@@ -7,7 +7,7 @@ INSERT INTO public.profiles
   (id, immutable_id, role, first_name, last_name, account_status)
 VALUES
   ('c2910000-0000-0000-0000-000000000001', 'C29-ENG-ADM-01', 'admin', 'Admin', 'Engine', 'active'),
-  ('c2910000-0000-0000-0000-000000000002', 'C29-ENG-TCH-01', 'teacher', 'Teacher', 'Engine', 'provisional_active');
+  ('c2910000-0000-0000-0000-000000000002', 'C29-ENG-TCH-01', 'teacher', 'Teacher', 'Engine', 'active');
 INSERT INTO public.teacher_profiles (profile_id, kyc_status)
 VALUES ('c2910000-0000-0000-0000-000000000002', 'approved');
 

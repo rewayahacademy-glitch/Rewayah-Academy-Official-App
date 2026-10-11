@@ -7,7 +7,7 @@ INSERT INTO public.profiles
   (id, immutable_id, role, first_name, last_name, account_status)
 VALUES
   ('c2900000-0000-0000-0000-000000000001', 'C29-ADMIN-0001', 'admin', 'Admin', 'C29', 'active'),
-  ('c2900000-0000-0000-0000-000000000002', 'C29-TEACH-0001', 'teacher', 'Teacher', 'C29', 'provisional_active');
+  ('c2900000-0000-0000-0000-000000000002', 'C29-TEACH-0001', 'teacher', 'Teacher', 'C29', 'active');
 
 SET LOCAL ROLE authenticated;
 SELECT set_config('request.jwt.claim.sub', 'c2900000-0000-0000-0000-000000000001', true);

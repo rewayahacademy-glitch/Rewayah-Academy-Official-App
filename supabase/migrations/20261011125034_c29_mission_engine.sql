@@ -261,9 +261,9 @@ ALTER FUNCTION public.enregistrer_regles_tirage(jsonb, uuid) OWNER TO postgres;
 ALTER FUNCTION public.candidats_cible_tirage() OWNER TO postgres;
 
 COMMENT ON FUNCTION public.enregistrer_regles_tirage(jsonb, uuid) IS
-  'F86 candidate allowlist: signature=public.enregistrer_regles_tirage(jsonb,uuid); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: active admin aal2 stores a new immutable, audited rule version; same key/payload replays same version; changed payload is refused; targets must be active.';
+  'F86 candidate allowlist: signature=public.enregistrer_regles_tirage(jsonb,uuid); md5_functiondef=aa5ec79d03fa2659be4cb08cb45fc792; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: active admin aal2 stores a new immutable, audited rule version; same key/payload replays same version; changed payload is refused; targets must be active.';
 COMMENT ON FUNCTION public.candidats_cible_tirage() IS
-  'F86 candidate allowlist: signature=public.candidats_cible_tirage(); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: active admin receives at most 500 active classes and approved active teachers sorted by display name; non-admin is refused.';
+  'F86 candidate allowlist: signature=public.candidats_cible_tirage(); md5_functiondef=eb7dbf83173d2dca2917ee368fbf4289; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: active admin receives at most 500 active classes and approved active teachers sorted by display name; non-admin is refused.';
 
 DO $postflight$
 DECLARE v_signature text;
@@ -281,7 +281,11 @@ BEGIN
         AND (v_signature <> 'public.enregistrer_regles_tirage(jsonb,uuid)'
           OR p.prosrc ILIKE '%aal2%')
         AND pg_catalog.obj_description(p.oid, 'pg_proc') LIKE
-          '%F86 candidate allowlist:%signature=' || v_signature || '; md5_functiondef=A_CALCULER;%'
+          '%F86 candidate allowlist:%signature=' || v_signature || '; md5_functiondef=' ||
+            CASE v_signature
+              WHEN 'public.enregistrer_regles_tirage(jsonb,uuid)' THEN 'aa5ec79d03fa2659be4cb08cb45fc792'
+              WHEN 'public.candidats_cible_tirage()' THEN 'eb7dbf83173d2dca2917ee368fbf4289'
+            END || ';%'
         AND NOT pg_catalog.has_function_privilege('anon', p.oid, 'EXECUTE')
         AND NOT pg_catalog.has_function_privilege('service_role', p.oid, 'EXECUTE')
         AND NOT pg_catalog.has_function_privilege('agent_ro', p.oid, 'EXECUTE')

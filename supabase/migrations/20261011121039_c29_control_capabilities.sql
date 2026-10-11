@@ -275,11 +275,11 @@ GRANT EXECUTE ON FUNCTION public.ma_capacite_controle_active()
   TO authenticated;
 
 COMMENT ON FUNCTION public.accorder_capacite_controle(uuid,timestamptz,timestamptz,boolean,uuid[],uuid[],uuid) IS
-  'F79 candidate allowlist: signature=public.accorder_capacite_controle(uuid,timestamptz,timestamptz,boolean,uuid[],uuid[],uuid); md5_prosrc=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: admin account with aal2 grants only active teacher/admin/controller profiles; grant is scoped, audited and idempotent; aal1/non-admin cannot grant.';
+  'F79 candidate allowlist: signature=public.accorder_capacite_controle(uuid,timestamptz,timestamptz,boolean,uuid[],uuid[],uuid); md5_prosrc=1949480f7b43b7de9724049cf7f247e1; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: admin account with aal2 grants only active teacher/admin/controller profiles; grant is scoped, audited and idempotent; aal1/non-admin cannot grant.';
 COMMENT ON FUNCTION public.retirer_capacite_controle(uuid,text,uuid) IS
-  'F79 candidate allowlist: signature=public.retirer_capacite_controle(uuid,text,uuid); md5_prosrc=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only active admin aal2 revokes; revocation is immediate, scoped, audited and idempotent.';
+  'F79 candidate allowlist: signature=public.retirer_capacite_controle(uuid,text,uuid); md5_prosrc=d95932d9af9c9ed55111ec1fdb0cb29b; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only active admin aal2 revokes; revocation is immediate, scoped, audited and idempotent.';
 COMMENT ON FUNCTION public.ma_capacite_controle_active() IS
-  'F79 candidate allowlist: signature=public.ma_capacite_controle_active(); md5_prosrc=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only auth.uid() active capability is evaluated; account, role, expiry, revocation and aal2 are checked.';
+  'F79 candidate allowlist: signature=public.ma_capacite_controle_active(); md5_prosrc=c9fb15780e387e635e2861732e133229; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only auth.uid() active capability is evaluated; account, role, expiry, revocation and aal2 are checked.';
 
 DO $postflight$
 DECLARE v_signature text;
@@ -299,7 +299,12 @@ BEGIN
          AND p.prosrc ILIKE '%app_account_valid()%'
          AND p.prosrc ILIKE '%aal2%'
          AND pg_catalog.obj_description(p.oid, 'pg_proc') LIKE
-             '%F79 candidate allowlist:%signature=' || v_signature || '; md5_prosrc=A_CALCULER;%'
+             '%F79 candidate allowlist:%signature=' || v_signature || '; md5_prosrc=' ||
+               CASE v_signature
+                 WHEN 'public.accorder_capacite_controle(uuid,timestamptz,timestamptz,boolean,uuid[],uuid[],uuid)' THEN '1949480f7b43b7de9724049cf7f247e1'
+                 WHEN 'public.retirer_capacite_controle(uuid,text,uuid)' THEN 'd95932d9af9c9ed55111ec1fdb0cb29b'
+                 WHEN 'public.ma_capacite_controle_active()' THEN 'c9fb15780e387e635e2861732e133229'
+               END || ';%'
          AND NOT pg_catalog.has_function_privilege('anon', p.oid, 'EXECUTE')
          AND NOT pg_catalog.has_function_privilege('service_role', p.oid, 'EXECUTE')
          AND NOT pg_catalog.has_function_privilege('agent_ro', p.oid, 'EXECUTE')

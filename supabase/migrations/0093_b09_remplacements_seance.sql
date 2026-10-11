@@ -260,18 +260,18 @@ ALTER FUNCTION public.prendre_remplacement(uuid, uuid) OWNER TO postgres;
 ALTER FUNCTION public.designer_remplacant_admin(uuid, uuid, uuid) OWNER TO postgres;
 
 COMMENT ON FUNCTION public.declarer_absence_seance(uuid, uuid) IS
-  'F86 candidate allowlist: signature=public.declarer_absence_seance(uuid,uuid); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: titulaire actif peut declarer une absence planifiee une fois, idempotence conservee, audit append-only.';
+  'F86 candidate allowlist: signature=public.declarer_absence_seance(uuid,uuid); md5_functiondef=1c22d79a6cbe17f856178c0c7aa2ab6e; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: titulaire actif peut declarer une absence planifiee une fois, idempotence conservee, audit append-only.';
 COMMENT ON FUNCTION public.prendre_remplacement(uuid, uuid) IS
-  'F86 candidate allowlist: signature=public.prendre_remplacement(uuid,uuid); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: premier enseignant actif compatible gagne atomiquement; second voit dejaPrise; audit append-only.';
+  'F86 candidate allowlist: signature=public.prendre_remplacement(uuid,uuid); md5_functiondef=7578dd0ea7b79b7d47df4e95712ea16c; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: premier enseignant actif compatible gagne atomiquement; second voit dejaPrise; audit append-only.';
 COMMENT ON FUNCTION public.designer_remplacant_admin(uuid, uuid, uuid) IS
-  'F86 candidate allowlist: signature=public.designer_remplacant_admin(uuid,uuid,uuid); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: admin actif assigne un enseignant compatible; enseignant non-admin refuse; audit append-only.';
+  'F86 candidate allowlist: signature=public.designer_remplacant_admin(uuid,uuid,uuid); md5_functiondef=fede4cb192330618a3adcbd06b221faa; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: admin actif assigne un enseignant compatible; enseignant non-admin refuse; audit append-only.';
 
 DO $postflight$
 DECLARE f record;
 BEGIN
   FOR f IN SELECT p.oid, p.prosrc, p.proconfig, p.proowner, p.prosecdef,
                   pg_catalog.obj_description(p.oid, 'pg_proc') AS comment,
-                  p.proname, p.oid::regprocedure::text AS signature
+                  p.proname, pg_catalog.replace(p.oid::regprocedure::text, ' ', '') AS signature
              FROM pg_catalog.pg_proc p
              JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
             WHERE n.nspname = 'public'
@@ -281,7 +281,12 @@ BEGIN
        OR f.proconfig IS DISTINCT FROM ARRAY['search_path=""']::text[]
        OR f.prosrc NOT ILIKE '%app_account_valid()%'
        OR f.prosrc NOT ILIKE '%app_role() = %'
-       OR f.comment NOT LIKE '%F86 candidate allowlist:%signature=' || f.signature || '; md5_functiondef=A_CALCULER;%'
+       OR f.comment NOT LIKE '%F86 candidate allowlist:%signature=public.' || f.signature || '; md5_functiondef=' ||
+            CASE f.proname
+              WHEN 'declarer_absence_seance' THEN '1c22d79a6cbe17f856178c0c7aa2ab6e'
+              WHEN 'prendre_remplacement' THEN '7578dd0ea7b79b7d47df4e95712ea16c'
+              WHEN 'designer_remplacant_admin' THEN 'fede4cb192330618a3adcbd06b221faa'
+            END || ';%'
        OR pg_catalog.has_function_privilege('anon', f.oid, 'EXECUTE')
        OR pg_catalog.has_function_privilege('service_role', f.oid, 'EXECUTE')
        OR pg_catalog.has_function_privilege('agent_ro', f.oid, 'EXECUTE')

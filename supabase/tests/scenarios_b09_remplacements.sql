@@ -86,7 +86,7 @@ RESET ROLE;
 
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
 VALUES ('b0900000-0000-0000-0000-000000000202',
- 'b0900000-0000-0000-0000-000000000001', now()+interval '3 days', now()+interval '3 days 1 hour',
+ 'b0900000-0000-0000-0000-000000000001', clock_timestamp()+interval '3 days', clock_timestamp()+interval '3 days 1 hour',
  'planned','standard','b0900000-0000-0000-0000-000000000101');
 SELECT set_config('request.jwt.claim.sub','b0900000-0000-0000-0000-000000000004',true);
 SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"admin"}}',true);
