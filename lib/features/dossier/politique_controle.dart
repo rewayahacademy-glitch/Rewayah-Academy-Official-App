@@ -16,6 +16,14 @@
 //   ouvrir ; tout le reste est mot pour mot ;
 // - la mise en forme du texte valide est gardee : listes (numerotees ou a
 //   puces) et passages en gras.
+//
+// Pourquoi cette feuille n'a ni etat de chargement, ni d'erreur, ni de hors
+// ligne : le texte est compile dans l'application (`t.contrat.politique`),
+// aucune lecture ne l'alimente, aucun reseau n'est en jeu. Elle s'affiche
+// donc toujours en entier, appareil connecte ou non ; seul le contact de la
+// section 10 est un parametre, jamais une lecture. Si le texte venait un jour
+// du serveur, les cinq etats deviendraient necessaires. Fiche d'ecran :
+// `docs/current/CATALOGUE_ECRANS_JURIDIQUE.md`.
 
 import 'package:flutter/material.dart';
 
