@@ -39,9 +39,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../capacites/capacite_indisponible.dart';
 import '../capacites/port_enseignants_classe.dart' show GenreClasse;
+import 'decoupage_classes.dart';
 import 'occurrence_creneau.dart';
 import 'offre_horaire.dart' show PublicOffre;
 
+export 'decoupage_classes.dart' show DecoupageClasses, decouperDemandes;
 export 'occurrence_creneau.dart' show OccurrenceCreneau;
 
 /// Une heure de la semaine lue dans un autre fuseau que celui du
@@ -138,6 +140,8 @@ class RegroupementDemandes {
     this.classe,
     this.classesPossibles,
     this.numeroProchaineClasse,
+    this.minimum,
+    this.classesExistantes,
   }) : assert(occurrences.isNotEmpty, 'un regroupement a au moins un jour'),
        assert(
          joursDistincts(occurrences),
@@ -210,10 +214,27 @@ class RegroupementDemandes {
   /// attribue par le serveur. Nul tant que le serveur ne le rend pas.
   final int? numeroProchaineClasse;
 
-  /// Le nombre de classes possibles : celui du serveur, sinon le nombre de
-  /// classes pleines au quota (jamais une classe sous le quota).
-  int get classesPossiblesLues =>
-      classesPossibles ?? (quota <= 0 ? 0 : nombreEleves ~/ quota);
+  /// R3 : le minimum d'eleves d'une classe pour ce public, lu dans
+  /// `app_config` par le serveur. Nul tant qu'il ne le rend pas : le reste
+  /// d'un decoupage attend alors, aucun minimum n'est invente.
+  final int? minimum;
+
+  /// R1, R16 : le nombre de classes deja ouvertes sur la meme cle (meme
+  /// horaire, meme categorie). Nul : non rendu. La classe creee s'y ajoute,
+  /// elle n'en ecrase aucune.
+  final int? classesExistantes;
+
+  /// R3 : le decoupage de ces demandes en classes, tel que le serveur le
+  /// fera (maximum = [quota], minimum = [minimum]).
+  DecoupageClasses get decoupage => decouperDemandes(
+    demandes: nombreEleves,
+    maximum: quota,
+    minimum: minimum,
+  );
+
+  /// Le nombre de classes possibles : celui du serveur, sinon celui du
+  /// decoupage (jamais une classe sous le minimum connu).
+  int get classesPossiblesLues => classesPossibles ?? decoupage.classes;
 
   /// Vrai quand le quota est atteint : la classe peut ouvrir complete.
   bool get pret => nombreEleves >= quota;

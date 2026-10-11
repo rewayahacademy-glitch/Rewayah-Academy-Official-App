@@ -99,9 +99,8 @@ Future<_Salle> _monterSalle(
               supportedLocales: AppLocaleUtils.supportedLocales,
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
               builder: (BuildContext contexte, Widget? enfant) => MediaQuery(
-                data: MediaQuery.of(
-                  contexte,
-                ).copyWith(textScaler: TextScaler.linear(echelleTexte)),
+                data: MediaQuery.of(contexte)
+                    .copyWith(textScaler: TextScaler.linear(echelleTexte)),
                 child: enfant!,
               ),
               routerConfig: GoRouter(
@@ -169,10 +168,7 @@ void main() {
       debugPrint('FAMILLES chargees : ${familles.join(', ')}');
     });
 
-    for (final ThemeMode mode in <ThemeMode>[
-      ThemeMode.light,
-      ThemeMode.dark,
-    ]) {
+    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
       testWidgets('fin 390x844 @3, ${mode.name}', (WidgetTester tester) async {
         fixerVueCapture(tester, const Size(390, 844), 3, zoneSure: _zoneSure);
         final _Salle salle = await _monterSalle(tester, mode: mode);
@@ -287,26 +283,29 @@ void main() {
       await _capturer(tester, 'o3_texte200_390x844@2_light');
     });
 
-    testWidgets('planche : fin de visite contre la maquette V8 M5',
-        skip: _maquetteM5 == null, (WidgetTester tester) async {
-      final (int l, int h) = await _taillePx(tester, _maquetteM5!);
-      fixerVueMaquette(
-        tester,
-        largeurPx: l,
-        hauteurPx: h,
-        largeurLogique: 390,
-        zoneSure: const EdgeInsets.only(top: 24),
-      );
-      final _Salle salle = await _monterSalle(tester);
-      salle.politique.dernierBudget = unBudget(
-        visitesUtilisees: 1,
-        visitesMax: 2,
-        total: const Duration(seconds: 240),
-      );
-      await _quitter(tester);
-      debugPrint(
-        'PNG ${await capturerEtComparer(tester, 'o3_fin_mobile_contre_maquette_M5', _maquetteM5!)}',
-      );
-    });
+    testWidgets(
+      'planche : fin de visite contre la maquette V8 M5',
+      skip: _maquetteM5 == null,
+      (WidgetTester tester) async {
+        final (int l, int h) = await _taillePx(tester, _maquetteM5!);
+        fixerVueMaquette(
+          tester,
+          largeurPx: l,
+          hauteurPx: h,
+          largeurLogique: 390,
+          zoneSure: const EdgeInsets.only(top: 24),
+        );
+        final _Salle salle = await _monterSalle(tester);
+        salle.politique.dernierBudget = unBudget(
+          visitesUtilisees: 1,
+          visitesMax: 2,
+          total: const Duration(seconds: 240),
+        );
+        await _quitter(tester);
+        debugPrint(
+          'PNG ${await capturerEtComparer(tester, 'o3_fin_mobile_contre_maquette_M5', _maquetteM5!)}',
+        );
+      },
+    );
   });
 }

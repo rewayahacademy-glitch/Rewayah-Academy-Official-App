@@ -89,14 +89,42 @@ Future<void> _taper(WidgetTester tester, String libelle) async {
   await tester.pumpAndSettle();
 }
 
-/// Ouvre la visionneuse, laisse l'image se decoder (hors horloge factice),
-/// puis la ferme par « Fermer » : la piece a ete vue (P-ADM-06 point 5).
+/// Attend, en temps reel, que la piece de la visionneuse soit decodee et
+/// peinte (premiere image : `RawImage.image` non nul), puis laisse passer le
+/// rappel de lecture (`onLecture`, apres la trame).
+///
+/// FINITIONS-CORR2-1 (7) : le decodage de l'image se fait hors de l'horloge
+/// factice. Une attente fixe de 100 ms suffisait seule, pas sous charge
+/// (suite complete, 4 coeurs partages) : la piece n'etait pas encore peinte
+/// quand la visionneuse se fermait, la lecture n'etait pas comptee et
+/// AD-T-LECTURE trouvait les cases fermees. On attend donc la condition,
+/// avec un plafond large (10 s de temps reel) qui ne sert qu'en panne.
+Future<void> _attendrePiecePeinte(WidgetTester tester) async {
+  final Finder images = find.descendant(
+    of: find.byType(VisionneusePiece),
+    matching: find.byType(RawImage),
+  );
+  bool peinte() =>
+      tester.widgetList<RawImage>(images).any((RawImage r) => r.image != null);
+  final Stopwatch chrono = Stopwatch()..start();
+  while (!peinte()) {
+    if (chrono.elapsed > const Duration(seconds: 10)) {
+      fail('la piece ne s est pas peinte en 10 s de temps reel');
+    }
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 10)),
+    );
+    await tester.pump();
+  }
+  await tester.pumpAndSettle();
+}
+
+/// Ouvre la visionneuse, attend que l'image soit decodee et peinte (hors
+/// horloge factice), puis la ferme par « Fermer » : la piece a ete vue
+/// (P-ADM-06 point 5).
 Future<void> _voirEtFermer(WidgetTester tester) async {
   await _taper(tester, t.dossiers.revue.voirPiece);
-  await tester.runAsync(
-    () => Future<void>.delayed(const Duration(milliseconds: 100)),
-  );
-  await tester.pumpAndSettle();
+  await _attendrePiecePeinte(tester);
   await tester.tap(
     find.descendant(
       of: find.byType(VisionneusePiece),
@@ -354,10 +382,7 @@ void main() {
       expect(service.apercus, isEmpty);
 
       await _taper(tester, t.dossiers.revue.voirPiece);
-      await tester.runAsync(
-        () => Future<void>.delayed(const Duration(milliseconds: 100)),
-      );
-      await tester.pumpAndSettle();
+      await _attendrePiecePeinte(tester);
       expect(find.byType(VisionneusePiece), findsOneWidget);
       expect(service.apercus, <String>['p1/piece.webp']);
       expect(find.textContaining('http'), findsNothing);

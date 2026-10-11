@@ -21,6 +21,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_groupe/cartes_classe.dart';
 import 'package:rewayah_academy/core/tc_observation/guardian_observation_policy.dart';
 import 'package:rewayah_academy/core/tc_parcours/feedback_memoire.dart';
@@ -198,7 +199,9 @@ void main() {
           () => Scaffold(
             body: SingleChildScrollView(
               child: ChoixEntreeObservation(
-                options: OptionsEntreeObservation.pour(AppRole.admin),
+                options: OptionsEntreeObservation.depuis(
+                  const SessionState(resolue: true, role: AppRole.admin),
+                ),
                 onMode: (_) {},
                 onEntrer: () {},
               ),

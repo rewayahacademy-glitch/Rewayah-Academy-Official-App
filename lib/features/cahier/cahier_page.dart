@@ -100,7 +100,10 @@ class CahierPage extends ConsumerWidget {
 
     return _Cahier(
       seanceId: seanceId,
-      vue: VueCahier.depuis(lecture: lecture),
+      vue: VueCahier.depuis(
+        lecture: lecture,
+        seanceConnue: seance != null || enRetard != null || enFile,
+      ),
       enFile: enFile,
       classe: classe == null || classe.isEmpty ? null : classe,
       debut: seance?.debut ?? enRetard?.debut,
@@ -234,6 +237,20 @@ class _CahierState extends ConsumerState<_Cahier> {
       );
     }
 
+    if (vue.etat == EtatCahier.introuvable) {
+      return PageShell(
+        titre: titre,
+        onRetour: _retourJournee,
+        child: EmptyState(
+          message: t.enseignant.cahier.introuvable,
+          invitation: t.enseignant.cahier.introuvableDetail,
+          icone: AppIcons.cahier,
+          libelleAction: t.enseignant.cahier.retourJournee,
+          onAction: _retourJournee,
+        ),
+      );
+    }
+
     final bool lectureSeule =
         vue.etat == EtatCahier.dejaDepose && !_enCorrection;
 
@@ -272,6 +289,8 @@ class _CahierState extends ConsumerState<_Cahier> {
               ),
               validation: _validation(vue, large: false),
             ),
+            // Traite plus haut : aucun formulaire pour une seance inconnue.
+            EtatCahier.introuvable => const SizedBox.shrink(),
             EtatCahier.dejaDepose || EtatCahier.constat => _Constat(
               vue: vue,
               decisions: _decisions,

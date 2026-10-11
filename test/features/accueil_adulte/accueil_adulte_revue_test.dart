@@ -46,9 +46,10 @@ void main() {
       ],
       depart: Routes.eleve,
     );
-    // La capacite n'est pas encore lue : l'accueil de l'eleve reste.
-    expect(lieu(routeur), Routes.eleve);
-    expect(find.byType(AccueilElevePage), findsOneWidget);
+    // EA-ROLE-1 : la capacite « eleve autonome » est servie avec la session,
+    // `/eleve` mene d'emblee a l'accueil adulte, qui attend sa lecture.
+    expect(lieu(routeur), Routes.eleveAdulte);
+    expect(find.byType(AccueilElevePage), findsNothing);
 
     // Le serveur repond ensuite, sans nouvelle navigation.
     lecture.complete(accueilDemo());
@@ -90,10 +91,12 @@ void main() {
     expect(conteneur.read(accueilAdulteProvider).hasValue, isTrue);
     expect(conteneur.read(capaciteAccueilAdulteProvider), isFalse);
 
+    // La lecture de l'accueil en echec ne retire pas la capacite servie :
+    // `/eleve` ramene toujours a l'accueil adulte, jamais a celui de l'eleve.
     routeur.go(Routes.eleve);
     await stabiliserTest(tester);
-    expect(lieu(routeur), Routes.eleve);
-    expect(find.byType(AccueilElevePage), findsOneWidget);
+    expect(lieu(routeur), Routes.eleveAdulte);
+    expect(find.byType(AccueilElevePage), findsNothing);
   });
 
   testWidgets('mobile 390 : les deux « Voir tout » voisins sont sur la ligne '

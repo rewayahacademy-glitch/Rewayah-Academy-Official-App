@@ -333,6 +333,45 @@
       "ouverture": "جارٍ فتح Rewayah"
     }
   },
+  "reseau": {
+    "retabli": "عادت الشبكة",
+    "horsLigne": "لا شبكة. ما هو معروض يبقى قابلًا للاطلاع.",
+    "enAttenteEnvoi": "سيُرسل بمجرد عودة الشبكة",
+    "syncImpossible": "تعذّرت المزامنة"
+  },
+  "destructif": {
+    "irreversible": "لا يمكن التراجع عن هذا الإجراء."
+  },
+  "presence": {
+    "titre": "الحضور",
+    "voir": "عرض الحضور",
+    "mienne": "حضورك",
+    "consolide": "مُوحَّد",
+    "planifiee": "درس قادم",
+    "enAttente": "لم يصل بعد",
+    "enConnexion": "جارٍ الاتصال",
+    "presente": "في القاعة",
+    "enRetard": "متأخر",
+    "deconnectee": "انقطع الاتصال",
+    "enReconnexion": "جارٍ إعادة الاتصال",
+    "reconnectee": "عاد",
+    "sortie": "غادر الدرس",
+    "absente": "غياب",
+    "excusee": "غياب بعذر",
+    "confirmationEnAttente": "للتأكيد",
+    "corrigeeManuel": "تصحيح يدوي",
+    "finalisee": "نهائي",
+    "inconnu": "حالة غير معروفة",
+    "entreeInstant": "دخل القاعة للتو",
+    "entreeMinutes": "في القاعة منذ \u2068{minutes}\u2069 د",
+    "retardMinutes": "\u2068{minutes}\u2069 د بعد الموعد",
+    "silenceInstant": "لا أخبار منذ بضع ثوانٍ",
+    "silenceMinutes": "لا أخبار منذ \u2068{minutes}\u2069 د",
+    "attenteInstant": "بدأ الدرس للتو",
+    "attenteMinutes": "بدأ الدرس منذ \u2068{minutes}\u2069 د",
+    "etatMicroOuvert": "ميكروفونه مفتوح",
+    "etatMicroCoupe": "ميكروفونه مغلق"
+  },
   "etat": {
     "enDirect": "مباشر",
     "seanceAnnulee": "ملغاة",
@@ -470,7 +509,9 @@
         "annonce": "الإعلان: \u2068{texte}\u2069",
         "detail": "التفاصيل: \u2068{texte}\u2069",
         "retour": "العودة إلى القائمة"
-      }
+      },
+      "indisponibleCourt": "تعذّر تحميل معلومات الحصة",
+      "indisponibleInvitation": "ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة."
     },
     "catalogue": "اختيار فصل",
     "planning": "الجدول",
@@ -704,7 +745,7 @@
       "horsLigne": "أنت غير متصل. تحتاج الحصة إلى اتصال.",
       "reessayer": "إعادة المحاولة",
       "quitter": "مغادرة",
-      "indisponible": "{commande}. غير متاح أثناء إعادة الاتصال.",
+      "indisponible": "\u2068{commande}\u2069. غير متاح أثناء إعادة الاتصال.",
       "cameraInterdite": "الكاميرا معطّلة لهذا الملف.",
       "microBloque": "الميكروفون محظور في إعدادات هذا الجهاز.",
       "microBloqueGuidee": "الميكروفون محظور على هذا الجهاز.",
@@ -833,7 +874,37 @@
         "pointeur": "المؤشر",
         "marquer": "وضع علامة",
         "masquer": "إخفاء",
-        "annoter": "كتابة ملاحظات"
+        "ecrire": "كتابة",
+        "aideLecture": "بدون أداة، تُقرأ الصفحة؛ وعند تكبيرها تُحرَّك بسحبها.",
+        "aidePointeur": "المؤشر: المس الصفحة لتشير إلى مقطع، ولا يبقى أي أثر.",
+        "aideEcrire": "الكتابة: اكتب على الصفحة. على شاشة اللمس، يحرّكها إصبعان."
+      },
+      "ecriture": {
+        "palette": "أدوات الكتابة",
+        "terminer": "إنهاء",
+        "couleur": "اللون",
+        "couleurAide": "اللون يدل على قصد الخط، للفصل كله.",
+        "epaisseur": "السُّمك",
+        "epaisseurAide": "رفيع لكتابة كلمة، وسميك للإحاطة.",
+        "fine": "رفيع",
+        "moyenne": "متوسط",
+        "epaisse": "سميك",
+        "tuPeuxEcrire": "يمكنك الكتابة على السبورة.",
+        "vousPouvezEcrire": "يمكنكم الكتابة على السبورة.",
+        "repriseSayyid": "السيد يستعيد السبورة.",
+        "repriseSayyida": "السيدة تستعيد السبورة.",
+        "repriseNom": "عادت السبورة إلى \u2068{nom}\u2069.",
+        "choisirTu": "المس «الكتابة» عندما تريد أن تكتب. وإلا فالصفحة للقراءة، ولا يبقى عليها أي خط.",
+        "choisirVous": "المسوا «الكتابة» عندما تريدون الكتابة. وإلا فالصفحة للقراءة، ولا يبقى عليها أي خط.",
+        "aideEleveTu": "اكتب بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطك؛ و«إنهاء» يعيد إلى القراءة.",
+        "aideEleveVous": "اكتبوا بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطكم؛ و«إنهاء» يعيد إلى القراءة.",
+        "peutEcrire": "الكتابة مسموحة",
+        "autoriser": "السماح بالكتابة",
+        "retirer": "سحب الإذن بالكتابة",
+        "autoriserSemantique": "السماح بالكتابة: \u2068{prenom}\u2069",
+        "retirerSemantique": "سحب الإذن بالكتابة من \u2068{dePrenom}\u2069",
+        "autoriserAide": "سيكون بإمكان \u2068{prenom}\u2069 الكتابة على الصفحة أو السبورة. تبقى الصفحة والمادة بيدك.",
+        "retirerAide": "تبقى الخطوط على الصفحة؛ وتُسحب أدوات الكتابة."
       },
       "rail": {
         "navigation": "التنقل",
@@ -893,7 +964,14 @@
         "affichage": "العرض",
         "focus": "التركيز",
         "focusSemantique": "التركيز، تكبير المحتوى وتصغير اللوحات",
-        "quitterFocus": "الخروج من التركيز"
+        "quitterFocus": "الخروج من التركيز",
+        "quitterFocusSemantique": "الخروج من التركيز وإظهار اللوحات",
+        "focusGuide": "تكبير",
+        "quitterFocusGuide": "إيقاف التكبير",
+        "ajusterGuide": "عرض الصفحة كاملة",
+        "classeVoitSupport": "يرى الفصل الصفحة دون الملاحظات.",
+        "classeVoitAvecNotes": "يرى الفصل الصفحة والملاحظات.",
+        "classeVoitTableau": "يرى الفصل السبورة دون الصفحة."
       },
       "bibliotheque": {
         "intro": "المادة التي تختارها تُفتح لك وحدك. يبقى الفصل على المادة الحالية حتى «عرض على الفصل».",
@@ -903,12 +981,43 @@
         "revenir": "العودة إلى المواد",
         "ouverture": "جارٍ فتح المادة…",
         "echec": "تعذّر فتح الملف.",
-        "echecDetail": "تعذّر تحميل ملف هذه المادة. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى."
+        "echecDetail": "ملف هذه المادة غير متاح حاليًا. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى."
       },
       "surface": {
         "aucunSupport": "اختر مادة أو اكتب على السبورة.",
         "page": "\u2068{titre}\u2069، الصفحة \u2068{page}\u2069 من \u2068{pages}\u2069",
-        "supportMasque": "السبورة، المادة مخفية"
+        "supportMasque": "السبورة، المادة مخفية",
+        "supportArrive": "المادة في الطريق…",
+        "supportIndisponible": "المادة لا تظهر.",
+        "supportIndisponibleDetail": "الملف غير متاح. أعد المحاولة: الحصة والصوت مستمران.",
+        "reessayerSemantique": "إعادة محاولة عرض المادة",
+        "supportIllustratif": "مادة توضيحية"
+      },
+      "synchro": {
+        "nonPartagees": "ملاحظاتك الجديدة غير مشارَكة.",
+        "nonPartageesSuite": "الملاحظات المنقّطة لا تظهر إلا على شاشتك، ريثما تعود السبورة إلى الاتصال.",
+        "seReconnecte": "السبورة تعيد الاتصال.",
+        "reprise": "استعادة السبورة…",
+        "revient": "السبورة تعود.",
+        "ecritureSuspendue": "تُستأنف الكتابة فور عودة السبورة.",
+        "nonSauvegardees": "ملاحظات هذه الحصة غير محفوظة.",
+        "nonSauvegardeesSuite": "تبقى على السبورة حتى نهاية الحصة، لكنها لن تُسترجع في الدرس القادم."
+      },
+      "rangement": {
+        "ranger": "إرجاع إلى المكتبة",
+        "menuSupport": "إجراءات المادة المعروضة",
+        "menuTableau": "إجراءات السبورة الحرة",
+        "range": "أُرجعت المادة",
+        "rangeDetail": "تبقى في المكتبة، عند صفحتها ومع ملاحظاتها. «عرض على الفصل» يعيدها.",
+        "tableauLibre": "السبورة الحرة",
+        "section": "مواد أُرجعت خلال الحصة",
+        "reprise": "الاستئناف من الصفحة \u2068{page}\u2069 من \u2068{total}\u2069.",
+        "notesConservees": "الملاحظات محفوظة في هذه الحصة فقط.",
+        "effacer": "مسح الملاحظات",
+        "questionPage": "مسح كل ملاحظات هذه الصفحة؟",
+        "questionTableau": "مسح كل ملاحظات السبورة؟",
+        "consequencePage": "تختفي ملاحظات هذه الصفحة عند الفصل كله.",
+        "consequenceTableau": "تختفي ملاحظات السبورة الحرة عند الفصل كله."
       },
       "capsule": {
         "avatar": "عرض معلومات \u2068{deNom}\u2069",
@@ -935,13 +1044,15 @@
         "intro": "بيانات وهمية، دون خادم. اختر دورًا وحالة.",
         "groupes": {
           "seance": "مجرى الحصة",
-          "secours": "حالات الطوارئ",
+          "secours": "حالات الاحتياط",
           "tableau": "المواد والسبورة"
         },
         "roles": {
           "eleve": "طالب عادي",
           "guidee": "وضع إمكانية الوصول",
-          "enseignant": "المعلم"
+          "enseignant": "المعلم",
+          "tuteur": "وليّ الأمر المتابِع",
+          "controleur": "المراقِب"
         },
         "etats": {
           "repos": "وضع عادي",
@@ -1154,7 +1265,8 @@
       "horsLigne": "لا شبكة",
       "horsLigneDetail": "يمكنك الدخول بمجرد عودة الشبكة.",
       "pausePriere": "استراحة للصلاة",
-      "pausePriereDetail": "\u2068{priere}\u2069، نحو \u2068{heure}\u2069"
+      "pausePriereDetail": "\u2068{priere}\u2069، نحو \u2068{heure}\u2069",
+      "entreeSePrepare": "دخولك قيد التحضير. أعد المحاولة بعد لحظة."
     },
     "coran": {
       "titre": "القرآن",
@@ -1256,7 +1368,6 @@
       "alertesErreur": "تعذّرت قراءة تنبيهات الحضور: لم يستجب الاتصال أو الخادم. أعد المحاولة بعد لحظة.",
       "voirAutreAlerte": "عرض التنبيه الآخر",
       "voirAutresAlertes": "عرض التنبيهات الأخرى (\u2068{nombre}\u2069)",
-      "remplacementsTitre": "الاستخلافات المؤكَّدة",
       "remplacementsVide": "لا درس لزميل تتولاه الآن.",
       "voirTousRemplacements": "عرض الكل: الاستخلافات المؤكَّدة (\u2068{nombre}\u2069)",
       "heure": "الساعة",
@@ -1483,6 +1594,8 @@
       "retourJournee": "العودة إلى يومي",
       "vide": "تعذّر استنتاج المعاينة",
       "videDetail": "لم يُسجَّل حضور ولا حدث لهذه الحصة. يمكنك مع ذلك إيداع دفتر المتابعة.",
+      "introuvable": "الحصة غير موجودة",
+      "introuvableDetail": "هذه الحصة ليست من حصصك، أو أن الرابط غير مكتمل. عد إلى يومك لاختيار حصة.",
       "erreur": "تعذّرت قراءة المعاينة.",
       "erreurDetail": "أعد المحاولة، أو أودع دفتر المتابعة دون المعاينة.",
       "echecEnvoi": "لم يُؤكَّد الإرسال. تحقّق قبل إعادة المحاولة.",
@@ -1798,7 +1911,8 @@
         "titre": "الدخول والأمان",
         "methode": "طريقة الدخول",
         "methodeLien": "رابط بالبريد الإلكتروني",
-        "methodeGoogle": "Google"
+        "methodeGoogle": "Google",
+        "consentements": "زيارات أولياء الأمور"
       },
       "informations": {
         "titre": "المعلومات الشخصية",
@@ -2036,7 +2150,8 @@
       "demandeEnvoyee": "أُرسل الطلب. ستحسم فيه الإدارة.",
       "aucunEnfant": "لا طفل في الأسرة",
       "aucunEnfantDetail": "أضف طفلًا لتتمكن من ضبط عرضه وكاميرته.",
-      "erreur": "لم يكتمل الحفظ: \u2068{message}\u2069"
+      "erreur": "لم يكتمل الحفظ: \u2068{message}\u2069",
+      "demandeManqueValeur": "المدة المطلوبة ناقصة: اخترها من القائمة، أو اضغط «آخر» واكتبها."
     }
   },
   "nav": {
@@ -2094,10 +2209,12 @@
     "compte": "حسابي",
     "principale": "التنقل الرئيسي",
     "motSymbole": "Rewayah",
+    "logoAccueil": "Rewayah Academy، الصفحة الرئيسية",
     "replier": "طي شريط التنقل",
     "deplier": "فتح شريط التنقل"
   },
   "tc": {
+    "indisponible": "هذه الميزة غير متاحة بعد. لم يضِع شيء، والحصة مستمرة، وستتوفر قريبًا.",
     "groupe": {
       "mesGroupes": {
         "titre": "فصولي",
@@ -2125,7 +2242,9 @@
           "few": "\u2068{membres}\u2069 طلاب من أصل \u2068{seuil}\u2069",
           "many": "\u2068{membres}\u2069 طالبًا من أصل \u2068{seuil}\u2069",
           "other": "\u2068{membres}\u2069 طالب من أصل \u2068{seuil}\u2069"
-        }
+        },
+        "entreeSePrepare": "دخولكم قيد التحضير. أعيدوا المحاولة بعد لحظة.",
+        "entreeAttendReseau": "ستتمكنون من الدخول عند عودة الشبكة."
       },
       "enseignant": {
         "sayyid": "سيد",
@@ -2847,8 +2966,8 @@
           "retirer": "إزالة",
           "retirerLecteur": "إزالة {nom}",
           "tailleOctets": "{taille} بايت",
-          "tailleKo": "{taille} كيلوبايت",
-          "tailleMo": "{taille} ميغابايت",
+          "tailleKo": "{taille} كيلوبايت",
+          "tailleMo": "{taille} ميغابايت",
           "autorisee": "جاهز للإرسال",
           "tropVolumineuse": "الملف كبير جدًا",
           "tropVolumineuseDetail": "هذا الملف يتجاوز الحجم المسموح به. اختر ملفًا أصغر.",
@@ -3022,7 +3141,7 @@
       "entete": {
         "avecAttention": "{entete}. {attention}",
         "deuxObjets": "{premier} · {second}",
-        "semantique": "محادثة مع {noms}\u200F، بخصوص {objets}",
+        "semantique": "محادثة مع {noms}\u200f، بخصوص {objets}",
         "semantiqueSansNoms": "محادثة بخصوص {objets}"
       },
       "types": {
@@ -3031,6 +3150,7 @@
         "dossier": "الملف",
         "mission": "مهمة المراقبة",
         "remplacement": "الاستبدال",
+        "profilPaiement": "ملف الدفع",
         "autre": "موضوع آخر"
       },
       "panneau": {
@@ -3138,7 +3258,7 @@
         "horsLigne": "أنت غير متصل. الرسالة الصوتية محفوظة هنا: أرسلها عند عودة الاتصال."
       },
       "lecteur": {
-        "libelleAuteur": "رسالة صوتية من {auteur}\u200F، {duree}",
+        "libelleAuteur": "رسالة صوتية من {auteur}\u200f، {duree}",
         "libelle": "رسالة صوتية، {duree}",
         "ecouter": "استماع",
         "pause": "إيقاف مؤقت",
@@ -3194,7 +3314,7 @@
         "ressourceExterne": "مورد تعليمي خارجي",
         "commercialInterdit": "رابط تجاري ممنوع",
         "nonVerifie": "رابط غير مُتحقَّق منه",
-        "semantique": "{adresse}\u200F، {etat}"
+        "semantique": "{adresse}\u200f، {etat}"
       },
       "sousTitre": "تبادل وتعاون بين المعلّمين",
       "sections": "فئات مجتمع المعلّمين",
@@ -3524,7 +3644,7 @@
         "videTitre": "لا توجد عناصر محفوظة",
         "vide": "اضغط على حفظ في لوحة قناة لتجد هنا قناة أو عنصرًا.",
         "ouvrir": "فتح {titre}",
-        "sansDestination": "{type}\u200F، لم يعد يُفتح من هنا",
+        "sansDestination": "{type}\u200f، لم يعد يُفتح من هنا",
         "types": {
           "canal": "قناة",
           "publication": "منشور",
@@ -3546,7 +3666,7 @@
         "messages": "الرسائل",
         "fichiers": "الملفات",
         "dansCanal": "في {canal}",
-        "messageDe": "{auteur}\u200F، في {canal}"
+        "messageDe": "{auteur}\u200f، في {canal}"
       },
       "demo": {
         "focus": "قناة في وضع التركيز",
@@ -3753,7 +3873,7 @@
           "sansAction": "لا يتاح لك أي إجراء إشراف على هذا المحتوى.",
           "sansSanction": "لا تُطبق أي عقوبة على الحساب تلقائيًا.",
           "politique": "سياسة منع الترويج",
-          "ouvrirSemantique": "فحص {objet}\u200F، السبب {motif}",
+          "ouvrirSemantique": "فحص {objet}\u200f، السبب {motif}",
           "regleMotif": {
             "publicite": "الإعلانات التجارية غير مسموح بها في مجتمع المعلّمين.",
             "lienAffilie": "روابط التسويق بالعمولة غير مسموح بها في مجتمع المعلّمين.",
@@ -3801,7 +3921,7 @@
       "annonce": "إعلان",
       "publier": "نشر إعلان",
       "videPublier": "لا توجد إعلانات لهذا الفصل. انشر أول إعلان للفصل كله.",
-      "auteurDate": "{auteur}\u200F، يوم {date} الساعة {heure}",
+      "auteurDate": "{auteur}\u200f، يوم {date} الساعة {heure}",
       "date": "يوم {date} الساعة {heure}",
       "lire": "قراءة الإعلان كاملًا",
       "ouvrirClasse": "فتح الفصل",
@@ -3868,15 +3988,6 @@
     "autreInvite": "حدّد",
     "selectionMultiple": "يمكن اختيار عدة إجابات"
   },
-  "destructif": {
-    "irreversible": "لا يمكن التراجع عن هذا الإجراء."
-  },
-  "reseau": {
-    "horsLigne": "لا شبكة. ما هو معروض يبقى قابلًا للاطلاع.",
-    "enAttenteEnvoi": "سيُرسل بمجرد عودة الشبكة",
-    "retabli": "عادت الشبكة",
-    "syncImpossible": "تعذّرت المزامنة"
-  },
   "admin": {
     "finance": {
       "aValider": "للمصادقة"
@@ -3914,7 +4025,9 @@
         "few": "ينتظر منذ \u2068{jours}\u2069 أيام",
         "many": "ينتظر منذ \u2068{jours}\u2069 يومًا",
         "other": "ينتظر منذ \u2068{jours}\u2069 يوم"
-      }
+      },
+      "outilsPilotage": "متابعة المواعيد",
+      "outilsPilotageDetail": "لكل موعد: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون."
     },
     "demandes": {
       "titre": "الطلبات والقواعد",
@@ -4103,7 +4216,7 @@
       "observationCapaciteAbsente": "هذا التثبيت لا يملك بعد تحديث الخادم الذي يتطلبه هذا الإعداد (الترحيل 0036). إعادة المحاولة لن تغيّر شيئًا: يجب تطبيقه أولًا على قاعدة البيانات.",
       "liste": {
         "rechercheLibelle": "البحث عن فصل",
-        "rechercheAide": "اسم الفصل أو رقمه أو رمزه أو معلمه",
+        "rechercheAide": "الاسم أو الرمز أو المعلم",
         "filtreAttente": "في انتظار معلم",
         "filtreJour": "اليوم",
         "filtreTousJours": "كل الأيام",
@@ -4123,7 +4236,11 @@
         "positionSemantique": "الصفحة \u2068{page}\u2069 من \u2068{total}\u2069 من قائمة الفصول",
         "precedente": "الصفحة السابقة من الفصول",
         "suivante": "الصفحة التالية من الفصول",
-        "resume": "الفصول من \u2068{debut}\u2069 إلى \u2068{fin}\u2069 من أصل \u2068{total}\u2069"
+        "resume": "الفصول من \u2068{debut}\u2069 إلى \u2068{fin}\u2069 من أصل \u2068{total}\u2069",
+        "filtreRemplissage": "الامتلاء",
+        "filtreTousRemplissages": "كل مستويات الامتلاء",
+        "remplissagePleines": "الفصول الممتلئة",
+        "remplissagePlaces": "الفصول التي بها أماكن"
       }
     },
     "diagnostics": {
@@ -4320,7 +4437,8 @@
       "annulerErreur": "لم يكتمل الإلغاء: \u2068{message}\u2069",
       "champMotif": "السبب",
       "motifRequis": "السبب مطلوب، ويُدوَّن في سجل التدقيق.",
-      "journalisation": "تُدوَّن كل جدولة ونتيجة وإلغاء في سجل التدقيق."
+      "journalisation": "تُدوَّن كل جدولة ونتيجة وإلغاء في سجل التدقيق.",
+      "manqueResultat": "اختر أولًا نتيجة التقييم."
     },
     "progression": {
       "titre": "التقدم",
@@ -4417,7 +4535,8 @@
       "champDescription": "الوصف (اختياري)",
       "champMotif": "السبب",
       "motifRequis": "السبب مطلوب، ويُدوَّن في سجل التدقيق.",
-      "journalisation": "يُدوَّن كل إنشاء وتعديل وحذف ونشر في سجل التدقيق."
+      "journalisation": "يُدوَّن كل إنشاء وتعديل وحذف ونشر في سجل التدقيق.",
+      "publierSansNiveau": "أضف مستوى واحدًا على الأقل لتتمكن من نشر هذه النسخة."
     },
     "journal": {
       "titre": "السجل",
@@ -4699,7 +4818,326 @@
         "many": "\u2068{n}\u2069 فصلًا ممكنًا",
         "other": "\u2068{n}\u2069 فصل ممكن"
       },
-      "demandesVersClasses": "\u2068{demandes}\u2069 تتيح \u2068{classes}\u2069"
+      "demandesVersClasses": "\u2068{demandes}\u2069 تتيح \u2068{classes}\u2069",
+      "decoupagePleines": {
+        "zero": "لا فصل",
+        "one": "فصل واحد بسعة ⁨{taille}⁩",
+        "two": "فصلان بسعة ⁨{taille}⁩",
+        "few": "⁨{n}⁩ فصول بسعة ⁨{taille}⁩",
+        "many": "⁨{n}⁩ فصلًا بسعة ⁨{taille}⁩",
+        "other": "⁨{n}⁩ فصل بسعة ⁨{taille}⁩"
+      },
+      "decoupageAucuneClasse": "لا فصل",
+      "decoupageDerniere": "وفصل أخير يضم ⁨{n}⁩",
+      "decoupageAttente": {
+        "zero": "لا أحد في الانتظار",
+        "one": "طالب واحد في الانتظار",
+        "two": "طالبان في الانتظار",
+        "few": "⁨{n}⁩ طلاب في الانتظار",
+        "many": "⁨{n}⁩ طالبًا في الانتظار",
+        "other": "⁨{n}⁩ طالب في الانتظار"
+      },
+      "decoupage": "التقسيم المتوقع: ⁨{detail}⁩.",
+      "contexteReparti": "سيُوزَّع طلاب هذه الطلبات بحسب التقسيم المبيّن أدناه. ثم تؤكدون المعلم المقترح.",
+      "classesExistantes": {
+        "zero": "لا فصل مفتوح بعدُ في هذا الموعد.",
+        "one": "يوجد فصل واحد مفتوح في هذا الموعد: ينضم إليه الفصل الجديد دون تعديل أي فصل.",
+        "two": "يوجد فصلان مفتوحان في هذا الموعد: ينضم إليهما الفصل الجديد دون تعديل أي فصل.",
+        "few": "يوجد ⁨{n}⁩ فصول مفتوحة في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل.",
+        "many": "يوجد ⁨{n}⁩ فصلًا مفتوحًا في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل.",
+        "other": "يوجد ⁨{n}⁩ فصل مفتوح في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل."
+      },
+      "liste": {
+        "rechercheLibelle": "البحث عن طلب",
+        "rechercheAide": "اللغة أو المنطقة الزمنية أو اسم الفصل المنشأ",
+        "filtreToutes": "الكل",
+        "filtreAFinir": "معلم بانتظار التأكيد",
+        "filtrePrets": "الجاهزة",
+        "filtreIncompletes": "غير المكتملة",
+        "filtrePublic": "الفئة",
+        "filtreTousPublics": "كل الفئات",
+        "aucunAvecCeFiltre": "لا طلبات بهذا المعيار",
+        "aucunAvecCeFiltreDetail": "غيّروا المعيار لرؤية بقية الطلبات المجمّعة.",
+        "position": "الصفحة ⁨{page}⁩ من ⁨{total}⁩",
+        "positionSemantique": "الصفحة ⁨{page}⁩ من ⁨{total}⁩ من قائمة الطلبات المجمّعة",
+        "precedente": "الصفحة السابقة من الطلبات المجمّعة",
+        "suivante": "الصفحة التالية من الطلبات المجمّعة",
+        "resume": "الطلبات المجمّعة من ⁨{debut}⁩ إلى ⁨{fin}⁩ من أصل ⁨{total}⁩"
+      }
+    },
+    "pilotage": {
+      "titre": "متابعة المواعيد",
+      "sousTitre": "لكل موعد ولكل فئة: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون.",
+      "sansDonnees": "تعذّر تحميل لوحة المتابعة",
+      "erreur": "تعذّرت قراءة لوحة المتابعة: ربما لم تصل القراءة إلى رواية. أعيدوا المحاولة بعد قليل.",
+      "indisponibleTitre": "متاحة عند الربط بالخادم",
+      "indisponiblePhrase": "ستظهر متابعة المواعيد هنا فور الربط بالخادم. إلى ذلك الحين لا يُعرض شيء: لا أرقام مختلقة.",
+      "vide": "لا مواعيد للمتابعة",
+      "videDetail": "ستظهر المواعيد هنا بمجرد وجود فصل أو طلب.",
+      "aucunAvecCeFiltre": "لا مواعيد بهذا المعيار",
+      "aucunAvecCeFiltreDetail": "غيّروا المعيار لرؤية بقية المواعيد.",
+      "vueEnsemble": "نظرة عامة",
+      "cleClasses": "الفصول",
+      "cleAttente": "في انتظار معلم",
+      "cleSousMinimum": "دون الحد الأدنى",
+      "cleDemandes": "الطلبات المعلّقة",
+      "cleLibres": "المعلمون المتاحون",
+      "cleManquants": "المعلمون الناقصون",
+      "attenteTitre": "فصول في انتظار معلم",
+      "attenteDetail": "أكّدوا معلمًا لكل فصل: تُبلَّغ الأسرة فور ذلك.",
+      "attenteHoraire": "الموعد: ⁨{horaire}⁩",
+      "voirToutes": "عرض كل الفصول التي تنتظر معلمًا",
+      "horairesTitre": "المواعيد",
+      "horaire": "⁨{jour}⁩ · ⁨{heure}⁩ · ⁨{ville}⁩",
+      "colonneHoraire": "الموعد",
+      "colonnePublic": "الفئة",
+      "colonneClasses": "الفصول",
+      "colonneRemplissage": "الامتلاء",
+      "colonneDemandes": "الطلبات المعلّقة",
+      "colonneLibres": "المعلمون المتاحون",
+      "colonneManquants": "المعلمون الناقصون",
+      "colonneEtat": "ما يستدعي الانتباه",
+      "remplissage": "⁨{taux}⁩٪ (⁨{effectif}⁩ من ⁨{capacite}⁩)",
+      "remplissageInconnu": "لا أماكن مفتوحة",
+      "aucun": "لا أحد",
+      "nombreEtGenres": "⁨{n}⁩ (⁨{genres}⁩)",
+      "genreHommes": {
+        "zero": "لا معلم",
+        "one": "معلم واحد",
+        "two": "معلمان",
+        "few": "⁨{n}⁩ معلمين",
+        "many": "⁨{n}⁩ معلمًا",
+        "other": "⁨{n}⁩ معلم"
+      },
+      "genreFemmes": {
+        "zero": "لا معلمة",
+        "one": "معلمة واحدة",
+        "two": "معلمتان",
+        "few": "⁨{n}⁩ معلمات",
+        "many": "⁨{n}⁩ معلمة",
+        "other": "⁨{n}⁩ معلمة"
+      },
+      "genreIndetermine": {
+        "zero": "لا معلم",
+        "one": "معلم واحد، الجنس يُؤكَّد لاحقًا",
+        "two": "معلمان، الجنس يُؤكَّد لاحقًا",
+        "few": "⁨{n}⁩ معلمين، الجنس يُؤكَّد لاحقًا",
+        "many": "⁨{n}⁩ معلمًا، الجنس يُؤكَّد لاحقًا",
+        "other": "⁨{n}⁩ معلم، الجنس يُؤكَّد لاحقًا"
+      },
+      "etatPenurie": "نقص في المعلمين",
+      "etatSousMinimum": {
+        "zero": "لا فصل دون الحد الأدنى",
+        "one": "فصل واحد دون الحد الأدنى",
+        "two": "فصلان دون الحد الأدنى",
+        "few": "⁨{n}⁩ فصول دون الحد الأدنى",
+        "many": "⁨{n}⁩ فصلًا دون الحد الأدنى",
+        "other": "⁨{n}⁩ فصل دون الحد الأدنى"
+      },
+      "etatAttente": {
+        "zero": "لا فصل ينتظر معلمًا",
+        "one": "فصل واحد ينتظر معلمًا",
+        "two": "فصلان ينتظران معلمًا",
+        "few": "⁨{n}⁩ فصول تنتظر معلمًا",
+        "many": "⁨{n}⁩ فصلًا ينتظر معلمًا",
+        "other": "⁨{n}⁩ فصل ينتظر معلمًا"
+      },
+      "etatCouvert": "مغطّى",
+      "filtreTous": "كل المواعيد",
+      "filtrePenurie": "نقص",
+      "filtreSousMinimum": "دون الحد الأدنى",
+      "filtreAttente": "في انتظار معلم",
+      "filtrePublic": "الفئة",
+      "filtreTousPublics": "كل الفئات",
+      "position": "الصفحة ⁨{page}⁩ من ⁨{total}⁩",
+      "positionSemantique": "الصفحة ⁨{page}⁩ من ⁨{total}⁩ من لوحة المتابعة",
+      "precedente": "الصفحة السابقة من لوحة المتابعة",
+      "suivante": "الصفحة التالية من لوحة المتابعة",
+      "resume": "المواعيد من ⁨{debut}⁩ إلى ⁨{fin}⁩ من أصل ⁨{total}⁩"
+    },
+    "fusion": {
+      "actionFusionner": "الدمج مع فصل موازٍ",
+      "actionTransferer": "نقل طالب",
+      "actionHistorique": "سجل الفصل",
+      "fusionTitre": "دمج ⁨{libelle}⁩",
+      "fusionContexte": "سينضم طلاب هذا الفصل إلى فصل موازٍ في الموعد نفسه ومن الفئة نفسها وفيه متسع. يتحرر معلم هذا الفصل. لا يتم شيء دون تأكيدكم.",
+      "choixTitre": "الفصل الذي يستقبل الطلاب",
+      "placesLibres": {
+        "zero": "لا مكان شاغر",
+        "one": "مكان شاغر واحد",
+        "two": "مكانان شاغران",
+        "few": "⁨{n}⁩ أماكن شاغرة",
+        "many": "⁨{n}⁩ مكانًا شاغرًا",
+        "other": "⁨{n}⁩ مكان شاغر"
+      },
+      "enseignantDe": "المعلم: ⁨{nom}⁩",
+      "sansEnseignant": "بلا معلم حتى الآن",
+      "aucuneCible": "لا فصل موازٍ فيه متسع كافٍ",
+      "aucuneCibleDetail": "يلزم فصل في الموعد نفسه ومن الفئة نفسها وفيه متسع لجميع طلاب هذا الفصل.",
+      "erreurCibles": "تعذّرت قراءة الفصول الموازية. أعيدوا المحاولة بعد قليل.",
+      "sansDonneesCibles": "تعذّر تحميل قائمة الفصول الموازية",
+      "apercuTitre": "ما الذي سيحدث",
+      "apercuErreur": "تعذّر حساب معاينة الدمج. أعيدوا المحاولة بعد قليل.",
+      "apercuMembres": {
+        "zero": "لا طالب ينتقل إلى ⁨{cible}⁩",
+        "one": "ينتقل طالب واحد إلى ⁨{cible}⁩",
+        "two": "ينتقل طالبان إلى ⁨{cible}⁩",
+        "few": "ينتقل ⁨{n}⁩ طلاب إلى ⁨{cible}⁩",
+        "many": "ينتقل ⁨{n}⁩ طالبًا إلى ⁨{cible}⁩",
+        "other": "ينتقل ⁨{n}⁩ طالب إلى ⁨{cible}⁩"
+      },
+      "apercuEffectif": "سيضم ⁨{cible}⁩ ⁨{apres}⁩ من أصل ⁨{capacite}⁩.",
+      "apercuEnseignantLibere": "لم يعد ⁨{enseignant}⁩ مكلفًا بهذا الفصل ويصبح متاحًا في هذا الموعد.",
+      "apercuSansEnseignant": "ليس لهذا الفصل معلم: لا أحد يتحرر.",
+      "apercuFamilles": {
+        "zero": "لا أسرة تُبلَّغ.",
+        "one": "تُبلَّغ أسرة واحدة.",
+        "two": "تُبلَّغ أسرتان.",
+        "few": "تُبلَّغ ⁨{n}⁩ أسر.",
+        "many": "تُبلَّغ ⁨{n}⁩ أسرة.",
+        "other": "تُبلَّغ ⁨{n}⁩ أسرة."
+      },
+      "apercuIrreversible": "يُغلَق الفصل المدموج ويُحفظ سجل الفصلين. لا يمكن التراجع عن هذا القرار.",
+      "confirmerFusion": "دمج الفصلين",
+      "fusionHorsLigne": "يمكن تأكيد الدمج عند عودة الاتصال. يبقى اختياركم معروضًا.",
+      "fusionFaite": {
+        "zero": "تم الدمج: لا طالب في ⁨{cible}⁩ بعد.",
+        "one": "تم الدمج: طالب واحد في ⁨{cible}⁩ الآن.",
+        "two": "تم الدمج: طالبان في ⁨{cible}⁩ الآن.",
+        "few": "تم الدمج: ⁨{n}⁩ طلاب في ⁨{cible}⁩ الآن.",
+        "many": "تم الدمج: ⁨{n}⁩ طالبًا في ⁨{cible}⁩ الآن.",
+        "other": "تم الدمج: ⁨{n}⁩ طالب في ⁨{cible}⁩ الآن."
+      },
+      "famillesPrevenues": "تم إبلاغ الأسر.",
+      "fusionDejaFaite": "دمج عضو آخر من الإدارة هذا الفصل للتو: لم يُنجَز شيء مرتين. أغلقوا هذه الورقة لرؤية القائمة المحدّثة.",
+      "fusionRefusee": "لم يتم الدمج: ⁨{motif}⁩. تحققوا من الفصول ثم أعيدوا المحاولة.",
+      "fusionNonConfirmee": "الدمج غير مؤكَّد: لم يصل رد الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون دمج مكرر.",
+      "manqueCible": "ينقص الفصل الذي يستقبل الطلاب: اختاروه من القائمة.",
+      "transfertTitre": "نقل طالب من ⁨{deLibelle}⁩",
+      "transfertContexte": "اختاروا الطالب ثم الفصل الموازي الذي يستقبله. يُسجَّل النقل وتُبلَّغ الأسرة به.",
+      "eleveTitre": "الطالب المراد نقله",
+      "aucunEleve": "لا طلاب في هذا الفصل",
+      "aucunEleveDetail": "لا أحد ليُنقَل.",
+      "erreurEleves": "تعذّرت قراءة طلاب الفصل. أعيدوا المحاولة بعد قليل.",
+      "transfertCibleTitre": "الفصل الذي يستقبل الطالب",
+      "manqueEleve": "ينقص الطالب: اختاروه من القائمة.",
+      "confirmerTransfert": "نقل الطالب",
+      "transfertHorsLigne": "يمكن تأكيد النقل عند عودة الاتصال. يبقى اختياركم معروضًا.",
+      "transfertFait": "⁨{prenom}⁩ الآن في ⁨{cible}⁩.",
+      "transfertDejaFait": "تم هذا النقل من قبل: لم يُنجَز شيء مرتين. أغلقوا هذه الورقة لرؤية القائمة المحدّثة.",
+      "refusChevauchement": "⁨{prenom}⁩ يتابع درسًا آخر في وقت ⁨{cible}⁩ نفسه: لا يمكن أن يكون الطالب في فصلين تتداخل حصصهما. اختاروا فصلًا آخر.",
+      "refusClassePleine": "لم يعد في ⁨{cible}⁩ مكان. اختاروا فصلًا آخر.",
+      "refusAutre": "لم يتم النقل: ⁨{motif}⁩. تحققوا من الفصل ثم أعيدوا المحاولة.",
+      "transfertNonConfirme": "النقل غير مؤكَّد: لم يصل رد الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون نقل مكرر.",
+      "historiqueTitre": "سجل ⁨{deLibelle}⁩",
+      "historiqueVide": "لا حركة",
+      "historiqueVideDetail": "ستظهر هنا عمليات الدمج والنقل الخاصة بهذا الفصل.",
+      "historiqueErreur": "تعذّرت قراءة السجل. أعيدوا المحاولة بعد قليل.",
+      "evenementFusionSortante": {
+        "zero": "دُمج في ⁨{autre}⁩: لا طالب منقول",
+        "one": "دُمج في ⁨{autre}⁩: نُقل طالب واحد",
+        "two": "دُمج في ⁨{autre}⁩: نُقل طالبان",
+        "few": "دُمج في ⁨{autre}⁩: نُقل ⁨{n}⁩ طلاب",
+        "many": "دُمج في ⁨{autre}⁩: نُقل ⁨{n}⁩ طالبًا",
+        "other": "دُمج في ⁨{autre}⁩: نُقل ⁨{n}⁩ طالب"
+      },
+      "evenementFusionEntrante": {
+        "zero": "دمج مع ⁨{autre}⁩: لا طالب مستقبَل",
+        "one": "دمج مع ⁨{autre}⁩: استُقبل طالب واحد",
+        "two": "دمج مع ⁨{autre}⁩: استُقبل طالبان",
+        "few": "دمج مع ⁨{autre}⁩: استُقبل ⁨{n}⁩ طلاب",
+        "many": "دمج مع ⁨{autre}⁩: استُقبل ⁨{n}⁩ طالبًا",
+        "other": "دمج مع ⁨{autre}⁩: استُقبل ⁨{n}⁩ طالب"
+      },
+      "evenementTransfertSortant": "نُقل ⁨{prenom}⁩ إلى ⁨{autre}⁩",
+      "evenementTransfertEntrant": "نُقل ⁨{prenom}⁩ من ⁨{autre}⁩",
+      "quand": "⁨{date}⁩ في ⁨{heure}⁩"
+    },
+    "tirage": {
+      "titre": "قرعة المراقبة",
+      "sousTitre": "يسحب الخادم بالقرعة الحصة التي يتلقاها كل مراقب. تحدد الإدارة القواعد، ولا يختار المراقب فصله أبدًا.",
+      "sansDonnees": "تعذّر تحميل القرعات",
+      "erreur": "تعذّرت قراءة القرعات: ربما لم تصل القراءة إلى رواية. أعيدوا المحاولة بعد قليل.",
+      "indisponibleTitre": "متاحة عند الربط بالخادم",
+      "indisponiblePhrase": "ستظهر قواعد القرعة وسجلها هنا فور الربط بالخادم. إلى ذلك الحين لا يُعرض شيء: لا قرعة مختلقة.",
+      "reserveTitre": "هذه الشاشة مخصصة للإدارة",
+      "reservePhrase": "ليس لحسابكم حق الاطلاع على القرعات: هي مخصصة للإدارة حتى لا يستطيع أحد توقع من سيُراقَب. إن احتجتم إلى ذلك فاطلبوا الإذن من الإدارة.",
+      "reglesTitre": "قواعد القرعة",
+      "reglesIntro": "تُطبَّق هذه القواعد على القرعات القادمة. المهام الموزعة لا تتغير. يُسجَّل كل تعديل في سجل التدقيق.",
+      "frequenceTitre": "التواتر",
+      "frequenceDetail": "أقصى عدد من المهام يتلقاه المراقب في الأسبوع.",
+      "missionsParSemaine": {
+        "zero": "لا مهمة في الأسبوع",
+        "one": "مهمة واحدة في الأسبوع",
+        "two": "مهمتان في الأسبوع",
+        "few": "⁨{n}⁩ مهام في الأسبوع",
+        "many": "⁨{n}⁩ مهمة في الأسبوع",
+        "other": "⁨{n}⁩ مهمة في الأسبوع"
+      },
+      "ponderationTitre": "الترجيح",
+      "ponderationDetail": "كلما قوي الوزن زادت فرص سحب هذه الحصص. تبقى القرعة غير قابلة للتوقع على المعلم والمراقب معًا.",
+      "critereEnseignantsRecents": "معلمون التحقوا حديثًا",
+      "critereClassesSignalees": "فصول أُبلغ عنها للإدارة",
+      "critereHeuresDePointe": "ساعات الذروة",
+      "niveauAucun": "بلا وزن",
+      "niveauNormal": "وزن عادي",
+      "niveauFort": "وزن قوي",
+      "ciblesTitre": "فصول أو معلمون مستهدفون",
+      "ciblesDetail": "يُسحب الهدف أولًا عندما تكون حصته مباشرة. لا يُعلَن أبدًا للمراقب ولا للمعلم.",
+      "aucuneCible": "لا هدف: لكل الحصص المباشرة الفرص نفسها، بحسب الوزن.",
+      "cibleClasse": "فصل",
+      "cibleEnseignant": "معلم",
+      "retirerCible": "إزالة ⁨{libelle}⁩",
+      "ajouterCible": "إضافة هدف",
+      "ajouterTitre": "إضافة هدف",
+      "ajouterContexte": "اختاروا الفصل أو المعلم الذي يُسحب أولًا. يُضاف الهدف إلى القواعد ثم تحفظونها.",
+      "ajouterChoix": "الفصل أو المعلم المستهدف",
+      "ajouterConfirmer": "إضافة هذا الهدف",
+      "manqueCible": "ينقص الهدف: اختاروه من القائمة.",
+      "aucunCandidat": "لا فصل ولا معلم يمكن استهدافه",
+      "aucunCandidatDetail": "كل الفصول والمعلمين مستهدفون بالفعل أو لا توجد حصص بعد.",
+      "erreurCandidats": "تعذّرت قراءة قائمة الأهداف. أعيدوا المحاولة بعد قليل.",
+      "enregistrer": "حفظ القواعد",
+      "enregistrees": "سُجِّلت القواعد. تُطبَّق على القرعات القادمة.",
+      "nonConfirmees": "الحفظ غير مؤكَّد: لم يصل رد الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون تكرار.",
+      "refusees": "لم تُحفظ القواعد: ⁨{motif}⁩. تحققوا منها ثم أعيدوا المحاولة.",
+      "horsLigne": "يمكن حفظ القواعد عند عودة الاتصال. تبقى اختياراتكم معروضة.",
+      "lectureSeule": "يمكنكم قراءة هذه القواعد دون تعديلها: التعديل مخصص لشخص من الإدارة له هذا الحق.",
+      "historiqueTitre": "سجل القرعات",
+      "historiqueDetail": "تُحفظ كل قرعة وكل مهمة لم تُراقَب مع تاريخها. لا تطلع عليها إلا الإدارة: لا يرى المراقب إلا مهمته.",
+      "rechercheLibelle": "البحث عن قرعة",
+      "rechercheAide": "الفصل أو المعلم أو المراقب",
+      "filtreTous": "الكل",
+      "filtreAttribuees": "الموزعة",
+      "filtreEnCours": "المراقبات الجارية",
+      "filtreControlees": "التي روقبت",
+      "filtreNonControlees": "التي لم تُراقَب",
+      "filtreDejaControlees": "المراقَبة سابقًا",
+      "colonneQuand": "تاريخ السحب",
+      "colonneClasse": "الفصل",
+      "colonneEnseignant": "المعلم",
+      "colonneControleur": "المراقب",
+      "colonneCritere": "القرعة",
+      "colonneStatut": "المهمة",
+      "statutAttribuee": "موزعة",
+      "statutEnCours": "مراقبة جارية",
+      "statutControlee": "روقبت",
+      "statutNonControlee": "لم تُراقَب",
+      "statutDejaControlee": "سبقه مراقب آخر",
+      "rapportEnvoye": "أُرسل تقرير إلى الإدارة",
+      "critereAleatoire": "بالصدفة",
+      "criterePonderation": "بحسب الوزن",
+      "critereCible": "هدف",
+      "vide": "لا قرعات حتى الآن",
+      "videDetail": "ستظهر القرعات هنا بمجرد وجود حصص مباشرة.",
+      "aucunAvecCeFiltre": "لا قرعات بهذا المعيار",
+      "aucunAvecCeFiltreDetail": "غيّروا المعيار لرؤية بقية القرعات.",
+      "position": "الصفحة ⁨{page}⁩ من ⁨{total}⁩",
+      "positionSemantique": "الصفحة ⁨{page}⁩ من ⁨{total}⁩ من سجل القرعات",
+      "precedente": "الصفحة السابقة من سجل القرعات",
+      "suivante": "الصفحة التالية من سجل القرعات",
+      "resume": "القرعات من ⁨{debut}⁩ إلى ⁨{fin}⁩ من أصل ⁨{total}⁩",
+      "quand": "⁨{date}⁩ في ⁨{heure}⁩"
     }
   },
   "comptable": {
@@ -4741,7 +5179,7 @@
       },
       "montantActuel": "المبلغ الحالي",
       "manque": "المتبقي لبلوغ الهدف",
-      "atteint": "تحقق {pourcent} %",
+      "atteint": "تحقق {pourcent} %",
       "modeCalcul": "طريقة الحساب",
       "modeMontantFixe": "مبلغ مستهدف ثابت",
       "modeCouvertureMois": "تغطية بعدد أشهر المصاريف الأساسية",
@@ -5114,7 +5552,7 @@
       "coffresPhrase": "حيث يُخصَّص المال. المبلغ المحمي لا يُحسب أبدًا ضمن الحر.",
       "coffreProtege": "محمي",
       "coffreNonProtege": "غير محمي",
-      "partDetenue": "{part} % من الخزينة المحتفَظ بها",
+      "partDetenue": "{part} % من الخزينة المحتفَظ بها",
       "regleUsage": "قاعدة الاستخدام: {regle}",
       "coffresVide": "لم يُرجَع أي صندوق بعد.",
       "coffresVidePhrase": "ستظهر الصناديق السبعة هنا بمجرد أن يُرجعها المصدر.",
@@ -5133,7 +5571,7 @@
       "regle": {
         "desactivee": "معطّلة",
         "montantFixe": "مبلغ ثابت في كل موعد",
-        "pourcentage": "{pourcent} % من كل مقبوض مُثبَّت",
+        "pourcentage": "{pourcent} % من كل مقبوض مُثبَّت",
         "jusquAObjectif": "الإكمال حتى المبلغ المستهدف",
         "proposee": "اقتراح يتطلب تأكيدك"
       },
@@ -5145,7 +5583,7 @@
         "apresEncaissementConsolide": "بعد كل مقبوض مُثبَّت",
         "manuelle": "يدوية"
       },
-      "seuilAlerte": "تنبيه دون {pourcent} % من المبلغ المستهدف",
+      "seuilAlerte": "تنبيه دون {pourcent} % من المبلغ المستهدف",
       "retraitValidation": "كل سحب يتطلب مصادقة إضافية.",
       "retraitSansValidation": "لا تشترط السياسة مصادقة للسحب؛ ويبقى معامَلًا كحركة حساسة.",
       "version": "الإصدار {version}",
@@ -5342,12 +5780,11 @@
         "demanderMiseAJour": "طلب تحديث من {nom}",
         "suspendre": "إيقاف مدفوعات {nom}",
         "reprendre": "استئناف مدفوعات {nom}",
-        "voirFil": "عرض محادثة «ملف الدفع»",
         "externe": "ليس لدى {nom} حساب Rewayah: تتيح له دعوة آمنة إدخال وسيلته بنفسه. أعد إرسالها من التزامه، في المتعاقدين.",
         "voirContractuels": "عرض التزامات المتعاقدين",
         "aucuneAction": "لا يوجد أي إجراء مفتوح على هذا الملف: إنه محدَّث.",
-        "relanceTitre": "رسالة جاهزة في محادثة «ملف الدفع»",
-        "relanceObjet": "الموضوع: ملف الدفع",
+        "filTitre": "محادثة «ملف الدفع»",
+        "relanceRefusee": "لا يمكن فتح محادثة «ملف الدفع» مع {nom}: لا تسمح Rewayah بذلك لهذا المستفيد. اطلب تحديثًا بدلًا من ذلك، أو أبلغ الإدارة.",
         "messageModele": "يجب إكمال معلومات الدفع الخاصة بك قبل دفعتك القادمة. يمكنك إضافتها من مساحتك الشخصية.",
         "miseAJourDemandee": "سُجّل طلب التحديث لـ {nom}.",
         "suspendus": "أُوقفت مدفوعات {nom}: لن تُصرف أي دفعة ما لم تُستأنف.",
@@ -6018,34 +6455,6 @@
       "generique": "لم يكتمل التحقق من الرمز. أعد المحاولة بعد لحظة."
     }
   },
-  "presence": {
-    "titre": "الحضور",
-    "voir": "عرض الحضور",
-    "mienne": "حضورك",
-    "consolide": "مُوحَّد",
-    "planifiee": "درس قادم",
-    "enAttente": "لم يصل بعد",
-    "enConnexion": "جارٍ الاتصال",
-    "presente": "في القاعة",
-    "enRetard": "متأخر",
-    "deconnectee": "انقطع الاتصال",
-    "enReconnexion": "جارٍ إعادة الاتصال",
-    "reconnectee": "عاد",
-    "sortie": "غادر الدرس",
-    "absente": "غياب",
-    "excusee": "غياب بعذر",
-    "confirmationEnAttente": "للتأكيد",
-    "corrigeeManuel": "تصحيح يدوي",
-    "finalisee": "نهائي",
-    "inconnu": "حالة غير معروفة",
-    "entreeInstant": "دخل القاعة للتو",
-    "entreeMinutes": "في القاعة منذ \u2068{minutes}\u2069 د",
-    "retardMinutes": "\u2068{minutes}\u2069 د بعد الموعد",
-    "silenceInstant": "لا أخبار منذ بضع ثوانٍ",
-    "silenceMinutes": "لا أخبار منذ \u2068{minutes}\u2069 د",
-    "attenteInstant": "بدأ الدرس للتو",
-    "attenteMinutes": "بدأ الدرس منذ \u2068{minutes}\u2069 د"
-  },
   "priere": {
     "fajr": "الفجر",
     "dhuhr": "الظهر",
@@ -6301,7 +6710,10 @@
       "moiDescription": "أريد متابعة الدروس بملفي الخاص كطالب.",
       "familleTitre": "أنا وأسرتي",
       "familleDescription": "سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.",
-      "enseignant": "أنا معلم"
+      "enseignant": "أنا معلم",
+      "coursQuestion": "هل تتابع أنت أيضًا دروسًا؟",
+      "coursOui": "نعم",
+      "coursNon": "لا"
     },
     "recap": {
       "usage": "نوع الحساب",
@@ -6420,7 +6832,8 @@
         "nom": "اللقب",
         "nomAide": "لا يُعرض لقب العائلة على المعلم أبدًا.",
         "age": "العمر",
-        "ageAide": "العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك."
+        "ageAide": "العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك.",
+        "ageFige": "الإرسال جارٍ: يمكن تغيير العمر بعد الرد."
       },
       "erreurs": {
         "prenomRequis": "أدخل اسم الطالب.",
@@ -6967,7 +7380,9 @@
     "envoiEnCours": "جارٍ الإرسال",
     "deposee": "استُلمت الوثيقة",
     "erreur": "لم يكتمل الإرسال. أعد المحاولة بعد لحظة.",
-    "tropVolumineux": "هذه الصورة تتجاوز \u2068{taille}\u2069 ميغابايت. التقطها بجودة أقل."
+    "tropVolumineux": "هذه الصورة تتجاوز \u2068{taille}\u2069 ميغابايت. التقطها بجودة أقل.",
+    "manquePhoto": "اختر أولًا صورة وثيقتك.",
+    "manqueType": "اختر أولًا الوثيقة التي تودعها."
   },
   "contrat": {
     "titre": "ما توقّع عليه",
@@ -7329,5 +7744,155 @@
     "bandeau": "متابعة، للقراءة فقط",
     "bandeauMasque": "الأسماء مخفية",
     "bandeauExpire": "حتى \u2068{heure}\u2069"
+  },
+  "suiviDemandes": {
+    "titre": "متابعة طلبات المواعيد",
+    "contexte": "يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.",
+    "carteTitre": "طلب موعد ⁨{dePrenom}⁩",
+    "joursChoisis": "الأيام المختارة",
+    "heureChoisie": "الساعة المختارة",
+    "joursEt": "⁨{debut}⁩ و⁨{dernier}⁩",
+    "heureFuseau": "⁨{heure}⁩، بتوقيت ⁨{deVille}⁩",
+    "creneauxChoisis": "الأيام والساعات المختارة",
+    "jourHeure": "⁨{jour}⁩ ⁨{heure}⁩",
+    "fuseauChoisi": "المنطقة الزمنية",
+    "fuseauValeur": "بتوقيت ⁨{deVille}⁩",
+    "etapes": {
+      "envoyee": "تم إرسال الطلب",
+      "listeAttente": "في قائمة الانتظار",
+      "classeValidee": "تم اعتماد الفصل",
+      "enseignantAffecte": "تم تعيين المعلم",
+      "eleveIntegre": "الطالب مندمج في الفصل",
+      "coursCommences": "بدء الدروس"
+    },
+    "etats": {
+      "fait": "تم",
+      "enCours": "جارية",
+      "prochaine": "الخطوة التالية",
+      "aVenir": "قادمة"
+    },
+    "situation": {
+      "envoyee": "وصل طلبكم إلى الإدارة",
+      "listeAttente": "طلبكم في قائمة الانتظار",
+      "classeValidee": "فصلكم جاهز: ينتظر معلمه",
+      "enseignantAffecte": "تم اعتماد الفصل · تم تعيين المعلم",
+      "eleveIntegre": "تم اعتماد الفصل · تم تعيين المعلم · الطالب مندمج",
+      "coursCommences": "بدأت الدروس"
+    },
+    "prochaine": {
+      "envoyee": "الخطوة التالية: تكوين الفصل",
+      "listeAttente": "نُبلغكم فور توفر مكان. لا يُعلَن أي موعد ما لم يكن معروفًا.",
+      "classeValidee": "الخطوة التالية: تعيين معلم الفصل. نُبلغكم فور ذلك.",
+      "eleveIntegre": "الخطوة التالية: بدء الدروس"
+    },
+    "debutCours": "بدء الدروس",
+    "debutValeur": "⁨{date}⁩ في ⁨{heure}⁩، بتوقيت ⁨{deVille}⁩",
+    "debutAFixer": "سيظهر موعد الدرس الأول هنا فور تحديده.",
+    "enseignant": "المعلم",
+    "personnaliseNotice": "لن يُفتح هذا الموعد إلا إذا اختاره طلاب آخرون واكتمل الفصل.",
+    "jalon": {
+      "date": "⁨{date}⁩ في ⁨{heure}⁩",
+      "apres": "⁨{date}⁩ في ⁨{heure}⁩، ⁨{duree}⁩",
+      "aussitot": "فورًا",
+      "minutes": {
+        "zero": "بعد أقل من دقيقة",
+        "one": "بعد دقيقة",
+        "two": "بعد دقيقتين",
+        "few": "بعد ⁨{n}⁩ دقائق",
+        "many": "بعد ⁨{n}⁩ دقيقة",
+        "other": "بعد ⁨{n}⁩ دقيقة"
+      },
+      "heures": {
+        "zero": "بعد أقل من ساعة",
+        "one": "بعد ساعة",
+        "two": "بعد ساعتين",
+        "few": "بعد ⁨{n}⁩ ساعات",
+        "many": "بعد ⁨{n}⁩ ساعة",
+        "other": "بعد ⁨{n}⁩ ساعة"
+      },
+      "jours": {
+        "zero": "في اليوم نفسه",
+        "one": "بعد يوم",
+        "two": "بعد يومين",
+        "few": "بعد ⁨{n}⁩ أيام",
+        "many": "بعد ⁨{n}⁩ يومًا",
+        "other": "بعد ⁨{n}⁩ يوم"
+      }
+    },
+    "changement": {
+      "titrePage": "تغيّر الفصل",
+      "titre": "تغيّر فصل ⁨{dePrenom}⁩",
+      "fusion": "دُمج فصلكم مع فصل آخر. هذا هو فصل ⁨{prenom}⁩ الآن.",
+      "transfert": "نقلت الإدارة ⁨{prenom}⁩ إلى فصل آخر. هذا هو فصله الجديد.",
+      "classe": "الفصل الجديد",
+      "enseignant": "المعلم",
+      "sansEnseignant": "سنُعلمكم باسم معلمه فور تعيينه.",
+      "date": "تاريخ التغيير",
+      "lien": "عرض الفصل الجديد",
+      "lienPour": "عرض فصل ⁨{dePrenom}⁩ الجديد",
+      "retour": "العودة إلى متابعة الطلبات",
+      "introuvable": "لم يعد هذا التغيير معروضًا",
+      "introuvableDetail": "عودوا إلى المتابعة لمعرفة أين وصلت طلباتكم."
+    },
+    "close": {
+      "retiree": "تم سحب الطلب",
+      "nonRetenue": "لم يُقبل الطلب",
+      "close": "أُغلق الطلب",
+      "motif": {
+        "retraitFamille": "لقد سحبتم هذا الطلب.",
+        "offreRetiree": "سحبت الأكاديمية هذا الموعد من عروضها.",
+        "classeNonConstituee": "تعذّر تكوين فصل هذا الموعد.",
+        "refusDirection": "لم تتمكن الإدارة من قبول هذا الطلب.",
+        "inconnu": "أُغلق هذا الطلب."
+      },
+      "suite": "يمكنكم اختيار موعد آخر من المواعيد المقترحة.",
+      "suiteSansChoix": "لا يوجد موعد آخر مقترح حاليًا. عودوا إلى هذه الصفحة لاحقًا.",
+      "choisirAutre": "اختيار موعد آخر لـ⁨{prenom}⁩"
+    },
+    "vide": "لا طلبات مواعيد جارية.",
+    "erreur": "تعذّر عرض متابعة طلباتكم: ربما لم تصل القراءة إلى رواية. هذا الإخفاق يخص عرض المتابعة فقط ولا يقول شيئًا عن طلبات مواعيدكم. أعيدوا المحاولة بعد قليل.",
+    "sansDonnees": "تعذّر تحميل متابعة الطلبات",
+    "accueil": {
+      "titre": "طلبات مواعيدكم",
+      "ligne": "⁨{prenom}⁩: ⁨{etat}⁩",
+      "voir": "عرض متابعة الطلبات"
+    },
+    "notification": {
+      "envoyee": "طلب موعد ⁨{dePrenom}⁩: وصل طلبكم إلى الإدارة",
+      "listeAttente": "طلب موعد ⁨{dePrenom}⁩: طلبكم في قائمة الانتظار",
+      "classeValidee": "طلب موعد ⁨{dePrenom}⁩: فصلكم جاهز وينتظر معلمه",
+      "enseignantAffecte": "طلب موعد ⁨{dePrenom}⁩: تم اعتماد الفصل وتعيين المعلم",
+      "eleveIntegre": "طلب موعد ⁨{dePrenom}⁩: الطالب مندمج في الفصل",
+      "coursCommences": "طلب موعد ⁨{dePrenom}⁩: بدأت الدروس",
+      "changementFusion": "طلب موعد ⁨{dePrenom}⁩: دُمج فصلكم مع فصل آخر، عرض الفصل الجديد",
+      "changementTransfert": "طلب موعد ⁨{dePrenom}⁩: فصل جديد، عرض التفاصيل",
+      "close": "طلب موعد ⁨{dePrenom}⁩: ⁨{motif}⁩"
+    }
+  },
+  "formulaire": {
+    "manqueAccord": "موافقتك ناقصة: ضع علامة في الخانة للمتابعة.",
+    "motif": {
+      "manqueSaisi": "السبب ناقص: اكتبه في كلمات قليلة."
+    }
+  },
+  "motifs": {
+    "reglageEnseignant": {
+      "horaire": "التوقيت لم يعد مناسبًا",
+      "niveau": "المستوى لم يعد مناسبًا",
+      "fuseau": "تغيّر المنطقة الزمنية",
+      "fratrie": "جمع أطفال الأسرة معًا"
+    },
+    "reglageDuree": {
+      "tropLongue": "المدة طويلة بالنسبة للسن",
+      "plusDeTemps": "الحاجة إلى وقت أطول",
+      "pause": "الحاجة إلى استراحة أثناء الدرس",
+      "horaire": "قيود توقيت الأسرة"
+    },
+    "reglageMinimum": {
+      "ecourtees": "الحصص تُختصر كثيرًا",
+      "reseau": "انقطاعات متكررة في الشبكة",
+      "duree": "تغيّرت مدة الدروس",
+      "horaire": "قيود توقيت الأسرة"
+    }
   }
 }

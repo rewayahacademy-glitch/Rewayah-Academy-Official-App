@@ -237,6 +237,11 @@ void main() {
     ) async {
       _journal.clear();
       await _monter(tester, _tailles['desktop']!);
+      // TB-RC (TB-10 reste a) : les tuiles passent en colonnes mesurees ;
+      // avec la police de test (glyphes d'un em), elles s'empilent et la
+      // tuile peut etre sous le pli : on l'amene, comme une personne.
+      await tester.ensureVisible(find.text(t.salle.seance.rappeler));
+      await tester.pump();
       await tester.tap(find.text(t.salle.seance.rappeler));
       await tester.pump();
       expect(_journal, <String>['rappeler Mariam']);

@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/session/port_capacite_eleve.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/accueil_adulte/historique_seances_adulte_page.dart';
@@ -92,6 +93,8 @@ Future<GoRouter> monterAccueilAdulteReel(
   double echelle = 1,
   TextDirection direction = TextDirection.ltr,
   ThemeMode theme = ThemeMode.light,
+  AppRole role = AppRole.guardian,
+  bool autonome = true,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -100,8 +103,13 @@ Future<GoRouter> monterAccueilAdulteReel(
   await tester.pumpWidget(
     ProviderScope(
       overrides: <Override>[
-        ...surchargesRouteur(
-          FausseSourceSession(sessionActive(AppRole.student)),
+        ...surchargesRouteur(FausseSourceSession(sessionActive(role))),
+        // EA-ROLE-1 : l'adulte est un compte tuteur dont le serveur sert la
+        // capacite « eleve autonome » (C-24), jamais le role eleve.
+        portCapaciteEleveProvider.overrideWithValue(
+          PortCapaciteEleveFactice(
+            autonomes: autonome ? <String>{'p-${role.valeurSql}'} : <String>{},
+          ),
         ),
         portClassesFoyerProvider.overrideWithValue(
           const ClassesFoyerIndisponible(),

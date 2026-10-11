@@ -56,7 +56,11 @@ String dateRevue(DateTime? utc) {
     ),
     zone: t.dossiers.file.zoneUtc,
   );
-  String colle(String s) => s.replaceAll(' ', '\u00a0');
+  // L'espace avant « (UTC) » reste secable : tout lie, « l'heure (UTC) » en
+  // arabe est un bloc plus large que 320 px en texte double, que le moteur
+  // coupe alors au milieu de « (UTC) ».
+  String colle(String s) =>
+      s.replaceAll(' ', '\u00a0').replaceAll('\u00a0(', ' (');
   final int i = texte.indexOf(date);
   if (i < 0) return colle(texte);
   // Les espaces qui touchent la date restent secables.

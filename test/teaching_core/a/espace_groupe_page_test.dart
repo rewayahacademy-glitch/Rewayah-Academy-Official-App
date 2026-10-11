@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
+import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/core/tc_horloge/demonstration_horloge.dart';
@@ -25,12 +26,14 @@ Future<void> _poser(
   RoleEspaceGroupe role = RoleEspaceGroupe.eleve,
   List<Override>? surcharges,
   void Function(dynamic groupe)? onReprendre,
+  void Function(GroupSummaryVM groupe)? onRejoindre,
 }) async {
   await tester.pumpWidget(
     hoteTcA(
       EspaceGroupePage(
         groupeId: groupeId,
         role: role,
+        onRejoindre: onRejoindre,
         onReprendreLeCours: onReprendre == null
             ? null
             : (_) => onReprendre(null),
@@ -174,8 +177,21 @@ void main() {
       WidgetTester tester,
     ) async {
       await avecLargeur(tester, largeurMobile, () async {
-        await _poser(tester, groupeId: GroupesDemonstration.anNour);
+        await _poser(
+          tester,
+          groupeId: GroupesDemonstration.anNour,
+          onRejoindre: (_) {},
+        );
         expect(find.text(LibellesGroupe.rejoindre), findsOneWidget);
+      });
+    });
+
+    testWidgets('a T-20, sans rappel branche, aucun Rejoindre grise '
+        '(BOUTONS-GRISES-1)', (WidgetTester tester) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await _poser(tester, groupeId: GroupesDemonstration.anNour);
+        expect(find.text(LibellesGroupe.rejoindre), findsNothing);
+        expect(tester.takeException(), isNull);
       });
     });
 
@@ -394,6 +410,7 @@ void main() {
           tester,
           groupeId: GroupesDemonstration.alBaqara,
           role: RoleEspaceGroupe.enseignant,
+          onReprendre: (_) {},
         );
         expect(find.text(LibellesGroupe.reprendreLeCours), findsOneWidget);
         // Une action, jamais une section permanente.
@@ -404,6 +421,22 @@ void main() {
           ),
         );
         expect(bouton.pleineLargeur, isFalse);
+        expect(bouton.onPress, isNotNull);
+      });
+    });
+
+    // BOUTONS-GRISES-1 : sans action de reprise branchee, le bouton n'est
+    // pas rendu (il etait grise).
+    testWidgets('sans action branchee, pas de bouton grise', (
+      WidgetTester tester,
+    ) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await _poser(
+          tester,
+          groupeId: GroupesDemonstration.alBaqara,
+          role: RoleEspaceGroupe.enseignant,
+        );
+        expect(find.text(LibellesGroupe.reprendreLeCours), findsNothing);
       });
     });
   });

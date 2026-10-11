@@ -10,8 +10,11 @@ import 'package:flutter/foundation.dart';
 import 'bibliotheque_seance.dart';
 import 'vue_seance.dart';
 
-/// Les outils d'enseignement (CLV-06), enseignant seulement.
-enum OutilEnseignement { pointeur, marquer, masquer, annoter }
+/// Les outils d'enseignement (CLV-06), enseignant seulement. TB-7b (plan V2
+/// §4.2, §20) : « Ecrire » remplace « Annoter » et suit le Pointeur dans la
+/// ligne d'outils primaires ; Marquer et Masquer sont les capacites
+/// existantes, preservees.
+enum OutilEnseignement { pointeur, ecrire, marquer, masquer }
 
 /// Les rappels d'une salle de seance.
 @immutable
@@ -48,7 +51,28 @@ class ActionsSeance {
     this.onOuvrirReglages,
     this.onContexte,
     this.onPresenter,
+    this.onRanger,
+    this.onEffacerNotes,
+    this.onAutoriserEcrire,
   });
+
+  /// TB-10 (plan V2 §4.3, §12, §20 ; UX-20) : « Autoriser a ecrire » ou
+  /// « Retirer l'autorisation d'ecrire » sur la fiche d'un eleve, selon
+  /// [EleveSeance.peutEcrire] (une bascule). L'autorisation ne delegue ni
+  /// la page, ni le support, ni l'effacement global (plan V2 §5). `null` :
+  /// l'action n'est pas rendue (Classe Live avant TB-BR-10).
+  final ValueChanged<EleveSeance>? onAutoriserEcrire;
+
+  /// TB-9 (plan V2 §3 « Ranger reellement », §19.2) : « Ranger dans la
+  /// bibliotheque » retire le support presente, sans rien effacer ; le
+  /// tableau libre revient. Aucune confirmation (action reversible). `null` :
+  /// l'entree n'est pas rendue (Classe Live avant TB-BR).
+  final VoidCallback? onRanger;
+
+  /// TB-9 (plan V2 §12) : efface les notes de la surface montree (la page du
+  /// support, ou le tableau libre), APRES la confirmation de la salle.
+  /// `null` : l'entree n'est pas rendue.
+  final VoidCallback? onEffacerNotes;
 
   /// TB-8 (LIB-02, LIB-03) : « Presenter » l'apercu choisi dans la
   /// Bibliotheque en seance. Le futur se termine quand le support est
@@ -169,5 +193,8 @@ class ActionsSeance {
     onOuvrirReglages: onOuvrirReglages,
     onContexte: onContexte,
     onPresenter: onPresenter,
+    onRanger: onRanger,
+    onEffacerNotes: onEffacerNotes,
+    onAutoriserEcrire: onAutoriserEcrire,
   );
 }

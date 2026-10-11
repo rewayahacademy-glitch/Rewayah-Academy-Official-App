@@ -81,14 +81,21 @@ class CapsuleSeance extends StatelessWidget {
             label: vue.nomEnseignant,
             child: cercle,
           )
-        : Pressable(
-            key: cleAvatar,
-            onPress: () => ouvrir(ContexteOuvert.enseignant),
-            libelleSemantique: vue.libelleAvatarCapsule,
-            selectionne: vue.contexte == ContexteOuvert.enseignant,
-            arrondiFocus: AppRadius.arrondiFull,
-            focusNode: focusAvatar,
-            child: cercle,
+        // TB-RC (revue TB-R, m27) : une icone seule porte son infobulle
+        // (comme `BoutonIcone`), muette au lecteur d'ecran qui lit deja le
+        // nom.
+        : Tooltip(
+            message: vue.libelleAvatarCapsule,
+            excludeFromSemantics: true,
+            child: Pressable(
+              key: cleAvatar,
+              onPress: () => ouvrir(ContexteOuvert.enseignant),
+              libelleSemantique: vue.libelleAvatarCapsule,
+              selectionne: vue.contexte == ContexteOuvert.enseignant,
+              arrondiFocus: AppRadius.arrondiFull,
+              focusNode: focusAvatar,
+              child: cercle,
+            ),
           );
     final String? oeil = vue.libelleOeilCapsule;
     final Widget icone = SizedBox.square(
@@ -131,13 +138,17 @@ class CapsuleSeance extends StatelessWidget {
                     label: oeil,
                     child: icone,
                   )
-                : Pressable(
-                    key: cleOeil,
-                    onPress: () => ouvrir(ContexteOuvert.controle),
-                    libelleSemantique: oeil,
-                    selectionne: vue.contexte == ContexteOuvert.controle,
-                    arrondiFocus: AppRadius.arrondiFull,
-                    child: icone,
+                : Tooltip(
+                    message: oeil,
+                    excludeFromSemantics: true,
+                    child: Pressable(
+                      key: cleOeil,
+                      onPress: () => ouvrir(ContexteOuvert.controle),
+                      libelleSemantique: oeil,
+                      selectionne: vue.contexte == ContexteOuvert.controle,
+                      arrondiFocus: AppRadius.arrondiFull,
+                      child: icone,
+                    ),
                   ),
         ],
       ),

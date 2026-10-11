@@ -14,8 +14,9 @@
 // lieu de l'executer, et la Bibliotheque ne l'execute que si l'enseignant
 // n'a pas renonce entre-temps (jeton d'ouverture). « Presenter » est pose au
 // pied de la feuille, hors du defilement : il reste dans la vue a toutes les
-// tailles ; l'etat de l'ouverture (message, echec) est en tete, sous le
-// retour, et la feuille defile jusqu'a son debut s'il est hors vue.
+// tailles ; l'echec est en tete, sous le retour, et la feuille defile
+// jusqu'a son debut s'il est hors vue. Verification TB-8 : pendant
+// l'ouverture, c'est le bouton du pied qui dit « Ouverture du support… ».
 
 import 'dart:async';
 
@@ -66,8 +67,14 @@ class BibliothequeSeance extends StatefulWidget {
   const BibliothequeSeance({
     required this.onPresenter,
     this.groupeId,
+    this.reprises = const <RepriseEnSeance>[],
     super.key,
   });
+
+  /// TB-9 : les supports ranges pendant la seance, en tete du catalogue,
+  /// chacun avec son point de reprise ; « Presenter » les reprend a leur
+  /// page, avec leurs notes de la seance.
+  final List<RepriseEnSeance> reprises;
 
   /// Charge l'apercu et rend son activation pour la classe ; echoue si le
   /// support n'est pas charge ([PresenterSupport]).
@@ -178,6 +185,8 @@ class _BibliothequeSeanceState extends State<BibliothequeSeance> {
         contexte: ContexteDecouverte.enClasse,
         groupeId: widget.groupeId,
         onChoisir: _choisir,
+        reprises: widget.reprises,
+        titreReprises: t.salle.seance.rangement.section,
         enTete: Text(
           t.salle.seance.bibliotheque.intro,
           style: AppPalette.of(context).inkMuted.applyTo(
@@ -251,52 +260,36 @@ class _Apercu extends StatelessWidget {
                     onPress: onRevenir,
                   ),
                 ),
-                // L'etat de l'ouverture, en tete : le retour au-dessus et
-                // « Reessayer » au pied restent les deux issues visibles.
-                // La cle est sous la marge : defiler aligne le titre du
-                // message lui-meme sur le haut de la vue (320 x2 : 51 de
-                // vue pour un titre de 48).
-                if (echec || ouverture)
+                // L'echec, en tete : le retour au-dessus et « Reessayer » au
+                // pied restent les deux issues visibles. La cle est sous la
+                // marge : defiler aligne le titre du message lui-meme sur le
+                // haut de la vue (320 x2 : 51 de vue pour un titre de 48).
+                // L'ouverture, elle, est dite par le bouton du pied (verif
+                // TB-8 : en tete, a 320 x2, on ne lisait que « Ouverture du »).
+                if (echec)
                   Padding(
                     padding: const EdgeInsets.only(top: AppSpacing.md),
                     child: KeyedSubtree(
                       key: cleEtat,
-                      child: echec
-                          ? Semantics(
-                              liveRegion: true,
-                              child: Column(
-                                key: BibliothequeSeance.cleEchec,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    t.salle.seance.bibliotheque.echec,
-                                    key: BibliothequeSeance.cleTitreEchec,
-                                    style: style(
-                                      palette.inkAlert,
-                                      textes.titleSmall,
-                                    ),
-                                  ),
-                                  Ecart.vXs,
-                                  Text(
-                                    t.salle.seance.bibliotheque.echecDetail,
-                                    style: style(
-                                      palette.inkMuted,
-                                      textes.bodySmall,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Semantics(
-                              liveRegion: true,
-                              child: Text(
-                                t.salle.seance.bibliotheque.ouverture,
-                                style: style(
-                                  palette.inkMuted,
-                                  textes.bodyMedium,
-                                ),
-                              ),
+                      child: Semantics(
+                        liveRegion: true,
+                        child: Column(
+                          key: BibliothequeSeance.cleEchec,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              t.salle.seance.bibliotheque.echec,
+                              key: BibliothequeSeance.cleTitreEchec,
+                              style: style(palette.inkAlert, textes.titleSmall),
                             ),
+                            Ecart.vXs,
+                            Text(
+                              t.salle.seance.bibliotheque.echecDetail,
+                              style: style(palette.inkMuted, textes.bodySmall),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 Ecart.vMd,
@@ -364,7 +357,12 @@ class _Apercu extends StatelessWidget {
         Ecart.vSm,
         ActionPrincipale(
           key: BibliothequeSeance.clePresenter,
-          libelle: echec
+          // Pendant l'ouverture, le bouton du pied dit l'etat lui-meme, a
+          // cote de son indicateur (annonce vive) : fixe, hors du
+          // defilement, il se lit entier a toutes les tailles.
+          libelle: ouverture
+              ? t.salle.seance.bibliotheque.ouverture
+              : echec
               ? t.commun.reessayer
               : t.salle.seance.bibliotheque.presenter,
           enCours: ouverture,

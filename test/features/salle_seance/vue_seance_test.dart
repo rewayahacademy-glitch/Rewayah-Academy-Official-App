@@ -85,12 +85,17 @@ void main() {
         expect(_vue(r).voitSignalVideo, isFalse);
       });
 
-      test('$r : ni Commandes, ni pagination active, ni affichages', () {
-        // TB-4 (TB14) : rien de l'enseignant chez l'eleve.
+      test('$r : Commandes de l eleve seulement, ni pagination active, ni '
+          'affichages', () {
+        // TB-4 (TB14) : rien de l'enseignant chez l'eleve. TB-10 (plan V2
+        // §19.3 point 4) : ses propres Commandes (lecture, focus, ecriture
+        // accordee), jamais celles de l'enseignant.
         for (final EtatDemoSalle e in EtatDemoSalle.values) {
-          expect(_vue(r, e).voitCommandes, isFalse);
+          expect(_vue(r, e).commandesCompletes, isFalse);
           expect(_vue(r, e).voitPaginationCommandes, isFalse);
-          expect(_vue(r, e).voitLectureCommandes, isFalse);
+          expect(_vue(r, e).voitOutils, isFalse);
+          expect(_vue(r, e).voitAutorisationEcrire, isFalse);
+          expect(_vue(r, e).voitLectureCommandes, _vue(r, e).support != null);
         }
         expect(
           _vue(r)
@@ -175,9 +180,11 @@ void main() {
     test('la ligne d etat ne porte pas son propre nom', () {
       expect(_vue(r).ligneEtat, isNot(contains('Sayyida')));
       expect(_vue(r).ligneEtat, 'Classe An-Nour · La séance se poursuit.');
+      // DUREE-INSECABLE-4 : la duree suit le nom de la Classe, donc sans
+      // ancre de sens au milieu de la ligne ; elle reste insecable.
       expect(
         _vue(r, EtatDemoSalle.repos).ligneEtat,
-        'Classe An-Nour · \u200E32\u00A0min restantes',
+        'Classe An-Nour · 32\u00A0min restantes',
       );
     });
 

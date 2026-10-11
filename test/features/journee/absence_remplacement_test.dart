@@ -9,6 +9,7 @@ import 'package:rewayah_academy/core/enseignant/absence_remplacement.dart';
 import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
 import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/journee/absence_remplacement_vue.dart';
+import 'package:rewayah_academy/features/remplacements/remplacements_page.dart';
 
 import '../../capture/outil_capture.dart';
 
@@ -42,11 +43,11 @@ final Finder _absenceSecondaire = find.byKey(
   const ValueKey<String>('absence-secondaire'),
 );
 final Finder _offre = find.text('Assurer ce remplacement\u00A0?');
-final Finder _remplacementPrincipale = find.byKey(
-  const ValueKey<String>('remplacement-principale'),
+final Finder _urgentFatiha = find.text(
+  titreRemplacementUrgent(DonneesEnseignantDemo.offreRemplacement().debut),
 );
-final Finder _remplacementSecondaire = find.byKey(
-  const ValueKey<String>('remplacement-secondaire'),
+final Finder _urgentNour = find.text(
+  titreRemplacementUrgent(DateTime(2026, 9, 30, 19)),
 );
 final Finder _carteRemplacement = find.byKey(
   const ValueKey<String>(
@@ -142,84 +143,33 @@ void main() {
     });
   });
 
+  // REMPL-1b : l'offre arrive en Alerte utile « Remplacement urgent », lue
+  // dans le tableau commun (seule source des offres) ; elle s'accepte sur
+  // l'ecran commun, ou l'alerte mene (mesure sur la vraie coquille dans
+  // `test/router/parcours_enseignant_test.dart`). La feuille « Assurer ce
+  // remplacement ? » ne s'ouvre plus depuis la Journee.
   group('ENS-13B offre de remplacement', () {
-    testWidgets("l'offre est une Alerte utile, la feuille montre la seance", (
+    testWidgets("les offres ouvertes du tableau commun sont l'Alerte utile", (
       WidgetTester tester,
     ) async {
       await _monter(tester);
       expect(find.text('Alertes utiles'), findsOne);
-      expect(_offre, findsOne);
-      expect(_carteRemplacement, findsNothing);
-
-      await _toucher(tester, _offre);
-      expect(find.text('Al-Fatiha'), findsWidgets);
-      expect(find.text('Heure locale'), findsOne);
-      expect(find.text('3 élèves'), findsWidgets);
-      expect(find.text('Assurer ce remplacement'), findsOne);
-      expect(find.text('Pas cette fois'), findsOne);
-    });
-
-    testWidgets('confirme par le serveur : la carte « Remplacement »', (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester);
-      await _toucher(tester, _offre);
-      await tester.tap(_remplacementPrincipale);
-      await tester.pump(const Duration(milliseconds: 100));
-      expect(_carteRemplacement, findsNothing);
-
-      await tester.pump(const Duration(milliseconds: 700));
-      await stabiliser(tester);
-      expect(_carteRemplacement, findsOne);
-      expect(
-        find.descendant(
-          of: _carteRemplacement,
-          matching: find.text('Remplacement'),
-        ),
-        findsOne,
-      );
-      // E11, doc 04 §17.3 : le remplacant ouvre la Classe remplacee.
-      expect(
-        find.descendant(
-          of: _carteRemplacement,
-          matching: find.text('Voir la Classe'),
-        ),
-        findsOne,
-      );
-      // L'offre acceptee quitte les alertes.
+      // Al-Fatiha (ouverte a tous) et An-Nour (Classe d'hommes) : le
+      // tableau de demonstration filtre par genre comme le serveur.
+      expect(_urgentFatiha, findsOne);
+      expect(_urgentNour, findsOne);
+      expect(find.text('Al-Fatiha'), findsOne);
+      expect(find.text('An-Nour'), findsWidgets);
+      // Maryam (Classe de femmes) n'est pas vue ; Al-Kawthar est prise.
+      expect(find.text('Maryam'), findsNothing);
+      expect(find.text('Al-Kawthar'), findsNothing);
       expect(_offre, findsNothing);
-    });
-
-    testWidgets('sans reponse (hors ligne) : aucune carte', (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester, etat: EtatDemoEnseignant.horsLigne);
-      await _toucher(tester, _offre);
-      await tester.tap(_remplacementPrincipale);
-      await tester.pump(const Duration(milliseconds: 700));
-      await stabiliser(tester);
-
-      expect(
-        find.byKey(const ValueKey<String>('remplacement-echec')),
-        findsOne,
-      );
       expect(_carteRemplacement, findsNothing);
-    });
-
-    testWidgets("« Pas cette fois » ferme la feuille, l'offre reste", (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester);
-      await _toucher(tester, _offre);
-      await _toucher(tester, _remplacementSecondaire);
-
-      expect(_carteRemplacement, findsNothing);
-      expect(_offre, findsOne);
     });
 
     testWidgets('situation vide : aucune offre', (WidgetTester tester) async {
       await _monter(tester, etat: EtatDemoEnseignant.vide);
-      expect(_offre, findsNothing);
+      expect(find.textContaining('Remplacement urgent'), findsNothing);
     });
   });
 }

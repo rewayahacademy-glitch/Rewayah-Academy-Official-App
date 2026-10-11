@@ -525,31 +525,45 @@ class _PourraNePourraPas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
-    return Row(
+    final Widget pourra = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(t.admin.agents.pourra, style: textes.titleSmall),
-              Ecart.vXs,
-              Text(t.admin.agents.pourraDetail, style: textes.bodySmall),
-            ],
-          ),
-        ),
-        Ecart.hXl,
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(t.admin.agents.nePourraPas, style: textes.titleSmall),
-              Ecart.vXs,
-              Text(t.admin.agents.nePourraPasDetail, style: textes.bodySmall),
-            ],
-          ),
-        ),
+        Text(t.admin.agents.pourra, style: textes.titleSmall),
+        Ecart.vXs,
+        Text(t.admin.agents.pourraDetail, style: textes.bodySmall),
       ],
+    );
+    final Widget nePourraPas = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(t.admin.agents.nePourraPas, style: textes.titleSmall),
+        Ecart.vXs,
+        Text(t.admin.agents.nePourraPasDetail, style: textes.bodySmall),
+      ],
+    );
+    // Deux colonnes cote a cote quand la place suffit ; empilees sinon (a
+    // 360 px et texte x2, chaque colonne etait trop etroite pour un mot :
+    // RECETTE-NUIT-B).
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints contraintes) {
+        final bool etroit =
+            contraintes.maxWidth <
+            480 * MediaQuery.textScalerOf(context).scale(1);
+        if (etroit) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[pourra, Ecart.vMd, nePourraPas],
+          );
+        }
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(child: pourra),
+            Ecart.hXl,
+            Expanded(child: nePourraPas),
+          ],
+        );
+      },
     );
   }
 }

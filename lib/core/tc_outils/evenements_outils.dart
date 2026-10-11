@@ -111,6 +111,7 @@ class EvenementTraitTermine extends EvenementOutil {
       'intention': trait.intention?.valeurSql,
       'pression': trait.pression,
       'inclinaison': trait.inclinaison,
+      'epaisseur': trait.epaisseur?.valeurSql,
     },
   };
 }

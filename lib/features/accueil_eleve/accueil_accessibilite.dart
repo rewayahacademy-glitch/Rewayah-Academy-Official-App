@@ -400,10 +400,12 @@ class _Haut extends StatelessWidget {
         CarteSession(
           espace: espace,
           entreeRetiree: accesFerme,
-          onRejoindre: accesFerme ? null : onRejoindre,
+          // Seances fermees : `entreeRetiree` retire le bouton, jamais grise.
+          onRejoindre: onRejoindre,
           tutoiement: tutoiement,
-          // Hors ligne, l'entree reste presente et inerte (D9) ; le bandeau
-          // de `PageShell` dit pourquoi.
+          // Hors ligne, l'emplacement devient une ligne d'etat avec
+          // « Reessayer » (D9), jamais un bouton grise ; le bandeau de
+          // `PageShell` dit pourquoi.
           horsLigne: horsLigne,
           onReessayer: onReessayer,
           identite: _IdentiteClasse(identite: espace.identite),

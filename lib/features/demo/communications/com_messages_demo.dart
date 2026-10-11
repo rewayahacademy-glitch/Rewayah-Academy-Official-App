@@ -282,6 +282,20 @@ class MessagesMetierDemo implements PortMessagesMetier {
        },
        _aOuvrir = conversationsAOuvrirDemo(role);
 
+  /// Cree le port sans fil existant, avec seulement les conversations
+  /// [aOuvrir] : le serveur de demonstration en cree le fil a la demande
+  /// (`filPourObjet`, `ouvrirConversation`). Sert aux voies qui ouvrent un
+  /// fil metier depuis leur objet sans porter de Messages a elles (le fil
+  /// « Profil de paiement » du Comptable, CPT-COM).
+  MessagesMetierDemo.surObjets({
+    required List<ConversationPossible> aOuvrir,
+    this.situation = SituationDemoMessages.normale,
+  }) : _fils = <String, FilMetier>{},
+       _aOuvrir = <String, List<ConversationPossible>>{
+         for (final ConversationPossible c in aOuvrir)
+           '${c.objet.type.name}:${c.objet.id}': <ConversationPossible>[c],
+       };
+
   /// La situation mise en scene.
   final SituationDemoMessages situation;
 

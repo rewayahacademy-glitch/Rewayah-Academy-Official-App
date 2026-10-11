@@ -133,7 +133,7 @@ class _Hub extends ConsumerWidget {
         // depuis le Compte (A-3) : meme page que l'invite, route dediee.
         LigneRubrique(
           icone: AppIcons.controleQualite,
-          libelle: t.consentement.titre,
+          libelle: t.compte.tuteur.securite.consentements,
           onPress: () => aller(Routes.tuteurCompteConsentements),
         ),
       ],

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `misc.dart` (meme convention que `service_planning.dart`).
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
+import '../tc_outils/fonction_indisponible.dart';
 import 'session_feedback.dart';
 
 /// Une question de micro-feedback, prete a etre posee.
@@ -90,17 +91,43 @@ class EchecFeedback implements Exception {
   String toString() => 'EchecFeedback($motif)';
 }
 
+/// Le micro-feedback quand aucun serveur n'est branche.
+///
+/// SALLE-ROBUSTE : aucune question n'est posee (`null`, le cas le plus
+/// frequent du contrat : la carte n'affiche rien), la tendance est vide et
+/// sous le seuil, et un depot echoue en [EchecFeedback], que l'ecran ignore
+/// deja en silence. Rien n'est enregistre ni simule.
+class FeedbackIndisponible implements PortFeedback, PortIndisponible {
+  /// Cree le micro-feedback indisponible.
+  const FeedbackIndisponible();
+
+  @override
+  Future<QuestionFeedback?> questionPour(String sessionId) async => null;
+
+  @override
+  Future<void> soumettre({
+    required String sessionId,
+    required String questionId,
+    required ReponseFeedback reponse,
+  }) => Future<void>.error(const EchecFeedback(MotifEchecFeedback.ecriture));
+
+  @override
+  Future<TendanceFeedback> tendance({required String groupeId}) async =>
+      TendanceFeedback.depuis(
+        groupeId: groupeId,
+        reponses: const <ReponseFeedback>[],
+        seuilMinimum: 1,
+      );
+}
+
 /// Le micro-feedback employe par l'application.
 ///
-/// **Aucune implementation serveur n'existe.** Le provider echoue plutot que de
-/// rendre un double en memoire : un feedback silencieusement perdu ferait
-/// croire a une collecte qui n'a pas lieu. Agent Z le surcharge a l'integration,
-/// les tests le surchargent avec `FeedbackMemoire`.
+/// Sans serveur, il rend [FeedbackIndisponible] : on ne demande rien, plutot
+/// que de lever. Un double en memoire ferait croire a une collecte qui n'a pas
+/// lieu ; Agent Z le surcharge a l'integration, les tests avec
+/// `FeedbackMemoire`.
 final Provider<PortFeedback> portFeedbackProvider = Provider<PortFeedback>(
-  (Ref ref) => throw UnimplementedError(
-    'PortFeedback : aucune implementation serveur. '
-    'Surcharger ce provider (FeedbackMemoire en attendant la table).',
-  ),
+  (Ref ref) => const FeedbackIndisponible(),
 );
 
 /// La question a poser apres une seance donnee, ou `null`.

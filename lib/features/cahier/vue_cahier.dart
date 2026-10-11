@@ -30,6 +30,10 @@ enum EtatCahier {
 
   /// Un cahier existe deja pour cette seance. Il se lit, il ne se redepose pas.
   dejaDepose,
+
+  /// Le serveur ne connait pas cette seance et rien, cote appareil, ne dit
+  /// qu'elle existe : pas de formulaire pour une seance qui n'est pas la sienne.
+  introuvable,
 }
 
 /// La projection pure du cahier : elle decide l'etat de l'ecran et l'ordre des
@@ -60,7 +64,14 @@ class VueCahier {
   /// d'execution** : Riverpod 3 relance un provider en echec de lui-meme et
   /// l'etat repasse par `AsyncLoading` en conservant `hasError`. Un `switch` sur
   /// le type rendrait l'ecran instable sans qu'aucune donnee ait change.
-  factory VueCahier.depuis({required AsyncValue<BrouillonCahier?> lecture}) {
+  ///
+  /// [seanceConnue] : la seance figure dans la journee, dans les cahiers en
+  /// retard ou dans la file d'envoi. Un brouillon nul d'une seance inconnue
+  /// est une seance introuvable ; d'une seance connue, un constat vide.
+  factory VueCahier.depuis({
+    required AsyncValue<BrouillonCahier?> lecture,
+    bool seanceConnue = true,
+  }) {
     if (!lecture.hasValue) {
       return VueCahier._(
         etat: lecture.hasError ? EtatCahier.erreur : EtatCahier.chargement,
@@ -70,9 +81,16 @@ class VueCahier {
     }
 
     final BrouillonCahier? brouillon = lecture.requireValue;
+    if (brouillon == null && !seanceConnue) {
+      return const VueCahier._(
+        etat: EtatCahier.introuvable,
+        exceptions: <ParticipantBrouillon>[],
+        nominaux: <ParticipantBrouillon>[],
+      );
+    }
     if (brouillon == null) {
-      // Une seance introuvable n'est pas une panne : le cahier reste deposable,
-      // et l'ecran dit que le constat n'a pas pu etre deduit.
+      // Une seance connue sans constat n'est pas une panne : le cahier reste
+      // deposable, et l'ecran dit que le constat n'a pas pu etre deduit.
       return const VueCahier._(
         etat: EtatCahier.vide,
         exceptions: <ParticipantBrouillon>[],

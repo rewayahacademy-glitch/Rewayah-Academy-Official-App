@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignant/absence_remplacement.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
+import 'package:rewayah_academy/core/enseignant/port_remplacements.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
@@ -36,7 +37,8 @@ import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_pag
 import 'package:rewayah_academy/features/remplacements/remplacements_page.dart';
 import 'package:rewayah_academy/features/revue_groupe/revue_groupe_page.dart';
 
-import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 
@@ -624,6 +626,171 @@ void main() {
       await monter(tester, Routes.enseignantRemplacements, avec: avec());
       expect(find.text(t.enseignant.journee.remplacementsVide), findsOneWidget);
       await tester.pump(const Duration(seconds: 5));
+    });
+
+    // REMPL-1b (decide par delegation, K-65) : l'alerte « Remplacement
+    // urgent » des Alertes utiles mene a l'ecran commun, meme sans
+    // remplacement confirme ; la Journee lit le tableau commun, seule source
+    // des offres.
+    group('REMPL-1b : l alerte urgente mene a l ecran commun', () {
+      final OffreRemplacement urgente = remplacement('Al-Muzzammil', 10, 6);
+      final Finder alerte = find.text(titreRemplacementUrgent(urgente.debut));
+      List<Override> tableau(Stream<List<OffreCommune>> flux) => <Override>[
+        offresCommunesProvider.overrideWith((Ref _) => flux),
+      ];
+
+      testWidgets('sans remplacement confirme : l alerte ouvre l ecran', (
+        WidgetTester tester,
+      ) async {
+        vueHaute(tester);
+        final GoRouter routeur = await monter(
+          tester,
+          Routes.enseignantJournee,
+          avec: avec(
+            plus: tableau(
+              Stream<List<OffreCommune>>.value(<OffreCommune>[
+                OffreCommune(offre: urgente, etat: EtatOffreCommune.ouverte),
+                // Une offre prise ou deja a moi n'est pas une urgence.
+                OffreCommune(
+                  offre: remplacement('An-Nour', 10, 7),
+                  etat: EtatOffreCommune.priseParUnCollegue,
+                ),
+                OffreCommune(
+                  offre: remplacement('As-Salam', 10, 8),
+                  etat: EtatOffreCommune.priseParMoi,
+                ),
+              ]),
+            ),
+          ),
+        );
+        expect(find.byType(CarteRemplacement), findsNothing);
+        expect(alerte, findsOneWidget);
+        expect(find.text('Al-Muzzammil'), findsOneWidget);
+        expect(find.text('An-Nour'), findsNothing);
+        expect(find.text('As-Salam'), findsNothing);
+
+        await toucher(tester, alerte);
+        expect(routeur.state.matchedLocation, Routes.enseignantRemplacements);
+        expect(find.byType(RemplacementsPage), findsOneWidget);
+        // L'ecran commun montre la meme offre, en carte urgente.
+        expect(alerte, findsOneWidget);
+        await tester.pump(const Duration(seconds: 5));
+      });
+
+      testWidgets('tableau illisible : la ligne le dit et mene a l ecran', (
+        WidgetTester tester,
+      ) async {
+        vueHaute(tester);
+        final GoRouter routeur = await monter(
+          tester,
+          Routes.enseignantJournee,
+          avec: avec(
+            plus: tableau(
+              Stream<List<OffreCommune>>.error(StateError('serveur')),
+            ),
+          ),
+        );
+        final Finder ligne = find.text(t.enseignant.remplacements.sansDonnees);
+        expect(ligne, findsOneWidget);
+        // Jamais « aucun remplacement » sur un echec (D10).
+        expect(find.text(t.enseignant.journee.remplacementsVide), findsNothing);
+        await toucher(tester, ligne);
+        expect(routeur.state.matchedLocation, Routes.enseignantRemplacements);
+        expect(
+          find.byKey(const ValueKey<String>('remplacements-erreur')),
+          findsOneWidget,
+        );
+        await tester.pump(const Duration(seconds: 5));
+      });
+
+      testWidgets('tableau en chargement ou vide : aucune alerte inventee', (
+        WidgetTester tester,
+      ) async {
+        vueHaute(tester);
+        await monter(
+          tester,
+          Routes.enseignantJournee,
+          avec: avec(
+            plus: tableau(StreamController<List<OffreCommune>>().stream),
+          ),
+        );
+        expect(find.textContaining('Remplacement urgent'), findsNothing);
+        expect(find.text(t.enseignant.remplacements.sansDonnees), findsNothing);
+        await tester.pump(const Duration(seconds: 5));
+      });
+
+      // Captures de preuve (docs/current/captures/REMPL-1b) : la Journee et
+      // son alerte, puis l'ecran commun ou elle mene, a 320 px texte x2 et a
+      // 1440. Sautees sans CAPTURE_DIR.
+      group('Capture REMPL-1b', skip: sautSansCapture, () {
+        setUp(masquerRubanDebug);
+        for (final (String, double, double, double) cas
+            in <(String, double, double, double)>[
+              ('320x2', 320, 2, 3200),
+              ('1440', 1440, 1, 1100),
+            ]) {
+          testWidgets('alerte puis ecran commun ${cas.$1}', (
+            WidgetTester tester,
+          ) async {
+            tester.view.physicalSize = Size(cas.$2, cas.$4);
+            tester.view.devicePixelRatio = 1;
+            addTearDown(tester.view.reset);
+            await monter(
+              tester,
+              Routes.enseignantJournee,
+              echelleTexte: cas.$3,
+              avec: avec(
+                plus: tableau(
+                  Stream<List<OffreCommune>>.value(<OffreCommune>[
+                    OffreCommune(
+                      offre: urgente,
+                      etat: EtatOffreCommune.ouverte,
+                    ),
+                  ]),
+                ),
+              ),
+            );
+            expect(tester.takeException(), isNull);
+            expect(motsCoupes(tester, find.byType(JourneePage)), isEmpty);
+            debugPrint(
+              'PNG ${await capturerVue(tester, 'rempl1b_journee_alerte_${cas.$1}')}',
+            );
+            await tester.ensureVisible(alerte);
+            await tester.pumpAndSettle();
+            await tester.tap(alerte);
+            await tester.pumpAndSettle();
+            expect(find.byType(RemplacementsPage), findsOneWidget);
+            expect(tester.takeException(), isNull);
+            expect(motsCoupes(tester, find.byType(RemplacementsPage)), isEmpty);
+            debugPrint(
+              'PNG ${await capturerVue(tester, 'rempl1b_ecran_commun_${cas.$1}')}',
+            );
+            await tester.pump(const Duration(seconds: 5));
+          });
+        }
+      });
+
+      testWidgets('la page des alertes lit la meme source et y mene', (
+        WidgetTester tester,
+      ) async {
+        vueHaute(tester);
+        final GoRouter routeur = await monter(
+          tester,
+          Routes.enseignantAlertes,
+          avec: avec(
+            plus: tableau(
+              Stream<List<OffreCommune>>.value(<OffreCommune>[
+                OffreCommune(offre: urgente, etat: EtatOffreCommune.ouverte),
+              ]),
+            ),
+          ),
+        );
+        expect(find.byType(ListeAlertesPage), findsOneWidget);
+        await toucher(tester, alerte);
+        expect(routeur.state.matchedLocation, Routes.enseignantRemplacements);
+        expect(find.byType(RemplacementsPage), findsOneWidget);
+        await tester.pump(const Duration(seconds: 5));
+      });
     });
 
     testWidgets('la Journee montre 2 alertes et un lien vers les 3 autres', (

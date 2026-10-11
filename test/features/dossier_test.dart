@@ -13,13 +13,16 @@ import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/dossier/versions_contrat.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
+import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
 
+import '../support/annonces.dart';
 import '../support/harnais.dart';
 
 /// Une destination de retour, pour que le `go` de fin de page aboutisse.
@@ -175,6 +178,7 @@ void main() {
         'avec la clause des visites et la case art. 9', (
       WidgetTester tester,
     ) async {
+      final List<String> annonces = ecouterAnnonces(tester);
       final FauxServiceDossier dossier = await monter(
         tester,
         AppRole.teacher,
@@ -191,9 +195,14 @@ void main() {
       expect(find.text(t.contrat.e1.quoi), findsOneWidget);
 
       // Case de l'article 9 jamais precochee : sans elle, rien n'est signe.
+      // Le bouton n'est jamais grise (BOUTONS-GRISES-1) : l'appui dit ce qui
+      // manque, l'annonce et rend le focus a la case.
       await tester.tap(find.text(t.contrat.accepter));
       await tester.pumpAndSettle();
       expect(dossier.contratsAcceptes, isEmpty);
+      expect(find.text(t.formulaire.manqueAccord), findsOneWidget);
+      expect(annonces, <String>[t.formulaire.manqueAccord]);
+      expect(FocusManager.instance.primaryFocus?.debugLabel, 'case-religion');
 
       final Finder caseReligion = find.text(
         t.contrat.clauseControle.caseReligion,
@@ -377,6 +386,61 @@ void main() {
       await tester.tap(find.text(t.kyc.choisirFichier));
       await tester.pumpAndSettle();
       expect(dossier.depots, isEmpty);
+    });
+
+    // BOUTONS-GRISES-1 : « Envoyer ma piece » et « Choisir la photo » ne sont
+    // jamais grises ; presses trop tot, ils disent ce qui manque, l'annoncent
+    // au lecteur d'ecran et rendent le focus au bon geste.
+    testWidgets('envoyer sans type : actif, dit ce qui manque, focus au type', (
+      WidgetTester tester,
+    ) async {
+      final List<String> annonces = ecouterAnnonces(tester);
+      final (FauxServiceDossier dossier, _) = await monter(tester, _piece());
+
+      final ActionPrincipale envoyer = tester.widget<ActionPrincipale>(
+        find.widgetWithText(ActionPrincipale, t.kyc.envoyer),
+      );
+      expect(envoyer.onPress, isNotNull);
+      expect(
+        tester
+            .widget<LienFleche>(
+              find.widgetWithText(LienFleche, t.kyc.choisirFichier),
+            )
+            .onPress,
+        isNotNull,
+      );
+
+      await tester.tap(find.text(t.kyc.envoyer));
+      await tester.pumpAndSettle();
+
+      expect(dossier.depots, isEmpty);
+      expect(find.text(t.kyc.manqueType), findsOneWidget);
+      expect(annonces, <String>[t.kyc.manqueType]);
+      expect(FocusManager.instance.primaryFocus?.debugLabel, 'type-piece');
+    });
+
+    testWidgets('envoyer sans photo : dit ce qui manque, focus au lien', (
+      WidgetTester tester,
+    ) async {
+      final List<String> annonces = ecouterAnnonces(tester);
+      final (FauxServiceDossier dossier, _) = await monter(tester, _piece());
+
+      await tester.tap(find.text(t.kyc.carteIdentite));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.kyc.envoyer));
+      await tester.pumpAndSettle();
+
+      expect(dossier.depots, isEmpty);
+      expect(find.text(t.kyc.manquePhoto), findsOneWidget);
+      expect(annonces, <String>[t.kyc.manquePhoto]);
+      expect(FocusManager.instance.primaryFocus?.debugLabel, 'fichier-piece');
+
+      // Le geste suivant efface la phrase : choisir la photo, puis envoyer.
+      await tester.tap(find.text(t.kyc.choisirFichier));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.kyc.envoyer));
+      await tester.pumpAndSettle();
+      expect(dossier.depots, hasLength(1));
     });
 
     testWidgets('un depot complet transmet la piece', (

@@ -9,6 +9,7 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
@@ -232,7 +233,10 @@ class _Liste extends StatelessWidget {
         ],
       ),
       precisions: Text(
-        t.classe.pagePlanning.habituelIndisponible,
+        isolerDansInterface(
+          t.classe.pagePlanning.habituelIndisponible,
+          Directionality.of(context),
+        ),
         style: discret,
       ),
     );
@@ -279,27 +283,39 @@ class _Ligne extends StatelessWidget {
                   children: <Widget>[
                     // « 4 octobre » sur une ligne quand il y tient (lot L).
                     TexteHeureSeance(
-                      heure: nombresLiesSiTient(
-                        context,
-                        affichage.date,
-                        styleDate,
-                        c.maxWidth,
+                      // Le jour, francais, isole dans son sens en RTL
+                      // (DUREE-INSECABLE-4).
+                      heure: isolerDansInterface(
+                        nombresLiesSiTient(
+                          context,
+                          affichage.date,
+                          styleDate,
+                          c.maxWidth,
+                        ),
+                        Directionality.of(context),
                       ),
                       annulee: annulee,
                       style: styleDate,
                     ),
                     Ecart.vXs,
                     TexteHeureSeance(
-                      heure: avecFuseau
-                          ? t.classe.pagePlanning.ligneFuseau(
-                              heure: affichage.heure,
-                              fuseau: affichage.fuseau,
-                              duree: affichage.duree,
-                            )
-                          : t.classe.pagePlanning.ligne(
-                              heure: affichage.heure,
-                              duree: affichage.duree,
-                            ),
+                      // DUREE-INSECABLE-4 : « 18:10 · 45 min » commence par
+                      // un chiffre ; isole, il garde son ordre en interface
+                      // de droite a gauche, et la duree, au milieu de la
+                      // ligne, n'y porte pas d'ancre de sens.
+                      heure: isolerDansInterface(
+                        avecFuseau
+                            ? t.classe.pagePlanning.ligneFuseau(
+                                heure: affichage.heure,
+                                fuseau: affichage.fuseau,
+                                duree: affichage.dureeEnPhrase,
+                              )
+                            : t.classe.pagePlanning.ligne(
+                                heure: affichage.heure,
+                                duree: affichage.dureeEnPhrase,
+                              ),
+                        Directionality.of(context),
+                      ),
                       annulee: annulee,
                       // Une seule annonce « Annulee » par carte : la date.
                       annoncer: false,

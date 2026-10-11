@@ -209,6 +209,12 @@ void main() {
         situationsTb(RoleSeance.enseignant),
         isNot(contains(SituationTb.supportArrive)),
       );
+      // TB-RC (M1) : l'echec cote enseignant est LIB-03 ; « Ressource
+      // indisponible » est l'etat du destinataire.
+      expect(
+        situationsTb(RoleSeance.enseignant),
+        isNot(contains(SituationTb.ressourceIndisponible)),
+      );
       // Toutes les vues du §17 (24) ont une situation.
       expect(
         SituationTb.values.where((SituationTb s) => s.reference != '§12'),

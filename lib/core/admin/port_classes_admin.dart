@@ -41,6 +41,15 @@ enum EtatClasseListee {
   cloturee,
 }
 
+/// Le remplissage d'une classe (R17) : pleine, ou avec des places.
+enum RemplissageClasse {
+  /// Le plafond est atteint.
+  pleine,
+
+  /// Il reste au moins une place.
+  avecPlaces,
+}
+
 /// Une ligne de la liste des classes.
 @immutable
 class ClasseListee {
@@ -51,6 +60,9 @@ class ClasseListee {
     this.codeCourt,
     this.genre,
     this.sansEnseignant = false,
+    this.peutAffecterEnseignant = false,
+    this.peutFusionner = false,
+    this.peutTransferer = false,
   });
 
   /// Une ligne lue de `groupes_admin()` : ni numero, ni code, ni genre ; une
@@ -74,8 +86,29 @@ class ClasseListee {
   /// Vrai quand aucun enseignant n'est affecte (R7).
   final bool sansEnseignant;
 
+  /// Capacite rendue par le serveur : la personne connectee peut confirmer
+  /// l'enseignant de cette classe. Faux tant qu'il ne la rend pas : aucun
+  /// bouton d'affectation n'est alors rendu.
+  final bool peutAffecterEnseignant;
+
+  /// Capacite rendue par le serveur : la personne connectee peut fusionner
+  /// cette classe avec une classe parallele (R9). Faux tant qu'il ne la
+  /// rend pas : aucune action de fusion n'est rendue.
+  final bool peutFusionner;
+
+  /// Capacite rendue par le serveur : la personne connectee peut transferer
+  /// un eleve de cette classe vers une classe parallele (R10). Faux tant
+  /// qu'il ne la rend pas.
+  final bool peutTransferer;
+
   /// L'identifiant de la classe.
   String get id => groupe.id;
+
+  /// Le remplissage : l'effectif contre le plafond de la classe.
+  RemplissageClasse get remplissage =>
+      groupe.seuilMax > 0 && groupe.nombreMembres >= groupe.seuilMax
+      ? RemplissageClasse.pleine
+      : RemplissageClasse.avecPlaces;
 
   /// L'etat, deduit de ce que le serveur a rendu.
   EtatClasseListee get etat => !groupe.actif
@@ -117,6 +150,7 @@ class FiltreClasses {
     this.fuseau,
     this.genre,
     this.enseignantId,
+    this.remplissage,
   });
 
   /// L'identifiant d'enseignant qui designe les classes sans enseignant.
@@ -146,6 +180,9 @@ class FiltreClasses {
   /// L'enseignant, ou [sansEnseignant].
   final String? enseignantId;
 
+  /// Le remplissage (R17).
+  final RemplissageClasse? remplissage;
+
   /// Le meme filtre, un axe change. Une fonction par axe rend `null`
   /// possible (« tous »).
   FiltreClasses avec({
@@ -157,6 +194,7 @@ class FiltreClasses {
     String? Function()? fuseau,
     GenreClasse? Function()? genre,
     String? Function()? enseignantId,
+    RemplissageClasse? Function()? remplissage,
   }) => FiltreClasses(
     texte: texte ?? this.texte,
     type: type == null ? this.type : type(),
@@ -166,6 +204,7 @@ class FiltreClasses {
     fuseau: fuseau == null ? this.fuseau : fuseau(),
     genre: genre == null ? this.genre : genre(),
     enseignantId: enseignantId == null ? this.enseignantId : enseignantId(),
+    remplissage: remplissage == null ? this.remplissage : remplissage(),
   );
 
   @override
@@ -178,11 +217,21 @@ class FiltreClasses {
       other.heure == heure &&
       other.fuseau == fuseau &&
       other.genre == genre &&
-      other.enseignantId == enseignantId;
+      other.enseignantId == enseignantId &&
+      other.remplissage == remplissage;
 
   @override
-  int get hashCode =>
-      Object.hash(texte, type, etat, jour, heure, fuseau, genre, enseignantId);
+  int get hashCode => Object.hash(
+    texte,
+    type,
+    etat,
+    jour,
+    heure,
+    fuseau,
+    genre,
+    enseignantId,
+    remplissage,
+  );
 }
 
 /// Une page de la liste.
@@ -304,6 +353,7 @@ bool _passe(ClasseListee c, FiltreClasses f, {bool avecEtat = true}) {
   if (f.heure != null && g.creneau.heure != f.heure) return false;
   if (f.fuseau != null && c.fuseau != f.fuseau) return false;
   if (f.genre != null && c.genre != f.genre) return false;
+  if (f.remplissage != null && c.remplissage != f.remplissage) return false;
   if (f.enseignantId case final String id) {
     if (id == FiltreClasses.sansEnseignant) {
       if (!c.sansEnseignant) return false;

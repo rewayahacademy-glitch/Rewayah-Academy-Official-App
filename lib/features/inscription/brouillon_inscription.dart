@@ -49,6 +49,7 @@ class BrouillonInscription {
     this.nom = '',
     this.genre,
     this.profilCree = false,
+    this.parentSuitDesCours,
   });
 
   /// L'usage retenu.
@@ -62,6 +63,11 @@ class BrouillonInscription {
 
   /// Le genre retenu.
   final Genre? genre;
+
+  /// Reponse a « Suivez-vous aussi des cours ? » (« Moi et ma famille »,
+  /// PAQ-DIR-EA) ; `null` tant que la question n'est pas repondue. Elle ne
+  /// donne aucun droit : l'eleve autonome est une capacite servie (C-24).
+  final bool? parentSuitDesCours;
 
   /// Vrai des que le serveur a cree le profil : une nouvelle tentative ne
   /// rappelle alors que le rafraichissement de session, jamais la creation.
@@ -91,12 +97,14 @@ class BrouillonInscription {
     String? nom,
     Genre? genre,
     bool? profilCree,
+    bool? parentSuitDesCours,
   }) => BrouillonInscription(
     usage: usage ?? this.usage,
     prenom: prenom ?? this.prenom,
     nom: nom ?? this.nom,
     genre: genre ?? this.genre,
     profilCree: profilCree ?? this.profilCree,
+    parentSuitDesCours: parentSuitDesCours ?? this.parentSuitDesCours,
   );
 }
 
@@ -108,6 +116,10 @@ class BrouillonInscriptionControleur extends Notifier<BrouillonInscription> {
   /// Retient l'usage.
   void choisirUsage(UsageInscription usage) =>
       state = state.copier(usage: usage);
+
+  /// Retient si le parent suit aussi des cours.
+  void choisirParentSuitDesCours({required bool suit}) =>
+      state = state.copier(parentSuitDesCours: suit);
 
   /// Retient l'identite.
   void saisirIdentite({required String prenom, required String nom}) =>

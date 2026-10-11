@@ -42,6 +42,9 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$notifications$ar notifications = _Traductions$notifications$ar._(_root);
 	@override late final _Traductions$historique$ar historique = _Traductions$historique$ar._(_root);
 	@override late final _Traductions$commun$ar commun = _Traductions$commun$ar._(_root);
+	@override late final _Traductions$reseau$ar reseau = _Traductions$reseau$ar._(_root);
+	@override late final _Traductions$destructif$ar destructif = _Traductions$destructif$ar._(_root);
+	@override late final _Traductions$presence$ar presence = _Traductions$presence$ar._(_root);
 	@override late final _Traductions$etat$ar etat = _Traductions$etat$ar._(_root);
 	@override late final _Traductions$accessibilite$ar accessibilite = _Traductions$accessibilite$ar._(_root);
 	@override late final _Traductions$classe$ar classe = _Traductions$classe$ar._(_root);
@@ -54,8 +57,6 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$tc$ar tc = _Traductions$tc$ar._(_root);
 	@override late final _Traductions$com$ar com = _Traductions$com$ar._(_root);
 	@override late final _Traductions$choix$ar choix = _Traductions$choix$ar._(_root);
-	@override late final _Traductions$destructif$ar destructif = _Traductions$destructif$ar._(_root);
-	@override late final _Traductions$reseau$ar reseau = _Traductions$reseau$ar._(_root);
 	@override late final _Traductions$admin$ar admin = _Traductions$admin$ar._(_root);
 	@override late final _Traductions$comptable$ar comptable = _Traductions$comptable$ar._(_root);
 	@override late final _Traductions$vide$ar vide = _Traductions$vide$ar._(_root);
@@ -69,7 +70,6 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$ficheEleve$ar ficheEleve = _Traductions$ficheEleve$ar._(_root);
 	@override late final _Traductions$parcours$ar parcours = _Traductions$parcours$ar._(_root);
 	@override late final _Traductions$eleveConnexion$ar eleveConnexion = _Traductions$eleveConnexion$ar._(_root);
-	@override late final _Traductions$presence$ar presence = _Traductions$presence$ar._(_root);
 	@override late final _Traductions$priere$ar priere = _Traductions$priere$ar._(_root);
 	@override late final _Traductions$appareils$ar appareils = _Traductions$appareils$ar._(_root);
 	@override late final _Traductions$connexion$ar connexion = _Traductions$connexion$ar._(_root);
@@ -86,6 +86,9 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$disponibilites$ar disponibilites = _Traductions$disponibilites$ar._(_root);
 	@override late final _Traductions$controleur$ar controleur = _Traductions$controleur$ar._(_root);
 	@override late final _Traductions$agent$ar agent = _Traductions$agent$ar._(_root);
+	@override late final _Traductions$suiviDemandes$ar suiviDemandes = _Traductions$suiviDemandes$ar._(_root);
+	@override late final _Traductions$formulaire$ar formulaire = _Traductions$formulaire$ar._(_root);
+	@override late final _Traductions$motifs$ar motifs = _Traductions$motifs$ar._(_root);
 }
 
 // Path: notifications
@@ -182,6 +185,66 @@ class _Traductions$commun$ar extends Traductions$commun$fr {
 	@override late final _Traductions$commun$selecteurProfils$ar selecteurProfils = _Traductions$commun$selecteurProfils$ar._(_root);
 	@override late final _Traductions$commun$theme$ar theme = _Traductions$commun$theme$ar._(_root);
 	@override late final _Traductions$commun$demarrage$ar demarrage = _Traductions$commun$demarrage$ar._(_root);
+}
+
+// Path: reseau
+class _Traductions$reseau$ar extends Traductions$reseau$fr {
+	_Traductions$reseau$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get retabli => 'عادت الشبكة';
+	@override String get horsLigne => 'لا شبكة. ما هو معروض يبقى قابلًا للاطلاع.';
+	@override String get enAttenteEnvoi => 'سيُرسل بمجرد عودة الشبكة';
+	@override String get syncImpossible => 'تعذّرت المزامنة';
+}
+
+// Path: destructif
+class _Traductions$destructif$ar extends Traductions$destructif$fr {
+	_Traductions$destructif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get irreversible => 'لا يمكن التراجع عن هذا الإجراء.';
+}
+
+// Path: presence
+class _Traductions$presence$ar extends Traductions$presence$fr {
+	_Traductions$presence$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الحضور';
+	@override String get voir => 'عرض الحضور';
+	@override String get mienne => 'حضورك';
+	@override String get consolide => 'مُوحَّد';
+	@override String get planifiee => 'درس قادم';
+	@override String get enAttente => 'لم يصل بعد';
+	@override String get enConnexion => 'جارٍ الاتصال';
+	@override String get presente => 'في القاعة';
+	@override String get enRetard => 'متأخر';
+	@override String get deconnectee => 'انقطع الاتصال';
+	@override String get enReconnexion => 'جارٍ إعادة الاتصال';
+	@override String get reconnectee => 'عاد';
+	@override String get sortie => 'غادر الدرس';
+	@override String get absente => 'غياب';
+	@override String get excusee => 'غياب بعذر';
+	@override String get confirmationEnAttente => 'للتأكيد';
+	@override String get corrigeeManuel => 'تصحيح يدوي';
+	@override String get finalisee => 'نهائي';
+	@override String get inconnu => 'حالة غير معروفة';
+	@override String get entreeInstant => 'دخل القاعة للتو';
+	@override String entreeMinutes({required Object minutes}) => 'في القاعة منذ ⁨${minutes}⁩ د';
+	@override String retardMinutes({required Object minutes}) => '⁨${minutes}⁩ د بعد الموعد';
+	@override String get silenceInstant => 'لا أخبار منذ بضع ثوانٍ';
+	@override String silenceMinutes({required Object minutes}) => 'لا أخبار منذ ⁨${minutes}⁩ د';
+	@override String get attenteInstant => 'بدأ الدرس للتو';
+	@override String attenteMinutes({required Object minutes}) => 'بدأ الدرس منذ ⁨${minutes}⁩ د';
+	@override String get etatMicroOuvert => 'ميكروفونه مفتوح';
+	@override String get etatMicroCoupe => 'ميكروفونه مغلق';
 }
 
 // Path: etat
@@ -469,6 +532,7 @@ class _Traductions$nav$ar extends Traductions$nav$fr {
 	@override String get compte => 'حسابي';
 	@override String get principale => 'التنقل الرئيسي';
 	@override String get motSymbole => 'Rewayah';
+	@override String get logoAccueil => 'Rewayah Academy، الصفحة الرئيسية';
 	@override String get replier => 'طي شريط التنقل';
 	@override String get deplier => 'فتح شريط التنقل';
 }
@@ -480,6 +544,7 @@ class _Traductions$tc$ar extends Traductions$tc$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get indisponible => 'هذه الميزة غير متاحة بعد. لم يضِع شيء، والحصة مستمرة، وستتوفر قريبًا.';
 	@override late final _Traductions$tc$groupe$ar groupe = _Traductions$tc$groupe$ar._(_root);
 	@override late final _Traductions$tc$bibliotheque$ar bibliotheque = _Traductions$tc$bibliotheque$ar._(_root);
 	@override late final _Traductions$tc$coran$ar coran = _Traductions$tc$coran$ar._(_root);
@@ -517,29 +582,6 @@ class _Traductions$choix$ar extends Traductions$choix$fr {
 	@override String get selectionMultiple => 'يمكن اختيار عدة إجابات';
 }
 
-// Path: destructif
-class _Traductions$destructif$ar extends Traductions$destructif$fr {
-	_Traductions$destructif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
-
-	final TraductionsAr _root; // ignore: unused_field
-
-	// Translations
-	@override String get irreversible => 'لا يمكن التراجع عن هذا الإجراء.';
-}
-
-// Path: reseau
-class _Traductions$reseau$ar extends Traductions$reseau$fr {
-	_Traductions$reseau$ar._(TraductionsAr root) : this._root = root, super.internal(root);
-
-	final TraductionsAr _root; // ignore: unused_field
-
-	// Translations
-	@override String get horsLigne => 'لا شبكة. ما هو معروض يبقى قابلًا للاطلاع.';
-	@override String get enAttenteEnvoi => 'سيُرسل بمجرد عودة الشبكة';
-	@override String get retabli => 'عادت الشبكة';
-	@override String get syncImpossible => 'تعذّرت المزامنة';
-}
-
 // Path: admin
 class _Traductions$admin$ar extends Traductions$admin$fr {
 	_Traductions$admin$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -567,6 +609,9 @@ class _Traductions$admin$ar extends Traductions$admin$fr {
 	@override late final _Traductions$admin$agents$ar agents = _Traductions$admin$agents$ar._(_root);
 	@override late final _Traductions$admin$notifications$ar notifications = _Traductions$admin$notifications$ar._(_root);
 	@override late final _Traductions$admin$regroupements$ar regroupements = _Traductions$admin$regroupements$ar._(_root);
+	@override late final _Traductions$admin$pilotage$ar pilotage = _Traductions$admin$pilotage$ar._(_root);
+	@override late final _Traductions$admin$fusion$ar fusion = _Traductions$admin$fusion$ar._(_root);
+	@override late final _Traductions$admin$tirage$ar tirage = _Traductions$admin$tirage$ar._(_root);
 }
 
 // Path: comptable
@@ -844,41 +889,6 @@ class _Traductions$eleveConnexion$ar extends Traductions$eleveConnexion$fr {
 	@override late final _Traductions$eleveConnexion$saisie$ar saisie = _Traductions$eleveConnexion$saisie$ar._(_root);
 	@override late final _Traductions$eleveConnexion$lecteur$ar lecteur = _Traductions$eleveConnexion$lecteur$ar._(_root);
 	@override late final _Traductions$eleveConnexion$refus$ar refus = _Traductions$eleveConnexion$refus$ar._(_root);
-}
-
-// Path: presence
-class _Traductions$presence$ar extends Traductions$presence$fr {
-	_Traductions$presence$ar._(TraductionsAr root) : this._root = root, super.internal(root);
-
-	final TraductionsAr _root; // ignore: unused_field
-
-	// Translations
-	@override String get titre => 'الحضور';
-	@override String get voir => 'عرض الحضور';
-	@override String get mienne => 'حضورك';
-	@override String get consolide => 'مُوحَّد';
-	@override String get planifiee => 'درس قادم';
-	@override String get enAttente => 'لم يصل بعد';
-	@override String get enConnexion => 'جارٍ الاتصال';
-	@override String get presente => 'في القاعة';
-	@override String get enRetard => 'متأخر';
-	@override String get deconnectee => 'انقطع الاتصال';
-	@override String get enReconnexion => 'جارٍ إعادة الاتصال';
-	@override String get reconnectee => 'عاد';
-	@override String get sortie => 'غادر الدرس';
-	@override String get absente => 'غياب';
-	@override String get excusee => 'غياب بعذر';
-	@override String get confirmationEnAttente => 'للتأكيد';
-	@override String get corrigeeManuel => 'تصحيح يدوي';
-	@override String get finalisee => 'نهائي';
-	@override String get inconnu => 'حالة غير معروفة';
-	@override String get entreeInstant => 'دخل القاعة للتو';
-	@override String entreeMinutes({required Object minutes}) => 'في القاعة منذ ⁨${minutes}⁩ د';
-	@override String retardMinutes({required Object minutes}) => '⁨${minutes}⁩ د بعد الموعد';
-	@override String get silenceInstant => 'لا أخبار منذ بضع ثوانٍ';
-	@override String silenceMinutes({required Object minutes}) => 'لا أخبار منذ ⁨${minutes}⁩ د';
-	@override String get attenteInstant => 'بدأ الدرس للتو';
-	@override String attenteMinutes({required Object minutes}) => 'بدأ الدرس منذ ⁨${minutes}⁩ د';
 }
 
 // Path: priere
@@ -1181,6 +1191,8 @@ class _Traductions$kyc$ar extends Traductions$kyc$fr {
 	@override String get deposee => 'استُلمت الوثيقة';
 	@override String get erreur => 'لم يكتمل الإرسال. أعد المحاولة بعد لحظة.';
 	@override String tropVolumineux({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.';
+	@override String get manquePhoto => 'اختر أولًا صورة وثيقتك.';
+	@override String get manqueType => 'اختر أولًا الوثيقة التي تودعها.';
 }
 
 // Path: contrat
@@ -1367,6 +1379,66 @@ class _Traductions$agent$ar extends Traductions$agent$fr {
 	@override String get bandeau => 'متابعة، للقراءة فقط';
 	@override String get bandeauMasque => 'الأسماء مخفية';
 	@override String bandeauExpire({required Object heure}) => 'حتى ⁨${heure}⁩';
+}
+
+// Path: suiviDemandes
+class _Traductions$suiviDemandes$ar extends Traductions$suiviDemandes$fr {
+	_Traductions$suiviDemandes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'متابعة طلبات المواعيد';
+	@override String get contexte => 'يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.';
+	@override String carteTitre({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩';
+	@override String get joursChoisis => 'الأيام المختارة';
+	@override String get heureChoisie => 'الساعة المختارة';
+	@override String joursEt({required Object debut, required Object dernier}) => '⁨${debut}⁩ و⁨${dernier}⁩';
+	@override String heureFuseau({required Object heure, required Object deVille}) => '⁨${heure}⁩، بتوقيت ⁨${deVille}⁩';
+	@override String get creneauxChoisis => 'الأيام والساعات المختارة';
+	@override String jourHeure({required Object jour, required Object heure}) => '⁨${jour}⁩ ⁨${heure}⁩';
+	@override String get fuseauChoisi => 'المنطقة الزمنية';
+	@override String fuseauValeur({required Object deVille}) => 'بتوقيت ⁨${deVille}⁩';
+	@override late final _Traductions$suiviDemandes$etapes$ar etapes = _Traductions$suiviDemandes$etapes$ar._(_root);
+	@override late final _Traductions$suiviDemandes$etats$ar etats = _Traductions$suiviDemandes$etats$ar._(_root);
+	@override late final _Traductions$suiviDemandes$situation$ar situation = _Traductions$suiviDemandes$situation$ar._(_root);
+	@override late final _Traductions$suiviDemandes$prochaine$ar prochaine = _Traductions$suiviDemandes$prochaine$ar._(_root);
+	@override String get debutCours => 'بدء الدروس';
+	@override String debutValeur({required Object date, required Object heure, required Object deVille}) => '⁨${date}⁩ في ⁨${heure}⁩، بتوقيت ⁨${deVille}⁩';
+	@override String get debutAFixer => 'سيظهر موعد الدرس الأول هنا فور تحديده.';
+	@override String get enseignant => 'المعلم';
+	@override String get personnaliseNotice => 'لن يُفتح هذا الموعد إلا إذا اختاره طلاب آخرون واكتمل الفصل.';
+	@override late final _Traductions$suiviDemandes$jalon$ar jalon = _Traductions$suiviDemandes$jalon$ar._(_root);
+	@override late final _Traductions$suiviDemandes$changement$ar changement = _Traductions$suiviDemandes$changement$ar._(_root);
+	@override late final _Traductions$suiviDemandes$close$ar close = _Traductions$suiviDemandes$close$ar._(_root);
+	@override String get vide => 'لا طلبات مواعيد جارية.';
+	@override String get erreur => 'تعذّر عرض متابعة طلباتكم: ربما لم تصل القراءة إلى رواية. هذا الإخفاق يخص عرض المتابعة فقط ولا يقول شيئًا عن طلبات مواعيدكم. أعيدوا المحاولة بعد قليل.';
+	@override String get sansDonnees => 'تعذّر تحميل متابعة الطلبات';
+	@override late final _Traductions$suiviDemandes$accueil$ar accueil = _Traductions$suiviDemandes$accueil$ar._(_root);
+	@override late final _Traductions$suiviDemandes$notification$ar notification = _Traductions$suiviDemandes$notification$ar._(_root);
+}
+
+// Path: formulaire
+class _Traductions$formulaire$ar extends Traductions$formulaire$fr {
+	_Traductions$formulaire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get manqueAccord => 'موافقتك ناقصة: ضع علامة في الخانة للمتابعة.';
+	@override late final _Traductions$formulaire$motif$ar motif = _Traductions$formulaire$motif$ar._(_root);
+}
+
+// Path: motifs
+class _Traductions$motifs$ar extends Traductions$motifs$fr {
+	_Traductions$motifs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$motifs$reglageEnseignant$ar reglageEnseignant = _Traductions$motifs$reglageEnseignant$ar._(_root);
+	@override late final _Traductions$motifs$reglageDuree$ar reglageDuree = _Traductions$motifs$reglageDuree$ar._(_root);
+	@override late final _Traductions$motifs$reglageMinimum$ar reglageMinimum = _Traductions$motifs$reglageMinimum$ar._(_root);
 }
 
 // Path: notifications.filtres
@@ -1920,6 +1992,8 @@ class _Traductions$classe$entree$ar extends Traductions$classe$entree$fr {
 	@override String dst({required Object avant, required Object apres}) => 'تغيير التوقيت: سينتقل الدرس من ⁨${avant}⁩ إلى ⁨${apres}⁩.';
 	@override late final _Traductions$classe$entree$annonce$ar annonce = _Traductions$classe$entree$annonce$ar._(_root);
 	@override late final _Traductions$classe$entree$demo$ar demo = _Traductions$classe$entree$demo$ar._(_root);
+	@override String get indisponibleCourt => 'تعذّر تحميل معلومات الحصة';
+	@override String get indisponibleInvitation => 'ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة.';
 }
 
 // Path: classe.seance
@@ -2120,7 +2194,7 @@ class _Traductions$salle$secours$ar extends Traductions$salle$secours$fr {
 	@override String get horsLigne => 'أنت غير متصل. تحتاج الحصة إلى اتصال.';
 	@override String get reessayer => 'إعادة المحاولة';
 	@override String get quitter => 'مغادرة';
-	@override String indisponible({required Object commande}) => '${commande}. غير متاح أثناء إعادة الاتصال.';
+	@override String indisponible({required Object commande}) => '⁨${commande}⁩. غير متاح أثناء إعادة الاتصال.';
 	@override String get cameraInterdite => 'الكاميرا معطّلة لهذا الملف.';
 	@override String get microBloque => 'الميكروفون محظور في إعدادات هذا الجهاز.';
 	@override String get microBloqueGuidee => 'الميكروفون محظور على هذا الجهاز.';
@@ -2225,6 +2299,7 @@ class _Traductions$salle$seance$ar extends Traductions$salle$seance$fr {
 	@override String get pagePrecedente => 'الصفحة السابقة';
 	@override String get pageSuivante => 'الصفحة التالية';
 	@override late final _Traductions$salle$seance$outils$ar outils = _Traductions$salle$seance$outils$ar._(_root);
+	@override late final _Traductions$salle$seance$ecriture$ar ecriture = _Traductions$salle$seance$ecriture$ar._(_root);
 	@override late final _Traductions$salle$seance$rail$ar rail = _Traductions$salle$seance$rail$ar._(_root);
 	@override String get fermerPanneau => 'إغلاق اللوحة';
 	@override late final _Traductions$salle$seance$panneauSupports$ar panneauSupports = _Traductions$salle$seance$panneauSupports$ar._(_root);
@@ -2242,6 +2317,8 @@ class _Traductions$salle$seance$ar extends Traductions$salle$seance$fr {
 	@override late final _Traductions$salle$seance$commandes$ar commandes = _Traductions$salle$seance$commandes$ar._(_root);
 	@override late final _Traductions$salle$seance$bibliotheque$ar bibliotheque = _Traductions$salle$seance$bibliotheque$ar._(_root);
 	@override late final _Traductions$salle$seance$surface$ar surface = _Traductions$salle$seance$surface$ar._(_root);
+	@override late final _Traductions$salle$seance$synchro$ar synchro = _Traductions$salle$seance$synchro$ar._(_root);
+	@override late final _Traductions$salle$seance$rangement$ar rangement = _Traductions$salle$seance$rangement$ar._(_root);
 	@override late final _Traductions$salle$seance$capsule$ar capsule = _Traductions$salle$seance$capsule$ar._(_root);
 	@override late final _Traductions$salle$seance$contexte$ar contexte = _Traductions$salle$seance$contexte$ar._(_root);
 	@override late final _Traductions$salle$seance$demo$ar demo = _Traductions$salle$seance$demo$ar._(_root);
@@ -2356,6 +2433,7 @@ class _Traductions$eleve$accueil$ar extends Traductions$eleve$accueil$fr {
 	@override String get horsLigneDetail => 'يمكنك الدخول بمجرد عودة الشبكة.';
 	@override String get pausePriere => 'استراحة للصلاة';
 	@override String pausePriereDetail({required Object priere, required Object heure}) => '⁨${priere}⁩، نحو ⁨${heure}⁩';
+	@override String get entreeSePrepare => 'دخولك قيد التحضير. أعد المحاولة بعد لحظة.';
 }
 
 // Path: eleve.coran
@@ -2469,7 +2547,6 @@ class _Traductions$enseignant$journee$ar extends Traductions$enseignant$journee$
 	@override String get alertesErreur => 'تعذّرت قراءة تنبيهات الحضور: لم يستجب الاتصال أو الخادم. أعد المحاولة بعد لحظة.';
 	@override String get voirAutreAlerte => 'عرض التنبيه الآخر';
 	@override String voirAutresAlertes({required Object nombre}) => 'عرض التنبيهات الأخرى (⁨${nombre}⁩)';
-	@override String get remplacementsTitre => 'الاستخلافات المؤكَّدة';
 	@override String get remplacementsVide => 'لا درس لزميل تتولاه الآن.';
 	@override String voirTousRemplacements({required Object nombre}) => 'عرض الكل: الاستخلافات المؤكَّدة (⁨${nombre}⁩)';
 	@override String get heure => 'الساعة';
@@ -2733,6 +2810,8 @@ class _Traductions$enseignant$cahier$ar extends Traductions$enseignant$cahier$fr
 	@override String get retourJournee => 'العودة إلى يومي';
 	@override String get vide => 'تعذّر استنتاج المعاينة';
 	@override String get videDetail => 'لم يُسجَّل حضور ولا حدث لهذه الحصة. يمكنك مع ذلك إيداع دفتر المتابعة.';
+	@override String get introuvable => 'الحصة غير موجودة';
+	@override String get introuvableDetail => 'هذه الحصة ليست من حصصك، أو أن الرابط غير مكتمل. عد إلى يومك لاختيار حصة.';
 	@override String get erreur => 'تعذّرت قراءة المعاينة.';
 	@override String get erreurDetail => 'أعد المحاولة، أو أودع دفتر المتابعة دون المعاينة.';
 	@override String get echecEnvoi => 'لم يُؤكَّد الإرسال. تحقّق قبل إعادة المحاولة.';
@@ -3126,6 +3205,7 @@ class _Traductions$tuteur$reglages$ar extends Traductions$tuteur$reglages$fr {
 	@override String get aucunEnfant => 'لا طفل في الأسرة';
 	@override String get aucunEnfantDetail => 'أضف طفلًا لتتمكن من ضبط عرضه وكاميرته.';
 	@override String erreur({required Object message}) => 'لم يكتمل الحفظ: ⁨${message}⁩';
+	@override String get demandeManqueValeur => 'المدة المطلوبة ناقصة: اخترها من القائمة، أو اضغط «آخر» واكتبها.';
 }
 
 // Path: nav.eleve
@@ -3552,6 +3632,8 @@ class _Traductions$admin$tableau$ar extends Traductions$admin$tableau$fr {
 		many: 'ينتظر منذ ⁨${jours}⁩ يومًا',
 		other: 'ينتظر منذ ⁨${jours}⁩ يوم',
 	);
+	@override String get outilsPilotage => 'متابعة المواعيد';
+	@override String get outilsPilotageDetail => 'لكل موعد: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون.';
 }
 
 // Path: admin.demandes
@@ -4005,6 +4087,7 @@ class _Traductions$admin$evaluations$ar extends Traductions$admin$evaluations$fr
 	@override String get champMotif => 'السبب';
 	@override String get motifRequis => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.';
 	@override String get journalisation => 'تُدوَّن كل جدولة ونتيجة وإلغاء في سجل التدقيق.';
+	@override String get manqueResultat => 'اختر أولًا نتيجة التقييم.';
 }
 
 // Path: admin.progression
@@ -4116,6 +4199,7 @@ class _Traductions$admin$programmes$ar extends Traductions$admin$programmes$fr {
 	@override String get champMotif => 'السبب';
 	@override String get motifRequis => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.';
 	@override String get journalisation => 'يُدوَّن كل إنشاء وتعديل وحذف ونشر في سجل التدقيق.';
+	@override String get publierSansNiveau => 'أضف مستوى واحدًا على الأقل لتتمكن من نشر هذه النسخة.';
 }
 
 // Path: admin.journal
@@ -4436,6 +4520,330 @@ class _Traductions$admin$regroupements$ar extends Traductions$admin$regroupement
 		other: '⁨${n}⁩ فصل ممكن',
 	);
 	@override String demandesVersClasses({required Object demandes, required Object classes}) => '⁨${demandes}⁩ تتيح ⁨${classes}⁩';
+	@override String decoupagePleines({required num n, required Object taille}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا فصل',
+		one: 'فصل واحد بسعة ⁨${taille}⁩',
+		two: 'فصلان بسعة ⁨${taille}⁩',
+		few: '⁨${n}⁩ فصول بسعة ⁨${taille}⁩',
+		many: '⁨${n}⁩ فصلًا بسعة ⁨${taille}⁩',
+		other: '⁨${n}⁩ فصل بسعة ⁨${taille}⁩',
+	);
+	@override String get decoupageAucuneClasse => 'لا فصل';
+	@override String decoupageDerniere({required Object n}) => 'وفصل أخير يضم ⁨${n}⁩';
+	@override String decoupageAttente({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أحد في الانتظار',
+		one: 'طالب واحد في الانتظار',
+		two: 'طالبان في الانتظار',
+		few: '⁨${n}⁩ طلاب في الانتظار',
+		many: '⁨${n}⁩ طالبًا في الانتظار',
+		other: '⁨${n}⁩ طالب في الانتظار',
+	);
+	@override String decoupage({required Object detail}) => 'التقسيم المتوقع: ⁨${detail}⁩.';
+	@override String get contexteReparti => 'سيُوزَّع طلاب هذه الطلبات بحسب التقسيم المبيّن أدناه. ثم تؤكدون المعلم المقترح.';
+	@override String classesExistantes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا فصل مفتوح بعدُ في هذا الموعد.',
+		one: 'يوجد فصل واحد مفتوح في هذا الموعد: ينضم إليه الفصل الجديد دون تعديل أي فصل.',
+		two: 'يوجد فصلان مفتوحان في هذا الموعد: ينضم إليهما الفصل الجديد دون تعديل أي فصل.',
+		few: 'يوجد ⁨${n}⁩ فصول مفتوحة في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل.',
+		many: 'يوجد ⁨${n}⁩ فصلًا مفتوحًا في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل.',
+		other: 'يوجد ⁨${n}⁩ فصل مفتوح في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل.',
+	);
+	@override late final _Traductions$admin$regroupements$liste$ar liste = _Traductions$admin$regroupements$liste$ar._(_root);
+}
+
+// Path: admin.pilotage
+class _Traductions$admin$pilotage$ar extends Traductions$admin$pilotage$fr {
+	_Traductions$admin$pilotage$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'متابعة المواعيد';
+	@override String get sousTitre => 'لكل موعد ولكل فئة: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون.';
+	@override String get sansDonnees => 'تعذّر تحميل لوحة المتابعة';
+	@override String get erreur => 'تعذّرت قراءة لوحة المتابعة: ربما لم تصل القراءة إلى رواية. أعيدوا المحاولة بعد قليل.';
+	@override String get indisponibleTitre => 'متاحة عند الربط بالخادم';
+	@override String get indisponiblePhrase => 'ستظهر متابعة المواعيد هنا فور الربط بالخادم. إلى ذلك الحين لا يُعرض شيء: لا أرقام مختلقة.';
+	@override String get vide => 'لا مواعيد للمتابعة';
+	@override String get videDetail => 'ستظهر المواعيد هنا بمجرد وجود فصل أو طلب.';
+	@override String get aucunAvecCeFiltre => 'لا مواعيد بهذا المعيار';
+	@override String get aucunAvecCeFiltreDetail => 'غيّروا المعيار لرؤية بقية المواعيد.';
+	@override String get vueEnsemble => 'نظرة عامة';
+	@override String get cleClasses => 'الفصول';
+	@override String get cleAttente => 'في انتظار معلم';
+	@override String get cleSousMinimum => 'دون الحد الأدنى';
+	@override String get cleDemandes => 'الطلبات المعلّقة';
+	@override String get cleLibres => 'المعلمون المتاحون';
+	@override String get cleManquants => 'المعلمون الناقصون';
+	@override String get attenteTitre => 'فصول في انتظار معلم';
+	@override String get attenteDetail => 'أكّدوا معلمًا لكل فصل: تُبلَّغ الأسرة فور ذلك.';
+	@override String attenteHoraire({required Object horaire}) => 'الموعد: ⁨${horaire}⁩';
+	@override String get voirToutes => 'عرض كل الفصول التي تنتظر معلمًا';
+	@override String get horairesTitre => 'المواعيد';
+	@override String horaire({required Object jour, required Object heure, required Object ville}) => '⁨${jour}⁩ · ⁨${heure}⁩ · ⁨${ville}⁩';
+	@override String get colonneHoraire => 'الموعد';
+	@override String get colonnePublic => 'الفئة';
+	@override String get colonneClasses => 'الفصول';
+	@override String get colonneRemplissage => 'الامتلاء';
+	@override String get colonneDemandes => 'الطلبات المعلّقة';
+	@override String get colonneLibres => 'المعلمون المتاحون';
+	@override String get colonneManquants => 'المعلمون الناقصون';
+	@override String get colonneEtat => 'ما يستدعي الانتباه';
+	@override String remplissage({required Object taux, required Object effectif, required Object capacite}) => '⁨${taux}⁩٪ (⁨${effectif}⁩ من ⁨${capacite}⁩)';
+	@override String get remplissageInconnu => 'لا أماكن مفتوحة';
+	@override String get aucun => 'لا أحد';
+	@override String nombreEtGenres({required Object n, required Object genres}) => '⁨${n}⁩ (⁨${genres}⁩)';
+	@override String genreHommes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا معلم',
+		one: 'معلم واحد',
+		two: 'معلمان',
+		few: '⁨${n}⁩ معلمين',
+		many: '⁨${n}⁩ معلمًا',
+		other: '⁨${n}⁩ معلم',
+	);
+	@override String genreFemmes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا معلمة',
+		one: 'معلمة واحدة',
+		two: 'معلمتان',
+		few: '⁨${n}⁩ معلمات',
+		many: '⁨${n}⁩ معلمة',
+		other: '⁨${n}⁩ معلمة',
+	);
+	@override String genreIndetermine({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا معلم',
+		one: 'معلم واحد، الجنس يُؤكَّد لاحقًا',
+		two: 'معلمان، الجنس يُؤكَّد لاحقًا',
+		few: '⁨${n}⁩ معلمين، الجنس يُؤكَّد لاحقًا',
+		many: '⁨${n}⁩ معلمًا، الجنس يُؤكَّد لاحقًا',
+		other: '⁨${n}⁩ معلم، الجنس يُؤكَّد لاحقًا',
+	);
+	@override String get etatPenurie => 'نقص في المعلمين';
+	@override String etatSousMinimum({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا فصل دون الحد الأدنى',
+		one: 'فصل واحد دون الحد الأدنى',
+		two: 'فصلان دون الحد الأدنى',
+		few: '⁨${n}⁩ فصول دون الحد الأدنى',
+		many: '⁨${n}⁩ فصلًا دون الحد الأدنى',
+		other: '⁨${n}⁩ فصل دون الحد الأدنى',
+	);
+	@override String etatAttente({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا فصل ينتظر معلمًا',
+		one: 'فصل واحد ينتظر معلمًا',
+		two: 'فصلان ينتظران معلمًا',
+		few: '⁨${n}⁩ فصول تنتظر معلمًا',
+		many: '⁨${n}⁩ فصلًا ينتظر معلمًا',
+		other: '⁨${n}⁩ فصل ينتظر معلمًا',
+	);
+	@override String get etatCouvert => 'مغطّى';
+	@override String get filtreTous => 'كل المواعيد';
+	@override String get filtrePenurie => 'نقص';
+	@override String get filtreSousMinimum => 'دون الحد الأدنى';
+	@override String get filtreAttente => 'في انتظار معلم';
+	@override String get filtrePublic => 'الفئة';
+	@override String get filtreTousPublics => 'كل الفئات';
+	@override String position({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩';
+	@override String positionSemantique({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩ من لوحة المتابعة';
+	@override String get precedente => 'الصفحة السابقة من لوحة المتابعة';
+	@override String get suivante => 'الصفحة التالية من لوحة المتابعة';
+	@override String resume({required Object debut, required Object fin, required Object total}) => 'المواعيد من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩';
+}
+
+// Path: admin.fusion
+class _Traductions$admin$fusion$ar extends Traductions$admin$fusion$fr {
+	_Traductions$admin$fusion$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get actionFusionner => 'الدمج مع فصل موازٍ';
+	@override String get actionTransferer => 'نقل طالب';
+	@override String get actionHistorique => 'سجل الفصل';
+	@override String fusionTitre({required Object libelle}) => 'دمج ⁨${libelle}⁩';
+	@override String get fusionContexte => 'سينضم طلاب هذا الفصل إلى فصل موازٍ في الموعد نفسه ومن الفئة نفسها وفيه متسع. يتحرر معلم هذا الفصل. لا يتم شيء دون تأكيدكم.';
+	@override String get choixTitre => 'الفصل الذي يستقبل الطلاب';
+	@override String placesLibres({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا مكان شاغر',
+		one: 'مكان شاغر واحد',
+		two: 'مكانان شاغران',
+		few: '⁨${n}⁩ أماكن شاغرة',
+		many: '⁨${n}⁩ مكانًا شاغرًا',
+		other: '⁨${n}⁩ مكان شاغر',
+	);
+	@override String enseignantDe({required Object nom}) => 'المعلم: ⁨${nom}⁩';
+	@override String get sansEnseignant => 'بلا معلم حتى الآن';
+	@override String get aucuneCible => 'لا فصل موازٍ فيه متسع كافٍ';
+	@override String get aucuneCibleDetail => 'يلزم فصل في الموعد نفسه ومن الفئة نفسها وفيه متسع لجميع طلاب هذا الفصل.';
+	@override String get erreurCibles => 'تعذّرت قراءة الفصول الموازية. أعيدوا المحاولة بعد قليل.';
+	@override String get sansDonneesCibles => 'تعذّر تحميل قائمة الفصول الموازية';
+	@override String get apercuTitre => 'ما الذي سيحدث';
+	@override String get apercuErreur => 'تعذّر حساب معاينة الدمج. أعيدوا المحاولة بعد قليل.';
+	@override String apercuMembres({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا طالب ينتقل إلى ⁨${cible}⁩',
+		one: 'ينتقل طالب واحد إلى ⁨${cible}⁩',
+		two: 'ينتقل طالبان إلى ⁨${cible}⁩',
+		few: 'ينتقل ⁨${n}⁩ طلاب إلى ⁨${cible}⁩',
+		many: 'ينتقل ⁨${n}⁩ طالبًا إلى ⁨${cible}⁩',
+		other: 'ينتقل ⁨${n}⁩ طالب إلى ⁨${cible}⁩',
+	);
+	@override String apercuEffectif({required Object cible, required Object apres, required Object capacite}) => 'سيضم ⁨${cible}⁩ ⁨${apres}⁩ من أصل ⁨${capacite}⁩.';
+	@override String apercuEnseignantLibere({required Object enseignant}) => 'لم يعد ⁨${enseignant}⁩ مكلفًا بهذا الفصل ويصبح متاحًا في هذا الموعد.';
+	@override String get apercuSansEnseignant => 'ليس لهذا الفصل معلم: لا أحد يتحرر.';
+	@override String apercuFamilles({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أسرة تُبلَّغ.',
+		one: 'تُبلَّغ أسرة واحدة.',
+		two: 'تُبلَّغ أسرتان.',
+		few: 'تُبلَّغ ⁨${n}⁩ أسر.',
+		many: 'تُبلَّغ ⁨${n}⁩ أسرة.',
+		other: 'تُبلَّغ ⁨${n}⁩ أسرة.',
+	);
+	@override String get apercuIrreversible => 'يُغلَق الفصل المدموج ويُحفظ سجل الفصلين. لا يمكن التراجع عن هذا القرار.';
+	@override String get confirmerFusion => 'دمج الفصلين';
+	@override String get fusionHorsLigne => 'يمكن تأكيد الدمج عند عودة الاتصال. يبقى اختياركم معروضًا.';
+	@override String fusionFaite({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'تم الدمج: لا طالب في ⁨${cible}⁩ بعد.',
+		one: 'تم الدمج: طالب واحد في ⁨${cible}⁩ الآن.',
+		two: 'تم الدمج: طالبان في ⁨${cible}⁩ الآن.',
+		few: 'تم الدمج: ⁨${n}⁩ طلاب في ⁨${cible}⁩ الآن.',
+		many: 'تم الدمج: ⁨${n}⁩ طالبًا في ⁨${cible}⁩ الآن.',
+		other: 'تم الدمج: ⁨${n}⁩ طالب في ⁨${cible}⁩ الآن.',
+	);
+	@override String get famillesPrevenues => 'تم إبلاغ الأسر.';
+	@override String get fusionDejaFaite => 'دمج عضو آخر من الإدارة هذا الفصل للتو: لم يُنجَز شيء مرتين. أغلقوا هذه الورقة لرؤية القائمة المحدّثة.';
+	@override String fusionRefusee({required Object motif}) => 'لم يتم الدمج: ⁨${motif}⁩. تحققوا من الفصول ثم أعيدوا المحاولة.';
+	@override String get fusionNonConfirmee => 'الدمج غير مؤكَّد: لم يصل رد الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون دمج مكرر.';
+	@override String get manqueCible => 'ينقص الفصل الذي يستقبل الطلاب: اختاروه من القائمة.';
+	@override String transfertTitre({required Object deLibelle}) => 'نقل طالب من ⁨${deLibelle}⁩';
+	@override String get transfertContexte => 'اختاروا الطالب ثم الفصل الموازي الذي يستقبله. يُسجَّل النقل وتُبلَّغ الأسرة به.';
+	@override String get eleveTitre => 'الطالب المراد نقله';
+	@override String get aucunEleve => 'لا طلاب في هذا الفصل';
+	@override String get aucunEleveDetail => 'لا أحد ليُنقَل.';
+	@override String get erreurEleves => 'تعذّرت قراءة طلاب الفصل. أعيدوا المحاولة بعد قليل.';
+	@override String get transfertCibleTitre => 'الفصل الذي يستقبل الطالب';
+	@override String get manqueEleve => 'ينقص الطالب: اختاروه من القائمة.';
+	@override String get confirmerTransfert => 'نقل الطالب';
+	@override String get transfertHorsLigne => 'يمكن تأكيد النقل عند عودة الاتصال. يبقى اختياركم معروضًا.';
+	@override String transfertFait({required Object prenom, required Object cible}) => '⁨${prenom}⁩ الآن في ⁨${cible}⁩.';
+	@override String get transfertDejaFait => 'تم هذا النقل من قبل: لم يُنجَز شيء مرتين. أغلقوا هذه الورقة لرؤية القائمة المحدّثة.';
+	@override String refusChevauchement({required Object prenom, required Object cible}) => '⁨${prenom}⁩ يتابع درسًا آخر في وقت ⁨${cible}⁩ نفسه: لا يمكن أن يكون الطالب في فصلين تتداخل حصصهما. اختاروا فصلًا آخر.';
+	@override String refusClassePleine({required Object cible}) => 'لم يعد في ⁨${cible}⁩ مكان. اختاروا فصلًا آخر.';
+	@override String refusAutre({required Object motif}) => 'لم يتم النقل: ⁨${motif}⁩. تحققوا من الفصل ثم أعيدوا المحاولة.';
+	@override String get transfertNonConfirme => 'النقل غير مؤكَّد: لم يصل رد الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون نقل مكرر.';
+	@override String historiqueTitre({required Object deLibelle}) => 'سجل ⁨${deLibelle}⁩';
+	@override String get historiqueVide => 'لا حركة';
+	@override String get historiqueVideDetail => 'ستظهر هنا عمليات الدمج والنقل الخاصة بهذا الفصل.';
+	@override String get historiqueErreur => 'تعذّرت قراءة السجل. أعيدوا المحاولة بعد قليل.';
+	@override String evenementFusionSortante({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'دُمج في ⁨${autre}⁩: لا طالب منقول',
+		one: 'دُمج في ⁨${autre}⁩: نُقل طالب واحد',
+		two: 'دُمج في ⁨${autre}⁩: نُقل طالبان',
+		few: 'دُمج في ⁨${autre}⁩: نُقل ⁨${n}⁩ طلاب',
+		many: 'دُمج في ⁨${autre}⁩: نُقل ⁨${n}⁩ طالبًا',
+		other: 'دُمج في ⁨${autre}⁩: نُقل ⁨${n}⁩ طالب',
+	);
+	@override String evenementFusionEntrante({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'دمج مع ⁨${autre}⁩: لا طالب مستقبَل',
+		one: 'دمج مع ⁨${autre}⁩: استُقبل طالب واحد',
+		two: 'دمج مع ⁨${autre}⁩: استُقبل طالبان',
+		few: 'دمج مع ⁨${autre}⁩: استُقبل ⁨${n}⁩ طلاب',
+		many: 'دمج مع ⁨${autre}⁩: استُقبل ⁨${n}⁩ طالبًا',
+		other: 'دمج مع ⁨${autre}⁩: استُقبل ⁨${n}⁩ طالب',
+	);
+	@override String evenementTransfertSortant({required Object prenom, required Object autre}) => 'نُقل ⁨${prenom}⁩ إلى ⁨${autre}⁩';
+	@override String evenementTransfertEntrant({required Object prenom, required Object autre}) => 'نُقل ⁨${prenom}⁩ من ⁨${autre}⁩';
+	@override String quand({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩';
+}
+
+// Path: admin.tirage
+class _Traductions$admin$tirage$ar extends Traductions$admin$tirage$fr {
+	_Traductions$admin$tirage$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'قرعة المراقبة';
+	@override String get sousTitre => 'يسحب الخادم بالقرعة الحصة التي يتلقاها كل مراقب. تحدد الإدارة القواعد، ولا يختار المراقب فصله أبدًا.';
+	@override String get sansDonnees => 'تعذّر تحميل القرعات';
+	@override String get erreur => 'تعذّرت قراءة القرعات: ربما لم تصل القراءة إلى رواية. أعيدوا المحاولة بعد قليل.';
+	@override String get indisponibleTitre => 'متاحة عند الربط بالخادم';
+	@override String get indisponiblePhrase => 'ستظهر قواعد القرعة وسجلها هنا فور الربط بالخادم. إلى ذلك الحين لا يُعرض شيء: لا قرعة مختلقة.';
+	@override String get reserveTitre => 'هذه الشاشة مخصصة للإدارة';
+	@override String get reservePhrase => 'ليس لحسابكم حق الاطلاع على القرعات: هي مخصصة للإدارة حتى لا يستطيع أحد توقع من سيُراقَب. إن احتجتم إلى ذلك فاطلبوا الإذن من الإدارة.';
+	@override String get reglesTitre => 'قواعد القرعة';
+	@override String get reglesIntro => 'تُطبَّق هذه القواعد على القرعات القادمة. المهام الموزعة لا تتغير. يُسجَّل كل تعديل في سجل التدقيق.';
+	@override String get frequenceTitre => 'التواتر';
+	@override String get frequenceDetail => 'أقصى عدد من المهام يتلقاه المراقب في الأسبوع.';
+	@override String missionsParSemaine({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا مهمة في الأسبوع',
+		one: 'مهمة واحدة في الأسبوع',
+		two: 'مهمتان في الأسبوع',
+		few: '⁨${n}⁩ مهام في الأسبوع',
+		many: '⁨${n}⁩ مهمة في الأسبوع',
+		other: '⁨${n}⁩ مهمة في الأسبوع',
+	);
+	@override String get ponderationTitre => 'الترجيح';
+	@override String get ponderationDetail => 'كلما قوي الوزن زادت فرص سحب هذه الحصص. تبقى القرعة غير قابلة للتوقع على المعلم والمراقب معًا.';
+	@override String get critereEnseignantsRecents => 'معلمون التحقوا حديثًا';
+	@override String get critereClassesSignalees => 'فصول أُبلغ عنها للإدارة';
+	@override String get critereHeuresDePointe => 'ساعات الذروة';
+	@override String get niveauAucun => 'بلا وزن';
+	@override String get niveauNormal => 'وزن عادي';
+	@override String get niveauFort => 'وزن قوي';
+	@override String get ciblesTitre => 'فصول أو معلمون مستهدفون';
+	@override String get ciblesDetail => 'يُسحب الهدف أولًا عندما تكون حصته مباشرة. لا يُعلَن أبدًا للمراقب ولا للمعلم.';
+	@override String get aucuneCible => 'لا هدف: لكل الحصص المباشرة الفرص نفسها، بحسب الوزن.';
+	@override String get cibleClasse => 'فصل';
+	@override String get cibleEnseignant => 'معلم';
+	@override String retirerCible({required Object libelle}) => 'إزالة ⁨${libelle}⁩';
+	@override String get ajouterCible => 'إضافة هدف';
+	@override String get ajouterTitre => 'إضافة هدف';
+	@override String get ajouterContexte => 'اختاروا الفصل أو المعلم الذي يُسحب أولًا. يُضاف الهدف إلى القواعد ثم تحفظونها.';
+	@override String get ajouterChoix => 'الفصل أو المعلم المستهدف';
+	@override String get ajouterConfirmer => 'إضافة هذا الهدف';
+	@override String get manqueCible => 'ينقص الهدف: اختاروه من القائمة.';
+	@override String get aucunCandidat => 'لا فصل ولا معلم يمكن استهدافه';
+	@override String get aucunCandidatDetail => 'كل الفصول والمعلمين مستهدفون بالفعل أو لا توجد حصص بعد.';
+	@override String get erreurCandidats => 'تعذّرت قراءة قائمة الأهداف. أعيدوا المحاولة بعد قليل.';
+	@override String get enregistrer => 'حفظ القواعد';
+	@override String get enregistrees => 'سُجِّلت القواعد. تُطبَّق على القرعات القادمة.';
+	@override String get nonConfirmees => 'الحفظ غير مؤكَّد: لم يصل رد الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون تكرار.';
+	@override String refusees({required Object motif}) => 'لم تُحفظ القواعد: ⁨${motif}⁩. تحققوا منها ثم أعيدوا المحاولة.';
+	@override String get horsLigne => 'يمكن حفظ القواعد عند عودة الاتصال. تبقى اختياراتكم معروضة.';
+	@override String get lectureSeule => 'يمكنكم قراءة هذه القواعد دون تعديلها: التعديل مخصص لشخص من الإدارة له هذا الحق.';
+	@override String get historiqueTitre => 'سجل القرعات';
+	@override String get historiqueDetail => 'تُحفظ كل قرعة وكل مهمة لم تُراقَب مع تاريخها. لا تطلع عليها إلا الإدارة: لا يرى المراقب إلا مهمته.';
+	@override String get rechercheLibelle => 'البحث عن قرعة';
+	@override String get rechercheAide => 'الفصل أو المعلم أو المراقب';
+	@override String get filtreTous => 'الكل';
+	@override String get filtreAttribuees => 'الموزعة';
+	@override String get filtreEnCours => 'المراقبات الجارية';
+	@override String get filtreControlees => 'التي روقبت';
+	@override String get filtreNonControlees => 'التي لم تُراقَب';
+	@override String get filtreDejaControlees => 'المراقَبة سابقًا';
+	@override String get colonneQuand => 'تاريخ السحب';
+	@override String get colonneClasse => 'الفصل';
+	@override String get colonneEnseignant => 'المعلم';
+	@override String get colonneControleur => 'المراقب';
+	@override String get colonneCritere => 'القرعة';
+	@override String get colonneStatut => 'المهمة';
+	@override String get statutAttribuee => 'موزعة';
+	@override String get statutEnCours => 'مراقبة جارية';
+	@override String get statutControlee => 'روقبت';
+	@override String get statutNonControlee => 'لم تُراقَب';
+	@override String get statutDejaControlee => 'سبقه مراقب آخر';
+	@override String get rapportEnvoye => 'أُرسل تقرير إلى الإدارة';
+	@override String get critereAleatoire => 'بالصدفة';
+	@override String get criterePonderation => 'بحسب الوزن';
+	@override String get critereCible => 'هدف';
+	@override String get vide => 'لا قرعات حتى الآن';
+	@override String get videDetail => 'ستظهر القرعات هنا بمجرد وجود حصص مباشرة.';
+	@override String get aucunAvecCeFiltre => 'لا قرعات بهذا المعيار';
+	@override String get aucunAvecCeFiltreDetail => 'غيّروا المعيار لرؤية بقية القرعات.';
+	@override String position({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩';
+	@override String positionSemantique({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩ من سجل القرعات';
+	@override String get precedente => 'الصفحة السابقة من سجل القرعات';
+	@override String get suivante => 'الصفحة التالية من سجل القرعات';
+	@override String resume({required Object debut, required Object fin, required Object total}) => 'القرعات من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩';
+	@override String quand({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩';
 }
 
 // Path: comptable.nav
@@ -4496,7 +4904,7 @@ class _Traductions$comptable$commun$ar extends Traductions$comptable$commun$fr {
 	);
 	@override String get montantActuel => 'المبلغ الحالي';
 	@override String get manque => 'المتبقي لبلوغ الهدف';
-	@override String atteint({required Object pourcent}) => 'تحقق ${pourcent} %';
+	@override String atteint({required Object pourcent}) => 'تحقق ${pourcent} %';
 	@override String get modeCalcul => 'طريقة الحساب';
 	@override String get modeMontantFixe => 'مبلغ مستهدف ثابت';
 	@override String get modeCouvertureMois => 'تغطية بعدد أشهر المصاريف الأساسية';
@@ -4662,7 +5070,7 @@ class _Traductions$comptable$tresorerie$ar extends Traductions$comptable$tresore
 	@override String get coffresPhrase => 'حيث يُخصَّص المال. المبلغ المحمي لا يُحسب أبدًا ضمن الحر.';
 	@override String get coffreProtege => 'محمي';
 	@override String get coffreNonProtege => 'غير محمي';
-	@override String partDetenue({required Object part}) => '${part} % من الخزينة المحتفَظ بها';
+	@override String partDetenue({required Object part}) => '${part} % من الخزينة المحتفَظ بها';
 	@override String regleUsage({required Object regle}) => 'قاعدة الاستخدام: ${regle}';
 	@override String get coffresVide => 'لم يُرجَع أي صندوق بعد.';
 	@override String get coffresVidePhrase => 'ستظهر الصناديق السبعة هنا بمجرد أن يُرجعها المصدر.';
@@ -4673,7 +5081,7 @@ class _Traductions$comptable$tresorerie$ar extends Traductions$comptable$tresore
 	@override late final _Traductions$comptable$tresorerie$regle$ar regle = _Traductions$comptable$tresorerie$regle$ar._(_root);
 	@override String get cadence => 'الوتيرة';
 	@override late final _Traductions$comptable$tresorerie$cadences$ar cadences = _Traductions$comptable$tresorerie$cadences$ar._(_root);
-	@override String seuilAlerte({required Object pourcent}) => 'تنبيه دون ${pourcent} % من المبلغ المستهدف';
+	@override String seuilAlerte({required Object pourcent}) => 'تنبيه دون ${pourcent} % من المبلغ المستهدف';
 	@override String get retraitValidation => 'كل سحب يتطلب مصادقة إضافية.';
 	@override String get retraitSansValidation => 'لا تشترط السياسة مصادقة للسحب؛ ويبقى معامَلًا كحركة حساسة.';
 	@override String version({required Object version}) => 'الإصدار ${version}';
@@ -5407,6 +5815,9 @@ class _Traductions$inscription$usage$ar extends Traductions$inscription$usage$fr
 	@override String get familleTitre => 'أنا وأسرتي';
 	@override String get familleDescription => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.';
 	@override String get enseignant => 'أنا معلم';
+	@override String get coursQuestion => 'هل تتابع أنت أيضًا دروسًا؟';
+	@override String get coursOui => 'نعم';
+	@override String get coursNon => 'لا';
 }
 
 // Path: inscription.recap
@@ -6340,6 +6751,215 @@ class _Traductions$controleur$controle$ar extends Traductions$controleur$control
 	@override String get erreur => 'تعذّرت قراءة زيارتك القادمة، غالبًا بسبب الاتصال أو خدمة غير متاحة مؤقتًا. أعد المحاولة بعد لحظة.';
 }
 
+// Path: suiviDemandes.etapes
+class _Traductions$suiviDemandes$etapes$ar extends Traductions$suiviDemandes$etapes$fr {
+	_Traductions$suiviDemandes$etapes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get envoyee => 'تم إرسال الطلب';
+	@override String get listeAttente => 'في قائمة الانتظار';
+	@override String get classeValidee => 'تم اعتماد الفصل';
+	@override String get enseignantAffecte => 'تم تعيين المعلم';
+	@override String get eleveIntegre => 'الطالب مندمج في الفصل';
+	@override String get coursCommences => 'بدء الدروس';
+}
+
+// Path: suiviDemandes.etats
+class _Traductions$suiviDemandes$etats$ar extends Traductions$suiviDemandes$etats$fr {
+	_Traductions$suiviDemandes$etats$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get fait => 'تم';
+	@override String get enCours => 'جارية';
+	@override String get prochaine => 'الخطوة التالية';
+	@override String get aVenir => 'قادمة';
+}
+
+// Path: suiviDemandes.situation
+class _Traductions$suiviDemandes$situation$ar extends Traductions$suiviDemandes$situation$fr {
+	_Traductions$suiviDemandes$situation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get envoyee => 'وصل طلبكم إلى الإدارة';
+	@override String get listeAttente => 'طلبكم في قائمة الانتظار';
+	@override String get classeValidee => 'فصلكم جاهز: ينتظر معلمه';
+	@override String get enseignantAffecte => 'تم اعتماد الفصل · تم تعيين المعلم';
+	@override String get eleveIntegre => 'تم اعتماد الفصل · تم تعيين المعلم · الطالب مندمج';
+	@override String get coursCommences => 'بدأت الدروس';
+}
+
+// Path: suiviDemandes.prochaine
+class _Traductions$suiviDemandes$prochaine$ar extends Traductions$suiviDemandes$prochaine$fr {
+	_Traductions$suiviDemandes$prochaine$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get envoyee => 'الخطوة التالية: تكوين الفصل';
+	@override String get listeAttente => 'نُبلغكم فور توفر مكان. لا يُعلَن أي موعد ما لم يكن معروفًا.';
+	@override String get classeValidee => 'الخطوة التالية: تعيين معلم الفصل. نُبلغكم فور ذلك.';
+	@override String get eleveIntegre => 'الخطوة التالية: بدء الدروس';
+}
+
+// Path: suiviDemandes.jalon
+class _Traductions$suiviDemandes$jalon$ar extends Traductions$suiviDemandes$jalon$fr {
+	_Traductions$suiviDemandes$jalon$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String date({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩';
+	@override String apres({required Object date, required Object heure, required Object duree}) => '⁨${date}⁩ في ⁨${heure}⁩، ⁨${duree}⁩';
+	@override String get aussitot => 'فورًا';
+	@override String minutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'بعد أقل من دقيقة',
+		one: 'بعد دقيقة',
+		two: 'بعد دقيقتين',
+		few: 'بعد ⁨${n}⁩ دقائق',
+		many: 'بعد ⁨${n}⁩ دقيقة',
+		other: 'بعد ⁨${n}⁩ دقيقة',
+	);
+	@override String heures({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'بعد أقل من ساعة',
+		one: 'بعد ساعة',
+		two: 'بعد ساعتين',
+		few: 'بعد ⁨${n}⁩ ساعات',
+		many: 'بعد ⁨${n}⁩ ساعة',
+		other: 'بعد ⁨${n}⁩ ساعة',
+	);
+	@override String jours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'في اليوم نفسه',
+		one: 'بعد يوم',
+		two: 'بعد يومين',
+		few: 'بعد ⁨${n}⁩ أيام',
+		many: 'بعد ⁨${n}⁩ يومًا',
+		other: 'بعد ⁨${n}⁩ يوم',
+	);
+}
+
+// Path: suiviDemandes.changement
+class _Traductions$suiviDemandes$changement$ar extends Traductions$suiviDemandes$changement$fr {
+	_Traductions$suiviDemandes$changement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titrePage => 'تغيّر الفصل';
+	@override String titre({required Object dePrenom}) => 'تغيّر فصل ⁨${dePrenom}⁩';
+	@override String fusion({required Object prenom}) => 'دُمج فصلكم مع فصل آخر. هذا هو فصل ⁨${prenom}⁩ الآن.';
+	@override String transfert({required Object prenom}) => 'نقلت الإدارة ⁨${prenom}⁩ إلى فصل آخر. هذا هو فصله الجديد.';
+	@override String get classe => 'الفصل الجديد';
+	@override String get enseignant => 'المعلم';
+	@override String get sansEnseignant => 'سنُعلمكم باسم معلمه فور تعيينه.';
+	@override String get date => 'تاريخ التغيير';
+	@override String get lien => 'عرض الفصل الجديد';
+	@override String lienPour({required Object dePrenom}) => 'عرض فصل ⁨${dePrenom}⁩ الجديد';
+	@override String get retour => 'العودة إلى متابعة الطلبات';
+	@override String get introuvable => 'لم يعد هذا التغيير معروضًا';
+	@override String get introuvableDetail => 'عودوا إلى المتابعة لمعرفة أين وصلت طلباتكم.';
+}
+
+// Path: suiviDemandes.close
+class _Traductions$suiviDemandes$close$ar extends Traductions$suiviDemandes$close$fr {
+	_Traductions$suiviDemandes$close$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get retiree => 'تم سحب الطلب';
+	@override String get nonRetenue => 'لم يُقبل الطلب';
+	@override String get close => 'أُغلق الطلب';
+	@override late final _Traductions$suiviDemandes$close$motif$ar motif = _Traductions$suiviDemandes$close$motif$ar._(_root);
+	@override String get suite => 'يمكنكم اختيار موعد آخر من المواعيد المقترحة.';
+	@override String get suiteSansChoix => 'لا يوجد موعد آخر مقترح حاليًا. عودوا إلى هذه الصفحة لاحقًا.';
+	@override String choisirAutre({required Object prenom}) => 'اختيار موعد آخر لـ⁨${prenom}⁩';
+}
+
+// Path: suiviDemandes.accueil
+class _Traductions$suiviDemandes$accueil$ar extends Traductions$suiviDemandes$accueil$fr {
+	_Traductions$suiviDemandes$accueil$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'طلبات مواعيدكم';
+	@override String ligne({required Object prenom, required Object etat}) => '⁨${prenom}⁩: ⁨${etat}⁩';
+	@override String get voir => 'عرض متابعة الطلبات';
+}
+
+// Path: suiviDemandes.notification
+class _Traductions$suiviDemandes$notification$ar extends Traductions$suiviDemandes$notification$fr {
+	_Traductions$suiviDemandes$notification$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String envoyee({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: وصل طلبكم إلى الإدارة';
+	@override String listeAttente({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: طلبكم في قائمة الانتظار';
+	@override String classeValidee({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: فصلكم جاهز وينتظر معلمه';
+	@override String enseignantAffecte({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: تم اعتماد الفصل وتعيين المعلم';
+	@override String eleveIntegre({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: الطالب مندمج في الفصل';
+	@override String coursCommences({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: بدأت الدروس';
+	@override String changementFusion({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: دُمج فصلكم مع فصل آخر، عرض الفصل الجديد';
+	@override String changementTransfert({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: فصل جديد، عرض التفاصيل';
+	@override String close({required Object dePrenom, required Object motif}) => 'طلب موعد ⁨${dePrenom}⁩: ⁨${motif}⁩';
+}
+
+// Path: formulaire.motif
+class _Traductions$formulaire$motif$ar extends Traductions$formulaire$motif$fr {
+	_Traductions$formulaire$motif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get manqueSaisi => 'السبب ناقص: اكتبه في كلمات قليلة.';
+}
+
+// Path: motifs.reglageEnseignant
+class _Traductions$motifs$reglageEnseignant$ar extends Traductions$motifs$reglageEnseignant$fr {
+	_Traductions$motifs$reglageEnseignant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get horaire => 'التوقيت لم يعد مناسبًا';
+	@override String get niveau => 'المستوى لم يعد مناسبًا';
+	@override String get fuseau => 'تغيّر المنطقة الزمنية';
+	@override String get fratrie => 'جمع أطفال الأسرة معًا';
+}
+
+// Path: motifs.reglageDuree
+class _Traductions$motifs$reglageDuree$ar extends Traductions$motifs$reglageDuree$fr {
+	_Traductions$motifs$reglageDuree$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get tropLongue => 'المدة طويلة بالنسبة للسن';
+	@override String get plusDeTemps => 'الحاجة إلى وقت أطول';
+	@override String get pause => 'الحاجة إلى استراحة أثناء الدرس';
+	@override String get horaire => 'قيود توقيت الأسرة';
+}
+
+// Path: motifs.reglageMinimum
+class _Traductions$motifs$reglageMinimum$ar extends Traductions$motifs$reglageMinimum$fr {
+	_Traductions$motifs$reglageMinimum$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ecourtees => 'الحصص تُختصر كثيرًا';
+	@override String get reseau => 'انقطاعات متكررة في الشبكة';
+	@override String get duree => 'تغيّرت مدة الدروس';
+	@override String get horaire => 'قيود توقيت الأسرة';
+}
+
 // Path: commun.etats.chargementProlonge
 class _Traductions$commun$etats$chargementProlonge$ar extends Traductions$commun$etats$chargementProlonge$fr {
 	_Traductions$commun$etats$chargementProlonge$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -6702,7 +7322,44 @@ class _Traductions$salle$seance$outils$ar extends Traductions$salle$seance$outil
 	@override String get pointeur => 'المؤشر';
 	@override String get marquer => 'وضع علامة';
 	@override String get masquer => 'إخفاء';
-	@override String get annoter => 'كتابة ملاحظات';
+	@override String get ecrire => 'كتابة';
+	@override String get aideLecture => 'بدون أداة، تُقرأ الصفحة؛ وعند تكبيرها تُحرَّك بسحبها.';
+	@override String get aidePointeur => 'المؤشر: المس الصفحة لتشير إلى مقطع، ولا يبقى أي أثر.';
+	@override String get aideEcrire => 'الكتابة: اكتب على الصفحة. على شاشة اللمس، يحرّكها إصبعان.';
+}
+
+// Path: salle.seance.ecriture
+class _Traductions$salle$seance$ecriture$ar extends Traductions$salle$seance$ecriture$fr {
+	_Traductions$salle$seance$ecriture$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get palette => 'أدوات الكتابة';
+	@override String get terminer => 'إنهاء';
+	@override String get couleur => 'اللون';
+	@override String get couleurAide => 'اللون يدل على قصد الخط، للفصل كله.';
+	@override String get epaisseur => 'السُّمك';
+	@override String get epaisseurAide => 'رفيع لكتابة كلمة، وسميك للإحاطة.';
+	@override String get fine => 'رفيع';
+	@override String get moyenne => 'متوسط';
+	@override String get epaisse => 'سميك';
+	@override String get tuPeuxEcrire => 'يمكنك الكتابة على السبورة.';
+	@override String get vousPouvezEcrire => 'يمكنكم الكتابة على السبورة.';
+	@override String get repriseSayyid => 'السيد يستعيد السبورة.';
+	@override String get repriseSayyida => 'السيدة تستعيد السبورة.';
+	@override String repriseNom({required Object nom}) => 'عادت السبورة إلى ⁨${nom}⁩.';
+	@override String get choisirTu => 'المس «الكتابة» عندما تريد أن تكتب. وإلا فالصفحة للقراءة، ولا يبقى عليها أي خط.';
+	@override String get choisirVous => 'المسوا «الكتابة» عندما تريدون الكتابة. وإلا فالصفحة للقراءة، ولا يبقى عليها أي خط.';
+	@override String get aideEleveTu => 'اكتب بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطك؛ و«إنهاء» يعيد إلى القراءة.';
+	@override String get aideEleveVous => 'اكتبوا بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطكم؛ و«إنهاء» يعيد إلى القراءة.';
+	@override String get peutEcrire => 'الكتابة مسموحة';
+	@override String get autoriser => 'السماح بالكتابة';
+	@override String get retirer => 'سحب الإذن بالكتابة';
+	@override String autoriserSemantique({required Object prenom}) => 'السماح بالكتابة: ⁨${prenom}⁩';
+	@override String retirerSemantique({required Object dePrenom}) => 'سحب الإذن بالكتابة من ⁨${dePrenom}⁩';
+	@override String autoriserAide({required Object prenom}) => 'سيكون بإمكان ⁨${prenom}⁩ الكتابة على الصفحة أو السبورة. تبقى الصفحة والمادة بيدك.';
+	@override String get retirerAide => 'تبقى الخطوط على الصفحة؛ وتُسحب أدوات الكتابة.';
 }
 
 // Path: salle.seance.rail
@@ -6780,6 +7437,13 @@ class _Traductions$salle$seance$commandes$ar extends Traductions$salle$seance$co
 	@override String get focus => 'التركيز';
 	@override String get focusSemantique => 'التركيز، تكبير المحتوى وتصغير اللوحات';
 	@override String get quitterFocus => 'الخروج من التركيز';
+	@override String get quitterFocusSemantique => 'الخروج من التركيز وإظهار اللوحات';
+	@override String get focusGuide => 'تكبير';
+	@override String get quitterFocusGuide => 'إيقاف التكبير';
+	@override String get ajusterGuide => 'عرض الصفحة كاملة';
+	@override String get classeVoitSupport => 'يرى الفصل الصفحة دون الملاحظات.';
+	@override String get classeVoitAvecNotes => 'يرى الفصل الصفحة والملاحظات.';
+	@override String get classeVoitTableau => 'يرى الفصل السبورة دون الصفحة.';
 }
 
 // Path: salle.seance.bibliotheque
@@ -6796,7 +7460,7 @@ class _Traductions$salle$seance$bibliotheque$ar extends Traductions$salle$seance
 	@override String get revenir => 'العودة إلى المواد';
 	@override String get ouverture => 'جارٍ فتح المادة…';
 	@override String get echec => 'تعذّر فتح الملف.';
-	@override String get echecDetail => 'تعذّر تحميل ملف هذه المادة. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى.';
+	@override String get echecDetail => 'ملف هذه المادة غير متاح حاليًا. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى.';
 }
 
 // Path: salle.seance.surface
@@ -6809,6 +7473,51 @@ class _Traductions$salle$seance$surface$ar extends Traductions$salle$seance$surf
 	@override String get aucunSupport => 'اختر مادة أو اكتب على السبورة.';
 	@override String page({required Object titre, required Object page, required Object pages}) => '⁨${titre}⁩، الصفحة ⁨${page}⁩ من ⁨${pages}⁩';
 	@override String get supportMasque => 'السبورة، المادة مخفية';
+	@override String get supportArrive => 'المادة في الطريق…';
+	@override String get supportIndisponible => 'المادة لا تظهر.';
+	@override String get supportIndisponibleDetail => 'الملف غير متاح. أعد المحاولة: الحصة والصوت مستمران.';
+	@override String get reessayerSemantique => 'إعادة محاولة عرض المادة';
+	@override String get supportIllustratif => 'مادة توضيحية';
+}
+
+// Path: salle.seance.synchro
+class _Traductions$salle$seance$synchro$ar extends Traductions$salle$seance$synchro$fr {
+	_Traductions$salle$seance$synchro$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get nonPartagees => 'ملاحظاتك الجديدة غير مشارَكة.';
+	@override String get nonPartageesSuite => 'الملاحظات المنقّطة لا تظهر إلا على شاشتك، ريثما تعود السبورة إلى الاتصال.';
+	@override String get seReconnecte => 'السبورة تعيد الاتصال.';
+	@override String get reprise => 'استعادة السبورة…';
+	@override String get revient => 'السبورة تعود.';
+	@override String get ecritureSuspendue => 'تُستأنف الكتابة فور عودة السبورة.';
+	@override String get nonSauvegardees => 'ملاحظات هذه الحصة غير محفوظة.';
+	@override String get nonSauvegardeesSuite => 'تبقى على السبورة حتى نهاية الحصة، لكنها لن تُسترجع في الدرس القادم.';
+}
+
+// Path: salle.seance.rangement
+class _Traductions$salle$seance$rangement$ar extends Traductions$salle$seance$rangement$fr {
+	_Traductions$salle$seance$rangement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ranger => 'إرجاع إلى المكتبة';
+	@override String get menuSupport => 'إجراءات المادة المعروضة';
+	@override String get menuTableau => 'إجراءات السبورة الحرة';
+	@override String get range => 'أُرجعت المادة';
+	@override String get rangeDetail => 'تبقى في المكتبة، عند صفحتها ومع ملاحظاتها. «عرض على الفصل» يعيدها.';
+	@override String get tableauLibre => 'السبورة الحرة';
+	@override String get section => 'مواد أُرجعت خلال الحصة';
+	@override String reprise({required Object page, required Object total}) => 'الاستئناف من الصفحة ⁨${page}⁩ من ⁨${total}⁩.';
+	@override String get notesConservees => 'الملاحظات محفوظة في هذه الحصة فقط.';
+	@override String get effacer => 'مسح الملاحظات';
+	@override String get questionPage => 'مسح كل ملاحظات هذه الصفحة؟';
+	@override String get questionTableau => 'مسح كل ملاحظات السبورة؟';
+	@override String get consequencePage => 'تختفي ملاحظات هذه الصفحة عند الفصل كله.';
+	@override String get consequenceTableau => 'تختفي ملاحظات السبورة الحرة عند الفصل كله.';
 }
 
 // Path: salle.seance.capsule
@@ -7016,6 +7725,7 @@ class _Traductions$compte$tuteur$securite$ar extends Traductions$compte$tuteur$s
 	@override String get methode => 'طريقة الدخول';
 	@override String get methodeLien => 'رابط بالبريد الإلكتروني';
 	@override String get methodeGoogle => 'Google';
+	@override String get consentements => 'زيارات أولياء الأمور';
 }
 
 // Path: compte.tuteur.informations
@@ -7281,6 +7991,8 @@ class _Traductions$tc$groupe$carte$ar extends Traductions$tc$groupe$carte$fr {
 		many: '⁨${membres}⁩ طالبًا من أصل ⁨${seuil}⁩',
 		other: '⁨${membres}⁩ طالب من أصل ⁨${seuil}⁩',
 	);
+	@override String get entreeSePrepare => 'دخولكم قيد التحضير. أعيدوا المحاولة بعد لحظة.';
+	@override String get entreeAttendReseau => 'ستتمكنون من الدخول عند عودة الشبكة.';
 }
 
 // Path: tc.groupe.enseignant
@@ -8619,6 +9331,7 @@ class _Traductions$com$messages$types$ar extends Traductions$com$messages$types$
 	@override String get dossier => 'الملف';
 	@override String get mission => 'مهمة المراقبة';
 	@override String get remplacement => 'الاستبدال';
+	@override String get profilPaiement => 'ملف الدفع';
 	@override String get autre => 'موضوع آخر';
 }
 
@@ -9310,7 +10023,7 @@ class _Traductions$admin$groupes$liste$ar extends Traductions$admin$groupes$list
 
 	// Translations
 	@override String get rechercheLibelle => 'البحث عن فصل';
-	@override String get rechercheAide => 'اسم الفصل أو رقمه أو رمزه أو معلمه';
+	@override String get rechercheAide => 'الاسم أو الرمز أو المعلم';
 	@override String get filtreAttente => 'في انتظار معلم';
 	@override String get filtreJour => 'اليوم';
 	@override String get filtreTousJours => 'كل الأيام';
@@ -9331,6 +10044,10 @@ class _Traductions$admin$groupes$liste$ar extends Traductions$admin$groupes$list
 	@override String get precedente => 'الصفحة السابقة من الفصول';
 	@override String get suivante => 'الصفحة التالية من الفصول';
 	@override String resume({required Object debut, required Object fin, required Object total}) => 'الفصول من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩';
+	@override String get filtreRemplissage => 'الامتلاء';
+	@override String get filtreTousRemplissages => 'كل مستويات الامتلاء';
+	@override String get remplissagePleines => 'الفصول الممتلئة';
+	@override String get remplissagePlaces => 'الفصول التي بها أماكن';
 }
 
 // Path: admin.journal.evenements
@@ -9343,6 +10060,30 @@ class _Traductions$admin$journal$evenements$ar extends Traductions$admin$journal
 	@override String get observationEntree => 'بدأت زيارة متابعة';
 	@override String get observationSortie => 'انتهت زيارة متابعة';
 	@override String get observationPolitiqueGroupeModifiee => 'عُدِّلت قواعد متابعة الفصل';
+}
+
+// Path: admin.regroupements.liste
+class _Traductions$admin$regroupements$liste$ar extends Traductions$admin$regroupements$liste$fr {
+	_Traductions$admin$regroupements$liste$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get rechercheLibelle => 'البحث عن طلب';
+	@override String get rechercheAide => 'اللغة أو المنطقة الزمنية أو اسم الفصل المنشأ';
+	@override String get filtreToutes => 'الكل';
+	@override String get filtreAFinir => 'معلم بانتظار التأكيد';
+	@override String get filtrePrets => 'الجاهزة';
+	@override String get filtreIncompletes => 'غير المكتملة';
+	@override String get filtrePublic => 'الفئة';
+	@override String get filtreTousPublics => 'كل الفئات';
+	@override String get aucunAvecCeFiltre => 'لا طلبات بهذا المعيار';
+	@override String get aucunAvecCeFiltreDetail => 'غيّروا المعيار لرؤية بقية الطلبات المجمّعة.';
+	@override String position({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩';
+	@override String positionSemantique({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩ من قائمة الطلبات المجمّعة';
+	@override String get precedente => 'الصفحة السابقة من الطلبات المجمّعة';
+	@override String get suivante => 'الصفحة التالية من الطلبات المجمّعة';
+	@override String resume({required Object debut, required Object fin, required Object total}) => 'الطلبات المجمّعة من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩';
 }
 
 // Path: comptable.statuts.paiement
@@ -9758,7 +10499,7 @@ class _Traductions$comptable$tresorerie$regle$ar extends Traductions$comptable$t
 	// Translations
 	@override String get desactivee => 'معطّلة';
 	@override String get montantFixe => 'مبلغ ثابت في كل موعد';
-	@override String pourcentage({required Object pourcent}) => '${pourcent} % من كل مقبوض مُثبَّت';
+	@override String pourcentage({required Object pourcent}) => '${pourcent} % من كل مقبوض مُثبَّت';
 	@override String get jusquAObjectif => 'الإكمال حتى المبلغ المستهدف';
 	@override String get proposee => 'اقتراح يتطلب تأكيدك';
 }
@@ -9896,12 +10637,11 @@ class _Traductions$comptable$beneficiaires$profil$ar extends Traductions$comptab
 	@override String demanderMiseAJour({required Object nom}) => 'طلب تحديث من ${nom}';
 	@override String suspendre({required Object nom}) => 'إيقاف مدفوعات ${nom}';
 	@override String reprendre({required Object nom}) => 'استئناف مدفوعات ${nom}';
-	@override String get voirFil => 'عرض محادثة «ملف الدفع»';
 	@override String externe({required Object nom}) => 'ليس لدى ${nom} حساب Rewayah: تتيح له دعوة آمنة إدخال وسيلته بنفسه. أعد إرسالها من التزامه، في المتعاقدين.';
 	@override String get voirContractuels => 'عرض التزامات المتعاقدين';
 	@override String get aucuneAction => 'لا يوجد أي إجراء مفتوح على هذا الملف: إنه محدَّث.';
-	@override String get relanceTitre => 'رسالة جاهزة في محادثة «ملف الدفع»';
-	@override String get relanceObjet => 'الموضوع: ملف الدفع';
+	@override String get filTitre => 'محادثة «ملف الدفع»';
+	@override String relanceRefusee({required Object nom}) => 'لا يمكن فتح محادثة «ملف الدفع» مع ${nom}: لا تسمح Rewayah بذلك لهذا المستفيد. اطلب تحديثًا بدلًا من ذلك، أو أبلغ الإدارة.';
 	@override String get messageModele => 'يجب إكمال معلومات الدفع الخاصة بك قبل دفعتك القادمة. يمكنك إضافتها من مساحتك الشخصية.';
 	@override String miseAJourDemandee({required Object nom}) => 'سُجّل طلب التحديث لـ ${nom}.';
 	@override String suspendus({required Object nom}) => 'أُوقفت مدفوعات ${nom}: لن تُصرف أي دفعة ما لم تُستأنف.';
@@ -10225,6 +10965,7 @@ class _Traductions$foyer$ajout$identite$ar extends Traductions$foyer$ajout$ident
 	@override String get nomAide => 'لا يُعرض لقب العائلة على المعلم أبدًا.';
 	@override String get age => 'العمر';
 	@override String get ageAide => 'العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك.';
+	@override String get ageFige => 'الإرسال جارٍ: يمكن تغيير العمر بعد الرد.';
 }
 
 // Path: foyer.ajout.erreurs
@@ -10476,6 +11217,20 @@ class _Traductions$dossiers$revue$etats$ar extends Traductions$dossiers$revue$et
 	@override String get refusNonAutorise => 'لا يمكن رفض هذا الملف في حالته الحالية.';
 }
 
+// Path: suiviDemandes.close.motif
+class _Traductions$suiviDemandes$close$motif$ar extends Traductions$suiviDemandes$close$motif$fr {
+	_Traductions$suiviDemandes$close$motif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get retraitFamille => 'لقد سحبتم هذا الطلب.';
+	@override String get offreRetiree => 'سحبت الأكاديمية هذا الموعد من عروضها.';
+	@override String get classeNonConstituee => 'تعذّر تكوين فصل هذا الموعد.';
+	@override String get refusDirection => 'لم تتمكن الإدارة من قبول هذا الطلب.';
+	@override String get inconnu => 'أُغلق هذا الطلب.';
+}
+
 // Path: classe.entree.demo.roles
 class _Traductions$classe$entree$demo$roles$ar extends Traductions$classe$entree$demo$roles$fr {
 	_Traductions$classe$entree$demo$roles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -10560,7 +11315,7 @@ class _Traductions$salle$seance$demo$groupes$ar extends Traductions$salle$seance
 
 	// Translations
 	@override String get seance => 'مجرى الحصة';
-	@override String get secours => 'حالات الطوارئ';
+	@override String get secours => 'حالات الاحتياط';
 	@override String get tableau => 'المواد والسبورة';
 }
 
@@ -10574,6 +11329,8 @@ class _Traductions$salle$seance$demo$roles$ar extends Traductions$salle$seance$d
 	@override String get eleve => 'طالب عادي';
 	@override String get guidee => 'وضع إمكانية الوصول';
 	@override String get enseignant => 'المعلم';
+	@override String get tuteur => 'وليّ الأمر المتابِع';
+	@override String get controleur => 'المراقِب';
 }
 
 // Path: salle.seance.demo.etats
@@ -10814,8 +11571,8 @@ class _Traductions$com$socle$composants$pieceJointe$ar extends Traductions$com$s
 	@override String get retirer => 'إزالة';
 	@override String retirerLecteur({required Object nom}) => 'إزالة ${nom}';
 	@override String tailleOctets({required Object taille}) => '${taille} بايت';
-	@override String tailleKo({required Object taille}) => '${taille} كيلوبايت';
-	@override String tailleMo({required Object taille}) => '${taille} ميغابايت';
+	@override String tailleKo({required Object taille}) => '${taille} كيلوبايت';
+	@override String tailleMo({required Object taille}) => '${taille} ميغابايت';
 	@override String get autorisee => 'جاهز للإرسال';
 	@override String get tropVolumineuse => 'الملف كبير جدًا';
 	@override String get tropVolumineuseDetail => 'هذا الملف يتجاوز الحجم المسموح به. اختر ملفًا أصغر.';
@@ -11758,6 +12515,39 @@ extension on TraductionsAr {
 			'commun.theme.clair' => 'المظهر الفاتح',
 			'commun.theme.sombre' => 'المظهر الداكن',
 			'commun.demarrage.ouverture' => 'جارٍ فتح Rewayah',
+			'reseau.retabli' => 'عادت الشبكة',
+			'reseau.horsLigne' => 'لا شبكة. ما هو معروض يبقى قابلًا للاطلاع.',
+			'reseau.enAttenteEnvoi' => 'سيُرسل بمجرد عودة الشبكة',
+			'reseau.syncImpossible' => 'تعذّرت المزامنة',
+			'destructif.irreversible' => 'لا يمكن التراجع عن هذا الإجراء.',
+			'presence.titre' => 'الحضور',
+			'presence.voir' => 'عرض الحضور',
+			'presence.mienne' => 'حضورك',
+			'presence.consolide' => 'مُوحَّد',
+			'presence.planifiee' => 'درس قادم',
+			'presence.enAttente' => 'لم يصل بعد',
+			'presence.enConnexion' => 'جارٍ الاتصال',
+			'presence.presente' => 'في القاعة',
+			'presence.enRetard' => 'متأخر',
+			'presence.deconnectee' => 'انقطع الاتصال',
+			'presence.enReconnexion' => 'جارٍ إعادة الاتصال',
+			'presence.reconnectee' => 'عاد',
+			'presence.sortie' => 'غادر الدرس',
+			'presence.absente' => 'غياب',
+			'presence.excusee' => 'غياب بعذر',
+			'presence.confirmationEnAttente' => 'للتأكيد',
+			'presence.corrigeeManuel' => 'تصحيح يدوي',
+			'presence.finalisee' => 'نهائي',
+			'presence.inconnu' => 'حالة غير معروفة',
+			'presence.entreeInstant' => 'دخل القاعة للتو',
+			'presence.entreeMinutes' => ({required Object minutes}) => 'في القاعة منذ ⁨${minutes}⁩ د',
+			'presence.retardMinutes' => ({required Object minutes}) => '⁨${minutes}⁩ د بعد الموعد',
+			'presence.silenceInstant' => 'لا أخبار منذ بضع ثوانٍ',
+			'presence.silenceMinutes' => ({required Object minutes}) => 'لا أخبار منذ ⁨${minutes}⁩ د',
+			'presence.attenteInstant' => 'بدأ الدرس للتو',
+			'presence.attenteMinutes' => ({required Object minutes}) => 'بدأ الدرس منذ ⁨${minutes}⁩ د',
+			'presence.etatMicroOuvert' => 'ميكروفونه مفتوح',
+			'presence.etatMicroCoupe' => 'ميكروفونه مغلق',
 			'etat.enDirect' => 'مباشر',
 			'etat.seanceAnnulee' => 'ملغاة',
 			'etat.annuleeValeur' => ({required Object valeur}) => 'ملغاة: ⁨${valeur}⁩',
@@ -11868,6 +12658,8 @@ extension on TraductionsAr {
 			'classe.entree.demo.annonce' => ({required Object texte}) => 'الإعلان: ⁨${texte}⁩',
 			'classe.entree.demo.detail' => ({required Object texte}) => 'التفاصيل: ⁨${texte}⁩',
 			'classe.entree.demo.retour' => 'العودة إلى القائمة',
+			'classe.entree.indisponibleCourt' => 'تعذّر تحميل معلومات الحصة',
+			'classe.entree.indisponibleInvitation' => 'ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة.',
 			'classe.catalogue' => 'اختيار فصل',
 			'classe.planning' => 'الجدول',
 			'classe.travail' => 'قبل الدرس القادم',
@@ -12001,6 +12793,8 @@ extension on TraductionsAr {
 			'classe.cartes.typesDetail.rappel' => 'لتاريخ لا يُنسى: رحلة، امتحان، تغيير في الموعد.',
 			'classe.cartes.modeles.annonce' => 'معلومة للفصل',
 			'classe.cartes.modeles.devoir' => 'للتحضير للحصة القادمة',
+			_ => null,
+		} ?? switch (path) {
 			'classe.cartes.modeles.lien' => 'مادة للاطلاع',
 			'classe.cartes.modeles.rappel' => 'لا تنسَ',
 			'classe.cartes.feuille.titreNouvelle' => 'بطاقة جديدة للفصل',
@@ -12036,15 +12830,13 @@ extension on TraductionsAr {
 			'salle.secours.reseauFaibleGuideeSuite' => 'الصوت يبقى أولوية.',
 			'salle.secours.reconnexion' => 'انقطع الاتصال. جارٍ إعادة الاتصال…',
 			'salle.secours.reconnexionGuidee' => 'جارٍ إعادة الاتصال بالحصة…',
-			_ => null,
-		} ?? switch (path) {
 			'salle.secours.retablie' => 'عاد الاتصال.',
 			'salle.secours.echec' => 'تعذّرت إعادة الاتصال.',
 			'salle.secours.echecGuidee' => 'الاتصال لا يعود.',
 			'salle.secours.horsLigne' => 'أنت غير متصل. تحتاج الحصة إلى اتصال.',
 			'salle.secours.reessayer' => 'إعادة المحاولة',
 			'salle.secours.quitter' => 'مغادرة',
-			'salle.secours.indisponible' => ({required Object commande}) => '${commande}. غير متاح أثناء إعادة الاتصال.',
+			'salle.secours.indisponible' => ({required Object commande}) => '⁨${commande}⁩. غير متاح أثناء إعادة الاتصال.',
 			'salle.secours.cameraInterdite' => 'الكاميرا معطّلة لهذا الملف.',
 			'salle.secours.microBloque' => 'الميكروفون محظور في إعدادات هذا الجهاز.',
 			'salle.secours.microBloqueGuidee' => 'الميكروفون محظور على هذا الجهاز.',
@@ -12160,7 +12952,35 @@ extension on TraductionsAr {
 			'salle.seance.outils.pointeur' => 'المؤشر',
 			'salle.seance.outils.marquer' => 'وضع علامة',
 			'salle.seance.outils.masquer' => 'إخفاء',
-			'salle.seance.outils.annoter' => 'كتابة ملاحظات',
+			'salle.seance.outils.ecrire' => 'كتابة',
+			'salle.seance.outils.aideLecture' => 'بدون أداة، تُقرأ الصفحة؛ وعند تكبيرها تُحرَّك بسحبها.',
+			'salle.seance.outils.aidePointeur' => 'المؤشر: المس الصفحة لتشير إلى مقطع، ولا يبقى أي أثر.',
+			'salle.seance.outils.aideEcrire' => 'الكتابة: اكتب على الصفحة. على شاشة اللمس، يحرّكها إصبعان.',
+			'salle.seance.ecriture.palette' => 'أدوات الكتابة',
+			'salle.seance.ecriture.terminer' => 'إنهاء',
+			'salle.seance.ecriture.couleur' => 'اللون',
+			'salle.seance.ecriture.couleurAide' => 'اللون يدل على قصد الخط، للفصل كله.',
+			'salle.seance.ecriture.epaisseur' => 'السُّمك',
+			'salle.seance.ecriture.epaisseurAide' => 'رفيع لكتابة كلمة، وسميك للإحاطة.',
+			'salle.seance.ecriture.fine' => 'رفيع',
+			'salle.seance.ecriture.moyenne' => 'متوسط',
+			'salle.seance.ecriture.epaisse' => 'سميك',
+			'salle.seance.ecriture.tuPeuxEcrire' => 'يمكنك الكتابة على السبورة.',
+			'salle.seance.ecriture.vousPouvezEcrire' => 'يمكنكم الكتابة على السبورة.',
+			'salle.seance.ecriture.repriseSayyid' => 'السيد يستعيد السبورة.',
+			'salle.seance.ecriture.repriseSayyida' => 'السيدة تستعيد السبورة.',
+			'salle.seance.ecriture.repriseNom' => ({required Object nom}) => 'عادت السبورة إلى ⁨${nom}⁩.',
+			'salle.seance.ecriture.choisirTu' => 'المس «الكتابة» عندما تريد أن تكتب. وإلا فالصفحة للقراءة، ولا يبقى عليها أي خط.',
+			'salle.seance.ecriture.choisirVous' => 'المسوا «الكتابة» عندما تريدون الكتابة. وإلا فالصفحة للقراءة، ولا يبقى عليها أي خط.',
+			'salle.seance.ecriture.aideEleveTu' => 'اكتب بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطك؛ و«إنهاء» يعيد إلى القراءة.',
+			'salle.seance.ecriture.aideEleveVous' => 'اكتبوا بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطكم؛ و«إنهاء» يعيد إلى القراءة.',
+			'salle.seance.ecriture.peutEcrire' => 'الكتابة مسموحة',
+			'salle.seance.ecriture.autoriser' => 'السماح بالكتابة',
+			'salle.seance.ecriture.retirer' => 'سحب الإذن بالكتابة',
+			'salle.seance.ecriture.autoriserSemantique' => ({required Object prenom}) => 'السماح بالكتابة: ⁨${prenom}⁩',
+			'salle.seance.ecriture.retirerSemantique' => ({required Object dePrenom}) => 'سحب الإذن بالكتابة من ⁨${dePrenom}⁩',
+			'salle.seance.ecriture.autoriserAide' => ({required Object prenom}) => 'سيكون بإمكان ⁨${prenom}⁩ الكتابة على الصفحة أو السبورة. تبقى الصفحة والمادة بيدك.',
+			'salle.seance.ecriture.retirerAide' => 'تبقى الخطوط على الصفحة؛ وتُسحب أدوات الكتابة.',
 			'salle.seance.rail.navigation' => 'التنقل',
 			'salle.seance.rail.marque' => 'Rewayah',
 			'salle.seance.rail.sousMarque' => 'Academy',
@@ -12206,6 +13026,13 @@ extension on TraductionsAr {
 			'salle.seance.commandes.focus' => 'التركيز',
 			'salle.seance.commandes.focusSemantique' => 'التركيز، تكبير المحتوى وتصغير اللوحات',
 			'salle.seance.commandes.quitterFocus' => 'الخروج من التركيز',
+			'salle.seance.commandes.quitterFocusSemantique' => 'الخروج من التركيز وإظهار اللوحات',
+			'salle.seance.commandes.focusGuide' => 'تكبير',
+			'salle.seance.commandes.quitterFocusGuide' => 'إيقاف التكبير',
+			'salle.seance.commandes.ajusterGuide' => 'عرض الصفحة كاملة',
+			'salle.seance.commandes.classeVoitSupport' => 'يرى الفصل الصفحة دون الملاحظات.',
+			'salle.seance.commandes.classeVoitAvecNotes' => 'يرى الفصل الصفحة والملاحظات.',
+			'salle.seance.commandes.classeVoitTableau' => 'يرى الفصل السبورة دون الصفحة.',
 			'salle.seance.bibliotheque.intro' => 'المادة التي تختارها تُفتح لك وحدك. يبقى الفصل على المادة الحالية حتى «عرض على الفصل».',
 			'salle.seance.bibliotheque.apercu' => 'معاينة خاصة',
 			'salle.seance.bibliotheque.apercuClasse' => 'ما زال الطلاب يرون المادة الحالية.',
@@ -12213,10 +13040,37 @@ extension on TraductionsAr {
 			'salle.seance.bibliotheque.revenir' => 'العودة إلى المواد',
 			'salle.seance.bibliotheque.ouverture' => 'جارٍ فتح المادة…',
 			'salle.seance.bibliotheque.echec' => 'تعذّر فتح الملف.',
-			'salle.seance.bibliotheque.echecDetail' => 'تعذّر تحميل ملف هذه المادة. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى.',
+			'salle.seance.bibliotheque.echecDetail' => 'ملف هذه المادة غير متاح حاليًا. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى.',
 			'salle.seance.surface.aucunSupport' => 'اختر مادة أو اكتب على السبورة.',
 			'salle.seance.surface.page' => ({required Object titre, required Object page, required Object pages}) => '⁨${titre}⁩، الصفحة ⁨${page}⁩ من ⁨${pages}⁩',
 			'salle.seance.surface.supportMasque' => 'السبورة، المادة مخفية',
+			'salle.seance.surface.supportArrive' => 'المادة في الطريق…',
+			'salle.seance.surface.supportIndisponible' => 'المادة لا تظهر.',
+			'salle.seance.surface.supportIndisponibleDetail' => 'الملف غير متاح. أعد المحاولة: الحصة والصوت مستمران.',
+			'salle.seance.surface.reessayerSemantique' => 'إعادة محاولة عرض المادة',
+			'salle.seance.surface.supportIllustratif' => 'مادة توضيحية',
+			'salle.seance.synchro.nonPartagees' => 'ملاحظاتك الجديدة غير مشارَكة.',
+			'salle.seance.synchro.nonPartageesSuite' => 'الملاحظات المنقّطة لا تظهر إلا على شاشتك، ريثما تعود السبورة إلى الاتصال.',
+			'salle.seance.synchro.seReconnecte' => 'السبورة تعيد الاتصال.',
+			'salle.seance.synchro.reprise' => 'استعادة السبورة…',
+			'salle.seance.synchro.revient' => 'السبورة تعود.',
+			'salle.seance.synchro.ecritureSuspendue' => 'تُستأنف الكتابة فور عودة السبورة.',
+			'salle.seance.synchro.nonSauvegardees' => 'ملاحظات هذه الحصة غير محفوظة.',
+			'salle.seance.synchro.nonSauvegardeesSuite' => 'تبقى على السبورة حتى نهاية الحصة، لكنها لن تُسترجع في الدرس القادم.',
+			'salle.seance.rangement.ranger' => 'إرجاع إلى المكتبة',
+			'salle.seance.rangement.menuSupport' => 'إجراءات المادة المعروضة',
+			'salle.seance.rangement.menuTableau' => 'إجراءات السبورة الحرة',
+			'salle.seance.rangement.range' => 'أُرجعت المادة',
+			'salle.seance.rangement.rangeDetail' => 'تبقى في المكتبة، عند صفحتها ومع ملاحظاتها. «عرض على الفصل» يعيدها.',
+			'salle.seance.rangement.tableauLibre' => 'السبورة الحرة',
+			'salle.seance.rangement.section' => 'مواد أُرجعت خلال الحصة',
+			'salle.seance.rangement.reprise' => ({required Object page, required Object total}) => 'الاستئناف من الصفحة ⁨${page}⁩ من ⁨${total}⁩.',
+			'salle.seance.rangement.notesConservees' => 'الملاحظات محفوظة في هذه الحصة فقط.',
+			'salle.seance.rangement.effacer' => 'مسح الملاحظات',
+			'salle.seance.rangement.questionPage' => 'مسح كل ملاحظات هذه الصفحة؟',
+			'salle.seance.rangement.questionTableau' => 'مسح كل ملاحظات السبورة؟',
+			'salle.seance.rangement.consequencePage' => 'تختفي ملاحظات هذه الصفحة عند الفصل كله.',
+			'salle.seance.rangement.consequenceTableau' => 'تختفي ملاحظات السبورة الحرة عند الفصل كله.',
 			'salle.seance.capsule.avatar' => ({required Object deNom}) => 'عرض معلومات ⁨${deNom}⁩',
 			'salle.seance.capsule.controlePossible' => 'المراقبة ممكنة. عرض المعلومات',
 			'salle.seance.capsule.controleActif' => 'المراقبة جارية. عرض المعلومات',
@@ -12236,11 +13090,13 @@ extension on TraductionsAr {
 			'salle.seance.demo.titre' => 'قاعة العرض التجريبي',
 			'salle.seance.demo.intro' => 'بيانات وهمية، دون خادم. اختر دورًا وحالة.',
 			'salle.seance.demo.groupes.seance' => 'مجرى الحصة',
-			'salle.seance.demo.groupes.secours' => 'حالات الطوارئ',
+			'salle.seance.demo.groupes.secours' => 'حالات الاحتياط',
 			'salle.seance.demo.groupes.tableau' => 'المواد والسبورة',
 			'salle.seance.demo.roles.eleve' => 'طالب عادي',
 			'salle.seance.demo.roles.guidee' => 'وضع إمكانية الوصول',
 			'salle.seance.demo.roles.enseignant' => 'المعلم',
+			'salle.seance.demo.roles.tuteur' => 'وليّ الأمر المتابِع',
+			'salle.seance.demo.roles.controleur' => 'المراقِب',
 			'salle.seance.demo.etats.repos' => 'وضع عادي',
 			'salle.seance.demo.etats.visite' => 'زيارة',
 			'salle.seance.demo.etats.rienPartage' => 'لا شيء مُشارَك',
@@ -12414,6 +13270,7 @@ extension on TraductionsAr {
 			'eleve.accueil.horsLigneDetail' => 'يمكنك الدخول بمجرد عودة الشبكة.',
 			'eleve.accueil.pausePriere' => 'استراحة للصلاة',
 			'eleve.accueil.pausePriereDetail' => ({required Object priere, required Object heure}) => '⁨${priere}⁩، نحو ⁨${heure}⁩',
+			'eleve.accueil.entreeSePrepare' => 'دخولك قيد التحضير. أعد المحاولة بعد لحظة.',
 			'eleve.coran.titre' => 'القرآن',
 			'eleve.coran.page' => ({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩',
 			'eleve.coran.juz' => ({required Object juz}) => 'الجزء ⁨${juz}⁩',
@@ -12450,6 +13307,8 @@ extension on TraductionsAr {
 			'enseignant.journee.titre' => 'اليوم',
 			'enseignant.journee.prochainCours' => 'الدرس القادم',
 			'enseignant.journee.coursEnCours' => 'حصة مباشرة',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.minuteurHeures' => ({required Object heures, required Object minutes}) => 'بعد ⁨${heures}⁩ س ⁨${minutes}⁩ د',
 			'enseignant.journee.minuteurMinutes' => ({required Object minutes}) => 'بعد ⁨${minutes}⁩ د',
 			'enseignant.journee.minuteurImminent' => 'يبدأ الآن',
@@ -12502,7 +13361,6 @@ extension on TraductionsAr {
 			'enseignant.journee.alertesErreur' => 'تعذّرت قراءة تنبيهات الحضور: لم يستجب الاتصال أو الخادم. أعد المحاولة بعد لحظة.',
 			'enseignant.journee.voirAutreAlerte' => 'عرض التنبيه الآخر',
 			'enseignant.journee.voirAutresAlertes' => ({required Object nombre}) => 'عرض التنبيهات الأخرى (⁨${nombre}⁩)',
-			'enseignant.journee.remplacementsTitre' => 'الاستخلافات المؤكَّدة',
 			'enseignant.journee.remplacementsVide' => 'لا درس لزميل تتولاه الآن.',
 			'enseignant.journee.voirTousRemplacements' => ({required Object nombre}) => 'عرض الكل: الاستخلافات المؤكَّدة (⁨${nombre}⁩)',
 			'enseignant.journee.heure' => 'الساعة',
@@ -12550,8 +13408,6 @@ extension on TraductionsAr {
 			'enseignant.ficheGroupe.introuvableDetail' => 'ربما أُغلق، أو هو لمعلم آخر.',
 			'enseignant.ficheGroupe.revue' => 'فتح مراجعة الفصل',
 			'enseignant.ficheGroupe.ressourcesTitre' => 'الموارد الأخيرة',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.ficheGroupe.progressionTitre' => 'تقدم الفصل',
 			'enseignant.classes.titre' => 'الفصول',
 			'enseignant.classes.vide' => 'لا فصل مسند إليك',
@@ -12684,6 +13540,8 @@ extension on TraductionsAr {
 			'enseignant.cahier.retourJournee' => 'العودة إلى يومي',
 			'enseignant.cahier.vide' => 'تعذّر استنتاج المعاينة',
 			'enseignant.cahier.videDetail' => 'لم يُسجَّل حضور ولا حدث لهذه الحصة. يمكنك مع ذلك إيداع دفتر المتابعة.',
+			'enseignant.cahier.introuvable' => 'الحصة غير موجودة',
+			'enseignant.cahier.introuvableDetail' => 'هذه الحصة ليست من حصصك، أو أن الرابط غير مكتمل. عد إلى يومك لاختيار حصة.',
 			'enseignant.cahier.erreur' => 'تعذّرت قراءة المعاينة.',
 			'enseignant.cahier.erreurDetail' => 'أعد المحاولة، أو أودع دفتر المتابعة دون المعاينة.',
 			'enseignant.cahier.echecEnvoi' => 'لم يُؤكَّد الإرسال. تحقّق قبل إعادة المحاولة.',
@@ -12963,6 +13821,8 @@ extension on TraductionsAr {
 			'compte.tuteur.identite.courrielAbsent' => 'عنوان الدخول غير متوفر',
 			'compte.tuteur.identite.connexionLien' => 'الدخول برابط يصل بالبريد الإلكتروني',
 			'compte.tuteur.identite.connexionGoogle' => 'الدخول بحساب Google',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.identite.connexionInconnue' => 'طريقة الدخول غير محددة',
 			'compte.tuteur.acces.titre' => 'الوصول والمدفوعات',
 			'compte.tuteur.acces.resume' => 'حالة كل ملف طالب وموعد انتهائه',
@@ -12974,6 +13834,7 @@ extension on TraductionsAr {
 			'compte.tuteur.securite.methode' => 'طريقة الدخول',
 			'compte.tuteur.securite.methodeLien' => 'رابط بالبريد الإلكتروني',
 			'compte.tuteur.securite.methodeGoogle' => 'Google',
+			'compte.tuteur.securite.consentements' => 'زيارات أولياء الأمور',
 			'compte.tuteur.informations.titre' => 'المعلومات الشخصية',
 			'compte.tuteur.informations.resume' => 'الاسم وعنوان الدخول واللغة والمنطقة الزمنية',
 			'compte.tuteur.informations.langueFuseau' => ({required Object ville}) => 'العربية · ⁨${ville}⁩',
@@ -13064,8 +13925,6 @@ extension on TraductionsAr {
 			'tuteur.accueil.seanceAnnulee' => 'لن تُعقد هذه الحصة.',
 			'tuteur.accueil.seanceNonTenue' => 'تعذّر عقد هذه الحصة.',
 			'tuteur.accueil.horaireIncertain' => 'فتح القاعة غير مؤكَّد الآن',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.pastilleAnnulee' => 'ملغاة',
 			'tuteur.accueil.pastilleNonTenue' => 'لم تُعقد',
 			'tuteur.accueil.pastilleTerminee' => 'منتهية',
@@ -13174,6 +14033,7 @@ extension on TraductionsAr {
 			'tuteur.reglages.aucunEnfant' => 'لا طفل في الأسرة',
 			'tuteur.reglages.aucunEnfantDetail' => 'أضف طفلًا لتتمكن من ضبط عرضه وكاميرته.',
 			'tuteur.reglages.erreur' => ({required Object message}) => 'لم يكتمل الحفظ: ⁨${message}⁩',
+			'tuteur.reglages.demandeManqueValeur' => 'المدة المطلوبة ناقصة: اخترها من القائمة، أو اضغط «آخر» واكتبها.',
 			'nav.eleve.accueil' => 'الرئيسية',
 			'nav.eleve.maClasse' => 'فصلي',
 			'nav.eleve.coran' => 'القرآن',
@@ -13218,8 +14078,10 @@ extension on TraductionsAr {
 			'nav.compte' => 'حسابي',
 			'nav.principale' => 'التنقل الرئيسي',
 			'nav.motSymbole' => 'Rewayah',
+			'nav.logoAccueil' => 'Rewayah Academy، الصفحة الرئيسية',
 			'nav.replier' => 'طي شريط التنقل',
 			'nav.deplier' => 'فتح شريط التنقل',
+			'tc.indisponible' => 'هذه الميزة غير متاحة بعد. لم يضِع شيء، والحصة مستمرة، وستتوفر قريبًا.',
 			'tc.groupe.mesGroupes.titre' => 'فصولي',
 			'tc.groupe.mesGroupes.aucun' => 'لا فصل حتى الآن',
 			'tc.groupe.mesGroupes.aucunDetail' => 'ستضعك الأكاديمية في فصل حين يتوفر موعد يناسبك.',
@@ -13235,6 +14097,8 @@ extension on TraductionsAr {
 			'tc.groupe.carte.dureeLibelle' => 'المدة',
 			'tc.groupe.carte.rejoindre' => 'انضمام',
 			'tc.groupe.carte.capacitePhrase' => ({required num membres, required Object seuil}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(membres, zero: 'لا طالب من أصل ⁨${seuil}⁩', one: 'طالب واحد من أصل ⁨${seuil}⁩', two: 'طالبان من أصل ⁨${seuil}⁩', few: '⁨${membres}⁩ طلاب من أصل ⁨${seuil}⁩', many: '⁨${membres}⁩ طالبًا من أصل ⁨${seuil}⁩', other: '⁨${membres}⁩ طالب من أصل ⁨${seuil}⁩', ), 
+			'tc.groupe.carte.entreeSePrepare' => 'دخولكم قيد التحضير. أعيدوا المحاولة بعد لحظة.',
+			'tc.groupe.carte.entreeAttendReseau' => 'ستتمكنون من الدخول عند عودة الشبكة.',
 			'tc.groupe.enseignant.sayyid' => 'سيد',
 			'tc.groupe.enseignant.sayyida' => 'سيدة',
 			'tc.groupe.enseignant.photoManquante' => 'الصورة مطلوبة',
@@ -13471,6 +14335,8 @@ extension on TraductionsAr {
 			'tc.classe.lien.instable' => 'الاتصال غير مستقر',
 			'tc.classe.lien.reconnexion' => 'جارٍ إعادة الاتصال',
 			'tc.classe.lien.retabli' => 'عاد الاتصال',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.lien.echec' => 'انقطع الاتصال',
 			'tc.classe.lien.retourDeSuspension' => 'أوقف النظام الدرس مؤقتًا. جارٍ التحقق من الاتصال.',
 			'tc.classe.barre.titre' => 'حصة مباشرة',
@@ -13578,8 +14444,6 @@ extension on TraductionsAr {
 			'tc.observation.visite.sonRecu' => 'الصوت يصل',
 			'tc.observation.visite.sonInterrompu' => 'الصوت منقطع',
 			'tc.observation.visite.agrandir' => 'تكبير',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.reduire' => 'تصغير',
 			'tc.observation.visite.cameraFermee' => 'الكاميرا مغلقة',
 			'tc.observation.visite.pasEncoreLa' => 'ليس في القاعة بعد',
@@ -13722,8 +14586,8 @@ extension on TraductionsAr {
 			'com.socle.composants.pieceJointe.retirer' => 'إزالة',
 			'com.socle.composants.pieceJointe.retirerLecteur' => ({required Object nom}) => 'إزالة ${nom}',
 			'com.socle.composants.pieceJointe.tailleOctets' => ({required Object taille}) => '${taille} بايت',
-			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} كيلوبايت',
-			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} ميغابايت',
+			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} كيلوبايت',
+			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} ميغابايت',
 			'com.socle.composants.pieceJointe.autorisee' => 'جاهز للإرسال',
 			'com.socle.composants.pieceJointe.tropVolumineuse' => 'الملف كبير جدًا',
 			'com.socle.composants.pieceJointe.tropVolumineuseDetail' => 'هذا الملف يتجاوز الحجم المسموح به. اختر ملفًا أصغر.',
@@ -13871,6 +14735,7 @@ extension on TraductionsAr {
 			'com.messages.types.dossier' => 'الملف',
 			'com.messages.types.mission' => 'مهمة المراقبة',
 			'com.messages.types.remplacement' => 'الاستبدال',
+			'com.messages.types.profilPaiement' => 'ملف الدفع',
 			'com.messages.types.autre' => 'موضوع آخر',
 			'com.messages.panneau.objets' => 'بخصوص',
 			'com.messages.panneau.participants' => 'المشاركون',
@@ -13984,6 +14849,8 @@ extension on TraductionsAr {
 			'com.vocal.demo.nonConfirme' => 'غير مؤكد',
 			'com.vocal.demo.indisponible' => 'غير متاح',
 			'com.vocal.demo.recu' => 'رسالة صوتية واردة',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.demo.repondre' => 'الرد في المحادثة',
 			'com.vocal.demo.envoyes' => 'الرسائل الصوتية المرسلة',
 			'com.vocal.demo.auteurEnseignante' => 'سيدة مريم، معلمة',
@@ -14092,8 +14959,6 @@ extension on TraductionsAr {
 			'com.communaute.regles.voir' => 'عرض القواعد',
 			'com.communaute.entree.lecteur' => 'فتح مجتمع المعلّمين',
 			'com.communaute.entree.detail' => 'أسئلة وطرق وموارد بين المعلّمين',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.demo.avertissement' => 'منشور يحتاج إلى مراجعة: إعلان تجاري',
 			'com.communaute.demo.lienAffilie' => 'رابط تسويق بالعمولة محظور',
 			'com.communaute.demo.vente' => 'بيع محظور',
@@ -14498,6 +15363,8 @@ extension on TraductionsAr {
 			'com.annonces.demoPublication.signalementVente' => 'منشور «دروس خصوصية متاحة»',
 			'com.annonces.demoPublication.extraitVente' => 'أقدم دروسًا خصوصية مدفوعة في عطلة نهاية الأسبوع، راسلوني.',
 			'com.annonces.demoPublication.signalementHorsSujet' => 'رد تحت «تنظيم مراجعة جماعية»',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.section' => 'إعلانات الفصل',
 			'com.annonces.annonce' => 'إعلان',
 			'com.annonces.publier' => 'نشر إعلان',
@@ -14559,11 +15426,6 @@ extension on TraductionsAr {
 			'choix.autre' => 'أخرى',
 			'choix.autreInvite' => 'حدّد',
 			'choix.selectionMultiple' => 'يمكن اختيار عدة إجابات',
-			'destructif.irreversible' => 'لا يمكن التراجع عن هذا الإجراء.',
-			'reseau.horsLigne' => 'لا شبكة. ما هو معروض يبقى قابلًا للاطلاع.',
-			'reseau.enAttenteEnvoi' => 'سيُرسل بمجرد عودة الشبكة',
-			'reseau.retabli' => 'عادت الشبكة',
-			'reseau.syncImpossible' => 'تعذّرت المزامنة',
 			'admin.finance.aValider' => 'للمصادقة',
 			'admin.tableau.titre' => 'مركز القيادة',
 			'admin.tableau.dossiers' => 'ملفات للاعتماد',
@@ -14591,6 +15453,8 @@ extension on TraductionsAr {
 			'admin.tableau.attenteAujourdhui' => 'أُودع اليوم',
 			'admin.tableau.attenteUnJour' => 'ينتظر منذ يوم',
 			'admin.tableau.attenteJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'ينتظر منذ اليوم', one: 'ينتظر منذ يوم واحد', two: 'ينتظر منذ يومين', few: 'ينتظر منذ ⁨${jours}⁩ أيام', many: 'ينتظر منذ ⁨${jours}⁩ يومًا', other: 'ينتظر منذ ⁨${jours}⁩ يوم', ), 
+			'admin.tableau.outilsPilotage' => 'متابعة المواعيد',
+			'admin.tableau.outilsPilotageDetail' => 'لكل موعد: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون.',
 			'admin.demandes.titre' => 'الطلبات والقواعد',
 			'admin.demandes.restanteUne' => 'طلب واحد قيد الانتظار',
 			'admin.demandes.restantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طلب قيد الانتظار', one: 'طلب واحد قيد الانتظار', two: 'طلبان قيد الانتظار', few: '⁨${n}⁩ طلبات قيد الانتظار', many: '⁨${n}⁩ طلبًا قيد الانتظار', other: '⁨${n}⁩ طلب قيد الانتظار', ), 
@@ -14606,8 +15470,6 @@ extension on TraductionsAr {
 			'admin.demandes.reclame' => 'المطلوب',
 			'admin.demandes.reclameReaffectation' => ({required Object dePrenom}) => 'تغيير معلم ⁨${dePrenom}⁩',
 			'admin.demandes.reclamePlafond' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(valeur, zero: 'رفع الحد الأقصى إلى صفر', one: 'رفع الحد الأقصى إلى طالب واحد', two: 'رفع الحد الأقصى إلى طالبين', few: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طلاب', many: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالبًا', other: 'رفع الحد الأقصى إلى ⁨${valeur}⁩ طالب', ), 
-			_ => null,
-		} ?? switch (path) {
 			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'جعل ⁨${regle}⁩ ⁨${valeur}⁩ د',
 			'admin.demandes.reclameRegleSansValeur' => ({required Object regle}) => 'مراجعة ⁨${regle}⁩',
 			'admin.demandes.motifDemande' => 'السبب المذكور',
@@ -14732,7 +15594,7 @@ extension on TraductionsAr {
 			'admin.groupes.observationErreur' => 'تعذّر حفظ الإعداد.',
 			'admin.groupes.observationCapaciteAbsente' => 'هذا التثبيت لا يملك بعد تحديث الخادم الذي يتطلبه هذا الإعداد (الترحيل 0036). إعادة المحاولة لن تغيّر شيئًا: يجب تطبيقه أولًا على قاعدة البيانات.',
 			'admin.groupes.liste.rechercheLibelle' => 'البحث عن فصل',
-			'admin.groupes.liste.rechercheAide' => 'اسم الفصل أو رقمه أو رمزه أو معلمه',
+			'admin.groupes.liste.rechercheAide' => 'الاسم أو الرمز أو المعلم',
 			'admin.groupes.liste.filtreAttente' => 'في انتظار معلم',
 			'admin.groupes.liste.filtreJour' => 'اليوم',
 			'admin.groupes.liste.filtreTousJours' => 'كل الأيام',
@@ -14753,6 +15615,10 @@ extension on TraductionsAr {
 			'admin.groupes.liste.precedente' => 'الصفحة السابقة من الفصول',
 			'admin.groupes.liste.suivante' => 'الصفحة التالية من الفصول',
 			'admin.groupes.liste.resume' => ({required Object debut, required Object fin, required Object total}) => 'الفصول من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩',
+			'admin.groupes.liste.filtreRemplissage' => 'الامتلاء',
+			'admin.groupes.liste.filtreTousRemplissages' => 'كل مستويات الامتلاء',
+			'admin.groupes.liste.remplissagePleines' => 'الفصول الممتلئة',
+			'admin.groupes.liste.remplissagePlaces' => 'الفصول التي بها أماكن',
 			'admin.diagnostics.titre' => 'تحديد المستوى',
 			'admin.diagnostics.intro' => 'ينتظر كل طالب مسجَّل مستوى أول قبل الانضمام إلى فصل: هنا يُقرَّر هذا التوجيه.',
 			'admin.diagnostics.aucunProgramme' => 'لا منهج منشور',
@@ -14900,6 +15766,7 @@ extension on TraductionsAr {
 			'admin.evaluations.champMotif' => 'السبب',
 			'admin.evaluations.motifRequis' => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.',
 			'admin.evaluations.journalisation' => 'تُدوَّن كل جدولة ونتيجة وإلغاء في سجل التدقيق.',
+			'admin.evaluations.manqueResultat' => 'اختر أولًا نتيجة التقييم.',
 			'admin.progression.titre' => 'التقدم',
 			'admin.progression.intro' => 'المستوى الحالي لكل طالب، وفصله، والعوائق أو الاستثناءات الجارية.',
 			'admin.progression.erreur' => 'تعذّرت قراءة التقدم. أعد المحاولة بعد لحظة.',
@@ -14979,6 +15846,7 @@ extension on TraductionsAr {
 			'admin.programmes.champMotif' => 'السبب',
 			'admin.programmes.motifRequis' => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.',
 			'admin.programmes.journalisation' => 'يُدوَّن كل إنشاء وتعديل وحذف ونشر في سجل التدقيق.',
+			'admin.programmes.publierSansNiveau' => 'أضف مستوى واحدًا على الأقل لتتمكن من نشر هذه النسخة.',
 			'admin.journal.titre' => 'السجل',
 			'admin.journal.chaineIntacte' => 'السجل سليم',
 			'admin.journal.chaineIntacteDetail' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا مدخل للتحقق منه بعد.', one: 'أُعيدت قراءة مدخل واحد: لم يُعدَّل ولم يُحذف منذ كتابته.', two: 'أُعيدت قراءة مدخلين واحدًا واحدًا: لم يُعدَّل أي منهما ولم يُحذف منذ كتابته.', few: 'أُعيدت قراءة ⁨${nombre}⁩ مدخلات واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.', many: 'أُعيدت قراءة ⁨${nombre}⁩ مدخلًا واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.', other: 'أُعيدت قراءة ⁨${nombre}⁩ مدخل واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.', ), 
@@ -15009,6 +15877,8 @@ extension on TraductionsAr {
 			'admin.journal.roleEleve' => 'طالب',
 			'admin.journal.roleControleur' => 'مراقب',
 			'admin.journal.roleComptable' => 'محاسب',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.roleAucun' => 'خارج الجلسة',
 			'admin.journal.evtKycLu' => 'اطُّلع على ملف الهوية',
 			'admin.journal.evtKycTranche' => 'حُسم ملف الهوية',
@@ -15120,8 +15990,6 @@ extension on TraductionsAr {
 			'admin.comptes.roleInconnu' => 'دور غير معروف',
 			'admin.comptes.pieceAucune' => 'لا وثيقة مودَعة',
 			'admin.comptes.pieceAVerifier' => 'للتحقق',
-			_ => null,
-		} ?? switch (path) {
 			'admin.comptes.pieceValidee' => 'معتمَدة',
 			'admin.comptes.pieceRefusee' => 'مرفوضة',
 			'admin.comptes.pieceNonVisible' => 'خارج صلاحيتك',
@@ -15193,6 +16061,212 @@ extension on TraductionsAr {
 			'admin.regroupements.demandes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طلب', one: 'طلب واحد', two: 'طلبان', few: '⁨${n}⁩ طلبات', many: '⁨${n}⁩ طلبًا', other: '⁨${n}⁩ طلب', ), 
 			'admin.regroupements.classesPossibles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا فصل ممكن', one: 'فصل واحد ممكن', two: 'فصلان ممكنان', few: '⁨${n}⁩ فصول ممكنة', many: '⁨${n}⁩ فصلًا ممكنًا', other: '⁨${n}⁩ فصل ممكن', ), 
 			'admin.regroupements.demandesVersClasses' => ({required Object demandes, required Object classes}) => '⁨${demandes}⁩ تتيح ⁨${classes}⁩',
+			'admin.regroupements.decoupagePleines' => ({required num n, required Object taille}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا فصل', one: 'فصل واحد بسعة ⁨${taille}⁩', two: 'فصلان بسعة ⁨${taille}⁩', few: '⁨${n}⁩ فصول بسعة ⁨${taille}⁩', many: '⁨${n}⁩ فصلًا بسعة ⁨${taille}⁩', other: '⁨${n}⁩ فصل بسعة ⁨${taille}⁩', ), 
+			'admin.regroupements.decoupageAucuneClasse' => 'لا فصل',
+			'admin.regroupements.decoupageDerniere' => ({required Object n}) => 'وفصل أخير يضم ⁨${n}⁩',
+			'admin.regroupements.decoupageAttente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أحد في الانتظار', one: 'طالب واحد في الانتظار', two: 'طالبان في الانتظار', few: '⁨${n}⁩ طلاب في الانتظار', many: '⁨${n}⁩ طالبًا في الانتظار', other: '⁨${n}⁩ طالب في الانتظار', ), 
+			'admin.regroupements.decoupage' => ({required Object detail}) => 'التقسيم المتوقع: ⁨${detail}⁩.',
+			'admin.regroupements.contexteReparti' => 'سيُوزَّع طلاب هذه الطلبات بحسب التقسيم المبيّن أدناه. ثم تؤكدون المعلم المقترح.',
+			'admin.regroupements.classesExistantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا فصل مفتوح بعدُ في هذا الموعد.', one: 'يوجد فصل واحد مفتوح في هذا الموعد: ينضم إليه الفصل الجديد دون تعديل أي فصل.', two: 'يوجد فصلان مفتوحان في هذا الموعد: ينضم إليهما الفصل الجديد دون تعديل أي فصل.', few: 'يوجد ⁨${n}⁩ فصول مفتوحة في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل.', many: 'يوجد ⁨${n}⁩ فصلًا مفتوحًا في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل.', other: 'يوجد ⁨${n}⁩ فصل مفتوح في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل.', ), 
+			'admin.regroupements.liste.rechercheLibelle' => 'البحث عن طلب',
+			'admin.regroupements.liste.rechercheAide' => 'اللغة أو المنطقة الزمنية أو اسم الفصل المنشأ',
+			'admin.regroupements.liste.filtreToutes' => 'الكل',
+			'admin.regroupements.liste.filtreAFinir' => 'معلم بانتظار التأكيد',
+			'admin.regroupements.liste.filtrePrets' => 'الجاهزة',
+			'admin.regroupements.liste.filtreIncompletes' => 'غير المكتملة',
+			'admin.regroupements.liste.filtrePublic' => 'الفئة',
+			'admin.regroupements.liste.filtreTousPublics' => 'كل الفئات',
+			'admin.regroupements.liste.aucunAvecCeFiltre' => 'لا طلبات بهذا المعيار',
+			'admin.regroupements.liste.aucunAvecCeFiltreDetail' => 'غيّروا المعيار لرؤية بقية الطلبات المجمّعة.',
+			'admin.regroupements.liste.position' => ({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩',
+			'admin.regroupements.liste.positionSemantique' => ({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩ من قائمة الطلبات المجمّعة',
+			'admin.regroupements.liste.precedente' => 'الصفحة السابقة من الطلبات المجمّعة',
+			'admin.regroupements.liste.suivante' => 'الصفحة التالية من الطلبات المجمّعة',
+			'admin.regroupements.liste.resume' => ({required Object debut, required Object fin, required Object total}) => 'الطلبات المجمّعة من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩',
+			'admin.pilotage.titre' => 'متابعة المواعيد',
+			'admin.pilotage.sousTitre' => 'لكل موعد ولكل فئة: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون.',
+			'admin.pilotage.sansDonnees' => 'تعذّر تحميل لوحة المتابعة',
+			'admin.pilotage.erreur' => 'تعذّرت قراءة لوحة المتابعة: ربما لم تصل القراءة إلى رواية. أعيدوا المحاولة بعد قليل.',
+			'admin.pilotage.indisponibleTitre' => 'متاحة عند الربط بالخادم',
+			'admin.pilotage.indisponiblePhrase' => 'ستظهر متابعة المواعيد هنا فور الربط بالخادم. إلى ذلك الحين لا يُعرض شيء: لا أرقام مختلقة.',
+			'admin.pilotage.vide' => 'لا مواعيد للمتابعة',
+			'admin.pilotage.videDetail' => 'ستظهر المواعيد هنا بمجرد وجود فصل أو طلب.',
+			'admin.pilotage.aucunAvecCeFiltre' => 'لا مواعيد بهذا المعيار',
+			'admin.pilotage.aucunAvecCeFiltreDetail' => 'غيّروا المعيار لرؤية بقية المواعيد.',
+			'admin.pilotage.vueEnsemble' => 'نظرة عامة',
+			'admin.pilotage.cleClasses' => 'الفصول',
+			'admin.pilotage.cleAttente' => 'في انتظار معلم',
+			'admin.pilotage.cleSousMinimum' => 'دون الحد الأدنى',
+			'admin.pilotage.cleDemandes' => 'الطلبات المعلّقة',
+			'admin.pilotage.cleLibres' => 'المعلمون المتاحون',
+			'admin.pilotage.cleManquants' => 'المعلمون الناقصون',
+			'admin.pilotage.attenteTitre' => 'فصول في انتظار معلم',
+			'admin.pilotage.attenteDetail' => 'أكّدوا معلمًا لكل فصل: تُبلَّغ الأسرة فور ذلك.',
+			'admin.pilotage.attenteHoraire' => ({required Object horaire}) => 'الموعد: ⁨${horaire}⁩',
+			'admin.pilotage.voirToutes' => 'عرض كل الفصول التي تنتظر معلمًا',
+			'admin.pilotage.horairesTitre' => 'المواعيد',
+			'admin.pilotage.horaire' => ({required Object jour, required Object heure, required Object ville}) => '⁨${jour}⁩ · ⁨${heure}⁩ · ⁨${ville}⁩',
+			'admin.pilotage.colonneHoraire' => 'الموعد',
+			'admin.pilotage.colonnePublic' => 'الفئة',
+			'admin.pilotage.colonneClasses' => 'الفصول',
+			'admin.pilotage.colonneRemplissage' => 'الامتلاء',
+			'admin.pilotage.colonneDemandes' => 'الطلبات المعلّقة',
+			'admin.pilotage.colonneLibres' => 'المعلمون المتاحون',
+			'admin.pilotage.colonneManquants' => 'المعلمون الناقصون',
+			'admin.pilotage.colonneEtat' => 'ما يستدعي الانتباه',
+			'admin.pilotage.remplissage' => ({required Object taux, required Object effectif, required Object capacite}) => '⁨${taux}⁩٪ (⁨${effectif}⁩ من ⁨${capacite}⁩)',
+			'admin.pilotage.remplissageInconnu' => 'لا أماكن مفتوحة',
+			'admin.pilotage.aucun' => 'لا أحد',
+			'admin.pilotage.nombreEtGenres' => ({required Object n, required Object genres}) => '⁨${n}⁩ (⁨${genres}⁩)',
+			'admin.pilotage.genreHommes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا معلم', one: 'معلم واحد', two: 'معلمان', few: '⁨${n}⁩ معلمين', many: '⁨${n}⁩ معلمًا', other: '⁨${n}⁩ معلم', ), 
+			'admin.pilotage.genreFemmes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا معلمة', one: 'معلمة واحدة', two: 'معلمتان', few: '⁨${n}⁩ معلمات', many: '⁨${n}⁩ معلمة', other: '⁨${n}⁩ معلمة', ), 
+			'admin.pilotage.genreIndetermine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا معلم', one: 'معلم واحد، الجنس يُؤكَّد لاحقًا', two: 'معلمان، الجنس يُؤكَّد لاحقًا', few: '⁨${n}⁩ معلمين، الجنس يُؤكَّد لاحقًا', many: '⁨${n}⁩ معلمًا، الجنس يُؤكَّد لاحقًا', other: '⁨${n}⁩ معلم، الجنس يُؤكَّد لاحقًا', ), 
+			'admin.pilotage.etatPenurie' => 'نقص في المعلمين',
+			'admin.pilotage.etatSousMinimum' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا فصل دون الحد الأدنى', one: 'فصل واحد دون الحد الأدنى', two: 'فصلان دون الحد الأدنى', few: '⁨${n}⁩ فصول دون الحد الأدنى', many: '⁨${n}⁩ فصلًا دون الحد الأدنى', other: '⁨${n}⁩ فصل دون الحد الأدنى', ), 
+			'admin.pilotage.etatAttente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا فصل ينتظر معلمًا', one: 'فصل واحد ينتظر معلمًا', two: 'فصلان ينتظران معلمًا', few: '⁨${n}⁩ فصول تنتظر معلمًا', many: '⁨${n}⁩ فصلًا ينتظر معلمًا', other: '⁨${n}⁩ فصل ينتظر معلمًا', ), 
+			'admin.pilotage.etatCouvert' => 'مغطّى',
+			'admin.pilotage.filtreTous' => 'كل المواعيد',
+			'admin.pilotage.filtrePenurie' => 'نقص',
+			'admin.pilotage.filtreSousMinimum' => 'دون الحد الأدنى',
+			'admin.pilotage.filtreAttente' => 'في انتظار معلم',
+			'admin.pilotage.filtrePublic' => 'الفئة',
+			'admin.pilotage.filtreTousPublics' => 'كل الفئات',
+			'admin.pilotage.position' => ({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩',
+			'admin.pilotage.positionSemantique' => ({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩ من لوحة المتابعة',
+			'admin.pilotage.precedente' => 'الصفحة السابقة من لوحة المتابعة',
+			'admin.pilotage.suivante' => 'الصفحة التالية من لوحة المتابعة',
+			'admin.pilotage.resume' => ({required Object debut, required Object fin, required Object total}) => 'المواعيد من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩',
+			'admin.fusion.actionFusionner' => 'الدمج مع فصل موازٍ',
+			'admin.fusion.actionTransferer' => 'نقل طالب',
+			'admin.fusion.actionHistorique' => 'سجل الفصل',
+			'admin.fusion.fusionTitre' => ({required Object libelle}) => 'دمج ⁨${libelle}⁩',
+			'admin.fusion.fusionContexte' => 'سينضم طلاب هذا الفصل إلى فصل موازٍ في الموعد نفسه ومن الفئة نفسها وفيه متسع. يتحرر معلم هذا الفصل. لا يتم شيء دون تأكيدكم.',
+			'admin.fusion.choixTitre' => 'الفصل الذي يستقبل الطلاب',
+			'admin.fusion.placesLibres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا مكان شاغر', one: 'مكان شاغر واحد', two: 'مكانان شاغران', few: '⁨${n}⁩ أماكن شاغرة', many: '⁨${n}⁩ مكانًا شاغرًا', other: '⁨${n}⁩ مكان شاغر', ), 
+			'admin.fusion.enseignantDe' => ({required Object nom}) => 'المعلم: ⁨${nom}⁩',
+			'admin.fusion.sansEnseignant' => 'بلا معلم حتى الآن',
+			'admin.fusion.aucuneCible' => 'لا فصل موازٍ فيه متسع كافٍ',
+			'admin.fusion.aucuneCibleDetail' => 'يلزم فصل في الموعد نفسه ومن الفئة نفسها وفيه متسع لجميع طلاب هذا الفصل.',
+			'admin.fusion.erreurCibles' => 'تعذّرت قراءة الفصول الموازية. أعيدوا المحاولة بعد قليل.',
+			'admin.fusion.sansDonneesCibles' => 'تعذّر تحميل قائمة الفصول الموازية',
+			'admin.fusion.apercuTitre' => 'ما الذي سيحدث',
+			'admin.fusion.apercuErreur' => 'تعذّر حساب معاينة الدمج. أعيدوا المحاولة بعد قليل.',
+			'admin.fusion.apercuMembres' => ({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طالب ينتقل إلى ⁨${cible}⁩', one: 'ينتقل طالب واحد إلى ⁨${cible}⁩', two: 'ينتقل طالبان إلى ⁨${cible}⁩', few: 'ينتقل ⁨${n}⁩ طلاب إلى ⁨${cible}⁩', many: 'ينتقل ⁨${n}⁩ طالبًا إلى ⁨${cible}⁩', other: 'ينتقل ⁨${n}⁩ طالب إلى ⁨${cible}⁩', ), 
+			'admin.fusion.apercuEffectif' => ({required Object cible, required Object apres, required Object capacite}) => 'سيضم ⁨${cible}⁩ ⁨${apres}⁩ من أصل ⁨${capacite}⁩.',
+			'admin.fusion.apercuEnseignantLibere' => ({required Object enseignant}) => 'لم يعد ⁨${enseignant}⁩ مكلفًا بهذا الفصل ويصبح متاحًا في هذا الموعد.',
+			'admin.fusion.apercuSansEnseignant' => 'ليس لهذا الفصل معلم: لا أحد يتحرر.',
+			'admin.fusion.apercuFamilles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أسرة تُبلَّغ.', one: 'تُبلَّغ أسرة واحدة.', two: 'تُبلَّغ أسرتان.', few: 'تُبلَّغ ⁨${n}⁩ أسر.', many: 'تُبلَّغ ⁨${n}⁩ أسرة.', other: 'تُبلَّغ ⁨${n}⁩ أسرة.', ), 
+			'admin.fusion.apercuIrreversible' => 'يُغلَق الفصل المدموج ويُحفظ سجل الفصلين. لا يمكن التراجع عن هذا القرار.',
+			'admin.fusion.confirmerFusion' => 'دمج الفصلين',
+			'admin.fusion.fusionHorsLigne' => 'يمكن تأكيد الدمج عند عودة الاتصال. يبقى اختياركم معروضًا.',
+			'admin.fusion.fusionFaite' => ({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'تم الدمج: لا طالب في ⁨${cible}⁩ بعد.', one: 'تم الدمج: طالب واحد في ⁨${cible}⁩ الآن.', two: 'تم الدمج: طالبان في ⁨${cible}⁩ الآن.', few: 'تم الدمج: ⁨${n}⁩ طلاب في ⁨${cible}⁩ الآن.', many: 'تم الدمج: ⁨${n}⁩ طالبًا في ⁨${cible}⁩ الآن.', other: 'تم الدمج: ⁨${n}⁩ طالب في ⁨${cible}⁩ الآن.', ), 
+			'admin.fusion.famillesPrevenues' => 'تم إبلاغ الأسر.',
+			'admin.fusion.fusionDejaFaite' => 'دمج عضو آخر من الإدارة هذا الفصل للتو: لم يُنجَز شيء مرتين. أغلقوا هذه الورقة لرؤية القائمة المحدّثة.',
+			'admin.fusion.fusionRefusee' => ({required Object motif}) => 'لم يتم الدمج: ⁨${motif}⁩. تحققوا من الفصول ثم أعيدوا المحاولة.',
+			'admin.fusion.fusionNonConfirmee' => 'الدمج غير مؤكَّد: لم يصل رد الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون دمج مكرر.',
+			'admin.fusion.manqueCible' => 'ينقص الفصل الذي يستقبل الطلاب: اختاروه من القائمة.',
+			'admin.fusion.transfertTitre' => ({required Object deLibelle}) => 'نقل طالب من ⁨${deLibelle}⁩',
+			'admin.fusion.transfertContexte' => 'اختاروا الطالب ثم الفصل الموازي الذي يستقبله. يُسجَّل النقل وتُبلَّغ الأسرة به.',
+			'admin.fusion.eleveTitre' => 'الطالب المراد نقله',
+			'admin.fusion.aucunEleve' => 'لا طلاب في هذا الفصل',
+			'admin.fusion.aucunEleveDetail' => 'لا أحد ليُنقَل.',
+			'admin.fusion.erreurEleves' => 'تعذّرت قراءة طلاب الفصل. أعيدوا المحاولة بعد قليل.',
+			'admin.fusion.transfertCibleTitre' => 'الفصل الذي يستقبل الطالب',
+			'admin.fusion.manqueEleve' => 'ينقص الطالب: اختاروه من القائمة.',
+			'admin.fusion.confirmerTransfert' => 'نقل الطالب',
+			'admin.fusion.transfertHorsLigne' => 'يمكن تأكيد النقل عند عودة الاتصال. يبقى اختياركم معروضًا.',
+			'admin.fusion.transfertFait' => ({required Object prenom, required Object cible}) => '⁨${prenom}⁩ الآن في ⁨${cible}⁩.',
+			'admin.fusion.transfertDejaFait' => 'تم هذا النقل من قبل: لم يُنجَز شيء مرتين. أغلقوا هذه الورقة لرؤية القائمة المحدّثة.',
+			'admin.fusion.refusChevauchement' => ({required Object prenom, required Object cible}) => '⁨${prenom}⁩ يتابع درسًا آخر في وقت ⁨${cible}⁩ نفسه: لا يمكن أن يكون الطالب في فصلين تتداخل حصصهما. اختاروا فصلًا آخر.',
+			'admin.fusion.refusClassePleine' => ({required Object cible}) => 'لم يعد في ⁨${cible}⁩ مكان. اختاروا فصلًا آخر.',
+			'admin.fusion.refusAutre' => ({required Object motif}) => 'لم يتم النقل: ⁨${motif}⁩. تحققوا من الفصل ثم أعيدوا المحاولة.',
+			'admin.fusion.transfertNonConfirme' => 'النقل غير مؤكَّد: لم يصل رد الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون نقل مكرر.',
+			'admin.fusion.historiqueTitre' => ({required Object deLibelle}) => 'سجل ⁨${deLibelle}⁩',
+			'admin.fusion.historiqueVide' => 'لا حركة',
+			'admin.fusion.historiqueVideDetail' => 'ستظهر هنا عمليات الدمج والنقل الخاصة بهذا الفصل.',
+			'admin.fusion.historiqueErreur' => 'تعذّرت قراءة السجل. أعيدوا المحاولة بعد قليل.',
+			'admin.fusion.evenementFusionSortante' => ({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'دُمج في ⁨${autre}⁩: لا طالب منقول', one: 'دُمج في ⁨${autre}⁩: نُقل طالب واحد', two: 'دُمج في ⁨${autre}⁩: نُقل طالبان', few: 'دُمج في ⁨${autre}⁩: نُقل ⁨${n}⁩ طلاب', many: 'دُمج في ⁨${autre}⁩: نُقل ⁨${n}⁩ طالبًا', other: 'دُمج في ⁨${autre}⁩: نُقل ⁨${n}⁩ طالب', ), 
+			'admin.fusion.evenementFusionEntrante' => ({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'دمج مع ⁨${autre}⁩: لا طالب مستقبَل', one: 'دمج مع ⁨${autre}⁩: استُقبل طالب واحد', two: 'دمج مع ⁨${autre}⁩: استُقبل طالبان', few: 'دمج مع ⁨${autre}⁩: استُقبل ⁨${n}⁩ طلاب', many: 'دمج مع ⁨${autre}⁩: استُقبل ⁨${n}⁩ طالبًا', other: 'دمج مع ⁨${autre}⁩: استُقبل ⁨${n}⁩ طالب', ), 
+			'admin.fusion.evenementTransfertSortant' => ({required Object prenom, required Object autre}) => 'نُقل ⁨${prenom}⁩ إلى ⁨${autre}⁩',
+			'admin.fusion.evenementTransfertEntrant' => ({required Object prenom, required Object autre}) => 'نُقل ⁨${prenom}⁩ من ⁨${autre}⁩',
+			'admin.fusion.quand' => ({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩',
+			'admin.tirage.titre' => 'قرعة المراقبة',
+			'admin.tirage.sousTitre' => 'يسحب الخادم بالقرعة الحصة التي يتلقاها كل مراقب. تحدد الإدارة القواعد، ولا يختار المراقب فصله أبدًا.',
+			'admin.tirage.sansDonnees' => 'تعذّر تحميل القرعات',
+			'admin.tirage.erreur' => 'تعذّرت قراءة القرعات: ربما لم تصل القراءة إلى رواية. أعيدوا المحاولة بعد قليل.',
+			'admin.tirage.indisponibleTitre' => 'متاحة عند الربط بالخادم',
+			'admin.tirage.indisponiblePhrase' => 'ستظهر قواعد القرعة وسجلها هنا فور الربط بالخادم. إلى ذلك الحين لا يُعرض شيء: لا قرعة مختلقة.',
+			'admin.tirage.reserveTitre' => 'هذه الشاشة مخصصة للإدارة',
+			'admin.tirage.reservePhrase' => 'ليس لحسابكم حق الاطلاع على القرعات: هي مخصصة للإدارة حتى لا يستطيع أحد توقع من سيُراقَب. إن احتجتم إلى ذلك فاطلبوا الإذن من الإدارة.',
+			'admin.tirage.reglesTitre' => 'قواعد القرعة',
+			'admin.tirage.reglesIntro' => 'تُطبَّق هذه القواعد على القرعات القادمة. المهام الموزعة لا تتغير. يُسجَّل كل تعديل في سجل التدقيق.',
+			'admin.tirage.frequenceTitre' => 'التواتر',
+			'admin.tirage.frequenceDetail' => 'أقصى عدد من المهام يتلقاه المراقب في الأسبوع.',
+			'admin.tirage.missionsParSemaine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا مهمة في الأسبوع', one: 'مهمة واحدة في الأسبوع', two: 'مهمتان في الأسبوع', few: '⁨${n}⁩ مهام في الأسبوع', many: '⁨${n}⁩ مهمة في الأسبوع', other: '⁨${n}⁩ مهمة في الأسبوع', ), 
+			'admin.tirage.ponderationTitre' => 'الترجيح',
+			'admin.tirage.ponderationDetail' => 'كلما قوي الوزن زادت فرص سحب هذه الحصص. تبقى القرعة غير قابلة للتوقع على المعلم والمراقب معًا.',
+			'admin.tirage.critereEnseignantsRecents' => 'معلمون التحقوا حديثًا',
+			'admin.tirage.critereClassesSignalees' => 'فصول أُبلغ عنها للإدارة',
+			'admin.tirage.critereHeuresDePointe' => 'ساعات الذروة',
+			'admin.tirage.niveauAucun' => 'بلا وزن',
+			'admin.tirage.niveauNormal' => 'وزن عادي',
+			'admin.tirage.niveauFort' => 'وزن قوي',
+			'admin.tirage.ciblesTitre' => 'فصول أو معلمون مستهدفون',
+			'admin.tirage.ciblesDetail' => 'يُسحب الهدف أولًا عندما تكون حصته مباشرة. لا يُعلَن أبدًا للمراقب ولا للمعلم.',
+			'admin.tirage.aucuneCible' => 'لا هدف: لكل الحصص المباشرة الفرص نفسها، بحسب الوزن.',
+			'admin.tirage.cibleClasse' => 'فصل',
+			'admin.tirage.cibleEnseignant' => 'معلم',
+			'admin.tirage.retirerCible' => ({required Object libelle}) => 'إزالة ⁨${libelle}⁩',
+			'admin.tirage.ajouterCible' => 'إضافة هدف',
+			'admin.tirage.ajouterTitre' => 'إضافة هدف',
+			'admin.tirage.ajouterContexte' => 'اختاروا الفصل أو المعلم الذي يُسحب أولًا. يُضاف الهدف إلى القواعد ثم تحفظونها.',
+			'admin.tirage.ajouterChoix' => 'الفصل أو المعلم المستهدف',
+			'admin.tirage.ajouterConfirmer' => 'إضافة هذا الهدف',
+			'admin.tirage.manqueCible' => 'ينقص الهدف: اختاروه من القائمة.',
+			'admin.tirage.aucunCandidat' => 'لا فصل ولا معلم يمكن استهدافه',
+			'admin.tirage.aucunCandidatDetail' => 'كل الفصول والمعلمين مستهدفون بالفعل أو لا توجد حصص بعد.',
+			'admin.tirage.erreurCandidats' => 'تعذّرت قراءة قائمة الأهداف. أعيدوا المحاولة بعد قليل.',
+			'admin.tirage.enregistrer' => 'حفظ القواعد',
+			'admin.tirage.enregistrees' => 'سُجِّلت القواعد. تُطبَّق على القرعات القادمة.',
+			'admin.tirage.nonConfirmees' => 'الحفظ غير مؤكَّد: لم يصل رد الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون تكرار.',
+			'admin.tirage.refusees' => ({required Object motif}) => 'لم تُحفظ القواعد: ⁨${motif}⁩. تحققوا منها ثم أعيدوا المحاولة.',
+			'admin.tirage.horsLigne' => 'يمكن حفظ القواعد عند عودة الاتصال. تبقى اختياراتكم معروضة.',
+			'admin.tirage.lectureSeule' => 'يمكنكم قراءة هذه القواعد دون تعديلها: التعديل مخصص لشخص من الإدارة له هذا الحق.',
+			'admin.tirage.historiqueTitre' => 'سجل القرعات',
+			'admin.tirage.historiqueDetail' => 'تُحفظ كل قرعة وكل مهمة لم تُراقَب مع تاريخها. لا تطلع عليها إلا الإدارة: لا يرى المراقب إلا مهمته.',
+			'admin.tirage.rechercheLibelle' => 'البحث عن قرعة',
+			'admin.tirage.rechercheAide' => 'الفصل أو المعلم أو المراقب',
+			'admin.tirage.filtreTous' => 'الكل',
+			'admin.tirage.filtreAttribuees' => 'الموزعة',
+			'admin.tirage.filtreEnCours' => 'المراقبات الجارية',
+			'admin.tirage.filtreControlees' => 'التي روقبت',
+			'admin.tirage.filtreNonControlees' => 'التي لم تُراقَب',
+			'admin.tirage.filtreDejaControlees' => 'المراقَبة سابقًا',
+			'admin.tirage.colonneQuand' => 'تاريخ السحب',
+			'admin.tirage.colonneClasse' => 'الفصل',
+			'admin.tirage.colonneEnseignant' => 'المعلم',
+			'admin.tirage.colonneControleur' => 'المراقب',
+			'admin.tirage.colonneCritere' => 'القرعة',
+			'admin.tirage.colonneStatut' => 'المهمة',
+			'admin.tirage.statutAttribuee' => 'موزعة',
+			'admin.tirage.statutEnCours' => 'مراقبة جارية',
+			'admin.tirage.statutControlee' => 'روقبت',
+			'admin.tirage.statutNonControlee' => 'لم تُراقَب',
+			'admin.tirage.statutDejaControlee' => 'سبقه مراقب آخر',
+			'admin.tirage.rapportEnvoye' => 'أُرسل تقرير إلى الإدارة',
+			'admin.tirage.critereAleatoire' => 'بالصدفة',
+			'admin.tirage.criterePonderation' => 'بحسب الوزن',
+			'admin.tirage.critereCible' => 'هدف',
+			'admin.tirage.vide' => 'لا قرعات حتى الآن',
+			'admin.tirage.videDetail' => 'ستظهر القرعات هنا بمجرد وجود حصص مباشرة.',
+			'admin.tirage.aucunAvecCeFiltre' => 'لا قرعات بهذا المعيار',
+			'admin.tirage.aucunAvecCeFiltreDetail' => 'غيّروا المعيار لرؤية بقية القرعات.',
+			'admin.tirage.position' => ({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩',
+			'admin.tirage.positionSemantique' => ({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩ من سجل القرعات',
+			'admin.tirage.precedente' => 'الصفحة السابقة من سجل القرعات',
+			'admin.tirage.suivante' => 'الصفحة التالية من سجل القرعات',
+			'admin.tirage.resume' => ({required Object debut, required Object fin, required Object total}) => 'القرعات من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩',
+			'admin.tirage.quand' => ({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩',
 			'comptable.nav.aujourdhui' => 'اليوم',
 			'comptable.nav.paiements' => 'المدفوعات',
 			'comptable.nav.tresorerie' => 'الخزينة',
@@ -15220,7 +16294,7 @@ extension on TraductionsAr {
 			'comptable.commun.objectifMois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'الهدف الحالي: شهر واحد من المصاريف الأساسية', two: 'الهدف الحالي: شهران من المصاريف الأساسية', few: 'الهدف الحالي: ${n} أشهر من المصاريف الأساسية', many: 'الهدف الحالي: ${n} شهرًا من المصاريف الأساسية', other: 'الهدف الحالي: ${n} شهر من المصاريف الأساسية', ), 
 			'comptable.commun.montantActuel' => 'المبلغ الحالي',
 			'comptable.commun.manque' => 'المتبقي لبلوغ الهدف',
-			'comptable.commun.atteint' => ({required Object pourcent}) => 'تحقق ${pourcent} %',
+			'comptable.commun.atteint' => ({required Object pourcent}) => 'تحقق ${pourcent} %',
 			'comptable.commun.modeCalcul' => 'طريقة الحساب',
 			'comptable.commun.modeMontantFixe' => 'مبلغ مستهدف ثابت',
 			'comptable.commun.modeCouvertureMois' => 'تغطية بعدد أشهر المصاريف الأساسية',
@@ -15317,6 +16391,8 @@ extension on TraductionsAr {
 			'comptable.statuts.raison.horsDelegation' => 'خارج التفويض',
 			'comptable.statuts.raison.fournisseurIndisponible' => 'المزوّد غير متاح',
 			'comptable.statuts.raison.fondsInsuffisants' => 'الأموال غير كافية',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.raison.doublonPotentiel' => 'تكرار محتمل',
 			'comptable.statuts.raison.nonApprouvee' => 'التزام غير معتمَد',
 			'comptable.statuts.raison.capaciteAbsente' => 'القدرة غير متوفرة',
@@ -15513,7 +16589,7 @@ extension on TraductionsAr {
 			'comptable.tresorerie.coffresPhrase' => 'حيث يُخصَّص المال. المبلغ المحمي لا يُحسب أبدًا ضمن الحر.',
 			'comptable.tresorerie.coffreProtege' => 'محمي',
 			'comptable.tresorerie.coffreNonProtege' => 'غير محمي',
-			'comptable.tresorerie.partDetenue' => ({required Object part}) => '${part} % من الخزينة المحتفَظ بها',
+			'comptable.tresorerie.partDetenue' => ({required Object part}) => '${part} % من الخزينة المحتفَظ بها',
 			'comptable.tresorerie.regleUsage' => ({required Object regle}) => 'قاعدة الاستخدام: ${regle}',
 			'comptable.tresorerie.coffresVide' => 'لم يُرجَع أي صندوق بعد.',
 			'comptable.tresorerie.coffresVidePhrase' => 'ستظهر الصناديق السبعة هنا بمجرد أن يُرجعها المصدر.',
@@ -15529,7 +16605,7 @@ extension on TraductionsAr {
 			'comptable.tresorerie.alimentationAuto' => 'التغذية التلقائية',
 			'comptable.tresorerie.regle.desactivee' => 'معطّلة',
 			'comptable.tresorerie.regle.montantFixe' => 'مبلغ ثابت في كل موعد',
-			'comptable.tresorerie.regle.pourcentage' => ({required Object pourcent}) => '${pourcent} % من كل مقبوض مُثبَّت',
+			'comptable.tresorerie.regle.pourcentage' => ({required Object pourcent}) => '${pourcent} % من كل مقبوض مُثبَّت',
 			'comptable.tresorerie.regle.jusquAObjectif' => 'الإكمال حتى المبلغ المستهدف',
 			'comptable.tresorerie.regle.proposee' => 'اقتراح يتطلب تأكيدك',
 			'comptable.tresorerie.cadence' => 'الوتيرة',
@@ -15538,7 +16614,7 @@ extension on TraductionsAr {
 			'comptable.tresorerie.cadences.mensuelle' => 'كل شهر',
 			'comptable.tresorerie.cadences.apresEncaissementConsolide' => 'بعد كل مقبوض مُثبَّت',
 			'comptable.tresorerie.cadences.manuelle' => 'يدوية',
-			'comptable.tresorerie.seuilAlerte' => ({required Object pourcent}) => 'تنبيه دون ${pourcent} % من المبلغ المستهدف',
+			'comptable.tresorerie.seuilAlerte' => ({required Object pourcent}) => 'تنبيه دون ${pourcent} % من المبلغ المستهدف',
 			'comptable.tresorerie.retraitValidation' => 'كل سحب يتطلب مصادقة إضافية.',
 			'comptable.tresorerie.retraitSansValidation' => 'لا تشترط السياسة مصادقة للسحب؛ ويبقى معامَلًا كحركة حساسة.',
 			'comptable.tresorerie.version' => ({required Object version}) => 'الإصدار ${version}',
@@ -15634,8 +16710,6 @@ extension on TraductionsAr {
 			'comptable.encaissements.rapprochementAucun' => 'لم تتم المطابقة بعد',
 			'comptable.encaissements.ouvrirRapprochement' => 'فتح المطابقة',
 			'comptable.encaissements.confirmeNote' => 'لا تظهر «مؤكَّد» إلا بعد تأكيد مزوّد الدفع.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.enAttenteNote' => 'بانتظار تأكيد مزوّد الدفع: لم يُكتسب شيء بعد.',
 			'comptable.encaissements.journal' => 'سجل المقبوض',
 			'comptable.encaissements.journalVide' => 'لا توجد عملية مسجلة لهذا المقبوض.',
@@ -15728,12 +16802,11 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.profil.demanderMiseAJour' => ({required Object nom}) => 'طلب تحديث من ${nom}',
 			'comptable.beneficiaires.profil.suspendre' => ({required Object nom}) => 'إيقاف مدفوعات ${nom}',
 			'comptable.beneficiaires.profil.reprendre' => ({required Object nom}) => 'استئناف مدفوعات ${nom}',
-			'comptable.beneficiaires.profil.voirFil' => 'عرض محادثة «ملف الدفع»',
 			'comptable.beneficiaires.profil.externe' => ({required Object nom}) => 'ليس لدى ${nom} حساب Rewayah: تتيح له دعوة آمنة إدخال وسيلته بنفسه. أعد إرسالها من التزامه، في المتعاقدين.',
 			'comptable.beneficiaires.profil.voirContractuels' => 'عرض التزامات المتعاقدين',
 			'comptable.beneficiaires.profil.aucuneAction' => 'لا يوجد أي إجراء مفتوح على هذا الملف: إنه محدَّث.',
-			'comptable.beneficiaires.profil.relanceTitre' => 'رسالة جاهزة في محادثة «ملف الدفع»',
-			'comptable.beneficiaires.profil.relanceObjet' => 'الموضوع: ملف الدفع',
+			'comptable.beneficiaires.profil.filTitre' => 'محادثة «ملف الدفع»',
+			'comptable.beneficiaires.profil.relanceRefusee' => ({required Object nom}) => 'لا يمكن فتح محادثة «ملف الدفع» مع ${nom}: لا تسمح Rewayah بذلك لهذا المستفيد. اطلب تحديثًا بدلًا من ذلك، أو أبلغ الإدارة.',
 			'comptable.beneficiaires.profil.messageModele' => 'يجب إكمال معلومات الدفع الخاصة بك قبل دفعتك القادمة. يمكنك إضافتها من مساحتك الشخصية.',
 			'comptable.beneficiaires.profil.miseAJourDemandee' => ({required Object nom}) => 'سُجّل طلب التحديث لـ ${nom}.',
 			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => 'أُوقفت مدفوعات ${nom}: لن تُصرف أي دفعة ما لم تُستأنف.',
@@ -15832,6 +16905,8 @@ extension on TraductionsAr {
 			'comptable.contractuels.champCentreCout' => 'مركز التكلفة',
 			'comptable.contractuels.champAuteur' => 'المُنشئ',
 			'comptable.contractuels.champApprobateur' => 'المعتمِد',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.champProfilPaiement' => 'دفع المستفيد',
 			'comptable.contractuels.champMotifRefus' => 'سبب الرفض',
 			'comptable.contractuels.aucunJustificatif' => 'لا يوجد مستند مؤيِّد مرفق',
@@ -16148,8 +17223,6 @@ extension on TraductionsAr {
 			'ficheEleve.acces.pastilleExpire' => 'منتهٍ',
 			'ficheEleve.acces.sansEcheance' => 'لا تاريخ انتهاء مسجَّل.',
 			'ficheEleve.acces.jusquau' => ({required Object date}) => 'حتى ⁨${date}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.acces.expireDepuis' => ({required Object date}) => 'منتهٍ منذ ⁨${date}⁩',
 			'ficheEleve.acces.expirePhrase' => ({required Object prenom}) => 'منذ هذا التاريخ، لا يستطيع ⁨${prenom}⁩ الدخول إلى Rewayah.',
 			'ficheEleve.acces.detailIndisponible' => 'بداية الوصول وسببه لا يظهران بعد.',
@@ -16312,32 +17385,6 @@ extension on TraductionsAr {
 			'eleveConnexion.refus.nonEnregistre' => 'لم يستطع هذا الجهاز الاحتفاظ بالربط. ربما استُخدم الرمز من قبل: اعرض رمزًا جديدًا على جهاز وليّ الأمر، ثم ابدأ من جديد.',
 			'eleveConnexion.refus.generiqueTitre' => 'لم يكتمل الربط',
 			'eleveConnexion.refus.generique' => 'لم يكتمل التحقق من الرمز. أعد المحاولة بعد لحظة.',
-			'presence.titre' => 'الحضور',
-			'presence.voir' => 'عرض الحضور',
-			'presence.mienne' => 'حضورك',
-			'presence.consolide' => 'مُوحَّد',
-			'presence.planifiee' => 'درس قادم',
-			'presence.enAttente' => 'لم يصل بعد',
-			'presence.enConnexion' => 'جارٍ الاتصال',
-			'presence.presente' => 'في القاعة',
-			'presence.enRetard' => 'متأخر',
-			'presence.deconnectee' => 'انقطع الاتصال',
-			'presence.enReconnexion' => 'جارٍ إعادة الاتصال',
-			'presence.reconnectee' => 'عاد',
-			'presence.sortie' => 'غادر الدرس',
-			'presence.absente' => 'غياب',
-			'presence.excusee' => 'غياب بعذر',
-			'presence.confirmationEnAttente' => 'للتأكيد',
-			'presence.corrigeeManuel' => 'تصحيح يدوي',
-			'presence.finalisee' => 'نهائي',
-			'presence.inconnu' => 'حالة غير معروفة',
-			'presence.entreeInstant' => 'دخل القاعة للتو',
-			'presence.entreeMinutes' => ({required Object minutes}) => 'في القاعة منذ ⁨${minutes}⁩ د',
-			'presence.retardMinutes' => ({required Object minutes}) => '⁨${minutes}⁩ د بعد الموعد',
-			'presence.silenceInstant' => 'لا أخبار منذ بضع ثوانٍ',
-			'presence.silenceMinutes' => ({required Object minutes}) => 'لا أخبار منذ ⁨${minutes}⁩ د',
-			'presence.attenteInstant' => 'بدأ الدرس للتو',
-			'presence.attenteMinutes' => ({required Object minutes}) => 'بدأ الدرس منذ ⁨${minutes}⁩ د',
 			'priere.fajr' => 'الفجر',
 			'priere.dhuhr' => 'الظهر',
 			'priere.asr' => 'العصر',
@@ -16372,6 +17419,8 @@ extension on TraductionsAr {
 			'appareils.eleve.vide' => ({required Object dePrenom}) => 'اربط الجهاز اللوحي أو الهاتف أو الحاسوب الخاص بـ⁨${dePrenom}⁩ بالرمز الذي يعرضه الزر أدناه.',
 			'appareils.eleve.introuvableTitre' => 'لم يُعثر على ملف الطالب',
 			'appareils.eleve.introuvable' => 'ملف الطالب هذا غير مرتبط بأسرتك.',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.eleve.introuvableAction' => 'عرض أجهزة الأسرة',
 			'appareils.eleve.connecteLe' => ({required Object date}) => 'رُبط في ⁨${date}⁩',
 			'appareils.eleve.utiliseLe' => ({required Object date}) => 'آخر استخدام: ⁨${date}⁩',
@@ -16542,6 +17591,9 @@ extension on TraductionsAr {
 			'inscription.usage.familleTitre' => 'أنا وأسرتي',
 			'inscription.usage.familleDescription' => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.',
 			'inscription.usage.enseignant' => 'أنا معلم',
+			'inscription.usage.coursQuestion' => 'هل تتابع أنت أيضًا دروسًا؟',
+			'inscription.usage.coursOui' => 'نعم',
+			'inscription.usage.coursNon' => 'لا',
 			'inscription.recap.usage' => 'نوع الحساب',
 			'inscription.recap.identite' => 'الاسم',
 			'inscription.recap.genre' => 'الجنس',
@@ -16622,6 +17674,7 @@ extension on TraductionsAr {
 			'foyer.ajout.identite.nomAide' => 'لا يُعرض لقب العائلة على المعلم أبدًا.',
 			'foyer.ajout.identite.age' => 'العمر',
 			'foyer.ajout.identite.ageAide' => 'العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك.',
+			'foyer.ajout.identite.ageFige' => 'الإرسال جارٍ: يمكن تغيير العمر بعد الرد.',
 			'foyer.ajout.erreurs.prenomRequis' => 'أدخل اسم الطالب.',
 			'foyer.ajout.erreurs.nomRequis' => 'أدخل لقب الطالب.',
 			'foyer.ajout.erreurs.ageRequis' => 'أدخل العمر، بالأرقام.',
@@ -16662,8 +17715,6 @@ extension on TraductionsAr {
 			'adulte.monEspace.coursAcces' => 'الدروس والوصول',
 			'adulte.monEspace.coursAccesLegende' => 'الفصل والحصص والوصول',
 			'adulte.monEspace.paiements' => 'المدفوعات',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.monEspace.paiementsLegende' => 'السجل والإيصالات',
 			'adulte.monEspace.accords' => 'موافقاتي',
 			'adulte.monEspace.accordsLegende' => 'الموافقات الممنوحة للأكاديمية',
@@ -16882,6 +17933,8 @@ extension on TraductionsAr {
 			'adulte.reprise.titulaire.consigne' => 'إن كان هذا الطلب خاطئًا، فارفضه.',
 			'adulte.reprise.titulaire.refuser' => 'رفض الطلب',
 			'adulte.reprise.titulaire.ligne' => 'قُدِّم طلب لاستلام أسرتك.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.titulaire.refusEchecTitre' => 'لم يُؤكَّد الرفض.',
 			'adulte.reprise.titulaire.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك رفض الطلب بنفسك عند عودة الاتصال.',
 			'adulte.reprise.titulaire.refusee' => 'رفضت هذا الطلب. الإدارة على علم. لا تُنقل أي صلاحية من صلاحيات أسرتك.',
@@ -17075,6 +18128,8 @@ extension on TraductionsAr {
 			'kyc.deposee' => 'استُلمت الوثيقة',
 			'kyc.erreur' => 'لم يكتمل الإرسال. أعد المحاولة بعد لحظة.',
 			'kyc.tropVolumineux' => ({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.',
+			'kyc.manquePhoto' => 'اختر أولًا صورة وثيقتك.',
+			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
 			'contrat.titre' => 'ما توقّع عليه',
 			'contrat.intro' => 'نقطتان أهم من غيرهما. هما مكتوبتان هنا بوضوح بدل أن تكونا وسط نص طويل.',
 			'contrat.pointEnregistrement' => 'يُسجَّل كل درس صوتيًا، ويُحفظ ثلاثين يومًا، ثم يُحذف. كل استماع يُدوَّن في السجل، مع اسم المستمع.',
@@ -17176,8 +18231,6 @@ extension on TraductionsAr {
 			'controleur.historique.faitsIndisponibles' => 'السجل التلقائي لهذه الزيارة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. سيظهر هنا بمجرد وصوله. باقي التقرير موثوق.',
 			'controleur.historique.motif' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
 			'controleur.historique.ajouterComplement' => 'إضافة تكملة',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.complement.bandeau' => 'ستُضاف هذه التكملة إلى التقرير الموجود.',
 			'controleur.complement.questionMotif' => 'لماذا تضيف هذه التكملة؟',
 			'controleur.complement.contexteMotif' => 'اختياري: السبب يساعد الإدارة على قراءة التكملة. التقرير الأصلي لا يتغير.',
@@ -17364,6 +18417,103 @@ extension on TraductionsAr {
 			'agent.bandeau' => 'متابعة، للقراءة فقط',
 			'agent.bandeauMasque' => 'الأسماء مخفية',
 			'agent.bandeauExpire' => ({required Object heure}) => 'حتى ⁨${heure}⁩',
+			'suiviDemandes.titre' => 'متابعة طلبات المواعيد',
+			'suiviDemandes.contexte' => 'يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.',
+			'suiviDemandes.carteTitre' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩',
+			'suiviDemandes.joursChoisis' => 'الأيام المختارة',
+			'suiviDemandes.heureChoisie' => 'الساعة المختارة',
+			'suiviDemandes.joursEt' => ({required Object debut, required Object dernier}) => '⁨${debut}⁩ و⁨${dernier}⁩',
+			'suiviDemandes.heureFuseau' => ({required Object heure, required Object deVille}) => '⁨${heure}⁩، بتوقيت ⁨${deVille}⁩',
+			'suiviDemandes.creneauxChoisis' => 'الأيام والساعات المختارة',
+			'suiviDemandes.jourHeure' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ ⁨${heure}⁩',
+			'suiviDemandes.fuseauChoisi' => 'المنطقة الزمنية',
+			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => 'بتوقيت ⁨${deVille}⁩',
+			'suiviDemandes.etapes.envoyee' => 'تم إرسال الطلب',
+			'suiviDemandes.etapes.listeAttente' => 'في قائمة الانتظار',
+			'suiviDemandes.etapes.classeValidee' => 'تم اعتماد الفصل',
+			'suiviDemandes.etapes.enseignantAffecte' => 'تم تعيين المعلم',
+			'suiviDemandes.etapes.eleveIntegre' => 'الطالب مندمج في الفصل',
+			'suiviDemandes.etapes.coursCommences' => 'بدء الدروس',
+			'suiviDemandes.etats.fait' => 'تم',
+			'suiviDemandes.etats.enCours' => 'جارية',
+			'suiviDemandes.etats.prochaine' => 'الخطوة التالية',
+			'suiviDemandes.etats.aVenir' => 'قادمة',
+			'suiviDemandes.situation.envoyee' => 'وصل طلبكم إلى الإدارة',
+			'suiviDemandes.situation.listeAttente' => 'طلبكم في قائمة الانتظار',
+			'suiviDemandes.situation.classeValidee' => 'فصلكم جاهز: ينتظر معلمه',
+			'suiviDemandes.situation.enseignantAffecte' => 'تم اعتماد الفصل · تم تعيين المعلم',
+			'suiviDemandes.situation.eleveIntegre' => 'تم اعتماد الفصل · تم تعيين المعلم · الطالب مندمج',
+			'suiviDemandes.situation.coursCommences' => 'بدأت الدروس',
+			'suiviDemandes.prochaine.envoyee' => 'الخطوة التالية: تكوين الفصل',
+			'suiviDemandes.prochaine.listeAttente' => 'نُبلغكم فور توفر مكان. لا يُعلَن أي موعد ما لم يكن معروفًا.',
+			'suiviDemandes.prochaine.classeValidee' => 'الخطوة التالية: تعيين معلم الفصل. نُبلغكم فور ذلك.',
+			_ => null,
+		} ?? switch (path) {
+			'suiviDemandes.prochaine.eleveIntegre' => 'الخطوة التالية: بدء الدروس',
+			'suiviDemandes.debutCours' => 'بدء الدروس',
+			'suiviDemandes.debutValeur' => ({required Object date, required Object heure, required Object deVille}) => '⁨${date}⁩ في ⁨${heure}⁩، بتوقيت ⁨${deVille}⁩',
+			'suiviDemandes.debutAFixer' => 'سيظهر موعد الدرس الأول هنا فور تحديده.',
+			'suiviDemandes.enseignant' => 'المعلم',
+			'suiviDemandes.personnaliseNotice' => 'لن يُفتح هذا الموعد إلا إذا اختاره طلاب آخرون واكتمل الفصل.',
+			'suiviDemandes.jalon.date' => ({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩',
+			'suiviDemandes.jalon.apres' => ({required Object date, required Object heure, required Object duree}) => '⁨${date}⁩ في ⁨${heure}⁩، ⁨${duree}⁩',
+			'suiviDemandes.jalon.aussitot' => 'فورًا',
+			'suiviDemandes.jalon.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من دقيقة', one: 'بعد دقيقة', two: 'بعد دقيقتين', few: 'بعد ⁨${n}⁩ دقائق', many: 'بعد ⁨${n}⁩ دقيقة', other: 'بعد ⁨${n}⁩ دقيقة', ), 
+			'suiviDemandes.jalon.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من ساعة', one: 'بعد ساعة', two: 'بعد ساعتين', few: 'بعد ⁨${n}⁩ ساعات', many: 'بعد ⁨${n}⁩ ساعة', other: 'بعد ⁨${n}⁩ ساعة', ), 
+			'suiviDemandes.jalon.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'في اليوم نفسه', one: 'بعد يوم', two: 'بعد يومين', few: 'بعد ⁨${n}⁩ أيام', many: 'بعد ⁨${n}⁩ يومًا', other: 'بعد ⁨${n}⁩ يوم', ), 
+			'suiviDemandes.changement.titrePage' => 'تغيّر الفصل',
+			'suiviDemandes.changement.titre' => ({required Object dePrenom}) => 'تغيّر فصل ⁨${dePrenom}⁩',
+			'suiviDemandes.changement.fusion' => ({required Object prenom}) => 'دُمج فصلكم مع فصل آخر. هذا هو فصل ⁨${prenom}⁩ الآن.',
+			'suiviDemandes.changement.transfert' => ({required Object prenom}) => 'نقلت الإدارة ⁨${prenom}⁩ إلى فصل آخر. هذا هو فصله الجديد.',
+			'suiviDemandes.changement.classe' => 'الفصل الجديد',
+			'suiviDemandes.changement.enseignant' => 'المعلم',
+			'suiviDemandes.changement.sansEnseignant' => 'سنُعلمكم باسم معلمه فور تعيينه.',
+			'suiviDemandes.changement.date' => 'تاريخ التغيير',
+			'suiviDemandes.changement.lien' => 'عرض الفصل الجديد',
+			'suiviDemandes.changement.lienPour' => ({required Object dePrenom}) => 'عرض فصل ⁨${dePrenom}⁩ الجديد',
+			'suiviDemandes.changement.retour' => 'العودة إلى متابعة الطلبات',
+			'suiviDemandes.changement.introuvable' => 'لم يعد هذا التغيير معروضًا',
+			'suiviDemandes.changement.introuvableDetail' => 'عودوا إلى المتابعة لمعرفة أين وصلت طلباتكم.',
+			'suiviDemandes.close.retiree' => 'تم سحب الطلب',
+			'suiviDemandes.close.nonRetenue' => 'لم يُقبل الطلب',
+			'suiviDemandes.close.close' => 'أُغلق الطلب',
+			'suiviDemandes.close.motif.retraitFamille' => 'لقد سحبتم هذا الطلب.',
+			'suiviDemandes.close.motif.offreRetiree' => 'سحبت الأكاديمية هذا الموعد من عروضها.',
+			'suiviDemandes.close.motif.classeNonConstituee' => 'تعذّر تكوين فصل هذا الموعد.',
+			'suiviDemandes.close.motif.refusDirection' => 'لم تتمكن الإدارة من قبول هذا الطلب.',
+			'suiviDemandes.close.motif.inconnu' => 'أُغلق هذا الطلب.',
+			'suiviDemandes.close.suite' => 'يمكنكم اختيار موعد آخر من المواعيد المقترحة.',
+			'suiviDemandes.close.suiteSansChoix' => 'لا يوجد موعد آخر مقترح حاليًا. عودوا إلى هذه الصفحة لاحقًا.',
+			'suiviDemandes.close.choisirAutre' => ({required Object prenom}) => 'اختيار موعد آخر لـ⁨${prenom}⁩',
+			'suiviDemandes.vide' => 'لا طلبات مواعيد جارية.',
+			'suiviDemandes.erreur' => 'تعذّر عرض متابعة طلباتكم: ربما لم تصل القراءة إلى رواية. هذا الإخفاق يخص عرض المتابعة فقط ولا يقول شيئًا عن طلبات مواعيدكم. أعيدوا المحاولة بعد قليل.',
+			'suiviDemandes.sansDonnees' => 'تعذّر تحميل متابعة الطلبات',
+			'suiviDemandes.accueil.titre' => 'طلبات مواعيدكم',
+			'suiviDemandes.accueil.ligne' => ({required Object prenom, required Object etat}) => '⁨${prenom}⁩: ⁨${etat}⁩',
+			'suiviDemandes.accueil.voir' => 'عرض متابعة الطلبات',
+			'suiviDemandes.notification.envoyee' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: وصل طلبكم إلى الإدارة',
+			'suiviDemandes.notification.listeAttente' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: طلبكم في قائمة الانتظار',
+			'suiviDemandes.notification.classeValidee' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: فصلكم جاهز وينتظر معلمه',
+			'suiviDemandes.notification.enseignantAffecte' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: تم اعتماد الفصل وتعيين المعلم',
+			'suiviDemandes.notification.eleveIntegre' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: الطالب مندمج في الفصل',
+			'suiviDemandes.notification.coursCommences' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: بدأت الدروس',
+			'suiviDemandes.notification.changementFusion' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: دُمج فصلكم مع فصل آخر، عرض الفصل الجديد',
+			'suiviDemandes.notification.changementTransfert' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: فصل جديد، عرض التفاصيل',
+			'suiviDemandes.notification.close' => ({required Object dePrenom, required Object motif}) => 'طلب موعد ⁨${dePrenom}⁩: ⁨${motif}⁩',
+			'formulaire.manqueAccord' => 'موافقتك ناقصة: ضع علامة في الخانة للمتابعة.',
+			'formulaire.motif.manqueSaisi' => 'السبب ناقص: اكتبه في كلمات قليلة.',
+			'motifs.reglageEnseignant.horaire' => 'التوقيت لم يعد مناسبًا',
+			'motifs.reglageEnseignant.niveau' => 'المستوى لم يعد مناسبًا',
+			'motifs.reglageEnseignant.fuseau' => 'تغيّر المنطقة الزمنية',
+			'motifs.reglageEnseignant.fratrie' => 'جمع أطفال الأسرة معًا',
+			'motifs.reglageDuree.tropLongue' => 'المدة طويلة بالنسبة للسن',
+			'motifs.reglageDuree.plusDeTemps' => 'الحاجة إلى وقت أطول',
+			'motifs.reglageDuree.pause' => 'الحاجة إلى استراحة أثناء الدرس',
+			'motifs.reglageDuree.horaire' => 'قيود توقيت الأسرة',
+			'motifs.reglageMinimum.ecourtees' => 'الحصص تُختصر كثيرًا',
+			'motifs.reglageMinimum.reseau' => 'انقطاعات متكررة في الشبكة',
+			'motifs.reglageMinimum.duree' => 'تغيّرت مدة الدروس',
+			'motifs.reglageMinimum.horaire' => 'قيود توقيت الأسرة',
 			_ => null,
 		};
 	}
