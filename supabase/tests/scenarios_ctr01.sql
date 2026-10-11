@@ -168,6 +168,24 @@ insert into public.session_participants (session_id, profile_id, role) values
   -- depuis 0012 : avant, le plafond la refusait aussi.
   ('c1aaaaaa-0000-0000-0000-00000000000e', 'c1000000-0000-0000-0000-000000000003', 'guardian_observer');
 
+-- F86: an authenticated token without a subject must not pass the teacher
+-- ownership guard merely because teacher_id <> auth.uid() evaluates to NULL.
+do $$
+begin
+  set local role authenticated;
+  perform set_config('request.jwt.claim.sub', '', true);
+  perform set_config('test.uid', '', true);
+  perform set_config('request.jwt.claims', '{"app_metadata":{"role":"teacher"}}', true);
+  perform set_config('test.jwt', '', true);
+  begin
+    perform public.annonces_observation('c1aaaaaa-0000-0000-0000-00000000000a');
+    raise exception 'F86: annonces_observation accepted an authenticated token without subject';
+  exception when insufficient_privilege then
+    null;
+  end;
+end $$;
+reset role;
+
 -- ============================================================
 -- C1 : un cours 1-to-1 plein accepte une visite de controle
 -- ============================================================
