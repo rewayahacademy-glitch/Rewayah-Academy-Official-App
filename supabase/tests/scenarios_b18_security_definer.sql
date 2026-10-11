@@ -299,6 +299,35 @@ begin
 end
 $m4_catalog$;
 
+-- SEC-PROD-27: keep the six pure transition guards invoker after migration.
+do $sec27_catalog$
+declare
+  v_name text;
+  v_prosecdef boolean;
+  v_expected text[] := array[
+    'guard_audit_logs_immutable',
+    'guard_contract_acceptances_immutable',
+    'guard_profile_immutable_id',
+    'guard_session_state_transition',
+    'guard_rule_override_immutable',
+    'guard_prayer_adjustments'
+  ];
+begin
+  foreach v_name in array v_expected loop
+    select p.prosecdef into v_prosecdef
+      from pg_catalog.pg_proc p
+      join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+     where n.nspname = 'public'
+       and p.proname = v_name
+       and p.pronargs = 0
+       and p.prorettype = 'trigger'::pg_catalog.regtype;
+    if v_prosecdef is distinct from false then
+      raise exception 'SEC-PROD-27: public.%() must remain SECURITY INVOKER', v_name;
+    end if;
+  end loop;
+end
+$sec27_catalog$;
+
 create temporary table profile_guard_fixture on commit drop as
 select role, household_id, account_status, access_until
 from public.profiles
