@@ -39,7 +39,7 @@ void main() {
                 ('sombre', ThemeMode.dark),
               ]) {
             for (final bool police in <bool>[true, false]) {
-              // La variante sans police : clair, 100 % seulement.
+              // La variante sans police : clair, zoom maximal seulement.
               if (!police && (nomTheme != 'clair' || nomZoom != 'max'))
                 continue;
               final String nom =
