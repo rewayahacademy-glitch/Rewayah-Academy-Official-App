@@ -15,6 +15,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
 import '../../core/admin/admin_domaine.dart';
+import '../../core/capacites/port_beneficiaires_paiement.dart';
 import '../../core/capacites/port_finance_direction.dart';
 import '../../core/capacites/port_politiques_commerciales.dart';
 import '../../core/comptable/visibilite_montants.dart';
@@ -23,6 +24,7 @@ import '../../core/widgets/admin_shell.dart';
 import '../admin_finance/finance_page.dart';
 import '../admin_finance/politiques_commerciales.dart';
 import '../admin_finance/vue_globale_finance.dart';
+import 'comptable/beneficiaires_demo.dart' show BeneficiairesPaiementDemo;
 import 'comptable/direction_demo.dart';
 import 'finance_demo.dart';
 import 'mode_demonstration.dart';
@@ -90,6 +92,11 @@ class DemoFinancePage extends StatelessWidget {
         // Reserve et delegation (Comptable V1, CPT-F) : la politique de la
         // Reserve et la delegation de la demonstration Direction.
         ...surchargesDemoDirection(),
+        // DELEG-FIN-1 : le selecteur des beneficiaires a exclure (la coquille
+        // du Comptable pose deja le sien).
+        portBeneficiairesPaiementProvider.overrideWithValue(
+          const BeneficiairesPaiementDemo(),
+        ),
         // Les montants de Reserve et delegation partent masques (R-FIN-01)
         // sans lire la session : la demonstration ne depend d'aucun
         // service (CPT-FUS ; sinon `MontantSensible` echoue hors Supabase).

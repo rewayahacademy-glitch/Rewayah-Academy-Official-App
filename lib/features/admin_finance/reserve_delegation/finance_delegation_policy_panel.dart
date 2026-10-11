@@ -23,8 +23,11 @@ import '../../../core/widgets/comptable/ligne_activite.dart' show dateComptable;
 import '../../../core/widgets/setting_row.dart';
 import '../../../core/widgets/status_pill.dart';
 import 'composants_politique.dart';
+import 'controle_delegation.dart';
+import 'exceptions_delegation.dart';
 import 'politiques_direction.dart';
 import 'saisie_politique.dart';
+import 'sorties_en_attente.dart';
 
 /// La lecture et l'enregistrement du panneau : la delegation et son
 /// historique. L'enregistrement relit les deux.
@@ -40,6 +43,8 @@ class FinanceDelegationPolicyPanelBloc extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          ControleDelegation(politique: politique),
+          Ecart.vXxl,
           FinanceDelegationPolicyPanel(
             politique: politique,
             onEnregistrer:
@@ -52,6 +57,8 @@ class FinanceDelegationPolicyPanelBloc extends ConsumerWidget {
                     ..invalidate(journalDelegationProvider);
                 },
           ),
+          Ecart.vXxl,
+          const SortiesEnAttente(),
           Ecart.vXxl,
           HistoriqueVersions(fournisseur: journalDelegationProvider),
         ],
@@ -95,6 +102,7 @@ class _FinanceDelegationPolicyPanelState
   late bool _retrait;
   late bool _premier;
   late bool _coordonnees;
+  late List<ExceptionDelegation> _exceptions;
   final TextEditingController _transaction = TextEditingController();
   final TextEditingController _lot = TextEditingController();
   final TextEditingController _periode = TextEditingController();
@@ -146,6 +154,7 @@ class _FinanceDelegationPolicyPanelState
     _retrait = p.retraitReserveInterdit;
     _premier = p.premierPaiementSecondeValidation;
     _coordonnees = p.coordonneesRecentesSecondeValidation;
+    _exceptions = <ExceptionDelegation>[...p.exceptions];
     _transaction.text = texteMontant(p.plafondParTransaction);
     _lot.text = texteMontant(p.plafondParLot);
     _periode.text = texteMontant(p.plafondParPeriode);
@@ -162,6 +171,7 @@ class _FinanceDelegationPolicyPanelState
         _retrait != p.retraitReserveInterdit ||
         _premier != p.premierPaiementSecondeValidation ||
         _coordonnees != p.coordonneesRecentesSecondeValidation ||
+        !_memesExceptions(_exceptions, p.exceptions) ||
         _transaction.text != texteMontant(p.plafondParTransaction) ||
         _lot.text != texteMontant(p.plafondParLot) ||
         _periode.text != texteMontant(p.plafondParPeriode) ||
@@ -198,6 +208,7 @@ class _FinanceDelegationPolicyPanelState
       plafondParLot: _plafond(_lot),
       plafondParPeriode: _plafond(_periode),
       joursCoordonneesRecentes: jours,
+      exceptions: _exceptions,
     );
   }
 
@@ -405,6 +416,16 @@ class _FinanceDelegationPolicyPanelState
           ],
         ),
         Ecart.vXxl,
+        // DELEG-FIN-1 : les exceptions par delegation (coffres autorises,
+        // beneficiaires exclus, plafond plus bas que la politique generale).
+        ExceptionsDelegation(
+          exceptions: _exceptions,
+          plafondGeneral: _plafond(_transaction),
+          actif: !_enCours,
+          onChange: (List<ExceptionDelegation> liste) =>
+              _edite(() => _exceptions = liste),
+        ),
+        Ecart.vXxl,
         PiedEnregistrement(
           key: FinanceDelegationPolicyPanel.enregistrerKey,
           modifie: _modifie,
@@ -429,4 +450,25 @@ class _Interdit extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       SettingRow(title: titre, description: detail, icon: AppIcons.interdit);
+}
+
+/// Deux listes d'exceptions disent-elles la meme chose ?
+bool _memesExceptions(
+  List<ExceptionDelegation> a,
+  List<ExceptionDelegation> b,
+) {
+  if (a.length != b.length) return false;
+  for (int i = 0; i < a.length; i++) {
+    final ExceptionDelegation x = a[i];
+    final ExceptionDelegation y = b[i];
+    if (x.id != y.id ||
+        x.plafondParTransaction != y.plafondParTransaction ||
+        x.coffresAutorises.length != y.coffresAutorises.length ||
+        !x.coffresAutorises.containsAll(y.coffresAutorises) ||
+        x.beneficiairesExclus.length != y.beneficiairesExclus.length ||
+        !x.beneficiairesExclus.every(y.beneficiairesExclus.contains)) {
+      return false;
+    }
+  }
+  return true;
 }

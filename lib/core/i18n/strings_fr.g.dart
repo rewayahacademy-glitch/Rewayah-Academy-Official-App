@@ -26305,6 +26305,24 @@ class Traductions$comptable$statuts$raison$fr {
 
 	/// fr: 'Capacité absente'
 	String get capaciteAbsente => 'Capacité absente';
+
+	/// fr: 'Délégations suspendues par la direction'
+	String get delegationsSuspendues => 'Délégations suspendues par la direction';
+
+	/// fr: 'Délégation expirée'
+	String get delegationExpiree => 'Délégation expirée';
+
+	/// fr: 'Sortie en attente du délai de sécurité'
+	String get sortieEnAttenteDelai => 'Sortie en attente du délai de sécurité';
+
+	/// fr: 'Coffre hors de la délégation'
+	String get coffreNonAutorise => 'Coffre hors de la délégation';
+
+	/// fr: 'Bénéficiaire exclu de la délégation'
+	String get beneficiaireExclu => 'Bénéficiaire exclu de la délégation';
+
+	/// fr: 'Au-dessus du plafond de cette délégation'
+	String get plafondExceptionDepasse => 'Au-dessus du plafond de cette délégation';
 }
 
 // Path: comptable.paiements.confirmation
@@ -27655,6 +27673,186 @@ class Traductions$comptable$direction$delegationPanneau$fr {
 
 	/// fr: 'La politique tarifaire reste à la direction.'
 	String get politiqueTarifaireDetail => 'La politique tarifaire reste à la direction.';
+
+	/// fr: 'Suspendre toutes les délégations'
+	String get suspendreTitre => 'Suspendre toutes les délégations';
+
+	/// fr: 'Le Comptable ne peut plus rien exécuter seul, tout de suite : chaque opération repasse par la direction.'
+	String get suspendreDetail => 'Le Comptable ne peut plus rien exécuter seul, tout de suite : chaque opération repasse par la direction.';
+
+	/// fr: 'Suspendre toutes les délégations'
+	String get suspendreAction => 'Suspendre toutes les délégations';
+
+	/// fr: 'Suspendre toutes les délégations ?'
+	String get suspendreConfirmerTitre => 'Suspendre toutes les délégations ?';
+
+	/// fr: 'L'effet est immédiat : aucune opération du Comptable ne partira sans votre validation. La suspension est inscrite au journal.'
+	String get suspendreConfirmerPhrase => 'L\'effet est immédiat : aucune opération du Comptable ne partira sans votre validation. La suspension est inscrite au journal.';
+
+	/// fr: 'Suspendre'
+	String get suspendreConfirmer => 'Suspendre';
+
+	/// fr: 'Garder les délégations'
+	String get suspendreGarder => 'Garder les délégations';
+
+	/// fr: 'Délégations suspendues'
+	String get suspendueTitre => 'Délégations suspendues';
+
+	/// fr: 'Suspendues depuis le {date}. Le Comptable ne peut rien exécuter sans votre validation.'
+	String suspendueDepuis({required Object date}) => 'Suspendues depuis le ${date}. Le Comptable ne peut rien exécuter sans votre validation.';
+
+	/// fr: 'Le Comptable ne peut rien exécuter sans votre validation.'
+	String get suspendueSansDate => 'Le Comptable ne peut rien exécuter sans votre validation.';
+
+	/// fr: 'Suspension en cours'
+	String get suspendueEnCours => 'Suspension en cours';
+
+	/// fr: 'La suspension n'est pas confirmée : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Vérifiez l'état de la délégation avant de réessayer.'
+	String get suspendueEchec => 'La suspension n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez l\'état de la délégation avant de réessayer.';
+
+	/// fr: 'Expiration'
+	String get expirationTitre => 'Expiration';
+
+	/// fr: 'Chaque délégation expire et se renouvelle. Passé la date, le Comptable ne peut plus rien exécuter seul.'
+	String get expirationDetail => 'Chaque délégation expire et se renouvelle. Passé la date, le Comptable ne peut plus rien exécuter seul.';
+
+	/// fr: 'Expire le {date}'
+	String expireLe({required Object date}) => 'Expire le ${date}';
+
+	/// fr: 'Date d'expiration non communiquée'
+	String get expirationInconnue => 'Date d\'expiration non communiquée';
+
+	/// fr: 'Active'
+	String get etatActive => 'Active';
+
+	/// fr: 'Suspendue'
+	String get etatSuspendue => 'Suspendue';
+
+	/// fr: 'Expirée'
+	String get etatExpiree => 'Expirée';
+
+	/// fr: 'Renouvelable pour {jours} jours'
+	String renouvelablePour({required Object jours}) => 'Renouvelable pour ${jours} jours';
+
+	/// fr: 'Renouveler la délégation'
+	String get renouveler => 'Renouveler la délégation';
+
+	/// fr: 'Délégation renouvelée.'
+	String get renouvelee => 'Délégation renouvelée.';
+
+	/// fr: 'Le renouvellement n'est pas confirmé : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Vérifiez la date d'expiration avant de réessayer.'
+	String get renouvelerEchec => 'Le renouvellement n\'est pas confirmé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez la date d\'expiration avant de réessayer.';
+
+	/// fr: 'Sorties en attente'
+	String get sortiesTitre => 'Sorties en attente';
+
+	/// fr: 'Une sortie au-dessus du plafond par transaction attend un délai de sécurité avant de partir. Vous pouvez l'annuler d'ici là.'
+	String get sortiesDetail => 'Une sortie au-dessus du plafond par transaction attend un délai de sécurité avant de partir. Vous pouvez l\'annuler d\'ici là.';
+
+	/// fr: 'Délai de sécurité : {heures} h'
+	String sortiesDelai({required Object heures}) => 'Délai de sécurité : ${heures} h';
+
+	/// fr: 'Aucune sortie en attente.'
+	String get sortiesVide => 'Aucune sortie en attente.';
+
+	/// fr: 'Les sorties en attente n'ont pas pu être lues : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get sortiesErreur => 'Les sorties en attente n\'ont pas pu être lues : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: '{objet} · part le {date}'
+	String sortiePart({required Object objet, required Object date}) => '${objet} · part le ${date}';
+
+	/// fr: 'Annuler'
+	String get sortieAnnuler => 'Annuler';
+
+	/// fr: 'Annuler la sortie de {beneficiaire}'
+	String sortieAnnulerNom({required Object beneficiaire}) => 'Annuler la sortie de ${beneficiaire}';
+
+	/// fr: 'Annuler cette sortie ?'
+	String get sortieAnnulerTitre => 'Annuler cette sortie ?';
+
+	/// fr: 'La sortie de {beneficiaire} ne partira pas. L'annulation est inscrite au journal.'
+	String sortieAnnulerPhrase({required Object beneficiaire}) => 'La sortie de ${beneficiaire} ne partira pas. L\'annulation est inscrite au journal.';
+
+	/// fr: 'Annuler la sortie'
+	String get sortieAnnulerConfirmer => 'Annuler la sortie';
+
+	/// fr: 'Garder la sortie'
+	String get sortieGarder => 'Garder la sortie';
+
+	/// fr: 'Sortie annulée.'
+	String get sortieAnnulee => 'Sortie annulée.';
+
+	/// fr: 'L'annulation n'est pas confirmée : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Relisez la liste avant de réessayer.'
+	String get sortieAnnulationEchec => 'L\'annulation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Relisez la liste avant de réessayer.';
+
+	/// fr: 'Exceptions'
+	String get exceptionsTitre => 'Exceptions';
+
+	/// fr: 'Réglages propres à une délégation. Un plafond d'exception est toujours plus bas que celui de la politique générale, jamais plus haut.'
+	String get exceptionsDetail => 'Réglages propres à une délégation. Un plafond d\'exception est toujours plus bas que celui de la politique générale, jamais plus haut.';
+
+	/// fr: 'Aucune exception : la politique générale s'applique à toutes les délégations.'
+	String get exceptionsVide => 'Aucune exception : la politique générale s\'applique à toutes les délégations.';
+
+	/// fr: 'Ajouter une exception'
+	String get exceptionAjouter => 'Ajouter une exception';
+
+	/// fr: 'Modifier l'exception de {libelle}'
+	String exceptionModifier({required Object libelle}) => 'Modifier l\'exception de ${libelle}';
+
+	/// fr: 'Délégation du Comptable'
+	String get exceptionLibelleDefaut => 'Délégation du Comptable';
+
+	/// fr: 'Coffres autorisés'
+	String get exceptionCoffres => 'Coffres autorisés';
+
+	/// fr: 'Aucun coffre autorisé'
+	String get exceptionCoffresAucun => 'Aucun coffre autorisé';
+
+	/// fr: 'Bénéficiaires exclus'
+	String get exceptionExclus => 'Bénéficiaires exclus';
+
+	/// fr: 'Aucun bénéficiaire exclu'
+	String get exceptionExclusAucun => 'Aucun bénéficiaire exclu';
+
+	/// fr: 'Plafond par transaction'
+	String get exceptionPlafond => 'Plafond par transaction';
+
+	/// fr: 'Celui de la politique générale'
+	String get exceptionPlafondGeneral => 'Celui de la politique générale';
+
+	/// fr: 'Exception de la délégation'
+	String get exceptionTitre => 'Exception de la délégation';
+
+	/// fr: 'Seuls ces coffres peuvent être touchés par la délégation. Aucun coffre coché : aucun coffre autorisé.'
+	String get exceptionCoffresDetail => 'Seuls ces coffres peuvent être touchés par la délégation. Aucun coffre coché : aucun coffre autorisé.';
+
+	/// fr: 'Plus bas que le plafond de la politique générale, jamais plus haut. Vide : celui de la politique générale.'
+	String get exceptionPlafondDetail => 'Plus bas que le plafond de la politique générale, jamais plus haut. Vide : celui de la politique générale.';
+
+	/// fr: 'Ce plafond doit être plus bas que celui de la politique générale ({plafond}).'
+	String exceptionPlafondTropHaut({required Object plafond}) => 'Ce plafond doit être plus bas que celui de la politique générale (${plafond}).';
+
+	/// fr: 'Fixez d'abord un plafond par transaction dans la politique générale : une exception ne peut qu'être plus basse.'
+	String get exceptionPlafondSansGeneral => 'Fixez d\'abord un plafond par transaction dans la politique générale : une exception ne peut qu\'être plus basse.';
+
+	/// fr: 'Exclure un bénéficiaire'
+	String get exceptionExclure => 'Exclure un bénéficiaire';
+
+	/// fr: 'Aucun autre bénéficiaire à exclure.'
+	String get exceptionExclureAucun => 'Aucun autre bénéficiaire à exclure.';
+
+	/// fr: 'Retirer {nom} des exclus'
+	String exceptionRetirerExclu({required Object nom}) => 'Retirer ${nom} des exclus';
+
+	/// fr: 'Garder l'exception'
+	String get exceptionGarder => 'Garder l\'exception';
+
+	/// fr: 'Retirer cette exception'
+	String get exceptionRetirer => 'Retirer cette exception';
+
+	/// fr: 'La délégation retrouve la politique générale. Rien n'est enregistré avant « Enregistrer ».'
+	String get exceptionRetirerPhrase => 'La délégation retrouve la politique générale. Rien n\'est enregistré avant « Enregistrer ».';
 }
 
 // Path: recherche.etats.vide
@@ -37703,6 +37901,12 @@ extension on Traductions {
 			'comptable.statuts.raison.doublonPotentiel' => 'Doublon potentiel',
 			'comptable.statuts.raison.nonApprouvee' => 'Obligation non approuvée',
 			'comptable.statuts.raison.capaciteAbsente' => 'Capacité absente',
+			'comptable.statuts.raison.delegationsSuspendues' => 'Délégations suspendues par la direction',
+			'comptable.statuts.raison.delegationExpiree' => 'Délégation expirée',
+			'comptable.statuts.raison.sortieEnAttenteDelai' => 'Sortie en attente du délai de sécurité',
+			'comptable.statuts.raison.coffreNonAutorise' => 'Coffre hors de la délégation',
+			'comptable.statuts.raison.beneficiaireExclu' => 'Bénéficiaire exclu de la délégation',
+			'comptable.statuts.raison.plafondExceptionDepasse' => 'Au-dessus du plafond de cette délégation',
 			'comptable.alertes.enseignantsAPayer' => 'Enseignants à payer',
 			'comptable.alertes.contractuelsAEcheance' => 'Contractuels à échéance',
 			'comptable.alertes.infosManquantes' => 'Infos paiement manquantes',
@@ -37859,14 +38063,14 @@ extension on Traductions {
 			'comptable.paiements.detail.methode' => 'Méthode de paiement',
 			'comptable.paiements.detail.informations' => 'Informations',
 			'comptable.paiements.detail.type' => 'Type',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.detail.periode' => 'Période / objet',
 			'comptable.paiements.detail.echeance' => 'Échéance',
 			'comptable.paiements.detail.prestataire' => 'Prestataire prévu',
 			'comptable.paiements.detail.preuve' => 'Preuve',
 			'comptable.paiements.detail.classes' => 'Classes',
 			'comptable.paiements.detail.version' => 'Version du calcul',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.detail.historique' => 'Historique',
 			'comptable.paiements.detail.historiqueVide' => 'Aucune opération enregistrée pour ce paiement.',
 			'comptable.paiements.detail.encart' => 'Le Comptable ne peut modifier ni le montant ni les coordonnées de paiement du bénéficiaire.',
@@ -38373,14 +38577,14 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.paiementsStandards' => 'Payer les paiements standards',
 			'comptable.direction.delegationPanneau.paiementsStandardsDetail' => 'Un paiement au montant calculé, vers une méthode vérifiée, part sans validation quotidienne.',
 			'comptable.direction.delegationPanneau.remboursement' => 'Exécuter un remboursement standard',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.remboursementDetail' => 'Un remboursement conforme à la règle part sans validation.',
 			'comptable.direction.delegationPanneau.alimentationReserve' => 'Alimenter la Réserve stratégique',
 			'comptable.direction.delegationPanneau.alimentationReserveDetail' => 'Un mouvement vers la Réserve, conforme à sa politique.',
 			'comptable.direction.delegationPanneau.plafondsTitre' => 'Plafonds',
 			'comptable.direction.delegationPanneau.plafondsDetail' => 'Au-delà d\'un plafond, le paiement demande votre validation. Laissez vide pour ne fixer aucun plafond.',
 			'comptable.direction.delegationPanneau.plafondTransaction' => 'Plafond par transaction',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.plafondTransactionDetail' => 'Le montant maximal d\'un seul paiement.',
 			'comptable.direction.delegationPanneau.plafondLot' => 'Plafond par lot',
 			'comptable.direction.delegationPanneau.plafondLotDetail' => 'Le montant maximal d\'un lot de paiements.',
@@ -38404,6 +38608,66 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.montantManuelDetail' => 'Le montant d\'un paiement est toujours celui de l\'obligation.',
 			'comptable.direction.delegationPanneau.politiqueTarifaire' => 'Modifier les tarifs',
 			'comptable.direction.delegationPanneau.politiqueTarifaireDetail' => 'La politique tarifaire reste à la direction.',
+			'comptable.direction.delegationPanneau.suspendreTitre' => 'Suspendre toutes les délégations',
+			'comptable.direction.delegationPanneau.suspendreDetail' => 'Le Comptable ne peut plus rien exécuter seul, tout de suite : chaque opération repasse par la direction.',
+			'comptable.direction.delegationPanneau.suspendreAction' => 'Suspendre toutes les délégations',
+			'comptable.direction.delegationPanneau.suspendreConfirmerTitre' => 'Suspendre toutes les délégations ?',
+			'comptable.direction.delegationPanneau.suspendreConfirmerPhrase' => 'L\'effet est immédiat : aucune opération du Comptable ne partira sans votre validation. La suspension est inscrite au journal.',
+			'comptable.direction.delegationPanneau.suspendreConfirmer' => 'Suspendre',
+			'comptable.direction.delegationPanneau.suspendreGarder' => 'Garder les délégations',
+			'comptable.direction.delegationPanneau.suspendueTitre' => 'Délégations suspendues',
+			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'Suspendues depuis le ${date}. Le Comptable ne peut rien exécuter sans votre validation.',
+			'comptable.direction.delegationPanneau.suspendueSansDate' => 'Le Comptable ne peut rien exécuter sans votre validation.',
+			'comptable.direction.delegationPanneau.suspendueEnCours' => 'Suspension en cours',
+			'comptable.direction.delegationPanneau.suspendueEchec' => 'La suspension n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez l\'état de la délégation avant de réessayer.',
+			'comptable.direction.delegationPanneau.expirationTitre' => 'Expiration',
+			'comptable.direction.delegationPanneau.expirationDetail' => 'Chaque délégation expire et se renouvelle. Passé la date, le Comptable ne peut plus rien exécuter seul.',
+			'comptable.direction.delegationPanneau.expireLe' => ({required Object date}) => 'Expire le ${date}',
+			'comptable.direction.delegationPanneau.expirationInconnue' => 'Date d\'expiration non communiquée',
+			'comptable.direction.delegationPanneau.etatActive' => 'Active',
+			'comptable.direction.delegationPanneau.etatSuspendue' => 'Suspendue',
+			'comptable.direction.delegationPanneau.etatExpiree' => 'Expirée',
+			'comptable.direction.delegationPanneau.renouvelablePour' => ({required Object jours}) => 'Renouvelable pour ${jours} jours',
+			'comptable.direction.delegationPanneau.renouveler' => 'Renouveler la délégation',
+			'comptable.direction.delegationPanneau.renouvelee' => 'Délégation renouvelée.',
+			'comptable.direction.delegationPanneau.renouvelerEchec' => 'Le renouvellement n\'est pas confirmé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez la date d\'expiration avant de réessayer.',
+			'comptable.direction.delegationPanneau.sortiesTitre' => 'Sorties en attente',
+			'comptable.direction.delegationPanneau.sortiesDetail' => 'Une sortie au-dessus du plafond par transaction attend un délai de sécurité avant de partir. Vous pouvez l\'annuler d\'ici là.',
+			'comptable.direction.delegationPanneau.sortiesDelai' => ({required Object heures}) => 'Délai de sécurité : ${heures} h',
+			'comptable.direction.delegationPanneau.sortiesVide' => 'Aucune sortie en attente.',
+			'comptable.direction.delegationPanneau.sortiesErreur' => 'Les sorties en attente n\'ont pas pu être lues : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'comptable.direction.delegationPanneau.sortiePart' => ({required Object objet, required Object date}) => '${objet} · part le ${date}',
+			'comptable.direction.delegationPanneau.sortieAnnuler' => 'Annuler',
+			'comptable.direction.delegationPanneau.sortieAnnulerNom' => ({required Object beneficiaire}) => 'Annuler la sortie de ${beneficiaire}',
+			'comptable.direction.delegationPanneau.sortieAnnulerTitre' => 'Annuler cette sortie ?',
+			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => 'La sortie de ${beneficiaire} ne partira pas. L\'annulation est inscrite au journal.',
+			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'Annuler la sortie',
+			'comptable.direction.delegationPanneau.sortieGarder' => 'Garder la sortie',
+			'comptable.direction.delegationPanneau.sortieAnnulee' => 'Sortie annulée.',
+			'comptable.direction.delegationPanneau.sortieAnnulationEchec' => 'L\'annulation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Relisez la liste avant de réessayer.',
+			'comptable.direction.delegationPanneau.exceptionsTitre' => 'Exceptions',
+			'comptable.direction.delegationPanneau.exceptionsDetail' => 'Réglages propres à une délégation. Un plafond d\'exception est toujours plus bas que celui de la politique générale, jamais plus haut.',
+			'comptable.direction.delegationPanneau.exceptionsVide' => 'Aucune exception : la politique générale s\'applique à toutes les délégations.',
+			'comptable.direction.delegationPanneau.exceptionAjouter' => 'Ajouter une exception',
+			'comptable.direction.delegationPanneau.exceptionModifier' => ({required Object libelle}) => 'Modifier l\'exception de ${libelle}',
+			'comptable.direction.delegationPanneau.exceptionLibelleDefaut' => 'Délégation du Comptable',
+			'comptable.direction.delegationPanneau.exceptionCoffres' => 'Coffres autorisés',
+			'comptable.direction.delegationPanneau.exceptionCoffresAucun' => 'Aucun coffre autorisé',
+			'comptable.direction.delegationPanneau.exceptionExclus' => 'Bénéficiaires exclus',
+			'comptable.direction.delegationPanneau.exceptionExclusAucun' => 'Aucun bénéficiaire exclu',
+			'comptable.direction.delegationPanneau.exceptionPlafond' => 'Plafond par transaction',
+			'comptable.direction.delegationPanneau.exceptionPlafondGeneral' => 'Celui de la politique générale',
+			'comptable.direction.delegationPanneau.exceptionTitre' => 'Exception de la délégation',
+			'comptable.direction.delegationPanneau.exceptionCoffresDetail' => 'Seuls ces coffres peuvent être touchés par la délégation. Aucun coffre coché : aucun coffre autorisé.',
+			'comptable.direction.delegationPanneau.exceptionPlafondDetail' => 'Plus bas que le plafond de la politique générale, jamais plus haut. Vide : celui de la politique générale.',
+			'comptable.direction.delegationPanneau.exceptionPlafondTropHaut' => ({required Object plafond}) => 'Ce plafond doit être plus bas que celui de la politique générale (${plafond}).',
+			'comptable.direction.delegationPanneau.exceptionPlafondSansGeneral' => 'Fixez d\'abord un plafond par transaction dans la politique générale : une exception ne peut qu\'être plus basse.',
+			'comptable.direction.delegationPanneau.exceptionExclure' => 'Exclure un bénéficiaire',
+			'comptable.direction.delegationPanneau.exceptionExclureAucun' => 'Aucun autre bénéficiaire à exclure.',
+			'comptable.direction.delegationPanneau.exceptionRetirerExclu' => ({required Object nom}) => 'Retirer ${nom} des exclus',
+			'comptable.direction.delegationPanneau.exceptionGarder' => 'Garder l\'exception',
+			'comptable.direction.delegationPanneau.exceptionRetirer' => 'Retirer cette exception',
+			'comptable.direction.delegationPanneau.exceptionRetirerPhrase' => 'La délégation retrouve la politique générale. Rien n\'est enregistré avant « Enregistrer ».',
 			'comptable.direction.titre' => 'Réserve et délégation',
 			'comptable.direction.sousTitre' => 'La politique de la Réserve stratégique et ce que le Comptable peut exécuter seul.',
 			'comptable.direction.reserve' => 'Politique de la Réserve stratégique',

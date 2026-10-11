@@ -10643,6 +10643,12 @@ class _Traductions$comptable$statuts$raison$ar extends Traductions$comptable$sta
 	@override String get doublonPotentiel => 'تكرار محتمل';
 	@override String get nonApprouvee => 'التزام غير معتمَد';
 	@override String get capaciteAbsente => 'القدرة غير متوفرة';
+	@override String get delegationsSuspendues => 'التفويضات موقوفة من الإدارة';
+	@override String get delegationExpiree => 'التفويض منتهٍ';
+	@override String get sortieEnAttenteDelai => 'صرف بانتظار مهلة الأمان';
+	@override String get coffreNonAutorise => 'صندوق خارج التفويض';
+	@override String get beneficiaireExclu => 'مستفيد مستبعد من التفويض';
+	@override String get plafondExceptionDepasse => 'فوق سقف هذا التفويض';
 }
 
 // Path: comptable.paiements.confirmation
@@ -11230,6 +11236,66 @@ class _Traductions$comptable$direction$delegationPanneau$ar extends Traductions$
 	@override String get montantManuelDetail => 'مبلغ الدفعة هو دائمًا مبلغ الالتزام.';
 	@override String get politiqueTarifaire => 'تعديل الأسعار';
 	@override String get politiqueTarifaireDetail => 'سياسة الأسعار تبقى للإدارة.';
+	@override String get suspendreTitre => 'إيقاف كل التفويضات';
+	@override String get suspendreDetail => 'لا يستطيع المحاسب تنفيذ شيء بمفرده فورًا: تعود كل عملية إلى الإدارة.';
+	@override String get suspendreAction => 'إيقاف كل التفويضات';
+	@override String get suspendreConfirmerTitre => 'إيقاف كل التفويضات؟';
+	@override String get suspendreConfirmerPhrase => 'الأثر فوري: لن تخرج أي عملية من المحاسب دون موافقتك. يُسجَّل الإيقاف في السجل.';
+	@override String get suspendreConfirmer => 'إيقاف';
+	@override String get suspendreGarder => 'الإبقاء على التفويضات';
+	@override String get suspendueTitre => 'التفويضات موقوفة';
+	@override String suspendueDepuis({required Object date}) => 'موقوفة منذ ⁨${date}⁩. لا يستطيع المحاسب تنفيذ شيء دون موافقتك.';
+	@override String get suspendueSansDate => 'لا يستطيع المحاسب تنفيذ شيء دون موافقتك.';
+	@override String get suspendueEnCours => 'جارٍ الإيقاف';
+	@override String get suspendueEchec => 'لم يتأكد الإيقاف: ربما لم يصل الطلب إلى رواية. تحقق من حالة التفويض قبل إعادة المحاولة.';
+	@override String get expirationTitre => 'الانتهاء';
+	@override String get expirationDetail => 'ينتهي كل تفويض ويُجدَّد. بعد التاريخ لا يستطيع المحاسب تنفيذ شيء بمفرده.';
+	@override String expireLe({required Object date}) => 'ينتهي في ⁨${date}⁩';
+	@override String get expirationInconnue => 'تاريخ الانتهاء غير معروف';
+	@override String get etatActive => 'ساري';
+	@override String get etatSuspendue => 'موقوف';
+	@override String get etatExpiree => 'منتهٍ';
+	@override String renouvelablePour({required Object jours}) => 'قابل للتجديد لمدة ⁨${jours}⁩ يومًا';
+	@override String get renouveler => 'تجديد التفويض';
+	@override String get renouvelee => 'جُدِّد التفويض.';
+	@override String get renouvelerEchec => 'لم يتأكد التجديد: ربما لم يصل الطلب إلى رواية. تحقق من تاريخ الانتهاء قبل إعادة المحاولة.';
+	@override String get sortiesTitre => 'مصروفات بالانتظار';
+	@override String get sortiesDetail => 'المصروف فوق سقف المعاملة الواحدة ينتظر مهلة أمان قبل أن يخرج. يمكنك إلغاؤه قبل ذلك.';
+	@override String sortiesDelai({required Object heures}) => 'مهلة الأمان: ⁨${heures}⁩ س';
+	@override String get sortiesVide => 'لا مصروفات بالانتظار.';
+	@override String get sortiesErreur => 'تعذّرت قراءة المصروفات بالانتظار: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.';
+	@override String sortiePart({required Object objet, required Object date}) => '⁨${objet}⁩ · يخرج في ⁨${date}⁩';
+	@override String get sortieAnnuler => 'إلغاء';
+	@override String sortieAnnulerNom({required Object beneficiaire}) => 'إلغاء مصروف ⁨${beneficiaire}⁩';
+	@override String get sortieAnnulerTitre => 'إلغاء هذا المصروف؟';
+	@override String sortieAnnulerPhrase({required Object beneficiaire}) => 'لن يخرج مصروف ⁨${beneficiaire}⁩. يُسجَّل الإلغاء في السجل.';
+	@override String get sortieAnnulerConfirmer => 'إلغاء المصروف';
+	@override String get sortieGarder => 'الإبقاء على المصروف';
+	@override String get sortieAnnulee => 'أُلغي المصروف.';
+	@override String get sortieAnnulationEchec => 'لم يتأكد الإلغاء: ربما لم يصل الطلب إلى رواية. أعد قراءة القائمة قبل إعادة المحاولة.';
+	@override String get exceptionsTitre => 'الاستثناءات';
+	@override String get exceptionsDetail => 'إعدادات خاصة بتفويض. سقف الاستثناء أخفض دائمًا من سقف السياسة العامة، لا أعلى منه أبدًا.';
+	@override String get exceptionsVide => 'لا استثناءات: تسري السياسة العامة على كل التفويضات.';
+	@override String get exceptionAjouter => 'إضافة استثناء';
+	@override String exceptionModifier({required Object libelle}) => 'تعديل استثناء ⁨${libelle}⁩';
+	@override String get exceptionLibelleDefaut => 'تفويض المحاسب';
+	@override String get exceptionCoffres => 'الصناديق المسموحة';
+	@override String get exceptionCoffresAucun => 'لا صندوق مسموح';
+	@override String get exceptionExclus => 'المستفيدون المستبعدون';
+	@override String get exceptionExclusAucun => 'لا مستفيد مستبعد';
+	@override String get exceptionPlafond => 'السقف لكل معاملة';
+	@override String get exceptionPlafondGeneral => 'سقف السياسة العامة';
+	@override String get exceptionTitre => 'استثناء التفويض';
+	@override String get exceptionCoffresDetail => 'هذه الصناديق وحدها يمكن للتفويض أن يمسّها. دون تحديد: لا صندوق مسموح.';
+	@override String get exceptionPlafondDetail => 'أخفض من سقف السياسة العامة، لا أعلى منه أبدًا. فارغ: سقف السياسة العامة.';
+	@override String exceptionPlafondTropHaut({required Object plafond}) => 'يجب أن يكون هذا السقف أخفض من سقف السياسة العامة (⁨${plafond}⁩).';
+	@override String get exceptionPlafondSansGeneral => 'حدّد أولًا سقفًا لكل معاملة في السياسة العامة: لا يمكن للاستثناء إلا أن يكون أخفض.';
+	@override String get exceptionExclure => 'استبعاد مستفيد';
+	@override String get exceptionExclureAucun => 'لا مستفيد آخر للاستبعاد.';
+	@override String exceptionRetirerExclu({required Object nom}) => 'إزالة ⁨${nom}⁩ من المستبعدين';
+	@override String get exceptionGarder => 'الإبقاء على الاستثناء';
+	@override String get exceptionRetirer => 'إزالة هذا الاستثناء';
+	@override String get exceptionRetirerPhrase => 'يعود التفويض إلى السياسة العامة. لا يُحفظ شيء قبل «حفظ».';
 }
 
 // Path: appareils.emetteur.verification
@@ -17569,6 +17635,12 @@ extension on TraductionsAr {
 			'comptable.statuts.raison.doublonPotentiel' => 'تكرار محتمل',
 			'comptable.statuts.raison.nonApprouvee' => 'التزام غير معتمَد',
 			'comptable.statuts.raison.capaciteAbsente' => 'القدرة غير متوفرة',
+			'comptable.statuts.raison.delegationsSuspendues' => 'التفويضات موقوفة من الإدارة',
+			'comptable.statuts.raison.delegationExpiree' => 'التفويض منتهٍ',
+			'comptable.statuts.raison.sortieEnAttenteDelai' => 'صرف بانتظار مهلة الأمان',
+			'comptable.statuts.raison.coffreNonAutorise' => 'صندوق خارج التفويض',
+			'comptable.statuts.raison.beneficiaireExclu' => 'مستفيد مستبعد من التفويض',
+			'comptable.statuts.raison.plafondExceptionDepasse' => 'فوق سقف هذا التفويض',
 			'comptable.alertes.enseignantsAPayer' => 'معلمون للدفع',
 			'comptable.alertes.contractuelsAEcheance' => 'متعاقدون حان موعد استحقاقهم',
 			'comptable.alertes.infosManquantes' => 'معلومات الدفع ناقصة',
@@ -17786,14 +17858,14 @@ extension on TraductionsAr {
 			'comptable.tresorerie.cadences.hebdomadaire' => 'كل أسبوع',
 			'comptable.tresorerie.cadences.mensuelle' => 'كل شهر',
 			'comptable.tresorerie.cadences.apresEncaissementConsolide' => 'بعد كل مقبوض مُثبَّت',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.cadences.manuelle' => 'يدوية',
 			'comptable.tresorerie.seuilAlerte' => ({required Object pourcent}) => 'تنبيه دون ${pourcent} % من المبلغ المستهدف',
 			'comptable.tresorerie.retraitValidation' => 'كل سحب يتطلب مصادقة إضافية.',
 			'comptable.tresorerie.retraitSansValidation' => 'لا تشترط السياسة مصادقة للسحب؛ ويبقى معامَلًا كحركة حساسة.',
 			'comptable.tresorerie.version' => ({required Object version}) => 'الإصدار ${version}',
 			'comptable.tresorerie.versionDepuis' => ({required Object version, required Object date}) => 'الإصدار ${version}، ساري المفعول منذ ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.mouvementsTitre' => 'الحركات بين الصناديق',
 			'comptable.tresorerie.mouvementsPhrase' => 'نحو الحماية: حسب تفويضك. الخروج من صندوق محمي: تلزم مصادقة إضافية.',
 			'comptable.tresorerie.preparerMouvement' => 'إعداد حركة',
@@ -18268,6 +18340,68 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.montantManuelDetail' => 'مبلغ الدفعة هو دائمًا مبلغ الالتزام.',
 			'comptable.direction.delegationPanneau.politiqueTarifaire' => 'تعديل الأسعار',
 			'comptable.direction.delegationPanneau.politiqueTarifaireDetail' => 'سياسة الأسعار تبقى للإدارة.',
+			'comptable.direction.delegationPanneau.suspendreTitre' => 'إيقاف كل التفويضات',
+			'comptable.direction.delegationPanneau.suspendreDetail' => 'لا يستطيع المحاسب تنفيذ شيء بمفرده فورًا: تعود كل عملية إلى الإدارة.',
+			'comptable.direction.delegationPanneau.suspendreAction' => 'إيقاف كل التفويضات',
+			'comptable.direction.delegationPanneau.suspendreConfirmerTitre' => 'إيقاف كل التفويضات؟',
+			'comptable.direction.delegationPanneau.suspendreConfirmerPhrase' => 'الأثر فوري: لن تخرج أي عملية من المحاسب دون موافقتك. يُسجَّل الإيقاف في السجل.',
+			'comptable.direction.delegationPanneau.suspendreConfirmer' => 'إيقاف',
+			'comptable.direction.delegationPanneau.suspendreGarder' => 'الإبقاء على التفويضات',
+			'comptable.direction.delegationPanneau.suspendueTitre' => 'التفويضات موقوفة',
+			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'موقوفة منذ ⁨${date}⁩. لا يستطيع المحاسب تنفيذ شيء دون موافقتك.',
+			'comptable.direction.delegationPanneau.suspendueSansDate' => 'لا يستطيع المحاسب تنفيذ شيء دون موافقتك.',
+			'comptable.direction.delegationPanneau.suspendueEnCours' => 'جارٍ الإيقاف',
+			'comptable.direction.delegationPanneau.suspendueEchec' => 'لم يتأكد الإيقاف: ربما لم يصل الطلب إلى رواية. تحقق من حالة التفويض قبل إعادة المحاولة.',
+			'comptable.direction.delegationPanneau.expirationTitre' => 'الانتهاء',
+			'comptable.direction.delegationPanneau.expirationDetail' => 'ينتهي كل تفويض ويُجدَّد. بعد التاريخ لا يستطيع المحاسب تنفيذ شيء بمفرده.',
+			'comptable.direction.delegationPanneau.expireLe' => ({required Object date}) => 'ينتهي في ⁨${date}⁩',
+			'comptable.direction.delegationPanneau.expirationInconnue' => 'تاريخ الانتهاء غير معروف',
+			'comptable.direction.delegationPanneau.etatActive' => 'ساري',
+			'comptable.direction.delegationPanneau.etatSuspendue' => 'موقوف',
+			'comptable.direction.delegationPanneau.etatExpiree' => 'منتهٍ',
+			'comptable.direction.delegationPanneau.renouvelablePour' => ({required Object jours}) => 'قابل للتجديد لمدة ⁨${jours}⁩ يومًا',
+			'comptable.direction.delegationPanneau.renouveler' => 'تجديد التفويض',
+			'comptable.direction.delegationPanneau.renouvelee' => 'جُدِّد التفويض.',
+			'comptable.direction.delegationPanneau.renouvelerEchec' => 'لم يتأكد التجديد: ربما لم يصل الطلب إلى رواية. تحقق من تاريخ الانتهاء قبل إعادة المحاولة.',
+			'comptable.direction.delegationPanneau.sortiesTitre' => 'مصروفات بالانتظار',
+			'comptable.direction.delegationPanneau.sortiesDetail' => 'المصروف فوق سقف المعاملة الواحدة ينتظر مهلة أمان قبل أن يخرج. يمكنك إلغاؤه قبل ذلك.',
+			'comptable.direction.delegationPanneau.sortiesDelai' => ({required Object heures}) => 'مهلة الأمان: ⁨${heures}⁩ س',
+			'comptable.direction.delegationPanneau.sortiesVide' => 'لا مصروفات بالانتظار.',
+			'comptable.direction.delegationPanneau.sortiesErreur' => 'تعذّرت قراءة المصروفات بالانتظار: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.',
+			'comptable.direction.delegationPanneau.sortiePart' => ({required Object objet, required Object date}) => '⁨${objet}⁩ · يخرج في ⁨${date}⁩',
+			'comptable.direction.delegationPanneau.sortieAnnuler' => 'إلغاء',
+			'comptable.direction.delegationPanneau.sortieAnnulerNom' => ({required Object beneficiaire}) => 'إلغاء مصروف ⁨${beneficiaire}⁩',
+			'comptable.direction.delegationPanneau.sortieAnnulerTitre' => 'إلغاء هذا المصروف؟',
+			_ => null,
+		} ?? switch (path) {
+			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => 'لن يخرج مصروف ⁨${beneficiaire}⁩. يُسجَّل الإلغاء في السجل.',
+			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'إلغاء المصروف',
+			'comptable.direction.delegationPanneau.sortieGarder' => 'الإبقاء على المصروف',
+			'comptable.direction.delegationPanneau.sortieAnnulee' => 'أُلغي المصروف.',
+			'comptable.direction.delegationPanneau.sortieAnnulationEchec' => 'لم يتأكد الإلغاء: ربما لم يصل الطلب إلى رواية. أعد قراءة القائمة قبل إعادة المحاولة.',
+			'comptable.direction.delegationPanneau.exceptionsTitre' => 'الاستثناءات',
+			'comptable.direction.delegationPanneau.exceptionsDetail' => 'إعدادات خاصة بتفويض. سقف الاستثناء أخفض دائمًا من سقف السياسة العامة، لا أعلى منه أبدًا.',
+			'comptable.direction.delegationPanneau.exceptionsVide' => 'لا استثناءات: تسري السياسة العامة على كل التفويضات.',
+			'comptable.direction.delegationPanneau.exceptionAjouter' => 'إضافة استثناء',
+			'comptable.direction.delegationPanneau.exceptionModifier' => ({required Object libelle}) => 'تعديل استثناء ⁨${libelle}⁩',
+			'comptable.direction.delegationPanneau.exceptionLibelleDefaut' => 'تفويض المحاسب',
+			'comptable.direction.delegationPanneau.exceptionCoffres' => 'الصناديق المسموحة',
+			'comptable.direction.delegationPanneau.exceptionCoffresAucun' => 'لا صندوق مسموح',
+			'comptable.direction.delegationPanneau.exceptionExclus' => 'المستفيدون المستبعدون',
+			'comptable.direction.delegationPanneau.exceptionExclusAucun' => 'لا مستفيد مستبعد',
+			'comptable.direction.delegationPanneau.exceptionPlafond' => 'السقف لكل معاملة',
+			'comptable.direction.delegationPanneau.exceptionPlafondGeneral' => 'سقف السياسة العامة',
+			'comptable.direction.delegationPanneau.exceptionTitre' => 'استثناء التفويض',
+			'comptable.direction.delegationPanneau.exceptionCoffresDetail' => 'هذه الصناديق وحدها يمكن للتفويض أن يمسّها. دون تحديد: لا صندوق مسموح.',
+			'comptable.direction.delegationPanneau.exceptionPlafondDetail' => 'أخفض من سقف السياسة العامة، لا أعلى منه أبدًا. فارغ: سقف السياسة العامة.',
+			'comptable.direction.delegationPanneau.exceptionPlafondTropHaut' => ({required Object plafond}) => 'يجب أن يكون هذا السقف أخفض من سقف السياسة العامة (⁨${plafond}⁩).',
+			'comptable.direction.delegationPanneau.exceptionPlafondSansGeneral' => 'حدّد أولًا سقفًا لكل معاملة في السياسة العامة: لا يمكن للاستثناء إلا أن يكون أخفض.',
+			'comptable.direction.delegationPanneau.exceptionExclure' => 'استبعاد مستفيد',
+			'comptable.direction.delegationPanneau.exceptionExclureAucun' => 'لا مستفيد آخر للاستبعاد.',
+			'comptable.direction.delegationPanneau.exceptionRetirerExclu' => ({required Object nom}) => 'إزالة ⁨${nom}⁩ من المستبعدين',
+			'comptable.direction.delegationPanneau.exceptionGarder' => 'الإبقاء على الاستثناء',
+			'comptable.direction.delegationPanneau.exceptionRetirer' => 'إزالة هذا الاستثناء',
+			'comptable.direction.delegationPanneau.exceptionRetirerPhrase' => 'يعود التفويض إلى السياسة العامة. لا يُحفظ شيء قبل «حفظ».',
 			'comptable.direction.titre' => 'الاحتياطي والتفويض',
 			'comptable.direction.sousTitre' => 'سياسة الاحتياطي الاستراتيجي وما يستطيع المحاسب تنفيذه وحده.',
 			'comptable.direction.reserve' => 'سياسة الاحتياطي الاستراتيجي',
@@ -18306,8 +18440,6 @@ extension on TraductionsAr {
 			'galerie.elevation' => 'الارتفاع والزوايا',
 			'galerie.typographie' => 'سلالم الخطوط',
 			'galerie.polices' => 'الخطوط',
-			_ => null,
-		} ?? switch (path) {
 			'galerie.composants' => 'المكونات المشتركة',
 			'galerie.modeEnfant' => 'وضع إمكانية الوصول',
 			'galerie.modeStandard' => 'الوضع العادي',
@@ -18754,6 +18886,8 @@ extension on TraductionsAr {
 			'inscription.champRequis' => 'هذه الإجابة ضرورية للمتابعة.',
 			'inscription.etapeCourte' => ({required Object n, required Object total}) => '⁨${n}⁩ من ⁨${total}⁩',
 			'inscription.retourEtape' => 'العودة إلى الخطوة السابقة',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.seDeconnecter' => 'تسجيل الخروج',
 			'inscription.modifier' => 'تعديل',
 			'inscription.reessayer' => 'إعادة المحاولة',
@@ -18820,8 +18954,6 @@ extension on TraductionsAr {
 			'foyer.relireClasses' => 'إعادة قراءة الفصول',
 			'foyer.inscriptionIllisible' => 'التسجيل الجاري لكل طالب لا يظهر في هذه الصفحة بعد.',
 			'foyer.appareilsPartages' => 'الأجهزة المشتركة',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.appareilsFoyer' => 'أجهزة الأسرة',
 			'foyer.appareilsFoyerLegende' => 'ربط جهاز، عرض الأجهزة المربوطة، إزالة أحدها',
 			'foyer.creerMonProfil' => 'إنشاء ملفي كطالب',
@@ -19268,6 +19400,8 @@ extension on TraductionsAr {
 			'dossiers.refus.inconnu' => 'نتيجة الرفض غير مؤكَّدة بعد.',
 			'dossiers.refus.interdit' => 'لم يعد بإمكانك رفض هذا الملف.',
 			'dossiers.refus.indisponible' => 'الرفض غير متاح الآن.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.refus.succes' => 'رُفض الملف.',
 			'dossiers.refus.abandonQuestion' => 'التخلي عن السبب المكتوب؟',
 			'dossiers.refus.continuerSaisie' => 'متابعة الكتابة',
@@ -19334,8 +19468,6 @@ extension on TraductionsAr {
 			'creneaux.attendDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'ينتظر منذ اليوم', one: 'ينتظر منذ يوم واحد', two: 'ينتظر منذ يومين', few: 'ينتظر منذ ⁨${jours}⁩ أيام', many: 'ينتظر منذ ⁨${jours}⁩ يومًا', other: 'ينتظر منذ ⁨${jours}⁩ يوم', ), 
 			'creneaux.attendUnJour' => 'ينتظر منذ يوم',
 			'creneaux.attendAujourdhui' => 'قُدِّم الطلب اليوم',
-			_ => null,
-		} ?? switch (path) {
 			'creneaux.niveau' => ({required Object niveau}) => 'المستوى ⁨${niveau}⁩',
 			'creneaux.prendre' => ({required Object jour, required Object heure}) => 'قبول ⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'creneaux.priseEnCours' => 'جارٍ الحفظ',
