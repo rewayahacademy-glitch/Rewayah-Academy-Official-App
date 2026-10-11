@@ -56,5 +56,24 @@ SELECT pg_catalog.jsonb_build_object(
         AND p.prokind = 'f'
         AND p.prorettype = 'trigger'::pg_catalog.regtype
     ) AS triggers
+  ), '[]'::jsonb),
+  'event_triggers', COALESCE((
+    SELECT pg_catalog.jsonb_agg(row_data ORDER BY row_data->>'name')
+    FROM (
+      SELECT pg_catalog.jsonb_build_object(
+        'name', e.evtname,
+        'event', e.evtevent,
+        'enabled', e.evtenabled,
+        'tags', e.evttags,
+        'signature', pg_catalog.format(
+          '%I.%I(%s)', n.nspname, p.proname,
+          pg_catalog.pg_get_function_identity_arguments(p.oid)
+        )
+      ) AS row_data
+      FROM pg_catalog.pg_event_trigger e
+      JOIN pg_catalog.pg_proc p ON p.oid = e.evtfoid
+      JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+      WHERE n.nspname IN ('public', 'app_private')
+    ) AS event_triggers
   ), '[]'::jsonb)
 )::text;

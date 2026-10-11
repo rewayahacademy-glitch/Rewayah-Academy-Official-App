@@ -11,6 +11,7 @@ L’inventaire ne contient pas les corps de fonctions ni une conclusion de sécu
 ## Conditions minimales du gate F79
 
 - Comparer toutes les fonctions `SECURITY DEFINER` de `public` et `app_private` par signature et `md5(prosrc)`; tout ajout, retrait, surcharge ou changement de hash échoue par défaut.
+- Comparer également les event triggers attachés aux fonctions de `public` et `app_private` par nom, événement, état, tags et signature de fonction; toute attache ajoutée, retirée ou modifiée échoue par défaut. Les event triggers des schémas d'extensions sont hors de cet inventaire applicatif.
 - Les fonctions `ROLE_POSITIVE_TEMPLATE` doivent commencer par l’un des gabarits positifs et null-safe approuvés par F79. Le scanner doit masquer commentaires et chaînes, et refuser les gardes après un DML, dans une branche morte ou hors du premier bloc exécutable.
 - Les fonctions classées `NO_GUARD_HELPER` exigent une justification spécifique à leur rôle. Les triggers doivent rester `SECURITY INVOKER`.
 - `search_path` doit être explicitement fixé et l’owner attendu contrôlé. Chaque signature exige classification, relecteur et date non vides.

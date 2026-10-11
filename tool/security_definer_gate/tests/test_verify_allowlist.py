@@ -38,12 +38,27 @@ def fixture():
                 "project_ref": "project-test",
                 "approval_state": "APPROVED_ALLOWLIST",
                 "function_count": 1,
+                "event_trigger_count": 1,
             },
             "functions": [approved],
+            "event_triggers": [{
+                "name": "ensure_rls",
+                "event": "ddl_command_end",
+                "enabled": "O",
+                "tags": ["CREATE TABLE", "CREATE TABLE AS", "SELECT INTO"],
+                "signature": "public.example_trigger()",
+            }],
         },
         {
             "metadata": {"project_ref": "project-test", "database": "postgres"},
             "functions": [current],
+            "event_triggers": [{
+                "name": "ensure_rls",
+                "event": "ddl_command_end",
+                "enabled": "O",
+                "tags": ["CREATE TABLE", "CREATE TABLE AS", "SELECT INTO"],
+                "signature": "public.example_trigger()",
+            }],
             "trigger_functions": [
                 {"signature": "public.example_trigger()", "security_definer": False}
             ],
@@ -108,6 +123,24 @@ class VerifyAllowlistTests(unittest.TestCase):
         manifest, observed = fixture()
         observed["trigger_functions"][0]["security_definer"] = True
         with self.assertRaisesRegex(GateFailure, "trigger function is SECURITY DEFINER"):
+            verify(manifest, observed, "project-test")
+
+    def test_event_trigger_attachment_must_match_reviewed_inventory(self):
+        manifest, observed = fixture()
+        observed["event_triggers"][0]["enabled"] = "D"
+        with self.assertRaisesRegex(GateFailure, "event trigger ensure_rls: enabled differs"):
+            verify(manifest, observed, "project-test")
+
+    def test_unapproved_event_trigger_fails_closed(self):
+        manifest, observed = fixture()
+        observed["event_triggers"].append({
+            "name": "unexpected",
+            "event": "sql_drop",
+            "enabled": "O",
+            "tags": None,
+            "signature": "public.other()",
+        })
+        with self.assertRaisesRegex(GateFailure, "unapproved catalog event trigger"):
             verify(manifest, observed, "project-test")
 
     def test_wrong_catalog_project_fails_closed(self):

@@ -6,6 +6,7 @@
     "source": "Read-only pg_catalog SELECT via Supabase MCP; body fingerprint is md5(prosrc)",
     "approval_state": "INVENTORY_ONLY_NOT_ALLOWLIST",
     "function_count": 141,
+    "event_trigger_count": 1,
     "grants_observed": {
       "anon": 27,
       "authenticated": 118,
@@ -2693,6 +2694,14 @@
       "reviewer": null,
       "reviewed_at": null
     }
+  ],
+  "event_triggers": [
+    {
+      "name": "ensure_rls",
+      "event": "ddl_command_end",
+      "enabled": "O",
+      "tags": ["CREATE TABLE", "CREATE TABLE AS", "SELECT INTO"],
+      "signature": "public.rls_auto_enable()"
+    }
   ]
 }
-

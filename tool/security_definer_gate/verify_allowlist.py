@@ -268,6 +268,23 @@ def _rows(document: dict[str, Any], field: str, source: str) -> dict[str, dict[s
     return result
 
 
+def _named_rows(document: dict[str, Any], field: str, source: str) -> dict[str, dict[str, Any]]:
+    values = document.get(field)
+    if not isinstance(values, list):
+        raise GateFailure(f"{source}: {field} must be a list")
+    result: dict[str, dict[str, Any]] = {}
+    for row in values:
+        if not isinstance(row, dict):
+            raise GateFailure(f"{source}: {field} contains a non-object row")
+        name = row.get("name")
+        if not isinstance(name, str) or not name:
+            raise GateFailure(f"{source}: {field} row has no name")
+        if name in result:
+            raise GateFailure(f"{source}: duplicate name {name}")
+        result[name] = row
+    return result
+
+
 def _check_review(row: dict[str, Any], signature: str) -> None:
     classification = row.get("classification")
     if not isinstance(classification, str) or classification not in _CLASSIFICATIONS:
@@ -303,6 +320,11 @@ def verify(manifest: dict[str, Any], observed: dict[str, Any], project_ref: str)
     actual = _rows(observed, "functions", "catalog")
     if metadata.get("function_count") != len(expected):
         raise GateFailure("manifest function_count does not match its rows")
+
+    expected_event_triggers = _named_rows(manifest, "event_triggers", "manifest")
+    actual_event_triggers = _named_rows(observed, "event_triggers", "catalog")
+    if metadata.get("event_trigger_count") != len(expected_event_triggers):
+        raise GateFailure("manifest event_trigger_count does not match its rows")
 
     problems: list[str] = []
     for signature in sorted(expected.keys() - actual.keys()):
@@ -351,6 +373,17 @@ def verify(manifest: dict[str, Any], observed: dict[str, Any], project_ref: str)
             or any(not isinstance(value, bool) for value in execute.values())
         ):
             problems.append(f"{signature}: execute ACL must cover anon/authenticated/agent_ro")
+
+    for name in sorted(expected_event_triggers.keys() - actual_event_triggers.keys()):
+        problems.append(f"missing catalog event trigger: {name}")
+    for name in sorted(actual_event_triggers.keys() - expected_event_triggers.keys()):
+        problems.append(f"unapproved catalog event trigger: {name}")
+    for name in sorted(expected_event_triggers.keys() & actual_event_triggers.keys()):
+        approved = expected_event_triggers[name]
+        current = actual_event_triggers[name]
+        for field in ("event", "enabled", "tags", "signature"):
+            if current.get(field) != approved.get(field):
+                problems.append(f"event trigger {name}: {field} differs from the reviewed manifest")
 
     triggers = observed.get("trigger_functions")
     if not isinstance(triggers, list):
