@@ -3067,6 +3067,7 @@ class Traductions$recherche$fr {
 	String get limite => 'Les résultats sont limités à ce que votre espace autorise.';
 
 	late final Traductions$recherche$guide$fr guide = Traductions$recherche$guide$fr.internal(_root);
+	late final Traductions$recherche$entree$fr entree = Traductions$recherche$entree$fr.internal(_root);
 }
 
 // Path: commun.classeDistincte
@@ -17416,6 +17417,18 @@ class Traductions$recherche$guide$fr {
 
 	/// fr: 'Seulement tes supports et tes leçons.'
 	String get limite => 'Seulement tes supports et tes leçons.';
+}
+
+// Path: recherche.entree
+class Traductions$recherche$entree$fr {
+	Traductions$recherche$entree$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rechercher dans les supports'
+	String get supports => 'Rechercher dans les supports';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -36609,6 +36622,7 @@ extension on Traductions {
 			'recherche.guide.initial.titre' => 'Trouver un support',
 			'recherche.guide.initial.phrase' => 'Écris un mot pour trouver un de tes supports.',
 			'recherche.guide.limite' => 'Seulement tes supports et tes leçons.',
+			'recherche.entree.supports' => 'Rechercher dans les supports',
 			_ => null,
 		};
 	}

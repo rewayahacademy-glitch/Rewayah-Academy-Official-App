@@ -9060,6 +9060,9 @@
         "phrase": "Écris un mot pour trouver un de tes supports."
       },
       "limite": "Seulement tes supports et tes leçons."
+    },
+    "entree": {
+      "supports": "Rechercher dans les supports"
     }
   }
 }

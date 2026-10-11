@@ -1445,6 +1445,7 @@ class _Traductions$recherche$ar extends Traductions$recherche$fr {
 	@override String get filtres => 'مجالات البحث';
 	@override String get limite => 'تقتصر النتائج على ما تتيحه مساحتك.';
 	@override late final _Traductions$recherche$guide$ar guide = _Traductions$recherche$guide$ar._(_root);
+	@override late final _Traductions$recherche$entree$ar entree = _Traductions$recherche$entree$ar._(_root);
 }
 
 // Path: notifications.filtres
@@ -6989,6 +6990,16 @@ class _Traductions$recherche$guide$ar extends Traductions$recherche$guide$fr {
 	@override String get titre => 'البحث عن مادة';
 	@override late final _Traductions$recherche$guide$initial$ar initial = _Traductions$recherche$guide$initial$ar._(_root);
 	@override String get limite => 'موادك ودروسك فقط.';
+}
+
+// Path: recherche.entree
+class _Traductions$recherche$entree$ar extends Traductions$recherche$entree$fr {
+	_Traductions$recherche$entree$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get supports => 'البحث في المواد';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -18515,6 +18526,7 @@ extension on TraductionsAr {
 			'recherche.guide.initial.titre' => 'البحث عن مادة',
 			'recherche.guide.initial.phrase' => 'اكتب كلمة لتجد إحدى موادك.',
 			'recherche.guide.limite' => 'موادك ودروسك فقط.',
+			'recherche.entree.supports' => 'البحث في المواد',
 			_ => null,
 		};
 	}
