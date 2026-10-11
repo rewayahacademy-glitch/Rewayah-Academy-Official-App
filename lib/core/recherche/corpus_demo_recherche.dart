@@ -13,13 +13,13 @@ const List<String> _prenoms = <String>[
 ];
 
 const List<String> _sourates = <String>[
-  'Al-Fātiḥa',
+  'Al-Fatiha',
   'Al-Baqara',
-  'Āl ʿImrān',
+  'Al Imran',
   'An-Nās',
-  'Al-Ikhlāṣ',
+  'Al-Ikhlas',
   'Al-Falaq',
-  'Yā-Sīn',
+  'Ya-Sin',
   'Al-Kawthar',
 ];
 
@@ -45,7 +45,8 @@ List<EntreeCorpusDemo> corpusClassesDemo({
       reference: 'classe-demo-$i',
       titre:
           'Classe ${_sourates[i % _sourates.length]} ${i ~/ _sourates.length + 1}',
-      contexte: 'Votre classe · ${_jours[i % _jours.length]} · ${16 + i % 5} h',
+      contexte:
+          'Votre classe · ${_jours[i % _jours.length]} · ${16 + i % 5}\u00a0h',
       cible: CibleRecherche(
         kind: KindCible.classe,
         reference: 'classe-demo-$i',
@@ -62,7 +63,7 @@ List<EntreeCorpusDemo> corpusSupportsDemo({
       type: TypeResultat.support,
       reference: 'support-demo-$i',
       titre:
-          '${_sourates[i % _sourates.length]}, lecon ${i ~/ _sourates.length + 1}',
+          '${_sourates[i % _sourates.length]}, leçon ${i ~/ _sourates.length + 1}',
       contexte: i.isEven
           ? 'Coran · Sourate ${i % 114 + 1}'
           : 'Lecture · Support de classe',
@@ -83,7 +84,7 @@ List<EntreeCorpusDemo> corpusElevesClasseDemo({
       reference: 'eleve-demo-$i',
       titre: '${_prenoms[i % _prenoms.length]} ${i ~/ _prenoms.length + 1}',
       contexte:
-          'Eleve de la Classe ${_sourates[i % _sourates.length]} · Fiche pedagogique',
+          'Élève de la classe ${_sourates[i % _sourates.length]} · Fiche pédagogique',
       cible: CibleRecherche(kind: KindCible.eleve, reference: 'eleve-demo-$i'),
     ),
 ];

@@ -44,7 +44,12 @@ class PageRecherche extends ConsumerWidget {
     return EcranRecherche(
       contexte: ContexteRecherche(
         espace: espace,
-        domaineCible: DomaineRecherche.values.asNameMap()[domaineDemande],
+        // Interface guidee : « Trouver un support », un domaine a la fois
+        // (spec §4.5). Une presentation, jamais une autorisation : le
+        // serveur decide de ce que l'espace peut chercher.
+        domaineCible: espace == EspaceRecherche.eleveGuide
+            ? DomaineRecherche.supports
+            : DomaineRecherche.values.asNameMap()[domaineDemande],
       ),
     );
   }

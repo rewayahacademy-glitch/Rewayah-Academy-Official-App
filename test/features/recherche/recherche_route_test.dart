@@ -16,6 +16,9 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/section_header.dart';
 import 'package:rewayah_academy/core/widgets/setting_row.dart';
 
+import 'package:rewayah_academy/features/recherche/ecran/ecran_recherche.dart'
+    show cleChampRecherche;
+
 import '../../router/support_routeur.dart';
 import '../../support/harnais.dart';
 
@@ -50,7 +53,7 @@ Future<GoRouter> _monter(
 );
 
 Future<void> _chercher(WidgetTester tester, String texte) async {
-  await tester.enterText(find.byType(TextField), texte);
+  await tester.enterText(find.byKey(cleChampRecherche), texte);
   await tester.pump(const Duration(milliseconds: 300));
   await tester.pump(const Duration(milliseconds: 50));
   await tester.pump(const Duration(milliseconds: 50));

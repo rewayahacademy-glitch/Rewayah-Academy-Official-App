@@ -325,24 +325,29 @@ void main() {
       expect(_etat(c).phase, PhaseRecherche.resultats);
     });
 
-    testWidgets('le domaine d\'ouverture passe en premier et sort a 20', (
-      WidgetTester t,
-    ) async {
+    testWidgets('le domaine d\'ouverture borne la recherche a lui seul, '
+        'pages de 20', (WidgetTester t) async {
       const ContexteRecherche borne = ContexteRecherche(
         espace: EspaceRecherche.famille,
         domaineCible: DomaineRecherche.supports,
       );
+      final MoteurRechercheDemo classes = _moteur(
+        DomaineRecherche.classes,
+        corpus: corpusClassesDemo(),
+      );
       final ProviderContainer c = _ouvrir(<MoteurRechercheDomaine>[
-        _moteur(DomaineRecherche.classes, corpus: corpusClassesDemo()),
+        classes,
         _moteur(DomaineRecherche.supports, corpus: corpusSupportsDemo()),
       ], contexte: borne);
       await t.pump(Duration.zero);
       _ctl(c, borne).ecrire('fatiha');
       await _attendre(t, _apresSaisie);
-      final EtatDomaine supports = _etat(c, borne).domaines.firstWhere(
-        (EtatDomaine d) => d.domaine == DomaineRecherche.supports,
-      );
-      expect(supports.elements.length, BudgetsRecherche.limitePage);
+      final List<EtatDomaine> domaines = _etat(c, borne).domaines;
+      expect(domaines.length, 1);
+      expect(domaines.single.domaine, DomaineRecherche.supports);
+      expect(domaines.single.elements.length, BudgetsRecherche.limitePage);
+      // Aucune demande n'est partie vers les autres domaines (§6.1 point 4).
+      expect(classes.appels, 0);
     });
   });
 

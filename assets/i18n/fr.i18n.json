@@ -8975,8 +8975,8 @@
     "titre": "Rechercher",
     "retour": "Retour",
     "champ": {
-      "libelle": "Rechercher dans votre espace",
-      "aide": "Un nom, une classe, un support"
+      "libelle": "Rechercher",
+      "aide": "Un mot"
     },
     "espace": {
       "famille": "Dans votre espace Tuteur",
@@ -9012,7 +9012,6 @@
     "voirDavantage": "Voir davantage",
     "pageSuivante": "Chargement de résultats supplémentaires…",
     "pageEnEchec": "Les résultats suivants n'ont pas pu être chargés.",
-    "ouvrir": "Ouvrir {titre}",
     "etats": {
       "vide": {
         "titre": "Aucun résultat pour cette recherche.",
@@ -9050,6 +9049,17 @@
         "phrase": "Vos résultats ont été actualisés.",
         "action": "Retour aux résultats"
       }
+    },
+    "tout": "Tout",
+    "filtres": "Domaines de recherche",
+    "limite": "Les résultats sont limités à ce que votre espace autorise.",
+    "guide": {
+      "titre": "Trouver un support",
+      "initial": {
+        "titre": "Trouver un support",
+        "phrase": "Écris un mot pour trouver un de tes supports."
+      },
+      "limite": "Seulement tes supports et tes leçons."
     }
   }
 }

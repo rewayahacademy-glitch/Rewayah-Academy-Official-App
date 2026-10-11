@@ -3055,10 +3055,18 @@ class Traductions$recherche$fr {
 	/// fr: 'Les résultats suivants n'ont pas pu être chargés.'
 	String get pageEnEchec => 'Les résultats suivants n\'ont pas pu être chargés.';
 
-	/// fr: 'Ouvrir {titre}'
-	String ouvrir({required Object titre}) => 'Ouvrir ${titre}';
-
 	late final Traductions$recherche$etats$fr etats = Traductions$recherche$etats$fr.internal(_root);
+
+	/// fr: 'Tout'
+	String get tout => 'Tout';
+
+	/// fr: 'Domaines de recherche'
+	String get filtres => 'Domaines de recherche';
+
+	/// fr: 'Les résultats sont limités à ce que votre espace autorise.'
+	String get limite => 'Les résultats sont limités à ce que votre espace autorise.';
+
+	late final Traductions$recherche$guide$fr guide = Traductions$recherche$guide$fr.internal(_root);
 }
 
 // Path: commun.classeDistincte
@@ -17291,11 +17299,11 @@ class Traductions$recherche$champ$fr {
 
 	// Translations
 
-	/// fr: 'Rechercher dans votre espace'
-	String get libelle => 'Rechercher dans votre espace';
+	/// fr: 'Rechercher'
+	String get libelle => 'Rechercher';
 
-	/// fr: 'Un nom, une classe, un support'
-	String get aide => 'Un nom, une classe, un support';
+	/// fr: 'Un mot'
+	String get aide => 'Un mot';
 }
 
 // Path: recherche.espace
@@ -17391,6 +17399,23 @@ class Traductions$recherche$etats$fr {
 	late final Traductions$recherche$etats$sessionExpiree$fr sessionExpiree = Traductions$recherche$etats$sessionExpiree$fr.internal(_root);
 	late final Traductions$recherche$etats$nonRaccorde$fr nonRaccorde = Traductions$recherche$etats$nonRaccorde$fr.internal(_root);
 	late final Traductions$recherche$etats$inaccessible$fr inaccessible = Traductions$recherche$etats$inaccessible$fr.internal(_root);
+}
+
+// Path: recherche.guide
+class Traductions$recherche$guide$fr {
+	Traductions$recherche$guide$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Trouver un support'
+	String get titre => 'Trouver un support';
+
+	late final Traductions$recherche$guide$initial$fr initial = Traductions$recherche$guide$initial$fr.internal(_root);
+
+	/// fr: 'Seulement tes supports et tes leçons.'
+	String get limite => 'Seulement tes supports et tes leçons.';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -26930,6 +26955,21 @@ class Traductions$recherche$etats$inaccessible$fr {
 
 	/// fr: 'Retour aux résultats'
 	String get action => 'Retour aux résultats';
+}
+
+// Path: recherche.guide.initial
+class Traductions$recherche$guide$initial$fr {
+	Traductions$recherche$guide$initial$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Trouver un support'
+	String get titre => 'Trouver un support';
+
+	/// fr: 'Écris un mot pour trouver un de tes supports.'
+	String get phrase => 'Écris un mot pour trouver un de tes supports.';
 }
 
 // Path: salle.preparation.eleve.guidee
@@ -36515,8 +36555,8 @@ extension on Traductions {
 			'reprisesAdmin.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'recherche.titre' => 'Rechercher',
 			'recherche.retour' => 'Retour',
-			'recherche.champ.libelle' => 'Rechercher dans votre espace',
-			'recherche.champ.aide' => 'Un nom, une classe, un support',
+			'recherche.champ.libelle' => 'Rechercher',
+			'recherche.champ.aide' => 'Un mot',
 			'recherche.espace.famille' => 'Dans votre espace Tuteur',
 			'recherche.espace.eleve' => 'Dans votre espace Élève',
 			'recherche.espace.eleveGuide' => 'Dans votre espace Élève',
@@ -36542,7 +36582,6 @@ extension on Traductions {
 			'recherche.voirDavantage' => 'Voir davantage',
 			'recherche.pageSuivante' => 'Chargement de résultats supplémentaires…',
 			'recherche.pageEnEchec' => 'Les résultats suivants n\'ont pas pu être chargés.',
-			'recherche.ouvrir' => ({required Object titre}) => 'Ouvrir ${titre}',
 			'recherche.etats.vide.titre' => 'Aucun résultat pour cette recherche.',
 			'recherche.etats.vide.phrase' => 'Essayez un autre mot ou un filtre.',
 			'recherche.etats.vide.action' => 'Modifier la recherche',
@@ -36563,6 +36602,13 @@ extension on Traductions {
 			'recherche.etats.inaccessible.titre' => 'Cet élément n\'est plus accessible.',
 			'recherche.etats.inaccessible.phrase' => 'Vos résultats ont été actualisés.',
 			'recherche.etats.inaccessible.action' => 'Retour aux résultats',
+			'recherche.tout' => 'Tout',
+			'recherche.filtres' => 'Domaines de recherche',
+			'recherche.limite' => 'Les résultats sont limités à ce que votre espace autorise.',
+			'recherche.guide.titre' => 'Trouver un support',
+			'recherche.guide.initial.titre' => 'Trouver un support',
+			'recherche.guide.initial.phrase' => 'Écris un mot pour trouver un de tes supports.',
+			'recherche.guide.limite' => 'Seulement tes supports et tes leçons.',
 			_ => null,
 		};
 	}

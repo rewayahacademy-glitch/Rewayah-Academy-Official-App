@@ -78,6 +78,7 @@ class RechercheControleur extends Notifier<EtatRecherche> {
   Timer? _lenteur;
   int _generation = 0;
   bool _ferme = false;
+  DomaineRecherche? _filtre;
 
   @override
   EtatRecherche build() {
@@ -106,17 +107,11 @@ class RechercheControleur extends Notifier<EtatRecherche> {
     final RequeteNormalisee requete = RequeteNormalisee.de(brut, contexte);
     switch (requete.validite) {
       case ValiditeRequete.vide:
-        state = const EtatRecherche();
+        state = _neuf();
       case ValiditeRequete.tropCourte:
-        state = EtatRecherche(
-          texte: requete.texte,
-          phase: PhaseRecherche.saisie,
-        );
+        state = _neuf(texte: requete.texte, phase: PhaseRecherche.saisie);
       case ValiditeRequete.valide:
-        state = EtatRecherche(
-          texte: requete.texte,
-          phase: PhaseRecherche.attente,
-        );
+        state = _neuf(texte: requete.texte, phase: PhaseRecherche.attente);
         final int generation = _generation;
         _attente = Timer(BudgetsRecherche.delaiSaisie, () {
           unawaited(_lancer(requete.texte, generation));
@@ -134,7 +129,7 @@ class RechercheControleur extends Notifier<EtatRecherche> {
   /// Efface la recherche et tout ce qu'elle a recu.
   void effacer() {
     _arreter();
-    state = const EtatRecherche();
+    state = _neuf();
   }
 
   /// Relance toute la recherche, apres une erreur, un delai ou le retour du
@@ -142,7 +137,7 @@ class RechercheControleur extends Notifier<EtatRecherche> {
   void reessayer() {
     if (state.texte.isEmpty) return;
     _arreter();
-    state = EtatRecherche(texte: state.texte, phase: PhaseRecherche.attente);
+    state = _neuf(texte: state.texte, phase: PhaseRecherche.attente);
     unawaited(_lancer(state.texte, _generation));
   }
 
@@ -184,7 +179,35 @@ class RechercheControleur extends Notifier<EtatRecherche> {
     );
   }
 
+  /// Retient un domaine (puce) ou, avec `null`, rend la fenetre commune ;
+  /// une recherche deja posee repart aussitot sur ce seul domaine.
+  void choisirDomaine(DomaineRecherche? domaine) {
+    if (_filtre == domaine) return;
+    _filtre = domaine;
+    final String texte = state.texte;
+    if (texte.isEmpty ||
+        state.phase == PhaseRecherche.inactif ||
+        state.phase == PhaseRecherche.saisie) {
+      state = _neuf(texte: state.texte, phase: state.phase);
+      return;
+    }
+    _arreter();
+    state = _neuf(texte: texte, phase: PhaseRecherche.attente);
+    unawaited(_lancer(texte, _generation));
+  }
+
   // --- interne -------------------------------------------------------------
+
+  EtatRecherche _neuf({
+    String texte = '',
+    PhaseRecherche phase = PhaseRecherche.inactif,
+    List<EtatDomaine> domaines = const <EtatDomaine>[],
+  }) => EtatRecherche(
+    texte: texte,
+    phase: phase,
+    domaines: domaines,
+    filtre: _filtre,
+  );
 
   void _arreter() {
     _generation++;
@@ -216,10 +239,10 @@ class RechercheControleur extends Notifier<EtatRecherche> {
     // « Reessayer » relance au retour du reseau. Reseau inconnu : en ligne.
     final bool horsLigne = ref.read(horsLigneProvider).value ?? false;
     if (horsLigne) {
-      state = EtatRecherche(texte: texte, phase: PhaseRecherche.horsLigne);
+      state = _neuf(texte: texte, phase: PhaseRecherche.horsLigne);
       return;
     }
-    state = EtatRecherche(texte: texte, phase: PhaseRecherche.chargement);
+    state = _neuf(texte: texte, phase: PhaseRecherche.chargement);
     _lenteur?.cancel();
     _lenteur = Timer(BudgetsRecherche.seuilLenteur, () {
       if (_ferme || generation != _generation) return;
@@ -238,27 +261,35 @@ class RechercheControleur extends Notifier<EtatRecherche> {
     } on TimeoutException {
       if (_ferme || generation != _generation) return;
       _lenteur?.cancel();
-      state = EtatRecherche(texte: texte, phase: PhaseRecherche.delai);
+      state = _neuf(texte: texte, phase: PhaseRecherche.delai);
       return;
     } on Object {
       if (_ferme || generation != _generation) return;
       _lenteur?.cancel();
-      state = EtatRecherche(texte: texte, phase: PhaseRecherche.erreur);
+      state = _neuf(texte: texte, phase: PhaseRecherche.erreur);
       return;
     }
     if (_ferme || generation != _generation) return;
     if (portees.isEmpty) {
       _lenteur?.cancel();
-      state = EtatRecherche(texte: texte, phase: PhaseRecherche.nonAutorise);
+      state = _neuf(texte: texte, phase: PhaseRecherche.nonAutorise);
       return;
     }
-    final List<DomaineRecherche> ordre = <DomaineRecherche>[
-      if (contexte.domaineCible != null &&
-          portees.contains(contexte.domaineCible))
-        contexte.domaineCible!,
-      ...portees.where((DomaineRecherche d) => d != contexte.domaineCible),
-    ];
-    state = EtatRecherche(
+    // Une puce, ou le domaine d'ouverture d'un module (Bibliotheque, Espace
+    // Classe), borne la recherche a ce seul domaine (§6.1 point 4).
+    final DomaineRecherche? voulu = _filtre ?? contexte.domaineCible;
+    final DomaineRecherche? retenu = portees.contains(voulu) ? voulu : null;
+    final List<DomaineRecherche> ordre = retenu != null
+        ? <DomaineRecherche>[retenu]
+        : <DomaineRecherche>[
+            if (contexte.domaineCible != null &&
+                portees.contains(contexte.domaineCible))
+              contexte.domaineCible!,
+            ...portees.where(
+              (DomaineRecherche d) => d != contexte.domaineCible,
+            ),
+          ];
+    state = _neuf(
       texte: texte,
       phase: PhaseRecherche.chargement,
       domaines: <EtatDomaine>[
@@ -305,7 +336,8 @@ class RechercheControleur extends Notifier<EtatRecherche> {
     required bool premiere,
     String? curseur,
   }) async {
-    final int limite = premiere && contexte.domaineCible == null
+    final int limite =
+        premiere && contexte.domaineCible == null && _filtre == null
         ? BudgetsRecherche.limiteCommune
         : BudgetsRecherche.limitePage;
     ReponseDomaine reponse;
@@ -395,3 +427,16 @@ final rechercheControleurProvider = NotifierProvider.autoDispose
     .family<RechercheControleur, EtatRecherche, ContexteRecherche>(
       RechercheControleur.new,
     );
+
+/// Les domaines que la personne peut interroger dans un contexte : lus une
+/// fois a l'ouverture (aucune requete, aucun balayage), ce sont les puces de
+/// l'ecran. Un domaine interdit n'y figure pas (spec §8.1). Une lecture en
+/// echec ne donne aucune puce : la recherche garde sa fenetre commune.
+final porteesRechercheProvider = FutureProvider.autoDispose
+    .family<List<DomaineRecherche>, ContexteRecherche>((
+      Ref ref,
+      ContexteRecherche contexte,
+    ) {
+      ref.watch(cleSessionRechercheProvider);
+      return ref.watch(portRechercheProvider).portees(contexte);
+    });

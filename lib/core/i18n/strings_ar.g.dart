@@ -1427,7 +1427,7 @@ class _Traductions$recherche$ar extends Traductions$recherche$fr {
 	@override String get courte => 'اكتب ثلاثة أحرف على الأقل.';
 	@override String get chargement => 'جارٍ البحث…';
 	@override String get lent => 'يستغرق البحث وقتًا أطول من المتوقع. تبقى النتائج التي وصلت معروضة.';
-	@override String resultatsPour({required Object requete}) => 'نتائج «${requete}»';
+	@override String resultatsPour({required Object requete}) => 'نتائج «⁨${requete}⁩»';
 	@override String categoriesAffichees({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
 		zero: 'لا فئة معروضة',
 		one: 'فئة واحدة معروضة',
@@ -1440,8 +1440,11 @@ class _Traductions$recherche$ar extends Traductions$recherche$fr {
 	@override String get voirDavantage => 'عرض المزيد';
 	@override String get pageSuivante => 'جارٍ تحميل مزيد من النتائج…';
 	@override String get pageEnEchec => 'تعذّر تحميل النتائج التالية.';
-	@override String ouvrir({required Object titre}) => 'فتح ${titre}';
 	@override late final _Traductions$recherche$etats$ar etats = _Traductions$recherche$etats$ar._(_root);
+	@override String get tout => 'الكل';
+	@override String get filtres => 'مجالات البحث';
+	@override String get limite => 'تقتصر النتائج على ما تتيحه مساحتك.';
+	@override late final _Traductions$recherche$guide$ar guide = _Traductions$recherche$guide$ar._(_root);
 }
 
 // Path: notifications.filtres
@@ -6911,8 +6914,8 @@ class _Traductions$recherche$champ$ar extends Traductions$recherche$champ$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get libelle => 'البحث في مساحتك';
-	@override String get aide => 'اسم أو فصل أو مادة';
+	@override String get libelle => 'بحث';
+	@override String get aide => 'كلمة';
 }
 
 // Path: recherche.espace
@@ -6974,6 +6977,18 @@ class _Traductions$recherche$etats$ar extends Traductions$recherche$etats$fr {
 	@override late final _Traductions$recherche$etats$sessionExpiree$ar sessionExpiree = _Traductions$recherche$etats$sessionExpiree$ar._(_root);
 	@override late final _Traductions$recherche$etats$nonRaccorde$ar nonRaccorde = _Traductions$recherche$etats$nonRaccorde$ar._(_root);
 	@override late final _Traductions$recherche$etats$inaccessible$ar inaccessible = _Traductions$recherche$etats$inaccessible$ar._(_root);
+}
+
+// Path: recherche.guide
+class _Traductions$recherche$guide$ar extends Traductions$recherche$guide$fr {
+	_Traductions$recherche$guide$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'البحث عن مادة';
+	@override late final _Traductions$recherche$guide$initial$ar initial = _Traductions$recherche$guide$initial$ar._(_root);
+	@override String get limite => 'موادك ودروسك فقط.';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -11244,6 +11259,17 @@ class _Traductions$recherche$etats$inaccessible$ar extends Traductions$recherche
 	@override String get titre => 'لم يعد هذا العنصر متاحًا.';
 	@override String get phrase => 'تم تحديث نتائجك.';
 	@override String get action => 'العودة إلى النتائج';
+}
+
+// Path: recherche.guide.initial
+class _Traductions$recherche$guide$initial$ar extends Traductions$recherche$guide$initial$fr {
+	_Traductions$recherche$guide$initial$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'البحث عن مادة';
+	@override String get phrase => 'اكتب كلمة لتجد إحدى موادك.';
 }
 
 // Path: classe.entree.demo.roles
@@ -18433,8 +18459,8 @@ extension on TraductionsAr {
 			'suiviDemandes.notification.close' => ({required Object dePrenom, required Object motif}) => 'طلب موعد ⁨${dePrenom}⁩: ⁨${motif}⁩',
 			'recherche.titre' => 'بحث',
 			'recherche.retour' => 'رجوع',
-			'recherche.champ.libelle' => 'البحث في مساحتك',
-			'recherche.champ.aide' => 'اسم أو فصل أو مادة',
+			'recherche.champ.libelle' => 'بحث',
+			'recherche.champ.aide' => 'كلمة',
 			'recherche.espace.famille' => 'في مساحة ولي الأمر',
 			'recherche.espace.eleve' => 'في مساحة الطالب',
 			'recherche.espace.eleveGuide' => 'في مساحة الطالب',
@@ -18447,7 +18473,7 @@ extension on TraductionsAr {
 			'recherche.courte' => 'اكتب ثلاثة أحرف على الأقل.',
 			'recherche.chargement' => 'جارٍ البحث…',
 			'recherche.lent' => 'يستغرق البحث وقتًا أطول من المتوقع. تبقى النتائج التي وصلت معروضة.',
-			'recherche.resultatsPour' => ({required Object requete}) => 'نتائج «${requete}»',
+			'recherche.resultatsPour' => ({required Object requete}) => 'نتائج «⁨${requete}⁩»',
 			'recherche.categoriesAffichees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا فئة معروضة', one: 'فئة واحدة معروضة', two: 'فئتان معروضتان', few: '⁨${nombre}⁩ فئات معروضة', many: '⁨${nombre}⁩ فئةً معروضة', other: '⁨${nombre}⁩ فئة معروضة', ), 
 			'recherche.domaines.classes' => 'الفصول',
 			'recherche.domaines.supports' => 'المواد',
@@ -18462,7 +18488,6 @@ extension on TraductionsAr {
 			'recherche.pageEnEchec' => 'تعذّر تحميل النتائج التالية.',
 			_ => null,
 		} ?? switch (path) {
-			'recherche.ouvrir' => ({required Object titre}) => 'فتح ${titre}',
 			'recherche.etats.vide.titre' => 'لا نتائج لهذا البحث.',
 			'recherche.etats.vide.phrase' => 'جرّب كلمة أخرى أو عامل تصفية.',
 			'recherche.etats.vide.action' => 'تعديل البحث',
@@ -18483,6 +18508,13 @@ extension on TraductionsAr {
 			'recherche.etats.inaccessible.titre' => 'لم يعد هذا العنصر متاحًا.',
 			'recherche.etats.inaccessible.phrase' => 'تم تحديث نتائجك.',
 			'recherche.etats.inaccessible.action' => 'العودة إلى النتائج',
+			'recherche.tout' => 'الكل',
+			'recherche.filtres' => 'مجالات البحث',
+			'recherche.limite' => 'تقتصر النتائج على ما تتيحه مساحتك.',
+			'recherche.guide.titre' => 'البحث عن مادة',
+			'recherche.guide.initial.titre' => 'البحث عن مادة',
+			'recherche.guide.initial.phrase' => 'اكتب كلمة لتجد إحدى موادك.',
+			'recherche.guide.limite' => 'موادك ودروسك فقط.',
 			_ => null,
 		};
 	}

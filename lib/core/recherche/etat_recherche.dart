@@ -140,6 +140,7 @@ class EtatRecherche {
     this.phase = PhaseRecherche.inactif,
     this.domaines = const <EtatDomaine>[],
     this.lent = false,
+    this.filtre,
   });
 
   /// Le texte nettoye de la recherche en cours (« Resultats pour « ... » »).
@@ -153,6 +154,10 @@ class EtatRecherche {
 
   /// Vrai a 2 s : la recherche dure plus que prevu, sans rien retirer.
   final bool lent;
+
+  /// Le domaine retenu par une puce : la recherche ne porte que sur lui
+  /// (pages de 20). `null` : la fenetre commune.
+  final DomaineRecherche? filtre;
 
   /// Les domaines qui ont des elements a montrer.
   Iterable<EtatDomaine> get avecElements =>
@@ -174,6 +179,7 @@ class EtatRecherche {
     phase: phase ?? this.phase,
     domaines: domaines ?? this.domaines,
     lent: lent ?? this.lent,
+    filtre: filtre,
   );
 }
 
