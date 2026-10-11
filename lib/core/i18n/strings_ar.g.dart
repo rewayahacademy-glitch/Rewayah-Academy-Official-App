@@ -3912,6 +3912,7 @@ class _Traductions$admin$groupes$ar extends Traductions$admin$groupes$fr {
 	@override String observationTitre({required Object libelle}) => 'المتابعة: ⁨${libelle}⁩';
 	@override String get observationErreur => 'تعذّر حفظ الإعداد.';
 	@override String get observationCapaciteAbsente => 'هذا التثبيت لا يملك بعد تحديث الخادم الذي يتطلبه هذا الإعداد (الترحيل 0036). إعادة المحاولة لن تغيّر شيئًا: يجب تطبيقه أولًا على قاعدة البيانات.';
+	@override late final _Traductions$admin$groupes$cahiers$ar cahiers = _Traductions$admin$groupes$cahiers$ar._(_root);
 	@override late final _Traductions$admin$groupes$partage$ar partage = _Traductions$admin$groupes$partage$ar._(_root);
 	@override late final _Traductions$admin$groupes$liste$ar liste = _Traductions$admin$groupes$liste$ar._(_root);
 }
@@ -10376,6 +10377,34 @@ class _Traductions$com$annonces$demo$ar extends Traductions$com$annonces$demo$fr
 	@override String get classeFajr => 'فصل الفجر';
 	@override String get enseignante => 'معلمة الفصل';
 	@override late final _Traductions$com$annonces$demo$f$ar f = _Traductions$com$annonces$demo$f$ar._(_root);
+}
+
+// Path: admin.groupes.cahiers
+class _Traductions$admin$groupes$cahiers$ar extends Traductions$admin$groupes$cahiers$fr {
+	_Traductions$admin$groupes$cahiers$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get lien => 'عرض دفاتر الفصل';
+	@override String get titre => 'دفاتر الفصل';
+	@override String get aide => 'للقراءة فقط. تُسجَّل كل مرة يُفتح فيها دفتر في سجل التدقيق مع اسمك.';
+	@override String get filtre => 'الحالة';
+	@override String get filtreTous => 'كل الحالات';
+	@override String get vide => 'لا يوجد دفتر مطابق لهذا الفصل.';
+	@override String get plus => 'عرض مزيد من الدفاتر';
+	@override String titreCahier({required Object dePrenom}) => 'دفتر ⁨${dePrenom}⁩';
+	@override String get lectureSeule => 'للقراءة فقط';
+	@override String get evaluation => 'تقييم المعلم لهذا الطالب';
+	@override String get aucuneEvaluation => 'لم يُسجَّل أي تقييم لهذا الطالب.';
+	@override String get detailsInternes => 'تفاصيل داخلية';
+	@override String get interne => 'داخلي، لا يُعرض للأسرة أبدًا';
+	@override String get aucunInterne => 'لم تُسجَّل أي تفاصيل داخلية.';
+	@override String get apercu => 'عرض معاينة الأسرة';
+	@override String get nonValide => 'لم يُعتمد الدفتر بعد.';
+	@override String corrigeLe({required Object date}) => 'صُحِّح في ⁨${date}⁩';
+	@override String get enseignant => 'المعلم';
+	@override String seanceDu({required Object date}) => 'حصة ⁨${date}⁩';
 }
 
 // Path: admin.groupes.partage
@@ -16851,6 +16880,25 @@ extension on TraductionsAr {
 			'admin.groupes.observationTitre' => ({required Object libelle}) => 'المتابعة: ⁨${libelle}⁩',
 			'admin.groupes.observationErreur' => 'تعذّر حفظ الإعداد.',
 			'admin.groupes.observationCapaciteAbsente' => 'هذا التثبيت لا يملك بعد تحديث الخادم الذي يتطلبه هذا الإعداد (الترحيل 0036). إعادة المحاولة لن تغيّر شيئًا: يجب تطبيقه أولًا على قاعدة البيانات.',
+			'admin.groupes.cahiers.lien' => 'عرض دفاتر الفصل',
+			'admin.groupes.cahiers.titre' => 'دفاتر الفصل',
+			'admin.groupes.cahiers.aide' => 'للقراءة فقط. تُسجَّل كل مرة يُفتح فيها دفتر في سجل التدقيق مع اسمك.',
+			'admin.groupes.cahiers.filtre' => 'الحالة',
+			'admin.groupes.cahiers.filtreTous' => 'كل الحالات',
+			'admin.groupes.cahiers.vide' => 'لا يوجد دفتر مطابق لهذا الفصل.',
+			'admin.groupes.cahiers.plus' => 'عرض مزيد من الدفاتر',
+			'admin.groupes.cahiers.titreCahier' => ({required Object dePrenom}) => 'دفتر ⁨${dePrenom}⁩',
+			'admin.groupes.cahiers.lectureSeule' => 'للقراءة فقط',
+			'admin.groupes.cahiers.evaluation' => 'تقييم المعلم لهذا الطالب',
+			'admin.groupes.cahiers.aucuneEvaluation' => 'لم يُسجَّل أي تقييم لهذا الطالب.',
+			'admin.groupes.cahiers.detailsInternes' => 'تفاصيل داخلية',
+			'admin.groupes.cahiers.interne' => 'داخلي، لا يُعرض للأسرة أبدًا',
+			'admin.groupes.cahiers.aucunInterne' => 'لم تُسجَّل أي تفاصيل داخلية.',
+			'admin.groupes.cahiers.apercu' => 'عرض معاينة الأسرة',
+			'admin.groupes.cahiers.nonValide' => 'لم يُعتمد الدفتر بعد.',
+			'admin.groupes.cahiers.corrigeLe' => ({required Object date}) => 'صُحِّح في ⁨${date}⁩',
+			'admin.groupes.cahiers.enseignant' => 'المعلم',
+			'admin.groupes.cahiers.seanceDu' => ({required Object date}) => 'حصة ⁨${date}⁩',
 			'admin.groupes.partage.titre' => 'مشاركة التقارير التربوية',
 			'admin.groupes.partage.interrupteur' => 'المشاركة التلقائية مع الأسر',
 			'admin.groupes.partage.aide' => 'ترى الأسر الملاحظات القابلة للمشاركة بعد اعتماد الدفتر. تبقى الملاحظات الداخلية خاصة.',
@@ -17075,6 +17123,8 @@ extension on TraductionsAr {
 			'admin.evaluations.filtreRealisees' => 'منجزة',
 			'admin.evaluations.filtreAnnulees' => 'ملغاة',
 			'admin.evaluations.filtreCertifications' => 'الشهادات',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.colonneEleve' => 'الطالب',
 			'admin.evaluations.colonneNiveau' => 'المستوى',
 			'admin.evaluations.colonneType' => 'النوع',
@@ -17094,8 +17144,6 @@ extension on TraductionsAr {
 			'admin.evaluations.planifier' => 'جدولة تقييم',
 			'admin.evaluations.planifierTitre' => 'جدولة تقييم',
 			'admin.evaluations.champNiveau' => 'المستوى المقيَّم',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.champType' => 'النوع',
 			'admin.evaluations.champDatePrevue' => 'التاريخ المقرر (يوم/شهر/سنة)',
 			'admin.evaluations.planifierEnvoyer' => 'جدولة',
@@ -17589,6 +17637,8 @@ extension on TraductionsAr {
 			'admin.tirage.missionsParSemaine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا مهمة في الأسبوع', one: 'مهمة واحدة في الأسبوع', two: 'مهمتان في الأسبوع', few: '⁨${n}⁩ مهام في الأسبوع', many: '⁨${n}⁩ مهمة في الأسبوع', other: '⁨${n}⁩ مهمة في الأسبوع', ), 
 			'admin.tirage.ponderationTitre' => 'الترجيح',
 			'admin.tirage.ponderationDetail' => 'كلما قوي الوزن زادت فرص سحب هذه الحصص. تبقى القرعة غير قابلة للتوقع على المعلم والمراقب معًا.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.critereEnseignantsRecents' => 'معلمون التحقوا حديثًا',
 			'admin.tirage.critereClassesSignalees' => 'فصول أُبلغ عنها للإدارة',
 			'admin.tirage.critereHeuresDePointe' => 'ساعات الذروة',
@@ -17608,8 +17658,6 @@ extension on TraductionsAr {
 			'admin.tirage.ajouterConfirmer' => 'إضافة هذا الهدف',
 			'admin.tirage.manqueCible' => 'ينقص الهدف: اختاروه من القائمة.',
 			'admin.tirage.aucunCandidat' => 'لا فصل ولا معلم يمكن استهدافه',
-			_ => null,
-		} ?? switch (path) {
 			'admin.tirage.aucunCandidatDetail' => 'كل الفصول والمعلمين مستهدفون بالفعل أو لا توجد حصص بعد.',
 			'admin.tirage.erreurCandidats' => 'تعذّرت قراءة قائمة الأهداف. أعيدوا المحاولة بعد قليل.',
 			'admin.tirage.enregistrer' => 'حفظ القواعد',
@@ -18103,6 +18151,8 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.alertesResume' => ({required Object n}) => 'تنبيهات للمراقبة: ${n}',
 			'comptable.aujourdhui.paiementsAEffectuer' => 'مدفوعات للتنفيذ',
 			'comptable.aujourdhui.paiementsAEffectuerDetail' => 'تُراجَع كل دفعة في قائمتها قبل دفعها.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.paiementsVide' => 'لا توجد مدفوعات للتنفيذ.',
 			'comptable.aujourdhui.echeancesVide' => 'لا توجد مواعيد استحقاق قريبة.',
 			'comptable.aujourdhui.encaissementsVide' => 'لا توجد مقبوضات حديثة.',
@@ -18122,8 +18172,6 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.aTraiterHorsPaiements' => 'مهام أخرى',
 			'comptable.aujourdhui.alertes' => 'التنبيهات',
 			'comptable.aujourdhui.echeances' => 'مواعيد استحقاق قريبة',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.prestataires' => 'مزوّدو الدفع',
 			'comptable.aujourdhui.activiteRecente' => 'النشاط الحديث',
 			'comptable.aujourdhui.accesRapides' => 'وصول سريع',
@@ -18617,6 +18665,8 @@ extension on TraductionsAr {
 			'comptable.contractuels.beneficiaireExterneAide' => 'يتلقى دعوة آمنة ليُدخل وسيلة الدفع بنفسه.',
 			'comptable.contractuels.champNomExterne' => 'اسم المستفيد الخارجي',
 			'comptable.contractuels.changerEcheance' => 'تغيير الاستحقاق',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.deviseDe' => ({required Object devise}) => 'العملة: ${devise}',
 			'comptable.contractuels.champObjet' => 'موضوع الالتزام',
 			'comptable.contractuels.aideObjet' => 'مثلًا: الفاتورة رقم 024',
@@ -18636,8 +18686,6 @@ extension on TraductionsAr {
 			'comptable.contractuels.nouvelle' => 'التزام جديد',
 			'comptable.contractuels.detailTitre' => 'الالتزام',
 			'comptable.validation.sousTitre' => 'طلبات المحاسب التي تنتظر قرار شخص مخوَّل آخر. صاحب الطلب لا يصادق أبدًا على طلبه.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.aDecider' => 'للبتّ',
 			'comptable.validation.decidees' => 'بُتّ فيها مؤخرًا',
 			'comptable.validation.videTitre' => 'لا شيء للمصادقة',
@@ -19131,6 +19179,8 @@ extension on TraductionsAr {
 			'eleveConnexion.lecteur.saisir' => 'إدخال الرمز',
 			'eleveConnexion.lecteur.scannerANouveau' => 'المسح من جديد',
 			'eleveConnexion.lecteur.verificationTitre' => 'جارٍ التحقق من الرمز',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.lecteur.verificationPhrase' => 'الكاميرا متوقفة أثناء التحقق.',
 			'eleveConnexion.lecteur.refuseeTitre' => 'الكاميرا غير مسموح بها',
 			'eleveConnexion.lecteur.refuseePhrase' => 'لقراءة رمز QR، اسمح بالكاميرا. يمكنك أيضًا إدخال الرمز المعروض تحت رمز QR.',
@@ -19150,8 +19200,6 @@ extension on TraductionsAr {
 			'eleveConnexion.refus.inconnu' => 'هذا الرمز غير موجود، أو حلّ محله رمز أحدث. تحقّق منه، أو اعرض رمزًا جديدًا على جهاز وليّ الأمر.',
 			'eleveConnexion.refus.expireTitre' => 'رمز منتهي الصلاحية',
 			'eleveConnexion.refus.expire' => 'هذا الرمز لم يعد صالحًا. اعرض رمزًا جديدًا على جهاز وليّ الأمر.',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.refus.dejaUtiliseTitre' => 'رمز مستخدَم',
 			'eleveConnexion.refus.dejaUtilise' => 'استُخدم هذا الرمز لربط جهاز من قبل. اعرض رمزًا جديدًا على جهاز وليّ الأمر.',
 			'eleveConnexion.refus.revoqueTitre' => 'جهاز مُزال',
@@ -19645,6 +19693,8 @@ extension on TraductionsAr {
 			'adulte.acceptation.sansCompteTitre' => 'دعوة إلى باقة الأسرة',
 			'adulte.acceptation.sansCompte' => 'للرد، سجّل الدخول إلى حسابك، أو أنشئ حسابًا. ستقرأ حينها ما سيراه الشخص الذي يدعوك وما لن يراه قبل أن تقرر.',
 			'adulte.acceptation.sansCompteAction' => 'تسجيل الدخول أو إنشاء حسابي',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.sortie.retirerElle' => 'إزالة زوجتي',
 			'adulte.sortie.retirerLui' => 'إزالة زوجي',
 			'adulte.sortie.retirerQuestionElle' => 'إزالة زوجتي؟',
@@ -19664,8 +19714,6 @@ extension on TraductionsAr {
 			'adulte.sortie.departEchecTitre' => 'لم تُؤكَّد المغادرة.',
 			'adulte.sortie.echecPhrase' => 'تحقّق قبل إعادة المحاولة.',
 			'adulte.sortie.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك إعادة المحاولة بنفسك عند عودة الاتصال.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.sortie.notificationQuitte' => ({required Object prenom}) => 'غادر ⁨${prenom}⁩ باقة أسرتك.',
 			'adulte.sortie.notificationRetiree' => ({required Object dePrenom}) => 'أُزلتِ من باقة أسرة ⁨${dePrenom}⁩.',
 			'adulte.sortie.notificationRetire' => ({required Object dePrenom}) => 'أُزلتَ من باقة أسرة ⁨${dePrenom}⁩.',
@@ -20159,6 +20207,8 @@ extension on TraductionsAr {
 			'controleur.demo.enseignantControle' => 'معلم مراقب، مساحة المراقبة',
 			'controleur.demo.enseignantPrincipal' => 'معلم مراقب، مساحة المعلم',
 			'controleur.demo.adminControle' => 'مدير مراقب، مساحة المراقبة',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.demo.adminPrincipal' => 'مدير مراقب، مساحة الإدارة',
 			'controleur.demo.missionEnCours' => 'زيارة جارية، العودة إلى المساحة الرئيسية',
 			'controleur.demo.accesRevoque' => 'سُحب الوصول أثناء التصفح',
@@ -20178,8 +20228,6 @@ extension on TraductionsAr {
 			'controleur.controle.dejaEnCoursAide' => 'مراقبة واحدة في كل مرة لكل فصل. اختر حصة أخرى، أو عد لاحقًا: يمكنك البدء حين تنتهي هذه المراقبة.',
 			'controleur.controle.incognito' => 'لا يُعلَن عن حضورك في الوقت الفعلي.',
 			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.controle.duree' => ({required Object minutes}) => '⁨${minutes}⁩ د مقررة',
 			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${n}⁩ طلاب', many: '⁨${n}⁩ طالبًا', other: '⁨${n}⁩ طالب', ), 
 			'controleur.controle.chargement' => 'جارٍ قراءة زيارتك القادمة.',

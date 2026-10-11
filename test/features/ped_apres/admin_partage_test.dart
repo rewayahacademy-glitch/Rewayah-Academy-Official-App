@@ -880,6 +880,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text(p.titre), findsOneWidget);
       expect(find.byType(Switch), findsOneWidget);
+      expect(find.text(t.admin.groupes.cahiers.lien), findsOneWidget);
       // L'observation existante et le partage sont deux reglages distincts.
       expect(find.text(t.admin.groupes.detailMembres), findsOneWidget);
     });
