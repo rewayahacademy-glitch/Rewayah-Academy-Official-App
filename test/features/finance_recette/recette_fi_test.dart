@@ -237,59 +237,38 @@ final RegExp _ancienMontant = RegExp(
 /// La base de la voie Finance (branche `ui/finance-v1`).
 const String _baseFinance = 'aebd21a5';
 
-/// La reference du refus 14 : la base de la voie si le clone la connait ;
-/// sinon le point ou la branche quitte `corrections/revue-directeur-2026-10`
-/// (la branche commune d'avant la voie), puis celui ou elle quitte
-/// `ui/finance-v1`. Jamais un saut : `null` fait echouer le test, avec ce
-/// qui a ete essaye.
-({String? reference, List<String> essais}) _referenceBackend() {
-  final List<String> essais = <String>[];
-  String? commit(List<String> arguments) {
-    final ProcessResult r = Process.runSync('git', arguments);
-    essais.add('git ${arguments.join(' ')} -> ${r.exitCode}');
-    if (r.exitCode != 0) return null;
-    final String sortie = (r.stdout as String).trim();
-    return sortie.isEmpty ? null : sortie;
-  }
+/// La pointe de la voie Finance (FI-DIR-1, contre-revue), integree a ccr
+/// (pointe de `ui/finance-v1`).
+///
+/// L'histoire de [_baseFinance] est SEPAREE de celle de ccr (aucun ancetre
+/// commun) : comparer cette base a HEAD signalait, a tort, tout le backend de
+/// ChatGPT (K-68) integre depuis. Le refus 14 compare donc la base de la voie
+/// a la pointe de la voie : c'est la voie, et elle seule, qui ne touche pas
+/// `supabase/`. Si la voie recoit un jour d'autres commits, avancer cette
+/// pointe (decision du directeur du 11/10/2026 : « OUI pour la finance »).
+const String _pointeFinance = '65cf51d2';
 
-  // JONCTION-LIGNES-1 : sur la branche d'integration, la ligne ccr (qui porte
-  // le backend de ChatGPT, K-68) a ete reunie dans HEAD ; la frontiere est
-  // alors « rien sous supabase/ depuis le dernier point de ccr reuni » : ce
-  // que la voie et la jonction ajoutent n'y touche pas. Ce point est le
-  // merge-base de HEAD et de ccr, pas la tete de ccr : ccr avance apres la
-  // jonction (verification du 10/10), et exiger qu'elle soit un ancetre
-  // faisait retomber la garde sur la base de la voie, backend compris.
-  // Sur la voie seule, ce merge-base est le depart de la voie (ccr jamais
-  // reunie) : la base de la voie reste alors la reference.
-  for (final String branche in <String>[
-    'origin/ccr-1b1bfa0b-m1kvkk',
-    'ccr-1b1bfa0b-m1kvkk',
-  ]) {
-    final String? reunie = commit(<String>['merge-base', 'HEAD', branche]);
-    final String? depart = commit(<String>[
-      'merge-base',
-      _baseFinance,
-      branche,
-    ]);
-    if (reunie != null && depart != null && reunie != depart) {
-      return (reference: reunie, essais: essais);
-    }
-  }
-  if (commit(<String>['rev-parse', '--verify', '$_baseFinance^{commit}'])
-      case final String base) {
-    return (reference: base, essais: essais);
-  }
-  for (final String branche in <String>[
-    'origin/corrections/revue-directeur-2026-10',
-    'corrections/revue-directeur-2026-10',
-    'origin/ui/finance-v1',
-    'ui/finance-v1',
-  ]) {
-    if (commit(<String>['merge-base', 'HEAD', branche]) case final String mb) {
-      return (reference: mb, essais: essais);
-    }
-  }
-  return (reference: null, essais: essais);
+/// Les fichiers sous `supabase/` qui different entre [base] et [pointe]
+/// (sortie de `git diff --name-only`, vide si la voie n'y a pas touche).
+/// [dans] : dossier du depot, `null` pour le depot courant.
+({int code, String fichiers, String erreur}) _fichiersSupabaseDeLaVoie(
+  String base,
+  String pointe, {
+  String? dans,
+}) {
+  final ProcessResult r = Process.runSync('git', <String>[
+    'diff',
+    '--name-only',
+    base,
+    pointe,
+    '--',
+    'supabase/',
+  ], workingDirectory: dans);
+  return (
+    code: r.exitCode,
+    fichiers: (r.stdout as String).trim(),
+    erreur: '${r.stderr}',
+  );
 }
 
 /// Le cours en direct de l'eleve [eleveId], autour de l'heure reelle :
@@ -1822,44 +1801,38 @@ void main() {
       expect(fautes, isEmpty);
     });
 
-    test('14. FRONTEND ONLY : aucun fichier sous supabase/ modifie depuis la '
-        'base de la voie (aebd21a5, a defaut le depart de la branche commune '
-        'ou de ui/finance-v1), aucun nouveau, aucun en cours', () {
-      // Un clone a historique peu profond ne contient ni la base de la voie
-      // ni les points de jonction : la comparaison n'y prouve rien (elle
-      // retombe sur un point plus recent et signale le backend des autres).
-      // On saute alors, avec la raison, au lieu d'echouer a tort.
-      final ProcessResult superficiel = Process.runSync('git', <String>[
-        'rev-parse',
-        '--is-shallow-repository',
-      ]);
-      final ProcessResult baseConnue = Process.runSync('git', <String>[
-        'rev-parse',
-        '--verify',
-        '$_baseFinance^{commit}',
-      ]);
-      if ((superficiel.stdout as String).trim() == 'true' &&
-          baseConnue.exitCode != 0) {
+    test('14. FRONTEND ONLY : aucun fichier sous supabase/ modifie par la '
+        'voie (de aebd21a5 a sa pointe 65cf51d2), aucun nouveau, aucun en '
+        'cours', () {
+      // Un clone a historique peu profond ne contient ni la base ni la pointe
+      // de la voie : la comparaison n'y prouve rien. On saute alors, avec la
+      // raison, au lieu d'echouer a tort.
+      bool connu(String commit) =>
+          Process.runSync('git', <String>[
+            'rev-parse',
+            '--verify',
+            '$commit^{commit}',
+          ]).exitCode ==
+          0;
+      if (!connu(_baseFinance) || !connu(_pointeFinance)) {
         markTestSkipped(
-          'Clone a historique peu profond sans $_baseFinance : comparaison '
-          'du backend impossible ici (git fetch --unshallow pour la jouer).',
+          'Base $_baseFinance ou pointe $_pointeFinance de la voie Finance '
+          'absente de ce clone : comparaison du backend impossible ici '
+          '(git fetch --unshallow pour la jouer).',
         );
         return;
       }
-      final ({String? reference, List<String> essais}) base =
-          _referenceBackend();
-      final String? reference = base.reference;
-      if (reference == null) {
-        fail(
-          'Aucune reference pour comparer supabase/ : ni $_baseFinance, ni '
-          'une branche commune connue du clone. Recuperer l historique '
-          '(git fetch --unshallow) ou la branche, puis relancer. Essais : '
-          '${base.essais.join(' ; ')}',
-        );
-      }
-      // Les commits de la voie, puis le travail en cours (index et arbre).
+      // Les commits de la voie (de sa base a sa pointe), puis le travail en
+      // cours (index et arbre).
+      final ({int code, String fichiers, String erreur}) voie =
+          _fichiersSupabaseDeLaVoie(_baseFinance, _pointeFinance);
+      expect(voie.code, 0, reason: voie.erreur);
+      expect(
+        voie.fichiers,
+        isEmpty,
+        reason: 'git diff --name-only $_baseFinance $_pointeFinance',
+      );
       for (final List<String> arguments in <List<String>>[
-        <String>['diff', '--name-only', reference, 'HEAD', '--', 'supabase/'],
         <String>['diff', '--name-only', 'HEAD', '--', 'supabase/'],
         <String>['diff', '--name-only', '--cached', '--', 'supabase/'],
         <String>[
@@ -1875,21 +1848,81 @@ void main() {
         expect(
           (r.stdout as String).trim(),
           isEmpty,
-          reason: 'git ${arguments.join(' ')} (reference $reference)',
+          reason: 'git ${arguments.join(' ')}',
         );
       }
-      // La reference precede bien la voie : aebd21a5 descend d'elle, ou
+      // La voie est bien dans l'histoire testee : sa pointe precede HEAD, ou
       // c'est elle.
       expect(
         Process.runSync('git', <String>[
           'merge-base',
           '--is-ancestor',
-          reference,
+          _pointeFinance,
           'HEAD',
         ]).exitCode,
         0,
-        reason: reference,
+        reason: _pointeFinance,
       );
+    });
+
+    test('14 bis. Contre-epreuve : une voie qui modifie un fichier sous '
+        'supabase/ fait echouer la comparaison', () {
+      // Un depot jetable a deux commits : la « base » et la « pointe », celle-ci
+      // ajoutant un fichier sous supabase/ ET un fichier de la Finance. La
+      // meme fonction que le refus 14 doit le voir ; sur une voie qui ne touche
+      // que du Dart, elle ne voit rien.
+      final Directory depot = Directory.systemTemp.createTempSync('fi14_');
+      try {
+        String git(List<String> arguments) {
+          final ProcessResult r = Process.runSync('git', <String>[
+            '-c',
+            'user.name=contre-epreuve',
+            '-c',
+            'user.email=contre-epreuve@example.test',
+            '-c',
+            'commit.gpgsign=false',
+            ...arguments,
+          ], workingDirectory: depot.path);
+          expect(r.exitCode, 0, reason: 'git ${arguments.join(' ')}');
+          return (r.stdout as String).trim();
+        }
+
+        git(<String>['init', '-q']);
+        File('${depot.path}/lib.dart').writeAsStringSync('base');
+        Directory('${depot.path}/supabase').createSync();
+        File('${depot.path}/supabase/ancien.sql').writeAsStringSync('a');
+        git(<String>['add', '-A']);
+        git(<String>['commit', '-q', '-m', 'base']);
+        final String base = git(<String>['rev-parse', 'HEAD']);
+
+        File('${depot.path}/lib.dart').writeAsStringSync('finance');
+        git(<String>['commit', '-q', '-am', 'voie sans backend']);
+        final String propre = git(<String>['rev-parse', 'HEAD']);
+
+        File('${depot.path}/supabase/ancien.sql').writeAsStringSync('modifie');
+        File('${depot.path}/supabase/nouveau.sql').writeAsStringSync('n');
+        git(<String>['add', '-A']);
+        git(<String>['commit', '-q', '-m', 'voie avec backend']);
+        final String fautive = git(<String>['rev-parse', 'HEAD']);
+
+        expect(
+          _fichiersSupabaseDeLaVoie(base, propre, dans: depot.path).fichiers,
+          isEmpty,
+          reason: 'une voie qui ne touche que du Dart doit passer',
+        );
+        final ({int code, String fichiers, String erreur}) vue =
+            _fichiersSupabaseDeLaVoie(base, fautive, dans: depot.path);
+        expect(vue.code, 0, reason: vue.erreur);
+        expect(
+          vue.fichiers.split('\n')..sort(),
+          <String>['supabase/ancien.sql', 'supabase/nouveau.sql'],
+          reason:
+              'la modification et l ajout sous supabase/ doivent '
+              'apparaitre',
+        );
+      } finally {
+        depot.deleteSync(recursive: true);
+      }
     });
   });
 
