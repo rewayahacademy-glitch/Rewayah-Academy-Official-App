@@ -173,6 +173,12 @@ INSERT INTO public.student_profiles (profile_id) VALUES
 INSERT INTO public.teacher_profiles (profile_id) VALUES
   ('c2a20000-0000-0000-0000-000000000005'),
   ('c2a20000-0000-0000-0000-000000000006');
+INSERT INTO public.groupes (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local) VALUES
+  ('c2a2a000-2000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000005', 'enfant', 5, 'Codex2 A', 1, 10),
+  ('c2a2a000-2000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000006', 'enfant', 5, 'Codex2 B', 2, 11);
+INSERT INTO public.groupe_membres (groupe_id, student_id) VALUES
+  ('c2a2a000-2000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004'),
+  ('c2a2a000-2000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002');
 INSERT INTO public.student_reading_position
   (student_profile_id, mushaf_id, page_mushaf, sourate, verset)
 SELECT sp.profile_id, m.id, 2, 2, 1
@@ -229,6 +235,10 @@ INSERT INTO public.session_presence_override
   (session_id, profile_id, etat, motif, decide_par) VALUES
   ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'excusee', 'codex2 A', 'c2a20000-0000-0000-0000-000000000005'),
   ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'excusee', 'codex2 B', 'c2a20000-0000-0000-0000-000000000006');
+INSERT INTO public.video_token_grants
+  (session_id, profile_id, role, provider, can_publish, can_publish_video, can_publish_data, expire_le) VALUES
+  ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'student', 'cloud', false, false, true, '2026-10-20 00:00:00+00'),
+  ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'student', 'cloud', false, false, true, '2026-10-20 00:00:00+00');
 INSERT INTO public.session_participants (session_id, profile_id, role) VALUES
   ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000005', 'teacher'),
   ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'student'),
@@ -310,6 +320,31 @@ BEGIN
       INSERT INTO codex2_rls_violations VALUES ('missing-role-claim', v_table::text);
     END IF;
   END LOOP;
+  RESET ROLE;
+END $$;
+
+-- La trace du jeton n'est visible que par le participant auquel elle appartient.
+DO $$
+DECLARE v_count integer; v_rows integer; v_denied boolean := false;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000004', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"student","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.video_token_grants
+   WHERE session_id = 'c2a2e000-1000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-VIDEO-TOKEN: student A cannot read own token trace'; END IF;
+  SELECT count(*) INTO v_count FROM public.video_token_grants
+   WHERE session_id = 'c2a2e000-1000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-VIDEO-TOKEN: student A sees token trace B'; END IF;
+  BEGIN
+    UPDATE public.video_token_grants SET hidden = hidden
+     WHERE session_id = 'c2a2e000-1000-0000-0000-000000000002';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+    v_rows := 0;
+  END;
+  IF NOT v_denied AND v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-VIDEO-TOKEN-WRITE: student A updated trace B'; END IF;
   RESET ROLE;
 END $$;
 
@@ -821,6 +856,52 @@ BEGIN
   IF NOT v_denied THEN
     RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-WRITE: cross-household device insert was not denied';
   END IF;
+  RESET ROLE;
+END $$;
+
+-- Les groupes et leurs membres sont visibles a l'enseignant proprietaire et
+-- au foyer du membre; les mutations directes sont reservees aux RPC.
+DO $$
+DECLARE v_count integer; v_denied boolean := false;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000005', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.groupes WHERE id = 'c2a2a000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-GROUP: teacher A cannot read own group'; END IF;
+  SELECT count(*) INTO v_count FROM public.groupes WHERE id = 'c2a2a000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-GROUP-READ: teacher A sees group B'; END IF;
+  BEGIN
+    UPDATE public.groupes SET libelle = libelle WHERE id = 'c2a2a000-2000-0000-0000-000000000002';
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'RLS-GROUP-DIRECT-WRITE: authenticated teacher updated a group'; END IF;
+  v_denied := false;
+  SELECT count(*) INTO v_count FROM public.groupe_membres WHERE groupe_id = 'c2a2a000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-GROUP-MEMBER: teacher A cannot read own roster'; END IF;
+  SELECT count(*) INTO v_count FROM public.groupe_membres WHERE groupe_id = 'c2a2a000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-GROUP-MEMBER-READ: teacher A sees roster B'; END IF;
+  BEGIN
+    UPDATE public.groupe_membres SET left_at = now()
+     WHERE groupe_id = 'c2a2a000-2000-0000-0000-000000000002';
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'RLS-GROUP-MEMBER-DIRECT-WRITE: authenticated teacher updated a roster'; END IF;
+  RESET ROLE;
+
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.groupes WHERE id = 'c2a2a000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-FAMILY-GROUP: household A cannot read group of its student'; END IF;
+  SELECT count(*) INTO v_count FROM public.groupes WHERE id = 'c2a2a000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-FAMILY-GROUP: household A sees group B'; END IF;
+  SELECT count(*) INTO v_count FROM public.groupe_membres WHERE groupe_id = 'c2a2a000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-FAMILY-GROUP-MEMBER: household A cannot read its student membership'; END IF;
+  SELECT count(*) INTO v_count FROM public.groupe_membres WHERE groupe_id = 'c2a2a000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-FAMILY-GROUP-MEMBER: household A sees roster B'; END IF;
   RESET ROLE;
 END $$;
 
