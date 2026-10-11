@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/widgets/pastilles_comptable.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation/controle_delegation.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation/exceptions_delegation.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation/finance_delegation_policy_panel.dart';
+import 'package:rewayah_academy/features/admin_finance/reserve_delegation/reactivation_delegation.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation/sorties_en_attente.dart';
 import 'package:rewayah_academy/features/comptable/paiements/paiements_donnees.dart';
 import 'package:rewayah_academy/features/demo/comptable/beneficiaires_demo.dart';
@@ -41,8 +42,13 @@ final d = t.comptable.direction.delegationPanneau;
 
 /// Une delegation fraiche par test, la sienne : aucun etat ne fuit.
 class _Banc {
-  _Banc({this.echecControle = false, this.echecSorties = false})
-    : source = DelegationFinanceDemo() {
+  _Banc({
+    this.echecControle = false,
+    this.echecSorties = false,
+    PolitiqueDelegationFinance? depart,
+  }) : source = depart == null
+           ? DelegationFinanceDemo()
+           : DelegationFinanceDemo.avec(depart) {
     controle = _Controle(source, this);
   }
 
@@ -51,6 +57,7 @@ class _Banc {
   final bool echecControle;
   final bool echecSorties;
   final List<String> cles = <String>[];
+  final List<String> raisons = <String>[];
   BrouillonDelegationFinance? dernierBrouillon;
 
   List<Override> surcharges() => <Override>[
@@ -97,6 +104,17 @@ class _Controle implements PortControleDelegation {
     banc.cles.add(cleIdempotence);
     if (banc.echecControle) throw StateError('reseau');
     return source.suspendreToutes(cleIdempotence: cleIdempotence);
+  }
+
+  @override
+  Future<PolitiqueDelegationFinance> reactiver({
+    required String cleIdempotence,
+    required String raison,
+  }) async {
+    banc.cles.add(cleIdempotence);
+    banc.raisons.add(raison);
+    if (banc.echecControle) throw StateError('reseau');
+    return source.reactiver(cleIdempotence: cleIdempotence, raison: raison);
   }
 
   @override
@@ -219,6 +237,194 @@ void main() {
       expect(_cle(ControleDelegation.cleBandeSuspendue), findsNothing);
       expect(banc.cles, hasLength(2));
       expect(banc.cles.first, banc.cles.last, reason: 'meme demande');
+    });
+  });
+
+  group('Reactivation (levee explicite de la suspension)', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    Future<void> suspendre(WidgetTester tester) async {
+      await _appuyer(tester, _cle(ControleDelegation.cleSuspendre));
+      await _appuyer(tester, find.text(d.suspendreConfirmer));
+    }
+
+    testWidgets('active : aucun bouton Reactiver', (WidgetTester tester) async {
+      await _monter(tester, _Banc().surcharges());
+      expect(_cle(ControleDelegation.cleReactiver), findsNothing);
+    });
+
+    testWidgets('suspendue : Reactiver prend la place de Suspendre', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, _Banc().surcharges());
+      await suspendre(tester);
+      expect(_cle(ControleDelegation.cleReactiver), findsOneWidget);
+      expect(_cle(ControleDelegation.cleSuspendre), findsNothing);
+    });
+
+    testWidgets('la raison est obligatoire : rien ne part sans elle', (
+      WidgetTester tester,
+    ) async {
+      final _Banc banc = _Banc();
+      await _monter(tester, banc.surcharges());
+      await suspendre(tester);
+      final int avant = banc.cles.length;
+      await _appuyer(tester, _cle(ControleDelegation.cleReactiver));
+      // La consequence est dite avant le choix.
+      expect(find.text(d.reactiverPhrase), findsOneWidget);
+      await _appuyer(tester, _cle(FeuilleReactivation.cleConfirmer));
+      expect(_cle(FeuilleReactivation.cleErreur), findsOneWidget);
+      await tester.enterText(
+        find.descendant(
+          of: _cle(FeuilleReactivation.cleRaison),
+          matching: find.byType(EditableText),
+        ),
+        '   ',
+      );
+      await _appuyer(tester, _cle(FeuilleReactivation.cleConfirmer));
+      expect(banc.cles.length, avant, reason: 'raison blanche refusee');
+      expect(_cle(FeuilleReactivation.cleErreur), findsOneWidget);
+    });
+
+    testWidgets(
+      'raison saisie : la cle et la raison partent, active, journal',
+      (WidgetTester tester) async {
+        final _Banc banc = _Banc();
+        await _monter(tester, banc.surcharges());
+        await suspendre(tester);
+        await _appuyer(tester, _cle(ControleDelegation.cleReactiver));
+        await tester.enterText(
+          find.descendant(
+            of: _cle(FeuilleReactivation.cleRaison),
+            matching: find.byType(EditableText),
+          ),
+          'Verification terminee',
+        );
+        await _appuyer(tester, _cle(FeuilleReactivation.cleConfirmer));
+        expect(banc.raisons, <String>['Verification terminee']);
+        expect(_cle(ControleDelegation.cleBandeSuspendue), findsNothing);
+        expect(_cle(ControleDelegation.cleSuspendre), findsOneWidget);
+        expect(find.text(d.reactiveeActive), findsOneWidget);
+        // Inscrite au journal, raison comprise.
+        final List<EntreeJournal> journal = await banc.source.journal();
+        expect(journal.first.objet, contains('Verification terminee'));
+      },
+    );
+
+    testWidgets('« Garder suspendues » : rien ne part', (
+      WidgetTester tester,
+    ) async {
+      final _Banc banc = _Banc();
+      await _monter(tester, banc.surcharges());
+      await suspendre(tester);
+      final int avant = banc.cles.length;
+      await _appuyer(tester, _cle(ControleDelegation.cleReactiver));
+      await _appuyer(tester, _cle(FeuilleReactivation.cleGarder));
+      expect(banc.cles.length, avant);
+      expect(_cle(ControleDelegation.cleBandeSuspendue), findsOneWidget);
+    });
+
+    testWidgets('echec : « non confirmee », la meme cle au second essai', (
+      WidgetTester tester,
+    ) async {
+      final _Banc banc = _Banc(echecControle: true);
+      // La suspension est posee en source avant l'ecran (le port echoue).
+      await banc.source.suspendreToutes(cleIdempotence: 'k');
+      await _monter(tester, banc.surcharges());
+      for (int i = 0; i < 2; i++) {
+        await _appuyer(tester, _cle(ControleDelegation.cleReactiver));
+        await tester.enterText(
+          find.descendant(
+            of: _cle(FeuilleReactivation.cleRaison),
+            matching: find.byType(EditableText),
+          ),
+          'Raison',
+        );
+        await _appuyer(tester, _cle(FeuilleReactivation.cleConfirmer));
+      }
+      expect(find.text(d.reactiverEchec), findsOneWidget);
+      expect(find.text(d.reactiveeActive), findsNothing);
+      expect(banc.cles, hasLength(2));
+      expect(banc.cles.first, banc.cles.last, reason: 'meme demande');
+    });
+
+    testWidgets('delegation expiree : jamais restauree, a renouveler', (
+      WidgetTester tester,
+    ) async {
+      final PolitiqueDelegationFinance depart = PolitiqueDelegationFinance(
+        version: '9',
+        paiementsStandardsAutorises: true,
+        remboursementStandardAutorise: true,
+        alimentationReserveAutorisee: true,
+        retraitReserveInterdit: true,
+        premierPaiementSecondeValidation: true,
+        coordonneesRecentesSecondeValidation: true,
+        autoPayoutInterdit: true,
+        montantManuelInterdit: true,
+        politiqueTarifaireInterdite: true,
+        etat: EtatDelegation.suspendue,
+        expireLe: DateTime(2026, 1, 1),
+        dureeJours: 90,
+      );
+      final _Banc banc = _Banc(depart: depart);
+      await _monter(tester, banc.surcharges());
+      expect(_cle(ControleDelegation.cleReactiver), findsOneWidget);
+      await _appuyer(tester, _cle(ControleDelegation.cleReactiver));
+      await tester.enterText(
+        find.descendant(
+          of: _cle(FeuilleReactivation.cleRaison),
+          matching: find.byType(EditableText),
+        ),
+        'Raison',
+      );
+      await _appuyer(tester, _cle(FeuilleReactivation.cleConfirmer));
+      expect(find.text(d.reactiveeExpiree), findsOneWidget);
+      expect(find.text(d.etatExpiree), findsOneWidget);
+      expect(find.text(d.etatActive), findsNothing);
+      // Seul le renouvellement repart sur la duree.
+      await _appuyer(tester, _cle(ControleDelegation.cleRenouveler));
+      expect(find.text(d.etatExpiree), findsNothing);
+    });
+
+    testWidgets('les sorties annulees pendant la suspension restent annulees', (
+      WidgetTester tester,
+    ) async {
+      final _Banc banc = _Banc();
+      await _monter(tester, banc.surcharges());
+      await suspendre(tester);
+      await _appuyer(tester, _cle(SortiesEnAttente.cleAnnuler('sortie-1')));
+      await _appuyer(tester, find.text(d.sortieAnnulerConfirmer));
+      await _appuyer(tester, _cle(ControleDelegation.cleReactiver));
+      await tester.enterText(
+        find.descendant(
+          of: _cle(FeuilleReactivation.cleRaison),
+          matching: find.byType(EditableText),
+        ),
+        'Raison',
+      );
+      await _appuyer(tester, _cle(FeuilleReactivation.cleConfirmer));
+      expect(_cle(SortiesEnAttente.cleAnnuler('sortie-1')), findsNothing);
+      expect(
+        (await banc.source.sortiesEnAttente()).map((SortieEnAttente s) => s.id),
+        isNot(contains('sortie-1')),
+      );
+    });
+
+    testWidgets('320 px, texte x2, arabe : aucune coupure ni debordement', (
+      WidgetTester tester,
+    ) async {
+      final _Banc banc = _Banc();
+      await _monter(
+        tester,
+        banc.surcharges(),
+        taille: const Size(320, 3200),
+        echelle: 2,
+        sens: TextDirection.rtl,
+      );
+      await suspendre(tester);
+      await _appuyer(tester, _cle(ControleDelegation.cleReactiver));
+      expect(tester.takeException(), isNull);
+      verifierEcranSansMotCoupe(tester);
     });
   });
 

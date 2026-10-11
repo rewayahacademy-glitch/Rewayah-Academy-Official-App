@@ -334,6 +334,17 @@ abstract interface class PortControleDelegation {
     required String cleIdempotence,
   });
 
+  /// Leve la suspension, sur action explicite de la Direction et avec une
+  /// [raison] obligatoire. La capacite est exigee et le serveur exige la MFA,
+  /// comme pour toute action Direction ; il inscrit la reactivation au
+  /// journal. **Ne restaure jamais une delegation expiree** : la politique
+  /// rendue dit `expiree`, et seul [renouveler] repart sur la duree (90 j).
+  /// Les sorties annulees pendant la suspension restent annulees.
+  Future<PolitiqueDelegationFinance> reactiver({
+    required String cleIdempotence,
+    required String raison,
+  });
+
   /// Renouvelle la delegation pour sa duree. Rend la politique relue.
   Future<PolitiqueDelegationFinance> renouveler({
     required String cleIdempotence,
@@ -360,6 +371,12 @@ class ControleDelegationIndisponible implements PortControleDelegation {
   @override
   Future<PolitiqueDelegationFinance> suspendreToutes({
     required String cleIdempotence,
+  }) => Future<PolitiqueDelegationFinance>.error(_manque);
+
+  @override
+  Future<PolitiqueDelegationFinance> reactiver({
+    required String cleIdempotence,
+    required String raison,
   }) => Future<PolitiqueDelegationFinance>.error(_manque);
 
   @override

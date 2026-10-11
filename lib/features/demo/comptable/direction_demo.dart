@@ -329,6 +329,23 @@ class DelegationFinanceDemo
   }
 
   @override
+  Future<PolitiqueDelegationFinance> reactiver({
+    required String cleIdempotence,
+    required String raison,
+  }) async {
+    // Une delegation arrivee a expiration n'est jamais restauree : elle reste
+    // `expiree`, et seul le renouvellement repart sur la duree.
+    final DateTime? fin = _courante.expireLe;
+    final bool expiree =
+        fin != null && !fin.isAfter(SocleComptableDemo.aujourdhui);
+    final PolitiqueDelegationFinance p = _avecEtat(
+      expiree ? EtatDelegation.expiree : EtatDelegation.active,
+    );
+    _inscrire('Réactivation des délégations\u00a0: $raison', 'Réactivées');
+    return p;
+  }
+
+  @override
   Future<PolitiqueDelegationFinance> renouveler({
     required String cleIdempotence,
   }) async {

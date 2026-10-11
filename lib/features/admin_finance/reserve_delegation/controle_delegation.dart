@@ -4,6 +4,9 @@
 //   `ConfirmDestructive` (l'effet se dit avant le choix), une cle
 //   d'idempotence par demande. Suspendues, la bande le dit ; l'ecran ne
 //   decide rien : l'etat est celui que la source rend.
+// - **Reactiver** : lever la suspension est un acte explicite de la
+//   Direction, avec une raison obligatoire (`reactivation_delegation.dart`).
+//   Une delegation expiree n'est jamais restauree : elle reste a renouveler.
 // - **Expiration** : chaque delegation expire (90 jours par defaut cote
 //   source), renouvelable. L'etat (active, suspendue, expiree) vient de la
 //   source, jamais d'une comparaison de dates faite ici.
@@ -27,6 +30,7 @@ import '../../../core/widgets/setting_row.dart';
 import '../../../core/widgets/status_pill.dart';
 import 'composants_politique.dart';
 import 'politiques_direction.dart';
+import 'reactivation_delegation.dart';
 
 /// Le mot de l'etat d'une delegation.
 String libelleEtatDelegation(EtatDelegation etat) {
@@ -59,6 +63,9 @@ class ControleDelegation extends ConsumerStatefulWidget {
   /// La cle du bouton « Renouveler la delegation ».
   static const Key cleRenouveler = ValueKey<String>('deleg-renouveler');
 
+  /// La cle du bouton « Reactiver les delegations ».
+  static const Key cleReactiver = ValueKey<String>('deleg-reactiver');
+
   /// La cle de la bande « Delegations suspendues ».
   static const Key cleBandeSuspendue = ValueKey<String>('deleg-suspendue');
 
@@ -72,6 +79,7 @@ class ControleDelegation extends ConsumerStatefulWidget {
 class _ControleDelegationEtat extends ConsumerState<ControleDelegation> {
   bool _suspension = false;
   bool _renouvellement = false;
+  bool _reactivation = false;
   String? _retour;
   bool _retourEchec = false;
 
@@ -79,6 +87,7 @@ class _ControleDelegationEtat extends ConsumerState<ControleDelegation> {
   /// perdue, reprend la meme demande cote serveur.
   String? _cleSuspension;
   String? _cleRenouvellement;
+  String? _cleReactivation;
 
   void _relire() => ref
     ..invalidate(politiqueDelegationProvider)
@@ -117,6 +126,44 @@ class _ControleDelegationEtat extends ConsumerState<ControleDelegation> {
       setState(() {
         _suspension = false;
         _retour = d.suspendueEchec;
+        _retourEchec = true;
+      });
+    }
+  }
+
+  Future<void> _reactiver() async {
+    if (_reactivation) return;
+    final d = t.comptable.direction.delegationPanneau;
+    final String? raison = await FeuilleReactivation.ouvrir(context);
+    if (raison == null || !mounted) return;
+    final String cle = _cleReactivation ??= nouvelleCleIdempotence(
+      'reactivation',
+    );
+    setState(() {
+      _reactivation = true;
+      _retour = null;
+    });
+    try {
+      final PolitiqueDelegationFinance p = await ref
+          .read(portControleDelegationProvider)
+          .reactiver(cleIdempotence: cle, raison: raison);
+      if (!mounted) return;
+      _cleReactivation = null;
+      _relire();
+      setState(() {
+        _reactivation = false;
+        // L'etat est celui que la source rend : expiree, elle reste a
+        // renouveler.
+        _retour = p.etat == EtatDelegation.expiree
+            ? d.reactiveeExpiree
+            : d.reactiveeActive;
+        _retourEchec = false;
+      });
+    } on Object {
+      if (!mounted) return;
+      setState(() {
+        _reactivation = false;
+        _retour = d.reactiverEchec;
         _retourEchec = true;
       });
     }
@@ -230,6 +277,27 @@ class _ControleDelegationEtat extends ConsumerState<ControleDelegation> {
                     pleineLargeur: false,
                     enCours: _suspension,
                     onPress: _suspendre,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ] else ...<Widget>[
+          Ecart.vXxl,
+          GroupePolitique(
+            titre: d.reactiverTitre,
+            detail: d.reactiverDetail,
+            enfants: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: ActionPrincipale(
+                    key: ControleDelegation.cleReactiver,
+                    libelle: d.reactiverAction,
+                    pleineLargeur: false,
+                    enCours: _reactivation,
+                    onPress: _reactiver,
                   ),
                 ),
               ),

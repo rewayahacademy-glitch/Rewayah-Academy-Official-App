@@ -27695,6 +27695,42 @@ class Traductions$comptable$direction$delegationPanneau$fr {
 	/// fr: 'Garder les délégations'
 	String get suspendreGarder => 'Garder les délégations';
 
+	/// fr: 'Réactiver les délégations'
+	String get reactiverTitre => 'Réactiver les délégations';
+
+	/// fr: 'Les délégations sont suspendues. Les lever est un acte de la direction, avec une raison écrite.'
+	String get reactiverDetail => 'Les délégations sont suspendues. Les lever est un acte de la direction, avec une raison écrite.';
+
+	/// fr: 'Réactiver les délégations'
+	String get reactiverAction => 'Réactiver les délégations';
+
+	/// fr: 'Le Comptable pourra de nouveau agir dans les limites de la politique. Une délégation expirée n'est jamais rétablie : il faudra la renouveler. Les sorties annulées restent annulées. La réactivation est inscrite au journal.'
+	String get reactiverPhrase => 'Le Comptable pourra de nouveau agir dans les limites de la politique. Une délégation expirée n\'est jamais rétablie : il faudra la renouveler. Les sorties annulées restent annulées. La réactivation est inscrite au journal.';
+
+	/// fr: 'Raison de la réactivation'
+	String get reactiverRaison => 'Raison de la réactivation';
+
+	/// fr: 'Elle est conservée au journal avec votre nom.'
+	String get reactiverRaisonAide => 'Elle est conservée au journal avec votre nom.';
+
+	/// fr: 'Écrivez la raison pour réactiver les délégations.'
+	String get reactiverRaisonVide => 'Écrivez la raison pour réactiver les délégations.';
+
+	/// fr: 'Réactiver'
+	String get reactiverConfirmer => 'Réactiver';
+
+	/// fr: 'Garder suspendues'
+	String get reactiverGarder => 'Garder suspendues';
+
+	/// fr: 'Délégations réactivées.'
+	String get reactiveeActive => 'Délégations réactivées.';
+
+	/// fr: 'Délégations réactivées, mais la délégation est expirée : renouvelez-la pour qu'elle reparte sur sa durée.'
+	String get reactiveeExpiree => 'Délégations réactivées, mais la délégation est expirée : renouvelez-la pour qu\'elle reparte sur sa durée.';
+
+	/// fr: 'La réactivation n'est pas confirmée : la demande n'est peut-être pas parvenue jusqu'à Rewayah, ou votre vérification en deux étapes est à refaire. Vérifiez l'état de la délégation avant de réessayer.'
+	String get reactiverEchec => 'La réactivation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah, ou votre vérification en deux étapes est à refaire. Vérifiez l\'état de la délégation avant de réessayer.';
+
 	/// fr: 'Délégations suspendues'
 	String get suspendueTitre => 'Délégations suspendues';
 
@@ -38615,6 +38651,18 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.suspendreConfirmerPhrase' => 'L\'effet est immédiat : aucune opération du Comptable ne partira sans votre validation. La suspension est inscrite au journal.',
 			'comptable.direction.delegationPanneau.suspendreConfirmer' => 'Suspendre',
 			'comptable.direction.delegationPanneau.suspendreGarder' => 'Garder les délégations',
+			'comptable.direction.delegationPanneau.reactiverTitre' => 'Réactiver les délégations',
+			'comptable.direction.delegationPanneau.reactiverDetail' => 'Les délégations sont suspendues. Les lever est un acte de la direction, avec une raison écrite.',
+			'comptable.direction.delegationPanneau.reactiverAction' => 'Réactiver les délégations',
+			'comptable.direction.delegationPanneau.reactiverPhrase' => 'Le Comptable pourra de nouveau agir dans les limites de la politique. Une délégation expirée n\'est jamais rétablie : il faudra la renouveler. Les sorties annulées restent annulées. La réactivation est inscrite au journal.',
+			'comptable.direction.delegationPanneau.reactiverRaison' => 'Raison de la réactivation',
+			'comptable.direction.delegationPanneau.reactiverRaisonAide' => 'Elle est conservée au journal avec votre nom.',
+			'comptable.direction.delegationPanneau.reactiverRaisonVide' => 'Écrivez la raison pour réactiver les délégations.',
+			'comptable.direction.delegationPanneau.reactiverConfirmer' => 'Réactiver',
+			'comptable.direction.delegationPanneau.reactiverGarder' => 'Garder suspendues',
+			'comptable.direction.delegationPanneau.reactiveeActive' => 'Délégations réactivées.',
+			'comptable.direction.delegationPanneau.reactiveeExpiree' => 'Délégations réactivées, mais la délégation est expirée : renouvelez-la pour qu\'elle reparte sur sa durée.',
+			'comptable.direction.delegationPanneau.reactiverEchec' => 'La réactivation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah, ou votre vérification en deux étapes est à refaire. Vérifiez l\'état de la délégation avant de réessayer.',
 			'comptable.direction.delegationPanneau.suspendueTitre' => 'Délégations suspendues',
 			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'Suspendues depuis le ${date}. Le Comptable ne peut rien exécuter sans votre validation.',
 			'comptable.direction.delegationPanneau.suspendueSansDate' => 'Le Comptable ne peut rien exécuter sans votre validation.',

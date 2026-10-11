@@ -11243,6 +11243,18 @@ class _Traductions$comptable$direction$delegationPanneau$ar extends Traductions$
 	@override String get suspendreConfirmerPhrase => 'الأثر فوري: لن تخرج أي عملية من المحاسب دون موافقتك. يُسجَّل الإيقاف في السجل.';
 	@override String get suspendreConfirmer => 'إيقاف';
 	@override String get suspendreGarder => 'الإبقاء على التفويضات';
+	@override String get reactiverTitre => 'إعادة تفعيل التفويضات';
+	@override String get reactiverDetail => 'التفويضات موقوفة. رفع الإيقاف قرار من الإدارة مع سبب مكتوب.';
+	@override String get reactiverAction => 'إعادة تفعيل التفويضات';
+	@override String get reactiverPhrase => 'سيتمكن المحاسب من العمل مجددًا ضمن حدود السياسة. لا يُستعاد أبدًا تفويض منتهي: يجب تجديده. تبقى المخرجات الملغاة ملغاة. تُسجَّل إعادة التفعيل في السجل.';
+	@override String get reactiverRaison => 'سبب إعادة التفعيل';
+	@override String get reactiverRaisonAide => 'يُحفظ في السجل مع اسمك.';
+	@override String get reactiverRaisonVide => 'اكتب السبب لإعادة تفعيل التفويضات.';
+	@override String get reactiverConfirmer => 'إعادة التفعيل';
+	@override String get reactiverGarder => 'إبقاؤها موقوفة';
+	@override String get reactiveeActive => 'أُعيد تفعيل التفويضات.';
+	@override String get reactiveeExpiree => 'أُعيد تفعيل التفويضات، لكن التفويض منتهي: جدّده لينطلق من جديد على مدّته.';
+	@override String get reactiverEchec => 'لم تتأكد إعادة التفعيل: ربما لم يصل الطلب إلى رواية، أو يلزم إعادة التحقق بخطوتين. تحقق من حالة التفويض قبل إعادة المحاولة.';
 	@override String get suspendueTitre => 'التفويضات موقوفة';
 	@override String suspendueDepuis({required Object date}) => 'موقوفة منذ ⁨${date}⁩. لا يستطيع المحاسب تنفيذ شيء دون موافقتك.';
 	@override String get suspendueSansDate => 'لا يستطيع المحاسب تنفيذ شيء دون موافقتك.';
@@ -18347,6 +18359,18 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.suspendreConfirmerPhrase' => 'الأثر فوري: لن تخرج أي عملية من المحاسب دون موافقتك. يُسجَّل الإيقاف في السجل.',
 			'comptable.direction.delegationPanneau.suspendreConfirmer' => 'إيقاف',
 			'comptable.direction.delegationPanneau.suspendreGarder' => 'الإبقاء على التفويضات',
+			'comptable.direction.delegationPanneau.reactiverTitre' => 'إعادة تفعيل التفويضات',
+			'comptable.direction.delegationPanneau.reactiverDetail' => 'التفويضات موقوفة. رفع الإيقاف قرار من الإدارة مع سبب مكتوب.',
+			'comptable.direction.delegationPanneau.reactiverAction' => 'إعادة تفعيل التفويضات',
+			'comptable.direction.delegationPanneau.reactiverPhrase' => 'سيتمكن المحاسب من العمل مجددًا ضمن حدود السياسة. لا يُستعاد أبدًا تفويض منتهي: يجب تجديده. تبقى المخرجات الملغاة ملغاة. تُسجَّل إعادة التفعيل في السجل.',
+			'comptable.direction.delegationPanneau.reactiverRaison' => 'سبب إعادة التفعيل',
+			'comptable.direction.delegationPanneau.reactiverRaisonAide' => 'يُحفظ في السجل مع اسمك.',
+			'comptable.direction.delegationPanneau.reactiverRaisonVide' => 'اكتب السبب لإعادة تفعيل التفويضات.',
+			'comptable.direction.delegationPanneau.reactiverConfirmer' => 'إعادة التفعيل',
+			'comptable.direction.delegationPanneau.reactiverGarder' => 'إبقاؤها موقوفة',
+			'comptable.direction.delegationPanneau.reactiveeActive' => 'أُعيد تفعيل التفويضات.',
+			'comptable.direction.delegationPanneau.reactiveeExpiree' => 'أُعيد تفعيل التفويضات، لكن التفويض منتهي: جدّده لينطلق من جديد على مدّته.',
+			'comptable.direction.delegationPanneau.reactiverEchec' => 'لم تتأكد إعادة التفعيل: ربما لم يصل الطلب إلى رواية، أو يلزم إعادة التحقق بخطوتين. تحقق من حالة التفويض قبل إعادة المحاولة.',
 			'comptable.direction.delegationPanneau.suspendueTitre' => 'التفويضات موقوفة',
 			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'موقوفة منذ ⁨${date}⁩. لا يستطيع المحاسب تنفيذ شيء دون موافقتك.',
 			'comptable.direction.delegationPanneau.suspendueSansDate' => 'لا يستطيع المحاسب تنفيذ شيء دون موافقتك.',
@@ -18360,6 +18384,8 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.etatSuspendue' => 'موقوف',
 			'comptable.direction.delegationPanneau.etatExpiree' => 'منتهٍ',
 			'comptable.direction.delegationPanneau.renouvelablePour' => ({required Object jours}) => 'قابل للتجديد لمدة ⁨${jours}⁩ يومًا',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.renouveler' => 'تجديد التفويض',
 			'comptable.direction.delegationPanneau.renouvelee' => 'جُدِّد التفويض.',
 			'comptable.direction.delegationPanneau.renouvelerEchec' => 'لم يتأكد التجديد: ربما لم يصل الطلب إلى رواية. تحقق من تاريخ الانتهاء قبل إعادة المحاولة.',
@@ -18372,8 +18398,6 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.sortieAnnuler' => 'إلغاء',
 			'comptable.direction.delegationPanneau.sortieAnnulerNom' => ({required Object beneficiaire}) => 'إلغاء مصروف ⁨${beneficiaire}⁩',
 			'comptable.direction.delegationPanneau.sortieAnnulerTitre' => 'إلغاء هذا المصروف؟',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => 'لن يخرج مصروف ⁨${beneficiaire}⁩. يُسجَّل الإلغاء في السجل.',
 			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'إلغاء المصروف',
 			'comptable.direction.delegationPanneau.sortieGarder' => 'الإبقاء على المصروف',
@@ -18874,6 +18898,8 @@ extension on TraductionsAr {
 			'inscription.autreAide' => 'راسل الأكاديمية وسننشئ لك وصولك. لا تستطيع هذه الصفحة فعل ذلك عنك.',
 			'inscription.identiteQuestion' => 'ما اسمك؟',
 			'inscription.identiteRaison' => 'يجب أن يكون هذا الاسم هو الاسم الموجود في وثيقة هويتك.',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.prenom' => 'الاسم',
 			'inscription.nom' => 'اللقب',
 			'inscription.genreQuestion' => 'أنت',
@@ -18886,8 +18912,6 @@ extension on TraductionsAr {
 			'inscription.champRequis' => 'هذه الإجابة ضرورية للمتابعة.',
 			'inscription.etapeCourte' => ({required Object n, required Object total}) => '⁨${n}⁩ من ⁨${total}⁩',
 			'inscription.retourEtape' => 'العودة إلى الخطوة السابقة',
-			_ => null,
-		} ?? switch (path) {
 			'inscription.seDeconnecter' => 'تسجيل الخروج',
 			'inscription.modifier' => 'تعديل',
 			'inscription.reessayer' => 'إعادة المحاولة',
@@ -19388,6 +19412,8 @@ extension on TraductionsAr {
 			'dossiers.profilACompleter.titre' => 'الملف الشخصي للإكمال',
 			'dossiers.profilACompleter.texte' => 'يجب إكمال ملفك الشخصي قبل الاطلاع على الملفات التي تسمح بها هذه القاعدة.',
 			'dossiers.refus.titre' => 'رفض الملف',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.refus.nomType' => ({required Object nom, required Object type}) => '⁨${nom}⁩ · ⁨${type}⁩',
 			'dossiers.refus.corps' => 'حدّد السبب الذي سيُعرض على الشخص المعني.',
 			'dossiers.refus.champ' => 'سبب الرفض',
@@ -19400,8 +19426,6 @@ extension on TraductionsAr {
 			'dossiers.refus.inconnu' => 'نتيجة الرفض غير مؤكَّدة بعد.',
 			'dossiers.refus.interdit' => 'لم يعد بإمكانك رفض هذا الملف.',
 			'dossiers.refus.indisponible' => 'الرفض غير متاح الآن.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.refus.succes' => 'رُفض الملف.',
 			'dossiers.refus.abandonQuestion' => 'التخلي عن السبب المكتوب؟',
 			'dossiers.refus.continuerSaisie' => 'متابعة الكتابة',
