@@ -596,6 +596,9 @@ where contract_kind = 'teacher_nda'
   and version = 'test-signature-0057'
   and locale = 'fr';
 
+update public.profiles set account_status = 'disabled'
+where id = '66666666-6666-6666-6666-666666666666';
+
 do $$
 declare
   v_signature public.contract_acceptances%rowtype;
@@ -603,6 +606,34 @@ declare
   v_refus text;
 begin
   set local role authenticated;
+  perform set_config('test.uid', '11111111-1111-1111-1111-111111111111', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"guardian"}}', true);
+  begin
+    insert into public.contract_acceptances (
+      profile_id, contract_kind, version, signer_name
+    ) values (
+      '11111111-1111-1111-1111-111111111111',
+      'teacher_nda', 'test-signature-0057', 'Parent Test'
+    );
+    raise exception 'CONTRAT ECHEC : un tuteur a pu signer comme enseignant';
+  exception when insufficient_privilege then
+    null;
+  end;
+
+  perform set_config('test.uid', '66666666-6666-6666-6666-666666666666', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+  begin
+    insert into public.contract_acceptances (
+      profile_id, contract_kind, version, signer_name
+    ) values (
+      '66666666-6666-6666-6666-666666666666',
+      'teacher_nda', 'test-signature-0057', 'Compte Desactive'
+    );
+    raise exception 'CONTRAT ECHEC : un compte desactive a pu signer';
+  exception when insufficient_privilege then
+    null;
+  end;
+
   perform set_config('test.uid', '22222222-2222-2222-2222-222222222222', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
 

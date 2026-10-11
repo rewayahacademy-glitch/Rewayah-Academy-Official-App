@@ -131,7 +131,7 @@ BEGIN
       RAISE EXCEPTION '0088 proprietaire, SECURITY DEFINER ou search_path invalide: %', v_signature;
     END IF;
   END LOOP;
-END
+END;
 $verification$;
 
 COMMIT;
