@@ -11,6 +11,7 @@ void main() {
   late HttpServer serveur;
   late SupabaseClient client;
   Object? reponse;
+  int statutHttp = HttpStatus.ok;
   Map<String, dynamic>? corpsRequete;
 
   setUp(() async {
@@ -19,6 +20,7 @@ void main() {
       'jalons': <String>['Lecture lente'],
       'seances': <Object?>[],
     };
+    statutHttp = HttpStatus.ok;
     corpsRequete = null;
     serveur = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     serveur.listen((HttpRequest requete) async {
@@ -26,7 +28,7 @@ void main() {
         await utf8.decoder.bind(requete).join(),
       ) as Map<String, dynamic>;
       requete.response
-        ..statusCode = HttpStatus.ok
+        ..statusCode = statutHttp
         ..headers.contentType = ContentType.json
         ..write(jsonEncode(reponse));
       await requete.response.close();
@@ -86,6 +88,27 @@ void main() {
         throwsFormatException,
       );
     });
+
+    test('propage un refus RPC sans le transformer en progression vide', () async {
+      statutHttp = HttpStatus.forbidden;
+      reponse = <String, Object?>{
+        'code': '42501',
+        'message': 'permission denied',
+        'details': null,
+        'hint': null,
+      };
+
+      await expectLater(
+        ProgressionFamilleSupabase(client).progression('eleve-1'),
+        throwsA(
+          isA<PostgrestException>().having(
+            (PostgrestException error) => error.code,
+            'code',
+            '42501',
+          ),
+        ),
+      );
+    });
   });
 
   group('ResumeSeanceFamilleSupabase', () {
@@ -111,6 +134,22 @@ void main() {
         ResumeSeanceFamilleSupabase(client)
             .resume(seanceId: 'seance-1', eleveId: 'eleve-1'),
         throwsFormatException,
+      );
+    });
+
+    test('propage une erreur RPC de résumé sans produire un résumé vide', () async {
+      statutHttp = HttpStatus.internalServerError;
+      reponse = <String, Object?>{
+        'code': 'XX000',
+        'message': 'summary projection unavailable',
+        'details': null,
+        'hint': null,
+      };
+
+      await expectLater(
+        ResumeSeanceFamilleSupabase(client)
+            .resume(seanceId: 'seance-1', eleveId: 'eleve-1'),
+        throwsA(isA<PostgrestException>()),
       );
     });
   });
