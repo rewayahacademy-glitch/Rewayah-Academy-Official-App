@@ -10,7 +10,7 @@ insert into public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status)
 values
   ('f1650000-0000-0000-0000-000000000001', 'F1FEEDBACKTEACH', 'teacher',
-   'f16fffff-0000-0000-0000-000000000001', 'Fixture', 'Teacher', 'active'),
+   'f16fffff-0000-0000-0000-000000000001', 'Fixture', 'Teacher', 'provisional_active'),
   ('f1650000-0000-0000-0000-000000000002', 'F1FEEDBACKSTUD', 'student',
    'f16fffff-0000-0000-0000-000000000001', 'Fixture', 'Student', 'active');
 insert into public.student_profiles (profile_id, student_type, interface_mode)

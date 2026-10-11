@@ -43,7 +43,8 @@ BEGIN
       (destinataire, foyer_id, evenement, params, destination)
     VALUES
       (v_destinataire, v_foyer_id, v_evenement,
-       jsonb_build_object('etat', NEW.etat), '/tuteur/demandes');
+       jsonb_build_object('demande_id', NEW.id, 'etat', NEW.etat),
+       '/tuteur/demandes');
   END IF;
 
   RETURN NEW;
