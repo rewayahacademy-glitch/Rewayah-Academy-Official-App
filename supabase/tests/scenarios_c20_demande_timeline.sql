@@ -4,7 +4,8 @@ BEGIN;
 
 INSERT INTO auth.users (id, email) VALUES
   ('c2000000-0000-0000-0000-000000000001', 'c20-guardian@example.test'),
-  ('c2000000-0000-0000-0000-000000000002', 'c20-student@example.test');
+  ('c2000000-0000-0000-0000-000000000002', 'c20-student@example.test'),
+  ('c2000000-0000-0000-0000-000000000003', 'c20-teacher@example.test');
 INSERT INTO public.households (id, timezone)
 VALUES ('c20fffff-0000-0000-0000-000000000001', 'Europe/Paris');
 INSERT INTO public.profiles
@@ -13,7 +14,9 @@ VALUES
   ('c2000000-0000-0000-0000-000000000001', 'C20GUARDIAN0001', 'guardian',
    'c20fffff-0000-0000-0000-000000000001', 'Tuteur', 'Test', 'active'),
   ('c2000000-0000-0000-0000-000000000002', 'C20STUDENT00001', 'student',
-   'c20fffff-0000-0000-0000-000000000001', 'Eleve', 'Test', 'active');
+   'c20fffff-0000-0000-0000-000000000001', 'Eleve', 'Test', 'active'),
+  ('c2000000-0000-0000-0000-000000000003', 'C20TEACHER0001', 'teacher',
+   NULL, 'Enseignant', 'Test', 'provisional_active');
 UPDATE public.households
    SET primary_guardian_id = 'c2000000-0000-0000-0000-000000000001'
  WHERE id = 'c20fffff-0000-0000-0000-000000000001';
@@ -42,6 +45,14 @@ INSERT INTO public.groupe_membres (groupe_id, student_id)
 VALUES ('c20fffff-0000-0000-0000-000000000002',
         'c2000000-0000-0000-0000-000000000002');
 
+INSERT INTO public.sessions
+  (id, teacher_id, groupe_id, started_at, ended_at, status)
+VALUES
+  ('c20fffff-0000-0000-0000-000000000004',
+   'c2000000-0000-0000-0000-000000000003',
+   'c20fffff-0000-0000-0000-000000000002',
+   '2026-10-18 09:00:00+00', '2026-10-18 10:00:00+00', 'planned');
+
 DO $events$
 DECLARE
   v_count integer;
@@ -59,10 +70,18 @@ BEGIN
     FROM public.demande_evenements
    WHERE demande_id = 'c20fffff-0000-0000-0000-000000000003'
      AND type = 'envoyee';
-  IF v_count <> 4 OR v_reason <> 'aucun_enseignant_libre'
+  IF v_count <> 5 OR v_reason <> 'aucun_enseignant_libre'
      OR v_sent_at <> '2026-10-11 08:00:00+00'::timestamptz THEN
-    RAISE EXCEPTION 'C-20 expected sent/class/wait/member events; got count %, reason %, sent %',
+    RAISE EXCEPTION 'C-20 expected sent/class/wait/member/session events; got count %, reason %, sent %',
       v_count, v_reason, v_sent_at;
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM public.demande_evenements
+     WHERE demande_id = 'c20fffff-0000-0000-0000-000000000003'
+       AND type = 'premiere_seance_prevue'
+       AND survenu_le = '2026-10-18 09:00:00+00'::timestamptz
+  ) THEN
+    RAISE EXCEPTION 'C-20 first scheduled session event missing';
   END IF;
 
   BEGIN
@@ -93,7 +112,7 @@ BEGIN
     FROM public.demande_evenements_foyer_v
    WHERE demande_id = 'c20fffff-0000-0000-0000-000000000003'
      AND type = 'envoyee';
-  IF v_count <> 4
+  IF v_count <> 5
      OR v_projection_at <> '2026-10-11 08:00:00+00'::timestamptz
      OR has_table_privilege('authenticated', 'public.demande_evenements', 'INSERT')
      OR has_table_privilege('authenticated', 'public.demande_evenements', 'UPDATE')
