@@ -68,6 +68,17 @@ Deno.test('7e bis -- famille de preuve CAP29 autorisee, familles inconnues refus
   assertThrows(() => verifierCle('priveApplicatif', `private/secretbucket/${ARCHIVE}`), ErreurCleObjet)
 })
 
+Deno.test('7e ter -- le chemin supports contient asset, version et nom de fichier', () => {
+  const cle = `supports/${ARCHIVE}/12/manuel.pdf`
+  assertEquals(verifierCle('supports', cle), cle)
+  for (const invalide of [
+    `private/supports/${ARCHIVE}`,
+    `supports/${ARCHIVE}/0/manuel.pdf`,
+    `supports/${ARCHIVE}/12/../manuel.pdf`,
+    `supports/${ARCHIVE}/12/manuel.pdf/extra`,
+  ]) assertThrows(() => verifierCle('supports', invalide), ErreurCleObjet)
+})
+
 Deno.test('7f -- la casse est normalisee, pour ne pas creer deux objets', () => {
   assertEquals(
     cleDe('pieceIdentite', PROFIL.toUpperCase(), DOCUMENT.toUpperCase()),

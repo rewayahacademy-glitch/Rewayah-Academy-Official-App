@@ -35,7 +35,7 @@ insert into public.download_asset
   (id, resource_version_id, format, cle_stockage, taille_octets, origine)
 values ('c3500000-0000-0000-0000-000000000013',
         'c3500000-0000-0000-0000-000000000012', 'pdf',
-        'private/supports/c3500000-0000-0000-0000-000000000012', 128, 'importe_tel_quel');
+        'supports/c3500000-0000-0000-0000-000000000013/1/manuel.pdf', 128, 'importe_tel_quel');
 update public.resource_version
    set download_asset_id = 'c3500000-0000-0000-0000-000000000013'
  where id = 'c3500000-0000-0000-0000-000000000012';
@@ -75,8 +75,8 @@ begin
   exception when insufficient_privilege then null;
   end;
   v_key := public.autoriser_lecture_version('c3500000-0000-0000-0000-000000000012');
-  if v_key <> 'private/supports/c3500000-0000-0000-0000-000000000012' then
-    raise exception 'C-35: la RPC n'a pas rendu la cle opaque attendue';
+  if v_key <> 'supports/c3500000-0000-0000-0000-000000000013/1/manuel.pdf' then
+    raise exception 'C-35: la RPC n'a pas rendu la chemin de stockage attendu';
   end if;
   begin
     perform public.autoriser_lecture_version('c3500000-0000-0000-0000-000000000099');
@@ -85,6 +85,25 @@ begin
   end;
 end $$;
 
+reset role;
+update public.download_asset
+   set cle_stockage = 'supports/c3500000-0000-0000-0000-000000000013/2/manuel.pdf'
+ where id = 'c3500000-0000-0000-0000-000000000013';
+set local role authenticated;
+select set_config('test.uid', 'c3500000-0000-0000-0000-000000000001', true);
+select set_config('request.jwt.claims', '{"app_metadata":{"role":"student"}}', true);
+do $$
+begin
+  begin
+    perform public.autoriser_lecture_version('c3500000-0000-0000-0000-000000000012');
+    raise exception 'C-35: un chemin asset/version incoherent a ete autorise';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+reset role;
+update public.download_asset
+   set cle_stockage = 'supports/c3500000-0000-0000-0000-000000000013/1/manuel.pdf'
+ where id = 'c3500000-0000-0000-0000-000000000013';
 select set_config('test.uid', 'c3500000-0000-0000-0000-000000000003', true);
 do $$
 begin
@@ -108,7 +127,7 @@ begin
      and action = 'library_read'
      and table_name = 'resource_version'
      and row_id = 'c3500000-0000-0000-0000-000000000012';
-  if v_count <> 1 or v_payload like '%private/supports/%' or v_payload like '%url%' then
+  if v_count <> 1 or v_payload like '%supports/%' or v_payload like '%url%' then
     raise exception 'C-35: audit absent, duplique ou contient une cle/URL';
   end if;
 end $$;

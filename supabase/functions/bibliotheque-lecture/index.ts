@@ -14,7 +14,7 @@ Deno.serve(async (requete: Request) => {
   if (requete.method === 'OPTIONS') return new Response('ok', { headers: enTetesCors })
   if (requete.method !== 'POST') return refus('methode non autorisee', 405)
 
-  if (!stockageConfigure('priveApplicatif')) return refus('stockage indisponible', 503)
+  if (!stockageConfigure('supports')) return refus('stockage indisponible', 503)
 
   let compte
   try {
@@ -44,7 +44,7 @@ Deno.serve(async (requete: Request) => {
 
   if (error || typeof data !== 'string') {
     journaliser({
-      domaine: 'priveApplicatif',
+      domaine: 'supports',
       operation: 'lecture',
       statut: 'refuse',
       dureeMs: Date.now() - debut,
@@ -53,16 +53,13 @@ Deno.serve(async (requete: Request) => {
   }
 
   try {
-    const cle = verifierCle('priveApplicatif', data)
-    if (!/^private\/supports\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(cle)) {
-      throw new Error('famille de cle refusee')
-    }
-    const signee = await signerLecture('priveApplicatif', cle, {
+    const cle = verifierCle('supports', data)
+    const signee = await signerLecture('supports', cle, {
       dureeSecondes: DUREE_LECTURE_SENSIBLE_S,
       contentDisposition: 'inline',
     })
     journaliser({
-      domaine: 'priveApplicatif',
+      domaine: 'supports',
       operation: 'lecture',
       statut: 'accorde',
       ressource: versionId,
@@ -71,7 +68,7 @@ Deno.serve(async (requete: Request) => {
     return json({ url: signee.url, expire_dans_secondes: signee.expireDansSecondes })
   } catch (e) {
     journaliser({
-      domaine: 'priveApplicatif',
+      domaine: 'supports',
       operation: 'lecture',
       statut: 'echec',
       ressource: versionId,

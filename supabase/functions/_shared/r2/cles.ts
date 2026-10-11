@@ -33,6 +33,7 @@ const PREFIXE_CLE: Record<DomaineStockage, string> = {
   archiveSeance: 'recordings',
   pieceJointeMessage: 'messages',
   priveApplicatif: 'private',
+  supports: 'supports',
 }
 
 /// La forme canonique d'un UUID, en minuscules. La casse est imposee : deux
@@ -133,6 +134,15 @@ export function verifierCle(domaine: DomaineStockage, cle: string): string {
   const segments = normalise.split('/')
   if (segments[0] !== PREFIXE_CLE[domaine]) {
     throw new ErreurCleObjet(`prefixe etranger au domaine ${domaine}`)
+  }
+  if (domaine === 'supports') {
+    if (segments.length !== 4) throw new ErreurCleObjet('profondeur hors convention')
+    exigerUuid(segments[1], 'identifiant de support')
+    if (!/^[1-9][0-9]{0,8}$/.test(segments[2])) throw new ErreurCleObjet('version hors convention')
+    if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(segments[3])) {
+      throw new ErreurCleObjet('nom de fichier hors convention')
+    }
+    return normalise
   }
   if (segments.length !== 3) {
     throw new ErreurCleObjet('profondeur hors convention')

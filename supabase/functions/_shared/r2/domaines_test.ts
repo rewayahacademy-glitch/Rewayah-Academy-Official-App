@@ -36,7 +36,8 @@ function environnementComplet(
     table[`${p}_ACCOUNT_ID`] = HEX32
     table[`${p}_ACCESS_KEY_ID`] = HEX32
     table[`${p}_SECRET_ACCESS_KEY`] = HEX64
-    table[`${p}_BUCKET_NAME`] = seauAttendu(domaine)
+    if (domaine === 'supports') table.R2_BUCKET_SUPPORTS = 'rewayah-supports'
+    else table[`${p}_BUCKET_NAME`] = seauAttendu(domaine)!
     table[`${p}_ENDPOINT`] = `https://${HEX32}.eu.r2.cloudflarestorage.com`
   }
   return (nom) => (nom in ajustements ? ajustements[nom] : table[nom])
@@ -52,6 +53,7 @@ Deno.test('A1 -- chaque domaine resout son propre groupe de secrets', () => {
     archiveSeance: 'R2_RECORDINGS',
     pieceJointeMessage: 'R2_MESSAGING',
     priveApplicatif: 'R2_APP_PRIVATE',
+    supports: 'R2_APP_PRIVATE',
   }
   for (const domaine of DOMAINES) {
     assertEquals(prefixeSecrets(domaine), attendus[domaine])
@@ -62,7 +64,7 @@ Deno.test('A1 -- chaque domaine resout son propre groupe de secrets', () => {
 })
 
 Deno.test('A2 -- aucun domaine ne partage le seau d un autre', () => {
-  const seaux = DOMAINES.map(seauAttendu)
+  const seaux = DOMAINES.filter((domaine) => domaine !== 'supports').map((domaine) => seauAttendu(domaine))
   assertEquals(new Set(seaux).size, 4)
 
   // Le controle porte sur la valeur reellement lue, pas sur la table interne :
@@ -213,6 +215,14 @@ Deno.test('B8 -- priveApplicatif va dans rewayah-app-private-storage', () => {
     configurationDe('priveApplicatif', environnementComplet()).seau,
     'rewayah-app-private-storage',
   )
+})
+
+Deno.test('B8 bis -- le seau supports vient exclusivement de R2_BUCKET_SUPPORTS', () => {
+  assertEquals(configurationDe('supports', environnementComplet()).seau, 'rewayah-supports')
+  const absent = environnementComplet({ R2_BUCKET_SUPPORTS: undefined })
+  assertThrows(() => configurationDe('supports', absent), ErreurConfigurationR2)
+  const invalide = environnementComplet({ R2_BUCKET_SUPPORTS: '../private' })
+  assertThrows(() => configurationDe('supports', invalide), ErreurConfigurationR2)
 })
 
 Deno.test('B9 -- la configuration ne transporte aucun identifiant de compte', () => {
