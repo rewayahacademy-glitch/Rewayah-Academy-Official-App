@@ -85,14 +85,21 @@ SET LOCAL ROLE authenticated;
 DO $rls$
 DECLARE
   v_count integer;
+  v_projection_at timestamptz;
 BEGIN
   SELECT count(*) INTO v_count FROM public.demande_evenements_foyer_v
    WHERE demande_id = 'c20fffff-0000-0000-0000-000000000003';
+  SELECT survenu_le_foyer INTO v_projection_at
+    FROM public.demande_evenements_foyer_v
+   WHERE demande_id = 'c20fffff-0000-0000-0000-000000000003'
+     AND type = 'envoyee';
   IF v_count <> 4
+     OR v_projection_at <> '2026-10-11 08:00:00+00'::timestamptz
      OR has_table_privilege('authenticated', 'public.demande_evenements', 'INSERT')
      OR has_table_privilege('authenticated', 'public.demande_evenements', 'UPDATE')
      OR has_table_privilege('authenticated', 'public.demande_evenements', 'DELETE') THEN
-    RAISE EXCEPTION 'C-20 family read/append-only ACL failed, visible events=%', v_count;
+    RAISE EXCEPTION 'C-20 UTC projection/family ACL failed, visible events=%, timestamp=%',
+      v_count, v_projection_at;
   END IF;
 END;
 $rls$;

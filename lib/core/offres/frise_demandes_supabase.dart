@@ -17,7 +17,7 @@ class FriseDemandesSupabase implements PortFriseDemandes {
 
   Future<List<FriseDemande>> _charger() async {
     final List<dynamic> demandes = await _client.rpc(
-      'suivi_demandes_horaires_foyer',
+      'suivi_demandes_horaires_foyer_utc',
     );
     final List<Map<String, dynamic>> evenements = await _client
         .from('demande_evenements_foyer_v')
@@ -54,7 +54,7 @@ List<FriseDemande> frisesDepuisDonnees(
         for (final Map<String, dynamic> source in sources) {
           final TypeEtapeFrise? type = _typeEtape(source['type'] as String?);
           if (type == null) continue;
-          final DateTime? quand = _heureMurale(source['survenu_le_foyer']);
+          final DateTime? quand = _instantUtc(source['survenu_le_foyer']);
           jalons[type] = quand;
           if (type == TypeEtapeFrise.enAttente) {
             motifAttente = switch (source['motif_attente']) {
@@ -77,7 +77,7 @@ List<FriseDemande> frisesDepuisDonnees(
           if (courante == null || type.index > courante.index) courante = type;
         }
 
-        final DateTime? premiereSeance = _heureMurale(demande['debut_cours']);
+        final DateTime? premiereSeance = _instantUtc(demande['debut_cours']);
         if (premiereSeance != null) {
           jalons[TypeEtapeFrise.premiereSeance] = premiereSeance;
         }
@@ -118,12 +118,12 @@ TypeEtapeFrise? _typeEtape(String? type) => switch (type) {
   _ => throw const FormatException('type d’événement inconnu'),
 };
 
-DateTime? _heureMurale(Object? valeur) {
+DateTime? _instantUtc(Object? valeur) {
   if (valeur == null) return null;
   if (valeur is! String) throw const FormatException('date de frise invalide');
   final DateTime? date = DateTime.tryParse(valeur);
-  if (date == null || date.isUtc) {
-    throw const FormatException('la date doit être une heure murale du foyer');
+  if (date == null || !date.isUtc) {
+    throw const FormatException('la date doit être un instant UTC');
   }
   return date;
 }
