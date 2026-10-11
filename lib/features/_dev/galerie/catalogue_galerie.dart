@@ -40,6 +40,7 @@ import '../../../core/widgets/barre_precedent_suivant.dart';
 import '../../../core/widgets/bento_tile.dart';
 import '../../../core/widgets/bouton_icone.dart';
 import '../../../core/widgets/bouton_outil.dart';
+import '../../../core/widgets/brand_logo.dart';
 import '../../../core/widgets/carte_groupee.dart';
 import '../../../core/widgets/carte_lignes.dart';
 import '../../../core/widgets/carte_piece_jointe.dart';
@@ -175,6 +176,10 @@ enum FamilleComposant {
   /// Les etats que tout composant de cette famille doit porter.
   final List<String> etatsObligatoires;
 }
+
+/// Hauteurs de cadre du fil de discussion dans la galerie.
+const double _hauteurFilVide = 480;
+const double _hauteurFilMessages = 640;
 
 /// Un etat d'un composant, tel que la galerie le montre.
 @immutable
@@ -1728,7 +1733,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'vide',
         (BuildContext _) => SizedBox(
-          height: 480,
+          height: _hauteurFilVide,
           child: Material(
             type: MaterialType.transparency,
             child: FilDiscussion(
@@ -1765,7 +1770,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'messages',
         (BuildContext _) => SizedBox(
-          height: 640,
+          height: _hauteurFilMessages,
           child: Material(
             type: MaterialType.transparency,
             child: FilDiscussion(
@@ -2150,6 +2155,48 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         (BuildContext _) => const Directionality(
           textDirection: TextDirection.rtl,
           child: MarquePage(),
+        ),
+      ),
+    ],
+  ),
+
+  // LOGO-APP (directeur, 10/10/2026) : le seul point d'entree du logo. Ses
+  // etats sont ses variantes ; le repli vers le symbole et la couleur par
+  // fond sont verifies par `test/core/widgets/brand_logo_test.dart`.
+  EntreeGalerie(
+    nom: 'BrandLogo',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'horizontal, lien vers l accueil (en-tete large)',
+        (BuildContext _) => BrandLogo(
+          variante: VarianteLogo.horizontal,
+          hauteur: AppSpacing.xxxl,
+          onAccueil: () {},
+        ),
+      ),
+      EtatGalerie(
+        'vertical, connexion',
+        (BuildContext _) => const MarquePage(logo: true),
+      ),
+      EtatGalerie(
+        'symbole, rail replie',
+        (BuildContext _) => const BrandLogo(
+          variante: VarianteLogo.symbole,
+          hauteur: AppSpacing.xxxl,
+        ),
+      ),
+      EtatGalerie(
+        'en arabe : au debut de ligne, jamais retourne',
+        (BuildContext _) => const Directionality(
+          textDirection: TextDirection.rtl,
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: BrandLogo(
+              variante: VarianteLogo.horizontal,
+              hauteur: AppSpacing.xxxl,
+            ),
+          ),
         ),
       ),
     ],

@@ -59,6 +59,10 @@ enum _Etat {
   aucune,
 }
 
+/// Largeur a laquelle la piece est dessinee avant d'etre reduite comme une
+/// image quand la place manque.
+const double _largeurNominale = 320;
+
 class _AgrandirIntent extends Intent {
   const _AgrandirIntent();
 }
@@ -633,8 +637,8 @@ class _PieceFictive extends StatelessWidget {
           if (c.maxWidth >= 240) return carte;
           return FittedBox(
             child: SizedBox(
-              width: 320,
-              height: 320 / ratio,
+              width: _largeurNominale,
+              height: _largeurNominale / ratio,
               child: MediaQuery.withNoTextScaling(child: carte),
             ),
           );

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,6 +18,8 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
+import '../../core/reseau/etat_sans_donnees.dart';
+import '../../core/reseau/service_reseau.dart' show horsLigneProvider;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_spacing.dart';
@@ -41,6 +45,7 @@ import '../../core/widgets/selecteur_personne.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../admin_fusion/feuilles_fusion.dart';
 import '../admin_regroupements/regroupements_libelles.dart' show villeDuFuseau;
 import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
 import 'bas_de_feuille.dart';
@@ -62,8 +67,12 @@ import 'genre_classe_libelles.dart';
 /// ligne ouvre le detail en feuille, comme le reste du produit
 /// (`AppBottomSheet`, jamais une boite de dialogue Material).
 class GroupesPage extends ConsumerStatefulWidget {
-  /// Cree l'ecran des groupes.
-  const GroupesPage({super.key});
+  /// Cree l'ecran des groupes. [attenteInitiale] : s'ouvre filtre sur les
+  /// classes en attente d'enseignant (R7), depuis le tableau de pilotage.
+  const GroupesPage({super.key, this.attenteInitiale = false});
+
+  /// Vrai : le filtre d'etat part sur « En attente d'enseignant ».
+  final bool attenteInitiale;
 
   /// Largeur de l'inspecteur (AD-X) : celle de la file du contrat D.
   static const double largeurInspecteur = 336;
@@ -82,7 +91,9 @@ class GroupesPage extends ConsumerStatefulWidget {
 class _GroupesPageEtat extends ConsumerState<GroupesPage> {
   /// Le filtre courant (R17) : texte, public, etat, jour, heure, fuseau,
   /// genre, enseignant.
-  FiltreClasses _filtre = const FiltreClasses();
+  late FiltreClasses _filtre = widget.attenteInitiale
+      ? const FiltreClasses(etat: EtatClasseListee.attenteEnseignant)
+      : const FiltreClasses();
 
   /// La page courante, a partir de 1. Revient a 1 a chaque changement de
   /// filtre.
@@ -97,8 +108,26 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
 
   final TextEditingController _recherche = TextEditingController();
 
+  /// L'attente qui suit la derniere frappe : une page n'est demandee au
+  /// serveur qu'une fois la saisie posee (ECHELLE, anti-rebond).
+  Timer? _attenteSaisie;
+
+  /// Le delai entre la derniere frappe et la requete. Ce n'est pas un
+  /// mouvement (aucune animation), donc pas un jeton d'`AppMouvement`.
+  static const Duration _delaiSaisie = Duration(
+    microseconds: 300 * Duration.microsecondsPerMillisecond,
+  );
+
+  void _chercher(String texte) {
+    _attenteSaisie?.cancel();
+    _attenteSaisie = Timer(_delaiSaisie, () {
+      if (mounted) _filtrer(_filtre.avec(texte: texte));
+    });
+  }
+
   @override
   void dispose() {
+    _attenteSaisie?.cancel();
     _recherche.dispose();
     super.dispose();
   }
@@ -123,6 +152,7 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
     );
     if (lecture.hasValue) _derniere = lecture.requireValue;
     final PageClasses? reference = lecture.value ?? _derniere;
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final bool bureau = DataCollection.enTableau(context);
     final l = t.admin.groupes.liste;
 
@@ -239,6 +269,27 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
           onChoix: (GenreClasse? genre) =>
               _filtrer(_filtre.avec(genre: () => genre)),
         ),
+        MenuFiltre<RemplissageClasse>(
+          key: const ValueKey<String>('classes-filtre-remplissage'),
+          libelle: l.filtreRemplissage,
+          valeur: _filtre.remplissage,
+          entrees: <EntreeFiltre<RemplissageClasse>>[
+            EntreeFiltre<RemplissageClasse>(
+              valeur: null,
+              libelle: l.filtreTousRemplissages,
+            ),
+            EntreeFiltre<RemplissageClasse>(
+              valeur: RemplissageClasse.pleine,
+              libelle: l.remplissagePleines,
+            ),
+            EntreeFiltre<RemplissageClasse>(
+              valeur: RemplissageClasse.avecPlaces,
+              libelle: l.remplissagePlaces,
+            ),
+          ],
+          onChoix: (RemplissageClasse? remplissage) =>
+              _filtrer(_filtre.avec(remplissage: () => remplissage)),
+        ),
         MenuFiltre<String>(
           key: const ValueKey<String>('classes-filtre-enseignant'),
           libelle: l.filtreEnseignant,
@@ -267,7 +318,7 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
       controleur: _recherche,
       libelle: l.rechercheLibelle,
       aide: l.rechercheAide,
-      onChange: (String texte) => _filtrer(_filtre.avec(texte: texte)),
+      onChange: _chercher,
     );
 
     return PageShell(
@@ -397,6 +448,12 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
                 },
               ),
             ),
+            _ when sansDonneesHorsLigne(lecture, horsLigne: horsLigne) =>
+              EtatSansDonnees(
+                key: const ValueKey<String>('classes-sans-donnees'),
+                quoi: t.admin.groupes.sansDonnees,
+                onAction: _relire,
+              ),
             AsyncValue<PageClasses>(hasError: true) => EmptyState(
               message: t.admin.groupes.erreur,
               icone: AppIcons.avertissement,
@@ -513,6 +570,7 @@ class _Inspecteur extends StatelessWidget {
                       libelle: t.admin.groupes.actionObservation,
                       onChoix: onObservation,
                     ),
+                    ..._actionsFusion(context, classe),
                     EntreeAction(
                       libelle: t.admin.groupes.actionCloturer,
                       destructif: true,
@@ -711,6 +769,7 @@ class _Corps extends StatelessWidget {
                       libelle: t.admin.groupes.actionObservation,
                       onChoix: () => onObservation(c),
                     ),
+                    ..._actionsFusion(contexte, c),
                     EntreeAction(
                       libelle: t.admin.groupes.actionCloturer,
                       destructif: true,
@@ -731,6 +790,30 @@ class _Corps extends StatelessWidget {
     );
   }
 }
+
+/// ECHELLE-ADM-FUSION-1 : les actions de fusion (R9), de transfert (R10) et
+/// l'historique d'une classe. Une action n'est rendue que si le serveur dit
+/// que la personne connectee peut la faire (`peutFusionner`,
+/// `peutTransferer`), jamais selon un role ; l'historique suit l'une ou
+/// l'autre.
+List<EntreeAction> _actionsFusion(BuildContext context, ClasseListee c) =>
+    <EntreeAction>[
+      if (c.peutFusionner)
+        EntreeAction(
+          libelle: t.admin.fusion.actionFusionner,
+          onChoix: () => unawaited(ouvrirFusion(context, c)),
+        ),
+      if (c.peutTransferer)
+        EntreeAction(
+          libelle: t.admin.fusion.actionTransferer,
+          onChoix: () => unawaited(ouvrirTransfert(context, c)),
+        ),
+      if (c.peutFusionner || c.peutTransferer)
+        EntreeAction(
+          libelle: t.admin.fusion.actionHistorique,
+          onChoix: () => unawaited(ouvrirHistorique(context, c)),
+        ),
+    ];
 
 /// L'etat d'une classe : le mot et le ton, jamais la couleur seule.
 class _PastilleEtat extends StatelessWidget {

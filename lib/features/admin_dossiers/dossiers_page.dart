@@ -10,6 +10,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
+import 'acces_piece_kyc.dart';
 import 'decision_dossier.dart';
 import 'detail_dossier.dart';
 import 'etat_file_dossiers.dart';
@@ -194,6 +195,7 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             SousNavigationDomaine(onglets: ongletsPersonnes(), indexActif: 0),
+            const BandeauExceptionKyc(),
             LocalFeedback(message: _retour),
           ],
         ),

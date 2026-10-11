@@ -11,9 +11,11 @@ import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import '../theme/app_typography.dart';
 import 'app_bottom_sheet.dart';
 import 'avatar_nom.dart';
 import 'bascule_theme.dart';
+import 'brand_logo.dart';
 import 'entete_page.dart';
 import 'lien_fleche.dart';
 import 'page_shell.dart';
@@ -167,6 +169,13 @@ class AdminShell extends StatelessWidget {
 
     final ChromeNavigation chrome = AppGabarit.de(context).chrome;
 
+    // LOGO-APP : le logo d'en-tete ramene a l'Accueil admin.
+    void accueil() {
+      if (AdminDomaine.accueil.chemin case final String chemin) {
+        onAller(chemin);
+      }
+    }
+
     void choisir(int index) {
       final String? chemin = domaines[index].chemin;
       // Un domaine inerte ne navigue nulle part : construire un ecran vide
@@ -240,6 +249,7 @@ class AdminShell extends StatelessWidget {
               onChoisir: choisir,
               onCompte: onCompte,
               onStudio: studio,
+              onAccueil: accueil,
             )
           : null,
       body: switch (chrome) {
@@ -269,7 +279,12 @@ class AdminShell extends StatelessWidget {
         ),
         ChromeNavigation.rail => Row(
           children: <Widget>[
-            _Rail(domaines: domaines, indexActif: actif, onChoisir: choisir),
+            _Rail(
+              domaines: domaines,
+              indexActif: actif,
+              onChoisir: choisir,
+              onAccueil: accueil,
+            ),
             Expanded(child: contenu(avecActions: true)),
           ],
         ),
@@ -280,6 +295,7 @@ class AdminShell extends StatelessWidget {
               indexActif: actif,
               onChoisir: choisir,
               onCompte: onCompte,
+              onAccueil: accueil,
             ),
             // Un panneau contextuel pourra prendre place a droite du contenu
             // le jour ou un ecran en aura besoin. Rien n'en a besoin
@@ -430,21 +446,31 @@ Widget _iconeEntree(
 Widget _infoBulle(AdminDomaine domaine, Widget icone) =>
     Tooltip(message: domaine.libelle, excludeFromSemantics: true, child: icone);
 
-/// La tete du tiroir et de la barre laterale : le mot-symbole.
+/// La tete du tiroir et de la barre laterale : le logo horizontal (LOGO-APP,
+/// README du logo : en-tete de navigation large), au debut de ligne, seul
+/// logo de l'ecran et seul cliquable : il ramene a l'Accueil admin.
+///
+/// Le logo porte sa zone de protection (25 % de sa hauteur, 8) : les 8 de
+/// retrait et les 16 au-dessus et au-dessous completent les 16 et 24 de
+/// l'ancien mot-symbole.
 class _TeteNavigation extends StatelessWidget {
-  const _TeteNavigation();
+  const _TeteNavigation({required this.onAccueil});
+
+  final VoidCallback onAccueil;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsetsDirectional.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.xxl,
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.lg,
       ),
-      child: Text(
-        t.nav.motSymbole,
-        style: AppPalette.of(context).inkStrong.applyTo(
-          Theme.of(context).textTheme.titleLarge ?? const TextStyle(),
+      child: Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: BrandLogo(
+          variante: VarianteLogo.horizontal,
+          hauteur: AppSpacing.xxxl,
+          onAccueil: onAccueil,
         ),
       ),
     );
@@ -502,6 +528,7 @@ class _Tiroir extends StatelessWidget {
     required this.indexActif,
     required this.onChoisir,
     required this.onCompte,
+    required this.onAccueil,
     this.onStudio,
   });
 
@@ -509,6 +536,7 @@ class _Tiroir extends StatelessWidget {
   final int? indexActif;
   final void Function(int index) onChoisir;
   final VoidCallback onCompte;
+  final VoidCallback onAccueil;
 
   /// Ouvre Le Studio ; nul, aucun lien (COM-F).
   final VoidCallback? onStudio;
@@ -552,7 +580,12 @@ class _Tiroir extends StatelessWidget {
           onChoisir(index);
         },
         children: <Widget>[
-          const _TeteNavigation(),
+          _TeteNavigation(
+            onAccueil: () {
+              Navigator.of(context).pop();
+              onAccueil();
+            },
+          ),
           for (final AdminDomaine domaine in domaines)
             NavigationDrawerDestination(
               icon: _iconeEntree(palette, domaine, selectionnee: false),
@@ -597,7 +630,8 @@ class _Tiroir extends StatelessWidget {
 }
 
 /// Le rail replie, de 600 a 1199 : icone seule, libelle en info-bulle et en
-/// semantique. Ni tete ni pied : 80 est trop etroit.
+/// semantique. Pas de pied : 80 est trop etroit ; en tete, le symbole seul
+/// du logo (LOGO-APP).
 ///
 /// Les libelles complets (« Opérations », « Configuration ») ne tiennent pas
 /// en 80 sans points de suspension, et aucun libelle court n'existe dans les
@@ -609,11 +643,13 @@ class _Rail extends StatelessWidget {
     required this.domaines,
     required this.indexActif,
     required this.onChoisir,
+    required this.onAccueil,
   });
 
   final List<AdminDomaine> domaines;
   final int? indexActif;
   final void Function(int index) onChoisir;
+  final VoidCallback onAccueil;
 
   @override
   Widget build(BuildContext context) {
@@ -638,6 +674,13 @@ class _Rail extends StatelessWidget {
             labelType: NavigationRailLabelType.none,
             scrollable: true,
             groupAlignment: -1,
+            // LOGO-APP : en tete du rail, le symbole seul (README du logo :
+            // petit format, barre etroite), cliquable vers l'Accueil.
+            leading: BrandLogo(
+              variante: VarianteLogo.symbole,
+              hauteur: AppSpacing.xxxl,
+              onAccueil: onAccueil,
+            ),
             useIndicator: true,
             indicatorColor: palette.washAccent.background,
             indicatorShape: const RoundedRectangleBorder(
@@ -645,9 +688,9 @@ class _Rail extends StatelessWidget {
             ),
             // L'etat actif ne passe pas par la couleur seule (spec section
             // 20) : la graisse le porte aussi.
-            selectedLabelTextStyle: base.copyWith(
-              color: palette.inkAccent.asBorderSide().color,
-              fontWeight: FontWeight.w600,
+            selectedLabelTextStyle: AppTypography.graisse(
+              base.copyWith(color: palette.inkAccent.asBorderSide().color),
+              FontWeight.w600,
             ),
             unselectedLabelTextStyle: base.copyWith(
               color: palette.inkMuted.asBorderSide().color,
@@ -687,12 +730,14 @@ class _Sidebar extends StatelessWidget {
     required this.indexActif,
     required this.onChoisir,
     required this.onCompte,
+    required this.onAccueil,
   });
 
   final List<AdminDomaine> domaines;
   final int? indexActif;
   final void Function(int index) onChoisir;
   final VoidCallback onCompte;
+  final VoidCallback onAccueil;
 
   @override
   Widget build(BuildContext context) {
@@ -747,7 +792,7 @@ class _Sidebar extends StatelessWidget {
                       ),
                       onDestinationSelected: onChoisir,
                       children: <Widget>[
-                        const _TeteNavigation(),
+                        _TeteNavigation(onAccueil: onAccueil),
                         for (final AdminDomaine domaine in domaines)
                           NavigationDrawerDestination(
                             icon: _iconeEntree(
@@ -795,9 +840,9 @@ WidgetStateProperty<TextStyle?> _stylesLibelleNav(
   // graisse le porte aussi, sur le fond discret `washAccent`.
   return WidgetStateProperty.resolveWith<TextStyle?>(
     (Set<WidgetState> states) => states.contains(WidgetState.selected)
-        ? base.copyWith(
-            color: palette.inkAccent.asBorderSide().color,
-            fontWeight: FontWeight.w600,
+        ? AppTypography.graisse(
+            base.copyWith(color: palette.inkAccent.asBorderSide().color),
+            FontWeight.w600,
           )
         : base.copyWith(color: palette.inkMuted.asBorderSide().color),
   );

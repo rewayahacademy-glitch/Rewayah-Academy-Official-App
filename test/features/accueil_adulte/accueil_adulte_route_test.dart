@@ -127,6 +127,9 @@ void main() {
         tester,
         surcharges: surchargesAccueilAdulte(),
         depart: Routes.eleve,
+        // Un compte eleve sans la capacite « eleve autonome » (EA-ROLE-1).
+        role: AppRole.student,
+        autonome: false,
       );
       expect(lieu(routeur), Routes.eleve);
       expect(find.byType(AccueilElevePage), findsOneWidget);
