@@ -17,7 +17,7 @@ values
   ('f1660000-0000-0000-0000-000000000002', 'F1NOTIFSTUDENT', 'student',
    'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Student', 'active', 'male'),
   ('f1660000-0000-0000-0000-000000000003', 'F1NOTIFTEACHER', 'teacher',
-   'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Teacher', 'active', 'male'),
+   'f16fffff-0000-0000-0000-000000000011', 'Fixture', 'Teacher', 'provisional_active', 'male'),
   ('f1660000-0000-0000-0000-000000000004', 'F1NOTIFADMIN', 'admin',
    null, 'Fixture', 'Admin', 'active', 'male'),
   ('f1660000-0000-0000-0000-000000000005', 'F1NOTIFADULT', 'student',

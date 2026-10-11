@@ -20,7 +20,7 @@ values
   ('b1300000-0000-0000-0000-000000000002', 'B13ADMIN000002', 'admin',
    'b13fffff-0000-0000-0000-000000000001', 'Disabled', 'Admin', 'disabled'),
   ('b1300000-0000-0000-0000-000000000003', 'B13TEACHER0001', 'teacher',
-   'b13fffff-0000-0000-0000-000000000001', 'Fixture', 'Teacher', 'active'),
+   'b13fffff-0000-0000-0000-000000000001', 'Fixture', 'Teacher', 'provisional_active'),
   ('b1300000-0000-0000-0000-000000000004', 'B13GUARDIAN001', 'guardian',
    'b13fffff-0000-0000-0000-000000000001', 'Fixture', 'Guardian', 'active'),
   ('b1300000-0000-0000-0000-000000000005', 'B13STUDENT0001', 'student',
