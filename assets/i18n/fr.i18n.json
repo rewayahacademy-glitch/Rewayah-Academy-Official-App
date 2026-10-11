@@ -9407,7 +9407,7 @@
         "exceptionTitre": "Exception de la délégation",
         "exceptionCoffresDetail": "Seuls ces coffres peuvent être touchés par la délégation. Aucun coffre coché\u00a0: aucun coffre autorisé.",
         "exceptionPlafondDetail": "Plus bas que le plafond de la politique générale, jamais plus haut. Vide\u00a0: celui de la politique générale.",
-        "exceptionPlafondTropHaut": "Ce plafond doit être plus bas que celui de la politique générale ({plafond}).",
+        "exceptionPlafondTropHaut": "Ce plafond doit être plus bas que celui de la politique générale.",
         "exceptionPlafondSansGeneral": "Fixez d'abord un plafond par transaction dans la politique générale\u00a0: une exception ne peut qu'être plus basse.",
         "exceptionExclure": "Exclure un bénéficiaire",
         "exceptionExclureAucun": "Aucun autre bénéficiaire à exclure.",

@@ -11288,7 +11288,7 @@ class _Traductions$comptable$direction$delegationPanneau$ar extends Traductions$
 	@override String get exceptionTitre => 'استثناء التفويض';
 	@override String get exceptionCoffresDetail => 'هذه الصناديق وحدها يمكن للتفويض أن يمسّها. دون تحديد: لا صندوق مسموح.';
 	@override String get exceptionPlafondDetail => 'أخفض من سقف السياسة العامة، لا أعلى منه أبدًا. فارغ: سقف السياسة العامة.';
-	@override String exceptionPlafondTropHaut({required Object plafond}) => 'يجب أن يكون هذا السقف أخفض من سقف السياسة العامة (⁨${plafond}⁩).';
+	@override String get exceptionPlafondTropHaut => 'يجب أن يكون هذا السقف أخفض من سقف السياسة العامة.';
 	@override String get exceptionPlafondSansGeneral => 'حدّد أولًا سقفًا لكل معاملة في السياسة العامة: لا يمكن للاستثناء إلا أن يكون أخفض.';
 	@override String get exceptionExclure => 'استبعاد مستفيد';
 	@override String get exceptionExclureAucun => 'لا مستفيد آخر للاستبعاد.';
@@ -18394,7 +18394,7 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.exceptionTitre' => 'استثناء التفويض',
 			'comptable.direction.delegationPanneau.exceptionCoffresDetail' => 'هذه الصناديق وحدها يمكن للتفويض أن يمسّها. دون تحديد: لا صندوق مسموح.',
 			'comptable.direction.delegationPanneau.exceptionPlafondDetail' => 'أخفض من سقف السياسة العامة، لا أعلى منه أبدًا. فارغ: سقف السياسة العامة.',
-			'comptable.direction.delegationPanneau.exceptionPlafondTropHaut' => ({required Object plafond}) => 'يجب أن يكون هذا السقف أخفض من سقف السياسة العامة (⁨${plafond}⁩).',
+			'comptable.direction.delegationPanneau.exceptionPlafondTropHaut' => 'يجب أن يكون هذا السقف أخفض من سقف السياسة العامة.',
 			'comptable.direction.delegationPanneau.exceptionPlafondSansGeneral' => 'حدّد أولًا سقفًا لكل معاملة في السياسة العامة: لا يمكن للاستثناء إلا أن يكون أخفض.',
 			'comptable.direction.delegationPanneau.exceptionExclure' => 'استبعاد مستفيد',
 			'comptable.direction.delegationPanneau.exceptionExclureAucun' => 'لا مستفيد آخر للاستبعاد.',

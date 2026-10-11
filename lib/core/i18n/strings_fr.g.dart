@@ -27830,8 +27830,8 @@ class Traductions$comptable$direction$delegationPanneau$fr {
 	/// fr: 'Plus bas que le plafond de la politique générale, jamais plus haut. Vide : celui de la politique générale.'
 	String get exceptionPlafondDetail => 'Plus bas que le plafond de la politique générale, jamais plus haut. Vide : celui de la politique générale.';
 
-	/// fr: 'Ce plafond doit être plus bas que celui de la politique générale ({plafond}).'
-	String exceptionPlafondTropHaut({required Object plafond}) => 'Ce plafond doit être plus bas que celui de la politique générale (${plafond}).';
+	/// fr: 'Ce plafond doit être plus bas que celui de la politique générale.'
+	String get exceptionPlafondTropHaut => 'Ce plafond doit être plus bas que celui de la politique générale.';
 
 	/// fr: 'Fixez d'abord un plafond par transaction dans la politique générale : une exception ne peut qu'être plus basse.'
 	String get exceptionPlafondSansGeneral => 'Fixez d\'abord un plafond par transaction dans la politique générale : une exception ne peut qu\'être plus basse.';
@@ -38660,7 +38660,7 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.exceptionTitre' => 'Exception de la délégation',
 			'comptable.direction.delegationPanneau.exceptionCoffresDetail' => 'Seuls ces coffres peuvent être touchés par la délégation. Aucun coffre coché : aucun coffre autorisé.',
 			'comptable.direction.delegationPanneau.exceptionPlafondDetail' => 'Plus bas que le plafond de la politique générale, jamais plus haut. Vide : celui de la politique générale.',
-			'comptable.direction.delegationPanneau.exceptionPlafondTropHaut' => ({required Object plafond}) => 'Ce plafond doit être plus bas que celui de la politique générale (${plafond}).',
+			'comptable.direction.delegationPanneau.exceptionPlafondTropHaut' => 'Ce plafond doit être plus bas que celui de la politique générale.',
 			'comptable.direction.delegationPanneau.exceptionPlafondSansGeneral' => 'Fixez d\'abord un plafond par transaction dans la politique générale : une exception ne peut qu\'être plus basse.',
 			'comptable.direction.delegationPanneau.exceptionExclure' => 'Exclure un bénéficiaire',
 			'comptable.direction.delegationPanneau.exceptionExclureAucun' => 'Aucun autre bénéficiaire à exclure.',

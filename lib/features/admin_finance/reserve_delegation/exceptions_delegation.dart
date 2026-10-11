@@ -25,6 +25,7 @@ import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/carte_groupee.dart';
 import '../../../core/widgets/lien_fleche.dart';
+import '../../../core/widgets/montant_sensible.dart';
 import '../../../core/widgets/pastilles_comptable.dart' show libelleCoffre;
 import '../../../core/widgets/setting_row.dart';
 import 'composants_politique.dart';
@@ -212,10 +213,17 @@ class _LigneException extends StatelessWidget {
           '${d.exceptionExclus} : $exclus'.replaceAll(' :', ' :'),
           style: cle,
         ),
-        Text(
-          '${d.exceptionPlafond} : ${plafond == null ? d.exceptionPlafondGeneral : formaterMontant(plafond)}'
-              .replaceAll(' :', ' :'),
-          style: cle,
+        // Le plafond est un montant : masquable, jamais colle dans un texte.
+        Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: AppSpacing.xs,
+          children: <Widget>[
+            Text('${d.exceptionPlafond}\u00a0:', style: cle),
+            if (plafond == null)
+              Text(d.exceptionPlafondGeneral, style: cle)
+            else
+              MontantSensible(plafond),
+          ],
         ),
         Ecart.vXs,
         LienFleche(
@@ -297,10 +305,7 @@ class _FeuilleExceptionEtat extends ConsumerState<FeuilleException> {
       return (valeur: null, erreur: d.exceptionPlafondSansGeneral);
     }
     if (m.mineur > general.mineur) {
-      return (
-        valeur: null,
-        erreur: d.exceptionPlafondTropHaut(plafond: formaterMontant(general)),
-      );
+      return (valeur: null, erreur: d.exceptionPlafondTropHaut);
     }
     return (valeur: m, erreur: null);
   }

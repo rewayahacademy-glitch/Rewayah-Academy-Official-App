@@ -6507,7 +6507,7 @@
         "exceptionTitre": "استثناء التفويض",
         "exceptionCoffresDetail": "هذه الصناديق وحدها يمكن للتفويض أن يمسّها. دون تحديد: لا صندوق مسموح.",
         "exceptionPlafondDetail": "أخفض من سقف السياسة العامة، لا أعلى منه أبدًا. فارغ: سقف السياسة العامة.",
-        "exceptionPlafondTropHaut": "يجب أن يكون هذا السقف أخفض من سقف السياسة العامة (⁨{plafond}⁩).",
+        "exceptionPlafondTropHaut": "يجب أن يكون هذا السقف أخفض من سقف السياسة العامة.",
         "exceptionPlafondSansGeneral": "حدّد أولًا سقفًا لكل معاملة في السياسة العامة: لا يمكن للاستثناء إلا أن يكون أخفض.",
         "exceptionExclure": "استبعاد مستفيد",
         "exceptionExclureAucun": "لا مستفيد آخر للاستبعاد.",
