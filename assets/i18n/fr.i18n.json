@@ -9514,7 +9514,13 @@
       "mission": "Mission de contrôle",
       "missionEnseignant(param=enseignant)": "Mission de contrôle · {enseignant}",
       "eleveDeClasse(param=classe)": "Élève de la classe {classe}",
-      "enseignantDeClasse(param=classe)": "Enseignant de la classe {classe}"
+      "enseignantDeClasse(param=classe)": "Enseignant de la classe {classe}",
+      "personneFoyer": "Profil de votre foyer",
+      "personneFoyerClasse(param=classe)": "Profil de votre foyer · {classe}",
+      "personneParIdentifiant": "Trouvé par son identifiant",
+      "personneParIdentifiantClasse(param=classe)": "Trouvé par son identifiant · {classe}",
+      "canalStudio": "Canal du Studio",
+      "encaissement(param=famille)": "Encaissement · {famille}"
     }
   }
 }

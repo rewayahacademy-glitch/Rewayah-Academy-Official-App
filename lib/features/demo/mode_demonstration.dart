@@ -70,6 +70,9 @@ import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
 import '../../core/theme/accent_profil.dart';
 import '../admin_tableau/activite_recente.dart';
+import '../recherche/domaines/familles_eleves/moteurs_familles_eleves.dart';
+import '../recherche/domaines/familles_eleves/port_resolution_ra.dart';
+import '../recherche/domaines/familles_eleves/resolution_ra_demo.dart';
 import 'admin_x_demo.dart';
 import 'alertes_demo.dart';
 import 'bibliotheque_admin_demo.dart';
@@ -285,7 +288,28 @@ List<Override> surchargesDemoTuteur({
     // RECH-1 : la recherche de demonstration (milliers de classes et de
     // supports fictifs), en fin de liste : des tests indexent les premieres
     // surcharges. En production, aucun moteur n'est raccorde.
-    moteursRechercheProvider.overrideWithValue(moteursDemoRecherche()),
+    // RECH-D2 : le domaine « familles et eleves » sur les ports du foyer de
+    // demonstration, et un RA exact joue par un faux serveur borne au foyer.
+    portResolutionRaProvider.overrideWithValue(
+      const ResolutionRaDemo(<String, ElevePourRa>{
+        'RA-AB0012': ElevePourRa(
+          eleveId: DonneesDemo.aichaId,
+          prenom: 'Aïcha',
+          classe: 'Coran, niveau 1',
+        ),
+        'RA-CD0034': ElevePourRa(
+          eleveId: DonneesDemo.yusufId,
+          prenom: 'Yusuf',
+          classe: 'Arabe, niveau 2',
+        ),
+      }),
+    ),
+    moteursRechercheProvider.overrideWith(
+      (Ref ref) => <MoteurRechercheDomaine>[
+        ...moteursDemoRecherche(),
+        ...moteursFamillesEleves(ref),
+      ],
+    ),
   ];
 }
 

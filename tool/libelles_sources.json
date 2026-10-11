@@ -4357,5 +4357,11 @@
   "tc.bibliotheque.rendu.lienHorsLigne": "etape BIBLIO-LECTURE (demande du directeur du 11/10, la bibliotheque sert l'eleve a reviser) : orchestrateur 01B8we8b ; arabe A RELIRE par un arabophone",
   "tc.bibliotheque.rendu.lienBloque": "etape BIBLIO-LECTURE (demande du directeur du 11/10, la bibliotheque sert l'eleve a reviser) : orchestrateur 01B8we8b ; arabe A RELIRE par un arabophone",
   "tc.bibliotheque.detail.entreeDetail": "etape BIBLIO-LECTURE point 3 (entree de la bibliotheque depuis le Compte : eleve, tuteur, adulte eleve autonome) : orchestrateur 01B8we8b ; arabe A RELIRE par un arabophone",
-  "tc.bibliotheque.detail.entreeLigne": "etape BIBLIO-LECTURE point 3 (entree de la bibliotheque depuis le Compte : eleve, tuteur, adulte eleve autonome) : orchestrateur 01B8we8b ; arabe A RELIRE par un arabophone"
+  "tc.bibliotheque.detail.entreeLigne": "etape BIBLIO-LECTURE point 3 (entree de la bibliotheque depuis le Compte : eleve, tuteur, adulte eleve autonome) : orchestrateur 01B8we8b ; arabe A RELIRE par un arabophone",
+  "recherche.contexte.personneFoyer": "etape RECH-D2/RECH-D4 (spec RECH-03 V3 §3, §7.2 : familles, eleves, identifiant RA exact, finance, fils et canaux) : fiche du tableau, voie RECH, lot RECH-FIN demande par l'orchestrateur 019TSYR4",
+  "recherche.contexte.personneFoyerClasse(param=classe)": "etape RECH-D2/RECH-D4 (spec RECH-03 V3 §3, §7.2 : familles, eleves, identifiant RA exact, finance, fils et canaux) : fiche du tableau, voie RECH, lot RECH-FIN demande par l'orchestrateur 019TSYR4",
+  "recherche.contexte.personneParIdentifiant": "etape RECH-D2/RECH-D4 (spec RECH-03 V3 §3, §7.2 : familles, eleves, identifiant RA exact, finance, fils et canaux) : fiche du tableau, voie RECH, lot RECH-FIN demande par l'orchestrateur 019TSYR4",
+  "recherche.contexte.personneParIdentifiantClasse(param=classe)": "etape RECH-D2/RECH-D4 (spec RECH-03 V3 §3, §7.2 : familles, eleves, identifiant RA exact, finance, fils et canaux) : fiche du tableau, voie RECH, lot RECH-FIN demande par l'orchestrateur 019TSYR4",
+  "recherche.contexte.canalStudio": "etape RECH-D2/RECH-D4 (spec RECH-03 V3 §3, §7.2 : familles, eleves, identifiant RA exact, finance, fils et canaux) : fiche du tableau, voie RECH, lot RECH-FIN demande par l'orchestrateur 019TSYR4",
+  "recherche.contexte.encaissement(param=famille)": "etape RECH-D2/RECH-D4 (spec RECH-03 V3 §3, §7.2 : familles, eleves, identifiant RA exact, finance, fils et canaux) : fiche du tableau, voie RECH, lot RECH-FIN demande par l'orchestrateur 019TSYR4"
 }

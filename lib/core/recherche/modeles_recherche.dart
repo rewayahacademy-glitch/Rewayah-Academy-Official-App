@@ -144,6 +144,9 @@ enum KindCible {
   /// Le fil.
   fil,
 
+  /// Le canal du Studio.
+  canal,
+
   /// L'ecran des remplacements de l'enseignant.
   remplacement,
 }
