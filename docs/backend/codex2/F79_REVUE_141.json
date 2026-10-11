@@ -10,10 +10,12 @@
     "generated_on": "2026-10-11",
     "review_limitations": [
       "No STAGING/PROD access",
-      "No PostgreSQL local replay",
+      "No local replay executed in this session; after-0048 anon result supplied with the task.",
       "Function source is absent for one inventory signature",
-      "ACL expectations include the default ACL model documented in migration 0028, but are not runtime verified"
-    ]
+      "Non-anon ACL estimates include the default ACL model documented in migration 0028 and are not runtime verified."
+    ],
+    "acl_source_of_truth": "has_function_privilege on PostgreSQL replay after migrations 0001-0048",
+    "anon_acl_replay_provenance": "Replay result supplied with the task; not rerun in this session."
   },
   "summary": {
     "inventory_count": 141,
@@ -25,9 +27,23 @@
       "INVOKER POSSIBLE": 68,
       "TRIGGER": 19
     },
-    "local_postgres_replay": "non rejoué localement (revue documentaire; PostgreSQL local absent de la consigne)",
+    "local_postgres_replay": "After-0048 replay result for anon supplied with the task; not rerun in this session. Other role ACLs remain statically derived.",
     "remote_database_access": "non effectué; STAGING et PROD non consultés",
-    "scope": "Sources du dépôt uniquement; ACL estimées d’après les migrations et le modèle de privilèges par défaut documenté en 0028. Les estimations dépendent du propriétaire/default ACL et du chemin pris dans le DO dynamique de 0048; non vérifiées runtime."
+    "scope": "Tracked repository sources only; ACLs are migration-derived except anon EXECUTE, recorded from the reported PostgreSQL replay after 0048 via has_function_privilege. Other role ACLs remain estimates, not runtime verified.",
+    "anon_execute_after_0048_replay": {
+      "true_count": 8,
+      "true_signatures": [
+        "public.agent_identite_masquee()",
+        "public.agent_pre_request()",
+        "public.app_account_valid()",
+        "public.app_config_int(p_key text, p_defaut integer)",
+        "public.app_household_id()",
+        "public.app_role()",
+        "public.app_user_id()",
+        "public.profil_de_mon_foyer(p_profile_id text)"
+      ],
+      "source_of_truth": "has_function_privilege on PostgreSQL replay after migrations 0001-0048"
+    }
   },
   "functions": [
     {
@@ -64,7 +80,14 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": true,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "anon",
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 2,
@@ -100,7 +123,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 3,
@@ -136,7 +165,14 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": true,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "anon",
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 4,
@@ -177,7 +213,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 5,
@@ -216,7 +257,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 6,
@@ -254,7 +300,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 7,
@@ -292,7 +344,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 8,
@@ -331,7 +389,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 9,
@@ -367,7 +430,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 10,
@@ -403,7 +472,14 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": true,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "anon",
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 11,
@@ -439,7 +515,14 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": true,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "anon",
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 12,
@@ -475,7 +558,14 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": true,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "anon",
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 13,
@@ -511,7 +601,14 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": true,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "anon",
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 14,
@@ -547,7 +644,14 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": true,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "anon",
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 15,
@@ -587,7 +691,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 16,
@@ -622,7 +731,12 @@
       "dynamic_sql_possible": true,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 17,
@@ -663,7 +777,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 18,
@@ -702,7 +821,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 19,
@@ -745,7 +869,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 20,
@@ -783,7 +912,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 21,
@@ -821,7 +955,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 22,
@@ -857,7 +997,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 23,
@@ -896,7 +1042,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 24,
@@ -935,7 +1086,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 25,
@@ -975,7 +1131,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 26,
@@ -1016,7 +1177,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 27,
@@ -1052,7 +1218,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 28,
@@ -1087,7 +1259,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 29,
@@ -1125,7 +1302,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 30,
@@ -1165,7 +1347,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 31,
@@ -1205,7 +1392,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 32,
@@ -1245,7 +1437,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 33,
@@ -1285,7 +1482,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 34,
@@ -1323,7 +1525,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 35,
@@ -1365,7 +1572,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 36,
@@ -1405,7 +1617,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 37,
@@ -1440,7 +1657,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 38,
@@ -1480,7 +1702,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 39,
@@ -1521,7 +1748,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 40,
@@ -1560,7 +1792,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 41,
@@ -1599,7 +1836,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 42,
@@ -1641,7 +1883,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 43,
@@ -1678,7 +1925,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 44,
@@ -1716,7 +1968,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 45,
@@ -1752,7 +2010,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 46,
@@ -1790,7 +2054,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 47,
@@ -1827,7 +2097,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 48,
@@ -1864,7 +2139,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 49,
@@ -1901,7 +2181,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 50,
@@ -1941,7 +2226,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 51,
@@ -1982,7 +2272,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 52,
@@ -2019,7 +2314,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 53,
@@ -2064,7 +2364,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 54,
@@ -2100,7 +2405,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 55,
@@ -2136,7 +2447,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 56,
@@ -2174,7 +2491,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 57,
@@ -2213,7 +2536,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 58,
@@ -2249,7 +2578,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 59,
@@ -2286,7 +2621,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 60,
@@ -2322,7 +2662,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 61,
@@ -2358,7 +2704,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 62,
@@ -2394,7 +2746,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 63,
@@ -2430,7 +2788,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 64,
@@ -2473,7 +2837,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 65,
@@ -2514,7 +2883,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 66,
@@ -2560,7 +2934,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 67,
@@ -2606,7 +2985,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 68,
@@ -2649,7 +3033,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 69,
@@ -2692,7 +3081,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 70,
@@ -2733,7 +3127,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 71,
@@ -2774,7 +3173,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 72,
@@ -2815,7 +3219,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 73,
@@ -2858,7 +3267,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 74,
@@ -2902,7 +3316,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 75,
@@ -2950,7 +3369,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 76,
@@ -2993,7 +3417,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 77,
@@ -3034,7 +3463,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 78,
@@ -3075,7 +3509,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 79,
@@ -3111,7 +3550,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 80,
@@ -3148,7 +3593,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 81,
@@ -3184,7 +3634,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 82,
@@ -3221,7 +3677,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 83,
@@ -3258,7 +3719,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 84,
@@ -3295,7 +3761,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 85,
@@ -3331,7 +3802,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 86,
@@ -3370,7 +3847,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 87,
@@ -3405,7 +3887,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 88,
@@ -3443,7 +3930,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 89,
@@ -3481,7 +3973,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 90,
@@ -3517,7 +4014,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 91,
@@ -3556,7 +4059,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 92,
@@ -3595,7 +4103,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 93,
@@ -3634,7 +4147,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 94,
@@ -3670,7 +4188,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 95,
@@ -3706,7 +4230,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 96,
@@ -3743,7 +4273,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 97,
@@ -3779,7 +4314,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 98,
@@ -3815,7 +4356,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 99,
@@ -3851,7 +4398,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 100,
@@ -3887,7 +4440,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 101,
@@ -3926,7 +4485,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 102,
@@ -3962,7 +4526,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 103,
@@ -4001,7 +4571,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 104,
@@ -4040,7 +4615,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 105,
@@ -4081,7 +4661,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 106,
@@ -4118,7 +4703,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 107,
@@ -4154,7 +4744,14 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": true,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "anon",
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 108,
@@ -4191,7 +4788,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 109,
@@ -4227,7 +4829,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 110,
@@ -4263,7 +4871,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 111,
@@ -4299,7 +4913,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 112,
@@ -4338,7 +4958,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 113,
@@ -4377,7 +5002,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 114,
@@ -4416,7 +5046,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 115,
@@ -4455,7 +5090,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 116,
@@ -4492,7 +5132,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 117,
@@ -4529,7 +5174,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 118,
@@ -4565,7 +5215,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 119,
@@ -4603,7 +5259,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 120,
@@ -4644,7 +5306,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 121,
@@ -4681,7 +5348,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 122,
@@ -4719,7 +5391,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 123,
@@ -4758,7 +5436,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 124,
@@ -4797,7 +5480,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 125,
@@ -4836,7 +5524,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 126,
@@ -4863,7 +5556,33 @@
       "dynamic_sql_possible": null,
       "trigger_references": [],
       "verdict": "À CORRIGER",
-      "proposed_correction_not_applied": "Réconcilier la définition public.rls_auto_enable() dans les sources suivies ou retirer cette entrée de l’inventaire source; ne pas inférer son corps ni modifier un environnement distant."
+      "proposed_correction_not_applied": "Réconcilier la définition public.rls_auto_enable() dans les sources suivies ou retirer cette entrée de l’inventaire source; ne pas inférer son corps ni modifier un environnement distant.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "u",
+        "n",
+        "k",
+        "n",
+        "o",
+        "w",
+        "n",
+        " ",
+        "(",
+        "s",
+        "o",
+        "u",
+        "r",
+        "c",
+        "e",
+        " ",
+        "a",
+        "b",
+        "s",
+        "e",
+        "n",
+        "t",
+        ")"
+      ]
     },
     {
       "ordinal": 127,
@@ -4899,7 +5618,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 128,
@@ -4935,7 +5660,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 129,
@@ -4971,7 +5702,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 130,
@@ -5006,7 +5743,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 131,
@@ -5045,7 +5787,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 132,
@@ -5086,7 +5833,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 133,
@@ -5127,7 +5879,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 134,
@@ -5168,7 +5925,12 @@
         }
       ],
       "verdict": "TRIGGER",
-      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué."
+      "proposed_correction_not_applied": "Retirer SECURITY DEFINER et conserver le déclencheur en SECURITY INVOKER; qualifier les objets nécessaires. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 135,
@@ -5207,7 +5969,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 136,
@@ -5245,7 +6012,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 137,
@@ -5281,7 +6054,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 138,
@@ -5318,7 +6097,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 139,
@@ -5356,7 +6140,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     },
     {
       "ordinal": 140,
@@ -5393,7 +6183,12 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "OK",
-      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué."
+      "proposed_correction_not_applied": "Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "service_role"
+      ]
     },
     {
       "ordinal": 141,
@@ -5429,7 +6224,13 @@
       "dynamic_sql_possible": false,
       "trigger_references": [],
       "verdict": "INVOKER POSSIBLE",
-      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué."
+      "proposed_correction_not_applied": "Évaluer SECURITY INVOKER afin de laisser RLS contrôler les lectures; valider les permissions des appelants avant changement. Correctif non appliqué.",
+      "anon_execute_after_0048_replay": false,
+      "roles_that_can_execute_with_anon_replay_and_other_role_estimates": [
+        "authenticated",
+        "agent_ro",
+        "service_role"
+      ]
     }
   ]
 }
