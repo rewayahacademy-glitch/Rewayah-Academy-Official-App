@@ -69,7 +69,9 @@ BEGIN
   END IF;
 
   IF has_function_privilege('anon', 'public.series_tresorerie()', 'EXECUTE')
-     OR has_function_privilege('service_role', 'public.series_tresorerie()', 'EXECUTE') THEN
+     OR has_function_privilege('service_role', 'public.series_tresorerie()', 'EXECUTE')
+     OR has_table_privilege('service_role', 'public.tresorerie_mouvements', 'SELECT')
+     OR has_table_privilege('service_role', 'public.tresorerie_mouvements', 'INSERT') THEN
     RAISE EXCEPTION 'X2-17: ACL inattendue pour anon/service_role';
   END IF;
 END;

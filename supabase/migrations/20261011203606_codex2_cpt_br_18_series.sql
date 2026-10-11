@@ -55,9 +55,11 @@ CREATE TRIGGER tresorerie_mouvements_no_delete
   FOR EACH ROW EXECUTE FUNCTION public.refuser_modification_tresorerie();
 
 ALTER TABLE public.tresorerie_mouvements ENABLE ROW LEVEL SECURITY;
-REVOKE ALL ON TABLE public.tresorerie_mouvements FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON TABLE public.tresorerie_mouvements
+  FROM PUBLIC, anon, authenticated, service_role;
 GRANT SELECT ON TABLE public.tresorerie_mouvements TO authenticated;
-REVOKE ALL ON FUNCTION public.refuser_modification_tresorerie() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.refuser_modification_tresorerie()
+  FROM PUBLIC, anon, authenticated, service_role;
 CREATE POLICY tresorerie_mouvements_finance_read
   ON public.tresorerie_mouvements FOR SELECT TO authenticated
   USING (
@@ -221,7 +223,7 @@ BEGIN
 END;
 $function$;
 
-REVOKE ALL ON FUNCTION public.series_tresorerie() FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.series_tresorerie() FROM PUBLIC, anon, service_role;
 GRANT EXECUTE ON FUNCTION public.series_tresorerie() TO authenticated;
 
 COMMIT;
