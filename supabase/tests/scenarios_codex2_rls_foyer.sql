@@ -295,11 +295,11 @@ INSERT INTO public.annotation_layer (id, resource_id, session_id, auteur_profile
   ('c2a2c000-2000-0000-0000-000000000001', 'c2a2b000-2000-0000-0000-000000000001', 'c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000005', 'seance'),
   ('c2a2c000-2000-0000-0000-000000000002', 'c2a2b000-2000-0000-0000-000000000001', 'c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000006', 'seance');
 INSERT INTO public.annotation_trait (layer_id, ancrage, points, outil) VALUES
-  ('c2a2c000-2000-0000-0000-000000000001', '{"page":2}', '[{"x":1,"y":2}]', 'stylet'),
-  ('c2a2c000-2000-0000-0000-000000000002', '{"page":3}', '[{"x":3,"y":4}]', 'stylet');
+  ('c2a2c000-2000-0000-0000-000000000001', '{"resource_id":"c2a2b000-2000-0000-0000-000000000001","page":2}', '[{"x":1,"y":2}]', 'stylet'),
+  ('c2a2c000-2000-0000-0000-000000000002', '{"resource_id":"c2a2b000-2000-0000-0000-000000000001","page":3}', '[{"x":3,"y":4}]', 'stylet');
 INSERT INTO public.annotation_marqueur (layer_id, plage, intention) VALUES
-  ('c2a2c000-2000-0000-0000-000000000001', '{"start":1,"end":2}', 'learn'),
-  ('c2a2c000-2000-0000-0000-000000000002', '{"start":3,"end":4}', 'review');
+  ('c2a2c000-2000-0000-0000-000000000001', '{"resource_id":"c2a2b000-2000-0000-0000-000000000001","start":1,"end":2}', 'learn'),
+  ('c2a2c000-2000-0000-0000-000000000002', '{"resource_id":"c2a2b000-2000-0000-0000-000000000001","start":3,"end":4}', 'review');
 INSERT INTO public.guardian_session_visit
   (session_id, groupe_id, observateur_profile_id, role, enfant_profile_id, visit_number, policy_version) VALUES
   ('c2a2e000-1000-0000-0000-000000000001', 'c2a2a000-2000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000001', 'guardian_observer', 'c2a20000-0000-0000-0000-000000000004', 1, 'codex2-v1'),
@@ -380,8 +380,11 @@ INSERT INTO public.download_asset
   (id, resource_version_id, format, cle_stockage, taille_octets, origine) VALUES
   ('c2a2b200-2000-0000-0000-000000000011', 'c2a2b100-2000-0000-0000-000000000011', 'pdf', 'codex2/asset-a', 16, 'importe_tel_quel'),
   ('c2a2b200-2000-0000-0000-000000000012', 'c2a2b100-2000-0000-0000-000000000012', 'pdf', 'codex2/asset-b', 16, 'importe_tel_quel');
-UPDATE public.resource_version SET download_asset_id = id
- WHERE id IN ('c2a2b100-2000-0000-0000-000000000011', 'c2a2b100-2000-0000-0000-000000000012');
+UPDATE public.resource_version rv
+   SET download_asset_id = da.id
+  FROM public.download_asset da
+ WHERE da.resource_version_id = rv.id
+   AND rv.id IN ('c2a2b100-2000-0000-0000-000000000011', 'c2a2b100-2000-0000-0000-000000000012');
 UPDATE public.library_resource SET current_version_id = resource_version.id
   FROM public.resource_version
  WHERE public.library_resource.id = resource_version.resource_id
@@ -695,7 +698,9 @@ BEGIN
   EXCEPTION WHEN insufficient_privilege THEN
     v_denied := true;
   END;
-  IF NOT v_denied THEN RAISE EXCEPTION 'RLS-DISABLED-KYC-INSERT: disabled guardian submitted KYC'; END IF;
+  IF NOT v_denied THEN
+    INSERT INTO codex2_rls_violations VALUES ('disabled-account-write', 'kyc_documents');
+  END IF;
   RESET ROLE;
 END $$;
 
@@ -930,10 +935,10 @@ BEGIN
   RESET ROLE;
 END $$;
 
--- Le tuteur A voit et modifie son eleve A, mais ni ne voit ni ne modifie
--- la ligne student_profiles de l'eleve B.
+-- Le tuteur A voit le profil de son eleve, mais le privilege SQL UPDATE sur
+-- student_profiles reste retire aux clients, meme pour une ligne du foyer.
 DO $$
-DECLARE v_count integer; v_rows integer;
+DECLARE v_count integer; v_rows integer; v_denied boolean := false;
 BEGIN
   SET LOCAL ROLE authenticated;
   PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
@@ -944,14 +949,25 @@ BEGIN
   SELECT count(*) INTO v_count FROM public.student_profiles
    WHERE profile_id = 'c2a20000-0000-0000-0000-000000000002';
   IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-STUDENT-READ: household B student visible'; END IF;
-  UPDATE public.student_profiles SET level = 'codex2-positive'
-   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000004';
-  GET DIAGNOSTICS v_rows = ROW_COUNT;
-  IF v_rows <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-STUDENT-WRITE: household A update was not accepted'; END IF;
-  UPDATE public.student_profiles SET level = 'codex2-cross-household'
-   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000002';
-  GET DIAGNOSTICS v_rows = ROW_COUNT;
-  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-STUDENT-WRITE: household B row was updated'; END IF;
+  BEGIN
+    UPDATE public.student_profiles SET level = level
+     WHERE profile_id = 'c2a20000-0000-0000-0000-000000000004';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+    v_rows := 0;
+  END;
+  IF NOT v_denied AND v_rows <> 0 THEN RAISE EXCEPTION 'RLS-STUDENT-PROFILE-WRITE: guardian updated student_profiles despite revoked UPDATE privilege'; END IF;
+  v_denied := false;
+  BEGIN
+    UPDATE public.student_profiles SET level = level
+     WHERE profile_id = 'c2a20000-0000-0000-0000-000000000002';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+    v_rows := 0;
+  END;
+  IF NOT v_denied AND v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-STUDENT-WRITE: household B row was updated'; END IF;
   RESET ROLE;
 END $$;
 
@@ -1145,14 +1161,19 @@ BEGIN
 END $$;
 
 DO $$
-DECLARE v_visible_tables text;
+DECLARE v_visible_tables text; v_write_tables text;
 BEGIN
   SELECT string_agg(table_name, ', ' ORDER BY table_name)
     INTO v_visible_tables
     FROM codex2_rls_violations
    WHERE scenario = 'disabled-account';
-  IF v_visible_tables IS NOT NULL THEN
-    RAISE EXCEPTION 'RLS-DISABLED-ACCOUNT: compte désactivé peut lire : %', v_visible_tables;
+  SELECT string_agg(table_name, ', ' ORDER BY table_name)
+    INTO v_write_tables
+    FROM codex2_rls_violations
+   WHERE scenario = 'disabled-account-write';
+  IF v_visible_tables IS NOT NULL OR v_write_tables IS NOT NULL THEN
+    RAISE EXCEPTION 'RLS-DISABLED-ACCOUNT: lectures autorisées [%]; écritures autorisées [%]',
+      coalesce(v_visible_tables, 'aucune'), coalesce(v_write_tables, 'aucune');
   END IF;
 END $$;
 
