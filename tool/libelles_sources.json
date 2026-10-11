@@ -4163,5 +4163,8 @@
   "admin.bibliotheque.attribution.retraitConfirmerBouton": "CAP29-E : attribution et retrait",
   "admin.bibliotheque.attribution.retire": "CAP29-E : attribution et retrait",
   "admin.bibliotheque.attribution.retraitEchec": "CAP29-E : attribution et retrait",
-  "admin.bibliotheque.attribution.conflit": "CAP29-E : attribution et retrait"
+  "admin.bibliotheque.attribution.conflit": "CAP29-E : attribution et retrait",
+  "tc.bibliotheque.rendu.imageInaccessible": "CAP29-F : rendu par type",
+  "tc.bibliotheque.rendu.imageIllisible": "CAP29-F : rendu par type",
+  "tc.bibliotheque.rendu.reessayer": "CAP29-F : rendu par type"
 }

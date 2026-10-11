@@ -24,6 +24,7 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import 'carte_ressource.dart';
 import 'libelles_bibliotheque.dart';
+import 'rendu_ressource.dart';
 import 'vignette_ressource.dart';
 
 /// Le detail minimal d'une ressource.
@@ -250,7 +251,7 @@ class _Corps extends StatelessWidget {
           ),
         ),
         Ecart.vXl,
-        Text(_noticeRendu(r), style: textes.bodyMedium),
+        RenduRessource(detail: detail),
         if (r.levelScope.isNotEmpty) ...<Widget>[
           Ecart.vSection,
           SectionHeader(titre: t.tc.bibliotheque.detail.niveaux),
@@ -351,13 +352,4 @@ class _Corps extends StatelessWidget {
     if (r.edition != null) r.edition!,
     r.language,
   ].join(' · ');
-
-  /// Ce que le produit sait faire de ce support aujourd'hui.
-  static String _noticeRendu(LibraryResource r) {
-    if (!r.publiee) return t.tc.bibliotheque.detail.sansVersion;
-    if (r.resourceType == TypeRessource.quran) {
-      return t.tc.bibliotheque.detail.renduCoran;
-    }
-    return t.tc.bibliotheque.detail.apercuIndisponible;
-  }
 }

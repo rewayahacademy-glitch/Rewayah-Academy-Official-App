@@ -1548,5 +1548,8 @@ suiviFamille.toutFait
 suiviFamille.vide
 suiviFamille.voirSuivi
 tc.bibliotheque.indisponible.invitation
+tc.bibliotheque.rendu.imageIllisible
+tc.bibliotheque.rendu.imageInaccessible
+tc.bibliotheque.rendu.reessayer
 tc.observation.refus.indisponibleInvitation
 tuteur.reglages.demandeManqueValeur

@@ -5862,6 +5862,11 @@
       "classe": {
         "titre": "Choisir un support",
         "sousTitre": "Le support choisi remplace celui affiché. Le cours continue."
+      },
+      "rendu": {
+        "imageInaccessible": "L'image n'a pas pu être chargée pour le moment.",
+        "imageIllisible": "Ce fichier image ne peut pas être affiché.",
+        "reessayer": "Réessayer"
       }
     },
     "coran": {
