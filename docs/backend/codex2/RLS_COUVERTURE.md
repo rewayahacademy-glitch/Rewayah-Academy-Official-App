@@ -101,6 +101,6 @@ Limite conservee: ces fixtures ne donnent toujours pas une ligne representative 
 
 ## Inventaire statique des policies
 
-Un scan des sources `supabase/migrations/*.sql` retrouve les 72 tables RLS de la liste. La recherche textuelle `CREATE POLICY ... ON public.<table>` trouve 66 cibles distinctes. Sept tables n'ont pas de policy ciblee detectee par ce motif (ce qui peut correspondre au deny-by-default ou a une creation dynamique): `audit_logs_default`, `device_tokens`, `id_sequences`, `livekit_webhook_deliveries`, `rate_limits`, `session_video_route`, `video_config`. Ce scan statique ne remplace pas `pg_policies` sur la base rejouee.
+Un scan des sources `supabase/migrations/*.sql` retrouve les 72 tables RLS de la liste. La recherche textuelle exacte `CREATE POLICY ... ON public.<table>` trouve 65 cibles distinctes. Sept tables n'ont pas de policy ciblee detectee par ce motif (ce qui peut correspondre au deny-by-default ou a une creation dynamique): `audit_logs_default`, `device_tokens`, `id_sequences`, `livekit_webhook_deliveries`, `rate_limits`, `session_video_route`, `video_config`. Ce scan statique ne remplace pas `pg_policies` sur la base rejouee.
 
 Plusieurs relations sont des catalogues partages ou des tables de service, pas des lignes appartenant a un foyer; la regle inter-foyer doit s'appliquer aux relations qui portent cette isolation. Le critere universel de positif proprietaire et de refus autre foyer doit donc etre interprete au niveau de la policy et des donnees de chaque table, pas declare couvert par une boucle `SELECT EXISTS` vide.
