@@ -29,6 +29,7 @@ import '../../core/widgets/audio_label.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/ornement_marque.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/pays_enseignant.dart';
@@ -292,7 +293,14 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
                     accesFerme: accesFerme,
                     accesEnLecture: accesEnLecture,
                   ),
-                Ecart.vXl,
+                // BRAND-ORN-1 : un separateur ornemental entre les deux blocs,
+                // dans l'ecart existant (20) ; le seul de l'ecran.
+                const SizedBox(
+                  height: AppSpacing.xl,
+                  child: Center(
+                    child: SeparateurOrnement(taille: TailleOrnement.petit),
+                  ),
+                ),
                 const _BlocCoran(),
               ],
             ),

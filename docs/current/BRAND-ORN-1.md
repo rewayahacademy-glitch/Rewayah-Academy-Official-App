@@ -31,7 +31,7 @@ spécifiée ici ; application dans l'app et tests locaux dans le lot (voir §6).
 | Séparateur de section | `SeparateurOrnement` : filet, ornement, filet | à la place d'un `Divider` entre deux blocs de contenu de même rang ; jamais entre deux lignes d'une liste |
 | État vide | un ornement contour entre l'illustration et le constat | dans l'écart existant : la hauteur de l'état vide ne change pas ; absent sur la salle en direct (surface inverse) |
 | Connexion | un ornement entre le logo et la carte de connexion | dans l'espace de respiration existant ; le logo garde sa zone de protection de 25 % |
-| Accueil | un séparateur sous l'en-tête de l'accueil | une fois par écran |
+| Accueil (élève) | un séparateur entre le bloc principal et le bloc du Coran | dans l'écart existant (20) ; une fois par écran |
 | Écran de chargement | un ornement entre la marque et l'indicateur | statique ; l'animation de l'écran de démarrage reste une décision du directeur |
 | Page du Coran (MUSHAF-15L) | cadre C : un ornement plein entre deux contours en haut et en bas de la page, cartouche de sourate orné | décision du directeur du 11/10 (« plus c'est simple et moins chargé mieux c'est ») |
 | Attestations, certificats | aucun écran de ce type dans l'app aujourd'hui | quand il existera : un ornement plein centré au pied, en encre d'impression sur le PDF |
@@ -81,11 +81,26 @@ de la page en haut et en bas (4 % en tout).
 ## 6. Application et preuves
 
 Appliqué dans ce lot, par les composants partagés (jamais écran par écran) :
-`EmptyState`, la page de connexion, l'écran de démarrage, et le séparateur
-d'accueil. Tests : `test/core/widgets/ornement_marque_test.dart` (tailles dans
-l'échelle, couleurs par fond, aucun texte ni sémantique, états vides sans
-changement de hauteur) ; `test/core/marque/ornement_traces_test.dart` (traces
-octet pour octet, générateur à jour). Captures : `docs/current/captures/BRAND-ORN-1/`.
+`EmptyState` (contour petit dans l'écart de 20 entre l'illustration et le
+constat, absent si l'état vide porte sa propre encre, donc sur la salle), la
+page de connexion (plein petit dans la respiration entre le logo et la carte),
+l'écran de démarrage (plein petit dans l'écart de 24 entre la marque et
+l'indicateur) et l'accueil de l'élève (`SeparateurOrnement` petit entre les deux
+blocs). Aucune hauteur d'écran ne change : l'ornement prend la place d'un écart
+qui existait. Les `Divider(` restants (listes, tableaux) ne sont pas touchés :
+l'ornement ne sépare pas deux lignes d'une liste.
+
+Aucune attestation ni aucun certificat n'existe dans l'app : rien à poser, la
+règle du §2 s'appliquera quand l'écran existera.
+
+Tests : `test/core/widgets/ornement_marque_test.dart` (tailles dans l'échelle,
+proportions, couleurs par fond, contraste 3:1, aucun texte ni sémantique,
+LTR et RTL de même taille, état vide : ornement présent, absent sur surface
+inverse, hauteur inchangée) ; `test/core/marque/ornement_traces_test.dart`
+(traces octet pour octet, générateur à jour) ;
+`test/core/marque/peinture_ornement_test.dart` (jamais de rotation ni de miroir) ;
+`test/widgets/catalogue_galerie_test.dart` (entrée de galerie `OrnementMarque`).
+Captures : `docs/current/captures/BRAND-ORN-1/`.
 
 ## 7. À appliquer par Codex (hors des zones de Claude)
 
