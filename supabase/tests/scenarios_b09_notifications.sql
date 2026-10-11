@@ -4,7 +4,9 @@ begin;
 
 insert into auth.users (id, email) values
   ('b0900000-0000-0000-0000-000000000001', 'b09-recipient-a@example.test'),
-  ('b0900000-0000-0000-0000-000000000002', 'b09-recipient-b@example.test');
+  ('b0900000-0000-0000-0000-000000000002', 'b09-recipient-b@example.test'),
+  ('b0900000-0000-0000-0000-000000000003', 'b09-student-child@example.test'),
+  ('b0900000-0000-0000-0000-000000000004', 'b09-student-adult@example.test');
 
 insert into public.households (id, timezone)
 values
@@ -17,7 +19,32 @@ values
   ('b0900000-0000-0000-0000-000000000001', 'B09RECIPIENTA01', 'guardian',
    'b09fffff-0000-0000-0000-000000000001', 'Recipient', 'A', 'active'),
   ('b0900000-0000-0000-0000-000000000002', 'B09RECIPIENTB01', 'guardian',
-   'b09fffff-0000-0000-0000-000000000002', 'Recipient', 'B', 'active');
+   'b09fffff-0000-0000-0000-000000000002', 'Recipient', 'B', 'active'),
+  ('b0900000-0000-0000-0000-000000000003', 'B09STUDENTCHILD01', 'student',
+   'b09fffff-0000-0000-0000-000000000001', 'Student', 'Child', 'active'),
+  ('b0900000-0000-0000-0000-000000000004', 'B09STUDENTADULT01', 'student',
+   'b09fffff-0000-0000-0000-000000000002', 'Student', 'Adult', 'active');
+
+update public.households
+   set primary_guardian_id = 'b0900000-0000-0000-0000-000000000001'
+ where id = 'b09fffff-0000-0000-0000-000000000001';
+
+insert into public.demandes_horaires_famille
+  (id, eleve_id, type_public, langue_code, fuseau_iana, jours,
+   heures_locales, source)
+values
+  ('b09fffff-0000-0000-0000-000000000004',
+   'b0900000-0000-0000-0000-000000000003',
+   'enfant', 'francais', 'Europe/Paris', ARRAY[2,4]::smallint[],
+   ARRAY[18,20]::smallint[], 'personnalisee'),
+  ('b09fffff-0000-0000-0000-000000000005',
+   'b0900000-0000-0000-0000-000000000004',
+   'adulte', 'francais', 'Europe/Paris', ARRAY[2,4]::smallint[],
+   ARRAY[18,20]::smallint[], 'personnalisee');
+
+update public.demandes_horaires_famille
+   set etat = 'refusee'
+ where id = 'b09fffff-0000-0000-0000-000000000004';
 
 insert into public.notifications
   (id, destinataire, foyer_id, evenement, params, destination)
@@ -52,22 +79,48 @@ begin
      or pg_catalog.has_table_privilege('agent_ro', 'public.notifications', 'SELECT')
      or pg_catalog.has_function_privilege(
        'authenticated', 'public.notifications_accuse_serveur()', 'EXECUTE')
-     or not exists (
-       select 1
+     or pg_catalog.has_function_privilege(
+       'authenticated', 'public.tc_notification_demande_horaire_famille()', 'EXECUTE')
+     or (
+       select count(*)
          from pg_catalog.pg_proc p
          join pg_catalog.pg_namespace n on n.oid = p.pronamespace
         where n.nspname = 'public'
-          and p.proname = 'notifications_accuse_serveur'
+          and p.proname in (
+            'notifications_accuse_serveur',
+            'tc_notification_demande_horaire_famille'
+          )
           and p.prorettype = 'trigger'::pg_catalog.regtype
           and not p.prosecdef
           and p.proconfig @> array['search_path=""']
-     ) then
+     ) <> 2 then
     raise exception 'B-09: table or trigger function privileges do not match the contract';
   end if;
 
   select count(*) into v_count from public.notifications;
-  if v_count <> 1 then
+  if v_count <> 3 then
     raise exception 'B-09: recipient must see only their own notification';
+  end if;
+  if not exists (
+    select 1 from public.notifications
+     where id <> 'b09fffff-0000-0000-0000-000000000002'
+       and destinataire = auth.uid()
+       and foyer_id = 'b09fffff-0000-0000-0000-000000000001'
+       and evenement = 'demande_recue'
+       and params = '{"etat":"envoyee"}'::jsonb
+       and destination = '/tuteur/demandes'
+  ) then
+    raise exception 'B-09: child request notification missing or not recipient-scoped';
+  end if;
+  if not exists (
+    select 1 from public.notifications
+     where destinataire = auth.uid()
+       and foyer_id = 'b09fffff-0000-0000-0000-000000000001'
+       and evenement = 'demande_close'
+       and params = '{"etat":"refusee"}'::jsonb
+       and destination = '/tuteur/demandes'
+  ) then
+    raise exception 'B-09: refusal notification missing or not recipient-scoped';
   end if;
 
   update public.notifications set lu_le = '2000-01-01T00:00:00Z'
@@ -111,16 +164,25 @@ do $b09_read_marker$
 declare
   v_read_at timestamptz;
   v_other_read_at timestamptz;
+  v_request_notifications integer;
+  v_close_notifications integer;
 begin
   select lu_le into v_read_at from public.notifications
    where id = 'b09fffff-0000-0000-0000-000000000002';
   select lu_le into v_other_read_at from public.notifications
    where id = 'b09fffff-0000-0000-0000-000000000003';
+  select count(*) into v_request_notifications from public.notifications
+   where evenement = 'demande_recue';
+  select count(*) into v_close_notifications from public.notifications
+   where evenement = 'demande_close';
   if v_read_at is null or v_other_read_at is not null then
     raise exception 'B-09: read acknowledgement changed the wrong row';
   end if;
   if v_read_at >= '2099-01-01T00:00:00Z'::timestamptz then
     raise exception 'B-09: client controlled the server read timestamp';
+  end if;
+  if v_request_notifications <> 1 OR v_close_notifications <> 1 then
+    raise exception 'B-09: adult requests must not create guardian notifications';
   end if;
 end
 $b09_read_marker$;
