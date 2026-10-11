@@ -26,8 +26,8 @@ import 'package:rewayah_academy/features/tc_catalogue/detail_ressource_page.dart
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show sessionActive;
-import '../../support/harnais.dart';
 import '../../support/aucun_mot_coupe.dart' as mc;
+import '../../support/harnais.dart';
 import '../../support/sens_et_echelle.dart';
 import '../../teaching_core/b/faux/faux_ports_b.dart';
 
