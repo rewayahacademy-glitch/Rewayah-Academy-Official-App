@@ -20,6 +20,8 @@ class Acceptation {
     required this.sorte,
     required this.version,
     required this.accepteeLe,
+    this.sha256,
+    this.nomSaisi,
   });
 
   /// Construit l'acceptation depuis une ligne Supabase.
@@ -41,6 +43,8 @@ class Acceptation {
       sorte: sorte,
       version: version is String ? version : '',
       accepteeLe: accepteeLe,
+      sha256: json['signed_sha256'] as String?,
+      nomSaisi: json['signer_name'] as String?,
     );
   }
 
@@ -53,6 +57,13 @@ class Acceptation {
 
   /// Quand la signature a eu lieu, en heure locale.
   final DateTime accepteeLe;
+
+  /// Empreinte du texte enseignant signe; absente pour les anciens contrats
+  /// et les autres acceptations.
+  final String? sha256;
+
+  /// Nom saisi par l'enseignant; absent pour les anciennes signatures.
+  final String? nomSaisi;
 
   static SorteContrat? _sorte(Object? valeur) {
     for (final SorteContrat sorte in SorteContrat.values) {
@@ -86,7 +97,9 @@ class ServiceAcceptationsSupabase implements ServiceAcceptations {
   Future<List<Acceptation>> acceptations(String profilId) async {
     final List<Map<String, dynamic>> lignes = await _client
         .from('contract_acceptances')
-        .select('contract_kind, version, accepted_at')
+        .select(
+          'contract_kind, version, accepted_at, signed_sha256, signer_name',
+        )
         .eq('profile_id', profilId)
         .order('accepted_at', ascending: false);
 
