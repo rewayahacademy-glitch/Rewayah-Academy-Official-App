@@ -137,7 +137,10 @@ END $$;
 INSERT INTO auth.users (id, email) VALUES
   ('c2a20000-0000-0000-0000-000000000001', 'codex2-guardian-a@example.test'),
   ('c2a20000-0000-0000-0000-000000000002', 'codex2-student-b@example.test'),
-  ('c2a20000-0000-0000-0000-000000000003', 'codex2-disabled-a@example.test');
+  ('c2a20000-0000-0000-0000-000000000003', 'codex2-disabled-a@example.test'),
+  ('c2a20000-0000-0000-0000-000000000004', 'codex2-student-a@example.test'),
+  ('c2a20000-0000-0000-0000-000000000005', 'codex2-teacher-a@example.test'),
+  ('c2a20000-0000-0000-0000-000000000006', 'codex2-teacher-b@example.test');
 
 INSERT INTO public.households (id, timezone) VALUES
   ('c2a2ffff-0000-0000-0000-000000000001', 'Europe/Paris'),
@@ -151,7 +154,20 @@ VALUES
   ('c2a20000-0000-0000-0000-000000000002', 'COD2-STUD-B', 'student',
    'c2a2ffff-0000-0000-0000-000000000002', 'Eleve', 'B', 'active'),
   ('c2a20000-0000-0000-0000-000000000003', 'COD2-GUARD-DISABLED', 'guardian',
-   'c2a2ffff-0000-0000-0000-000000000001', 'Gardien', 'Suspendu', 'disabled');
+   'c2a2ffff-0000-0000-0000-000000000001', 'Gardien', 'Suspendu', 'disabled'),
+  ('c2a20000-0000-0000-0000-000000000004', 'COD2-STUD-A', 'student',
+   'c2a2ffff-0000-0000-0000-000000000001', 'Eleve', 'A', 'active'),
+  ('c2a20000-0000-0000-0000-000000000005', 'COD2-TEACH-A', 'teacher',
+   'c2a2ffff-0000-0000-0000-000000000001', 'Enseignant', 'A', 'active'),
+  ('c2a20000-0000-0000-0000-000000000006', 'COD2-TEACH-B', 'teacher',
+   'c2a2ffff-0000-0000-0000-000000000002', 'Enseignant', 'B', 'active');
+
+INSERT INTO public.student_profiles (profile_id) VALUES
+  ('c2a20000-0000-0000-0000-000000000002'),
+  ('c2a20000-0000-0000-0000-000000000004');
+INSERT INTO public.teacher_profiles (profile_id) VALUES
+  ('c2a20000-0000-0000-0000-000000000005'),
+  ('c2a20000-0000-0000-0000-000000000006');
 
 INSERT INTO public.devices (profile_id, device_fingerprint, platform) VALUES
   ('c2a20000-0000-0000-0000-000000000001', 'codex2-device-owner-household', 'web'),
@@ -220,6 +236,47 @@ BEGIN
       INSERT INTO codex2_rls_violations VALUES ('missing-role-claim', v_table::text);
     END IF;
   END LOOP;
+  RESET ROLE;
+END $$;
+
+-- Le tuteur A voit et modifie son eleve A, mais ni ne voit ni ne modifie
+-- la ligne student_profiles de l'eleve B.
+DO $$
+DECLARE v_count integer; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.student_profiles
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000004';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-STUDENT-PROFILE: household A student not visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.student_profiles
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-STUDENT-READ: household B student visible'; END IF;
+  UPDATE public.student_profiles SET level = 'codex2-positive'
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000004';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-STUDENT-WRITE: household A update was not accepted'; END IF;
+  UPDATE public.student_profiles SET level = 'codex2-cross-household'
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-STUDENT-WRITE: household B row was updated'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Un enseignant du foyer A lit sa fiche propre, pas celle du foyer B.
+DO $$
+DECLARE v_count integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000005', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.teacher_profiles
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000005';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-TEACHER-PROFILE: teacher A profile not visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.teacher_profiles
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000006';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-TEACHER-READ: teacher B profile visible'; END IF;
   RESET ROLE;
 END $$;
 
