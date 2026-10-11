@@ -33,6 +33,19 @@ SET LOCAL ROLE authenticated;
 SELECT set_config('test.uid', '6f000000-0000-4000-8000-000000000018', true);
 SELECT set_config('test.jwt', '{"app_metadata":{"role":"accountant"}}', true);
 
+DO $direct_write$
+BEGIN
+  INSERT INTO public.exports_comptables (
+    reference, perimetre, periode_debut, periode_fin, nb_lignes, csv, cree_par, cle_idempotence
+  ) VALUES (
+    'FORGE-1', 'rapport', current_date, current_date, 999,
+    'faux;chiffres', auth.uid(), 'x2-18-forge'
+  );
+  RAISE EXCEPTION 'X2-18: comptable unexpectedly forged export journal row';
+EXCEPTION WHEN insufficient_privilege THEN NULL;
+END;
+$direct_write$;
+
 DO $scenario$
 DECLARE
   v_report jsonb;
@@ -109,12 +122,29 @@ BEGIN
      OR has_function_privilege('anon', 'public.exporter_selection_comptable(uuid[],text)', 'EXECUTE')
      OR has_function_privilege('service_role', 'public.exporter_rapport_comptable(text)', 'EXECUTE')
      OR has_function_privilege('service_role', 'public.exporter_selection_comptable(uuid[],text)', 'EXECUTE')
+     OR NOT has_function_privilege('authenticated', 'codex2_private.creer_export_comptable(text,uuid[],text)', 'EXECUTE')
+     OR has_function_privilege('anon', 'codex2_private.creer_export_comptable(text,uuid[],text)', 'EXECUTE')
+     OR has_function_privilege('service_role', 'codex2_private.creer_export_comptable(text,uuid[],text)', 'EXECUTE')
      OR has_table_privilege('service_role', 'public.exports_comptables', 'SELECT')
      OR has_table_privilege('service_role', 'public.exports_comptables', 'INSERT') THEN
     RAISE EXCEPTION 'X2-18: ACL anon/service_role inattendue';
   END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_proc p
+    JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'codex2_private'
+      AND p.proname = 'creer_export_comptable'
+      AND p.prosecdef
+      AND p.proconfig @> ARRAY['search_path=""']
+  ) THEN
+    RAISE EXCEPTION 'X2-18: helper privé absent ou non conforme F86';
+  END IF;
 END;
 $scenario$;
+
+SELECT md5(pg_catalog.pg_get_functiondef(
+  'codex2_private.creer_export_comptable(text,uuid[],text)'::regprocedure
+)) AS x2_18_helper_definer_md5;
 
 RESET ROLE;
 INSERT INTO public.tresorerie_mouvements (
@@ -122,7 +152,7 @@ INSERT INTO public.tresorerie_mouvements (
   survenu_le, source_type, regle, source_id
 )
 SELECT 'fonds_clients_engages', 'entree', 1, 'USD', 1, 'USD', now(),
-       'encaissement', 'x2-18-cap', 'x2-18-cap-' || g::text
+       'encaissement', 'x2-18-cap', 'x2-18-cap-' || n::text
   FROM generate_series(1, 5001) AS gs(n);
 
 SET LOCAL ROLE authenticated;
