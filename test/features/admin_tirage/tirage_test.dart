@@ -358,6 +358,148 @@ void main() {
     });
   });
 
+  group('TIRAGE-REGLES-1 : le nombre de 0 a 50, les versions', () {
+    Future<void> saisirAutre(WidgetTester tester, String texte) async {
+      await _toucher(tester, find.text(t.choix.autre));
+      final Finder champ = find.descendant(
+        of: _cle('tirage-regles'),
+        matching: find.byType(TextField),
+      );
+      await tester.ensureVisible(champ.first);
+      await tester.enterText(champ.first, texte);
+      await _laisser(tester);
+    }
+
+    test(
+      'lireMissions : chiffres arabo-indiens et persans lus comme ASCII',
+      () {
+        expect(lireMissions('٣٧'), 37);
+        expect(lireMissions('۳۷'), 37);
+        expect(lireMissions('٠'), 0);
+        expect(lireMissions('٥٠'), 50);
+        expect(lireMissions('٥١'), isNull);
+        expect(lireMissions('۵۱'), isNull);
+        expect(lireMissions('٣a'), isNull);
+      },
+    );
+
+    testWidgets('« ٣٧ » part comme 37', (WidgetTester tester) async {
+      final TirageDemo port = TirageDemo();
+      await _monter(tester, port, direction: TextDirection.rtl);
+      await saisirAutre(tester, '٣٧');
+      expect(_cle('tirage-nombre-invalide'), findsNothing);
+      await _toucher(tester, _bouton('tirage-enregistrer'));
+      expect(port.reglesCourantes.missionsParSemaine, 37);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('« ٥١ » refusé : rien ne part', (WidgetTester tester) async {
+      final TirageDemo port = TirageDemo();
+      await _monter(tester, port, direction: TextDirection.rtl);
+      await saisirAutre(tester, '٥١');
+      expect(_cle('tirage-nombre-invalide'), findsOneWidget);
+      await _toucher(tester, _bouton('tirage-enregistrer'));
+      expect(port.clesRecues, isEmpty);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('lecture : la version en vigueur est dite', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, TirageDemo());
+      expect(find.text(t.admin.tirage.versionEnVigueur(n: 1)), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('version 0 : aucune regle enregistree, une phrase le dit', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        TirageDemo(
+          regles: const ReglesTirage(
+            missionsParSemaine: 0,
+            ponderations: <CriterePonderation, NiveauPonderation>{},
+            cibles: <CibleTirage>[],
+          ),
+        ),
+      );
+      expect(find.text(t.admin.tirage.aucuneVersion), findsOneWidget);
+      expect(_cle('tirage-zero'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('« Autre » : 37 part tel quel, une nouvelle version naît', (
+      WidgetTester tester,
+    ) async {
+      final TirageDemo port = TirageDemo();
+      await _monter(tester, port);
+      await saisirAutre(tester, '37');
+      await _toucher(tester, _bouton('tirage-enregistrer'));
+      expect(port.reglesCourantes.missionsParSemaine, 37);
+      expect(port.reglesCourantes.version, 2);
+      expect(
+        find.text(t.admin.tirage.enregistreesVersion(n: 2)),
+        findsOneWidget,
+      );
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('0 puis 50 sont acceptes, 51 et « abc » ne partent pas', (
+      WidgetTester tester,
+    ) async {
+      final TirageDemo port = TirageDemo();
+      await _monter(tester, port);
+      await saisirAutre(tester, '51');
+      expect(_cle('tirage-nombre-invalide'), findsOneWidget);
+      await _toucher(tester, _bouton('tirage-enregistrer'));
+      expect(port.clesRecues, isEmpty, reason: 'rien ne part');
+      expect(find.text(t.admin.tirage.nombreInvalide), findsWidgets);
+      await saisirAutre(tester, 'abc');
+      expect(_cle('tirage-nombre-invalide'), findsOneWidget);
+      await saisirAutre(tester, '50');
+      expect(_cle('tirage-nombre-invalide'), findsNothing);
+      await _toucher(tester, _bouton('tirage-enregistrer'));
+      expect(port.reglesCourantes.missionsParSemaine, 50);
+      await _toucher(tester, _cle('tirage-frequence-0'));
+      expect(_cle('tirage-zero'), findsOneWidget);
+      await _toucher(tester, _bouton('tirage-enregistrer'));
+      expect(port.reglesCourantes.missionsParSemaine, 0);
+      expect(port.reglesCourantes.version, 3);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('une valeur lue hors des cartes ouvre « Autre » dessus', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        TirageDemo(
+          regles: ReglesTirage(
+            version: 4,
+            missionsParSemaine: 12,
+            ponderations: reglesParDefautDemo().ponderations,
+            cibles: const <CibleTirage>[],
+          ),
+        ),
+      );
+      expect(find.text(t.admin.tirage.versionEnVigueur(n: 4)), findsOneWidget);
+      expect(find.text('12'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('sans peutModifier (ex. sans MFA) : aucun bouton, aucune '
+        'cle ne part', (WidgetTester tester) async {
+      final TirageDemo port = TirageDemo(
+        acces$: const AccesTirage(peutLire: true, peutModifier: false),
+      );
+      await _monter(tester, port);
+      expect(_cle('tirage-enregistrer'), findsNothing);
+      expect(port.clesRecues, isEmpty);
+      await tester.pumpWidget(const SizedBox());
+    });
+  });
+
   group('Les cinq etats', () {
     testWidgets('vide : aucun tirage', (WidgetTester tester) async {
       await _monter(tester, TirageDemo(historique: const <TirageAudite>[]));
@@ -420,6 +562,25 @@ void main() {
           tester,
           // `ChampRecherche` (composant partage, inchange) garde son
           // etiquette et son aide dans le champ au-dela de 130 %.
+          exceptions: <String>{
+            t.admin.tirage.rechercheLibelle,
+            t.admin.tirage.rechercheAide,
+          },
+        );
+        await _toucher(tester, find.text(t.choix.autre));
+        await tester.enterText(
+          find
+              .descendant(
+                of: _cle('tirage-regles'),
+                matching: find.byType(TextField),
+              )
+              .first,
+          '99',
+        );
+        await _laisser(tester);
+        expect(_cle('tirage-nombre-invalide'), findsOneWidget);
+        verifierEcranSansMotCoupe(
+          tester,
           exceptions: <String>{
             t.admin.tirage.rechercheLibelle,
             t.admin.tirage.rechercheAide,
