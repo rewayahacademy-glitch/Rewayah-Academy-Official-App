@@ -13,6 +13,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
+import '../../core/tc_horloge/chrono_seance.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/tc_outils/learning_assignment.dart';
@@ -67,6 +68,9 @@ abstract final class DepuisClasseLive {
       initialesEnseignant: DepuisSalle.initiales(nomEnseignant),
       prenomEleve: prenomEleve,
       horloge: enseignant ? horlogeDe(horloge) : null,
+      // LIVE-CHRONO-01 : T0 et la fin prevue de la seance, tels que le
+      // serveur les a servis ; rien sans horloge.
+      chrono: chronoDe(horloge),
       connexion: DepuisSalle.connexionDe(salle.phase),
       enregistrementConfirme: salle.phase != PhaseSalle.refus,
       visite: visite,
@@ -94,6 +98,15 @@ abstract final class DepuisClasseLive {
       tutoiement: age.tutoiement,
     );
   }
+
+  /// LIVE-CHRONO-01 : T0 et la fin prevue servies par l'horloge de la
+  /// seance, ou `null` sans horloge (rien n'est invente).
+  static BornesChrono? chronoDe(SessionClockVM? horloge) => horloge == null
+      ? null
+      : BornesChrono(
+          debutUtc: horloge.debutUtc,
+          finPrevueUtc: horloge.finPrevueUtc,
+        );
 
   /// « 32 min restantes » pendant le cours, « La seance se poursuit. » apres
   /// la fin prevue, rien sinon (horloge non branchee, avant T0, terminee).

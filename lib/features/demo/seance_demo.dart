@@ -12,6 +12,7 @@ import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_horloge/chrono_seance.dart';
 import '../../core/tc_outils/annotation_layer.dart';
 import '../../core/tc_telechargement/port_etat_offline.dart';
 import '../salle_seance/depuis_salle.dart';
@@ -800,6 +801,22 @@ abstract final class DonneesSeanceDemo {
     heureFin: '18:45',
     cahierACompleter: true,
   );
+
+  /// LIVE-CHRONO-01 : les bornes d'une seance de 45 minutes dont la demo
+  /// montre « 32 min restantes » (treize minutes ecoulees), ou depassee
+  /// (« La seance se poursuit. », temps prevu ecoule), calculees a partir de
+  /// [maintenant] pour que le chrono avance comme une vraie seance.
+  static BornesChrono chronoDemo(DateTime maintenant, {bool depasse = false}) {
+    final DateTime debut = maintenant.toUtc().subtract(
+      depasse
+          ? const Duration(minutes: 50, seconds: 12)
+          : const Duration(minutes: 12, seconds: 34),
+    );
+    return BornesChrono(
+      debutUtc: debut,
+      finPrevueUtc: debut.add(const Duration(minutes: 45)),
+    );
+  }
 
   /// La vue d'un role dans un etat.
   ///

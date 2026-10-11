@@ -23,6 +23,7 @@ import '../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
 import '../../core/tc_outils/annotation_layer.dart'
     show AnnotationLayer, TraitVectoriel;
 import '../../core/tc_outils/etat_outils.dart';
@@ -513,7 +514,7 @@ class _SalleDemoState extends State<SalleDemo> {
     String prenomEleve = DonneesSeanceDemo.eleveCourant,
   }) {
     final SituationTb? s = widget.situation;
-    return s == null
+    final VueSeance vue = s == null
         ? DonneesSeanceDemo.vue(
             widget.role,
             widget.etat,
@@ -528,7 +529,20 @@ class _SalleDemoState extends State<SalleDemo> {
             etat: widget.etat,
             enregistrement: widget.enregistrement,
           );
+    // LIVE-CHRONO-01 : la demonstration porte les bornes d'une vraie seance,
+    // fixees une fois a l'ouverture de l'ecran.
+    return vue.copyWith(
+      chrono: vue.horloge is HorlogeDepassee ? _chronoDepasse : _chronoEnCours,
+    );
   }
+
+  late final BornesChrono _chronoEnCours = DonneesSeanceDemo.chronoDemo(
+    DateTime.now(),
+  );
+  late final BornesChrono _chronoDepasse = DonneesSeanceDemo.chronoDemo(
+    DateTime.now(),
+    depasse: true,
+  );
 
   /// La file de recitation locale (EN-9) : « Faire reciter » donne la parole
   /// sans serveur, par le modele de `ControleurRecitation`.
