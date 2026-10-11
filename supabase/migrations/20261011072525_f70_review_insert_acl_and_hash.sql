@@ -1,4 +1,4 @@
-﻿BEGIN;
+BEGIN;
 
 -- Normalize only the two line terminators introduced by the dollar-quoted SQL
 -- wrapper. The stored text hash must cover the exact approved UTF-8 body.
