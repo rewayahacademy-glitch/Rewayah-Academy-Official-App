@@ -19605,8 +19605,8 @@ class Traductions$admin$groupes$cahiers$fr {
 	/// fr: 'Afficher plus de cahiers'
 	String get plus => 'Afficher plus de cahiers';
 
-	/// fr: 'Cahier {dePrenom}'
-	String titreCahier({required Object dePrenom}) => 'Cahier ${dePrenom}';
+	/// fr: 'Cahier de séance {dePrenom}'
+	String titreCahier({required Object dePrenom}) => 'Cahier de séance ${dePrenom}';
 
 	/// fr: 'Lecture seule'
 	String get lectureSeule => 'Lecture seule';
@@ -33515,7 +33515,7 @@ extension on Traductions {
 			'admin.groupes.cahiers.filtreTous' => 'Tous les états',
 			'admin.groupes.cahiers.vide' => 'Aucun cahier ne correspond pour cette classe.',
 			'admin.groupes.cahiers.plus' => 'Afficher plus de cahiers',
-			'admin.groupes.cahiers.titreCahier' => ({required Object dePrenom}) => 'Cahier ${dePrenom}',
+			'admin.groupes.cahiers.titreCahier' => ({required Object dePrenom}) => 'Cahier de séance ${dePrenom}',
 			'admin.groupes.cahiers.lectureSeule' => 'Lecture seule',
 			'admin.groupes.cahiers.evaluation' => 'Évaluation de l\'enseignant pour cet élève',
 			'admin.groupes.cahiers.aucuneEvaluation' => 'Aucune évaluation n\'a été enregistrée pour cet élève.',

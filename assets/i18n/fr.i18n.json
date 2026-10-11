@@ -2327,7 +2327,7 @@
         "filtreTous": "Tous les états",
         "vide": "Aucun cahier ne correspond pour cette classe.",
         "plus": "Afficher plus de cahiers",
-        "titreCahier": "Cahier {dePrenom}",
+        "titreCahier": "Cahier de séance {dePrenom}",
         "lectureSeule": "Lecture seule",
         "evaluation": "Évaluation de l'enseignant pour cet élève",
         "aucuneEvaluation": "Aucune évaluation n'a été enregistrée pour cet élève.",
