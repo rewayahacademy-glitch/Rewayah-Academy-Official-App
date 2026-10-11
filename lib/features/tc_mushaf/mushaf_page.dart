@@ -325,9 +325,9 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
                   ),
                 ),
                 if (_messageTaille != null)
-                  Positioned(
-                    left: 0,
-                    right: 0,
+                  PositionedDirectional(
+                    start: 0,
+                    end: 0,
                     bottom: AppSpacing.lg,
                     child: Center(
                       child: LocalFeedback(message: _messageTaille),
