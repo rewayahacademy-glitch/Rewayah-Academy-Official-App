@@ -147,7 +147,15 @@ const String dependanceSignatureContrat = 'RECRUT-SIGNATURE';
 /// Le port : absent avant le branchement serveur.
 final Provider<PortSignatureContrat?> portSignatureContratProvider =
     Provider<PortSignatureContrat?>(
-      (Ref _) => SignatureContratSupabase(Supabase.instance.client),
+      (Ref _) {
+        try {
+          return SignatureContratSupabase(Supabase.instance.client);
+        } on AssertionError {
+          // Les galeries/tests qui n'initialisent pas Supabase gardent le port
+          // indisponible; les écrans de démonstration peuvent le remplacer.
+          return null;
+        }
+      },
     );
 
 /// Adaptateur Supabase du contrat enseignant versionne.

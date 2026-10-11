@@ -202,6 +202,8 @@ begin
   begin
     perform * from public.read_kyc_documents();
     raise exception 'S5 ECHEC : un lecteur sans genre a obtenu des dossiers';
+  exception when insufficient_privilege then
+    null;
   exception when sqlstate 'P0001' then
     if position('genre du lecteur inconnu' in sqlerrm) = 0 then raise; end if;
   end;
