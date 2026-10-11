@@ -792,4 +792,14 @@ begin
   raise notice 'search_path ok : toute fonction SECURITY DEFINER le fixe';
 end $$;
 
+do $$
+begin
+  if has_function_privilege(
+       'service_role', 'public.completer_contract_acceptance()', 'EXECUTE'
+     ) then
+    raise exception 'F70 ACL ECHEC : service_role peut appeler le trigger de signature';
+  end if;
+  raise notice 'F70 ACL ok : service_role ne peut pas appeler le trigger de signature';
+end $$;
+
 select 'TOUS LES SCENARIOS SQL DE L''ETAPE 3 SONT PASSES' as verdict;
