@@ -17,7 +17,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/capacites/port_delegation_finance.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
-import '../../../core/tc_groupe/libelles_tc_groupe.dart' show LibellesGroupe;
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
@@ -166,10 +165,9 @@ class _ControleDelegationEtat extends ConsumerState<ControleDelegation> {
     final DateTime? depuis = p.suspendueLe;
     final String? retour = _retour;
     final String detailExpiration = <String>[
-      if (p.dureeJours != null)
-        LibellesGroupe.insecable(d.renouvelablePour(jours: p.dureeJours!)),
+      if (p.dureeJours != null) d.renouvelablePour(jours: p.dureeJours!),
       if (p.delaiSortieHeures != null)
-        LibellesGroupe.insecable(d.sortiesDelai(heures: p.delaiSortieHeures!)),
+        d.sortiesDelai(heures: p.delaiSortieHeures!),
     ].join(' · ');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

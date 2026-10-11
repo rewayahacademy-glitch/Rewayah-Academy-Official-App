@@ -27732,7 +27732,7 @@ class Traductions$comptable$direction$delegationPanneau$fr {
 	String get etatExpiree => 'Expirée';
 
 	/// fr: 'Renouvelable pour {jours} jours'
-	String renouvelablePour({required Object jours}) => 'Renouvelable pour ${jours} jours';
+	String renouvelablePour({required Object jours}) => 'Renouvelable pour ${jours} jours';
 
 	/// fr: 'Renouveler la délégation'
 	String get renouveler => 'Renouveler la délégation';
@@ -27750,7 +27750,7 @@ class Traductions$comptable$direction$delegationPanneau$fr {
 	String get sortiesDetail => 'Une sortie au-dessus du plafond par transaction attend un délai de sécurité avant de partir. Vous pouvez l\'annuler d\'ici là.';
 
 	/// fr: 'Délai de sécurité : {heures} h'
-	String sortiesDelai({required Object heures}) => 'Délai de sécurité : ${heures} h';
+	String sortiesDelai({required Object heures}) => 'Délai de sécurité : ${heures} h';
 
 	/// fr: 'Aucune sortie en attente.'
 	String get sortiesVide => 'Aucune sortie en attente.';
@@ -38627,13 +38627,13 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.etatActive' => 'Active',
 			'comptable.direction.delegationPanneau.etatSuspendue' => 'Suspendue',
 			'comptable.direction.delegationPanneau.etatExpiree' => 'Expirée',
-			'comptable.direction.delegationPanneau.renouvelablePour' => ({required Object jours}) => 'Renouvelable pour ${jours} jours',
+			'comptable.direction.delegationPanneau.renouvelablePour' => ({required Object jours}) => 'Renouvelable pour ${jours} jours',
 			'comptable.direction.delegationPanneau.renouveler' => 'Renouveler la délégation',
 			'comptable.direction.delegationPanneau.renouvelee' => 'Délégation renouvelée.',
 			'comptable.direction.delegationPanneau.renouvelerEchec' => 'Le renouvellement n\'est pas confirmé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez la date d\'expiration avant de réessayer.',
 			'comptable.direction.delegationPanneau.sortiesTitre' => 'Sorties en attente',
 			'comptable.direction.delegationPanneau.sortiesDetail' => 'Une sortie au-dessus du plafond par transaction attend un délai de sécurité avant de partir. Vous pouvez l\'annuler d\'ici là.',
-			'comptable.direction.delegationPanneau.sortiesDelai' => ({required Object heures}) => 'Délai de sécurité : ${heures} h',
+			'comptable.direction.delegationPanneau.sortiesDelai' => ({required Object heures}) => 'Délai de sécurité : ${heures} h',
 			'comptable.direction.delegationPanneau.sortiesVide' => 'Aucune sortie en attente.',
 			'comptable.direction.delegationPanneau.sortiesErreur' => 'Les sorties en attente n\'ont pas pu être lues : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.direction.delegationPanneau.sortiePart' => ({required Object objet, required Object date}) => '${objet} · part le ${date}',

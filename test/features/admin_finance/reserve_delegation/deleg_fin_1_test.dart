@@ -23,8 +23,6 @@ import 'package:rewayah_academy/core/capacites/port_delegation_finance.dart';
 import 'package:rewayah_academy/core/comptable/modeles_comptable.dart';
 import 'package:rewayah_academy/core/comptable/statuts_comptable.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart'
-    show LibellesGroupe;
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/pastilles_comptable.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation/controle_delegation.dart';
@@ -233,17 +231,10 @@ void main() {
       expect(find.textContaining('Expire le'), findsOneWidget);
       expect(find.text(d.etatActive), findsOneWidget);
       expect(
-        find.textContaining(
-          LibellesGroupe.insecable(d.renouvelablePour(jours: 90)),
-        ),
+        find.textContaining(d.renouvelablePour(jours: 90)),
         findsOneWidget,
       );
-      expect(
-        find.textContaining(
-          LibellesGroupe.insecable(d.sortiesDelai(heures: 24)),
-        ),
-        findsOneWidget,
-      );
+      expect(find.textContaining(d.sortiesDelai(heures: 24)), findsOneWidget);
     });
 
     testWidgets('renouveler : la cle part, la date change, succes dit apres', (
