@@ -80,6 +80,7 @@ CAP29-BACK-1 (Codex).
 | CAP29-D | Vérifier et publier : contrôle serveur, blocages, confirmation | `publication_test` (14) |
 | CAP29-E | Attribuer (classes paginées, épinglage) et retirer (motif, confirmation, trace) | `attribution_test` (13) |
 | CAP29-F | Rendu par type côté classe (image rendue ; Coran jamais rendu ici ; PDF, texte, leçon : « aucun lecteur » dit tel quel) ; l'enseignant entre dans `/tc/bibliotheque` | `rendu_ressource_test` (10), `redirection_test` |
+| CAP29-G | `PortSupportActif` (activer, suivre, capacités) + double ; `SupportActifClasse` (la classe suit sans bouton) ; `PresentationPort` (rappel `PresenterSupport` de la bibliothèque de la salle, activation à l'appel, clé reprise) | `support_actif_test` (21) |
 | CAP29-H | Arabe complet `admin.bibliotheque.*` et `tc.bibliotheque.rendu.*` (265 clés), arabe 320 px ×2 RTL des cinq écrans, captures 4 cadrages | `arabe_test` (5), `capture_bibliotheque_admin_test` (20 captures, `CAPTURE_DIR`) |
 
 ### Les 20 scénarios CAP29-01 à 20
@@ -95,11 +96,11 @@ CAP29-BACK-1 (Codex).
 | 07 | testé localement (client) / BLOCKED (bascule atomique serveur) | v2 en brouillon séparée ; v1 figée |
 | 08 | testé localement (client) / BLOCKED (serveur) | conflit de révision dit ; clé d'idempotence par tentative |
 | 09 | BLOCKED | l'attribution est testée côté écran ; l'isolation entre classes est une RLS serveur |
-| 10 | INCONNU | salle = CAP29-G, hors de ce lot |
+| 10 | testé localement (port + double) / BLOCKED (serveur) | `PortSupportActif` : la classe suit sans geste, le « Presenter » de la bibliotheque de la salle ne part qu'avec la capacite ; la synchronisation reelle (BR-1), la reprise apres reconnexion et LiveKit restent au serveur ; branchement dans `/salle` non fait (provider reel `null`) |
 | 11 | BLOCKED | non-fuite entre foyers : serveur |
 | 12 | BLOCKED (serveur) / testé localement (écran de retrait) | motif obligatoire, confirmation, trace d'audit ; durée de vie d'une URL existante non documentée côté client |
 | 13 | testé localement (affichage) / BLOCKED (refus serveur) | droits expirés visibles, filtre dédié |
-| 14 | testé localement (320 px ×2, LTR, RTL, arabe, captures clair 320/390/768/1440) | sombre, clavier complet et lecteur d'écran : INCONNU |
+| 14 | testé localement (320 px ×2, LTR, RTL, arabe, sombre 390, Tab + Entrée sur l'attribution, noms de boutons et champs en sémantique, captures clair 320/390/768/1440) | passage lecteur d'écran réel (TalkBack, VoiceOver) : INCONNU |
 | 15 | INCONNU | cache hors ligne persistant : non exercé |
 | 16 | testé localement (double) | l'échec de dépôt à chaque phase ne publie rien ; jamais d'état éternel |
 | 17 | BLOCKED (serveur) / testé localement (écran non autorisé) | aucune action sans capacité |
@@ -109,7 +110,8 @@ CAP29-BACK-1 (Codex).
 
 ### Écarts à connaître
 
-- Ports : `facettes`, `revoirDroits` et `FinaliteUpload` ont été ajoutés après la ligne Contrats C-30 ; une ligne bis est à publier avant le branchement.
+- Ports : `facettes`, `revoirDroits` et `FinaliteUpload` : ligne Contrats C-30 bis publiée le 11/10. `PortSupportActif` (CAP29-G) : ligne Contrats C-33 bis à lire dans le tableau.
+- Salle : `PresentationPort.pourSeance()` n'est pas encore appelé par `/salle` (les fichiers de la salle n'ont pas été modifiés) ; le rappel est prêt pour `onPresenter` des `ActionsSeance`.
 - Aperçu : sans lecteur PDF, texte structuré ni leçon dans `pubspec.yaml` ; le rendu réel attend ces lecteurs.
 - Captures : clair seulement ; pas de comparaison pixel aux maquettes M01 à M04 (aucune référence versionnée dans le dépôt) ; défaut corrigé grâce aux captures : mots coupés dans les pastilles et la visibilité du tableau du catalogue à 1440 px.
 - Arabe : traduction écrite sans relecture par un locuteur natif.

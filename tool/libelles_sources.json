@@ -4166,5 +4166,18 @@
   "admin.bibliotheque.attribution.conflit": "CAP29-E : attribution et retrait",
   "tc.bibliotheque.rendu.imageInaccessible": "CAP29-F : rendu par type",
   "tc.bibliotheque.rendu.imageIllisible": "CAP29-F : rendu par type",
-  "tc.bibliotheque.rendu.reessayer": "CAP29-F : rendu par type"
+  "tc.bibliotheque.rendu.reessayer": "CAP29-F : rendu par type",
+  "tc.bibliotheque.actif.indisponibleTitre": "CAP29-G : support actif",
+  "tc.bibliotheque.actif.indisponible": "CAP29-G : support actif",
+  "tc.bibliotheque.actif.sansDonnees": "CAP29-G : support actif",
+  "tc.bibliotheque.actif.erreur": "CAP29-G : support actif",
+  "tc.bibliotheque.actif.aucun": "CAP29-G : support actif",
+  "tc.bibliotheque.actif.aucunDetail": "CAP29-G : support actif",
+  "tc.bibliotheque.actif.titre": "CAP29-G : support actif",
+  "tc.bibliotheque.actif.version": "CAP29-G : support actif",
+  "tc.bibliotheque.actif.page": "CAP29-G : support actif",
+  "tc.bibliotheque.actif.ouvrirFiche": "CAP29-G : support actif",
+  "tc.bibliotheque.actif.ouvrirCoran": "CAP29-G : support actif",
+  "tc.bibliotheque.actif.retire": "CAP29-G : support actif",
+  "tc.bibliotheque.actif.retireDetail": "CAP29-G : support actif"
 }

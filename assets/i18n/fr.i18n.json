@@ -5867,6 +5867,21 @@
         "imageInaccessible": "L'image n'a pas pu être chargée pour le moment.",
         "imageIllisible": "Ce fichier image ne peut pas être affiché.",
         "reessayer": "Réessayer"
+      },
+      "actif": {
+        "indisponibleTitre": "Support présenté pas encore ouvert",
+        "indisponible": "Le suivi du support présenté s'ouvrira au branchement serveur.",
+        "sansDonnees": "le support présenté",
+        "erreur": "Le support présenté n'a pas pu être chargé. Réessayez.",
+        "aucun": "Aucun support présenté",
+        "aucunDetail": "Quand votre enseignant présentera un support, il apparaîtra ici sans rien faire de votre part.",
+        "titre": "Support présenté",
+        "version": "Version {numero}",
+        "page": "Page {page}",
+        "ouvrirFiche": "Ouvrir la fiche du support",
+        "ouvrirCoran": "Ouvrir dans le lecteur du Coran",
+        "retire": "« {titre} » a été retiré",
+        "retireDetail": "Votre enseignant a retiré ce support de la séance. Il n'est plus accessible."
       }
     },
     "coran": {

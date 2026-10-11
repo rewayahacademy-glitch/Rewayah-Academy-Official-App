@@ -13700,6 +13700,7 @@ class Traductions$tc$bibliotheque$fr {
 	late final Traductions$tc$bibliotheque$message$fr message = Traductions$tc$bibliotheque$message$fr.internal(_root);
 	late final Traductions$tc$bibliotheque$classe$fr classe = Traductions$tc$bibliotheque$classe$fr.internal(_root);
 	late final Traductions$tc$bibliotheque$rendu$fr rendu = Traductions$tc$bibliotheque$rendu$fr.internal(_root);
+	late final Traductions$tc$bibliotheque$actif$fr actif = Traductions$tc$bibliotheque$actif$fr.internal(_root);
 }
 
 // Path: tc.coran
@@ -21534,6 +21535,54 @@ class Traductions$tc$bibliotheque$rendu$fr {
 
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
+}
+
+// Path: tc.bibliotheque.actif
+class Traductions$tc$bibliotheque$actif$fr {
+	Traductions$tc$bibliotheque$actif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Support présenté pas encore ouvert'
+	String get indisponibleTitre => 'Support présenté pas encore ouvert';
+
+	/// fr: 'Le suivi du support présenté s'ouvrira au branchement serveur.'
+	String get indisponible => 'Le suivi du support présenté s\'ouvrira au branchement serveur.';
+
+	/// fr: 'le support présenté'
+	String get sansDonnees => 'le support présenté';
+
+	/// fr: 'Le support présenté n'a pas pu être chargé. Réessayez.'
+	String get erreur => 'Le support présenté n\'a pas pu être chargé. Réessayez.';
+
+	/// fr: 'Aucun support présenté'
+	String get aucun => 'Aucun support présenté';
+
+	/// fr: 'Quand votre enseignant présentera un support, il apparaîtra ici sans rien faire de votre part.'
+	String get aucunDetail => 'Quand votre enseignant présentera un support, il apparaîtra ici sans rien faire de votre part.';
+
+	/// fr: 'Support présenté'
+	String get titre => 'Support présenté';
+
+	/// fr: 'Version {numero}'
+	String version({required Object numero}) => 'Version ${numero}';
+
+	/// fr: 'Page {page}'
+	String page({required Object page}) => 'Page ${page}';
+
+	/// fr: 'Ouvrir la fiche du support'
+	String get ouvrirFiche => 'Ouvrir la fiche du support';
+
+	/// fr: 'Ouvrir dans le lecteur du Coran'
+	String get ouvrirCoran => 'Ouvrir dans le lecteur du Coran';
+
+	/// fr: '« {titre} » a été retiré'
+	String retire({required Object titre}) => '« ${titre} » a été retiré';
+
+	/// fr: 'Votre enseignant a retiré ce support de la séance. Il n'est plus accessible.'
+	String get retireDetail => 'Votre enseignant a retiré ce support de la séance. Il n\'est plus accessible.';
 }
 
 // Path: tc.coran.modes
@@ -34824,6 +34873,19 @@ extension on Traductions {
 			'tc.bibliotheque.rendu.imageInaccessible' => 'L\'image n\'a pas pu être chargée pour le moment.',
 			'tc.bibliotheque.rendu.imageIllisible' => 'Ce fichier image ne peut pas être affiché.',
 			'tc.bibliotheque.rendu.reessayer' => 'Réessayer',
+			'tc.bibliotheque.actif.indisponibleTitre' => 'Support présenté pas encore ouvert',
+			'tc.bibliotheque.actif.indisponible' => 'Le suivi du support présenté s\'ouvrira au branchement serveur.',
+			'tc.bibliotheque.actif.sansDonnees' => 'le support présenté',
+			'tc.bibliotheque.actif.erreur' => 'Le support présenté n\'a pas pu être chargé. Réessayez.',
+			'tc.bibliotheque.actif.aucun' => 'Aucun support présenté',
+			'tc.bibliotheque.actif.aucunDetail' => 'Quand votre enseignant présentera un support, il apparaîtra ici sans rien faire de votre part.',
+			'tc.bibliotheque.actif.titre' => 'Support présenté',
+			'tc.bibliotheque.actif.version' => ({required Object numero}) => 'Version ${numero}',
+			'tc.bibliotheque.actif.page' => ({required Object page}) => 'Page ${page}',
+			'tc.bibliotheque.actif.ouvrirFiche' => 'Ouvrir la fiche du support',
+			'tc.bibliotheque.actif.ouvrirCoran' => 'Ouvrir dans le lecteur du Coran',
+			'tc.bibliotheque.actif.retire' => ({required Object titre}) => '« ${titre} » a été retiré',
+			'tc.bibliotheque.actif.retireDetail' => 'Votre enseignant a retiré ce support de la séance. Il n\'est plus accessible.',
 			'tc.coran.modes.mushaf' => 'Page du mushaf',
 			'tc.coran.modes.verset' => 'Lecture agrandie',
 			'tc.coran.modes.focus' => 'Focus',
@@ -35070,6 +35132,8 @@ extension on Traductions {
 			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
 			'tc.observation.visite.restantes' => 'restantes',
 			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.enDirect' => 'En direct',
 			'tc.observation.visite.connexion' => 'Connexion',
 			'tc.observation.visite.reconnexion' => 'Reconnexion',
@@ -35083,8 +35147,6 @@ extension on Traductions {
 			'tc.observation.visite.pasEncoreLa' => 'Pas encore dans la salle',
 			'tc.observation.visite.parle' => ({required Object nom}) => '${nom} parle',
 			'tc.observation.visite.quitterQuestion' => 'Quitter la visite ?',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.quitterConsequence' => ({required Object duree}) => 'Il vous reste ${duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
 			'tc.observation.visite.quitterConsequenceSansTemps' => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
 			'tc.observation.visite.quitterConfirmer' => 'Quitter la visite',
@@ -35584,6 +35646,8 @@ extension on Traductions {
 			'adulte.finances.mouvementsContexte' => 'Vos recharges, mensualités, remises et avoirs, du plus récent au plus ancien. Rien ne s\'efface : une correction s\'ajoute comme un nouveau mouvement.',
 			'adulte.finances.mouvementsErreurTitre' => 'Vos mouvements ne peuvent pas être lus',
 			'adulte.finances.mouvementsIndisponiblePhrase' => 'Vos recharges et vos mensualités s\'afficheront ici dès leur mise en service.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.finances.mouvementsVidePhrase' => 'Aucune recharge ni aucune mensualité n\'est encore enregistrée pour votre profil. Les mouvements apparaîtront ici après le premier paiement.',
 			'formulaire.motif.manque' => 'Il manque le motif : choisissez-en un dans la liste, ou touchez « Autre » et écrivez-le.',
 			'formulaire.motif.autreVide' => 'Vous avez choisi « Autre » : écrivez le motif en quelques mots.',
@@ -35597,8 +35661,6 @@ extension on Traductions {
 			'motifs.ajoutEleve.attente' => 'Sortie de la liste d\'attente',
 			'motifs.ajoutEleve.transfert' => 'Transfert depuis une autre classe',
 			'motifs.ajoutEleve.famille' => 'Demande de la famille',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.retraitEleve.famille' => 'Demande de la famille',
 			'motifs.retraitEleve.transfert' => 'Transfert vers une autre classe',
 			'motifs.retraitEleve.ecartNiveau' => 'Écart de niveau durable',
@@ -36098,6 +36160,8 @@ extension on Traductions {
 			'com.messages.demo.f.yasmine' => 'Yasmine',
 			'com.messages.demo.f.yusuf' => 'Yusuf',
 			'com.messages.demo.f.dossierAdam' => 'Dossier d\'inscription d\'Adam',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.demo.f.missionNour' => 'Visite de contrôle, Classe An-Nour',
 			'com.messages.demo.f.pieceDevoir' => 'Devoir_semaine_3.pdf',
 			'com.messages.demo.f.pieceAttestation' => 'Attestation_ancienne.pdf',
@@ -36111,8 +36175,6 @@ extension on Traductions {
 			'com.messages.demo.f.missionSuite' => 'Merci, nous en parlons avec l\'enseignante cette semaine.',
 			'com.messages.demo.f.yasmineMerci' => 'Merci beaucoup pour ces explications.',
 			'com.messages.demo.f.affectation' => 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.demo.f.khadijaRevision' => 'Pensez à réviser la sourate Al-Mulk pour jeudi.',
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'Aucune conversation pour le moment.',
@@ -36612,6 +36674,8 @@ extension on Traductions {
 			'com.annonces.administration.planifiees.titre' => 'Annonces planifiées',
 			'com.annonces.administration.planifiees.vide' => 'Aucune annonce planifiée.',
 			'com.annonces.administration.planifiees.pastille' => 'Planifiée',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.planifiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · prévue le ${date} à ${heure}',
 			'com.annonces.administration.matrice.titre' => 'Droits de publication des annonces',
 			'com.annonces.administration.matrice.detail' => 'La règle de l\'académie, appliquée à chaque publication.',
@@ -36625,8 +36689,6 @@ extension on Traductions {
 			'com.annonces.administration.matrice.vide' => 'Aucun droit de publication n\'est configuré.',
 			'com.annonces.administration.moderation.titre' => 'File de modération',
 			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'Signalé le ${date} à ${heure}',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'com.annonces.administration.moderation.extraitTitre' => 'Contenu signalé',
 			'com.annonces.administration.moderation.extraitAbsent' => 'L\'extrait de ce contenu n\'est pas communiqué.',
@@ -37126,6 +37188,8 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.erreurMontant' => 'Saisissez un montant entier supérieur à zéro.',
 			'comptable.tresorerie.transfert.verifier' => 'Vérifier le mouvement',
 			'comptable.tresorerie.transfert.recapPhrase' => 'Vérifiez le montant exact avant d\'envoyer.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.transfert.de' => 'De',
 			'comptable.tresorerie.transfert.vers' => 'Vers',
 			'comptable.tresorerie.transfert.confirmer' => 'Confirmer le mouvement',
@@ -37139,8 +37203,6 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.validationPhrase' => 'Une autre personne doit décider. Le coffre d\'origine reste inchangé jusque-là.',
 			'comptable.tresorerie.transfert.refusTitre' => 'Mouvement refusé par la source',
 			'comptable.tresorerie.transfert.refusPhrase' => ({required Object raison}) => 'Raison : ${raison}. Rien n\'a été déplacé.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.transfert.erreurEnvoiTitre' => 'Réponse non reçue',
 			'comptable.tresorerie.transfert.erreurEnvoi' => 'La réponse n\'est pas arrivée. Consultez l\'historique avant de réessayer : le même mouvement ne sera jamais compté deux fois.',
 			'comptable.tresorerie.transfert.indisponible' => 'Les mouvements entre coffres ne sont pas encore reliés au serveur. Rien n\'a été déplacé.',
