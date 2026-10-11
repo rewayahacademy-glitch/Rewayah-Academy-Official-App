@@ -44,15 +44,24 @@ BEGIN
 END
 $fixture_teacher_contracts$;
 INSERT INTO public.groupes
-  (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana, genre_public)
+  (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana, genre_public,
+   ended_at, ended_by, end_reason)
 VALUES
-  ('c2900000-0000-0000-0000-000000000101', 'c2900000-0000-0000-0000-000000000003', 'enfant', 5, 'C29 recent weight', 1, 18, 'Europe/Paris', 'hommes'),
-  ('c2900000-0000-0000-0000-000000000102', 'c2900000-0000-0000-0000-000000000004', 'enfant', 5, 'C29 concern weight', 1, 18, 'Europe/Paris', 'hommes');
+  ('c2900000-0000-0000-0000-000000000101', 'c2900000-0000-0000-0000-000000000003', 'enfant', 5, 'C29 recent weight', 1, 18, 'Europe/Paris', 'hommes', NULL, NULL, NULL),
+  ('c2900000-0000-0000-0000-000000000102', 'c2900000-0000-0000-0000-000000000004', 'enfant', 5, 'C29 concern weight', 1, 18, 'Europe/Paris', 'hommes', NULL, NULL, NULL),
+  ('c2900000-0000-0000-0000-000000000103', 'c2900000-0000-0000-0000-000000000004', 'enfant', 5, 'C29 closed trigger group', 1, 18, 'Europe/Paris', 'hommes', now(), 'c2900000-0000-0000-0000-000000000001', 'scenario trigger only');
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
 VALUES
-  ('c2900000-0000-0000-0000-000000000201', 'c2900000-0000-0000-0000-000000000003', now() - interval '5 minutes', now() + interval '55 minutes', 'planned', 'standard', 'c2900000-0000-0000-0000-000000000101'),
-  ('c2900000-0000-0000-0000-000000000202', 'c2900000-0000-0000-0000-000000000004', now() - interval '5 minutes', now() + interval '55 minutes', 'planned', 'standard', 'c2900000-0000-0000-0000-000000000102'),
+  ('c2900000-0000-0000-0000-000000000201', 'c2900000-0000-0000-0000-000000000003', now() - interval '5 minutes', now() + interval '55 minutes', 'in_progress', 'standard', 'c2900000-0000-0000-0000-000000000101'),
+  ('c2900000-0000-0000-0000-000000000202', 'c2900000-0000-0000-0000-000000000004', now() - interval '5 minutes', now() + interval '55 minutes', 'in_progress', 'standard', 'c2900000-0000-0000-0000-000000000102'),
   ('c2900000-0000-0000-0000-000000000203', 'c2900000-0000-0000-0000-000000000003', now() - interval '10 days', now() - interval '9 days', 'ended', 'standard', NULL);
+INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
+SELECT ('c2900000-0000-0000-0000-' || lpad((300 + n)::text, 12, '0'))::uuid,
+       'c2900000-0000-0000-0000-000000000004',
+       now() - (2 * n + 2) * interval '1 hour',
+       now() - (2 * n + 1) * interval '1 hour',
+       'preflight', 'standard', 'c2900000-0000-0000-0000-000000000103'
+FROM generate_series(1, 400) AS n;
 INSERT INTO public.student_concern
   (categorie, groupe_id, student_id, teacher_id, internal_details)
 VALUES
@@ -74,21 +83,45 @@ VALUES
    'c2900000-0000-0000-0000-000000000001', now() - interval '1 minute', now() + interval '1 day',
    true, '{}', '{}', 'c2900000-0000-0000-0000-000000000302');
 
-UPDATE public.sessions SET status = 'preflight'
-WHERE id IN ('c2900000-0000-0000-0000-000000000201',
-             'c2900000-0000-0000-0000-000000000202');
-UPDATE public.sessions SET status = 'in_progress'
-WHERE id IN ('c2900000-0000-0000-0000-000000000201',
-             'c2900000-0000-0000-0000-000000000202');
-
+-- The candidate pool consists of sessions already in progress before the
+-- trigger fires. Their INSERT bypasses the UPDATE-only assignment trigger.
 DO $test$
+DECLARE
+  n integer;
+  v_recent integer := 0;
+  v_assigned uuid;
+  v_trigger_id uuid;
 BEGIN
-  IF (SELECT count(*) FROM private.controle_missions
-      WHERE session_id IN ('c2900000-0000-0000-0000-000000000201',
-                           'c2900000-0000-0000-0000-000000000202')
-        AND controleur_id = 'c2900000-0000-0000-0000-000000000002'
-        AND version_regles = 1 AND critere = 'ponderation') <> 2 THEN
-    RAISE EXCEPTION 'C29: trigger must assign both weighted candidate sessions to the active controller';
+  -- A fixed seed makes the 400-trial distribution reproducible. Roll each
+  -- assignment back after observing it so capacity and mission history do not
+  -- influence later trials.
+  PERFORM setseed(0.25);
+  FOR n IN 1..400 LOOP
+    v_trigger_id := ('c2900000-0000-0000-0000-' || lpad((300 + n)::text, 12, '0'))::uuid;
+    BEGIN
+      UPDATE public.sessions SET status='in_progress' WHERE id=v_trigger_id;
+      SELECT session_id INTO v_assigned FROM private.controle_missions
+       WHERE controleur_id='c2900000-0000-0000-0000-000000000002'
+         AND version_regles=1 AND critere='ponderation';
+      IF v_assigned IS NULL THEN
+        RAISE EXCEPTION 'C29: trigger did not assign an already-running candidate';
+      END IF;
+      IF v_assigned='c2900000-0000-0000-0000-000000000201' THEN
+        v_recent:=v_recent+1;
+      ELSIF v_assigned<>'c2900000-0000-0000-0000-000000000202' THEN
+        RAISE EXCEPTION 'C29: trigger selected an unexpected session %', v_assigned;
+      END IF;
+      RAISE EXCEPTION USING ERRCODE='ZX001', MESSAGE='rollback this sampling trial';
+    EXCEPTION WHEN SQLSTATE 'ZX001' THEN
+      NULL;
+    END;
+  END LOOP;
+  -- With weights 2 (recent, normal) and 4 (reported class, strong), the
+  -- exponential race selects the recent candidate about one third of the time.
+  -- This broad four-sigma band detects equal or reversed weights without a
+  -- flaky exact-count assertion.
+  IF v_recent NOT BETWEEN 95 AND 170 THEN
+    RAISE EXCEPTION 'C29: expected roughly one-third recent assignments (weight 2 vs 4), got %/400', v_recent;
   END IF;
   IF (SELECT ponderations FROM public.controle_regles WHERE version=1) <>
       '{"enseignants_recents":"normal","classes_signalees":"fort","heures_de_pointe":"aucun"}'::jsonb THEN
