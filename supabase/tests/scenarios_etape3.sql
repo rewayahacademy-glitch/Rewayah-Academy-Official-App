@@ -553,13 +553,69 @@ begin
 end $$;
 
 -- Une acceptation de contrat est un fait : ni modifiable, ni effacable.
+-- Texte de fixture uniquement : la migration ne publie aucun texte juridique
+-- car le contrat complet validé n'est pas présent dans le dépôt.
+update public.profiles set account_status = 'active'
+where id = '22222222-2222-2222-2222-222222222222';
+
+insert into public.contract_texts (
+  contract_kind, version, locale, body, sha256, is_current
+) values (
+  'teacher_nda', 'test-signature-0057', 'fr',
+  'Texte synthétique réservé au test de signature.',
+  encode(extensions.digest(
+    convert_to('Texte synthétique réservé au test de signature.', 'UTF8'), 'sha256'
+  ), 'hex'),
+  true
+);
+
 do $$
+declare
+  v_signature public.contract_acceptances%rowtype;
+  v_rejouee public.contract_acceptances%rowtype;
+  v_refus text;
 begin
   set local role authenticated;
   perform set_config('test.uid', '22222222-2222-2222-2222-222222222222', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
-  insert into public.contract_acceptances (profile_id, contract_kind, version)
-  values ('22222222-2222-2222-2222-222222222222', 'teacher_nda', '2026-09');
+
+  begin
+    insert into public.contract_acceptances (
+      profile_id, contract_kind, version, signed_sha256
+    ) values (
+      '22222222-2222-2222-2222-222222222222',
+      'teacher_nda', 'test-signature-0057', repeat('0', 64)
+    );
+    raise exception 'CONTRAT ECHEC : le client a pu fournir son empreinte';
+  exception when insufficient_privilege then
+    null;
+  end;
+
+  select * into v_signature
+  from public.signer_contrat('test-signature-0057', '  Yasmine Test  ');
+  select * into v_rejouee
+  from public.signer_contrat('test-signature-0057', 'Autre nom');
+
+  if v_signature.id is distinct from v_rejouee.id
+     or v_signature.accepted_at is distinct from v_rejouee.accepted_at then
+    raise exception 'CONTRAT ECHEC : le rejeu n''a pas renvoye la signature initiale';
+  end if;
+  if v_signature.signer_name is distinct from 'Yasmine Test'
+     or v_signature.signed_sha256 is distinct from (
+       select t.sha256 from public.contract_texts t
+       where t.contract_kind = 'teacher_nda'
+         and t.version = 'test-signature-0057' and t.locale = 'fr'
+     ) then
+    raise exception 'CONTRAT ECHEC : nom ou empreinte source different du texte courant';
+  end if;
+
+  begin
+    perform public.signer_contrat('ancienne-version', 'Yasmine Test');
+    raise exception 'CONTRAT ECHEC : une version perimee a ete signee';
+  exception when sqlstate 'P0001' then
+    get stacked diagnostics v_refus = message_text;
+    if v_refus not like 'version_perimee:%' then raise; end if;
+  end;
 end $$;
 
 do $$
