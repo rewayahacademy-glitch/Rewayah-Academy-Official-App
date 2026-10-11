@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../config/env.dart';
+import 'layout_madina_15.dart';
 import 'port_layout_mushaf.dart';
 
 /// La source de layout du depot : **il n'y en a pas**.
@@ -46,7 +48,15 @@ class LayoutLignesIndisponible implements PortLayoutMushaf {
 
 /// La source de layout employee par l'application.
 ///
-/// **C'est le seul point a surcharger** le jour ou les lignes arrivent : ni le
-/// moteur, ni l'ecran, ni les tests ne connaissent l'implementation.
+/// **C'est le seul point a surcharger** : ni le moteur, ni l'ecran, ni les
+/// tests ne connaissent l'implementation. Derriere le drapeau `MUSHAF_15L`
+/// (`Env.mushaf15LActif`, actif en developpement et en galerie), la source est
+/// la mise en page de Medine en 15 lignes ([LayoutMadina15]) ; sinon, elle
+/// n'existe pas ([LayoutLignesIndisponible]) et la page dit sa composition
+/// approchee.
 final Provider<PortLayoutMushaf> portLayoutMushafProvider =
-    Provider<PortLayoutMushaf>((Ref ref) => const LayoutLignesIndisponible());
+    Provider<PortLayoutMushaf>(
+      (Ref ref) => Env.mushaf15LActif
+          ? LayoutMadina15()
+          : const LayoutLignesIndisponible(),
+    );

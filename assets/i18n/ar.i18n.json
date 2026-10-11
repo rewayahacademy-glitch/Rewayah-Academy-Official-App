@@ -2419,7 +2419,16 @@
       "mushaf": {
         "coteDroite": "الصفحة اليمنى",
         "coteGauche": "الصفحة اليسرى",
-        "ouverture": "الصفحتان المفتوحتان ⁨{droite}⁩ و⁨{gauche}⁩"
+        "ouverture": "الصفحتان المفتوحتان ⁨{droite}⁩ و⁨{gauche}⁩",
+        "page15": {
+          "sourate(param=nom)": "سُورَةُ {nom}",
+          "juz(param=numero)": "الجزء {numero}",
+          "hizb(param=numero)": "الحزب {numero}",
+          "rubUn(param=numero)": "ربع الحزب {numero}",
+          "rubDeux(param=numero)": "نصف الحزب {numero}",
+          "rubTrois(param=numero)": "ثلاثة أرباع الحزب {numero}",
+          "creditMiseEnPage": "التنسيق: مجمع الملك فهد، quran.ws (CC BY 4.0)"
+        }
       },
       "fidelite": {
         "approchee": "تنسيق تقريبي",

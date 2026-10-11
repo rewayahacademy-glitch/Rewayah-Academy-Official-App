@@ -22,6 +22,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/rosace_verset.dart';
+import 'page_madina_15.dart';
 import 'textes_lecteur_coran.dart';
 
 /// Le rendu « page du mushaf ».
@@ -388,6 +389,19 @@ class TexteDePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // MUSHAF-15L : une source de layout reelle (quinze lignes, cadres de
+    // sourate, basmala, rosaces) se compose en page du Mushaf de Medine.
+    if (vue.fidelite == DisponibiliteLayout.fidele && vue.lignes.isNotEmpty) {
+      return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints contraintes) =>
+            PageMadina15(
+              vue: vue,
+              largeur: contraintes.maxWidth.isFinite
+                  ? contraintes.maxWidth
+                  : largeur,
+            ),
+      );
+    }
     final AppPalette palette = AppPalette.of(context);
     // La mesure vient du CADRE, pas de l'ecran : c'est toute la difference
     // avec le rendu actuel, et c'est ce qui rend la page reconnaissable.

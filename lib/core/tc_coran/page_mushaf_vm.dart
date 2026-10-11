@@ -93,6 +93,9 @@ class PageMushafVM {
     required this.lignes,
     required this.nombreLignes,
     required this.ratioLargeurSurHauteur,
+    this.hizb,
+    this.rubDansHizb,
+    this.quartsDebutes = const <int>[],
   });
 
   /// Calcule ce qu'une page doit montrer.
@@ -137,6 +140,9 @@ class PageMushafVM {
       nombreLignes: layout?.nombreLignes ?? GeometrieMushaf.lignesParPage,
       ratioLargeurSurHauteur:
           layout?.ratioLargeurSurHauteur ?? GeometrieMushaf.ratioCadreTexte,
+      hizb: lignesReelles ? layout.hizb : null,
+      rubDansHizb: lignesReelles ? layout.rubDansHizb : null,
+      quartsDebutes: lignesReelles ? layout.quartsDebutes : const <int>[],
     );
   }
 
@@ -160,6 +166,15 @@ class PageMushafVM {
 
   /// La proportion du cadre de texte.
   final double ratioLargeurSurHauteur;
+
+  /// Le hizb du premier verset de la page (1 a 60), quand l'edition le dit.
+  final int? hizb;
+
+  /// Le quart parcouru dans le hizb au premier verset (0 a 3).
+  final int? rubDansHizb;
+
+  /// Les quarts de hizb (1 a 240) qui commencent sur cette page.
+  final List<int> quartsDebutes;
 
   /// L'etat du lecteur : chargement, lecture, corpus absent, indisponible.
   EtatLecteur get etat => lecteur.etat;
