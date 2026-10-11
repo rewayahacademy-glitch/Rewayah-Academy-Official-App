@@ -120,7 +120,7 @@ void main() {
           final RequeteNormalisee q = RequeteNormalisee.de(brut, contexte);
           if (q.validite != ValiditeRequete.valide) continue;
           expect(
-            q.texte.length,
+            q.texte.runes.length,
             lessThanOrEqualTo(BudgetsRecherche.longueurMaximale),
           );
           expect(
