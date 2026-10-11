@@ -15743,6 +15743,9 @@ class Traductions$suiviDemandes$notification$fr {
 	/// fr: 'Demande de créneau {dePrenom} : les cours ont commencé'
 	String coursCommences({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : les cours ont commencé';
 
+	/// fr: 'Demande de créneau {dePrenom} : élève déjà en classe, demande classée'
+	String dejaEnClasse({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : élève déjà en classe, demande classée';
+
 	/// fr: 'Demande de créneau {dePrenom} : votre classe a été réunie avec une autre, voir la nouvelle classe'
 	String changementFusion({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe a été réunie avec une autre, voir la nouvelle classe';
 
@@ -24540,6 +24543,9 @@ class Traductions$suiviDemandes$close$motif$fr {
 
 	/// fr: 'La direction n'a pas pu retenir cette demande.'
 	String get refusDirection => 'La direction n\'a pas pu retenir cette demande.';
+
+	/// fr: '{prenom} a déjà une place en classe : cette demande n'est plus nécessaire.'
+	String dejaEnClasse({required Object prenom}) => '${prenom} a déjà une place en classe : cette demande n\'est plus nécessaire.';
 
 	/// fr: 'Cette demande est close.'
 	String get inconnu => 'Cette demande est close.';
@@ -37221,6 +37227,7 @@ extension on Traductions {
 			'suiviDemandes.close.motif.offreRetiree' => 'L\'académie a retiré ce créneau de ses offres.',
 			'suiviDemandes.close.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
 			'suiviDemandes.close.motif.refusDirection' => 'La direction n\'a pas pu retenir cette demande.',
+			'suiviDemandes.close.motif.dejaEnClasse' => ({required Object prenom}) => '${prenom} a déjà une place en classe : cette demande n\'est plus nécessaire.',
 			'suiviDemandes.close.motif.inconnu' => 'Cette demande est close.',
 			'suiviDemandes.close.suite' => 'Vous pouvez choisir un autre créneau parmi ceux proposés.',
 			'suiviDemandes.close.suiteSansChoix' => 'Aucun autre créneau n\'est proposé pour le moment. Revenez sur cette page plus tard.',
@@ -37238,6 +37245,7 @@ extension on Traductions {
 			'suiviDemandes.notification.listeAttente' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre demande est en liste d\'attente',
 			'suiviDemandes.notification.eleveIntegre' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : élève intégré dans la classe',
 			'suiviDemandes.notification.coursCommences' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : les cours ont commencé',
+			'suiviDemandes.notification.dejaEnClasse' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : élève déjà en classe, demande classée',
 			'suiviDemandes.notification.changementFusion' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe a été réunie avec une autre, voir la nouvelle classe',
 			'suiviDemandes.notification.changementTransfert' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : nouvelle classe, voir le détail',
 			'suiviDemandes.jalon.date' => ({required Object date, required Object heure}) => '${date} à ${heure}',
@@ -37402,10 +37410,10 @@ extension on Traductions {
 			'com.socle.lexique.publication' => 'Publication',
 			'com.socle.lexique.reponse' => 'Réponse',
 			'com.socle.lexique.enregistrer' => 'Enregistrer',
-			'com.socle.lexique.signaler' => 'Signaler',
-			'com.socle.lexique.modeFocus' => 'Mode focus',
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.lexique.signaler' => 'Signaler',
+			'com.socle.lexique.modeFocus' => 'Mode focus',
 			'com.socle.lexique.quitterFocus' => 'Quitter le focus',
 			'com.socle.lexique.aTraiter' => 'À traiter',
 			'com.socle.lexique.actionRequise' => 'Action requise',
@@ -37916,10 +37924,10 @@ extension on Traductions {
 			'com.studio.demo.aujourdhuiVide' => 'Aujourd\'hui sans activité',
 			'com.studio.demo.horsDemo' => ({required Object module}) => 'Dans l\'application, cette ligne ouvre ${module}. La démonstration reste sur cette page.',
 			'com.studio.demo.choisir' => 'Choisissez une situation à essayer.',
-			'com.studio.demo.normale' => 'Le Studio et ses canaux',
-			'com.studio.demo.echec' => 'Envoi non confirmé',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.demo.normale' => 'Le Studio et ses canaux',
+			'com.studio.demo.echec' => 'Envoi non confirmé',
 			'com.studio.demo.horsLigne' => 'Hors ligne',
 			'com.studio.demo.canalPrive' => 'Adresse d\'un canal privé qui ne vous est pas ouvert',
 			'com.studio.demo.sansCanaux' => 'Aucun canal ouvert',
@@ -38430,10 +38438,10 @@ extension on Traductions {
 			'comptable.paiements.confirmation.plafond' => 'Délégation restante',
 			'comptable.paiements.confirmation.exclusTitre' => 'Exclus de ce lot : ils ne partiront pas',
 			'comptable.paiements.confirmation.aucunPretTitre' => 'Aucun paiement prêt',
-			'comptable.paiements.confirmation.aucunPret' => 'Rien ne partira. Ouvrez chaque paiement exclu pour lever sa raison, puis relancez le contrôle.',
-			'comptable.paiements.confirmation.erreursTitre' => 'Erreurs rendues par le contrôle',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.confirmation.aucunPret' => 'Rien ne partira. Ouvrez chaque paiement exclu pour lever sa raison, puis relancez le contrôle.',
+			'comptable.paiements.confirmation.erreursTitre' => 'Erreurs rendues par le contrôle',
 			'comptable.paiements.confirmation.confirmerUn' => ({required Object montant}) => 'Confirmer le paiement de ${montant}',
 			'comptable.paiements.confirmation.confirmerLot' => ({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Confirmer le paiement prêt de ${montants}', other: 'Confirmer les ${n} paiements prêts : ${montants}', ), 
 			'comptable.paiements.confirmation.demanderValidation' => 'Demander validation',
@@ -38944,10 +38952,10 @@ extension on Traductions {
 			'comptable.validation.motifs.coordonnees' => 'Coordonnées du bénéficiaire à vérifier',
 			'comptable.validation.motifs.montant' => 'Montant à vérifier à la source',
 			'comptable.validation.motifs.justificatif' => 'Justificatif manquant ou illisible',
-			'comptable.validation.motifs.reserve' => 'Hors de la politique de la Réserve',
-			'comptable.validation.motifs.reporter' => 'À reporter au prochain cycle',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.validation.motifs.reserve' => 'Hors de la politique de la Réserve',
+			'comptable.validation.motifs.reporter' => 'À reporter au prochain cycle',
 			'comptable.validation.motifs.autre' => 'Autre',
 			'comptable.validation.motifAutreChamp' => 'Précisez le motif',
 			'comptable.validation.erreurMotif' => 'Choisissez un motif pour refuser.',

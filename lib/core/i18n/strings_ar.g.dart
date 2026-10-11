@@ -7085,6 +7085,7 @@ class _Traductions$suiviDemandes$notification$ar extends Traductions$suiviDemand
 	@override String enseignantAffecte({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: تم اعتماد الفصل وتعيين المعلم';
 	@override String eleveIntegre({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: الطالب مندمج في الفصل';
 	@override String coursCommences({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: بدأت الدروس';
+	@override String dejaEnClasse({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: الطالب في فصل بالفعل، تم حفظ الطلب';
 	@override String changementFusion({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: دُمج فصلكم مع فصل آخر، عرض الفصل الجديد';
 	@override String changementTransfert({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: فصل جديد، عرض التفاصيل';
 	@override String close({required Object dePrenom, required Object motif}) => 'طلب موعد ⁨${dePrenom}⁩: ⁨${motif}⁩';
@@ -11833,6 +11834,7 @@ class _Traductions$suiviDemandes$close$motif$ar extends Traductions$suiviDemande
 	@override String get offreRetiree => 'سحبت الأكاديمية هذا الموعد من عروضها.';
 	@override String get classeNonConstituee => 'تعذّر تكوين فصل هذا الموعد.';
 	@override String get refusDirection => 'لم تتمكن الإدارة من قبول هذا الطلب.';
+	@override String dejaEnClasse({required Object prenom}) => '⁨${prenom}⁩ لديه مكان في فصل بالفعل: لم يعد هذا الطلب لازمًا.';
 	@override String get inconnu => 'أُغلق هذا الطلب.';
 }
 
@@ -20036,6 +20038,7 @@ extension on TraductionsAr {
 			'suiviDemandes.close.motif.offreRetiree' => 'سحبت الأكاديمية هذا الموعد من عروضها.',
 			'suiviDemandes.close.motif.classeNonConstituee' => 'تعذّر تكوين فصل هذا الموعد.',
 			'suiviDemandes.close.motif.refusDirection' => 'لم تتمكن الإدارة من قبول هذا الطلب.',
+			'suiviDemandes.close.motif.dejaEnClasse' => ({required Object prenom}) => '⁨${prenom}⁩ لديه مكان في فصل بالفعل: لم يعد هذا الطلب لازمًا.',
 			'suiviDemandes.close.motif.inconnu' => 'أُغلق هذا الطلب.',
 			'suiviDemandes.close.suite' => 'يمكنكم اختيار موعد آخر من المواعيد المقترحة.',
 			'suiviDemandes.close.suiteSansChoix' => 'لا يوجد موعد آخر مقترح حاليًا. عودوا إلى هذه الصفحة لاحقًا.',
@@ -20052,13 +20055,14 @@ extension on TraductionsAr {
 			'suiviDemandes.notification.enseignantAffecte' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: تم اعتماد الفصل وتعيين المعلم',
 			'suiviDemandes.notification.eleveIntegre' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: الطالب مندمج في الفصل',
 			'suiviDemandes.notification.coursCommences' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: بدأت الدروس',
+			'suiviDemandes.notification.dejaEnClasse' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: الطالب في فصل بالفعل، تم حفظ الطلب',
 			'suiviDemandes.notification.changementFusion' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: دُمج فصلكم مع فصل آخر، عرض الفصل الجديد',
 			'suiviDemandes.notification.changementTransfert' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: فصل جديد، عرض التفاصيل',
 			'suiviDemandes.notification.close' => ({required Object dePrenom, required Object motif}) => 'طلب موعد ⁨${dePrenom}⁩: ⁨${motif}⁩',
-			'formulaire.manqueAccord' => 'موافقتك ناقصة: ضع علامة في الخانة للمتابعة.',
-			'formulaire.motif.manqueSaisi' => 'السبب ناقص: اكتبه في كلمات قليلة.',
 			_ => null,
 		} ?? switch (path) {
+			'formulaire.manqueAccord' => 'موافقتك ناقصة: ضع علامة في الخانة للمتابعة.',
+			'formulaire.motif.manqueSaisi' => 'السبب ناقص: اكتبه في كلمات قليلة.',
 			'motifs.reglageEnseignant.horaire' => 'التوقيت لم يعد مناسبًا',
 			'motifs.reglageEnseignant.niveau' => 'المستوى لم يعد مناسبًا',
 			'motifs.reglageEnseignant.fuseau' => 'تغيّر المنطقة الزمنية',
