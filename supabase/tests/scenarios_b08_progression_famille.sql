@@ -43,7 +43,7 @@ VALUES
   ('b0800000-0000-0000-0000-000000000005', 'minor', 'debut_lettres');
 
 INSERT INTO public.programme_versions
-  (id, statut, numero_version, cree_par, publie_par, publiee_at)
+  (id, statut, numero_version, cree_par, publiee_par, publiee_at)
 VALUES
   ('b0800000-0000-0000-0000-000000000401', 'publiee', 99991,
    'b0800000-0000-0000-0000-000000000001',
@@ -319,7 +319,8 @@ SELECT public.enregistrer_resume_seance(
 SELECT set_config('request.jwt.claim.sub', 'b0800000-0000-0000-0000-000000000002', true);
 SELECT set_config('request.jwt.claims',
   '{"app_metadata":{"role":"guardian","household_id":"b0800000-0000-0000-0000-000000000101"}}', true);
-DO $retrait_audite$
+SET LOCAL ROLE authenticated;
+DO $retrait_visible$
 DECLARE
   v_count integer;
 BEGIN
@@ -335,6 +336,14 @@ BEGIN
   IF v_count <> 0 THEN
     RAISE EXCEPTION 'B-08: RLS expose le résumé après retrait';
   END IF;
+END
+$retrait_visible$;
+
+RESET ROLE;
+DO $retrait_audite$
+DECLARE
+  v_count integer;
+BEGIN
   SELECT count(*) INTO v_count FROM public.audit_logs a
   WHERE a.action = 'resume_seance_famille_retire'
     AND a.table_name = 'seance_resumes'
