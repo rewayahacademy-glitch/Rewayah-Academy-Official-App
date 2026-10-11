@@ -1889,7 +1889,12 @@ class _SalleEnseignant extends StatelessWidget {
     final Widget? boutonsEnHaut = courte ? null : boutons;
     // TB-RC : volet temporaire ouvert dans une salle courte (telephone
     // couche) : l'en-tete cede sa place au volet.
-    final bool teteRetiree = recouvre && courte && !agrandi;
+    // « Couchee » : la hauteur reelle de l'ecran est courte (le facteur de
+    // texte n'y entre pas : un bureau a x2 garde son en-tete).
+    final bool couchee =
+        CompositionSalle.hauteurUtile(context) <
+        CompositionSalle.seuilHauteurCourte;
+    final bool teteRetiree = recouvre && couchee && !agrandi;
     // En focus, sous la surface ne reste que la palette pendant l'ecriture ;
     // le declencheur au repos passe dans la tete (verification TB-5).
     final Widget? declencheur = recouvre
