@@ -171,6 +171,7 @@ import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../mouvement/transitions.dart';
 import '../preferences/presentation_vue.dart';
+import '../recherche/controleur_recherche.dart';
 import '../recherche/modeles_recherche.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
@@ -2269,6 +2270,17 @@ class _CoquilleNavigation extends ConsumerWidget {
           : navigationShell,
     );
 
+    // RECH-D5 : une seule loupe par coque, quel que soit le role, rendue
+    // seulement si un domaine de recherche est servi a l'espace de la
+    // personne (la capacite, jamais le role) ; masquee sinon. Le meme espace
+    // porte le raccourci Ctrl/Cmd + K.
+    final EspaceRecherche? espaceRecherche = espaceRecherchePour(
+      ref.watch(sessionProvider),
+    );
+    final bool rechercheServie =
+        espaceRecherche != null &&
+        (ref.watch(rechercheServieProvider(espaceRecherche)).value ?? false);
+
     if (role != AppRole.guardian) {
       // COM-F : la cloche des notifications, posee par la coquille du role
       // quand ce role en a une (`Routes.notificationsPour` : enseignant et
@@ -2276,29 +2288,18 @@ class _CoquilleNavigation extends ConsumerWidget {
       // 04/10). Sans point tant que le port est indisponible, comme le
       // tuteur. Elle s'ajoute, en dernier, aux actions deja posees au-dessus
       // (le raccourci Espaces de CT-9), et se montre active sur sa page.
-      // RECH-D5 : une seule loupe par coque, pour l'enseignant et le
-      // controleur, rendue seulement si un domaine de recherche est servi a
-      // leur espace (la capacite, jamais le role) ; masquee sinon. Les
-      // coques famille et eleve n'en portent pas encore (D2).
-      final EspaceRecherche? espaceRecherche = switch (role) {
-        AppRole.teacher => EspaceRecherche.enseignant,
-        AppRole.controller => EspaceRecherche.controleur,
-        _ => null,
-      };
-      final bool rechercheServie =
-          espaceRecherche != null &&
-          (ref.watch(rechercheServieProvider(espaceRecherche)).value ?? false);
-      final Widget avecCloche = cheminCloche == null
+      final Widget avecCloche = cheminCloche == null && !rechercheServie
           ? coquille
           : Builder(
               builder: (BuildContext contexte) => ActionsEnteteCoquille(
                 actions: <Widget>[
                   ...ActionsEnteteCoquille.de(contexte),
                   if (rechercheServie) const LoupeRecherche(),
-                  ClocheNotifications(
-                    actif: surNotifications,
-                    onPress: () => GoRouter.of(contexte).go(cheminCloche),
-                  ),
+                  if (cheminCloche != null)
+                    ClocheNotifications(
+                      actif: surNotifications,
+                      onPress: () => GoRouter.of(contexte).go(cheminCloche),
+                    ),
                 ],
                 onRetour: ActionsEnteteCoquille.retourDe(contexte),
                 child: coquille,
@@ -2308,24 +2309,31 @@ class _CoquilleNavigation extends ConsumerWidget {
       // quand le compte a plus d'un espace (jamais le tuteur, C6) ; l'espace
       // Controle est garde, refus generique si la capacite manque (C7).
       final Widget avecEspaces = EnteteEspaces(child: avecCloche);
-      return role == AppRole.controller
-          ? GardeControle(child: avecEspaces)
-          : avecEspaces;
+      return RaccourciRecherche(
+        actif: rechercheServie,
+        child: role == AppRole.controller
+            ? GardeControle(child: avecEspaces)
+            : avecEspaces,
+      );
     }
     // Le tuteur porte, sur chaque page de sa coquille, la cloche des
     // notifications et, a partir de la tablette, la bascule clair / sombre
     // (manifeste visuel Tuteur V1 section 4.2). La cloche n'a pas de point
     // tant qu'aucune source de notifications n'existe (DB-CPT-04).
     final bool large = AppGabarit.de(context).estLarge;
-    return ActionsEnteteCoquille(
-      actions: <Widget>[
-        if (large) const BasculeTheme(),
-        ClocheNotifications(
-          actif: surNotifications,
-          onPress: () => GoRouter.of(context).go(Routes.tuteurNotifications),
-        ),
-      ],
-      child: coquille,
+    return RaccourciRecherche(
+      actif: rechercheServie,
+      child: ActionsEnteteCoquille(
+        actions: <Widget>[
+          if (large) const BasculeTheme(),
+          if (rechercheServie) const LoupeRecherche(),
+          ClocheNotifications(
+            actif: surNotifications,
+            onPress: () => GoRouter.of(context).go(Routes.tuteurNotifications),
+          ),
+        ],
+        child: coquille,
+      ),
     );
   }
 }
@@ -2421,44 +2429,49 @@ class _CoquilleAdmin extends ConsumerWidget {
             .value ??
         false;
 
-    return AdminShell(
-      onRechercheMetier: rechercheServie ? () => aller(Routes.recherche) : null,
-      domaines: domainesAdmin(voitDirection: voitDirection),
-      domaineActif: domaine,
-      onAller: aller,
-      onCompte: () => aller(Routes.compte),
-      // Retour vers l'Accueil sur toute page admin sauf l'Accueil lui-meme
-      // (spec section 26 ter, Q14).
-      onRetour: domaine == AdminDomaine.accueil && !sousPage
-          ? null
-          : () => aller(Routes.admin),
-      cloche: urgentes == null
-          ? null
-          : ClocheNotifications(
-              onPress: () => aller(Routes.adminAlertes),
-              nonLues: urgentes,
-              libelleSemantique: switch (urgentes) {
-                0 => t.alertes.cloche,
-                1 => t.alertes.clocheUneUrgente,
-                _ => t.alertes.clocheUrgentes(nombre: urgentes),
-              },
-            ),
-      // Le bandeau d'alerte urgente, en tete de toute page ouverte, sauf
-      // sous l'Accueil : le Centre de commande et la page des alertes
-      // montrent deja l'alerte en tete (D7, une information une fois).
-      // Pose seulement quand une alerte urgente est ouverte ; fige en haut
-      // par la coquille, hors de la zone qui defile (ALERTE-1b).
-      bandeau: domaine == AdminDomaine.accueil || (urgentes ?? 0) == 0
-          ? null
-          : BandeauAlerteUrgente(onOuvrir: () => aller(Routes.adminAlertes)),
-      // COM-F : la cloche mene a la `NotificationsPage` existante, l'action
-      // « Le Studio » au Studio (Q1). Posees par la route, sous le prefixe
-      // `/admin` que la garde reserve a l'admin : la coquille ne lit aucun
-      // role.
-      onNotifications: () => aller(Routes.adminNotifications),
-      notificationsActives: notificationsOuvertes,
-      onStudio: () => aller(Routes.adminStudio),
-      child: child,
+    return RaccourciRecherche(
+      actif: rechercheServie,
+      child: AdminShell(
+        onRechercheMetier: rechercheServie
+            ? () => aller(Routes.recherche)
+            : null,
+        domaines: domainesAdmin(voitDirection: voitDirection),
+        domaineActif: domaine,
+        onAller: aller,
+        onCompte: () => aller(Routes.compte),
+        // Retour vers l'Accueil sur toute page admin sauf l'Accueil lui-meme
+        // (spec section 26 ter, Q14).
+        onRetour: domaine == AdminDomaine.accueil && !sousPage
+            ? null
+            : () => aller(Routes.admin),
+        cloche: urgentes == null
+            ? null
+            : ClocheNotifications(
+                onPress: () => aller(Routes.adminAlertes),
+                nonLues: urgentes,
+                libelleSemantique: switch (urgentes) {
+                  0 => t.alertes.cloche,
+                  1 => t.alertes.clocheUneUrgente,
+                  _ => t.alertes.clocheUrgentes(nombre: urgentes),
+                },
+              ),
+        // Le bandeau d'alerte urgente, en tete de toute page ouverte, sauf
+        // sous l'Accueil : le Centre de commande et la page des alertes
+        // montrent deja l'alerte en tete (D7, une information une fois).
+        // Pose seulement quand une alerte urgente est ouverte ; fige en haut
+        // par la coquille, hors de la zone qui defile (ALERTE-1b).
+        bandeau: domaine == AdminDomaine.accueil || (urgentes ?? 0) == 0
+            ? null
+            : BandeauAlerteUrgente(onOuvrir: () => aller(Routes.adminAlertes)),
+        // COM-F : la cloche mene a la `NotificationsPage` existante, l'action
+        // « Le Studio » au Studio (Q1). Posees par la route, sous le prefixe
+        // `/admin` que la garde reserve a l'admin : la coquille ne lit aucun
+        // role.
+        onNotifications: () => aller(Routes.adminNotifications),
+        notificationsActives: notificationsOuvertes,
+        onStudio: () => aller(Routes.adminStudio),
+        child: child,
+      ),
     );
   }
 }

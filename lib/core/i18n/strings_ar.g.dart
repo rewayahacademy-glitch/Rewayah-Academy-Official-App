@@ -7242,6 +7242,12 @@ class _Traductions$recherche$contexte$ar extends Traductions$recherche$contexte$
 	@override String missionEnseignant({required Object enseignant}) => 'مهمة مراقبة · ⁨${enseignant}⁩';
 	@override String eleveDeClasse({required Object classe}) => 'طالب في فصل ⁨${classe}⁩';
 	@override String enseignantDeClasse({required Object classe}) => 'معلّم فصل ⁨${classe}⁩';
+	@override String get personneFoyer => 'ملف من أسرتك';
+	@override String personneFoyerClasse({required Object classe}) => 'ملف من أسرتك · ⁨${classe}⁩';
+	@override String get personneParIdentifiant => 'وُجد بمعرّفه';
+	@override String personneParIdentifiantClasse({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩';
+	@override String get canalStudio => 'قناة الاستوديو';
+	@override String encaissement({required Object famille}) => 'تحصيل · ⁨${famille}⁩';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -19961,6 +19967,12 @@ extension on TraductionsAr {
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'مهمة مراقبة · ⁨${enseignant}⁩',
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'طالب في فصل ⁨${classe}⁩',
 			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'معلّم فصل ⁨${classe}⁩',
+			'recherche.contexte.personneFoyer' => 'ملف من أسرتك',
+			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'ملف من أسرتك · ⁨${classe}⁩',
+			'recherche.contexte.personneParIdentifiant' => 'وُجد بمعرّفه',
+			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
+			'recherche.contexte.canalStudio' => 'قناة الاستوديو',
+			'recherche.contexte.encaissement' => ({required Object famille}) => 'تحصيل · ⁨${famille}⁩',
 			_ => null,
 		};
 	}

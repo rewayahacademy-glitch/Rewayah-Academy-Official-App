@@ -17815,6 +17815,24 @@ class Traductions$recherche$contexte$fr {
 
 	/// fr: 'Enseignant de la classe {classe}'
 	String enseignantDeClasse({required Object classe}) => 'Enseignant de la classe ${classe}';
+
+	/// fr: 'Profil de votre foyer'
+	String get personneFoyer => 'Profil de votre foyer';
+
+	/// fr: 'Profil de votre foyer · {classe}'
+	String personneFoyerClasse({required Object classe}) => 'Profil de votre foyer · ${classe}';
+
+	/// fr: 'Trouvé par son identifiant'
+	String get personneParIdentifiant => 'Trouvé par son identifiant';
+
+	/// fr: 'Trouvé par son identifiant · {classe}'
+	String personneParIdentifiantClasse({required Object classe}) => 'Trouvé par son identifiant · ${classe}';
+
+	/// fr: 'Canal du Studio'
+	String get canalStudio => 'Canal du Studio';
+
+	/// fr: 'Encaissement · {famille}'
+	String encaissement({required Object famille}) => 'Encaissement · ${famille}';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -38910,6 +38928,12 @@ extension on Traductions {
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'Mission de contrôle · ${enseignant}',
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'Élève de la classe ${classe}',
 			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'Enseignant de la classe ${classe}',
+			'recherche.contexte.personneFoyer' => 'Profil de votre foyer',
+			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'Profil de votre foyer · ${classe}',
+			'recherche.contexte.personneParIdentifiant' => 'Trouvé par son identifiant',
+			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'Trouvé par son identifiant · ${classe}',
+			'recherche.contexte.canalStudio' => 'Canal du Studio',
+			'recherche.contexte.encaissement' => ({required Object famille}) => 'Encaissement · ${famille}',
 			_ => null,
 		};
 	}
