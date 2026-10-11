@@ -1,0 +1,8 @@
+REWAYAH · PED-APRÈS · HANDOFF CLAUDE
+
+Lire PED_APRES_SPEC_VERTICALE_V1.md. 
+OBLIGATION 0 : inspecter les écrans et contrats existants avant toute modification.
+Réutiliser le cahier K-45 sans le modifier ; zéro seconde de saisie ajoutée.
+Ne faire aucun backend, aucune migration, aucune publication ou deployment.
+Les captures références sont illustratives, elles ne prévalent pas sur la Bible UI et les données métier.
+Remettre le registre des fonctions conservées / modifiées / absentes avec preuve, et la recette.
