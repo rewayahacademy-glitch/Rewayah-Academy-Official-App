@@ -5,7 +5,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/enums.dart';
 import '../theme/app_delais.dart';
 import 'claims_jwt.dart';
-import 'port_capacite_eleve.dart';
 import 'session_state.dart';
 
 /// D'ou vient l'etat de session.
@@ -29,10 +28,9 @@ abstract interface class SourceSession {
 /// La source reelle : Supabase.
 class SourceSessionSupabase implements SourceSession {
   /// Cree la source a partir d'un client Supabase.
-  SourceSessionSupabase(this._client, this._capaciteEleve);
+  SourceSessionSupabase(this._client);
 
   final SupabaseClient _client;
-  final PortCapaciteEleve _capaciteEleve;
 
   @override
   Stream<SessionState> etats() async* {
@@ -66,10 +64,6 @@ class SourceSessionSupabase implements SourceSession {
     // et household_id) : il demande une lecture, autorisee par la policy
     // `profiles_self_select`.
     final _ProfilLu profil = await _lireProfil(profileId);
-    final CapaciteEleve capacite = role == AppRole.guardian
-        ? await _capaciteEleve.lire()
-        : const PasEleve();
-
     return SessionState(
       resolue: true,
       profileId: profileId,
@@ -78,7 +72,6 @@ class SourceSessionSupabase implements SourceSession {
       accountStatus: profil.statut,
       interfaceMode: profil.mode,
       lectureProfil: profil.lecture,
-      eleveAutonome: capacite is EleveAutonome,
     );
   }
 

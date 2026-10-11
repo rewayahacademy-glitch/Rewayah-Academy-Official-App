@@ -15,14 +15,21 @@ BEGIN
   PERFORM set_config('request.jwt.claim.sub', v_solo::text, true);
   PERFORM set_config('request.jwt.claims', '{"app_metadata":{"role":"guardian"}}', true);
   PERFORM public.creer_profil_inscription('guardian', 'Adulte', 'Solo', NULL, 'Europe/Paris', true);
+  -- La creation attend encore le KYC; la capacite ne s'ouvre qu'apres activation.
+  UPDATE public.profiles SET account_status = 'active' WHERE id = v_solo;
   IF NOT public.ma_capacite_eleve() OR
      (SELECT role FROM public.profiles WHERE id = v_solo) <> 'guardian' THEN
     RAISE EXCEPTION 'A81: Moi uniquement doit créer la capacité sans changer le rôle';
+  END IF;
+  UPDATE public.profiles SET account_status = 'disabled' WHERE id = v_solo;
+  IF public.ma_capacite_eleve() THEN
+    RAISE EXCEPTION 'A81: un compte desactive ne conserve pas la capacite eleve';
   END IF;
 
   PERFORM set_config('request.jwt.claim.sub', v_famille::text, true);
   PERFORM set_config('request.jwt.claims', '{"app_metadata":{"role":"guardian"}}', true);
   PERFORM public.creer_profil_inscription('guardian', 'Parent', 'Famille', NULL, 'Europe/Paris', true);
+  UPDATE public.profiles SET account_status = 'active' WHERE id = v_famille;
   IF NOT public.ma_capacite_eleve() THEN
     RAISE EXCEPTION 'A81: famille avec parent_suit_des_cours doit créer la capacité';
   END IF;

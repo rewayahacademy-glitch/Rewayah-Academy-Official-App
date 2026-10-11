@@ -36,15 +36,15 @@ void main() {
 
   test('décode les deux verdicts booléens de la RPC', () async {
     final PortCapaciteEleveSupabase port = PortCapaciteEleveSupabase(client);
-    expect(await port.lire(), isA<EleveAutonome>());
+    expect(await port.lire('profil-adulte'), isA<EleveAutonome>());
     response = false;
-    expect(await port.lire(), isA<PasEleve>());
+    expect(await port.lire('profil-adulte'), isA<PasEleve>());
   });
 
   test('ferme si le résultat RPC a une forme inconnue', () async {
     response = 'true';
     expect(
-      await PortCapaciteEleveSupabase(client).lire(),
+      await PortCapaciteEleveSupabase(client).lire('profil-adulte'),
       isA<CapaciteInconnue>(),
     );
   });

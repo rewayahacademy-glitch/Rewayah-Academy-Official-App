@@ -33,7 +33,10 @@ VALUES
  ('f6900000-0000-0000-0000-000000000202', 'f6900000-0000-0000-0000-000000000006', 'passport', 'female', 'f69/personne-f.webp');
 
 DO $scenario$
-DECLARE v_count integer;
+DECLARE
+  v_count integer;
+  v_audit_before bigint;
+  v_audit_after bigint;
 BEGIN
   IF to_regclass('storage.objects') IS NOT NULL AND NOT EXISTS (
     SELECT 1 FROM pg_catalog.pg_policies
@@ -109,6 +112,11 @@ BEGIN
   EXCEPTION WHEN insufficient_privilege THEN NULL;
   END;
   BEGIN
+    PERFORM public.ma_exception_kyc_active();
+    RAISE EXCEPTION 'F69: controller read the admin exception state';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+  BEGIN
     PERFORM public.autoriser_lecture_piece_identite('f6900000-0000-0000-0000-000000000201');
     RAISE EXCEPTION 'F69 : controller a ouvert une pièce';
   EXCEPTION WHEN insufficient_privilege THEN NULL;
@@ -116,8 +124,14 @@ BEGIN
 
   PERFORM set_config('test.uid', 'f6900000-0000-0000-0000-000000000002', true);
   PERFORM set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+  IF NOT public.ma_exception_kyc_active() THEN
+    RAISE EXCEPTION 'F69: l''administration ne voit pas l''exception active';
+  END IF;
   UPDATE public.app_config SET value = 'false'::jsonb
   WHERE key = 'kyc_exception_super_admin';
+  IF public.ma_exception_kyc_active() THEN
+    RAISE EXCEPTION 'F69: statut exception actif apres desactivation';
+  END IF;
   SELECT count(*) INTO v_count FROM public.read_kyc_documents()
   WHERE id IN (
     'f6900000-0000-0000-0000-000000000201',
@@ -132,11 +146,25 @@ BEGIN
 
   UPDATE public.app_config SET value = 'true'::jsonb
   WHERE key = 'kyc_exception_super_admin';
+  IF NOT public.ma_exception_kyc_active() THEN
+    RAISE EXCEPTION 'F69: statut exception inactif apres activation';
+  END IF;
+  SELECT count(*) INTO v_audit_before FROM public.audit_logs
+  WHERE actor = auth.uid() AND action = 'kyc_read';
   SELECT count(*) INTO v_count FROM public.read_kyc_documents()
   WHERE id IN (
     'f6900000-0000-0000-0000-000000000201',
     'f6900000-0000-0000-0000-000000000202'
   );
+  SELECT count(*) INTO v_audit_after FROM public.audit_logs
+  WHERE actor = auth.uid() AND action = 'kyc_read';
+  IF v_audit_after - v_audit_before <> 1 OR NOT EXISTS (
+    SELECT 1 FROM public.audit_logs
+    WHERE actor = auth.uid() AND action = 'kyc_read'
+      AND payload ->> 'document_count' = '2'
+  ) THEN
+    RAISE EXCEPTION 'F69: un seul audit de liste doit couvrir tous les documents';
+  END IF;
   IF v_count <> 2 THEN RAISE EXCEPTION 'F69 : super-admin actif ne voit pas les deux genres'; END IF;
   PERFORM public.autoriser_lecture_piece_identite('f6900000-0000-0000-0000-000000000201');
   IF NOT EXISTS (
