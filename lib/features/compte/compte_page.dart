@@ -272,9 +272,7 @@ class ReglagesComptePage extends ConsumerWidget {
     // la page telle quelle.
     final bool modeAccessibilite = ref.watch(modeAccessibiliteActifProvider);
     final bool foyerDisponible = ref.watch(
-      sessionProvider.select(
-        (SessionState session) => session.role == AppRole.guardian,
-      ),
+      sessionProvider.select((SessionState session) => session.aUnFoyer),
     );
     final PreferencesLocalesControleur controleur = ref.read(
       preferencesLocalesProvider.notifier,
@@ -710,20 +708,17 @@ class _CompteProjection {
   factory _CompteProjection.depuis(SessionState session) {
     final AppRole role = session.role ?? AppRole.student;
     final String libelleRole = _libelleRole(role);
-    final bool foyer = role == AppRole.guardian;
     return _CompteProjection(
       libelleRole: libelleRole,
-      resume: role == AppRole.admin
-          ? t.compte.roleDetail.admin
-          : _detailRole(role),
+      resume: _detailRole(role),
       statut: switch (session.accountStatus) {
         AccountStatus.active => t.compte.statutActif,
         AccountStatus.provisionalActive => t.compte.statutProvisoire,
         _ => t.compte.nonDisponible,
       },
       espaces: _espacesPour(role),
-      afficheFoyer: foyer,
-      afficheAppareils: role != AppRole.controller,
+      afficheFoyer: session.aUnFoyer,
+      afficheAppareils: session.peutGererAppareils,
       profileId: session.profileId,
     );
   }

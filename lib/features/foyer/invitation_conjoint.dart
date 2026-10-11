@@ -606,18 +606,21 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
             niveau: NiveauAction.secondaire,
             pleineLargeur: false,
           ),
-          principale: ActionPrincipale(
-            key: InviterConjointPage.envoyerKey,
-            libelle: t.adulte.invitation.envoyer,
-            onPress:
-                horsLigne ||
-                    _echec == _Echec.indisponible ||
-                    _echec == _Echec.refus
-                ? null
-                : () => unawaited(_envoyer()),
-            enCours: _envoi,
-            pleineLargeur: false,
-          ),
+          // Hors ligne, indisponible ou refuse : l'envoi ne peut pas
+          // aboutir, il n'est pas rendu ; la note ou l'etat au-dessus le dit
+          // (BOUTONS-GRISES-1).
+          principale:
+              horsLigne ||
+                  _echec == _Echec.indisponible ||
+                  _echec == _Echec.refus
+              ? null
+              : ActionPrincipale(
+                  key: InviterConjointPage.envoyerKey,
+                  libelle: t.adulte.invitation.envoyer,
+                  onPress: () => unawaited(_envoyer()),
+                  enCours: _envoi,
+                  pleineLargeur: false,
+                ),
         ),
       ],
     );
@@ -759,20 +762,22 @@ class _InvitationEnvoyeePageState extends ConsumerState<InvitationEnvoyeePage> {
               Ecart.vLg,
               _Note(texte: t.adulte.invitation.annulerHorsLigne),
             ],
-            Ecart.vLg,
-            // Destructif : jamais un second bouton plein (contrat B).
-            _Actions(
-              principale: ActionPrincipale(
-                key: InvitationEnvoyeePage.annulerKey,
-                libelle: t.adulte.invitation.annuler,
-                niveau: NiveauAction.destructive,
-                onPress: horsLigne || _echec == _Echec.indisponible
-                    ? null
-                    : () => unawaited(_annuler()),
-                enCours: _envoi,
-                pleineLargeur: false,
+            // Destructif : jamais un second bouton plein (contrat B). Hors
+            // ligne ou indisponible, l'annulation n'est pas rendue : la note
+            // ou l'etat au-dessus le dit (BOUTONS-GRISES-1).
+            if (!horsLigne && _echec != _Echec.indisponible) ...<Widget>[
+              Ecart.vLg,
+              _Actions(
+                principale: ActionPrincipale(
+                  key: InvitationEnvoyeePage.annulerKey,
+                  libelle: t.adulte.invitation.annuler,
+                  niveau: NiveauAction.destructive,
+                  onPress: () => unawaited(_annuler()),
+                  enCours: _envoi,
+                  pleineLargeur: false,
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),
@@ -906,12 +911,18 @@ class _Carte extends StatelessWidget {
 class _Actions extends StatelessWidget {
   const _Actions({required this.principale, this.secondaire});
 
-  final Widget principale;
+  /// L'action principale ; `null` quand elle ne peut pas aboutir (hors
+  /// ligne, fonction indisponible) : elle n'est pas rendue, jamais grisee,
+  /// et la note ou l'etat au-dessus dit pourquoi (BOUTONS-GRISES-1).
+  final Widget? principale;
   final Widget? secondaire;
 
   @override
   Widget build(BuildContext context) => RangeeActions(
-    children: <Widget>[if (secondaire case final Widget s) s, principale],
+    children: <Widget>[
+      if (secondaire case final Widget s) s,
+      if (principale case final Widget p) p,
+    ],
   );
 }
 

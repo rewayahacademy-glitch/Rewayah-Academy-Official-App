@@ -23,10 +23,12 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/appareils/ajouter_enfant_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart'
@@ -39,6 +41,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' show FunctionException;
 import '../../fixtures/tuteur/faux_creation_profil_eleve.dart';
 import '../../fixtures/tuteur/foyers.dart';
 import '../../router/support_routeur.dart';
+import '../../support/annonces.dart';
 import '../../support/harnais.dart';
 import '../../support/hors_ligne_une_fois.dart';
 
@@ -422,7 +425,12 @@ void main() {
 
       expect(find.text(t.foyer.ajout.refus.ageHorsBornes), findsOneWidget);
       expect(
-        find.text(t.foyer.ajout.erreurs.ageHorsBornes(min: 3, max: 18)),
+        // DUREE-INSECABLE-4 : « 18 ans » insecable a l'ecran.
+        find.text(
+          LibellesGroupe.insecable(
+            t.foyer.ajout.erreurs.ageHorsBornes(min: 3, max: 18),
+          ),
+        ),
         findsOneWidget,
       );
     });
@@ -515,6 +523,47 @@ void main() {
       );
       port.attente!.complete();
       await stabiliser(tester);
+    });
+
+    testWidgets('envoi en cours : une puce d age touchee dit que le choix est '
+        'fige, l annonce et ne change rien (BOUTONS-GRISES-1)', (
+      WidgetTester tester,
+    ) async {
+      final List<String> annonces = ecouterAnnonces(tester);
+      final FauxCreationProfilEleve port = FauxCreationProfilEleve()
+        ..attente = Completer<void>();
+      await _monter(
+        tester,
+        appairage: _AppairageCreant(),
+        autres: <Override>[
+          portCreationProfilEleveProvider.overrideWithValue(port),
+        ],
+      );
+      await _ouvrirAjout(tester);
+      await _choisirEnfantPuisSuivant(tester);
+      await _remplir(tester);
+
+      await tester.tap(find.byKey(FormulaireProfilEleve.actionKey));
+      await tester.pump();
+      final Finder puce = find.byKey(FormulaireProfilEleve.ageChoixKey(12));
+      expect(tester.widget<FilterPill>(puce).onPress, isNotNull);
+      await tester.ensureVisible(puce);
+      await tester.tap(puce);
+      await tester.pump();
+
+      expect(annonces, <String>[t.foyer.ajout.identite.ageFige]);
+      expect(tester.widget<FilterPill>(puce).retenue, isFalse);
+      expect(
+        tester
+            .widget<FilterPill>(
+              find.byKey(FormulaireProfilEleve.ageChoixKey(9)),
+            )
+            .retenue,
+        isTrue,
+      );
+      port.attente!.complete();
+      await stabiliser(tester);
+      expect(port.envois, hasLength(1));
     });
   });
 

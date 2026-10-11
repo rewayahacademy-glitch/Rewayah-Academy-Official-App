@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
+import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/mention_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
@@ -132,15 +133,21 @@ void main() {
     });
   });
 
-  // SALLE-200 et TB-5 : avec un support, la place ne change pas (aucune
-  // phrase a reserver).
-  testWidgets('320 x2 avec support : la tete garde sa hauteur', (
+  // SALLE-200 et TB-5 : avec un support, aucune phrase a reserver. TB-RC
+  // (TB_RAPPORT §d n. 1) : a 320 x2 la salle est courte, la tete se borne a
+  // sa part (CompositionSalle.partTeteCourte) et defile en fondu ; la page
+  // garde sa part de la hauteur.
+  testWidgets('320 x2 avec support : la tete se borne, la page garde sa part', (
     WidgetTester tester,
   ) async {
     await _monter(tester, const Size(320, 700), situation: SituationTb.ped03);
     expect(tester.takeException(), isNull);
     expect(_consigne, findsNothing);
-    expect(find.byKey(TeteSalleBornee.cleFondu), findsNothing);
+    expect(find.byKey(TeteSalleBornee.cleFondu), findsOneWidget);
+    expect(
+      tester.getSize(find.byKey(TeteSalleBornee.defilementKey)).height,
+      lessThanOrEqualTo(700 * CompositionSalle.partTeteCourte + 0.5),
+    );
     expect(find.byType(ZoneSupport), findsOneWidget);
   });
 }

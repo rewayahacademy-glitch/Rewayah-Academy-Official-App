@@ -554,8 +554,8 @@ void main() {
       );
       await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
       expect(find.text(t.ficheEleve.informations.horsLigne), findsOneWidget);
-      await tester.tap(find.byKey(EditeurPhotoEleve.envoyerKey));
-      await stabiliser(tester);
+      // BOUTONS-GRISES-1 : l'envoi qui ne peut pas aboutir n'est pas rendu.
+      expect(find.byKey(EditeurPhotoEleve.envoyerKey), findsNothing);
       expect(avatar.depots, isEmpty);
     });
   });

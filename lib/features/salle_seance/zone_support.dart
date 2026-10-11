@@ -19,6 +19,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
+import 'composition_salle.dart';
 import 'surface_page_fixe.dart';
 import 'vignette_video.dart';
 import 'vue_seance.dart';
@@ -72,7 +73,7 @@ class ZoneSupport extends StatelessWidget {
     final double largeurVignette = MesuresVignette.largeur(
       gabarit,
       guidee: vue.vignetteAgrandie,
-      enseignant: vue.role == RoleSeance.enseignant,
+      enseignant: vue.meneLaSeance,
       panneau: vue.panneau != PanneauOuvert.aucun,
     );
     // Guidee web etroit (image CLV-04-05-06 web etroit) : la grande vignette
@@ -248,6 +249,84 @@ double hauteurMinimaleSurface(
       2 * serti;
 }
 
+/// Le ratio d'une page sans ratio connu (A4 portrait), meme valeur que la
+/// surface a page fixe.
+const double _ratioPageParDefaut = 1240 / 1754;
+
+/// TB-RC : le ratio (largeur / hauteur) de la page que la surface montre,
+/// ou `null` quand elle ne montre pas de page fixe (diapositive, rendu
+/// fourni).
+double? ratioSurface(VueSeance vue) {
+  final VueSurface? surface = surfaceAMontrer(vue);
+  if (surface == null) return null;
+  final SupportPageFixe? page = vue.supportPresente;
+  return surface == VueSurface.tableauLibre || page == null
+      ? (vue.tableauLibre?.ratio ?? _ratioPageParDefaut)
+      : page.ratio;
+}
+
+/// TB-RC : le retrait de la page dans la surface de la salle (serti du
+/// bureau et marge interieure de la carte), de chaque cote.
+double retraitPageSurface(Gabarit gabarit, {bool serre = true}) =>
+    (serre ? AppSpacing.sm : AppSpacing.md) +
+    (gabarit == Gabarit.desktop ? _serti : 0);
+
+/// TB-RC (TB_RAPPORT §d n. 3) : la hauteur a reserver au-dessus de la page
+/// pour que la [vignette], posee au coin haut de fin de la carte (retrait
+/// de 16), ne recouvre pas la page dans une carte de taille [boite] et de
+/// marge interieure [marge]. 0 quand la page laisse le coin libre (ecran
+/// large) ou sans page fixe ([ratio] nul). La page est centree : le sens de
+/// lecture ne change pas le resultat.
+double reserveSousVignette({
+  required Size boite,
+  required double marge,
+  required double? ratio,
+  required Size vignette,
+}) {
+  if (ratio == null) return 0;
+  // Le coin de la vignette, avec un palier d'air sous elle.
+  final Rect coin = Rect.fromLTWH(
+    boite.width - AppSpacing.md - vignette.width,
+    AppSpacing.md,
+    vignette.width,
+    vignette.height + AppSpacing.sm,
+  );
+  bool libre(double dessus) {
+    final Size interieur = Size(
+      math.max(0, boite.width - 2 * marge),
+      math.max(0, boite.height - 2 * marge - dessus),
+    );
+    final Rect page = rectanglePage(
+      ratio: ratio,
+      boite: interieur,
+    ).shift(Offset(marge, marge + dessus));
+    return !coin.overlaps(page);
+  }
+
+  if (libre(0)) return 0;
+  // La plus petite reserve qui libere le coin : une page qui a de la
+  // hauteur de reste descend sans rapetisser (TB_RAPPORT §d n. 3).
+  final double plafond = math.max(0, coin.bottom - marge);
+  for (
+    double dessus = AppSpacing.xs;
+    dessus < plafond;
+    dessus += AppSpacing.xs
+  ) {
+    if (libre(dessus)) return dessus;
+  }
+  return plafond;
+}
+
+/// TB-RC (revue TB-R M2 ; TB_RAPPORT §d n. 3) : la vignette video se
+/// pose-t-elle sur la surface a page fixe ? Chez l'enseignant, sa propre
+/// image cede la place quand la salle est courte (telephone couche, texte
+/// x2 au bureau), comme pour la phrase du §12 ([ZoneSupport]) : la page et
+/// ses entrees passent d'abord. L'eleve garde toujours celle de
+/// l'enseignant.
+bool vignetteEnseignantPosee(BuildContext context, VueSeance vue) =>
+    vue.voitVignetteSurSupport &&
+    !(vue.role == RoleSeance.enseignant && CompositionSalle.courte(context));
+
 /// TB-6 : ce que la surface a page fixe montre, ou `null` (diapositive,
 /// rendu fourni, rien de partage sans tableau connu).
 VueSurface? surfaceAMontrer(VueSeance vue) {
@@ -272,11 +351,11 @@ extension on ZoneSupport {
         vue.voitConsigneTableauLibre &&
         gabarit != Gabarit.desktop &&
         MediaQuery.textScalerOf(context).scale(1) >= _seuilPile;
-    final bool video = vue.voitVignetteSurSupport && !consigneSerree;
+    final bool video = vignetteEnseignantPosee(context, vue) && !consigneSerree;
     final double largeurVignette = MesuresVignette.largeur(
       gabarit,
       guidee: vue.vignetteAgrandie,
-      enseignant: vue.role == RoleSeance.enseignant,
+      enseignant: vue.meneLaSeance,
       panneau: vue.panneau != PanneauOuvert.aucun,
     );
     final Widget carte = Theme(
@@ -292,34 +371,76 @@ extension on ZoneSupport {
                 .copyWith(boxShadow: AppElevation.niveau1(palette.ombre)),
             child: ClipRRect(
               borderRadius: AppRadius.arrondiLg,
-              child: Stack(
-                children: <Widget>[
-                  Positioned.fill(
-                    child: Padding(
-                      padding: EdgeInsets.all(
-                        serre ? AppSpacing.sm : AppSpacing.md,
-                      ),
-                      child: SurfacePageFixe(
-                        vue: vue,
-                        surface: surface,
-                        zoom: zoom,
-                      ),
-                    ),
-                  ),
-                  if (video)
-                    PositionedDirectional(
-                      top: AppSpacing.md,
-                      end: AppSpacing.md,
-                      // La video garde le theme de l'ecran.
-                      child: Theme(
-                        data: Theme.of(context),
-                        child: VignetteVideo(
-                          vue: vue,
-                          largeur: largeurVignette,
+              child: LayoutBuilder(
+                builder: (BuildContext _, BoxConstraints c) {
+                  final double marge = serre ? AppSpacing.sm : AppSpacing.md;
+                  final double? ratio = ratioSurface(vue);
+                  // TB-RC (TB_RAPPORT §d n. 3) : la vignette ne recouvre
+                  // jamais la feuille ; si elle la toucherait en coin, la
+                  // page descend sous elle (la plus petite reserve).
+                  final double dessus = video
+                      ? reserveSousVignette(
+                          boite: c.biggest,
+                          marge: marge,
+                          ratio: ratio,
+                          vignette: Size(
+                            largeurVignette,
+                            largeurVignette / MesuresVignette.ratio,
+                          ),
+                        )
+                      : 0;
+                  // L'enseignant ne voit la que sa propre image : si la
+                  // reserve faisait tomber sa page sous sa part minimale
+                  // (CompositionSalle.partMinimalePage, 320 px), elle ne se
+                  // pose pas, comme pour [consigneSerree]. L'eleve garde
+                  // toujours celle de l'enseignant.
+                  final bool vignette =
+                      video &&
+                      !(vue.role == RoleSeance.enseignant &&
+                          dessus > 0 &&
+                          ratio != null &&
+                          rectanglePage(
+                                ratio: ratio,
+                                boite: Size(
+                                  math.max(0, c.maxWidth - 2 * marge),
+                                  math.max(0, c.maxHeight - 2 * marge - dessus),
+                                ),
+                              ).height <
+                              CompositionSalle.partMinimalePage *
+                                  CompositionSalle.hauteurUtile(context));
+                  return Stack(
+                    children: <Widget>[
+                      Positioned.fill(
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                            marge,
+                            marge + (vignette ? dessus : 0),
+                            marge,
+                            marge,
+                          ),
+                          child: SurfacePageFixe(
+                            vue: vue,
+                            surface: surface,
+                            zoom: zoom,
+                          ),
                         ),
                       ),
-                    ),
-                ],
+                      if (vignette)
+                        PositionedDirectional(
+                          top: AppSpacing.md,
+                          end: AppSpacing.md,
+                          // La video garde le theme de l'ecran.
+                          child: Theme(
+                            data: Theme.of(context),
+                            child: VignetteVideo(
+                              vue: vue,
+                              largeur: largeurVignette,
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
               ),
             ),
           );

@@ -28,6 +28,8 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/port_regroupements_admin.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart'
+    show LibellesGroupe;
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/admin_pilotage/pilotage_libelles.dart';
@@ -218,7 +220,11 @@ void main() {
         capacite: 10,
       );
       expect(l.tauxRemplissage, 80);
-      expect(libelleRemplissage(l), '80 % (8 sur 10)');
+      // DUREE-INSECABLE : le libelle ne se coupe pas entre le chiffre et l'unite.
+      expect(
+        libelleRemplissage(l),
+        LibellesGroupe.insecable('80 % (8 sur 10)'),
+      );
       expect(
         libelleRemplissage(
           const LignePilotage(

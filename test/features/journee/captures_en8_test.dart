@@ -36,10 +36,6 @@ final Finder _declarer = find.byKey(
 final Finder _declarerMonAbsence = find.byKey(
   const ValueKey<String>('absence-principale'),
 );
-final Finder _offre = find.text('Assurer ce remplacement\u00A0?');
-final Finder _assurer = find.byKey(
-  const ValueKey<String>('remplacement-principale'),
-);
 
 void main() {
   group('Capture : EN-8', skip: sautSansCapture, () {
@@ -69,19 +65,8 @@ void main() {
           await _toucher(tester, _declarerMonAbsence);
           await capturer(tester, 'en8_absence_etat_$s');
         });
-        testWidgets('en8_confirmation_remplacement_$s', (
-          WidgetTester tester,
-        ) async {
-          await _monter(tester, taille, mode);
-          await _toucher(tester, _offre);
-          await capturer(tester, 'en8_confirmation_remplacement_$s');
-        });
-        testWidgets('en8_carte_remplacement_$s', (WidgetTester tester) async {
-          await _monter(tester, taille, mode);
-          await _toucher(tester, _offre);
-          await _toucher(tester, _assurer);
-          await capturer(tester, 'en8_carte_remplacement_$s');
-        });
+        // REMPL-1b : la confirmation et la carte ne s'ouvrent plus depuis
+        // l'Alerte utile, qui mene a l'ecran commun (captures REMPL-1b).
       }
     }
   });

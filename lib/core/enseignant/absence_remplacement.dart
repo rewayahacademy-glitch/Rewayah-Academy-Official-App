@@ -10,8 +10,13 @@
 ///   reponse (E7).
 /// - Aucun branchement serveur avant BR-1 (K-28) : en production, les ports
 ///   sont absents ([declarationAbsenceProvider] et [reponseRemplacementProvider]
-///   valent `null`), donc l'action ne s'affiche pas et aucune offre n'arrive.
-///   La demonstration (`/demo/enseignant`) les surcharge.
+///   valent `null`), donc l'action d'absence ne s'affiche pas. La
+///   demonstration (`/demo/enseignant`) les surcharge.
+/// - Les offres de remplacement ne viennent plus d'ici (REMPL-1b) : la Journee
+///   lit le tableau commun `offresCommunesProvider`
+///   (`core/enseignant/port_remplacements.dart`), et l'Alerte utile mene a
+///   l'ecran commun. [reponseRemplacementProvider] n'a plus de lecteur a
+///   l'ecran ; son retrait demande une ligne Contrats.
 library;
 
 import 'package:flutter/foundation.dart';
@@ -113,10 +118,6 @@ final Provider<DeclarationAbsence?> declarationAbsenceProvider =
 /// Le port de reponse aux offres : absent avant BR-1.
 final Provider<ReponseRemplacement?> reponseRemplacementProvider =
     Provider<ReponseRemplacement?>((Ref _) => null);
-
-/// Les offres de remplacement recues : aucune avant BR-1.
-final Provider<List<OffreRemplacement>> offresRemplacementProvider =
-    Provider<List<OffreRemplacement>>((Ref _) => const <OffreRemplacement>[]);
 
 /// Les etats d'absence rendus par le serveur, par seance.
 class EtatsAbsenceControleur extends Notifier<Map<String, EtatAbsence>> {

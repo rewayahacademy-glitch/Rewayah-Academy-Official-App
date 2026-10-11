@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_elevation.dart';
@@ -101,7 +102,7 @@ class CarteRubriques extends StatelessWidget {
                           children: <Widget>[
                             Semantics(
                               header: true,
-                              child: Text(
+                              child: TexteSansCoupure(
                                 titre,
                                 style: palette.inkStrong.applyTo(
                                   textes.titleMedium ?? const TextStyle(),
@@ -110,7 +111,7 @@ class CarteRubriques extends StatelessWidget {
                             ),
                             for (final String ligne in resume) ...<Widget>[
                               Ecart.vXs,
-                              Text(
+                              TexteSansCoupure(
                                 ligne,
                                 style: palette.inkMuted.applyTo(
                                   textes.bodyMedium ?? const TextStyle(),
@@ -296,19 +297,25 @@ class _Rubrique extends StatelessWidget {
                           runSpacing: AppSpacing.xs,
                           alignment: WrapAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(
+                            TexteSansCoupure(
                               ligne.libelle,
                               style: palette.inkStrong.applyTo(
                                 textes.bodyLarge ?? const TextStyle(),
                               ),
                             ),
                             if (ligne.valeur != null)
-                              Text(ligne.valeur!, style: styleSecondaire),
+                              TexteSansCoupure(
+                                ligne.valeur!,
+                                style: styleSecondaire,
+                              ),
                           ],
                         ),
                         if (ligne.legende != null) ...<Widget>[
                           Ecart.vXs,
-                          Text(ligne.legende!, style: styleSecondaire),
+                          TexteSansCoupure(
+                            ligne.legende!,
+                            style: styleSecondaire,
+                          ),
                         ],
                       ],
                     ),

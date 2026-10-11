@@ -837,6 +837,12 @@ abstract final class Routes {
   static String comptableBeneficiairePour(String beneficiaireId) =>
       '$comptableBeneficiaires/$beneficiaireId';
 
+  /// Le fil metier « Profil de paiement » d'un beneficiaire, ouvert par
+  /// « Relancer » (CPT-COM, CPT-BR-11) : un fil contextuel des Messages
+  /// metier, jamais une messagerie Finance (R-FIN-21).
+  static String comptableFilProfilPaiementPour(String beneficiaireId) =>
+      '${comptableBeneficiairePour(beneficiaireId)}/fil';
+
   /// Destination Tresorerie, onglet « Coffres » (W04, M02 ecran 1).
   static const String comptableTresorerie = '/comptable/tresorerie';
 

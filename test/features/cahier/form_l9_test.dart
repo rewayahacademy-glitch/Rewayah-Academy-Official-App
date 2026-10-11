@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/features/cahier/selecteur_reprise.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/annonces.dart';
 import '../../support/cahier_sourates.dart';
 
 Future<void> _toucher(WidgetTester tester, Finder cible) async {
@@ -72,9 +73,21 @@ void main() {
     await tester.enterText(find.byKey(FeuilleReprise.rechercheKey), 'kahf');
     await stabiliser(tester);
     await _toucher(tester, find.byKey(FeuilleReprise.sourateKey(18)));
-    // Changer de sourate relache le verset : il faut le choisir.
+    // Changer de sourate relache le verset : il faut le choisir. Le bouton
+    // n'est jamais grise (BOUTONS-GRISES-1) : il le dit, l'annonce et rend
+    // le focus au champ du verset.
+    final List<String> annonces = ecouterAnnonces(tester);
     await _toucher(tester, find.byKey(FeuilleReprise.retenirKey));
     expect(find.text(t.enseignant.cahier.repriseIncomplete), findsOneWidget);
+    expect(annonces, <String>[t.enseignant.cahier.repriseIncomplete]);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'reprise-verset');
+
+    // Une saisie hors bornes : le bouton reste actif, l'appui dit les bornes.
+    await tester.enterText(find.byKey(FeuilleReprise.versetSaisieKey), '999');
+    await stabiliser(tester);
+    await _toucher(tester, find.byKey(FeuilleReprise.retenirKey));
+    expect(find.byType(FeuilleReprise), findsOneWidget);
+    expect(annonces.last, t.enseignant.cahier.repriseVersetBornes(n: 110));
     expect(find.byKey(FeuilleReprise.versetKey(110)), findsOneWidget);
 
     await _toucher(tester, find.byKey(FeuilleReprise.versetKey(10)));

@@ -345,6 +345,14 @@ class VueSalle {
   bool get voitLesParticipants =>
       role == RoleSalle.enseignant || role == RoleSalle.controleur;
 
+  /// TB-11a (plan V2 §5, UX-21) : ce role suit la presentation de
+  /// l'enseignant (support, page, affichage, notes) **en lecture seule**. Le
+  /// tuteur observateur et le controleur la voient ; aucune commande
+  /// d'ecriture, de page ou de rangement ne leur est rendue : leurs
+  /// commandes et leurs notices restent celles de leur role.
+  bool get suitLaPresentationEnLecture =>
+      role == RoleSalle.tuteurObservateur || role == RoleSalle.controleur;
+
   /// La liste des participants, dans l'ordre ou elle se lit.
   ///
   /// **Soi-meme en premier quand on est visible, et absent sinon.** C'est ce qui

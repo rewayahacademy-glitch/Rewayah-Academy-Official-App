@@ -108,8 +108,9 @@ void main() {
           // TB-2 (VIS-01) : Agrandir a quitte la barre de l'appel (Micro,
           // Camera, Quitter). Sur bureau, seule la barre du support (zoom
           // local) le porte encore ; sans support, rien a agrandir.
+          // Revue TB-R m1 : son mot est « Focus », comme dans les Commandes.
           expect(
-            find.text('Agrandir'),
+            find.text('Focus'),
             etat != EtatDemoSalle.rienPartage && taille.value.width >= 1200
                 ? findsOneWidget
                 : findsNothing,
@@ -194,7 +195,10 @@ void main() {
       EtatDemoSalle.repos,
       local: const EtatLocalSeance(agrandi: true),
     );
-    expect(find.text('Réduire'), findsOneWidget);
+    // Revue TB-R m1 : « Focus » (mot d'etat), lu « Quitter le focus » ;
+    // jamais « Reduire » ni « Agrandir ».
+    expect(find.text('Focus'), findsOneWidget);
+    expect(find.text('Réduire'), findsNothing);
     expect(find.text('Agrandir'), findsNothing);
   });
 

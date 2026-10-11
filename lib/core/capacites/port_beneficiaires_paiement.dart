@@ -4,8 +4,8 @@
 //
 // **Aucune ecriture de coordonnees par le personnel** (R-FIN-11, 12) : voir
 // un statut, une representation masquee, demander une mise a jour, relancer
-// (`port_relance_paiement.dart`), suspendre selon capacite, marquer une
-// verification requise. La lecture par la Direction depend de CPT-Q1.
+// (fil metier « Profil de paiement », CPT-COM), suspendre selon capacite,
+// marquer une verification requise. La lecture par la Direction depend de CPT-Q1.
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

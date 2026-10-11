@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
@@ -145,7 +146,10 @@ class _CarteEnfant extends StatelessWidget {
                   icone: AppIcons.reglages,
                   libelle: t.reglagesEnfant.renvoi,
                   legende: t.reglagesEnfant.renvoiLegende(
-                    dePrenom: deDevant(enfant.prenom),
+                    dePrenom: deDevant(
+                      enfant.prenom,
+                      cle: 'reglagesEnfant.renvoiLegende',
+                    ),
                   ),
                   onPress: () =>
                       GoRouter.of(context).go(Routes.ficheElevePour(enfant.id)),
@@ -295,6 +299,12 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
   final TextEditingController _motif = TextEditingController();
   int? _valeur;
 
+  /// Le choix de la duree et le champ du motif : le focus y revient quand
+  /// c'est eux qui manquent (BOUTONS-GRISES-1, reserve SUPERPOS-1b).
+  final FocusNode _focusValeur = FocusNode(debugLabel: 'demande-valeur');
+  final GlobalKey<SelecteurMotifEtat> _selecteurMotif =
+      GlobalKey<SelecteurMotifEtat>();
+
   bool _enCours = false;
   bool _motifManquant = false;
   String? _erreur;
@@ -312,13 +322,18 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
   @override
   void dispose() {
     _motif.dispose();
+    _focusValeur.dispose();
     super.dispose();
   }
 
   Future<void> _envoyer() async {
-    // Bouton jamais grise (K-56) : presse trop tot, il dit ce qui manque.
+    // Bouton jamais grise (K-56) : presse trop tot, il dit ce qui manque,
+    // l'annonce au lecteur d'ecran et rend le focus au champ fautif
+    // (BOUTONS-GRISES-1, reserve SUPERPOS-1b).
     if (_avecValeur && _valeur == null) {
-      setState(() => _erreur = t.tuteur.reglages.demandeManqueValeur);
+      final String message = t.tuteur.reglages.demandeManqueValeur;
+      setState(() => _erreur = message);
+      signalerManque(context, message, champ: _focusValeur);
       return;
     }
     if (_motif.text.trim().isEmpty) {
@@ -326,6 +341,10 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
         _erreur = null;
         _motifManquant = true;
       });
+      // Le focus va a la premiere puce, ou au champ libre si « Autre » est
+      // ouvert : le geste qui manque.
+      _selecteurMotif.currentState?.focaliser();
+      signalerManque(context, t.formulaire.motif.manque);
       return;
     }
     setState(() {
@@ -405,28 +424,41 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
                 Ecart.vMd,
               ],
               if (_avecValeur) ...<Widget>[
-                ChoiceCardGroup(
-                  options: <OptionChoix>[
-                    for (final int minutes in dureesProposees)
-                      OptionChoix(
-                        valeur: '$minutes',
-                        libelle: LibellesGroupe.valeurSeule(
-                          t.tuteur.reglages.demandeMinutes(minutes: '$minutes'),
+                Focus(
+                  focusNode: _focusValeur,
+                  child: ChoiceCardGroup(
+                    options: <OptionChoix>[
+                      for (final int minutes in dureesProposees)
+                        OptionChoix(
+                          valeur: '$minutes',
+                          libelle: LibellesGroupe.valeurSeule(
+                            t.tuteur.reglages.demandeMinutes(
+                              minutes: '$minutes',
+                            ),
+                          ),
                         ),
-                      ),
-                  ],
-                  onChange: (ReponseChoix reponse) => setState(() {
-                    _erreur = null;
-                    _valeur = int.tryParse(
-                      reponse.valeurs.isEmpty
-                          ? reponse.saisieLibre ?? ''
-                          : reponse.valeurs.first,
-                    );
-                  }),
+                    ],
+                    onChange: (ReponseChoix reponse) => setState(() {
+                      _erreur = null;
+                      _valeur = int.tryParse(
+                        reponse.valeurs.isEmpty
+                            ? reponse.saisieLibre ?? ''
+                            : reponse.valeurs.first,
+                      );
+                    }),
+                  ),
                 ),
                 Ecart.vMd,
               ],
-              Text(t.tuteur.reglages.demandeMotif, style: textes.titleSmall),
+              // COUPE-MOTS-FOND-1 (6) : « changement ? » (espace insecable)
+              // est un seul bloc ; en Interface guidee a 320 px texte x2, il
+              // ne tenait qu'a 0,8 px pres, et le « ? » partait seul a la
+              // ligne des que la feuille etait plus etroite. Le bloc se
+              // reduit, borne, au lieu d'etre casse.
+              TexteSansCoupure(
+                t.tuteur.reglages.demandeMotif,
+                style: textes.titleSmall,
+              ),
               Ecart.vXs,
               Text(
                 t.tuteur.reglages.demandeMotifRequis,
@@ -436,16 +468,20 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
               SelecteurMotif(
                 motifs: _motifsProposes(),
                 controleur: _motif,
+                key: _selecteurMotif,
                 libelleChamp: t.tuteur.reglages.demandeMotif,
                 erreur: _motifManquant ? t.formulaire.motif.manque : null,
                 onChange: (String _) => setState(() => _motifManquant = false),
               ),
               if (_erreur != null) ...<Widget>[
                 Ecart.vSm,
-                Text(
-                  _erreur!,
-                  style: palette.inkAlert.applyTo(
-                    textes.bodySmall ?? const TextStyle(),
+                Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    _erreur!,
+                    style: palette.inkAlert.applyTo(
+                      textes.bodySmall ?? const TextStyle(),
+                    ),
                   ),
                 ),
               ],
@@ -473,13 +509,19 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
 
   String _titre() => switch (widget.sorte) {
     SorteDemande.reaffectation => t.tuteur.reglages.demandeTitreReaffectation(
-      dePrenom: deDevant(widget.enfant.prenom),
+      dePrenom: deDevant(
+        widget.enfant.prenom,
+        cle: 'tuteur.reglages.demandeTitreReaffectation',
+      ),
     ),
     SorteDemande.plafond || SorteDemande.regle =>
       widget.cle == CleRegle.minimumPayable
           ? t.tuteur.reglages.demandeTitreMinimum(prenom: widget.enfant.prenom)
           : t.tuteur.reglages.demandeTitreDuree(
-              dePrenom: deDevant(widget.enfant.prenom),
+              dePrenom: deDevant(
+                widget.enfant.prenom,
+                cle: 'tuteur.reglages.demandeTitreDuree',
+              ),
             ),
   };
 }
