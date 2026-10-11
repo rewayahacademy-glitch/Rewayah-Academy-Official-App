@@ -219,6 +219,50 @@ void main() {
       });
     }
 
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('sens des glyphes (${sens.name}) : la fleche de gauche '
+          'pointe a gauche, celle de droite a droite', (
+        WidgetTester tester,
+      ) async {
+        if (sens == TextDirection.rtl) {
+          await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+          addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+        }
+        await monterPageMadina15(
+          tester,
+          page: 51,
+          taille: _tablette,
+          ecranComplet: true,
+        );
+        // Le glyphe des jetons pointe a droite : une echelle horizontale
+        // negative le retourne vers la gauche.
+        double echelleX(Finder fleche) => tester
+            .widgetList<Transform>(
+              find.descendant(of: fleche, matching: find.byType(Transform)),
+            )
+            .map((Transform t) => t.transform.entry(0, 0))
+            .reduce((double a, double b) => a < b ? a : b);
+        final Finder fleches = find.byType(FlechePageMushaf);
+        expect(fleches, findsNWidgets(2));
+        final Finder gauche = fleches.first;
+        final Finder droite = fleches.last;
+        expect(
+          tester.getCenter(gauche).dx,
+          lessThan(tester.getCenter(droite).dx),
+        );
+        expect(
+          echelleX(gauche),
+          lessThan(0),
+          reason: 'gauche : vers la gauche',
+        );
+        expect(
+          echelleX(droite),
+          greaterThan(0),
+          reason: 'droite : vers la droite',
+        );
+      });
+    }
+
     testWidgets('la fleche de gauche tourne vers la page suivante', (
       WidgetTester tester,
     ) async {

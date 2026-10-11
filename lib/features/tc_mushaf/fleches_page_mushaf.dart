@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../core/icons/app_icons.dart';
-import '../../core/theme/app_metriques.dart';
-import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_radius.dart';
-import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/pressable.dart';
+import '../../core/widgets/barre_precedent_suivant.dart';
 
 /// Une fleche de page du Mushaf, ronde, hors de la page.
 ///
-/// Meme forme que celles de `BarrePrecedentSuivant` (disque `surfaceRaised`,
-/// cible tactile du mode d'interface), mais posee **de chaque cote de la page**
+/// Le bouton rond est celui de `BarrePrecedentSuivant` ([FlecheRonde]), mais posee **de chaque cote de la page**
 /// et non sous elle. Le glyphe est celui des jetons ; il est retourne ici,
 /// selon le cote, jamais selon la langue de l'interface : un Mushaf se feuillette
 /// de la droite vers la gauche en francais comme en arabe.
@@ -34,37 +28,8 @@ class FlechePageMushaf extends StatelessWidget {
   final VoidCallback? onPress;
 
   @override
-  Widget build(BuildContext context) {
-    final double cible = AppMetriques.of(context).cibleTactile;
-    final VoidCallback? action = onPress;
-    if (action == null) {
-      return SizedBox.square(dimension: cible);
-    }
-    final AppPalette palette = AppPalette.of(context);
-    return Pressable(
-      onPress: action,
-      libelleSemantique: libelle,
-      arrondiFocus: AppRadius.arrondiFull,
-      child: SizedBox.square(
-        dimension: cible,
-        child: DecoratedBox(
-          decoration: palette.surfaceRaised.decoration(
-            borderRadius: AppRadius.arrondiFull,
-            side: palette.borderResting.asBorderSide(),
-          ),
-          child: Center(
-            child: IconTheme(
-              data: palette.inkStrong.asIconTheme(size: AppSpacing.xxl),
-              child: Transform.flip(
-                flipX: versLaGauche,
-                child: Icon(AppIcons.suivant.repos),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) =>
+      FlecheRonde(libelle: libelle, onPress: onPress, retourne: versLaGauche);
 }
 
 /// La page encadree de ses deux fleches (tablette et bureau).
