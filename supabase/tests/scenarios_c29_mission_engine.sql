@@ -7,9 +7,47 @@ INSERT INTO public.profiles
   (id, immutable_id, role, first_name, last_name, account_status)
 VALUES
   ('c2910000-0000-0000-0000-000000000001', 'C29-ENG-ADM-01', 'admin', 'Admin', 'Engine', 'active'),
-  ('c2910000-0000-0000-0000-000000000002', 'C29-ENG-TCH-01', 'teacher', 'Teacher', 'Engine', 'active');
+  ('c2910000-0000-0000-0000-000000000002', 'C29-ENG-TCH-01', 'teacher', 'Teacher', 'Engine', 'provisional_active');
 INSERT INTO public.teacher_profiles (profile_id, kyc_status)
 VALUES ('c2910000-0000-0000-0000-000000000002', 'approved');
+DO $fixture_teacher_contracts$
+DECLARE v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts
+   WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions
+   WHERE contract_kind='recording_and_control_notice';
+  PERFORM set_config('request.jwt.claim.sub','c2910000-0000-0000-0000-000000000002',true);
+  PERFORM set_config('test.uid','c2910000-0000-0000-0000-000000000002',true);
+  PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+  PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+  PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+  INSERT INTO public.contract_acceptances(profile_id,contract_kind,version)
+  VALUES ('c2910000-0000-0000-0000-000000000002','recording_and_control_notice',v_notice_version)
+  ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+  UPDATE public.profiles SET account_status='active'
+   WHERE id='c2910000-0000-0000-0000-000000000002';
+  PERFORM set_config('request.jwt.claim.sub','',true);
+  PERFORM set_config('request.jwt.claims','',true);
+  PERFORM set_config('test.uid','',true);
+  PERFORM set_config('test.jwt','',true);
+END
+$fixture_teacher_contracts$;
+
+INSERT INTO public.notifications (destinataire, evenement, params, destination)
+VALUES ('c2910000-0000-0000-0000-000000000001','demande_presentation',
+  '{"demande_id":"c2912000-0000-0000-0000-000000000001"}'::jsonb,
+  '/tuteur/demandes');
+DO $presentation_event_assert$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM public.notifications
+    WHERE destinataire='c2910000-0000-0000-0000-000000000001'
+      AND evenement='demande_presentation'
+      AND params->>'demande_id'='c2912000-0000-0000-0000-000000000001') THEN
+    RAISE EXCEPTION 'C29: presentation notification event is not accepted';
+  END IF;
+END
+$presentation_event_assert$;
 
 SET LOCAL ROLE authenticated;
 SELECT set_config('request.jwt.claim.sub', 'c2910000-0000-0000-0000-000000000001', true);

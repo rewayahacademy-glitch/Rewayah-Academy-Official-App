@@ -9,9 +9,28 @@ INSERT INTO auth.users (id, email) VALUES
 INSERT INTO public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 VALUES
-  ('c29e0000-0000-0000-0000-000000000001', 'C29-EFF-HOLDER', 'teacher', NULL, 'Holder', 'One', 'active', 'male'),
-  ('c29e0000-0000-0000-0000-000000000002', 'C29-EFF-COVER', 'teacher', NULL, 'Cover', 'Two', 'active', 'male'),
+  ('c29e0000-0000-0000-0000-000000000001', 'C29-EFF-HOLDER', 'teacher', NULL, 'Holder', 'One', 'provisional_active', 'male'),
+  ('c29e0000-0000-0000-0000-000000000002', 'C29-EFF-COVER', 'teacher', NULL, 'Cover', 'Two', 'provisional_active', 'male'),
   ('c29e0000-0000-0000-0000-000000000003', 'C29-EFF-ADMIN', 'admin', NULL, 'Admin', 'Three', 'active', 'female');
+INSERT INTO public.teacher_profiles(profile_id,kyc_status) VALUES
+ ('c29e0000-0000-0000-0000-000000000001','approved'),
+ ('c29e0000-0000-0000-0000-000000000002','approved');
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+ SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+ SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+ FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+  PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true); PERFORM set_config('test.uid',v_teacher.id::text,true);
+  PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true); PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+  PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+  INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version) ON CONFLICT DO NOTHING;
+  UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+ END LOOP;
+ PERFORM set_config('request.jwt.claim.sub','',true); PERFORM set_config('request.jwt.claims','',true);
+ PERFORM set_config('test.uid','',true); PERFORM set_config('test.jwt','',true);
+END
+$fixture_teacher_contracts$;
 INSERT INTO public.groupes
   (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana, genre_public)
 VALUES

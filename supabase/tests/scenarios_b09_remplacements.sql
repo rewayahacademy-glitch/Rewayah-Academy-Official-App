@@ -10,23 +10,39 @@ INSERT INTO auth.users (id, email) VALUES
 INSERT INTO public.profiles
  (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 VALUES
- ('b0900000-0000-0000-0000-000000000001','B09-HOLDER','teacher',NULL,'Holder','A','active','male'),
- ('b0900000-0000-0000-0000-000000000002','B09-FIRST','teacher',NULL,'First','B','active','male'),
- ('b0900000-0000-0000-0000-000000000003','B09-SECOND','teacher',NULL,'Second','C','active','male'),
+ ('b0900000-0000-0000-0000-000000000001','B09-HOLDER','teacher',NULL,'Holder','A','provisional_active','male'),
+ ('b0900000-0000-0000-0000-000000000002','B09-FIRST','teacher',NULL,'First','B','provisional_active','male'),
+ ('b0900000-0000-0000-0000-000000000003','B09-SECOND','teacher',NULL,'Second','C','provisional_active','male'),
  ('b0900000-0000-0000-0000-000000000004','B09-ADMIN','admin',NULL,'Admin','D','active','female'),
- ('b0900000-0000-0000-0000-000000000005','B09-WRONG','teacher',NULL,'Wrong','E','active','female');
+ ('b0900000-0000-0000-0000-000000000005','B09-WRONG','teacher',NULL,'Wrong','E','provisional_active','female');
 INSERT INTO public.teacher_profiles (profile_id, kyc_status) VALUES
  ('b0900000-0000-0000-0000-000000000001','approved'),
  ('b0900000-0000-0000-0000-000000000002','approved'),
  ('b0900000-0000-0000-0000-000000000003','approved'),
  ('b0900000-0000-0000-0000-000000000005','approved');
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+ SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+ SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+ FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+  PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true); PERFORM set_config('test.uid',v_teacher.id::text,true);
+  PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true); PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+  PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+  INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version) ON CONFLICT DO NOTHING;
+  UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+ END LOOP;
+ PERFORM set_config('request.jwt.claim.sub','',true); PERFORM set_config('request.jwt.claims','',true);
+ PERFORM set_config('test.uid','',true); PERFORM set_config('test.jwt','',true);
+END
+$fixture_teacher_contracts$;
 INSERT INTO public.groupes
  (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana, genre_public)
 VALUES ('b0900000-0000-0000-0000-000000000101',
  'b0900000-0000-0000-0000-000000000001','enfant',5,'B09 class',1,18,'Europe/Paris','hommes');
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
 VALUES ('b0900000-0000-0000-0000-000000000201',
- 'b0900000-0000-0000-0000-000000000001', now()+interval '2 days', now()+interval '2 days 1 hour',
+ 'b0900000-0000-0000-0000-000000000001', clock_timestamp()+interval '2 days', clock_timestamp()+interval '2 days 1 hour',
  'planned','standard','b0900000-0000-0000-0000-000000000101');
 
 SELECT set_config('request.jwt.claim.sub','b0900000-0000-0000-0000-000000000001',true);
@@ -66,7 +82,7 @@ DECLARE v_result jsonb;
 BEGIN
  v_result := public.prendre_remplacement(
    'b0900000-0000-0000-0000-000000000201','b0900000-0000-0000-0000-000000000303');
- IF v_result->>'etat' <> 'acceptee' THEN RAISE EXCEPTION 'B09: premier remplaçant refusé'; END IF;
+ IF v_result->>'etat' <> 'acceptee' THEN RAISE EXCEPTION 'B09: premier remplaأ§ant refusأ©'; END IF;
 END;
 $test$;
 RESET ROLE;
@@ -98,7 +114,7 @@ BEGIN
    'b0900000-0000-0000-0000-000000000202',
    'b0900000-0000-0000-0000-000000000003',
    'b0900000-0000-0000-0000-000000000305');
- IF v_result->>'etat' <> 'designe' THEN RAISE EXCEPTION 'B09: désignation admin refusée'; END IF;
+ IF v_result->>'etat' <> 'designe' THEN RAISE EXCEPTION 'B09: dأ©signation admin refusأ©e'; END IF;
  v_result := public.designer_remplacant_admin(
    'b0900000-0000-0000-0000-000000000202',
    'b0900000-0000-0000-0000-000000000003',

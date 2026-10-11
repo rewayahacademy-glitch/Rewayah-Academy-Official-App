@@ -193,8 +193,9 @@ class PortTirageControleSupabase implements PortTirageControle {
         .map((Object? item) {
           final Map<String, dynamic> row = _object(item, 'ligne');
           final Object? report = row['rapport_envoye'];
-          if (report is! bool)
+          if (report is! bool) {
             throw const FormatException('rapport_envoye: booleen attendu');
+          }
           return TirageAudite(
             id: _string(row['id'], 'id'),
             quand: DateTime.parse(_string(row['quand'], 'quand')).toLocal(),

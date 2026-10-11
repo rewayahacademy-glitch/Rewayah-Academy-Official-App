@@ -7,7 +7,25 @@ INSERT INTO public.profiles
   (id, immutable_id, role, first_name, last_name, account_status)
 VALUES
   ('c2900000-0000-0000-0000-000000000001', 'C29-ADMIN-0001', 'admin', 'Admin', 'C29', 'active'),
-  ('c2900000-0000-0000-0000-000000000002', 'C29-TEACH-0001', 'teacher', 'Teacher', 'C29', 'active');
+  ('c2900000-0000-0000-0000-000000000002', 'C29-TEACH-0001', 'teacher', 'Teacher', 'C29', 'provisional_active');
+INSERT INTO public.teacher_profiles(profile_id,kyc_status)
+VALUES ('c2900000-0000-0000-0000-000000000002','approved');
+DO $fixture_teacher_contracts$
+DECLARE v_teacher_version text; v_notice_version text;
+BEGIN
+ SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+ SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+ PERFORM set_config('request.jwt.claim.sub','c2900000-0000-0000-0000-000000000002',true);
+ PERFORM set_config('test.uid','c2900000-0000-0000-0000-000000000002',true);
+ PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+ PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+ PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+ INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES ('c2900000-0000-0000-0000-000000000002','recording_and_control_notice',v_notice_version) ON CONFLICT DO NOTHING;
+ UPDATE public.profiles SET account_status='active' WHERE id='c2900000-0000-0000-0000-000000000002';
+ PERFORM set_config('request.jwt.claim.sub','',true); PERFORM set_config('request.jwt.claims','',true);
+ PERFORM set_config('test.uid','',true); PERFORM set_config('test.jwt','',true);
+END
+$fixture_teacher_contracts$;
 
 SET LOCAL ROLE authenticated;
 SELECT set_config('request.jwt.claim.sub', 'c2900000-0000-0000-0000-000000000001', true);
@@ -26,7 +44,7 @@ BEGIN
     'c29a0000-0000-0000-0000-000000000001'
   );
   IF v_first IS NULL THEN
-    RAISE EXCEPTION 'C29: aucun identifiant de capacité créé';
+    RAISE EXCEPTION 'C29: aucun identifiant de capacitأ© crأ©أ©';
   END IF;
   BEGIN
     PERFORM public.accorder_capacite_controle(
@@ -74,11 +92,11 @@ SELECT set_config('request.jwt.claims', '{"aal":"aal2","app_metadata":{"role":"t
 DO $test$
 BEGIN
   IF NOT public.ma_capacite_controle_active() THEN
-    RAISE EXCEPTION 'C29: la capacité active avec MFA est refusée';
+    RAISE EXCEPTION 'C29: la capacitأ© active avec MFA est refusأ©e';
   END IF;
   PERFORM pg_catalog.set_config('request.jwt.claims', '{"aal":"aal1","app_metadata":{"role":"teacher"}}', true);
   IF public.ma_capacite_controle_active() THEN
-    RAISE EXCEPTION 'C29: une session aal1 conserve la capacité';
+    RAISE EXCEPTION 'C29: une session aal1 conserve la capacitأ©';
   END IF;
 END;
 $test$;
@@ -93,7 +111,7 @@ BEGIN
       true, '{}'::uuid[], '{}'::uuid[],
       'c29a0000-0000-0000-0000-000000000005'
     );
-    RAISE EXCEPTION 'C29: un profil enseignant a utilisé un role admin stale du JWT';
+    RAISE EXCEPTION 'C29: un profil enseignant a utilisأ© un role admin stale du JWT';
   EXCEPTION WHEN insufficient_privilege THEN
     NULL;
   END;
@@ -109,7 +127,7 @@ BEGIN
       current_setting('test.capacite_id')::uuid, 'test aal1',
       'c29a0000-0000-0000-0000-000000000003'
     );
-    RAISE EXCEPTION 'C29: une session aal1 a retiré une capacité';
+    RAISE EXCEPTION 'C29: une session aal1 a retirأ© une capacitأ©';
   EXCEPTION WHEN insufficient_privilege THEN
     NULL;
   END;
@@ -121,14 +139,14 @@ DO $test$
 DECLARE v_id uuid := current_setting('test.capacite_id')::uuid;
 BEGIN
   IF NOT public.retirer_capacite_controle(
-    v_id, 'retrait de scénario', 'c29a0000-0000-0000-0000-000000000004'
+    v_id, 'retrait de scأ©nario', 'c29a0000-0000-0000-0000-000000000004'
   ) THEN
-    RAISE EXCEPTION 'C29: retrait initial non appliqué';
+    RAISE EXCEPTION 'C29: retrait initial non appliquأ©';
   END IF;
   IF public.retirer_capacite_controle(
-    v_id, 'retrait de scénario', 'c29a0000-0000-0000-0000-000000000004'
+    v_id, 'retrait de scأ©nario', 'c29a0000-0000-0000-0000-000000000004'
   ) THEN
-    RAISE EXCEPTION 'C29: retrait rejoué signalé comme nouvelle mutation';
+    RAISE EXCEPTION 'C29: retrait rejouأ© signalأ© comme nouvelle mutation';
   END IF;
 END;
 $test$;
@@ -138,7 +156,7 @@ SELECT set_config('request.jwt.claims', '{"aal":"aal2","app_metadata":{"role":"t
 DO $test$
 BEGIN
   IF public.ma_capacite_controle_active() THEN
-    RAISE EXCEPTION 'C29: la révocation ne prend pas effet immédiatement';
+    RAISE EXCEPTION 'C29: la rأ©vocation ne prend pas effet immأ©diatement';
   END IF;
 END;
 $test$;
@@ -155,7 +173,7 @@ BEGIN
   END IF;
   IF (SELECT count(*) FROM public.audit_logs
        WHERE action IN ('controle_capacite_accordee', 'controle_capacite_retiree')) < 2 THEN
-    RAISE EXCEPTION 'C29: attribution/retrait non journalisé';
+    RAISE EXCEPTION 'C29: attribution/retrait non journalisأ©';
   END IF;
 END;
 $postflight$;
