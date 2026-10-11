@@ -815,4 +815,52 @@ begin
   end;
 end $$;
 
+-- F70 : les statuts de signature ne sont visibles qu'à un admin actif.
+insert into public.profiles (id, immutable_id, role, first_name, last_name, account_status)
+values ('99999999-9999-9999-9999-999999999991', 'F70ADMININACTIF1',
+        'admin', 'Admin', 'Suspendu', 'disabled');
+
+do $f70_signature_statuses$
+declare
+  v_status jsonb;
+begin
+  set local role authenticated;
+  perform set_config('test.uid', '33333333-3333-3333-3333-333333333333', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+  v_status := public.teacher_signature_statuses('22222222-2222-2222-2222-222222222222');
+  if v_status -> 'contrat' ->> 'status' is null then
+    raise exception 'F70 ECHEC : l''admin actif ne reçoit aucun statut de signature';
+  end if;
+
+  perform set_config('test.uid', '11111111-1111-1111-1111-111111111111', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"guardian"}}', true);
+  begin
+    perform public.teacher_signature_statuses('22222222-2222-2222-2222-222222222222');
+    raise exception 'F70 ECHEC : un tuteur lit les statuts de signature';
+  exception when insufficient_privilege then null;
+  end;
+
+  perform set_config('test.uid', '33333333-3333-3333-3333-333333333333', true);
+  perform set_config('test.jwt', '{"app_metadata":{}}', true);
+  begin
+    perform public.teacher_signature_statuses('22222222-2222-2222-2222-222222222222');
+    raise exception 'F70 ECHEC : un JWT sans rôle lit les statuts';
+  exception when insufficient_privilege then null;
+  end;
+
+  perform set_config('test.uid', '99999999-9999-9999-9999-999999999991', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+  begin
+    perform public.teacher_signature_statuses('22222222-2222-2222-2222-222222222222');
+    raise exception 'F70 ECHEC : un admin suspendu lit les statuts';
+  exception when insufficient_privilege then null;
+  end;
+  reset role;
+
+  if has_function_privilege('anon', 'public.teacher_signature_statuses(uuid)', 'EXECUTE') then
+    raise exception 'F70 ECHEC : anon conserve EXECUTE sur teacher_signature_statuses';
+  end if;
+end
+$f70_signature_statuses$;
+
 select 'TOUS LES SCENARIOS SQL DE L''ETAPE 3 SONT PASSES' as verdict;
