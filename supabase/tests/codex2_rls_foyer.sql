@@ -168,6 +168,16 @@ INSERT INTO public.student_profiles (profile_id) VALUES
 INSERT INTO public.teacher_profiles (profile_id) VALUES
   ('c2a20000-0000-0000-0000-000000000005'),
   ('c2a20000-0000-0000-0000-000000000006');
+INSERT INTO public.student_reading_position
+  (student_profile_id, mushaf_id, page_mushaf, sourate, verset)
+SELECT sp.profile_id, m.id, 2, 2, 1
+  FROM public.student_profiles sp
+  CROSS JOIN public.mushaf m
+ WHERE sp.profile_id IN (
+   'c2a20000-0000-0000-0000-000000000002',
+   'c2a20000-0000-0000-0000-000000000004'
+ )
+   AND m.code = 'madina-hafs-604';
 
 INSERT INTO public.devices (profile_id, device_fingerprint, platform) VALUES
   ('c2a20000-0000-0000-0000-000000000001', 'codex2-device-owner-household', 'web'),
@@ -277,6 +287,47 @@ BEGIN
   SELECT count(*) INTO v_count FROM public.teacher_profiles
    WHERE profile_id = 'c2a20000-0000-0000-0000-000000000006';
   IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-TEACHER-READ: teacher B profile visible'; END IF;
+  RESET ROLE;
+END $$;
+
+-- La position personnelle est modifiable par l'eleve A; ni lui ni son foyer
+-- ne lisent la position de l'eleve B.
+DO $$
+DECLARE v_count integer; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000004', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"student","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.student_reading_position
+   WHERE student_profile_id = 'c2a20000-0000-0000-0000-000000000004';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-READING-POSITION: student A row not visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.student_reading_position
+   WHERE student_profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-READING-READ: student B row visible'; END IF;
+  UPDATE public.student_reading_position SET page_mushaf = 3
+   WHERE student_profile_id = 'c2a20000-0000-0000-0000-000000000004';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-READING-WRITE: student A could not update own row'; END IF;
+  UPDATE public.student_reading_position SET page_mushaf = 3
+   WHERE student_profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-READING-WRITE: student A updated student B row'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Le tuteur A peut lire la position de l'eleve A, pas celle de B.
+DO $$
+DECLARE v_count integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.student_reading_position
+   WHERE student_profile_id = 'c2a20000-0000-0000-0000-000000000004';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-READING-GUARDIAN: household A position not visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.student_reading_position
+   WHERE student_profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-READING-GUARDIAN: household B position visible'; END IF;
   RESET ROLE;
 END $$;
 
