@@ -51,7 +51,8 @@ Vérifié sur `ccr` @ 87c43aa0 :
 | :--- | :--- |
 | Barre latérale et rail (`NavShell`, `_EnteteColonne`) | fait : `BrandLogo` horizontal (déplié) ou symbole (replié), seul logo de l'écran, ramène à l'accueil ; test `nav_shell_adaptatif_test.dart` |
 | Coque administration (`AdminShell`) | fait : logo horizontal en tête de la barre latérale, symbole en tête du rail ; test `admin_shell_test.dart` |
-| Connexion, récupération, bienvenue, dépôt de pièce (`MarquePage`) | fait |
+| Connexion (`MarquePage(logo: true)`) | fait |
+| Récupération d'accès, bienvenue (K-64), dépôt de pièce, états du routeur (`MarquePage()`) | mot-marque texte gardé ; pour la bienvenue publique, session qui tient ces pages (K-64) ; récupération : le bouton d'envoi sortait de la vue à 800 x 600 avec le logo (voir ci-dessus) |
 | Favicon web | fait : `web/favicon.svg` est le symbole plein violet du directeur, octet pour octet (test `test/core/marque/favicon_test.dart`), déclaré dans `web/index.html` |
 
 Restes, volontairement non traités ici (pubspec.yaml et copie depuis le site public, jamais de rastérisation par un agent, README du logo) :
