@@ -2780,6 +2780,8 @@ class _Traductions$enseignant$cahier$ar extends Traductions$enseignant$cahier$fr
 	@override String get retourJournee => 'العودة إلى يومي';
 	@override String get vide => 'تعذّر استنتاج المعاينة';
 	@override String get videDetail => 'لم يُسجَّل حضور ولا حدث لهذه الحصة. يمكنك مع ذلك إيداع دفتر المتابعة.';
+	@override String get introuvable => 'الحصة غير موجودة';
+	@override String get introuvableDetail => 'هذه الحصة ليست من حصصك، أو أن الرابط غير مكتمل. عد إلى يومك لاختيار حصة.';
 	@override String get erreur => 'تعذّرت قراءة المعاينة.';
 	@override String get erreurDetail => 'أعد المحاولة، أو أودع دفتر المتابعة دون المعاينة.';
 	@override String get echecEnvoi => 'لم يُؤكَّد الإرسال. تحقّق قبل إعادة المحاولة.';
@@ -13451,6 +13453,8 @@ extension on TraductionsAr {
 			'enseignant.cahier.retourJournee' => 'العودة إلى يومي',
 			'enseignant.cahier.vide' => 'تعذّر استنتاج المعاينة',
 			'enseignant.cahier.videDetail' => 'لم يُسجَّل حضور ولا حدث لهذه الحصة. يمكنك مع ذلك إيداع دفتر المتابعة.',
+			'enseignant.cahier.introuvable' => 'الحصة غير موجودة',
+			'enseignant.cahier.introuvableDetail' => 'هذه الحصة ليست من حصصك، أو أن الرابط غير مكتمل. عد إلى يومك لاختيار حصة.',
 			'enseignant.cahier.erreur' => 'تعذّرت قراءة المعاينة.',
 			'enseignant.cahier.erreurDetail' => 'أعد المحاولة، أو أودع دفتر المتابعة دون المعاينة.',
 			'enseignant.cahier.echecEnvoi' => 'لم يُؤكَّد الإرسال. تحقّق قبل إعادة المحاولة.',
@@ -13732,10 +13736,10 @@ extension on TraductionsAr {
 			'compte.tuteur.identite.connexionGoogle' => 'الدخول بحساب Google',
 			'compte.tuteur.identite.connexionInconnue' => 'طريقة الدخول غير محددة',
 			'compte.tuteur.acces.titre' => 'الوصول والمدفوعات',
-			'compte.tuteur.acces.resume' => 'حالة كل ملف طالب وموعد انتهائه',
-			'compte.tuteur.acces.pastilleActif' => 'الوصول ساري',
 			_ => null,
 		} ?? switch (path) {
+			'compte.tuteur.acces.resume' => 'حالة كل ملف طالب وموعد انتهائه',
+			'compte.tuteur.acces.pastilleActif' => 'الوصول ساري',
 			'compte.tuteur.acces.pastilleExpire' => 'انتهى الوصول',
 			'compte.tuteur.acces.ligne' => 'وصول ملفات الطلاب',
 			'compte.tuteur.acces.paiements' => 'المدفوعات والإيصالات',
@@ -14246,10 +14250,10 @@ extension on TraductionsAr {
 			'tc.classe.barre.revenir' => ({required Object deGroupe}) => 'العودة إلى درس ⁨${deGroupe}⁩',
 			'tc.classe.prevol.titre' => 'قبل فتح الدرس',
 			'tc.classe.prevol.microOk' => 'تم العثور على ميكروفون',
-			'tc.classe.prevol.microAbsent' => 'لا ميكروفون صالح',
-			'tc.classe.prevol.cameraOk' => 'تم العثور على كاميرا',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.prevol.microAbsent' => 'لا ميكروفون صالح',
+			'tc.classe.prevol.cameraOk' => 'تم العثور على كاميرا',
 			'tc.classe.prevol.cameraAbsente' => 'لا كاميرا. يبقى الدرس ممكنًا.',
 			'tc.classe.prevol.permissionRefusee' => 'رُفض الوصول إلى الميكروفون. اسمح به لفتح الدرس.',
 			'tc.classe.prevol.reessayer' => 'التحقق من جديد',
@@ -14760,10 +14764,10 @@ extension on TraductionsAr {
 			'com.vocal.demo.messageRecu' => 'السلام عليكم، هذه ملاحظاتي على تلاوة هذا الأسبوع.',
 			'com.vocal.demo.horodatage' => 'اليوم، 10:28',
 			'com.vocal.titre' => 'رسالة صوتية',
-			'com.communaute.garde.aide' => 'لا إعلانات. لا روابط تسويق بالعمولة. لا بيع.',
-			'com.communaute.garde.avertissement' => 'يبدو أن هذا المنشور يتضمّن ترويجًا تجاريًا. أزِل الرابط أو الرمز أو العرض قبل النشر.',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.garde.aide' => 'لا إعلانات. لا روابط تسويق بالعمولة. لا بيع.',
+			'com.communaute.garde.avertissement' => 'يبدو أن هذا المنشور يتضمّن ترويجًا تجاريًا. أزِل الرابط أو الرمز أو العرض قبل النشر.',
 			'com.communaute.garde.bloqueAffilie' => 'روابط التسويق بالعمولة غير مسموح بها في مجتمع المعلّمين.',
 			'com.communaute.garde.bloqueVente' => 'بيع المنتجات أو الخدمات غير مسموح به في هذه المساحة.',
 			'com.communaute.garde.titreAvertissement' => 'منشور يحتاج إلى مراجعة',
@@ -15274,10 +15278,10 @@ extension on TraductionsAr {
 			'com.annonces.auteurDate' => ({required Object auteur, required Object date, required Object heure}) => '${auteur}‏، يوم ${date} الساعة ${heure}',
 			'com.annonces.date' => ({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}',
 			'com.annonces.lire' => 'قراءة الإعلان كاملًا',
-			'com.annonces.ouvrirClasse' => 'فتح الفصل',
-			'com.annonces.ouvrirClasseSemantique' => ({required Object classe}) => 'فتح ${classe}',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.ouvrirClasse' => 'فتح الفصل',
+			'com.annonces.ouvrirClasseSemantique' => ({required Object classe}) => 'فتح ${classe}',
 			'com.annonces.marquerLue' => 'تحديد كمقروء',
 			'com.annonces.lue' => 'مقروء',
 			'com.annonces.carteSemantique' => ({required Object classe, required Object titre}) => 'إعلان ${classe}: ${titre}',
@@ -15788,10 +15792,10 @@ extension on TraductionsAr {
 			'admin.journal.evtAppareilAppaire' => 'رُبط جهاز',
 			'admin.journal.evtAppareilRevoque' => 'أُلغي جهاز',
 			'admin.journal.evtPedagogie' => 'عُدِّلت الإعدادات التعليمية',
-			'admin.journal.evtAffectationPrise' => 'قبل معلم طالبًا',
-			'admin.journal.evtAffectationAttribuee' => 'أسندت الإدارة طالبًا',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.evtAffectationPrise' => 'قبل معلم طالبًا',
+			'admin.journal.evtAffectationAttribuee' => 'أسندت الإدارة طالبًا',
 			'admin.journal.evtDemandeCreee' => 'قُدِّم طلب',
 			'admin.journal.evtDemandeTranchee' => 'حُسم طلب',
 			'admin.journal.evtReglePosee' => 'وُضعت قاعدة',
@@ -16302,10 +16306,10 @@ extension on TraductionsAr {
 			'comptable.alertes.payoutEchoue' => 'فشل صرف دفعة',
 			'comptable.alertes.paiementFamilleEchoue' => 'فشل دفع أسرة',
 			'comptable.alertes.transactionNonRapprochee' => 'معاملة غير مطابَقة',
-			'comptable.alertes.remboursementEnAttente' => 'استرداد قيد الانتظار',
-			'comptable.alertes.reserveSousObjectif' => 'الاحتياطي الاستراتيجي دون الهدف',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.alertes.remboursementEnAttente' => 'استرداد قيد الانتظار',
+			'comptable.alertes.reserveSousObjectif' => 'الاحتياطي الاستراتيجي دون الهدف',
 			'comptable.alertes.soldePrestataireInsuffisant' => 'رصيد مزوّد الدفع غير كافٍ',
 			'comptable.alertes.methodeModifieeRecemment' => 'وسيلة دفع عُدّلت مؤخرًا',
 			'comptable.alertes.doublonPotentiel' => 'تكرار محتمل',
@@ -16816,10 +16820,10 @@ extension on TraductionsAr {
 			'comptable.contractuels.ligneAuteur' => ({required Object auteur}) => 'أضافه ${auteur}',
 			'comptable.contractuels.ligneValidation' => ({required Object validation}) => 'المصادقة: ${validation}',
 			'comptable.contractuels.payerAide' => 'يُفتح الدفع في تفاصيل الدفعة، بالمبلغ الدقيق.',
-			'comptable.contractuels.approuverAide' => 'بعد الاعتماد، يُثبَّت المبلغ ويصبح الالتزام قابلًا للدفع.',
-			'comptable.contractuels.renvoyerInvitation' => 'إعادة إرسال الدعوة',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.contractuels.approuverAide' => 'بعد الاعتماد، يُثبَّت المبلغ ويصبح الالتزام قابلًا للدفع.',
+			'comptable.contractuels.renvoyerInvitation' => 'إعادة إرسال الدعوة',
 			'comptable.contractuels.invitationAide' => 'هذا المستفيد الخارجي يُدخل وسيلة الدفع بنفسه، من دعوته الآمنة.',
 			'comptable.contractuels.invitationRenvoyee' => 'أُعيد إرسال الدعوة',
 			'comptable.contractuels.erreurApprobation' => 'لا نعلم إن كان الاعتماد قد سُجّل. حدّث الالتزام قبل إعادة المحاولة.',
@@ -17330,10 +17334,10 @@ extension on TraductionsAr {
 			'appareils.eleve.horsLigne' => 'إزالة جهاز أو ربطه يتطلب اتصالًا بالإنترنت.',
 			'appareils.eleve.partageTitre' => 'اختيار الملف والرمز الشخصي',
 			'appareils.eleve.partage' => 'على جهاز مشترك، يختار كل طالب ملفه ثم يدخل رمزه الشخصي، المحفوظ على هذا الجهاز.',
-			'appareils.eleve.retraitTitre' => 'إزالة جهاز',
-			'appareils.eleve.retrait' => 'الجهاز المُزال لا يستطيع إعادة الاتصال. إن كان متصلًا الآن، يبقى كذلك حتى انقطاعه التالي.',
 			_ => null,
 		} ?? switch (path) {
+			'appareils.eleve.retraitTitre' => 'إزالة جهاز',
+			'appareils.eleve.retrait' => 'الجهاز المُزال لا يستطيع إعادة الاتصال. إن كان متصلًا الآن، يبقى كذلك حتى انقطاعه التالي.',
 			'appareils.plateforme.android' => 'هاتف أو جهاز لوحي Android',
 			'appareils.plateforme.ios' => 'iPhone أو iPad',
 			'appareils.plateforme.web' => 'متصفح ويب',
@@ -17844,10 +17848,10 @@ extension on TraductionsAr {
 			'adulte.reprise.notifications.refusee' => 'رُفض طلبك لاستلام الأسرة.',
 			'adulte.demo.titre' => 'عرض تجريبي للطالب البالغ',
 			'adulte.demo.mention' => 'البيانات وهمية ولا يُرسل شيء.',
-			'adulte.demo.intro' => 'اختر شاشة، ثم حالة من حالات أسرة ديالو.',
-			'adulte.demo.ecrans' => 'الشاشات',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.intro' => 'اختر شاشة، ثم حالة من حالات أسرة ديالو.',
+			'adulte.demo.ecrans' => 'الشاشات',
 			'adulte.demo.situations' => 'حالات الأسرة',
 			'adulte.demo.variantes' => 'المتغيرات',
 			'adulte.demo.titulaireFemme' => 'صاحبة الحساب امرأة، وزوجها هو البالغ الثاني.',
@@ -18358,10 +18362,10 @@ extension on TraductionsAr {
 			'suiviDemandes.jalon.aussitot' => 'فورًا',
 			'suiviDemandes.jalon.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من دقيقة', one: 'بعد دقيقة', two: 'بعد دقيقتين', few: 'بعد ⁨${n}⁩ دقائق', many: 'بعد ⁨${n}⁩ دقيقة', other: 'بعد ⁨${n}⁩ دقيقة', ), 
 			'suiviDemandes.jalon.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من ساعة', one: 'بعد ساعة', two: 'بعد ساعتين', few: 'بعد ⁨${n}⁩ ساعات', many: 'بعد ⁨${n}⁩ ساعة', other: 'بعد ⁨${n}⁩ ساعة', ), 
-			'suiviDemandes.jalon.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'في اليوم نفسه', one: 'بعد يوم', two: 'بعد يومين', few: 'بعد ⁨${n}⁩ أيام', many: 'بعد ⁨${n}⁩ يومًا', other: 'بعد ⁨${n}⁩ يوم', ), 
-			'suiviDemandes.changement.titrePage' => 'تغيّر الفصل',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.jalon.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'في اليوم نفسه', one: 'بعد يوم', two: 'بعد يومين', few: 'بعد ⁨${n}⁩ أيام', many: 'بعد ⁨${n}⁩ يومًا', other: 'بعد ⁨${n}⁩ يوم', ), 
+			'suiviDemandes.changement.titrePage' => 'تغيّر الفصل',
 			'suiviDemandes.changement.titre' => ({required Object dePrenom}) => 'تغيّر فصل ⁨${dePrenom}⁩',
 			'suiviDemandes.changement.fusion' => ({required Object prenom}) => 'دُمج فصلكم مع فصل آخر. هذا هو فصل ⁨${prenom}⁩ الآن.',
 			'suiviDemandes.changement.transfert' => ({required Object prenom}) => 'نقلت الإدارة ⁨${prenom}⁩ إلى فصل آخر. هذا هو فصله الجديد.',

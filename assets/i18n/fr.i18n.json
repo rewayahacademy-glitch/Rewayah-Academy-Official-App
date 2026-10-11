@@ -4873,6 +4873,8 @@
       "retourJournee": "Retour à ma journée",
       "vide": "Le constat n'a pas pu être déduit",
       "videDetail": "Aucune présence et aucun événement n'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier de transmission.",
+      "introuvable": "Séance introuvable",
+      "introuvableDetail": "Cette séance n'est pas l'une des vôtres, ou le lien est incomplet. Revenez à votre journée pour choisir une séance.",
       "erreur": "Le constat n'a pas pu être lu.",
       "erreurDetail": "Réessayez, ou déposez le cahier de transmission sans le constat.",
       "echecEnvoi": "L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.",

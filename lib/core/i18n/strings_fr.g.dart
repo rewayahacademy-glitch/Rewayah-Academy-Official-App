@@ -11915,6 +11915,12 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Aucune présence et aucun événement n'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier de transmission.'
 	String get videDetail => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier de transmission.';
 
+	/// fr: 'Séance introuvable'
+	String get introuvable => 'Séance introuvable';
+
+	/// fr: 'Cette séance n'est pas l'une des vôtres, ou le lien est incomplet. Revenez à votre journée pour choisir une séance.'
+	String get introuvableDetail => 'Cette séance n\'est pas l\'une des vôtres, ou le lien est incomplet. Revenez à votre journée pour choisir une séance.';
+
 	/// fr: 'Le constat n'a pas pu être lu.'
 	String get erreur => 'Le constat n\'a pas pu être lu.';
 
@@ -33075,6 +33081,8 @@ extension on Traductions {
 			'enseignant.cahier.retourJournee' => 'Retour à ma journée',
 			'enseignant.cahier.vide' => 'Le constat n\'a pas pu être déduit',
 			'enseignant.cahier.videDetail' => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier de transmission.',
+			'enseignant.cahier.introuvable' => 'Séance introuvable',
+			'enseignant.cahier.introuvableDetail' => 'Cette séance n\'est pas l\'une des vôtres, ou le lien est incomplet. Revenez à votre journée pour choisir une séance.',
 			'enseignant.cahier.erreur' => 'Le constat n\'a pas pu être lu.',
 			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier de transmission sans le constat.',
 			'enseignant.cahier.echecEnvoi' => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.',
@@ -33140,10 +33148,10 @@ extension on Traductions {
 			'enseignant.cahier.niveauAcquisDetail' => 'La leçon est sue, avec peu d\'erreurs.',
 			'enseignant.cahier.niveauMaitriseDetail' => 'La leçon est sue sans erreur, l\'élève peut avancer.',
 			'enseignant.cahier.faiblesseMakharijDetail' => 'La prononciation des lettres.',
-			'enseignant.cahier.faiblesseMaddDetail' => 'Les allongements.',
-			'enseignant.cahier.faiblesseGhunnaDetail' => 'Le son nasal.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.faiblesseMaddDetail' => 'Les allongements.',
+			'enseignant.cahier.faiblesseGhunnaDetail' => 'Le son nasal.',
 			'enseignant.cahier.faiblesseWaqfDetail' => 'Les arrêts.',
 			'enseignant.cahier.faiblesseFluiditeDetail' => 'La lecture sans hésitation.',
 			'enseignant.cahier.faiblesseMemorisationDetail' => 'La récitation de mémoire.',
@@ -33654,10 +33662,10 @@ extension on Traductions {
 			'tc.groupe.session.conseilAppareil' => 'Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge.',
 			'tc.groupe.espace.retour' => 'Mes classes',
 			'tc.groupe.espace.avantProchainCours' => 'Avant le prochain cours',
-			'tc.groupe.espace.aucuneAction' => 'Rien à préparer pour l\'instant',
-			'tc.groupe.espace.bibliotheque' => 'Bibliothèque',
 			_ => null,
 		} ?? switch (path) {
+			'tc.groupe.espace.aucuneAction' => 'Rien à préparer pour l\'instant',
+			'tc.groupe.espace.bibliotheque' => 'Bibliothèque',
 			'tc.groupe.espace.bibliothequeVoirTout' => 'Voir tout',
 			'tc.groupe.espace.progression' => 'Progression',
 			'tc.groupe.espace.roster' => 'Élèves de la Classe',
@@ -34168,10 +34176,10 @@ extension on Traductions {
 			'adulte.recharge.ajouter' => ({required Object prenom}) => 'Ajouter ${prenom} à la recharge',
 			'adulte.recharge.regularisationDe' => ({required Object prenom, required Object message}) => '${prenom} : ${message}',
 			'adulte.recharge.commandeRendue' => 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.',
-			'adulte.recharge.suivrePaiement' => 'Suivre le paiement',
-			'adulte.recharge.resultat.preparationTitre' => 'Paiement en préparation',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.recharge.suivrePaiement' => 'Suivre le paiement',
+			'adulte.recharge.resultat.preparationTitre' => 'Paiement en préparation',
 			'adulte.recharge.resultat.preparationPhrase' => 'Vérifiez la répartition avant de payer.',
 			'adulte.recharge.resultat.attenteTitre' => 'Paiement en cours de confirmation',
 			'adulte.recharge.resultat.attentePhrase' => 'Le prestataire de paiement n\'a pas encore confirmé. Les soldes ne changent qu\'après sa confirmation.',
@@ -34682,10 +34690,10 @@ extension on Traductions {
 			'suiviDemandes.accueil.ligne' => ({required Object prenom, required Object etat}) => '${prenom} : ${etat}',
 			'suiviDemandes.accueil.voir' => 'Voir le suivi des demandes',
 			'suiviDemandes.notification.envoyee' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre demande est arrivée à l\'administration',
-			'suiviDemandes.notification.classeValidee' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe est prête, elle attend son enseignant',
-			'suiviDemandes.notification.enseignantAffecte' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : classe validée · enseignant affecté',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.notification.classeValidee' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe est prête, elle attend son enseignant',
+			'suiviDemandes.notification.enseignantAffecte' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : classe validée · enseignant affecté',
 			'suiviDemandes.notification.close' => ({required Object dePrenom, required Object motif}) => 'Demande de créneau ${dePrenom} : ${motif}',
 			'suiviDemandes.notification.listeAttente' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre demande est en liste d\'attente',
 			'suiviDemandes.notification.eleveIntegre' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : élève intégré dans la classe',
@@ -35196,10 +35204,10 @@ extension on Traductions {
 			'com.communaute.demo.f.fonctionNour' => 'Enseignante, Classe Al-Fajr',
 			'com.communaute.demo.f.yasmine' => 'Yasmine Haddad',
 			'com.communaute.demo.f.fonctionYasmine' => 'Enseignante, Classe Al-Badr',
-			'com.communaute.demo.f.youssef' => 'Youssef Amrani',
-			'com.communaute.demo.f.fonctionYoussef' => 'Enseignant, Classe Al-Kawthar',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.demo.f.youssef' => 'Youssef Amrani',
+			'com.communaute.demo.f.fonctionYoussef' => 'Enseignant, Classe Al-Kawthar',
 			'com.communaute.demo.f.mariam' => 'Mariam Benali',
 			'com.communaute.demo.f.fonctionMariam' => 'Enseignante, Classe An-Nas',
 			'com.communaute.demo.f.hamza' => 'Hamza Ouali',
@@ -35710,10 +35718,10 @@ extension on Traductions {
 			'comptable.statuts.encaissement.partiellementRembourse' => 'Partiellement remboursé',
 			'comptable.statuts.encaissement.conteste' => 'Contesté',
 			'comptable.statuts.encaissement.chargeback' => 'Chargeback',
-			'comptable.statuts.encaissement.aRapprocher' => 'À rapprocher',
-			'comptable.statuts.encaissement.rapproche' => 'Rapproché',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.encaissement.aRapprocher' => 'À rapprocher',
+			'comptable.statuts.encaissement.rapproche' => 'Rapproché',
 			'comptable.statuts.rapprochement.automatique' => 'Automatique',
 			'comptable.statuts.rapprochement.aVerifier' => 'À vérifier',
 			'comptable.statuts.rapprochement.rapproche' => 'Rapproché',
@@ -36224,10 +36232,10 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.remplacee' => 'Nouvelle méthode enregistrée : elle est en cours de vérification.',
 			'comptable.beneficiaires.recevoir.supprimee' => 'Méthode supprimée.',
 			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Méthode préférée mise à jour.',
-			'comptable.beneficiaires.recevoir.erreurAction' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
-			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.erreurAction' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.',
 			'comptable.beneficiaires.recevoir.journalTitre' => 'Historique de mes changements',
 			'comptable.beneficiaires.recevoir.journalVide' => 'Aucun changement enregistré pour l\'instant.',
 			'comptable.beneficiaires.recevoir.seulVous' => 'Vous seul pouvez modifier ces informations : ni la comptabilité ni la direction ne peuvent le faire à votre place.',

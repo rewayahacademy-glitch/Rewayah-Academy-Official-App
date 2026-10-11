@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
@@ -202,7 +201,7 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
   @override
   Widget build(BuildContext context) {
     final SessionState session = ref.watch(sessionProvider);
-    final AppRole? role = session.role;
+    final bool tuteur = session.observeEnFamille;
     _lireNavigation(context);
 
     // **Interrupteur P3 ferme : le tuteur n'appelle aucune porte serveur.**
@@ -211,8 +210,7 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     // valeur est fixee a la compilation, la branche ne bascule donc jamais
     // entre deux constructions. L'administration et le controle qualite ne
     // sont pas concernes.
-    if (role == AppRole.guardian &&
-        !ref.watch(observationTuteurReelleProvider)) {
+    if (tuteur && !ref.watch(observationTuteurReelleProvider)) {
       return _cadreTuteur(
         titre: t.tc.observation.entree.titre,
         retourPossible: true,
@@ -220,8 +218,8 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
       );
     }
 
-    final OptionsEntreeObservation options = OptionsEntreeObservation.pour(
-      role,
+    final OptionsEntreeObservation options = OptionsEntreeObservation.depuis(
+      session,
     );
     final AsyncValue<EtatVisiteObservation> etat = ref.watch(
       etatVisiteObservationProvider(widget.seanceId),
@@ -245,7 +243,7 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
         _suivreConnexion(valeur.phase);
         if (valeur.phase == PhaseVisite.terminee &&
             anterieur?.value?.phase != PhaseVisite.terminee) {
-          _apresVisite(role);
+          _apresVisite(tuteur: tuteur);
         }
         if (valeur.phase == PhaseVisite.enVisite) {
           unawaited(_rejoindreSalle(options));
@@ -255,7 +253,7 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
       },
     );
 
-    if (role == AppRole.guardian) {
+    if (tuteur) {
       return _parcoursTuteur(options, etat, session);
     }
 
@@ -849,9 +847,9 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
   /// A la fin d'une visite : la confirmation de sortie encore ouverte est
   /// refermee (la question n'a plus d'objet), et les visites restantes sont
   /// relues aupres du serveur, jamais deduites du compteur local.
-  void _apresVisite(AppRole? role) {
+  void _apresVisite({required bool tuteur}) {
     _fermerConfirmation();
-    if (role != AppRole.guardian) {
+    if (!tuteur) {
       return;
     }
     ref.invalidate(
