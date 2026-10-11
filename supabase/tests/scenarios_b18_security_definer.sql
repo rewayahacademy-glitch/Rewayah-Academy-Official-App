@@ -53,7 +53,7 @@ begin
   begin
     perform 1 from public.read_kyc_documents();
     raise exception 'B-18: read_kyc_documents accepted missing claims';
-  exception when raise_exception then
+  exception when insufficient_privilege or raise_exception then
     if sqlerrm <> 'acces KYC refuse' then raise; end if;
   end;
 end $$;
