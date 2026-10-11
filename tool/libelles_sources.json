@@ -4349,5 +4349,13 @@
   "recherche.contexte.mission": "etape RECH-D3 (spec RECH-03 V3 §3, §7 : enseignants, remplacements, pedagogie, controle) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b",
   "recherche.contexte.missionEnseignant(param=enseignant)": "etape RECH-D3 (spec RECH-03 V3 §3, §7 : enseignants, remplacements, pedagogie, controle) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b",
   "recherche.contexte.eleveDeClasse(param=classe)": "etape RECH-D3 (spec RECH-03 V3 §3, §7 : enseignants, remplacements, pedagogie, controle) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b",
-  "recherche.contexte.enseignantDeClasse(param=classe)": "etape RECH-D3 (spec RECH-03 V3 §3, §7 : enseignants, remplacements, pedagogie, controle) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b"
+  "recherche.contexte.enseignantDeClasse(param=classe)": "etape RECH-D3 (spec RECH-03 V3 §3, §7 : enseignants, remplacements, pedagogie, controle) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b",
+  "tc.bibliotheque.rendu.ouvrir": "etape BIBLIO-LECTURE (demande du directeur du 11/10, la bibliotheque sert l'eleve a reviser) : orchestrateur 01B8we8b ; arabe A RELIRE par un arabophone",
+  "tc.bibliotheque.rendu.ouvrirMushaf": "etape BIBLIO-LECTURE (demande du directeur du 11/10, la bibliotheque sert l'eleve a reviser) : orchestrateur 01B8we8b ; arabe A RELIRE par un arabophone",
+  "tc.bibliotheque.rendu.lienEchec": "etape BIBLIO-LECTURE (demande du directeur du 11/10, la bibliotheque sert l'eleve a reviser) : orchestrateur 01B8we8b ; arabe A RELIRE par un arabophone",
+  "tc.bibliotheque.rendu.lienIndisponible": "etape BIBLIO-LECTURE (demande du directeur du 11/10, la bibliotheque sert l'eleve a reviser) : orchestrateur 01B8we8b ; arabe A RELIRE par un arabophone",
+  "tc.bibliotheque.rendu.lienHorsLigne": "etape BIBLIO-LECTURE (demande du directeur du 11/10, la bibliotheque sert l'eleve a reviser) : orchestrateur 01B8we8b ; arabe A RELIRE par un arabophone",
+  "tc.bibliotheque.rendu.lienBloque": "etape BIBLIO-LECTURE (demande du directeur du 11/10, la bibliotheque sert l'eleve a reviser) : orchestrateur 01B8we8b ; arabe A RELIRE par un arabophone",
+  "tc.bibliotheque.detail.entreeDetail": "etape BIBLIO-LECTURE point 3 (entree de la bibliotheque depuis le Compte : eleve, tuteur, adulte eleve autonome) : orchestrateur 01B8we8b ; arabe A RELIRE par un arabophone",
+  "tc.bibliotheque.detail.entreeLigne": "etape BIBLIO-LECTURE point 3 (entree de la bibliotheque depuis le Compte : eleve, tuteur, adulte eleve autonome) : orchestrateur 01B8we8b ; arabe A RELIRE par un arabophone"
 }

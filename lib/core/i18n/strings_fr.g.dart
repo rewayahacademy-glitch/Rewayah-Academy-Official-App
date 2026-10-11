@@ -21960,6 +21960,12 @@ class Traductions$tc$bibliotheque$detail$fr {
 
 	/// fr: 'Le Coran s’ouvre dans le lecteur dédié.'
 	String get renduCoran => 'Le Coran s’ouvre dans le lecteur dédié.';
+
+	/// fr: 'Toutes vos ressources de révision, au même endroit.'
+	String get entreeDetail => 'Toutes vos ressources de révision, au même endroit.';
+
+	/// fr: 'Ouvrir la bibliothèque'
+	String get entreeLigne => 'Ouvrir la bibliothèque';
 }
 
 // Path: tc.bibliotheque.action
@@ -22035,6 +22041,24 @@ class Traductions$tc$bibliotheque$rendu$fr {
 
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
+
+	/// fr: 'Ouvrir'
+	String get ouvrir => 'Ouvrir';
+
+	/// fr: 'Ouvrir le mushaf'
+	String get ouvrirMushaf => 'Ouvrir le mushaf';
+
+	/// fr: 'Le lien de lecture n'a pas pu être obtenu pour le moment.'
+	String get lienEchec => 'Le lien de lecture n\'a pas pu être obtenu pour le moment.';
+
+	/// fr: 'L'ouverture n'est pas disponible pour ce support.'
+	String get lienIndisponible => 'L\'ouverture n\'est pas disponible pour ce support.';
+
+	/// fr: 'L'ouverture demande une connexion. Réessayez quand elle sera revenue.'
+	String get lienHorsLigne => 'L\'ouverture demande une connexion. Réessayez quand elle sera revenue.';
+
+	/// fr: 'Votre navigateur a bloqué l'ouverture. Autorisez les fenêtres de ce site, puis réessayez.'
+	String get lienBloque => 'Votre navigateur a bloqué l\'ouverture. Autorisez les fenêtres de ce site, puis réessayez.';
 }
 
 // Path: tc.bibliotheque.actif
@@ -35591,6 +35615,8 @@ extension on Traductions {
 			'tc.bibliotheque.detail.sansVersion' => 'Aucune version publiée : rien à ouvrir pour le moment.',
 			'tc.bibliotheque.detail.apercuIndisponible' => 'L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.',
 			'tc.bibliotheque.detail.renduCoran' => 'Le Coran s’ouvre dans le lecteur dédié.',
+			'tc.bibliotheque.detail.entreeDetail' => 'Toutes vos ressources de révision, au même endroit.',
+			'tc.bibliotheque.detail.entreeLigne' => 'Ouvrir la bibliothèque',
 			'tc.bibliotheque.action.telecharger' => 'Rendre disponible hors ligne',
 			'tc.bibliotheque.action.liberer' => 'Libérer la place',
 			'tc.bibliotheque.action.enregistrerCopie' => 'Enregistrer une copie',
@@ -35604,6 +35630,12 @@ extension on Traductions {
 			'tc.bibliotheque.rendu.imageInaccessible' => 'L\'image n\'a pas pu être chargée pour le moment.',
 			'tc.bibliotheque.rendu.imageIllisible' => 'Ce fichier image ne peut pas être affiché.',
 			'tc.bibliotheque.rendu.reessayer' => 'Réessayer',
+			'tc.bibliotheque.rendu.ouvrir' => 'Ouvrir',
+			'tc.bibliotheque.rendu.ouvrirMushaf' => 'Ouvrir le mushaf',
+			'tc.bibliotheque.rendu.lienEchec' => 'Le lien de lecture n\'a pas pu être obtenu pour le moment.',
+			'tc.bibliotheque.rendu.lienIndisponible' => 'L\'ouverture n\'est pas disponible pour ce support.',
+			'tc.bibliotheque.rendu.lienHorsLigne' => 'L\'ouverture demande une connexion. Réessayez quand elle sera revenue.',
+			'tc.bibliotheque.rendu.lienBloque' => 'Votre navigateur a bloqué l\'ouverture. Autorisez les fenêtres de ce site, puis réessayez.',
 			'tc.bibliotheque.actif.indisponibleTitre' => 'Support présenté pas encore ouvert',
 			'tc.bibliotheque.actif.indisponible' => 'Le suivi du support présenté s\'ouvrira au branchement serveur.',
 			'tc.bibliotheque.actif.sansDonnees' => 'le support présenté',
@@ -35777,6 +35809,8 @@ extension on Traductions {
 			'tc.classe.observation.restant' => ({required Object secondes}) => 'Reste ${secondes} s',
 			'tc.realtime.transport.partage_indisponible' => 'Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page.',
 			'tc.realtime.etat.restauration_impossible' => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.entree.titre' => 'Observer la séance',
 			'tc.observation.entree.tuteurIntro' => 'Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.',
 			'tc.observation.entree.adminIntro' => 'Choisissez votre mode avant d\'entrer. Il ne change plus ensuite.',
@@ -35785,8 +35819,6 @@ extension on Traductions {
 			'tc.observation.entree.modeDiscret' => 'Observer discrètement',
 			'tc.observation.entree.modeDiscretDetail' => 'Invisible pour les participants. Sans micro ni caméra, sans annonce.',
 			'tc.observation.entree.modeVisible' => 'Rejoindre la classe',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.entree.modeVisibleDetail' => 'Visible par tous sous le nom Administration Rewayah. Micro et caméra permis, annonce faite.',
 			'tc.observation.entree.nomInstitutionnel' => 'Administration Rewayah',
 			'tc.observation.entree.visiteJournalisee' => 'Visite journalisée : identité, séance, entrée, sortie et durée.',
@@ -36291,6 +36323,8 @@ extension on Traductions {
 			'adulte.reprise.deposeeLe' => 'Déposée le',
 			'adulte.reprise.etat' => 'État',
 			'adulte.reprise.etats.deposee' => 'Déposée',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.etats.refuseeParTitulaire' => 'Refusée par le titulaire',
 			'adulte.reprise.etats.attenteAdministration' => 'En attente de l\'administration',
 			'adulte.reprise.etats.validee' => 'Validée',
@@ -36299,8 +36333,6 @@ extension on Traductions {
 			'adulte.reprise.phrases.examenLe' => ({required Object date}) => 'Sans réponse du titulaire, l\'administration pourra l\'examiner à partir du ${date}.',
 			'adulte.reprise.phrases.refuseeParTitulaire' => 'Le titulaire du foyer a refusé cette demande. L\'administration en est informée. Aucune permission du foyer n\'est transférée.',
 			'adulte.reprise.phrases.attenteAdministration' => 'Le titulaire n\'a pas répondu. Rien n\'est transféré automatiquement : l\'administration doit encore examiner la demande.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.phrases.validee' => 'L\'administration a validé la demande. Vous êtes désormais titulaire du foyer.',
 			'adulte.reprise.phrases.refusee' => 'L\'administration a refusé la demande. Aucune permission du foyer n\'est transférée.',
 			'adulte.reprise.phrases.redepotLe' => ({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}.',
@@ -36805,6 +36837,8 @@ extension on Traductions {
 			'com.socle.navigation.provisoire.messagesDetail' => 'Les messages liés à vos Classes arriveront bientôt dans cet espace.',
 			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
 			'com.socle.navigation.provisoire.communauteDetail' => 'L\'espace d\'échange entre enseignants arrivera bientôt ici.',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.navigation.provisoire.studioTitre' => _root.com.socle.lexique.studio,
 			'com.socle.navigation.provisoire.studioDetail' => 'L\'espace de travail de l\'équipe arrivera bientôt ici.',
 			'com.socle.navigation.provisoire.administrationTitre' => 'Administration des communications',
@@ -36813,8 +36847,6 @@ extension on Traductions {
 			'com.socle.navigation.provisoire.publierAnnonceDetail' => 'La publication d\'une annonce pour une Classe arrivera bientôt ici.',
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
 			'com.messages.entree.titreClasse' => 'Échanger sur cette Classe',
 			'com.messages.entree.titreDossier' => 'Échanger sur ce dossier',
@@ -37319,6 +37351,8 @@ extension on Traductions {
 			'com.studio.demo.f.messageRemplacement' => 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.',
 			'com.studio.demo.f.messageJustificatifs' => 'Les justificatifs de septembre sont rassemblés.',
 			'com.studio.demo.f.messageBudget' => 'Budget confidentiel du trimestre.',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.activiteBudget' => 'Budget confidentiel du trimestre',
 			'com.studio.demo.f.partagePlanning' => 'Planning du trimestre',
 			'com.studio.demo.f.partageModeration' => 'Guide de modération',
@@ -37327,8 +37361,6 @@ extension on Traductions {
 			'com.studio.demo.f.lienRemplacements' => 'Remplacements de la semaine',
 			'com.studio.demo.f.lienCharte' => 'Charte de l\'équipe',
 			'com.studio.demo.f.brouillon' => 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.activitePaiement' => 'Paiement de septembre non confirmé pour la famille Haddad',
 			'com.studio.demo.f.objetEcheancier' => 'Échéancier de la famille Haddad',
 			'com.studio.demo.f.activiteDossierKarim' => 'Dossier de la famille Karim prêt pour une décision',
@@ -37833,6 +37865,8 @@ extension on Traductions {
 			'comptable.paiements.detail.preuve' => 'Preuve',
 			'comptable.paiements.detail.classes' => 'Classes',
 			'comptable.paiements.detail.version' => 'Version du calcul',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.detail.historique' => 'Historique',
 			'comptable.paiements.detail.historiqueVide' => 'Aucune opération enregistrée pour ce paiement.',
 			'comptable.paiements.detail.encart' => 'Le Comptable ne peut modifier ni le montant ni les coordonnées de paiement du bénéficiaire.',
@@ -37841,8 +37875,6 @@ extension on Traductions {
 			'comptable.paiements.detail.alerteEchec' => 'Le dernier envoi a échoué chez le prestataire. Vérifiez la méthode de paiement avant une nouvelle tentative.',
 			'comptable.paiements.detail.alerteInfos' => 'Le bénéficiaire n\'a pas encore de méthode de paiement complète. Relancez-le depuis son profil de paiement.',
 			'comptable.paiements.detail.alerteTitre' => 'À savoir avant de payer',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.detail.autoPaiementPhrase' => 'Ce paiement vous concerne : une autre personne habilitée le traitera. Personne ne peut exécuter son propre paiement.',
 			'comptable.paiements.detail.introuvableTitre' => 'Ce paiement est introuvable.',
 			'comptable.paiements.detail.introuvablePhrase' => 'Revenez à la liste des paiements à effectuer pour choisir un autre paiement.',
@@ -38347,6 +38379,8 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.plafondsTitre' => 'Plafonds',
 			'comptable.direction.delegationPanneau.plafondsDetail' => 'Au-delà d\'un plafond, le paiement demande votre validation. Laissez vide pour ne fixer aucun plafond.',
 			'comptable.direction.delegationPanneau.plafondTransaction' => 'Plafond par transaction',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.plafondTransactionDetail' => 'Le montant maximal d\'un seul paiement.',
 			'comptable.direction.delegationPanneau.plafondLot' => 'Plafond par lot',
 			'comptable.direction.delegationPanneau.plafondLotDetail' => 'Le montant maximal d\'un lot de paiements.',
@@ -38355,8 +38389,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.plafondIndice' => 'Aucun plafond',
 			'comptable.direction.delegationPanneau.validationsTitre' => 'Quand une seconde validation est exigée',
 			'comptable.direction.delegationPanneau.retraitReserve' => 'Retrait de la Réserve stratégique',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.retraitReserveDetail' => 'Interdit au Comptable sans validation.',
 			'comptable.direction.delegationPanneau.premierPaiement' => 'Premier paiement d\'un bénéficiaire',
 			'comptable.direction.delegationPanneau.premierPaiementDetail' => 'Le premier paiement vers un bénéficiaire demande une seconde validation.',
