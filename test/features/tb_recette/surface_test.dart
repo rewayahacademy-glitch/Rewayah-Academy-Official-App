@@ -12,12 +12,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
+    show TraitVectoriel;
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
+import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
 import 'package:rewayah_academy/features/salle_seance/vignette_video.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
+import 'package:rewayah_academy/features/tc_dock/couche_annotation.dart';
 
 import '../../capture/outil_capture.dart' hide stabiliser;
 import '../../router/support_routeur.dart';
@@ -60,6 +65,16 @@ Future<void> _attendre(WidgetTester tester) async {
 
 bool _calqueVisible(WidgetTester tester) =>
     tester.widget<Visibility>(find.byKey(SurfacePageFixe.cleCalque)).visible;
+
+/// Les identifiants des traits que la couche d'annotation de la surface
+/// recoit, donc peint quand le calque est visible.
+List<String> _traitsPeints(WidgetTester tester) => <String>[
+  for (final TraitVectoriel trait
+      in tester
+          .widget<CoucheAnnotation>(find.byKey(SurfacePageFixe.cleCouche))
+          .traits)
+    trait.id,
+];
 
 Finder _affichage(String libelle) => find.descendant(
   of: find.byKey(CommandesPedagogiques.cleAffichages),
@@ -144,7 +159,18 @@ void main() {
     testWidgets('Avec notes -> Tableau -> Support -> Avec notes', (
       WidgetTester tester,
     ) async {
-      await _monter(tester, RoleSeance.enseignant, SituationTb.cmd01);
+      // Revue TB-6 : une situation qui PORTE un trait (le cercle de TB-7a,
+      // PED-03), pour prouver « garde les traits », pas seulement le calque.
+      await _monter(tester, RoleSeance.enseignant, SituationTb.ped03);
+      if (_affichage(t.salle.seance.commandes.affichageTableau)
+          .evaluate()
+          .isEmpty) {
+        await tester.tap(find.byKey(DeclencheurCommandes.cle));
+        await _attendre(tester);
+      }
+      final List<String> traits = _traitsPeints(tester);
+      expect(traits, contains(DonneesSeanceDemo.traitDemonstration.id));
+      expect(_calqueVisible(tester), isTrue);
       final Element calque = tester.element(_calque);
       final Rect avant = tester.getRect(_calque);
       for (final (String libelle, bool page, bool visible)
@@ -162,7 +188,80 @@ void main() {
         // Le meme calque, au meme endroit : rien n'est demonte ni deplace.
         expect(identical(tester.element(_calque), calque), isTrue);
         expect(tester.getRect(_calque), avant, reason: libelle);
+        // Les memes traits, a chaque etape : caches en Support, jamais
+        // effaces, peints de nouveau au retour.
+        expect(_traitsPeints(tester), traits, reason: libelle);
       }
+      // Au retour sur Avec notes, le cercle est peint : le calque est
+      // visible et la couche le recoit.
+      expect(_calqueVisible(tester), isTrue);
+      expect(
+        _traitsPeints(tester),
+        contains(DonneesSeanceDemo.traitDemonstration.id),
+      );
+    });
+  });
+
+  group('La page suit la langue du document, pas l\'interface', () {
+    setUp(() => LocaleSettings.setLocale(AppLocale.ar));
+    tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+
+    for (final (String nom, Size taille, double texte)
+        in <(String, Size, double)>[
+          ('1440 x1', _bureau, 1),
+          ('390 x1', _telephone, 1),
+          ('320 x2', const Size(320, 700), 2),
+        ]) {
+      testWidgets('arabe (RTL), page francaise calee a gauche ($nom)', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          RoleSeance.enseignant,
+          SituationTb.ped03,
+          taille: taille,
+          texte: texte,
+        );
+        expect(tester.takeException(), isNull);
+        expect(
+          Directionality.of(tester.element(find.byType(DemoSallePage))),
+          TextDirection.rtl,
+        );
+        final Rect page = tester.getRect(_page);
+        final SupportPageFixe support = DonneesSeanceDemo.supportPageFixe;
+        for (final String ecrit in <String>[support.titre, support.mention!]) {
+          final Rect r = tester.getRect(
+            find.descendant(of: _page, matching: find.text(ecrit)),
+          );
+          // Au debut GAUCHE de la page : l'ecart a gauche est la marge, au
+          // plus l'ecart a droite (le titre, le plus long, peut remplir la
+          // largeur une fois reduit ; la mention, plus courte, laisse alors
+          // tout le vide a droite).
+          expect(
+            r.left - page.left,
+            lessThanOrEqualTo(page.right - r.right + 0.5),
+            reason: ecrit,
+          );
+          expect(
+            r.left - page.left,
+            lessThanOrEqualTo(AppSpacing.lg + 1),
+            reason: ecrit,
+          );
+        }
+      });
+    }
+
+    test('sensDuDocument : premier caractere fort', () {
+      expect(
+        sensDuDocument(<String?>['Les bonnes manières']),
+        TextDirection.ltr,
+      );
+      expect(sensDuDocument(<String?>[null, '1. الآداب']), TextDirection.rtl);
+      expect(
+        sensDuDocument(<String?>['12', 'سورة', 'Titre']),
+        TextDirection.rtl,
+      );
+      expect(sensDuDocument(<String?>[]), TextDirection.ltr);
     });
   });
 
@@ -207,8 +306,18 @@ void main() {
         taille: _telephone,
       );
       final Rect consigne = tester.getRect(_consigne);
-      // Le test mesure quelque chose : la vignette est bien posee.
-      expect(find.byType(VignetteVideo), findsWidgets);
+      // TB-RC (TB_RAPPORT §d n. 3) : la propre vignette de l'enseignant ne
+      // se pose que si la feuille, descendue sous elle, garde sa part de la
+      // hauteur ; sinon elle cede la place (polices de test, plus hautes).
+      // Avec les polices du depot, elle est posee : rc_composition_test.
+      if (find.byType(VignetteVideo).evaluate().isEmpty) {
+        expect(
+          tester.getSize(_feuille).height,
+          greaterThanOrEqualTo(
+            CompositionSalle.partMinimalePage * _telephone.height,
+          ),
+        );
+      }
       for (final Element e in find.byType(VignetteVideo).evaluate()) {
         final Rect r = tester.getRect(find.byWidget(e.widget));
         expect(r.overlaps(consigne), isFalse);

@@ -88,8 +88,15 @@ class RepereDemonstration extends StatelessWidget {
           // Un conteneur semantique propre : la barriere d'une route
           // (`BlockSemantics`) masque les noeuds peints avant elle dans le
           // meme conteneur, donc la bande, sans lui.
+          //
+          // TB-12 (UX-21) : `explicitChildNodes` garde a chaque descendant son
+          // propre noeud. Sans lui, pose directement sur une salle
+          // (observateurs de /demo/salle), ce conteneur absorbait l'ecran
+          // entier : un seul noeud lu, « Quitter » compris, sans cible
+          // separee.
           child: Semantics(
             container: true,
+            explicitChildNodes: true,
             child: MediaQuery.removePadding(
               context: context,
               // Clavier ouvert, sans bande : l'application garde la zone

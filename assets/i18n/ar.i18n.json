@@ -333,6 +333,45 @@
       "ouverture": "جارٍ فتح Rewayah"
     }
   },
+  "reseau": {
+    "retabli": "عادت الشبكة",
+    "horsLigne": "لا شبكة. ما هو معروض يبقى قابلًا للاطلاع.",
+    "enAttenteEnvoi": "سيُرسل بمجرد عودة الشبكة",
+    "syncImpossible": "تعذّرت المزامنة"
+  },
+  "destructif": {
+    "irreversible": "لا يمكن التراجع عن هذا الإجراء."
+  },
+  "presence": {
+    "titre": "الحضور",
+    "voir": "عرض الحضور",
+    "mienne": "حضورك",
+    "consolide": "مُوحَّد",
+    "planifiee": "درس قادم",
+    "enAttente": "لم يصل بعد",
+    "enConnexion": "جارٍ الاتصال",
+    "presente": "في القاعة",
+    "enRetard": "متأخر",
+    "deconnectee": "انقطع الاتصال",
+    "enReconnexion": "جارٍ إعادة الاتصال",
+    "reconnectee": "عاد",
+    "sortie": "غادر الدرس",
+    "absente": "غياب",
+    "excusee": "غياب بعذر",
+    "confirmationEnAttente": "للتأكيد",
+    "corrigeeManuel": "تصحيح يدوي",
+    "finalisee": "نهائي",
+    "inconnu": "حالة غير معروفة",
+    "entreeInstant": "دخل القاعة للتو",
+    "entreeMinutes": "في القاعة منذ \u2068{minutes}\u2069 د",
+    "retardMinutes": "\u2068{minutes}\u2069 د بعد الموعد",
+    "silenceInstant": "لا أخبار منذ بضع ثوانٍ",
+    "silenceMinutes": "لا أخبار منذ \u2068{minutes}\u2069 د",
+    "attenteInstant": "بدأ الدرس للتو",
+    "attenteMinutes": "بدأ الدرس منذ \u2068{minutes}\u2069 د",
+    "etatMicroOuvert": "ميكروفونه مفتوح",
+    "etatMicroCoupe": "ميكروفونه مغلق"
+  },
   "etat": {
     "enDirect": "مباشر",
     "seanceAnnulee": "ملغاة",
@@ -706,7 +745,7 @@
       "horsLigne": "أنت غير متصل. تحتاج الحصة إلى اتصال.",
       "reessayer": "إعادة المحاولة",
       "quitter": "مغادرة",
-      "indisponible": "{commande}. غير متاح أثناء إعادة الاتصال.",
+      "indisponible": "\u2068{commande}\u2069. غير متاح أثناء إعادة الاتصال.",
       "cameraInterdite": "الكاميرا معطّلة لهذا الملف.",
       "microBloque": "الميكروفون محظور في إعدادات هذا الجهاز.",
       "microBloqueGuidee": "الميكروفون محظور على هذا الجهاز.",
@@ -835,7 +874,37 @@
         "pointeur": "المؤشر",
         "marquer": "وضع علامة",
         "masquer": "إخفاء",
-        "annoter": "كتابة ملاحظات"
+        "ecrire": "كتابة",
+        "aideLecture": "بدون أداة، تُقرأ الصفحة؛ وعند تكبيرها تُحرَّك بسحبها.",
+        "aidePointeur": "المؤشر: المس الصفحة لتشير إلى مقطع، ولا يبقى أي أثر.",
+        "aideEcrire": "الكتابة: اكتب على الصفحة. على شاشة اللمس، يحرّكها إصبعان."
+      },
+      "ecriture": {
+        "palette": "أدوات الكتابة",
+        "terminer": "إنهاء",
+        "couleur": "اللون",
+        "couleurAide": "اللون يدل على قصد الخط، للفصل كله.",
+        "epaisseur": "السُّمك",
+        "epaisseurAide": "رفيع لكتابة كلمة، وسميك للإحاطة.",
+        "fine": "رفيع",
+        "moyenne": "متوسط",
+        "epaisse": "سميك",
+        "tuPeuxEcrire": "يمكنك الكتابة على السبورة.",
+        "vousPouvezEcrire": "يمكنكم الكتابة على السبورة.",
+        "repriseSayyid": "السيد يستعيد السبورة.",
+        "repriseSayyida": "السيدة تستعيد السبورة.",
+        "repriseNom": "عادت السبورة إلى \u2068{nom}\u2069.",
+        "choisirTu": "المس «الكتابة» عندما تريد أن تكتب. وإلا فالصفحة للقراءة، ولا يبقى عليها أي خط.",
+        "choisirVous": "المسوا «الكتابة» عندما تريدون الكتابة. وإلا فالصفحة للقراءة، ولا يبقى عليها أي خط.",
+        "aideEleveTu": "اكتب بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطك؛ و«إنهاء» يعيد إلى القراءة.",
+        "aideEleveVous": "اكتبوا بالقلم. الممحاة والتراجع لا يمسّان إلا خطوطكم؛ و«إنهاء» يعيد إلى القراءة.",
+        "peutEcrire": "الكتابة مسموحة",
+        "autoriser": "السماح بالكتابة",
+        "retirer": "سحب الإذن بالكتابة",
+        "autoriserSemantique": "السماح بالكتابة: \u2068{prenom}\u2069",
+        "retirerSemantique": "سحب الإذن بالكتابة من \u2068{dePrenom}\u2069",
+        "autoriserAide": "سيكون بإمكان \u2068{prenom}\u2069 الكتابة على الصفحة أو السبورة. تبقى الصفحة والمادة بيدك.",
+        "retirerAide": "تبقى الخطوط على الصفحة؛ وتُسحب أدوات الكتابة."
       },
       "rail": {
         "navigation": "التنقل",
@@ -895,7 +964,14 @@
         "affichage": "العرض",
         "focus": "التركيز",
         "focusSemantique": "التركيز، تكبير المحتوى وتصغير اللوحات",
-        "quitterFocus": "الخروج من التركيز"
+        "quitterFocus": "الخروج من التركيز",
+        "quitterFocusSemantique": "الخروج من التركيز وإظهار اللوحات",
+        "focusGuide": "تكبير",
+        "quitterFocusGuide": "إيقاف التكبير",
+        "ajusterGuide": "عرض الصفحة كاملة",
+        "classeVoitSupport": "يرى الفصل الصفحة دون الملاحظات.",
+        "classeVoitAvecNotes": "يرى الفصل الصفحة والملاحظات.",
+        "classeVoitTableau": "يرى الفصل السبورة دون الصفحة."
       },
       "bibliotheque": {
         "intro": "المادة التي تختارها تُفتح لك وحدك. يبقى الفصل على المادة الحالية حتى «عرض على الفصل».",
@@ -905,12 +981,43 @@
         "revenir": "العودة إلى المواد",
         "ouverture": "جارٍ فتح المادة…",
         "echec": "تعذّر فتح الملف.",
-        "echecDetail": "تعذّر تحميل ملف هذه المادة. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى."
+        "echecDetail": "ملف هذه المادة غير متاح حاليًا. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى."
       },
       "surface": {
         "aucunSupport": "اختر مادة أو اكتب على السبورة.",
         "page": "\u2068{titre}\u2069، الصفحة \u2068{page}\u2069 من \u2068{pages}\u2069",
-        "supportMasque": "السبورة، المادة مخفية"
+        "supportMasque": "السبورة، المادة مخفية",
+        "supportArrive": "المادة في الطريق…",
+        "supportIndisponible": "المادة لا تظهر.",
+        "supportIndisponibleDetail": "الملف غير متاح. أعد المحاولة: الحصة والصوت مستمران.",
+        "reessayerSemantique": "إعادة محاولة عرض المادة",
+        "supportIllustratif": "مادة توضيحية"
+      },
+      "synchro": {
+        "nonPartagees": "ملاحظاتك الجديدة غير مشارَكة.",
+        "nonPartageesSuite": "الملاحظات المنقّطة لا تظهر إلا على شاشتك، ريثما تعود السبورة إلى الاتصال.",
+        "seReconnecte": "السبورة تعيد الاتصال.",
+        "reprise": "استعادة السبورة…",
+        "revient": "السبورة تعود.",
+        "ecritureSuspendue": "تُستأنف الكتابة فور عودة السبورة.",
+        "nonSauvegardees": "ملاحظات هذه الحصة غير محفوظة.",
+        "nonSauvegardeesSuite": "تبقى على السبورة حتى نهاية الحصة، لكنها لن تُسترجع في الدرس القادم."
+      },
+      "rangement": {
+        "ranger": "إرجاع إلى المكتبة",
+        "menuSupport": "إجراءات المادة المعروضة",
+        "menuTableau": "إجراءات السبورة الحرة",
+        "range": "أُرجعت المادة",
+        "rangeDetail": "تبقى في المكتبة، عند صفحتها ومع ملاحظاتها. «عرض على الفصل» يعيدها.",
+        "tableauLibre": "السبورة الحرة",
+        "section": "مواد أُرجعت خلال الحصة",
+        "reprise": "الاستئناف من الصفحة \u2068{page}\u2069 من \u2068{total}\u2069.",
+        "notesConservees": "الملاحظات محفوظة في هذه الحصة فقط.",
+        "effacer": "مسح الملاحظات",
+        "questionPage": "مسح كل ملاحظات هذه الصفحة؟",
+        "questionTableau": "مسح كل ملاحظات السبورة؟",
+        "consequencePage": "تختفي ملاحظات هذه الصفحة عند الفصل كله.",
+        "consequenceTableau": "تختفي ملاحظات السبورة الحرة عند الفصل كله."
       },
       "capsule": {
         "avatar": "عرض معلومات \u2068{deNom}\u2069",
@@ -937,13 +1044,15 @@
         "intro": "بيانات وهمية، دون خادم. اختر دورًا وحالة.",
         "groupes": {
           "seance": "مجرى الحصة",
-          "secours": "حالات الطوارئ",
+          "secours": "حالات الاحتياط",
           "tableau": "المواد والسبورة"
         },
         "roles": {
           "eleve": "طالب عادي",
           "guidee": "وضع إمكانية الوصول",
-          "enseignant": "المعلم"
+          "enseignant": "المعلم",
+          "tuteur": "وليّ الأمر المتابِع",
+          "controleur": "المراقِب"
         },
         "etats": {
           "repos": "وضع عادي",
@@ -3876,15 +3985,6 @@
     "autreInvite": "حدّد",
     "selectionMultiple": "يمكن اختيار عدة إجابات"
   },
-  "destructif": {
-    "irreversible": "لا يمكن التراجع عن هذا الإجراء."
-  },
-  "reseau": {
-    "horsLigne": "لا شبكة. ما هو معروض يبقى قابلًا للاطلاع.",
-    "enAttenteEnvoi": "سيُرسل بمجرد عودة الشبكة",
-    "retabli": "عادت الشبكة",
-    "syncImpossible": "تعذّرت المزامنة"
-  },
   "admin": {
     "finance": {
       "aValider": "للمصادقة"
@@ -4995,7 +5095,7 @@
       "aucunCandidatDetail": "كل الفصول والمعلمين مستهدفون بالفعل أو لا توجد حصص بعد.",
       "erreurCandidats": "تعذّرت قراءة قائمة الأهداف. أعيدوا المحاولة بعد قليل.",
       "enregistrer": "حفظ القواعد",
-      "enregistrees": "تم حفظ القواعد. تُطبَّق على القرعات القادمة.",
+      "enregistrees": "سُجِّلت القواعد. تُطبَّق على القرعات القادمة.",
       "nonConfirmees": "الحفظ غير مؤكَّد: لم يصل رد الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون تكرار.",
       "refusees": "لم تُحفظ القواعد: ⁨{motif}⁩. تحققوا منها ثم أعيدوا المحاولة.",
       "horsLigne": "يمكن حفظ القواعد عند عودة الاتصال. تبقى اختياراتكم معروضة.",
@@ -6351,34 +6451,6 @@
       "generiqueTitre": "لم يكتمل الربط",
       "generique": "لم يكتمل التحقق من الرمز. أعد المحاولة بعد لحظة."
     }
-  },
-  "presence": {
-    "titre": "الحضور",
-    "voir": "عرض الحضور",
-    "mienne": "حضورك",
-    "consolide": "مُوحَّد",
-    "planifiee": "درس قادم",
-    "enAttente": "لم يصل بعد",
-    "enConnexion": "جارٍ الاتصال",
-    "presente": "في القاعة",
-    "enRetard": "متأخر",
-    "deconnectee": "انقطع الاتصال",
-    "enReconnexion": "جارٍ إعادة الاتصال",
-    "reconnectee": "عاد",
-    "sortie": "غادر الدرس",
-    "absente": "غياب",
-    "excusee": "غياب بعذر",
-    "confirmationEnAttente": "للتأكيد",
-    "corrigeeManuel": "تصحيح يدوي",
-    "finalisee": "نهائي",
-    "inconnu": "حالة غير معروفة",
-    "entreeInstant": "دخل القاعة للتو",
-    "entreeMinutes": "في القاعة منذ \u2068{minutes}\u2069 د",
-    "retardMinutes": "\u2068{minutes}\u2069 د بعد الموعد",
-    "silenceInstant": "لا أخبار منذ بضع ثوانٍ",
-    "silenceMinutes": "لا أخبار منذ \u2068{minutes}\u2069 د",
-    "attenteInstant": "بدأ الدرس للتو",
-    "attenteMinutes": "بدأ الدرس منذ \u2068{minutes}\u2069 د"
   },
   "priere": {
     "fajr": "الفجر",

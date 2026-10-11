@@ -478,6 +478,12 @@ class Traductions$presence$fr {
 
 	/// fr: 'le cours a commencé il y a {minutes} min'
 	String attenteMinutes({required Object minutes}) => 'le cours a commencé il y a ${minutes} min';
+
+	/// fr: 'son micro est ouvert'
+	String get etatMicroOuvert => 'son micro est ouvert';
+
+	/// fr: 'son micro est coupé'
+	String get etatMicroCoupe => 'son micro est coupé';
 }
 
 // Path: bienvenue
@@ -3675,6 +3681,7 @@ class Traductions$salle$seance$fr {
 	String get pageSuivante => 'Page suivante';
 
 	late final Traductions$salle$seance$outils$fr outils = Traductions$salle$seance$outils$fr.internal(_root);
+	late final Traductions$salle$seance$ecriture$fr ecriture = Traductions$salle$seance$ecriture$fr.internal(_root);
 	late final Traductions$salle$seance$rail$fr rail = Traductions$salle$seance$rail$fr.internal(_root);
 
 	/// fr: 'Fermer le panneau'
@@ -3715,12 +3722,14 @@ class Traductions$salle$seance$fr {
 	String optionsPanneau({required Object titre}) => 'Options du panneau ${titre}';
 
 	late final Traductions$salle$seance$commandes$fr commandes = Traductions$salle$seance$commandes$fr.internal(_root);
+	late final Traductions$salle$seance$bibliotheque$fr bibliotheque = Traductions$salle$seance$bibliotheque$fr.internal(_root);
+	late final Traductions$salle$seance$surface$fr surface = Traductions$salle$seance$surface$fr.internal(_root);
+	late final Traductions$salle$seance$synchro$fr synchro = Traductions$salle$seance$synchro$fr.internal(_root);
+	late final Traductions$salle$seance$rangement$fr rangement = Traductions$salle$seance$rangement$fr.internal(_root);
 	late final Traductions$salle$seance$capsule$fr capsule = Traductions$salle$seance$capsule$fr.internal(_root);
 	late final Traductions$salle$seance$contexte$fr contexte = Traductions$salle$seance$contexte$fr.internal(_root);
 	late final Traductions$salle$seance$demo$fr demo = Traductions$salle$seance$demo$fr.internal(_root);
 	late final Traductions$salle$seance$statut$fr statut = Traductions$salle$seance$statut$fr.internal(_root);
-	late final Traductions$salle$seance$bibliotheque$fr bibliotheque = Traductions$salle$seance$bibliotheque$fr.internal(_root);
-	late final Traductions$salle$seance$surface$fr surface = Traductions$salle$seance$surface$fr.internal(_root);
 }
 
 // Path: salle.fin
@@ -17603,8 +17612,101 @@ class Traductions$salle$seance$outils$fr {
 	/// fr: 'Masquer'
 	String get masquer => 'Masquer';
 
-	/// fr: 'Annoter'
-	String get annoter => 'Annoter';
+	/// fr: 'Écrire'
+	String get ecrire => 'Écrire';
+
+	/// fr: 'Sans outil, la page se lit ; agrandie, elle se déplace en la faisant glisser.'
+	String get aideLecture => 'Sans outil, la page se lit ; agrandie, elle se déplace en la faisant glisser.';
+
+	/// fr: 'Pointeur : touchez la page pour montrer un passage, rien ne reste.'
+	String get aidePointeur => 'Pointeur : touchez la page pour montrer un passage, rien ne reste.';
+
+	/// fr: 'Écrire : écrivez sur la page. Sur un écran tactile, deux doigts la déplacent.'
+	String get aideEcrire => 'Écrire : écrivez sur la page. Sur un écran tactile, deux doigts la déplacent.';
+}
+
+// Path: salle.seance.ecriture
+class Traductions$salle$seance$ecriture$fr {
+	Traductions$salle$seance$ecriture$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Outils d'écriture'
+	String get palette => 'Outils d\'écriture';
+
+	/// fr: 'Terminer'
+	String get terminer => 'Terminer';
+
+	/// fr: 'Couleur'
+	String get couleur => 'Couleur';
+
+	/// fr: 'La couleur dit l'intention du trait, pour toute la classe.'
+	String get couleurAide => 'La couleur dit l\'intention du trait, pour toute la classe.';
+
+	/// fr: 'Épaisseur'
+	String get epaisseur => 'Épaisseur';
+
+	/// fr: 'Fin pour écrire un mot, épais pour entourer.'
+	String get epaisseurAide => 'Fin pour écrire un mot, épais pour entourer.';
+
+	/// fr: 'Fin'
+	String get fine => 'Fin';
+
+	/// fr: 'Moyen'
+	String get moyenne => 'Moyen';
+
+	/// fr: 'Épais'
+	String get epaisse => 'Épais';
+
+	/// fr: 'Tu peux écrire sur le tableau.'
+	String get tuPeuxEcrire => 'Tu peux écrire sur le tableau.';
+
+	/// fr: 'Vous pouvez écrire sur le tableau.'
+	String get vousPouvezEcrire => 'Vous pouvez écrire sur le tableau.';
+
+	/// fr: 'Sayyid reprend le tableau.'
+	String get repriseSayyid => 'Sayyid reprend le tableau.';
+
+	/// fr: 'Sayyida reprend le tableau.'
+	String get repriseSayyida => 'Sayyida reprend le tableau.';
+
+	/// fr: '{nom} reprend le tableau.'
+	String repriseNom({required Object nom}) => '${nom} reprend le tableau.';
+
+	/// fr: 'Touche « Écrire » quand tu veux écrire. Sinon la page se lit, sans laisser de trait.'
+	String get choisirTu => 'Touche « Écrire » quand tu veux écrire. Sinon la page se lit, sans laisser de trait.';
+
+	/// fr: 'Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, sans laisser de trait.'
+	String get choisirVous => 'Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, sans laisser de trait.';
+
+	/// fr: 'Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.'
+	String get aideEleveTu => 'Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.';
+
+	/// fr: 'Écrivez avec le stylo. La gomme et Annuler ne touchent que vos traits ; Terminer revient à la lecture.'
+	String get aideEleveVous => 'Écrivez avec le stylo. La gomme et Annuler ne touchent que vos traits ; Terminer revient à la lecture.';
+
+	/// fr: 'Peut écrire'
+	String get peutEcrire => 'Peut écrire';
+
+	/// fr: 'Autoriser à écrire'
+	String get autoriser => 'Autoriser à écrire';
+
+	/// fr: 'Retirer l'autorisation d'écrire'
+	String get retirer => 'Retirer l\'autorisation d\'écrire';
+
+	/// fr: 'Autoriser à écrire : {prenom}'
+	String autoriserSemantique({required Object prenom}) => 'Autoriser à écrire : ${prenom}';
+
+	/// fr: 'Retirer l'autorisation d'écrire {dePrenom}'
+	String retirerSemantique({required Object dePrenom}) => 'Retirer l\'autorisation d\'écrire ${dePrenom}';
+
+	/// fr: '{prenom} pourra écrire sur la page ou le tableau. La page et le support restent à vous.'
+	String autoriserAide({required Object prenom}) => '${prenom} pourra écrire sur la page ou le tableau. La page et le support restent à vous.';
+
+	/// fr: 'Ses traits restent sur la page ; ses outils d'écriture se retirent.'
+	String get retirerAide => 'Ses traits restent sur la page ; ses outils d\'écriture se retirent.';
 }
 
 // Path: salle.seance.rail
@@ -17746,6 +17848,177 @@ class Traductions$salle$seance$commandes$fr {
 
 	/// fr: 'Quitter le focus'
 	String get quitterFocus => 'Quitter le focus';
+
+	/// fr: 'Quitter le focus et revoir les panneaux'
+	String get quitterFocusSemantique => 'Quitter le focus et revoir les panneaux';
+
+	/// fr: 'Agrandir'
+	String get focusGuide => 'Agrandir';
+
+	/// fr: 'Arrêter d'agrandir'
+	String get quitterFocusGuide => 'Arrêter d\'agrandir';
+
+	/// fr: 'Voir toute la page'
+	String get ajusterGuide => 'Voir toute la page';
+
+	/// fr: 'La classe voit la page, sans les notes.'
+	String get classeVoitSupport => 'La classe voit la page, sans les notes.';
+
+	/// fr: 'La classe voit la page et les notes.'
+	String get classeVoitAvecNotes => 'La classe voit la page et les notes.';
+
+	/// fr: 'La classe voit le tableau, sans la page.'
+	String get classeVoitTableau => 'La classe voit le tableau, sans la page.';
+}
+
+// Path: salle.seance.bibliotheque
+class Traductions$salle$seance$bibliotheque$fr {
+	Traductions$salle$seance$bibliotheque$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Un support choisi s'ouvre pour vous seul. La classe garde le support actuel jusqu'à « Présenter ».'
+	String get intro => 'Un support choisi s\'ouvre pour vous seul. La classe garde le support actuel jusqu\'à « Présenter ».';
+
+	/// fr: 'Aperçu personnel'
+	String get apercu => 'Aperçu personnel';
+
+	/// fr: 'Les élèves voient toujours le support actuel.'
+	String get apercuClasse => 'Les élèves voient toujours le support actuel.';
+
+	/// fr: 'Présenter'
+	String get presenter => 'Présenter';
+
+	/// fr: 'Revenir aux supports'
+	String get revenir => 'Revenir aux supports';
+
+	/// fr: 'Ouverture du support…'
+	String get ouverture => 'Ouverture du support…';
+
+	/// fr: 'Fichier non ouvert.'
+	String get echec => 'Fichier non ouvert.';
+
+	/// fr: 'Le fichier de ce support est indisponible. Réessayez, ou revenez aux supports pour en choisir un autre.'
+	String get echecDetail => 'Le fichier de ce support est indisponible. Réessayez, ou revenez aux supports pour en choisir un autre.';
+}
+
+// Path: salle.seance.surface
+class Traductions$salle$seance$surface$fr {
+	Traductions$salle$seance$surface$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisissez un support ou écrivez au tableau.'
+	String get aucunSupport => 'Choisissez un support ou écrivez au tableau.';
+
+	/// fr: '{titre}, page {page} sur {pages}'
+	String page({required Object titre, required Object page, required Object pages}) => '${titre}, page ${page} sur ${pages}';
+
+	/// fr: 'Tableau, le support est masqué'
+	String get supportMasque => 'Tableau, le support est masqué';
+
+	/// fr: 'Le support arrive…'
+	String get supportArrive => 'Le support arrive…';
+
+	/// fr: 'Le support ne s'affiche pas.'
+	String get supportIndisponible => 'Le support ne s\'affiche pas.';
+
+	/// fr: 'Le fichier est indisponible. Réessayez : la séance et le son continuent.'
+	String get supportIndisponibleDetail => 'Le fichier est indisponible. Réessayez : la séance et le son continuent.';
+
+	/// fr: 'Réessayer d'afficher le support'
+	String get reessayerSemantique => 'Réessayer d\'afficher le support';
+
+	/// fr: 'Support illustratif'
+	String get supportIllustratif => 'Support illustratif';
+}
+
+// Path: salle.seance.synchro
+class Traductions$salle$seance$synchro$fr {
+	Traductions$salle$seance$synchro$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vos nouvelles notes ne sont pas partagées.'
+	String get nonPartagees => 'Vos nouvelles notes ne sont pas partagées.';
+
+	/// fr: 'Les notes en pointillés ne se voient que sur votre écran, le temps que le tableau se reconnecte.'
+	String get nonPartageesSuite => 'Les notes en pointillés ne se voient que sur votre écran, le temps que le tableau se reconnecte.';
+
+	/// fr: 'Le tableau se reconnecte.'
+	String get seReconnecte => 'Le tableau se reconnecte.';
+
+	/// fr: 'Reprise du tableau…'
+	String get reprise => 'Reprise du tableau…';
+
+	/// fr: 'Le tableau revient.'
+	String get revient => 'Le tableau revient.';
+
+	/// fr: 'L'écriture reprend dès le retour du tableau.'
+	String get ecritureSuspendue => 'L\'écriture reprend dès le retour du tableau.';
+
+	/// fr: 'Les notes de cette séance ne sont pas sauvegardées.'
+	String get nonSauvegardees => 'Les notes de cette séance ne sont pas sauvegardées.';
+
+	/// fr: 'Elles restent au tableau jusqu'à la fin de la séance, mais ne seront pas retrouvées au prochain cours.'
+	String get nonSauvegardeesSuite => 'Elles restent au tableau jusqu\'à la fin de la séance, mais ne seront pas retrouvées au prochain cours.';
+}
+
+// Path: salle.seance.rangement
+class Traductions$salle$seance$rangement$fr {
+	Traductions$salle$seance$rangement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ranger dans la bibliothèque'
+	String get ranger => 'Ranger dans la bibliothèque';
+
+	/// fr: 'Actions du support affiché'
+	String get menuSupport => 'Actions du support affiché';
+
+	/// fr: 'Actions du tableau libre'
+	String get menuTableau => 'Actions du tableau libre';
+
+	/// fr: 'Support rangé'
+	String get range => 'Support rangé';
+
+	/// fr: 'Il reste dans la Bibliothèque, à sa page et avec ses notes. « Présenter » le reprend.'
+	String get rangeDetail => 'Il reste dans la Bibliothèque, à sa page et avec ses notes. « Présenter » le reprend.';
+
+	/// fr: 'Tableau libre'
+	String get tableauLibre => 'Tableau libre';
+
+	/// fr: 'Rangés pendant la séance'
+	String get section => 'Rangés pendant la séance';
+
+	/// fr: 'Reprise à la page {page} sur {total}.'
+	String reprise({required Object page, required Object total}) => 'Reprise à la page ${page} sur ${total}.';
+
+	/// fr: 'Les notes sont conservées dans cette séance uniquement.'
+	String get notesConservees => 'Les notes sont conservées dans cette séance uniquement.';
+
+	/// fr: 'Effacer les notes'
+	String get effacer => 'Effacer les notes';
+
+	/// fr: 'Effacer toutes les notes de cette page ?'
+	String get questionPage => 'Effacer toutes les notes de cette page ?';
+
+	/// fr: 'Effacer toutes les notes du tableau ?'
+	String get questionTableau => 'Effacer toutes les notes du tableau ?';
+
+	/// fr: 'Les notes de cette page disparaissent pour toute la classe.'
+	String get consequencePage => 'Les notes de cette page disparaissent pour toute la classe.';
+
+	/// fr: 'Les notes du tableau libre disparaissent pour toute la classe.'
+	String get consequenceTableau => 'Les notes du tableau libre disparaissent pour toute la classe.';
 }
 
 // Path: salle.seance.capsule
@@ -17850,57 +18123,6 @@ class Traductions$salle$seance$statut$fr {
 
 	/// fr: 'Connexion interrompue'
 	String get connexionInterrompue => 'Connexion interrompue';
-}
-
-// Path: salle.seance.bibliotheque
-class Traductions$salle$seance$bibliotheque$fr {
-	Traductions$salle$seance$bibliotheque$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Un support choisi s'ouvre pour vous seul. La classe garde le support actuel jusqu'à « Présenter ».'
-	String get intro => 'Un support choisi s\'ouvre pour vous seul. La classe garde le support actuel jusqu\'à « Présenter ».';
-
-	/// fr: 'Aperçu personnel'
-	String get apercu => 'Aperçu personnel';
-
-	/// fr: 'Les élèves voient toujours le support actuel.'
-	String get apercuClasse => 'Les élèves voient toujours le support actuel.';
-
-	/// fr: 'Présenter'
-	String get presenter => 'Présenter';
-
-	/// fr: 'Revenir aux supports'
-	String get revenir => 'Revenir aux supports';
-
-	/// fr: 'Ouverture du support…'
-	String get ouverture => 'Ouverture du support…';
-
-	/// fr: 'Fichier non ouvert.'
-	String get echec => 'Fichier non ouvert.';
-
-	/// fr: 'Le fichier de ce support n'a pas pu être chargé. Réessayez, ou revenez aux supports pour en choisir un autre.'
-	String get echecDetail => 'Le fichier de ce support n\'a pas pu être chargé. Réessayez, ou revenez aux supports pour en choisir un autre.';
-}
-
-// Path: salle.seance.surface
-class Traductions$salle$seance$surface$fr {
-	Traductions$salle$seance$surface$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Choisissez un support ou écrivez au tableau.'
-	String get aucunSupport => 'Choisissez un support ou écrivez au tableau.';
-
-	/// fr: '{titre}, page {page} sur {pages}'
-	String page({required Object titre, required Object page, required Object pages}) => '${titre}, page ${page} sur ${pages}';
-
-	/// fr: 'Tableau, le support est masqué'
-	String get supportMasque => 'Tableau, le support est masqué';
 }
 
 // Path: salle.fin.enseignant
@@ -21335,8 +21557,8 @@ class Traductions$tc$outils$trait$fr {
 
 	// Translations
 
-	/// fr: 'Stylet'
-	String get stylet => 'Stylet';
+	/// fr: 'Stylo'
+	String get stylet => 'Stylo';
 
 	/// fr: 'Surligner'
 	String get surligneur => 'Surligner';
@@ -26760,6 +26982,12 @@ class Traductions$salle$seance$demo$roles$fr {
 
 	/// fr: 'Enseignant'
 	String get enseignant => 'Enseignant';
+
+	/// fr: 'Tuteur observateur'
+	String get tuteur => 'Tuteur observateur';
+
+	/// fr: 'Contrôleur'
+	String get controleur => 'Contrôleur';
 }
 
 // Path: salle.seance.demo.etats
@@ -29107,7 +29335,35 @@ extension on Traductions {
 			'salle.seance.outils.pointeur' => 'Pointeur',
 			'salle.seance.outils.marquer' => 'Marquer',
 			'salle.seance.outils.masquer' => 'Masquer',
-			'salle.seance.outils.annoter' => 'Annoter',
+			'salle.seance.outils.ecrire' => 'Écrire',
+			'salle.seance.outils.aideLecture' => 'Sans outil, la page se lit ; agrandie, elle se déplace en la faisant glisser.',
+			'salle.seance.outils.aidePointeur' => 'Pointeur : touchez la page pour montrer un passage, rien ne reste.',
+			'salle.seance.outils.aideEcrire' => 'Écrire : écrivez sur la page. Sur un écran tactile, deux doigts la déplacent.',
+			'salle.seance.ecriture.palette' => 'Outils d\'écriture',
+			'salle.seance.ecriture.terminer' => 'Terminer',
+			'salle.seance.ecriture.couleur' => 'Couleur',
+			'salle.seance.ecriture.couleurAide' => 'La couleur dit l\'intention du trait, pour toute la classe.',
+			'salle.seance.ecriture.epaisseur' => 'Épaisseur',
+			'salle.seance.ecriture.epaisseurAide' => 'Fin pour écrire un mot, épais pour entourer.',
+			'salle.seance.ecriture.fine' => 'Fin',
+			'salle.seance.ecriture.moyenne' => 'Moyen',
+			'salle.seance.ecriture.epaisse' => 'Épais',
+			'salle.seance.ecriture.tuPeuxEcrire' => 'Tu peux écrire sur le tableau.',
+			'salle.seance.ecriture.vousPouvezEcrire' => 'Vous pouvez écrire sur le tableau.',
+			'salle.seance.ecriture.repriseSayyid' => 'Sayyid reprend le tableau.',
+			'salle.seance.ecriture.repriseSayyida' => 'Sayyida reprend le tableau.',
+			'salle.seance.ecriture.repriseNom' => ({required Object nom}) => '${nom} reprend le tableau.',
+			'salle.seance.ecriture.choisirTu' => 'Touche « Écrire » quand tu veux écrire. Sinon la page se lit, sans laisser de trait.',
+			'salle.seance.ecriture.choisirVous' => 'Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, sans laisser de trait.',
+			'salle.seance.ecriture.aideEleveTu' => 'Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.',
+			'salle.seance.ecriture.aideEleveVous' => 'Écrivez avec le stylo. La gomme et Annuler ne touchent que vos traits ; Terminer revient à la lecture.',
+			'salle.seance.ecriture.peutEcrire' => 'Peut écrire',
+			'salle.seance.ecriture.autoriser' => 'Autoriser à écrire',
+			'salle.seance.ecriture.retirer' => 'Retirer l\'autorisation d\'écrire',
+			'salle.seance.ecriture.autoriserSemantique' => ({required Object prenom}) => 'Autoriser à écrire : ${prenom}',
+			'salle.seance.ecriture.retirerSemantique' => ({required Object dePrenom}) => 'Retirer l\'autorisation d\'écrire ${dePrenom}',
+			'salle.seance.ecriture.autoriserAide' => ({required Object prenom}) => '${prenom} pourra écrire sur la page ou le tableau. La page et le support restent à vous.',
+			'salle.seance.ecriture.retirerAide' => 'Ses traits restent sur la page ; ses outils d\'écriture se retirent.',
 			'salle.seance.rail.navigation' => 'Navigation',
 			'salle.seance.rail.marque' => 'Rewayah',
 			'salle.seance.rail.sousMarque' => 'Academy',
@@ -29153,6 +29409,51 @@ extension on Traductions {
 			'salle.seance.commandes.focus' => 'Focus',
 			'salle.seance.commandes.focusSemantique' => 'Focus, agrandir le contenu et réduire les panneaux',
 			'salle.seance.commandes.quitterFocus' => 'Quitter le focus',
+			'salle.seance.commandes.quitterFocusSemantique' => 'Quitter le focus et revoir les panneaux',
+			'salle.seance.commandes.focusGuide' => 'Agrandir',
+			'salle.seance.commandes.quitterFocusGuide' => 'Arrêter d\'agrandir',
+			'salle.seance.commandes.ajusterGuide' => 'Voir toute la page',
+			'salle.seance.commandes.classeVoitSupport' => 'La classe voit la page, sans les notes.',
+			'salle.seance.commandes.classeVoitAvecNotes' => 'La classe voit la page et les notes.',
+			'salle.seance.commandes.classeVoitTableau' => 'La classe voit le tableau, sans la page.',
+			'salle.seance.bibliotheque.intro' => 'Un support choisi s\'ouvre pour vous seul. La classe garde le support actuel jusqu\'à « Présenter ».',
+			'salle.seance.bibliotheque.apercu' => 'Aperçu personnel',
+			'salle.seance.bibliotheque.apercuClasse' => 'Les élèves voient toujours le support actuel.',
+			'salle.seance.bibliotheque.presenter' => 'Présenter',
+			'salle.seance.bibliotheque.revenir' => 'Revenir aux supports',
+			'salle.seance.bibliotheque.ouverture' => 'Ouverture du support…',
+			'salle.seance.bibliotheque.echec' => 'Fichier non ouvert.',
+			'salle.seance.bibliotheque.echecDetail' => 'Le fichier de ce support est indisponible. Réessayez, ou revenez aux supports pour en choisir un autre.',
+			'salle.seance.surface.aucunSupport' => 'Choisissez un support ou écrivez au tableau.',
+			'salle.seance.surface.page' => ({required Object titre, required Object page, required Object pages}) => '${titre}, page ${page} sur ${pages}',
+			'salle.seance.surface.supportMasque' => 'Tableau, le support est masqué',
+			'salle.seance.surface.supportArrive' => 'Le support arrive…',
+			'salle.seance.surface.supportIndisponible' => 'Le support ne s\'affiche pas.',
+			'salle.seance.surface.supportIndisponibleDetail' => 'Le fichier est indisponible. Réessayez : la séance et le son continuent.',
+			'salle.seance.surface.reessayerSemantique' => 'Réessayer d\'afficher le support',
+			'salle.seance.surface.supportIllustratif' => 'Support illustratif',
+			'salle.seance.synchro.nonPartagees' => 'Vos nouvelles notes ne sont pas partagées.',
+			'salle.seance.synchro.nonPartageesSuite' => 'Les notes en pointillés ne se voient que sur votre écran, le temps que le tableau se reconnecte.',
+			'salle.seance.synchro.seReconnecte' => 'Le tableau se reconnecte.',
+			'salle.seance.synchro.reprise' => 'Reprise du tableau…',
+			'salle.seance.synchro.revient' => 'Le tableau revient.',
+			'salle.seance.synchro.ecritureSuspendue' => 'L\'écriture reprend dès le retour du tableau.',
+			'salle.seance.synchro.nonSauvegardees' => 'Les notes de cette séance ne sont pas sauvegardées.',
+			'salle.seance.synchro.nonSauvegardeesSuite' => 'Elles restent au tableau jusqu\'à la fin de la séance, mais ne seront pas retrouvées au prochain cours.',
+			'salle.seance.rangement.ranger' => 'Ranger dans la bibliothèque',
+			'salle.seance.rangement.menuSupport' => 'Actions du support affiché',
+			'salle.seance.rangement.menuTableau' => 'Actions du tableau libre',
+			'salle.seance.rangement.range' => 'Support rangé',
+			'salle.seance.rangement.rangeDetail' => 'Il reste dans la Bibliothèque, à sa page et avec ses notes. « Présenter » le reprend.',
+			'salle.seance.rangement.tableauLibre' => 'Tableau libre',
+			'salle.seance.rangement.section' => 'Rangés pendant la séance',
+			'salle.seance.rangement.reprise' => ({required Object page, required Object total}) => 'Reprise à la page ${page} sur ${total}.',
+			'salle.seance.rangement.notesConservees' => 'Les notes sont conservées dans cette séance uniquement.',
+			'salle.seance.rangement.effacer' => 'Effacer les notes',
+			'salle.seance.rangement.questionPage' => 'Effacer toutes les notes de cette page ?',
+			'salle.seance.rangement.questionTableau' => 'Effacer toutes les notes du tableau ?',
+			'salle.seance.rangement.consequencePage' => 'Les notes de cette page disparaissent pour toute la classe.',
+			'salle.seance.rangement.consequenceTableau' => 'Les notes du tableau libre disparaissent pour toute la classe.',
 			'salle.seance.capsule.avatar' => ({required Object deNom}) => 'Afficher les informations ${deNom}',
 			'salle.seance.capsule.controlePossible' => 'Contrôle possible. Afficher les informations',
 			'salle.seance.capsule.controleActif' => 'Contrôle actif. Afficher les informations',
@@ -29177,6 +29478,8 @@ extension on Traductions {
 			'salle.seance.demo.roles.eleve' => 'Élève standard',
 			'salle.seance.demo.roles.guidee' => 'Mode Accessibilité',
 			'salle.seance.demo.roles.enseignant' => 'Enseignant',
+			'salle.seance.demo.roles.tuteur' => 'Tuteur observateur',
+			'salle.seance.demo.roles.controleur' => 'Contrôleur',
 			'salle.seance.demo.etats.repos' => 'Repos',
 			'salle.seance.demo.etats.visite' => 'Visite',
 			'salle.seance.demo.etats.rienPartage' => 'Rien partagé',
@@ -29225,17 +29528,6 @@ extension on Traductions {
 			'salle.seance.statut.connecte' => 'Connecté',
 			'salle.seance.statut.pasEncoreConnecte' => 'Pas encore connecté',
 			'salle.seance.statut.connexionInterrompue' => 'Connexion interrompue',
-			'salle.seance.bibliotheque.intro' => 'Un support choisi s\'ouvre pour vous seul. La classe garde le support actuel jusqu\'à « Présenter ».',
-			'salle.seance.bibliotheque.apercu' => 'Aperçu personnel',
-			'salle.seance.bibliotheque.apercuClasse' => 'Les élèves voient toujours le support actuel.',
-			'salle.seance.bibliotheque.presenter' => 'Présenter',
-			'salle.seance.bibliotheque.revenir' => 'Revenir aux supports',
-			'salle.seance.bibliotheque.ouverture' => 'Ouverture du support…',
-			'salle.seance.bibliotheque.echec' => 'Fichier non ouvert.',
-			'salle.seance.bibliotheque.echecDetail' => 'Le fichier de ce support n\'a pas pu être chargé. Réessayez, ou revenez aux supports pour en choisir un autre.',
-			'salle.seance.surface.aucunSupport' => 'Choisissez un support ou écrivez au tableau.',
-			'salle.seance.surface.page' => ({required Object titre, required Object page, required Object pages}) => '${titre}, page ${page} sur ${pages}',
-			'salle.seance.surface.supportMasque' => 'Tableau, le support est masqué',
 			'salle.fin.titre' => 'Séance terminée',
 			'salle.fin.phrase' => 'Vous pouvez retrouver votre travail dans votre Classe.',
 			'salle.fin.retourClasse' => 'Retour à la Classe',
@@ -29285,6 +29577,8 @@ extension on Traductions {
 			'salle.refusReseau' => 'La salle n\'a pas pu s\'ouvrir',
 			'salle.refusReseauDetail' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vérifiez votre connexion, puis réessayez.',
 			'salle.refusMateriel' => 'Aucun micro utilisable sur cet appareil',
+			_ => null,
+		} ?? switch (path) {
 			'salle.refusMaterielDetail' => 'Un cours de Coran se fait à la voix. Autorisez l\'accès au micro, ou branchez un casque, puis réessayez.',
 			'salle.retourAccueil' => 'Revenir à mon accueil',
 			'salle.ouvrirMicro' => 'Ouvrir le micro',
@@ -29339,6 +29633,8 @@ extension on Traductions {
 			'presence.silenceMinutes' => ({required Object minutes}) => 'sans nouvelles depuis ${minutes} min',
 			'presence.attenteInstant' => 'le cours vient de commencer',
 			'presence.attenteMinutes' => ({required Object minutes}) => 'le cours a commencé il y a ${minutes} min',
+			'presence.etatMicroOuvert' => 'son micro est ouvert',
+			'presence.etatMicroCoupe' => 'son micro est coupé',
 			'bienvenue.titre' => 'Bienvenue',
 			'bienvenue.accroche' => 'Apprendre le Coran en classe, en visio',
 			'bienvenue.phrase' => 'Rewayah Academy propose des cours de Coran en direct, en vidéo, pour vous ou pour les élèves de votre foyer.',
@@ -29349,8 +29645,6 @@ extension on Traductions {
 			'bienvenue.pointParcoursTitre' => 'Un parcours selon le niveau',
 			'bienvenue.pointParcours' => 'Le débutant commence par la lecture de l\'arabe et du Coran. L\'élève déjà avancé rejoint la classe la plus proche de son niveau.',
 			'bienvenue.pointFoyerTitre' => 'Le suivi de la famille',
-			_ => null,
-		} ?? switch (path) {
 			'bienvenue.pointFoyer' => 'Un seul compte pour le foyer : les séances de chaque élève se suivent depuis votre compte.',
 			'bienvenue.commencer' => 'Commencer',
 			'bienvenue.dejaCompte' => 'J\'ai déjà un compte',
@@ -29797,6 +30091,8 @@ extension on Traductions {
 			'foyer.ajout.pourQui.requis' => 'Choisissez pour qui est ce profil pour continuer.',
 			'foyer.ajout.pourQui.indisponible' => 'Indisponible',
 			'foyer.ajout.pourQui.enfantTitre' => 'Un enfant ou un mineur',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.ajout.pourQui.enfantDescription' => 'Un profil rattaché à votre foyer, que vous gérez pour lui.',
 			'foyer.ajout.pourQui.enfantAttente' => 'Possible dès que votre accès est ouvert.',
 			'foyer.ajout.pourQui.moiTitre' => 'Moi-même',
@@ -29863,8 +30159,6 @@ extension on Traductions {
 			'ficheEleve.lignes.acces' => 'Accès Rewayah',
 			'ficheEleve.lignes.appareils' => ({required Object dePrenom}) => 'Appareils ${dePrenom}',
 			'ficheEleve.lignes.appareilsLegende' => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.lignes.couleur' => 'Couleur du profil',
 			'ficheEleve.lignes.couleurAucune' => 'Sans couleur',
 			'ficheEleve.lignes.couleurIndisponible' => 'Pas encore disponible',
@@ -30311,6 +30605,8 @@ extension on Traductions {
 			'dossiers.revue.pieceNonTransmise' => 'La pièce requise n’a pas été transmise.',
 			'dossiers.revue.piece' => 'Pièce d\'identité',
 			'dossiers.revue.voirPiece' => 'Voir la pièce',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.revue.accords' => 'Accords et éléments soumis',
 			'dossiers.revue.nom' => 'Nom',
 			'dossiers.revue.prenom' => 'Prénom',
@@ -30377,8 +30673,6 @@ extension on Traductions {
 			'dossiers.validation.inconnu' => 'Le résultat de la validation n’est pas encore confirmé.',
 			'dossiers.validation.plusPret' => 'Ce dossier n’est plus prêt à être validé.',
 			'dossiers.validation.interdit' => 'Vous ne pouvez plus valider ce dossier.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.validation.succes' => 'Dossier validé.',
 			'dossiers.decision.verifierResultat' => 'Vérifier le résultat',
 			'dossiers.decision.dejaTraite' => 'Ce dossier a déjà été traité.',
@@ -30825,6 +31119,8 @@ extension on Traductions {
 			'admin.qualite.statutTraite' => 'Traitée',
 			'admin.qualite.depuisAujourdhui' => 'Aujourd\'hui',
 			'admin.qualite.depuisUnJour' => '1 jour',
+			_ => null,
+		} ?? switch (path) {
 			'admin.qualite.actionTraiter' => 'Marquer traité',
 			'admin.qualite.traiterTitre' => ({required Object personne}) => 'Marquer traité : ${personne}',
 			'admin.qualite.champNote' => 'Note (optionnelle)',
@@ -30891,8 +31187,6 @@ extension on Traductions {
 			'admin.politiqueRevueKyc.echecEnregistrement' => _root.admin.groupes.observationErreur,
 			'admin.evaluations.titre' => 'Évaluations',
 			'admin.evaluations.intro' => 'Ce qui est prévu, ce qui a été passé, et les certifications obtenues.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.erreur' => 'Les évaluations n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.evaluations.aucune' => 'Aucune évaluation',
 			'admin.evaluations.aucuneDetail' => 'Planifiez une première évaluation pour un élève déjà diagnostiqué.',
@@ -31339,6 +31633,8 @@ extension on Traductions {
 			'admin.finance.pol.erreurMinimum' => ({required Object capacite}) => 'Le minimum dépasse la plus petite classe (${capacite}) : elle ne pourrait jamais ouvrir. Saisissez au plus cette capacité.',
 			'admin.finance.pol.erreurRemise' => ({required Object tarif}) => 'La remise dépasse le tarif (${tarif}) : la mensualité deviendrait négative. Saisissez au plus ce montant.',
 			'admin.finance.pol.parHeure' => ({required Object montant}) => '${montant} / h',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.suffixeParHeure' => ({required Object symbole}) => '${symbole} / h',
 			'admin.finance.pol.suffixeRemise' => ({required Object symbole}) => '${symbole} de remise',
 			'admin.finance.pol.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
@@ -31405,8 +31701,6 @@ extension on Traductions {
 			'admin.finance.pol.railInactif' => 'Inactif',
 			'admin.finance.pol.railWebDetail' => 'Le seul moyen de paiement proposé aux familles au lancement.',
 			'admin.finance.pol.railIos' => 'Achat intégré iOS',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.railAndroid' => 'Facturation Google Play',
 			'admin.finance.pol.railPrepare' => 'Préparé (inactif)',
 			'admin.finance.pol.railMobileDetail' => 'Prévu pour plus tard : aucun bouton de paiement mobile n\'est montré aux familles au lancement.',
@@ -31853,6 +32147,8 @@ extension on Traductions {
 			'compte.reglages' => 'Réglages',
 			'compte.reglagesDetail' => 'Apparence, notifications et accessibilité',
 			'compte.profils' => 'Gérer mon foyer',
+			_ => null,
+		} ?? switch (path) {
 			'compte.profilsDetail' => 'Gérer les profils de vos enfants',
 			'compte.appareils' => 'Foyer',
 			'compte.appareilsDetail' => 'Les appareils et profils rattachés à votre foyer',
@@ -31919,8 +32215,6 @@ extension on Traductions {
 			'compte.modeStandard' => 'Mode standard',
 			'compte.cameraLabel' => 'Caméra',
 			'compte.cameraAutorisee' => 'Autorisée',
-			_ => null,
-		} ?? switch (path) {
 			'compte.cameraInterdite' => 'Interdite',
 			'compte.accesSansFin' => 'Accès sans date de fin',
 			'compte.accesJusqua' => ({required Object date}) => 'Accès jusqu\'au ${date}',
@@ -32367,6 +32661,8 @@ extension on Traductions {
 			'tuteur.reglages.demandeMotif' => 'Pourquoi ce changement ?',
 			'tuteur.reglages.demandeMotifRequis' => 'Un motif est nécessaire : c\'est lui qui permet de trancher.',
 			'tuteur.reglages.demandeManqueValeur' => 'Il manque la durée demandée : choisissez-la dans la liste, ou touchez « Autre » et écrivez-la.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.reglages.demandeEnvoyer' => 'Envoyer la demande',
 			'tuteur.reglages.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
 			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
@@ -32433,8 +32729,6 @@ extension on Traductions {
 			'classe.indisponiblePhrase' => 'Le détail de la classe n\'est pas encore disponible ici.',
 			'classe.introuvableTitre' => 'Cette classe n\'est pas ouverte à ce profil',
 			'classe.introuvablePhrase' => 'Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.seance.aucune' => 'Aucune séance planifiée',
 			'classe.seance.aucuneDetail' => ({required Object dePrenom}) => 'La prochaine séance ${dePrenom} apparaîtra ici dès qu\'elle sera programmée.',
 			'classe.seance.illisible' => 'La prochaine séance n\'a pas pu être lue.',
@@ -32881,6 +33175,8 @@ extension on Traductions {
 			'enseignant.cahier.faiblesseWaqf' => 'Waqf',
 			'enseignant.cahier.faiblesseFluidite' => 'Fluidité',
 			'enseignant.cahier.faiblesseMemorisation' => 'Mémorisation',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.niveauARevoirDetail' => 'La leçon est à reprendre à la prochaine séance.',
 			'enseignant.cahier.niveauEnProgresDetail' => 'L\'élève avance, quelques erreurs restent.',
 			'enseignant.cahier.niveauAcquisDetail' => 'La leçon est sue, avec peu d\'erreurs.',
@@ -32947,8 +33243,6 @@ extension on Traductions {
 			'enseignant.profil.contratAccuse' => 'Enregistrement audio et visite de contrôle',
 			'enseignant.profil.contratDetail' => ({required Object version, required Object date}) => 'Version ${version}, accepté le ${date}',
 			'enseignant.profil.contratAucun' => 'Aucun contrat enregistré',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.contratAucunDetail' => 'Votre dossier n\'est pas encore passé par la signature.',
 			'enseignant.profil.contratErreur' => 'Vos contrats n\'ont pas pu être lus.',
 			'enseignant.profil.contratLectureSeule' => 'Ces pièces sont en lecture seule.',
@@ -33395,6 +33689,8 @@ extension on Traductions {
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
 			'tc.groupe.horloges.heureGroupe' => 'Heure de la classe',
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.dst.j30' => 'Changement d\'heure dans un mois',
 			'tc.groupe.dst.j7' => 'Changement d\'heure la semaine prochaine',
 			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
@@ -33461,8 +33757,6 @@ extension on Traductions {
 			'tc.bibliotheque.classe.sousTitre' => 'Le support choisi remplace celui affiché. Le cours continue.',
 			'tc.coran.modes.mushaf' => 'Page du mushaf',
 			'tc.coran.modes.verset' => 'Lecture agrandie',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.modes.focus' => 'Focus',
 			'tc.coran.modes.choisir' => 'Mode de lecture',
 			'tc.coran.mushaf.coteDroite' => 'Page de droite',
@@ -33504,7 +33798,7 @@ extension on Traductions {
 			'tc.outils.intention.aRenforcer' => 'À renforcer',
 			'tc.outils.intention.aEntretenir' => 'À entretenir',
 			'tc.outils.intention.pourEvaluation' => 'Pour l\'évaluation',
-			'tc.outils.trait.stylet' => 'Stylet',
+			'tc.outils.trait.stylet' => 'Stylo',
 			'tc.outils.trait.surligneur' => 'Surligner',
 			'tc.outils.trait.gomme' => 'Gomme',
 			'tc.outils.trait.annuler' => 'Annuler',
@@ -33909,6 +34203,8 @@ extension on Traductions {
 			'adulte.recharge.montantPour' => ({required Object prenom}) => 'Montant pour ${prenom}',
 			'adulte.recharge.diminuer' => ({required Object prenom}) => 'Diminuer le montant pour ${prenom}',
 			'adulte.recharge.augmenter' => ({required Object prenom}) => 'Augmenter le montant pour ${prenom}',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.repartition' => 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n\'y a pas de solde commun.',
 			'adulte.recharge.moyen' => 'Moyen de paiement',
 			'adulte.recharge.raisonMontant' => 'Choisissez un montant pour chaque profil sélectionné.',
@@ -33975,8 +34271,6 @@ extension on Traductions {
 			'adulte.famille.retourMonEspace' => 'Revenir à Mon espace',
 			'adulte.famille.titulaire' => 'Vous êtes titulaire du foyer',
 			'adulte.famille.paiementsFoyer' => 'Paiements du foyer',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.aProposForfait' => 'À propos du forfait famille',
 			'adulte.famille.aProposForfaitPhrase' => 'Le forfait famille comprend un titulaire, un conjoint ou une conjointe adulte, et les enfants ou adolescents sous la responsabilité du titulaire. Chaque adulte conserve son propre compte.',
 			'adulte.famille.profilNonCreeTitre' => 'Démonstration : aucun profil n\'a été créé',
@@ -34423,6 +34717,8 @@ extension on Traductions {
 			'suiviDemandes.close.motif.refusDirection' => 'La direction n\'a pas pu retenir cette demande.',
 			'suiviDemandes.close.motif.inconnu' => 'Cette demande est close.',
 			'suiviDemandes.close.suite' => 'Vous pouvez choisir un autre créneau parmi ceux proposés.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.close.suiteSansChoix' => 'Aucun autre créneau n\'est proposé pour le moment. Revenez sur cette page plus tard.',
 			'suiviDemandes.close.choisirAutre' => ({required Object prenom}) => 'Choisir un autre créneau pour ${prenom}',
 			'suiviDemandes.vide' => 'Aucune demande de créneau en cours.',
@@ -34489,8 +34785,6 @@ extension on Traductions {
 			'argent.etat.pause' => 'En pause',
 			'argent.etat.aRegulariser' => 'À régulariser',
 			'argent.periode.jusquau' => ({required Object date}) => 'Financé jusqu\'au ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'argent.periode.aucune' => 'Aucune période financée',
 			'argent.allocation.credite' => 'Crédité',
 			'argent.moyen.webStripe' => 'Carte bancaire',
@@ -34937,6 +35231,8 @@ extension on Traductions {
 			'com.communaute.demo.moderationIndisponible' => 'Modération indisponible',
 			'com.communaute.demo.lecteurSeul' => 'Lecture seule, sans publication',
 			'com.communaute.demo.f.categoriePedagogie' => 'Pédagogie',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.demo.f.categorieRessources' => 'Ressources',
 			'com.communaute.demo.f.categorieGestion' => 'Gestion',
 			'com.communaute.demo.f.fonctionSoi' => 'Enseignant, Classe Al-Fatiha',
@@ -35003,8 +35299,6 @@ extension on Traductions {
 			'com.studio.aujourdhui.videsBlocs.mentions' => 'Aucune mention ni réponse en attente.',
 			'com.studio.aujourdhui.videsBlocs.decisions' => 'Aucune décision en attente.',
 			'com.studio.aujourdhui.videsBlocs.echeances' => 'Aucune échéance proche.',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.videsBlocs.activite' => 'Aucune activité récente.',
 			'com.studio.aujourdhui.videTitre' => 'Rien à traiter pour le moment',
 			'com.studio.aujourdhui.dansCanal' => ({required Object nom}) => 'Dans ${nom}',
@@ -35451,6 +35745,8 @@ extension on Traductions {
 			'comptable.statuts.paiement.reussi' => 'Réussi',
 			'comptable.statuts.paiement.echoue' => 'Échoué',
 			'comptable.statuts.paiement.aRelancer' => 'À relancer',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.paiement.annule' => 'Annulé',
 			'comptable.statuts.paiement.retourne' => 'Remboursé / retourné',
 			'comptable.statuts.paiement.indisponible' => 'Indisponible',
@@ -35517,8 +35813,6 @@ extension on Traductions {
 			'comptable.alertes.infosManquantes' => 'Infos paiement manquantes',
 			'comptable.alertes.payoutEchoue' => 'Payout échoué',
 			'comptable.alertes.paiementFamilleEchoue' => 'Paiement famille échoué',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.alertes.transactionNonRapprochee' => 'Transaction non rapprochée',
 			'comptable.alertes.remboursementEnAttente' => 'Remboursement en attente',
 			'comptable.alertes.reserveSousObjectif' => 'Réserve stratégique sous objectif',
@@ -35965,6 +36259,8 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.ajouter' => 'Ajouter une méthode de paiement',
 			'comptable.beneficiaires.recevoir.ajoutTitre' => 'Ajouter une méthode de paiement',
 			'comptable.beneficiaires.recevoir.remplacementTitre' => ({required Object methode}) => 'Remplacer ${methode}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.ajoutContexte' => 'Choisissez le type de méthode. Vous saisirez ensuite vos coordonnées dans un espace sécurisé : l\'application ne les voit pas et ne les conserve pas.',
 			'comptable.beneficiaires.recevoir.continuerSaisie' => 'Continuer vers la saisie sécurisée',
 			'comptable.beneficiaires.recevoir.typeRequis' => 'Choisissez un type de méthode pour continuer.',
@@ -36031,8 +36327,6 @@ extension on Traductions {
 			'comptable.contractuels.ligneAuteur' => ({required Object auteur}) => 'Ajouté par ${auteur}',
 			'comptable.contractuels.ligneValidation' => ({required Object validation}) => 'Validation : ${validation}',
 			'comptable.contractuels.payerAide' => 'Le paiement s\'ouvre dans le détail du paiement, avec le montant exact.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.approuverAide' => 'Après l\'approbation, le montant est figé et l\'obligation devient payable.',
 			'comptable.contractuels.renvoyerInvitation' => 'Renvoyer l\'invitation',
 			'comptable.contractuels.invitationAide' => 'Ce bénéficiaire externe saisit lui-même sa méthode de paiement, depuis son invitation sécurisée.',

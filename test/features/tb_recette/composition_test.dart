@@ -23,6 +23,7 @@ import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dar
 import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 
@@ -347,6 +348,57 @@ void main() {
       expect(_reduireDock, findsOneWidget);
       expect(_declencheur, findsOneWidget);
     });
+
+    // Verification TB-5 (10/10) : « contenu agrandi » se mesure sur la page
+    // rendue, hauteur et largeur. Avant : 646 px de haut developpe, 620 en
+    // focus a 1440 x1 (le declencheur prenait une rangee sous la surface).
+    for (final (Size taille, double texte) cas in <(Size, double)>[
+      (_bureau, 1),
+      (_tabletteLarge, 1),
+      (_tablettePortrait, 1),
+      (_bureau, 2),
+    ]) {
+      final (Size taille, double texte) = cas;
+      testWidgets('UX-14 : la page grandit en focus, '
+          '${taille.width.toInt()} x${texte.toInt()}', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester, taille: taille, texte: texte);
+        final Finder page = find.byKey(SurfacePageFixe.clePage);
+        expect(page, findsOneWidget);
+        final Rect developpe = tester.getRect(page);
+        final Rect zoneDeveloppee = _zone(tester);
+        await Scrollable.ensureVisible(tester.element(_focus), alignment: 0.5);
+        await tester.pump();
+        await tester.tap(_focus);
+        await _attendre(tester);
+        expect(tester.takeException(), isNull);
+        expect(_reduireDock, findsOneWidget, reason: 'en focus');
+        final Rect focus = tester.getRect(page);
+        expect(
+          focus.height,
+          greaterThan(developpe.height + 1),
+          reason: 'hauteur : developpe $developpe, focus $focus',
+        );
+        expect(
+          focus.width,
+          greaterThan(developpe.width + 1),
+          reason: 'largeur : developpe $developpe, focus $focus',
+        );
+        // Aucune rangee sous la surface en focus : elle descend au moins
+        // aussi bas qu'en developpe (Commandes ouvertes, sans declencheur).
+        expect(
+          _zone(tester).bottom,
+          greaterThanOrEqualTo(zoneDeveloppee.bottom - 1),
+          reason: 'bas de la surface : developpe $zoneDeveloppee, '
+              'focus ${_zone(tester)}',
+        );
+        // L'acces aux Commandes reste, sans recouvrir la page.
+        expect(_declencheur, findsOneWidget);
+        expect(_chevauche(tester.getRect(_declencheur), focus), isFalse);
+        expect((Offset.zero & taille).contains(focus.bottomRight), isTrue);
+      });
+    }
 
     testWidgets('UX-15 : Commandes en focus puis Reduire, la gauche reste '
         'repliee', (WidgetTester tester) async {

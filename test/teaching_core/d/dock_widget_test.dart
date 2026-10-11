@@ -260,10 +260,11 @@ void main() {
       ]) {
         expect(boutonNomme(libelle), findsOneWidget);
       }
-      // « Stylet » nomme deux boutons : celui du dock qui arme l'outil, et
-      // celui de la barre qui choisit l'encre. Le mot est le bon des deux
-      // cotes, et la barre n'existe que si le premier est arme.
-      expect(boutonNomme(t.tc.outils.trait.stylet), findsNWidgets(2));
+      // Le dock arme l'outil par « Stylet » ; la barre choisit l'encre par
+      // « Stylo » (TB-7b, plan V2 §20). La barre n'existe que si le premier
+      // est arme.
+      expect(boutonNomme(t.tc.outils.dock.stylet), findsOneWidget);
+      expect(boutonNomme(t.tc.outils.trait.stylet), findsOneWidget);
     });
   });
 

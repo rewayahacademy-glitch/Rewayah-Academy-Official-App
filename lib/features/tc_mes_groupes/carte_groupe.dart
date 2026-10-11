@@ -218,38 +218,78 @@ class _Entete extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle styleNom = textes.titleMedium ?? const TextStyle();
+    final TextStyle styleCapacite = textes.labelLarge ?? const TextStyle();
+    final String capacite = LibellesGroupe.capacite(
+      membres: groupe.nombreMembres,
+      seuil: groupe.seuilMax,
+    );
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        LisereGroupe(jeton: groupe.couleurJeton),
-        Ecart.hMd,
-        Expanded(
-          child: Text(
-            groupe.libelle,
-            style: textes.titleMedium ?? const TextStyle(),
-          ),
-        ),
-        Ecart.hMd,
-        // `4 / 5` ou `3 / 4` : jamais un plafond ecrit dans cet ecran. La
-        // phrase complete est reservee aux technologies d'assistance, qui
-        // liraient « quatre barre oblique cinq » sans elle.
-        Semantics(
-          label: LibellesGroupe.capacitePhrase(
-            membres: groupe.nombreMembres,
-            seuil: groupe.seuilMax,
-          ),
-          child: ExcludeSemantics(
-            child: Text(
-              LibellesGroupe.capacite(
-                membres: groupe.nombreMembres,
-                seuil: groupe.seuilMax,
+    final Widget nom = Text(groupe.libelle, style: styleNom);
+    // `4 / 5` ou `3 / 4` : jamais un plafond ecrit dans cet ecran. La
+    // phrase complete est reservee aux technologies d'assistance, qui
+    // liraient « quatre barre oblique cinq » sans elle.
+    final Widget valeur = Semantics(
+      label: LibellesGroupe.capacitePhrase(
+        membres: groupe.nombreMembres,
+        seuil: groupe.seuilMax,
+      ),
+      child: ExcludeSemantics(child: Text(capacite, style: styleCapacite)),
+    );
+
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        // AR-TC-1 : la capacite reste a cote du nom tant que le mot le plus
+        // long du nom y tient entier ; sinon (320 px, texte x2, « 4 من 5 »)
+        // elle passe sous le nom, et aucun mot n'est coupe.
+        final TextScaler echelle = MediaQuery.textScalerOf(context);
+        final TextDirection sens = Directionality.of(context);
+        double largeur(String texte, TextStyle style) {
+          final TextPainter mesure = TextPainter(
+            text: TextSpan(text: texte, style: style),
+            textDirection: sens,
+            textScaler: echelle,
+            maxLines: 1,
+          )..layout();
+          final double l = mesure.width;
+          mesure.dispose();
+          return l;
+        }
+        final double motLePlusLong = groupe.libelle
+            .split(RegExp(r'\s+'))
+            .map((String mot) => largeur(mot, styleNom))
+            .fold(0, (double a, double b) => a > b ? a : b);
+        final bool aCote =
+            AppSpacing.xs +
+                2 * AppSpacing.md +
+                motLePlusLong +
+                largeur(capacite, styleCapacite) <=
+            contraintes.maxWidth;
+
+        final Widget ligneNom = Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            LisereGroupe(jeton: groupe.couleurJeton),
+            Ecart.hMd,
+            Expanded(child: nom),
+            if (aCote) ...<Widget>[Ecart.hMd, valeur],
+          ],
+        );
+        if (aCote) return ligneNom;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ligneNom,
+            Padding(
+              padding: const EdgeInsetsDirectional.only(
+                start: AppSpacing.xs + AppSpacing.md,
               ),
-              style: textes.labelLarge ?? const TextStyle(),
+              child: valeur,
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 }

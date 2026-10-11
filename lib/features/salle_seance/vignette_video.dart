@@ -97,7 +97,9 @@ class VignetteVideo extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final ThemeData theme = Theme.of(context);
+    // TB-RC (revue TB-R, m7) : un noeud propre, jamais fondu dans l'ecran.
     return Semantics(
+      container: true,
       image: true,
       label: t.salle.seance.videoDe(deNom: deDevant(vue.nomEnseignant)),
       excludeSemantics: true,

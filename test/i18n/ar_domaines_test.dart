@@ -129,11 +129,6 @@ Map<String, String> _domaine(String langue, String domaine) => _aplatir(
   '$domaine.',
 );
 
-/// Les cles traduites avant ces tranches, sans isolation. Celles des
-/// domaines enseignant, etat, classe et eleve sont isolees depuis la revue
-/// du 09/10 au soir.
-const Set<String> _anciennes = <String>{'salle.secours.indisponible'};
-
 /// Les textes gardes en latin (marque, format de fichier).
 const Set<String> _latins = <String>{
   'salle.seance.rail.marque',
@@ -322,7 +317,6 @@ void main() {
 
       test('parametres isoles (U+2068 ... U+2069)', () {
         for (final MapEntry<String, String> e in ar.entries) {
-          if (_anciennes.contains(e.key)) continue;
           expect(defautsIsolation(e.value), isEmpty, reason: e.key);
         }
       });

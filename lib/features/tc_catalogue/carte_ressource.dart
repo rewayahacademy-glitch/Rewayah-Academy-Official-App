@@ -38,7 +38,13 @@ class CarteRessource extends StatelessWidget {
     this.onPress,
     this.raisonIndisponible,
     this.couvertureDeposee,
+    this.pointDeReprise,
   });
+
+  /// TB-9 (plan V2 §3 « Ranger reellement ») : le point de reprise d'un
+  /// support range pendant la seance (« Reprise a la page 3 sur 12 »), ou
+  /// `null`. Une ligne de texte, jamais une couleur seule.
+  final String? pointDeReprise;
 
   /// La ressource presentee.
   final LibraryResource ressource;
@@ -81,36 +87,41 @@ class CarteRessource extends StatelessWidget {
     return AppCard(
       onPress: onPress,
       libelleSemantique: libelleSemantique,
-      // COUPE-MOTS-FOND-1 : quand le mot le plus long du titre ne tient pas
-      // a cote de la couverture (320 px texte x2, Interface guidee), le
-      // texte passe sous la couverture au lieu de couper « Alphabet ».
-      child: LayoutBuilder(
-        builder: (BuildContext contexte, BoxConstraints c) {
-          final TextTheme textes = Theme.of(contexte).textTheme;
-          final double place = c.maxWidth - largeur - AppSpacing.lg;
-          final bool aCote =
-              largeurMotLePlusLong(
-                contexte,
-                ressource.title,
-                textes.titleMedium,
-                MediaQuery.textScalerOf(contexte),
-              ) <=
-              place;
-          if (!aCote) {
-            return Column(
+      // TB-RC (TB_RAPPORT §d n. 22) : le nom lu dit deja titre, type et
+      // etat ; le texte peint se tait, la carte n'est pas lue deux fois.
+      child: ExcludeSemantics(
+        excluding: onPress != null,
+        // COUPE-MOTS-FOND-1 : quand le mot le plus long du titre ne tient pas
+        // a cote de la couverture (320 px texte x2, Interface guidee), le
+        // texte passe sous la couverture au lieu de couper « Alphabet ».
+        child: LayoutBuilder(
+          builder: (BuildContext contexte, BoxConstraints c) {
+            final TextTheme textes = Theme.of(contexte).textTheme;
+            final double place = c.maxWidth - largeur - AppSpacing.lg;
+            final bool aCote =
+                largeurMotLePlusLong(
+                  contexte,
+                  ressource.title,
+                  textes.titleMedium,
+                  MediaQuery.textScalerOf(contexte),
+                ) <=
+                place;
+            if (!aCote) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[vignette, Ecart.vMd, _texte(contexte)],
+              );
+            }
+            return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[vignette, Ecart.vMd, _texte(contexte)],
+              children: <Widget>[
+                vignette,
+                Ecart.hLg,
+                Expanded(child: _texte(contexte)),
+              ],
             );
-          }
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              vignette,
-              Ecart.hLg,
-              Expanded(child: _texte(contexte)),
-            ],
-          );
-        },
+          },
+        ),
       ),
     );
   }
@@ -124,8 +135,10 @@ class CarteRessource extends StatelessWidget {
     final String base =
         '${ressource.title}, ${libelleTypeRessource(ressource.resourceType)}, '
         '${libelleOffline(etatOffline)}';
+    final String? reprise = pointDeReprise;
+    final String avecReprise = reprise == null ? base : '$base. $reprise';
     final String? raison = raisonIndisponible;
-    return raison == null ? base : '$base. $raison';
+    return raison == null ? avecReprise : '$avecReprise. $raison';
   }
 
   Widget _texte(BuildContext context) {
@@ -156,6 +169,15 @@ class CarteRessource extends StatelessWidget {
             textes.bodySmall ?? const TextStyle(),
           ),
         ),
+        if (pointDeReprise != null) ...<Widget>[
+          Ecart.vSm,
+          Text(
+            pointDeReprise!,
+            style: palette.inkStrong.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+        ],
         Ecart.vSm,
         Align(
           alignment: AlignmentDirectional.centerStart,

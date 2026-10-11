@@ -49,8 +49,13 @@ class BoutonIcone extends StatelessWidget {
     super.key,
     this.forme = FormeBoutonIcone.cercle,
     this.infobulle,
+    this.focusNode,
     this.suitTexte = false,
   });
+
+  /// Le noeud du bouton, ou `null` : un hote y rend le focus (fermeture
+  /// d'un panneau ouvert par ce bouton).
+  final FocusNode? focusNode;
 
   /// Vrai pour que l'icone suive l'echelle du texte (lot K) : posee a cote
   /// d'un bouton a libelle (le micro a cote d'« Envoyer »), une icone de
@@ -132,6 +137,7 @@ class BoutonIcone extends StatelessWidget {
         actif: onPress != null,
         libelleSemantique: libelle,
         arrondiFocus: arrondi,
+        focusNode: focusNode,
         child: ExcludeSemantics(
           child: SizedBox.square(
             dimension: cible,
