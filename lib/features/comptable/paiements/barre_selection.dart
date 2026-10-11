@@ -6,10 +6,12 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../core/capacites/port_export_rapports.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
+import '../graphiques/action_export.dart';
 
 /// La barre de selection de W02.
 class BarreSelection extends StatelessWidget {
@@ -19,8 +21,12 @@ class BarreSelection extends StatelessWidget {
     required this.onVider,
     this.onPayer,
     this.horsLigne = false,
+    this.identifiants = const <String>[],
     super.key,
   });
+
+  /// Les identifiants retenus, pour « Exporter la selection ».
+  final List<String> identifiants;
 
   /// Le nombre de paiements retenus.
   final int nombre;
@@ -66,6 +72,13 @@ class BarreSelection extends StatelessWidget {
             style: palette.inkMuted.applyTo(
               textes.bodySmall ?? const TextStyle(),
             ),
+          ),
+          Ecart.vMd,
+          // COMPTA-GRAPH-1 : l'export de la selection, par un port ; sans
+          // capacite, une phrase le dit a la place de l'action.
+          ActionExport(
+            perimetre: PerimetreExport.selection,
+            identifiants: identifiants,
           ),
           Ecart.vMd,
           Wrap(

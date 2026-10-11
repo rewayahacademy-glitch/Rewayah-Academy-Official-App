@@ -42,6 +42,7 @@ import '../comptable/contractuels/obligation_contractuel_page.dart';
 import '../comptable/encaissements/detail_encaissement_page.dart';
 import '../comptable/encaissements/encaissements_page.dart';
 import '../comptable/encaissements/rapprochement_page.dart';
+import '../comptable/graphiques/rapports_page.dart';
 import '../comptable/paiements/detail_paiement_page.dart';
 import '../comptable/paiements/paiements_page.dart';
 import '../comptable/tresorerie/tresorerie_page.dart';
@@ -53,6 +54,7 @@ import 'comptable/contractuels_demo.dart';
 import 'comptable/direction_demo.dart';
 import 'comptable/encaissements_demo.dart';
 import 'comptable/paiements_demo.dart';
+import 'comptable/series_demo.dart';
 import 'comptable/socle_comptable_demo.dart';
 import 'comptable/tresorerie_demo.dart';
 import 'comptable/validations_demo.dart';
@@ -108,6 +110,9 @@ enum EcranDemoComptable {
 
   /// Rapprochement.
   rapprochement(2),
+
+  /// Rapports (COMPTA-GRAPH-1) : entrees et sorties, flux, export.
+  rapports(2),
 
   /// Compte du Comptable.
   compte(3),
@@ -185,6 +190,7 @@ String libelleEcranDemoComptable(EcranDemoComptable ecran) => switch (ecran) {
     t.comptable.encaissements.detailTitre,
   EcranDemoComptable.rapprochement =>
     t.comptable.encaissements.rapprochementTitre,
+  EcranDemoComptable.rapports => t.comptable.graphiques.rapportsTitre,
   EcranDemoComptable.compte => t.comptable.nav.compte,
   EcranDemoComptable.recevoirPaiements =>
     t.comptable.beneficiaires.recevoir.titre,
@@ -227,6 +233,7 @@ List<Override> surchargesCoquilleComptableDemo({
   ...surchargesDemoAujourdhui(),
   ...surchargesDemoPaiements(),
   ...surchargesDemoTresorerie(),
+  ...surchargesDemoSeries(aujourdhui: SocleComptableDemo.aujourdhui),
   ...surchargesDemoEncaissements(),
   ...surchargesDemoBeneficiaires(),
   // CPT-COM : « Relancer » ouvre le fil dans la coquille de demonstration,
@@ -397,6 +404,7 @@ class CoquilleComptableDemo extends StatelessWidget {
             EcranDemoComptable.detailEncaissement =>
               const DetailEncaissementPage(encaissementId: 'enc-01'),
             EcranDemoComptable.rapprochement => const RapprochementPage(),
+            EcranDemoComptable.rapports => const RapportsPage(),
             EcranDemoComptable.compte => const ComptePage(),
             EcranDemoComptable.recevoirPaiements =>
               const RecevoirPaiementsPage(),

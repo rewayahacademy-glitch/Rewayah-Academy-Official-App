@@ -197,6 +197,15 @@ class TableauDeBordPage extends ConsumerWidget {
           onPress: () =>
               GoRouter.of(context).go(Routes.adminOperationsPilotage),
         ),
+        // DASH-ADM-PLANNING : les seances de la semaine, toutes classes.
+        SettingRow(
+          key: const ValueKey<String>('tableau-planning'),
+          title: t.admin.tableau.outilsPlanning,
+          description: t.admin.tableau.outilsPlanningDetail,
+          icon: AppIcons.planningGlobal,
+          onPress: () =>
+              GoRouter.of(context).go(Routes.adminOperationsPlanning),
+        ),
         SettingRow(
           title: t.admin.groupes.titre,
           description: t.admin.tableau.outilsGroupesDetail,
@@ -427,8 +436,10 @@ class _Compteurs extends StatelessWidget {
         gauche: (indicateurs.incidents24h, t.admin.tableau.incidents),
         droite: (indicateurs.comptesEchus, t.admin.tableau.comptes),
         // DASH-ADM-ECHUS : Comptes s'ouvre filtre sur les acces echus.
-        // Incidents reste un rapport : aucune page ne liste ce qu'il compte
-        // (DASH-ADM-INC).
+        // DASH-ADM-INC : la page des incidents liste les seances que compte
+        // le chiffre (D9).
+        onPressGauche: () =>
+            GoRouter.of(context).go(Routes.adminSecuriteAuditIncidents),
         onPressDroite: () =>
             GoRouter.of(context).go(Routes.adminPersonnesComptesEchus),
       ),

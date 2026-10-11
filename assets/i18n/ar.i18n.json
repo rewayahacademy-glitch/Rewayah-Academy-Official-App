@@ -4055,7 +4055,9 @@
         "other": "ينتظر منذ ⁨{jours}⁩ يوم"
       },
       "outilsPilotage": "متابعة المواعيد",
-      "outilsPilotageDetail": "لكل موعد: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون."
+      "outilsPilotageDetail": "لكل موعد: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون.",
+      "outilsPlanning": "جدول الأسبوع",
+      "outilsPlanningDetail": "حصص الأسبوع يومًا بيوم، مع فصلها ومعلمها."
     },
     "demandes": {
       "titre": "الطلبات والقواعد",
@@ -4893,6 +4895,45 @@
         "resume": "الطلبات المجمّعة من ⁨{debut}⁩ إلى ⁨{fin}⁩ من أصل ⁨{total}⁩"
       }
     },
+    "planning": {
+      "titre": "الجدول",
+      "sousTitre": "حصص الأسبوع في جميع الفصول، يومًا بيوم.",
+      "semaine": "أسبوع ⁨{date}⁩",
+      "semaineSemantique": "أسبوع ⁨{date}⁩",
+      "precedente": "الأسبوع السابق",
+      "suivante": "الأسبوع التالي",
+      "cetteSemaine": "العودة إلى هذا الأسبوع",
+      "horaire": "من ⁨{debut}⁩ إلى ⁨{fin}⁩",
+      "sansEnseignant": "دون معلم",
+      "avecEnseignant": "المعلم: ⁨{nom}⁩",
+      "vide": "لا حصص هذا الأسبوع",
+      "videDetail": "تظهر الحصص هنا بمجرد أن يكون لفصل موعد هذا الأسبوع. جرّب أسبوعًا آخر.",
+      "sansDonnees": "تعذّر تحميل الجدول",
+      "erreur": "تعذّرت قراءة الجدول: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.",
+      "indisponibleTitre": "متاح عند ربط الخادم",
+      "indisponiblePhrase": "سيظهر الجدول هنا فور ربط الخادم. إلى ذلك الحين لا يُعرض شيء: لا تُختلق أي حصة.",
+      "statutPrevue": "مقرَّرة",
+      "statutPreparation": "قيد التحضير",
+      "statutTerminee": "منتهية",
+      "statutIncident": "عطل تقني",
+      "statutEnseignantAbsent": "المعلم غائب",
+      "statutEleveAbsent": "الطالب غائب"
+    },
+    "incidents": {
+      "titre": "حوادث آخر 24 ساعة",
+      "sousTitre": "الحصص التي صارت عطلًا تقنيًا أو غياب معلم أو غياب طالب منذ 24 ساعة: هذا ما تعدّه بطاقة «حوادث (24 س)».",
+      "liste": "حصص بها حادث",
+      "natureTechnique": "عطل تقني",
+      "natureEnseignantAbsent": "المعلم غائب",
+      "natureEleveAbsent": "الطالب غائب",
+      "survenu": "⁨{date}⁩، ⁨{heure}⁩",
+      "vide": "لا حوادث منذ 24 ساعة",
+      "videDetail": "تظهر هنا كل حصة تتحول إلى عطل أو غياب معلم أو غياب طالب فور تغيّر حالتها.",
+      "sansDonnees": "تعذّر تحميل الحوادث",
+      "erreur": "تعذّرت قراءة الحوادث: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.",
+      "indisponibleTitre": "متاح عند ربط الخادم",
+      "indisponiblePhrase": "ستظهر الحوادث هنا فور ربط الخادم. إلى ذلك الحين لا يُعرض شيء: لا يُختلق أي حادث."
+    },
     "pilotage": {
       "titre": "متابعة المواعيد",
       "sousTitre": "لكل موعد ولكل فئة: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون.",
@@ -5503,13 +5544,49 @@
       "tresorerie": "الخزينة",
       "compte": "الحساب"
     },
+    "graphiques": {
+      "masque": "المبالغ مخفية: لا يُرسم المخطط. أظهر المبالغ لرؤيته.",
+      "voirValeurs": "عرض القيم",
+      "masquerValeurs": "إخفاء القيم",
+      "repartitionTitre": "التوزيع حسب الصندوق",
+      "repartitionResume": "التوزيع بين ⁨{n}⁩ صناديق.",
+      "mensuelTitre": "الوارد والصادر خلال 6 أشهر",
+      "mensuelResume": "الوارد والصادر من ⁨{debut}⁩ إلى ⁨{fin}⁩.",
+      "fluxTitre": "تدفق الخزينة خلال 30 يومًا",
+      "fluxResume": "المقبوضات والمدفوعات من ⁨{debut}⁩ إلى ⁨{fin}⁩.",
+      "evolutionTitre": "التطور خلال 6 أشهر",
+      "evolutionResume": "الخزينة المحتفظ بها من ⁨{debut}⁩ إلى ⁨{fin}⁩.",
+      "legendeEntrees": "الوارد",
+      "legendeSorties": "الصادر",
+      "legendeEncaissements": "المقبوضات",
+      "legendeDecaissements": "المدفوعات",
+      "legendeDetenue": "الخزينة المحتفظ بها",
+      "kpiTitre": "الوارد والصادر",
+      "kpiEntrees": "الوارد",
+      "kpiSorties": "الصادر",
+      "kpiPeriode": "آخر 30 يومًا",
+      "variation": "⁨{pourcent}⁩٪ مقارنة بالفترة السابقة",
+      "rapportsTitre": "التقارير",
+      "rapportsSousTitre": "الوارد والصادر والخزينة عبر الزمن.",
+      "vide": "لا بيانات للرسم",
+      "videDetail": "تظهر المخططات هنا بمجرد تسجيل مقبوضات أو مدفوعات.",
+      "erreur": "تعذّرت قراءة المخططات: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.",
+      "sansDonnees": "تعذّر تحميل المخططات",
+      "exporterRapport": "تصدير التقرير",
+      "exporterSelection": "تصدير المحدد",
+      "exportIndisponible": "التصدير غير متاح بعد: سيفتح فور ربط الخادم.",
+      "exportEnCours": "جارٍ تحضير التصدير",
+      "exportPret": "التصدير جاهز: ⁨{reference}⁩ (⁨{lignes}⁩ سطرًا).",
+      "exportEchec": "تعذّر تحضير التصدير: ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة."
+    },
     "onglets": {
       "aEffectuer": "للتنفيذ",
       "contractuels": "المتعاقدون",
       "beneficiaires": "المستفيدون",
       "coffres": "الصناديق",
       "encaissements": "المقبوضات",
-      "rapprochement": "المطابقة"
+      "rapprochement": "المطابقة",
+      "rapports": "التقارير"
     },
     "commun": {
       "montantMasque": "مبلغ مخفي",
@@ -5695,6 +5772,7 @@
       "accesEncaissements": "عرض المقبوضات",
       "accesTresorerie": "عرض الخزينة والصناديق",
       "accesAlimenter": "تغذية الاحتياطي الاستراتيجي",
+      "accesRapports": "عرض التقارير",
       "titre": "اليوم",
       "sousTitre": "ماذا عليّ أن أفعل الآن؟",
       "attention": "للمعالجة والتنبيهات",
@@ -5994,7 +6072,9 @@
       },
       "titre": "الخزينة والصناديق",
       "sousTitre": "الخزينة الحرة هي الرقم الوحيد القابل للإنفاق.",
-      "alimenter": "تغذية الاحتياطي الاستراتيجي"
+      "alimenter": "تغذية الاحتياطي الاستراتيجي",
+      "erreurPartielle": "تعذّرت قراءة جزء من الصفحة: الباقي محدَّث. أعد المحاولة للإكمال.",
+      "erreurPartielleAction": "إعادة المحاولة"
     },
     "encaissements": {
       "filtreTous": "الكل",
@@ -6155,7 +6235,9 @@
         "motifAnomalieDetail": "فشلت دفعة حديثة أو أُبلغ عن فرق.",
         "motifDemande": "طلب من المستفيد",
         "motifDemandeDetail": "طلب المستفيد عدم استلام أي دفعة حاليًا.",
-        "motifRequis": "اختر سببًا للمتابعة."
+        "motifRequis": "اختر سببًا للمتابعة.",
+        "voirFil": "عرض محادثة ⁨{nom}⁩",
+        "voirFilRefuse": "تعذّر فتح محادثة ⁨{nom}⁩: لم تُنشأ بعد أو لم تنجح القراءة. أعد المحاولة بعد لحظة."
       },
       "titre": "المستفيدون",
       "sousTitre": "البيانات مخفية: المستفيد وحده يعدّل بياناته.",
@@ -6312,7 +6394,9 @@
         "montant": "المبلغ الدقيق",
         "etat": "الحالة",
         "historique": "السجل",
-        "historiqueVide": "لا يوجد أي إدخال حتى الآن."
+        "historiqueVide": "لا يوجد أي إدخال حتى الآن.",
+        "historiqueErreur": "تعذّرت قراءة السجل: هذا لا يعني أنه فارغ. أعد المحاولة بعد لحظة.",
+        "historiqueReessayer": "إعادة قراءة السجل"
       },
       "valider": "مصادقة",
       "refuser": "رفض",
@@ -6448,7 +6532,19 @@
         "montantManuel": "إدخال مبلغ يدويًا عند الدفع",
         "montantManuelDetail": "مبلغ الدفعة هو دائمًا مبلغ الالتزام.",
         "politiqueTarifaire": "تعديل الأسعار",
-        "politiqueTarifaireDetail": "سياسة الأسعار تبقى للإدارة."
+        "politiqueTarifaireDetail": "سياسة الأسعار تبقى للإدارة.",
+        "sensiblesTitre": "حساس دائمًا",
+        "sensiblesDetail": "هذه الحالات الخمس تتطلب دائمًا تحققًا إضافيًا مهما كانت الإعدادات أعلاه. الدفعة الأولى والبيانات الحديثة تُضبط في الأعلى.",
+        "sensibleHorsSeuil": "مبلغ فوق الحد",
+        "sensibleHorsSeuilDetail": "دفعة تتجاوز الحدود المضبوطة أعلاه.",
+        "sensibleHorsCycle": "دفعة خارج الدورة",
+        "sensibleHorsCycleDetail": "دفعة لا تتبع فترة الدفع المعتادة.",
+        "sensibleLieOperateur": "مستفيد مرتبط بالمشغّل",
+        "sensibleLieOperateurDetail": "دفعة إلى شخص مرتبط بمشغّل الدفع.",
+        "sensibleFournisseur": "المزوّد غير متاح",
+        "sensibleFournisseurDetail": "دفعة لا يستجيب مزوّد الدفع الخاص بها.",
+        "sensibleManuelle": "التزام يدوي غير معتمد",
+        "sensibleManuelleDetail": "التزام أُدخل يدويًا ولم يُعتمد بعد."
       },
       "titre": "الاحتياطي والتفويض",
       "sousTitre": "سياسة الاحتياطي الاستراتيجي وما يستطيع المحاسب تنفيذه وحده.",

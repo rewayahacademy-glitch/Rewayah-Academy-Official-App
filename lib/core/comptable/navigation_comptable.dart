@@ -30,8 +30,8 @@ List<({String libelle, String chemin})> ongletsPaiementsComptable() =>
       ),
     ];
 
-/// Les trois onglets de la destination Tresorerie : Coffres (W04),
-/// Encaissements (W05), Rapprochement.
+/// Les quatre onglets de la destination Tresorerie : Coffres (W04),
+/// Encaissements (W05), Rapprochement, Rapports (COMPTA-GRAPH-1).
 List<({String libelle, String chemin})> ongletsTresorerieComptable() =>
     <({String libelle, String chemin})>[
       (
@@ -46,6 +46,7 @@ List<({String libelle, String chemin})> ongletsTresorerieComptable() =>
         libelle: t.comptable.onglets.rapprochement,
         chemin: Routes.comptableRapprochement,
       ),
+      (libelle: t.comptable.onglets.rapports, chemin: Routes.comptableRapports),
     ];
 
 /// L'index de l'onglet Paiements actif pour [chemin] : A effectuer pour la
@@ -71,6 +72,9 @@ int indexOngletTresorerie(String chemin) {
   }
   if (chemin == Routes.comptableRapprochement) {
     return 2;
+  }
+  if (chemin == Routes.comptableRapports) {
+    return 3;
   }
   return 0;
 }

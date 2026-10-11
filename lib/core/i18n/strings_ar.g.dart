@@ -610,6 +610,8 @@ class _Traductions$admin$ar extends Traductions$admin$fr {
 	@override late final _Traductions$admin$agents$ar agents = _Traductions$admin$agents$ar._(_root);
 	@override late final _Traductions$admin$notifications$ar notifications = _Traductions$admin$notifications$ar._(_root);
 	@override late final _Traductions$admin$regroupements$ar regroupements = _Traductions$admin$regroupements$ar._(_root);
+	@override late final _Traductions$admin$planning$ar planning = _Traductions$admin$planning$ar._(_root);
+	@override late final _Traductions$admin$incidents$ar incidents = _Traductions$admin$incidents$ar._(_root);
 	@override late final _Traductions$admin$pilotage$ar pilotage = _Traductions$admin$pilotage$ar._(_root);
 	@override late final _Traductions$admin$fusion$ar fusion = _Traductions$admin$fusion$ar._(_root);
 	@override late final _Traductions$admin$tirage$ar tirage = _Traductions$admin$tirage$ar._(_root);
@@ -624,6 +626,7 @@ class _Traductions$comptable$ar extends Traductions$comptable$fr {
 
 	// Translations
 	@override late final _Traductions$comptable$nav$ar nav = _Traductions$comptable$nav$ar._(_root);
+	@override late final _Traductions$comptable$graphiques$ar graphiques = _Traductions$comptable$graphiques$ar._(_root);
 	@override late final _Traductions$comptable$onglets$ar onglets = _Traductions$comptable$onglets$ar._(_root);
 	@override late final _Traductions$comptable$commun$ar commun = _Traductions$comptable$commun$ar._(_root);
 	@override late final _Traductions$comptable$coffres$ar coffres = _Traductions$comptable$coffres$ar._(_root);
@@ -3675,6 +3678,8 @@ class _Traductions$admin$tableau$ar extends Traductions$admin$tableau$fr {
 	);
 	@override String get outilsPilotage => 'متابعة المواعيد';
 	@override String get outilsPilotageDetail => 'لكل موعد: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون.';
+	@override String get outilsPlanning => 'جدول الأسبوع';
+	@override String get outilsPlanningDetail => 'حصص الأسبوع يومًا بيوم، مع فصلها ومعلمها.';
 }
 
 // Path: admin.demandes
@@ -4592,6 +4597,59 @@ class _Traductions$admin$regroupements$ar extends Traductions$admin$regroupement
 	@override late final _Traductions$admin$regroupements$liste$ar liste = _Traductions$admin$regroupements$liste$ar._(_root);
 }
 
+// Path: admin.planning
+class _Traductions$admin$planning$ar extends Traductions$admin$planning$fr {
+	_Traductions$admin$planning$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الجدول';
+	@override String get sousTitre => 'حصص الأسبوع في جميع الفصول، يومًا بيوم.';
+	@override String semaine({required Object date}) => 'أسبوع ⁨${date}⁩';
+	@override String semaineSemantique({required Object date}) => 'أسبوع ⁨${date}⁩';
+	@override String get precedente => 'الأسبوع السابق';
+	@override String get suivante => 'الأسبوع التالي';
+	@override String get cetteSemaine => 'العودة إلى هذا الأسبوع';
+	@override String horaire({required Object debut, required Object fin}) => 'من ⁨${debut}⁩ إلى ⁨${fin}⁩';
+	@override String get sansEnseignant => 'دون معلم';
+	@override String avecEnseignant({required Object nom}) => 'المعلم: ⁨${nom}⁩';
+	@override String get vide => 'لا حصص هذا الأسبوع';
+	@override String get videDetail => 'تظهر الحصص هنا بمجرد أن يكون لفصل موعد هذا الأسبوع. جرّب أسبوعًا آخر.';
+	@override String get sansDonnees => 'تعذّر تحميل الجدول';
+	@override String get erreur => 'تعذّرت قراءة الجدول: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.';
+	@override String get indisponibleTitre => 'متاح عند ربط الخادم';
+	@override String get indisponiblePhrase => 'سيظهر الجدول هنا فور ربط الخادم. إلى ذلك الحين لا يُعرض شيء: لا تُختلق أي حصة.';
+	@override String get statutPrevue => 'مقرَّرة';
+	@override String get statutPreparation => 'قيد التحضير';
+	@override String get statutTerminee => 'منتهية';
+	@override String get statutIncident => 'عطل تقني';
+	@override String get statutEnseignantAbsent => 'المعلم غائب';
+	@override String get statutEleveAbsent => 'الطالب غائب';
+}
+
+// Path: admin.incidents
+class _Traductions$admin$incidents$ar extends Traductions$admin$incidents$fr {
+	_Traductions$admin$incidents$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'حوادث آخر 24 ساعة';
+	@override String get sousTitre => 'الحصص التي صارت عطلًا تقنيًا أو غياب معلم أو غياب طالب منذ 24 ساعة: هذا ما تعدّه بطاقة «حوادث (24 س)».';
+	@override String get liste => 'حصص بها حادث';
+	@override String get natureTechnique => 'عطل تقني';
+	@override String get natureEnseignantAbsent => 'المعلم غائب';
+	@override String get natureEleveAbsent => 'الطالب غائب';
+	@override String survenu({required Object date, required Object heure}) => '⁨${date}⁩، ⁨${heure}⁩';
+	@override String get vide => 'لا حوادث منذ 24 ساعة';
+	@override String get videDetail => 'تظهر هنا كل حصة تتحول إلى عطل أو غياب معلم أو غياب طالب فور تغيّر حالتها.';
+	@override String get sansDonnees => 'تعذّر تحميل الحوادث';
+	@override String get erreur => 'تعذّرت قراءة الحوادث: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.';
+	@override String get indisponibleTitre => 'متاح عند ربط الخادم';
+	@override String get indisponiblePhrase => 'ستظهر الحوادث هنا فور ربط الخادم. إلى ذلك الحين لا يُعرض شيء: لا يُختلق أي حادث.';
+}
+
 // Path: admin.pilotage
 class _Traductions$admin$pilotage$ar extends Traductions$admin$pilotage$fr {
 	_Traductions$admin$pilotage$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -4929,6 +4987,48 @@ class _Traductions$comptable$nav$ar extends Traductions$comptable$nav$fr {
 	@override String get compte => 'الحساب';
 }
 
+// Path: comptable.graphiques
+class _Traductions$comptable$graphiques$ar extends Traductions$comptable$graphiques$fr {
+	_Traductions$comptable$graphiques$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get masque => 'المبالغ مخفية: لا يُرسم المخطط. أظهر المبالغ لرؤيته.';
+	@override String get voirValeurs => 'عرض القيم';
+	@override String get masquerValeurs => 'إخفاء القيم';
+	@override String get repartitionTitre => 'التوزيع حسب الصندوق';
+	@override String repartitionResume({required Object n}) => 'التوزيع بين ⁨${n}⁩ صناديق.';
+	@override String get mensuelTitre => 'الوارد والصادر خلال 6 أشهر';
+	@override String mensuelResume({required Object debut, required Object fin}) => 'الوارد والصادر من ⁨${debut}⁩ إلى ⁨${fin}⁩.';
+	@override String get fluxTitre => 'تدفق الخزينة خلال 30 يومًا';
+	@override String fluxResume({required Object debut, required Object fin}) => 'المقبوضات والمدفوعات من ⁨${debut}⁩ إلى ⁨${fin}⁩.';
+	@override String get evolutionTitre => 'التطور خلال 6 أشهر';
+	@override String evolutionResume({required Object debut, required Object fin}) => 'الخزينة المحتفظ بها من ⁨${debut}⁩ إلى ⁨${fin}⁩.';
+	@override String get legendeEntrees => 'الوارد';
+	@override String get legendeSorties => 'الصادر';
+	@override String get legendeEncaissements => 'المقبوضات';
+	@override String get legendeDecaissements => 'المدفوعات';
+	@override String get legendeDetenue => 'الخزينة المحتفظ بها';
+	@override String get kpiTitre => 'الوارد والصادر';
+	@override String get kpiEntrees => 'الوارد';
+	@override String get kpiSorties => 'الصادر';
+	@override String get kpiPeriode => 'آخر 30 يومًا';
+	@override String variation({required Object pourcent}) => '⁨${pourcent}⁩٪ مقارنة بالفترة السابقة';
+	@override String get rapportsTitre => 'التقارير';
+	@override String get rapportsSousTitre => 'الوارد والصادر والخزينة عبر الزمن.';
+	@override String get vide => 'لا بيانات للرسم';
+	@override String get videDetail => 'تظهر المخططات هنا بمجرد تسجيل مقبوضات أو مدفوعات.';
+	@override String get erreur => 'تعذّرت قراءة المخططات: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.';
+	@override String get sansDonnees => 'تعذّر تحميل المخططات';
+	@override String get exporterRapport => 'تصدير التقرير';
+	@override String get exporterSelection => 'تصدير المحدد';
+	@override String get exportIndisponible => 'التصدير غير متاح بعد: سيفتح فور ربط الخادم.';
+	@override String get exportEnCours => 'جارٍ تحضير التصدير';
+	@override String exportPret({required Object reference, required Object lignes}) => 'التصدير جاهز: ⁨${reference}⁩ (⁨${lignes}⁩ سطرًا).';
+	@override String get exportEchec => 'تعذّر تحضير التصدير: ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة.';
+}
+
 // Path: comptable.onglets
 class _Traductions$comptable$onglets$ar extends Traductions$comptable$onglets$fr {
 	_Traductions$comptable$onglets$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -4942,6 +5042,7 @@ class _Traductions$comptable$onglets$ar extends Traductions$comptable$onglets$fr
 	@override String get coffres => 'الصناديق';
 	@override String get encaissements => 'المقبوضات';
 	@override String get rapprochement => 'المطابقة';
+	@override String get rapports => 'التقارير';
 }
 
 // Path: comptable.commun
@@ -5079,6 +5180,7 @@ class _Traductions$comptable$aujourdhui$ar extends Traductions$comptable$aujourd
 	@override String get accesEncaissements => 'عرض المقبوضات';
 	@override String get accesTresorerie => 'عرض الخزينة والصناديق';
 	@override String get accesAlimenter => 'تغذية الاحتياطي الاستراتيجي';
+	@override String get accesRapports => 'عرض التقارير';
 	@override String get titre => 'اليوم';
 	@override String get sousTitre => 'ماذا عليّ أن أفعل الآن؟';
 	@override String get attention => 'للمعالجة والتنبيهات';
@@ -5177,6 +5279,8 @@ class _Traductions$comptable$tresorerie$ar extends Traductions$comptable$tresore
 	@override String get titre => 'الخزينة والصناديق';
 	@override String get sousTitre => 'الخزينة الحرة هي الرقم الوحيد القابل للإنفاق.';
 	@override String get alimenter => 'تغذية الاحتياطي الاستراتيجي';
+	@override String get erreurPartielle => 'تعذّرت قراءة جزء من الصفحة: الباقي محدَّث. أعد المحاولة للإكمال.';
+	@override String get erreurPartielleAction => 'إعادة المحاولة';
 }
 
 // Path: comptable.encaissements
@@ -11053,6 +11157,8 @@ class _Traductions$comptable$beneficiaires$profil$ar extends Traductions$comptab
 	@override String get motifDemande => 'طلب من المستفيد';
 	@override String get motifDemandeDetail => 'طلب المستفيد عدم استلام أي دفعة حاليًا.';
 	@override String get motifRequis => 'اختر سببًا للمتابعة.';
+	@override String voirFil({required Object nom}) => 'عرض محادثة ⁨${nom}⁩';
+	@override String voirFilRefuse({required Object nom}) => 'تعذّر فتح محادثة ⁨${nom}⁩: لم تُنشأ بعد أو لم تنجح القراءة. أعد المحاولة بعد لحظة.';
 }
 
 // Path: comptable.beneficiaires.recevoir
@@ -11135,6 +11241,8 @@ class _Traductions$comptable$validation$detail$ar extends Traductions$comptable$
 	@override String get etat => 'الحالة';
 	@override String get historique => 'السجل';
 	@override String get historiqueVide => 'لا يوجد أي إدخال حتى الآن.';
+	@override String get historiqueErreur => 'تعذّرت قراءة السجل: هذا لا يعني أنه فارغ. أعد المحاولة بعد لحظة.';
+	@override String get historiqueReessayer => 'إعادة قراءة السجل';
 }
 
 // Path: comptable.validation.motifs
@@ -11230,6 +11338,18 @@ class _Traductions$comptable$direction$delegationPanneau$ar extends Traductions$
 	@override String get montantManuelDetail => 'مبلغ الدفعة هو دائمًا مبلغ الالتزام.';
 	@override String get politiqueTarifaire => 'تعديل الأسعار';
 	@override String get politiqueTarifaireDetail => 'سياسة الأسعار تبقى للإدارة.';
+	@override String get sensiblesTitre => 'حساس دائمًا';
+	@override String get sensiblesDetail => 'هذه الحالات الخمس تتطلب دائمًا تحققًا إضافيًا مهما كانت الإعدادات أعلاه. الدفعة الأولى والبيانات الحديثة تُضبط في الأعلى.';
+	@override String get sensibleHorsSeuil => 'مبلغ فوق الحد';
+	@override String get sensibleHorsSeuilDetail => 'دفعة تتجاوز الحدود المضبوطة أعلاه.';
+	@override String get sensibleHorsCycle => 'دفعة خارج الدورة';
+	@override String get sensibleHorsCycleDetail => 'دفعة لا تتبع فترة الدفع المعتادة.';
+	@override String get sensibleLieOperateur => 'مستفيد مرتبط بالمشغّل';
+	@override String get sensibleLieOperateurDetail => 'دفعة إلى شخص مرتبط بمشغّل الدفع.';
+	@override String get sensibleFournisseur => 'المزوّد غير متاح';
+	@override String get sensibleFournisseurDetail => 'دفعة لا يستجيب مزوّد الدفع الخاص بها.';
+	@override String get sensibleManuelle => 'التزام يدوي غير معتمد';
+	@override String get sensibleManuelleDetail => 'التزام أُدخل يدويًا ولم يُعتمد بعد.';
 }
 
 // Path: appareils.emetteur.verification
@@ -16366,6 +16486,8 @@ extension on TraductionsAr {
 			'admin.tableau.attenteJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'ينتظر منذ اليوم', one: 'ينتظر منذ يوم واحد', two: 'ينتظر منذ يومين', few: 'ينتظر منذ ⁨${jours}⁩ أيام', many: 'ينتظر منذ ⁨${jours}⁩ يومًا', other: 'ينتظر منذ ⁨${jours}⁩ يوم', ), 
 			'admin.tableau.outilsPilotage' => 'متابعة المواعيد',
 			'admin.tableau.outilsPilotageDetail' => 'لكل موعد: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون.',
+			'admin.tableau.outilsPlanning' => 'جدول الأسبوع',
+			'admin.tableau.outilsPlanningDetail' => 'حصص الأسبوع يومًا بيوم، مع فصلها ومعلمها.',
 			'admin.demandes.titre' => 'الطلبات والقواعد',
 			'admin.demandes.restanteUne' => 'طلب واحد قيد الانتظار',
 			'admin.demandes.restantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طلب قيد الانتظار', one: 'طلب واحد قيد الانتظار', two: 'طلبان قيد الانتظار', few: '⁨${n}⁩ طلبات قيد الانتظار', many: '⁨${n}⁩ طلبًا قيد الانتظار', other: '⁨${n}⁩ طلب قيد الانتظار', ), 
@@ -16762,10 +16884,10 @@ extension on TraductionsAr {
 			'admin.journal.chaineIntacte' => 'السجل سليم',
 			'admin.journal.chaineIntacteDetail' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا مدخل للتحقق منه بعد.', one: 'أُعيدت قراءة مدخل واحد: لم يُعدَّل ولم يُحذف منذ كتابته.', two: 'أُعيدت قراءة مدخلين واحدًا واحدًا: لم يُعدَّل أي منهما ولم يُحذف منذ كتابته.', few: 'أُعيدت قراءة ⁨${nombre}⁩ مدخلات واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.', many: 'أُعيدت قراءة ⁨${nombre}⁩ مدخلًا واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.', other: 'أُعيدت قراءة ⁨${nombre}⁩ مدخل واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.', ), 
 			'admin.journal.chaineRompue' => 'السجل مُحرَّف',
-			'admin.journal.chaineRompueUne' => ({required Object entree}) => 'مدخل لم يعد يطابق بصمته، رقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.',
-			'admin.journal.chaineRompueDetail' => ({required num nombre, required Object entree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا مدخل يخالف بصمته.', one: 'مدخل واحد لم يعد يطابق بصمته، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', two: 'مدخلان لم يعودا يطابقان بصمتهما، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', few: '⁨${nombre}⁩ مدخلات لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', many: '⁨${nombre}⁩ مدخلًا لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', other: '⁨${nombre}⁩ مدخل لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', ), 
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.chaineRompueUne' => ({required Object entree}) => 'مدخل لم يعد يطابق بصمته، رقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.',
+			'admin.journal.chaineRompueDetail' => ({required num nombre, required Object entree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا مدخل يخالف بصمته.', one: 'مدخل واحد لم يعد يطابق بصمته، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', two: 'مدخلان لم يعودا يطابقان بصمتهما، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', few: '⁨${nombre}⁩ مدخلات لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', many: '⁨${nombre}⁩ مدخلًا لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', other: '⁨${nombre}⁩ مدخل لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', ), 
 			'admin.journal.chaineInconnue' => 'السلامة غير معروفة',
 			'admin.journal.chaineInconnueDetail' => 'لم يكتمل التحقق. تبقى المدخلات أدناه مقروءة، لكن لا شيء يضمن الآن أنها كاملة.',
 			'admin.journal.chaineEnCours' => 'جارٍ التحقق',
@@ -16994,6 +17116,41 @@ extension on TraductionsAr {
 			'admin.regroupements.liste.precedente' => 'الصفحة السابقة من الطلبات المجمّعة',
 			'admin.regroupements.liste.suivante' => 'الصفحة التالية من الطلبات المجمّعة',
 			'admin.regroupements.liste.resume' => ({required Object debut, required Object fin, required Object total}) => 'الطلبات المجمّعة من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩',
+			'admin.planning.titre' => 'الجدول',
+			'admin.planning.sousTitre' => 'حصص الأسبوع في جميع الفصول، يومًا بيوم.',
+			'admin.planning.semaine' => ({required Object date}) => 'أسبوع ⁨${date}⁩',
+			'admin.planning.semaineSemantique' => ({required Object date}) => 'أسبوع ⁨${date}⁩',
+			'admin.planning.precedente' => 'الأسبوع السابق',
+			'admin.planning.suivante' => 'الأسبوع التالي',
+			'admin.planning.cetteSemaine' => 'العودة إلى هذا الأسبوع',
+			'admin.planning.horaire' => ({required Object debut, required Object fin}) => 'من ⁨${debut}⁩ إلى ⁨${fin}⁩',
+			'admin.planning.sansEnseignant' => 'دون معلم',
+			'admin.planning.avecEnseignant' => ({required Object nom}) => 'المعلم: ⁨${nom}⁩',
+			'admin.planning.vide' => 'لا حصص هذا الأسبوع',
+			'admin.planning.videDetail' => 'تظهر الحصص هنا بمجرد أن يكون لفصل موعد هذا الأسبوع. جرّب أسبوعًا آخر.',
+			'admin.planning.sansDonnees' => 'تعذّر تحميل الجدول',
+			'admin.planning.erreur' => 'تعذّرت قراءة الجدول: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.',
+			'admin.planning.indisponibleTitre' => 'متاح عند ربط الخادم',
+			'admin.planning.indisponiblePhrase' => 'سيظهر الجدول هنا فور ربط الخادم. إلى ذلك الحين لا يُعرض شيء: لا تُختلق أي حصة.',
+			'admin.planning.statutPrevue' => 'مقرَّرة',
+			'admin.planning.statutPreparation' => 'قيد التحضير',
+			'admin.planning.statutTerminee' => 'منتهية',
+			'admin.planning.statutIncident' => 'عطل تقني',
+			'admin.planning.statutEnseignantAbsent' => 'المعلم غائب',
+			'admin.planning.statutEleveAbsent' => 'الطالب غائب',
+			'admin.incidents.titre' => 'حوادث آخر 24 ساعة',
+			'admin.incidents.sousTitre' => 'الحصص التي صارت عطلًا تقنيًا أو غياب معلم أو غياب طالب منذ 24 ساعة: هذا ما تعدّه بطاقة «حوادث (24 س)».',
+			'admin.incidents.liste' => 'حصص بها حادث',
+			'admin.incidents.natureTechnique' => 'عطل تقني',
+			'admin.incidents.natureEnseignantAbsent' => 'المعلم غائب',
+			'admin.incidents.natureEleveAbsent' => 'الطالب غائب',
+			'admin.incidents.survenu' => ({required Object date, required Object heure}) => '⁨${date}⁩، ⁨${heure}⁩',
+			'admin.incidents.vide' => 'لا حوادث منذ 24 ساعة',
+			'admin.incidents.videDetail' => 'تظهر هنا كل حصة تتحول إلى عطل أو غياب معلم أو غياب طالب فور تغيّر حالتها.',
+			'admin.incidents.sansDonnees' => 'تعذّر تحميل الحوادث',
+			'admin.incidents.erreur' => 'تعذّرت قراءة الحوادث: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.',
+			'admin.incidents.indisponibleTitre' => 'متاح عند ربط الخادم',
+			'admin.incidents.indisponiblePhrase' => 'ستظهر الحوادث هنا فور ربط الخادم. إلى ذلك الحين لا يُعرض شيء: لا يُختلق أي حادث.',
 			'admin.pilotage.titre' => 'متابعة المواعيد',
 			'admin.pilotage.sousTitre' => 'لكل موعد ولكل فئة: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون.',
 			'admin.pilotage.sansDonnees' => 'تعذّر تحميل لوحة المتابعة',
@@ -17241,6 +17398,8 @@ extension on TraductionsAr {
 			'admin.bibliotheque.catalogue.colonnes.publication' => 'النشر',
 			'admin.bibliotheque.catalogue.colonnes.droits' => 'الحقوق',
 			'admin.bibliotheque.catalogue.colonnes.visibilite' => 'الظهور',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.catalogue.colonnes.modifie' => 'آخر تعديل',
 			'admin.bibliotheque.catalogue.modifieLe' => ({required Object date}) => 'عُدّلت في ⁨${date}⁩',
 			'admin.bibliotheque.catalogue.videRecherche' => 'لا توجد نتائج',
@@ -17278,8 +17437,6 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.meta.categorie' => 'التصنيف',
 			'admin.bibliotheque.fiche.meta.niveau' => 'المستوى',
 			'admin.bibliotheque.fiche.meta.annee' => 'السنة',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.fiche.meta.visibilite' => 'الظهور',
 			'admin.bibliotheque.fiche.meta.horsLigne' => 'القراءة دون إنترنت',
 			'admin.bibliotheque.fiche.meta.nonRenseigne' => 'غير مذكور',
@@ -17446,12 +17603,46 @@ extension on TraductionsAr {
 			'comptable.nav.paiements' => 'المدفوعات',
 			'comptable.nav.tresorerie' => 'الخزينة',
 			'comptable.nav.compte' => 'الحساب',
+			'comptable.graphiques.masque' => 'المبالغ مخفية: لا يُرسم المخطط. أظهر المبالغ لرؤيته.',
+			'comptable.graphiques.voirValeurs' => 'عرض القيم',
+			'comptable.graphiques.masquerValeurs' => 'إخفاء القيم',
+			'comptable.graphiques.repartitionTitre' => 'التوزيع حسب الصندوق',
+			'comptable.graphiques.repartitionResume' => ({required Object n}) => 'التوزيع بين ⁨${n}⁩ صناديق.',
+			'comptable.graphiques.mensuelTitre' => 'الوارد والصادر خلال 6 أشهر',
+			'comptable.graphiques.mensuelResume' => ({required Object debut, required Object fin}) => 'الوارد والصادر من ⁨${debut}⁩ إلى ⁨${fin}⁩.',
+			'comptable.graphiques.fluxTitre' => 'تدفق الخزينة خلال 30 يومًا',
+			'comptable.graphiques.fluxResume' => ({required Object debut, required Object fin}) => 'المقبوضات والمدفوعات من ⁨${debut}⁩ إلى ⁨${fin}⁩.',
+			'comptable.graphiques.evolutionTitre' => 'التطور خلال 6 أشهر',
+			'comptable.graphiques.evolutionResume' => ({required Object debut, required Object fin}) => 'الخزينة المحتفظ بها من ⁨${debut}⁩ إلى ⁨${fin}⁩.',
+			'comptable.graphiques.legendeEntrees' => 'الوارد',
+			'comptable.graphiques.legendeSorties' => 'الصادر',
+			'comptable.graphiques.legendeEncaissements' => 'المقبوضات',
+			'comptable.graphiques.legendeDecaissements' => 'المدفوعات',
+			'comptable.graphiques.legendeDetenue' => 'الخزينة المحتفظ بها',
+			'comptable.graphiques.kpiTitre' => 'الوارد والصادر',
+			'comptable.graphiques.kpiEntrees' => 'الوارد',
+			'comptable.graphiques.kpiSorties' => 'الصادر',
+			'comptable.graphiques.kpiPeriode' => 'آخر 30 يومًا',
+			'comptable.graphiques.variation' => ({required Object pourcent}) => '⁨${pourcent}⁩٪ مقارنة بالفترة السابقة',
+			'comptable.graphiques.rapportsTitre' => 'التقارير',
+			'comptable.graphiques.rapportsSousTitre' => 'الوارد والصادر والخزينة عبر الزمن.',
+			'comptable.graphiques.vide' => 'لا بيانات للرسم',
+			'comptable.graphiques.videDetail' => 'تظهر المخططات هنا بمجرد تسجيل مقبوضات أو مدفوعات.',
+			'comptable.graphiques.erreur' => 'تعذّرت قراءة المخططات: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.',
+			'comptable.graphiques.sansDonnees' => 'تعذّر تحميل المخططات',
+			'comptable.graphiques.exporterRapport' => 'تصدير التقرير',
+			'comptable.graphiques.exporterSelection' => 'تصدير المحدد',
+			'comptable.graphiques.exportIndisponible' => 'التصدير غير متاح بعد: سيفتح فور ربط الخادم.',
+			'comptable.graphiques.exportEnCours' => 'جارٍ تحضير التصدير',
+			'comptable.graphiques.exportPret' => ({required Object reference, required Object lignes}) => 'التصدير جاهز: ⁨${reference}⁩ (⁨${lignes}⁩ سطرًا).',
+			'comptable.graphiques.exportEchec' => 'تعذّر تحضير التصدير: ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة.',
 			'comptable.onglets.aEffectuer' => 'للتنفيذ',
 			'comptable.onglets.contractuels' => 'المتعاقدون',
 			'comptable.onglets.beneficiaires' => 'المستفيدون',
 			'comptable.onglets.coffres' => 'الصناديق',
 			'comptable.onglets.encaissements' => 'المقبوضات',
 			'comptable.onglets.rapprochement' => 'المطابقة',
+			'comptable.onglets.rapports' => 'التقارير',
 			'comptable.commun.montantMasque' => 'مبلغ مخفي',
 			'comptable.commun.afficherMontants' => 'إظهار المبالغ',
 			'comptable.commun.masquerMontants' => 'إخفاء المبالغ',
@@ -17601,6 +17792,7 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.accesEncaissements' => 'عرض المقبوضات',
 			'comptable.aujourdhui.accesTresorerie' => 'عرض الخزينة والصناديق',
 			'comptable.aujourdhui.accesAlimenter' => 'تغذية الاحتياطي الاستراتيجي',
+			'comptable.aujourdhui.accesRapports' => 'عرض التقارير',
 			'comptable.aujourdhui.titre' => 'اليوم',
 			'comptable.aujourdhui.sousTitre' => 'ماذا عليّ أن أفعل الآن؟',
 			'comptable.aujourdhui.attention' => 'للمعالجة والتنبيهات',
@@ -17720,6 +17912,8 @@ extension on TraductionsAr {
 			'comptable.paiements.detail.lignes' => 'تفاصيل الحساب',
 			'comptable.paiements.detail.ligneTotal' => 'الإجمالي',
 			'comptable.paiements.detail.source' => ({required Object source}) => 'المصدر: ${source}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.detail.auteur' => ({required Object auteur}) => 'أضافه ${auteur}',
 			'comptable.paiements.detail.voirSource' => 'عرض المصدر',
 			'comptable.paiements.detail.methode' => 'وسيلة الدفع',
@@ -17792,8 +17986,6 @@ extension on TraductionsAr {
 			'comptable.tresorerie.retraitSansValidation' => 'لا تشترط السياسة مصادقة للسحب؛ ويبقى معامَلًا كحركة حساسة.',
 			'comptable.tresorerie.version' => ({required Object version}) => 'الإصدار ${version}',
 			'comptable.tresorerie.versionDepuis' => ({required Object version, required Object date}) => 'الإصدار ${version}، ساري المفعول منذ ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.mouvementsTitre' => 'الحركات بين الصناديق',
 			'comptable.tresorerie.mouvementsPhrase' => 'نحو الحماية: حسب تفويضك. الخروج من صندوق محمي: تلزم مصادقة إضافية.',
 			'comptable.tresorerie.preparerMouvement' => 'إعداد حركة',
@@ -17843,6 +18035,8 @@ extension on TraductionsAr {
 			'comptable.tresorerie.titre' => 'الخزينة والصناديق',
 			'comptable.tresorerie.sousTitre' => 'الخزينة الحرة هي الرقم الوحيد القابل للإنفاق.',
 			'comptable.tresorerie.alimenter' => 'تغذية الاحتياطي الاستراتيجي',
+			'comptable.tresorerie.erreurPartielle' => 'تعذّرت قراءة جزء من الصفحة: الباقي محدَّث. أعد المحاولة للإكمال.',
+			'comptable.tresorerie.erreurPartielleAction' => 'إعادة المحاولة',
 			'comptable.encaissements.filtreTous' => 'الكل',
 			'comptable.encaissements.filtreConfirmes' => 'مؤكَّدة',
 			'comptable.encaissements.filtreEnAttente' => 'قيد الانتظار',
@@ -17997,6 +18191,8 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.profil.motifDemande' => 'طلب من المستفيد',
 			'comptable.beneficiaires.profil.motifDemandeDetail' => 'طلب المستفيد عدم استلام أي دفعة حاليًا.',
 			'comptable.beneficiaires.profil.motifRequis' => 'اختر سببًا للمتابعة.',
+			'comptable.beneficiaires.profil.voirFil' => ({required Object nom}) => 'عرض محادثة ⁨${nom}⁩',
+			'comptable.beneficiaires.profil.voirFilRefuse' => ({required Object nom}) => 'تعذّر فتح محادثة ⁨${nom}⁩: لم تُنشأ بعد أو لم تنجح القراءة. أعد المحاولة بعد لحظة.',
 			'comptable.beneficiaires.titre' => 'المستفيدون',
 			'comptable.beneficiaires.sousTitre' => 'البيانات مخفية: المستفيد وحده يعدّل بياناته.',
 			'comptable.beneficiaires.profilTitre' => 'ملف الدفع',
@@ -18144,6 +18340,8 @@ extension on TraductionsAr {
 			'comptable.validation.detail.etat' => 'الحالة',
 			'comptable.validation.detail.historique' => 'السجل',
 			'comptable.validation.detail.historiqueVide' => 'لا يوجد أي إدخال حتى الآن.',
+			'comptable.validation.detail.historiqueErreur' => 'تعذّرت قراءة السجل: هذا لا يعني أنه فارغ. أعد المحاولة بعد لحظة.',
+			'comptable.validation.detail.historiqueReessayer' => 'إعادة قراءة السجل',
 			'comptable.validation.valider' => 'مصادقة',
 			'comptable.validation.refuser' => 'رفض',
 			'comptable.validation.annuler' => 'إلغاء',
@@ -18228,6 +18426,8 @@ extension on TraductionsAr {
 			'comptable.direction.reservePanneau.cadence.apresEncaissementConsolide' => 'بعد كل مقبوض مُثبَّت',
 			'comptable.direction.reservePanneau.cadence.manuelle' => 'يدوية',
 			'comptable.direction.reservePanneau.seuilTitre' => 'التنبيه',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.seuil' => 'حد التنبيه',
 			'comptable.direction.reservePanneau.seuilDetail' => 'دون هذه الحصة من الهدف، يُشار إلى الاحتياطي بأنه «دون الهدف». اتركه فارغًا لعدم تحديد أي حد.',
 			'comptable.direction.reservePanneau.seuilIndice' => 'بلا حد',
@@ -18268,6 +18468,18 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.montantManuelDetail' => 'مبلغ الدفعة هو دائمًا مبلغ الالتزام.',
 			'comptable.direction.delegationPanneau.politiqueTarifaire' => 'تعديل الأسعار',
 			'comptable.direction.delegationPanneau.politiqueTarifaireDetail' => 'سياسة الأسعار تبقى للإدارة.',
+			'comptable.direction.delegationPanneau.sensiblesTitre' => 'حساس دائمًا',
+			'comptable.direction.delegationPanneau.sensiblesDetail' => 'هذه الحالات الخمس تتطلب دائمًا تحققًا إضافيًا مهما كانت الإعدادات أعلاه. الدفعة الأولى والبيانات الحديثة تُضبط في الأعلى.',
+			'comptable.direction.delegationPanneau.sensibleHorsSeuil' => 'مبلغ فوق الحد',
+			'comptable.direction.delegationPanneau.sensibleHorsSeuilDetail' => 'دفعة تتجاوز الحدود المضبوطة أعلاه.',
+			'comptable.direction.delegationPanneau.sensibleHorsCycle' => 'دفعة خارج الدورة',
+			'comptable.direction.delegationPanneau.sensibleHorsCycleDetail' => 'دفعة لا تتبع فترة الدفع المعتادة.',
+			'comptable.direction.delegationPanneau.sensibleLieOperateur' => 'مستفيد مرتبط بالمشغّل',
+			'comptable.direction.delegationPanneau.sensibleLieOperateurDetail' => 'دفعة إلى شخص مرتبط بمشغّل الدفع.',
+			'comptable.direction.delegationPanneau.sensibleFournisseur' => 'المزوّد غير متاح',
+			'comptable.direction.delegationPanneau.sensibleFournisseurDetail' => 'دفعة لا يستجيب مزوّد الدفع الخاص بها.',
+			'comptable.direction.delegationPanneau.sensibleManuelle' => 'التزام يدوي غير معتمد',
+			'comptable.direction.delegationPanneau.sensibleManuelleDetail' => 'التزام أُدخل يدويًا ولم يُعتمد بعد.',
 			'comptable.direction.titre' => 'الاحتياطي والتفويض',
 			'comptable.direction.sousTitre' => 'سياسة الاحتياطي الاستراتيجي وما يستطيع المحاسب تنفيذه وحده.',
 			'comptable.direction.reserve' => 'سياسة الاحتياطي الاستراتيجي',
@@ -18306,8 +18518,6 @@ extension on TraductionsAr {
 			'galerie.elevation' => 'الارتفاع والزوايا',
 			'galerie.typographie' => 'سلالم الخطوط',
 			'galerie.polices' => 'الخطوط',
-			_ => null,
-		} ?? switch (path) {
 			'galerie.composants' => 'المكونات المشتركة',
 			'galerie.modeEnfant' => 'وضع إمكانية الوصول',
 			'galerie.modeStandard' => 'الوضع العادي',
@@ -18730,6 +18940,8 @@ extension on TraductionsAr {
 			'attente.prochaineEtape' => ({required Object etape}) => 'الخطوة التالية: ⁨${etape}⁩',
 			'attente.refuseDetail' => ({required Object element}) => 'لطلب التحقق من جديد، ابدأ بهذا العنصر: ⁨${element}⁩.',
 			'attente.refuseSansElement' => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.',
+			_ => null,
+		} ?? switch (path) {
 			'attente.illisible' => 'حالة ملفك لا تظهر الآن.',
 			'attente.horsLigne' => 'أنت غير متصل. ستظهر حالة ملفك بمجرد عودة الشبكة.',
 			'inscription.titre' => 'إنشاء حسابك',
@@ -18820,8 +19032,6 @@ extension on TraductionsAr {
 			'foyer.relireClasses' => 'إعادة قراءة الفصول',
 			'foyer.inscriptionIllisible' => 'التسجيل الجاري لكل طالب لا يظهر في هذه الصفحة بعد.',
 			'foyer.appareilsPartages' => 'الأجهزة المشتركة',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.appareilsFoyer' => 'أجهزة الأسرة',
 			'foyer.appareilsFoyerLegende' => 'ربط جهاز، عرض الأجهزة المربوطة، إزالة أحدها',
 			'foyer.creerMonProfil' => 'إنشاء ملفي كطالب',
@@ -19244,6 +19454,8 @@ extension on TraductionsAr {
 			'dossiers.pieceNonVisible' => 'وثيقة خارج صلاحيتك',
 			'dossiers.pieceNonVisibleDetail' => 'أُودعت وثيقة بالفعل، لكن قاعدة الجنس تمنعك من الاطلاع عليها. يجب أن يتحقق منها موظف من جنس هذا الشخص.',
 			'dossiers.rienATrancher' => 'لا شيء للحسم الآن',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.apercu' => 'الوثيقة المودَعة',
 			'dossiers.apercuIndisponible' => 'المعاينة غير متاحة',
 			'dossiers.verifications' => 'عمليات التحقق',
@@ -19334,8 +19546,6 @@ extension on TraductionsAr {
 			'creneaux.attendDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'ينتظر منذ اليوم', one: 'ينتظر منذ يوم واحد', two: 'ينتظر منذ يومين', few: 'ينتظر منذ ⁨${jours}⁩ أيام', many: 'ينتظر منذ ⁨${jours}⁩ يومًا', other: 'ينتظر منذ ⁨${jours}⁩ يوم', ), 
 			'creneaux.attendUnJour' => 'ينتظر منذ يوم',
 			'creneaux.attendAujourdhui' => 'قُدِّم الطلب اليوم',
-			_ => null,
-		} ?? switch (path) {
 			'creneaux.niveau' => ({required Object niveau}) => 'المستوى ⁨${niveau}⁩',
 			'creneaux.prendre' => ({required Object jour, required Object heure}) => 'قبول ⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'creneaux.priseEnCours' => 'جارٍ الحفظ',
