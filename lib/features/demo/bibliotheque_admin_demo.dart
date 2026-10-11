@@ -92,6 +92,9 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   /// Vrai : seule la lecture d'une fiche echoue, connexion perdue.
   bool panneFiche = false;
 
+  /// Vrai : la publication echoue, connexion perdue (rien n'est publie).
+  bool panneEcriture = false;
+
   /// Vrai : la lecture d'une fiche echoue d'une panne du serveur.
   bool erreurFiche = false;
 
@@ -723,6 +726,7 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     _garde();
     final _Etat e = _trouve(supportId);
     if (!droitsServeur.peutPublier) throw const BibliothequeNonAutorisee();
+    if (panneEcriture) throw const BibliothequeHorsLigne();
     if (e.revision != revisionAttendue) return const PublicationEnConflit();
     final ControleVersion c = _controle(e);
     if (!c.publiable) return PublicationBloquee(c);

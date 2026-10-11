@@ -9520,6 +9520,7 @@ class Traductions$admin$bibliotheque$fr {
 	late final Traductions$admin$bibliotheque$catalogue$fr catalogue = Traductions$admin$bibliotheque$catalogue$fr.internal(_root);
 	late final Traductions$admin$bibliotheque$fiche$fr fiche = Traductions$admin$bibliotheque$fiche$fr.internal(_root);
 	late final Traductions$admin$bibliotheque$import$fr import = Traductions$admin$bibliotheque$import$fr.internal(_root);
+	late final Traductions$admin$bibliotheque$publication$fr publication = Traductions$admin$bibliotheque$publication$fr.internal(_root);
 }
 
 // Path: nav.eleve
@@ -19947,6 +19948,94 @@ class Traductions$admin$bibliotheque$import$fr {
 	String get retour => 'Retour au catalogue';
 }
 
+// Path: admin.bibliotheque.publication
+class Traductions$admin$bibliotheque$publication$fr {
+	Traductions$admin$bibliotheque$publication$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vérifier et publier'
+	String get titre => 'Vérifier et publier';
+
+	/// fr: 'Chaque point est contrôlé par le serveur. La publication fige la version.'
+	String get intro => 'Chaque point est contrôlé par le serveur. La publication fige la version.';
+
+	/// fr: 'Source et fichier'
+	String get apercuTitre => 'Source et fichier';
+
+	/// fr: 'Aucun fichier n'est déposé : le rendu ne peut pas être contrôlé.'
+	String get apercuAucunFichier => 'Aucun fichier n\'est déposé : le rendu ne peut pas être contrôlé.';
+
+	/// fr: 'Fichier déposé. Son rendu se contrôle dans le lecteur de son type ; le serveur dit ci-dessous s'il a été testé.'
+	String get apercuFichier => 'Fichier déposé. Son rendu se contrôle dans le lecteur de son type ; le serveur dit ci-dessous s\'il a été testé.';
+
+	/// fr: 'Empreinte {valeur}'
+	String empreinte({required Object valeur}) => 'Empreinte ${valeur}';
+
+	/// fr: 'Revue des droits'
+	String get droitsTitre => 'Revue des droits';
+
+	/// fr: 'J'ai contrôlé la source et la preuve de cette version.'
+	String get confirmerControle => 'J\'ai contrôlé la source et la preuve de cette version.';
+
+	/// fr: 'Enregistrer la revue des droits'
+	String get enregistrerDroits => 'Enregistrer la revue des droits';
+
+	/// fr: 'Revue des droits enregistrée.'
+	String get droitsEnregistres => 'Revue des droits enregistrée.';
+
+	/// fr: 'La revue des droits n'a pas pu être confirmée. Réessayez.'
+	String get droitsEchec => 'La revue des droits n\'a pas pu être confirmée. Réessayez.';
+
+	/// fr: 'Les droits d'une version publiée ne se modifient plus : créez une nouvelle version.'
+	String get droitsFiges => 'Les droits d\'une version publiée ne se modifient plus : créez une nouvelle version.';
+
+	/// fr: 'Contrôle de la version'
+	String get checklistTitre => 'Contrôle de la version';
+
+	late final Traductions$admin$bibliotheque$publication$criteres$fr criteres = Traductions$admin$bibliotheque$publication$criteres$fr.internal(_root);
+	late final Traductions$admin$bibliotheque$publication$explications$fr explications = Traductions$admin$bibliotheque$publication$explications$fr.internal(_root);
+	late final Traductions$admin$bibliotheque$publication$etats$fr etats = Traductions$admin$bibliotheque$publication$etats$fr.internal(_root);
+
+	/// fr: 'Ce qui bloque la publication'
+	String get blocagesTitre => 'Ce qui bloque la publication';
+
+	/// fr: 'Tous les points sont validés par le serveur.'
+	String get aucunBlocage => 'Tous les points sont validés par le serveur.';
+
+	/// fr: 'Publier la version'
+	String get publier => 'Publier la version';
+
+	/// fr: 'Cette version ne peut pas être publiée tant que le serveur n'a pas validé tous les points du contrôle.'
+	String get bloque => 'Cette version ne peut pas être publiée tant que le serveur n\'a pas validé tous les points du contrôle.';
+
+	/// fr: 'Publier la version {numero} ?'
+	String confirmerTitre({required Object numero}) => 'Publier la version ${numero} ?';
+
+	/// fr: 'La version devient immuable et visible des classes auxquelles le support est attribué. Pour la modifier, vous créerez une nouvelle version.'
+	String get confirmerEffet => 'La version devient immuable et visible des classes auxquelles le support est attribué. Pour la modifier, vous créerez une nouvelle version.';
+
+	/// fr: 'Publier'
+	String get confirmerBouton => 'Publier';
+
+	/// fr: 'Version publiée.'
+	String get publiee => 'Version publiée.';
+
+	/// fr: 'Cette version est déjà publiée.'
+	String get dejaPubliee => 'Cette version est déjà publiée.';
+
+	/// fr: 'La publication n'a pas pu être confirmée. Rien n'est publié à moitié : consultez la fiche avant de réessayer.'
+	String get echec => 'La publication n\'a pas pu être confirmée. Rien n\'est publié à moitié : consultez la fiche avant de réessayer.';
+
+	/// fr: 'Voir la fiche'
+	String get versLaFiche => 'Voir la fiche';
+
+	/// fr: 'Vous pouvez consulter le contrôle, mais pas publier.'
+	String get pasDeCapacite => 'Vous pouvez consulter le contrôle, mais pas publier.';
+}
+
 // Path: compte.tuteur.identite
 class Traductions$compte$tuteur$identite$fr {
 	Traductions$compte$tuteur$identite$fr.internal(this._root);
@@ -27773,6 +27862,108 @@ class Traductions$admin$bibliotheque$import$droits$fr {
 	String get preuveDeposee => 'Preuve déposée.';
 }
 
+// Path: admin.bibliotheque.publication.criteres
+class Traductions$admin$bibliotheque$publication$criteres$fr {
+	Traductions$admin$bibliotheque$publication$criteres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Source confirmée'
+	String get source => 'Source confirmée';
+
+	/// fr: 'Titulaire du droit connu'
+	String get titulaire => 'Titulaire du droit connu';
+
+	/// fr: 'Preuve d'autorisation vérifiée'
+	String get preuve => 'Preuve d\'autorisation vérifiée';
+
+	/// fr: 'Usage dans l'application permis'
+	String get usageApplication => 'Usage dans l\'application permis';
+
+	/// fr: 'Affichage en classe permis'
+	String get usageClasse => 'Affichage en classe permis';
+
+	/// fr: 'Téléchargement et hors ligne tranchés'
+	String get usageTelechargement => 'Téléchargement et hors ligne tranchés';
+
+	/// fr: 'Échéance et attribution en règle'
+	String get expirationAttribution => 'Échéance et attribution en règle';
+
+	/// fr: 'Fichier sain (analyse du serveur)'
+	String get fichierSain => 'Fichier sain (analyse du serveur)';
+
+	/// fr: 'Rendu testé dans le lecteur du type'
+	String get renduTeste => 'Rendu testé dans le lecteur du type';
+
+	/// fr: 'Langue et niveau renseignés'
+	String get langueNiveau => 'Langue et niveau renseignés';
+
+	/// fr: 'Version et empreinte figées'
+	String get versionEmpreinte => 'Version et empreinte figées';
+}
+
+// Path: admin.bibliotheque.publication.explications
+class Traductions$admin$bibliotheque$publication$explications$fr {
+	Traductions$admin$bibliotheque$publication$explications$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Indiquez la source d'origine dans la revue des droits.'
+	String get source => 'Indiquez la source d\'origine dans la revue des droits.';
+
+	/// fr: 'Indiquez le titulaire du droit, ou l'origine institutionnelle.'
+	String get titulaire => 'Indiquez le titulaire du droit, ou l\'origine institutionnelle.';
+
+	/// fr: 'Déposez la preuve d'autorisation de cette version.'
+	String get preuve => 'Déposez la preuve d\'autorisation de cette version.';
+
+	/// fr: 'Autorisez l'usage dans l'application dans la revue des droits.'
+	String get usageApplication => 'Autorisez l\'usage dans l\'application dans la revue des droits.';
+
+	/// fr: 'Autorisez l'affichage en classe dans la revue des droits.'
+	String get usageClasse => 'Autorisez l\'affichage en classe dans la revue des droits.';
+
+	/// fr: 'Le serveur doit pouvoir trancher le téléchargement et le hors ligne.'
+	String get usageTelechargement => 'Le serveur doit pouvoir trancher le téléchargement et le hors ligne.';
+
+	/// fr: 'La licence est échue ou son attribution manque : renouvelez-la.'
+	String get expirationAttribution => 'La licence est échue ou son attribution manque : renouvelez-la.';
+
+	/// fr: 'Déposez un fichier : le serveur doit l'analyser.'
+	String get fichierSain => 'Déposez un fichier : le serveur doit l\'analyser.';
+
+	/// fr: 'Le rendu n'a pas encore été testé par le serveur.'
+	String get renduTeste => 'Le rendu n\'a pas encore été testé par le serveur.';
+
+	/// fr: 'Renseignez la langue et le niveau sur la fiche.'
+	String get langueNiveau => 'Renseignez la langue et le niveau sur la fiche.';
+
+	/// fr: 'Déposez un fichier pour figer la version et son empreinte.'
+	String get versionEmpreinte => 'Déposez un fichier pour figer la version et son empreinte.';
+}
+
+// Path: admin.bibliotheque.publication.etats
+class Traductions$admin$bibliotheque$publication$etats$fr {
+	Traductions$admin$bibliotheque$publication$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Validé'
+	String get valide => 'Validé';
+
+	/// fr: 'Bloqué'
+	String get bloque => 'Bloqué';
+
+	/// fr: 'Pas encore évalué'
+	String get inconnu => 'Pas encore évalué';
+}
+
 // Path: classe.entree.demo.roles
 class Traductions$classe$entree$demo$roles$fr {
 	Traductions$classe$entree$demo$roles$fr.internal(this._root);
@@ -32677,8 +32868,60 @@ extension on Traductions {
 			'admin.bibliotheque.import.poursuivre' => 'Poursuivre vers la vérification',
 			'admin.bibliotheque.import.poursuivreAide' => 'Le fichier doit être vérifié par le serveur avant de poursuivre.',
 			'admin.bibliotheque.import.retour' => 'Retour au catalogue',
+			'admin.bibliotheque.publication.titre' => 'Vérifier et publier',
+			'admin.bibliotheque.publication.intro' => 'Chaque point est contrôlé par le serveur. La publication fige la version.',
+			'admin.bibliotheque.publication.apercuTitre' => 'Source et fichier',
+			'admin.bibliotheque.publication.apercuAucunFichier' => 'Aucun fichier n\'est déposé : le rendu ne peut pas être contrôlé.',
+			'admin.bibliotheque.publication.apercuFichier' => 'Fichier déposé. Son rendu se contrôle dans le lecteur de son type ; le serveur dit ci-dessous s\'il a été testé.',
+			'admin.bibliotheque.publication.empreinte' => ({required Object valeur}) => 'Empreinte ${valeur}',
+			'admin.bibliotheque.publication.droitsTitre' => 'Revue des droits',
+			'admin.bibliotheque.publication.confirmerControle' => 'J\'ai contrôlé la source et la preuve de cette version.',
+			'admin.bibliotheque.publication.enregistrerDroits' => 'Enregistrer la revue des droits',
+			'admin.bibliotheque.publication.droitsEnregistres' => 'Revue des droits enregistrée.',
+			'admin.bibliotheque.publication.droitsEchec' => 'La revue des droits n\'a pas pu être confirmée. Réessayez.',
+			'admin.bibliotheque.publication.droitsFiges' => 'Les droits d\'une version publiée ne se modifient plus : créez une nouvelle version.',
+			'admin.bibliotheque.publication.checklistTitre' => 'Contrôle de la version',
+			'admin.bibliotheque.publication.criteres.source' => 'Source confirmée',
+			'admin.bibliotheque.publication.criteres.titulaire' => 'Titulaire du droit connu',
+			'admin.bibliotheque.publication.criteres.preuve' => 'Preuve d\'autorisation vérifiée',
+			'admin.bibliotheque.publication.criteres.usageApplication' => 'Usage dans l\'application permis',
+			'admin.bibliotheque.publication.criteres.usageClasse' => 'Affichage en classe permis',
+			'admin.bibliotheque.publication.criteres.usageTelechargement' => 'Téléchargement et hors ligne tranchés',
+			'admin.bibliotheque.publication.criteres.expirationAttribution' => 'Échéance et attribution en règle',
+			'admin.bibliotheque.publication.criteres.fichierSain' => 'Fichier sain (analyse du serveur)',
+			'admin.bibliotheque.publication.criteres.renduTeste' => 'Rendu testé dans le lecteur du type',
+			'admin.bibliotheque.publication.criteres.langueNiveau' => 'Langue et niveau renseignés',
+			'admin.bibliotheque.publication.criteres.versionEmpreinte' => 'Version et empreinte figées',
+			'admin.bibliotheque.publication.explications.source' => 'Indiquez la source d\'origine dans la revue des droits.',
+			'admin.bibliotheque.publication.explications.titulaire' => 'Indiquez le titulaire du droit, ou l\'origine institutionnelle.',
+			'admin.bibliotheque.publication.explications.preuve' => 'Déposez la preuve d\'autorisation de cette version.',
+			'admin.bibliotheque.publication.explications.usageApplication' => 'Autorisez l\'usage dans l\'application dans la revue des droits.',
+			'admin.bibliotheque.publication.explications.usageClasse' => 'Autorisez l\'affichage en classe dans la revue des droits.',
+			'admin.bibliotheque.publication.explications.usageTelechargement' => 'Le serveur doit pouvoir trancher le téléchargement et le hors ligne.',
+			'admin.bibliotheque.publication.explications.expirationAttribution' => 'La licence est échue ou son attribution manque : renouvelez-la.',
+			'admin.bibliotheque.publication.explications.fichierSain' => 'Déposez un fichier : le serveur doit l\'analyser.',
+			'admin.bibliotheque.publication.explications.renduTeste' => 'Le rendu n\'a pas encore été testé par le serveur.',
+			'admin.bibliotheque.publication.explications.langueNiveau' => 'Renseignez la langue et le niveau sur la fiche.',
+			'admin.bibliotheque.publication.explications.versionEmpreinte' => 'Déposez un fichier pour figer la version et son empreinte.',
+			'admin.bibliotheque.publication.etats.valide' => 'Validé',
+			'admin.bibliotheque.publication.etats.bloque' => 'Bloqué',
+			'admin.bibliotheque.publication.etats.inconnu' => 'Pas encore évalué',
+			'admin.bibliotheque.publication.blocagesTitre' => 'Ce qui bloque la publication',
+			'admin.bibliotheque.publication.aucunBlocage' => 'Tous les points sont validés par le serveur.',
+			'admin.bibliotheque.publication.publier' => 'Publier la version',
+			'admin.bibliotheque.publication.bloque' => 'Cette version ne peut pas être publiée tant que le serveur n\'a pas validé tous les points du contrôle.',
+			'admin.bibliotheque.publication.confirmerTitre' => ({required Object numero}) => 'Publier la version ${numero} ?',
+			'admin.bibliotheque.publication.confirmerEffet' => 'La version devient immuable et visible des classes auxquelles le support est attribué. Pour la modifier, vous créerez une nouvelle version.',
+			'admin.bibliotheque.publication.confirmerBouton' => 'Publier',
+			'admin.bibliotheque.publication.publiee' => 'Version publiée.',
+			'admin.bibliotheque.publication.dejaPubliee' => 'Cette version est déjà publiée.',
+			'admin.bibliotheque.publication.echec' => 'La publication n\'a pas pu être confirmée. Rien n\'est publié à moitié : consultez la fiche avant de réessayer.',
+			'admin.bibliotheque.publication.versLaFiche' => 'Voir la fiche',
+			'admin.bibliotheque.publication.pasDeCapacite' => 'Vous pouvez consulter le contrôle, mais pas publier.',
 			'agent.titre' => 'Entrée d\'un agent',
 			'agent.intro' => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.',
+			_ => null,
+		} ?? switch (path) {
 			'agent.jeton' => 'Jeton d\'observation',
 			'agent.jetonExemple' => 'rag_...',
 			'agent.entrer' => 'Ouvrir l\'application',
@@ -32729,8 +32972,6 @@ extension on Traductions {
 			'parcours.ageRaison' => 'L\'âge décide de la durée des séances et du nombre d\'élèves par classe. Nous ne demandons pas de date de naissance : une tranche suffit.',
 			'parcours.langueQuestion' => 'Dans quelle langue le cours doit-il être donné ?',
 			'parcours.langueRaison' => 'C\'est la langue que l\'enseignant parlera pendant la séance. Elle est indépendante de la langue de l\'application, que vous pouvez changer à tout moment dans vos réglages.',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.lieuQuestion' => 'Où vous trouvez-vous ?',
 			'parcours.lieuRaison' => 'Nous nous en servons uniquement pour vous montrer les horaires à votre heure locale. Nous ne demandons jamais votre position exacte, et cette réponse ne quitte pas votre dossier.',
 			'parcours.lieuSuggere' => 'Proposé d\'après l\'heure de votre appareil',
@@ -33193,6 +33434,8 @@ extension on Traductions {
 			'eleve.accueil.aucunCours' => 'Pas de cours aujourd\'hui',
 			'eleve.accueil.aucunCoursDetail' => 'Ton enseignant prépare le prochain.',
 			'eleve.accueil.erreurCours' => 'Tes cours n\'ont pas pu être lus. Réessaie dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.accueil.erreurCoursHorsLigneTitre' => 'Tes cours ne sont pas disponibles',
 			'eleve.accueil.prochainAujourdhui' => 'Ton prochain cours est plus tard aujourd\'hui.',
 			'eleve.accueil.prochainDemain' => 'Ton prochain cours est demain.',
@@ -33243,8 +33486,6 @@ extension on Traductions {
 			'eleve.suivi.tronquee' => ({required Object nombre}) => 'Les ${nombre} cours les plus récents sont affichés.',
 			'eleve.suivi.fin' => ({required Object nombre}) => '${nombre} cours au suivi.',
 			'eleve.suivi.finUn' => '1 cours au suivi.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.titre' => 'Accueil',
 			'tuteur.accueil.voirLaClasse' => 'Voir la classe',
 			'tuteur.accueil.prochaineSeance' => 'Prochaine séance',
@@ -33707,6 +33948,8 @@ extension on Traductions {
 			'enseignant.journee.aTerminer' => 'À terminer',
 			'enseignant.journee.aTerminerVide' => 'Tous vos cahiers de transmission sont terminés.',
 			'enseignant.journee.aTerminerSansDonnees' => 'Les cahiers de transmission à terminer n\'ont pas pu être lus.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.aTerminerErreur' => 'Les cahiers de transmission à terminer n\'ont pas pu être lus. Réessayez dans un instant.',
 			'enseignant.journee.aTerminerAide' => 'Le cahier de transmission aide vos élèves et vous permet d\'ajuster le prochain cours.',
 			'enseignant.journee.rappelCahier' => 'Des cahiers de transmission attendent d\'être terminés',
@@ -33757,8 +34000,6 @@ extension on Traductions {
 			'enseignant.journee.remplacement.assurer' => 'Assurer ce remplacement',
 			'enseignant.journee.remplacement.pasCetteFois' => 'Pas cette fois',
 			'enseignant.journee.erreurPartielleCahiers' => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.effectif' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} élève', other: '${nombre} élèves', ), 
 			'enseignant.remplacements.titre' => 'Remplacements',
 			'enseignant.remplacements.contexte' => 'Ouverts à tous les enseignants : le premier qui accepte assure la séance.',
@@ -34221,6 +34462,8 @@ extension on Traductions {
 			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. Le serveur transmet la visite et son relevé automatique dès la sortie de la salle ; cet écran ne peut pas le confirmer. Pour ajouter une remarque, écrivez à l\'administration.',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.contexteNature' => 'Votre observation rejoint le compte rendu de cette visite, transmis à l\'administration.',
 			'controleur.observation.pointPositif' => 'Point positif',
 			'controleur.observation.pointPositifAide' => 'Quand une pratique mérite d\'être relevée · elle figure au rapport comme point positif',
@@ -34271,8 +34514,6 @@ extension on Traductions {
 			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.observation.echecSansTexte' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Vos réponses restent choisies ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.titre' => 'Échanges',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
 			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
 			'controleur.echanges.reponseRecue' => 'Réponse reçue',
@@ -34735,6 +34976,8 @@ extension on Traductions {
 			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
 			'tc.observation.annonce.tuteursObservent' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} tuteur observe', other: '${nombre} tuteurs observent', ), 
 			'tc.observation.reglages.titre' => 'Observation par les tuteurs',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à cette classe.',
 			'tc.observation.reglages.heriter' => 'Hériter de l\'Académie',
 			'tc.observation.reglages.personnaliser' => 'Personnaliser pour cette classe',
@@ -34785,8 +35028,6 @@ extension on Traductions {
 			'tc.parcours.feedback.rythme.tresBien' => 'Très confortable',
 			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
 			'tc.parcours.feedback.technique.difficile' => 'Gênants',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.technique.bien' => 'Corrects',
 			'tc.parcours.feedback.technique.tresBien' => 'Très bons',
 			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',
@@ -35249,6 +35490,8 @@ extension on Traductions {
 			'motifs.cloreSurcharge.parErreur' => 'Règle posée par erreur',
 			'motifs.annulationEvaluation.absenceEleve' => 'Absence de l\'élève',
 			'motifs.annulationEvaluation.absenceEnseignant' => 'Absence de l\'enseignant',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.annulationEvaluation.pasPret' => 'Élève pas encore prêt',
 			'motifs.annulationEvaluation.report' => 'Report à une autre date',
 			'motifs.annulationEvaluation.parErreur' => 'Évaluation planifiée par erreur',
@@ -35299,8 +35542,6 @@ extension on Traductions {
 			'motifs.reglageMinimum.ecourtees' => 'Séances souvent écourtées',
 			'motifs.reglageMinimum.reseau' => 'Coupures réseau fréquentes',
 			'motifs.reglageMinimum.duree' => 'Durée des cours modifiée',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.reglageMinimum.horaire' => 'Contraintes d\'horaire de la famille',
 			'motifs.signalement.pedagogique.renforcement' => 'Un renforcement est conseillé sur la leçon en cours.',
 			'motifs.signalement.pedagogique.revision' => 'Un peu de révision à la maison aidera avant le prochain cours.',
@@ -35763,6 +36004,8 @@ extension on Traductions {
 			'com.vocal.composer.actionPause' => 'Pause',
 			'com.vocal.composer.actionReprendre' => 'Reprendre',
 			'com.vocal.composer.actionArreter' => 'Arrêter',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.composer.actionSupprimer' => 'Supprimer',
 			'com.vocal.composer.actionEnvoyer' => 'Envoyer',
 			'com.vocal.composer.confirmerTitre' => 'Supprimer ce message vocal ?',
@@ -35813,8 +36056,6 @@ extension on Traductions {
 			'com.communaute.garde.liensTitre' => 'Liens de la publication',
 			'com.communaute.garde.consigneBlocage' => 'Modifiez la publication, puis publiez-la de nouveau.',
 			'com.communaute.garde.panne' => 'La vérification de ce contenu n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Rien n\'a été publié ; réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.garde.reponse.avertissement' => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de l\'envoyer.',
 			'com.communaute.garde.reponse.liensTitre' => 'Liens de la réponse',
 			'com.communaute.garde.reponse.consigneBlocage' => 'Modifiez la réponse, puis envoyez-la de nouveau.',
@@ -36277,6 +36518,8 @@ extension on Traductions {
 			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}',
 			'com.annonces.administration.moderation.regleMotif.publicite' => 'La publicité n\'est pas autorisée dans la Communauté enseignants.',
 			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.regleMotif.vente' => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.',
 			'com.annonces.administration.moderation.regleMotif.sollicitation' => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.',
 			'com.annonces.administration.moderation.regles.titre' => 'Partage pédagogique uniquement',
@@ -36327,8 +36570,6 @@ extension on Traductions {
 			'com.annonces.demo.detail' => 'Démonstration hors production : données fictives, rien n\'est envoyé.',
 			'com.annonces.demo.choisirRole' => 'Choisissez le rôle à montrer',
 			'com.annonces.demo.roles.tuteur' => 'Famille',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.roles.enseignant' => 'Enseignant',
 			'com.annonces.demo.roles.adulte' => 'Élève adulte',
 			'com.annonces.demo.roles.admin' => 'Direction',
@@ -36791,6 +37032,8 @@ extension on Traductions {
 			'comptable.encaissements.videPhrase' => 'Les paiements des familles apparaîtront ici dès que le prestataire les aura transmis.',
 			'comptable.encaissements.videFiltreTitre' => 'Aucun encaissement ne correspond.',
 			'comptable.encaissements.videFiltrePhrase' => 'Choisissez « Tous » ou effacez la recherche pour revoir toute la liste.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.voirTous' => 'Voir tous les encaissements',
 			'comptable.encaissements.ouvrirDetailLecteur' => ({required Object famille}) => 'Ouvrir le détail de l\'encaissement de ${famille}',
 			'comptable.encaissements.fermerDetail' => 'Fermer le détail',
@@ -36841,8 +37084,6 @@ extension on Traductions {
 			'comptable.encaissements.rap.doublonPhrase' => 'Cette transaction ressemble à une autre déjà reçue. Vérifiez avant de rapprocher : un doublon n\'est jamais validé en silence.',
 			'comptable.encaissements.rap.marquerDoublon' => 'Marquer comme doublon',
 			'comptable.encaissements.rap.resultat' => ({required Object etat}) => 'État rendu par la source : ${etat}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.erreurEnvoi' => 'Nous ne savons pas si l\'opération a été prise en compte. Actualisez la liste avant de réessayer.',
 			'comptable.encaissements.rap.actualiser' => 'Actualiser',
 			'comptable.encaissements.rap.journal' => 'Journal de la transaction',

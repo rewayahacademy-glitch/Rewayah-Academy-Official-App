@@ -356,13 +356,6 @@ List<Override> surchargesDemoAdmin({
   return <Override>[
     sourceSessionProvider.overrideWithValue(const SourceSessionDemoAdmin()),
     portRevueDossiersProvider.overrideWithValue(RevueDossiersDemo(e)),
-    // CAP29-0 : la bibliotheque d'administration, en demonstration.
-    // [bibliotheque] pose un autre double (tests) ; [bibliothequeAbsente]
-    // laisse le port nul, comme en production.
-    if (!bibliothequeAbsente)
-      portBibliothequeAdminProvider.overrideWithValue(
-        bibliotheque ?? BibliothequeAdminDemo(),
-      ),
     portPolitiqueRevueKycProvider.overrideWithValue(PolitiqueRevueKycDemo(e)),
     // L'ecran ADM-02 actuel et l'Accueil admin : aucun appel serveur.
     serviceValidationProvider.overrideWithValue(ServiceValidationDemo(e)),
@@ -446,6 +439,13 @@ List<Override> surchargesDemoAdmin({
     ),
     // Tous les autres services admin adosses a Supabase : « indisponible ».
     ...surchargesServicesAdminIndisponibles(),
+    // CAP29-0 : la bibliotheque d'administration, en demonstration.
+    // [bibliotheque] pose un autre double (tests) ; [bibliothequeAbsente]
+    // laisse le port nul, comme en production.
+    if (!bibliothequeAbsente)
+      portBibliothequeAdminProvider.overrideWithValue(
+        bibliotheque ?? BibliothequeAdminDemo(),
+      ),
   ];
 }
 
