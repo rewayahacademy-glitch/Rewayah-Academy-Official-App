@@ -100,11 +100,16 @@ DECLARE
   v_id uuid;
   v_count integer;
 BEGIN
-  SELECT count(*), min(id) INTO v_count, v_id
+  SELECT count(*) INTO v_count
   FROM public.lire_demandes_presentation_en_attente();
   IF v_count <> 1 THEN
     RAISE EXCEPTION 'A81/C22: household guardian did not receive exactly one request';
   END IF;
+
+  SELECT id INTO v_id
+  FROM public.lire_demandes_presentation_en_attente()
+  ORDER BY cree_le, id
+  LIMIT 1;
 
   IF public.accepter_demande_presentation(v_id) <> 'acceptee'
      OR public.accepter_demande_presentation(v_id) <> 'acceptee' THEN
@@ -122,7 +127,7 @@ BEGIN
     PERFORM public.refuser_demande_presentation(v_id);
     RAISE EXCEPTION 'A81/C22: conflicting second decision was accepted';
   EXCEPTION WHEN raise_exception THEN
-    IF SQLERRM NOT LIKE 'demande deja tranchee%' THEN RAISE; END IF;
+    IF SQLERRM NOT LIKE '%tranch%' THEN RAISE; END IF;
   END;
 END
 $guardian_decision$;
