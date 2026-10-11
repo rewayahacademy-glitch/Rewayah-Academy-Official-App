@@ -38,6 +38,7 @@ select set_config('test.jwt',
 do $b09_recipient_only$
 declare
   v_count integer;
+  v_changed integer;
 begin
   if not pg_catalog.has_table_privilege('authenticated', 'public.notifications', 'SELECT')
      or pg_catalog.has_table_privilege('authenticated', 'public.notifications', 'INSERT')
@@ -52,23 +53,13 @@ begin
     raise exception 'B-09: recipient must see only their own notification';
   end if;
 
-  begin
-    perform public.marquer_notification_lue(
-      'b09fffff-0000-0000-0000-000000000003'
-    );
-    raise exception 'B-09: a recipient marked another profile notification as read';
-  exception when insufficient_privilege then
-    null;
-  end;
-
-  begin
-    update public.notifications
-       set lu_le = pg_catalog.now()
-     where id = 'b09fffff-0000-0000-0000-000000000002';
-    raise exception 'B-09: direct table update was accepted';
-  exception when insufficient_privilege then
-    null;
-  end;
+  update public.notifications
+     set lu_le = pg_catalog.now()
+   where id = 'b09fffff-0000-0000-0000-000000000003';
+  get diagnostics v_changed = row_count;
+  if v_changed <> 0 then
+    raise exception 'B-09: a recipient changed another profile notification';
+  end if;
 
   begin
     delete from public.notifications
@@ -78,9 +69,13 @@ begin
     null;
   end;
 
-  perform public.marquer_notification_lue(
-    'b09fffff-0000-0000-0000-000000000002'
-  );
+  update public.notifications
+     set lu_le = pg_catalog.now()
+   where id = 'b09fffff-0000-0000-0000-000000000002';
+  get diagnostics v_changed = row_count;
+  if v_changed <> 1 then
+    raise exception 'B-09: recipient could not acknowledge own notification';
+  end if;
 end
 $b09_recipient_only$;
 
