@@ -148,16 +148,20 @@ class _GraphiqueSensibleEtat extends ConsumerState<GraphiqueSensible> {
             Semantics(
               label: t.comptable.commun.montantMasque,
               excludeSemantics: true,
-              child: Container(
+              child: SizedBox(
                 key: const ValueKey<String>('graphique-masque'),
                 width: double.infinity,
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                decoration: palette.surfaceSunken.decoration(),
-                child: Text(
-                  g.masque,
-                  textAlign: TextAlign.center,
-                  style: palette.inkMuted.applyTo(
-                    textes.bodyMedium ?? const TextStyle(),
+                child: DecoratedBox(
+                  decoration: palette.surfaceSunken.decoration(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.lg),
+                    child: Text(
+                      g.masque,
+                      textAlign: TextAlign.center,
+                      style: palette.inkMuted.applyTo(
+                        textes.bodyMedium ?? const TextStyle(),
+                      ),
+                    ),
                   ),
                 ),
               ),
