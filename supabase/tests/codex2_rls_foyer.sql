@@ -94,6 +94,45 @@ BEGIN
   END IF;
 END $$;
 
+CREATE TEMP TABLE codex2_rls_violations (
+  scenario text NOT NULL,
+  table_name text NOT NULL
+) ON COMMIT DROP;
+GRANT INSERT ON codex2_rls_violations TO authenticated;
+
+-- Anon est exercé sur chaque table RLS réellement créée par les migrations,
+-- pas seulement sur `profiles`. Une absence de privilège SQL est un refus
+-- valide; si SELECT est accordé, aucune ligne ne doit devenir lisible.
+DO $$
+DECLARE
+  v_table regclass;
+  v_visible boolean;
+BEGIN
+  FOR v_table IN
+    SELECT c.oid::regclass
+      FROM pg_catalog.pg_class c
+      JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+     WHERE n.nspname = 'public'
+       AND c.relrowsecurity
+       AND c.relkind IN ('r', 'p', 'v', 'm', 'f')
+     ORDER BY c.oid::regclass::text
+  LOOP
+    v_visible := false;
+    BEGIN
+      SET LOCAL ROLE anon;
+      EXECUTE format('SELECT EXISTS (SELECT 1 FROM %s)', v_table)
+        INTO v_visible;
+      RESET ROLE;
+    EXCEPTION WHEN insufficient_privilege THEN
+      RESET ROLE;
+      v_visible := false;
+    END;
+    IF v_visible THEN
+      INSERT INTO codex2_rls_violations VALUES ('anon-read', v_table::text);
+    END IF;
+  END LOOP;
+END $$;
+
 
 INSERT INTO auth.users (id, email) VALUES
   ('c2a20000-0000-0000-0000-000000000001', 'codex2-guardian-a@example.test'),
@@ -154,29 +193,56 @@ BEGIN
 END $$;
 
 DO $$
-DECLARE v_count integer;
+DECLARE v_table regclass; v_visible boolean;
 BEGIN
   SET LOCAL ROLE authenticated;
   PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
   PERFORM set_config('test.jwt', '{"app_metadata":{"household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
-  SELECT count(*) INTO v_count FROM public.households
-   WHERE id = 'c2a2ffff-0000-0000-0000-000000000001';
-  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-NO-ROLE-CLAIM : foyer visible sans claim role'; END IF;
+  FOR v_table IN
+    SELECT c.oid::regclass FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public' AND c.relrowsecurity
+      AND c.relkind IN ('r', 'p', 'v', 'm', 'f')
+    ORDER BY c.oid::regclass::text
+  LOOP
+    v_visible := false;
+    BEGIN
+      EXECUTE format('SELECT EXISTS (SELECT 1 FROM %s)', v_table)
+        INTO v_visible;
+    EXCEPTION WHEN insufficient_privilege THEN
+      v_visible := false;
+    END;
+    IF v_visible THEN
+      INSERT INTO codex2_rls_violations VALUES ('missing-role-claim', v_table::text);
+    END IF;
+  END LOOP;
   RESET ROLE;
 END $$;
 
 DO $$
-DECLARE v_count integer;
+DECLARE v_table regclass; v_visible boolean;
 BEGIN
   SET LOCAL ROLE authenticated;
   PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000003', true);
   PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
-  SELECT count(*) INTO v_count FROM public.households
-   WHERE id = 'c2a2ffff-0000-0000-0000-000000000001';
-  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-DISABLED-ACCOUNT : compte disabled lit son foyer'; END IF;
-  SELECT count(*) INTO v_count FROM public.profiles
-   WHERE id = 'c2a20000-0000-0000-0000-000000000001';
-  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-DISABLED-ACCOUNT-PROFILES : compte disabled lit des profils'; END IF;
+  FOR v_table IN
+    SELECT c.oid::regclass FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public' AND c.relrowsecurity
+      AND c.relkind IN ('r', 'p', 'v', 'm', 'f')
+    ORDER BY c.oid::regclass::text
+  LOOP
+    v_visible := false;
+    BEGIN
+      EXECUTE format('SELECT EXISTS (SELECT 1 FROM %s)', v_table)
+        INTO v_visible;
+    EXCEPTION WHEN insufficient_privilege THEN
+      v_visible := false;
+    END;
+    IF v_visible THEN
+      INSERT INTO codex2_rls_violations VALUES ('disabled-account', v_table::text);
+    END IF;
+  END LOOP;
   RESET ROLE;
 END $$;
 
@@ -191,6 +257,17 @@ BEGIN
   GET DIAGNOSTICS v_rows = ROW_COUNT;
   IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-WRITE : appareil étranger modifié'; END IF;
   RESET ROLE;
+END $$;
+
+DO $$
+DECLARE v_failures text;
+BEGIN
+  SELECT string_agg(scenario || ':' || table_name, ', ' ORDER BY scenario, table_name)
+    INTO v_failures
+    FROM codex2_rls_violations;
+  IF v_failures IS NOT NULL THEN
+    RAISE EXCEPTION 'RLS-X2-02 negative assertion(s) failed: %', v_failures;
+  END IF;
 END $$;
 
 ROLLBACK;
