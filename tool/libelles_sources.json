@@ -3999,5 +3999,7 @@
   "eleve.accueil.entreeSePrepare": "décidé par délégation le 10/10, étape BOUTONS-GRISES-1 : « Rejoindre » jamais grisé pendant la lecture de l'accès, l'appui dit d'attendre un instant (K-59, interface de l'enfant au tutoiement)",
   "tc.groupe.carte.entreeSePrepare": "décidé par délégation le 10/10, étape BOUTONS-GRISES-1 : « Rejoindre » des cartes de classe jamais grisé pendant la lecture de l'accès (FI-9a), l'appui dit d'attendre un instant (K-59, vouvoiement)",
   "tc.groupe.carte.entreeAttendReseau": "décidé par délégation le 10/10, étape BOUTONS-GRISES-1 : « Rejoindre » de Mes classes jamais grisé quand le réseau manque, l'appui dit quand entrer sans redire « hors ligne » (K-59, seul le bandeau le dit)",
-  "foyer.ajout.identite.ageFige": "décidé par délégation le 10/10, étape BOUTONS-GRISES-1 : puces d'âge jamais grisées pendant l'envoi, l'appui dit pourquoi le choix est figé au lieu de rester muet (revue du vérificateur, K-59)"
+  "foyer.ajout.identite.ageFige": "décidé par délégation le 10/10, étape BOUTONS-GRISES-1 : puces d'âge jamais grisées pendant l'envoi, l'appui dit pourquoi le choix est figé au lieu de rester muet (revue du vérificateur, K-59)",
+  "enseignant.cahier.introuvable": "recette nuit A, lot RECETTE-A-CORR (defaut 5) ; decision deleguee de l'orchestrateur 01B8we8b, d'apres « etat seance introuvable avant le formulaire »",
+  "enseignant.cahier.introuvableDetail": "recette nuit A, lot RECETTE-A-CORR (defaut 5) ; decision deleguee de l'orchestrateur 01B8we8b, d'apres « etat seance introuvable avant le formulaire »"
 }

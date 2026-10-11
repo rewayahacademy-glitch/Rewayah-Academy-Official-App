@@ -107,11 +107,14 @@ void main() {
       expect(mode.role, RoleObservateur.adminVisible);
       expect(mode.visible, isTrue);
       expect(mode.annonceFaite, isTrue);
-      expect(profil.capacites, containsAll(<CapaciteObservation>[
-        CapaciteObservation.micro,
-        CapaciteObservation.camera,
-        CapaciteObservation.visibilite,
-      ]));
+      expect(
+        profil.capacites,
+        containsAll(<CapaciteObservation>[
+          CapaciteObservation.micro,
+          CapaciteObservation.camera,
+          CapaciteObservation.visibilite,
+        ]),
+      );
       // Le canal de donnees reste l'outil pedagogique de l'enseignant, meme
       // pour une intervention administrative.
       expect(
@@ -142,76 +145,79 @@ void main() {
     });
   });
 
-  group('Un ecart entre le jeton et le produit se voit, il ne s\'applique pas',
-      () {
-    test('un jeton conforme ne produit aucun ecart', () {
-      final ProfilObservateur tuteur = ProfilObservateur.pour(
-        RoleObservateur.tuteur,
-      );
+  group(
+    'Un ecart entre le jeton et le produit se voit, il ne s\'applique pas',
+    () {
+      test('un jeton conforme ne produit aucun ecart', () {
+        final ProfilObservateur tuteur = ProfilObservateur.pour(
+          RoleObservateur.tuteur,
+        );
 
-      expect(
-        tuteur.ecartsAvecJeton(
-          peutPublier: false,
+        expect(
+          tuteur.ecartsAvecJeton(
+            peutPublier: false,
+            peutPublierVideo: false,
+            peutPublierDonnees: false,
+            invisible: false,
+          ),
+          isEmpty,
+        );
+      });
+
+      test('un micro accorde a un tuteur est signale, pas accepte', () {
+        final ProfilObservateur tuteur = ProfilObservateur.pour(
+          RoleObservateur.tuteur,
+        );
+
+        final Set<CapaciteObservation> ecarts = tuteur.ecartsAvecJeton(
+          peutPublier: true,
           peutPublierVideo: false,
           peutPublierDonnees: false,
           invisible: false,
-        ),
-        isEmpty,
-      );
-    });
+        );
 
-    test('un micro accorde a un tuteur est signale, pas accepte', () {
-      final ProfilObservateur tuteur = ProfilObservateur.pour(
-        RoleObservateur.tuteur,
-      );
+        expect(ecarts, <CapaciteObservation>{CapaciteObservation.micro});
+        // Le profil, lui, n'a pas bouge : c'est le serveur qu'il faudra
+        // corriger, pas l'ecran qu'il faut ouvrir.
+        expect(tuteur.capacites.contains(CapaciteObservation.micro), isFalse);
+      });
 
-      final Set<CapaciteObservation> ecarts = tuteur.ecartsAvecJeton(
-        peutPublier: true,
-        peutPublierVideo: false,
-        peutPublierDonnees: false,
-        invisible: false,
-      );
+      test('un controleur rendu visible est un ecart', () {
+        final ProfilObservateur controleur = ProfilObservateur.pour(
+          RoleObservateur.controleur,
+        );
 
-      expect(ecarts, <CapaciteObservation>{CapaciteObservation.micro});
-      // Le profil, lui, n'a pas bouge : c'est le serveur qu'il faudra
-      // corriger, pas l'ecran qu'il faut ouvrir.
-      expect(tuteur.capacites.contains(CapaciteObservation.micro), isFalse);
-    });
-
-    test('un controleur rendu visible est un ecart', () {
-      final ProfilObservateur controleur = ProfilObservateur.pour(
-        RoleObservateur.controleur,
-      );
-
-      expect(
-        controleur.ecartsAvecJeton(
-          peutPublier: false,
-          peutPublierVideo: false,
-          peutPublierDonnees: false,
-          invisible: false,
-        ),
-        <CapaciteObservation>{CapaciteObservation.visibilite},
-      );
-    });
-  });
+        expect(
+          controleur.ecartsAvecJeton(
+            peutPublier: false,
+            peutPublierVideo: false,
+            peutPublierDonnees: false,
+            invisible: false,
+          ),
+          <CapaciteObservation>{CapaciteObservation.visibilite},
+        );
+      });
+    },
+  );
 
   group('La visite journalisee porte ce qu\'il faut pour la relire', () {
     test('entree, sortie, duree, rang et version de politique', () {
-      final GuardianSessionVisit lue =
-          GuardianSessionVisit.depuisJson(const <String, dynamic>{
-            'id': 'v1',
-            'session_id': 's1',
-            'groupe_id': 'g1',
-            'observateur_profile_id': 'tuteur-1',
-            'role': 'guardian_observer',
-            'enfant_profile_id': 'enfant-1',
-            'entered_at': '2026-09-20T10:00:00Z',
-            'left_at': '2026-09-20T10:02:00Z',
-            'duration_seconds': 120,
-            'visit_number': 1,
-            'policy_version': 'p1',
-            'fin_de_visite': 'quota_atteint',
-          });
+      final GuardianSessionVisit lue = GuardianSessionVisit.depuisJson(
+        const <String, dynamic>{
+          'id': 'v1',
+          'session_id': 's1',
+          'groupe_id': 'g1',
+          'observateur_profile_id': 'tuteur-1',
+          'role': 'guardian_observer',
+          'enfant_profile_id': 'enfant-1',
+          'entered_at': '2026-09-20T10:00:00Z',
+          'left_at': '2026-09-20T10:02:00Z',
+          'duration_seconds': 120,
+          'visit_number': 1,
+          'policy_version': 'p1',
+          'fin_de_visite': 'quota_atteint',
+        },
+      );
 
       expect(lue.enteredAtUtc.isUtc, isTrue);
       expect(lue.leftAtUtc?.isUtc, isTrue);
@@ -223,17 +229,18 @@ void main() {
     });
 
     test('un intervalle ouvert n\'a ni sortie ni duree', () {
-      final GuardianSessionVisit lue =
-          GuardianSessionVisit.depuisJson(const <String, dynamic>{
-            'id': 'v1',
-            'session_id': 's1',
-            'groupe_id': 'g1',
-            'observateur_profile_id': 'tuteur-1',
-            'role': 'guardian_observer',
-            'entered_at': '2026-09-20T10:00:00Z',
-            'visit_number': 1,
-            'policy_version': 'p1',
-          });
+      final GuardianSessionVisit lue = GuardianSessionVisit.depuisJson(
+        const <String, dynamic>{
+          'id': 'v1',
+          'session_id': 's1',
+          'groupe_id': 'g1',
+          'observateur_profile_id': 'tuteur-1',
+          'role': 'guardian_observer',
+          'entered_at': '2026-09-20T10:00:00Z',
+          'visit_number': 1,
+          'policy_version': 'p1',
+        },
+      );
 
       expect(lue.enCours, isTrue);
       expect(lue.leftAtUtc, isNull);

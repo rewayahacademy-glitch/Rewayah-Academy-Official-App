@@ -11936,6 +11936,12 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Aucune présence et aucun événement n'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier de transmission.'
 	String get videDetail => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier de transmission.';
 
+	/// fr: 'Séance introuvable'
+	String get introuvable => 'Séance introuvable';
+
+	/// fr: 'Cette séance n'est pas l'une des vôtres, ou le lien est incomplet. Revenez à votre journée pour choisir une séance.'
+	String get introuvableDetail => 'Cette séance n\'est pas l\'une des vôtres, ou le lien est incomplet. Revenez à votre journée pour choisir une séance.';
+
 	/// fr: 'Le constat n'a pas pu être lu.'
 	String get erreur => 'Le constat n\'a pas pu être lu.';
 
@@ -33115,6 +33121,8 @@ extension on Traductions {
 			'enseignant.cahier.retourJournee' => 'Retour à ma journée',
 			'enseignant.cahier.vide' => 'Le constat n\'a pas pu être déduit',
 			'enseignant.cahier.videDetail' => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier de transmission.',
+			'enseignant.cahier.introuvable' => 'Séance introuvable',
+			'enseignant.cahier.introuvableDetail' => 'Cette séance n\'est pas l\'une des vôtres, ou le lien est incomplet. Revenez à votre journée pour choisir une séance.',
 			'enseignant.cahier.erreur' => 'Le constat n\'a pas pu être lu.',
 			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier de transmission sans le constat.',
 			'enseignant.cahier.echecEnvoi' => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.',
@@ -33173,10 +33181,10 @@ extension on Traductions {
 			'enseignant.cahier.faiblesseMadd' => 'Madd',
 			'enseignant.cahier.faiblesseGhunna' => 'Ghunna',
 			'enseignant.cahier.faiblesseWaqf' => 'Waqf',
-			'enseignant.cahier.faiblesseFluidite' => 'Fluidité',
-			'enseignant.cahier.faiblesseMemorisation' => 'Mémorisation',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.faiblesseFluidite' => 'Fluidité',
+			'enseignant.cahier.faiblesseMemorisation' => 'Mémorisation',
 			'enseignant.cahier.niveauARevoirDetail' => 'La leçon est à reprendre à la prochaine séance.',
 			'enseignant.cahier.niveauEnProgresDetail' => 'L\'élève avance, quelques erreurs restent.',
 			'enseignant.cahier.niveauAcquisDetail' => 'La leçon est sue, avec peu d\'erreurs.',
@@ -33687,10 +33695,10 @@ extension on Traductions {
 			'tc.groupe.duree.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
 			'tc.groupe.horloges.votreHeure' => 'Votre heure',
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
-			'tc.groupe.horloges.heureGroupe' => 'Heure de la classe',
-			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
 			_ => null,
 		} ?? switch (path) {
+			'tc.groupe.horloges.heureGroupe' => 'Heure de la classe',
+			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
 			'tc.groupe.dst.j30' => 'Changement d\'heure dans un mois',
 			'tc.groupe.dst.j7' => 'Changement d\'heure la semaine prochaine',
 			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
@@ -34201,10 +34209,10 @@ extension on Traductions {
 			'adulte.recharge.soldeActuel' => ({required Object montant}) => 'Solde actuel : ${montant}',
 			'adulte.recharge.montantSuggere' => ({required Object montant}) => 'Montant suggéré : ${montant}',
 			'adulte.recharge.montantPour' => ({required Object prenom}) => 'Montant pour ${prenom}',
-			'adulte.recharge.diminuer' => ({required Object prenom}) => 'Diminuer le montant pour ${prenom}',
-			'adulte.recharge.augmenter' => ({required Object prenom}) => 'Augmenter le montant pour ${prenom}',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.recharge.diminuer' => ({required Object prenom}) => 'Diminuer le montant pour ${prenom}',
+			'adulte.recharge.augmenter' => ({required Object prenom}) => 'Augmenter le montant pour ${prenom}',
 			'adulte.recharge.repartition' => 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n\'y a pas de solde commun.',
 			'adulte.recharge.moyen' => 'Moyen de paiement',
 			'adulte.recharge.raisonMontant' => 'Choisissez un montant pour chaque profil sélectionné.',
@@ -34715,10 +34723,10 @@ extension on Traductions {
 			'suiviDemandes.close.motif.offreRetiree' => 'L\'académie a retiré ce créneau de ses offres.',
 			'suiviDemandes.close.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
 			'suiviDemandes.close.motif.refusDirection' => 'La direction n\'a pas pu retenir cette demande.',
-			'suiviDemandes.close.motif.inconnu' => 'Cette demande est close.',
-			'suiviDemandes.close.suite' => 'Vous pouvez choisir un autre créneau parmi ceux proposés.',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.close.motif.inconnu' => 'Cette demande est close.',
+			'suiviDemandes.close.suite' => 'Vous pouvez choisir un autre créneau parmi ceux proposés.',
 			'suiviDemandes.close.suiteSansChoix' => 'Aucun autre créneau n\'est proposé pour le moment. Revenez sur cette page plus tard.',
 			'suiviDemandes.close.choisirAutre' => ({required Object prenom}) => 'Choisir un autre créneau pour ${prenom}',
 			'suiviDemandes.vide' => 'Aucune demande de créneau en cours.',
@@ -35229,10 +35237,10 @@ extension on Traductions {
 			'com.communaute.demo.horsLigne' => 'Hors ligne',
 			'com.communaute.demo.envoiNonConfirme' => 'Envoi non confirmé',
 			'com.communaute.demo.moderationIndisponible' => 'Modération indisponible',
-			'com.communaute.demo.lecteurSeul' => 'Lecture seule, sans publication',
-			'com.communaute.demo.f.categoriePedagogie' => 'Pédagogie',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.demo.lecteurSeul' => 'Lecture seule, sans publication',
+			'com.communaute.demo.f.categoriePedagogie' => 'Pédagogie',
 			'com.communaute.demo.f.categorieRessources' => 'Ressources',
 			'com.communaute.demo.f.categorieGestion' => 'Gestion',
 			'com.communaute.demo.f.fonctionSoi' => 'Enseignant, Classe Al-Fatiha',
@@ -35743,10 +35751,10 @@ extension on Traductions {
 			'comptable.statuts.paiement.soumis' => 'Soumis',
 			'comptable.statuts.paiement.enTransit' => 'En transit',
 			'comptable.statuts.paiement.reussi' => 'Réussi',
-			'comptable.statuts.paiement.echoue' => 'Échoué',
-			'comptable.statuts.paiement.aRelancer' => 'À relancer',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.paiement.echoue' => 'Échoué',
+			'comptable.statuts.paiement.aRelancer' => 'À relancer',
 			'comptable.statuts.paiement.annule' => 'Annulé',
 			'comptable.statuts.paiement.retourne' => 'Remboursé / retourné',
 			'comptable.statuts.paiement.indisponible' => 'Indisponible',
@@ -36257,10 +36265,10 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.supprimerQuestion' => ({required Object methode}) => 'Supprimer ${methode} ?',
 			'comptable.beneficiaires.recevoir.supprimerConsequence' => 'Vous ne recevrez plus de versement sur cette méthode. Si c\'est la seule, votre prochain versement attendra une nouvelle méthode.',
 			'comptable.beneficiaires.recevoir.ajouter' => 'Ajouter une méthode de paiement',
-			'comptable.beneficiaires.recevoir.ajoutTitre' => 'Ajouter une méthode de paiement',
-			'comptable.beneficiaires.recevoir.remplacementTitre' => ({required Object methode}) => 'Remplacer ${methode}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.ajoutTitre' => 'Ajouter une méthode de paiement',
+			'comptable.beneficiaires.recevoir.remplacementTitre' => ({required Object methode}) => 'Remplacer ${methode}',
 			'comptable.beneficiaires.recevoir.ajoutContexte' => 'Choisissez le type de méthode. Vous saisirez ensuite vos coordonnées dans un espace sécurisé : l\'application ne les voit pas et ne les conserve pas.',
 			'comptable.beneficiaires.recevoir.continuerSaisie' => 'Continuer vers la saisie sécurisée',
 			'comptable.beneficiaires.recevoir.typeRequis' => 'Choisissez un type de méthode pour continuer.',

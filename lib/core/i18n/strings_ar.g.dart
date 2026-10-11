@@ -2809,6 +2809,8 @@ class _Traductions$enseignant$cahier$ar extends Traductions$enseignant$cahier$fr
 	@override String get retourJournee => 'العودة إلى يومي';
 	@override String get vide => 'تعذّر استنتاج المعاينة';
 	@override String get videDetail => 'لم يُسجَّل حضور ولا حدث لهذه الحصة. يمكنك مع ذلك إيداع دفتر المتابعة.';
+	@override String get introuvable => 'الحصة غير موجودة';
+	@override String get introuvableDetail => 'هذه الحصة ليست من حصصك، أو أن الرابط غير مكتمل. عد إلى يومك لاختيار حصة.';
 	@override String get erreur => 'تعذّرت قراءة المعاينة.';
 	@override String get erreurDetail => 'أعد المحاولة، أو أودع دفتر المتابعة دون المعاينة.';
 	@override String get echecEnvoi => 'لم يُؤكَّد الإرسال. تحقّق قبل إعادة المحاولة.';
@@ -13537,6 +13539,8 @@ extension on TraductionsAr {
 			'enseignant.cahier.retourJournee' => 'العودة إلى يومي',
 			'enseignant.cahier.vide' => 'تعذّر استنتاج المعاينة',
 			'enseignant.cahier.videDetail' => 'لم يُسجَّل حضور ولا حدث لهذه الحصة. يمكنك مع ذلك إيداع دفتر المتابعة.',
+			'enseignant.cahier.introuvable' => 'الحصة غير موجودة',
+			'enseignant.cahier.introuvableDetail' => 'هذه الحصة ليست من حصصك، أو أن الرابط غير مكتمل. عد إلى يومك لاختيار حصة.',
 			'enseignant.cahier.erreur' => 'تعذّرت قراءة المعاينة.',
 			'enseignant.cahier.erreurDetail' => 'أعد المحاولة، أو أودع دفتر المتابعة دون المعاينة.',
 			'enseignant.cahier.echecEnvoi' => 'لم يُؤكَّد الإرسال. تحقّق قبل إعادة المحاولة.',
@@ -13816,10 +13820,10 @@ extension on TraductionsAr {
 			'compte.tuteur.identite.courrielAbsent' => 'عنوان الدخول غير متوفر',
 			'compte.tuteur.identite.connexionLien' => 'الدخول برابط يصل بالبريد الإلكتروني',
 			'compte.tuteur.identite.connexionGoogle' => 'الدخول بحساب Google',
-			'compte.tuteur.identite.connexionInconnue' => 'طريقة الدخول غير محددة',
-			'compte.tuteur.acces.titre' => 'الوصول والمدفوعات',
 			_ => null,
 		} ?? switch (path) {
+			'compte.tuteur.identite.connexionInconnue' => 'طريقة الدخول غير محددة',
+			'compte.tuteur.acces.titre' => 'الوصول والمدفوعات',
 			'compte.tuteur.acces.resume' => 'حالة كل ملف طالب وموعد انتهائه',
 			'compte.tuteur.acces.pastilleActif' => 'الوصول ساري',
 			'compte.tuteur.acces.pastilleExpire' => 'انتهى الوصول',
@@ -14330,10 +14334,10 @@ extension on TraductionsAr {
 			'tc.classe.lien.reconnexion' => 'جارٍ إعادة الاتصال',
 			'tc.classe.lien.retabli' => 'عاد الاتصال',
 			'tc.classe.lien.echec' => 'انقطع الاتصال',
-			'tc.classe.lien.retourDeSuspension' => 'أوقف النظام الدرس مؤقتًا. جارٍ التحقق من الاتصال.',
-			'tc.classe.barre.titre' => 'حصة مباشرة',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.lien.retourDeSuspension' => 'أوقف النظام الدرس مؤقتًا. جارٍ التحقق من الاتصال.',
+			'tc.classe.barre.titre' => 'حصة مباشرة',
 			'tc.classe.barre.revenir' => ({required Object deGroupe}) => 'العودة إلى درس ⁨${deGroupe}⁩',
 			'tc.classe.prevol.titre' => 'قبل فتح الدرس',
 			'tc.classe.prevol.microOk' => 'تم العثور على ميكروفون',
@@ -14844,10 +14848,10 @@ extension on TraductionsAr {
 			'com.vocal.demo.indisponible' => 'غير متاح',
 			'com.vocal.demo.recu' => 'رسالة صوتية واردة',
 			'com.vocal.demo.repondre' => 'الرد في المحادثة',
-			'com.vocal.demo.envoyes' => 'الرسائل الصوتية المرسلة',
-			'com.vocal.demo.auteurEnseignante' => 'سيدة مريم، معلمة',
 			_ => null,
 		} ?? switch (path) {
+			'com.vocal.demo.envoyes' => 'الرسائل الصوتية المرسلة',
+			'com.vocal.demo.auteurEnseignante' => 'سيدة مريم، معلمة',
 			'com.vocal.demo.auteurParent' => 'أحمد، ولي أمر آدم',
 			'com.vocal.demo.messageRecu' => 'السلام عليكم، هذه ملاحظاتي على تلاوة هذا الأسبوع.',
 			'com.vocal.demo.horodatage' => 'اليوم، 10:28',
@@ -15358,10 +15362,10 @@ extension on TraductionsAr {
 			'com.annonces.demoPublication.extraitVente' => 'أقدم دروسًا خصوصية مدفوعة في عطلة نهاية الأسبوع، راسلوني.',
 			'com.annonces.demoPublication.signalementHorsSujet' => 'رد تحت «تنظيم مراجعة جماعية»',
 			'com.annonces.section' => 'إعلانات الفصل',
-			'com.annonces.annonce' => 'إعلان',
-			'com.annonces.publier' => 'نشر إعلان',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.annonce' => 'إعلان',
+			'com.annonces.publier' => 'نشر إعلان',
 			'com.annonces.videPublier' => 'لا توجد إعلانات لهذا الفصل. انشر أول إعلان للفصل كله.',
 			'com.annonces.auteurDate' => ({required Object auteur, required Object date, required Object heure}) => '${auteur}‏، يوم ${date} الساعة ${heure}',
 			'com.annonces.date' => ({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}',
@@ -15872,10 +15876,10 @@ extension on TraductionsAr {
 			'admin.journal.roleControleur' => 'مراقب',
 			'admin.journal.roleComptable' => 'محاسب',
 			'admin.journal.roleAucun' => 'خارج الجلسة',
-			'admin.journal.evtKycLu' => 'اطُّلع على ملف الهوية',
-			'admin.journal.evtKycTranche' => 'حُسم ملف الهوية',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.evtKycLu' => 'اطُّلع على ملف الهوية',
+			'admin.journal.evtKycTranche' => 'حُسم ملف الهوية',
 			'admin.journal.evtProfilCree' => 'أُنشئ ملف',
 			'admin.journal.evtProfilEnfantCree' => 'أُنشئ ملف طفل',
 			'admin.journal.evtCodeCree' => 'أُنشئ رمز ربط',
@@ -16386,10 +16390,10 @@ extension on TraductionsAr {
 			'comptable.statuts.raison.fournisseurIndisponible' => 'المزوّد غير متاح',
 			'comptable.statuts.raison.fondsInsuffisants' => 'الأموال غير كافية',
 			'comptable.statuts.raison.doublonPotentiel' => 'تكرار محتمل',
-			'comptable.statuts.raison.nonApprouvee' => 'التزام غير معتمَد',
-			'comptable.statuts.raison.capaciteAbsente' => 'القدرة غير متوفرة',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.raison.nonApprouvee' => 'التزام غير معتمَد',
+			'comptable.statuts.raison.capaciteAbsente' => 'القدرة غير متوفرة',
 			'comptable.alertes.enseignantsAPayer' => 'معلمون للدفع',
 			'comptable.alertes.contractuelsAEcheance' => 'متعاقدون حان موعد استحقاقهم',
 			'comptable.alertes.infosManquantes' => 'معلومات الدفع ناقصة',
@@ -16900,10 +16904,10 @@ extension on TraductionsAr {
 			'comptable.contractuels.champAuteur' => 'المُنشئ',
 			'comptable.contractuels.champApprobateur' => 'المعتمِد',
 			'comptable.contractuels.champProfilPaiement' => 'دفع المستفيد',
-			'comptable.contractuels.champMotifRefus' => 'سبب الرفض',
-			'comptable.contractuels.aucunJustificatif' => 'لا يوجد مستند مؤيِّد مرفق',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.contractuels.champMotifRefus' => 'سبب الرفض',
+			'comptable.contractuels.aucunJustificatif' => 'لا يوجد مستند مؤيِّد مرفق',
 			'comptable.contractuels.nonRenseigne' => 'غير محدد',
 			'comptable.contractuels.ligneSource' => ({required Object source}) => 'المصدر: ${source}',
 			'comptable.contractuels.ligneAuteur' => ({required Object auteur}) => 'أضافه ${auteur}',
@@ -17414,10 +17418,10 @@ extension on TraductionsAr {
 			'appareils.eleve.introuvableTitre' => 'لم يُعثر على ملف الطالب',
 			'appareils.eleve.introuvable' => 'ملف الطالب هذا غير مرتبط بأسرتك.',
 			'appareils.eleve.introuvableAction' => 'عرض أجهزة الأسرة',
-			'appareils.eleve.connecteLe' => ({required Object date}) => 'رُبط في ⁨${date}⁩',
-			'appareils.eleve.utiliseLe' => ({required Object date}) => 'آخر استخدام: ⁨${date}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'appareils.eleve.connecteLe' => ({required Object date}) => 'رُبط في ⁨${date}⁩',
+			'appareils.eleve.utiliseLe' => ({required Object date}) => 'آخر استخدام: ⁨${date}⁩',
 			'appareils.eleve.jamaisUtilise' => 'لم يُستخدم بعد',
 			'appareils.eleve.retirerLibelle' => ({required Object appareil}) => 'إزالة ⁨${appareil}⁩',
 			'appareils.eleve.horsLigne' => 'إزالة جهاز أو ربطه يتطلب اتصالًا بالإنترنت.',
@@ -17928,10 +17932,10 @@ extension on TraductionsAr {
 			'adulte.reprise.titulaire.refuser' => 'رفض الطلب',
 			'adulte.reprise.titulaire.ligne' => 'قُدِّم طلب لاستلام أسرتك.',
 			'adulte.reprise.titulaire.refusEchecTitre' => 'لم يُؤكَّد الرفض.',
-			'adulte.reprise.titulaire.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك رفض الطلب بنفسك عند عودة الاتصال.',
-			'adulte.reprise.titulaire.refusee' => 'رفضت هذا الطلب. الإدارة على علم. لا تُنقل أي صلاحية من صلاحيات أسرتك.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.reprise.titulaire.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك رفض الطلب بنفسك عند عودة الاتصال.',
+			'adulte.reprise.titulaire.refusee' => 'رفضت هذا الطلب. الإدارة على علم. لا تُنقل أي صلاحية من صلاحيات أسرتك.',
 			'adulte.reprise.notifications.refuseeParTitulaire' => 'رفض صاحب حساب الأسرة طلبك لاستلام الأسرة.',
 			'adulte.reprise.notifications.attenteAdministration' => 'طلبك لاستلام الأسرة بانتظار الإدارة.',
 			'adulte.reprise.notifications.validee' => 'اعتُمد طلبك لاستلام الأسرة.',
@@ -18442,10 +18446,10 @@ extension on TraductionsAr {
 			'suiviDemandes.prochaine.listeAttente' => 'نُبلغكم فور توفر مكان. لا يُعلَن أي موعد ما لم يكن معروفًا.',
 			'suiviDemandes.prochaine.classeValidee' => 'الخطوة التالية: تعيين معلم الفصل. نُبلغكم فور ذلك.',
 			'suiviDemandes.prochaine.eleveIntegre' => 'الخطوة التالية: بدء الدروس',
-			'suiviDemandes.debutCours' => 'بدء الدروس',
-			'suiviDemandes.debutValeur' => ({required Object date, required Object heure, required Object deVille}) => '⁨${date}⁩ في ⁨${heure}⁩، بتوقيت ⁨${deVille}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.debutCours' => 'بدء الدروس',
+			'suiviDemandes.debutValeur' => ({required Object date, required Object heure, required Object deVille}) => '⁨${date}⁩ في ⁨${heure}⁩، بتوقيت ⁨${deVille}⁩',
 			'suiviDemandes.debutAFixer' => 'سيظهر موعد الدرس الأول هنا فور تحديده.',
 			'suiviDemandes.enseignant' => 'المعلم',
 			'suiviDemandes.personnaliseNotice' => 'لن يُفتح هذا الموعد إلا إذا اختاره طلاب آخرون واكتمل الفصل.',

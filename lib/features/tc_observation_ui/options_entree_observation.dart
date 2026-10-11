@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/session/session_state.dart';
 import '../../core/tc_observation/guardian_session_visit.dart';
 import '../../core/tc_observation/mode_entree_admin.dart';
 
@@ -25,35 +25,40 @@ class OptionsEntreeObservation {
     this.role,
   });
 
-  /// Les options offertes a un role applicatif.
+  /// Les options offertes a une session, selon ses capacites d'observation.
   ///
-  /// Un role absent de cette liste n'observe pas : ni l'enseignant, qui est
-  /// dans la salle, ni l'eleve, ni la comptabilite. Le repli est le plus ferme,
-  /// comme celui de `RoleSalle.depuis`.
-  factory OptionsEntreeObservation.pour(AppRole? role) => switch (role) {
-    AppRole.guardian => OptionsEntreeObservation._(
-      role: RoleObservateur.tuteur,
-      modes: const <ModeEntreeAdmin>[],
-      intro: t.tc.observation.entree.tuteurIntro,
-    ),
-    AppRole.admin => OptionsEntreeObservation._(
-      // Le mode discret est le defaut : entrer sans perturber est le geste le
-      // plus frequent, et c'est aussi le moins invasif des deux.
-      role: RoleObservateur.adminIncognito,
-      modes: ModeEntreeAdmin.values,
-      intro: t.tc.observation.entree.adminIntro,
-    ),
-    AppRole.controller => OptionsEntreeObservation._(
-      role: RoleObservateur.controleur,
-      modes: const <ModeEntreeAdmin>[],
-      intro: t.tc.observation.entree.controleurIntro,
-    ),
-    AppRole.teacher || AppRole.student || AppRole.accountant || null =>
-      OptionsEntreeObservation._(
+  /// Une session sans capacite d'observer n'observe pas : ni l'enseignant, qui
+  /// est dans la salle, ni l'eleve, ni la comptabilite. Le repli est le plus
+  /// ferme, comme celui de `RoleSalle.depuis`.
+  factory OptionsEntreeObservation.depuis(SessionState session) {
+    if (session.observeEnFamille) {
+      return OptionsEntreeObservation._(
+        role: RoleObservateur.tuteur,
         modes: const <ModeEntreeAdmin>[],
-        intro: t.tc.observation.entree.roleSansObservation,
-      ),
-  };
+        intro: t.tc.observation.entree.tuteurIntro,
+      );
+    }
+    if (session.observeEnDirection) {
+      return OptionsEntreeObservation._(
+        // Le mode discret est le defaut : entrer sans perturber est le geste
+        // le plus frequent, et c'est aussi le moins invasif des deux.
+        role: RoleObservateur.adminIncognito,
+        modes: ModeEntreeAdmin.values,
+        intro: t.tc.observation.entree.adminIntro,
+      );
+    }
+    if (session.observeEnControle) {
+      return OptionsEntreeObservation._(
+        role: RoleObservateur.controleur,
+        modes: const <ModeEntreeAdmin>[],
+        intro: t.tc.observation.entree.controleurIntro,
+      );
+    }
+    return OptionsEntreeObservation._(
+      modes: const <ModeEntreeAdmin>[],
+      intro: t.tc.observation.entree.roleSansObservation,
+    );
+  }
 
   /// Le role d'observation tenu par defaut. `null` quand ce compte n'observe
   /// aucune seance.

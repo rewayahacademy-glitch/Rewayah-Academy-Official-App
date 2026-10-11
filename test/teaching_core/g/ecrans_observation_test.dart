@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_observation/guardian_observation_policy.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/vue_budget_observation.dart';
@@ -66,7 +67,9 @@ void main() {
       await tester.pumpWidget(
         hoteTcG(
           ChoixEntreeObservation(
-            options: OptionsEntreeObservation.pour(AppRole.controller),
+            options: OptionsEntreeObservation.depuis(
+              const SessionState(resolue: true, role: AppRole.controller),
+            ),
             onMode: (_) {},
             onEntrer: () {},
           ),
@@ -90,7 +93,9 @@ void main() {
       await tester.pumpWidget(
         hoteTcG(
           ChoixEntreeObservation(
-            options: OptionsEntreeObservation.pour(AppRole.admin),
+            options: OptionsEntreeObservation.depuis(
+              const SessionState(resolue: true, role: AppRole.admin),
+            ),
             onMode: (_) {},
             onEntrer: () {},
           ),
@@ -107,7 +112,9 @@ void main() {
       await tester.pumpWidget(
         hoteTcG(
           ChoixEntreeObservation(
-            options: OptionsEntreeObservation.pour(AppRole.guardian),
+            options: OptionsEntreeObservation.depuis(
+              const SessionState(resolue: true, role: AppRole.guardian),
+            ),
             onMode: (_) {},
             onEntrer: () {},
           ),
@@ -130,7 +137,9 @@ void main() {
       await tester.pumpWidget(
         hoteTcG(
           ChoixEntreeObservation(
-            options: OptionsEntreeObservation.pour(AppRole.student),
+            options: OptionsEntreeObservation.depuis(
+              const SessionState(resolue: true, role: AppRole.student),
+            ),
             onMode: (_) {},
             onEntrer: () => entre = true,
           ),
