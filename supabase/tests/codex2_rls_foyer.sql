@@ -247,6 +247,14 @@ INSERT INTO public.matching_requests (kind, subject_profile_id, reason, requeste
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at) VALUES
   ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000005', '2026-10-12 10:00:00+00', '2026-10-12 11:00:00+00'),
   ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000006', '2026-10-13 11:00:00+00', '2026-10-13 12:00:00+00');
+INSERT INTO public.learning_assignment
+  (id, group_id, student_id, resource_id, purpose, starts_at, due_at, created_by, status) VALUES
+  ('c2a2d000-2000-0000-0000-000000000001', 'c2a2a000-2000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'c2a2b000-2000-0000-0000-000000000001', 'learn', '2026-10-12 00:00:00+00', '2026-10-19 00:00:00+00', 'c2a20000-0000-0000-0000-000000000005', 'a_faire'),
+  ('c2a2d000-2000-0000-0000-000000000002', 'c2a2a000-2000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'c2a2b000-2000-0000-0000-000000000001', 'review', '2026-10-13 00:00:00+00', '2026-10-20 00:00:00+00', 'c2a20000-0000-0000-0000-000000000006', 'a_faire');
+INSERT INTO public.session_shared_content
+  (session_id, resource_id, content_position, display_mode, revision, updated_by) VALUES
+  ('c2a2e000-1000-0000-0000-000000000001', 'c2a2b000-2000-0000-0000-000000000001', '{"page":2}', 'page', 1, 'c2a20000-0000-0000-0000-000000000005'),
+  ('c2a2e000-1000-0000-0000-000000000002', 'c2a2b000-2000-0000-0000-000000000001', '{"page":3}', 'page', 1, 'c2a20000-0000-0000-0000-000000000006');
 INSERT INTO public.annotation_layer (id, resource_id, session_id, auteur_profile_id, portee) VALUES
   ('c2a2c000-2000-0000-0000-000000000001', 'c2a2b000-2000-0000-0000-000000000001', 'c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000005', 'seance'),
   ('c2a2c000-2000-0000-0000-000000000002', 'c2a2b000-2000-0000-0000-000000000001', 'c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000006', 'seance');
@@ -1093,6 +1101,56 @@ BEGIN
    WHERE observateur_profile_id = 'c2a20000-0000-0000-0000-000000000002';
   GET DIAGNOSTICS v_rows = ROW_COUNT;
   IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-GUARDIAN-VISIT-WRITE: guardian A updated B visit'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Les devoirs suivent le groupe: enseignant et foyer A voient A, pas B.
+DO $$
+DECLARE v_count integer; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000005', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.learning_assignment WHERE id = 'c2a2d000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-LEARNING-ASSIGNMENT: teacher A cannot read own assignment'; END IF;
+  SELECT count(*) INTO v_count FROM public.learning_assignment WHERE id = 'c2a2d000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-LEARNING-ASSIGNMENT-READ: teacher A sees assignment B'; END IF;
+  UPDATE public.learning_assignment SET status = status WHERE id = 'c2a2d000-2000-0000-0000-000000000001';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-LEARNING-ASSIGNMENT-WRITE: teacher A cannot update own assignment'; END IF;
+  UPDATE public.learning_assignment SET status = status WHERE id = 'c2a2d000-2000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-LEARNING-ASSIGNMENT-WRITE: teacher A updated assignment B'; END IF;
+  RESET ROLE;
+
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.learning_assignment WHERE id = 'c2a2d000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-FAMILY-LEARNING-ASSIGNMENT: guardian A cannot read assignment for own student'; END IF;
+  SELECT count(*) INTO v_count FROM public.learning_assignment WHERE id = 'c2a2d000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-FAMILY-LEARNING-ASSIGNMENT: guardian A sees assignment B'; END IF;
+  UPDATE public.learning_assignment SET status = status WHERE id = 'c2a2d000-2000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-FAMILY-LEARNING-ASSIGNMENT-WRITE: guardian A updated assignment B'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Le contenu de seance est lisible par les participants de cette seance;
+-- son ecriture directe reste reservee a la RPC.
+DO $$
+DECLARE v_count integer; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000005', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.session_shared_content WHERE session_id = 'c2a2e000-1000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-SHARED-CONTENT: teacher A cannot read own session content'; END IF;
+  SELECT count(*) INTO v_count FROM public.session_shared_content WHERE session_id = 'c2a2e000-1000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-SHARED-CONTENT: teacher A sees session B content'; END IF;
+  UPDATE public.session_shared_content SET revision = revision WHERE session_id = 'c2a2e000-1000-0000-0000-000000000001';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-SHARED-CONTENT-DIRECT-WRITE: teacher A updated content outside the RPC'; END IF;
   RESET ROLE;
 END $$;
 
