@@ -9478,7 +9478,7 @@ class Traductions$admin$bibliotheque$fr {
 	String get titre => 'Bibliothèque';
 
 	/// fr: 'Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.'
-	String get intro => 'Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.';
+	String get intro => 'Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.';
 
 	/// fr: 'Un brouillon ne donne aucun accès aux élèves ni aux enseignants.'
 	String get brouillonAlerte => 'Un brouillon ne donne aucun accès aux élèves ni aux enseignants.';
@@ -9498,8 +9498,8 @@ class Traductions$admin$bibliotheque$fr {
 	/// fr: 'Vous n'avez pas accès à la bibliothèque d'administration.'
 	String get nonAutorise => 'Vous n\'avez pas accès à la bibliothèque d\'administration.';
 
-	/// fr: 'Bibliothèque indisponible'
-	String get indisponibleTitre => 'Bibliothèque indisponible';
+	/// fr: 'Bibliothèque pas encore ouverte'
+	String get indisponibleTitre => 'Bibliothèque pas encore ouverte';
 
 	/// fr: 'Cette fonction sera disponible au branchement serveur.'
 	String get indisponiblePhrase => 'Cette fonction sera disponible au branchement serveur.';
@@ -19835,10 +19835,10 @@ class Traductions$admin$bibliotheque$fiche$fr {
 	String get apercuAucunFichier => 'Aucun fichier n\'est déposé pour cette version.';
 
 	/// fr: 'Un fichier est déposé. Son rendu se contrôle à l'étape « Vérifier et publier ».'
-	String get apercuFichier => 'Un fichier est déposé. Son rendu se contrôle à l\'étape « Vérifier et publier ».';
+	String get apercuFichier => 'Un fichier est déposé. Son rendu se contrôle à l\'étape « Vérifier et publier ».';
 
 	/// fr: 'Version publiée : le contenu est figé.'
-	String get apercuPublie => 'Version publiée : le contenu est figé.';
+	String get apercuPublie => 'Version publiée : le contenu est figé.';
 
 	/// fr: 'Déposer un fichier'
 	String get deposer => 'Déposer un fichier';
@@ -19868,10 +19868,10 @@ class Traductions$admin$bibliotheque$fiche$fr {
 	String get titreVide => 'Le titre est obligatoire.';
 
 	/// fr: 'Version publiée et figée : pour la modifier, créez une nouvelle version.'
-	String get figee => 'Version publiée et figée : pour la modifier, créez une nouvelle version.';
+	String get figee => 'Version publiée et figée : pour la modifier, créez une nouvelle version.';
 
 	/// fr: 'Retiré du catalogue. Motif : {motif}'
-	String retireMotif({required Object motif}) => 'Retiré du catalogue. Motif : ${motif}';
+	String retireMotif({required Object motif}) => 'Retiré du catalogue. Motif : ${motif}';
 
 	/// fr: 'Retiré du catalogue.'
 	String get retireSansMotif => 'Retiré du catalogue.';
@@ -19891,7 +19891,7 @@ class Traductions$admin$bibliotheque$fiche$fr {
 	late final Traductions$admin$bibliotheque$fiche$droitsChamps$fr droitsChamps = Traductions$admin$bibliotheque$fiche$droitsChamps$fr.internal(_root);
 
 	/// fr: 'Classes servies : {nombre}'
-	String classesServies({required Object nombre}) => 'Classes servies : ${nombre}';
+	String classesServies({required Object nombre}) => 'Classes servies : ${nombre}';
 
 	/// fr: 'Aucun événement.'
 	String get historiqueVide => 'Aucun événement.';
@@ -19899,7 +19899,7 @@ class Traductions$admin$bibliotheque$fiche$fr {
 	late final Traductions$admin$bibliotheque$fiche$audit$fr audit = Traductions$admin$bibliotheque$fiche$audit$fr.internal(_root);
 
 	/// fr: 'Motif : {motif}'
-	String auditMotif({required Object motif}) => 'Motif : ${motif}';
+	String auditMotif({required Object motif}) => 'Motif : ${motif}';
 
 	/// fr: 'Version {numero}'
 	String auditVersion({required Object numero}) => 'Version ${numero}';
@@ -19967,10 +19967,10 @@ class Traductions$admin$bibliotheque$publication$fr {
 	String get apercuTitre => 'Source et fichier';
 
 	/// fr: 'Aucun fichier n'est déposé : le rendu ne peut pas être contrôlé.'
-	String get apercuAucunFichier => 'Aucun fichier n\'est déposé : le rendu ne peut pas être contrôlé.';
+	String get apercuAucunFichier => 'Aucun fichier n\'est déposé : le rendu ne peut pas être contrôlé.';
 
 	/// fr: 'Fichier déposé. Son rendu se contrôle dans le lecteur de son type ; le serveur dit ci-dessous s'il a été testé.'
-	String get apercuFichier => 'Fichier déposé. Son rendu se contrôle dans le lecteur de son type ; le serveur dit ci-dessous s\'il a été testé.';
+	String get apercuFichier => 'Fichier déposé. Son rendu se contrôle dans le lecteur de son type ; le serveur dit ci-dessous s\'il a été testé.';
 
 	/// fr: 'Empreinte {valeur}'
 	String empreinte({required Object valeur}) => 'Empreinte ${valeur}';
@@ -19991,7 +19991,7 @@ class Traductions$admin$bibliotheque$publication$fr {
 	String get droitsEchec => 'La revue des droits n\'a pas pu être confirmée. Réessayez.';
 
 	/// fr: 'Les droits d'une version publiée ne se modifient plus : créez une nouvelle version.'
-	String get droitsFiges => 'Les droits d\'une version publiée ne se modifient plus : créez une nouvelle version.';
+	String get droitsFiges => 'Les droits d\'une version publiée ne se modifient plus : créez une nouvelle version.';
 
 	/// fr: 'Contrôle de la version'
 	String get checklistTitre => 'Contrôle de la version';
@@ -20013,7 +20013,7 @@ class Traductions$admin$bibliotheque$publication$fr {
 	String get bloque => 'Cette version ne peut pas être publiée tant que le serveur n\'a pas validé tous les points du contrôle.';
 
 	/// fr: 'Publier la version {numero} ?'
-	String confirmerTitre({required Object numero}) => 'Publier la version ${numero} ?';
+	String confirmerTitre({required Object numero}) => 'Publier la version ${numero} ?';
 
 	/// fr: 'La version devient immuable et visible des classes auxquelles le support est attribué. Pour la modifier, vous créerez une nouvelle version.'
 	String get confirmerEffet => 'La version devient immuable et visible des classes auxquelles le support est attribué. Pour la modifier, vous créerez une nouvelle version.';
@@ -20028,7 +20028,7 @@ class Traductions$admin$bibliotheque$publication$fr {
 	String get dejaPubliee => 'Cette version est déjà publiée.';
 
 	/// fr: 'La publication n'a pas pu être confirmée. Rien n'est publié à moitié : consultez la fiche avant de réessayer.'
-	String get echec => 'La publication n\'a pas pu être confirmée. Rien n\'est publié à moitié : consultez la fiche avant de réessayer.';
+	String get echec => 'La publication n\'a pas pu être confirmée. Rien n\'est publié à moitié : consultez la fiche avant de réessayer.';
 
 	/// fr: 'Voir la fiche'
 	String get versLaFiche => 'Voir la fiche';
@@ -20087,26 +20087,26 @@ class Traductions$admin$bibliotheque$attribution$fr {
 	/// fr: 'Support attribué. Les classes choisies le voient maintenant.'
 	String get attribuee => 'Support attribué. Les classes choisies le voient maintenant.';
 
-	/// fr: 'L'attribution n'a pas abouti. Vérifiez votre connexion puis réessayez.'
-	String get attribueEchec => 'L\'attribution n\'a pas abouti. Vérifiez votre connexion puis réessayez.';
+	/// fr: 'L'attribution n'a pas abouti. Réessayez dans un instant.'
+	String get attribueEchec => 'L\'attribution n\'a pas abouti. Réessayez dans un instant.';
 
 	/// fr: 'Retirer du catalogue'
 	String get retraitTitre => 'Retirer du catalogue';
 
 	/// fr: 'Un retrait masque le support de toutes les classes. Il ne supprime rien : le fichier et l'historique restent conservés.'
-	String get retraitIntro => 'Un retrait masque le support de toutes les classes. Il ne supprime rien : le fichier et l\'historique restent conservés.';
+	String get retraitIntro => 'Un retrait masque le support de toutes les classes. Il ne supprime rien : le fichier et l\'historique restent conservés.';
 
 	/// fr: 'Motif du retrait'
 	String get motif => 'Motif du retrait';
 
 	/// fr: 'Écrivez le motif du retrait avant de continuer : il est conservé dans l'historique.'
-	String get motifRequis => 'Écrivez le motif du retrait avant de continuer : il est conservé dans l\'historique.';
+	String get motifRequis => 'Écrivez le motif du retrait avant de continuer : il est conservé dans l\'historique.';
 
 	/// fr: 'Retirer ce support'
 	String get retirer => 'Retirer ce support';
 
 	/// fr: 'Retirer « {titre} » du catalogue ?'
-	String retraitConfirmerTitre({required Object titre}) => 'Retirer « ${titre} » du catalogue ?';
+	String retraitConfirmerTitre({required Object titre}) => 'Retirer « ${titre} » du catalogue ?';
 
 	/// fr: 'Les classes ne le verront plus, y compris celles qui l'utilisent déjà. Le motif est conservé dans l'historique.'
 	String get retraitConfirmerEffet => 'Les classes ne le verront plus, y compris celles qui l\'utilisent déjà. Le motif est conservé dans l\'historique.';
@@ -20117,8 +20117,8 @@ class Traductions$admin$bibliotheque$attribution$fr {
 	/// fr: 'Support retiré du catalogue.'
 	String get retire => 'Support retiré du catalogue.';
 
-	/// fr: 'Le retrait n'a pas abouti. Vérifiez votre connexion puis réessayez.'
-	String get retraitEchec => 'Le retrait n\'a pas abouti. Vérifiez votre connexion puis réessayez.';
+	/// fr: 'Le retrait n'a pas abouti. Réessayez dans un instant.'
+	String get retraitEchec => 'Le retrait n\'a pas abouti. Réessayez dans un instant.';
 
 	/// fr: 'Quelqu'un a modifié ce support entre-temps. Rechargez avant de continuer.'
 	String get conflit => 'Quelqu\'un a modifié ce support entre-temps. Rechargez avant de continuer.';
@@ -27487,8 +27487,8 @@ class Traductions$admin$bibliotheque$libelles$usage$fr {
 	/// fr: 'Téléchargement'
 	String get telechargement => 'Téléchargement';
 
-	/// fr: 'Hors ligne'
-	String get horsLigne => 'Hors ligne';
+	/// fr: 'Lecture sans internet'
+	String get horsLigne => 'Lecture sans internet';
 }
 
 // Path: admin.bibliotheque.libelles.horsLigne
@@ -27679,8 +27679,8 @@ class Traductions$admin$bibliotheque$fiche$meta$fr {
 	/// fr: 'Visibilité'
 	String get visibilite => 'Visibilité';
 
-	/// fr: 'Hors ligne'
-	String get horsLigne => 'Hors ligne';
+	/// fr: 'Lecture sans internet'
+	String get horsLigne => 'Lecture sans internet';
 
 	/// fr: 'Non renseigné'
 	String get nonRenseigne => 'Non renseigné';
@@ -27848,13 +27848,13 @@ class Traductions$admin$bibliotheque$import$formats$fr {
 	// Translations
 
 	/// fr: 'Format accepté : PDF.'
-	String get pdf => 'Format accepté : PDF.';
+	String get pdf => 'Format accepté : PDF.';
 
 	/// fr: 'Formats acceptés : PNG, JPEG, WebP.'
-	String get image => 'Formats acceptés : PNG, JPEG, WebP.';
+	String get image => 'Formats acceptés : PNG, JPEG, WebP.';
 
 	/// fr: 'Format accepté : JSON structuré.'
-	String get json => 'Format accepté : JSON structuré.';
+	String get json => 'Format accepté : JSON structuré.';
 
 	/// fr: 'Ce type n'accepte pas de fichier.'
 	String get aucun => 'Ce type n\'accepte pas de fichier.';
@@ -27872,7 +27872,7 @@ class Traductions$admin$bibliotheque$import$etats$fr {
 	String get attente => 'Préparation du dépôt…';
 
 	/// fr: 'Envoi en cours : {pourcent} %'
-	String envoi({required Object pourcent}) => 'Envoi en cours : ${pourcent} %';
+	String envoi({required Object pourcent}) => 'Envoi en cours : ${pourcent} %';
 
 	/// fr: 'Envoi terminé, en attente de la confirmation du serveur…'
 	String get confirmation => 'Envoi terminé, en attente de la confirmation du serveur…';
@@ -27902,7 +27902,7 @@ class Traductions$admin$bibliotheque$import$erreurs$fr {
 	String get type => 'Ce type de fichier n\'est pas pris en charge pour ce support. Choisissez un autre fichier.';
 
 	/// fr: 'La connexion s'est interrompue. Le dépôt n'est pas confirmé : réessayez.'
-	String get reseau => 'La connexion s\'est interrompue. Le dépôt n\'est pas confirmé : réessayez.';
+	String get reseau => 'La connexion s\'est interrompue. Le dépôt n\'est pas confirmé : réessayez.';
 
 	/// fr: 'Le serveur a refusé ce dépôt. Réessayez ou choisissez un autre fichier.'
 	String get refuse => 'Le serveur a refusé ce dépôt. Réessayez ou choisissez un autre fichier.';
@@ -27926,7 +27926,7 @@ class Traductions$admin$bibliotheque$import$droits$fr {
 	// Translations
 
 	/// fr: 'Aucun droit n'est présumé : une valeur inconnue bloque la publication.'
-	String get aide => 'Aucun droit n\'est présumé : une valeur inconnue bloque la publication.';
+	String get aide => 'Aucun droit n\'est présumé : une valeur inconnue bloque la publication.';
 
 	/// fr: 'Source d'origine'
 	String get source => 'Source d\'origine';
@@ -27973,8 +27973,8 @@ class Traductions$admin$bibliotheque$publication$criteres$fr {
 	/// fr: 'Affichage en classe permis'
 	String get usageClasse => 'Affichage en classe permis';
 
-	/// fr: 'Téléchargement et hors ligne tranchés'
-	String get usageTelechargement => 'Téléchargement et hors ligne tranchés';
+	/// fr: 'Téléchargement et lecture sans internet tranchés'
+	String get usageTelechargement => 'Téléchargement et lecture sans internet tranchés';
 
 	/// fr: 'Échéance et attribution en règle'
 	String get expirationAttribution => 'Échéance et attribution en règle';
@@ -28015,14 +28015,14 @@ class Traductions$admin$bibliotheque$publication$explications$fr {
 	/// fr: 'Autorisez l'affichage en classe dans la revue des droits.'
 	String get usageClasse => 'Autorisez l\'affichage en classe dans la revue des droits.';
 
-	/// fr: 'Le serveur doit pouvoir trancher le téléchargement et le hors ligne.'
-	String get usageTelechargement => 'Le serveur doit pouvoir trancher le téléchargement et le hors ligne.';
+	/// fr: 'Le serveur doit pouvoir trancher le téléchargement et la lecture sans internet.'
+	String get usageTelechargement => 'Le serveur doit pouvoir trancher le téléchargement et la lecture sans internet.';
 
 	/// fr: 'La licence est échue ou son attribution manque : renouvelez-la.'
-	String get expirationAttribution => 'La licence est échue ou son attribution manque : renouvelez-la.';
+	String get expirationAttribution => 'La licence est échue ou son attribution manque : renouvelez-la.';
 
 	/// fr: 'Déposez un fichier : le serveur doit l'analyser.'
-	String get fichierSain => 'Déposez un fichier : le serveur doit l\'analyser.';
+	String get fichierSain => 'Déposez un fichier : le serveur doit l\'analyser.';
 
 	/// fr: 'Le rendu n'a pas encore été testé par le serveur.'
 	String get renduTeste => 'Le rendu n\'a pas encore été testé par le serveur.';
@@ -32771,14 +32771,14 @@ extension on Traductions {
 			'admin.tirage.resume' => ({required Object debut, required Object fin, required Object total}) => 'Tirages ${debut} à ${fin} sur ${total}',
 			'admin.tirage.quand' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'admin.bibliotheque.titre' => 'Bibliothèque',
-			'admin.bibliotheque.intro' => 'Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.',
+			'admin.bibliotheque.intro' => 'Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.',
 			'admin.bibliotheque.brouillonAlerte' => 'Un brouillon ne donne aucun accès aux élèves ni aux enseignants.',
 			'admin.bibliotheque.ajouter' => 'Ajouter un support',
 			'admin.bibliotheque.vide' => 'Aucun support',
 			'admin.bibliotheque.videDetail' => 'Ajoutez un premier support pour le préparer, vérifier ses droits, puis le publier.',
 			'admin.bibliotheque.erreur' => 'Le catalogue n\'a pas pu être chargé. Réessayez.',
 			'admin.bibliotheque.nonAutorise' => 'Vous n\'avez pas accès à la bibliothèque d\'administration.',
-			'admin.bibliotheque.indisponibleTitre' => 'Bibliothèque indisponible',
+			'admin.bibliotheque.indisponibleTitre' => 'Bibliothèque pas encore ouverte',
 			'admin.bibliotheque.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'admin.bibliotheque.sansDonnees' => 'le catalogue',
 			'admin.bibliotheque.ficheTitre' => 'Support',
@@ -32810,7 +32810,7 @@ extension on Traductions {
 			'admin.bibliotheque.libelles.usage.application' => 'Dans l\'application',
 			'admin.bibliotheque.libelles.usage.classe' => 'En classe',
 			'admin.bibliotheque.libelles.usage.telechargement' => 'Téléchargement',
-			'admin.bibliotheque.libelles.usage.horsLigne' => 'Hors ligne',
+			'admin.bibliotheque.libelles.usage.horsLigne' => 'Lecture sans internet',
 			'admin.bibliotheque.libelles.horsLigne.jamais' => 'Jamais',
 			'admin.bibliotheque.libelles.horsLigne.surDemande' => 'Sur demande',
 			'admin.bibliotheque.libelles.horsLigne.automatique' => 'Automatique',
@@ -32855,8 +32855,8 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.afficherSection' => ({required Object nom}) => 'Afficher la section ${nom}',
 			'admin.bibliotheque.fiche.masquerSection' => ({required Object nom}) => 'Masquer la section ${nom}',
 			'admin.bibliotheque.fiche.apercuAucunFichier' => 'Aucun fichier n\'est déposé pour cette version.',
-			'admin.bibliotheque.fiche.apercuFichier' => 'Un fichier est déposé. Son rendu se contrôle à l\'étape « Vérifier et publier ».',
-			'admin.bibliotheque.fiche.apercuPublie' => 'Version publiée : le contenu est figé.',
+			'admin.bibliotheque.fiche.apercuFichier' => 'Un fichier est déposé. Son rendu se contrôle à l\'étape « Vérifier et publier ».',
+			'admin.bibliotheque.fiche.apercuPublie' => 'Version publiée : le contenu est figé.',
 			'admin.bibliotheque.fiche.deposer' => 'Déposer un fichier',
 			'admin.bibliotheque.fiche.remplacer' => 'Remplacer le fichier',
 			'admin.bibliotheque.fiche.champs.titre' => 'Titre',
@@ -32871,7 +32871,7 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.meta.niveau' => 'Niveau',
 			'admin.bibliotheque.fiche.meta.annee' => 'Année',
 			'admin.bibliotheque.fiche.meta.visibilite' => 'Visibilité',
-			'admin.bibliotheque.fiche.meta.horsLigne' => 'Hors ligne',
+			'admin.bibliotheque.fiche.meta.horsLigne' => 'Lecture sans internet',
 			'admin.bibliotheque.fiche.meta.nonRenseigne' => 'Non renseigné',
 			'admin.bibliotheque.fiche.enregistrer' => 'Enregistrer les modifications',
 			'admin.bibliotheque.fiche.enregistre' => 'Modifications enregistrées.',
@@ -32879,8 +32879,8 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.recharger' => 'Recharger la fiche',
 			'admin.bibliotheque.fiche.echecEnregistrer' => 'Les modifications n\'ont pas pu être confirmées. Réessayez.',
 			'admin.bibliotheque.fiche.titreVide' => 'Le titre est obligatoire.',
-			'admin.bibliotheque.fiche.figee' => 'Version publiée et figée : pour la modifier, créez une nouvelle version.',
-			'admin.bibliotheque.fiche.retireMotif' => ({required Object motif}) => 'Retiré du catalogue. Motif : ${motif}',
+			'admin.bibliotheque.fiche.figee' => 'Version publiée et figée : pour la modifier, créez une nouvelle version.',
+			'admin.bibliotheque.fiche.retireMotif' => ({required Object motif}) => 'Retiré du catalogue. Motif : ${motif}',
 			'admin.bibliotheque.fiche.retireSansMotif' => 'Retiré du catalogue.',
 			'admin.bibliotheque.fiche.retireRestaurer' => 'Il ne peut être republié qu\'après une nouvelle vérification des droits.',
 			'admin.bibliotheque.fiche.actions.verifier' => 'Vérifier et publier',
@@ -32903,7 +32903,7 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.droitsChamps.aucunUsage' => 'Aucun usage autorisé',
 			'admin.bibliotheque.fiche.droitsChamps.attribution' => 'Attribution',
 			'admin.bibliotheque.fiche.droitsChamps.echeance' => 'Échéance',
-			'admin.bibliotheque.fiche.classesServies' => ({required Object nombre}) => 'Classes servies : ${nombre}',
+			'admin.bibliotheque.fiche.classesServies' => ({required Object nombre}) => 'Classes servies : ${nombre}',
 			'admin.bibliotheque.fiche.historiqueVide' => 'Aucun événement.',
 			'admin.bibliotheque.fiche.audit.creation' => 'Brouillon créé',
 			'admin.bibliotheque.fiche.audit.depot' => 'Fichier déposé',
@@ -32912,7 +32912,7 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.audit.attribution' => 'Attribué à des classes',
 			'admin.bibliotheque.fiche.audit.retrait' => 'Retiré du catalogue',
 			'admin.bibliotheque.fiche.audit.restauration' => 'Restauré',
-			'admin.bibliotheque.fiche.auditMotif' => ({required Object motif}) => 'Motif : ${motif}',
+			'admin.bibliotheque.fiche.auditMotif' => ({required Object motif}) => 'Motif : ${motif}',
 			'admin.bibliotheque.fiche.auditVersion' => ({required Object numero}) => 'Version ${numero}',
 			'admin.bibliotheque.import.completer' => 'Compléter le support',
 			'admin.bibliotheque.import.sections.ressource' => 'Ressource',
@@ -32928,24 +32928,24 @@ extension on Traductions {
 			'admin.bibliotheque.import.choisirAutre' => 'Choisir un autre fichier',
 			'admin.bibliotheque.import.annulerDepot' => 'Annuler le dépôt',
 			'admin.bibliotheque.import.progression' => 'Progression du dépôt',
-			'admin.bibliotheque.import.formats.pdf' => 'Format accepté : PDF.',
-			'admin.bibliotheque.import.formats.image' => 'Formats acceptés : PNG, JPEG, WebP.',
-			'admin.bibliotheque.import.formats.json' => 'Format accepté : JSON structuré.',
+			'admin.bibliotheque.import.formats.pdf' => 'Format accepté : PDF.',
+			'admin.bibliotheque.import.formats.image' => 'Formats acceptés : PNG, JPEG, WebP.',
+			'admin.bibliotheque.import.formats.json' => 'Format accepté : JSON structuré.',
 			'admin.bibliotheque.import.formats.aucun' => 'Ce type n\'accepte pas de fichier.',
 			'admin.bibliotheque.import.etats.attente' => 'Préparation du dépôt…',
-			'admin.bibliotheque.import.etats.envoi' => ({required Object pourcent}) => 'Envoi en cours : ${pourcent} %',
+			'admin.bibliotheque.import.etats.envoi' => ({required Object pourcent}) => 'Envoi en cours : ${pourcent} %',
 			'admin.bibliotheque.import.etats.confirmation' => 'Envoi terminé, en attente de la confirmation du serveur…',
 			'admin.bibliotheque.import.etats.verification' => 'Vérification du fichier…',
 			'admin.bibliotheque.import.etats.pret' => 'Fichier vérifié. Passez aux droits.',
 			'admin.bibliotheque.import.etats.annule' => 'Dépôt annulé.',
 			'admin.bibliotheque.import.erreurs.taille' => 'Ce fichier est trop volumineux. Choisissez un fichier plus léger.',
 			'admin.bibliotheque.import.erreurs.type' => 'Ce type de fichier n\'est pas pris en charge pour ce support. Choisissez un autre fichier.',
-			'admin.bibliotheque.import.erreurs.reseau' => 'La connexion s\'est interrompue. Le dépôt n\'est pas confirmé : réessayez.',
+			'admin.bibliotheque.import.erreurs.reseau' => 'La connexion s\'est interrompue. Le dépôt n\'est pas confirmé : réessayez.',
 			'admin.bibliotheque.import.erreurs.refuse' => 'Le serveur a refusé ce dépôt. Réessayez ou choisissez un autre fichier.',
 			'admin.bibliotheque.import.erreurs.empreinte' => 'Le fichier reçu ne correspond pas à celui envoyé. Réessayez.',
 			'admin.bibliotheque.import.erreurs.creation' => 'Le brouillon n\'a pas pu être créé. Réessayez.',
 			'admin.bibliotheque.import.erreurs.droits' => 'Les droits n\'ont pas pu être enregistrés. Réessayez.',
-			'admin.bibliotheque.import.droits.aide' => 'Aucun droit n\'est présumé : une valeur inconnue bloque la publication.',
+			'admin.bibliotheque.import.droits.aide' => 'Aucun droit n\'est présumé : une valeur inconnue bloque la publication.',
 			'admin.bibliotheque.import.droits.source' => 'Source d\'origine',
 			'admin.bibliotheque.import.droits.titulaire' => 'Titulaire du droit',
 			'admin.bibliotheque.import.droits.attribution' => 'Attribution exigée',
@@ -32959,22 +32959,22 @@ extension on Traductions {
 			'admin.bibliotheque.publication.titre' => 'Vérifier et publier',
 			'admin.bibliotheque.publication.intro' => 'Chaque point est contrôlé par le serveur. La publication fige la version.',
 			'admin.bibliotheque.publication.apercuTitre' => 'Source et fichier',
-			'admin.bibliotheque.publication.apercuAucunFichier' => 'Aucun fichier n\'est déposé : le rendu ne peut pas être contrôlé.',
-			'admin.bibliotheque.publication.apercuFichier' => 'Fichier déposé. Son rendu se contrôle dans le lecteur de son type ; le serveur dit ci-dessous s\'il a été testé.',
+			'admin.bibliotheque.publication.apercuAucunFichier' => 'Aucun fichier n\'est déposé : le rendu ne peut pas être contrôlé.',
+			'admin.bibliotheque.publication.apercuFichier' => 'Fichier déposé. Son rendu se contrôle dans le lecteur de son type ; le serveur dit ci-dessous s\'il a été testé.',
 			'admin.bibliotheque.publication.empreinte' => ({required Object valeur}) => 'Empreinte ${valeur}',
 			'admin.bibliotheque.publication.droitsTitre' => 'Revue des droits',
 			'admin.bibliotheque.publication.confirmerControle' => 'J\'ai contrôlé la source et la preuve de cette version.',
 			'admin.bibliotheque.publication.enregistrerDroits' => 'Enregistrer la revue des droits',
 			'admin.bibliotheque.publication.droitsEnregistres' => 'Revue des droits enregistrée.',
 			'admin.bibliotheque.publication.droitsEchec' => 'La revue des droits n\'a pas pu être confirmée. Réessayez.',
-			'admin.bibliotheque.publication.droitsFiges' => 'Les droits d\'une version publiée ne se modifient plus : créez une nouvelle version.',
+			'admin.bibliotheque.publication.droitsFiges' => 'Les droits d\'une version publiée ne se modifient plus : créez une nouvelle version.',
 			'admin.bibliotheque.publication.checklistTitre' => 'Contrôle de la version',
 			'admin.bibliotheque.publication.criteres.source' => 'Source confirmée',
 			'admin.bibliotheque.publication.criteres.titulaire' => 'Titulaire du droit connu',
 			'admin.bibliotheque.publication.criteres.preuve' => 'Preuve d\'autorisation vérifiée',
 			'admin.bibliotheque.publication.criteres.usageApplication' => 'Usage dans l\'application permis',
 			'admin.bibliotheque.publication.criteres.usageClasse' => 'Affichage en classe permis',
-			'admin.bibliotheque.publication.criteres.usageTelechargement' => 'Téléchargement et hors ligne tranchés',
+			'admin.bibliotheque.publication.criteres.usageTelechargement' => 'Téléchargement et lecture sans internet tranchés',
 			'admin.bibliotheque.publication.criteres.expirationAttribution' => 'Échéance et attribution en règle',
 			'admin.bibliotheque.publication.criteres.fichierSain' => 'Fichier sain (analyse du serveur)',
 			'admin.bibliotheque.publication.criteres.renduTeste' => 'Rendu testé dans le lecteur du type',
@@ -32985,9 +32985,9 @@ extension on Traductions {
 			'admin.bibliotheque.publication.explications.preuve' => 'Déposez la preuve d\'autorisation de cette version.',
 			'admin.bibliotheque.publication.explications.usageApplication' => 'Autorisez l\'usage dans l\'application dans la revue des droits.',
 			'admin.bibliotheque.publication.explications.usageClasse' => 'Autorisez l\'affichage en classe dans la revue des droits.',
-			'admin.bibliotheque.publication.explications.usageTelechargement' => 'Le serveur doit pouvoir trancher le téléchargement et le hors ligne.',
-			'admin.bibliotheque.publication.explications.expirationAttribution' => 'La licence est échue ou son attribution manque : renouvelez-la.',
-			'admin.bibliotheque.publication.explications.fichierSain' => 'Déposez un fichier : le serveur doit l\'analyser.',
+			'admin.bibliotheque.publication.explications.usageTelechargement' => 'Le serveur doit pouvoir trancher le téléchargement et la lecture sans internet.',
+			'admin.bibliotheque.publication.explications.expirationAttribution' => 'La licence est échue ou son attribution manque : renouvelez-la.',
+			'admin.bibliotheque.publication.explications.fichierSain' => 'Déposez un fichier : le serveur doit l\'analyser.',
 			'admin.bibliotheque.publication.explications.renduTeste' => 'Le rendu n\'a pas encore été testé par le serveur.',
 			'admin.bibliotheque.publication.explications.langueNiveau' => 'Renseignez la langue et le niveau sur la fiche.',
 			'admin.bibliotheque.publication.explications.versionEmpreinte' => 'Déposez un fichier pour figer la version et son empreinte.',
@@ -32998,12 +32998,12 @@ extension on Traductions {
 			'admin.bibliotheque.publication.aucunBlocage' => 'Tous les points sont validés par le serveur.',
 			'admin.bibliotheque.publication.publier' => 'Publier la version',
 			'admin.bibliotheque.publication.bloque' => 'Cette version ne peut pas être publiée tant que le serveur n\'a pas validé tous les points du contrôle.',
-			'admin.bibliotheque.publication.confirmerTitre' => ({required Object numero}) => 'Publier la version ${numero} ?',
+			'admin.bibliotheque.publication.confirmerTitre' => ({required Object numero}) => 'Publier la version ${numero} ?',
 			'admin.bibliotheque.publication.confirmerEffet' => 'La version devient immuable et visible des classes auxquelles le support est attribué. Pour la modifier, vous créerez une nouvelle version.',
 			'admin.bibliotheque.publication.confirmerBouton' => 'Publier',
 			'admin.bibliotheque.publication.publiee' => 'Version publiée.',
 			'admin.bibliotheque.publication.dejaPubliee' => 'Cette version est déjà publiée.',
-			'admin.bibliotheque.publication.echec' => 'La publication n\'a pas pu être confirmée. Rien n\'est publié à moitié : consultez la fiche avant de réessayer.',
+			'admin.bibliotheque.publication.echec' => 'La publication n\'a pas pu être confirmée. Rien n\'est publié à moitié : consultez la fiche avant de réessayer.',
 			'admin.bibliotheque.publication.versLaFiche' => 'Voir la fiche',
 			'admin.bibliotheque.publication.pasDeCapacite' => 'Vous pouvez consulter le contrôle, mais pas publier.',
 			'admin.bibliotheque.attribution.titre' => 'Attribuer à des classes',
@@ -33022,17 +33022,17 @@ extension on Traductions {
 			'admin.bibliotheque.attribution.attribuer' => ({required Object nombre}) => 'Attribuer à ${nombre} classe(s)',
 			'admin.bibliotheque.attribution.attribuerAucune' => 'Choisissez au moins une classe avant d\'attribuer.',
 			'admin.bibliotheque.attribution.attribuee' => 'Support attribué. Les classes choisies le voient maintenant.',
-			'admin.bibliotheque.attribution.attribueEchec' => 'L\'attribution n\'a pas abouti. Vérifiez votre connexion puis réessayez.',
+			'admin.bibliotheque.attribution.attribueEchec' => 'L\'attribution n\'a pas abouti. Réessayez dans un instant.',
 			'admin.bibliotheque.attribution.retraitTitre' => 'Retirer du catalogue',
-			'admin.bibliotheque.attribution.retraitIntro' => 'Un retrait masque le support de toutes les classes. Il ne supprime rien : le fichier et l\'historique restent conservés.',
+			'admin.bibliotheque.attribution.retraitIntro' => 'Un retrait masque le support de toutes les classes. Il ne supprime rien : le fichier et l\'historique restent conservés.',
 			'admin.bibliotheque.attribution.motif' => 'Motif du retrait',
-			'admin.bibliotheque.attribution.motifRequis' => 'Écrivez le motif du retrait avant de continuer : il est conservé dans l\'historique.',
+			'admin.bibliotheque.attribution.motifRequis' => 'Écrivez le motif du retrait avant de continuer : il est conservé dans l\'historique.',
 			'admin.bibliotheque.attribution.retirer' => 'Retirer ce support',
-			'admin.bibliotheque.attribution.retraitConfirmerTitre' => ({required Object titre}) => 'Retirer « ${titre} » du catalogue ?',
+			'admin.bibliotheque.attribution.retraitConfirmerTitre' => ({required Object titre}) => 'Retirer « ${titre} » du catalogue ?',
 			'admin.bibliotheque.attribution.retraitConfirmerEffet' => 'Les classes ne le verront plus, y compris celles qui l\'utilisent déjà. Le motif est conservé dans l\'historique.',
 			'admin.bibliotheque.attribution.retraitConfirmerBouton' => 'Retirer le support',
 			'admin.bibliotheque.attribution.retire' => 'Support retiré du catalogue.',
-			'admin.bibliotheque.attribution.retraitEchec' => 'Le retrait n\'a pas abouti. Vérifiez votre connexion puis réessayez.',
+			'admin.bibliotheque.attribution.retraitEchec' => 'Le retrait n\'a pas abouti. Réessayez dans un instant.',
 			'admin.bibliotheque.attribution.conflit' => 'Quelqu\'un a modifié ce support entre-temps. Rechargez avant de continuer.',
 			'agent.titre' => 'Entrée d\'un agent',
 			'agent.intro' => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.',
