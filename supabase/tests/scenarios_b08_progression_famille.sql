@@ -313,7 +313,7 @@ SELECT set_config('request.jwt.claims',
 SELECT public.enregistrer_resume_seance(
   'b0800000-0000-0000-0000-000000000301',
   'b0800000-0000-0000-0000-000000000003',
-  'Lecture régulière; revoir les liaisons.', NULL, false, true
+  'Lecture régulière; revoir les liaisons.', NULL, true
 );
 
 SELECT set_config('request.jwt.claim.sub', 'b0800000-0000-0000-0000-000000000002', true);

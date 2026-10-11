@@ -126,7 +126,7 @@ BEGIN
     PERFORM public.refuser_demande_presentation(v_id);
     RAISE EXCEPTION 'A81/C22: conflicting second decision was accepted';
   EXCEPTION WHEN raise_exception THEN
-    IF SQLERRM NOT LIKE 'demande deja tranchee%' THEN RAISE; END IF;
+    IF SQLERRM NOT LIKE 'demande déjà tranchée%' THEN RAISE; END IF;
   END;
 END
 $guardian_decision$;
