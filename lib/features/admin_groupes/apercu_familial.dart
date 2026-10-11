@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/capacites/port_partage_pedagogique.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart' show horsLigneProvider;
 import '../../core/session/session_controleur.dart';
@@ -56,7 +57,7 @@ void ouvrirComptesRendusEleve(
 }) {
   AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.admin.groupes.partage.comptesRendusTitre(prenom: prenom),
+    titre: t.admin.groupes.partage.comptesRendusTitre(dePrenom: deDevant(prenom)),
     constructeur: (BuildContext contexte) =>
         FeuilleComptesRendusEleve(classeId: classeId, eleveId: eleveId),
   );
@@ -238,7 +239,7 @@ class _FeuilleApercuFamilialEtat extends ConsumerState<FeuilleApercuFamilial> {
     final bool confirme = await ConfirmDestructive.demander(
       context,
       question: publier
-          ? l.confirmerPublier(prenom: a.elevePrenom)
+          ? l.confirmerPublier(dePrenom: deDevant(a.elevePrenom))
           : l.confirmerRevoquer,
       consequence: publier ? l.consequencePublier : l.consequenceRevoquer,
       libelleConfirmer: publier ? l.publier : l.revoquer,

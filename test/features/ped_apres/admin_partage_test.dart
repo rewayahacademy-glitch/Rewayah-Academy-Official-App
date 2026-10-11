@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/permission_insuffisante.dart';
 import 'package:rewayah_academy/core/capacites/port_partage_pedagogique.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart'
     show Creneau;
@@ -611,7 +612,7 @@ void main() {
       await tester.tap(_action(p.publier));
       await tester.pumpAndSettle();
       // La confirmation dit la portee et ne promet rien de plus.
-      expect(find.text(p.confirmerPublier(prenom: 'Yusuf')), findsWidgets);
+      expect(find.text(p.confirmerPublier(dePrenom: deDevant('Yusuf'))), findsWidgets);
       expect(find.text(p.consequencePublier), findsOneWidget);
       await tester.tap(find.text(p.publier).last);
       await tester.pumpAndSettle();

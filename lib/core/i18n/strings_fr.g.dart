@@ -19700,14 +19700,14 @@ class Traductions$admin$groupes$partage$fr {
 	/// fr: 'Afficher plus d'élèves'
 	String get plusEleves => 'Afficher plus d\'élèves';
 
-	/// fr: 'Modifier la règle de {prenom}'
-	String modifierEleve({required Object prenom}) => 'Modifier la règle de ${prenom}';
+	/// fr: 'Modifier la règle {dePrenom}'
+	String modifierEleve({required Object dePrenom}) => 'Modifier la règle ${dePrenom}';
 
 	/// fr: 'Utiliser la règle de la classe'
 	String get regleClasse => 'Utiliser la règle de la classe';
 
 	/// fr: 'À choisir quand l'élève n'a pas de besoin particulier : sa famille suit le réglage de la classe.'
-	String get regleClasseAide => 'À choisir quand l\'élève n\'a pas de besoin particulier : sa famille suit le réglage de la classe.';
+	String get regleClasseAide => 'À choisir quand l\'élève n\'a pas de besoin particulier : sa famille suit le réglage de la classe.';
 
 	/// fr: 'Toujours partager automatiquement'
 	String get regleToujours => 'Toujours partager automatiquement';
@@ -19719,7 +19719,7 @@ class Traductions$admin$groupes$partage$fr {
 	String get regleJamais => 'Ne pas partager automatiquement';
 
 	/// fr: 'À choisir quand sa famille ne doit pas les voir automatiquement : ils sont masqués tout de suite, le cahier reste conservé.'
-	String get regleJamaisAide => 'À choisir quand sa famille ne doit pas les voir automatiquement : ils sont masqués tout de suite, le cahier reste conservé.';
+	String get regleJamaisAide => 'À choisir quand sa famille ne doit pas les voir automatiquement : ils sont masqués tout de suite, le cahier reste conservé.';
 
 	/// fr: 'Modifier le partage pour {prenom} ?'
 	String confirmerEleve({required Object prenom}) => 'Modifier le partage pour ${prenom} ?';
@@ -19733,8 +19733,8 @@ class Traductions$admin$groupes$partage$fr {
 	/// fr: 'Voir les comptes rendus'
 	String get comptesRendus => 'Voir les comptes rendus';
 
-	/// fr: 'Comptes rendus de {prenom}'
-	String comptesRendusTitre({required Object prenom}) => 'Comptes rendus de ${prenom}';
+	/// fr: 'Comptes rendus {dePrenom}'
+	String comptesRendusTitre({required Object dePrenom}) => 'Comptes rendus ${dePrenom}';
 
 	/// fr: 'Aucun compte rendu n'existe encore pour cet élève.'
 	String get aucunCompteRendu => 'Aucun compte rendu n\'existe encore pour cet élève.';
@@ -19779,10 +19779,10 @@ class Traductions$admin$groupes$partage$fr {
 	String get etatRevoque => 'Accès de la famille révoqué pour ce compte rendu.';
 
 	/// fr: 'Corrigé après la publication : la famille voit la dernière version approuvée.'
-	String get etatCorrige => 'Corrigé après la publication : la famille voit la dernière version approuvée.';
+	String get etatCorrige => 'Corrigé après la publication : la famille voit la dernière version approuvée.';
 
 	/// fr: 'Aucun contenu pédagogique partageable n'existe pour ce compte rendu : la publication n'est pas possible.'
-	String get nonPubliable => 'Aucun contenu pédagogique partageable n\'existe pour ce compte rendu : la publication n\'est pas possible.';
+	String get nonPubliable => 'Aucun contenu pédagogique partageable n\'existe pour ce compte rendu : la publication n\'est pas possible.';
 
 	/// fr: 'Publier pour la famille'
 	String get publier => 'Publier pour la famille';
@@ -19793,8 +19793,8 @@ class Traductions$admin$groupes$partage$fr {
 	/// fr: 'Cette action concerne uniquement ce compte rendu.'
 	String get portee => 'Cette action concerne uniquement ce compte rendu.';
 
-	/// fr: 'Publier ce compte rendu pour la famille de {prenom} ?'
-	String confirmerPublier({required Object prenom}) => 'Publier ce compte rendu pour la famille de ${prenom} ?';
+	/// fr: 'Publier ce compte rendu pour la famille {dePrenom} ?'
+	String confirmerPublier({required Object dePrenom}) => 'Publier ce compte rendu pour la famille ${dePrenom} ?';
 
 	/// fr: 'Le partage est limité à ce compte rendu. Il n'active pas le partage automatique de la classe.'
 	String get consequencePublier => 'Le partage est limité à ce compte rendu. Il n\'active pas le partage automatique de la classe.';
@@ -33480,18 +33480,18 @@ extension on Traductions {
 			'admin.groupes.partage.nonVisible' => 'Non visible',
 			'admin.groupes.partage.eleveRetire' => 'Retiré de la classe',
 			'admin.groupes.partage.plusEleves' => 'Afficher plus d\'élèves',
-			'admin.groupes.partage.modifierEleve' => ({required Object prenom}) => 'Modifier la règle de ${prenom}',
+			'admin.groupes.partage.modifierEleve' => ({required Object dePrenom}) => 'Modifier la règle ${dePrenom}',
 			'admin.groupes.partage.regleClasse' => 'Utiliser la règle de la classe',
-			'admin.groupes.partage.regleClasseAide' => 'À choisir quand l\'élève n\'a pas de besoin particulier : sa famille suit le réglage de la classe.',
+			'admin.groupes.partage.regleClasseAide' => 'À choisir quand l\'élève n\'a pas de besoin particulier : sa famille suit le réglage de la classe.',
 			'admin.groupes.partage.regleToujours' => 'Toujours partager automatiquement',
 			'admin.groupes.partage.regleToujoursAide' => 'À choisir quand sa famille doit toujours voir les comptes rendus, même si la classe ne partage pas.',
 			'admin.groupes.partage.regleJamais' => 'Ne pas partager automatiquement',
-			'admin.groupes.partage.regleJamaisAide' => 'À choisir quand sa famille ne doit pas les voir automatiquement : ils sont masqués tout de suite, le cahier reste conservé.',
+			'admin.groupes.partage.regleJamaisAide' => 'À choisir quand sa famille ne doit pas les voir automatiquement : ils sont masqués tout de suite, le cahier reste conservé.',
 			'admin.groupes.partage.confirmerEleve' => ({required Object prenom}) => 'Modifier le partage pour ${prenom} ?',
 			'admin.groupes.partage.consequenceEleve' => 'Cette règle ne concerne que cet élève. Elle ne change ni la classe, ni les autres élèves.',
 			'admin.groupes.partage.consequenceEleveJamais' => 'Les comptes rendus visibles au titre du partage automatique sont masqués tout de suite pour sa famille. Le cahier et la preuve de séance sont conservés.',
 			'admin.groupes.partage.comptesRendus' => 'Voir les comptes rendus',
-			'admin.groupes.partage.comptesRendusTitre' => ({required Object prenom}) => 'Comptes rendus de ${prenom}',
+			'admin.groupes.partage.comptesRendusTitre' => ({required Object dePrenom}) => 'Comptes rendus ${dePrenom}',
 			'admin.groupes.partage.aucunCompteRendu' => 'Aucun compte rendu n\'existe encore pour cet élève.',
 			'admin.groupes.partage.apercuTitre' => 'Aperçu du compte rendu visible par la famille',
 			'admin.groupes.partage.apercuAide' => 'Ce que la famille lira, dans le même ordre et avec les mêmes intitulés que dans l\'application.',
@@ -33506,12 +33506,12 @@ extension on Traductions {
 			'admin.groupes.partage.etatPartageAuto' => 'Partagé automatiquement avec la famille.',
 			'admin.groupes.partage.etatPartageManuel' => 'Publié manuellement pour la famille.',
 			'admin.groupes.partage.etatRevoque' => 'Accès de la famille révoqué pour ce compte rendu.',
-			'admin.groupes.partage.etatCorrige' => 'Corrigé après la publication : la famille voit la dernière version approuvée.',
-			'admin.groupes.partage.nonPubliable' => 'Aucun contenu pédagogique partageable n\'existe pour ce compte rendu : la publication n\'est pas possible.',
+			'admin.groupes.partage.etatCorrige' => 'Corrigé après la publication : la famille voit la dernière version approuvée.',
+			'admin.groupes.partage.nonPubliable' => 'Aucun contenu pédagogique partageable n\'existe pour ce compte rendu : la publication n\'est pas possible.',
 			'admin.groupes.partage.publier' => 'Publier pour la famille',
 			'admin.groupes.partage.revoquer' => 'Révoquer l\'accès',
 			'admin.groupes.partage.portee' => 'Cette action concerne uniquement ce compte rendu.',
-			'admin.groupes.partage.confirmerPublier' => ({required Object prenom}) => 'Publier ce compte rendu pour la famille de ${prenom} ?',
+			'admin.groupes.partage.confirmerPublier' => ({required Object dePrenom}) => 'Publier ce compte rendu pour la famille ${dePrenom} ?',
 			'admin.groupes.partage.consequencePublier' => 'Le partage est limité à ce compte rendu. Il n\'active pas le partage automatique de la classe.',
 			'admin.groupes.partage.confirmerRevoquer' => 'Révoquer l\'accès de la famille à ce compte rendu ?',
 			'admin.groupes.partage.consequenceRevoquer' => 'La famille ne le voit plus, tout de suite. Le cahier et la séance restent validés.',

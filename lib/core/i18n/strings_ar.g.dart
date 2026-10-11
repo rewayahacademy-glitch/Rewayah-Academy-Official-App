@@ -10395,7 +10395,7 @@ class _Traductions$admin$groupes$partage$ar extends Traductions$admin$groupes$pa
 	@override String get illisible => 'تعذّرت قراءة إعداد المشاركة حاليًا.';
 	@override String get horsLigne => 'يلزم الاتصال بالإنترنت لقراءة المشاركة أو تعديلها.';
 	@override String get enregistrement => 'جارٍ الحفظ';
-	@override String get confirme => 'تم حفظ إعداد المشاركة.';
+	@override String get confirme => 'تم تسجيل إعداد المشاركة.';
 	@override String get conflit => 'عدّل شخص آخر من الإدارة هذا الإعداد للتو. تُعرض القيمة المحدّثة: راجعها ثم أعد المحاولة عند الحاجة.';
 	@override String get echec => 'لم يُحفظ التعديل، وبقيت القيمة السابقة. أعد المحاولة بعد قليل.';
 	@override String get classeVide => 'لا يوجد أي طالب في هذا الفصل بعد.';
@@ -10424,7 +10424,7 @@ class _Traductions$admin$groupes$partage$ar extends Traductions$admin$groupes$pa
 	@override String get nonVisible => 'غير مرئي';
 	@override String get eleveRetire => 'أُزيل من الفصل';
 	@override String get plusEleves => 'عرض مزيد من الطلاب';
-	@override String modifierEleve({required Object prenom}) => 'تعديل قاعدة ⁨${prenom}⁩';
+	@override String modifierEleve({required Object dePrenom}) => 'تعديل قاعدة ⁨${dePrenom}⁩';
 	@override String get regleClasse => 'استخدام قاعدة الفصل';
 	@override String get regleClasseAide => 'اخترها عندما لا يحتاج الطالب إلى معاملة خاصة: تتبع أسرته إعداد الفصل.';
 	@override String get regleToujours => 'المشاركة التلقائية دائمًا';
@@ -10435,7 +10435,7 @@ class _Traductions$admin$groupes$partage$ar extends Traductions$admin$groupes$pa
 	@override String get consequenceEleve => 'هذه القاعدة تخص هذا الطالب فقط، ولا تغيّر الفصل ولا بقية الطلاب.';
 	@override String get consequenceEleveJamais => 'تُخفى فورًا عن أسرته التقارير المرئية بموجب المشاركة التلقائية. يبقى الدفتر وإثبات الحصة محفوظين.';
 	@override String get comptesRendus => 'عرض التقارير';
-	@override String comptesRendusTitre({required Object prenom}) => 'تقارير ⁨${prenom}⁩';
+	@override String comptesRendusTitre({required Object dePrenom}) => 'تقارير ⁨${dePrenom}⁩';
 	@override String get aucunCompteRendu => 'لا يوجد تقرير لهذا الطالب بعد.';
 	@override String get apercuTitre => 'معاينة التقرير الذي تراه الأسرة';
 	@override String get apercuAide => 'ما ستقرؤه الأسرة، بالترتيب والعناوين نفسها كما في التطبيق.';
@@ -10455,7 +10455,7 @@ class _Traductions$admin$groupes$partage$ar extends Traductions$admin$groupes$pa
 	@override String get publier => 'النشر للأسرة';
 	@override String get revoquer => 'سحب الوصول';
 	@override String get portee => 'يخص هذا الإجراء هذا التقرير وحده.';
-	@override String confirmerPublier({required Object prenom}) => 'نشر هذا التقرير لأسرة ⁨${prenom}⁩؟';
+	@override String confirmerPublier({required Object dePrenom}) => 'نشر هذا التقرير لأسرة ⁨${dePrenom}⁩؟';
 	@override String get consequencePublier => 'المشاركة محصورة في هذا التقرير، ولا تفعّل المشاركة التلقائية للفصل.';
 	@override String get confirmerRevoquer => 'سحب وصول الأسرة إلى هذا التقرير؟';
 	@override String get consequenceRevoquer => 'لن تراه الأسرة فورًا. يبقى الدفتر والحصة معتمدين.';
@@ -16861,7 +16861,7 @@ extension on TraductionsAr {
 			'admin.groupes.partage.illisible' => 'تعذّرت قراءة إعداد المشاركة حاليًا.',
 			'admin.groupes.partage.horsLigne' => 'يلزم الاتصال بالإنترنت لقراءة المشاركة أو تعديلها.',
 			'admin.groupes.partage.enregistrement' => 'جارٍ الحفظ',
-			'admin.groupes.partage.confirme' => 'تم حفظ إعداد المشاركة.',
+			'admin.groupes.partage.confirme' => 'تم تسجيل إعداد المشاركة.',
 			'admin.groupes.partage.conflit' => 'عدّل شخص آخر من الإدارة هذا الإعداد للتو. تُعرض القيمة المحدّثة: راجعها ثم أعد المحاولة عند الحاجة.',
 			'admin.groupes.partage.echec' => 'لم يُحفظ التعديل، وبقيت القيمة السابقة. أعد المحاولة بعد قليل.',
 			'admin.groupes.partage.classeVide' => 'لا يوجد أي طالب في هذا الفصل بعد.',
@@ -16890,7 +16890,7 @@ extension on TraductionsAr {
 			'admin.groupes.partage.nonVisible' => 'غير مرئي',
 			'admin.groupes.partage.eleveRetire' => 'أُزيل من الفصل',
 			'admin.groupes.partage.plusEleves' => 'عرض مزيد من الطلاب',
-			'admin.groupes.partage.modifierEleve' => ({required Object prenom}) => 'تعديل قاعدة ⁨${prenom}⁩',
+			'admin.groupes.partage.modifierEleve' => ({required Object dePrenom}) => 'تعديل قاعدة ⁨${dePrenom}⁩',
 			'admin.groupes.partage.regleClasse' => 'استخدام قاعدة الفصل',
 			'admin.groupes.partage.regleClasseAide' => 'اخترها عندما لا يحتاج الطالب إلى معاملة خاصة: تتبع أسرته إعداد الفصل.',
 			'admin.groupes.partage.regleToujours' => 'المشاركة التلقائية دائمًا',
@@ -16901,7 +16901,7 @@ extension on TraductionsAr {
 			'admin.groupes.partage.consequenceEleve' => 'هذه القاعدة تخص هذا الطالب فقط، ولا تغيّر الفصل ولا بقية الطلاب.',
 			'admin.groupes.partage.consequenceEleveJamais' => 'تُخفى فورًا عن أسرته التقارير المرئية بموجب المشاركة التلقائية. يبقى الدفتر وإثبات الحصة محفوظين.',
 			'admin.groupes.partage.comptesRendus' => 'عرض التقارير',
-			'admin.groupes.partage.comptesRendusTitre' => ({required Object prenom}) => 'تقارير ⁨${prenom}⁩',
+			'admin.groupes.partage.comptesRendusTitre' => ({required Object dePrenom}) => 'تقارير ⁨${dePrenom}⁩',
 			'admin.groupes.partage.aucunCompteRendu' => 'لا يوجد تقرير لهذا الطالب بعد.',
 			'admin.groupes.partage.apercuTitre' => 'معاينة التقرير الذي تراه الأسرة',
 			'admin.groupes.partage.apercuAide' => 'ما ستقرؤه الأسرة، بالترتيب والعناوين نفسها كما في التطبيق.',
@@ -16921,7 +16921,7 @@ extension on TraductionsAr {
 			'admin.groupes.partage.publier' => 'النشر للأسرة',
 			'admin.groupes.partage.revoquer' => 'سحب الوصول',
 			'admin.groupes.partage.portee' => 'يخص هذا الإجراء هذا التقرير وحده.',
-			'admin.groupes.partage.confirmerPublier' => ({required Object prenom}) => 'نشر هذا التقرير لأسرة ⁨${prenom}⁩؟',
+			'admin.groupes.partage.confirmerPublier' => ({required Object dePrenom}) => 'نشر هذا التقرير لأسرة ⁨${dePrenom}⁩؟',
 			'admin.groupes.partage.consequencePublier' => 'المشاركة محصورة في هذا التقرير، ولا تفعّل المشاركة التلقائية للفصل.',
 			'admin.groupes.partage.confirmerRevoquer' => 'سحب وصول الأسرة إلى هذا التقرير؟',
 			'admin.groupes.partage.consequenceRevoquer' => 'لن تراه الأسرة فورًا. يبقى الدفتر والحصة معتمدين.',

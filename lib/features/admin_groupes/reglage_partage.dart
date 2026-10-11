@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/capacites/port_partage_pedagogique.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart' show horsLigneProvider;
 import '../../core/session/session_controleur.dart';
@@ -439,7 +440,7 @@ class _FeuilleExceptionsPartageEtat
   void _ouvrirEleve(PartageEleve eleve) {
     AppBottomSheet.ouvrir<void>(
       context,
-      titre: t.admin.groupes.partage.modifierEleve(prenom: eleve.libelle),
+      titre: t.admin.groupes.partage.modifierEleve(dePrenom: deDevant(eleve.libelle)),
       constructeur: (BuildContext contexte) => FeuilleRegleEleve(
         classeId: widget.classeId,
         eleve: eleve,
@@ -563,7 +564,7 @@ class _FeuilleExceptionsPartageEtat
       libelle: e.libelle,
       legende: legende,
       pastille: pastille,
-      libelleSemantique: l.modifierEleve(prenom: e.libelle),
+      libelleSemantique: l.modifierEleve(dePrenom: deDevant(e.libelle)),
       onPress: () => _ouvrirEleve(e),
     );
   }
