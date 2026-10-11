@@ -329,8 +329,8 @@ INSERT INTO public.student_concern
    'c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002',
    'c2a20000-0000-0000-0000-000000000006', 'codex2 internal B');
 INSERT INTO public.session_events (session_id, profile_id, event_type, source) VALUES
-  ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'joined', 'codex2'),
-  ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'joined', 'codex2');
+  ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'joined', 'server'),
+  ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'joined', 'server');
 INSERT INTO public.session_recordings (session_id, object_key, duration_seconds, size_bytes, expires_at) VALUES
   ('c2a2e000-1000-0000-0000-000000000001', 'codex2/recording-a', 60, 1024, '2026-10-20 00:00:00+00'),
   ('c2a2e000-1000-0000-0000-000000000002', 'codex2/recording-b', 60, 1024, '2026-10-20 00:00:00+00');
