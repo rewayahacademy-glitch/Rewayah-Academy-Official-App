@@ -7823,7 +7823,8 @@
       "pedagogie": "الطلاب",
       "controle": "المراقبة",
       "finances": "المالية",
-      "fils": "المحادثات"
+      "fils": "المحادثات",
+      "remplacements": "الاستبدالات"
     },
     "voirDavantage": "عرض المزيد",
     "pageSuivante": "جارٍ تحميل مزيد من النتائج…",
@@ -7879,6 +7880,14 @@
     },
     "entree": {
       "supports": "البحث في المواد"
+    },
+    "contexte": {
+      "remplacementOuvert": "استبدال متاح",
+      "remplacementMien": "استبدالك",
+      "mission": "مهمة مراقبة",
+      "missionEnseignant(param=enseignant)": "مهمة مراقبة · ⁨{enseignant}⁩",
+      "eleveDeClasse(param=classe)": "طالب في فصل ⁨{classe}⁩",
+      "enseignantDeClasse(param=classe)": "معلّم فصل ⁨{classe}⁩"
     }
   }
 }

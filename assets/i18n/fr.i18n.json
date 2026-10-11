@@ -9007,7 +9007,8 @@
       "pedagogie": "Élèves",
       "controle": "Contrôle",
       "finances": "Finances",
-      "fils": "Fils de discussion"
+      "fils": "Fils de discussion",
+      "remplacements": "Remplacements"
     },
     "voirDavantage": "Voir davantage",
     "pageSuivante": "Chargement de résultats supplémentaires…",
@@ -9063,6 +9064,14 @@
     },
     "entree": {
       "supports": "Rechercher dans les supports"
+    },
+    "contexte": {
+      "remplacementOuvert": "Remplacement à prendre",
+      "remplacementMien": "Votre remplacement",
+      "mission": "Mission de contrôle",
+      "missionEnseignant(param=enseignant)": "Mission de contrôle · {enseignant}",
+      "eleveDeClasse(param=classe)": "Élève de la classe {classe}",
+      "enseignantDeClasse(param=classe)": "Enseignant de la classe {classe}"
     }
   }
 }

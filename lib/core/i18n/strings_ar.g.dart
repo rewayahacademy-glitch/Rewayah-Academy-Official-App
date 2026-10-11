@@ -1446,6 +1446,7 @@ class _Traductions$recherche$ar extends Traductions$recherche$fr {
 	@override String get limite => 'تقتصر النتائج على ما تتيحه مساحتك.';
 	@override late final _Traductions$recherche$guide$ar guide = _Traductions$recherche$guide$ar._(_root);
 	@override late final _Traductions$recherche$entree$ar entree = _Traductions$recherche$entree$ar._(_root);
+	@override late final _Traductions$recherche$contexte$ar contexte = _Traductions$recherche$contexte$ar._(_root);
 }
 
 // Path: notifications.filtres
@@ -6961,6 +6962,7 @@ class _Traductions$recherche$domaines$ar extends Traductions$recherche$domaines$
 	@override String get controle => 'المراقبة';
 	@override String get finances => 'المالية';
 	@override String get fils => 'المحادثات';
+	@override String get remplacements => 'الاستبدالات';
 }
 
 // Path: recherche.etats
@@ -7000,6 +7002,21 @@ class _Traductions$recherche$entree$ar extends Traductions$recherche$entree$fr {
 
 	// Translations
 	@override String get supports => 'البحث في المواد';
+}
+
+// Path: recherche.contexte
+class _Traductions$recherche$contexte$ar extends Traductions$recherche$contexte$fr {
+	_Traductions$recherche$contexte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get remplacementOuvert => 'استبدال متاح';
+	@override String get remplacementMien => 'استبدالك';
+	@override String get mission => 'مهمة مراقبة';
+	@override String missionEnseignant({required Object enseignant}) => 'مهمة مراقبة · ⁨${enseignant}⁩';
+	@override String eleveDeClasse({required Object classe}) => 'طالب في فصل ⁨${classe}⁩';
+	@override String enseignantDeClasse({required Object classe}) => 'معلّم فصل ⁨${classe}⁩';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -18494,11 +18511,12 @@ extension on TraductionsAr {
 			'recherche.domaines.controle' => 'المراقبة',
 			'recherche.domaines.finances' => 'المالية',
 			'recherche.domaines.fils' => 'المحادثات',
+			'recherche.domaines.remplacements' => 'الاستبدالات',
 			'recherche.voirDavantage' => 'عرض المزيد',
 			'recherche.pageSuivante' => 'جارٍ تحميل مزيد من النتائج…',
-			'recherche.pageEnEchec' => 'تعذّر تحميل النتائج التالية.',
 			_ => null,
 		} ?? switch (path) {
+			'recherche.pageEnEchec' => 'تعذّر تحميل النتائج التالية.',
 			'recherche.etats.vide.titre' => 'لا نتائج لهذا البحث.',
 			'recherche.etats.vide.phrase' => 'جرّب كلمة أخرى أو عامل تصفية.',
 			'recherche.etats.vide.action' => 'تعديل البحث',
@@ -18527,6 +18545,12 @@ extension on TraductionsAr {
 			'recherche.guide.initial.phrase' => 'اكتب كلمة لتجد إحدى موادك.',
 			'recherche.guide.limite' => 'موادك ودروسك فقط.',
 			'recherche.entree.supports' => 'البحث في المواد',
+			'recherche.contexte.remplacementOuvert' => 'استبدال متاح',
+			'recherche.contexte.remplacementMien' => 'استبدالك',
+			'recherche.contexte.mission' => 'مهمة مراقبة',
+			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'مهمة مراقبة · ⁨${enseignant}⁩',
+			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'طالب في فصل ⁨${classe}⁩',
+			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'معلّم فصل ⁨${classe}⁩',
 			_ => null,
 		};
 	}

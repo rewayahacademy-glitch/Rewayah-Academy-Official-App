@@ -3963,5 +3963,12 @@
   "recherche.guide.initial.titre": "etape RECH-2 (spec RECH-03 V3 §4.2 a 4.6, §11 : puces de domaine, Interface guidee « Trouver un support », mention de portee) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b ; tutoiement de l'Interface guidee comme les autres ecrans de l'eleve",
   "recherche.guide.initial.phrase": "etape RECH-2 (spec RECH-03 V3 §4.2 a 4.6, §11 : puces de domaine, Interface guidee « Trouver un support », mention de portee) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b ; tutoiement de l'Interface guidee comme les autres ecrans de l'eleve",
   "recherche.guide.limite": "etape RECH-2 (spec RECH-03 V3 §4.2 a 4.6, §11 : puces de domaine, Interface guidee « Trouver un support », mention de portee) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b ; tutoiement de l'Interface guidee comme les autres ecrans de l'eleve",
-  "recherche.entree.supports": "etape RECH-D1 (spec RECH-03 V3 §4.1, §6.1 point 4 : recherche contextuelle depuis l'Espace Classe) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b"
+  "recherche.entree.supports": "etape RECH-D1 (spec RECH-03 V3 §4.1, §6.1 point 4 : recherche contextuelle depuis l'Espace Classe) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b",
+  "recherche.domaines.remplacements": "etape RECH-D3 (spec RECH-03 V3 §3, §7 : enseignants, remplacements, pedagogie, controle) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b",
+  "recherche.contexte.remplacementOuvert": "etape RECH-D3 (spec RECH-03 V3 §3, §7 : enseignants, remplacements, pedagogie, controle) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b",
+  "recherche.contexte.remplacementMien": "etape RECH-D3 (spec RECH-03 V3 §3, §7 : enseignants, remplacements, pedagogie, controle) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b",
+  "recherche.contexte.mission": "etape RECH-D3 (spec RECH-03 V3 §3, §7 : enseignants, remplacements, pedagogie, controle) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b",
+  "recherche.contexte.missionEnseignant(param=enseignant)": "etape RECH-D3 (spec RECH-03 V3 §3, §7 : enseignants, remplacements, pedagogie, controle) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b",
+  "recherche.contexte.eleveDeClasse(param=classe)": "etape RECH-D3 (spec RECH-03 V3 §3, §7 : enseignants, remplacements, pedagogie, controle) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b",
+  "recherche.contexte.enseignantDeClasse(param=classe)": "etape RECH-D3 (spec RECH-03 V3 §3, §7 : enseignants, remplacements, pedagogie, controle) : fiche du tableau, voie RECH, demandee par l'orchestrateur 01B8we8b"
 }

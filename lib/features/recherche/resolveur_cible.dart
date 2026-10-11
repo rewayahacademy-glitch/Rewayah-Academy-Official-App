@@ -43,6 +43,10 @@ String? cheminPourCible(CibleRecherche cible, EspaceRecherche espace) {
       return espace == EspaceRecherche.famille
           ? Routes.ficheElevePour(cible.reference)
           : null;
+    case KindCible.remplacement:
+      return espace == EspaceRecherche.enseignant
+          ? Routes.enseignantRemplacements
+          : null;
     case KindCible.enseignant:
     case KindCible.mission:
     case KindCible.operation:

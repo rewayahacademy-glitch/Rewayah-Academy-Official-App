@@ -24,6 +24,9 @@ enum DomaineRecherche {
   /// Missions et rapports de controle (RECH-D3).
   controle,
 
+  /// Offres de remplacement d'un enseignant (RECH-D3).
+  remplacements,
+
   /// Finance FI et CPT (RECH-D4).
   finances,
 
@@ -140,6 +143,9 @@ enum KindCible {
 
   /// Le fil.
   fil,
+
+  /// L'ecran des remplacements de l'enseignant.
+  remplacement,
 }
 
 /// Ce qu'un resultat ouvre : un genre ferme et une reference opaque.

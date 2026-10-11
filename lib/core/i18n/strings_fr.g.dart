@@ -3068,6 +3068,7 @@ class Traductions$recherche$fr {
 
 	late final Traductions$recherche$guide$fr guide = Traductions$recherche$guide$fr.internal(_root);
 	late final Traductions$recherche$entree$fr entree = Traductions$recherche$entree$fr.internal(_root);
+	late final Traductions$recherche$contexte$fr contexte = Traductions$recherche$contexte$fr.internal(_root);
 }
 
 // Path: commun.classeDistincte
@@ -17383,6 +17384,9 @@ class Traductions$recherche$domaines$fr {
 
 	/// fr: 'Fils de discussion'
 	String get fils => 'Fils de discussion';
+
+	/// fr: 'Remplacements'
+	String get remplacements => 'Remplacements';
 }
 
 // Path: recherche.etats
@@ -17429,6 +17433,33 @@ class Traductions$recherche$entree$fr {
 
 	/// fr: 'Rechercher dans les supports'
 	String get supports => 'Rechercher dans les supports';
+}
+
+// Path: recherche.contexte
+class Traductions$recherche$contexte$fr {
+	Traductions$recherche$contexte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Remplacement à prendre'
+	String get remplacementOuvert => 'Remplacement à prendre';
+
+	/// fr: 'Votre remplacement'
+	String get remplacementMien => 'Votre remplacement';
+
+	/// fr: 'Mission de contrôle'
+	String get mission => 'Mission de contrôle';
+
+	/// fr: 'Mission de contrôle · {enseignant}'
+	String missionEnseignant({required Object enseignant}) => 'Mission de contrôle · ${enseignant}';
+
+	/// fr: 'Élève de la classe {classe}'
+	String eleveDeClasse({required Object classe}) => 'Élève de la classe ${classe}';
+
+	/// fr: 'Enseignant de la classe {classe}'
+	String enseignantDeClasse({required Object classe}) => 'Enseignant de la classe ${classe}';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -36592,6 +36623,7 @@ extension on Traductions {
 			'recherche.domaines.controle' => 'Contrôle',
 			'recherche.domaines.finances' => 'Finances',
 			'recherche.domaines.fils' => 'Fils de discussion',
+			'recherche.domaines.remplacements' => 'Remplacements',
 			'recherche.voirDavantage' => 'Voir davantage',
 			'recherche.pageSuivante' => 'Chargement de résultats supplémentaires…',
 			'recherche.pageEnEchec' => 'Les résultats suivants n\'ont pas pu être chargés.',
@@ -36623,6 +36655,12 @@ extension on Traductions {
 			'recherche.guide.initial.phrase' => 'Écris un mot pour trouver un de tes supports.',
 			'recherche.guide.limite' => 'Seulement tes supports et tes leçons.',
 			'recherche.entree.supports' => 'Rechercher dans les supports',
+			'recherche.contexte.remplacementOuvert' => 'Remplacement à prendre',
+			'recherche.contexte.remplacementMien' => 'Votre remplacement',
+			'recherche.contexte.mission' => 'Mission de contrôle',
+			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'Mission de contrôle · ${enseignant}',
+			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'Élève de la classe ${classe}',
+			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'Enseignant de la classe ${classe}',
 			_ => null,
 		};
 	}

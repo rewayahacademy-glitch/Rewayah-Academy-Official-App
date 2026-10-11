@@ -50,6 +50,7 @@ String libelleDomaineRecherche(DomaineRecherche domaine) {
     DomaineRecherche.enseignants => d.enseignants,
     DomaineRecherche.pedagogie => d.pedagogie,
     DomaineRecherche.controle => d.controle,
+    DomaineRecherche.remplacements => d.remplacements,
     DomaineRecherche.finances => d.finances,
     DomaineRecherche.fils => d.fils,
   };
