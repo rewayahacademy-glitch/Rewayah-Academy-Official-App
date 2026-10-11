@@ -1,22 +1,37 @@
-# X2-18 — BLOQUÉ
+# X2-18 — IMPLÉMENTÉ, VÉRIFICATION SQL BLOQUÉE
 
-Le port Claude `PortExportRapports` et son consommateur `ActionExport` ne
-peuvent rendre qu'une `reference` et un nombre de `lignes`. Le parcours
-affiche ensuite « export prêt », mais ne reçoit aucun contenu de ligne ni
-aucun moyen de le télécharger. La décision X2-18 demande maintenant une RPC
-qui renvoie les lignes et ne stocke pas de fichier. Une implémentation
-`*_supabase.dart` qui lit puis jette ces lignes présenterait un export prêt
-sans livrer les données; les mettre en cache localement ne donne pas non plus
-au consommateur de moyen de les récupérer.
+## Source de vérité
 
-Le rapport n'a pas de période ni de colonnes définies dans l'interface, et la
-sélection n'identifie pas explicitement le type de ligne au-delà du commentaire
-« paiements à effectuer ». Il manque donc le contrat des données exportées,
-les limites attendues et la forme de livraison côté UI. Les fichiers `port_*`
-et le parcours UI étant détenus par Claude selon la feuille, ce lot ne modifie
-pas leurs interfaces et n'invente pas un export incomplet.
+Contrat v2: `docs/current/CONTRAT-CPT-BR-18-19.md`, commit source
+`7231d321c7bae2d8642b10f661df8b0c0cdd1b15`, déjà inclus par le merge de X2-17.
 
-À arbitrer : fournir les lignes dans une interface de port révisée (et le
-contrat de période/colonnes/limites), ou conserver un fichier côté serveur et
-remplacer la référence par un lien de téléchargement contrôlé. Aucun export
-financier ni journal métier incomplet n'a été ajouté.
+## Livré dans cette branche
+
+- `exports_comptables`: journal append-only, RLS admin (toutes lignes) et
+  comptable (ses lignes), avec identifiant, période ou sélection, nombre,
+  texte CSV, auteur et clé d'idempotence.
+- RPC `SECURITY INVOKER` pour le rapport mensuel et la sélection de 1 à 500
+  payouts; période Europe/Paris configurable, 5 000 lignes maximum, erreurs
+  `22023`/`54000`, idempotence utilisateur, CSV UTF-8 BOM séparé par `;`,
+  dates locales, montants décimaux, neutralisation des cellules-formules.
+- L'export sélectionné ne lit et ne sérialise que `payout_methods.kind` et
+  `profile_id`; `details` est exclu.
+- Adaptateur Dart renvoyant strictement `reference` et `lignes`, sans fabriquer
+  ou télécharger de fichier. Le téléchargement reste hors du port actuel.
+- Scénario SQL couvrant rapport/sélection, idempotence, format, neutralisation,
+  détails privés, sélection invalide, ACL et plafond.
+- Test Dart ciblé: 3/3 réussis; `dart format` et `git diff --check` propres.
+
+## Limites / arbitrage de sécurité
+
+- PostgreSQL local n'est pas disponible: `psql` absent et Docker Desktop
+  injoignable (`dockerDesktopLinuxEngine` absent). Le scénario SQL n'a pas été
+  rejoué. Aucun accès base distante n'a été tenté.
+- Pour que les RPC invoker puissent insérer dans le journal, l'adaptateur SQL
+  doit donner `INSERT` à `authenticated` et le permettre par RLS aux comptes
+  actifs admin/comptable. Cela autorise aussi ces comptes à insérer directement
+  des lignes arbitraires dans la table, en dehors des RPC. Le contrat ne donne
+  pas de mécanisme invoker pour rendre l'insertion exclusive aux RPC. À arbitrer
+  avant acceptation du journal en production (p. ex. helper privé F86 approuvé).
+- Aucun scénario de permission réel ou d'absence d'accès Data API n'est prouvé
+  dans cette session.
