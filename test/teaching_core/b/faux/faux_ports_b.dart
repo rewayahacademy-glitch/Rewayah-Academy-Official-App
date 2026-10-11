@@ -170,11 +170,7 @@ class FauxEnregistrementFichier implements PortEnregistrementFichier {
     required String nomFichierPropose,
     required String typeMime,
   }) async {
-    appels.add((
-      nom: nomFichierPropose,
-      mime: typeMime,
-      taille: octets.length,
-    ));
+    appels.add((nom: nomFichierPropose, mime: typeMime, taille: octets.length));
     return destinationRendue;
   }
 }
@@ -284,11 +280,11 @@ List<Override> surchargesCatalogue({
   ServiceReseau? reseau,
   PortCatalogue? catalogue,
   PortEnregistrementFichier? enregistrement,
+  ArtefactsLocaux? depotArtefactsPropre,
 }) {
-  final ArtefactsLocaux depotArtefacts = ArtefactsLocaux(
-    parVersion: artefacts,
-    octetsParCle: octets,
-  );
+  final ArtefactsLocaux depotArtefacts =
+      depotArtefactsPropre ??
+      ArtefactsLocaux(parVersion: artefacts, octetsParCle: octets);
   return <Override>[
     portCatalogueProvider.overrideWithValue(
       catalogue ??

@@ -5929,7 +5929,9 @@
         "niveaux": "Niveaux",
         "sansVersion": "Aucune version publiée\u00a0: rien à ouvrir pour le moment.",
         "apercuIndisponible": "L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.",
-        "renduCoran": "Le Coran s’ouvre dans le lecteur dédié."
+        "renduCoran": "Le Coran s’ouvre dans le lecteur dédié.",
+        "entreeDetail": "Toutes vos ressources de révision, au même endroit.",
+        "entreeLigne": "Ouvrir la bibliothèque"
       },
       "action": {
         "telecharger": "Rendre disponible hors ligne",
@@ -5950,7 +5952,13 @@
       "rendu": {
         "imageInaccessible": "L'image n'a pas pu être chargée pour le moment.",
         "imageIllisible": "Ce fichier image ne peut pas être affiché.",
-        "reessayer": "Réessayer"
+        "reessayer": "Réessayer",
+        "ouvrir": "Ouvrir",
+        "ouvrirMushaf": "Ouvrir le mushaf",
+        "lienEchec": "Le lien de lecture n'a pas pu être obtenu pour le moment.",
+        "lienIndisponible": "L'ouverture n'est pas disponible pour ce support.",
+        "lienHorsLigne": "L'ouverture n'est pas possible pour le moment. Réessayez dans un instant.",
+        "lienBloque": "Votre navigateur a bloqué l'ouverture. Autorisez les fenêtres de ce site, puis réessayez."
       },
       "actif": {
         "indisponibleTitre": "Support présenté pas encore ouvert",
