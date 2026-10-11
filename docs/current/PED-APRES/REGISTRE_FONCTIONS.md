@@ -23,3 +23,6 @@ Preuve : `git diff origin/ccr-1b1bfa0b-m1kvkk...claude/ped-apres-1 --stat` ; tes
 | Adaptateur Supabase, migration, RPC, RLS | n/a | absents | **non écrits** | ABSENTE (BLOQUÉ PAR CONTRAT) |
 
 Fichiers hors lot modifiés : `assets/i18n/{fr,ar}.i18n.json` et `lib/core/i18n/strings*.g.dart` (régénérés), `tool/libelles_sources.json` (sources des 100 libellés).
+
+## Réserve acceptée (orchestrateur, 11/10/2026, par délégation du directeur)
+L'accès provisoire à l'aperçu familial et au partage ciblé, par la règle d'un élève dans l'inspecteur de classe, est **accepté pour ce lot**. Le vrai point de lecture administrative d'un cahier confirmé sera une étape séparée, **ADM-CAHIER-LECTURE** (créée par l'orchestrateur). Le backend du port est confié à Codex 2 (X2-20).
