@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart'
     show sansCoupureAuTrait;
 import '../../core/appairage/lecteur_qr.dart';
@@ -140,10 +141,12 @@ class PanneauAppareilEleve extends StatelessWidget {
 /// l'alphabet du serveur ; les refus sont dits sous le champ ; le scanner est
 /// propose la ou la plateforme sait lire un QR code.
 ///
-/// Etats : vide (action inactive), saisie, erreur sous le champ (format ou
-/// refus du serveur), verification (action en cours, champ fige, double envoi
-/// bloque), hors ligne (action inactive, phrase sous le champ), succes (passage
-/// au code personnel).
+/// Etats : vide (action active : l'appui dit sous le champ qu'un code compte
+/// six caractères, l'annonce et rend le focus au champ), saisie, erreur sous
+/// le champ (format ou refus du serveur), verification (action en cours,
+/// champ fige, double envoi bloque), hors ligne (action non rendue, phrase
+/// sous le champ), succes (passage au code personnel). Jamais de bouton
+/// grise (BOUTONS-GRISES-1).
 class SaisieCodePage extends ConsumerStatefulWidget {
   /// Cree la page.
   const SaisieCodePage({super.key});
@@ -157,6 +160,7 @@ class SaisieCodePage extends ConsumerStatefulWidget {
 
 class _SaisieCodePageState extends ConsumerState<SaisieCodePage> {
   final TextEditingController _champ = TextEditingController();
+  final FocusNode _focusChamp = FocusNode(debugLabel: 'code-appairage');
   bool _enCours = false;
   String? _erreur;
   int _generation = 0;
@@ -166,10 +170,9 @@ class _SaisieCodePageState extends ConsumerState<SaisieCodePage> {
     // Le code quitte la memoire avec l'ecran.
     _champ.clear();
     _champ.dispose();
+    _focusChamp.dispose();
     super.dispose();
   }
-
-  bool get _complet => _champ.text.length == FormatCodeAppairage.longueur;
 
   Future<void> _valider() async {
     if (_enCours) {
@@ -177,7 +180,11 @@ class _SaisieCodePageState extends ConsumerState<SaisieCodePage> {
     }
     final String? code = FormatCodeAppairage.normaliser(_champ.text);
     if (code == null) {
-      setState(() => _erreur = t.eleveConnexion.refus.format);
+      // Code incomplet : la phrase sous le champ, annoncee, et le focus au
+      // champ (BOUTONS-GRISES-1).
+      final String message = t.eleveConnexion.refus.format;
+      setState(() => _erreur = message);
+      signalerManque(context, message, champ: _focusChamp);
       return;
     }
     final int generation = ++_generation;
@@ -235,20 +242,26 @@ class _SaisieCodePageState extends ConsumerState<SaisieCodePage> {
     final bool scanner = ref.watch(lecteurQrDisponibleProvider);
     final bool mobile = AppGabarit.de(context) == Gabarit.mobile;
 
-    final Widget action = ActionPrincipale(
-      libelle: t.eleveConnexion.saisie.valider,
-      enCours: _enCours,
-      fleche: true,
-      onPress: _complet && !horsLigne ? () => unawaited(_valider()) : null,
-    );
+    // Hors ligne, la verification ne peut pas aboutir : l'action n'est pas
+    // rendue, la phrase sous le champ dit quand elle le pourra. Code
+    // incomplet : l'action reste active et dit ce qui manque.
+    final Widget? action = horsLigne
+        ? null
+        : ActionPrincipale(
+            libelle: t.eleveConnexion.saisie.valider,
+            enCours: _enCours,
+            fleche: true,
+            onPress: () => unawaited(_valider()),
+          );
 
     final Widget formulaire = _Formulaire(
       champ: _champ,
+      focusChamp: _focusChamp,
       enCours: _enCours,
       erreur: _erreur,
       horsLigne: horsLigne,
       onChange: () => setState(() => _erreur = null),
-      onValider: _complet && !horsLigne ? () => unawaited(_valider()) : null,
+      onValider: horsLigne ? null : () => unawaited(_valider()),
       actionDansLeCorps: mobile ? null : action,
       scanner: scanner && !_enCours
           ? () => GoRouter.of(context).go(Routes.connexionEleveScanner)
@@ -279,6 +292,7 @@ class _SaisieCodePageState extends ConsumerState<SaisieCodePage> {
 class _Formulaire extends StatelessWidget {
   const _Formulaire({
     required this.champ,
+    required this.focusChamp,
     required this.enCours,
     required this.erreur,
     required this.horsLigne,
@@ -289,6 +303,7 @@ class _Formulaire extends StatelessWidget {
   });
 
   final TextEditingController champ;
+  final FocusNode focusChamp;
   final bool enCours;
   final String? erreur;
   final bool horsLigne;
@@ -342,6 +357,7 @@ class _Formulaire extends StatelessWidget {
           builder: (BuildContext context, BoxConstraints c) => TextField(
             key: SaisieCodePage.champKey,
             controller: champ,
+            focusNode: focusChamp,
             enabled: !enCours,
             autocorrect: false,
             enableSuggestions: false,

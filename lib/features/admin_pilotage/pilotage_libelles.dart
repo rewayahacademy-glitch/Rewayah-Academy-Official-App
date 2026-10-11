@@ -11,6 +11,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/offres/offre_horaire.dart' show PublicOffre;
 import '../../core/offres/port_regroupements_admin.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
+import '../../core/tc_groupe/libelles_tc_groupe.dart' show LibellesGroupe;
 import '../admin_regroupements/regroupements_libelles.dart'
     show libelleHeureMinute, villeDuFuseau;
 import '../creneaux/plages.dart' show jourCapitalise;
@@ -66,10 +67,12 @@ String libelleCompteParGenre(
 String libelleRemplissage(LignePilotage l) {
   final int? taux = l.tauxRemplissage;
   if (taux == null) return t.admin.pilotage.remplissageInconnu;
-  return t.admin.pilotage.remplissage(
-    taux: '$taux',
-    effectif: '${l.effectif}',
-    capacite: '${l.capacite}',
+  return LibellesGroupe.insecable(
+    t.admin.pilotage.remplissage(
+      taux: '$taux',
+      effectif: '${l.effectif}',
+      capacite: '${l.capacite}',
+    ),
   );
 }
 

@@ -498,12 +498,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text(r.horsLigne), findsOneWidget);
-    expect(bouton(tester, RepriseFoyerPage.deposerKey).onPress, isNull);
-    await tester.ensureVisible(find.byKey(RepriseFoyerPage.deposerKey));
-    await tester.tap(
-      find.byKey(RepriseFoyerPage.deposerKey),
-      warnIfMissed: false,
-    );
+    expect(find.byKey(RepriseFoyerPage.deposerKey), findsNothing);
     await tester.pumpAndSettle();
     expect(port.appels, 0);
   });
@@ -529,12 +524,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text(r.titulaire.horsLigne), findsOneWidget);
-    expect(bouton(tester, RepriseTitulairePage.refuserKey).onPress, isNull);
-    await tester.ensureVisible(find.byKey(RepriseTitulairePage.refuserKey));
-    await tester.tap(
-      find.byKey(RepriseTitulairePage.refuserKey),
-      warnIfMissed: false,
-    );
+    expect(find.byKey(RepriseTitulairePage.refuserKey), findsNothing);
     await tester.pumpAndSettle();
     expect(port.appels, 0);
   });
@@ -643,7 +633,7 @@ void main() {
       find.byType(EtatSysteme),
     );
     expect(etat.dependance, 'EA-BR-27');
-    expect(bouton(tester, RepriseFoyerPage.deposerKey).onPress, isNull);
+    expect(find.byKey(RepriseFoyerPage.deposerKey), findsNothing);
   });
 
   testWidgets('chargement : un squelette, aucun faux etat', (

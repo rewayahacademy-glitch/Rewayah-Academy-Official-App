@@ -138,6 +138,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/mouvement/envol_vers_cible.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart'
+    show LibellesGroupe;
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
     show AnnotationLayer, OutilTrait, PointNormalise, TraitVectoriel;
 import 'package:rewayah_academy/core/tc_outils/etat_outils.dart';
@@ -966,7 +968,12 @@ void main() {
           await tester.tap(plus.first);
           await tester.pump();
         }
-        expect(find.text(t.salle.seance.zoomValeur(valeur: 200)), findsWidgets);
+        expect(
+          find.text(
+            LibellesGroupe.valeurSeule(t.salle.seance.zoomValeur(valeur: 200)),
+          ),
+          findsWidgets,
+        );
         // Les Commandes refermees : la page seule, lue a 200 %.
         await tester.sendKeyEvent(LogicalKeyboardKey.escape);
         await stabiliser(tester);

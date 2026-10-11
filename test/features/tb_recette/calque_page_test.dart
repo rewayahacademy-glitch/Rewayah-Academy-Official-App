@@ -17,6 +17,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart'
+    show LibellesGroupe;
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
 import 'package:rewayah_academy/core/tc_outils/etat_outils.dart';
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
@@ -44,6 +46,7 @@ class _ControleurArme extends ControleurOutils {
 final double _ratio = DonneesSeanceDemo.supportPageFixe.ratio;
 
 final Finder _page = find.byKey(SurfacePageFixe.clePage);
+
 /// L'entree « Commandes » : le declencheur, ou, pendant l'ecriture, le
 /// dernier bouton de la palette courte qui a pris sa place (TB-7b).
 final Finder _entreeCommandes = find.byWidgetPredicate(
@@ -525,7 +528,12 @@ void main() {
         await tester.pump();
       }
       await _attendre(tester);
-      expect(find.text(t.salle.seance.zoomValeur(valeur: 200)), findsWidgets);
+      expect(
+        find.text(
+          LibellesGroupe.valeurSeule(t.salle.seance.zoomValeur(valeur: 200)),
+        ),
+        findsWidgets,
+      );
 
       final Rect apres = tester.getRect(_page);
       expect(apres.width, moreOrLessEquals(avant.width * 2, epsilon: 1e-6));
@@ -621,7 +629,11 @@ void main() {
             await tester.pump();
           }
           expect(
-            find.text(t.salle.seance.zoomValeur(valeur: zoom)),
+            find.text(
+              LibellesGroupe.valeurSeule(
+                t.salle.seance.zoomValeur(valeur: zoom),
+              ),
+            ),
             findsWidgets,
           );
           await tester.sendKeyEvent(LogicalKeyboardKey.escape);
@@ -865,7 +877,12 @@ void main() {
         await tester.pump();
       }
       await _attendre(tester);
-      expect(find.text(t.salle.seance.zoomValeur(valeur: 200)), findsWidgets);
+      expect(
+        find.text(
+          LibellesGroupe.valeurSeule(t.salle.seance.zoomValeur(valeur: 200)),
+        ),
+        findsWidgets,
+      );
       final (double? luApres, double attenduApres) = await encreAuMilieu(
         tester,
       );

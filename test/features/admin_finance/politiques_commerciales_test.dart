@@ -1584,7 +1584,7 @@ void main() {
       expect(find.text(pol.budgetValeur(valeur: '8')), findsOneWidget);
       expect(find.text(pol.budgetOperationnel), findsOneWidget);
       expect(find.text(pol.budgetValeur(valeur: '15')), findsOneWidget);
-      expect(pol.budgetValeur(valeur: '8'), '8 %, non contraignant');
+      expect(pol.budgetValeur(valeur: '8'), '8\u00A0%, non contraignant');
       expect(find.text(pol.differences(n: 2)), findsOneWidget);
       expect(
         tester.widget<Text>(_comparaison('relances')).data,

@@ -560,16 +560,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text(t.adulte.acceptation.horsLigne), findsOneWidget);
-    expect(bouton(tester, InvitationRecuePage.accepterKey).onPress, isNull);
-    expect(bouton(tester, InvitationRecuePage.refuserKey).onPress, isNull);
-    for (final Key cle in <Key>[
-      InvitationRecuePage.accepterKey,
-      InvitationRecuePage.refuserKey,
-    ]) {
-      await tester.ensureVisible(find.byKey(cle));
-      await tester.tap(find.byKey(cle), warnIfMissed: false);
-      await tester.pumpAndSettle();
-    }
+    expect(find.byKey(InvitationRecuePage.accepterKey), findsNothing);
+    expect(find.byKey(InvitationRecuePage.refuserKey), findsNothing);
     expect(port.appels, 0);
   });
 

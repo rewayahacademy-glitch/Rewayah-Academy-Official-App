@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_groupe/palette_groupe.dart';
@@ -70,7 +71,14 @@ class CarteGroupe extends StatelessWidget {
     this.onRejoindre,
     this.urlPhotoEnseignant,
     this.rejoindreRetire = false,
+    this.attenteEntree,
   });
+
+  /// L'entree ne peut pas encore aboutir (hors ligne, acces qui se lit
+  /// encore) : « Rejoindre » reste present et actif, jamais grise
+  /// (BOUTONS-GRISES-1) ; l'appui dit cette phrase sous le bouton et
+  /// l'annonce, sans entrer. Nulle, l'appui entre.
+  final String? attenteEntree;
 
   /// Le groupe montre.
   final GroupSummaryVM groupe;
@@ -78,7 +86,8 @@ class CarteGroupe extends StatelessWidget {
   /// Ce que fait un tap sur la carte.
   final VoidCallback? onOuvrir;
 
-  /// Ce que fait le bouton « Rejoindre ».
+  /// Ce que fait le bouton « Rejoindre ». Nul (rien de branche), le bouton
+  /// n'est pas rendu : jamais grise.
   final VoidCallback? onRejoindre;
 
   /// L'URL signee de la photo, quand l'hote sait la resoudre.
@@ -100,12 +109,12 @@ class CarteGroupe extends StatelessWidget {
       onPress: onOuvrir,
       libelleSemantique: LibellesGroupe.ouvrirGroupe(groupe.libelle),
       entete: _Entete(groupe: groupe),
-      actions: groupe.rejoindreOuvert && !rejoindreRetire
-          ? ActionPrincipale(
-              libelle: LibellesGroupe.rejoindre,
-              onPress: onRejoindre,
-            )
-          : null,
+      actions: switch (onRejoindre) {
+        final VoidCallback rejoindre
+            when groupe.rejoindreOuvert && !rejoindreRetire =>
+          _Rejoindre(onRejoindre: rejoindre, attente: attenteEntree),
+        _ => null,
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -138,6 +147,64 @@ class CarteGroupe extends StatelessWidget {
             _ProchaineSeance(groupe: groupe, horloge: horloge),
         ],
       ),
+    );
+  }
+}
+
+/// « Rejoindre », jamais grise (BOUTONS-GRISES-1). Tant que [attente] est
+/// posee, l'appui n'entre pas : il dit la phrase sous le bouton (region
+/// live) et l'annonce au lecteur d'ecran.
+class _Rejoindre extends StatefulWidget {
+  const _Rejoindre({required this.onRejoindre, this.attente});
+
+  final VoidCallback onRejoindre;
+  final String? attente;
+
+  @override
+  State<_Rejoindre> createState() => _RejoindreEtat();
+}
+
+class _RejoindreEtat extends State<_Rejoindre> {
+  bool _attenteDite = false;
+
+  @override
+  void didUpdateWidget(_Rejoindre ancien) {
+    super.didUpdateWidget(ancien);
+    if (widget.attente == null) _attenteDite = false;
+  }
+
+  void _appui() {
+    final String? attente = widget.attente;
+    if (attente == null) {
+      widget.onRejoindre();
+      return;
+    }
+    setState(() => _attenteDite = true);
+    signalerManque(context, attente);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final String? attente = widget.attente;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        ActionPrincipale(libelle: LibellesGroupe.rejoindre, onPress: _appui),
+        if (_attenteDite && attente != null) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              attente,
+              key: const ValueKey<String>('carte-groupe-attente-entree'),
+              style: AppPalette.of(context).inkMuted.applyTo(
+                Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

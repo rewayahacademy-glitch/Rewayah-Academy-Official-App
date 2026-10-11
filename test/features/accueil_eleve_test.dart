@@ -31,6 +31,7 @@ import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../support/annonces.dart';
 import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';
@@ -367,7 +368,7 @@ void main() {
       expect(find.byType(ActionPrincipale), findsNothing);
     });
 
-    testWidgets('hors ligne, le bloc Rejoindre reste present mais inerte', (
+    testWidgets('hors ligne, le bloc Rejoindre reste present, jamais grise', (
       WidgetTester tester,
     ) async {
       final FauxServicePlanning planning = FauxServicePlanning()
@@ -392,10 +393,17 @@ void main() {
       // Seul le bloc Rejoindre change, et il ne disparait pas : une panne de
       // reseau n'est pas une limite de droit, et un bouton absent ferait croire
       // que le cours n'existe plus.
+      // BOUTONS-GRISES-1 : present, jamais grise ; l'appui n'entre pas, il
+      // annonce l'attente au lecteur d'ecran.
+      final List<String> annonces = ecouterAnnonces(tester);
       final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
         find.byType(ActionPrincipale),
       );
-      expect(bouton.onPress, isNull);
+      expect(bouton.onPress, isNotNull);
+      await tester.tap(find.byType(ActionPrincipale));
+      await tester.pumpAndSettle();
+      expect(annonces, <String>[t.eleve.accueil.horsLigneDetail]);
+      expect(find.text(t.eleve.accueil.coursEnDirect), findsOneWidget);
       expect(find.text(t.eleve.accueil.horsLigne), findsOneWidget);
       expect(find.text(t.eleve.accueil.horsLigneDetail), findsOneWidget);
       // EA-HL-DOUBLE-1 (reprise) : le bandeau seul dit « hors ligne », en

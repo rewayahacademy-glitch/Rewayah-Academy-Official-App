@@ -498,9 +498,16 @@ class _Seance extends ConsumerWidget {
       return AppCard(
         dominante: true,
         child: EmptyState(
+          // FINITIONS-CORR2-1 : le message, en style titre, dit seulement ce
+          // qui a echoue ; la cause probable et quoi faire passent dans la
+          // ligne d'invitation, comme la bibliotheque et l'observation (la
+          // phrase entiere faisait 14 lignes en gras a 320 px texte x2).
           message: lecture.hasError
-              ? t.classe.entree.indisponible
+              ? t.classe.entree.indisponibleCourt
               : t.classe.entree.aucune,
+          invitation: lecture.hasError
+              ? t.classe.entree.indisponibleInvitation
+              : null,
           icone: AppIcons.cours,
           // EA-HL-DOUBLE-1f : un registre subi taisait le bouton, et
           // « Reessayez dans un instant » restait sans action.

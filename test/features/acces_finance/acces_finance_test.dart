@@ -60,6 +60,7 @@ import 'package:rewayah_academy/features/tc_mes_groupes/carte_groupe.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/annonces.dart';
 import '../../support/harnais.dart';
 import '../../teaching_core/a/support/hote_tc_a.dart';
 
@@ -647,8 +648,13 @@ void main() {
       await tester.pump();
       expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
       expect(_rejoindre, findsOneWidget);
-      expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNull);
-      // Inerte sans message hors ligne : ce n'est pas une panne de reseau.
+      // BOUTONS-GRISES-1 : jamais grise ; l'appui n'entre pas, il dit
+      // d'attendre un instant, sans message hors ligne : ce n'est pas une
+      // panne de reseau.
+      expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNotNull);
+      await tester.tap(_rejoindre);
+      await tester.pump();
+      expect(find.text(t.eleve.accueil.entreeSePrepare), findsOneWidget);
       expect(find.text(t.eleve.accueil.horsLigne), findsNothing);
 
       port.reponse.complete(
@@ -672,7 +678,10 @@ void main() {
       );
       await tester.pump();
       await tester.pump();
-      expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNull);
+      // Jamais grise (BOUTONS-GRISES-1) : l'appui dit d'attendre.
+      await tester.tap(_rejoindre);
+      await tester.pump();
+      expect(find.text(t.eleve.accueil.entreeSePrepare), findsOneWidget);
 
       port.reponse.complete(_essaisEpuises);
       await tester.pumpAndSettle();
@@ -694,7 +703,9 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
-      expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNull);
+      // Jamais grise (BOUTONS-GRISES-1) : present, l'appui dit l'attente.
+      expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNotNull);
+      expect(find.text(t.eleve.accueil.horsLigneDetail), findsOneWidget);
     });
 
     testWidgets('hors ligne et periode non financee : la copie neutre, sans '
@@ -860,9 +871,8 @@ void main() {
       });
     });
 
-    testWidgets('acces en lecture : Rejoindre present et inerte', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('acces en lecture : Rejoindre present, jamais grise, l appui '
+        'dit d attendre (BOUTONS-GRISES-1)', (WidgetTester tester) async {
       await avecLargeur(tester, largeurMobile, () async {
         final _MonAccesEnAttente port = _MonAccesEnAttente();
         await poser(tester, port);
@@ -871,8 +881,12 @@ void main() {
         for (final ActionPrincipale b in tester.widgetList<ActionPrincipale>(
           rejoindreGroupe(),
         )) {
-          expect(b.onPress, isNull);
+          expect(b.onPress, isNotNull);
         }
+        await tester.ensureVisible(rejoindreGroupe().first);
+        await tester.tap(rejoindreGroupe().first);
+        await tester.pump();
+        expect(find.text(t.tc.groupe.carte.entreeSePrepare), findsOneWidget);
         port.reponse.complete(accesDeMoi(ouvert: false));
         await tester.pump();
         await tester.pump();
@@ -1662,13 +1676,21 @@ void main() {
       });
     });
 
-    testWidgets('Espace groupe, acces en lecture : Rejoindre present et '
-        'inerte, puis retire', (WidgetTester tester) async {
+    testWidgets('Espace groupe, acces en lecture : Rejoindre present, jamais '
+        'grise, l appui dit d attendre, puis retire (BOUTONS-GRISES-1)', (
+      WidgetTester tester,
+    ) async {
       await avecLargeur(tester, largeurMobile, () async {
+        final List<String> annonces = ecouterAnnonces(tester);
         final _MonAccesEnAttente port = _MonAccesEnAttente();
         await espaceGroupe(tester, port);
         expect(rejoindre(), findsOneWidget);
-        expect(tester.widget<ActionPrincipale>(rejoindre()).onPress, isNull);
+        expect(tester.widget<ActionPrincipale>(rejoindre()).onPress, isNotNull);
+        await tester.ensureVisible(rejoindre());
+        await tester.tap(rejoindre());
+        await tester.pump();
+        expect(find.text(t.tc.groupe.carte.entreeSePrepare), findsOneWidget);
+        expect(annonces, <String>[t.tc.groupe.carte.entreeSePrepare]);
         port.reponse.complete(accesDeMoi(ouvert: false));
         await tester.pump();
         await tester.pump();

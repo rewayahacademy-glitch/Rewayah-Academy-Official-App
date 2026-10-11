@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_telechargement/port_etat_offline.dart';
@@ -74,6 +75,15 @@ class CarteRessource extends StatelessWidget {
   Widget build(BuildContext context) {
     final double largeur = largeurVignettePour(context);
 
+    final Widget vignette = SizedBox(
+      width: largeur,
+      child: VignetteRessource(
+        couverture: CouvertureRessource.pour(ressource),
+        image: couvertureDeposee,
+        compacte: largeur <= AppSpacing.respiration,
+      ),
+    );
+
     return AppCard(
       onPress: onPress,
       libelleSemantique: libelleSemantique,
@@ -81,20 +91,36 @@ class CarteRessource extends StatelessWidget {
       // etat ; le texte peint se tait, la carte n'est pas lue deux fois.
       child: ExcludeSemantics(
         excluding: onPress != null,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(
-              width: largeur,
-              child: VignetteRessource(
-                couverture: CouvertureRessource.pour(ressource),
-                image: couvertureDeposee,
-                compacte: largeur <= AppSpacing.respiration,
-              ),
-            ),
-            Ecart.hLg,
-            Expanded(child: _texte(context)),
-          ],
+        // COUPE-MOTS-FOND-1 : quand le mot le plus long du titre ne tient pas
+        // a cote de la couverture (320 px texte x2, Interface guidee), le
+        // texte passe sous la couverture au lieu de couper « Alphabet ».
+        child: LayoutBuilder(
+          builder: (BuildContext contexte, BoxConstraints c) {
+            final TextTheme textes = Theme.of(contexte).textTheme;
+            final double place = c.maxWidth - largeur - AppSpacing.lg;
+            final bool aCote =
+                largeurMotLePlusLong(
+                  contexte,
+                  ressource.title,
+                  textes.titleMedium,
+                  MediaQuery.textScalerOf(contexte),
+                ) <=
+                place;
+            if (!aCote) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[vignette, Ecart.vMd, _texte(contexte)],
+              );
+            }
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                vignette,
+                Ecart.hLg,
+                Expanded(child: _texte(contexte)),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -127,19 +153,18 @@ class CarteRessource extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text(
+        // COUPE-MOTS-FOND-1 : le titre et le type passent a la ligne entre
+        // leurs mots, jamais tronques (« Les regles du... », « Leçon ·
+        // Taj... » a 320 px texte x2) ; un mot trop long se reduit, borne.
+        TexteSansCoupure(
           ressource.title,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
           style: palette.surfaceRaised.applyTo(
             textes.titleMedium ?? const TextStyle(),
           ),
         ),
         Ecart.vXs,
-        Text(
+        TexteSansCoupure(
           sousTitre,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
           style: palette.inkMuted.applyTo(
             textes.bodySmall ?? const TextStyle(),
           ),

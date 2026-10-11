@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../admin/admin_domaine.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
@@ -160,6 +161,11 @@ class AdminShell extends StatelessWidget {
   /// quatre autres roles pour un besoin qui n'est que le sien.
   static const double largeurBarreLaterale = 288;
 
+  /// La place que le titre de la page garde a cote des actions de l'en-tete,
+  /// en tailles de son texte (em, `headlineMedium` a l'echelle courante) :
+  /// en dessous, les actions quittent la ligne du titre (COUPE-MOTS-FOND-1).
+  static const double _emTitreMinimum = 10;
+
   @override
   Widget build(BuildContext context) {
     final int trouve = domaineActif == null
@@ -207,25 +213,62 @@ class AdminShell extends StatelessWidget {
     final VoidCallback? notifications = onNotifications;
     final VoidCallback? studio = onStudio;
     Widget contenu({required bool avecActions}) {
-      final Widget page = ActionsEnteteCoquille(
-        actions: <Widget>[
-          if (avecActions) ...<Widget>[
-            _BoutonRecherche(onRecherche: onAller),
-            if (studio != null) _BoutonStudio(onStudio: studio),
-            const BasculeTheme(),
-            ?cloche,
-            _BoutonCompte(onCompte: onCompte),
-          ],
-          if (notifications != null)
-            ClocheNotifications(
-              onPress: notifications,
-              actif: notificationsActives,
-            ),
+      final List<Widget> actions = <Widget>[
+        if (avecActions) ...<Widget>[
+          _BoutonRecherche(onRecherche: onAller),
+          if (studio != null) _BoutonStudio(onStudio: studio),
+          const BasculeTheme(),
+          ?cloche,
+          _BoutonCompte(onCompte: onCompte),
         ],
+        if (notifications != null)
+          ClocheNotifications(
+            onPress: notifications,
+            actif: notificationsActives,
+          ),
+      ];
+      Widget pageAvec(List<Widget> enTete) => ActionsEnteteCoquille(
+        actions: enTete,
         onRetour: onRetour,
         sousBandeau: bandeau != null,
         child: child,
       );
+      // COUPE-MOTS-FOND-1 : en Interface guidee (cibles de 72) ou dans une
+      // colonne etroite (rail a 800), sept cibles a cote du titre ne lui
+      // laissaient plus que deux lettres par ligne (« Diagnosti / cs »,
+      // « Centre de commande » lettre a lettre). Quand elles ne laissent plus
+      // au titre dix fois la taille de son texte, elles passent sur leur
+      // propre rangee, au-dessus de la page, et le titre reprend la ligne.
+      final Widget page = !avecActions
+          ? pageAvec(actions)
+          : LayoutBuilder(
+              builder: (BuildContext contexte, BoxConstraints c) {
+                final double cible = AppMetriques.of(contexte).cibleTactile;
+                // La bascule de theme vaut deux cibles ; le retour, une.
+                final double besoin =
+                    (actions.length + 2) * (cible + AppSpacing.xs);
+                final double em = MediaQuery.textScalerOf(contexte).scale(
+                  Theme.of(contexte).textTheme.headlineMedium?.fontSize ??
+                      AppSpacing.xxl,
+                );
+                if (c.maxWidth - besoin >= _emTitreMinimum * em) {
+                  return pageAvec(actions);
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    _RangeeActions(actions: actions),
+                    Expanded(
+                      child: MediaQuery.removePadding(
+                        context: contexte,
+                        removeTop: true,
+                        child: pageAvec(const <Widget>[]),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
       return switch (bandeau) {
         null => page,
         final Widget b => _ZoneBandeau(
@@ -374,6 +417,38 @@ class _ZoneBandeau extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Les actions de l'en-tete sur leur propre rangee, au-dessus de la page,
+/// au bord de fin (COUPE-MOTS-FOND-1) : quand elles ne laisseraient plus au
+/// titre dix fois la taille de son texte. Meme ordre, memes composants ; la
+/// rangee passe a la ligne plutot que de deborder.
+class _RangeeActions extends StatelessWidget {
+  const _RangeeActions({required this.actions});
+
+  final List<Widget> actions;
+
+  @override
+  Widget build(BuildContext context) {
+    final double gouttiere = AppGabarit.de(context).gouttiere;
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: EdgeInsetsDirectional.only(
+          start: gouttiere,
+          end: gouttiere,
+          top: AppSpacing.lg,
+        ),
+        child: Wrap(
+          alignment: WrapAlignment.end,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: AppSpacing.xs,
+          runSpacing: AppSpacing.xs,
+          children: actions,
+        ),
       ),
     );
   }
@@ -946,7 +1021,7 @@ class _BoutonRecherche extends StatelessWidget {
         decoration: InputDecoration(
           isDense: true,
           hintText: t.nav.admin.rechercheIndication,
-          hintMaxLines: 2,
+          hintMaxLines: lignesTexteAide(t.nav.admin.rechercheIndication),
           prefixIcon: Icon(AppIcons.recherche.repos),
         ),
       ),
@@ -1112,7 +1187,9 @@ class _BarreMobileState extends State<_BarreMobile> {
                             hintText: t.nav.admin.rechercheIndication,
                             // AD-11 (1.4.4) : a 200 %, l'indication passe
                             // a la ligne au lieu d'etre coupee.
-                            hintMaxLines: 2,
+                            hintMaxLines: lignesTexteAide(
+                              t.nav.admin.rechercheIndication,
+                            ),
                             prefixIcon: Icon(AppIcons.recherche.repos),
                           ),
                         ),

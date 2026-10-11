@@ -25,8 +25,13 @@ typedef AppelLibelle = ({
 
 /// Les unites qui suivent un parametre dans un libelle a duree ou a unite.
 final RegExp _parametreEtUnite = RegExp(
-  r'\{\w+\}[  ]?'
-  r'(min|s|h|j|sem\.|minutes?|secondes?|heures?|jours?|semaines?)'
+  // DUREE-INSECABLE-4 : seule une espace ordinaire (secable) est cherchee ;
+  // un libelle qui lie deja son nombre a son unite par U+00A0
+  // (« {taille}\u00A0Mo ») est insecable par son texte.
+  r'\{\w+\} ?'
+  r'(min|s|h|j|sem\.|minutes?|secondes?|heures?|jours?|semaines?'
+  // DUREE-INSECABLE-4 : unites hors duree (age, taille de fichier, pourcentage).
+  r'|ans?|o|Ko|Mo|Go|%)'
   r'(?=$|[\s.,;:)!?])',
 );
 
@@ -80,6 +85,24 @@ Iterable<File> sourcesDart() =>
                 '${Platform.pathSeparator}_dev${Platform.pathSeparator}',
               ),
         );
+
+/// DUREE-INSECABLE-4 : le rendu du Coran (`features/tc_mushaf`,
+/// `core/coran`, `core/tc_coran`) est hors du perimetre des corrections
+/// d'interface : il n'est pas modifie ici, et la garde ne le juge pas. Ses
+/// appels nus (« 150 % » du zoom) sont consignes pour l'etape qui aura le
+/// droit d'y toucher.
+const List<String> perimetreCoran = <String>[
+  'lib/features/tc_mushaf/',
+  'lib/core/coran/',
+  'lib/core/tc_coran/',
+];
+
+/// Les sources de [sourcesDart] hors [perimetreCoran].
+Iterable<File> sourcesDartHorsCoran() => sourcesDart().where(
+  (File f) => !perimetreCoran.any(
+    (String d) => f.path.replaceAll(r'\', '/').contains(d),
+  ),
+);
 
 /// Le nom de l'appel qui entoure immediatement la position [i] de [source] :
 /// `LibellesGroupe.insecable`, `Text`, ou `''` si [i] n'est dans aucune
@@ -156,4 +179,40 @@ List<AppelLibelle> appelsDe(Iterable<String> cles, Iterable<File> sources) {
 bool estInsecable(String enveloppe) {
   final String nom = enveloppe.split('.').last;
   return nom == 'insecable' || nom == 'valeurSeule';
+}
+
+/// DUREE-FOND-1 : parite de l'arabe. Un libelle francais qui lie son nombre a
+/// son unite par U+00A0 (« {taille} Ko ») est insecable par son texte ;
+/// la garde des unites, qui ne lit que le francais, le tient pour regle. Mais
+/// l'unite arabe (« كيلوبايت ») n'est pas dans le motif des unites : si la
+/// traduction garde une espace ordinaire apres le meme parametre, le nombre se
+/// separe encore de son unite a 320 px. Rend, pour chaque chemin ou le
+/// francais lie `{p}` par U+00A0 et ou l'arabe ecrit `{p}` suivi d'une espace
+/// ordinaire : « chemin {p} : texte arabe ».
+List<String> unitesSecablesEnArabe({
+  String francais = 'assets/i18n/fr.i18n.json',
+  String arabe = 'assets/i18n/ar.i18n.json',
+}) {
+  final Object? fr = jsonDecode(File(francais).readAsStringSync());
+  final Object? ar = jsonDecode(File(arabe).readAsStringSync());
+  final RegExp lie = RegExp('\\{(\\w+)\\} ');
+  final List<String> fautes = <String>[];
+  void parcourir(Object? f, Object? a, List<String> chemin) {
+    if (f is String) {
+      if (a is! String) return;
+      for (final RegExpMatch m in lie.allMatches(f)) {
+        if (a.contains('{${m[1]}} ')) {
+          fautes.add('${chemin.join('.')} {${m[1]}} : $a');
+        }
+      }
+      return;
+    }
+    if (f is! Map<String, Object?> || a is! Map<String, Object?>) return;
+    f.forEach(
+      (String k, Object? v) => parcourir(v, a[k], <String>[...chemin, k]),
+    );
+  }
+
+  parcourir(fr, ar, <String>[]);
+  return fautes;
 }

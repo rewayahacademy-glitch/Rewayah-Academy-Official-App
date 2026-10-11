@@ -1132,7 +1132,9 @@
     "envoiEnCours": "Envoi en cours",
     "deposee": "Pièce reçue",
     "erreur": "L'envoi n'a pas abouti. Réessayez dans un instant.",
-    "tropVolumineux": "Cette photo dépasse {taille}\u00a0Mo. Reprenez-la en qualité plus basse."
+    "tropVolumineux": "Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.",
+    "manqueType": "Choisissez d'abord la pièce que vous déposez.",
+    "manquePhoto": "Choisissez d'abord la photo de votre pièce."
   },
   "appareils": {
     "titre": "Appareils",
@@ -1317,7 +1319,8 @@
         "nomAide": "Le nom de famille n'est jamais montré à l'enseignant.",
         "nomAidePrerempli": "Prérempli avec le nom de votre compte\u00a0: modifiez-le si l'élève porte un autre nom. Jamais montré à l'enseignant.",
         "age": "Âge, en années",
-        "ageAide": "L'âge fixe l'affichage et la caméra au départ. Vous pourrez changer les deux ensuite."
+        "ageAide": "L'âge fixe l'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.",
+        "ageFige": "L'envoi est en cours : l'âge pourra être changé après la réponse."
       },
       "erreurs": {
         "prenomRequis": "Indiquez le prénom de l'élève.",
@@ -2672,7 +2675,8 @@
       "annulerErreur": "L'annulation n'a pas abouti\u00a0: {message}",
       "champMotif": "Motif",
       "motifRequis": "Un motif est requis, il s'inscrit au journal d'audit.",
-      "journalisation": "Chaque planification, résultat et annulation est inscrit au journal d'audit."
+      "journalisation": "Chaque planification, résultat et annulation est inscrit au journal d'audit.",
+      "manqueResultat": "Choisissez d'abord le résultat de l'évaluation."
     },
     "progression": {
       "titre": "Progression",
@@ -2774,7 +2778,8 @@
       "niveauxSur(param=nombre)": {
         "one": "{nombre} niveau",
         "other": "{nombre} niveaux"
-      }
+      },
+      "publierSansNiveau": "Ajoutez au moins un niveau pour pouvoir publier cette version."
     },
     "journal": {
       "titre": "Journal",
@@ -3035,8 +3040,8 @@
         "paie": "Paie enseignants",
         "paieDetail": "Estimée pour le mois\u00a0: une charge à venir, pas un paiement fait.",
         "marge": "Marge projetée",
-        "margeValeur": "{valeur} %",
-        "margeDetail": "Calculée sur la seule paie des enseignants, sans les autres charges\u00a0: elle ne se compare pas à une marge nette.",
+        "margeValeur": "{valeur} %",
+        "margeDetail": "Calculée sur la seule paie des enseignants, sans les autres charges : elle ne se compare pas à une marge nette.",
         "margeSansActivite": "Aucune activité",
         "margeNonCalculable": "Non calculable",
         "impayes": "Impayés",
@@ -3065,7 +3070,7 @@
         "etatARegulariser": "À régulariser",
         "etatEnEssai": "En essai",
         "etatEnConfirmation": "En confirmation",
-        "etatPart": "{valeur} % des profils du mois",
+        "etatPart": "{valeur} % des profils du mois",
         "etatVide": "Aucun état de paiement rendu pour ce mois.",
         "topClasses": "Top classes",
         "topClassesDetail": "Les classes qui ont le plus encaissé {deMois}.",
@@ -3217,8 +3222,8 @@
         "margeForte": "Performance forte",
         "margeForteDetail": "Le repère d'un mois très bon\u00a0; il ne descend pas sous l'objectif.",
         "margeStretch": "Scénario stretch",
-        "margeStretchDetail": "Le repère ambitieux\u00a0; il ne descend pas sous la performance forte.",
-        "pourcentValeur": "{valeur} %",
+        "margeStretchDetail": "Le repère ambitieux ; il ne descend pas sous la performance forte.",
+        "pourcentValeur": "{valeur} %",
         "unitePourcent": "%",
         "erreurMargeMax": "Saisissez une marge de 100 % au plus.",
         "erreurMargeForte": "La performance forte ne descend pas sous l'objectif ({objectif})\u00a0: saisissez une valeur au moins égale.",
@@ -3228,9 +3233,9 @@
         "budgetsNonFixes": "Pas encore fixés",
         "budgetMarketing": "Budget marketing",
         "budgetOperationnel": "Budget opérationnel",
-        "budgetValeur": "{valeur} %, non contraignant",
-        "budgetComparaison": "{libelle}\u00a0: {valeur}",
-        "separateurComparaison": "\u00a0; ",
+        "budgetValeur": "{valeur} %, non contraignant",
+        "budgetComparaison": "{libelle} : {valeur}",
+        "separateurComparaison": " ; ",
         "invariants": "Règles fixes",
         "invariantsDetail": "Elles protègent l'argent des familles\u00a0: ce ne sont pas des réglages, aucune version ne les change.",
         "invariantConfirmation": "Un paiement est confirmé avant tout crédit sur un profil.",
@@ -4162,7 +4167,8 @@
       "prochainDansJours(param=jours)": {
         "one": "Ton prochain cours est dans {jours} jour.",
         "other": "Ton prochain cours est dans {jours} jours."
-      }
+      },
+      "entreeSePrepare": "Ton entrée se prépare. Réessaie dans un instant."
     },
     "coran": {
       "titre": "Le Coran",
@@ -4353,7 +4359,9 @@
       "annulee": "Séance annulée",
       "aucune": "Aucune séance prévue",
       "horsLigne": "Vous pourrez entrer dans la séance dès le retour de la connexion.",
-      "indisponible": "L'information sur la séance n'a pas pu être chargée\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "indisponible": "L'information sur la séance n'a pas pu être chargée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "indisponibleCourt": "L'information sur la séance n'a pas pu être chargée",
+      "indisponibleInvitation": "Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
       "accesInverifiable": "L'accès à la salle ne peut pas être vérifié pour le moment.",
       "reessayer": "Réessayer",
       "chargementSeance": "Chargement de la prochaine séance.",
@@ -4767,7 +4775,6 @@
       "alertesErreur": "Les alertes de présence n'ont pas pu être lues. Réessayez dans un instant.",
       "voirAutreAlerte": "Voir l'autre alerte",
       "voirAutresAlertes": "Voir les {nombre} autres alertes",
-      "remplacementsTitre": "Remplacements confirmés",
       "remplacementsVide": "Aucun cours d'un collègue à assurer pour le moment.",
       "voirTousRemplacements": "Voir tout\u00a0: les {nombre} remplacements confirmés",
       "heure": "Heure",
@@ -5473,7 +5480,9 @@
         "aucuneSeanceDetail": "Le planning de cette classe n'est pas encore posé.",
         "duree": "Durée {valeur}",
         "dureeLibelle": "Durée",
-        "rejoindre": "Rejoindre"
+        "rejoindre": "Rejoindre",
+        "entreeSePrepare": "Votre entrée se prépare. Réessayez dans un instant.",
+        "entreeAttendReseau": "Vous pourrez entrer dès que le réseau revient."
       },
       "enseignant": {
         "sayyid": "Sayyid",
@@ -6583,9 +6592,10 @@
   },
   "formulaire": {
     "motif": {
-      "manque": "Il manque le motif\u00a0: choisissez-en un dans la liste, ou touchez «\u00a0Autre\u00a0» et écrivez-le.",
-      "autreVide": "Vous avez choisi «\u00a0Autre\u00a0»\u00a0: écrivez le motif en quelques mots.",
-      "autreChamp": "Le motif, en quelques mots"
+      "manque": "Il manque le motif : choisissez-en un dans la liste, ou touchez « Autre » et écrivez-le.",
+      "autreVide": "Vous avez choisi « Autre » : écrivez le motif en quelques mots.",
+      "autreChamp": "Le motif, en quelques mots",
+      "manqueSaisi": "Il manque le motif : écrivez-le en quelques mots."
     },
     "entier": {
       "bornes": "Entre {min} et {max}",
@@ -6593,7 +6603,8 @@
     },
     "obligatoire": "Champ obligatoire",
     "champObligatoire": "{champ}, champ obligatoire",
-    "legendeObligatoire": "Les champs marqués d'un point sont obligatoires."
+    "legendeObligatoire": "Les champs marqués d'un point sont obligatoires.",
+    "manqueAccord": "Il manque votre accord : cochez la case pour continuer."
   },
   "motifs": {
     "ajoutEleve": {
@@ -7000,7 +7011,7 @@
     }
   },
   "identiteProfil": {
-    "age": "{n} ans",
+    "age": "{n} ans",
     "classe": "Classe {classe}",
     "ageEtClasse": "{age} · {classe}",
     "lecteurEnfant": "{prenom}, profil enfant",
@@ -7036,8 +7047,8 @@
           "retirer": "Retirer",
           "retirerLecteur": "Retirer {nom}",
           "tailleOctets": "{taille} octets",
-          "tailleKo": "{taille} Ko",
-          "tailleMo": "{taille} Mo",
+          "tailleKo": "{taille} Ko",
+          "tailleMo": "{taille} Mo",
           "autorisee": "Prêt à envoyer",
           "tropVolumineuse": "Fichier trop lourd",
           "tropVolumineuseDetail": "Ce fichier dépasse la taille autorisée. Choisissez un fichier plus léger.",
@@ -7220,6 +7231,7 @@
         "dossier": "Dossier",
         "mission": "Mission de contrôle",
         "remplacement": "Remplacement",
+        "profilPaiement": "Profil de paiement",
         "autre": "Autre sujet"
       },
       "panneau": {
@@ -8079,7 +8091,7 @@
       },
       "montantActuel": "Montant actuel",
       "manque": "Manque à compléter",
-      "atteint": "{pourcent} % atteint",
+      "atteint": "{pourcent} % atteint",
       "modeCalcul": "Mode de calcul",
       "modeMontantFixe": "Montant cible fixe",
       "modeCouvertureMois": "Couverture en mois de charges essentielles",
@@ -8440,8 +8452,8 @@
       "coffresPhrase": "Où l'argent est affecté. Une somme protégée n'est jamais comptée comme libre.",
       "coffreProtege": "Protégé",
       "coffreNonProtege": "Non protégé",
-      "partDetenue": "{part} % de la trésorerie détenue",
-      "regleUsage": "Règle d'usage\u00a0: {regle}",
+      "partDetenue": "{part} % de la trésorerie détenue",
+      "regleUsage": "Règle d'usage : {regle}",
       "coffresVide": "Aucun coffre n'est encore rendu.",
       "coffresVidePhrase": "Les sept coffres apparaîtront ici dès que la source les rendra.",
       "descriptions": {
@@ -8459,7 +8471,7 @@
       "regle": {
         "desactivee": "Désactivée",
         "montantFixe": "Montant fixe à chaque échéance",
-        "pourcentage": "{pourcent} % de chaque encaissement consolidé",
+        "pourcentage": "{pourcent} % de chaque encaissement consolidé",
         "jusquAObjectif": "Compléter jusqu'au montant visé",
         "proposee": "Proposition à confirmer par vous"
       },
@@ -8471,7 +8483,7 @@
         "apresEncaissementConsolide": "Après chaque encaissement consolidé",
         "manuelle": "Manuelle"
       },
-      "seuilAlerte": "Alerte sous {pourcent} % du montant visé",
+      "seuilAlerte": "Alerte sous {pourcent} % du montant visé",
       "retraitValidation": "Tout retrait exige une validation supplémentaire.",
       "retraitSansValidation": "La politique n'exige pas de validation pour un retrait\u00a0; il reste traité comme un mouvement sensible.",
       "version": "Version {version}",
@@ -8668,12 +8680,11 @@
         "demanderMiseAJour": "Demander une mise à jour à {nom}",
         "suspendre": "Suspendre les paiements de {nom}",
         "reprendre": "Reprendre les paiements de {nom}",
-        "voirFil": "Voir le fil «\u00a0Profil de paiement\u00a0»",
-        "externe": "{nom} n'a pas de compte Rewayah\u00a0: une invitation sécurisée lui permet de saisir lui-même sa méthode. Renvoyez-la depuis son obligation, dans Contractuels.",
+        "externe": "{nom} n'a pas de compte Rewayah : une invitation sécurisée lui permet de saisir lui-même sa méthode. Renvoyez-la depuis son obligation, dans Contractuels.",
         "voirContractuels": "Voir les obligations des contractuels",
-        "aucuneAction": "Aucune action n'est ouverte sur ce profil\u00a0: il est à jour.",
-        "relanceTitre": "Message prêt dans le fil «\u00a0Profil de paiement\u00a0»",
-        "relanceObjet": "Objet\u00a0: Profil de paiement",
+        "aucuneAction": "Aucune action n'est ouverte sur ce profil : il est à jour.",
+        "filTitre": "Fil « Profil de paiement »",
+        "relanceRefusee": "Aucun fil « Profil de paiement » ne peut être ouvert avec {nom} : Rewayah ne l'autorise pas pour ce bénéficiaire. Demandez plutôt une mise à jour, ou signalez-le à la direction.",
         "messageModele": "Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.",
         "miseAJourDemandee": "Demande de mise à jour enregistrée pour {nom}.",
         "suspendus": "Paiements de {nom} suspendus\u00a0: aucun versement ne part tant qu'ils ne sont pas repris.",

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_bibliotheque/recherche_catalogue.dart';
@@ -170,10 +171,17 @@ class _FeuilleRepriseEtat extends ConsumerState<FeuilleReprise> {
   /// n'est retenu, la feuille ne peut pas se refermer sur une autre valeur.
   bool _saisieInvalide = false;
 
+  /// Les champs ou le focus revient quand le verset manque
+  /// (BOUTONS-GRISES-1) : la recherche de sourate, puis le verset.
+  final FocusNode _focusRecherche = FocusNode(debugLabel: 'reprise-sourate');
+  final FocusNode _focusVerset = FocusNode(debugLabel: 'reprise-verset');
+
   @override
   void dispose() {
     _recherche.dispose();
     _numero.dispose();
+    _focusRecherche.dispose();
+    _focusVerset.dispose();
     super.dispose();
   }
 
@@ -245,6 +253,7 @@ class _FeuilleRepriseEtat extends ConsumerState<FeuilleReprise> {
         TextField(
           key: FeuilleReprise.rechercheKey,
           controller: _recherche,
+          focusNode: _focusRecherche,
           onChanged: (String _) => setState(() {}),
           decoration: InputDecoration(
             // L'indice n'existe que tant que le champ est vide : un indice
@@ -310,6 +319,7 @@ class _FeuilleRepriseEtat extends ConsumerState<FeuilleReprise> {
           TextField(
             key: FeuilleReprise.versetSaisieKey,
             controller: _numero,
+            focusNode: _focusVerset,
             keyboardType: TextInputType.number,
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.digitsOnly,
@@ -368,19 +378,31 @@ class _FeuilleRepriseEtat extends ConsumerState<FeuilleReprise> {
         ActionPrincipale(
           key: FeuilleReprise.retenirKey,
           libelle: s.repriseRetenir,
-          // Inerte tant que la saisie du verset n'est pas valide.
-          onPress: _saisieInvalide
-              ? null
-              : () {
-                  final int? verset = _verset;
-                  if (retenue == null || verset == null) {
-                    setState(() => _incomplete = true);
-                    return;
-                  }
-                  Navigator.of(context).pop(
-                    PositionReprise(sourate: retenue.numero, verset: verset),
-                  );
-                },
+          // Jamais inerte (BOUTONS-GRISES-1) : une saisie hors bornes ou un
+          // verset manquant se disent, s'annoncent et rendent le focus au
+          // champ fautif.
+          onPress: () {
+            final int? verset = _verset;
+            if (retenue != null && _saisieInvalide) {
+              signalerManque(
+                context,
+                s.repriseVersetBornes(n: retenue.nombreVersets),
+                champ: _focusVerset,
+              );
+              return;
+            }
+            if (retenue == null || verset == null) {
+              setState(() => _incomplete = true);
+              signalerManque(
+                context,
+                s.repriseIncomplete,
+                champ: retenue == null ? _focusRecherche : _focusVerset,
+              );
+              return;
+            }
+            Navigator.of(context)
+                .pop(PositionReprise(sourate: retenue.numero, verset: verset));
+          },
         ),
       ],
     );
