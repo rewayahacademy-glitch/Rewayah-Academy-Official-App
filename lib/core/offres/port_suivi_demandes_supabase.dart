@@ -73,7 +73,15 @@ class PortSuiviDemandesSupabase implements PortSuiviDemandes {
       stopping = true;
       debounce?.cancel();
       await _client.removeChannel(canal);
-      await changements.close();
+      if (changements.hasListener) {
+        await changements.close();
+      } else {
+        // Without an `await for` listener (for example, a subscribe failure
+        // before the first snapshot), a single-subscription controller's
+        // close future never settles. Close it without blocking stream error
+        // propagation to the caller.
+        unawaited(changements.close());
+      }
     }
   }
 
