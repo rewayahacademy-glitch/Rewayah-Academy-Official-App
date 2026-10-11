@@ -370,6 +370,39 @@ void main() {
       await _laisser(tester);
     }
 
+    test(
+      'lireMissions : chiffres arabo-indiens et persans lus comme ASCII',
+      () {
+        expect(lireMissions('٣٧'), 37);
+        expect(lireMissions('۳۷'), 37);
+        expect(lireMissions('٠'), 0);
+        expect(lireMissions('٥٠'), 50);
+        expect(lireMissions('٥١'), isNull);
+        expect(lireMissions('۵۱'), isNull);
+        expect(lireMissions('٣a'), isNull);
+      },
+    );
+
+    testWidgets('« ٣٧ » part comme 37', (WidgetTester tester) async {
+      final TirageDemo port = TirageDemo();
+      await _monter(tester, port, direction: TextDirection.rtl);
+      await saisirAutre(tester, '٣٧');
+      expect(_cle('tirage-nombre-invalide'), findsNothing);
+      await _toucher(tester, _bouton('tirage-enregistrer'));
+      expect(port.reglesCourantes.missionsParSemaine, 37);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('« ٥١ » refusé : rien ne part', (WidgetTester tester) async {
+      final TirageDemo port = TirageDemo();
+      await _monter(tester, port, direction: TextDirection.rtl);
+      await saisirAutre(tester, '٥١');
+      expect(_cle('tirage-nombre-invalide'), findsOneWidget);
+      await _toucher(tester, _bouton('tirage-enregistrer'));
+      expect(port.clesRecues, isEmpty);
+      await tester.pumpWidget(const SizedBox());
+    });
+
     testWidgets('lecture : la version en vigueur est dite', (
       WidgetTester tester,
     ) async {
