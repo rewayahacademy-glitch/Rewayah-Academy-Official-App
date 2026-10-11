@@ -149,22 +149,22 @@ INSERT INTO public.households (id, timezone) VALUES
   ('c2a2ffff-0000-0000-0000-000000000003', 'Europe/Paris');
 
 INSERT INTO public.profiles
-  (id, immutable_id, role, household_id, first_name, last_name, account_status)
+  (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 VALUES
   ('c2a20000-0000-0000-0000-000000000001', 'COD2-GUARD-A', 'guardian',
-   'c2a2ffff-0000-0000-0000-000000000001', 'Gardien', 'A', 'active'),
+   'c2a2ffff-0000-0000-0000-000000000001', 'Gardien', 'A', 'active', 'male'),
   ('c2a20000-0000-0000-0000-000000000002', 'COD2-STUD-B', 'student',
-   'c2a2ffff-0000-0000-0000-000000000002', 'Eleve', 'B', 'active'),
+   'c2a2ffff-0000-0000-0000-000000000002', 'Eleve', 'B', 'active', 'female'),
   ('c2a20000-0000-0000-0000-000000000003', 'COD2-GUARD-DISABLED', 'guardian',
-   'c2a2ffff-0000-0000-0000-000000000001', 'Gardien', 'Suspendu', 'disabled'),
+   'c2a2ffff-0000-0000-0000-000000000001', 'Gardien', 'Suspendu', 'disabled', 'male'),
   ('c2a20000-0000-0000-0000-000000000004', 'COD2-STUD-A', 'student',
-   'c2a2ffff-0000-0000-0000-000000000001', 'Eleve', 'A', 'active'),
+   'c2a2ffff-0000-0000-0000-000000000001', 'Eleve', 'A', 'active', 'male'),
   ('c2a20000-0000-0000-0000-000000000005', 'COD2-TEACH-A', 'teacher',
-   'c2a2ffff-0000-0000-0000-000000000003', 'Enseignant', 'A', 'active'),
+   'c2a2ffff-0000-0000-0000-000000000003', 'Enseignant', 'A', 'active', 'male'),
   ('c2a20000-0000-0000-0000-000000000006', 'COD2-TEACH-B', 'teacher',
-   'c2a2ffff-0000-0000-0000-000000000002', 'Enseignant', 'B', 'active'),
+   'c2a2ffff-0000-0000-0000-000000000002', 'Enseignant', 'B', 'active', 'female'),
   ('c2a20000-0000-0000-0000-000000000007', 'COD2-ADMIN', 'admin',
-   'c2a2ffff-0000-0000-0000-000000000001', 'Administrateur', 'Codex2', 'active');
+   'c2a2ffff-0000-0000-0000-000000000001', 'Administrateur', 'Codex2', 'active', 'male');
 
 INSERT INTO public.kyc_documents (profile_id, doc_type, gender, object_key) VALUES
   ('c2a20000-0000-0000-0000-000000000001', 'id_card', 'male', 'codex2/kyc-a'),
@@ -1105,6 +1105,18 @@ BEGIN
     END IF;
   END LOOP;
   RESET ROLE;
+END $$;
+
+DO $$
+DECLARE v_visible_tables text;
+BEGIN
+  SELECT string_agg(table_name, ', ' ORDER BY table_name)
+    INTO v_visible_tables
+    FROM codex2_rls_violations
+   WHERE scenario = 'disabled-account';
+  IF v_visible_tables IS NOT NULL THEN
+    RAISE EXCEPTION 'RLS-DISABLED-ACCOUNT: compte désactivé peut lire : %', v_visible_tables;
+  END IF;
 END $$;
 
 DO $$
