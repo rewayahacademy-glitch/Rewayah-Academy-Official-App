@@ -10,10 +10,12 @@ void main() {
   late SupabaseClient client;
   final requests = <Uri>[];
   final bodies = <Map<String, dynamic>>[];
+  var manyPages = false;
 
   setUp(() async {
     requests.clear();
     bodies.clear();
+    manyPages = false;
     server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     server.listen((request) async {
       requests.add(request.uri);
@@ -21,20 +23,31 @@ void main() {
         jsonDecode(await utf8.decoder.bind(request.cast<List<int>>()).join())
             as Map<String, dynamic>,
       );
+      final offset = bodies.last['p_offset'] as int;
+      final rows = manyPages && offset == 0
+          ? List.generate(
+              100,
+              (index) => {
+                'id': 's$index',
+                'classe': 'A',
+                'statut': 'tech_failure',
+                'survenu_le': '2026-10-11T10:00:00Z',
+                'enseignant': null,
+              },
+            )
+          : [
+              {
+                'id': 's${offset + 1}',
+                'classe': 'A',
+                'statut': 'tech_failure',
+                'survenu_le': '2026-10-11T10:00:00Z',
+                'enseignant': null,
+              },
+            ];
       request.response
         ..statusCode = 200
         ..headers.contentType = ContentType.json
-        ..write(
-          jsonEncode([
-            {
-              'id': 's1',
-              'classe': 'A',
-              'statut': 'tech_failure',
-              'survenu_le': '2026-10-11T10:00:00Z',
-              'enseignant': null,
-            },
-          ]),
-        );
+        ..write(jsonEncode(rows));
       await request.response.close();
     });
     client = SupabaseClient(
@@ -62,4 +75,14 @@ void main() {
       expect(body['p_offset'], 0);
     },
   );
+
+  test('récupère la page suivante quand la première est pleine', () async {
+    manyPages = true;
+    final results = await IncidentsSeancesSupabase(client)
+        .dernieres24h(DateTime.utc(2026, 10, 11, 12));
+
+    expect(results, hasLength(101));
+    expect(bodies.map((body) => body['p_offset']), <int>[0, 100]);
+    expect(requests, hasLength(2));
+  });
 }
