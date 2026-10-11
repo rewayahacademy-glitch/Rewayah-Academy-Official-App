@@ -2071,7 +2071,9 @@
         "other": "En attente depuis {jours} jours"
       },
       "outilsPilotage": "Pilotage des horaires",
-      "outilsPilotageDetail": "Par horaire : les classes, leur remplissage, les demandes en attente et les enseignants libres ou manquants."
+      "outilsPilotageDetail": "Par horaire : les classes, leur remplissage, les demandes en attente et les enseignants libres ou manquants.",
+      "outilsPlanning": "Planning de la semaine",
+      "outilsPlanningDetail": "Les séances de la semaine, jour par jour, avec leur classe et leur enseignant."
     },
     "traitement": {
       "titre": "Espace de traitement",
@@ -3301,6 +3303,45 @@
       },
       "reserveDelegation": "Réserve et délégation",
       "aValider": "À valider"
+    },
+    "planning": {
+      "titre": "Planning",
+      "sousTitre": "Les séances de la semaine, toutes classes confondues, jour par jour.",
+      "semaine": "Semaine du {date}",
+      "semaineSemantique": "Semaine du {date}",
+      "precedente": "Semaine précédente",
+      "suivante": "Semaine suivante",
+      "cetteSemaine": "Revenir à cette semaine",
+      "horaire": "{debut} à {fin}",
+      "sansEnseignant": "Sans enseignant",
+      "avecEnseignant": "Enseignant : {nom}",
+      "vide": "Aucune séance cette semaine",
+      "videDetail": "Les séances apparaissent ici dès qu'une classe a un horaire cette semaine. Essayez une autre semaine.",
+      "sansDonnees": "Le planning n'a pas pu être chargé",
+      "erreur": "Le planning n'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "indisponibleTitre": "Disponible au branchement serveur",
+      "indisponiblePhrase": "Le planning s'affichera ici dès le branchement serveur. D'ici là, rien n'est affiché : aucune séance n'est inventée.",
+      "statutPrevue": "Prévue",
+      "statutPreparation": "En préparation",
+      "statutTerminee": "Terminée",
+      "statutIncident": "Incident technique",
+      "statutEnseignantAbsent": "Enseignant absent",
+      "statutEleveAbsent": "Élève absent"
+    },
+    "incidents": {
+      "titre": "Incidents des 24 dernières heures",
+      "sousTitre": "Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».",
+      "liste": "Séances en incident",
+      "natureTechnique": "Incident technique",
+      "natureEnseignantAbsent": "Enseignant absent",
+      "natureEleveAbsent": "Élève absent",
+      "survenu": "{date}, {heure}",
+      "vide": "Aucun incident depuis 24 heures",
+      "videDetail": "Une séance passée en incident, en absence d'enseignant ou en absence d'élève apparaît ici dès qu'elle change de statut.",
+      "sansDonnees": "Les incidents n'ont pas pu être chargés",
+      "erreur": "Les incidents n'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "indisponibleTitre": "Disponible au branchement serveur",
+      "indisponiblePhrase": "Les incidents s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché : aucun incident n'est inventé."
     },
     "pilotage": {
       "titre": "Pilotage des horaires",

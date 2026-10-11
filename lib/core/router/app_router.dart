@@ -21,6 +21,7 @@ import '../../features/admin_dossiers/dossiers_page.dart';
 import '../../features/admin_finance/finance_page.dart';
 import '../../features/admin_groupes/groupes_page.dart';
 import '../../features/admin_invitations/invitations_page.dart';
+import '../../features/admin_journal/incidents_page.dart';
 import '../../features/admin_journal/journal_page.dart';
 import '../../features/admin_observations/observations_admin_page.dart';
 import '../../features/admin_pedagogie_bibliotheque/attribution/attribution_page.dart';
@@ -34,6 +35,7 @@ import '../../features/admin_pedagogie_programmes/programmes_page.dart';
 import '../../features/admin_pedagogie_progression/progression_page.dart';
 import '../../features/admin_pedagogie_qualite/qualite_page.dart';
 import '../../features/admin_pilotage/pilotage_page.dart';
+import '../../features/admin_planning/planning_page.dart';
 import '../../features/admin_regroupements/regroupements_page.dart';
 import '../../features/admin_reprises/reprises_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
@@ -1335,6 +1337,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           child: PilotagePage(),
         ),
       ),
+      // DASH-ADM-PLANNING : le planning de la semaine, atteint depuis l'Accueil.
+      GoRoute(
+        path: Routes.adminOperationsPlanning,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: PlanningPage(),
+        ),
+      ),
       GoRoute(
         path: Routes.adminOperationsAttributions,
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
@@ -1658,6 +1668,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.securite,
           child: JournalPage(),
+        ),
+      ),
+      // DASH-ADM-INC : les incidents des 24 dernieres heures, atteints par la
+      // tuile « Incidents (24 h) » de l'Accueil.
+      GoRoute(
+        path: Routes.adminSecuriteAuditIncidents,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.securite,
+          child: IncidentsPage(),
         ),
       ),
       // `ADM-07` : l'acces des agents IA (ADR-025), atteint depuis l'Accueil.

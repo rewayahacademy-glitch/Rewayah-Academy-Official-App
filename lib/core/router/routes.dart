@@ -671,6 +671,10 @@ abstract final class Routes {
   /// Operations.
   static const String adminOperationsPilotage = '/admin/operations/pilotage';
 
+  /// DASH-ADM-PLANNING : le planning de la direction, les seances de la
+  /// semaine toutes classes confondues. Atteint depuis l'Accueil.
+  static const String adminOperationsPlanning = '/admin/operations/planning';
+
   /// RECRUT-ECRANS : inviter un enseignant (code a usage unique), sous
   /// Personnes.
   static const String adminPersonnesInvitations =
@@ -770,6 +774,11 @@ abstract final class Routes {
 
   /// Domaine Securite et audit.
   static const String adminSecuriteAudit = '/admin/securite-audit';
+
+  /// DASH-ADM-INC : les incidents des 24 dernieres heures, ce que compte la
+  /// tuile « Incidents (24 h) » de l'Accueil (D9).
+  static const String adminSecuriteAuditIncidents =
+      '/admin/securite-audit/incidents';
 
   /// Journal d'audit (`ADM-04`), sous Securite et audit.
   static const String adminSecuriteAuditJournal =
@@ -1074,10 +1083,7 @@ abstract final class Routes {
   /// contextuelle d'un module). Jamais le texte cherche.
   static String rechercheAvec({String? espace, String? domaine}) => Uri(
     path: recherche,
-    queryParameters: <String, String>{
-      'espace': ?espace,
-      'domaine': ?domaine,
-    },
+    queryParameters: <String, String>{'espace': ?espace, 'domaine': ?domaine},
   ).toString();
 
   // --- Compte -------------------------------------------------------------
