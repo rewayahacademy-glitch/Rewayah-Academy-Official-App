@@ -2342,6 +2342,8 @@
         "consequenceActiver": "Les comptes rendus déjà partagés redeviennent lisibles pour les familles. Ceux retenus pendant la désactivation ne sont pas publiés d'un coup.",
         "confirmerDesactiver": "Désactiver le partage automatique pour cette classe\u00a0?",
         "consequenceDesactiver": "Les familles ne voient plus, tout de suite, les comptes rendus partagés automatiquement. Les cahiers, les séances validées et la paie ne changent pas.",
+        "actionActiver": "Activer le partage",
+        "actionDesactiver": "Désactiver le partage",
         "enregistrer": "Enregistrer",
         "exceptionsTitre": "Exceptions individuelles",
         "exceptionsAide": "Une exception ne concerne que l'élève choisi. Elle ne transmet jamais les données d'un autre élève.",

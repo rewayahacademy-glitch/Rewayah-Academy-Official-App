@@ -4635,5 +4635,7 @@
   "admin.groupes.partage.entete": "spec PED-APRES V1 du directeur (11/10/2026), docs/current/PED-APRES/PED_APRES_SPEC_VERTICALE_V1.md, section 3 (TUT-PED-APR-01, ADM-PED-APR-02 et 03) : texte exact ou deduit des etats de la spec",
   "admin.groupes.partage.enseignant": "spec PED-APRES V1 du directeur (11/10/2026), docs/current/PED-APRES/PED_APRES_SPEC_VERTICALE_V1.md, section 3 (TUT-PED-APR-01, ADM-PED-APR-02 et 03) : texte exact ou deduit des etats de la spec",
   "admin.groupes.partage.miseAJour": "spec PED-APRES V1 du directeur (11/10/2026), docs/current/PED-APRES/PED_APRES_SPEC_VERTICALE_V1.md, section 3 (TUT-PED-APR-01, ADM-PED-APR-02 et 03) : texte exact ou deduit des etats de la spec",
-  "admin.groupes.partage.fermer": "spec PED-APRES V1 du directeur (11/10/2026), docs/current/PED-APRES/PED_APRES_SPEC_VERTICALE_V1.md, section 3 (TUT-PED-APR-01, ADM-PED-APR-02 et 03) : texte exact ou deduit des etats de la spec"
+  "admin.groupes.partage.fermer": "spec PED-APRES V1 du directeur (11/10/2026), docs/current/PED-APRES/PED_APRES_SPEC_VERTICALE_V1.md, section 3 (TUT-PED-APR-01, ADM-PED-APR-02 et 03) : texte exact ou deduit des etats de la spec",
+  "admin.groupes.partage.actionActiver": "spec PED-APRES V1 du directeur (11/10/2026), docs/current/PED-APRES/PED_APRES_SPEC_VERTICALE_V1.md, section 3 (TUT-PED-APR-01, ADM-PED-APR-02 et 03) : texte exact ou deduit des etats de la spec",
+  "admin.groupes.partage.actionDesactiver": "spec PED-APRES V1 du directeur (11/10/2026), docs/current/PED-APRES/PED_APRES_SPEC_VERTICALE_V1.md, section 3 (TUT-PED-APR-01, ADM-PED-APR-02 et 03) : texte exact ou deduit des etats de la spec"
 }

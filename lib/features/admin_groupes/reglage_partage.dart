@@ -92,7 +92,7 @@ class _GroupePartageClasseEtat extends ConsumerState<GroupePartageClasse> {
       context,
       question: actif ? l.confirmerActiver : l.confirmerDesactiver,
       consequence: actif ? l.consequenceActiver : l.consequenceDesactiver,
-      libelleConfirmer: l.enregistrer,
+      libelleConfirmer: actif ? l.actionActiver : l.actionDesactiver,
     );
     if (!confirme || !mounted || _envoi) {
       return;

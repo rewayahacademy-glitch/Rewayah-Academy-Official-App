@@ -10407,6 +10407,8 @@ class _Traductions$admin$groupes$partage$ar extends Traductions$admin$groupes$pa
 	@override String get consequenceActiver => 'تعود التقارير التي شُورِكت سابقًا قابلة للقراءة لدى الأسر. أما التقارير المحجوزة أثناء التعطيل فلا تُنشر دفعة واحدة.';
 	@override String get confirmerDesactiver => 'تعطيل المشاركة التلقائية لهذا الفصل؟';
 	@override String get consequenceDesactiver => 'لن ترى الأسر فورًا التقارير المشاركة تلقائيًا. لا تتغير الدفاتر ولا الحصص المعتمدة ولا الأجور.';
+	@override String get actionActiver => 'تفعيل المشاركة';
+	@override String get actionDesactiver => 'تعطيل المشاركة';
 	@override String get enregistrer => 'حفظ';
 	@override String get exceptionsTitre => 'الاستثناءات الفردية';
 	@override String get exceptionsAide => 'الاستثناء يخص الطالب المختار فقط، ولا ينقل أبدًا بيانات أي طالب آخر.';
@@ -16871,6 +16873,8 @@ extension on TraductionsAr {
 			'admin.groupes.partage.consequenceActiver' => 'تعود التقارير التي شُورِكت سابقًا قابلة للقراءة لدى الأسر. أما التقارير المحجوزة أثناء التعطيل فلا تُنشر دفعة واحدة.',
 			'admin.groupes.partage.confirmerDesactiver' => 'تعطيل المشاركة التلقائية لهذا الفصل؟',
 			'admin.groupes.partage.consequenceDesactiver' => 'لن ترى الأسر فورًا التقارير المشاركة تلقائيًا. لا تتغير الدفاتر ولا الحصص المعتمدة ولا الأجور.',
+			'admin.groupes.partage.actionActiver' => 'تفعيل المشاركة',
+			'admin.groupes.partage.actionDesactiver' => 'تعطيل المشاركة',
 			'admin.groupes.partage.enregistrer' => 'حفظ',
 			'admin.groupes.partage.exceptionsTitre' => 'الاستثناءات الفردية',
 			'admin.groupes.partage.exceptionsAide' => 'الاستثناء يخص الطالب المختار فقط، ولا ينقل أبدًا بيانات أي طالب آخر.',
@@ -17090,10 +17094,10 @@ extension on TraductionsAr {
 			'admin.evaluations.planifier' => 'جدولة تقييم',
 			'admin.evaluations.planifierTitre' => 'جدولة تقييم',
 			'admin.evaluations.champNiveau' => 'المستوى المقيَّم',
-			'admin.evaluations.champType' => 'النوع',
-			'admin.evaluations.champDatePrevue' => 'التاريخ المقرر (يوم/شهر/سنة)',
 			_ => null,
 		} ?? switch (path) {
+			'admin.evaluations.champType' => 'النوع',
+			'admin.evaluations.champDatePrevue' => 'التاريخ المقرر (يوم/شهر/سنة)',
 			'admin.evaluations.planifierEnvoyer' => 'جدولة',
 			'admin.evaluations.planifierErreur' => ({required Object message}) => 'لم تكتمل الجدولة: ⁨${message}⁩',
 			'admin.evaluations.actionEnregistrerResultat' => 'حفظ النتيجة',
@@ -17604,10 +17608,10 @@ extension on TraductionsAr {
 			'admin.tirage.ajouterConfirmer' => 'إضافة هذا الهدف',
 			'admin.tirage.manqueCible' => 'ينقص الهدف: اختاروه من القائمة.',
 			'admin.tirage.aucunCandidat' => 'لا فصل ولا معلم يمكن استهدافه',
-			'admin.tirage.aucunCandidatDetail' => 'كل الفصول والمعلمين مستهدفون بالفعل أو لا توجد حصص بعد.',
-			'admin.tirage.erreurCandidats' => 'تعذّرت قراءة قائمة الأهداف. أعيدوا المحاولة بعد قليل.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.tirage.aucunCandidatDetail' => 'كل الفصول والمعلمين مستهدفون بالفعل أو لا توجد حصص بعد.',
+			'admin.tirage.erreurCandidats' => 'تعذّرت قراءة قائمة الأهداف. أعيدوا المحاولة بعد قليل.',
 			'admin.tirage.enregistrer' => 'حفظ القواعد',
 			'admin.tirage.enregistrees' => 'سُجِّلت القواعد. تُطبَّق على القرعات القادمة.',
 			'admin.tirage.nonConfirmees' => 'الحفظ غير مؤكَّد: لم يصل رد الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون تكرار.',
@@ -18118,10 +18122,10 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.aTraiterHorsPaiements' => 'مهام أخرى',
 			'comptable.aujourdhui.alertes' => 'التنبيهات',
 			'comptable.aujourdhui.echeances' => 'مواعيد استحقاق قريبة',
-			'comptable.aujourdhui.prestataires' => 'مزوّدو الدفع',
-			'comptable.aujourdhui.activiteRecente' => 'النشاط الحديث',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.aujourdhui.prestataires' => 'مزوّدو الدفع',
+			'comptable.aujourdhui.activiteRecente' => 'النشاط الحديث',
 			'comptable.aujourdhui.accesRapides' => 'وصول سريع',
 			'comptable.aujourdhui.encaissementsRecents' => 'المقبوضات الحديثة',
 			'comptable.aujourdhui.voirTout' => 'عرض الكل',
@@ -18632,10 +18636,10 @@ extension on TraductionsAr {
 			'comptable.contractuels.nouvelle' => 'التزام جديد',
 			'comptable.contractuels.detailTitre' => 'الالتزام',
 			'comptable.validation.sousTitre' => 'طلبات المحاسب التي تنتظر قرار شخص مخوَّل آخر. صاحب الطلب لا يصادق أبدًا على طلبه.',
-			'comptable.validation.aDecider' => 'للبتّ',
-			'comptable.validation.decidees' => 'بُتّ فيها مؤخرًا',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.validation.aDecider' => 'للبتّ',
+			'comptable.validation.decidees' => 'بُتّ فيها مؤخرًا',
 			'comptable.validation.videTitre' => 'لا شيء للمصادقة',
 			'comptable.validation.videPhrase' => 'ستظهر هنا طلبات المحاسب القادمة.',
 			'comptable.validation.natures.payoutSensible' => 'دفعة حساسة',
@@ -19146,10 +19150,10 @@ extension on TraductionsAr {
 			'eleveConnexion.refus.inconnu' => 'هذا الرمز غير موجود، أو حلّ محله رمز أحدث. تحقّق منه، أو اعرض رمزًا جديدًا على جهاز وليّ الأمر.',
 			'eleveConnexion.refus.expireTitre' => 'رمز منتهي الصلاحية',
 			'eleveConnexion.refus.expire' => 'هذا الرمز لم يعد صالحًا. اعرض رمزًا جديدًا على جهاز وليّ الأمر.',
-			'eleveConnexion.refus.dejaUtiliseTitre' => 'رمز مستخدَم',
-			'eleveConnexion.refus.dejaUtilise' => 'استُخدم هذا الرمز لربط جهاز من قبل. اعرض رمزًا جديدًا على جهاز وليّ الأمر.',
 			_ => null,
 		} ?? switch (path) {
+			'eleveConnexion.refus.dejaUtiliseTitre' => 'رمز مستخدَم',
+			'eleveConnexion.refus.dejaUtilise' => 'استُخدم هذا الرمز لربط جهاز من قبل. اعرض رمزًا جديدًا على جهاز وليّ الأمر.',
 			'eleveConnexion.refus.revoqueTitre' => 'جهاز مُزال',
 			'eleveConnexion.refus.revoque' => 'أزال وليّ الأمر هذا الجهاز. اطلب منه عرض رمز جديد.',
 			'eleveConnexion.refus.plafondTitre' => 'بلغت حد الأجهزة',
@@ -19660,10 +19664,10 @@ extension on TraductionsAr {
 			'adulte.sortie.departEchecTitre' => 'لم تُؤكَّد المغادرة.',
 			'adulte.sortie.echecPhrase' => 'تحقّق قبل إعادة المحاولة.',
 			'adulte.sortie.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك إعادة المحاولة بنفسك عند عودة الاتصال.',
-			'adulte.sortie.notificationQuitte' => ({required Object prenom}) => 'غادر ⁨${prenom}⁩ باقة أسرتك.',
-			'adulte.sortie.notificationRetiree' => ({required Object dePrenom}) => 'أُزلتِ من باقة أسرة ⁨${dePrenom}⁩.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.sortie.notificationQuitte' => ({required Object prenom}) => 'غادر ⁨${prenom}⁩ باقة أسرتك.',
+			'adulte.sortie.notificationRetiree' => ({required Object dePrenom}) => 'أُزلتِ من باقة أسرة ⁨${dePrenom}⁩.',
 			'adulte.sortie.notificationRetire' => ({required Object dePrenom}) => 'أُزلتَ من باقة أسرة ⁨${dePrenom}⁩.',
 			'adulte.sortie.delaiTitre' => 'دعوة جديدة غير متاحة',
 			'adulte.sortie.delaiPhrase' => ({required Object date}) => 'يمكن تقديم طلب جديد ابتداءً من ⁨${date}⁩. ثم يجب أن تعتمده الإدارة.',
@@ -20174,10 +20178,10 @@ extension on TraductionsAr {
 			'controleur.controle.dejaEnCoursAide' => 'مراقبة واحدة في كل مرة لكل فصل. اختر حصة أخرى، أو عد لاحقًا: يمكنك البدء حين تنتهي هذه المراقبة.',
 			'controleur.controle.incognito' => 'لا يُعلَن عن حضورك في الوقت الفعلي.',
 			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
-			'controleur.controle.duree' => ({required Object minutes}) => '⁨${minutes}⁩ د مقررة',
-			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${n}⁩ طلاب', many: '⁨${n}⁩ طالبًا', other: '⁨${n}⁩ طالب', ), 
 			_ => null,
 		} ?? switch (path) {
+			'controleur.controle.duree' => ({required Object minutes}) => '⁨${minutes}⁩ د مقررة',
+			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${n}⁩ طلاب', many: '⁨${n}⁩ طالبًا', other: '⁨${n}⁩ طالب', ), 
 			'controleur.controle.chargement' => 'جارٍ قراءة زيارتك القادمة.',
 			'controleur.controle.erreur' => 'تعذّرت قراءة زيارتك القادمة، غالبًا بسبب الاتصال أو خدمة غير متاحة مؤقتًا. أعد المحاولة بعد لحظة.',
 			'agent.titre' => 'دخول موظف',

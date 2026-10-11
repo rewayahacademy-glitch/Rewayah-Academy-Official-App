@@ -20,6 +20,7 @@ import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../classe_tuteur/contexte_classe.dart' show nomClasseInsecable;
 import '../compte/carte_rubriques.dart';
 import '../suivi_foyer/bloc_compte_rendu.dart';
 import '../suivi_foyer/filtres_historique.dart' show dateCourte, heureMinute;
@@ -343,7 +344,7 @@ class _FeuilleApercuFamilialEtat extends ConsumerState<FeuilleApercuFamilial> {
           child: Text(
             l.entete(
               eleve: a.elevePrenom,
-              classe: a.classeLibelle,
+              classe: nomClasseInsecable(a.classeLibelle),
               date: dateCourte(a.seanceLe),
             ),
             style: textes.titleMedium,
