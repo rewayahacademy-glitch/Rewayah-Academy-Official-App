@@ -35,6 +35,14 @@ VALUES
   ('a8000000-0000-0000-0000-000000000003', 'minor', 'child'),
   ('a8000000-0000-0000-0000-000000000004', 'autonomous', 'standard');
 
+-- Privileged fixture for a stale request whose student's household changed.
+INSERT INTO public.demandes_presentation (id, eleve_id, foyer_id)
+VALUES (
+  'a8000000-0000-0000-0000-000000000201',
+  'a8000000-0000-0000-0000-000000000004',
+  'a8000000-0000-0000-0000-000000000101'
+);
+
 DO $age_hook$
 DECLARE
   v_event jsonb;
@@ -108,6 +116,10 @@ BEGIN
   LIMIT 1;
   IF v_count <> 1 THEN
     RAISE EXCEPTION 'A81/C22: household guardian did not receive exactly one request';
+  END IF;
+  IF (SELECT count(*)
+      FROM public.lire_demandes_presentation_en_attente_avec_fuseau()) <> 1 THEN
+    RAISE EXCEPTION 'C22: timezone projection exposed a request for a student in another household';
   END IF;
 
   IF public.accepter_demande_presentation(v_id) <> 'acceptee'
