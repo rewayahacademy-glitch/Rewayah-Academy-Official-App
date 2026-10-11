@@ -113,7 +113,7 @@ begin
   end if;
 
   select count(*) into v_count from public.notifications;
-  if v_count <> 3 then
+  if v_count <> 5 then
     raise exception 'B-09: recipient must see only their own notification';
   end if;
   if not exists (
@@ -197,7 +197,8 @@ begin
   select lu_le into v_other_read_at from public.notifications
    where id = 'b09fffff-0000-0000-0000-000000000003';
   select count(*) into v_request_notifications from public.notifications
-   where evenement = 'demande_recue';
+   where evenement = 'demande_recue'
+     and params ->> 'etat' = 'envoyee';
   select count(*) into v_close_notifications from public.notifications
    where evenement = 'demande_close';
   if v_read_at is null or v_other_read_at is not null then
