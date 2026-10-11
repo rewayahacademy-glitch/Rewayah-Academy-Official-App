@@ -3,8 +3,14 @@ import 'package:flutter/painting.dart';
 import '../widgets/brand_logo.dart' show cheminDepuisTrace;
 import 'dessin_ornement.dart';
 
-/// Peint [dessin] au centre de [centre], haut de [hauteur], tourne de
-/// [rotation] radians, de l'unique couleur de [peinture].
+/// Peint [dessin] au centre de [centre], haut de [hauteur], de l'unique
+/// couleur de [peinture].
+///
+/// **Toujours dans son sens d'origine, celui du SVG** (decision du directeur,
+/// 11/10/2026) : aucune rotation, aucun miroir, ni vertical ni horizontal, en
+/// haut comme en bas, en LTR comme en RTL. La seule transformation est une
+/// translation et une echelle homogene positive ; c'est pourquoi la fonction
+/// n'a pas de parametre de rotation.
 ///
 /// Le contour est peint comme le fichier le declare : le trace epais, prive de
 /// la forme pleine qui le masque (le `<mask>` de `ornement-contour.svg`).
@@ -16,16 +22,16 @@ void peindreOrnement(
   DessinOrnement dessin,
   Offset centre,
   double hauteur,
-  Paint peinture, {
-  double rotation = 0,
-}) {
+  Paint peinture,
+) {
   final double echelle = hauteur / dessin.hauteur;
   canvas
     ..save()
-    ..translate(centre.dx, centre.dy)
-    ..rotate(rotation)
-    ..scale(echelle)
-    ..translate(-dessin.largeur / 2, -dessin.hauteur / 2);
+    ..translate(
+      centre.dx - dessin.largeur * echelle / 2,
+      centre.dy - hauteur / 2,
+    )
+    ..scale(echelle);
   if (dessin.masque != null) {
     canvas.clipPath(_decoupe(dessin), doAntiAlias: true);
   }

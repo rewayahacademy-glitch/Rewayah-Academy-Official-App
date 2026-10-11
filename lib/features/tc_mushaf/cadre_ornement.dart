@@ -64,7 +64,8 @@ class _PeintreCadre extends CustomPainter {
   final Color couleur;
 
   /// Un ornement plein entre deux contours, un filet de chaque cote, en haut et
-  /// en bas.
+  /// en bas. Les ornements sont peints dans leur sens d'origine, jamais
+  /// retournes : le cadre ne suit ni le haut et le bas, ni la directionnalite.
   @override
   void paint(Canvas canvas, Size size) {
     final double e = epaisseur;
@@ -83,15 +84,7 @@ class _PeintreCadre extends CustomPainter {
     final double ecart = largeur * 1.5;
     for (final bool haut in <bool>[true, false]) {
       final double y = haut ? e / 2 : size.height - e / 2;
-      final double rotation = haut ? math.pi : 0;
-      peindreOrnement(
-        canvas,
-        ornementPlein,
-        Offset(centre, y),
-        hauteur,
-        plein,
-        rotation: rotation,
-      );
+      peindreOrnement(canvas, ornementPlein, Offset(centre, y), hauteur, plein);
       for (final int sens in <int>[-1, 1]) {
         peindreOrnement(
           canvas,
@@ -99,7 +92,6 @@ class _PeintreCadre extends CustomPainter {
           Offset(centre + sens * ecart, y),
           petite,
           plein,
-          rotation: rotation,
         );
         canvas.drawLine(
           Offset(centre + sens * (ecart + largeur * 0.9), y),
