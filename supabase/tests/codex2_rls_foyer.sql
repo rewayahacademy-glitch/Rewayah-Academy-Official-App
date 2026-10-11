@@ -200,6 +200,24 @@ INSERT INTO public.groupes (id, teacher_id, type_public, seuil_max, libelle, wee
 INSERT INTO public.groupe_membres (groupe_id, student_id) VALUES
   ('c2a2a000-2000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004'),
   ('c2a2a000-2000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002');
+INSERT INTO public.offres_horaires
+  (id, type_public, langue_code, fuseau_iana, jours, heure_locale,
+   duree_minutes, etat, created_by, publiee_at, publiee_par) VALUES
+  ('c2a2a200-2000-0000-0000-000000000001', 'enfant', 'francais', 'Europe/Paris', ARRAY[1,3,5]::smallint[], 18,
+   60, 'publiee', 'c2a20000-0000-0000-0000-000000000007', now(), 'c2a20000-0000-0000-0000-000000000007'),
+  ('c2a2a200-2000-0000-0000-000000000002', 'enfant', 'francais', 'Europe/Paris', ARRAY[2,4,6]::smallint[], 19,
+   60, 'publiee', 'c2a20000-0000-0000-0000-000000000007', now(), 'c2a20000-0000-0000-0000-000000000007');
+INSERT INTO public.intentions_horaire
+  (id, eleve_id, offre_id, fuseau_affiche, heure_affichee, jours_affiches, created_by) VALUES
+  ('c2a2a300-2000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'c2a2a200-2000-0000-0000-000000000001',
+   'Europe/Paris', 18, ARRAY[1,3,5]::smallint[], 'c2a20000-0000-0000-0000-000000000001'),
+  ('c2a2a300-2000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'c2a2a200-2000-0000-0000-000000000002',
+   'Europe/Paris', 19, ARRAY[2,4,6]::smallint[], 'c2a20000-0000-0000-0000-000000000002');
+-- La migration copie automatiquement l'ancre de chaque groupe dans
+-- groupe_creneaux; ces deux lignes servent de temoins A/B.
+INSERT INTO public.recurrence_rules (id, local_time, timezone_iana, rule) VALUES
+  ('c2a2a100-2000-0000-0000-000000000001', '10:00', 'Europe/Paris', 'weekly'),
+  ('c2a2a100-2000-0000-0000-000000000002', '11:00', 'Europe/Paris', 'biweekly');
 INSERT INTO public.library_resource
   (id, title, short_title, resource_type, access_policy, offline_policy) VALUES
   ('c2a2b000-2000-0000-0000-000000000001', 'Codex2 resource', 'Codex2', 'quran', 'publique', 'jamais');
@@ -247,9 +265,9 @@ INSERT INTO public.payouts (id, wallet_id, payout_method_id, amount_minor) VALUE
 INSERT INTO public.teacher_student_assignments (teacher_id, student_id, weekday, hour_local) VALUES
   ('c2a20000-0000-0000-0000-000000000005', 'c2a20000-0000-0000-0000-000000000004', 1, 10),
   ('c2a20000-0000-0000-0000-000000000006', 'c2a20000-0000-0000-0000-000000000002', 2, 11);
-INSERT INTO public.availability_slots (teacher_id, starts_at, ends_at) VALUES
-  ('c2a20000-0000-0000-0000-000000000005', '2026-10-12 10:00:00+00', '2026-10-12 11:00:00+00'),
-  ('c2a20000-0000-0000-0000-000000000006', '2026-10-13 11:00:00+00', '2026-10-13 12:00:00+00');
+INSERT INTO public.availability_slots (teacher_id, starts_at, ends_at, recurrence_id) VALUES
+  ('c2a20000-0000-0000-0000-000000000005', '2026-10-12 10:00:00+00', '2026-10-12 11:00:00+00', 'c2a2a100-2000-0000-0000-000000000001'),
+  ('c2a20000-0000-0000-0000-000000000006', '2026-10-13 11:00:00+00', '2026-10-13 12:00:00+00', 'c2a2a100-2000-0000-0000-000000000002');
 INSERT INTO public.rule_overrides (profile_id, key, value, reason, set_by) VALUES
   ('c2a20000-0000-0000-0000-000000000004', 'session_duration_minutes', '45', 'codex2 foyer A', 'c2a20000-0000-0000-0000-000000000001'),
   ('c2a20000-0000-0000-0000-000000000002', 'session_duration_minutes', '60', 'codex2 foyer B', 'c2a20000-0000-0000-0000-000000000001');
@@ -1311,6 +1329,90 @@ BEGIN
   IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-FAMILY-EVALUATIONS: guardian reads admin evaluations'; END IF;
   SELECT count(*) INTO v_count FROM public.controles_qualite;
   IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-FAMILY-CONTROLES-QUALITE: guardian reads admin controls'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Les references sont globales en lecture; offres publiees visibles a tout
+-- compte authentifie; intentions et creneaux restent lies au foyer/groupe.
+DO $$
+DECLARE v_count integer; v_rows integer; v_denied boolean;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.langues_cours;
+  IF v_count < 1 THEN RAISE EXCEPTION 'RLS-COURSE-LANGUAGE-CATALOG: guardian A cannot read shared catalog'; END IF;
+  SELECT count(*) INTO v_count FROM public.cohortes_age;
+  IF v_count < 1 THEN RAISE EXCEPTION 'RLS-AGE-COHORT-CATALOG: guardian A cannot read shared catalog'; END IF;
+  v_rows := 0;
+  UPDATE public.langues_cours SET actif = actif WHERE code = 'francais';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-COURSE-LANGUAGE-WRITE: guardian changed shared catalog'; END IF;
+  UPDATE public.cohortes_age SET actif = actif WHERE code = 'enfant_5_7';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-AGE-COHORT-WRITE: guardian changed shared catalog'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.offres_horaires WHERE etat = 'publiee';
+  IF v_count <> 2 THEN RAISE EXCEPTION 'RLS-PUBLISHED-OFFERS: guardian A cannot read published offers'; END IF;
+  UPDATE public.offres_horaires SET heure_locale = heure_locale
+   WHERE id = 'c2a2a200-2000-0000-0000-000000000001';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OFFER-DIRECT-WRITE: guardian changed published offer'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.intentions_horaire;
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-INTENTION: household A does not see only its intention'; END IF;
+  SELECT count(*) INTO v_count FROM public.intentions_horaire
+   WHERE id = 'c2a2a300-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-INTENTION: household A sees intention B'; END IF;
+  UPDATE public.intentions_horaire SET heure_affichee = heure_affichee
+   WHERE id = 'c2a2a300-2000-0000-0000-000000000001';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-INTENTION-DIRECT-WRITE: guardian changed intention outside RPC'; END IF;
+  v_denied := false;
+  BEGIN
+    INSERT INTO public.intentions_horaire
+      (eleve_id, offre_id, fuseau_affiche, heure_affichee, jours_affiches, created_by)
+    VALUES ('c2a20000-0000-0000-0000-000000000004', 'c2a2a200-2000-0000-0000-000000000001',
+      'Europe/Paris', 18, ARRAY[1,3,5]::smallint[], 'c2a20000-0000-0000-0000-000000000001');
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'RLS-INTENTION-DIRECT-INSERT: guardian inserted outside RPC'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.recurrence_rules;
+  IF v_count <> 2 THEN RAISE EXCEPTION 'RLS-RECURRENCE-RULES: valid account cannot read shared rules'; END IF;
+  UPDATE public.recurrence_rules SET local_time = local_time
+   WHERE id = 'c2a2a100-2000-0000-0000-000000000001';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-RECURRENCE-DIRECT-WRITE: guardian changed recurrence'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.groupe_creneaux
+   WHERE groupe_id = 'c2a2a000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-GROUP-SLOT: household A cannot read its group slot'; END IF;
+  SELECT count(*) INTO v_count FROM public.groupe_creneaux
+   WHERE groupe_id = 'c2a2a000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-GROUP-SLOT: household A sees group B slot'; END IF;
+  UPDATE public.groupe_creneaux SET hour_local = hour_local
+   WHERE groupe_id = 'c2a2a000-2000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-GROUP-SLOT-WRITE: guardian changed B slot'; END IF;
+  RESET ROLE;
+
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000002', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"student","household_id":"c2a2ffff-0000-0000-0000-000000000002"}}', true);
+  SELECT count(*) INTO v_count FROM public.langues_cours;
+  IF v_count < 1 THEN RAISE EXCEPTION 'RLS-COURSE-LANGUAGE-CATALOG-B: student B cannot read shared catalog'; END IF;
+  SELECT count(*) INTO v_count FROM public.cohortes_age;
+  IF v_count < 1 THEN RAISE EXCEPTION 'RLS-AGE-COHORT-CATALOG-B: student B cannot read shared catalog'; END IF;
+  SELECT count(*) INTO v_count FROM public.offres_horaires WHERE etat = 'publiee';
+  IF v_count <> 2 THEN RAISE EXCEPTION 'RLS-PUBLISHED-OFFERS-OTHER-HOUSEHOLD: household B cannot read shared offers'; END IF;
+  SELECT count(*) INTO v_count FROM public.intentions_horaire;
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-INTENTION-B: household B cannot read its intention'; END IF;
+  SELECT count(*) INTO v_count FROM public.groupe_creneaux
+   WHERE groupe_id = 'c2a2a000-2000-0000-0000-000000000002';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-GROUP-SLOT-B: household B cannot read its group slot'; END IF;
+  SELECT count(*) INTO v_count FROM public.recurrence_rules;
+  IF v_count <> 2 THEN RAISE EXCEPTION 'RLS-RECURRENCE-RULES-B: valid account cannot read shared rules'; END IF;
   RESET ROLE;
 END $$;
 
