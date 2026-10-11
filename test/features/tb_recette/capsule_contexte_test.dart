@@ -373,6 +373,10 @@ void main() {
         // hors de la partie visible de la liste (sans defilement, elle n'y
         // serait pas).
         await reduire();
+        // TB-RC (revue TB-R M2, TB_RAPPORT §d n. 1) : a 320 x2, la tete
+        // bornee defile en fondu ; on l'amene comme une personne.
+        await tester.ensureVisible(_avatar);
+        await tester.pump();
         await tester.tap(_avatar);
         await stabiliser(tester);
         expect(_contexte, findsOneWidget);
@@ -385,6 +389,8 @@ void main() {
 
         // L'oeil : la meme liste defile jusqu'a la section, rien d'autre.
         await reduire();
+        await tester.ensureVisible(_oeil);
+        await tester.pump();
         await tester.tap(_oeil);
         await stabiliser(tester);
         expect(_contexte, findsOneWidget);

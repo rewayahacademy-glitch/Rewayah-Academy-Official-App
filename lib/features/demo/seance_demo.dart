@@ -4,10 +4,15 @@
 // le panneau Eleves et le recapitulatif de fin (I-6). Les contenus (noms,
 // support) sont des contenus de demonstration, pas des libelles d'interface.
 
+import 'dart:math' as math;
+
+import '../../core/i18n/strings.g.dart';
 import '../../core/tc_bibliotheque/catalogue_local.dart';
+import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_outils/annotation_layer.dart';
 import '../../core/tc_telechargement/port_etat_offline.dart';
 import '../salle_seance/depuis_salle.dart';
 import '../salle_seance/resultat_seance.dart';
@@ -184,8 +189,13 @@ enum SituationTb {
     effacementTableau,
   };
 
-  /// L'eleve seulement : le support qui arrive chez le destinataire.
-  static const Set<SituationTb> _eleveSeul = <SituationTb>{supportArrive};
+  /// L'eleve seulement : le support qui arrive chez le destinataire, et
+  /// celui qui ne s'y affiche pas (TB-RC, M1 : cote enseignant, l'echec
+  /// d'ouverture est LIB-03, dans la Bibliotheque).
+  static const Set<SituationTb> _eleveSeul = <SituationTb>{
+    supportArrive,
+    ressourceIndisponible,
+  };
 
   /// La situation a-t-elle un sens pour [role] ? Une commande d'un autre
   /// role n'est jamais proposee (00_REPRISE §8).
@@ -402,7 +412,10 @@ abstract final class DonneesSeanceDemo {
   /// derive de [chapitre1] (meme identifiant, meme titre, meme version, meme
   /// nombre de pages). Une page neutre marquee « Support illustratif » :
   /// aucune page de Coran (TB27).
-  static final SupportPageFixe supportPageFixe = SupportPageFixe(
+  ///
+  /// TB-RC (TB_RAPPORT §d n. 13) : la mention est traduite, lue a chaque
+  /// appel dans la langue de l'interface.
+  static SupportPageFixe get supportPageFixe => SupportPageFixe(
     id: chapitre1.id,
     version: _versionChapitre1,
     titre: chapitre1.titre,
@@ -410,8 +423,78 @@ abstract final class DonneesSeanceDemo {
     total: chapitre1.contenu!.pages,
     largeurCanonique: largeurPage,
     hauteurCanonique: hauteurPage,
-    mention: 'Support illustratif',
+    mention: t.salle.seance.surface.supportIllustratif,
   );
+
+  /// TB-7a : le trait de demonstration, un cercle pose sur la page 1 du
+  /// Chapitre 1 (version presentee), au milieu de la page. Coordonnees
+  /// normalisees de la page (§9) : le rayon vertical tient compte du
+  /// ratio pour que le cercle reste rond. Porte en PED-02 (cache), PED-03
+  /// et PED-04 ;
+  /// aucun serveur (TB-BR).
+  static final TraitVectoriel traitDemonstration = TraitVectoriel(
+    id: 'demo-trait-cercle',
+    ancrage: ContentPosition.page(
+      resourceId: chapitre1.id,
+      resourceVersionId: _versionChapitre1,
+      page: 1,
+    ),
+    outil: OutilTrait.stylet,
+    points: <PointNormalise>[
+      for (int i = 0; i <= _pointsCercle; i++)
+        PointNormalise(
+          centreCercle.x +
+              rayonCercle * math.cos(2 * math.pi * i / _pointsCercle),
+          centreCercle.y +
+              rayonCercle *
+                  (largeurPage / hauteurPage) *
+                  math.sin(2 * math.pi * i / _pointsCercle),
+        ),
+    ],
+  );
+
+  /// TB-9 : un trait du tableau libre (§12 « Effacement du tableau
+  /// libre ») : un trait horizontal sous le milieu de la feuille, ancre au
+  /// tableau libre, jamais a un support (TB5).
+  static const TraitVectoriel traitTableauDemonstration = TraitVectoriel(
+    id: 'demo-trait-tableau',
+    ancrage: ContentPosition.page(
+      resourceId: TableauLibre.idRessource,
+      page: 1,
+    ),
+    outil: OutilTrait.stylet,
+    points: <PointNormalise>[
+      PointNormalise(0.25, 0.6),
+      PointNormalise(0.5, 0.62),
+      PointNormalise(0.75, 0.6),
+    ],
+  );
+
+  /// TB-11b (ERR-01) : le trait que l'enseignant a pose pendant
+  /// l'interruption, un souligne horizontal sous le cercle de la page 1 ;
+  /// la classe ne l'a pas recu (`VueSeance.traitsNonPartages`).
+  static final TraitVectoriel traitNonPartageDemonstration = TraitVectoriel(
+    id: 'demo-trait-non-partage',
+    ancrage: ContentPosition.page(
+      resourceId: chapitre1.id,
+      resourceVersionId: _versionChapitre1,
+      page: 1,
+    ),
+    outil: OutilTrait.stylet,
+    points: const <PointNormalise>[
+      PointNormalise(0.25, 0.8),
+      PointNormalise(0.5, 0.8),
+      PointNormalise(0.75, 0.8),
+    ],
+  );
+
+  /// Le centre du cercle de demonstration, dans la page.
+  static const PointNormalise centreCercle = PointNormalise(0.5, 0.55);
+
+  /// Le rayon du cercle, en part de la largeur de la page.
+  static const double rayonCercle = 0.18;
+
+  static const int _pointsCercle = 64;
 
   // --- Bibliotheque en seance (TB-8) ---
 
@@ -419,9 +502,21 @@ abstract final class DonneesSeanceDemo {
   /// (« Fichier non ouvert. »), jamais une page vide.
   static const String idSupportIndisponible = 'demo-cahier-ecriture';
 
+  /// TB-12 (R-18, « Support arabe ») : un support non coranique a titre
+  /// arabe vocalise, texte court sans image (TB27 : aucune page de Coran).
+  static const String idSupportArabe = 'demo-adab-talib';
+
+  /// Le titre du support arabe : une donnee de demonstration, pas un
+  /// libelle d'interface.
+  static const String titreSupportArabe = 'آدَابُ طَالِبِ العِلْمِ';
+
+  /// Le nombre de pages du support arabe (chevrons a parcourir en RTL).
+  static const int pagesSupportArabe = 3;
+
   /// Les supports de la Bibliotheque unique en demonstration : ceux du
-  /// panneau Supports qui ont un contenu (memes identifiants, memes titres)
-  /// et un cahier dont le fichier manque. Aucun Coran (TB27).
+  /// panneau Supports qui ont un contenu (memes identifiants, memes titres),
+  /// un support arabe (R-18) et un cahier dont le fichier manque. Aucun
+  /// Coran (TB27).
   static List<LibraryResource> get ressourcesTb => <LibraryResource>[
     for (final SupportDisponible s in supports)
       if (s.contenu != null)
@@ -441,6 +536,22 @@ abstract final class DonneesSeanceDemo {
             CapaciteRessource.presentableInClass,
           },
         ),
+    const LibraryResource(
+      id: idSupportArabe,
+      title: titreSupportArabe,
+      shortTitle: titreSupportArabe,
+      resourceType: TypeRessource.pdf,
+      language: 'ar',
+      category: 'Bonnes manières',
+      accessPolicy: PolitiqueAcces.inscrits,
+      offlinePolicy: PolitiqueOffline.surDemande,
+      currentVersionId: 'v1.0',
+      capabilities: <CapaciteRessource>{
+        CapaciteRessource.searchable,
+        CapaciteRessource.pageable,
+        CapaciteRessource.presentableInClass,
+      },
+    ),
     const LibraryResource(
       id: idSupportIndisponible,
       title: "Cahier d'écriture",
@@ -479,7 +590,7 @@ abstract final class DonneesSeanceDemo {
   /// position (bornee a son nombre de pages), sinon la premiere ; meme
   /// repere que la page de demonstration, nombre de pages de son contenu.
   static SupportPageFixe pagePresentee(LibraryResource r, {int? page}) {
-    int total = 1;
+    int total = r.id == idSupportArabe ? pagesSupportArabe : 1;
     for (final SupportDisponible s in supports) {
       if (s.id == r.id) total = s.contenu?.pages ?? 1;
     }
@@ -491,17 +602,30 @@ abstract final class DonneesSeanceDemo {
       total: total,
       largeurCanonique: largeurPage,
       hauteurCanonique: hauteurPage,
-      mention: 'Support illustratif',
+      mention: t.salle.seance.surface.supportIllustratif,
     );
   }
 
   /// La diapositive d'un support presente, s'il en a une (la capsule de
   /// l'en-tete suit le support partage).
-  static SupportSeance? diapositiveDe(String id) {
+  ///
+  /// TB-RC (TB_RAPPORT §d n. 22) : un support sans diapositive (le support
+  /// arabe) en recoit une, faite de sa page presentee ; la capsule et la
+  /// lecture ne gardent jamais celle du support precedent.
+  static SupportSeance? diapositiveDe(String id, {SupportPageFixe? page}) {
     for (final SupportDisponible s in supports) {
       if (s.id == id) return s.contenu;
     }
-    return null;
+    if (page == null) return null;
+    return SupportSeance(
+      chapitre: '',
+      titre: page.titre,
+      encadre: '',
+      points: const <String>[],
+      page: page.page,
+      pages: page.total,
+      ressourceId: page.id,
+    );
   }
 
   /// Le tableau libre : choix provisoire, meme repere que la page de
@@ -542,6 +666,9 @@ abstract final class DonneesSeanceDemo {
       SituationTb.autorisationEcrire ||
       SituationTb.cmd02 ||
       SituationTb.cmd03 => true,
+      // TB-11b : l'eleve autorise voit son ecriture suspendue (ERR-01,
+      // ERR-02), sans perdre son droit.
+      SituationTb.err01 || SituationTb.err02 => true,
       _ => false,
     };
     final List<EleveSeance> inscrits = <EleveSeance>[
@@ -580,6 +707,53 @@ abstract final class DonneesSeanceDemo {
           : tableauLibre,
       supportPresente: sansSupport ? null : supportPageFixe,
       sansSupportPresente: sansSupport,
+      // TB-10 (§12 « Droit retire ») : l'eleve vient de perdre son droit
+      // d'ecrire ; l'enseignant voit sa ligne sans « Peut ecrire ».
+      ecritureRetiree: situation == SituationTb.droitRetire,
+      // TB-11b (plan V2 §10 a §12, §19.5) : le tableau interrompu (ERR-01),
+      // en reprise (ERR-02) ; la sauvegarde en echec (ERR-03), sans
+      // « Reessayer » tant que le contrat durable manque (TB-BR-18).
+      synchroTableau: switch (situation) {
+        SituationTb.err01 => SynchroTableau.interrompue,
+        SituationTb.err02 => SynchroTableau.reprise,
+        _ => SynchroTableau.partage,
+      },
+      conservation: situation == SituationTb.err03
+          ? ConservationNotes.nonSauvegardees
+          : ConservationNotes.seanceSeulement,
+      // TB-RC (revue TB-R, M1 ; plan V2 §12) : le support presente chez
+      // l'eleve, en chargement ou indisponible (aucun chargement reel avant
+      // BR-1 : la situation le nomme).
+      supportRecu: switch (situation) {
+        SituationTb.supportArrive => EtatSupportRecu.enChargement,
+        SituationTb.ressourceIndisponible => EtatSupportRecu.indisponible,
+        _ => EtatSupportRecu.pret,
+      },
+      // ERR-01 : le trait que l'enseignant vient de poser n'a pas ete
+      // recu ; la classe ne le voit pas, l'enseignant le voit marque.
+      traitsNonPartages: situation == SituationTb.err01 && enseignant
+          ? <String>{traitNonPartageDemonstration.id}
+          : const <String>{},
+      // TB-7a : les notes de la page en PED-03 (Avec notes) et PED-04
+      // (Tableau, support masque) ; cachees, jamais effacees, en PED-02.
+      // TB-9 : DLG-01 (effacement de page) porte le cercle de la page ;
+      // l'effacement du tableau libre, le trait du tableau.
+      notesSurface: switch (situation) {
+        SituationTb.ped02 ||
+        SituationTb.ped03 ||
+        SituationTb.ped04 ||
+        SituationTb.dlg01 ||
+        SituationTb.err02 ||
+        SituationTb.err03 => <TraitVectoriel>[traitDemonstration],
+        SituationTb.err01 => <TraitVectoriel>[
+          traitDemonstration,
+          if (enseignant) traitNonPartageDemonstration,
+        ],
+        SituationTb.effacementTableau => <TraitVectoriel>[
+          traitTableauDemonstration,
+        ],
+        _ => const <TraitVectoriel>[],
+      },
       affichage: switch (situation) {
         SituationTb.ped02 => AffichagePartage.support,
         SituationTb.ped04 => AffichagePartage.tableau,
@@ -598,7 +772,9 @@ abstract final class DonneesSeanceDemo {
               SituationTb.per01 ||
               SituationTb.autorisationEcrire ||
               SituationTb.droitRetire => PanneauOuvert.eleves,
-              // TB-4 : CMD-01 s'ouvre sur les Commandes.
+              // TB-4 : CMD-01 s'ouvre sur les Commandes. TB-11b : ERR-03
+              // part du bandeau seul (au telephone, une feuille ouverte le
+              // couvrirait) ; la conservation se lit dans les Commandes.
               SituationTb.cmd01 => PanneauOuvert.commandes,
               _ => PanneauOuvert.aucun,
             },
@@ -682,6 +858,8 @@ abstract final class DonneesSeanceDemo {
             },
       // Le point non lu de la cloche des images CLV-04 et CLV-06 desktop.
       notificationsNonLues: 2,
+      // TB-10 : « Sayyid reprend le tableau. » ou « Sayyida ... ».
+      titreEnseignant: titre,
     );
   }
 

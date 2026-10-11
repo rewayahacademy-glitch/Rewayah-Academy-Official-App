@@ -11,9 +11,13 @@ import 'package:flutter/widgets.dart' show StringCharacters;
 import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
+import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_outils/annotation_layer.dart'
+    show OutilTrait, TraitVectoriel;
 import '../../core/theme/app_gabarit.dart';
 import '../salle/vue_salle.dart';
 
@@ -220,10 +224,61 @@ enum VueSurface {
   tableauSupportMasque,
 }
 
+/// TB-11b (plan V2 §10, §12, §19.5 ; ERR-01, ERR-02) : l'etat du tableau
+/// partage chez la personne devant l'ecran. Un AUTRE axe que
+/// [ConnexionSeance] (la room, l'audio, la video) : le tableau peut se
+/// reprendre pendant que l'appel continue, et une erreur du tableau
+/// n'interrompt jamais l'audio. Signal du moteur temps reel (TB-BR) ;
+/// demonstration seulement aujourd'hui.
+enum SynchroTableau {
+  /// Le tableau est partage : rien a dire.
+  partage,
+
+  /// Synchronisation interrompue (ERR-01) : l'enseignant ecrit encore
+  /// localement, ses nouveaux traits sont marques non partages ; chez
+  /// l'eleve, l'ecriture distante est suspendue.
+  interrompue,
+
+  /// Recuperation de l'etat courant (ERR-02) : l'ecriture est suspendue
+  /// pour tous jusqu'au retour du contexte et des droits. Aucune selection
+  /// manuelle de version, aucun bouton « Suivre ».
+  reprise,
+}
+
+/// TB-11b (plan V2 §11, §12 « Sauvegarde en echec », §20 « Sauvegarde
+/// absente » ; ERR-03) : ce que l'enseignant sait de la conservation des
+/// notes. Aucune valeur « sauvegardee » : le contrat durable n'existe pas
+/// encore (TB-BR-18), et un envoi LiveKit reussi n'est jamais une
+/// sauvegarde.
+enum ConservationNotes {
+  /// Sauvegarde absente : les notes restent dans cette seance seulement.
+  seanceSeulement,
+
+  /// Sauvegarde en echec : l'enseignant doit le savoir (§19.5 point 5).
+  nonSauvegardees,
+}
+
 /// L'etat d'enregistrement de la seance, a trois valeurs (UX_REVIEW_TB
 /// n. 7, TB12) : le point rouge ne se montre que sur `actif`. Inconnu par
 /// defaut : un etat qu'on ne connait pas ne se montre pas (TB-BR-23).
 enum EtatEnregistrement { actif, inactif, inconnu }
+
+/// TB-RC (revue TB-R, M1 ; plan V2 §12) : le support presente, tel qu'il
+/// arrive chez le destinataire (eleve, guidee). L'enseignant connait deja
+/// l'ouverture par la Bibliotheque (« Ouverture du support… », TB-8).
+/// Demonstration : les situations « Le support arrive » et « Ressource
+/// indisponible » ; production : le chargement reel des pages (BR-1).
+enum EtatSupportRecu {
+  /// La page presentee est affichee.
+  pret,
+
+  /// « Le support arrive… » : le dernier contenu reste, marque en attente ;
+  /// l'audio continue.
+  enChargement,
+
+  /// « Le support ne s'affiche pas. » : Reessayer, sans quitter la seance.
+  indisponible,
+}
 
 /// Le controle de la seance, quand la donnee existe (plan V2 §4.3, §19.6,
 /// TB12) : l'oeil informe, il ne declenche rien et ne donne aucun droit.
@@ -324,6 +379,10 @@ class TableauLibre {
     required this.hauteurCanonique,
     this.aDesNotes = false,
   }) : assert(largeurCanonique > 0 && hauteurCanonique > 0);
+
+  /// TB-7a : la ressource a laquelle s'ancrent les notes du tableau libre,
+  /// distincte de tout support (TB5 : rien n'y est copie).
+  static const String idRessource = 'tableau-libre';
 
   /// Le repere de la feuille. Le plan ne donne pas de ratio au tableau sans
   /// support : choix provisoire, fourni par les donnees (UX_REVIEW_TB n. 15,
@@ -461,7 +520,45 @@ class VueSeance {
     this.enregistrement = EtatEnregistrement.inconnu,
     this.controle,
     this.contexte = ContexteOuvert.aucun,
+    this.notesSurface = const <TraitVectoriel>[],
+    this.supportsRanges = const <SupportPageFixe>[],
+    this.titreEnseignant,
+    this.ecritureRetiree = false,
+    this.synchroTableau = SynchroTableau.partage,
+    this.traitsNonPartages = const <String>{},
+    this.conservation = ConservationNotes.seanceSeulement,
+    this.supportRecu = EtatSupportRecu.pret,
   });
+
+  /// TB-RC (M1, plan V2 §12) : le support presente chez le destinataire.
+  /// Lu par [etatSupportRecu], jamais directement par un widget.
+  final EtatSupportRecu supportRecu;
+
+  /// TB-11b (plan V2 §10, §12 ; ERR-01, ERR-02) : l'etat du tableau
+  /// partage chez la personne devant l'ecran, independant de [connexion].
+  final SynchroTableau synchroTableau;
+
+  /// TB-11b (plan V2 §10 « Les nouveaux traits locaux restent identifies
+  /// comme non partages jusqu'a reconciliation ») : les identifiants des
+  /// traits de [notesSurface] que la classe n'a pas recus. Statut d'envoi
+  /// du moteur (TB-BR) ; demonstration : le trait de la situation ERR-01.
+  final Set<String> traitsNonPartages;
+
+  /// TB-11b (plan V2 §11, §12, §20 ; ERR-03) : la conservation des notes,
+  /// lue par l'enseignant seul.
+  final ConservationNotes conservation;
+
+  /// TB-10 (plan V2 §12, §20 « Choisir Sayyid/Sayyida selon le profil
+  /// reel ») : le titre de l'enseignant, ou `null` s'il n'est pas connu
+  /// (le nom affiche le remplace alors, jamais « Le professeur »).
+  final TitreEnseignant? titreEnseignant;
+
+  /// TB-10 (plan V2 §12 « Droit retire », §19.3 point 7) : l'enseignant
+  /// vient de retirer a la personne devant l'ecran son droit d'ecrire.
+  /// Demonstration : la situation « Droit retire » ; la salle le deduit
+  /// aussi du passage de [peutEcrire] de vrai a faux. Production : le
+  /// signal viendra du serveur (TB-BR-10).
+  final bool ecritureRetiree;
 
   // --- Reponses retenues aux questions Q1 a Q8 (plan de code section 4) ---
   //
@@ -593,6 +690,20 @@ class VueSeance {
   /// Le contexte deplie depuis la capsule (TB-3), etat local d'interface.
   final ContexteOuvert contexte;
 
+  /// TB-7a (plan V2 §9) : les traits valides de la surface (etat partage),
+  /// chacun ancre a une page de support ou au tableau libre, en
+  /// coordonnees normalisees de la page. La surface ne peint que ceux de la
+  /// page montree ([notesAffichees]). Vide hors demonstration tant que le
+  /// contrat des traits n'est pas branche (TB-BR).
+  final List<TraitVectoriel> notesSurface;
+
+  /// TB-9 (plan V2 §2, §3 « Ranger reellement », §19.2) : les supports
+  /// ranges pendant la seance, chacun a la page ou il a ete range (son point
+  /// de reprise). Ranger n'efface rien : leurs notes restent dans
+  /// [notesSurface], attachees a leur page ; « Presenter » les retrouve.
+  /// Donnee de la seance seulement, jamais une sauvegarde (TB-BR).
+  final List<SupportPageFixe> supportsRanges;
+
   bool get _tutoie => tutoiement ?? _guidee;
 
   bool get _enseignant => role == RoleSeance.enseignant;
@@ -648,7 +759,11 @@ class VueSeance {
   // --- Ecrans de secours (lot CL-7, P05, P06, P09 a P12) ---
 
   /// Le bandeau non bloquant (reseau faible, reconnexion), ou `null`.
-  String? get texteBandeau => switch (connexion) {
+  /// TB-11b : sans etat de la room a dire, l'etat du tableau ([texteTableau])
+  /// prend le MEME bandeau, jamais un second (UX_REVIEW_TB, ERR-01).
+  String? get texteBandeau => _texteConnexion ?? texteTableau;
+
+  String? get _texteConnexion => switch (connexion) {
     ConnexionSeance.reseauFaible =>
       _guidee
           ? t.salle.secours.reseauFaibleGuidee
@@ -661,11 +776,103 @@ class VueSeance {
     ConnexionSeance.horsLigne => null,
   };
 
-  /// Le sous-texte du bandeau : guidee en reseau faible seulement.
-  String? get sousTexteBandeau =>
-      _guidee && connexion == ConnexionSeance.reseauFaible
-      ? t.salle.secours.reseauFaibleGuideeSuite
-      : null;
+  /// Le sous-texte du bandeau : guidee en reseau faible ; TB-11b, la suite
+  /// de l'etat du tableau quand c'est lui que le bandeau dit.
+  String? get sousTexteBandeau {
+    if (_guidee && connexion == ConnexionSeance.reseauFaible) {
+      return t.salle.secours.reseauFaibleGuideeSuite;
+    }
+    return bandeauDitTableau ? _suiteTableau : null;
+  }
+
+  /// TB-11b (tour 2) : le bandeau dit l'etat du tableau ([texteTableau]),
+  /// faute d'etat de la room a dire ; son icone est celle du tableau.
+  bool get bandeauDitTableau => _texteConnexion == null && texteTableau != null;
+
+  // --- Tableau partage et conservation des notes (TB-11b) ---
+
+  /// TB-11b (plan V2 §12, §19.5 ; ERR-01 a ERR-03) : l'etat du tableau, ou
+  /// `null`. Enseignant : « Vos nouvelles notes ne sont pas partagees. »,
+  /// « Reprise du tableau… », « Les notes de cette seance ne sont pas
+  /// sauvegardees. » ; eleve et guidee : « Le tableau se reconnecte. »,
+  /// « Le tableau revient. », jamais d'alerte de sauvegarde (§12 « pas
+  /// d'alerte inutile »). Aucun texte de succes : ni « Sauvegarde », ni
+  /// retour a chaque trait. Le bloc d'echec de la room le remplace.
+  String? get texteTableau {
+    if (estFinie || voitBlocEchec) return null;
+    final Traductions$salle$seance$synchro$fr textes = t.salle.seance.synchro;
+    return switch (synchroTableau) {
+      SynchroTableau.interrompue =>
+        _enseignant ? textes.nonPartagees : textes.seReconnecte,
+      SynchroTableau.reprise => _enseignant ? textes.reprise : textes.revient,
+      SynchroTableau.partage =>
+        _enseignant && conservation == ConservationNotes.nonSauvegardees
+            ? textes.nonSauvegardees
+            : null,
+    };
+  }
+
+  /// La suite de [texteTableau] (K-59 : ce qui manque, la cause, la suite),
+  /// ou `null`.
+  String? get _suiteTableau {
+    final Traductions$salle$seance$synchro$fr textes = t.salle.seance.synchro;
+    if (_enseignant && synchroTableau == SynchroTableau.interrompue) {
+      return textes.nonPartageesSuite;
+    }
+    // Tour 2 : en guidee, le bandeau reste court (plan V2 §20 « Reprise
+    // eleve guide » : « Le tableau revient. ») ; la suspension de l'ecriture
+    // se lit dans les Commandes, a la place d'« Ecrire ».
+    // Tour 3 : Commandes de l'eleve ouvertes, la phrase est dite une fois, a
+    // la place d'« Ecrire » ([texteEcritureSuspendue], toujours visible
+    // dans ses Commandes) ; le bandeau garde son etat. L'enseignant la lit
+    // dans l'onglet Outils seulement : son bandeau la garde.
+    if (ecritureSuspendue &&
+        peutEcrire &&
+        !_guidee &&
+        !(!_enseignant &&
+            panneau == PanneauOuvert.commandes &&
+            texteEcritureSuspendue != null)) {
+      return textes.ecritureSuspendue;
+    }
+    if (_enseignant &&
+        synchroTableau == SynchroTableau.partage &&
+        conservation == ConservationNotes.nonSauvegardees) {
+      return textes.nonSauvegardeesSuite;
+    }
+    return null;
+  }
+
+  /// TB-11b (plan V2 §10, §19.5 point 2) : l'ecriture est suspendue
+  /// pendant la reprise, pour tous ; pendant l'interruption, chez l'eleve
+  /// (« ecriture distante suspendue »). L'enseignant interrompu ecrit
+  /// encore : ses nouveaux traits sont marques non partages.
+  bool get ecritureSuspendue => switch (synchroTableau) {
+    SynchroTableau.partage => false,
+    SynchroTableau.interrompue => !_enseignant,
+    SynchroTableau.reprise => true,
+  };
+
+  /// La personne peut ecrire maintenant : son droit ([peutEcrire]) et le
+  /// tableau qui le permet (TB-11b).
+  bool get ecritPossible => peutEcrire && !ecritureSuspendue;
+
+  /// TB-11b (plan V2 §10) : la nouvelle encre de la personne n'est pas
+  /// partagee (enseignant, tableau interrompu) : elle est marquee.
+  bool get encreNonPartagee =>
+      _enseignant && synchroTableau == SynchroTableau.interrompue;
+
+  /// TB-11b (plan V2 §11, §20 « Sauvegarde absente ») : « Les notes sont
+  /// conservees dans cette seance uniquement. », dans le contexte de
+  /// conservation de l'enseignant (les Commandes, sous le support ou le
+  /// tableau montre), ou `null` : sans surface qui prend des notes ni
+  /// support range, rien a conserver. Vrai que des notes existent ou non :
+  /// la phrase dit ce que devient ce qu'on ecrit. Jamais chez l'eleve.
+  String? get texteConservation {
+    if (!_enseignant || estFinie) return null;
+    return ancrageSurface != null || supportsRanges.isNotEmpty
+        ? t.salle.seance.rangement.notesConservees
+        : null;
+  }
 
   /// Le retour bref « Connexion retablie. », ou `null`.
   String? get texteRetabli =>
@@ -787,19 +994,152 @@ class VueSeance {
   bool get voitBoutonsPanneaux => _enseignant;
 
   /// Les outils d'enseignement (onglet « Outils » des Commandes, TB-4) :
-  /// enseignant, un support montre.
-  bool get voitOutils => _enseignant && support != null;
+  /// enseignant, un support montre. TB-7b (plan V2 §12, « Aucun support » :
+  /// « Bibliotheque, Ecrire cote enseignant ») : aussi sur le tableau libre.
+  bool get voitOutils =>
+      _enseignant && (support != null || ancrageSurface != null);
+
+  /// TB-7b (plan V2 §4.2) : « Ecrire » ; la surface montree prend des notes
+  /// (page fixe ou tableau libre), et la personne peut ecrire. TB-10 (plan
+  /// V2 §5, §19.3 points 4 et 5) : chez l'eleve et en guidee, seulement si
+  /// sa ligne porte l'autorisation ; ecrire n'ouvre aucun autre droit.
+  bool get voitEcriture =>
+      !estFinie &&
+      peutEcrire &&
+      ancrageSurface != null &&
+      (!_enseignant || voitOutils);
+
+  /// TB-11b (tour 2) : « Ecrire » se propose maintenant : la personne voit
+  /// l'ecriture ([voitEcriture]) et le tableau la permet (pas de reprise,
+  /// pas d'ecriture distante suspendue). Pendant la suspension, ni la tuile
+  /// « Ecrire », ni la barre (Stylo, Gomme, Annuler, Terminer), ni l'aide
+  /// qui dit d'ecrire : une phrase dit pourquoi ([texteEcritureSuspendue]).
+  bool get ecritureProposee => voitEcriture && !ecritureSuspendue;
+
+  /// TB-11b (tour 2, K-58 et « un bouton qui ne peut pas aboutir n'est pas
+  /// rendu ; une phrase explique la limite ») : la ou « Ecrire » se
+  /// proposerait, « L'ecriture reprend des le retour du tableau. » ; `null`
+  /// ailleurs.
+  String? get texteEcritureSuspendue => voitEcriture && ecritureSuspendue
+      ? t.salle.seance.synchro.ecritureSuspendue
+      : null;
+
+  /// TB-10 (plan V2 §5, §19.3 point 6) : les outils de trace proposes.
+  /// L'enseignant : Stylo, Surligner, Gomme ; l'eleve autorise : Stylo et
+  /// Gomme (« Stylo, Gomme, Annuler, Terminer »).
+  List<OutilTrait> get outilsEcriture => _enseignant
+      ? OutilTrait.values
+      : const <OutilTrait>[OutilTrait.stylet, OutilTrait.gomme];
+
+  /// TB-10 : « Couleur » et « Epaisseur » (la couleur dit l'intention pour
+  /// toute la classe) : l'enseignant seulement ; la barre de l'eleve reste
+  /// courte (plan V2 §5).
+  bool get voitOptionsEcriture => _enseignant;
+
+  /// TB-10 (plan V2 §5, §12, §20) : l'information courte de l'eleve
+  /// autorise, « Tu peux ecrire sur le tableau. » ou la variante adulte
+  /// (tutoiement selon l'age, A4) ; `null` ailleurs.
+  String? get avisEcriture {
+    // TB-11b : pendant la reprise, la phrase du bandeau le remplace ; « Tu
+    // peux ecrire » mentirait.
+    if (_enseignant || !voitEcriture || ecritureSuspendue) return null;
+    return _tutoie
+        ? t.salle.seance.ecriture.tuPeuxEcrire
+        : t.salle.seance.ecriture.vousPouvezEcrire;
+  }
+
+  /// TB-10 (plan V2 §12 « Droit retire ») : « Sayyid reprend le tableau. »
+  /// ou « Sayyida reprend le tableau. » selon le titre reel ; sans titre
+  /// connu, le nom affiche (jamais « Le professeur ») ; `null` ailleurs.
+  String? get avisRetrait {
+    if (_enseignant || estFinie || !ecritureRetiree || peutEcrire) {
+      return null;
+    }
+    return switch (titreEnseignant) {
+      TitreEnseignant.sayyid => t.salle.seance.ecriture.repriseSayyid,
+      TitreEnseignant.sayyida => t.salle.seance.ecriture.repriseSayyida,
+      null => t.salle.seance.ecriture.repriseNom(nom: nomEnseignant),
+    };
+  }
+
+  /// TB-10 (K-58) : ce que fait « Ecrire » avant de le choisir, puis ce que
+  /// font les outils une fois choisi ; tutoiement selon l'age (A4).
+  String get aideChoisirEcrire => _tutoie
+      ? t.salle.seance.ecriture.choisirTu
+      : t.salle.seance.ecriture.choisirVous;
+
+  /// TB-10 : la phrase des outils de l'eleve.
+  String get aideOutilsEleve => _tutoie
+      ? t.salle.seance.ecriture.aideEleveTu
+      : t.salle.seance.ecriture.aideEleveVous;
+
+  /// TB-10 (plan V2 §4.3, §20, UX-20) : « Autoriser a ecrire » et « Retirer
+  /// l'autorisation d'ecrire » sur la fiche de chaque eleve, dans les
+  /// Participants ; l'enseignant seulement.
+  bool get voitAutorisationEcrire => _enseignant && !estFinie;
+
+  /// TB-7b : le Pointeur montre un passage sur la surface montree.
+  bool get peutPointer => voitOutils && ancrageSurface != null;
+
+  /// TB-7b (UX_REVIEW_TB n. 21, plan V2 §19.3.6) : la gomme retire tout
+  /// trait de la surface (l'enseignant la gere) ; sinon, seulement ceux de
+  /// la personne.
+  bool get gereToutesLesNotes => _enseignant;
 
   /// TB-4 (CMD-01) : le declencheur « Commandes » et son panneau. Enseignant
   /// seulement : l'eleve ne voit ni Bibliotheque, ni affichages, ni page
   /// partagee (TB14, plan V2 §5) ; son contenu propre (lecture, focus,
   /// ecriture autorisee) vient avec TB-10. Le declencheur n'est rendu que si
   /// une de ses entrees a un rappel (UX_REVIEW_TB §3 bis).
-  bool get voitCommandes => _enseignant && !estFinie;
+  ///
+  /// TB-10 (plan V2 §19.3 point 4) : l'eleve et la guidee ont aussi leurs
+  /// Commandes, qui ne montrent que la lecture, l'ajustement, le focus et
+  /// l'ecriture si elle est accordee ; rien d'autre (TB14).
+  bool get voitCommandes => !estFinie;
+
+  /// TB-10 : les Commandes de l'enseignant (Bibliotheque, affichages, page,
+  /// outils), ou celles de l'eleve (lecture, focus, ecriture accordee).
+  bool get commandesCompletes => _enseignant;
+
+  /// TB-10 (plan V2 §5) : le zoom local dans les Commandes ; l'enseignant,
+  /// l'eleve standard (Q6), jamais la guidee (« Agrandir », « Voir toute la
+  /// page »).
+  bool get voitZoomCommandes =>
+      _enseignant || (role == RoleSeance.eleve && optionQ6);
 
   /// « Support », « Avec notes », « Tableau » : invisibles sans support
   /// presente (plan V2 §4.2) ; jamais chez l'eleve.
   bool get voitAffichagesPartages => _enseignant && supportPresente != null;
+
+  /// TB-9 : « Ranger dans la bibliotheque », au menu du titre du support
+  /// presente ; enseignant seulement, jamais chez l'eleve (TB14).
+  bool get voitRanger => _enseignant && supportPresente != null && !estFinie;
+
+  /// TB-9 (plan V2 §12) : « Effacer les notes » de la surface montree (la
+  /// page du support, ou le tableau libre), quand des notes s'y voient ;
+  /// jamais en « Support » (notes cachees), jamais chez l'eleve.
+  bool get voitEffacerNotes {
+    if (!_enseignant || estFinie) return false;
+    final VueSurface surface = vueSurface;
+    if (surface == VueSurface.supportSeul) return false;
+    if (notesAffichees.isNotEmpty) return true;
+    return surface == VueSurface.tableauLibre &&
+        (tableauLibre?.aDesNotes ?? false);
+  }
+
+  /// TB-9 : l'effacement porte sur le tableau libre (« … du tableau ? »),
+  /// sinon sur la page du support (« … de cette page ? »).
+  bool get effacementDuTableau => vueSurface == VueSurface.tableauLibre;
+
+  /// TB-9 : le nombre de notes de la seance attachees a un support range
+  /// (toutes pages de sa version) : la carte dit qu'elles sont conservees.
+  int notesDuSupport(SupportPageFixe range) => notesSurface
+      .where(
+        (TraitVectoriel trait) =>
+            trait.ancrage.resourceId == range.id &&
+            trait.ancrage.resourceVersionId == range.version,
+      )
+      .length;
   bool get voitSignalVideo => _enseignant;
 
   /// Le rail de navigation enseignant : desktop seulement (image CLV-06).
@@ -863,7 +1203,9 @@ class VueSeance {
 
   /// Lecture (zoom local, « Ajuster a l'ecran ») et Affichage (Focus) dans
   /// les Commandes : enseignant, un support montre ; rien n'est diffuse.
-  bool get voitLectureCommandes => _enseignant && support != null;
+  bool get voitLectureCommandes => _enseignant
+      ? support != null
+      : support != null || supportPresente != null;
 
   /// « 1 / 12 » en lecture seule : eleve standard, desktop.
   bool voitIndicateurPage(Gabarit gabarit) =>
@@ -903,6 +1245,8 @@ class VueSeance {
   /// par le systeme, P09).
   bool get visioMaintenue =>
       (voitBoutonsPanneaux && panneau != PanneauOuvert.aucun) ||
+      // TB-10 : les Commandes de l'eleve ouvertes sont un panneau ouvert.
+      (!_enseignant && panneau == PanneauOuvert.commandes) ||
       // TB-3 : le contexte deplie est un panneau ouvert (TB7).
       contexteOuvert ||
       !commandesPublicationActives ||
@@ -931,6 +1275,46 @@ class VueSeance {
   /// support ou ecrivez au tableau. » s'adresse a qui peut choisir le
   /// support : l'enseignant ; l'eleve voit le tableau sans consigne.
   bool get voitConsigneTableauLibre => role == RoleSeance.enseignant;
+
+  /// TB-RC (revue TB-R, m23) : la salle de qui mene la seance (colonne
+  /// d'outils et vignette de tablette plus etroite). Capacite lue par les
+  /// widgets a la place du role.
+  bool get meneLaSeance => _enseignant;
+
+  // --- Support recu (TB-RC, revue TB-R M1 ; plan V2 §12) ---
+
+  /// L'etat du support presente chez la personne devant l'ecran : le
+  /// destinataire seul (eleve, guidee) ; l'enseignant suit l'ouverture dans
+  /// la Bibliotheque. Sans support presente, rien a attendre.
+  EtatSupportRecu get etatSupportRecu =>
+      _enseignant || supportPresente == null || estFinie
+      ? EtatSupportRecu.pret
+      : supportRecu;
+
+  /// La phrase du §12 cote eleve, ou `null` quand le support est la.
+  String? get texteSupportRecu => switch (etatSupportRecu) {
+    EtatSupportRecu.pret => null,
+    EtatSupportRecu.enChargement => t.salle.seance.surface.supportArrive,
+    EtatSupportRecu.indisponible => t.salle.seance.surface.supportIndisponible,
+  };
+
+  /// La cause probable et quoi faire (K-59), sous la phrase de l'echec.
+  String? get detailSupportRecu =>
+      etatSupportRecu == EtatSupportRecu.indisponible
+      ? t.salle.seance.surface.supportIndisponibleDetail
+      : null;
+
+  /// Le dernier contenu reste, marque « en attente » (§12).
+  bool get supportEnAttente => etatSupportRecu != EtatSupportRecu.pret;
+
+  /// « Reessayer » sans quitter la seance (§12) : seulement l'echec.
+  bool get voitReessayerSupport =>
+      etatSupportRecu == EtatSupportRecu.indisponible;
+
+  /// TB-RC (revue TB-R, m11) : un changement de presentation (page, support,
+  /// Tableau) est annonce discretement a qui le recoit : eleve, guidee et
+  /// observateurs (lecture). L'enseignant, qui le fait, ne l'entend pas.
+  bool get annonceLaPresentation => !_enseignant;
 
   /// Le contexte deplie se montre : seulement depuis la capsule.
   bool get contexteOuvert => voitCapsule && contexte != ContexteOuvert.aucun;
@@ -988,6 +1372,38 @@ class VueSeance {
     };
   }
 
+  /// TB-7a : l'ancrage des notes de la surface montree : la page presentee
+  /// (ressource, version, numero), ou la feuille du tableau libre. Un trait
+  /// d'une autre page ou d'une autre version ne s'y peint jamais (§13 :
+  /// « ancien trait recu sur une nouvelle page »).
+  ContentPosition? get ancrageSurface {
+    final SupportPageFixe? page = supportPresente;
+    if (page != null) {
+      return ContentPosition.page(
+        resourceId: page.id,
+        resourceVersionId: page.version,
+        page: page.page,
+      );
+    }
+    if (tableauLibre != null) {
+      return const ContentPosition.page(
+        resourceId: TableauLibre.idRessource,
+        page: 1,
+      );
+    }
+    return null;
+  }
+
+  /// Les notes de la surface montree, et elles seules.
+  List<TraitVectoriel> get notesAffichees {
+    final ContentPosition? ancrage = ancrageSurface;
+    if (ancrage == null) return const <TraitVectoriel>[];
+    return <TraitVectoriel>[
+      for (final TraitVectoriel trait in notesSurface)
+        if (trait.ancrage == ancrage) trait,
+    ];
+  }
+
   /// Les inscrits autorises a ecrire (Participants, TB15).
   List<EleveSeance> get elevesAutorisesAEcrire =>
       eleves.where((EleveSeance e) => e.peutEcrire).toList();
@@ -1029,6 +1445,13 @@ class VueSeance {
     EtatControle? controle,
     bool sansControle = false,
     ContexteOuvert? contexte,
+    List<TraitVectoriel>? notesSurface,
+    List<SupportPageFixe>? supportsRanges,
+    bool? ecritureRetiree,
+    SynchroTableau? synchroTableau,
+    Set<String>? traitsNonPartages,
+    ConservationNotes? conservation,
+    EtatSupportRecu? supportRecu,
   }) => VueSeance(
     role: role ?? this.role,
     nomClasse: nomClasse,
@@ -1063,5 +1486,13 @@ class VueSeance {
     enregistrement: enregistrement ?? this.enregistrement,
     controle: sansControle ? null : controle ?? this.controle,
     contexte: contexte ?? this.contexte,
+    notesSurface: notesSurface ?? this.notesSurface,
+    supportsRanges: supportsRanges ?? this.supportsRanges,
+    titreEnseignant: titreEnseignant,
+    ecritureRetiree: ecritureRetiree ?? this.ecritureRetiree,
+    synchroTableau: synchroTableau ?? this.synchroTableau,
+    traitsNonPartages: traitsNonPartages ?? this.traitsNonPartages,
+    conservation: conservation ?? this.conservation,
+    supportRecu: supportRecu ?? this.supportRecu,
   );
 }

@@ -285,9 +285,13 @@ class _PressableState extends State<Pressable>
     );
 
     // The ring is outside the hit target: no layout shift and no clipping.
+    // `passthrough` : le contenu recoit les memes contraintes avec ou sans
+    // focus (la cible minimale ci-dessous l'etire pareil) ; sinon il
+    // reprendrait sa taille naturelle, cale en haut et au debut (TB-7a).
     if (etat.focus) {
       contenu = Stack(
         clipBehavior: Clip.none,
+        fit: StackFit.passthrough,
         children: <Widget>[
           contenu,
           PositionedDirectional(

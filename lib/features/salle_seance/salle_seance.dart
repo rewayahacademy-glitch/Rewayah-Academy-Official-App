@@ -13,15 +13,21 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/commandes_masquables.dart';
+import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/preferences/preferences_locales.dart';
+import '../../core/tc_outils/etat_outils.dart';
+import '../../core/theme/app_contour.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/commande_salle.dart' show commandesSurDeuxRangees;
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/offline_banner.dart';
@@ -33,10 +39,14 @@ import 'chrome_seance.dart';
 import 'commandes_pedagogiques.dart';
 import 'composition_salle.dart';
 import 'dock_seance.dart';
+import 'ecriture_seance.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
 import 'panneau_supports.dart';
+import 'rangement_support.dart';
 import 'selecteur_ressources.dart';
+import 'surface_page_fixe.dart' show rectanglePage;
+import 'vignette_video.dart' show MesuresVignette;
 import 'vue_seance.dart';
 import 'zone_support.dart';
 
@@ -148,66 +158,94 @@ class SalleSeance extends StatelessWidget {
       return _ContexteEleve(
         vue: vue,
         actions: actions,
-        construire: (FocusNode focusCapsule) => Material(
-          color: palette.surfaceCanvas.background,
-          child: SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                if (!agrandi)
-                  ChromeSeance(
-                    vue: vue,
-                    actions: actions,
-                    compacte: true,
-                    focusCapsule: focusCapsule,
-                  ),
-                BandeauSecours(
-                  vue: vue,
-                  actions: actions,
-                  gouttiere: gouttiere,
-                ),
-                if (!agrandi) ?_appel(vue, gouttiere),
-                Expanded(
-                  child: _visioRevelee(
-                    vue: vue,
-                    contenu: _surContexteEleve(
-                      vue: vue,
-                      actions: actions,
-                      contenu: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
-                          gouttiere,
-                          AppSpacing.xs,
-                          gouttiere,
-                          AppSpacing.xs,
-                        ),
-                        child: ZoneSupport(
-                          vue: vue,
-                          zoom: local.zoom,
-                          contenu: contenuSupport,
-                        ),
-                      ),
-                    ),
-                    barre: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(
-                        gouttiere,
-                        0,
-                        gouttiere,
-                        AppSpacing.sm,
-                      ),
-                      child: DockSeance(
+        construire: (FocusNode focusCapsule, FocusNode focusCommandes) =>
+            Material(
+              color: palette.surfaceCanvas.background,
+              child: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    if (!agrandi)
+                      ChromeSeance(
                         vue: vue,
                         actions: actions,
-                        microOuvert: local.microOuvert,
-                        cameraAllumee: local.cameraAllumee,
-                        agrandi: agrandi,
+                        compacte: true,
+                        focusCapsule: focusCapsule,
+                      ),
+                    BandeauSecours(
+                      vue: vue,
+                      actions: actions,
+                      gouttiere: gouttiere,
+                    ),
+                    if (!agrandi) ?_appel(vue, gouttiere),
+                    Expanded(
+                      child: _visioRevelee(
+                        vue: vue,
+                        contenu: _surContexteEleve(
+                          vue: vue,
+                          actions: actions,
+                          contenu: _surCommandesEleve(
+                            vue: vue,
+                            actions: actions,
+                            local: local,
+                            agrandi: agrandi,
+                            contenu: _surfaceEtEntreeEleve(
+                              vue: vue,
+                              zoom: local.zoom,
+                              gouttiere: gouttiere,
+                              surface: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                  gouttiere,
+                                  AppSpacing.xs,
+                                  gouttiere,
+                                  AppSpacing.xs,
+                                ),
+                                child: ZoneSupport(
+                                  vue: vue,
+                                  zoom: local.zoom,
+                                  contenu: contenuSupport,
+                                ),
+                              ),
+                              entree: _sousSurfaceEleve(
+                                vue,
+                                actions,
+                                gouttiere,
+                                focusCommandes,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Jonction ETATS-MA-1 x TB-10 : texte agrandi, les
+                        // commandes sur deux rangees (232 de haut a 320 x2)
+                        // ne laissent que 64 a la colonne des Commandes
+                        // ouvertes. Tant que la feuille est ouverte, la barre
+                        // lui cede la place ; « Reduire » la referme et rend
+                        // la barre.
+                        barre:
+                            vue.panneau == PanneauOuvert.commandes &&
+                                commandesSurDeuxRangees(context)
+                            ? const SizedBox.shrink()
+                            : Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                  gouttiere,
+                                  0,
+                                  gouttiere,
+                                  AppSpacing.sm,
+                                ),
+                                child: DockSeance(
+                                  vue: vue,
+                                  actions: actions,
+                                  microOuvert: local.microOuvert,
+                                  cameraAllumee: local.cameraAllumee,
+                                  agrandi: agrandi,
+                                ),
+                              ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
       );
     }
     // Plein cadre, sans coquille de page : ni titre d'ecran, ni colonne
@@ -216,7 +254,7 @@ class SalleSeance extends StatelessWidget {
     return _ContexteEleve(
       vue: vue,
       actions: actions,
-      construire: (FocusNode focusCapsule) => Material(
+      construire: (FocusNode focusCapsule, FocusNode focusCommandes) => Material(
         color: palette.surfaceCanvas.background,
         child: SafeArea(
           child: Column(
@@ -232,18 +270,24 @@ class SalleSeance extends StatelessWidget {
                 ),
                 Ecart.vLg,
               ] else if (large) ...<Widget>[
-                ChromeSeance(
-                  vue: vue,
-                  actions: actions,
-                  focusCapsule: focusCapsule,
+                // TB-RC (revue TB-R M3) : la tete du bureau est bornee comme
+                // ailleurs ; a texte x2, elle defile en fondu.
+                TeteSalleBornee(
+                  children: <Widget>[
+                    ChromeSeance(
+                      vue: vue,
+                      actions: actions,
+                      focusCapsule: focusCapsule,
+                    ),
+                    BandeauSecours(
+                      vue: vue,
+                      actions: actions,
+                      gouttiere: gouttiere,
+                      espaceApres: AppSpacing.lg,
+                    ),
+                    ?_appel(vue, gouttiere),
+                  ],
                 ),
-                BandeauSecours(
-                  vue: vue,
-                  actions: actions,
-                  gouttiere: gouttiere,
-                  espaceApres: AppSpacing.lg,
-                ),
-                ?_appel(vue, gouttiere),
               ] else ...<Widget>[
                 TeteSalleBornee(
                   children: <Widget>[
@@ -271,18 +315,39 @@ class SalleSeance extends StatelessWidget {
                   contenu: _surContexteEleve(
                     vue: vue,
                     actions: actions,
+                    // TB-10 : les Commandes ouvertes (volet du bureau) se
+                    // posent sur la surface seule, au-dessus de la barre
+                    // basse (page, zoom local) : elles ne la couvrent pas.
                     contenu: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: gouttiere,
-                            ),
-                            child: ZoneSupport(
+                          child: _surCommandesEleve(
+                            vue: vue,
+                            actions: actions,
+                            local: local,
+                            agrandi: agrandi,
+                            marge: gouttiere,
+                            contenu: _surfaceEtEntreeEleve(
                               vue: vue,
                               zoom: local.zoom,
-                              contenu: contenuSupport,
+                              gouttiere: gouttiere,
+                              surface: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: gouttiere,
+                                ),
+                                child: ZoneSupport(
+                                  vue: vue,
+                                  zoom: local.zoom,
+                                  contenu: contenuSupport,
+                                ),
+                              ),
+                              entree: _sousSurfaceEleve(
+                                vue,
+                                actions,
+                                gouttiere,
+                                focusCommandes,
+                              ),
                             ),
                           ),
                         ),
@@ -343,7 +408,8 @@ class _ContexteEleve extends StatefulWidget {
 
   final VueSeance vue;
   final ActionsSeance actions;
-  final Widget Function(FocusNode focusCapsule) construire;
+  final Widget Function(FocusNode focusCapsule, FocusNode focusCommandes)
+  construire;
 
   @override
   State<_ContexteEleve> createState() => _ContexteEleveState();
@@ -352,9 +418,22 @@ class _ContexteEleve extends StatefulWidget {
 class _ContexteEleveState extends State<_ContexteEleve> {
   final FocusNode _focusCapsule = FocusNode(debugLabel: 'capsule-avatar');
 
+  /// TB-10 : le declencheur « Commandes » de l'eleve ; la fermeture du
+  /// panneau (Reduire, Echap) y rend le focus.
+  final FocusNode _focusCommandes = FocusNode(debugLabel: 'commandes-eleve');
+
+  bool _commandes(VueSeance vue) => vue.panneau == PanneauOuvert.commandes;
+
   @override
   void didUpdateWidget(_ContexteEleve ancien) {
     super.didUpdateWidget(ancien);
+    if (_commandes(ancien.vue) && !_commandes(widget.vue)) {
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted && _focusCommandes.context != null) {
+          _focusCommandes.requestFocus();
+        }
+      });
+    }
     if (ancien.vue.contexteOuvert && !widget.vue.contexteOuvert) {
       WidgetsBinding.instance.addPostFrameCallback((Duration _) {
         if (mounted && _focusCapsule.context != null) {
@@ -367,17 +446,28 @@ class _ContexteEleveState extends State<_ContexteEleve> {
   @override
   void dispose() {
     _focusCapsule.dispose();
+    _focusCommandes.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) => CallbackShortcuts(
     bindings: <ShortcutActivator, VoidCallback>{
-      if (widget.vue.contexteOuvert)
-        const SingleActivator(LogicalKeyboardKey.escape): () =>
-            widget.actions.onContexte?.call(ContexteOuvert.aucun),
+      // TB-10 (UX_REVIEW_TB n. 26, plan V2 §18.3) : Echap reduit aussi les
+      // Commandes de l'eleve, jamais l'appel. Une seule entree pour la
+      // touche (deux cles egales dans la table : la seconde ecraserait la
+      // premiere) : le contexte deplie d'abord, les Commandes ensuite.
+      if (widget.vue.contexteOuvert ||
+          (_commandes(widget.vue) && widget.actions.onCommandes != null))
+        const SingleActivator(LogicalKeyboardKey.escape): () {
+          if (widget.vue.contexteOuvert) {
+            widget.actions.onContexte?.call(ContexteOuvert.aucun);
+          } else {
+            widget.actions.onCommandes?.call();
+          }
+        },
     },
-    child: widget.construire(_focusCapsule),
+    child: widget.construire(_focusCapsule, _focusCommandes),
   );
 }
 
@@ -443,6 +533,389 @@ Widget _surContexteEleve({
       );
     },
   );
+}
+
+/// TB-10 (plan V2 §19.3 point 4) : sous la surface de l'eleve et de la
+/// guidee, l'information courte de l'ecriture et le declencheur
+/// « Commandes » (ou, pendant l'ecriture, la palette courte : Stylo ou
+/// Gomme, Annuler, Terminer). `null` : aucune entree n'a de rappel
+/// (Classe Live avant TB-BR), rien n'est rendu.
+///
+/// Pose sous la surface et non dans la barre de l'appel : il ne couvre
+/// rien, et la palette ne se masque pas pendant qu'on ecrit.
+Widget? _sousSurfaceEleve(
+  VueSeance vue,
+  ActionsSeance actions,
+  double gouttiere,
+  FocusNode focusCommandes,
+) {
+  if (vue.commandesCompletes ||
+      !CommandesPedagogiques.aDesEntrees(vue, actions)) {
+    return null;
+  }
+  // Texte agrandi sur petit ecran : la barre de l'appel se pose par-dessus
+  // le bas du contenu ; l'entree reste au-dessus d'elle, jamais dessous.
+  // Au-dela de sa part, elle defile : rien n'est coupe.
+  // Un quart de l'ecran au plus (la page garde le reste) ; la marge de la
+  // barre est hors du defilement : rien ne passe sous elle.
+  return Builder(
+    builder: (BuildContext contexte) => Padding(
+      padding: EdgeInsets.only(
+        bottom: CommandesMasquables.recouvrementDe(contexte),
+      ),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(contexte).height / 4,
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsetsDirectional.only(
+            start: gouttiere,
+            end: gouttiere,
+            top: AppSpacing.sm,
+            bottom: AppSpacing.sm,
+          ),
+          child: CommandesEleve(
+            vue: vue,
+            actions: actions,
+            focusCommandes: focusCommandes,
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+/// TB-RC (revue TB-R M2, M3), eleve et guidee : la surface et, dessous,
+/// l'information courte et l'entree des Commandes ([entree]). Salle courte
+/// (telephone couche, texte x2 au bureau) et page qui laisse la place a cote
+/// d'elle : l'entree passe dans une colonne au bord de fin, en bas, et la
+/// page garde toute la hauteur ; sinon sous la surface, comme avant.
+Widget _surfaceEtEntreeEleve({
+  required VueSeance vue,
+  required double zoom,
+  required double gouttiere,
+  required Widget surface,
+  required Widget? entree,
+}) {
+  if (entree == null) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[Expanded(child: surface)],
+    );
+  }
+  return LayoutBuilder(
+    builder: (BuildContext contexte, BoxConstraints c) {
+      final double? ratio = zoom <= 1 ? ratioSurface(vue) : null;
+      final double retrait =
+          gouttiere + retraitPageSurface(AppGabarit.de(contexte));
+      final bool aCote =
+          ratio != null &&
+          TeteSalleBornee.courte(contexte) &&
+          c.maxWidth - largeurPanneauSeance >=
+              math.max(0, c.maxHeight - 2 * retrait) * ratio + 2 * retrait;
+      if (aCote) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Expanded(child: surface),
+            SizedBox(
+              width: largeurPanneauSeance,
+              child: Align(
+                alignment: AlignmentDirectional.bottomCenter,
+                child: entree,
+              ),
+            ),
+          ],
+        );
+      }
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(child: surface),
+          // Jonction ETATS-MA-1 x TB-10 : quand la barre d'appel prend deux
+          // rangees (texte agrandi, Mode Accessibilite), la place restante
+          // peut etre plus basse que l'entree (phrase d'echec ou d'ecriture
+          // et declencheur). L'entree defile alors dans la part qui lui
+          // revient (85 % au plus de la hauteur) ; plus basse, rien ne change
+          // (jamais de debordement).
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: c.maxHeight * 0.85),
+            child: SingleChildScrollView(child: entree),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+/// TB-10, eleve et guidee : les Commandes ouvertes, posees par-dessus la
+/// surface dans le cadre de panneau existant ([PanneauSeance]) : feuille du
+/// bas au telephone (le haut de la page reste visible), volet au bord de fin
+/// ailleurs. « Reduire » et Echap les ferment.
+Widget _surCommandesEleve({
+  required VueSeance vue,
+  required ActionsSeance actions,
+  required EtatLocalSeance local,
+  required bool agrandi,
+  required Widget contenu,
+  double marge = AppSpacing.sm,
+}) {
+  final VoidCallback? reduire = actions.onCommandes;
+  if (vue.commandesCompletes || reduire == null) return contenu;
+  // La meme pile, ouverte ou non : la surface et l'entree des Commandes
+  // restent les memes elements (zoom, deplacement, outil retenu gardes).
+  return LayoutBuilder(
+    builder: (BuildContext contexte, BoxConstraints c) {
+      if (vue.panneau != PanneauOuvert.commandes) {
+        return Stack(children: <Widget>[Positioned.fill(child: contenu)]);
+      }
+      final bool feuille = AppGabarit.de(contexte) == Gabarit.mobile;
+      final double recouvert = math.min(
+        CommandesMasquables.recouvrementDe(contexte),
+        c.maxHeight,
+      );
+      final Widget panneau = Focus(
+        autofocus: true,
+        skipTraversal: true,
+        child: PanneauSeance(
+          titre: t.salle.seance.commandes.titre,
+          onFermer: reduire,
+          libelleFermer: t.salle.seance.commandes.reduire,
+          semantiqueFermer: t.salle.seance.commandes.reduireSemantique,
+          forme: feuille ? FormePanneau.feuille : FormePanneau.volet,
+          enfant: Padding(
+            padding: EdgeInsets.only(bottom: recouvert),
+            child: CommandesPedagogiques(
+              vue: vue,
+              actions: actions,
+              zoom: local.zoom,
+              agrandi: agrandi,
+            ),
+          ),
+        ),
+      );
+      return Stack(
+        children: <Widget>[
+          Positioned.fill(child: contenu),
+          if (feuille)
+            Positioned.fill(
+              top: supportVisiblePour(contexte, c.maxHeight - recouvert),
+              child: panneau,
+            )
+          else
+            // Verification TB-10 : le volet reste dans le cadre de la
+            // surface ([marge] : la gouttiere qui borde le support).
+            PositionedDirectional(
+              end: marge,
+              top: 0,
+              bottom: AppSpacing.sm,
+              width: math.min(largeurPanneauSeance, c.maxWidth - 2 * marge),
+              child: panneau,
+            ),
+        ],
+      );
+    },
+  );
+}
+
+/// TB-10 (plan V2 §5, §12, §19.3 ; UX-20) : l'information courte et
+/// l'entree des Commandes de l'eleve.
+///
+/// - Autorisation accordee : « Tu peux ecrire sur le tableau. » (ou la
+///   variante adulte), annoncee au lecteur d'ecran ; l'eleve choisit
+///   ensuite « Ecrire » dans ses Commandes : aucun geste ne devient un
+///   trait sans ce choix.
+/// - Droit retire : « Sayyid reprend le tableau. » (ou « Sayyida ... »),
+///   l'outil d'ecriture est repose (la palette disparait) ; le trait en
+///   cours est resolu par la surface (`CoucheAnnotation.saisie`).
+///
+/// L'information reste jusqu'a l'ouverture des Commandes (aucune minuterie :
+/// un lecteur lent ne la manque pas, WCAG 2.2.1).
+class CommandesEleve extends ConsumerStatefulWidget {
+  /// Cree l'entree.
+  const CommandesEleve({
+    required this.vue,
+    required this.actions,
+    this.focusCommandes,
+    super.key = cle,
+  });
+
+  /// La cle de l'entree.
+  static const Key cle = ValueKey<String>('commandes-eleve');
+
+  /// La cle de l'information courte.
+  static const Key cleAvis = ValueKey<String>('commandes-eleve-avis');
+
+  final VueSeance vue;
+  final ActionsSeance actions;
+  final FocusNode? focusCommandes;
+
+  @override
+  ConsumerState<CommandesEleve> createState() => _CommandesEleveState();
+}
+
+class _CommandesEleveState extends ConsumerState<CommandesEleve> {
+  /// Le droit vient d'etre retire dans cette salle (passage de vrai a faux).
+  bool _retrait = false;
+
+  /// L'information a ete vue : les Commandes se sont ouvertes depuis.
+  bool _lu = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _lu = widget.vue.panneau == PanneauOuvert.commandes;
+    // TB-10 (tour 2) : l'entree peut etre recreee au moment meme du retrait
+    // (bascule agrandi, changement de gabarit) : le passage de vrai a faux
+    // n'est alors pas vu. Sans droit, un outil retenu est donc repose des
+    // la creation, pas seulement au passage.
+    if (!widget.vue.peutEcrire) _reposerOutil();
+  }
+
+  void _reposerOutil() {
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted) return;
+      if (ref.read(etatOutilsProvider).outilActif != null) {
+        ref.read(etatOutilsProvider.notifier).relacherOutil();
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(CommandesEleve ancien) {
+    super.didUpdateWidget(ancien);
+    final bool avant = ancien.vue.peutEcrire;
+    final bool apres = widget.vue.peutEcrire;
+    if (avant && !apres) {
+      _retrait = true;
+      _lu = false;
+      _reposerOutil();
+    } else if (!avant && apres) {
+      _retrait = false;
+      _lu = false;
+    } else if (ancien.vue.ecritureRetiree != widget.vue.ecritureRetiree) {
+      _lu = false;
+    }
+    if (!avant && !apres) _reposerOutil();
+    if (widget.vue.panneau == PanneauOuvert.commandes) _lu = true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final VueSeance vue = widget.vue;
+    final VoidCallback? basculer = widget.actions.onCommandes;
+    final bool ouvert = vue.panneau == PanneauOuvert.commandes;
+    final bool ecrit = ecritSurLaSurface(ref, vue);
+    final String? retrait = _lu
+        ? null
+        : vue
+              .copyWith(ecritureRetiree: vue.ecritureRetiree || _retrait)
+              .avisRetrait;
+    final String? avis = _lu
+        ? null
+        : retrait ?? (ecrit ? null : vue.avisEcriture);
+    // TB-10 (tour 2) : texte agrandi ou Mode Accessibilite, l'information
+    // courte et le declencheur (icone seule, nom lu et infobulle gardes) se
+    // partagent UNE rangee, et la phrase prend le corps court : la page
+    // garde la hauteur qu'elle avait avant l'information (320 a 200 %).
+    final bool rangee =
+        avis != null &&
+        !ecrit &&
+        basculer != null &&
+        !ouvert &&
+        (MediaQuery.textScalerOf(context).scale(1) >
+                AppContour.seuilTexteAgrandi ||
+            AppMetriques.of(context).mode == InterfaceMode.enfant);
+    final Widget? entree = basculer == null || ouvert
+        ? null
+        : ecrit
+        ? PaletteEcriture(
+            vue: vue,
+            onCommandes: basculer,
+            focusCommandes: widget.focusCommandes,
+          )
+        : DeclencheurCommandes(
+            onPress: basculer,
+            focusNode: widget.focusCommandes,
+            iconeSeule: rangee,
+          );
+    if (rangee) {
+      return Row(
+        children: <Widget>[
+          Expanded(child: _AvisEcriture(texte: avis, compacte: true)),
+          Ecart.hSm,
+          ?entree,
+        ],
+      );
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        // Verification TB-10 : le retrait (« Sayyid reprend le tableau. »)
+        // ne porte pas le crayon de « Vous pouvez ecrire » : sans icone.
+        if (avis != null)
+          _AvisEcriture(texte: avis, avecIcone: retrait == null),
+        if (avis != null && entree != null) Ecart.vSm,
+        if (entree != null) Center(heightFactor: 1, child: entree),
+      ],
+    );
+  }
+}
+
+/// L'information courte de l'eleve : l'icone d'ecriture et la phrase, dite
+/// au lecteur d'ecran des qu'elle change (W-413).
+class _AvisEcriture extends StatelessWidget {
+  const _AvisEcriture({
+    required this.texte,
+    this.compacte = false,
+    this.avecIcone = true,
+  });
+
+  final String texte;
+
+  /// Faux pour le retrait du droit d'ecrire : le crayon dirait le contraire.
+  final bool avecIcone;
+
+  /// Rangee du texte agrandi : sans l'icone (le declencheur est a cote), au
+  /// corps court.
+  final bool compacte;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    // Le corps du texte, pas un titre : au texte agrandi, la phrase laisse
+    // sa hauteur a la page.
+    final Widget phrase = TexteSansCoupure(
+      texte,
+      style: palette.inkStrong.applyTo(
+        (compacte ? textes.bodySmall : textes.bodyMedium) ?? const TextStyle(),
+      ),
+    );
+    return Semantics(
+      key: CommandesEleve.cleAvis,
+      liveRegion: true,
+      container: true,
+      child: compacte
+          ? phrase
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                if (avecIcone) ...<Widget>[
+                  ExcludeSemantics(
+                    child: IconTheme(
+                      data: palette.inkAccent.asIconTheme(size: AppSpacing.xl),
+                      child: Icon(AppIcons.annoter.repos),
+                    ),
+                  ),
+                  Ecart.hSm,
+                ],
+                Flexible(child: phrase),
+              ],
+            ),
+    );
+  }
 }
 
 /// Le clavier des panneaux Eleves, Supports et Commandes : Echap ferme le
@@ -1023,9 +1496,13 @@ class _SalleEnseignant extends StatelessWidget {
         contenu: contenuSupport,
       ),
     );
-    return gabarit == Gabarit.mobile
-        ? _telephone(support)
-        : _large(context, support);
+    // TB-9 : la portee du rangement (depart : la feuille de la surface ;
+    // arrivee : la Bibliotheque des Commandes).
+    return PorteeRangement(
+      child: gabarit == Gabarit.mobile
+          ? _telephone(support)
+          : _large(context, support),
+    );
   }
 
   /// TB-4 : le declencheur « Commandes », rendu seulement si une entree du
@@ -1034,17 +1511,59 @@ class _SalleEnseignant extends StatelessWidget {
   /// Commandes ouvertes, il s'efface : le panneau porte deja le titre
   /// « Commandes » et sa « Reduire » (une seule entree visible, revue du
   /// 09/10) ; il revient a la fermeture, ou le focus le retrouve.
-  Widget? _declencheur() {
+  ///
+  /// TB-7b (plan V2 §4.2) : panneau ferme pendant l'ecriture, la palette
+  /// courte (outil actif, Annuler, Terminer) prend sa place, et « Commandes »
+  /// devient le dernier bouton de la palette, ou reparaissent les autres
+  /// outils. Une seule rangee : au telephone, la hauteur reste a la page au
+  /// moment ou l'on ecrit (une palette posee au-dessus du declencheur la
+  /// reduisait de moitie a 320 x2).
+  ///
+  /// Verification TB-5 (10/10) : en focus hors telephone, le declencheur au
+  /// repos monte dans la tete, a cote de la capsule ([auRepos] seul), et la
+  /// palette reste sous la surface ([enEcriture] seul, precedee de
+  /// [ecartAvant]) : aucune rangee sous la page tant qu'on n'ecrit pas.
+  Widget? _declencheur({
+    bool auRepos = true,
+    bool enEcriture = true,
+    double ecartAvant = 0,
+    double? largeurPalette,
+  }) {
     final VoidCallback? basculer = actions.onCommandes;
     if (basculer == null ||
         vue.panneau == PanneauOuvert.commandes ||
         !CommandesPedagogiques.aDesEntrees(vue, actions)) {
       return null;
     }
-    return DeclencheurCommandes(
-      onPress: basculer,
-      ouvert: vue.panneau == PanneauOuvert.commandes,
-      focusNode: focusCommandes,
+    return Consumer(
+      builder: (BuildContext _, WidgetRef ref, Widget? enfant) =>
+          !ecritSurLaSurface(ref, vue)
+          ? enfant!
+          : !enEcriture
+          ? const SizedBox.shrink()
+          : Padding(
+              padding: EdgeInsets.only(top: ecartAvant),
+              // TB-RC : posee dans la marge de la page, la palette tient
+              // dans sa largeur (icones seules, mots en infobulle) : la page
+              // garde sa hauteur quand on ecrit (TB-7b).
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: largeurPalette ?? double.infinity,
+                ),
+                child: PaletteEcriture(
+                  vue: vue,
+                  onCommandes: basculer,
+                  focusCommandes: focusCommandes,
+                ),
+              ),
+            ),
+      child: auRepos
+          ? DeclencheurCommandes(
+              onPress: basculer,
+              ouvert: vue.panneau == PanneauOuvert.commandes,
+              focusNode: focusCommandes,
+            )
+          : const SizedBox.shrink(),
     );
   }
 
@@ -1089,6 +1608,7 @@ class _SalleEnseignant extends StatelessWidget {
             : null,
         large: colonne,
         serre: forme == FormePanneau.feuille,
+        autorisationEcrire: vue.voitAutorisationEcrire,
         entete: vue.contexteOuvert
             ? SectionContexte(vue: vue, actions: actions)
             : null,
@@ -1123,6 +1643,7 @@ class _SalleEnseignant extends StatelessWidget {
         enfant: BibliothequeSeance(
           onPresenter: presenter,
           groupeId: vue.groupeId,
+          reprises: reprisesDe(vue),
         ),
       ),
       null => PanneauSeance(
@@ -1353,22 +1874,53 @@ class _SalleEnseignant extends StatelessWidget {
     // (images CLV-07-08-10) ; repliee, la colonne laisse son bouton au bord
     // de debut, a sa place.
     final bool recouvre = composition.recouvre;
-    final Widget? boutons = recouvre ? null : _bouton(etire: !gaucheTient);
-    final Widget? declencheur = recouvre ? null : _declencheur();
+    // TB-RC (revue TB-R M2, M3) : salle courte (telephone couche, texte x2
+    // au bureau), la capsule ouvre deja les Participants (TB-3) : la rangee
+    // « Eleves » rend sa hauteur a la page, comme au telephone (TB-5).
+    final bool sansRangeeEleves =
+        vue.voitCapsule && TeteSalleBornee.courte(context);
+    // Salle courte sans capsule (tableau libre) : le bouton « Eleves »
+    // partage la rangee du declencheur, sous la surface (une rangee de
+    // moins), ou se pose au coin bas de debut si la page le permet.
+    final bool courte = TeteSalleBornee.courte(context);
+    final Widget? boutons = recouvre || sansRangeeEleves
+        ? null
+        : _bouton(etire: !gaucheTient && !courte);
+    final Widget? boutonsEnHaut = courte ? null : boutons;
+    // En focus, sous la surface ne reste que la palette pendant l'ecriture ;
+    // le declencheur au repos passe dans la tete (verification TB-5).
+    final Widget? declencheur = recouvre
+        ? null
+        : agrandi
+        ? _declencheur(auRepos: false, ecartAvant: AppSpacing.md)
+        : _declencheur();
+    Widget? declencheurPour(double? largeurPalette) => recouvre || agrandi
+        ? declencheur
+        : _declencheur(largeurPalette: largeurPalette);
     final Widget centre = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (boutons != null)
+        if (boutonsEnHaut != null)
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.md),
             child: gaucheTient
                 ? Align(
                     alignment: AlignmentDirectional.centerStart,
-                    child: boutons,
+                    child: boutonsEnHaut,
                   )
-                : boutons,
+                : boutonsEnHaut,
           ),
-        Expanded(child: _sousSupport(support, declencheur)),
+        Expanded(
+          child: _sousSupport(
+            support,
+            declencheur,
+            ecart: !agrandi,
+            auBordPossible: !agrandi,
+            gabarit: gabarit,
+            debut: courte ? boutons : null,
+            declencheurPour: declencheurPour,
+          ),
+        ),
       ],
     );
     // Les colonnes, puis les volets par-dessus toute la largeur utile : un
@@ -1439,12 +1991,26 @@ class _SalleEnseignant extends StatelessWidget {
         // TB-5 (plan V2 §19.4.3, §6 « capsule minimale ») : en focus, l'en-tete
         // se retire comme chez l'eleve ; restent la capsule compacte et l'etat
         // critique.
-        if (agrandi) ...<Widget>[_teteFocus()] else if (desktop) ...<Widget>[
-          ChromeSeance(vue: vue, actions: actions, focusCapsule: focusCapsule),
-          BandeauSecours(
-            vue: vue,
-            actions: actions,
-            espaceApres: AppSpacing.md,
+        if (agrandi) ...<Widget>[
+          _teteFocus(
+            declencheur: recouvre ? null : _declencheur(enEcriture: false),
+          ),
+        ] else if (desktop) ...<Widget>[
+          // TB-RC (revue TB-R M3) : bornee au bureau aussi ; a texte x2,
+          // elle defile en fondu au lieu de prendre la page.
+          TeteSalleBornee(
+            children: <Widget>[
+              ChromeSeance(
+                vue: vue,
+                actions: actions,
+                focusCapsule: focusCapsule,
+              ),
+              BandeauSecours(
+                vue: vue,
+                actions: actions,
+                espaceApres: AppSpacing.md,
+              ),
+            ],
           ),
         ] else ...<Widget>[
           TeteSalleBornee(
@@ -1471,7 +2037,11 @@ class _SalleEnseignant extends StatelessWidget {
   /// capsule compacte, l'acces aux Commandes et la sortie du focus (barre de
   /// l'appel). Ni titre, ni sous-titre, ni mention, ni coin de l'en-tete ;
   /// l'etat critique (reconnexion, echec) reste visible (CL-7 §2.7).
-  Widget _teteFocus() => Column(
+  ///
+  /// Hors telephone, le [declencheur] au repos se pose sur la meme rangee,
+  /// avant la capsule (bord de fin) : il ne prend plus de rangee sous la
+  /// surface, la page grandit (verification TB-5, UX-14).
+  Widget _teteFocus({Widget? declencheur}) => Column(
     key: cleTeteFocus,
     crossAxisAlignment: CrossAxisAlignment.stretch,
     mainAxisSize: MainAxisSize.min,
@@ -1485,10 +2055,16 @@ class _SalleEnseignant extends StatelessWidget {
         ),
         child: Align(
           alignment: AlignmentDirectional.centerEnd,
-          child: CapsuleSeance(
-            vue: vue,
-            actions: actions,
-            focusAvatar: focusCapsule,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              if (declencheur != null) ...<Widget>[declencheur, Ecart.hMd],
+              CapsuleSeance(
+                vue: vue,
+                actions: actions,
+                focusAvatar: focusCapsule,
+              ),
+            ],
           ),
         ),
       ),
@@ -1499,14 +2075,82 @@ class _SalleEnseignant extends StatelessWidget {
   /// Le declencheur « Commandes » sous le support, au bord de fin (plan V2
   /// §4.2 : « bord droit de la surface ») ; la barre de l'appel est posee
   /// par-dessus, plus bas (TB-2).
-  Widget _sousSupport(Widget support, Widget? declencheur) {
-    if (declencheur == null) return support;
+  ///
+  /// [ecart] faux (focus) : la palette porte son propre ecart, rien n'est
+  /// reserve sous la surface tant qu'on n'ecrit pas.
+  ///
+  /// TB-RC (TB_RAPPORT §d n. 12 ; revue TB-R M2, M3) : [auBordPossible],
+  /// hors telephone, le declencheur se pose au coin bas de fin de la
+  /// surface, dans la marge que la page laisse a cote d'elle, sans rangee :
+  /// fermer les Commandes ne rapetisse plus la page. S'il ne tient pas a
+  /// cote de la page (page large, zoom local, vignette), il reprend sa
+  /// rangee sous la surface.
+  Widget _sousSupport(
+    Widget support,
+    Widget? declencheur, {
+    bool ecart = true,
+    bool auBordPossible = false,
+    Gabarit gabarit = Gabarit.desktop,
+    Widget? debut,
+    Widget? Function(double? largeurPalette)? declencheurPour,
+  }) {
+    if (declencheur == null && debut == null) return support;
+    if (auBordPossible) {
+      final double? ratio = local.zoom <= 1 ? ratioSurface(vue) : null;
+      final double retrait = retraitPageSurface(gabarit);
+      return LayoutBuilder(
+        builder: (BuildContext contexte, BoxConstraints c) {
+          // La palette d'ecriture se pose dans la marge de la page si elle
+          // y tient en icones seules ; sinon sa largeur naturelle.
+          final double? libre = ratio == null
+              ? null
+              : _PlaceDeclencheur.margeLaterale(
+                      taille: c.biggest,
+                      ratio: ratio,
+                      retrait: retrait,
+                    ) -
+                    2 * AppSpacing.md;
+          final Widget? entree =
+              declencheurPour?.call(
+                libre != null && libre >= _largeurPaletteIcones ? libre : null,
+              ) ??
+              declencheur;
+          return CustomMultiChildLayout(
+            delegate: _PlaceDeclencheur(
+              ratio: ratio,
+              retrait: retrait,
+              ecart: AppSpacing.md,
+              dessus: vignetteEnseignantPosee(contexte, vue)
+                  ? AppSpacing.md +
+                        MesuresVignette.largeur(
+                              gabarit,
+                              guidee: vue.vignetteAgrandie,
+                              enseignant: true,
+                              panneau: vue.panneau != PanneauOuvert.aucun,
+                            ) /
+                            MesuresVignette.ratio
+                  : 0,
+              sens: Directionality.of(contexte),
+              bas: CommandesMasquables.recouvrementDe(contexte),
+            ),
+            children: <Widget>[
+              LayoutId(id: _PieceSurface.surface, child: support),
+              // Ordre de lecture : « Eleves » (debut) avant « Commandes ».
+              if (debut != null)
+                LayoutId(id: _PieceSurface.debut, child: debut),
+              if (entree != null)
+                LayoutId(id: _PieceSurface.declencheur, child: entree),
+            ],
+          );
+        },
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Expanded(child: support),
         Padding(
-          padding: const EdgeInsets.only(top: AppSpacing.md),
+          padding: EdgeInsets.only(top: ecart ? AppSpacing.md : 0),
           child: Align(
             alignment: AlignmentDirectional.centerEnd,
             child: declencheur,
@@ -1515,6 +2159,132 @@ class _SalleEnseignant extends StatelessWidget {
       ],
     );
   }
+}
+
+/// La largeur de la palette d'ecriture en icones seules (quatre cibles de
+/// 48, leurs ecarts, la marge de sa surface) : en dessous, elle ne se pose
+/// pas dans la marge de la page.
+const double _largeurPaletteIcones =
+    4 * AppSpacing.titreEcran + 3 * AppSpacing.sm + 2 * AppSpacing.xs;
+
+/// Les pieces de la surface et de ses entrees (hors telephone).
+enum _PieceSurface { surface, declencheur, debut }
+
+/// TB-RC (TB_RAPPORT §d n. 12 ; revue TB-R M2, M3) : le declencheur
+/// « Commandes » au coin bas de fin de la surface, et [debut] (le bouton
+/// « Eleves » d'une salle courte) au coin bas de debut, quand la page,
+/// posee en `BoxFit.contain` ([ratio], retrait [retrait] de chaque cote),
+/// leur laisse la place a cote d'elle et sous la vignette ([dessus]) ;
+/// sinon sur une seule rangee sous la surface, le declencheur au bord de
+/// fin, comme avant. Rien ne recouvre la page.
+class _PlaceDeclencheur extends MultiChildLayoutDelegate {
+  _PlaceDeclencheur({
+    required this.ratio,
+    required this.retrait,
+    required this.ecart,
+    required this.dessus,
+    required this.sens,
+    this.bas = 0,
+  });
+
+  /// La hauteur du bas que la barre de l'appel recouvre quand elle se pose
+  /// par-dessus (texte agrandi sur ecran court) : les entrees restent
+  /// au-dessus d'elle, jamais dessous.
+  final double bas;
+
+  /// Le ratio de la page, ou `null` : pas de page fixe (diapositive, rendu
+  /// fourni) ou page agrandie, les entrees gardent leur rangee.
+  final double? ratio;
+  final double retrait;
+  final double ecart;
+
+  /// La hauteur occupee en haut de la surface par la vignette, ou 0.
+  final double dessus;
+  final TextDirection sens;
+
+  /// La marge que la page laisse de chaque cote d'une surface [taille].
+  static double margeLaterale({
+    required Size taille,
+    required double ratio,
+    required double retrait,
+  }) {
+    final Size boite = Size(
+      math.max(0, taille.width - 2 * retrait),
+      math.max(0, taille.height - 2 * retrait),
+    );
+    final Rect page = rectanglePage(ratio: ratio, boite: boite);
+    return (boite.width - page.width) / 2 + retrait;
+  }
+
+  @override
+  void performLayout(Size size) {
+    final bool aDecl = hasChild(_PieceSurface.declencheur);
+    final bool aDebut = hasChild(_PieceSurface.debut);
+    final Size d = aDecl
+        ? layoutChild(_PieceSurface.declencheur, BoxConstraints.loose(size))
+        : Size.zero;
+    final double resteDebut = math.max(
+      0,
+      size.width - (aDecl ? d.width + ecart : 0),
+    );
+    final Size b = aDebut
+        ? layoutChild(
+            _PieceSurface.debut,
+            BoxConstraints(maxWidth: resteDebut, maxHeight: size.height),
+          )
+        : Size.zero;
+    bool auBord = false;
+    final double? r = ratio;
+    if (r != null) {
+      final double libre = margeLaterale(
+        taille: size,
+        ratio: r,
+        retrait: retrait,
+      );
+      auBord =
+          (!aDecl ||
+              (libre >= d.width + 2 * ecart &&
+                  size.height >= dessus + d.height + 2 * ecart + bas)) &&
+          (!aDebut ||
+              (libre >= b.width + 2 * ecart &&
+                  size.height >= b.height + 2 * ecart + bas));
+    }
+    final double rangee = math.max(d.height, b.height);
+    final double hSurface = auBord
+        ? size.height
+        : math.max(0, size.height - rangee - ecart - bas);
+    layoutChild(
+      _PieceSurface.surface,
+      BoxConstraints.tightFor(width: size.width, height: hSurface),
+    );
+    positionChild(_PieceSurface.surface, Offset.zero);
+    final double marge = auBord ? ecart : 0;
+    final bool ltr = sens == TextDirection.ltr;
+    double y(Size piece) => auBord
+        ? size.height - bas - piece.height - ecart
+        : hSurface + ecart + (rangee - piece.height) / 2;
+    if (aDecl) {
+      positionChild(
+        _PieceSurface.declencheur,
+        Offset(ltr ? size.width - d.width - marge : marge, y(d)),
+      );
+    }
+    if (aDebut) {
+      positionChild(
+        _PieceSurface.debut,
+        Offset(ltr ? marge : size.width - b.width - marge, y(b)),
+      );
+    }
+  }
+
+  @override
+  bool shouldRelayout(_PlaceDeclencheur ancien) =>
+      ancien.ratio != ratio ||
+      ancien.retrait != retrait ||
+      ancien.ecart != ecart ||
+      ancien.dessus != dessus ||
+      ancien.bas != bas ||
+      ancien.sens != sens;
 }
 
 /// Les pieces de la salle du telephone sans panneau.
@@ -1803,11 +2573,31 @@ class TeteSalleBornee extends StatefulWidget {
   /// 100 % en-tete et bloc restent visibles ensemble.
   static const double part = 0.55;
 
+  /// TB-RC (revue TB-R M2, M3) : la hauteur utile de l'ecran, hors zones
+  /// du systeme (barre d'etat, indicateur d'accueil).
+  static double hauteurUtile(BuildContext context) =>
+      CompositionSalle.hauteurUtile(context);
+
+  /// La salle est courte a cet ecran ([CompositionSalle.hauteurCourte]).
+  static bool courte(BuildContext context) => CompositionSalle.courte(context);
+
+  /// La hauteur maximale de la tete : [part] de l'ecran, ou
+  /// [CompositionSalle.partTeteCourte] de la hauteur utile quand la salle
+  /// est courte (telephone couche, texte x2 au bureau ou a 320) : la tete
+  /// defile alors en fondu, l'etat critique passe en tete
+  /// ([BandeauSecours]) et la page garde sa part.
+  static double hauteurMax(BuildContext context) => courte(context)
+      ? hauteurUtile(context) * CompositionSalle.partTeteCourte
+      : MediaQuery.sizeOf(context).height * part;
+
   /// La cle du defilement de la tete.
   static const Key defilementKey = ValueKey<String>('tete-salle-defile');
 
   /// La cle du fondu pose au bas de la tete quand elle defile.
   static const Key cleFondu = ValueKey<String>('tete-salle-fondu');
+
+  /// La cle du fondu pose en haut de la tete quand elle a defile.
+  static const Key cleFonduHaut = ValueKey<String>('tete-salle-fondu-haut');
 
   /// L'en-tete, le bandeau, l'appel.
   final List<Widget> children;
@@ -1820,7 +2610,19 @@ class _TeteSalleBorneeState extends State<TeteSalleBornee> {
   /// La tete a encore du contenu sous son bord bas.
   bool _suite = false;
 
-  /// Le defilement garde sa position quand le fondu se pose ou se retire.
+  /// La tete a deja defile : du contenu est au-dessus de son bord haut.
+  bool _avant = false;
+
+  /// TB-11b (tour 3) : le rang de l'enfant qui porte l'etat critique, pose
+  /// en premier parce qu'il ne tenait pas a sa place ; `null` sinon.
+  int? _enTete;
+
+  /// TB-RC : un etat critique ne tenait pas dans la tete d'une salle
+  /// courte ; la tete reprend sa borne ordinaire ([TeteSalleBornee.part])
+  /// tant qu'il dure, pour qu'il se lise en entier, hors du fondu.
+  bool _critique = false;
+
+  /// Le defilement garde sa position quand un fondu se pose ou se retire.
   final GlobalKey _cleDefile = GlobalKey(debugLabel: 'tete-salle');
 
   bool _mesurer(ScrollMetricsNotification n) {
@@ -1835,11 +2637,107 @@ class _TeteSalleBorneeState extends State<TeteSalleBornee> {
 
   void _suivre(ScrollMetrics m) {
     final bool suite = m.extentAfter > 0.5;
-    if (suite != _suite) setState(() => _suite = suite);
+    final bool avant = m.extentBefore > 0.5;
+    if (suite != _suite || avant != _avant) {
+      setState(() {
+        _suite = suite;
+        _avant = avant;
+      });
+    }
   }
+
+  /// Le rang, dans [TeteSalleBornee.children], de l'enfant qui contient
+  /// [cible], ou `null`.
+  int? _rang(BuildContext cible) {
+    int? rang;
+    cible.visitAncestorElements((Element e) {
+      final Key? cle = e.widget.key;
+      if (cle is _RangTete) {
+        rang = cle.value;
+        return false;
+      }
+      return !identical(e.widget, widget);
+    });
+    return rang;
+  }
+
+  /// TB-11b (tours 2 et 3) : l'etat critique ([cible], le bandeau de
+  /// secours) se voit toujours en entier, hors du fondu : « une alerte
+  /// urgente va toujours en tete, avant tout autre bloc ». S'il ne tient pas
+  /// a sa place (texte a 200 %, ecran etroit), il passe en premier dans la
+  /// tete et la tete revient a son debut : aucune ligne n'est laissee
+  /// coupee a son bord haut (revue du tour 2 : un defilement arrete au
+  /// milieu d'une ligne la rognait). L'en-tete suit, sous lui, et se relit
+  /// en faisant defiler la tete (fondus bas et haut). S'il se voit deja en
+  /// entier, rien ne bouge.
+  void montrer(BuildContext cible) {
+    final RenderObject? objet = cible.findRenderObject();
+    final ScrollableState? defile = Scrollable.maybeOf(cible);
+    if (objet is! RenderBox || !objet.hasSize || defile == null) return;
+    final RenderObject? cadre = defile.context.findRenderObject();
+    if (cadre is! RenderBox || !cadre.hasSize) return;
+    final ScrollPosition position = defile.position;
+    final Offset haut = objet.localToGlobal(Offset.zero, ancestor: cadre);
+    // Le fondu couvre le bas de la tete tant qu'il reste a lire dessous.
+    final double fondu = position.extentAfter > 0.5 ? AppSpacing.xxxl : 0;
+    final bool entier =
+        haut.dy >= -0.5 &&
+        haut.dy + objet.size.height <= cadre.size.height - fondu + 0.5;
+    if (entier) return;
+    final int? rang = _rang(cible);
+    if ((rang != null && rang != _enTete) || !_critique) {
+      setState(() {
+        if (rang != null) _enTete = rang;
+        _critique = true;
+      });
+    }
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted || !position.hasPixels) return;
+      position.jumpTo(position.minScrollExtent);
+    });
+  }
+
+  /// L'etat critique est parti : la tete reprend son ordre.
+  void relacher() {
+    if (_enTete != null || _critique) {
+      setState(() {
+        _enTete = null;
+        _critique = false;
+      });
+    }
+  }
+
+  /// Un fondu de [AppSpacing.xxxl] au bord bas ([versLeBas]) ou haut.
+  Widget _fondre(
+    Key cle,
+    Color fond, {
+    required bool versLeBas,
+    required Widget child,
+  }) => ShaderMask(
+    key: cle,
+    blendMode: BlendMode.dstIn,
+    shaderCallback: (Rect r) => LinearGradient(
+      begin: versLeBas ? Alignment.topCenter : Alignment.bottomCenter,
+      end: versLeBas ? Alignment.bottomCenter : Alignment.topCenter,
+      stops: <double>[
+        if (r.height <= 0) 0 else math.max(0, 1 - AppSpacing.xxxl / r.height),
+        1,
+      ],
+      colors: <Color>[fond, fond.withValues(alpha: 0)],
+    ).createShader(r),
+    child: child,
+  );
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> enfants = <Widget>[
+      for (int i = 0; i < widget.children.length; i++)
+        KeyedSubtree(key: _RangTete(i), child: widget.children[i]),
+    ];
+    final int? enTete = _enTete;
+    if (enTete != null && enTete > 0 && enTete < enfants.length) {
+      enfants.insert(0, enfants.removeAt(enTete));
+    }
     final Widget defile = KeyedSubtree(
       key: _cleDefile,
       child: SingleChildScrollView(
@@ -1847,49 +2745,59 @@ class _TeteSalleBorneeState extends State<TeteSalleBornee> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
-          children: widget.children,
+          children: enfants,
         ),
       ),
     );
     // Revue du 09/10 : quand la tete ne tient pas (texte a 200 %, ecran
     // etroit, place laissee a la phrase du §12), son bas s'efface en fondu :
     // une ligne coupee se lit comme une suite a faire defiler, jamais comme
-    // un texte rogne.
+    // un texte rogne. TB-11b (tour 3) : de meme a son bord haut, des qu'elle
+    // a defile.
     final Color fond = AppPalette.of(context).surfaceCanvas.background;
+    Widget contenu = defile;
+    if (_suite) {
+      contenu = _fondre(
+        TeteSalleBornee.cleFondu,
+        fond,
+        versLeBas: true,
+        child: contenu,
+      );
+    }
+    if (_avant) {
+      contenu = _fondre(
+        TeteSalleBornee.cleFonduHaut,
+        fond,
+        versLeBas: false,
+        child: contenu,
+      );
+    }
     return ConstrainedBox(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.sizeOf(context).height * TeteSalleBornee.part,
+        maxHeight: _critique
+            ? math.max(
+                TeteSalleBornee.hauteurMax(context),
+                MediaQuery.sizeOf(context).height * TeteSalleBornee.part,
+              )
+            : TeteSalleBornee.hauteurMax(context),
       ),
       child: NotificationListener<ScrollUpdateNotification>(
         onNotification: _defiler,
         child: NotificationListener<ScrollMetricsNotification>(
           onNotification: _mesurer,
-          child: !_suite
-              ? defile
-              : ShaderMask(
-                  key: TeteSalleBornee.cleFondu,
-                  blendMode: BlendMode.dstIn,
-                  shaderCallback: (Rect r) => LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: <double>[
-                      if (r.height <= 0)
-                        0
-                      else
-                        math.max(0, 1 - AppSpacing.xxxl / r.height),
-                      1,
-                    ],
-                    colors: <Color>[fond, fond.withValues(alpha: 0)],
-                  ).createShader(r),
-                  child: defile,
-                ),
+          child: contenu,
         ),
       ),
     );
   }
 }
 
-class BandeauSecours extends StatelessWidget {
+/// Le rang d'un enfant de la tete : il garde son etat quand l'ordre change.
+class _RangTete extends ValueKey<int> {
+  const _RangTete(super.value);
+}
+
+class BandeauSecours extends StatefulWidget {
   const BandeauSecours({
     required this.vue,
     required this.actions,
@@ -1906,6 +2814,53 @@ class BandeauSecours extends StatelessWidget {
 
   /// L'ecart sous un etat visible, s'il manque au gabarit.
   final double espaceApres;
+
+  @override
+  State<BandeauSecours> createState() => _BandeauSecoursState();
+}
+
+class _BandeauSecoursState extends State<BandeauSecours> {
+  VueSeance get vue => widget.vue;
+  ActionsSeance get actions => widget.actions;
+  double get gouttiere => widget.gouttiere;
+  double get espaceApres => widget.espaceApres;
+
+  /// L'etat dit (bloc d'echec ou bandeau), ou `null`.
+  static String? _etat(VueSeance vue) => vue.titreEchec ?? vue.texteBandeau;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_etat(vue) != null) _montrer();
+  }
+
+  @override
+  void didUpdateWidget(BandeauSecours ancien) {
+    super.didUpdateWidget(ancien);
+    final String? etat = _etat(vue);
+    if (etat != null && etat != _etat(ancien.vue)) _montrer();
+    if (etat == null && _etat(ancien.vue) != null) _relacher();
+  }
+
+  /// TB-11b (tour 3) : l'etat parti, la tete reprend son ordre.
+  void _relacher() {
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted || _etat(vue) != null) return;
+      context.findAncestorStateOfType<_TeteSalleBorneeState>()?.relacher();
+    });
+  }
+
+  /// TB-11b (tour 2) : dans la tete bornee du telephone, un etat qui
+  /// apparait n'est jamais laisse sous son bord ni sous son fondu
+  /// ([TeteSalleBornee]) ; ailleurs, rien a faire (pas de tete qui defile).
+  void _montrer() {
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted || _etat(vue) == null) return;
+      context.findAncestorStateOfType<_TeteSalleBorneeState>()?.montrer(
+        context,
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1939,9 +2894,12 @@ class BandeauSecours extends StatelessWidget {
         message: texte,
         sousTexte: vue.sousTexteBandeau,
         // Reseau faible : la room reste connectee, jamais l'icone hors
-        // ligne (P06.5).
+        // ligne (P06.5). TB-11b : l'etat du tableau non plus (l'appel
+        // continue) ; son icone dit ce qui manque.
         icone: vue.connexion == ConnexionSeance.reseauFaible
             ? AppIcons.reseau.repos
+            : vue.bandeauDitTableau
+            ? _iconeTableau(vue)
             : null,
         encadre: true,
       );
@@ -1961,6 +2919,8 @@ class BandeauSecours extends StatelessWidget {
             duration: AppMouvement.duree(context, AppMouvement.apparition),
             curve: AppMouvement.entree,
             alignment: AlignmentDirectional.topStart,
+            // L'etat a fini de grandir : sa taille vraie decide du defilement.
+            onEnd: _montrer,
             child: etat,
           ),
           LocalFeedback(
@@ -1971,6 +2931,17 @@ class BandeauSecours extends StatelessWidget {
       ),
     );
   }
+}
+
+/// TB-11b : l'icone de l'etat du tableau. Nouvelle encre non partagee : en
+/// attente d'envoi ; reprise ou reconnexion du tableau : reconnexion ;
+/// notes non sauvegardees : avertissement.
+IconData _iconeTableau(VueSeance vue) {
+  if (vue.encreNonPartagee) return AppIcons.enAttenteEnvoi.repos;
+  if (vue.synchroTableau != SynchroTableau.partage) {
+    return AppIcons.reconnexion.repos;
+  }
+  return AppIcons.avertissement.repos;
 }
 
 /// Le bloc d'erreur de connexion (P05.8) : titre exact par role, sans

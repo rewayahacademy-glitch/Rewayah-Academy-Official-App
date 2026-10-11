@@ -11,11 +11,21 @@ import 'pressable.dart';
 @immutable
 class Segment<T> {
   /// Cree un segment.
-  const Segment({required this.valeur, required this.libelle, this.icone});
+  const Segment({
+    required this.valeur,
+    required this.libelle,
+    this.icone,
+    this.apercu,
+  });
 
   /// Une icone posee au-dessus du libelle (soleil, lune) : elle ne remplace
   /// jamais le libelle, l'etat ne repose pas sur le seul pictogramme.
   final AppIcon? icone;
+
+  /// TB-7b : un apercu peint de la valeur, a la place de l'icone (pastille
+  /// d'une couleur d'encre, trait d'une epaisseur). Comme l'icone, il ne
+  /// remplace jamais le libelle ; il est muet pour le lecteur d'ecran.
+  final Widget? apercu;
 
   /// La valeur que le segment selectionne.
   final T valeur;
@@ -167,7 +177,10 @@ class _Segment<T> extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    if (segment.icone != null) ...<Widget>[
+                    if (segment.apercu case final Widget apercu) ...<Widget>[
+                      ExcludeSemantics(child: apercu),
+                      Ecart.vXs,
+                    ] else if (segment.icone != null) ...<Widget>[
                       ExcludeSemantics(
                         child: Icon(
                           selectionne

@@ -23,6 +23,9 @@ import '../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_outils/annotation_layer.dart'
+    show AnnotationLayer, TraitVectoriel;
+import '../../core/tc_outils/port_annotations.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
@@ -31,12 +34,15 @@ import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart';
 import '../salle_seance/actions_seance.dart';
+import '../salle_seance/notes_deposees.dart';
 import '../salle_seance/panneau_eleves.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/salle_seance.dart';
 import '../salle_seance/signalement_seance.dart';
+import '../salle_seance/surface_page_fixe.dart' show PorteeSupportRecu;
 import '../salle_seance/vue_seance.dart';
 import 'mode_demonstration.dart';
+import 'salle_observateur_demo.dart';
 import 'seance_demo.dart';
 
 /// Les routes de la demonstration : AUCUNE quand l'environnement ne
@@ -51,6 +57,11 @@ List<RouteBase> routesDemoSalle(String environnement) {
         etat: _lire(EtatDemoSalle.values, etat.uri.queryParameters['etat']),
         // TB-1b : une situation Supports et tableau (`&tb=ped03`).
         situation: _lire(SituationTb.values, etat.uri.queryParameters['tb']),
+        // TB-11a : la salle d'un observateur (`&obs=tuteur`).
+        observateur: _lire(
+          ObservateurDemo.values,
+          etat.uri.queryParameters['obs'],
+        ),
         // Le titre de demonstration, comme l'Espace Classe (`&titre=sayyida`).
         titre: etat.uri.queryParameters['titre'] == 'sayyida'
             ? TitreEnseignant.sayyida
@@ -83,13 +94,29 @@ String adresseDemoSalleTb(RoleSeance role, SituationTb situation) => Uri(
   queryParameters: <String, String>{'role': role.name, 'tb': situation.name},
 ).toString();
 
+/// TB-11a : l'adresse de la salle d'un observateur dans une situation.
+String adresseDemoSalleObservateur(
+  ObservateurDemo observateur,
+  SituationTb situation,
+) => Uri(
+  path: Routes.demoSalle,
+  queryParameters: <String, String>{
+    'obs': observateur.name,
+    'tb': situation.name,
+  },
+).toString();
+
+/// L'identifiant fictif de la seance observee.
+const String _seanceObservee = 'demo-seance';
+
 /// La page : la liste, ou la salle si [role] et [etat] (ou [situation])
-/// sont donnes.
+/// sont donnes, ou celle d'un [observateur].
 class DemoSallePage extends StatelessWidget {
   const DemoSallePage({
     this.role,
     this.etat,
     this.situation,
+    this.observateur,
     this.titre = TitreEnseignant.sayyid,
     this.enregistrement = EtatEnregistrement.actif,
     super.key,
@@ -111,8 +138,24 @@ class DemoSallePage extends StatelessWidget {
   /// Le titre de l'enseignant de la demonstration (E16).
   final TitreEnseignant titre;
 
+  /// TB-11a : l'observateur (tuteur, controleur) ; il prime sur [role]. Sa
+  /// salle est la VRAIE `SallePage`, la presentation lue celle de
+  /// [situation] (une situation sans objet pour lui ramene a la liste).
+  final ObservateurDemo? observateur;
+
   @override
   Widget build(BuildContext context) {
+    final ObservateurDemo? o = observateur;
+    if (o != null) {
+      final SituationTb s = situation ?? SituationTb.sal00;
+      if (!situationsObservateur.contains(s)) return const _ListeDemo();
+      return SalleObservateurDemo(
+        key: ValueKey<String>('obs-${o.name}-tb-${s.name}'),
+        observateur: o,
+        seanceId: _seanceObservee,
+        presentation: presentationObserveeDemo(s),
+      );
+    }
     final RoleSeance? r = role;
     final SituationTb? s = situation;
     if (r != null && s != null) {
@@ -157,6 +200,11 @@ String _libelleRole(RoleSeance role) => switch (role) {
   RoleSeance.eleve => t.salle.seance.demo.roles.eleve,
   RoleSeance.guidee => t.salle.seance.demo.roles.guidee,
   RoleSeance.enseignant => t.salle.seance.demo.roles.enseignant,
+};
+
+String _libelleObservateur(ObservateurDemo o) => switch (o) {
+  ObservateurDemo.tuteur => t.salle.seance.demo.roles.tuteur,
+  ObservateurDemo.controleur => t.salle.seance.demo.roles.controleur,
 };
 
 String _libelleEtat(EtatDemoSalle etat) => switch (etat) {
@@ -319,6 +367,35 @@ class _ListeDemo extends StatelessWidget {
             Ecart.vLg,
             groupeTb(role),
           ],
+          // TB-11a : les observateurs, la presentation en lecture seule.
+          for (final ObservateurDemo o in ObservateurDemo.values) ...<Widget>[
+            Ecart.vXxl,
+            Semantics(
+              header: true,
+              child: Text(
+                _libelleObservateur(o),
+                style: palette.inkStrong.applyTo(
+                  theme.textTheme.titleMedium ?? const TextStyle(),
+                ),
+              ),
+            ),
+            Ecart.vMd,
+            titreGroupe(t.salle.seance.demo.groupes.tableau),
+            Ecart.vSm,
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: <Widget>[
+                for (final SituationTb s in situationsObservateur)
+                  _Lien(
+                    key: ValueKey<String>('lien-obs-${o.name}-tb-${s.name}'),
+                    libelle: _libelleSituation(s),
+                    onPress: () =>
+                        context.go(adresseDemoSalleObservateur(o, s)),
+                  ),
+              ],
+            ),
+          ],
         ],
       ),
     );
@@ -386,6 +463,30 @@ class _SalleDemoState extends State<SalleDemo> {
   static const double _zoomMax = 2;
 
   bool _micro = true;
+
+  /// TB-7b : le depot d'annotations de la demonstration, en memoire (le
+  /// « double local assume » de `AnnotationsMemoire`) : les notes vivent le
+  /// temps de la salle ouverte, rien n'est envoye ni enregistre (TB-BR).
+  /// `null` quand l'hote en fournit deja un (tests, Classe Live).
+  late final AnnotationsMemoire? _depot = _depotDemonstration();
+
+  AnnotationsMemoire? _depotDemonstration() {
+    try {
+      ProviderScope.containerOf(
+        context,
+        listen: false,
+      ).read(portAnnotationsProvider);
+      return null;
+    } on Object {
+      return AnnotationsMemoire(DonneesSeanceDemo.groupeDemo);
+    }
+  }
+
+  @override
+  void dispose() {
+    unawaited(_depot?.liberer());
+    super.dispose();
+  }
 
   /// EN-10 : la camera de l'enseignant ne s'allume jamais sans son geste.
   late bool _camera = widget.role != RoleSeance.enseignant;
@@ -482,6 +583,72 @@ class _SalleDemoState extends State<SalleDemo> {
   /// la situation.
   SupportPageFixe? _presente;
 
+  /// TB-9 : le support a ete range ; la surface revient au tableau libre
+  /// (aucun support presente, aucune diapositive) jusqu'au prochain
+  /// « Presenter ».
+  bool _range = false;
+
+  /// TB-9 : les supports ranges pendant la seance, a leur page.
+  final List<SupportPageFixe> _ranges = <SupportPageFixe>[];
+
+  /// TB-7a, TB-9 : les notes de la seance ; `null` : celles de la
+  /// situation. Ranger n'y touche pas ; « Effacer les notes » retire celles
+  /// de la surface montree. Rien n'est diffuse (TB-BR).
+  List<TraitVectoriel>? _notes;
+
+  /// TB-10 : les autorisations d'ecrire donnees ou retirees dans la
+  /// demonstration, par prenom ; absentes : celles de la situation.
+  final Map<String, bool> _ecriture = <String, bool>{};
+
+  /// TB-9 : le tableau libre a ete efface (« … du tableau ? »).
+  bool _tableauEfface = false;
+
+  /// TB-RC (revue TB-R, M1 ; plan V2 §12) : le support recu apres
+  /// « Reessayer » ; `null` : celui de la situation. Demonstration : le
+  /// support revient (aucun chargement reel avant BR-1).
+  EtatSupportRecu? _supportRecu;
+
+  /// TB-9 (plan V2 §3 « Ranger reellement », §19.2 points 4 et 5) : le
+  /// support presente rejoint les supports ranges, a sa page ; le tableau
+  /// libre revient, sans copie des notes du support. Aucune confirmation.
+  void _ranger(VueSeance vue) {
+    final SupportPageFixe? presente = vue.supportPresente;
+    if (presente == null) return;
+    setState(() {
+      _ranges
+        ..removeWhere((SupportPageFixe s) => s.id == presente.id)
+        ..add(presente);
+      _range = true;
+      _presente = null;
+      _page = null;
+    });
+  }
+
+  /// TB-9 (plan V2 §12) : apres confirmation, les notes de la surface
+  /// montree (la page, ou le tableau libre) sont retirees.
+  void _effacerNotes(VueSeance vue) {
+    final ContentPosition? ancrage = vue.ancrageSurface;
+    if (ancrage == null) return;
+    setState(() {
+      _notes = <TraitVectoriel>[
+        for (final TraitVectoriel trait in vue.notesSurface)
+          if (trait.ancrage != ancrage) trait,
+      ];
+      if (vue.effacementDuTableau) _tableauEfface = true;
+    });
+    // TB-7b : les notes ecrites dans la demonstration (depot en memoire)
+    // de cette surface s'effacent aussi.
+    final AnnotationsMemoire? depot = _depot;
+    if (depot == null) return;
+    for (final AnnotationLayer couche in depot.couches.toList()) {
+      for (final TraitVectoriel trait in couche.traits.toList()) {
+        if (trait.ancrage == ancrage) {
+          unawaited(depot.retirerTrait(couche.id, trait.id));
+        }
+      }
+    }
+  }
+
   /// TB-8 (LIB-02, LIB-03) : « Presenter ». Le chargement se verifie avant
   /// tout changement ; en demonstration, le cahier sans fichier echoue et la
   /// classe garde le support d'avant. Le futur rend l'activation, que la
@@ -504,8 +671,20 @@ class _SalleDemoState extends State<SalleDemo> {
     return () {
       if (!mounted) return;
       setState(() {
-        _presente = DonneesSeanceDemo.pagePresentee(ressource, page: page);
-        _support = DonneesSeanceDemo.diapositiveDe(ressource.id) ?? _support;
+        // TB-9 : reprendre un support range le retire des ranges ; ses
+        // notes de la seance l'attendent a sa page.
+        _range = false;
+        _ranges.removeWhere((SupportPageFixe s) => s.id == ressource.id);
+        final SupportPageFixe presente = DonneesSeanceDemo.pagePresentee(
+          ressource,
+          page: page,
+        );
+        _presente = presente;
+        // TB-RC (n. 22) : la diapositive suit le support presente, meme
+        // sans diapositive propre (support arabe).
+        _support =
+            DonneesSeanceDemo.diapositiveDe(ressource.id, page: presente) ??
+            _support;
         _page = page;
         _affichage = AffichagePartage.avecNotes;
         _panneau = PanneauOuvert.aucun;
@@ -528,11 +707,13 @@ class _SalleDemoState extends State<SalleDemo> {
     );
     final int? page = _page;
     // Comme avant : sans support dans l'etat, rien n'est montre.
-    final SupportSeance? diapositive = etat.support == null
+    final SupportSeance? diapositive = etat.support == null || _range
         ? null
         : _support ?? etat.support;
+    final TableauLibre? tableau = etat.tableauLibre;
     final VueSeance vue = etat.copyWith(
       panneau: _panneau,
+      sansSupport: diapositive == null,
       support: diapositive == null
           ? null
           : page == null
@@ -549,6 +730,30 @@ class _SalleDemoState extends State<SalleDemo> {
         ),
         _ => _presente,
       },
+      // TB-9 : range, plus aucun support presente.
+      sansSupportPresente: _range,
+      supportsRanges: List<SupportPageFixe>.unmodifiable(_ranges),
+      eleves: _ecriture.isEmpty
+          ? null
+          : <EleveSeance>[
+              for (final EleveSeance e in etat.eleves)
+                EleveSeance(
+                  prenom: e.prenom,
+                  statut: e.statut,
+                  fiche: e.fiche,
+                  id: e.id,
+                  cleAvatar: e.cleAvatar,
+                  peutEcrire: _ecriture[e.prenom] ?? e.peutEcrire,
+                ),
+            ],
+      notesSurface: _notes,
+      supportRecu: _supportRecu,
+      tableauLibre: tableau != null && _tableauEfface
+          ? TableauLibre(
+              largeurCanonique: tableau.largeurCanonique,
+              hauteurCanonique: tableau.hauteurCanonique,
+            )
+          : null,
     );
     final bool enseignant = widget.role == RoleSeance.enseignant;
     // Fin de seance de l'enseignant : CLV-10 (le cahier n'existe pas en
@@ -579,13 +784,17 @@ class _SalleDemoState extends State<SalleDemo> {
       // TB-4 (CMD-01) : « Commandes » ouvre et reduit le panneau ; les trois
       // affichages, un clic chacun ; « Ajuster a l'ecran » remet le zoom
       // local a 100 %. Etat local, rien n'est diffuse.
-      onCommandes: enseignant
+      // TB-10 : l'eleve et la guidee ont leurs Commandes dans les
+      // situations Supports et tableau (lecture, focus, ecriture accordee).
+      onCommandes: enseignant || widget.situation != null
           ? () => _basculerPanneau(PanneauOuvert.commandes)
           : null,
       onAffichage: enseignant
           ? (AffichagePartage a) => setState(() => _affichage = a)
           : null,
-      onAjusterEcran: enseignant ? () => setState(() => _zoom = 1) : null,
+      onAjusterEcran: enseignant || widget.situation != null
+          ? () => setState(() => _zoom = 1)
+          : null,
       onRetour: widget.onSortir,
       onQuitter: enseignant
           ? widget.onSortir
@@ -624,7 +833,18 @@ class _SalleDemoState extends State<SalleDemo> {
       onSupports: enseignant
           ? () => _basculerPanneau(PanneauOuvert.supports)
           : null,
-      onOutil: enseignant ? (OutilEnseignement _) => _inerte() : null,
+      // TB-10 : « Ecrire » de l'eleve autorise, dans les situations
+      // Supports et tableau (depot en memoire, rien n'est diffuse).
+      onOutil: enseignant || widget.situation != null
+          ? (OutilEnseignement _) => _inerte()
+          : null,
+      // TB-10 (UX-20) : « Autoriser a ecrire » et « Retirer l'autorisation
+      // d'ecrire » sur la fiche ; etat local de la demonstration, rien
+      // n'est diffuse (TB-BR-10).
+      onAutoriserEcrire: enseignant && widget.situation != null
+          ? (EleveSeance e) =>
+                setState(() => _ecriture[e.prenom] = !e.peutEcrire)
+          : null,
       // TB-4 : la page change dans la demonstration (diffusion a BR-1).
       onPagePrecedente: enseignant ? () => _changerPage(vue, -1) : null,
       onPageSuivante: enseignant ? () => _changerPage(vue, 1) : null,
@@ -655,6 +875,14 @@ class _SalleDemoState extends State<SalleDemo> {
       // TB-8 : la Bibliotheque unique dans les situations Supports et
       // tableau (catalogue de demonstration par le port, ci-dessous).
       onPresenter: enseignant && widget.situation != null ? _presenter : null,
+      // TB-9 : ranger et effacer les notes, dans les situations Supports et
+      // tableau (Bibliotheque unique) ; rien n'est diffuse (TB-BR).
+      onRanger: enseignant && widget.situation != null
+          ? () => _ranger(vue)
+          : null,
+      onEffacerNotes: enseignant && widget.situation != null
+          ? () => _effacerNotes(vue)
+          : null,
       // Secours (CL-7), sans serveur : « Reessayer » simule le retour de la
       // connexion (« Connexion retablie. ») ; « Continuer sans micro »
       // laisse le micro coupe. Ouvrir les reglages : BR-1 (non rendu).
@@ -701,8 +929,23 @@ class _SalleDemoState extends State<SalleDemo> {
           (Ref _, String cle) =>
               Future<String>.error(StateError('demonstration : $cle')),
         ),
+        // TB-7b : ecrire, gommer et annuler dans la demonstration ; la
+        // relecture du depot suit ce depot-ci (famille reprise dans ce
+        // perimetre).
+        // TB-11b (tour 2) : les traits poses pendant l'interruption
+        // appartiennent a cette salle, jamais a la suivante.
+        traitsNonPartagesProvider.overrideWith(TraitsNonPartages.new),
+        if (_depot case final AnnotationsMemoire depot) ...<Override>[
+          portAnnotationsProvider.overrideWithValue(depot),
+          notesDeposeesProvider.overrideWith2(NotesDeposees.new),
+        ],
       ],
-      child: salle,
+      // TB-RC (M1) : « Reessayer » de l'eleve, sans quitter la seance.
+      child: PorteeSupportRecu(onReessayer: _reessayerSupport, child: salle),
     );
   }
+
+  /// TB-RC (M1) : le support redemande revient (demonstration).
+  void _reessayerSupport() =>
+      setState(() => _supportRecu = EtatSupportRecu.pret);
 }
