@@ -125,13 +125,17 @@ final class StatutsSignatureSupabase implements PortStatutsSignature {
     }
     return switch (value['status']) {
       'signe_version_courante' => const SigneVersionCourante(),
-      'signe_ancienne_version' => SigneAncienneVersion(
-        value['version_signee'] is String
-            ? value['version_signee'] as String
-            : '',
-      ),
-      _ => const NonSigne(),
+      'signe_ancienne_version' => _ancienneVersion(value['version_signee']),
+      'non_signe' => const NonSigne(),
+      _ => throw const FormatException('statut de signature inconnu'),
     };
+  }
+
+  static SigneAncienneVersion _ancienneVersion(Object? value) {
+    if (value is! String || value.trim().isEmpty) {
+      throw const FormatException('version de signature invalide');
+    }
+    return SigneAncienneVersion(value);
   }
 }
 
