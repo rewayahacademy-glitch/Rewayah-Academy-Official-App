@@ -271,7 +271,7 @@ void main() {
   });
 
   group('le lot (§41)', () {
-    testWidgets('R-FIN-22, 23 : 11 prets / 2 exclus, l\'exclusion dite, '
+    testWidgets('R-FIN-22 et R-FIN-23 : 11 prets / 2 exclus, l\'exclusion dite, '
         'seuls les prets partent', (WidgetTester tester) async {
       final EtatDemoPaiements etat = EtatDemoPaiements();
       await monterPaiements(

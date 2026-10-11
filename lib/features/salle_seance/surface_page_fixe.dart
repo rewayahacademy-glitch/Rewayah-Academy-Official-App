@@ -151,19 +151,25 @@ class SurfacePageFixe extends ConsumerStatefulWidget {
       InterfaceMode.standard,
       Brightness.light,
     );
-    final TextPainter peintre = TextPainter(
-      text: TextSpan(
-        text: t.salle.seance.surface.aucunSupport,
-        style: DefaultTextStyle.of(context).style
-            .merge(clair.textTheme.bodyLarge),
-      ),
-      textAlign: TextAlign.center,
-      textDirection: Directionality.of(context),
-      textScaler: MediaQuery.textScalerOf(context),
-    )..layout(maxWidth: math.max(0, largeur - 2 * _margeConsigne));
+    final TextPainter peintre =
+        TextPainter(
+          text: TextSpan(
+            text: t.salle.seance.surface.aucunSupport,
+            style: DefaultTextStyle.of(context).style
+                .merge(clair.textTheme.bodyLarge),
+          ),
+          textAlign: TextAlign.center,
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+        )..layout(
+          maxWidth: math.max(
+            0,
+            largeur - 2 * (_margeConsigne + _margeCarteConsigne),
+          ),
+        );
     final double hauteur = peintre.height;
     peintre.dispose();
-    return hauteur + 2 * _margeConsigne;
+    return hauteur + 2 * (_margeConsigne + _margeCarteConsigne);
   }
 
   @override
@@ -248,7 +254,7 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
   /// pose pendant l'interruption n'est donc pas prouve recu. La levee sur
   /// accuse par trait (TB-BR-42) arrive avec le transport (BR-1).
   void _reconcilier() {
-    if (widget.vue.synchroTableau != SynchroTableau.partage) return;
+    if (widget.vue.synchroEffective != SynchroTableau.partage) return;
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       if (!mounted) return;
       ref.read(traitsNonPartagesProvider.notifier).reconcilier();
@@ -258,7 +264,9 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
   @override
   void didUpdateWidget(SurfacePageFixe ancien) {
     super.didUpdateWidget(ancien);
-    if (ancien.vue.synchroTableau != widget.vue.synchroTableau) _reconcilier();
+    if (ancien.vue.synchroEffective != widget.vue.synchroEffective) {
+      _reconcilier();
+    }
     // « Ajuster a l'ecran » (zoom 100 %) recentre aussi la page.
     if (widget.zoom != ancien.zoom && widget.zoom <= 1) {
       _garder(Offset.zero);
@@ -459,11 +467,19 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
                     child: Center(
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.all(_margeConsigne),
-                        child: Text(
-                          t.salle.seance.surface.aucunSupport,
-                          key: SurfacePageFixe.cleConsigne,
-                          textAlign: TextAlign.center,
-                          style: _styleConsigne(context),
+                        // TB-RC (n.7) : la phrase tient sur sa propre carte,
+                        // jamais a cheval sur la page et le fond de la
+                        // surface (a x2 la page est plus etroite qu'elle).
+                        child: _Cadre(
+                          child: Padding(
+                            padding: const EdgeInsets.all(_margeCarteConsigne),
+                            child: Text(
+                              t.salle.seance.surface.aucunSupport,
+                              key: SurfacePageFixe.cleConsigne,
+                              textAlign: TextAlign.center,
+                              style: _styleConsigne(context),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -579,7 +595,8 @@ class _CalqueNotes extends ConsumerWidget {
     // que le tableau n'est pas revenu : ceux que dit la vue, et ceux que la
     // personne vient de poser pendant l'interruption.
     final Set<String> locaux = ref.watch(traitsNonPartagesProvider);
-    final Set<String> nonPartages = vue.synchroTableau == SynchroTableau.partage
+    final Set<String> nonPartages =
+        vue.synchroEffective == SynchroTableau.partage
         ? vue.traitsNonPartages
         : <String>{...vue.traitsNonPartages, ...locaux};
     // Les notes de la vue, puis celles que le depot a prises pour cette
@@ -625,6 +642,9 @@ class _CalqueNotes extends ConsumerWidget {
 
 /// La marge autour de la phrase du §12.
 const double _margeConsigne = AppSpacing.lg;
+
+/// TB-RC (n.7) : l'air entre la phrase et le bord de sa carte.
+const double _margeCarteConsigne = AppSpacing.md;
 
 TextStyle _styleConsigne(BuildContext context) =>
     AppPalette.of(context).inkMuted

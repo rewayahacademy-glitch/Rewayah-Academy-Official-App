@@ -261,9 +261,15 @@ class TirageDemo implements PortTirageControle {
         'votre compte ne peut pas modifier ces règles',
       );
     } else {
-      _regles = regles;
+      final int version = _regles.version + 1;
+      _regles = ReglesTirage(
+        version: version,
+        missionsParSemaine: regles.missionsParSemaine,
+        ponderations: regles.ponderations,
+        cibles: regles.cibles,
+      );
       enregistrementsFaits++;
-      resultat = const ReglesEnregistrees();
+      resultat = ReglesEnregistrees(version: version);
     }
     _parCle[cleEnvoi] = resultat;
     return resultat;
@@ -300,6 +306,7 @@ class TirageDemo implements PortTirageControle {
 /// Les regles de depart : une mission par semaine, poids normaux, aucune
 /// cible.
 ReglesTirage reglesParDefautDemo() => const ReglesTirage(
+  version: 1,
   missionsParSemaine: 1,
   ponderations: <CriterePonderation, NiveauPonderation>{
     CriterePonderation.enseignantsRecents: NiveauPonderation.normal,

@@ -221,15 +221,46 @@ class _ReglesEtat extends ConsumerState<_Regles> {
   String? _message;
   bool _enregistre = false;
 
+  /// La version creee par le dernier enregistrement (0 : non rendue).
+  int _versionEnregistree = 0;
+
+  /// Vrai quand la carte « Autre » porte un texte qui n'est pas un entier de
+  /// 0 a 50 : rien ne part, l'ecran le dit (jamais un bouton grise).
+  bool _nombreInvalide = false;
+
   void _modifier(ReglesTirage regles) => setState(() {
     _brouillon = regles;
     _message = null;
     _enregistre = false;
+    _nombreInvalide = false;
   });
+
+  /// Les cartes de frequence : un nombre propose, ou « Autre » (0 a 50).
+  void _choisirFrequence(ReglesTirage regles, ReponseChoix reponse) {
+    if (reponse.valeurs.contains(ChoiceCardGroup.valeurAutre)) {
+      final int? n = lireMissions(reponse.saisieLibre);
+      if (n == null) {
+        setState(() {
+          _nombreInvalide = true;
+          _message = null;
+          _enregistre = false;
+        });
+      } else {
+        _modifier(regles.avec(missionsParSemaine: n));
+      }
+      return;
+    }
+    final int? n = int.tryParse(reponse.valeurs.firstOrNull ?? '');
+    if (n != null) _modifier(regles.avec(missionsParSemaine: n));
+  }
 
   Future<void> _enregistrer() async {
     final ReglesTirage? regles = _brouillon;
     if (_envoi || regles == null) return;
+    if (_nombreInvalide) {
+      setState(() => _message = t.admin.tirage.nombreInvalide);
+      return;
+    }
     final PortTirageControle? port = ref.read(portTirageControleProvider);
     if (port == null) return;
     setState(() {
@@ -251,8 +282,9 @@ class _ReglesEtat extends ConsumerState<_Regles> {
           _message = t.admin.tirage.nonConfirmees;
         case ReglesRefusees(:final String motif):
           _message = t.admin.tirage.refusees(motif: motif);
-        case ReglesEnregistrees():
+        case ReglesEnregistrees(:final int version):
           _enregistre = true;
+          _versionEnregistree = version;
           // La serie est close : la prochaine modification repart d'une cle
           // neuve.
           _cle = nouvelleCleEnvoi();
@@ -305,6 +337,16 @@ class _ReglesEtat extends ConsumerState<_Regles> {
         Ecart.vXs,
         TexteSansCoupure(r.reglesIntro, style: textes.bodySmall),
         Ecart.vMd,
+        if (regles != null) ...<Widget>[
+          TexteSansCoupure(
+            regles.version == 0
+                ? r.aucuneVersion
+                : r.versionEnVigueur(n: regles.version),
+            key: const ValueKey<String>('tirage-version'),
+            style: textes.titleSmall,
+          ),
+          Ecart.vMd,
+        ],
         if (regles == null)
           BlocAsynchrone<ReglesTirage>(
             valeur: lecture,
@@ -336,10 +378,15 @@ class _ReglesEtat extends ConsumerState<_Regles> {
                 Ecart.vMd,
                 ChoiceCardGroup(
                   key: ValueKey<String>('tirage-frequence-$_version'),
-                  autoriserSaisieLibre: false,
-                  valeurInitiale: ReponseChoix(
-                    valeurs: <String>{'${regles.missionsParSemaine}'},
-                  ),
+                  valeurInitiale:
+                      frequencesProposees.contains(regles.missionsParSemaine)
+                      ? ReponseChoix(
+                          valeurs: <String>{'${regles.missionsParSemaine}'},
+                        )
+                      : ReponseChoix(
+                          valeurs: const <String>{ChoiceCardGroup.valeurAutre},
+                          saisieLibre: '${regles.missionsParSemaine}',
+                        ),
                   options: <OptionChoix>[
                     for (final int n in frequencesProposees)
                       OptionChoix(
@@ -348,15 +395,24 @@ class _ReglesEtat extends ConsumerState<_Regles> {
                         libelle: r.missionsParSemaine(n: n),
                       ),
                   ],
-                  onChange: (ReponseChoix reponse) {
-                    final int? n = int.tryParse(
-                      reponse.valeurs.firstOrNull ?? '',
-                    );
-                    if (n != null) {
-                      _modifier(regles.avec(missionsParSemaine: n));
-                    }
-                  },
+                  onChange: (ReponseChoix reponse) =>
+                      _choisirFrequence(regles, reponse),
                 ),
+                if (_nombreInvalide) ...<Widget>[
+                  Ecart.vSm,
+                  TexteSansCoupure(
+                    r.nombreInvalide,
+                    key: const ValueKey<String>('tirage-nombre-invalide'),
+                    style: textes.bodyMedium,
+                  ),
+                ] else if (regles.missionsParSemaine == 0) ...<Widget>[
+                  Ecart.vSm,
+                  TexteSansCoupure(
+                    r.zeroPhrase,
+                    key: const ValueKey<String>('tirage-zero'),
+                    style: textes.bodyMedium,
+                  ),
+                ],
                 Ecart.vXl,
                 Text(r.ponderationTitre, style: textes.titleMedium),
                 Ecart.vXs,
@@ -453,7 +509,9 @@ class _ReglesEtat extends ConsumerState<_Regles> {
                   Semantics(
                     liveRegion: true,
                     child: TexteSansCoupure(
-                      r.enregistrees,
+                      _versionEnregistree > 0
+                          ? r.enregistreesVersion(n: _versionEnregistree)
+                          : r.enregistrees,
                       key: const ValueKey<String>('tirage-enregistrees'),
                       style: textes.titleSmall,
                     ),
