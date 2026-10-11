@@ -36,11 +36,12 @@ BEGIN
 
   INSERT INTO public.remplacements_seance
     (session_id, evenement, enseignant_titulaire_id, enseignant_remplacant_id,
-     acteur_id, cle_idempotence)
+     acteur_id, cle_idempotence, cree_le)
   VALUES
     ('c29e0000-0000-0000-0000-000000000201', 'absence_declaree',
      'c29e0000-0000-0000-0000-000000000001', NULL,
-     'c29e0000-0000-0000-0000-000000000001', 'c29e0000-0000-0000-0000-000000000301');
+     'c29e0000-0000-0000-0000-000000000001', 'c29e0000-0000-0000-0000-000000000301',
+     pg_catalog.clock_timestamp());
   IF private.c29_enseignant_effectif_session(
        'c29e0000-0000-0000-0000-000000000201'
      ) <> 'c29e0000-0000-0000-0000-000000000001' THEN
@@ -49,11 +50,12 @@ BEGIN
 
   INSERT INTO public.remplacements_seance
     (session_id, evenement, enseignant_titulaire_id, enseignant_remplacant_id,
-     acteur_id, cle_idempotence)
+     acteur_id, cle_idempotence, cree_le)
   VALUES
     ('c29e0000-0000-0000-0000-000000000201', 'remplacement_pris',
      'c29e0000-0000-0000-0000-000000000001', 'c29e0000-0000-0000-0000-000000000002',
-     'c29e0000-0000-0000-0000-000000000002', 'c29e0000-0000-0000-0000-000000000302');
+     'c29e0000-0000-0000-0000-000000000002', 'c29e0000-0000-0000-0000-000000000302',
+     pg_catalog.clock_timestamp() + interval '1 millisecond');
   IF private.c29_enseignant_effectif_session(
        'c29e0000-0000-0000-0000-000000000201'
      ) <> 'c29e0000-0000-0000-0000-000000000002' THEN

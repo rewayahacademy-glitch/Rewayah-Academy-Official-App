@@ -158,7 +158,8 @@ BEGIN
       CASE WHEN EXISTS (SELECT 1 FROM private.controle_missions done
         WHERE done.groupe_id=s.groupe_id AND done.cycle_debut=v_cycle
           AND done.statut='controlee') THEN 1 ELSE 0 END,
-      pg_catalog.random() *
+      -pg_catalog.ln(1.0-pg_catalog.random()) /
+        (
         CASE WHEN EXISTS (SELECT 1 FROM private.controle_missions previous_teacher
           WHERE previous_teacher.enseignant_effectif_id=private.c29_enseignant_effectif_session(s.id)
             AND previous_teacher.affectee_le>=pg_catalog.clock_timestamp()-interval '28 days')
@@ -188,7 +189,8 @@ BEGIN
           AND v_weights->>'heures_de_pointe'='fort' THEN 4
         WHEN (s.started_at AT TIME ZONE g.timezone_iana)::time >= TIME '17:00'
           AND (s.started_at AT TIME ZONE g.timezone_iana)::time < TIME '21:00'
-          AND v_weights->>'heures_de_pointe'='normal' THEN 2 ELSE 1 END,
+          AND v_weights->>'heures_de_pointe'='normal' THEN 2 ELSE 1 END
+        ),
       s.id
     LIMIT 1 FOR UPDATE OF s SKIP LOCKED;
   IF NOT FOUND THEN RETURN NEW; END IF;
@@ -232,9 +234,12 @@ BEGIN
       AND NOT EXISTS (SELECT 1 FROM private.controle_missions own
         WHERE own.controleur_id=p.id AND own.cycle_debut=v_cycle
         GROUP BY own.controleur_id HAVING count(*)>=v_quota)
-    ORDER BY pg_catalog.random() * CASE WHEN EXISTS (SELECT 1 FROM private.controle_missions old
-      WHERE old.controleur_id=c.profile_id AND old.groupe_id=v_candidate.groupe_id
-        AND old.affectee_le>=pg_catalog.clock_timestamp()-interval '28 days') THEN 0.25 ELSE 1 END,
+    ORDER BY -pg_catalog.ln(1.0-pg_catalog.random()) /
+      CASE WHEN EXISTS (SELECT 1 FROM private.controle_missions ancienne_mission
+        WHERE ancienne_mission.controleur_id=c.profile_id
+          AND ancienne_mission.groupe_id=v_candidate.groupe_id
+          AND ancienne_mission.affectee_le>=pg_catalog.clock_timestamp()-interval '28 days')
+        THEN 0.25 ELSE 1 END,
       c.profile_id
     LIMIT 1 FOR UPDATE OF c SKIP LOCKED;
   IF v_controller IS NULL THEN RETURN NEW; END IF;

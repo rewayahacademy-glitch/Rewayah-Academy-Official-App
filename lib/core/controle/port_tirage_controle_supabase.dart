@@ -10,8 +10,9 @@ class PortTirageControleSupabase implements PortTirageControle {
 
   static Map<String, dynamic> _object(Object? value, String name) {
     if (value is Map<String, dynamic>) return value;
-    if (value is Map)
+    if (value is Map) {
       return value.map((Object? k, Object? v) => MapEntry('$k', v));
+    }
     throw FormatException('$name: objet JSON attendu');
   }
 
@@ -95,6 +96,7 @@ class PortTirageControleSupabase implements PortTirageControle {
         })
         .toList(growable: false);
     return ReglesTirage(
+      version: _int(json['version'], 'version'),
       missionsParSemaine: _int(
         json['missions_par_semaine'],
         'missions_par_semaine',
@@ -135,7 +137,7 @@ class PortTirageControleSupabase implements PortTirageControle {
     );
     _throwServerError(result);
     return result['statut'] == 'enregistrees'
-        ? const ReglesEnregistrees()
+        ? ReglesEnregistrees(version: _int(result['version'], 'version'))
         : ReglesRefusees(_string(result['erreur'], 'erreur'));
   }
 

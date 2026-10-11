@@ -281,12 +281,12 @@ BEGIN
        OR f.proconfig IS DISTINCT FROM ARRAY['search_path=""']::text[]
        OR f.prosrc NOT ILIKE '%app_account_valid()%'
        OR f.prosrc NOT ILIKE '%app_role() = %'
-       OR f.comment NOT LIKE '%F86 candidate allowlist:%signature=public.' || f.signature || '; md5_functiondef=' ||
+       OR f.comment NOT LIKE ('%F86 candidate allowlist:%signature=public.' || f.signature || '; md5_functiondef=' ||
             CASE f.proname
               WHEN 'declarer_absence_seance' THEN '1c22d79a6cbe17f856178c0c7aa2ab6e'
               WHEN 'prendre_remplacement' THEN '7578dd0ea7b79b7d47df4e95712ea16c'
               WHEN 'designer_remplacant_admin' THEN 'fede4cb192330618a3adcbd06b221faa'
-            END || ';%'
+            END || ';%')
        OR pg_catalog.has_function_privilege('anon', f.oid, 'EXECUTE')
        OR pg_catalog.has_function_privilege('service_role', f.oid, 'EXECUTE')
        OR pg_catalog.has_function_privilege('agent_ro', f.oid, 'EXECUTE')
