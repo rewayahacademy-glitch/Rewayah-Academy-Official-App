@@ -94,6 +94,10 @@ Deno.test('7g -- les deux familles de la bibliotheque sont distinctes et opaques
 Deno.test('7h -- la finalite choisit la famille sans recevoir de cle du client', () => {
   assertEquals(cleDepotBibliotheque('support', ARCHIVE), `private/libraryupload/${ARCHIVE}`)
   assertEquals(cleDepotBibliotheque('preuve', ARCHIVE), `private/libraryproof/${ARCHIVE}`)
+  assertThrows(
+    () => cleDepotBibliotheque('autre' as 'support', ARCHIVE),
+    ErreurCleObjet,
+  )
 })
 
 Deno.test('7f -- la casse est normalisee, pour ne pas creer deux objets', () => {

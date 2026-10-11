@@ -115,6 +115,9 @@ export function cleDe(domaine: DomaineStockage, parent: string, enfant: string):
 
 /// Construit une cle de depot CAP29 sans laisser l'appelant choisir la famille.
 export function cleDepotBibliotheque(finalite: 'support' | 'preuve', versionId: string): string {
+  if (finalite !== 'support' && finalite !== 'preuve') {
+    throw new ErreurCleObjet('finalite de depot hors convention')
+  }
   const famille: FamillePrivee = finalite === 'support' ? 'libraryupload' : 'libraryproof'
   return cleDe('priveApplicatif', famille, versionId)
 }
