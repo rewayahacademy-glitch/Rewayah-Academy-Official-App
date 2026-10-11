@@ -1,4 +1,4 @@
-# X2-18 — IMPLÉMENTÉ, VÉRIFICATION SQL BLOQUÉE
+﻿# X2-18 — IMPLÉMENTÉ, VÉRIFICATION SQL BLOQUÉE
 
 ## Source de vérité
 
@@ -38,8 +38,8 @@ Contrat v2: `docs/current/CONTRAT-CPT-BR-18-19.md`, commit source
 
 ## Mise a jour du 2026-10-12
 
-- Merge sans force de `codex2/x2-17` a jour, incluant `c9c5b2338e36eef512ac5a1786a3b23aa48409b4`.
-- X2-18 demeure PARTIEL: le scenario SQL n'est pas rejoue et l'insertion directe arbitraire dans `exports_comptables` reste possible pour les comptes finance. L'interdire tout en gardant les RPC `SECURITY INVOKER` capables d'inserer exige un mecanisme approuve; F86 n'est pas disponible ici. Aucun changement d'ACL non prouve n'est applique.
+- Merge sans force de `codex2/x2-17` a jour, incluant `b12929bcad8a6c9e087630f35bc71fd38cd1a2c3` (corrections A119 et état A114).
+- X2-18 demeure PARTIEL: le scenario SQL n'est pas rejoue et l'insertion directe arbitraire dans `exports_comptables` reste possible pour les comptes finance. L'interdire tout en gardant les RPC `SECURITY INVOKER` capables d'inserer exige un mecanisme approuve; le manifeste F86 consulté est un candidat explicitement non approuvé. Aucun changement d'ACL non prouve n'est applique.
 
 ## Revue Claude A120 — correctif appliqué
 
@@ -47,4 +47,5 @@ Contrat v2: `docs/current/CONTRAT-CPT-BR-18-19.md`, commit source
 - Les RPC invoker délèguent la génération CSV, le compte de lignes et l'insertion à `codex2_private.creer_export_comptable`, fonction SECURITY DEFINER avec `search_path = ''`, garde de compte actif/rôle finance, et ACL fermée à anon/service_role. Le schéma privé n'est pas ajouté aux schémas PostgREST.
 - Le scénario relève `md5(pg_get_functiondef(...))` et vérifie `prosecdef`, `search_path` et les privilèges. Le SHA du md5 exige le rejeu PostgreSQL.
 - Correction du générateur de 5001 lignes (`g` remplacé par `n`) et merge de la correction X2-17 A119.
-- Non rejoué localement : `psql`/PostgreSQL absent; attente d'un nouveau contrôle Claude. Le helper SECURITY DEFINER reste à comparer au protocole F86 complet, non présent dans ce checkout.
+- Non rejoué localement : `psql`/PostgreSQL absent; attente d'un nouveau contrôle Claude. Le manifeste F86 disponible sur `origin/claude/f86-manifeste` est marqué `CANDIDATE_NOT_APPROVED`; il ne prouve donc pas à lui seul la conformité complète du helper. Le rejeu PostgreSQL et le MD5 effectif restent à relever.
+
