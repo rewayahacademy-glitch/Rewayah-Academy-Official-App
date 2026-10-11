@@ -110,6 +110,34 @@ BEGIN
   IF NOT v_append_only THEN
     RAISE EXCEPTION 'C29: une version de règles a pu être modifiée';
   END IF;
+  v_append_only := false;
+  BEGIN
+    DELETE FROM public.controle_regles
+    WHERE version = (SELECT max(version) FROM public.controle_regles);
+  EXCEPTION WHEN SQLSTATE '55000' THEN
+    v_append_only := true;
+  END;
+  IF NOT v_append_only THEN RAISE EXCEPTION 'C29: rule version deletion was allowed'; END IF;
+
+  v_append_only := false;
+  BEGIN
+    UPDATE public.controle_regles_cibles SET libelle = 'changed'
+    WHERE version = (SELECT max(version) FROM public.controle_regles)
+      AND type = 'enseignant';
+  EXCEPTION WHEN SQLSTATE '55000' THEN
+    v_append_only := true;
+  END;
+  IF NOT v_append_only THEN RAISE EXCEPTION 'C29: target update was allowed'; END IF;
+
+  v_append_only := false;
+  BEGIN
+    DELETE FROM public.controle_regles_cibles
+    WHERE version = (SELECT max(version) FROM public.controle_regles)
+      AND type = 'enseignant';
+  EXCEPTION WHEN SQLSTATE '55000' THEN
+    v_append_only := true;
+  END;
+  IF NOT v_append_only THEN RAISE EXCEPTION 'C29: target deletion was allowed'; END IF;
 END;
 $postflight$;
 
