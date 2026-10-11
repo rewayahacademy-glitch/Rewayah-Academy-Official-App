@@ -42,3 +42,21 @@ Consultation le 10/10/2026.
   la page est une tâche secondaire à retour, le logo vient d'être vu sur la connexion.
 - Présentation publique (`/bienvenue`, K-64) et dépôt de pièce : mot-marque texte
   inchangé ; `MarquePage(logo: true)` est prêt pour la session qui tient ces pages.
+
+## LOGO-1 : état des surfaces au 11/10/2026
+
+Vérifié sur `ccr` @ 87c43aa0 :
+
+| Surface | État |
+| :--- | :--- |
+| Barre latérale et rail (`NavShell`, `_EnteteColonne`) | fait : `BrandLogo` horizontal (déplié) ou symbole (replié), seul logo de l'écran, ramène à l'accueil ; test `nav_shell_adaptatif_test.dart` |
+| Coque administration (`AdminShell`) | fait : logo horizontal en tête de la barre latérale, symbole en tête du rail ; test `admin_shell_test.dart` |
+| Connexion, récupération, bienvenue, dépôt de pièce (`MarquePage`) | fait |
+| Favicon web | fait : `web/favicon.svg` est le symbole plein violet du directeur, octet pour octet (test `test/core/marque/favicon_test.dart`), déclaré dans `web/index.html` |
+
+Restes, volontairement non traités ici (pubspec.yaml et copie depuis le site public, jamais de rastérisation par un agent, README du logo) :
+
+- `web/favicon.png` et `web/icons/*` (PWA) : ne viennent pas du logo ; à copier depuis les fichiers produits pour le site public (décision du directeur du 10/10) ;
+- icônes Android et iOS natives (`android/app/src/main/res/mipmap-*`, `ios/.../AppIcon`) : `flutter_launcher_icons` exige `pubspec.yaml`, interdit aux sessions ;
+- écran de démarrage, e-mails, fiches des stores ;
+- versions carrée, claire et sombre de l'icône, couleur de fond, zone de protection de l'icône : à demander au directeur le moment venu.
