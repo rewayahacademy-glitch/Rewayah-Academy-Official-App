@@ -1,6 +1,8 @@
 name: CI
 
 on:
+  push:
+    branches: ['codex/backend-f79-allowlist']
   # `ui/**` depuis le 09/10/2026 (decision D2, CI-D2) : les PR des postes vers
   # leur branche `ui/*` n'etaient jamais controlees. GitHub lit ce fichier sur
   # la branche de BASE : il ne sert a une branche `ui/*` qu'une fois present
@@ -22,7 +24,7 @@ jobs:
     name: Migrations applicables (Postgres 17)
     # Le SQL et les fonctions Edge ne sont controles que vers `main` : les
     # branches `ui/*` ne touchent pas `supabase/`.
-    if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
+    if: github.event_name != 'push' && (github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk')
     runs-on: ubuntu-latest
     container: postgres:17-alpine
     services:
