@@ -22821,6 +22821,8 @@ class Traductions$tc$coran$mushaf$fr {
 
 	/// fr: 'Ouverture, pages {droite} et {gauche}'
 	String ouverture({required Object droite, required Object gauche}) => 'Ouverture, pages ${droite} et ${gauche}';
+
+	late final Traductions$tc$coran$mushaf$page15$fr page15 = Traductions$tc$coran$mushaf$page15$fr.internal(_root);
 }
 
 // Path: tc.coran.fidelite
@@ -29865,6 +29867,33 @@ class Traductions$enseignant$journee$absence$etats$fr {
 	String get demandeAnnulee => 'Demande annulée';
 }
 
+// Path: tc.coran.mushaf.page15
+class Traductions$tc$coran$mushaf$page15$fr {
+	Traductions$tc$coran$mushaf$page15$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mise en page : KFGQPC, quran.ws (CC BY 4.0)'
+	String get creditMiseEnPage => 'Mise en page : KFGQPC, quran.ws (CC BY 4.0)';
+
+	/// fr: 'À propos de cette édition'
+	String get aProposOuvrir => 'À propos de cette édition';
+
+	/// fr: 'À propos de cette édition'
+	String get aProposTitre => 'À propos de cette édition';
+
+	/// fr: 'Police : KFGQPC UthmanicHafs v3.0 (Complexe du Roi Fahd)'
+	String get aProposPolice => 'Police : KFGQPC UthmanicHafs v3.0 (Complexe du Roi Fahd)';
+
+	/// fr: 'Licences : le texte et la police appartiennent au KFGQPC, la mise en page est publiée sous CC BY 4.0 (quran.ws), les quarts de hizb viennent de quran-meta (MIT).'
+	String get aProposLicences => 'Licences : le texte et la police appartiennent au KFGQPC, la mise en page est publiée sous CC BY 4.0 (quran.ws), les quarts de hizb viennent de quran-meta (MIT).';
+
+	/// fr: 'Tanzil demande que la source soit clairement indiquée et que tanzil.net soit joignable.'
+	String get aProposTanzil => 'Tanzil demande que la source soit clairement indiquée et que tanzil.net soit joignable.';
+}
+
 // Path: tc.outils.dock.position
 class Traductions$tc$outils$dock$position$fr {
 	Traductions$tc$outils$dock$position$fr.internal(this._root);
@@ -36777,6 +36806,12 @@ extension on Traductions {
 			'tc.coran.mushaf.coteDroite' => 'Page de droite',
 			'tc.coran.mushaf.coteGauche' => 'Page de gauche',
 			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'Ouverture, pages ${droite} et ${gauche}',
+			'tc.coran.mushaf.page15.creditMiseEnPage' => 'Mise en page : KFGQPC, quran.ws (CC BY 4.0)',
+			'tc.coran.mushaf.page15.aProposOuvrir' => 'À propos de cette édition',
+			'tc.coran.mushaf.page15.aProposTitre' => 'À propos de cette édition',
+			'tc.coran.mushaf.page15.aProposPolice' => 'Police : KFGQPC UthmanicHafs v3.0 (Complexe du Roi Fahd)',
+			'tc.coran.mushaf.page15.aProposLicences' => 'Licences : le texte et la police appartiennent au KFGQPC, la mise en page est publiée sous CC BY 4.0 (quran.ws), les quarts de hizb viennent de quran-meta (MIT).',
+			'tc.coran.mushaf.page15.aProposTanzil' => 'Tanzil demande que la source soit clairement indiquée et que tanzil.net soit joignable.',
 			'tc.coran.fidelite.approchee' => 'Composition approchée',
 			'tc.coran.fidelite.approcheeDetail' => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.',
 			'tc.coran.fidelite.fidele' => 'Composition de l\'édition',
@@ -37274,14 +37309,14 @@ extension on Traductions {
 			'adulte.paiements.soldesSansDonnees' => 'Les soldes de votre foyer n\'ont pas pu être chargés',
 			'adulte.paiements.soldesIndisponiblesTitre' => 'Soldes pas encore consultables',
 			'adulte.paiements.soldesIndisponiblesPhrase' => 'Le solde de chaque bénéficiaire n\'est pas encore disponible dans l\'application. Aucune recharge n\'est possible ici pour l\'instant.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.paiements.aucunBeneficiaireTitre' => 'Aucun bénéficiaire',
 			'adulte.paiements.aucunBeneficiairePhrase' => 'Aucun profil élève de votre foyer n\'a de solde à recharger pour l\'instant.',
 			'adulte.famille.ajouter' => 'Ajouter ma famille',
 			'adulte.famille.ajouterLegende' => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.',
 			'adulte.famille.ajouterPhrase' => 'Vous pouvez ajouter vos enfants et inviter un conjoint ou une conjointe à rejoindre votre forfait famille. Votre espace élève reste inchangé.',
 			'adulte.famille.inscrireEnfant' => 'Inscrire un enfant',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.maFamille' => 'Ma famille',
 			'adulte.famille.forfaitFamille' => 'Forfait famille',
 			'adulte.famille.retourMonEspace' => 'Revenir à Mon espace',
@@ -37788,14 +37823,14 @@ extension on Traductions {
 			'alertes.erreurTitre' => 'Les alertes n\'ont pas pu être lues',
 			'alertes.sansDonnees' => 'Les alertes n\'ont pas pu être lues',
 			'alertes.cloche' => 'Alertes',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.clocheUneUrgente' => 'Alertes, une urgente',
 			'alertes.clocheUrgentes' => ({required Object nombre}) => 'Alertes, ${nombre} urgentes',
 			'argent.etat.finance' => 'Financé',
 			'argent.etat.essai' => 'Essai',
 			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Essai : ${n}/${max}',
 			'argent.etat.manque' => 'À financer',
-			_ => null,
-		} ?? switch (path) {
 			'argent.etat.enConfirmation' => 'En confirmation',
 			'argent.etat.expire' => 'Accès expiré',
 			'argent.etat.pause' => 'En pause',
@@ -38302,14 +38337,14 @@ extension on Traductions {
 			'com.studio.aujourdhui.indicateurs.mentions' => 'Mentions et réponses',
 			'com.studio.aujourdhui.indicateurs.decisions' => 'Décisions en attente',
 			'com.studio.aujourdhui.indicateurs.nonLus' => 'Non lus',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.blocs.aTraiter' => 'À traiter aujourd\'hui',
 			'com.studio.aujourdhui.blocs.mentions' => 'Mentions et réponses',
 			'com.studio.aujourdhui.blocs.decisions' => 'Décisions en attente',
 			'com.studio.aujourdhui.blocs.echeances' => 'Échéances proches',
 			'com.studio.aujourdhui.blocs.activite' => 'Activité récente',
 			'com.studio.aujourdhui.blocs.brouillons' => 'Brouillons',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.blocs.acces' => 'Accès rapides',
 			'com.studio.aujourdhui.videsBlocs.aTraiter' => 'Rien à traiter aujourd\'hui.',
 			'com.studio.aujourdhui.videsBlocs.mentions' => 'Aucune mention ni réponse en attente.',
@@ -38816,14 +38851,14 @@ extension on Traductions {
 			'comptable.statuts.profil.aucunMoyen' => 'Aucun moyen',
 			'comptable.statuts.profil.incomplet' => 'Incomplet',
 			'comptable.statuts.profil.enVerification' => 'En vérification',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.profil.verifie' => 'Vérifié',
 			'comptable.statuts.profil.suspendu' => 'Suspendu',
 			'comptable.statuts.profil.actionRequise' => 'Action requise',
 			'comptable.statuts.profil.invitationEnvoyee' => 'Invitation envoyée',
 			'comptable.statuts.capacite.prisEnCharge' => 'Pris en charge',
 			'comptable.statuts.capacite.nonPrisEnCharge' => 'Non pris en charge',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.capacite.temporairementIndisponible' => 'Temporairement indisponible',
 			'comptable.statuts.capacite.verificationRequise' => 'Vérification requise',
 			'comptable.statuts.capacite.soldePrestataireInsuffisant' => 'Solde prestataire insuffisant',
@@ -39330,14 +39365,14 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.supprimee' => 'Méthode supprimée.',
 			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Méthode préférée mise à jour.',
 			'comptable.beneficiaires.recevoir.erreurAction' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.',
 			'comptable.beneficiaires.recevoir.journalTitre' => 'Historique de mes changements',
 			'comptable.beneficiaires.recevoir.journalVide' => 'Aucun changement enregistré pour l\'instant.',
 			'comptable.beneficiaires.recevoir.seulVous' => 'Vous seul pouvez modifier ces informations : ni la comptabilité ni la direction ne peuvent le faire à votre place.',
 			'comptable.beneficiaires.recevoir.titre' => 'Recevoir mes paiements',
 			'comptable.beneficiaires.recevoir.sousTitre' => 'Vos coordonnées de paiement, modifiables par vous seul.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.notice' => 'Informations de paiement à compléter',
 			'comptable.beneficiaires.recevoir.configurer' => 'Configurer mes paiements',
 			'comptable.contractuels.ongletObligations' => 'Obligations',

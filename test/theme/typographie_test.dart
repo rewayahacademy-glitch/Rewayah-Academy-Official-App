@@ -323,12 +323,17 @@ void main() {
     ).allMatches(pubspec).map((RegExpMatch m) => m.group(1)!).toList();
 
     test('la liste declaree est exactement celle du theme et des icones', () {
-      expect(familles.toSet(), <String>{
-        ...AppFontFamily.texte,
-        'Phosphor',
-        'PhosphorFill',
-      });
-      expect(familles, hasLength(6));
+      // MUSHAF-15L (decision du directeur du 11/10/2026) : UthmanicHafs est la
+      // seule famille de plus, et facultative tant que le bloc de
+      // `docs/current/coran/PUBSPEC_MUSHAF_15L.md` n'est pas applique.
+      expect(
+        familles.toSet().difference(<String>{AppFontFamily.arabeMushaf}),
+        <String>{...AppFontFamily.texte, 'Phosphor', 'PhosphorFill'},
+      );
+      expect(familles.length, anyOf(6, 7));
+      if (familles.length == 7) {
+        expect(familles, contains(AppFontFamily.arabeMushaf));
+      }
     });
 
     test('chaque fichier declare existe et les anciens sont retires', () {
@@ -336,7 +341,7 @@ void main() {
           .allMatches(pubspec)
           .map((RegExpMatch m) => m.group(1)!)
           .where((String a) => a.startsWith('assets/fonts/'));
-      expect(assets, hasLength(6));
+      expect(assets.length, anyOf(6, 7));
       for (final String asset in assets) {
         expect(File(asset).existsSync(), isTrue, reason: asset);
       }

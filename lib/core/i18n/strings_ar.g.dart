@@ -8657,6 +8657,7 @@ class _Traductions$tc$coran$mushaf$ar extends Traductions$tc$coran$mushaf$fr {
 	@override String get coteDroite => 'الصفحة اليمنى';
 	@override String get coteGauche => 'الصفحة اليسرى';
 	@override String ouverture({required Object droite, required Object gauche}) => 'الصفحتان المفتوحتان ⁨${droite}⁩ و⁨${gauche}⁩';
+	@override late final _Traductions$tc$coran$mushaf$page15$ar page15 = _Traductions$tc$coran$mushaf$page15$ar._(_root);
 }
 
 // Path: tc.coran.fidelite
@@ -12269,6 +12270,21 @@ class _Traductions$enseignant$journee$absence$etats$ar extends Traductions$ensei
 	@override String get demandeAnnulee => 'أُلغي الطلب';
 }
 
+// Path: tc.coran.mushaf.page15
+class _Traductions$tc$coran$mushaf$page15$ar extends Traductions$tc$coran$mushaf$page15$fr {
+	_Traductions$tc$coran$mushaf$page15$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get creditMiseEnPage => 'التنسيق: مجمع الملك فهد، quran.ws (CC BY 4.0)';
+	@override String get aProposOuvrir => 'حول هذه الطبعة';
+	@override String get aProposTitre => 'حول هذه الطبعة';
+	@override String get aProposPolice => 'الخط: خط حفص العثماني، مجمع الملك فهد';
+	@override String get aProposLicences => 'التراخيص: النص والخط ملك لمجمع الملك فهد؛ التنسيق منشور برخصة CC BY 4.0 (quran.ws)؛ أرباع الأحزاب من مصدر مفتوح.';
+	@override String get aProposTanzil => 'يشترط مشروع تنزيل ذكر المصدر بوضوح وإتاحة الوصول إلى موقعه.';
+}
+
 // Path: tc.outils.dock.position
 class _Traductions$tc$outils$dock$position$ar extends Traductions$tc$outils$dock$position$fr {
 	_Traductions$tc$outils$dock$position$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -15481,6 +15497,12 @@ extension on TraductionsAr {
 			'tc.coran.mushaf.coteDroite' => 'الصفحة اليمنى',
 			'tc.coran.mushaf.coteGauche' => 'الصفحة اليسرى',
 			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'الصفحتان المفتوحتان ⁨${droite}⁩ و⁨${gauche}⁩',
+			'tc.coran.mushaf.page15.creditMiseEnPage' => 'التنسيق: مجمع الملك فهد، quran.ws (CC BY 4.0)',
+			'tc.coran.mushaf.page15.aProposOuvrir' => 'حول هذه الطبعة',
+			'tc.coran.mushaf.page15.aProposTitre' => 'حول هذه الطبعة',
+			'tc.coran.mushaf.page15.aProposPolice' => 'الخط: خط حفص العثماني، مجمع الملك فهد',
+			'tc.coran.mushaf.page15.aProposLicences' => 'التراخيص: النص والخط ملك لمجمع الملك فهد؛ التنسيق منشور برخصة CC BY 4.0 (quran.ws)؛ أرباع الأحزاب من مصدر مفتوح.',
+			'tc.coran.mushaf.page15.aProposTanzil' => 'يشترط مشروع تنزيل ذكر المصدر بوضوح وإتاحة الوصول إلى موقعه.',
 			'tc.coran.fidelite.approchee' => 'تنسيق تقريبي',
 			'tc.coran.fidelite.approcheeDetail' => 'آيات هذه الصفحة هي بالضبط آيات صفحة مصحف المدينة. أما توزيعها على الأسطر فهو توزيع هذه الشاشة: لم يُستورد بعد تقسيم الأسطر في الطبعة.',
 			'tc.coran.fidelite.fidele' => 'تنسيق الطبعة',
@@ -15575,14 +15597,14 @@ extension on TraductionsAr {
 			'tc.classe.fiche.aReprendre' => 'للاستئناف',
 			'tc.classe.fiche.presenceRecente' => 'الحضور الأخير',
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => 'الدروس: ⁨${presences}⁩ من ⁨${total}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.fiche.travailActuel' => 'العمل الحالي',
 			'tc.classe.fiche.interfaceGuidee' => 'وضع إمكانية الوصول',
 			'tc.classe.fiche.sansPedagogie' => 'المتابعة التعليمية غير متاحة',
 			'tc.classe.fiche.sansPedagogieDetail' => 'المسار والأهداف والعمل الجاري غير مفتوحة للمعلم بعد.',
 			'tc.classe.action.rappel' => 'نداء هادئ',
 			'tc.classe.action.reciter' => 'اختيار للتلاوة',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.action.noter' => 'تدوين ملاحظة',
 			'tc.classe.action.signaler' => 'الإبلاغ عن حاجة',
 			'tc.classe.action.contexte' => 'فتح السياق',
@@ -16089,14 +16111,14 @@ extension on TraductionsAr {
 			'com.vocal.composer.refuse' => 'الميكروفون غير مسموح به لتطبيق رواية.',
 			'com.vocal.composer.refuseAide' => 'لإرسال رسالة صوتية، اسمح باستخدام الميكروفون من إعدادات جهازك، ثم عد إلى هنا.',
 			'com.vocal.composer.fermer' => 'إغلاق',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.composer.enregistrement' => 'التسجيل جارٍ',
 			'com.vocal.composer.pause' => 'التسجيل متوقف مؤقتًا',
 			'com.vocal.composer.reprise' => 'استُؤنف التسجيل',
 			'com.vocal.composer.limiteProche' => ({required Object seuil, required Object max}) => 'بقي أقل من ${seuil} قبل الحد الأقصى ${max}',
 			'com.vocal.composer.limiteAtteinte' => ({required Object max}) => 'بلغت المدة القصوى (${max}). استمع إلى رسالتك، ثم أرسلها أو احذفها.',
 			'com.vocal.composer.ecoule' => ({required Object ecoule, required Object max}) => '${ecoule} من ${max}',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.preEcoute' => 'الاستماع قبل الإرسال',
 			'com.vocal.composer.preEcouteAide' => 'استمع إلى رسالتك قبل إرسالها. لا يُرسل شيء دون موافقتك.',
 			'com.vocal.composer.duree' => ({required Object duree}) => 'المدة: ${duree}',
@@ -16603,14 +16625,14 @@ extension on TraductionsAr {
 			'com.annonces.administration.moderation.nonConfirmee' => 'لم يُؤكَّد هذا القرار بعد. تحقق من الاتصال ثم أعد المحاولة.',
 			'com.annonces.administration.moderation.horsLigne' => 'أنت غير متصل. لا يمكن تحديث قائمة الإشراف.',
 			'com.annonces.administration.moderation.indisponible' => 'الإشراف غير متاح بعد. عد لاحقًا.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.videTitre' => 'لا يوجد محتوى للفحص',
 			'com.annonces.administration.moderation.vide' => 'تصل هنا بلاغات مجتمع المعلمين.',
 			'com.annonces.administration.moderation.refuseTitre' => 'قائمة خاصة بالإشراف',
 			'com.annonces.administration.moderation.refuse' => 'لا يرى هذه القائمة إلا المكلفون بالإشراف.',
 			'com.annonces.administration.moderation.choisirTitre' => 'لا يوجد بلاغ مفتوح',
 			'com.annonces.administration.moderation.choisir' => 'اختر بلاغًا من القائمة لفحصه.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.sansAction' => 'لا يتاح لك أي إجراء إشراف على هذا المحتوى.',
 			'com.annonces.administration.moderation.sansSanction' => 'لا تُطبق أي عقوبة على الحساب تلقائيًا.',
 			'com.annonces.administration.moderation.politique' => 'سياسة منع الترويج',
@@ -17117,14 +17139,14 @@ extension on TraductionsAr {
 			'admin.evaluations.aucune' => 'لا تقييم',
 			'admin.evaluations.aucuneDetail' => 'جدوِل تقييمًا أول لطالب حُدِّد مستواه بالفعل.',
 			'admin.evaluations.aucuneAvecCeFiltre' => 'لا تقييم بهذا المعيار',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.aucuneAvecCeFiltreDetail' => 'غيّر المعيار لترى التقييمات الأخرى.',
 			'admin.evaluations.filtreToutes' => 'الكل',
 			'admin.evaluations.filtrePlanifiees' => 'مجدولة',
 			'admin.evaluations.filtreRealisees' => 'منجزة',
 			'admin.evaluations.filtreAnnulees' => 'ملغاة',
 			'admin.evaluations.filtreCertifications' => 'الشهادات',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.colonneEleve' => 'الطالب',
 			'admin.evaluations.colonneNiveau' => 'المستوى',
 			'admin.evaluations.colonneType' => 'النوع',
@@ -17631,14 +17653,14 @@ extension on TraductionsAr {
 			'admin.tirage.frequenceDetail' => 'أقصى عدد من المهام يتلقاه المراقب في الأسبوع، من 0 إلى 50. يطبّق الخادم هذا العدد.',
 			'admin.tirage.versionEnVigueur' => ({required Object n}) => 'القواعد السارية: النسخة ⁨${n}⁩',
 			'admin.tirage.aucuneVersion' => 'لم تُسجَّل أي قاعدة بعد.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.zeroPhrase' => 'مع القيمة 0، لا تُسحب أي حصة للمراقبة.',
 			'admin.tirage.nombreInvalide' => 'أدخل عددًا صحيحًا من 0 إلى 50، أو اختر إحدى البطاقات.',
 			'admin.tirage.enregistreesVersion' => ({required Object n}) => 'سُجّلت القواعد، النسخة ⁨${n}⁩. تسري على السحوب القادمة.',
 			'admin.tirage.missionsParSemaine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا مهمة في الأسبوع', one: 'مهمة واحدة في الأسبوع', two: 'مهمتان في الأسبوع', few: '⁨${n}⁩ مهام في الأسبوع', many: '⁨${n}⁩ مهمة في الأسبوع', other: '⁨${n}⁩ مهمة في الأسبوع', ), 
 			'admin.tirage.ponderationTitre' => 'الترجيح',
 			'admin.tirage.ponderationDetail' => 'كلما قوي الوزن زادت فرص سحب هذه الحصص. تبقى القرعة غير قابلة للتوقع على المعلم والمراقب معًا.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.tirage.critereEnseignantsRecents' => 'معلمون التحقوا حديثًا',
 			'admin.tirage.critereClassesSignalees' => 'فصول أُبلغ عنها للإدارة',
 			'admin.tirage.critereHeuresDePointe' => 'ساعات الذروة',
@@ -18145,14 +18167,14 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.attentionSousTitre' => 'ما ينتظر إجراءً منك، ثم المخاطر التي تجب مراقبتها.',
 			'comptable.aujourdhui.elementCompteur' => ({required Object libelle, required Object n}) => '${libelle}: ${n}',
 			'comptable.aujourdhui.elementDepuis' => ({required Object date}) => 'قيد الانتظار منذ ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.aTraiterVide' => 'لا شيء للمعالجة اليوم.',
 			'comptable.aujourdhui.aTraiterVideDetail' => 'ستظهر هنا المدفوعات والتذكيرات والمطابقات المطلوبة.',
 			'comptable.aujourdhui.alertesVide' => 'لا توجد تنبيهات حاليًا.',
 			'comptable.aujourdhui.alertesResume' => ({required Object n}) => 'تنبيهات للمراقبة: ${n}',
 			'comptable.aujourdhui.paiementsAEffectuer' => 'مدفوعات للتنفيذ',
 			'comptable.aujourdhui.paiementsAEffectuerDetail' => 'تُراجَع كل دفعة في قائمتها قبل دفعها.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.paiementsVide' => 'لا توجد مدفوعات للتنفيذ.',
 			'comptable.aujourdhui.echeancesVide' => 'لا توجد مواعيد استحقاق قريبة.',
 			'comptable.aujourdhui.encaissementsVide' => 'لا توجد مقبوضات حديثة.',
@@ -18659,14 +18681,14 @@ extension on TraductionsAr {
 			'comptable.contractuels.invitationAide' => 'هذا المستفيد الخارجي يُدخل وسيلة الدفع بنفسه، من دعوته الآمنة.',
 			'comptable.contractuels.invitationRenvoyee' => 'أُعيد إرسال الدعوة',
 			'comptable.contractuels.erreurApprobation' => 'لا نعلم إن كان الاعتماد قد سُجّل. حدّث الالتزام قبل إعادة المحاولة.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.erreurInvitation' => 'لا نعلم إن كانت الدعوة قد أُعيد إرسالها. حدّث الالتزام قبل إعادة المحاولة.',
 			'comptable.contractuels.formIntro' => 'المستفيد والاستحقاق ومركز التكلفة مقترحة: غيّرها عند الحاجة، ثم أدخل الموضوع والمبلغ.',
 			'comptable.contractuels.beneficiaireExterne' => 'مستفيد خارجي جديد',
 			'comptable.contractuels.beneficiaireExterneAide' => 'يتلقى دعوة آمنة ليُدخل وسيلة الدفع بنفسه.',
 			'comptable.contractuels.champNomExterne' => 'اسم المستفيد الخارجي',
 			'comptable.contractuels.changerEcheance' => 'تغيير الاستحقاق',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.deviseDe' => ({required Object devise}) => 'العملة: ${devise}',
 			'comptable.contractuels.champObjet' => 'موضوع الالتزام',
 			'comptable.contractuels.aideObjet' => 'مثلًا: الفاتورة رقم 024',
@@ -19173,14 +19195,14 @@ extension on TraductionsAr {
 			'eleveConnexion.saisie.horsLigne' => 'لا اتصال بالإنترنت. يمكن التحقق من الرمز عند عودة الشبكة.',
 			'eleveConnexion.lecteur.titre' => 'مسح رمز QR',
 			'eleveConnexion.lecteur.consigne' => 'وجّه الكاميرا نحو رمز QR المعروض على جهاز وليّ الأمر.',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.lecteur.demarrage' => 'اسمح بالكاميرا إن طلب الجهاز ذلك.',
 			'eleveConnexion.lecteur.libelleApercu' => 'عرض الكاميرا',
 			'eleveConnexion.lecteur.contenuInvalide' => 'رمز QR هذا ليس رمز ربط من Rewayah. وجّه الكاميرا نحو الرمز الذي يعرضه وليّ الأمر.',
 			'eleveConnexion.lecteur.saisir' => 'إدخال الرمز',
 			'eleveConnexion.lecteur.scannerANouveau' => 'المسح من جديد',
 			'eleveConnexion.lecteur.verificationTitre' => 'جارٍ التحقق من الرمز',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.lecteur.verificationPhrase' => 'الكاميرا متوقفة أثناء التحقق.',
 			'eleveConnexion.lecteur.refuseeTitre' => 'الكاميرا غير مسموح بها',
 			'eleveConnexion.lecteur.refuseePhrase' => 'لقراءة رمز QR، اسمح بالكاميرا. يمكنك أيضًا إدخال الرمز المعروض تحت رمز QR.',
@@ -19687,14 +19709,14 @@ extension on TraductionsAr {
 			'adulte.acceptation.refuseeTitre' => 'رُفضت الدعوة',
 			'adulte.acceptation.impossible' => 'لا يمكن لهذا الحساب الانضمام إلى هذه الباقة حاليًا.',
 			'adulte.acceptation.perimee' => 'هذه الدعوة لم تعد صالحة.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.monEspace' => 'الذهاب إلى مساحتي',
 			'adulte.acceptation.recu' => ({required Object date}) => 'سُجِّل الرد في ⁨${date}⁩.',
 			'adulte.acceptation.titreNeutre' => 'دعوة إلى باقة الأسرة',
 			'adulte.acceptation.sansCompteTitre' => 'دعوة إلى باقة الأسرة',
 			'adulte.acceptation.sansCompte' => 'للرد، سجّل الدخول إلى حسابك، أو أنشئ حسابًا. ستقرأ حينها ما سيراه الشخص الذي يدعوك وما لن يراه قبل أن تقرر.',
 			'adulte.acceptation.sansCompteAction' => 'تسجيل الدخول أو إنشاء حسابي',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.sortie.retirerElle' => 'إزالة زوجتي',
 			'adulte.sortie.retirerLui' => 'إزالة زوجي',
 			'adulte.sortie.retirerQuestionElle' => 'إزالة زوجتي؟',
@@ -20201,14 +20223,14 @@ extension on TraductionsAr {
 			'controleur.demo.etatPasEncoreEnDirect' => 'الحصة لم تبدأ مباشرة بعد',
 			'controleur.demo.etatEnDirect' => 'حصة مباشرة',
 			'controleur.demo.etatIndisponible' => 'الزيارة لم تعد مقترحة',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.demo.etatDejaControlee' => 'الفصل مراقَب بالفعل',
 			'controleur.demo.espaces' => 'المساحات والوصول',
 			'controleur.demo.espacesIntro' => 'الحساب نفسه، عدة مساحات: ينتقل المعلم أو المدير إلى «المراقبة» من «الحساب»، ثم «المساحات».',
 			'controleur.demo.enseignantControle' => 'معلم مراقب، مساحة المراقبة',
 			'controleur.demo.enseignantPrincipal' => 'معلم مراقب، مساحة المعلم',
 			'controleur.demo.adminControle' => 'مدير مراقب، مساحة المراقبة',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.demo.adminPrincipal' => 'مدير مراقب، مساحة الإدارة',
 			'controleur.demo.missionEnCours' => 'زيارة جارية، العودة إلى المساحة الرئيسية',
 			'controleur.demo.accesRevoque' => 'سُحب الوصول أثناء التصفح',

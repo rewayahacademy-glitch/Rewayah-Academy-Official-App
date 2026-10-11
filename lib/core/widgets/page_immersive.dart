@@ -56,6 +56,7 @@ class PageImmersive extends StatelessWidget {
     this.entete,
     this.bandeau,
     this.commandes,
+    this.surface,
   });
 
   /// Le contenu primaire. Il occupe tout ce qui reste, et va jusqu'aux bords.
@@ -74,16 +75,24 @@ class PageImmersive extends StatelessWidget {
   /// La rangee de commandes, collee en bas.
   final Widget? commandes;
 
+  /// La paire de fond, quand l'ecran impose la surface de l'application plutot
+  /// que celle de son registre (le Mushaf de Medine, MUSHAF-15L : le fond de
+  /// la page est la surface de l'application, jamais un parchemin). Sans elle,
+  /// le registre decide.
+  final AppColorPair? surface;
+
   /// La cle de la zone du contenu primaire (tests de geometrie, SALLE-200-1).
   static const Key contenuKey = ValueKey<String>('page-immersive-contenu');
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final AppColorPair paire = switch (registre) {
-      RegistreImmersif.salle => palette.surfaceInverse,
-      RegistreImmersif.lecture => palette.surfaceQuran,
-    };
+    final AppColorPair paire =
+        surface ??
+        switch (registre) {
+          RegistreImmersif.salle => palette.surfaceInverse,
+          RegistreImmersif.lecture => palette.surfaceQuran,
+        };
     final Gabarit gabarit = AppGabarit.de(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final bool texteAgrandi =
