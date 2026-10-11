@@ -66,5 +66,29 @@ void main() {
         }
       }
     }
+
+    // La page du Mushaf, avec et sans UthmanicHafs : sans elle, le texte Tanzil
+    // simple en police arabe de l'application, jamais le texte KFGQPC.
+    for (final (String nomTaille, Size taille) in <(String, Size)>[
+      ('1440', const Size(1440, 900)),
+      ('390', const Size(390, 844)),
+    ]) {
+      for (final bool police in <bool>[true, false]) {
+        final String nom =
+            'apres_pagemushaf_${nomTaille}_clair${police ? '' : '_sans_police'}';
+        testWidgets(nom, (WidgetTester tester) async {
+          await monterPageMadina15(
+            tester,
+            page: 293,
+            taille: taille,
+            tanzilSimple: true,
+            policeMushaf: police,
+            ecranComplet: true,
+          );
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
   });
 }

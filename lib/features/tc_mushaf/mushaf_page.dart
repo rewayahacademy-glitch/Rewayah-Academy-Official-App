@@ -28,6 +28,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/controle_segmente.dart';
+import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_immersive.dart';
 import '../../core/widgets/selecteur_section.dart';
 // L'attribution Tanzil compacte (deux lignes au plus, jamais sous la taille
@@ -116,6 +117,20 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
   Timer? _enregistrement;
   PositionLecture? _positionPersonnelle;
   PositionLecture? _positionDeGroupe;
+
+  /// Le court message « Taille maximale atteinte » (retour local).
+  String? _messageTaille;
+  bool _alterne = false;
+
+  void _direTailleMaximale() {
+    // Deux appuis de suite rejouent le message : le texte change d'un signe
+    // invisible.
+    _alterne = !_alterne;
+    setState(
+      () => _messageTaille =
+          '${t.tc.coran.zoom.maximale}${_alterne ? '\u200B' : ''}',
+    );
+  }
 
   @override
   void initState() {
@@ -229,6 +244,12 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
       largeurMaximaleColonne: AppPage.largeurLecture,
     ).zoomApplique;
     void zoomer(double delta) {
+      // Au maximum de la colonne, le bouton reste actif (regle des boutons
+      // grises) : un appui le dit, il ne grossit plus.
+      if (delta > 0 && etat.zoomLocal >= zoomMax - 0.001) {
+        _direTailleMaximale();
+        return;
+      }
       ref.read(lectureCoranProvider.notifier).zoomer(delta);
       _planifierEnregistrement();
     }
@@ -242,18 +263,13 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
             : null,
       ),
     );
-    final Widget reglage = _ReglageTaille(
-      zoom: etat.zoomLocal,
-      zoomMax: zoomMax,
-      onZoom: zoomer,
-    );
+    final Widget reglage = _ReglageTaille(zoom: etat.zoomLocal, onZoom: zoomer);
     final Widget commandes = _Commandes(
       key: MushafPage.commandesKey,
       compact: compact,
       vue: vue,
       mode: etat.mode,
       zoom: etat.zoomLocal,
-      zoomMax: zoomMax,
       onPage: (int p) => _allerA(p, origine: OrigineNavigation.personnelle),
       onZoom: zoomer,
       onNavigation: ouvrirNavigation,
@@ -295,14 +311,29 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
                 _allerA(p, origine: OrigineNavigation.personnelle),
           ),
           Expanded(
-            child: _Corps(
-              mode: etat.mode,
-              fleches: fleches,
-              balayage: balayage,
-              page: etat.page,
-              nombrePages: vue?.nombrePages ?? pagesMushafMedine,
-              onAller: (int p) =>
-                  _allerA(p, origine: OrigineNavigation.personnelle),
+            child: Stack(
+              children: <Widget>[
+                Positioned.fill(
+                  child: _Corps(
+                    mode: etat.mode,
+                    fleches: fleches,
+                    balayage: balayage,
+                    page: etat.page,
+                    nombrePages: vue?.nombrePages ?? pagesMushafMedine,
+                    onAller: (int p) =>
+                        _allerA(p, origine: OrigineNavigation.personnelle),
+                  ),
+                ),
+                if (_messageTaille != null)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: AppSpacing.lg,
+                    child: Center(
+                      child: LocalFeedback(message: _messageTaille),
+                    ),
+                  ),
+              ],
             ),
           ),
           // Les credits quittent l'ecran : feuille « A propos de cette edition ».
@@ -943,7 +974,6 @@ class _Commandes extends StatelessWidget {
     required this.vue,
     required this.mode,
     required this.zoom,
-    required this.zoomMax,
     required this.onPage,
     required this.onZoom,
     required this.onNavigation,
@@ -956,7 +986,6 @@ class _Commandes extends StatelessWidget {
   final PageMushafVM? vue;
   final ModeRenduCoran mode;
   final double zoom;
-  final double zoomMax;
   final void Function(int page) onPage;
   final void Function(double delta) onZoom;
   final VoidCallback onNavigation;
@@ -969,7 +998,7 @@ class _Commandes extends StatelessWidget {
     final int? suivante = vue?.pageSuivante;
     final Widget reglageTaille = Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-      child: _ReglageTaille(zoom: zoom, zoomMax: zoomMax, onZoom: onZoom),
+      child: _ReglageTaille(zoom: zoom, onZoom: onZoom),
     );
     // NAV-FLECHES-1 : fleche, position, fleche ; aux bornes la fleche
     // disparait. Le choix d'une page ou d'une sourate reste dessous, un lien
@@ -1044,17 +1073,9 @@ class _Commandes extends StatelessWidget {
 /// Un seul composant pour ses deux places (CORAN-320-1b) : sous les versets a
 /// texte de base, dans le panneau « Mode de lecture » a texte agrandi.
 class _ReglageTaille extends StatelessWidget {
-  const _ReglageTaille({
-    required this.zoom,
-    required this.zoomMax,
-    required this.onZoom,
-  });
+  const _ReglageTaille({required this.zoom, required this.onZoom});
 
   final double zoom;
-
-  /// Le grossissement maximal que la colonne tient : au-dela, « Agrandir » se
-  /// grise.
-  final double zoomMax;
   final void Function(double delta) onZoom;
 
   @override
@@ -1091,7 +1112,7 @@ class _ReglageTaille extends StatelessWidget {
           libelle: t.eleve.coran.agrandir,
           niveau: NiveauAction.tertiaire,
           pleineLargeur: false,
-          onPress: zoom >= zoomMax - 0.001 ? null : () => onZoom(0.2),
+          onPress: () => onZoom(0.2),
         ),
       ],
     );

@@ -15,4 +15,9 @@ Page 293 (sourate 17, versets 105 à 112 environ, puis 18:1 à 4), mise en page 
 - Le texte vient du jeu de la mise en page de l'édition (UthmanicHafs v3.0, riwaya Hafs) ; le texte
   « Tanzil simple » des captures sans police est ce même jeu privé des signes propres à l'écriture
   uthmanie, comme le serait le corpus de la base (non atteint hors ligne).
+- `apres_pagemushaf_<largeur>_clair[_sans_police].png` : la page du Mushaf (mode « Page du mushaf »),
+  avec la police, puis sans elle : la page de Médine ne se dessine pas, on rend le texte Tanzil simple en
+  police arabe de l'application, sous la notice « composition approchée » (jamais le texte KFGQPC en
+  police générique). La rosace y reste isolée sur sa ligne : ancien chemin, figé par l'empreinte du
+  texte coranique.
 - Script : `test/capture/mushaf_modes_capture_test.dart` (saute sans `CAPTURE_DIR`).

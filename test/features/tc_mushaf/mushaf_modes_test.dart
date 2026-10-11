@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/rosace_verset.dart';
 import 'package:rewayah_academy/features/tc_mushaf/fleches_page_mushaf.dart';
 import 'package:rewayah_academy/features/tc_mushaf/mushaf_page.dart';
+import 'package:rewayah_academy/features/tc_mushaf/page_madina_15.dart';
 import 'package:rewayah_academy/features/tc_mushaf/texte_continu_mushaf.dart';
 import 'package:rewayah_academy/features/tc_mushaf/vue_verset_agrandi.dart';
 
@@ -278,7 +279,8 @@ void main() {
       }
 
       testWidgets(
-        '(f) aucune note de zoom borne, Agrandir se grise au maximum',
+        '(f) aucune note de zoom borne, aucun bouton grise : un appui au '
+        'maximum le dit',
         (WidgetTester tester) async {
           await _monter(tester, mode: mode, taille: _bureau, zoom: 4);
           expect(find.textContaining(t.tc.coran.zoom.bride), findsNothing);
@@ -290,36 +292,51 @@ void main() {
             ActionPrincipale,
             t.eleve.coran.reduire,
           );
-          expect(tester.widget<ActionPrincipale>(agrandir).onPress, isNull);
+          // Jamais grise (regle BOUTONS-GRISES) : actif, meme au maximum.
+          expect(tester.widget<ActionPrincipale>(agrandir).onPress, isNotNull);
           expect(tester.widget<ActionPrincipale>(reduire).onPress, isNotNull);
+          expect(find.textContaining(t.tc.coran.zoom.maximale), findsNothing);
+          await tester.tap(agrandir);
+          await tester.pump();
+          expect(find.textContaining(t.tc.coran.zoom.maximale), findsOneWidget);
+          // Un second appui rejoue le message, le zoom ne bouge pas.
+          await tester.tap(agrandir);
+          await tester.pump();
+          expect(find.textContaining(t.tc.coran.zoom.maximale), findsWidgets);
+          expect(
+            ProviderScope.containerOf(tester.element(find.byType(MushafPage)))
+                .read(lectureCoranProvider)
+                .zoomLocal,
+            4,
+          );
+          await tester.pump(const Duration(seconds: 5));
           expect(tester.takeException(), isNull);
         },
       );
 
-      testWidgets('(f) Agrandir reste actif tant que la colonne le tient', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('(f) Agrandir grossit jusqu au maximum de la colonne, puis '
+          'dit la borne', (WidgetTester tester) async {
         await _monter(tester, mode: mode, taille: _bureau);
         final Finder agrandir = find.widgetWithText(
           ActionPrincipale,
           t.eleve.coran.agrandir,
         );
-        expect(tester.widget<ActionPrincipale>(agrandir).onPress, isNotNull);
+        double zoom() =>
+            ProviderScope.containerOf(tester.element(find.byType(MushafPage)))
+                .read(lectureCoranProvider)
+                .zoomLocal;
+        double avant = zoom();
         for (int i = 0; i < 40; i++) {
-          final VoidCallback? action = tester
-              .widget<ActionPrincipale>(agrandir)
-              .onPress;
-          if (action == null) break;
-          action();
+          await tester.tap(agrandir);
           await tester.pump();
+          if (zoom() == avant) {
+            break;
+          }
+          avant = zoom();
         }
-        expect(tester.widget<ActionPrincipale>(agrandir).onPress, isNull);
-        expect(
-          ProviderScope.containerOf(tester.element(find.byType(MushafPage)))
-              .read(lectureCoranProvider)
-              .zoomLocal,
-          lessThanOrEqualTo(PositionLecture.zoomMax + 1e-9),
-        );
+        expect(zoom(), lessThanOrEqualTo(PositionLecture.zoomMax + 1e-9));
+        expect(find.textContaining(t.tc.coran.zoom.maximale), findsWidgets);
+        expect(tester.widget<ActionPrincipale>(agrandir).onPress, isNotNull);
       });
 
       testWidgets('(h) versets en texte continu, rosace en ligne', (
@@ -451,4 +468,78 @@ void main() {
       expect(tout.length, greaterThan(_surlignes(tester).join().length));
     },
   );
+
+  group('page du Mushaf : jamais de texte KFGQPC sans UthmanicHafs', () {
+    for (final (String nom, Size taille) in <(String, Size)>[
+      ('telephone', _telephone),
+      ('bureau', _bureau),
+    ]) {
+      testWidgets(
+        'avec la police ($nom) : la page de Medine, en UthmanicHafs',
+        (WidgetTester tester) async {
+          await _monter(tester, mode: ModeRenduCoran.mushaf, taille: taille);
+          expect(find.byType(PageMadina15), findsWidgets);
+          int vus = 0;
+          for (final RichText r in tester.widgetList<RichText>(
+            find.byType(RichText),
+          )) {
+            for (final String? famille in _famillesDesSignes(r)) {
+              vus++;
+              expect(famille, AppFontFamily.arabeMushaf);
+            }
+          }
+          expect(vus, greaterThan(0));
+        },
+      );
+
+      testWidgets('sans la police ($nom) : texte Tanzil simple, police arabe '
+          'de l application', (WidgetTester tester) async {
+        await _monter(
+          tester,
+          mode: ModeRenduCoran.mushaf,
+          taille: taille,
+          policeMushaf: false,
+        );
+        expect(find.byType(PageMadina15), findsNothing);
+        // Aucun paragraphe ne porte les signes du texte KFGQPC, en aucune
+        // police : on rend le texte Tanzil simple.
+        for (final RichText r in tester.widgetList<RichText>(
+          find.byType(RichText),
+        )) {
+          expect(
+            _signesKfgqpc.hasMatch(r.text.toPlainText()),
+            isFalse,
+            reason: 'texte KFGQPC rendu sans UthmanicHafs',
+          );
+        }
+        // La composition n'est pas celle de l'edition : la notice le dit.
+        expect(
+          find.text(t.tc.coran.fidelite.fidele),
+          findsNothing,
+          reason: 'la page ne se dit pas fidele a l\'edition',
+        );
+      });
+    }
+  });
+}
+
+/// Les familles effectives des morceaux de texte qui portent les signes
+/// propres au KFGQPC (le style de chaque morceau herite de ses parents).
+List<String?> _famillesDesSignes(RichText r) {
+  final List<String?> sortie = <String?>[];
+  void marcher(InlineSpan s, TextStyle? herite) {
+    if (s is! TextSpan) {
+      return;
+    }
+    final TextStyle? style = herite == null ? s.style : herite.merge(s.style);
+    if (s.text != null && _signesKfgqpc.hasMatch(s.text!)) {
+      sortie.add(style?.fontFamily);
+    }
+    for (final InlineSpan enfant in s.children ?? const <InlineSpan>[]) {
+      marcher(enfant, style);
+    }
+  }
+
+  marcher(r.text, null);
+  return sortie;
 }

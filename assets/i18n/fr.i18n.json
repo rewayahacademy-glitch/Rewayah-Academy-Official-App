@@ -6052,7 +6052,8 @@
       "zoom": {
         "bride": "Grossissement limité par la largeur\u00a0: au-delà, un mot serait coupé.",
         "valeur": "{pourcent} %",
-        "renvoiLectureAgrandie": "Pour grossir le texte, passez en lecture agrandie\u00a0: la page du mushaf garde sa géométrie."
+        "renvoiLectureAgrandie": "Pour grossir le texte, passez en lecture agrandie\u00a0: la page du mushaf garde sa géométrie.",
+        "maximale": "Taille maximale atteinte"
       },
       "navigation": {
         "titre": "Aller à",

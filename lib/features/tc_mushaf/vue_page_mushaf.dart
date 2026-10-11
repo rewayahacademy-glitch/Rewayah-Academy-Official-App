@@ -23,6 +23,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/rosace_verset.dart';
 import 'page_madina_15.dart';
+import 'police_mushaf.dart';
 import 'textes_lecteur_coran.dart';
 
 /// Le rendu « page du mushaf ».
@@ -185,6 +186,11 @@ class OuvertureMushaf extends ConsumerWidget {
     final int? numeroGauche = doublePage
         ? GeometrieMushaf.pageDeGaucheDe(pageDeDroite)
         : null;
+    // Le texte KFGQPC va avec UthmanicHafs, et seulement avec elle : sans la
+    // police, la page de Medine ne se dessine pas, la page du mushaf rend le
+    // texte Tanzil simple en police arabe de l'application.
+    final bool police =
+        ref.watch(policeMushafDisponibleProvider).value ?? false;
 
     final AsyncValue<PageMushafVM> droite = ref.watch(
       pageMushafProvider(pageDeDroite),
@@ -213,6 +219,7 @@ class OuvertureMushaf extends ConsumerWidget {
         // applications de mushaf : le corps du texte est calcule pour que les
         // quinze lignes remplissent la hauteur et la largeur.
         if (planche != null &&
+            police &&
             planche.pages.every((PageMushafVM p) => p.estMadina15) &&
             contraintes.hasBoundedHeight) {
           return _OuvertureMadina15(planche: planche, contraintes: contraintes);
@@ -448,7 +455,7 @@ class _ContenuDePage extends ConsumerWidget {
 ///   aucune donnee a rendre ;
 /// - **flux continu** : les versets exacts de la page, composes dans la largeur
 ///   du cadre. C'est le chemin courant, et [NoticeComposition] le dit.
-class TexteDePage extends StatelessWidget {
+class TexteDePage extends ConsumerWidget {
   /// Cree le texte d'une page.
   const TexteDePage({required this.vue, required this.largeur, super.key});
 
@@ -459,10 +466,13 @@ class TexteDePage extends StatelessWidget {
   final double largeur;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool police =
+        ref.watch(policeMushafDisponibleProvider).value ?? false;
     // MUSHAF-15L : une source de layout reelle (quinze lignes, cadres de
-    // sourate, basmala, rosaces) se compose en page du Mushaf de Medine.
-    if (vue.estMadina15) {
+    // sourate, basmala, rosaces) se compose en page du Mushaf de Medine, avec
+    // UthmanicHafs. Sans elle, jamais le texte KFGQPC : le flux Tanzil simple.
+    if (vue.estMadina15 && police) {
       return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints contraintes) =>
             PageMadina15(
@@ -491,7 +501,7 @@ class TexteDePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          if (vue.lignes.isNotEmpty)
+          if (vue.lignes.isNotEmpty && !vue.estMadina15)
             for (final SectionLigne ligne in vue.lignes)
               LigneComposee(ligne: ligne, style: base, echelle: metrique)
           else
@@ -659,20 +669,28 @@ class EnteteSourate extends StatelessWidget {
 }
 
 /// Le pied de page : numero, juz, cote, et l'etat de la composition.
-class _PiedDePage extends StatelessWidget {
+class _PiedDePage extends ConsumerWidget {
   const _PiedDePage({required this.vue});
 
   final PageMushafVM vue;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool police =
+        ref.watch(policeMushafDisponibleProvider).value ?? false;
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        NoticeComposition(fidelite: vue.fidelite),
+        NoticeComposition(
+          // Sans la police, la page est composee d'apres le texte Tanzil : la
+          // composition n'est pas celle de l'edition.
+          fidelite: vue.estMadina15 && !police
+              ? DisponibiliteLayout.indisponible
+              : vue.fidelite,
+        ),
         const SizedBox(height: AppSpacing.sm),
         Text(
           <String>[

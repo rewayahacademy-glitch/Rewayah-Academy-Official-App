@@ -8657,6 +8657,7 @@ class _Traductions$tc$coran$zoom$ar extends Traductions$tc$coran$zoom$fr {
 	@override String get bride => 'التكبير محدود بالعرض: ما زاد عليه يقطع الكلمات.';
 	@override String valeur({required Object pourcent}) => '⁨${pourcent}⁩ ٪';
 	@override String get renvoiLectureAgrandie => 'لتكبير النص، انتقل إلى القراءة المكبَّرة: صفحة المصحف تحافظ على هيئتها.';
+	@override String get maximale => 'بلغ الحجم الأقصى';
 }
 
 // Path: tc.coran.navigation
@@ -15270,6 +15271,7 @@ extension on TraductionsAr {
 			'tc.coran.zoom.bride' => 'التكبير محدود بالعرض: ما زاد عليه يقطع الكلمات.',
 			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '⁨${pourcent}⁩ ٪',
 			'tc.coran.zoom.renvoiLectureAgrandie' => 'لتكبير النص، انتقل إلى القراءة المكبَّرة: صفحة المصحف تحافظ على هيئتها.',
+			'tc.coran.zoom.maximale' => 'بلغ الحجم الأقصى',
 			'tc.coran.navigation.titre' => 'الانتقال إلى',
 			'tc.coran.navigation.ouvrir' => 'الانتقال إلى صفحة',
 			'tc.coran.navigation.champ' => 'صفحة أو سورة أو جزء أو مرجع',
@@ -15370,9 +15372,9 @@ extension on TraductionsAr {
 			'tc.classe.rappel.recu' => 'المعلم يناديك',
 			'tc.classe.rappel.echec' => 'تعذّر إرسال النداء',
 			'tc.classe.rappel.echecDroit' => 'دخولك إلى هذه الحصة لا يسمح بنداء طالب',
-			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'تم النداء. مجددًا بعد ⁨${secondes}⁩ ث',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'تم النداء. مجددًا بعد ⁨${secondes}⁩ ث',
 			'tc.classe.recitation.titre' => 'التلاوة',
 			'tc.classe.recitation.actif' => ({required Object prenom}) => 'التلاوة: ⁨${prenom}⁩',
 			'tc.classe.recitation.pastille' => 'في التلاوة',
@@ -15884,9 +15886,9 @@ extension on TraductionsAr {
 			'com.vocal.composer.actionPause' => 'إيقاف مؤقت',
 			'com.vocal.composer.actionReprendre' => 'استئناف',
 			'com.vocal.composer.actionArreter' => 'إيقاف',
-			'com.vocal.composer.actionSupprimer' => 'حذف',
 			_ => null,
 		} ?? switch (path) {
+			'com.vocal.composer.actionSupprimer' => 'حذف',
 			'com.vocal.composer.actionEnvoyer' => 'إرسال',
 			'com.vocal.composer.confirmerTitre' => 'حذف هذه الرسالة الصوتية؟',
 			'com.vocal.composer.confirmerPhrase' => 'ستُمحى من هذا الجهاز. لا يمكن التراجع عن هذا الإجراء.',
@@ -16398,9 +16400,9 @@ extension on TraductionsAr {
 			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'فحص ${objet}‏، السبب ${motif}',
 			'com.annonces.administration.moderation.regleMotif.publicite' => 'الإعلانات التجارية غير مسموح بها في مجتمع المعلّمين.',
 			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'روابط التسويق بالعمولة غير مسموح بها في مجتمع المعلّمين.',
-			'com.annonces.administration.moderation.regleMotif.vente' => 'بيع المنتجات أو الخدمات غير مسموح به في هذه المساحة.',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.administration.moderation.regleMotif.vente' => 'بيع المنتجات أو الخدمات غير مسموح به في هذه المساحة.',
 			'com.annonces.administration.moderation.regleMotif.sollicitation' => 'الاستدراج التجاري غير مسموح به في هذه المساحة.',
 			'com.annonces.administration.moderation.regles.titre' => 'مشاركة تعليمية فقط',
 			'com.annonces.administration.moderation.regles.corps' => 'مجتمع المعلّمين مخصّص للتبادل المهني بين المعلّمين.',
@@ -16912,9 +16914,9 @@ extension on TraductionsAr {
 			'admin.programmes.champNomHumain' => 'الاسم المعروض',
 			'admin.programmes.champCycle' => 'المرحلة',
 			'admin.programmes.champOrdre' => 'الترتيب',
-			'admin.programmes.champDescription' => 'الوصف (اختياري)',
 			_ => null,
 		} ?? switch (path) {
+			'admin.programmes.champDescription' => 'الوصف (اختياري)',
 			'admin.programmes.champMotif' => 'السبب',
 			'admin.programmes.motifRequis' => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.',
 			'admin.programmes.journalisation' => 'يُدوَّن كل إنشاء وتعديل وحذف ونشر في سجل التدقيق.',
@@ -17426,9 +17428,9 @@ extension on TraductionsAr {
 			'admin.bibliotheque.catalogue.segments.brouillons' => 'المسودات',
 			'admin.bibliotheque.catalogue.segments.aVerifier' => 'بحاجة إلى مراجعة',
 			'admin.bibliotheque.catalogue.segments.publies' => 'المنشورة',
-			'admin.bibliotheque.catalogue.segments.retires' => 'المسحوبة',
 			_ => null,
 		} ?? switch (path) {
+			'admin.bibliotheque.catalogue.segments.retires' => 'المسحوبة',
 			'admin.bibliotheque.catalogue.segments.droitsExpires' => 'حقوق منتهية',
 			'admin.bibliotheque.catalogue.filtres.type' => 'النوع',
 			'admin.bibliotheque.catalogue.filtres.niveau' => 'المستوى',
@@ -17940,9 +17942,9 @@ extension on TraductionsAr {
 			'comptable.paiements.actions.selectionner' => ({required Object nom}) => 'تحديد دفعة ${nom}',
 			'comptable.paiements.actions.selectionnerPrets' => 'تحديد كل المدفوعات الجاهزة',
 			'comptable.paiements.actions.payerSelection' => 'دفع المحدد',
-			'comptable.paiements.actions.viderSelection' => 'إلغاء التحديد',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.actions.viderSelection' => 'إلغاء التحديد',
 			'comptable.paiements.actions.voirProfil' => 'عرض ملف الدفع',
 			'comptable.paiements.selection' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'دفعة واحدة محددة', two: 'دفعتان محددتان', few: '${n} دفعات محددة', other: '${n} دفعة محددة', ), 
 			'comptable.paiements.selectionPhrase' => 'يُرجع الفحص الإجمالي والاستبعادات قبل أي إرسال.',
@@ -18454,9 +18456,9 @@ extension on TraductionsAr {
 			'comptable.direction.reservePanneau.regle.pourcentageDetail' => 'حصة من المقبوض المُثبَّت.',
 			'comptable.direction.reservePanneau.regle.jusquAObjectif' => 'حتى بلوغ الهدف',
 			'comptable.direction.reservePanneau.regle.jusquAObjectifDetail' => 'إكمال ما ينقص لبلوغ الهدف.',
-			'comptable.direction.reservePanneau.regle.proposee' => 'مقترحة',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.reservePanneau.regle.proposee' => 'مقترحة',
 			'comptable.direction.reservePanneau.regle.proposeeDetail' => 'اقتراح يؤكده المحاسب.',
 			'comptable.direction.reservePanneau.montantAuto' => 'المبلغ المخصَّص',
 			'comptable.direction.reservePanneau.montantAutoDetail' => 'المبلغ المخصَّص للاحتياطي في كل موعد.',
@@ -18968,9 +18970,9 @@ extension on TraductionsAr {
 			'attente.correctionImpossible' => 'لا يمكن تعديل هذا الملف الآن.',
 			'attente.actualiser' => 'تحديث حالة الملف',
 			'attente.suspenduDetail' => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.',
-			'attente.seDeconnecter' => 'تسجيل الخروج',
 			_ => null,
 		} ?? switch (path) {
+			'attente.seDeconnecter' => 'تسجيل الخروج',
 			'attente.titreDossier' => 'ملفك',
 			'attente.titreCompte' => 'حسابك',
 			'attente.accordsARelire' => 'بقي عليك قراءة شروطنا وقبولها.',
@@ -19482,9 +19484,9 @@ extension on TraductionsAr {
 			'dossiers.revue.etats.retourDossiers' => 'العودة إلى الملفات',
 			'dossiers.revue.etats.verificationsIncompletes' => 'أكمل عمليات التحقق المطلوبة.',
 			'dossiers.revue.etats.accordManquant' => 'تنقص هذا الملف موافقة مطلوبة.',
-			'dossiers.revue.etats.decisionIndisponible' => 'القرار غير متاح الآن.',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.revue.etats.decisionIndisponible' => 'القرار غير متاح الآن.',
 			'dossiers.revue.etats.actualiserDossier' => 'تحديث الملف',
 			'dossiers.revue.etats.refusNonAutorise' => 'لا يمكن رفض هذا الملف في حالته الحالية.',
 			'dossiers.restantUn' => 'ملف واحد قيد الانتظار',
@@ -19996,9 +19998,9 @@ extension on TraductionsAr {
 			'recherche.guide.initial.titre' => 'البحث عن مادة',
 			'recherche.guide.initial.phrase' => 'اكتب كلمة لتجد إحدى موادك.',
 			'recherche.guide.limite' => 'موادك ودروسك فقط.',
-			'recherche.entree.supports' => 'البحث في المواد',
 			_ => null,
 		} ?? switch (path) {
+			'recherche.entree.supports' => 'البحث في المواد',
 			'recherche.contexte.remplacementOuvert' => 'استبدال متاح',
 			'recherche.contexte.remplacementMien' => 'استبدالك',
 			'recherche.contexte.mission' => 'مهمة مراقبة',
