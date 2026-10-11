@@ -8347,7 +8347,13 @@
       "mission": "مهمة مراقبة",
       "missionEnseignant(param=enseignant)": "مهمة مراقبة · ⁨{enseignant}⁩",
       "eleveDeClasse(param=classe)": "طالب في فصل ⁨{classe}⁩",
-      "enseignantDeClasse(param=classe)": "معلّم فصل ⁨{classe}⁩"
+      "enseignantDeClasse(param=classe)": "معلّم فصل ⁨{classe}⁩",
+      "personneFoyer": "ملف من أسرتك",
+      "personneFoyerClasse(param=classe)": "ملف من أسرتك · ⁨{classe}⁩",
+      "personneParIdentifiant": "وُجد بمعرّفه",
+      "personneParIdentifiantClasse(param=classe)": "وُجد بمعرّفه · ⁨{classe}⁩",
+      "canalStudio": "قناة الاستوديو",
+      "encaissement(param=famille)": "تحصيل · ⁨{famille}⁩"
     }
   }
 }
