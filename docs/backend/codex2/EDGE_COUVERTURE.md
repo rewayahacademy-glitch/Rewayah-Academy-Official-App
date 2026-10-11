@@ -1,19 +1,19 @@
 ﻿# Couverture des handlers Edge - X2-05
 
-Les tests interceptent `Deno.serve`, appellent les handlers directement et remplacent `fetch` par des reponses locales sur les parcours metier retenus. Aucune requete externe ni credential reel n'est utilise.
+Les tests interceptent `Deno.serve`, appellent les handlers directement et remplacent `fetch` par des reponses locales. Les signatures JWT/R2 sont calculees localement avec des valeurs de test. Aucun appel externe ni credential reel n'est utilise.
 
 | Handler | Scenarios verifies |
 | --- | --- |
-| `agent-session` | Corps absent / JSON illisible -> 400; refus RPC -> 401; succes avec faux RPC, JWT emet un claim `role=agent_ro` sans exposer la cle de signature. |
-| `archive-seance-acces` | Methode GET -> 405. |
+| `agent-session` | Corps absent / JSON illisible -> 400; refus RPC -> 401; succes signe, claim `role=agent_ro`, secret absent du JWT. |
+| `archive-seance-acces` | GET -> 405; appelant absent -> 401; JSON illisible -> 400; RPC refuse -> 403; URL GET signee nominale; URL et cle R2 absentes des journaux. |
 | `create-room-token` | Configuration absente -> 503; appelant absent -> 401; JSON illisible -> 400; RPC refuse -> 403; succes signe avec faux credentials. |
-| `creer-profil-enfant` | Appelant absent -> 401; succes avec faux appels auth/RPC; refus RPC -> 403 et suppression compensatoire simulee. |
-| `livekit-webhook` | Methode GET -> 405; signature absente -> 401. |
-| `piece-identite-acces` | Methode GET -> 405. |
-| `piece-identite-confirme` | Methode GET -> 405. |
-| `piece-identite-depot` | Methode GET -> 405. |
-| `session-enfant` | JSON illisible -> 400 avant service; refus de code -> 403; succes d'appairage avec faux RPC/Auth, reponse a usage unique. |
+| `creer-profil-enfant` | Appelant absent -> 401; succes avec faux auth/RPC; refus RPC -> 403 et suppression compensatoire simulee. |
+| `livekit-webhook` | GET -> 405; signature invalide/absente -> 401; evenement signe accepte et transmis a la RPC simulee. |
+| `piece-identite-acces` | GET -> 405; appelant absent -> 401; JSON illisible -> 400; RPC refuse -> 403; URL GET signee nominale; URL et cle R2 absentes des journaux. |
+| `piece-identite-confirme` | GET -> 405; JSON illisible / UUID invalide -> 400; deposant non autorise -> 403; objet HEAD present et confirmation nominale. |
+| `piece-identite-depot` | GET -> 405; JSON illisible / MIME refuse -> 400; reservation refusee -> 403; URL PUT signee nominale; URL et cle R2 absentes des journaux. |
+| `session-enfant` | JSON illisible -> 400; code refuse -> 403; appairage nominal avec faux RPC/Auth. |
 
-Execution de tous les fichiers: `deno test --no-check --allow-env ...` -> 15/15 tests. Les tests ne couvrent pas encore un succes nominal pour les handlers R2, webhook, ni tous les refus de role metier. `create-room-token` emet un jeton nominal si la reponse autorisee interdit la publication; le cas autorise avec publication audio revele une erreur d'execution dans la conversion `TrackSource` du module partage.
+Execution de tous les fichiers: `deno test --no-check --allow-env ...` -> 20/20 tests. Les neuf handlers ont maintenant au moins un parcours nominal simule; les points d'entree avec session utilisateur couvrent des refus d'appelant et de role selon leur modele d'autorisation. Les webhooks n'ont pas de role utilisateur: leur garde est la signature LiveKit.
 
-`deno test` avec verification TypeScript reste en echec sur le code existant `supabase/functions/_shared/livekit.ts:104`: `TrackSource[]` n'est pas assignable au type de chaines attendu par la dependance. Ce lot ne modifie aucun handler pour masquer cette erreur.
+`deno test` avec verification TypeScript reste en echec sur le code existant `supabase/functions/_shared/livekit.ts:104`: `TrackSource[]` n'est pas assignable au type de chaines attendu par la dependance. Le test `create-room-token` a egalement revele que le cas autorise avec publication audio echoue a l'execution dans cette conversion. Aucun handler n'est modifie par ce lot.
