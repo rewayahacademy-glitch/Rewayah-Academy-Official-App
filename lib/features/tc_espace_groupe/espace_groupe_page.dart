@@ -25,6 +25,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../acces_finance/acces_finance.dart';
+import '../recherche/entree_recherche.dart';
 import '../tc_catalogue/routes_tc_b.dart';
 import '../tc_mes_groupes/carte_groupe.dart';
 import '../tc_mes_groupes/chemins_tc_a.dart';
@@ -493,7 +494,13 @@ class _Colonnes extends StatelessWidget {
     return ColonnesParRangees(
       rangees: <(List<Widget>, List<Widget>)>[
         (identiteEtSeance, <Widget>[avant, Ecart.vSection, cartes]),
-        (<Widget>[bibliotheque], secondaire),
+        (
+          <Widget>[
+            bibliotheque,
+            EntreeRechercheSupports(espace: espacePourRoleGroupe(espace.role)),
+          ],
+          secondaire,
+        ),
       ],
     );
   }

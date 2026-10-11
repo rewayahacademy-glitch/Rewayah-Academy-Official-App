@@ -86,6 +86,7 @@ class AdminShell extends StatelessWidget {
     this.onNotifications,
     this.notificationsActives = false,
     this.onStudio,
+    this.onRechercheMetier,
   }) : assert(
          domaines.length <= maxDomaines,
          'La sidebar admin ne contient jamais plus de $maxDomaines domaines '
@@ -132,6 +133,11 @@ class AdminShell extends StatelessWidget {
   /// La page ouverte est celle des notifications : la cloche s'y montre
   /// active (icone pleine, etat selectionne), aucun domaine ne l'etant.
   final bool notificationsActives;
+
+  /// Ouvre la recherche metier (`/recherche`, RECH-D5) : la loupe d'en-tete
+  /// garde sa recherche de navigation et y ajoute ce lien. Nul quand aucun
+  /// domaine n'est servi a cet espace : la loupe est alors inchangee.
+  final VoidCallback? onRechercheMetier;
 
   /// Ouvre Le Studio (`/admin/studio`). Nul : aucune action Studio.
   final VoidCallback? onStudio;
@@ -215,7 +221,10 @@ class AdminShell extends StatelessWidget {
     Widget contenu({required bool avecActions}) {
       final List<Widget> actions = <Widget>[
         if (avecActions) ...<Widget>[
-          _BoutonRecherche(onRecherche: onAller),
+          _BoutonRecherche(
+            onRecherche: onAller,
+            onRechercheMetier: onRechercheMetier,
+          ),
           if (studio != null) _BoutonStudio(onStudio: studio),
           const BasculeTheme(),
           ?cloche,
@@ -1002,31 +1011,54 @@ class _BoutonCompte extends StatelessWidget {
 /// La recherche a partir de 600 : un bouton qui ouvre le champ existant dans
 /// une feuille (Q-S2). Aucune largeur inventee dans l'en-tete.
 class _BoutonRecherche extends StatelessWidget {
-  const _BoutonRecherche({required this.onRecherche});
+  const _BoutonRecherche({required this.onRecherche, this.onRechercheMetier});
 
   final void Function(String chemin) onRecherche;
 
+  /// RECH-D5 : le lien vers la recherche metier, quand un domaine est servi.
+  final VoidCallback? onRechercheMetier;
+
   Future<void> _ouvrir(BuildContext context) async {
+    bool metier = false;
     final String? chemin = await AppBottomSheet.ouvrir<String>(
       context,
       titre: t.nav.admin.recherche,
-      constructeur: (BuildContext contexte) => TextField(
-        autofocus: true,
-        onSubmitted: (String saisie) {
-          final String? cible = _cheminRecherche(saisie);
-          if (cible != null) {
-            Navigator.of(contexte).pop(cible);
-          }
-        },
-        decoration: InputDecoration(
-          isDense: true,
-          hintText: t.nav.admin.rechercheIndication,
-          hintMaxLines: lignesTexteAide(t.nav.admin.rechercheIndication),
-          prefixIcon: Icon(AppIcons.recherche.repos),
-        ),
+      constructeur: (BuildContext contexte) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          TextField(
+            autofocus: true,
+            onSubmitted: (String saisie) {
+              final String? cible = _cheminRecherche(saisie);
+              if (cible != null) {
+                Navigator.of(contexte).pop(cible);
+              }
+            },
+            decoration: InputDecoration(
+              isDense: true,
+              hintText: t.nav.admin.rechercheIndication,
+              hintMaxLines: lignesTexteAide(t.nav.admin.rechercheIndication),
+              prefixIcon: Icon(AppIcons.recherche.repos),
+            ),
+          ),
+          if (onRechercheMetier != null) ...<Widget>[
+            Ecart.vSm,
+            LienFleche(
+              libelle: t.recherche.initial.titre,
+              alignerEnDebut: true,
+              onPress: () {
+                metier = true;
+                Navigator.of(contexte).pop();
+              },
+            ),
+          ],
+        ],
       ),
     );
-    if (chemin != null) {
+    if (metier) {
+      onRechercheMetier?.call();
+    } else if (chemin != null) {
       onRecherche(chemin);
     }
   }

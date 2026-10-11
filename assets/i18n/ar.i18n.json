@@ -8242,5 +8242,112 @@
       "duree": "تغيّرت مدة الدروس",
       "horaire": "قيود توقيت الأسرة"
     }
+  },
+  "recherche": {
+    "titre": "بحث",
+    "retour": "رجوع",
+    "champ": {
+      "libelle": "بحث",
+      "aide": "كلمة"
+    },
+    "espace": {
+      "famille": "في مساحة ولي الأمر",
+      "eleve": "في مساحة الطالب",
+      "eleveGuide": "في مساحة الطالب",
+      "enseignant": "في مساحة المعلّم",
+      "controleur": "في مساحة المراقبة",
+      "comptable": "في مساحة المحاسبة",
+      "administration": "في مساحة الإدارة"
+    },
+    "initial": {
+      "titre": "البحث في مساحتك",
+      "phrase": "اكتب اسمًا أو فصلًا أو مادة. لا يُبحث عن شيء قبل أن تكتب."
+    },
+    "courte": "اكتب ثلاثة أحرف على الأقل.",
+    "chargement": "جارٍ البحث…",
+    "lent": "يستغرق البحث وقتًا أطول من المتوقع. تبقى النتائج التي وصلت معروضة.",
+    "resultatsPour": "نتائج «⁨{requete}⁩»",
+    "categoriesAffichees(param=nombre)": {
+      "zero": "لا فئة معروضة",
+      "one": "فئة واحدة معروضة",
+      "two": "فئتان معروضتان",
+      "few": "⁨{nombre}⁩ فئات معروضة",
+      "many": "⁨{nombre}⁩ فئةً معروضة",
+      "other": "⁨{nombre}⁩ فئة معروضة"
+    },
+    "domaines": {
+      "classes": "الفصول",
+      "supports": "المواد",
+      "personnes": "الأشخاص",
+      "enseignants": "المعلّمون",
+      "pedagogie": "الطلاب",
+      "controle": "المراقبة",
+      "finances": "المالية",
+      "fils": "المحادثات",
+      "remplacements": "الاستبدالات"
+    },
+    "voirDavantage": "عرض المزيد",
+    "pageSuivante": "جارٍ تحميل مزيد من النتائج…",
+    "pageEnEchec": "تعذّر تحميل النتائج التالية.",
+    "etats": {
+      "vide": {
+        "titre": "لا نتائج لهذا البحث.",
+        "phrase": "جرّب كلمة أخرى أو عامل تصفية.",
+        "action": "تعديل البحث"
+      },
+      "domaineIndisponible": {
+        "titre": "البحث في هذا المجال غير متاح.",
+        "phrase": "تبقى الفئات الأخرى قابلة للاطلاع.",
+        "action": "إعادة المحاولة لهذا المجال"
+      },
+      "erreur": {
+        "titre": "تعذّر إجراء البحث.",
+        "phrase": "أُعيد التحقق من صلاحياتك. أعد المحاولة بعد قليل."
+      },
+      "delai": {
+        "titre": "البحث يستغرق وقتًا طويلًا.",
+        "phrase": "حدّد المجال أو أعد المحاولة."
+      },
+      "horsLigne": {
+        "titre": "البحث عبر الإنترنت غير متاح.",
+        "phrase": "سيستأنف عند عودة الاتصال. لا تُحفظ أي نتيجة خاصة في الانتظار."
+      },
+      "sessionExpiree": {
+        "titre": "انتهت جلستك.",
+        "phrase": "سجّل الدخول من جديد لمتابعة البحث."
+      },
+      "nonRaccorde": {
+        "titre": "البحث غير متاح حاليًا.",
+        "phrase": "هذا البحث لم يُفتح بعد في مساحتك.",
+        "action": "رجوع"
+      },
+      "inaccessible": {
+        "titre": "لم يعد هذا العنصر متاحًا.",
+        "phrase": "تم تحديث نتائجك.",
+        "action": "العودة إلى النتائج"
+      }
+    },
+    "tout": "الكل",
+    "filtres": "مجالات البحث",
+    "limite": "تقتصر النتائج على ما تتيحه مساحتك.",
+    "guide": {
+      "titre": "البحث عن مادة",
+      "initial": {
+        "titre": "البحث عن مادة",
+        "phrase": "اكتب كلمة لتجد إحدى موادك."
+      },
+      "limite": "موادك ودروسك فقط."
+    },
+    "entree": {
+      "supports": "البحث في المواد"
+    },
+    "contexte": {
+      "remplacementOuvert": "استبدال متاح",
+      "remplacementMien": "استبدالك",
+      "mission": "مهمة مراقبة",
+      "missionEnseignant(param=enseignant)": "مهمة مراقبة · ⁨{enseignant}⁩",
+      "eleveDeClasse(param=classe)": "طالب في فصل ⁨{classe}⁩",
+      "enseignantDeClasse(param=classe)": "معلّم فصل ⁨{classe}⁩"
+    }
   }
 }

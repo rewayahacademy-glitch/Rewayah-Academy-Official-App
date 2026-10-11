@@ -73,6 +73,8 @@ const Map<String, int> _domaines = <String, int>{
   'agent': 12,
   // AR-ADMIN-1.
   'admin': 590,
+  // RECH-1, RECH-2 : la surface de recherche, arabe des l'origine.
+  'recherche': 55,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :

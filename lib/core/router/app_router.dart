@@ -138,6 +138,8 @@ import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
 import '../../features/presentation_tuteur/demandes_presentation_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
+import '../../features/recherche/entree_recherche.dart';
+import '../../features/recherche/page_recherche.dart';
 import '../../features/recrutement/invitation_candidat_page.dart';
 import '../../features/remplacements/remplacements_page.dart';
 import '../../features/revenus_enseignant/revenus_enseignant_page.dart';
@@ -166,6 +168,7 @@ import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../mouvement/transitions.dart';
 import '../preferences/presentation_vue.dart';
+import '../recherche/modeles_recherche.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
 import '../tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
@@ -376,6 +379,19 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.compte,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: ComptePage()),
+      ),
+      // RECH-1 : la recherche transversale, une seule route pour tous les
+      // espaces (spec RECH-03 §1). L'espace et le domaine d'ouverture sont
+      // des parametres d'interface ; le texte cherche n'est jamais dans
+      // l'adresse.
+      GoRoute(
+        path: Routes.recherche,
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
+          child: PageRecherche(
+            espaceDemande: etat.uri.queryParameters['espace'],
+            domaineDemande: etat.uri.queryParameters['domaine'],
+          ),
+        ),
       ),
       GoRoute(
         path: Routes.compteProfil,
@@ -2088,6 +2104,15 @@ class _CoquilleSecondaire extends ConsumerWidget {
     // 2026 sur ce meme ecran.
     if (effectif == AppRole.admin) {
       return AdminShell(
+        onRechercheMetier:
+            (ref
+                    .watch(
+                      rechercheServieProvider(EspaceRecherche.administration),
+                    )
+                    .value ??
+                false)
+            ? () => aller(Routes.recherche)
+            : null,
         domaines: domainesAdmin(voitDirection: session.peutVoirDirection),
         domaineActif: null,
         onAller: aller,
@@ -2226,12 +2251,25 @@ class _CoquilleNavigation extends ConsumerWidget {
       // 04/10). Sans point tant que le port est indisponible, comme le
       // tuteur. Elle s'ajoute, en dernier, aux actions deja posees au-dessus
       // (le raccourci Espaces de CT-9), et se montre active sur sa page.
+      // RECH-D5 : une seule loupe par coque, pour l'enseignant et le
+      // controleur, rendue seulement si un domaine de recherche est servi a
+      // leur espace (la capacite, jamais le role) ; masquee sinon. Les
+      // coques famille et eleve n'en portent pas encore (D2).
+      final EspaceRecherche? espaceRecherche = switch (role) {
+        AppRole.teacher => EspaceRecherche.enseignant,
+        AppRole.controller => EspaceRecherche.controleur,
+        _ => null,
+      };
+      final bool rechercheServie =
+          espaceRecherche != null &&
+          (ref.watch(rechercheServieProvider(espaceRecherche)).value ?? false);
       final Widget avecCloche = cheminCloche == null
           ? coquille
           : Builder(
               builder: (BuildContext contexte) => ActionsEnteteCoquille(
                 actions: <Widget>[
                   ...ActionsEnteteCoquille.de(contexte),
+                  if (rechercheServie) const LoupeRecherche(),
                   ClocheNotifications(
                     actif: surNotifications,
                     onPress: () => GoRouter.of(contexte).go(cheminCloche),
@@ -2350,7 +2388,16 @@ class _CoquilleAdmin extends ConsumerWidget {
     // dit qu'une alerte urgente est ouverte. Jamais deduite du role.
     final int? urgentes = ref.watch(alertesUrgentesProvider);
 
+    // RECH-D5 : la loupe d'en-tete ouvre aussi la recherche metier, quand un
+    // domaine est servi a l'espace administration.
+    final bool rechercheServie =
+        ref
+            .watch(rechercheServieProvider(EspaceRecherche.administration))
+            .value ??
+        false;
+
     return AdminShell(
+      onRechercheMetier: rechercheServie ? () => aller(Routes.recherche) : null,
       domaines: domainesAdmin(voitDirection: voitDirection),
       domaineActif: domaine,
       onAller: aller,

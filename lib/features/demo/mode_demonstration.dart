@@ -51,6 +51,8 @@ import '../../core/offres/service_offres.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/profil/service_acceptations.dart';
+import '../../core/recherche/moteurs_demo_recherche.dart';
+import '../../core/recherche/port_recherche.dart';
 import '../../core/recrutement/port_invitations_enseignant.dart';
 import '../../core/recrutement/port_statuts_signature.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
@@ -280,6 +282,10 @@ List<Override> surchargesDemoTuteur({
     // Presence (Accueil, verification prealable) et pieces signees (Compte).
     servicePresenceProvider.overrideWithValue(const PresenceDemo()),
     acceptationsProvider.overrideWith((Ref ref) async => const <Acceptation>[]),
+    // RECH-1 : la recherche de demonstration (milliers de classes et de
+    // supports fictifs), en fin de liste : des tests indexent les premieres
+    // surcharges. En production, aucun moteur n'est raccorde.
+    moteursRechercheProvider.overrideWithValue(moteursDemoRecherche()),
   ];
 }
 
@@ -446,6 +452,10 @@ List<Override> surchargesDemoAdmin({
       portBibliothequeAdminProvider.overrideWithValue(
         bibliotheque ?? BibliothequeAdminDemo(),
       ),
+    // RECH-1 : la recherche de demonstration (milliers de classes et de
+    // supports fictifs), en fin de liste : des tests indexent les premieres
+    // surcharges. En production, aucun moteur n'est raccorde.
+    moteursRechercheProvider.overrideWithValue(moteursDemoRecherche()),
   ];
 }
 

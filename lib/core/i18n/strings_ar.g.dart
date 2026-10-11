@@ -89,6 +89,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$suiviDemandes$ar suiviDemandes = _Traductions$suiviDemandes$ar._(_root);
 	@override late final _Traductions$formulaire$ar formulaire = _Traductions$formulaire$ar._(_root);
 	@override late final _Traductions$motifs$ar motifs = _Traductions$motifs$ar._(_root);
+	@override late final _Traductions$recherche$ar recherche = _Traductions$recherche$ar._(_root);
 }
 
 // Path: notifications
@@ -1440,6 +1441,43 @@ class _Traductions$motifs$ar extends Traductions$motifs$fr {
 	@override late final _Traductions$motifs$reglageEnseignant$ar reglageEnseignant = _Traductions$motifs$reglageEnseignant$ar._(_root);
 	@override late final _Traductions$motifs$reglageDuree$ar reglageDuree = _Traductions$motifs$reglageDuree$ar._(_root);
 	@override late final _Traductions$motifs$reglageMinimum$ar reglageMinimum = _Traductions$motifs$reglageMinimum$ar._(_root);
+}
+
+// Path: recherche
+class _Traductions$recherche$ar extends Traductions$recherche$fr {
+	_Traductions$recherche$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'بحث';
+	@override String get retour => 'رجوع';
+	@override late final _Traductions$recherche$champ$ar champ = _Traductions$recherche$champ$ar._(_root);
+	@override late final _Traductions$recherche$espace$ar espace = _Traductions$recherche$espace$ar._(_root);
+	@override late final _Traductions$recherche$initial$ar initial = _Traductions$recherche$initial$ar._(_root);
+	@override String get courte => 'اكتب ثلاثة أحرف على الأقل.';
+	@override String get chargement => 'جارٍ البحث…';
+	@override String get lent => 'يستغرق البحث وقتًا أطول من المتوقع. تبقى النتائج التي وصلت معروضة.';
+	@override String resultatsPour({required Object requete}) => 'نتائج «⁨${requete}⁩»';
+	@override String categoriesAffichees({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'لا فئة معروضة',
+		one: 'فئة واحدة معروضة',
+		two: 'فئتان معروضتان',
+		few: '⁨${nombre}⁩ فئات معروضة',
+		many: '⁨${nombre}⁩ فئةً معروضة',
+		other: '⁨${nombre}⁩ فئة معروضة',
+	);
+	@override late final _Traductions$recherche$domaines$ar domaines = _Traductions$recherche$domaines$ar._(_root);
+	@override String get voirDavantage => 'عرض المزيد';
+	@override String get pageSuivante => 'جارٍ تحميل مزيد من النتائج…';
+	@override String get pageEnEchec => 'تعذّر تحميل النتائج التالية.';
+	@override late final _Traductions$recherche$etats$ar etats = _Traductions$recherche$etats$ar._(_root);
+	@override String get tout => 'الكل';
+	@override String get filtres => 'مجالات البحث';
+	@override String get limite => 'تقتصر النتائج على ما تتيحه مساحتك.';
+	@override late final _Traductions$recherche$guide$ar guide = _Traductions$recherche$guide$ar._(_root);
+	@override late final _Traductions$recherche$entree$ar entree = _Traductions$recherche$entree$ar._(_root);
+	@override late final _Traductions$recherche$contexte$ar contexte = _Traductions$recherche$contexte$ar._(_root);
 }
 
 // Path: notifications.filtres
@@ -6992,6 +7030,116 @@ class _Traductions$motifs$reglageMinimum$ar extends Traductions$motifs$reglageMi
 	@override String get horaire => 'قيود توقيت الأسرة';
 }
 
+// Path: recherche.champ
+class _Traductions$recherche$champ$ar extends Traductions$recherche$champ$fr {
+	_Traductions$recherche$champ$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'بحث';
+	@override String get aide => 'كلمة';
+}
+
+// Path: recherche.espace
+class _Traductions$recherche$espace$ar extends Traductions$recherche$espace$fr {
+	_Traductions$recherche$espace$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get famille => 'في مساحة ولي الأمر';
+	@override String get eleve => 'في مساحة الطالب';
+	@override String get eleveGuide => 'في مساحة الطالب';
+	@override String get enseignant => 'في مساحة المعلّم';
+	@override String get controleur => 'في مساحة المراقبة';
+	@override String get comptable => 'في مساحة المحاسبة';
+	@override String get administration => 'في مساحة الإدارة';
+}
+
+// Path: recherche.initial
+class _Traductions$recherche$initial$ar extends Traductions$recherche$initial$fr {
+	_Traductions$recherche$initial$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'البحث في مساحتك';
+	@override String get phrase => 'اكتب اسمًا أو فصلًا أو مادة. لا يُبحث عن شيء قبل أن تكتب.';
+}
+
+// Path: recherche.domaines
+class _Traductions$recherche$domaines$ar extends Traductions$recherche$domaines$fr {
+	_Traductions$recherche$domaines$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get classes => 'الفصول';
+	@override String get supports => 'المواد';
+	@override String get personnes => 'الأشخاص';
+	@override String get enseignants => 'المعلّمون';
+	@override String get pedagogie => 'الطلاب';
+	@override String get controle => 'المراقبة';
+	@override String get finances => 'المالية';
+	@override String get fils => 'المحادثات';
+	@override String get remplacements => 'الاستبدالات';
+}
+
+// Path: recherche.etats
+class _Traductions$recherche$etats$ar extends Traductions$recherche$etats$fr {
+	_Traductions$recherche$etats$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recherche$etats$vide$ar vide = _Traductions$recherche$etats$vide$ar._(_root);
+	@override late final _Traductions$recherche$etats$domaineIndisponible$ar domaineIndisponible = _Traductions$recherche$etats$domaineIndisponible$ar._(_root);
+	@override late final _Traductions$recherche$etats$erreur$ar erreur = _Traductions$recherche$etats$erreur$ar._(_root);
+	@override late final _Traductions$recherche$etats$delai$ar delai = _Traductions$recherche$etats$delai$ar._(_root);
+	@override late final _Traductions$recherche$etats$horsLigne$ar horsLigne = _Traductions$recherche$etats$horsLigne$ar._(_root);
+	@override late final _Traductions$recherche$etats$sessionExpiree$ar sessionExpiree = _Traductions$recherche$etats$sessionExpiree$ar._(_root);
+	@override late final _Traductions$recherche$etats$nonRaccorde$ar nonRaccorde = _Traductions$recherche$etats$nonRaccorde$ar._(_root);
+	@override late final _Traductions$recherche$etats$inaccessible$ar inaccessible = _Traductions$recherche$etats$inaccessible$ar._(_root);
+}
+
+// Path: recherche.guide
+class _Traductions$recherche$guide$ar extends Traductions$recherche$guide$fr {
+	_Traductions$recherche$guide$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'البحث عن مادة';
+	@override late final _Traductions$recherche$guide$initial$ar initial = _Traductions$recherche$guide$initial$ar._(_root);
+	@override String get limite => 'موادك ودروسك فقط.';
+}
+
+// Path: recherche.entree
+class _Traductions$recherche$entree$ar extends Traductions$recherche$entree$fr {
+	_Traductions$recherche$entree$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get supports => 'البحث في المواد';
+}
+
+// Path: recherche.contexte
+class _Traductions$recherche$contexte$ar extends Traductions$recherche$contexte$fr {
+	_Traductions$recherche$contexte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get remplacementOuvert => 'استبدال متاح';
+	@override String get remplacementMien => 'استبدالك';
+	@override String get mission => 'مهمة مراقبة';
+	@override String missionEnseignant({required Object enseignant}) => 'مهمة مراقبة · ⁨${enseignant}⁩';
+	@override String eleveDeClasse({required Object classe}) => 'طالب في فصل ⁨${classe}⁩';
+	@override String enseignantDeClasse({required Object classe}) => 'معلّم فصل ⁨${classe}⁩';
+}
+
 // Path: commun.etats.chargementProlonge
 class _Traductions$commun$etats$chargementProlonge$ar extends Traductions$commun$etats$chargementProlonge$fr {
 	_Traductions$commun$etats$chargementProlonge$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -11469,6 +11617,109 @@ class _Traductions$suiviDemandes$close$motif$ar extends Traductions$suiviDemande
 	@override String get classeNonConstituee => 'تعذّر تكوين فصل هذا الموعد.';
 	@override String get refusDirection => 'لم تتمكن الإدارة من قبول هذا الطلب.';
 	@override String get inconnu => 'أُغلق هذا الطلب.';
+}
+
+// Path: recherche.etats.vide
+class _Traductions$recherche$etats$vide$ar extends Traductions$recherche$etats$vide$fr {
+	_Traductions$recherche$etats$vide$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'لا نتائج لهذا البحث.';
+	@override String get phrase => 'جرّب كلمة أخرى أو عامل تصفية.';
+	@override String get action => 'تعديل البحث';
+}
+
+// Path: recherche.etats.domaineIndisponible
+class _Traductions$recherche$etats$domaineIndisponible$ar extends Traductions$recherche$etats$domaineIndisponible$fr {
+	_Traductions$recherche$etats$domaineIndisponible$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'البحث في هذا المجال غير متاح.';
+	@override String get phrase => 'تبقى الفئات الأخرى قابلة للاطلاع.';
+	@override String get action => 'إعادة المحاولة لهذا المجال';
+}
+
+// Path: recherche.etats.erreur
+class _Traductions$recherche$etats$erreur$ar extends Traductions$recherche$etats$erreur$fr {
+	_Traductions$recherche$etats$erreur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'تعذّر إجراء البحث.';
+	@override String get phrase => 'أُعيد التحقق من صلاحياتك. أعد المحاولة بعد قليل.';
+}
+
+// Path: recherche.etats.delai
+class _Traductions$recherche$etats$delai$ar extends Traductions$recherche$etats$delai$fr {
+	_Traductions$recherche$etats$delai$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'البحث يستغرق وقتًا طويلًا.';
+	@override String get phrase => 'حدّد المجال أو أعد المحاولة.';
+}
+
+// Path: recherche.etats.horsLigne
+class _Traductions$recherche$etats$horsLigne$ar extends Traductions$recherche$etats$horsLigne$fr {
+	_Traductions$recherche$etats$horsLigne$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'البحث عبر الإنترنت غير متاح.';
+	@override String get phrase => 'سيستأنف عند عودة الاتصال. لا تُحفظ أي نتيجة خاصة في الانتظار.';
+}
+
+// Path: recherche.etats.sessionExpiree
+class _Traductions$recherche$etats$sessionExpiree$ar extends Traductions$recherche$etats$sessionExpiree$fr {
+	_Traductions$recherche$etats$sessionExpiree$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'انتهت جلستك.';
+	@override String get phrase => 'سجّل الدخول من جديد لمتابعة البحث.';
+}
+
+// Path: recherche.etats.nonRaccorde
+class _Traductions$recherche$etats$nonRaccorde$ar extends Traductions$recherche$etats$nonRaccorde$fr {
+	_Traductions$recherche$etats$nonRaccorde$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'البحث غير متاح حاليًا.';
+	@override String get phrase => 'هذا البحث لم يُفتح بعد في مساحتك.';
+	@override String get action => 'رجوع';
+}
+
+// Path: recherche.etats.inaccessible
+class _Traductions$recherche$etats$inaccessible$ar extends Traductions$recherche$etats$inaccessible$fr {
+	_Traductions$recherche$etats$inaccessible$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'لم يعد هذا العنصر متاحًا.';
+	@override String get phrase => 'تم تحديث نتائجك.';
+	@override String get action => 'العودة إلى النتائج';
+}
+
+// Path: recherche.guide.initial
+class _Traductions$recherche$guide$initial$ar extends Traductions$recherche$guide$initial$fr {
+	_Traductions$recherche$guide$initial$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'البحث عن مادة';
+	@override String get phrase => 'اكتب كلمة لتجد إحدى موادك.';
 }
 
 // Path: classe.entree.demo.roles
@@ -19420,6 +19671,70 @@ extension on TraductionsAr {
 			'motifs.reglageMinimum.reseau' => 'انقطاعات متكررة في الشبكة',
 			'motifs.reglageMinimum.duree' => 'تغيّرت مدة الدروس',
 			'motifs.reglageMinimum.horaire' => 'قيود توقيت الأسرة',
+			'recherche.titre' => 'بحث',
+			'recherche.retour' => 'رجوع',
+			'recherche.champ.libelle' => 'بحث',
+			'recherche.champ.aide' => 'كلمة',
+			'recherche.espace.famille' => 'في مساحة ولي الأمر',
+			'recherche.espace.eleve' => 'في مساحة الطالب',
+			'recherche.espace.eleveGuide' => 'في مساحة الطالب',
+			'recherche.espace.enseignant' => 'في مساحة المعلّم',
+			'recherche.espace.controleur' => 'في مساحة المراقبة',
+			'recherche.espace.comptable' => 'في مساحة المحاسبة',
+			'recherche.espace.administration' => 'في مساحة الإدارة',
+			'recherche.initial.titre' => 'البحث في مساحتك',
+			'recherche.initial.phrase' => 'اكتب اسمًا أو فصلًا أو مادة. لا يُبحث عن شيء قبل أن تكتب.',
+			'recherche.courte' => 'اكتب ثلاثة أحرف على الأقل.',
+			'recherche.chargement' => 'جارٍ البحث…',
+			'recherche.lent' => 'يستغرق البحث وقتًا أطول من المتوقع. تبقى النتائج التي وصلت معروضة.',
+			'recherche.resultatsPour' => ({required Object requete}) => 'نتائج «⁨${requete}⁩»',
+			'recherche.categoriesAffichees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا فئة معروضة', one: 'فئة واحدة معروضة', two: 'فئتان معروضتان', few: '⁨${nombre}⁩ فئات معروضة', many: '⁨${nombre}⁩ فئةً معروضة', other: '⁨${nombre}⁩ فئة معروضة', ), 
+			'recherche.domaines.classes' => 'الفصول',
+			'recherche.domaines.supports' => 'المواد',
+			'recherche.domaines.personnes' => 'الأشخاص',
+			'recherche.domaines.enseignants' => 'المعلّمون',
+			'recherche.domaines.pedagogie' => 'الطلاب',
+			'recherche.domaines.controle' => 'المراقبة',
+			'recherche.domaines.finances' => 'المالية',
+			'recherche.domaines.fils' => 'المحادثات',
+			'recherche.domaines.remplacements' => 'الاستبدالات',
+			'recherche.voirDavantage' => 'عرض المزيد',
+			'recherche.pageSuivante' => 'جارٍ تحميل مزيد من النتائج…',
+			'recherche.pageEnEchec' => 'تعذّر تحميل النتائج التالية.',
+			'recherche.etats.vide.titre' => 'لا نتائج لهذا البحث.',
+			'recherche.etats.vide.phrase' => 'جرّب كلمة أخرى أو عامل تصفية.',
+			'recherche.etats.vide.action' => 'تعديل البحث',
+			'recherche.etats.domaineIndisponible.titre' => 'البحث في هذا المجال غير متاح.',
+			'recherche.etats.domaineIndisponible.phrase' => 'تبقى الفئات الأخرى قابلة للاطلاع.',
+			'recherche.etats.domaineIndisponible.action' => 'إعادة المحاولة لهذا المجال',
+			'recherche.etats.erreur.titre' => 'تعذّر إجراء البحث.',
+			'recherche.etats.erreur.phrase' => 'أُعيد التحقق من صلاحياتك. أعد المحاولة بعد قليل.',
+			'recherche.etats.delai.titre' => 'البحث يستغرق وقتًا طويلًا.',
+			'recherche.etats.delai.phrase' => 'حدّد المجال أو أعد المحاولة.',
+			'recherche.etats.horsLigne.titre' => 'البحث عبر الإنترنت غير متاح.',
+			'recherche.etats.horsLigne.phrase' => 'سيستأنف عند عودة الاتصال. لا تُحفظ أي نتيجة خاصة في الانتظار.',
+			'recherche.etats.sessionExpiree.titre' => 'انتهت جلستك.',
+			'recherche.etats.sessionExpiree.phrase' => 'سجّل الدخول من جديد لمتابعة البحث.',
+			'recherche.etats.nonRaccorde.titre' => 'البحث غير متاح حاليًا.',
+			'recherche.etats.nonRaccorde.phrase' => 'هذا البحث لم يُفتح بعد في مساحتك.',
+			'recherche.etats.nonRaccorde.action' => 'رجوع',
+			'recherche.etats.inaccessible.titre' => 'لم يعد هذا العنصر متاحًا.',
+			'recherche.etats.inaccessible.phrase' => 'تم تحديث نتائجك.',
+			'recherche.etats.inaccessible.action' => 'العودة إلى النتائج',
+			'recherche.tout' => 'الكل',
+			'recherche.filtres' => 'مجالات البحث',
+			'recherche.limite' => 'تقتصر النتائج على ما تتيحه مساحتك.',
+			'recherche.guide.titre' => 'البحث عن مادة',
+			'recherche.guide.initial.titre' => 'البحث عن مادة',
+			'recherche.guide.initial.phrase' => 'اكتب كلمة لتجد إحدى موادك.',
+			'recherche.guide.limite' => 'موادك ودروسك فقط.',
+			'recherche.entree.supports' => 'البحث في المواد',
+			'recherche.contexte.remplacementOuvert' => 'استبدال متاح',
+			'recherche.contexte.remplacementMien' => 'استبدالك',
+			'recherche.contexte.mission' => 'مهمة مراقبة',
+			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'مهمة مراقبة · ⁨${enseignant}⁩',
+			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'طالب في فصل ⁨${classe}⁩',
+			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'معلّم فصل ⁨${classe}⁩',
 			_ => null,
 		};
 	}

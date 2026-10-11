@@ -1058,6 +1058,28 @@ abstract final class Routes {
   /// Galerie des surfaces Compte, compilee seulement en developpement.
   static const String galerieCompte = '/_galerie/compte';
 
+  // --- RECH-1 : la recherche transversale (spec RECH-03 §1, §4.1) ---------
+  //
+  // Bloc propre a l'etape. **Une seule route pour tous les espaces** : la
+  // surface de recherche est transverse, ni un tableau de bord ni un
+  // cinquieme onglet. L'espace actif et le domaine d'ouverture sont des
+  // choix d'interface en parametres, sans aucun texte cherche dans l'adresse :
+  // la requete ne passe jamais par l'URL (SEC-R20).
+
+  /// La recherche commune, hors des arbres de role (comme `/compte`).
+  static const String recherche = '/recherche';
+
+  /// L'adresse de la recherche avec son contexte : [espace] est le nom d'un
+  /// `EspaceRecherche`, [domaine] celui d'un `DomaineRecherche` (recherche
+  /// contextuelle d'un module). Jamais le texte cherche.
+  static String rechercheAvec({String? espace, String? domaine}) => Uri(
+    path: recherche,
+    queryParameters: <String, String>{
+      'espace': ?espace,
+      'domaine': ?domaine,
+    },
+  ).toString();
+
   // --- Compte -------------------------------------------------------------
 
   /// Portail commun aux comptes actifs, hors des arbres metier.

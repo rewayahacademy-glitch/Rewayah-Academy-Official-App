@@ -318,6 +318,9 @@ void main() {
       'dossiers.revue.etats.decisionIndisponible',
       'dossiers.refus.indisponible',
       'dossiers.validation.indisponible',
+      // Aucun moteur de recherche n'est raccorde en production : fait de
+      // l'application, pas cause supposee d'un echec (RECH-0, INTEG-NUIT-2).
+      'recherche.etats.nonRaccorde.titre',
     };
     expect(<String>[
       for (final MapEntry<String, String> e in textes.entries)
