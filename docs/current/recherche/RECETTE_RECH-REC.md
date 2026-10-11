@@ -54,16 +54,32 @@ Lecture : tous les domaines codés sont `test local` et **aucun n'est prêt à a
 
 | # | Écart | Preuve | Gravité |
 | :--- | :--- | :--- | :--- |
-| E1 | La coupe à 160 caractères de `RequeteNormalisee.de` (`budgets_recherche.dart`) travaille en unités UTF-16 : une saisie avec un émoji sur la coupe laisse une moitié de paire de substitution (dernier code `0xD83D`). La chaîne n'est plus du texte valide à envoyer au serveur. | mesure : `'a' * 159 + '😀fatiha'` rend 160 unités, dernier code `0xD83D` | faible (aucune fuite, risque d'erreur 4xx serveur) ; correction : couper sur des runes |
+| E1 | **Corrigé (commit E1, 11/10)** : la coupe se fait sur les runes (`RequeteNormalisee.de`), test d'un émoji à la frontière dans `normalisation_test.dart`. Constat d'origine : la coupe à 160 caractères de `RequeteNormalisee.de` (`budgets_recherche.dart`) travaille en unités UTF-16 : une saisie avec un émoji sur la coupe laisse une moitié de paire de substitution (dernier code `0xD83D`). La chaîne n'est plus du texte valide à envoyer au serveur. | mesure : `'a' * 159 + '😀fatiha'` rend 160 unités, dernier code `0xD83D` | faible ; corrigé |
 | E2 | Les moteurs de domaine filtrent localement un corpus déjà autorisé (D1, D3, D4, filtre par nom de D2). Ce n'est pas une recherche : ils ne sont valables qu'en démonstration. | commentaires de réserve dans chaque moteur ; `moteursRechercheProvider` vide en production | information |
 | E3 | La démonstration ne branche D2 que dans la coque du tuteur. Finance et fils n'ont de double de démonstration que dans les modules (`EncaissementsDemo`, `MessagesMetierDemo`, `StudioDemo`) et ne sont pas posés dans `moteursRechercheProvider` d'une démonstration de coque. | `mode_demonstration.dart` | information |
 | E4 | Mesure de performance : un double en mémoire ne dit rien d'un serveur ; l'écran lui-même (rendu, défilement) n'a pas de p95 mesuré. | `recette_front_test` | information |
-| E5 | Captures contre les sept maquettes : non refaites dans ce lot (lecture seule, aucune capture réelle produite). Les captures de RECH-2 restent la référence (`UX_REVIEW_RECH-2.md`). | | à faire par le vérificateur |
+| E5 | Captures faites (§5), sauf la maquette 07 (salle : fichiers réservés). | `docs/current/captures/RECH-REC/` | information |
 
 ## 4. Ce qu'il faut pour activer
 
 1. Contrats lignes C-31 à C-33 servies par Codex, plus le contrat de résolution d'un RA exact (Immatriculation) ;
 2. rejouer REC-01 à REC-14 sur staging avec RLS réelle, dataset synthétique et mesure p95 / p99 (gates D et E) ;
 3. décision CPT-Q1 (finance pour bénéficiaire, Direction, second adulte) avant tout moteur de finance côté famille ;
-4. corriger E1 ;
+4. (E1 corrigé) ;
 5. vérificateur non auteur sur ce document et sur les captures.
+
+## 5. Captures contre les sept maquettes
+
+Produites par `test/capture/rech_rec_capture_test.dart` (vrai routeur, vraies polices, doubles de démonstration ; saute sans `CAPTURE_DIR`) et rangées dans `docs/current/captures/RECH-REC/` : captures `rec_*.png`, planches `planche_0N_*.png` (maquette | capture), maquettes copiées dans `maquettes/`. Playwright n'a pas servi : les captures Flutter rendues par le moteur de test sont la méthode du dépôt (`test/capture/LISEZ-MOI.md`).
+
+| Maquette | Capture | Écarts constatés (maquette contre écran réel) |
+| :--- | :--- | :--- |
+| 01-M famille | `planche_01_famille.png` (390, puis RA exact D2) | La maquette montre Mes classes et Supports avec « Voir tout » par section ; l'écran groupe par domaine avec « Voir davantage » et des puces `Tout / Classes / Supports` (« Mes classes » n'est pas le libellé du domaine). Titre « Recherche » (maquette) contre « Rechercher » (texte §5). Le résultat par RA exact (Personnes) n'a pas de maquette. |
+| 02-M guidée | `planche_02_guidee.png` | Écran d'Interface guidée conforme à RECH-2 ; pas d'aide audio sur la liste (composant `AudioLabel` non posé). |
+| 03-D enseignant sombre | `planche_03_enseignant.png` | Pas d'encart « Informations pédagogiques seulement » ; navigation prise du code, pas de la maquette. |
+| 04-D admin clair | `planche_04_admin.png` (puis fils et canaux D4) | La maquette montre « Actions disponibles » et « Personnes dans votre périmètre » : non rendus (pas de domaine personnes pour l'administration hors RA exact, pas de bloc d'actions). Pas de puce « Période ». |
+| 05-D comptable | `planche_05_comptable.png` | La maquette est un tableau Référence / Objet / Date / État avec pastilles d'état ; l'écran rend des lignes (référence, famille) : le résultat de recherche n'a ni date ni état dans sa liste blanche. Pas de puces de domaine (un seul domaine servi). Pas de note « montants non visibles ». Le menu du comptable allume « Compte » sur `/recherche`, comme pour tous les rôles (page commune). |
+| 06-M états | `planche_06_etats.png` (vide, hors ligne, domaine en panne) | Les états sont ceux de RECH-2 ; la capture « domaine en panne » montre les résultats d'un domaine et laisse le message du domaine en panne sous le pli. |
+| 07-T tablette Classe | non capturée | Salle, `tc_classe_live`, `tc_dock` : fichiers réservés, hors lot. |
+
+Ces écarts sont des constats, pas des corrections : la maquette n'élargit jamais une permission (DESIGN-GOV §1) et le tableau d'opérations demanderait une date et un état dans `ResultatRecherche`, à décider avec Codex.
