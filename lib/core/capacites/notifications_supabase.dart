@@ -1,6 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../communications/modeles_communication.dart' show NiveauAttention;
 import '../theme/app_delais.dart';
 import 'port_notifications.dart';
 
@@ -32,22 +31,19 @@ const Set<String> _evenementsPrisEnCharge = <String>{
   'remplacement_pris',
 };
 
+const Set<String> _destinationsAutorisees = <String>{
+  '/tuteur/demandes',
+  '/enseignant/journee/remplacements',
+};
+
 /// Adaptateur Supabase de la boîte privée de notifications.
 class NotificationsSupabase
     implements PortNotifications, PortLectureNotifications {
   /// Crée l'adaptateur avec le client de l'application et le résolveur localisé.
-  const NotificationsSupabase(
-    this._client, {
-    required NotificationContenuResolver contenuPour,
-  }) : _contenuPour = contenuPour;
+  const NotificationsSupabase(this._client, {required this._contenuPour});
 
   final SupabaseClient _client;
   final NotificationContenuResolver _contenuPour;
-
-  static const Set<String> _destinations = <String>{
-    '/tuteur/demandes',
-    '/enseignant/journee/remplacements',
-  };
 
   String get _destinataire {
     final String? id = _client.auth.currentUser?.id;
@@ -112,14 +108,14 @@ class NotificationsSupabase
     if (identifiant.isEmpty) {
       throw ArgumentError.value(id, 'id', 'Identifiant requis.');
     }
-    if (_client.auth.currentUser?.id == null) {
-      throw StateError('Session requise pour lire les notifications.');
-    }
+    final String destinataire = _destinataire;
     await _client
-        .rpc<void>(
-          'marquer_notification_lue',
-          params: <String, dynamic>{'p_notification_id': identifiant},
-        )
+        .from('notifications')
+        .update(<String, dynamic>{
+          'lu_le': DateTime.now().toUtc().toIso8601String(),
+        })
+        .eq('id', identifiant)
+        .eq('destinataire', destinataire)
         .timeout(AppDelais.requeteMax);
   }
 }
@@ -169,7 +165,9 @@ NotificationTuteur notificationDepuis(
     titre: titre,
     texte: texte == null || texte.isEmpty ? null : texte,
     date: date.toUtc(),
-    destination: _destinations.contains(destination) ? destination : null,
+    destination: _destinationsAutorisees.contains(destination)
+        ? destination
+        : null,
     niveau: lue ? NiveauAttention.information : NiveauAttention.aLire,
     lue: lue,
     type: _typePour(evenement),
@@ -177,11 +175,7 @@ NotificationTuteur notificationDepuis(
 }
 
 Map<String, dynamic> _parametresAffichables(Map<dynamic, dynamic> bruts) {
-  const Set<String> clesAutorisees = <String>{
-    'etat',
-    'debut_local',
-    'motif',
-  };
+  const Set<String> clesAutorisees = <String>{'etat', 'debut_local', 'motif'};
   final Map<String, dynamic> valeurs = <String, dynamic>{};
   for (final MapEntry<dynamic, dynamic> entree in bruts.entries) {
     if (entree.key is String &&
@@ -196,8 +190,10 @@ Map<String, dynamic> _parametresAffichables(Map<dynamic, dynamic> bruts) {
 
 TypeNotification _typePour(String evenement) => switch (evenement) {
   'demande_recue' => TypeNotification.messageMetier,
-  'classe_validee' || 'enseignant_affecte' => TypeNotification.changementPlanning,
+  'classe_validee' ||
+  'enseignant_affecte' => TypeNotification.changementPlanning,
   'demande_close' => TypeNotification.decisionDossier,
-  'remplacement_propose' || 'remplacement_pris' => TypeNotification.remplacement,
+  'remplacement_propose' ||
+  'remplacement_pris' => TypeNotification.remplacement,
   _ => TypeNotification.autre,
 };
