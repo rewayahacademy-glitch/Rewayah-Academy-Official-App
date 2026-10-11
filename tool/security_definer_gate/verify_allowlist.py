@@ -240,9 +240,16 @@ def _has_positive_nullsafe_guard(prosrc: str) -> bool:
 def _no_guard_helper_reads_identity(prosrc: str) -> bool:
     """Reject identity access even through quoted names or dynamic SQL."""
     tokens = _sql_tokens(prosrc)
-    forbidden = {"APP_ROLE", "JWT", "UID", "CLAIMS", "CURRENT_SETTING"}
-    for token in tokens:
+    forbidden = {
+        "APP_ROLE", "ROLE", "JWT", "UID", "CLAIMS", "CURRENT_SETTING",
+        "CURRENT_USER", "SESSION_USER", "CURRENT_ROLE", "SESSION_ROLE",
+    }
+    for index, token in enumerate(tokens):
         if token in forbidden or token == "EXECUTE":
+            return True
+        # auth.* is the Supabase identity/JWT namespace. Reject the namespace
+        # as a whole so new identity helpers cannot silently bypass this rule.
+        if token == "AUTH" and tokens[index + 1:index + 2] == ["."]:
             return True
         prefix = "<QUOTED_IDENTIFIER:"
         if token.startswith(prefix) and token.endswith(">"):
