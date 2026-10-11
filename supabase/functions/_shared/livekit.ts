@@ -12,7 +12,7 @@
 // Un jeton fabrique de memoire marche le jour ou on l'ecrit et casse a la
 // montee de version suivante, sans prevenir.
 
-import { AccessToken, WebhookReceiver } from 'npm:livekit-server-sdk@2.13.1'
+import { AccessToken, TrackSource, WebhookReceiver } from 'npm:livekit-server-sdk@2.13.1'
 
 /// Les deux fournisseurs coexistent (decision de l'operateur du 12 septembre
 /// 2026 : Cloud pour eprouver, self-host pour encaisser, jamais Cloud seul).
@@ -89,10 +89,10 @@ export async function signerJeton(a: AutorisationVideo): Promise<string> {
   // `canPublishSources` borne ce qu'un participant peut publier, source par
   // source. C'est lui qui realise `camera_policy = 'forbidden'` : l'eleve garde
   // le micro et perd la camera, sans que l'interface ait a y veiller.
-  const sources: ('microphone' | 'camera' | 'screen_share')[] = []
+  const sources: TrackSource[] = []
   if (a.capabilities.can_publish) {
-    sources.push('microphone')
-    if (a.capabilities.can_publish_video) sources.push('camera')
+    sources.push(TrackSource.MICROPHONE)
+    if (a.capabilities.can_publish_video) sources.push(TrackSource.CAMERA)
   }
 
   jeton.addGrant({
