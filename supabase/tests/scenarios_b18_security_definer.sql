@@ -152,10 +152,12 @@ begin
   exception when insufficient_privilege then
     null;
   end;
-  select count(*) into v_rows from public.kyc_documents;
-  if v_rows <> 0 then
-    raise exception 'B-06 ECHEC: le contrôleur lit directement la table KYC';
-  end if;
+  begin
+    select count(*) into v_rows from public.kyc_documents;
+    raise exception 'B-06 ECHEC: direct KYC table read unexpectedly succeeded';
+  exception when insufficient_privilege then
+    null;
+  end;
 end
 $b06_controller$;
 
@@ -210,6 +212,12 @@ begin
     'IF NOT coalesce(public.app_role() = ''admin'' AND public.app_account_valid(), false) THEN'
   ) then
     raise exception 'M2 ECHEC: le scanner rejette la garde positive canonique';
+  end if;
+
+  if app_private.has_unsafe_role_guard(
+    'IF public.app_role() = ''teacher'' AND p_genre_classe NOT IN (''hommes'', ''femmes'') THEN'
+  ) then
+    raise exception 'M2 ECHEC: NOT IN sur p_genre_classe est attribue a tort a app_role()';
   end if;
 
   if exists (

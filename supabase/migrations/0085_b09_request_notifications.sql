@@ -13,10 +13,6 @@ DECLARE
   v_foyer_id uuid;
   v_destinataire uuid;
 BEGIN
-  IF NEW.type_public IS DISTINCT FROM 'enfant' THEN
-    RETURN NEW;
-  END IF;
-
   IF TG_OP = 'INSERT' THEN
     v_evenement := 'demande_recue';
   ELSIF OLD.etat IS DISTINCT FROM NEW.etat
@@ -38,14 +34,20 @@ BEGIN
      AND guardian.account_status IN ('active', 'provisional_active')
      AND guardian.deleted_at IS NULL;
 
-  IF v_destinataire IS NOT NULL THEN
-    INSERT INTO public.notifications
-      (destinataire, foyer_id, evenement, params, destination)
-    VALUES
-      (v_destinataire, v_foyer_id, v_evenement,
-       jsonb_build_object('demande_id', NEW.id, 'etat', NEW.etat),
-       '/tuteur/demandes');
-  END IF;
+  INSERT INTO public.notifications
+    (destinataire, foyer_id, evenement, params, destination)
+  SELECT DISTINCT destinataire, v_foyer_id, v_evenement,
+         jsonb_strip_nulls(jsonb_build_object(
+           'demande_id', NEW.id,
+           'etat', NEW.etat,
+           'motif', CASE WHEN TG_OP = 'UPDATE' THEN NEW.motif END
+         )),
+         '/tuteur/demandes'
+    FROM unnest(ARRAY[
+      v_destinataire,
+      CASE WHEN NEW.type_public = 'adulte' THEN NEW.eleve_id END
+    ]::uuid[]) AS destinataire
+   WHERE destinataire IS NOT NULL;
 
   RETURN NEW;
 END;
