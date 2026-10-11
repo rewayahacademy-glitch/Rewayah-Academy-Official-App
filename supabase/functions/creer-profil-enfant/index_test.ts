@@ -25,13 +25,18 @@ Deno.test('child profile creation uses the caller and returns the created profil
     throw new Error(`unexpected mocked request: ${url}`)
   }
   try {
+    const invalid = await handler(new Request('http://local/', {
+      method: 'POST', headers: { Authorization: 'Bearer test-user-token', 'Content-Type': 'application/json' },
+      body: '{',
+    }))
+    assertEquals(invalid.status, 400)
     const response = await handler(new Request('http://local/', {
       method: 'POST', headers: { Authorization: 'Bearer test-user-token', 'Content-Type': 'application/json' },
       body: JSON.stringify({ first_name: 'Amina', last_name: 'Test', age: 9, level: 'A1' }),
     }))
     assertEquals(response.status, 200)
     assertEquals(await response.json(), { profile_id: '00000000-0000-4000-8000-000000000002', immutable_id: 'immutable-1' })
-    assertEquals(calls.length, 3)
+    assertEquals(calls.length, 4)
     assertEquals(calls.some((call) => call.includes('guardian-1')), false)
   } finally {
     globalThis.fetch = priorFetch

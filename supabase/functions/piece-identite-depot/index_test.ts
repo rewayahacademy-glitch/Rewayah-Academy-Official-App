@@ -33,6 +33,8 @@ Deno.test('identity upload validates input, denies refused reservation, and retu
   }
   try {
     const headers = { Authorization: 'Bearer test-user-token', 'Content-Type': 'application/json' }
+    const missing = await handler(new Request('http://local/', { method: 'POST', body: '{}' }))
+    assertEquals(missing.status, 401)
     assertEquals((await handler(new Request('http://local/', { method: 'POST', headers, body: '{' }))).status, 400)
     const payload = { doc_type: 'id_card', type_mime: 'image/jpeg', taille_octets: 256 }
     assertEquals((await handler(new Request('http://local/', { method: 'POST', headers, body: JSON.stringify({ ...payload, type_mime: 'text/plain' }) }))).status, 400)

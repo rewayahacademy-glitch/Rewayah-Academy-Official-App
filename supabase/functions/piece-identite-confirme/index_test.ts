@@ -32,6 +32,8 @@ Deno.test('identity confirmation denies another profile and confirms a present o
   }
   try {
     const headers = { Authorization: 'Bearer test-user-token', 'Content-Type': 'application/json' }
+    const missing = await handler(new Request('http://local/', { method: 'POST', body: '{}' }))
+    assertEquals(missing.status, 401)
     assertEquals((await handler(new Request('http://local/', { method: 'POST', headers, body: '{' }))).status, 400)
     assertEquals((await handler(new Request('http://local/', { method: 'POST', headers, body: JSON.stringify({ document_id: 'invalid' }) }))).status, 400)
     const payload = JSON.stringify({ document_id: documentId })
