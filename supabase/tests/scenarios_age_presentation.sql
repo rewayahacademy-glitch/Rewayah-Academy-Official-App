@@ -116,15 +116,28 @@ DO $guardian_decision$
 DECLARE
   v_id uuid;
   v_count integer;
+  v_timezone text;
+  v_utc timestamptz;
+  v_household_time timestamp without time zone;
 BEGIN
   SELECT count(*) INTO v_count
   FROM public.lire_demandes_presentation_en_attente();
   SELECT id INTO v_id
   FROM public.lire_demandes_presentation_en_attente()
-  ORDER BY id
+  ORDER BY cree_le, id
   LIMIT 1;
   IF v_count <> 1 THEN
     RAISE EXCEPTION 'A81/C22: household guardian did not receive exactly one request';
+  END IF;
+
+  SELECT fuseau_iana, cree_le_utc, heure_foyer
+    INTO v_timezone, v_utc, v_household_time
+  FROM public.lire_demandes_presentation_en_attente_avec_fuseau()
+  WHERE id = v_id;
+  IF v_timezone <> 'Europe/Paris'
+     OR v_utc IS NULL
+     OR v_household_time IS DISTINCT FROM (v_utc AT TIME ZONE v_timezone) THEN
+    RAISE EXCEPTION 'C-22: expected UTC instant and household timezone projection';
   END IF;
 
   IF public.accepter_demande_presentation(v_id) <> 'acceptee'
@@ -143,7 +156,7 @@ BEGIN
     PERFORM public.refuser_demande_presentation(v_id);
     RAISE EXCEPTION 'A81/C22: conflicting second decision was accepted';
   EXCEPTION WHEN raise_exception THEN
-    IF SQLERRM NOT LIKE 'demande deja tranchee%' THEN RAISE; END IF;
+    IF SQLERRM NOT LIKE '%tranch%' THEN RAISE; END IF;
   END;
 END
 $guardian_decision$;

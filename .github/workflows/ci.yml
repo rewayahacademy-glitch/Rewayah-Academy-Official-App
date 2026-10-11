@@ -60,6 +60,12 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_c21_kyc_access_verdict.sql
 
+      # A81/C-22 : capacite adulte, demandes de presentation idempotentes,
+      # decisions foyer et projection UTC/fuseau IANA.
+      - name: Scenarios SQL de presentation A81 et C-22
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_age_presentation.sql
+
       # Disponibilites communes aux deux roles, affectation durable et son
       # plafond, regles par eleve et leur immuabilite, chevauchement de seances,
       # cloisonnement des disponibilites, demandes des quatre parties, feed de

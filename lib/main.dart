@@ -7,6 +7,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
+import 'core/accessibilite/port_reponse_presentation.dart';
+import 'core/accessibilite/reponse_presentation_supabase.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
 import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
@@ -30,6 +32,9 @@ import 'features/demo/repere_demonstration.dart';
 /// comportement par defaut ; ce branchement se fait ici et nulle part
 /// ailleurs.
 List<Override> _surchargesAppReelle() => <Override>[
+  portReponsePresentationProvider.overrideWithValue(
+    ReponsePresentationSupabase(Supabase.instance.client),
+  ),
   portClassesFoyerProvider.overrideWithValue(
     ClassesFoyerSupabase(Supabase.instance.client),
   ),
