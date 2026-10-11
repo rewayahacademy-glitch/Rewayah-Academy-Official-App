@@ -29263,8 +29263,8 @@ class Traductions$tc$coran$mushaf$page15$fr {
 	/// fr: 'Police : KFGQPC UthmanicHafs v3.0 (Complexe du Roi Fahd)'
 	String get aProposPolice => 'Police : KFGQPC UthmanicHafs v3.0 (Complexe du Roi Fahd)';
 
-	/// fr: 'Licences : le texte et la police appartiennent au KFGQPC ; la mise en page est publiée sous CC BY 4.0 (quran.ws) ; les quarts de hizb viennent de quran-meta (MIT).'
-	String get aProposLicences => 'Licences : le texte et la police appartiennent au KFGQPC ; la mise en page est publiée sous CC BY 4.0 (quran.ws) ; les quarts de hizb viennent de quran-meta (MIT).';
+	/// fr: 'Licences : le texte et la police appartiennent au KFGQPC, la mise en page est publiée sous CC BY 4.0 (quran.ws), les quarts de hizb viennent de quran-meta (MIT).'
+	String get aProposLicences => 'Licences : le texte et la police appartiennent au KFGQPC, la mise en page est publiée sous CC BY 4.0 (quran.ws), les quarts de hizb viennent de quran-meta (MIT).';
 
 	/// fr: 'Tanzil demande que la source soit clairement indiquée et que tanzil.net soit joignable.'
 	String get aProposTanzil => 'Tanzil demande que la source soit clairement indiquée et que tanzil.net soit joignable.';
@@ -36064,7 +36064,7 @@ extension on Traductions {
 			'tc.coran.mushaf.page15.aProposOuvrir' => 'À propos de cette édition',
 			'tc.coran.mushaf.page15.aProposTitre' => 'À propos de cette édition',
 			'tc.coran.mushaf.page15.aProposPolice' => 'Police : KFGQPC UthmanicHafs v3.0 (Complexe du Roi Fahd)',
-			'tc.coran.mushaf.page15.aProposLicences' => 'Licences : le texte et la police appartiennent au KFGQPC ; la mise en page est publiée sous CC BY 4.0 (quran.ws) ; les quarts de hizb viennent de quran-meta (MIT).',
+			'tc.coran.mushaf.page15.aProposLicences' => 'Licences : le texte et la police appartiennent au KFGQPC, la mise en page est publiée sous CC BY 4.0 (quran.ws), les quarts de hizb viennent de quran-meta (MIT).',
 			'tc.coran.mushaf.page15.aProposTanzil' => 'Tanzil demande que la source soit clairement indiquée et que tanzil.net soit joignable.',
 			'tc.coran.fidelite.approchee' => 'Composition approchée',
 			'tc.coran.fidelite.approcheeDetail' => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.',

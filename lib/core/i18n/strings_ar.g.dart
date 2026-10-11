@@ -12052,9 +12052,9 @@ class _Traductions$tc$coran$mushaf$page15$ar extends Traductions$tc$coran$mushaf
 	@override String get creditMiseEnPage => 'التنسيق: مجمع الملك فهد، quran.ws (CC BY 4.0)';
 	@override String get aProposOuvrir => 'حول هذه الطبعة';
 	@override String get aProposTitre => 'حول هذه الطبعة';
-	@override String get aProposPolice => 'الخط: خط حفص العثماني، مجمع الملك فهد (KFGQPC UthmanicHafs v3.0)';
-	@override String get aProposLicences => 'التراخيص: النص والخط ملك لمجمع الملك فهد؛ التنسيق منشور برخصة CC BY 4.0 (quran.ws)؛ أرباع الأحزاب من quran-meta (MIT).';
-	@override String get aProposTanzil => 'يشترط مشروع تنزيل ذكر المصدر بوضوح وإتاحة الوصول إلى tanzil.net.';
+	@override String get aProposPolice => 'الخط: خط حفص العثماني، مجمع الملك فهد';
+	@override String get aProposLicences => 'التراخيص: النص والخط ملك لمجمع الملك فهد؛ التنسيق منشور برخصة CC BY 4.0 (quran.ws)؛ أرباع الأحزاب من مكتبة برمجية حرة.';
+	@override String get aProposTanzil => 'يشترط مشروع تنزيل ذكر المصدر بوضوح وإتاحة الوصول إلى موقعه.';
 }
 
 // Path: tc.outils.dock.position
@@ -15257,9 +15257,9 @@ extension on TraductionsAr {
 			'tc.coran.mushaf.page15.creditMiseEnPage' => 'التنسيق: مجمع الملك فهد، quran.ws (CC BY 4.0)',
 			'tc.coran.mushaf.page15.aProposOuvrir' => 'حول هذه الطبعة',
 			'tc.coran.mushaf.page15.aProposTitre' => 'حول هذه الطبعة',
-			'tc.coran.mushaf.page15.aProposPolice' => 'الخط: خط حفص العثماني، مجمع الملك فهد (KFGQPC UthmanicHafs v3.0)',
-			'tc.coran.mushaf.page15.aProposLicences' => 'التراخيص: النص والخط ملك لمجمع الملك فهد؛ التنسيق منشور برخصة CC BY 4.0 (quran.ws)؛ أرباع الأحزاب من quran-meta (MIT).',
-			'tc.coran.mushaf.page15.aProposTanzil' => 'يشترط مشروع تنزيل ذكر المصدر بوضوح وإتاحة الوصول إلى tanzil.net.',
+			'tc.coran.mushaf.page15.aProposPolice' => 'الخط: خط حفص العثماني، مجمع الملك فهد',
+			'tc.coran.mushaf.page15.aProposLicences' => 'التراخيص: النص والخط ملك لمجمع الملك فهد؛ التنسيق منشور برخصة CC BY 4.0 (quran.ws)؛ أرباع الأحزاب من مكتبة برمجية حرة.',
+			'tc.coran.mushaf.page15.aProposTanzil' => 'يشترط مشروع تنزيل ذكر المصدر بوضوح وإتاحة الوصول إلى موقعه.',
 			'tc.coran.fidelite.approchee' => 'تنسيق تقريبي',
 			'tc.coran.fidelite.approcheeDetail' => 'آيات هذه الصفحة هي بالضبط آيات صفحة مصحف المدينة. أما توزيعها على الأسطر فهو توزيع هذه الشاشة: لم يُستورد بعد تقسيم الأسطر في الطبعة.',
 			'tc.coran.fidelite.fidele' => 'تنسيق الطبعة',

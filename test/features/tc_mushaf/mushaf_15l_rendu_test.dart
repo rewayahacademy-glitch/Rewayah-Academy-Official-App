@@ -19,6 +19,7 @@ import 'package:rewayah_academy/core/tc_coran/port_layout_mushaf.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/widgets/rosace_verset.dart';
 import 'package:rewayah_academy/features/tc_mushaf/mushaf_page.dart';
+import 'package:rewayah_academy/features/tc_mushaf/navigation_coran_feuille.dart';
 import 'package:rewayah_academy/features/tc_mushaf/page_madina_15.dart';
 
 import '../../capture/outil_capture.dart';
@@ -271,24 +272,31 @@ void main() {
       },
     );
 
-    testWidgets('le credit CC-BY apparait avec la mise en page de l\'edition', (
-      WidgetTester tester,
-    ) async {
-      fixerVueCapture(tester, const Size(390, 844), 1);
-      await tester.pumpWidget(
-        hoteCapture(
-          const MushafPage(),
-          surcharges: <Override>[
-            ...surchargesMadina15(page: 2),
-            portNavigationCoranProvider.overrideWithValue(
-              FauxNavigationCoran(),
-            ),
-          ],
-        ),
-      );
-      await stabiliser(tester);
-      expect(find.textContaining('quran.ws (CC BY 4.0)'), findsOneWidget);
-      expect(find.textContaining('Tanzil'), findsWidgets);
-    });
+    testWidgets(
+      'le credit CC-BY quitte l\'ecran, il est dans la feuille A propos',
+      (WidgetTester tester) async {
+        fixerVueCapture(tester, const Size(390, 844), 1);
+        await tester.pumpWidget(
+          hoteCapture(
+            const MushafPage(),
+            surcharges: <Override>[
+              ...surchargesMadina15(page: 2),
+              portNavigationCoranProvider.overrideWithValue(
+                FauxNavigationCoran(),
+              ),
+            ],
+          ),
+        );
+        await stabiliser(tester);
+        expect(find.textContaining('quran.ws (CC BY 4.0)'), findsNothing);
+        expect(find.textContaining('Tanzil'), findsNothing);
+        await tester.tap(find.byKey(MushafPage.menuKey));
+        await stabiliser(tester);
+        await tester.tap(find.byKey(FeuilleNavigationCoran.aProposKey));
+        await stabiliser(tester);
+        expect(find.textContaining('quran.ws (CC BY 4.0)'), findsOneWidget);
+        expect(find.textContaining('Tanzil'), findsWidgets);
+      },
+    );
   });
 }

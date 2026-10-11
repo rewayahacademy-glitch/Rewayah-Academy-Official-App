@@ -362,7 +362,7 @@ class _EtatPageMadina15 extends State<PageMadina15> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(
+            padding: EdgeInsetsDirectional.fromSTEB(
               lateral + corps * _margeTexte,
               bande,
               lateral + corps * _margeTexte,
