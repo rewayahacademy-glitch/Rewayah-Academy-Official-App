@@ -1345,3 +1345,9 @@ Limite : les 111 signatures sont les grants directs détectés. La migration `00
 - **Idempotence:** no explicit idempotence mechanism detected statically.
 - **Port Dart:** `lib/core/tc_observation/port_visite_observation.dart`.
 - **Source:** [`supabase/migrations/0033_tc_vues_rpc.sql:1235`](../../../../supabase/migrations/0033_tc_vues_rpc.sql:1235); grants: `supabase/migrations/0033_tc_vues_rpc.sql:1257`.
+
+## Portee exacte de la migration 0048
+
+La boucle de `supabase/migrations/0048_revoke_public_volatile_function_execute.sql:12-42` parcourt chaque fonction `public` non-extension (`prokind = 'f'`, pas d'entree `pg_depend` de type extension) dont `provolatile = 'v'`. Avant la revocation, elle photographie `has_function_privilege('authenticated', oid, 'EXECUTE')`; elle retire ensuite EXECUTE a `PUBLIC`, `anon` et `agent_ro`, puis accorde explicitement EXECUTE a `authenticated` uniquement si cette photographie est vraie. La verification `:46-70` s'assure qu'aucune fonction volatile reste executable par `agent_ro`.
+
+Le catalogue de 111 lignes recense les signatures dont un GRANT direct a `authenticated` est retrouve textuellement dans les migrations. Il n'inclut pas une liste inventee des membres conditionnels de 0048: cette appartenance depend de l'ACL effective juste avant cette migration, y compris des privileges herites de PUBLIC et des default privileges du role applicateur. Pour fermer cet ecart sans acces distant, il faudrait rejouer les migrations avec le meme role/default ACL puis capturer les signatures avant/apres 0048. Aucun test de ce type n'a ete execute dans ce lot.
