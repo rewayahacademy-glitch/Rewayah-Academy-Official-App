@@ -82,6 +82,13 @@ $student_request$;
 
 SELECT set_config('test.uid', 'a8000000-0000-0000-0000-000000000004', true);
 SELECT set_config('test.jwt', '{"app_metadata":{"role":"student"}}', true);
+DO $adult_capacity$
+BEGIN
+  IF NOT public.ma_capacite_eleve() THEN
+    RAISE EXCEPTION 'A81/F86: active autonomous adult lacks own capability';
+  END IF;
+END
+$adult_capacity$;
 DO $adult_denied$
 BEGIN
   BEGIN
@@ -95,6 +102,16 @@ $adult_denied$;
 
 SELECT set_config('test.uid', 'a8000000-0000-0000-0000-000000000001', true);
 SELECT set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"a8000000-0000-0000-0000-000000000101"}}', true);
+DO $guardian_capacity_denied$
+BEGIN
+  BEGIN
+    PERFORM public.ma_capacite_eleve();
+    RAISE EXCEPTION 'A81/F86: guardian was allowed to call student capability';
+  EXCEPTION WHEN insufficient_privilege THEN
+    NULL;
+  END;
+END
+$guardian_capacity_denied$;
 DO $guardian_decision$
 DECLARE
   v_id uuid;
