@@ -6,12 +6,15 @@ INSERT INTO auth.users (id, email) VALUES
   ('b0400000-0000-0000-0000-000000000002', 'b04-holder-a@example.test'),
   ('b0400000-0000-0000-0000-000000000003', 'b04-requester-a@example.test'),
   ('b0400000-0000-0000-0000-000000000004', 'b04-holder-b@example.test'),
-  ('b0400000-0000-0000-0000-000000000005', 'b04-requester-b@example.test');
+  ('b0400000-0000-0000-0000-000000000005', 'b04-requester-b@example.test'),
+  ('b0400000-0000-0000-0000-000000000006', 'b04-holder-c@example.test'),
+  ('b0400000-0000-0000-0000-000000000007', 'b04-requester-c@example.test');
 
 INSERT INTO public.households (id) VALUES
   ('b04fffff-0000-0000-0000-000000000001'),
   ('b04fffff-0000-0000-0000-000000000002'),
-  ('b04fffff-0000-0000-0000-000000000003');
+  ('b04fffff-0000-0000-0000-000000000003'),
+  ('b04fffff-0000-0000-0000-000000000004');
 INSERT INTO public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 VALUES
@@ -24,11 +27,17 @@ VALUES
   ('b0400000-0000-0000-0000-000000000004', 'B04HOLDER00002', 'guardian',
    'b04fffff-0000-0000-0000-000000000002', 'Holder', 'Two', 'active', 'female'),
   ('b0400000-0000-0000-0000-000000000005', 'B04REQUEST0002', 'guardian',
-   'b04fffff-0000-0000-0000-000000000002', 'Requester', 'Two', 'active', 'female');
+   'b04fffff-0000-0000-0000-000000000002', 'Requester', 'Two', 'active', 'female'),
+  ('b0400000-0000-0000-0000-000000000006', 'B04HOLDER00003', 'guardian',
+   'b04fffff-0000-0000-0000-000000000004', 'Holder', 'Three', 'active', 'female'),
+  ('b0400000-0000-0000-0000-000000000007', 'B04REQUEST0003', 'guardian',
+   'b04fffff-0000-0000-0000-000000000004', 'Requester', 'Three', 'active', 'female');
 UPDATE public.households SET primary_guardian_id = 'b0400000-0000-0000-0000-000000000002'
 WHERE id = 'b04fffff-0000-0000-0000-000000000001';
 UPDATE public.households SET primary_guardian_id = 'b0400000-0000-0000-0000-000000000004'
 WHERE id = 'b04fffff-0000-0000-0000-000000000002';
+UPDATE public.households SET primary_guardian_id = 'b0400000-0000-0000-0000-000000000006'
+WHERE id = 'b04fffff-0000-0000-0000-000000000004';
 
 SET LOCAL ROLE authenticated;
 SELECT set_config('test.uid', 'b0400000-0000-0000-0000-000000000003', true);
@@ -70,18 +79,30 @@ BEGIN
 END
 $holder_refusal$;
 
+SELECT set_config('test.uid', 'b0400000-0000-0000-0000-000000000005', true);
+SELECT set_config('test.jwt',
+  '{"app_metadata":{"role":"guardian","household_id":"b04fffff-0000-0000-0000-000000000002"}}', true);
+SELECT public.deposer_reprise_foyer('b0400000-0000-0000-0000-000000000021');
 SELECT set_config('test.uid', 'b0400000-0000-0000-0000-000000000001', true);
 SELECT set_config('test.jwt',
   '{"app_metadata":{"role":"admin","household_id":"b04fffff-0000-0000-0000-000000000003"}}', true);
 DO $admin_refusal$
 DECLARE v_row record; v_result jsonb;
 BEGIN
-  SELECT * INTO v_row FROM public.lister_reprises_admin();
-  IF v_row.statut <> 'refusee_par_titulaire' OR NOT v_row.decidable THEN
-    RAISE EXCEPTION 'B-04: reprise refusee non visible ou non decidable';
+  SELECT * INTO v_row FROM public.lister_reprises_admin()
+  WHERE foyer_nom = 'Holder One';
+  IF v_row.statut <> 'refusee_par_titulaire' OR v_row.decidable THEN
+    RAISE EXCEPTION 'B-04: refus titulaire doit rester visible mais non decidable';
   END IF;
   v_result := public.decider_reprise_foyer(
     v_row.id, false, 'b0400000-0000-0000-0000-000000000013');
+  IF v_result->>'statut' <> 'deja_traitee' THEN
+    RAISE EXCEPTION 'B-04: une demande refusee par le titulaire ne peut plus etre decidee';
+  END IF;
+  SELECT * INTO v_row FROM public.lister_reprises_admin()
+  WHERE foyer_nom = 'Holder Two';
+  v_result := public.decider_reprise_foyer(
+    v_row.id, false, 'b0400000-0000-0000-0000-000000000023');
   IF v_result->>'statut' <> 'decidee' OR v_result->>'foyer_personnel_cree' <> 'false' THEN
     RAISE EXCEPTION 'B-04: refus administratif incorrect: %', v_result;
   END IF;
@@ -92,7 +113,20 @@ SET LOCAL ROLE authenticated;
 SELECT set_config('test.uid', 'b0400000-0000-0000-0000-000000000005', true);
 SELECT set_config('test.jwt',
   '{"app_metadata":{"role":"guardian","household_id":"b04fffff-0000-0000-0000-000000000002"}}', true);
-SELECT public.deposer_reprise_foyer('b0400000-0000-0000-0000-000000000021');
+DO $redeposit_wait$
+DECLARE v_denied boolean := false;
+BEGIN
+  BEGIN
+    PERFORM public.deposer_reprise_foyer('b0400000-0000-0000-0000-000000000024');
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'B-04: refus admin sans delai de redepot'; END IF;
+END
+$redeposit_wait$;
+SELECT set_config('test.uid', 'b0400000-0000-0000-0000-000000000007', true);
+SELECT set_config('test.jwt',
+  '{"app_metadata":{"role":"guardian","household_id":"b04fffff-0000-0000-0000-000000000004"}}', true);
+SELECT public.deposer_reprise_foyer('b0400000-0000-0000-0000-000000000031');
 RESET ROLE;
 SET LOCAL ROLE authenticated;
 SELECT set_config('test.uid', 'b0400000-0000-0000-0000-000000000001', true);
@@ -101,7 +135,8 @@ SELECT set_config('test.jwt',
 DO $admin_approval$
 DECLARE v_row record; v_first jsonb; v_retry jsonb;
 BEGIN
-  SELECT * INTO v_row FROM public.lister_reprises_admin();
+  SELECT * INTO v_row FROM public.lister_reprises_admin()
+  WHERE foyer_nom = 'Holder Three';
   IF v_row.demandeur_prenom <> 'Requester' THEN
     RAISE EXCEPTION 'B-04: seconde reprise absente de la file';
   END IF;
@@ -113,7 +148,7 @@ BEGIN
     OR v_retry->>'statut' <> 'deja_traitee'
     OR v_retry->>'foyer_personnel_cree' <> 'true'
     OR (SELECT count(*) FROM public.households
-        WHERE primary_guardian_id = 'b0400000-0000-0000-0000-000000000005') <> 1 THEN
+        WHERE primary_guardian_id = 'b0400000-0000-0000-0000-000000000007') <> 1 THEN
     RAISE EXCEPTION 'B-04: approbation ou idempotence incorrecte: %, %', v_first, v_retry;
   END IF;
 END
