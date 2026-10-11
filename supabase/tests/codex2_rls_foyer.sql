@@ -176,6 +176,24 @@ INSERT INTO public.student_profiles (profile_id) VALUES
 INSERT INTO public.teacher_profiles (profile_id) VALUES
   ('c2a20000-0000-0000-0000-000000000005'),
   ('c2a20000-0000-0000-0000-000000000006');
+INSERT INTO public.programme_versions (id, statut, numero_version, cree_par) VALUES
+  ('c2a2f000-3000-0000-0000-000000000001', 'brouillon', 9902, 'c2a20000-0000-0000-0000-000000000007');
+INSERT INTO public.programme_niveaux (id, version_id, code_technique, nom_humain, cycle, ordre) VALUES
+  ('c2a2f100-3000-0000-0000-000000000001', 'c2a2f000-3000-0000-0000-000000000001', 'COD2-A', 'Niveau A', 'Codex2', 1),
+  ('c2a2f100-3000-0000-0000-000000000002', 'c2a2f000-3000-0000-0000-000000000001', 'COD2-B', 'Niveau B', 'Codex2', 2);
+INSERT INTO public.progression_historique
+  (id, student_id, niveau_id, type_mouvement, decide_par, motif) VALUES
+  ('c2a2f200-3000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'c2a2f100-3000-0000-0000-000000000001', 'diagnostic_initial', 'c2a20000-0000-0000-0000-000000000007', 'codex2 A'),
+  ('c2a2f200-3000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'c2a2f100-3000-0000-0000-000000000002', 'diagnostic_initial', 'c2a20000-0000-0000-0000-000000000007', 'codex2 B');
+INSERT INTO public.progression_exceptions (id, student_id, type, motif, cree_par) VALUES
+  ('c2a2f300-3000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'blocage', 'codex2 A', 'c2a20000-0000-0000-0000-000000000007'),
+  ('c2a2f300-3000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'derogation', 'codex2 B', 'c2a20000-0000-0000-0000-000000000007');
+INSERT INTO public.evaluations (id, student_id, niveau_id, type, date_prevue) VALUES
+  ('c2a2f400-3000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'c2a2f100-3000-0000-0000-000000000001', 'initiale', '2026-10-15'),
+  ('c2a2f400-3000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'c2a2f100-3000-0000-0000-000000000002', 'initiale', '2026-10-16');
+INSERT INTO public.controles_qualite (id, type_anomalie, ref_table, ref_id) VALUES
+  ('c2a2f500-3000-0000-0000-000000000001', 'blocage_sans_suivi', 'progression_exceptions', 'c2a2f300-3000-0000-0000-000000000001'),
+  ('c2a2f500-3000-0000-0000-000000000002', 'blocage_sans_suivi', 'progression_exceptions', 'c2a2f300-3000-0000-0000-000000000002');
 INSERT INTO public.groupes (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local) VALUES
   ('c2a2a000-2000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000005', 'enfant', 5, 'Codex2 A', 1, 10),
   ('c2a2a000-2000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000006', 'enfant', 5, 'Codex2 B', 2, 11);
@@ -1206,6 +1224,93 @@ BEGIN
   UPDATE public.annotation_marqueur SET plage = plage WHERE layer_id = 'c2a2c000-2000-0000-0000-000000000002';
   GET DIAGNOSTICS v_rows = ROW_COUNT;
   IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-ANNOTATION-MARKER-UPDATE: teacher A updated marker B'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Ces donnees pedagogiques sont admin-only: l'admin lit A et B, les foyers
+-- n'accedent pas aux tables, et les mutations passent par des RPC dediees.
+DO $$
+DECLARE v_count integer; v_rows integer; v_denied boolean;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000007', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"admin","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.programme_versions;
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-ADMIN-PROGRAMME-VERSIONS: admin cannot read version'; END IF;
+  v_denied := false;
+  BEGIN
+    UPDATE public.programme_versions SET statut = statut WHERE id = 'c2a2f000-3000-0000-0000-000000000001';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true; v_rows := 0;
+  END;
+  IF NOT v_denied AND v_rows <> 0 THEN RAISE EXCEPTION 'RLS-PROGRAMME-VERSION-DIRECT-WRITE: admin changed version outside RPC'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.programme_niveaux;
+  IF v_count <> 2 THEN RAISE EXCEPTION 'RLS-ADMIN-PROGRAMME-NIVEAUX: admin cannot read levels'; END IF;
+  v_denied := false;
+  BEGIN
+    UPDATE public.programme_niveaux SET ordre = ordre WHERE id = 'c2a2f100-3000-0000-0000-000000000001';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true; v_rows := 0;
+  END;
+  IF NOT v_denied AND v_rows <> 0 THEN RAISE EXCEPTION 'RLS-PROGRAMME-NIVEAU-DIRECT-WRITE: admin changed level outside RPC'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.progression_historique;
+  IF v_count <> 2 THEN RAISE EXCEPTION 'RLS-ADMIN-PROGRESSION-HISTORIQUE: admin cannot read history'; END IF;
+  v_denied := false;
+  BEGIN
+    UPDATE public.progression_historique SET motif = motif WHERE id = 'c2a2f200-3000-0000-0000-000000000001';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true; v_rows := 0;
+  END;
+  IF NOT v_denied AND v_rows <> 0 THEN RAISE EXCEPTION 'RLS-PROGRESSION-HISTORY-DIRECT-WRITE: admin changed append-only history'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.progression_exceptions;
+  IF v_count <> 2 THEN RAISE EXCEPTION 'RLS-ADMIN-PROGRESSION-EXCEPTIONS: admin cannot read exceptions'; END IF;
+  v_denied := false;
+  BEGIN
+    UPDATE public.progression_exceptions SET motif = motif WHERE id = 'c2a2f300-3000-0000-0000-000000000001';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true; v_rows := 0;
+  END;
+  IF NOT v_denied AND v_rows <> 0 THEN RAISE EXCEPTION 'RLS-PROGRESSION-EXCEPTION-DIRECT-WRITE: admin changed exception outside RPC'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.evaluations;
+  IF v_count <> 2 THEN RAISE EXCEPTION 'RLS-ADMIN-EVALUATIONS: admin cannot read evaluations'; END IF;
+  v_denied := false;
+  BEGIN
+    UPDATE public.evaluations SET notes = notes WHERE id = 'c2a2f400-3000-0000-0000-000000000001';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true; v_rows := 0;
+  END;
+  IF NOT v_denied AND v_rows <> 0 THEN RAISE EXCEPTION 'RLS-EVALUATION-DIRECT-WRITE: admin changed evaluation outside RPC'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.controles_qualite;
+  IF v_count <> 2 THEN RAISE EXCEPTION 'RLS-ADMIN-CONTROLES-QUALITE: admin cannot read controls'; END IF;
+  v_denied := false;
+  BEGIN
+    UPDATE public.controles_qualite SET note = note WHERE id = 'c2a2f500-3000-0000-0000-000000000001';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true; v_rows := 0;
+  END;
+  IF NOT v_denied AND v_rows <> 0 THEN RAISE EXCEPTION 'RLS-CONTROLE-QUALITE-DIRECT-WRITE: admin changed control outside RPC'; END IF;
+  RESET ROLE;
+
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.programme_versions;
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-FAMILY-PROGRAMME-VERSIONS: guardian reads admin curriculum'; END IF;
+  SELECT count(*) INTO v_count FROM public.programme_niveaux;
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-FAMILY-PROGRAMME-NIVEAUX: guardian reads admin levels'; END IF;
+  SELECT count(*) INTO v_count FROM public.progression_historique;
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-FAMILY-PROGRESSION-HISTORIQUE: guardian reads admin history'; END IF;
+  SELECT count(*) INTO v_count FROM public.progression_exceptions;
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-FAMILY-PROGRESSION-EXCEPTIONS: guardian reads admin exceptions'; END IF;
+  SELECT count(*) INTO v_count FROM public.evaluations;
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-FAMILY-EVALUATIONS: guardian reads admin evaluations'; END IF;
+  SELECT count(*) INTO v_count FROM public.controles_qualite;
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-FAMILY-CONTROLES-QUALITE: guardian reads admin controls'; END IF;
   RESET ROLE;
 END $$;
 
