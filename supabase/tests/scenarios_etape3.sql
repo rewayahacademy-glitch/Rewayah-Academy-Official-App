@@ -579,6 +579,18 @@ begin
   perform set_config('test.uid', '22222222-2222-2222-2222-222222222222', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
 
+  -- A missing role must fail closed; SQL NULL must not bypass the admin guard.
+  perform set_config('test.jwt', '{"app_metadata":{}}', true);
+  begin
+    perform public.teacher_signature_statuses(
+      '22222222-2222-2222-2222-222222222222'
+    );
+    raise exception 'CONTRAT ECHEC : statut de signature divulgue sans role';
+  exception when insufficient_privilege then
+    null;
+  end;
+  perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+
   begin
     insert into public.contract_acceptances (
       profile_id, contract_kind, version, signed_sha256
