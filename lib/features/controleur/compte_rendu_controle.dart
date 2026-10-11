@@ -18,52 +18,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
+import '../../core/controle/modele_visite.dart';
 import '../../core/theme/app_delais.dart';
 import 'mission_controle.dart';
 import 'observation_controle.dart';
 
-/// Les faits d'une visite (doc 08 §1.1, C4) : releves par le systeme, jamais
-/// saisis par le controleur.
-@immutable
-class FaitsVisite {
-  /// Cree les faits.
-  const FaitsVisite({
-    required this.debutPrevu,
-    required this.finPrevue,
-    required this.debutReel,
-    required this.participantsAttendus,
-    required this.participantsPresents,
-    required this.reconnexions,
-    this.finReelle,
-  });
-
-  /// Debut prevu de la seance.
-  final DateTime debutPrevu;
-
-  /// Fin prevue de la seance.
-  final DateTime finPrevue;
-
-  /// Debut reel de la seance.
-  final DateTime debutReel;
-
-  /// Fin reelle, nulle tant que la seance continue.
-  final DateTime? finReelle;
-
-  /// Eleves attendus.
-  final int participantsAttendus;
-
-  /// Eleves presents.
-  final int participantsPresents;
-
-  /// Reconnexions relevees.
-  final int reconnexions;
-
-  /// Le retard au demarrage, en minutes entieres (zero si a l'heure).
-  int get minutesDeRetard {
-    final int m = debutReel.difference(debutPrevu).inMinutes;
-    return m > 0 ? m : 0;
-  }
-}
+export '../../core/controle/modele_visite.dart';
 
 /// Les faits de la visite de la seance donnee, ou nuls. Lus PAR SEANCE
 /// (CTRL-SEANCE-1) : le compte rendu de la Classe A ne montre jamais le
@@ -72,18 +32,6 @@ final FutureProviderFamily<FaitsVisite?, String> faitsVisiteProvider =
     FutureProvider.family<FaitsVisite?, String>(
       (Ref _, String _) async => null,
     );
-
-/// La reponse du controleur a « Avez-vous quelque chose a signaler ? ».
-enum ChoixCompteRendu {
-  /// Rien a signaler : envoi en une action.
-  rienASignaler,
-
-  /// Ajouter une observation : parcours CTR-03A.
-  ajouterObservation,
-
-  /// Signaler un point important : parcours CTR-03A.
-  pointImportant,
-}
 
 /// L'adresse de CTR-03A a [chemin] pour [choix] : le choix est porte par
 /// l'adresse (`?choix=`), pas par `extra` seul, pour qu'un rechargement de
