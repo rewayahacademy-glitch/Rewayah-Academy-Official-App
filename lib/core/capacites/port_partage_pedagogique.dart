@@ -336,6 +336,122 @@ class LigneCompteRendu {
   final EtatDiffusion etat;
 }
 
+/// Une ligne de la liste des cahiers d'une classe (ADM-CAHIER-LECTURE).
+@immutable
+class LigneCahierClasse {
+  /// Cree la ligne.
+  const LigneCahierClasse({
+    required this.seanceId,
+    required this.eleveId,
+    required this.elevePrenom,
+    required this.seanceLe,
+    required this.etat,
+  });
+
+  /// La seance.
+  final String seanceId;
+
+  /// L'eleve concerne par ce cahier.
+  final String eleveId;
+
+  /// Son prenom, tel que l'administration a le droit de le lire.
+  final String elevePrenom;
+
+  /// La date de la seance.
+  final DateTime seanceLe;
+
+  /// L'etat de diffusion de son compte rendu.
+  final EtatDiffusion etat;
+}
+
+/// Une page de la liste des cahiers d'une classe (pagination serveur).
+@immutable
+class PageCahiersClasse {
+  /// Cree la page.
+  const PageCahiersClasse({
+    required this.lignes,
+    required this.total,
+    this.page = 1,
+  });
+
+  /// Les lignes de la page, de la plus recente a la plus ancienne.
+  final List<LigneCahierClasse> lignes;
+
+  /// Le nombre reel de cahiers correspondant au filtre.
+  final int total;
+
+  /// La page lue, a partir de 1.
+  final int page;
+}
+
+/// Une rubrique **interne** du cahier, lisible par la direction seule.
+@immutable
+class RubriqueInterne {
+  /// Cree la rubrique.
+  const RubriqueInterne({required this.libelle, required this.texte});
+
+  /// L'intitule (« Note interne », « Remarque privee »...).
+  final String libelle;
+
+  /// Le texte, jamais montre a la famille.
+  final String texte;
+}
+
+/// Le cahier d'un eleve pour une seance, **tel que la direction le lit**
+/// (lecture seule, supervision pedagogique).
+///
+/// **Type distinct de [CompteRenduFamille], sans conversion** : les details
+/// internes n'ont aucun chemin vers la projection familiale. Il ne porte que
+/// l'eleve concerne : jamais la decision d'un autre eleve de la classe, jamais
+/// une donnee de paie.
+@immutable
+class CahierAdmin {
+  /// Cree le cahier.
+  const CahierAdmin({
+    required this.seanceId,
+    required this.eleveId,
+    required this.elevePrenom,
+    required this.classeLibelle,
+    required this.seanceLe,
+    required this.confirme,
+    this.enseignant,
+    this.evaluation = const <RubriqueInterne>[],
+    this.detailsInternes = const <RubriqueInterne>[],
+    this.corrigeLe,
+  });
+
+  /// La seance.
+  final String seanceId;
+
+  /// L'eleve.
+  final String eleveId;
+
+  /// Son prenom.
+  final String elevePrenom;
+
+  /// La classe.
+  final String classeLibelle;
+
+  /// La date de la seance.
+  final DateTime seanceLe;
+
+  /// Le cahier est confirme (K-45 valide, hors file hors ligne).
+  final bool confirme;
+
+  /// L'enseignant auteur, si l'administration peut le lire.
+  final String? enseignant;
+
+  /// Ce que l'enseignant a evalue pour cet eleve (base de la projection
+  /// familiale), tel qu'enregistre.
+  final List<RubriqueInterne> evaluation;
+
+  /// Les details **internes** : jamais montres a la famille.
+  final List<RubriqueInterne> detailsInternes;
+
+  /// La date de correction du cahier, si corrige.
+  final DateTime? corrigeLe;
+}
+
 /// Le serveur a refuse l'ecriture parce que la valeur lue est perimee
 /// (un autre administrateur a modifie entre-temps). L'ecran relit et informe ;
 /// il n'ecrase jamais en silence.
@@ -387,6 +503,22 @@ abstract interface class PortPartagePedagogique {
   /// ancien.
   Future<List<LigneCompteRendu>> comptesRendusEleve({
     required String classeId,
+    required String eleveId,
+  });
+
+  /// Les cahiers d'une classe, page [page] (a partir de 1), du plus recent au
+  /// plus ancien, filtres par [filtreEtat] si donne. Pagination serveur.
+  Future<PageCahiersClasse> comptesRendusClasse({
+    required String classeId,
+    int page = 1,
+    EtatDiffusion? filtreEtat,
+  });
+
+  /// Le cahier brut d'un eleve pour une seance, **lecture seule, reservee a la
+  /// direction**. Chaque lecture est journalisee cote serveur (qui, quand,
+  /// quelle seance).
+  Future<CahierAdmin> lireCahierAdmin({
+    required String seanceId,
     required String eleveId,
   });
 
@@ -460,6 +592,19 @@ class PartagePedagogiqueIndisponible implements PortPartagePedagogique {
   @override
   Future<List<LigneCompteRendu>> comptesRendusEleve({
     required String classeId,
+    required String eleveId,
+  }) => _indisponible();
+
+  @override
+  Future<PageCahiersClasse> comptesRendusClasse({
+    required String classeId,
+    int page = 1,
+    EtatDiffusion? filtreEtat,
+  }) => _indisponible();
+
+  @override
+  Future<CahierAdmin> lireCahierAdmin({
+    required String seanceId,
     required String eleveId,
   }) => _indisponible();
 

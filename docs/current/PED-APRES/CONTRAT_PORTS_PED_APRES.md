@@ -19,6 +19,8 @@
 | `definirPartageClasse` | `classeId`, `actif`, `versionAttendue`, `cleIdempotence` | `PartageClasse` confirmé | `ConflitPartage`, `PermissionInsuffisante`, `CapaciteIndisponible` |
 | `definirRegleEleve` | `classeId`, `eleveId`, `regle` (`regleClasse` / `toujours` / `jamais`), `versionAttendue`, `cleIdempotence` | `PartageClasse` confirmé | idem |
 | `comptesRendusEleve` | `classeId`, `eleveId` | `List<LigneCompteRendu>` (séance, date, `EtatDiffusion`), du plus récent | `PermissionInsuffisante`, `CapaciteIndisponible` |
+| `comptesRendusClasse` | `classeId`, `page` (≥1), `filtreEtat?` (`EtatDiffusion`) | `PageCahiersClasse` (`lignes` : séance, élève, prénom, date, `EtatDiffusion` ; `total` réel du filtre ; `page`), du plus récent au plus ancien, **pagination serveur** | `PermissionInsuffisante`, `CapaciteIndisponible` |
+| `lireCahierAdmin` | `seanceId`, `eleveId` | `CahierAdmin` (lecture seule, voir ci-dessous) | `PermissionInsuffisante` (tout rôle autre qu'admin), `CapaciteIndisponible` |
 | `apercuFamilial` | `seanceId`, `eleveId` | `ApercuAdmin` | idem |
 | `publier` | `seanceId`, `eleveId`, `versionAttendue`, `cleIdempotence` | `ApercuAdmin` à jour | `ConflitPartage`, `PermissionInsuffisante`, refus si cahier non confirmé ou aucun champ partageable |
 | `revoquer` | idem | `ApercuAdmin` à jour | `ConflitPartage`, `PermissionInsuffisante` |
@@ -45,3 +47,19 @@ Tableau de vérité servi par le serveur (spec §2.3) : cahier non confirmé →
 
 ## Tests de contrat à écrire côté backend
 Rejouer A01 à A22 de la spec contre le vrai serveur (le double `FauxPartagePedagogique` en donne l'oracle fonctionnel).
+
+## ADM-CAHIER-LECTURE : lecture administrative du cahier (extension du 11/10/2026)
+
+Décision de l'orchestrateur, par délégation du directeur : la **direction (rôle admin)** lit le cahier brut **en lecture seule** (supervision pédagogique, établissement des responsabilités).
+
+**`CahierAdmin` est un type distinct de `CompteRenduFamille`, sans conversion implicite dans un sens ni dans l'autre.** Champs : `seanceId`, `eleveId`, `elevePrenom`, `classeLibelle`, `seanceLe`, `confirme`, `enseignant?`, `evaluation` (rubriques saisies par l'enseignant pour **cet élève**, base de la projection familiale), `detailsInternes` (rubriques **internes**, libellé + texte), `corrigeLe?`.
+
+Exigences serveur (à implémenter par Codex 2) :
+1. **Rôles** : seul l'admin actif peut appeler `lireCahierAdmin`. Comptable, tuteur, élève : **jamais**. Contrôleur : **non** dans ce lot. Refus : `PermissionInsuffisante`, sans aucune donnée.
+2. **Journalisation** : chaque lecture du cahier brut est inscrite côté serveur (**qui, quand, quelle séance**, et l'élève). Une lecture refusée n'est pas une lecture.
+3. **Périmètre** : le résultat ne contient que l'élève demandé. **Jamais** la décision d'un autre élève de la classe, **jamais** une donnée de paie ni de rémunération.
+4. **Aucune copie** du texte interne vers `ApercuAdmin.apercu` ni vers `compteRenduFamille` : la projection familiale se construit à partir des seuls champs partageables approuvés.
+5. `comptesRendusClasse` ne retourne que des cahiers de la classe demandée, avec le nom de l'élève selon les droits admin ; jamais d'effectif fictif ; `total` = effectif réel du filtre.
+6. Aucun effet sur la validation du cahier K-45 ni sur la paie.
+
+À l'écran : la lecture est étiquetée **« Interne, jamais montré à la famille »** pour les détails internes ; l'aperçu familial et publier / révoquer restent ceux d'ADM-PED-APR-03.
