@@ -46,9 +46,17 @@ BEGIN
 
   PERFORM set_config('test.uid', 'f6900000-0000-0000-0000-000000000001', true);
   PERFORM set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
-  SELECT count(*) INTO v_count FROM public.read_kyc_documents();
+  SELECT count(*) INTO v_count FROM public.read_kyc_documents()
+  WHERE id IN (
+    'f6900000-0000-0000-0000-000000000201',
+    'f6900000-0000-0000-0000-000000000202'
+  );
   IF v_count <> 1 OR EXISTS (
-    SELECT 1 FROM public.read_kyc_documents() WHERE gender <> 'male'
+    SELECT 1 FROM public.read_kyc_documents()
+    WHERE id IN (
+      'f6900000-0000-0000-0000-000000000201',
+      'f6900000-0000-0000-0000-000000000202'
+    ) AND gender <> 'male'
   ) THEN RAISE EXCEPTION 'F69 : admin homme voit autre chose que son genre'; END IF;
   IF (SELECT count(*) FROM public.kyc_documents) <> 0 THEN
     RAISE EXCEPTION 'F69 : lecture directe KYC disponible malgré la policy de refus';
@@ -110,7 +118,11 @@ BEGIN
   PERFORM set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
   UPDATE public.app_config SET value = 'false'::jsonb
   WHERE key = 'kyc_exception_super_admin';
-  SELECT count(*) INTO v_count FROM public.read_kyc_documents();
+  SELECT count(*) INTO v_count FROM public.read_kyc_documents()
+  WHERE id IN (
+    'f6900000-0000-0000-0000-000000000201',
+    'f6900000-0000-0000-0000-000000000202'
+  );
   IF v_count <> 1 THEN RAISE EXCEPTION 'F69 : exception désactivée ne respecte pas le genre'; END IF;
   BEGIN
     PERFORM public.autoriser_lecture_piece_identite('f6900000-0000-0000-0000-000000000201');
@@ -120,7 +132,11 @@ BEGIN
 
   UPDATE public.app_config SET value = 'true'::jsonb
   WHERE key = 'kyc_exception_super_admin';
-  SELECT count(*) INTO v_count FROM public.read_kyc_documents();
+  SELECT count(*) INTO v_count FROM public.read_kyc_documents()
+  WHERE id IN (
+    'f6900000-0000-0000-0000-000000000201',
+    'f6900000-0000-0000-0000-000000000202'
+  );
   IF v_count <> 2 THEN RAISE EXCEPTION 'F69 : super-admin actif ne voit pas les deux genres'; END IF;
   PERFORM public.autoriser_lecture_piece_identite('f6900000-0000-0000-0000-000000000201');
   IF NOT EXISTS (

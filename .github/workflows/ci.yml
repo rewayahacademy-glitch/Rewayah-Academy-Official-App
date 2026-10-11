@@ -175,6 +175,19 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_r2.sql
 
+      # Capacite de l'adulte autonome : profil personnel et familial sans
+      # changement de role, et refus de la capacite pour le tuteur seul.
+      - name: Scenarios A81 (eleve adulte autonome)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_a81_eleve_autonome.sql
+
+      # KYC : separation par genre, exception super-admin, refus des autres
+      # roles et audit de l'ouverture d'une piece. Ce scénario precede ADM-04
+      # car les ouvertures ecrivent dans audit_logs.
+      - name: Scenarios F69 (exception KYC super-admin)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_f69_kyc_super_admin.sql
+
       # Journal d'audit : lecture reservee a l'administration, pagination par
       # keyset, trois filtres, et surtout la chaine de hachage de 0001 enfin
       # verifiee -- y compris en la falsifiant volontairement (J5, J6).
