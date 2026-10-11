@@ -46,6 +46,12 @@ jobs:
             psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
           done
 
+      # Boite privee B-09 : isolation par destinataire, accusé serveur
+      # idempotent, refus d'ecriture du contenu par le client.
+      - name: Scenarios d'acceptation SQL de B-09 (notifications)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b09_notifications.sql
+
       # Inscription bornee a deux roles, depot KYC de l'enseignant, cloisonnement
       # de genre, appareil partage, plafond d'appareils, codes d'appairage,
       # immuabilite des signatures, etancheite du journal d'audit, RLS partout,
