@@ -8466,7 +8466,7 @@ class _Traductions$tc$bibliotheque$rendu$ar extends Traductions$tc$bibliotheque$
 	@override String get ouvrirMushaf => 'فتح المصحف';
 	@override String get lienEchec => 'تعذّر الحصول على رابط القراءة حاليًا.';
 	@override String get lienIndisponible => 'الفتح غير متاح لهذه المادة.';
-	@override String get lienHorsLigne => 'يتطلب الفتح اتصالًا. أعد المحاولة عند عودته.';
+	@override String get lienHorsLigne => 'سيمكن الفتح عند عودة الاتصال.';
 	@override String get lienBloque => 'منع المتصفح الفتح. اسمح بالنوافذ لهذا الموقع ثم أعد المحاولة.';
 }
 
@@ -15085,7 +15085,7 @@ extension on TraductionsAr {
 			'tc.bibliotheque.rendu.ouvrirMushaf' => 'فتح المصحف',
 			'tc.bibliotheque.rendu.lienEchec' => 'تعذّر الحصول على رابط القراءة حاليًا.',
 			'tc.bibliotheque.rendu.lienIndisponible' => 'الفتح غير متاح لهذه المادة.',
-			'tc.bibliotheque.rendu.lienHorsLigne' => 'يتطلب الفتح اتصالًا. أعد المحاولة عند عودته.',
+			'tc.bibliotheque.rendu.lienHorsLigne' => 'سيمكن الفتح عند عودة الاتصال.',
 			'tc.bibliotheque.rendu.lienBloque' => 'منع المتصفح الفتح. اسمح بالنوافذ لهذا الموقع ثم أعد المحاولة.',
 			'tc.bibliotheque.actif.indisponibleTitre' => 'المادة المعروضة لم تُفتح بعد',
 			'tc.bibliotheque.actif.indisponible' => 'سيُفتح تتبّع المادة المعروضة عند ربط الخادم.',
