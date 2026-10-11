@@ -39,6 +39,7 @@ const PREFIXE_CLE: Record<DomaineStockage, string> = {
 /// cles qui ne different que par la casse designent deux objets distincts chez
 /// R2, et une convention qui tolere les deux finit par en creer deux.
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+const FAMILLES_PRIVEES = new Set(['export', 'supports', 'libraryproof'])
 
 /// L'echec de construction ou de validation d'une cle.
 export class ErreurCleObjet extends Error {
@@ -87,7 +88,7 @@ export function cleDe(domaine: DomaineStockage, parent: string, enfant: string):
     // famille de ressource. La liste reste fermee pour que ce segment ne
     // devienne pas un champ libre ecrit par un appelant.
     const famille = parent.trim().toLowerCase()
-    if (!/^[a-z][a-z0-9_]{1,31}$/.test(famille)) {
+    if (!/^[a-z][a-z0-9_]{1,31}$/.test(famille) || !FAMILLES_PRIVEES.has(famille)) {
       throw new ErreurCleObjet('famille de ressource hors convention')
     }
     return `${prefixe}/${famille}/${exigerUuid(enfant, 'identifiant de ressource')}`
@@ -138,7 +139,7 @@ export function verifierCle(domaine: DomaineStockage, cle: string): string {
   }
 
   if (domaine === 'priveApplicatif') {
-    if (!/^[a-z][a-z0-9_]{1,31}$/.test(segments[1])) {
+    if (!/^[a-z][a-z0-9_]{1,31}$/.test(segments[1]) || !FAMILLES_PRIVEES.has(segments[1])) {
       throw new ErreurCleObjet('famille de ressource hors convention')
     }
     exigerUuid(segments[2], 'identifiant de ressource')

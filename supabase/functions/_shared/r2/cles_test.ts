@@ -60,6 +60,14 @@ Deno.test('7e -- un identifiant qui n est pas un UUID est refuse', () => {
   assertThrows(() => cleDe('priveApplicatif', 'Export Des Eleves', ARCHIVE), ErreurCleObjet)
 })
 
+Deno.test('7e bis -- famille de preuve CAP29 autorisee, familles inconnues refusees', () => {
+  const cle = cleDe('priveApplicatif', 'libraryproof', ARCHIVE)
+  assertEquals(cle, `private/libraryproof/${ARCHIVE}`)
+  assertEquals(verifierCle('priveApplicatif', cle), cle)
+  assertThrows(() => cleDe('priveApplicatif', 'secretbucket', ARCHIVE), ErreurCleObjet)
+  assertThrows(() => verifierCle('priveApplicatif', `private/secretbucket/${ARCHIVE}`), ErreurCleObjet)
+})
+
 Deno.test('7f -- la casse est normalisee, pour ne pas creer deux objets', () => {
   assertEquals(
     cleDe('pieceIdentite', PROFIL.toUpperCase(), DOCUMENT.toUpperCase()),
