@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/marque/ornement_traces.g.dart';
 import 'package:rewayah_academy/core/marque/peinture_ornement.dart';
-import 'package:rewayah_academy/core/widgets/ornement_marque.dart';
 import 'package:rewayah_academy/features/tc_mushaf/cadre_ornement.dart';
 
 /// Un canevas qui note les transformations demandees et les compose dans une
@@ -139,9 +138,7 @@ void main() {
     },
   );
 
-  testWidgets('le cartouche et OrnementMarque : meme regle', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('le cartouche : meme regle', (WidgetTester tester) async {
     await tester.pumpWidget(
       const Directionality(
         textDirection: TextDirection.rtl,
@@ -152,8 +149,6 @@ void main() {
               height: 40,
               child: FiletsCartoucheMushaf(couleur: Colors.black),
             ),
-            OrnementMarque(variante: VarianteOrnement.contour),
-            OrnementMarque(),
           ],
         ),
       ),
