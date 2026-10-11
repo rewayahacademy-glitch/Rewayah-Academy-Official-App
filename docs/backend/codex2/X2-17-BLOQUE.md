@@ -54,3 +54,10 @@ compléter cette partie. Aucun taux ni événement n'a été supposé.
 - Le scenario SQL contient des assertions aal1/aal2, append-only et audit; aucune n'est prouvee en execution avant rejeu.
 - La duree reellement tenue n'est pas definie pour les intervalles incomplets, reconnexions et seances sans evenement `left`. Aucun montant de prestation n'est donc calcule. FI-BR-06 n'ecrit pas encore le marqueur.
 - Aucun trigger d'alimentation ou de reprise n'est branche. La migration et le scenario restent PARTIELS tant que F86 et le rejeu local PostgreSQL manquent.
+
+## Revue Claude A119 — corrections appliquées
+
+- Le scénario d'immutabilité accepte `insufficient_privilege` en plus de `object_not_in_prerequisite_state`, car l'ACL refuse l'opération avant le trigger pour authenticated.
+- Le décodage du fixture Dart est maintenant typé; `flutter test --no-pub test/core/capacites/series_tresorerie_supabase_test.dart` passe 4/4.
+- `dart analyze --fatal-infos` n'a pas rendu de résultat après environ 2 minutes et a été interrompu; la commande de psql/PostgreSQL reste absente.
+- Le rejeu Claude confirme la table de règles, aal2, portée non-enseignant, audit et mutation aal1. Les triggers d'alimentation, `tresorerie_a_reprendre`, reprise, calcul rémunération et politique d'allocation ne sont toujours pas livrés; X2-17 reste PARTIEL.

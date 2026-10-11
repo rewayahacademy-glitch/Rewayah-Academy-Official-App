@@ -41,9 +41,12 @@ void main() {
 
     test('refuse les montants décimaux', () {
       final Map<String, dynamic> payload = _payload();
-      (payload['repartition'] as List<Map<String, dynamic>>)
-              .first['montant']['mineur'] =
-          12.34;
+      final List<Object?> repartition = payload['repartition'] as List<Object?>;
+      final Map<String, dynamic> first =
+          repartition.first as Map<String, dynamic>;
+      final Map<String, dynamic> montant =
+          first['montant'] as Map<String, dynamic>;
+      montant['mineur'] = 12.34;
       expect(
         () => SeriesTresorerieSupabase.decoder(payload),
         throwsFormatException,

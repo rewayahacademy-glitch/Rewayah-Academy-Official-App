@@ -136,7 +136,7 @@ BEGIN
   UPDATE public.regles_remuneration_enseignant
      SET motif = 'modifie' WHERE enseignant_id = '6f000000-0000-4000-8000-000000000019';
   RAISE EXCEPTION 'X2-17: remuneration rule unexpectedly updated';
-EXCEPTION WHEN object_not_in_prerequisite_state THEN NULL;
+EXCEPTION WHEN object_not_in_prerequisite_state OR insufficient_privilege THEN NULL;
 END;
 $append_only$;
 DO $append_only_delete$
@@ -144,7 +144,7 @@ BEGIN
   DELETE FROM public.regles_remuneration_enseignant
    WHERE enseignant_id = '6f000000-0000-4000-8000-000000000019';
   RAISE EXCEPTION 'X2-17: remuneration rule unexpectedly deleted';
-EXCEPTION WHEN object_not_in_prerequisite_state THEN NULL;
+EXCEPTION WHEN object_not_in_prerequisite_state OR insufficient_privilege THEN NULL;
 END;
 $append_only_delete$;
 
