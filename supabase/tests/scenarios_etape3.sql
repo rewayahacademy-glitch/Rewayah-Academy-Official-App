@@ -204,7 +204,7 @@ begin
     raise exception 'S5 ECHEC : un lecteur sans genre a obtenu des dossiers';
   exception when insufficient_privilege then
     null;
-  exception when sqlstate 'P0001' then
+  when sqlstate 'P0001' then
     if position('genre du lecteur inconnu' in sqlerrm) = 0 then raise; end if;
   end;
   raise notice 'S5a ok : genre inconnu, refus explicite plutot que filtrage a moitie';
@@ -575,6 +575,7 @@ begin
 end $$;
 
 reset role;
+select set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', false);
 update public.profiles set account_status = 'active'
 where id = '22222222-2222-2222-2222-222222222222';
 

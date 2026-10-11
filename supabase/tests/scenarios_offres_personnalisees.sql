@@ -459,7 +459,7 @@ BEGIN
       AND ligne->>'etat' = 'enseignant_affecte'
       AND ligne->>'enseignant' = 'Sayid Enseignant'
       AND (ligne->>'debut_cours_local') !~ '(Z|[+-][0-9]{2}:[0-9]{2})$'
-      AND (ligne->>'debut_cours_local')::time = time '18:00'
+      AND (ligne->>'debut_cours_local')::timestamp::time = time '18:00'
   ) THEN
     RAISE EXCEPTION 'C-04/C-10 : titre masculin ou heure murale du cours absent';
   END IF;
