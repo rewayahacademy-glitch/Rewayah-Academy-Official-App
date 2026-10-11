@@ -29,6 +29,7 @@ import 'package:rewayah_academy/features/tc_mushaf/vue_verset_agrandi.dart';
 
 import '../../capture/outil_capture.dart'
     show chargerPolicesDuDepot, stabiliser;
+import '../../support/aucun_mot_coupe.dart';
 import '../../support/hote_theme.dart';
 import '../../teaching_core/c/faux/faux_corpus_coran.dart';
 import '../../teaching_core/c/goldens/corpus_reference.dart';
@@ -235,6 +236,8 @@ void main() {
           await tester.tap(find.byKey(MushafPage.reduireKey));
           await tester.pump();
           expect(zoom(), closeTo(avant, 1e-9));
+          // Garde des mots coupes : aucun mot ne se coupe au milieu.
+          verifierEcranSansMotCoupe(tester);
           expect(tester.takeException(), isNull);
         });
       }
