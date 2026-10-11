@@ -46,6 +46,12 @@ jobs:
             psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
           done
 
+      # Invitation foyer B-03 : lecture de l'invitation reçue, rattachement
+      # vérifié et refus des états périmés / non admissibles.
+      - name: Scénarios d'acceptation SQL de B-03 (invitations foyer)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b03_invitations_foyer.sql
+
       # Inscription bornee a deux roles, depot KYC de l'enseignant, cloisonnement
       # de genre, appareil partage, plafond d'appareils, codes d'appairage,
       # immuabilite des signatures, etancheite du journal d'audit, RLS partout,
