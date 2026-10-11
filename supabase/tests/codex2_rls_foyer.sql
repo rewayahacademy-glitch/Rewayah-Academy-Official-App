@@ -202,6 +202,21 @@ INSERT INTO public.payouts (id, wallet_id, payout_method_id, amount_minor) VALUE
 INSERT INTO public.teacher_student_assignments (teacher_id, student_id, weekday, hour_local) VALUES
   ('c2a20000-0000-0000-0000-000000000005', 'c2a20000-0000-0000-0000-000000000004', 1, 10),
   ('c2a20000-0000-0000-0000-000000000006', 'c2a20000-0000-0000-0000-000000000002', 2, 11);
+INSERT INTO public.availability_slots (teacher_id, starts_at, ends_at) VALUES
+  ('c2a20000-0000-0000-0000-000000000005', '2026-10-12 10:00:00+00', '2026-10-12 11:00:00+00'),
+  ('c2a20000-0000-0000-0000-000000000006', '2026-10-13 11:00:00+00', '2026-10-13 12:00:00+00');
+INSERT INTO public.rule_overrides (profile_id, key, value, reason, set_by) VALUES
+  ('c2a20000-0000-0000-0000-000000000004', 'session_duration_minutes', '45', 'codex2 foyer A', 'c2a20000-0000-0000-0000-000000000001'),
+  ('c2a20000-0000-0000-0000-000000000002', 'session_duration_minutes', '60', 'codex2 foyer B', 'c2a20000-0000-0000-0000-000000000001');
+INSERT INTO public.weekly_availability (profile_id, weekday, hour_local) VALUES
+  ('c2a20000-0000-0000-0000-000000000004', 1, 10),
+  ('c2a20000-0000-0000-0000-000000000002', 2, 11);
+INSERT INTO public.prayer_settings (teacher_id, latitude, longitude) VALUES
+  ('c2a20000-0000-0000-0000-000000000005', 48.85660, 2.35220),
+  ('c2a20000-0000-0000-0000-000000000006', 9.50917, -13.71222);
+INSERT INTO public.matching_requests (kind, subject_profile_id, reason, requested_by, requester_role) VALUES
+  ('reassignment', 'c2a20000-0000-0000-0000-000000000004', 'codex2 foyer A', 'c2a20000-0000-0000-0000-000000000001', 'guardian'),
+  ('reassignment', 'c2a20000-0000-0000-0000-000000000002', 'codex2 foyer B', 'c2a20000-0000-0000-0000-000000000002', 'student');
 
 DO $$
 DECLARE v_denied boolean := false;
@@ -266,6 +281,128 @@ BEGIN
       INSERT INTO codex2_rls_violations VALUES ('missing-role-claim', v_table::text);
     END IF;
   END LOOP;
+  RESET ROLE;
+END $$;
+
+-- Les creneaux dates restent visibles a l'enseignant proprietaire et aux
+-- parties de son affectation, jamais au foyer/enseignant B.
+DO $$
+DECLARE v_count integer; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000005', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.availability_slots
+   WHERE teacher_id = 'c2a20000-0000-0000-0000-000000000005';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-AVAILABILITY-SLOT: teacher A slot not visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.availability_slots
+   WHERE teacher_id = 'c2a20000-0000-0000-0000-000000000006';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-AVAILABILITY-READ: teacher B slot visible'; END IF;
+  UPDATE public.availability_slots SET ends_at = ends_at + interval '1 minute'
+   WHERE teacher_id = 'c2a20000-0000-0000-0000-000000000005';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-AVAILABILITY-WRITE: teacher A cannot update own slot'; END IF;
+  UPDATE public.availability_slots SET ends_at = ends_at + interval '1 minute'
+   WHERE teacher_id = 'c2a20000-0000-0000-0000-000000000006';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-AVAILABILITY-WRITE: teacher A updated slot B'; END IF;
+  RESET ROLE;
+
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.availability_slots
+   WHERE teacher_id = 'c2a20000-0000-0000-0000-000000000005';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-ASSIGNED-AVAILABILITY: household A cannot read assigned teacher'; END IF;
+  SELECT count(*) INTO v_count FROM public.availability_slots
+   WHERE teacher_id = 'c2a20000-0000-0000-0000-000000000006';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-ASSIGNED-AVAILABILITY: household A sees teacher B'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Reglages/propositions visibles aux seules parties concernees; les insertions
+-- des tables fonctionnelles gardent leurs capacites precises par policy.
+DO $$
+DECLARE v_count integer; v_rows integer; v_denied boolean := false;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+
+  SELECT count(*) INTO v_count FROM public.rule_overrides
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000004';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-RULE-OVERRIDE: foyer A override not visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.rule_overrides
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-RULE-OVERRIDE-READ: foyer B override visible'; END IF;
+  v_rows := 0;
+  BEGIN
+    UPDATE public.rule_overrides SET ended_at = now(), ended_by = auth.uid(), end_reason = 'codex2'
+     WHERE profile_id = 'c2a20000-0000-0000-0000-000000000002';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied AND v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-RULE-OVERRIDE-WRITE: guardian A closed B override'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.matching_requests
+   WHERE subject_profile_id = 'c2a20000-0000-0000-0000-000000000004';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-MATCHING-REQUEST: foyer A request not visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.matching_requests
+   WHERE subject_profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-MATCHING-REQUEST-READ: foyer B request visible'; END IF;
+  v_denied := false;
+  v_rows := 0;
+  BEGIN
+    UPDATE public.matching_requests SET status = 'rejected'
+     WHERE subject_profile_id = 'c2a20000-0000-0000-0000-000000000002';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied AND v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-MATCHING-REQUEST-WRITE: guardian A decided B request'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.weekly_availability
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000004';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-WEEKLY-AVAILABILITY: foyer A availability not visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.weekly_availability
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-WEEKLY-READ: foyer B availability visible'; END IF;
+  INSERT INTO public.weekly_availability (profile_id, weekday, hour_local)
+  VALUES ('c2a20000-0000-0000-0000-000000000004', 3, 12);
+  v_denied := false;
+  BEGIN
+    INSERT INTO public.weekly_availability (profile_id, weekday, hour_local)
+    VALUES ('c2a20000-0000-0000-0000-000000000002', 3, 13);
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-WEEKLY-INSERT: guardian A scheduled student B'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.prayer_settings
+   WHERE teacher_id = 'c2a20000-0000-0000-0000-000000000005';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-PRAYER-SETTINGS: assigned teacher A settings not visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.prayer_settings
+   WHERE teacher_id = 'c2a20000-0000-0000-0000-000000000006';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-PRAYER-READ: teacher B settings visible'; END IF;
+  RESET ROLE;
+END $$;
+
+-- L'enseignant lit et modifie ses reglages de priere, pas ceux de B.
+DO $$
+DECLARE v_count integer; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000005', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  UPDATE public.prayer_settings SET pause_minutes = 20
+   WHERE teacher_id = 'c2a20000-0000-0000-0000-000000000005';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-PRAYER-WRITE: teacher A could not update own settings'; END IF;
+  UPDATE public.prayer_settings SET pause_minutes = 25
+   WHERE teacher_id = 'c2a20000-0000-0000-0000-000000000006';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-PRAYER-WRITE: teacher A updated teacher B settings'; END IF;
   RESET ROLE;
 END $$;
 
