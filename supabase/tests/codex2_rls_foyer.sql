@@ -140,7 +140,8 @@ INSERT INTO auth.users (id, email) VALUES
   ('c2a20000-0000-0000-0000-000000000003', 'codex2-disabled-a@example.test'),
   ('c2a20000-0000-0000-0000-000000000004', 'codex2-student-a@example.test'),
   ('c2a20000-0000-0000-0000-000000000005', 'codex2-teacher-a@example.test'),
-  ('c2a20000-0000-0000-0000-000000000006', 'codex2-teacher-b@example.test');
+  ('c2a20000-0000-0000-0000-000000000006', 'codex2-teacher-b@example.test'),
+  ('c2a20000-0000-0000-0000-000000000007', 'codex2-admin@example.test');
 
 INSERT INTO public.households (id, timezone) VALUES
   ('c2a2ffff-0000-0000-0000-000000000001', 'Europe/Paris'),
@@ -161,7 +162,9 @@ VALUES
   ('c2a20000-0000-0000-0000-000000000005', 'COD2-TEACH-A', 'teacher',
    'c2a2ffff-0000-0000-0000-000000000003', 'Enseignant', 'A', 'active'),
   ('c2a20000-0000-0000-0000-000000000006', 'COD2-TEACH-B', 'teacher',
-   'c2a2ffff-0000-0000-0000-000000000002', 'Enseignant', 'B', 'active');
+   'c2a2ffff-0000-0000-0000-000000000002', 'Enseignant', 'B', 'active'),
+  ('c2a20000-0000-0000-0000-000000000007', 'COD2-ADMIN', 'admin',
+   'c2a2ffff-0000-0000-0000-000000000001', 'Administrateur', 'Codex2', 'active');
 
 INSERT INTO public.kyc_documents (profile_id, doc_type, gender, object_key) VALUES
   ('c2a20000-0000-0000-0000-000000000001', 'id_card', 'male', 'codex2/kyc-a'),
@@ -193,6 +196,10 @@ SELECT sp.profile_id, m.id, 2, 2, 1
 INSERT INTO public.devices (profile_id, device_fingerprint, platform) VALUES
   ('c2a20000-0000-0000-0000-000000000001', 'codex2-device-owner-household', 'web'),
   ('c2a20000-0000-0000-0000-000000000002', 'codex2-device-other-household', 'web');
+INSERT INTO public.device_pairing_codes
+  (student_profile_id, code_hash, created_by, expires_at) VALUES
+  ('c2a20000-0000-0000-0000-000000000004', 'codex2-hash-a', 'c2a20000-0000-0000-0000-000000000005', '2026-10-20 00:00:00+00'),
+  ('c2a20000-0000-0000-0000-000000000002', 'codex2-hash-b', 'c2a20000-0000-0000-0000-000000000006', '2026-10-20 00:00:00+00');
 
 INSERT INTO public.contract_acceptances (profile_id, contract_kind, version) VALUES
   ('c2a20000-0000-0000-0000-000000000004', 'recording_and_control_notice', 'codex2-v1'),
@@ -231,6 +238,12 @@ INSERT INTO public.matching_requests (kind, subject_profile_id, reason, requeste
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at) VALUES
   ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000005', '2026-10-12 10:00:00+00', '2026-10-12 11:00:00+00'),
   ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000006', '2026-10-13 11:00:00+00', '2026-10-13 12:00:00+00');
+INSERT INTO public.session_video_route (session_id, provider, ws_url, room_name) VALUES
+  ('c2a2e000-1000-0000-0000-000000000001', 'cloud', 'wss://a.example.invalid', 'codex2-room-a'),
+  ('c2a2e000-1000-0000-0000-000000000002', 'cloud', 'wss://b.example.invalid', 'codex2-room-b');
+INSERT INTO public.livekit_webhook_deliveries (event_id, event_type, room_name, detail) VALUES
+  ('codex2-event-a', 'participant_joined', 'codex2-room-a', '{"source":"fixture"}'),
+  ('codex2-event-b', 'participant_joined', 'codex2-room-b', '{"source":"fixture"}');
 INSERT INTO public.session_presence_override
   (session_id, profile_id, etat, motif, decide_par) VALUES
   ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'excusee', 'codex2 A', 'c2a20000-0000-0000-0000-000000000005'),
@@ -261,6 +274,32 @@ INSERT INTO public.lesson_reports (id, session_id, idempotency_key, content, aut
 INSERT INTO public.makharij_findings (lesson_report_id, makhraj, finding) VALUES
   ('c2a2e000-2000-0000-0000-000000000001', 'lam', '{"note":"A"}'),
   ('c2a2e000-2000-0000-0000-000000000002', 'lam', '{"note":"B"}');
+
+-- Anon est re-exerce apres le seed pour inclure les lignes representatives.
+DO $$
+DECLARE v_table regclass; v_visible boolean;
+BEGIN
+  FOR v_table IN
+    SELECT c.oid::regclass FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public' AND c.relrowsecurity
+      AND c.relkind IN ('r', 'p', 'v', 'm', 'f')
+    ORDER BY c.oid::regclass::text
+  LOOP
+    v_visible := false;
+    BEGIN
+      SET LOCAL ROLE anon;
+      EXECUTE format('SELECT EXISTS (SELECT 1 FROM %s)', v_table) INTO v_visible;
+      RESET ROLE;
+    EXCEPTION WHEN insufficient_privilege THEN
+      RESET ROLE;
+      v_visible := false;
+    END;
+    IF v_visible THEN
+      INSERT INTO codex2_rls_violations VALUES ('anon-read-after-seed', v_table::text);
+    END IF;
+  END LOOP;
+END $$;
 
 DO $$
 DECLARE v_denied boolean := false;
@@ -962,6 +1001,97 @@ BEGIN
    WHERE student_id = 'c2a20000-0000-0000-0000-000000000002';
   GET DIAGNOSTICS v_rows = ROW_COUNT;
   IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-CONCERN-WRITE: teacher A updated concern B'; END IF;
+  RESET ROLE;
+END $$;
+
+-- L'administration lit les empreintes d'appairage; le foyer utilise la vue
+-- expurgee et ne lit jamais les codes bruts ni ceux d'un autre foyer.
+DO $$
+DECLARE v_count integer; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000007', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"admin","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.device_pairing_codes;
+  IF v_count <> 2 THEN RAISE EXCEPTION 'RLS-ADMIN-PAIRING-CODES: admin cannot read pairing records'; END IF;
+  BEGIN
+    UPDATE public.device_pairing_codes SET code_hash = code_hash WHERE code_hash = 'codex2-hash-b';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_rows := 0;
+  END;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-PAIRING-CODE-DIRECT-WRITE: admin updated a code outside the RPC'; END IF;
+  RESET ROLE;
+
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  v_count := 0;
+  BEGIN
+    SELECT count(*) INTO v_count FROM public.device_pairing_codes;
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_count := 0;
+  END;
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-FAMILY-PAIRING-CODE-RAW: guardian can read raw code rows'; END IF;
+  SELECT count(*) INTO v_count FROM public.mes_codes_appairage_v
+   WHERE student_profile_id = 'c2a20000-0000-0000-0000-000000000004';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-PAIRING-CODE-VIEW: household A cannot read safe child code metadata'; END IF;
+  SELECT count(*) INTO v_count FROM public.mes_codes_appairage_v
+   WHERE student_profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-PAIRING-CODE-VIEW: household A sees B code metadata'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Les tables de routage/configuration video et de webhooks sont service-only:
+-- aucune policy client ne doit exposer leurs lignes ni permettre une mutation.
+DO $$
+DECLARE v_count integer; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  v_count := 0;
+  BEGIN
+    SELECT count(*) INTO v_count FROM public.video_config;
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_count := 0;
+  END;
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-SERVICE-VIDEO-CONFIG-READ: client can read video config'; END IF;
+  BEGIN
+    UPDATE public.video_config SET token_ttl_seconds = token_ttl_seconds WHERE id;
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_rows := 0;
+  END;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-SERVICE-VIDEO-CONFIG-WRITE: client changed video config'; END IF;
+  v_count := 0;
+  BEGIN
+    SELECT count(*) INTO v_count FROM public.session_video_route;
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_count := 0;
+  END;
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-SERVICE-VIDEO-ROUTE-READ: client can read session routing'; END IF;
+  BEGIN
+    UPDATE public.session_video_route SET room_name = room_name WHERE session_id = 'c2a2e000-1000-0000-0000-000000000002';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_rows := 0;
+  END;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-SERVICE-VIDEO-ROUTE-WRITE: client changed session routing'; END IF;
+  v_count := 0;
+  BEGIN
+    SELECT count(*) INTO v_count FROM public.livekit_webhook_deliveries;
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_count := 0;
+  END;
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-SERVICE-WEBHOOK-READ: client can read webhook delivery rows'; END IF;
+  BEGIN
+    UPDATE public.livekit_webhook_deliveries SET applique = true WHERE event_id = 'codex2-event-b';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_rows := 0;
+  END;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-SERVICE-WEBHOOK-WRITE: client changed webhook delivery'; END IF;
   RESET ROLE;
 END $$;
 
