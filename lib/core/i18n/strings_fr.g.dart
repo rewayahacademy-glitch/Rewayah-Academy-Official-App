@@ -2883,6 +2883,7 @@ class Traductions$comptable$fr {
 
 	// Translations
 	late final Traductions$comptable$nav$fr nav = Traductions$comptable$nav$fr.internal(_root);
+	late final Traductions$comptable$graphiques$fr graphiques = Traductions$comptable$graphiques$fr.internal(_root);
 	late final Traductions$comptable$onglets$fr onglets = Traductions$comptable$onglets$fr.internal(_root);
 	late final Traductions$comptable$commun$fr commun = Traductions$comptable$commun$fr.internal(_root);
 	late final Traductions$comptable$coffres$fr coffres = Traductions$comptable$coffres$fr.internal(_root);
@@ -16250,6 +16251,114 @@ class Traductions$comptable$nav$fr {
 	String get compte => 'Compte';
 }
 
+// Path: comptable.graphiques
+class Traductions$comptable$graphiques$fr {
+	Traductions$comptable$graphiques$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.'
+	String get masque => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.';
+
+	/// fr: 'Voir les valeurs'
+	String get voirValeurs => 'Voir les valeurs';
+
+	/// fr: 'Masquer les valeurs'
+	String get masquerValeurs => 'Masquer les valeurs';
+
+	/// fr: 'Répartition par coffre'
+	String get repartitionTitre => 'Répartition par coffre';
+
+	/// fr: 'Répartition entre {n} coffres.'
+	String repartitionResume({required Object n}) => 'Répartition entre ${n} coffres.';
+
+	/// fr: 'Entrées et sorties sur 6 mois'
+	String get mensuelTitre => 'Entrées et sorties sur 6 mois';
+
+	/// fr: 'Entrées et sorties de {debut} à {fin}.'
+	String mensuelResume({required Object debut, required Object fin}) => 'Entrées et sorties de ${debut} à ${fin}.';
+
+	/// fr: 'Flux de trésorerie sur 30 jours'
+	String get fluxTitre => 'Flux de trésorerie sur 30 jours';
+
+	/// fr: 'Encaissements et décaissements du {debut} au {fin}.'
+	String fluxResume({required Object debut, required Object fin}) => 'Encaissements et décaissements du ${debut} au ${fin}.';
+
+	/// fr: 'Évolution sur 6 mois'
+	String get evolutionTitre => 'Évolution sur 6 mois';
+
+	/// fr: 'Trésorerie détenue de {debut} à {fin}.'
+	String evolutionResume({required Object debut, required Object fin}) => 'Trésorerie détenue de ${debut} à ${fin}.';
+
+	/// fr: 'Entrées'
+	String get legendeEntrees => 'Entrées';
+
+	/// fr: 'Sorties'
+	String get legendeSorties => 'Sorties';
+
+	/// fr: 'Encaissements'
+	String get legendeEncaissements => 'Encaissements';
+
+	/// fr: 'Décaissements'
+	String get legendeDecaissements => 'Décaissements';
+
+	/// fr: 'Trésorerie détenue'
+	String get legendeDetenue => 'Trésorerie détenue';
+
+	/// fr: 'Entrées et sorties'
+	String get kpiTitre => 'Entrées et sorties';
+
+	/// fr: 'Entrées'
+	String get kpiEntrees => 'Entrées';
+
+	/// fr: 'Sorties'
+	String get kpiSorties => 'Sorties';
+
+	/// fr: '30 derniers jours'
+	String get kpiPeriode => '30 derniers jours';
+
+	/// fr: '{pourcent} % par rapport à la période précédente'
+	String variation({required Object pourcent}) => '${pourcent} % par rapport à la période précédente';
+
+	/// fr: 'Rapports'
+	String get rapportsTitre => 'Rapports';
+
+	/// fr: 'Les entrées, les sorties et la trésorerie dans la durée.'
+	String get rapportsSousTitre => 'Les entrées, les sorties et la trésorerie dans la durée.';
+
+	/// fr: 'Aucune donnée à dessiner'
+	String get vide => 'Aucune donnée à dessiner';
+
+	/// fr: 'Les graphiques apparaîtront ici dès que des encaissements ou des paiements auront été enregistrés.'
+	String get videDetail => 'Les graphiques apparaîtront ici dès que des encaissements ou des paiements auront été enregistrés.';
+
+	/// fr: 'Les graphiques n'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les graphiques n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Les graphiques n'ont pas pu être chargés'
+	String get sansDonnees => 'Les graphiques n\'ont pas pu être chargés';
+
+	/// fr: 'Exporter le rapport'
+	String get exporterRapport => 'Exporter le rapport';
+
+	/// fr: 'Exporter la sélection'
+	String get exporterSelection => 'Exporter la sélection';
+
+	/// fr: 'Les exports ne sont pas encore disponibles : ils s'ouvriront dès le branchement serveur.'
+	String get exportIndisponible => 'Les exports ne sont pas encore disponibles : ils s\'ouvriront dès le branchement serveur.';
+
+	/// fr: 'Export en préparation'
+	String get exportEnCours => 'Export en préparation';
+
+	/// fr: 'Export prêt : {reference} ({lignes} lignes).'
+	String exportPret({required Object reference, required Object lignes}) => 'Export prêt : ${reference} (${lignes} lignes).';
+
+	/// fr: 'L'export n'a pas pu être préparé : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get exportEchec => 'L\'export n\'a pas pu être préparé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+}
+
 // Path: comptable.onglets
 class Traductions$comptable$onglets$fr {
 	Traductions$comptable$onglets$fr.internal(this._root);
@@ -16275,6 +16384,9 @@ class Traductions$comptable$onglets$fr {
 
 	/// fr: 'Rapprochement'
 	String get rapprochement => 'Rapprochement';
+
+	/// fr: 'Rapports'
+	String get rapports => 'Rapports';
 }
 
 // Path: comptable.commun
@@ -16562,6 +16674,9 @@ class Traductions$comptable$aujourdhui$fr {
 	/// fr: 'Alimenter la Réserve stratégique'
 	String get accesAlimenter => 'Alimenter la Réserve stratégique';
 
+	/// fr: 'Voir les rapports'
+	String get accesRapports => 'Voir les rapports';
+
 	/// fr: 'Aujourd'hui'
 	String get titre => 'Aujourd\'hui';
 
@@ -16778,6 +16893,12 @@ class Traductions$comptable$tresorerie$fr {
 
 	/// fr: 'Alimenter la Réserve stratégique'
 	String get alimenter => 'Alimenter la Réserve stratégique';
+
+	/// fr: 'Une partie de la page n'a pas pu être lue : le reste est à jour. Réessayez pour compléter.'
+	String get erreurPartielle => 'Une partie de la page n\'a pas pu être lue : le reste est à jour. Réessayez pour compléter.';
+
+	/// fr: 'Réessayer'
+	String get erreurPartielleAction => 'Réessayer';
 }
 
 // Path: comptable.encaissements
@@ -27341,6 +27462,12 @@ class Traductions$comptable$beneficiaires$profil$fr {
 
 	/// fr: 'Choisissez un motif pour continuer.'
 	String get motifRequis => 'Choisissez un motif pour continuer.';
+
+	/// fr: 'Voir le fil de {nom}'
+	String voirFil({required Object nom}) => 'Voir le fil de ${nom}';
+
+	/// fr: 'Le fil de {nom} n'a pas pu s'ouvrir : il n'existe pas encore ou la lecture n'a pas abouti. Réessayez dans un instant.'
+	String voirFilRefuse({required Object nom}) => 'Le fil de ${nom} n\'a pas pu s\'ouvrir : il n\'existe pas encore ou la lecture n\'a pas abouti. Réessayez dans un instant.';
 }
 
 // Path: comptable.beneficiaires.recevoir
@@ -27533,6 +27660,12 @@ class Traductions$comptable$validation$detail$fr {
 
 	/// fr: 'Aucune entrée pour l'instant.'
 	String get historiqueVide => 'Aucune entrée pour l\'instant.';
+
+	/// fr: 'L'historique n'a pas pu être lu : ce n'est pas qu'il est vide. Réessayez dans un instant.'
+	String get historiqueErreur => 'L\'historique n\'a pas pu être lu : ce n\'est pas qu\'il est vide. Réessayez dans un instant.';
+
+	/// fr: 'Relire l'historique'
+	String get historiqueReessayer => 'Relire l\'historique';
 }
 
 // Path: comptable.validation.motifs
@@ -27762,6 +27895,42 @@ class Traductions$comptable$direction$delegationPanneau$fr {
 
 	/// fr: 'La politique tarifaire reste à la direction.'
 	String get politiqueTarifaireDetail => 'La politique tarifaire reste à la direction.';
+
+	/// fr: 'Toujours sensible'
+	String get sensiblesTitre => 'Toujours sensible';
+
+	/// fr: 'Ces cinq cas demandent toujours une validation supplémentaire, quels que soient les réglages ci-dessus. Le premier paiement et les coordonnées récentes se règlent plus haut.'
+	String get sensiblesDetail => 'Ces cinq cas demandent toujours une validation supplémentaire, quels que soient les réglages ci-dessus. Le premier paiement et les coordonnées récentes se règlent plus haut.';
+
+	/// fr: 'Montant hors seuil'
+	String get sensibleHorsSeuil => 'Montant hors seuil';
+
+	/// fr: 'Un paiement au-dessus des plafonds fixés plus haut.'
+	String get sensibleHorsSeuilDetail => 'Un paiement au-dessus des plafonds fixés plus haut.';
+
+	/// fr: 'Paiement hors cycle'
+	String get sensibleHorsCycle => 'Paiement hors cycle';
+
+	/// fr: 'Un paiement qui ne suit pas la période de paie habituelle.'
+	String get sensibleHorsCycleDetail => 'Un paiement qui ne suit pas la période de paie habituelle.';
+
+	/// fr: 'Bénéficiaire lié à l'opérateur'
+	String get sensibleLieOperateur => 'Bénéficiaire lié à l\'opérateur';
+
+	/// fr: 'Un paiement vers une personne liée à l'opérateur de paiement.'
+	String get sensibleLieOperateurDetail => 'Un paiement vers une personne liée à l\'opérateur de paiement.';
+
+	/// fr: 'Fournisseur indisponible'
+	String get sensibleFournisseur => 'Fournisseur indisponible';
+
+	/// fr: 'Un paiement dont le fournisseur de paiement ne répond pas.'
+	String get sensibleFournisseurDetail => 'Un paiement dont le fournisseur de paiement ne répond pas.';
+
+	/// fr: 'Obligation manuelle non approuvée'
+	String get sensibleManuelle => 'Obligation manuelle non approuvée';
+
+	/// fr: 'Une obligation saisie à la main et pas encore approuvée.'
+	String get sensibleManuelleDetail => 'Une obligation saisie à la main et pas encore approuvée.';
 }
 
 // Path: recherche.etats.vide
@@ -37716,12 +37885,46 @@ extension on Traductions {
 			'comptable.nav.paiements' => 'Paiements',
 			'comptable.nav.tresorerie' => 'Trésorerie',
 			'comptable.nav.compte' => 'Compte',
+			'comptable.graphiques.masque' => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.',
+			'comptable.graphiques.voirValeurs' => 'Voir les valeurs',
+			'comptable.graphiques.masquerValeurs' => 'Masquer les valeurs',
+			'comptable.graphiques.repartitionTitre' => 'Répartition par coffre',
+			'comptable.graphiques.repartitionResume' => ({required Object n}) => 'Répartition entre ${n} coffres.',
+			'comptable.graphiques.mensuelTitre' => 'Entrées et sorties sur 6 mois',
+			'comptable.graphiques.mensuelResume' => ({required Object debut, required Object fin}) => 'Entrées et sorties de ${debut} à ${fin}.',
+			'comptable.graphiques.fluxTitre' => 'Flux de trésorerie sur 30 jours',
+			'comptable.graphiques.fluxResume' => ({required Object debut, required Object fin}) => 'Encaissements et décaissements du ${debut} au ${fin}.',
+			'comptable.graphiques.evolutionTitre' => 'Évolution sur 6 mois',
+			'comptable.graphiques.evolutionResume' => ({required Object debut, required Object fin}) => 'Trésorerie détenue de ${debut} à ${fin}.',
+			'comptable.graphiques.legendeEntrees' => 'Entrées',
+			'comptable.graphiques.legendeSorties' => 'Sorties',
+			'comptable.graphiques.legendeEncaissements' => 'Encaissements',
+			'comptable.graphiques.legendeDecaissements' => 'Décaissements',
+			'comptable.graphiques.legendeDetenue' => 'Trésorerie détenue',
+			'comptable.graphiques.kpiTitre' => 'Entrées et sorties',
+			'comptable.graphiques.kpiEntrees' => 'Entrées',
+			'comptable.graphiques.kpiSorties' => 'Sorties',
+			'comptable.graphiques.kpiPeriode' => '30 derniers jours',
+			'comptable.graphiques.variation' => ({required Object pourcent}) => '${pourcent} % par rapport à la période précédente',
+			'comptable.graphiques.rapportsTitre' => 'Rapports',
+			'comptable.graphiques.rapportsSousTitre' => 'Les entrées, les sorties et la trésorerie dans la durée.',
+			'comptable.graphiques.vide' => 'Aucune donnée à dessiner',
+			'comptable.graphiques.videDetail' => 'Les graphiques apparaîtront ici dès que des encaissements ou des paiements auront été enregistrés.',
+			'comptable.graphiques.erreur' => 'Les graphiques n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'comptable.graphiques.sansDonnees' => 'Les graphiques n\'ont pas pu être chargés',
+			'comptable.graphiques.exporterRapport' => 'Exporter le rapport',
+			'comptable.graphiques.exporterSelection' => 'Exporter la sélection',
+			'comptable.graphiques.exportIndisponible' => 'Les exports ne sont pas encore disponibles : ils s\'ouvriront dès le branchement serveur.',
+			'comptable.graphiques.exportEnCours' => 'Export en préparation',
+			'comptable.graphiques.exportPret' => ({required Object reference, required Object lignes}) => 'Export prêt : ${reference} (${lignes} lignes).',
+			'comptable.graphiques.exportEchec' => 'L\'export n\'a pas pu être préparé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.onglets.aEffectuer' => 'À effectuer',
 			'comptable.onglets.contractuels' => 'Contractuels',
 			'comptable.onglets.beneficiaires' => 'Bénéficiaires',
 			'comptable.onglets.coffres' => 'Coffres',
 			'comptable.onglets.encaissements' => 'Encaissements',
 			'comptable.onglets.rapprochement' => 'Rapprochement',
+			'comptable.onglets.rapports' => 'Rapports',
 			'comptable.commun.montantMasque' => 'Montant masqué',
 			'comptable.commun.afficherMontants' => 'Afficher les montants',
 			'comptable.commun.masquerMontants' => 'Masquer les montants',
@@ -37871,6 +38074,7 @@ extension on Traductions {
 			'comptable.aujourdhui.accesEncaissements' => 'Voir les encaissements',
 			'comptable.aujourdhui.accesTresorerie' => 'Voir la trésorerie et les coffres',
 			'comptable.aujourdhui.accesAlimenter' => 'Alimenter la Réserve stratégique',
+			'comptable.aujourdhui.accesRapports' => 'Voir les rapports',
 			'comptable.aujourdhui.titre' => 'Aujourd\'hui',
 			'comptable.aujourdhui.sousTitre' => 'Que dois-je faire maintenant ?',
 			'comptable.aujourdhui.attention' => 'À traiter et alertes',
@@ -37937,6 +38141,8 @@ extension on Traductions {
 			'comptable.paiements.confirmation.refusPerime' => 'Le contrôle a expiré. Rien n\'est parti. Relancez le contrôle avant de confirmer.',
 			'comptable.paiements.confirmation.refusFournisseur' => 'Le prestataire est devenu indisponible. Rien n\'est parti. Relancez le contrôle dans un moment.',
 			'comptable.paiements.confirmation.inconnuTitre' => 'Issue inconnue',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.inconnuPhrase' => 'La réponse ne nous est pas parvenue : le paiement a pu partir. Réessayez : la même demande est renvoyée et ne partira qu\'une fois.',
 			'comptable.paiements.confirmation.reessayer' => 'Réessayer',
 			'comptable.paiements.confirmation.validationDemandeeTitre' => 'Validation demandée',
@@ -37972,8 +38178,6 @@ extension on Traductions {
 			'comptable.paiements.actions.payer' => 'Payer',
 			'comptable.paiements.actions.demanderValidation' => 'Demander validation',
 			'comptable.paiements.actions.relancer' => 'Relancer',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.actions.signalerEcart' => 'Signaler un écart',
 			'comptable.paiements.actions.selectionner' => ({required Object nom}) => 'Sélectionner le paiement de ${nom}',
 			'comptable.paiements.actions.selectionnerPrets' => 'Sélectionner tous les paiements prêts',
@@ -38113,6 +38317,8 @@ extension on Traductions {
 			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
 			'comptable.tresorerie.sousTitre' => 'La Trésorerie libre est le seul chiffre dépensable.',
 			'comptable.tresorerie.alimenter' => 'Alimenter la Réserve stratégique',
+			'comptable.tresorerie.erreurPartielle' => 'Une partie de la page n\'a pas pu être lue : le reste est à jour. Réessayez pour compléter.',
+			'comptable.tresorerie.erreurPartielleAction' => 'Réessayer',
 			'comptable.encaissements.filtreTous' => 'Tous',
 			'comptable.encaissements.filtreConfirmes' => 'Confirmés',
 			'comptable.encaissements.filtreEnAttente' => 'En attente',
@@ -38267,6 +38473,8 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.motifDemande' => 'Demande du bénéficiaire',
 			'comptable.beneficiaires.profil.motifDemandeDetail' => 'Le bénéficiaire a demandé à ne plus recevoir de versement pour l\'instant.',
 			'comptable.beneficiaires.profil.motifRequis' => 'Choisissez un motif pour continuer.',
+			'comptable.beneficiaires.profil.voirFil' => ({required Object nom}) => 'Voir le fil de ${nom}',
+			'comptable.beneficiaires.profil.voirFilRefuse' => ({required Object nom}) => 'Le fil de ${nom} n\'a pas pu s\'ouvrir : il n\'existe pas encore ou la lecture n\'a pas abouti. Réessayez dans un instant.',
 			'comptable.beneficiaires.titre' => 'Bénéficiaires',
 			'comptable.beneficiaires.sousTitre' => 'Coordonnées masquées : seul le bénéficiaire modifie les siennes.',
 			'comptable.beneficiaires.profilTitre' => 'Profil de paiement',
@@ -38414,6 +38622,8 @@ extension on Traductions {
 			'comptable.validation.detail.etat' => 'État',
 			'comptable.validation.detail.historique' => 'Historique',
 			'comptable.validation.detail.historiqueVide' => 'Aucune entrée pour l\'instant.',
+			'comptable.validation.detail.historiqueErreur' => 'L\'historique n\'a pas pu être lu : ce n\'est pas qu\'il est vide. Réessayez dans un instant.',
+			'comptable.validation.detail.historiqueReessayer' => 'Relire l\'historique',
 			'comptable.validation.valider' => 'Valider',
 			'comptable.validation.refuser' => 'Refuser',
 			'comptable.validation.annuler' => 'Annuler',
@@ -38445,6 +38655,8 @@ extension on Traductions {
 			'comptable.validation.suiviRefusee' => ({required Object decideur, required Object date, required Object motif}) => 'Refusée par ${decideur} le ${date}. Motif : ${motif}',
 			'comptable.validation.erreurSuivi' => 'Nous n\'avons pas pu lire l\'état de la demande de validation. Réessayez dans un instant.',
 			'comptable.validation.reessayer' => 'Réessayer',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.versionDepuis' => ({required Object version, required Object date}) => 'Version ${version}, en vigueur depuis le ${date}',
 			'comptable.direction.versionSansDate' => ({required Object version}) => 'Version ${version}',
 			'comptable.direction.auteur' => ({required Object auteur}) => 'Enregistrée par ${auteur}',
@@ -38486,8 +38698,6 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.regle.jusquAObjectifDetail' => 'Compléter ce qui manque pour atteindre l\'objectif.',
 			'comptable.direction.reservePanneau.regle.proposee' => 'Proposée',
 			'comptable.direction.reservePanneau.regle.proposeeDetail' => 'Une proposition que le Comptable confirme.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.reservePanneau.montantAuto' => 'Montant à affecter',
 			'comptable.direction.reservePanneau.montantAutoDetail' => 'La somme affectée à la Réserve à chaque échéance.',
 			'comptable.direction.reservePanneau.pourcentageAuto' => 'Part de l\'encaissement consolidé',
@@ -38540,6 +38750,18 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.montantManuelDetail' => 'Le montant d\'un paiement est toujours celui de l\'obligation.',
 			'comptable.direction.delegationPanneau.politiqueTarifaire' => 'Modifier les tarifs',
 			'comptable.direction.delegationPanneau.politiqueTarifaireDetail' => 'La politique tarifaire reste à la direction.',
+			'comptable.direction.delegationPanneau.sensiblesTitre' => 'Toujours sensible',
+			'comptable.direction.delegationPanneau.sensiblesDetail' => 'Ces cinq cas demandent toujours une validation supplémentaire, quels que soient les réglages ci-dessus. Le premier paiement et les coordonnées récentes se règlent plus haut.',
+			'comptable.direction.delegationPanneau.sensibleHorsSeuil' => 'Montant hors seuil',
+			'comptable.direction.delegationPanneau.sensibleHorsSeuilDetail' => 'Un paiement au-dessus des plafonds fixés plus haut.',
+			'comptable.direction.delegationPanneau.sensibleHorsCycle' => 'Paiement hors cycle',
+			'comptable.direction.delegationPanneau.sensibleHorsCycleDetail' => 'Un paiement qui ne suit pas la période de paie habituelle.',
+			'comptable.direction.delegationPanneau.sensibleLieOperateur' => 'Bénéficiaire lié à l\'opérateur',
+			'comptable.direction.delegationPanneau.sensibleLieOperateurDetail' => 'Un paiement vers une personne liée à l\'opérateur de paiement.',
+			'comptable.direction.delegationPanneau.sensibleFournisseur' => 'Fournisseur indisponible',
+			'comptable.direction.delegationPanneau.sensibleFournisseurDetail' => 'Un paiement dont le fournisseur de paiement ne répond pas.',
+			'comptable.direction.delegationPanneau.sensibleManuelle' => 'Obligation manuelle non approuvée',
+			'comptable.direction.delegationPanneau.sensibleManuelleDetail' => 'Une obligation saisie à la main et pas encore approuvée.',
 			'comptable.direction.titre' => 'Réserve et délégation',
 			'comptable.direction.sousTitre' => 'La politique de la Réserve stratégique et ce que le Comptable peut exécuter seul.',
 			'comptable.direction.reserve' => 'Politique de la Réserve stratégique',

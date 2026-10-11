@@ -405,6 +405,36 @@ class _FinanceDelegationPolicyPanelState
           ],
         ),
         Ecart.vXxl,
+        // Spec §21.4 : ce qui est sensible quoi qu'on regle plus haut. Une
+        // ligne en lecture seule par cas, rien ne se regle ici (COMPTA-RECON-1
+        // §3.2 ; l'echelle des exceptions attend une decision du directeur).
+        GroupePolitique(
+          titre: d.sensiblesTitre,
+          detail: d.sensiblesDetail,
+          enfants: <Widget>[
+            _Interdit(
+              titre: d.sensibleHorsSeuil,
+              detail: d.sensibleHorsSeuilDetail,
+            ),
+            _Interdit(
+              titre: d.sensibleHorsCycle,
+              detail: d.sensibleHorsCycleDetail,
+            ),
+            _Interdit(
+              titre: d.sensibleLieOperateur,
+              detail: d.sensibleLieOperateurDetail,
+            ),
+            _Interdit(
+              titre: d.sensibleFournisseur,
+              detail: d.sensibleFournisseurDetail,
+            ),
+            _Interdit(
+              titre: d.sensibleManuelle,
+              detail: d.sensibleManuelleDetail,
+            ),
+          ],
+        ),
+        Ecart.vXxl,
         PiedEnregistrement(
           key: FinanceDelegationPolicyPanel.enregistrerKey,
           modifie: _modifie,

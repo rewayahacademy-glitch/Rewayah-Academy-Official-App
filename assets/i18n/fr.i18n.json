@@ -8451,13 +8451,49 @@
       "tresorerie": "Trésorerie",
       "compte": "Compte"
     },
+    "graphiques": {
+      "masque": "Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.",
+      "voirValeurs": "Voir les valeurs",
+      "masquerValeurs": "Masquer les valeurs",
+      "repartitionTitre": "Répartition par coffre",
+      "repartitionResume": "Répartition entre {n} coffres.",
+      "mensuelTitre": "Entrées et sorties sur 6 mois",
+      "mensuelResume": "Entrées et sorties de {debut} à {fin}.",
+      "fluxTitre": "Flux de trésorerie sur 30 jours",
+      "fluxResume": "Encaissements et décaissements du {debut} au {fin}.",
+      "evolutionTitre": "Évolution sur 6 mois",
+      "evolutionResume": "Trésorerie détenue de {debut} à {fin}.",
+      "legendeEntrees": "Entrées",
+      "legendeSorties": "Sorties",
+      "legendeEncaissements": "Encaissements",
+      "legendeDecaissements": "Décaissements",
+      "legendeDetenue": "Trésorerie détenue",
+      "kpiTitre": "Entrées et sorties",
+      "kpiEntrees": "Entrées",
+      "kpiSorties": "Sorties",
+      "kpiPeriode": "30 derniers jours",
+      "variation": "{pourcent} % par rapport à la période précédente",
+      "rapportsTitre": "Rapports",
+      "rapportsSousTitre": "Les entrées, les sorties et la trésorerie dans la durée.",
+      "vide": "Aucune donnée à dessiner",
+      "videDetail": "Les graphiques apparaîtront ici dès que des encaissements ou des paiements auront été enregistrés.",
+      "erreur": "Les graphiques n'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "sansDonnees": "Les graphiques n'ont pas pu être chargés",
+      "exporterRapport": "Exporter le rapport",
+      "exporterSelection": "Exporter la sélection",
+      "exportIndisponible": "Les exports ne sont pas encore disponibles : ils s'ouvriront dès le branchement serveur.",
+      "exportEnCours": "Export en préparation",
+      "exportPret": "Export prêt : {reference} ({lignes} lignes).",
+      "exportEchec": "L'export n'a pas pu être préparé : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+    },
     "onglets": {
       "aEffectuer": "À effectuer",
       "contractuels": "Contractuels",
       "beneficiaires": "Bénéficiaires",
       "coffres": "Coffres",
       "encaissements": "Encaissements",
-      "rapprochement": "Rapprochement"
+      "rapprochement": "Rapprochement",
+      "rapports": "Rapports"
     },
     "commun": {
       "montantMasque": "Montant masqué",
@@ -8640,6 +8676,7 @@
       "accesEncaissements": "Voir les encaissements",
       "accesTresorerie": "Voir la trésorerie et les coffres",
       "accesAlimenter": "Alimenter la Réserve stratégique",
+      "accesRapports": "Voir les rapports",
       "titre": "Aujourd'hui",
       "sousTitre": "Que dois-je faire maintenant\u00a0?",
       "attention": "À traiter et alertes",
@@ -8927,7 +8964,9 @@
       },
       "titre": "Trésorerie et coffres",
       "sousTitre": "La Trésorerie libre est le seul chiffre dépensable.",
-      "alimenter": "Alimenter la Réserve stratégique"
+      "alimenter": "Alimenter la Réserve stratégique",
+      "erreurPartielle": "Une partie de la page n'a pas pu être lue : le reste est à jour. Réessayez pour compléter.",
+      "erreurPartielleAction": "Réessayer"
     },
     "encaissements": {
       "filtreTous": "Tous",
@@ -9088,7 +9127,9 @@
         "motifAnomalieDetail": "Un paiement récent a échoué ou un écart a été signalé.",
         "motifDemande": "Demande du bénéficiaire",
         "motifDemandeDetail": "Le bénéficiaire a demandé à ne plus recevoir de versement pour l'instant.",
-        "motifRequis": "Choisissez un motif pour continuer."
+        "motifRequis": "Choisissez un motif pour continuer.",
+        "voirFil": "Voir le fil de {nom}",
+        "voirFilRefuse": "Le fil de {nom} n'a pas pu s'ouvrir : il n'existe pas encore ou la lecture n'a pas abouti. Réessayez dans un instant."
       },
       "titre": "Bénéficiaires",
       "sousTitre": "Coordonnées masquées\u00a0: seul le bénéficiaire modifie les siennes.",
@@ -9245,7 +9286,9 @@
         "montant": "Montant exact",
         "etat": "État",
         "historique": "Historique",
-        "historiqueVide": "Aucune entrée pour l'instant."
+        "historiqueVide": "Aucune entrée pour l'instant.",
+        "historiqueErreur": "L'historique n'a pas pu être lu : ce n'est pas qu'il est vide. Réessayez dans un instant.",
+        "historiqueReessayer": "Relire l'historique"
       },
       "valider": "Valider",
       "refuser": "Refuser",
@@ -9381,7 +9424,19 @@
         "montantManuel": "Saisir un montant à la main au moment de payer",
         "montantManuelDetail": "Le montant d'un paiement est toujours celui de l'obligation.",
         "politiqueTarifaire": "Modifier les tarifs",
-        "politiqueTarifaireDetail": "La politique tarifaire reste à la direction."
+        "politiqueTarifaireDetail": "La politique tarifaire reste à la direction.",
+        "sensiblesTitre": "Toujours sensible",
+        "sensiblesDetail": "Ces cinq cas demandent toujours une validation supplémentaire, quels que soient les réglages ci-dessus. Le premier paiement et les coordonnées récentes se règlent plus haut.",
+        "sensibleHorsSeuil": "Montant hors seuil",
+        "sensibleHorsSeuilDetail": "Un paiement au-dessus des plafonds fixés plus haut.",
+        "sensibleHorsCycle": "Paiement hors cycle",
+        "sensibleHorsCycleDetail": "Un paiement qui ne suit pas la période de paie habituelle.",
+        "sensibleLieOperateur": "Bénéficiaire lié à l'opérateur",
+        "sensibleLieOperateurDetail": "Un paiement vers une personne liée à l'opérateur de paiement.",
+        "sensibleFournisseur": "Fournisseur indisponible",
+        "sensibleFournisseurDetail": "Un paiement dont le fournisseur de paiement ne répond pas.",
+        "sensibleManuelle": "Obligation manuelle non approuvée",
+        "sensibleManuelleDetail": "Une obligation saisie à la main et pas encore approuvée."
       },
       "titre": "Réserve et délégation",
       "sousTitre": "La politique de la Réserve stratégique et ce que le Comptable peut exécuter seul.",

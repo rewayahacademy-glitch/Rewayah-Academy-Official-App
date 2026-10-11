@@ -73,6 +73,7 @@ import '../../features/comptable/contractuels/obligation_contractuel_page.dart';
 import '../../features/comptable/encaissements/detail_encaissement_page.dart';
 import '../../features/comptable/encaissements/encaissements_page.dart';
 import '../../features/comptable/encaissements/rapprochement_page.dart';
+import '../../features/comptable/graphiques/rapports_page.dart';
 import '../../features/comptable/paiements/detail_paiement_page.dart';
 import '../../features/comptable/paiements/paiements_page.dart';
 import '../../features/comptable/tresorerie/tresorerie_page.dart';
@@ -1895,6 +1896,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     path: 'rapprochement',
                     builder: (BuildContext _, GoRouterState _) =>
                         const RapprochementPage(),
+                  ),
+                  GoRoute(
+                    path: 'rapports',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const RapportsPage(),
                   ),
                 ],
               ),

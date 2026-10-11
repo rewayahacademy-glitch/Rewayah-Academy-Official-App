@@ -409,6 +409,7 @@ class ZoneAccesRapides extends StatelessWidget {
           Routes.comptableEncaissements,
         ),
         lien('tresorerie', a.accesTresorerie, Routes.comptableTresorerie),
+        lien('rapports', a.accesRapports, Routes.comptableRapports),
         lien(
           'alimenter',
           a.accesAlimenter,

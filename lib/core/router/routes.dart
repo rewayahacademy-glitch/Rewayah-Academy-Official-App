@@ -891,6 +891,10 @@ abstract final class Routes {
   static const String comptableRapprochement =
       '/comptable/tresorerie/rapprochement';
 
+  /// Onglet « Rapports » de Tresorerie (COMPTA-GRAPH-1) : entrees et sorties
+  /// sur 6 mois, flux sur 30 jours, export du rapport.
+  static const String comptableRapports = '/comptable/tresorerie/rapports';
+
   /// « Recevoir mes paiements » (spec §17, §38) : la surface personnelle de
   /// tout beneficiaire avec compte (enseignant, Comptable), sous `/compte`
   /// comme `/compte/profil`, dans la coquille du role connecte.
