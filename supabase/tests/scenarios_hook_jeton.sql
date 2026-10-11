@@ -329,7 +329,9 @@ do $$
 declare
   v_claims jsonb;
   v_lignes int;
+  v_retention_days integer;
 begin
+  v_retention_days := public.app_config_int('kyc_retention_days', 90);
   v_claims := public.custom_access_token_hook(jsonb_build_object(
     'user_id', 'da000000-0000-0000-0000-000000000001',
     'claims', jsonb_build_object('sub', 'da000000-0000-0000-0000-000000000001')
@@ -339,9 +341,9 @@ begin
   perform set_config('test.uid', 'da000000-0000-0000-0000-000000000001', true);
   set local role authenticated;
 
-  insert into public.kyc_documents (profile_id, doc_type, object_key)
-  values ('da000000-0000-0000-0000-000000000001', 'id_card',
-          'da000000-0000-0000-0000-000000000001/1700000000.jpg');
+  insert into public.kyc_documents (profile_id, doc_type, object_key, gender)
+    values ('da000000-0000-0000-0000-000000000001', 'id_card',
+            'da000000-0000-0000-0000-000000000001/1700000000.jpg', 'female');
 
   reset role;
 
@@ -359,32 +361,54 @@ begin
   if not exists (
     select 1 from public.kyc_documents
     where profile_id = 'da000000-0000-0000-0000-000000000001'
-      and gender = 'male' and purge_at is not null and status = 'pending'
+      and gender = 'male'
+      and purge_at = now() + make_interval(days => v_retention_days)
+      and status = 'pending'
   ) then
-    raise exception 'H8 ECHEC : la ligne creee n''est pas correctement classee';
+    raise exception 'H8 ECHEC : le genre ou la retention derivee ne correspond pas';
   end if;
 end $$;
 
 -- ============================================================
--- H9 -- Le hook reste ferme a tout le monde sauf Auth
+-- H9 -- Le trigger KYC reste invoker-only et non appelable directement
+-- ============================================================
+
+do $$
+begin
+  if (select p.prosecdef
+      from pg_catalog.pg_proc p
+      where p.oid = 'public.completer_kyc_document()'::regprocedure) then
+    raise exception 'H9 ECHEC : le trigger KYC est SECURITY DEFINER';
+  end if;
+
+  if has_function_privilege('anon', 'public.completer_kyc_document()', 'execute')
+     or has_function_privilege('authenticated', 'public.completer_kyc_document()', 'execute')
+     or has_function_privilege('service_role', 'public.completer_kyc_document()', 'execute')
+     or has_function_privilege('agent_ro', 'public.completer_kyc_document()', 'execute') then
+    raise exception 'H9 ECHEC : une role applicatif peut executer le trigger KYC';
+  end if;
+end $$;
+
+-- ============================================================
+-- H10 -- Le hook reste ferme a tout le monde sauf Auth
 -- ============================================================
 
 do $$
 begin
   if not has_function_privilege('supabase_auth_admin',
        'public.custom_access_token_hook(jsonb)', 'execute') then
-    raise exception 'H9 ECHEC : supabase_auth_admin ne peut plus appeler le hook -- Auth emettrait des jetons muets';
+    raise exception 'H10 ECHEC : supabase_auth_admin ne peut plus appeler le hook -- Auth emettrait des jetons muets';
   end if;
 
   if has_function_privilege('authenticated',
        'public.custom_access_token_hook(jsonb)', 'execute')
      or has_function_privilege('anon',
        'public.custom_access_token_hook(jsonb)', 'execute') then
-    raise exception 'H9 ECHEC : le hook est appelable par un client';
+    raise exception 'H10 ECHEC : le hook est appelable par un client';
   end if;
 end $$;
 
 do $$
 begin
-  raise notice 'scenarios_hook_jeton : H1 a H9 au vert.';
+  raise notice 'scenarios_hook_jeton : H1 a H10 au vert.';
 end $$;
