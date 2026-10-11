@@ -2286,6 +2286,7 @@ class Traductions$historique$fr {
 	late final Traductions$historique$observations$fr observations = Traductions$historique$observations$fr.internal(_root);
 	late final Traductions$historique$seance$fr seance = Traductions$historique$seance$fr.internal(_root);
 	late final Traductions$historique$observation$fr observation = Traductions$historique$observation$fr.internal(_root);
+	late final Traductions$historique$compteRendu$fr compteRendu = Traductions$historique$compteRendu$fr.internal(_root);
 
 	/// fr: '{jour} {mois}'
 	String dateCourteSansAnnee({required Object jour, required Object mois}) => '${jour} ${mois}';
@@ -7164,6 +7165,7 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Cette installation n'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n'y changera rien : elle doit d'abord être appliquée à la base.'
 	String get observationCapaciteAbsente => 'Cette installation n\'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n\'y changera rien : elle doit d\'abord être appliquée à la base.';
 
+	late final Traductions$admin$groupes$partage$fr partage = Traductions$admin$groupes$partage$fr.internal(_root);
 	late final Traductions$admin$groupes$formulaire$fr formulaire = Traductions$admin$groupes$formulaire$fr.internal(_root);
 }
 
@@ -10328,6 +10330,60 @@ class Traductions$historique$observation$fr {
 
 	/// fr: 'Aucune visite enregistrée ne correspond à cette séance.'
 	String get introuvablePhrase => 'Aucune visite enregistrée ne correspond à cette séance.';
+}
+
+// Path: historique.compteRendu
+class Traductions$historique$compteRendu$fr {
+	Traductions$historique$compteRendu$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Compte rendu pédagogique'
+	String get titre => 'Compte rendu pédagogique';
+
+	/// fr: 'Ce qui a été travaillé'
+	String get travaille => 'Ce qui a été travaillé';
+
+	/// fr: 'Appréciation de la séance'
+	String get appreciation => 'Appréciation de la séance';
+
+	/// fr: 'À renforcer'
+	String get aRenforcer => 'À renforcer';
+
+	/// fr: 'À préparer pour la prochaine séance'
+	String get aPreparer => 'À préparer pour la prochaine séance';
+
+	/// fr: 'Commentaire partagé'
+	String get commentaire => 'Commentaire partagé';
+
+	/// fr: 'Corrigé le {date}'
+	String corrigeLe({required Object date}) => 'Corrigé le ${date}';
+
+	/// fr: 'Compte rendu pédagogique non disponible'
+	String get nonDisponibleTitre => 'Compte rendu pédagogique non disponible';
+
+	/// fr: 'Les observations de cette séance ne sont pas partagées avec votre famille pour le moment.'
+	String get nonPartagePhrase => 'Les observations de cette séance ne sont pas partagées avec votre famille pour le moment.';
+
+	/// fr: 'Le compte rendu n'est pas encore disponible.'
+	String get enAttentePhrase => 'Le compte rendu n\'est pas encore disponible.';
+
+	/// fr: 'Le compte rendu ne peut pas être affiché.'
+	String get illisiblePhrase => 'Le compte rendu ne peut pas être affiché.';
+
+	/// fr: 'Connexion nécessaire pour consulter le compte rendu.'
+	String get horsLignePhrase => 'Connexion nécessaire pour consulter le compte rendu.';
+
+	/// fr: 'Aucun compte rendu pédagogique n'est disponible pour cette séance.'
+	String get aucunChampPhrase => 'Aucun compte rendu pédagogique n\'est disponible pour cette séance.';
+
+	/// fr: 'Voir le travail à préparer'
+	String get voirTravail => 'Voir le travail à préparer';
+
+	/// fr: 'Voir la progression'
+	String get voirProgression => 'Voir la progression';
 }
 
 // Path: notifications.filtres
@@ -19517,6 +19573,273 @@ class Traductions$admin$groupes$liste$fr {
 
 	/// fr: 'Classes avec des places'
 	String get remplissagePlaces => 'Classes avec des places';
+}
+
+// Path: admin.groupes.partage
+class Traductions$admin$groupes$partage$fr {
+	Traductions$admin$groupes$partage$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Partage des comptes rendus pédagogiques'
+	String get titre => 'Partage des comptes rendus pédagogiques';
+
+	/// fr: 'Partager automatiquement avec les familles'
+	String get interrupteur => 'Partager automatiquement avec les familles';
+
+	/// fr: 'Les familles voient les observations partageables après validation du cahier. Les notes internes restent privées.'
+	String get aide => 'Les familles voient les observations partageables après validation du cahier. Les notes internes restent privées.';
+
+	/// fr: 'Exception élève → Classe → Réglage par défaut'
+	String get priorite => 'Exception élève → Classe → Réglage par défaut';
+
+	/// fr: 'Gérer les exceptions individuelles'
+	String get gererExceptions => 'Gérer les exceptions individuelles';
+
+	/// fr: 'Le réglage de partage n'est pas encore disponible.'
+	String get indisponible => 'Le réglage de partage n\'est pas encore disponible.';
+
+	/// fr: 'Vous n'avez pas le droit de modifier ce réglage.'
+	String get refuse => 'Vous n\'avez pas le droit de modifier ce réglage.';
+
+	/// fr: 'Le réglage de partage ne peut pas être lu pour le moment.'
+	String get illisible => 'Le réglage de partage ne peut pas être lu pour le moment.';
+
+	/// fr: 'Connexion nécessaire pour lire ou modifier le partage.'
+	String get horsLigne => 'Connexion nécessaire pour lire ou modifier le partage.';
+
+	/// fr: 'Enregistrement en cours'
+	String get enregistrement => 'Enregistrement en cours';
+
+	/// fr: 'Le réglage de partage est enregistré.'
+	String get confirme => 'Le réglage de partage est enregistré.';
+
+	/// fr: 'Une autre personne de la direction vient de modifier ce réglage. La valeur à jour est affichée : vérifiez-la, puis recommencez si besoin.'
+	String get conflit => 'Une autre personne de la direction vient de modifier ce réglage. La valeur à jour est affichée : vérifiez-la, puis recommencez si besoin.';
+
+	/// fr: 'La modification n'est pas confirmée, la valeur précédente est conservée. Réessayez dans un instant.'
+	String get echec => 'La modification n\'est pas confirmée, la valeur précédente est conservée. Réessayez dans un instant.';
+
+	/// fr: 'Cette classe n'a encore aucun élève.'
+	String get classeVide => 'Cette classe n\'a encore aucun élève.';
+
+	/// fr: 'Dernière modification : {date}, par {auteur}'
+	String modifiePar({required Object date, required Object auteur}) => 'Dernière modification : ${date}, par ${auteur}';
+
+	/// fr: 'Dernière modification : {date}'
+	String modifieLe({required Object date}) => 'Dernière modification : ${date}';
+
+	/// fr: 'Activé pour la classe'
+	String get etatActif => 'Activé pour la classe';
+
+	/// fr: 'Désactivé pour la classe'
+	String get etatInactif => 'Désactivé pour la classe';
+
+	/// fr: 'Activer le partage automatique pour cette classe ?'
+	String get confirmerActiver => 'Activer le partage automatique pour cette classe ?';
+
+	/// fr: 'Les comptes rendus déjà partagés redeviennent lisibles pour les familles. Ceux retenus pendant la désactivation ne sont pas publiés d'un coup.'
+	String get consequenceActiver => 'Les comptes rendus déjà partagés redeviennent lisibles pour les familles. Ceux retenus pendant la désactivation ne sont pas publiés d\'un coup.';
+
+	/// fr: 'Désactiver le partage automatique pour cette classe ?'
+	String get confirmerDesactiver => 'Désactiver le partage automatique pour cette classe ?';
+
+	/// fr: 'Les familles ne voient plus, tout de suite, les comptes rendus partagés automatiquement. Les cahiers, les séances validées et la paie ne changent pas.'
+	String get consequenceDesactiver => 'Les familles ne voient plus, tout de suite, les comptes rendus partagés automatiquement. Les cahiers, les séances validées et la paie ne changent pas.';
+
+	/// fr: 'Activer le partage'
+	String get actionActiver => 'Activer le partage';
+
+	/// fr: 'Désactiver le partage'
+	String get actionDesactiver => 'Désactiver le partage';
+
+	/// fr: 'Enregistrer'
+	String get enregistrer => 'Enregistrer';
+
+	/// fr: 'Exceptions individuelles'
+	String get exceptionsTitre => 'Exceptions individuelles';
+
+	/// fr: 'Une exception ne concerne que l'élève choisi. Elle ne transmet jamais les données d'un autre élève.'
+	String get exceptionsAide => 'Une exception ne concerne que l\'élève choisi. Elle ne transmet jamais les données d\'un autre élève.';
+
+	/// fr: 'Rechercher un élève'
+	String get rechercheEleve => 'Rechercher un élève';
+
+	/// fr: 'Élève'
+	String get colonneEleve => 'Élève';
+
+	/// fr: 'Règle appliquée'
+	String get colonneRegle => 'Règle appliquée';
+
+	/// fr: 'Visible par la famille'
+	String get colonneVisibilite => 'Visible par la famille';
+
+	/// fr: 'Dernière modification'
+	String get colonneModification => 'Dernière modification';
+
+	/// fr: 'Règle de la classe'
+	String get sourceClasse => 'Règle de la classe';
+
+	/// fr: 'Exception individuelle'
+	String get sourceException => 'Exception individuelle';
+
+	/// fr: 'Réglage par défaut'
+	String get sourceDefaut => 'Réglage par défaut';
+
+	/// fr: 'Visible'
+	String get visible => 'Visible';
+
+	/// fr: 'Non visible'
+	String get nonVisible => 'Non visible';
+
+	/// fr: 'Retiré de la classe'
+	String get eleveRetire => 'Retiré de la classe';
+
+	/// fr: 'Afficher plus d'élèves'
+	String get plusEleves => 'Afficher plus d\'élèves';
+
+	/// fr: 'Modifier la règle {dePrenom}'
+	String modifierEleve({required Object dePrenom}) => 'Modifier la règle ${dePrenom}';
+
+	/// fr: 'Utiliser la règle de la classe'
+	String get regleClasse => 'Utiliser la règle de la classe';
+
+	/// fr: 'À choisir quand l'élève n'a pas de besoin particulier : sa famille suit le réglage de la classe.'
+	String get regleClasseAide => 'À choisir quand l\'élève n\'a pas de besoin particulier : sa famille suit le réglage de la classe.';
+
+	/// fr: 'Toujours partager automatiquement'
+	String get regleToujours => 'Toujours partager automatiquement';
+
+	/// fr: 'À choisir quand sa famille doit toujours voir les comptes rendus, même si la classe ne partage pas.'
+	String get regleToujoursAide => 'À choisir quand sa famille doit toujours voir les comptes rendus, même si la classe ne partage pas.';
+
+	/// fr: 'Ne pas partager automatiquement'
+	String get regleJamais => 'Ne pas partager automatiquement';
+
+	/// fr: 'À choisir quand sa famille ne doit pas les voir automatiquement : ils sont masqués tout de suite, le cahier reste conservé.'
+	String get regleJamaisAide => 'À choisir quand sa famille ne doit pas les voir automatiquement : ils sont masqués tout de suite, le cahier reste conservé.';
+
+	/// fr: 'Modifier le partage pour {prenom} ?'
+	String confirmerEleve({required Object prenom}) => 'Modifier le partage pour ${prenom} ?';
+
+	/// fr: 'Cette règle ne concerne que cet élève. Elle ne change ni la classe, ni les autres élèves.'
+	String get consequenceEleve => 'Cette règle ne concerne que cet élève. Elle ne change ni la classe, ni les autres élèves.';
+
+	/// fr: 'Les comptes rendus visibles au titre du partage automatique sont masqués tout de suite pour sa famille. Le cahier et la preuve de séance sont conservés.'
+	String get consequenceEleveJamais => 'Les comptes rendus visibles au titre du partage automatique sont masqués tout de suite pour sa famille. Le cahier et la preuve de séance sont conservés.';
+
+	/// fr: 'Voir les comptes rendus'
+	String get comptesRendus => 'Voir les comptes rendus';
+
+	/// fr: 'Comptes rendus {dePrenom}'
+	String comptesRendusTitre({required Object dePrenom}) => 'Comptes rendus ${dePrenom}';
+
+	/// fr: 'Aucun compte rendu n'existe encore pour cet élève.'
+	String get aucunCompteRendu => 'Aucun compte rendu n\'existe encore pour cet élève.';
+
+	/// fr: 'Aperçu du compte rendu visible par la famille'
+	String get apercuTitre => 'Aperçu du compte rendu visible par la famille';
+
+	/// fr: 'Ce que la famille lira, dans le même ordre et avec les mêmes intitulés que dans l'application.'
+	String get apercuAide => 'Ce que la famille lira, dans le même ordre et avec les mêmes intitulés que dans l\'application.';
+
+	/// fr: 'Les notes internes du cahier ne sont jamais affichées ici.'
+	String get notesInternes => 'Les notes internes du cahier ne sont jamais affichées ici.';
+
+	/// fr: 'Diffusion vers la famille'
+	String get diffusion => 'Diffusion vers la famille';
+
+	/// fr: 'Règle effective'
+	String get regleEffective => 'Règle effective';
+
+	/// fr: 'Partage automatique actif'
+	String get regleActive => 'Partage automatique actif';
+
+	/// fr: 'Partage automatique désactivé'
+	String get regleInactive => 'Partage automatique désactivé';
+
+	/// fr: '{regle}, d'après {source}'
+	String regleSource({required Object regle, required Object source}) => '${regle}, d\'après ${source}';
+
+	/// fr: 'Le cahier n'est pas encore validé. Aucune publication n'est possible.'
+	String get etatNonValide => 'Le cahier n\'est pas encore validé. Aucune publication n\'est possible.';
+
+	/// fr: 'Cahier validé, compte rendu non partagé avec la famille.'
+	String get etatConfirmeNonPartage => 'Cahier validé, compte rendu non partagé avec la famille.';
+
+	/// fr: 'Partagé automatiquement avec la famille.'
+	String get etatPartageAuto => 'Partagé automatiquement avec la famille.';
+
+	/// fr: 'Publié manuellement pour la famille.'
+	String get etatPartageManuel => 'Publié manuellement pour la famille.';
+
+	/// fr: 'Accès de la famille révoqué pour ce compte rendu.'
+	String get etatRevoque => 'Accès de la famille révoqué pour ce compte rendu.';
+
+	/// fr: 'Corrigé après la publication : la famille voit la dernière version approuvée.'
+	String get etatCorrige => 'Corrigé après la publication : la famille voit la dernière version approuvée.';
+
+	/// fr: 'Aucun contenu pédagogique partageable n'existe pour ce compte rendu : la publication n'est pas possible.'
+	String get nonPubliable => 'Aucun contenu pédagogique partageable n\'existe pour ce compte rendu : la publication n\'est pas possible.';
+
+	/// fr: 'Publier pour la famille'
+	String get publier => 'Publier pour la famille';
+
+	/// fr: 'Révoquer l'accès'
+	String get revoquer => 'Révoquer l\'accès';
+
+	/// fr: 'Cette action concerne uniquement ce compte rendu.'
+	String get portee => 'Cette action concerne uniquement ce compte rendu.';
+
+	/// fr: 'Publier ce compte rendu pour la famille {dePrenom} ?'
+	String confirmerPublier({required Object dePrenom}) => 'Publier ce compte rendu pour la famille ${dePrenom} ?';
+
+	/// fr: 'Le partage est limité à ce compte rendu. Il n'active pas le partage automatique de la classe.'
+	String get consequencePublier => 'Le partage est limité à ce compte rendu. Il n\'active pas le partage automatique de la classe.';
+
+	/// fr: 'Révoquer l'accès de la famille à ce compte rendu ?'
+	String get confirmerRevoquer => 'Révoquer l\'accès de la famille à ce compte rendu ?';
+
+	/// fr: 'La famille ne le voit plus, tout de suite. Le cahier et la séance restent validés.'
+	String get consequenceRevoquer => 'La famille ne le voit plus, tout de suite. Le cahier et la séance restent validés.';
+
+	/// fr: 'Ce compte rendu est désormais visible par la famille.'
+	String get publie => 'Ce compte rendu est désormais visible par la famille.';
+
+	/// fr: 'L'accès à ce compte rendu a été révoqué.'
+	String get revoque => 'L\'accès à ce compte rendu a été révoqué.';
+
+	/// fr: 'Une autre personne de la direction a modifié ce compte rendu. L'état à jour est affiché.'
+	String get conflitApercu => 'Une autre personne de la direction a modifié ce compte rendu. L\'état à jour est affiché.';
+
+	/// fr: 'Historique des actions'
+	String get historique => 'Historique des actions';
+
+	/// fr: 'Publication manuelle'
+	String get actionPublication => 'Publication manuelle';
+
+	/// fr: 'Révocation'
+	String get actionRevocation => 'Révocation';
+
+	/// fr: 'Partage automatique'
+	String get actionAuto => 'Partage automatique';
+
+	/// fr: 'Système'
+	String get parSysteme => 'Système';
+
+	/// fr: '{eleve}, {classe}, séance du {date}'
+	String entete({required Object eleve, required Object classe, required Object date}) => '${eleve}, ${classe}, séance du ${date}';
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
+
+	/// fr: 'Mise à jour le {date}'
+	String miseAJour({required Object date}) => 'Mise à jour le ${date}';
+
+	/// fr: 'Fermer'
+	String get fermer => 'Fermer';
 }
 
 // Path: admin.groupes.formulaire
@@ -33147,6 +33470,92 @@ extension on Traductions {
 			'admin.groupes.observationTitre' => ({required Object libelle}) => 'Observation : ${libelle}',
 			'admin.groupes.observationErreur' => 'Le réglage n\'a pas pu être enregistré.',
 			'admin.groupes.observationCapaciteAbsente' => 'Cette installation n\'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n\'y changera rien : elle doit d\'abord être appliquée à la base.',
+			'admin.groupes.partage.titre' => 'Partage des comptes rendus pédagogiques',
+			'admin.groupes.partage.interrupteur' => 'Partager automatiquement avec les familles',
+			'admin.groupes.partage.aide' => 'Les familles voient les observations partageables après validation du cahier. Les notes internes restent privées.',
+			'admin.groupes.partage.priorite' => 'Exception élève → Classe → Réglage par défaut',
+			'admin.groupes.partage.gererExceptions' => 'Gérer les exceptions individuelles',
+			'admin.groupes.partage.indisponible' => 'Le réglage de partage n\'est pas encore disponible.',
+			'admin.groupes.partage.refuse' => 'Vous n\'avez pas le droit de modifier ce réglage.',
+			'admin.groupes.partage.illisible' => 'Le réglage de partage ne peut pas être lu pour le moment.',
+			'admin.groupes.partage.horsLigne' => 'Connexion nécessaire pour lire ou modifier le partage.',
+			'admin.groupes.partage.enregistrement' => 'Enregistrement en cours',
+			'admin.groupes.partage.confirme' => 'Le réglage de partage est enregistré.',
+			'admin.groupes.partage.conflit' => 'Une autre personne de la direction vient de modifier ce réglage. La valeur à jour est affichée : vérifiez-la, puis recommencez si besoin.',
+			'admin.groupes.partage.echec' => 'La modification n\'est pas confirmée, la valeur précédente est conservée. Réessayez dans un instant.',
+			'admin.groupes.partage.classeVide' => 'Cette classe n\'a encore aucun élève.',
+			'admin.groupes.partage.modifiePar' => ({required Object date, required Object auteur}) => 'Dernière modification : ${date}, par ${auteur}',
+			'admin.groupes.partage.modifieLe' => ({required Object date}) => 'Dernière modification : ${date}',
+			'admin.groupes.partage.etatActif' => 'Activé pour la classe',
+			'admin.groupes.partage.etatInactif' => 'Désactivé pour la classe',
+			'admin.groupes.partage.confirmerActiver' => 'Activer le partage automatique pour cette classe ?',
+			'admin.groupes.partage.consequenceActiver' => 'Les comptes rendus déjà partagés redeviennent lisibles pour les familles. Ceux retenus pendant la désactivation ne sont pas publiés d\'un coup.',
+			'admin.groupes.partage.confirmerDesactiver' => 'Désactiver le partage automatique pour cette classe ?',
+			'admin.groupes.partage.consequenceDesactiver' => 'Les familles ne voient plus, tout de suite, les comptes rendus partagés automatiquement. Les cahiers, les séances validées et la paie ne changent pas.',
+			'admin.groupes.partage.actionActiver' => 'Activer le partage',
+			'admin.groupes.partage.actionDesactiver' => 'Désactiver le partage',
+			'admin.groupes.partage.enregistrer' => 'Enregistrer',
+			'admin.groupes.partage.exceptionsTitre' => 'Exceptions individuelles',
+			'admin.groupes.partage.exceptionsAide' => 'Une exception ne concerne que l\'élève choisi. Elle ne transmet jamais les données d\'un autre élève.',
+			'admin.groupes.partage.rechercheEleve' => 'Rechercher un élève',
+			'admin.groupes.partage.colonneEleve' => 'Élève',
+			'admin.groupes.partage.colonneRegle' => 'Règle appliquée',
+			'admin.groupes.partage.colonneVisibilite' => 'Visible par la famille',
+			'admin.groupes.partage.colonneModification' => 'Dernière modification',
+			'admin.groupes.partage.sourceClasse' => 'Règle de la classe',
+			'admin.groupes.partage.sourceException' => 'Exception individuelle',
+			'admin.groupes.partage.sourceDefaut' => 'Réglage par défaut',
+			'admin.groupes.partage.visible' => 'Visible',
+			'admin.groupes.partage.nonVisible' => 'Non visible',
+			'admin.groupes.partage.eleveRetire' => 'Retiré de la classe',
+			'admin.groupes.partage.plusEleves' => 'Afficher plus d\'élèves',
+			'admin.groupes.partage.modifierEleve' => ({required Object dePrenom}) => 'Modifier la règle ${dePrenom}',
+			'admin.groupes.partage.regleClasse' => 'Utiliser la règle de la classe',
+			'admin.groupes.partage.regleClasseAide' => 'À choisir quand l\'élève n\'a pas de besoin particulier : sa famille suit le réglage de la classe.',
+			'admin.groupes.partage.regleToujours' => 'Toujours partager automatiquement',
+			'admin.groupes.partage.regleToujoursAide' => 'À choisir quand sa famille doit toujours voir les comptes rendus, même si la classe ne partage pas.',
+			'admin.groupes.partage.regleJamais' => 'Ne pas partager automatiquement',
+			'admin.groupes.partage.regleJamaisAide' => 'À choisir quand sa famille ne doit pas les voir automatiquement : ils sont masqués tout de suite, le cahier reste conservé.',
+			'admin.groupes.partage.confirmerEleve' => ({required Object prenom}) => 'Modifier le partage pour ${prenom} ?',
+			'admin.groupes.partage.consequenceEleve' => 'Cette règle ne concerne que cet élève. Elle ne change ni la classe, ni les autres élèves.',
+			'admin.groupes.partage.consequenceEleveJamais' => 'Les comptes rendus visibles au titre du partage automatique sont masqués tout de suite pour sa famille. Le cahier et la preuve de séance sont conservés.',
+			'admin.groupes.partage.comptesRendus' => 'Voir les comptes rendus',
+			'admin.groupes.partage.comptesRendusTitre' => ({required Object dePrenom}) => 'Comptes rendus ${dePrenom}',
+			'admin.groupes.partage.aucunCompteRendu' => 'Aucun compte rendu n\'existe encore pour cet élève.',
+			'admin.groupes.partage.apercuTitre' => 'Aperçu du compte rendu visible par la famille',
+			'admin.groupes.partage.apercuAide' => 'Ce que la famille lira, dans le même ordre et avec les mêmes intitulés que dans l\'application.',
+			'admin.groupes.partage.notesInternes' => 'Les notes internes du cahier ne sont jamais affichées ici.',
+			'admin.groupes.partage.diffusion' => 'Diffusion vers la famille',
+			'admin.groupes.partage.regleEffective' => 'Règle effective',
+			'admin.groupes.partage.regleActive' => 'Partage automatique actif',
+			'admin.groupes.partage.regleInactive' => 'Partage automatique désactivé',
+			'admin.groupes.partage.regleSource' => ({required Object regle, required Object source}) => '${regle}, d\'après ${source}',
+			'admin.groupes.partage.etatNonValide' => 'Le cahier n\'est pas encore validé. Aucune publication n\'est possible.',
+			'admin.groupes.partage.etatConfirmeNonPartage' => 'Cahier validé, compte rendu non partagé avec la famille.',
+			'admin.groupes.partage.etatPartageAuto' => 'Partagé automatiquement avec la famille.',
+			'admin.groupes.partage.etatPartageManuel' => 'Publié manuellement pour la famille.',
+			'admin.groupes.partage.etatRevoque' => 'Accès de la famille révoqué pour ce compte rendu.',
+			'admin.groupes.partage.etatCorrige' => 'Corrigé après la publication : la famille voit la dernière version approuvée.',
+			'admin.groupes.partage.nonPubliable' => 'Aucun contenu pédagogique partageable n\'existe pour ce compte rendu : la publication n\'est pas possible.',
+			'admin.groupes.partage.publier' => 'Publier pour la famille',
+			'admin.groupes.partage.revoquer' => 'Révoquer l\'accès',
+			'admin.groupes.partage.portee' => 'Cette action concerne uniquement ce compte rendu.',
+			'admin.groupes.partage.confirmerPublier' => ({required Object dePrenom}) => 'Publier ce compte rendu pour la famille ${dePrenom} ?',
+			'admin.groupes.partage.consequencePublier' => 'Le partage est limité à ce compte rendu. Il n\'active pas le partage automatique de la classe.',
+			'admin.groupes.partage.confirmerRevoquer' => 'Révoquer l\'accès de la famille à ce compte rendu ?',
+			'admin.groupes.partage.consequenceRevoquer' => 'La famille ne le voit plus, tout de suite. Le cahier et la séance restent validés.',
+			'admin.groupes.partage.publie' => 'Ce compte rendu est désormais visible par la famille.',
+			'admin.groupes.partage.revoque' => 'L\'accès à ce compte rendu a été révoqué.',
+			'admin.groupes.partage.conflitApercu' => 'Une autre personne de la direction a modifié ce compte rendu. L\'état à jour est affiché.',
+			'admin.groupes.partage.historique' => 'Historique des actions',
+			'admin.groupes.partage.actionPublication' => 'Publication manuelle',
+			'admin.groupes.partage.actionRevocation' => 'Révocation',
+			'admin.groupes.partage.actionAuto' => 'Partage automatique',
+			'admin.groupes.partage.parSysteme' => 'Système',
+			'admin.groupes.partage.entete' => ({required Object eleve, required Object classe, required Object date}) => '${eleve}, ${classe}, séance du ${date}',
+			'admin.groupes.partage.enseignant' => 'Enseignant',
+			'admin.groupes.partage.miseAJour' => ({required Object date}) => 'Mise à jour le ${date}',
+			'admin.groupes.partage.fermer' => 'Fermer',
 			'admin.groupes.formulaire.contexte' => 'Une classe réunit un enseignant et ses élèves sur un même créneau chaque semaine. Choisissez le public et le genre : la liste des enseignants, le seuil et le nom de la classe en découlent.',
 			'admin.groupes.formulaire.titrePublic' => 'Public',
 			'admin.groupes.formulaire.publicEnfantDetail' => 'À choisir pour une classe d\'enfants. Seuil proposé : 5 élèves.',
@@ -33235,6 +33644,8 @@ extension on Traductions {
 			'admin.regroupements.cleJoursHeures' => 'Jours et heures',
 			'admin.regroupements.cleFuseau' => 'Fuseau de référence',
 			'admin.regroupements.fuseauValeur' => ({required Object deVille}) => 'Heure ${deVille}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regroupements.jourHeure' => ({required Object jour, required Object heure}) => '${jour} ${heure}',
 			'admin.regroupements.ailleursJour' => ({required Object jour, required Object ailleurs}) => '${jour} : ${ailleurs}',
 			'admin.regroupements.demandes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} demande', other: '${n} demandes', ), 
@@ -33321,8 +33732,6 @@ extension on Traductions {
 			'admin.qualite.colonneStatut' => 'Statut',
 			'admin.qualite.statutOuvert' => 'Ouverte',
 			'admin.qualite.statutTraite' => 'Traitée',
-			_ => null,
-		} ?? switch (path) {
 			'admin.qualite.depuisAujourdhui' => 'Aujourd\'hui',
 			'admin.qualite.depuisUnJour' => '1 jour',
 			'admin.qualite.actionTraiter' => 'Marquer traité',
@@ -33749,6 +34158,8 @@ extension on Traductions {
 			'admin.notifications.vide' => 'Aucune notification',
 			'admin.notifications.videDetail' => 'Rien à signaler pour l\'instant.',
 			'admin.finance.vueGlobale' => 'Vue globale',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.politiques' => 'Politiques commerciales',
 			'admin.finance.vue.moisAnnee' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
 			'admin.finance.vue.contexte' => ({required Object deMois}) => 'Les chiffres ${deMois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.',
@@ -33835,8 +34246,6 @@ extension on Traductions {
 			'admin.finance.pol.erreurPlafond' => ({required Object base}) => 'Le plafond est sous la base garantie (${base}) : le taux baisserait quand la classe se remplit. Saisissez au moins la base.',
 			'admin.finance.pol.erreurClassesMax' => ({required Object objectif}) => 'Le maximum est sous l\'objectif (${objectif}) : saisissez au moins l\'objectif.',
 			'admin.finance.pol.erreurMinimum' => ({required Object capacite}) => 'Le minimum dépasse la plus petite classe (${capacite}) : elle ne pourrait jamais ouvrir. Saisissez au plus cette capacité.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.erreurRemise' => ({required Object tarif}) => 'La remise dépasse le tarif (${tarif}) : la mensualité deviendrait négative. Saisissez au plus ce montant.',
 			'admin.finance.pol.parHeure' => ({required Object montant}) => '${montant} / h',
 			'admin.finance.pol.suffixeParHeure' => ({required Object symbole}) => '${symbole} / h',
@@ -34263,6 +34672,8 @@ extension on Traductions {
 			'admin.bibliotheque.libelles.langue.en' => 'Anglais',
 			'admin.bibliotheque.libelles.usage.application' => 'Dans l\'application',
 			'admin.bibliotheque.libelles.usage.classe' => 'En classe',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.libelles.usage.telechargement' => 'Téléchargement',
 			'admin.bibliotheque.libelles.usage.horsLigne' => 'Lecture sans internet',
 			'admin.bibliotheque.libelles.horsLigne.jamais' => 'Jamais',
@@ -34349,8 +34760,6 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.version.sansFichier' => 'Sans fichier',
 			'admin.bibliotheque.fiche.droitsChamps.revue' => 'Revue des droits',
 			'admin.bibliotheque.fiche.droitsChamps.source' => 'Source',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.fiche.droitsChamps.titulaire' => 'Titulaire du droit',
 			'admin.bibliotheque.fiche.droitsChamps.preuve' => 'Preuve d\'autorisation',
 			'admin.bibliotheque.fiche.droitsChamps.preuveOui' => 'Déposée',
@@ -34777,6 +35186,8 @@ extension on Traductions {
 			'compte.tuteur.deconnexion.consequence' => 'Vous devrez vous reconnecter pour revenir sur cet appareil. Vos autres appareils restent connectés.',
 			'compte.tuteur.deconnexion.confirmer' => 'Me déconnecter',
 			'compte.tuteur.deconnexion.echec' => 'La déconnexion n\'a pas abouti. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageInformations.titre' => 'Informations personnelles',
 			'compte.tuteur.pageInformations.prenom' => 'Prénom',
 			'compte.tuteur.pageInformations.nom' => 'Nom',
@@ -34863,8 +35274,6 @@ extension on Traductions {
 			'historique.duree.secondes' => ({required Object s}) => '${s} s',
 			'historique.duree.minutes' => ({required Object m}) => '${m} min',
 			'historique.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
-			_ => null,
-		} ?? switch (path) {
 			'historique.duree.heures' => ({required Object h}) => '${h} h',
 			'historique.duree.heuresMinutes' => ({required Object h, required Object m}) => '${h} h ${m}',
 			'historique.fuseauListe' => 'Heures affichées à l\'heure de cet appareil.',
@@ -34941,6 +35350,21 @@ extension on Traductions {
 			'historique.observation.terminee' => 'Visite terminée',
 			'historique.observation.introuvableTitre' => 'Aucune visite pour cette séance',
 			'historique.observation.introuvablePhrase' => 'Aucune visite enregistrée ne correspond à cette séance.',
+			'historique.compteRendu.titre' => 'Compte rendu pédagogique',
+			'historique.compteRendu.travaille' => 'Ce qui a été travaillé',
+			'historique.compteRendu.appreciation' => 'Appréciation de la séance',
+			'historique.compteRendu.aRenforcer' => 'À renforcer',
+			'historique.compteRendu.aPreparer' => 'À préparer pour la prochaine séance',
+			'historique.compteRendu.commentaire' => 'Commentaire partagé',
+			'historique.compteRendu.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
+			'historique.compteRendu.nonDisponibleTitre' => 'Compte rendu pédagogique non disponible',
+			'historique.compteRendu.nonPartagePhrase' => 'Les observations de cette séance ne sont pas partagées avec votre famille pour le moment.',
+			'historique.compteRendu.enAttentePhrase' => 'Le compte rendu n\'est pas encore disponible.',
+			'historique.compteRendu.illisiblePhrase' => 'Le compte rendu ne peut pas être affiché.',
+			'historique.compteRendu.horsLignePhrase' => 'Connexion nécessaire pour consulter le compte rendu.',
+			'historique.compteRendu.aucunChampPhrase' => 'Aucun compte rendu pédagogique n\'est disponible pour cette séance.',
+			'historique.compteRendu.voirTravail' => 'Voir le travail à préparer',
+			'historique.compteRendu.voirProgression' => 'Voir la progression',
 			'historique.dateCourteSansAnnee' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
 			'notifications.filtres.libelle' => 'Filtrer les notifications',
 			'notifications.filtres.toutes' => 'Toutes',
@@ -35276,6 +35700,8 @@ extension on Traductions {
 			'classe.pageTravail.echeance' => ({required Object date}) => 'Échéance : ${date}',
 			'classe.pageTravail.nonCochable' => 'Marquer un travail comme fait n\'est pas encore possible ici.',
 			'classe.pageTravail.statut.aFaire' => 'À faire',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageTravail.statut.enCours' => 'Commencé',
 			'classe.pageTravail.statut.fait' => 'Fait',
 			'classe.pageTravail.statut.expire' => 'Échéance passée',
@@ -35377,8 +35803,6 @@ extension on Traductions {
 			'classe.cartes.feuille.retirerConfirmer' => 'Retirer la carte',
 			'classe.cartes.feuille.envoiNonConfirme' => 'La carte n\'est pas confirmée : la réponse n\'est pas arrivée. Enregistrez de nouveau dans un instant.',
 			'classe.cartes.feuille.retraitNonConfirme' => 'Le retrait n\'est pas confirmé : la réponse n\'est pas arrivée. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.feuille.defauts.titreVide' => 'Le titre manque. Écrivez quelques mots, par exemple « Sourate à réviser ».',
 			'classe.cartes.feuille.defauts.titreLong' => ({required Object max}) => 'Le titre dépasse ${max} caractères. Raccourcissez-le.',
 			'classe.cartes.feuille.defauts.texteLong' => ({required Object max}) => 'Le texte dépasse ${max} caractères. Raccourcissez-le ou partagez un lien.',
@@ -35790,6 +36214,8 @@ extension on Traductions {
 			'enseignant.creneaux.heureEngagee' => ({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.',
 			'enseignant.creneaux.heuresEngagees' => ({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.',
 			'enseignant.creneaux.feedErreur' => 'Les familles en attente n\'ont pas pu être lues',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.feedErreurDetail' => 'Rien n\'est perdu : personne n\'a été pris, et vos heures restent posées.',
 			'enseignant.creneaux.horsLignePrise' => 'Vous pourrez prendre un élève quand la connexion reviendra. Les demandes ci-dessous restent consultables.',
 			'enseignant.creneaux.horsLigneDemande' => 'Cette demande pourra être envoyée quand la connexion reviendra.',
@@ -35891,8 +36317,6 @@ extension on Traductions {
 			'enseignant.revenus.intro' => 'Une estimation de votre rémunération du mois choisi, Classe par Classe.',
 			'enseignant.revenus.introSansChoix' => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.',
 			'enseignant.revenus.estimation' => 'Estimation',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.periode' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
 			'enseignant.revenus.totalEstime' => 'Revenu estimé du mois',
 			'enseignant.revenus.totalDetail' => 'Rémunération pédagogique, hors aide Internet.',
@@ -36304,6 +36728,8 @@ extension on Traductions {
 			'tc.coran.fidelite.approcheeDetail' => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.',
 			'tc.coran.fidelite.fidele' => 'Composition de l\'édition',
 			'tc.coran.zoom.bride' => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '${pourcent} %',
 			'tc.coran.zoom.renvoiLectureAgrandie' => 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.',
 			'tc.coran.navigation.titre' => 'Aller à',
@@ -36405,8 +36831,6 @@ extension on Traductions {
 			'tc.classe.action.contexte' => 'Ouvrir le contexte',
 			'tc.classe.rappel.recu' => 'Le professeur vous appelle',
 			'tc.classe.rappel.echec' => 'Le rappel n\'a pas pu être envoyé',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.rappel.echecDroit' => 'Votre accès à cette séance ne permet pas d\'appeler un élève',
 			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s',
 			'tc.classe.recitation.titre' => 'Récitation',
@@ -36818,6 +37242,8 @@ extension on Traductions {
 			'adulte.famille.monProfilIndisponibleTitre' => 'Pas encore disponible',
 			'adulte.famille.monProfilIndisponiblePhrase' => 'La création d\'un profil élève séparé n\'est pas encore disponible. Vos cours et Ma famille restent tels qu\'ils sont.',
 			'adulte.famille.indisponibleTitre' => 'La rubrique famille n\'est pas encore disponible',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.indisponiblePhrase' => 'Votre famille ou votre forfait famille s\'affichera ici dès qu\'il sera disponible.',
 			'adulte.famille.place.ajouterConjointe' => 'Ajouter une conjointe',
 			'adulte.famille.place.ajouterConjoint' => 'Ajouter un conjoint',
@@ -36919,8 +37345,6 @@ extension on Traductions {
 			'adulte.sortie.retirerQuestionLui' => 'Retirer mon conjoint ?',
 			'adulte.sortie.retirerConsequence' => 'Son compte, ses cours, son historique et son solde ne seront pas supprimés.',
 			'adulte.sortie.placePhrase' => ({required Object prenom}) => '${prenom} fait partie de votre forfait famille, avec son propre compte.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.sortie.quitter' => 'Quitter le forfait famille',
 			'adulte.sortie.quitterQuestion' => 'Quitter le forfait famille ?',
 			'adulte.sortie.quitterConfirmer' => 'Quitter le forfait',
@@ -37332,6 +37756,8 @@ extension on Traductions {
 			'argent.soldes.totalDetail' => 'Une lecture : chaque solde reste celui de son profil.',
 			'argent.soldes.aPayer' => 'À payer ce mois',
 			'argent.soldes.profilsFinances' => 'Profils financés',
+			_ => null,
+		} ?? switch (path) {
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'argent.soldes.paiements' => 'Paiements du mois',
 			'argent.acces.enfantTitre' => 'Accès à cette classe temporairement indisponible',
@@ -37433,8 +37859,6 @@ extension on Traductions {
 			'com.socle.lexique.studio' => 'Le Studio',
 			'com.socle.lexique.aujourdhui' => 'Aujourd\'hui',
 			'com.socle.lexique.notifications' => 'Notifications',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.lexique.annonce' => 'Annonce',
 			'com.socle.lexique.publication' => 'Publication',
 			'com.socle.lexique.reponse' => 'Réponse',
@@ -37846,6 +38270,8 @@ extension on Traductions {
 			'com.studio.aujourdhui.ouvrirDans' => ({required Object module, required Object libelle}) => 'Ouvrir dans ${module} : ${libelle}',
 			'com.studio.aujourdhui.modules.studio' => _root.com.socle.lexique.studio,
 			'com.studio.aujourdhui.modules.finance' => 'Finance',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.modules.planning' => 'Planning',
 			'com.studio.aujourdhui.modules.dossiers' => 'Dossiers',
 			'com.studio.aujourdhui.modules.classes' => 'Classes',
@@ -37947,8 +38373,6 @@ extension on Traductions {
 			'com.studio.recherche.fichiers' => 'Fichiers',
 			'com.studio.recherche.dansCanal' => ({required Object canal}) => 'Dans ${canal}',
 			'com.studio.recherche.messageDe' => ({required Object auteur, required Object canal}) => '${auteur}, dans ${canal}',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.focus' => 'Un canal en mode focus',
 			'com.studio.demo.aujourdhuiVide' => 'Aujourd\'hui sans activité',
 			'com.studio.demo.horsDemo' => ({required Object module}) => 'Dans l\'application, cette ligne ouvre ${module}. La démonstration reste sur cette page.',
@@ -38360,6 +38784,8 @@ extension on Traductions {
 			'comptable.statuts.obligation.aApprouver' => 'À approuver',
 			'comptable.statuts.obligation.approuvee' => 'Approuvée',
 			'comptable.statuts.obligation.refusee' => 'Refusée',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.obligation.payable' => 'Payable',
 			'comptable.statuts.obligation.payee' => 'Payée',
 			'comptable.statuts.obligation.annulee' => 'Annulée',
@@ -38461,8 +38887,6 @@ extension on Traductions {
 			'comptable.paiements.confirmation.beneficiairesCle' => 'Bénéficiaires',
 			'comptable.paiements.confirmation.beneficiaires' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un bénéficiaire', other: '${n} bénéficiaires', ), 
 			'comptable.paiements.confirmation.devises' => 'Devises',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.prestataires' => 'Prestataires',
 			'comptable.paiements.confirmation.plafond' => 'Délégation restante',
 			'comptable.paiements.confirmation.exclusTitre' => 'Exclus de ce lot : ils ne partiront pas',
@@ -38874,6 +39298,8 @@ extension on Traductions {
 			'comptable.contractuels.colonneEcheance' => 'Échéance',
 			'comptable.contractuels.colonneStatut' => 'Statut',
 			'comptable.contractuels.typeRecurrente' => 'Récurrente',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.typePonctuelle' => 'Ponctuelle',
 			'comptable.contractuels.echeanceLe' => ({required Object date}) => 'Échéance : ${date}',
 			'comptable.contractuels.payer' => 'Payer',
@@ -38975,8 +39401,6 @@ extension on Traductions {
 			'comptable.validation.fermer' => 'Fermer',
 			'comptable.validation.confirmerRefus' => 'Confirmer le refus',
 			'comptable.validation.motifTitre' => 'Motif du refus',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.motifPhrase' => 'Le Comptable lira ce motif avec la décision. Choisissez-en un, ou précisez le vôtre.',
 			'comptable.validation.motifs.coordonnees' => 'Coordonnées du bénéficiaire à vérifier',
 			'comptable.validation.motifs.montant' => 'Montant à vérifier à la source',

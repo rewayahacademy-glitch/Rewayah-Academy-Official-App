@@ -21,6 +21,7 @@ import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../compte/carte_rubriques.dart';
+import 'bloc_compte_rendu.dart';
 import 'composants_historique.dart';
 import 'donnees_historique.dart';
 import 'filtres_historique.dart';
@@ -34,8 +35,10 @@ import 'vue_suivi_foyer.dart';
 /// d'infos, rangees ») : titre = la classe, sous-titre = l'eleve et la date,
 /// puis deux cartes groupees : la seance (date, horaire, duree prevue, classe,
 /// enseignant) et la presence de l'eleve (etat apres la seance, arrivee,
-/// interruption). Aucun resume famille (DB-CRS-12 : `lesson_reports` porte les
-/// decisions de tous les eleves), aucun reseau (non mesure), aucune action.
+/// interruption), puis le compte rendu pedagogique partageable (PED-APRES-1,
+/// `BlocCompteRendu`, par le port de partage : jamais `lesson_reports`, qui
+/// porte les decisions de tous les eleves, DB-CRS-12). Aucun reseau (non
+/// mesure), aucune action de modification.
 ///
 /// La ligne vient de la meme lecture que la liste (`mes_seances_v`, bornee au
 /// foyer par la base) : un identifiant qui n'y figure pas est « introuvable »,
@@ -244,6 +247,18 @@ class _Contenu extends ConsumerWidget {
               ),
             ),
         ]),
+        // PED-APRES-1 (TUT-PED-APR-01) : le compte rendu pedagogique partageable
+        // de CET eleve. Absent d'une seance annulee ou non tenue : aucun bloc
+        // trompeur, ni appreciation, ni faux constat d'absence.
+        if (statut != StatutHistorique.annule &&
+            statut != StatutHistorique.nonTenu) ...<Widget>[
+          Ecart.vXl,
+          BlocCompteRendu(
+            seanceId: seance.id,
+            eleveId: seance.eleveId,
+            classeId: classe?.groupeId,
+          ),
+        ],
         Ecart.vMd,
         NoteHistorique(
           t.historique.fuseauDetail(decalage: decalageUtc(seance.debut)),

@@ -51,6 +51,7 @@ import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
 import 'bas_de_feuille.dart';
 import 'feuille_observation_groupe.dart';
 import 'genre_classe_libelles.dart';
+import 'reglage_partage.dart';
 
 /// Operations > Groupes : le noyau du produit depuis le pivot du 19
 /// septembre 2026.
@@ -1529,7 +1530,7 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
   }
 }
 
-/// Le detail d'un groupe : ses membres.
+/// Le detail d'un groupe : le partage des comptes rendus, puis ses membres.
 class _FeuilleDetail extends ConsumerWidget {
   const _FeuilleDetail({required this.groupe, required this.onRetirer});
 
@@ -1546,6 +1547,10 @@ class _FeuilleDetail extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // PED-APRES-1 (ADM-PED-APR-02) : le partage des comptes rendus, au
+        // meme endroit sur bureau (inspecteur) et sur telephone (feuille).
+        GroupePartageClasse(classeId: groupe.id, nomClasse: groupe.libelle),
+        Ecart.vXxl,
         Text(
           t.admin.groupes.detailMembres,
           style: Theme.of(context).textTheme.titleMedium,
