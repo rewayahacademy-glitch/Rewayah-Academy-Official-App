@@ -2,7 +2,7 @@
 
 État : note technique de Codex, **pas une approbation humaine ni une allowlist**.
 
-Le 11/10/2026, les corps de sept fonctions `SECURITY DEFINER` avec EXECUTE effectif pour `anon` ont été lus depuis le catalogue PROD par une requête `SELECT` Supabase. Pour les sept, signature, `md5(prosrc)`, propriétaire `postgres` et `search_path=""` correspondent aux entrées de `SECURITY_DEFINER_INVENTORY_PROD_2026-10-11.json`. La comparaison des métadonnées de l’inventaire complet est consignée dans Questions!A151. Aucun DDL/DML ni changement distant n’a été fait.
+Le 11/10/2026, les corps de huit fonctions `SECURITY DEFINER` avec EXECUTE effectif pour `anon` ont été lus depuis le catalogue PROD par des requêtes `SELECT` Supabase : sept helpers sélectionnés et un trigger KYC. Pour les huit, signature, `md5(prosrc)`, propriétaire `postgres` et `search_path=""` correspondent aux entrées de `SECURITY_DEFINER_INVENTORY_PROD_2026-10-11.json`. La comparaison des métadonnées de l’inventaire complet est consignée dans Questions!A151. Aucun DDL/DML ni changement distant n’a été fait.
 
 ## Revue de corps préliminaire
 
@@ -15,10 +15,11 @@ Le 11/10/2026, les corps de sept fonctions `SECURITY DEFINER` avec EXECUTE effec
 | `public.app_household_id()` | `cdcee8b2d885dc388d475891ca1b4f74` | Renvoie seulement le `household_id` de `app_metadata` du JWT appelant. Les policies utilisent cette valeur avec des tests de foyer/propriété (0001:701, 710, 729, 741). | Candidat helper de RLS; confirmer le caractère non modifiable par l’utilisateur du claim côté Auth et les policies qui le consomment. |
 | `public.app_role()` | `76cd6e881c7faa91934d00985fcd2c9f` | Renvoie le rôle du `app_metadata` du JWT appelant; les policies l’emploient pour leurs filtres (0001:697+). | Candidat helper de RLS; confirmer les politiques d’émission/rafraîchissement du claim et les contraintes complémentaires à chaque usage. |
 | `public.app_user_id()` | `ebef03123c01c0f5b0431f57f14f1482` | Renvoie uniquement `auth.uid()`. | Candidat helper d’identité; confirmer les grants effectifs et que les appelants ne l’utilisent pas comme substitut à l’autorisation. |
+| `public.completer_kyc_document()` | `67c4b5ec25609b0d47ed45fc737d3b51` | Trigger `BEFORE INSERT ROW` actif sur `public.kyc_documents`; dérive `NEW.gender` du profil et `NEW.purge_at` de `get_config('kyc_retention_days', '90')`. Le catalogue confirme `RETURNS trigger`, `SECURITY DEFINER`, EXECUTE `anon/authenticated/service_role`; il n’y a qu’un trigger SECURITY DEFINER dans le relevé actuel. | **Doit être résolu avant l’approbation F79**, dont le gate rejette les triggers SECURITY DEFINER. La fonction ne fait pas de DML elle-même; son `SECURITY DEFINER` sert actuellement à appeler `get_config`, réservé à `service_role` par 0001:1219-1222. Concevoir/tester un accès invoker au réglage de rétention sans ouvrir `get_config`/`app_config` ni perdre le réglage configurable. Questions!A159. |
 
 ## Limites et action requise
 
-- Cette lecture porte sur sept corps seulement; elle ne classe aucune entrée et ne remplace pas la revue de tous les corps du manifeste.
+- Cette lecture porte sur huit corps seulement; elle ne classe aucune entrée et ne remplace pas la revue de tous les corps du manifeste.
 - Les empreintes concordantes identifient le corps observé; elles ne prouvent ni la sûreté de sa logique ni celle de ses appelants.
 - Le point `app_config_int` requiert une décision explicite et un correctif/rejeu avant d’envisager une allowlist F79.
 - Une personne responsable doit confirmer les classifications, le reviewer/date et la résolution du point `app_config_int`. Le gate reste `INVENTORY_ONLY_NOT_ALLOWLIST`.
