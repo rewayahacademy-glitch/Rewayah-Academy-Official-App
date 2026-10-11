@@ -14,11 +14,11 @@ VALUES
   ('c0400000-0000-0000-0000-000000000001', 'C04ADMIN0000001', 'admin',
    'Fixture', 'Admin', 'active', 'female'),
   ('c0400000-0000-0000-0000-000000000002', 'C04TEACHFEMALE02', 'teacher',
-   'Amira', 'Female', 'active', 'female'),
+   'Amira', 'Female', 'provisional_active', 'female'),
   ('c0400000-0000-0000-0000-000000000003', 'C04TEACHMALE0003', 'teacher',
-   'Youssef', 'Male', 'active', 'male'),
+   'Youssef', 'Male', 'provisional_active', 'male'),
   ('c0400000-0000-0000-0000-000000000004', 'C04TEACHUNKNOWN04', 'teacher',
-   'Sam', 'Unknown', 'active', NULL);
+   'Sam', 'Unknown', 'provisional_active', NULL);
 
 INSERT INTO public.teacher_profiles
   (profile_id, country, languages, weekly_hours_cap, kyc_status, timezone_iana)

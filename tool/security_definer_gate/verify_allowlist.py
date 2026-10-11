@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Fail-closed comparison of a reviewed SECURITY DEFINER manifest and catalog export."""
 
 from __future__ import annotations

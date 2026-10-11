@@ -1,4 +1,4 @@
-﻿BEGIN;
+BEGIN;
 
 -- A81: une capacite personnelle n'est visible qu'a un compte dont l'acces est
 -- encore valide. L'identite reste auth.uid(); aucun identifiant client n'entre.

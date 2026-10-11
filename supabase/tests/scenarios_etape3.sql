@@ -4,7 +4,22 @@
 
 -- Droits facon Supabase (alter default privileges du projet).
 grant usage on schema public to anon, authenticated, service_role;
-grant all on all tables in schema public to authenticated, service_role;
+do $scenario_grants$
+declare
+  v_table record;
+begin
+  for v_table in
+    select schemaname, tablename
+    from pg_catalog.pg_tables
+    where schemaname = 'public' and tablename <> 'contract_acceptances'
+  loop
+    execute format(
+      'grant all on table %I.%I to authenticated, service_role',
+      v_table.schemaname, v_table.tablename
+    );
+  end loop;
+end
+$scenario_grants$;
 grant all on all sequences in schema public to authenticated, service_role;
 grant all on all functions in schema public to service_role;
 
@@ -640,10 +655,10 @@ begin
 
   begin
     insert into public.contract_acceptances (
-      profile_id, contract_kind, version, signed_sha256
+      profile_id, contract_kind, version, signer_name, signed_sha256
     ) values (
       '22222222-2222-2222-2222-222222222222',
-      'teacher_nda', 'test-signature-0057', repeat('0', 64)
+      'teacher_nda', 'test-signature-0057', 'Enseignant Test', repeat('0', 64)
     );
     raise exception 'CONTRAT ECHEC : le client a pu fournir son empreinte';
   exception when insufficient_privilege then
