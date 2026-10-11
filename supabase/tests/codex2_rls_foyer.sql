@@ -187,6 +187,22 @@ INSERT INTO public.contract_acceptances (profile_id, contract_kind, version) VAL
   ('c2a20000-0000-0000-0000-000000000004', 'recording_and_control_notice', 'codex2-v1'),
   ('c2a20000-0000-0000-0000-000000000002', 'recording_and_control_notice', 'codex2-v1');
 
+INSERT INTO public.wallets (id, household_id) VALUES
+  ('c2a2ffff-1000-0000-0000-000000000001', 'c2a2ffff-0000-0000-0000-000000000001'),
+  ('c2a2ffff-1000-0000-0000-000000000002', 'c2a2ffff-0000-0000-0000-000000000002');
+INSERT INTO public.wallet_entries (wallet_id, amount_minor, currency, reference_type) VALUES
+  ('c2a2ffff-1000-0000-0000-000000000001', 1000, 'EUR', 'credit'),
+  ('c2a2ffff-1000-0000-0000-000000000002', 2000, 'EUR', 'credit');
+INSERT INTO public.payout_methods (id, profile_id, kind, details) VALUES
+  ('c2a2ffff-2000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'bank', '{"masked":"A"}'),
+  ('c2a2ffff-2000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'bank', '{"masked":"B"}');
+INSERT INTO public.payouts (id, wallet_id, payout_method_id, amount_minor) VALUES
+  ('c2a2ffff-3000-0000-0000-000000000001', 'c2a2ffff-1000-0000-0000-000000000001', 'c2a2ffff-2000-0000-0000-000000000001', 500),
+  ('c2a2ffff-3000-0000-0000-000000000002', 'c2a2ffff-1000-0000-0000-000000000002', 'c2a2ffff-2000-0000-0000-000000000002', 700);
+INSERT INTO public.teacher_student_assignments (teacher_id, student_id, weekday, hour_local) VALUES
+  ('c2a20000-0000-0000-0000-000000000005', 'c2a20000-0000-0000-0000-000000000004', 1, 10),
+  ('c2a20000-0000-0000-0000-000000000006', 'c2a20000-0000-0000-0000-000000000002', 2, 11);
+
 DO $$
 DECLARE v_denied boolean := false;
 BEGIN
@@ -357,6 +373,86 @@ BEGIN
     v_denied := true;
   END;
   IF NOT v_denied THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-CONTRACT-INSERT: signer A inserted for B'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Les donnees financieres lisibles par un foyer ne franchissent pas sa frontiere;
+-- le tuteur ne dispose d'aucune policy d'ecriture sur ces quatre relations.
+DO $$
+DECLARE v_count integer; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+
+  SELECT count(*) INTO v_count FROM public.wallets
+   WHERE household_id = 'c2a2ffff-0000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-WALLET: household A wallet not visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.wallets
+   WHERE household_id = 'c2a2ffff-0000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-WALLET-READ: household B wallet visible'; END IF;
+  UPDATE public.wallets SET currency = currency
+   WHERE household_id = 'c2a2ffff-0000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-WALLET-WRITE: guardian A updated wallet B'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.wallet_entries
+   WHERE wallet_id = 'c2a2ffff-1000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-WALLET-ENTRY: household A entry not visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.wallet_entries
+   WHERE wallet_id = 'c2a2ffff-1000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-WALLET-ENTRY-READ: household B entry visible'; END IF;
+  UPDATE public.wallet_entries SET amount_minor = amount_minor
+   WHERE wallet_id = 'c2a2ffff-1000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-WALLET-ENTRY-WRITE: guardian A updated entry B'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.payout_methods
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000004';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-PAYOUT-METHOD: household A method not visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.payout_methods
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-PAYOUT-METHOD-READ: household B method visible'; END IF;
+  UPDATE public.payout_methods SET details = details
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-PAYOUT-METHOD-WRITE: guardian A updated method B'; END IF;
+
+  SELECT count(*) INTO v_count FROM public.payouts
+   WHERE wallet_id = 'c2a2ffff-1000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-PAYOUT: household A payout not visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.payouts
+   WHERE wallet_id = 'c2a2ffff-1000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-PAYOUT-READ: household B payout visible'; END IF;
+  UPDATE public.payouts SET amount_minor = amount_minor
+   WHERE wallet_id = 'c2a2ffff-1000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-PAYOUT-WRITE: guardian A updated payout B'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Les parties d'une affectation voient leur cours planifie, pas l'affectation B.
+DO $$
+DECLARE v_count integer; v_rows integer; v_denied boolean := false;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000005', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.teacher_student_assignments
+   WHERE teacher_id = 'c2a20000-0000-0000-0000-000000000005';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-ASSIGNMENT: teacher A assignment not visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.teacher_student_assignments
+   WHERE student_id = 'c2a20000-0000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-ASSIGNMENT-READ: teacher A sees assignment B'; END IF;
+  v_rows := 0;
+  BEGIN
+    UPDATE public.teacher_student_assignments SET ended_at = now(), ended_by = auth.uid(), end_reason = 'codex2'
+     WHERE student_id = 'c2a20000-0000-0000-0000-000000000002';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied AND v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-ASSIGNMENT-WRITE: teacher A ended assignment B'; END IF;
   RESET ROLE;
 END $$;
 
