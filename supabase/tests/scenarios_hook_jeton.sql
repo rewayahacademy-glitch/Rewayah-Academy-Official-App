@@ -388,3 +388,161 @@ do $$
 begin
   raise notice 'scenarios_hook_jeton : H1 a H9 au vert.';
 end $$;
+
+
+-- B-17 : claim de tranche d'âge et demandes MA-9, sans date de naissance.
+BEGIN;
+
+INSERT INTO auth.users (id, email) VALUES
+  ('db000000-0000-0000-0000-000000000001', 'b17.guardian@example.test'),
+  ('db000000-0000-0000-0000-000000000002', 'b17.minor@example.test'),
+  ('db000000-0000-0000-0000-000000000003', 'b17.adult@example.test'),
+  ('db000000-0000-0000-0000-000000000004', 'b17.other@example.test');
+
+INSERT INTO public.households (id, timezone)
+VALUES ('dbffffff-0000-0000-0000-000000000001', 'Europe/Paris');
+
+INSERT INTO public.profiles
+  (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+VALUES
+  ('db000000-0000-0000-0000-000000000001', 'B17-GUARD-001', 'guardian',
+   'dbffffff-0000-0000-0000-000000000001', 'Tuteur', 'Test', 'active', 'female'),
+  ('db000000-0000-0000-0000-000000000002', 'B17-MINOR-001', 'student',
+   'dbffffff-0000-0000-0000-000000000001', 'Enfant', 'Test', 'active', 'male'),
+  ('db000000-0000-0000-0000-000000000003', 'B17-ADULT-001', 'student',
+   'dbffffff-0000-0000-0000-000000000001', 'Adulte', 'Test', 'active', 'male'),
+  ('db000000-0000-0000-0000-000000000004', 'B17-OTHER-001', 'guardian',
+   'dbffffff-0000-0000-0000-000000000001', 'Autre', 'Test', 'active', 'female');
+
+UPDATE public.households
+SET primary_guardian_id = 'db000000-0000-0000-0000-000000000001'
+WHERE id = 'dbffffff-0000-0000-0000-000000000001';
+
+INSERT INTO public.student_profiles (profile_id, student_type)
+VALUES
+  ('db000000-0000-0000-0000-000000000002', 'minor'),
+  ('db000000-0000-0000-0000-000000000003', 'autonomous');
+
+DO $b17_hook$
+DECLARE
+  v_child jsonb;
+  v_adult jsonb;
+  v_teacher jsonb;
+BEGIN
+  v_child := public.custom_access_token_hook(jsonb_build_object(
+    'user_id', 'db000000-0000-0000-0000-000000000002',
+    'claims', jsonb_build_object('sub', 'db000000-0000-0000-0000-000000000002')
+  )) -> 'claims';
+  v_adult := public.custom_access_token_hook(jsonb_build_object(
+    'user_id', 'db000000-0000-0000-0000-000000000003',
+    'claims', jsonb_build_object('sub', 'db000000-0000-0000-0000-000000000003')
+  )) -> 'claims';
+  v_teacher := public.custom_access_token_hook(jsonb_build_object(
+    'user_id', 'da000000-0000-0000-0000-000000000001',
+    'claims', jsonb_build_object('sub', 'da000000-0000-0000-0000-000000000001')
+  )) -> 'claims';
+
+  IF v_child ->> 'tranche_age' IS DISTINCT FROM 'enfant'
+     OR v_adult ->> 'tranche_age' IS DISTINCT FROM 'adulte'
+     OR v_teacher ->> 'tranche_age' IS DISTINCT FROM 'inconnu'
+     OR v_child::text LIKE '%date_naissance%' THEN
+    RAISE EXCEPTION 'B-17 claim âge invalide: enfant %, adulte %, non-élève %',
+      v_child ->> 'tranche_age', v_adult ->> 'tranche_age', v_teacher ->> 'tranche_age';
+  END IF;
+END
+$b17_hook$;
+
+DO $b17_requests$
+DECLARE
+  v_request uuid;
+  v_retry uuid;
+  v_count integer;
+  v_denied boolean := false;
+BEGIN
+  PERFORM set_config('request.jwt.claim.sub',
+    'db000000-0000-0000-0000-000000000002', true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object(
+      'role', 'student', 'household_id', 'dbffffff-0000-0000-0000-000000000001'
+    ))::text, true);
+
+  PERFORM public.demander_presentation_standard();
+  SELECT id INTO v_request FROM public.demandes_presentation
+  WHERE eleve_id = 'db000000-0000-0000-0000-000000000002'
+    AND statut = 'en_attente';
+  PERFORM public.demander_presentation_standard();
+  SELECT id INTO v_retry FROM public.demandes_presentation
+  WHERE eleve_id = 'db000000-0000-0000-0000-000000000002'
+    AND statut = 'en_attente';
+  IF v_request IS NULL OR v_request IS DISTINCT FROM v_retry THEN
+    RAISE EXCEPTION 'B-17 création non idempotente';
+  END IF;
+
+  SELECT count(*) INTO v_count
+  FROM public.notifications
+  WHERE destinataire = 'db000000-0000-0000-0000-000000000001'
+    AND evenement = 'demande_presentation'
+    AND params ->> 'demande_id' = v_request::text;
+  IF v_count <> 1 THEN
+    RAISE EXCEPTION 'B-17 notification attendue une fois, obtenue %', v_count;
+  END IF;
+
+  -- Un adulte autonome ne peut pas envoyer la demande standard MA-8.
+  PERFORM set_config('request.jwt.claim.sub',
+    'db000000-0000-0000-0000-000000000003', true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object(
+      'role', 'student', 'household_id', 'dbffffff-0000-0000-0000-000000000001'
+    ))::text, true);
+  BEGIN
+    PERFORM public.demander_presentation_standard();
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN
+    RAISE EXCEPTION 'B-17 un élève adulte a envoyé une demande standard';
+  END IF;
+
+  -- Un tuteur du foyer lit et tranche, sans accès à un autre foyer.
+  PERFORM set_config('request.jwt.claim.sub',
+    'db000000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object(
+      'role', 'guardian', 'household_id', 'dbffffff-0000-0000-0000-000000000001'
+    ))::text, true);
+  SELECT count(*) INTO v_count
+  FROM public.lire_demandes_presentation_en_attente();
+  IF v_count <> 1 THEN
+    RAISE EXCEPTION 'B-17 le tuteur autorisé ne voit pas la demande';
+  END IF;
+
+  IF public.accepter_demande_presentation(v_request) <> 'acceptee'
+     OR public.accepter_demande_presentation(v_request) <> 'acceptee' THEN
+    RAISE EXCEPTION 'B-17 acceptation ou répétition idempotente invalide';
+  END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM public.refuser_demande_presentation(v_request);
+  EXCEPTION WHEN raise_exception THEN
+    IF SQLERRM = 'demande déjà tranchée' THEN v_denied := true; ELSE RAISE; END IF;
+  END;
+  IF NOT v_denied THEN
+    RAISE EXCEPTION 'B-17 une décision opposée a été acceptée';
+  END IF;
+
+  IF pg_catalog.has_function_privilege(
+       'anon', 'public.demander_presentation_standard()', 'EXECUTE')
+     OR pg_catalog.has_function_privilege(
+       'anon', 'public.lire_demandes_presentation_en_attente()', 'EXECUTE')
+     OR pg_catalog.has_function_privilege(
+       'anon', 'public.accepter_demande_presentation(uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege(
+       'agent_ro', 'public.repondre_demande_presentation(uuid,text)', 'EXECUTE') THEN
+    RAISE EXCEPTION 'B-17 ACL RPC trop large';
+
+  END IF;
+END
+$b17_requests$;
+
+ROLLBACK;
