@@ -328,7 +328,7 @@ class _Traductions$salle$ar extends Traductions$salle$fr {
 	@override String get cameraCoupee => 'الكاميرا مطفأة';
 	@override late final _Traductions$salle$secours$ar secours = _Traductions$salle$secours$ar._(_root);
 	@override late final _Traductions$salle$preparation$ar preparation = _Traductions$salle$preparation$ar._(_root);
-	@override String get bandeauPermanent => 'يُسجَّل الدرس، وقد تجري زيارة مراقبة.';
+	@override String get bandeauPermanent => 'قد تجري زيارة مراقبة.';
 	@override late final _Traductions$salle$seance$ar seance = _Traductions$salle$seance$ar._(_root);
 	@override late final _Traductions$salle$fin$ar fin = _Traductions$salle$fin$ar._(_root);
 	@override String get micro => 'الميكروفون';
@@ -14001,7 +14001,7 @@ extension on TraductionsAr {
 			'salle.preparation.eleve.demo.pret' => 'جاهز',
 			'salle.preparation.eleve.demo.microBloque' => 'الميكروفون محظور',
 			'salle.preparation.eleve.demo.horsLigne' => 'غير متصل',
-			'salle.bandeauPermanent' => 'يُسجَّل الدرس، وقد تجري زيارة مراقبة.',
+			'salle.bandeauPermanent' => 'قد تجري زيارة مراقبة.',
 			'salle.seance.titre' => 'حصة مباشرة',
 			'salle.seance.titreGuidee' => 'حصتي',
 			'salle.seance.ligne' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ · ⁨${fin}⁩',
