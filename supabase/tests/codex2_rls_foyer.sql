@@ -244,6 +244,11 @@ INSERT INTO public.session_participants (session_id, profile_id, role) VALUES
   ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'student'),
   ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000006', 'teacher'),
   ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'student');
+INSERT INTO public.student_concern
+  (categorie, groupe_id, session_id, student_id, teacher_id, internal_details) VALUES
+  ('pedagogique', 'c2a2a000-2000-0000-0000-000000000002',
+   'c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002',
+   'c2a20000-0000-0000-0000-000000000006', 'codex2 internal B');
 INSERT INTO public.session_events (session_id, profile_id, event_type, source) VALUES
   ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'joined', 'codex2'),
   ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'joined', 'codex2');
@@ -902,6 +907,61 @@ BEGIN
   IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-FAMILY-GROUP-MEMBER: household A cannot read its student membership'; END IF;
   SELECT count(*) INTO v_count FROM public.groupe_membres WHERE groupe_id = 'c2a2a000-2000-0000-0000-000000000002';
   IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-FAMILY-GROUP-MEMBER: household A sees roster B'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Un retour de seance est deposable par le participant, mais la table brute
+-- reste privee aux administrateurs et aucun second foyer ne peut voter.
+DO $$
+DECLARE v_denied boolean := false;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000005', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  INSERT INTO public.session_feedback (session_id, groupe_id, question_id, reponse)
+  VALUES ('c2a2e000-1000-0000-0000-000000000001', 'c2a2a000-2000-0000-0000-000000000001', 'codex2-q1', 'bien');
+  BEGIN
+    INSERT INTO public.session_feedback (session_id, groupe_id, question_id, reponse)
+    VALUES ('c2a2e000-1000-0000-0000-000000000002', 'c2a2a000-2000-0000-0000-000000000002', 'codex2-q1', 'bien');
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-FEEDBACK-INSERT: participant A voted for session B'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Un signalement n'est ecrit que par l'enseignant du groupe et de la seance.
+DO $$
+DECLARE v_count integer; v_denied boolean := false; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000005', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  INSERT INTO public.student_concern
+    (categorie, groupe_id, session_id, student_id, teacher_id, internal_details)
+  VALUES ('pedagogique', 'c2a2a000-2000-0000-0000-000000000001',
+          'c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004',
+          'c2a20000-0000-0000-0000-000000000005', 'codex2 internal A');
+  BEGIN
+    INSERT INTO public.student_concern
+      (categorie, groupe_id, session_id, student_id, teacher_id, internal_details)
+    VALUES ('pedagogique', 'c2a2a000-2000-0000-0000-000000000002',
+            'c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002',
+            'c2a20000-0000-0000-0000-000000000005', 'codex2 cross B');
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-CONCERN-INSERT: teacher A wrote concern for B'; END IF;
+  SELECT count(*) INTO v_count FROM public.student_concern
+   WHERE teacher_id = 'c2a20000-0000-0000-0000-000000000005';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-CONCERN-READ: teacher A cannot read own concern'; END IF;
+  SELECT count(*) INTO v_count FROM public.student_concern
+   WHERE student_id = 'c2a20000-0000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-CONCERN-READ: teacher A sees concern B'; END IF;
+  UPDATE public.student_concern SET internal_details = internal_details
+   WHERE student_id = 'c2a20000-0000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-CONCERN-WRITE: teacher A updated concern B'; END IF;
   RESET ROLE;
 END $$;
 
