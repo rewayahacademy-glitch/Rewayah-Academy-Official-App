@@ -5988,13 +5988,7 @@
         "coteGauche": "Page de gauche",
         "ouverture": "Ouverture, pages {droite} et {gauche}",
         "page15": {
-          "sourate(param=nom)": "سُورَةُ {nom}",
-          "juz(param=numero)": "الجزء {numero}",
-          "hizb(param=numero)": "الحزب {numero}",
-          "rubUn(param=numero)": "ربع الحزب {numero}",
-          "rubDeux(param=numero)": "نصف الحزب {numero}",
-          "rubTrois(param=numero)": "ثلاثة أرباع الحزب {numero}",
-          "creditMiseEnPage": "Mise en page : KFGQPC, quran.ws (CC BY 4.0)"
+          "creditMiseEnPage": "Mise en page\u00a0: KFGQPC, quran.ws (CC BY 4.0)"
         }
       },
       "fidelite": {

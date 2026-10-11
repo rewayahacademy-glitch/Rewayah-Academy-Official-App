@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../core/coran/service_coran.dart';
-import '../../core/i18n/strings.g.dart';
 import '../../core/tc_coran/layout_madina_15.dart';
 import '../../core/tc_coran/page_mushaf_vm.dart';
 import '../../core/tc_coran/port_layout_mushaf.dart';
@@ -445,7 +444,7 @@ class _CadreSourate extends StatelessWidget {
           child: FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
-              t.tc.coran.mushaf.page15.sourate(nom: nomSourateMadina15(numero)),
+              ReperesMadina15.sourate(nomSourateMadina15(numero)),
               textScaler: TextScaler.noScaling,
               style: AppTypography.mushaf15L(
                 taille: corps * 1.1,
@@ -497,13 +496,10 @@ class _EntetePage extends StatelessWidget {
   String? _reperHizb() {
     if (vue.quartsDebutes.isEmpty) return null;
     final int q = vue.quartsDebutes.first;
-    final String hizb = RosaceVerset.enChiffresArabes((q - 1) ~/ 4 + 1);
-    return switch ((q - 1) % 4) {
-      0 => t.tc.coran.mushaf.page15.hizb(numero: hizb),
-      1 => t.tc.coran.mushaf.page15.rubUn(numero: hizb),
-      2 => t.tc.coran.mushaf.page15.rubDeux(numero: hizb),
-      _ => t.tc.coran.mushaf.page15.rubTrois(numero: hizb),
-    };
+    return ReperesMadina15.quartDeHizb(
+      q,
+      RosaceVerset.enChiffresArabes((q - 1) ~/ 4 + 1),
+    );
   }
 
   @override
@@ -534,18 +530,12 @@ class _EntetePage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         if (sourate != null)
-          texte(
-            t.tc.coran.mushaf.page15.sourate(nom: nomSourateMadina15(sourate)),
-          )
+          texte(ReperesMadina15.sourate(nomSourateMadina15(sourate)))
         else
           const SizedBox.shrink(),
         if (hizb != null) texte(hizb) else const SizedBox.shrink(),
         if (juz != null)
-          texte(
-            t.tc.coran.mushaf.page15.juz(
-              numero: RosaceVerset.enChiffresArabes(juz),
-            ),
-          )
+          texte(ReperesMadina15.juz(RosaceVerset.enChiffresArabes(juz)))
         else
           const SizedBox.shrink(),
       ],

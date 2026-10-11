@@ -154,3 +154,24 @@ final String basmalaMadina15 = analyserPageMadina15(
   1,
   layoutMadina15Pages.first,
 ).lignes[1].segments.first.texte;
+
+/// Les reperes imprimes de la page, en arabe quelle que soit la langue de
+/// l'interface : c'est le texte de l'edition, pas un libelle d'ecran (il ne
+/// passe donc pas par slang, qui exige une valeur differente par langue).
+abstract final class ReperesMadina15 {
+  /// Le titre d'une sourate : `سُورَةُ البَقَرَة`.
+  static String sourate(String nom) => 'سُورَةُ $nom';
+
+  /// Le repere du juz, en chiffres arabes deja ecrits.
+  static String juz(String chiffres) => 'الجزء $chiffres';
+
+  /// Le repere du quart de hizb [quart] (1 a 240), qui commence sur la page :
+  /// le hizb, son quart, sa moitie ou ses trois quarts.
+  static String quartDeHizb(int quart, String chiffresHizb) =>
+      switch ((quart - 1) % 4) {
+        0 => 'الحزب $chiffresHizb',
+        1 => 'ربع الحزب $chiffresHizb',
+        2 => 'نصف الحزب $chiffresHizb',
+        _ => 'ثلاثة أرباع الحزب $chiffresHizb',
+      };
+}
