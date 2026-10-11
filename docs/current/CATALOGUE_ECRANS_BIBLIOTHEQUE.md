@@ -60,3 +60,57 @@ Source : `REWAYAH_CAP29_BIBLIOTHEQUE_HANDOFF_CANONIQUE_V1.md` (branche
 - Aucune branche distante CAP-29 / bibliothèque d'administration.
 - Statut inconnu, non testé ici : application de `0035` sur STAGING, contenu
   des secrets R2 sur STAGING, performance.
+
+## Rapport de clôture CAP-29 (lot BIBLIOTHEQUE, branche `claude/bibliotheque`, 11/10/2026)
+
+Statuts distingués : `spécifié` / `présent dans le code` / `testé localement` /
+`testé sur staging` / `déployé`. **Rien n'est testé sur staging ni déployé.**
+Tout ce qui est « testé localement » l'est sur le double de démonstration
+(`BibliothequeAdminDemo`) ; le provider réel du port est `null` jusqu'à
+CAP29-BACK-1 (Codex).
+
+### Écrans livrés (présents dans le code, testés localement)
+
+| Fiche | Écran | Preuve locale |
+| :--- | :--- | :--- |
+| CAP29-0 | Onglet, routes, ports, double de démo | `socle_test` (10) |
+| CAP29-A | Catalogue : recherche, segments, filtres, curseur sans total | `catalogue_test` (13) |
+| CAP29-B | Fiche : édition d'un brouillon, versions, droits, périmètre, historique | `fiche_test` (17) |
+| CAP29-C | Import : dépôt par intention, progression, annulation, preuve | `import_test` (12) |
+| CAP29-D | Vérifier et publier : contrôle serveur, blocages, confirmation | `publication_test` (14) |
+| CAP29-E | Attribuer (classes paginées, épinglage) et retirer (motif, confirmation, trace) | `attribution_test` (13) |
+| CAP29-F | Rendu par type côté classe (image rendue ; Coran jamais rendu ici ; PDF, texte, leçon : « aucun lecteur » dit tel quel) ; l'enseignant entre dans `/tc/bibliotheque` | `rendu_ressource_test` (10), `redirection_test` |
+| CAP29-H | Arabe complet `admin.bibliotheque.*` et `tc.bibliotheque.rendu.*` (265 clés), arabe 320 px ×2 RTL des cinq écrans, captures 4 cadrages | `arabe_test` (5), `capture_bibliotheque_admin_test` (20 captures, `CAPTURE_DIR`) |
+
+### Les 20 scénarios CAP29-01 à 20
+
+| # | Statut | Ce qui est vrai |
+| :--- | :--- | :--- |
+| 01 | testé localement | l'onglet Bibliothèque est atteint au clic depuis Pédagogie ; capacité de lecture requise |
+| 02 | testé localement | catalogue vide utile ; brouillon créé sans publication |
+| 03 | BLOCKED | clé R2, URL signée expirante, hash : serveur (CAP29-BACK) ; le client dépose par intention et ne garde aucune URL |
+| 04 | BLOCKED (serveur) / testé localement (client) | refus taille/type rendu et expliqué ; l'analyse du fichier est côté serveur |
+| 05 | testé localement | sans preuve, la publication est bloquée et expliquée |
+| 06 | INCONNU | l'aperçu est honnête (aucun lecteur PDF) ; seule l'image est rendue ; le test de rendu est un critère rendu par le serveur |
+| 07 | testé localement (client) / BLOCKED (bascule atomique serveur) | v2 en brouillon séparée ; v1 figée |
+| 08 | testé localement (client) / BLOCKED (serveur) | conflit de révision dit ; clé d'idempotence par tentative |
+| 09 | BLOCKED | l'attribution est testée côté écran ; l'isolation entre classes est une RLS serveur |
+| 10 | INCONNU | salle = CAP29-G, hors de ce lot |
+| 11 | BLOCKED | non-fuite entre foyers : serveur |
+| 12 | BLOCKED (serveur) / testé localement (écran de retrait) | motif obligatoire, confirmation, trace d'audit ; durée de vie d'une URL existante non documentée côté client |
+| 13 | testé localement (affichage) / BLOCKED (refus serveur) | droits expirés visibles, filtre dédié |
+| 14 | testé localement (320 px ×2, LTR, RTL, arabe, captures clair 320/390/768/1440) | sombre, clavier complet et lecteur d'écran : INCONNU |
+| 15 | INCONNU | cache hors ligne persistant : non exercé |
+| 16 | testé localement (double) | l'échec de dépôt à chaque phase ne publie rien ; jamais d'état éternel |
+| 17 | BLOCKED (serveur) / testé localement (écran non autorisé) | aucune action sans capacité |
+| 18 | BLOCKED | staging, R2 isolé, SQL/RLS : CAP29-BACK |
+| 19 | BLOCKED | FK et historique : serveur |
+| 20 | BLOCKED | p95/p99 sur staging ; le client pagine à curseur et ne scanne pas tout |
+
+### Écarts à connaître
+
+- Ports : `facettes`, `revoirDroits` et `FinaliteUpload` ont été ajoutés après la ligne Contrats C-30 ; une ligne bis est à publier avant le branchement.
+- Aperçu : sans lecteur PDF, texte structuré ni leçon dans `pubspec.yaml` ; le rendu réel attend ces lecteurs.
+- Captures : clair seulement ; pas de comparaison pixel aux maquettes M01 à M04 (aucune référence versionnée dans le dépôt) ; défaut corrigé grâce aux captures : mots coupés dans les pastilles et la visibilité du tableau du catalogue à 1440 px.
+- Arabe : traduction écrite sans relecture par un locuteur natif.
+- Vérificateur non auteur : à faire.

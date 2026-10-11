@@ -402,12 +402,14 @@ class _CatalogueEtat extends ConsumerState<_Catalogue> {
       ),
       ColonneDonnees<SupportAdmin>(
         titre: co.publication,
+        flex: 2,
         texte: libelleEtatSupport,
         rendu: (BuildContext _, SupportAdmin s) =>
             StatusPill(libelle: libelleEtatSupport(s), ton: tonEtatSupport(s)),
       ),
       ColonneDonnees<SupportAdmin>(
         titre: co.droits,
+        flex: 2,
         texte: (SupportAdmin s) => libelleRevue(s.revueDroits),
         rendu: (BuildContext _, SupportAdmin s) => StatusPill(
           libelle: libelleRevue(s.revueDroits),
@@ -416,6 +418,7 @@ class _CatalogueEtat extends ConsumerState<_Catalogue> {
       ),
       ColonneDonnees<SupportAdmin>(
         titre: co.visibilite,
+        flex: 2,
         texte: (SupportAdmin s) => libelleVisibilite(s.visibilite),
       ),
       ColonneDonnees<SupportAdmin>(
