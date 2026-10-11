@@ -40,8 +40,9 @@ void main() {
               ]) {
             for (final bool police in <bool>[true, false]) {
               // La variante sans police : clair, zoom maximal seulement.
-              if (!police && (nomTheme != 'clair' || nomZoom != 'max'))
+              if (!police && (nomTheme != 'clair' || nomZoom != 'max')) {
                 continue;
+              }
               final String nom =
                   'apres_${nomMode}_${nomTaille}_${nomZoom}_$nomTheme'
                   '${police ? '' : '_sans_police'}';
