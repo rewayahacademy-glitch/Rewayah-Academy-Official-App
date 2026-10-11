@@ -85,6 +85,7 @@ done
 
 failed=0
 red=0
+printf 'SCÉNARIO | STATUT\n'
 for scenario in "${scenarios[@]}"; do
   name="${scenario##*/}"
   log="$TMP/$name.log"
