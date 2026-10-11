@@ -391,6 +391,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.recherche,
         builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
+          avecRaccourciRecherche: false,
           child: PageRecherche(
             espaceDemande: etat.uri.queryParameters['espace'],
             domaineDemande: etat.uri.queryParameters['domaine'],
@@ -2105,9 +2106,16 @@ RoleEspaceGroupe _roleEspaceGroupePour(AppRole? role) => switch (role) {
 /// Aucune destination n'est active ici : `indexActif` est nul, et le chrome
 /// rend alors ses entrees sans en surligner aucune.
 class _CoquilleSecondaire extends ConsumerWidget {
-  const _CoquilleSecondaire({required this.child});
+  const _CoquilleSecondaire({
+    required this.child,
+    this.avecRaccourciRecherche = true,
+  });
 
   final Widget child;
+
+  /// Faux sur la recherche elle-meme : Ctrl/Cmd + K n'y rouvre pas la page
+  /// par-dessus elle-meme.
+  final bool avecRaccourciRecherche;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -2165,15 +2173,27 @@ class _CoquilleSecondaire extends ConsumerWidget {
       (Destination d) => d.chemin == Routes.compte,
     );
 
-    return NavShell(
-      destinations: destinations,
-      indexActif: compte == -1 ? null : compte,
-      onAller: aller,
-      secondaires: secondairesPour(role: effectif),
-      onAllerSecondaire: aller,
-      // Rail a libelles hors tuteur, comme avant le chantier Tuteur V1.
-      libellesDansLeRail: effectif != AppRole.guardian,
-      child: child,
+    // RECH-D5 : sur cette coque secondaire (`/compte*`, `/recherche`), le
+    // raccourci Ctrl/Cmd + K reste le meme que sur la coque du role, et pour
+    // la meme capacite (jamais le role). Pas de seconde loupe : l'en-tete de
+    // ces pages n'en porte pas, la route unique `/recherche` s'ouvre d'une
+    // touche.
+    final EspaceRecherche? espaceRecherche = espaceRecherchePour(session);
+    final bool rechercheServie =
+        espaceRecherche != null &&
+        (ref.watch(rechercheServieProvider(espaceRecherche)).value ?? false);
+    return RaccourciRecherche(
+      actif: rechercheServie && avecRaccourciRecherche,
+      child: NavShell(
+        destinations: destinations,
+        indexActif: compte == -1 ? null : compte,
+        onAller: aller,
+        secondaires: secondairesPour(role: effectif),
+        onAllerSecondaire: aller,
+        // Rail a libelles hors tuteur, comme avant le chantier Tuteur V1.
+        libellesDansLeRail: effectif != AppRole.guardian,
+        child: child,
+      ),
     );
   }
 }

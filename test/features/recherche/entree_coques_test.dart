@@ -43,10 +43,11 @@ Future<GoRouter> _monter(
   String depart, {
   List<MoteurRechercheDomaine>? moteurs,
   Size taille = const Size(390, 844),
+  InterfaceMode mode = InterfaceMode.standard,
 }) => monterRouteur(
   tester,
   depart,
-  source: FausseSourceSession(sessionActive(role)),
+  source: FausseSourceSession(sessionActive(role, mode: mode)),
   taille: taille,
   surcharges: <Override>[
     moteursRechercheProvider.overrideWithValue(
@@ -273,6 +274,90 @@ void main() {
       );
       await appuyer(tester, LogicalKeyboardKey.controlLeft);
       expect(_sommet(routeur), Routes.recherche);
+    });
+  });
+
+  group('Interface guidee : la meme loupe, la meme route', () {
+    testWidgets('eleve en Interface guidee : une seule loupe, elle ouvre '
+        '/recherche et « Trouver un support »', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        AppRole.student,
+        Routes.eleve,
+        moteurs: moteursDemoRecherche(),
+        mode: InterfaceMode.enfant,
+      );
+      expect(find.byKey(cleLoupeRecherche), findsOneWidget);
+      await tester.tap(find.byKey(cleLoupeRecherche));
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(_sommet(routeur), Routes.recherche);
+      expect(find.text('Trouver un support'), findsWidgets);
+    });
+
+    testWidgets('eleve en Interface guidee, aucun domaine servi : la loupe '
+        'est masquee, pas grisee', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        AppRole.student,
+        Routes.eleve,
+        mode: InterfaceMode.enfant,
+      );
+      expect(find.byKey(cleLoupeRecherche), findsNothing);
+    });
+  });
+
+  group('coque secondaire /compte : Ctrl / Cmd + K', () {
+    Future<void> ctrlK(WidgetTester tester) async {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyK);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+
+    testWidgets('domaine servi : la touche ouvre /recherche depuis /compte', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        AppRole.teacher,
+        Routes.compte,
+        moteurs: moteursDemoRecherche(),
+        taille: const Size(1440, 900),
+      );
+      await ctrlK(tester);
+      expect(_sommet(routeur), Routes.recherche);
+    });
+
+    testWidgets('aucun domaine servi : la touche ne fait rien', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        AppRole.teacher,
+        Routes.compte,
+        taille: const Size(1440, 900),
+      );
+      await ctrlK(tester);
+      expect(_sommet(routeur), Routes.compte);
+    });
+
+    testWidgets('sur /recherche, la touche ne l\'empile pas sur elle-meme', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        AppRole.teacher,
+        Routes.recherche,
+        moteurs: moteursDemoRecherche(),
+        taille: const Size(1440, 900),
+      );
+      final int avant =
+          routeur.routerDelegate.currentConfiguration.matches.length;
+      await ctrlK(tester);
+      expect(_sommet(routeur), Routes.recherche);
+      expect(routeur.routerDelegate.currentConfiguration.matches.length, avant);
     });
   });
 
