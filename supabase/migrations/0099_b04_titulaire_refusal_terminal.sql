@@ -214,13 +214,13 @@ REVOKE ALL ON FUNCTION public.decider_reprise_foyer(uuid, boolean, uuid)
 GRANT EXECUTE ON FUNCTION public.decider_reprise_foyer(uuid, boolean, uuid) TO authenticated;
 
 COMMENT ON FUNCTION public.deposer_reprise_foyer(uuid) IS
-  'F86 candidate allowlist: signature=public.deposer_reprise_foyer(uuid); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: single open request and 30-day wait after either refusal.';
+  'F86 candidate allowlist: signature=public.deposer_reprise_foyer(uuid); md5_functiondef=b579ad20bc6cd4e61b8656b79b1f569e; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: single open request and 30-day wait after either refusal.';
 COMMENT ON FUNCTION public.refuser_reprise_foyer(uuid) IS
-  'F86 candidate allowlist: signature=public.refuser_reprise_foyer(uuid); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: holder refusal closes request and starts 30-day wait.';
+  'F86 candidate allowlist: signature=public.refuser_reprise_foyer(uuid); md5_functiondef=79fbe1602fc1f88693984311d84ff26a; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: holder refusal closes request and starts 30-day wait.';
 COMMENT ON FUNCTION public.lister_reprises_admin() IS
-  'F86 candidate allowlist: signature=public.lister_reprises_admin(); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: admin-only; holder-refused rows are non-decidable.';
+  'F86 candidate allowlist: signature=public.lister_reprises_admin(); md5_functiondef=cf8fef33c45c76ceca8ea2d1724d2e06; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: admin-only; holder-refused rows are non-decidable.';
 COMMENT ON FUNCTION public.decider_reprise_foyer(uuid, boolean, uuid) IS
-  'F86 candidate allowlist: signature=public.decider_reprise_foyer(uuid, boolean, uuid); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only unanswered requests can be decided; locked idempotent decision and audit.';
+  'F86 candidate allowlist: signature=public.decider_reprise_foyer(uuid, boolean, uuid); md5_functiondef=3cde2e929e92d5773c853ddcb4836226; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only unanswered requests can be decided; locked idempotent decision and audit.';
 
 DO $verification$
 DECLARE

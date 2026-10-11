@@ -89,10 +89,25 @@ SELECT set_config('test.uid', 'b0400000-0000-0000-0000-000000000002', true);
 SELECT set_config('test.jwt',
   '{"app_metadata":{"role":"guardian","household_id":"b04fffff-0000-0000-0000-000000000001"}}', true);
 DO $holder_refusal$
+DECLARE
+  v_before jsonb;
+  v_result jsonb;
+  v_after jsonb;
 BEGIN
-  IF public.etat_reprise_foyer()->>'type' <> 'titulaire'
-    OR public.refuser_reprise_foyer('b0400000-0000-0000-0000-000000000012')->>'statut' <> 'enregistree'
-    OR public.etat_reprise_foyer()->>'statut' <> 'refusee_par_vous' THEN
+  v_before := public.etat_reprise_foyer();
+  IF v_before->>'type' <> 'titulaire' THEN
+    RAISE EXCEPTION 'B-04: l etat initial du titulaire est absent';
+  END IF;
+
+  v_result := public.refuser_reprise_foyer(
+    'b0400000-0000-0000-0000-000000000012'
+  );
+  IF v_result->>'statut' <> 'enregistree' THEN
+    RAISE EXCEPTION 'B-04: le refus du titulaire ne s est pas enregistre';
+  END IF;
+
+  v_after := public.etat_reprise_foyer();
+  IF v_after->>'statut' <> 'refusee_par_vous' THEN
     RAISE EXCEPTION 'B-04: refus du titulaire non reflechi';
   END IF;
 END

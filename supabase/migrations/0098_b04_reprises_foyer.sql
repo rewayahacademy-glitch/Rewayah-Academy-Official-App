@@ -305,7 +305,7 @@ COMMENT ON FUNCTION public.deposer_reprise_foyer(uuid) IS
 COMMENT ON FUNCTION public.refuser_reprise_foyer(uuid) IS
   'F86 candidate allowlist: signature=public.refuser_reprise_foyer(uuid); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only captured household holder can refuse before admin decision.';
 COMMENT ON FUNCTION public.etat_reprise_foyer() IS
-  'F86 candidate allowlist: signature=public.etat_reprise_foyer(); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only active guardian sees own request/household holder state.';
+  'F86 candidate allowlist: signature=public.etat_reprise_foyer(); md5_functiondef=1f0f0ae6b7787afc5794429453b072fd; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only active guardian sees own request/household holder state.';
 
 DO $verification$
 DECLARE
