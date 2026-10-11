@@ -40,7 +40,7 @@ Inventaire statique: 72 tables avec `ENABLE ROW LEVEL SECURITY` dans les migrati
 | `public.app_config_history` | [`0001_fondations.sql:383`](../../../../supabase/migrations/0001_fondations.sql) | aucun scénario existant repéré | anon, claim absent et disabled: boucles dynamiques sur chaque table RLS; non ajouté dans cette livraison; RLS catalogue vérifiée |
 | `public.rate_limits` | [`0001_fondations.sql:384`](../../../../supabase/migrations/0001_fondations.sql) | aucun scénario existant repéré | anon, claim absent et disabled: boucles dynamiques sur chaque table RLS; non ajouté dans cette livraison; RLS catalogue vérifiée |
 | `public.device_tokens` | [`0001_fondations.sql:385`](../../../../supabase/migrations/0001_fondations.sql) | aucun scénario existant repéré | anon, claim absent et disabled: boucles dynamiques sur chaque table RLS; non ajouté dans cette livraison; RLS catalogue vérifiée |
-| `public.contract_acceptances` | [`0004_inscription_kyc_appairage.sql:233`](../../../../supabase/migrations/0004_inscription_kyc_appairage.sql) | `scenarios_etape3.sql` | anon, claim absent et disabled: boucles dynamiques sur chaque table RLS; non ajouté dans cette livraison; RLS catalogue vérifiée |
+| `public.contract_acceptances` | [`0004_inscription_kyc_appairage.sql:233`](../../../../supabase/migrations/0004_inscription_kyc_appairage.sql) | `scenarios_etape3.sql`, `codex2_rls_foyer.sql` | Signataire A lit/inscrit son acceptation, pas celle de B; anon, claim absent et disabled: boucles dynamiques; RLS catalogue vérifiée |
 | `public.device_pairing_codes` | [`0004_inscription_kyc_appairage.sql:287`](../../../../supabase/migrations/0004_inscription_kyc_appairage.sql) | `scenarios_etape3.sql` | anon, claim absent et disabled: boucles dynamiques sur chaque table RLS; non ajouté dans cette livraison; RLS catalogue vérifiée |
 | `public.audit_logs_default` | [`0004_inscription_kyc_appairage.sql:945`](../../../../supabase/migrations/0004_inscription_kyc_appairage.sql) | `scenarios_adm04.sql`, `scenarios_etape3.sql` | anon, claim absent et disabled: boucles dynamiques sur chaque table RLS; non ajouté dans cette livraison; RLS catalogue vérifiée |
 | `public.rule_overrides` | [`0005_dashboards_affectation_regles.sql:77`](../../../../supabase/migrations/0005_dashboards_affectation_regles.sql) | `scenarios_adm05.sql`, `scenarios_etape4.sql` | anon, claim absent et disabled: boucles dynamiques sur chaque table RLS; non ajouté dans cette livraison; RLS catalogue vérifiée |
@@ -97,7 +97,7 @@ Inventaire statique: 72 tables avec `ENABLE ROW LEVEL SECURITY` dans les migrati
 
 Le scenario ajoute un appareil dans le foyer proprietaire comme temoin SELECT positif. Le compte authentifie du foyer A verifie que l'appareil lie au profil du foyer B est invisible; il tente aussi une insertion liee au profil B, qui doit etre refusee avec SQLSTATE `insufficient_privilege` par la RLS. L'ancien UPDATE inter-foyer reste une assertion secondaire, mais n'est pas presente comme preuve de policy WITH CHECK, car aucune policy UPDATE guardian n'existe.
 
-Limite conservee: ces fixtures ne donnent toujours pas une ligne representative a chacune des 72 tables; six relations ont maintenant des assertions comportementales ciblees, les autres restent sans temoin inter-foyer propre. Les boucles anon, claim absent et disabled testent les lignes presentes dans l'etat migre; aucun test comportemental inter-foyer par table n'est pretendu. La suite SQL est non rejouee localement et aucune base distante n'a ete consultee.
+Limite conservee: ces fixtures ne donnent toujours pas une ligne representative a chacune des 72 tables; sept relations ont maintenant des assertions comportementales ciblees, les autres restent sans temoin inter-foyer propre. Les boucles anon, claim absent et disabled testent les lignes presentes dans l'etat migre; aucun test comportemental inter-foyer par table n'est pretendu. La suite SQL est non rejouee localement et aucune base distante n'a ete consultee.
 
 ## Inventaire statique des policies
 
@@ -108,5 +108,7 @@ Plusieurs relations sont des catalogues partages ou des tables de service, pas d
 ## Scenarios complementaires de profil
 
 Les fixtures ajoutent deux eleves avec student_profiles et des positions de lecture liees au mushaf `madina-hafs-604`. La RLS est exercee sous le jeton de student A (lecture/ecriture positives sur sa ligne, lecture/ecriture cachees sur B) puis sous guardian A (lecture de la ligne de son foyer, refus de lecture de B). Le test ne donne pas d'ecriture de position au tuteur; cette policy est une lecture seule.
+
+Les acceptations `recording_and_control_notice` de deux eleves de foyers distincts couvrent la policy `auth.uid()`: A lit et inscrit la sienne, ne lit pas celle de B et ne peut pas ajouter une acceptation au nom de B.
 
 Les scenarios teacher_profiles et student_profiles sont egalement explicites: fiche enseignant propre uniquement; lecture/ecriture du profil eleve dans le foyer pour le tuteur. Les autres tables restent couvertes par les boucles generiques, sans ligne comportementale propre a chaque relation.

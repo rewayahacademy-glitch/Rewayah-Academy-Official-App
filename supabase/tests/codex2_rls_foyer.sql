@@ -183,6 +183,10 @@ INSERT INTO public.devices (profile_id, device_fingerprint, platform) VALUES
   ('c2a20000-0000-0000-0000-000000000001', 'codex2-device-owner-household', 'web'),
   ('c2a20000-0000-0000-0000-000000000002', 'codex2-device-other-household', 'web');
 
+INSERT INTO public.contract_acceptances (profile_id, contract_kind, version) VALUES
+  ('c2a20000-0000-0000-0000-000000000004', 'recording_and_control_notice', 'codex2-v1'),
+  ('c2a20000-0000-0000-0000-000000000002', 'recording_and_control_notice', 'codex2-v1');
+
 DO $$
 DECLARE v_denied boolean := false;
 BEGIN
@@ -328,6 +332,31 @@ BEGIN
   SELECT count(*) INTO v_count FROM public.student_reading_position
    WHERE student_profile_id = 'c2a20000-0000-0000-0000-000000000002';
   IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-READING-GUARDIAN: household B position visible'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Chaque acceptation est lisible et inscriptible par son signataire seulement.
+DO $$
+DECLARE v_count integer; v_denied boolean := false;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000004', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"student","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.contract_acceptances
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000004';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-CONTRACT-ACCEPTANCE: signer A cannot read own acceptance'; END IF;
+  SELECT count(*) INTO v_count FROM public.contract_acceptances
+   WHERE profile_id = 'c2a20000-0000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-CONTRACT-READ: signer A sees signer B acceptance'; END IF;
+  INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
+  VALUES ('c2a20000-0000-0000-0000-000000000004', 'recording_and_control_notice', 'codex2-v2');
+  BEGIN
+    INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
+    VALUES ('c2a20000-0000-0000-0000-000000000002', 'recording_and_control_notice', 'codex2-v2');
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-CONTRACT-INSERT: signer A inserted for B'; END IF;
   RESET ROLE;
 END $$;
 
