@@ -55,8 +55,13 @@ class FilterPill extends StatelessWidget {
     super.key,
     this.retenue = false,
     this.compteur,
+    this.apercu,
     this.focusNode,
   });
+
+  /// TB-7b : un apercu peint avant le libelle (la pastille d'une couleur
+  /// d'encre). Il ne remplace jamais le libelle ; muet au lecteur d'ecran.
+  final Widget? apercu;
 
   /// Ce qui s'affiche.
   final String libelle;
@@ -135,6 +140,7 @@ class FilterPill extends StatelessWidget {
             // Aucun mot coupe (COUPE-MOTS-4 sur les puces de motifs de
             // FORM-L1, reuni par JONCTION-LIGNES-1) : un mot plus long que la
             // puce reduit juste assez l'echelle au lieu de se couper.
+            if (apercu case final Widget a) a,
             TexteSansCoupure(
               libelle,
               textAlign: TextAlign.center,

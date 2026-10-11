@@ -7,6 +7,7 @@ library;
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/port_frise_demande.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart' show LibellesGroupe;
 import '../suivi_demandes/libelles_suivi_demandes.dart';
 
 /// Le nom d'une etape : « Classe créée ».
@@ -60,37 +61,78 @@ String intervalleEntre(DateTime avant, DateTime apres) {
   if (heures < 24) {
     return heures == 1
         ? t.suiviFamille.intervalle.heure
-        : t.suiviFamille.intervalle.heures(n: heures);
+        : LibellesGroupe.insecable(t.suiviFamille.intervalle.heures(n: heures));
   }
   final int jours = ecart.inDays;
   return jours == 1
       ? t.suiviFamille.intervalle.jour
-      : t.suiviFamille.intervalle.jours(n: jours);
+      : LibellesGroupe.insecable(t.suiviFamille.intervalle.jours(n: jours));
 }
 
 /// Le titre de la notification d'un passage d'etape. Les trois premieres
 /// etapes gardent les titres du suivi existant.
 String titreNotificationFrise(TypeEtapeFrise type, String prenom) {
-  String de(String cle) => deDevant(prenom, cle: cle);
   return switch (type) {
     TypeEtapeFrise.envoyee => t.suiviDemandes.notification.envoyee(
-      dePrenom: de('suiviDemandes.notification.envoyee'),
+      dePrenom: deDevant(prenom, cle: 'suiviDemandes.notification.envoyee'),
     ),
     TypeEtapeFrise.classeCreee => t.suiviDemandes.notification.classeValidee(
-      dePrenom: de('suiviDemandes.notification.classeValidee'),
+      dePrenom: deDevant(
+        prenom,
+        cle: 'suiviDemandes.notification.classeValidee',
+      ),
     ),
     TypeEtapeFrise.enseignantAffecte =>
       t.suiviDemandes.notification.enseignantAffecte(
-        dePrenom: de('suiviDemandes.notification.enseignantAffecte'),
+        dePrenom: deDevant(
+          prenom,
+          cle: 'suiviDemandes.notification.enseignantAffecte',
+        ),
       ),
     TypeEtapeFrise.enAttente => t.suiviFamille.notification.enAttente(
-      dePrenom: de('suiviFamille.notification.enAttente'),
+      dePrenom: deDevant(prenom, cle: 'suiviFamille.notification.enAttente'),
     ),
     TypeEtapeFrise.eleveIntegre => t.suiviFamille.notification.eleveIntegre(
-      dePrenom: de('suiviFamille.notification.eleveIntegre'),
+      dePrenom: deDevant(prenom, cle: 'suiviFamille.notification.eleveIntegre'),
     ),
     TypeEtapeFrise.premiereSeance => t.suiviFamille.notification.premiereSeance(
-      dePrenom: de('suiviFamille.notification.premiereSeance'),
+      dePrenom: deDevant(
+        prenom,
+        cle: 'suiviFamille.notification.premiereSeance',
+      ),
     ),
   };
+}
+
+/// Le motif de cloture en clair.
+String libelleMotifCloture(
+  MotifClotureFrise motif,
+  String prenom,
+) => switch (motif) {
+  MotifClotureFrise.retraitFamille => t.suiviFamille.close.motif.retraitFamille,
+  MotifClotureFrise.offreRetiree => t.suiviFamille.close.motif.offreRetiree,
+  MotifClotureFrise.classeNonConstituee =>
+    t.suiviFamille.close.motif.classeNonConstituee,
+  MotifClotureFrise.refusDirection => t.suiviFamille.close.motif.refusDirection,
+  MotifClotureFrise.dejaEnClasse => t.suiviFamille.close.motif.dejaEnClasse(
+    prenom: prenom,
+  ),
+  MotifClotureFrise.inconnu => t.suiviFamille.close.motif.inconnu,
+};
+
+/// Le titre de la notification de cloture : « Demande de Yusuf : ce
+/// créneau n'est plus proposé. »
+String titreNotificationCloture(MotifClotureFrise motif, String prenom) {
+  if (motif == MotifClotureFrise.dejaEnClasse) {
+    return t.suiviFamille.notification.dejaEnClasse(
+      dePrenom: deDevant(prenom, cle: 'suiviFamille.notification.dejaEnClasse'),
+    );
+  }
+  final String phrase = libelleMotifCloture(motif, prenom);
+  return t.suiviFamille.notification.close(
+    dePrenom: deDevant(prenom, cle: 'suiviFamille.notification.close'),
+    motif: phrase.isEmpty
+        ? phrase
+        : phrase[0].toLowerCase() + phrase.substring(1),
+  );
 }

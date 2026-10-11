@@ -23,13 +23,21 @@ import '../../features/admin_groupes/groupes_page.dart';
 import '../../features/admin_invitations/invitations_page.dart';
 import '../../features/admin_journal/journal_page.dart';
 import '../../features/admin_observations/observations_admin_page.dart';
+import '../../features/admin_pedagogie_bibliotheque/attribution/attribution_page.dart';
+import '../../features/admin_pedagogie_bibliotheque/catalogue/catalogue_page.dart';
+import '../../features/admin_pedagogie_bibliotheque/fiche/fiche_page.dart';
+import '../../features/admin_pedagogie_bibliotheque/import/import_page.dart';
+import '../../features/admin_pedagogie_bibliotheque/publication/publication_page.dart';
 import '../../features/admin_pedagogie_diagnostics/diagnostics_page.dart';
 import '../../features/admin_pedagogie_evaluations/evaluations_page.dart';
 import '../../features/admin_pedagogie_programmes/programmes_page.dart';
 import '../../features/admin_pedagogie_progression/progression_page.dart';
 import '../../features/admin_pedagogie_qualite/qualite_page.dart';
+import '../../features/admin_pilotage/pilotage_page.dart';
 import '../../features/admin_regroupements/regroupements_page.dart';
+import '../../features/admin_reprises/reprises_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
+import '../../features/admin_tirage/tirage_page.dart';
 import '../../features/admin_traitement/traitement_page.dart';
 import '../../features/agent_entree/agent_entree_page.dart';
 import '../../features/alertes/alertes_page.dart';
@@ -55,6 +63,7 @@ import '../../features/com_messages/messages_page.dart';
 import '../../features/com_studio/studio_page.dart';
 import '../../features/comptable/aujourdhui/aujourdhui_page.dart';
 import '../../features/comptable/beneficiaires/beneficiaires_page.dart';
+import '../../features/comptable/beneficiaires/fil_profil_paiement_page.dart';
 import '../../features/comptable/beneficiaires/profil_paiement_page.dart';
 import '../../features/comptable/contractuels/contractuels_page.dart';
 import '../../features/comptable/contractuels/nouvelle_obligation_page.dart';
@@ -127,12 +136,16 @@ import '../../features/journee/journee_page.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
+import '../../features/presentation_tuteur/demandes_presentation_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
+import '../../features/recherche/entree_recherche.dart';
+import '../../features/recherche/page_recherche.dart';
 import '../../features/recrutement/invitation_candidat_page.dart';
 import '../../features/remplacements/remplacements_page.dart';
 import '../../features/revenus_enseignant/revenus_enseignant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart';
+import '../../features/suivi_demandes/changement_classe_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
 import '../../features/suivi_famille/suivi_famille_page.dart';
 import '../../features/suivi_foyer/detail_observations_page.dart';
@@ -155,6 +168,7 @@ import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../mouvement/transitions.dart';
 import '../preferences/presentation_vue.dart';
+import '../recherche/modeles_recherche.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
 import '../tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
@@ -366,6 +380,19 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: ComptePage()),
       ),
+      // RECH-1 : la recherche transversale, une seule route pour tous les
+      // espaces (spec RECH-03 §1). L'espace et le domaine d'ouverture sont
+      // des parametres d'interface ; le texte cherche n'est jamais dans
+      // l'adresse.
+      GoRoute(
+        path: Routes.recherche,
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
+          child: PageRecherche(
+            espaceDemande: etat.uri.queryParameters['espace'],
+            domaineDemande: etat.uri.queryParameters['domaine'],
+          ),
+        ),
+      ),
       GoRoute(
         path: Routes.compteProfil,
         builder: (BuildContext _, GoRouterState _) =>
@@ -571,6 +598,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     ),
                   ),
                   GoRoute(
+                    path: 'presentation',
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const DemandesPresentationPage(),
+                    ),
+                  ),
+                  GoRoute(
                     path: 'demandes',
                     pageBuilder: glissee(
                       (GoRouterState _) => const SuiviDemandesEntree(),
@@ -580,6 +613,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                         path: ':demandeId',
                         pageBuilder: glissee(
                           (GoRouterState etat) => FriseDemandePage(
+                            demandeId: _parametre(etat, 'demandeId'),
+                          ),
+                        ),
+                      ),
+                      // ECHELLE-FAM-ETATS-1 : le resultat d'une fusion ou
+                      // d'un transfert, adresse que le rechargement garde.
+                      GoRoute(
+                        path: ':demandeId/changement',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => ChangementClassePage(
                             demandeId: _parametre(etat, 'demandeId'),
                           ),
                         ),
@@ -1274,9 +1317,22 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.adminOperationsGroupes,
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          // ECHELLE-ADM-PILOTAGE-1 : `?etat=attente` ouvre la liste sur les
+          // classes en attente d'enseignant.
+          child: GroupesPage(
+            attenteInitiale: etat.uri.queryParameters['etat'] == 'attente',
+          ),
+        ),
+      ),
+      // ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire, atteint
+      // depuis l'Accueil (raccourci « Pilotage des horaires »).
+      GoRoute(
+        path: Routes.adminOperationsPilotage,
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.operations,
-          child: GroupesPage(),
+          child: PilotagePage(),
         ),
       ),
       GoRoute(
@@ -1386,6 +1442,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ),
       ),
       GoRoute(
+        path: Routes.adminPersonnesReprises,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: ReprisesPage(),
+        ),
+      ),
+      GoRoute(
         path: Routes.adminPersonnesInvitations,
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
@@ -1456,6 +1519,43 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
           child: EvaluationsPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminPedagogieBibliotheque,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.pedagogie,
+          child: CataloguePage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminPedagogieBibliothequeNouveau,
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.pedagogie,
+          child: ImportPage(supportId: etat.uri.queryParameters['support']),
+        ),
+      ),
+      GoRoute(
+        path: '${Routes.adminPedagogieBibliotheque}/:supportId/publication',
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.pedagogie,
+          child: PublicationPage(supportId: _parametre(etat, 'supportId')),
+        ),
+      ),
+      GoRoute(
+        path: '${Routes.adminPedagogieBibliotheque}/:supportId/attribution',
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.pedagogie,
+          child: AttributionSupportPage(
+            supportId: _parametre(etat, 'supportId'),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: '${Routes.adminPedagogieBibliotheque}/:supportId',
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.pedagogie,
+          child: FichePage(supportId: _parametre(etat, 'supportId')),
         ),
       ),
       GoRoute(
@@ -1575,6 +1675,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.securite,
           child: ObservationsAdminPage(),
+        ),
+      ),
+      // ECHELLE-CTRL-DIRECT-1 : le tirage des controles, onglet pair du
+      // Journal et des observations (`ongletsSecurite()`).
+      GoRoute(
+        path: Routes.adminSecuriteAuditTirages,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.securite,
+          child: TiragePage(),
         ),
       ),
 
@@ -1712,6 +1821,20 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                                 'beneficiaireId',
                               ),
                             ),
+                        routes: <RouteBase>[
+                          // CPT-COM : le fil « Profil de paiement », ouvert
+                          // par « Relancer » (CPT-BR-11).
+                          GoRoute(
+                            path: 'fil',
+                            builder: (BuildContext _, GoRouterState etat) =>
+                                FilProfilPaiementPage(
+                                  beneficiaireId: _parametre(
+                                    etat,
+                                    'beneficiaireId',
+                                  ),
+                                ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -1981,6 +2104,15 @@ class _CoquilleSecondaire extends ConsumerWidget {
     // 2026 sur ce meme ecran.
     if (effectif == AppRole.admin) {
       return AdminShell(
+        onRechercheMetier:
+            (ref
+                    .watch(
+                      rechercheServieProvider(EspaceRecherche.administration),
+                    )
+                    .value ??
+                false)
+            ? () => aller(Routes.recherche)
+            : null,
         domaines: domainesAdmin(voitDirection: session.peutVoirDirection),
         domaineActif: null,
         onAller: aller,
@@ -2119,12 +2251,25 @@ class _CoquilleNavigation extends ConsumerWidget {
       // 04/10). Sans point tant que le port est indisponible, comme le
       // tuteur. Elle s'ajoute, en dernier, aux actions deja posees au-dessus
       // (le raccourci Espaces de CT-9), et se montre active sur sa page.
+      // RECH-D5 : une seule loupe par coque, pour l'enseignant et le
+      // controleur, rendue seulement si un domaine de recherche est servi a
+      // leur espace (la capacite, jamais le role) ; masquee sinon. Les
+      // coques famille et eleve n'en portent pas encore (D2).
+      final EspaceRecherche? espaceRecherche = switch (role) {
+        AppRole.teacher => EspaceRecherche.enseignant,
+        AppRole.controller => EspaceRecherche.controleur,
+        _ => null,
+      };
+      final bool rechercheServie =
+          espaceRecherche != null &&
+          (ref.watch(rechercheServieProvider(espaceRecherche)).value ?? false);
       final Widget avecCloche = cheminCloche == null
           ? coquille
           : Builder(
               builder: (BuildContext contexte) => ActionsEnteteCoquille(
                 actions: <Widget>[
                   ...ActionsEnteteCoquille.de(contexte),
+                  if (rechercheServie) const LoupeRecherche(),
                   ClocheNotifications(
                     actif: surNotifications,
                     onPress: () => GoRouter.of(contexte).go(cheminCloche),
@@ -2243,7 +2388,16 @@ class _CoquilleAdmin extends ConsumerWidget {
     // dit qu'une alerte urgente est ouverte. Jamais deduite du role.
     final int? urgentes = ref.watch(alertesUrgentesProvider);
 
+    // RECH-D5 : la loupe d'en-tete ouvre aussi la recherche metier, quand un
+    // domaine est servi a l'espace administration.
+    final bool rechercheServie =
+        ref
+            .watch(rechercheServieProvider(EspaceRecherche.administration))
+            .value ??
+        false;
+
     return AdminShell(
+      onRechercheMetier: rechercheServie ? () => aller(Routes.recherche) : null,
       domaines: domainesAdmin(voitDirection: voitDirection),
       domaineActif: domaine,
       onAller: aller,

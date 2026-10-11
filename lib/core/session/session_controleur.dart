@@ -5,8 +5,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/env.dart';
 import '../domain/enums.dart';
+import '../tc_classe/controleur_recitation.dart';
+import '../tc_classe/rappel_discret.dart';
+import '../tc_coran/etat_lecture_coran.dart';
+import '../tc_etat_partage/providers_tc_etat_partage.dart';
+import '../tc_outils/etat_outils.dart';
 import 'port_capacite_eleve.dart';
-import 'port_capacite_eleve_supabase.dart';
 import 'session_state.dart';
 import 'source_session.dart';
 
@@ -45,14 +49,9 @@ AccesDemo? accesDemoDepuisCourriel(String courriel) {
 ///
 /// Les tests la remplacent par une source en memoire : le routeur se verifie
 /// alors sans reseau ni backend.
-final Provider<SourceSession> sourceSessionProvider = Provider<SourceSession>((
-  Ref ref,
-) {
-  final SupabaseClient client = Supabase.instance.client;
-  final PortCapaciteEleve port =
-      ref.watch(portCapaciteEleveProvider) ?? PortCapaciteEleveSupabase(client);
-  return SourceSessionSupabase(client, port);
-});
+final Provider<SourceSession> sourceSessionProvider = Provider<SourceSession>(
+  (Ref ref) => SourceSessionSupabase(Supabase.instance.client),
+);
 
 /// L'etat de session courant, synchrone.
 ///
@@ -66,6 +65,7 @@ final NotifierProvider<SessionControleur, SessionState> sessionProvider =
 class SessionControleur extends Notifier<SessionState> {
   StreamSubscription<SessionState>? _abonnement;
   bool _demoActive = false;
+  final Map<String, bool> _autonomes = <String, bool>{};
 
   @override
   SessionState build() {
@@ -73,10 +73,20 @@ class SessionControleur extends Notifier<SessionState> {
 
     _abonnement = source.etats().listen((SessionState etat) {
       if (!_demoActive) {
-        state = etat;
+        _appliquer(etat);
       }
     });
     ref.onDispose(() => unawaited(_abonnement?.cancel()));
+
+    // SALLE-ROBUSTE : la memoire de la salle appartient a la personne
+    // connectee. Quand le profil change (deconnexion, autre compte sur un
+    // appareil partage), elle est oubliee avant que la personne suivante ne
+    // puisse la lire.
+    listenSelf((SessionState? avant, SessionState apres) {
+      if (avant != null && avant.profileId != apres.profileId) {
+        oublierMemoireDeSalle(ref);
+      }
+    });
 
     return const SessionState.chargement();
   }
@@ -87,14 +97,45 @@ class SessionControleur extends Notifier<SessionState> {
       throw StateError('Le mode de demonstration n est pas compile.');
     }
     _demoActive = true;
-    state = SessionState(
-      resolue: true,
-      role: acces.role,
-      profileId: 'demo-${acces.role.valeurSql}',
-      accountStatus: AccountStatus.active,
-      interfaceMode: acces.mode,
-      lectureProfil: LectureProfil.presente,
+    _appliquer(
+      SessionState(
+        resolue: true,
+        role: acces.role,
+        profileId: 'demo-${acces.role.valeurSql}',
+        accountStatus: AccountStatus.active,
+        interfaceMode: acces.mode,
+        lectureProfil: LectureProfil.presente,
+      ),
     );
+  }
+
+  /// Publie [etat] avec la capacite « eleve autonome » deja connue pour ce
+  /// profil, puis la lit sur le port si elle ne l'est pas encore (C-24).
+  /// Une reponse inconnue ou en echec laisse la capacite fausse.
+  void _appliquer(SessionState etat) {
+    final String? profil = etat.profileId;
+    state = etat.copyWith(
+      eleveAutonome: profil != null && (_autonomes[profil] ?? false),
+    );
+    if (profil == null || _autonomes.containsKey(profil)) {
+      return;
+    }
+    _autonomes[profil] = false;
+    unawaited(_lireCapacite(profil));
+  }
+
+  Future<void> _lireCapacite(String profil) async {
+    CapaciteEleve capacite;
+    try {
+      capacite = await ref.read(portCapaciteEleveProvider).lire(profil);
+    } on Object {
+      capacite = const CapaciteInconnue();
+    }
+    final bool autonome = capacite is EleveAutonome;
+    _autonomes[profil] = autonome;
+    if (ref.mounted && state.profileId == profil) {
+      state = state.copyWith(eleveAutonome: autonome);
+    }
   }
 
   /// Ferme la session locale et indique si une session demo etait active.
@@ -116,3 +157,25 @@ class SessionControleur extends Notifier<SessionState> {
 /// `identiteTitulaireProvider` et `monAccesProvider`).
 void surveillerPersonneConnectee(Ref ref) =>
     ref.watch(sessionProvider.select((SessionState s) => s.profileId));
+
+/// Les providers qui gardent en memoire du processus l'etat d'une personne dans
+/// la salle (SALLE-ROBUSTE) : etat partage d'une seance, position du dock,
+/// outils armes, file de recitation, page de lecture, cadence des rappels.
+///
+/// Tout nouveau provider de ce genre s'ajoute ICI : c'est la seule liste qui
+/// decide de ce qui ne survit pas a la personne.
+final List<void Function(Ref)> memoiresDeSalle = <void Function(Ref)>[
+  (Ref ref) => ref.invalidate(portEtatPartagePersistantProvider),
+  (Ref ref) => ref.invalidate(portPositionDockProvider),
+  (Ref ref) => ref.invalidate(etatOutilsProvider),
+  (Ref ref) => ref.invalidate(recitationProvider),
+  (Ref ref) => ref.invalidate(lectureCoranProvider),
+  (Ref ref) => ref.invalidate(portRappelDiscretProvider),
+];
+
+/// Oublie la memoire de la salle.
+void oublierMemoireDeSalle(Ref ref) {
+  for (final void Function(Ref) oublier in memoiresDeSalle) {
+    oublier(ref);
+  }
+}

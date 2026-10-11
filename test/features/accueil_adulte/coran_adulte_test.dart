@@ -132,6 +132,8 @@ void main() {
       ...corpus(),
     ],
     depart: Routes.eleve,
+    role: capacite ? AppRole.guardian : AppRole.student,
+    autonome: capacite,
   );
 
   group('route reelle (K-07)', () {

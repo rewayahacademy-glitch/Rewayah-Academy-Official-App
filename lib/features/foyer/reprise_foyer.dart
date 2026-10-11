@@ -68,6 +68,7 @@ final class RepriseDemande extends EtatReprise {
     required this.statut,
     this.deposeeLe,
     this.examenPossibleLe,
+    this.redepotPossibleLe,
   });
 
   /// Le statut rendu.
@@ -79,6 +80,11 @@ final class RepriseDemande extends EtatReprise {
   /// La date a partir de laquelle l'administration pourra examiner la
   /// demande sans reponse du titulaire (section 12.3), si elle est rendue.
   final DateTime? examenPossibleLe;
+
+  /// BACK-FRONT-REPRISE-1 (K-65) : apres un refus, la date a partir de
+  /// laquelle une nouvelle demande pourra etre deposee, si elle est rendue.
+  /// Jamais calculee ici (F17).
+  final DateTime? redepotPossibleLe;
 }
 
 /// Ce que le titulaire lit de la demande qui le concerne (EA-BR-28).
@@ -386,15 +392,17 @@ class _RepriseFoyerPageState extends ConsumerState<RepriseFoyerPage> {
             niveau: NiveauAction.secondaire,
             pleineLargeur: false,
           ),
-          principale: ActionPrincipale(
-            key: RepriseFoyerPage.deposerKey,
-            libelle: r.deposer,
-            onPress: horsLigne || _echec == _Echec.indisponible
-                ? null
-                : () => unawaited(_deposer()),
-            enCours: _envoi,
-            pleineLargeur: false,
-          ),
+          // Hors ligne ou indisponible : le depot n'est pas rendu, la note
+          // ou l'etat au-dessus le dit (BOUTONS-GRISES-1).
+          principale: horsLigne || _echec == _Echec.indisponible
+              ? null
+              : ActionPrincipale(
+                  key: RepriseFoyerPage.deposerKey,
+                  libelle: r.deposer,
+                  onPress: () => unawaited(_deposer()),
+                  enCours: _envoi,
+                  pleineLargeur: false,
+                ),
         ),
       ],
     );
@@ -460,6 +468,10 @@ class _EtatDemande extends StatelessWidget {
     final r = t.adulte.reprise;
     final DateTime? depot = demande.deposeeLe;
     final DateTime? examen = demande.examenPossibleLe;
+    final DateTime? redepot = demande.redepotPossibleLe;
+    final bool refusee =
+        demande.statut == StatutReprise.refusee ||
+        demande.statut == StatutReprise.refuseeParTitulaire;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -489,6 +501,14 @@ class _EtatDemande extends StatelessWidget {
           Ecart.vMd,
           _Note(
             texte: r.phrases.examenLe(date: dateEcheance(examen)),
+            attenuee: true,
+          ),
+        ],
+        if (refusee && redepot != null) ...<Widget>[
+          Ecart.vMd,
+          _Note(
+            key: const ValueKey<String>('reprise-redepot'),
+            texte: r.phrases.redepotLe(date: dateEcheance(redepot)),
             attenuee: true,
           ),
         ],
@@ -665,20 +685,22 @@ class _RepriseTitulairePageState extends ConsumerState<RepriseTitulairePage> {
         ],
         // Rien ne part tout seul. Libelle provisoire, lexique D4.
         if (horsLigne) ...<Widget>[Ecart.vLg, _Note(texte: r.horsLigne)],
-        Ecart.vLg,
         // Bouton principal : c'est la protection du titulaire, pas une
-        // destruction (UX_REVIEW_07 ligne 18 a).
-        _Actions(
-          principale: ActionPrincipale(
-            key: RepriseTitulairePage.refuserKey,
-            libelle: r.refuser,
-            onPress: horsLigne || _echec == _Echec.indisponible
-                ? null
-                : () => unawaited(_refuser()),
-            enCours: _envoi,
-            pleineLargeur: false,
+        // destruction (UX_REVIEW_07 ligne 18 a). Hors ligne ou indisponible,
+        // il n'est pas rendu : la note ou l'etat au-dessus le dit
+        // (BOUTONS-GRISES-1).
+        if (!horsLigne && _echec != _Echec.indisponible) ...<Widget>[
+          Ecart.vLg,
+          _Actions(
+            principale: ActionPrincipale(
+              key: RepriseTitulairePage.refuserKey,
+              libelle: r.refuser,
+              onPress: () => unawaited(_refuser()),
+              enCours: _envoi,
+              pleineLargeur: false,
+            ),
           ),
-        ),
+        ],
       ],
     );
   }

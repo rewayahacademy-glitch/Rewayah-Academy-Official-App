@@ -30,16 +30,16 @@ import '../../core/tc_coran/moteur_mushaf.dart' show pageMushafProvider;
 import '../../core/tc_coran/navigation_coran.dart';
 import '../../core/tc_coran/page_mushaf_vm.dart';
 import '../../core/tc_coran/port_navigation_coran.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
-import '../../core/widgets/pressable.dart';
 import '../tc_mushaf/navigation_coran_feuille.dart';
 import '../tc_mushaf/textes_lecteur_coran.dart';
 import '../tc_mushaf/vue_page_mushaf.dart';
@@ -404,8 +404,10 @@ class _LecteurCoranAccessibiliteEtat
     final int? precedente = vue?.pagePrecedente;
     final int? suivante = vue?.pageSuivante;
     final bool agrandi = etat.mode == ModeRenduCoran.versetAgrandi;
-    final String taille = t.tc.coran.zoom.valeur(
-      pourcent: (etat.zoomLocal * 100).round(),
+    // DUREE-INSECABLE-4 : « 150 % » insecable ; la valeur suit le nom de la
+    // commande (« Agrandir, 150 % »), donc sans ancre de sens.
+    final String taille = LibellesGroupe.insecable(
+      t.tc.coran.zoom.valeur(pourcent: (etat.zoomLocal * 100).round()),
     );
 
     // La disposition de `_Commandes` (MushafPage), en icones seules : les
@@ -436,14 +438,16 @@ class _LecteurCoranAccessibiliteEtat
                 dimension: cible,
               )
             else
-              _BoutonIcone(
+              BoutonIcone(
                 key: const ValueKey<String>('coran-ma-page-precedente'),
+                forme: FormeBoutonIcone.disque,
                 icone: AppIcons.retour,
                 libelle: t.eleve.coran.pagePrecedente,
                 onPress: () => _allerA(precedente),
               ),
-            _BoutonIcone(
+            BoutonIcone(
               key: const ValueKey<String>('coran-ma-navigation'),
+              forme: FormeBoutonIcone.disque,
               icone: AppIcons.menu,
               libelle: t.tc.coran.navigation.ouvrir,
               onPress: () => unawaited(
@@ -451,15 +455,17 @@ class _LecteurCoranAccessibiliteEtat
               ),
             ),
             if (agrandi) ...<Widget>[
-              _BoutonIcone(
+              BoutonIcone(
                 key: const ValueKey<String>('coran-ma-reduire'),
+                forme: FormeBoutonIcone.disque,
                 icone: AppIcons.zoomMoins,
                 libelle: '${t.eleve.coran.reduire}, $taille',
                 infobulle: t.eleve.coran.reduire,
                 onPress: () => _zoomer(-0.2),
               ),
-              _BoutonIcone(
+              BoutonIcone(
                 key: const ValueKey<String>('coran-ma-agrandir'),
+                forme: FormeBoutonIcone.disque,
                 icone: AppIcons.zoomPlus,
                 libelle: '${t.eleve.coran.agrandir}, $taille',
                 infobulle: t.eleve.coran.agrandir,
@@ -472,8 +478,9 @@ class _LecteurCoranAccessibiliteEtat
                 dimension: cible,
               )
             else
-              _BoutonIcone(
+              BoutonIcone(
                 key: const ValueKey<String>('coran-ma-page-suivante'),
+                forme: FormeBoutonIcone.disque,
                 icone: AppIcons.flecheAction,
                 libelle: t.eleve.coran.pageSuivante,
                 onPress: () => _allerA(suivante),
@@ -645,12 +652,12 @@ class EnteteLecteurCoranAccessibilite extends StatelessWidget {
       child: Row(
         children: <Widget>[
           if (retour != null) ...<Widget>[
-            _BoutonIcone(
+            BoutonIcone(
               key: const ValueKey<String>('coran-ma-retour'),
               icone: AppIcons.retour,
               libelle: t.commun.retour,
               onPress: retour,
-              disque: false,
+              forme: FormeBoutonIcone.nue,
             ),
             Ecart.hXs,
           ],
@@ -673,69 +680,6 @@ class EnteteLecteurCoranAccessibilite extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Une commande en icone seule, sur le modele de `BoutonAppel` en dock
-/// etroit : disque de la cible tactile du mode (48 en standard, 72 en
-/// guide), nom lu par le lecteur d'ecran, infobulle. Les fleches portent
-/// `matchTextDirection` (miroitees en arabe).
-class _BoutonIcone extends StatelessWidget {
-  const _BoutonIcone({
-    required this.icone,
-    required this.libelle,
-    required this.onPress,
-    this.infobulle,
-    this.disque = true,
-    super.key,
-  });
-
-  final AppIcon icone;
-
-  /// Le nom lu par le lecteur d'ecran.
-  final String libelle;
-
-  /// Le texte de l'infobulle ; nul : [libelle].
-  final String? infobulle;
-
-  /// Nul : la commande est inerte. Jamais pour une fleche a la borne : elle
-  /// n'est alors pas rendue (NAV-FLECHES-1).
-  final VoidCallback? onPress;
-
-  /// Faux : l'icone seule, sans disque (retour de l'en-tete).
-  final bool disque;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final double diametre = AppMetriques.of(context).cibleTactile;
-    final bool actif = onPress != null;
-    final IconThemeData encre = (actif ? palette.inkStrong : palette.inkMuted)
-        .asIconTheme(size: AppSpacing.xl);
-    return Tooltip(
-      message: infobulle ?? libelle,
-      excludeFromSemantics: true,
-      child: Pressable(
-        onPress: onPress,
-        actif: actif,
-        libelleSemantique: libelle,
-        arrondiFocus: AppRadius.arrondiFull,
-        child: SizedBox.square(
-          dimension: diametre,
-          child: DecoratedBox(
-            decoration: disque
-                ? palette.surfaceOverlay.decoration(
-                    borderRadius: AppRadius.arrondiFull,
-                    side: palette.borderHairline.asBorderSide(),
-                  )
-                : const BoxDecoration(),
-            child: Center(
-              child: IconTheme(data: encre, child: Icon(icone.repos)),
-            ),
-          ),
-        ),
       ),
     );
   }

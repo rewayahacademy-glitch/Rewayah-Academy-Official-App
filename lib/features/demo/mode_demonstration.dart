@@ -16,7 +16,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
+import '../../core/admin/port_bibliotheque_admin.dart';
 import '../../core/admin/port_classes_admin.dart';
+import '../../core/admin/port_fusion_classes.dart';
+import '../../core/admin/port_pilotage.dart';
 import '../../core/admin/service_admin.dart';
 import '../../core/admin/service_groupes.dart';
 import '../../core/alertes/port_alertes.dart';
@@ -34,17 +37,22 @@ import '../../core/capacites/port_politiques_commerciales.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/config/env.dart';
+import '../../core/controle/port_tirage_controle.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/dossier/service_validation.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/offres/offre_horaire.dart';
+import '../../core/offres/page_regroupements.dart'
+    show portRegroupementsPagesProvider;
 import '../../core/offres/port_regroupements_admin.dart';
 import '../../core/offres/service_offres.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/profil/service_acceptations.dart';
+import '../../core/recherche/moteurs_demo_recherche.dart';
+import '../../core/recherche/port_recherche.dart';
 import '../../core/recrutement/port_invitations_enseignant.dart';
 import '../../core/recrutement/port_statuts_signature.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
@@ -64,18 +72,22 @@ import '../../core/theme/accent_profil.dart';
 import '../admin_tableau/activite_recente.dart';
 import 'admin_x_demo.dart';
 import 'alertes_demo.dart';
+import 'bibliotheque_admin_demo.dart';
 import 'cartes_classe_demo.dart';
 import 'catalogue_demo.dart';
 import 'classe_form_demo.dart';
 import 'classes_admin_demo.dart';
 import 'dossiers_demo.dart';
 import 'finance_demo.dart';
+import 'fusion_demo.dart';
 import 'observation_demo.dart';
+import 'pilotage_demo.dart';
 import 'presence_demo.dart';
 import 'recrutement_demo.dart';
 import 'regroupements_demo.dart';
 import 'services_admin_demo.dart';
 import 'suivi_demandes_demo.dart';
+import 'tirage_demo.dart';
 
 /// Parametre d'adresse qui demande la demonstration tuteur.
 const String parametreDemo = 'demo';
@@ -270,6 +282,10 @@ List<Override> surchargesDemoTuteur({
     // Presence (Accueil, verification prealable) et pieces signees (Compte).
     servicePresenceProvider.overrideWithValue(const PresenceDemo()),
     acceptationsProvider.overrideWith((Ref ref) async => const <Acceptation>[]),
+    // RECH-1 : la recherche de demonstration (milliers de classes et de
+    // supports fictifs), en fin de liste : des tests indexent les premieres
+    // surcharges. En production, aucun moteur n'est raccorde.
+    moteursRechercheProvider.overrideWithValue(moteursDemoRecherche()),
   ];
 }
 
@@ -307,6 +323,8 @@ List<Override> surchargesDemoAdmin({
   EtatRevueDemo? etat,
   bool avecAlertes = false,
   Duration? arriveeAlerte,
+  PortBibliothequeAdmin? bibliotheque,
+  bool bibliothequeAbsente = false,
 }) {
   if (!environnementAutoriseDemo(environnement ?? Env.environnement)) {
     throw StateError('Demonstration interdite en production.');
@@ -315,6 +333,32 @@ List<Override> surchargesDemoAdmin({
   // CLASSE-FORM-1 : une classe creee en demonstration se voit dans la liste
   // et compte dans la charge de son enseignant.
   final ClassesCreeesDemo creees = ClassesCreeesDemo();
+  final RegroupementsDemo regroupementsPortDemo = RegroupementsDemo(
+    depart: <RegroupementDemandes>[
+      ...regroupementsDemo(),
+      ...regroupementsVolumeDemo(),
+    ],
+  );
+  // R9, R10 : fusions et transferts, calcules des classes avant mouvement.
+  // Les deux se referencent : la fusion lit les classes, les classes lisent
+  // ce que la fusion a change.
+  late final FusionDemo fusionDemo;
+  // La liste des classes suit les enseignants confirmes pendant la visite et
+  // les fusions et transferts ; le tableau de pilotage se recalcule depuis
+  // les deux.
+  final ClassesAdminDemo classesAdminDemo = ClassesAdminDemo(
+    creees: creees,
+    classes: <ClasseListee>[
+      ...familleDemo(),
+      ...<GroupeAdmin>[...groupesDemo()].map(ClasseListee.depuisGroupe),
+      ...volumeDemo(),
+    ],
+    enseignantAffecte: (String classeId) =>
+        regroupementsPortDemo.enseignantDe[classeId],
+    // ignore: unnecessary_lambdas, la fusion n'est affectee qu'apres.
+    ajuster: (ClasseListee c) => fusionDemo.ajuster(c),
+  );
+  fusionDemo = FusionDemo(classes: classesAdminDemo.toutesBrutes);
   return <Override>[
     sourceSessionProvider.overrideWithValue(const SourceSessionDemoAdmin()),
     portRevueDossiersProvider.overrideWithValue(RevueDossiersDemo(e)),
@@ -341,14 +385,15 @@ List<Override> surchargesDemoAdmin({
     groupesProvider.overrideWith((Ref ref) async => creees.toutes()),
     // R16, R17 : la liste paginee des classes, a grande echelle (30 classes
     // paralleles de meme cle, un grand volume simule, les classes creees).
-    portClassesAdminProvider.overrideWithValue(
-      ClassesAdminDemo(
-        creees: creees,
-        classes: <ClasseListee>[
-          ...familleDemo(),
-          ...<GroupeAdmin>[...groupesDemo()].map(ClasseListee.depuisGroupe),
-          ...volumeDemo(),
-        ],
+    portClassesAdminProvider.overrideWithValue(classesAdminDemo),
+    portFusionClassesProvider.overrideWithValue(fusionDemo),
+    // ECHELLE-CTRL-DIRECT-1 : les regles et l'historique audite des tirages.
+    portTirageControleProvider.overrideWithValue(TirageDemo()),
+    // ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire.
+    portPilotageProvider.overrideWithValue(
+      PilotageDemo(
+        classes: classesAdminDemo.toutes,
+        regroupements: regroupementsPortDemo.regroupements,
       ),
     ),
     portEnseignantsClasseProvider.overrideWithValue(
@@ -356,7 +401,9 @@ List<Override> surchargesDemoAdmin({
     ),
     portCreationClasseProvider.overrideWithValue(CreationClasseDemo(creees)),
     // OFFRES-ADM-1 : les demandes semblables reunies, en memoire.
-    portRegroupementsAdminProvider.overrideWithValue(RegroupementsDemo()),
+    // ECHELLE-ADM-LISTES-1 : 10 000 demandes simulees, paginees par le port.
+    portRegroupementsAdminProvider.overrideWithValue(regroupementsPortDemo),
+    portRegroupementsPagesProvider.overrideWithValue(regroupementsPortDemo),
     // RECRUT-ECRANS : les invitations d'enseignants (admin et verification du
     // code par le candidat) et les statuts de signature des dossiers.
     ...surchargesInvitationsDemo(),
@@ -398,6 +445,17 @@ List<Override> surchargesDemoAdmin({
     ),
     // Tous les autres services admin adosses a Supabase : « indisponible ».
     ...surchargesServicesAdminIndisponibles(),
+    // CAP29-0 : la bibliotheque d'administration, en demonstration.
+    // [bibliotheque] pose un autre double (tests) ; [bibliothequeAbsente]
+    // laisse le port nul, comme en production.
+    if (!bibliothequeAbsente)
+      portBibliothequeAdminProvider.overrideWithValue(
+        bibliotheque ?? BibliothequeAdminDemo(),
+      ),
+    // RECH-1 : la recherche de demonstration (milliers de classes et de
+    // supports fictifs), en fin de liste : des tests indexent les premieres
+    // surcharges. En production, aucun moteur n'est raccorde.
+    moteursRechercheProvider.overrideWithValue(moteursDemoRecherche()),
   ];
 }
 

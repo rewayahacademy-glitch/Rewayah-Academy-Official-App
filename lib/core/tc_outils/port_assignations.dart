@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../tc_bibliotheque/content_range.dart';
+import 'fonction_indisponible.dart';
 import 'intention_pedagogique.dart';
 import 'learning_assignment.dart';
 
@@ -171,11 +172,55 @@ class AssignationsMemoire implements PortAssignations {
   }
 }
 
+/// Le depot du travail a preparer quand aucun serveur n'est branche.
+///
+/// SALLE-ROBUSTE : aucun travail n'est connu (listes vides), et creer ou
+/// changer un travail leve [FonctionIndisponible]. Il ne simule pas une
+/// creation : un travail « pose » ici ne serait vu de personne.
+class AssignationsIndisponibles implements PortAssignations, PortIndisponible {
+  /// Cree le depot indisponible.
+  const AssignationsIndisponibles();
+
+  static const FonctionIndisponible _echec = FonctionIndisponible(
+    'assignations',
+  );
+
+  @override
+  Future<List<LearningAssignment>> pourGroupe(
+    String groupId, {
+    String? studentId,
+  }) async => const <LearningAssignment>[];
+
+  @override
+  Future<List<LearningAssignment>> aVenir({
+    required String groupId,
+    String? studentId,
+    int limite = 3,
+  }) async => const <LearningAssignment>[];
+
+  @override
+  Future<LearningAssignment> creerDepuisSelection({
+    required String groupId,
+    String? studentId,
+    required String resourceId,
+    String? resourceVersionId,
+    ContentRange? contentRange,
+    required IntentionPedagogique purpose,
+    String? instructions,
+    DateTime? dueAtUtc,
+  }) => Future<LearningAssignment>.error(_echec);
+
+  @override
+  Future<void> changerStatut(String assignmentId, StatutAssignation statut) =>
+      Future<void>.error(_echec);
+}
+
 /// Le depot du travail a preparer employe par l'application.
+///
+/// Sans serveur, il rend [AssignationsIndisponibles] : l'ecran se vide au lieu
+/// de lever. Agent Z le surcharge a l'integration (`AssignationsMemoire` pour
+/// les tests et la demonstration).
 final Provider<PortAssignations> portAssignationsProvider =
     Provider<PortAssignations>(
-      (Ref ref) => throw UnimplementedError(
-        'PortAssignations : aucune implementation serveur. '
-        'Surcharger ce provider (AssignationsMemoire en attendant la table).',
-      ),
+      (Ref ref) => const AssignationsIndisponibles(),
     );

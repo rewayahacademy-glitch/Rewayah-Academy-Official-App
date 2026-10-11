@@ -1735,8 +1735,8 @@ void main() {
           expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
         }
         // Mes groupes : Rejoindre sur chaque carte ouverte, retire sinon.
-        // (La route ne branche pas encore l'entree en salle, `BilletSalle` :
-        // le bouton y est present et inerte quel que soit l'acces.)
+        // (BOUTONS-GRISES-1 : la route branche l'entree en salle, comme
+        // l'Espace Groupe ; le bouton n'est jamais inerte.)
         routeur.go(Routes.tcGroupes);
         await stabiliser(tester);
         final Finder rejoindreGroupe = find.widgetWithText(
@@ -1825,6 +1825,27 @@ void main() {
     test('14. FRONTEND ONLY : aucun fichier sous supabase/ modifie depuis la '
         'base de la voie (aebd21a5, a defaut le depart de la branche commune '
         'ou de ui/finance-v1), aucun nouveau, aucun en cours', () {
+      // Un clone a historique peu profond ne contient ni la base de la voie
+      // ni les points de jonction : la comparaison n'y prouve rien (elle
+      // retombe sur un point plus recent et signale le backend des autres).
+      // On saute alors, avec la raison, au lieu d'echouer a tort.
+      final ProcessResult superficiel = Process.runSync('git', <String>[
+        'rev-parse',
+        '--is-shallow-repository',
+      ]);
+      final ProcessResult baseConnue = Process.runSync('git', <String>[
+        'rev-parse',
+        '--verify',
+        '$_baseFinance^{commit}',
+      ]);
+      if ((superficiel.stdout as String).trim() == 'true' &&
+          baseConnue.exitCode != 0) {
+        markTestSkipped(
+          'Clone a historique peu profond sans $_baseFinance : comparaison '
+          'du backend impossible ici (git fetch --unshallow pour la jouer).',
+        );
+        return;
+      }
       final ({String? reference, List<String> essais}) base =
           _referenceBackend();
       final String? reference = base.reference;

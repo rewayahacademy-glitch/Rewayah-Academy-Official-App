@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/personnes_proposables.dart';
 import '../../core/admin/service_comptes.dart';
@@ -527,15 +528,26 @@ class _FeuilleResultatEtat extends State<_FeuilleResultat> {
   bool _envoi = false;
   String? _erreur;
 
+  /// La premiere valeur du resultat : le focus y revient quand il manque.
+  final FocusNode _focusResultat = FocusNode(debugLabel: 'resultat');
+
   @override
   void dispose() {
     _notes.dispose();
+    _focusResultat.dispose();
     super.dispose();
   }
 
   Future<void> _envoyer(WidgetRef ref) async {
     final ResultatEvaluation? resultat = _resultat;
-    if (resultat == null) return;
+    if (resultat == null) {
+      // Jamais grise (BOUTONS-GRISES-1) : l'appui dit ce qui manque,
+      // l'annonce et rend le focus au choix du resultat.
+      final String message = t.admin.evaluations.manqueResultat;
+      setState(() => _erreur = message);
+      signalerManque(context, message, champ: _focusResultat);
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -575,7 +587,13 @@ class _FeuilleResultatEtat extends State<_FeuilleResultat> {
                 FilterPill(
                   libelle: _libelleResultat(valeur),
                   retenue: _resultat == valeur,
-                  onPress: () => setState(() => _resultat = valeur),
+                  focusNode: valeur == ResultatEvaluation.values.first
+                      ? _focusResultat
+                      : null,
+                  onPress: () => setState(() {
+                    _resultat = valeur;
+                    _erreur = null;
+                  }),
                 ),
             ],
           ),
@@ -587,16 +605,19 @@ class _FeuilleResultatEtat extends State<_FeuilleResultat> {
           ),
           if (_erreur != null) ...<Widget>[
             Ecart.vMd,
-            Text(
-              _erreur!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                _erreur!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
             ),
           ],
           Ecart.vLg,
           ActionPrincipale(
             libelle: t.admin.evaluations.resultatEnvoyer,
             enCours: _envoi,
-            onPress: _resultat == null ? null : () => _envoyer(ref),
+            onPress: () => _envoyer(ref),
           ),
         ],
       ),

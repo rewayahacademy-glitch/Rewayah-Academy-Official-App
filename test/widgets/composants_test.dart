@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_color_pair.dart';
 import 'package:rewayah_academy/core/theme/app_elevation.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
+import 'package:rewayah_academy/core/theme/app_metriques.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_radius.dart';
@@ -24,6 +25,7 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/bento_tile.dart';
+import 'package:rewayah_academy/core/widgets/bouton_outil.dart';
 import 'package:rewayah_academy/core/widgets/child_card.dart';
 import 'package:rewayah_academy/core/widgets/confirm_destructive.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
@@ -96,6 +98,51 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
       await tester.pump();
       expect(presses, 1);
+    });
+
+    // TB-7a (verification) : un BoutonOutil en icone seule (contenu
+    // naturel plus petit que la cible) se retrecissait et se calait en haut
+    // et au debut de son anneau des qu'il prenait le focus clavier.
+    testWidgets('le focus ne change ni la taille ni la place du contenu', (
+      WidgetTester tester,
+    ) async {
+      Widget bouton({required bool focus}) => hoteComposant(
+        Center(
+          child: PressionForcee(
+            etat: EtatPression(focus: focus),
+            child: const BoutonOutil(
+              icone: AppIcons.annuler,
+              libelle: 'Annuler',
+              onPress: _rien,
+            ),
+          ),
+        ),
+      );
+      final Finder contenu = find.descendant(
+        of: find.byType(Pressable),
+        matching: find.byType(ScaleTransition),
+      );
+      final Finder anneau = find.descendant(
+        of: find.byType(Pressable),
+        matching: find.byType(PositionedDirectional),
+      );
+      await tester.pumpWidget(bouton(focus: false));
+      await tester.pump();
+      expect(anneau, findsNothing);
+      final Rect avant = tester.getRect(contenu);
+      final double cible = AppMetriques.of(
+        tester.element(find.byType(Pressable)),
+      ).cibleTactile;
+      expect(avant.height, greaterThanOrEqualTo(cible));
+      expect(avant.width, greaterThanOrEqualTo(cible));
+      await tester.pumpWidget(bouton(focus: true));
+      await tester.pump();
+      // L'anneau est bien la : le cas mesure est celui du focus visible.
+      expect(anneau, findsOneWidget);
+      expect(tester.getRect(contenu), avant);
+      // L'anneau entoure le contenu a egale distance des quatre bords.
+      final Rect r = tester.getRect(anneau);
+      expect(r.center, avant.center);
     });
 
     testWidgets('une zone inerte ne prend pas le focus', (

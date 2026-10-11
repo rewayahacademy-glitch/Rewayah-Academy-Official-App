@@ -15,7 +15,6 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
-import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/presence/vue_presence.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
@@ -73,7 +72,7 @@ void main() {
     });
 
     test('chaque appel est enveloppe par insecable ou valeurSeule', () {
-      final List<AppelLibelle> appels = appelsDe(cles, sourcesDart());
+      final List<AppelLibelle> appels = appelsDe(cles, sourcesDartHorsCoran());
       expect(appels.length, greaterThan(50));
       final List<String> nus = <String>[
         for (final AppelLibelle a in appels)
@@ -81,6 +80,35 @@ void main() {
             '${a.fichier}:${a.ligne} ${a.cle} <${a.enveloppe}>',
       ];
       expect(nus, isEmpty, reason: 'Durees secables :\n${nus.join('\n')}');
+    });
+
+    test('DUREE-FOND-1 : une unite liee en francais l\'est aussi en arabe', () {
+      // L'unite arabe (« كيلوبايت ») echappe au motif des unites : la garde
+      // compare donc les deux langues, parametre par parametre.
+      final List<String> fautes = unitesSecablesEnArabe();
+      expect(
+        fautes,
+        isEmpty,
+        reason: 'Unites secables en arabe :\n${fautes.join('\n')}',
+      );
+    });
+
+    test('DUREE-FOND-1 : la parite de l\'arabe releve une espace ordinaire', () {
+      final Directory dossier = Directory.systemTemp.createTempSync('parite');
+      addTearDown(() => dossier.deleteSync(recursive: true));
+      final File fr = File('${dossier.path}/fr.json')
+        ..writeAsStringSync('{"p":{"ko":"{taille}\u00A0Ko","n":"{n} min"}}');
+      final File ar = File('${dossier.path}/ar.json')
+        ..writeAsStringSync(
+          '{"p":{"ko":"{taille} كيلوبايت","n":"{n} دقيقة"}}',
+        );
+      expect(unitesSecablesEnArabe(francais: fr.path, arabe: ar.path), <String>[
+        'p.ko {taille} : {taille} كيلوبايت',
+      ]);
+      ar.writeAsStringSync(
+        '{"p":{"ko":"{taille}\u00A0كيلوبايت","n":"{n} دقيقة"}}',
+      );
+      expect(unitesSecablesEnArabe(francais: fr.path, arabe: ar.path), isEmpty);
     });
 
     test('la garde suit les alias (final h = t.controleur.historique)', () {
@@ -137,12 +165,10 @@ String b() {
   });
 
   group('Durees et unites restantes : valeurs rendues', () {
-    test('rappel : « A nouveau dans 30 s » insecable', () {
-      expect(
-        LibellesGroupe.insecable(t.tc.classe.rappel.cooldown(secondes: 30)),
-        endsWith('30${_nbsp}s'),
-      );
-    });
+    // DUREE-INSECABLE-4 : le rappel se verifie sur l'ecran reel (fiche de
+    // seance et Classe Live), plus en appelant `insecable` soi-meme :
+    // test/accessibilite/duree_insecable_4_test.dart et
+    // test/teaching_core/e/classe_live_page_test.dart.
 
     test('regles de l academie : « 45 min » insecable et ancree', () {
       expect(uniteMinutesRegle(45), '${_lrm}45${_nbsp}min');

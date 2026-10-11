@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../i18n/isolat_bidi.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
@@ -180,8 +181,12 @@ class _Bandeau extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Expanded(
+              // DUREE-INSECABLE-4 : le message du rappel discret (« Deja
+              // appele. A nouveau dans 30 s ») garde son point a sa place
+              // dans une interface de droite a gauche : isolat partage
+              // FSI ... PDI ([isolerDansInterface]).
               child: Text(
-                message,
+                isolerDansInterface(message, Directionality.of(context)),
                 style: palette.washAccent.applyTo(
                   Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
                 ),

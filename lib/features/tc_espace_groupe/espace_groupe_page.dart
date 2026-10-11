@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/i18n/isolat_bidi.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
@@ -24,6 +25,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../acces_finance/acces_finance.dart';
+import '../recherche/entree_recherche.dart';
 import '../tc_catalogue/routes_tc_b.dart';
 import '../tc_mes_groupes/carte_groupe.dart';
 import '../tc_mes_groupes/chemins_tc_a.dart';
@@ -222,13 +224,15 @@ class LectureGroupe {
   /// Relit le reseau et l'horloge.
   final VoidCallback onReessayer;
 
-  /// La carte de seance CL-4, cablee sur cette lecture. « Rejoindre » est
-  /// desactive hors ligne ou sans [onRejoindre]. [tutoiement] : l'eleve
+  /// La carte de seance CL-4, cablee sur cette lecture. Hors ligne,
+  /// l'emplacement devient une ligne d'etat avec « Reessayer » ; sans
+  /// [onRejoindre], le bouton n'est pas rendu. [tutoiement] : l'eleve
   /// mineur est tutoye (MA4, MA-3).
   ///
   /// [accesFerme] : les seances de l'eleve connecte sont fermees (FI-9a),
   /// Rejoindre est retire ; [accesEnLecture] : son acces se lit encore,
-  /// Rejoindre reste present et inerte (revue FI-VAGUE-R R4-01).
+  /// Rejoindre reste present (revue FI-VAGUE-R R4-01), jamais grise :
+  /// l'appui dit d'attendre un instant (BOUTONS-GRISES-1).
   Widget carte({
     void Function(GroupSummaryVM groupe)? onRejoindre,
     bool tutoiement = false,
@@ -244,10 +248,12 @@ class LectureGroupe {
       onReessayer: onReessayer,
       tutoiement: tutoiement,
       entreeRetiree: accesFerme,
-      onRejoindre:
-          horsLigne || accesFerme || accesEnLecture || onRejoindre == null
-          ? null
-          : () => onRejoindre(identite),
+      attenteEntree: accesEnLecture
+          ? (tutoiement
+                ? t.eleve.accueil.entreeSePrepare
+                : t.tc.groupe.carte.entreeSePrepare)
+          : null,
+      onRejoindre: onRejoindre == null ? null : () => onRejoindre(identite),
     );
   }
 
@@ -431,8 +437,12 @@ class _Colonnes extends StatelessWidget {
 
     // R16 : contextuelle, jamais permanente. Rien a reprendre tant que la
     // seance n'a pas commence, et plus rien une fois qu'elle est close.
+    // Sans action de reprise branchee, le bouton n'est pas rendu (jamais
+    // grise, BOUTONS-GRISES-1).
     final bool reprisePossible =
-        !espace.estCoteFamille && (espace.horloge?.enDirect ?? false);
+        !espace.estCoteFamille &&
+        (espace.horloge?.enDirect ?? false) &&
+        reprendre != null;
     final Widget? reprise = reprisePossible
         ? Align(
             alignment: AlignmentDirectional.centerStart,
@@ -440,7 +450,7 @@ class _Colonnes extends StatelessWidget {
               libelle: LibellesGroupe.reprendreLeCours,
               niveau: NiveauAction.secondaire,
               pleineLargeur: false,
-              onPress: reprendre == null ? null : () => reprendre(identite),
+              onPress: () => reprendre(identite),
             ),
           )
         : null;
@@ -484,7 +494,13 @@ class _Colonnes extends StatelessWidget {
     return ColonnesParRangees(
       rangees: <(List<Widget>, List<Widget>)>[
         (identiteEtSeance, <Widget>[avant, Ecart.vSection, cartes]),
-        (<Widget>[bibliotheque], secondaire),
+        (
+          <Widget>[
+            bibliotheque,
+            EntreeRechercheSupports(espace: espacePourRoleGroupe(espace.role)),
+          ],
+          secondaire,
+        ),
       ],
     );
   }

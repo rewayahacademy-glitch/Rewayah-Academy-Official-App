@@ -217,15 +217,33 @@ void main() {
       final List<String> titres = <String>[
         for (int n = 1; n <= 30; n++) 'Garçons, lundi 18 h · n°\u00a0$n',
       ];
-      for (int n = 1; n <= 30; n++) {
-        expect(
-          find.descendant(
-            of: _cle('regroupement-r$n'),
-            matching: find.text(titres[n - 1]),
-          ),
-          findsOneWidget,
-        );
+      // Les numeros presents a l'ecran, avec leur titre distinct.
+      Set<int> presents() {
+        final Set<int> vus = <int>{};
+        for (int n = 1; n <= 30; n++) {
+          if (_cle('regroupement-r$n').evaluate().isEmpty) continue;
+          expect(
+            find.descendant(
+              of: _cle('regroupement-r$n'),
+              matching: find.text(titres[n - 1]),
+            ),
+            findsOneWidget,
+          );
+          vus.add(n);
+        }
+        return vus;
       }
+
+      // R17 : une page de 25, puis les cinq dernieres.
+      final Set<int> premiere = presents();
+      expect(premiere, hasLength(25));
+      final Finder suivante = _cle('nav-suivant');
+      await tester.ensureVisible(suivante.first);
+      await tester.tap(suivante.first);
+      await _laisser(tester);
+      final Set<int> seconde = presents();
+      expect(seconde, hasLength(5));
+      expect(premiere.union(seconde), hasLength(30));
       expect(titres.toSet(), hasLength(30));
       await tester.pumpWidget(const SizedBox());
     });

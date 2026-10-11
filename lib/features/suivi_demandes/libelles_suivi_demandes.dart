@@ -9,6 +9,7 @@ library;
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/port_suivi_demandes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart' show LibellesGroupe;
 
 /// « 18:05 » : heure murale, sur deux chiffres. Jamais convertie par
 /// l'appareil : elle est deja dans le fuseau du foyer.
@@ -134,8 +135,11 @@ bool estRetiree(MotifCloture motif) => switch (motif) {
 /// « Demande close » (motif inconnu : ni retrait ni refus suppose).
 String etatCourtDemande(SuiviDemande d) => switch (d.etape) {
   EtapeDemande.envoyee => t.suiviDemandes.etapes.envoyee,
+  EtapeDemande.listeAttente => t.suiviDemandes.etapes.listeAttente,
   EtapeDemande.classeValidee => t.suiviDemandes.etapes.classeValidee,
   EtapeDemande.enseignantAffecte => t.suiviDemandes.etapes.enseignantAffecte,
+  EtapeDemande.eleveIntegre => t.suiviDemandes.etapes.eleveIntegre,
+  EtapeDemande.coursCommences => t.suiviDemandes.etapes.coursCommences,
   EtapeDemande.close =>
     d.motif == MotifCloture.inconnu
         ? t.suiviDemandes.close.close
@@ -158,8 +162,11 @@ String motifDemande(MotifCloture motif) => switch (motif) {
 /// close (son motif la remplace).
 String? situationDemande(EtapeDemande etape) => switch (etape) {
   EtapeDemande.envoyee => t.suiviDemandes.situation.envoyee,
+  EtapeDemande.listeAttente => t.suiviDemandes.situation.listeAttente,
   EtapeDemande.classeValidee => t.suiviDemandes.situation.classeValidee,
   EtapeDemande.enseignantAffecte => t.suiviDemandes.situation.enseignantAffecte,
+  EtapeDemande.eleveIntegre => t.suiviDemandes.situation.eleveIntegre,
+  EtapeDemande.coursCommences => t.suiviDemandes.situation.coursCommences,
   EtapeDemande.close => null,
 };
 
@@ -167,6 +174,24 @@ String? situationDemande(EtapeDemande etape) => switch (etape) {
 String titreNotificationDemande(SuiviDemande d) => switch (d.etape) {
   EtapeDemande.envoyee => t.suiviDemandes.notification.envoyee(
     dePrenom: deDevant(d.prenom, cle: 'suiviDemandes.notification.envoyee'),
+  ),
+  EtapeDemande.listeAttente => t.suiviDemandes.notification.listeAttente(
+    dePrenom: deDevant(
+      d.prenom,
+      cle: 'suiviDemandes.notification.listeAttente',
+    ),
+  ),
+  EtapeDemande.eleveIntegre => t.suiviDemandes.notification.eleveIntegre(
+    dePrenom: deDevant(
+      d.prenom,
+      cle: 'suiviDemandes.notification.eleveIntegre',
+    ),
+  ),
+  EtapeDemande.coursCommences => t.suiviDemandes.notification.coursCommences(
+    dePrenom: deDevant(
+      d.prenom,
+      cle: 'suiviDemandes.notification.coursCommences',
+    ),
   ),
   EtapeDemande.classeValidee => t.suiviDemandes.notification.classeValidee(
     dePrenom: deDevant(
@@ -190,3 +215,71 @@ String titreNotificationDemande(SuiviDemande d) => switch (d.etape) {
 /// Au milieu d'une phrase, le motif commence en minuscule.
 String _minusculeInitiale(String phrase) =>
     phrase.isEmpty ? phrase : phrase[0].toLowerCase() + phrase.substring(1);
+
+/// Le titre de la notification d'un changement de classe (R9, R10) : qui, puis
+/// ce qui a change. Il ne dit ni le nombre de classes paralleles, ni d'autres
+/// eleves, ni que des enfants sont ensemble ou separes.
+String titreNotificationChangement(SuiviDemande d) {
+  final ChangementClasse c = d.changement!;
+  return switch (c.type) {
+    TypeChangementClasse.fusion =>
+      t.suiviDemandes.notification.changementFusion(
+        dePrenom: deDevant(
+          d.prenom,
+          cle: 'suiviDemandes.notification.changementFusion',
+        ),
+      ),
+    TypeChangementClasse.transfert =>
+      t.suiviDemandes.notification.changementTransfert(
+        dePrenom: deDevant(
+          d.prenom,
+          cle: 'suiviDemandes.notification.changementTransfert',
+        ),
+      ),
+  };
+}
+
+/// « Lundi 19 octobre » : le jour d'une heure murale du foyer, lu tel quel.
+String jourDateDemande(DateTime quand) => t.commun.dates.jourDate(
+  jour: t.commun.dates.jours[quand.weekday - 1],
+  numero: quand.day,
+  mois: t.commun.dates.mois[quand.month - 1],
+);
+
+/// « 2 jours plus tard », « 3 heures plus tard », « 12 minutes plus tard »,
+/// « aussitot » : le temps ecoule entre deux etapes, dit dans l'unite la plus
+/// grande qui compte. `null` quand le temps est negatif (deux dates dans le
+/// desordre : aucun intervalle n'est invente).
+String? intervalleDemande(Duration ecoule) {
+  if (ecoule.isNegative) return null;
+  if (ecoule.inMinutes < 1) return t.suiviDemandes.jalon.aussitot;
+  if (ecoule.inHours < 1) {
+    return LibellesGroupe.insecable(
+      t.suiviDemandes.jalon.minutes(n: ecoule.inMinutes),
+    );
+  }
+  if (ecoule.inDays < 1) {
+    return LibellesGroupe.insecable(
+      t.suiviDemandes.jalon.heures(n: ecoule.inHours),
+    );
+  }
+  return LibellesGroupe.insecable(
+    t.suiviDemandes.jalon.jours(n: ecoule.inDays),
+  );
+}
+
+/// La date d'une etape franchie, et le temps ecoule depuis [precedent] quand
+/// les deux dates sont connues (R20) : « Jeudi 2 octobre a 10:00, 3 jours
+/// plus tard ». `null` quand le serveur n'a rendu aucune date pour l'etape :
+/// l'ecran n'en invente pas.
+String? libelleJalon(DateTime? quand, {DateTime? precedent}) {
+  if (quand == null || quand.isUtc) return null;
+  final String date = jourDateDemande(quand);
+  final String heure = hhmmDemande(quand.hour, quand.minute);
+  final String? ecoule = precedent == null || precedent.isUtc
+      ? null
+      : intervalleDemande(quand.difference(precedent));
+  return ecoule == null
+      ? t.suiviDemandes.jalon.date(date: date, heure: heure)
+      : t.suiviDemandes.jalon.apres(date: date, heure: heure, duree: ecoule);
+}

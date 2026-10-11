@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/admin/service_groupes.dart'
+    show TypePublicGroupe;
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/planning/service_planning.dart'
+    show Creneau;
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
@@ -29,6 +33,17 @@ FauxServiceEnseignant _service({
           membreDeTest(studentId: 'e2', identifiant: 'RA-e2', prenom: 'Bilal'),
         ],
   }
+  ..groupesRendus = <GroupeEnseignant>[
+    GroupeEnseignant(
+      id: _groupe,
+      libelle: 'Perles du Coran',
+      type: TypePublicGroupe.enfant,
+      seuilMax: 5,
+      creneau: const Creneau(jour: 3, heure: 17, fuseau: 'Europe/Paris'),
+      nbMembres: 2,
+      creeLe: DateTime(2026, 10, 1),
+    ),
+  ]
   ..erreurLecture = erreur
   ..delai = delai;
 
@@ -64,6 +79,21 @@ Future<void> _monter(
 }
 
 void main() {
+  group('Une Classe qui n est pas la sienne', () {
+    testWidgets('on le dit, au lieu de « rien ne demande votre attention »', (
+      WidgetTester tester,
+    ) async {
+      // La liste des Classes de l'enseignant est lue et ne contient pas g1.
+      final FauxServiceEnseignant service = _service()
+        ..groupesRendus = const <GroupeEnseignant>[];
+      await _monter(tester, service: service);
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.enseignant.ficheGroupe.introuvable), findsOneWidget);
+      expect(find.text(t.enseignant.revue.aucuneAnomalie), findsNothing);
+    });
+  });
+
   group('ENS-08 : le vide est l etat normal', () {
     testWidgets('rien ne demande votre attention, et aucun bouton ne le dit', (
       WidgetTester tester,

@@ -31,6 +31,7 @@ import 'package:supabase_flutter/supabase_flutter.dart'
     show FunctionsFetchException, FunctionsHttpException;
 
 import '../../router/support_routeur.dart';
+import '../../support/annonces.dart';
 import '../../support/harnais.dart';
 import 'faux_lecteur_qr.dart';
 
@@ -229,13 +230,38 @@ void main() {
     ActionPrincipale valider(WidgetTester tester) => tester
         .widget<ActionPrincipale>(_action(t.eleveConnexion.saisie.valider));
 
-    testWidgets('vide : action inactive, aide sous le champ', (
+    // BOUTONS-GRISES-1 : la regle du design system prime sur l'ancien
+    // « vide : action inactive ». Le bouton n'est jamais grise ; presse trop
+    // tot, il dit ce qui manque sous le champ, l'annonce et rend le focus.
+    testWidgets('vide : action active, aide sous le champ', (
       WidgetTester tester,
     ) async {
       await _monter(tester, depart: Routes.connexionEleveCode);
-      expect(valider(tester).onPress, isNull);
+      expect(valider(tester).onPress, isNotNull);
       expect(find.text(t.eleveConnexion.saisie.aide), findsOneWidget);
     });
+
+    testWidgets(
+      'code incomplet : l appui dit ce qui manque, l annonce et rend le focus',
+      (WidgetTester tester) async {
+        final List<String> annonces = ecouterAnnonces(tester);
+        final _Montage m = await _monter(
+          tester,
+          depart: Routes.connexionEleveCode,
+        );
+        await tester.enterText(find.byKey(SaisieCodePage.champKey), 'AB2');
+        await stabiliser(tester);
+        FocusManager.instance.primaryFocus?.unfocus();
+        await stabiliser(tester);
+
+        await _taper(tester, _action(t.eleveConnexion.saisie.valider));
+
+        expect(m.service.codesRecus, isEmpty);
+        expect(find.text(t.eleveConnexion.refus.format), findsOneWidget);
+        expect(annonces, contains(t.eleveConnexion.refus.format));
+        expect(champ(tester).focusNode!.hasFocus, isTrue);
+      },
+    );
 
     testWidgets('filtre l alphabet du serveur : ni I, ni O, ni 0, ni 1', (
       WidgetTester tester,
@@ -244,7 +270,7 @@ void main() {
       await tester.enterText(find.byKey(SaisieCodePage.champKey), 'a-b 2i3o01');
       await stabiliser(tester);
       expect(champ(tester).controller!.text, 'AB23');
-      expect(valider(tester).onPress, isNull);
+      expect(valider(tester).onPress, isNotNull);
 
       await tester.enterText(find.byKey(SaisieCodePage.champKey), 'AB23CDEFGH');
       await stabiliser(tester);
@@ -305,13 +331,14 @@ void main() {
       expect(m.lieu, Routes.connexionEleve);
     });
 
-    testWidgets('hors ligne : action inactive et phrase sous le champ', (
+    testWidgets('hors ligne : action non rendue et phrase sous le champ', (
       WidgetTester tester,
     ) async {
       await _monter(tester, depart: Routes.connexionEleveCode, horsLigne: true);
       await tester.enterText(find.byKey(SaisieCodePage.champKey), 'AB23CD');
       await stabiliser(tester);
-      expect(valider(tester).onPress, isNull);
+      // Un bouton qui ne peut pas aboutir n'est pas rendu (lib/CLAUDE.md).
+      expect(_action(t.eleveConnexion.saisie.valider), findsNothing);
       expect(find.text(t.eleveConnexion.saisie.horsLigne), findsOneWidget);
     });
 

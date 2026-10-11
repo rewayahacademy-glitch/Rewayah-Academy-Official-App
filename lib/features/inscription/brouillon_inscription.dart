@@ -48,8 +48,8 @@ class BrouillonInscription {
     this.prenom = '',
     this.nom = '',
     this.genre,
-    this.parentSuitDesCours,
     this.profilCree = false,
+    this.parentSuitDesCours,
   });
 
   /// L'usage retenu.
@@ -64,7 +64,9 @@ class BrouillonInscription {
   /// Le genre retenu.
   final Genre? genre;
 
-  /// Reponse demandee uniquement pour « Moi et ma famille ».
+  /// Reponse a « Suivez-vous aussi des cours ? » (« Moi et ma famille »,
+  /// PAQ-DIR-EA) ; `null` tant que la question n'est pas repondue. Elle ne
+  /// donne aucun droit : l'eleve autonome est une capacite servie (C-24).
   final bool? parentSuitDesCours;
 
   /// Vrai des que le serveur a cree le profil : une nouvelle tentative ne
@@ -94,15 +96,15 @@ class BrouillonInscription {
     String? prenom,
     String? nom,
     Genre? genre,
-    bool? parentSuitDesCours,
     bool? profilCree,
+    bool? parentSuitDesCours,
   }) => BrouillonInscription(
     usage: usage ?? this.usage,
     prenom: prenom ?? this.prenom,
     nom: nom ?? this.nom,
     genre: genre ?? this.genre,
-    parentSuitDesCours: parentSuitDesCours ?? this.parentSuitDesCours,
     profilCree: profilCree ?? this.profilCree,
+    parentSuitDesCours: parentSuitDesCours ?? this.parentSuitDesCours,
   );
 }
 
@@ -115,16 +117,16 @@ class BrouillonInscriptionControleur extends Notifier<BrouillonInscription> {
   void choisirUsage(UsageInscription usage) =>
       state = state.copier(usage: usage);
 
+  /// Retient si le parent suit aussi des cours.
+  void choisirParentSuitDesCours({required bool suit}) =>
+      state = state.copier(parentSuitDesCours: suit);
+
   /// Retient l'identite.
   void saisirIdentite({required String prenom, required String nom}) =>
       state = state.copier(prenom: prenom.trim(), nom: nom.trim());
 
   /// Retient le genre.
   void choisirGenre(Genre genre) => state = state.copier(genre: genre);
-
-  /// Retient si le titulaire de famille suit aussi les cours.
-  void choisirCoursTitulaire(bool suit) =>
-      state = state.copier(parentSuitDesCours: suit);
 
   /// Note que le profil existe cote serveur.
   void noterProfilCree() => state = state.copier(profilCree: true);

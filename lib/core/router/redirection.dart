@@ -246,6 +246,14 @@ String? deciderRedirection({
         return null;
       }
 
+      // RECH-1 : la recherche est une surface commune, ouverte a chaque role
+      // actif ; ce qu'elle rend se decide serveur, par domaine (spec RECH-03
+      // §7.1). Une session d'observation d'agent n'y ouvre rien : sa page
+      // dit « indisponible » (aucune recherche par heritage, SEC-R16).
+      if (cheminDemande == Routes.recherche) {
+        return null;
+      }
+
       // Le Teaching Core vit sous `/tc/`, hors du prefixe unique de chaque
       // role (plan d'integration Teaching Core, etape 7 section 8.2 point 4).
       // Sans cette autorisation explicite, les sept chemins seraient tous
@@ -263,6 +271,18 @@ String? deciderRedirection({
       final String prefixe = Routes.prefixePour(role);
       if (_dansLeSousArbre(cheminDemande, prefixe)) {
         return null;
+      }
+      // EA-ROLE-1 : l'adulte inscrit est un compte tuteur ; la capacite
+      // « eleve autonome » servie (C-24) lui ouvre son espace d'eleve
+      // (`/eleve/*`), `/eleve` le ramenant a l'accueil adulte. Le tuteur
+      // seul reste refuse, et `/tc/classe` l'est aussi aux deux.
+      if (role == AppRole.guardian && session.eleveAutonome) {
+        if (cheminDemande == Routes.eleve) {
+          return Routes.eleveAdulte;
+        }
+        if (_dansLeSousArbre(cheminDemande, Routes.eleve)) {
+          return null;
+        }
       }
       return role == AppRole.guardian ? Routes.accesRefuse : racine;
   }
@@ -363,9 +383,16 @@ bool _dansLeSousArbre(String chemin, String racine) =>
 /// eleve, `/tc/observation/...` au tuteur, a l'admin et au controleur. La
 /// table vient du plan d'integration Teaching Core, section 8.2.
 bool _teachingCoreAutorise(String chemin, AppRole role) {
-  if (_dansLeSousArbre(chemin, Routes.tcGroupes) ||
-      _dansLeSousArbre(chemin, Routes.tcBibliotheque)) {
+  if (_dansLeSousArbre(chemin, Routes.tcGroupes)) {
     return role == AppRole.student || role == AppRole.guardian;
+  }
+  // CAP29-F : la bibliotheque est la meme pour les trois roles de la classe ;
+  // l'enseignant y arrive depuis la salle (aucun onglet principal), et ce que
+  // chacun voit reste decide par le serveur, ressource par ressource.
+  if (_dansLeSousArbre(chemin, Routes.tcBibliotheque)) {
+    return role == AppRole.student ||
+        role == AppRole.guardian ||
+        role == AppRole.teacher;
   }
   if (_dansLeSousArbre(chemin, Routes.tcClasse)) {
     return role == AppRole.teacher || role == AppRole.student;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -720,11 +721,57 @@ void main() {
       _fenetreHaute(tester);
       await monter(tester);
 
-      expect(find.text(t.classe.entree.indisponible), findsOneWidget);
+      expect(find.text(t.classe.entree.indisponibleCourt), findsOneWidget);
+      expect(find.text(t.classe.entree.indisponibleInvitation), findsOneWidget);
       expect(causesAffirmees(), findsNothing);
       expect(find.textContaining(formulationCauseProbable), findsOneWidget);
       expectHorsLigneUneFois();
       expect(find.text(t.classe.entree.reessayer), findsOneWidget);
+    });
+
+    // FINITIONS-CORR2-1 (3) : la phrase entiere de cause probable posee dans
+    // le message en style titre faisait 14 lignes en gras a 320 px texte x2.
+    // Le message, rendu, tient en 4 lignes au plus ; la cause est dans
+    // l'invitation, en style courant.
+    group('320 texte x2 : message court (polices du depot)', () {
+      setUpAll(chargerPolicesDuDepot);
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('${sens.name} : le message en titre tient en 4 lignes', (
+          WidgetTester tester,
+        ) async {
+          tester.view.physicalSize = const Size(320, 2400);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+          await monter(tester, direction: sens, echelle: 2);
+
+          final Finder message = find.textContaining(
+            RegExp("n'a pas pu être chargée"),
+          );
+          expect(message, findsOneWidget);
+          final RenderParagraph rendu = tester.renderObject<RenderParagraph>(
+            find.descendant(of: message, matching: find.byType(RichText)),
+          );
+          final TextPainter mesure = TextPainter(
+            text: rendu.text,
+            textDirection: rendu.textDirection,
+            textScaler: rendu.textScaler,
+          )..layout(maxWidth: rendu.size.width);
+          final int lignes = mesure.computeLineMetrics().length;
+          mesure.dispose();
+          expect(
+            lignes,
+            lessThanOrEqualTo(4),
+            reason: 'message en $lignes lignes',
+          );
+          // La cause probable n'est pas dans le message en titre.
+          expect(find.textContaining(formulationCauseProbable), findsOneWidget);
+          expect(
+            formulationCauseProbable.hasMatch(rendu.text.toPlainText()),
+            isFalse,
+            reason: 'la cause probable est dans le message en titre',
+          );
+        });
+      }
     });
 
     group('320 texte x2 (polices du depot)', () {
@@ -737,7 +784,7 @@ void main() {
           tester.view.devicePixelRatio = 1;
           addTearDown(tester.view.reset);
           await monter(tester, direction: sens, echelle: 2);
-          expect(find.text(t.classe.entree.indisponible), findsOneWidget);
+          expect(find.text(t.classe.entree.indisponibleCourt), findsOneWidget);
           verifierAucunMotCoupe(tester, find.byType(MaterialApp));
         });
       }
@@ -814,7 +861,7 @@ void main() {
             echelle: cas.$4,
           );
           expect(tester.takeException(), isNull);
-          expect(find.text(t.classe.entree.indisponible), findsOneWidget);
+          expect(find.text(t.classe.entree.indisponibleCourt), findsOneWidget);
           expect(causesAffirmees(), findsNothing);
           if (cas.$6) {
             expectHorsLigneUneFois();

@@ -11,6 +11,7 @@ import '../../core/domain/enums.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../salle/vue_salle.dart';
+import 'presentation_observee.dart';
 import 'vue_seance.dart';
 
 /// Construit la `VueSeance` d'une salle `/salle`.
@@ -99,6 +100,41 @@ abstract final class DepuisSalle {
       // MA-TUTOIEMENT-1 : le registre suit l'age, jamais la presentation ;
       // un age inconnu (avant BR-1) vouvoie.
       tutoiement: age.tutoiement,
+    );
+  }
+
+  /// TB-11a (plan V2 §5, UX-21) : la vue de la presentation que suit un
+  /// observateur (tuteur, controleur), lue par la surface partagee
+  /// (`ZoneSupport`, `SurfacePageFixe`), ou `null` : le role ne la suit pas
+  /// ([VueSalle.suitLaPresentationEnLecture]), ou rien n'est presente.
+  ///
+  /// La vue porte le role de lecture de la classe (`RoleSeance.eleve` :
+  /// qui suit l'enseignant sans rien diriger) et ferme tout ce que la surface
+  /// pourrait ajouter : aucune consigne de tableau (`voitConsigneTableauLibre`
+  /// est celle de l'enseignant), aucune vignette (camera de l'enseignant
+  /// tenue pour eteinte : sa video est deja dans la scene de l'observateur),
+  /// aucun panneau, aucune visite ni mention (la mention de visite n'est
+  /// jamais montree au controleur, CTRL-SALLE-1). Aucune commande ne vit dans
+  /// cette surface : la page, l'affichage et les notes se lisent, rien ne se
+  /// touche.
+  static VueSeance? presentationObservee({
+    required VueSalle salle,
+    required PresentationObservee? presentation,
+  }) {
+    if (!salle.suitLaPresentationEnLecture) return null;
+    if (presentation == null || !presentation.aMontrer) return null;
+    final String nomEnseignant = salle.dominant?.nom ?? '';
+    return VueSeance(
+      role: RoleSeance.eleve,
+      nomClasse: '',
+      nomEnseignant: nomEnseignant,
+      initialesEnseignant: initiales(nomEnseignant),
+      connexion: connexionDe(salle.phase),
+      enregistrementConfirme: false,
+      cameraEnseignantActive: false,
+      supportPresente: presentation.supportPresente,
+      affichage: presentation.affichage,
+      tableauLibre: presentation.tableauLibre,
     );
   }
 

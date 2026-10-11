@@ -58,8 +58,10 @@ void main() {
       Routes.adminPersonnesDossiers,
       Routes.adminOperationsAttributions,
       Routes.adminOperationsRegroupements,
+      Routes.adminOperationsPilotage,
       Routes.adminSecuriteAuditJournal,
       Routes.adminSecuriteAuditObservations,
+      Routes.adminSecuriteAuditTirages,
       Routes.comptable,
       Routes.compte,
       Routes.compteProfil,
@@ -900,7 +902,11 @@ void main() {
     const Map<String, List<AppRole>> autorises = <String, List<AppRole>>{
       '/tc/groupes': <AppRole>[AppRole.student],
       '/tc/groupes/g1': <AppRole>[AppRole.student],
-      '/tc/bibliotheque': <AppRole>[AppRole.student, AppRole.guardian],
+      '/tc/bibliotheque': <AppRole>[
+        AppRole.student,
+        AppRole.guardian,
+        AppRole.teacher,
+      ],
       '/tc/classe': <AppRole>[AppRole.teacher, AppRole.student],
       '/tc/mushaf': <AppRole>[AppRole.student],
       '/tc/observation/s1': <AppRole>[

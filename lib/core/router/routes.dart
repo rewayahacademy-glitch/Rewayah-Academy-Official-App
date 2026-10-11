@@ -97,9 +97,11 @@ abstract final class Routes {
 
   // --- DASH-EA-PROD : Accueil de l'eleve adulte (bloc propre a l'etape) ----
   //
-  // Sous le prefixe `/eleve` : l'eleve adulte est un compte eleve
-  // (`AppRole.student`), la garde de role l'y laisse donc entrer. Atteint
-  // par `/eleve` quand la capacite « accueil adulte » est servie
+  // Sous le prefixe `/eleve` : l'eleve adulte est un compte tuteur
+  // (`AppRole.guardian`) dont le serveur sert la capacite « eleve autonome »
+  // (`SessionState.eleveAutonome`, C-24) ; la redirection le laisse entrer
+  // sur ce seul sous-arbre (EA-ROLE-1). Atteint par `/eleve` quand la
+  // capacite « accueil adulte » est servie
   // (`capaciteAccueilAdulteProvider`), jamais d'apres le role. Sans source
   // serveur avant BR-1 (EA-BR-04) : la page dit « indisponible ».
 
@@ -109,6 +111,14 @@ abstract final class Routes {
   /// L'historique de ses seances passees, « Voir tout » des dernieres
   /// seances de l'Accueil adulte (D6).
   static const String eleveAdulteSeances = '/eleve/adulte/seances';
+
+  /// Le suivi de ses demandes de creneau (BACK-FRONT-SUIVI-1) : l'eleve
+  /// adulte autonome voit lui-meme sa frise.
+  static const String eleveAdulteDemandes = '/eleve/adulte/demandes';
+
+  /// La frise d'une de ses demandes.
+  static String eleveAdulteDemande(String demandeId) =>
+      '$eleveAdulteDemandes/$demandeId';
 
   // --- fin du bloc DASH-EA-PROD ---------------------------------------------
 
@@ -402,8 +412,16 @@ abstract final class Routes {
   /// Le suivi des demandes de creneau du foyer (OFFRES-FAM-1).
   static const String tuteurDemandes = '/tuteur/demandes';
 
+  /// Les demandes de presentation standard de ses enfants (MA-9).
+  static const String tuteurPresentation = '/tuteur/presentation';
+
   /// La frise d'une demande (SUIVI-FAMILLE, R20).
   static String tuteurDemande(String demandeId) => '$tuteurDemandes/$demandeId';
+
+  /// ECHELLE-FAM-ETATS-1 : le resultat d'une fusion ou d'un transfert pour une
+  /// demande : la nouvelle classe, le titre de l'enseignant, l'horaire.
+  static String tuteurChangementPour(String demandeId) =>
+      '$tuteurDemandes/$demandeId/changement';
 
   /// Vrai quand [chemin] est une **tache focalisee** : sur telephone, la
   /// barre basse s'efface et l'ecran porte son disque retour (manifeste
@@ -648,10 +666,18 @@ abstract final class Routes {
   static const String adminOperationsRegroupements =
       '/admin/operations/regroupements';
 
+  /// ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire (classes,
+  /// remplissage, demandes, enseignants libres et manquants), sous
+  /// Operations.
+  static const String adminOperationsPilotage = '/admin/operations/pilotage';
+
   /// RECRUT-ECRANS : inviter un enseignant (code a usage unique), sous
   /// Personnes.
   static const String adminPersonnesInvitations =
       '/admin/personnes/invitations';
+
+  /// BACK-FRONT-REPRISE-1 : la file des reprises de foyer, sous Personnes.
+  static const String adminPersonnesReprises = '/admin/personnes/reprises';
 
   /// Domaine Personnes.
   static const String adminPersonnes = '/admin/personnes';
@@ -687,6 +713,30 @@ abstract final class Routes {
 
   /// Controle qualite pedagogique (`ADM-14`), sous Pedagogie.
   static const String adminPedagogieQualite = '/admin/pedagogie/qualite';
+
+  /// CAP29-0 : le catalogue de la bibliotheque, sous Pedagogie.
+  static const String adminPedagogieBibliotheque =
+      '/admin/pedagogie/bibliotheque';
+
+  /// CAP29-C : ajouter un support (import), avant `:supportId` dans le routeur.
+  static const String adminPedagogieBibliothequeNouveau =
+      '/admin/pedagogie/bibliotheque/nouveau';
+
+  /// CAP29-D : verifier et publier la derniere version d'un support.
+  static String adminPedagogieSupportPublication(String supportId) =>
+      '$adminPedagogieBibliotheque/$supportId/publication';
+
+  /// CAP29-E : attribuer un support aux classes, ou le retirer.
+  static String adminPedagogieSupportAttribution(String supportId) =>
+      '$adminPedagogieBibliotheque/$supportId/attribution';
+
+  /// CAP29-C : deposer un fichier pour le brouillon d'un support existant.
+  static String adminPedagogieSupportFichier(String supportId) =>
+      '$adminPedagogieBibliothequeNouveau?support=$supportId';
+
+  /// CAP29-0 : la fiche d'un support de la bibliotheque.
+  static String adminPedagogieSupport(String supportId) =>
+      '$adminPedagogieBibliotheque/$supportId';
 
   /// Domaine Finance (FI-1b) : racine et onglet « Vue globale » (route
   /// canonique « Vue d'ensemble » du contrat metier,
@@ -733,6 +783,12 @@ abstract final class Routes {
   /// (complement observation du mandat Tuteur V1, section 8).
   static const String adminSecuriteAuditObservations =
       '/admin/securite-audit/observations';
+
+  /// ECHELLE-CTRL-DIRECT-1 : les regles du tirage des missions de controle et
+  /// l'historique audite des tirages, lisibles par la direction seule, sous
+  /// Securite et audit.
+  static const String adminSecuriteAuditTirages =
+      '/admin/securite-audit/tirages';
 
   // --- Observation par un agent IA -----------------------------------------
 
@@ -804,6 +860,12 @@ abstract final class Routes {
   /// Le profil de paiement d'un beneficiaire, vu par le Comptable (W07).
   static String comptableBeneficiairePour(String beneficiaireId) =>
       '$comptableBeneficiaires/$beneficiaireId';
+
+  /// Le fil metier « Profil de paiement » d'un beneficiaire, ouvert par
+  /// « Relancer » (CPT-COM, CPT-BR-11) : un fil contextuel des Messages
+  /// metier, jamais une messagerie Finance (R-FIN-21).
+  static String comptableFilProfilPaiementPour(String beneficiaireId) =>
+      '${comptableBeneficiairePour(beneficiaireId)}/fil';
 
   /// Destination Tresorerie, onglet « Coffres » (W04, M02 ecran 1).
   static const String comptableTresorerie = '/comptable/tresorerie';
@@ -995,6 +1057,28 @@ abstract final class Routes {
 
   /// Galerie des surfaces Compte, compilee seulement en developpement.
   static const String galerieCompte = '/_galerie/compte';
+
+  // --- RECH-1 : la recherche transversale (spec RECH-03 §1, §4.1) ---------
+  //
+  // Bloc propre a l'etape. **Une seule route pour tous les espaces** : la
+  // surface de recherche est transverse, ni un tableau de bord ni un
+  // cinquieme onglet. L'espace actif et le domaine d'ouverture sont des
+  // choix d'interface en parametres, sans aucun texte cherche dans l'adresse :
+  // la requete ne passe jamais par l'URL (SEC-R20).
+
+  /// La recherche commune, hors des arbres de role (comme `/compte`).
+  static const String recherche = '/recherche';
+
+  /// L'adresse de la recherche avec son contexte : [espace] est le nom d'un
+  /// `EspaceRecherche`, [domaine] celui d'un `DomaineRecherche` (recherche
+  /// contextuelle d'un module). Jamais le texte cherche.
+  static String rechercheAvec({String? espace, String? domaine}) => Uri(
+    path: recherche,
+    queryParameters: <String, String>{
+      'espace': ?espace,
+      'domaine': ?domaine,
+    },
+  ).toString();
 
   // --- Compte -------------------------------------------------------------
 

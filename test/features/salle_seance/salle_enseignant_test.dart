@@ -178,10 +178,17 @@ void main() {
       ) async {
         await _monter(tester, taille.value, role: role);
         expect(tester.takeException(), isNull);
+        // TB-10 (plan V2 §19.3 point 4) : l'eleve a ses propres Commandes
+        // (lecture, focus, ecriture accordee) ; ni onglets, ni Bibliotheque,
+        // ni affichages, ni page partagee.
+        // Le panneau n'est pas ouvert ici (vue fixe) : son contenu par role
+        // est mesure dans tb_recette/autorisation_ecrire_test.dart.
+        expect(_cle('commandes-onglets'), findsNothing);
+        expect(_cle('commandes-bibliotheque'), findsNothing);
+        expect(_cle('commandes-affichages'), findsNothing);
         for (final String texte in <String>[
           'Élèves 1/3',
           'Supports',
-          'Commandes',
           'Bibliothèque',
           'Avec notes',
           'Réseau',

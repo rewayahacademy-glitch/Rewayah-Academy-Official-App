@@ -474,7 +474,7 @@ void main() {
           t.salle.seance.outils.pointeur,
           t.salle.seance.outils.marquer,
           t.salle.seance.outils.masquer,
-          t.salle.seance.outils.annoter,
+          t.salle.seance.outils.ecrire,
         ]) {
           expect(find.text(reserve), findsNothing, reason: reserve);
           expect(find.bySemanticsLabel(reserve), findsNothing, reason: reserve);
@@ -721,6 +721,42 @@ void main() {
 
       expect(find.text(t.tc.classe.rappel.echec), findsOneWidget);
       // Le temps passe : le retour local disparait tout seul.
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    // DUREE-INSECABLE-4 : le delai d'attente du rappel se lit sur l'ecran
+    // reel, pas en rappelant soi-meme le formatage : « A nouveau dans 45 s »
+    // ne se coupe jamais entre le nombre et son unite.
+    testWidgets('un rappel trop proche dit quand, sans couper la duree', (
+      WidgetTester tester,
+    ) async {
+      final banc0 = banc(
+        presence: troisEleves(),
+        fiches: <TeacherStudentProjection>[
+          fiche('Amina', niveau: 'Decodage consolide'),
+        ],
+        echecRappel: const EchecRappel(MotifEchecRappel.cooldown),
+      );
+      await monterClasse(
+        tester,
+        contexte: contexte(support: 'r1'),
+        surcharges: banc0.surcharges,
+        ecran: LargeurEcran.desktop,
+      );
+
+      await ouvrirEleves(tester);
+      if (find.text(t.salle.seance.rappeler).evaluate().isEmpty) {
+        await tester.tap(find.text('Amina'));
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(find.text(t.salle.seance.rappeler));
+      await tester.pump();
+      await tester.pump();
+
+      // Le faux rend un delai inconnu : la classe annonce le delai complet.
+      final Finder message = find.textContaining('45\u00A0s');
+      expect(message, findsOneWidget);
+      expect(find.textContaining('45 s'), findsNothing);
       await tester.pump(const Duration(seconds: 5));
     });
 

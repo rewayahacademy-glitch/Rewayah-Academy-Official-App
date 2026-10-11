@@ -1,0 +1,680 @@
+// TB-11a (plan V2 §5 tableau des profils, UX-21) : le tuteur observateur et
+// le controleur lisent la presentation de l'enseignant (support, page,
+// affichage, notes) dans la VRAIE salle `/salle` (`SallePage`), en lecture
+// seule.
+//
+// 1. K-07 : chaque lien nouveau de /demo/salle (observateur x situation)
+//    s'ouvre par le VRAI routeur et monte la vraie salle de l'observateur.
+// 2. Par role (tuteur, controleur), au rendu : la surface partagee
+//    (`ZoneSupport`, `SurfacePageFixe`) est montee, dans l'ecran, avec la
+//    page et l'affichage de la situation ; AUCUNE commande d'ecriture, de
+//    page ou de rangement : aucun widget touchable dans la presentation,
+//    exactement les memes commandes qu'en l'absence de presentation, aucun
+//    widget de pagination, de zoom, d'affichage, d'outil ou de bibliotheque.
+// 3. Les notices restent celles du role : la mention « Cours enregistre,
+//    visite de controle possible » n'est jamais montree au controleur ;
+//    le tuteur garde la sienne et son rappel.
+// 4. SALLE-200-1/2 avec presentation : 320 et 390, texte x1 et x2, la
+//    salle tient, « Quitter » reste a l'ecran, le titre n'est pas coupe.
+// 5. CT-3 sur tablette (900x1200, 1100x700, 1024x768), texte x1 et x2 : la
+//    liste de presence du controleur se lit (contraste de chaque texte sur
+//    le fond REELLEMENT peint sous lui), dans sa colonne laterale, sans
+//    debordement ; a x1 elle tient sans defiler, a x2 sa colonne defile
+//    jusqu'a la derniere ligne, avec ou sans presentation. Le tuteur tient
+//    aussi a x2 sur ces trois tablettes.
+
+import 'package:flutter/gestures.dart' show HitTestEntry, HitTestResult;
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/video/video_session_provider.dart';
+import 'package:rewayah_academy/core/widgets/barre_precedent_suivant.dart';
+import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
+import 'package:rewayah_academy/core/widgets/page_immersive.dart';
+import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
+import 'package:rewayah_academy/core/widgets/pressable.dart';
+import 'package:rewayah_academy/core/widgets/section_header.dart';
+import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
+import 'package:rewayah_academy/features/demo/salle_controleur_demo.dart';
+import 'package:rewayah_academy/features/demo/salle_observateur_demo.dart';
+import 'package:rewayah_academy/features/demo/seance_demo.dart';
+import 'package:rewayah_academy/features/salle/vue_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/barre_support.dart';
+import 'package:rewayah_academy/features/salle_seance/bibliotheque_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
+import 'package:rewayah_academy/features/salle_seance/depuis_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/outils_enseignement.dart';
+import 'package:rewayah_academy/features/salle_seance/presentation_observee.dart';
+import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
+import 'package:rewayah_academy/features/salle_seance/vignette_video.dart';
+import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
+import 'package:rewayah_academy/features/tc_dock/barre_stylet.dart';
+import 'package:rewayah_academy/features/tc_dock/couche_annotation.dart';
+
+import '../../capture/outil_capture.dart' hide stabiliser;
+import '../../router/support_routeur.dart';
+import '../../support/aucun_mot_coupe.dart';
+import '../../support/garde_interface.dart';
+import '../../theme/support/contraste.dart';
+
+const Key _presentation = ValueKey<String>('presentation-lue');
+
+/// La ligne du titre et de la page de la presentation lue (TB-RC).
+const Key _ligneTitre = ValueKey<String>('presentation-lue-titre');
+
+/// Le defilement de la colonne laterale de presence (`_FondPresence`).
+const Key _defilePresence = ValueKey<String>('presence-defile');
+
+/// CT-3 : tablette en portrait, en paysage, et l'iPad en paysage.
+const List<Size> _tablettes = <Size>[
+  Size(900, 1200),
+  Size(1100, 700),
+  Size(1024, 768),
+];
+
+/// [r] est entier dans la fenetre [taille].
+void _dansLaFenetre(Rect r, Size taille) {
+  expect(r.top, greaterThanOrEqualTo(-0.5), reason: '$r');
+  expect(r.bottom, lessThanOrEqualTo(taille.height + 0.5), reason: '$r');
+  expect(r.left, greaterThanOrEqualTo(-0.5), reason: '$r');
+  expect(r.right, lessThanOrEqualTo(taille.width + 0.5), reason: '$r');
+}
+
+const List<SituationTb> _avecPresentation = <SituationTb>[
+  SituationTb.ped01,
+  SituationTb.ped02,
+  SituationTb.ped03,
+  SituationTb.ped04,
+];
+
+/// Monte la salle de [o] dans [s] (la page que sert
+/// `/demo/salle?obs=…&tb=…`).
+Future<void> _monter(
+  WidgetTester tester,
+  ObservateurDemo o,
+  SituationTb s, {
+  Size taille = const Size(390, 844),
+  double texte = 1,
+  ThemeMode mode = ThemeMode.light,
+}) async {
+  fixerVueCapture(tester, taille, 1);
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(
+    hoteCapture(
+      DemoSallePage(observateur: o, situation: s),
+      echelleTexte: texte,
+      themeMode: mode,
+    ),
+  );
+  await stabiliser(tester);
+}
+
+/// Les widgets touchables montes (tout bouton passe par `Pressable`).
+int _touchables() => find.byType(Pressable).evaluate().length;
+
+/// Le libelle de sortie du role (zone haute du controleur, commandes du
+/// tuteur).
+Finder _quitter(ObservateurDemo o) => o == ObservateurDemo.controleur
+    ? find.bySemanticsLabel(RegExp(t.salle.quitter))
+    : find.bySemanticsLabel(RegExp(t.salle.quitterLeCours));
+
+/// La couleur peinte sous [e] : la premiere surface opaque de ses ancetres.
+Color _fondSous(Element e) {
+  Color? fond;
+  e.visitAncestorElements((Element a) {
+    final Widget w = a.widget;
+    final Color? c = switch (w) {
+      DecoratedBox(decoration: final BoxDecoration d) => d.color,
+      ColoredBox(:final Color color) => color,
+      Material(:final Color? color, :final MaterialType type)
+          when type != MaterialType.transparency =>
+        color,
+      Scaffold(:final Color? backgroundColor) => backgroundColor,
+      _ => null,
+    };
+    if (c != null && c.a == 1) {
+      fond = c;
+      return false;
+    }
+    return true;
+  });
+  return fond!;
+}
+
+/// L'encre reellement posee sur un paragraphe rendu.
+Color _encre(RenderParagraph p) {
+  Color? encre;
+  p.text.visitChildren((InlineSpan s) {
+    final Color? c = s.style?.color;
+    if (c != null) {
+      encre = c;
+      return false;
+    }
+    return true;
+  });
+  return encre!;
+}
+
+void main() {
+  group('K-07 : chaque lien observateur s\'ouvre par le vrai routeur', () {
+    for (final ObservateurDemo o in ObservateurDemo.values) {
+      for (final SituationTb s in situationsObservateur) {
+        testWidgets('${o.name} ${s.name}', (WidgetTester tester) async {
+          final GoRouter routeur = await monterRouteur(
+            tester,
+            Routes.demoSalle,
+            taille: const Size(1440, 900),
+          );
+          final Finder lien = find.byKey(
+            ValueKey<String>('lien-obs-${o.name}-tb-${s.name}'),
+          );
+          await tester.ensureVisible(lien);
+          await tester.pump();
+          await tester.tap(lien);
+          await stabiliser(tester);
+          expect(tester.takeException(), isNull);
+          expect(lieu(routeur), adresseDemoSalleObservateur(o, s));
+          expect(
+            find.byKey(ValueKey<String>('obs-${o.name}-tb-${s.name}')),
+            findsOneWidget,
+          );
+          // La presentation lue n'existe que s'il y a quelque chose de
+          // presente (SAL-00 : la scene, comme avant).
+          expect(
+            find.byKey(_presentation),
+            s == SituationTb.sal00 ? findsNothing : findsOneWidget,
+          );
+          expect(_quitter(o), findsWidgets);
+        });
+      }
+    }
+
+    testWidgets('une situation sans objet pour l\'observateur ramene a la '
+        'liste', (WidgetTester tester) async {
+      await monterRouteur(
+        tester,
+        Uri(
+          path: Routes.demoSalle,
+          queryParameters: <String, String>{'obs': 'tuteur', 'tb': 'cmd01'},
+        ).toString(),
+        taille: const Size(1440, 900),
+      );
+      expect(find.byKey(_presentation), findsNothing);
+      expect(
+        find.byKey(const ValueKey<String>('lien-obs-tuteur-tb-sal00')),
+        findsOneWidget,
+      );
+    });
+  });
+
+  group('Lecture seule, par role', () {
+    for (final ObservateurDemo o in ObservateurDemo.values) {
+      for (final (String nom, Size taille) in <(String, Size)>[
+        ('390', const Size(390, 844)),
+        ('1440', const Size(1440, 900)),
+      ]) {
+        for (final SituationTb s in _avecPresentation) {
+          testWidgets('${o.name} ${s.name} $nom : la presentation, aucune '
+              'commande', (WidgetTester tester) async {
+            // Le meme role sans presentation : ses commandes de reference.
+            await _monter(tester, o, SituationTb.sal00, taille: taille);
+            final int reference = _touchables();
+            expect(reference, greaterThan(0), reason: 'Quitter au moins');
+            expect(find.byKey(_presentation), findsNothing);
+
+            await _monter(tester, o, s, taille: taille);
+            expect(tester.takeException(), isNull);
+
+            // La surface partagee est montee, dans l'ecran.
+            final Finder zone = find.descendant(
+              of: find.byKey(_presentation),
+              matching: find.byType(ZoneSupport),
+            );
+            expect(zone, findsOneWidget);
+            final Rect r = tester.getRect(zone);
+            expect(r.left, greaterThanOrEqualTo(-0.5));
+            expect(r.right, lessThanOrEqualTo(taille.width + 0.5));
+            expect(r.height, greaterThan(100), reason: 'surface de $r');
+            final Finder surface = find.descendant(
+              of: zone,
+              matching: find.byType(SurfacePageFixe),
+            );
+            expect(surface, findsOneWidget);
+
+            // Page, affichage et notes de la situation.
+            final bool page = s == SituationTb.ped02 || s == SituationTb.ped03;
+            expect(
+              find.byKey(SurfacePageFixe.clePage),
+              page ? findsOneWidget : findsNothing,
+            );
+            expect(
+              find.byKey(SurfacePageFixe.cleFeuille),
+              page ? findsNothing : findsOneWidget,
+            );
+            expect(
+              tester
+                  .widget<Visibility>(find.byKey(SurfacePageFixe.cleCalque))
+                  .visible,
+              s != SituationTb.ped02,
+              reason: 'notes cachees en Support seulement',
+            );
+            // TB-RC (TB_RAPPORT §d n° 18) : la page se dit dans la ligne du
+            // titre, sans la pastille `IndicateurPage`.
+            expect(find.byType(IndicateurPage), findsNothing);
+            final Finder ligne = find.byKey(_ligneTitre);
+            if (s == SituationTb.ped01) {
+              expect(ligne, findsNothing);
+            } else {
+              expect(
+                tester.widget<Text>(ligne).data,
+                t.salle.seance.surface.page(
+                  titre: DonneesSeanceDemo.supportPageFixe.titre,
+                  page: 3,
+                  pages: DonneesSeanceDemo.supportPageFixe.total,
+                ),
+              );
+            }
+            // Ni consigne de l'enseignant, ni vignette posee sur la page.
+            expect(find.byKey(SurfacePageFixe.cleConsigne), findsNothing);
+            expect(
+              find.descendant(
+                of: find.byKey(_presentation),
+                matching: find.byType(VignetteVideo),
+              ),
+              findsNothing,
+            );
+
+            // AUCUNE commande : rien de touchable dans la presentation, et
+            // exactement les commandes du role sans presentation.
+            expect(
+              find.descendant(
+                of: find.byKey(_presentation),
+                matching: find.byType(Pressable),
+              ),
+              findsNothing,
+            );
+            expect(_touchables(), reference);
+            for (final Type interdit in <Type>[
+              PaginationSupport,
+              BarrePrecedentSuivant,
+              ZoomLocal,
+              DeclencheurCommandes,
+              CommandesPedagogiques,
+              OutilsEnseignement,
+              BarreStylet,
+              BibliothequeSeance,
+            ]) {
+              expect(find.byType(interdit), findsNothing, reason: '$interdit');
+            }
+            // TB-7a : le calque des notes est monte pour PEINDRE les notes
+            // (plan §5 : l'observateur voit les notes), mais il ne recoit
+            // aucun geste : un appui au centre de la page n'atteint pas
+            // CoucheAnnotation.
+            for (final Element calque
+                in find.byType(CoucheAnnotation).evaluate()) {
+              final RenderBox boite = calque.renderObject! as RenderBox;
+              final Offset centre = boite.localToGlobal(
+                boite.size.center(Offset.zero),
+              );
+              final HitTestResult touche = HitTestResult();
+              WidgetsBinding.instance.hitTestInView(
+                touche,
+                centre,
+                tester.view.viewId,
+              );
+              expect(
+                touche.path.any((HitTestEntry e) => identical(e.target, boite)),
+                isFalse,
+                reason: 'le calque des notes ne recoit aucun geste',
+              );
+            }
+            for (final String mot in <String>[
+              t.salle.seance.commandes.declencheur,
+              t.salle.seance.commandes.affichageAvecNotes,
+              t.salle.seance.commandes.bibliotheque,
+              t.salle.seance.commandes.focus,
+            ]) {
+              expect(find.text(mot), findsNothing, reason: mot);
+            }
+            verifierUnSeulBoutonPlein(tester);
+            expect(_quitter(o), findsWidgets);
+          });
+        }
+      }
+    }
+  });
+
+  group('Notices du role', () {
+    for (final SituationTb s in <SituationTb>[
+      SituationTb.ped01,
+      SituationTb.ped03,
+    ]) {
+      testWidgets('controleur ${s.name} : pas de mention de visite, son '
+          'rappel', (WidgetTester tester) async {
+        await _monter(tester, ObservateurDemo.controleur, s);
+        expect(find.byKey(_presentation), findsOneWidget);
+        expect(find.byType(PermanentNotice), findsNothing);
+        expect(find.text(t.salle.bandeauPermanent), findsNothing);
+        expect(find.textContaining(t.salle.bandeauControleTitre), findsWidgets);
+      });
+
+      testWidgets('tuteur ${s.name} : la mention et son rappel', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester, ObservateurDemo.tuteur, s);
+        expect(find.byKey(_presentation), findsOneWidget);
+        expect(find.byType(PermanentNotice), findsOneWidget);
+        expect(
+          find.textContaining(t.salle.observationMuetteTitre),
+          findsWidgets,
+        );
+      });
+    }
+  });
+
+  group('SALLE-200-1/2 avec presentation : la salle tient', () {
+    // Revue TB-R m35 : les mots se mesurent avec les polices du depot.
+    setUpAll(chargerPolicesDuDepot);
+    for (final ObservateurDemo o in ObservateurDemo.values) {
+      for (final double largeur in <double>[320, 390]) {
+        for (final double texte in <double>[1, 2]) {
+          testWidgets('${o.name} ped03, $largeur px, texte x$texte', (
+            WidgetTester tester,
+          ) async {
+            await _monter(
+              tester,
+              o,
+              SituationTb.ped03,
+              taille: Size(largeur, 844),
+              texte: texte,
+            );
+            expect(tester.takeException(), isNull);
+            final Rect contenu = tester.getRect(
+              find.byKey(PageImmersive.contenuKey),
+            );
+            expect(contenu.height, greaterThanOrEqualTo(844 / 2));
+            final Finder quitter = _quitter(o);
+            expect(quitter, findsWidgets);
+            final Rect zone = tester.getRect(quitter.first);
+            expect(zone.left, greaterThanOrEqualTo(-0.5));
+            expect(zone.right, lessThanOrEqualTo(largeur + 0.5));
+            expect(zone.bottom, lessThanOrEqualTo(844.5));
+            // Le titre du support (la ligne au-dessus de la surface, la page
+            // neutre le repete), dans l'ecran et non rogne. Revue TB-R m35 :
+            // mesure de chaque mot au rendu, polices du depot (le
+            // `didExceedMaxLines` d'un `Text` sans `maxLines` ne mesurait
+            // rien).
+            final Finder titre = find.byKey(_ligneTitre);
+            expect(titre, findsOneWidget);
+            expect(
+              tester.widget<Text>(titre).data,
+              startsWith(DonneesSeanceDemo.supportPageFixe.titre),
+            );
+            final Rect rt = tester.getRect(titre);
+            expect(rt.left, greaterThanOrEqualTo(-0.5));
+            expect(rt.right, lessThanOrEqualTo(largeur + 0.5));
+            verifierAucunMotCoupe(tester, titre);
+            // SUPERPOS-1 : a texte x1, la scene tient sous la presentation,
+            // aucune tuile ne passe sous le rappel du role (le bandeau). A
+            // texte x2, la colonne (presentation puis scene) finit au-dessus
+            // du bandeau ; quand elle defile (TB-RC : jamais au milieu d'une
+            // tuile, rc_observateurs_test), la tuile se lit entiere une fois
+            // la colonne defilee jusqu'au bout.
+            if (texte == 2) {
+              final Finder colonne = find
+                  .ancestor(
+                    of: find.byKey(_presentation),
+                    matching: find.byType(Scrollable),
+                  )
+                  .first;
+              final ScrollPosition position = tester
+                  .state<ScrollableState>(colonne)
+                  .position;
+              final Rect vue = tester.getRect(colonne);
+              // TB-RC (n° 6) : a x2, le rappel garde ses deux phrases ; son
+              // titre en est la premiere ligne.
+              final Rect rappel = tester.getRect(
+                find
+                    .textContaining(
+                      o == ObservateurDemo.controleur
+                          ? t.salle.bandeauControleTitre
+                          : t.salle.observationMuetteTitre,
+                    )
+                    .first,
+              );
+              expect(
+                vue.bottom,
+                lessThanOrEqualTo(rappel.top + 0.5),
+                reason: 'colonne $vue sous le rappel $rappel',
+              );
+              position.jumpTo(position.maxScrollExtent);
+              await tester.pump();
+              final Rect tuile = tester.getRect(
+                find.byKey(const ValueKey<String>('demo-enseignant')),
+              );
+              expect(
+                tuile.bottom,
+                lessThanOrEqualTo(vue.bottom + 0.5),
+                reason: 'tuile $tuile hors de la colonne $vue',
+              );
+              position.jumpTo(0);
+              await tester.pump();
+            }
+            if (texte == 1) {
+              final Rect tuile = tester.getRect(
+                find.byKey(const ValueKey<String>('demo-enseignant')),
+              );
+              final Rect rappel = tester.getRect(
+                find
+                    .textContaining(
+                      o == ObservateurDemo.controleur
+                          ? t.salle.bandeauControle
+                          : t.salle.observationMuette,
+                    )
+                    .first,
+              );
+              expect(
+                tuile.bottom,
+                lessThanOrEqualTo(rappel.top),
+                reason: 'tuile $tuile sous le rappel $rappel',
+              );
+            }
+            verifierSansChevauchement(tester, <Finder>[
+              find.byKey(_ligneTitre),
+              find.byType(ZoneSupport),
+            ]);
+          });
+        }
+      }
+    }
+  });
+
+  group('CT-3 sur tablette : la presence du controleur se lit', () {
+    for (final Size taille in _tablettes) {
+      for (final double texte in <double>[1, 2]) {
+        for (final SituationTb s in <SituationTb>[
+          SituationTb.sal00,
+          SituationTb.ped01,
+          SituationTb.ped03,
+          SituationTb.ped04,
+        ]) {
+          for (final ThemeMode mode in <ThemeMode>[
+            ThemeMode.light,
+            ThemeMode.dark,
+          ]) {
+            testWidgets('controleur ${s.name}, ${taille.width.toInt()}x'
+                '${taille.height.toInt()}, texte x$texte, ${mode.name}', (
+              WidgetTester tester,
+            ) async {
+              await _monter(
+                tester,
+                ObservateurDemo.controleur,
+                s,
+                taille: taille,
+                texte: texte,
+                mode: mode,
+              );
+              // Aucun debordement (« A RenderFlex overflowed ») : la colonne
+              // laterale defile au lieu de deborder.
+              expect(tester.takeException(), isNull);
+              expect(
+                find.byKey(_presentation),
+                s == SituationTb.sal00 ? findsNothing : findsOneWidget,
+              );
+              final Finder entete = find.byWidgetPredicate(
+                (Widget w) => w is SectionHeader && w.titre == t.presence.titre,
+              );
+              expect(entete, findsOneWidget);
+              final Finder lignes = find.byType(LignePresence);
+              expect(lignes, findsWidgets);
+              // Chaque texte de la liste, au rendu : son encre sur le fond
+              // peint sous lui, au seuil AA.
+              final Finder textes = find.descendant(
+                of: find
+                    .ancestor(of: entete, matching: find.byType(Column))
+                    .first,
+                matching: find.byType(RichText),
+              );
+              expect(textes.evaluate().length, greaterThanOrEqualTo(3));
+              for (final Element e in textes.evaluate()) {
+                final RenderParagraph p = e.renderObject! as RenderParagraph;
+                final double r = contraste(_encre(p), _fondSous(e));
+                expect(
+                  r,
+                  greaterThanOrEqualTo(seuilTexte),
+                  reason: '« ${p.text.toPlainText()} » a $r:1',
+                );
+              }
+              // La colonne laterale, a cote de la presentation.
+              final Finder colonne = find.byKey(_defilePresence);
+              expect(colonne, findsOneWidget);
+              final Rect rc = tester.getRect(colonne);
+              expect(rc.top, greaterThanOrEqualTo(-0.5));
+              expect(rc.bottom, lessThanOrEqualTo(taille.height + 0.5));
+              if (s != SituationTb.sal00) {
+                final Rect zone = tester.getRect(find.byType(ZoneSupport));
+                expect(
+                  tester.getRect(entete).left,
+                  greaterThanOrEqualTo(zone.right - 0.5),
+                  reason: 'colonne laterale, pas sous la scene',
+                );
+              }
+              // L'en-tete se lit sans un geste.
+              _dansLaFenetre(tester.getRect(entete), taille);
+              final ScrollPosition position = tester
+                  .state<ScrollableState>(
+                    find.descendant(
+                      of: colonne,
+                      matching: find.byType(Scrollable),
+                    ),
+                  )
+                  .position;
+              if (texte == 1) {
+                // Texte x1 : la liste tient entiere, rien ne defile.
+                expect(position.maxScrollExtent, 0);
+              } else {
+                // Texte x2 : la colonne defile jusqu'a la derniere ligne,
+                // qui se lit alors entiere, dans la colonne et la fenetre.
+                await tester.drag(
+                  colonne,
+                  Offset(0, -taille.height),
+                  warnIfMissed: false,
+                );
+                await tester.pumpAndSettle();
+                expect(position.pixels, position.maxScrollExtent);
+              }
+              final Rect derniere = tester.getRect(lignes.last);
+              _dansLaFenetre(derniere, taille);
+              expect(derniere.bottom, lessThanOrEqualTo(rc.bottom + 0.5));
+              expect(tester.takeException(), isNull);
+            });
+          }
+        }
+      }
+    }
+  });
+
+  group('Tablette, texte x2 : la salle du tuteur tient aussi', () {
+    for (final Size taille in _tablettes) {
+      for (final SituationTb s in <SituationTb>[
+        SituationTb.sal00,
+        SituationTb.ped03,
+      ]) {
+        testWidgets('tuteur ${s.name}, ${taille.width.toInt()}x'
+            '${taille.height.toInt()}, texte x2', (WidgetTester tester) async {
+          await _monter(
+            tester,
+            ObservateurDemo.tuteur,
+            s,
+            taille: taille,
+            texte: 2,
+          );
+          expect(tester.takeException(), isNull);
+          final Finder quitter = _quitter(ObservateurDemo.tuteur);
+          expect(quitter, findsWidgets);
+          _dansLaFenetre(tester.getRect(quitter.first), taille);
+        });
+      }
+    }
+  });
+
+  group('DepuisSalle.presentationObservee', () {
+    VueSalle salle(String role) => VueSalle.depuis(
+      materielPret: true,
+      acces: accesControleurDemo(role: role),
+      etatMoteur: EtatSalle.connecte,
+      participants: const <ParticipantSalle>[],
+      qualite: QualiteLien.bonne,
+    );
+
+    test('null hors des deux observateurs, ou sans presentation', () {
+      final PresentationObservee p = presentationObserveeDemo(
+        SituationTb.ped03,
+      )!;
+      for (final String role in <String>['teacher', 'student']) {
+        expect(
+          DepuisSalle.presentationObservee(salle: salle(role), presentation: p),
+          isNull,
+          reason: role,
+        );
+      }
+      expect(
+        DepuisSalle.presentationObservee(
+          salle: salle('guardian_observer'),
+          presentation: null,
+        ),
+        isNull,
+      );
+      expect(
+        DepuisSalle.presentationObservee(
+          salle: salle('masked_controller'),
+          presentation: const PresentationObservee(),
+        ),
+        isNull,
+      );
+    });
+
+    test('la vue de lecture ferme tout ce que la surface ajouterait', () {
+      for (final String role in <String>[
+        'guardian_observer',
+        'masked_controller',
+      ]) {
+        final VueSeance v = DepuisSalle.presentationObservee(
+          salle: salle(role),
+          presentation: presentationObserveeDemo(SituationTb.ped02),
+        )!;
+        expect(v.voitConsigneTableauLibre, isFalse);
+        expect(v.voitVignetteSurSupport, isFalse);
+        expect(v.texteMention, isNull);
+        expect(v.visiteVisible, isFalse);
+        expect(v.panneau, PanneauOuvert.aucun);
+        expect(v.vueSurface, VueSurface.supportSeul);
+        expect(surfaceAMontrer(v), VueSurface.supportSeul);
+      }
+    });
+  });
+}

@@ -586,21 +586,24 @@ class _ActionsState extends ConsumerState<_Actions> {
             // (Q-AD8-8) : Echap et retour ferment sans rien annuler.
             onPress: e is DecisionEnvoi ? null : _annulerCommande,
           ),
-          ActionPrincipale(
-            libelle: switch (e) {
-              DecisionEnvoi() =>
-                _refus ? t.dossiers.refus.envoi : t.dossiers.validation.envoi,
-              DecisionEchec() when !horsLigne => t.commun.reessayer,
-              _ => libelle,
-            },
-            niveau: niveau,
-            pleineLargeur: false,
-            focusNode: e is DecisionEchec ? _etat : null,
-            enCours: e is DecisionEnvoi,
-            onPress: e is DecisionEnvoi || horsLigne
-                ? null
-                : () => _confirmer(e),
-          ),
+          // Hors ligne, la decision ne peut pas partir : le bouton n'est
+          // pas rendu, le message au-dessus dit quand reessayer (lib/CLAUDE.md,
+          // BOUTONS-GRISES-1, jamais grise). Un envoi deja parti reste
+          // affiche, en cours, sans repartir.
+          if (!horsLigne || e is DecisionEnvoi)
+            ActionPrincipale(
+              libelle: switch (e) {
+                DecisionEnvoi() =>
+                  _refus ? t.dossiers.refus.envoi : t.dossiers.validation.envoi,
+                DecisionEchec() => t.commun.reessayer,
+                _ => libelle,
+              },
+              niveau: niveau,
+              pleineLargeur: false,
+              focusNode: e is DecisionEchec ? _etat : null,
+              enCours: e is DecisionEnvoi,
+              onPress: e is DecisionEnvoi ? null : () => _confirmer(e),
+            ),
         ],
       ),
     };

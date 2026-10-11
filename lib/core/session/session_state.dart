@@ -123,7 +123,10 @@ class SessionState {
   /// bouton qui echouera est une promesse non tenue, pas une securite.
   final Observation? observation;
 
-  /// Capacité personnelle rendue par la fiche serveur, jamais déduite du rôle.
+  /// Capacite « eleve autonome » servie par le serveur (contrat C-24,
+  /// `port_capacite_eleve.dart`) : le compte suit lui-meme des cours. Faux
+  /// par defaut et tant que le serveur n'a pas repondu. Un widget lit cette
+  /// capacite, jamais `AppRole.student`.
   final bool eleveAutonome;
 
   /// Vrai quand une session existe.
@@ -131,6 +134,23 @@ class SessionState {
 
   /// La capacite d'ecrire. **Un widget lit une capacite, jamais un role.**
   bool get peutEcrire => observation == null;
+
+  /// La capacite de tenir un foyer (profils eleves, appareils, recharge).
+  /// Un widget lit cette capacite, jamais le role.
+  bool get aUnFoyer => role == AppRole.guardian;
+
+  /// La capacite de gerer des appareils : tous les comptes, sauf le controle
+  /// qualite, qui n'en enregistre pas.
+  bool get peutGererAppareils => role != AppRole.controller;
+
+  /// La capacite d'observer une seance comme tuteur (visite budgetee).
+  bool get observeEnFamille => role == AppRole.guardian;
+
+  /// La capacite d'observer une seance comme direction (discret ou visible).
+  bool get observeEnDirection => role == AppRole.admin;
+
+  /// La capacite d'observer une seance comme controle qualite.
+  bool get observeEnControle => role == AppRole.controller;
 
   /// La capacite de voir le domaine Direction du panneau admin, meme regle
   /// que [peutEcrire] : un widget lit une capacite, jamais un role.

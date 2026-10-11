@@ -1,7 +1,8 @@
 // CPT-BEN-1 (FIN-L4a) : les beneficiaires vus par le Comptable, W07 liste et
 // profil de paiement. R-FIN-11 (aucun « Modifier les coordonnees »), R-FIN-19
 // cote personnel (infos manquantes filtrees, relance), R-FIN-21 (la relance
-// passe par le port de relance, aucune messagerie Finance) ; cinq etats ;
+// ouvre le fil metier des Messages, aucune messagerie Finance : parcours
+// complet dans `relance_fil_test.dart`, CPT-COM) ; cinq etats ;
 // un seul bouton plein ; aucune carte collee ; 320 a texte x2 sans mot
 // coupe, 1440 sombre, RTL.
 
@@ -14,7 +15,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_beneficiaires_paiement.dart';
-import 'package:rewayah_academy/core/capacites/port_relance_paiement.dart';
 import 'package:rewayah_academy/core/comptable/modeles_comptable.dart';
 import 'package:rewayah_academy/core/comptable/statuts_comptable.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -27,10 +27,12 @@ import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/montant_sensible.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/beneficiaires_page.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/etat_beneficiaires.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/feuille_suspension.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/profil_paiement_page.dart';
+import 'package:rewayah_academy/features/demo/communications/com_messages_demo.dart';
 import 'package:rewayah_academy/features/demo/comptable/beneficiaires_demo.dart';
 import 'package:rewayah_academy/features/demo/comptable/socle_comptable_demo.dart';
 
@@ -40,22 +42,18 @@ import '../../../support/garde_interface.dart';
 import '../../../support/harnais.dart';
 import '../../../support/mots_coupes.dart';
 
-/// Une relance qui compte ses appels (R-FIN-21) et peut rendre une route.
-class _RelanceEspion implements PortRelancePaiement {
-  _RelanceEspion({this.route});
+/// Les Messages de demonstration, qui comptent les fils demandes (R-FIN-21 :
+/// la relance ne passe que par le fil metier de l'objet).
+class _MessagesEspion extends MessagesMetierDemo {
+  _MessagesEspion()
+    : super.surObjets(aOuvrir: conversationsProfilPaiementDemo());
 
-  final String? route;
-  final List<String> appels = <String>[];
+  final List<(TypeObjetLie, String)> appels = <(TypeObjetLie, String)>[];
 
   @override
-  Future<RelancePreparee> relancer(String beneficiaireId) async {
-    appels.add(beneficiaireId);
-    return RelancePreparee(
-      filId: 'fil-$beneficiaireId',
-      beneficiaireId: beneficiaireId,
-      messageModele: t.comptable.beneficiaires.profil.messageModele,
-      route: route,
-    );
+  Future<FilMetier?> filPourObjet(TypeObjetLie type, String objetId) {
+    appels.add((type, objetId));
+    return super.filPourObjet(type, objetId);
   }
 }
 
@@ -97,7 +95,7 @@ class _MiseAJourIndisponible extends BeneficiairesPaiementDemo {
 
 List<Override> _surcharges({
   PortBeneficiairesPaiement? port,
-  PortRelancePaiement? relance,
+  PortMessagesMetier? messages,
   bool horsLigne = false,
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(
@@ -108,9 +106,7 @@ List<Override> _surcharges({
   portBeneficiairesPaiementProvider.overrideWithValue(
     port ?? const BeneficiairesPaiementDemo(),
   ),
-  portRelancePaiementProvider.overrideWithValue(
-    relance ?? const RelancePaiementDemo(),
-  ),
+  portMessagesMetierProvider.overrideWithValue(messages ?? _MessagesEspion()),
 ];
 
 Future<void> _monter(
@@ -377,48 +373,6 @@ void main() {
       verifierUnSeulBoutonPlein(tester);
     });
 
-    testWidgets('R-FIN-21 : Relancer passe par le port de relance, fil '
-        '« Profil de paiement », message modele §27.3, jamais « envoye »', (
-      WidgetTester tester,
-    ) async {
-      final _RelanceEspion espion = _RelanceEspion();
-      await _monter(
-        tester,
-        const ProfilPaiementPage(beneficiaireId: _ens01),
-        surcharges: _surcharges(relance: espion),
-      );
-      await tester.ensureVisible(find.byKey(ProfilPaiementPage.relancerKey));
-      await tester.tap(find.byKey(ProfilPaiementPage.relancerKey));
-      await stabiliser(tester);
-      expect(espion.appels, <String>[_ens01]);
-      expect(find.byKey(ProfilPaiementPage.relanceKey), findsOneWidget);
-      expect(
-        find.text(t.comptable.beneficiaires.profil.messageModele),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.comptable.beneficiaires.profil.relanceObjet),
-        findsOneWidget,
-      );
-      expect(find.textContaining('envoy'), findsNothing);
-      // Aucune route de fil rendue : pas de « Voir le fil ».
-      expect(find.byKey(ProfilPaiementPage.voirFilKey), findsNothing);
-    });
-
-    testWidgets('« Voir le fil » quand la source rend la route du fil', (
-      WidgetTester tester,
-    ) async {
-      await _monter(
-        tester,
-        const ProfilPaiementPage(beneficiaireId: _ens01),
-        surcharges: _surcharges(relance: _RelanceEspion(route: '/fil/x')),
-      );
-      await tester.ensureVisible(find.byKey(ProfilPaiementPage.relancerKey));
-      await tester.tap(find.byKey(ProfilPaiementPage.relancerKey));
-      await stabiliser(tester);
-      expect(find.byKey(ProfilPaiementPage.voirFilKey), findsOneWidget);
-    });
-
     testWidgets('Demander une mise a jour : le profil passe a « Action '
         'requise », retour en mots', (WidgetTester tester) async {
       await _monter(tester, const ProfilPaiementPage(beneficiaireId: _ens01));
@@ -495,13 +449,13 @@ void main() {
     testWidgets(
       'externe sans compte : pas de fil, invitation par l obligation',
       (WidgetTester tester) async {
-        final _RelanceEspion espion = _RelanceEspion();
+        final _MessagesEspion espion = _MessagesEspion();
         await _monter(
           tester,
           const ProfilPaiementPage(
             beneficiaireId: ProfilsBeneficiairesDemo.externe,
           ),
-          surcharges: _surcharges(relance: espion),
+          surcharges: _surcharges(messages: espion),
         );
         expect(find.byKey(ProfilPaiementPage.relancerKey), findsNothing);
         expect(

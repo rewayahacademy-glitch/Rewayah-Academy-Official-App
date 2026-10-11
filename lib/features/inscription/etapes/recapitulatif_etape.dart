@@ -114,13 +114,18 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
             ? t.inscription.erreurActualisation
             : null);
 
-    Widget modifier(String route, String cle) => ActionPrincipale(
-      key: Key(cle),
-      libelle: t.inscription.modifier,
-      niveau: NiveauAction.tertiaire,
-      pleineLargeur: false,
-      onPress: _envoi || brouillon.profilCree ? null : () => _modifier(route),
-    );
+    // Le profil deja cree ne se modifie plus d'ici : « Modifier » n'est pas
+    // rendu (jamais grise, BOUTONS-GRISES-1) ; l'erreur d'actualisation et
+    // « Reessayer » disent la suite. Pendant l'envoi, il ne repart pas.
+    Widget? modifier(String route, String cle) => brouillon.profilCree
+        ? null
+        : ActionPrincipale(
+            key: Key(cle),
+            libelle: t.inscription.modifier,
+            niveau: NiveauAction.tertiaire,
+            pleineLargeur: false,
+            onPress: _envoi ? null : () => _modifier(route),
+          );
 
     return CoquilleEtape(
       route: _route,

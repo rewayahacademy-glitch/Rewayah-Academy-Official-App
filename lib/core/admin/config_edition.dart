@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../i18n/isolat_bidi.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_spacing.dart';
@@ -228,9 +229,12 @@ class _FeuilleEntiereEtat extends State<_FeuilleEntiere> {
     // Seul un plafond a source ecrite refuse une valeur (08/10).
     if (p?.max case final int max when v > max) {
       setState(
+        // DUREE-FOND-1 : une valeur ancree pour s'afficher seule
+        // (« 30 jours », marque U+200E en tete) perd son ancre au milieu de
+        // la phrase.
         () => _erreur = t.formulaire.entier.horsBornes(
-          min: widget.affichage(0),
-          max: widget.affichage(max),
+          min: sansAncre(widget.affichage(0)),
+          max: sansAncre(widget.affichage(max)),
         ),
       );
       return;

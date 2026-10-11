@@ -261,7 +261,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    const MarquePage(),
+                    const MarquePage(logo: true),
                     respiration,
                     ConstrainedBox(
                       constraints: const BoxConstraints(

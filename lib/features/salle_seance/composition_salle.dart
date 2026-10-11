@@ -9,7 +9,9 @@
 // qui comprime le texte. Le focus local replie les deux cotes. Rien n'est
 // diffuse : ce sont des etats locaux d'interface (§18.1).
 
-import 'package:flutter/foundation.dart';
+import 'dart:math' as math;
+
+import 'package:flutter/widgets.dart';
 
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
@@ -51,6 +53,43 @@ class CompositionSalle {
 
   /// Le panneau pedagogique ouvert (Commandes, Supports, Bibliotheque).
   final PlacePanneau droite;
+
+  /// TB-RC (revue TB-R M2, M3 ; TB_RAPPORT §d n. 1 et 4) : la hauteur
+  /// utile, divisee par le facteur de texte, sous laquelle la salle est
+  /// « courte » (telephone couche, bureau a texte x2, 320 x2) : la tete se
+  /// borne a [partTeteCourte] et defile en fondu, la rangee « Eleves » se
+  /// retire quand la capsule la remplace. La largeur seule ne le dit pas :
+  /// 844 x 390 est un telephone couche, pas une tablette.
+  static const double seuilHauteurCourte = 480;
+
+  /// La part maximale de la hauteur que la tete de salle prend quand la
+  /// salle est courte ; la page garde le reste (au lieu de 55 %).
+  static const double partTeteCourte = 0.25;
+
+  /// L'objectif mesurable de TB-RC (revue TB-R m5) : la page du support (ou
+  /// la feuille du tableau libre) garde au moins cette part de la hauteur
+  /// utile, a toutes les tailles de la recette, texte x1 et x2.
+  static const double partMinimalePage = 0.3;
+
+  /// La salle est-elle courte (voir [seuilHauteurCourte]) ?
+  static bool hauteurCourte({
+    required double hauteur,
+    required double facteurTexte,
+  }) => hauteur / facteurTexte < seuilHauteurCourte;
+
+  /// La hauteur utile de l'ecran, hors zones du systeme (barre d'etat,
+  /// indicateur d'accueil).
+  static double hauteurUtile(BuildContext context) => math.max(
+    0,
+    MediaQuery.sizeOf(context).height -
+        MediaQuery.viewPaddingOf(context).vertical,
+  );
+
+  /// La salle est-elle courte a cet ecran ([hauteurCourte]) ?
+  static bool courte(BuildContext context) => hauteurCourte(
+    hauteur: hauteurUtile(context),
+    facteurTexte: MediaQuery.textScalerOf(context).scale(1),
+  );
 
   /// La colonne des Participants tient-elle a cette largeur ? Jamais au
   /// telephone (un seul panneau secondaire, feuille du bas).

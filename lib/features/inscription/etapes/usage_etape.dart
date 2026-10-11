@@ -25,13 +25,14 @@ class UsageEtape extends ConsumerWidget {
     final UsageInscription? usage = ref.watch(
       brouillonInscriptionProvider.select((BrouillonInscription b) => b.usage),
     );
-    final bool parentSuitDesCours = ref.watch(
-      brouillonInscriptionProvider.select(
-        (BrouillonInscription b) => b.parentSuitDesCours ?? false,
-      ),
-    );
     final BrouillonInscriptionControleur controleur = ref.read(
       brouillonInscriptionProvider.notifier,
+    );
+
+    final bool? suitDesCours = ref.watch(
+      brouillonInscriptionProvider.select(
+        (BrouillonInscription b) => b.parentSuitDesCours,
+      ),
     );
 
     // Une carte deja choisie reste retenue au retour ; l'enseignant n'est pas
@@ -44,7 +45,11 @@ class UsageEtape extends ConsumerWidget {
       route: _route,
       question: t.inscription.usage.question,
       libelleAction: t.commun.continuer,
-      onAction: retenu == null ? null : () => avancerDepuis(context, _route),
+      onAction:
+          retenu == null ||
+              (retenu == UsageInscription.famille && suitDesCours == null)
+          ? null
+          : () => avancerDepuis(context, _route),
       complement: Center(
         child: ActionPrincipale(
           key: const Key('inscription-lien-enseignant'),
@@ -70,6 +75,7 @@ class UsageEtape extends ConsumerWidget {
       // Le groupe partage (ADR-013), sans carte « Autre » : deux cartes
       // exactement, a description (demande B-3 levee par COORD).
       enfant: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           ChoiceCardGroup(
             key: const Key('inscription-usage'),
@@ -102,17 +108,41 @@ class UsageEtape extends ConsumerWidget {
               }
             },
           ),
-          if (usage == UsageInscription.famille)
-            SwitchListTile.adaptive(
-              key: const Key('inscription-parent-suit-cours'),
-              value: parentSuitDesCours,
-              title: Text(
-                Localizations.localeOf(context).languageCode == 'ar'
-                    ? 'هل تتابع دروسًا أيضًا؟'
-                    : 'Suivez-vous aussi des cours ?',
-              ),
-              onChanged: controleur.choisirCoursTitulaire,
+          if (retenu == UsageInscription.famille) ...<Widget>[
+            const SizedBox(height: 24),
+            Text(
+              t.inscription.usage.coursQuestion,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
+            const SizedBox(height: 12),
+            ChoiceCardGroup(
+              key: const Key('inscription-parent-suit-des-cours'),
+              autoriserSaisieLibre: false,
+              coteACote: true,
+              valeurInitiale: suitDesCours == null
+                  ? null
+                  : ReponseChoix(
+                      valeurs: <String>{suitDesCours ? 'oui' : 'non'},
+                    ),
+              options: <OptionChoix>[
+                OptionChoix(
+                  valeur: 'oui',
+                  libelle: t.inscription.usage.coursOui,
+                ),
+                OptionChoix(
+                  valeur: 'non',
+                  libelle: t.inscription.usage.coursNon,
+                ),
+              ],
+              onChange: (ReponseChoix reponse) {
+                if (reponse.valeurs.contains('oui')) {
+                  controleur.choisirParentSuitDesCours(suit: true);
+                } else if (reponse.valeurs.contains('non')) {
+                  controleur.choisirParentSuitDesCours(suit: false);
+                }
+              },
+            ),
+          ],
         ],
       ),
     );

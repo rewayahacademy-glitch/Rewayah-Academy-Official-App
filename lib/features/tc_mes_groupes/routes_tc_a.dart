@@ -34,7 +34,14 @@ List<RouteBase> routesTcA({RoleEspaceGroupe role = RoleEspaceGroupe.eleve}) =>
     <RouteBase>[
       GoRoute(
         path: CheminsTcA.mesGroupes,
-        builder: (_, _) => const MesGroupesPage(),
+        // « Rejoindre » des cartes ouvre la salle comme celui de l'Espace
+        // Groupe (BOUTONS-GRISES-1) : non branche, il etait rendu inerte.
+        builder: (BuildContext contexte, GoRouterState _) => MesGroupesPage(
+          onRejoindre: (GroupSummaryVM groupe) =>
+              role == RoleEspaceGroupe.eleve
+              ? preparerSalleEleve(contexte, groupe)
+              : _rejoindre(contexte, groupe),
+        ),
         routes: <RouteBase>[
           GoRoute(
             path: CheminsTcA.segmentEspaceGroupe,

@@ -187,6 +187,16 @@ class TableauDeBordPage extends ConsumerWidget {
           onPress: () =>
               GoRouter.of(context).go(Routes.adminOperationsRegroupements),
         ),
+        // ECHELLE-ADM-PILOTAGE-1 : la demande et l'offre d'enseignants par
+        // horaire, R7 et R19.
+        SettingRow(
+          key: const ValueKey<String>('tableau-pilotage'),
+          title: t.admin.tableau.outilsPilotage,
+          description: t.admin.tableau.outilsPilotageDetail,
+          icon: AppIcons.tableauDeBord,
+          onPress: () =>
+              GoRouter.of(context).go(Routes.adminOperationsPilotage),
+        ),
         SettingRow(
           title: t.admin.groupes.titre,
           description: t.admin.tableau.outilsGroupesDetail,

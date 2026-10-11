@@ -15,6 +15,7 @@ import '../../core/classes/nom_classe_distinct.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/offre_horaire.dart' show PublicOffre;
+import '../../core/offres/page_regroupements.dart' show trierParPret;
 import '../../core/offres/port_regroupements_admin.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -27,24 +28,7 @@ import '../creneaux/plages.dart' show jourCapitalise;
 /// d'une lecture a l'autre.
 List<RegroupementDemandes> trierRegroupements(
   Iterable<RegroupementDemandes> regroupements,
-) {
-  int premierJour(RegroupementDemandes r) =>
-      r.occurrences.isEmpty ? 8 : r.occurrences.first.jourIso;
-  int premiereHeure(RegroupementDemandes r) =>
-      r.occurrences.isEmpty ? 0 : r.occurrences.first.minutesDuJour;
-  return regroupements.toList()
-    ..sort((RegroupementDemandes a, RegroupementDemandes b) {
-      final int pret = (a.pret ? 0 : 1).compareTo(b.pret ? 0 : 1);
-      if (pret != 0) return pret;
-      final int nombre = b.nombreEleves.compareTo(a.nombreEleves);
-      if (nombre != 0) return nombre;
-      final int jour = premierJour(a).compareTo(premierJour(b));
-      if (jour != 0) return jour;
-      final int heure = premiereHeure(a).compareTo(premiereHeure(b));
-      if (heure != 0) return heure;
-      return a.id.compareTo(b.id);
-    });
-}
+) => trierParPret(regroupements);
 
 /// Le public d'un regroupement, tel que la creation d'une classe le connait.
 TypePublicGroupe typeDe(PublicOffre public) => switch (public) {
@@ -224,3 +208,18 @@ List<Creneau> creneauxDe(RegroupementDemandes r) => <Creneau>[
   for (final OccurrenceCreneau o in r.occurrences)
     Creneau(jour: o.jourIso, heure: o.heure, fuseau: r.fuseau),
 ];
+
+/// R3 : « 2 classes de 5, 2 élèves en attente ». Une partie vide ne se dit
+/// pas ; sans classe, « aucune classe ».
+String libelleDecoupage(DecoupageClasses d) {
+  final r = t.admin.regroupements;
+  final List<String> parties = <String>[
+    if (d.pleines > 0)
+      r.decoupagePleines(n: d.pleines, taille: d.tailleMax)
+    else if (d.derniere == null)
+      r.decoupageAucuneClasse,
+    if (d.derniere case final int n) r.decoupageDerniere(n: n),
+    if (d.enAttente > 0) r.decoupageAttente(n: d.enAttente),
+  ];
+  return parties.join(', ');
+}
