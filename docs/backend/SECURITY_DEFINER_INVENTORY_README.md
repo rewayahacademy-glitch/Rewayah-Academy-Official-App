@@ -17,3 +17,20 @@ L’inventaire ne contient pas les corps de fonctions ni une conclusion de sécu
 - Les tests négatifs P02–P19 et P21–P24, signatures inconnues/surcharges/hash modifiés, et triggers SECURITY DEFINER doivent échouer. P00/P25/P29–P32, les helpers approuvés et les exceptions exactes `etat_presence` et `ressources_du_groupe` doivent réussir.
 
 F79 a demandé un contrôle en CI et en postflight. L’ajout de ces fichiers ne livre pas encore ce contrôle exécutable, ne corrige pas les 20 gardes négatives restant dans le candidat SEC-PROD, et ne lève pas le verdict `NON PRÊT`. Aucun SQL n’a été exécuté sur PROD ou STAGING.
+
+## Gate local de comparaison (composant partiel)
+
+`tool/security_definer_gate/catalog.sql` exporte en lecture seule les fonctions `SECURITY DEFINER` de `public` et `app_private`, leurs hashes, propriétaires, `search_path`, ACL effectives, ainsi que les fonctions trigger. `verify_allowlist.py` compare l’export au manifeste revu et refuse les entrées non approuvées, ajouts/suppressions/surcharges, différences de hash/ACL/propriétaire/search_path, fonctions trigger SECURITY DEFINER, et signatures sans classification/relecteur/date. Le script ne se connecte pas à la base et ne contient aucune clé.
+
+Exemple après application du lot candidat sur une base PostgreSQL jetable :
+
+```powershell
+psql -X -A -t -v ON_ERROR_STOP=1 -v project_ref=gggmtelinlpseweouyav `
+  -f tool/security_definer_gate/catalog.sql > catalog.json
+python tool/security_definer_gate/verify_allowlist.py `
+  --manifest docs/backend/SECURITY_DEFINER_INVENTORY_PROD_2026-10-11.json `
+  --catalog catalog.json --project-ref gggmtelinlpseweouyav
+python -m unittest discover -s tool/security_definer_gate/tests -v
+```
+
+Le manifeste actuel est `INVENTORY_ONLY_NOT_ALLOWLIST` et chaque entrée est `UNREVIEWED`; le gate doit donc refuser son utilisation. Cette comparaison ne remplace ni la revue manuelle des corps hashés, ni les scénarios positifs/négatifs du scanner de gardes, ni le branchement CI/postflight exigé par F79. Ce composant est partiel et ne change rien à distance.
