@@ -5,6 +5,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/env.dart';
 import '../domain/enums.dart';
+import 'port_capacite_eleve.dart';
+import 'port_capacite_eleve_supabase.dart';
 import 'session_state.dart';
 import 'source_session.dart';
 
@@ -43,9 +45,14 @@ AccesDemo? accesDemoDepuisCourriel(String courriel) {
 ///
 /// Les tests la remplacent par une source en memoire : le routeur se verifie
 /// alors sans reseau ni backend.
-final Provider<SourceSession> sourceSessionProvider = Provider<SourceSession>(
-  (Ref ref) => SourceSessionSupabase(Supabase.instance.client),
-);
+final Provider<SourceSession> sourceSessionProvider = Provider<SourceSession>((
+  Ref ref,
+) {
+  final SupabaseClient client = Supabase.instance.client;
+  final PortCapaciteEleve port =
+      ref.watch(portCapaciteEleveProvider) ?? PortCapaciteEleveSupabase(client);
+  return SourceSessionSupabase(client, port);
+});
 
 /// L'etat de session courant, synchrone.
 ///

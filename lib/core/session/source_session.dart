@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/enums.dart';
 import '../theme/app_delais.dart';
 import 'claims_jwt.dart';
+import 'port_capacite_eleve.dart';
 import 'session_state.dart';
 
 /// D'ou vient l'etat de session.
@@ -28,9 +29,10 @@ abstract interface class SourceSession {
 /// La source reelle : Supabase.
 class SourceSessionSupabase implements SourceSession {
   /// Cree la source a partir d'un client Supabase.
-  SourceSessionSupabase(this._client);
+  SourceSessionSupabase(this._client, this._capaciteEleve);
 
   final SupabaseClient _client;
+  final PortCapaciteEleve _capaciteEleve;
 
   @override
   Stream<SessionState> etats() async* {
@@ -58,21 +60,25 @@ class SourceSessionSupabase implements SourceSession {
     // meme source que celle lue par les policies RLS.
     final ClaimsJwt claims = ClaimsJwt.depuisJeton(session.accessToken);
     final String profileId = session.user.id;
+    final AppRole? role = AppRole.depuisSql(claims.role);
 
     // Le statut de compte n'est pas dans le jeton (le hook n'injecte que role
     // et household_id) : il demande une lecture, autorisee par la policy
     // `profiles_self_select`.
     final _ProfilLu profil = await _lireProfil(profileId);
+    final CapaciteEleve capacite = role == AppRole.guardian
+        ? await _capaciteEleve.lire()
+        : const PasEleve();
 
     return SessionState(
       resolue: true,
       profileId: profileId,
-      role: AppRole.depuisSql(claims.role),
+      role: role,
       householdId: claims.householdId,
       accountStatus: profil.statut,
       interfaceMode: profil.mode,
       lectureProfil: profil.lecture,
-      eleveAutonome: profil.eleveAutonome,
+      eleveAutonome: capacite is EleveAutonome,
     );
   }
 
@@ -82,9 +88,7 @@ class SourceSessionSupabase implements SourceSession {
       // demarrage indefiniment (C01 section 4).
       final Map<String, dynamic>? ligne = await _client
           .from('profiles')
-          .select(
-            'account_status, student_profiles(interface_mode, student_type, deleted_at)',
-          )
+          .select('account_status, student_profiles(interface_mode)')
           .eq('id', profileId)
           .maybeSingle()
           .timeout(AppDelais.requeteMax);
@@ -104,16 +108,10 @@ class SourceSessionSupabase implements SourceSession {
       final String? mode = eleve is Map<String, dynamic>
           ? eleve['interface_mode'] as String?
           : null;
-      final bool autonome =
-          eleve is Map<String, dynamic> &&
-          eleve['student_type'] == 'autonomous' &&
-          eleve['deleted_at'] == null;
-
       return _ProfilLu(
         AccountStatus.depuisSql(ligne['account_status'] as String?),
         InterfaceMode.depuisSql(mode),
         LectureProfil.presente,
-        autonome,
       );
     } on PostgrestException {
       // Lecture refusee ou indisponible. **Ne se confond pas avec l'absence** :
@@ -146,15 +144,9 @@ class SourceSessionSupabase implements SourceSession {
 }
 
 class _ProfilLu {
-  const _ProfilLu(
-    this.statut,
-    this.mode,
-    this.lecture, [
-    this.eleveAutonome = false,
-  ]);
+  const _ProfilLu(this.statut, this.mode, this.lecture);
 
   final AccountStatus? statut;
   final InterfaceMode mode;
   final LectureProfil lecture;
-  final bool eleveAutonome;
 }
