@@ -4,7 +4,22 @@
 
 -- Droits facon Supabase (alter default privileges du projet).
 grant usage on schema public to anon, authenticated, service_role;
-grant all on all tables in schema public to authenticated, service_role;
+do $scenario_grants$
+declare
+  v_table record;
+begin
+  for v_table in
+    select schemaname, tablename
+    from pg_catalog.pg_tables
+    where schemaname = 'public' and tablename <> 'contract_acceptances'
+  loop
+    execute format(
+      'grant all on table %I.%I to authenticated, service_role',
+      v_table.schemaname, v_table.tablename
+    );
+  end loop;
+end
+$scenario_grants$;
 grant all on all sequences in schema public to authenticated, service_role;
 grant all on all functions in schema public to service_role;
 
