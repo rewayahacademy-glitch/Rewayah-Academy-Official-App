@@ -10,7 +10,7 @@ Une ligne compacte dans l'en-tête de la salle de classe (`ChromeSeance`, celle 
 `/salle` et de `/tc/classe`), sous ou à côté de la ligne d'état :
 `00:12:34 écoulé · 00:32:26 restant`. Au dépassement : `Temps prévu écoulé`, jamais
 un temps négatif. Avant T0 : rien. Enseignant et élève en interface standard ;
-**jamais en Interface guidée**. Sans horodatages dans la source : aucune ligne.
+**jamais en Interface guidée**. Sans horodatages dans la source : aucune ligne. Dans la démonstration (`/demo/salle`), le chrono s'active par `&chrono=1` ; les autres démonstrations gardent leur en-tête d'origine.
 
 ## Règles et conclusions
 

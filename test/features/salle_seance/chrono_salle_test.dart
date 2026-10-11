@@ -15,6 +15,8 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
 import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/demo/demo_salle_page.dart'
+    show SalleDemo;
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrome_seance.dart';
@@ -281,6 +283,38 @@ void main() {
     expect(find.byKey(ChronoSalle.cleTexte), findsOneWidget);
     await _poser(tester, h, role: RoleSeance.guidee);
     expect(find.byKey(ChronoSalle.cleTexte), findsNothing);
+  });
+
+  testWidgets('la demonstration montre le chrono avec &chrono=1 seulement', (
+    WidgetTester tester,
+  ) async {
+    Future<void> monter({required bool avecChrono}) async {
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        ProviderScope(
+          child: TranslationProvider(
+            child: MaterialApp(
+              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              home: SalleDemo(
+                role: RoleSeance.enseignant,
+                etat: EtatDemoSalle.repos,
+                avecChrono: avecChrono,
+                onSortir: _rien,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump(const Duration(seconds: 1));
+    }
+
+    await monter(avecChrono: false);
+    expect(find.byKey(ChronoSalle.cleTexte), findsNothing);
+    await monter(avecChrono: true);
+    expect(find.byKey(ChronoSalle.cleTexte), findsOneWidget);
+    expect(_texte(tester), contains('écoulé'));
   });
 
   testWidgets('sans horodatages dans la source : aucune ligne', (

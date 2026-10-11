@@ -74,6 +74,8 @@ List<RouteBase> routesDemoSalle(String environnement) {
         enregistrement:
             _lire(EtatEnregistrement.values, etat.uri.queryParameters['enr']) ??
             EtatEnregistrement.actif,
+        // LIVE-CHRONO-01 : le chrono de la salle (`&chrono=1`).
+        avecChrono: etat.uri.queryParameters['chrono'] == '1',
       ),
     ),
   ];
@@ -123,8 +125,13 @@ class DemoSallePage extends StatelessWidget {
     this.observateur,
     this.titre = TitreEnseignant.sayyid,
     this.enregistrement = EtatEnregistrement.actif,
+    this.avecChrono = false,
     super.key,
   });
+
+  /// LIVE-CHRONO-01 : montre le chrono dans l'en-tete (`&chrono=1`). Faux par
+  /// defaut : les autres demonstrations gardent leur en-tete d'origine.
+  final bool avecChrono;
 
   final RoleSeance? role;
 
@@ -172,6 +179,7 @@ class DemoSallePage extends StatelessWidget {
           role: r,
           etat: etat ?? DonneesSeanceDemo.etatBaseTb(s),
           situation: s,
+          avecChrono: avecChrono,
           titre: titre,
           enregistrement: enregistrement,
           onSortir: () => context.go(Routes.demoSalle),
@@ -185,6 +193,7 @@ class DemoSallePage extends StatelessWidget {
       role: r,
       etat: e,
       titre: titre,
+      avecChrono: avecChrono,
       onSortir: () => context.go(Routes.demoSalle),
     );
     return _themePour(context, r, salle);
@@ -433,8 +442,12 @@ class SalleDemo extends StatefulWidget {
     this.prenomEleve = DonneesSeanceDemo.eleveCourant,
     this.situation,
     this.enregistrement = EtatEnregistrement.actif,
+    this.avecChrono = false,
     super.key,
   });
+
+  /// LIVE-CHRONO-01 : l'en-tete porte le chrono de la seance.
+  final bool avecChrono;
 
   final RoleSeance role;
   final EtatDemoSalle etat;
@@ -530,9 +543,9 @@ class _SalleDemoState extends State<SalleDemo> {
             enregistrement: widget.enregistrement,
           );
     // LIVE-CHRONO-01 : la demonstration porte les bornes d'une vraie seance,
-    // fixees une fois a l'ouverture de l'ecran. Les situations de la recette
-    // TB gardent leur en-tete d'origine (leurs mesures en dependent).
-    if (s != null) {
+    // fixees une fois a l'ouverture de l'ecran. Hors `&chrono=1`, l'en-tete
+    // garde sa forme d'origine (les mesures d'autres lots en dependent).
+    if (!widget.avecChrono) {
       return vue;
     }
     return vue.copyWith(
