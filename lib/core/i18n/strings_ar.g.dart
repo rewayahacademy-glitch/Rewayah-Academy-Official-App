@@ -8411,6 +8411,8 @@ class _Traductions$tc$bibliotheque$detail$ar extends Traductions$tc$bibliotheque
 	@override String get sansVersion => 'لا نسخة منشورة: لا شيء للفتح الآن.';
 	@override String get apercuIndisponible => 'معاينة هذا التنسيق غير متاحة بعد في التطبيق. يمكنك حفظ نسخة منه.';
 	@override String get renduCoran => 'يُفتح القرآن في القارئ المخصص له.';
+	@override String get entreeDetail => 'كل مواد المراجعة في مكان واحد.';
+	@override String get entreeLigne => 'فتح المكتبة';
 }
 
 // Path: tc.bibliotheque.action
@@ -8460,6 +8462,12 @@ class _Traductions$tc$bibliotheque$rendu$ar extends Traductions$tc$bibliotheque$
 	@override String get imageInaccessible => 'تعذّر تحميل الصورة حاليًا.';
 	@override String get imageIllisible => 'لا يمكن عرض ملف الصورة هذا.';
 	@override String get reessayer => 'إعادة المحاولة';
+	@override String get ouvrir => 'فتح';
+	@override String get ouvrirMushaf => 'فتح المصحف';
+	@override String get lienEchec => 'تعذّر الحصول على رابط القراءة حاليًا.';
+	@override String get lienIndisponible => 'الفتح غير متاح لهذه المادة.';
+	@override String get lienHorsLigne => 'يتطلب الفتح اتصالًا. أعد المحاولة عند عودته.';
+	@override String get lienBloque => 'منع المتصفح الفتح. اسمح بالنوافذ لهذا الموقع ثم أعد المحاولة.';
 }
 
 // Path: tc.bibliotheque.actif
@@ -15058,6 +15066,8 @@ extension on TraductionsAr {
 			'tc.bibliotheque.detail.sansVersion' => 'لا نسخة منشورة: لا شيء للفتح الآن.',
 			'tc.bibliotheque.detail.apercuIndisponible' => 'معاينة هذا التنسيق غير متاحة بعد في التطبيق. يمكنك حفظ نسخة منه.',
 			'tc.bibliotheque.detail.renduCoran' => 'يُفتح القرآن في القارئ المخصص له.',
+			'tc.bibliotheque.detail.entreeDetail' => 'كل مواد المراجعة في مكان واحد.',
+			'tc.bibliotheque.detail.entreeLigne' => 'فتح المكتبة',
 			'tc.bibliotheque.action.telecharger' => 'إتاحتها دون اتصال',
 			'tc.bibliotheque.action.liberer' => 'تحرير المساحة',
 			'tc.bibliotheque.action.enregistrerCopie' => 'حفظ نسخة',
@@ -15071,6 +15081,12 @@ extension on TraductionsAr {
 			'tc.bibliotheque.rendu.imageInaccessible' => 'تعذّر تحميل الصورة حاليًا.',
 			'tc.bibliotheque.rendu.imageIllisible' => 'لا يمكن عرض ملف الصورة هذا.',
 			'tc.bibliotheque.rendu.reessayer' => 'إعادة المحاولة',
+			'tc.bibliotheque.rendu.ouvrir' => 'فتح',
+			'tc.bibliotheque.rendu.ouvrirMushaf' => 'فتح المصحف',
+			'tc.bibliotheque.rendu.lienEchec' => 'تعذّر الحصول على رابط القراءة حاليًا.',
+			'tc.bibliotheque.rendu.lienIndisponible' => 'الفتح غير متاح لهذه المادة.',
+			'tc.bibliotheque.rendu.lienHorsLigne' => 'يتطلب الفتح اتصالًا. أعد المحاولة عند عودته.',
+			'tc.bibliotheque.rendu.lienBloque' => 'منع المتصفح الفتح. اسمح بالنوافذ لهذا الموقع ثم أعد المحاولة.',
 			'tc.bibliotheque.actif.indisponibleTitre' => 'المادة المعروضة لم تُفتح بعد',
 			'tc.bibliotheque.actif.indisponible' => 'سيُفتح تتبّع المادة المعروضة عند ربط الخادم.',
 			'tc.bibliotheque.actif.sansDonnees' => 'المادة المعروضة',
@@ -15206,6 +15222,8 @@ extension on TraductionsAr {
 			'tc.classe.recitation.arreter' => 'إيقاف التلاوة',
 			'tc.classe.support.aucun' => 'لا مادة معروضة',
 			'tc.classe.support.aucunDetail' => 'افتح المكتبة لعرض مادة على الفصل.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.support.bibliotheque' => 'المكتبة',
 			'tc.classe.support.bibliothequeAbsente' => 'المكتبة غير موصولة',
 			'tc.classe.support.bibliothequeAbsenteDetail' => 'سيتاح اختيار المادة بمجرد دمج الفهرس.',
@@ -15214,8 +15232,6 @@ extension on TraductionsAr {
 			'tc.classe.commandes.camera' => 'فتح الكاميرا',
 			'tc.classe.commandes.cameraFermer' => 'إغلاق الكاميرا',
 			'tc.classe.commandes.microCoupe' => 'الميكروفون مغلق',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.commandes.quitter' => 'مغادرة',
 			'tc.classe.commandes.quitterQuestion' => 'مغادرة الدرس؟',
 			'tc.classe.commandes.quitterConsequence' => 'سيُسجَّل خروجك. يمكنك العودة ما دامت الحصة مفتوحة.',
@@ -15720,6 +15736,8 @@ extension on TraductionsAr {
 			'com.vocal.composer.nonConfirme' => 'لم يتم تأكيد هذه الرسالة الصوتية بعد.',
 			'com.vocal.composer.nonConfirmeAide' => 'تحقّق من اتصالك، ثم أعد المحاولة. الرسالة الصوتية محفوظة هنا.',
 			'com.vocal.composer.reessayer' => 'إعادة المحاولة',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.composer.envoye' => 'أُرسلت الرسالة الصوتية.',
 			'com.vocal.composer.horsLigne' => 'أنت غير متصل. الرسالة الصوتية محفوظة هنا: أرسلها عند عودة الاتصال.',
 			'com.vocal.lecteur.libelleAuteur' => ({required Object auteur, required Object duree}) => 'رسالة صوتية من ${auteur}‏، ${duree}',
@@ -15728,8 +15746,6 @@ extension on TraductionsAr {
 			'com.vocal.lecteur.pause' => 'إيقاف مؤقت',
 			'com.vocal.lecteur.reprendre' => 'استئناف',
 			'com.vocal.lecteur.reecouter' => 'إعادة الاستماع',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.lecteur.nonEcoute' => 'لم يُستمع إليها بعد',
 			'com.vocal.lecteur.lecture' => 'التشغيل جارٍ',
 			'com.vocal.lecteur.enPause' => 'التشغيل متوقف مؤقتًا',
@@ -16234,6 +16250,8 @@ extension on TraductionsAr {
 			'com.annonces.administration.moderation.regles.pasAffilie' => 'لا روابط تسويق بالعمولة',
 			'com.annonces.administration.moderation.regles.pasVente' => 'لا بيع لمنتج أو خدمة',
 			'com.annonces.administration.moderation.regles.pasSollicitation' => 'لا التماس تجاري',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.regles.pasDonnees' => 'لا بيانات شخصية لطالب أو عائلة',
 			'com.annonces.demoPublication.lienAdministration' => 'إدارة التواصل (الإدارة)',
 			'com.annonces.demoPublication.lienPublier' => 'نشر إعلان لفصل (المعلم)',
@@ -16242,8 +16260,6 @@ extension on TraductionsAr {
 			'com.annonces.demoPublication.enseignants' => 'المعلمون',
 			'com.annonces.demoPublication.eleves' => 'الطلاب',
 			'com.annonces.demoPublication.controleurs' => 'المراقبون',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demoPublication.direction' => 'الإدارة',
 			'com.annonces.demoPublication.audiencesDirection' => 'الأكاديمية كلها، أو جمهور، أو فصل',
 			'com.annonces.demoPublication.audiencesEnseignant' => 'فصله فقط',
@@ -16748,6 +16764,8 @@ extension on TraductionsAr {
 			'admin.journal.chaineRompue' => 'السجل مُحرَّف',
 			'admin.journal.chaineRompueUne' => ({required Object entree}) => 'مدخل لم يعد يطابق بصمته، رقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.',
 			'admin.journal.chaineRompueDetail' => ({required num nombre, required Object entree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا مدخل يخالف بصمته.', one: 'مدخل واحد لم يعد يطابق بصمته، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', two: 'مدخلان لم يعودا يطابقان بصمتهما، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', few: '⁨${nombre}⁩ مدخلات لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', many: '⁨${nombre}⁩ مدخلًا لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', other: '⁨${nombre}⁩ مدخل لم تعد تطابق بصمتها، ابتداءً من الرقم ⁨${entree}⁩. شيء ما مسّ قاعدة البيانات من خارج التطبيق.', ), 
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.chaineInconnue' => 'السلامة غير معروفة',
 			'admin.journal.chaineInconnueDetail' => 'لم يكتمل التحقق. تبقى المدخلات أدناه مقروءة، لكن لا شيء يضمن الآن أنها كاملة.',
 			'admin.journal.chaineEnCours' => 'جارٍ التحقق',
@@ -16756,8 +16774,6 @@ extension on TraductionsAr {
 			'admin.journal.periodeMois' => 'آخر 30 يومًا',
 			'admin.journal.periodeTout' => 'منذ البداية',
 			'admin.journal.tousTypes' => 'كل الأحداث',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.tousActeurs' => 'الجميع',
 			'admin.journal.colonneQuand' => 'متى',
 			'admin.journal.colonneQui' => 'من',
@@ -17262,6 +17278,8 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.meta.categorie' => 'التصنيف',
 			'admin.bibliotheque.fiche.meta.niveau' => 'المستوى',
 			'admin.bibliotheque.fiche.meta.annee' => 'السنة',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.fiche.meta.visibilite' => 'الظهور',
 			'admin.bibliotheque.fiche.meta.horsLigne' => 'القراءة دون إنترنت',
 			'admin.bibliotheque.fiche.meta.nonRenseigne' => 'غير مذكور',
@@ -17270,8 +17288,6 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.conflit' => 'عدّل مسؤول آخر هذه المادة. أعد تحميل البطاقة قبل المتابعة.',
 			'admin.bibliotheque.fiche.recharger' => 'إعادة تحميل البطاقة',
 			'admin.bibliotheque.fiche.echecEnregistrer' => 'تعذّر تأكيد التعديلات. أعد المحاولة.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.fiche.titreVide' => 'العنوان مطلوب.',
 			'admin.bibliotheque.fiche.figee' => 'إصدار منشور ومثبّت: لتعديله أنشئ إصدارًا جديدًا.',
 			'admin.bibliotheque.fiche.retireMotif' => ({required Object motif}) => 'سُحبت من الفهرس. السبب: ⁨${motif}⁩',
@@ -17776,6 +17792,8 @@ extension on TraductionsAr {
 			'comptable.tresorerie.retraitSansValidation' => 'لا تشترط السياسة مصادقة للسحب؛ ويبقى معامَلًا كحركة حساسة.',
 			'comptable.tresorerie.version' => ({required Object version}) => 'الإصدار ${version}',
 			'comptable.tresorerie.versionDepuis' => ({required Object version, required Object date}) => 'الإصدار ${version}، ساري المفعول منذ ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.mouvementsTitre' => 'الحركات بين الصناديق',
 			'comptable.tresorerie.mouvementsPhrase' => 'نحو الحماية: حسب تفويضك. الخروج من صندوق محمي: تلزم مصادقة إضافية.',
 			'comptable.tresorerie.preparerMouvement' => 'إعداد حركة',
@@ -17784,8 +17802,6 @@ extension on TraductionsAr {
 			'comptable.tresorerie.alimenterBloque' => ({required Object raison}) => 'تغذية الاحتياطي الاستراتيجي: ${raison}.',
 			'comptable.tresorerie.aucunMouvement' => 'لا تسمح السياسة لحسابك بأي حركة بين الصناديق.',
 			'comptable.tresorerie.mouvementsHorsLigne' => 'غير متصل: تُستأنف الحركات بين الصناديق مع عودة الشبكة.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.interdits' => 'أموال العملاء الملتزَم بها والضرائب والالتزامات لا تموّل أبدًا مصروفًا عاديًا؛ والتخصيص السابق لا يُعدَّل.',
 			'comptable.tresorerie.previsionTitre' => 'التوقعات',
 			'comptable.tresorerie.previsionPhrase' => 'الداخل والخارج المتوقع، حسب التاريخ.',
@@ -18290,6 +18306,8 @@ extension on TraductionsAr {
 			'galerie.elevation' => 'الارتفاع والزوايا',
 			'galerie.typographie' => 'سلالم الخطوط',
 			'galerie.polices' => 'الخطوط',
+			_ => null,
+		} ?? switch (path) {
 			'galerie.composants' => 'المكونات المشتركة',
 			'galerie.modeEnfant' => 'وضع إمكانية الوصول',
 			'galerie.modeStandard' => 'الوضع العادي',
@@ -18298,8 +18316,6 @@ extension on TraductionsAr {
 			'ficheEleve.appareilsGroupe' => 'الأجهزة',
 			'ficheEleve.introuvable.titre' => 'لم يُعثر على ملف الطالب هذا',
 			'ficheEleve.introuvable.phrase' => 'ليس من أسرتك، أو الرابط ناقص.',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.introuvable.retour' => 'العودة إلى الأسرة',
 			'ficheEleve.lignes.informations' => 'المعلومات',
 			'ficheEleve.lignes.informationsLegende' => 'الاسم والصورة',
@@ -18804,6 +18820,8 @@ extension on TraductionsAr {
 			'foyer.relireClasses' => 'إعادة قراءة الفصول',
 			'foyer.inscriptionIllisible' => 'التسجيل الجاري لكل طالب لا يظهر في هذه الصفحة بعد.',
 			'foyer.appareilsPartages' => 'الأجهزة المشتركة',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.appareilsFoyer' => 'أجهزة الأسرة',
 			'foyer.appareilsFoyerLegende' => 'ربط جهاز، عرض الأجهزة المربوطة، إزالة أحدها',
 			'foyer.creerMonProfil' => 'إنشاء ملفي كطالب',
@@ -18812,8 +18830,6 @@ extension on TraductionsAr {
 			'foyer.monProfil.indisponiblePhrase' => 'متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا. يبقى حسابك كوليّ أمر كما هو.',
 			'foyer.monProfil.retour' => 'العودة إلى الأسرة',
 			'foyer.ajout.suivant' => 'التالي',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.ajout.creer' => 'إنشاء الملف',
 			'foyer.ajout.porte.illisibleTitre' => 'تعذّرت قراءة حسابك',
 			'foyer.ajout.porte.illisiblePhrase' => 'لا نعرف بعد أي الملفات يمكنك إضافتها. أعد المحاولة بعد لحظة.',
@@ -19318,6 +19334,8 @@ extension on TraductionsAr {
 			'creneaux.attendDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'ينتظر منذ اليوم', one: 'ينتظر منذ يوم واحد', two: 'ينتظر منذ يومين', few: 'ينتظر منذ ⁨${jours}⁩ أيام', many: 'ينتظر منذ ⁨${jours}⁩ يومًا', other: 'ينتظر منذ ⁨${jours}⁩ يوم', ), 
 			'creneaux.attendUnJour' => 'ينتظر منذ يوم',
 			'creneaux.attendAujourdhui' => 'قُدِّم الطلب اليوم',
+			_ => null,
+		} ?? switch (path) {
 			'creneaux.niveau' => ({required Object niveau}) => 'المستوى ⁨${niveau}⁩',
 			'creneaux.prendre' => ({required Object jour, required Object heure}) => 'قبول ⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'creneaux.priseEnCours' => 'جارٍ الحفظ',
@@ -19326,8 +19344,6 @@ extension on TraductionsAr {
 			'creneaux.demandeTitre' => 'كم طالبًا يمكنك أن تتابع؟',
 			'creneaux.demandeMotif' => 'لماذا هذا التغيير؟',
 			'creneaux.demandeMotifRequis' => 'السبب ضروري: هو الذي يسمح بالحسم.',
-			_ => null,
-		} ?? switch (path) {
 			'creneaux.demandeEnvoyer' => 'إرسال الطلب',
 			'creneaux.demandeEnvoyee' => 'أُرسل الطلب. ستحسم فيه الإدارة.',
 			'creneaux.eleves' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${nombre}⁩ طلاب', many: '⁨${nombre}⁩ طالبًا', other: '⁨${nombre}⁩ طالب', ), 
