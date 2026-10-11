@@ -1,0 +1,2707 @@
+{
+  "metadata": {
+    "title": "Rewayah Academy PROD SECURITY DEFINER inventory",
+    "project_ref": "gggmtelinlpseweouyav",
+    "observed_at_utc": "2026-10-11",
+    "source": "Read-only pg_catalog SELECT via Supabase MCP; body fingerprint is md5(prosrc)",
+    "approval_state": "INVENTORY_ONLY_NOT_ALLOWLIST",
+    "function_count": 141,
+    "event_trigger_count": 1,
+    "grants_observed": {
+      "anon": 27,
+      "authenticated": 118,
+      "agent_ro": 48
+    },
+    "use": "Fail closed: this file is not an approval. Every row requires human classification, reviewer and review date before an allowlist gate can pass."
+  },
+  "functions": [
+    {
+      "signature": "public.agent_identite_masquee()",
+      "schema": "public",
+      "function_name": "agent_identite_masquee",
+      "identity_arguments": "",
+      "md5_prosrc": "0ea1371589d8b2b4876e3392b4700ba8",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.agent_jeton_vivant(p_id uuid)",
+      "schema": "public",
+      "function_name": "agent_jeton_vivant",
+      "identity_arguments": "p_id uuid",
+      "md5_prosrc": "9c0f4aee03521dc254b8c2bda3f73b4a",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.agent_pre_request()",
+      "schema": "public",
+      "function_name": "agent_pre_request",
+      "identity_arguments": "",
+      "md5_prosrc": "38199345beac958904c16f961c73b7fe",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.ajouter_eleve_groupe(p_groupe_id uuid, p_student_profile_id uuid, p_motif text)",
+      "schema": "public",
+      "function_name": "ajouter_eleve_groupe",
+      "identity_arguments": "p_groupe_id uuid, p_student_profile_id uuid, p_motif text",
+      "md5_prosrc": "e4790305fabd7f5cf52e17172edc431f",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.ajouter_niveau_programme(p_version_id uuid, p_code_technique text, p_nom_humain text, p_cycle text, p_ordre integer, p_description text)",
+      "schema": "public",
+      "function_name": "ajouter_niveau_programme",
+      "identity_arguments": "p_version_id uuid, p_code_technique text, p_nom_humain text, p_cycle text, p_ordre integer, p_description text",
+      "md5_prosrc": "e7eb8ebb0dc41cef2e5aa858ab7b78da",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.annonce_observation_pour_moi(p_session_id uuid)",
+      "schema": "public",
+      "function_name": "annonce_observation_pour_moi",
+      "identity_arguments": "p_session_id uuid",
+      "md5_prosrc": "fc4e8b8a13a367ea57d57ae6cd69b134",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.annonces_observation(p_session_id uuid)",
+      "schema": "public",
+      "function_name": "annonces_observation",
+      "identity_arguments": "p_session_id uuid",
+      "md5_prosrc": "54bd6bed9ff97abd3d115d844d7ad593",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.annuler_evaluation(p_evaluation_id uuid, p_motif text)",
+      "schema": "public",
+      "function_name": "annuler_evaluation",
+      "identity_arguments": "p_evaluation_id uuid, p_motif text",
+      "md5_prosrc": "9939318b95fe5e2cb357e0f2173ff95c",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.anomalies_qualite()",
+      "schema": "public",
+      "function_name": "anomalies_qualite",
+      "identity_arguments": "",
+      "md5_prosrc": "fd26f6e0f1d554dc4626dc32eaa8e6ad",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.app_account_valid()",
+      "schema": "public",
+      "function_name": "app_account_valid",
+      "identity_arguments": "",
+      "md5_prosrc": "dc39632a4b8d0929ce52282fad359717",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.app_config_int(p_key text, p_defaut integer)",
+      "schema": "public",
+      "function_name": "app_config_int",
+      "identity_arguments": "p_key text, p_defaut integer",
+      "md5_prosrc": "2d85ce9438876e24b538fc8bd897f7e6",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.app_household_id()",
+      "schema": "public",
+      "function_name": "app_household_id",
+      "identity_arguments": "",
+      "md5_prosrc": "cdcee8b2d885dc388d475891ca1b4f74",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.app_role()",
+      "schema": "public",
+      "function_name": "app_role",
+      "identity_arguments": "",
+      "md5_prosrc": "76cd6e881c7faa91934d00985fcd2c9f",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.app_user_id()",
+      "schema": "public",
+      "function_name": "app_user_id",
+      "identity_arguments": "",
+      "md5_prosrc": "ebef03123c01c0f5b0431f57f14f1482",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.assister_seance(p_session_id uuid)",
+      "schema": "public",
+      "function_name": "assister_seance",
+      "identity_arguments": "p_session_id uuid",
+      "md5_prosrc": "32e061ee532987b505d4cdd92384a9fd",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.attacher_partition_audit(p_debut date)",
+      "schema": "public",
+      "function_name": "attacher_partition_audit",
+      "identity_arguments": "p_debut date",
+      "md5_prosrc": "79092b389fec1bc9a1d10b3d6515dd1d",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.attribuer_eleve(p_student_profile_id uuid, p_teacher_profile_id uuid, p_weekday integer, p_hour integer, p_motif text)",
+      "schema": "public",
+      "function_name": "attribuer_eleve",
+      "identity_arguments": "p_student_profile_id uuid, p_teacher_profile_id uuid, p_weekday integer, p_hour integer, p_motif text",
+      "md5_prosrc": "6ca7af08a8193ec66940ed3f4ca813a9",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.autoriser_ecoute_archive(p_recording_id uuid)",
+      "schema": "public",
+      "function_name": "autoriser_ecoute_archive",
+      "identity_arguments": "p_recording_id uuid",
+      "md5_prosrc": "7576c1e1e6be92ab2db946b182046700",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.autoriser_jeton_video(p_session_id uuid, p_profile_id uuid, p_ws_url_cloud text, p_ws_url_self_hosted text)",
+      "schema": "public",
+      "function_name": "autoriser_jeton_video",
+      "identity_arguments": "p_session_id uuid, p_profile_id uuid, p_ws_url_cloud text, p_ws_url_self_hosted text",
+      "md5_prosrc": "fe22869c27a62a5d6777fb7ca78a61c3",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.autoriser_lecture_piece_identite(p_document_id uuid)",
+      "schema": "public",
+      "function_name": "autoriser_lecture_piece_identite",
+      "identity_arguments": "p_document_id uuid",
+      "md5_prosrc": "3f6e529f0e299d84fb014a0bb2682d2a",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.brouillon_cahier(p_session_id uuid)",
+      "schema": "public",
+      "function_name": "brouillon_cahier",
+      "identity_arguments": "p_session_id uuid",
+      "md5_prosrc": "990f0bc01e91903f95afce2593431996",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.budget_observation(p_session_id uuid)",
+      "schema": "public",
+      "function_name": "budget_observation",
+      "identity_arguments": "p_session_id uuid",
+      "md5_prosrc": "261f0f5b4314419458533e8ade733ed7",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.clore_exception_progression(p_exception_id uuid, p_motif text)",
+      "schema": "public",
+      "function_name": "clore_exception_progression",
+      "identity_arguments": "p_exception_id uuid, p_motif text",
+      "md5_prosrc": "3174b1452ce9a7173e09d34e7788f291",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.clore_regle(p_override_id uuid, p_motif text)",
+      "schema": "public",
+      "function_name": "clore_regle",
+      "identity_arguments": "p_override_id uuid, p_motif text",
+      "md5_prosrc": "ca38f130b5a01e63e9a8415e09491043",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.cloturer_groupe(p_groupe_id uuid, p_motif text)",
+      "schema": "public",
+      "function_name": "cloturer_groupe",
+      "identity_arguments": "p_groupe_id uuid, p_motif text",
+      "md5_prosrc": "1078dd58ec6042c0a70d93a182bdff16",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.completer_kyc_document()",
+      "schema": "public",
+      "function_name": "completer_kyc_document",
+      "identity_arguments": "",
+      "md5_prosrc": "67c4b5ec25609b0d47ed45fc737d3b51",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.comptes_admin()",
+      "schema": "public",
+      "function_name": "comptes_admin",
+      "identity_arguments": "",
+      "md5_prosrc": "53d7dca670a1cc348fe5e77175c90ddc",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.confirmer_depot_piece_identite(p_document_id uuid)",
+      "schema": "public",
+      "function_name": "confirmer_depot_piece_identite",
+      "identity_arguments": "p_document_id uuid",
+      "md5_prosrc": "767fe5fe5b31acdd738634b54eeb724a",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.consommer_code_appairage(p_code text, p_device_fingerprint text, p_platform text)",
+      "schema": "public",
+      "function_name": "consommer_code_appairage",
+      "identity_arguments": "p_code text, p_device_fingerprint text, p_platform text",
+      "md5_prosrc": "1136dc1bb6573ddced2a576c2d5c4d3a",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.creer_code_appairage(p_student_profile_id uuid)",
+      "schema": "public",
+      "function_name": "creer_code_appairage",
+      "identity_arguments": "p_student_profile_id uuid",
+      "md5_prosrc": "c2d25e13ca3ec1e53ac417bb0b43896e",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.creer_groupe(p_teacher_profile_id uuid, p_type_public text, p_libelle text, p_weekday smallint, p_hour_local smallint, p_seuil_max smallint, p_timezone_iana text, p_couleur_jeton smallint)",
+      "schema": "public",
+      "function_name": "creer_groupe",
+      "identity_arguments": "p_teacher_profile_id uuid, p_type_public text, p_libelle text, p_weekday smallint, p_hour_local smallint, p_seuil_max smallint, p_timezone_iana text, p_couleur_jeton smallint",
+      "md5_prosrc": "9342aee5cbf83293d29ee62bcdd8d2ed",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.creer_groupe(p_teacher_profile_id uuid, p_type_public text, p_libelle text, p_weekday smallint, p_hour_local smallint, p_seuil_max smallint)",
+      "schema": "public",
+      "function_name": "creer_groupe",
+      "identity_arguments": "p_teacher_profile_id uuid, p_type_public text, p_libelle text, p_weekday smallint, p_hour_local smallint, p_seuil_max smallint",
+      "md5_prosrc": "88d151e907c9782842fed654b180ffe0",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.creer_jeton_agent(p_libelle text, p_profil_observe uuid, p_duree_heures integer, p_identite_masquee boolean)",
+      "schema": "public",
+      "function_name": "creer_jeton_agent",
+      "identity_arguments": "p_libelle text, p_profil_observe uuid, p_duree_heures integer, p_identite_masquee boolean",
+      "md5_prosrc": "afa74cd05466cf3e20ac414a405897cd",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.creer_profil_enfant(p_auth_user_id uuid, p_guardian_id uuid, p_first_name text, p_last_name text, p_age integer, p_level text)",
+      "schema": "public",
+      "function_name": "creer_profil_enfant",
+      "identity_arguments": "p_auth_user_id uuid, p_guardian_id uuid, p_first_name text, p_last_name text, p_age integer, p_level text",
+      "md5_prosrc": "3e22ec64686ba9fc4265e9cbd904c4d7",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.creer_profil_inscription(p_role text, p_first_name text, p_last_name text, p_gender gender, p_timezone text)",
+      "schema": "public",
+      "function_name": "creer_profil_inscription",
+      "identity_arguments": "p_role text, p_first_name text, p_last_name text, p_gender gender, p_timezone text",
+      "md5_prosrc": "347d980095d70ff447b390bc9bb7ef5c",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.creer_version_programme(p_source_version_id uuid)",
+      "schema": "public",
+      "function_name": "creer_version_programme",
+      "identity_arguments": "p_source_version_id uuid",
+      "md5_prosrc": "a09f2e0ecf924274b082cb15899c3a9e",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.custom_access_token_hook(event jsonb)",
+      "schema": "public",
+      "function_name": "custom_access_token_hook",
+      "identity_arguments": "event jsonb",
+      "md5_prosrc": "8b8286d4b2958229e98c6aba4417f810",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.decider_demande(p_request_id uuid, p_accepte boolean, p_motif text)",
+      "schema": "public",
+      "function_name": "decider_demande",
+      "identity_arguments": "p_request_id uuid, p_accepte boolean, p_motif text",
+      "md5_prosrc": "c77709d455ca6c30abb1bbf6aef19d30",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.decider_dossier(p_document_id uuid, p_approuve boolean, p_motif text)",
+      "schema": "public",
+      "function_name": "decider_dossier",
+      "identity_arguments": "p_document_id uuid, p_approuve boolean, p_motif text",
+      "md5_prosrc": "00549122076dc852de7aebc7178baa39",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.decider_placement(p_student_id uuid, p_niveau_id uuid, p_motif text)",
+      "schema": "public",
+      "function_name": "decider_placement",
+      "identity_arguments": "p_student_id uuid, p_niveau_id uuid, p_motif text",
+      "md5_prosrc": "f2ecaa2cc76c70583dde0160840f8e99",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.definir_politique_observation_groupe(p_groupe_id uuid, p_source text, p_max_visites smallint, p_max_secondes integer, p_max_secondes_par_visite integer)",
+      "schema": "public",
+      "function_name": "definir_politique_observation_groupe",
+      "identity_arguments": "p_groupe_id uuid, p_source text, p_max_visites smallint, p_max_secondes integer, p_max_secondes_par_visite integer",
+      "md5_prosrc": "39010e670306e03b2e5d83bc6546f2e1",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.demander(p_kind text, p_subject_profile_id uuid, p_motif text, p_rule_key text, p_rule_value integer)",
+      "schema": "public",
+      "function_name": "demander",
+      "identity_arguments": "p_kind text, p_subject_profile_id uuid, p_motif text, p_rule_key text, p_rule_value integer",
+      "md5_prosrc": "b3830528d120b2fb0d3f3af096c9726a",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.demandes_en_attente()",
+      "schema": "public",
+      "function_name": "demandes_en_attente",
+      "identity_arguments": "",
+      "md5_prosrc": "f65e3a1750018442e192fd9c897769fc",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.derniere_position_groupe(p_groupe_id uuid)",
+      "schema": "public",
+      "function_name": "derniere_position_groupe",
+      "identity_arguments": "p_groupe_id uuid",
+      "md5_prosrc": "b27d5ae6d2fdef996ad03178efdeda54",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.diagnostics_a_traiter()",
+      "schema": "public",
+      "function_name": "diagnostics_a_traiter",
+      "identity_arguments": "",
+      "md5_prosrc": "f81efacd1badcb7e289c198904c609ea",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.doit_demander_feedback(p_session_id uuid)",
+      "schema": "public",
+      "function_name": "doit_demander_feedback",
+      "identity_arguments": "p_session_id uuid",
+      "md5_prosrc": "788add93c242f0b6cd24b210ed13073f",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.dossiers_en_attente()",
+      "schema": "public",
+      "function_name": "dossiers_en_attente",
+      "identity_arguments": "",
+      "md5_prosrc": "1341dbef62daee8c7f09d38dd9a8104f",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.eleves_sans_enseignant()",
+      "schema": "public",
+      "function_name": "eleves_sans_enseignant",
+      "identity_arguments": "",
+      "md5_prosrc": "adb729f75c08753548fefd9e46d85ebd",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.enregistrer_archive_seance(p_room_name text, p_egress_id text, p_object_key text, p_duration_seconds integer, p_size_bytes bigint, p_codec text)",
+      "schema": "public",
+      "function_name": "enregistrer_archive_seance",
+      "identity_arguments": "p_room_name text, p_egress_id text, p_object_key text, p_duration_seconds integer, p_size_bytes bigint, p_codec text",
+      "md5_prosrc": "1bc75fe8bd423bdb52a1c947eaa2a961",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.enregistrer_resultat_evaluation(p_evaluation_id uuid, p_resultat text, p_notes text)",
+      "schema": "public",
+      "function_name": "enregistrer_resultat_evaluation",
+      "identity_arguments": "p_evaluation_id uuid, p_resultat text, p_notes text",
+      "md5_prosrc": "acf11c26ffc54ba9b8ffe492d2c5ebbe",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.enregistrer_webhook_livekit(p_event_id text, p_event_type text, p_room_name text, p_profile_id uuid, p_server_ts timestamp with time zone, p_detail jsonb)",
+      "schema": "public",
+      "function_name": "enregistrer_webhook_livekit",
+      "identity_arguments": "p_event_id text, p_event_type text, p_room_name text, p_profile_id uuid, p_server_ts timestamp with time zone, p_detail jsonb",
+      "md5_prosrc": "5d59b5968d15c4587d20afdd7546217a",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.enseignants_pour(p_student_profile_id uuid)",
+      "schema": "public",
+      "function_name": "enseignants_pour",
+      "identity_arguments": "p_student_profile_id uuid",
+      "md5_prosrc": "f94180c16cb5c1bb0a962b74c08d0d21",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.entrer_observation(p_session_id uuid, p_role text)",
+      "schema": "public",
+      "function_name": "entrer_observation",
+      "identity_arguments": "p_session_id uuid, p_role text",
+      "md5_prosrc": "a9a68e22a5b5a7f9f67de29ea78a7d5d",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.est_du_foyer(p_profile_id uuid)",
+      "schema": "public",
+      "function_name": "est_du_foyer",
+      "identity_arguments": "p_profile_id uuid",
+      "md5_prosrc": "1ba5b091a750892c41259d3b3d26c282",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.est_observateur_masque(p_session_id uuid, p_profile_id uuid)",
+      "schema": "public",
+      "function_name": "est_observateur_masque",
+      "identity_arguments": "p_session_id uuid, p_profile_id uuid",
+      "md5_prosrc": "91ccfe858c3f95557876f409feeea126",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.etat_dossier()",
+      "schema": "public",
+      "function_name": "etat_dossier",
+      "identity_arguments": "",
+      "md5_prosrc": "b82434a4117d22013a02c5c921aba9ca",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.etat_presence(p_session_id uuid, p_profile_id uuid)",
+      "schema": "public",
+      "function_name": "etat_presence",
+      "identity_arguments": "p_session_id uuid, p_profile_id uuid",
+      "md5_prosrc": "f281c0f4614d9bfbe79ca02e108ce33c",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.evaluations_admin()",
+      "schema": "public",
+      "function_name": "evaluations_admin",
+      "identity_arguments": "",
+      "md5_prosrc": "cc6276355437fcb10854b7b3d4764971",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.geler_archive_seance(p_recording_id uuid, p_motif text, p_gel boolean)",
+      "schema": "public",
+      "function_name": "geler_archive_seance",
+      "identity_arguments": "p_recording_id uuid, p_motif text, p_gel boolean",
+      "md5_prosrc": "114d9b487c1c17729eea6354e495a1d7",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.get_config(p_key text, p_default jsonb)",
+      "schema": "public",
+      "function_name": "get_config",
+      "identity_arguments": "p_key text, p_default jsonb",
+      "md5_prosrc": "82233f266914ea7f1dd61a4ecbd2b0a5",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.groupe_detail(p_groupe_id uuid)",
+      "schema": "public",
+      "function_name": "groupe_detail",
+      "identity_arguments": "p_groupe_id uuid",
+      "md5_prosrc": "5bb58e5863d75546f0c2a1dbd0015324",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.groupe_roster_enseignant(p_groupe_id uuid)",
+      "schema": "public",
+      "function_name": "groupe_roster_enseignant",
+      "identity_arguments": "p_groupe_id uuid",
+      "md5_prosrc": "45d40cd851f769bc7d530bef5c0f4dca",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.groupes_admin()",
+      "schema": "public",
+      "function_name": "groupes_admin",
+      "identity_arguments": "",
+      "md5_prosrc": "b975db1bd5a8bcd4bb421a0572c46447",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.guard_app_config_history()",
+      "schema": "public",
+      "function_name": "guard_app_config_history",
+      "identity_arguments": "",
+      "md5_prosrc": "62ad1799f61b17606e0cf7cc85eba6e2",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.guard_assignment_cap()",
+      "schema": "public",
+      "function_name": "guard_assignment_cap",
+      "identity_arguments": "",
+      "md5_prosrc": "1d2ac6f467d60bd3420aa99f62db2558",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.guard_audit_logs_immutable()",
+      "schema": "public",
+      "function_name": "guard_audit_logs_immutable",
+      "identity_arguments": "",
+      "md5_prosrc": "8085566fad4286fb52f626ae41df1d25",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.guard_contract_acceptances_immutable()",
+      "schema": "public",
+      "function_name": "guard_contract_acceptances_immutable",
+      "identity_arguments": "",
+      "md5_prosrc": "3109d0f5ed0838a28303b1f9d2d83d0f",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.guard_devices_max_reactivation()",
+      "schema": "public",
+      "function_name": "guard_devices_max_reactivation",
+      "identity_arguments": "",
+      "md5_prosrc": "976ace380fe0296834849a4568557ef6",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.guard_devices_max()",
+      "schema": "public",
+      "function_name": "guard_devices_max",
+      "identity_arguments": "",
+      "md5_prosrc": "c55a42006a0225df37271dff19c7d944",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.guard_groupe_membre_cap()",
+      "schema": "public",
+      "function_name": "guard_groupe_membre_cap",
+      "identity_arguments": "",
+      "md5_prosrc": "819178cc9c2fe021bdfe58cdad9b736a",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.guard_prayer_adjustments()",
+      "schema": "public",
+      "function_name": "guard_prayer_adjustments",
+      "identity_arguments": "",
+      "md5_prosrc": "b16a3df032880985236fac05501dbff7",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.guard_profile_immutable_id()",
+      "schema": "public",
+      "function_name": "guard_profile_immutable_id",
+      "identity_arguments": "",
+      "md5_prosrc": "8e1b0799dc3b196b9bd7c7275bd382cf",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.guard_profile_privileged_columns()",
+      "schema": "public",
+      "function_name": "guard_profile_privileged_columns",
+      "identity_arguments": "",
+      "md5_prosrc": "842aa96cca61b2378272293765a80750",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.guard_rule_override_coherente()",
+      "schema": "public",
+      "function_name": "guard_rule_override_coherente",
+      "identity_arguments": "",
+      "md5_prosrc": "375e07dfebbdbac48b5ccd502cff45ee",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.guard_rule_override_immutable()",
+      "schema": "public",
+      "function_name": "guard_rule_override_immutable",
+      "identity_arguments": "",
+      "md5_prosrc": "c656eb9277f373d0494a06ceca5d957c",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.guard_session_overlap()",
+      "schema": "public",
+      "function_name": "guard_session_overlap",
+      "identity_arguments": "",
+      "md5_prosrc": "bc27e693905b682dd9dbb6f0c3e4e419",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.guard_session_participant_cap()",
+      "schema": "public",
+      "function_name": "guard_session_participant_cap",
+      "identity_arguments": "",
+      "md5_prosrc": "1f8185d8d8f4f5193713ee7fc601c726",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.guard_session_state_transition()",
+      "schema": "public",
+      "function_name": "guard_session_state_transition",
+      "identity_arguments": "",
+      "md5_prosrc": "a9288d730fbb00966e22894ea00e03bb",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.horloge_seance(p_session_id uuid)",
+      "schema": "public",
+      "function_name": "horloge_seance",
+      "identity_arguments": "p_session_id uuid",
+      "md5_prosrc": "e01ca036ac36b89356b05e5696a80790",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.indicateurs_admin()",
+      "schema": "public",
+      "function_name": "indicateurs_admin",
+      "identity_arguments": "",
+      "md5_prosrc": "a0336f08c8fafabe928c29e18e76dee3",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.jetons_agent_actifs()",
+      "schema": "public",
+      "function_name": "jetons_agent_actifs",
+      "identity_arguments": "",
+      "md5_prosrc": "4cb4bb80e6f6fa32cd7423da0dceb6c6",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.journal_audit_filtres()",
+      "schema": "public",
+      "function_name": "journal_audit_filtres",
+      "identity_arguments": "",
+      "md5_prosrc": "646f85245fd9597ade23daea54c527e6",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.journal_audit(p_acteur uuid, p_action text, p_depuis timestamp with time zone, p_limite integer, p_avant_date timestamp with time zone, p_avant_id bigint)",
+      "schema": "public",
+      "function_name": "journal_audit",
+      "identity_arguments": "p_acteur uuid, p_action text, p_depuis timestamp with time zone, p_limite integer, p_avant_date timestamp with time zone, p_avant_id bigint",
+      "md5_prosrc": "e75092da511464618f14b8c809cad7cc",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.log_sensitive_access(p_action text, p_table_name text, p_row_id text, p_payload jsonb)",
+      "schema": "public",
+      "function_name": "log_sensitive_access",
+      "identity_arguments": "p_action text, p_table_name text, p_row_id text, p_payload jsonb",
+      "md5_prosrc": "896efd6eb6ccd8bcdb861f0587e6d518",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.maintenant_serveur()",
+      "schema": "public",
+      "function_name": "maintenant_serveur",
+      "identity_arguments": "",
+      "md5_prosrc": "c6cc5aedf06b326b93be09bbe76052cd",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.maj_eleve_pedagogie(p_profile_id uuid, p_level text, p_riwaya text)",
+      "schema": "public",
+      "function_name": "maj_eleve_pedagogie",
+      "identity_arguments": "p_profile_id uuid, p_level text, p_riwaya text",
+      "md5_prosrc": "3fdc5727d01fbbd890b6ccf7f19b18ee",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.maj_profil_enseignant(p_country text, p_languages text[], p_timezone text)",
+      "schema": "public",
+      "function_name": "maj_profil_enseignant",
+      "identity_arguments": "p_country text, p_languages text[], p_timezone text",
+      "md5_prosrc": "513efebd225dd4ade5b4437948bc6c09",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.materialiser_seances_groupe(p_groupe_id uuid)",
+      "schema": "public",
+      "function_name": "materialiser_seances_groupe",
+      "identity_arguments": "p_groupe_id uuid",
+      "md5_prosrc": "ead0e7c359236fa78617599b512d244a",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.materialiser_seances(p_assignment_id uuid)",
+      "schema": "public",
+      "function_name": "materialiser_seances",
+      "identity_arguments": "p_assignment_id uuid",
+      "md5_prosrc": "e6c58a9246777b52f729078d6c53efaf",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.mes_rapports_en_attente()",
+      "schema": "public",
+      "function_name": "mes_rapports_en_attente",
+      "identity_arguments": "",
+      "md5_prosrc": "f425cc96813be477d75a5bf183a22bf1",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.modifier_groupe(p_groupe_id uuid, p_libelle text, p_seuil_max smallint, p_weekday smallint, p_hour_local smallint, p_timezone_iana text, p_couleur_jeton smallint)",
+      "schema": "public",
+      "function_name": "modifier_groupe",
+      "identity_arguments": "p_groupe_id uuid, p_libelle text, p_seuil_max smallint, p_weekday smallint, p_hour_local smallint, p_timezone_iana text, p_couleur_jeton smallint",
+      "md5_prosrc": "691feb179f9e6eaf2e490eddd635d588",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.modifier_groupe(p_groupe_id uuid, p_libelle text, p_seuil_max smallint, p_weekday smallint, p_hour_local smallint)",
+      "schema": "public",
+      "function_name": "modifier_groupe",
+      "identity_arguments": "p_groupe_id uuid, p_libelle text, p_seuil_max smallint, p_weekday smallint, p_hour_local smallint",
+      "md5_prosrc": "6db386990f5b61ef5c301bf9ce5d1479",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.modifier_niveau_programme(p_niveau_id uuid, p_nom_humain text, p_cycle text, p_ordre integer, p_description text)",
+      "schema": "public",
+      "function_name": "modifier_niveau_programme",
+      "identity_arguments": "p_niveau_id uuid, p_nom_humain text, p_cycle text, p_ordre integer, p_description text",
+      "md5_prosrc": "715615d4e4e04943aaae7108bd9bd8e8",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.mon_fuseau()",
+      "schema": "public",
+      "function_name": "mon_fuseau",
+      "identity_arguments": "",
+      "md5_prosrc": "a21b2dccef25c78a6a3ce623f2cb6079",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.mon_groupe_detail(p_groupe_id uuid)",
+      "schema": "public",
+      "function_name": "mon_groupe_detail",
+      "identity_arguments": "p_groupe_id uuid",
+      "md5_prosrc": "e5ce8db3efdacf49a9662fa8b50813c7",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.next_immutable_id(role_code app_role, initials text)",
+      "schema": "public",
+      "function_name": "next_immutable_id",
+      "identity_arguments": "role_code app_role, initials text",
+      "md5_prosrc": "410fc035d080d3724273976f2b79431a",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.partie_concernee(p_profile_id uuid)",
+      "schema": "public",
+      "function_name": "partie_concernee",
+      "identity_arguments": "p_profile_id uuid",
+      "md5_prosrc": "04de2429d1a046027057779380996fd1",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.personnes_observables()",
+      "schema": "public",
+      "function_name": "personnes_observables",
+      "identity_arguments": "",
+      "md5_prosrc": "b116dbe60c73a7e067f52fdda38806ba",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.peut_deposer_piece_identite(p_profile_id uuid)",
+      "schema": "public",
+      "function_name": "peut_deposer_piece_identite",
+      "identity_arguments": "p_profile_id uuid",
+      "md5_prosrc": "ee8578bbe0bc1cc46e3a7b5c3cbd8db1",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.peut_poser_disponibilite(p_profile_id uuid)",
+      "schema": "public",
+      "function_name": "peut_poser_disponibilite",
+      "identity_arguments": "p_profile_id uuid",
+      "md5_prosrc": "a5268e123461f77c781bfdb63b2c1741",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.planifier_evaluation(p_student_id uuid, p_niveau_id uuid, p_type text, p_date_prevue date)",
+      "schema": "public",
+      "function_name": "planifier_evaluation",
+      "identity_arguments": "p_student_id uuid, p_niveau_id uuid, p_type text, p_date_prevue date",
+      "md5_prosrc": "3ee56750011961a5e88703b44371152f",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.politique_observation_effective(p_groupe_id uuid)",
+      "schema": "public",
+      "function_name": "politique_observation_effective",
+      "identity_arguments": "p_groupe_id uuid",
+      "md5_prosrc": "0910a0ac812665755c08a98bf0ca3561",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.poser_exception_progression(p_student_id uuid, p_type text, p_motif text)",
+      "schema": "public",
+      "function_name": "poser_exception_progression",
+      "identity_arguments": "p_student_id uuid, p_type text, p_motif text",
+      "md5_prosrc": "65904b4d6149faa12f78bf223e5ac2b1",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.poser_regle(p_profile_id uuid, p_key text, p_value integer, p_motif text)",
+      "schema": "public",
+      "function_name": "poser_regle",
+      "identity_arguments": "p_profile_id uuid, p_key text, p_value integer, p_motif text",
+      "md5_prosrc": "8e493f36011487b27ec3898e9fb6bdeb",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.prendre_eleve(p_student_profile_id uuid, p_weekday integer, p_hour integer)",
+      "schema": "public",
+      "function_name": "prendre_eleve",
+      "identity_arguments": "p_student_profile_id uuid, p_weekday integer, p_hour integer",
+      "md5_prosrc": "2dd44ebb316805e96a7653c6189f4e24",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.preparer_depot_piece_identite(p_profile_id uuid, p_doc_type text)",
+      "schema": "public",
+      "function_name": "preparer_depot_piece_identite",
+      "identity_arguments": "p_profile_id uuid, p_doc_type text",
+      "md5_prosrc": "2269fbb0cd0c96d941f3609c3ce091c6",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.profil_de_mon_foyer(p_profile_id text)",
+      "schema": "public",
+      "function_name": "profil_de_mon_foyer",
+      "identity_arguments": "p_profile_id text",
+      "md5_prosrc": "e84b55a75bf76cb0fafeeb8dd8976f6d",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.profil_du_jeton_appareil(p_token text)",
+      "schema": "public",
+      "function_name": "profil_du_jeton_appareil",
+      "identity_arguments": "p_token text",
+      "md5_prosrc": "c12cf164729caddc9cfed4d0f6a3f0e3",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.programme_niveaux_admin(p_version_id uuid)",
+      "schema": "public",
+      "function_name": "programme_niveaux_admin",
+      "identity_arguments": "p_version_id uuid",
+      "md5_prosrc": "05b14f59cd6d01b56686f27e12e8c854",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.programme_versions_admin()",
+      "schema": "public",
+      "function_name": "programme_versions_admin",
+      "identity_arguments": "",
+      "md5_prosrc": "1a426cf12df086baea0ec6f09e9743a1",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.progression_admin()",
+      "schema": "public",
+      "function_name": "progression_admin",
+      "identity_arguments": "",
+      "md5_prosrc": "cbc7f581fcab288f1f3517fd76f40c00",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.progression_promouvoir(p_student_id uuid, p_niveau_id uuid, p_motif text)",
+      "schema": "public",
+      "function_name": "progression_promouvoir",
+      "identity_arguments": "p_student_id uuid, p_niveau_id uuid, p_motif text",
+      "md5_prosrc": "bfb081b0f5021c6b695376a708f6dfd0",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.publier_etat_partage(p_session_id uuid, p_resource_id uuid, p_resource_version_id uuid, p_content_position jsonb, p_content_range jsonb, p_display_mode text, p_hidden_ranges jsonb, p_semantic_markers jsonb, p_group_resume_position jsonb, p_revision integer)",
+      "schema": "public",
+      "function_name": "publier_etat_partage",
+      "identity_arguments": "p_session_id uuid, p_resource_id uuid, p_resource_version_id uuid, p_content_position jsonb, p_content_range jsonb, p_display_mode text, p_hidden_ranges jsonb, p_semantic_markers jsonb, p_group_resume_position jsonb, p_revision integer",
+      "md5_prosrc": "397cff4c84560d9b30c3cbbcad4746b7",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.publier_version_programme(p_version_id uuid, p_motif text)",
+      "schema": "public",
+      "function_name": "publier_version_programme",
+      "identity_arguments": "p_version_id uuid, p_motif text",
+      "md5_prosrc": "298115047268c0070e31caffb8693e61",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.quitter_salle(p_session_id uuid)",
+      "schema": "public",
+      "function_name": "quitter_salle",
+      "identity_arguments": "p_session_id uuid",
+      "md5_prosrc": "ad4016b7ebc558d99230d2fa6425063d",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.read_kyc_documents()",
+      "schema": "public",
+      "function_name": "read_kyc_documents",
+      "identity_arguments": "",
+      "md5_prosrc": "bbf06744e11c643090929943cc7260b0",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.record_session_event(p_session_id uuid, p_profile_id uuid, p_event_type session_event_type, p_source text)",
+      "schema": "public",
+      "function_name": "record_session_event",
+      "identity_arguments": "p_session_id uuid, p_profile_id uuid, p_event_type session_event_type, p_source text",
+      "md5_prosrc": "e9b4c9f60e003634462302bed1f26d8f",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.regle_brute(p_profile_id uuid, p_key text)",
+      "schema": "public",
+      "function_name": "regle_brute",
+      "identity_arguments": "p_profile_id uuid, p_key text",
+      "md5_prosrc": "aca3b41b67bb45e116b7e87590b16d11",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.regle_effective(p_profile_id uuid, p_key text)",
+      "schema": "public",
+      "function_name": "regle_effective",
+      "identity_arguments": "p_profile_id uuid, p_key text",
+      "md5_prosrc": "9de65f5b52b1f5ed5cf18dca2a93ec8f",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.rejoindre_observation(p_session_id uuid)",
+      "schema": "public",
+      "function_name": "rejoindre_observation",
+      "identity_arguments": "p_session_id uuid",
+      "md5_prosrc": "0e6387dd9616858f2a862b466207a23a",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.remettre_session_agent(p_jeton text)",
+      "schema": "public",
+      "function_name": "remettre_session_agent",
+      "identity_arguments": "p_jeton text",
+      "md5_prosrc": "af8891227d3ea64a1a90730898d0d1c9",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.ressources_du_groupe(p_groupe_id uuid)",
+      "schema": "public",
+      "function_name": "ressources_du_groupe",
+      "identity_arguments": "p_groupe_id uuid",
+      "md5_prosrc": "b9d3ad9816d6d5465afb66c991cc3fb8",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.retirer_eleve_groupe(p_groupe_id uuid, p_student_profile_id uuid, p_motif text)",
+      "schema": "public",
+      "function_name": "retirer_eleve_groupe",
+      "identity_arguments": "p_groupe_id uuid, p_student_profile_id uuid, p_motif text",
+      "md5_prosrc": "a0cff3ef5bd4154ff6c3414c34b55b34",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.revoquer_appareil(p_device_id uuid)",
+      "schema": "public",
+      "function_name": "revoquer_appareil",
+      "identity_arguments": "p_device_id uuid",
+      "md5_prosrc": "7f5e4d93faed3118b2c8ee752137204a",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.revoquer_jeton_agent(p_id uuid)",
+      "schema": "public",
+      "function_name": "revoquer_jeton_agent",
+      "identity_arguments": "p_id uuid",
+      "md5_prosrc": "b0da7380e766cdd406a1731f7882fa9a",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.rls_auto_enable()",
+      "schema": "public",
+      "function_name": "rls_auto_enable",
+      "identity_arguments": "",
+      "md5_prosrc": "99be20677b456ea8d3be47bdd44fb369",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=pg_catalog"
+      ],
+      "execute": {
+        "anon": true,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.session_belongs_to_teacher(p_session_id uuid, p_uid uuid)",
+      "schema": "public",
+      "function_name": "session_belongs_to_teacher",
+      "identity_arguments": "p_session_id uuid, p_uid uuid",
+      "md5_prosrc": "56f7a39fd6afeed083a74a93a8bdefda",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.session_has_participant(p_session_id uuid, p_uid uuid)",
+      "schema": "public",
+      "function_name": "session_has_participant",
+      "identity_arguments": "p_session_id uuid, p_uid uuid",
+      "md5_prosrc": "8a6cb2f804b416b476b95536ab5274a3",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.session_in_household(p_session_id uuid, p_household_id uuid)",
+      "schema": "public",
+      "function_name": "session_in_household",
+      "identity_arguments": "p_session_id uuid, p_household_id uuid",
+      "md5_prosrc": "1061915d170e39838f410a1ff125055e",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.sortir_observation(p_session_id uuid)",
+      "schema": "public",
+      "function_name": "sortir_observation",
+      "identity_arguments": "p_session_id uuid",
+      "md5_prosrc": "e67f8c662659b8b798273f9eb2bfb7d1",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.supprimer_niveau_programme(p_niveau_id uuid, p_motif text)",
+      "schema": "public",
+      "function_name": "supprimer_niveau_programme",
+      "identity_arguments": "p_niveau_id uuid, p_motif text",
+      "md5_prosrc": "bdaf1c1ec4a4d056eef12c54fdb96fa7",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.tc_materialiser_apres_adhesion()",
+      "schema": "public",
+      "function_name": "tc_materialiser_apres_adhesion",
+      "identity_arguments": "",
+      "md5_prosrc": "ef696eef0e790dbe7e61574d4e642b88",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.tc_materialiser_apres_creation_groupe()",
+      "schema": "public",
+      "function_name": "tc_materialiser_apres_creation_groupe",
+      "identity_arguments": "",
+      "md5_prosrc": "8f79fca8103e13ad13c668a99dbd8090",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.tc_session_feedback_calculer_empreinte()",
+      "schema": "public",
+      "function_name": "tc_session_feedback_calculer_empreinte",
+      "identity_arguments": "",
+      "md5_prosrc": "273dc69394ceb8304c903b26886c0f6f",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.traiter_anomalie_qualite(p_type_anomalie text, p_ref_id uuid, p_note text)",
+      "schema": "public",
+      "function_name": "traiter_anomalie_qualite",
+      "identity_arguments": "p_type_anomalie text, p_ref_id uuid, p_note text",
+      "md5_prosrc": "6f50603a8e09ac6a0cfe3991e33d9671",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.transitions_fuseau_a_venir(p_jours integer)",
+      "schema": "public",
+      "function_name": "transitions_fuseau_a_venir",
+      "identity_arguments": "p_jours integer",
+      "md5_prosrc": "53fb8bd189c33b334db996531512bd3a",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.unite_curriculum(p_student_id uuid)",
+      "schema": "public",
+      "function_name": "unite_curriculum",
+      "identity_arguments": "p_student_id uuid",
+      "md5_prosrc": "888bad4a1ae5f0d810686ab354733697",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.verifier_chaine_audit(p_limite integer)",
+      "schema": "public",
+      "function_name": "verifier_chaine_audit",
+      "identity_arguments": "p_limite integer",
+      "md5_prosrc": "a8e5f2a4c6198218aa12f03953f42092",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.video_config_lire()",
+      "schema": "public",
+      "function_name": "video_config_lire",
+      "identity_arguments": "",
+      "md5_prosrc": "e135609a2bbe6481b650eea29788872b",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": true
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.video_route_de_seance(p_session_id uuid, p_ws_url_cloud text, p_ws_url_self_hosted text)",
+      "schema": "public",
+      "function_name": "video_route_de_seance",
+      "identity_arguments": "p_session_id uuid, p_ws_url_cloud text, p_ws_url_self_hosted text",
+      "md5_prosrc": "b491f10bf1c87bf152f0b4c4c616e374",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": false,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    },
+    {
+      "signature": "public.visites_observation(p_session_id uuid)",
+      "schema": "public",
+      "function_name": "visites_observation",
+      "identity_arguments": "p_session_id uuid",
+      "md5_prosrc": "296f68f5af84c9a28123485d5a3fb80d",
+      "owner": "postgres",
+      "search_path": [
+        "search_path=\"\""
+      ],
+      "execute": {
+        "anon": false,
+        "authenticated": true,
+        "agent_ro": false
+      },
+      "classification": "UNREVIEWED",
+      "reviewer": null,
+      "reviewed_at": null
+    }
+  ],
+  "event_triggers": [
+    {
+      "name": "ensure_rls",
+      "event": "ddl_command_end",
+      "enabled": "O",
+      "tags": ["CREATE TABLE", "CREATE TABLE AS", "SELECT INTO"],
+      "signature": "public.rls_auto_enable()"
+    }
+  ]
+}
