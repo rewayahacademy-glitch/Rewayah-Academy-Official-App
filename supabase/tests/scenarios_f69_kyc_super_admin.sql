@@ -37,6 +37,7 @@ DECLARE
   v_count integer;
   v_audit_before bigint;
   v_audit_after bigint;
+  v_verdict jsonb;
 BEGIN
   IF to_regclass('storage.objects') IS NOT NULL AND NOT EXISTS (
     SELECT 1 FROM pg_catalog.pg_policies
@@ -49,6 +50,31 @@ BEGIN
 
   PERFORM set_config('test.uid', 'f6900000-0000-0000-0000-000000000001', true);
   PERFORM set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+  SELECT count(*) INTO v_audit_before FROM public.audit_logs
+  WHERE actor = auth.uid() AND action = 'kyc_read';
+  v_verdict := public.verdict_acces_dossier_kyc(
+    'f6900000-0000-0000-0000-000000000005'
+  );
+  IF v_verdict <> '{"type":"memeGenre"}'::jsonb THEN
+    RAISE EXCEPTION 'C21: un admin du meme genre doit recevoir memeGenre';
+  END IF;
+  v_verdict := public.verdict_acces_dossier_kyc(
+    'f6900000-0000-0000-0000-000000000006'
+  );
+  IF v_verdict <> '{"type":"refus","raison":"genreDifferent"}'::jsonb THEN
+    RAISE EXCEPTION 'C21: le verdict hors genre doit rester refuse';
+  END IF;
+  v_verdict := public.verdict_acces_dossier_kyc(
+    'f6900000-0000-0000-0000-000000000099'
+  );
+  IF v_verdict <> '{"type":"refus","raison":"profilNonAutorise"}'::jsonb THEN
+    RAISE EXCEPTION 'C21: un dossier absent ne doit reveler aucune information';
+  END IF;
+  SELECT count(*) INTO v_audit_after FROM public.audit_logs
+  WHERE actor = auth.uid() AND action = 'kyc_read';
+  IF v_audit_after <> v_audit_before THEN
+    RAISE EXCEPTION 'C21: la consultation du verdict ne doit pas auditer une ouverture';
+  END IF;
   SELECT count(*) INTO v_count FROM public.read_kyc_documents()
   WHERE id IN (
     'f6900000-0000-0000-0000-000000000201',
@@ -98,6 +124,11 @@ BEGIN
 
   PERFORM set_config('test.uid', 'f6900000-0000-0000-0000-000000000003', true);
   PERFORM set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+  IF public.verdict_acces_dossier_kyc(
+    'f6900000-0000-0000-0000-000000000005'
+  ) <> '{"type":"refus","raison":"adminSansGenre"}'::jsonb THEN
+    RAISE EXCEPTION 'C21: admin sans genre doit recevoir adminSansGenre';
+  END IF;
   BEGIN
     PERFORM 1 FROM public.read_kyc_documents();
     RAISE EXCEPTION 'F69 : admin sans genre a lu des dossiers';
@@ -117,6 +148,13 @@ BEGIN
   EXCEPTION WHEN insufficient_privilege THEN NULL;
   END;
   BEGIN
+    PERFORM public.verdict_acces_dossier_kyc(
+      'f6900000-0000-0000-0000-000000000005'
+    );
+    RAISE EXCEPTION 'C21: le controller ne peut pas demander un verdict';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+  BEGIN
     PERFORM public.autoriser_lecture_piece_identite('f6900000-0000-0000-0000-000000000201');
     RAISE EXCEPTION 'F69 : controller a ouvert une pièce';
   EXCEPTION WHEN insufficient_privilege THEN NULL;
@@ -131,6 +169,11 @@ BEGIN
   WHERE key = 'kyc_exception_super_admin';
   IF public.ma_exception_kyc_active() THEN
     RAISE EXCEPTION 'F69: statut exception actif apres desactivation';
+  END IF;
+  IF public.verdict_acces_dossier_kyc(
+    'f6900000-0000-0000-0000-000000000005'
+  ) <> '{"type":"refus","raison":"genreDifferent"}'::jsonb THEN
+    RAISE EXCEPTION 'C21: exception inactive ne doit pas autoriser le verdict';
   END IF;
   SELECT count(*) INTO v_count FROM public.read_kyc_documents()
   WHERE id IN (
@@ -148,6 +191,11 @@ BEGIN
   WHERE key = 'kyc_exception_super_admin';
   IF NOT public.ma_exception_kyc_active() THEN
     RAISE EXCEPTION 'F69: statut exception inactif apres activation';
+  END IF;
+  IF public.verdict_acces_dossier_kyc(
+    'f6900000-0000-0000-0000-000000000005'
+  ) <> '{"type":"exceptionSuperAdmin"}'::jsonb THEN
+    RAISE EXCEPTION 'C21: super-admin actif doit recevoir le verdict exceptionnel';
   END IF;
   SELECT count(*) INTO v_audit_before FROM public.audit_logs
   WHERE actor = auth.uid() AND action = 'kyc_read';
