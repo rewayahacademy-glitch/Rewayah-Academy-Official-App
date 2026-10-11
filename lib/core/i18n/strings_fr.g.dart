@@ -21095,7 +21095,7 @@ class Traductions$notifications$evenements$classeValidee$fr {
 	String get titre => 'Classe validée';
 
 	/// fr: 'Votre classe est prête : elle attend son enseignant.'
-	String get texte => 'Votre classe est prête : elle attend son enseignant.';
+	String get texte => 'Votre classe est prête : elle attend son enseignant.';
 }
 
 // Path: notifications.evenements.enseignantAffecte
@@ -21109,8 +21109,8 @@ class Traductions$notifications$evenements$enseignantAffecte$fr {
 	/// fr: 'Enseignant affecté'
 	String get titre => 'Enseignant affecté';
 
-	/// fr: 'Un enseignant est affecté à votre classe.'
-	String get texte => 'Un enseignant est affecté à votre classe.';
+	/// fr: 'Votre classe a son enseignant.'
+	String get texte => 'Votre classe a son enseignant.';
 }
 
 // Path: notifications.evenements.demandeClose
@@ -21154,8 +21154,8 @@ class Traductions$notifications$evenements$remplacementPris$fr {
 	/// fr: 'Remplacement pris'
 	String get titre => 'Remplacement pris';
 
-	/// fr: 'Un enseignant a pris le remplacement.'
-	String get texte => 'Un enseignant a pris le remplacement.';
+	/// fr: 'Le remplacement a été pris.'
+	String get texte => 'Le remplacement a été pris.';
 }
 
 // Path: tuteur.accueil.etatCourt
@@ -34400,15 +34400,15 @@ extension on Traductions {
 			'notifications.evenements.demandeRecue.titre' => 'Demande reçue',
 			'notifications.evenements.demandeRecue.texte' => 'Votre demande de créneau est arrivée à l\'administration.',
 			'notifications.evenements.classeValidee.titre' => 'Classe validée',
-			'notifications.evenements.classeValidee.texte' => 'Votre classe est prête : elle attend son enseignant.',
+			'notifications.evenements.classeValidee.texte' => 'Votre classe est prête : elle attend son enseignant.',
 			'notifications.evenements.enseignantAffecte.titre' => 'Enseignant affecté',
-			'notifications.evenements.enseignantAffecte.texte' => 'Un enseignant est affecté à votre classe.',
+			'notifications.evenements.enseignantAffecte.texte' => 'Votre classe a son enseignant.',
 			'notifications.evenements.demandeClose.titre' => 'Demande clôturée',
 			'notifications.evenements.demandeClose.texte' => 'Votre demande est maintenant close.',
 			'notifications.evenements.remplacementPropose.titre' => 'Remplacement proposé',
 			'notifications.evenements.remplacementPropose.texte' => 'Une séance a besoin d\'un remplaçant. Ouvrez la page pour répondre.',
 			'notifications.evenements.remplacementPris.titre' => 'Remplacement pris',
-			'notifications.evenements.remplacementPris.texte' => 'Un enseignant a pris le remplacement.',
+			'notifications.evenements.remplacementPris.texte' => 'Le remplacement a été pris.',
 			'notifications.detail.choisirTitre' => 'Choisissez une notification',
 			'notifications.detail.choisirPhrase' => 'Son détail s\'affiche ici, à côté de la liste.',
 			'notifications.detail.recue' => ({required Object date, required Object heure}) => 'Reçue le ${date} à ${heure}',
