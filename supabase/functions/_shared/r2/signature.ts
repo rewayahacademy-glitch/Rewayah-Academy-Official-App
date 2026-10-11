@@ -25,6 +25,7 @@
 //     droit d'acces reutilisable jusqu'a son expiration.
 
 import { AwsClient } from 'npm:aws4fetch@1.0.20'
+import { verifierCle } from './cles.ts'
 import {
   type ConfigurationR2,
   configurationDe,
@@ -192,11 +193,12 @@ export async function signerLecture(
   cle: string,
   options: OptionsLecture = {},
 ): Promise<{ url: string; expireDansSecondes: number }> {
+  const cleCanonique = verifierCle(domaine, cle)
   const { config, aws } = clientDe(domaine, options.env)
   const duree = options.dureeSecondes ?? DUREE_LECTURE_SENSIBLE_S
   exigerDureeSensee(domaine, duree)
 
-  const url = urlObjet(config, cle)
+  const url = urlObjet(config, cleCanonique)
   url.searchParams.set('X-Amz-Expires', String(duree))
 
   const signee = await signer(domaine, aws, url, 'GET')
@@ -230,6 +232,7 @@ export async function signerDepot(
   cle: string,
   options: OptionsDepot,
 ): Promise<{ url: string; enTetesExiges: Record<string, string>; expireDansSecondes: number }> {
+  const cleCanonique = verifierCle(domaine, cle)
   const typeMime = options.typeMime.trim().toLowerCase()
   if (!options.typesAutorises.includes(typeMime)) {
     throw new ErreurStockageR2('validation', domaine, 'type de contenu refuse')
@@ -245,7 +248,7 @@ export async function signerDepot(
   const duree = options.dureeSecondes ?? DUREE_DEPOT_S
   exigerDureeSensee(domaine, duree)
 
-  const url = urlObjet(config, cle)
+  const url = urlObjet(config, cleCanonique)
   url.searchParams.set('X-Amz-Expires', String(duree))
 
   const enTetesExiges = {
@@ -326,8 +329,9 @@ export async function objetExiste(
   cle: string,
   env?: LecteurEnvironnement,
 ): Promise<boolean> {
+  const cleCanonique = verifierCle(domaine, cle)
   const { config, aws } = clientDe(domaine, env)
-  const url = urlObjet(config, cle)
+  const url = urlObjet(config, cleCanonique)
 
   let reponse: Response
   try {

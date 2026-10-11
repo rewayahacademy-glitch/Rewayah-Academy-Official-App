@@ -8,12 +8,13 @@
 
 import { assert, assertEquals, assertRejects } from 'jsr:@std/assert@1'
 import { DOMAINES, type LecteurEnvironnement, prefixeSecrets, seauAttendu } from './domaines.ts'
-import { cleDe } from './cles.ts'
+import { cleDe, ErreurCleObjet } from './cles.ts'
 import {
   DUREE_DEPOT_S,
   DUREE_LECTURE_SENSIBLE_S,
   ErreurStockageR2,
   messagePourClient,
+  objetExiste,
   signerDepot,
   signerLecture,
   TAILLE_MAXIMALE_PIECE_OCTETS,
@@ -52,6 +53,21 @@ Deno.test('D15 -- l expiration est celle de la politique centrale, et elle est i
   assertEquals(expireDansSecondes, DUREE_LECTURE_SENSIBLE_S)
   assertEquals(DUREE_LECTURE_SENSIBLE_S, 60, 'ADR-002 : soixante secondes')
   assertEquals(new URL(url).searchParams.get('X-Amz-Expires'), '60')
+})
+
+Deno.test('D14 -- aucune URL ou vérification R2 ne prend une clé hors convention', async () => {
+  const cleHostile = 'private/libraryupload/../../identity/opaque'
+  await assertRejects(() => signerLecture('priveApplicatif', cleHostile), ErreurCleObjet)
+  await assertRejects(
+    () => signerDepot('priveApplicatif', cleHostile, {
+      typeMime: 'application/pdf',
+      tailleOctets: 12,
+      typesAutorises: ['application/pdf'],
+      tailleMaximaleOctets: 1024,
+    }),
+    ErreurCleObjet,
+  )
+  await assertRejects(() => objetExiste('priveApplicatif', cleHostile), ErreurCleObjet)
 })
 
 Deno.test('D16 -- l URL n est pas permanente : elle porte date, duree et portee', async () => {
