@@ -21,6 +21,8 @@ import 'package:supabase_flutter/supabase_flutter.dart'
 import '../admin/service_comptes.dart' show EtatPiece;
 import '../domain/enums.dart';
 import '../dossier/service_validation.dart';
+import '../recrutement/port_statuts_signature.dart'
+    show ContratNonSigneVersionCourante, ManqueSignature;
 import '../theme/app_delais.dart';
 import 'capacite_indisponible.dart';
 import 'port_revue_dossiers.dart';
@@ -359,6 +361,13 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
       // Le serveur a repondu : la transaction est annulee, echec certain.
       // AD-BR : la carte repose sur des sous-chaines de message (P0001).
       final String m = e.message;
+      if (e.code == '23514' && m.startsWith('contract_not_signed_current:')) {
+        final String kind = m.substring('contract_not_signed_current:'.length);
+        throw ContratNonSigneVersionCourante(<ManqueSignature>[
+          if (kind == 'teacher_nda') ManqueSignature.contrat,
+          if (kind == 'recording_and_control_notice') ManqueSignature.accuse,
+        ]);
+      }
       if (m.contains('un refus exige un motif')) {
         throw const ErreurRevueDossier(CodeErreurRevue.motifRequis);
       }

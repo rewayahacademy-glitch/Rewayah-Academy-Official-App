@@ -17,6 +17,7 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Le statut d'une signature.
 sealed class StatutSignature {
@@ -87,7 +88,52 @@ abstract interface class PortStatutsSignature {
 /// Le port : absent avant le branchement serveur. Absent, la revue n'affiche
 /// pas la carte et ne bloque rien de plus : le serveur reste la barriere.
 final Provider<PortStatutsSignature?> portStatutsSignatureProvider =
-    Provider<PortStatutsSignature?>((Ref _) => null);
+    Provider<PortStatutsSignature?>(
+      (Ref _) => StatutsSignatureSupabase(Supabase.instance.client),
+    );
+
+/// Adaptateur du RPC qui calcule les signatures au regard des versions serveur.
+final class StatutsSignatureSupabase implements PortStatutsSignature {
+  /// Cree l'adaptateur.
+  const StatutsSignatureSupabase(this._client);
+
+  final SupabaseClient _client;
+
+  @override
+  Future<StatutsSignature?> pour(String dossierId) async {
+    try {
+      final Object? result = await _client.rpc<Object?>(
+        'teacher_signature_statuses',
+        params: <String, dynamic>{'p_profile_id': dossierId},
+      );
+      if (result is! Map<String, dynamic>) {
+        throw const FormatException('teacher_signature_statuses invalide');
+      }
+      return StatutsSignature(
+        contrat: _statut(result['contrat']),
+        accuse: _statut(result['accuse']),
+      );
+    } on PostgrestException catch (error) {
+      if (error.code == 'P0002') return null;
+      rethrow;
+    }
+  }
+
+  static StatutSignature _statut(Object? value) {
+    if (value is! Map<String, dynamic>) {
+      throw const FormatException('statut de signature invalide');
+    }
+    return switch (value['status']) {
+      'signe_version_courante' => const SigneVersionCourante(),
+      'signe_ancienne_version' => SigneAncienneVersion(
+        value['version_signee'] is String
+            ? value['version_signee'] as String
+            : '',
+      ),
+      _ => const NonSigne(),
+    };
+  }
+}
 
 /// Les statuts d'un dossier, `null` quand le port est absent.
 final FutureProviderFamily<StatutsSignature?, String>
