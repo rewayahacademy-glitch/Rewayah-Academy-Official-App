@@ -416,6 +416,10 @@ enabled = false
 [functions.livekit-webhook]
 verify_jwt = false
 
+# Requiert le JWT de l'administrateur et appelle les RPC avec son contexte RLS.
+[functions.regroupements-pages]
+verify_jwt = true
+
 # OAuth server configuration
 [auth.oauth_server]
 # Enable OAuth server functionality
