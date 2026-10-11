@@ -553,10 +553,32 @@ begin
 end $$;
 
 -- Une acceptation de contrat est un fait : ni modifiable, ni effacable.
--- Texte de fixture uniquement : la migration ne publie aucun texte juridique
--- car le contrat complet validé n'est pas présent dans le dépôt.
+-- La fixture synthétique reste distincte du texte juridique approuvé publié
+-- par la migration 0090.
+-- L'enseignant doit pouvoir signer pendant l'etat provisoire, avant activation.
+update public.profiles set account_status = 'provisional_active'
+where id = '22222222-2222-2222-2222-222222222222';
+
+do $$
+begin
+  set local role authenticated;
+  perform set_config('test.uid', '22222222-2222-2222-2222-222222222222', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+  insert into public.contract_acceptances (profile_id, contract_kind, version)
+  values (
+    '22222222-2222-2222-2222-222222222222',
+    'recording_and_control_notice', '2026-10-jur'
+  );
+  perform public.signer_contrat('2026-10-jur', 'Yasmine Test');
+end $$;
+
+reset role;
 update public.profiles set account_status = 'active'
 where id = '22222222-2222-2222-2222-222222222222';
+
+-- Bascule la fixture vers sa propre version courante pour tester signer_contrat.
+update public.contract_texts set is_current = false
+where contract_kind = 'teacher_nda' and locale = 'fr' and is_current;
 
 insert into public.contract_texts (
   contract_kind, version, locale, body, sha256, is_current
@@ -566,8 +588,13 @@ insert into public.contract_texts (
   encode(extensions.digest(
     convert_to('Texte synthétique réservé au test de signature.', 'UTF8'), 'sha256'
   ), 'hex'),
-  true
+  false
 );
+
+update public.contract_texts set is_current = true
+where contract_kind = 'teacher_nda'
+  and version = 'test-signature-0057'
+  and locale = 'fr';
 
 do $$
 declare

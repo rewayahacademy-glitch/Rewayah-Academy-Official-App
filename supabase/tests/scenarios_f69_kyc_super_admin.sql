@@ -35,6 +35,7 @@ VALUES
 DO $scenario$
 DECLARE
   v_count integer;
+  v_all_count integer;
   v_audit_before bigint;
   v_audit_after bigint;
   v_verdict jsonb;
@@ -75,11 +76,11 @@ BEGIN
   IF v_audit_after <> v_audit_before THEN
     RAISE EXCEPTION 'C21: la consultation du verdict ne doit pas auditer une ouverture';
   END IF;
-  SELECT count(*) INTO v_count FROM public.read_kyc_documents()
-  WHERE id IN (
+  SELECT count(*), count(*) FILTER (WHERE id IN (
     'f6900000-0000-0000-0000-000000000201',
     'f6900000-0000-0000-0000-000000000202'
-  );
+  )) INTO v_all_count, v_count
+  FROM public.read_kyc_documents();
   IF v_count <> 1 OR EXISTS (
     SELECT 1 FROM public.read_kyc_documents()
     WHERE id IN (
@@ -209,7 +210,7 @@ BEGIN
   IF v_audit_after - v_audit_before <> 1 OR NOT EXISTS (
     SELECT 1 FROM public.audit_logs
     WHERE actor = auth.uid() AND action = 'kyc_read'
-      AND payload ->> 'document_count' = '2'
+      AND (payload ->> 'document_count')::integer = v_all_count
   ) THEN
     RAISE EXCEPTION 'F69: un seul audit de liste doit couvrir tous les documents';
   END IF;
