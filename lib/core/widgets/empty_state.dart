@@ -8,7 +8,6 @@ import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import 'action_principale.dart';
-import 'ornement_marque.dart';
 
 /// Les trois registres d'un ecran vide.
 ///
@@ -128,14 +127,7 @@ class EmptyState extends StatelessWidget {
                   ),
           child: Icon((icone ?? _iconeParDefaut).repos),
         ),
-        if (serre)
-          Ecart.vMd
-        else if (encre != null)
-          Ecart.vXl
-        else
-          // BRAND-ORN-1 : la signature de la marque prend la place de l'ecart
-          // existant, sans le changer ; absente sur une surface inverse.
-          const _SignatureVide(),
+        if (serre) Ecart.vMd else Ecart.vXl,
         // Aucun mot coupe, meme a 320 px et texte x2 (« aujourd'hu / i »,
         // ELV-VIDE-COUPE-1 ; « l'acadé / mie », DASH-MA-PROD) : le
         // constat et l'invitation passent a la ligne entre les mots ; le
@@ -252,16 +244,4 @@ class EmptyState extends StatelessWidget {
     RegistreVide.subi => palette.inkMuted,
     RegistreVide.bonneNouvelle => palette.inkSuccess,
   };
-}
-
-/// L'ornement de la marque centre dans l'ecart entre l'illustration et le
-/// constat : la meme hauteur que `Ecart.vXl`.
-class _SignatureVide extends StatelessWidget {
-  const _SignatureVide();
-
-  @override
-  Widget build(BuildContext context) => const SizedBox(
-    height: AppSpacing.xl,
-    child: Center(child: OrnementMarque(variante: VarianteOrnement.contour)),
-  );
 }

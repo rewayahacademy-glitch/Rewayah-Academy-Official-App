@@ -293,15 +293,11 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
                     accesFerme: accesFerme,
                     accesEnLecture: accesEnLecture,
                   ),
-                // BRAND-ORN-1 : un separateur ornemental entre les deux blocs,
-                // dans l'ecart existant (20) ; le seul de l'ecran.
-                const SizedBox(
-                  height: AppSpacing.xl,
-                  child: Center(
-                    child: SeparateurOrnement(taille: TailleOrnement.petit),
-                  ),
-                ),
+                Ecart.vXl,
                 const _BlocCoran(),
+                // BRAND-ORN-1 : la signature de la marque, une fois, au pied.
+                Ecart.vXxl,
+                const Center(child: OrnementMarque.signature()),
               ],
             ),
     );

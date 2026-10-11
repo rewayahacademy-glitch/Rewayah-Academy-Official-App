@@ -16,7 +16,6 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/marque_page.dart';
-import '../../core/widgets/ornement_marque.dart';
 import '../../core/widgets/page_shell.dart';
 import '../demo/racine_demonstrable.dart';
 import 'feuille_appareil_eleve.dart';
@@ -242,14 +241,9 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   Widget build(BuildContext context) {
     // La respiration au dessus de la carte, pas sa largeur : le gabarit change
     // l'air autour de la colonne, jamais la colonne.
-    // BRAND-ORN-1 : l'ornement de la marque se pose dans cette respiration,
-    // sans la changer.
-    final Widget respiration = SizedBox(
-      height: AppGabarit.de(context) == Gabarit.mobile
-          ? AppSpacing.xxl
-          : AppSpacing.section,
-      child: const Center(child: OrnementMarque()),
-    );
+    final Widget respiration = AppGabarit.de(context) == Gabarit.mobile
+        ? Ecart.vXxl
+        : Ecart.vSection;
 
     return PageShell(
       // La page mene son propre defilement : la carte se centre verticalement

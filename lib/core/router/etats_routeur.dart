@@ -186,7 +186,7 @@ class _EcranDemarrageState extends ConsumerState<EcranDemarrage> {
               // BRAND-ORN-1 : la signature dans l'ecart existant (24).
               const SizedBox(
                 height: AppSpacing.xxl,
-                child: Center(child: OrnementMarque()),
+                child: Center(child: OrnementMarque.signature()),
               ),
               Semantics(
                 label: t.commun.demarrage.ouverture,

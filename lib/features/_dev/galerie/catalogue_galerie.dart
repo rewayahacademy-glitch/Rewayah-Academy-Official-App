@@ -2218,14 +2218,14 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         ),
       ),
       EtatGalerie(
-        'separateur de section',
-        (BuildContext _) => const SeparateurOrnement(),
+        'signature : petite, a faible opacite',
+        (BuildContext _) => const OrnementMarque.signature(),
       ),
       EtatGalerie(
         'en arabe : meme dessin, jamais retourne',
         (BuildContext _) => const Directionality(
           textDirection: TextDirection.rtl,
-          child: SeparateurOrnement(),
+          child: OrnementMarque.signature(),
         ),
       ),
     ],

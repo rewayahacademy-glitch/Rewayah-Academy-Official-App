@@ -56,8 +56,24 @@ class OrnementMarque extends StatelessWidget {
     this.taille = TailleOrnement.petit,
     this.variante = VarianteOrnement.plein,
     this.fond = FondLogo.page,
+    this.opacite = 1,
     super.key,
   });
+
+  /// La signature discrete d'un ecran : petite, a [opaciteSignature]. Elle
+  /// ancre la marque sans encombrer ; jamais sur un ecran de travail.
+  const OrnementMarque.signature({this.fond = FondLogo.page, super.key})
+    : taille = TailleOrnement.petit,
+      variante = VarianteOrnement.plein,
+      opacite = opaciteSignature;
+
+  /// L'opacite de la signature : un repere, pas un motif. Une valeur unique,
+  /// fixee ici, jamais choisie ecran par ecran.
+  static const double opaciteSignature = 0.4;
+
+  /// L'opacite du dessin, entre 0 et 1 : une seule couleur, en une seule passe
+  /// (aucun recouvrement).
+  final double opacite;
 
   /// La hauteur du dessin.
   final TailleOrnement taille;
@@ -75,7 +91,7 @@ class OrnementMarque extends StatelessWidget {
         painter: _PeintreOrnement(
           dessin: variante.dessin,
           hauteur: taille.hauteur,
-          couleur: BrandLogo.couleur(fond),
+          couleur: BrandLogo.couleur(fond).withValues(alpha: opacite),
         ),
         size: Size(taille.hauteur * variante.dessin.proportion, taille.hauteur),
       ),
@@ -110,52 +126,4 @@ class _PeintreOrnement extends CustomPainter {
       ancien.dessin != dessin ||
       ancien.hauteur != hauteur ||
       ancien.couleur != couleur;
-}
-
-/// Un separateur de section : un filet, l'ornement, un filet. Il remplace un
-/// `Divider` entre deux blocs de contenu de meme rang ; jamais entre deux
-/// lignes d'une liste. Sa hauteur est celle de [taille] : il prend la place
-/// d'un ecart, il n'en ajoute pas.
-class SeparateurOrnement extends StatelessWidget {
-  /// Cree un separateur.
-  const SeparateurOrnement({
-    this.taille = TailleOrnement.moyen,
-    this.fond = FondLogo.page,
-    super.key,
-  });
-
-  /// La hauteur de l'ornement central, et du separateur.
-  final TailleOrnement taille;
-
-  /// Le fond qui porte le separateur.
-  final FondLogo fond;
-
-  @override
-  Widget build(BuildContext context) {
-    final Widget filet = Expanded(
-      child: ExcludeSemantics(
-        child: Divider(
-          height: taille.hauteur,
-          thickness: 1,
-          color: BrandLogo.couleur(fond),
-        ),
-      ),
-    );
-    return SizedBox(
-      height: taille.hauteur,
-      child: Row(
-        children: <Widget>[
-          filet,
-          const SizedBox(width: AppSpacing.md),
-          OrnementMarque(
-            taille: taille,
-            variante: VarianteOrnement.contour,
-            fond: fond,
-          ),
-          const SizedBox(width: AppSpacing.md),
-          filet,
-        ],
-      ),
-    );
-  }
 }
