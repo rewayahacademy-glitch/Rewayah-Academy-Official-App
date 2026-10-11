@@ -48,6 +48,7 @@ import '../../capture/outil_capture.dart'
         hoteCapture,
         sautSansCapture;
 import '../../router/support_routeur.dart';
+import '../../support/annonces.dart';
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/harnais.dart';
 import '../../support/hors_ligne_une_fois.dart';
@@ -315,17 +316,27 @@ void main() {
     expect(find.textContaining('manque'), findsNothing);
   });
 
-  testWidgets('porte ouverte, acces en lecture : Rejoindre present et '
-      'inerte, puis actif', (WidgetTester tester) async {
+  testWidgets('porte ouverte, acces en lecture : Rejoindre present, jamais '
+      'grise, l appui dit d attendre, puis entre (BOUTONS-GRISES-1)', (
+    WidgetTester tester,
+  ) async {
+    final List<String> annonces = ecouterAnnonces(tester);
     final Completer<AccesBeneficiaire?> reponse =
         Completer<AccesBeneficiaire?>();
     await monterPorteOuverte(tester, _MonAcces.attente(reponse.future));
     await tester.pump(const Duration(milliseconds: 100));
     expect(boutonEntree(), findsOneWidget);
-    expect(tester.widget<ActionPrincipale>(boutonEntree()).onPress, isNull);
+    expect(tester.widget<ActionPrincipale>(boutonEntree()).onPress, isNotNull);
+    await tester.ensureVisible(boutonEntree());
+    await tester.tap(boutonEntree());
+    await tester.pump();
+    expect(find.text(t.tc.groupe.carte.entreeSePrepare), findsOneWidget);
+    expect(annonces, <String>[t.tc.groupe.carte.entreeSePrepare]);
     reponse.complete(accesAdulte(ouvert: true));
     await tester.pumpAndSettle();
     expect(tester.widget<ActionPrincipale>(boutonEntree()).onPress, isNotNull);
+    // L'acces lu, la phrase d'attente s'efface.
+    expect(find.text(t.tc.groupe.carte.entreeSePrepare), findsNothing);
     expect(find.byKey(BandeauAccesAdulte.cle), findsNothing);
   });
 

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/i18n/cle_audio.dart';
 import '../../core/i18n/strings.g.dart';
@@ -64,8 +65,9 @@ enum EtatAccueilEleve {
 
   /// Un cours en direct, sans reseau pour y entrer.
   ///
-  /// L'ecran reste identique : seul le bloc « Rejoindre » devient inerte et
-  /// gagne le pictogramme de reseau.
+  /// L'ecran reste identique : le bloc « Rejoindre » dit l'attente de
+  /// l'entree a l'appui (jamais grise, BOUTONS-GRISES-1) et gagne le
+  /// pictogramme d'attente.
   horsLigne,
 }
 
@@ -226,7 +228,7 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
         : ref.watch(accesAppelantProvider);
     final bool accesFerme =
         ouvertureSeances(acces?.value) == OuvertureSeances.fermees;
-    // Tant que l'acces se lit, Rejoindre reste present et inerte (revue
+    // Tant que l'acces se lit, Rejoindre reste present sans entrer (revue
     // FI-9a) : un bouton actif qui disparaitrait ensuite serait une promesse
     // retiree.
     final bool accesEnLecture = acces != null && accesEnAttente(acces);
@@ -317,7 +319,7 @@ class _BlocPrincipal extends StatelessWidget {
   /// Seances fermees (FI-9a) : Rejoindre n'est pas rendu.
   final bool accesFerme;
 
-  /// L'acces se lit encore : Rejoindre est rendu inerte.
+  /// L'acces se lit encore : Rejoindre dit d'attendre un instant.
   final bool accesEnLecture;
 
   @override
@@ -453,7 +455,7 @@ class _CoursEnDirect extends StatelessWidget {
   /// cause (guide §1.7).
   final bool accesFerme;
 
-  /// L'acces se lit encore (revue FI-9a) : le bouton est present et inerte
+  /// L'acces se lit encore (revue FI-9a) : le bouton est present sans entrer
   /// ([joignable] est alors faux), sans le message hors ligne, le temps que
   /// la lecture aboutisse.
   final bool accesEnLecture;
@@ -488,24 +490,24 @@ class _CoursEnDirect extends StatelessWidget {
         _Interruptions(interruptions: interruptions, paire: paire),
         if (!accesFerme) ...<Widget>[
           Ecart.vLg,
-          // Hors ligne, le bouton reste **present et inerte**, contrairement a la
-          // regle du bouton absent qui vaut pour une limite de droit. Ce n'est pas
-          // une limite, c'est une panne passagere : un bouton disparu ferait
-          // croire a l'enfant que son cours n'existe plus, alors qu'il attend le
-          // reseau. `ActionPrincipale` signale l'inertie en changeant de PAIRE, et
-          // non par de la transparence, qui ferait tomber son texte sous le seuil.
-          ActionPrincipale(
-            libelle: t.eleve.accueil.rejoindre,
-            onPress: joignable
-                ? () => GoRouter.of(context).go(
-                    Routes.salle,
-                    // Le billet passe par `extra`, jamais par l'URL (ADR-005).
-                    extra: BilletSalle(
-                      sessionId: seance.id,
-                      emisA: DateTime.now(),
-                    ),
-                  )
-                : null,
+          // Hors ligne, le bouton reste **present**, contrairement a la regle
+          // du bouton absent qui vaut pour une limite de droit. Ce n'est pas une
+          // limite, c'est une panne passagere : un bouton disparu ferait croire
+          // a l'enfant que son cours n'existe plus, alors qu'il attend le
+          // reseau.
+          //
+          // BOUTONS-GRISES-1 : present, mais jamais grise. Tant que l'entree
+          // ne peut pas aboutir, l'appui dit pourquoi (annonce au lecteur
+          // d'ecran) au lieu de rester sans reponse.
+          _Rejoindre(
+            joignable: joignable,
+            accesEnLecture: accesEnLecture,
+            paire: paire,
+            onRejoindre: () => GoRouter.of(context).go(
+              Routes.salle,
+              // Le billet passe par `extra`, jamais par l'URL (ADR-005).
+              extra: BilletSalle(sessionId: seance.id, emisA: DateTime.now()),
+            ),
           ),
           if (!joignable && !accesEnLecture) ...<Widget>[
             Ecart.vSm,
@@ -537,6 +539,73 @@ class _CoursEnDirect extends StatelessWidget {
               style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
             ),
           ],
+        ],
+      ],
+    );
+  }
+}
+
+/// « Rejoindre » du cours en direct, jamais grise (BOUTONS-GRISES-1).
+///
+/// Joignable, l'appui entre dans la salle. Sinon, il dit pourquoi : l'acces
+/// se lit encore (phrase sous le bouton, annoncee), ou l'entree attend le
+/// reseau (la phrase deja posee sous le bouton est annoncee).
+class _Rejoindre extends StatefulWidget {
+  const _Rejoindre({
+    required this.joignable,
+    required this.accesEnLecture,
+    required this.paire,
+    required this.onRejoindre,
+  });
+
+  final bool joignable;
+  final bool accesEnLecture;
+  final AppColorPair paire;
+  final VoidCallback onRejoindre;
+
+  @override
+  State<_Rejoindre> createState() => _RejoindreEtat();
+}
+
+class _RejoindreEtat extends State<_Rejoindre> {
+  bool _attenteDite = false;
+
+  void _appui() {
+    if (widget.joignable) {
+      widget.onRejoindre();
+      return;
+    }
+    if (widget.accesEnLecture) {
+      setState(() => _attenteDite = true);
+    }
+    signalerManque(
+      context,
+      widget.accesEnLecture
+          ? t.eleve.accueil.entreeSePrepare
+          : t.eleve.accueil.horsLigneDetail,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        ActionPrincipale(libelle: t.eleve.accueil.rejoindre, onPress: _appui),
+        if (_attenteDite &&
+            widget.accesEnLecture &&
+            !widget.joignable) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              t.eleve.accueil.entreeSePrepare,
+              style: widget.paire.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
         ],
       ],
     );

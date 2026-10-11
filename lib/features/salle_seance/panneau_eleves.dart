@@ -7,7 +7,10 @@
 // (`VueSeance.eleves`, source unique du compteur, I-6). Connaissance privee
 // minimale : ni telephone, ni e-mail, ni tuteur, ni « present » / « absent ».
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderAbstractViewport;
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/elision.dart';
@@ -20,6 +23,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bouton_outil.dart';
 import '../../core/widgets/pressable.dart';
@@ -73,11 +77,18 @@ class PanneauEleves extends StatefulWidget {
     this.large = false,
     this.serre = false,
     this.entete,
+    this.autorisationEcrire = false,
     super.key,
   });
 
   final List<EleveSeance> eleves;
   final ActionsSeance actions;
+
+  /// TB-10 (plan V2 §4.3, §20 ; UX-20) : la fiche porte « Autoriser a
+  /// ecrire » ou « Retirer l'autorisation d'ecrire » (capacite de la vue,
+  /// [VueSeance.voitAutorisationEcrire], et rappel
+  /// [ActionsSeance.onAutoriserEcrire]).
+  final bool autorisationEcrire;
 
   /// TB-3 (CTX-01, CTX-02) : le contexte de l'enseignant et de la seance,
   /// deplie depuis la capsule, en tete du panneau de personnes (une seule
@@ -105,6 +116,45 @@ class _PanneauElevesState extends State<PanneauEleves> {
   /// une fiche (image : Mariam). L'identifiant, jamais le prenom seul : deux
   /// inscrits de meme prenom ne se deplient pas ensemble.
   late String? _deplie = _premierDeplie();
+
+  /// TB-RC (TB_RAPPORT §d n. 8) : la carte depliee, amenee entiere dans la
+  /// liste (« Autoriser a ecrire » n'est plus coupe au bas du panneau).
+  final GlobalKey _carteDepliee = GlobalKey(debugLabel: 'carte-depliee');
+
+  @override
+  void initState() {
+    super.initState();
+    _montrerCarteDepliee();
+  }
+
+  /// Quand la carte depliee tient dans la liste mais deborde en bas, la
+  /// liste (elle seule) defile juste assez pour la montrer entiere, ses
+  /// actions comprises. Plus haute que la liste : rien ne bouge, le prenom
+  /// reste en haut. Le contexte deplie depuis la capsule garde la main
+  /// (il amene sa propre section).
+  void _montrerCarteDepliee() {
+    if (widget.entete != null) return;
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      final BuildContext? carte = _carteDepliee.currentContext;
+      if (!mounted || carte == null) return;
+      final ScrollableState? liste = Scrollable.maybeOf(carte);
+      final RenderObject? cible = carte.findRenderObject();
+      if (liste == null || cible is! RenderBox || !cible.hasSize) return;
+      final ScrollPosition position = liste.position;
+      // Le bord de la carte reste visible : une marge sous elle.
+      if (cible.size.height + AppSpacing.md > position.viewportDimension) {
+        return;
+      }
+      final double finCarte = RenderAbstractViewport.of(cible)
+          .getOffsetToReveal(cible, 1)
+          .offset;
+      final double voulu = math.min(
+        finCarte + AppSpacing.md,
+        position.maxScrollExtent,
+      );
+      if (voulu > position.pixels) position.jumpTo(voulu);
+    });
+  }
 
   String? _premierDeplie() {
     for (final EleveSeance e in widget.eleves) {
@@ -142,14 +192,19 @@ class _PanneauElevesState extends State<PanneauEleves> {
         final String cle = cleEleveSeance(e);
         final bool deplie = _deplie == cle && e.fiche != null;
         return _CarteEleve(
+          key: deplie ? _carteDepliee : null,
           eleve: e,
           deplie: deplie,
           large: widget.large,
           serre: widget.serre,
           actions: widget.actions,
+          autorisationEcrire: widget.autorisationEcrire,
           onBasculer: e.fiche == null
               ? null
-              : () => setState(() => _deplie = deplie ? null : cle),
+              : () {
+                  setState(() => _deplie = deplie ? null : cle);
+                  _montrerCarteDepliee();
+                },
         );
       },
     );
@@ -158,12 +213,14 @@ class _PanneauElevesState extends State<PanneauEleves> {
 
 class _CarteEleve extends StatelessWidget {
   const _CarteEleve({
+    super.key,
     required this.eleve,
     required this.deplie,
     required this.large,
     required this.serre,
     required this.actions,
     required this.onBasculer,
+    this.autorisationEcrire = false,
   });
 
   final EleveSeance eleve;
@@ -172,6 +229,7 @@ class _CarteEleve extends StatelessWidget {
   final bool serre;
   final ActionsSeance actions;
   final VoidCallback? onBasculer;
+  final bool autorisationEcrire;
 
   @override
   Widget build(BuildContext context) {
@@ -198,6 +256,14 @@ class _CarteEleve extends StatelessWidget {
                 serre: serre,
                 large: large,
               ),
+              if (autorisationEcrire)
+                if (actions.onAutoriserEcrire
+                    case final ValueChanged<EleveSeance> autoriser)
+                  _AutorisationEcrire(
+                    eleve: eleve,
+                    serre: serre,
+                    onPress: () => autoriser(eleve),
+                  ),
             ],
           ],
         ),
@@ -235,20 +301,53 @@ class _EnTeteEleve extends StatelessWidget {
         styleNom: palette.inkStrong.applyTo(
           textes.titleSmall ?? const TextStyle(),
         ),
-        roleWidget: Row(
+        // Verification TB-10 : en arabe a 320 x2, « Peut ecrire » etait
+        // tronque en « الكتاب… » (une ligne et points de suspension). Les
+        // deux mentions d'etat se lisent entieres : le droit d'ecrire passe
+        // a la ligne, en bloc, quand il ne tient pas a cote du statut.
+        roleWidget: Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.xs,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: <Widget>[
-            _Pastille(couleur: _couleurPastille(palette, eleve.statut)),
-            Ecart.hXs,
-            Flexible(
-              child: Text(
-                statut,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: (connecte ? encre : palette.inkMuted).applyTo(
-                  _styleFiche(context),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                _Pastille(couleur: _couleurPastille(palette, eleve.statut)),
+                Ecart.hXs,
+                Flexible(
+                  child: TexteSansCoupure(
+                    statut,
+                    style: (connecte ? encre : palette.inkMuted).applyTo(
+                      _styleFiche(context),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
+            // TB-10 (plan V2 §12 « Autorisation de dessin » : eleve et droit
+            // visibles dans Participants ; planche 8) : l'icone et le mot,
+            // jamais la couleur seule.
+            if (eleve.peutEcrire)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconTheme(
+                    key: ValueKey<String>(
+                      'peut-ecrire-${cleEleveSeance(eleve)}',
+                    ),
+                    data: palette.inkAccent.asIconTheme(size: AppSpacing.lg),
+                    child: Icon(AppIcons.annoter.repos),
+                  ),
+                  Ecart.hXs,
+                  Flexible(
+                    child: TexteSansCoupure(
+                      t.salle.seance.ecriture.peutEcrire,
+                      style: palette.inkAccent.applyTo(_styleFiche(context)),
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
         fin: onBasculer == null
@@ -262,17 +361,26 @@ class _EnTeteEleve extends StatelessWidget {
       ),
     );
     final VoidCallback? basculer = onBasculer;
+    final String etat = eleve.peutEcrire
+        ? '$statut, ${t.salle.seance.ecriture.peutEcrire}'
+        : statut;
+    // TB-RC (revue TB-R, m12) : le nom lu dit deja le prenom et l'etat ; la
+    // ligne peinte se tait (sinon « Mariam, Connecte » est lu deux fois).
     if (basculer == null) {
-      return Semantics(label: '${eleve.prenom}, $statut', child: ligne);
+      return Semantics(
+        container: true,
+        label: '${eleve.prenom}, $etat',
+        child: ExcludeSemantics(child: ligne),
+      );
     }
     return Semantics(
       expanded: deplie,
       child: Pressable(
         onPress: basculer,
         libelleSemantique:
-            '${deplie ? t.salle.seance.replierFiche(dePrenom: deDevant(eleve.prenom)) : t.salle.seance.deplierFiche(dePrenom: deDevant(eleve.prenom))}, $statut',
+            '${deplie ? t.salle.seance.replierFiche(dePrenom: deDevant(eleve.prenom)) : t.salle.seance.deplierFiche(dePrenom: deDevant(eleve.prenom))}, $etat',
         arrondiFocus: AppRadius.arrondiSm,
-        child: ligne,
+        child: ExcludeSemantics(child: ligne),
       ),
     );
   }
@@ -549,6 +657,11 @@ class _ActionsEleve extends StatelessWidget {
       // besoin » ensemble, comme sur les images.
       (AppIcons.signaler, t.salle.seance.signalerBesoin, actions.onSignaler),
     ];
+    final List<String> libelles = <String>[
+      for (final (AppIcon _, String libelle, ValueChanged<EleveSeance>? r)
+          in liste)
+        if (r != null) libelle,
+    ];
     final List<Widget> tuiles = <Widget>[
       for (final (AppIcon icone, String libelle, ValueChanged<EleveSeance>? r)
           in liste)
@@ -572,16 +685,136 @@ class _ActionsEleve extends StatelessWidget {
     );
     return Padding(
       padding: EdgeInsets.only(top: serre ? AppSpacing.xs : AppSpacing.sm),
-      child: large && tuiles.length > 2
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                rangee(tuiles.sublist(0, 2)),
-                Ecart.vXs,
-                rangee(tuiles.sublist(2)),
-              ],
-            )
-          : rangee(tuiles),
+      // TB-RC (TB-10 reste a, TB_RAPPORT §d n. 23) : le nombre de colonnes
+      // se mesure. Quatre tant que chaque mot tient dans sa tuile, sinon
+      // deux, sinon une : jamais un mot coupe (« Appeler di / scrèteme /
+      // nt » a 768 et 1440 x2). Colonne desktop : deux au plus (images).
+      child: LayoutBuilder(
+        builder: (BuildContext contexte, BoxConstraints c) {
+          int colonnes = colonnesSansCoupure(
+            contexte,
+            libelles: libelles,
+            largeur: c.maxWidth,
+          );
+          if (large) colonnes = math.min(colonnes, 2);
+          colonnes = math.min(colonnes, tuiles.length);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: AppSpacing.xs,
+            children: <Widget>[
+              for (int i = 0; i < tuiles.length; i += colonnes)
+                rangee(<Widget>[
+                  ...tuiles.sublist(i, math.min(i + colonnes, tuiles.length)),
+                  // La derniere rangee garde la largeur des autres.
+                  for (
+                    int k = tuiles.length;
+                    k < i + colonnes && i + colonnes > tuiles.length;
+                    k++
+                  )
+                    const Spacer(),
+                ]),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// TB-RC (TB-10 reste a) : le plus grand nombre de colonnes (4, 2 ou 1) ou
+/// chaque mot de chaque [libelles] tient dans sa tuile, au style et au
+/// texte de l'appareil (marges de `BoutonOutil` en tuile comprises). Un
+/// espace insecable garde ses deux mots ensemble.
+@visibleForTesting
+int colonnesSansCoupure(
+  BuildContext context, {
+  required List<String> libelles,
+  required double largeur,
+}) {
+  final TextStyle style = DefaultTextStyle.of(context).style
+      .merge(Theme.of(context).textTheme.labelSmall);
+  final TextScaler echelle = MediaQuery.textScalerOf(context);
+  final TextDirection sens = Directionality.of(context);
+  double motLePlusLong = 0;
+  for (final String libelle in libelles) {
+    for (final String mot in libelle.split(' ')) {
+      final TextPainter peintre = TextPainter(
+        text: TextSpan(text: mot, style: style),
+        textDirection: sens,
+        textScaler: echelle,
+        maxLines: 1,
+      )..layout();
+      motLePlusLong = math.max(motLePlusLong, peintre.width);
+      peintre.dispose();
+    }
+  }
+  for (final int n in const <int>[4, 2]) {
+    // La cellule, moins la marge interieure et le filet de la tuile.
+    final double cellule =
+        (largeur - (n - 1) * AppSpacing.xs) / n - 2 * AppSpacing.xs - 2;
+    if (motLePlusLong <= cellule) return n;
+  }
+  return 1;
+}
+
+/// TB-10 (plan V2 §4.3, §20 ; UX-20) : « Autoriser a ecrire » ou « Retirer
+/// l'autorisation d'ecrire », pres de la personne, apres ses quatre actions.
+/// La consequence se dit avant le choix (K-58) ; bouton discret pose en bas
+/// de la carte, sur toute sa largeur (K-56). Rien d'irreversible : le droit
+/// se retire comme il se donne, les traits restent.
+class _AutorisationEcrire extends StatelessWidget {
+  const _AutorisationEcrire({
+    required this.eleve,
+    required this.serre,
+    required this.onPress,
+  });
+
+  final EleveSeance eleve;
+  final bool serre;
+  final VoidCallback onPress;
+
+  /// La cle du bouton d'un eleve.
+  static Key cle(EleveSeance eleve) =>
+      ValueKey<String>('autoriser-ecrire-${cleEleveSeance(eleve)}');
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final bool autorise = eleve.peutEcrire;
+    return Padding(
+      padding: EdgeInsets.only(top: serre ? AppSpacing.sm : AppSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // TB-RC (revue TB-R, m12) : l'aide a son propre noeud, lu juste
+          // avant le bouton, jamais fondue dans la carte avant le prenom.
+          Semantics(
+            container: true,
+            child: Text(
+              autorise
+                  ? t.salle.seance.ecriture.retirerAide
+                  : t.salle.seance.ecriture.autoriserAide(prenom: eleve.prenom),
+              style: palette.inkMuted.applyTo(_styleFiche(context)),
+            ),
+          ),
+          Ecart.vSm,
+          ActionPrincipale(
+            key: cle(eleve),
+            libelle: autorise
+                ? t.salle.seance.ecriture.retirer
+                : t.salle.seance.ecriture.autoriser,
+            libelleSemantique: autorise
+                ? t.salle.seance.ecriture.retirerSemantique(
+                    dePrenom: deDevant(eleve.prenom),
+                  )
+                : t.salle.seance.ecriture.autoriserSemantique(
+                    prenom: eleve.prenom,
+                  ),
+            niveau: NiveauAction.secondaire,
+            onPress: onPress,
+          ),
+        ],
+      ),
     );
   }
 }

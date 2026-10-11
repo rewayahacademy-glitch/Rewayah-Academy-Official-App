@@ -52,6 +52,7 @@ class BoutonOutil extends StatelessWidget {
     this.lignesLibelle = 1,
     this.iconeActive = false,
     this.serre = false,
+    this.focusNode,
   });
 
   /// L'icone de l'outil.
@@ -85,6 +86,10 @@ class BoutonOutil extends StatelessWidget {
 
   /// Vrai pour resserrer les marges (colonne des eleves de la salle).
   final bool serre;
+
+  /// Le noeud de focus du bouton, quand l'hote doit y rendre le focus (la
+  /// fermeture d'un panneau qu'il ouvre).
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -155,8 +160,13 @@ class BoutonOutil extends StatelessWidget {
 
     final Widget bouton = Pressable(
       libelleSemantique: libelle,
+      // TB-RC (revue TB-R, m6) : l'outil retenu est annonce au lecteur
+      // d'ecran (« selectionne »), pas seulement peint. Non retenu : rien
+      // n'est annonce (une action comme Annuler n'a pas d'etat de choix).
+      selectionne: retenu ? true : null,
       arrondiFocus: tuile ? AppRadius.arrondiMd : AppRadius.arrondiSm,
       onPress: onPress,
+      focusNode: focusNode,
       // Le contenu est exclu de la semantique : l'icone n'a rien a dire, et le
       // libelle affiche redirait le nom que `Pressable` porte deja. Sans cela,
       // un lecteur d'ecran annoncerait le bouton deux fois.

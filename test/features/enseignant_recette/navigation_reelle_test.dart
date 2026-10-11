@@ -6,12 +6,15 @@
 // `test/router/parcours_enseignant_test.dart` ; ce fichier couvre les poses
 // qui s'ouvrent DEPUIS elles.
 //
-// ENS-13 et ENS-13B (absence, remplacement) restent hors de ce fichier : leurs
-// ports (`declarationAbsenceProvider`, `reponseRemplacementProvider`) valent
-// `null` en dehors de la demonstration (K-28, backend reporte a BR-1), donc
-// aucun bouton ne les ouvre depuis la vraie coquille avant BR-1. Ils sont
-// mesures depuis `CoquilleEnseignantDemo`, elle-meme batie sur le vrai
-// `NavShell` (`test/features/journee/absence_remplacement_test.dart`).
+// ENS-13 (absence) reste hors de ce fichier : son port
+// (`declarationAbsenceProvider`) vaut `null` en dehors de la demonstration
+// (K-28, backend reporte a BR-1), donc aucun bouton ne l'ouvre depuis la
+// vraie coquille avant BR-1. Il est mesure depuis `CoquilleEnseignantDemo`,
+// elle-meme batie sur le vrai `NavShell`
+// (`test/features/journee/absence_remplacement_test.dart`).
+// ENS-13B (remplacement) se mesure depuis la vraie coquille depuis REMPL-1b :
+// l'Alerte utile « Remplacement urgent » lit `offresCommunesProvider` et mene a
+// l'ecran commun (`test/router/parcours_enseignant_test.dart`, groupe REMPL-1b).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

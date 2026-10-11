@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/foyer/port_creation_profil_eleve.dart';
@@ -13,6 +14,7 @@ import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -489,9 +491,9 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
       erreurAge = t.foyer.ajout.erreurs.ageRequis;
     } else if (erreurs[ChampProfilEleve.age] == ErreurChamp.horsBornes ||
         refusAge) {
-      erreurAge = t.foyer.ajout.erreurs.ageHorsBornes(
-        min: _bornes.min,
-        max: _bornes.max,
+      // DUREE-INSECABLE-4 : « 18 ans » insecable.
+      erreurAge = LibellesGroupe.insecable(
+        t.foyer.ajout.erreurs.ageHorsBornes(min: _bornes.min, max: _bornes.max),
       );
     }
 
@@ -575,7 +577,8 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
           bornes: _bornes,
           choisi: int.tryParse(_age.text.trim()),
           erreur: erreurAge,
-          onChoisir: _envoi ? null : choisirAge,
+          figee: _envoi,
+          onChoisir: choisirAge,
         ),
       ],
     );
@@ -591,12 +594,16 @@ class _ChoixAge extends StatelessWidget {
     required this.erreur,
     required this.onChoisir,
     super.key,
+    this.figee = false,
   });
 
   final BornesAge bornes;
   final int? choisi;
   final String? erreur;
-  final ValueChanged<int>? onChoisir;
+  final ValueChanged<int> onChoisir;
+
+  /// Vrai pendant l'envoi : le choix est fige le temps de la reponse.
+  final bool figee;
 
   @override
   Widget build(BuildContext context) {
@@ -629,7 +636,15 @@ class _ChoixAge extends StatelessWidget {
                 key: FormulaireProfilEleve.ageChoixKey(age),
                 libelle: '$age',
                 retenue: age == choisi,
-                onPress: onChoisir == null ? null : () => onChoisir!(age),
+                // Jamais grisee (BOUTONS-GRISES-1) : pendant l'envoi, le
+                // choix est fige le temps de la reponse, et l'appui le dit
+                // au lecteur d'ecran au lieu de rester muet.
+                onPress: figee
+                    ? () => signalerManque(
+                        context,
+                        t.foyer.ajout.identite.ageFige,
+                      )
+                    : () => onChoisir(age),
               ),
           ],
         ),

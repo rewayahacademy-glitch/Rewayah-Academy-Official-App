@@ -34,6 +34,7 @@ import '../../core/widgets/page_shell.dart';
 import '../admin_finance/finance_page.dart';
 import '../comptable/aujourdhui/aujourdhui_page.dart';
 import '../comptable/beneficiaires/beneficiaires_page.dart';
+import '../comptable/beneficiaires/fil_profil_paiement_page.dart';
 import '../comptable/beneficiaires/profil_paiement_page.dart';
 import '../comptable/contractuels/contractuels_page.dart';
 import '../comptable/contractuels/nouvelle_obligation_page.dart';
@@ -89,6 +90,9 @@ enum EcranDemoComptable {
 
   /// W07 Profil de paiement.
   profilPaiement(1),
+
+  /// W07 Fil « Profil de paiement », ouvert par « Relancer » (CPT-COM).
+  filProfilPaiement(1),
 
   /// W04 Tresorerie et coffres.
   tresorerie(2),
@@ -172,6 +176,8 @@ String libelleEcranDemoComptable(EcranDemoComptable ecran) => switch (ecran) {
   EcranDemoComptable.nouvelleObligation => t.comptable.contractuels.nouvelle,
   EcranDemoComptable.beneficiaires => t.comptable.beneficiaires.titre,
   EcranDemoComptable.profilPaiement => t.comptable.beneficiaires.profilTitre,
+  EcranDemoComptable.filProfilPaiement =>
+    t.comptable.beneficiaires.profil.filTitre,
   EcranDemoComptable.tresorerie => t.comptable.tresorerie.titre,
   EcranDemoComptable.alimenter => t.comptable.tresorerie.alimenter,
   EcranDemoComptable.encaissements => t.comptable.encaissements.titre,
@@ -223,6 +229,14 @@ List<Override> surchargesCoquilleComptableDemo({
   ...surchargesDemoTresorerie(),
   ...surchargesDemoEncaissements(),
   ...surchargesDemoBeneficiaires(),
+  // CPT-COM : « Relancer » ouvre le fil dans la coquille de demonstration,
+  // jamais la route de production (la demonstration n'a qu'un profil).
+  cheminFilProfilPaiementProvider.overrideWithValue(
+    (String _) => adresseDemoComptable(
+      EcranDemoComptable.filProfilPaiement,
+      montantsAffiches: montantsAffiches,
+    ),
+  ),
   ...surchargesDemoContractuels(),
   // Le Comptable lit ses propres demandes de validation (CPT-VAL-1) : la
   // source lui rend « approuver » bloquee sur chacune (autoPaiement).
@@ -370,6 +384,9 @@ class CoquilleComptableDemo extends StatelessWidget {
               const NouvelleObligationPage(),
             EcranDemoComptable.beneficiaires => const BeneficiairesPage(),
             EcranDemoComptable.profilPaiement => ProfilPaiementPage(
+              beneficiaireId: SocleComptableDemo.enseignants.first.id,
+            ),
+            EcranDemoComptable.filProfilPaiement => FilProfilPaiementPage(
               beneficiaireId: SocleComptableDemo.enseignants.first.id,
             ),
             EcranDemoComptable.tresorerie => const TresoreriePage(),

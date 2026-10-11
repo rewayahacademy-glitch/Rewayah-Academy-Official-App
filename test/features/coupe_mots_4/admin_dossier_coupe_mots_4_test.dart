@@ -90,7 +90,16 @@ void main() {
         verifierCartesDeChoixEntieres(tester);
         expect(find.text(t.admin.demandes.poserMotif), findsWidgets);
         // L'ecran entier et la feuille ouverte (verifierCartesDeChoixEntieres).
-        expect(ponctuationsIsolees(tester, find.byType(BottomSheet)), isEmpty);
+        // Ligne visuelle RTL non lue : la feuille n'est pas traduite en
+        // arabe (repli francais, `ecransTraduitsEnArabe`).
+        expect(
+          ponctuationsIsolees(
+            tester,
+            find.byType(BottomSheet),
+            ligneVisuelleRtl: false,
+          ),
+          isEmpty,
+        );
       });
     }
   }

@@ -112,7 +112,12 @@ void main() {
             lessThanOrEqualTo(2),
             reason: 'ligne ${i + 1} : texte decale du cercle (${r.height})',
           );
-          expect(haut, greaterThanOrEqualTo(c.top - toleranceGarde));
+          // Un bloc plus haut que le cercle (nom et statut a texte x2, que
+          // la tete bornee du bureau laisse desormais voir, TB-RC) deborde
+          // des deux cotes du cercle, centre : seul le centrage compte.
+          if (bas - haut <= c.height) {
+            expect(haut, greaterThanOrEqualTo(c.top - toleranceGarde));
+          }
           mesurees++;
         }
         if (vue.width > 320 || echelle == 1) {

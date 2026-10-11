@@ -142,6 +142,16 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
   const String id = DonneesEnseignantDemo.enseignantId;
   final bool vide = etat == EtatDemoEnseignant.vide;
   final List<SeanceEnseignant> seances = DonneesEnseignantDemo.seances(etat);
+  final PortRemplacementsDemo remplacements = PortRemplacementsDemo(
+    tableau: vide
+        ? TableauRemplacementsDemo(
+            const <(OffreRemplacement, PublicClasseDemo, String?)>[],
+          )
+        : TableauRemplacementsDemo.demonstration(),
+    enseignantId: id,
+    genre: GenreEnseignantDemo.homme,
+    horsLigne: etat == EtatDemoEnseignant.horsLigne,
+  );
   return <Override>[
     sessionProvider.overrideWith(_SessionEnseignantDemo.new),
     horsLigneProvider.overrideWith(
@@ -153,35 +163,25 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
       () => DonneesEnseignantDemo.maintenant,
     ),
     seancesEnseignantProvider.overrideWith((Ref _) async => seances),
-    // Absence et remplacement (ENS-13, ENS-13B, EN-8) : l'offre d'Al-Fatiha
-    // en Alerte utile, et des reponses simulees qui ne quittent pas
-    // l'appareil (K-28). Hors ligne, aucune reponse, donc aucun etat (E7).
+    // Absence et remplacement (ENS-13, ENS-13B, EN-8) : des reponses
+    // simulees qui ne quittent pas l'appareil (K-28). Hors ligne, aucune
+    // reponse, donc aucun etat (E7).
     declarationAbsenceProvider.overrideWithValue(
       DeclarationAbsenceDemo(horsLigne: etat == EtatDemoEnseignant.horsLigne),
     ),
     reponseRemplacementProvider.overrideWithValue(
       ReponseRemplacementDemo(horsLigne: etat == EtatDemoEnseignant.horsLigne),
     ),
-    offresRemplacementProvider.overrideWithValue(
-      vide
-          ? const <OffreRemplacement>[]
-          : <OffreRemplacement>[DonneesEnseignantDemo.offreRemplacement()],
-    ),
     // REMPL-1 : le tableau commun des remplacements, filtre par genre et
     // premier arrive, premier servi, simule sur l'appareil (K-28). Le genre
-    // est un parametre de la demonstration (Sayyid : un enseignant).
-    portRemplacementsProvider.overrideWithValue(
-      PortRemplacementsDemo(
-        tableau: vide
-            ? TableauRemplacementsDemo(
-                const <(OffreRemplacement, PublicClasseDemo, String?)>[],
-              )
-            : TableauRemplacementsDemo.demonstration(),
-        enseignantId: id,
-        genre: GenreEnseignantDemo.homme,
-        horsLigne: etat == EtatDemoEnseignant.horsLigne,
-      ),
-    ),
+    // est un parametre de la demonstration (Sayyid : un enseignant). C'est
+    // la seule source des offres (REMPL-1b) : l'Alerte utile de la Journee
+    // et l'ecran commun le lisent tous deux.
+    portRemplacementsProvider.overrideWithValue(remplacements),
+    // Surcharge aussi : sous ce ProviderScope imbrique, le flux se
+    // resoudrait sinon dans le conteneur racine, ou le port est absent, et
+    // l'Alerte utile de la Journee resterait vide.
+    offresCommunesProvider.overrideWith((Ref _) => remplacements.suivre()),
     // Classes (ENS-09) : les quatre Classes, leur niveau, leur langue et le
     // remplacement d'Al-Fatiha. Le cahier non valide d'Al-Badr vient de
     // `cahiersEnRetardProvider`, plus bas.

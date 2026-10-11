@@ -506,6 +506,30 @@ void main() {
       expect(find.text(t.enseignant.cahier.validerSansConstat), findsOneWidget);
     });
 
+    testWidgets('seance introuvable : on le dit avant tout formulaire', (
+      WidgetTester tester,
+    ) async {
+      _telephone(tester);
+      // Le serveur ne connait pas cette seance (brouillon nul) et elle ne
+      // figure ni dans la journee ni dans les cahiers en retard : pas de
+      // formulaire a remplir pour une seance qui n'est pas la sienne.
+      final FauxServiceEnseignant service = FauxServiceEnseignant()
+        ..brouillonRendu = null;
+
+      await tester.pumpWidget(
+        hote(
+          const CahierPage(seanceId: 'seance-inconnue'),
+          surcharges: _surcharges(service: service, depot: FauxDepotRapports()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.enseignant.cahier.introuvable), findsOneWidget);
+      expect(find.text(t.enseignant.cahier.validerSansConstat), findsNothing);
+      expect(find.text(t.enseignant.cahier.vide), findsNothing);
+      expect(find.text(t.enseignant.cahier.retourJournee), findsWidgets);
+    });
+
     testWidgets(
       'deja depose : le cahier se lit, et se corrige sans redepot direct',
       (WidgetTester tester) async {

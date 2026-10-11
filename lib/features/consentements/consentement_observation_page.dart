@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/capacites/consentements_supabase.dart';
 import '../../core/capacites/port_consentements.dart';
 import '../../core/domain/enums.dart';
@@ -50,6 +51,15 @@ class _ConsentementObservationPageState
   bool _merci = false;
   String? _erreur;
 
+  /// La case d'accord : le focus y revient quand elle manque.
+  final FocusNode _focusCase = FocusNode(debugLabel: 'case-accord');
+
+  @override
+  void dispose() {
+    _focusCase.dispose();
+    super.dispose();
+  }
+
   VarianteObservation get _variante {
     String? pour;
     try {
@@ -63,6 +73,14 @@ class _ConsentementObservationPageState
   void _retour() => GoRouter.of(context).go(Routes.tuteurCompte);
 
   Future<void> _accepter() async {
+    if (!_cochee) {
+      // Jamais grise (BOUTONS-GRISES-1) : sans la case, l'appui dit ce qui
+      // manque, l'annonce et rend le focus a la case.
+      final String message = t.formulaire.manqueAccord;
+      setState(() => _erreur = message);
+      signalerManque(context, message, champ: _focusCase);
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -148,7 +166,13 @@ class _ConsentementObservationPageState
         CaseAccordObservation(
           variante: variante,
           cochee: _cochee,
-          onChanged: _envoi ? null : (bool v) => setState(() => _cochee = v),
+          focusNode: _focusCase,
+          onChanged: _envoi
+              ? null
+              : (bool v) => setState(() {
+                  _cochee = v;
+                  _erreur = null;
+                }),
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
@@ -164,7 +188,7 @@ class _ConsentementObservationPageState
         Ecart.vXl,
         ActionPrincipale(
           libelle: t.consentement.texte.continuer,
-          onPress: _cochee ? () => unawaited(_accepter()) : null,
+          onPress: () => unawaited(_accepter()),
           enCours: _envoi,
         ),
         Ecart.vMd,

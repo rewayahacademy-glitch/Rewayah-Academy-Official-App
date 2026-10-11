@@ -41,7 +41,13 @@ elle ne bloque pas le lot, car aucune règle ci-dessous n'en dépend seule.
 - **Conclusion : conforme.** Contrôle automatique ajouté (FILTRES-1b) :
   `dart run tool/verifier_revue.dart --regle=wrap-filtres` ; un choix de formulaire en
   `Wrap` se déclare par un commentaire « Choix de formulaire, pas un filtre : <raison> ».
-  Total de `verifier_revue` inchangé (1533).
+  Total de `verifier_revue` : 1533 sur la base `5a52ff30`, 1532 sur la tête `0de88e47` de
+  `corrections/c2-filtres-b` (remesuré le 10/10, FINITIONS-CORR2-1 : `dart
+  tool/verifier_revue.dart` dans les deux arbres extraits par `git archive` ; la règle
+  `wrap-filtres` n'ajoute aucune violation ; `libelle-sans-source` passe de 1474 à 1473, le
+  texte de `commun.etats.actions.revenir`, « Revenir en arrière », étant désormais cité dans
+  `docs/`). Ce paragraphe disait « inchangé (1533) », chiffre de la tête `c2763700`, avant
+  la reprise.
 
 ### 2. Le signal « il y a d'autres filtres »
 

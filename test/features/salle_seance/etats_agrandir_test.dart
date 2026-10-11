@@ -63,6 +63,7 @@ void main() {
         WidgetTester tester,
       ) async {
         fixerVueCapture(tester, const Size(1440, 900), 1);
+        final SemanticsHandle lecteur = tester.ensureSemantics();
         await tester.pumpWidget(
           hoteCapture(monter(agrandi: false), themeMode: luminosite),
         );
@@ -71,7 +72,7 @@ void main() {
           tester.element(find.byKey(cle)),
         );
         // Inactif (le support n'occupe pas l'ecran) : contour seul, icone
-        // agrandir, mot « Agrandir ».
+        // agrandir, mot « Focus » (revue TB-R m1 : un seul nom du focus).
         final BoxDecoration repos = _decoration(tester, cle);
         expect(repos.color, isNull, reason: 'contour seul');
         expect(repos.border, isNotNull);
@@ -79,7 +80,7 @@ void main() {
         expect(
           find.descendant(
             of: find.byKey(cle),
-            matching: find.text(t.salle.seance.agrandir),
+            matching: find.text(t.salle.seance.commandes.focus),
           ),
           findsOneWidget,
         );
@@ -88,7 +89,9 @@ void main() {
           hoteCapture(monter(agrandi: true), themeMode: luminosite),
         );
         await tester.pump();
-        // Actif : disque plein de contraste, icone reduire, mot « Reduire ».
+        // Actif : disque plein de contraste, icone reduire, le meme mot
+        // d'etat « Focus » (une ligne, ETATS-BTN-1) ; le nom lu dit la
+        // sortie (revue TB-R m1).
         final BoxDecoration plein = _decoration(tester, cle);
         expect(plein.color, palette.surfaceInverse.background);
         expect(plein.border, isNull);
@@ -96,12 +99,17 @@ void main() {
         expect(
           find.descendant(
             of: find.byKey(cle),
-            matching: find.text(t.salle.seance.reduire),
+            matching: find.text(t.salle.seance.commandes.focus),
           ),
           findsOneWidget,
         );
+        expect(
+          tester.getSemantics(find.byKey(cle)).label,
+          contains(t.salle.seance.commandes.quitterFocus),
+        );
         expect(plein.color, isNot(repos.color));
         expect(plein.border, isNot(repos.border));
+        lecteur.dispose();
       });
     }
   });
@@ -116,6 +124,7 @@ void main() {
     testWidgets('dock de la seance, ${luminosite.name} : Reduire seulement '
         'quand le support occupe l\'ecran', (WidgetTester tester) async {
       fixerVueCapture(tester, const Size(1440, 900), 1);
+      final SemanticsHandle lecteur = tester.ensureSemantics();
       await tester.pumpWidget(
         hoteCapture(_dock(agrandi: false), themeMode: luminosite),
       );
@@ -135,10 +144,15 @@ void main() {
       expect(
         find.descendant(
           of: find.byKey(_dockCle),
-          matching: find.text(t.salle.seance.reduire),
+          matching: find.text(t.salle.seance.commandes.focus),
         ),
         findsOneWidget,
       );
+      expect(
+        tester.getSemantics(find.byKey(_dockCle)).label,
+        contains(t.salle.seance.commandes.quitterFocus),
+      );
+      lecteur.dispose();
     });
   }
 }

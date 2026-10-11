@@ -1,6 +1,7 @@
 // DASH-ENS-b (corrections des revues DASH-ENS-ROUTE-R et DASH-ENS-LISTES-R) :
-// les trois listes de la Journee (« A terminer », « Remplacements
-// confirmes », « Alertes utiles »), montees seules en VRAIES polices, a
+// les trois listes de la Journee (« A terminer », l'ecran commun
+// « Remplacements » depuis REMPL-1b, « Alertes utiles »), montees seules en
+// VRAIES polices, a
 // 320 px et texte a 200 %, en LTR comme en RTL, dans chacun de leurs etats.
 //
 // Ce que la contre-revue de DASH-ENS-ROUTE a trouve : l'etat vide d'« A
@@ -19,6 +20,7 @@ import 'package:rewayah_academy/core/enseignant/absence_remplacement.dart';
 import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart'
     show cahiersEnFileProvider;
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
+import 'package:rewayah_academy/core/enseignant/port_remplacements.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
@@ -29,6 +31,7 @@ import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
+import 'package:rewayah_academy/features/remplacements/remplacements_page.dart';
 
 import '../../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
@@ -91,13 +94,25 @@ class _RemplacementsFixes extends RemplacementsControleur {
 /// ligne ; `horsLigne` echoue sans reseau.
 enum _Etat { chargement, contenu, vide, erreur, horsLigne }
 
-List<Override> _surcharges(_Etat etat) {
+/// [etatOffres] isole le flux du tableau commun ; par defaut il suit [etat].
+List<Override> _surcharges(_Etat etat, {_Etat? etatOffres}) {
   Future<T> lire<T>(T valeur) {
     if (etat == _Etat.chargement) return Completer<T>().future;
     if (etat == _Etat.erreur || etat == _Etat.horsLigne) {
       return Future<T>.error(StateError('reseau'));
     }
     return Future<T>.value(valeur);
+  }
+
+  // REMPL-1b : le tableau commun, seule source des offres, dans le meme etat
+  // que les autres lectures.
+  final _Etat offres = etatOffres ?? etat;
+  Stream<T> suivre<T>(T valeur) {
+    if (offres == _Etat.chargement) return StreamController<T>().stream;
+    if (offres == _Etat.erreur || offres == _Etat.horsLigne) {
+      return Stream<T>.error(StateError('reseau'));
+    }
+    return Stream<T>.value(valeur);
   }
 
   final bool vide = etat == _Etat.vide;
@@ -148,6 +163,18 @@ List<Override> _surcharges(_Etat etat) {
               ],
       ),
     ),
+    offresCommunesProvider.overrideWith(
+      (Ref _) => suivre<List<OffreCommune>>(
+        offres == _Etat.vide
+            ? const <OffreCommune>[]
+            : <OffreCommune>[
+                OffreCommune(
+                  offre: _remplacement('Al-Muzzammil', 6),
+                  etat: EtatOffreCommune.ouverte,
+                ),
+              ],
+      ),
+    ),
     presenceSeanceProvider('live').overrideWith(
       (Ref _) => Stream<List<PresenceParticipant>?>.value(
         vide
@@ -171,13 +198,14 @@ Future<void> _monter(
   double echelle = 2,
   ThemeMode mode = ThemeMode.light,
   InterfaceMode interface = InterfaceMode.standard,
+  _Etat? etatOffres,
 }) async {
   tester.view.physicalSize = Size(largeur, 3000);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: _surcharges(etat),
+      overrides: _surcharges(etat, etatOffres: etatOffres),
       child: TranslationProvider(
         child: MaterialApp(
           theme: AppTheme.pour(interface, Brightness.light),
@@ -209,11 +237,9 @@ void main() {
   final Map<String, (Widget, List<_Etat>)> pages =
       <String, (Widget, List<_Etat>)>{
         'A terminer': (const ListeATerminerPage(), _Etat.values),
-        // Une memoire synchrone : ni chargement, ni echec de lecture.
-        'Remplacements': (
-          const ListeRemplacementsPage(),
-          <_Etat>[_Etat.contenu, _Etat.vide],
-        ),
+        // REMPL-1b : « Voir tout » et l'alerte urgente menent a l'ecran
+        // commun, qui lit un flux : ses cinq etats.
+        'Remplacements': (const RemplacementsPage(), _Etat.values),
         'Alertes': (const ListeAlertesPage(), _Etat.values),
       };
 
@@ -233,6 +259,67 @@ void main() {
             });
           }
         }
+      }
+    },
+  );
+
+  // REMPL-1b (revue, mineur 6) : la page des alertes lit le tableau commun.
+  // Le groupe ci-dessus garde la mise en page ; celui-ci garde le contenu,
+  // dans chaque etat du flux.
+  group(
+    'La page des alertes affiche les offres ouvertes du tableau commun',
+    () {
+      final String titre = titreRemplacementUrgent(DateTime(2026, 10, 6, 18));
+      final String illisible = t.enseignant.remplacements.sansDonnees;
+
+      testWidgets('contenu : l offre ouverte est une Alerte utile', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          const ListeAlertesPage(),
+          _Etat.contenu,
+          direction: TextDirection.ltr,
+        );
+        expect(find.text(titre), findsOneWidget);
+        expect(find.text('Al-Muzzammil'), findsOneWidget);
+        expect(find.text(illisible), findsNothing);
+      });
+
+      for (final _Etat etat in <_Etat>[_Etat.vide, _Etat.chargement]) {
+        testWidgets('${etat.name} : aucune alerte de remplacement', (
+          WidgetTester tester,
+        ) async {
+          // Les seances et la presence se lisent : seul le flux des offres
+          // change d'etat.
+          await _monter(
+            tester,
+            const ListeAlertesPage(),
+            _Etat.contenu,
+            etatOffres: etat,
+            direction: TextDirection.ltr,
+          );
+          expect(find.text(titre), findsNothing);
+          expect(find.text(illisible), findsNothing);
+        });
+      }
+
+      for (final _Etat etat in <_Etat>[_Etat.erreur, _Etat.horsLigne]) {
+        testWidgets('${etat.name} : l echec du flux se dit, sans offre', (
+          WidgetTester tester,
+        ) async {
+          // Les seances et la presence se lisent : seul le flux des offres
+          // change d'etat.
+          await _monter(
+            tester,
+            const ListeAlertesPage(),
+            _Etat.contenu,
+            etatOffres: etat,
+            direction: TextDirection.ltr,
+          );
+          expect(find.text(titre), findsNothing);
+          expect(find.text(illisible), findsOneWidget);
+        });
       }
     },
   );
