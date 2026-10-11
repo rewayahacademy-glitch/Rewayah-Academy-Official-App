@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/recherche/modeles_recherche.dart';
 import '../../core/recherche/port_recherche.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/lien_fleche.dart';
 
 /// L'espace de recherche d'un role de l'Espace Classe : un choix d'interface,
@@ -64,3 +66,35 @@ final _supportsServisProvider = FutureProvider.autoDispose
           );
       return servis.contains(DomaineRecherche.supports);
     });
+
+/// Vrai quand au moins un domaine de recherche est servi a [espace] : la
+/// capacite (jamais le role) qui decide si une coque pose son entree. Lu sans
+/// la session ; une lecture en cours ou en echec vaut « non servi » : l'entree
+/// est alors masquee, jamais grisee.
+final rechercheServieProvider = FutureProvider.autoDispose
+    .family<bool, EspaceRecherche>((Ref ref, EspaceRecherche espace) async {
+      final List<DomaineRecherche> servis = await ref
+          .watch(portRechercheProvider)
+          .portees(ContexteRecherche(espace: espace));
+      return servis.isNotEmpty;
+    });
+
+/// La cle de la loupe d'en-tete des coques, pour les tests.
+const Key cleLoupeRecherche = ValueKey<String>('recherche-loupe');
+
+/// La loupe d'en-tete d'une coque (RECH-D5, spec RECH-03 §4.1) : **une seule
+/// entree par coque**, qui ouvre la meme surface `/recherche`. La coque ne la
+/// pose que si [rechercheServieProvider] le dit pour son espace.
+class LoupeRecherche extends StatelessWidget {
+  /// Cree la loupe.
+  const LoupeRecherche({super.key});
+
+  @override
+  Widget build(BuildContext context) => BoutonIcone(
+    key: cleLoupeRecherche,
+    icone: AppIcons.recherche,
+    libelle: t.recherche.titre,
+    infobulle: t.recherche.titre,
+    onPress: () => GoRouter.of(context).push(Routes.recherche),
+  );
+}
