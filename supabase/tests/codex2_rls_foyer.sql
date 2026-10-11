@@ -144,7 +144,8 @@ INSERT INTO auth.users (id, email) VALUES
 
 INSERT INTO public.households (id, timezone) VALUES
   ('c2a2ffff-0000-0000-0000-000000000001', 'Europe/Paris'),
-  ('c2a2ffff-0000-0000-0000-000000000002', 'Europe/Paris');
+  ('c2a2ffff-0000-0000-0000-000000000002', 'Europe/Paris'),
+  ('c2a2ffff-0000-0000-0000-000000000003', 'Europe/Paris');
 
 INSERT INTO public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status)
@@ -158,7 +159,7 @@ VALUES
   ('c2a20000-0000-0000-0000-000000000004', 'COD2-STUD-A', 'student',
    'c2a2ffff-0000-0000-0000-000000000001', 'Eleve', 'A', 'active'),
   ('c2a20000-0000-0000-0000-000000000005', 'COD2-TEACH-A', 'teacher',
-   'c2a2ffff-0000-0000-0000-000000000001', 'Enseignant', 'A', 'active'),
+   'c2a2ffff-0000-0000-0000-000000000003', 'Enseignant', 'A', 'active'),
   ('c2a20000-0000-0000-0000-000000000006', 'COD2-TEACH-B', 'teacher',
    'c2a2ffff-0000-0000-0000-000000000002', 'Enseignant', 'B', 'active');
 
@@ -217,6 +218,26 @@ INSERT INTO public.prayer_settings (teacher_id, latitude, longitude) VALUES
 INSERT INTO public.matching_requests (kind, subject_profile_id, reason, requested_by, requester_role) VALUES
   ('reassignment', 'c2a20000-0000-0000-0000-000000000004', 'codex2 foyer A', 'c2a20000-0000-0000-0000-000000000001', 'guardian'),
   ('reassignment', 'c2a20000-0000-0000-0000-000000000002', 'codex2 foyer B', 'c2a20000-0000-0000-0000-000000000002', 'student');
+INSERT INTO public.sessions (id, teacher_id, started_at, ended_at) VALUES
+  ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000005', '2026-10-12 10:00:00+00', '2026-10-12 11:00:00+00'),
+  ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000006', '2026-10-13 11:00:00+00', '2026-10-13 12:00:00+00');
+INSERT INTO public.session_participants (session_id, profile_id, role) VALUES
+  ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000005', 'teacher'),
+  ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'student'),
+  ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000006', 'teacher'),
+  ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'student');
+INSERT INTO public.session_events (session_id, profile_id, event_type, source) VALUES
+  ('c2a2e000-1000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000004', 'joined', 'codex2'),
+  ('c2a2e000-1000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000002', 'joined', 'codex2');
+INSERT INTO public.session_recordings (session_id, object_key, duration_seconds, size_bytes, expires_at) VALUES
+  ('c2a2e000-1000-0000-0000-000000000001', 'codex2/recording-a', 60, 1024, '2026-10-20 00:00:00+00'),
+  ('c2a2e000-1000-0000-0000-000000000002', 'codex2/recording-b', 60, 1024, '2026-10-20 00:00:00+00');
+INSERT INTO public.lesson_reports (id, session_id, idempotency_key, content, author_profile_id) VALUES
+  ('c2a2e000-2000-0000-0000-000000000001', 'c2a2e000-1000-0000-0000-000000000001', 'codex2-report-a', '{}', 'c2a20000-0000-0000-0000-000000000005'),
+  ('c2a2e000-2000-0000-0000-000000000002', 'c2a2e000-1000-0000-0000-000000000002', 'codex2-report-b', '{}', 'c2a20000-0000-0000-0000-000000000006');
+INSERT INTO public.makharij_findings (lesson_report_id, makhraj, finding) VALUES
+  ('c2a2e000-2000-0000-0000-000000000001', 'lam', '{"note":"A"}'),
+  ('c2a2e000-2000-0000-0000-000000000002', 'lam', '{"note":"B"}');
 
 DO $$
 DECLARE v_denied boolean := false;
@@ -281,6 +302,90 @@ BEGIN
       INSERT INTO codex2_rls_violations VALUES ('missing-role-claim', v_table::text);
     END IF;
   END LOOP;
+  RESET ROLE;
+END $$;
+
+-- Les donnees de seance suivent les participants et leur foyer, sur les deux
+-- cotes du lien enseignant-eleve.
+DO $$
+DECLARE v_count integer; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000005', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.sessions WHERE id = 'c2a2e000-1000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-SESSION: teacher A cannot read own session'; END IF;
+  SELECT count(*) INTO v_count FROM public.sessions WHERE id = 'c2a2e000-1000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-SESSION-READ: teacher A sees session B'; END IF;
+  UPDATE public.sessions SET room = room WHERE id = 'c2a2e000-1000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-SESSION-WRITE: teacher A updated session B'; END IF;
+  SELECT count(*) INTO v_count FROM public.session_participants WHERE session_id = 'c2a2e000-1000-0000-0000-000000000001';
+  IF v_count <> 2 THEN RAISE EXCEPTION 'RLS-OWNER-SESSION-PARTICIPANTS: teacher A cannot read own roster'; END IF;
+  SELECT count(*) INTO v_count FROM public.session_participants WHERE session_id = 'c2a2e000-1000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-SESSION-PARTICIPANTS: teacher A sees roster B'; END IF;
+  UPDATE public.session_participants SET entered_at = entered_at WHERE session_id = 'c2a2e000-1000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-SESSION-PARTICIPANTS-WRITE: teacher A updated roster B'; END IF;
+  SELECT count(*) INTO v_count FROM public.session_events WHERE session_id = 'c2a2e000-1000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-SESSION-EVENT: teacher A cannot read own event'; END IF;
+  SELECT count(*) INTO v_count FROM public.session_events WHERE session_id = 'c2a2e000-1000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-SESSION-EVENT: teacher A sees event B'; END IF;
+  UPDATE public.session_events SET source = source WHERE session_id = 'c2a2e000-1000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-SESSION-EVENT-WRITE: teacher A updated event B'; END IF;
+  SELECT count(*) INTO v_count FROM public.session_recordings WHERE session_id = 'c2a2e000-1000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-SESSION-RECORDING: teacher A cannot read own recording'; END IF;
+  SELECT count(*) INTO v_count FROM public.session_recordings WHERE session_id = 'c2a2e000-1000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-SESSION-RECORDING: teacher A sees recording B'; END IF;
+  SELECT count(*) INTO v_count FROM public.lesson_reports WHERE id = 'c2a2e000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-LESSON-REPORT: teacher A cannot read own report'; END IF;
+  SELECT count(*) INTO v_count FROM public.lesson_reports WHERE id = 'c2a2e000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-LESSON-REPORT: teacher A sees report B'; END IF;
+  SELECT count(*) INTO v_count FROM public.makharij_findings WHERE lesson_report_id = 'c2a2e000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-MAKHARIJ-FINDING: teacher A cannot read own finding'; END IF;
+  SELECT count(*) INTO v_count FROM public.makharij_findings WHERE lesson_report_id = 'c2a2e000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-MAKHARIJ-FINDING: teacher A sees finding B'; END IF;
+  UPDATE public.lesson_reports SET content = content WHERE id = 'c2a2e000-2000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-LESSON-REPORT-WRITE: teacher A updated report B'; END IF;
+  RESET ROLE;
+
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.sessions WHERE id = 'c2a2e000-1000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-FAMILY-SESSION: household A cannot read session A'; END IF;
+  SELECT count(*) INTO v_count FROM public.sessions WHERE id = 'c2a2e000-1000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-FAMILY-SESSION: household A sees session B'; END IF;
+  SELECT count(*) INTO v_count FROM public.session_participants WHERE session_id = 'c2a2e000-1000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-FAMILY-PARTICIPANTS: household A cannot read its student participant'; END IF;
+  SELECT count(*) INTO v_count FROM public.session_participants WHERE session_id = 'c2a2e000-1000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-FAMILY-PARTICIPANTS: household A sees roster B'; END IF;
+  SELECT count(*) INTO v_count FROM public.session_events WHERE session_id = 'c2a2e000-1000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-FAMILY-SESSION-EVENT: household A cannot read event A'; END IF;
+  SELECT count(*) INTO v_count FROM public.session_events WHERE session_id = 'c2a2e000-1000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-FAMILY-SESSION-EVENT: household A sees event B'; END IF;
+  SELECT count(*) INTO v_count FROM public.session_recordings WHERE session_id = 'c2a2e000-1000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-FAMILY-RECORDING: household A cannot read recording A'; END IF;
+  SELECT count(*) INTO v_count FROM public.session_recordings WHERE session_id = 'c2a2e000-1000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-FAMILY-RECORDING: household A sees recording B'; END IF;
+  SELECT count(*) INTO v_count FROM public.lesson_reports WHERE id = 'c2a2e000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-FAMILY-LESSON-REPORT: household A cannot read report A'; END IF;
+  SELECT count(*) INTO v_count FROM public.lesson_reports WHERE id = 'c2a2e000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-FAMILY-LESSON-REPORT: household A sees report B'; END IF;
+  SELECT count(*) INTO v_count FROM public.makharij_findings WHERE lesson_report_id = 'c2a2e000-2000-0000-0000-000000000001';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-FAMILY-MAKHARIJ: household A cannot read finding A'; END IF;
+  SELECT count(*) INTO v_count FROM public.makharij_findings WHERE lesson_report_id = 'c2a2e000-2000-0000-0000-000000000002';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-FAMILY-MAKHARIJ: household A sees finding B'; END IF;
+  UPDATE public.makharij_findings SET finding = finding
+   WHERE lesson_report_id = 'c2a2e000-2000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-FAMILY-MAKHARIJ-WRITE: household A updated finding B'; END IF;
+  UPDATE public.session_recordings SET size_bytes = size_bytes
+   WHERE session_id = 'c2a2e000-1000-0000-0000-000000000002';
+  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-FAMILY-RECORDING-WRITE: household A updated recording B'; END IF;
   RESET ROLE;
 END $$;
 
