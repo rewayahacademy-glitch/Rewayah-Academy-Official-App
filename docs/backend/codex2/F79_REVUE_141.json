@@ -1,4 +1,4 @@
-﻿{
+{
     "metadata":  {
                      "title":  "Revue statique SECURITY DEFINER, inventaire 155",
                      "base_branch":  "origin/ccr-1b1bfa0b-m1kvkk",
@@ -11,7 +11,6 @@
                      "review_limitations":  [
                                                 "No STAGING/PROD access",
                                                 "No local replay executed in this session; after-0048 anon result supplied with the task.",
-                                                "Function source is absent for one inventory signature",
                                                 "Non-anon ACL estimates include the default ACL model documented in migration 0028 and are not runtime verified."
                                             ],
                      "acl_source_of_truth":  "has_function_privilege on PostgreSQL replay; counts and helper names supplied by Claude for X2-12; not rerun in this session",
@@ -19,18 +18,17 @@
                  },
     "summary":  {
                     "inventory_count":  155,
-                    "source_definitions_found":  154,
-                    "source_missing":  1,
+                    "source_definitions_found":  155,
+                    "source_missing":  0,
                     "verdict_counts":  {
                                            "OK":  53,
-                                           "أ€ CORRIGER":  1,
                                            "INVOKER POSSIBLE":  68,
                                            "TRIGGER":  19,
-                                           "NOT REASSESSED IN X2-12":  14
+                                           "NOT REASSESSED IN X2-12":  15
                                        },
                     "local_postgres_replay":  "X2-01 reported anon replay after 0048; X2-12 reports 155 SECURITY DEFINER and two additional anon helpers. Neither replay was run in this session.",
                     "remote_database_access":  "non effectuأ©; STAGING et PROD non consultأ©s",
-                    "scope":  "155 SECURITY DEFINER signatures after reconciling 14 definitions from 0043; two non-DEFINER anon helpers are tracked separately. ACL source of truth is has_function_privilege. Other-role grants remain source-derived estimates.",
+                    "scope":  "155 SECURITY DEFINER signatures from tracked migration sources 0001-0048; source-less rls_auto_enable() is replaced by public.compte_en_parcours() from 0043, with fourteen other 0043 additions. Two non-DEFINER anon helpers are tracked separately; ACL source of truth remains has_function_privilege.",
                     "anon_execute_after_0048_replay":  {
                                                            "true_count":  8,
                                                            "true_signatures":  [
@@ -6034,66 +6032,24 @@
                                                                                                    "service_role"
                                                                                                ]
                       },
-                      {
-                          "ordinal":  126,
-                          "signature":  "public.rls_auto_enable()",
-                          "identity_arguments":  "",
-                          "source":  null,
-                          "roles_that_can_execute_derived_from_repository_migrations":  "unknown (source absent)",
-                          "roles_that_should_call":  "unknown (source absent)",
-                          "source_gap":  "No CREATE FUNCTION declaration for this signature was found in tracked supabase/migrations/*.sql on the ccr base (0001â€“0048).",
-                          "security_definer_in_source":  null,
-                          "volatility_in_source":  null,
-                          "search_path":  "inconnu (source absente)",
-                          "expected_execute_from_repository_migrations":  {
-                                                                              "anon":  "unknown (source absent)",
-                                                                              "authenticated":  "unknown (source absent)",
-                                                                              "agent_ro":  "unknown (source absent)",
-                                                                              "service_role":  "unknown (source absent)"
-                                                                          },
-                          "explicit_acl_evidence":  [
-
-                                                    ],
-                          "guard_form":  "impossible أ  dأ©terminer depuis la source absente",
-                          "authorization_guard_conditions":  [
-
-                                                             ],
-                          "exception_when_present":  null,
-                          "tables_written_detected":  [
-
-                                                      ],
-                          "dynamic_sql_possible":  null,
-                          "trigger_references":  [
-
-                                                 ],
-                          "verdict":  "أ€ CORRIGER",
-                          "proposed_correction_not_applied":  "Rأ©concilier la dأ©finition public.rls_auto_enable() dans les sources suivies ou retirer cette entrأ©e de lâ€™inventaire source; ne pas infأ©rer son corps ni modifier un environnement distant.",
-                          "anon_execute_after_0048_replay":  false,
-                          "roles_that_can_execute_with_anon_replay_and_other_role_estimates":  [
-                                                                                                   "u",
-                                                                                                   "n",
-                                                                                                   "k",
-                                                                                                   "n",
-                                                                                                   "o",
-                                                                                                   "w",
-                                                                                                   "n",
-                                                                                                   " ",
-                                                                                                   "(",
-                                                                                                   "s",
-                                                                                                   "o",
-                                                                                                   "u",
-                                                                                                   "r",
-                                                                                                   "c",
-                                                                                                   "e",
-                                                                                                   " ",
-                                                                                                   "a",
-                                                                                                   "b",
-                                                                                                   "s",
-                                                                                                   "e",
-                                                                                                   "n",
-                                                                                                   "t",
-                                                                                                   ")"
-                                                                                               ]
+                                            {
+                        "ordinal": 126,
+                        "signature": "public.compte_en_parcours()",
+                        "identity_arguments": "",
+                        "source": {
+                          "file": "supabase/migrations/0043_offres_horaires_et_intentions.sql",
+                          "line": 174
+                        },
+                        "security_definer_in_source": true,
+                        "expected_execute_from_repository_migrations": {
+                          "anon": false,
+                          "authenticated": true,
+                          "agent_ro": true,
+                          "service_role": false
+                        },
+                        "anon_execute_on_replay_reported_by_task": false,
+                        "acl_source": "has_function_privilege on PostgreSQL replay; X2-01 reported eight anon functions after 0048; source grants authenticated and agent_ro",
+                        "review_status": "source reconciliation only; detailed guard/verdict review not repeated in X2-12"
                       },
                       {
                           "ordinal":  127,

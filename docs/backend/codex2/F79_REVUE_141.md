@@ -6,9 +6,7 @@ Base: `origin/ccr-1b1bfa0b-m1kvkk` (`030ab8858bd7b1556f7c47b12104ebbf22d7f5c2`).
 
 Revue des sources suivies du dépôt seulement. Les signatures viennent de l’inventaire versionné nommé ci-dessus; corps, gardes, `search_path`, appels de déclencheurs et droits attendus dérivés des migrations (0001–0048). Les résultats GRANT/REVOKE décrivent l’intention de la chaîne source, pas les privilèges effectifs d’une base. Aucun accès STAGING/PROD ni clé `service_role`; aucun rejeu PostgreSQL local.
 
-Couverture: 154/155 définitions trouvées; 1 source absente. Sur les 141 entrées initialement revues, verdicts: {'OK': 53, 'À CORRIGER': 1, 'INVOKER POSSIBLE': 68, 'TRIGGER': 19}. Les 14 ajouts X2-12 sont inventoriés mais leurs gardes et verdicts ne sont pas réévalués ici.
-
-Les absences de définition sont signalées sans corps ni permissions inventés; le verdict À CORRIGER pour cette entrée signifie que la source de l’inventaire doit être réconciliée, pas que le corps absent a été audité. Les corrections proposées ne sont pas appliquées. « Tables écrites détectées » est une extraction statique et peut omettre du SQL dynamique.
+Couverture: 155/155 définitions SECURITY DEFINER trouvées dans les sources 0001-0048; aucune source absente. Sur les 141 entrées initialement revues, l’élément sans source `rls_auto_enable()` est remplacé par `compte_en_parcours()` défini en 0043. Les 14 autres ajouts X2-12 sont inventoriés sans nouvelle revue détaillée des gardes. Les corrections proposées ne sont pas appliquées. « Tables écrites détectées » reste une extraction statique susceptible de manquer du SQL dynamique.
 
 
 ACL anon : la source de vérité est has_function_privilege sur le rejeu PostgreSQL. Le rejeu X2-01 après 0048 donnait huit fonctions; X2-12 signale deux helpers supplémentaires non SECURITY DEFINER exécutables par anon. Cette liste de dix est rapportée, non rejouée dans cette session. Les ACL des autres rôles restent des estimations dérivées des migrations.
@@ -1703,17 +1701,14 @@ ACL anon : la source de vérité est has_function_privilege sur le rejeu Postgre
 - **Verdict:** **OK**.
 - **Correction proposée (non appliquée):** Aucun correctif proposé sur la seule analyse statique des sources; confirmer les hypothèses de rôle par tests négatifs. Aucun changement appliqué.
 
-## 126. `public.rls_auto_enable()`
+## 126. `public.compte_en_parcours()`
 
-- **Source:** absente des migrations suivies 0001–0048; No CREATE FUNCTION declaration for this signature was found in tracked supabase/migrations/*.sql on the ccr base (0001–0048).
-- **EXECUTE (anon: rejeu 0048; autres: dérivés):** anon=False; authenticated=unknown (source absent); agent_ro=unknown (source absent); service_role=unknown (source absent). Pas un état runtime complet.
-- **Rôles pouvant appeler (anon observé; autres estimés):** u, n, k, n, o, w, n,  , (, s, o, u, r, c, e,  , a, b, s, e, n, t, ).
-- **Rôles censés appeler selon les gardes et usages repérés:** unknown (source absent).
-- **Garde:** impossible à déterminer depuis la source absente.
-- **`search_path`:** `inconnu (source absente)`.
-- **Tables écrites détectées:** aucune par motifs SQL statiques; relire si SQL dynamique est présent.
-- **Verdict:** **À CORRIGER**.
-- **Correction proposée (non appliquée):** Réconcilier la définition public.rls_auto_enable() dans les sources suivies ou retirer cette entrée de l’inventaire source; ne pas inférer son corps ni modifier un environnement distant.
+- **Définition suivie:** `supabase/migrations/0043_offres_horaires_et_intentions.sql:174`
+- **SECURITY DEFINER:** oui; `STABLE`; `search_path = ''`.
+- **EXECUTE dérivé des migrations:** anon=False; authenticated=True; agent_ro=True; service_role=False (révoqué à PUBLIC et anon, accordé à authenticated et agent_ro aux lignes 190-192).
+- **Garde:** `coalesce(...)` vérifie `profiles.deleted_at IS NULL`, le statut `pending_kyc`, `active` ou `provisional_active`, et `access_until` nul ou futur pour `auth.uid()`.
+- **Tables lues détectées:** `public.profiles`.
+- **Verdict:** **SOURCE RÉCONCILIÉE — revue détaillée non répétée dans X2-12**.
 
 ## 127. `public.session_belongs_to_teacher(p_session_id uuid, p_uid uuid)`
 
@@ -1917,7 +1912,7 @@ ACL anon : la source de vérité est has_function_privilege sur le rejeu Postgre
 
 ## X2-12 — réconciliation de l’inventaire SECURITY DEFINER
 
-Le rejeu communiqué pour X2-12 compte 155 fonctions SECURITY DEFINER contre les 141 entrées initiales. Les 14 signatures manquantes ci-dessous sont définies dans `0043_offres_horaires_et_intentions.sql`. Cette mise à jour complète l’inventaire; elle ne réévalue pas les gardes ni les verdicts de sécurité. Les droits autres qu’anon restent dérivés des `GRANT`/`REVOKE` source. Pour l’ACL effective, la source de vérité demeure `has_function_privilege` sur rejeu PostgreSQL.
+Le rejeu communiqué pour X2-12 compte 155 fonctions SECURITY DEFINER contre les 141 entrées initiales. Quatorze fonctions supplémentaires viennent de 0043; la réconciliation remplace aussi la signature sans source `rls_auto_enable()` par `compte_en_parcours()` (0043:174). Les 14 ajouts restent inventoriés sans nouvelle revue des gardes ni verdicts de sécurité. Les droits autres qu’anon restent dérivés des GRANT/REVOKE source. Pour l’ACL effective, la source de vérité demeure `has_function_privilege` sur rejeu PostgreSQL.
 
 | # | Signature | Source | EXECUTE attendu d’après 0043 (statique) |
 | ---: | --- | --- | --- |
@@ -1941,4 +1936,4 @@ Les helpers suivants ne sont pas SECURITY DEFINER; ils sont listés à part et l
 - `public.agent_jeton_id()` — `0014_acces_agent.sql:215` — anon EXECUTE: vrai selon le rejeu communiqué.
 - `public.app_est_agent()` — `0014_acces_agent.sql:230` — anon EXECUTE: vrai selon le rejeu communiqué.
 
-Limite: le rejeu et `has_function_privilege` n’ont pas été exécutés dans cette session. Les 14 nouvelles entrées portent le statut « inventaire seulement; revue détaillée non répétée » dans le JSON.
+Limite: le rejeu et `has_function_privilege` n’ont pas été exécutés dans cette session. Les 15 signatures ajoutées ou réconciliées sans revue détaillée portent le statut correspondant dans le JSON; les 14 fonctions 0043 gardent le libellé « inventaire seulement ».
