@@ -188,14 +188,15 @@ class _Corps extends StatelessWidget {
           ],
         ),
         Ecart.vLg,
-        Row(
+        // Un Wrap et non une Row : a 320 px en texte double (arabe, Interface
+        // guidee), la pastille passe sous le titre au lieu de le couper.
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: AppSpacing.md,
+          runSpacing: AppSpacing.sm,
           children: <Widget>[
-            Expanded(
-              child: Text(
-                t.admin.programmes.niveauxTitre,
-                style: textes.titleMedium,
-              ),
-            ),
+            Text(t.admin.programmes.niveauxTitre, style: textes.titleMedium),
             StatusPill(
               libelle: _libelleStatut(selectionnee.statut),
               ton: switch (selectionnee.statut) {
@@ -326,9 +327,8 @@ class _ActionsBrouillonEtat extends State<_ActionsBrouillon> {
             child: Text(
               t.admin.programmes.publierSansNiveau,
               key: const ValueKey<String>('programmes-publier-sans-niveau'),
-              style: AppPalette.of(context).inkAlert.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
-              ),
+              style: AppPalette.of(context).inkAlert
+                  .applyTo(textes.bodyMedium ?? const TextStyle()),
             ),
           ),
         ],
