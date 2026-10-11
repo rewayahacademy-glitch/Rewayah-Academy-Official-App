@@ -204,7 +204,7 @@ jobs:
 
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
-    if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
+    if: github.event_name != 'push' && (github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -275,7 +275,7 @@ jobs:
 
   flutter:
     # Les PR backend vers ccr exécutent les migrations/scénarios et Edge; les builds Flutter restent sur les PR main et les lancements manuels.
-    if: github.event_name != 'pull_request' || github.base_ref == 'main'
+    if: github.event_name != 'push' && (github.event_name != 'pull_request' || github.base_ref == 'main')
     name: Flutter (${{ matrix.target }})
     strategy:
       fail-fast: false
