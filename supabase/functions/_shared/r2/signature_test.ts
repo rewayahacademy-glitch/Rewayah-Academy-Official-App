@@ -70,6 +70,19 @@ Deno.test('D16 -- l URL n est pas permanente : elle porte date, duree et portee'
   assertEquals(p.get('X-Amz-Algorithm'), 'AWS4-HMAC-SHA256')
 })
 
+Deno.test('D16b -- le support de bibliotheque est ouvert inline et signe pour 60 secondes', async () => {
+  const { url, expireDansSecondes } = await signerLecture(
+    'priveApplicatif',
+    cleDe('priveApplicatif', 'supports', DOCUMENT),
+    { dureeSecondes: 60, contentDisposition: 'inline', env },
+  )
+  const params = new URL(url).searchParams
+  assertEquals(params.get('response-content-disposition'), 'inline')
+  assertEquals(params.get('X-Amz-Expires'), '60')
+  assert(params.get('X-Amz-Signature'))
+  assertEquals(expireDansSecondes, 60)
+})
+
 Deno.test('D17 -- la methode est bornee : lecture et depot ne signent pas la meme chose', async () => {
   const cle = cleDe('pieceIdentite', PROFIL, DOCUMENT)
   const lecture = await signerLecture('pieceIdentite', cle, { env })
