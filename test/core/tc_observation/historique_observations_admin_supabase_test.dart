@@ -30,6 +30,8 @@ void main() {
     await server.close(force: true);
   });
   test('page vide sans curseur', () async {
+    status = 200;
+    body = const <Object>[];
     final p = await HistoriqueObservationsAdminSupabase(() => client)
         .rechercher(const FiltreObservationsAdmin());
     expect(p.lignes, isEmpty);
@@ -47,12 +49,35 @@ void main() {
     }
   });
   test('ligne malformee ne fabrique pas un resultat', () async {
+    status = 200;
+    body = {'unexpected': 'object instead of row list'};
+    await expectLater(
+      HistoriqueObservationsAdminSupabase(() => client)
+          .rechercher(const FiltreObservationsAdmin()),
+      throwsA(isA<TypeError>()),
+    );
+  });
+  test('une visite valide forme une ligne admin', () async {
+    status = 200;
     body = [
-      {'id': 1, 'entered_at': 'bad'},
+      {
+        'id': 'v1',
+        'session_id': 's1',
+        'groupe_id': 'g1',
+        'observateur_profile_id': 't1',
+        'role': 'guardian_observer',
+        'enfant_profile_id': 'e1',
+        'entered_at': '2026-10-11T08:00:00Z',
+        'left_at': '2026-10-11T08:01:00Z',
+        'duration_seconds': 60,
+        'visit_number': 1,
+        'policy_version': 'v1',
+        'fin_de_visite': 'sortie_volontaire',
+      },
     ];
     final p = await HistoriqueObservationsAdminSupabase(() => client)
         .rechercher(const FiltreObservationsAdmin());
-    expect(p.lignes, isEmpty);
+    expect(p.lignes.single.seanceId, 's1');
     expect(p.curseur, isNull);
   });
 }

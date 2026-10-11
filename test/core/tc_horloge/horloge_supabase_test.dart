@@ -29,6 +29,8 @@ void main() {
     await server.close(force: true);
   });
   test('sans session id et RPC vide: aucune horloge fabriquee', () async {
+    status = 200;
+    body = const <Object>[];
     final a = HorlogeSeanceSupabase(client);
     expect(await a.horlogeDe(groupeId: 'g'), isNull);
     expect(await a.horlogeDe(groupeId: 'g', sessionId: 's'), isNull);
@@ -44,12 +46,21 @@ void main() {
     }
   });
   test('reponse malformee echoue au parsing', () async {
+    status = 200;
     body = [
       {'debut_utc': 12},
     ];
     await expectLater(
       HorlogeSeanceSupabase(client).horlogeDe(groupeId: 'g', sessionId: 's'),
-      throwsA(anything),
+      throwsA(isA<TypeError>()),
+    );
+  });
+  test('maintenant serveur retourne la valeur HTTP UTC', () async {
+    status = 200;
+    body = '2026-10-11T08:30:00Z';
+    expect(
+      await HorlogeSeanceSupabase(client).maintenantServeurUtc(),
+      DateTime.utc(2026, 10, 11, 8, 30),
     );
   });
 }
