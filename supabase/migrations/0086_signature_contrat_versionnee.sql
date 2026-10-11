@@ -1,4 +1,4 @@
-﻿-- F70 / C-15 / C-16: serve and record the exact current teacher contract.
+-- F70 / C-15 / C-16: serve and record the exact current teacher contract.
 -- Published text is intentionally not seeded here: the validated full legal
 -- text is not present in this checkout. Until an approved body is inserted by
 -- a migration, contrat_courant has no row and signing remains unavailable.

@@ -1,4 +1,4 @@
-﻿BEGIN;
+BEGIN;
 
 -- C-21 returns one closed access verdict for auth.uid() and the requested
 -- profile. It never returns KYC rows, storage keys, or signed URLs.

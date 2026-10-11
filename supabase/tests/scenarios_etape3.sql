@@ -640,10 +640,10 @@ begin
 
   begin
     insert into public.contract_acceptances (
-      profile_id, contract_kind, version, signed_sha256
+      profile_id, contract_kind, version, signer_name, signed_sha256
     ) values (
       '22222222-2222-2222-2222-222222222222',
-      'teacher_nda', 'test-signature-0057', repeat('0', 64)
+      'teacher_nda', 'test-signature-0057', 'Enseignant Test', repeat('0', 64)
     );
     raise exception 'CONTRAT ECHEC : le client a pu fournir son empreinte';
   exception when insufficient_privilege then
