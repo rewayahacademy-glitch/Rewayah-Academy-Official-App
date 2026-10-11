@@ -341,6 +341,175 @@ INSERT INTO public.makharij_findings (lesson_report_id, makhraj, finding) VALUES
   ('c2a2e000-2000-0000-0000-000000000001', 'lam', '{"note":"A"}'),
   ('c2a2e000-2000-0000-0000-000000000002', 'lam', '{"note":"B"}');
 
+-- Temoins supplementaires pour les relations systeme, rolees, reference et
+-- ressources; leurs regles sont distinctes d'une isolation foyer A/B.
+INSERT INTO public.fx_rates (from_currency, to_currency, rate, effective_at)
+VALUES ('XAA', 'XBB', 1.25, '2026-10-11 00:00:00+00');
+INSERT INTO public.webhook_events (external_ref, source, payload)
+VALUES ('codex2-webhook-event', 'codex2-test', '{"fixture":true}');
+INSERT INTO public.audit_logs (actor, actor_role, action, table_name, row_id, payload, prev_hash, hash, created_at)
+VALUES ('c2a20000-0000-0000-0000-000000000007', 'admin', 'codex2_fixture', 'codex2', 'x2-02',
+        '{"fixture":true}', '', 'codex2-audit-hash', '2099-12-31 00:00:00+00');
+INSERT INTO public.id_sequences (code, last_value)
+VALUES ('codex2-fixture', 1);
+INSERT INTO public.app_config_history (key, old_value, new_value, changed_by)
+VALUES ('codex2-fixture', NULL, 'true', 'c2a20000-0000-0000-0000-000000000007');
+INSERT INTO public.rate_limits (bucket, tokens)
+VALUES ('codex2-fixture', 1);
+INSERT INTO public.device_tokens (profile_id, token, platform) VALUES
+  ('c2a20000-0000-0000-0000-000000000001', 'codex2-device-token-a', 'web'),
+  ('c2a20000-0000-0000-0000-000000000002', 'codex2-device-token-b', 'web');
+INSERT INTO public.jetons_agent
+  (id, libelle, prefixe, empreinte, profil_observe, parcours, expire_le, cree_par, cree_le)
+VALUES ('c2a2d000-0000-0000-0000-000000000001', 'Codex2 fixture', 'rag_c2test01', repeat('a', 64),
+        'c2a20000-0000-0000-0000-000000000001', 'guardian', now() + interval '1 hour',
+        'c2a20000-0000-0000-0000-000000000007', now());
+
+INSERT INTO public.library_resource
+  (id, title, short_title, resource_type, access_policy, offline_policy) VALUES
+  ('c2a2b000-2000-0000-0000-000000000011', 'Codex2 group A', 'C2A', 'lesson', 'groupe_assigne', 'jamais'),
+  ('c2a2b000-2000-0000-0000-000000000012', 'Codex2 group B', 'C2B', 'lesson', 'groupe_assigne', 'jamais');
+INSERT INTO public.library_resource_groupe (resource_id, groupe_id, ajoutee_par) VALUES
+  ('c2a2b000-2000-0000-0000-000000000011', 'c2a2a000-2000-0000-0000-000000000001', 'c2a20000-0000-0000-0000-000000000005'),
+  ('c2a2b000-2000-0000-0000-000000000012', 'c2a2a000-2000-0000-0000-000000000002', 'c2a20000-0000-0000-0000-000000000006');
+INSERT INTO public.resource_version
+  (id, resource_id, numero_version, statut, publiee_le, publiee_par, empreinte) VALUES
+  ('c2a2b100-2000-0000-0000-000000000011', 'c2a2b000-2000-0000-0000-000000000011', 1, 'publiee', now(), 'c2a20000-0000-0000-0000-000000000005', 'codex2-version-a'),
+  ('c2a2b100-2000-0000-0000-000000000012', 'c2a2b000-2000-0000-0000-000000000012', 1, 'publiee', now(), 'c2a20000-0000-0000-0000-000000000006', 'codex2-version-b');
+INSERT INTO public.download_asset
+  (id, resource_version_id, format, cle_stockage, taille_octets, origine) VALUES
+  ('c2a2b200-2000-0000-0000-000000000011', 'c2a2b100-2000-0000-0000-000000000011', 'pdf', 'codex2/asset-a', 16, 'importe_tel_quel'),
+  ('c2a2b200-2000-0000-0000-000000000012', 'c2a2b100-2000-0000-0000-000000000012', 'pdf', 'codex2/asset-b', 16, 'importe_tel_quel');
+UPDATE public.resource_version SET download_asset_id = id
+ WHERE id IN ('c2a2b100-2000-0000-0000-000000000011', 'c2a2b100-2000-0000-0000-000000000012');
+UPDATE public.library_resource SET current_version_id = resource_version.id
+  FROM public.resource_version
+ WHERE public.library_resource.id = resource_version.resource_id
+   AND public.library_resource.id IN ('c2a2b000-2000-0000-0000-000000000011', 'c2a2b000-2000-0000-0000-000000000012');
+
+-- Les tables operationnelles/admin ne doivent exposer aucune des lignes
+-- temoins aux comptes de foyer, y compris la partition physique d'audit.
+DO $$
+DECLARE v_count integer; v_rows integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.fx_rates WHERE from_currency = 'XAA';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-ADMIN-FX-RATES: guardian reads system rate'; END IF;
+  SELECT count(*) INTO v_count FROM public.webhook_events WHERE external_ref = 'codex2-webhook-event';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-ADMIN-WEBHOOK: guardian reads webhook'; END IF;
+  SELECT count(*) INTO v_count FROM public.audit_logs WHERE action = 'codex2_fixture';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-ADMIN-AUDIT: guardian reads audit row'; END IF;
+  SELECT count(*) INTO v_count FROM public.audit_logs_default WHERE action = 'codex2_fixture';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-AUDIT-PARTITION: guardian reads physical partition'; END IF;
+  SELECT count(*) INTO v_count FROM public.id_sequences WHERE code = 'codex2-fixture';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-SERVICE-SEQUENCE: guardian reads sequence'; END IF;
+  SELECT count(*) INTO v_count FROM public.app_config_history WHERE key = 'codex2-fixture';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-ADMIN-CONFIG-HISTORY: guardian reads config history'; END IF;
+  SELECT count(*) INTO v_count FROM public.rate_limits WHERE bucket = 'codex2-fixture';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-SERVICE-RATE-LIMIT: guardian reads rate limit'; END IF;
+  SELECT count(*) INTO v_count FROM public.device_tokens WHERE token LIKE 'codex2-device-token-%';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-SERVICE-DEVICE-TOKEN: guardian reads device token'; END IF;
+  SELECT count(*) INTO v_count FROM public.jetons_agent WHERE prefixe = 'rag_c2test01';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-ADMIN-AGENT-TOKEN: guardian reads agent token'; END IF;
+  BEGIN
+    UPDATE public.fx_rates SET rate = rate WHERE from_currency = 'XAA';
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+  EXCEPTION WHEN insufficient_privilege THEN v_rows := 0;
+  END;
+  IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-ADMIN-FX-WRITE: guardian updated rate'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Les lectures explicitement reservees a l'administration restent positives.
+DO $$
+DECLARE v_count integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000007', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"admin","household_id":"c2a2ffff-0000-0000-0000-000000000007"}}', true);
+  SELECT count(*) INTO v_count FROM public.fx_rates WHERE from_currency = 'XAA';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-ADMIN-FX-RATES-POSITIVE: admin cannot read rate'; END IF;
+  SELECT count(*) INTO v_count FROM public.webhook_events WHERE external_ref = 'codex2-webhook-event';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-ADMIN-WEBHOOK-POSITIVE: admin cannot read webhook'; END IF;
+  SELECT count(*) INTO v_count FROM public.audit_logs WHERE action = 'codex2_fixture';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-ADMIN-AUDIT-POSITIVE: admin cannot read audit row'; END IF;
+  SELECT count(*) INTO v_count FROM public.app_config WHERE key = 'max_participants_per_session';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-ADMIN-CONFIG-POSITIVE: admin cannot read config'; END IF;
+  SELECT count(*) INTO v_count FROM public.app_config_history WHERE key = 'codex2-fixture';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-ADMIN-CONFIG-HISTORY-POSITIVE: admin cannot read history'; END IF;
+  SELECT count(*) INTO v_count FROM public.jetons_agent WHERE prefixe = 'rag_c2test01';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-ADMIN-AGENT-TOKEN-POSITIVE: admin cannot read agent token'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Les cinq tables Quran sont des references globales: les deux foyers lisent
+-- les memes lignes de corpus; leur partage ne constitue pas une fuite foyer.
+DO $$
+DECLARE v_count integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.mushaf WHERE code = 'madina-hafs-604';
+  IF v_count = 0 THEN RAISE EXCEPTION 'RLS-SHARED-MUSHAF: guardian A cannot read corpus'; END IF;
+  SELECT count(*) INTO v_count FROM public.sourate WHERE numero = 2;
+  IF v_count = 0 THEN RAISE EXCEPTION 'RLS-SHARED-SOURATE: guardian A cannot read corpus'; END IF;
+  SELECT count(*) INTO v_count FROM public.juz LIMIT 1;
+  IF v_count = 0 THEN RAISE EXCEPTION 'RLS-SHARED-JUZ: guardian A cannot read corpus'; END IF;
+  SELECT count(*) INTO v_count FROM public.page_mushaf WHERE mushaf_id = (SELECT id FROM public.mushaf WHERE code = 'madina-hafs-604') AND numero = 2;
+  IF v_count = 0 THEN RAISE EXCEPTION 'RLS-SHARED-PAGE: guardian A cannot read corpus'; END IF;
+  SELECT count(*) INTO v_count FROM public.verset WHERE sourate_numero = 2 AND numero = 1;
+  IF v_count = 0 THEN RAISE EXCEPTION 'RLS-SHARED-VERSET: guardian A cannot read corpus'; END IF;
+  RESET ROLE;
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000002', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000002"}}', true);
+  SELECT count(*) INTO v_count FROM public.mushaf WHERE code = 'madina-hafs-604';
+  IF v_count = 0 THEN RAISE EXCEPTION 'RLS-SHARED-MUSHAF-B: guardian B cannot read corpus'; END IF;
+  SELECT count(*) INTO v_count FROM public.sourate WHERE numero = 2;
+  IF v_count = 0 THEN RAISE EXCEPTION 'RLS-SHARED-SOURATE-B: guardian B cannot read corpus'; END IF;
+  SELECT count(*) INTO v_count FROM public.juz;
+  IF v_count = 0 THEN RAISE EXCEPTION 'RLS-SHARED-JUZ-B: guardian B cannot read corpus'; END IF;
+  SELECT count(*) INTO v_count FROM public.page_mushaf WHERE mushaf_id = (SELECT id FROM public.mushaf WHERE code = 'madina-hafs-604') AND numero = 2;
+  IF v_count = 0 THEN RAISE EXCEPTION 'RLS-SHARED-PAGE-B: guardian B cannot read corpus'; END IF;
+  SELECT count(*) INTO v_count FROM public.verset WHERE sourate_numero = 2 AND numero = 1;
+  IF v_count = 0 THEN RAISE EXCEPTION 'RLS-SHARED-VERSET-B: guardian B cannot read corpus'; END IF;
+  RESET ROLE;
+END $$;
+
+-- Les ressources assignees, leurs versions et artefacts suivent le groupe;
+-- les deux foyers ont un temoin positif et ne voient pas l'autre groupe.
+DO $$
+DECLARE v_count integer;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.library_resource WHERE id = 'c2a2b000-2000-0000-0000-000000000011';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-RESOURCE-GROUP-A: assigned resource invisible'; END IF;
+  SELECT count(*) INTO v_count FROM public.library_resource WHERE id = 'c2a2b000-2000-0000-0000-000000000012';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-RESOURCE-GROUP-CROSS: group B resource visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.resource_version WHERE id = 'c2a2b100-2000-0000-0000-000000000011';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-RESOURCE-VERSION-A: assigned version invisible'; END IF;
+  SELECT count(*) INTO v_count FROM public.resource_version WHERE id = 'c2a2b100-2000-0000-0000-000000000012';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-RESOURCE-VERSION-CROSS: group B version visible'; END IF;
+  SELECT count(*) INTO v_count FROM public.download_asset WHERE id = 'c2a2b200-2000-0000-0000-000000000011';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-DOWNLOAD-ASSET-A: assigned asset invisible'; END IF;
+  SELECT count(*) INTO v_count FROM public.download_asset WHERE id = 'c2a2b200-2000-0000-0000-000000000012';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-DOWNLOAD-ASSET-CROSS: group B asset visible'; END IF;
+  RESET ROLE;
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000002', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000002"}}', true);
+  SELECT count(*) INTO v_count FROM public.library_resource WHERE id = 'c2a2b000-2000-0000-0000-000000000012';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-RESOURCE-GROUP-B: assigned resource invisible'; END IF;
+  SELECT count(*) INTO v_count FROM public.library_resource WHERE id = 'c2a2b000-2000-0000-0000-000000000011';
+  IF v_count <> 0 THEN RAISE EXCEPTION 'RLS-RESOURCE-GROUP-REVERSE-CROSS: group A resource visible'; END IF;
+  RESET ROLE;
+END $$;
+
 -- Anon est re-exerce apres le seed pour inclure les lignes representatives.
 DO $$
 DECLARE v_table regclass; v_visible boolean;
