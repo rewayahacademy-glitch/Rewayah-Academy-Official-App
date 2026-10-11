@@ -551,6 +551,43 @@ BEGIN
   END IF;
 END $$;
 
+-- Un JWT expire est rejete par la passerelle Auth avant PostgreSQL. Ce test
+-- couvre uniquement l'etat de repli observe par la base (role anon) apres ce
+-- rejet; il ne pretend pas verifier la signature ni l'expiration du JWT.
+-- Toutes les relations RLS sont relues apres les fixtures sous ce role.
+DO $$
+DECLARE v_table regclass; v_visible boolean; v_visible_tables text;
+BEGIN
+  FOR v_table IN
+    SELECT c.oid::regclass FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public' AND c.relrowsecurity
+      AND c.relkind IN ('r', 'p', 'v', 'm', 'f')
+    ORDER BY c.oid::regclass::text
+  LOOP
+    v_visible := false;
+    BEGIN
+      SET LOCAL ROLE anon;
+      EXECUTE format('SELECT EXISTS (SELECT 1 FROM %s)', v_table) INTO v_visible;
+      RESET ROLE;
+    EXCEPTION WHEN insufficient_privilege THEN
+      RESET ROLE;
+      v_visible := false;
+    END;
+    IF v_visible THEN
+      INSERT INTO codex2_rls_violations VALUES ('expired-jwt-anon-fallback', v_table::text);
+    END IF;
+  END LOOP;
+
+  SELECT string_agg(table_name, ', ' ORDER BY table_name)
+    INTO v_visible_tables
+    FROM codex2_rls_violations
+   WHERE scenario = 'expired-jwt-anon-fallback';
+  IF v_visible_tables IS NOT NULL THEN
+    RAISE EXCEPTION 'RLS-EXPIRED-JWT-ANON-FALLBACK: lecture après rejet du JWT expiré : %', v_visible_tables;
+  END IF;
+END $$;
+
 DO $$
 DECLARE v_count integer;
 BEGIN
