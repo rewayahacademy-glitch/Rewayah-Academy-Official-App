@@ -175,6 +175,14 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_r2.sql
 
+      # C-29: capacité Contrôle approuvée, bornée, expirante, révocable et
+      # protégée par MFA. Le scénario vérifie les gardes, l'idempotence,
+      # l'effet immédiat du retrait et les traces avant le contrôle de chaîne
+      # ADM-04 ci-dessous.
+      - name: Scenarios d'acceptation SQL C-29 capacités de contrôle
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_c29_control_capabilities.sql
+
       # Journal d'audit : lecture reservee a l'administration, pagination par
       # keyset, trois filtres, et surtout la chaine de hachage de 0001 enfin
       # verifiee -- y compris en la falsifiant volontairement (J5, J6).
