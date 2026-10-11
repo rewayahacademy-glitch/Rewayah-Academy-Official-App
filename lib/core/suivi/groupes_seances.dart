@@ -43,6 +43,11 @@ class ServiceGroupesSeancesSupabase implements ServiceGroupesSeances {
       final List<Map<String, dynamic>> lignes = await _client()
           .from('sessions')
           .select('id, groupe_id')
+          .inFilter('status', const <String>[
+            'ended',
+            'student_absent',
+            'tech_failure',
+          ])
           .order('started_at', ascending: false)
           .limit(plafondSuiviFoyer);
       return groupesDepuisLignes(lignes);
