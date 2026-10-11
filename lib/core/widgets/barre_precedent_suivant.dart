@@ -83,6 +83,7 @@ class BarrePrecedentSuivant extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final double cible = AppMetriques.of(context).cibleTactile;
+    final bool arabe = Directionality.of(context) == TextDirection.rtl;
     final Widget centre = Semantics(
       label: positionSemantique ?? position,
       excludeSemantics: true,
@@ -108,12 +109,14 @@ class BarrePrecedentSuivant extends StatelessWidget {
       mainAxisSize: etendue ? MainAxisSize.max : MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        _Fleche(
-          cle: const ValueKey<String>('nav-precedent'),
+        FlecheRonde(
+          cleDisque: const ValueKey<String>('nav-precedent'),
           libelle: libellePrecedent,
           onPress: onPrecedent,
           actives: actives,
-          versLeDebut: true,
+          // Le glyphe pointe a droite : « precedent » le retourne en lecture de
+          // gauche a droite, « suivant » en arabe.
+          retourne: !arabe,
           cote: cible,
         ),
         if (etendue)
@@ -128,12 +131,12 @@ class BarrePrecedentSuivant extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             child: centre,
           ),
-        _Fleche(
-          cle: const ValueKey<String>('nav-suivant'),
+        FlecheRonde(
+          cleDisque: const ValueKey<String>('nav-suivant'),
           libelle: libelleSuivant,
           onPress: onSuivant,
           actives: actives,
-          versLeDebut: false,
+          retourne: arabe,
           cote: cible,
         ),
       ],
@@ -142,43 +145,62 @@ class BarrePrecedentSuivant extends StatelessWidget {
 }
 
 /// Une fleche ronde, ou sa place vide quand [onPress] est nul.
-class _Fleche extends StatelessWidget {
-  const _Fleche({
-    required this.cle,
+///
+/// Le bouton rond partage des fleches de page : la barre precedent / suivant
+/// et les fleches de chaque cote de la page du Mushaf (`FlechePageMushaf`) le
+/// reutilisent, au lieu de recreer son disque.
+class FlecheRonde extends StatelessWidget {
+  /// Cree une fleche.
+  ///
+  /// [retourne] : vrai quand la fleche pointe vers la gauche. Le glyphe de
+  /// [AppIcons.suivant] pointe vers la droite et ne se miroite pas seul : c'est
+  /// l'appelant qui dit le cote, selon le sens de lecture (la barre) ou selon
+  /// le cote physique (les fleches du Mushaf).
+  const FlecheRonde({
     required this.libelle,
     required this.onPress,
-    required this.versLeDebut,
-    required this.cote,
-    required this.actives,
+    required this.retourne,
+    super.key,
+    this.cleDisque,
+    this.actives = true,
+    this.cote,
   });
 
-  final Key cle;
+  /// La cle du disque : presente seulement quand la fleche est rendue (une
+  /// fleche absente ne se trouve pas).
+  final Key? cleDisque;
+
+  /// Ce que le lecteur d'ecran annonce.
   final String libelle;
+
+  /// `null` : la fleche n'est pas rendue, sa place reste.
   final VoidCallback? onPress;
-  final bool versLeDebut;
-  final double cote;
+
+  /// Vrai : la fleche pointe vers la gauche.
+  final bool retourne;
+
+  /// Faux : fleche presente mais inerte et attenuee.
   final bool actives;
+
+  /// Le cote du disque ; par defaut la cible tactile du mode d'interface.
+  final double? cote;
 
   @override
   Widget build(BuildContext context) {
+    final double dimension = cote ?? AppMetriques.of(context).cibleTactile;
     final VoidCallback? action = onPress;
     // La place reste reservee : la position ne bouge pas, l'autre fleche non
     // plus.
-    if (action == null) return SizedBox.square(dimension: cote);
+    if (action == null) return SizedBox.square(dimension: dimension);
     final AppPalette palette = AppPalette.of(context);
-    // Le glyphe de [AppIcons.suivant] pointe vers la droite. En lecture de
-    // gauche a droite, « precedent » le retourne ; en arabe, c'est « suivant »
-    // qui pointe vers la gauche.
-    final bool arabe = Directionality.of(context) == TextDirection.rtl;
-    final bool retourne = versLeDebut != arabe;
     return Pressable(
       onPress: action,
       actif: actives,
       libelleSemantique: libelle,
       arrondiFocus: AppRadius.arrondiFull,
       child: SizedBox.square(
-        key: cle,
-        dimension: cote,
+        key: cleDisque,
+        dimension: dimension,
         child: DecoratedBox(
           decoration: palette.surfaceRaised.decoration(
             borderRadius: AppRadius.arrondiFull,
