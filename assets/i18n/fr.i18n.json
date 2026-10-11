@@ -6032,7 +6032,15 @@
       "mushaf": {
         "coteDroite": "Page de droite",
         "coteGauche": "Page de gauche",
-        "ouverture": "Ouverture, pages {droite} et {gauche}"
+        "ouverture": "Ouverture, pages {droite} et {gauche}",
+        "page15": {
+          "creditMiseEnPage": "Mise en page\u00a0: KFGQPC, quran.ws (CC BY 4.0)",
+          "aProposOuvrir": "À propos de cette édition",
+          "aProposTitre": "À propos de cette édition",
+          "aProposPolice": "Police\u00a0: KFGQPC UthmanicHafs v3.0 (Complexe du Roi Fahd)",
+          "aProposLicences": "Licences\u00a0: le texte et la police appartiennent au KFGQPC, la mise en page est publiée sous CC BY 4.0 (quran.ws), les quarts de hizb viennent de quran-meta (MIT).",
+          "aProposTanzil": "Tanzil demande que la source soit clairement indiquée et que tanzil.net soit joignable."
+        }
       },
       "fidelite": {
         "approchee": "Composition approchée",

@@ -2419,7 +2419,15 @@
       "mushaf": {
         "coteDroite": "الصفحة اليمنى",
         "coteGauche": "الصفحة اليسرى",
-        "ouverture": "الصفحتان المفتوحتان ⁨{droite}⁩ و⁨{gauche}⁩"
+        "ouverture": "الصفحتان المفتوحتان ⁨{droite}⁩ و⁨{gauche}⁩",
+        "page15": {
+          "creditMiseEnPage": "التنسيق: مجمع الملك فهد، quran.ws (CC BY 4.0)",
+          "aProposOuvrir": "حول هذه الطبعة",
+          "aProposTitre": "حول هذه الطبعة",
+          "aProposPolice": "الخط: خط حفص العثماني، مجمع الملك فهد",
+          "aProposLicences": "التراخيص: النص والخط ملك لمجمع الملك فهد؛ التنسيق منشور برخصة CC BY 4.0 (quran.ws)؛ أرباع الأحزاب من مصدر مفتوح.",
+          "aProposTanzil": "يشترط مشروع تنزيل ذكر المصدر بوضوح وإتاحة الوصول إلى موقعه."
+        }
       },
       "fidelite": {
         "approchee": "تنسيق تقريبي",
