@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/tc_coran/etat_lecture_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
 import 'package:rewayah_academy/core/tc_coran/layout_madina_15.dart';
 import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
+import 'package:rewayah_academy/core/tc_coran/page_mushaf_vm.dart';
 import 'package:rewayah_academy/core/tc_coran/port_corpus_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/port_layout_mushaf.dart';
 import 'package:rewayah_academy/features/tc_mushaf/mushaf_page.dart';
@@ -109,24 +110,32 @@ class CorpusDepuisLayout implements PortCorpusCoran {
 }
 
 class _LecteurALaPage extends ControleurLectureCoran {
-  _LecteurALaPage(this.page);
+  _LecteurALaPage(this.page, this.mode, this.zoom);
 
   final int page;
+  final ModeRenduCoran mode;
+  final double zoom;
 
   @override
-  EtatLectureCoran build() => EtatLectureCoran.ouverture(page: page);
+  EtatLectureCoran build() =>
+      EtatLectureCoran.ouverture(page: page, zoom: zoom).versMode(mode);
 }
 
 /// Les surcharges qui posent la mise en page de Medine et un corpus complet,
 /// le lecteur ouvert a la page [page].
-List<Override> surchargesMadina15({required int page, bool miseEnPage = true}) {
+List<Override> surchargesMadina15({
+  required int page,
+  bool miseEnPage = true,
+  ModeRenduCoran mode = ModeRenduCoran.mushaf,
+  double zoom = 1,
+}) {
   final LayoutMadina15 source = LayoutMadina15();
   return <Override>[
     portLayoutMushafProvider.overrideWithValue(
       miseEnPage ? source : const LayoutLignesIndisponible(),
     ),
     portCorpusCoranProvider.overrideWithValue(CorpusDepuisLayout(source)),
-    lectureCoranProvider.overrideWith(() => _LecteurALaPage(page)),
+    lectureCoranProvider.overrideWith(() => _LecteurALaPage(page, mode, zoom)),
   ];
 }
 
@@ -138,6 +147,8 @@ Future<void> monterPageMadina15(
   ThemeMode theme = ThemeMode.light,
   double echelleTexte = 1,
   bool miseEnPage = true,
+  ModeRenduCoran mode = ModeRenduCoran.mushaf,
+  double zoom = 1,
   bool ecranComplet = false,
   Widget Function(Widget vue)? enrober,
 }) async {
@@ -153,7 +164,12 @@ Future<void> monterPageMadina15(
               ),
             ),
       surcharges: <Override>[
-        ...surchargesMadina15(page: page, miseEnPage: miseEnPage),
+        ...surchargesMadina15(
+          page: page,
+          miseEnPage: miseEnPage,
+          mode: mode,
+          zoom: zoom,
+        ),
         if (ecranComplet)
           portNavigationCoranProvider.overrideWithValue(FauxNavigationCoran()),
       ],

@@ -29,16 +29,15 @@ void main() {
 
   setUpAll(() => reference = CorpusReference.charger());
 
-  Widget ecran({
-    PortLayoutMushaf layout = const LayoutLignesIndisponible(),
-  }) => hoteCoran(
-    const MushafPage(),
-    surcharges: <Override>[
-      portCorpusCoranProvider.overrideWithValue(FauxCorpusCoran(reference)),
-      portLayoutMushafProvider.overrideWithValue(layout),
-      portNavigationCoranProvider.overrideWithValue(FauxNavigationCoran()),
-    ],
-  );
+  Widget ecran({PortLayoutMushaf layout = const LayoutLignesIndisponible()}) =>
+      hoteCoran(
+        const MushafPage(),
+        surcharges: <Override>[
+          portCorpusCoranProvider.overrideWithValue(FauxCorpusCoran(reference)),
+          portLayoutMushafProvider.overrideWithValue(layout),
+          portNavigationCoranProvider.overrideWithValue(FauxNavigationCoran()),
+        ],
+      );
 
   /// Laisse les `FutureProvider` se resoudre sans `pumpAndSettle`, que
   /// l'indicateur de chargement ferait tourner sans fin.
@@ -128,10 +127,7 @@ void main() {
       await tester.pumpWidget(ecran());
       await poser(tester);
 
-      expect(
-        find.text(t.tc.coran.zoom.renvoiLectureAgrandie),
-        findsOneWidget,
-      );
+      expect(find.text(t.tc.coran.zoom.renvoiLectureAgrandie), findsOneWidget);
     });
   });
 
@@ -158,7 +154,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('le zoom bride se dit, il ne se subit pas', (
+    testWidgets('MUSHAF-MODES (f) : le zoom borne ne s affiche plus en note', (
       WidgetTester tester,
     ) async {
       await poserFenetre(tester, _petitTelephone);
@@ -174,7 +170,7 @@ void main() {
       conteneur.read(lectureCoranProvider.notifier).definirZoom(4);
       await poser(tester);
 
-      expect(find.textContaining(t.tc.coran.zoom.bride), findsOneWidget);
+      expect(find.textContaining(t.tc.coran.zoom.bride), findsNothing);
     });
 
     testWidgets('il rend les versets de la page ouverte', (
@@ -198,7 +194,7 @@ void main() {
   });
 
   group('le rendu focus', () {
-    testWidgets('sans plage designee, il le dit et centre la page', (
+    testWidgets('MUSHAF-MODES (d) : sans plage designee, il centre la page', (
       WidgetTester tester,
     ) async {
       await poserFenetre(tester, _telephone);
@@ -213,10 +209,7 @@ void main() {
           .changerMode(ModeRenduCoran.focus);
       await poser(tester);
 
-      expect(
-        find.textContaining(t.tc.coran.focus.aucunePlage),
-        findsOneWidget,
-      );
+      expect(find.textContaining(t.tc.coran.focus.aucunePlage), findsNothing);
       expect(find.byType(ColonneVersetsReflow), findsOneWidget);
       expect(tester.takeException(), isNull);
     });

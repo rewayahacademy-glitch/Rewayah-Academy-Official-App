@@ -301,11 +301,7 @@ void main() {
           taille: taille,
           ecranComplet: true,
         );
-        if (nom == 'telephone') {
-          await tester.tap(find.byKey(MushafPage.menuKey));
-        } else {
-          await tester.tap(find.text(t.tc.coran.navigation.ouvrir));
-        }
+        await tester.tap(find.byKey(MushafPage.menuKey));
         await stabiliser(tester);
         await tester.tap(find.byKey(FeuilleNavigationCoran.aProposKey));
         await stabiliser(tester);

@@ -8,6 +8,8 @@ import '../../core/icons/app_icons.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/content_range.dart';
 import '../../core/tc_coran/etat_lecture_coran.dart';
+import '../../core/tc_coran/layout_lignes_indisponible.dart';
+import '../../core/tc_coran/layout_madina_15.dart';
 import '../../core/tc_coran/metrique_texte_coran.dart';
 import '../../core/tc_coran/moteur_mushaf.dart';
 import '../../core/tc_coran/page_mushaf_vm.dart';
@@ -33,13 +35,19 @@ import 'textes_lecteur_coran.dart';
 /// du contrat `SharedContentState` et la decision D-21.
 class VueVersetAgrandi extends ConsumerWidget {
   /// Cree le rendu verset.
-  const VueVersetAgrandi({super.key});
+  ///
+  /// [pageFeuilletee] : la page a rendre quand ce rendu est un feuillet d'un
+  /// feuilletage (MUSHAF-MODES) ; `null`, la page ouverte du lecteur.
+  const VueVersetAgrandi({this.pageFeuilletee, super.key});
+
+  /// La page du feuillet, ou `null` pour la page ouverte.
+  final int? pageFeuilletee;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final EtatLectureCoran etat = ref.watch(lectureCoranProvider);
     final AsyncValue<PageMushafVM> page = ref.watch(
-      pageMushafProvider(etat.page),
+      pageMushafProvider(pageFeuilletee ?? etat.page),
     );
 
     if (!page.hasValue || page.value == null) {
@@ -54,6 +62,8 @@ class VueVersetAgrandi extends ConsumerWidget {
       versets: vue.versets,
       zoom: etat.zoomLocal,
       sections: vue.sections,
+      policeMushaf: ref.watch(portLayoutMushafProvider) is LayoutMadina15,
+      selectionnable: pageFeuilletee == null,
     );
   }
 }
@@ -100,8 +110,19 @@ class ColonneVersetsReflow extends StatelessWidget {
     required this.versets,
     required this.zoom,
     this.sections = const <SectionSourate>[],
+    this.policeMushaf = false,
+    this.selectionnable = true,
     super.key,
   });
+
+  /// Faux : le texte n'est pas selectionnable. Dans un feuilletage tactile
+  /// (MUSHAF-MODES), la zone de selection garde le geste horizontal et
+  /// l'empeche de tourner la page : on choisit de tourner.
+  final bool selectionnable;
+
+  /// Vrai : le texte est en UthmanicHafs, la police de la page du Mushaf de
+  /// Medine, avec la police des documents en repli (MUSHAF-MODES).
+  final bool policeMushaf;
 
   /// Les versets a rendre, dans l'ordre du texte.
   final List<VersetCoran> versets;
@@ -126,6 +147,21 @@ class ColonneVersetsReflow extends StatelessWidget {
           largeurMaximaleColonne: AppPage.largeurLecture,
         );
 
+        final Widget colonne = Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            for (final VersetCoran verset in versets) ...<Widget>[
+              BlocVerset(
+                verset: verset,
+                metrique: metrique,
+                debutDeSourate: _commenceUneSourate(verset),
+                policeMushaf: policeMushaf,
+              ),
+              const SizedBox(height: AppSpacing.xxl),
+            ],
+          ],
+        );
+
         return SingleChildScrollView(
           padding: EdgeInsetsDirectional.symmetric(
             horizontal: gabarit.gouttiere,
@@ -134,25 +170,7 @@ class ColonneVersetsReflow extends StatelessWidget {
           child: Center(
             child: SizedBox(
               width: metrique.largeurColonne,
-              child: SelectionArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    if (metrique.zoomBride) ...<Widget>[
-                      _NoticeZoomBride(metrique: metrique),
-                      const SizedBox(height: AppSpacing.lg),
-                    ],
-                    for (final VersetCoran verset in versets) ...<Widget>[
-                      BlocVerset(
-                        verset: verset,
-                        metrique: metrique,
-                        debutDeSourate: _commenceUneSourate(verset),
-                      ),
-                      const SizedBox(height: AppSpacing.xxl),
-                    ],
-                  ],
-                ),
-              ),
+              child: selectionnable ? SelectionArea(child: colonne) : colonne,
             ),
           ),
         );
@@ -180,8 +198,12 @@ class BlocVerset extends StatelessWidget {
     required this.verset,
     required this.metrique,
     this.debutDeSourate = false,
+    this.policeMushaf = false,
     super.key,
   });
+
+  /// Vrai : UthmanicHafs, avec la police des documents en repli.
+  final bool policeMushaf;
 
   /// Le verset a rendre.
   final VersetCoran verset;
@@ -229,34 +251,19 @@ class BlocVerset extends StatelessWidget {
             ),
             textAlign: TextAlign.justify,
             style: palette.inkStrong.applyTo(
-              AppTypography.document(
-                taille: metrique.tailleTexte,
-                interligne: metrique.interligne,
-              ),
+              policeMushaf
+                  ? AppTypography.mushaf15L(
+                      taille: metrique.tailleTexte,
+                      interligne: metrique.interligne,
+                    )
+                  : AppTypography.document(
+                      taille: metrique.tailleTexte,
+                      interligne: metrique.interligne,
+                    ),
             ),
           ),
         ),
       ],
-    );
-  }
-}
-
-/// La notice du zoom borne.
-class _NoticeZoomBride extends StatelessWidget {
-  const _NoticeZoomBride({required this.metrique});
-
-  final MetriqueTexteCoran metrique;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-
-    return Text(
-      '${t.tc.coran.zoom.bride} '
-      '${t.tc.coran.zoom.valeur(pourcent: (metrique.zoomApplique * 100).round())}',
-      textAlign: TextAlign.center,
-      style: palette.inkMuted.applyTo(textes.labelSmall ?? const TextStyle()),
     );
   }
 }
