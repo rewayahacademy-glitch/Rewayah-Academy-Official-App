@@ -171,7 +171,7 @@ class CarteDemande extends StatelessWidget {
           style: fort,
         ),
         Ecart.vLg,
-        _FriseEtapes(etape: d.etape),
+        _FriseEtapes(demande: d),
         Ecart.vLg,
         ..._prochaine(d, corps),
       ],
@@ -195,6 +195,19 @@ class CarteDemande extends StatelessWidget {
         LigneCleValeur(
           cle: t.suiviDemandes.fuseauChoisi,
           valeur: fuseauDemande(d),
+        ),
+      ],
+      // R9, R10 : la classe a change (fusion, transfert). Une phrase, et le
+      // lien vers l'ecran de resultat : nouvelle classe, titre de
+      // l'enseignant, horaire.
+      if (d.changement != null) ...<Widget>[
+        Ecart.vLg,
+        Text(
+          t.suiviDemandes.changement.titre(
+            dePrenom: deDevant(d.prenom, cle: 'suiviDemandes.changement.titre'),
+          ),
+          key: ValueKey<String>('demande-changement-${d.demandeId}'),
+          style: fort,
         ),
       ],
       if (d.personnalise && d.etape == EtapeDemande.envoyee) ...<Widget>[
@@ -234,7 +247,22 @@ class CarteDemande extends StatelessWidget {
           : titre,
       // Capacite rendue par le serveur : sans elle, pas de lien (jamais
       // grise) ; la phrase de suite dit ce qui reste possible.
-      actions: close && d.peutChoisirAutreCreneau
+      actions: d.changement != null && !close
+          ? LienFleche(
+              key: ValueKey<String>('demande-voir-changement-${d.demandeId}'),
+              libelle: t.suiviDemandes.changement.lien,
+              libelleSemantique: t.suiviDemandes.changement.lienPour(
+                dePrenom: deDevant(
+                  d.prenom,
+                  cle: 'suiviDemandes.changement.lienPour',
+                ),
+              ),
+              alignerEnFin: true,
+              onPress: () =>
+                  GoRouter.maybeOf(context)
+                      ?.go(Routes.tuteurChangementPour(d.demandeId)),
+            )
+          : close && d.peutChoisirAutreCreneau
           ? LienFleche(
               key: ValueKey<String>('demande-rechoisir-${d.demandeId}'),
               libelle: t.suiviDemandes.close.choisirAutre(prenom: d.prenom),
@@ -251,20 +279,41 @@ class CarteDemande extends StatelessWidget {
     );
   }
 
-  /// Ce qui vient ensuite, pour une demande en cours.
+  /// Ce qui vient ensuite, pour une demande en cours. Aucune date ni aucun
+  /// delai n'est annonce tant que le serveur ne les rend pas (R7, R11).
   List<Widget> _prochaine(SuiviDemande d, TextStyle corps) {
     switch (d.etape) {
       case EtapeDemande.envoyee:
         return <Widget>[Text(t.suiviDemandes.prochaine.envoyee, style: corps)];
+      case EtapeDemande.listeAttente:
+        return <Widget>[
+          Text(
+            t.suiviDemandes.prochaine.listeAttente,
+            key: ValueKey<String>('demande-prochaine-${d.demandeId}'),
+            style: corps,
+          ),
+        ];
       case EtapeDemande.classeValidee:
         return <Widget>[
-          Text(t.suiviDemandes.prochaine.classeValidee, style: corps),
+          Text(
+            t.suiviDemandes.prochaine.classeValidee,
+            key: ValueKey<String>('demande-prochaine-${d.demandeId}'),
+            style: corps,
+          ),
         ];
-      case EtapeDemande.enseignantAffecte:
+      case EtapeDemande.enseignantAffecte ||
+          EtapeDemande.eleveIntegre ||
+          EtapeDemande.coursCommences:
         final String? debut = debutCoursDemande(d);
         final String? enseignant = d.enseignant;
         return <Widget>[
-          if (debut == null)
+          if (d.etape == EtapeDemande.eleveIntegre) ...<Widget>[
+            Text(t.suiviDemandes.prochaine.eleveIntegre, style: corps),
+            Ecart.vSm,
+          ],
+          if (d.etape == EtapeDemande.coursCommences)
+            const SizedBox.shrink()
+          else if (debut == null)
             Text(t.suiviDemandes.debutAFixer, style: corps)
           else
             LigneCleValeur(
@@ -288,57 +337,96 @@ class CarteDemande extends StatelessWidget {
 }
 
 /// Ou en est une etape de la frise.
-enum _EtatEtape { fait, prochaine, aVenir }
+enum _EtatEtape { fait, enCours, prochaine, aVenir }
 
-/// Les trois etapes d'une demande en cours, du haut vers le bas.
+/// Les etapes d'une demande en cours, du haut vers le bas (R20) : demande
+/// envoyee, liste d'attente s'il y a lieu, classe validee, enseignant
+/// affecte, eleve integre, debut des cours.
 ///
 /// Chaque etape dit son etat par trois signaux, jamais la couleur seule :
-/// l'icone (coche pleine, horloge, sablier), le mot (« Fait », « Prochaine
-/// etape », « A venir ») et l'encre.
+/// l'icone (coche pleine, horloge, sablier), le mot (« Fait », « En cours »,
+/// « Prochaine etape », « A venir ») et l'encre. Une etape franchie porte sa
+/// date et le temps ecoule depuis la precedente, quand le serveur les rend ;
+/// l'etape en cours est mise en avant. Aucune date future n'est inventee.
 class _FriseEtapes extends StatelessWidget {
-  const _FriseEtapes({required this.etape});
+  const _FriseEtapes({required this.demande});
 
-  final EtapeDemande etape;
+  final SuiviDemande demande;
 
   @override
   Widget build(BuildContext context) {
-    final int atteintes = switch (etape) {
-      EtapeDemande.envoyee => 1,
-      EtapeDemande.classeValidee => 2,
-      EtapeDemande.enseignantAffecte => 3,
-      EtapeDemande.close => 0,
-    };
-    final List<String> libelles = <String>[
-      t.suiviDemandes.etapes.envoyee,
-      t.suiviDemandes.etapes.classeValidee,
-      t.suiviDemandes.etapes.enseignantAffecte,
+    final SuiviDemande d = demande;
+    final bool attente =
+        d.etape == EtapeDemande.listeAttente ||
+        d.jalons.containsKey(EtapeDemande.listeAttente);
+    final List<(EtapeDemande, String)> etapes = <(EtapeDemande, String)>[
+      (EtapeDemande.envoyee, t.suiviDemandes.etapes.envoyee),
+      if (attente)
+        (EtapeDemande.listeAttente, t.suiviDemandes.etapes.listeAttente),
+      (EtapeDemande.classeValidee, t.suiviDemandes.etapes.classeValidee),
+      (
+        EtapeDemande.enseignantAffecte,
+        t.suiviDemandes.etapes.enseignantAffecte,
+      ),
+      (EtapeDemande.eleveIntegre, t.suiviDemandes.etapes.eleveIntegre),
+      (EtapeDemande.coursCommences, t.suiviDemandes.etapes.coursCommences),
     ];
+    // Le rang de l'etape atteinte dans CETTE frise (avec ou sans attente).
+    final int courant = etapes.indexWhere(
+      ((EtapeDemande, String) e) => e.$1 == d.etape,
+    );
+    final bool enAttente = d.etape == EtapeDemande.listeAttente;
+    DateTime? precedente;
     return Column(
       key: const ValueKey<String>('demande-frise'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        for (int i = 0; i < libelles.length; i++) ...<Widget>[
-          if (i > 0) Ecart.vSm,
-          _LigneEtape(
-            libelle: libelles[i],
-            etat: i < atteintes
+        for (final (int i, (EtapeDemande, String) e) in etapes.indexed)
+          ...() {
+            final _EtatEtape etat = i < courant
                 ? _EtatEtape.fait
-                : i == atteintes
+                : i == courant
+                ? (enAttente ? _EtatEtape.enCours : _EtatEtape.fait)
+                : i == courant + 1 && !enAttente
                 ? _EtatEtape.prochaine
-                : _EtatEtape.aVenir,
-          ),
-        ],
+                : _EtatEtape.aVenir;
+            final DateTime? quand =
+                etat == _EtatEtape.fait || etat == _EtatEtape.enCours
+                ? d.jalons[e.$1]
+                : null;
+            final String? date = libelleJalon(quand, precedent: precedente);
+            if (quand != null) precedente = quand;
+            return <Widget>[
+              if (i > 0) Ecart.vSm,
+              _LigneEtape(
+                key: ValueKey<String>(
+                  'demande-etape-${d.demandeId}-${e.$1.name}',
+                ),
+                libelle: e.$2,
+                etat: etat,
+                date: date,
+              ),
+            ];
+          }(),
       ],
     );
   }
 }
 
 class _LigneEtape extends StatelessWidget {
-  const _LigneEtape({required this.libelle, required this.etat});
+  const _LigneEtape({
+    required this.libelle,
+    required this.etat,
+    this.date,
+    super.key,
+  });
 
   final String libelle;
   final _EtatEtape etat;
+
+  /// La date de l'etape et le temps ecoule, quand le serveur les rend.
+  final String? date;
 
   @override
   Widget build(BuildContext context) {
@@ -359,6 +447,12 @@ class _LigneEtape extends StatelessWidget {
         palette.inkSuccess,
         t.suiviDemandes.etats.fait,
       ),
+      _EtatEtape.enCours => (
+        AppIcons.attente,
+        true,
+        palette.inkAccent,
+        t.suiviDemandes.etats.enCours,
+      ),
       _EtatEtape.prochaine => (
         AppIcons.horloge,
         false,
@@ -372,6 +466,10 @@ class _LigneEtape extends StatelessWidget {
         t.suiviDemandes.etats.aVenir,
       ),
     };
+    // L'etape en cours, ou la prochaine, est mise en avant : un titre plus
+    // grand, en plus de l'icone, du mot et de l'encre.
+    final bool enAvant =
+        etat == _EtatEtape.enCours || etat == _EtatEtape.prochaine;
     return MergeSemantics(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -391,7 +489,8 @@ class _LigneEtape extends StatelessWidget {
                 Text(
                   libelle,
                   style: palette.inkStrong.applyTo(
-                    textes.titleSmall ?? const TextStyle(),
+                    (enAvant ? textes.titleMedium : textes.titleSmall) ??
+                        const TextStyle(),
                   ),
                 ),
                 Text(
@@ -400,6 +499,13 @@ class _LigneEtape extends StatelessWidget {
                     textes.bodySmall ?? const TextStyle(),
                   ),
                 ),
+                if (date != null)
+                  Text(
+                    date!,
+                    style: secondaire.applyTo(
+                      textes.bodySmall ?? const TextStyle(),
+                    ),
+                  ),
               ],
             ),
           ),

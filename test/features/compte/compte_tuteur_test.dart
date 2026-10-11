@@ -251,7 +251,7 @@ void main() {
       testWidgets('${taille.width.toInt()} : la ligne Consentements ouvre '
           'le consentement aux visites', (WidgetTester tester) async {
         final GoRouter routeur = await monterCompte(tester, taille: taille);
-        await toucher(tester, _texte(t.consentement.titre));
+        await toucher(tester, _texte(t.compte.tuteur.securite.consentements));
 
         expect(lieu(routeur), Routes.tuteurCompteConsentements);
         expect(find.byType(ConsentementObservationPage), findsOneWidget);

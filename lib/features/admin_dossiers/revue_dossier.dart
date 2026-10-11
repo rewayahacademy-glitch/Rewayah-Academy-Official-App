@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/domain/enums.dart';
+import '../../core/dossier/port_acces_pieces_kyc.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/recrutement/port_statuts_signature.dart';
@@ -18,6 +19,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/status_pill.dart';
+import 'acces_piece_kyc.dart';
 import 'decision_dossier.dart';
 import 'file_dossiers.dart' show actualiserDossiers;
 import 'surfaces_decision.dart';
@@ -85,7 +87,29 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
   bool get _lectureFaite => !widget.dossier.lectureRequise || _pieceLue;
 
   @override
+  void initState() {
+    super.initState();
+    _focusVoirPiece.addListener(_ramenerVoirPieceEnVue);
+  }
+
+  /// Le focus clavier sur « Voir la piece » ramene toujours le bouton dans
+  /// la zone defilante : sa carte peut sortir sous l'en-tete du volet.
+  void _ramenerVoirPieceEnVue() {
+    if (!_focusVoirPiece.hasFocus) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final BuildContext? contexte = _focusVoirPiece.context;
+      if (!mounted || contexte == null || !contexte.mounted) {
+        return;
+      }
+      unawaited(Scrollable.ensureVisible(contexte));
+    });
+  }
+
+  @override
   void dispose() {
+    _focusVoirPiece.removeListener(_ramenerVoirPieceEnVue);
     for (final FocusNode n in _focus.values) {
       n.dispose();
     }
@@ -537,7 +561,7 @@ class _CarteIdentite extends StatelessWidget {
   );
 }
 
-class _CartePiece extends StatelessWidget {
+class _CartePiece extends ConsumerWidget {
   const _CartePiece({
     required this.dossier,
     required this.focusNode,
@@ -549,19 +573,47 @@ class _CartePiece extends StatelessWidget {
   final VoidCallback onVoirPiece;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final TypePiece? type = dossier.typePiece;
+    // BACK-FRONT-KYC-DIR-1 : le verdict du serveur sur l'ouverture. Sans port
+    // il est nul et la ligne reste celle d'avant.
+    final AsyncValue<AccesPieceKyc?> acces = ref.watch(
+      accesPieceKycProvider(dossier.dossierId),
+    );
+    final AccesPieceKyc? verdict = acces.value;
+    final bool sansPort = ref.watch(portAccesPiecesKycProvider) == null;
+    final bool enAttente = !sansPort && !acces.hasValue && !acces.hasError;
+    final bool ouvrable =
+        dossier.peutVoirPiece &&
+        !enAttente &&
+        !acces.hasError &&
+        verdict is! AccesRefuse;
+    final String? legendeAcces = switch ((verdict, acces.hasError, enAttente)) {
+      (_, _, true) => t.dossiers.accesKyc.verification,
+      (_, true, _) => t.dossiers.accesKyc.verificationEchec,
+      (final AccesRefuse r, _, _) => libelleRefusPiece(r.raison),
+      (AccesExceptionSuperAdmin(), _, _) => t.dossiers.accesKyc.exceptionPiece,
+      _ => null,
+    };
     final LigneRubrique ligne = switch (dossier.etatPiece) {
       EtatPieceRevue.disponible => LigneRubrique(
         icone: AppIcons.dossiers,
         libelle: type == null ? t.dossiers.revue.piece : libelleTypePiece(type),
         // AD-M3-PROD : consultation fermee, la raison remplace le bouton
         // (jamais de bouton grise).
-        legende: dossier.peutVoirPiece
-            ? null
-            : t.dossiers.revue.pieceIndisponible,
+        legende: !dossier.peutVoirPiece
+            ? t.dossiers.revue.pieceIndisponible
+            : legendeAcces,
         // AD-7 : la visionneuse (lecture et zoom seulement).
-        controle: dossier.peutVoirPiece
+        controle: acces.hasError && dossier.peutVoirPiece
+            ? ActionPrincipale(
+                libelle: t.dossiers.accesKyc.reessayer,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+                onPress: () =>
+                    ref.invalidate(accesPieceKycProvider(dossier.dossierId)),
+              )
+            : ouvrable
             ? ActionPrincipale(
                 libelle: t.dossiers.revue.voirPiece,
                 niveau: NiveauAction.tertiaire,

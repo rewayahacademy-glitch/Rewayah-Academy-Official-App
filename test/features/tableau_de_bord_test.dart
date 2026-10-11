@@ -322,6 +322,7 @@ void main() {
               (Routes.adminOperationsGroupes, 'GROUPES'),
               (Routes.adminSecuriteAuditAccesAgents, 'ADM-07'),
               (Routes.adminOperationsRegroupements, 'OFFRES-ADM-1'),
+              (Routes.adminOperationsPilotage, 'ECHELLE-PILOTAGE'),
             ])
               GoRoute(
                 path: route,
@@ -398,6 +399,8 @@ void main() {
           (() => t.admin.tableau.outilsAccesAgents, 'ADM-07'),
           // OFFRES-ADM-1 : le point d'entree des demandes reunies.
           (() => t.admin.tableau.outilsRegroupements, 'OFFRES-ADM-1'),
+          // ECHELLE-ADM-PILOTAGE-1 : le point d'entree du tableau de pilotage.
+          (() => t.admin.tableau.outilsPilotage, 'ECHELLE-PILOTAGE'),
           // DASH-ADM-ECHUS : la moitie « Acces echus » de la tuile double.
           (() => t.admin.tableau.comptes, 'ADM-08 echus'),
         ]) {

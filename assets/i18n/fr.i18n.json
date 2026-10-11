@@ -775,7 +775,10 @@
       "moiDescription": "Je souhaite suivre les cours avec mon propre profil élève.",
       "familleTitre": "Moi et ma famille",
       "familleDescription": "Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.",
-      "enseignant": "Je suis enseignant"
+      "enseignant": "Je suis enseignant",
+      "coursQuestion": "Suivez-vous aussi des cours ?",
+      "coursOui": "Oui",
+      "coursNon": "Non"
     },
     "recap": {
       "usage": "Type de compte",
@@ -1697,19 +1700,19 @@
       "onglet": "Invitations",
       "sousTitre": "Un enseignant ne peut s'inscrire qu'avec un code d'invitation. Le code sert une seule fois et expire.",
       "champEmail": "Adresse de courriel de l'enseignant",
-      "aideEmail": "Le code est créé pour cette adresse. Transmettez-le à la personne : il n'est pas envoyé automatiquement.",
+      "aideEmail": "Le code est créé pour cette adresse. Transmettez-le à la personne : il n'est pas envoyé automatiquement.",
       "inviter": "Créer l'invitation",
       "emailInvalide": "Cette adresse n'a pas la forme d'une adresse e-mail. Vérifiez-la, puis réessayez.",
-      "compteExistant": "Un compte existe déjà pour cette adresse : aucune invitation n'est nécessaire.",
+      "compteExistant": "Un compte existe déjà pour cette adresse : aucune invitation n'est nécessaire.",
       "dejaInvite": "Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous.",
       "nonAutorise": "Vous n'avez pas le droit d'inviter un enseignant. Adressez-vous à la direction.",
-      "horsLigne": "Pas de connexion : l'invitation n'a pas été créée. Reconnectez-vous, puis réessayez.",
-      "erreur": "La création de l'invitation n'est pas confirmée. Elle existe peut-être : regardez la liste avant de recommencer.",
-      "creee": "Invitation créée. Transmettez ce code à l'enseignant : {code}",
+      "horsLigne": "L'invitation n'a pas été créée. Réessayez dans un instant.",
+      "erreur": "La création de l'invitation n'est pas confirmée. Elle existe peut-être : regardez la liste avant de recommencer.",
+      "creee": "Invitation créée. Transmettez ce code à l'enseignant : {code}",
       "liste": "Invitations",
       "vide": "Aucune invitation pour le moment",
-      "videDetail": "Invitez un enseignant avec son adresse e-mail : le code apparaît ici.",
-      "erreurListe": "Les invitations n'ont pas pu être lues. Vérifiez la connexion, puis réessayez.",
+      "videDetail": "Invitez un enseignant avec son adresse e-mail : le code apparaît ici.",
+      "erreurListe": "Les invitations n'ont pas pu être lues. Réessayez dans un instant.",
       "sansDonnees": "Les invitations ne sont pas lisibles hors connexion.",
       "indisponibleTitre": "Invitations d'enseignants",
       "indisponiblePhrase": "Cette fonction sera disponible au branchement du serveur.",
@@ -1723,7 +1726,7 @@
       "utiliseeLe": "Utilisée le {date}",
       "revoquer": "Révoquer",
       "revoquerPour": "Révoquer l'invitation de {email}",
-      "revoquerQuestion": "Révoquer l'invitation de {email} ?",
+      "revoquerQuestion": "Révoquer l'invitation de {email} ?",
       "revoquerConsequence": "Le code ne pourra plus servir. Vous pourrez inviter la même adresse de nouveau.",
       "revoquerEchec": "La révocation n'est pas confirmée. Actualisez la liste avant de recommencer."
     },
@@ -1739,40 +1742,40 @@
       "expiree": "Cette invitation a expiré.",
       "expireeDetail": "Demandez une nouvelle invitation à la direction de l'académie.",
       "demanderNouvelle": "Demander une nouvelle invitation",
-      "contactCopie": "Adresse de la direction copiée : écrivez-lui depuis votre messagerie.",
+      "contactCopie": "Adresse de la direction copiée : écrivez-lui depuis votre messagerie.",
       "dejaUtilisee": "Cette invitation a déjà servi.",
       "dejaUtiliseeDetail": "Si c'est vous, connectez-vous avec le compte créé.",
       "seConnecter": "Me connecter",
       "inconnue": "Code non reconnu.",
       "inconnueDetail": "Vérifiez le code, puis saisissez-le de nouveau.",
       "ressaisir": "Saisir un autre code",
-      "horsLigne": "Pas de connexion : le code n'a pas été vérifié. Reconnectez-vous, puis réessayez.",
+      "horsLigne": "Le code n'a pas été vérifié. Réessayez dans un instant.",
       "erreur": "Le code n'a pas pu être vérifié. Réessayez dans un instant.",
       "indisponible": "La vérification des invitations sera disponible au branchement du serveur."
     },
     "signature": {
       "titre": "Contrat",
       "version": "Version {version}",
-      "empreinte": "Empreinte du texte : {empreinte}",
-      "texteAltere": "Le texte reçu ne correspond pas à son empreinte : la signature n'est pas proposée. Réessayez plus tard ou prévenez la direction.",
+      "empreinte": "Empreinte du texte : {empreinte}",
+      "texteAltere": "Le texte reçu ne correspond pas à son empreinte : la signature n'est pas proposée. Réessayez plus tard ou prévenez la direction.",
       "champNom": "Votre nom complet",
       "aideNom": "Tapez votre prénom et votre nom, comme sur votre pièce d'identité.",
       "nomVide": "Saisissez votre nom complet pour signer.",
-      "nomTropLong": "Ce nom est trop long : abrégez-le.",
+      "nomTropLong": "Ce nom est trop long : abrégez-le.",
       "accuse": "Je confirme avoir lu ce contrat.",
       "signer": "Signer le contrat",
       "dejaSigne": "Signé le {date}, version {version}.",
       "signePar": "Signé par {nom}",
       "copie": "Télécharger ma copie",
-      "copieLien": "Le lien de votre copie est copié. Collez-le dans votre navigateur : il reste valable quelques minutes.",
+      "copieLien": "Le lien de votre copie est copié. Collez-le dans votre navigateur : il reste valable quelques minutes.",
       "copieErreur": "Votre copie n'a pas pu être préparée. Réessayez dans un instant.",
       "nouvelleVersion": "Le contrat a été mis à jour depuis votre dernière signature (version {version}). Relisez-le, puis signez de nouveau.",
-      "versionPerimee": "Le contrat a été mis à jour pendant votre lecture. Le texte est rechargé : relisez-le, puis signez de nouveau.",
-      "horsLigne": "Pas de connexion : le contrat n'est pas signé. Reconnectez-vous, puis réessayez.",
+      "versionPerimee": "Le contrat a été mis à jour pendant votre lecture. Le texte est rechargé : relisez-le, puis signez de nouveau.",
+      "horsLigne": "Le contrat n'est pas signé. Réessayez dans un instant.",
       "erreur": "La signature n'est pas confirmée. Regardez si le contrat apparaît signé avant de recommencer.",
       "nonConnecte": "Votre session a expiré. Reconnectez-vous pour signer.",
       "introuvable": "Aucun contrat n'est publié pour le moment. Prévenez la direction.",
-      "erreurLecture": "Le contrat n'a pas pu être lu. Vérifiez la connexion, puis réessayez.",
+      "erreurLecture": "Le contrat n'a pas pu être lu. Réessayez dans un instant.",
       "sansDonnees": "Le contrat n'est pas lisible hors connexion.",
       "indisponible": "La signature du contrat sera disponible au branchement du serveur.",
       "retour": "Retour"
@@ -1784,11 +1787,11 @@
       "signeCourante": "Signé, version courante",
       "signeAncienne": "Signé, ancienne version {version}",
       "nonSigne": "Non signé",
-      "bloque": "Contrat non signé à la version courante : le dossier ne peut pas être approuvé tant que le contrat et l'accusé ne sont pas signés à la version courante.",
-      "refuse": "Contrat non signé à la version courante. Le dossier n'a pas été activé : l'enseignant doit signer, puis actualisez le dossier.",
-      "manqueContrat": "Manque : le contrat.",
-      "manqueAccuse": "Manque : l'accusé.",
-      "manqueLesDeux": "Manquent : le contrat et l'accusé.",
+      "bloque": "Contrat non signé à la version courante : le dossier ne peut pas être approuvé tant que le contrat et l'accusé ne sont pas signés à la version courante.",
+      "refuse": "Contrat non signé à la version courante. Le dossier n'a pas été activé : l'enseignant doit signer, puis actualisez le dossier.",
+      "manqueContrat": "Manque : le contrat.",
+      "manqueAccuse": "Manque : l'accusé.",
+      "manqueLesDeux": "Manquent : le contrat et l'accusé.",
       "inviter": "Inviter un enseignant"
     }
   },
@@ -1934,6 +1937,19 @@
     "inscritDepuis(param=jours)": {
       "one": "Inscrit depuis {jours} jour",
       "other": "Inscrit depuis {jours} jours"
+    },
+    "accesKyc": {
+      "exceptionTitre": "Exception du super administrateur active",
+      "exceptionMessage": "Vous pouvez ouvrir les pièces des deux genres. Chaque ouverture hors de votre genre est tracée.",
+      "exceptionPiece": "Cette ouverture est hors de votre genre : elle sera tracée.",
+      "verification": "Vérification de vos droits d'accès…",
+      "verificationEchec": "Vos droits d'accès à cette pièce n'ont pas pu être vérifiés.",
+      "reessayer": "Réessayer",
+      "refus": {
+        "genreDifferent": "Cette pièce est réservée à un administrateur du même genre que le candidat.",
+        "adminSansGenre": "Votre genre n'est pas renseigné : aucune pièce ne peut s'ouvrir. Demandez à la direction de le renseigner.",
+        "profilNonAutorise": "Votre profil ne peut pas consulter les pièces d'identité."
+      }
     }
   },
   "admin": {
@@ -1978,7 +1994,9 @@
       "attenteJours(param=jours)": {
         "one": "En attente depuis {jours} jour",
         "other": "En attente depuis {jours} jours"
-      }
+      },
+      "outilsPilotage": "Pilotage des horaires",
+      "outilsPilotageDetail": "Par horaire : les classes, leur remplissage, les demandes en attente et les enseignants libres ou manquants."
     },
     "traitement": {
       "titre": "Espace de traitement",
@@ -2150,7 +2168,7 @@
       "filtreTousTypes": "Tous les publics",
       "liste": {
         "rechercheLibelle": "Rechercher une classe",
-        "rechercheAide": "Nom, numéro, code ou enseignant de la classe",
+        "rechercheAide": "Nom, code ou enseignant",
         "filtreAttente": "En attente d'enseignant",
         "filtreJour": "Jour",
         "filtreTousJours": "Tous les jours",
@@ -2170,7 +2188,11 @@
         "positionSemantique": "Page {page} sur {total} de la liste des classes",
         "precedente": "Page précédente des classes",
         "suivante": "Page suivante des classes",
-        "resume": "Classes {debut} à {fin} sur {total}"
+        "resume": "Classes {debut} à {fin} sur {total}",
+        "filtreRemplissage": "Remplissage",
+        "filtreTousRemplissages": "Tous les remplissages",
+        "remplissagePleines": "Classes pleines",
+        "remplissagePlaces": "Classes avec des places"
       },
       "etatActif": "Active",
       "etatCloture": "Clôturée",
@@ -2365,7 +2387,40 @@
       "dejaAffecte": "Un autre membre de la direction a déjà confirmé l'enseignant de cette classe : votre choix ne remplace pas le sien.",
       "famillesPrevenues": "Les familles ont été prévenues.",
       "famillesClasseValidee": "Les familles ont été prévenues que leur classe est validée.",
-      "termineDetail": "Classe {libelle} : {enseignant} en est l'enseignant."
+      "termineDetail": "Classe {libelle} : {enseignant} en est l'enseignant.",
+      "decoupagePleines": {
+        "one": "{n} classe de {taille}",
+        "other": "{n} classes de {taille}"
+      },
+      "decoupageAucuneClasse": "aucune classe",
+      "decoupageDerniere": "une dernière classe de {n}",
+      "decoupageAttente": {
+        "one": "{n} élève en attente",
+        "other": "{n} élèves en attente"
+      },
+      "decoupage": "Découpage prévu : {detail}.",
+      "contexteReparti": "Les élèves de ces demandes seront répartis selon le découpage ci-dessous. Vous confirmerez ensuite l'enseignant proposé.",
+      "classesExistantes": {
+        "one": "{n} classe est déjà ouverte sur ce créneau : la nouvelle s'ajoute, aucune n'est modifiée.",
+        "other": "{n} classes sont déjà ouvertes sur ce créneau : la nouvelle s'ajoute, aucune n'est modifiée."
+      },
+      "liste": {
+        "rechercheLibelle": "Rechercher une demande",
+        "rechercheAide": "Langue, fuseau ou nom de la classe créée",
+        "filtreToutes": "Toutes",
+        "filtreAFinir": "Enseignant à confirmer",
+        "filtrePrets": "Prêtes",
+        "filtreIncompletes": "Incomplètes",
+        "filtrePublic": "Public",
+        "filtreTousPublics": "Tous les publics",
+        "aucunAvecCeFiltre": "Aucune demande avec ce filtre",
+        "aucunAvecCeFiltreDetail": "Changez de filtre pour voir les autres demandes réunies.",
+        "position": "Page {page} sur {total}",
+        "positionSemantique": "Page {page} sur {total} de la liste des demandes réunies",
+        "precedente": "Page précédente des demandes réunies",
+        "suivante": "Page suivante des demandes réunies",
+        "resume": "Demandes réunies {debut} à {fin} sur {total}"
+      }
     },
     "diagnostics": {
       "titre": "Diagnostics",
@@ -3169,6 +3224,232 @@
       },
       "reserveDelegation": "Réserve et délégation",
       "aValider": "À valider"
+    },
+    "pilotage": {
+      "titre": "Pilotage des horaires",
+      "sousTitre": "Pour chaque horaire et chaque public : les classes, leur remplissage, les demandes en attente, et les enseignants libres ou manquants.",
+      "sansDonnees": "Le tableau de pilotage n'a pas pu être chargé",
+      "erreur": "Le tableau de pilotage n'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "indisponibleTitre": "Disponible au branchement serveur",
+      "indisponiblePhrase": "Le pilotage par horaire s'affichera ici dès le branchement serveur. D'ici là, rien n'est affiché : aucun chiffre n'est inventé.",
+      "vide": "Aucun horaire à piloter",
+      "videDetail": "Les horaires apparaîtront ici dès qu'une classe ou une demande existera.",
+      "aucunAvecCeFiltre": "Aucun horaire avec ce filtre",
+      "aucunAvecCeFiltreDetail": "Changez de filtre pour voir les autres horaires.",
+      "vueEnsemble": "Vue d'ensemble",
+      "cleClasses": "Classes",
+      "cleAttente": "En attente d'enseignant",
+      "cleSousMinimum": "Sous le minimum",
+      "cleDemandes": "Demandes en attente",
+      "cleLibres": "Enseignants libres",
+      "cleManquants": "Enseignants manquants",
+      "attenteTitre": "Classes en attente d'enseignant",
+      "attenteDetail": "Confirmez un enseignant pour chacune : la famille est prévenue dès que c'est fait.",
+      "attenteHoraire": "Horaire : {horaire}",
+      "voirToutes": "Voir toutes les classes en attente",
+      "horairesTitre": "Horaires",
+      "horaire": "{jour} · {heure} · {ville}",
+      "colonneHoraire": "Horaire",
+      "colonnePublic": "Public",
+      "colonneClasses": "Classes",
+      "colonneRemplissage": "Remplissage",
+      "colonneDemandes": "Demandes en attente",
+      "colonneLibres": "Enseignants libres",
+      "colonneManquants": "Enseignants manquants",
+      "colonneEtat": "À signaler",
+      "remplissage": "{taux} % ({effectif} sur {capacite})",
+      "remplissageInconnu": "Aucune place ouverte",
+      "aucun": "Aucun",
+      "nombreEtGenres": "{n} ({genres})",
+      "genreHommes": {
+        "one": "{n} enseignant",
+        "other": "{n} enseignants"
+      },
+      "genreFemmes": {
+        "one": "{n} enseignante",
+        "other": "{n} enseignantes"
+      },
+      "genreIndetermine": {
+        "one": "{n} enseignant, genre à confirmer",
+        "other": "{n} enseignants, genre à confirmer"
+      },
+      "etatPenurie": "Pénurie d'enseignants",
+      "etatSousMinimum": {
+        "one": "{n} classe sous le minimum",
+        "other": "{n} classes sous le minimum"
+      },
+      "etatAttente": {
+        "one": "{n} classe en attente d'enseignant",
+        "other": "{n} classes en attente d'enseignant"
+      },
+      "etatCouvert": "Couvert",
+      "filtreTous": "Tous les horaires",
+      "filtrePenurie": "Pénurie",
+      "filtreSousMinimum": "Sous le minimum",
+      "filtreAttente": "En attente d'enseignant",
+      "filtrePublic": "Public",
+      "filtreTousPublics": "Tous les publics",
+      "position": "Page {page} sur {total}",
+      "positionSemantique": "Page {page} sur {total} du tableau de pilotage",
+      "precedente": "Page précédente du tableau de pilotage",
+      "suivante": "Page suivante du tableau de pilotage",
+      "resume": "Horaires {debut} à {fin} sur {total}"
+    },
+    "fusion": {
+      "actionFusionner": "Fusionner avec une classe parallèle",
+      "actionTransferer": "Transférer un élève",
+      "actionHistorique": "Historique de la classe",
+      "fusionTitre": "Fusionner {libelle}",
+      "fusionContexte": "Les élèves de cette classe rejoindront une classe parallèle du même horaire et de la même catégorie qui a de la place. L'enseignant de cette classe est libéré. Rien ne se fait sans votre confirmation.",
+      "choixTitre": "Classe qui accueille les élèves",
+      "placesLibres": {
+        "one": "{n} place libre",
+        "other": "{n} places libres"
+      },
+      "enseignantDe": "Enseignant : {nom}",
+      "sansEnseignant": "Sans enseignant pour l'instant",
+      "aucuneCible": "Aucune classe parallèle n'a assez de place",
+      "aucuneCibleDetail": "Il faut une classe du même horaire et de la même catégorie, avec de la place pour tous les élèves de celle-ci.",
+      "erreurCibles": "Les classes parallèles n'ont pas pu être lues. Réessayez dans un instant.",
+      "sansDonneesCibles": "La liste des classes parallèles n'a pas pu être chargée",
+      "apercuTitre": "Ce qui va se passer",
+      "apercuErreur": "L'aperçu de la fusion n'a pas pu être calculé. Réessayez dans un instant.",
+      "apercuMembres": {
+        "one": "{n} élève passe dans {cible}",
+        "other": "{n} élèves passent dans {cible}"
+      },
+      "apercuEffectif": "{cible} aura {apres} élèves sur {capacite}.",
+      "apercuEnseignantLibere": "{enseignant} n'a plus cette classe et redevient libre à cet horaire.",
+      "apercuSansEnseignant": "Cette classe n'a pas d'enseignant : personne n'est libéré.",
+      "apercuFamilles": {
+        "one": "{n} famille est prévenue.",
+        "other": "{n} familles sont prévenues."
+      },
+      "apercuIrreversible": "La classe fusionnée est clôturée, et l'historique des deux classes est conservé. Cette décision ne se défait pas.",
+      "confirmerFusion": "Fusionner les deux classes",
+      "fusionHorsLigne": "La fusion pourra être confirmée quand la connexion sera revenue. Votre choix reste affiché.",
+      "fusionFaite": {
+        "one": "Fusion faite : {n} élève est maintenant dans {cible}.",
+        "other": "Fusion faite : {n} élèves sont maintenant dans {cible}."
+      },
+      "famillesPrevenues": "Les familles ont été prévenues.",
+      "fusionDejaFaite": "Un autre membre de la direction vient de fusionner cette classe : rien n'a été fait en double. Fermez cette feuille pour retrouver la liste à jour.",
+      "fusionRefusee": "La fusion n'a pas eu lieu : {motif}. Vérifiez les classes, puis recommencez.",
+      "fusionNonConfirmee": "La fusion n'est pas confirmée : la réponse du serveur n'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans fusion en double.",
+      "manqueCible": "Il manque la classe qui accueille les élèves : choisissez-la dans la liste.",
+      "transfertTitre": "Transférer un élève {deLibelle}",
+      "transfertContexte": "Choisissez l'élève, puis la classe parallèle qui l'accueille. Le transfert est tracé, et la famille en est prévenue.",
+      "eleveTitre": "Élève à transférer",
+      "aucunEleve": "Cette classe n'a aucun élève",
+      "aucunEleveDetail": "Il n'y a personne à transférer.",
+      "erreurEleves": "Les élèves de la classe n'ont pas pu être lus. Réessayez dans un instant.",
+      "transfertCibleTitre": "Classe qui accueille l'élève",
+      "manqueEleve": "Il manque l'élève : choisissez-le dans la liste.",
+      "confirmerTransfert": "Transférer l'élève",
+      "transfertHorsLigne": "Le transfert pourra être confirmé quand la connexion sera revenue. Votre choix reste affiché.",
+      "transfertFait": "{prenom} est maintenant dans {cible}.",
+      "transfertDejaFait": "Ce transfert a déjà été fait : rien n'a été fait en double. Fermez cette feuille pour retrouver la liste à jour.",
+      "refusChevauchement": "{prenom} suit déjà un cours qui a lieu en même temps que {cible} : un élève ne peut pas être dans deux classes qui se chevauchent. Choisissez une autre classe.",
+      "refusClassePleine": "{cible} n'a plus de place. Choisissez une autre classe.",
+      "refusAutre": "Le transfert n'a pas eu lieu : {motif}. Vérifiez la classe, puis recommencez.",
+      "transfertNonConfirme": "Le transfert n'est pas confirmé : la réponse du serveur n'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans transfert en double.",
+      "historiqueTitre": "Historique {deLibelle}",
+      "historiqueVide": "Aucun mouvement",
+      "historiqueVideDetail": "Les fusions et les transferts de cette classe apparaîtront ici.",
+      "historiqueErreur": "L'historique n'a pas pu être lu. Réessayez dans un instant.",
+      "evenementFusionSortante": {
+        "one": "Fusionnée dans {autre} : {n} élève déplacé",
+        "other": "Fusionnée dans {autre} : {n} élèves déplacés"
+      },
+      "evenementFusionEntrante": {
+        "one": "Fusion avec {autre} : {n} élève accueilli",
+        "other": "Fusion avec {autre} : {n} élèves accueillis"
+      },
+      "evenementTransfertSortant": "{prenom} transféré vers {autre}",
+      "evenementTransfertEntrant": "{prenom} transféré depuis {autre}",
+      "quand": "{date} à {heure}"
+    },
+    "tirage": {
+      "titre": "Tirage des contrôles",
+      "sousTitre": "Le serveur tire au sort la séance que chaque contrôleur reçoit. La direction fixe les règles ; le contrôleur ne choisit jamais sa classe.",
+      "sansDonnees": "Les tirages n'ont pas pu être chargés",
+      "erreur": "Les tirages n'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "indisponibleTitre": "Disponible au branchement serveur",
+      "indisponiblePhrase": "Les règles et l'historique des tirages s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché : aucun tirage n'est inventé.",
+      "reserveTitre": "Cet écran est réservé à la direction",
+      "reservePhrase": "Votre compte n'a pas accès aux tirages : ils sont réservés à la direction, pour que personne ne puisse prévoir qui sera contrôlé. Si vous en avez besoin, demandez l'accès à la direction.",
+      "reglesTitre": "Règles du tirage",
+      "reglesIntro": "Ces règles s'appliquent aux prochains tirages. Les missions déjà attribuées ne changent pas. Chaque modification est inscrite au journal d'audit.",
+      "frequenceTitre": "Fréquence",
+      "frequenceDetail": "Le nombre de missions qu'un contrôleur reçoit par semaine, au plus.",
+      "missionsParSemaine": {
+        "one": "{n} mission par semaine",
+        "other": "{n} missions par semaine"
+      },
+      "ponderationTitre": "Pondération",
+      "ponderationDetail": "Plus le poids est fort, plus ces séances ont de chances d'être tirées. Le tirage reste imprévisible pour l'enseignant comme pour le contrôleur.",
+      "critereEnseignantsRecents": "Enseignants arrivés récemment",
+      "critereClassesSignalees": "Classes signalées à l'administration",
+      "critereHeuresDePointe": "Heures de pointe",
+      "niveauAucun": "Aucun poids",
+      "niveauNormal": "Poids normal",
+      "niveauFort": "Poids fort",
+      "ciblesTitre": "Classes ou enseignants à cibler",
+      "ciblesDetail": "Une cible est tirée en priorité quand sa séance est en direct. Elle n'est jamais annoncée au contrôleur ni à l'enseignant.",
+      "aucuneCible": "Aucune cible : toutes les séances en direct ont les mêmes chances, au poids près.",
+      "cibleClasse": "Classe",
+      "cibleEnseignant": "Enseignant",
+      "retirerCible": "Retirer {libelle}",
+      "ajouterCible": "Ajouter une cible",
+      "ajouterTitre": "Ajouter une cible",
+      "ajouterContexte": "Choisissez la classe ou l'enseignant à tirer en priorité. La cible s'ajoute aux règles, que vous enregistrez ensuite.",
+      "ajouterChoix": "Classe ou enseignant à cibler",
+      "ajouterConfirmer": "Ajouter cette cible",
+      "manqueCible": "Il manque la cible : choisissez-la dans la liste.",
+      "aucunCandidat": "Aucune classe ni aucun enseignant à cibler",
+      "aucunCandidatDetail": "Toutes les classes et tous les enseignants sont déjà ciblés, ou aucune séance n'existe encore.",
+      "erreurCandidats": "La liste des cibles n'a pas pu être lue. Réessayez dans un instant.",
+      "enregistrer": "Enregistrer les règles",
+      "enregistrees": "Règles enregistrées. Elles s'appliquent aux prochains tirages.",
+      "nonConfirmees": "L'enregistrement n'est pas confirmé : la réponse du serveur n'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans doublon.",
+      "refusees": "Les règles n'ont pas été enregistrées : {motif}. Vérifiez-les, puis recommencez.",
+      "horsLigne": "Les règles pourront être enregistrées quand la connexion sera revenue. Vos choix restent affichés.",
+      "lectureSeule": "Vous pouvez lire ces règles, mais pas les modifier : leur modification est réservée à une personne de la direction qui en a le droit.",
+      "historiqueTitre": "Historique des tirages",
+      "historiqueDetail": "Chaque tirage et chaque mission non contrôlée sont conservés avec leur date. Seule la direction les lit : le contrôleur ne voit que sa propre mission.",
+      "rechercheLibelle": "Rechercher un tirage",
+      "rechercheAide": "Classe, enseignant ou contrôleur",
+      "filtreTous": "Tous",
+      "filtreAttribuees": "Attribuées",
+      "filtreEnCours": "Contrôles en cours",
+      "filtreControlees": "Contrôlées",
+      "filtreNonControlees": "Non contrôlées",
+      "filtreDejaControlees": "Déjà contrôlées",
+      "colonneQuand": "Tirée le",
+      "colonneClasse": "Classe",
+      "colonneEnseignant": "Enseignant",
+      "colonneControleur": "Contrôleur",
+      "colonneCritere": "Tirage",
+      "colonneStatut": "Mission",
+      "statutAttribuee": "Attribuée",
+      "statutEnCours": "Contrôle en cours",
+      "statutControlee": "Contrôlée",
+      "statutNonControlee": "Non contrôlée",
+      "statutDejaControlee": "Déjà contrôlée par un autre",
+      "rapportEnvoye": "Rapport envoyé à l'administration",
+      "critereAleatoire": "Au hasard",
+      "criterePonderation": "Selon le poids",
+      "critereCible": "Cible",
+      "vide": "Aucun tirage pour le moment",
+      "videDetail": "Les tirages apparaîtront ici dès que des séances seront en direct.",
+      "aucunAvecCeFiltre": "Aucun tirage avec ce filtre",
+      "aucunAvecCeFiltreDetail": "Changez de filtre pour voir les autres tirages.",
+      "position": "Page {page} sur {total}",
+      "positionSemantique": "Page {page} sur {total} de l'historique des tirages",
+      "precedente": "Page précédente de l'historique des tirages",
+      "suivante": "Page suivante de l'historique des tirages",
+      "resume": "Tirages {debut} à {fin} sur {total}",
+      "quand": "{date} à {heure}"
     }
   },
   "agent": {
@@ -3359,6 +3640,7 @@
     "compte": "Mon compte",
     "principale": "Navigation principale",
     "motSymbole": "Rewayah",
+    "logoAccueil": "Rewayah Academy, accueil",
     "replier": "Replier la navigation",
     "deplier": "Déplier la navigation"
   },
@@ -3484,7 +3766,8 @@
         "titre": "Connexion et sécurité",
         "methode": "Méthode de connexion",
         "methodeLien": "Lien par courriel",
-        "methodeGoogle": "Google"
+        "methodeGoogle": "Google",
+        "consentements": "Visites des parents"
       },
       "informations": {
         "titre": "Informations personnelles",
@@ -6082,7 +6365,8 @@
       "delaiTitre": "Nouvelle invitation indisponible",
       "delaiPhrase": "Une nouvelle demande pourra être déposée à partir du {date}. Elle devra ensuite être validée par l'administration.",
       "pourquoi": "Pourquoi cette attente ?",
-      "pourquoiPhrase": "Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants."
+      "pourquoiPhrase": "Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.",
+      "foyerPersonnel": "Un foyer personnel a été créé pour vous : vous y retrouvez votre compte et vos élèves."
     },
     "reprise": {
       "titre": "Demande de reprise du foyer",
@@ -6128,7 +6412,8 @@
         "refuseeParTitulaire": "Le titulaire du foyer a refusé cette demande. L'administration en est informée. Aucune permission du foyer n'est transférée.",
         "attenteAdministration": "Le titulaire n'a pas répondu. Rien n'est transféré automatiquement : l'administration doit encore examiner la demande.",
         "validee": "L'administration a validé la demande. Vous êtes désormais titulaire du foyer.",
-        "refusee": "L'administration a refusé la demande. Aucune permission du foyer n'est transférée."
+        "refusee": "L'administration a refusé la demande. Aucune permission du foyer n'est transférée.",
+        "redepotLe": "Une nouvelle demande pourra être déposée à partir du {date}."
       },
       "titulaire": {
         "notification": "Une demande de reprise de votre foyer a été déposée en indiquant votre décès.",
@@ -6387,7 +6672,7 @@
     "contexte": "Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.",
     "carteTitre": "Demande {dePrenom}",
     "detailTitre": "Suivi de la demande {dePrenom}",
-    "etapeCourante": "Étape en cours : {etape}",
+    "etapeCourante": "Étape en cours : {etape}",
     "toutFait": "Toutes les étapes sont franchies.",
     "voirSuivi": "Voir le suivi",
     "vide": "Aucune demande pour le moment.",
@@ -6396,7 +6681,7 @@
     "sansDonnees": "vos demandes",
     "introuvable": "Cette demande n'existe plus ou n'est pas la vôtre.",
     "retour": "Retour aux demandes",
-    "fuseau": "Heures affichées : heure {deVille}.",
+    "fuseau": "Heures affichées : heure {deVille}.",
     "horodatage": "{date} à {heure}",
     "prevue": "Prévue le {date} à {heure}",
     "etapes": {
@@ -6425,14 +6710,31 @@
       "jours": "{n} jours plus tard"
     },
     "notification": {
-      "enAttente": "Demande {dePrenom} : en liste d'attente",
-      "eleveIntegre": "Demande {dePrenom} : élève intégré à la classe",
-      "premiereSeance": "Demande {dePrenom} : première séance effectuée"
+      "enAttente": "Demande {dePrenom} : en liste d'attente",
+      "eleveIntegre": "Demande {dePrenom} : élève intégré à la classe",
+      "premiereSeance": "Demande {dePrenom} : première séance effectuée",
+      "close": "Demande {dePrenom} : {motif}",
+      "dejaEnClasse": "Demande {dePrenom} : élève déjà en classe, demande classée"
+    },
+    "etapeSurTotal": "Étape {n} sur {total} : {etape}",
+    "close": {
+      "etat": "Demande close",
+      "suite": "Vous pouvez choisir un autre créneau pour {prenom}.",
+      "suiteSansChoix": "Rien d'autre à faire de votre côté.",
+      "choisirAutre": "Choisir un autre créneau pour {prenom}",
+      "motif": {
+        "retraitFamille": "Vous avez retiré cette demande.",
+        "offreRetiree": "Ce créneau n'est plus proposé.",
+        "classeNonConstituee": "La classe de ce créneau n'a pas pu être constituée.",
+        "refusDirection": "La direction n'a pas retenu cette demande.",
+        "dejaEnClasse": "{prenom} a déjà une place en classe : cette demande n'est plus nécessaire.",
+        "inconnu": "Cette demande est close."
+      }
     }
   },
   "suiviDemandes": {
     "titre": "Suivi des demandes de créneau",
-    "contexte": "Chaque demande avance en trois étapes. Vous êtes prévenu à chaque passage.",
+    "contexte": "Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.",
     "carteTitre": "Demande de créneau {dePrenom}",
     "joursChoisis": "Jours choisis",
     "heureChoisie": "Heure choisie",
@@ -6445,21 +6747,30 @@
     "etapes": {
       "envoyee": "Demande envoyée",
       "classeValidee": "Classe validée",
-      "enseignantAffecte": "Enseignant affecté"
+      "enseignantAffecte": "Enseignant affecté",
+      "listeAttente": "En liste d'attente",
+      "eleveIntegre": "Élève intégré dans la classe",
+      "coursCommences": "Début des cours"
     },
     "etats": {
       "fait": "Fait",
+      "enCours": "En cours",
       "prochaine": "Prochaine étape",
       "aVenir": "À venir"
     },
     "situation": {
       "envoyee": "Votre demande est arrivée à l'administration",
-      "classeValidee": "Votre classe a été validée",
-      "enseignantAffecte": "Classe validée · enseignant affecté"
+      "classeValidee": "Votre classe est prête : elle attend son enseignant",
+      "enseignantAffecte": "Classe validée · enseignant affecté",
+      "listeAttente": "Votre demande est en liste d'attente",
+      "eleveIntegre": "Classe validée · enseignant affecté · élève intégré",
+      "coursCommences": "Les cours ont commencé"
     },
     "prochaine": {
       "envoyee": "Prochaine étape : constitution de la classe",
-      "classeValidee": "Prochaine étape : affectation de l'enseignant"
+      "classeValidee": "Prochaine étape : l'enseignant de la classe est désigné. Nous vous prévenons dès que c'est fait.",
+      "listeAttente": "Nous vous prévenons dès qu'une place s'ouvre. Aucune date n'est annoncée tant qu'elle n'est pas connue.",
+      "eleveIntegre": "Prochaine étape : le début des cours"
     },
     "debutCours": "Début des cours",
     "debutValeur": "{date} à {heure}, heure {deVille}",
@@ -6491,9 +6802,46 @@
     },
     "notification": {
       "envoyee": "Demande de créneau {dePrenom} : votre demande est arrivée à l'administration",
-      "classeValidee": "Demande de créneau {dePrenom} : votre classe a été validée",
+      "classeValidee": "Demande de créneau {dePrenom} : votre classe est prête, elle attend son enseignant",
       "enseignantAffecte": "Demande de créneau {dePrenom} : classe validée · enseignant affecté",
-      "close": "Demande de créneau {dePrenom} : {motif}"
+      "close": "Demande de créneau {dePrenom} : {motif}",
+      "listeAttente": "Demande de créneau {dePrenom} : votre demande est en liste d'attente",
+      "eleveIntegre": "Demande de créneau {dePrenom} : élève intégré dans la classe",
+      "coursCommences": "Demande de créneau {dePrenom} : les cours ont commencé",
+      "changementFusion": "Demande de créneau {dePrenom} : votre classe a été réunie avec une autre, voir la nouvelle classe",
+      "changementTransfert": "Demande de créneau {dePrenom} : nouvelle classe, voir le détail"
+    },
+    "jalon": {
+      "date": "{date} à {heure}",
+      "apres": "{date} à {heure}, {duree}",
+      "aussitot": "aussitôt",
+      "minutes": {
+        "one": "{n} minute plus tard",
+        "other": "{n} minutes plus tard"
+      },
+      "heures": {
+        "one": "{n} heure plus tard",
+        "other": "{n} heures plus tard"
+      },
+      "jours": {
+        "one": "{n} jour plus tard",
+        "other": "{n} jours plus tard"
+      }
+    },
+    "changement": {
+      "titrePage": "Changement de classe",
+      "titre": "La classe {dePrenom} a changé",
+      "fusion": "Votre classe a été réunie avec une autre. {prenom} a maintenant la classe ci-dessous.",
+      "transfert": "La direction a changé {prenom} de classe. Voici sa nouvelle classe.",
+      "classe": "Nouvelle classe",
+      "enseignant": "Enseignant",
+      "sansEnseignant": "Son enseignant sera communiqué dès qu'il sera désigné.",
+      "date": "Changement fait le",
+      "lien": "Voir la nouvelle classe",
+      "lienPour": "Voir la nouvelle classe {dePrenom}",
+      "retour": "Retour au suivi des demandes",
+      "introuvable": "Ce changement de classe n'est plus à afficher",
+      "introuvableDetail": "Retournez au suivi pour voir où en sont vos demandes."
     }
   },
   "alertes": {
@@ -8575,5 +8923,53 @@
       "groupeCompte": "Compte et bénéficiaire",
       "groupeDirection": "Direction"
     }
+  },
+  "presentationTuteur": {
+    "titre": "Demandes de présentation",
+    "contexte": "Un enfant de votre foyer demande la présentation standard. C'est vous qui décidez.",
+    "ligne": "{prenom} demande la présentation standard.",
+    "demandeeLe": "Demandé le {date} à {heure}",
+    "accepter": "Accepter",
+    "refuser": "Refuser",
+    "acceptee": "Présentation standard activée pour {prenom}.",
+    "refusee": "Demande {dePrenom} refusée.",
+    "echecReponse": "Votre réponse n'a pas pu être confirmée. La demande reste en attente : réessayez.",
+    "vide": "Aucune demande de présentation en attente.",
+    "erreur": "Les demandes n'ont pas pu être chargées. Réessayez.",
+    "sansDonnees": "les demandes de présentation",
+    "accueil": {
+      "titre": "Demande de présentation",
+      "voir": "Répondre"
+    },
+    "notification": "{prenom} demande la présentation standard"
+  },
+  "reprisesAdmin": {
+    "onglet": "Reprises",
+    "titre": "Reprises de foyer",
+    "sousTitre": "Demandes d'un second adulte pour devenir titulaire du foyer. L'administration décide.",
+    "demandeur": "Demandeur",
+    "foyer": "Foyer",
+    "deposeeLe": "Déposée le",
+    "etat": {
+      "aExaminer": "À examiner",
+      "refuseeParTitulaire": "Refusée par le titulaire"
+    },
+    "examenLe": "Examen possible à partir du {date}.",
+    "refuseeInfo": "Le titulaire a refusé cette demande. Aucune décision n'est attendue.",
+    "valider": "Valider la reprise",
+    "refuser": "Refuser la reprise",
+    "validerQuestion": "Valider la reprise du foyer par {prenom} ?",
+    "validerConsequence": "Cette personne deviendra titulaire du foyer. Cette décision transfère la titularité.",
+    "refuserQuestion": "Refuser la reprise du foyer par {prenom} ?",
+    "refuserConsequence": "Aucune permission n'est transférée. La personne pourra déposer une nouvelle demande après le délai prévu.",
+    "validee": "Reprise validée.",
+    "refusee": "Reprise refusée.",
+    "dejaTraitee": "Cette demande a déjà été traitée. La liste est à jour.",
+    "echecReseau": "La décision n'a pas pu être confirmée. Vérifiez la liste avant de réessayer.",
+    "vide": "Aucune demande de reprise à traiter.",
+    "erreur": "Les demandes n'ont pas pu être chargées. Réessayez.",
+    "sansDonnees": "les demandes de reprise",
+    "indisponibleTitre": "Reprises de foyer indisponibles",
+    "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur."
   }
 }

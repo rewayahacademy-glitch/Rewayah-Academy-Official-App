@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/env.dart';
 import '../domain/enums.dart';
+import 'port_capacite_eleve.dart';
 import 'session_state.dart';
 import 'source_session.dart';
 
@@ -59,6 +60,7 @@ final NotifierProvider<SessionControleur, SessionState> sessionProvider =
 class SessionControleur extends Notifier<SessionState> {
   StreamSubscription<SessionState>? _abonnement;
   bool _demoActive = false;
+  final Map<String, bool> _autonomes = <String, bool>{};
 
   @override
   SessionState build() {
@@ -66,7 +68,7 @@ class SessionControleur extends Notifier<SessionState> {
 
     _abonnement = source.etats().listen((SessionState etat) {
       if (!_demoActive) {
-        state = etat;
+        _appliquer(etat);
       }
     });
     ref.onDispose(() => unawaited(_abonnement?.cancel()));
@@ -80,14 +82,45 @@ class SessionControleur extends Notifier<SessionState> {
       throw StateError('Le mode de demonstration n est pas compile.');
     }
     _demoActive = true;
-    state = SessionState(
-      resolue: true,
-      role: acces.role,
-      profileId: 'demo-${acces.role.valeurSql}',
-      accountStatus: AccountStatus.active,
-      interfaceMode: acces.mode,
-      lectureProfil: LectureProfil.presente,
+    _appliquer(
+      SessionState(
+        resolue: true,
+        role: acces.role,
+        profileId: 'demo-${acces.role.valeurSql}',
+        accountStatus: AccountStatus.active,
+        interfaceMode: acces.mode,
+        lectureProfil: LectureProfil.presente,
+      ),
     );
+  }
+
+  /// Publie [etat] avec la capacite « eleve autonome » deja connue pour ce
+  /// profil, puis la lit sur le port si elle ne l'est pas encore (C-24).
+  /// Une reponse inconnue ou en echec laisse la capacite fausse.
+  void _appliquer(SessionState etat) {
+    final String? profil = etat.profileId;
+    state = etat.copyWith(
+      eleveAutonome: profil != null && (_autonomes[profil] ?? false),
+    );
+    if (profil == null || _autonomes.containsKey(profil)) {
+      return;
+    }
+    _autonomes[profil] = false;
+    unawaited(_lireCapacite(profil));
+  }
+
+  Future<void> _lireCapacite(String profil) async {
+    CapaciteEleve capacite;
+    try {
+      capacite = await ref.read(portCapaciteEleveProvider).lire(profil);
+    } on Object {
+      capacite = const CapaciteInconnue();
+    }
+    final bool autonome = capacite is EleveAutonome;
+    _autonomes[profil] = autonome;
+    if (ref.mounted && state.profileId == profil) {
+      state = state.copyWith(eleveAutonome: autonome);
+    }
   }
 
   /// Ferme la session locale et indique si une session demo etait active.

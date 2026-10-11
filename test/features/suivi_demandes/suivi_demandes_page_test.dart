@@ -136,9 +136,20 @@ List<String> _textes(WidgetTester tester) => <String>[
     (w as RichText).text.toPlainText(),
 ];
 
-/// Un nombre qui n'est pas une heure « hh:mm » : un compte, un rang, une
-/// date. Avant l'etape 3, il n'y en a aucun.
+/// Un nombre qui n'est pas une heure « hh:mm » ni le jour d'une date
+/// (« 8 octobre ») : un compte, un rang. Avant l'etape 3, il n'y en a aucun.
+/// Les dates des etapes franchies sont voulues (R20) : un jour du mois n'est
+/// pas un nombre de demandeurs.
 final RegExp _nombreHorsHeure = RegExp(r'(?<![\d:])\d+(?![\d:])');
+
+/// « 8 octobre » : le jour d'une date, et « 4 jours plus tard » : le temps
+/// ecoule entre deux etapes (R20). Retires avant la recherche d'un nombre : ni
+/// l'un ni l'autre ne compte des demandeurs.
+final RegExp _jourDeDate = RegExp(
+  r'\d{1,2}(?=[\s\u00a0]+(?:janvier|f[ée]vrier|mars|avril|mai|juin|juillet|'
+  r'ao[uû]t|septembre|octobre|novembre|d[ée]cembre))|'
+  r'\d+(?=[\s\u00a0]+(?:minutes?|heures?|jours?)[\s\u00a0]+plus tard)',
+);
 
 void _verifierConfidentiel(WidgetTester tester, DemandeServeurDemo serveur) {
   final List<String> textes = _textes(tester);
@@ -158,7 +169,7 @@ void _verifierConfidentiel(WidgetTester tester, DemandeServeurDemo serveur) {
       reason: 'titre d enseignant avant l etape 3 : « $texte »',
     );
     expect(
-      _nombreHorsHeure.hasMatch(texte),
+      _nombreHorsHeure.hasMatch(texte.replaceAll(_jourDeDate, '')),
       isFalse,
       reason: 'nombre affiche avant l etape 3 : « $texte »',
     );
@@ -188,10 +199,11 @@ void main() {
       // Rappel : jours tries (choisis jeudi, lundi, mardi) et heure du foyer.
       expect(find.text('Lundi, mardi et jeudi'), findsOneWidget);
       expect(find.text('18:00, heure de Paris'), findsOneWidget);
-      // Frise : une etape faite, la suivante annoncee, la derniere a venir.
+      // Frise (R20) : une etape faite, la suivante annoncee, les trois
+      // dernieres a venir.
       expect(find.text(t.suiviDemandes.etats.fait), findsOneWidget);
       expect(find.text(t.suiviDemandes.etats.prochaine), findsOneWidget);
-      expect(find.text(t.suiviDemandes.etats.aVenir), findsOneWidget);
+      expect(find.text(t.suiviDemandes.etats.aVenir), findsNWidgets(3));
       verifierUnSeulBoutonPlein(tester, maximum: 0);
       await _demonter(tester);
     });
@@ -200,14 +212,19 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, port: _seule(_ines));
-      expect(find.text('Votre classe a été validée'), findsOneWidget);
+      // R7 : la classe est prete, elle attend son enseignant, sans delai
+      // annonce.
       expect(
-        find.text('Prochaine étape\u00a0: affectation de l\'enseignant'),
+        find.text(t.suiviDemandes.situation.classeValidee),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.suiviDemandes.prochaine.classeValidee),
         findsOneWidget,
       );
       expect(find.text(t.suiviDemandes.etats.fait), findsNWidgets(2));
       expect(find.text(t.suiviDemandes.etats.prochaine), findsOneWidget);
-      expect(find.text(t.suiviDemandes.etats.aVenir), findsNothing);
+      expect(find.text(t.suiviDemandes.etats.aVenir), findsNWidgets(2));
       // C-10 bis : chaque jour avec son heure, le fuseau sur sa ligne.
       expect(find.text('Samedi 10:00, dimanche 11:30'), findsOneWidget);
       expect(find.text('Heure de Paris'), findsOneWidget);
@@ -220,14 +237,17 @@ void main() {
     ) async {
       await _monter(tester, port: _seule(_aicha));
       expect(find.text('Classe validée · enseignant affecté'), findsOneWidget);
-      expect(find.text(t.suiviDemandes.debutCours), findsOneWidget);
+      // « Debut des cours » : la derniere etape de la frise et la ligne de
+      // la date.
+      expect(find.text(t.suiviDemandes.debutCours), findsNWidgets(2));
       expect(
         find.text('Lundi 19 octobre à 17:30, heure de Paris'),
         findsOneWidget,
       );
       expect(find.text('Sayyida Maryam'), findsOneWidget);
       expect(find.text(t.suiviDemandes.etats.fait), findsNWidgets(3));
-      expect(find.text(t.suiviDemandes.etats.prochaine), findsNothing);
+      // R20 : apres l'enseignant, l'eleve est integre.
+      expect(find.text(t.suiviDemandes.etats.prochaine), findsOneWidget);
       await _demonter(tester);
     });
 
@@ -267,7 +287,12 @@ void main() {
       demo.demandes.first.debutCours = null;
       await _monter(tester, port: demo);
       expect(find.text(t.suiviDemandes.debutAFixer), findsOneWidget);
-      expect(find.text(t.suiviDemandes.debutCours), findsNothing);
+      // Aucune ligne de date : seule reste l'etape de la frise.
+      expect(
+        find.byKey(const ValueKey<String>('demande-debut-$_aicha')),
+        findsNothing,
+      );
+      expect(find.text(t.suiviDemandes.debutCours), findsOneWidget);
       await _demonter(tester);
     });
 
@@ -325,7 +350,10 @@ void main() {
       );
       await tester.pump();
       await tester.pump();
-      expect(find.text('Votre classe a été validée'), findsOneWidget);
+      expect(
+        find.text(t.suiviDemandes.situation.classeValidee),
+        findsOneWidget,
+      );
       // La notice ne vaut que pour l'attente du quota.
       expect(find.text(t.suiviDemandes.personnaliseNotice), findsNothing);
       await _demonter(tester);
@@ -410,7 +438,7 @@ void main() {
           enseignant: 'Sayyida Khadija',
           debutCours: DateTime(2026, 11, 2, 9),
         );
-        final bool affecte = etape == EtapeDemande.enseignantAffecte;
+        final bool affecte = etape.enseignantConnu;
         expect(d.enseignant, affecte ? 'Sayyida Khadija' : isNull);
         expect(d.debutCours, affecte ? isNotNull : isNull);
       }
@@ -668,7 +696,8 @@ void main() {
           containsAll(<String>[
             'Demande de créneau de Yusuf\u00a0: votre demande est arrivée à '
                 'l\'administration',
-            'Demande de créneau d\'Inès\u00a0: votre classe a été validée',
+            'Demande de créneau d\'Inès\u00a0: votre classe est prête, elle '
+                'attend son enseignant',
             'Demande de créneau d\'Aïcha\u00a0: classe validée · enseignant affecté',
             'Demande de créneau de Bilal\u00a0: l\'académie a retiré ce créneau de '
                 'ses offres.',
@@ -699,7 +728,8 @@ void main() {
       expect(apres, hasLength(avant + 1));
       expect(
         apres.first.titre,
-        'Demande de créneau de Yusuf\u00a0: votre classe a été validée',
+        'Demande de créneau de Yusuf\u00a0: votre classe est prête, elle '
+        'attend son enseignant',
       );
       expect(await port.detail(apres.first.id), isNotNull);
     });

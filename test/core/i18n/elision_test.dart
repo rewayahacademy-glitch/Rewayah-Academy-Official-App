@@ -160,6 +160,15 @@ void main() {
         'admin.finance.vue.graphiqueRepartitionDetail',
         'admin.finance.vue.topClassesDetail',
         'suiviDemandes.carteTitre',
+        'suiviFamille.carteTitre',
+        'suiviFamille.detailTitre',
+        'suiviFamille.fuseau',
+        'suiviFamille.notification.enAttente',
+        'suiviFamille.notification.eleveIntegre',
+        'suiviFamille.notification.premiereSeance',
+        'suiviFamille.notification.close',
+        'suiviFamille.notification.dejaEnClasse',
+        'presentationTuteur.refusee',
         'suiviDemandes.heureFuseau',
         'suiviDemandes.fuseauValeur',
         'suiviDemandes.debutValeur',
@@ -181,6 +190,9 @@ void main() {
         'lib/features/admin_finance/vue_globale_finance.dart',
         'lib/features/suivi_demandes/suivi_demandes_page.dart',
         'lib/features/suivi_demandes/libelles_suivi_demandes.dart',
+        'lib/features/suivi_famille/libelles_suivi_famille.dart',
+        'lib/features/suivi_famille/suivi_famille_page.dart',
+        'lib/features/presentation_tuteur/demandes_presentation_page.dart',
       ].map((String f) => File(f).readAsStringSync()).join();
       for (final String cle in enRepli) {
         expect(code, contains("cle: '$cle'"), reason: cle);
