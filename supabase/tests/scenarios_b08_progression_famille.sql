@@ -336,6 +336,16 @@ BEGIN
   IF v_count <> 1 THEN
     RAISE EXCEPTION 'B-08: RLS ne montre pas exactement la publication courante';
   END IF;
+END
+$publication_auditee$;
+
+-- audit_logs n'est lisible que par admin/contrôleur via RLS. Vérifier la trace
+-- avec le rôle propriétaire du scénario, après les assertions familiales qui
+-- restent exécutées sous authenticated.
+RESET ROLE;
+DO $publication_audit$
+DECLARE v_count integer;
+BEGIN
   SELECT count(*) INTO v_count FROM public.audit_logs a
   WHERE a.action = 'resume_seance_famille_publie'
     AND a.table_name = 'seance_resumes'
@@ -344,6 +354,6 @@ BEGIN
     RAISE EXCEPTION 'B-08: la publication n''a pas produit une entrée d''audit';
   END IF;
 END
-$publication_auditee$;
+$publication_audit$;
 
 ROLLBACK;

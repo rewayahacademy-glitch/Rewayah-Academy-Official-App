@@ -20,6 +20,10 @@ begin
   end loop;
 end
 $scenario_grants$;
+-- Postgres nu n'applique pas les privilèges par défaut de Supabase. La RPC
+-- SECURITY INVOKER lit la signature qu'elle vient d'insérer; reproduire ici
+-- le SELECT de plateforme, sans modifier stub_auth ni les ACL de production.
+grant select on table public.contract_acceptances to authenticated;
 grant all on all sequences in schema public to authenticated, service_role;
 grant all on all functions in schema public to service_role;
 
