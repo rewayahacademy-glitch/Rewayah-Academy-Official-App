@@ -52,7 +52,7 @@ VALUES
   ('f1490000-0000-0000-0000-000000000996', 'F1-CONTROLLER', 'controller', NULL,
    'Controleur', 'Test', 'active', 'male'),
   ('f1490000-0000-0000-0000-000000000997', 'F1-TEACHER', 'teacher', NULL,
-   'Enseignant', 'Test', 'active', 'male'),
+   'Enseignant', 'Test', 'provisional_active', 'male'),
   ('f1490000-0000-0000-0000-000000000998', 'F1-GUARDIAN', 'guardian',
    'f1480000-0000-0000-0000-000000000003', 'Foyer', 'Titulaire', 'active', 'female'),
   ('f1490000-0000-0000-0000-000000000999', 'F1-ADMIN', 'admin', NULL,
@@ -62,6 +62,11 @@ INSERT INTO public.teacher_profiles
   (profile_id, languages, weekly_hours_cap, kyc_status, timezone_iana)
 VALUES
   ('f1490000-0000-0000-0000-000000000997', ARRAY['francais'], 10, 'approved', 'Europe/Paris');
+
+INSERT INTO public.weekly_availability
+  (profile_id, weekday, hour_local, timezone_iana)
+VALUES
+  ('f1490000-0000-0000-0000-000000000997', 2, 18, 'Europe/Paris');
 
 UPDATE public.households
    SET primary_guardian_id = 'f1490000-0000-0000-0000-000000000998'
