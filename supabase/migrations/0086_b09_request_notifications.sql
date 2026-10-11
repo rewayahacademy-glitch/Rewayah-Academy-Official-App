@@ -19,7 +19,8 @@ BEGIN
 
   IF TG_OP = 'INSERT' THEN
     v_evenement := 'demande_recue';
-  ELSIF OLD.etat IS DISTINCT FROM NEW.etat AND NEW.etat = 'refusee' THEN
+  ELSIF OLD.etat IS DISTINCT FROM NEW.etat
+        AND NEW.etat IN ('refusee', 'retiree') THEN
     v_evenement := 'demande_close';
   ELSE
     RETURN NEW;

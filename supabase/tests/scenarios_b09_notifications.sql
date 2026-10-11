@@ -46,6 +46,21 @@ update public.demandes_horaires_famille
    set etat = 'refusee'
  where id = 'b09fffff-0000-0000-0000-000000000004';
 
+-- Une nouvelle demande du meme eleve peut etre envoyee apres la cloture
+-- precedente; son retrait familial doit lui aussi notifier le tuteur.
+insert into public.demandes_horaires_famille
+  (id, eleve_id, type_public, langue_code, fuseau_iana, jours,
+   heures_locales, source)
+values
+  ('b09fffff-0000-0000-0000-000000000006',
+   'b0900000-0000-0000-0000-000000000003',
+   'enfant', 'francais', 'Europe/Paris', ARRAY[3]::smallint[],
+   ARRAY[19]::smallint[], 'personnalisee');
+
+update public.demandes_horaires_famille
+   set etat = 'retiree', motif = 'retrait_famille'
+ where id = 'b09fffff-0000-0000-0000-000000000006';
+
 insert into public.notifications
   (id, destinataire, foyer_id, evenement, params, destination)
 values
@@ -122,6 +137,16 @@ begin
   ) then
     raise exception 'B-09: refusal notification missing or not recipient-scoped';
   end if;
+  if not exists (
+    select 1 from public.notifications
+     where destinataire = auth.uid()
+       and foyer_id = 'b09fffff-0000-0000-0000-000000000001'
+       and evenement = 'demande_close'
+       and params = '{"etat":"retiree"}'::jsonb
+       and destination = '/tuteur/demandes'
+  ) then
+    raise exception 'B-09: family withdrawal notification missing or not recipient-scoped';
+  end if;
 
   update public.notifications set lu_le = '2000-01-01T00:00:00Z'
    where id = 'b09fffff-0000-0000-0000-000000000003';
@@ -181,7 +206,7 @@ begin
   if v_read_at >= '2099-01-01T00:00:00Z'::timestamptz then
     raise exception 'B-09: client controlled the server read timestamp';
   end if;
-  if v_request_notifications <> 1 OR v_close_notifications <> 1 then
+  if v_request_notifications <> 2 OR v_close_notifications <> 2 then
     raise exception 'B-09: adult requests must not create guardian notifications';
   end if;
 end
