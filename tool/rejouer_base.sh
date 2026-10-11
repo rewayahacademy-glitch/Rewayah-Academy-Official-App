@@ -85,6 +85,7 @@ done
 
 failed=0
 red=0
+missing=0
 printf 'SCÉNARIO | STATUT\n'
 for scenario in "${scenarios[@]}"; do
   name="${scenario##*/}"
@@ -98,5 +99,26 @@ for scenario in "${scenarios[@]}"; do
     red=$((red + 1))
   fi
 done
-printf 'RÉSULTAT | %s scénario(s), %s rouge(s)\n' "${#scenarios[@]}" "$red"
+# X2-14 found these files on fe253766 but absent from the ccr base used by
+# this branch. Keep the gap visible until the canonical scenarios are merged.
+expected=(
+  scenarios_age_presentation.sql scenarios_agent_identity.sql
+  scenarios_b03_invitations_foyer.sql scenarios_b07_profil_titulaire.sql
+  scenarios_b08_progression_famille.sql scenarios_b09_notifications.sql
+  scenarios_b10_support.sql scenarios_b11_feedback_questions.sql
+  scenarios_b11_student_concern.sql scenarios_b13_admin_suspended.sql
+  scenarios_b14_shared_state.sql scenarios_b15_assignations_annotations.sql
+  scenarios_c04_teacher_title.sql scenarios_c11bis_f74_partition.sql
+  scenarios_c20_demande_timeline.sql scenarios_offres_notifications.sql
+  scenarios_offres_personnalisees.sql
+)
+for name in "${expected[@]}"; do
+  if [[ ! -f "$TESTS/$name" ]]; then
+    printf '%s | MISSING\n' "$name"
+    failed=1
+    red=$((red + 1))
+    missing=$((missing + 1))
+  fi
+done
+printf 'RÉSULTAT | %s exécuté(s), %s attendu(s) absent(s), %s rouge(s)\n' "${#scenarios[@]}" "$missing" "$red"
 exit "$failed"
