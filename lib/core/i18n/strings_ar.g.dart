@@ -542,6 +542,7 @@ class _Traductions$tc$ar extends Traductions$tc$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get indisponible => 'هذه الميزة غير متاحة بعد. لم يضِع شيء، والحصة مستمرة، وستتوفر قريبًا.';
 	@override late final _Traductions$tc$groupe$ar groupe = _Traductions$tc$groupe$ar._(_root);
 	@override late final _Traductions$tc$bibliotheque$ar bibliotheque = _Traductions$tc$bibliotheque$ar._(_root);
 	@override late final _Traductions$tc$coran$ar coran = _Traductions$tc$coran$ar._(_root);
@@ -13993,6 +13994,7 @@ extension on TraductionsAr {
 			'nav.logoAccueil' => 'Rewayah Academy، الصفحة الرئيسية',
 			'nav.replier' => 'طي شريط التنقل',
 			'nav.deplier' => 'فتح شريط التنقل',
+			'tc.indisponible' => 'هذه الميزة غير متاحة بعد. لم يضِع شيء، والحصة مستمرة، وستتوفر قريبًا.',
 			'tc.groupe.mesGroupes.titre' => 'فصولي',
 			'tc.groupe.mesGroupes.aucun' => 'لا فصل حتى الآن',
 			'tc.groupe.mesGroupes.aucunDetail' => 'ستضعك الأكاديمية في فصل حين يتوفر موعد يناسبك.',
@@ -14249,9 +14251,9 @@ extension on TraductionsAr {
 			'tc.classe.barre.titre' => 'حصة مباشرة',
 			'tc.classe.barre.revenir' => ({required Object deGroupe}) => 'العودة إلى درس ⁨${deGroupe}⁩',
 			'tc.classe.prevol.titre' => 'قبل فتح الدرس',
-			'tc.classe.prevol.microOk' => 'تم العثور على ميكروفون',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.prevol.microOk' => 'تم العثور على ميكروفون',
 			'tc.classe.prevol.microAbsent' => 'لا ميكروفون صالح',
 			'tc.classe.prevol.cameraOk' => 'تم العثور على كاميرا',
 			'tc.classe.prevol.cameraAbsente' => 'لا كاميرا. يبقى الدرس ممكنًا.',
@@ -14763,9 +14765,9 @@ extension on TraductionsAr {
 			'com.vocal.demo.auteurParent' => 'أحمد، ولي أمر آدم',
 			'com.vocal.demo.messageRecu' => 'السلام عليكم، هذه ملاحظاتي على تلاوة هذا الأسبوع.',
 			'com.vocal.demo.horodatage' => 'اليوم، 10:28',
-			'com.vocal.titre' => 'رسالة صوتية',
 			_ => null,
 		} ?? switch (path) {
+			'com.vocal.titre' => 'رسالة صوتية',
 			'com.communaute.garde.aide' => 'لا إعلانات. لا روابط تسويق بالعمولة. لا بيع.',
 			'com.communaute.garde.avertissement' => 'يبدو أن هذا المنشور يتضمّن ترويجًا تجاريًا. أزِل الرابط أو الرمز أو العرض قبل النشر.',
 			'com.communaute.garde.bloqueAffilie' => 'روابط التسويق بالعمولة غير مسموح بها في مجتمع المعلّمين.',
@@ -15277,9 +15279,9 @@ extension on TraductionsAr {
 			'com.annonces.videPublier' => 'لا توجد إعلانات لهذا الفصل. انشر أول إعلان للفصل كله.',
 			'com.annonces.auteurDate' => ({required Object auteur, required Object date, required Object heure}) => '${auteur}‏، يوم ${date} الساعة ${heure}',
 			'com.annonces.date' => ({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}',
-			'com.annonces.lire' => 'قراءة الإعلان كاملًا',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.lire' => 'قراءة الإعلان كاملًا',
 			'com.annonces.ouvrirClasse' => 'فتح الفصل',
 			'com.annonces.ouvrirClasseSemantique' => ({required Object classe}) => 'فتح ${classe}',
 			'com.annonces.marquerLue' => 'تحديد كمقروء',
@@ -15791,9 +15793,9 @@ extension on TraductionsAr {
 			'admin.journal.evtCodeCree' => 'أُنشئ رمز ربط',
 			'admin.journal.evtAppareilAppaire' => 'رُبط جهاز',
 			'admin.journal.evtAppareilRevoque' => 'أُلغي جهاز',
-			'admin.journal.evtPedagogie' => 'عُدِّلت الإعدادات التعليمية',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.evtPedagogie' => 'عُدِّلت الإعدادات التعليمية',
 			'admin.journal.evtAffectationPrise' => 'قبل معلم طالبًا',
 			'admin.journal.evtAffectationAttribuee' => 'أسندت الإدارة طالبًا',
 			'admin.journal.evtDemandeCreee' => 'قُدِّم طلب',
@@ -16305,9 +16307,9 @@ extension on TraductionsAr {
 			'comptable.alertes.infosManquantes' => 'معلومات الدفع ناقصة',
 			'comptable.alertes.payoutEchoue' => 'فشل صرف دفعة',
 			'comptable.alertes.paiementFamilleEchoue' => 'فشل دفع أسرة',
-			'comptable.alertes.transactionNonRapprochee' => 'معاملة غير مطابَقة',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.alertes.transactionNonRapprochee' => 'معاملة غير مطابَقة',
 			'comptable.alertes.remboursementEnAttente' => 'استرداد قيد الانتظار',
 			'comptable.alertes.reserveSousObjectif' => 'الاحتياطي الاستراتيجي دون الهدف',
 			'comptable.alertes.soldePrestataireInsuffisant' => 'رصيد مزوّد الدفع غير كافٍ',
@@ -16819,9 +16821,9 @@ extension on TraductionsAr {
 			'comptable.contractuels.ligneSource' => ({required Object source}) => 'المصدر: ${source}',
 			'comptable.contractuels.ligneAuteur' => ({required Object auteur}) => 'أضافه ${auteur}',
 			'comptable.contractuels.ligneValidation' => ({required Object validation}) => 'المصادقة: ${validation}',
-			'comptable.contractuels.payerAide' => 'يُفتح الدفع في تفاصيل الدفعة، بالمبلغ الدقيق.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.contractuels.payerAide' => 'يُفتح الدفع في تفاصيل الدفعة، بالمبلغ الدقيق.',
 			'comptable.contractuels.approuverAide' => 'بعد الاعتماد، يُثبَّت المبلغ ويصبح الالتزام قابلًا للدفع.',
 			'comptable.contractuels.renvoyerInvitation' => 'إعادة إرسال الدعوة',
 			'comptable.contractuels.invitationAide' => 'هذا المستفيد الخارجي يُدخل وسيلة الدفع بنفسه، من دعوته الآمنة.',
@@ -17333,9 +17335,9 @@ extension on TraductionsAr {
 			'appareils.eleve.retirerLibelle' => ({required Object appareil}) => 'إزالة ⁨${appareil}⁩',
 			'appareils.eleve.horsLigne' => 'إزالة جهاز أو ربطه يتطلب اتصالًا بالإنترنت.',
 			'appareils.eleve.partageTitre' => 'اختيار الملف والرمز الشخصي',
-			'appareils.eleve.partage' => 'على جهاز مشترك، يختار كل طالب ملفه ثم يدخل رمزه الشخصي، المحفوظ على هذا الجهاز.',
 			_ => null,
 		} ?? switch (path) {
+			'appareils.eleve.partage' => 'على جهاز مشترك، يختار كل طالب ملفه ثم يدخل رمزه الشخصي، المحفوظ على هذا الجهاز.',
 			'appareils.eleve.retraitTitre' => 'إزالة جهاز',
 			'appareils.eleve.retrait' => 'الجهاز المُزال لا يستطيع إعادة الاتصال. إن كان متصلًا الآن، يبقى كذلك حتى انقطاعه التالي.',
 			'appareils.plateforme.android' => 'هاتف أو جهاز لوحي Android',
@@ -17847,9 +17849,9 @@ extension on TraductionsAr {
 			'adulte.reprise.notifications.validee' => 'اعتُمد طلبك لاستلام الأسرة.',
 			'adulte.reprise.notifications.refusee' => 'رُفض طلبك لاستلام الأسرة.',
 			'adulte.demo.titre' => 'عرض تجريبي للطالب البالغ',
-			'adulte.demo.mention' => 'البيانات وهمية ولا يُرسل شيء.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.mention' => 'البيانات وهمية ولا يُرسل شيء.',
 			'adulte.demo.intro' => 'اختر شاشة، ثم حالة من حالات أسرة ديالو.',
 			'adulte.demo.ecrans' => 'الشاشات',
 			'adulte.demo.situations' => 'حالات الأسرة',
@@ -18361,9 +18363,9 @@ extension on TraductionsAr {
 			'suiviDemandes.jalon.apres' => ({required Object date, required Object heure, required Object duree}) => '⁨${date}⁩ في ⁨${heure}⁩، ⁨${duree}⁩',
 			'suiviDemandes.jalon.aussitot' => 'فورًا',
 			'suiviDemandes.jalon.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من دقيقة', one: 'بعد دقيقة', two: 'بعد دقيقتين', few: 'بعد ⁨${n}⁩ دقائق', many: 'بعد ⁨${n}⁩ دقيقة', other: 'بعد ⁨${n}⁩ دقيقة', ), 
-			'suiviDemandes.jalon.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من ساعة', one: 'بعد ساعة', two: 'بعد ساعتين', few: 'بعد ⁨${n}⁩ ساعات', many: 'بعد ⁨${n}⁩ ساعة', other: 'بعد ⁨${n}⁩ ساعة', ), 
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.jalon.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من ساعة', one: 'بعد ساعة', two: 'بعد ساعتين', few: 'بعد ⁨${n}⁩ ساعات', many: 'بعد ⁨${n}⁩ ساعة', other: 'بعد ⁨${n}⁩ ساعة', ), 
 			'suiviDemandes.jalon.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'في اليوم نفسه', one: 'بعد يوم', two: 'بعد يومين', few: 'بعد ⁨${n}⁩ أيام', many: 'بعد ⁨${n}⁩ يومًا', other: 'بعد ⁨${n}⁩ يوم', ), 
 			'suiviDemandes.changement.titrePage' => 'تغيّر الفصل',
 			'suiviDemandes.changement.titre' => ({required Object dePrenom}) => 'تغيّر فصل ⁨${dePrenom}⁩',

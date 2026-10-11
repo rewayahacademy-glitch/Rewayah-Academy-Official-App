@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_outils/fonction_indisponible.dart';
 import '../../core/tc_parcours/libelles_parcours.dart';
 import '../../core/tc_parcours/port_signalement.dart';
 import '../../core/tc_parcours/student_concern.dart';
@@ -176,17 +177,26 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
         ),
         Ecart.vXl,
 
-        ActionPrincipale(
-          libelle: t.tc.parcours.signalement.envoyer,
-          enCours: _envoi,
-          onPress: () {
-            if (_interne.text.trim().isEmpty) {
-              setState(() => _interneManquante = true);
-            } else {
-              unawaited(_envoyer());
-            }
-          },
-        ),
+        // Un bouton qui ne peut pas aboutir n'est pas rendu : une phrase dit
+        // la limite (SALLE-ROBUSTE, serveur des signalements non branche).
+        if (ref.watch(portSignalementProvider) is PortIndisponible)
+          Text(
+            t.tc.indisponible,
+            textAlign: TextAlign.center,
+            style: textes.bodyMedium,
+          )
+        else
+          ActionPrincipale(
+            libelle: t.tc.parcours.signalement.envoyer,
+            enCours: _envoi,
+            onPress: () {
+              if (_interne.text.trim().isEmpty) {
+                setState(() => _interneManquante = true);
+              } else {
+                unawaited(_envoyer());
+              }
+            },
+          ),
         if (_erreur case final String message) ...<Widget>[
           Ecart.vMd,
           Text(
@@ -244,6 +254,15 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
           );
       if (mounted) {
         Navigator.of(context).pop(signalement);
+      }
+    } on FonctionIndisponible {
+      // Le serveur des signalements n'est pas branche : rien n'est parti, et
+      // recommencer ne servirait a rien (SALLE-ROBUSTE).
+      if (mounted) {
+        setState(() {
+          _envoi = false;
+          _erreur = t.tc.indisponible;
+        });
       }
     } on Object {
       // Volontairement un `Object` : le port peut lever son propre

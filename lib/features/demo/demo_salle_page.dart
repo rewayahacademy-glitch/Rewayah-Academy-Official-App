@@ -472,14 +472,17 @@ class _SalleDemoState extends State<SalleDemo> {
 
   AnnotationsMemoire? _depotDemonstration() {
     try {
-      ProviderScope.containerOf(
+      final PortAnnotations hote = ProviderScope.containerOf(
         context,
         listen: false,
       ).read(portAnnotationsProvider);
-      return null;
+      // Le defaut de production (`AnnotationsIndisponibles`) n'est pas un
+      // depot fourni par l'hote : la demonstration prend alors le sien.
+      if (hote is! AnnotationsIndisponibles) return null;
     } on Object {
-      return AnnotationsMemoire(DonneesSeanceDemo.groupeDemo);
+      // Aucun depot fourni.
     }
+    return AnnotationsMemoire(DonneesSeanceDemo.groupeDemo);
   }
 
   @override

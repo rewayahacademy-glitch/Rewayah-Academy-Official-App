@@ -18,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_outils/etat_outils.dart';
+import '../../core/tc_outils/fonction_indisponible.dart' show PortIndisponible;
 import '../../core/tc_outils/port_annotations.dart';
 import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
 import '../../core/theme/app_palette.dart';
@@ -76,12 +77,12 @@ OutilDock outilDock(OutilEnseignement outil) => switch (outil) {
   OutilEnseignement.masquer => OutilDock.masquer,
 };
 
-/// La salle a-t-elle un depot d'annotations ? (Le provider leve sans
-/// surcharge : aucune implementation serveur, TB-BR.)
+/// La salle a-t-elle un depot d'annotations ? Ni quand le provider leve, ni
+/// quand il rend le depot indisponible du defaut de production (SALLE-ROBUSTE) :
+/// aucun serveur, rien ne serait conserve (TB-BR).
 bool _depotDisponible(WidgetRef ref) {
   try {
-    ref.read(portAnnotationsProvider);
-    return true;
+    return ref.read(portAnnotationsProvider) is! PortIndisponible;
   } on Object {
     return false;
   }

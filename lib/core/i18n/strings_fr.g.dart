@@ -2516,6 +2516,9 @@ class Traductions$tc$fr {
 	late final Traductions$tc$realtime$fr realtime = Traductions$tc$realtime$fr.internal(_root);
 	late final Traductions$tc$observation$fr observation = Traductions$tc$observation$fr.internal(_root);
 	late final Traductions$tc$parcours$fr parcours = Traductions$tc$parcours$fr.internal(_root);
+
+	/// fr: 'Cette fonction n'est pas encore disponible. Rien n'est perdu, le cours continue et elle arrivera bientôt.'
+	String get indisponible => 'Cette fonction n\'est pas encore disponible. Rien n\'est perdu, le cours continue et elle arrivera bientôt.';
 }
 
 // Path: adulte
@@ -34096,6 +34099,7 @@ extension on Traductions {
 			'tc.parcours.postCours.valider' => 'Valider',
 			'tc.parcours.postCours.enFile' => 'Enregistré. Il partira dès le retour du réseau.',
 			'tc.parcours.postCours.envoye' => 'Cours clôturé.',
+			'tc.indisponible' => 'Cette fonction n\'est pas encore disponible. Rien n\'est perdu, le cours continue et elle arrivera bientôt.',
 			'adulte.nav.accueil' => 'Accueil',
 			'adulte.nav.maClasse' => 'Ma classe',
 			'adulte.nav.coran' => 'Coran',
@@ -34175,9 +34179,9 @@ extension on Traductions {
 			'adulte.recharge.payerSeul' => 'Payer',
 			'adulte.recharge.ajouter' => ({required Object prenom}) => 'Ajouter ${prenom} à la recharge',
 			'adulte.recharge.regularisationDe' => ({required Object prenom, required Object message}) => '${prenom} : ${message}',
-			'adulte.recharge.commandeRendue' => 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.recharge.commandeRendue' => 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.',
 			'adulte.recharge.suivrePaiement' => 'Suivre le paiement',
 			'adulte.recharge.resultat.preparationTitre' => 'Paiement en préparation',
 			'adulte.recharge.resultat.preparationPhrase' => 'Vérifiez la répartition avant de payer.',
@@ -34689,9 +34693,9 @@ extension on Traductions {
 			'suiviDemandes.accueil.titre' => 'Vos demandes de créneau',
 			'suiviDemandes.accueil.ligne' => ({required Object prenom, required Object etat}) => '${prenom} : ${etat}',
 			'suiviDemandes.accueil.voir' => 'Voir le suivi des demandes',
-			'suiviDemandes.notification.envoyee' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre demande est arrivée à l\'administration',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.notification.envoyee' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre demande est arrivée à l\'administration',
 			'suiviDemandes.notification.classeValidee' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe est prête, elle attend son enseignant',
 			'suiviDemandes.notification.enseignantAffecte' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : classe validée · enseignant affecté',
 			'suiviDemandes.notification.close' => ({required Object dePrenom, required Object motif}) => 'Demande de créneau ${dePrenom} : ${motif}',
@@ -35203,9 +35207,9 @@ extension on Traductions {
 			'com.communaute.demo.f.nour' => 'Nour El Idrissi',
 			'com.communaute.demo.f.fonctionNour' => 'Enseignante, Classe Al-Fajr',
 			'com.communaute.demo.f.yasmine' => 'Yasmine Haddad',
-			'com.communaute.demo.f.fonctionYasmine' => 'Enseignante, Classe Al-Badr',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.demo.f.fonctionYasmine' => 'Enseignante, Classe Al-Badr',
 			'com.communaute.demo.f.youssef' => 'Youssef Amrani',
 			'com.communaute.demo.f.fonctionYoussef' => 'Enseignant, Classe Al-Kawthar',
 			'com.communaute.demo.f.mariam' => 'Mariam Benali',
@@ -35717,9 +35721,9 @@ extension on Traductions {
 			'comptable.statuts.encaissement.rembourse' => 'Remboursé',
 			'comptable.statuts.encaissement.partiellementRembourse' => 'Partiellement remboursé',
 			'comptable.statuts.encaissement.conteste' => 'Contesté',
-			'comptable.statuts.encaissement.chargeback' => 'Chargeback',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.encaissement.chargeback' => 'Chargeback',
 			'comptable.statuts.encaissement.aRapprocher' => 'À rapprocher',
 			'comptable.statuts.encaissement.rapproche' => 'Rapproché',
 			'comptable.statuts.rapprochement.automatique' => 'Automatique',
@@ -36231,9 +36235,9 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.ajoutee' => 'Méthode ajoutée : elle est en cours de vérification.',
 			'comptable.beneficiaires.recevoir.remplacee' => 'Nouvelle méthode enregistrée : elle est en cours de vérification.',
 			'comptable.beneficiaires.recevoir.supprimee' => 'Méthode supprimée.',
-			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Méthode préférée mise à jour.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Méthode préférée mise à jour.',
 			'comptable.beneficiaires.recevoir.erreurAction' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.',
 			'comptable.beneficiaires.recevoir.journalTitre' => 'Historique de mes changements',
