@@ -113,6 +113,12 @@ export function cleDe(domaine: DomaineStockage, parent: string, enfant: string):
   return domaine === 'archiveSeance' ? `${debut}${EXTENSION_ARCHIVE}` : debut
 }
 
+/// Construit une cle de depot CAP29 sans laisser l'appelant choisir la famille.
+export function cleDepotBibliotheque(finalite: 'support' | 'preuve', versionId: string): string {
+  const famille: FamillePrivee = finalite === 'support' ? 'libraryupload' : 'libraryproof'
+  return cleDe('priveApplicatif', famille, versionId)
+}
+
 /// Le conteneur des archives audio. `audio_only` en OGG/Opus, conformement a
 /// l'ADR-002. Centralise ici parce que le chemin d'Egress et le chemin de
 /// lecture doivent s'accorder au caractere pres.

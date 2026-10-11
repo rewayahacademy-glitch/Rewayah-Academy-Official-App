@@ -3,7 +3,13 @@
 // est confronte a la convention avant d'entrer en base.
 
 import { assert, assertEquals, assertThrows } from 'jsr:@std/assert@1'
-import { cleDe, ErreurCleObjet, EXTENSION_ARCHIVE, verifierCle } from './cles.ts'
+import {
+  cleDe,
+  cleDepotBibliotheque,
+  ErreurCleObjet,
+  EXTENSION_ARCHIVE,
+  verifierCle,
+} from './cles.ts'
 
 const PROFIL = '3f2504e0-4f89-41d3-9a0c-0305e82c3301'
 const DOCUMENT = '7b1e4a2c-9d63-4f1a-8e55-2c0b6f9a7d10'
@@ -83,6 +89,11 @@ Deno.test('7g -- les deux familles de la bibliotheque sont distinctes et opaques
     () => verifierCle('priveApplicatif', `private/unknown/${ARCHIVE}`),
     ErreurCleObjet,
   )
+})
+
+Deno.test('7h -- la finalite choisit la famille sans recevoir de cle du client', () => {
+  assertEquals(cleDepotBibliotheque('support', ARCHIVE), `private/libraryupload/${ARCHIVE}`)
+  assertEquals(cleDepotBibliotheque('preuve', ARCHIVE), `private/libraryproof/${ARCHIVE}`)
 })
 
 Deno.test('7f -- la casse est normalisee, pour ne pas creer deux objets', () => {
