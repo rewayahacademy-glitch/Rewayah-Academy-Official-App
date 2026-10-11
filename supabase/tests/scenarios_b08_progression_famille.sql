@@ -20,7 +20,7 @@ INSERT INTO public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 VALUES
   ('b0800000-0000-0000-0000-000000000001', 'B08-TEACHER', 'teacher',
-   NULL, 'Enseignant', 'A', 'active'::public.account_status, 'male'),
+   NULL, 'Enseignant', 'A', 'provisional_active'::public.account_status, 'male'),
   ('b0800000-0000-0000-0000-000000000002', 'B08-GUARDIAN', 'guardian',
    'b0800000-0000-0000-0000-000000000101', 'Parent', 'A', 'active'::public.account_status, 'female'),
   ('b0800000-0000-0000-0000-000000000003', 'B08-STUDENT', 'student',
@@ -30,7 +30,7 @@ VALUES
   ('b0800000-0000-0000-0000-000000000005', 'B08-OTHER-STUDENT', 'student',
    'b0800000-0000-0000-0000-000000000102', 'Élève', 'B', 'active'::public.account_status, 'male'),
   ('b0800000-0000-0000-0000-000000000006', 'B08-OTHER-TEACHER', 'teacher',
-   NULL, 'Enseignant', 'B', 'active'::public.account_status, 'female');
+   NULL, 'Enseignant', 'B', 'provisional_active'::public.account_status, 'female');
 
 UPDATE public.households SET primary_guardian_id = 'b0800000-0000-0000-0000-000000000002'
 WHERE id = 'b0800000-0000-0000-0000-000000000101';

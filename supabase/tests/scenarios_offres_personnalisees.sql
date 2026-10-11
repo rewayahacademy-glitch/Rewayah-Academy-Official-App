@@ -52,7 +52,7 @@ VALUES
   ('f1490000-0000-0000-0000-000000000996', 'F1-CONTROLLER', 'controller', NULL,
    'Controleur', 'Test', 'active', 'male'),
   ('f1490000-0000-0000-0000-000000000997', 'F1-TEACHER', 'teacher', NULL,
-   'Enseignant', 'Test', 'active', 'male'),
+   'Enseignant', 'Test', 'provisional_active', 'male'),
   ('f1490000-0000-0000-0000-000000000998', 'F1-GUARDIAN', 'guardian',
    'f1480000-0000-0000-0000-000000000003', 'Foyer', 'Titulaire', 'active', 'female'),
   ('f1490000-0000-0000-0000-000000000999', 'F1-ADMIN', 'admin', NULL,

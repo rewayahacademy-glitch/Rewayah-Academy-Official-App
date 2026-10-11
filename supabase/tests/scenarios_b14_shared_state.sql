@@ -14,9 +14,9 @@ insert into public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status)
 values
   ('b1400000-0000-0000-0000-000000000001', 'B14TEACHERA001', 'teacher',
-   'b14fffff-0000-0000-0000-000000000001', 'Teacher', 'A', 'active'),
+   'b14fffff-0000-0000-0000-000000000001', 'Teacher', 'A', 'provisional_active'),
   ('b1400000-0000-0000-0000-000000000002', 'B14TEACHERB001', 'teacher',
-   'b14fffff-0000-0000-0000-000000000001', 'Teacher', 'B', 'active'),
+   'b14fffff-0000-0000-0000-000000000001', 'Teacher', 'B', 'provisional_active'),
   ('b1400000-0000-0000-0000-000000000003', 'B14ADMIN000001', 'admin',
    'b14fffff-0000-0000-0000-000000000001', 'Fixture', 'Admin', 'active');
 
