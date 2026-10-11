@@ -139,6 +139,7 @@ class _Traductions$historique$ar extends Traductions$historique$fr {
 	];
 	@override String dateCourte({required Object jour, required Object mois, required Object annee}) => '⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩';
 	@override String dateCourteSansAnnee({required Object jour, required Object mois}) => '⁨${jour}⁩ ⁨${mois}⁩';
+	@override late final _Traductions$historique$compteRendu$ar compteRendu = _Traductions$historique$compteRendu$ar._(_root);
 	@override String dateLongue({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '⁨${jourSemaine}⁩ ⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩';
 	@override String get titre => 'السجل';
 	@override String get detailSeance => 'تفاصيل الحصة';
@@ -328,7 +329,7 @@ class _Traductions$salle$ar extends Traductions$salle$fr {
 	@override String get cameraCoupee => 'الكاميرا مطفأة';
 	@override late final _Traductions$salle$secours$ar secours = _Traductions$salle$secours$ar._(_root);
 	@override late final _Traductions$salle$preparation$ar preparation = _Traductions$salle$preparation$ar._(_root);
-	@override String get bandeauPermanent => 'يُسجَّل الدرس، وقد تجري زيارة مراقبة.';
+	@override String get bandeauPermanent => 'قد تجري زيارة مراقبة.';
 	@override late final _Traductions$salle$seance$ar seance = _Traductions$salle$seance$ar._(_root);
 	@override late final _Traductions$salle$fin$ar fin = _Traductions$salle$fin$ar._(_root);
 	@override String get micro => 'الميكروفون';
@@ -1546,6 +1547,30 @@ class _Traductions$notifications$types$ar extends Traductions$notifications$type
 	@override String get annonceInterne => 'إعلان داخلي';
 	@override String get evenementContextuel => 'حدث';
 	@override String get autre => 'إشعار';
+}
+
+// Path: historique.compteRendu
+class _Traductions$historique$compteRendu$ar extends Traductions$historique$compteRendu$fr {
+	_Traductions$historique$compteRendu$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'التقرير التربوي';
+	@override String get travaille => 'ما تم العمل عليه';
+	@override String get appreciation => 'تقدير الحصة';
+	@override String get aRenforcer => 'ما يحتاج إلى تقوية';
+	@override String get aPreparer => 'ما يجب تحضيره للحصة القادمة';
+	@override String get commentaire => 'تعليق مشترك';
+	@override String corrigeLe({required Object date}) => 'صُحِّح في ⁨${date}⁩';
+	@override String get nonDisponibleTitre => 'التقرير التربوي غير متاح';
+	@override String get nonPartagePhrase => 'ملاحظات هذه الحصة غير مشاركة مع أسرتكم في الوقت الحالي.';
+	@override String get enAttentePhrase => 'التقرير غير متاح بعد.';
+	@override String get illisiblePhrase => 'تعذّر عرض التقرير.';
+	@override String get horsLignePhrase => 'يلزم الاتصال بالإنترنت للاطلاع على التقرير.';
+	@override String get aucunChampPhrase => 'لا يوجد تقرير تربوي متاح لهذه الحصة.';
+	@override String get voirTravail => 'عرض ما يجب تحضيره';
+	@override String get voirProgression => 'عرض التقدم';
 }
 
 // Path: historique.segments
@@ -3887,6 +3912,7 @@ class _Traductions$admin$groupes$ar extends Traductions$admin$groupes$fr {
 	@override String observationTitre({required Object libelle}) => 'المتابعة: ⁨${libelle}⁩';
 	@override String get observationErreur => 'تعذّر حفظ الإعداد.';
 	@override String get observationCapaciteAbsente => 'هذا التثبيت لا يملك بعد تحديث الخادم الذي يتطلبه هذا الإعداد (الترحيل 0036). إعادة المحاولة لن تغيّر شيئًا: يجب تطبيقه أولًا على قاعدة البيانات.';
+	@override late final _Traductions$admin$groupes$partage$ar partage = _Traductions$admin$groupes$partage$ar._(_root);
 	@override late final _Traductions$admin$groupes$liste$ar liste = _Traductions$admin$groupes$liste$ar._(_root);
 }
 
@@ -10356,6 +10382,101 @@ class _Traductions$com$annonces$demo$ar extends Traductions$com$annonces$demo$fr
 	@override late final _Traductions$com$annonces$demo$f$ar f = _Traductions$com$annonces$demo$f$ar._(_root);
 }
 
+// Path: admin.groupes.partage
+class _Traductions$admin$groupes$partage$ar extends Traductions$admin$groupes$partage$fr {
+	_Traductions$admin$groupes$partage$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'مشاركة التقارير التربوية';
+	@override String get interrupteur => 'المشاركة التلقائية مع الأسر';
+	@override String get aide => 'ترى الأسر الملاحظات القابلة للمشاركة بعد اعتماد الدفتر. تبقى الملاحظات الداخلية خاصة.';
+	@override String get priorite => 'استثناء الطالب ← الفصل ← الإعداد الافتراضي';
+	@override String get gererExceptions => 'إدارة الاستثناءات الفردية';
+	@override String get indisponible => 'إعداد المشاركة غير متاح بعد.';
+	@override String get refuse => 'ليس لديك صلاحية تعديل هذا الإعداد.';
+	@override String get illisible => 'تعذّرت قراءة إعداد المشاركة حاليًا.';
+	@override String get horsLigne => 'يلزم الاتصال بالإنترنت لقراءة المشاركة أو تعديلها.';
+	@override String get enregistrement => 'جارٍ الحفظ';
+	@override String get confirme => 'تم تسجيل إعداد المشاركة.';
+	@override String get conflit => 'عدّل شخص آخر من الإدارة هذا الإعداد للتو. تُعرض القيمة المحدّثة: راجعها ثم أعد المحاولة عند الحاجة.';
+	@override String get echec => 'لم يُحفظ التعديل، وبقيت القيمة السابقة. أعد المحاولة بعد قليل.';
+	@override String get classeVide => 'لا يوجد أي طالب في هذا الفصل بعد.';
+	@override String modifiePar({required Object date, required Object auteur}) => 'آخر تعديل: ⁨${date}⁩، بواسطة ⁨${auteur}⁩';
+	@override String modifieLe({required Object date}) => 'آخر تعديل: ⁨${date}⁩';
+	@override String get etatActif => 'مفعّل للفصل';
+	@override String get etatInactif => 'معطّل للفصل';
+	@override String get confirmerActiver => 'تفعيل المشاركة التلقائية لهذا الفصل؟';
+	@override String get consequenceActiver => 'تعود التقارير التي شُورِكت سابقًا قابلة للقراءة لدى الأسر. أما التقارير المحجوزة أثناء التعطيل فلا تُنشر دفعة واحدة.';
+	@override String get confirmerDesactiver => 'تعطيل المشاركة التلقائية لهذا الفصل؟';
+	@override String get consequenceDesactiver => 'لن ترى الأسر فورًا التقارير المشاركة تلقائيًا. لا تتغير الدفاتر ولا الحصص المعتمدة ولا الأجور.';
+	@override String get actionActiver => 'تفعيل المشاركة';
+	@override String get actionDesactiver => 'تعطيل المشاركة';
+	@override String get enregistrer => 'حفظ';
+	@override String get exceptionsTitre => 'الاستثناءات الفردية';
+	@override String get exceptionsAide => 'الاستثناء يخص الطالب المختار فقط، ولا ينقل أبدًا بيانات أي طالب آخر.';
+	@override String get rechercheEleve => 'البحث عن طالب';
+	@override String get colonneEleve => 'الطالب';
+	@override String get colonneRegle => 'القاعدة المطبقة';
+	@override String get colonneVisibilite => 'مرئي للأسرة';
+	@override String get colonneModification => 'آخر تعديل';
+	@override String get sourceClasse => 'قاعدة الفصل';
+	@override String get sourceException => 'استثناء فردي';
+	@override String get sourceDefaut => 'الإعداد الافتراضي';
+	@override String get visible => 'مرئي';
+	@override String get nonVisible => 'غير مرئي';
+	@override String get eleveRetire => 'أُزيل من الفصل';
+	@override String get plusEleves => 'عرض مزيد من الطلاب';
+	@override String modifierEleve({required Object dePrenom}) => 'تعديل قاعدة ⁨${dePrenom}⁩';
+	@override String get regleClasse => 'استخدام قاعدة الفصل';
+	@override String get regleClasseAide => 'اخترها عندما لا يحتاج الطالب إلى معاملة خاصة: تتبع أسرته إعداد الفصل.';
+	@override String get regleToujours => 'المشاركة التلقائية دائمًا';
+	@override String get regleToujoursAide => 'اخترها عندما يجب أن ترى أسرته التقارير دائمًا، حتى لو كان الفصل لا يشارك.';
+	@override String get regleJamais => 'عدم المشاركة تلقائيًا';
+	@override String get regleJamaisAide => 'اخترها عندما لا يجب أن ترى أسرته التقارير تلقائيًا: تُخفى فورًا ويبقى الدفتر محفوظًا.';
+	@override String confirmerEleve({required Object prenom}) => 'تعديل المشاركة لـ⁨${prenom}⁩؟';
+	@override String get consequenceEleve => 'هذه القاعدة تخص هذا الطالب فقط، ولا تغيّر الفصل ولا بقية الطلاب.';
+	@override String get consequenceEleveJamais => 'تُخفى فورًا عن أسرته التقارير المرئية بموجب المشاركة التلقائية. يبقى الدفتر وإثبات الحصة محفوظين.';
+	@override String get comptesRendus => 'عرض التقارير';
+	@override String comptesRendusTitre({required Object dePrenom}) => 'تقارير ⁨${dePrenom}⁩';
+	@override String get aucunCompteRendu => 'لا يوجد تقرير لهذا الطالب بعد.';
+	@override String get apercuTitre => 'معاينة التقرير الذي تراه الأسرة';
+	@override String get apercuAide => 'ما ستقرؤه الأسرة، بالترتيب والعناوين نفسها كما في التطبيق.';
+	@override String get notesInternes => 'لا تُعرض الملاحظات الداخلية للدفتر هنا أبدًا.';
+	@override String get diffusion => 'النشر للأسرة';
+	@override String get regleEffective => 'القاعدة السارية';
+	@override String get regleActive => 'المشاركة التلقائية مفعّلة';
+	@override String get regleInactive => 'المشاركة التلقائية معطّلة';
+	@override String regleSource({required Object regle, required Object source}) => '⁨${regle}⁩، بحسب ⁨${source}⁩';
+	@override String get etatNonValide => 'لم يُعتمد الدفتر بعد. لا يمكن النشر.';
+	@override String get etatConfirmeNonPartage => 'الدفتر معتمد، والتقرير غير مشارك مع الأسرة.';
+	@override String get etatPartageAuto => 'مشارك تلقائيًا مع الأسرة.';
+	@override String get etatPartageManuel => 'نُشر يدويًا للأسرة.';
+	@override String get etatRevoque => 'سُحب وصول الأسرة إلى هذا التقرير.';
+	@override String get etatCorrige => 'صُحِّح بعد النشر: ترى الأسرة آخر نسخة معتمدة.';
+	@override String get nonPubliable => 'لا يوجد محتوى تربوي قابل للمشاركة في هذا التقرير: النشر غير ممكن.';
+	@override String get publier => 'النشر للأسرة';
+	@override String get revoquer => 'سحب الوصول';
+	@override String get portee => 'يخص هذا الإجراء هذا التقرير وحده.';
+	@override String confirmerPublier({required Object dePrenom}) => 'نشر هذا التقرير لأسرة ⁨${dePrenom}⁩؟';
+	@override String get consequencePublier => 'المشاركة محصورة في هذا التقرير، ولا تفعّل المشاركة التلقائية للفصل.';
+	@override String get confirmerRevoquer => 'سحب وصول الأسرة إلى هذا التقرير؟';
+	@override String get consequenceRevoquer => 'لن تراه الأسرة فورًا. يبقى الدفتر والحصة معتمدين.';
+	@override String get publie => 'أصبح هذا التقرير مرئيًا للأسرة الآن.';
+	@override String get revoque => 'سُحب الوصول إلى هذا التقرير.';
+	@override String get conflitApercu => 'عدّل شخص آخر من الإدارة هذا التقرير. تُعرض الحالة المحدّثة.';
+	@override String get historique => 'سجل الإجراءات';
+	@override String get actionPublication => 'نشر يدوي';
+	@override String get actionRevocation => 'سحب الوصول';
+	@override String get actionAuto => 'مشاركة تلقائية';
+	@override String get parSysteme => 'النظام';
+	@override String entete({required Object eleve, required Object classe, required Object date}) => '⁨${eleve}⁩، ⁨${classe}⁩، حصة ⁨${date}⁩';
+	@override String get enseignant => 'المعلم';
+	@override String miseAJour({required Object date}) => 'آخر تحديث: ⁨${date}⁩';
+	@override String get fermer => 'إغلاق';
+}
+
 // Path: admin.groupes.liste
 class _Traductions$admin$groupes$liste$ar extends Traductions$admin$groupes$liste$fr {
 	_Traductions$admin$groupes$liste$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -10762,6 +10883,12 @@ class _Traductions$comptable$statuts$raison$ar extends Traductions$comptable$sta
 	@override String get doublonPotentiel => 'تكرار محتمل';
 	@override String get nonApprouvee => 'التزام غير معتمَد';
 	@override String get capaciteAbsente => 'القدرة غير متوفرة';
+	@override String get delegationsSuspendues => 'التفويضات موقوفة من الإدارة';
+	@override String get delegationExpiree => 'التفويض منتهٍ';
+	@override String get sortieEnAttenteDelai => 'صرف بانتظار مهلة الأمان';
+	@override String get coffreNonAutorise => 'صندوق خارج التفويض';
+	@override String get beneficiaireExclu => 'مستفيد مستبعد من التفويض';
+	@override String get plafondExceptionDepasse => 'فوق سقف هذا التفويض';
 }
 
 // Path: comptable.paiements.confirmation
@@ -11353,6 +11480,78 @@ class _Traductions$comptable$direction$delegationPanneau$ar extends Traductions$
 	@override String get montantManuelDetail => 'مبلغ الدفعة هو دائمًا مبلغ الالتزام.';
 	@override String get politiqueTarifaire => 'تعديل الأسعار';
 	@override String get politiqueTarifaireDetail => 'سياسة الأسعار تبقى للإدارة.';
+	@override String get suspendreTitre => 'إيقاف كل التفويضات';
+	@override String get suspendreDetail => 'لا يستطيع المحاسب تنفيذ شيء بمفرده فورًا: تعود كل عملية إلى الإدارة.';
+	@override String get suspendreAction => 'إيقاف كل التفويضات';
+	@override String get suspendreConfirmerTitre => 'إيقاف كل التفويضات؟';
+	@override String get suspendreConfirmerPhrase => 'الأثر فوري: لن تخرج أي عملية من المحاسب دون موافقتك. يُسجَّل الإيقاف في السجل.';
+	@override String get suspendreConfirmer => 'إيقاف';
+	@override String get suspendreGarder => 'الإبقاء على التفويضات';
+	@override String get reactiverTitre => 'إعادة تفعيل التفويضات';
+	@override String get reactiverDetail => 'التفويضات موقوفة. رفع الإيقاف قرار من الإدارة مع سبب مكتوب.';
+	@override String get reactiverAction => 'إعادة تفعيل التفويضات';
+	@override String get reactiverPhrase => 'سيتمكن المحاسب من العمل مجددًا ضمن حدود السياسة. لا يُستعاد أبدًا تفويض منتهي: يجب تجديده. تبقى المخرجات الملغاة ملغاة. تُسجَّل إعادة التفعيل في السجل.';
+	@override String get reactiverRaison => 'سبب إعادة التفعيل';
+	@override String get reactiverRaisonAide => 'يُحفظ في السجل مع اسمك.';
+	@override String get reactiverRaisonVide => 'اكتب السبب لإعادة تفعيل التفويضات.';
+	@override String get reactiverConfirmer => 'إعادة التفعيل';
+	@override String get reactiverGarder => 'إبقاؤها موقوفة';
+	@override String get reactiveeActive => 'أُعيد تفعيل التفويضات.';
+	@override String get reactiveeExpiree => 'أُعيد تفعيل التفويضات، لكن التفويض منتهي: جدّده لينطلق من جديد على مدّته.';
+	@override String get reactiverEchec => 'لم تتأكد إعادة التفعيل: ربما لم يصل الطلب إلى رواية، أو يلزم إعادة التحقق بخطوتين. تحقق من حالة التفويض قبل إعادة المحاولة.';
+	@override String get suspendueTitre => 'التفويضات موقوفة';
+	@override String suspendueDepuis({required Object date}) => 'موقوفة منذ ⁨${date}⁩. لا يستطيع المحاسب تنفيذ شيء دون موافقتك.';
+	@override String get suspendueSansDate => 'لا يستطيع المحاسب تنفيذ شيء دون موافقتك.';
+	@override String get suspendueEnCours => 'جارٍ الإيقاف';
+	@override String get suspendueEchec => 'لم يتأكد الإيقاف: ربما لم يصل الطلب إلى رواية. تحقق من حالة التفويض قبل إعادة المحاولة.';
+	@override String get expirationTitre => 'الانتهاء';
+	@override String get expirationDetail => 'ينتهي كل تفويض ويُجدَّد. بعد التاريخ لا يستطيع المحاسب تنفيذ شيء بمفرده.';
+	@override String expireLe({required Object date}) => 'ينتهي في ⁨${date}⁩';
+	@override String get expirationInconnue => 'تاريخ الانتهاء غير معروف';
+	@override String get etatActive => 'ساري';
+	@override String get etatSuspendue => 'موقوف';
+	@override String get etatExpiree => 'منتهٍ';
+	@override String renouvelablePour({required Object jours}) => 'قابل للتجديد لمدة ⁨${jours}⁩ يومًا';
+	@override String get renouveler => 'تجديد التفويض';
+	@override String get renouvelee => 'جُدِّد التفويض.';
+	@override String get renouvelerEchec => 'لم يتأكد التجديد: ربما لم يصل الطلب إلى رواية. تحقق من تاريخ الانتهاء قبل إعادة المحاولة.';
+	@override String get sortiesTitre => 'مصروفات بالانتظار';
+	@override String get sortiesDetail => 'المصروف فوق سقف المعاملة الواحدة ينتظر مهلة أمان قبل أن يخرج. يمكنك إلغاؤه قبل ذلك.';
+	@override String sortiesDelai({required Object heures}) => 'مهلة الأمان: ⁨${heures}⁩ س';
+	@override String get sortiesVide => 'لا مصروفات بالانتظار.';
+	@override String get sortiesErreur => 'تعذّرت قراءة المصروفات بالانتظار: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.';
+	@override String sortiePart({required Object objet, required Object date}) => '⁨${objet}⁩ · يخرج في ⁨${date}⁩';
+	@override String get sortieAnnuler => 'إلغاء';
+	@override String sortieAnnulerNom({required Object beneficiaire}) => 'إلغاء مصروف ⁨${beneficiaire}⁩';
+	@override String get sortieAnnulerTitre => 'إلغاء هذا المصروف؟';
+	@override String sortieAnnulerPhrase({required Object beneficiaire}) => 'لن يخرج مصروف ⁨${beneficiaire}⁩. يُسجَّل الإلغاء في السجل.';
+	@override String get sortieAnnulerConfirmer => 'إلغاء المصروف';
+	@override String get sortieGarder => 'الإبقاء على المصروف';
+	@override String get sortieAnnulee => 'أُلغي المصروف.';
+	@override String get sortieAnnulationEchec => 'لم يتأكد الإلغاء: ربما لم يصل الطلب إلى رواية. أعد قراءة القائمة قبل إعادة المحاولة.';
+	@override String get exceptionsTitre => 'الاستثناءات';
+	@override String get exceptionsDetail => 'إعدادات خاصة بتفويض. سقف الاستثناء أخفض دائمًا من سقف السياسة العامة، لا أعلى منه أبدًا.';
+	@override String get exceptionsVide => 'لا استثناءات: تسري السياسة العامة على كل التفويضات.';
+	@override String get exceptionAjouter => 'إضافة استثناء';
+	@override String exceptionModifier({required Object libelle}) => 'تعديل استثناء ⁨${libelle}⁩';
+	@override String get exceptionLibelleDefaut => 'تفويض المحاسب';
+	@override String get exceptionCoffres => 'الصناديق المسموحة';
+	@override String get exceptionCoffresAucun => 'لا صندوق مسموح';
+	@override String get exceptionExclus => 'المستفيدون المستبعدون';
+	@override String get exceptionExclusAucun => 'لا مستفيد مستبعد';
+	@override String get exceptionPlafond => 'السقف لكل معاملة';
+	@override String get exceptionPlafondGeneral => 'سقف السياسة العامة';
+	@override String get exceptionTitre => 'استثناء التفويض';
+	@override String get exceptionCoffresDetail => 'هذه الصناديق وحدها يمكن للتفويض أن يمسّها. دون تحديد: لا صندوق مسموح.';
+	@override String get exceptionPlafondDetail => 'أخفض من سقف السياسة العامة، لا أعلى منه أبدًا. فارغ: سقف السياسة العامة.';
+	@override String get exceptionPlafondTropHaut => 'يجب أن يكون هذا السقف أخفض من سقف السياسة العامة.';
+	@override String get exceptionPlafondSansGeneral => 'حدّد أولًا سقفًا لكل معاملة في السياسة العامة: لا يمكن للاستثناء إلا أن يكون أخفض.';
+	@override String get exceptionExclure => 'استبعاد مستفيد';
+	@override String get exceptionExclureAucun => 'لا مستفيد آخر للاستبعاد.';
+	@override String exceptionRetirerExclu({required Object nom}) => 'إزالة ⁨${nom}⁩ من المستبعدين';
+	@override String get exceptionGarder => 'الإبقاء على الاستثناء';
+	@override String get exceptionRetirer => 'إزالة هذا الاستثناء';
+	@override String get exceptionRetirerPhrase => 'يعود التفويض إلى السياسة العامة. لا يُحفظ شيء قبل «حفظ».';
 	@override String get sensiblesTitre => 'حساس دائمًا';
 	@override String get sensiblesDetail => 'هذه الحالات الخمس تتطلب دائمًا تحققًا إضافيًا مهما كانت الإعدادات أعلاه. الدفعة الأولى والبيانات الحديثة تُضبط في الأعلى.';
 	@override String get sensibleHorsSeuil => 'مبلغ فوق الحد';
@@ -13382,6 +13581,21 @@ extension on TraductionsAr {
 			'historique.moisCourts.11' => 'ديسمبر',
 			'historique.dateCourte' => ({required Object jour, required Object mois, required Object annee}) => '⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩',
 			'historique.dateCourteSansAnnee' => ({required Object jour, required Object mois}) => '⁨${jour}⁩ ⁨${mois}⁩',
+			'historique.compteRendu.titre' => 'التقرير التربوي',
+			'historique.compteRendu.travaille' => 'ما تم العمل عليه',
+			'historique.compteRendu.appreciation' => 'تقدير الحصة',
+			'historique.compteRendu.aRenforcer' => 'ما يحتاج إلى تقوية',
+			'historique.compteRendu.aPreparer' => 'ما يجب تحضيره للحصة القادمة',
+			'historique.compteRendu.commentaire' => 'تعليق مشترك',
+			'historique.compteRendu.corrigeLe' => ({required Object date}) => 'صُحِّح في ⁨${date}⁩',
+			'historique.compteRendu.nonDisponibleTitre' => 'التقرير التربوي غير متاح',
+			'historique.compteRendu.nonPartagePhrase' => 'ملاحظات هذه الحصة غير مشاركة مع أسرتكم في الوقت الحالي.',
+			'historique.compteRendu.enAttentePhrase' => 'التقرير غير متاح بعد.',
+			'historique.compteRendu.illisiblePhrase' => 'تعذّر عرض التقرير.',
+			'historique.compteRendu.horsLignePhrase' => 'يلزم الاتصال بالإنترنت للاطلاع على التقرير.',
+			'historique.compteRendu.aucunChampPhrase' => 'لا يوجد تقرير تربوي متاح لهذه الحصة.',
+			'historique.compteRendu.voirTravail' => 'عرض ما يجب تحضيره',
+			'historique.compteRendu.voirProgression' => 'عرض التقدم',
 			'historique.dateLongue' => ({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '⁨${jourSemaine}⁩ ⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩',
 			'historique.titre' => 'السجل',
 			'historique.detailSeance' => 'تفاصيل الحصة',
@@ -13815,6 +14029,8 @@ extension on TraductionsAr {
 			'classe.cartes.copierLienCourt' => 'نسخ الرابط',
 			'classe.cartes.lienCopie' => 'تم نسخ الرابط. الصقه في متصفحك لفتحه.',
 			'classe.cartes.indisponibleTitre' => 'بطاقات الفصل غير مفتوحة بعد',
+			_ => null,
+		} ?? switch (path) {
 			'classe.cartes.indisponiblePhrase' => 'ستظهر هنا فور فتحها. لا شيء مطلوب منك.',
 			'classe.cartes.erreurLecture' => 'تعذرت قراءة بطاقات الفصل. أعد المحاولة بعد قليل.',
 			'classe.cartes.sansDonnees' => 'تعذر تحميل بطاقات الفصل',
@@ -13830,8 +14046,6 @@ extension on TraductionsAr {
 			'classe.cartes.typesDetail.rappel' => 'لتاريخ لا يُنسى: رحلة، امتحان، تغيير في الموعد.',
 			'classe.cartes.modeles.annonce' => 'معلومة للفصل',
 			'classe.cartes.modeles.devoir' => 'للتحضير للحصة القادمة',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.modeles.lien' => 'مادة للاطلاع',
 			'classe.cartes.modeles.rappel' => 'لا تنسَ',
 			'classe.cartes.feuille.titreNouvelle' => 'بطاقة جديدة للفصل',
@@ -13942,7 +14156,7 @@ extension on TraductionsAr {
 			'salle.preparation.eleve.demo.pret' => 'جاهز',
 			'salle.preparation.eleve.demo.microBloque' => 'الميكروفون محظور',
 			'salle.preparation.eleve.demo.horsLigne' => 'غير متصل',
-			'salle.bandeauPermanent' => 'يُسجَّل الدرس، وقد تجري زيارة مراقبة.',
+			'salle.bandeauPermanent' => 'قد تجري زيارة مراقبة.',
 			'salle.seance.titre' => 'حصة مباشرة',
 			'salle.seance.titreGuidee' => 'حصتي',
 			'salle.seance.ligne' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ · ⁨${fin}⁩',
@@ -14329,6 +14543,8 @@ extension on TraductionsAr {
 			'eleve.coran.agrandir' => 'تكبير النص',
 			'eleve.coran.reduire' => 'تصغير النص',
 			'eleve.coran.source' => 'نص القرآن: Tanzil Project',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.coran.sourceLien' => 'tanzil.net',
 			'eleve.coran.edition' => 'مصحف المدينة، رواية حفص',
 			'enseignant.journee.derniereSeance' => 'آخر حصة',
@@ -14344,8 +14560,6 @@ extension on TraductionsAr {
 			'enseignant.journee.titre' => 'اليوم',
 			'enseignant.journee.prochainCours' => 'الدرس القادم',
 			'enseignant.journee.coursEnCours' => 'حصة مباشرة',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.minuteurHeures' => ({required Object heures, required Object minutes}) => 'بعد ⁨${heures}⁩ س ⁨${minutes}⁩ د',
 			'enseignant.journee.minuteurMinutes' => ({required Object minutes}) => 'بعد ⁨${minutes}⁩ د',
 			'enseignant.journee.minuteurImminent' => 'يبدأ الآن',
@@ -14843,6 +15057,8 @@ extension on TraductionsAr {
 			'compte.roles.controller' => 'مراقب',
 			'compte.roles.teacher' => 'معلم',
 			'compte.roles.guardian' => 'وليّ أمر',
+			_ => null,
+		} ?? switch (path) {
 			'compte.roles.student' => 'طالب',
 			'compte.roleDetail.admin' => 'يدير ملفات الأكاديمية والإسناد والسجل',
 			'compte.roleDetail.accountant' => 'يدير المدفوعات والفواتير',
@@ -14858,8 +15074,6 @@ extension on TraductionsAr {
 			'compte.tuteur.identite.courrielAbsent' => 'عنوان الدخول غير متوفر',
 			'compte.tuteur.identite.connexionLien' => 'الدخول برابط يصل بالبريد الإلكتروني',
 			'compte.tuteur.identite.connexionGoogle' => 'الدخول بحساب Google',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.identite.connexionInconnue' => 'طريقة الدخول غير محددة',
 			'compte.tuteur.acces.titre' => 'الوصول والمدفوعات',
 			'compte.tuteur.acces.resume' => 'حالة كل ملف طالب وموعد انتهائه',
@@ -15357,6 +15571,8 @@ extension on TraductionsAr {
 			'tc.classe.fiche.derniereSeance' => 'آخر حصة',
 			'tc.classe.fiche.page' => ({required Object page}) => 'الصفحة ⁨${page}⁩',
 			'tc.classe.fiche.travailEnCours' => ({required Object nombre}) => 'العناصر: ⁨${nombre}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.fiche.aReprendre' => 'للاستئناف',
 			'tc.classe.fiche.presenceRecente' => 'الحضور الأخير',
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => 'الدروس: ⁨${presences}⁩ من ⁨${total}⁩',
@@ -15372,8 +15588,6 @@ extension on TraductionsAr {
 			'tc.classe.rappel.recu' => 'المعلم يناديك',
 			'tc.classe.rappel.echec' => 'تعذّر إرسال النداء',
 			'tc.classe.rappel.echecDroit' => 'دخولك إلى هذه الحصة لا يسمح بنداء طالب',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'تم النداء. مجددًا بعد ⁨${secondes}⁩ ث',
 			'tc.classe.recitation.titre' => 'التلاوة',
 			'tc.classe.recitation.actif' => ({required Object prenom}) => 'التلاوة: ⁨${prenom}⁩',
@@ -15871,6 +16085,8 @@ extension on TraductionsAr {
 			'com.vocal.composer.permissionPhrase' => 'يحتاج رواية إلى الميكروفون لتسجيل رسالتك الصوتية. لا يُرسل شيء دون موافقتك.',
 			'com.vocal.composer.autoriser' => 'السماح باستخدام الميكروفون',
 			'com.vocal.composer.annuler' => 'إلغاء',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.composer.refuse' => 'الميكروفون غير مسموح به لتطبيق رواية.',
 			'com.vocal.composer.refuseAide' => 'لإرسال رسالة صوتية، اسمح باستخدام الميكروفون من إعدادات جهازك، ثم عد إلى هنا.',
 			'com.vocal.composer.fermer' => 'إغلاق',
@@ -15886,8 +16102,6 @@ extension on TraductionsAr {
 			'com.vocal.composer.actionPause' => 'إيقاف مؤقت',
 			'com.vocal.composer.actionReprendre' => 'استئناف',
 			'com.vocal.composer.actionArreter' => 'إيقاف',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.actionSupprimer' => 'حذف',
 			'com.vocal.composer.actionEnvoyer' => 'إرسال',
 			'com.vocal.composer.confirmerTitre' => 'حذف هذه الرسالة الصوتية؟',
@@ -16385,6 +16599,8 @@ extension on TraductionsAr {
 			'com.annonces.administration.moderation.rejete' => 'رُفض البلاغ',
 			'com.annonces.administration.moderation.restaure' => 'مستعاد',
 			'com.annonces.administration.moderation.enregistree' => 'سُجل القرار.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.nonConfirmee' => 'لم يُؤكَّد هذا القرار بعد. تحقق من الاتصال ثم أعد المحاولة.',
 			'com.annonces.administration.moderation.horsLigne' => 'أنت غير متصل. لا يمكن تحديث قائمة الإشراف.',
 			'com.annonces.administration.moderation.indisponible' => 'الإشراف غير متاح بعد. عد لاحقًا.',
@@ -16400,8 +16616,6 @@ extension on TraductionsAr {
 			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'فحص ${objet}‏، السبب ${motif}',
 			'com.annonces.administration.moderation.regleMotif.publicite' => 'الإعلانات التجارية غير مسموح بها في مجتمع المعلّمين.',
 			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'روابط التسويق بالعمولة غير مسموح بها في مجتمع المعلّمين.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.regleMotif.vente' => 'بيع المنتجات أو الخدمات غير مسموح به في هذه المساحة.',
 			'com.annonces.administration.moderation.regleMotif.sollicitation' => 'الاستدراج التجاري غير مسموح به في هذه المساحة.',
 			'com.annonces.administration.moderation.regles.titre' => 'مشاركة تعليمية فقط',
@@ -16665,6 +16879,92 @@ extension on TraductionsAr {
 			'admin.groupes.observationTitre' => ({required Object libelle}) => 'المتابعة: ⁨${libelle}⁩',
 			'admin.groupes.observationErreur' => 'تعذّر حفظ الإعداد.',
 			'admin.groupes.observationCapaciteAbsente' => 'هذا التثبيت لا يملك بعد تحديث الخادم الذي يتطلبه هذا الإعداد (الترحيل 0036). إعادة المحاولة لن تغيّر شيئًا: يجب تطبيقه أولًا على قاعدة البيانات.',
+			'admin.groupes.partage.titre' => 'مشاركة التقارير التربوية',
+			'admin.groupes.partage.interrupteur' => 'المشاركة التلقائية مع الأسر',
+			'admin.groupes.partage.aide' => 'ترى الأسر الملاحظات القابلة للمشاركة بعد اعتماد الدفتر. تبقى الملاحظات الداخلية خاصة.',
+			'admin.groupes.partage.priorite' => 'استثناء الطالب ← الفصل ← الإعداد الافتراضي',
+			'admin.groupes.partage.gererExceptions' => 'إدارة الاستثناءات الفردية',
+			'admin.groupes.partage.indisponible' => 'إعداد المشاركة غير متاح بعد.',
+			'admin.groupes.partage.refuse' => 'ليس لديك صلاحية تعديل هذا الإعداد.',
+			'admin.groupes.partage.illisible' => 'تعذّرت قراءة إعداد المشاركة حاليًا.',
+			'admin.groupes.partage.horsLigne' => 'يلزم الاتصال بالإنترنت لقراءة المشاركة أو تعديلها.',
+			'admin.groupes.partage.enregistrement' => 'جارٍ الحفظ',
+			'admin.groupes.partage.confirme' => 'تم تسجيل إعداد المشاركة.',
+			'admin.groupes.partage.conflit' => 'عدّل شخص آخر من الإدارة هذا الإعداد للتو. تُعرض القيمة المحدّثة: راجعها ثم أعد المحاولة عند الحاجة.',
+			'admin.groupes.partage.echec' => 'لم يُحفظ التعديل، وبقيت القيمة السابقة. أعد المحاولة بعد قليل.',
+			'admin.groupes.partage.classeVide' => 'لا يوجد أي طالب في هذا الفصل بعد.',
+			'admin.groupes.partage.modifiePar' => ({required Object date, required Object auteur}) => 'آخر تعديل: ⁨${date}⁩، بواسطة ⁨${auteur}⁩',
+			'admin.groupes.partage.modifieLe' => ({required Object date}) => 'آخر تعديل: ⁨${date}⁩',
+			'admin.groupes.partage.etatActif' => 'مفعّل للفصل',
+			'admin.groupes.partage.etatInactif' => 'معطّل للفصل',
+			'admin.groupes.partage.confirmerActiver' => 'تفعيل المشاركة التلقائية لهذا الفصل؟',
+			'admin.groupes.partage.consequenceActiver' => 'تعود التقارير التي شُورِكت سابقًا قابلة للقراءة لدى الأسر. أما التقارير المحجوزة أثناء التعطيل فلا تُنشر دفعة واحدة.',
+			'admin.groupes.partage.confirmerDesactiver' => 'تعطيل المشاركة التلقائية لهذا الفصل؟',
+			'admin.groupes.partage.consequenceDesactiver' => 'لن ترى الأسر فورًا التقارير المشاركة تلقائيًا. لا تتغير الدفاتر ولا الحصص المعتمدة ولا الأجور.',
+			'admin.groupes.partage.actionActiver' => 'تفعيل المشاركة',
+			'admin.groupes.partage.actionDesactiver' => 'تعطيل المشاركة',
+			'admin.groupes.partage.enregistrer' => 'حفظ',
+			'admin.groupes.partage.exceptionsTitre' => 'الاستثناءات الفردية',
+			'admin.groupes.partage.exceptionsAide' => 'الاستثناء يخص الطالب المختار فقط، ولا ينقل أبدًا بيانات أي طالب آخر.',
+			'admin.groupes.partage.rechercheEleve' => 'البحث عن طالب',
+			'admin.groupes.partage.colonneEleve' => 'الطالب',
+			'admin.groupes.partage.colonneRegle' => 'القاعدة المطبقة',
+			'admin.groupes.partage.colonneVisibilite' => 'مرئي للأسرة',
+			'admin.groupes.partage.colonneModification' => 'آخر تعديل',
+			'admin.groupes.partage.sourceClasse' => 'قاعدة الفصل',
+			'admin.groupes.partage.sourceException' => 'استثناء فردي',
+			'admin.groupes.partage.sourceDefaut' => 'الإعداد الافتراضي',
+			'admin.groupes.partage.visible' => 'مرئي',
+			'admin.groupes.partage.nonVisible' => 'غير مرئي',
+			'admin.groupes.partage.eleveRetire' => 'أُزيل من الفصل',
+			'admin.groupes.partage.plusEleves' => 'عرض مزيد من الطلاب',
+			'admin.groupes.partage.modifierEleve' => ({required Object dePrenom}) => 'تعديل قاعدة ⁨${dePrenom}⁩',
+			'admin.groupes.partage.regleClasse' => 'استخدام قاعدة الفصل',
+			'admin.groupes.partage.regleClasseAide' => 'اخترها عندما لا يحتاج الطالب إلى معاملة خاصة: تتبع أسرته إعداد الفصل.',
+			'admin.groupes.partage.regleToujours' => 'المشاركة التلقائية دائمًا',
+			'admin.groupes.partage.regleToujoursAide' => 'اخترها عندما يجب أن ترى أسرته التقارير دائمًا، حتى لو كان الفصل لا يشارك.',
+			'admin.groupes.partage.regleJamais' => 'عدم المشاركة تلقائيًا',
+			'admin.groupes.partage.regleJamaisAide' => 'اخترها عندما لا يجب أن ترى أسرته التقارير تلقائيًا: تُخفى فورًا ويبقى الدفتر محفوظًا.',
+			'admin.groupes.partage.confirmerEleve' => ({required Object prenom}) => 'تعديل المشاركة لـ⁨${prenom}⁩؟',
+			'admin.groupes.partage.consequenceEleve' => 'هذه القاعدة تخص هذا الطالب فقط، ولا تغيّر الفصل ولا بقية الطلاب.',
+			'admin.groupes.partage.consequenceEleveJamais' => 'تُخفى فورًا عن أسرته التقارير المرئية بموجب المشاركة التلقائية. يبقى الدفتر وإثبات الحصة محفوظين.',
+			'admin.groupes.partage.comptesRendus' => 'عرض التقارير',
+			'admin.groupes.partage.comptesRendusTitre' => ({required Object dePrenom}) => 'تقارير ⁨${dePrenom}⁩',
+			'admin.groupes.partage.aucunCompteRendu' => 'لا يوجد تقرير لهذا الطالب بعد.',
+			'admin.groupes.partage.apercuTitre' => 'معاينة التقرير الذي تراه الأسرة',
+			'admin.groupes.partage.apercuAide' => 'ما ستقرؤه الأسرة، بالترتيب والعناوين نفسها كما في التطبيق.',
+			'admin.groupes.partage.notesInternes' => 'لا تُعرض الملاحظات الداخلية للدفتر هنا أبدًا.',
+			'admin.groupes.partage.diffusion' => 'النشر للأسرة',
+			'admin.groupes.partage.regleEffective' => 'القاعدة السارية',
+			'admin.groupes.partage.regleActive' => 'المشاركة التلقائية مفعّلة',
+			'admin.groupes.partage.regleInactive' => 'المشاركة التلقائية معطّلة',
+			'admin.groupes.partage.regleSource' => ({required Object regle, required Object source}) => '⁨${regle}⁩، بحسب ⁨${source}⁩',
+			'admin.groupes.partage.etatNonValide' => 'لم يُعتمد الدفتر بعد. لا يمكن النشر.',
+			'admin.groupes.partage.etatConfirmeNonPartage' => 'الدفتر معتمد، والتقرير غير مشارك مع الأسرة.',
+			'admin.groupes.partage.etatPartageAuto' => 'مشارك تلقائيًا مع الأسرة.',
+			'admin.groupes.partage.etatPartageManuel' => 'نُشر يدويًا للأسرة.',
+			'admin.groupes.partage.etatRevoque' => 'سُحب وصول الأسرة إلى هذا التقرير.',
+			'admin.groupes.partage.etatCorrige' => 'صُحِّح بعد النشر: ترى الأسرة آخر نسخة معتمدة.',
+			'admin.groupes.partage.nonPubliable' => 'لا يوجد محتوى تربوي قابل للمشاركة في هذا التقرير: النشر غير ممكن.',
+			'admin.groupes.partage.publier' => 'النشر للأسرة',
+			'admin.groupes.partage.revoquer' => 'سحب الوصول',
+			'admin.groupes.partage.portee' => 'يخص هذا الإجراء هذا التقرير وحده.',
+			'admin.groupes.partage.confirmerPublier' => ({required Object dePrenom}) => 'نشر هذا التقرير لأسرة ⁨${dePrenom}⁩؟',
+			'admin.groupes.partage.consequencePublier' => 'المشاركة محصورة في هذا التقرير، ولا تفعّل المشاركة التلقائية للفصل.',
+			'admin.groupes.partage.confirmerRevoquer' => 'سحب وصول الأسرة إلى هذا التقرير؟',
+			'admin.groupes.partage.consequenceRevoquer' => 'لن تراه الأسرة فورًا. يبقى الدفتر والحصة معتمدين.',
+			'admin.groupes.partage.publie' => 'أصبح هذا التقرير مرئيًا للأسرة الآن.',
+			'admin.groupes.partage.revoque' => 'سُحب الوصول إلى هذا التقرير.',
+			'admin.groupes.partage.conflitApercu' => 'عدّل شخص آخر من الإدارة هذا التقرير. تُعرض الحالة المحدّثة.',
+			'admin.groupes.partage.historique' => 'سجل الإجراءات',
+			'admin.groupes.partage.actionPublication' => 'نشر يدوي',
+			'admin.groupes.partage.actionRevocation' => 'سحب الوصول',
+			'admin.groupes.partage.actionAuto' => 'مشاركة تلقائية',
+			'admin.groupes.partage.parSysteme' => 'النظام',
+			'admin.groupes.partage.entete' => ({required Object eleve, required Object classe, required Object date}) => '⁨${eleve}⁩، ⁨${classe}⁩، حصة ⁨${date}⁩',
+			'admin.groupes.partage.enseignant' => 'المعلم',
+			'admin.groupes.partage.miseAJour' => ({required Object date}) => 'آخر تحديث: ⁨${date}⁩',
+			'admin.groupes.partage.fermer' => 'إغلاق',
 			'admin.groupes.liste.rechercheLibelle' => 'البحث عن فصل',
 			'admin.groupes.liste.rechercheAide' => 'الاسم أو الرمز أو المعلم',
 			'admin.groupes.liste.filtreAttente' => 'في انتظار معلم',
@@ -16813,6 +17113,8 @@ extension on TraductionsAr {
 			'admin.evaluations.typePeriodique' => 'دوري',
 			'admin.evaluations.typeReevaluation' => 'إعادة تقييم',
 			'admin.evaluations.typeCertification' => 'شهادة',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.statutPlanifiee' => 'مجدول',
 			'admin.evaluations.statutRealisee' => 'منجز',
 			'admin.evaluations.statutAnnulee' => 'ملغى',
@@ -16914,8 +17216,6 @@ extension on TraductionsAr {
 			'admin.programmes.champNomHumain' => 'الاسم المعروض',
 			'admin.programmes.champCycle' => 'المرحلة',
 			'admin.programmes.champOrdre' => 'الترتيب',
-			_ => null,
-		} ?? switch (path) {
 			'admin.programmes.champDescription' => 'الوصف (اختياري)',
 			'admin.programmes.champMotif' => 'السبب',
 			'admin.programmes.motifRequis' => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.',
@@ -17327,6 +17627,8 @@ extension on TraductionsAr {
 			'admin.tirage.ciblesDetail' => 'يُسحب الهدف أولًا عندما تكون حصته مباشرة. لا يُعلَن أبدًا للمراقب ولا للمعلم.',
 			'admin.tirage.aucuneCible' => 'لا هدف: لكل الحصص المباشرة الفرص نفسها، بحسب الوزن.',
 			'admin.tirage.cibleClasse' => 'فصل',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.cibleEnseignant' => 'معلم',
 			'admin.tirage.retirerCible' => ({required Object libelle}) => 'إزالة ⁨${libelle}⁩',
 			'admin.tirage.ajouterCible' => 'إضافة هدف',
@@ -17428,8 +17730,6 @@ extension on TraductionsAr {
 			'admin.bibliotheque.catalogue.segments.brouillons' => 'المسودات',
 			'admin.bibliotheque.catalogue.segments.aVerifier' => 'بحاجة إلى مراجعة',
 			'admin.bibliotheque.catalogue.segments.publies' => 'المنشورة',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.catalogue.segments.retires' => 'المسحوبة',
 			'admin.bibliotheque.catalogue.segments.droitsExpires' => 'حقوق منتهية',
 			'admin.bibliotheque.catalogue.filtres.type' => 'النوع',
@@ -17804,6 +18104,12 @@ extension on TraductionsAr {
 			'comptable.statuts.raison.doublonPotentiel' => 'تكرار محتمل',
 			'comptable.statuts.raison.nonApprouvee' => 'التزام غير معتمَد',
 			'comptable.statuts.raison.capaciteAbsente' => 'القدرة غير متوفرة',
+			'comptable.statuts.raison.delegationsSuspendues' => 'التفويضات موقوفة من الإدارة',
+			'comptable.statuts.raison.delegationExpiree' => 'التفويض منتهٍ',
+			'comptable.statuts.raison.sortieEnAttenteDelai' => 'صرف بانتظار مهلة الأمان',
+			'comptable.statuts.raison.coffreNonAutorise' => 'صندوق خارج التفويض',
+			'comptable.statuts.raison.beneficiaireExclu' => 'مستفيد مستبعد من التفويض',
+			'comptable.statuts.raison.plafondExceptionDepasse' => 'فوق سقف هذا التفويض',
 			'comptable.alertes.enseignantsAPayer' => 'معلمون للدفع',
 			'comptable.alertes.contractuelsAEcheance' => 'متعاقدون حان موعد استحقاقهم',
 			'comptable.alertes.infosManquantes' => 'معلومات الدفع ناقصة',
@@ -17835,6 +18141,8 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.accesContractuels' => 'إدارة التزامات المتعاقدين',
 			'comptable.aujourdhui.accesEncaissements' => 'عرض المقبوضات',
 			'comptable.aujourdhui.accesTresorerie' => 'عرض الخزينة والصناديق',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.accesAlimenter' => 'تغذية الاحتياطي الاستراتيجي',
 			'comptable.aujourdhui.accesRapports' => 'عرض التقارير',
 			'comptable.aujourdhui.titre' => 'اليوم',
@@ -17942,8 +18250,6 @@ extension on TraductionsAr {
 			'comptable.paiements.actions.selectionner' => ({required Object nom}) => 'تحديد دفعة ${nom}',
 			'comptable.paiements.actions.selectionnerPrets' => 'تحديد كل المدفوعات الجاهزة',
 			'comptable.paiements.actions.payerSelection' => 'دفع المحدد',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.actions.viderSelection' => 'إلغاء التحديد',
 			'comptable.paiements.actions.voirProfil' => 'عرض ملف الدفع',
 			'comptable.paiements.selection' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'دفعة واحدة محددة', two: 'دفعتان محددتان', few: '${n} دفعات محددة', other: '${n} دفعة محددة', ), 
@@ -18349,6 +18655,8 @@ extension on TraductionsAr {
 			'comptable.contractuels.horsLigneCreation' => 'أنت غير متصل. أعد الاتصال لإنشاء الالتزام.',
 			'comptable.contractuels.erreurObjet' => 'أدخل موضوع الالتزام.',
 			'comptable.contractuels.erreurMontant' => 'أدخل مبلغًا أكبر من صفر، مثلًا 350 أو 350,50.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.erreurNomExterne' => 'أدخل اسم المستفيد الخارجي.',
 			'comptable.contractuels.erreurCreation' => 'لا نعلم إن كان الالتزام قد أُنشئ. حدّث القائمة قبل إعادة المحاولة.',
 			'comptable.contractuels.creationIndisponible' => 'لا يستطيع حسابك إنشاء التزام.',
@@ -18456,8 +18764,6 @@ extension on TraductionsAr {
 			'comptable.direction.reservePanneau.regle.pourcentageDetail' => 'حصة من المقبوض المُثبَّت.',
 			'comptable.direction.reservePanneau.regle.jusquAObjectif' => 'حتى بلوغ الهدف',
 			'comptable.direction.reservePanneau.regle.jusquAObjectifDetail' => 'إكمال ما ينقص لبلوغ الهدف.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.reservePanneau.regle.proposee' => 'مقترحة',
 			'comptable.direction.reservePanneau.regle.proposeeDetail' => 'اقتراح يؤكده المحاسب.',
 			'comptable.direction.reservePanneau.montantAuto' => 'المبلغ المخصَّص',
@@ -18512,6 +18818,78 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.montantManuelDetail' => 'مبلغ الدفعة هو دائمًا مبلغ الالتزام.',
 			'comptable.direction.delegationPanneau.politiqueTarifaire' => 'تعديل الأسعار',
 			'comptable.direction.delegationPanneau.politiqueTarifaireDetail' => 'سياسة الأسعار تبقى للإدارة.',
+			'comptable.direction.delegationPanneau.suspendreTitre' => 'إيقاف كل التفويضات',
+			'comptable.direction.delegationPanneau.suspendreDetail' => 'لا يستطيع المحاسب تنفيذ شيء بمفرده فورًا: تعود كل عملية إلى الإدارة.',
+			'comptable.direction.delegationPanneau.suspendreAction' => 'إيقاف كل التفويضات',
+			'comptable.direction.delegationPanneau.suspendreConfirmerTitre' => 'إيقاف كل التفويضات؟',
+			'comptable.direction.delegationPanneau.suspendreConfirmerPhrase' => 'الأثر فوري: لن تخرج أي عملية من المحاسب دون موافقتك. يُسجَّل الإيقاف في السجل.',
+			'comptable.direction.delegationPanneau.suspendreConfirmer' => 'إيقاف',
+			'comptable.direction.delegationPanneau.suspendreGarder' => 'الإبقاء على التفويضات',
+			'comptable.direction.delegationPanneau.reactiverTitre' => 'إعادة تفعيل التفويضات',
+			'comptable.direction.delegationPanneau.reactiverDetail' => 'التفويضات موقوفة. رفع الإيقاف قرار من الإدارة مع سبب مكتوب.',
+			'comptable.direction.delegationPanneau.reactiverAction' => 'إعادة تفعيل التفويضات',
+			'comptable.direction.delegationPanneau.reactiverPhrase' => 'سيتمكن المحاسب من العمل مجددًا ضمن حدود السياسة. لا يُستعاد أبدًا تفويض منتهي: يجب تجديده. تبقى المخرجات الملغاة ملغاة. تُسجَّل إعادة التفعيل في السجل.',
+			'comptable.direction.delegationPanneau.reactiverRaison' => 'سبب إعادة التفعيل',
+			'comptable.direction.delegationPanneau.reactiverRaisonAide' => 'يُحفظ في السجل مع اسمك.',
+			'comptable.direction.delegationPanneau.reactiverRaisonVide' => 'اكتب السبب لإعادة تفعيل التفويضات.',
+			'comptable.direction.delegationPanneau.reactiverConfirmer' => 'إعادة التفعيل',
+			'comptable.direction.delegationPanneau.reactiverGarder' => 'إبقاؤها موقوفة',
+			'comptable.direction.delegationPanneau.reactiveeActive' => 'أُعيد تفعيل التفويضات.',
+			'comptable.direction.delegationPanneau.reactiveeExpiree' => 'أُعيد تفعيل التفويضات، لكن التفويض منتهي: جدّده لينطلق من جديد على مدّته.',
+			'comptable.direction.delegationPanneau.reactiverEchec' => 'لم تتأكد إعادة التفعيل: ربما لم يصل الطلب إلى رواية، أو يلزم إعادة التحقق بخطوتين. تحقق من حالة التفويض قبل إعادة المحاولة.',
+			'comptable.direction.delegationPanneau.suspendueTitre' => 'التفويضات موقوفة',
+			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'موقوفة منذ ⁨${date}⁩. لا يستطيع المحاسب تنفيذ شيء دون موافقتك.',
+			'comptable.direction.delegationPanneau.suspendueSansDate' => 'لا يستطيع المحاسب تنفيذ شيء دون موافقتك.',
+			'comptable.direction.delegationPanneau.suspendueEnCours' => 'جارٍ الإيقاف',
+			'comptable.direction.delegationPanneau.suspendueEchec' => 'لم يتأكد الإيقاف: ربما لم يصل الطلب إلى رواية. تحقق من حالة التفويض قبل إعادة المحاولة.',
+			'comptable.direction.delegationPanneau.expirationTitre' => 'الانتهاء',
+			'comptable.direction.delegationPanneau.expirationDetail' => 'ينتهي كل تفويض ويُجدَّد. بعد التاريخ لا يستطيع المحاسب تنفيذ شيء بمفرده.',
+			'comptable.direction.delegationPanneau.expireLe' => ({required Object date}) => 'ينتهي في ⁨${date}⁩',
+			'comptable.direction.delegationPanneau.expirationInconnue' => 'تاريخ الانتهاء غير معروف',
+			'comptable.direction.delegationPanneau.etatActive' => 'ساري',
+			'comptable.direction.delegationPanneau.etatSuspendue' => 'موقوف',
+			'comptable.direction.delegationPanneau.etatExpiree' => 'منتهٍ',
+			'comptable.direction.delegationPanneau.renouvelablePour' => ({required Object jours}) => 'قابل للتجديد لمدة ⁨${jours}⁩ يومًا',
+			'comptable.direction.delegationPanneau.renouveler' => 'تجديد التفويض',
+			'comptable.direction.delegationPanneau.renouvelee' => 'جُدِّد التفويض.',
+			'comptable.direction.delegationPanneau.renouvelerEchec' => 'لم يتأكد التجديد: ربما لم يصل الطلب إلى رواية. تحقق من تاريخ الانتهاء قبل إعادة المحاولة.',
+			'comptable.direction.delegationPanneau.sortiesTitre' => 'مصروفات بالانتظار',
+			'comptable.direction.delegationPanneau.sortiesDetail' => 'المصروف فوق سقف المعاملة الواحدة ينتظر مهلة أمان قبل أن يخرج. يمكنك إلغاؤه قبل ذلك.',
+			'comptable.direction.delegationPanneau.sortiesDelai' => ({required Object heures}) => 'مهلة الأمان: ⁨${heures}⁩ س',
+			'comptable.direction.delegationPanneau.sortiesVide' => 'لا مصروفات بالانتظار.',
+			'comptable.direction.delegationPanneau.sortiesErreur' => 'تعذّرت قراءة المصروفات بالانتظار: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.',
+			'comptable.direction.delegationPanneau.sortiePart' => ({required Object objet, required Object date}) => '⁨${objet}⁩ · يخرج في ⁨${date}⁩',
+			'comptable.direction.delegationPanneau.sortieAnnuler' => 'إلغاء',
+			'comptable.direction.delegationPanneau.sortieAnnulerNom' => ({required Object beneficiaire}) => 'إلغاء مصروف ⁨${beneficiaire}⁩',
+			'comptable.direction.delegationPanneau.sortieAnnulerTitre' => 'إلغاء هذا المصروف؟',
+			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => 'لن يخرج مصروف ⁨${beneficiaire}⁩. يُسجَّل الإلغاء في السجل.',
+			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'إلغاء المصروف',
+			'comptable.direction.delegationPanneau.sortieGarder' => 'الإبقاء على المصروف',
+			'comptable.direction.delegationPanneau.sortieAnnulee' => 'أُلغي المصروف.',
+			'comptable.direction.delegationPanneau.sortieAnnulationEchec' => 'لم يتأكد الإلغاء: ربما لم يصل الطلب إلى رواية. أعد قراءة القائمة قبل إعادة المحاولة.',
+			'comptable.direction.delegationPanneau.exceptionsTitre' => 'الاستثناءات',
+			'comptable.direction.delegationPanneau.exceptionsDetail' => 'إعدادات خاصة بتفويض. سقف الاستثناء أخفض دائمًا من سقف السياسة العامة، لا أعلى منه أبدًا.',
+			'comptable.direction.delegationPanneau.exceptionsVide' => 'لا استثناءات: تسري السياسة العامة على كل التفويضات.',
+			'comptable.direction.delegationPanneau.exceptionAjouter' => 'إضافة استثناء',
+			'comptable.direction.delegationPanneau.exceptionModifier' => ({required Object libelle}) => 'تعديل استثناء ⁨${libelle}⁩',
+			'comptable.direction.delegationPanneau.exceptionLibelleDefaut' => 'تفويض المحاسب',
+			'comptable.direction.delegationPanneau.exceptionCoffres' => 'الصناديق المسموحة',
+			'comptable.direction.delegationPanneau.exceptionCoffresAucun' => 'لا صندوق مسموح',
+			'comptable.direction.delegationPanneau.exceptionExclus' => 'المستفيدون المستبعدون',
+			'comptable.direction.delegationPanneau.exceptionExclusAucun' => 'لا مستفيد مستبعد',
+			'comptable.direction.delegationPanneau.exceptionPlafond' => 'السقف لكل معاملة',
+			'comptable.direction.delegationPanneau.exceptionPlafondGeneral' => 'سقف السياسة العامة',
+			'comptable.direction.delegationPanneau.exceptionTitre' => 'استثناء التفويض',
+			'comptable.direction.delegationPanneau.exceptionCoffresDetail' => 'هذه الصناديق وحدها يمكن للتفويض أن يمسّها. دون تحديد: لا صندوق مسموح.',
+			'comptable.direction.delegationPanneau.exceptionPlafondDetail' => 'أخفض من سقف السياسة العامة، لا أعلى منه أبدًا. فارغ: سقف السياسة العامة.',
+			'comptable.direction.delegationPanneau.exceptionPlafondTropHaut' => 'يجب أن يكون هذا السقف أخفض من سقف السياسة العامة.',
+			'comptable.direction.delegationPanneau.exceptionPlafondSansGeneral' => 'حدّد أولًا سقفًا لكل معاملة في السياسة العامة: لا يمكن للاستثناء إلا أن يكون أخفض.',
+			'comptable.direction.delegationPanneau.exceptionExclure' => 'استبعاد مستفيد',
+			'comptable.direction.delegationPanneau.exceptionExclureAucun' => 'لا مستفيد آخر للاستبعاد.',
+			'comptable.direction.delegationPanneau.exceptionRetirerExclu' => ({required Object nom}) => 'إزالة ⁨${nom}⁩ من المستبعدين',
+			'comptable.direction.delegationPanneau.exceptionGarder' => 'الإبقاء على الاستثناء',
+			'comptable.direction.delegationPanneau.exceptionRetirer' => 'إزالة هذا الاستثناء',
+			'comptable.direction.delegationPanneau.exceptionRetirerPhrase' => 'يعود التفويض إلى السياسة العامة. لا يُحفظ شيء قبل «حفظ».',
 			'comptable.direction.delegationPanneau.sensiblesTitre' => 'حساس دائمًا',
 			'comptable.direction.delegationPanneau.sensiblesDetail' => 'هذه الحالات الخمس تتطلب دائمًا تحققًا إضافيًا مهما كانت الإعدادات أعلاه. الدفعة الأولى والبيانات الحديثة تُضبط في الأعلى.',
 			'comptable.direction.delegationPanneau.sensibleHorsSeuil' => 'مبلغ فوق الحد',
@@ -18791,6 +19169,8 @@ extension on TraductionsAr {
 			'eleveConnexion.lecteur.occupeePhrase' => 'تطبيق آخر يستخدم الكاميرا. أغلقه ثم أعد المحاولة، أو أدخل الرمز.',
 			'eleveConnexion.lecteur.absenteTitre' => 'لا كاميرا',
 			'eleveConnexion.lecteur.absentePhrase' => 'لا كاميرا متاحة على هذا الجهاز. أدخل الرمز المعروض تحت رمز QR.',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.lecteur.nonSupporteeTitre' => 'القراءة غير ممكنة هنا',
 			'eleveConnexion.lecteur.nonSupporteePhrase' => 'هذا الجهاز أو المتصفح لا يقرأ رموز QR. أدخل الرمز المعروض تحت رمز QR.',
 			'eleveConnexion.lecteur.erreurTitre' => 'لم تبدأ الكاميرا',
@@ -18970,8 +19350,6 @@ extension on TraductionsAr {
 			'attente.correctionImpossible' => 'لا يمكن تعديل هذا الملف الآن.',
 			'attente.actualiser' => 'تحديث حالة الملف',
 			'attente.suspenduDetail' => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.',
-			_ => null,
-		} ?? switch (path) {
 			'attente.seDeconnecter' => 'تسجيل الخروج',
 			'attente.titreDossier' => 'ملفك',
 			'attente.titreCompte' => 'حسابك',
@@ -19305,6 +19683,8 @@ extension on TraductionsAr {
 			'adulte.sortie.quitterQuestion' => 'مغادرة باقة الأسرة؟',
 			'adulte.sortie.quitterConfirmer' => 'مغادرة الباقة',
 			'adulte.sortie.quitterConsequence' => 'يبقى حسابك ودروسك وسجلك ورصيدك متاحة. ينتهي الربط بباقة الأسرة.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.sortie.forfaitPhrase' => ({required Object dePrenom}) => 'أنت جزء من باقة أسرة ⁨${dePrenom}⁩.',
 			'adulte.sortie.resultatTitre' => 'انتهى الربط بباقة الأسرة',
 			'adulte.sortie.resultatTitulaire' => 'يبقى حسابه ودروسه وسجله ورصيده متاحة.',
@@ -19484,8 +19864,6 @@ extension on TraductionsAr {
 			'dossiers.revue.etats.retourDossiers' => 'العودة إلى الملفات',
 			'dossiers.revue.etats.verificationsIncompletes' => 'أكمل عمليات التحقق المطلوبة.',
 			'dossiers.revue.etats.accordManquant' => 'تنقص هذا الملف موافقة مطلوبة.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.revue.etats.decisionIndisponible' => 'القرار غير متاح الآن.',
 			'dossiers.revue.etats.actualiserDossier' => 'تحديث الملف',
 			'dossiers.revue.etats.refusNonAutorise' => 'لا يمكن رفض هذا الملف في حالته الحالية.',
@@ -19819,6 +20197,8 @@ extension on TraductionsAr {
 			'controleur.controle.titre' => 'المراقبة',
 			'controleur.controle.mission' => 'فصلك القادم للمراقبة',
 			'controleur.controle.missionEnDirect' => 'فصل للمراقبة الآن',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.controle.commencer' => 'بدء المراقبة',
 			'controleur.controle.vide' => 'لا مراقبة مطلوبة الآن.',
 			'controleur.controle.videAide' => 'سيقترح عليك Rewayah فصلًا للمراقبة حين تتوفر حصة مناسبة.',
@@ -19998,8 +20378,6 @@ extension on TraductionsAr {
 			'recherche.guide.initial.titre' => 'البحث عن مادة',
 			'recherche.guide.initial.phrase' => 'اكتب كلمة لتجد إحدى موادك.',
 			'recherche.guide.limite' => 'موادك ودروسك فقط.',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.entree.supports' => 'البحث في المواد',
 			'recherche.contexte.remplacementOuvert' => 'استبدال متاح',
 			'recherche.contexte.remplacementMien' => 'استبدالك',
