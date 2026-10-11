@@ -271,7 +271,7 @@ DECLARE f record;
 BEGIN
   FOR f IN SELECT p.oid, p.prosrc, p.proconfig, p.proowner, p.prosecdef,
                   pg_catalog.obj_description(p.oid, 'pg_proc') AS comment,
-                  p.proname, pg_catalog.replace(p.oid::regprocedure::text, ' ', '') AS signature
+                  p.proname, pg_catalog.replace(pg_catalog.replace(p.oid::regprocedure::text, 'public.', ''), ' ', '') AS signature
              FROM pg_catalog.pg_proc p
              JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
             WHERE n.nspname = 'public'
@@ -298,3 +298,4 @@ END;
 $postflight$;
 
 COMMIT;
+
