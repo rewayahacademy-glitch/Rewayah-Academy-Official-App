@@ -154,6 +154,7 @@ VALUES
    'c2a2ffff-0000-0000-0000-000000000001', 'Gardien', 'Suspendu', 'disabled');
 
 INSERT INTO public.devices (profile_id, device_fingerprint, platform) VALUES
+  ('c2a20000-0000-0000-0000-000000000001', 'codex2-device-owner-household', 'web'),
   ('c2a20000-0000-0000-0000-000000000002', 'codex2-device-other-household', 'web');
 
 DO $$
@@ -177,6 +178,9 @@ BEGIN
   SET LOCAL ROLE authenticated;
   PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
   PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  SELECT count(*) INTO v_count FROM public.devices
+   WHERE device_fingerprint = 'codex2-device-owner-household';
+  IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-DEVICE: owner device is not visible'; END IF;
   SELECT count(*) INTO v_count FROM public.households
    WHERE id = 'c2a2ffff-0000-0000-0000-000000000001';
   IF v_count <> 1 THEN RAISE EXCEPTION 'RLS-OWNER-HOUSEHOLD : foyer propriétaire invisible'; END IF;
@@ -256,6 +260,24 @@ BEGIN
    WHERE device_fingerprint = 'codex2-device-other-household';
   GET DIAGNOSTICS v_rows = ROW_COUNT;
   IF v_rows <> 0 THEN RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-WRITE : appareil étranger modifié'; END IF;
+  RESET ROLE;
+END $$;
+
+DO $$
+DECLARE v_denied boolean := false;
+BEGIN
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid', 'c2a20000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"guardian","household_id":"c2a2ffff-0000-0000-0000-000000000001"}}', true);
+  BEGIN
+    INSERT INTO public.devices (profile_id, device_fingerprint, platform)
+    VALUES ('c2a20000-0000-0000-0000-000000000002', 'codex2-device-cross-household-insert', 'web');
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN
+    RAISE EXCEPTION 'RLS-OTHER-HOUSEHOLD-WRITE: cross-household device insert was not denied';
+  END IF;
   RESET ROLE;
 END $$;
 

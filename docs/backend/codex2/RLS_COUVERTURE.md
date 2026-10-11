@@ -92,3 +92,15 @@ Inventaire statique: 72 tables avec `ENABLE ROW LEVEL SECURITY` dans les migrati
 - La requête anon teste le refus effectif via privilège SQL/RLS : les migrations révoquent les privilèges de table anon, donc l’assertion intercepte `insufficient_privilege` au lieu de compter des lignes. Les catalogues peuvent avoir des lectures métier partagées à authenticated; les tests comportementaux ne prétendent pas vérifier ces cas anon.
 - Le scénario de compte désactivé est une assertion attendue en échec sous les policies source actuelles; les policies `households_guardian_select`, `profiles_self_select` et `profiles_family_select` de `0001_fondations.sql` ne consultent pas toutes `app_account_valid()`. Ce test peut révéler un défaut et n’est pas annoncé comme vert.
 - La suite de tests est à exécuter par l’orchestrateur sur PostgreSQL 17; aucun fichier CI n’a été modifié.
+
+## Mise a jour des scenarios devices
+
+Le scenario ajoute un appareil dans le foyer proprietaire comme temoin SELECT positif. Le compte authentifie du foyer A verifie que l'appareil lie au profil du foyer B est invisible; il tente aussi une insertion liee au profil B, qui doit etre refusee avec SQLSTATE `insufficient_privilege` par la RLS. L'ancien UPDATE inter-foyer reste une assertion secondaire, mais n'est pas presente comme preuve de policy WITH CHECK, car aucune policy UPDATE guardian n'existe.
+
+Limite conservee: ces fixtures ne donnent toujours pas une ligne representative a chacune des 72 tables. Les boucles anon, claim absent et disabled testent les lignes presentes dans l'etat migre; aucun test comportemental inter-foyer par table n'est pretendu. La suite SQL est non rejouee localement et aucune base distante n'a ete consultee.
+
+## Inventaire statique des policies
+
+Un scan des sources `supabase/migrations/*.sql` retrouve les 72 tables RLS de la liste. La recherche textuelle `CREATE POLICY ... ON public.<table>` trouve 66 cibles distinctes. Sept tables n'ont pas de policy ciblee detectee par ce motif (ce qui peut correspondre au deny-by-default ou a une creation dynamique): `audit_logs_default`, `device_tokens`, `id_sequences`, `livekit_webhook_deliveries`, `rate_limits`, `session_video_route`, `video_config`. Ce scan statique ne remplace pas `pg_policies` sur la base rejouee.
+
+Plusieurs relations sont des catalogues partages ou des tables de service, pas des lignes appartenant a un foyer; la regle inter-foyer doit s'appliquer aux relations qui portent cette isolation. Le critere universel de positif proprietaire et de refus autre foyer doit donc etre interprete au niveau de la policy et des donnees de chaque table, pas declare couvert par une boucle `SELECT EXISTS` vide.
