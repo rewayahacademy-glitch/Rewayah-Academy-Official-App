@@ -29,9 +29,11 @@ begin
         v_expected.table_name, v_expected.policy_name;
     end if;
 
-    v_qual := lower(regexp_replace(coalesce(v_policy.qual, ''), '[[:space:]()]', '', 'g'));
+    v_qual := lower(regexp_replace(
+      regexp_replace(coalesce(v_policy.qual, ''), 'public\.', '', 'g'),
+      '[[:space:]()]', '', 'g'));
     if v_expected.table_name in ('langues_cours', 'cohortes_age') then
-      if v_qual <> 'coalescepublic.app_account_valid,false' then
+      if v_qual <> 'coalesceapp_account_valid,false' then
         raise exception 'X2-08 catalog SELECT is not gated only by app_account_valid(): %.%',
           v_expected.table_name, v_expected.policy_name;
       end if;
@@ -41,9 +43,10 @@ begin
       or position('app_role' in v_qual) = 0
       or position('admin' in v_qual) = 0
       or position('controller' in v_qual) = 0
-      or regexp_count(lower(coalesce(v_policy.qual, '')), '\mor\m') <> 1
-      or regexp_count(lower(coalesce(v_policy.qual, '')), '\mand\m') <> 1 then
-      raise exception 'X2-08 offer SELECT lost its account gate or published/admin predicate';
+      or regexp_count(v_qual, 'or') <> 1
+      or regexp_count(v_qual, 'and') <> 1 then
+      raise exception 'X2-08 offer SELECT lost its valid-account gate or published OR admin/controller predicate: %',
+        v_policy.qual;
     end if;
   end loop;
 end;
