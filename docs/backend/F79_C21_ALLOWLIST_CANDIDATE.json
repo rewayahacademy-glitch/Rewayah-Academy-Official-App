@@ -1,0 +1,60 @@
+{
+  "state": "CLAUDE_REVIEW_REQUIRED",
+  "reviewer": "Claude à relire",
+  "date": "2026-10-11",
+  "functions": [
+    {
+      "migration": "0078_kyc_super_admin_gender_exception.sql",
+      "signature": "public.kyc_super_admin_exception_active()",
+      "md5_prosrc": "70b983b11a2d43c04c6c46cc1f5fab13",
+      "guard_type": "NO_GUARD_HELPER",
+      "owner": "postgres",
+      "search_path": "",
+      "justification": "Returns only whether the current admin is explicitly allowlisted while the server setting is enabled; it exposes no KYC rows or metadata."
+    },
+    {
+      "migration": "0078_kyc_super_admin_gender_exception.sql",
+      "signature": "public.read_kyc_documents()",
+      "md5_prosrc": "c162eca8a973c31d06fb8fac91840815",
+      "guard_type": "ROLE_POSITIVE_TEMPLATE",
+      "owner": "postgres",
+      "search_path": "",
+      "must_pass": [
+        "only valid admins",
+        "same-gender rows by default",
+        "cross-gender rows only for enabled super-admin",
+        "every exceptional cross-gender read is audited"
+      ]
+    },
+    {
+      "migration": "0078_kyc_super_admin_gender_exception.sql",
+      "signature": "public.autoriser_lecture_piece_identite(uuid)",
+      "md5_prosrc": "84d06def684a507a71faaa7e9d3bcd90",
+      "guard_type": "ROLE_POSITIVE_TEMPLATE",
+      "owner": "postgres",
+      "search_path": "",
+      "must_pass": [
+        "only valid admins",
+        "only an authorized dossier yields object metadata",
+        "every opening is audited"
+      ]
+    },
+    {
+      "migration": "0079_kyc_access_verdict.sql",
+      "signature": "public.verdict_acces_dossier_kyc(uuid)",
+      "md5_prosrc": "2b467cd3363c49316932828981a826f9",
+      "guard_type": "ROLE_POSITIVE_TEMPLATE",
+      "owner": "postgres",
+      "search_path": "",
+      "must_pass": [
+        "controllers cannot obtain a KYC access verdict",
+        "same-gender admin receives memeGenre",
+        "admin without gender receives adminSansGenre when exception is inactive",
+        "enabled super-admin receives exceptionSuperAdmin for cross-gender access",
+        "missing or deleted dossier returns only profilNonAutorise",
+        "verdict returns no document metadata, object key, or signed URL",
+        "verdict itself writes no audit row; opening remains audited by the existing RPC"
+      ]
+    }
+  ]
+}
