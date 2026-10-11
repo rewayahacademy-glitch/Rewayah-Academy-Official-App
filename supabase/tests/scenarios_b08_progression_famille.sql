@@ -320,30 +320,30 @@ SELECT set_config('request.jwt.claim.sub', 'b0800000-0000-0000-0000-000000000002
 SELECT set_config('request.jwt.claims',
   '{"app_metadata":{"role":"guardian","household_id":"b0800000-0000-0000-0000-000000000101"}}', true);
 SET LOCAL ROLE authenticated;
-DO $retrait_audite$
+DO $publication_auditee$
 DECLARE
   v_count integer;
 BEGIN
   IF public.resume_seance_famille(
     'b0800000-0000-0000-0000-000000000301',
     'b0800000-0000-0000-0000-000000000003'
-  ) IS NOT NULL THEN
-    RAISE EXCEPTION 'B-08: le résumé retiré reste visible via RPC';
+  ) IS DISTINCT FROM 'Lecture régulière; revoir les liaisons.' THEN
+    RAISE EXCEPTION 'B-08: la publication courante est absente de la RPC';
   END IF;
   SELECT count(*) INTO v_count FROM public.seance_resumes r
   WHERE r.session_id = 'b0800000-0000-0000-0000-000000000301'
     AND r.student_id = 'b0800000-0000-0000-0000-000000000003';
-  IF v_count <> 0 THEN
-    RAISE EXCEPTION 'B-08: RLS expose le résumé après retrait';
+  IF v_count <> 1 THEN
+    RAISE EXCEPTION 'B-08: RLS ne montre pas exactement la publication courante';
   END IF;
   SELECT count(*) INTO v_count FROM public.audit_logs a
-  WHERE a.action = 'resume_seance_famille_retire'
+  WHERE a.action = 'resume_seance_famille_publie'
     AND a.table_name = 'seance_resumes'
     AND a.row_id = 'b0800000-0000-0000-0000-000000000301:b0800000-0000-0000-0000-000000000003';
   IF v_count <> 1 THEN
-    RAISE EXCEPTION 'B-08: le retrait n''a pas produit une entrée d''audit';
+    RAISE EXCEPTION 'B-08: la publication n''a pas produit une entrée d''audit';
   END IF;
 END
-$retrait_audite$;
+$publication_auditee$;
 
 ROLLBACK;

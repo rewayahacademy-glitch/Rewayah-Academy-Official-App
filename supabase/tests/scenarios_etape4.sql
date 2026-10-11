@@ -86,6 +86,10 @@ BEGIN
       ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
     UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
   END LOOP;
+  PERFORM set_config('request.jwt.claim.sub','',true);
+  PERFORM set_config('request.jwt.claims','',true);
+  PERFORM set_config('test.uid','',true);
+  PERFORM set_config('test.jwt','',true);
 END
 $fixture_teacher_contracts$;
 
@@ -1221,6 +1225,10 @@ BEGIN
       ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
     UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
   END LOOP;
+  PERFORM set_config('request.jwt.claim.sub','',true);
+  PERFORM set_config('request.jwt.claims','',true);
+  PERFORM set_config('test.uid','',true);
+  PERFORM set_config('test.jwt','',true);
 END
 $fixture_teacher_contracts$;
 insert into public.groupes

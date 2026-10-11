@@ -574,16 +574,19 @@ end $$;
 -- par la migration 0090.
 -- L'enseignant signe dès pending_kyc, avant que la direction l'active.
 
+-- Avis de contrôle préchargé par le propriétaire du scénario : il n'existe pas
+-- de RPC de signature dédiée à cet avis.
+insert into public.contract_acceptances (profile_id, contract_kind, version)
+values (
+  '22222222-2222-2222-2222-222222222222',
+  'recording_and_control_notice', '2026-10-jur'
+);
+
 do $$
 begin
   set local role authenticated;
   perform set_config('test.uid', '22222222-2222-2222-2222-222222222222', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
-  insert into public.contract_acceptances (profile_id, contract_kind, version)
-  values (
-    '22222222-2222-2222-2222-222222222222',
-    'recording_and_control_notice', '2026-10-jur'
-  );
   perform public.signer_contrat('2026-10-jur', 'Yasmine Test');
 end $$;
 
