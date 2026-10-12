@@ -61,15 +61,37 @@ values
   ('bbbbbbbb-0000-0000-0000-000000000002', 'STUD-KB-000003', 'student',
    'ffffffff-0000-0000-0000-00000000000b', 'Khadija', 'Barry', 'active', null),
   ('cccccccc-0000-0000-0000-000000000001', 'TEACH-OS-000001', 'teacher',
-   null, 'Omar', 'Sow', 'active', 'male'),
+   null, 'Omar', 'Sow', 'provisional_active', 'male'),
   ('cccccccc-0000-0000-0000-000000000002', 'TEACH-AB-000002', 'teacher',
-   null, 'Aissatou', 'Balde', 'active', 'female'),
+   null, 'Aissatou', 'Balde', 'provisional_active', 'female'),
   ('dddddddd-0000-0000-0000-000000000001', 'ADMIN-RA-000001', 'admin',
    null, 'Rewayah', 'Admin', 'active', 'female'),
   -- Un foyer sans aucun lien avec les deux enseignants : c'est lui qui mesure le
   -- defaut 3.5, les foyers A et B ayant tous deux un enfant suivi par Omar.
   ('99999999-0000-0000-0000-000000000001', 'GUARD-SC-000003', 'guardian',
    'ffffffff-0000-0000-0000-00000000000c', 'Sans', 'Cours', 'active', 'male');
+-- Fixture contractuel requis par 0089 : aucune garde d'activation n'est assouplie.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+    PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true);
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+      ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+  PERFORM set_config('request.jwt.claim.sub','',true);
+  PERFORM set_config('request.jwt.claims','',true);
+  PERFORM set_config('test.uid','',true);
+  PERFORM set_config('test.jwt','',true);
+END
+$fixture_teacher_contracts$;
 
 insert into public.student_profiles (profile_id, student_type, interface_mode, camera_policy, level)
 values
@@ -80,6 +102,9 @@ values
 insert into public.teacher_profiles (profile_id, country, timezone_iana) values
   ('cccccccc-0000-0000-0000-000000000001', 'FR', 'Europe/Paris'),
   ('cccccccc-0000-0000-0000-000000000002', 'GN', 'Africa/Conakry');
+-- prendre_eleve exige un profil enseignant dont le KYC est approuve.
+update public.teacher_profiles set kyc_status = 'approved'
+ where profile_id = 'cccccccc-0000-0000-0000-000000000002';
 
 -- Le fuseau dans lequel chacun pose ses creneaux, quel que soit son role.
 do $$
@@ -188,34 +213,112 @@ begin
     v_heure, v_jour;
 end $$;
 
--- La semaine de reference d'un creneau ne depend pas du fuseau qui le demande.
---
--- Le defaut, mesure le 6 septembre 2026 a 22h23 UTC : instant_creneau ancrait sa
--- semaine sur `date_trunc('week', now() at time zone p_tz)`. A cette heure-la,
--- Paris etait deja lundi et Conakry encore dimanche, donc les deux fuseaux
--- dataient deux semaines differentes et le meme rendez-vous rendait deux
--- instants a SEPT JOURS d'ecart. Le feed de ENS-06 se vidait alors de toute
--- famille d'un autre fuseau, deux heures par semaine, sans erreur ni trace.
---
--- Le controle ne compare pas a une valeur ecrite en dur, qui serait vraie en ete
--- et fausse en hiver : deux fuseaux separes de quelques heures ne peuvent pas
--- rendre un ecart d'un jour entier pour le meme jour et la meme heure nominale.
--- Il vaut donc a n'importe quelle heure, n'importe quel jour de l'annee.
+-- Prochaine occurrence : références le dimanche autour de minuit UTC, valeurs
+-- attendues écrites en dur. Couvre le créneau encore futur, le créneau passé,
+-- le basculement de semaine et le retour DST entre les deux occurrences.
 do $$
 declare
-  v_jour int;
-  v_ecart interval;
+  v_cas record;
+  v_obtenu timestamptz;
 begin
-  for v_jour in 1 .. 7 loop
-    v_ecart := public.instant_creneau(v_jour, 12, 'Europe/Paris')
-             - public.instant_creneau(v_jour, 12, 'Africa/Conakry');
-    if abs(extract(epoch from v_ecart)) >= 86400 then
-      raise exception
-        'Instant ECHEC : le jour % rend % d''ecart entre Paris et Conakry, soit une semaine de decalage',
-        v_jour, v_ecart;
+  for v_cas in
+    select * from (values
+      (1, 18, 'Europe/Paris', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-19 16:00:00+00'),
+      (1, 18, 'Europe/Paris', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-19 16:00:00+00'),
+      (1, 18, 'Europe/Paris', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-19 16:00:00+00'),
+      (1,  0, 'Europe/Paris', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-18 22:00:00+00'),
+      (1,  0, 'Europe/Paris', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-25 23:00:00+00'),
+      (1,  0, 'Europe/Paris', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-25 23:00:00+00'),
+      (7, 23, 'Europe/Paris', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-25 22:00:00+00'),
+      (7, 23, 'Europe/Paris', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-25 22:00:00+00'),
+      (7, 23, 'Europe/Paris', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-25 22:00:00+00'),
+      (7, 21, 'Europe/Paris', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-25 20:00:00+00'),
+      (7, 21, 'Europe/Paris', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-25 20:00:00+00'),
+      (7, 21, 'Europe/Paris', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-25 20:00:00+00'),
+      (1, 22, 'Africa/Conakry', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-19 22:00:00+00'),
+      (1, 22, 'Africa/Conakry', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-19 22:00:00+00'),
+      (1, 22, 'Africa/Conakry', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-19 22:00:00+00'),
+      (1,  0, 'Europe/Paris', 1, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-25 23:00:00+00'),
+      (1,  0, 'Europe/Paris', 1, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-11-01 23:00:00+00'),
+      (1,  0, 'Europe/Paris', 1, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-11-01 23:00:00+00'),
+      (7, 23, 'Europe/Paris', 1, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-11-01 22:00:00+00'),
+      (7, 23, 'Europe/Paris', 1, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-11-01 22:00:00+00'),
+      (7, 23, 'Europe/Paris', 1, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-11-01 22:00:00+00')
+    ) as cas(weekday, heure, fuseau, offset_semaine, reference_at, attendu)
+  loop
+    v_obtenu := public.instant_creneau_reference(
+      v_cas.weekday, v_cas.heure, v_cas.fuseau,
+      v_cas.offset_semaine, v_cas.reference_at
+    );
+    if v_obtenu is distinct from v_cas.attendu then
+      raise exception 'Instant ECHEC: slot %, %h %, ref %, obtenu %, attendu %',
+        v_cas.weekday, v_cas.heure, v_cas.fuseau, v_cas.reference_at,
+        v_obtenu, v_cas.attendu;
     end if;
   end loop;
-  raise notice 'Instant ok : la semaine de reference est la meme dans tous les fuseaux';
+  raise notice 'Instant ok : 21 valeurs sans doublon d offset, bascule hebdomadaire et DST';
+end $$;
+
+-- La classe calcule une fois son occurrence dans le fuseau de reference.
+-- Paris et Conakry affichent ensuite le meme instant UTC, meme a cheval sur
+-- le dimanche UTC / lundi local et apres la fin de l'heure d'ete parisienne.
+do $$
+declare
+  v_cas record;
+  v_instant timestamptz;
+  v_paris_local timestamp without time zone;
+  v_conakry_local timestamp without time zone;
+begin
+  for v_cas in
+    select * from (values
+      (timestamptz '2026-10-25 00:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00'),
+      (timestamptz '2026-10-25 10:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00'),
+      (timestamptz '2026-10-25 12:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00'),
+      (timestamptz '2026-10-25 16:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00'),
+      (timestamptz '2026-10-25 17:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00'),
+      (timestamptz '2026-10-25 23:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00')
+    ) as cas(reference_at, attendu_utc, attendu_paris, attendu_conakry)
+  loop
+    v_instant := public.instant_creneau_reference(
+      1, 18, 'Europe/Paris', 0, v_cas.reference_at
+    );
+    v_paris_local := v_instant at time zone 'Europe/Paris';
+    v_conakry_local := v_instant at time zone 'Africa/Conakry';
+    if v_instant is distinct from v_cas.attendu_utc
+       or v_paris_local is distinct from v_cas.attendu_paris
+       or v_conakry_local is distinct from v_cas.attendu_conakry
+       or (v_paris_local at time zone 'Europe/Paris')
+          is distinct from (v_conakry_local at time zone 'Africa/Conakry') then
+      raise exception 'A778: instants Paris/Conakry divergents, ref %, UTC %, Paris %, Conakry %',
+        v_cas.reference_at, v_instant, v_paris_local, v_conakry_local;
+    end if;
+  end loop;
+  raise notice 'A778: les six références donnent le même instant UTC projeté à Paris et Conakry';
+end $$;
+
+-- Les consommateurs des migrations 0014, 0016, 0033 et 0083 ainsi que les
+-- gardes F86 (affectation et prise d'élève) appellent instant_creneau. Vérifier
+-- ici le contrat partagé : un horaire du dimanche déjà passé pointe au prochain
+-- dimanche; les comparaisons de créneaux n'utilisent donc pas l'occurrence passée.
+do $$
+declare
+  v_dimanche_precedent date;
+  v_reference timestamptz;
+  v_attendu timestamptz;
+  v_obtenu timestamptz;
+begin
+  v_dimanche_precedent := (pg_catalog.now() at time zone 'Europe/Paris')::date
+    - extract(isodow from pg_catalog.now() at time zone 'Europe/Paris')::int;
+  v_reference := (v_dimanche_precedent + time '23:30') at time zone 'Europe/Paris';
+  v_attendu := ((v_dimanche_precedent + 7) + time '23:00') at time zone 'Europe/Paris';
+  v_obtenu := public.instant_creneau_reference(
+    7, 23, 'Europe/Paris', 0, v_reference
+  );
+  if v_obtenu is distinct from v_attendu or v_obtenu <= v_reference then
+    raise exception 'F86/callers: le créneau passé ne pointe pas à la prochaine occurrence (%, attendu %) ',
+      v_obtenu, v_attendu;
+  end if;
+  raise notice 'Callers/F86 ok : le créneau du dimanche passé avance au dimanche suivant';
 end $$;
 
 -- ============================================================
@@ -706,10 +809,16 @@ begin
 end $$;
 
 -- La date de fin d'acces, que TUT-01 affiche par enfant en MVP-0 a la place d'un
--- portefeuille. Posee ici en superuser : elle vient d'un import d'administration
--- (ADR-014), aucun tuteur ne l'ecrit.
-update public.profiles set access_until = now() + interval '30 days'
-where id = 'aaaaaaaa-0000-0000-0000-000000000003';
+-- portefeuille. L'import d'administration est represente par un admin actif;
+-- la garde du trigger ne doit pas s'appuyer sur un role JWT absent.
+do $import_admin$
+begin
+  perform set_config('test.uid', 'dddddddd-0000-0000-0000-000000000001', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+  update public.profiles set access_until = now() + interval '30 days'
+  where id = 'aaaaaaaa-0000-0000-0000-000000000003';
+end
+$import_admin$;
 
 do $$
 declare
@@ -1158,3 +1267,340 @@ begin
   end if;
   raise notice 'Prieres ok : les reglages ne sortent pas du cercle des parties concernees';
 end $$;
+
+-- H1: la lecture des groupes ne boucle pas entre les deux policies RLS.
+begin;
+
+insert into auth.users (id, email) values
+  ('a1730000-0000-0000-0000-000000000001', 'h1-teacher@example.test'),
+  ('a1730000-0000-0000-0000-000000000002', 'h1-student-a@example.test'),
+  ('a1730000-0000-0000-0000-000000000003', 'h1-student-b@example.test'),
+  ('a1730000-0000-0000-0000-000000000004', 'h1-outsider@example.test');
+insert into public.households (id, timezone) values
+  ('a173ffff-0000-0000-0000-000000000001', 'Europe/Paris'),
+  ('a173ffff-0000-0000-0000-000000000002', 'Europe/Paris');
+insert into public.profiles
+  (id, immutable_id, role, household_id, first_name, last_name, account_status)
+values
+  ('a1730000-0000-0000-0000-000000000001', 'H1-TEACHER-001', 'teacher',
+   null, 'Fixture', 'Teacher', 'provisional_active'),
+  ('a1730000-0000-0000-0000-000000000002', 'H1-STUDENT-A-001', 'student',
+   'a173ffff-0000-0000-0000-000000000001', 'Fixture', 'StudentA', 'active'),
+  ('a1730000-0000-0000-0000-000000000003', 'H1-STUDENT-B-001', 'student',
+   'a173ffff-0000-0000-0000-000000000001', 'Fixture', 'StudentB', 'active'),
+  ('a1730000-0000-0000-0000-000000000004', 'H1-OUTSIDER-001', 'student',
+   'a173ffff-0000-0000-0000-000000000002', 'Fixture', 'Outsider', 'active');
+-- Fixture contractuel requis par 0089 : aucune garde d'activation n'est assouplie.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+    PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true);
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+      ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+  PERFORM set_config('request.jwt.claim.sub','',true);
+  PERFORM set_config('request.jwt.claims','',true);
+  PERFORM set_config('test.uid','',true);
+  PERFORM set_config('test.jwt','',true);
+END
+$fixture_teacher_contracts$;
+insert into public.groupes
+  (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana)
+values
+  ('a173ffff-0000-0000-0000-000000000010',
+   'a1730000-0000-0000-0000-000000000001', 'enfant', 5,
+   'H1 fixture', 1, 10, 'Europe/Paris');
+insert into public.groupe_membres (groupe_id, student_id) values
+  ('a173ffff-0000-0000-0000-000000000010', 'a1730000-0000-0000-0000-000000000002'),
+  ('a173ffff-0000-0000-0000-000000000010', 'a1730000-0000-0000-0000-000000000003');
+
+do $h1$
+declare
+  v_groups integer;
+  v_members integer;
+begin
+  set local role authenticated;
+  perform set_config('test.uid', 'a1730000-0000-0000-0000-000000000002', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"a173ffff-0000-0000-0000-000000000001"}}',
+    true);
+  select count(*) into v_groups from public.groupes
+   where id = 'a173ffff-0000-0000-0000-000000000010';
+  select count(*) into v_members from public.groupe_membres
+   where groupe_id = 'a173ffff-0000-0000-0000-000000000010';
+  if v_groups <> 1 or v_members <> 2 then
+    raise exception 'H1: le foyer ne lit pas le groupe et les membres de son foyer (%, %)',
+      v_groups, v_members;
+  end if;
+
+  perform set_config('test.uid', 'a1730000-0000-0000-0000-000000000004', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"a173ffff-0000-0000-0000-000000000002"}}',
+    true);
+  select count(*) into v_groups from public.groupes
+   where id = 'a173ffff-0000-0000-0000-000000000010';
+  select count(*) into v_members from public.groupe_membres
+   where groupe_id = 'a173ffff-0000-0000-0000-000000000010';
+  if v_groups <> 0 or v_members <> 0 then
+    raise exception 'H1: un foyer tiers lit le groupe ou ses membres (%, %)',
+      v_groups, v_members;
+  end if;
+
+  perform set_config('test.uid', 'a1730000-0000-0000-0000-000000000001', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"teacher"}}',
+    true);
+  select count(*) into v_groups from public.groupes
+   where id = 'a173ffff-0000-0000-0000-000000000010';
+  select count(*) into v_members from public.groupe_membres
+   where groupe_id = 'a173ffff-0000-0000-0000-000000000010';
+  if v_groups <> 1 or v_members <> 2 then
+    raise exception 'H1: l''enseignant n''a pas la visibilité complète de son groupe (%, %)',
+      v_groups, v_members;
+  end if;
+end
+$h1$;
+
+-- H2: un compte valide avec un JWT sans rôle ne peut pas rejoindre un groupe.
+-- Avant 0067, « role <> admin OR NOT compte_valide » valait NULL et IF NULL
+-- laissait passer cette mutation SECURITY DEFINER.
+do $h2$
+declare
+  v_refuse boolean := false;
+begin
+  set local role authenticated;
+  perform set_config('request.jwt.claims', '{}', true);
+  perform set_config('test.uid', 'a1730000-0000-0000-0000-000000000004', true);
+  perform set_config('test.jwt', '{}', true);
+
+  begin
+    perform public.ajouter_eleve_groupe(
+      'a173ffff-0000-0000-0000-000000000010',
+      'a1730000-0000-0000-0000-000000000004',
+      'H2 regression: no role claim'
+    );
+  exception when sqlstate 'P0001' then
+    if sqlerrm <> 'ajout d''un eleve a un groupe reserve a l''administration' then
+      raise;
+    end if;
+    v_refuse := true;
+  end;
+
+  if not v_refuse then
+    raise exception 'H2 ECHEC : un JWT sans rôle a ajouté un élève au groupe';
+  end if;
+  raise notice 'H2 ok : ajouter_eleve_groupe refuse un compte valide sans rôle JWT';
+end
+$h2$;
+
+-- F86: les quatre mutations admin refusent un JWT admin sans profil, puis
+-- un profil admin dont le compte est désactivé.
+do $f86_admin_mutators$
+declare
+  v_test record;
+  v_uid uuid := 'eeeeeeee-0000-0000-0000-000000000099';
+  v_admin uuid := 'dddddddd-0000-0000-0000-000000000001';
+  v_refuse boolean;
+begin
+  set local role authenticated;
+  perform set_config('request.jwt.claim.sub', v_uid::text, true);
+  perform set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', true);
+  perform set_config('test.uid', v_uid::text, true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+
+  if auth.uid() is distinct from v_uid or public.app_account_valid() then
+    raise exception 'F86 fixture: le JWT admin doit être sans profil applicatif';
+  end if;
+
+  for v_test in
+    select * from (values
+      ('select public.maj_eleve_pedagogie(''aaaaaaaa-0000-0000-0000-000000000002'', ''intermediaire'', ''hafs'')',
+       'seul un administrateur modifie le niveau ou la riwaya'),
+      ('select public.poser_regle(''aaaaaaaa-0000-0000-0000-000000000002'', ''session_duration_minutes'', 45, ''F86 sans profil'')',
+       'seul un administrateur pose une regle'),
+      ('select public.clore_regle(''ffffffff-0000-0000-0000-0000000000ff'', ''F86 sans profil'')',
+       'seul un administrateur clot une regle'),
+      ('select public.decider_demande(''ffffffff-0000-0000-0000-0000000000ff'', true, ''F86 sans profil'')',
+       'seul un administrateur tranche une demande')
+    ) as tests(commande, refus_attendu)
+  loop
+    v_refuse := false;
+    begin
+      execute v_test.commande;
+      raise exception 'F86 ECHEC: une RPC admin a accepté le JWT sans profil';
+    exception when sqlstate 'P0001' then
+      if sqlerrm <> v_test.refus_attendu then raise; end if;
+      v_refuse := true;
+    end;
+    if not v_refuse then
+      raise exception 'F86 ECHEC: refus absent pour le JWT sans profil';
+    end if;
+  end loop;
+
+  reset role;
+  update public.profiles set account_status = 'disabled' where id = v_admin;
+  set local role authenticated;
+  perform set_config('request.jwt.claim.sub', v_admin::text, true);
+  perform set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', true);
+  perform set_config('test.uid', v_admin::text, true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+
+  if auth.uid() is distinct from v_admin or public.app_account_valid() then
+    raise exception 'F86 fixture: le compte admin doit être désactivé';
+  end if;
+
+  for v_test in
+    select * from (values
+      ('select public.maj_eleve_pedagogie(''aaaaaaaa-0000-0000-0000-000000000002'', ''intermediaire'', ''hafs'')',
+       'seul un administrateur modifie le niveau ou la riwaya'),
+      ('select public.poser_regle(''aaaaaaaa-0000-0000-0000-000000000002'', ''session_duration_minutes'', 45, ''F86 admin désactivé'')',
+       'seul un administrateur pose une regle'),
+      ('select public.clore_regle(''ffffffff-0000-0000-0000-0000000000ff'', ''F86 admin désactivé'')',
+       'seul un administrateur clot une regle'),
+      ('select public.decider_demande(''ffffffff-0000-0000-0000-0000000000ff'', true, ''F86 admin désactivé'')',
+       'seul un administrateur tranche une demande')
+    ) as tests(commande, refus_attendu)
+  loop
+    v_refuse := false;
+    begin
+      execute v_test.commande;
+      raise exception 'F86 ECHEC: une RPC admin a accepté un compte désactivé';
+    exception when sqlstate 'P0001' then
+      if sqlerrm <> v_test.refus_attendu then raise; end if;
+      v_refuse := true;
+    end;
+    if not v_refuse then
+      raise exception 'F86 ECHEC: refus absent pour le compte désactivé';
+    end if;
+  end loop;
+
+  reset role;
+  update public.profiles set account_status = 'active' where id = v_admin;
+end
+$f86_admin_mutators$;
+
+-- A793 : les appelants voient le prochain instant d'un créneau déjà passé.
+-- Ce scénario exerce enseignants_pour (0014/0016), la matérialisation de
+-- groupe (0033), les deux chevauchements récurrents (0083) et les deux gardes
+-- F86 qui comparent les disponibilités élève/enseignant.
+do $next_occurrence_callers$
+declare
+  v_reference timestamptz := now();
+  v_weekday integer;
+  v_hour integer;
+  v_weekday_2 integer;
+  v_hour_2 integer;
+  v_teacher_weekday integer;
+  v_teacher_hour integer;
+  v_teacher_weekday_2 integer;
+  v_teacher_hour_2 integer;
+  v_next timestamptz;
+  v_next_2 timestamptz;
+  v_group_first timestamptz;
+  v_session_count integer;
+  v_common integer;
+  v_assignment uuid;
+begin
+  -- Deux horaires espacés d'une journée et toujours déjà passés aujourd'hui.
+  -- Les créneaux à 00 h évitent les séances matérialisées par les autres
+  -- scénarios de l'enseignant, dont les disponibilités sont en journée/soirée.
+  v_weekday := extract(isodow from (v_reference at time zone 'Europe/Paris'))::integer;
+  v_hour := 0;
+  v_weekday_2 := case when v_weekday = 1 then 7 else v_weekday - 1 end;
+  v_hour_2 := 0;
+
+  v_next := public.instant_creneau_reference(
+    v_weekday, v_hour, 'Europe/Paris', 0, v_reference
+  );
+  v_next_2 := public.instant_creneau_reference(
+    v_weekday_2, v_hour_2, 'Europe/Paris', 0, v_reference
+  );
+  if v_next <= v_reference or v_next_2 <= v_reference
+     or public.instant_creneau(v_weekday, v_hour, 'Europe/Paris') <> v_next then
+    raise exception 'A793: un créneau passé ne renvoie pas sa prochaine occurrence';
+  end if;
+
+  v_teacher_weekday := extract(isodow from (v_next at time zone 'Africa/Conakry'))::integer;
+  v_teacher_hour := extract(hour from (v_next at time zone 'Africa/Conakry'))::integer;
+  v_teacher_weekday_2 := extract(isodow from (v_next_2 at time zone 'Africa/Conakry'))::integer;
+  v_teacher_hour_2 := extract(hour from (v_next_2 at time zone 'Africa/Conakry'))::integer;
+
+  delete from public.weekly_availability
+   where profile_id in (
+     'aaaaaaaa-0000-0000-0000-000000000003',
+     'bbbbbbbb-0000-0000-0000-000000000002',
+     'cccccccc-0000-0000-0000-000000000001',
+     'cccccccc-0000-0000-0000-000000000002'
+   );
+  insert into public.weekly_availability(profile_id,weekday,hour_local,timezone_iana)
+  values
+    ('aaaaaaaa-0000-0000-0000-000000000003',v_weekday,v_hour,'Europe/Paris'),
+    ('bbbbbbbb-0000-0000-0000-000000000002',v_weekday_2,v_hour_2,'Europe/Paris'),
+    ('cccccccc-0000-0000-0000-000000000002',v_teacher_weekday,v_teacher_hour,'Africa/Conakry'),
+    ('cccccccc-0000-0000-0000-000000000002',v_teacher_weekday_2,v_teacher_hour_2,'Africa/Conakry');
+
+  if not app_private.creneaux_recurrents_se_chevauchent(
+       v_weekday,v_hour,'Europe/Paris',v_teacher_weekday,v_teacher_hour,
+       'Africa/Conakry',60)
+     or not app_private.creneau_recurrent_chevauche_session(
+       v_weekday,v_hour,'Europe/Paris',60,v_next,v_next+interval '30 minutes') then
+    raise exception 'A793: le consommateur 0083 ne voit pas le créneau suivant';
+  end if;
+
+  -- L'insertion d'un groupe traverse les triggers 0033 et matérialise son
+  -- premier début sur le même prochain instant, même si son heure est passée.
+  insert into public.groupes
+    (id,teacher_id,type_public,seuil_max,libelle,weekday,hour_local,timezone_iana)
+  values
+    ('a173ffff-0000-0000-0000-000000000011',
+     'cccccccc-0000-0000-0000-000000000001','enfant',5,
+     'A793 prochaine occurrence',v_weekday,v_hour,'Europe/Paris');
+  select count(*),min(started_at) into v_session_count,v_group_first
+  from public.sessions where groupe_id='a173ffff-0000-0000-0000-000000000011';
+  if v_session_count < 1 or v_group_first is distinct from v_next then
+    raise exception 'A793: 0033 a matérialisé %, attendu %',v_group_first,v_next;
+  end if;
+
+  set local role authenticated;
+  perform set_config('test.uid','dddddddd-0000-0000-0000-000000000001',true);
+  perform set_config('test.jwt','{"app_metadata":{"role":"admin"}}',true);
+  select count(*) into v_common
+  from public.enseignants_pour('aaaaaaaa-0000-0000-0000-000000000003') e
+  where e.teacher_id='cccccccc-0000-0000-0000-000000000002'
+    and e.creneaux_communs <> '[]'::jsonb;
+  if v_common <> 1 then
+    raise exception 'A793: 0014/0016 ne trouvent pas le créneau commun suivant';
+  end if;
+  v_assignment := public.attribuer_eleve(
+    'aaaaaaaa-0000-0000-0000-000000000003',
+    'cccccccc-0000-0000-0000-000000000002',v_weekday,v_hour,NULL
+  );
+  if v_assignment is null then
+    raise exception 'A793: garde F86 attribuer_eleve n''a pas affecté le créneau suivant';
+  end if;
+
+  perform set_config('test.uid','cccccccc-0000-0000-0000-000000000002',true);
+  perform set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+  perform set_config('request.jwt.claim.sub','cccccccc-0000-0000-0000-000000000002',true);
+  perform set_config('request.jwt.claims','{"sub":"cccccccc-0000-0000-0000-000000000002","app_metadata":{"role":"teacher"}}',true);
+  v_assignment := public.prendre_eleve(
+    'bbbbbbbb-0000-0000-0000-000000000002',v_weekday_2,v_hour_2
+  );
+  if v_assignment is null then
+    raise exception 'A793: garde F86 prendre_eleve n''a pas pris le créneau suivant';
+  end if;
+  reset role;
+  raise notice 'A793 : appelants 0014/0016/0033/0083 et gardes F86 utilisent la prochaine occurrence';
+end
+$next_occurrence_callers$;
+
+reset role;
+rollback;
