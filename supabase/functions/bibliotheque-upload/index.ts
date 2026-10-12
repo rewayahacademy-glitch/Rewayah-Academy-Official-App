@@ -13,6 +13,7 @@ import {
   signerDepot,
   signerLecture,
 } from "../_shared/r2/signature.ts";
+import { signatureConfirmationUpload } from "../_shared/r2/confirmation_hmac.ts";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const SHA256 = /^[0-9a-f]{64}$/;
@@ -168,6 +169,18 @@ async function confirmerDepot(
 ): Promise<Response> {
   const id = typeof corps.upload_id === "string" ? corps.upload_id.trim() : "";
   if (!UUID.test(id)) return refus("intention invalide");
+  let secretConfirmation: string;
+  try {
+    secretConfirmation = Deno.env.get("LIBRARY_UPLOAD_CONFIRMATION_HMAC_KEY") ?? "";
+  } catch {
+    return refus("confirmation indisponible", 503);
+  }
+  if (
+    new TextEncoder().encode(secretConfirmation).byteLength < 32 ||
+    secretConfirmation.trim() !== secretConfirmation
+  ) {
+    return refus("confirmation indisponible", 503);
+  }
   const debut = Date.now();
   const { data, error } = await compte.sql.rpc("lire_upload_bibliotheque", {
     p_intention_id: id,
@@ -222,11 +235,18 @@ async function confirmerDepot(
       body: octets,
     });
     if (!depose.ok) throw new Error("ecriture R2 refusee");
+    const confirmationSignature = await signatureConfirmationUpload(
+      secretConfirmation,
+      id,
+      empreinte,
+      octets.byteLength,
+    );
     const confirme = await compte.sql.rpc("confirmer_upload_bibliotheque", {
       p_intention_id: id,
       p_mime_reel: mimeReel,
       p_taille_reelle: octets.byteLength,
       p_sha256_reel: empreinte,
+      p_confirmation_signature: confirmationSignature,
     });
     if (confirme.error) return refus("confirmation refusee", 403);
     journaliser({

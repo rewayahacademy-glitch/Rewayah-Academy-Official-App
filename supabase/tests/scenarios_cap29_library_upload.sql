@@ -16,6 +16,8 @@ VALUES
 INSERT INTO public.resource_version (id, resource_id, numero_version)
 VALUES ('c29u1000-0000-0000-0000-000000000004',
         'c29u1000-0000-0000-0000-000000000003', 1);
+INSERT INTO private.library_upload_confirmation_secrets(singleton, secret)
+VALUES (true, 'test-only-cap29-upload-confirmation-key-32-bytes');
 
 SELECT set_config('request.jwt.claim.sub', 'c29u1000-0000-0000-0000-000000000001', true);
 SELECT set_config('test.uid', 'c29u1000-0000-0000-0000-000000000001', true);
@@ -23,10 +25,14 @@ SELECT set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', tru
 SELECT set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
 SET LOCAL ROLE authenticated;
 DO $test$
-DECLARE v_intention jsonb;
+DECLARE
+  v_intention jsonb;
+  v_signature text;
+  v_result jsonb;
+  v_sha text := 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc';
 BEGIN
   IF has_function_privilege('anon', 'public.demander_upload_bibliotheque(uuid,text,text,text,bigint,text)', 'EXECUTE')
-     OR has_function_privilege('anon', 'public.confirmer_upload_bibliotheque(uuid,text,bigint,text)', 'EXECUTE')
+     OR has_function_privilege('anon', 'public.confirmer_upload_bibliotheque(uuid,text,bigint,text,text)', 'EXECUTE')
      OR has_function_privilege('anon', 'public.lire_upload_bibliotheque(uuid)', 'EXECUTE')
      OR has_function_privilege('anon', 'public.annuler_upload_bibliotheque(uuid)', 'EXECUTE') THEN
     RAISE EXCEPTION 'CAP29 upload: anon conserve EXECUTE';
@@ -53,6 +59,39 @@ BEGIN
   EXCEPTION WHEN invalid_parameter_value THEN
     NULL;
   END;
+
+  v_intention := public.demander_upload_bibliotheque(
+    'c29u1000-0000-0000-0000-000000000003', 'support', 'signe.pdf',
+    'application/pdf', 1234, v_sha
+  );
+  -- Mutant guard: if DB-side HMAC verification is removed, this untrusted
+  -- confirmation reaches the write and the explicit failure below turns red.
+  BEGIN
+    PERFORM public.confirmer_upload_bibliotheque(
+      (v_intention->>'id')::uuid, 'application/pdf', 1234, v_sha, NULL
+    );
+    RAISE EXCEPTION 'CAP29 upload: appel client sans HMAC accepte';
+  EXCEPTION WHEN insufficient_privilege THEN
+    NULL;
+  END;
+
+  v_signature := pg_catalog.encode(
+    extensions.hmac(
+      pg_catalog.convert_to(
+        (v_intention->>'id')::uuid::text || E'\n' || v_sha || E'\n1234',
+        'UTF8'
+      ),
+      pg_catalog.convert_to('test-only-cap29-upload-confirmation-key-32-bytes', 'UTF8'),
+      'sha256'
+    ),
+    'hex'
+  );
+  v_result := public.confirmer_upload_bibliotheque(
+    (v_intention->>'id')::uuid, 'application/pdf', 1234, v_sha, v_signature
+  );
+  IF v_result->>'etat' <> 'pret' THEN
+    RAISE EXCEPTION 'CAP29 upload: signature Edge simulée refusée: %', v_result;
+  END IF;
 END
 $test$;
 RESET ROLE;
