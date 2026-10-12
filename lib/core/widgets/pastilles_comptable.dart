@@ -249,6 +249,12 @@ String libelleRaisonBlocage(RaisonBlocage raison) {
     RaisonBlocage.doublonPotentiel => r.doublonPotentiel,
     RaisonBlocage.nonApprouvee => r.nonApprouvee,
     RaisonBlocage.capaciteAbsente => r.capaciteAbsente,
+    RaisonBlocage.delegationsSuspendues => r.delegationsSuspendues,
+    RaisonBlocage.delegationExpiree => r.delegationExpiree,
+    RaisonBlocage.sortieEnAttenteDelai => r.sortieEnAttenteDelai,
+    RaisonBlocage.coffreNonAutorise => r.coffreNonAutorise,
+    RaisonBlocage.beneficiaireExclu => r.beneficiaireExclu,
+    RaisonBlocage.plafondExceptionDepasse => r.plafondExceptionDepasse,
   };
 }
 

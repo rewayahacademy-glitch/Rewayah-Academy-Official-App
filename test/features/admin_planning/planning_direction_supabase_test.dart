@@ -1,0 +1,89 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/admin/planning_direction_supabase.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+void main() {
+  late HttpServer server;
+  late SupabaseClient client;
+  final requests = <Uri>[];
+  final bodies = <Map<String, dynamic>>[];
+  var manyPages = false;
+
+  setUp(() async {
+    requests.clear();
+    bodies.clear();
+    manyPages = false;
+    server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    server.listen((request) async {
+      requests.add(request.uri);
+      bodies.add(
+        jsonDecode(await utf8.decoder.bind(request.cast<List<int>>()).join())
+            as Map<String, dynamic>,
+      );
+      final offset = bodies.last['p_offset'] as int;
+      final rows = manyPages && offset == 0
+          ? List.generate(
+              100,
+              (index) => {
+                'id': 's$index',
+                'classe': 'A',
+                'debut': '2026-10-12T09:00:00Z',
+                'duree_minutes': 60,
+                'statut': 'planned',
+                'enseignant': null,
+              },
+            )
+          : [
+              {
+                'id': 's${offset + 1}',
+                'classe': 'A',
+                'debut': '2026-10-12T09:00:00Z',
+                'duree_minutes': 60,
+                'statut': 'planned',
+                'enseignant': null,
+              },
+            ];
+      request.response
+        ..statusCode = 200
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode(rows));
+      await request.response.close();
+    });
+    client = SupabaseClient(
+      'http://${server.address.address}:${server.port}',
+      'cle-fictive',
+      authOptions: const AuthClientOptions(autoRefreshToken: false),
+    );
+  });
+
+  tearDown(() async {
+    await client.dispose();
+    await server.close(force: true);
+  });
+
+  test('demande la semaine et mappe les séances depuis la RPC', () async {
+    final rows = await PlanningDirectionSupabase(client)
+        .semaine(DateTime(2026, 10, 12));
+    expect(rows.single.dureeMinutes, 60);
+    expect(rows.single.classe, 'A');
+    expect(requests.single.path, endsWith('/rpc/lister_planning_direction'));
+    expect(
+      bodies.single['p_lundi'],
+      DateTime(2026, 10, 12).toUtc().toIso8601String(),
+    );
+    expect(bodies.single['p_limite'], 100);
+  });
+
+  test('récupère toutes les pages tant que le lot reçu est plein', () async {
+    manyPages = true;
+    final rows = await PlanningDirectionSupabase(client)
+        .semaine(DateTime(2026, 10, 12));
+
+    expect(rows, hasLength(101));
+    expect(bodies.map((body) => body['p_offset']), <int>[0, 100]);
+    expect(requests, hasLength(2));
+  });
+}

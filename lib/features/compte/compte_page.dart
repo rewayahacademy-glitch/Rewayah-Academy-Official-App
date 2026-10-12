@@ -78,6 +78,16 @@ class ComptePage extends ConsumerWidget {
                 icon: AppIcons.reglages,
                 onPress: () => context.push(Routes.compteReglages),
               ),
+              // BIBLIO-LECTURE : la Bibliotheque se rejoint depuis la navigation,
+              // pas seulement par une adresse (eleve, tuteur, adulte eleve
+              // autonome ; capacite de la session, jamais le role).
+              if (projection.afficheBibliotheque)
+                SettingRow(
+                  title: t.tc.bibliotheque.titre,
+                  description: t.tc.bibliotheque.detail.entreeDetail,
+                  icon: AppIcons.bibliotheque,
+                  onPress: () => context.push(Routes.tcBibliotheque),
+                ),
               // Le Foyer est une destination du tuteur (seul role a qui la ligne
               // s'affiche) : on la rejoint par `go`, pour que la barre allume le
               // Foyer. Un `push` de `/compte/profils`, redirige vers le Foyer,
@@ -702,6 +712,7 @@ class _CompteProjection {
     required this.espaces,
     required this.afficheFoyer,
     required this.afficheAppareils,
+    required this.afficheBibliotheque,
     this.profileId,
   });
 
@@ -719,6 +730,7 @@ class _CompteProjection {
       espaces: _espacesPour(role),
       afficheFoyer: session.aUnFoyer,
       afficheAppareils: session.peutGererAppareils,
+      afficheBibliotheque: session.peutOuvrirBibliotheque,
       profileId: session.profileId,
     );
   }
@@ -729,6 +741,9 @@ class _CompteProjection {
   final List<_EspaceCompte> espaces;
   final bool afficheFoyer;
   final bool afficheAppareils;
+
+  /// BIBLIO-LECTURE : l'entree de la Bibliotheque, pour qui peut l'ouvrir.
+  final bool afficheBibliotheque;
   final String? profileId;
 }
 
