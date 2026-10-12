@@ -70,9 +70,11 @@ void main() {
       final PolitiqueDelegationFinance policy = await adapter.renouveler(
         cleIdempotence: 'df100000-0000-0000-0000-000000000001',
       );
+      final Map<String, dynamic> body =
+          requests.single['body'] as Map<String, dynamic>;
 
       expect(
-        requests.single['body']['p_cle'],
+        body['p_cle'],
         'df100000-0000-0000-0000-000000000001',
       );
       expect(policy.etat, EtatDelegation.suspendue);
