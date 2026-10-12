@@ -24,15 +24,15 @@ declare
   v_result jsonb;
   v_replay jsonb;
   v_unknown_email_rejected boolean := false;
-  v_students_csv text := E'Email,Email du tuteur,Nom,Prénom,Date de naissance,Nom de l\'élève 1,Prénom de l\'élève 1,Date de naissance de l\'élève 1,Pour qui faites-vous cette inscription ?\r\nfamily@example.test,family@example.test,ParentLast,ParentFirst,01/01/1980,ChildLast,Lina,02/02/2015,Pour mon enfant\r\n';
+  v_students_csv text := E'Email,Email du tuteur,Nom,Prénom,Date de naissance,Nom de l\'élève 1,Prénom de l\'élève 1,Date de naissance de l\'élève 1,Pour qui faites-vous cette inscription ?\r\nfamily@example.test,family@example.test,ParentLast,ParentFirst,01/01/1980,ChildLast,Lina,02/02/2015,Pour mon enfant\r\nfamily2@example.test,family2@example.test,GuardianTwo,FamilyTwo,01/02/1984,ChildTwo,Noor,03/04/2016,Pour mon enfant\r\n';
   v_teachers_csv text := E'Horodateur,Prénom,Nom,Email\r\n2026-10-01,TeachFirst,TeacherLast,teacher@example.test\r\n';
 begin
   v_result := public.confirmer_import_inscriptions(
     v_students_csv, v_teachers_csv,
-    '[{"email":"family@example.test","a_patiente":true}]'::jsonb);
-  if v_result->>'foyers_traites' <> '2'
-     or v_result->>'foyers_crees' <> '2'
-     or v_result->>'personnes_creees' <> '3'
+    '[{"email":"family@example.test","a_patiente":true},{"email":"family2@example.test","a_patiente":true,"mot_patience":"Message personnalisé pour FamilyTwo et Noor."}]'::jsonb);
+  if v_result->>'foyers_traites' <> '3'
+     or v_result->>'foyers_crees' <> '3'
+     or v_result->>'personnes_creees' <> '5'
      or v_result->>'personnes_deja_importees' <> '0'
      or v_result->>'journal_audit' <> 'true'
      or v_result::text like '%ParentFirst%'
@@ -42,11 +42,11 @@ begin
 
   v_replay := public.confirmer_import_inscriptions(
     v_students_csv, v_teachers_csv,
-    '[{"email":"family@example.test","a_patiente":true}]'::jsonb);
-  if v_replay->>'foyers_traites' <> '2'
+    '[{"email":"family@example.test","a_patiente":true},{"email":"family2@example.test","a_patiente":true,"mot_patience":"Message personnalisé pour FamilyTwo et Noor."}]'::jsonb);
+  if v_replay->>'foyers_traites' <> '3'
      or v_replay->>'foyers_crees' <> '0'
      or v_replay->>'personnes_creees' <> '0'
-     or v_replay->>'personnes_deja_importees' <> '3' then
+     or v_replay->>'personnes_deja_importees' <> '5' then
     raise exception 'identical confirmation replay was not idempotent';
   end if;
 
@@ -74,16 +74,17 @@ begin
    where email_normalise = 'family@example.test';
   if v_household_id is null or not exists (
     select 1 from private.preinscription_households
-     where id = v_household_id and status = 'confirmed' and a_patiente
+      where id = v_household_id and status = 'confirmed' and a_patiente
        and welcomed_at is not null and waited_at is not null
        and mot_accueil like '%ParentFirst%Lina%'
        and mot_patience like '%ParentFirst%Lina%'
-       and mot_patience like '%[Signature du directeur]%'
+        and mot_patience like '%Admin Fixture'
+        and mot_patience not like '%[Signature du directeur]%'
   ) then
     raise exception 'family welcome/patience state was not persisted';
   end if;
-  if (select count(*) from private.preinscription_households) <> 2
-     or (select count(*) from private.preinscription_persons) <> 3
+  if (select count(*) from private.preinscription_households) <> 3
+     or (select count(*) from private.preinscription_persons) <> 5
      or not exists (
        select 1 from private.preinscription_persons
         where household_id = v_household_id and person_kind = 'student'
@@ -94,6 +95,11 @@ begin
        join private.preinscription_households h on h.id = p.household_id
         where h.email_normalise = 'teacher@example.test'
           and p.person_kind = 'teacher' and p.first_name = 'TeachFirst'
+      )
+      or not exists (
+        select 1 from private.preinscription_households
+         where email_normalise = 'family2@example.test'
+           and mot_patience = 'Message personnalisé pour FamilyTwo et Noor.'
      ) then
     raise exception 'expected private household/person rows were not persisted';
   end if;
@@ -103,7 +109,7 @@ begin
   if v_audit_payload is null
      or v_audit_payload->>'households_created' <> '0'
      or v_audit_payload->>'persons_created' <> '0'
-     or v_audit_payload->>'persons_existing' <> '3'
+      or v_audit_payload->>'persons_existing' <> '5'
      or v_audit_payload::text like '%ParentFirst%'
      or v_audit_payload::text like '%family@example.test%' then
     raise exception 'audit payload does not contain counters only';
@@ -114,6 +120,19 @@ begin
   end if;
 end;
 $$;
+
+-- Isolate confirmer_import_inscriptions authorization from the preview's own
+-- guard so direct calls can detect a missing confirmation-RPC guard.
+create or replace function public.previsualiser_import_inscriptions(
+  p_eleves_csv text,
+  p_enseignants_csv text
+) returns jsonb
+language sql
+security definer
+set search_path = ''
+as $guard_isolation$
+  select pg_catalog.jsonb_build_object('motifs_rejet', '[]'::jsonb);
+$guard_isolation$;
 
 set local role authenticated;
 select set_config('request.jwt.claim.sub', 'ec100000-0000-0000-0000-000000000002', true);

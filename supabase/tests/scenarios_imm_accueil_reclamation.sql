@@ -51,7 +51,8 @@ delete from auth.users
  where id in ('ec200000-0000-0000-0000-000000000001', 'ec200000-0000-0000-0000-000000000002');
 insert into auth.users (id, email, email_confirmed_at) values
   ('ec200000-0000-0000-0000-000000000003', 'family@example.test', now()),
-  ('ec200000-0000-0000-0000-000000000004', 'unknown@example.test', now());
+  ('ec200000-0000-0000-0000-000000000004', 'unknown@example.test', now()),
+  ('ec200000-0000-0000-0000-000000000005', 'previous-owner@example.test', now());
 
 set local role authenticated;
 select set_config('request.jwt.claim.sub', 'ec200000-0000-0000-0000-000000000003', true);
@@ -112,6 +113,35 @@ begin
           and (payload::text like '%family@example.test%' or payload::text like '%ParentFirst%')
      ) then
     raise exception 'claim audit is missing, duplicated, or contains PII';
+  end if;
+end;
+$$;
+
+update private.preinscription_households
+   set linked_auth_user_id = 'ec200000-0000-0000-0000-000000000005',
+       linked_at = now()
+ where id = 'ec2fffff-ffff-ffff-ffff-000000000001';
+set local role authenticated;
+select set_config('request.jwt.claim.sub', 'ec200000-0000-0000-0000-000000000003', true);
+select set_config('request.jwt.claims',
+  '{"sub":"ec200000-0000-0000-0000-000000000003","role":"authenticated"}', true);
+do $linked_to_other_account$
+declare v_result jsonb;
+begin
+  v_result := public.reclamer_preinscription_apres_preuve();
+  if v_result <> '{"email_prouve":true,"inscription_connue":false}'::jsonb
+     or v_result::text like '%ParentFirst%'
+     or v_result::text like '%Lina%'
+     or v_result ? 'personnes' then
+    raise exception 'household linked to another Auth account returned private data';
+  end if;
+end;
+$linked_to_other_account$;
+reset role;
+do $$
+begin
+  if (select count(*) from public.audit_logs where action = 'preinscription_claimed') <> 1 then
+    raise exception 'refusing a second account claim wrote another audit event';
   end if;
 end;
 $$;

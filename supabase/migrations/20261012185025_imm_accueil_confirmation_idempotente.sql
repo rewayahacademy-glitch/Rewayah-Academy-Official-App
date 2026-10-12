@@ -232,6 +232,7 @@ declare
   v_students text;
   v_welcome text;
   v_patience text;
+  v_admin_display_name text;
   v_waited boolean;
   v_household_created boolean;
   v_households_created integer := 0;
@@ -244,6 +245,13 @@ begin
      or public.app_role() is distinct from 'admin'::public.app_role
      or public.app_account_valid() is not true then
     raise exception using errcode = '42501', message = 'Accès refusé';
+  end if;
+  select nullif(pg_catalog.btrim(pg_catalog.concat_ws(' ', p.first_name, p.last_name)), '')
+    into v_admin_display_name
+    from public.profiles as p
+   where p.id = auth.uid();
+  if v_admin_display_name is null then
+    raise exception using errcode = '42501', message = 'Nom affiché administrateur indisponible';
   end if;
   if p_options_foyers is null then p_options_foyers := '[]'::jsonb; end if;
   if jsonb_typeof(p_options_foyers) <> 'array'
@@ -300,7 +308,7 @@ begin
         || coalesce(nullif(v_students, ''), 'votre famille')
         || '. Nous vous avions demandé d''attendre, et vous avez attendu, avec une patience et une confiance qui nous ont profondément touchés. '
         || 'Vous faites partie des toutes premières familles de la nouvelle Rewayah Academy. Bienvenue chez vous.'
-        || E'\n[Signature du directeur]');
+        || E'\n' || v_admin_display_name);
     end if;
 
     insert into private.preinscription_households
