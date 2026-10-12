@@ -45,10 +45,11 @@ begin
   );
 
   if v_available < 1.0 then
-    -- Preserve the refill anchor on denied calls so repeated denials cannot
-    -- starve the account by moving its next refill farther into the future.
+    -- Persist both the partial refill and its new anchor. Keeping only one
+    -- would count the same elapsed interval again on each denied request.
     update public.rate_limits r
        set tokens = v_available
+         , updated_at = pg_catalog.statement_timestamp()
      where r.bucket = v_bucket;
     return false;
   end if;

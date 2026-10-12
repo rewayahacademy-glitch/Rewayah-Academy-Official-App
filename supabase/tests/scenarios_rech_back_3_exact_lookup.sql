@@ -148,13 +148,28 @@ begin
     raise exception 'RECH-03: quota storage or RPC ACL is incorrect';
   end if;
 
-  -- Denied attempts preserve the refill anchor; make one minute elapse in-fixture.
+  -- A half-minute refill stays partial across repeated denials; the same
+  -- elapsed interval must not be counted twice.
   update public.rate_limits
-     set updated_at = pg_catalog.statement_timestamp() - interval '60 seconds'
+     set tokens = 0,
+         updated_at = pg_catalog.statement_timestamp() - interval '30 seconds'
    where bucket = v_bucket;
-  select count(*) into v_rows
-    from public.rechercher_personne_par_matricule(v_owner_code);
-  if v_rows <> 1 then
+  if private.rech_recherche_quota_ok() then
+    raise exception 'RECH-03: half-minute refill granted a full token';
+  end if;
+  if private.rech_recherche_quota_ok() then
+    raise exception 'RECH-03: denied retry double-counted the same refill interval';
+  end if;
+  if (select tokens from public.rate_limits where bucket = v_bucket) < 0.49
+     or (select tokens from public.rate_limits where bucket = v_bucket) > 0.51 then
+    raise exception 'RECH-03: partial refill was not preserved with its new anchor';
+  end if;
+
+  update public.rate_limits
+     set tokens = 0,
+         updated_at = pg_catalog.statement_timestamp() - interval '60 seconds'
+   where bucket = v_bucket;
+  if not private.rech_recherche_quota_ok() then
     raise exception 'RECH-03: account quota did not refill after one minute';
   end if;
 end;
