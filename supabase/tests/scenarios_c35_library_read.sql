@@ -120,6 +120,18 @@ begin
   end if;
 end $$;
 
+-- L'ACL anon est exercee par un appel reel en plus du postflight.
+set local role anon;
+do $$
+begin
+  begin
+    perform public.autoriser_lecture_version('c3500000-0000-0000-0000-000000000012');
+    raise exception 'C-35: anon a obtenu une cle de stockage';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+reset role;
+
 set local role authenticated;
 select set_config('test.uid', 'c3500000-0000-0000-0000-000000000001', true);
 select set_config('request.jwt.claims', '{"app_metadata":{"role":"student"}}', true);
@@ -188,6 +200,25 @@ begin
   end;
 end $$;
 reset role;
+
+-- Un JWT valide ne reactive pas un compte desactive.
+update public.profiles
+   set account_status = 'disabled'
+ where id = 'c3500000-0000-0000-0000-000000000001';
+set local role authenticated;
+select set_config('test.uid', 'c3500000-0000-0000-0000-000000000001', true);
+select set_config('request.jwt.claims', '{"app_metadata":{"role":"student"}}', true);
+select set_config('test.jwt', '{"app_metadata":{"role":"student"}}', true);
+do $$
+begin
+  begin
+    perform public.autoriser_lecture_version('c3500000-0000-0000-0000-000000000012');
+    raise exception 'C-35: un compte desactive a obtenu une cle de stockage';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+reset role;
+
 select set_config('test.uid', 'c3500000-0000-0000-0000-000000000003', true);
 do $$
 begin
