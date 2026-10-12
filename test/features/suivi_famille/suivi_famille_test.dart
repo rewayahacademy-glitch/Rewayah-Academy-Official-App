@@ -293,7 +293,10 @@ void main() {
         findsOneWidget,
       );
       // Intervalles : 1 jour (39 h 58), puis 3 jours.
-      expect(find.text(f.intervalle.jour), findsOneWidget);
+      expect(
+        find.text(LibellesGroupe.insecable(f.intervalle.jours(n: 1))),
+        findsOneWidget,
+      );
       expect(
         find.text(LibellesGroupe.insecable(f.intervalle.jours(n: 3))),
         findsOneWidget,

@@ -394,6 +394,32 @@ void main() {
         });
       }
 
+      testWidgets(
+        '(h) la rosace est collee au dernier mot par une espace insecable',
+        (WidgetTester tester) async {
+          await _monter(tester, mode: mode, taille: _bureau);
+          final String texte = tester
+              .widget<RichText>(_texte())
+              .text
+              .toPlainText();
+          int rosaces = 0;
+          for (int i = 0; i < texte.length; i++) {
+            if (texte[i] != '\uFFFC') {
+              continue;
+            }
+            rosaces++;
+            // Une espace normale permettrait de passer a la ligne entre le
+            // mot et la rosace : l'espace est insecable.
+            expect(
+              texte[i - 1],
+              '\u00A0',
+              reason: 'rosace $i : espace insecable avant la rosace',
+            );
+          }
+          expect(rosaces, greaterThan(1));
+        },
+      );
+
       testWidgets('(h) alignement a droite, jamais justifie', (
         WidgetTester tester,
       ) async {
