@@ -12,7 +12,7 @@ BEGIN
   );
   v_before := 'if p_role not in (''guardian_observer'', ''admin_masked'', ''admin_visible'') then';
   v_after := 'if not coalesce(public.app_account_valid() and public.app_role() in (''guardian'', ''admin''), false) then' || E'\n'
-    || '    raise exception ''observation reservee aux tuteurs et a l''administration''' || E'\n'
+    || '    raise exception ''observation reservee aux tuteurs et a l''''administration''' || E'\n'
     || '      using errcode = ''insufficient_privilege'';' || E'\n'
     || '  end if;' || E'\n'
     || '  if p_role not in (''guardian_observer'', ''admin_masked'', ''admin_visible'') then';
@@ -32,7 +32,7 @@ GRANT EXECUTE ON FUNCTION public.entrer_observation(uuid,text)
   TO authenticated;
 
 COMMENT ON FUNCTION public.entrer_observation(uuid,text) IS
-  'F86 candidate allowlist: signature=public.entrer_observation(uuid,text); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: only valid guardian or admin accounts enter the role-specific observation checks; the guardian-child link, policy, quota, and session window remain enforced.';
+  'F86 candidate allowlist: signature=public.entrer_observation(uuid,text); md5_functiondef=729727c897e62754beb9fa46c4206d2c; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: only valid guardian or admin accounts enter the role-specific observation checks; the guardian-child link, policy, quota, and session window remain enforced.';
 
 DO $f86_postflight$
 DECLARE
@@ -44,6 +44,9 @@ BEGIN
   SELECT pg_catalog.pg_get_userbyid(p.proowner), p.proconfig
     INTO v_owner, v_config FROM pg_catalog.pg_proc p WHERE p.oid = v_oid::oid;
   v_definition := pg_catalog.pg_get_functiondef(v_oid);
+  IF pg_catalog.md5(v_definition) IS DISTINCT FROM '729727c897e62754beb9fa46c4206d2c' THEN
+    RAISE EXCEPTION 'F86 postflight: unexpected entrer_observation hash';
+  END IF;
   IF v_owner IS DISTINCT FROM 'postgres'
      OR NOT coalesce(v_config @> ARRAY['search_path=""'], false)
      OR pg_catalog.strpos(v_definition, 'if not coalesce(public.app_account_valid() and public.app_role() in (''guardian'', ''admin''), false) then') = 0
@@ -54,7 +57,7 @@ BEGIN
      OR NOT pg_catalog.has_function_privilege('authenticated', v_oid, 'EXECUTE')
      OR coalesce(pg_catalog.strpos(
        pg_catalog.obj_description(v_oid::oid, 'pg_proc'),
-       'md5_functiondef=A_CALCULER;'
+       'md5_functiondef=729727c897e62754beb9fa46c4206d2c;'
      ), 0) = 0 THEN
     RAISE EXCEPTION 'F86 postflight: observation-entry guard/ACL/owner/search_path/allowlist invalid';
   END IF;
