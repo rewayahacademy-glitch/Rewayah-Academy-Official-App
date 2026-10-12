@@ -1,4 +1,4 @@
--- X2-15: la liste d'incidents reste sous les RLS de l'appelant.
+-- X2-15: la RPC contourne le cycle RLS préexistant, avec garde de rôle explicite.
 begin;
 insert into auth.users(id,email) values
  ('a1500000-0000-0000-0000-000000000001','x215-admin@test'),
@@ -27,8 +27,8 @@ insert into public.groupes(id,teacher_id,type_public,seuil_max,libelle,weekday,h
 insert into public.sessions(id,teacher_id,groupe_id,started_at,ended_at,status,updated_at) values
  ('a15bbbbb-0000-0000-0000-000000000001','a1500000-0000-0000-0000-000000000003','a15aaaaa-0000-0000-0000-000000000001',now()-interval '1 hour',now()-interval '30 minutes','tech_failure',now());
 do $$ begin
- if (select prosecdef from pg_proc where oid='public.lister_incidents_seances(timestamptz,integer,integer)'::regprocedure) then
-   raise exception 'X2-15 RPC must be SECURITY INVOKER';
+ if not (select prosecdef from pg_proc where oid='public.lister_incidents_seances(timestamptz,integer,integer)'::regprocedure) then
+   raise exception 'X2-15 RPC must be SECURITY DEFINER to avoid recursive groupes policies';
  end if;
  if not has_function_privilege('authenticated','public.lister_incidents_seances(timestamptz,integer,integer)','EXECUTE') then
    raise exception 'X2-15 authenticated must execute RPC';

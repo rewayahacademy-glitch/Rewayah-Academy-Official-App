@@ -1,17 +1,5 @@
--- X2-15: paginated incident list; caller's RLS remains in force.
-create policy groupes_incidents_controller_read on public.groupes
-  for select to authenticated using (
-    public.app_account_valid()
-    and public.app_role() = 'controller'
-    and exists (
-      select 1 from public.sessions s
-      where s.groupe_id = groupes.id
-        and s.deleted_at is null
-        and s.status in ('tech_failure', 'teacher_absent', 'student_absent')
-        and s.updated_at > now() - interval '24 hours'
-    )
-  );
-
+-- X2-15: the RPC checks account and role itself; bypasses the pre-existing
+-- recursive groupes policies while projecting only authorized incident data.
 create function public.lister_incidents_seances(
   p_maintenant timestamptz,
   p_limite integer default 100,
@@ -24,7 +12,7 @@ returns table (
   survenu_le timestamptz,
   enseignant text
 )
-language sql stable security invoker set search_path = ''
+language sql stable security definer set search_path = ''
 as $$
   select s.id, coalesce(g.libelle, ''), s.status::text, s.updated_at,
          case when public.app_role() = 'admin'
