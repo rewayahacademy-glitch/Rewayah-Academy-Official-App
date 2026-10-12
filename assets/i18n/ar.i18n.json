@@ -8530,7 +8530,7 @@
       "eleveIntegre": "طلب ⁨{dePrenom}⁩: الطالب مندمج في الفصل",
       "premiereSeance": "طلب ⁨{dePrenom}⁩: تمت الحصة الأولى",
       "close": "طلب ⁨{dePrenom}⁩: ⁨{motif}⁩",
-      "dejaEnClasse": "طلب ⁨{dePrenom}⁩: الطالب في فصل بالفعل، أُغلق الطلب"
+      "dejaEnClasse": "طلب ⁨{dePrenom}⁩: يوجد مكان في فصل بالفعل، أُغلق الطلب"
     },
     "etapeSurTotal": "الخطوة ⁨{n}⁩ من ⁨{total}⁩: ⁨{etape}⁩",
     "close": {
@@ -8668,7 +8668,7 @@
       "enseignantAffecte": "طلب موعد ⁨{dePrenom}⁩: تم اعتماد الفصل وتعيين المعلم",
       "eleveIntegre": "طلب موعد ⁨{dePrenom}⁩: الطالب مندمج في الفصل",
       "coursCommences": "طلب موعد ⁨{dePrenom}⁩: بدأت الدروس",
-      "dejaEnClasse": "طلب موعد ⁨{dePrenom}⁩: الطالب في فصل بالفعل، أُغلق الطلب",
+      "dejaEnClasse": "طلب موعد ⁨{dePrenom}⁩: يوجد مكان في فصل بالفعل، أُغلق الطلب",
       "changementFusion": "طلب موعد ⁨{dePrenom}⁩: دُمج فصلكم مع فصل آخر، عرض الفصل الجديد",
       "changementTransfert": "طلب موعد ⁨{dePrenom}⁩: فصل جديد، عرض التفاصيل",
       "close": "طلب موعد ⁨{dePrenom}⁩: ⁨{motif}⁩"
