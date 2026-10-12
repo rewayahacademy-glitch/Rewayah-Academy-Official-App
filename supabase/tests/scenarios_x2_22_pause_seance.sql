@@ -3,19 +3,23 @@ BEGIN;
 INSERT INTO auth.users(id,email) VALUES
  ('c2200000-0000-0000-0000-000000000101','x222-teacher@example.test'),
  ('c2200000-0000-0000-0000-000000000102','x222-admin@example.test'),
- ('c2200000-0000-0000-0000-000000000103','x222-student@example.test');
+ ('c2200000-0000-0000-0000-000000000103','x222-student@example.test'),
+ ('c2200000-0000-0000-0000-000000000104','x222-guardian@example.test'),
+ ('c2200000-0000-0000-0000-000000000105','x222-accountant@example.test');
 INSERT INTO public.households(id) VALUES
  ('c2200000-0000-0000-0000-000000000111');
 INSERT INTO public.profiles(id,immutable_id,role,household_id,first_name,last_name,account_status) VALUES
  ('c2200000-0000-0000-0000-000000000101','X222-TEACHER','teacher','c2200000-0000-0000-0000-000000000111','Teacher','X','provisional_active'),
  ('c2200000-0000-0000-0000-000000000102','X222-ADMIN','admin','c2200000-0000-0000-0000-000000000111','Admin','X','active'),
- ('c2200000-0000-0000-0000-000000000103','X222-STUDENT','student','c2200000-0000-0000-0000-000000000111','Student','X','active');
+ ('c2200000-0000-0000-0000-000000000103','X222-STUDENT','student','c2200000-0000-0000-0000-000000000111','Student','X','active'),
+ ('c2200000-0000-0000-0000-000000000104','X222-GUARDIAN','guardian','c2200000-0000-0000-0000-000000000111','Guardian','X','active'),
+ ('c2200000-0000-0000-0000-000000000105','X222-ACCOUNTANT','accountant','c2200000-0000-0000-0000-000000000111','Accountant','X','active');
 INSERT INTO public.groupes(id,teacher_id,type_public,seuil_max,libelle,weekday,hour_local)
 VALUES('c2200000-0000-0000-0000-000000000121',
  'c2200000-0000-0000-0000-000000000101','enfant',5,'X2-22 classe',1,10);
 INSERT INTO public.sessions(id,teacher_id,started_at,ended_at,status,session_type,groupe_id) VALUES
  ('c2200000-0000-0000-0000-000000000131','c2200000-0000-0000-0000-000000000101',now(),now()+interval '1 hour','planned','standard','c2200000-0000-0000-0000-000000000121'),
- ('c2200000-0000-0000-0000-000000000132','c2200000-0000-0000-0000-000000000101',now(),now()+interval '1 hour','planned','standard','c2200000-0000-0000-0000-000000000121');
+ ('c2200000-0000-0000-0000-000000000132','c2200000-0000-0000-0000-000000000101',now()+interval '3 hours',now()+interval '4 hours','planned','standard','c2200000-0000-0000-0000-000000000121');
 
 DO $scenario$
 DECLARE
@@ -106,5 +110,94 @@ BEGIN
   IF NOT v_denied THEN RAISE EXCEPTION 'X2-22: élève autorisé à lire la pause'; END IF;
 END;
 $scenario$;
+
+DO $role_denials$
+DECLARE
+  v_ids uuid[] := ARRAY[
+    'c2200000-0000-0000-0000-000000000104'::uuid,
+    'c2200000-0000-0000-0000-000000000103'::uuid,
+    'c2200000-0000-0000-0000-000000000105'::uuid
+  ];
+  v_roles text[] := ARRAY['guardian','student','accountant'];
+  v_i integer;
+  v_denied boolean;
+  v_count bigint;
+BEGIN
+  FOR v_i IN 1..array_length(v_ids,1) LOOP
+    SET LOCAL ROLE authenticated;
+    PERFORM set_config('request.jwt.claim.sub',v_ids[v_i]::text,true);
+    PERFORM set_config('request.jwt.claims',jsonb_build_object(
+      'app_metadata',jsonb_build_object('role',v_roles[v_i],
+        'household_id','c2200000-0000-0000-0000-000000000111'))::text,true);
+
+    v_denied := false;
+    BEGIN
+      PERFORM public.pause_reglage_lire('c2200000-0000-0000-0000-000000000121');
+    EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+    END;
+    IF NOT v_denied THEN RAISE EXCEPTION 'X2-22: % a lu le réglage',v_roles[v_i]; END IF;
+
+    v_denied := false;
+    BEGIN
+      PERFORM public.pause_reglage_ecrire('c2200000-0000-0000-0000-000000000121',true,15,10,'2','x222-denied-write-'||v_roles[v_i]);
+    EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+    END;
+    IF NOT v_denied THEN RAISE EXCEPTION 'X2-22: % a modifié le réglage',v_roles[v_i]; END IF;
+
+    v_denied := false;
+    BEGIN
+      PERFORM public.pause_seance_etat('c2200000-0000-0000-0000-000000000131');
+    EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+    END;
+    IF NOT v_denied THEN RAISE EXCEPTION 'X2-22: % a lu l’état de pause',v_roles[v_i]; END IF;
+
+    v_denied := false;
+    BEGIN
+      PERFORM public.pause_seance_demarrer('c2200000-0000-0000-0000-000000000131','x222-denied-start-'||v_roles[v_i]);
+    EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+    END;
+    IF NOT v_denied THEN RAISE EXCEPTION 'X2-22: % a démarré la pause',v_roles[v_i]; END IF;
+
+    v_denied := false;
+    BEGIN
+      PERFORM public.pause_seance_terminer('c2200000-0000-0000-0000-000000000131','x222-denied-stop-'||v_roles[v_i]);
+    EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+    END;
+    IF NOT v_denied THEN RAISE EXCEPTION 'X2-22: % a terminé la pause',v_roles[v_i]; END IF;
+
+    v_denied := false;
+    BEGIN
+      SELECT count(*) INTO v_count FROM public.pause_reglages;
+    EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+    END;
+    IF NOT v_denied THEN RAISE EXCEPTION 'X2-22: % a lu directement pause_reglages',v_roles[v_i]; END IF;
+
+    v_denied := false;
+    BEGIN
+      SELECT count(*) INTO v_count FROM public.pause_seances;
+    EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+    END;
+    IF NOT v_denied THEN RAISE EXCEPTION 'X2-22: % a lu directement pause_seances',v_roles[v_i]; END IF;
+
+    v_denied := false;
+    BEGIN
+      UPDATE public.pause_reglages SET actif=false
+      WHERE groupe_id='c2200000-0000-0000-0000-000000000121';
+    EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+    END;
+    IF NOT v_denied THEN RAISE EXCEPTION 'X2-22: % a modifié directement pause_reglages',v_roles[v_i]; END IF;
+
+    v_denied := false;
+    BEGIN
+      INSERT INTO public.pause_seances(seance_id,statut,duree_prevue_minutes)
+      VALUES('c2200000-0000-0000-0000-000000000132','non_prevue',5);
+    EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+    END;
+    IF NOT v_denied THEN RAISE EXCEPTION 'X2-22: % a inséré directement dans pause_seances',v_roles[v_i]; END IF;
+
+    SET LOCAL ROLE postgres;
+  END LOOP;
+END;
+$role_denials$;
 
 ROLLBACK;
