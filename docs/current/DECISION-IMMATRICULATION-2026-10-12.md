@@ -75,9 +75,33 @@ ressaisir**.
    continuer est demandé.
 4. **Mot personnel.** Depuis l'administration, le directeur peut joindre un mot d'accueil
    personnel à un foyer pré-inscrit ou à une adresse e-mail attendue (« invitation en attente »).
-   Ce mot s'affiche une fois, à la première connexion. C'est le moyen de remercier une famille
-   qui a patienté. Aucune personne n'est jamais codée en dur dans l'app : c'est une fonction
-   générale, et le texte vient de l'administration.
+   Ce mot s'affiche une fois, à la première connexion, en tête de l'accueil, signé par son auteur.
+   Il peut être long et nommer la personne et ses enfants : c'est le directeur qui l'écrit pour
+   cette famille-là, et non un texte modèle. Aucune personne n'est jamais codée en dur dans l'app :
+   c'est une fonction générale, et le texte vient de l'administration.
+5. **Ce que voit un tuteur déjà connu (précisé par le directeur le 12/10).** Après la preuve de
+   l'e-mail :
+   - il est **d'emblée tuteur** de son foyer, sans rien choisir ;
+   - il voit **la liste des personnes déjà inscrites** de son foyer, chacune avec son prénom et son
+     état : « à jour » ou « à compléter » ;
+   - une personne « à compléter » ouvre une mise à jour qui ne demande **que ce qui manque**. Ce
+     qui est déjà connu est prérempli et modifiable ;
+   - deux actions sous la liste : **« M'inscrire moi aussi »** (le tuteur devient aussi élève, avec
+     son propre matricule) et **« Ajouter une autre personne »** (un autre enfant ou un adulte du
+     foyer).
+6. **Champs obligatoires lors de la mise à jour.** Ce sont ceux sans lesquels l'app ne peut pas
+   fonctionner légalement ou techniquement, et que les formulaires Google ne recueillaient pas
+   toujours :
+   - le pays de résidence et le fuseau horaire, pour les horaires des Classes ;
+   - la date de naissance de l'élève, pour la tranche d'âge et les règles applicables aux mineurs ;
+   - les consentements en vigueur : conditions d'utilisation, traitement des données d'un mineur
+     par son tuteur, et avis d'enregistrement et de contrôle des séances ;
+   - la langue de l'interface.
+
+   Tout le reste est **facultatif** et peut être fait plus tard : photo, téléphone, adresse,
+   niveau, préférences horaires. Tant qu'une personne n'est pas à jour, elle reste visible dans la
+   liste avec son état, sans blocage du reste de l'app. Seule son entrée dans une Classe attend la
+   mise à jour.
 
 ## 6. Partage du travail
 
@@ -87,5 +111,5 @@ ressaisir**.
 | IMM-BACK-2 | Codex | Codes `EV-NNNN` et politique de publication des évaluations |
 | IMM-ACCUEIL-BACK | Codex | Fiches pré-inscrites, script d'import testé sur données inventées, rattachement après preuve de l'e-mail, invitations en attente avec mot personnel |
 | IMM-FRONT-1 | Claude | Affichage du matricule (copie, gauche à droite), étiquettes de rôle, réglage de publication |
-| IMM-ACCUEIL-FRONT | Claude | Écran d'accueil « on vous connaît déjà », mise à jour facultative, ajout de personnes, affichage du mot personnel, réglage du mot dans l'administration |
+| IMM-ACCUEIL-FRONT | Claude | Écran d'accueil « on vous connaît déjà » avec le mot personnel en tête, liste du foyer avec l'état de chaque personne, mise à jour limitée à ce qui manque, « M'inscrire moi aussi » et « Ajouter une autre personne », réglage du mot dans l'administration |
 | RECH-BACK-3 | Codex | Recherche exacte par matricule, après IMM-BACK-1 |
