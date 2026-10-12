@@ -18,12 +18,12 @@ begin
     return false;
   end if;
 
-  -- Proposal pending product confirmation: burst 10, then one token per minute.
+  -- Product decision: burst 20, then one token every 10 seconds.
   -- Hash the actor id so the shared limiter does not persist a direct identifier.
   v_bucket := 'rech:all:' || pg_catalog.md5(auth.uid()::text);
 
   insert into public.rate_limits (bucket, tokens, updated_at)
-  values (v_bucket, 10.0, pg_catalog.statement_timestamp())
+  values (v_bucket, 20.0, pg_catalog.statement_timestamp())
   on conflict (bucket) do nothing;
 
   select r.tokens, r.updated_at
@@ -33,13 +33,13 @@ begin
    for update;
 
   v_available := least(
-    10.0::real,
+    20.0::real,
     greatest(
       0.0::real,
       v_available + greatest(
         0.0::real,
         (pg_catalog.date_part('epoch',
-          pg_catalog.statement_timestamp() - v_updated_at) / 60.0)::real
+          pg_catalog.statement_timestamp() - v_updated_at) / 10.0)::real
       )
     )
   );

@@ -106,9 +106,12 @@ begin
   if v_rows <> 1 then
     raise exception 'RECH-03: first exact lookup should consume one token and return self';
   end if;
+  update public.rate_limits
+     set updated_at = pg_catalog.statement_timestamp() + interval '1 day'
+   where bucket = v_bucket;
   perform public.rech_d1_rechercher_classes('synthetic query', null, 20);
   perform public.rech_d1_rechercher_supports('synthetic query', null, 20);
-  if (select tokens from public.rate_limits where bucket = v_bucket) > 7.0 then
+  if (select tokens from public.rate_limits where bucket = v_bucket) <> 17.0 then
     raise exception 'RECH-03: D1 did not consume the person-domain shared quota';
   end if;
   delete from public.rate_limits where bucket = v_bucket;
@@ -117,7 +120,10 @@ begin
   if v_rows <> 1 then
     raise exception 'RECH-03: exact lookup should return after a fixture reset';
   end if;
-  for v_attempt in 1..9 loop
+  update public.rate_limits
+     set updated_at = pg_catalog.statement_timestamp() + interval '1 day'
+   where bucket = v_bucket;
+  for v_attempt in 1..19 loop
     if exists (
       select 1 from public.rechercher_personne_par_matricule('RA-99-0000')
     ) then
@@ -126,7 +132,7 @@ begin
   end loop;
   select updated_at into v_refill_anchor from public.rate_limits where bucket = v_bucket;
   if exists (select 1 from public.rechercher_personne_par_matricule(v_owner_code)) then
-    raise exception 'RECH-03: 11th request was not rate-limited';
+    raise exception 'RECH-03: 21st request was not rate-limited';
   end if;
   select public.rech_d1_rechercher_classes('synthetic query', null, 20)
     into v_d1_response;
@@ -148,14 +154,14 @@ begin
     raise exception 'RECH-03: quota storage or RPC ACL is incorrect';
   end if;
 
-  -- A half-minute refill stays partial across repeated denials; the same
+  -- A half-token refill stays partial across repeated denials; the same
   -- elapsed interval must not be counted twice.
   update public.rate_limits
      set tokens = 0,
-         updated_at = pg_catalog.statement_timestamp() - interval '30 seconds'
+         updated_at = pg_catalog.statement_timestamp() - interval '5 seconds'
    where bucket = v_bucket;
   if private.rech_recherche_quota_ok() then
-    raise exception 'RECH-03: half-minute refill granted a full token';
+    raise exception 'RECH-03: five-second refill granted a full token';
   end if;
   if private.rech_recherche_quota_ok() then
     raise exception 'RECH-03: denied retry double-counted the same refill interval';
@@ -167,10 +173,10 @@ begin
 
   update public.rate_limits
      set tokens = 0,
-         updated_at = pg_catalog.statement_timestamp() - interval '60 seconds'
+         updated_at = pg_catalog.statement_timestamp() - interval '10 seconds'
    where bucket = v_bucket;
   if not private.rech_recherche_quota_ok() then
-    raise exception 'RECH-03: account quota did not refill after one minute';
+    raise exception 'RECH-03: account quota did not refill after ten seconds';
   end if;
 end;
 $quota$;
