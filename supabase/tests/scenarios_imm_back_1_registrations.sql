@@ -26,9 +26,7 @@ begin
       from pg_catalog.generate_series(0, 9999) as candidates(n)
      where n > 0 and not exists (
        select 1 from private.person_registrations r
-        where r.matricule = 'RA-'
-          || pg_catalog.lpad((extract(year from now() at time zone 'UTC')::integer % 100)::text, 2, '0')
-          || '-' || pg_catalog.lpad(n::text, 4, '0')
+        where pg_catalog.split_part(r.matricule, '-', 3) = pg_catalog.lpad(n::text, 4, '0')
      )
      order by n limit 1;
     return v_number;
@@ -37,9 +35,7 @@ begin
     from pg_catalog.generate_series(10000, 99999) as candidates(n)
    where not exists (
      select 1 from private.person_registrations r
-      where r.matricule = 'RA-'
-        || pg_catalog.lpad((extract(year from now() at time zone 'UTC')::integer % 100)::text, 2, '0')
-        || '-' || pg_catalog.lpad(n::text, 5, '0')
+      where pg_catalog.split_part(r.matricule, '-', 3) = pg_catalog.lpad(n::text, 5, '0')
    )
    order by n limit 1;
   return v_number;
@@ -211,6 +207,55 @@ begin
 end;
 $coverage_and_immutability$;
 
+-- IMM-BACK-1 C: the 4,500th code remains four digits; later ones use five.
+insert into private.person_registrations
+  (profile_id, matricule, registration_year, issued_at)
+select
+  ('a1290000-0000-0000-0000-' || pg_catalog.lpad(n::text, 12, '0'))::uuid,
+  'RA-99-' || pg_catalog.lpad(n::text, 4, '0'),
+  2099, '2099-01-01 UTC'
+from pg_catalog.generate_series(0, 4498) as candidates(n);
+do $threshold$
+declare
+  v_four text;
+  v_five text;
+begin
+  v_four := private.attribuer_matricule(
+    'a1299999-0000-0000-0000-000000000001', '2099-01-02 UTC'
+  );
+  v_five := private.attribuer_matricule(
+    'a1299999-0000-0000-0000-000000000002', '2099-01-03 UTC'
+  );
+  if v_four !~ '^RA-99-[0-9]{4}$' or v_five !~ '^RA-99-[0-9]{5}$' then
+    raise exception 'IMM-11: seuil 4500 incorrect';
+  end if;
+end;
+$threshold$;
+
+-- A deleted account keeps its permanent reservation and cannot receive a new code.
+insert into auth.users (id, email)
+values ('a1100000-0000-0000-0000-000000000007', 'imm1-retired@example.test');
+insert into public.profiles
+  (id, immutable_id, role, household_id, first_name, last_name, account_status)
+values ('a1100000-0000-0000-0000-000000000007', null, 'guardian',
+        'a11fffff-0000-0000-0000-000000000001', 'Retired', 'Fixture', 'active');
+select set_config('imm.back1.deleted_code',
+  (select immutable_id from public.profiles where id = 'a1100000-0000-0000-0000-000000000007'), true);
+delete from auth.users where id = 'a1100000-0000-0000-0000-000000000007';
+do $non_reassignment$
+declare
+  v_code text := current_setting('imm.back1.deleted_code');
+begin
+  if exists (select 1 from public.profiles where id = 'a1100000-0000-0000-0000-000000000007')
+     or not exists (select 1 from private.person_registrations
+                     where profile_id = 'a1100000-0000-0000-0000-000000000007'
+                       and matricule = v_code)
+     or private.attribuer_matricule('a1100000-0000-0000-0000-000000000007', now()) <> v_code then
+    raise exception 'IMM-12: code libere apres suppression';
+  end if;
+end;
+$non_reassignment$;
+
 -- Direct authenticated admin INSERT cannot preserve a caller-supplied code.
 set local session authorization authenticated;
 select set_config('request.jwt.claim.sub', 'a1100000-0000-0000-0000-000000000004', true);
@@ -233,5 +278,87 @@ begin
   end if;
 end;
 $caller_chosen_code$;
+
+-- Exact lookup accepts separators/case but never reveals non-related profiles.
+do $lookup_and_acl$
+declare
+  v_code text := (select immutable_id from public.profiles
+                   where id = 'a1100000-0000-0000-0000-000000000003');
+  v_outsider_code text := (select immutable_id from public.profiles
+                            where id = 'a1100000-0000-0000-0000-000000000002');
+  v_rows integer;
+  v_denied boolean := false;
+begin
+  perform set_config('request.jwt.claim.sub', 'a1100000-0000-0000-0000-000000000001', true);
+  perform set_config('request.jwt.claims', jsonb_build_object(
+    'sub', 'a1100000-0000-0000-0000-000000000001',
+    'role', 'authenticated',
+    'app_metadata', jsonb_build_object(
+      'role', 'guardian', 'household_id', 'a11fffff-0000-0000-0000-000000000001'
+    )
+  )::text, true);
+  select count(*) into v_rows
+    from public.rechercher_personne_par_matricule(lower(replace(v_code, '-', ' '))) r
+   where r.profile_id = 'a1100000-0000-0000-0000-000000000003'
+     and r.matricule = v_code and r.first_name = 'LinaRenommee'
+     and r.role = 'guardian';
+  if v_rows <> 1
+     or exists (select 1 from public.rechercher_personne_par_matricule(v_outsider_code))
+     or exists (select 1 from public.rechercher_personne_par_matricule('RA-O1-12I4'))
+     or exists (select 1 from public.rechercher_personne_par_matricule('RA-26-')) then
+    raise exception 'IMM-05: recherche exacte ou droits du foyer incorrects';
+  end if;
+
+  perform set_config('request.jwt.claim.sub', 'a1100000-0000-0000-0000-000000000002', true);
+  perform set_config('request.jwt.claims', jsonb_build_object(
+    'sub', 'a1100000-0000-0000-0000-000000000002',
+    'role', 'authenticated',
+    'app_metadata', jsonb_build_object(
+      'role', 'guardian', 'household_id', 'a11fffff-0000-0000-0000-000000000002'
+    )
+  )::text, true);
+  if exists (select 1 from public.rechercher_personne_par_matricule(v_code)) then
+    raise exception 'IMM-09: foyer etranger a resolu un matricule connu';
+  end if;
+
+  begin
+    perform 1 from private.person_registrations;
+  exception when insufficient_privilege then
+    v_denied := true;
+  end;
+  if not v_denied then
+    raise exception 'IMM-09: lecture directe du registre permise';
+  end if;
+end;
+$lookup_and_acl$;
+
+do $catalogue$
+begin
+  if not exists (
+    select 1 from pg_catalog.pg_index i
+    join pg_catalog.pg_class t on t.oid = i.indrelid
+    join pg_catalog.pg_namespace n on n.oid = t.relnamespace
+    join pg_catalog.pg_attribute a on a.attrelid = t.oid
+      and a.attname = 'matricule' and a.attnum = i.indkey[0]
+    where n.nspname = 'private' and t.relname = 'person_registrations'
+      and i.indisunique and i.indisvalid and i.indpred is null and i.indexprs is null
+  ) then
+    raise exception 'IMM-14: index unique exact du matricule absent';
+  end if;
+  if exists (
+    select 1 from pg_catalog.pg_proc p
+     where p.oid in (
+       'private.tirer_nombre_matricule(integer)'::regprocedure,
+       'private.attribuer_matricule(uuid,timestamptz)'::regprocedure,
+       'public.profiles_attribuer_matricule()'::regprocedure,
+       'public.rechercher_personne_par_matricule(text)'::regprocedure
+     )
+       and (not p.prosecdef or p.proowner <> 'postgres'::regrole
+         or not (p.proconfig @> array['search_path=""']))
+  ) then
+    raise exception 'IMM-BACK-1: nouveau DEFINER sans owner postgres et search_path vide';
+  end if;
+end;
+$catalogue$;
 
 rollback;

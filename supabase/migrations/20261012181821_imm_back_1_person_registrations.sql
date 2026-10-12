@@ -322,4 +322,88 @@ create trigger profiles_immutable_id_guard
 before update on public.profiles
 for each row execute function public.guard_profile_immutable_id();
 
+-- IMM-BACK-1 C: retire the initials sequence and expose authorized exact lookup.
+drop function public.next_immutable_id(public.app_role, text);
+drop table public.id_sequences;
+
+create or replace function public.rechercher_personne_par_matricule(p_saisie text)
+returns table (
+  profile_id uuid,
+  matricule text,
+  first_name text,
+  last_name text,
+  role public.app_role
+)
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $function$
+declare
+  v_compact text;
+  v_matricule text;
+begin
+  if auth.uid() is null or not public.app_account_valid() then
+    return;
+  end if;
+  v_compact := pg_catalog.upper(pg_catalog.regexp_replace(
+    pg_catalog.btrim(coalesce(p_saisie, '')), '[-[:space:]]', '', 'g'
+  ));
+  if v_compact !~ '^RA[0-9]{2}[0-9]{4,5}$' then
+    return;
+  end if;
+  v_matricule := 'RA-' || pg_catalog.substr(v_compact, 3, 2) || '-'
+    || pg_catalog.substr(v_compact, 5);
+
+  return query
+    select p.id, r.matricule, p.first_name, p.last_name, p.role
+      from private.person_registrations r
+      join public.profiles p on p.id = r.profile_id
+     where r.matricule = v_matricule
+       and p.deleted_at is null
+       and public.partie_concernee(p.id);
+end;
+$function$;
+
+alter function public.rechercher_personne_par_matricule(text) owner to postgres;
+revoke all on function public.rechercher_personne_par_matricule(text)
+  from public, anon, service_role;
+grant execute on function public.rechercher_personne_par_matricule(text)
+  to authenticated;
+comment on function public.rechercher_personne_par_matricule(text) is
+  'Exact authenticated lookup by canonical RA matricule; accepts case and separators, and returns only profiles authorized by partie_concernee.';
+
+do $verification$
+begin
+  if exists (
+       select 1 from public.profiles p
+       left join private.person_registrations r on r.profile_id = p.id
+       where r.profile_id is null or r.matricule is distinct from p.immutable_id
+     ) then
+    raise exception 'IMM-BACK-1: registry/profile matricules are incomplete';
+  end if;
+  if to_regprocedure('public.next_immutable_id(public.app_role,text)') is not null
+     or to_regclass('public.id_sequences') is not null
+     or has_table_privilege('authenticated', 'private.person_registrations', 'SELECT')
+     or has_table_privilege('service_role', 'private.person_registrations', 'SELECT')
+     or has_function_privilege('anon', 'public.rechercher_personne_par_matricule(text)', 'EXECUTE')
+     or has_function_privilege('service_role', 'public.rechercher_personne_par_matricule(text)', 'EXECUTE')
+     or not has_function_privilege('authenticated', 'public.rechercher_personne_par_matricule(text)', 'EXECUTE')
+     or exists (
+       select 1 from pg_catalog.pg_proc p
+        where p.oid in (
+          'private.tirer_nombre_matricule(integer)'::regprocedure,
+          'private.attribuer_matricule(uuid,timestamptz)'::regprocedure,
+          'public.profiles_attribuer_matricule()'::regprocedure,
+          'public.rechercher_personne_par_matricule(text)'::regprocedure
+        )
+          and (not p.prosecdef
+            or p.proowner <> 'postgres'::regrole
+            or not (p.proconfig @> array['search_path=""']))
+     ) then
+    raise exception 'IMM-BACK-1: legacy generator or registry/lookup ACL is incorrect';
+  end if;
+end;
+$verification$;
+
 commit;
