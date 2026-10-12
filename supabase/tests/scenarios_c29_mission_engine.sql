@@ -126,12 +126,78 @@ END;
 $test$;
 
 RESET ROLE;
+UPDATE public.profiles SET account_status='disabled'
+ WHERE id='c2910000-0000-0000-0000-000000000001';
+SET LOCAL ROLE authenticated;
+SELECT set_config('request.jwt.claim.sub','c2910000-0000-0000-0000-000000000001',true);
+SELECT set_config('test.uid','c2910000-0000-0000-0000-000000000001',true);
+SELECT set_config('request.jwt.claims','{"aal":"aal2","app_metadata":{"role":"admin"}}',true);
+SELECT set_config('test.jwt','{"aal":"aal2","app_metadata":{"role":"admin"}}',true);
+DO $disabled_admin$
+DECLARE v_capacites jsonb;
+BEGIN
+  v_capacites := public.capacites_tirage_controle();
+  IF v_capacites->>'peut_lire' <> 'false' OR v_capacites->>'peut_modifier' <> 'false' THEN
+    RAISE EXCEPTION 'C29: un admin désactivé conserve les capacités de tirage';
+  END IF;
+  IF public.lire_regles_tirage()->>'erreur' <> 'autorisation_direction_requise' THEN
+    RAISE EXCEPTION 'C29: un admin désactivé lit les règles';
+  END IF;
+  BEGIN
+    PERFORM public.candidats_cible_tirage();
+    RAISE EXCEPTION 'C29: un admin désactivé lit les cibles';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+  BEGIN
+    PERFORM public.enregistrer_regles_tirage(
+      '{"missions_par_semaine":5,"ponderations":{"enseignants_recents":"normal","classes_signalees":"fort","heures_de_pointe":"aucun"},"cibles":[]}'::jsonb,
+      'c2911000-0000-0000-0000-000000000004'
+    );
+    RAISE EXCEPTION 'C29: un admin désactivé modifie les règles';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+END;
+$disabled_admin$;
+RESET ROLE;
+
+SET LOCAL ROLE anon;
+DO $anonymous$
+BEGIN
+  BEGIN PERFORM public.capacites_tirage_controle();
+    RAISE EXCEPTION 'C29: anon consulte les capacités de tirage';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.lire_regles_tirage();
+    RAISE EXCEPTION 'C29: anon lit les règles';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.candidats_cible_tirage();
+    RAISE EXCEPTION 'C29: anon lit les cibles';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN
+    PERFORM public.enregistrer_regles_tirage(
+      '{"missions_par_semaine":5,"ponderations":{"enseignants_recents":"normal","classes_signalees":"fort","heures_de_pointe":"aucun"},"cibles":[]}'::jsonb,
+      'c2911000-0000-0000-0000-000000000005'
+    );
+    RAISE EXCEPTION 'C29: anon modifie les règles';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END;
+$anonymous$;
+RESET ROLE;
+
 DO $postflight$
 DECLARE v_append_only boolean := false;
 BEGIN
-  IF has_function_privilege('anon', 'public.enregistrer_regles_tirage(jsonb,uuid)', 'EXECUTE')
+  IF has_function_privilege('anon', 'public.capacites_tirage_controle()', 'EXECUTE')
+     OR has_function_privilege('anon', 'public.lire_regles_tirage()', 'EXECUTE')
+     OR has_function_privilege('anon', 'public.candidats_cible_tirage()', 'EXECUTE')
+     OR has_function_privilege('anon', 'public.enregistrer_regles_tirage(jsonb,uuid)', 'EXECUTE')
+     OR has_function_privilege('service_role', 'public.capacites_tirage_controle()', 'EXECUTE')
+     OR has_function_privilege('service_role', 'public.lire_regles_tirage()', 'EXECUTE')
+     OR has_function_privilege('service_role', 'public.candidats_cible_tirage()', 'EXECUTE')
      OR has_function_privilege('service_role', 'public.enregistrer_regles_tirage(jsonb,uuid)', 'EXECUTE')
+     OR has_function_privilege('agent_ro', 'public.capacites_tirage_controle()', 'EXECUTE')
+     OR has_function_privilege('agent_ro', 'public.lire_regles_tirage()', 'EXECUTE')
      OR has_function_privilege('agent_ro', 'public.candidats_cible_tirage()', 'EXECUTE')
+     OR has_function_privilege('agent_ro', 'public.enregistrer_regles_tirage(jsonb,uuid)', 'EXECUTE')
      OR has_table_privilege('anon', 'public.controle_regles', 'SELECT') THEN
     RAISE EXCEPTION 'C29: ACL des règles expose une surface interdite';
   END IF;
@@ -181,9 +247,32 @@ $postflight$;
 
 SET LOCAL ROLE authenticated;
 SELECT set_config('request.jwt.claim.sub', 'c2910000-0000-0000-0000-000000000002', true);
+SELECT set_config('test.uid', 'c2910000-0000-0000-0000-000000000002', true);
 SELECT set_config('request.jwt.claims', '{"aal":"aal2","app_metadata":{"role":"teacher"}}', true);
+SELECT set_config('test.jwt', '{"aal":"aal2","app_metadata":{"role":"teacher"}}', true);
 DO $test$
+DECLARE v_capacites jsonb;
 BEGIN
+  v_capacites := public.capacites_tirage_controle();
+  IF v_capacites->>'peut_lire' <> 'false' OR v_capacites->>'peut_modifier' <> 'false' THEN
+    RAISE EXCEPTION 'C29: un enseignant conserve les capacités de direction';
+  END IF;
+  IF public.lire_regles_tirage()->>'erreur' <> 'autorisation_direction_requise' THEN
+    RAISE EXCEPTION 'C29: un enseignant lit les règles';
+  END IF;
+  BEGIN
+    PERFORM public.candidats_cible_tirage();
+    RAISE EXCEPTION 'C29: un enseignant lit les cibles de tirage';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+  BEGIN
+    PERFORM public.enregistrer_regles_tirage(
+      '{"missions_par_semaine":5,"ponderations":{"enseignants_recents":"normal","classes_signalees":"fort","heures_de_pointe":"aucun"},"cibles":[]}'::jsonb,
+      'c2911000-0000-0000-0000-000000000006'
+    );
+    RAISE EXCEPTION 'C29: un enseignant modifie les règles';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
   IF (SELECT count(*) FROM public.controle_regles) <> 0 THEN
     RAISE EXCEPTION 'C29: un enseignant peut lire les règles de la direction';
   END IF;
