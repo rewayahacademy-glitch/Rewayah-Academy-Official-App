@@ -49,17 +49,19 @@ INSERT INTO public.groupes
 VALUES
   ('c2900000-0000-0000-0000-000000000101', 'c2900000-0000-0000-0000-000000000003', 'enfant', 5, 'C29 recent weight', 1, 18, 'Europe/Paris', 'hommes', NULL, NULL, NULL),
   ('c2900000-0000-0000-0000-000000000102', 'c2900000-0000-0000-0000-000000000004', 'enfant', 5, 'C29 concern weight', 1, 18, 'Europe/Paris', 'hommes', NULL, NULL, NULL),
-  ('c2900000-0000-0000-0000-000000000103', 'c2900000-0000-0000-0000-000000000004', 'enfant', 5, 'C29 closed trigger group', 1, 18, 'Europe/Paris', 'hommes', now(), 'c2900000-0000-0000-0000-000000000001', 'scenario trigger only');
+  ('c2900000-0000-0000-0000-000000000103', 'c2900000-0000-0000-0000-000000000004', 'enfant', 5, 'C29 closed trigger group', 1, 18, 'Europe/Paris', 'hommes', TIMESTAMPTZ '2098-12-01 00:00:00+00', 'c2900000-0000-0000-0000-000000000001', 'scenario trigger only');
+-- The fixed future window avoids overlap with ambient or time-shifted sessions;
+-- the effective-teacher history remains within the rolling 90-day threshold.
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
 VALUES
-  ('c2900000-0000-0000-0000-000000000201', 'c2900000-0000-0000-0000-000000000003', now() - interval '5 minutes', now() + interval '55 minutes', 'in_progress', 'standard', 'c2900000-0000-0000-0000-000000000101'),
-  ('c2900000-0000-0000-0000-000000000202', 'c2900000-0000-0000-0000-000000000004', now() - interval '5 minutes', now() + interval '55 minutes', 'in_progress', 'standard', 'c2900000-0000-0000-0000-000000000102'),
-  ('c2900000-0000-0000-0000-000000000203', 'c2900000-0000-0000-0000-000000000003', now() - interval '10 days', now() - interval '9 days', 'ended', 'standard', NULL);
+  ('c2900000-0000-0000-0000-000000000201', 'c2900000-0000-0000-0000-000000000003', TIMESTAMPTZ '2099-01-01 11:55:00+00', TIMESTAMPTZ '2099-01-01 12:55:00+00', 'in_progress', 'standard', 'c2900000-0000-0000-0000-000000000101'),
+  ('c2900000-0000-0000-0000-000000000202', 'c2900000-0000-0000-0000-000000000004', TIMESTAMPTZ '2099-01-01 11:55:00+00', TIMESTAMPTZ '2099-01-01 12:55:00+00', 'in_progress', 'standard', 'c2900000-0000-0000-0000-000000000102'),
+  ('c2900000-0000-0000-0000-000000000203', 'c2900000-0000-0000-0000-000000000003', TIMESTAMPTZ '2098-12-22 12:00:00+00', TIMESTAMPTZ '2098-12-22 13:00:00+00', 'ended', 'standard', NULL);
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
 SELECT ('c2900000-0000-0000-0000-' || lpad((300 + n)::text, 12, '0'))::uuid,
        'c2900000-0000-0000-0000-000000000004',
-       now() - (2 * n + 2) * interval '1 hour',
-       now() - (2 * n + 1) * interval '1 hour',
+       TIMESTAMPTZ '2099-01-01 12:00:00+00' - (2 * n + 2) * interval '1 hour',
+       TIMESTAMPTZ '2099-01-01 12:00:00+00' - (2 * n + 1) * interval '1 hour',
        'preflight', 'standard', 'c2900000-0000-0000-0000-000000000103'
 FROM generate_series(1, 400) AS n;
 INSERT INTO public.student_concern
