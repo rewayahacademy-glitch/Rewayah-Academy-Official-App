@@ -104,6 +104,40 @@ END;
 $test$;
 RESET ROLE;
 
+UPDATE public.profiles SET account_status='disabled'
+ WHERE id='c29d1000-0000-0000-0000-000000000001';
+SELECT set_config('request.jwt.claim.sub','c29d1000-0000-0000-0000-000000000001',true);
+SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"admin"}}',true);
+SELECT set_config('test.uid','c29d1000-0000-0000-0000-000000000001',true);
+SELECT set_config('test.jwt','{"app_metadata":{"role":"admin"}}',true);
+SET LOCAL ROLE authenticated;
+DO $disabled_admin$
+BEGIN
+  BEGIN
+    PERFORM public.library_get_detail('c29d1000-0000-0000-0000-000000000003');
+    RAISE EXCEPTION 'CAP-29: admin desactive a lu la fiche admin';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+END;
+$disabled_admin$;
+RESET ROLE;
+
+SELECT set_config('request.jwt.claim.sub','c29d1000-0000-0000-0000-000000000099',true);
+SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"admin"}}',true);
+SELECT set_config('test.uid','c29d1000-0000-0000-0000-000000000099',true);
+SELECT set_config('test.jwt','{"app_metadata":{"role":"admin"}}',true);
+SET LOCAL ROLE authenticated;
+DO $admin_without_profile$
+BEGIN
+  BEGIN
+    PERFORM public.library_get_detail('c29d1000-0000-0000-0000-000000000003');
+    RAISE EXCEPTION 'CAP-29: admin sans profil a lu la fiche admin';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+END;
+$admin_without_profile$;
+RESET ROLE;
+
 DO $acl$
 BEGIN
   IF has_function_privilege('anon', 'public.library_get_detail(uuid)', 'EXECUTE')

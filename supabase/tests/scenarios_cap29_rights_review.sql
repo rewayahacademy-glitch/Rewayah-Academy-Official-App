@@ -121,4 +121,42 @@ END;
 $negative$;
 RESET ROLE;
 
+UPDATE public.profiles SET account_status='disabled'
+ WHERE id='c29d2000-0000-0000-0000-000000000001';
+SELECT set_config('request.jwt.claim.sub','c29d2000-0000-0000-0000-000000000001',true);
+SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"admin"}}',true);
+SET LOCAL ROLE authenticated;
+DO $disabled_admin$
+BEGIN
+  BEGIN
+    PERFORM public.admin_library_review_rights(
+      'c29d2000-0000-0000-0000-000000000003',
+      'c29d2000-0000-0000-0000-000000000004',
+      '{"sourceTitre":"S","titulaire":"T","preuveFournie":false,"usages":["classe"],"attribution":"A","expireLeUtc":null,"approuver":false}'::jsonb,
+      2);
+    RAISE EXCEPTION 'CAP29: admin desactive a modifie les droits';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+END;
+$disabled_admin$;
+RESET ROLE;
+
+SELECT set_config('request.jwt.claim.sub','c29d2000-0000-0000-0000-000000000099',true);
+SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"admin"}}',true);
+SET LOCAL ROLE authenticated;
+DO $admin_without_profile$
+BEGIN
+  BEGIN
+    PERFORM public.admin_library_review_rights(
+      'c29d2000-0000-0000-0000-000000000003',
+      'c29d2000-0000-0000-0000-000000000004',
+      '{"sourceTitre":"S","titulaire":"T","preuveFournie":false,"usages":["classe"],"attribution":"A","expireLeUtc":null,"approuver":false}'::jsonb,
+      2);
+    RAISE EXCEPTION 'CAP29: admin sans profil a modifie les droits';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+END;
+$admin_without_profile$;
+RESET ROLE;
+
 ROLLBACK;
