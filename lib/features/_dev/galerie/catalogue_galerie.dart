@@ -75,6 +75,7 @@ import '../../../core/widgets/menu_filtre.dart';
 import '../../../core/widgets/montant_argent.dart';
 import '../../../core/widgets/nav_shell.dart';
 import '../../../core/widgets/offline_banner.dart';
+import '../../../core/widgets/ornement_marque.dart';
 import '../../../core/widgets/page_etape.dart';
 import '../../../core/widgets/page_immersive.dart';
 import '../../../core/widgets/page_parcours.dart';
@@ -2197,6 +2198,34 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
               hauteur: AppSpacing.xxxl,
             ),
           ),
+        ),
+      ),
+    ],
+  ),
+
+  // BRAND-ORN-1 (directeur, 11/10/2026) : la signature discrete de la marque.
+  // Regle d'usage : `docs/current/BRAND-ORN-1.md`.
+  EntreeGalerie(
+    nom: 'OrnementMarque',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie('plein, petit', (BuildContext _) => const OrnementMarque()),
+      EtatGalerie(
+        'contour, grand',
+        (BuildContext _) => const OrnementMarque(
+          taille: TailleOrnement.grand,
+          variante: VarianteOrnement.contour,
+        ),
+      ),
+      EtatGalerie(
+        'signature : petite, a faible opacite',
+        (BuildContext _) => const OrnementMarque.signature(),
+      ),
+      EtatGalerie(
+        'en arabe : meme dessin, jamais retourne',
+        (BuildContext _) => const Directionality(
+          textDirection: TextDirection.rtl,
+          child: OrnementMarque.signature(),
         ),
       ),
     ],
