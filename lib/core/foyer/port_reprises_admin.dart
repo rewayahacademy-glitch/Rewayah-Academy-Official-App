@@ -7,10 +7,9 @@
 /// capacite lue par l'ecran, jamais un role) : Flutter ne calcule ni delai ni
 /// droit. La decision part avec une cle d'idempotence.
 ///
-/// Aucun branchement serveur : en production le port est absent
-/// ([portReprisesAdminProvider] vaut `null`) et l'ecran dit « disponible au
-/// branchement serveur ». Signature proposee en Contrats (C-23) ; l'adaptateur
-/// reel s'appuie sur `decider_reprise_foyer` (B-04).
+/// L'adaptateur C-23 est disponible ; le branchement de l'ecran reste séparé
+/// ([portReprisesAdminProvider] vaut `null` tant que l'injection n'est pas faite).
+/// Il s'appuie sur les RPC B-04 et ne déduit aucune capacité côté client.
 library;
 
 import 'package:flutter/foundation.dart';
@@ -33,8 +32,8 @@ enum EtatRepriseAdmin {
 /// Une demande de reprise de foyer.
 @immutable
 class RepriseAdmin {
-  /// Cree la demande. [deposeeLe] et [examenPossibleLe] : heures murales du
-  /// fuseau de l'administration, rendues par le serveur.
+  /// Crée la demande. Les dates sont des instants du serveur convertis en
+  /// heure locale par l'adaptateur pour leur affichage.
   const RepriseAdmin({
     required this.id,
     required this.demandeurPrenom,
