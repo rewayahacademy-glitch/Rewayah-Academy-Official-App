@@ -129,6 +129,36 @@ BEGIN
       '{"enseignants_recents":"normal","classes_signalees":"fort","heures_de_pointe":"aucun"}'::jsonb THEN
     RAISE EXCEPTION 'C29: normal, strong, and disabled weighting levels were not retained';
   END IF;
+
+  INSERT INTO public.controle_regles
+    (version, missions_par_semaine, ponderations, payload, cree_par, cle)
+  VALUES
+    (2, 1,
+     '{"enseignants_recents":"normal","classes_signalees":"fort","heures_de_pointe":"aucun"}',
+     '{"scenario":"C29 versioned cap one"}',
+     'c2900000-0000-0000-0000-000000000001',
+     'c2900000-0000-0000-0000-000000000303');
+  UPDATE public.sessions SET status='in_progress'
+   WHERE id='c2900000-0000-0000-0000-000000000301';
+  UPDATE public.sessions SET status='in_progress'
+   WHERE id='c2900000-0000-0000-0000-000000000302';
+  IF (SELECT count(*) FROM private.controle_missions WHERE version_regles=2) <> 1 THEN
+    RAISE EXCEPTION 'C29: versioned weekly cap 1 was not enforced';
+  END IF;
+
+  INSERT INTO public.controle_regles
+    (version, missions_par_semaine, ponderations, payload, cree_par, cle)
+  VALUES
+    (3, 0,
+     '{"enseignants_recents":"normal","classes_signalees":"fort","heures_de_pointe":"aucun"}',
+     '{"scenario":"C29 versioned cap zero"}',
+     'c2900000-0000-0000-0000-000000000001',
+     'c2900000-0000-0000-0000-000000000304');
+  UPDATE public.sessions SET status='in_progress'
+   WHERE id='c2900000-0000-0000-0000-000000000303';
+  IF EXISTS (SELECT 1 FROM private.controle_missions WHERE version_regles=3) THEN
+    RAISE EXCEPTION 'C29: versioned cap zero still assigned a mission';
+  END IF;
 END;
 $test$;
 
