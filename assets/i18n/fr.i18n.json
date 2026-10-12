@@ -135,6 +135,20 @@
     "demarrage": {
       "ouverture": "Ouverture de Rewayah"
     },
+    "fuseaux": {
+      "europeParis": "Paris",
+      "africaConakry": "Conakry",
+      "americaToronto": "Toronto",
+      "europeLondon": "London",
+      "asiaRiyadh": "Riyadh",
+      "americaLosAngeles": "Los Angeles",
+      "africaLagos": "Lagos",
+      "africaAbidjan": "Abidjan",
+      "americaNewYork": "New York",
+      "africaCasablanca": "Casablanca",
+      "asiaTokyo": "Tokyo",
+      "americaArgentinaBuenosAires": "Buenos Aires"
+    },
     "dates": {
       "moisAnnee": "{mois} {annee}",
       "choixMois": "Mois",

@@ -8,6 +8,7 @@ library;
 
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/villes_fuseau.dart';
 import '../../core/offres/port_suivi_demandes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart' show LibellesGroupe;
 
@@ -16,11 +17,10 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart' show LibellesGroupe;
 String hhmmDemande(int heure, int minute) =>
     '${heure.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
 
-/// « Paris » pour `Europe/Paris`, « New York » pour `America/New_York`.
-String villeDuFuseau(String fuseauIana) {
-  final String dernier = fuseauIana.split('/').last;
-  return dernier.replaceAll('_', ' ');
-}
+/// « Paris » pour `Europe/Paris`, « New York » pour `America/New_York`, et en
+/// arabe « باريس », « نيويورك » (table `commun.fuseaux`, AR-FUSEAU-VILLE) ; un
+/// fuseau hors table garde son nom IANA, isole hors du francais.
+String villeDuFuseau(String fuseauIana) => villeDuFuseauLibelle(fuseauIana);
 
 /// Les identifiants IANA qui designent le temps universel lui-meme : ils
 /// n'ont pas de ville. On dit « heure UTC », jamais « heure d'UTC ».

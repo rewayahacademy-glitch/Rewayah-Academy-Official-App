@@ -144,6 +144,7 @@ class Traductions$commun$fr {
 	late final Traductions$commun$selecteurProfils$fr selecteurProfils = Traductions$commun$selecteurProfils$fr.internal(_root);
 	late final Traductions$commun$theme$fr theme = Traductions$commun$theme$fr.internal(_root);
 	late final Traductions$commun$demarrage$fr demarrage = Traductions$commun$demarrage$fr.internal(_root);
+	late final Traductions$commun$fuseaux$fr fuseaux = Traductions$commun$fuseaux$fr.internal(_root);
 	late final Traductions$commun$dates$fr dates = Traductions$commun$dates$fr.internal(_root);
 	late final Traductions$commun$sections$fr sections = Traductions$commun$sections$fr.internal(_root);
 	late final Traductions$commun$recherche$fr recherche = Traductions$commun$recherche$fr.internal(_root);
@@ -3349,6 +3350,51 @@ class Traductions$commun$demarrage$fr {
 
 	/// fr: 'Ouverture de Rewayah'
 	String get ouverture => 'Ouverture de Rewayah';
+}
+
+// Path: commun.fuseaux
+class Traductions$commun$fuseaux$fr {
+	Traductions$commun$fuseaux$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Paris'
+	String get europeParis => 'Paris';
+
+	/// fr: 'Conakry'
+	String get africaConakry => 'Conakry';
+
+	/// fr: 'Toronto'
+	String get americaToronto => 'Toronto';
+
+	/// fr: 'London'
+	String get europeLondon => 'London';
+
+	/// fr: 'Riyadh'
+	String get asiaRiyadh => 'Riyadh';
+
+	/// fr: 'Los Angeles'
+	String get americaLosAngeles => 'Los Angeles';
+
+	/// fr: 'Lagos'
+	String get africaLagos => 'Lagos';
+
+	/// fr: 'Abidjan'
+	String get africaAbidjan => 'Abidjan';
+
+	/// fr: 'New York'
+	String get americaNewYork => 'New York';
+
+	/// fr: 'Casablanca'
+	String get africaCasablanca => 'Casablanca';
+
+	/// fr: 'Tokyo'
+	String get asiaTokyo => 'Tokyo';
+
+	/// fr: 'Buenos Aires'
+	String get americaArgentinaBuenosAires => 'Buenos Aires';
 }
 
 // Path: commun.dates
@@ -31686,6 +31732,18 @@ extension on Traductions {
 			'commun.theme.clair' => 'Thème clair',
 			'commun.theme.sombre' => 'Thème sombre',
 			'commun.demarrage.ouverture' => 'Ouverture de Rewayah',
+			'commun.fuseaux.europeParis' => 'Paris',
+			'commun.fuseaux.africaConakry' => 'Conakry',
+			'commun.fuseaux.americaToronto' => 'Toronto',
+			'commun.fuseaux.europeLondon' => 'London',
+			'commun.fuseaux.asiaRiyadh' => 'Riyadh',
+			'commun.fuseaux.americaLosAngeles' => 'Los Angeles',
+			'commun.fuseaux.africaLagos' => 'Lagos',
+			'commun.fuseaux.africaAbidjan' => 'Abidjan',
+			'commun.fuseaux.americaNewYork' => 'New York',
+			'commun.fuseaux.africaCasablanca' => 'Casablanca',
+			'commun.fuseaux.asiaTokyo' => 'Tokyo',
+			'commun.fuseaux.americaArgentinaBuenosAires' => 'Buenos Aires',
 			'commun.dates.moisAnnee' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
 			'commun.dates.choixMois' => 'Mois',
 			'commun.dates.jours.0' => 'Lundi',
@@ -32099,6 +32157,8 @@ extension on Traductions {
 			'salle.reconnexionCourt' => 'Reconnexion',
 			'salle.perdue' => 'La connexion au cours est perdue',
 			'salle.seulEnseignant' => 'Votre professeur n\'est pas encore arrivé',
+			_ => null,
+		} ?? switch (path) {
 			'salle.seulEnseignantDetail' => 'Restez sur cet écran. Vous le verrez apparaître.',
 			'salle.seulEleve' => 'Votre élève n\'est pas encore arrivé',
 			'salle.seulEleveDetail' => 'Restez sur cet écran. Vous le verrez apparaître.',
@@ -32111,8 +32171,6 @@ extension on Traductions {
 			'salle.refusReseau' => 'La salle n\'a pas pu s\'ouvrir',
 			'salle.refusReseauDetail' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vérifiez votre connexion, puis réessayez.',
 			'salle.refusMateriel' => 'Aucun micro utilisable sur cet appareil',
-			_ => null,
-		} ?? switch (path) {
 			'salle.refusMaterielDetail' => 'Un cours de Coran se fait à la voix. Autorisez l\'accès au micro, ou branchez un casque, puis réessayez.',
 			'salle.retourAccueil' => 'Revenir à mon accueil',
 			'salle.ouvrirMicro' => 'Ouvrir le micro',
@@ -32613,6 +32671,8 @@ extension on Traductions {
 			'foyer.creerMonProfil' => 'Créer mon profil élève',
 			'foyer.monProfil.titre' => 'Créer mon profil élève',
 			'foyer.monProfil.indisponibleTitre' => 'Pas encore possible',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.monProfil.indisponiblePhrase' => 'Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu\'il est.',
 			'foyer.monProfil.retour' => 'Retour au foyer',
 			'foyer.ajout.suivant' => 'Suivant',
@@ -32625,8 +32685,6 @@ extension on Traductions {
 			'foyer.ajout.pourQui.requis' => 'Choisissez pour qui est ce profil pour continuer.',
 			'foyer.ajout.pourQui.indisponible' => 'Indisponible',
 			'foyer.ajout.pourQui.enfantTitre' => 'Un enfant ou un mineur',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.ajout.pourQui.enfantDescription' => 'Un profil rattaché à votre foyer, que vous gérez pour lui.',
 			'foyer.ajout.pourQui.enfantAttente' => 'Possible dès que votre accès est ouvert.',
 			'foyer.ajout.pourQui.moiTitre' => 'Moi-même',
@@ -33127,6 +33185,8 @@ extension on Traductions {
 			'dossiers.visionneuse.recharger' => 'Recharger la pièce',
 			'dossiers.visionneuse.formatNonPrisEnCharge' => 'Ce format de pièce ne peut pas être affiché.',
 			'dossiers.visionneuse.accesRetire' => 'Vous n’avez plus accès à cette pièce.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.visionneuse.horsLigne' => 'La pièce n\'a pas pu être chargée.',
 			'dossiers.visionneuse.aucune' => 'Aucune pièce n’est disponible.',
 			'dossiers.visionneuse.fermerPiece' => 'Fermer la pièce',
@@ -33139,8 +33199,6 @@ extension on Traductions {
 			'dossiers.revue.pieceNonTransmise' => 'La pièce requise n’a pas été transmise.',
 			'dossiers.revue.piece' => 'Pièce d\'identité',
 			'dossiers.revue.voirPiece' => 'Voir la pièce',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.revue.accords' => 'Accords et éléments soumis',
 			'dossiers.revue.nom' => 'Nom',
 			'dossiers.revue.prenom' => 'Prénom',
@@ -33641,6 +33699,8 @@ extension on Traductions {
 			'admin.regroupements.cleJours' => 'Jours',
 			'admin.regroupements.cleHeure' => 'Heure de référence',
 			'admin.regroupements.cleAilleurs' => 'Ailleurs',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regroupements.clePublic' => 'Public',
 			'admin.regroupements.cleLangue' => 'Langue',
 			'admin.regroupements.cleEleves' => 'Demandes',
@@ -33653,8 +33713,6 @@ extension on Traductions {
 			'admin.regroupements.cleJoursHeures' => 'Jours et heures',
 			'admin.regroupements.cleFuseau' => 'Fuseau de référence',
 			'admin.regroupements.fuseauValeur' => ({required Object deVille}) => 'Heure ${deVille}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regroupements.jourHeure' => ({required Object jour, required Object heure}) => '${jour} ${heure}',
 			'admin.regroupements.ailleursJour' => ({required Object jour, required Object ailleurs}) => '${jour} : ${ailleurs}',
 			'admin.regroupements.demandes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} demande', other: '${n} demandes', ), 
@@ -34155,6 +34213,8 @@ extension on Traductions {
 			'admin.agents.revoquer' => 'Révoquer',
 			'admin.agents.revoquerTitre' => 'Révoquer ce jeton ?',
 			'admin.agents.revoquerDetail' => 'L\'agent perdra l\'accès à sa requête suivante. C\'est définitif : un jeton révoqué ne se réactive pas.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.revoquerConfirmer' => 'Révoquer',
 			'admin.agents.annuler' => 'Annuler',
 			'admin.agents.revoque' => 'Jeton révoqué',
@@ -34167,8 +34227,6 @@ extension on Traductions {
 			'admin.notifications.vide' => 'Aucune notification',
 			'admin.notifications.videDetail' => 'Rien à signaler pour l\'instant.',
 			'admin.finance.vueGlobale' => 'Vue globale',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.politiques' => 'Politiques commerciales',
 			'admin.finance.vue.moisAnnee' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
 			'admin.finance.vue.contexte' => ({required Object deMois}) => 'Les chiffres ${deMois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.',
@@ -34669,6 +34727,8 @@ extension on Traductions {
 			'admin.bibliotheque.libelles.version.aucune' => 'Aucune version',
 			'admin.bibliotheque.libelles.droits.aVerifier' => 'À vérifier',
 			'admin.bibliotheque.libelles.droits.approuve' => 'Approuvé',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.libelles.droits.refuse' => 'Refusé',
 			'admin.bibliotheque.libelles.droits.expire' => 'Expiré',
 			'admin.bibliotheque.libelles.visibilite.publique' => 'Publique',
@@ -34681,8 +34741,6 @@ extension on Traductions {
 			'admin.bibliotheque.libelles.langue.en' => 'Anglais',
 			'admin.bibliotheque.libelles.usage.application' => 'Dans l\'application',
 			'admin.bibliotheque.libelles.usage.classe' => 'En classe',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.libelles.usage.telechargement' => 'Téléchargement',
 			'admin.bibliotheque.libelles.usage.horsLigne' => 'Lecture sans internet',
 			'admin.bibliotheque.libelles.horsLigne.jamais' => 'Jamais',
@@ -35183,6 +35241,8 @@ extension on Traductions {
 			'compte.tuteur.informations.langueFuseau' => ({required Object ville}) => 'Français · ${ville}',
 			'compte.tuteur.informations.consulter' => 'Consulter mes informations',
 			'compte.tuteur.foyer.titre' => 'Mon foyer',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.foyer.aucun' => 'Aucun profil élève pour le moment',
 			'compte.tuteur.foyer.un' => '1 profil élève',
 			'compte.tuteur.foyer.plusieurs' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} profil élève', other: '${nombre} profils élèves', ), 
@@ -35195,8 +35255,6 @@ extension on Traductions {
 			'compte.tuteur.deconnexion.consequence' => 'Vous devrez vous reconnecter pour revenir sur cet appareil. Vos autres appareils restent connectés.',
 			'compte.tuteur.deconnexion.confirmer' => 'Me déconnecter',
 			'compte.tuteur.deconnexion.echec' => 'La déconnexion n\'a pas abouti. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageInformations.titre' => 'Informations personnelles',
 			'compte.tuteur.pageInformations.prenom' => 'Prénom',
 			'compte.tuteur.pageInformations.nom' => 'Nom',
@@ -35697,6 +35755,8 @@ extension on Traductions {
 			'classe.observation.visites' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} visite disponible', other: '${nombre} visites disponibles', ), 
 			'classe.observation.restantes' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} visite restante pour cette séance', other: '${nombre} visites restantes pour cette séance', ), 
 			'classe.pagePlanning.prochaines' => 'Prochaines séances',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pagePlanning.ligne' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
 			'classe.pagePlanning.ligneFuseau' => ({required Object heure, required Object fuseau, required Object duree}) => '${heure} (${fuseau}) · ${duree}',
 			'classe.pagePlanning.aucune' => 'Aucune séance à venir pour l\'instant',
@@ -35709,8 +35769,6 @@ extension on Traductions {
 			'classe.pageTravail.echeance' => ({required Object date}) => 'Échéance : ${date}',
 			'classe.pageTravail.nonCochable' => 'Marquer un travail comme fait n\'est pas encore possible ici.',
 			'classe.pageTravail.statut.aFaire' => 'À faire',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageTravail.statut.enCours' => 'Commencé',
 			'classe.pageTravail.statut.fait' => 'Fait',
 			'classe.pageTravail.statut.expire' => 'Échéance passée',
@@ -36211,6 +36269,8 @@ extension on Traductions {
 			'enseignant.profil.remuneration' => 'Rémunération',
 			'enseignant.profil.revenus' => 'Revenus estimés',
 			'enseignant.profil.revenusDetail' => 'Estimation du mois en cours, Classe par Classe',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.plafondValeur' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} h par semaine', other: '${nombre} h par semaine', ), 
 			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure} h',
 			'enseignant.creneaux.aucuneHeure' => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.',
@@ -36223,8 +36283,6 @@ extension on Traductions {
 			'enseignant.creneaux.heureEngagee' => ({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.',
 			'enseignant.creneaux.heuresEngagees' => ({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.',
 			'enseignant.creneaux.feedErreur' => 'Les familles en attente n\'ont pas pu être lues',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.feedErreurDetail' => 'Rien n\'est perdu : personne n\'a été pris, et vos heures restent posées.',
 			'enseignant.creneaux.horsLignePrise' => 'Vous pourrez prendre un élève quand la connexion reviendra. Les demandes ci-dessous restent consultables.',
 			'enseignant.creneaux.horsLigneDemande' => 'Cette demande pourra être envoyée quand la connexion reviendra.',
@@ -36725,6 +36783,8 @@ extension on Traductions {
 			'tc.coran.modes.focus' => 'Focus',
 			'tc.coran.modes.choisir' => 'Mode de lecture',
 			'tc.coran.modes.versets' => ({required Object debut, required Object fin}) => 'v. ${debut} à ${fin}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.modes.versetsEntre' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'tc.coran.mushaf.coteDroite' => 'Page de droite',
 			'tc.coran.mushaf.coteGauche' => 'Page de gauche',
@@ -36737,8 +36797,6 @@ extension on Traductions {
 			'tc.coran.mushaf.page15.aProposTanzil' => 'Tanzil demande que la source soit clairement indiquée et que tanzil.net soit joignable.',
 			'tc.coran.fidelite.approchee' => 'Composition approchée',
 			'tc.coran.fidelite.approcheeDetail' => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.fidelite.fidele' => 'Composition de l\'édition',
 			'tc.coran.zoom.bride' => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.',
 			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '${pourcent} %',
@@ -37239,6 +37297,8 @@ extension on Traductions {
 			'adulte.paiements.aucunBeneficiairePhrase' => 'Aucun profil élève de votre foyer n\'a de solde à recharger pour l\'instant.',
 			'adulte.famille.ajouter' => 'Ajouter ma famille',
 			'adulte.famille.ajouterLegende' => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.ajouterPhrase' => 'Vous pouvez ajouter vos enfants et inviter un conjoint ou une conjointe à rejoindre votre forfait famille. Votre espace élève reste inchangé.',
 			'adulte.famille.inscrireEnfant' => 'Inscrire un enfant',
 			'adulte.famille.maFamille' => 'Ma famille',
@@ -37251,8 +37311,6 @@ extension on Traductions {
 			'adulte.famille.profilNonCreeTitre' => 'Démonstration : aucun profil n\'a été créé',
 			'adulte.famille.profilNonCreePhrase' => 'En démonstration, rien n\'est envoyé. Ma famille reste telle qu\'elle était.',
 			'adulte.famille.profilNonCreePhraseSeul' => 'En démonstration, rien n\'est envoyé. Votre espace élève reste tel qu\'il était.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.monProfilIndisponibleTitre' => 'Pas encore disponible',
 			'adulte.famille.monProfilIndisponiblePhrase' => 'La création d\'un profil élève séparé n\'est pas encore disponible. Vos cours et Ma famille restent tels qu\'ils sont.',
 			'adulte.famille.indisponibleTitre' => 'La rubrique famille n\'est pas encore disponible',
@@ -37753,6 +37811,8 @@ extension on Traductions {
 			'alertes.clocheUrgentes' => ({required Object nombre}) => 'Alertes, ${nombre} urgentes',
 			'argent.etat.finance' => 'Financé',
 			'argent.etat.essai' => 'Essai',
+			_ => null,
+		} ?? switch (path) {
 			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Essai : ${n}/${max}',
 			'argent.etat.manque' => 'À financer',
 			'argent.etat.enConfirmation' => 'En confirmation',
@@ -37765,8 +37825,6 @@ extension on Traductions {
 			'argent.moyen.webStripe' => 'Carte bancaire',
 			'argent.moyen.webStripeDetail' => 'Paiement par le web. Aucun débit avant votre confirmation.',
 			'argent.soldes.total' => 'Total des soldes (lecture)',
-			_ => null,
-		} ?? switch (path) {
 			'argent.soldes.totalDetail' => 'Une lecture : chaque solde reste celui de son profil.',
 			'argent.soldes.aPayer' => 'À payer ce mois',
 			'argent.soldes.profilsFinances' => 'Profils financés',
@@ -38267,6 +38325,8 @@ extension on Traductions {
 			'com.studio.aujourdhui.blocs.mentions' => 'Mentions et réponses',
 			'com.studio.aujourdhui.blocs.decisions' => 'Décisions en attente',
 			'com.studio.aujourdhui.blocs.echeances' => 'Échéances proches',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.blocs.activite' => 'Activité récente',
 			'com.studio.aujourdhui.blocs.brouillons' => 'Brouillons',
 			'com.studio.aujourdhui.blocs.acces' => 'Accès rapides',
@@ -38279,8 +38339,6 @@ extension on Traductions {
 			'com.studio.aujourdhui.dansCanal' => ({required Object nom}) => 'Dans ${nom}',
 			'com.studio.aujourdhui.echeance' => ({required Object date}) => 'Échéance le ${date}',
 			'com.studio.aujourdhui.seTraiteDans' => ({required Object module}) => 'Se traite dans ${module}',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.ouvrirDans' => ({required Object module, required Object libelle}) => 'Ouvrir dans ${module} : ${libelle}',
 			'com.studio.aujourdhui.modules.studio' => _root.com.socle.lexique.studio,
 			'com.studio.aujourdhui.modules.finance' => 'Finance',
@@ -38781,6 +38839,8 @@ extension on Traductions {
 			'comptable.statuts.profil.suspendu' => 'Suspendu',
 			'comptable.statuts.profil.actionRequise' => 'Action requise',
 			'comptable.statuts.profil.invitationEnvoyee' => 'Invitation envoyée',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.capacite.prisEnCharge' => 'Pris en charge',
 			'comptable.statuts.capacite.nonPrisEnCharge' => 'Non pris en charge',
 			'comptable.statuts.capacite.temporairementIndisponible' => 'Temporairement indisponible',
@@ -38793,8 +38853,6 @@ extension on Traductions {
 			'comptable.statuts.reserve.alimentationPrevue' => 'Alimentation prévue',
 			'comptable.statuts.reserve.mouvementSensible' => 'Mouvement sensible',
 			'comptable.statuts.obligation.brouillon' => 'Brouillon',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.obligation.aApprouver' => 'À approuver',
 			'comptable.statuts.obligation.approuvee' => 'Approuvée',
 			'comptable.statuts.obligation.refusee' => 'Refusée',
@@ -39295,6 +39353,8 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.journalTitre' => 'Historique de mes changements',
 			'comptable.beneficiaires.recevoir.journalVide' => 'Aucun changement enregistré pour l\'instant.',
 			'comptable.beneficiaires.recevoir.seulVous' => 'Vous seul pouvez modifier ces informations : ni la comptabilité ni la direction ne peuvent le faire à votre place.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.titre' => 'Recevoir mes paiements',
 			'comptable.beneficiaires.recevoir.sousTitre' => 'Vos coordonnées de paiement, modifiables par vous seul.',
 			'comptable.beneficiaires.recevoir.notice' => 'Informations de paiement à compléter',
@@ -39307,8 +39367,6 @@ extension on Traductions {
 			'comptable.contractuels.colonneBeneficiaire' => 'Bénéficiaire',
 			'comptable.contractuels.colonneObjet' => 'Objet',
 			'comptable.contractuels.colonneMontant' => 'Montant',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.colonneEcheance' => 'Échéance',
 			'comptable.contractuels.colonneStatut' => 'Statut',
 			'comptable.contractuels.typeRecurrente' => 'Récurrente',

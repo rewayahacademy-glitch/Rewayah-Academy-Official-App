@@ -222,6 +222,20 @@
     "sections": {
       "page": "أقسام الصفحة"
     },
+    "fuseaux": {
+      "europeParis": "باريس",
+      "africaConakry": "كوناكري",
+      "americaToronto": "تورنتو",
+      "europeLondon": "لندن",
+      "asiaRiyadh": "الرياض",
+      "americaLosAngeles": "لوس أنجلوس",
+      "africaLagos": "لاغوس",
+      "africaAbidjan": "أبيدجان",
+      "americaNewYork": "نيويورك",
+      "africaCasablanca": "الدار البيضاء",
+      "asiaTokyo": "طوكيو",
+      "americaArgentinaBuenosAires": "بوينس آيرس"
+    },
     "dates": {
       "premierJour": "1",
       "jours": [
