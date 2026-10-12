@@ -11959,7 +11959,7 @@ class _Traductions$suiviDemandes$close$motif$ar extends Traductions$suiviDemande
 	@override String get offreRetiree => 'سحبت الأكاديمية هذا الموعد من عروضها.';
 	@override String get classeNonConstituee => 'تعذّر تكوين فصل هذا الموعد.';
 	@override String get refusDirection => 'لم تتمكن الإدارة من قبول هذا الطلب.';
-	@override String dejaEnClasse({required Object prenom}) => '⁨${prenom}⁩ لديه مكان في فصل بالفعل: لم يعد هذا الطلب لازمًا.';
+	@override String dejaEnClasse({required Object prenom}) => 'لدى ⁨${prenom}⁩ مكان في فصل بالفعل: لم يعد هذا الطلب لازمًا.';
 	@override String get inconnu => 'أُغلق هذا الطلب.';
 }
 
@@ -20290,7 +20290,7 @@ extension on TraductionsAr {
 			'suiviDemandes.close.motif.offreRetiree' => 'سحبت الأكاديمية هذا الموعد من عروضها.',
 			'suiviDemandes.close.motif.classeNonConstituee' => 'تعذّر تكوين فصل هذا الموعد.',
 			'suiviDemandes.close.motif.refusDirection' => 'لم تتمكن الإدارة من قبول هذا الطلب.',
-			'suiviDemandes.close.motif.dejaEnClasse' => ({required Object prenom}) => '⁨${prenom}⁩ لديه مكان في فصل بالفعل: لم يعد هذا الطلب لازمًا.',
+			'suiviDemandes.close.motif.dejaEnClasse' => ({required Object prenom}) => 'لدى ⁨${prenom}⁩ مكان في فصل بالفعل: لم يعد هذا الطلب لازمًا.',
 			'suiviDemandes.close.motif.inconnu' => 'أُغلق هذا الطلب.',
 			'suiviDemandes.close.suite' => 'يمكنكم اختيار موعد آخر من المواعيد المقترحة.',
 			'suiviDemandes.close.suiteSansChoix' => 'لا يوجد موعد آخر مقترح حاليًا. عودوا إلى هذه الصفحة لاحقًا.',
