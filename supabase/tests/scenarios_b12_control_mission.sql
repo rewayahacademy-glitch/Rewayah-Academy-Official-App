@@ -6,13 +6,15 @@ INSERT INTO auth.users(id,email) VALUES
  ('b1200000-0000-0000-0000-000000000002','b12-controller@test.invalid'),
  ('b1200000-0000-0000-0000-000000000003','b12-other@test.invalid'),
  ('b1200000-0000-0000-0000-000000000004','b12-teacher@test.invalid'),
+ ('b1200000-0000-0000-0000-000000000005','b12-student@test.invalid'),
  ('b1200000-0000-0000-0000-000000000099','b12-admin-no-profile@test.invalid');
 INSERT INTO public.profiles(id,immutable_id,role,household_id,first_name,last_name,account_status,gender)
 VALUES
  ('b1200000-0000-0000-0000-000000000001','B12-ADMIN-0001','admin',NULL,'Direction','B12','active','female'),
  ('b1200000-0000-0000-0000-000000000002','B12-CTRL-00001','controller',NULL,'Controleur','B12','active','male'),
  ('b1200000-0000-0000-0000-000000000003','B12-CTRL-00002','controller',NULL,'Autre','B12','active','female'),
- ('b1200000-0000-0000-0000-000000000004','B12-TEACH-0001','teacher',NULL,'Enseignant','B12','provisional_active','male');
+ ('b1200000-0000-0000-0000-000000000004','B12-TEACH-0001','teacher',NULL,'Enseignant','B12','provisional_active','male'),
+ ('b1200000-0000-0000-0000-000000000005','B12-STUD-00001','student',NULL,'Élève','Présent','active','female');
 
 DO $fixture_teacher_contract$
 DECLARE
@@ -44,10 +46,16 @@ $fixture_teacher_contract$;
 INSERT INTO public.groupes(id,teacher_id,type_public,seuil_max,libelle,weekday,hour_local,timezone_iana)
 VALUES ('b1210000-0000-0000-0000-000000000001','b1200000-0000-0000-0000-000000000004',
         'enfant',5,'Classe B12',1,9,'Europe/Paris');
+INSERT INTO public.groupes(id,teacher_id,type_public,seuil_max,libelle,weekday,hour_local,timezone_iana)
+VALUES ('b1210000-0000-0000-0000-000000000002','b1200000-0000-0000-0000-000000000004',
+        'enfant',5,'Classe B12 scope autre',2,10,'Europe/Paris');
 INSERT INTO public.sessions(id,teacher_id,groupe_id,started_at,ended_at,status,session_type)
 VALUES ('b1220000-0000-0000-0000-000000000001','b1200000-0000-0000-0000-000000000004',
-        'b1210000-0000-0000-0000-000000000001',now()-interval '1 hour',now(),
-        'in_progress','standard');
+        'b1210000-0000-0000-0000-000000000001',now()-interval '1 hour',now()+interval '1 hour',
+        'planned','standard');
+INSERT INTO public.session_participants(session_id,profile_id,role,entered_at)
+VALUES ('b1220000-0000-0000-0000-000000000001',
+        'b1200000-0000-0000-0000-000000000005','student',now()-interval '30 minutes');
 INSERT INTO private.controle_capacites
  (profile_id,approved_by,active_from,expires_at,scope_all_groups,scope_group_ids,
   scope_teacher_ids,grant_idempotency_key)
@@ -59,23 +67,50 @@ INSERT INTO private.controle_capacites
   scope_teacher_ids,grant_idempotency_key)
 VALUES ('b1200000-0000-0000-0000-000000000003','b1200000-0000-0000-0000-000000000001',
         now()-interval '1 day',now()+interval '1 day',false,
-        ARRAY['b1210000-0000-0000-0000-000000000001'::uuid],'{}',
+        ARRAY['b1210000-0000-0000-0000-000000000002'::uuid],'{}',
         'b1230000-0000-0000-0000-000000000002');
-INSERT INTO private.controle_missions
- (id,session_id,groupe_id,enseignant_effectif_id,controleur_id,version_regles,
-  cycle_debut,critere,affectee_le,echeance,commencee_le,statut)
-VALUES ('b1240000-0000-0000-0000-000000000001','b1220000-0000-0000-0000-000000000001',
-        'b1210000-0000-0000-0000-000000000001','b1200000-0000-0000-0000-000000000004',
-        'b1200000-0000-0000-0000-000000000002',0,current_date,'aleatoire',
-        now()-interval '1 hour',now()+interval '1 hour',NULL,'attribuee');
-UPDATE private.controle_missions
-   SET statut='en_cours', commencee_le=now()-interval '50 minutes'
- WHERE id='b1240000-0000-0000-0000-000000000001';
+
+DO $fixture_control_rules$
+BEGIN
+  PERFORM set_config('request.jwt.claim.sub','b1200000-0000-0000-0000-000000000001',true);
+  PERFORM set_config('test.uid','b1200000-0000-0000-0000-000000000001',true);
+  PERFORM set_config('request.jwt.claims','{"aal":"aal2","app_metadata":{"role":"admin"}}',true);
+  PERFORM set_config('test.jwt','{"aal":"aal2","app_metadata":{"role":"admin"}}',true);
+  PERFORM public.enregistrer_regles_tirage(
+    '{"missions_par_semaine":5,"ponderations":{"enseignants_recents":"normal","classes_signalees":"fort","heures_de_pointe":"aucun"},"cibles":[{"id":"b1200000-0000-0000-0000-000000000004","type":"enseignant"}]}'::jsonb,
+    'b1230000-0000-0000-0000-000000000020'
+  );
+  PERFORM set_config('request.jwt.claim.sub','',true);
+  PERFORM set_config('test.uid','',true);
+  PERFORM set_config('request.jwt.claims','',true);
+  PERFORM set_config('test.jwt','',true);
+END
+$fixture_control_rules$;
+
+-- La mission est créée par le trigger serveur du cycle de séance, jamais par
+-- insertion directe dans controle_missions; son démarrage passe par la RPC.
+UPDATE public.sessions SET status='preflight'
+ WHERE id='b1220000-0000-0000-0000-000000000001';
+UPDATE public.sessions SET status='in_progress'
+ WHERE id='b1220000-0000-0000-0000-000000000001';
+SELECT set_config('test.b12_mission_id',
+  (SELECT id::text FROM private.controle_missions
+   WHERE session_id='b1220000-0000-0000-0000-000000000001'),true);
+SELECT set_config('request.jwt.claim.sub','b1200000-0000-0000-0000-000000000002',true);
+SELECT set_config('test.uid','b1200000-0000-0000-0000-000000000002',true);
+SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"controller"}}',true);
+SELECT set_config('test.jwt','{"app_metadata":{"role":"controller"}}',true);
+SET LOCAL ROLE authenticated;
+SELECT public.demarrer_mission_controle(current_setting('test.b12_mission_id')::uuid);
+RESET ROLE;
+INSERT INTO public.session_events(session_id,profile_id,event_type,server_ts,source)
+VALUES ('b1220000-0000-0000-0000-000000000001','b1200000-0000-0000-0000-000000000005',
+        'joined',now()-interval '30 minutes','server');
+UPDATE public.sessions SET status='ended', ended_at=now()
+ WHERE id='b1220000-0000-0000-0000-000000000001';
 INSERT INTO public.session_events(session_id,profile_id,event_type,server_ts,source)
 VALUES ('b1220000-0000-0000-0000-000000000001','b1200000-0000-0000-0000-000000000002',
         'joined',now()-interval '48 minutes','server');
-UPDATE private.controle_missions SET statut='controlee',terminee_le=now()
- WHERE id='b1240000-0000-0000-0000-000000000001';
 
 DO $acl$
 BEGIN
@@ -107,16 +142,16 @@ SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"controller"}}',
 DO $nominal$
 DECLARE v_thread jsonb; v_reports jsonb; v_report_id uuid; v_before jsonb;
 BEGIN
- v_thread:=public.controleur_fil_de_mission('b1240000-0000-0000-0000-000000000001');
+ v_thread:=public.controleur_fil_de_mission(current_setting('test.b12_mission_id')::uuid);
  PERFORM set_config('test.b12_fil_id',v_thread->>'id',true);
- IF v_thread->>'mission_id'<>'b1240000-0000-0000-0000-000000000001' THEN
+ IF v_thread->>'mission_id'<>current_setting('test.b12_mission_id') THEN
    RAISE EXCEPTION 'B12: fil de mission absent';
  END IF;
  PERFORM public.controleur_envoyer_message(
    (v_thread->>'id')::uuid,'b1230000-0000-0000-0000-000000000010','Bonjour Direction');
  PERFORM public.controleur_envoyer_message(
    (v_thread->>'id')::uuid,'b1230000-0000-0000-0000-000000000010','Bonjour Direction');
-  v_thread:=public.controleur_fil_de_mission('b1240000-0000-0000-0000-000000000001');
+  v_thread:=public.controleur_fil_de_mission(current_setting('test.b12_mission_id')::uuid);
   IF jsonb_array_length(v_thread->'messages')<>1 THEN
    RAISE EXCEPTION 'B12: la clé client ne rend pas l''envoi idempotent';
  END IF;
@@ -124,7 +159,8 @@ BEGIN
  v_report_id:=(v_reports->0->>'id')::uuid;
  PERFORM set_config('test.b12_rapport_id',v_report_id::text,true);
  IF v_report_id IS NULL OR v_reports->0->>'classe'<>'Classe B12'
-    OR v_reports::text ILIKE '%email%' OR v_reports::text ILIKE '%kyc%' THEN
+    OR v_reports::text ILIKE '%email%' OR v_reports::text ILIKE '%kyc%'
+    OR NOT (v_reports->0->'presents' @> '["Élève P."]'::jsonb) THEN
    RAISE EXCEPTION 'B12: projection rapport absente ou trop large';
  END IF;
   v_before:=(v_reports->0)-'statut'-'complements';
@@ -156,7 +192,7 @@ SET LOCAL ROLE authenticated;
 DO $direction$
 DECLARE v_thread jsonb; v_reports jsonb;
 BEGIN
-  v_thread:=public.controleur_fil_de_mission('b1240000-0000-0000-0000-000000000001');
+  v_thread:=public.controleur_fil_de_mission(current_setting('test.b12_mission_id')::uuid);
   v_reports:=public.controleur_lister_rapports();
   IF jsonb_array_length(v_reports)<>1 OR jsonb_array_length(v_thread->'messages')<>1 THEN
     RAISE EXCEPTION 'B12: Direction ne lit pas le fil et le rapport';
@@ -179,7 +215,7 @@ BEGIN
     RAISE EXCEPTION 'B12: un autre controleur voit des missions ou rapports';
   END IF;
   BEGIN
-  PERFORM public.controleur_fil_de_mission('b1240000-0000-0000-0000-000000000001');
+  PERFORM public.controleur_fil_de_mission(current_setting('test.b12_mission_id')::uuid);
   RAISE EXCEPTION 'B12: contrôleur hors mission accepté';
   EXCEPTION WHEN insufficient_privilege THEN NULL;
   END;
@@ -241,7 +277,7 @@ BEGIN
   BEGIN PERFORM public.controleur_lister_fils();
     RAISE EXCEPTION 'B12: direction desactivee lit les fils';
   EXCEPTION WHEN insufficient_privilege THEN NULL; END;
-  BEGIN PERFORM public.controleur_fil_de_mission('b1240000-0000-0000-0000-000000000001');
+  BEGIN PERFORM public.controleur_fil_de_mission(current_setting('test.b12_mission_id')::uuid);
     RAISE EXCEPTION 'B12: direction desactivee ouvre un fil';
   EXCEPTION WHEN insufficient_privilege THEN NULL; END;
   BEGIN PERFORM public.controleur_envoyer_message(
@@ -325,7 +361,7 @@ BEGIN
     RAISE EXCEPTION 'B12: message modifie';
   EXCEPTION WHEN object_not_in_prerequisite_state THEN NULL; END;
   BEGIN DELETE FROM public.rapports_mission
-    WHERE mission_id='b1240000-0000-0000-0000-000000000001';
+    WHERE mission_id=current_setting('test.b12_mission_id')::uuid;
     RAISE EXCEPTION 'B12: rapport supprime';
   EXCEPTION WHEN object_not_in_prerequisite_state THEN NULL; END;
   BEGIN UPDATE public.rapport_complements SET texte='change'
