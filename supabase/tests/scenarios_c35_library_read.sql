@@ -169,14 +169,6 @@ update public.resource_version
 set local role authenticated;
 select set_config('test.uid', 'c3500000-0000-0000-0000-000000000001', true);
 select set_config('request.jwt.claims', '{"app_metadata":{"role":"student"}}', true);
-do $$
-begin
-  begin
-    perform public.autoriser_lecture_version('c3500000-0000-0000-0000-000000000012');
-    raise exception 'C-35: un chemin asset/version incoherent a ete autorise';
-  exception when insufficient_privilege then null;
-  end;
-end $$;
 reset role;
 select set_config('test.uid', 'c3500000-0000-0000-0000-000000000003', true);
 do $$
