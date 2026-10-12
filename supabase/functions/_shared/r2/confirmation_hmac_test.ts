@@ -29,6 +29,15 @@ Deno.test("confirmation HMAC binds intent, hash and size", async () => {
     await signatureConfirmationUpload(
       secret,
       "aaaaaaaa-0000-0000-0000-000000000001",
+      "c".repeat(64),
+      1234,
+    ),
+  );
+  assertNotEquals(
+    signature,
+    await signatureConfirmationUpload(
+      secret,
+      "aaaaaaaa-0000-0000-0000-000000000001",
       "b".repeat(64),
       1235,
     ),
