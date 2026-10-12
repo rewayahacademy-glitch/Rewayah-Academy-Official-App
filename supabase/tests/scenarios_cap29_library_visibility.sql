@@ -14,9 +14,34 @@ values
   ('c2910000-0000-0000-0000-000000000001', 'ADMN-C29-100001', 'admin',
    null, 'Aminata', 'Ba', 'active', 'female'),
   ('c2910000-0000-0000-0000-000000000002', 'TEACH-C29-10001', 'teacher',
-   null, 'Moussa', 'Sow', 'active', 'male'),
+   null, 'Moussa', 'Sow', 'provisional_active', 'male'),
   ('c2910000-0000-0000-0000-000000000003', 'ADMN-C29-100003', 'admin',
    null, 'Kadiatou', 'Diallo', 'disabled', 'female');
+
+do $teacher_contract_fixture$
+declare v_nda_version text; v_notice_version text;
+begin
+  select version into v_nda_version from public.contract_texts
+   where contract_kind='teacher_nda' and locale='fr' and is_current;
+  select version into v_notice_version from public.contract_required_versions
+   where contract_kind='recording_and_control_notice';
+  perform set_config('request.jwt.claim.sub','c2910000-0000-0000-0000-000000000002',true);
+  perform set_config('test.uid','c2910000-0000-0000-0000-000000000002',true);
+  perform set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+  perform set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+  perform public.signer_contrat(v_nda_version,'Moussa Sow');
+  insert into public.contract_acceptances(profile_id,contract_kind,version)
+  values ('c2910000-0000-0000-0000-000000000002',
+          'recording_and_control_notice',v_notice_version)
+  on conflict do nothing;
+  update public.profiles set account_status='active'
+   where id='c2910000-0000-0000-0000-000000000002';
+  perform set_config('request.jwt.claim.sub','',true);
+  perform set_config('request.jwt.claims','',true);
+  perform set_config('test.uid','',true);
+  perform set_config('test.jwt','',true);
+end
+$teacher_contract_fixture$;
 
 insert into public.groupes
   (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local)
