@@ -7308,10 +7308,14 @@
     },
     "intervalle": {
       "moinsHeure": "Moins d'une heure plus tard",
-      "heure": "1 heure plus tard",
-      "heures": "{n} heures plus tard",
-      "jour": "1 jour plus tard",
-      "jours": "{n} jours plus tard"
+      "heures": {
+        "one": "{n} heure plus tard",
+        "other": "{n} heures plus tard"
+      },
+      "jours": {
+        "one": "{n} jour plus tard",
+        "other": "{n} jours plus tard"
+      }
     },
     "notification": {
       "enAttente": "Demande {dePrenom} : en liste d'attente",

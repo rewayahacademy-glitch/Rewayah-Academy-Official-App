@@ -59,14 +59,13 @@ String intervalleEntre(DateTime avant, DateTime apres) {
   final int heures = ecart.isNegative ? 0 : ecart.inHours;
   if (heures < 1) return t.suiviFamille.intervalle.moinsHeure;
   if (heures < 24) {
-    return heures == 1
-        ? t.suiviFamille.intervalle.heure
-        : LibellesGroupe.insecable(t.suiviFamille.intervalle.heures(n: heures));
+    return LibellesGroupe.insecable(
+      t.suiviFamille.intervalle.heures(n: heures),
+    );
   }
-  final int jours = ecart.inDays;
-  return jours == 1
-      ? t.suiviFamille.intervalle.jour
-      : LibellesGroupe.insecable(t.suiviFamille.intervalle.jours(n: jours));
+  return LibellesGroupe.insecable(
+    t.suiviFamille.intervalle.jours(n: ecart.inDays),
+  );
 }
 
 /// Le titre de la notification d'un passage d'etape. Les trois premieres

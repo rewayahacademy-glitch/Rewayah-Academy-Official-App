@@ -8396,6 +8396,83 @@
     "bandeauMasque": "الأسماء مخفية",
     "bandeauExpire": "حتى ⁨{heure}⁩"
   },
+  "suiviFamille": {
+    "titre": "متابعة الطلبات",
+    "contexte": "يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.",
+    "carteTitre": "طلب ⁨{dePrenom}⁩",
+    "detailTitre": "متابعة طلب ⁨{dePrenom}⁩",
+    "etapeCourante": "الخطوة الحالية: ⁨{etape}⁩",
+    "toutFait": "اكتملت كل الخطوات.",
+    "voirSuivi": "عرض المتابعة",
+    "vide": "لا طلبات في الوقت الحالي.",
+    "faireDemande": "تقديم طلب",
+    "erreur": "تعذّر تحميل المتابعة. أعيدوا المحاولة.",
+    "sansDonnees": "طلباتكم",
+    "introuvable": "هذا الطلب لم يعد موجودًا أو ليس من طلباتكم.",
+    "retour": "العودة إلى الطلبات",
+    "fuseau": "الأوقات المعروضة بتوقيت ⁨{deVille}⁩.",
+    "horodatage": "⁨{date}⁩ في ⁨{heure}⁩",
+    "prevue": "مقررة ⁨{date}⁩ في ⁨{heure}⁩",
+    "etapes": {
+      "envoyee": "تم إرسال الطلب",
+      "enAttente": "في قائمة الانتظار",
+      "classeCreee": "تم إنشاء الفصل",
+      "enseignantAffecte": "تم تعيين المعلم",
+      "eleveIntegre": "الطالب مندمج في الفصل",
+      "premiereSeance": "الحصة الأولى"
+    },
+    "etats": {
+      "fait": "تم",
+      "enCours": "جارية",
+      "aVenir": "قادمة"
+    },
+    "motif": {
+      "classesPleines": "كل فصول هذا الموعد مكتملة. سنبلغكم حالما يتوفر مكان.",
+      "aucunEnseignantLibre": "لا يتوفر معلم في هذا الموعد حاليًا. سنبلغكم حالما يتغير ذلك.",
+      "inconnu": "طلبكم قيد الانتظار. سنبلغكم حالما يتقدم."
+    },
+    "intervalle": {
+      "moinsHeure": "بعد أقل من ساعة",
+      "heures": {
+        "zero": "بعد أقل من ساعة",
+        "one": "بعد ساعة",
+        "two": "بعد ساعتين",
+        "few": "بعد ⁨{n}⁩ ساعات",
+        "many": "بعد ⁨{n}⁩ ساعة",
+        "other": "بعد ⁨{n}⁩ ساعة"
+      },
+      "jours": {
+        "zero": "في اليوم نفسه",
+        "one": "بعد يوم",
+        "two": "بعد يومين",
+        "few": "بعد ⁨{n}⁩ أيام",
+        "many": "بعد ⁨{n}⁩ يومًا",
+        "other": "بعد ⁨{n}⁩ يوم"
+      }
+    },
+    "notification": {
+      "enAttente": "طلب ⁨{dePrenom}⁩: في قائمة الانتظار",
+      "eleveIntegre": "طلب ⁨{dePrenom}⁩: الطالب مندمج في الفصل",
+      "premiereSeance": "طلب ⁨{dePrenom}⁩: تمت الحصة الأولى",
+      "close": "طلب ⁨{dePrenom}⁩: ⁨{motif}⁩",
+      "dejaEnClasse": "طلب ⁨{dePrenom}⁩: الطالب في فصل بالفعل، أُغلق الطلب"
+    },
+    "etapeSurTotal": "الخطوة ⁨{n}⁩ من ⁨{total}⁩: ⁨{etape}⁩",
+    "close": {
+      "etat": "أُغلق الطلب",
+      "suite": "يمكنكم اختيار موعد آخر لـ⁨{prenom}⁩.",
+      "suiteSansChoix": "لا شيء آخر مطلوب منكم.",
+      "choisirAutre": "اختيار موعد آخر لـ⁨{prenom}⁩",
+      "motif": {
+        "retraitFamille": "لقد سحبتم هذا الطلب.",
+        "offreRetiree": "لم يعد هذا الموعد مقترحًا.",
+        "classeNonConstituee": "تعذّر تكوين فصل هذا الموعد.",
+        "refusDirection": "لم تقبل الإدارة هذا الطلب.",
+        "dejaEnClasse": "لدى ⁨{prenom}⁩ مكان في فصل بالفعل: لم يعد هذا الطلب لازمًا.",
+        "inconnu": "أُغلق هذا الطلب."
+      }
+    }
+  },
   "suiviDemandes": {
     "titre": "متابعة طلبات المواعيد",
     "contexte": "يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.",
