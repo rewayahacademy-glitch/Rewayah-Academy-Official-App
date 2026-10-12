@@ -1503,6 +1503,7 @@ declare
   v_teacher_weekday_2 integer;
   v_teacher_hour_2 integer;
   v_next timestamptz;
+  v_next_week timestamptz;
   v_next_2 timestamptz;
   v_group_first timestamptz;
   v_session_count integer;
@@ -1520,10 +1521,15 @@ begin
   v_next := public.instant_creneau_reference(
     v_weekday, v_hour, 'Europe/Paris', 0, v_reference
   );
+  v_next_week := public.instant_creneau_reference(
+    v_weekday, v_hour, 'Europe/Paris', 1, v_reference
+  );
   v_next_2 := public.instant_creneau_reference(
     v_weekday_2, v_hour_2, 'Europe/Paris', 0, v_reference
   );
   if v_next <= v_reference or v_next_2 <= v_reference
+     or v_next_week at time zone 'Europe/Paris'
+          <> (v_next at time zone 'Europe/Paris') + interval '7 days'
      or public.instant_creneau(v_weekday, v_hour, 'Europe/Paris') <> v_next then
     raise exception 'A793: un créneau passé ne renvoie pas sa prochaine occurrence';
   end if;
