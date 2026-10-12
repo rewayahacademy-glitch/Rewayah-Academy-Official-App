@@ -2,25 +2,25 @@
 BEGIN;
 
 INSERT INTO auth.users (id, email) VALUES
-  ('c29u1000-0000-0000-0000-000000000001', 'cap29-upload-admin@test.invalid'),
-  ('c29u1000-0000-0000-0000-000000000002', 'cap29-upload-teacher@test.invalid');
+  ('c29a1000-0000-0000-0000-000000000001', 'cap29-upload-admin@test.invalid'),
+  ('c29a1000-0000-0000-0000-000000000002', 'cap29-upload-teacher@test.invalid');
 INSERT INTO public.profiles
   (id, immutable_id, role, first_name, last_name, account_status, gender)
 VALUES
-  ('c29u1000-0000-0000-0000-000000000001', 'C29-UPLOAD-ADMIN', 'admin', 'Upload', 'Admin', 'active', 'female'),
-  ('c29u1000-0000-0000-0000-000000000002', 'C29-UPLOAD-TEACH', 'teacher', 'Upload', 'Teacher', 'active', 'male');
+  ('c29a1000-0000-0000-0000-000000000001', 'C29-UPLOAD-ADMIN', 'admin', 'Upload', 'Admin', 'active', 'female'),
+  ('c29a1000-0000-0000-0000-000000000002', 'C29-UPLOAD-TEACH', 'teacher', 'Upload', 'Teacher', 'active', 'male');
 INSERT INTO public.library_resource
   (id, title, short_title, resource_type, language, category, access_policy, offline_policy)
 VALUES
-  ('c29u1000-0000-0000-0000-000000000003', 'Upload draft', 'Upload', 'pdf', 'fr', 'cours', 'admin', 'jamais');
+  ('c29a1000-0000-0000-0000-000000000003', 'Upload draft', 'Upload', 'pdf', 'fr', 'cours', 'admin', 'jamais');
 INSERT INTO public.resource_version (id, resource_id, numero_version)
-VALUES ('c29u1000-0000-0000-0000-000000000004',
-        'c29u1000-0000-0000-0000-000000000003', 1);
+VALUES ('c29a1000-0000-0000-0000-000000000004',
+        'c29a1000-0000-0000-0000-000000000003', 1);
 INSERT INTO private.library_upload_confirmation_secrets(singleton, secret)
 VALUES (true, 'test-only-cap29-upload-confirmation-key-32-bytes');
 
-SELECT set_config('request.jwt.claim.sub', 'c29u1000-0000-0000-0000-000000000001', true);
-SELECT set_config('test.uid', 'c29u1000-0000-0000-0000-000000000001', true);
+SELECT set_config('request.jwt.claim.sub', 'c29a1000-0000-0000-0000-000000000001', true);
+SELECT set_config('test.uid', 'c29a1000-0000-0000-0000-000000000001', true);
 SELECT set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', true);
 SELECT set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
 SET LOCAL ROLE authenticated;
@@ -38,7 +38,7 @@ BEGIN
     RAISE EXCEPTION 'CAP29 upload: anon conserve EXECUTE';
   END IF;
   v_intention := public.demander_upload_bibliotheque(
-    'c29u1000-0000-0000-0000-000000000003', 'support', 'manuel.pdf',
+    'c29a1000-0000-0000-0000-000000000003', 'support', 'manuel.pdf',
     'application/pdf', 1234,
     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
   );
@@ -51,7 +51,7 @@ BEGIN
   END IF;
   BEGIN
     PERFORM public.demander_upload_bibliotheque(
-      'c29u1000-0000-0000-0000-000000000003', 'support', 'archive.zip',
+      'c29a1000-0000-0000-0000-000000000003', 'support', 'archive.zip',
       'application/zip', 1234,
       'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
     );
@@ -61,7 +61,7 @@ BEGIN
   END;
 
   v_intention := public.demander_upload_bibliotheque(
-    'c29u1000-0000-0000-0000-000000000003', 'support', 'signe.pdf',
+    'c29a1000-0000-0000-0000-000000000003', 'support', 'signe.pdf',
     'application/pdf', 1234, v_sha
   );
   -- Mutant guard: if DB-side HMAC verification is removed, this untrusted
@@ -96,8 +96,8 @@ END
 $test$;
 RESET ROLE;
 
-SELECT set_config('request.jwt.claim.sub', 'c29u1000-0000-0000-0000-000000000002', true);
-SELECT set_config('test.uid', 'c29u1000-0000-0000-0000-000000000002', true);
+SELECT set_config('request.jwt.claim.sub', 'c29a1000-0000-0000-0000-000000000002', true);
+SELECT set_config('test.uid', 'c29a1000-0000-0000-0000-000000000002', true);
 SELECT set_config('request.jwt.claims', '{"app_metadata":{"role":"teacher"}}', true);
 SELECT set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
 SET LOCAL ROLE authenticated;
@@ -105,7 +105,7 @@ DO $refus$
 BEGIN
   BEGIN
     PERFORM public.demander_upload_bibliotheque(
-      'c29u1000-0000-0000-0000-000000000003', 'support', 'manuel.pdf',
+      'c29a1000-0000-0000-0000-000000000003', 'support', 'manuel.pdf',
       'application/pdf', 1234,
       'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
     );

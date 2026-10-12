@@ -48,7 +48,8 @@ BEGIN
   IF p_resource_id IS NULL OR p_finalite IS NULL
      OR p_finalite NOT IN ('support', 'preuve') OR p_nom_fichier IS NULL
      OR pg_catalog.length(v_nom) NOT BETWEEN 1 AND 200
-     OR pg_catalog.position('/' IN v_nom) > 0 OR pg_catalog.position(pg_catalog.chr(92) IN v_nom) > 0
+     OR pg_catalog.strpos(v_nom, '/') > 0
+     OR pg_catalog.strpos(v_nom, pg_catalog.chr(92)) > 0
      OR v_nom ~ '[[:cntrl:]]'
      OR (p_finalite = 'support' AND v_nom !~ '^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$')
      OR p_mime IS NULL OR v_mime = ''

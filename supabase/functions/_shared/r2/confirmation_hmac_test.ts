@@ -2,7 +2,7 @@ import {
   assertEquals,
   assertNotEquals,
   assertRejects,
-} from "https://deno.land/std@0.224.0/assert/mod.ts";
+} from "jsr:@std/assert";
 import { signatureConfirmationUpload } from "./confirmation_hmac.ts";
 
 Deno.test("confirmation HMAC binds intent, hash and size", async () => {
