@@ -1,5 +1,8 @@
 -- X2-15: les policies de groupe ne se récursent pas et la RPC garde ses rôles.
 begin;
+grant usage on schema public to authenticated;
+grant all on all tables in schema public to authenticated;
+grant all on all sequences in schema public to authenticated;
 insert into auth.users(id,email) values
  ('a1500000-0000-0000-0000-000000000001','x215-admin@test'),
  ('a1500000-0000-0000-0000-000000000002','x215-controller@test'),
@@ -70,7 +73,7 @@ do $$ declare n int; begin
  if n <> 1 then raise exception 'X2-15 admin expected 1 incident, got %',n; end if;
 end $$;
 select set_config('test.uid','a1500000-0000-0000-0000-000000000002',true);
-select set_config('test.jwt','{"app_metadata":{"role":"controller"}}',true);
+select set_config('test.jwt','{"app_metadata":{"role":"controller","household_id":null}}',true);
 do $$ declare n int; begin
  select count(*) into n from public.lister_incidents_seances(now(),100,0);
  if n <> 1 then raise exception 'X2-15 controller expected 1 incident, got %',n; end if;
@@ -94,7 +97,7 @@ do $$ declare n int; begin
  if n <> 0 then raise exception 'X2-15 disabled admin must see zero incidents'; end if;
 end $$;
 select set_config('test.uid','a1500000-0000-0000-0000-000000000006',true);
-select set_config('test.jwt','{"app_metadata":{"role":"accountant"}}',true);
+select set_config('test.jwt','{"app_metadata":{"role":"accountant","household_id":null}}',true);
 do $$ declare n int; begin
  select count(*) into n from public.lister_incidents_seances(now(),100,0);
  if n <> 0 then raise exception 'X2-15 accountant must see zero incidents'; end if;
@@ -120,11 +123,11 @@ begin
   for v_uid, v_role, v_household, v_expected_groups, v_expected_members in
     select * from (values
       ('a1500000-0000-0000-0000-000000000001'::uuid, 'admin', 'a15fffff-0000-0000-0000-000000000001'::uuid, 1, 2),
-      ('a1500000-0000-0000-0000-000000000002'::uuid, 'controller', 'a15fffff-0000-0000-0000-000000000001'::uuid, 0, 0),
+      ('a1500000-0000-0000-0000-000000000002'::uuid, 'controller', NULL::uuid, 0, 0),
       ('a1500000-0000-0000-0000-000000000003'::uuid, 'teacher', 'a15fffff-0000-0000-0000-000000000001'::uuid, 1, 2),
       ('a1500000-0000-0000-0000-000000000004'::uuid, 'guardian', 'a15fffff-0000-0000-0000-000000000001'::uuid, 1, 1),
       ('a1500000-0000-0000-0000-000000000007'::uuid, 'student', 'a15fffff-0000-0000-0000-000000000001'::uuid, 1, 1),
-      ('a1500000-0000-0000-0000-000000000006'::uuid, 'accountant', 'a15fffff-0000-0000-0000-000000000001'::uuid, 0, 0)
+      ('a1500000-0000-0000-0000-000000000006'::uuid, 'accountant', NULL::uuid, 0, 0)
     ) as expected_cases(uid, role_name, household_id, group_count, member_count)
   loop
     perform set_config('test.uid', v_uid::text, true);
