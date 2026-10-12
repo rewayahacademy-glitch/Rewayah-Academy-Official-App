@@ -3,7 +3,7 @@ import 'package:rewayah_academy/core/offres/frise_demandes_supabase.dart';
 import 'package:rewayah_academy/core/offres/port_frise_demande.dart';
 
 void main() {
-  test('projects only listed events as UTC instants', () {
+  test('projects listed UTC events as local wall times', () {
     final List<FriseDemande> result = frisesDepuisDonnees(
       <dynamic>[
         <String, Object?>{
@@ -41,9 +41,15 @@ void main() {
 
     expect(result, hasLength(1));
     expect(result.single.courante, TypeEtapeFrise.classeCreee);
-    expect(result.single.etapes.first.quand, DateTime.utc(2026, 10, 11, 6, 15));
+    expect(
+      result.single.etapes.first.quand,
+      DateTime.utc(2026, 10, 11, 6, 15).toLocal(),
+    );
     expect(result.single.etapes[1].quand, isNull);
-    expect(result.single.etapes.last.quand, DateTime.utc(2026, 10, 12, 8));
+    expect(
+      result.single.etapes.last.quand,
+      DateTime.utc(2026, 10, 12, 8).toLocal(),
+    );
     expect(result.single.fuseauIana, 'Europe/Paris');
   });
 
