@@ -177,7 +177,7 @@ reset role;
 -- F86: les garde-fous KYC et d'affectation refusent aussi un compte admin
 -- suspendu, même lorsque le JWT annonce encore le rôle admin.
 update public.profiles
-   set account_status = 'suspended'
+   set account_status = 'disabled'
  where id = 'b1800000-0000-0000-0000-000000000003';
 set local role authenticated;
 select set_config('request.jwt.claim.sub', 'b1800000-0000-0000-0000-000000000003', true);
