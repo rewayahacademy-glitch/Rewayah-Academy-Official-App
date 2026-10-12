@@ -137,4 +137,189 @@ alter function private.attribuer_matricule(uuid, timestamptz) owner to postgres;
 revoke all on function private.attribuer_matricule(uuid, timestamptz)
   from public, anon, authenticated, service_role;
 
+-- IMM-BACK-1 B: assign registry codes in the profile-creation transaction.
+create or replace function public.profiles_attribuer_matricule()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+begin
+  -- API sessions cannot choose a matricule, even when INSERT supplies one.
+  -- The migration/test database owner may still seed explicit fixtures.
+  if new.immutable_id is null or session_user <> 'postgres' then
+    new.immutable_id := private.attribuer_matricule(new.id, new.created_at);
+  end if;
+  return new;
+end;
+$function$;
+
+alter function public.profiles_attribuer_matricule() owner to postgres;
+revoke all on function public.profiles_attribuer_matricule()
+  from public, anon, authenticated, service_role;
+create trigger profiles_assign_person_registration
+before insert on public.profiles
+for each row execute function public.profiles_attribuer_matricule();
+
+create or replace function public.creer_profil_inscription(
+  p_role text,
+  p_first_name text,
+  p_last_name text,
+  p_gender public.gender default null,
+  p_timezone text default 'Europe/Paris',
+  p_parent_suit_des_cours boolean default false
+) returns public.profiles
+language plpgsql security definer set search_path = ''
+as $function$
+declare
+  v_uid uuid := auth.uid();
+  v_role public.app_role;
+  v_household uuid;
+  v_profile public.profiles;
+begin
+  if v_uid is null then raise exception 'aucune session'; end if;
+  if p_role not in ('guardian', 'teacher') then
+    raise exception 'role non ouvert a l''inscription publique : %', p_role;
+  end if;
+  v_role := p_role::public.app_role;
+  if v_role <> 'guardian' and coalesce(p_parent_suit_des_cours, false) then
+    raise exception 'profil apprenant personnel reserve au titulaire';
+  end if;
+  if exists (select 1 from public.profiles p where p.id = v_uid) then
+    raise exception 'ce compte a deja un profil';
+  end if;
+  if coalesce(btrim(p_first_name), '') = '' or coalesce(btrim(p_last_name), '') = '' then
+    raise exception 'prenom et nom sont requis';
+  end if;
+
+  if v_role = 'guardian' then
+    insert into public.households (timezone)
+    values (coalesce(nullif(btrim(p_timezone), ''), 'Europe/Paris'))
+    returning id into v_household;
+  end if;
+  insert into public.profiles
+    (id, immutable_id, role, household_id, first_name, last_name, gender, account_status)
+  values (v_uid, null, v_role, v_household,
+    btrim(p_first_name), btrim(p_last_name), p_gender, 'pending_kyc')
+  returning * into v_profile;
+
+  if v_role = 'guardian' then
+    update public.households set primary_guardian_id = v_uid where id = v_household;
+    if coalesce(p_parent_suit_des_cours, false) then
+      insert into public.student_profiles
+        (profile_id, titulaire_profile_id, student_type, interface_mode,
+         camera_policy, cohorte)
+      values (v_uid, v_uid, 'autonomous', 'standard', 'forbidden', 'adulte_18_plus');
+      perform public.log_sensitive_access(
+        'profil_eleve_titulaire_cree', 'student_profiles', v_uid::text,
+        jsonb_build_object('student_type', 'autonomous', 'source', 'inscription')
+      );
+    end if;
+  else
+    insert into public.teacher_profiles (profile_id) values (v_uid);
+  end if;
+  perform public.log_sensitive_access('profil_cree', 'profiles', v_uid::text,
+    jsonb_build_object('role', v_role::text));
+  return v_profile;
+end;
+$function$;
+
+alter function public.creer_profil_inscription(
+  text, text, text, public.gender, text, boolean
+) owner to postgres;
+revoke execute on function public.creer_profil_inscription(
+  text, text, text, public.gender, text, boolean
+) from public, anon;
+grant execute on function public.creer_profil_inscription(
+  text, text, text, public.gender, text, boolean
+) to authenticated;
+
+create or replace function public.creer_profil_enfant(
+  p_auth_user_id uuid,
+  p_guardian_id uuid,
+  p_first_name text,
+  p_last_name text,
+  p_age int,
+  p_level text default null
+) returns public.profiles
+language plpgsql security definer set search_path = ''
+as $function$
+declare
+  v_guardian public.profiles;
+  v_profile public.profiles;
+  v_mode public.interface_mode;
+  v_camera public.camera_policy;
+  v_seuil_enfant int;
+  v_age_camera int;
+begin
+  select * into v_guardian
+    from public.profiles p
+   where p.id = p_guardian_id and p.deleted_at is null;
+  if v_guardian.id is null or v_guardian.role <> 'guardian' then
+    raise exception 'l''appelant n''est pas un tuteur';
+  end if;
+  if v_guardian.household_id is null then
+    raise exception 'ce tuteur n''a pas de foyer';
+  end if;
+  if v_guardian.account_status not in ('active', 'provisional_active') then
+    raise exception 'compte tuteur non valide';
+  end if;
+  if coalesce(btrim(p_first_name), '') = '' or coalesce(btrim(p_last_name), '') = '' then
+    raise exception 'prenom et nom sont requis';
+  end if;
+  if p_age is null or p_age < 3 or p_age > 99 then
+    raise exception 'age hors bornes';
+  end if;
+
+  select coalesce((public.get_config('child_ui_mode_max_age', '8'::jsonb) #>> '{}')::int, 8)
+    into v_seuil_enfant;
+  select coalesce((public.get_config('camera_auto_allow_min_age', '11'::jsonb) #>> '{}')::int, 11)
+    into v_age_camera;
+  v_mode := case when p_age <= v_seuil_enfant then 'child' else 'standard' end;
+  v_camera := case when p_age >= v_age_camera then 'allowed' else 'forbidden' end;
+
+  insert into public.profiles
+    (id, immutable_id, role, household_id, first_name, last_name, account_status)
+  values (p_auth_user_id, null, 'student', v_guardian.household_id,
+    btrim(p_first_name), btrim(p_last_name), v_guardian.account_status)
+  returning * into v_profile;
+
+  insert into public.student_profiles
+    (profile_id, student_type, interface_mode, camera_policy, level)
+  values (p_auth_user_id, 'minor', v_mode, v_camera, p_level);
+  perform public.log_sensitive_access('profil_enfant_cree', 'profiles', p_auth_user_id::text,
+    jsonb_build_object('household_id', v_guardian.household_id, 'mode', v_mode::text));
+  return v_profile;
+end;
+$function$;
+
+alter function public.creer_profil_enfant(uuid, uuid, text, text, integer, text) owner to postgres;
+revoke execute on function public.creer_profil_enfant(uuid, uuid, text, text, integer, text)
+  from public, anon, authenticated;
+grant execute on function public.creer_profil_enfant(uuid, uuid, text, text, integer, text)
+  to service_role;
+
+-- Backfill old profiles in their original UTC registration year, then restore
+-- the existing unique/immutable guarantees with the server-issued RA value.
+alter table public.profiles drop constraint profiles_immutable_id_unique;
+drop trigger profiles_immutable_id_guard on public.profiles;
+do $backfill$
+declare
+  v_profile record;
+  v_matricule text;
+begin
+  for v_profile in
+    select p.id, p.created_at from public.profiles p order by p.created_at, p.id
+  loop
+    v_matricule := private.attribuer_matricule(v_profile.id, v_profile.created_at);
+    update public.profiles p set immutable_id = v_matricule where p.id = v_profile.id;
+  end loop;
+end;
+$backfill$;
+alter table public.profiles
+  add constraint profiles_immutable_id_unique unique (immutable_id);
+create trigger profiles_immutable_id_guard
+before update on public.profiles
+for each row execute function public.guard_profile_immutable_id();
+
 commit;
