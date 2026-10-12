@@ -235,7 +235,7 @@ REVOKE ALL ON FUNCTION public.creer_classe_depuis_regroupement(uuid, uuid, text)
 GRANT EXECUTE ON FUNCTION public.creer_classe_depuis_regroupement(uuid, uuid, text)
   TO authenticated;
 COMMENT ON FUNCTION public.creer_classe_depuis_regroupement(uuid, uuid, text) IS
-  'F86 candidate allowlist: signature=public.creer_classe_depuis_regroupement(uuid, uuid, text); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: no client gender/level input; server revalidates every member gender and snapshotted level before atomic class creation.';
+  'F86 candidate allowlist: signature=public.creer_classe_depuis_regroupement(uuid, uuid, text); md5_functiondef=84d28d7a483364127ebdfa957e163e25; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: no client gender/level input; server revalidates every member gender and snapshotted level before atomic class creation.';
 
 DO $postflight$
 DECLARE
