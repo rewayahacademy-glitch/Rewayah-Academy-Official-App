@@ -757,7 +757,7 @@ class FichierADeposer {
     required this.nom,
     required this.octets,
     required this.mime,
-    this.sha256 = '',
+    required this.sha256,
   });
 
   /// Le nom, pour l'affichage seulement.

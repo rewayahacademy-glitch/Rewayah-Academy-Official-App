@@ -65,6 +65,7 @@ Future<void> _deposerPreuve(BibliothequeAdminDemo port, String id) async {
       nom: 'preuve.pdf',
       octets: 10,
       mime: 'application/pdf',
+      sha256: '0000000000000000000000000000000000000000000000000000000000000000',
     ),
     finalite: FinaliteUpload.preuve,
   );
