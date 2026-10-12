@@ -78,21 +78,20 @@ update public.resource_version
 
 insert into public.library_version_rights
   (resource_version_id, source_titre, titulaire, usages, attribution,
-   approuve, revu_par, revu_le, resource_id)
+   approuve, revu_par, revu_le)
 values ('c3500000-0000-0000-0000-000000000012', 'Support de test', 'Titulaire de test',
         array['application'], 'Attribution de test', true,
-        'c3500000-0000-0000-0000-000000000002', now(),
-        'c3500000-0000-0000-0000-000000000011');
+        'c3500000-0000-0000-0000-000000000002', now());
 insert into public.library_version_rights
   (resource_version_id, source_titre, titulaire, usages, attribution,
-   approuve, revu_par, revu_le, resource_id)
+   approuve, revu_par, revu_le)
 values
   ('c3500000-0000-0000-0000-000000000015', 'Support public de test', 'Titulaire de test',
    array['application'], 'Attribution de test', true,
-   'c3500000-0000-0000-0000-000000000002', now(), 'c3500000-0000-0000-0000-000000000014'),
+   'c3500000-0000-0000-0000-000000000002', now()),
   ('c3500000-0000-0000-0000-000000000018', 'Support inscrit de test', 'Titulaire de test',
    array['application'], 'Attribution de test', true,
-   'c3500000-0000-0000-0000-000000000002', now(), 'c3500000-0000-0000-0000-000000000017');
+   'c3500000-0000-0000-0000-000000000002', now());
 -- CAP-29 : chaque version suit le cycle brouillon -> publiee avant le pointeur courant.
 select set_config('request.jwt.claim.sub', 'c3500000-0000-0000-0000-000000000002', true);
 update public.resource_version
