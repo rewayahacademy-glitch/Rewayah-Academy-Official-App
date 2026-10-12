@@ -99,6 +99,7 @@ class _Traductions$notifications$ar extends Traductions$notifications$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$notifications$evenements$ar evenements = _Traductions$notifications$evenements$ar._(_root);
 	@override String get titre => 'الإشعارات';
 	@override String get indisponibleTitre => 'الإشعارات غير متاحة بعد';
 	@override String get indisponiblePhrase => 'ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية بمجرد فتحها.';
@@ -114,6 +115,21 @@ class _Traductions$notifications$ar extends Traductions$notifications$fr {
 	@override String get lectureNonConfirmee => 'لم تُؤكَّد القراءة بعد. أعد المحاولة بعد قليل.';
 	@override late final _Traductions$notifications$detail$ar detail = _Traductions$notifications$detail$ar._(_root);
 	@override late final _Traductions$notifications$types$ar types = _Traductions$notifications$types$ar._(_root);
+}
+
+// Path: notifications.evenements
+class _Traductions$notifications$evenements$ar extends Traductions$notifications$evenements$fr {
+	_Traductions$notifications$evenements$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get demandeRecue => 'تم استلام طلب موعد جديد.';
+	@override String get classeValidee => 'الفصل جاهز وينتظر معلمه.';
+	@override String get enseignantAffecte => 'تم تعيين معلم للفصل.';
+	@override String get demandeClose => 'أُغلق طلب الموعد.';
+	@override String get remplacementPropose => 'عُرضت عليك حصة بديلة.';
+	@override String get remplacementPris => 'تم إسناد حصة بديلة.';
 }
 
 // Path: historique
@@ -13377,6 +13393,12 @@ class _Traductions$com$annonces$administration$moderation$regles$ar extends Trad
 extension on TraductionsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'notifications.evenements.demandeRecue' => 'تم استلام طلب موعد جديد.',
+			'notifications.evenements.classeValidee' => 'الفصل جاهز وينتظر معلمه.',
+			'notifications.evenements.enseignantAffecte' => 'تم تعيين معلم للفصل.',
+			'notifications.evenements.demandeClose' => 'أُغلق طلب الموعد.',
+			'notifications.evenements.remplacementPropose' => 'عُرضت عليك حصة بديلة.',
+			'notifications.evenements.remplacementPris' => 'تم إسناد حصة بديلة.',
 			'notifications.titre' => 'الإشعارات',
 			'notifications.indisponibleTitre' => 'الإشعارات غير متاحة بعد',
 			'notifications.indisponiblePhrase' => 'ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية بمجرد فتحها.',

@@ -2298,6 +2298,7 @@ class Traductions$notifications$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$notifications$evenements$fr evenements = Traductions$notifications$evenements$fr.internal(_root);
 	late final Traductions$notifications$filtres$fr filtres = Traductions$notifications$filtres$fr.internal(_root);
 
 	/// fr: 'Aucune notification dans ce filtre'
@@ -2338,6 +2339,32 @@ class Traductions$notifications$fr {
 
 	/// fr: '{titre}, le {date} à {heure}'
 	String ligne({required Object titre, required Object date, required Object heure}) => '${titre}, le ${date} à ${heure}';
+}
+
+// Path: notifications.evenements
+class Traductions$notifications$evenements$fr {
+	Traductions$notifications$evenements$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	/// fr: 'Une nouvelle demande de créneau a été reçue.'
+	String get demandeRecue => 'Une nouvelle demande de créneau a été reçue.';
+
+	/// fr: 'La classe est prête et attend son enseignant.'
+	String get classeValidee => 'La classe est prête et attend son enseignant.';
+
+	/// fr: 'Un enseignant a été affecté à la classe.'
+	String get enseignantAffecte => 'Un enseignant a été affecté à la classe.';
+
+	/// fr: 'Une demande de créneau a été clôturée.'
+	String get demandeClose => 'Une demande de créneau a été clôturée.';
+
+	/// fr: 'Un remplacement de cours vous est proposé.'
+	String get remplacementPropose => 'Un remplacement de cours vous est proposé.';
+
+	/// fr: 'Un remplacement de cours a été attribué.'
+	String get remplacementPris => 'Un remplacement de cours a été attribué.';
 }
 
 // Path: eleve
@@ -34957,6 +34984,12 @@ extension on Traductions {
 			'notifications.types.annonceInterne' => 'Annonce interne',
 			'notifications.types.evenementContextuel' => 'Événement',
 			'notifications.types.autre' => 'Notification',
+			'notifications.evenements.demandeRecue' => 'Une nouvelle demande de créneau a été reçue.',
+			'notifications.evenements.classeValidee' => 'La classe est prête et attend son enseignant.',
+			'notifications.evenements.enseignantAffecte' => 'Un enseignant a été affecté à la classe.',
+			'notifications.evenements.demandeClose' => 'Une demande de créneau a été clôturée.',
+			'notifications.evenements.remplacementPropose' => 'Un remplacement de cours vous est proposé.',
+			'notifications.evenements.remplacementPris' => 'Un remplacement de cours a été attribué.',
 			'notifications.titre' => 'Notifications',
 			'notifications.indisponibleTitre' => 'Les notifications ne sont pas encore disponibles',
 			'notifications.indisponiblePhrase' => 'Les rappels de séance et les messages de l\'académie s\'afficheront ici dès qu\'ils seront ouverts.',

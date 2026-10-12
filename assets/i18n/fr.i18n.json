@@ -4458,6 +4458,14 @@
     "dateCourteSansAnnee": "{jour} {mois}"
   },
   "notifications": {
+    "evenements": {
+      "demandeRecue": "Une nouvelle demande de créneau a été reçue.",
+      "classeValidee": "La classe est prête et attend son enseignant.",
+      "enseignantAffecte": "Un enseignant a été affecté à la classe.",
+      "demandeClose": "Une demande de créneau a été clôturée.",
+      "remplacementPropose": "Un remplacement de cours vous est proposé.",
+      "remplacementPris": "Un remplacement de cours a été attribué."
+    },
     "filtres": {
       "libelle": "Filtrer les notifications",
       "toutes": "Toutes",
