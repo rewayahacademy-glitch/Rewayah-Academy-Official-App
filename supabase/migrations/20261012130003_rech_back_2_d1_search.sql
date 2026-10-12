@@ -86,7 +86,19 @@ revoke all on function private.rech_d1_curseur_lire(uuid, text, text, bigint)
   from public, anon, authenticated, service_role;
 revoke all on function private.rech_d1_curseur_creer(text, text, text, uuid, bigint)
   from public, anon, authenticated, service_role;
-create index if not exists groupes_actifs_recherche_trgm_idx
+-- D1 reads only these projections; existing table RLS remains the row authority.
+grant select (id, libelle, type_public, weekday, hour_local, timezone_iana, ended_at)
+  on public.groupes to authenticated;
+grant select (id, type_public, langue_code, jours, heure_locale,
+               duree_minutes, fuseau_iana, etat)
+  on public.offres_horaires to authenticated;
+grant select (id, title, short_title, resource_type, edition, language,
+               category, archived_at, current_version_id)
+  on public.library_resource to authenticated;
+grant select (id, resource_id, statut)
+  on public.resource_version to authenticated;
+grant select (resource_id, groupe_id)
+  on public.library_resource_groupe to authenticated;create index if not exists groupes_actifs_recherche_trgm_idx
   on public.groupes using gin (lower(libelle) extensions.gin_trgm_ops)
   where ended_at is null;
 create index if not exists offres_horaires_publiees_recherche_trgm_idx
@@ -148,8 +160,7 @@ begin
            pg_catalog.jsonb_build_object(
              'typePublic', o.type_public, 'langueCode', o.langue_code,
              'jours', o.jours, 'heureLocale', o.heure_locale,
-             'dureeMinutes', o.duree_minutes, 'fuseau', o.fuseau_iana,
-             'rythme', o.rythme::text
+             'dureeMinutes', o.duree_minutes, 'fuseau', o.fuseau_iana
            )
       from public.offres_horaires o
      where o.etat = 'publiee'
