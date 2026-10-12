@@ -109,6 +109,13 @@ class FauxPartagePedagogique implements PortPartagePedagogique {
   /// Chaque appel recu, par nom de methode.
   final List<String> appels = <String>[];
 
+  /// Le journal serveur des lectures du cahier brut (qui, quand, quelle
+  /// seance) : ici la seance et l'eleve lus.
+  final List<(String, String)> lecturesJournalisees = <(String, String)>[];
+
+  /// Les pages et filtres demandes a `comptesRendusClasse`.
+  final List<(int, EtatDiffusion?)> demandesCahiers = <(int, EtatDiffusion?)>[];
+
   /// Les pages demandees a `partageClasse`.
   final List<int> pagesDemandees = <int>[];
 
@@ -344,6 +351,62 @@ class FauxPartagePedagogique implements PortPartagePedagogique {
             etat: _etat(e.value, eleveId),
           ),
     ];
+  }
+
+  @override
+  Future<PageCahiersClasse> comptesRendusClasse({
+    required String classeId,
+    int page = 1,
+    EtatDiffusion? filtreEtat,
+  }) async {
+    await _entree('comptesRendusClasse');
+    demandesCahiers.add((page, filtreEtat));
+    final List<LigneCahierClasse> tout = <LigneCahierClasse>[
+      for (final MapEntry<(String, String), RapportSim> e in rapports.entries)
+        if (filtreEtat == null || _etat(e.value, e.key.$2) == filtreEtat)
+          LigneCahierClasse(
+            seanceId: e.key.$1,
+            eleveId: e.key.$2,
+            elevePrenom: (eleves[e.key.$2] ?? e.key.$2).split(' ').first,
+            seanceLe: DateTime(2026, 10, 8),
+            etat: _etat(e.value, e.key.$2),
+          ),
+    ];
+    final int debut = (page - 1) * taillePage;
+    return PageCahiersClasse(
+      lignes: tout.skip(debut).take(taillePage).toList(),
+      total: tout.length,
+      page: page,
+    );
+  }
+
+  @override
+  Future<CahierAdmin> lireCahierAdmin({
+    required String seanceId,
+    required String eleveId,
+  }) async {
+    await _entree('lireCahierAdmin');
+    final RapportSim r = rapports[(seanceId, eleveId)]!;
+    lecturesJournalisees.add((seanceId, eleveId));
+    return CahierAdmin(
+      seanceId: seanceId,
+      eleveId: eleveId,
+      elevePrenom: (eleves[eleveId] ?? eleveId).split(' ').first,
+      classeLibelle: 'Classe An-Nour',
+      seanceLe: DateTime(2026, 10, 8, 18),
+      confirme: r.confirme,
+      enseignant: 'Sayyida Aicha',
+      evaluation: <RubriqueInterne>[
+        if ((r.contenu.travaille ?? '').isNotEmpty)
+          RubriqueInterne(libelle: 'Travaille', texte: r.contenu.travaille!),
+      ],
+      detailsInternes: <RubriqueInterne>[
+        // Contrat : jamais un autre eleve ni la paie, meme pour la direction.
+        for (final String n in r.interne)
+          if (n.startsWith('NOTE INTERNE'))
+            RubriqueInterne(libelle: 'Note interne', texte: n),
+      ],
+    );
   }
 
   ApercuAdmin _apercu(String seanceId, String eleveId) {

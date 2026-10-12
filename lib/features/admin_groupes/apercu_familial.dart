@@ -57,7 +57,9 @@ void ouvrirComptesRendusEleve(
 }) {
   AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.admin.groupes.partage.comptesRendusTitre(dePrenom: deDevant(prenom)),
+    titre: t.admin.groupes.partage.comptesRendusTitre(
+      dePrenom: deDevant(prenom),
+    ),
     constructeur: (BuildContext contexte) =>
         FeuilleComptesRendusEleve(classeId: classeId, eleveId: eleveId),
   );
@@ -77,7 +79,8 @@ void ouvrirApercuFamilial(
   );
 }
 
-String _etatDiffusion(EtatDiffusion etat) {
+/// Le libelle de l'etat de diffusion d'un compte rendu.
+String libelleEtatDiffusion(EtatDiffusion etat) {
   final l = t.admin.groupes.partage;
   return switch (etat) {
     EtatDiffusion.nonValide => l.etatNonValide,
@@ -89,7 +92,8 @@ String _etatDiffusion(EtatDiffusion etat) {
   };
 }
 
-TonEtat _tonDiffusion(EtatDiffusion etat) => switch (etat) {
+/// Le ton de l'etat de diffusion d'un compte rendu.
+TonEtat tonEtatDiffusion(EtatDiffusion etat) => switch (etat) {
   EtatDiffusion.partageAuto || EtatDiffusion.partageManuel => TonEtat.succes,
   EtatDiffusion.corrigeApresPartageManuel => TonEtat.avertissement,
   EtatDiffusion.revoque => TonEtat.alerte,
@@ -138,10 +142,10 @@ class FeuilleComptesRendusEleve extends ConsumerWidget {
           for (final LigneCompteRendu c in lignes)
             LigneRubrique(
               libelle: dateCourte(c.seanceLe),
-              legende: _etatDiffusion(c.etat),
+              legende: libelleEtatDiffusion(c.etat),
               pastille: StatusPill(
-                libelle: _etatDiffusion(c.etat),
-                ton: _tonDiffusion(c.etat),
+                libelle: libelleEtatDiffusion(c.etat),
+                ton: tonEtatDiffusion(c.etat),
               ),
               onPress: () => ouvrirApercuFamilial(
                 context,
@@ -391,8 +395,8 @@ class _FeuilleApercuFamilialEtat extends ConsumerState<FeuilleApercuFamilial> {
         Align(
           alignment: AlignmentDirectional.centerStart,
           child: StatusPill(
-            libelle: _etatDiffusion(a.etat),
-            ton: _tonDiffusion(a.etat),
+            libelle: libelleEtatDiffusion(a.etat),
+            ton: tonEtatDiffusion(a.etat),
           ),
         ),
         if (raison != null && a.etat != EtatDiffusion.nonValide) ...<Widget>[

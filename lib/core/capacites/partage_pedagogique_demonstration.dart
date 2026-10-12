@@ -155,6 +155,60 @@ class PartagePedagogiqueDemonstration implements PortPartagePedagogique {
       ),
   ];
 
+  @override
+  Future<PageCahiersClasse> comptesRendusClasse({
+    required String classeId,
+    int page = 1,
+    EtatDiffusion? filtreEtat,
+  }) async {
+    final List<LigneCahierClasse> tout =
+        <LigneCahierClasse>[
+              for (final (String id, String nom) in _eleves)
+                for (final (int i, String s) in <(int, String)>[
+                  (3, 'demo-seance-3'),
+                  (10, 'demo-seance-2'),
+                ])
+                  LigneCahierClasse(
+                    seanceId: s,
+                    eleveId: id,
+                    elevePrenom: nom,
+                    seanceLe: DateTime(2026, 10, 18 - i),
+                    etat: _etat(s, id),
+                  ),
+            ]
+            .where(
+              (LigneCahierClasse l) =>
+                  filtreEtat == null || l.etat == filtreEtat,
+            )
+            .toList();
+    return PageCahiersClasse(lignes: tout, total: tout.length, page: page);
+  }
+
+  @override
+  Future<CahierAdmin> lireCahierAdmin({
+    required String seanceId,
+    required String eleveId,
+  }) async => CahierAdmin(
+    seanceId: seanceId,
+    eleveId: eleveId,
+    elevePrenom: _eleves.firstWhere((e) => e.$1 == eleveId).$2,
+    classeLibelle: 'Classe de demonstration',
+    seanceLe: DateTime(2026, 10, 8, 18),
+    confirme: true,
+    evaluation: const <RubriqueInterne>[
+      RubriqueInterne(
+        libelle: 'Evaluation',
+        texte: 'Evaluation de demonstration.',
+      ),
+    ],
+    detailsInternes: const <RubriqueInterne>[
+      RubriqueInterne(
+        libelle: 'Note interne',
+        texte: 'Note interne de demonstration.',
+      ),
+    ],
+  );
+
   ApercuAdmin _apercu(String seanceId, String eleveId) {
     final EtatDiffusion etat = _etat(seanceId, eleveId);
     final String nom = _eleves.firstWhere((e) => e.$1 == eleveId).$2;

@@ -26,3 +26,13 @@ Fichiers hors lot modifiés : `assets/i18n/{fr,ar}.i18n.json` et `lib/core/i18n/
 
 ## Réserve acceptée (orchestrateur, 11/10/2026, par délégation du directeur)
 L'accès provisoire à l'aperçu familial et au partage ciblé, par la règle d'un élève dans l'inspecteur de classe, est **accepté pour ce lot**. Le vrai point de lecture administrative d'un cahier confirmé sera une étape séparée, **ADM-CAHIER-LECTURE** (créée par l'orchestrateur). Le backend du port est confié à Codex 2 (X2-20).
+
+## ADM-CAHIER-LECTURE (branche `claude/adm-cahier-lecture`)
+| Fonction | Fichier | Statut |
+| :--- | :--- | :--- |
+| Lien « Voir les cahiers de la classe » dans la fiche de classe (inspecteur et feuille mobile), **sans nouvelle route** | `features/admin_groupes/groupes_page.dart`, `cahiers_classe.dart` | MODIFIÉE / NOUVELLE |
+| Liste paginée et filtrée des cahiers d'une classe (loading, contenu, vide, erreur, hors ligne, indisponible, refusé) | `cahiers_classe.dart` (`FeuilleCahiersClasse`) | NOUVELLE |
+| Cahier en lecture seule, détails internes étiquetés « Interne, jamais montré à la famille », lien vers l'aperçu familial et publier / révoquer | `cahiers_classe.dart` (`FeuilleCahierAdmin`), `apercu_familial.dart` | NOUVELLE |
+| Port : `comptesRendusClasse`, `lireCahierAdmin`, type `CahierAdmin` distinct de `CompteRenduFamille` | `core/capacites/port_partage_pedagogique.dart` | ÉTENDU, production indisponible |
+| Journalisation de chaque lecture, droits admin seul | exigence serveur (contrat), oracle dans le double | DÉPEND DU BACKEND (Codex 2, X2-20) |
+| Saisie enseignante, route, adaptateur Supabase | n/a | ABSENTS, voulu |

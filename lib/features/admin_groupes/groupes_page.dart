@@ -49,6 +49,7 @@ import '../admin_fusion/feuilles_fusion.dart';
 import '../admin_regroupements/regroupements_libelles.dart' show villeDuFuseau;
 import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
 import 'bas_de_feuille.dart';
+import 'cahiers_classe.dart';
 import 'feuille_observation_groupe.dart';
 import 'genre_classe_libelles.dart';
 import 'reglage_partage.dart';
@@ -1550,6 +1551,9 @@ class _FeuilleDetail extends ConsumerWidget {
         // PED-APRES-1 (ADM-PED-APR-02) : le partage des comptes rendus, au
         // meme endroit sur bureau (inspecteur) et sur telephone (feuille).
         GroupePartageClasse(classeId: groupe.id, nomClasse: groupe.libelle),
+        Ecart.vMd,
+        // ADM-CAHIER-LECTURE : les cahiers de la classe, en lecture seule.
+        LienCahiersClasse(classeId: groupe.id),
         Ecart.vXxl,
         Text(
           t.admin.groupes.detailMembres,
