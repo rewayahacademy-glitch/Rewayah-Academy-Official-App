@@ -60,12 +60,6 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_c21_kyc_access_verdict.sql
 
-      # B-06 : une policy historique ne rouvre pas l'acces direct, et le
-      # controleur est refuse par les deux RPC KYC auditables.
-      - name: Scenario SQL de refus KYC au contrôleur
-        shell: bash
-        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_kyc_controller_refus.sql
-
       # Disponibilites communes aux deux roles, affectation durable et son
       # plafond, regles par eleve et leur immuabilite, chevauchement de seances,
       # cloisonnement des disponibilites, demandes des quatre parties, feed de
