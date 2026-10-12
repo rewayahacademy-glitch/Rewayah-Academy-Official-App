@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
+import 'package:rewayah_academy/core/capacites/port_beneficiaires_paiement.dart';
 import 'package:rewayah_academy/core/capacites/port_delegation_finance.dart';
 import 'package:rewayah_academy/core/capacites/port_politique_reserve.dart';
 import 'package:rewayah_academy/core/comptable/modeles_comptable.dart';
@@ -29,6 +30,7 @@ import 'package:rewayah_academy/features/admin_finance/finance_page.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation/finance_delegation_policy_panel.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation/strategic_reserve_policy_panel.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation_page.dart';
+import 'package:rewayah_academy/features/demo/comptable/beneficiaires_demo.dart';
 import 'package:rewayah_academy/features/demo/comptable/direction_demo.dart';
 import 'package:rewayah_academy/features/demo/comptable/socle_comptable_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_finance_page.dart';
@@ -40,14 +42,20 @@ final c = t.comptable.direction;
 List<Override> _demo({
   PolitiqueReserveDemo? reserve,
   DelegationFinanceDemo? delegation,
-}) => <Override>[
-  portPolitiqueReserveProvider.overrideWithValue(
-    reserve ?? PolitiqueReserveDemo(),
-  ),
-  portDelegationFinanceProvider.overrideWithValue(
-    delegation ?? DelegationFinanceDemo(),
-  ),
-];
+}) {
+  final DelegationFinanceDemo d = delegation ?? DelegationFinanceDemo();
+  return <Override>[
+    portPolitiqueReserveProvider.overrideWithValue(
+      reserve ?? PolitiqueReserveDemo(),
+    ),
+    portDelegationFinanceProvider.overrideWithValue(d),
+    // DELEG-FIN-1 : les gestes de controle et les sorties en attente.
+    portControleDelegationProvider.overrideWithValue(d),
+    portBeneficiairesPaiementProvider.overrideWithValue(
+      const BeneficiairesPaiementDemo(),
+    ),
+  ];
+}
 
 /// Un port de reserve qui echoue, ou ne repond jamais.
 class _ReserveEnPanne implements PortPolitiqueReserve {

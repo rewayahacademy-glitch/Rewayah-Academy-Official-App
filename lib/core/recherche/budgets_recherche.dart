@@ -73,8 +73,12 @@ class RequeteNormalisee {
         .take(BudgetsRecherche.termesMaximum)
         .toList();
     String texte = termes.join(' ');
-    if (texte.length > BudgetsRecherche.longueurMaximale) {
-      texte = texte.substring(0, BudgetsRecherche.longueurMaximale).trimRight();
+    // La coupe se fait sur les runes, jamais sur les unites UTF-16 : un emoji
+    // a la frontiere ne laisse pas une moitie de paire de substitution.
+    if (texte.runes.length > BudgetsRecherche.longueurMaximale) {
+      texte = String.fromCharCodes(
+        texte.runes.take(BudgetsRecherche.longueurMaximale),
+      ).trimRight();
     }
     if (texte.isEmpty) {
       return const RequeteNormalisee._('', ValiditeRequete.vide);

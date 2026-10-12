@@ -282,6 +282,16 @@ class ActionObligation extends StatelessWidget {
         if (raison == RaisonBlocage.autoPaiement) {
           return phrase(libelleRaisonBlocage(raison!));
         }
+        // DELEG-FIN-1 : une operation en attente ou bloquee par une
+        // delegation dit pourquoi, avec la raison rendue par la source.
+        if (raison != null && raisonsDelegation.contains(raison)) {
+          return Column(
+            key: ValueKey<String>('raison-obligation-${o.id}'),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[phrase(libelleRaisonBlocage(raison)), voir()],
+          );
+        }
         return voir();
     }
   }

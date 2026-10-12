@@ -129,6 +129,18 @@ ActionLigne actionDe(ObligationPayable o) {
   return ActionLigne.voir;
 }
 
+/// DELEG-FIN-1 : les raisons qui viennent des delegations de la Direction
+/// (suspension, expiration, delai de securite, exceptions). Rendues par la
+/// source, jamais deduites ici : l'ecran les dit, il ne les calcule pas.
+const Set<RaisonBlocage> raisonsDelegation = <RaisonBlocage>{
+  RaisonBlocage.delegationsSuspendues,
+  RaisonBlocage.delegationExpiree,
+  RaisonBlocage.sortieEnAttenteDelai,
+  RaisonBlocage.coffreNonAutorise,
+  RaisonBlocage.beneficiaireExclu,
+  RaisonBlocage.plafondExceptionDepasse,
+};
+
 /// La raison rendue pour laquelle « Payer » est absent, ou `null`.
 RaisonBlocage? raisonSansPaiement(ObligationPayable o) =>
     o.permissions.permet(ActionFinance.payer)

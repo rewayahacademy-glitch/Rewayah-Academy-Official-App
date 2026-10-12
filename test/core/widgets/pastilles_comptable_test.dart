@@ -57,7 +57,7 @@ void main() {
   });
 
   test('12 alertes (§28) avec leur liste (DR-10), 12 actions, '
-      '10 raisons de blocage (CPT-BR §1), 7 coffres (§8.1)', () {
+      '16 raisons de blocage (CPT-BR §1, dont les 6 de DELEG-FIN-1), 7 coffres (§8.1)', () {
     expect(TypeAlerteComptable.values, hasLength(12));
     _motsDistincts(TypeAlerteComptable.values, libelleAlerteComptable);
     expect(
@@ -70,7 +70,7 @@ void main() {
       4,
     );
     expect(ActionFinance.values, hasLength(12));
-    expect(RaisonBlocage.values, hasLength(10));
+    expect(RaisonBlocage.values, hasLength(16));
     _motsDistincts(RaisonBlocage.values, libelleRaisonBlocage);
     expect(
       libelleRaisonBlocage(RaisonBlocage.autoPaiement),
