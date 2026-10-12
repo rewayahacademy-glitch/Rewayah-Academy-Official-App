@@ -4,7 +4,26 @@
 
 -- Droits facon Supabase (alter default privileges du projet).
 grant usage on schema public to anon, authenticated, service_role;
-grant all on all tables in schema public to authenticated, service_role;
+do $scenario_grants$
+declare
+  v_table record;
+begin
+  for v_table in
+    select schemaname, tablename
+    from pg_catalog.pg_tables
+    where schemaname = 'public' and tablename <> 'contract_acceptances'
+  loop
+    execute format(
+      'grant all on table %I.%I to authenticated, service_role',
+      v_table.schemaname, v_table.tablename
+    );
+  end loop;
+end
+$scenario_grants$;
+-- Postgres nu n'applique pas les privilèges par défaut de Supabase. La RPC
+-- SECURITY INVOKER lit la signature qu'elle vient d'insérer; reproduire ici
+-- le SELECT de plateforme, sans modifier stub_auth ni les ACL de production.
+grant select on table public.contract_acceptances to authenticated;
 grant all on all sequences in schema public to authenticated, service_role;
 grant all on all functions in schema public to service_role;
 
@@ -202,7 +221,9 @@ begin
   begin
     perform * from public.read_kyc_documents();
     raise exception 'S5 ECHEC : un lecteur sans genre a obtenu des dossiers';
-  exception when sqlstate 'P0001' then
+  exception when insufficient_privilege then
+    null;
+  when sqlstate 'P0001' then
     if position('genre du lecteur inconnu' in sqlerrm) = 0 then raise; end if;
   end;
   raise notice 'S5a ok : genre inconnu, refus explicite plutot que filtrage a moitie';
@@ -553,13 +574,129 @@ begin
 end $$;
 
 -- Une acceptation de contrat est un fait : ni modifiable, ni effacable.
+-- La fixture synthétique reste distincte du texte juridique approuvé publié
+-- par la migration 0090.
+-- L'enseignant signe dès pending_kyc, avant que la direction l'active.
+
+-- Avis de contrôle préchargé par le propriétaire du scénario : il n'existe pas
+-- de RPC de signature dédiée à cet avis.
+insert into public.contract_acceptances (profile_id, contract_kind, version)
+values (
+  '22222222-2222-2222-2222-222222222222',
+  'recording_and_control_notice', '2026-10-jur'
+);
+
 do $$
 begin
   set local role authenticated;
   perform set_config('test.uid', '22222222-2222-2222-2222-222222222222', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
-  insert into public.contract_acceptances (profile_id, contract_kind, version)
-  values ('22222222-2222-2222-2222-222222222222', 'teacher_nda', '2026-09');
+  perform public.signer_contrat('2026-10-jur', 'Yasmine Test');
+end $$;
+
+reset role;
+select set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', false);
+update public.profiles set account_status = 'active'
+where id = '22222222-2222-2222-2222-222222222222';
+
+-- Bascule la fixture vers sa propre version courante pour tester signer_contrat.
+update public.contract_texts set is_current = false
+where contract_kind = 'teacher_nda' and locale = 'fr' and is_current;
+
+insert into public.contract_texts (
+  contract_kind, version, locale, body, sha256, is_current
+) values (
+  'teacher_nda', 'test-signature-0057', 'fr',
+  'Texte synthétique réservé au test de signature.',
+  encode(extensions.digest(
+    convert_to('Texte synthétique réservé au test de signature.', 'UTF8'), 'sha256'
+  ), 'hex'),
+  false
+);
+
+update public.contract_texts set is_current = true
+where contract_kind = 'teacher_nda'
+  and version = 'test-signature-0057'
+  and locale = 'fr';
+
+update public.profiles set account_status = 'disabled'
+where id = '66666666-6666-6666-6666-666666666666';
+
+do $$
+declare
+  v_signature public.contract_acceptances%rowtype;
+  v_rejouee public.contract_acceptances%rowtype;
+  v_refus text;
+begin
+  set local role authenticated;
+  perform set_config('test.uid', '11111111-1111-1111-1111-111111111111', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"guardian"}}', true);
+  begin
+    insert into public.contract_acceptances (
+      profile_id, contract_kind, version, signer_name
+    ) values (
+      '11111111-1111-1111-1111-111111111111',
+      'teacher_nda', 'test-signature-0057', 'Parent Test'
+    );
+    raise exception 'CONTRAT ECHEC : un tuteur a pu signer comme enseignant';
+  exception when insufficient_privilege then
+    null;
+  end;
+
+  perform set_config('test.uid', '66666666-6666-6666-6666-666666666666', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+  begin
+    insert into public.contract_acceptances (
+      profile_id, contract_kind, version, signer_name
+    ) values (
+      '66666666-6666-6666-6666-666666666666',
+      'teacher_nda', 'test-signature-0057', 'Compte Desactive'
+    );
+    raise exception 'CONTRAT ECHEC : un compte desactive a pu signer';
+  exception when insufficient_privilege then
+    null;
+  end;
+
+  perform set_config('test.uid', '22222222-2222-2222-2222-222222222222', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+
+  begin
+    insert into public.contract_acceptances (
+      profile_id, contract_kind, version, signer_name, signed_sha256
+    ) values (
+      '22222222-2222-2222-2222-222222222222',
+      'teacher_nda', 'test-signature-0057', 'Enseignant Test', repeat('0', 64)
+    );
+    raise exception 'CONTRAT ECHEC : le client a pu fournir son empreinte';
+  exception when insufficient_privilege then
+    null;
+  end;
+
+  select * into v_signature
+  from public.signer_contrat('test-signature-0057', '  Yasmine Test  ');
+  select * into v_rejouee
+  from public.signer_contrat('test-signature-0057', 'Autre nom');
+
+  if v_signature.id is distinct from v_rejouee.id
+     or v_signature.accepted_at is distinct from v_rejouee.accepted_at then
+    raise exception 'CONTRAT ECHEC : le rejeu n''a pas renvoye la signature initiale';
+  end if;
+  if v_signature.signer_name is distinct from 'Yasmine Test'
+     or v_signature.signed_sha256 is distinct from (
+       select t.sha256 from public.contract_texts t
+       where t.contract_kind = 'teacher_nda'
+         and t.version = 'test-signature-0057' and t.locale = 'fr'
+     ) then
+    raise exception 'CONTRAT ECHEC : nom ou empreinte source different du texte courant';
+  end if;
+
+  begin
+    perform public.signer_contrat('ancienne-version', 'Yasmine Test');
+    raise exception 'CONTRAT ECHEC : une version perimee a ete signee';
+  exception when sqlstate 'P0001' then
+    get stacked diagnostics v_refus = message_text;
+    if v_refus not like 'version_perimee:%' then raise; end if;
+  end;
 end $$;
 
 do $$
@@ -673,6 +810,39 @@ begin
     raise exception 'SEARCH_PATH ECHEC : % ', v_sans;
   end if;
   raise notice 'search_path ok : toute fonction SECURITY DEFINER le fixe';
+end $$;
+
+-- F70 : ni l'insertion directe ni un changement de rôle ne peuvent créer un
+-- enseignant déjà actif sans la signature du texte courant.
+INSERT INTO auth.users (id, email) VALUES
+  ('88888888-8888-8888-8888-888888888881', 'f70-teacher@example.test'),
+  ('88888888-8888-8888-8888-888888888882', 'f70-student@example.test');
+INSERT INTO public.households (id, timezone, status)
+VALUES ('88888888-8888-8888-8888-888888888883', 'Europe/Paris', 'active');
+
+do $$
+begin
+  begin
+    insert into public.profiles (id, immutable_id, role, first_name, last_name, account_status)
+    values ('88888888-8888-8888-8888-888888888881', 'F70INSERT000001',
+            'teacher', 'Sans', 'Signature', 'active');
+    raise exception 'F70 ECHEC : insertion enseignant actif sans signature acceptée';
+  exception when check_violation then
+    if position('contract_not_signed_current:teacher_nda' in sqlerrm) = 0 then raise; end if;
+  end;
+
+  insert into public.profiles
+    (id, immutable_id, role, household_id, first_name, last_name, account_status)
+  values ('88888888-8888-8888-8888-888888888882', 'F70ROLE0000001',
+          'student', '88888888-8888-8888-8888-888888888883',
+          'Sans', 'Signature', 'active');
+  begin
+    update public.profiles set role = 'teacher'
+    where id = '88888888-8888-8888-8888-888888888882';
+    raise exception 'F70 ECHEC : promotion role-only vers enseignant actif acceptée';
+  exception when check_violation then
+    if position('contract_not_signed_current:teacher_nda' in sqlerrm) = 0 then raise; end if;
+  end;
 end $$;
 
 select 'TOUS LES SCENARIOS SQL DE L''ETAPE 3 SONT PASSES' as verdict;

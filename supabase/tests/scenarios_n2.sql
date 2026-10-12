@@ -54,7 +54,7 @@ insert into public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 values
   ('b2000000-0000-0000-0000-000000000001', 'TEACH-N2-000001', 'teacher',
-   'b2ffffff-0000-0000-0000-00000000000a', 'Bilal', 'Ndiaye', 'active', 'male'),
+   'b2ffffff-0000-0000-0000-00000000000a', 'Bilal', 'Ndiaye', 'provisional_active', 'male'),
   ('b2000000-0000-0000-0000-000000000002', 'STUD-N2-000001', 'student',
    'b2ffffff-0000-0000-0000-00000000000a', 'Nour', 'Ndiaye', 'active', 'female'),
   ('b2000000-0000-0000-0000-000000000003', 'STUD-N2-000002', 'student',
@@ -63,6 +63,24 @@ values
    'b2ffffff-0000-0000-0000-00000000000a', 'Khadija', 'Ba', 'active', 'female'),
   ('b2000000-0000-0000-0000-000000000005', 'STUD-N2-000003', 'student',
    'b2ffffff-0000-0000-0000-00000000000a', 'Salim', 'Ba', 'active', 'male');
+-- Fixture contractuel requis par 0089 : aucune garde d'activation n'est assouplie.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+    PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true);
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+      ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+END
+$fixture_teacher_contracts$;
 
 insert into public.student_profiles (profile_id, student_type, interface_mode, camera_policy)
 values
