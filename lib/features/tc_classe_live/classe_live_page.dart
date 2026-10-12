@@ -479,9 +479,11 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
         onCompte: () => _allerSansQuitter(Routes.compte),
         onQuitter: () => unawaited(_sortir()),
         // LIVE-PAUSE-01 : la commande suit la capacite lue du serveur, jamais
-        // le role ; sans source (production), elle n'existe pas.
+        // le role (LIVE-PAUSE-01b : plus aucune lecture du role ici, le test
+        // `classe_live_pause_test` tombe si `peutPiloter` disparait) ; sans
+        // source (production), elle n'existe pas.
         onPause: switch (vue.pause) {
-          final PauseSeance p when p.peutPiloter && enseignant =>
+          final PauseSeance p when p.peutPiloter =>
             () => unawaited(_basculerPause(p)),
           _ => null,
         },
