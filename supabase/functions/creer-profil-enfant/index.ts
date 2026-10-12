@@ -55,7 +55,7 @@ Deno.serve(async (requete: Request) => {
 
   const { data: compte, error: erreurCompte } = await service.auth.admin.createUser({
     email: courriel,
-    email_confirm: true,
+    email_confirm: false,
     password: crypto.randomUUID() + crypto.randomUUID(),
     app_metadata: { child_of: tuteur.id },
   })

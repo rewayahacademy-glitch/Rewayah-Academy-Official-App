@@ -282,6 +282,61 @@ begin
   end;
 end;
 $child_rpc_denies_unproven_account$;
+
+-- The Edge-created identity remains unconfirmed and must not already have an
+-- authenticated session before it can be attached to a guardian profile.
+do $child_rpc_denies_confirmed_account$
+begin
+  update auth.users set raw_app_meta_data = jsonb_build_object(
+    'child_of', 'a1100000-0000-0000-0000-000000000001'
+  ), email_confirmed_at = now()
+   where id = 'a1100000-0000-0000-0000-000000000009';
+  perform set_config('request.jwt.claim.sub', 'a1100000-0000-0000-0000-000000000001', true);
+  perform set_config('request.jwt.claims',
+    '{"sub":"a1100000-0000-0000-0000-000000000001","app_metadata":{"role":"guardian"}}', true);
+  begin
+    perform public.creer_profil_enfant(
+      'a1100000-0000-0000-0000-000000000009',
+      'a1100000-0000-0000-0000-000000000001', 'Confirmed', 'Fixture', 10, null
+    );
+    raise exception 'IMM-BACK-1: compte enfant confirme accepte';
+  exception when insufficient_privilege then
+    null;
+  end;
+  update auth.users set email_confirmed_at = null
+   where id = 'a1100000-0000-0000-0000-000000000009';
+end;
+$child_rpc_denies_confirmed_account$;
+
+-- The local auth stub has no sessions table; create only the two columns this
+-- guard reads. On Supabase the existing table is used unchanged.
+create table if not exists auth.sessions (
+  id uuid primary key,
+  user_id uuid not null
+);
+do $child_rpc_denies_existing_session$
+begin
+  update auth.users set raw_app_meta_data = jsonb_build_object(
+    'child_of', 'a1100000-0000-0000-0000-000000000001'
+  ) where id = 'a1100000-0000-0000-0000-000000000008';
+  insert into auth.sessions (id, user_id)
+  values ('a1100000-0000-0000-0000-000000000088',
+          'a1100000-0000-0000-0000-000000000008');
+  perform set_config('request.jwt.claim.sub', 'a1100000-0000-0000-0000-000000000001', true);
+  perform set_config('request.jwt.claims',
+    '{"sub":"a1100000-0000-0000-0000-000000000001","app_metadata":{"role":"guardian"}}', true);
+  begin
+    perform public.creer_profil_enfant(
+      'a1100000-0000-0000-0000-000000000008',
+      'a1100000-0000-0000-0000-000000000001', 'Session', 'Fixture', 10, null
+    );
+    raise exception 'IMM-BACK-1: compte enfant avec session accepte';
+  exception when insufficient_privilege then
+    null;
+  end;
+  delete from auth.sessions where id = 'a1100000-0000-0000-0000-000000000088';
+end;
+$child_rpc_denies_existing_session$;
 reset role;
 do $child_profile_registry$
 begin
