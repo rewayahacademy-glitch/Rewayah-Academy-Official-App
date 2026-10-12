@@ -108,5 +108,3 @@ Relevé du 12/10/2026. La file a été récupérée depuis le dépôt. Le fetch 
 - **X2-15 et X2-16 : corrections confirmées statiquement, non appliquées.** Branches `codex2/x2-15 @ c08e769b` et `codex2/x2-16 @ f662f419`. Les deux fixtures omettent `profiles.account_status='active'`; les migrations `20261011200000` et `20261011201000` ont des secondes paires et ne révoquent pas explicitement EXECUTE à `service_role`.
 
 **Vérification bloquante commune avant tout push de code :** aucun `psql`, `initdb` ou `pg_ctl` n'est installé; le Docker CLI est présent, mais son moteur local ne répond pas (`dockerDesktopLinuxEngine` absent). Supabase CLI 2.116.0 est présent. Le replay PostgreSQL 16 nu demandé par la file n'a donc pas été exécuté; aucun scénario ni migration n'est déclaré vert. Aucun code de ces lots n'est présenté comme corrigé ou poussé. Aucun accès à STAGING/PROD ni aucune clé `service_role` n'a été utilisé.
-
-SHA vérifié après ce compte rendu : à renseigner après le commit de cette branche.
