@@ -368,7 +368,8 @@ void main() {
         );
       }
       if (_dureeAnimation.hasMatch(code) &&
-          !chemin.endsWith(_fichierMouvement)) {
+          !chemin.endsWith(_fichierMouvement) &&
+          !chemin.endsWith('core/theme/app_delais.dart')) {
         violations.add(Violation(chemin, numero, 'duree-litterale', ligne));
       }
       if (_courbeNommee.hasMatch(code) && !chemin.endsWith(_fichierMouvement)) {

@@ -12,6 +12,9 @@
 /// **Valeurs proposees par le contrat K5, non mesurees.** Elles se confirment
 /// en recette, sur un reseau reel et lent, et se changent ici seulement.
 abstract final class AppDelais {
+  /// Regroupe les changements realtime rapproches avant de rafraichir le suivi.
+  static const Duration debounceRealtime = Duration(milliseconds: 200);
+
   /// Au-dela, un chargement encore en cours devient un « chargement
   /// prolonge » : l'ecran garde son squelette et ajoute une phrase qui le dit.
   ///

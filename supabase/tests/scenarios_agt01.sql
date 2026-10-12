@@ -67,7 +67,7 @@ insert into public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 values
   ('a7000000-0000-0000-0000-000000000001', 'TEACH-A7-000001', 'teacher',
-   'a7ffffff-0000-0000-0000-00000000000c', 'Yacine', 'Belhadj', 'active', 'male'),
+   'a7ffffff-0000-0000-0000-00000000000c', 'Yacine', 'Belhadj', 'provisional_active', 'male'),
   ('a7000000-0000-0000-0000-000000000002', 'STUD-A7-000001', 'student',
    'a7ffffff-0000-0000-0000-00000000000a', 'Maryam', 'Cherif', 'active', 'female'),
   ('a7000000-0000-0000-0000-000000000003', 'GUAR-A7-000001', 'guardian',
@@ -75,9 +75,27 @@ values
   ('a7000000-0000-0000-0000-000000000004', 'ADMIN-A7-00001', 'admin',
    'a7ffffff-0000-0000-0000-00000000000c', 'Amine', 'Rahal', 'active', 'male'),
   ('a7000000-0000-0000-0000-000000000005', 'TEACH-A7-000002', 'teacher',
-   'a7ffffff-0000-0000-0000-00000000000c', 'Hafsa', 'Toumi', 'active', 'female'),
+   'a7ffffff-0000-0000-0000-00000000000c', 'Hafsa', 'Toumi', 'provisional_active', 'female'),
   ('a7000000-0000-0000-0000-000000000006', 'STUD-A7-000002', 'student',
    'a7ffffff-0000-0000-0000-00000000000b', 'Zineb', 'Toumi', 'active', 'female');
+-- Fixture contractuel requis par 0089 : aucune garde d'activation n'est assouplie.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+    PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true);
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+      ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+END
+$fixture_teacher_contracts$;
 
 insert into public.student_profiles (profile_id, student_type, interface_mode, camera_policy)
 values
@@ -514,7 +532,7 @@ declare
   v_id  uuid := (select valeur::uuid from agt_fixture where cle = 'id_nominatif');
   v_jwt text;
 begin
-  v_jwt := format('{"app_metadata":{"role":"student","agent_token_id":"%s"}}', v_id);
+  v_jwt := format('{"sub":"%s","app_metadata":{"role":"student","agent_token_id":"%s"}}', v_id, v_id);
 
   set local role postgres;
   perform set_config('test.jwt', v_jwt, true);
@@ -543,17 +561,19 @@ begin
 end $$;
 
 -- ============================================================
--- A12 : aucune fonction volatile n'est appelable par un agent
+-- A12 : seul le hook d'agent, sans mutation métier, est volatile et appelable
 -- ============================================================
 --
--- L'invariant `I2` de 0014, rejoue APRES les grants du harnais : c'est la seule
--- facon de verifier qu'un `grant ... to authenticated` de routine n'a pas rouvert
--- une porte d'ecriture par heritage.
+-- SEC-01 exige set_config(..., true) pour adapter auth.uid() dans la
+-- transaction PostgREST. Le hook reste SECURITY DEFINER, sans argument et ne
+-- fait que lire les portées puis modifier un GUC transaction-local. Toute
+-- autre fonction volatile applicative reste interdite à agent_ro.
 
 do $$
 declare
   v_n      int;
   v_detail text;
+  v_hook_ok boolean;
 begin
   select count(*), string_agg(p.proname, ', ')
     into v_n, v_detail
@@ -563,16 +583,28 @@ begin
     and p.prokind = 'f'
     and p.provolatile = 'v'
     and has_function_privilege('agent_ro', p.oid, 'EXECUTE')
+    and p.oid <> to_regprocedure('public.agent_pre_request()')
     -- Les fonctions d'extension sont hors sujet : `btree_gist` est installe
-    -- dans `public` par 0005, et ses 188 fonctions de support d'index restent
-    -- ouvertes a PUBLIC. Les refermer couterait la contrainte d'exclusion des
-    -- seances sans fermer la moindre porte d'ecriture.
+    -- dans `public` par 0005, et ses fonctions de support d'index restent
+    -- ouvertes a PUBLIC.
     and not exists (
       select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e'
     );
   if v_n > 0 then
-    raise exception 'A12 : agent_ro peut appeler % fonction(s) volatile(s) : %',
+    raise exception 'A12 : agent_ro peut appeler % fonction(s) volatile(s) hors hook : %',
       v_n, v_detail;
+  end if;
+
+  select p.provolatile = 'v'
+     and p.prosecdef
+     and p.pronargs = 0
+     and p.prorettype = 'void'::regtype
+     and has_function_privilege('agent_ro', p.oid, 'EXECUTE')
+    into v_hook_ok
+  from pg_proc p
+  where p.oid = to_regprocedure('public.agent_pre_request()');
+  if coalesce(v_hook_ok, false) IS NOT TRUE then
+    raise exception 'A12 : agent_pre_request absent ou privilèges hook incomplets';
   end if;
 
   select count(*), string_agg(distinct c.relname, ', ')

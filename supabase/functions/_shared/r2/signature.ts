@@ -160,6 +160,7 @@ function urlObjet(config: ConfigurationR2, cle: string): URL {
 
 export interface OptionsLecture {
   readonly dureeSecondes?: number
+  readonly contentDisposition?: 'inline' | 'attachment'
   readonly env?: LecteurEnvironnement
 }
 
@@ -178,6 +179,7 @@ export interface OptionsLecture {
 // bannit precisement des chemins parce qu'il voyage en clair ; et une chaine
 // de requete est exactement l'endroit ou une donnee finit dans un journal
 // d'acces. Le client nomme le fichier qu'il telecharge, c'est son affaire.
+// Les constantes `inline` et `attachment` restent sans espace et sont sûres.
 
 /// Signe une lecture (GET) d'un objet deja autorisee.
 ///
@@ -198,6 +200,9 @@ export async function signerLecture(
 
   const url = urlObjet(config, cle)
   url.searchParams.set('X-Amz-Expires', String(duree))
+  if (options.contentDisposition) {
+    url.searchParams.set('response-content-disposition', options.contentDisposition)
+  }
 
   const signee = await signer(domaine, aws, url, 'GET')
   return { url: signee, expireDansSecondes: duree }

@@ -82,6 +82,10 @@ BEGIN
     RETURN NEW;
   END IF;
 
+  IF NEW.signed_sha256 IS NOT NULL THEN
+    RAISE EXCEPTION USING ERRCODE = '42501', MESSAGE = 'empreinte_signature_fournie_par_client_refusee';
+  END IF;
+
   IF NOT coalesce(
     auth.uid() IS NOT NULL
     AND NEW.profile_id = auth.uid()
@@ -140,7 +144,9 @@ BEGIN
       AND p.policyname = 'contract_acceptances_self_insert'
       AND p.with_check LIKE '%app_role%'
       AND p.with_check LIKE '%app_account_valid%'
-  ) THEN
+  ) OR pg_catalog.pg_get_functiondef(
+       'public.completer_contract_acceptance()'::pg_catalog.regprocedure
+     ) NOT LIKE '%NEW.signed_sha256 IS NOT NULL%' THEN
     RAISE EXCEPTION 'F70: signature guard trigger postflight failed';
   END IF;
 END;

@@ -6,7 +6,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../admin/service_comptes.dart' show EtatPiece;
 import '../domain/enums.dart';
-import 'service_dossier.dart';
 
 /// Un dossier a valider, tel que `dossiers_en_attente()` le rend.
 ///

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../theme/app_delais.dart';
 import 'port_suivi_demandes.dart';
 
 /// Adaptateur du suivi C-10/C-10 bis vers les RPC et changements Postgres.
@@ -27,7 +28,7 @@ class PortSuiviDemandesSupabase implements PortSuiviDemandes {
 
     void invalider() {
       debounce?.cancel();
-      debounce = Timer(const Duration(milliseconds: 200), () {
+      debounce = Timer(AppDelais.debounceRealtime, () {
         if (!changements.isClosed) changements.add(null);
       });
     }

@@ -76,7 +76,7 @@ insert into public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 values
   ('c1000000-0000-0000-0000-000000000001', 'TEACH-C1-00001', 'teacher',
-   'c1ffffff-0000-0000-0000-00000000000c', 'Rachid', 'Benali', 'active', 'male'),
+   'c1ffffff-0000-0000-0000-00000000000c', 'Rachid', 'Benali', 'provisional_active', 'male'),
   ('c1000000-0000-0000-0000-000000000002', 'STUD-C1-000001', 'student',
    'c1ffffff-0000-0000-0000-00000000000a', 'Sofia', 'Haddad', 'active', 'female'),
   ('c1000000-0000-0000-0000-000000000003', 'CTRL-C1-000001', 'controller',
@@ -86,13 +86,13 @@ values
   ('c1000000-0000-0000-0000-000000000005', 'GUAR-C1-000001', 'guardian',
    'c1ffffff-0000-0000-0000-00000000000a', 'Latifa', 'Haddad', 'active', 'female'),
   ('c1000000-0000-0000-0000-000000000006', 'TEACH-C1-00002', 'teacher',
-   'c1ffffff-0000-0000-0000-00000000000c', 'Youssef', 'Amrani', 'active', 'male'),
+   'c1ffffff-0000-0000-0000-00000000000c', 'Youssef', 'Amrani', 'provisional_active', 'male'),
   ('c1000000-0000-0000-0000-000000000007', 'STUD-C1-000002', 'student',
    'c1ffffff-0000-0000-0000-00000000000b', 'Ines', 'Zerhouni', 'active', 'female'),
   ('c1000000-0000-0000-0000-000000000008', 'ADMIN-C1-00001', 'admin',
    'c1ffffff-0000-0000-0000-00000000000c', 'Amira', 'Sellami', 'active', 'female'),
   ('c1000000-0000-0000-0000-000000000009', 'TEACH-C1-00003', 'teacher',
-   'c1ffffff-0000-0000-0000-00000000000c', 'Kenza', 'Berkani', 'active', 'female'),
+   'c1ffffff-0000-0000-0000-00000000000c', 'Kenza', 'Berkani', 'provisional_active', 'female'),
   ('c1000000-0000-0000-0000-00000000000a', 'STUD-C1-000003', 'student',
    'c1ffffff-0000-0000-0000-00000000000b', 'Adam', 'Zerhouni', 'active', 'male'),
   ('c1000000-0000-0000-0000-00000000000b', 'STUD-C1-000004', 'student',
@@ -101,7 +101,25 @@ values
   -- (0005) interdit a un enseignant deux seances qui se recoupent, et les
   -- quatre autres en donnent deja une sur ce creneau.
   ('c1000000-0000-0000-0000-00000000000c', 'TEACH-C1-00004', 'teacher',
-   'c1ffffff-0000-0000-0000-00000000000c', 'Mounir', 'Talbi', 'active', 'male');
+   'c1ffffff-0000-0000-0000-00000000000c', 'Mounir', 'Talbi', 'provisional_active', 'male');
+-- Fixture contractuel requis par 0089 : aucune garde d'activation n'est assouplie.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+    PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true);
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+      ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+END
+$fixture_teacher_contracts$;
 
 insert into public.student_profiles (profile_id, student_type, interface_mode, camera_policy)
 values
@@ -561,7 +579,7 @@ begin
     perform public.entrer_observation(
       'c1aaaaaa-0000-0000-0000-00000000000a', 'guardian_observer');
   exception when insufficient_privilege then
-    v_refus_enseignant := (sqlerrm like '%observation reservee au tuteur%');
+    v_refus_enseignant := (sqlerrm like '%observation reservee aux tuteurs et a l''administration%');
   end;
 
   reset role;

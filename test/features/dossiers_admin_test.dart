@@ -384,7 +384,7 @@ void main() {
       await _taper(tester, t.dossiers.revue.voirPiece);
       await _attendrePiecePeinte(tester);
       expect(find.byType(VisionneusePiece), findsOneWidget);
-      expect(service.apercus, <String>['p1/piece.webp']);
+      expect(service.apercus, <String>['doc1']);
       expect(find.textContaining('http'), findsNothing);
       expect(find.textContaining('piece.webp'), findsNothing);
 
@@ -451,7 +451,7 @@ void main() {
           ..erreurApercu = const StorageException('Erreur', statusCode: '500'),
       );
       await _taper(tester, t.dossiers.revue.voirPiece);
-      expect(service.apercus, <String>['p1/piece.webp']);
+      expect(service.apercus, <String>['doc1']);
       expect(find.text(t.dossiers.revue.pieceIndisponible), findsOneWidget);
       await tester.tap(
         find.descendant(
@@ -476,7 +476,7 @@ void main() {
           ),
       );
       await _taper(tester, t.dossiers.revue.voirPiece);
-      expect(service.apercus, <String>['p1/piece.webp']);
+      expect(service.apercus, <String>['doc1']);
       expect(find.text(t.dossiers.visionneuse.erreur), findsOneWidget);
       await tester.tap(
         find.descendant(
