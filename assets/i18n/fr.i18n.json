@@ -314,6 +314,13 @@
       "ligne": "{debut} · {fin}",
       "minutesRestantes": "{minutes} min restantes",
       "sePoursuit": "La séance se poursuit.",
+      "chrono": {
+        "ecoule": "{temps}\u00a0écoulé",
+        "restant": "{temps}\u00a0restant",
+        "tempsPrevuEcoule": "Temps prévu écoulé",
+        "annonce": "Séance\u00a0: {ecoule} min écoulées, {restant} min restantes.",
+        "annoncePrevuEcoule": "Temps prévu écoulé."
+      },
       "enLigne": "En ligne",
       "reconnexion": "Reconnexion",
       "coursEnregistreCourt": "Le cours est enregistré.",
