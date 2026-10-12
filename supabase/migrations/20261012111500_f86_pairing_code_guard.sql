@@ -10,7 +10,7 @@ BEGIN
   v_definition := pg_catalog.pg_get_functiondef(
     'public.creer_code_appairage(uuid)'::pg_catalog.regprocedure
   );
-  v_before := 'if public.app_role() <> ''guardian'' or not public.app_account_valid() then' || E'\n'
+  v_before := 'if NOT coalesce(public.app_role() = ''guardian'' AND public.app_account_valid(), false) or not public.app_account_valid() then' || E'\n'
     || '    raise exception ''seul un tuteur au compte valide appaire un appareil'';' || E'\n'
     || '  end if;';
   v_after := 'if not coalesce(public.app_account_valid() and public.app_role() = ''guardian'', false) then' || E'\n'
@@ -32,7 +32,7 @@ GRANT EXECUTE ON FUNCTION public.creer_code_appairage(uuid)
   TO authenticated;
 
 COMMENT ON FUNCTION public.creer_code_appairage(uuid) IS
-  'F86 candidate allowlist: signature=public.creer_code_appairage(uuid); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: valid guardians may issue device pairing codes only for students in their household; non-guardians and invalid accounts are denied.';
+  'F86 candidate allowlist: signature=public.creer_code_appairage(uuid); md5_functiondef=c9511be43d7cf5a0e3547fc9c3e49925; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: valid guardians may issue device pairing codes only for students in their household; non-guardians and invalid accounts are denied.';
 
 DO $f86_postflight$
 DECLARE
@@ -45,6 +45,9 @@ BEGIN
     INTO v_owner, v_config
     FROM pg_catalog.pg_proc p WHERE p.oid = v_oid::oid;
   v_definition := pg_catalog.pg_get_functiondef(v_oid);
+  IF pg_catalog.md5(v_definition) IS DISTINCT FROM 'c9511be43d7cf5a0e3547fc9c3e49925' THEN
+    RAISE EXCEPTION 'F86 postflight: unexpected creer_code_appairage hash';
+  END IF;
   IF v_owner IS DISTINCT FROM 'postgres'
      OR NOT coalesce(v_config @> ARRAY['search_path=""'], false)
      OR pg_catalog.strpos(v_definition, 'if not coalesce(public.app_account_valid() and public.app_role() = ''guardian'', false) then') = 0
@@ -54,7 +57,7 @@ BEGIN
      OR NOT pg_catalog.has_function_privilege('authenticated', v_oid, 'EXECUTE')
      OR coalesce(pg_catalog.strpos(
        pg_catalog.obj_description(v_oid::oid, 'pg_proc'),
-       'md5_functiondef=A_CALCULER;'
+       'md5_functiondef=c9511be43d7cf5a0e3547fc9c3e49925;'
      ), 0) = 0 THEN
     RAISE EXCEPTION 'F86 postflight: pairing-code guard/ACL/owner/search_path/allowlist invalid';
   END IF;
