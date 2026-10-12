@@ -321,6 +321,19 @@
         "annonce": "Séance\u00a0: {ecoule} min écoulées, {restant} min restantes.",
         "annoncePrevuEcoule": "Temps prévu écoulé."
       },
+      "pause": {
+        "dans": "Pause dans {minutes} min",
+        "prevue": "Pause prévue",
+        "enCours": "Pause, reprise à {heure}",
+        "prise": "Pause prise",
+        "demarrer": "Démarrer la pause",
+        "terminer": "Terminer la pause",
+        "annonceDans": "Pause dans {minutes} min.",
+        "annonceEnCours": "Pause en cours, reprise à {heure}.",
+        "recapTitre": "Pause",
+        "recapPrise": "Pause prise, {minutes} min",
+        "recapNonPrise": "Pause prévue, non prise"
+      },
       "enLigne": "En ligne",
       "reconnexion": "Reconnexion",
       "coursEnregistreCourt": "Le cours est enregistré.",
@@ -5634,7 +5647,27 @@
       "dernierPoint": "Dernier point\u00a0: {texte}",
       "chargementClasse": "Chargement de la Classe.",
       "ressourcesTitre": "Ressources récentes",
-      "progressionTitre": "Progression de la Classe"
+      "progressionTitre": "Progression de la Classe",
+      "pause": {
+        "titre": "Pause de la séance",
+        "detail": "Une pause programmée à l'avance sur cette Classe, par exemple pour la prière. Elle vaut pour chaque séance, jusqu'à ce que vous la changiez.",
+        "actif": "Programmer une pause",
+        "etatActif": "Programmée",
+        "etatInactif": "Aucune pause",
+        "moment": "Moment de la pause",
+        "momentAide": "Minutes après le début de la séance.",
+        "duree": "Durée de la pause",
+        "minutes": "{minutes} min",
+        "resume": "Pause de {duree} min, {moment} min après le début.",
+        "enregistrer": "Enregistrer la pause",
+        "enregistree": "Pause enregistrée.",
+        "echec": "Le réglage n'est pas confirmé\u00a0: la demande n'est peut-être pas parvenue jusqu'à Rewayah. Vérifiez avant de réessayer.",
+        "obsolete": "Le réglage a changé entre-temps. Il vient d'être relu\u00a0: vérifiez avant d'enregistrer.",
+        "refuse": "Seul l'enseignant de la Classe règle la pause.",
+        "indisponibleTitre": "La pause programmée n'est pas encore disponible",
+        "indisponiblePhrase": "Elle sera proposée ici dès que Rewayah la servira.",
+        "illisible": "Le réglage de la pause n'a pas pu être lu."
+      }
     },
     "revue": {
       "titre": "Revue de la Classe",

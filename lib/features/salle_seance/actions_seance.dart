@@ -54,6 +54,7 @@ class ActionsSeance {
     this.onRanger,
     this.onEffacerNotes,
     this.onAutoriserEcrire,
+    this.onPause,
   });
 
   /// TB-10 (plan V2 §4.3, §12, §20 ; UX-20) : « Autoriser a ecrire » ou
@@ -62,6 +63,11 @@ class ActionsSeance {
   /// la page, ni le support, ni l'effacement global (plan V2 §5). `null` :
   /// l'action n'est pas rendue (Classe Live avant TB-BR-10).
   final ValueChanged<EleveSeance>? onAutoriserEcrire;
+
+  /// LIVE-PAUSE-01 : demarre la pause programmee, ou la termine si elle est
+  /// en cours. `null` : la commande n'existe pas a l'ecran (jamais grisee) ;
+  /// seul l'enseignant qui en a la capacite la recoit.
+  final VoidCallback? onPause;
 
   /// TB-9 (plan V2 §3 « Ranger reellement », §19.2) : « Ranger dans la
   /// bibliotheque » retire le support presente, sans rien effacer ; le
