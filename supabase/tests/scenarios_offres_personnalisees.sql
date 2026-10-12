@@ -309,6 +309,9 @@ BEGIN
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000997', true);
   PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'teacher'))::text, true);
+  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000997', true);
+  PERFORM set_config('test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'teacher'))::text, true);
   IF EXISTS (SELECT 1 FROM public.mes_groupes_v WHERE groupe_id = v_groupe) THEN
     RAISE EXCEPTION 'C-12: mes_groupes_v expose une classe sans enseignant';
   END IF;
@@ -343,18 +346,64 @@ BEGIN
     jsonb_build_object('app_metadata', jsonb_build_object(
       'role', 'guardian', 'household_id', 'f1480000-0000-0000-0000-000000000003'
     ))::text, true);
+  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000998', true);
+  PERFORM set_config('test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object(
+      'role', 'guardian', 'household_id', 'f1480000-0000-0000-0000-000000000003'
+    ))::text, true);
+  -- F86 class-assignment split the same null-safe admin gate from null-argument
+  -- validation; the authorization outcome is intentionally unchanged.
   v_ok := false;
   BEGIN
     PERFORM public.affecter_enseignant_classe(
       v_groupe, 'f1490000-0000-0000-0000-000000000997'
     );
-  EXCEPTION WHEN OTHERS THEN
-    v_ok := true;
+  EXCEPTION WHEN raise_exception THEN
+    v_ok := SQLERRM = 'affectation reservee a l''administration';
   END;
   IF NOT v_ok THEN RAISE EXCEPTION 'C-12: un tuteur a affecté un enseignant'; END IF;
 
+  IF NOT v_ok OR NOT EXISTS (
+    SELECT 1 FROM public.groupes
+     WHERE id = v_groupe AND teacher_id IS NULL AND etat = 'en_attente_enseignant'
+  ) THEN
+    RAISE EXCEPTION 'F86 ECHEC : le refus d''affectation n''est pas protege';
+  END IF;
+
+  v_ok := false;
+  BEGIN
+    PERFORM public.affecter_enseignant_classe_c11bis(
+      v_groupe, 'f1490000-0000-0000-0000-000000000997'
+    );
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_ok := SQLERRM = 'affectation reservee a l''administration';
+  END;
+  IF NOT v_ok THEN
+    RAISE EXCEPTION 'F86 ECHEC : le refus d''affectation C11bis manque';
+  END IF;
+
+  -- F86 normalise la garde admin-actif deja equivalente; ce scénario
+  -- documente le refus sans attribuer un changement de resultat a la migration.
+  v_ok := false;
+  BEGIN
+  PERFORM public.definir_politique_observation_groupe(
+    v_groupe, 'groupe', 3::smallint, 600, 120
+    );
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_ok := SQLERRM = 'reserve a l''administration';
+  END;
+  IF NOT v_ok OR NOT EXISTS (
+    SELECT 1 FROM public.groupes
+     WHERE id = v_groupe AND observation_source IS DISTINCT FROM 'groupe'
+  ) THEN
+    RAISE EXCEPTION 'F86 ECHEC : un tuteur a modifie la politique d''observation';
+  END IF;
+
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
   PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
+  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000999', true);
+  PERFORM set_config('test.jwt',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
   PERFORM public.affecter_enseignant_classe(
     v_groupe, 'f1490000-0000-0000-0000-000000000997'

@@ -153,9 +153,29 @@ begin
 end $$;
 
 reset role;
-update public.download_asset
-   set cle_stockage = 'supports/c3500000-0000-0000-0000-000000000013/2/manuel.pdf'
- where id = 'c3500000-0000-0000-0000-000000000013';
+-- Une cle d'une version publiee est immuable : la correction cree une nouvelle
+-- version brouillon et son artefact, sans retoucher l'asset publie.
+insert into public.resource_version (id, resource_id, numero_version, statut)
+values ('c3500000-0000-0000-0000-000000000020',
+        'c3500000-0000-0000-0000-000000000011', 2, 'brouillon');
+insert into public.download_asset
+  (id, resource_version_id, format, cle_stockage, taille_octets, origine)
+values ('c3500000-0000-0000-0000-000000000022',
+        'c3500000-0000-0000-0000-000000000020', 'pdf',
+        'supports/c3500000-0000-0000-0000-000000000022/2/manuel.pdf', 128, 'importe_tel_quel');
+update public.resource_version
+   set download_asset_id = 'c3500000-0000-0000-0000-000000000022'
+ where id = 'c3500000-0000-0000-0000-000000000020';
+do $$
+begin
+  begin
+    update public.download_asset
+       set cle_stockage = 'supports/c3500000-0000-0000-0000-000000000013/2/manuel.pdf'
+     where id = 'c3500000-0000-0000-0000-000000000013';
+    raise exception 'C-35: cle d''une version publiee modifiee';
+  exception when check_violation then null;
+  end;
+end $$;
 set local role authenticated;
 select set_config('test.uid', 'c3500000-0000-0000-0000-000000000001', true);
 select set_config('request.jwt.claims', '{"app_metadata":{"role":"student"}}', true);
@@ -168,9 +188,6 @@ begin
   end;
 end $$;
 reset role;
-update public.download_asset
-   set cle_stockage = 'supports/c3500000-0000-0000-0000-000000000013/1/manuel.pdf'
- where id = 'c3500000-0000-0000-0000-000000000013';
 select set_config('test.uid', 'c3500000-0000-0000-0000-000000000003', true);
 do $$
 begin
