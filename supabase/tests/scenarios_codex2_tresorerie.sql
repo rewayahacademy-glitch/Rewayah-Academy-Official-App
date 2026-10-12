@@ -23,6 +23,74 @@ INSERT INTO public.profiles (
     '6f000000-0000-4000-8000-000000000118', 'Test', 'Direction', 'active'),
   ('6f000000-0000-4000-8000-000000000019', 'X2-17-TEACH', 'teacher',
     '6f000000-0000-4000-8000-000000000119', 'Test', 'Enseignant', 'active');
+INSERT INTO auth.users (id,email) VALUES
+  ('6f000000-0000-4000-8000-000000000020','x2-17-teacher-no-rule@example.invalid'),
+  ('6f000000-0000-4000-8000-000000000021','x2-17-teacher-policy@example.invalid');
+INSERT INTO public.households(id,timezone) VALUES
+  ('6f000000-0000-4000-8000-000000000120','Europe/Paris'),
+  ('6f000000-0000-4000-8000-000000000121','Europe/Paris');
+INSERT INTO public.profiles(id,immutable_id,role,household_id,first_name,last_name,account_status) VALUES
+  ('6f000000-0000-4000-8000-000000000020','X2-17-TEACH-NORULE','teacher',
+    '6f000000-0000-4000-8000-000000000120','Test','Sans règle','active'),
+  ('6f000000-0000-4000-8000-000000000021','X2-17-TEACH-POLICY','teacher',
+    '6f000000-0000-4000-8000-000000000121','Test','Avec règle','active');
+INSERT INTO public.wallets(id,household_id,currency) VALUES
+  ('6f000000-0000-4000-8000-000000000317','6f000000-0000-4000-8000-000000000118','USD');
+
+DO $payment_events$
+DECLARE v_credit bigint; v_refund bigint; v_movement_count integer; v_denied boolean:=false;
+BEGIN
+  INSERT INTO public.wallet_entries(wallet_id,amount_minor,currency,reference_type)
+  VALUES('6f000000-0000-4000-8000-000000000317',10000,'USD','credit') RETURNING id INTO v_credit;
+  UPDATE public.wallet_entries SET confirme_par_prestataire_le=clock_timestamp() WHERE id=v_credit;
+  INSERT INTO public.wallet_entries(wallet_id,amount_minor,currency,reference_type,refund_of_entry_id)
+  VALUES('6f000000-0000-4000-8000-000000000317',1000,'USD','refund',v_credit) RETURNING id INTO v_refund;
+  UPDATE public.wallet_entries SET confirme_par_prestataire_le=clock_timestamp() WHERE id=v_refund;
+  UPDATE public.wallet_entries SET confirme_par_prestataire_le=confirme_par_prestataire_le WHERE id=v_credit;
+  SELECT count(*) INTO v_movement_count FROM public.tresorerie_mouvements
+   WHERE source_type='encaissement' AND source_id=v_credit::text;
+  IF v_movement_count<>1 THEN RAISE EXCEPTION 'X2-17: confirmation paiement non idempotente'; END IF;
+  SELECT count(*) INTO v_movement_count FROM public.tresorerie_mouvements
+   WHERE source_type='remboursement' AND source_id=v_refund::text AND sens='sortie';
+  IF v_movement_count<>1 THEN RAISE EXCEPTION 'X2-17: remboursement confirmé non enregistré en sortie'; END IF;
+  SET LOCAL ROLE authenticated;
+  PERFORM set_config('test.uid','6f000000-0000-4000-8000-000000000018',true);
+  PERFORM set_config('test.jwt','{"app_metadata":{"role":"admin"},"aal":"aal2"}',true);
+  BEGIN
+    UPDATE public.wallet_entries SET confirme_par_prestataire_le=clock_timestamp()+interval '1 second'
+     WHERE id=v_credit;
+  EXCEPTION WHEN insufficient_privilege THEN v_denied:=true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'X2-17: admin a fabriqué une confirmation prestataire'; END IF;
+  RESET ROLE;
+END;
+$payment_events$;
+
+INSERT INTO public.payout_methods(id,profile_id,kind,details)
+VALUES('6f000000-0000-4000-8000-000000000317','6f000000-0000-4000-8000-000000000019','bank_transfer','{}');
+INSERT INTO public.payouts(id,wallet_id,payout_method_id,amount_minor,status)
+VALUES('6f000000-0000-4000-8000-000000000217','6f000000-0000-4000-8000-000000000317',
+  '6f000000-0000-4000-8000-000000000317',500,'requested');
+UPDATE public.payouts SET status='failed' WHERE id='6f000000-0000-4000-8000-000000000217';
+DO $payout_events$
+DECLARE v_count integer;
+BEGIN
+  SELECT count(*) INTO v_count FROM public.tresorerie_mouvements
+   WHERE source_type='payout' AND source_id='6f000000-0000-4000-8000-000000000217';
+  IF v_count<>4 THEN RAISE EXCEPTION 'X2-17: demande et retour de payout non journalisés'; END IF;
+END;
+$payout_events$;
+
+INSERT INTO public.sessions(id,teacher_id,started_at,ended_at,status,session_type)
+VALUES
+ ('6f000000-0000-4000-8000-000000000117','6f000000-0000-4000-8000-000000000021',now()-interval '2 hours',now()+interval '1 hour','planned','standard'),
+ ('6f000000-0000-4000-8000-000000000118','6f000000-0000-4000-8000-000000000020',now()-interval '2 hours',now()+interval '1 hour','planned','standard'),
+ ('6f000000-0000-4000-8000-000000000119','6f000000-0000-4000-8000-000000000021',now()-interval '2 hours',now()+interval '1 hour','planned','standard');
+INSERT INTO public.wallet_entries(wallet_id,amount_minor,currency,reference_type,reference_id)
+VALUES
+ ('6f000000-0000-4000-8000-000000000317',10000,'USD','debit','6f000000-0000-4000-8000-000000000117'),
+ ('6f000000-0000-4000-8000-000000000317',10000,'USD','debit','6f000000-0000-4000-8000-000000000118'),
+ ('6f000000-0000-4000-8000-000000000317',10000,'USD','debit','6f000000-0000-4000-8000-000000000119');
 
 INSERT INTO public.tresorerie_mouvements (
   coffre, sens, montant_minor, devise, montant_ref_minor, devise_ref,
@@ -65,8 +133,8 @@ BEGIN
   SELECT (r -> 'montant' ->> 'mineur')::bigint INTO v_amount
     FROM jsonb_array_elements(v_series -> 'repartition') AS r
    WHERE r ->> 'coffre' = 'fonds_clients_engages';
-  IF v_amount <> 8000 THEN
-    RAISE EXCEPTION 'X2-17: le transfert doit compter dans le solde, obtenu %', v_amount;
+  IF v_amount <> 17000 THEN
+    RAISE EXCEPTION 'X2-17: solde initial et confirmations doivent compter, obtenu %', v_amount;
   END IF;
 
   IF (v_series ->> 'variationEntreesPourMille') IS NOT NULL
@@ -149,6 +217,81 @@ END;
 $append_only_delete$;
 
 RESET ROLE;
+UPDATE public.sessions SET status='preflight' WHERE id='6f000000-0000-4000-8000-000000000118';
+UPDATE public.sessions SET status='in_progress' WHERE id='6f000000-0000-4000-8000-000000000118';
+UPDATE public.sessions SET status='ended' WHERE id='6f000000-0000-4000-8000-000000000118';
+
+SET LOCAL ROLE authenticated;
+SELECT set_config('test.uid','6f000000-0000-4000-8000-000000000018',true);
+SELECT set_config('test.jwt','{"app_metadata":{"role":"admin"},"aal":"aal2"}',true);
+INSERT INTO public.regles_remuneration_enseignant(
+  enseignant_id,taux_minor_par_heure,devise,date_effet,motif,cree_par
+) VALUES (NULL,18000,'USD',current_date,'X2-17 règle globale de test','6f000000-0000-4000-8000-000000000018');
+RESET ROLE;
+
+UPDATE public.sessions SET status='preflight' WHERE id='6f000000-0000-4000-8000-000000000117';
+UPDATE public.sessions SET status='in_progress' WHERE id='6f000000-0000-4000-8000-000000000117';
+SELECT pg_sleep(1);
+UPDATE public.sessions SET status='ended' WHERE id='6f000000-0000-4000-8000-000000000117';
+UPDATE public.sessions SET status='preflight' WHERE id='6f000000-0000-4000-8000-000000000119';
+UPDATE public.sessions SET status='in_progress' WHERE id='6f000000-0000-4000-8000-000000000119';
+UPDATE public.sessions SET status='tech_failure' WHERE id='6f000000-0000-4000-8000-000000000119';
+
+DO $session_finance$
+DECLARE v_due bigint;
+BEGIN
+  SELECT count(*) INTO v_due FROM public.tresorerie_mouvements
+   WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000117'
+     AND regle='remuneration_due';
+  IF v_due<>1 THEN RAISE EXCEPTION 'X2-17: seance cloturee avec regle sans remuneration'; END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.tresorerie_a_reprendre
+    WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000118'
+      AND raison='regle_remuneration_absente') THEN
+    RAISE EXCEPTION 'X2-17: absence de regle non mise en reprise';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.tresorerie_a_reprendre
+    WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000119'
+      AND raison='duree_indeterminee') THEN
+    RAISE EXCEPTION 'X2-17: duree interrompue non mise en reprise';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.tresorerie_a_reprendre
+    WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000117'
+      AND raison='politique_allocation_absente') THEN
+    RAISE EXCEPTION 'X2-17: absence de politique non signalée';
+  END IF;
+END;
+$session_finance$;
+
+SET LOCAL ROLE authenticated;
+SELECT set_config('test.uid','6f000000-0000-4000-8000-000000000018',true);
+SELECT set_config('test.jwt','{"app_metadata":{"role":"admin"},"aal":"aal2"}',true);
+INSERT INTO public.politique_allocation_coffres(
+  date_effet,taux_taxes_permille,taux_charges_permille,taux_reserve_permille,cree_par
+) VALUES(current_date,100,100,100,'6f000000-0000-4000-8000-000000000018');
+DO $resume$
+DECLARE v_processed integer; v_pending bigint;
+BEGIN
+  SELECT id INTO v_pending FROM public.tresorerie_a_reprendre
+   WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000119'
+     AND raison='duree_indeterminee';
+  PERFORM public.decider_tresorerie_duree(v_pending,now()-interval '30 minutes',now());
+  v_processed:=public.reprendre_alimentation_tresorerie();
+  IF v_processed<1 THEN RAISE EXCEPTION 'X2-17: reprise admin non appliquée'; END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.tresorerie_mouvements
+      WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000119'
+        AND coffre='taxes_obligations' AND montant_minor=100)
+     OR NOT EXISTS (SELECT 1 FROM public.tresorerie_mouvements
+      WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000119'
+        AND coffre='charges_essentielles' AND montant_minor=100)
+     OR NOT EXISTS (SELECT 1 FROM public.tresorerie_mouvements
+      WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000119'
+        AND coffre='reserve_strategique' AND montant_minor=100) THEN
+    RAISE EXCEPTION 'X2-17: politique des coffres non appliquée à la reprise';
+  END IF;
+END;
+$resume$;
+RESET ROLE;
+
 DO $audit$
 BEGIN
   IF NOT EXISTS (
