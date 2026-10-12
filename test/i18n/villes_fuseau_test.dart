@@ -27,6 +27,10 @@ Set<String> _fuseauxDeLib() => <String>{
       for (final RegExpMatch m in _iana.allMatches(f.readAsStringSync())) m[1]!,
 };
 
+// Isolats bidirectionnels (FSI, PDI).
+final String _fsi = String.fromCharCode(0x2068);
+final String _pdi = String.fromCharCode(0x2069);
+
 final RegExp _latin = RegExp('[A-Za-z]');
 
 void main() {
@@ -49,7 +53,7 @@ void main() {
     await LocaleSettings.setLocale(AppLocale.ar);
     for (final String iana in fuseaux) {
       final String ville = villeDuFuseauLibelle(iana);
-      expect(ville.contains('⁨'), isFalse, reason: '$iana hors table');
+      expect(ville.contains(_fsi), isFalse, reason: '$iana hors table');
       expect(_latin.hasMatch(ville), isFalse, reason: iana);
     }
   });
@@ -71,9 +75,12 @@ void main() {
 
   test('un fuseau inconnu ne plante pas : nom IANA, isole en arabe', () async {
     await LocaleSettings.setLocale(AppLocale.ar);
-    expect(villeDuFuseauLibelle('Australia/Perth'), '⁨Perth⁩');
-    expect(villeDuFuseauLibelle('America/Port_of_Spain'), '⁨Port of Spain⁩');
-    expect(villeDuFuseauLibelle('UTC'), '⁨UTC⁩');
+    expect(villeDuFuseauLibelle('Australia/Perth'), '${_fsi}Perth$_pdi');
+    expect(
+      villeDuFuseauLibelle('America/Port_of_Spain'),
+      '${_fsi}Port of Spain$_pdi',
+    );
+    expect(villeDuFuseauLibelle('UTC'), '${_fsi}UTC$_pdi');
     expect(villeDuFuseauLibelle(''), '');
     expect(() => villeDuFuseauLibelle('////'), returnsNormally);
     expect(() => villeDuFuseauLibelle('  '), returnsNormally);

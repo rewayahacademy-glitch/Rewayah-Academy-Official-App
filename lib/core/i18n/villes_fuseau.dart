@@ -10,8 +10,8 @@
 
 import 'strings.g.dart';
 
-const String _debutIsolat = '⁨';
-const String _finIsolat = '⁩';
+final String _debutIsolat = String.fromCharCode(0x2068);
+final String _finIsolat = String.fromCharCode(0x2069);
 
 /// La cle de table d'un identifiant IANA : `Europe/Paris` donne `europeParis`,
 /// `America/Los_Angeles` donne `americaLosAngeles`. `null` pour un identifiant
@@ -20,6 +20,7 @@ String? cleVilleFuseau(String iana) {
   final List<String> morceaux = iana
       .trim()
       .split(RegExp('[/_]'))
+      .map((String m) => m.trim())
       .where((String m) => m.isNotEmpty)
       .toList();
   if (morceaux.isEmpty) {
@@ -46,6 +47,9 @@ String villeDuFuseauLibelle(String iana) {
   }
   final String dernier = nu.split('/').last.replaceAll('_', ' ').trim();
   final String nom = dernier.isEmpty ? nu : dernier;
+  if (nom.isEmpty) {
+    return nom;
+  }
   return LocaleSettings.currentLocale == AppLocale.fr
       ? nom
       : '$_debutIsolat$nom$_finIsolat';
