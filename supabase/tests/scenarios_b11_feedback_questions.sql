@@ -10,7 +10,7 @@ insert into public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status)
 values
   ('f1650000-0000-0000-0000-000000000001', 'F1FEEDBACKTEACH', 'teacher',
-   'f16fffff-0000-0000-0000-000000000001', 'Fixture', 'Teacher', 'active'),
+   'f16fffff-0000-0000-0000-000000000001', 'Fixture', 'Teacher', 'provisional_active'),
   ('f1650000-0000-0000-0000-000000000002', 'F1FEEDBACKSTUD', 'student',
    'f16fffff-0000-0000-0000-000000000001', 'Fixture', 'Student', 'active');
 insert into public.student_profiles (profile_id, student_type, interface_mode)
@@ -33,8 +33,8 @@ begin
     insert into public.sessions (id, teacher_id, groupe_id, started_at, ended_at)
     values (v_session, 'f1650000-0000-0000-0000-000000000001',
             'f16fffff-0000-0000-0000-000000000002',
-            pg_catalog.now() + pg_catalog.make_interval(days => i),
-            pg_catalog.now() + pg_catalog.make_interval(days => i, hours => 1));
+            TIMESTAMPTZ '2030-01-02 03:00:00+00' + pg_catalog.make_interval(days => i),
+            TIMESTAMPTZ '2030-01-02 04:00:00+00' + pg_catalog.make_interval(days => i));
     insert into public.session_participants(session_id, profile_id, role)
     values (v_session, 'f1650000-0000-0000-0000-000000000002', 'student');
   end loop;
@@ -79,8 +79,8 @@ begin
     insert into public.sessions (id, teacher_id, groupe_id, started_at, ended_at)
     values (v_session, 'f1650000-0000-0000-0000-000000000001',
             'f16fffff-0000-0000-0000-000000000002',
-            pg_catalog.now() + pg_catalog.make_interval(days => i),
-            pg_catalog.now() + pg_catalog.make_interval(days => i, hours => 1));
+            TIMESTAMPTZ '2030-01-02 03:00:00+00' + pg_catalog.make_interval(days => i),
+            TIMESTAMPTZ '2030-01-02 04:00:00+00' + pg_catalog.make_interval(days => i));
     insert into public.session_participants(session_id, profile_id, role)
     values (v_session, 'f1650000-0000-0000-0000-000000000002', 'student');
     insert into public.session_feedback(session_id, groupe_id, question_id, reponse)

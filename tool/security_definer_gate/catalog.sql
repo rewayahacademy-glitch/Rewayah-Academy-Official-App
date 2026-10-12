@@ -1,4 +1,4 @@
-﻿-- Read-only catalog export for verify_allowlist.py.
+-- Read-only catalog export for verify_allowlist.py.
 -- Run on the exact disposable database after applying the candidate migrations.
 SELECT pg_catalog.jsonb_build_object(
   'metadata', pg_catalog.jsonb_build_object(

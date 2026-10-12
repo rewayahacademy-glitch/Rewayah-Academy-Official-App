@@ -170,17 +170,19 @@ immutable
 security invoker
 set search_path = ''
 as $function$
+  with executable_source as (
+    select pg_catalog.regexp_replace(
+      pg_catalog.regexp_replace(coalesce(p_definition, ''), '--[^\r\n]*', '', 'g'),
+      '/[*].*?[*]/', '', 'gs'
+    ) as source
+  )
   select coalesce(
-    p_definition ~*
-      '((if|elsif)[[:space:]]+not[[:space:]]*[(][[:space:]]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)])'
-    or p_definition ~*
-      '((if|elsif)[[:space:]]+not[[:space:]]+(public[.])?app_role[[:space:]]*[(][[:space:]]*[)])'
-    or p_definition ~*
-      '((if|elsif)[[:space:]]+[^;]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)][^;]*(<>|!=|not[[:space:]]+in)[^;]*then)'
-    or p_definition ~*
-      '((if|elsif)[[:space:]]+[^;]*(<>|!=|not[[:space:]]+in)[^;]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)][^;]*then)',
+    source ~* '((if|elsif)[[:space:]]+not[[:space:]]*[(][[:space:]]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)])'
+    or source ~* '((if|elsif)[[:space:]]+not[[:space:]]+(public[.])?app_role[[:space:]]*[(][[:space:]]*[)])'
+    or source ~* '((if|elsif)[[:space:]]+[^;]*?(public[.])?app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*(<>|!=|not[[:space:]]+in)([[:space:]]|[(]))'
+    or source ~* '((if|elsif)[[:space:]]+[^;()]*[^;()[:space:]]+[[:space:]]*(<>|!=)[[:space:]]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)])',
     false
-  );
+  ) from executable_source;
 $function$;
 revoke all on function app_private.has_unsafe_role_guard(text) from public;
 revoke all on function app_private.has_unsafe_role_guard(text) from anon, authenticated, agent_ro;

@@ -19,9 +19,9 @@ values
   ('b1100000-0000-0000-0000-000000000001', 'B11ADMIN000001', 'admin',
    'b11fffff-0000-0000-0000-000000000001', 'Fixture', 'Admin', 'active', 'male'),
   ('b1100000-0000-0000-0000-000000000002', 'B11TEACHER0001', 'teacher',
-   'b11fffff-0000-0000-0000-000000000001', 'Teacher', 'One', 'active', 'male'),
+   'b11fffff-0000-0000-0000-000000000001', 'Teacher', 'One', 'provisional_active', 'male'),
   ('b1100000-0000-0000-0000-000000000003', 'B11TEACHER0002', 'teacher',
-   'b11fffff-0000-0000-0000-000000000001', 'Teacher', 'Two', 'active', 'female'),
+   'b11fffff-0000-0000-0000-000000000001', 'Teacher', 'Two', 'provisional_active', 'female'),
   ('b1100000-0000-0000-0000-000000000004', 'B11GUARDIAN001', 'guardian',
    'b11fffff-0000-0000-0000-000000000001', 'Fixture', 'Guardian', 'active', 'female'),
   ('b1100000-0000-0000-0000-000000000005', 'B11STUDENT0001', 'student',
@@ -62,7 +62,8 @@ values ('b11fffff-0000-0000-0000-000000000002',
 insert into public.sessions (id, teacher_id, started_at, ended_at)
 values ('b11fffff-0000-0000-0000-000000000004',
         'b1100000-0000-0000-0000-000000000002',
-        now(), now() + interval '1 hour');
+        TIMESTAMPTZ '2030-01-02 03:00:00+00',
+        TIMESTAMPTZ '2030-01-02 04:00:00+00');
 
 insert into public.session_participants (session_id, profile_id, role)
 values

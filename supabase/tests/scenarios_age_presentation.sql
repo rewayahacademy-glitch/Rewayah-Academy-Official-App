@@ -4,7 +4,8 @@ INSERT INTO auth.users (id, email) VALUES
   ('a8000000-0000-0000-0000-000000000001', 'age-parent-a@example.test'),
   ('a8000000-0000-0000-0000-000000000002', 'age-parent-b@example.test'),
   ('a8000000-0000-0000-0000-000000000003', 'age-child@example.test'),
-  ('a8000000-0000-0000-0000-000000000004', 'age-adult@example.test');
+  ('a8000000-0000-0000-0000-000000000004', 'age-adult@example.test'),
+  ('a8000000-0000-0000-0000-000000000005', 'age-child-b@example.test');
 
 INSERT INTO public.households (id, timezone) VALUES
   ('a8000000-0000-0000-0000-000000000101', 'Europe/Paris'),
@@ -21,7 +22,9 @@ VALUES
   ('a8000000-0000-0000-0000-000000000003', 'AGE-CHILD', 'student',
    'a8000000-0000-0000-0000-000000000101', 'Child', 'A', 'female', 'active'),
   ('a8000000-0000-0000-0000-000000000004', 'AGE-ADULT', 'student',
-   'a8000000-0000-0000-0000-000000000102', 'Adult', 'B', 'male', 'active');
+   'a8000000-0000-0000-0000-000000000102', 'Adult', 'B', 'male', 'active'),
+  ('a8000000-0000-0000-0000-000000000005', 'AGE-CHILD-B', 'student',
+   'a8000000-0000-0000-0000-000000000102', 'Child', 'B', 'male', 'active');
 
 UPDATE public.households
 SET primary_guardian_id = 'a8000000-0000-0000-0000-000000000001'
@@ -33,7 +36,16 @@ WHERE id = 'a8000000-0000-0000-0000-000000000102';
 INSERT INTO public.student_profiles (profile_id, student_type, interface_mode)
 VALUES
   ('a8000000-0000-0000-0000-000000000003', 'minor', 'child'),
-  ('a8000000-0000-0000-0000-000000000004', 'autonomous', 'standard');
+  ('a8000000-0000-0000-0000-000000000004', 'autonomous', 'standard'),
+  ('a8000000-0000-0000-0000-000000000005', 'minor', 'child');
+
+-- Privileged fixture for a stale request whose student's household changed.
+INSERT INTO public.demandes_presentation (id, eleve_id, foyer_id)
+VALUES (
+  'a8000000-0000-0000-0000-000000000201',
+  'a8000000-0000-0000-0000-000000000004',
+  'a8000000-0000-0000-0000-000000000101'
+);
 
 DO $age_hook$
 DECLARE
@@ -80,6 +92,14 @@ BEGIN
 END
 $student_request$;
 
+SELECT set_config('test.uid', 'a8000000-0000-0000-0000-000000000005', true);
+SELECT set_config('test.jwt', '{"app_metadata":{"role":"student"}}', true);
+DO $second_household_request$
+BEGIN
+  PERFORM public.demander_presentation_standard();
+END
+$second_household_request$;
+
 SELECT set_config('test.uid', 'a8000000-0000-0000-0000-000000000004', true);
 SELECT set_config('test.jwt', '{"app_metadata":{"role":"student"}}', true);
 DO $adult_denied$
@@ -109,6 +129,10 @@ BEGIN
   IF v_count <> 1 THEN
     RAISE EXCEPTION 'A81/C22: household guardian did not receive exactly one request';
   END IF;
+  IF (SELECT count(*)
+      FROM public.lire_demandes_presentation_en_attente_avec_fuseau()) <> 1 THEN
+    RAISE EXCEPTION 'C22: timezone projection exposed a request for a student in another household';
+  END IF;
 
   IF public.accepter_demande_presentation(v_id) <> 'acceptee'
      OR public.accepter_demande_presentation(v_id) <> 'acceptee' THEN
@@ -126,7 +150,7 @@ BEGIN
     PERFORM public.refuser_demande_presentation(v_id);
     RAISE EXCEPTION 'A81/C22: conflicting second decision was accepted';
   EXCEPTION WHEN raise_exception THEN
-    IF SQLERRM NOT LIKE 'demande deja tranchee%' THEN RAISE; END IF;
+    IF SQLERRM NOT LIKE 'demande déjà tranchée%' THEN RAISE; END IF;
   END;
 END
 $guardian_decision$;
@@ -139,8 +163,19 @@ DECLARE
   v_count integer;
 BEGIN
   SELECT count(*) INTO v_count FROM public.lire_demandes_presentation_en_attente();
-  IF v_count <> 0 THEN
-    RAISE EXCEPTION 'A81/C22: another household read the request';
+  IF v_count <> 1 OR EXISTS (
+    SELECT 1 FROM public.lire_demandes_presentation_en_attente()
+    WHERE id = v_id
+  ) THEN
+    RAISE EXCEPTION 'A81/C22: household B should see only its own pending request';
+  END IF;
+  SELECT count(*) INTO v_count
+    FROM public.lire_demandes_presentation_en_attente_avec_fuseau();
+  IF v_count <> 1 OR EXISTS (
+    SELECT 1 FROM public.lire_demandes_presentation_en_attente_avec_fuseau()
+    WHERE id = v_id
+  ) THEN
+    RAISE EXCEPTION 'C22: household B should see only its own pending request';
   END IF;
   BEGIN
     PERFORM public.accepter_demande_presentation(v_id);

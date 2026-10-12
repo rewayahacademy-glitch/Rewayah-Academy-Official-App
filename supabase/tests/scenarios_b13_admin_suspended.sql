@@ -20,7 +20,7 @@ values
   ('b1300000-0000-0000-0000-000000000002', 'B13ADMIN000002', 'admin',
    'b13fffff-0000-0000-0000-000000000001', 'Disabled', 'Admin', 'disabled'),
   ('b1300000-0000-0000-0000-000000000003', 'B13TEACHER0001', 'teacher',
-   'b13fffff-0000-0000-0000-000000000001', 'Fixture', 'Teacher', 'active'),
+   'b13fffff-0000-0000-0000-000000000001', 'Fixture', 'Teacher', 'provisional_active'),
   ('b1300000-0000-0000-0000-000000000004', 'B13GUARDIAN001', 'guardian',
    'b13fffff-0000-0000-0000-000000000001', 'Fixture', 'Guardian', 'active'),
   ('b1300000-0000-0000-0000-000000000005', 'B13STUDENT0001', 'student',
@@ -41,7 +41,8 @@ insert into public.sessions
 values
   ('b13fffff-0000-0000-0000-000000000003',
    'b1300000-0000-0000-0000-000000000003',
-   now(), now() + interval '1 hour');
+   TIMESTAMPTZ '2030-01-02 03:00:00+00',
+   TIMESTAMPTZ '2030-01-02 04:00:00+00');
 
 insert into public.guardian_session_visit
   (id, session_id, groupe_id, observateur_profile_id, role, enfant_profile_id,
@@ -65,6 +66,21 @@ do $b13_active_admin$
 declare
   v_count integer;
 begin
+  if not pg_catalog.has_table_privilege(
+       'authenticated', 'public.guardian_session_visit', 'SELECT'
+     )
+     or pg_catalog.has_table_privilege(
+       'authenticated', 'public.guardian_session_visit', 'INSERT'
+     )
+     or pg_catalog.has_table_privilege(
+       'authenticated', 'public.guardian_session_visit', 'UPDATE'
+     )
+     or pg_catalog.has_table_privilege(
+       'authenticated', 'public.guardian_session_visit', 'DELETE'
+     ) THEN
+    raise exception 'B-13: authenticated must have read-only visit access';
+  end if;
+
   select count(*) into v_count from public.guardian_session_visit
    where id = 'b13fffff-0000-0000-0000-000000000004';
   if v_count <> 1 then

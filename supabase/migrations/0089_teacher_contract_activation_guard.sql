@@ -1,4 +1,4 @@
-﻿BEGIN;
+BEGIN;
 
 -- Version requise pour le recu de traitement audio/visites. Le contrat
 -- enseignant lui-meme prend sa version courante dans contract_texts.
