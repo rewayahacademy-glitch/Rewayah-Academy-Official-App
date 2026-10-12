@@ -161,13 +161,98 @@ BEGIN
 END;
 $test$;
 
+DO $test$
+BEGIN
+  BEGIN
+    PERFORM public.retirer_capacite_controle(
+      current_setting('test.capacite_id')::uuid,
+      'rôle enseignant interdit',
+      'c29a0000-0000-0000-0000-000000000006'
+    );
+    RAISE EXCEPTION 'C29: un enseignant a retiré une capacité';
+  EXCEPTION WHEN insufficient_privilege THEN
+    NULL;
+  END;
+END;
+$test$;
+
 RESET ROLE;
+UPDATE public.profiles SET account_status = 'disabled'
+ WHERE id = 'c2900000-0000-0000-0000-000000000001';
+SET LOCAL ROLE authenticated;
+SELECT set_config('request.jwt.claim.sub', 'c2900000-0000-0000-0000-000000000001', true);
+SELECT set_config('request.jwt.claims', '{"aal":"aal2","app_metadata":{"role":"admin"}}', true);
+DO $disabled_admin$
+BEGIN
+  BEGIN
+    PERFORM public.accorder_capacite_controle(
+      'c2900000-0000-0000-0000-000000000002',
+      pg_catalog.clock_timestamp(), pg_catalog.clock_timestamp() + interval '1 day',
+      true, '{}'::uuid[], '{}'::uuid[],
+      'c29a0000-0000-0000-0000-000000000007'
+    );
+    RAISE EXCEPTION 'C29: une direction désactivée a accordé une capacité';
+  EXCEPTION WHEN insufficient_privilege THEN
+    NULL;
+  END;
+  BEGIN
+    PERFORM public.retirer_capacite_controle(
+      current_setting('test.capacite_id')::uuid,
+      'direction désactivée',
+      'c29a0000-0000-0000-0000-000000000008'
+    );
+    RAISE EXCEPTION 'C29: une direction désactivée a retiré une capacité';
+  EXCEPTION WHEN insufficient_privilege THEN
+    NULL;
+  END;
+  IF public.ma_capacite_controle_active() THEN
+    RAISE EXCEPTION 'C29: une direction désactivée conserve une capacité active';
+  END IF;
+END;
+$disabled_admin$;
+RESET ROLE;
+
+SET LOCAL ROLE anon;
+DO $anonymous$
+BEGIN
+  BEGIN
+    PERFORM public.accorder_capacite_controle(
+      'c2900000-0000-0000-0000-000000000002',
+      pg_catalog.clock_timestamp(), pg_catalog.clock_timestamp() + interval '1 day',
+      true, '{}'::uuid[], '{}'::uuid[],
+      'c29a0000-0000-0000-0000-000000000009'
+    );
+    RAISE EXCEPTION 'C29: anon a accordé une capacité';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+  BEGIN
+    PERFORM public.retirer_capacite_controle(
+      current_setting('test.capacite_id')::uuid,
+      'appel anon',
+      'c29a0000-0000-0000-0000-000000000010'
+    );
+    RAISE EXCEPTION 'C29: anon a retiré une capacité';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+  BEGIN
+    PERFORM public.ma_capacite_controle_active();
+    RAISE EXCEPTION 'C29: anon a consulté une capacité';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+END;
+$anonymous$;
+RESET ROLE;
+
 DO $postflight$
 BEGIN
   IF has_table_privilege('authenticated', 'private.controle_capacites', 'SELECT')
      OR has_table_privilege('anon', 'private.controle_capacites', 'SELECT')
      OR has_function_privilege('anon', 'public.accorder_capacite_controle(uuid,timestamptz,timestamptz,boolean,uuid[],uuid[],uuid)', 'EXECUTE')
+     OR has_function_privilege('anon', 'public.retirer_capacite_controle(uuid,text,uuid)', 'EXECUTE')
+     OR has_function_privilege('anon', 'public.ma_capacite_controle_active()', 'EXECUTE')
      OR has_function_privilege('service_role', 'public.accorder_capacite_controle(uuid,timestamptz,timestamptz,boolean,uuid[],uuid[],uuid)', 'EXECUTE')
+     OR has_function_privilege('service_role', 'public.retirer_capacite_controle(uuid,text,uuid)', 'EXECUTE')
+     OR has_function_privilege('service_role', 'public.ma_capacite_controle_active()', 'EXECUTE')
      OR has_function_privilege('agent_ro', 'public.ma_capacite_controle_active()', 'EXECUTE') THEN
     RAISE EXCEPTION 'C29: exposition directe ou ACL indegue';
   END IF;
