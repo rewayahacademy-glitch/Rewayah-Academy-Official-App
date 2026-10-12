@@ -104,4 +104,65 @@ BEGIN
 END
 $negative_student$;
 
+UPDATE public.profiles
+   SET account_status = 'disabled'
+ WHERE id = 'b0700000-0000-0000-0000-000000000001';
+SET LOCAL ROLE authenticated;
+SELECT set_config('test.uid', 'b0700000-0000-0000-0000-000000000001', true);
+SELECT set_config(
+  'request.jwt.claims',
+  '{"app_metadata":{"role":"guardian","household_id":"b0700000-0000-0000-0000-000000000101"}}',
+  true
+);
+DO $negative_disabled$
+BEGIN
+  BEGIN
+    PERFORM public.profil_eleve_titulaire_existe();
+    RAISE EXCEPTION 'B-07: un titulaire suspendu a lu sa capacite';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+
+  BEGIN
+    PERFORM public.creer_profil_eleve_titulaire();
+    RAISE EXCEPTION 'B-07: un titulaire suspendu a cree un profil apprenant';
+  EXCEPTION WHEN raise_exception THEN
+    IF SQLERRM <> U&'cr\00e9ation r\00e9serv\00e9e au titulaire connect\00e9' THEN
+      RAISE;
+    END IF;
+  END;
+END
+$negative_disabled$;
+RESET ROLE;
+
+DO $anon_acl$
+BEGIN
+  IF pg_catalog.has_function_privilege(
+       'anon', 'public.profil_eleve_titulaire_existe()', 'EXECUTE'
+     )
+     OR pg_catalog.has_function_privilege(
+       'anon', 'public.creer_profil_eleve_titulaire()', 'EXECUTE'
+     ) THEN
+    RAISE EXCEPTION 'B-07: anon conserve EXECUTE sur une RPC titulaire';
+  END IF;
+END
+$anon_acl$;
+
+SET LOCAL ROLE anon;
+DO $negative_anon$
+BEGIN
+  BEGIN
+    PERFORM public.profil_eleve_titulaire_existe();
+    RAISE EXCEPTION 'B-07: anon a lu la capacite du titulaire';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+
+  BEGIN
+    PERFORM public.creer_profil_eleve_titulaire();
+    RAISE EXCEPTION 'B-07: anon a cree un profil apprenant titulaire';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+END
+$negative_anon$;
+RESET ROLE;
+
 ROLLBACK;
