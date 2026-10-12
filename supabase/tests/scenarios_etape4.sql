@@ -1325,7 +1325,7 @@ $h2$;
 do $f86_admin_mutators$
 declare
   v_test record;
-  v_uid uuid := 'eeeeeeee-0000-0000-0000-000000000001';
+  v_uid uuid := 'eeeeeeee-0000-0000-0000-000000000099';
   v_admin uuid := 'dddddddd-0000-0000-0000-000000000001';
   v_refuse boolean;
 begin
@@ -1365,7 +1365,7 @@ begin
   end loop;
 
   reset role;
-  update public.profiles set account_status = 'suspended' where id = v_admin;
+  update public.profiles set account_status = 'disabled' where id = v_admin;
   set local role authenticated;
   perform set_config('request.jwt.claim.sub', v_admin::text, true);
   perform set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', true);
