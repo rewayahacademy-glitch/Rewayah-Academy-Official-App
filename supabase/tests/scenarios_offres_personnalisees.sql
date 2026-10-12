@@ -310,6 +310,9 @@ BEGIN
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000997', true);
   PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'teacher'))::text, true);
+  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000997', true);
+  PERFORM set_config('test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'teacher'))::text, true);
   IF EXISTS (SELECT 1 FROM public.mes_groupes_v WHERE groupe_id = v_groupe) THEN
     RAISE EXCEPTION 'C-12: mes_groupes_v expose une classe sans enseignant';
   END IF;
@@ -341,6 +344,11 @@ BEGIN
 
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000998', true);
   PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object(
+      'role', 'guardian', 'household_id', 'f1480000-0000-0000-0000-000000000003'
+    ))::text, true);
+  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000998', true);
+  PERFORM set_config('test.jwt',
     jsonb_build_object('app_metadata', jsonb_build_object(
       'role', 'guardian', 'household_id', 'f1480000-0000-0000-0000-000000000003'
     ))::text, true);
@@ -379,7 +387,9 @@ BEGIN
   -- documente le refus sans attribuer un changement de resultat a la migration.
   v_ok := false;
   BEGIN
-    PERFORM public.definir_politique_observation_groupe(v_groupe, 'groupe', 3, 600, 120);
+    PERFORM public.definir_politique_observation_groupe(
+      v_groupe, 'groupe', 3::smallint, 600, 120
+    );
   EXCEPTION WHEN insufficient_privilege THEN
     v_ok := SQLERRM = 'reserve a l''administration';
   END;
@@ -392,6 +402,9 @@ BEGIN
 
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
   PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
+  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000999', true);
+  PERFORM set_config('test.jwt',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
   PERFORM public.affecter_enseignant_classe(
     v_groupe, 'f1490000-0000-0000-0000-000000000997'
