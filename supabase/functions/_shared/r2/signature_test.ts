@@ -102,6 +102,29 @@ Deno.test('D17 -- la methode est bornee : lecture et depot ne signent pas la mem
   )
 })
 
+Deno.test('D17b -- libraryupload signe un PUT temporaire borne au type et a la taille', async () => {
+  const cle = cleDe('priveApplicatif', 'libraryupload', ARCHIVE)
+  const depot = await signerDepot('priveApplicatif', cle, {
+    typeMime: 'application/pdf',
+    tailleOctets: 2048,
+    typesAutorises: ['application/pdf'],
+    tailleMaximaleOctets: 50 * 1024 * 1024,
+    env,
+  })
+  const query = new URL(depot.url).searchParams
+  assert(query.get('X-Amz-Signature'))
+  assertEquals(query.get('X-Amz-Expires'), String(DUREE_DEPOT_S))
+  assertEquals(depot.enTetesExiges['content-type'], 'application/pdf')
+  assertEquals(depot.enTetesExiges['content-length'], '2048')
+  await assertRejects(() => signerDepot('priveApplicatif', cle, {
+    typeMime: 'application/zip',
+    tailleOctets: 2048,
+    typesAutorises: ['application/pdf'],
+    tailleMaximaleOctets: 50 * 1024 * 1024,
+    env,
+  }))
+})
+
 Deno.test('D19 -- aucun parametre n est encode en + : ce serait un 403 chez R2', async () => {
   // SigV4 impose l encodage RFC 3986, ou l espace s ecrit %20. `URLSearchParams`
   // encode l espace en `+` : un seul parametre a espace dans l URL et R2
