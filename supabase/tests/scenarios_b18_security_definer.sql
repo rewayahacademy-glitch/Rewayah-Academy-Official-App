@@ -12,7 +12,9 @@ begin
      or pg_catalog.has_function_privilege('anon', 'public.creer_groupe(uuid,text,text,smallint,smallint,smallint)', 'execute')
      or pg_catalog.has_function_privilege('anon', 'public.modifier_groupe(uuid,text,smallint,smallint,smallint,text,smallint)', 'execute')
      or pg_catalog.has_function_privilege('anon', 'public.modifier_groupe(uuid,text,smallint,smallint,smallint)', 'execute')
-     or pg_catalog.has_function_privilege('anon', 'public.read_kyc_documents()', 'execute') then
+     or pg_catalog.has_function_privilege('anon', 'public.read_kyc_documents()', 'execute')
+     or pg_catalog.has_function_privilege('anon', 'public.eleves_sans_enseignant()', 'execute')
+     or pg_catalog.has_function_privilege('anon', 'public.enseignants_pour(uuid)', 'execute') then
     raise exception 'B-18: anon retains EXECUTE on a protected RPC';
   end if;
 end $$;
@@ -130,6 +132,34 @@ values
    'female', 'Fixture', 'Controller', 'active'),
   ('b1800000-0000-0000-0000-000000000003', 'B06ADMIN0000003', 'admin',
    'female', 'Fixture', 'Admin', 'active');
+
+-- F86: an existing admin role must not bypass an invalid/suspended account.
+UPDATE public.profiles SET account_status='suspended'
+ WHERE id='b1800000-0000-0000-0000-000000000003';
+SET LOCAL ROLE authenticated;
+SELECT set_config('request.jwt.claim.sub', 'b1800000-0000-0000-0000-000000000003', true);
+SELECT set_config('test.uid', 'b1800000-0000-0000-0000-000000000003', true);
+SELECT set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', true);
+SELECT set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+DO $f86_suspended_admin$
+BEGIN
+  BEGIN
+    PERFORM * FROM public.eleves_sans_enseignant();
+    RAISE EXCEPTION 'F86: suspended admin read the student assignment queue';
+  EXCEPTION WHEN raise_exception THEN
+    IF SQLERRM <> 'attribution manuelle reservee a l''administration' THEN RAISE; END IF;
+  END;
+  BEGIN
+    PERFORM * FROM public.enseignants_pour(NULL::uuid);
+    RAISE EXCEPTION 'F86: suspended admin read teacher assignment candidates';
+  EXCEPTION WHEN raise_exception THEN
+    IF SQLERRM <> 'attribution manuelle reservee a l''administration' THEN RAISE; END IF;
+  END;
+END
+$f86_suspended_admin$;
+RESET ROLE;
+UPDATE public.profiles SET account_status='active'
+ WHERE id='b1800000-0000-0000-0000-000000000003';
 
 set local role authenticated;
 select set_config('test.uid', 'b1800000-0000-0000-0000-000000000002', true);
