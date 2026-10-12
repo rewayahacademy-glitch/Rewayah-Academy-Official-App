@@ -149,4 +149,16 @@ BEGIN
 END;
 $acl$;
 
+SET LOCAL ROLE anon;
+DO $anon_call$
+BEGIN
+  BEGIN
+    PERFORM public.library_get_detail('c29d1000-0000-0000-0000-000000000003');
+    RAISE EXCEPTION 'CAP-29: anon a lu une fiche de ressource';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+END;
+$anon_call$;
+RESET ROLE;
+
 ROLLBACK;

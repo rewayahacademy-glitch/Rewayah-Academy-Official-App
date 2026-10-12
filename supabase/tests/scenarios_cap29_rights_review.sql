@@ -159,4 +159,20 @@ END;
 $admin_without_profile$;
 RESET ROLE;
 
+SET LOCAL ROLE anon;
+DO $anon_call$
+BEGIN
+  BEGIN
+    PERFORM public.admin_library_review_rights(
+      'c29d2000-0000-0000-0000-000000000003',
+      'c29d2000-0000-0000-0000-000000000004',
+      '{}'::jsonb,
+      2);
+    RAISE EXCEPTION 'CAP29: anon a modifie les droits de lecture';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+END;
+$anon_call$;
+RESET ROLE;
+
 ROLLBACK;
