@@ -42,7 +42,7 @@ begin
       'authorization_version', 1
     )
   )::text, true);
-  update public.profiles set account_status = 'suspended'
+  update public.profiles set account_status = 'disabled'
    where id = 'a3300000-0000-0000-0000-000000000001';
   if exists (select 1 from public.rechercher_personne_par_matricule(v_owner_code)) then
     raise exception 'RECH-03: inactive account lookup returned a row';
@@ -68,7 +68,13 @@ begin
      or exists (select 1 from public.rechercher_personne_par_matricule(v_outside_code))
      or exists (select 1 from public.rechercher_personne_par_matricule('RA-99-0000'))
      or exists (select 1 from public.rechercher_personne_par_matricule('RA-O1-12I4'))
-     or exists (select 1 from public.rechercher_personne_par_matricule('R-A--99--0000')) then
+     or exists (select 1 from public.rechercher_personne_par_matricule('R-A--99--0000'))
+     or exists (select 1 from public.rechercher_personne_par_matricule('RB-26-4817'))
+     or exists (select 1 from public.rechercher_personne_par_matricule('RA-2026-4817'))
+     or exists (select 1 from public.rechercher_personne_par_matricule('RA-26-481'))
+     or exists (select 1 from public.rechercher_personne_par_matricule('RA-26-1234567'))
+     or exists (select 1 from public.rechercher_personne_par_matricule('RA_26_4817'))
+     or exists (select 1 from public.rechercher_personne_par_matricule('RA-26-48A7')) then
     raise exception 'RECH-03: exact lookup or identical empty outcomes are incorrect';
   end if;
 end;
