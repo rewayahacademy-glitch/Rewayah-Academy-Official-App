@@ -1509,26 +1509,13 @@ declare
   v_common integer;
   v_assignment uuid;
 begin
+  -- Deux horaires espacés d'une journée et toujours déjà passés aujourd'hui.
+  -- Les créneaux à 00 h évitent les séances matérialisées par les autres
+  -- scénarios de l'enseignant, dont les disponibilités sont en journée/soirée.
   v_weekday := extract(isodow from (v_reference at time zone 'Europe/Paris'))::integer;
-  v_hour := extract(hour from (v_reference at time zone 'Europe/Paris'))::integer - 1;
-  if v_hour < 0 then
-    v_weekday := case when v_weekday = 1 then 7 else v_weekday - 1 end;
-    v_hour := 23;
-  end if;
-  -- Evite les horaires déjà occupés par les prises positives précédentes.
-  if (v_weekday = 1 and v_hour = 17)
-     or (v_weekday = 2 and v_hour = 18)
-     or (v_weekday = 3 and v_hour = 17)
-     or (v_weekday = 4 and v_hour between 9 and 13) then
-    v_weekday := case when v_weekday = 1 then 7 else v_weekday - 1 end;
-    v_hour := 0;
-  end if;
-  v_weekday_2 := v_weekday;
-  v_hour_2 := v_hour - 1;
-  if v_hour_2 < 0 then
-    v_weekday_2 := case when v_weekday_2 = 1 then 7 else v_weekday_2 - 1 end;
-    v_hour_2 := 22;
-  end if;
+  v_hour := 0;
+  v_weekday_2 := case when v_weekday = 1 then 7 else v_weekday - 1 end;
+  v_hour_2 := 0;
 
   v_next := public.instant_creneau_reference(
     v_weekday, v_hour, 'Europe/Paris', 0, v_reference
