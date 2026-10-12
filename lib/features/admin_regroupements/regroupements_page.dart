@@ -33,6 +33,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart' show PublicOffre;
 import '../../core/offres/page_regroupements.dart';
@@ -204,7 +205,7 @@ class _RegroupementsPageEtat extends ConsumerState<RegroupementsPage> {
             for (final String fuseau in reference?.fuseaux ?? const <String>[])
               EntreeFiltre<String>(
                 valeur: fuseau,
-                libelle: villeDuFuseau(fuseau),
+                libelle: villeDuFuseauLibelle(fuseau),
               ),
           ],
           onChoix: (String? fuseau) =>

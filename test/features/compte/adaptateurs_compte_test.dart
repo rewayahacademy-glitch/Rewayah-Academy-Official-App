@@ -8,6 +8,7 @@ import 'package:rewayah_academy/core/capacites/identite_titulaire_supabase.dart'
 import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/villes_fuseau.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart';
 
 import '../../fixtures/tuteur/foyers.dart';
@@ -129,10 +130,13 @@ void main() {
 
   group('lisibilite', () {
     test('villeDuFuseau', () {
-      expect(villeDuFuseau('Europe/Paris'), 'Paris');
-      expect(villeDuFuseau('America/New_York'), 'New York');
-      expect(villeDuFuseau('America/Argentina/Buenos_Aires'), 'Buenos Aires');
-      expect(villeDuFuseau('UTC'), 'UTC');
+      expect(villeDuFuseauLibelle('Europe/Paris'), 'Paris');
+      expect(villeDuFuseauLibelle('America/New_York'), 'New York');
+      expect(
+        villeDuFuseauLibelle('America/Argentina/Buenos_Aires'),
+        'Buenos Aires',
+      );
+      expect(villeDuFuseauLibelle('UTC'), 'UTC');
     });
 
     test('dateLongue', () {
