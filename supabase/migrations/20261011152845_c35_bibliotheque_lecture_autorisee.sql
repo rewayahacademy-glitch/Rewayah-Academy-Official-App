@@ -39,7 +39,6 @@ begin
      and da.resource_version_id = v.id
     join public.library_version_rights rights
       on rights.resource_version_id = v.id
-     and rights.resource_id = r.id
      and rights.approuve
      and 'application' = any(rights.usages)
      and (rights.expire_le is null or rights.expire_le > clock_timestamp())
