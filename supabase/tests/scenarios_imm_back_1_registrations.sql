@@ -123,17 +123,67 @@ begin
       'role', 'guardian', 'household_id', 'a11fffff-0000-0000-0000-000000000001'
     )
   )::text, true);
-  v_profile := public.creer_profil_enfant(
-    'a1100000-0000-0000-0000-000000000003',
-    'a1100000-0000-0000-0000-000000000001', 'Lina', 'Created', 10, null
-  );
-  if v_profile.immutable_id !~ '^RA-[0-9]{2}-[0-9]{4,5}$'
-     or not exists (select 1 from private.person_registrations r
-                     where r.profile_id = v_profile.id and r.matricule = v_profile.immutable_id) then
+end;
+$official_creation_paths$;
+
+do $child_rpc_acl$
+begin
+  if not has_function_privilege(
+       'authenticated',
+       'public.creer_profil_enfant(uuid,uuid,text,text,integer,text)', 'EXECUTE'
+     )
+     or has_function_privilege(
+       'anon',
+       'public.creer_profil_enfant(uuid,uuid,text,text,integer,text)', 'EXECUTE'
+     )
+     or has_function_privilege(
+       'service_role',
+       'public.creer_profil_enfant(uuid,uuid,text,text,integer,text)', 'EXECUTE'
+     ) then
+    raise exception 'IMM-BACK-1: droits EXECUTE enfant incorrects';
+  end if;
+end;
+$child_rpc_acl$;
+
+set local role authenticated;
+select set_config('request.jwt.claim.sub', 'a1100000-0000-0000-0000-000000000002', true);
+select set_config('request.jwt.claims',
+  '{"sub":"a1100000-0000-0000-0000-000000000002","app_metadata":{"role":"guardian"}}', true);
+do $child_rpc_denies_other_guardian$
+begin
+  begin
+    perform public.creer_profil_enfant(
+      'a1100000-0000-0000-0000-000000000009',
+      'a1100000-0000-0000-0000-000000000001', 'Intrus', 'Fixture', 10, null
+    );
+    raise exception 'IMM-BACK-1: un autre compte a pu créer un enfant';
+  exception when insufficient_privilege then
+    null;
+  end;
+end;
+$child_rpc_denies_other_guardian$;
+
+select set_config('request.jwt.claim.sub', 'a1100000-0000-0000-0000-000000000001', true);
+select set_config('request.jwt.claims',
+  '{"sub":"a1100000-0000-0000-0000-000000000001","app_metadata":{"role":"guardian","household_id":"a11fffff-0000-0000-0000-000000000001"}}', true);
+select public.creer_profil_enfant(
+  'a1100000-0000-0000-0000-000000000003',
+  'a1100000-0000-0000-0000-000000000001', 'Lina', 'Created', 10, null
+);
+reset role;
+do $child_profile_registry$
+begin
+  if not exists (
+    select 1 from public.profiles p
+    join private.person_registrations r on r.profile_id = p.id
+    where p.id = 'a1100000-0000-0000-0000-000000000003'
+      and p.immutable_id ~ '^RA-[0-9]{2}-[0-9]{4,5}$'
+      and r.matricule = p.immutable_id
+  ) then
     raise exception 'IMM-01: parcours enfant sans matricule du registre';
   end if;
 end;
-$official_creation_paths$;
+$child_profile_registry$;
 
 -- A dependent-row failure proves profile and reservation roll back together.
 create function pg_temp.imm_back_1_fail_student_profile()
