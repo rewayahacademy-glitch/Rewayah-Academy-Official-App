@@ -216,9 +216,10 @@ end $$;
 do $$
 declare
   v_reference timestamptz;
-  v_debut timestamptz;
-  v_paris timestamptz;
-  v_conakry timestamptz;
+  v_debut_paris timestamptz;
+  v_debut_conakry timestamptz;
+  v_jour_conakry int;
+  v_heure_conakry int;
 begin
   foreach v_reference in array ARRAY[
     timestamptz '2026-10-12 00:30:00+00',
@@ -228,18 +229,26 @@ begin
     timestamptz '2026-10-12 17:30:00+00',
     timestamptz '2026-10-12 23:30:00+00'
   ] loop
-    v_debut := public.instant_creneau_reference(
+    -- Paris pose le lundi a 18 h dans le fuseau de reference de la Classe.
+    v_debut_paris := public.instant_creneau_reference(
       1, 18, 'Europe/Paris', 0, v_reference
     );
-    v_paris := ((v_debut at time zone 'Europe/Paris') at time zone 'Europe/Paris');
-    v_conakry := ((v_debut at time zone 'Africa/Conakry') at time zone 'Africa/Conakry');
-    if v_paris <> v_conakry or v_paris <> v_debut then
+    -- Calcul independant de la meme occurrence locale a Conakry, depuis la
+    -- meme reference. Les deux calculs doivent converger sur le meme instant.
+    v_jour_conakry := extract(isodow from
+      (v_debut_paris at time zone 'Africa/Conakry'))::int;
+    v_heure_conakry := extract(hour from
+      (v_debut_paris at time zone 'Africa/Conakry'))::int;
+    v_debut_conakry := public.instant_creneau_reference(
+      v_jour_conakry, v_heure_conakry, 'Africa/Conakry', 0, v_reference
+    );
+    if v_debut_paris <> v_debut_conakry then
       raise exception
-        'Instant ECHEC : Paris et Conakry ne partagent pas le debut UTC a la reference %',
-        v_reference;
+        'Instant ECHEC : calcul Paris % et Conakry % divergent a la reference %',
+        v_debut_paris, v_debut_conakry, v_reference;
     end if;
   end loop;
-  raise notice 'Instant ok : Paris et Conakry partagent le debut UTC aux six references';
+  raise notice 'Instant ok : calculs independants Paris/Conakry convergent aux six references';
 end $$;
 
 -- ============================================================
