@@ -47,11 +47,11 @@ class NotificationsSupabase
   /// Crée l'adaptateur avec le client de l'application et le résolveur localisé.
   const NotificationsSupabase(
     this._client, {
-    required NotificationContenuResolver contenuPour,
-  }) : _contenuPour = contenuPour;
+    required this.contenuPour,
+  });
 
   final SupabaseClient _client;
-  final NotificationContenuResolver _contenuPour;
+  final NotificationContenuResolver contenuPour;
 
   String get _destinataire {
     final String? id = _client.auth.currentUser?.id;
@@ -74,7 +74,7 @@ class NotificationsSupabase
     if (rows is! List) {
       throw const FormatException('Réponse notifications invalide.');
     }
-    return notificationsDepuis(rows, titrePour: _contenuPour);
+    return notificationsDepuis(rows, titrePour: contenuPour);
   }
 
   @override
@@ -97,7 +97,7 @@ class NotificationsSupabase
     try {
       return notificationDepuis(
         Map<String, dynamic>.from(row),
-        titrePour: _contenuPour,
+        titrePour: contenuPour,
       );
     } on FormatException {
       return null;
