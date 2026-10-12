@@ -188,6 +188,27 @@ Deno.test('11f -- le type et la taille entrent dans les en-tetes signes', async 
   assert(signes.includes('host'), 'host doit etre signe')
 })
 
+Deno.test('CAP29 -- libraryupload signe un PUT simule avec le trousseau prive existant', async () => {
+  const cle = cleDe('priveApplicatif', 'libraryupload', DOCUMENT)
+  const depot = await signerDepot('priveApplicatif', cle, {
+    typeMime: 'application/pdf',
+    tailleOctets: 4096,
+    typesAutorises: ['application/pdf'],
+    tailleMaximaleOctets: 8 * 1024 * 1024,
+    env,
+  })
+  const url = new URL(depot.url)
+  assertEquals(url.pathname, `/rewayah-app-private-storage/${cle}`)
+  assertEquals(url.searchParams.get('X-Amz-Expires'), String(DUREE_DEPOT_S))
+  assert(url.searchParams.get('X-Amz-Signature'))
+  assertEquals(depot.enTetesExiges['content-type'], 'application/pdf')
+  assertEquals(depot.enTetesExiges['content-length'], '4096')
+  const headers = (url.searchParams.get('X-Amz-SignedHeaders') ?? '').split(';')
+  assert(headers.includes('content-type'))
+  assert(headers.includes('content-length'))
+  assert(!depot.url.includes(HEX64), 'aucun secret permanent ne sort dans l URL')
+})
+
 Deno.test('11g -- un type de contenu hors liste est refuse avant toute signature', async () => {
   await assertRejects(
     () =>

@@ -40,7 +40,7 @@ const PREFIXE_CLE: Record<DomaineStockage, string> = {
 /// cles qui ne different que par la casse designent deux objets distincts chez
 /// R2, et une convention qui tolere les deux finit par en creer deux.
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
-const FAMILLES_PRIVEES = new Set(['export', 'supports', 'libraryproof'])
+const FAMILLES_PRIVEES = new Set(['export', 'supports', 'libraryupload', 'libraryproof'])
 
 /// L'echec de construction ou de validation d'une cle.
 export class ErreurCleObjet extends Error {
