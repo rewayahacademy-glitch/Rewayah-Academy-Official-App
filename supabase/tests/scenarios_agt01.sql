@@ -67,7 +67,7 @@ insert into public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 values
   ('a7000000-0000-0000-0000-000000000001', 'TEACH-A7-000001', 'teacher',
-   'a7ffffff-0000-0000-0000-00000000000c', 'Yacine', 'Belhadj', 'active', 'male'),
+   'a7ffffff-0000-0000-0000-00000000000c', 'Yacine', 'Belhadj', 'provisional_active', 'male'),
   ('a7000000-0000-0000-0000-000000000002', 'STUD-A7-000001', 'student',
    'a7ffffff-0000-0000-0000-00000000000a', 'Maryam', 'Cherif', 'active', 'female'),
   ('a7000000-0000-0000-0000-000000000003', 'GUAR-A7-000001', 'guardian',
@@ -75,9 +75,27 @@ values
   ('a7000000-0000-0000-0000-000000000004', 'ADMIN-A7-00001', 'admin',
    'a7ffffff-0000-0000-0000-00000000000c', 'Amine', 'Rahal', 'active', 'male'),
   ('a7000000-0000-0000-0000-000000000005', 'TEACH-A7-000002', 'teacher',
-   'a7ffffff-0000-0000-0000-00000000000c', 'Hafsa', 'Toumi', 'active', 'female'),
+   'a7ffffff-0000-0000-0000-00000000000c', 'Hafsa', 'Toumi', 'provisional_active', 'female'),
   ('a7000000-0000-0000-0000-000000000006', 'STUD-A7-000002', 'student',
    'a7ffffff-0000-0000-0000-00000000000b', 'Zineb', 'Toumi', 'active', 'female');
+-- Fixture contractuel requis par 0089 : aucune garde d'activation n'est assouplie.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+    PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true);
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+      ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+END
+$fixture_teacher_contracts$;
 
 insert into public.student_profiles (profile_id, student_type, interface_mode, camera_policy)
 values

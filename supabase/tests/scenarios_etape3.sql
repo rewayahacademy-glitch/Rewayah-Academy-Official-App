@@ -4,7 +4,26 @@
 
 -- Droits facon Supabase (alter default privileges du projet).
 grant usage on schema public to anon, authenticated, service_role;
-grant all on all tables in schema public to authenticated, service_role;
+do $scenario_grants$
+declare
+  v_table record;
+begin
+  for v_table in
+    select schemaname, tablename
+    from pg_catalog.pg_tables
+    where schemaname = 'public' and tablename <> 'contract_acceptances'
+  loop
+    execute format(
+      'grant all on table %I.%I to authenticated, service_role',
+      v_table.schemaname, v_table.tablename
+    );
+  end loop;
+end
+$scenario_grants$;
+-- Postgres nu n'applique pas les privilèges par défaut de Supabase. La RPC
+-- SECURITY INVOKER lit la signature qu'elle vient d'insérer; reproduire ici
+-- le SELECT de plateforme, sans modifier stub_auth ni les ACL de production.
+grant select on table public.contract_acceptances to authenticated;
 grant all on all sequences in schema public to authenticated, service_role;
 grant all on all functions in schema public to service_role;
 
@@ -559,16 +578,19 @@ end $$;
 -- par la migration 0090.
 -- L'enseignant signe dès pending_kyc, avant que la direction l'active.
 
+-- Avis de contrôle préchargé par le propriétaire du scénario : il n'existe pas
+-- de RPC de signature dédiée à cet avis.
+insert into public.contract_acceptances (profile_id, contract_kind, version)
+values (
+  '22222222-2222-2222-2222-222222222222',
+  'recording_and_control_notice', '2026-10-jur'
+);
+
 do $$
 begin
   set local role authenticated;
   perform set_config('test.uid', '22222222-2222-2222-2222-222222222222', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
-  insert into public.contract_acceptances (profile_id, contract_kind, version)
-  values (
-    '22222222-2222-2222-2222-222222222222',
-    'recording_and_control_notice', '2026-10-jur'
-  );
   perform public.signer_contrat('2026-10-jur', 'Yasmine Test');
 end $$;
 
@@ -640,10 +662,10 @@ begin
 
   begin
     insert into public.contract_acceptances (
-      profile_id, contract_kind, version, signed_sha256
+      profile_id, contract_kind, version, signer_name, signed_sha256
     ) values (
       '22222222-2222-2222-2222-222222222222',
-      'teacher_nda', 'test-signature-0057', repeat('0', 64)
+      'teacher_nda', 'test-signature-0057', 'Enseignant Test', repeat('0', 64)
     );
     raise exception 'CONTRAT ECHEC : le client a pu fournir son empreinte';
   exception when insufficient_privilege then
