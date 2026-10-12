@@ -251,6 +251,11 @@ BEGIN
   EXCEPTION WHEN insufficient_privilege THEN NULL;
   END;
   BEGIN
+    PERFORM public.controleur_fil_de_mission(current_setting('test.b12_mission_id')::uuid);
+    RAISE EXCEPTION 'B12: enseignant sans capacite a ouvert un fil';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+  BEGIN
     PERFORM public.controleur_envoyer_message(
       current_setting('test.b12_fil_id')::uuid,'b1230000-0000-0000-0000-000000000014','Interdit');
     RAISE EXCEPTION 'B12: enseignant sans capacite a ecrit un message';
@@ -287,6 +292,10 @@ BEGIN
   BEGIN PERFORM public.controleur_lister_rapports();
     RAISE EXCEPTION 'B12: direction desactivee lit les rapports';
   EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.controleur_ajouter_complement(
+      current_setting('test.b12_rapport_id')::uuid,'Interdit',NULL);
+    RAISE EXCEPTION 'B12: direction desactivee ajoute un complement';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
 END;
 $disabled_admin$;
 RESET ROLE;
@@ -298,6 +307,19 @@ SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"controller"}}',
 SET LOCAL ROLE authenticated;
 DO $disabled_controller$
 BEGIN
+  BEGIN PERFORM public.controleur_lister_fils();
+    RAISE EXCEPTION 'B12: controleur desactive lit les fils';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.controleur_fil_de_mission(current_setting('test.b12_mission_id')::uuid);
+    RAISE EXCEPTION 'B12: controleur desactive ouvre un fil';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.controleur_envoyer_message(
+      current_setting('test.b12_fil_id')::uuid,'b1230000-0000-0000-0000-000000000017','Interdit');
+    RAISE EXCEPTION 'B12: controleur desactive envoie un message';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.controleur_lister_rapports();
+    RAISE EXCEPTION 'B12: controleur desactive lit les rapports';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
   BEGIN PERFORM public.controleur_ajouter_complement(
       current_setting('test.b12_rapport_id')::uuid,'Interdit',NULL);
     RAISE EXCEPTION 'B12: controleur desactive ajoute un complement';
@@ -325,6 +347,10 @@ BEGIN
   BEGIN PERFORM public.controleur_lister_rapports();
     RAISE EXCEPTION 'B12: admin sans profil lit les rapports';
   EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.controleur_ajouter_complement(
+      current_setting('test.b12_rapport_id')::uuid,'Interdit',NULL);
+    RAISE EXCEPTION 'B12: admin sans profil ajoute un complement';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
 END;
 $admin_without_profile$;
 
@@ -332,6 +358,19 @@ $admin_without_profile$;
 SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"controller"}}',true);
 DO $controller_without_profile$
 BEGIN
+  BEGIN PERFORM public.controleur_lister_fils();
+    RAISE EXCEPTION 'B12: controleur sans profil lit les fils';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.controleur_fil_de_mission(current_setting('test.b12_mission_id')::uuid);
+    RAISE EXCEPTION 'B12: controleur sans profil ouvre un fil';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.controleur_envoyer_message(
+      current_setting('test.b12_fil_id')::uuid,'b1230000-0000-0000-0000-000000000018','Interdit');
+    RAISE EXCEPTION 'B12: controleur sans profil envoie un message';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.controleur_lister_rapports();
+    RAISE EXCEPTION 'B12: controleur sans profil lit les rapports';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
   BEGIN PERFORM public.controleur_ajouter_complement(
       current_setting('test.b12_rapport_id')::uuid,'Interdit',NULL);
     RAISE EXCEPTION 'B12: contrôleur sans profil ajoute un complément';
@@ -346,8 +385,34 @@ SELECT set_config('request.jwt.claims','{}',true);
 SET LOCAL ROLE anon;
 DO $anonymous$
 BEGIN
+  IF EXISTS (
+    SELECT 1 FROM unnest(ARRAY[
+      'public.controleur_lister_fils()'::regprocedure,
+      'public.controleur_fil_de_mission(uuid)'::regprocedure,
+      'public.controleur_envoyer_message(uuid,uuid,text)'::regprocedure,
+      'public.controleur_lister_rapports()'::regprocedure,
+      'public.controleur_ajouter_complement(uuid,text,text)'::regprocedure
+    ]) AS rpc(oid)
+    WHERE pg_catalog.has_function_privilege('anon', rpc.oid, 'EXECUTE')
+  ) THEN
+    RAISE EXCEPTION 'B12: anon conserve EXECUTE sur une RPC controleur';
+  END IF;
   BEGIN PERFORM public.controleur_lister_fils();
     RAISE EXCEPTION 'B12: anon a execute la RPC';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.controleur_fil_de_mission(current_setting('test.b12_mission_id')::uuid);
+    RAISE EXCEPTION 'B12: anon a ouvert un fil';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.controleur_envoyer_message(
+      current_setting('test.b12_fil_id')::uuid,'b1230000-0000-0000-0000-000000000019','Interdit');
+    RAISE EXCEPTION 'B12: anon a envoye un message';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.controleur_lister_rapports();
+    RAISE EXCEPTION 'B12: anon a lu des rapports';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.controleur_ajouter_complement(
+      current_setting('test.b12_rapport_id')::uuid,'Interdit',NULL);
+    RAISE EXCEPTION 'B12: anon a ajoute un complement';
   EXCEPTION WHEN insufficient_privilege THEN NULL; END;
 END;
 $anonymous$;
