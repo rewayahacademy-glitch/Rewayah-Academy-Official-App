@@ -89,6 +89,12 @@ BEGIN
      OR jsonb_array_length(v_result->'lignes') <> 2 THEN
     RAISE EXCEPTION 'X2-20 ADM: total de classe incorrect';
   END IF;
+  v_result := public.comptes_rendus_classe(
+    'c2200000-0000-0000-0000-000000000201', 2147483647, NULL);
+  IF (v_result->>'page')::integer <> 42949672
+     OR jsonb_array_length(v_result->'lignes') <> 0 THEN
+    RAISE EXCEPTION 'X2-20 ADM: grande page non plafonnee';
+  END IF;
 
   PERFORM set_config('request.jwt.claim.sub',
     'c2200000-0000-0000-0000-000000000008', true);
@@ -116,6 +122,26 @@ BEGIN
         'c2200000-0000-0000-0000-000000000301',
         'c2200000-0000-0000-0000-000000000003');
       RAISE EXCEPTION 'X2-20 ADM: rôle % autorisé à lire le cahier', v_role;
+    EXCEPTION WHEN insufficient_privilege THEN
+      NULL;
+    END;
+  END LOOP;
+
+  FOREACH v_uid IN ARRAY ARRAY[
+    'c2200000-0000-0000-0000-000000000008'::uuid,
+    'c2200000-0000-0000-0000-000000000005'::uuid,
+    'c2200000-0000-0000-0000-000000000006'::uuid,
+    'c2200000-0000-0000-0000-000000000003'::uuid,
+    'c2200000-0000-0000-0000-000000000007'::uuid
+  ] LOOP
+    SELECT p.role::text INTO v_role FROM public.profiles p WHERE p.id = v_uid;
+    PERFORM set_config('request.jwt.claim.sub', v_uid::text, true);
+    PERFORM set_config('request.jwt.claims',
+      jsonb_build_object('app_metadata', jsonb_build_object('role', v_role))::text, true);
+    BEGIN
+      PERFORM public.comptes_rendus_classe(
+        'c2200000-0000-0000-0000-000000000201', 1, NULL);
+      RAISE EXCEPTION 'X2-20 ADM: role % autorise a lister les cahiers', v_role;
     EXCEPTION WHEN insufficient_privilege THEN
       NULL;
     END;

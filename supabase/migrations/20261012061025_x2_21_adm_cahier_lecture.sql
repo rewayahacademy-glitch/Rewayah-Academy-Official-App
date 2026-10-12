@@ -9,7 +9,8 @@ RETURNS jsonb
 LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = ''
 AS $function$
 DECLARE
-  v_page integer := greatest(coalesce(p_page, 1), 1);
+  -- Keep page * 50 inside the positive int32 range used by row_number().
+  v_page integer := least(greatest(coalesce(p_page, 1), 1), 42949672);
   v_etat text := nullif(p_filtre_etat, '');
   v_lignes jsonb;
   v_total integer;
