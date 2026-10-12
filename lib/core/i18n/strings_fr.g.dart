@@ -2341,35 +2341,6 @@ class Traductions$notifications$fr {
 	String ligne({required Object titre, required Object date, required Object heure}) => '${titre}, le ${date} à ${heure}';
 }
 
-// Path: notifications.evenements
-class Traductions$notifications$evenements$fr {
-	Traductions$notifications$evenements$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-	/// fr: 'Une nouvelle demande de créneau a été reçue.'
-	String get demandeRecue => 'Une nouvelle demande de créneau a été reçue.';
-
-	/// fr: 'Une demande de présentation standard a été reçue.'
-	String get demandePresentation => 'Une demande de présentation standard a été reçue.';
-
-	/// fr: 'La classe est prête et attend son enseignant.'
-	String get classeValidee => 'La classe est prête et attend son enseignant.';
-
-	/// fr: 'Un enseignant a été affecté à la classe.'
-	String get enseignantAffecte => 'Un enseignant a été affecté à la classe.';
-
-	/// fr: 'Une demande de créneau a été clôturée.'
-	String get demandeClose => 'Une demande de créneau a été clôturée.';
-
-	/// fr: 'Un remplacement de cours vous est proposé.'
-	String get remplacementPropose => 'Un remplacement de cours vous est proposé.';
-
-	/// fr: 'Un remplacement de cours a été attribué.'
-	String get remplacementPris => 'Un remplacement de cours a été attribué.';
-}
-
 // Path: eleve
 class Traductions$eleve$fr {
 	Traductions$eleve$fr.internal(this._root);
@@ -10358,6 +10329,42 @@ class Traductions$historique$observation$fr {
 
 	/// fr: 'Aucune visite enregistrée ne correspond à cette séance.'
 	String get introuvablePhrase => 'Aucune visite enregistrée ne correspond à cette séance.';
+}
+
+// Path: notifications.evenements
+class Traductions$notifications$evenements$fr {
+	Traductions$notifications$evenements$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une nouvelle demande de créneau a été reçue.'
+	String get demandeRecue => 'Une nouvelle demande de créneau a été reçue.';
+
+	/// fr: 'Une demande de présentation standard a été reçue.'
+	String get demandePresentation => 'Une demande de présentation standard a été reçue.';
+
+	/// fr: 'La classe est prête et attend son enseignant.'
+	String get classeValidee => 'La classe est prête et attend son enseignant.';
+
+	/// fr: 'Un enseignant a été affecté à la classe.'
+	String get enseignantAffecte => 'Un enseignant a été affecté à la classe.';
+
+	/// fr: 'Une demande de créneau a été clôturée.'
+	String get demandeClose => 'Une demande de créneau a été clôturée.';
+
+	/// fr: 'Un remplacement de cours vous est proposé.'
+	String get remplacementPropose => 'Un remplacement de cours vous est proposé.';
+
+	/// fr: 'Un remplacement de cours a été attribué.'
+	String get remplacementPris => 'Un remplacement de cours a été attribué.';
+
+	/// fr: 'Une mission de contrôle vous a été attribuée.'
+	String get controleMissionAttribuee => 'Une mission de contrôle vous a été attribuée.';
+
+	/// fr: 'Une mission de contrôle est restée sans vérification.'
+	String get controleMissionNonControlee => 'Une mission de contrôle est restée sans vérification.';
 }
 
 // Path: notifications.filtres
@@ -31268,7 +31275,6 @@ class Traductions$com$annonces$administration$moderation$regles$fr {
 extension on Traductions {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'notifications.evenements.demandePresentation' => 'Une demande de présentation standard a été reçue.',
 			'commun.classeDistincte.numero' => ({required Object libelle, required Object numero}) => '${libelle} · n° ${numero}',
 			'commun.classeDistincte.code' => ({required Object libelle, required Object code}) => '${libelle} · ${code}',
 			'commun.classeDistincte.enseignant' => ({required Object libelle, required Object enseignant}) => '${libelle} · avec ${enseignant}',
@@ -34944,6 +34950,15 @@ extension on Traductions {
 			'historique.observation.introuvableTitre' => 'Aucune visite pour cette séance',
 			'historique.observation.introuvablePhrase' => 'Aucune visite enregistrée ne correspond à cette séance.',
 			'historique.dateCourteSansAnnee' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
+			'notifications.evenements.demandeRecue' => 'Une nouvelle demande de créneau a été reçue.',
+			'notifications.evenements.demandePresentation' => 'Une demande de présentation standard a été reçue.',
+			'notifications.evenements.classeValidee' => 'La classe est prête et attend son enseignant.',
+			'notifications.evenements.enseignantAffecte' => 'Un enseignant a été affecté à la classe.',
+			'notifications.evenements.demandeClose' => 'Une demande de créneau a été clôturée.',
+			'notifications.evenements.remplacementPropose' => 'Un remplacement de cours vous est proposé.',
+			'notifications.evenements.remplacementPris' => 'Un remplacement de cours a été attribué.',
+			'notifications.evenements.controleMissionAttribuee' => 'Une mission de contrôle vous a été attribuée.',
+			'notifications.evenements.controleMissionNonControlee' => 'Une mission de contrôle est restée sans vérification.',
 			'notifications.filtres.libelle' => 'Filtrer les notifications',
 			'notifications.filtres.toutes' => 'Toutes',
 			'notifications.filtres.nonLues' => 'Non lues',
@@ -34988,12 +35003,6 @@ extension on Traductions {
 			'notifications.types.annonceInterne' => 'Annonce interne',
 			'notifications.types.evenementContextuel' => 'Événement',
 			'notifications.types.autre' => 'Notification',
-			'notifications.evenements.demandeRecue' => 'Une nouvelle demande de créneau a été reçue.',
-			'notifications.evenements.classeValidee' => 'La classe est prête et attend son enseignant.',
-			'notifications.evenements.enseignantAffecte' => 'Un enseignant a été affecté à la classe.',
-			'notifications.evenements.demandeClose' => 'Une demande de créneau a été clôturée.',
-			'notifications.evenements.remplacementPropose' => 'Un remplacement de cours vous est proposé.',
-			'notifications.evenements.remplacementPris' => 'Un remplacement de cours a été attribué.',
 			'notifications.titre' => 'Notifications',
 			'notifications.indisponibleTitre' => 'Les notifications ne sont pas encore disponibles',
 			'notifications.indisponiblePhrase' => 'Les rappels de séance et les messages de l\'académie s\'afficheront ici dès qu\'ils seront ouverts.',
@@ -35376,6 +35385,8 @@ extension on Traductions {
 			'classe.cartes.feuille.aideLongueur' => ({required Object max}) => '${max} caractères au plus',
 			'classe.cartes.feuille.aideLien' => 'Une adresse complète, qui commence par https://',
 			'classe.cartes.feuille.echeanceAucune' => 'Aucune échéance',
+			_ => null,
+		} ?? switch (path) {
 			'classe.cartes.feuille.choisirEcheance' => 'Choisir la date d\'échéance',
 			'classe.cartes.feuille.retirerEcheance' => 'Retirer l\'échéance',
 			'classe.cartes.feuille.enregistrer' => 'Enregistrer la carte',
@@ -35385,8 +35396,6 @@ extension on Traductions {
 			'classe.cartes.feuille.retirerConfirmer' => 'Retirer la carte',
 			'classe.cartes.feuille.envoiNonConfirme' => 'La carte n\'est pas confirmée : la réponse n\'est pas arrivée. Enregistrez de nouveau dans un instant.',
 			'classe.cartes.feuille.retraitNonConfirme' => 'Le retrait n\'est pas confirmé : la réponse n\'est pas arrivée. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.feuille.defauts.titreVide' => 'Le titre manque. Écrivez quelques mots, par exemple « Sourate à réviser ».',
 			'classe.cartes.feuille.defauts.titreLong' => ({required Object max}) => 'Le titre dépasse ${max} caractères. Raccourcissez-le.',
 			'classe.cartes.feuille.defauts.texteLong' => ({required Object max}) => 'Le texte dépasse ${max} caractères. Raccourcissez-le ou partagez un lien.',
@@ -35890,6 +35899,8 @@ extension on Traductions {
 			'enseignant.revue.aucuneAnomalie' => 'Rien ne demande votre attention.',
 			'enseignant.revue.erreur' => 'La revue n\'a pas pu être lue.',
 			'enseignant.revue.erreurDetail' => 'Cette Classe n\'est peut-être pas la vôtre, ou la lecture a échoué.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revue.pasDeDecision' => 'Vous signalez, l\'académie tranche : un transfert et une réorientation ne se décident pas depuis ici.',
 			'enseignant.revue.typeGate' => 'Palier à venir',
 			'enseignant.revue.typeCorridor' => 'Élève hors corridor',
@@ -35899,8 +35910,6 @@ extension on Traductions {
 			'enseignant.revenus.intro' => 'Une estimation de votre rémunération du mois choisi, Classe par Classe.',
 			'enseignant.revenus.introSansChoix' => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.',
 			'enseignant.revenus.estimation' => 'Estimation',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.periode' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
 			'enseignant.revenus.totalEstime' => 'Revenu estimé du mois',
 			'enseignant.revenus.totalDetail' => 'Rémunération pédagogique, hors aide Internet.',
@@ -36404,6 +36413,8 @@ extension on Traductions {
 			'tc.classe.action.reciter' => 'Choisir pour réciter',
 			'tc.classe.action.noter' => 'Noter',
 			'tc.classe.action.signaler' => 'Signaler un besoin',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.action.contexte' => 'Ouvrir le contexte',
 			'tc.classe.rappel.recu' => 'Le professeur vous appelle',
 			'tc.classe.rappel.echec' => 'Le rappel n\'a pas pu être envoyé',
@@ -36413,8 +36424,6 @@ extension on Traductions {
 			'tc.classe.recitation.actif' => ({required Object prenom}) => '${prenom} récite',
 			'tc.classe.recitation.pastille' => 'Récite',
 			'tc.classe.recitation.suivants' => 'Ensuite',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.recitation.personne' => 'Personne ne récite',
 			'tc.classe.recitation.arreter' => 'Arrêter la récitation',
 			'tc.classe.support.aucun' => 'Aucun support présenté',
@@ -36918,6 +36927,8 @@ extension on Traductions {
 			'adulte.sortie.retirerElle' => 'Retirer ma conjointe',
 			'adulte.sortie.retirerLui' => 'Retirer mon conjoint',
 			'adulte.sortie.retirerQuestionElle' => 'Retirer ma conjointe ?',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.sortie.retirerQuestionLui' => 'Retirer mon conjoint ?',
 			'adulte.sortie.retirerConsequence' => 'Son compte, ses cours, son historique et son solde ne seront pas supprimés.',
 			'adulte.sortie.placePhrase' => ({required Object prenom}) => '${prenom} fait partie de votre forfait famille, avec son propre compte.',
@@ -36927,8 +36938,6 @@ extension on Traductions {
 			'adulte.sortie.quitterConsequence' => 'Votre compte, vos cours, votre historique et votre solde restent disponibles. Le rattachement au forfait famille prendra fin.',
 			'adulte.sortie.forfaitPhrase' => ({required Object dePrenom}) => 'Vous faites partie du forfait famille ${dePrenom}.',
 			'adulte.sortie.resultatTitre' => 'Le rattachement au forfait famille a pris fin',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.sortie.resultatTitulaire' => 'Son compte, ses cours, son historique et son solde restent disponibles.',
 			'adulte.sortie.resultatSecondAdulte' => 'Votre compte, vos cours, votre historique et votre solde restent disponibles.',
 			'adulte.sortie.compris' => 'Compris',
@@ -37432,6 +37441,8 @@ extension on Traductions {
 			'com.socle.lexique.messages' => 'Messages',
 			'com.socle.lexique.messagesMetier' => 'Messages métier',
 			'com.socle.lexique.communaute' => 'Communauté enseignants',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.lexique.studio' => 'Le Studio',
 			'com.socle.lexique.aujourdhui' => 'Aujourd\'hui',
 			'com.socle.lexique.notifications' => 'Notifications',
@@ -37441,8 +37452,6 @@ extension on Traductions {
 			'com.socle.lexique.enregistrer' => 'Enregistrer',
 			'com.socle.lexique.signaler' => 'Signaler',
 			'com.socle.lexique.modeFocus' => 'Mode focus',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.lexique.quitterFocus' => 'Quitter le focus',
 			'com.socle.lexique.aTraiter' => 'À traiter',
 			'com.socle.lexique.actionRequise' => 'Action requise',
@@ -37946,6 +37955,8 @@ extension on Traductions {
 			'com.studio.recherche.tout' => 'Tout',
 			'com.studio.recherche.canaux' => 'Canaux',
 			'com.studio.recherche.messages' => 'Messages',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.recherche.fichiers' => 'Fichiers',
 			'com.studio.recherche.dansCanal' => ({required Object canal}) => 'Dans ${canal}',
 			'com.studio.recherche.messageDe' => ({required Object auteur, required Object canal}) => '${auteur}, dans ${canal}',
@@ -37955,8 +37966,6 @@ extension on Traductions {
 			'com.studio.demo.choisir' => 'Choisissez une situation à essayer.',
 			'com.studio.demo.normale' => 'Le Studio et ses canaux',
 			'com.studio.demo.echec' => 'Envoi non confirmé',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.horsLigne' => 'Hors ligne',
 			'com.studio.demo.canalPrive' => 'Adresse d\'un canal privé qui ne vous est pas ouvert',
 			'com.studio.demo.sansCanaux' => 'Aucun canal ouvert',
@@ -38460,6 +38469,8 @@ extension on Traductions {
 			'comptable.paiements.confirmation.prets' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '1 prêt', other: '${n} prêts', ), 
 			'comptable.paiements.confirmation.exclus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '1 exclu', other: '${n} exclus', ), 
 			'comptable.paiements.confirmation.total' => 'Total des paiements prêts',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.beneficiairesCle' => 'Bénéficiaires',
 			'comptable.paiements.confirmation.beneficiaires' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un bénéficiaire', other: '${n} bénéficiaires', ), 
 			'comptable.paiements.confirmation.devises' => 'Devises',
@@ -38469,8 +38480,6 @@ extension on Traductions {
 			'comptable.paiements.confirmation.aucunPretTitre' => 'Aucun paiement prêt',
 			'comptable.paiements.confirmation.aucunPret' => 'Rien ne partira. Ouvrez chaque paiement exclu pour lever sa raison, puis relancez le contrôle.',
 			'comptable.paiements.confirmation.erreursTitre' => 'Erreurs rendues par le contrôle',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.confirmerUn' => ({required Object montant}) => 'Confirmer le paiement de ${montant}',
 			'comptable.paiements.confirmation.confirmerLot' => ({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Confirmer le paiement prêt de ${montants}', other: 'Confirmer les ${n} paiements prêts : ${montants}', ), 
 			'comptable.paiements.confirmation.demanderValidation' => 'Demander validation',
@@ -38974,6 +38983,8 @@ extension on Traductions {
 			'comptable.validation.valider' => 'Valider',
 			'comptable.validation.refuser' => 'Refuser',
 			'comptable.validation.annuler' => 'Annuler',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.fermer' => 'Fermer',
 			'comptable.validation.confirmerRefus' => 'Confirmer le refus',
 			'comptable.validation.motifTitre' => 'Motif du refus',
@@ -38983,8 +38994,6 @@ extension on Traductions {
 			'comptable.validation.motifs.justificatif' => 'Justificatif manquant ou illisible',
 			'comptable.validation.motifs.reserve' => 'Hors de la politique de la Réserve',
 			'comptable.validation.motifs.reporter' => 'À reporter au prochain cycle',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.motifs.autre' => 'Autre',
 			'comptable.validation.motifAutreChamp' => 'Précisez le motif',
 			'comptable.validation.erreurMotif' => 'Choisissez un motif pour refuser.',

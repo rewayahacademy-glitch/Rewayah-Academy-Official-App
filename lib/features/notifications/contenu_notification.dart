@@ -14,6 +14,10 @@ NotificationContenu contenuNotificationPour(
     'demande_close' => t.notifications.evenements.demandeClose,
     'remplacement_propose' => t.notifications.evenements.remplacementPropose,
     'remplacement_pris' => t.notifications.evenements.remplacementPris,
+    'controle_mission_attribuee' =>
+      t.notifications.evenements.controleMissionAttribuee,
+    'controle_mission_non_controlee' =>
+      t.notifications.evenements.controleMissionNonControlee,
     _ => throw const FormatException('Événement de notification inconnu.'),
   };
   return NotificationContenu(titre: titre);

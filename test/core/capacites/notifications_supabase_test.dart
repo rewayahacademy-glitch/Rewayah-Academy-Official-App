@@ -79,7 +79,47 @@ void main() {
       expect(notifications, hasLength(1));
       expect(notifications.single.titre, 'Demande de présentation');
       expect(notifications.single.destination, '/tuteur/demandes');
+      expect(notifications.single.type, TypeNotification.messageMetier);
     });
+
+    test('maps assigned control missions to the controller destination', () {
+      final NotificationTuteur notification = notificationDepuis(
+        _row(
+          evenement: 'controle_mission_attribuee',
+          destination: '/controleur',
+          params: <String, dynamic>{'mission_id': 'private-mission-id'},
+        ),
+        titrePour: (String evenement, Map<String, dynamic> params) {
+          expect(evenement, 'controle_mission_attribuee');
+          expect(params, isEmpty);
+          return const NotificationContenu(titre: 'Mission attribuée');
+        },
+      );
+
+      expect(notification.type, TypeNotification.mission);
+      expect(notification.destination, '/controleur');
+    });
+
+    test(
+      'maps uncontrolled mission notices to the admin audit destination',
+      () {
+        final NotificationTuteur notification = notificationDepuis(
+          _row(
+            evenement: 'controle_mission_non_controlee',
+            destination: '/admin/securite-audit/tirages',
+            params: <String, dynamic>{'mission_id': 'private-mission-id'},
+          ),
+          titrePour: (String evenement, Map<String, dynamic> params) {
+            expect(evenement, 'controle_mission_non_controlee');
+            expect(params, isEmpty);
+            return const NotificationContenu(titre: 'Mission non contrôlée');
+          },
+        );
+
+        expect(notification.type, TypeNotification.evenementOperationnel);
+        expect(notification.destination, '/admin/securite-audit/tirages');
+      },
+    );
 
     test('rejects malformed read timestamps instead of marking them read', () {
       expect(
@@ -100,6 +140,21 @@ void main() {
       );
 
       expect(notification.destination, isNull);
+    });
+
+    test('keeps known notices when a row has an unknown destination', () {
+      final List<NotificationTuteur> notifications = notificationsDepuis(
+        <dynamic>[
+          _row(destination: '/admin/destination-future'),
+          _row(destination: '/tuteur/demandes'),
+        ],
+        titrePour: (String _, Map<String, dynamic> _) =>
+            const NotificationContenu(titre: 'Demande reçue'),
+      );
+
+      expect(notifications, hasLength(2));
+      expect(notifications.first.destination, isNull);
+      expect(notifications.last.destination, '/tuteur/demandes');
     });
   });
 }

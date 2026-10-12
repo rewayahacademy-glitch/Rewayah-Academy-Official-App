@@ -14,7 +14,7 @@ final Provider<PortNotifications> notificationsPagePortProvider =
       try {
         return NotificationsSupabase(
           Supabase.instance.client,
-          titrePour: contenuNotificationPour,
+          contenuPour: contenuNotificationPour,
         );
       } on Object {
         // Hors du démarrage applicatif (tests, aperçu isolé), garder l'état

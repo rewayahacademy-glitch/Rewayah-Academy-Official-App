@@ -7,7 +7,9 @@
       "enseignantAffecte": "تم تعيين معلم للفصل.",
       "demandeClose": "أُغلق طلب الموعد.",
       "remplacementPropose": "عُرضت عليك حصة بديلة.",
-      "remplacementPris": "تم إسناد حصة بديلة."
+      "remplacementPris": "تم إسناد حصة بديلة.",
+      "controleMissionAttribuee": "تم إسناد مهمة مراقبة إليك.",
+      "controleMissionNonControlee": "لم تتم مراجعة مهمة مراقبة."
     },
     "titre": "الإشعارات",
     "indisponibleTitre": "الإشعارات غير متاحة بعد",

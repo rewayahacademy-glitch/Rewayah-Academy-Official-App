@@ -30,18 +30,25 @@ const Set<String> _evenementsPrisEnCharge = <String>{
   'remplacement_propose',
   'remplacement_pris',
   'demande_presentation',
+  'controle_mission_attribuee',
+  'controle_mission_non_controlee',
 };
 
 const Set<String> _destinationsAutorisees = <String>{
   '/tuteur/demandes',
   '/enseignant/journee/remplacements',
+  '/controleur',
+  '/admin/securite-audit/tirages',
 };
 
 /// Adaptateur Supabase de la boîte privée de notifications.
 class NotificationsSupabase
     implements PortNotifications, PortLectureNotifications {
   /// Crée l'adaptateur avec le client de l'application et le résolveur localisé.
-  const NotificationsSupabase(this._client, {required this._contenuPour});
+  const NotificationsSupabase(
+    this._client, {
+    required NotificationContenuResolver contenuPour,
+  }) : _contenuPour = contenuPour;
 
   final SupabaseClient _client;
   final NotificationContenuResolver _contenuPour;
@@ -216,5 +223,7 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'remplacement_propose' ||
   'remplacement_pris' => TypeNotification.remplacement,
   'demande_presentation' => TypeNotification.messageMetier,
+  'controle_mission_attribuee' => TypeNotification.mission,
+  'controle_mission_non_controlee' => TypeNotification.evenementOperationnel,
   _ => TypeNotification.autre,
 };

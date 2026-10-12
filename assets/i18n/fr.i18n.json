@@ -4465,7 +4465,9 @@
       "enseignantAffecte": "Un enseignant a été affecté à la classe.",
       "demandeClose": "Une demande de créneau a été clôturée.",
       "remplacementPropose": "Un remplacement de cours vous est proposé.",
-      "remplacementPris": "Un remplacement de cours a été attribué."
+      "remplacementPris": "Un remplacement de cours a été attribué.",
+      "controleMissionAttribuee": "Une mission de contrôle vous a été attribuée.",
+      "controleMissionNonControlee": "Une mission de contrôle est restée sans vérification."
     },
     "filtres": {
       "libelle": "Filtrer les notifications",
