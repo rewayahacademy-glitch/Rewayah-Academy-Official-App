@@ -1,6 +1,11 @@
 -- IMM-BACK-1 A: synthetic RA format, uniqueness and collision retry cases.
 begin;
 
+-- Test-only Supabase Auth fields used by the server-origin guard; the shared
+-- stub_auth.sql remains untouched.
+alter table auth.users add column if not exists raw_app_meta_data jsonb not null default '{}'::jsonb;
+alter table auth.users add column if not exists created_at timestamptz not null default now();
+
 create temporary table imm_back_1_draws (attempts integer not null) on commit drop;
 insert into imm_back_1_draws values (0);
 insert into private.person_registrations
@@ -76,7 +81,15 @@ insert into auth.users (id, email) values
   ('a1100000-0000-0000-0000-000000000005', 'imm1-signup-guardian@example.test'),
   ('a1100000-0000-0000-0000-000000000006', 'imm1-signup-teacher@example.test'),
   ('a1100000-0000-0000-0000-000000000008', 'imm1-direct-insert@example.test'),
-  ('a1100000-0000-0000-0000-000000000009', 'imm1-atomic-failure@example.test');
+  ('a1100000-0000-0000-0000-000000000009', 'imm1-atomic-failure@example.test'),
+  ('a1100000-0000-0000-0000-000000000010', 'imm1-teacher@example.test'),
+  ('a1100000-0000-0000-0000-000000000011', 'imm1-student@example.test'),
+  ('a1100000-0000-0000-0000-000000000012', 'imm1-pending-guardian@example.test'),
+  ('a1100000-0000-0000-0000-000000000013', 'imm1-expired-guardian@example.test');
+update auth.users set raw_app_meta_data = jsonb_build_object(
+  'child_of', 'a1100000-0000-0000-0000-000000000001'
+) where id in ('a1100000-0000-0000-0000-000000000003',
+               'a1100000-0000-0000-0000-000000000009');
 insert into public.households (id, timezone) values
   ('a11fffff-0000-0000-0000-000000000001', 'Europe/Paris'),
   ('a11fffff-0000-0000-0000-000000000002', 'Europe/Paris');
@@ -88,7 +101,17 @@ values
   ('a1100000-0000-0000-0000-000000000002', null, 'guardian',
    'a11fffff-0000-0000-0000-000000000002', 'Nadia', 'Outside', 'active'),
   ('a1100000-0000-0000-0000-000000000004', null, 'admin',
-   null, 'Admin', 'Fixture', 'active');
+   null, 'Admin', 'Fixture', 'active'),
+  ('a1100000-0000-0000-0000-000000000010', null, 'teacher',
+   'a11fffff-0000-0000-0000-000000000001', 'Teacher', 'Fixture', 'active'),
+  ('a1100000-0000-0000-0000-000000000011', null, 'student',
+   'a11fffff-0000-0000-0000-000000000001', 'Student', 'Fixture', 'active'),
+  ('a1100000-0000-0000-0000-000000000012', null, 'guardian',
+   'a11fffff-0000-0000-0000-000000000001', 'Pending', 'Guardian', 'pending_kyc'),
+  ('a1100000-0000-0000-0000-000000000013', null, 'guardian',
+   'a11fffff-0000-0000-0000-000000000001', 'Expired', 'Guardian', 'active');
+update public.profiles set access_until = '2000-01-01 UTC'
+ where id = 'a1100000-0000-0000-0000-000000000013';
 
 do $official_creation_paths$
 declare
@@ -139,11 +162,74 @@ begin
      or has_function_privilege(
        'service_role',
        'public.creer_profil_enfant(uuid,uuid,text,text,integer,text)', 'EXECUTE'
+     )
+     or has_function_privilege(
+       'anon',
+       'public.creer_profil_inscription(text,text,text,public.gender,text,boolean)', 'EXECUTE'
+     )
+     or has_function_privilege(
+       'service_role',
+       'public.creer_profil_inscription(text,text,text,public.gender,text,boolean)', 'EXECUTE'
      ) then
     raise exception 'IMM-BACK-1: droits EXECUTE enfant incorrects';
   end if;
 end;
 $child_rpc_acl$;
+
+-- F86 negative contexts: active non-guardians, a pending guardian and a
+-- disabled administrator must not gain child-creation capability.
+do $child_rpc_denies_roles_and_status$
+declare
+  v_actor uuid;
+  v_role text;
+  v_accepted boolean;
+begin
+  for v_actor, v_role in
+    select * from (values
+      ('a1100000-0000-0000-0000-000000000010'::uuid, 'teacher'),
+      ('a1100000-0000-0000-0000-000000000011'::uuid, 'student'),
+      ('a1100000-0000-0000-0000-000000000012'::uuid, 'guardian'),
+      ('a1100000-0000-0000-0000-000000000013'::uuid, 'guardian'),
+      ('a1100000-0000-0000-0000-000000000004'::uuid, 'admin')
+    ) as actors(id, role_name)
+  loop
+    if v_role = 'admin' then
+      update public.profiles set account_status = 'disabled' where id = v_actor;
+    end if;
+    update auth.users set raw_app_meta_data = jsonb_build_object('child_of', v_actor::text)
+      where id = 'a1100000-0000-0000-0000-000000000009';
+    perform set_config('request.jwt.claim.sub', v_actor::text, true);
+    perform set_config('request.jwt.claims', jsonb_build_object(
+      'sub', v_actor::text, 'app_metadata', jsonb_build_object('role', v_role)
+    )::text, true);
+    v_accepted := false;
+    begin
+      set local role authenticated;
+      perform public.creer_profil_enfant(
+        'a1100000-0000-0000-0000-000000000009', v_actor,
+        'Refuse', 'Fixture', 10, null
+      );
+      v_accepted := true;
+      raise exception '__rollback_accepted_child_probe__';
+    exception when others then
+      if sqlerrm = '__rollback_accepted_child_probe__' then
+        null;
+      else
+        v_accepted := false;
+      end if;
+    end;
+    if v_accepted then
+      raise exception 'IMM-BACK-1: role/status probe accepted %', v_role;
+    end if;
+    if v_role = 'admin' then
+      update public.profiles set account_status = 'active' where id = v_actor;
+    end if;
+  end loop;
+  update auth.users set raw_app_meta_data = jsonb_build_object(
+    'child_of', 'a1100000-0000-0000-0000-000000000001'
+  ) where id = 'a1100000-0000-0000-0000-000000000009';
+end;
+$child_rpc_denies_roles_and_status$;
 
 set local role authenticated;
 select set_config('request.jwt.claim.sub', 'a1100000-0000-0000-0000-000000000002', true);
@@ -170,6 +256,32 @@ select public.creer_profil_enfant(
   'a1100000-0000-0000-0000-000000000003',
   'a1100000-0000-0000-0000-000000000001', 'Lina', 'Created', 10, null
 );
+do $child_rpc_denies_existing_profile$
+begin
+  begin
+    perform public.creer_profil_enfant(
+      'a1100000-0000-0000-0000-000000000003',
+      'a1100000-0000-0000-0000-000000000001', 'Duplicate', 'Profile', 10, null
+    );
+    raise exception 'IMM-BACK-1: profil existant accepte une seconde creation';
+  exception when insufficient_privilege then
+    null;
+  end;
+end;
+$child_rpc_denies_existing_profile$;
+do $child_rpc_denies_unproven_account$
+begin
+  begin
+    perform public.creer_profil_enfant(
+      'a1100000-0000-0000-0000-000000000008',
+      'a1100000-0000-0000-0000-000000000001', 'Sans', 'Preuve', 10, null
+    );
+    raise exception 'IMM-BACK-1: compte auth arbitraire accepte comme enfant';
+  exception when insufficient_privilege then
+    null;
+  end;
+end;
+$child_rpc_denies_unproven_account$;
 reset role;
 do $child_profile_registry$
 begin

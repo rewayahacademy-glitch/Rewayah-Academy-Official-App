@@ -57,7 +57,7 @@ Deno.serve(async (requete: Request) => {
     email: courriel,
     email_confirm: true,
     password: crypto.randomUUID() + crypto.randomUUID(),
-    user_metadata: { cree_par: tuteur.id },
+    app_metadata: { child_of: tuteur.id },
   })
   if (erreurCompte || !compte.user) {
     return refus('creation du compte impossible', 500)
