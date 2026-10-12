@@ -579,7 +579,7 @@ begin
     perform public.entrer_observation(
       'c1aaaaaa-0000-0000-0000-00000000000a', 'guardian_observer');
   exception when insufficient_privilege then
-    v_refus_enseignant := (sqlerrm like '%observation reservee au tuteur%');
+    v_refus_enseignant := (sqlerrm like '%observation reservee aux tuteurs et a l''administration%');
   end;
 
   reset role;
