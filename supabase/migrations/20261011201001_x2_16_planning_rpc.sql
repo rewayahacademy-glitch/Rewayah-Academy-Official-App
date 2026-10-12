@@ -32,3 +32,4 @@ as $$
 $$;
 revoke all on function public.lister_planning_direction(timestamptz, integer, integer) from public, anon;
 grant execute on function public.lister_planning_direction(timestamptz, integer, integer) to authenticated;
+revoke execute on function public.lister_planning_direction(timestamptz, integer, integer) from service_role;
