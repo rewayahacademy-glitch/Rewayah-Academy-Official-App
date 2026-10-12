@@ -66,7 +66,9 @@ VALUES
 INSERT INTO public.weekly_availability
   (profile_id, weekday, hour_local, timezone_iana)
 VALUES
-  ('f1490000-0000-0000-0000-000000000997', 2, 18, 'Europe/Paris');
+  ('f1490000-0000-0000-0000-000000000997', 2, 18, 'Europe/Paris'),
+  ('f1490000-0000-0000-0000-000000000997', 4, 18, 'Europe/Paris'),
+  ('f1490000-0000-0000-0000-000000000997', 6, 18, 'Europe/Paris');
 
 UPDATE public.households
    SET primary_guardian_id = 'f1490000-0000-0000-0000-000000000998'
@@ -174,7 +176,8 @@ DECLARE
   v_pret boolean;
   v_jours smallint[];
   v_heures smallint[];
-  v_regroupement text;
+  v_regroupement uuid;
+  v_regroupement_admin jsonb;
   v_offre uuid;
   v_result uuid;
   v_groupe uuid;
@@ -256,11 +259,21 @@ BEGIN
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
   PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
-  SELECT regroupement_id, nombre_eleves, quota, pret, jours, heures_locales
-    INTO v_regroupement, v_count, v_quota, v_pret, v_jours, v_heures
-   FROM public.regroupements_demandes_horaires_admin()
-   WHERE type_public = 'adulte' AND langue_code = 'francais'
-     AND fuseau_iana = 'Europe/Paris';
+  SELECT item INTO v_regroupement_admin
+    FROM public.regroupements_c11bis_admin() AS regroupements(item)
+   WHERE item->>'type_public' = 'adulte'
+     AND item->>'langue_code' = 'francais'
+     AND item->>'fuseau_iana' = 'Europe/Paris'
+     AND item->>'niveau' = 'lecture_lente';
+  v_regroupement := (v_regroupement_admin->>'regroupement_id')::uuid;
+  v_count := (v_regroupement_admin->>'nombre_eleves')::integer;
+  v_quota := (v_regroupement_admin->>'quota')::integer;
+  v_pret := (v_regroupement_admin->>'peut_creer_classe')::boolean;
+  SELECT array_agg((heure->>'jour_iso')::smallint ORDER BY position),
+         array_agg((heure->>'heure')::smallint ORDER BY position)
+    INTO v_jours, v_heures
+    FROM jsonb_array_elements(v_regroupement_admin->'occurrences')
+      WITH ORDINALITY AS horaires(heure, position);
   IF v_count <> v_capacite OR v_quota <> v_capacite OR NOT v_pret THEN
     RAISE EXCEPTION 'F1 quota: regroupement=% eleves=% quota=% pret=%',
       v_regroupement, v_count, v_quota, v_pret;
@@ -273,10 +286,10 @@ BEGIN
   END IF;
 
   v_groupe := public.creer_classe_depuis_regroupement(
-    v_regroupement, 'c1200000-0000-0000-0000-000000000001', 'Classe F1 C-12'
+    v_regroupement, 'c1201000-0000-0000-0000-000000000001'::uuid, 'Classe F1 C-12'
   );
   v_groupe_rejoue := public.creer_classe_depuis_regroupement(
-    v_regroupement, 'c1200000-0000-0000-0000-000000000001', 'Classe F1 C-12'
+    v_regroupement, 'c1201000-0000-0000-0000-000000000001'::uuid, 'Classe F1 C-12'
   );
   IF v_groupe_rejoue <> v_groupe
      OR NOT EXISTS (
@@ -430,7 +443,9 @@ BEGIN
 
   -- C-10 : le suivi déduit le foyer depuis la session, sans identifiant fourni
   -- par le client, et ne rend que les demandes de ce foyer.
-  v_reponse := public.mes_demandes_horaires_famille();
+  SELECT coalesce(jsonb_agg(to_jsonb(s)), '[]'::jsonb)
+    INTO v_reponse
+    FROM public.suivi_demandes_horaires_foyer() AS s;
   IF jsonb_array_length(v_reponse) = 0
      OR EXISTS (
        SELECT 1
@@ -444,7 +459,7 @@ BEGIN
   IF EXISTS (
     SELECT 1
     FROM jsonb_array_elements(v_reponse) AS ligne
-    WHERE coalesce(ligne->>'etat', '') <> 'enseignant_affecte'
+    WHERE coalesce(ligne->>'etape', '') <> 'enseignant_affecte'
       AND (ligne->>'enseignant') IS NOT NULL
   ) THEN
     RAISE EXCEPTION 'C-10 : un enseignant est visible avant son affectation';
@@ -452,8 +467,19 @@ BEGIN
   IF EXISTS (
     SELECT 1
     FROM jsonb_array_elements(v_reponse) AS ligne
-    WHERE jsonb_array_length(ligne->'jours') <>
-          jsonb_array_length(ligne->'heures_locales')
+    JOIN public.demandes_horaires_famille AS demande
+      ON demande.id = (ligne->>'demande_id')::uuid
+    WHERE jsonb_array_length(ligne->'occurrences') <> cardinality(demande.jours)
+       OR EXISTS (
+         SELECT 1
+         FROM jsonb_array_elements(ligne->'occurrences') WITH ORDINALITY
+           AS occurrence(valeur, position)
+         WHERE (occurrence.valeur->>'jour_iso')::integer <>
+                 demande.jours[occurrence.position::integer]
+            OR (occurrence.valeur->>'heure')::integer <>
+                 demande.heures_locales[occurrence.position::integer]
+            OR (occurrence.valeur->>'minute')::integer <> 0
+       )
   ) THEN
     RAISE EXCEPTION 'C-10 bis : jours et heures ne sont pas parallèles';
   END IF;
@@ -461,31 +487,34 @@ BEGIN
     SELECT 1
     FROM jsonb_array_elements(v_reponse) AS ligne
     WHERE ligne->>'eleve_id' = 'f1490000-0000-0000-0000-000000000003'
-      AND ligne->>'etat' = 'enseignant_affecte'
-      AND ligne->>'enseignant' = 'Sayid Enseignant'
-      AND (ligne->>'debut_cours_local') !~ '(Z|[+-][0-9]{2}:[0-9]{2})$'
-      AND (ligne->>'debut_cours_local')::timestamp::time = time '18:00'
+      AND ligne->>'etape' = 'enseignant_affecte'
+      AND ligne->>'enseignant' = 'Enseignant Test'
+      AND ligne->>'titre_public' = 'sayid'
+      AND (ligne->>'debut_cours') !~ '(Z|[+-][0-9]{2}:[0-9]{2})$'
+      AND (ligne->>'debut_cours')::timestamp::time = time '18:00'
   ) THEN
-    RAISE EXCEPTION 'C-04/C-10 : titre masculin ou heure murale du cours absent';
+    RAISE EXCEPTION 'C-10 : nom de l''enseignant ou heure murale du cours absent';
   END IF;
 
-  -- C-04 : le titre public suit le genre du profil enseignant; il n'est
-  -- jamais saisi ni fourni par le client.
+  -- C-04 : le RPC rend le titre distinct du nom; le genre reste serveur.
   UPDATE public.profiles SET gender = 'female'
    WHERE id = 'f1490000-0000-0000-0000-000000000997';
-  v_reponse := public.mes_demandes_horaires_famille();
+  SELECT coalesce(jsonb_agg(to_jsonb(s)), '[]'::jsonb)
+    INTO v_reponse
+    FROM public.suivi_demandes_horaires_foyer() AS s;
   IF NOT EXISTS (
     SELECT 1
     FROM jsonb_array_elements(v_reponse) AS ligne
     WHERE ligne->>'eleve_id' = 'f1490000-0000-0000-0000-000000000003'
-      AND ligne->>'enseignant' = 'Sayyida Enseignant'
+      AND ligne->>'enseignant' = 'Enseignant Test'
+      AND ligne->>'titre_public' = 'sayyida'
   ) THEN
-    RAISE EXCEPTION 'C-04 : gender=female ne produit pas le titre sayyida';
+    RAISE EXCEPTION 'C-04 : titre_public ne suit pas le genre du profil enseignant';
   END IF;
   UPDATE public.profiles SET gender = 'male'
    WHERE id = 'f1490000-0000-0000-0000-000000000997';
 
-  RAISE NOTICE 'F1/C-10: demandes privées, suivi foyer, heures par jour, titre C-04 et ACL vérifiés';
+  RAISE NOTICE 'F1/C-10: suivi, confidentialité, horaires muraux et titre C-04 vérifiés';
 END
 $quota$;
 

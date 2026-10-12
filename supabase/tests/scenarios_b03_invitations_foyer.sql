@@ -66,6 +66,8 @@ DECLARE
   v_repeat jsonb;
   v_state jsonb;
   v_count integer;
+  v_guard_error text;
+  v_cancelled boolean;
 BEGIN
   PERFORM set_config('request.jwt.claim.sub', v_inviter::text, true);
   PERFORM set_config('request.jwt.claims',
@@ -152,10 +154,60 @@ BEGIN
   END IF;
 
   PERFORM set_config('request.jwt.claim.sub', v_inviter::text, true);
+
+  -- F86 must-pass: an active account with the wrong JWT role is rejected
+  -- before the cancellation can change an invitation or its outbox row.
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'student',
+      'household_id', 'b0300000-0000-0000-0000-000000000101'))::text, true);
+  BEGIN
+    PERFORM public.annuler_invitation_conjoint();
+    RAISE EXCEPTION 'B-03 F86: a non-guardian cancelled a household invitation';
+  EXCEPTION WHEN SQLSTATE 'P0001' THEN
+    GET STACKED DIAGNOSTICS v_guard_error = MESSAGE_TEXT;
+    IF v_guard_error <> 'annulation indisponible' THEN
+      RAISE;
+    END IF;
+  END;
+
+  -- F86 null-safety: a missing JWT role is rejected too.
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object(
+      'household_id', 'b0300000-0000-0000-0000-000000000101'))::text, true);
+  BEGIN
+    PERFORM public.annuler_invitation_conjoint();
+    RAISE EXCEPTION 'B-03 F86: a JWT without a role cancelled an invitation';
+  EXCEPTION WHEN SQLSTATE 'P0001' THEN
+    GET STACKED DIAGNOSTICS v_guard_error = MESSAGE_TEXT;
+    IF v_guard_error <> 'annulation indisponible' THEN
+      RAISE;
+    END IF;
+  END;
+
+  SELECT count(*) INTO v_count
+  FROM public.invitations_foyer
+  WHERE invite_par = v_inviter
+    AND email_invite = 'b03-unverified@example.test'
+    AND statut = 'en_attente';
+  IF v_count <> 1 OR NOT EXISTS (
+    SELECT 1
+    FROM public.email_outbox_invitation_foyer o
+    JOIN public.invitations_foyer i ON i.id = o.invitation_id
+    WHERE i.invite_par = v_inviter
+      AND i.email_invite = 'b03-unverified@example.test'
+      AND o.statut = 'en_attente'
+  ) THEN
+    RAISE EXCEPTION 'B-03 F86: a denied cancellation changed invitation state';
+  END IF;
+
+  -- Restore the valid role and prove the permitted cancellation still works.
   PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
       'household_id', 'b0300000-0000-0000-0000-000000000101'))::text, true);
-  PERFORM public.annuler_invitation_conjoint();
+  v_cancelled := public.annuler_invitation_conjoint();
+  IF v_cancelled IS NOT TRUE THEN
+    RAISE EXCEPTION 'B-03 F86: a valid guardian could not cancel their invitation';
+  END IF;
   PERFORM public.inviter_conjoint(
     'b03-expired@example.test',
     'b0300000-0000-0000-0000-000000000206'

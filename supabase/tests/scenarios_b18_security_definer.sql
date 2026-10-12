@@ -2,6 +2,7 @@
 -- À exécuter après toutes les migrations sur PostgreSQL jetable seulement.
 begin;
 select set_config('request.jwt.claims', '{}', true);
+REVOKE SELECT ON public.kyc_documents FROM authenticated;
 
 set local role anon;
 do $$
@@ -98,7 +99,9 @@ begin
       ('indicateurs_admin', 'select * from public.indicateurs_admin()', 'centre de commande reserve a l''administration'),
       ('demandes_en_attente', 'select * from public.demandes_en_attente()', 'file des demandes reservee a l''administration'),
       ('journal_audit_filtres', 'select public.journal_audit_filtres()', 'journal d''audit reserve a l''administration'),
-      ('maj_eleve_pedagogie', 'select public.maj_eleve_pedagogie(null::uuid, ''inconnu'', ''inconnu'')', 'seul un administrateur modifie le niveau ou la riwaya')
+      ('maj_eleve_pedagogie', 'select public.maj_eleve_pedagogie(null::uuid, ''inconnu'', ''inconnu'')', 'seul un administrateur modifie le niveau ou la riwaya'),
+      ('decider_dossier', 'select public.decider_dossier(null::uuid, true)', 'seul un administrateur decide d''un dossier'),
+      ('attribuer_eleve', 'select public.attribuer_eleve(null::uuid, null::uuid, 1, 1, null)', 'attribution manuelle reservee a l''administration')
     ) as tests(nom, commande, refus_attendu)
   loop
     begin
@@ -111,7 +114,7 @@ begin
     end;
   end loop;
 
-  raise notice 'B2 ok : compte Auth sans profil refusé par les six RPC sensibles';
+  raise notice 'B2 ok : compte Auth sans profil refusé par les huit RPC sensibles';
 end
 $b2$;
 reset role;
@@ -245,6 +248,8 @@ $b18_scanner$;
 insert into auth.users (id, email) values
   ('b1840000-0000-0000-0000-000000000004', 'b18-null-role-guardian@example.test'),
   ('b1840000-0000-0000-0000-000000000005', 'b18-null-role-child@example.test');
+insert into public.households (id, timezone)
+values ('b1840000-0000-0000-0000-000000000010', 'Europe/Paris');
 insert into public.profiles
   (id, immutable_id, role, gender, first_name, last_name, account_status, household_id)
 values
