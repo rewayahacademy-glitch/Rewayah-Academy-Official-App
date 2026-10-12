@@ -77,6 +77,7 @@ DO $f86_postflight$
 DECLARE
   v_signature text;
   v_definition text;
+  v_comment text;
   v_owner text;
   v_config text[];
 BEGIN
@@ -89,6 +90,10 @@ BEGIN
       FROM pg_catalog.pg_proc p
      WHERE p.oid = pg_catalog.to_regprocedure(v_signature)::oid;
     v_definition := pg_catalog.pg_get_functiondef(v_signature::pg_catalog.regprocedure);
+    v_comment := coalesce(
+      pg_catalog.obj_description(pg_catalog.to_regprocedure(v_signature)::oid, 'pg_proc'),
+      ''
+    );
     IF v_owner IS DISTINCT FROM 'postgres'
        OR NOT coalesce(v_config @> ARRAY['search_path=""'], false)
        OR pg_catalog.strpos(v_definition, 'public.app_account_valid() AND public.app_role() = ''admin''') = 0
@@ -97,10 +102,10 @@ BEGIN
        OR pg_catalog.has_function_privilege('service_role', v_signature, 'EXECUTE')
        OR pg_catalog.has_function_privilege('agent_ro', v_signature, 'EXECUTE')
        OR NOT pg_catalog.has_function_privilege('authenticated', v_signature, 'EXECUTE')
-       OR coalesce(pg_catalog.strpos(
-         pg_catalog.obj_description(pg_catalog.to_regprocedure(v_signature)::oid, 'pg_proc'),
-         'md5_functiondef=A_CALCULER;'
-       ), 0) = 0 THEN
+       OR pg_catalog.strpos(
+         v_comment,
+         'md5_functiondef=' || pg_catalog.md5(v_definition) || ';'
+       ) = 0 THEN
       RAISE EXCEPTION 'F86 postflight: guard/ACL/owner/search_path/allowlist invalid for %', v_signature;
     END IF;
   END LOOP;
