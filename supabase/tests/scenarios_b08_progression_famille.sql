@@ -195,6 +195,14 @@ BEGIN
     'b0800000-0000-0000-0000-000000000411', true
   );
 
+  SELECT count(*) INTO v_count FROM public.audit_logs a
+  WHERE a.action = 'resume_seance_famille_publie'
+    AND a.table_name = 'seance_resumes'
+    AND a.row_id = v_session::text || ':' || v_student::text;
+  IF v_count <> 1 THEN
+    RAISE EXCEPTION 'B-08: la première publication n''a pas produit une entrée d''audit';
+  END IF;
+
   v_denied := false;
   BEGIN
     PERFORM public.enregistrer_resume_seance(
@@ -339,9 +347,9 @@ BEGIN
 END
 $publication_auditee$;
 
--- audit_logs n'est lisible que par admin/contrôleur via RLS. Vérifier la trace
--- avec le rôle propriétaire du scénario, après les assertions familiales qui
--- restent exécutées sous authenticated.
+-- La republication ci-dessus modifie le jalon : chaque publication doit laisser
+-- sa propre ligne d'audit. Vérifier les deux avec le rôle propriétaire du
+-- scénario, après les assertions familiales sous authenticated.
 RESET ROLE;
 DO $publication_audit$
 DECLARE v_count integer;
@@ -350,8 +358,8 @@ BEGIN
   WHERE a.action = 'resume_seance_famille_publie'
     AND a.table_name = 'seance_resumes'
     AND a.row_id = 'b0800000-0000-0000-0000-000000000301:b0800000-0000-0000-0000-000000000003';
-  IF v_count <> 1 THEN
-    RAISE EXCEPTION 'B-08: la publication n''a pas produit une entrée d''audit';
+  IF v_count <> 2 THEN
+    RAISE EXCEPTION 'B-08: attendu deux entrées d''audit pour les deux publications, obtenu %', v_count;
   END IF;
 END
 $publication_audit$;
