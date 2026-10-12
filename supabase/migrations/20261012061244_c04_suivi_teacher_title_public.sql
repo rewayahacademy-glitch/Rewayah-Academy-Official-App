@@ -128,7 +128,7 @@ REVOKE ALL ON FUNCTION public.suivi_demandes_horaires_foyer()
 GRANT EXECUTE ON FUNCTION public.suivi_demandes_horaires_foyer()
   TO authenticated;
 COMMENT ON FUNCTION public.suivi_demandes_horaires_foyer() IS
-  'F86: signature=public.suivi_demandes_horaires_foyer(); md5_prosrc=A_CALCULER; guard=active family account; titre_public derives from profiles.gender.';
+  'F86: signature=public.suivi_demandes_horaires_foyer(); md5_functiondef=9e7d6b4cea897babc465b9454b0b03e4; guard=active family account; titre_public derives from profiles.gender.';
 
 DO $postflight$
 DECLARE
@@ -159,7 +159,7 @@ BEGIN
      OR pg_catalog.has_function_privilege('agent_ro', v_oid, 'EXECUTE')
      OR NOT pg_catalog.has_function_privilege('authenticated', v_oid, 'EXECUTE')
      OR pg_catalog.obj_description(v_oid, 'pg_proc') NOT LIKE
-       '%signature=public.suivi_demandes_horaires_foyer(); md5_prosrc=A_CALCULER;%'
+       '%signature=public.suivi_demandes_horaires_foyer(); md5_functiondef=9e7d6b4cea897babc465b9454b0b03e4;%'
   THEN
     RAISE EXCEPTION 'C-04: ACL ou empreinte F86 placeholder incorrecte';
   END IF;

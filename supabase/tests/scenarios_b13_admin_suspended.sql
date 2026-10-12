@@ -41,7 +41,8 @@ insert into public.sessions
 values
   ('b13fffff-0000-0000-0000-000000000003',
    'b1300000-0000-0000-0000-000000000003',
-   now(), now() + interval '1 hour');
+   TIMESTAMPTZ '2030-01-02 03:00:00+00',
+   TIMESTAMPTZ '2030-01-02 04:00:00+00');
 
 insert into public.guardian_session_visit
   (id, session_id, groupe_id, observateur_profile_id, role, enfant_profile_id,

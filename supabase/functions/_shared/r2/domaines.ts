@@ -35,6 +35,7 @@ export type DomaineStockage =
   | 'archiveSeance'
   | 'pieceJointeMessage'
   | 'priveApplicatif'
+  | 'supports'
 
 /// Le prefixe du groupe de cinq secrets de chaque domaine.
 const PREFIXE: Record<DomaineStockage, string> = {
@@ -42,6 +43,7 @@ const PREFIXE: Record<DomaineStockage, string> = {
   archiveSeance: 'R2_RECORDINGS',
   pieceJointeMessage: 'R2_MESSAGING',
   priveApplicatif: 'R2_APP_PRIVATE',
+  supports: 'R2_APP_PRIVATE',
 }
 
 /// Le seau que chaque domaine DOIT atteindre.
@@ -52,11 +54,12 @@ const PREFIXE: Record<DomaineStockage, string> = {
 /// pas le sien et la resolution echoue franchement au lieu de reussir au mauvais
 /// endroit. C'est ce qui rend vrai << aucun domaine ne partage accidentellement
 /// le seau d'un autre >>, plutot que de l'esperer.
-const SEAU_ATTENDU: Record<DomaineStockage, string> = {
+const SEAU_ATTENDU: Record<DomaineStockage, string | null> = {
   pieceIdentite: 'rewayah-identity-vault',
   archiveSeance: 'rewayah-session-recordings',
   pieceJointeMessage: 'rewayah-message-attachments',
   priveApplicatif: 'rewayah-app-private-storage',
+  supports: null,
 }
 
 /// Tous les domaines, pour les balayages de configuration et les tests.
@@ -64,7 +67,7 @@ export const DOMAINES: readonly DomaineStockage[] = Object.keys(PREFIXE) as Doma
 
 /// Le nom du seau attendu pour un domaine. Sert au controle et aux tests ; ce
 /// n'est jamais ce qui est envoye a R2.
-export function seauAttendu(domaine: DomaineStockage): string {
+export function seauAttendu(domaine: DomaineStockage): string | null {
   return SEAU_ATTENDU[domaine]
 }
 
@@ -132,7 +135,9 @@ function lireSecret(
   suffixe: string,
   env: LecteurEnvironnement,
 ): string {
-  const nom = `${PREFIXE[domaine]}_${suffixe}`
+  const nom = domaine === 'supports' && suffixe === 'BUCKET_NAME'
+    ? 'R2_BUCKET_SUPPORTS'
+    : `${PREFIXE[domaine]}_${suffixe}`
   const brut = env(nom)
   if (brut === undefined || brut.trim() === '') {
     throw new ErreurConfigurationR2(domaine, nom, 'secret absent')
@@ -189,7 +194,11 @@ export function configurationDe(
   }
 
   const seau = lireSecret(domaine, 'BUCKET_NAME', env)
-  if (seau !== SEAU_ATTENDU[domaine]) {
+  if (domaine === 'supports') {
+    if (!/^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(seau)) {
+      throw new ErreurConfigurationR2(domaine, 'R2_BUCKET_SUPPORTS', 'nom de seau invalide')
+    }
+  } else if (seau !== SEAU_ATTENDU[domaine]) {
     // Le nom lu n'entre pas dans le message : c'est peut-etre le seau d'un
     // AUTRE domaine, et l'annoncer reviendrait a publier la carte des seaux
     // dans un journal.
