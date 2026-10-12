@@ -261,9 +261,11 @@ set local session authorization authenticated;
 select set_config('request.jwt.claim.sub', 'a1100000-0000-0000-0000-000000000004', true);
 select set_config('request.jwt.claims',
   '{"sub":"a1100000-0000-0000-0000-000000000004","role":"authenticated","app_metadata":{"role":"admin"}}', true);
-insert into public.profiles (id, immutable_id, role, first_name, last_name, account_status)
+insert into public.profiles
+  (id, immutable_id, role, household_id, first_name, last_name, account_status)
 values ('a1100000-0000-0000-0000-000000000008', 'RA-26-0000', 'guardian',
-        'Direct', 'Insert', 'active');
+        'a11fffff-0000-0000-0000-000000000001', 'Direct', 'Insert', 'active');
+reset session authorization;
 do $caller_chosen_code$
 begin
   if (select immutable_id from public.profiles
@@ -278,6 +280,7 @@ begin
   end if;
 end;
 $caller_chosen_code$;
+set local session authorization authenticated;
 
 -- Exact lookup accepts separators/case but never reveals non-related profiles.
 do $lookup_and_acl$
@@ -332,6 +335,32 @@ begin
 end;
 $lookup_and_acl$;
 
+reset session authorization;
+update public.profiles set account_status = 'disabled'
+ where id = 'a1100000-0000-0000-0000-000000000002';
+select set_config('imm.back1.disabled_lookup_code',
+  (select immutable_id from public.profiles
+    where id = 'a1100000-0000-0000-0000-000000000002'), true);
+set local session authorization authenticated;
+select set_config('request.jwt.claim.sub', 'a1100000-0000-0000-0000-000000000002', true);
+select set_config('request.jwt.claims', jsonb_build_object(
+  'sub', 'a1100000-0000-0000-0000-000000000002',
+  'role', 'authenticated',
+  'app_metadata', jsonb_build_object(
+    'role', 'guardian', 'household_id', 'a11fffff-0000-0000-0000-000000000002'
+  )
+)::text, true);
+do $disabled_lookup$
+declare
+  v_code text := current_setting('imm.back1.disabled_lookup_code');
+begin
+  if exists (select 1 from public.rechercher_personne_par_matricule(v_code)) then
+    raise exception 'IMM-BACK-1: compte désactivé a recherché un matricule';
+  end if;
+end;
+$disabled_lookup$;
+
+reset session authorization;
 do $catalogue$
 begin
   if not exists (
