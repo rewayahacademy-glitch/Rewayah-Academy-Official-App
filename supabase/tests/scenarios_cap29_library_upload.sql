@@ -64,13 +64,14 @@ BEGIN
     'c29a1000-0000-0000-0000-000000000003', 'support', 'signe.pdf',
     'application/pdf', 1234, v_sha
   );
-  -- Mutant guard: if DB-side HMAC verification is removed, this untrusted
-  -- confirmation reaches the write and the explicit failure below turns red.
+  -- A well-formed but incorrect MAC isolates the DB-side HMAC comparison.
+  -- Removing that comparison lets this call confirm the upload and turns red.
   BEGIN
     PERFORM public.confirmer_upload_bibliotheque(
-      (v_intention->>'id')::uuid, 'application/pdf', 1234, v_sha, NULL
+      (v_intention->>'id')::uuid, 'application/pdf', 1234, v_sha,
+      pg_catalog.repeat('0', 64)
     );
-    RAISE EXCEPTION 'CAP29 upload: appel client sans HMAC accepte';
+    RAISE EXCEPTION 'CAP29 upload: signature HMAC invalide acceptee';
   EXCEPTION WHEN insufficient_privilege THEN
     NULL;
   END;
