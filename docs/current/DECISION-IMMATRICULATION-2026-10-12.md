@@ -1,0 +1,91 @@
+# Décision : immatriculation des personnes et accueil des inscrits actuels (directeur, 12/10/2026)
+
+**Statut : validé par le directeur le 12/10/2026, dans la conversation d'orchestration.**
+
+Ce document remplace, pour le **format** du matricule, le complément du 7 octobre
+(`docs/orchestration/handoff/2026-10-09/REWAYAH_COMPLEMENT_IMMATRICULATION_IDENTITES_V0_1.md`).
+Le directeur a jugé illisible et imprononçable le format `RA-XXXX-XXXX-XXXX` proposé par ce complément.
+Le reste du complément s'applique tant qu'il ne contredit pas ce document : registre dédié,
+attribution atomique côté serveur, immutabilité, non-réattribution, autorisations, codes propres
+à chaque évaluation publiée et critères IMM-01 à IMM-14.
+
+## 1. Format du matricule : `RA-26-4817`
+
+| Partie | Règle |
+| :--- | :--- |
+| `RA` | Préfixe fixe, pour la marque. Toujours devant. |
+| `26` | Les deux derniers chiffres de l'année de la première inscription (date du serveur, en UTC). |
+| `4817` | Nombre **tiré au hasard** côté serveur, jamais un compteur. Il a 4 chiffres (`0000` à `9999`) tant que l'année compte moins de 4 500 matricules. Au-delà, le serveur tire sur 5 chiffres. |
+
+- **Chiffres seulement après `RA`** : rien à épeler, aucune confusion entre O et 0 ou entre I et 1, et
+  le code se lit de la même façon en français, en anglais et en arabe. Il s'affiche toujours de gauche
+  à droite, y compris dans l'interface arabe.
+- **Le rôle n'est pas dans le code.** Une personne garde son matricule si elle change de rôle ou en
+  cumule plusieurs. Le rôle s'affiche à côté, comme une étiquette traduite dans la langue de l'app
+  (Student, Guardian, Teacher…) et calculée à partir des données du serveur, jamais à partir du code.
+- **Pourquoi le hasard :** un compteur révèle le nombre d'inscrits et permet de deviner les codes
+  des autres. Le hasard ne change rien à la lisibilité.
+- **Unicité :** une contrainte d'unicité en base, et un nouveau tirage en cas de collision
+  uniquement. Si les tirages échouent trop souvent, le serveur passe à 5 chiffres. Un code est
+  attribué dans la même transaction que la création du profil. Il est immuable et n'est jamais
+  réattribué, même après un effacement.
+- **Saisie :** majuscules et minuscules sont acceptées, avec ou sans tirets ou espaces. Le serveur
+  ramène toujours le code à sa forme canonique `RA-AA-NNNN`.
+
+## 2. Les anciens codes disparaissent
+
+Les codes des formulaires Google (`STU/…-RA`, `TUT/…-RA`, `Stu-07-25-…/RA`) et le générateur
+« rôle + initiales + compteur » du serveur (`next_immutable_id`) étaient des essais préparatoires.
+**Ils ne sont ni repris, ni affichés, ni recherchables.** Le générateur par initiales est retiré. La
+colonne `profiles.immutable_id` reste en place pour les vues existantes et reçoit le matricule RA :
+il n'y a qu'une seule source de vérité, le registre.
+
+## 3. Connexion par matricule (plus tard, pas en V1)
+
+Le format est choisi pour pouvoir servir un jour d'identifiant de connexion à la place de
+l'e-mail. Ce jour-là, trois conditions s'appliquent :
+
+1. Le matricule dit **qui** se connecte. Le mot de passe, ou une autre preuve, reste obligatoire.
+   Le code seul ne connecte jamais personne, car il figure sur des fiches et des attestations.
+2. La récupération du compte passe par un e-mail ou un téléphone, celui du tuteur pour un enfant.
+3. Le serveur limite les tentatives et répond toujours « code ou mot de passe incorrect », sans
+   révéler si le code existe.
+
+## 4. Codes des évaluations publiées
+
+Ils restent séparés du matricule et propres à chaque évaluation (complément du 7 octobre, §5),
+au format simplifié `EV-NNNN` : des chiffres tirés au hasard, uniques dans l'évaluation.
+L'administration choisit d'afficher le code, le nom réel ou les deux, dans les règles du serveur.
+
+## 5. Accueil des inscrits actuels
+
+Les familles et les enseignants déjà inscrits par les formulaires Google ne doivent **pas tout
+ressaisir**.
+
+1. **Import préalable.** Leurs inscriptions sont importées dans l'app comme des fiches
+   « pré-inscrites » : foyer, personnes, ce qui est déjà connu. L'import se prépare et se teste sur
+   des données inventées. L'import réel attend un feu vert explicite du directeur. Aucune donnée
+   réelle ne passe par une conversation, un ticket ou une branche Git.
+2. **Preuve d'abord.** À la première connexion, la personne prouve d'abord qu'elle possède
+   l'adresse e-mail, par un code ou un lien envoyé à cette adresse. Avant cette preuve, l'app ne
+   révèle jamais qu'une adresse est connue : l'écran est le même pour tout le monde.
+3. **Accueil chaleureux.** Après la preuve, un message d'accueil explique que l'app la connaît déjà
+   et la rassure. Elle peut ensuite, sans y être obligée, mettre à jour ce qui existe et ajouter
+   de nouvelles personnes (un autre enfant, elle-même comme élève). Seul ce qui manque vraiment pour
+   continuer est demandé.
+4. **Mot personnel.** Depuis l'administration, le directeur peut joindre un mot d'accueil
+   personnel à un foyer pré-inscrit ou à une adresse e-mail attendue (« invitation en attente »).
+   Ce mot s'affiche une fois, à la première connexion. C'est le moyen de remercier une famille
+   qui a patienté. Aucune personne n'est jamais codée en dur dans l'app : c'est une fonction
+   générale, et le texte vient de l'administration.
+
+## 6. Partage du travail
+
+| Lot | Qui | Contenu |
+| :--- | :--- | :--- |
+| IMM-BACK-1 | Codex | Registre, générateur `RA-AA-NNNN`, attribution dans tous les parcours de création, retrait du générateur par initiales, remplissage de `immutable_id`, lecture et recherche exacte sous autorisation |
+| IMM-BACK-2 | Codex | Codes `EV-NNNN` et politique de publication des évaluations |
+| IMM-ACCUEIL-BACK | Codex | Fiches pré-inscrites, script d'import testé sur données inventées, rattachement après preuve de l'e-mail, invitations en attente avec mot personnel |
+| IMM-FRONT-1 | Claude | Affichage du matricule (copie, gauche à droite), étiquettes de rôle, réglage de publication |
+| IMM-ACCUEIL-FRONT | Claude | Écran d'accueil « on vous connaît déjà », mise à jour facultative, ajout de personnes, affichage du mot personnel, réglage du mot dans l'administration |
+| RECH-BACK-3 | Codex | Recherche exacte par matricule, après IMM-BACK-1 |
