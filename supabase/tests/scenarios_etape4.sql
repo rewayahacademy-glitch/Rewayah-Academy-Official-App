@@ -219,21 +219,21 @@ end $$;
 -- instants a SEPT JOURS d'ecart. Le feed de ENS-06 se vidait alors de toute
 -- famille d'un autre fuseau, deux heures par semaine, sans erreur ni trace.
 --
--- Le controle ne compare pas a une valeur ecrite en dur, qui serait vraie en ete
--- et fausse en hiver : deux fuseaux separes de quelques heures ne peuvent pas
--- rendre un ecart d'un jour entier pour le meme jour et la meme heure nominale.
--- Il vaut donc a n'importe quelle heure, n'importe quel jour de l'annee.
+-- Compare a 18 h : aux instants de rejeu documentes (10:05 et 11:30 UTC),
+-- cette heure reste a venir a Paris comme a Conakry. Ainsi le scenario compare
+-- les prochaines occurrences de la meme semaine, sans faire basculer un fuseau
+-- a la semaine suivante parce que midi local est deja passe.
 do $$
 declare
   v_jour int;
   v_ecart interval;
 begin
   for v_jour in 1 .. 7 loop
-    v_ecart := public.instant_creneau(v_jour, 12, 'Europe/Paris')
-             - public.instant_creneau(v_jour, 12, 'Africa/Conakry');
+    v_ecart := public.instant_creneau(v_jour, 18, 'Europe/Paris')
+             - public.instant_creneau(v_jour, 18, 'Africa/Conakry');
     if abs(extract(epoch from v_ecart)) >= 86400 then
       raise exception
-        'Instant ECHEC : le jour % rend % d''ecart entre Paris et Conakry, soit une semaine de decalage',
+        'Instant ECHEC : le jour % rend % d''ecart entre Paris et Conakry pour 18 h',
         v_jour, v_ecart;
     end if;
   end loop;
