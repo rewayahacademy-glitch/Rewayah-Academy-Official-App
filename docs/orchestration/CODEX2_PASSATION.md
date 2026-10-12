@@ -3,6 +3,13 @@
 Ce document s'adresse au **nouveau Codex 2**, qui remplace une session arrêtée. Lis-le en entier
 avant de toucher au code. Il remplace `CODEX2_FILE_ATTENTE.md`, qui date du matin et est périmé.
 
+
+> **Mise à jour du 12/10, 15h : la feuille a été rangée.** Les onglets Questions et Codex2 sont
+> archivés. Tout se passe désormais dans l'onglet **« Codex2 · en cours »** : les lignes 1 à 19 forment
+> ton tableau de bord (règles, état, file dans l'ordre), tenu à jour par l'orchestrateur, et le journal
+> commence ligne 22. Partout où ce document dit « onglet Codex2 », lis « Codex2 · en cours ». Les
+> lignes A196 à A201 citées plus bas restent lisibles dans l'onglet Codex2 archivé.
+
 ## 1. Ton rôle
 
 - **Qui tu es :** l'un des deux agents ChatGPT (Codex) du backend de Rewayah Academy : Supabase,
