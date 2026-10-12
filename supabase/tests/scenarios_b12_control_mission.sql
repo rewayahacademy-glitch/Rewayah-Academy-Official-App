@@ -11,7 +11,35 @@ VALUES
  ('b1200000-0000-0000-0000-000000000001','B12-ADMIN-0001','admin',NULL,'Direction','B12','active','female'),
  ('b1200000-0000-0000-0000-000000000002','B12-CTRL-00001','controller',NULL,'Controleur','B12','active','male'),
  ('b1200000-0000-0000-0000-000000000003','B12-CTRL-00002','controller',NULL,'Autre','B12','active','female'),
- ('b1200000-0000-0000-0000-000000000004','B12-TEACH-0001','teacher',NULL,'Enseignant','B12','active','male');
+ ('b1200000-0000-0000-0000-000000000004','B12-TEACH-0001','teacher',NULL,'Enseignant','B12','provisional_active','male');
+
+DO $fixture_teacher_contract$
+DECLARE
+  v_teacher_version text;
+  v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version
+  FROM public.contract_texts
+  WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version
+  FROM public.contract_required_versions
+  WHERE contract_kind='recording_and_control_notice';
+  PERFORM set_config('request.jwt.claim.sub','b1200000-0000-0000-0000-000000000004',true);
+  PERFORM set_config('test.uid','b1200000-0000-0000-0000-000000000004',true);
+  PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+  PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+  PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant B12');
+  INSERT INTO public.contract_acceptances(profile_id,contract_kind,version)
+  VALUES ('b1200000-0000-0000-0000-000000000004',
+          'recording_and_control_notice',v_notice_version);
+  UPDATE public.profiles SET account_status='active'
+  WHERE id='b1200000-0000-0000-0000-000000000004';
+  PERFORM set_config('request.jwt.claim.sub','',true);
+  PERFORM set_config('test.uid','',true);
+  PERFORM set_config('request.jwt.claims','',true);
+  PERFORM set_config('test.jwt','',true);
+END
+$fixture_teacher_contract$;
 INSERT INTO public.groupes(id,teacher_id,type_public,seuil_max,libelle,weekday,hour_local,timezone_iana)
 VALUES ('b1210000-0000-0000-0000-000000000001','b1200000-0000-0000-0000-000000000004',
         'enfant',5,'Classe B12',1,9,'Europe/Paris');
@@ -29,7 +57,8 @@ INSERT INTO private.controle_capacites
  (profile_id,approved_by,active_from,expires_at,scope_all_groups,scope_group_ids,
   scope_teacher_ids,grant_idempotency_key)
 VALUES ('b1200000-0000-0000-0000-000000000003','b1200000-0000-0000-0000-000000000001',
-        now()-interval '1 day',now()+interval '1 day',false,'{}','{}',
+        now()-interval '1 day',now()+interval '1 day',false,
+        ARRAY['b1210000-0000-0000-0000-000000000001'::uuid],'{}',
         'b1230000-0000-0000-0000-000000000002');
 INSERT INTO private.controle_missions
  (id,session_id,groupe_id,enseignant_effectif_id,controleur_id,version_regles,
@@ -37,7 +66,10 @@ INSERT INTO private.controle_missions
 VALUES ('b1240000-0000-0000-0000-000000000001','b1220000-0000-0000-0000-000000000001',
         'b1210000-0000-0000-0000-000000000001','b1200000-0000-0000-0000-000000000004',
         'b1200000-0000-0000-0000-000000000002',0,current_date,'aleatoire',
-        now()-interval '1 hour',now()+interval '1 hour',now()-interval '50 minutes','en_cours');
+        now()-interval '1 hour',now()+interval '1 hour',NULL,'attribuee');
+UPDATE private.controle_missions
+   SET statut='en_cours', commencee_le=now()-interval '50 minutes'
+ WHERE id='b1240000-0000-0000-0000-000000000001';
 INSERT INTO public.session_events(session_id,profile_id,event_type,server_ts,source)
 VALUES ('b1220000-0000-0000-0000-000000000001','b1200000-0000-0000-0000-000000000002',
         'joined',now()-interval '48 minutes','server');

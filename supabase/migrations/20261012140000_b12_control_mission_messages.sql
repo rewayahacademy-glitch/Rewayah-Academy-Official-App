@@ -343,15 +343,15 @@ END;
 $f86$;
 
 COMMENT ON FUNCTION public.controleur_lister_fils() IS
- 'F86 candidate allowlist: signature=public.controleur_lister_fils(); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: anon, autre contrôleur, compte inactif refusés; DTO sans contacts ni KYC.';
+ 'F86 candidate allowlist: signature=public.controleur_lister_fils(); md5_functiondef=9031b61f7bc6d54c2ba5867bfd440491; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: anon, autre contrôleur, compte inactif refusés; DTO sans contacts ni KYC.';
 COMMENT ON FUNCTION public.controleur_fil_de_mission(uuid) IS
- 'F86 candidate allowlist: signature=public.controleur_fil_de_mission(uuid); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: mission hors périmètre refusée; fil canonique idempotent.';
+ 'F86 candidate allowlist: signature=public.controleur_fil_de_mission(uuid); md5_functiondef=cd8bdaab207da1c0da0a5b39af603801; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: mission hors périmètre refusée; fil canonique idempotent.';
 COMMENT ON FUNCTION public.controleur_envoyer_message(uuid,uuid,text) IS
- 'F86 candidate allowlist: signature=public.controleur_envoyer_message(uuid,uuid,text); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: refus rôle non autorisé et message vide; clé client idempotente.';
+ 'F86 candidate allowlist: signature=public.controleur_envoyer_message(uuid,uuid,text); md5_functiondef=79e8352cf9fe42e2005a0b02842e83e2; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: refus rôle non autorisé et message vide; clé client idempotente.';
 COMMENT ON FUNCTION public.controleur_lister_rapports() IS
- 'F86 candidate allowlist: signature=public.controleur_lister_rapports(); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: contrôleur ne lit que ses rapports, Direction active lit tout; aucune donnée contact/KYC.';
+ 'F86 candidate allowlist: signature=public.controleur_lister_rapports(); md5_functiondef=e2220dd9714a76ec5bde0e8a73535188; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: contrôleur ne lit que ses rapports, Direction active lit tout; aucune donnée contact/KYC.';
 COMMENT ON FUNCTION public.controleur_ajouter_complement(uuid,text,text) IS
- 'F86 candidate allowlist: signature=public.controleur_ajouter_complement(uuid,text,text); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: autre auteur refusé; rapport parent immuable; complément ajouté.';
+ 'F86 candidate allowlist: signature=public.controleur_ajouter_complement(uuid,text,text); md5_functiondef=440dd4da6526f968bb364a6125b50d16; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: autre auteur refusé; rapport parent immuable; complément ajouté.';
 
 DO $postflight$
 BEGIN
@@ -369,7 +369,18 @@ BEGIN
        'public.controleur_lister_rapports()'::regprocedure,
        'public.controleur_ajouter_complement(uuid,text,text)'::regprocedure
      ) AND p.prosecdef AND p.proconfig @> ARRAY['search_path=""']
-       AND pg_catalog.obj_description(p.oid,'pg_proc') LIKE '%md5_functiondef=A_CALCULER%') <> 5 THEN
+       AND pg_catalog.obj_description(p.oid,'pg_proc') LIKE '%md5_functiondef=A_CALCULER%') <> 0
+     OR EXISTS (
+       SELECT 1 FROM (VALUES
+         ('public.controleur_lister_fils()'::regprocedure, '9031b61f7bc6d54c2ba5867bfd440491'),
+         ('public.controleur_fil_de_mission(uuid)'::regprocedure, 'cd8bdaab207da1c0da0a5b39af603801'),
+         ('public.controleur_envoyer_message(uuid,uuid,text)'::regprocedure, '79e8352cf9fe42e2005a0b02842e83e2'),
+         ('public.controleur_lister_rapports()'::regprocedure, 'e2220dd9714a76ec5bde0e8a73535188'),
+         ('public.controleur_ajouter_complement(uuid,text,text)'::regprocedure, '440dd4da6526f968bb364a6125b50d16')
+       ) AS fingerprints(oid, expected)
+       JOIN pg_catalog.pg_proc p ON p.oid=fingerprints.oid
+       WHERE pg_catalog.md5(pg_catalog.pg_get_functiondef(p.oid)) <> fingerprints.expected
+     ) THEN
     RAISE EXCEPTION 'B12 schema, ACL, RLS ou allowlist F86 invalide';
   END IF;
   IF EXISTS (
