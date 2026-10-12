@@ -1,17 +1,12 @@
--- X2-16: direction reads a bounded week through the caller's RLS.
-create policy groupes_planning_controller_read on public.groupes
-  for select to authenticated using (
-    public.app_account_valid() and public.app_role() = 'controller'
-    and exists (select 1 from public.sessions s where s.groupe_id = groupes.id and s.deleted_at is null)
-  );
-
+-- X2-16: the RPC checks account and role itself; bypasses recursive groupes
+-- policies while projecting only authorized planning data.
 create function public.lister_planning_direction(
   p_lundi timestamptz,
   p_limite integer default 100,
   p_offset integer default 0
 )
 returns table (id uuid, classe text, debut timestamptz, duree_minutes integer, statut text, enseignant text)
-language sql stable security invoker set search_path = ''
+language sql stable security definer set search_path = ''
 as $$
   select s.id, coalesce(g.libelle, ''), s.started_at,
          greatest(1, floor(extract(epoch from (s.ended_at - s.started_at)) / 60)::integer),

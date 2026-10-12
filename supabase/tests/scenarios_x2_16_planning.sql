@@ -27,17 +27,17 @@ insert into public.groupes(id,teacher_id,type_public,seuil_max,libelle,weekday,h
 insert into public.sessions(id,teacher_id,groupe_id,started_at,ended_at,status) values
  ('a16bbbbb-0000-0000-0000-000000000001','a1600000-0000-0000-0000-000000000003','a16aaaaa-0000-0000-0000-000000000001',date_trunc('week',now())+interval '1 day',date_trunc('week',now())+interval '1 day 1 hour','planned');
 do $$ begin
- if (select prosecdef from pg_proc where oid='public.lister_planning_direction(timestamptz,integer,integer)'::regprocedure) then raise exception 'X2-16 RPC must be SECURITY INVOKER'; end if;
+ if not (select prosecdef from pg_proc where oid='public.lister_planning_direction(timestamptz,integer,integer)'::regprocedure) then raise exception 'X2-16 RPC must be SECURITY DEFINER to avoid recursive groupes policies'; end if;
  if has_function_privilege('anon','public.lister_planning_direction(timestamptz,integer,integer)','EXECUTE') then raise exception 'X2-16 anon must not execute'; end if;
  if has_function_privilege('service_role','public.lister_planning_direction(timestamptz,integer,integer)','EXECUTE') then raise exception 'X2-16 service_role must not execute'; end if;
 end $$;
 set local role authenticated;
 select set_config('test.uid','a1600000-0000-0000-0000-000000000001',true);
 select set_config('test.jwt','{"app_metadata":{"role":"admin"}}',true);
-do $$ declare n int; begin select count(*) into n from public.lister_planning_direction(date_trunc('week',now()),100,0); if n<>1 then raise exception 'X2-16 admin expected 1 session'; end if; end $$;
+do $$ declare n int; begin select count(*) into n from public.lister_planning_direction(date_trunc('week',now()),100,0) where id='a16bbbbb-0000-0000-0000-000000000001'; if n<>1 then raise exception 'X2-16 admin expected target session'; end if; end $$;
 select set_config('test.uid','a1600000-0000-0000-0000-000000000002',true);
 select set_config('test.jwt','{"app_metadata":{"role":"controller"}}',true);
-do $$ declare n int; begin select count(*) into n from public.lister_planning_direction(date_trunc('week',now()),100,0); if n<>1 then raise exception 'X2-16 controller expected 1 session'; end if; end $$;
+do $$ declare n int; begin select count(*) into n from public.lister_planning_direction(date_trunc('week',now()),100,0) where id='a16bbbbb-0000-0000-0000-000000000001'; if n<>1 then raise exception 'X2-16 controller expected target session'; end if; end $$;
 select set_config('test.uid','a1600000-0000-0000-0000-000000000003',true);
 select set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
 do $$ declare n int; begin select count(*) into n from public.lister_planning_direction(date_trunc('week',now()),100,0); if n<>0 then raise exception 'X2-16 teacher must see zero sessions'; end if; end $$;
