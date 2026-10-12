@@ -103,7 +103,7 @@ declare
   student_headers jsonb;
   teacher_headers jsonb;
   row_data jsonb;
-  value text;
+  v_cell_text text;
   email_value text;
   unique_emails text[] := array[]::text[];
   seen_emails text[] := array[]::text[];
@@ -123,7 +123,7 @@ declare
   duplicate_rows integer := 0;
   rejected jsonb := '[]'::jsonb;
 begin
-  if auth.uid() is null or coalesce(auth.role(), '') = 'service_role'
+  if auth.uid() is null
      or public.app_role() is distinct from 'admin'::public.app_role
      or public.app_account_valid() is not true then
     raise exception using errcode = '42501', message = 'Accès refusé';
@@ -159,13 +159,13 @@ begin
     email_value := null;
     for field_index in 0..jsonb_array_length(student_headers)-1 loop
       header_name := lower(btrim(student_headers->>field_index));
-      value := btrim(row_data->>field_index);
-      if lower(value) in ('test','testing','demo','dummy','test row','ligne test','dummy row','demo row','sample row')
-         or lower(value) ~ '^(test|demo|dummy)@' then test_row := true; end if;
-      if header_name like '%date de naissance%' and value <> '' then
+      v_cell_text := btrim(row_data->>field_index);
+      if lower(v_cell_text) in ('test','testing','demo','dummy','test row','ligne test','dummy row','demo row','sample row')
+         or lower(v_cell_text) ~ '^(test|demo|dummy)@' then test_row := true; end if;
+      if header_name like '%date de naissance%' and v_cell_text <> '' then
         begin
-          if value !~ '^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4}$'
-             or pg_catalog.to_char(pg_catalog.to_date(value, 'DD/MM/YYYY'), 'DD/MM/YYYY') <> value then
+          if v_cell_text !~ '^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4}$'
+             or pg_catalog.to_char(pg_catalog.to_date(v_cell_text, 'DD/MM/YYYY'), 'DD/MM/YYYY') <> v_cell_text then
             invalid_date := true;
           end if;
         exception when others then
@@ -177,7 +177,7 @@ begin
           exit;
         end if;
       end if;
-      if value <> '' and header_name like 'nom%' then
+      if v_cell_text <> '' and header_name like 'nom%' then
         paired_first_name := regexp_replace(header_name, '^nom', 'prénom');
         select count(*)::integer into occurrence_no
         from jsonb_array_elements_text(student_headers) with ordinality as h(value, ord)
@@ -195,9 +195,9 @@ begin
           row_people_count := row_people_count + 1;
         end if;
       end if;
-      if header_name in ('email','email du tuteur') and value <> '' then
-        if header_name = 'email du tuteur' or email_value is null then email_value := lower(value); end if;
-        if not lower(value) ~ '^[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+$' then
+      if header_name in ('email','email du tuteur') and v_cell_text <> '' then
+        if header_name = 'email du tuteur' or email_value is null then email_value := lower(v_cell_text); end if;
+        if not lower(v_cell_text) ~ '^[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+$' then
           invalid_rows := invalid_rows + 1;
           rejected := rejected || jsonb_build_array(jsonb_build_object('source','eleves','row',row_index+1,'reason','invalid_email'));
           email_value := null;
@@ -246,19 +246,19 @@ begin
     end if;
     for field_index in 0..jsonb_array_length(teacher_headers)-1 loop
       header_name := lower(btrim(teacher_headers->>field_index));
-      value := btrim(row_data->>field_index);
-      if lower(value) in ('test','testing','demo','dummy','test row','ligne test','dummy row','demo row','sample row')
-         or lower(value) ~ '^(test|demo|dummy)@' then test_row := true; end if;
-      if header_name = 'prénom' and value <> '' then has_person_name := true; end if;
-      if header_name = 'email' and value <> '' then
-        email_value := lower(value);
+      v_cell_text := btrim(row_data->>field_index);
+      if lower(v_cell_text) in ('test','testing','demo','dummy','test row','ligne test','dummy row','demo row','sample row')
+         or lower(v_cell_text) ~ '^(test|demo|dummy)@' then test_row := true; end if;
+      if header_name = 'prénom' and v_cell_text <> '' then has_person_name := true; end if;
+      if header_name = 'email' and v_cell_text <> '' then
+        email_value := lower(v_cell_text);
         if not email_value ~ '^[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+$' then
           invalid_rows := invalid_rows + 1;
           rejected := rejected || jsonb_build_array(jsonb_build_object('source','enseignants','row',row_index+1,'reason','invalid_email'));
           has_person_name := false;
           exit;
         end if;
-        email_value := lower(value);
+        email_value := lower(v_cell_text);
       end if;
     end loop;
     if rejected @> jsonb_build_array(jsonb_build_object('source','enseignants','row',row_index+1,'reason','invalid_email')) then continue; end if;
