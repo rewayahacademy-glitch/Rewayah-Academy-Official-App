@@ -146,7 +146,24 @@ begin
       from public.rech_d1_curseur_lire(p_curseur, 'classes', v_hash, v_authz) c;
   end if;
 
-  with groupes_candidats as materialized (
+  with appelant as materialized (
+    select auth.uid() as uid, public.app_household_id() as household_id,
+           public.app_role() as role, public.app_account_valid() as account_valid
+  ), groupes_visibles as materialized (
+    select g.id
+      from public.groupes g
+      cross join appelant a
+     where a.account_valid
+       and (a.role = 'admin' or g.teacher_id = a.uid)
+    union
+    select gm.groupe_id
+      from public.groupe_membres gm
+      join public.profiles p on p.id = gm.student_id
+      cross join appelant a
+     where a.account_valid
+       and gm.left_at is null
+       and (p.id = a.uid or p.household_id = a.household_id)
+  ), groupes_candidats as materialized (
     select g.id
       from public.groupes g
      where g.ended_at is null
@@ -165,7 +182,7 @@ begin
            ) as metadata
       from groupes_candidats c
       join public.groupes g on g.id = c.id
-     where app_private.peut_lire_groupe(g.id, null)
+      join groupes_visibles v on v.id = g.id
     union all
     select 'offre'::text, o.id,
            o.langue_code || ' · ' || o.type_public,

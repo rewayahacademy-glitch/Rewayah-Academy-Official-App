@@ -147,9 +147,9 @@ begin
     raise exception 'RECH-D1: première page ou curseur absent';
   end if;
   v_item := v_page -> 'items' -> 0;
-  if pg_catalog.jsonb_object_length(v_item) <> 4
+  if (select count(*) from pg_catalog.jsonb_object_keys(v_item)) <> 4
      or not (v_item ?& array['kind', 'id', 'title', 'metadata'])
-     or pg_catalog.jsonb_object_length(v_item -> 'metadata') <> 4
+     or (select count(*) from pg_catalog.jsonb_object_keys(v_item -> 'metadata')) <> 4
      or not (v_item -> 'metadata' ?& array[
        'typePublic', 'weekday', 'hourLocal', 'timezone'
      ]) then
@@ -236,7 +236,7 @@ begin
     raise exception 'RECH-D1: support non publié ou champ interne exposé';
   end if;
   v_item := v_page -> 'items' -> 0;
-  if pg_catalog.jsonb_object_length(v_item) <> 7
+  if (select count(*) from pg_catalog.jsonb_object_keys(v_item)) <> 7
      or not (v_item ?& array['id', 'title', 'shortTitle', 'type', 'edition', 'language', 'category']) then
     raise exception 'RECH-D1: projection support non bornée';
   end if;
@@ -258,7 +258,7 @@ begin
     raise exception 'RECH-D1: vitrine doit exposer uniquement l''offre publiée et les colonnes autorisées';
   end if;
   v_item := v_page -> 'items' -> 0;
-  if pg_catalog.jsonb_object_length(v_item -> 'metadata') <> 6
+  if (select count(*) from pg_catalog.jsonb_object_keys(v_item -> 'metadata')) <> 6
      or not (v_item -> 'metadata' ?& array[
        'typePublic', 'langueCode', 'jours', 'heureLocale', 'dureeMinutes', 'fuseau'
      ]) then
