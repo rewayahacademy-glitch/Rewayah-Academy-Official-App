@@ -48,6 +48,6 @@ revoke all on function public.ma_mission_controle()
   from public, anon, service_role, agent_ro;
 grant execute on function public.ma_mission_controle() to authenticated;
 comment on function public.ma_mission_controle() is
-  'D3 caller-scoped control mission summary; checks fresh authorization, live capability and mission deadline on every read.';
+  'F86 candidate allowlist: signature=public.ma_mission_controle(); md5_functiondef=db91938c0f16c29e0796e1ae7548e64b; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. D3 projection checks fresh authorization, live capability and mission deadline on every read.';
 
 commit;

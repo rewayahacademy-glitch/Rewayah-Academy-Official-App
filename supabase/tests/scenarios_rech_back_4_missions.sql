@@ -9,8 +9,41 @@ insert into public.profiles
   (id, immutable_id, role, first_name, last_name, account_status, gender)
 values
   ('d1400000-0000-0000-0000-000000000001', 'D3-ADMIN', 'admin', 'D3', 'Admin', 'active', 'male'),
-  ('d1400000-0000-0000-0000-000000000002', 'D3-TEACHER', 'teacher', 'D3', 'Teacher', 'active', 'male'),
+  ('d1400000-0000-0000-0000-000000000002', 'D3-TEACHER', 'teacher', 'D3', 'Teacher', 'provisional_active', 'male'),
   ('d1400000-0000-0000-0000-000000000003', 'D3-CONTROLLER', 'controller', 'D3', 'Controller', 'active', 'female');
+-- 0089 requires current teacher NDA and recording notice before activation.
+do $fixture_teacher_contract$
+declare
+  v_teacher record;
+  v_teacher_version text;
+  v_notice_version text;
+begin
+  select version into v_teacher_version
+    from public.contract_texts
+   where contract_kind = 'teacher_nda' and locale = 'fr' and is_current;
+  select version into v_notice_version
+    from public.contract_required_versions
+   where contract_kind = 'recording_and_control_notice';
+  for v_teacher in
+    select id from public.profiles
+     where role = 'teacher' and account_status = 'provisional_active'
+  loop
+    perform set_config('request.jwt.claim.sub', v_teacher.id::text, true);
+    perform set_config('test.uid', v_teacher.id::text, true);
+    perform set_config('request.jwt.claims', '{"app_metadata":{"role":"teacher"}}', true);
+    perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+    perform public.signer_contrat(v_teacher_version, 'Fixture RECH-D3');
+    insert into public.contract_acceptances(profile_id, contract_kind, version)
+    values (v_teacher.id, 'recording_and_control_notice', v_notice_version)
+    on conflict (profile_id, contract_kind, version) do nothing;
+    perform set_config('request.jwt.claim.sub', 'd1400000-0000-0000-0000-000000000001', true);
+    perform set_config('test.uid', 'd1400000-0000-0000-0000-000000000001', true);
+    perform set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', true);
+    perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+    update public.profiles set account_status = 'active' where id = v_teacher.id;
+  end loop;
+end
+$fixture_teacher_contract$;
 
 insert into public.groupes
   (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, genre_public)
