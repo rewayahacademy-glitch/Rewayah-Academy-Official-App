@@ -18,21 +18,26 @@ VALUES
   ('c2100000-0000-0000-0000-000000000002', 'C21-ADMIN-F', 'admin',
    'c2100000-0000-0000-0000-000000000101', 'Admin', 'F', 'female', 'active'),
   ('c2100000-0000-0000-0000-000000000003', 'C21-TARGET-M', 'teacher',
-   'c2100000-0000-0000-0000-000000000101', 'Target', 'M', 'male', 'active'),
+   'c2100000-0000-0000-0000-000000000101', 'Target', 'M', 'male', 'provisional_active'),
   ('c2100000-0000-0000-0000-000000000004', 'C21-TARGET-F', 'teacher',
-   'c2100000-0000-0000-0000-000000000101', 'Target', 'F', 'female', 'active');
+   'c2100000-0000-0000-0000-000000000101', 'Target', 'F', 'female', 'provisional_active');
 
 -- Fixture contractuelle requise par 0089 : le scénario signe la version NDA courante.
 DO $fixture_teacher_nda$
 DECLARE
   v_teacher record;
   v_teacher_version text;
+  v_notice_version text;
 BEGIN
   SELECT version INTO v_teacher_version
     FROM public.contract_texts
    WHERE contract_kind = 'teacher_nda'
      AND locale = 'fr'
      AND is_current;
+
+  SELECT version INTO v_notice_version
+    FROM public.contract_required_versions
+   WHERE contract_kind = 'recording_and_control_notice';
 
   FOR v_teacher IN
     SELECT id FROM public.profiles
@@ -46,6 +51,10 @@ BEGIN
     PERFORM set_config('request.jwt.claims', '{"app_metadata":{"role":"teacher"}}', true);
     PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
     PERFORM public.signer_contrat(v_teacher_version, 'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id, contract_kind, version)
+    VALUES (v_teacher.id, 'recording_and_control_notice', v_notice_version)
+    ON CONFLICT (profile_id, contract_kind, version) DO NOTHING;
+    UPDATE public.profiles SET account_status = 'active' WHERE id = v_teacher.id;
   END LOOP;
 
   PERFORM set_config('request.jwt.claim.sub', '', true);
