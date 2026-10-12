@@ -127,9 +127,15 @@ class BarrePrecedentSuivant extends StatelessWidget {
             ),
           )
         else
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-            child: centre,
+          // Resserree : la position cede devant les fleches (CORAN-320-FOND-1).
+          // Sans `Flexible`, une position longue (« Page 604 sur 604 ») a
+          // texte x2 faisait deborder la rangee de 72 points a 320 ; elle passe
+          // maintenant a la ligne.
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              child: centre,
+            ),
           ),
         FlecheRonde(
           cleDisque: const ValueKey<String>('nav-suivant'),
