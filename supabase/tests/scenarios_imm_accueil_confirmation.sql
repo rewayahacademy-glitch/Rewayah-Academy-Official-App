@@ -131,7 +131,7 @@ end;
 $$;
 reset role;
 
-update public.profiles set account_status = 'suspended'
+update public.profiles set account_status = 'disabled'
  where id = 'ec100000-0000-0000-0000-000000000001';
 set local role authenticated;
 select set_config('request.jwt.claim.sub', 'ec100000-0000-0000-0000-000000000001', true);
@@ -144,7 +144,7 @@ begin
     perform public.confirmer_import_inscriptions('', '', '[]'::jsonb);
   exception when insufficient_privilege then v_rejected := true;
   end;
-  if not v_rejected then raise exception 'suspended admin executed confirmation RPC'; end if;
+  if not v_rejected then raise exception 'disabled admin executed confirmation RPC'; end if;
 end;
 $$;
 reset role;
