@@ -169,17 +169,17 @@ begin
       continue;
     end if;
     v_row := v_teachers->v_row_index;
-    select lower(btrim(coalesce(v_row->>(h.ord - 1), '')))
+    select lower(btrim(coalesce(v_row->>((h.ord - 1)::integer), '')))
       into v_email
       from jsonb_array_elements_text(v_teacher_headers) with ordinality as h(value, ord)
      where lower(btrim(h.value)) = 'email'
      order by h.ord limit 1;
-    select btrim(coalesce(v_row->>(h.ord - 1), ''))
+    select btrim(coalesce(v_row->>((h.ord - 1)::integer), ''))
       into v_first_name
       from jsonb_array_elements_text(v_teacher_headers) with ordinality as h(value, ord)
      where lower(btrim(h.value)) = 'prénom'
      order by h.ord limit 1;
-    select btrim(coalesce(v_row->>(h.ord - 1), ''))
+    select btrim(coalesce(v_row->>((h.ord - 1)::integer), ''))
       into v_last_name
       from jsonb_array_elements_text(v_teacher_headers) with ordinality as h(value, ord)
      where lower(btrim(h.value)) = 'nom'
