@@ -183,6 +183,7 @@ DECLARE
   v_groupe uuid;
   v_groupe_rejoue uuid;
   v_sessions integer;
+  v_f86_refuse boolean;
 BEGIN
   v_capacite := public.app_config_int('groupe.capacite_adulte', 6);
   IF v_capacite < 1 THEN
@@ -343,15 +344,51 @@ BEGIN
     jsonb_build_object('app_metadata', jsonb_build_object(
       'role', 'guardian', 'household_id', 'f1480000-0000-0000-0000-000000000003'
     ))::text, true);
+  -- F86 class-assignment split the same null-safe admin gate from null-argument
+  -- validation; the authorization outcome is intentionally unchanged.
   v_ok := false;
   BEGIN
     PERFORM public.affecter_enseignant_classe(
       v_groupe, 'f1490000-0000-0000-0000-000000000997'
     );
-  EXCEPTION WHEN OTHERS THEN
-    v_ok := true;
+  EXCEPTION WHEN raise_exception THEN
+    v_ok := SQLERRM = 'affectation reservee a l''administration';
   END;
   IF NOT v_ok THEN RAISE EXCEPTION 'C-12: un tuteur a affecté un enseignant'; END IF;
+
+  IF NOT v_ok OR NOT EXISTS (
+    SELECT 1 FROM public.groupes
+     WHERE id = v_groupe AND teacher_id IS NULL AND etat = 'en_attente_enseignant'
+  ) THEN
+    RAISE EXCEPTION 'F86 ECHEC : le refus d''affectation n''est pas protege';
+  END IF;
+
+  v_ok := false;
+  BEGIN
+    PERFORM public.affecter_enseignant_classe_c11bis(
+      v_groupe, 'f1490000-0000-0000-0000-000000000997'
+    );
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_ok := SQLERRM = 'affectation reservee a l''administration';
+  END;
+  IF NOT v_ok THEN
+    RAISE EXCEPTION 'F86 ECHEC : le refus d''affectation C11bis manque';
+  END IF;
+
+  -- F86 normalise la garde admin-actif deja equivalente; ce scénario
+  -- documente le refus sans attribuer un changement de resultat a la migration.
+  v_ok := false;
+  BEGIN
+    PERFORM public.definir_politique_observation_groupe(v_groupe, 'groupe', 3, 600, 120);
+  EXCEPTION WHEN insufficient_privilege THEN
+    v_ok := SQLERRM = 'reserve a l''administration';
+  END;
+  IF NOT v_ok OR NOT EXISTS (
+    SELECT 1 FROM public.groupes
+     WHERE id = v_groupe AND observation_source IS DISTINCT FROM 'groupe'
+  ) THEN
+    RAISE EXCEPTION 'F86 ECHEC : un tuteur a modifie la politique d''observation';
+  END IF;
 
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
   PERFORM set_config('request.jwt.claims',
@@ -425,6 +462,84 @@ BEGIN
     'adulte', 'francais', 'Europe/Paris', ARRAY[1,3,5]::smallint[], 20::smallint, NULL
   );
   PERFORM public.publier_offre_horaire(v_offre);
+
+  -- Le profil autonome reste autorise par le helper via son titulaire, meme
+  -- quand le JWT omet role. La garde F86 doit donc provoquer le refus.
+  UPDATE public.student_profiles
+     SET titulaire_profile_id = profile_id
+   WHERE profile_id = ('f1490000-0000-0000-0000-' || lpad((v_capacite + 3)::text, 12, '0'))::uuid;
+  v_id := ('f1490000-0000-0000-0000-' || lpad((v_capacite + 3)::text, 12, '0'))::uuid;
+  PERFORM set_config('request.jwt.claim.sub', v_id::text, true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
+  PERFORM public.demander_creneau_personnalise(
+    v_id, 'Europe/Paris', ARRAY[2,4,6]::smallint[], 18::smallint
+  );
+  PERFORM set_config('request.jwt.claims', '{"app_metadata":{}}', true);
+  v_f86_refuse := false;
+  BEGIN
+    PERFORM public.demander_creneau_personnalise(
+      v_id, 'Europe/Paris', ARRAY[2,4,6]::smallint[], 18::smallint
+    );
+  EXCEPTION WHEN raise_exception THEN
+    v_f86_refuse := SQLERRM = 'ce profil n''est pas le votre ni celui de votre foyer';
+  END;
+  IF NOT v_f86_refuse THEN
+    RAISE EXCEPTION 'F86 ECHEC : demander_creneau_personnalise a accepte un JWT sans role';
+  END IF;
+
+  v_f86_refuse := false;
+  BEGIN
+    PERFORM public.choisir_offre_horaire(v_id, v_offre, 'Europe/Paris');
+  EXCEPTION WHEN raise_exception THEN
+    v_f86_refuse := SQLERRM = 'ce profil n''est pas le votre ni celui de votre foyer';
+  END;
+  IF NOT v_f86_refuse THEN
+    RAISE EXCEPTION 'F86 ECHEC : choisir_offre_horaire a accepte un JWT sans role';
+  END IF;
+
+  v_f86_refuse := false;
+  BEGIN
+    PERFORM public.retirer_demande_horaire(v_id, 'retrait_test_f86');
+  EXCEPTION WHEN insufficient_privilege THEN v_f86_refuse := true;
+  END;
+  IF NOT v_f86_refuse THEN
+    RAISE EXCEPTION 'F86 ECHEC : retirer_demande_horaire a accepte un JWT sans role';
+  END IF;
+
+  v_f86_refuse := false;
+  BEGIN
+    PERFORM public.retirer_creneau_personnalise(v_id);
+  EXCEPTION WHEN insufficient_privilege THEN v_f86_refuse := true;
+  END;
+  IF NOT v_f86_refuse THEN
+    RAISE EXCEPTION 'F86 ECHEC : retirer_creneau_personnalise a accepte un JWT sans role';
+  END IF;
+
+  v_f86_refuse := false;
+  BEGIN
+    PERFORM public.renoncer_intention_horaire(v_id, 'retrait_test_f86');
+  EXCEPTION WHEN insufficient_privilege THEN v_f86_refuse := true;
+  END;
+  IF NOT v_f86_refuse THEN
+    RAISE EXCEPTION 'F86 ECHEC : renoncer_intention_horaire a accepte un JWT sans role';
+  END IF;
+
+  v_f86_refuse := false;
+  BEGIN
+    PERFORM public.signaler_horaire_insatisfait(v_id, '{}'::jsonb);
+  EXCEPTION WHEN insufficient_privilege THEN v_f86_refuse := true;
+  END;
+  IF NOT v_f86_refuse THEN
+    RAISE EXCEPTION 'F86 ECHEC : signaler_horaire_insatisfait a accepte un JWT sans role';
+  END IF;
+
+  -- Nettoyage de cette fixture synthétique pour laisser le test historique
+  -- de choix d'offre utiliser ce même apprenant après ces sondes.
+  UPDATE public.demandes_horaires_famille
+     SET etat = 'retiree'
+   WHERE eleve_id = v_id AND source = 'personnalisee' AND etat = 'envoyee';
+
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000998', true);
   PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object(
