@@ -18,23 +18,24 @@ AS $function$
     )::date AS lundi_local
   ), candidat AS (
     SELECT (
-      r.lundi_local + (p_weekday - 1) + (p_semaine_offset * 7)
+      r.lundi_local + (p_weekday - 1)
       + pg_catalog.make_interval(hours => p_hour)
     )::timestamp without time zone AS local
     FROM reference r
-  ), occurrence AS (
-    SELECT c.local, c.local AT TIME ZONE p_tz AS debut FROM candidat c
+  ), prochaine AS (
+    SELECT CASE
+      WHEN c.local AT TIME ZONE p_tz <= p_reference_at
+        THEN c.local + interval '7 days'
+      ELSE c.local
+    END AS local
+    FROM candidat c
   )
-  SELECT CASE
-    WHEN p_semaine_offset = 0 AND o.debut <= p_reference_at
-      THEN (o.local + interval '7 days') AT TIME ZONE p_tz
-    ELSE o.debut
-  END
-  FROM occurrence o;
+  SELECT (p.local + (p_semaine_offset * interval '7 days')) AT TIME ZONE p_tz
+  FROM prochaine p;
 $function$;
 
 REVOKE ALL ON FUNCTION public.instant_creneau_reference(int, int, text, int, timestamptz)
-  FROM PUBLIC, anon;
+  FROM PUBLIC, anon, service_role;
 GRANT EXECUTE ON FUNCTION public.instant_creneau_reference(int, int, text, int, timestamptz)
   TO authenticated;
 
