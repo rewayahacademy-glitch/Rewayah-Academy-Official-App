@@ -177,14 +177,10 @@ as $function$
     ) as source
   )
   select coalesce(
-    source ~*
-      '((if|elsif)[[:space:]]+not[[:space:]]*[(][[:space:]]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)])'
-    or source ~*
-      '((if|elsif)[[:space:]]+not[[:space:]]+(public[.])?app_role[[:space:]]*[(][[:space:]]*[)])'
-    or source ~*
-      '((if|elsif)[[:space:]]+[^;]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)][^;]*(<>|!=|not[[:space:]]+in)[^;]*then)'
-    or source ~*
-      '((if|elsif)[[:space:]]+[^;]*(<>|!=|not[[:space:]]+in)[^;]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)][^;]*then)',
+    source ~* '((if|elsif)[[:space:]]+not[[:space:]]*[(][[:space:]]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)])'
+    or source ~* '((if|elsif)[[:space:]]+not[[:space:]]+(public[.])?app_role[[:space:]]*[(][[:space:]]*[)])'
+    or source ~* '((if|elsif)[[:space:]]+[^;]*?(public[.])?app_role[[:space:]]*[(][[:space:]]*[)][[:space:]]*(<>|!=|not[[:space:]]+in)([[:space:]]|[(]))'
+    or source ~* '((if|elsif)[[:space:]]+[^;()]*[^;()[:space:]]+[[:space:]]*(<>|!=)[[:space:]]*(public[.])?app_role[[:space:]]*[(][[:space:]]*[)])',
     false
   ) from executable_source;
 $function$;

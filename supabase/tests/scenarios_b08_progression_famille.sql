@@ -195,6 +195,14 @@ BEGIN
     'b0800000-0000-0000-0000-000000000411', true
   );
 
+  SELECT count(*) INTO v_count FROM public.audit_logs a
+  WHERE a.action = 'resume_seance_famille_publie'
+    AND a.table_name = 'seance_resumes'
+    AND a.row_id = v_session::text || ':' || v_student::text;
+  IF v_count <> 1 THEN
+    RAISE EXCEPTION 'B-08: la première publication n''a pas produit une entrée d''audit';
+  END IF;
+
   v_denied := false;
   BEGIN
     PERFORM public.enregistrer_resume_seance(
@@ -313,37 +321,47 @@ SELECT set_config('request.jwt.claims',
 SELECT public.enregistrer_resume_seance(
   'b0800000-0000-0000-0000-000000000301',
   'b0800000-0000-0000-0000-000000000003',
-  'Lecture régulière; revoir les liaisons.', NULL, false, true
+  'Lecture régulière; revoir les liaisons.', NULL, true
 );
 
 SELECT set_config('request.jwt.claim.sub', 'b0800000-0000-0000-0000-000000000002', true);
 SELECT set_config('request.jwt.claims',
   '{"app_metadata":{"role":"guardian","household_id":"b0800000-0000-0000-0000-000000000101"}}', true);
 SET LOCAL ROLE authenticated;
-DO $retrait_audite$
+DO $publication_auditee$
 DECLARE
   v_count integer;
 BEGIN
   IF public.resume_seance_famille(
     'b0800000-0000-0000-0000-000000000301',
     'b0800000-0000-0000-0000-000000000003'
-  ) IS NOT NULL THEN
-    RAISE EXCEPTION 'B-08: le résumé retiré reste visible via RPC';
+  ) IS DISTINCT FROM 'Lecture régulière; revoir les liaisons.' THEN
+    RAISE EXCEPTION 'B-08: la publication courante est absente de la RPC';
   END IF;
   SELECT count(*) INTO v_count FROM public.seance_resumes r
   WHERE r.session_id = 'b0800000-0000-0000-0000-000000000301'
     AND r.student_id = 'b0800000-0000-0000-0000-000000000003';
-  IF v_count <> 0 THEN
-    RAISE EXCEPTION 'B-08: RLS expose le résumé après retrait';
-  END IF;
-  SELECT count(*) INTO v_count FROM public.audit_logs a
-  WHERE a.action = 'resume_seance_famille_retire'
-    AND a.table_name = 'seance_resumes'
-    AND a.row_id = 'b0800000-0000-0000-0000-000000000301:b0800000-0000-0000-0000-000000000003';
   IF v_count <> 1 THEN
-    RAISE EXCEPTION 'B-08: le retrait n''a pas produit une entrée d''audit';
+    RAISE EXCEPTION 'B-08: RLS ne montre pas exactement la publication courante';
   END IF;
 END
-$retrait_audite$;
+$publication_auditee$;
+
+-- La republication ci-dessus modifie le jalon : chaque publication doit laisser
+-- sa propre ligne d'audit. Vérifier les deux avec le rôle propriétaire du
+-- scénario, après les assertions familiales sous authenticated.
+RESET ROLE;
+DO $publication_audit$
+DECLARE v_count integer;
+BEGIN
+  SELECT count(*) INTO v_count FROM public.audit_logs a
+  WHERE a.action = 'resume_seance_famille_publie'
+    AND a.table_name = 'seance_resumes'
+    AND a.row_id = 'b0800000-0000-0000-0000-000000000301:b0800000-0000-0000-0000-000000000003';
+  IF v_count <> 2 THEN
+    RAISE EXCEPTION 'B-08: attendu deux entrées d''audit pour les deux publications, obtenu %', v_count;
+  END IF;
+END
+$publication_audit$;
 
 ROLLBACK;

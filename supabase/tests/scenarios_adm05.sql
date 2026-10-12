@@ -64,13 +64,31 @@ values
   ('a5000000-0000-0000-0000-000000000005', 'STUD-A5-000004', 'student',
    'a5ffffff-0000-0000-0000-00000000000a', 'Awa', 'Sarr', 'active', null),
   ('a5000000-0000-0000-0000-000000000011', 'TEACH-A5-000001', 'teacher',
-   'a5ffffff-0000-0000-0000-00000000000b', 'Omar', 'Sow', 'active', 'male'),
+   'a5ffffff-0000-0000-0000-00000000000b', 'Omar', 'Sow', 'provisional_active', 'male'),
   ('a5000000-0000-0000-0000-000000000012', 'TEACH-A5-000002', 'teacher',
-   'a5ffffff-0000-0000-0000-00000000000b', 'Fatima', 'Balde', 'active', 'female'),
+   'a5ffffff-0000-0000-0000-00000000000b', 'Fatima', 'Balde', 'provisional_active', 'female'),
   ('a5000000-0000-0000-0000-000000000013', 'TEACH-A5-000003', 'teacher',
-   'a5ffffff-0000-0000-0000-00000000000b', 'Ibrahim', 'Diop', 'active', 'male'),
+   'a5ffffff-0000-0000-0000-00000000000b', 'Ibrahim', 'Diop', 'provisional_active', 'male'),
   ('a5000000-0000-0000-0000-000000000021', 'ADMIN-A5-000001', 'admin',
    'a5ffffff-0000-0000-0000-00000000000b', 'Nadia', 'Cherif', 'active', 'female');
+-- Fixture contractuel requis par 0089 : aucune garde d'activation n'est assouplie.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+    PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true);
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+      ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+END
+$fixture_teacher_contracts$;
 
 update public.households set primary_guardian_id = 'a5000000-0000-0000-0000-000000000001'
  where id = 'a5ffffff-0000-0000-0000-00000000000a';
