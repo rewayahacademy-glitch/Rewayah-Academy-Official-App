@@ -11,6 +11,17 @@ insert into public.profiles(id,immutable_id,role,household_id,first_name,last_na
  ('a1500000-0000-0000-0000-000000000002','CTR-X215-001','controller','a15fffff-0000-0000-0000-000000000001','Control','Test','female'),
  ('a1500000-0000-0000-0000-000000000003','TEA-X215-001','teacher','a15fffff-0000-0000-0000-000000000001','Teach','Test','male'),
  ('a1500000-0000-0000-0000-000000000004','GUA-X215-001','guardian','a15fffff-0000-0000-0000-000000000001','Guard','Test','female');
+update public.profiles
+set account_status = case
+  when role = 'teacher' then 'provisional_active'::public.account_status
+  else 'active'::public.account_status
+end
+where id in (
+ 'a1500000-0000-0000-0000-000000000001',
+ 'a1500000-0000-0000-0000-000000000002',
+ 'a1500000-0000-0000-0000-000000000003',
+ 'a1500000-0000-0000-0000-000000000004'
+);
 insert into public.groupes(id,teacher_id,type_public,seuil_max,libelle,weekday,hour_local) values
  ('a15aaaaa-0000-0000-0000-000000000001','a1500000-0000-0000-0000-000000000003','enfant',5,'Classe X215',1,9);
 insert into public.sessions(id,teacher_id,groupe_id,started_at,ended_at,status,updated_at) values
@@ -24,6 +35,9 @@ do $$ begin
  end if;
  if has_function_privilege('anon','public.lister_incidents_seances(timestamptz,integer,integer)','EXECUTE') then
    raise exception 'X2-15 anon must not execute RPC';
+ end if;
+ if has_function_privilege('service_role','public.lister_incidents_seances(timestamptz,integer,integer)','EXECUTE') then
+   raise exception 'X2-15 service_role must not execute RPC';
  end if;
 end $$;
 set local role authenticated;

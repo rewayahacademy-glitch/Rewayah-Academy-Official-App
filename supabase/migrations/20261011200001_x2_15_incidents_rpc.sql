@@ -45,3 +45,4 @@ as $$
 $$;
 revoke all on function public.lister_incidents_seances(timestamptz, integer, integer) from public, anon;
 grant execute on function public.lister_incidents_seances(timestamptz, integer, integer) to authenticated;
+revoke execute on function public.lister_incidents_seances(timestamptz, integer, integer) from service_role;
