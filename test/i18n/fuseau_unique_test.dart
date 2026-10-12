@@ -15,8 +15,13 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/i18n/villes_fuseau.dart';
+import 'package:rewayah_academy/core/offres/offre_horaire.dart'
+    show PublicOffre;
+import 'package:rewayah_academy/core/offres/port_regroupements_admin.dart';
+import 'package:rewayah_academy/features/admin_regroupements/regroupements_libelles.dart';
 import 'package:rewayah_academy/features/suivi_demandes/libelles_suivi_demandes.dart';
 
 // Les anciennes fonctions, reproduites telles qu'elles etaient.
@@ -110,6 +115,40 @@ void main() {
     }
   });
 
+  test(
+    'regroupements : la reference et le fuseau rendent les memes phrases',
+    () {
+      for (final String iana in _corpus) {
+        final RegroupementDemandes g = _regroupement(iana);
+        final String avant = deDevant(_avantRegroupements(iana));
+        expect(
+          libelleFuseau(g),
+          'Heure $avant',
+          reason: 'libelleFuseau : $iana',
+        );
+        expect(
+          libelleReference(g),
+          '${libelleHeureCommune(g)}, heure $avant',
+          reason: 'libelleReference : $iana',
+        );
+      }
+    },
+  );
+
+  test('compte : la ville du compte rend le nom d\'avant', () {
+    for (final String iana in _corpus) {
+      final String avant = _avantCompte(iana);
+      expect(villeDuFuseauLibelle(iana), avant, reason: 'ville : $iana');
+      expect(
+        t.compte.tuteur.informations.langueFuseau(
+          ville: villeDuFuseauLibelle(iana),
+        ),
+        'Français · $avant',
+        reason: 'langueFuseau : $iana',
+      );
+    }
+  });
+
   test('aucune definition de villeDuFuseau ne reste dans lib/', () {
     final List<String> restantes = <String>[
       for (final FileSystemEntity f in Directory(
@@ -131,6 +170,19 @@ void main() {
     expect(() => villeDuFuseauLibelle('////'), returnsNormally);
   });
 }
+
+RegroupementDemandes _regroupement(String fuseau) => RegroupementDemandes(
+  id: 'r',
+  public: PublicOffre.enfants,
+  langueCode: 'fr',
+  langueNom: 'Français',
+  fuseau: fuseau,
+  occurrences: const <OccurrenceCreneau>[
+    OccurrenceCreneau(jourIso: 1, heure: 18),
+  ],
+  nombreEleves: 3,
+  quota: 6,
+);
 
 /// « de » ou « d' » devant [nom], comme `deDevant` en francais.
 String _elision(String nom) => commenceParVoyelleDe(nom) ? "d'" : 'de ';
