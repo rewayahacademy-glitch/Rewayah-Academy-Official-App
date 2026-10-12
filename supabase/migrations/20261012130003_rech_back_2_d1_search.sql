@@ -86,12 +86,6 @@ revoke all on function private.rech_d1_curseur_lire(uuid, text, text, bigint)
   from public, anon, authenticated, service_role;
 revoke all on function private.rech_d1_curseur_creer(text, text, text, uuid, bigint)
   from public, anon, authenticated, service_role;
-grant usage on schema private to authenticated;
-grant execute on function private.rech_d1_curseur_lire(uuid, text, text, bigint)
-  to authenticated;
-grant execute on function private.rech_d1_curseur_creer(text, text, text, uuid, bigint)
-  to authenticated;
-
 create index if not exists groupes_actifs_recherche_trgm_idx
   on public.groupes using gin (lower(libelle) extensions.gin_trgm_ops)
   where ended_at is null;
@@ -135,7 +129,7 @@ begin
   v_hash := pg_catalog.md5(v_query || ':' || p_limite::text);
   if p_curseur is not null then
     select c.after_kind, c.after_id into v_after_kind, v_after_id
-      from private.rech_d1_curseur_lire(p_curseur, 'classes', v_hash, v_authz) c;
+      from public.rech_d1_curseur_lire(p_curseur, 'classes', v_hash, v_authz) c;
   end if;
 
   with lignes as (
@@ -178,7 +172,7 @@ begin
   into v_count, v_items, v_last_kind, v_last_id;
 
   if v_count > p_limite and v_last_id is not null then
-    v_next := private.rech_d1_curseur_creer(
+    v_next := public.rech_d1_curseur_creer(
       'classes', v_hash, v_last_kind, v_last_id, v_authz
     );
   end if;
@@ -222,7 +216,7 @@ begin
   v_hash := pg_catalog.md5(v_query || ':' || p_limite::text);
   if p_curseur is not null then
     select c.after_kind, c.after_id into v_after_kind, v_after_id
-      from private.rech_d1_curseur_lire(p_curseur, 'supports', v_hash, v_authz) c;
+      from public.rech_d1_curseur_lire(p_curseur, 'supports', v_hash, v_authz) c;
   end if;
 
   with lignes as (
@@ -255,7 +249,7 @@ begin
   into v_count, v_items, v_last_id;
 
   if v_count > p_limite and v_last_id is not null then
-    v_next := private.rech_d1_curseur_creer(
+    v_next := public.rech_d1_curseur_creer(
       'supports', v_hash, 'support', v_last_id, v_authz
     );
   end if;

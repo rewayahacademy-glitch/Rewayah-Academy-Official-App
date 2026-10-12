@@ -155,6 +155,17 @@ begin
        'public.rech_d1_rechercher_supports(text,uuid,integer)'::regprocedure) then
     raise exception 'RECH-D1: un endpoint contourne la RLS';
   end if;
+  if has_schema_privilege('authenticated', 'private', 'USAGE')
+     or has_function_privilege('authenticated',
+       'private.rech_d1_curseur_lire(uuid,text,text,bigint)', 'EXECUTE')
+     or has_function_privilege('authenticated',
+       'private.rech_d1_curseur_creer(text,text,text,uuid,bigint)', 'EXECUTE')
+     or not has_function_privilege('authenticated',
+       'public.rech_d1_curseur_lire(uuid,text,text,bigint)', 'EXECUTE')
+     or not has_function_privilege('authenticated',
+       'public.rech_d1_curseur_creer(text,text,text,uuid,bigint)', 'EXECUTE') then
+    raise exception 'RECH-D1: ACL des wrappers de curseur trop large ou inaccessible';
+  end if;
 end;
 $acl$;
 
