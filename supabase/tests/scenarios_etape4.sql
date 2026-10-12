@@ -1320,5 +1320,91 @@ begin
 end
 $h2$;
 
+-- F86: les quatre mutations admin refusent un JWT admin sans profil, puis
+-- un profil admin dont le compte est désactivé.
+do $f86_admin_mutators$
+declare
+  v_test record;
+  v_uid uuid := 'eeeeeeee-0000-0000-0000-000000000001';
+  v_admin uuid := 'dddddddd-0000-0000-0000-000000000001';
+  v_refuse boolean;
+begin
+  set local role authenticated;
+  perform set_config('request.jwt.claim.sub', v_uid::text, true);
+  perform set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', true);
+  perform set_config('test.uid', v_uid::text, true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+
+  if auth.uid() is distinct from v_uid or public.app_account_valid() then
+    raise exception 'F86 fixture: le JWT admin doit être sans profil applicatif';
+  end if;
+
+  for v_test in
+    select * from (values
+      ('select public.maj_eleve_pedagogie(''aaaaaaaa-0000-0000-0000-000000000002'', ''intermediaire'', ''hafs'')',
+       'seul un administrateur modifie le niveau ou la riwaya'),
+      ('select public.poser_regle(''aaaaaaaa-0000-0000-0000-000000000002'', ''session_duration_minutes'', 45, ''F86 sans profil'')',
+       'seul un administrateur pose une regle'),
+      ('select public.clore_regle(''ffffffff-0000-0000-0000-0000000000ff'', ''F86 sans profil'')',
+       'seul un administrateur clot une regle'),
+      ('select public.decider_demande(''ffffffff-0000-0000-0000-0000000000ff'', true, ''F86 sans profil'')',
+       'seul un administrateur tranche une demande')
+    ) as tests(commande, refus_attendu)
+  loop
+    v_refuse := false;
+    begin
+      execute v_test.commande;
+      raise exception 'F86 ECHEC: une RPC admin a accepté le JWT sans profil';
+    exception when sqlstate 'P0001' then
+      if sqlerrm <> v_test.refus_attendu then raise; end if;
+      v_refuse := true;
+    end;
+    if not v_refuse then
+      raise exception 'F86 ECHEC: refus absent pour le JWT sans profil';
+    end if;
+  end loop;
+
+  reset role;
+  update public.profiles set account_status = 'suspended' where id = v_admin;
+  set local role authenticated;
+  perform set_config('request.jwt.claim.sub', v_admin::text, true);
+  perform set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', true);
+  perform set_config('test.uid', v_admin::text, true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+
+  if auth.uid() is distinct from v_admin or public.app_account_valid() then
+    raise exception 'F86 fixture: le compte admin doit être désactivé';
+  end if;
+
+  for v_test in
+    select * from (values
+      ('select public.maj_eleve_pedagogie(''aaaaaaaa-0000-0000-0000-000000000002'', ''intermediaire'', ''hafs'')',
+       'seul un administrateur modifie le niveau ou la riwaya'),
+      ('select public.poser_regle(''aaaaaaaa-0000-0000-0000-000000000002'', ''session_duration_minutes'', 45, ''F86 admin désactivé'')',
+       'seul un administrateur pose une regle'),
+      ('select public.clore_regle(''ffffffff-0000-0000-0000-0000000000ff'', ''F86 admin désactivé'')',
+       'seul un administrateur clot une regle'),
+      ('select public.decider_demande(''ffffffff-0000-0000-0000-0000000000ff'', true, ''F86 admin désactivé'')',
+       'seul un administrateur tranche une demande')
+    ) as tests(commande, refus_attendu)
+  loop
+    v_refuse := false;
+    begin
+      execute v_test.commande;
+      raise exception 'F86 ECHEC: une RPC admin a accepté un compte désactivé';
+    exception when sqlstate 'P0001' then
+      if sqlerrm <> v_test.refus_attendu then raise; end if;
+      v_refuse := true;
+    end;
+    if not v_refuse then
+      raise exception 'F86 ECHEC: refus absent pour le compte désactivé';
+    end if;
+  end loop;
+
+  reset role;
+  update public.profiles set account_status = 'active' where id = v_admin;
+end
+$f86_admin_mutators$;
+
 reset role;
 rollback;
