@@ -106,26 +106,28 @@ begin
   select pg_catalog.pg_get_functiondef(
     'public.rech_d1_rechercher_classes(text,uuid,integer)'::regprocedure
   ) into v_definition;
-  if position('private.rech_d1_curseur_' in v_definition) = 0 then
+  if position('private.rech_d1_curseur_' in v_definition) > 0 then
+    v_definition := pg_catalog.replace(v_definition,
+      'private.rech_d1_curseur_lire', 'public.rech_d1_curseur_lire');
+    v_definition := pg_catalog.replace(v_definition,
+      'private.rech_d1_curseur_creer', 'public.rech_d1_curseur_creer');
+    execute v_definition;
+  elsif position('public.rech_d1_curseur_' in v_definition) = 0 then
     raise exception 'RECH-D1: definition classes inattendue pendant la correction';
   end if;
-  v_definition := pg_catalog.replace(v_definition,
-    'private.rech_d1_curseur_lire', 'public.rech_d1_curseur_lire');
-  v_definition := pg_catalog.replace(v_definition,
-    'private.rech_d1_curseur_creer', 'public.rech_d1_curseur_creer');
-  execute v_definition;
 
   select pg_catalog.pg_get_functiondef(
     'public.rech_d1_rechercher_supports(text,uuid,integer)'::regprocedure
   ) into v_definition;
-  if position('private.rech_d1_curseur_' in v_definition) = 0 then
+  if position('private.rech_d1_curseur_' in v_definition) > 0 then
+    v_definition := pg_catalog.replace(v_definition,
+      'private.rech_d1_curseur_lire', 'public.rech_d1_curseur_lire');
+    v_definition := pg_catalog.replace(v_definition,
+      'private.rech_d1_curseur_creer', 'public.rech_d1_curseur_creer');
+    execute v_definition;
+  elsif position('public.rech_d1_curseur_' in v_definition) = 0 then
     raise exception 'RECH-D1: definition supports inattendue pendant la correction';
   end if;
-  v_definition := pg_catalog.replace(v_definition,
-    'private.rech_d1_curseur_lire', 'public.rech_d1_curseur_lire');
-  v_definition := pg_catalog.replace(v_definition,
-    'private.rech_d1_curseur_creer', 'public.rech_d1_curseur_creer');
-  execute v_definition;
 end;
 $rewrite$;
 
@@ -141,6 +143,9 @@ grant execute on function public.rech_d1_curseur_creer(text, text, text, uuid, b
   to authenticated;
 
 do $postflight$
+declare
+  v_classes text;
+  v_supports text;
 begin
   if has_schema_privilege('authenticated', 'private', 'USAGE')
      or has_function_privilege('authenticated',
@@ -158,6 +163,16 @@ begin
      or not has_function_privilege('authenticated',
        'public.rech_d1_curseur_creer(text,text,text,uuid,bigint)', 'EXECUTE') then
     raise exception 'RECH-D1: wrappers de curseur manquants';
+  end if;
+  select pg_catalog.pg_get_functiondef(
+    'public.rech_d1_rechercher_classes(text,uuid,integer)'::regprocedure
+  ) into v_classes;
+  select pg_catalog.pg_get_functiondef(
+    'public.rech_d1_rechercher_supports(text,uuid,integer)'::regprocedure
+  ) into v_supports;
+  if position('private.rech_d1_curseur_' in v_classes) > 0
+     or position('private.rech_d1_curseur_' in v_supports) > 0 then
+    raise exception 'RECH-D1: un endpoint expose encore une référence au schéma private';
   end if;
 end;
 $postflight$;
