@@ -4460,6 +4460,7 @@
   "notifications": {
     "evenements": {
       "demandeRecue": "Une nouvelle demande de créneau a été reçue.",
+      "demandePresentation": "Une demande de présentation standard a été reçue.",
       "classeValidee": "La classe est prête et attend son enseignant.",
       "enseignantAffecte": "Un enseignant a été affecté à la classe.",
       "demandeClose": "Une demande de créneau a été clôturée.",

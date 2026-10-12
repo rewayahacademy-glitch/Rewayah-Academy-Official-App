@@ -59,15 +59,26 @@ void main() {
       },
     );
 
-    test('rejects event values outside the database constraint', () {
-      expect(
-        () => notificationDepuis(
-          _row(evenement: 'demande_presentation'),
-          titrePour: (String _, Map<String, dynamic> _) =>
-              const NotificationContenu(titre: 'Inattendu'),
-        ),
-        throwsFormatException,
+    test('maps presentation requests and skips unknown events per row', () {
+      final List<NotificationTuteur> notifications = notificationsDepuis(
+        <dynamic>[
+          _row(evenement: 'evenement_futur'),
+          _row(
+            evenement: 'demande_presentation',
+            params: <String, dynamic>{'demande_id': 'private-request-id'},
+          ),
+        ],
+        titrePour: (String evenement, Map<String, dynamic> _) =>
+            NotificationContenu(
+              titre: evenement == 'demande_presentation'
+                  ? 'Demande de présentation'
+                  : 'Inattendu',
+            ),
       );
+
+      expect(notifications, hasLength(1));
+      expect(notifications.single.titre, 'Demande de présentation');
+      expect(notifications.single.destination, '/tuteur/demandes');
     });
 
     test('rejects malformed read timestamps instead of marking them read', () {

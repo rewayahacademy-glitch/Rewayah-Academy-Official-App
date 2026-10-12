@@ -29,6 +29,7 @@ const Set<String> _evenementsPrisEnCharge = <String>{
   'demande_close',
   'remplacement_propose',
   'remplacement_pris',
+  'demande_presentation',
 };
 
 const Set<String> _destinationsAutorisees = <String>{
@@ -66,17 +67,7 @@ class NotificationsSupabase
     if (rows is! List) {
       throw const FormatException('Réponse notifications invalide.');
     }
-    return rows
-        .map((dynamic row) {
-          if (row is! Map) {
-            throw const FormatException('Ligne de notification invalide.');
-          }
-          return notificationDepuis(
-            Map<String, dynamic>.from(row),
-            titrePour: _contenuPour,
-          );
-        })
-        .toList(growable: false);
+    return notificationsDepuis(rows, titrePour: _contenuPour);
   }
 
   @override
@@ -96,10 +87,14 @@ class NotificationsSupabase
     if (row is! Map) {
       throw const FormatException('Réponse notification invalide.');
     }
-    return notificationDepuis(
-      Map<String, dynamic>.from(row),
-      titrePour: _contenuPour,
-    );
+    try {
+      return notificationDepuis(
+        Map<String, dynamic>.from(row),
+        titrePour: _contenuPour,
+      );
+    } on FormatException {
+      return null;
+    }
   }
 
   @override
@@ -118,6 +113,31 @@ class NotificationsSupabase
         .eq('destinataire', destinataire)
         .timeout(AppDelais.requeteMax);
   }
+}
+
+/// Décode les lignes indépendamment : une ligne inconnue ou mal formée ne
+/// rend pas illisible toute la boîte du destinataire.
+List<NotificationTuteur> notificationsDepuis(
+  List<dynamic> rows, {
+  required NotificationContenuResolver titrePour,
+}) {
+  final List<NotificationTuteur> notifications = <NotificationTuteur>[];
+  for (final dynamic row in rows) {
+    if (row is! Map || row['evenement'] is! String) continue;
+    final String evenement = row['evenement'] as String;
+    if (!_evenementsPrisEnCharge.contains(evenement)) continue;
+    try {
+      notifications.add(
+        notificationDepuis(
+          Map<String, dynamic>.from(row),
+          titrePour: titrePour,
+        ),
+      );
+    } on FormatException {
+      continue;
+    }
+  }
+  return List<NotificationTuteur>.unmodifiable(notifications);
 }
 
 /// Décode et réduit une ligne SQL sans laisser les paramètres serveur devenir
@@ -195,5 +215,6 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'demande_close' => TypeNotification.decisionDossier,
   'remplacement_propose' ||
   'remplacement_pris' => TypeNotification.remplacement,
+  'demande_presentation' => TypeNotification.messageMetier,
   _ => TypeNotification.autre,
 };

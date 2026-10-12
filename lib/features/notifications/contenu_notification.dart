@@ -8,6 +8,7 @@ NotificationContenu contenuNotificationPour(
 ) {
   final String titre = switch (evenement) {
     'demande_recue' => t.notifications.evenements.demandeRecue,
+    'demande_presentation' => t.notifications.evenements.demandePresentation,
     'classe_validee' => t.notifications.evenements.classeValidee,
     'enseignant_affecte' => t.notifications.evenements.enseignantAffecte,
     'demande_close' => t.notifications.evenements.demandeClose,

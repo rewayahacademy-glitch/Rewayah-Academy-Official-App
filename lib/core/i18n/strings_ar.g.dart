@@ -125,6 +125,7 @@ class _Traductions$notifications$evenements$ar extends Traductions$notifications
 
 	// Translations
 	@override String get demandeRecue => 'تم استلام طلب موعد جديد.';
+	@override String get demandePresentation => 'تم استلام طلب عرض قياسي.';
 	@override String get classeValidee => 'الفصل جاهز وينتظر معلمه.';
 	@override String get enseignantAffecte => 'تم تعيين معلم للفصل.';
 	@override String get demandeClose => 'أُغلق طلب الموعد.';
@@ -13393,6 +13394,7 @@ class _Traductions$com$annonces$administration$moderation$regles$ar extends Trad
 extension on TraductionsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'notifications.evenements.demandePresentation' => 'تم استلام طلب عرض قياسي.',
 			'notifications.evenements.demandeRecue' => 'تم استلام طلب موعد جديد.',
 			'notifications.evenements.classeValidee' => 'الفصل جاهز وينتظر معلمه.',
 			'notifications.evenements.enseignantAffecte' => 'تم تعيين معلم للفصل.',

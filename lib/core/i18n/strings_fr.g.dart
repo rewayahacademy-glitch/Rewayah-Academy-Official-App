@@ -2351,6 +2351,9 @@ class Traductions$notifications$evenements$fr {
 	/// fr: 'Une nouvelle demande de créneau a été reçue.'
 	String get demandeRecue => 'Une nouvelle demande de créneau a été reçue.';
 
+	/// fr: 'Une demande de présentation standard a été reçue.'
+	String get demandePresentation => 'Une demande de présentation standard a été reçue.';
+
 	/// fr: 'La classe est prête et attend son enseignant.'
 	String get classeValidee => 'La classe est prête et attend son enseignant.';
 
@@ -31265,6 +31268,7 @@ class Traductions$com$annonces$administration$moderation$regles$fr {
 extension on Traductions {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'notifications.evenements.demandePresentation' => 'Une demande de présentation standard a été reçue.',
 			'commun.classeDistincte.numero' => ({required Object libelle, required Object numero}) => '${libelle} · n° ${numero}',
 			'commun.classeDistincte.code' => ({required Object libelle, required Object code}) => '${libelle} · ${code}',
 			'commun.classeDistincte.enseignant' => ({required Object libelle, required Object enseignant}) => '${libelle} · avec ${enseignant}',

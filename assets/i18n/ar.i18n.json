@@ -2,6 +2,7 @@
   "notifications": {
     "evenements": {
       "demandeRecue": "تم استلام طلب موعد جديد.",
+      "demandePresentation": "تم استلام طلب عرض قياسي.",
       "classeValidee": "الفصل جاهز وينتظر معلمه.",
       "enseignantAffecte": "تم تعيين معلم للفصل.",
       "demandeClose": "أُغلق طلب الموعد.",
