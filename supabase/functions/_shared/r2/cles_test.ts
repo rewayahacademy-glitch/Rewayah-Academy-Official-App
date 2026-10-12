@@ -68,7 +68,14 @@ Deno.test('7e bis -- famille de preuve CAP29 autorisee, familles inconnues refus
   assertThrows(() => verifierCle('priveApplicatif', `private/secretbucket/${ARCHIVE}`), ErreurCleObjet)
 })
 
-Deno.test('7e ter -- le chemin supports contient asset, version et nom de fichier', () => {
+Deno.test('7e ter -- famille temporaire d upload de bibliotheque autorisee', () => {
+  const cle = cleDe('priveApplicatif', 'libraryupload', ARCHIVE)
+  assertEquals(cle, `private/libraryupload/${ARCHIVE}`)
+  assertEquals(verifierCle('priveApplicatif', cle), cle)
+  assertThrows(() => verifierCle('supports', cle), ErreurCleObjet)
+})
+
+Deno.test('7e quater -- le chemin supports contient asset, version et nom de fichier', () => {
   const cle = `supports/${ARCHIVE}/12/manuel.pdf`
   assertEquals(verifierCle('supports', cle), cle)
   for (const invalide of [
