@@ -23,6 +23,7 @@ import '../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
 import '../../core/tc_outils/annotation_layer.dart'
     show AnnotationLayer, TraitVectoriel;
 import '../../core/tc_outils/etat_outils.dart';
@@ -73,6 +74,8 @@ List<RouteBase> routesDemoSalle(String environnement) {
         enregistrement:
             _lire(EtatEnregistrement.values, etat.uri.queryParameters['enr']) ??
             EtatEnregistrement.actif,
+        // LIVE-CHRONO-01 : le chrono de la salle (`&chrono=1`).
+        avecChrono: etat.uri.queryParameters['chrono'] == '1',
       ),
     ),
   ];
@@ -122,8 +125,13 @@ class DemoSallePage extends StatelessWidget {
     this.observateur,
     this.titre = TitreEnseignant.sayyid,
     this.enregistrement = EtatEnregistrement.actif,
+    this.avecChrono = false,
     super.key,
   });
+
+  /// LIVE-CHRONO-01 : montre le chrono dans l'en-tete (`&chrono=1`). Faux par
+  /// defaut : les autres demonstrations gardent leur en-tete d'origine.
+  final bool avecChrono;
 
   final RoleSeance? role;
 
@@ -171,6 +179,7 @@ class DemoSallePage extends StatelessWidget {
           role: r,
           etat: etat ?? DonneesSeanceDemo.etatBaseTb(s),
           situation: s,
+          avecChrono: avecChrono,
           titre: titre,
           enregistrement: enregistrement,
           onSortir: () => context.go(Routes.demoSalle),
@@ -184,6 +193,7 @@ class DemoSallePage extends StatelessWidget {
       role: r,
       etat: e,
       titre: titre,
+      avecChrono: avecChrono,
       onSortir: () => context.go(Routes.demoSalle),
     );
     return _themePour(context, r, salle);
@@ -432,8 +442,12 @@ class SalleDemo extends StatefulWidget {
     this.prenomEleve = DonneesSeanceDemo.eleveCourant,
     this.situation,
     this.enregistrement = EtatEnregistrement.actif,
+    this.avecChrono = false,
     super.key,
   });
+
+  /// LIVE-CHRONO-01 : l'en-tete porte le chrono de la seance.
+  final bool avecChrono;
 
   final RoleSeance role;
   final EtatDemoSalle etat;
@@ -513,7 +527,7 @@ class _SalleDemoState extends State<SalleDemo> {
     String prenomEleve = DonneesSeanceDemo.eleveCourant,
   }) {
     final SituationTb? s = widget.situation;
-    return s == null
+    final VueSeance vue = s == null
         ? DonneesSeanceDemo.vue(
             widget.role,
             widget.etat,
@@ -528,7 +542,24 @@ class _SalleDemoState extends State<SalleDemo> {
             etat: widget.etat,
             enregistrement: widget.enregistrement,
           );
+    // LIVE-CHRONO-01 : la demonstration porte les bornes d'une vraie seance,
+    // fixees une fois a l'ouverture de l'ecran. Hors `&chrono=1`, l'en-tete
+    // garde sa forme d'origine (les mesures d'autres lots en dependent).
+    if (!widget.avecChrono) {
+      return vue;
+    }
+    return vue.copyWith(
+      chrono: vue.horloge is HorlogeDepassee ? _chronoDepasse : _chronoEnCours,
+    );
   }
+
+  late final BornesChrono _chronoEnCours = DonneesSeanceDemo.chronoDemo(
+    DateTime.now(),
+  );
+  late final BornesChrono _chronoDepasse = DonneesSeanceDemo.chronoDemo(
+    DateTime.now(),
+    depasse: true,
+  );
 
   /// La file de recitation locale (EN-9) : « Faire reciter » donne la parole
   /// sans serveur, par le modele de `ControleurRecitation`.

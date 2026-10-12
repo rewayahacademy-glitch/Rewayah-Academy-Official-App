@@ -849,6 +849,13 @@
       "ligne": "⁨{debut}⁩ · ⁨{fin}⁩",
       "minutesRestantes": "الوقت المتبقي: ⁨{minutes}⁩ د",
       "sePoursuit": "الحصة مستمرة.",
+      "chrono": {
+        "ecoule": "مضى\u00a0⁨{temps}⁩",
+        "restant": "تبقّى\u00a0⁨{temps}⁩",
+        "tempsPrevuEcoule": "انقضى الوقت المقرّر",
+        "annonce": "الحصة: مضى ⁨{ecoule}⁩ د وتبقّى ⁨{restant}⁩ د.",
+        "annoncePrevuEcoule": "انقضى الوقت المقرّر."
+      },
       "enLigne": "متصل",
       "reconnexion": "إعادة الاتصال",
       "coursEnregistreCourt": "الدرس مسجَّل.",

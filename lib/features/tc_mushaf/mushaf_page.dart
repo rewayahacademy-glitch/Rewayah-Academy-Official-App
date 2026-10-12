@@ -70,6 +70,12 @@ class MushafPage extends ConsumerStatefulWidget {
   /// La cle des commandes du bas (tests de geometrie, captures).
   static const Key commandesKey = ValueKey<String>('mushaf-commandes');
 
+  /// Les cles des deux boutons de taille de l'en-tete serre.
+  static const Key reduireKey = ValueKey<String>('mushaf-reduire');
+
+  /// Voir [reduireKey].
+  static const Key agrandirKey = ValueKey<String>('mushaf-agrandir');
+
   /// La cle de l'attribution Tanzil (tests de geometrie, captures).
   static const Key attributionKey = ValueKey<String>('mushaf-attribution');
 
@@ -222,8 +228,11 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
     // surface de l'application, pas le parchemin du registre.
     final bool madina15 = ref.watch(portLayoutMushafProvider) is LayoutMadina15;
     final bool large = AppGabarit.de(context).estLarge;
-    final bool compact =
-        MushafPage.texteAgrandi(context) || (madina15 && !large);
+    // CORAN-320-FOND-1 : l'habillage serre est la forme du telephone a toute
+    // echelle de texte, pas seulement des 130 % : la part des versets ne
+    // saute plus d'un seuil a l'autre, et elle tient au moins la moitie de
+    // l'ecran a 320 x 568 des le texte de base.
+    final bool compact = MushafPage.texteAgrandi(context) || !large;
     // MUSHAF-15L (retours du directeur du 11/10) et MUSHAF-MODES : avec la
     // mise en page de Medine, dans les trois rendus, on tourne les pages sans
     // barre ni « 544 / 604 ». Sur telephone, au glisser (un PageView, avec des
@@ -301,7 +310,13 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
               vue: vue,
               mode: etat.mode,
               onMenu: madina15 ? ouvrirNavigation : null,
-              reglageTaille: reglage,
+              zoom: etat.zoomLocal,
+              onReduire: etat.mode == ModeRenduCoran.mushaf
+                  ? null
+                  : () => zoomer(-0.2),
+              onAgrandir: etat.mode == ModeRenduCoran.mushaf
+                  ? null
+                  : () => zoomer(0.2),
             ),
           _Reprises(
             personnelle: _positionPersonnelle,
@@ -655,7 +670,9 @@ class _EnteteCompact extends StatefulWidget {
   const _EnteteCompact({
     required this.vue,
     required this.mode,
-    required this.reglageTaille,
+    this.zoom = 1,
+    this.onReduire,
+    this.onAgrandir,
     this.onMenu,
     super.key,
   });
@@ -668,9 +685,16 @@ class _EnteteCompact extends StatefulWidget {
   /// ou aux credits de l'edition.
   final VoidCallback? onMenu;
 
-  /// Le reglage de taille du texte (lecture agrandie et focus), deplie avec
-  /// le choix du rendu (CORAN-320-1b).
-  final Widget reglageTaille;
+  /// Le reglage de taille du texte (lecture agrandie et focus), **directement
+  /// dans l'en-tete** : deux boutons ronds, jamais derriere « Mode de lecture »
+  /// (CORAN-320-FOND-1). `null` en page du mushaf, qui n'a pas de reglage.
+  final VoidCallback? onReduire;
+
+  /// Voir [onReduire].
+  final VoidCallback? onAgrandir;
+
+  /// Le grossissement courant, dit dans le panneau « Mode de lecture ».
+  final double zoom;
 
   @override
   State<_EnteteCompact> createState() => _EnteteCompactEtat();
@@ -728,7 +752,22 @@ class _EnteteCompactEtat extends State<_EnteteCompact> {
                     ),
                   ),
                 ),
-                const SizedBox(width: AppSpacing.sm),
+                const SizedBox(width: AppSpacing.xs),
+                if (widget.onReduire != null &&
+                    widget.onAgrandir != null) ...<Widget>[
+                  BoutonIcone(
+                    key: MushafPage.reduireKey,
+                    icone: AppIcons.zoomMoins,
+                    libelle: t.eleve.coran.reduire,
+                    onPress: widget.onReduire!,
+                  ),
+                  BoutonIcone(
+                    key: MushafPage.agrandirKey,
+                    icone: AppIcons.zoomPlus,
+                    libelle: t.eleve.coran.agrandir,
+                    onPress: widget.onAgrandir!,
+                  ),
+                ],
                 if (widget.onMenu != null)
                   BoutonIcone(
                     key: MushafPage.menuKey,
@@ -762,10 +801,22 @@ class _EnteteCompactEtat extends State<_EnteteCompact> {
                   ),
                 )
               else
-                // CORAN-320-1b (decide par delegation le 09/10) : le reglage
-                // de taille quitte la pagination, ou il prenait deux rangees
-                // a 320 points, et rejoint le reglage du rendu.
-                widget.reglageTaille,
+                // La valeur du reglage de taille, que les deux boutons de
+                // l'en-tete font varier. Isolee : sans lettre, « 100 % » se
+                // lisait « % 100 » en arabe (CORAN-320-1b).
+                Text(
+                  isolerSens(
+                    t.tc.coran.zoom.valeur(
+                      pourcent: (widget.zoom * 100).round(),
+                    ),
+                  ),
+                  textAlign: TextAlign.center,
+                  style: palette.inkMuted.applyTo(
+                    AppTypography.tabulaire(
+                      textes.labelMedium ?? const TextStyle(),
+                    ),
+                  ),
+                ),
             ],
           ],
         ),
