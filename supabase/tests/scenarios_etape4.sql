@@ -102,6 +102,9 @@ values
 insert into public.teacher_profiles (profile_id, country, timezone_iana) values
   ('cccccccc-0000-0000-0000-000000000001', 'FR', 'Europe/Paris'),
   ('cccccccc-0000-0000-0000-000000000002', 'GN', 'Africa/Conakry');
+-- prendre_eleve exige un profil enseignant dont le KYC est approuve.
+update public.teacher_profiles set kyc_status = 'approved'
+ where profile_id = 'cccccccc-0000-0000-0000-000000000002';
 
 -- Le fuseau dans lequel chacun pose ses creneaux, quel que soit son role.
 do $$
@@ -235,7 +238,12 @@ begin
       (1, 22, 'Africa/Conakry', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-19 22:00:00+00'),
       (1, 22, 'Africa/Conakry', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-19 22:00:00+00'),
       (1, 22, 'Africa/Conakry', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-19 22:00:00+00'),
-      (1,  0, 'Europe/Paris', 1, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-25 23:00:00+00')
+      (1,  0, 'Europe/Paris', 1, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-25 23:00:00+00'),
+      (1,  0, 'Europe/Paris', 1, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-11-01 23:00:00+00'),
+      (1,  0, 'Europe/Paris', 1, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-11-01 23:00:00+00'),
+      (7, 23, 'Europe/Paris', 1, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-11-01 22:00:00+00'),
+      (7, 23, 'Europe/Paris', 1, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-11-01 22:00:00+00'),
+      (7, 23, 'Europe/Paris', 1, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-11-01 22:00:00+00')
     ) as cas(weekday, heure, fuseau, offset_semaine, reference_at, attendu)
   loop
     v_obtenu := public.instant_creneau_reference(
@@ -248,7 +256,44 @@ begin
         v_obtenu, v_cas.attendu;
     end if;
   end loop;
-  raise notice 'Instant ok : 16 valeurs de prochaine occurrence, bascule hebdomadaire et DST';
+  raise notice 'Instant ok : 21 valeurs sans doublon d offset, bascule hebdomadaire et DST';
+end $$;
+
+-- La classe calcule une fois son occurrence dans le fuseau de reference.
+-- Paris et Conakry affichent ensuite le meme instant UTC, meme a cheval sur
+-- le dimanche UTC / lundi local et apres la fin de l'heure d'ete parisienne.
+do $$
+declare
+  v_cas record;
+  v_instant timestamptz;
+  v_paris_local timestamp without time zone;
+  v_conakry_local timestamp without time zone;
+begin
+  for v_cas in
+    select * from (values
+      (timestamptz '2026-10-25 00:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00'),
+      (timestamptz '2026-10-25 10:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00'),
+      (timestamptz '2026-10-25 12:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00'),
+      (timestamptz '2026-10-25 16:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00'),
+      (timestamptz '2026-10-25 17:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00'),
+      (timestamptz '2026-10-25 23:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00')
+    ) as cas(reference_at, attendu_utc, attendu_paris, attendu_conakry)
+  loop
+    v_instant := public.instant_creneau_reference(
+      1, 18, 'Europe/Paris', 0, v_cas.reference_at
+    );
+    v_paris_local := v_instant at time zone 'Europe/Paris';
+    v_conakry_local := v_instant at time zone 'Africa/Conakry';
+    if v_instant is distinct from v_cas.attendu_utc
+       or v_paris_local is distinct from v_cas.attendu_paris
+       or v_conakry_local is distinct from v_cas.attendu_conakry
+       or (v_paris_local at time zone 'Europe/Paris')
+          is distinct from (v_conakry_local at time zone 'Africa/Conakry') then
+      raise exception 'A778: instants Paris/Conakry divergents, ref %, UTC %, Paris %, Conakry %',
+        v_cas.reference_at, v_instant, v_paris_local, v_conakry_local;
+    end if;
+  end loop;
+  raise notice 'A778: les six références donnent le même instant UTC projeté à Paris et Conakry';
 end $$;
 
 -- Les consommateurs des migrations 0014, 0016, 0033 et 0083 ainsi que les
