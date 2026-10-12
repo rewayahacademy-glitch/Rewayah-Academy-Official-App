@@ -200,4 +200,118 @@ BEGIN
 END;
 $role_denials$;
 
+UPDATE public.profiles SET account_status='disabled'
+ WHERE id='c2200000-0000-0000-0000-000000000101';
+SET LOCAL ROLE authenticated;
+SELECT set_config('request.jwt.claim.sub','c2200000-0000-0000-0000-000000000101',true);
+SELECT set_config('test.uid','c2200000-0000-0000-0000-000000000101',true);
+SELECT set_config('request.jwt.claims',jsonb_build_object(
+  'app_metadata',jsonb_build_object('role','teacher',
+    'household_id','c2200000-0000-0000-0000-000000000111'))::text,true);
+SELECT set_config('test.jwt',jsonb_build_object(
+  'app_metadata',jsonb_build_object('role','teacher',
+    'household_id','c2200000-0000-0000-0000-000000000111'))::text,true);
+DO $disabled_teacher$
+DECLARE v_denied boolean;
+BEGIN
+  v_denied := false;
+  BEGIN
+    PERFORM public.pause_reglage_lire('c2200000-0000-0000-0000-000000000121');
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'X2-22: disabled teacher read pause settings'; END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM public.pause_reglage_ecrire(
+      'c2200000-0000-0000-0000-000000000121',true,15,10,'0','x222-disabled-write'
+    );
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'X2-22: disabled teacher changed pause settings'; END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM public.pause_seance_etat('c2200000-0000-0000-0000-000000000131');
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'X2-22: disabled teacher read pause state'; END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM public.pause_seance_demarrer(
+      'c2200000-0000-0000-0000-000000000131','x222-disabled-start'
+    );
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'X2-22: disabled teacher started a pause'; END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM public.pause_seance_terminer(
+      'c2200000-0000-0000-0000-000000000131','x222-disabled-stop'
+    );
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'X2-22: disabled teacher ended a pause'; END IF;
+END;
+$disabled_teacher$;
+RESET ROLE;
+
+DO $anon_acl$
+BEGIN
+  IF pg_catalog.has_function_privilege('anon', 'public.pause_reglage_lire(uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege(
+       'anon', 'public.pause_reglage_ecrire(uuid,boolean,integer,integer,text,text)', 'EXECUTE'
+     )
+     OR pg_catalog.has_function_privilege('anon', 'public.pause_seance_etat(uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.pause_seance_demarrer(uuid,text)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.pause_seance_terminer(uuid,text)', 'EXECUTE') THEN
+    RAISE EXCEPTION 'X2-22: anon unexpectedly has pause RPC EXECUTE';
+  END IF;
+END;
+$anon_acl$;
+
+SET LOCAL ROLE anon;
+DO $anon_calls$
+BEGIN
+  BEGIN
+    PERFORM public.pause_reglage_lire('c2200000-0000-0000-0000-000000000121');
+    RAISE EXCEPTION 'X2-22: anon read pause settings';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+
+  BEGIN
+    PERFORM public.pause_reglage_ecrire(
+      'c2200000-0000-0000-0000-000000000121', true, 15, 10, '0', 'x222-anon-write'
+    );
+    RAISE EXCEPTION 'X2-22: anon changed pause settings';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+
+  BEGIN
+    PERFORM public.pause_seance_etat('c2200000-0000-0000-0000-000000000131');
+    RAISE EXCEPTION 'X2-22: anon read pause state';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+
+  BEGIN
+    PERFORM public.pause_seance_demarrer(
+      'c2200000-0000-0000-0000-000000000131', 'x222-anon-start'
+    );
+    RAISE EXCEPTION 'X2-22: anon started a pause';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+
+  BEGIN
+    PERFORM public.pause_seance_terminer(
+      'c2200000-0000-0000-0000-000000000131', 'x222-anon-stop'
+    );
+    RAISE EXCEPTION 'X2-22: anon ended a pause';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+END;
+$anon_calls$;
+RESET ROLE;
+
 ROLLBACK;
