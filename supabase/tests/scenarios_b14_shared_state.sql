@@ -5,7 +5,8 @@ begin;
 insert into auth.users (id, email) values
   ('b1400000-0000-0000-0000-000000000001', 'b14-teacher-a@example.test'),
   ('b1400000-0000-0000-0000-000000000002', 'b14-teacher-b@example.test'),
-  ('b1400000-0000-0000-0000-000000000003', 'b14-admin@example.test');
+  ('b1400000-0000-0000-0000-000000000003', 'b14-admin@example.test'),
+  ('b1400000-0000-0000-0000-000000000004', 'b14-disabled-teacher@example.test');
 
 insert into public.households (id, timezone)
 values ('b14fffff-0000-0000-0000-000000000001', 'Europe/Paris');
@@ -18,7 +19,9 @@ values
   ('b1400000-0000-0000-0000-000000000002', 'B14TEACHERB001', 'teacher',
    'b14fffff-0000-0000-0000-000000000001', 'Teacher', 'B', 'provisional_active'),
   ('b1400000-0000-0000-0000-000000000003', 'B14ADMIN000001', 'admin',
-   'b14fffff-0000-0000-0000-000000000001', 'Fixture', 'Admin', 'active');
+   'b14fffff-0000-0000-0000-000000000001', 'Fixture', 'Admin', 'active'),
+  ('b1400000-0000-0000-0000-000000000004', 'B14DISABLED0001', 'teacher',
+   'b14fffff-0000-0000-0000-000000000001', 'Disabled', 'Teacher', 'disabled');
 
 insert into public.groupes
   (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local)
@@ -155,5 +158,70 @@ select set_config('test.jwt',
   true);
 select public.effacer_etat_partage('b14fffff-0000-0000-0000-000000000009');
 
+reset role;
+
+set local role authenticated;
+select set_config('test.uid', 'b1400000-0000-0000-0000-000000000004', true);
+select set_config('test.jwt',
+  '{"app_metadata":{"role":"teacher","household_id":"b14fffff-0000-0000-0000-000000000001"}}',
+  true);
+do $b14_disabled_account$
+begin
+  begin
+    perform public.publier_etat_partage(
+      'b14fffff-0000-0000-0000-000000000004',
+      'b14fffff-0000-0000-0000-000000000006', null,
+      '{"resource_id":"b14fffff-0000-0000-0000-000000000006","resource_version_id":null,"type_ancrage":"page","page":8,"sourate":null,"ayah":null,"section_id":null,"fraction":null}',
+      null, 'page', '[]', '[]', null, 1
+    );
+    raise exception 'B-14: disabled teacher published shared state';
+  exception when insufficient_privilege then null;
+  end;
+
+  begin
+    perform public.effacer_etat_partage('b14fffff-0000-0000-0000-000000000009');
+    raise exception 'B-14: disabled teacher erased shared state';
+  exception when insufficient_privilege then null;
+  end;
+end
+$b14_disabled_account$;
+
+reset role;
+do $b14_anon_acl$
+begin
+  if pg_catalog.has_function_privilege(
+       'anon',
+       'public.publier_etat_partage(uuid,uuid,uuid,jsonb,jsonb,text,jsonb,jsonb,jsonb,integer)',
+       'EXECUTE'
+     )
+     or pg_catalog.has_function_privilege(
+       'anon', 'public.effacer_etat_partage(uuid)', 'EXECUTE'
+     ) then
+    raise exception 'B-14: anon unexpectedly has shared-state RPC execution';
+  end if;
+end
+$b14_anon_acl$;
+
+set local role anon;
+do $b14_anon_calls$
+begin
+  begin
+    perform public.publier_etat_partage(
+      'b14fffff-0000-0000-0000-000000000004',
+      'b14fffff-0000-0000-0000-000000000006', null,
+      '{"resource_id":"b14fffff-0000-0000-0000-000000000006","resource_version_id":null,"type_ancrage":"page","page":8,"sourate":null,"ayah":null,"section_id":null,"fraction":null}',
+      null, 'page', '[]', '[]', null, 1
+    );
+    raise exception 'B-14: anon published shared state';
+  exception when insufficient_privilege then null;
+  end;
+
+  begin
+    perform public.effacer_etat_partage('b14fffff-0000-0000-0000-000000000009');
+    raise exception 'B-14: anon erased shared state';
+  exception when insufficient_privilege then null;
+  end;
+end
+$b14_anon_calls$;
 reset role;
 rollback;
