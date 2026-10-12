@@ -62,10 +62,25 @@ L'administration choisit d'afficher le code, le nom réel ou les deux, dans les 
 Les familles et les enseignants déjà inscrits par les formulaires Google ne doivent **pas tout
 ressaisir**.
 
-1. **Import préalable.** Leurs inscriptions sont importées dans l'app comme des fiches
-   « pré-inscrites » : foyer, personnes, ce qui est déjà connu. L'import se prépare et se teste sur
-   des données inventées. L'import réel attend un feu vert explicite du directeur. Aucune donnée
-   réelle ne passe par une conversation, un ticket ou une branche Git.
+1. **Import préalable, automatique (précisé par le directeur le 12/10 : pas de saisie à la
+   main).** Leurs inscriptions sont importées dans l'app comme des fiches « pré-inscrites » :
+   foyer, personnes, ce qui est déjà connu. Le chemin des données est le suivant :
+   - le directeur télécharge en CSV les onglets « Elèves (Réponses) » et « Enseignants (Réponses) »
+     du classeur des formulaires Google (Fichier > Télécharger > CSV), tels quels, sans les retoucher ;
+   - il dépose ces fichiers dans l'écran d'administration « Importer les inscriptions » ;
+   - le **serveur** lit la disposition des formulaires Google : une ligne par envoi, jusqu'à 5 élèves
+     par ligne, tuteur ou adulte. Il en tire les foyers, les tuteurs et les élèves, regroupe les
+     envois d'une même adresse e-mail, ignore les lignes de test et signale les doublons ;
+   - un **essai à blanc** montre d'abord ce qui sera créé : nombre de foyers, de personnes,
+     doublons et lignes rejetées avec leur motif. Rien n'est écrit tant que le directeur n'a pas
+     confirmé ;
+   - après confirmation, l'import est **rejouable sans doublon** : la même ligne importée deux fois
+     ne crée rien de plus. Il est réservé à un administrateur actif, tracé dans le journal d'audit,
+     et n'utilise pas de clé `service_role`.
+
+   L'import se développe et se teste sur des CSV inventés, avec la même disposition de colonnes.
+   Aucune donnée réelle ne passe par une conversation, un ticket ou une branche Git : les fichiers
+   vont directement du poste du directeur au serveur de l'app.
 2. **Preuve d'abord.** À la première connexion, la personne prouve d'abord qu'elle possède
    l'adresse e-mail, par un code ou un lien envoyé à cette adresse. Avant cette preuve, l'app ne
    révèle jamais qu'une adresse est connue : l'écran est le même pour tout le monde.
@@ -76,9 +91,20 @@ ressaisir**.
 4. **Mot personnel.** Depuis l'administration, le directeur peut joindre un mot d'accueil
    personnel à un foyer pré-inscrit ou à une adresse e-mail attendue (« invitation en attente »).
    Ce mot s'affiche une fois, à la première connexion, en tête de l'accueil, signé par son auteur.
-   Il peut être long et nommer la personne et ses enfants : c'est le directeur qui l'écrit pour
-   cette famille-là, et non un texte modèle. Aucune personne n'est jamais codée en dur dans l'app :
-   c'est une fonction générale, et le texte vient de l'administration.
+   Il peut être long et nommer la personne et ses enfants. Aucune personne n'est jamais codée en
+   dur dans l'app : c'est une fonction générale, et le texte vient de l'administration.
+   **Pas de saisie une par une :** chaque foyer importé reçoit automatiquement un mot de bienvenue
+   rempli avec les prénoms connus. Dans l'essai à blanc, le directeur coche « a patienté » pour les
+   familles qui ont attendu l'app. Ces familles reçoivent alors le mot de patience, rempli lui
+   aussi avec leurs prénoms :
+
+   > [Prénom du tuteur], vous nous aviez demandé, il y a longtemps déjà, de vous inscrire, vous et
+   > [prénoms des enfants]. Nous vous avions demandé d'attendre, et vous avez attendu, avec une
+   > patience et une confiance qui nous ont profondément touchés. Vous faites partie des toutes
+   > premières familles de la nouvelle Rewayah Academy. Bienvenue chez vous.
+   > [Signature du directeur]
+
+   Le directeur peut retoucher n'importe quel mot avant de confirmer l'import, sans y être obligé.
 5. **Ce que voit un tuteur déjà connu (précisé par le directeur le 12/10).** Après la preuve de
    l'e-mail :
    - il est **d'emblée tuteur** de son foyer, sans rien choisir ;
@@ -109,7 +135,7 @@ ressaisir**.
 | :--- | :--- | :--- |
 | IMM-BACK-1 | Codex | Registre, générateur `RA-AA-NNNN`, attribution dans tous les parcours de création, retrait du générateur par initiales, remplissage de `immutable_id`, lecture et recherche exacte sous autorisation |
 | IMM-BACK-2 | Codex | Codes `EV-NNNN` et politique de publication des évaluations |
-| IMM-ACCUEIL-BACK | Codex | Fiches pré-inscrites, script d'import testé sur données inventées, rattachement après preuve de l'e-mail, invitations en attente avec mot personnel |
+| IMM-ACCUEIL-BACK | Codex | Fiches pré-inscrites, RPC d'import admin (lecture de la disposition des formulaires Google, essai à blanc, confirmation, rejouable sans doublon, audit), mots de bienvenue et de patience remplis automatiquement, rattachement après preuve de l'e-mail ; tout est testé sur des CSV inventés |
 | IMM-FRONT-1 | Claude | Affichage du matricule (copie, gauche à droite), étiquettes de rôle, réglage de publication |
-| IMM-ACCUEIL-FRONT | Claude | Écran d'accueil « on vous connaît déjà » avec le mot personnel en tête, liste du foyer avec l'état de chaque personne, mise à jour limitée à ce qui manque, « M'inscrire moi aussi » et « Ajouter une autre personne », réglage du mot dans l'administration |
+| IMM-ACCUEIL-FRONT | Claude | Écran d'accueil « on vous connaît déjà » avec le mot personnel en tête, liste du foyer avec l'état de chaque personne, mise à jour limitée à ce qui manque, « M'inscrire moi aussi » et « Ajouter une autre personne » ; dans l'administration, l'écran « Importer les inscriptions » (dépôt des CSV, essai à blanc, case « a patienté », retouche facultative des mots, confirmation) |
 | RECH-BACK-3 | Codex | Recherche exacte par matricule, après IMM-BACK-1 |
