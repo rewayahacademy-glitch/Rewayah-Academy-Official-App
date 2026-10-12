@@ -229,6 +229,27 @@ enum RaisonBlocage {
 
   /// La capacite n'existe pas pour ce compte.
   capaciteAbsente,
+
+  /// DELEG-FIN-1 : la Direction a suspendu toutes les delegations ; rien ne
+  /// part sans elle.
+  delegationsSuspendues,
+
+  /// DELEG-FIN-1 : la delegation est arrivee a expiration.
+  delegationExpiree,
+
+  /// DELEG-FIN-1 : sortie au-dessus du plafond par transaction, retenue par
+  /// le delai de 24 h (annulable par la Direction).
+  sortieEnAttenteDelai,
+
+  /// DELEG-FIN-1 : coffre hors des exceptions de la delegation.
+  coffreNonAutorise,
+
+  /// DELEG-FIN-1 : beneficiaire exclu de la delegation.
+  beneficiaireExclu,
+
+  /// DELEG-FIN-1 : au-dessus du plafond propre a cette delegation (exception
+  /// plus basse que la politique generale).
+  plafondExceptionDepasse,
 }
 
 /// Les deux listes d'Aujourd'hui (DR-10) : une ligne n'appartient qu'a une

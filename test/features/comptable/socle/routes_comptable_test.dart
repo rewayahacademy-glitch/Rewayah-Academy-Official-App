@@ -120,6 +120,7 @@ void main() {
         Routes.comptableTresorerie,
         Routes.comptableEncaissements,
         Routes.comptableRapprochement,
+        Routes.comptableRapports,
       ]);
       expect(indexOngletPaiements(Routes.comptableContractuelsNouvelle), 1);
       expect(indexOngletPaiements(Routes.comptableBeneficiairePour('b')), 2);
@@ -129,6 +130,7 @@ void main() {
       );
       expect(indexOngletTresorerie(Routes.comptableEncaissementPour('e')), 1);
       expect(indexOngletTresorerie(Routes.comptableRapprochement), 2);
+      expect(indexOngletTresorerie(Routes.comptableRapports), 3);
     });
 
     test('la demonstration n existe pas en production', () {

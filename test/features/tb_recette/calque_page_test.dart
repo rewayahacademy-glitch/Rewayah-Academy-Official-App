@@ -14,6 +14,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -29,6 +30,8 @@ import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/repere_page.dart';
+import 'package:rewayah_academy/features/salle_seance/salle_seance.dart'
+    show SalleSeance;
 import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/tc_dock/barre_stylet.dart';
@@ -150,13 +153,18 @@ Future<AnnotationsMemoire> _monterSalle(
   await tester.pumpWidget(
     hoteCapture(
       DemoSallePage(role: role, situation: situation),
-      surcharges: <Override>[
-        portAnnotationsProvider.overrideWithValue(depot),
-        if (arme) etatOutilsProvider.overrideWith(_ControleurArme.new),
-      ],
+      surcharges: <Override>[portAnnotationsProvider.overrideWithValue(depot)],
     ),
   );
   await _attendre(tester);
+  // TB-RC (m21) : les outils sont ceux de la salle ; l'outil est arme dans
+  // sa portee, pas a la racine.
+  if (arme) {
+    ProviderScope.containerOf(tester.element(find.byType(SalleSeance)))
+        .read(etatOutilsProvider.notifier)
+        .choisirOutil(OutilDock.stylet);
+    await _attendre(tester);
+  }
   return depot;
 }
 

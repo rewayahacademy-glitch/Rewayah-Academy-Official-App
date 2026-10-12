@@ -60,6 +60,9 @@ class ValidationsPilotees implements PortValidationsFinance {
   Completer<List<DemandeValidation>>? attente;
   Completer<DemandeValidation>? decision;
   Object? erreurDecision;
+
+  /// L'erreur que jette la lecture du journal (COMPTA-RECON-1 §3.2).
+  Object? erreurJournal;
   final List<(DecisionValidation, String?, String)> decisions =
       <(DecisionValidation, String?, String)>[];
 
@@ -90,8 +93,11 @@ class ValidationsPilotees implements PortValidationsFinance {
   }
 
   @override
-  Future<List<EntreeJournal>> journal(String demandeId) async =>
-      const <EntreeJournal>[];
+  Future<List<EntreeJournal>> journal(String demandeId) async {
+    final Object? e = erreurJournal;
+    if (e != null) return Future<List<EntreeJournal>>.error(e);
+    return const <EntreeJournal>[];
+  }
 }
 
 DemandeValidation _demande({
@@ -262,6 +268,33 @@ void main() {
         find.text(formaterMontant(SocleComptableDemo.usd(500))),
         findsNothing,
       );
+    });
+  });
+
+  group('journal', () {
+    testWidgets('une lecture en echec n est pas un historique vide : la '
+        'phrase le dit et la relecture est a portee (COMPTA-RECON-1 §3.2)', (
+      WidgetTester tester,
+    ) async {
+      final ValidationsPilotees port = ValidationsPilotees(
+        rendues: <DemandeValidation>[_demande()],
+      )..erreurJournal = StateError('reseau');
+      await monter(tester, port);
+      await ouvrir(tester, 'd-1');
+      expect(
+        find.byKey(const ValueKey<String>('validation-historique-erreur')),
+        findsOneWidget,
+      );
+      expect(find.text(v.detail.historiqueErreur), findsOneWidget);
+      expect(find.text(v.detail.historiqueVide), findsNothing);
+      // La source revient : la relecture montre l'historique, vide cette fois.
+      port.erreurJournal = null;
+      await appuyer(tester, find.text(v.detail.historiqueReessayer));
+      expect(
+        find.byKey(const ValueKey<String>('validation-historique-erreur')),
+        findsNothing,
+      );
+      expect(find.text(v.detail.historiqueVide), findsOneWidget);
     });
   });
 

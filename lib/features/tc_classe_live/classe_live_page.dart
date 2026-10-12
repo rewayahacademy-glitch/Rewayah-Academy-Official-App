@@ -36,6 +36,7 @@ import '../../core/widgets/status_pill.dart';
 import '../salle/vue_salle.dart';
 import '../salle_seance/actions_seance.dart';
 import '../salle_seance/depuis_classe_live.dart';
+import '../salle_seance/portee_outils_salle.dart';
 import '../salle_seance/salle_seance.dart';
 import '../salle_seance/vue_seance.dart';
 import 'encre_salle.dart';
@@ -341,6 +342,9 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
   ContexteOuvert _contexte = ContexteOuvert.aucun;
 
   /// Le zoom local, qui n'agit que sur cet ecran.
+  /// TB-RC (m21) : la cle de la portee des outils de la salle.
+  final GlobalKey _cleOutilsSalle = GlobalKey(debugLabel: 'outils-salle');
+
   double _zoom = 1;
 
   /// TB-5 (UI-03) : le focus local de l'enseignant (Commandes > Focus).
@@ -531,10 +535,17 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
             : null,
       ),
     );
+    // TB-RC (m21) : les outils, l'historique d'Annuler et la marque « non
+    // partage » sont ceux de CETTE salle ; la cle garde leur etat quand un
+    // message apparait au-dessus de la salle.
+    final Widget salleDeLaClasse = PorteeOutilsSalle(
+      key: _cleOutilsSalle,
+      child: salleSeance,
+    );
     final String? avis = suspensionNonConfirmee
         ? t.tc.classe.lien.retourDeSuspension
         : null;
-    if (avis == null && _echecRappel == null) return salleSeance;
+    if (avis == null && _echecRappel == null) return salleDeLaClasse;
     // Les deux seuls messages de la Classe Live qui ne sont pas dans la salle
     // de seance : une ligne au-dessus, jamais par-dessus.
     return Column(
@@ -543,7 +554,7 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
         if (avis != null) LocalFeedback(message: avis, persistant: true),
         if (_echecRappel case final String echec)
           LocalFeedback(message: echec, persistant: true),
-        Expanded(child: salleSeance),
+        Expanded(child: salleDeLaClasse),
       ],
     );
   }

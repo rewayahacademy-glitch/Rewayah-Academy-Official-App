@@ -282,8 +282,7 @@ class CommandeSalle extends StatelessWidget {
     final bool garderMot = compacte?.garderMotEtat ?? false;
     final bool iconeSeule =
         compacte != null &&
-        (!(estBascule || motGarde) ||
-            (!garderMot && !motEtatVisible(context)));
+        (!(estBascule || motGarde) || (!garderMot && !motEtatVisible(context)));
     final double diametre =
         compacte?.diametre ?? diametreCommandeSalle(context);
     final double tailleIcone =
@@ -410,15 +409,25 @@ class CommandeSalle extends StatelessWidget {
           ),
           if (!iconeSeule) ...<Widget>[
             Ecart.vXs,
-            Text(
-              libelle,
-              key: const ValueKey<String>('mot-commande'),
-              // Un mot d'etat de deux mots passe a la ligne, centre ligne a
-              // ligne (K-54), plutot que de se tronquer.
-              maxLines: estBascule ? 2 : 1,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              style: styleLibelle,
+            // TB-RC : le `Pressable` porte deja le nom lu (« Quitter la
+            // seance ») ; le mot peint se tait, sinon « Quitter » est lu deux
+            // fois. Seule une bascule garde son mot d'etat dans le nom lu
+            // (acte puis etat : « Fermer le micro, Micro ouvert »).
+            ExcludeSemantics(
+              excluding:
+                  !estBascule ||
+                  libelleSemantique == null ||
+                  libelleSemantique == libelle,
+              child: Text(
+                libelle,
+                key: const ValueKey<String>('mot-commande'),
+                // Un mot d'etat de deux mots passe a la ligne, centre ligne a
+                // ligne (K-54), plutot que de se tronquer.
+                maxLines: estBascule ? 2 : 1,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: styleLibelle,
+              ),
             ),
           ],
         ],
