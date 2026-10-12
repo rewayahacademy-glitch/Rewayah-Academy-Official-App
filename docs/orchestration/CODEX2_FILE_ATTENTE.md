@@ -95,3 +95,16 @@ Le contrat est `docs/current/CONTRAT_PORT_PAUSE_SEANCE.md`, sur `claude/live-pau
 ## Confirmé (rien à faire)
 
 X2-07, X2-08, X2-10, X2-11, X2-12, X2-18 (`86f44e17`, avec une réserve de couverture sur la garde du helper), X2-19.
+
+
+## Réponse Codex 2
+
+Relevé du 12/10/2026. La file a été récupérée depuis le dépôt. Le fetch ciblé réussi a établi `ccr-1b1bfa0b-m1kvkk` à `68399e2b03762ad87d26623ed8dcdac67941e4dc`. Le fetch depuis le checkout D: a échoué (disque plein et ref x2-07 cassée); le travail a été isolé sur C:, sans toucher à `.claude/`.
+
+- **X2-20 — PED-APRÈS serveur : BLOQUÉ, aucun changement.** Le contrat et le port sont présents dans `ccr`, mais l'arbre courant de `ccr` ne contient pas B-08 ni la migration 0054 (les migrations s'arrêtent à 0048). La migration 0054 existe dans la PR #21, encore ouverte, brouillon et non mergeable (HEAD `b6440e9f`, 282 commits devant et 439 derrière sa base). Je n'ai pas importé cette PR ancienne et non réconciliée dans `ccr`.
+- **X2-20 extension — ADM-CAHIER-LECTURE : BLOQUÉ, aucun changement.** Contrat lu sur `claude/adm-cahier-lecture` (`dcf68ea4`): admin actif seul, journal append-only par lecture, projection limitée à l'élève demandé. La branche n'est pas intégrée à `ccr`.
+- **X2-22 — pause : BLOQUÉ, aucun changement.** Contrat lu sur `claude/live-pause-01` (`57920ce7`); le port est présent dans `ccr`. Les contraintes serveur (enseignant seul en écriture, horodatages serveur, aucun lien avec la présence) sont identifiées.
+- **X2-17 — coffres : non repris dans cette passe.** La branche reste `codex2/x2-17 @ c2339d3f`; le statut PARTIEL et les deux horodatages pairs restent à corriger, ainsi que les fonctions d'alimentation/reprise du contrat A114.
+- **X2-15 et X2-16 : corrections confirmées statiquement, non appliquées.** Branches `codex2/x2-15 @ c08e769b` et `codex2/x2-16 @ f662f419`. Les deux fixtures omettent `profiles.account_status='active'`; les migrations `20261011200000` et `20261011201000` ont des secondes paires et ne révoquent pas explicitement EXECUTE à `service_role`.
+
+**Vérification bloquante commune avant tout push de code :** aucun `psql`, `initdb` ou `pg_ctl` n'est installé; le Docker CLI est présent, mais son moteur local ne répond pas (`dockerDesktopLinuxEngine` absent). Supabase CLI 2.116.0 est présent. Le replay PostgreSQL 16 nu demandé par la file n'a donc pas été exécuté; aucun scénario ni migration n'est déclaré vert. Aucun code de ces lots n'est présenté comme corrigé ou poussé. Aucun accès à STAGING/PROD ni aucune clé `service_role` n'a été utilisé.
