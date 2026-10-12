@@ -7,7 +7,7 @@ void main() {
       'lit une étape connue et conserve le motif sans données de regroupement',
       () {
         final DemandeHoraireFamille demande = DemandeHoraireFamille.depuisJson(
-          <String, dynamic>{
+          const <String, dynamic>{
             'id': 'd-1',
             'etat': 'refusee',
             'prochaine_etape': 'choisir_autre_horaire',
@@ -33,7 +33,7 @@ void main() {
 
   test('lit le regroupement sans identité familiale', () {
     final RegroupementDemandesHoraires regroupement =
-        RegroupementDemandesHoraires.depuisJson(<String, dynamic>{
+        RegroupementDemandesHoraires.depuisJson(const <String, dynamic>{
           'regroupement_id': 'a1b2',
           'type_public': 'adulte',
           'langue_code': 'francais',
