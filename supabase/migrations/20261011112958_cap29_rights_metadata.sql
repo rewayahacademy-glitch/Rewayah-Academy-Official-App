@@ -169,6 +169,7 @@ BEGIN
      OR has_table_privilege('authenticated', 'private.library_rights_proofs', 'UPDATE')
      OR has_table_privilege('authenticated', 'private.library_rights_proofs', 'DELETE')
      OR has_table_privilege('anon', 'public.library_version_rights', 'SELECT')
+     OR has_table_privilege('authenticated', 'public.library_version_rights', 'SELECT')
      OR has_table_privilege('authenticated', 'public.library_version_rights', 'INSERT')
      OR has_table_privilege('authenticated', 'public.library_version_rights', 'UPDATE')
      OR has_table_privilege('authenticated', 'public.library_version_rights', 'DELETE')
