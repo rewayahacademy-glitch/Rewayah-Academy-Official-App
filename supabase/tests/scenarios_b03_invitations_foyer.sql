@@ -246,7 +246,76 @@ BEGIN
         <> 'b0300000-0000-0000-0000-000000000104'::uuid THEN
     RAISE EXCEPTION 'B-03: un titulaire avec enfant a été fusionné dans un autre foyer';
   END IF;
+
+  UPDATE public.profiles SET account_status = 'disabled' WHERE id = v_inviter;
+  PERFORM set_config('request.jwt.claim.sub', v_inviter::text, true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'guardian',
+      'household_id', 'b0300000-0000-0000-0000-000000000101'))::text, true);
+  BEGIN
+    PERFORM public.inviter_conjoint(
+      'b03-disabled-attempt@example.test',
+      'b0300000-0000-0000-0000-000000000207'
+    );
+    RAISE EXCEPTION 'B-03: disabled guardian created a household invitation';
+  EXCEPTION WHEN raise_exception THEN
+    GET STACKED DIAGNOSTICS v_guard_error = MESSAGE_TEXT;
+    IF v_guard_error <> 'invitation indisponible' THEN RAISE; END IF;
+  END;
+
+  BEGIN
+    PERFORM public.annuler_invitation_conjoint();
+    RAISE EXCEPTION 'B-03: disabled guardian cancelled a household invitation';
+  EXCEPTION WHEN raise_exception THEN
+    GET STACKED DIAGNOSTICS v_guard_error = MESSAGE_TEXT;
+    IF v_guard_error <> 'annulation indisponible' THEN RAISE; END IF;
+  END;
 END
 $scenario$;
+
+DO $anon_acl$
+BEGIN
+  IF pg_catalog.has_function_privilege('anon', 'public.inviter_conjoint(text,uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.annuler_invitation_conjoint()', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.mon_invitation_en_cours()', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.repondre_invitation_conjoint(text,uuid)', 'EXECUTE') THEN
+    RAISE EXCEPTION 'B-03: anon unexpectedly has household invitation RPC EXECUTE';
+  END IF;
+END
+$anon_acl$;
+
+SET LOCAL ROLE anon;
+DO $anon_calls$
+BEGIN
+  BEGIN
+    PERFORM public.inviter_conjoint(
+      'b03-anon@example.test', 'b0300000-0000-0000-0000-000000000208'
+    );
+    RAISE EXCEPTION 'B-03: anon created a household invitation';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+
+  BEGIN
+    PERFORM public.annuler_invitation_conjoint();
+    RAISE EXCEPTION 'B-03: anon cancelled a household invitation';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+
+  BEGIN
+    PERFORM public.mon_invitation_en_cours();
+    RAISE EXCEPTION 'B-03: anon read a household invitation';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+
+  BEGIN
+    PERFORM public.repondre_invitation_conjoint(
+      'refuser', 'b0300000-0000-0000-0000-000000000209'
+    );
+    RAISE EXCEPTION 'B-03: anon answered a household invitation';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+END
+$anon_calls$;
+RESET ROLE;
 
 ROLLBACK;
