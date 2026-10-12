@@ -448,7 +448,7 @@ BEGIN
   IF EXISTS (
     SELECT 1
     FROM jsonb_array_elements(v_reponse) AS ligne
-    WHERE coalesce(ligne->>'etat', '') <> 'enseignant_affecte'
+    WHERE coalesce(ligne->>'etape', '') <> 'enseignant_affecte'
       AND (ligne->>'enseignant') IS NOT NULL
   ) THEN
     RAISE EXCEPTION 'C-10 : un enseignant est visible avant son affectation';
@@ -456,8 +456,19 @@ BEGIN
   IF EXISTS (
     SELECT 1
     FROM jsonb_array_elements(v_reponse) AS ligne
-    WHERE jsonb_array_length(ligne->'jours') <>
-          jsonb_array_length(ligne->'heures_locales')
+    JOIN public.demandes_horaires_famille AS demande
+      ON demande.id = (ligne->>'demande_id')::uuid
+    WHERE jsonb_array_length(ligne->'occurrences') <> cardinality(demande.jours)
+       OR EXISTS (
+         SELECT 1
+         FROM jsonb_array_elements(ligne->'occurrences') WITH ORDINALITY
+           AS occurrence(valeur, position)
+         WHERE (occurrence.valeur->>'jour_iso')::integer <>
+                 demande.jours[occurrence.position::integer]
+            OR (occurrence.valeur->>'heure')::integer <>
+                 demande.heures_locales[occurrence.position::integer]
+            OR (occurrence.valeur->>'minute')::integer <> 0
+       )
   ) THEN
     RAISE EXCEPTION 'C-10 bis : jours et heures ne sont pas parallèles';
   END IF;
@@ -465,16 +476,16 @@ BEGIN
     SELECT 1
     FROM jsonb_array_elements(v_reponse) AS ligne
     WHERE ligne->>'eleve_id' = 'f1490000-0000-0000-0000-000000000003'
-      AND ligne->>'etat' = 'enseignant_affecte'
-      AND ligne->>'enseignant' = 'Sayid Enseignant'
-      AND (ligne->>'debut_cours_local') !~ '(Z|[+-][0-9]{2}:[0-9]{2})$'
-      AND (ligne->>'debut_cours_local')::timestamp::time = time '18:00'
+      AND ligne->>'etape' = 'enseignant_affecte'
+      AND ligne->>'enseignant' = 'Enseignant Test'
+      AND ligne->>'titre_public' = 'sayid'
+      AND (ligne->>'debut_cours') !~ '(Z|[+-][0-9]{2}:[0-9]{2})$'
+      AND (ligne->>'debut_cours')::timestamp::time = time '18:00'
   ) THEN
-    RAISE EXCEPTION 'C-04/C-10 : titre masculin ou heure murale du cours absent';
+    RAISE EXCEPTION 'C-10 : nom de l''enseignant ou heure murale du cours absent';
   END IF;
 
-  -- C-04 : le titre public suit le genre du profil enseignant; il n'est
-  -- jamais saisi ni fourni par le client.
+  -- C-04 : le RPC rend le titre distinct du nom; le genre reste serveur.
   UPDATE public.profiles SET gender = 'female'
    WHERE id = 'f1490000-0000-0000-0000-000000000997';
   SELECT coalesce(jsonb_agg(to_jsonb(s)), '[]'::jsonb)
@@ -484,14 +495,15 @@ BEGIN
     SELECT 1
     FROM jsonb_array_elements(v_reponse) AS ligne
     WHERE ligne->>'eleve_id' = 'f1490000-0000-0000-0000-000000000003'
-      AND ligne->>'enseignant' = 'Sayyida Enseignant'
+      AND ligne->>'enseignant' = 'Enseignant Test'
+      AND ligne->>'titre_public' = 'sayyida'
   ) THEN
-    RAISE EXCEPTION 'C-04 : gender=female ne produit pas le titre sayyida';
+    RAISE EXCEPTION 'C-04 : titre_public ne suit pas le genre du profil enseignant';
   END IF;
   UPDATE public.profiles SET gender = 'male'
    WHERE id = 'f1490000-0000-0000-0000-000000000997';
 
-  RAISE NOTICE 'F1/C-10: demandes privées, suivi foyer, heures par jour, titre C-04 et ACL vérifiés';
+  RAISE NOTICE 'F1/C-10: suivi, confidentialité, horaires muraux et titre C-04 vérifiés';
 END
 $quota$;
 

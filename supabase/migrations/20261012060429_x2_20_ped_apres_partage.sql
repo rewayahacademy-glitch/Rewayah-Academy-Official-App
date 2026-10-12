@@ -128,7 +128,7 @@ END;
 $function$;
 
 ALTER FUNCTION public.revoquer_resume_seance(uuid, uuid, text, text) OWNER TO postgres;
-REVOKE ALL ON FUNCTION public.revoquer_resume_seance(uuid, uuid, text, text) FROM PUBLIC, anon, agent_ro;
+REVOKE ALL ON FUNCTION public.revoquer_resume_seance(uuid, uuid, text, text) FROM PUBLIC, anon, agent_ro, service_role;
 GRANT EXECUTE ON FUNCTION public.revoquer_resume_seance(uuid, uuid, text, text) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.publier_resume_seance(
@@ -197,7 +197,7 @@ BEGIN
 END;
 $function$;
 ALTER FUNCTION public.publier_resume_seance(uuid, uuid, text, text) OWNER TO postgres;
-REVOKE ALL ON FUNCTION public.publier_resume_seance(uuid, uuid, text, text) FROM PUBLIC, anon, agent_ro;
+REVOKE ALL ON FUNCTION public.publier_resume_seance(uuid, uuid, text, text) FROM PUBLIC, anon, agent_ro, service_role;
 GRANT EXECUTE ON FUNCTION public.publier_resume_seance(uuid, uuid, text, text) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.resume_seance_famille(
@@ -231,7 +231,7 @@ BEGIN
 END;
 $function$;
 ALTER FUNCTION public.resume_seance_famille(uuid, uuid) OWNER TO postgres;
-REVOKE ALL ON FUNCTION public.resume_seance_famille(uuid, uuid) FROM PUBLIC, anon, agent_ro;
+REVOKE ALL ON FUNCTION public.resume_seance_famille(uuid, uuid) FROM PUBLIC, anon, agent_ro, service_role;
 GRANT EXECUTE ON FUNCTION public.resume_seance_famille(uuid, uuid) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.progression_famille(
@@ -305,7 +305,7 @@ BEGIN
 END;
 $function$;
 ALTER FUNCTION public.progression_famille(uuid, integer) OWNER TO postgres;
-REVOKE ALL ON FUNCTION public.progression_famille(uuid, integer) FROM PUBLIC, anon, agent_ro;
+REVOKE ALL ON FUNCTION public.progression_famille(uuid, integer) FROM PUBLIC, anon, agent_ro, service_role;
 GRANT EXECUTE ON FUNCTION public.progression_famille(uuid, integer) TO authenticated;
 
 DO $verification$
@@ -314,6 +314,10 @@ BEGIN
      OR NOT has_function_privilege('authenticated', 'public.revoquer_resume_seance(uuid,uuid,text,text)', 'EXECUTE')
      OR has_function_privilege('anon', 'public.publier_resume_seance(uuid,uuid,text,text)', 'EXECUTE')
      OR NOT has_function_privilege('authenticated', 'public.publier_resume_seance(uuid,uuid,text,text)', 'EXECUTE')
+     OR has_function_privilege('service_role', 'public.revoquer_resume_seance(uuid,uuid,text,text)', 'EXECUTE')
+     OR has_function_privilege('service_role', 'public.publier_resume_seance(uuid,uuid,text,text)', 'EXECUTE')
+     OR has_function_privilege('service_role', 'public.resume_seance_famille(uuid,uuid)', 'EXECUTE')
+     OR has_function_privilege('service_role', 'public.progression_famille(uuid,integer)', 'EXECUTE')
      OR NOT EXISTS (
        SELECT 1 FROM pg_catalog.pg_policy p
        WHERE p.polrelid = 'public.seance_resumes'::regclass

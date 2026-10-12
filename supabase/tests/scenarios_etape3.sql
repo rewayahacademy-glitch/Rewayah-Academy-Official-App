@@ -814,6 +814,12 @@ end $$;
 
 -- F70 : ni l'insertion directe ni un changement de rôle ne peuvent créer un
 -- enseignant déjà actif sans la signature du texte courant.
+INSERT INTO auth.users (id, email) VALUES
+  ('88888888-8888-8888-8888-888888888881', 'f70-teacher@example.test'),
+  ('88888888-8888-8888-8888-888888888882', 'f70-student@example.test');
+INSERT INTO public.households (id, timezone, status)
+VALUES ('88888888-8888-8888-8888-888888888883', 'Europe/Paris', 'active');
+
 do $$
 begin
   begin
@@ -825,9 +831,11 @@ begin
     if position('contract_not_signed_current:teacher_nda' in sqlerrm) = 0 then raise; end if;
   end;
 
-  insert into public.profiles (id, immutable_id, role, first_name, last_name, account_status)
+  insert into public.profiles
+    (id, immutable_id, role, household_id, first_name, last_name, account_status)
   values ('88888888-8888-8888-8888-888888888882', 'F70ROLE0000001',
-          'student', 'Sans', 'Signature', 'active');
+          'student', '88888888-8888-8888-8888-888888888883',
+          'Sans', 'Signature', 'active');
   begin
     update public.profiles set role = 'teacher'
     where id = '88888888-8888-8888-8888-888888888882';
