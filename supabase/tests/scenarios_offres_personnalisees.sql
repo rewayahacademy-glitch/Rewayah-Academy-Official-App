@@ -285,6 +285,18 @@ BEGIN
     RAISE EXCEPTION 'F1 heures Europe/Paris incorrectes: %', v_heures;
   END IF;
 
+  v_ok := false;
+  BEGIN
+    PERFORM public.creer_classe_depuis_regroupement(
+      NULL::text, 'c1200000-0000-0000-0000-000000000099', 'Classe F1 null'
+    );
+  EXCEPTION WHEN OTHERS THEN
+    v_ok := true;
+  END;
+  IF NOT v_ok THEN
+    RAISE EXCEPTION 'F86: creer_classe_depuis_regroupement accepted a NULL grouping key';
+  END IF;
+
   v_groupe := public.creer_classe_depuis_regroupement(
     v_regroupement, 'c1201000-0000-0000-0000-000000000001'::uuid, 'Classe F1 C-12'
   );
@@ -421,6 +433,17 @@ BEGIN
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
   PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
+  v_ok := false;
+  BEGIN
+    PERFORM public.creer_offre_horaire(
+      'adulte', 'francais', 'Europe/Paris', NULL::smallint[], 20::smallint, NULL::smallint
+    );
+  EXCEPTION WHEN OTHERS THEN
+    v_ok := true;
+  END;
+  IF NOT v_ok THEN
+    RAISE EXCEPTION 'F86: creer_offre_horaire accepted a NULL weekday array';
+  END IF;
   v_offre := public.creer_offre_horaire(
     'adulte', 'francais', 'Europe/Paris', ARRAY[1,3,5]::smallint[], 20::smallint, NULL
   );

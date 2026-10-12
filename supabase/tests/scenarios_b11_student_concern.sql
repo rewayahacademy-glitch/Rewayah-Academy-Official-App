@@ -170,6 +170,16 @@ begin
    where internal_details = 'Note interne distincte';
 
   begin
+    perform public.transmettre_student_concern(v_family_id, NULL);
+    raise exception 'B-11/F86: null target was accepted';
+  exception when raise_exception then
+    if sqlerrm not in (
+      'cible de transmission invalide',
+      'cible incompatible avec le profil de l''eleve'
+    ) then raise; end if;
+  end;
+
+  begin
     perform public.transmettre_student_concern(v_family_id, 'eleve_adulte');
     raise exception 'B-11: target mismatching a minor was accepted';
   exception when raise_exception then
