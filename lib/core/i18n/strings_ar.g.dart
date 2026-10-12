@@ -3913,6 +3913,7 @@ class _Traductions$admin$groupes$ar extends Traductions$admin$groupes$fr {
 	@override String observationTitre({required Object libelle}) => 'المتابعة: ⁨${libelle}⁩';
 	@override String get observationErreur => 'تعذّر حفظ الإعداد.';
 	@override String get observationCapaciteAbsente => 'هذا التثبيت لا يملك بعد تحديث الخادم الذي يتطلبه هذا الإعداد (الترحيل 0036). إعادة المحاولة لن تغيّر شيئًا: يجب تطبيقه أولًا على قاعدة البيانات.';
+	@override late final _Traductions$admin$groupes$cahiers$ar cahiers = _Traductions$admin$groupes$cahiers$ar._(_root);
 	@override late final _Traductions$admin$groupes$partage$ar partage = _Traductions$admin$groupes$partage$ar._(_root);
 	@override late final _Traductions$admin$groupes$liste$ar liste = _Traductions$admin$groupes$liste$ar._(_root);
 }
@@ -10396,6 +10397,34 @@ class _Traductions$com$annonces$demo$ar extends Traductions$com$annonces$demo$fr
 	@override String get classeFajr => 'فصل الفجر';
 	@override String get enseignante => 'معلمة الفصل';
 	@override late final _Traductions$com$annonces$demo$f$ar f = _Traductions$com$annonces$demo$f$ar._(_root);
+}
+
+// Path: admin.groupes.cahiers
+class _Traductions$admin$groupes$cahiers$ar extends Traductions$admin$groupes$cahiers$fr {
+	_Traductions$admin$groupes$cahiers$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get lien => 'عرض دفاتر الفصل';
+	@override String get titre => 'دفاتر الفصل';
+	@override String get aide => 'للقراءة فقط. تُسجَّل كل مرة يُفتح فيها دفتر في سجل التدقيق مع اسمك.';
+	@override String get filtre => 'الحالة';
+	@override String get filtreTous => 'كل الحالات';
+	@override String get vide => 'لا يوجد دفتر مطابق لهذا الفصل.';
+	@override String get plus => 'عرض مزيد من الدفاتر';
+	@override String titreCahier({required Object dePrenom}) => 'دفتر ⁨${dePrenom}⁩';
+	@override String get lectureSeule => 'للقراءة فقط';
+	@override String get evaluation => 'تقييم المعلم لهذا الطالب';
+	@override String get aucuneEvaluation => 'لم يُسجَّل أي تقييم لهذا الطالب.';
+	@override String get detailsInternes => 'تفاصيل داخلية';
+	@override String get interne => 'داخلي، لا يُعرض للأسرة أبدًا';
+	@override String get aucunInterne => 'لم تُسجَّل أي تفاصيل داخلية.';
+	@override String get apercu => 'عرض معاينة الأسرة';
+	@override String get nonValide => 'لم يُعتمد الدفتر بعد.';
+	@override String corrigeLe({required Object date}) => 'صُحِّح في ⁨${date}⁩';
+	@override String get enseignant => 'المعلم';
+	@override String seanceDu({required Object date}) => 'حصة ⁨${date}⁩';
 }
 
 // Path: admin.groupes.partage
@@ -16901,6 +16930,25 @@ extension on TraductionsAr {
 			'admin.groupes.observationTitre' => ({required Object libelle}) => 'المتابعة: ⁨${libelle}⁩',
 			'admin.groupes.observationErreur' => 'تعذّر حفظ الإعداد.',
 			'admin.groupes.observationCapaciteAbsente' => 'هذا التثبيت لا يملك بعد تحديث الخادم الذي يتطلبه هذا الإعداد (الترحيل 0036). إعادة المحاولة لن تغيّر شيئًا: يجب تطبيقه أولًا على قاعدة البيانات.',
+			'admin.groupes.cahiers.lien' => 'عرض دفاتر الفصل',
+			'admin.groupes.cahiers.titre' => 'دفاتر الفصل',
+			'admin.groupes.cahiers.aide' => 'للقراءة فقط. تُسجَّل كل مرة يُفتح فيها دفتر في سجل التدقيق مع اسمك.',
+			'admin.groupes.cahiers.filtre' => 'الحالة',
+			'admin.groupes.cahiers.filtreTous' => 'كل الحالات',
+			'admin.groupes.cahiers.vide' => 'لا يوجد دفتر مطابق لهذا الفصل.',
+			'admin.groupes.cahiers.plus' => 'عرض مزيد من الدفاتر',
+			'admin.groupes.cahiers.titreCahier' => ({required Object dePrenom}) => 'دفتر ⁨${dePrenom}⁩',
+			'admin.groupes.cahiers.lectureSeule' => 'للقراءة فقط',
+			'admin.groupes.cahiers.evaluation' => 'تقييم المعلم لهذا الطالب',
+			'admin.groupes.cahiers.aucuneEvaluation' => 'لم يُسجَّل أي تقييم لهذا الطالب.',
+			'admin.groupes.cahiers.detailsInternes' => 'تفاصيل داخلية',
+			'admin.groupes.cahiers.interne' => 'داخلي، لا يُعرض للأسرة أبدًا',
+			'admin.groupes.cahiers.aucunInterne' => 'لم تُسجَّل أي تفاصيل داخلية.',
+			'admin.groupes.cahiers.apercu' => 'عرض معاينة الأسرة',
+			'admin.groupes.cahiers.nonValide' => 'لم يُعتمد الدفتر بعد.',
+			'admin.groupes.cahiers.corrigeLe' => ({required Object date}) => 'صُحِّح في ⁨${date}⁩',
+			'admin.groupes.cahiers.enseignant' => 'المعلم',
+			'admin.groupes.cahiers.seanceDu' => ({required Object date}) => 'حصة ⁨${date}⁩',
 			'admin.groupes.partage.titre' => 'مشاركة التقارير التربوية',
 			'admin.groupes.partage.interrupteur' => 'المشاركة التلقائية مع الأسر',
 			'admin.groupes.partage.aide' => 'ترى الأسر الملاحظات القابلة للمشاركة بعد اعتماد الدفتر. تبقى الملاحظات الداخلية خاصة.',
@@ -17111,6 +17159,8 @@ extension on TraductionsAr {
 			'admin.conservationDonnees.uniteJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ يوم', one: 'يوم واحد', two: 'يومان', few: '⁨${n}⁩ أيام', many: '⁨${n}⁩ يومًا', other: '⁨${n}⁩ يوم', ), 
 			'admin.politiqueRevueKyc.titre' => 'اشتراط تطابق الجنس في مراجعة الهوية',
 			'admin.politiqueRevueKyc.libelle' => 'حصر مراجعة الهوية بموظف من الجنس نفسه',
+			_ => null,
+		} ?? switch (path) {
 			'admin.politiqueRevueKyc.aide' => 'حين تُعطَّل هذه القاعدة، يمكن لكل عضو مخوَّل بمراجعة الملفات معالجة ملفات نطاقه، أيًا كان جنسه.',
 			'admin.politiqueRevueKyc.echecEnregistrement' => _root.admin.groupes.observationErreur,
 			'admin.evaluations.titre' => 'التقييمات',
@@ -17130,8 +17180,6 @@ extension on TraductionsAr {
 			'admin.evaluations.colonneType' => 'النوع',
 			'admin.evaluations.colonneDatePrevue' => 'مقرر في',
 			'admin.evaluations.colonneStatut' => 'الحالة',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.colonneResultat' => 'النتيجة',
 			'admin.evaluations.typeInitiale' => 'أولي',
 			'admin.evaluations.typePeriodique' => 'دوري',
@@ -17625,6 +17673,8 @@ extension on TraductionsAr {
 			'admin.tirage.erreur' => 'تعذّرت قراءة القرعات: ربما لم تصل القراءة إلى رواية. أعيدوا المحاولة بعد قليل.',
 			'admin.tirage.indisponibleTitre' => 'متاحة عند الربط بالخادم',
 			'admin.tirage.indisponiblePhrase' => 'ستظهر قواعد القرعة وسجلها هنا فور الربط بالخادم. إلى ذلك الحين لا يُعرض شيء: لا قرعة مختلقة.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.reserveTitre' => 'هذه الشاشة مخصصة للإدارة',
 			'admin.tirage.reservePhrase' => 'ليس لحسابكم حق الاطلاع على القرعات: هي مخصصة للإدارة حتى لا يستطيع أحد توقع من سيُراقَب. إن احتجتم إلى ذلك فاطلبوا الإذن من الإدارة.',
 			'admin.tirage.reglesTitre' => 'قواعد القرعة',
@@ -17644,8 +17694,6 @@ extension on TraductionsAr {
 			'admin.tirage.critereHeuresDePointe' => 'ساعات الذروة',
 			'admin.tirage.niveauAucun' => 'بلا وزن',
 			'admin.tirage.niveauNormal' => 'وزن عادي',
-			_ => null,
-		} ?? switch (path) {
 			'admin.tirage.niveauFort' => 'وزن قوي',
 			'admin.tirage.ciblesTitre' => 'فصول أو معلمون مستهدفون',
 			'admin.tirage.ciblesDetail' => 'يُسحب الهدف أولًا عندما تكون حصته مباشرة. لا يُعلَن أبدًا للمراقب ولا للمعلم.',
@@ -18139,6 +18187,8 @@ extension on TraductionsAr {
 			'comptable.alertes.paiementFamilleEchoue' => 'فشل دفع أسرة',
 			'comptable.alertes.transactionNonRapprochee' => 'معاملة غير مطابَقة',
 			'comptable.alertes.remboursementEnAttente' => 'استرداد قيد الانتظار',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.alertes.reserveSousObjectif' => 'الاحتياطي الاستراتيجي دون الهدف',
 			'comptable.alertes.soldePrestataireInsuffisant' => 'رصيد مزوّد الدفع غير كافٍ',
 			'comptable.alertes.methodeModifieeRecemment' => 'وسيلة دفع عُدّلت مؤخرًا',
@@ -18158,8 +18208,6 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.encaissementsVide' => 'لا توجد مقبوضات حديثة.',
 			'comptable.aujourdhui.activiteVide' => 'لا يوجد نشاط حديث.',
 			'comptable.aujourdhui.prestatairesVide' => 'لا يوجد مزوّد دفع مفعّل.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.prestatairesVideDetail' => 'ستنطلق المدفوعات الصادرة عندما تفعّل الإدارة مزوّد دفع.',
 			'comptable.aujourdhui.accesPaiements' => 'عرض المدفوعات للتنفيذ',
 			'comptable.aujourdhui.accesContractuels' => 'إدارة التزامات المتعاقدين',
@@ -18653,6 +18701,8 @@ extension on TraductionsAr {
 			'comptable.contractuels.aucunJustificatif' => 'لا يوجد مستند مؤيِّد مرفق',
 			'comptable.contractuels.nonRenseigne' => 'غير محدد',
 			'comptable.contractuels.ligneSource' => ({required Object source}) => 'المصدر: ${source}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.ligneAuteur' => ({required Object auteur}) => 'أضافه ${auteur}',
 			'comptable.contractuels.ligneValidation' => ({required Object validation}) => 'المصادقة: ${validation}',
 			'comptable.contractuels.payerAide' => 'يُفتح الدفع في تفاصيل الدفعة، بالمبلغ الدقيق.',
@@ -18672,8 +18722,6 @@ extension on TraductionsAr {
 			'comptable.contractuels.aideObjet' => 'مثلًا: الفاتورة رقم 024',
 			'comptable.contractuels.champRefJustificatif' => 'مرجع المستند المؤيِّد (اختياري)',
 			'comptable.contractuels.champMontantSaisi' => 'المبلغ',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.aideMontant' => 'يُدخل مرة واحدة: لا يُعدَّل بعد الاعتماد.',
 			'comptable.contractuels.creer' => 'إنشاء الالتزام',
 			'comptable.contractuels.horsLigneCreation' => 'أنت غير متصل. أعد الاتصال لإنشاء الالتزام.',
@@ -19167,6 +19215,8 @@ extension on TraductionsAr {
 			'eleveConnexion.pin.oubliePhrase' => 'اطلب من وليّ الأمر عرض رمز جديد على جهازه، ثم أدخله هنا. ستختار حينها رمزًا شخصيًا جديدًا.',
 			'eleveConnexion.pin.oublieAction' => 'إدخال رمز جديد',
 			'eleveConnexion.saisie.titre' => 'ربط هذا الجهاز',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.saisie.phrase' => 'أدخل الرمز المكوَّن من ستة أحرف المعروض تحت رمز QR، على جهاز وليّ الأمر.',
 			'eleveConnexion.saisie.champ' => 'الرمز',
 			'eleveConnexion.saisie.aide' => 'أرقام من 2 إلى 9 وحروف لاتينية، دون I ولا O.',
@@ -19186,8 +19236,6 @@ extension on TraductionsAr {
 			'eleveConnexion.lecteur.refuseePhrase' => 'لقراءة رمز QR، اسمح بالكاميرا. يمكنك أيضًا إدخال الرمز المعروض تحت رمز QR.',
 			'eleveConnexion.lecteur.refuseeAction' => 'السماح بالكاميرا',
 			'eleveConnexion.lecteur.refuseeDurablementTitre' => 'الكاميرا محظورة',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.lecteur.refuseeDurablementPhrase' => 'ما زالت الكاميرا مرفوضة لـRewayah. اسمح بها في إعدادات الجهاز أو المتصفح، أو أدخل الرمز.',
 			'eleveConnexion.lecteur.occupeeTitre' => 'الكاميرا مشغولة',
 			'eleveConnexion.lecteur.occupeePhrase' => 'تطبيق آخر يستخدم الكاميرا. أغلقه ثم أعد المحاولة، أو أدخل الرمز.',
@@ -19681,6 +19729,8 @@ extension on TraductionsAr {
 			'adulte.acceptation.refuser' => 'رفض الدعوة',
 			'adulte.acceptation.accepter' => 'قبول الدعوة',
 			'adulte.acceptation.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك الرد بنفسك عند عودة الاتصال.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.acceptationEchecTitre' => 'لم يُؤكَّد القبول.',
 			'adulte.acceptation.refusEchecTitre' => 'لم يُؤكَّد الرفض.',
 			'adulte.acceptation.echecPhrase' => 'تحقّق قبل إعادة المحاولة.',
@@ -19700,8 +19750,6 @@ extension on TraductionsAr {
 			'adulte.sortie.retirerQuestionElle' => 'إزالة زوجتي؟',
 			'adulte.sortie.retirerQuestionLui' => 'إزالة زوجي؟',
 			'adulte.sortie.retirerConsequence' => 'لن يُحذف حسابه ولا دروسه ولا سجله ولا رصيده.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.sortie.placePhrase' => ({required Object prenom}) => '⁨${prenom}⁩ جزء من باقة أسرتك، بحسابه الخاص.',
 			'adulte.sortie.quitter' => 'مغادرة باقة الأسرة',
 			'adulte.sortie.quitterQuestion' => 'مغادرة باقة الأسرة؟',
@@ -20195,6 +20243,8 @@ extension on TraductionsAr {
 			'controleur.echanges.envoye' => 'أُرسل.',
 			'controleur.echanges.echec' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا؛ أعد المحاولة بعد لحظة. إن استمرت المشكلة، راسل الإدارة.',
 			'controleur.echanges.reessayer' => 'إعادة المحاولة',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.echanges.nouveauMessage' => ({required Object deAuteur, required Object texte}) => 'رسالة جديدة من ⁨${deAuteur}⁩: ⁨${texte}⁩',
 			'controleur.demo.titre' => 'عرض تجريبي للمراقب',
 			'controleur.demo.mention' => 'بيانات وهمية، لا إرسال.',
@@ -20214,8 +20264,6 @@ extension on TraductionsAr {
 			'controleur.demo.accesRevoque' => 'سُحب الوصول أثناء التصفح',
 			'controleur.demo.sansCapacite' => 'معلم دون صلاحية المراقبة',
 			'controleur.demo.compteRenduIndisponible' => 'التقرير، الزيارة لم تعد مقترحة',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.acces.revoque' => 'وصولك إلى المراقبة لم يعد ساريًا.',
 			'controleur.acces.revenir' => 'العودة إلى مساحتي',
 			'controleur.controle.titre' => 'المراقبة',

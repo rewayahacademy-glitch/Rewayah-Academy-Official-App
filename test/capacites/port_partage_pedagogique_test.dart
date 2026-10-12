@@ -37,6 +37,9 @@ void main() {
             ),
             'comptesRendusEleve': () =>
                 p.comptesRendusEleve(classeId: 'c', eleveId: 'e'),
+            'comptesRendusClasse': () => p.comptesRendusClasse(classeId: 'c'),
+            'lireCahierAdmin': () =>
+                p.lireCahierAdmin(seanceId: 's', eleveId: 'e'),
             'apercuFamilial': () =>
                 p.apercuFamilial(seanceId: 's', eleveId: 'e'),
             'publier': () => p.publier(
