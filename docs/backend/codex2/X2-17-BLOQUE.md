@@ -49,7 +49,7 @@ compléter cette partie. Aucun taux ni événement n'a été supposé.
 
 ## Mise a jour apres Codex2!A114
 
-- Migration additive `20261012120000_codex2_remuneration_rules.sql`: ajoute `regles_remuneration_enseignant` sans taux precharge, avec date d'effet, portee globale ou par enseignant, motif, audit, append-only et insertion reservee a Direction active avec `aal2`.
+- Migration additive `20261012120001_codex2_remuneration_rules.sql`: ajoute `regles_remuneration_enseignant` sans taux precharge, avec date d'effet, portee globale ou par enseignant, motif, audit, append-only et insertion reservee a Direction active avec `aal2`.
 - La meme migration ajoute `wallet_entries.confirme_par_prestataire_le`, nullable. Aucun mouvement ne se declenche encore depuis cette colonne.
 - Le scenario SQL contient des assertions aal1/aal2, append-only et audit; aucune n'est prouvee en execution avant rejeu.
 - La duree reellement tenue n'est pas definie pour les intervalles incomplets, reconnexions et seances sans evenement `left`. Aucun montant de prestation n'est donc calcule. FI-BR-06 n'ecrit pas encore le marqueur.
@@ -70,3 +70,11 @@ compléter cette partie. Aucun taux ni événement n'a été supposé.
 - PostgreSQL 16 n'a pas pu être installé ici: seule la distribution WSL `docker-desktop` est disponible; `psql`, `pg_ctl`, `initdb` et Docker fonctionnel sont absents. Le téléchargement des binaires EDB n'a reçu aucun octet en 60 secondes et a été interrompu. Aucun rejeu SQL n'est revendiqué.
 - En conséquence, restent non livrés et non prouvés: alimentation encaissement/prestation/payout/remboursement, `tresorerie_a_reprendre`, `reprendre_alimentation_tresorerie()`, `remuneration_due_seance()` et `politique_allocation_coffres`. Lot PARTIEL.
 - L'inspection statique précise aussi les données source manquantes: `wallet_entries.reference_type` n'accepte que `credit`, `debit`, `adjustment`, `payout`; `reference_id` n'est pas une FK vers une séance ou un remboursement; `payouts.status` a des valeurs, mais aucune RPC/Edge Function du dépôt n'en pilote les transitions. Les scénarios doivent définir les liens et transitions sûrs avant d'automatiser prestation, remboursement et payouts.
+
+## Reprise du 12/10 - X2-17 (PARTIEL, alimentation non livree)
+
+- Les deux horodatages pairs ont ete renommes par `git mv` en secondes impaires : `20261011203607_codex2_cpt_br_18_series.sql` et `20261012120001_codex2_remuneration_rules.sql`. L'ordre relatif est conserve.
+- Le registre, les series, la regle de remuneration sans taux precharge et le marqueur `confirme_par_prestataire_le` restent les seuls elements livres dans ce lot.
+- **BLOQUE pour l'alimentation automatique** : la regle source de duree reellement tenue lors d'evenements incomplets/reconnexions n'est pas determinee; aucun flux serveur FI-BR-06 ne renseigne encore le marqueur; les transitions effectives des paiements/remboursements/payouts ne sont pas modelisees; le manifeste F86 disponible n'est pas approuve pour les fonctions d'ecriture privilegiees. Deduire un montant ou ecrire un trigger maintenant pourrait creer ou repartir des fonds sans source metier verifiable.
+- Non livres : `tresorerie_a_reprendre`, `reprendre_alimentation_tresorerie()`, `remuneration_due_seance()`, `politique_allocation_coffres` et les triggers de paiements. Aucun taux ni evenement n'est invente.
+- Verification de cette reprise : `git diff --check` avant push; SQL non rejoue ici. Rejeu PG16 par Claude a faire; aucun scenario vert revendique.
