@@ -62,7 +62,8 @@ values ('b11fffff-0000-0000-0000-000000000002',
 insert into public.sessions (id, teacher_id, started_at, ended_at)
 values ('b11fffff-0000-0000-0000-000000000004',
         'b1100000-0000-0000-0000-000000000002',
-        now(), now() + interval '1 hour');
+        TIMESTAMPTZ '2030-01-02 03:00:00+00',
+        TIMESTAMPTZ '2030-01-02 04:00:00+00');
 
 insert into public.session_participants (session_id, profile_id, role)
 values

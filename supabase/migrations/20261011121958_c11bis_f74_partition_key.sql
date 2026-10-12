@@ -460,12 +460,15 @@ BEGIN
   IF NOT coalesce(
        public.app_account_valid() AND public.app_role() = 'admin',
        false
-     )
-     OR p_regroupement_id IS NULL
-     OR p_cle_idempotence IS NULL
-     OR coalesce(btrim(p_libelle), '') = '' THEN
+     ) THEN
     RAISE EXCEPTION 'creation_classe_non_autorisee'
       USING ERRCODE = '42501';
+  END IF;
+  IF p_regroupement_id IS NULL
+     OR p_cle_idempotence IS NULL
+     OR coalesce(btrim(p_libelle), '') = '' THEN
+    RAISE EXCEPTION 'parametres_creation_classe_invalides'
+      USING ERRCODE = '22023';
   END IF;
 
   PERFORM pg_catalog.pg_advisory_xact_lock(
@@ -668,15 +671,17 @@ REVOKE ALL ON FUNCTION public.creer_classe_depuis_regroupement(text, uuid, text)
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 REVOKE ALL ON FUNCTION public.creer_classe_depuis_regroupement_c11bis(text, uuid, text, text)
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
+DROP FUNCTION public.creer_classe_depuis_regroupement_c11bis(text, uuid, text, text);
+DROP FUNCTION public.creer_classe_depuis_regroupement(text, uuid, text);
 
 COMMENT ON FUNCTION public.regroupements_c11bis_admin() IS
-  'F86 candidate allowlist: signature=public.regroupements_c11bis_admin(); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: requests are partitioned by UTC schedule, public, language, server-derived gender and request-level declared level; unknown attributes are returned individually as a_completer.';
+  'F86 candidate allowlist: signature=public.regroupements_c11bis_admin(); md5_functiondef=484b5d88ca18fb354ec2e15795982114; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: requests are partitioned by UTC schedule, public, language, server-derived gender and request-level declared level; unknown attributes are returned individually as a_completer.';
 
 COMMENT ON FUNCTION public.creer_classe_depuis_regroupement(uuid, uuid, text) IS
-  'F86 candidate allowlist: signature=public.creer_classe_depuis_regroupement(uuid, uuid, text); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: no client gender/level input; server revalidates every member gender and snapshotted level before atomic class creation.';
+  'F86 candidate allowlist: signature=public.creer_classe_depuis_regroupement(uuid, uuid, text); md5_functiondef=5360cadc1f2b94250bd10f75c970f2a7; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: no client gender/level input; server revalidates every member gender and snapshotted level before atomic class creation.';
 
 COMMENT ON FUNCTION public.completer_niveau_demande_horaire(uuid) IS
-  'F86 candidate allowlist: signature=public.completer_niveau_demande_horaire(uuid); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only the active student or guardian may copy the server-stored declared level into that learner’s incomplete active request.';
+  'F86 candidate allowlist: signature=public.completer_niveau_demande_horaire(uuid); md5_functiondef=82003d5fc881821ac2aa0b3f9604bc9f; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: only the active student or guardian may copy the server-stored declared level into that learner’s incomplete active request.';
 
 DO $postflight$
 BEGIN
@@ -686,32 +691,38 @@ BEGIN
        AND p.prosecdef
        AND p.proowner = 'postgres'::regrole
        AND p.proconfig @> ARRAY['search_path=""']
-       AND pg_catalog.obj_description(p.oid, 'pg_proc') LIKE '%md5_functiondef=A_CALCULER%'
+       AND pg_catalog.obj_description(p.oid, 'pg_proc') LIKE '%md5_functiondef=484b5d88ca18fb354ec2e15795982114%'
   ) OR NOT EXISTS (
     SELECT 1 FROM pg_catalog.pg_proc p
      WHERE p.oid = 'public.creer_classe_depuis_regroupement(uuid, uuid, text)'::regprocedure
        AND p.prosecdef
        AND p.proowner = 'postgres'::regrole
        AND p.proconfig @> ARRAY['search_path=""']
-       AND pg_catalog.obj_description(p.oid, 'pg_proc') LIKE '%md5_functiondef=A_CALCULER%'
+       AND pg_catalog.obj_description(p.oid, 'pg_proc') LIKE '%md5_functiondef=5360cadc1f2b94250bd10f75c970f2a7%'
   ) OR NOT EXISTS (
     SELECT 1 FROM pg_catalog.pg_proc p
      WHERE p.oid = 'public.completer_niveau_demande_horaire(uuid)'::regprocedure
        AND p.prosecdef
        AND p.proowner = 'postgres'::regrole
        AND p.proconfig @> ARRAY['search_path=""']
-       AND pg_catalog.obj_description(p.oid, 'pg_proc') LIKE '%md5_functiondef=A_CALCULER%'
+       AND pg_catalog.obj_description(p.oid, 'pg_proc') LIKE '%md5_functiondef=82003d5fc881821ac2aa0b3f9604bc9f%'
+  ) OR pg_catalog.has_function_privilege(
+       'anon', 'public.regroupements_c11bis_admin()', 'EXECUTE'
+  ) OR pg_catalog.has_function_privilege(
+       'service_role', 'public.regroupements_c11bis_admin()', 'EXECUTE'
+  ) OR pg_catalog.has_function_privilege(
+       'agent_ro', 'public.regroupements_c11bis_admin()', 'EXECUTE'
+  ) OR NOT pg_catalog.has_function_privilege(
+       'authenticated', 'public.regroupements_c11bis_admin()', 'EXECUTE'
   ) OR pg_catalog.has_function_privilege(
        'anon', 'public.creer_classe_depuis_regroupement(uuid, uuid, text)', 'EXECUTE'
      ) OR pg_catalog.has_function_privilege(
        'agent_ro', 'public.creer_classe_depuis_regroupement(uuid, uuid, text)', 'EXECUTE'
      ) OR pg_catalog.has_function_privilege(
        'service_role', 'public.creer_classe_depuis_regroupement(uuid, uuid, text)', 'EXECUTE'
-     ) OR NOT pg_catalog.has_function_privilege(
+  ) OR NOT pg_catalog.has_function_privilege(
        'authenticated', 'public.creer_classe_depuis_regroupement(uuid, uuid, text)', 'EXECUTE'
   ) OR pg_catalog.has_function_privilege(
-       'authenticated', 'public.creer_classe_depuis_regroupement(text, uuid, text)', 'EXECUTE'
-     ) OR pg_catalog.has_function_privilege(
        'authenticated', 'public.regroupements_demandes_horaires_admin()', 'EXECUTE'
      ) OR pg_catalog.has_function_privilege(
        'anon', 'public.completer_niveau_demande_horaire(uuid)', 'EXECUTE'
@@ -721,7 +732,11 @@ BEGIN
        'agent_ro', 'public.completer_niveau_demande_horaire(uuid)', 'EXECUTE'
      ) OR NOT pg_catalog.has_function_privilege(
        'authenticated', 'public.completer_niveau_demande_horaire(uuid)', 'EXECUTE'
-  ) THEN
+  ) OR pg_catalog.to_regprocedure(
+       'public.creer_classe_depuis_regroupement(text, uuid, text)'
+  ) IS NOT NULL OR pg_catalog.to_regprocedure(
+       'public.creer_classe_depuis_regroupement_c11bis(text, uuid, text, text)'
+  ) IS NOT NULL THEN
     RAISE EXCEPTION 'F74: SECURITY DEFINER/ACL postflight failed';
   END IF;
 
