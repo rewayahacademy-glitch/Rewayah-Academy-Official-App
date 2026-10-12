@@ -94,6 +94,13 @@ RESET ROLE;
 SET LOCAL ROLE anon;
 DO $anon_denied$
 BEGIN
+  IF pg_catalog.has_function_privilege('anon', 'public.read_kyc_documents()', 'EXECUTE')
+     OR pg_catalog.has_function_privilege(
+       'anon', 'public.autoriser_lecture_piece_identite(uuid)', 'EXECUTE'
+     ) THEN
+    RAISE EXCEPTION 'KYC-LECTURE-1: anon conserve EXECUTE sur une RPC KYC';
+  END IF;
+
   BEGIN
     PERFORM 1 FROM public.read_kyc_documents();
     RAISE EXCEPTION 'KYC-LECTURE-1: anon a exécuté read_kyc_documents';
