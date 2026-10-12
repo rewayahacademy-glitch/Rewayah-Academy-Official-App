@@ -17,7 +17,7 @@ class FriseDemandesSupabase implements PortFriseDemandes {
 
   Future<List<FriseDemande>> _charger() async {
     final List<dynamic> demandes = await _client.rpc(
-      'suivi_demandes_horaires_foyer_utc',
+      'suivi_demandes_horaires_foyer',
     );
     final List<Map<String, dynamic>> evenements = await _client
         .from('demande_evenements_foyer_v')
@@ -26,7 +26,7 @@ class FriseDemandesSupabase implements PortFriseDemandes {
   }
 }
 
-/// Projection pure pour garder le contrat UTC/fuseau vérifiable sans réseau.
+/// Projection pure: le serveur fournit les heures murales du fuseau du foyer.
 List<FriseDemande> frisesDepuisDonnees(
   List<dynamic> demandes,
   List<Map<String, dynamic>> evenements,
@@ -122,10 +122,10 @@ DateTime? _heureMurale(Object? valeur) {
   if (valeur == null) return null;
   if (valeur is! String) throw const FormatException('date de frise invalide');
   final DateTime? date = DateTime.tryParse(valeur);
-  if (date == null || !date.isUtc) {
-    throw const FormatException('la date doit être un instant UTC');
+  if (date == null || date.isUtc) {
+    throw const FormatException('la date doit être une heure murale du foyer');
   }
-  return date.toLocal();
+  return date;
 }
 
 MotifClotureFrise _motifCloture(String? motif) => switch (motif) {
