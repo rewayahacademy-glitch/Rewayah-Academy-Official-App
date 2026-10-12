@@ -24,6 +24,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/port_notifications.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/i18n/villes_fuseau.dart';
 import 'package:rewayah_academy/core/offres/port_suivi_demandes.dart';
 import 'package:rewayah_academy/core/reseau/etat_sans_donnees.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -737,7 +738,7 @@ void main() {
     test('libelles : jours tries et dedoublonnes, fuseau en ville', () {
       expect(joursDemande(<int>[4, 1, 2, 1]), 'Lundi, mardi et jeudi');
       expect(joursDemande(<int>[7]), 'Dimanche');
-      expect(villeDuFuseau('America/Los_Angeles'), 'Los Angeles');
+      expect(villeDuFuseauLibelle('America/Los_Angeles'), 'Los Angeles');
     });
   });
 

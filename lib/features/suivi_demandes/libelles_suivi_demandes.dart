@@ -17,11 +17,6 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart' show LibellesGroupe;
 String hhmmDemande(int heure, int minute) =>
     '${heure.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
 
-/// « Paris » pour `Europe/Paris`, « New York » pour `America/New_York`, et en
-/// arabe « باريس », « نيويورك » (table `commun.fuseaux`, AR-FUSEAU-VILLE) ; un
-/// fuseau hors table garde son nom IANA, isole hors du francais.
-String villeDuFuseau(String fuseauIana) => villeDuFuseauLibelle(fuseauIana);
-
 /// Les identifiants IANA qui designent le temps universel lui-meme : ils
 /// n'ont pas de ville. On dit « heure UTC », jamais « heure d'UTC ».
 const Set<String> _fuseauxUniversels = <String>{
@@ -44,7 +39,7 @@ String deFuseau(String fuseauIana, {String? cle}) {
   if (_fuseauxUniversels.contains(nu)) {
     return 'UTC';
   }
-  return deDevant(villeDuFuseau(nu), cle: cle);
+  return deDevant(villeDuFuseauLibelle(nu), cle: cle);
 }
 
 /// « Lundi, mardi et jeudi » : jours tries et dedoublonnes, le premier avec

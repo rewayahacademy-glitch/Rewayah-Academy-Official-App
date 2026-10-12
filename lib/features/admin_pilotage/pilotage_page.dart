@@ -31,6 +31,7 @@ import '../../core/admin/port_pilotage.dart';
 import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/offres/port_regroupements_admin.dart'
     show RegroupementDemandes;
@@ -59,7 +60,7 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../admin_regroupements/feuille_classe_regroupement.dart';
 import '../admin_regroupements/regroupements_libelles.dart'
-    show libelleHeureMinute, villeDuFuseau;
+    show libelleHeureMinute;
 import '../creneaux/plages.dart' show jourCapitalise;
 import 'pilotage_libelles.dart';
 
@@ -191,7 +192,7 @@ class _PilotagePageEtat extends ConsumerState<PilotagePage> {
             for (final String fuseau in reference?.fuseaux ?? const <String>[])
               EntreeFiltre<String>(
                 valeur: fuseau,
-                libelle: villeDuFuseau(fuseau),
+                libelle: villeDuFuseauLibelle(fuseau),
               ),
           ],
           onChoix: (String? fuseau) =>

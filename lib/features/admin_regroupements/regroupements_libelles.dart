@@ -14,6 +14,7 @@ import '../../core/capacites/port_enseignants_classe.dart' show GenreClasse;
 import '../../core/classes/nom_classe_distinct.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/villes_fuseau.dart';
 import '../../core/offres/offre_horaire.dart' show PublicOffre;
 import '../../core/offres/page_regroupements.dart' show trierParPret;
 import '../../core/offres/port_regroupements_admin.dart';
@@ -94,13 +95,6 @@ String libelleCreneau(RegroupementDemandes g) {
       : '${libelleJours(g.jours)} · $heure';
 }
 
-/// La ville d'un fuseau IANA, telle qu'on la dit : « Europe/Paris » donne
-/// « Paris », « America/Los_Angeles » donne « Los Angeles ». Un identifiant
-/// sans ville (`UTC`) reste tel quel. Le nom IANA complet ne tient pas en
-/// une ligne a 320 px en texte agrandi, et il n'apprend rien de plus.
-String villeDuFuseau(String iana) =>
-    iana.substring(iana.lastIndexOf('/') + 1).replaceAll('_', ' ');
-
 /// « 18 h, heure de Paris » : l'heure de reference commune et son fuseau,
 /// `null` quand les jours n'ont pas tous la meme heure.
 String? libelleReference(RegroupementDemandes g) {
@@ -109,7 +103,7 @@ String? libelleReference(RegroupementDemandes g) {
   return t.admin.regroupements.heureFuseau(
     heure: heure,
     deVille: deDevant(
-      villeDuFuseau(g.fuseau),
+      villeDuFuseauLibelle(g.fuseau),
       cle: 'admin.regroupements.heureFuseau',
     ),
   );
@@ -120,7 +114,7 @@ String? libelleReference(RegroupementDemandes g) {
 String libelleFuseau(RegroupementDemandes g) =>
     t.admin.regroupements.fuseauValeur(
       deVille: deDevant(
-        villeDuFuseau(g.fuseau),
+        villeDuFuseauLibelle(g.fuseau),
         cle: 'admin.regroupements.fuseauValeur',
       ),
     );
@@ -129,7 +123,7 @@ String libelleFuseau(RegroupementDemandes g) =>
 String libelleAilleurs(HeureDansFuseau h) {
   final r = t.admin.regroupements;
   final String heure = libelleHeure(h);
-  final String ville = villeDuFuseau(h.fuseau);
+  final String ville = villeDuFuseauLibelle(h.fuseau);
   return switch (h.decalageJour) {
     < 0 => r.ailleursVeille(heure: heure, ville: ville),
     > 0 => r.ailleursLendemain(heure: heure, ville: ville),

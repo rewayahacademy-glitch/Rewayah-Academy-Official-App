@@ -70,17 +70,6 @@ final FutureProvider<bool> profilEleveTitulaireExisteProvider =
       (Ref ref) => ref.watch(portProfilEleveTitulaireProvider).existe(),
     );
 
-/// La ville d'un identifiant de fuseau IANA, lisible par une famille :
-/// `Europe/Paris` donne « Paris », `America/New_York` « New York ».
-///
-/// Jamais un decalage fixe : le decalage change avec la date (heure d'ete), et
-/// le depot n'embarque aucune base de fuseaux. Un identifiant sans ville est
-/// rendu tel quel.
-String villeDuFuseau(String iana) {
-  final String ville = iana.split('/').last.replaceAll('_', ' ').trim();
-  return ville.isEmpty ? iana.trim() : ville;
-}
-
 /// Une date en toutes lettres : « 30 octobre 2026 », « 1er novembre 2026 »
 /// (R8-05), en heure locale.
 String dateLongue(DateTime date) {

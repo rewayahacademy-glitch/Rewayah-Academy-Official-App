@@ -16,6 +16,7 @@ import '../../core/domain/enums.dart';
 import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/reseau/etat_sans_donnees.dart';
@@ -46,7 +47,6 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../admin_fusion/feuilles_fusion.dart';
-import '../admin_regroupements/regroupements_libelles.dart' show villeDuFuseau;
 import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
 import 'bas_de_feuille.dart';
 import 'feuille_observation_groupe.dart';
@@ -245,7 +245,7 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
             for (final String fuseau in reference?.fuseaux ?? const <String>[])
               EntreeFiltre<String>(
                 valeur: fuseau,
-                libelle: villeDuFuseau(fuseau),
+                libelle: villeDuFuseauLibelle(fuseau),
               ),
           ],
           onChoix: (String? fuseau) =>
