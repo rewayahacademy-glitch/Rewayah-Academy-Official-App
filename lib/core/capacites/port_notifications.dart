@@ -205,9 +205,8 @@ abstract interface class PortLectureNotifications {
   Future<void> marquerLue(String id);
 }
 
-/// Les notifications tant qu'aucune source n'existe (DB-CPT-04) : « Les
-/// notifications ne sont pas encore disponibles », cloche sans pastille,
-/// jamais un faux etat vide. Aucun adaptateur prevu.
+/// Le port neutre utilise en dehors de l'application réelle (DB-CPT-04).
+/// L'application réelle injecte son adaptateur dans `main.dart`.
 class NotificationsIndisponibles implements PortNotifications {
   /// Cree l'implementation.
   const NotificationsIndisponibles();

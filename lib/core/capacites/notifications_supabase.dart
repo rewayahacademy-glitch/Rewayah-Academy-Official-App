@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../i18n/strings.g.dart';
 import '../theme/app_delais.dart';
 import 'port_notifications.dart';
 
@@ -118,6 +119,26 @@ class NotificationsSupabase
         .eq('destinataire', destinataire)
         .timeout(AppDelais.requeteMax);
   }
+}
+
+/// Produit les libellés depuis le catalogue de la langue courante.
+NotificationContenu contenuNotificationLocalise(
+  String evenement,
+  Map<String, dynamic> params,
+) {
+  final types = t.notifications.types;
+  final String titre = switch (evenement) {
+    'demande_recue' => types.messageMetier,
+    'classe_validee' || 'enseignant_affecte' => types.changementPlanning,
+    'demande_close' => types.decisionDossier,
+    'remplacement_propose' || 'remplacement_pris' => types.remplacement,
+    _ => types.autre,
+  };
+  final Object? motif = params['motif'];
+  return NotificationContenu(
+    titre: titre,
+    texte: motif is String ? motif : null,
+  );
 }
 
 /// Décode et réduit une ligne SQL sans laisser les paramètres serveur devenir
