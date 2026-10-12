@@ -1,4 +1,4 @@
--- F86 : un compte enseignant valide sans claim role ne peut pas prendre un eleve.
+-- F86 : un compte valide sans claim role ne peut pas prendre un eleve.
 BEGIN;
 
 INSERT INTO auth.users (id, email) VALUES
@@ -10,8 +10,8 @@ VALUES ('f864ffff-0000-0000-0000-000000000001', 'Europe/Paris');
 INSERT INTO public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status)
 VALUES
-  ('f8640000-0000-0000-0000-000000000001', 'F86TEACHER00001', 'teacher',
-   'f864ffff-0000-0000-0000-000000000001', 'F86', 'Teacher', 'active');
+  ('f8640000-0000-0000-0000-000000000001', 'F86GUARDIAN0001', 'guardian',
+   'f864ffff-0000-0000-0000-000000000001', 'F86', 'Guardian', 'active');
 
 SET LOCAL ROLE authenticated;
 SELECT set_config('test.uid', 'f8640000-0000-0000-0000-000000000001', true);
