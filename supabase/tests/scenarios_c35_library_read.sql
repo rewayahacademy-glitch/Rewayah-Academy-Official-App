@@ -122,7 +122,8 @@ end $$;
 
 set local role authenticated;
 select set_config('test.uid', 'c3500000-0000-0000-0000-000000000001', true);
-select set_config('request.jwt.claims', '{"app_metadata":{"role":"student"}}', true);
+select set_config('request.jwt.claim.sub', 'c3500000-0000-0000-0000-000000000001', true);
+select set_config('request.jwt.claims', '{"sub":"c3500000-0000-0000-0000-000000000001","app_metadata":{"role":"student"}}', true);
 select set_config('test.jwt', '{"app_metadata":{"role":"student"}}', true);
 do $$
 declare
@@ -168,9 +169,12 @@ update public.resource_version
  where id = 'c3500000-0000-0000-0000-000000000020';
 set local role authenticated;
 select set_config('test.uid', 'c3500000-0000-0000-0000-000000000001', true);
-select set_config('request.jwt.claims', '{"app_metadata":{"role":"student"}}', true);
+select set_config('request.jwt.claim.sub', 'c3500000-0000-0000-0000-000000000001', true);
+select set_config('request.jwt.claims', '{"sub":"c3500000-0000-0000-0000-000000000001","app_metadata":{"role":"student"}}', true);
 reset role;
 select set_config('test.uid', 'c3500000-0000-0000-0000-000000000003', true);
+select set_config('request.jwt.claim.sub', 'c3500000-0000-0000-0000-000000000003', true);
+select set_config('request.jwt.claims', '{"sub":"c3500000-0000-0000-0000-000000000003","app_metadata":{"role":"student"}}', true);
 do $$
 begin
   begin
