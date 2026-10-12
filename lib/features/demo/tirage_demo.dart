@@ -215,6 +215,7 @@ class TirageDemo implements PortTirageControle {
   ReglesTirage _regles;
   final List<TirageAudite> _historique;
   final Map<String, ResultatRegles> _parCle = <String, ResultatRegles>{};
+  final Set<String> _conflits = <String>{};
 
   /// Les cles d'envoi recues, dans l'ordre.
   final List<String> clesRecues = <String>[];
@@ -300,6 +301,22 @@ class TirageDemo implements PortTirageControle {
     pagesDemandees++;
     await _attendre();
     return paginerTirages(_historique, filtre, page: page, taille: taille);
+  }
+
+  @override
+  Future<void> declarerConflit(
+    String missionId, {
+    required String cleConflit,
+  }) async {
+    await _attendre();
+    if (ecritureEnPanne) throw StateError('Aucune reponse du serveur.');
+    if (!acces$.peutModifier) {
+      throw StateError('Votre compte ne peut pas declarer de conflit.');
+    }
+    if (missionId.trim().isEmpty || cleConflit.trim().isEmpty) {
+      throw ArgumentError('Mission et cle de conflit obligatoires.');
+    }
+    _conflits.add('$missionId:$cleConflit');
   }
 }
 

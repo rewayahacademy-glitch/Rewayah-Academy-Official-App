@@ -61,15 +61,37 @@ values
   ('bbbbbbbb-0000-0000-0000-000000000002', 'STUD-KB-000003', 'student',
    'ffffffff-0000-0000-0000-00000000000b', 'Khadija', 'Barry', 'active', null),
   ('cccccccc-0000-0000-0000-000000000001', 'TEACH-OS-000001', 'teacher',
-   null, 'Omar', 'Sow', 'active', 'male'),
+   null, 'Omar', 'Sow', 'provisional_active', 'male'),
   ('cccccccc-0000-0000-0000-000000000002', 'TEACH-AB-000002', 'teacher',
-   null, 'Aissatou', 'Balde', 'active', 'female'),
+   null, 'Aissatou', 'Balde', 'provisional_active', 'female'),
   ('dddddddd-0000-0000-0000-000000000001', 'ADMIN-RA-000001', 'admin',
    null, 'Rewayah', 'Admin', 'active', 'female'),
   -- Un foyer sans aucun lien avec les deux enseignants : c'est lui qui mesure le
   -- defaut 3.5, les foyers A et B ayant tous deux un enfant suivi par Omar.
   ('99999999-0000-0000-0000-000000000001', 'GUARD-SC-000003', 'guardian',
    'ffffffff-0000-0000-0000-00000000000c', 'Sans', 'Cours', 'active', 'male');
+-- Fixture contractuel requis par 0089 : aucune garde d'activation n'est assouplie.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+    PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true);
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+      ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+  PERFORM set_config('request.jwt.claim.sub','',true);
+  PERFORM set_config('request.jwt.claims','',true);
+  PERFORM set_config('test.uid','',true);
+  PERFORM set_config('test.jwt','',true);
+END
+$fixture_teacher_contracts$;
 
 insert into public.student_profiles (profile_id, student_type, interface_mode, camera_policy, level)
 values
@@ -706,10 +728,16 @@ begin
 end $$;
 
 -- La date de fin d'acces, que TUT-01 affiche par enfant en MVP-0 a la place d'un
--- portefeuille. Posee ici en superuser : elle vient d'un import d'administration
--- (ADR-014), aucun tuteur ne l'ecrit.
-update public.profiles set access_until = now() + interval '30 days'
-where id = 'aaaaaaaa-0000-0000-0000-000000000003';
+-- portefeuille. L'import d'administration est represente par un admin actif;
+-- la garde du trigger ne doit pas s'appuyer sur un role JWT absent.
+do $import_admin$
+begin
+  perform set_config('test.uid', 'dddddddd-0000-0000-0000-000000000001', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+  update public.profiles set access_until = now() + interval '30 days'
+  where id = 'aaaaaaaa-0000-0000-0000-000000000003';
+end
+$import_admin$;
 
 do $$
 declare
@@ -1158,3 +1186,139 @@ begin
   end if;
   raise notice 'Prieres ok : les reglages ne sortent pas du cercle des parties concernees';
 end $$;
+
+-- H1: la lecture des groupes ne boucle pas entre les deux policies RLS.
+begin;
+
+insert into auth.users (id, email) values
+  ('a1730000-0000-0000-0000-000000000001', 'h1-teacher@example.test'),
+  ('a1730000-0000-0000-0000-000000000002', 'h1-student-a@example.test'),
+  ('a1730000-0000-0000-0000-000000000003', 'h1-student-b@example.test'),
+  ('a1730000-0000-0000-0000-000000000004', 'h1-outsider@example.test');
+insert into public.households (id, timezone) values
+  ('a173ffff-0000-0000-0000-000000000001', 'Europe/Paris'),
+  ('a173ffff-0000-0000-0000-000000000002', 'Europe/Paris');
+insert into public.profiles
+  (id, immutable_id, role, household_id, first_name, last_name, account_status)
+values
+  ('a1730000-0000-0000-0000-000000000001', 'H1-TEACHER-001', 'teacher',
+   null, 'Fixture', 'Teacher', 'provisional_active'),
+  ('a1730000-0000-0000-0000-000000000002', 'H1-STUDENT-A-001', 'student',
+   'a173ffff-0000-0000-0000-000000000001', 'Fixture', 'StudentA', 'active'),
+  ('a1730000-0000-0000-0000-000000000003', 'H1-STUDENT-B-001', 'student',
+   'a173ffff-0000-0000-0000-000000000001', 'Fixture', 'StudentB', 'active'),
+  ('a1730000-0000-0000-0000-000000000004', 'H1-OUTSIDER-001', 'student',
+   'a173ffff-0000-0000-0000-000000000002', 'Fixture', 'Outsider', 'active');
+-- Fixture contractuel requis par 0089 : aucune garde d'activation n'est assouplie.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+    PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true);
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+      ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+  PERFORM set_config('request.jwt.claim.sub','',true);
+  PERFORM set_config('request.jwt.claims','',true);
+  PERFORM set_config('test.uid','',true);
+  PERFORM set_config('test.jwt','',true);
+END
+$fixture_teacher_contracts$;
+insert into public.groupes
+  (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana)
+values
+  ('a173ffff-0000-0000-0000-000000000010',
+   'a1730000-0000-0000-0000-000000000001', 'enfant', 5,
+   'H1 fixture', 1, 10, 'Europe/Paris');
+insert into public.groupe_membres (groupe_id, student_id) values
+  ('a173ffff-0000-0000-0000-000000000010', 'a1730000-0000-0000-0000-000000000002'),
+  ('a173ffff-0000-0000-0000-000000000010', 'a1730000-0000-0000-0000-000000000003');
+
+do $h1$
+declare
+  v_groups integer;
+  v_members integer;
+begin
+  set local role authenticated;
+  perform set_config('test.uid', 'a1730000-0000-0000-0000-000000000002', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"a173ffff-0000-0000-0000-000000000001"}}',
+    true);
+  select count(*) into v_groups from public.groupes
+   where id = 'a173ffff-0000-0000-0000-000000000010';
+  select count(*) into v_members from public.groupe_membres
+   where groupe_id = 'a173ffff-0000-0000-0000-000000000010';
+  if v_groups <> 1 or v_members <> 2 then
+    raise exception 'H1: le foyer ne lit pas le groupe et les membres de son foyer (%, %)',
+      v_groups, v_members;
+  end if;
+
+  perform set_config('test.uid', 'a1730000-0000-0000-0000-000000000004', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"a173ffff-0000-0000-0000-000000000002"}}',
+    true);
+  select count(*) into v_groups from public.groupes
+   where id = 'a173ffff-0000-0000-0000-000000000010';
+  select count(*) into v_members from public.groupe_membres
+   where groupe_id = 'a173ffff-0000-0000-0000-000000000010';
+  if v_groups <> 0 or v_members <> 0 then
+    raise exception 'H1: un foyer tiers lit le groupe ou ses membres (%, %)',
+      v_groups, v_members;
+  end if;
+
+  perform set_config('test.uid', 'a1730000-0000-0000-0000-000000000001', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"teacher"}}',
+    true);
+  select count(*) into v_groups from public.groupes
+   where id = 'a173ffff-0000-0000-0000-000000000010';
+  select count(*) into v_members from public.groupe_membres
+   where groupe_id = 'a173ffff-0000-0000-0000-000000000010';
+  if v_groups <> 1 or v_members <> 2 then
+    raise exception 'H1: l''enseignant n''a pas la visibilité complète de son groupe (%, %)',
+      v_groups, v_members;
+  end if;
+end
+$h1$;
+
+-- H2: un compte valide avec un JWT sans rôle ne peut pas rejoindre un groupe.
+-- Avant 0067, « role <> admin OR NOT compte_valide » valait NULL et IF NULL
+-- laissait passer cette mutation SECURITY DEFINER.
+do $h2$
+declare
+  v_refuse boolean := false;
+begin
+  set local role authenticated;
+  perform set_config('request.jwt.claims', '{}', true);
+  perform set_config('test.uid', 'a1730000-0000-0000-0000-000000000004', true);
+  perform set_config('test.jwt', '{}', true);
+
+  begin
+    perform public.ajouter_eleve_groupe(
+      'a173ffff-0000-0000-0000-000000000010',
+      'a1730000-0000-0000-0000-000000000004',
+      'H2 regression: no role claim'
+    );
+  exception when sqlstate 'P0001' then
+    if sqlerrm <> 'ajout d''un eleve a un groupe reserve a l''administration' then
+      raise;
+    end if;
+    v_refuse := true;
+  end;
+
+  if not v_refuse then
+    raise exception 'H2 ECHEC : un JWT sans rôle a ajouté un élève au groupe';
+  end if;
+  raise notice 'H2 ok : ajouter_eleve_groupe refuse un compte valide sans rôle JWT';
+end
+$h2$;
+
+reset role;
+rollback;
