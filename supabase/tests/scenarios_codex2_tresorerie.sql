@@ -22,7 +22,7 @@ INSERT INTO public.profiles (
   ('6f000000-0000-4000-8000-000000000018', 'X2-17-ADMIN', 'admin',
     '6f000000-0000-4000-8000-000000000118', 'Test', 'Direction', 'active'),
   ('6f000000-0000-4000-8000-000000000019', 'X2-17-TEACH', 'teacher',
-    '6f000000-0000-4000-8000-000000000119', 'Test', 'Enseignant', 'active');
+    '6f000000-0000-4000-8000-000000000119', 'Test', 'Enseignant', 'provisional_active');
 INSERT INTO auth.users (id,email) VALUES
   ('6f000000-0000-4000-8000-000000000020','x2-17-teacher-no-rule@example.invalid'),
   ('6f000000-0000-4000-8000-000000000021','x2-17-teacher-policy@example.invalid');
@@ -32,9 +32,35 @@ INSERT INTO public.households(id,timezone) VALUES
   ('6f000000-0000-4000-8000-000000000122','Europe/Paris');
 INSERT INTO public.profiles(id,immutable_id,role,household_id,first_name,last_name,account_status) VALUES
   ('6f000000-0000-4000-8000-000000000020','X2-17-TEACH-NORULE','teacher',
-    '6f000000-0000-4000-8000-000000000120','Test','Sans règle','active'),
+    '6f000000-0000-4000-8000-000000000120','Test','Sans règle','provisional_active'),
   ('6f000000-0000-4000-8000-000000000021','X2-17-TEACH-POLICY','teacher',
-    '6f000000-0000-4000-8000-000000000121','Test','Avec règle','active');
+    '6f000000-0000-4000-8000-000000000121','Test','Avec règle','provisional_active');
+-- Contract fixture required by 0089 before activating any teacher.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version
+    FROM public.contract_texts
+   WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version
+    FROM public.contract_required_versions
+   WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN
+    SELECT id FROM public.profiles
+     WHERE role='teacher' AND account_status='provisional_active'
+  LOOP
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture X2-17');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version)
+    VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+    ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    PERFORM set_config('test.uid','6f000000-0000-4000-8000-000000000018',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"admin"}}',true);
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+END
+$fixture_teacher_contracts$;
 INSERT INTO public.wallets(id,household_id,currency) VALUES
   ('6f000000-0000-4000-8000-000000000317','6f000000-0000-4000-8000-000000000118','USD');
 INSERT INTO public.wallets(id,household_id,currency) VALUES
