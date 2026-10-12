@@ -165,4 +165,113 @@ void main() {
       expect(formaterChrono(const Duration(seconds: -5)), '00:00:00');
     });
   });
+
+  group('pauses (LIVE-PAUSE-01)', () {
+    test('une pause terminee sort du temps ecoule, pas du temps restant', () {
+      final PauseChrono pause = PauseChrono(
+        debutUtc: t0.add(const Duration(minutes: 20)),
+        finUtc: t0.add(const Duration(minutes: 30)),
+      );
+      final ChronoSeance c = ChronoSeance.a(
+        bornes,
+        t0.add(const Duration(minutes: 35)),
+        pauses: <PauseChrono>[pause],
+      );
+      expect(c.ecoule, const Duration(minutes: 25), reason: '35 - 10 de pause');
+      expect(c.restant, const Duration(minutes: 10), reason: 'fin prevue fixe');
+      expect(c.pause, const Duration(minutes: 10));
+      expect(c.enPause, isFalse);
+    });
+
+    test('pendant la pause : le temps ecoule est fige, le restant court', () {
+      final PauseChrono pause = PauseChrono(
+        debutUtc: t0.add(const Duration(minutes: 20)),
+      );
+      final ChronoSeance a = ChronoSeance.a(
+        bornes,
+        t0.add(const Duration(minutes: 22)),
+        pauses: <PauseChrono>[pause],
+      );
+      final ChronoSeance b = ChronoSeance.a(
+        bornes,
+        t0.add(const Duration(minutes: 27)),
+        pauses: <PauseChrono>[pause],
+      );
+      expect(a.enPause, isTrue);
+      expect(a.ecoule, const Duration(minutes: 20));
+      expect(b.ecoule, const Duration(minutes: 20), reason: 'fige');
+      expect(b.restant, a.restant - const Duration(minutes: 5));
+    });
+
+    test('une pause avant T0 ou apres maintenant ne compte pas', () {
+      final ChronoSeance c = ChronoSeance.a(
+        bornes,
+        t0.add(const Duration(minutes: 10)),
+        pauses: <PauseChrono>[
+          PauseChrono(
+            debutUtc: t0.subtract(const Duration(minutes: 30)),
+            finUtc: t0.subtract(const Duration(minutes: 20)),
+          ),
+          PauseChrono(debutUtc: t0.add(const Duration(minutes: 15))),
+        ],
+      );
+      expect(c.ecoule, const Duration(minutes: 10));
+      expect(c.enPause, isFalse);
+    });
+
+    test('jamais negatif, meme avec des pauses qui se chevauchent', () {
+      final ChronoSeance c = ChronoSeance.a(
+        bornes,
+        t0.add(const Duration(minutes: 10)),
+        pauses: <PauseChrono>[
+          PauseChrono(debutUtc: t0),
+          PauseChrono(debutUtc: t0),
+        ],
+      );
+      expect(c.ecoule.isNegative, isFalse);
+      expect(c.restant.isNegative, isFalse);
+    });
+
+    test('apres la fin prevue : « temps prevu ecoule », pauses ou non', () {
+      final ChronoSeance c = ChronoSeance.a(
+        bornes,
+        bornes.finPrevueUtc.add(const Duration(minutes: 3)),
+        pauses: <PauseChrono>[PauseChrono(debutUtc: t0)],
+      );
+      expect(c.prevuEcoule, isTrue);
+      expect(c.restant, Duration.zero);
+    });
+
+    test('annonce : jamais deux changements a moins d\'une minute', () {
+      final PauseChrono pause = PauseChrono(
+        debutUtc: t0.add(const Duration(minutes: 20, seconds: 17)),
+        finUtc: t0.add(const Duration(minutes: 22, seconds: 41)),
+      );
+      String? precedent;
+      final List<int> instants = <int>[];
+      for (int s = 0; s < 8 * 60; s++) {
+        final ChronoSeance c = ChronoSeance.a(
+          bornes,
+          t0.add(Duration(minutes: 19, seconds: s)),
+          pauses: <PauseChrono>[pause],
+        );
+        final String cle = '${c.minutesEcoulees}/${c.minutesRestantes}';
+        if (precedent != null && cle != precedent) {
+          instants.add(s);
+        }
+        precedent = cle;
+      }
+      for (int i = 1; i < instants.length; i++) {
+        expect(
+          instants[i] - instants[i - 1],
+          greaterThanOrEqualTo(1),
+          reason: 'changements aux secondes $instants',
+        );
+      }
+      // Hors bordure d'une pause, une annonce par minute : au plus
+      // `minutes + 2` changements sur huit minutes (un par minute, plus la
+      // reprise apres la pause).
+      expect(instants.length, lessThanOrEqualTo(8 + 2));
+    });
+  });
 }
