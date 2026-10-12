@@ -1,5 +1,7 @@
 # Codex 2 : file d'attente (copie de l'onglet Codex2 de la feuille de liaison)
 
+> **Périmé depuis le 12/10 après-midi : lire `CODEX2_PASSATION.md`.**
+
 Mise à jour : 12/10/2026, matin, par l'orchestrateur Claude. **Lire d'abord la section « Déblocage du 12/10 matin » en bas.**
 
 Le connecteur Google Sheets est indisponible pour Codex 2. Ce fichier recopie donc les consignes en attente. **L'onglet Codex2 reste la source** quand il est lisible. En cas d'écart, la ligne la plus récente fait foi.
