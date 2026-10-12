@@ -1,5 +1,8 @@
 -- X2-16: planning hebdomadaire admin/controller uniquement.
 begin;
+grant usage on schema public to authenticated;
+grant all on all tables in schema public to authenticated;
+grant all on all sequences in schema public to authenticated;
 insert into auth.users(id,email) values
  ('a1600000-0000-0000-0000-000000000001','x216-admin@test'),
  ('a1600000-0000-0000-0000-000000000002','x216-controller@test'),
@@ -48,7 +51,7 @@ select set_config('test.uid','a1600000-0000-0000-0000-000000000001',true);
 select set_config('test.jwt','{"app_metadata":{"role":"admin"}}',true);
 do $$ declare n int; begin select count(*) into n from public.lister_planning_direction(date_trunc('week',now()),100,0) where id='a16bbbbb-0000-0000-0000-000000000001'; if n<>1 then raise exception 'X2-16 admin expected target session'; end if; end $$;
 select set_config('test.uid','a1600000-0000-0000-0000-000000000002',true);
-select set_config('test.jwt','{"app_metadata":{"role":"controller"}}',true);
+select set_config('test.jwt','{"app_metadata":{"role":"controller","household_id":null}}',true);
 do $$ declare n int; begin select count(*) into n from public.lister_planning_direction(date_trunc('week',now()),100,0) where id='a16bbbbb-0000-0000-0000-000000000001'; if n<>1 then raise exception 'X2-16 controller expected target session'; end if; end $$;
 select set_config('test.uid','a1600000-0000-0000-0000-000000000003',true);
 select set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
@@ -60,7 +63,7 @@ select set_config('test.uid','a1600000-0000-0000-0000-000000000005',true);
 select set_config('test.jwt','{"app_metadata":{"role":"admin"}}',true);
 do $$ declare n int; begin select count(*) into n from public.lister_planning_direction(date_trunc('week',now()),100,0); if n<>0 then raise exception 'X2-16 disabled admin must see zero sessions'; end if; end $$;
 select set_config('test.uid','a1600000-0000-0000-0000-000000000006',true);
-select set_config('test.jwt','{"app_metadata":{"role":"accountant"}}',true);
+select set_config('test.jwt','{"app_metadata":{"role":"accountant","household_id":null}}',true);
 do $$ declare n int; begin select count(*) into n from public.lister_planning_direction(date_trunc('week',now()),100,0); if n<>0 then raise exception 'X2-16 accountant must see zero sessions'; end if; end $$;
 select set_config('test.uid','a1600000-0000-0000-0000-000000000007',true);
 select set_config('test.jwt','{"app_metadata":{"role":"student"}}',true);
