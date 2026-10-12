@@ -44,7 +44,9 @@ VALUES
   ('f1490000-0000-0000-0000-000000000996', 'f1-controller@example.test'),
   ('f1490000-0000-0000-0000-000000000997', 'f1-teacher@example.test'),
   ('f1490000-0000-0000-0000-000000000998', 'f1-guardian@example.test'),
-  ('f1490000-0000-0000-0000-000000000999', 'f1-admin@example.test');
+  ('f1490000-0000-0000-0000-000000000999', 'f1-admin@example.test'),
+  ('f1490000-0000-0000-0000-000000000994', 'f1-disabled-admin@example.test'),
+  ('f1490000-0000-0000-0000-000000000995', 'f1-admin-no-profile@example.test');
 
 INSERT INTO public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
@@ -56,7 +58,9 @@ VALUES
   ('f1490000-0000-0000-0000-000000000998', 'F1-GUARDIAN', 'guardian',
    'f1480000-0000-0000-0000-000000000003', 'Foyer', 'Titulaire', 'active', 'female'),
   ('f1490000-0000-0000-0000-000000000999', 'F1-ADMIN', 'admin', NULL,
-   'Admin', 'Test', 'active', 'male');
+   'Admin', 'Test', 'active', 'male'),
+  ('f1490000-0000-0000-0000-000000000994', 'F1-ADMIN-DISABLED', 'admin', NULL,
+   'Admin', 'Disabled', 'disabled', 'female');
 
 INSERT INTO public.teacher_profiles
   (profile_id, languages, weekly_hours_cap, kyc_status, timezone_iana)
@@ -183,6 +187,7 @@ DECLARE
   v_groupe uuid;
   v_groupe_rejoue uuid;
   v_sessions integer;
+  v_f86_refuse boolean;
 BEGIN
   v_capacite := public.app_config_int('groupe.capacite_adulte', 6);
   IF v_capacite < 1 THEN
@@ -388,7 +393,7 @@ BEGIN
   BEGIN
   PERFORM public.definir_politique_observation_groupe(
     v_groupe, 'groupe', 3::smallint, 600, 120
-    );
+  );
   EXCEPTION WHEN insufficient_privilege THEN
     v_ok := SQLERRM = 'reserve a l''administration';
   END;
@@ -432,6 +437,72 @@ BEGIN
   END;
   IF NOT v_ok THEN RAISE EXCEPTION 'C-12: une double affectation a été acceptée'; END IF;
 
+  -- Une garde F86 doit refuser un admin désactivé avant la logique métier.
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000994', true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
+  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000994', true);
+  PERFORM set_config('test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
+  v_ok := false;
+  BEGIN
+    PERFORM public.affecter_enseignant_classe(
+      v_groupe, 'f1490000-0000-0000-0000-000000000997'
+    );
+  EXCEPTION WHEN OTHERS THEN
+    v_ok := SQLERRM = 'affectation reservee a l''administration';
+  END;
+  IF NOT v_ok THEN RAISE EXCEPTION 'F86: admin disabled accepted by affecter_enseignant_classe'; END IF;
+  BEGIN
+    PERFORM public.affecter_enseignant_classe_c11bis(
+      v_groupe, 'f1490000-0000-0000-0000-000000000997'
+    );
+    RAISE EXCEPTION 'F86: admin disabled accepted by affecter_enseignant_classe_c11bis';
+  EXCEPTION WHEN insufficient_privilege THEN
+    IF SQLERRM <> 'affectation reservee a l''administration' THEN RAISE; END IF;
+  END;
+  BEGIN
+    PERFORM public.definir_politique_observation_groupe(
+      v_groupe, 'groupe', 3::smallint, 600, 120
+    );
+    RAISE EXCEPTION 'F86: admin disabled accepted by definir_politique_observation_groupe';
+  EXCEPTION WHEN insufficient_privilege THEN
+    IF SQLERRM <> 'reserve a l''administration' THEN RAISE; END IF;
+  END;
+
+  -- A JWT admin with no matching profile must fail at the same guards.
+  PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000995', true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
+  PERFORM set_config('test.uid', 'f1490000-0000-0000-0000-000000000995', true);
+  PERFORM set_config('test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
+  v_ok := false;
+  BEGIN
+    PERFORM public.affecter_enseignant_classe(
+      v_groupe, 'f1490000-0000-0000-0000-000000000997'
+    );
+  EXCEPTION WHEN OTHERS THEN
+    v_ok := SQLERRM = 'affectation reservee a l''administration';
+  END;
+  IF NOT v_ok THEN RAISE EXCEPTION 'F86: admin without profile accepted by affecter_enseignant_classe'; END IF;
+  BEGIN
+    PERFORM public.affecter_enseignant_classe_c11bis(
+      v_groupe, 'f1490000-0000-0000-0000-000000000997'
+    );
+    RAISE EXCEPTION 'F86: admin without profile accepted by affecter_enseignant_classe_c11bis';
+  EXCEPTION WHEN insufficient_privilege THEN
+    IF SQLERRM <> 'affectation reservee a l''administration' THEN RAISE; END IF;
+  END;
+  BEGIN
+    PERFORM public.definir_politique_observation_groupe(
+      v_groupe, 'groupe', 3::smallint, 600, 120
+    );
+    RAISE EXCEPTION 'F86: admin without profile accepted by definir_politique_observation_groupe';
+  EXCEPTION WHEN insufficient_privilege THEN
+    IF SQLERRM <> 'reserve a l''administration' THEN RAISE; END IF;
+  END;
+
   -- Le tuteur ne reçoit que l'état de l'élève de son foyer.
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000998', true);
   PERFORM set_config('request.jwt.claims',
@@ -474,6 +545,84 @@ BEGIN
     'adulte', 'francais', 'Europe/Paris', ARRAY[1,3,5]::smallint[], 20::smallint, NULL
   );
   PERFORM public.publier_offre_horaire(v_offre);
+
+  -- Le profil autonome reste autorise par le helper via son titulaire, meme
+  -- quand le JWT omet role. La garde F86 doit donc provoquer le refus.
+  UPDATE public.student_profiles
+     SET titulaire_profile_id = profile_id
+   WHERE profile_id = ('f1490000-0000-0000-0000-' || lpad((v_capacite + 3)::text, 12, '0'))::uuid;
+  v_id := ('f1490000-0000-0000-0000-' || lpad((v_capacite + 3)::text, 12, '0'))::uuid;
+  PERFORM set_config('request.jwt.claim.sub', v_id::text, true);
+  PERFORM set_config('request.jwt.claims',
+    jsonb_build_object('app_metadata', jsonb_build_object('role', 'student'))::text, true);
+  PERFORM public.demander_creneau_personnalise(
+    v_id, 'Europe/Paris', ARRAY[2,4,6]::smallint[], 18::smallint
+  );
+  PERFORM set_config('request.jwt.claims', '{"app_metadata":{}}', true);
+  v_f86_refuse := false;
+  BEGIN
+    PERFORM public.demander_creneau_personnalise(
+      v_id, 'Europe/Paris', ARRAY[2,4,6]::smallint[], 18::smallint
+    );
+  EXCEPTION WHEN raise_exception THEN
+    v_f86_refuse := SQLERRM = 'ce profil n''est pas le votre ni celui de votre foyer';
+  END;
+  IF NOT v_f86_refuse THEN
+    RAISE EXCEPTION 'F86 ECHEC : demander_creneau_personnalise a accepte un JWT sans role';
+  END IF;
+
+  v_f86_refuse := false;
+  BEGIN
+    PERFORM public.choisir_offre_horaire(v_id, v_offre, 'Europe/Paris');
+  EXCEPTION WHEN raise_exception THEN
+    v_f86_refuse := SQLERRM = 'ce profil n''est pas le votre ni celui de votre foyer';
+  END;
+  IF NOT v_f86_refuse THEN
+    RAISE EXCEPTION 'F86 ECHEC : choisir_offre_horaire a accepte un JWT sans role';
+  END IF;
+
+  v_f86_refuse := false;
+  BEGIN
+    PERFORM public.retirer_demande_horaire(v_id, 'retrait_test_f86');
+  EXCEPTION WHEN insufficient_privilege THEN v_f86_refuse := true;
+  END;
+  IF NOT v_f86_refuse THEN
+    RAISE EXCEPTION 'F86 ECHEC : retirer_demande_horaire a accepte un JWT sans role';
+  END IF;
+
+  v_f86_refuse := false;
+  BEGIN
+    PERFORM public.retirer_creneau_personnalise(v_id);
+  EXCEPTION WHEN insufficient_privilege THEN v_f86_refuse := true;
+  END;
+  IF NOT v_f86_refuse THEN
+    RAISE EXCEPTION 'F86 ECHEC : retirer_creneau_personnalise a accepte un JWT sans role';
+  END IF;
+
+  v_f86_refuse := false;
+  BEGIN
+    PERFORM public.renoncer_intention_horaire(v_id, 'retrait_test_f86');
+  EXCEPTION WHEN insufficient_privilege THEN v_f86_refuse := true;
+  END;
+  IF NOT v_f86_refuse THEN
+    RAISE EXCEPTION 'F86 ECHEC : renoncer_intention_horaire a accepte un JWT sans role';
+  END IF;
+
+  v_f86_refuse := false;
+  BEGIN
+    PERFORM public.signaler_horaire_insatisfait(v_id, '{}'::jsonb);
+  EXCEPTION WHEN insufficient_privilege THEN v_f86_refuse := true;
+  END;
+  IF NOT v_f86_refuse THEN
+    RAISE EXCEPTION 'F86 ECHEC : signaler_horaire_insatisfait a accepte un JWT sans role';
+  END IF;
+
+  -- Nettoyage de cette fixture synthétique pour laisser le test historique
+  -- de choix d'offre utiliser ce même apprenant après ces sondes.
+  UPDATE public.demandes_horaires_famille
+     SET etat = 'retiree'
+   WHERE eleve_id = v_id AND source = 'personnalisee' AND etat = 'envoyee';
+
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000998', true);
   PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object(

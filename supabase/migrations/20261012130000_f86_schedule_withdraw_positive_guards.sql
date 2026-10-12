@@ -23,7 +23,7 @@ REVOKE ALL ON FUNCTION public.retirer_creneau_personnalise(uuid)
 GRANT EXECUTE ON FUNCTION public.retirer_creneau_personnalise(uuid)
   TO authenticated;
 COMMENT ON FUNCTION public.retirer_creneau_personnalise(uuid) IS
-  'F86 candidate allowlist: signature=public.retirer_creneau_personnalise(uuid); md5_functiondef=1b7d8d5147f4b4d388c9eb15baa6164d; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
+  'F86 candidate allowlist: signature=public.retirer_creneau_personnalise(uuid); md5_functiondef=1b7d8d5147f4b4d388c9eb15baa6164d; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Its downstream retirer_demande_horaire RPC enforces the same caller gate, so this outer check is defense in depth.';
 
 CREATE OR REPLACE FUNCTION public.retirer_demande_horaire(
   p_membre_id uuid,
@@ -128,7 +128,7 @@ REVOKE ALL ON FUNCTION public.renoncer_intention_horaire(uuid, text)
 GRANT EXECUTE ON FUNCTION public.renoncer_intention_horaire(uuid, text)
   TO authenticated;
 COMMENT ON FUNCTION public.renoncer_intention_horaire(uuid, text) IS
-  'F86 candidate allowlist: signature=public.renoncer_intention_horaire(uuid,text); md5_functiondef=c54da25900fe5ae1dfd793707b4ca088; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
+  'F86 candidate allowlist: signature=public.renoncer_intention_horaire(uuid,text); md5_functiondef=c54da25900fe5ae1dfd793707b4ca088; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Its downstream retirer_demande_horaire RPC enforces the same caller gate, so this outer check is defense in depth.';
 
 CREATE OR REPLACE FUNCTION public.signaler_horaire_insatisfait(
   p_membre_id uuid,

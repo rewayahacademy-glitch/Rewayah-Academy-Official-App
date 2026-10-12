@@ -377,6 +377,29 @@ select set_config('test.jwt',
   (select household_id from public.profiles where id = '11111111-1111-1111-1111-111111111111') ||
   '"}}', false);
 
+-- F86 student-identity : le contrôle existant était déjà null-safe; cette
+-- fixture documente son refus pour le cas du JWT sans claim role.
+do $$
+declare v_refuse boolean := false;
+begin
+  set local role authenticated;
+  perform set_config('test.uid', '11111111-1111-1111-1111-111111111111', true);
+  perform set_config('test.jwt',
+    jsonb_build_object('app_metadata', jsonb_build_object(
+      'household_id', (select household_id from public.profiles
+                       where id = '11111111-1111-1111-1111-111111111111')
+    ))::text, true);
+  begin
+    perform * from public.creer_code_appairage('44444444-4444-4444-4444-444444444444');
+  exception when sqlstate 'P0001' then
+    v_refuse := sqlerrm = 'seul un tuteur au compte valide appaire un appareil';
+  end;
+  reset role;
+  if not v_refuse then
+    raise exception 'F86 ECHEC : le JWT tuteur sans claim role a pu creer un code';
+  end if;
+end $$;
+
 -- Une tablette, deux enfants du meme foyer.
 do $$
 declare v_code text; v_p1 uuid; v_p2 uuid;

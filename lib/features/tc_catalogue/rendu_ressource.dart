@@ -5,10 +5,15 @@
 ///   signee gardee cote client). Etats : chargement, contenu, absent, echec
 ///   avec relance.
 /// - **Coran** : jamais rendu ici. Le lecteur dedie est le seul a l'afficher ;
-///   l'ecran le dit et ne le contourne pas.
+///   l'ecran le dit et, quand la capacite de lecture du Coran est la (eleve,
+///   adulte eleve autonome), propose « Ouvrir le mushaf » vers ce lecteur.
+///   Sans la capacite, la phrase seule : jamais un bouton grise.
 /// - **PDF, texte structure, lecon** : aucun lecteur n'est present dans
-///   l'application. L'ecran le dit au lieu de faire semblant, et la copie
-///   reste proposee par la fiche.
+///   l'application. Quand la source rend un lien de lecture court
+///   (`PortTelechargement.lienLectureServi`, C-35) et qu'on est dans un
+///   navigateur, « Ouvrir » demande ce lien, l'ouvre dans un nouvel onglet,
+///   puis l'oublie : jamais garde ni journalise. Sinon l'ecran le dit au lieu
+///   de faire semblant, et la copie reste proposee par la fiche.
 /// - Les droits sont recontroles a la resolution : la fiche n'existe que si le
 ///   serveur rend la ressource, et l'artefact n'est demande qu'a travers la
 ///   version publiee courante.
@@ -19,13 +24,19 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
+import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/service_reseau.dart';
+import '../../core/router/routes.dart';
+import '../../core/tc_bibliotheque/capacite_lecture_coran.dart';
 import '../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
+import '../../core/tc_bibliotheque/ouvreur_onglet.dart';
 import '../../core/tc_telechargement/download_asset.dart';
+import '../../core/tc_telechargement/port_telechargement.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -50,10 +61,7 @@ class RenduRessource extends ConsumerWidget {
       );
     }
     return switch (r.resourceType) {
-      TypeRessource.quran => Text(
-        t.tc.bibliotheque.detail.renduCoran,
-        style: textes.bodyMedium,
-      ),
+      TypeRessource.quran => const _RenduCoran(),
       TypeRessource.image => _RenduImage(
         key: ValueKey<String>('rendu-image-${detail.version!.id}'),
         versionId: detail.version!.id,
@@ -61,12 +69,138 @@ class RenduRessource extends ConsumerWidget {
       ),
       TypeRessource.pdf ||
       TypeRessource.texteStructure ||
-      TypeRessource.lecon => Text(
+      TypeRessource.lecon => _RenduLecture(versionId: detail.version!.id),
+    };
+  }
+}
+
+/// Le Coran : la phrase, et « Ouvrir le mushaf » seulement avec la capacite
+/// de lecture du Coran. Aucun rendu du Coran ici.
+class _RenduCoran extends ConsumerWidget {
+  const _RenduCoran();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool capacite = ref.watch(capaciteLectureCoranProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(
+          t.tc.bibliotheque.detail.renduCoran,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        if (capacite) ...<Widget>[
+          Ecart.vMd,
+          ActionPrincipale(
+            key: const ValueKey<String>('rendu-ouvrir-mushaf'),
+            libelle: t.tc.bibliotheque.rendu.ouvrirMushaf,
+            niveau: NiveauAction.secondaire,
+            pleineLargeur: false,
+            onPress: () => GoRouter.of(context).go(Routes.eleveCoran),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// Ou en est l'ouverture d'un support de lecture.
+enum _EtatLecture { repos, chargement, horsLigne, bloque, echec, indisponible }
+
+/// PDF, texte structure, lecon : « Ouvrir » dans un nouvel onglet, avec un
+/// lien de lecture court demande au port a chaque ouverture (jamais garde).
+class _RenduLecture extends ConsumerStatefulWidget {
+  const _RenduLecture({required this.versionId});
+
+  final String versionId;
+
+  @override
+  ConsumerState<_RenduLecture> createState() => _EtatRenduLecture();
+}
+
+class _EtatRenduLecture extends ConsumerState<_RenduLecture> {
+  _EtatLecture _etat = _EtatLecture.repos;
+
+  Future<void> _ouvrir() async {
+    if (_etat == _EtatLecture.chargement) return;
+    final OuvreurOnglet? ouvreur = ref.read(ouvreurOngletProvider);
+    if (ouvreur == null) return;
+    // Hors ligne : aucune demande ne part ; la phrase le dit.
+    if (ref.read(horsLigneProvider).value ?? false) {
+      setState(() => _etat = _EtatLecture.horsLigne);
+      return;
+    }
+    setState(() => _etat = _EtatLecture.chargement);
+    try {
+      final Uri lien = await ref
+          .read(portTelechargementProvider)
+          .lienLecture(widget.versionId);
+      if (!mounted) return;
+      // Le lien n'existe que le temps de cet appel : ouvert, puis oublie.
+      final bool ouvert = ouvreur(lien);
+      setState(() => _etat = ouvert ? _EtatLecture.repos : _EtatLecture.bloque);
+    } on EchecArtefact {
+      if (mounted) setState(() => _etat = _EtatLecture.indisponible);
+    } on Object {
+      if (mounted) setState(() => _etat = _EtatLecture.echec);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final bool servi = ref.watch(portTelechargementProvider).lienLectureServi;
+    final bool navigateur = ref.watch(ouvreurOngletProvider) != null;
+    if (!servi || !navigateur) {
+      return Text(
         t.tc.bibliotheque.detail.apercuIndisponible,
         key: const ValueKey<String>('rendu-sans-lecteur'),
         style: textes.bodyMedium,
-      ),
+      );
+    }
+    final String? phrase = switch (_etat) {
+      _EtatLecture.repos || _EtatLecture.chargement => null,
+      _EtatLecture.horsLigne => t.tc.bibliotheque.rendu.lienHorsLigne,
+      _EtatLecture.bloque => t.tc.bibliotheque.rendu.lienBloque,
+      _EtatLecture.echec => t.tc.bibliotheque.rendu.lienEchec,
+      _EtatLecture.indisponible => t.tc.bibliotheque.rendu.lienIndisponible,
     };
+    final bool relance =
+        _etat == _EtatLecture.horsLigne ||
+        _etat == _EtatLecture.bloque ||
+        _etat == _EtatLecture.echec;
+    return Column(
+      key: const ValueKey<String>('rendu-lecture'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (phrase != null) ...<Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              ExcludeSemantics(child: Icon(AppIcons.avertissement.repos)),
+              Ecart.hSm,
+              Expanded(child: TexteSansCoupure(phrase)),
+            ],
+          ),
+          Ecart.vSm,
+        ],
+        // Une phrase sans suite (non disponible pour ce support) ne porte
+        // aucun bouton : il n'aboutirait jamais.
+        if (_etat != _EtatLecture.indisponible)
+          ActionPrincipale(
+            key: const ValueKey<String>('rendu-ouvrir'),
+            libelle: relance
+                ? t.tc.bibliotheque.rendu.reessayer
+                : t.tc.bibliotheque.rendu.ouvrir,
+            niveau: NiveauAction.secondaire,
+            pleineLargeur: false,
+            enCours: _etat == _EtatLecture.chargement,
+            onPress: _ouvrir,
+          ),
+      ],
+    );
   }
 }
 

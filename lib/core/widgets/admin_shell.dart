@@ -301,6 +301,7 @@ class AdminShell extends StatelessWidget {
               onChoisir: choisir,
               onCompte: onCompte,
               onStudio: studio,
+              onRechercheMetier: onRechercheMetier,
               onAccueil: accueil,
             )
           : null,
@@ -614,6 +615,7 @@ class _Tiroir extends StatelessWidget {
     required this.onCompte,
     required this.onAccueil,
     this.onStudio,
+    this.onRechercheMetier,
   });
 
   final List<AdminDomaine> domaines;
@@ -624,6 +626,11 @@ class _Tiroir extends StatelessWidget {
 
   /// Ouvre Le Studio ; nul, aucun lien (COM-F).
   final VoidCallback? onStudio;
+
+  /// Ouvre la recherche metier (RECH-D5) ; nul, aucun lien. Le champ de la
+  /// barre mobile reste une recherche de navigation : la recherche metier
+  /// s'ouvre d'ici, comme Le Studio.
+  final VoidCallback? onRechercheMetier;
 
   @override
   Widget build(BuildContext context) {
@@ -694,6 +701,23 @@ class _Tiroir extends StatelessWidget {
                   libelle: t.com.socle.navigation.studio,
                   libelleSemantique: t.com.socle.navigation.ouvrirStudio,
                   icone: AppIcons.studio,
+                  onPress: () {
+                    Navigator.of(context).pop();
+                    ouvrir();
+                  },
+                ),
+              ),
+            ),
+          if (onRechercheMetier case final VoidCallback ouvrir)
+            Padding(
+              padding: const EdgeInsetsDirectional.symmetric(
+                horizontal: AppSpacing.lg,
+              ),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: LienFleche(
+                  libelle: t.recherche.initial.titre,
+                  icone: AppIcons.recherche,
                   onPress: () {
                     Navigator.of(context).pop();
                     ouvrir();

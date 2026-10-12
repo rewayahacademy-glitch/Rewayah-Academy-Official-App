@@ -591,7 +591,7 @@ begin
     raise exception 'C10 : l''ancienne porte assister_seance reste appelable';
   end if;
   if not v_refus_enseignant then
-    raise exception 'C10 : un enseignant peut demander une observation tuteur';
+    raise exception 'F86 ECHEC : l''enseignant valide a pu entrer dans entrer_observation';
   end if;
   if v_role is not null then
     raise exception 'C10 : refus attendu, mais le tuteur a ete inscrit comme %', v_role;

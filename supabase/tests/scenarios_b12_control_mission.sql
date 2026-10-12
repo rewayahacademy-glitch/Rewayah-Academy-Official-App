@@ -8,13 +8,17 @@ INSERT INTO auth.users(id,email) VALUES
  ('b1200000-0000-0000-0000-000000000004','b12-teacher@test.invalid'),
  ('b1200000-0000-0000-0000-000000000005','b12-student@test.invalid'),
  ('b1200000-0000-0000-0000-000000000099','b12-admin-no-profile@test.invalid');
+INSERT INTO public.households(id,timezone)
+VALUES ('b1240000-0000-0000-0000-000000000001','Europe/Paris');
 INSERT INTO public.profiles(id,immutable_id,role,household_id,first_name,last_name,account_status,gender)
 VALUES
  ('b1200000-0000-0000-0000-000000000001','B12-ADMIN-0001','admin',NULL,'Direction','B12','active','female'),
  ('b1200000-0000-0000-0000-000000000002','B12-CTRL-00001','controller',NULL,'Controleur','B12','active','male'),
  ('b1200000-0000-0000-0000-000000000003','B12-CTRL-00002','controller',NULL,'Autre','B12','active','female'),
  ('b1200000-0000-0000-0000-000000000004','B12-TEACH-0001','teacher',NULL,'Enseignant','B12','provisional_active','male'),
- ('b1200000-0000-0000-0000-000000000005','B12-STUD-00001','student',NULL,'Élève','Présent','active','female');
+ ('b1200000-0000-0000-0000-000000000005','B12-STUD-00001','student','b1240000-0000-0000-0000-000000000001','Élève','Présent','active','female');
+INSERT INTO public.teacher_profiles(profile_id,kyc_status)
+VALUES ('b1200000-0000-0000-0000-000000000004','approved');
 
 DO $fixture_teacher_contract$
 DECLARE
@@ -98,8 +102,8 @@ SELECT set_config('test.b12_mission_id',
    WHERE session_id='b1220000-0000-0000-0000-000000000001'),true);
 SELECT set_config('request.jwt.claim.sub','b1200000-0000-0000-0000-000000000002',true);
 SELECT set_config('test.uid','b1200000-0000-0000-0000-000000000002',true);
-SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"controller"}}',true);
-SELECT set_config('test.jwt','{"app_metadata":{"role":"controller"}}',true);
+SELECT set_config('request.jwt.claims','{"aal":"aal2","app_metadata":{"role":"controller"}}',true);
+SELECT set_config('test.jwt','{"aal":"aal2","app_metadata":{"role":"controller"}}',true);
 SET LOCAL ROLE authenticated;
 SELECT public.demarrer_mission_controle(current_setting('test.b12_mission_id')::uuid);
 RESET ROLE;

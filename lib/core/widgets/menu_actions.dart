@@ -40,8 +40,16 @@ class MenuActions extends StatelessWidget {
     required this.actions,
     this.tooltip,
     this.points = false,
+    this.fermetureNette = false,
     super.key,
   });
+
+  /// Vrai : le menu s'ouvre et disparait d'un coup, sans fondu (le fondu de
+  /// sortie dure environ 200 ms, pendant lesquelles il resterait par-dessus).
+  /// Pour une action qui anime l'ecran juste derriere le menu (TB-RC n.17 :
+  /// la copie du support range ne vole plus sous un menu qui s'efface
+  /// encore). L'action part aussitot, comme avant.
+  final bool fermetureNette;
 
   /// Vrai pour le declencheur « ... » (trois points horizontaux, image CLV-07)
   /// au lieu de l'icone de menu : le menu d'un panneau.
@@ -60,6 +68,7 @@ class MenuActions extends StatelessWidget {
     return PopupMenuButton<int>(
       tooltip: tooltip,
       position: PopupMenuPosition.under,
+      popUpAnimationStyle: fermetureNette ? AnimationStyle.noAnimation : null,
       onSelected: (int index) => actions[index].onChoix(),
       itemBuilder: (BuildContext _) => <PopupMenuEntry<int>>[
         for (int i = 0; i < actions.length; i++)
@@ -86,7 +95,9 @@ class MenuActions extends StatelessWidget {
           child: Center(
             child: points
                 ? _TroisPoints(
-                    couleur: palette.inkStrong.asIconTheme(size: AppSpacing.xs).color,
+                    couleur: palette.inkStrong
+                        .asIconTheme(size: AppSpacing.xs)
+                        .color,
                   )
                 : Icon(AppIcons.menu.repos),
           ),

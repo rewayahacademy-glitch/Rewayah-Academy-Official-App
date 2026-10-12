@@ -25,6 +25,8 @@ import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/tc_outils/annotation_layer.dart'
     show AnnotationLayer, TraitVectoriel;
+import '../../core/tc_outils/etat_outils.dart';
+import '../../core/tc_outils/operations_personnelles.dart';
 import '../../core/tc_outils/port_annotations.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -36,6 +38,7 @@ import '../../core/widgets/status_pill.dart';
 import '../salle_seance/actions_seance.dart';
 import '../salle_seance/notes_deposees.dart';
 import '../salle_seance/panneau_eleves.dart';
+import '../salle_seance/portee_outils_salle.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/salle_seance.dart';
 import '../salle_seance/signalement_seance.dart';
@@ -913,7 +916,7 @@ class _SalleDemoState extends State<SalleDemo> {
       ),
       actions: actions,
     );
-    if (widget.situation == null) return salle;
+    if (widget.situation == null) return PorteeOutilsSalle(child: salle);
     // TB-1b : les inscrits ont une cle de photo (K-44) mais aucun fichier
     // n'est livre ; la demonstration ne demande aucune URL au stockage
     // (K-28) : les initiales en repli (E5).
@@ -938,6 +941,10 @@ class _SalleDemoState extends State<SalleDemo> {
         // TB-11b (tour 2) : les traits poses pendant l'interruption
         // appartiennent a cette salle, jamais a la suivante.
         traitsNonPartagesProvider.overrideWith(TraitsNonPartages.new),
+        // TB-RC (m21) : l'outil Ecrire et l'historique d'Annuler sont ceux de
+        // CETTE salle, jamais ceux de la precedente.
+        etatOutilsProvider.overrideWith(ControleurOutils.new),
+        historiquePersonnelProvider.overrideWith(ControleurHistorique.new),
         if (_depot case final AnnotationsMemoire depot) ...<Override>[
           portAnnotationsProvider.overrideWithValue(depot),
           notesDeposeesProvider.overrideWith2(NotesDeposees.new),

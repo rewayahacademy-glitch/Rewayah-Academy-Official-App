@@ -71,5 +71,8 @@ Total : 5 × 3 × 14 + 2 = **212 PNG**.
   haut de la feuille du tableau libre.
 - Ouvert, salle des observateurs (`features/salle`, hors périmètre TB) : la scène suit le
   registre inverse, sombre en thème clair et claire en thème sombre.
-- Ouvert : la mention « Cours enregistré » et son point rouge ne correspondent à aucun
-  enregistrement réel côté client (arbitrage ouvert, `06`).
+- Réglé (m22, décision directeur 11/10, option b ; ADR-011 respecté sur la permanence) :
+  la mention permanente devient « Visite de contrôle possible. » (fr) et « قد تجري زيارة
+  مراقبة. » (ar), sans le mot « enregistré » ; son point rouge devient un point neutre
+  (`pointsStatut.neutre`). `PermanentNotice` reste sans paramètre et identique partout. Le
+  point rouge de la capsule ne s'allume que pour un enregistrement réellement actif.

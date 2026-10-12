@@ -446,27 +446,22 @@ void main() {
             findsOneWidget,
           );
         }
-        // DASH-ADM-ECHUS : un seul appui, celui des acces echus ; les
-        // incidents restent un rapport sans page (D9, DASH-ADM-INC).
+        // DASH-ADM-ECHUS et DASH-ADM-INC : les deux chiffres mènent à la
+        // page qui liste ce qu'ils comptent (D9).
         final Finder appuis = find.descendant(
           of: double,
           matching: find.byType(Pressable),
         );
-        expect(appuis, findsOneWidget);
-        expect(
-          find.descendant(
-            of: appuis,
-            matching: find.text(t.admin.tableau.comptes),
-          ),
-          findsOneWidget,
-        );
-        expect(
-          find.descendant(
-            of: appuis,
-            matching: find.text(t.admin.tableau.incidents),
-          ),
-          findsNothing,
-        );
+        expect(appuis, findsNWidgets(2));
+        for (final String libelle in <String>[
+          t.admin.tableau.comptes,
+          t.admin.tableau.incidents,
+        ]) {
+          expect(
+            find.descendant(of: appuis, matching: find.text(libelle)),
+            findsOneWidget,
+          );
+        }
       });
     }
 

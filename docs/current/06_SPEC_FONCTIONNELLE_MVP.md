@@ -32,5 +32,7 @@ Version : 22 septembre 2026. Cette liste est une cible de livraison, pas un cons
 ## Enregistrement de cours : arbitrage explicite
 ADR-002 ancien inclut audio systématique, stockage R2 et rétention 30 jours ; le Control System V2 plus récent dit « aucun enregistrement audio/vidéo par défaut ». Ne pas activer automatiquement sur de vrais élèves avant décision écrite sur finalité, consentement, politique de rétention, chiffrement, accès et conformité. Le système de salle doit pouvoir porter un état d'enregistrement réel et visible, jamais une indication fictive. Ce seul arbitrage ne bloque pas l'enseignement en direct non enregistré si les règles de protection applicables sont respectées.
 
+**Amendement du 11/10/2026 (m22, décision du directeur, option b ; ADR-011 respecté sur la permanence)** : la mention permanente de la salle ne dit plus « Cours enregistré ». Elle devient « Visite de contrôle possible. » (fr) et « قد تجري زيارة مراقبة. » (ar), identique partout et sans paramètre ; son point est neutre, plus rouge. Un point rouge ne reste que pour un enregistrement réellement actif.
+
 ## Livrer sans tromper
 Un écran maquetté, un service inutilisé ou une migration non appliquée n'est pas une fonctionnalité livrée. Pour chaque ligne M, noter propriétaire du code, preuve, état et blocage. La branche CORE24 déjà auditée « non prête » doit repasser la recette complète avant fusion. Regrouper les lots par parcours vertical, pas par nombre de fichiers.
