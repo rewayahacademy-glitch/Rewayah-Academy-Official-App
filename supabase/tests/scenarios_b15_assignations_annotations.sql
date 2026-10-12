@@ -16,9 +16,9 @@ insert into public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status)
 values
   ('b1500000-0000-0000-0000-000000000001', 'B15TEACHERA001', 'teacher',
-   'b15fffff-0000-0000-0000-000000000001', 'Teacher', 'A', 'active'),
+   'b15fffff-0000-0000-0000-000000000001', 'Teacher', 'A', 'provisional_active'),
   ('b1500000-0000-0000-0000-000000000002', 'B15TEACHERB001', 'teacher',
-   'b15fffff-0000-0000-0000-000000000001', 'Teacher', 'B', 'active'),
+   'b15fffff-0000-0000-0000-000000000001', 'Teacher', 'B', 'provisional_active'),
   ('b1500000-0000-0000-0000-000000000003', 'B15TEACHERD001', 'teacher',
    'b15fffff-0000-0000-0000-000000000001', 'Teacher', 'Disabled', 'disabled'),
   ('b1500000-0000-0000-0000-000000000004', 'B15STUDENTA001', 'student',
@@ -45,10 +45,12 @@ insert into public.sessions (id, teacher_id, groupe_id, started_at, ended_at)
 values
   ('b15fffff-0000-0000-0000-000000000005',
    'b1500000-0000-0000-0000-000000000001',
-   'b15fffff-0000-0000-0000-000000000002', now(), now() + interval '1 hour'),
+   'b15fffff-0000-0000-0000-000000000002',
+   TIMESTAMPTZ '2030-01-02 03:00:00+00', TIMESTAMPTZ '2030-01-02 04:00:00+00'),
   ('b15fffff-0000-0000-0000-000000000006',
    'b1500000-0000-0000-0000-000000000002',
-   'b15fffff-0000-0000-0000-000000000003', now(), now() + interval '1 hour');
+   'b15fffff-0000-0000-0000-000000000003',
+   TIMESTAMPTZ '2030-01-02 03:00:00+00', TIMESTAMPTZ '2030-01-02 04:00:00+00');
 
 insert into public.session_participants (session_id, profile_id, role)
 values

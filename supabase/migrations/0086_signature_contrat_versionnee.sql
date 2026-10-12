@@ -1,4 +1,4 @@
-﻿-- F70 / C-15 / C-16: serve and record the exact current teacher contract.
+-- F70 / C-15 / C-16: serve and record the exact current teacher contract.
 -- Published text is intentionally not seeded here: the validated full legal
 -- text is not present in this checkout. Until an approved body is inserted by
 -- a migration, contrat_courant has no row and signing remains unavailable.
@@ -98,6 +98,26 @@ $$;
 create trigger contract_acceptances_complete_signature
 before insert on public.contract_acceptances
 for each row execute function public.completer_contract_acceptance();
+
+create function public.refuser_empreinte_contrat_fournie()
+returns trigger
+language plpgsql security invoker set search_path = ''
+as $function$
+begin
+  if new.signed_sha256 is not null then
+    raise exception using
+      errcode = '42501',
+      message = 'signed_sha256_server_managed';
+  end if;
+  return new;
+end;
+$function$;
+
+create trigger contract_acceptances_a_reject_supplied_hash
+before insert on public.contract_acceptances
+for each row execute function public.refuser_empreinte_contrat_fournie();
+revoke all on function public.refuser_empreinte_contrat_fournie()
+  from public, anon, authenticated, service_role, agent_ro;
 
 revoke execute on function public.completer_contract_acceptance()
   from public, anon, authenticated, service_role, agent_ro;

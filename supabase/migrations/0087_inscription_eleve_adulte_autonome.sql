@@ -1,4 +1,4 @@
-﻿BEGIN;
+BEGIN;
 
 -- L'intention appartient au compte connecté. La fiche adulte est créée dans
 -- la même transaction que le profil guardian, sans changer son rôle.

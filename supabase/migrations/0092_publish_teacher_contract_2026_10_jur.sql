@@ -1,4 +1,4 @@
-﻿BEGIN;
+BEGIN;
 
 -- Publish the director-approved teacher contract already rendered by
 -- `paragraphesE1()` and `clauseControle` in `signature_page.dart`.
