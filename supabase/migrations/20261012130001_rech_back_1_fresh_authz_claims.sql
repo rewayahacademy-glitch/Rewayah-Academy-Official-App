@@ -48,36 +48,93 @@ DECLARE
   claims jsonb;
   user_id uuid := (event ->> 'user_id')::uuid;
   v_profile public.profiles;
+  v_student_type public.student_type;
+  v_tranche_age text := 'inconnu';
 BEGIN
   SELECT * INTO v_profile
   FROM public.profiles
   WHERE public.profiles.id = user_id
     AND public.profiles.deleted_at IS NULL;
 
-  claims := COALESCE(event -> 'claims', '{}'::jsonb);
+  claims := coalesce(event -> 'claims', '{}'::jsonb);
 
   IF v_profile.id IS NOT NULL THEN
-    IF jsonb_typeof(claims -> 'app_metadata') IS DISTINCT FROM 'object' THEN
-      claims := jsonb_set(claims, '{app_metadata}', '{}'::jsonb, true);
+    IF coalesce(jsonb_typeof(claims -> 'app_metadata'), 'absent') <> 'object' THEN
+      claims := jsonb_set(claims, '{app_metadata}', '{}'::jsonb);
     END IF;
-    claims := jsonb_set(claims, '{app_metadata,role}', to_jsonb(v_profile.role::text), true);
+
     claims := jsonb_set(
       claims,
-      '{app_metadata,household_id}',
-      COALESCE(to_jsonb(v_profile.household_id::text), 'null'::jsonb),
-      true
+      '{app_metadata, role}',
+      coalesce(to_jsonb(v_profile.role::text), 'null'::jsonb)
     );
     claims := jsonb_set(
       claims,
-      '{app_metadata,authorization_version}',
+      '{app_metadata, household_id}',
+      coalesce(to_jsonb(v_profile.household_id::text), 'null'::jsonb)
+    );
+
+    claims := jsonb_set(
+      claims,
+      '{app_metadata, authorization_version}',
       to_jsonb(v_profile.authorization_version),
       true
     );
+
+    SELECT sp.student_type INTO v_student_type
+    FROM public.student_profiles sp
+    WHERE sp.profile_id = user_id
+      AND sp.deleted_at IS NULL;
+
+    v_tranche_age := CASE v_student_type
+      WHEN 'minor' THEN 'enfant'
+      WHEN 'autonomous' THEN 'adulte'
+      ELSE 'inconnu'
+    END;
   END IF;
 
-  RETURN jsonb_set(event, '{claims}', claims, true);
+  -- Claim de présentation uniquement : aucune décision d'accès ne s'appuie
+  -- sur lui. Il ne contient jamais de date de naissance.
+  claims := jsonb_set(claims, '{tranche_age}', to_jsonb(v_tranche_age), true);
+
+  RETURN coalesce(jsonb_set(event, '{claims}', claims), event);
 END;
 $function$;
+
+ALTER FUNCTION public.custom_access_token_hook(jsonb) OWNER TO postgres;
+REVOKE ALL ON FUNCTION public.custom_access_token_hook(jsonb)
+  FROM PUBLIC, anon, authenticated, service_role, agent_ro;
+GRANT EXECUTE ON FUNCTION public.custom_access_token_hook(jsonb)
+  TO supabase_auth_admin;
+
+COMMENT ON FUNCTION public.custom_access_token_hook(jsonb) IS
+  'F79 candidate allowlist: signature=public.custom_access_token_hook(jsonb); md5_prosrc=fc825b4f53ad01f251d6c8e311bb97a6; guard_type=NO_GUARD_HELPER; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12; justification=Auth hook preserves tranche_age as presentation-only and adds the current authorization_version claim.';
+
+DO $f79_rech_back1$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_catalog.pg_proc p
+    WHERE p.oid = 'public.custom_access_token_hook(jsonb)'::regprocedure
+      AND p.prosecdef
+      AND pg_catalog.pg_get_userbyid(p.proowner) = 'postgres'
+      AND p.proconfig @> ARRAY['search_path=""']
+      AND pg_catalog.md5(p.prosrc) = 'fc825b4f53ad01f251d6c8e311bb97a6'
+      AND pg_catalog.obj_description(p.oid, 'pg_proc') LIKE
+        '%F79 candidate allowlist:%signature=public.custom_access_token_hook(jsonb); md5_prosrc=fc825b4f53ad01f251d6c8e311bb97a6;%'
+      AND NOT pg_catalog.has_function_privilege('anon', p.oid, 'EXECUTE')
+      AND NOT pg_catalog.has_function_privilege('authenticated', p.oid, 'EXECUTE')
+      AND NOT pg_catalog.has_function_privilege('agent_ro', p.oid, 'EXECUTE')
+      AND NOT pg_catalog.has_function_privilege('service_role', p.oid, 'EXECUTE')
+  ) OR NOT pg_catalog.has_function_privilege(
+         'supabase_auth_admin',
+         'public.custom_access_token_hook(jsonb)',
+         'EXECUTE'
+       ) THEN
+    RAISE EXCEPTION 'RECH-BACK-1 F79 hook owner/path/hash/ACL postflight failed';
+  END IF;
+END;
+$f79_rech_back1$;
 
 -- Search endpoints call this before using the JWT role/household claims.
 -- It exposes only the caller's validity; role and household remain JWT claims,
