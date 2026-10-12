@@ -97,16 +97,20 @@ enum EtatEtapeFrise {
 /// Une etape de la frise et son instant.
 @immutable
 class EtapeFrise {
-  /// Cree l'etape. [quand] est un instant UTC ; pour la premiere seance, il
-  /// s'agit de la date prevue uniquement si le serveur la connait.
+  /// Cree l'etape. [quand] : instant de passage, heure murale du foyer
+  /// (jamais UTC) ; ou, pour la premiere seance seule, la date prevue si le
+  /// serveur la connait. Un instant UTC est une erreur d'adaptateur.
   EtapeFrise({required this.type, DateTime? quand})
-    : assert(quand == null || quand.isUtc, 'quand doit etre un instant UTC'),
-      quand = quand == null || quand.isUtc ? quand : null;
+    : assert(
+        quand == null || !quand.isUtc,
+        'quand est une heure murale du fuseau du foyer, jamais UTC',
+      ),
+      quand = quand == null || quand.isUtc ? null : quand;
 
   /// La nature de l'etape.
   final TypeEtapeFrise type;
 
-  /// Son instant UTC, nul si le serveur n'en donne pas.
+  /// Son instant (heure murale du foyer), nul si le serveur n'en donne pas.
   final DateTime? quand;
 }
 

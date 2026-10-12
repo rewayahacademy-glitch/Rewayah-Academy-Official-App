@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/preferences/preferences_locales.dart';
@@ -10,7 +11,6 @@ import '../../core/router/routes.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import 'carte_rubriques.dart';
-import 'donnees_compte.dart';
 
 /// Les preferences du titulaire sur cet appareil
 /// (`/tuteur/compte/preferences`, maquette V4 « Reglages », ecran 01).
@@ -40,7 +40,7 @@ class PreferencesComptePage extends ConsumerWidget {
     final AsyncValue<String> fuseau = ref.watch(monFuseauProvider);
     final String langue = fuseau.hasValue && !fuseau.hasError
         ? t.compte.tuteur.informations.langueFuseau(
-            ville: villeDuFuseau(fuseau.requireValue),
+            ville: villeDuFuseauLibelle(fuseau.requireValue),
           )
         : t.compte.francais;
 

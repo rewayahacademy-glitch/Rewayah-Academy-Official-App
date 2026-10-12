@@ -6,6 +6,7 @@ import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'action_principale.dart';
+import 'ornement_marque.dart';
 import 'status_pill.dart';
 
 /// L'ecran resultat : cercle heros, titre, phrase, encart, action dominante,
@@ -188,6 +189,12 @@ class EcranResultat extends StatelessWidget {
                 onPress: onSecondaire,
                 niveau: NiveauAction.tertiaire,
               ),
+            ],
+            // BRAND-ORN-1 : la signature ferme une confirmation (le « recu »),
+            // jamais une erreur ni un etat d'attente.
+            if (ton == TonEtat.succes) ...<Widget>[
+              Ecart.vXxl,
+              const OrnementMarque.signature(),
             ],
           ],
         ),

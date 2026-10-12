@@ -39,6 +39,7 @@ import '../tc_espace_groupe/bloc_cartes_classe.dart';
 import '../tc_espace_groupe/carte_session.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart' show IdentiteGroupe;
+import 'bloc_pause_classe.dart';
 import 'fiche_eleve_enseignant.dart';
 import 'preparation_seance.dart';
 
@@ -330,6 +331,10 @@ class _CorpsState extends ConsumerState<_Corps> {
       preparation,
       Ecart.vSection,
       cartes,
+      // LIVE-PAUSE-01 : la pause programmee de la Classe (la capacite vient de
+      // la lecture du reglage, jamais du role).
+      Ecart.vSection,
+      BlocPauseClasse(groupeId: groupe.id),
       if (avancement != null) ...<Widget>[
         Ecart.vSection,
         _ProgressionClasse(valeur: avancement),

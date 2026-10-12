@@ -15,6 +15,7 @@ import '../theme/app_delais.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/etat_systeme.dart';
 import '../widgets/marque_page.dart';
+import '../widgets/ornement_marque.dart';
 import '../widgets/page_shell.dart';
 import 'page_etat.dart';
 import 'routes.dart';
@@ -182,7 +183,11 @@ class _EcranDemarrageState extends ConsumerState<EcranDemarrage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               const MarquePage(),
-              Ecart.vXxl,
+              // BRAND-ORN-1 : la signature dans l'ecart existant (24).
+              const SizedBox(
+                height: AppSpacing.xxl,
+                child: Center(child: OrnementMarque.signature()),
+              ),
               Semantics(
                 label: t.commun.demarrage.ouverture,
                 child: const CircularProgressIndicator.adaptive(),

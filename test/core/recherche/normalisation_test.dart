@@ -100,4 +100,36 @@ void main() {
       expect(RequeteNormalisee.de('  al   fatiha ', commun).texte, 'al fatiha');
     });
   });
+
+  group('coupe a 160 sur les runes (RECH-REC E1)', () {
+    const ContexteRecherche contexte = ContexteRecherche(
+      espace: EspaceRecherche.famille,
+    );
+
+    test('un emoji a la frontiere n\'est pas coupe en deux', () {
+      final RequeteNormalisee q = RequeteNormalisee.de(
+        '${'a' * 159}\u{1F600}fatiha',
+        contexte,
+      );
+      expect(q.texte.runes.length, 160);
+      expect(q.texte.endsWith('\u{1F600}'), isTrue);
+      for (int i = 0; i < q.texte.length; i++) {
+        final int u = q.texte.codeUnitAt(i);
+        if (u >= 0xD800 && u <= 0xDBFF) {
+          expect(q.texte.codeUnitAt(i + 1) & 0xFC00, 0xDC00);
+          i++;
+        } else {
+          expect(u & 0xFC00, isNot(0xDC00));
+        }
+      }
+    });
+
+    test('160 emojis passent entiers, le 161e est retire', () {
+      final RequeteNormalisee q = RequeteNormalisee.de(
+        '\u{1F600}' * 170,
+        contexte,
+      );
+      expect(q.texte.runes.length, 160);
+    });
+  });
 }

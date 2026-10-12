@@ -69,6 +69,9 @@ class ProfilPaiementPage extends ConsumerStatefulWidget {
   /// La cle du bouton « Relancer ».
   static const Key relancerKey = ValueKey<String>('cpt-ben-relancer');
 
+  /// La cle du lien « Voir le fil ».
+  static const Key voirFilKey = ValueKey<String>('cpt-ben-voir-fil');
+
   /// La cle du lien « Demander une mise a jour ».
   static const Key miseAJourKey = ValueKey<String>('cpt-ben-mise-a-jour');
 
@@ -191,6 +194,44 @@ class _ProfilPaiementPageEtat extends ConsumerState<ProfilPaiementPage> {
     }
   }
 
+  /// « Voir le fil » (W07, §35) : ouvre le fil « Profil de paiement » tel
+  /// qu'il est, sans message prerempli ni brouillon touche. Fil absent ou
+  /// lecture en echec : la phrase le dit, rien ne s'ouvre.
+  Future<void> _voirFil(String nom) async {
+    if (_enCours) return;
+    final PortMessagesMetier port = ref.read(portMessagesMetierProvider);
+    final String chemin = ref.read(cheminFilProfilPaiementProvider)(
+      widget.beneficiaireId,
+    );
+    setState(() {
+      _enCours = true;
+      _retour = null;
+    });
+    try {
+      final FilMetier? fil = await lireFilProfilPaiement(
+        port,
+        widget.beneficiaireId,
+      );
+      if (!mounted) return;
+      if (fil == null) {
+        setState(() {
+          _retour = t.comptable.beneficiaires.profil.voirFilRefuse(nom: nom);
+          _retourEchec = true;
+        });
+        return;
+      }
+      unawaited(GoRouter.of(context).push<void>(chemin));
+    } on Object {
+      if (!mounted) return;
+      setState(() {
+        _retour = t.comptable.beneficiaires.profil.voirFilRefuse(nom: nom);
+        _retourEchec = true;
+      });
+    } finally {
+      if (mounted) setState(() => _enCours = false);
+    }
+  }
+
   Future<void> _suspendre(String nom) async {
     if (_enCours) return;
     final String? motif = await demanderMotifSuspension(context, nom: nom);
@@ -245,6 +286,7 @@ class _ProfilPaiementPageEtat extends ConsumerState<ProfilPaiementPage> {
             retourEchec: _retourEchec,
             enCours: _enCours,
             onRelancer: () => unawaited(_relancer(profil.identite.nom)),
+            onVoirFil: () => unawaited(_voirFil(profil.identite.nom)),
             onMiseAJour: () => unawaited(
               _agir(
                 (PortBeneficiairesPaiement port) =>
@@ -327,6 +369,7 @@ class _Actions extends StatelessWidget {
     required this.retourEchec,
     required this.enCours,
     required this.onRelancer,
+    required this.onVoirFil,
     required this.onMiseAJour,
     required this.onSuspendre,
     required this.onReprendre,
@@ -337,6 +380,7 @@ class _Actions extends StatelessWidget {
   final bool retourEchec;
   final bool enCours;
   final VoidCallback onRelancer;
+  final VoidCallback onVoirFil;
   final VoidCallback onMiseAJour;
   final VoidCallback onSuspendre;
   final VoidCallback onReprendre;
@@ -407,6 +451,13 @@ class _Actions extends StatelessWidget {
                     libelle: p.suspendre(nom: nom),
                     onPress: onSuspendre,
                   ),
+          // W07 : le fil se lit sans relancer (aucun message prerempli).
+          if (relancer)
+            LienFleche(
+              key: ProfilPaiementPage.voirFilKey,
+              libelle: p.voirFil(nom: nom),
+              onPress: onVoirFil,
+            ),
           if (relancer) ...<Widget>[
             Ecart.vMd,
             Text(p.relancerDetail, style: corps),

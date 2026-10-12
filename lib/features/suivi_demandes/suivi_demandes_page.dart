@@ -153,7 +153,7 @@ class CarteDemande extends StatelessWidget {
     final List<Widget> blocs = <Widget>[
       if (close) ...<Widget>[
         Text(
-          motifDemande(d.motif!),
+          motifDemande(d.motif!, d.prenom),
           key: ValueKey<String>('demande-motif-${d.demandeId}'),
           style: fort,
         ),

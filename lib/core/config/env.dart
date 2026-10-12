@@ -32,6 +32,20 @@ abstract final class Env {
   /// Faux par defaut : une version de production ne compile pas le Playground.
   static const bool playgroundActif = bool.fromEnvironment('PLAYGROUND');
 
+  /// Active la mise en page du Mushaf de Medine en 15 lignes (MUSHAF-15L) :
+  /// `portLayoutMushafProvider` rend alors `LayoutMadina15` au lieu de
+  /// `LayoutLignesIndisponible`.
+  ///
+  /// Faux par defaut, donc faux en production tant qu'on ne le passe pas.
+  /// Actif en developpement et en galerie : la galerie et le Playground, eux
+  /// aussi absents d'une production, l'allument sans autre commande.
+  static const bool mushaf15L = bool.fromEnvironment('MUSHAF_15L');
+
+  /// Le drapeau MUSHAF-15L effectivement applique (developpement et galerie
+  /// l'allument).
+  static bool get mushaf15LActif =>
+      mushaf15L || galerieActive || playgroundActif;
+
   /// Active le raccourci de connexion par courriel fictif, sans Supabase
   /// (`SessionControleur.ouvrirDemo`).
   ///

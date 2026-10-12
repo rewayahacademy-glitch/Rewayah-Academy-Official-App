@@ -104,7 +104,7 @@ SET LOCAL ROLE authenticated;
 DO $rls$
 DECLARE
   v_count integer;
-  v_projection_at timestamptz;
+  v_projection_at timestamp without time zone;
 BEGIN
   SELECT count(*) INTO v_count FROM public.demande_evenements_foyer_v
    WHERE demande_id = 'c20fffff-0000-0000-0000-000000000003';
@@ -113,11 +113,12 @@ BEGIN
    WHERE demande_id = 'c20fffff-0000-0000-0000-000000000003'
      AND type = 'envoyee';
   IF v_count <> 5
-     OR v_projection_at <> '2026-10-11 08:00:00+00'::timestamptz
+     OR v_projection_at <> timestamp '2026-10-11 10:00:00'
+     OR pg_typeof(v_projection_at) <> 'timestamp without time zone'::regtype
      OR has_table_privilege('authenticated', 'public.demande_evenements', 'INSERT')
      OR has_table_privilege('authenticated', 'public.demande_evenements', 'UPDATE')
      OR has_table_privilege('authenticated', 'public.demande_evenements', 'DELETE') THEN
-    RAISE EXCEPTION 'C-20 UTC projection/family ACL failed, visible events=%, timestamp=%',
+    RAISE EXCEPTION 'C-20 household wall-clock projection/family ACL failed, visible events=%, timestamp=%',
       v_count, v_projection_at;
   END IF;
 END;

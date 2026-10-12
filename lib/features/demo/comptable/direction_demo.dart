@@ -136,7 +136,8 @@ class PolitiqueReserveDemo implements PortPolitiqueReserve {
 /// autorises sous trois plafonds de demonstration, retrait de la Reserve
 /// interdit, secondes validations actives. Les trois interdits absolus sont
 /// vrais. Aucune ecriture reelle : la version enregistree reste en memoire.
-class DelegationFinanceDemo implements PortDelegationFinance {
+class DelegationFinanceDemo
+    implements PortDelegationFinance, PortControleDelegation {
   /// La demonstration par defaut.
   DelegationFinanceDemo() : this.avec(standard);
 
@@ -163,7 +164,47 @@ class DelegationFinanceDemo implements PortDelegationFinance {
     politiqueTarifaireInterdite: true,
     dateEffet: DateTime(2026, 9, 15),
     auteur: _laDirection,
+    // DELEG-FIN-1 : la delegation expire (90 jours, renouvelable), les
+    // sorties au-dessus du plafond attendent 24 h, une exception existe.
+    etat: EtatDelegation.active,
+    expireLe: DateTime(2026, 12, 14),
+    dureeJours: 90,
+    delaiSortieHeures: 24,
+    exceptions: <ExceptionDelegation>[
+      ExceptionDelegation(
+        id: 'exc-1',
+        libelle: 'Délégation du Comptable',
+        coffresAutorises: const <Coffre>{
+          Coffre.tresorerieLibre,
+          Coffre.paieADecaisser,
+        },
+        beneficiairesExclus: const <BeneficiaireExclu>[
+          BeneficiaireExclu(id: 'ctr-02', nom: 'Karim Studio'),
+        ],
+        plafondParTransaction: SocleComptableDemo.usd(300),
+      ),
+    ],
   );
+
+  /// Les sorties retenues par le delai de securite, en demonstration.
+  final List<SortieEnAttente> _sorties = <SortieEnAttente>[
+    SortieEnAttente(
+      id: 'sortie-1',
+      beneficiaire: 'Sayyid Youssouf Diallo',
+      objet: 'Octobre 2026 · Classe Al-Fajr',
+      montant: SocleComptableDemo.usd(620),
+      demandeeLe: DateTime(2026, 10, 4, 9),
+      liberableLe: DateTime(2026, 10, 5, 9),
+    ),
+    SortieEnAttente(
+      id: 'sortie-2',
+      beneficiaire: 'Karim Studio',
+      objet: 'Montage vidéo',
+      montant: SocleComptableDemo.usd(900),
+      demandeeLe: DateTime(2026, 10, 4, 11),
+      liberableLe: DateTime(2026, 10, 5, 11),
+    ),
+  ];
 
   PolitiqueDelegationFinance _courante;
   final List<EntreeJournal> _journal;
@@ -205,6 +246,12 @@ class DelegationFinanceDemo implements PortDelegationFinance {
       politiqueTarifaireInterdite: true,
       dateEffet: SocleComptableDemo.aujourdhui,
       auteur: _laDirection,
+      etat: ancienne.etat,
+      suspendueLe: ancienne.suspendueLe,
+      expireLe: ancienne.expireLe,
+      dureeJours: ancienne.dureeJours,
+      delaiSortieHeures: ancienne.delaiSortieHeures,
+      exceptions: brouillon.exceptions,
     );
     _journal.insert(
       0,
@@ -223,6 +270,113 @@ class DelegationFinanceDemo implements PortDelegationFinance {
   @override
   Future<List<EntreeJournal>> journal() async =>
       List<EntreeJournal>.unmodifiable(_journal);
+
+  PolitiqueDelegationFinance _avecEtat(
+    EtatDelegation etat, {
+    DateTime? suspendueLe,
+    DateTime? expireLe,
+  }) {
+    final PolitiqueDelegationFinance p = _courante;
+    final String version = '${(int.tryParse(p.version) ?? 0) + 1}';
+    return _courante = PolitiqueDelegationFinance(
+      version: version,
+      paiementsStandardsAutorises: p.paiementsStandardsAutorises,
+      plafondParTransaction: p.plafondParTransaction,
+      plafondParLot: p.plafondParLot,
+      plafondParPeriode: p.plafondParPeriode,
+      remboursementStandardAutorise: p.remboursementStandardAutorise,
+      alimentationReserveAutorisee: p.alimentationReserveAutorisee,
+      retraitReserveInterdit: p.retraitReserveInterdit,
+      premierPaiementSecondeValidation: p.premierPaiementSecondeValidation,
+      coordonneesRecentesSecondeValidation:
+          p.coordonneesRecentesSecondeValidation,
+      joursCoordonneesRecentes: p.joursCoordonneesRecentes,
+      autoPayoutInterdit: true,
+      montantManuelInterdit: true,
+      politiqueTarifaireInterdite: true,
+      dateEffet: SocleComptableDemo.aujourdhui,
+      auteur: _laDirection,
+      etat: etat,
+      suspendueLe: suspendueLe ?? p.suspendueLe,
+      expireLe: expireLe ?? p.expireLe,
+      dureeJours: p.dureeJours,
+      delaiSortieHeures: p.delaiSortieHeures,
+      exceptions: p.exceptions,
+    );
+  }
+
+  void _inscrire(String objet, String etat) => _journal.insert(
+    0,
+    EntreeJournal(
+      id: 'del-j-${_journal.length + 1}',
+      date: SocleComptableDemo.aujourdhui,
+      initiateur: _laDirection,
+      objet: objet,
+      nouvelEtat: etat,
+    ),
+  );
+
+  @override
+  Future<PolitiqueDelegationFinance> suspendreToutes({
+    required String cleIdempotence,
+  }) async {
+    final PolitiqueDelegationFinance p = _avecEtat(
+      EtatDelegation.suspendue,
+      suspendueLe: SocleComptableDemo.aujourdhui,
+    );
+    _inscrire('Suspension de toutes les délégations', 'Suspendues');
+    return p;
+  }
+
+  @override
+  Future<PolitiqueDelegationFinance> reactiver({
+    required String cleIdempotence,
+    required String raison,
+  }) async {
+    // Une delegation arrivee a expiration n'est jamais restauree : elle reste
+    // `expiree`, et seul le renouvellement repart sur la duree.
+    final DateTime? fin = _courante.expireLe;
+    final bool expiree =
+        fin != null && !fin.isAfter(SocleComptableDemo.aujourdhui);
+    final PolitiqueDelegationFinance p = _avecEtat(
+      expiree ? EtatDelegation.expiree : EtatDelegation.active,
+    );
+    _inscrire('Réactivation des délégations\u00a0: $raison', 'Réactivées');
+    return p;
+  }
+
+  @override
+  Future<PolitiqueDelegationFinance> renouveler({
+    required String cleIdempotence,
+  }) async {
+    // Renouveler ne change que la date : une delegation suspendue le reste
+    // (seule la reactivation, avec sa raison, leve une suspension).
+    final bool suspendue = _courante.etat == EtatDelegation.suspendue;
+    final PolitiqueDelegationFinance p = _avecEtat(
+      suspendue ? EtatDelegation.suspendue : EtatDelegation.active,
+      expireLe: SocleComptableDemo.aujourdhui.add(
+        Duration(days: _courante.dureeJours ?? 90),
+      ),
+    );
+    _inscrire(
+      'Renouvellement de la délégation',
+      suspendue ? 'Suspendue' : 'Active',
+    );
+    return p;
+  }
+
+  @override
+  Future<List<SortieEnAttente>> sortiesEnAttente() async =>
+      List<SortieEnAttente>.unmodifiable(_sorties);
+
+  @override
+  Future<void> annulerSortie({
+    required String sortieId,
+    required String cleIdempotence,
+  }) async {
+    _sorties.removeWhere((SortieEnAttente s) => s.id == sortieId);
+    _inscrire('Annulation d\'une sortie en attente', 'Annulée');
+  }
 }
 
 /// Les instances de la demonstration, gardees pour toute la vie de la page :
@@ -241,5 +395,6 @@ List<Override> surchargesDemoDirection({
 }) => <Override>[
   portPolitiqueReserveProvider.overrideWithValue(_reserve),
   portDelegationFinanceProvider.overrideWithValue(_delegation),
+  portControleDelegationProvider.overrideWithValue(_delegation),
   portValidationsFinanceProvider.overrideWithValue(validations),
 ];

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/router/routes.dart';
@@ -38,7 +39,7 @@ class InformationsComptePage extends ConsumerWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final AsyncValue<String> fuseau = ref.watch(monFuseauProvider);
     final String valeurFuseau = fuseau.hasValue && !fuseau.hasError
-        ? villeDuFuseau(fuseau.requireValue)
+        ? villeDuFuseauLibelle(fuseau.requireValue)
         : t.compte.tuteur.pageInformations.fuseauIndisponible;
 
     return PageShell(

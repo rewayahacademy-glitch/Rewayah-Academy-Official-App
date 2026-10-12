@@ -11,11 +11,14 @@ import 'package:flutter/widgets.dart' show StringCharacters;
 import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/pause_seance/port_pause_seance.dart'
+    show PauseSeance, StatutPause;
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
 import '../../core/tc_outils/annotation_layer.dart'
     show OutilTrait, TraitVectoriel;
 import '../../core/theme/app_gabarit.dart';
@@ -496,6 +499,8 @@ class VueSeance {
     required this.initialesEnseignant,
     this.prenomEleve,
     this.horloge,
+    this.chrono,
+    this.pause,
     this.connexion = ConnexionSeance.enLigne,
     this.enregistrementConfirme = true,
     this.visite,
@@ -607,6 +612,16 @@ class VueSeance {
   final String? prenomEleve;
 
   final HorlogeSeance? horloge;
+
+  /// LIVE-CHRONO-01 : T0 et la fin prevue de la seance, en UTC, ou `null`
+  /// quand la source n'a pas les horodatages. Le chrono ne court que si
+  /// elles existent ; rien n'est invente.
+  final BornesChrono? chrono;
+
+  /// LIVE-PAUSE-01 : la pause programmee de la seance, telle que le serveur
+  /// la sert, ou `null` sans source. Elle ne s'affiche que dans la ligne du
+  /// chrono. Jamais une preuve de presence.
+  final PauseSeance? pause;
   final ConnexionSeance connexion;
 
   /// Le serveur a confirme l'enregistrement (I-1). Sans confirmation, aucune
@@ -735,6 +750,9 @@ class VueSeance {
             : base;
       case RoleSeance.enseignant:
         final String? suite = switch (horloge) {
+          // LIVE-CHRONO-01 : chrono visible, il porte le temps restant ; la
+          // ligne d'etat ne le repete pas.
+          HorlogeRestante() when voitChrono => null,
           HorlogeRestante(:final int minutes) => LibellesGroupe.insecable(
             t.salle.seance.minutesRestantes(minutes: minutes),
           ),
@@ -755,6 +773,15 @@ class VueSeance {
 
   /// La duree restante n'est lue que par l'enseignant.
   bool get voitDureeRestante => _enseignant;
+
+  /// LIVE-CHRONO-01 : le chrono discret de l'en-tete, pour l'enseignant et
+  /// l'eleve en interface standard quand la seance porte ses horodatages.
+  /// Jamais en Interface guidee (rien qui compte ni qui presse un enfant).
+  bool get voitChrono => chrono != null && !_guidee;
+
+  /// LIVE-PAUSE-01 : une pause est a dire dans la ligne du chrono.
+  bool get voitPause =>
+      voitChrono && pause != null && pause!.statut != StatutPause.nonPrevue;
 
   /// Le libelle de la pastille de connexion : « En ligne » tant que la room
   /// est connectee, meme en reseau faible (P06.5).
@@ -847,11 +874,27 @@ class VueSeance {
     return null;
   }
 
+  /// TB-RC (revue TB-R, m20) : l'etat du tableau tel qu'il COMPORTE, la
+  /// coupure de la room comprise. Une room en reconnexion, hors ligne ou en
+  /// echec n'envoie plus rien : le tableau est au moins interrompu, meme si
+  /// le moteur du tableau ne l'a pas encore dit (`synchroTableau`). La
+  /// reprise, plus stricte, reste la reprise. Les phrases du bandeau
+  /// (`texteTableau`) suivent le signal du moteur ; l'ecriture et la marque
+  /// « non partage » suivent cet etat. Lie a TB-BR-06.
+  SynchroTableau get synchroEffective {
+    if (synchroTableau == SynchroTableau.reprise) return synchroTableau;
+    final bool coupee =
+        connexion == ConnexionSeance.reconnexion ||
+        connexion == ConnexionSeance.echec ||
+        connexion == ConnexionSeance.horsLigne;
+    return coupee ? SynchroTableau.interrompue : synchroTableau;
+  }
+
   /// TB-11b (plan V2 §10, §19.5 point 2) : l'ecriture est suspendue
   /// pendant la reprise, pour tous ; pendant l'interruption, chez l'eleve
   /// (« ecriture distante suspendue »). L'enseignant interrompu ecrit
   /// encore : ses nouveaux traits sont marques non partages.
-  bool get ecritureSuspendue => switch (synchroTableau) {
+  bool get ecritureSuspendue => switch (synchroEffective) {
     SynchroTableau.partage => false,
     SynchroTableau.interrompue => !_enseignant,
     SynchroTableau.reprise => true,
@@ -864,7 +907,7 @@ class VueSeance {
   /// TB-11b (plan V2 §10) : la nouvelle encre de la personne n'est pas
   /// partagee (enseignant, tableau interrompu) : elle est marquee.
   bool get encreNonPartagee =>
-      _enseignant && synchroTableau == SynchroTableau.interrompue;
+      _enseignant && synchroEffective == SynchroTableau.interrompue;
 
   /// TB-11b (plan V2 §11, §20 « Sauvegarde absente ») : « Les notes sont
   /// conservees dans cette seance uniquement. », dans le contexte de
@@ -1428,6 +1471,10 @@ class VueSeance {
     RoleSeance? role,
     HorlogeSeance? horloge,
     bool sansHorloge = false,
+    BornesChrono? chrono,
+    bool sansChrono = false,
+    PauseSeance? pause,
+    bool sansPause = false,
     ConnexionSeance? connexion,
     VisiteSeance? visite,
     bool sansVisite = false,
@@ -1464,6 +1511,8 @@ class VueSeance {
     initialesEnseignant: initialesEnseignant,
     prenomEleve: prenomEleve,
     horloge: sansHorloge ? null : horloge ?? this.horloge,
+    chrono: sansChrono ? null : chrono ?? this.chrono,
+    pause: sansPause ? null : pause ?? this.pause,
     connexion: connexion ?? this.connexion,
     enregistrementConfirme:
         enregistrementConfirme ?? this.enregistrementConfirme,

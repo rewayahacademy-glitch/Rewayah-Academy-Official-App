@@ -75,6 +75,8 @@ const Map<String, int> _domaines = <String, int>{
   'admin': 590,
   // RECH-1, RECH-2 : la surface de recherche, arabe des l'origine.
   'recherche': 55,
+  // AR-SUIVI-FAMILLE.
+  'suiviFamille': 40,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :
@@ -83,9 +85,7 @@ const Map<String, int> _domaines = <String, int>{
 /// relus par la ligne arabe. Un domaine en sort quand sa tranche arabe entre
 /// dans [_domaines].
 const Set<String> _enAttente = <String>{
-  // RECRUT-ECRANS, SUIVI-FAMILLE : arabe non prioritaire au lancement
-  // (REPRISE.md).
-  'suiviFamille',
+  // RECRUT-ECRANS : arabe non prioritaire au lancement (REPRISE.md).
   'presentationTuteur',
   'reprisesAdmin',
   'recrutement',
@@ -193,6 +193,11 @@ const Set<String> _motsLatinsAdmis = <String>{
   'iPhone',
   'iPad',
   'Tanzil',
+  // MUSHAF-15L : le credit du jeu de donnees de mise en page (CC-BY-4.0).
+  'quran',
+  'ws',
+  'CC',
+  'BY',
   'Project',
 };
 

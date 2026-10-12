@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../core/accessibilite/age_eleve.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/pause_seance/port_pause_seance.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_classe/controleur_recitation.dart';
 import '../../core/tc_classe/port_rappel_discret.dart';
@@ -36,6 +38,7 @@ import '../../core/widgets/status_pill.dart';
 import '../salle/vue_salle.dart';
 import '../salle_seance/actions_seance.dart';
 import '../salle_seance/depuis_classe_live.dart';
+import '../salle_seance/portee_outils_salle.dart';
 import '../salle_seance/salle_seance.dart';
 import '../salle_seance/vue_seance.dart';
 import 'encre_salle.dart';
@@ -309,6 +312,28 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
 
   /// Ouvre [route] sans quitter la salle : le controleur de session
   /// persistante garde la room, la barre « Cours en cours » y ramene (D-24).
+  /// LIVE-PAUSE-01 : demarre la pause programmee, ou la termine si elle est en
+  /// cours. Le serveur horodate ; l'etat affiche est toujours celui qu'il
+  /// rend (relu apres l'envoi, succes ou echec).
+  Future<void> _basculerPause(PauseSeance pause) async {
+    final String sessionId = widget.contexte.sessionId;
+    final PortPauseSeance port = ref.read(portPauseSeanceProvider);
+    final String cle = const Uuid().v4();
+    try {
+      if (pause.statut == StatutPause.enCours) {
+        await port.terminer(seanceId: sessionId, cleIdempotence: cle);
+      } else {
+        await port.demarrer(seanceId: sessionId, cleIdempotence: cle);
+      }
+    } on Object {
+      // La pause affichee reste celle que le serveur a rendue : relue
+      // ci-dessous, rien n'est affirme sans confirmation.
+    }
+    if (mounted) {
+      ref.invalidate(pauseSeanceProvider(sessionId));
+    }
+  }
+
   void _allerSansQuitter(String route) => GoRouter.maybeOf(context)?.go(route);
 
   /// Le Groupe de la seance, selon le role : la fiche du groupe pour
@@ -341,6 +366,9 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
   ContexteOuvert _contexte = ContexteOuvert.aucun;
 
   /// Le zoom local, qui n'agit que sur cet ecran.
+  /// TB-RC (m21) : la cle de la portee des outils de la salle.
+  final GlobalKey _cleOutilsSalle = GlobalKey(debugLabel: 'outils-salle');
+
   double _zoom = 1;
 
   /// TB-5 (UI-03) : le focus local de l'enseignant (Commandes > Focus).
@@ -450,6 +478,15 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
         onReglages: () => _allerSansQuitter(Routes.compteReglages),
         onCompte: () => _allerSansQuitter(Routes.compte),
         onQuitter: () => unawaited(_sortir()),
+        // LIVE-PAUSE-01 : la commande suit la capacite lue du serveur, jamais
+        // le role (LIVE-PAUSE-01b : plus aucune lecture du role ici, le test
+        // `classe_live_pause_test` tombe si `peutPiloter` disparait) ; sans
+        // source (production), elle n'existe pas.
+        onPause: switch (vue.pause) {
+          final PauseSeance p when p.peutPiloter =>
+            () => unawaited(_basculerPause(p)),
+          _ => null,
+        },
         // Le rail enseignant (desktop) : la salle confirme la sortie, puis on
         // quitte vraiment avant d'aller ailleurs, comme le dit la confirmation.
         onNaviguer: enseignant
@@ -531,10 +568,17 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
             : null,
       ),
     );
+    // TB-RC (m21) : les outils, l'historique d'Annuler et la marque « non
+    // partage » sont ceux de CETTE salle ; la cle garde leur etat quand un
+    // message apparait au-dessus de la salle.
+    final Widget salleDeLaClasse = PorteeOutilsSalle(
+      key: _cleOutilsSalle,
+      child: salleSeance,
+    );
     final String? avis = suspensionNonConfirmee
         ? t.tc.classe.lien.retourDeSuspension
         : null;
-    if (avis == null && _echecRappel == null) return salleSeance;
+    if (avis == null && _echecRappel == null) return salleDeLaClasse;
     // Les deux seuls messages de la Classe Live qui ne sont pas dans la salle
     // de seance : une ligne au-dessus, jamais par-dessus.
     return Column(
@@ -543,7 +587,7 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
         if (avis != null) LocalFeedback(message: avis, persistant: true),
         if (_echecRappel case final String echec)
           LocalFeedback(message: echec, persistant: true),
-        Expanded(child: salleSeance),
+        Expanded(child: salleDeLaClasse),
       ],
     );
   }
@@ -739,6 +783,9 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
           vue: seance.copyWith(
             supportPresente: contexte.supportPresente,
             contexte: _contexte,
+            // LIVE-PAUSE-01 : la pause lue du serveur ; une erreur ou une
+            // capacite absente (production) n'affiche rien.
+            pause: ref.watch(pauseSeanceProvider(contexte.sessionId)).value,
           ),
           salle: salle,
           support: slotSupport,

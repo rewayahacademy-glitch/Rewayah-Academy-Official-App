@@ -16,6 +16,7 @@ import '../../core/domain/enums.dart';
 import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/reseau/etat_sans_donnees.dart';
@@ -46,11 +47,12 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../admin_fusion/feuilles_fusion.dart';
-import '../admin_regroupements/regroupements_libelles.dart' show villeDuFuseau;
 import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
 import 'bas_de_feuille.dart';
+import 'cahiers_classe.dart';
 import 'feuille_observation_groupe.dart';
 import 'genre_classe_libelles.dart';
+import 'reglage_partage.dart';
 
 /// Operations > Groupes : le noyau du produit depuis le pivot du 19
 /// septembre 2026.
@@ -244,7 +246,7 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
             for (final String fuseau in reference?.fuseaux ?? const <String>[])
               EntreeFiltre<String>(
                 valeur: fuseau,
-                libelle: villeDuFuseau(fuseau),
+                libelle: villeDuFuseauLibelle(fuseau),
               ),
           ],
           onChoix: (String? fuseau) =>
@@ -1529,7 +1531,7 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
   }
 }
 
-/// Le detail d'un groupe : ses membres.
+/// Le detail d'un groupe : le partage des comptes rendus, puis ses membres.
 class _FeuilleDetail extends ConsumerWidget {
   const _FeuilleDetail({required this.groupe, required this.onRetirer});
 
@@ -1546,6 +1548,13 @@ class _FeuilleDetail extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // PED-APRES-1 (ADM-PED-APR-02) : le partage des comptes rendus, au
+        // meme endroit sur bureau (inspecteur) et sur telephone (feuille).
+        GroupePartageClasse(classeId: groupe.id, nomClasse: groupe.libelle),
+        Ecart.vMd,
+        // ADM-CAHIER-LECTURE : les cahiers de la classe, en lecture seule.
+        LienCahiersClasse(classeId: groupe.id),
+        Ecart.vXxl,
         Text(
           t.admin.groupes.detailMembres,
           style: Theme.of(context).textTheme.titleMedium,

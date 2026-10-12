@@ -96,6 +96,13 @@ class CibleTirage {
   int get hashCode => Object.hash(id, type);
 }
 
+/// Les bornes du nombre de missions par semaine. Le serveur les applique
+/// (0 a 50) ; l'ecran ne les rappelle que par courtoisie.
+const int missionsMin = 0;
+
+/// Voir [missionsMin].
+const int missionsMax = 50;
+
 /// Les regles du tirage, fixees par la direction.
 @immutable
 class ReglesTirage {
@@ -107,10 +114,11 @@ class ReglesTirage {
     required this.cibles,
   });
 
-  /// Version immuable de la regle serveur (0 avant le premier enregistrement).
+  /// Version immuable creee par le serveur (0 avant le premier enregistrement).
   final int version;
 
-  /// Le nombre de missions qu'un controleur recoit par semaine, au plus.
+  /// Le nombre de missions qu'un controleur recoit par semaine, au plus
+  /// (de [missionsMin] a [missionsMax], que le serveur applique).
   final int missionsParSemaine;
 
   /// Le poids de chaque critere.
@@ -338,7 +346,7 @@ final class ReglesEnregistrees extends ResultatRegles {
   /// Cree le resultat.
   const ReglesEnregistrees({this.version = 0});
 
-  /// Version attribuee par le serveur.
+  /// La version creee par le serveur (0 : non rendue).
   final int version;
 }
 
@@ -381,10 +389,7 @@ abstract interface class PortTirageControle {
 
   /// Signale un conflit sur une mission attribuee. [cleConflit] doit rester
   /// stable lors des reprises de la meme commande; le serveur est idempotent.
-  Future<void> declarerConflit(
-    String missionId, {
-    required String cleConflit,
-  });
+  Future<void> declarerConflit(String missionId, {required String cleConflit});
 }
 
 /// L'identifiant de la dependance serveur, pour la trace et les tests

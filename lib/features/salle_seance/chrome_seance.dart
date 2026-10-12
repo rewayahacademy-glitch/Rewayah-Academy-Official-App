@@ -19,6 +19,7 @@ import '../../core/widgets/pressable.dart';
 import '../../core/widgets/status_pill.dart';
 import 'actions_seance.dart';
 import 'capsule_seance.dart';
+import 'chrono_salle.dart';
 import 'cible_debordante.dart';
 import 'dock_seance.dart';
 import 'mention_seance.dart';
@@ -212,6 +213,14 @@ class _Large extends StatelessWidget {
                           theme.textTheme.bodyLarge ?? const TextStyle(),
                         ),
                       ),
+                    if (vue.voitChrono)
+                      ChronoSalle(
+                        bornes: vue.chrono!,
+                        connexion: vue.connexion,
+                        pause: vue.pause,
+                        onPause: actions.onPause,
+                        style: theme.textTheme.bodyLarge ?? const TextStyle(),
+                      ),
                     _Connexion(vue: vue),
                     MentionSeance(vue: vue),
                   ],
@@ -268,6 +277,17 @@ class _Etroit extends StatelessWidget {
     final Widget? laCapsule = capsule
         ? CapsuleSeance(vue: vue, actions: actions, focusAvatar: focusCapsule)
         : null;
+    // LIVE-CHRONO-01 : une ligne discrete, sous la ligne d'etat.
+    final bool chrono = vue.voitChrono;
+    final Widget? leChrono = chrono
+        ? ChronoSalle(
+            bornes: vue.chrono!,
+            connexion: vue.connexion,
+            pause: vue.pause,
+            onPause: actions.onPause,
+            style: theme.textTheme.bodyMedium ?? const TextStyle(),
+          )
+        : null;
     if (compacte) {
       // MA-CMD-1 : une seule ligne (chevron, titre, « En ligne ») ; la ligne
       // d'etat reste lue sans prendre de hauteur. La mention (observation
@@ -320,12 +340,13 @@ class _Etroit extends StatelessWidget {
                 ],
               ),
             ),
-            if (mention || capsule)
+            if (mention || capsule || chrono)
               Wrap(
                 spacing: AppSpacing.sm,
                 runSpacing: AppSpacing.xs,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: <Widget>[
+                  ?leChrono,
                   if (mention) MentionSeance(vue: vue),
                   ?laCapsule,
                 ],
@@ -365,7 +386,7 @@ class _Etroit extends StatelessWidget {
               _Connexion(vue: vue, compacte: true),
             ],
           ),
-          if (ligne != null || mention || capsule)
+          if (ligne != null || mention || capsule || chrono)
             Padding(
               padding: EdgeInsetsDirectional.only(
                 start: retour ? _retraitEtroit : 0,
@@ -375,7 +396,7 @@ class _Etroit extends StatelessWidget {
                 runSpacing: AppSpacing.xs,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: <Widget>[
-                  if (ligne != null || mention)
+                  if (ligne != null || mention || chrono)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
@@ -387,7 +408,9 @@ class _Etroit extends StatelessWidget {
                               theme.textTheme.bodyMedium ?? const TextStyle(),
                             ),
                           ),
-                        if (ligne != null && mention) Ecart.vXs,
+                        if (ligne != null && chrono) Ecart.vXs,
+                        ?leChrono,
+                        if ((ligne != null || chrono) && mention) Ecart.vXs,
                         if (mention) MentionSeance(vue: vue),
                       ],
                     ),
