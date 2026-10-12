@@ -6,7 +6,9 @@ INSERT INTO auth.users (id, email) VALUES
   ('c0400000-0000-0000-0000-000000000001', 'c04-admin@example.test'),
   ('c0400000-0000-0000-0000-000000000002', 'c04-teacher-female@example.test'),
   ('c0400000-0000-0000-0000-000000000003', 'c04-teacher-male@example.test'),
-  ('c0400000-0000-0000-0000-000000000004', 'c04-teacher-unknown@example.test');
+  ('c0400000-0000-0000-0000-000000000004', 'c04-teacher-unknown@example.test'),
+  ('c0400000-0000-0000-0000-000000000005', 'c04-student@example.test'),
+  ('c0400000-0000-0000-0000-000000000006', 'c04-admin-disabled@example.test');
 
 INSERT INTO public.profiles
   (id, immutable_id, role, first_name, last_name, account_status, gender)
@@ -18,7 +20,11 @@ VALUES
   ('c0400000-0000-0000-0000-000000000003', 'C04TEACHMALE0003', 'teacher',
    'Youssef', 'Male', 'provisional_active', 'male'),
   ('c0400000-0000-0000-0000-000000000004', 'C04TEACHUNKNOWN04', 'teacher',
-   'Sam', 'Unknown', 'provisional_active', NULL);
+   'Sam', 'Unknown', 'provisional_active', NULL),
+  ('c0400000-0000-0000-0000-000000000005', 'C04STUDENT00005', 'student',
+   'Fixture', 'Student', 'active', NULL),
+  ('c0400000-0000-0000-0000-000000000006', 'C04ADMINDIS0006', 'admin',
+   'Fixture', 'Disabled', 'disabled', 'female');
 
 INSERT INTO public.teacher_profiles
   (profile_id, country, languages, weekly_hours_cap, kyc_status, timezone_iana)
@@ -80,5 +86,61 @@ BEGIN
 END
 $c04$;
 
+RESET ROLE;
+
+SET LOCAL ROLE authenticated;
+SELECT set_config('test.uid', 'c0400000-0000-0000-0000-000000000005', true);
+SELECT set_config('test.jwt', '{"app_metadata":{"role":"student"}}', true);
+DO $c04_student_denied$
+BEGIN
+  BEGIN
+    PERFORM 1 FROM public.enseignants_pour_classe(
+      'c04fffff-0000-0000-0000-000000000001'
+    );
+    RAISE EXCEPTION USING ERRCODE = 'ZX001', MESSAGE = 'C-04: student unexpectedly queried teacher candidates';
+  EXCEPTION WHEN raise_exception THEN
+    IF SQLSTATE <> 'P0001' THEN RAISE; END IF;
+  END;
+END
+$c04_student_denied$;
+
+SELECT set_config('test.uid', 'c0400000-0000-0000-0000-000000000006', true);
+SELECT set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+DO $c04_disabled_admin_denied$
+BEGIN
+  BEGIN
+    PERFORM 1 FROM public.enseignants_pour_classe(
+      'c04fffff-0000-0000-0000-000000000001'
+    );
+    RAISE EXCEPTION USING ERRCODE = 'ZX001', MESSAGE = 'C-04: disabled admin unexpectedly queried teacher candidates';
+  EXCEPTION WHEN raise_exception THEN
+    IF SQLSTATE <> 'P0001' THEN RAISE; END IF;
+  END;
+END
+$c04_disabled_admin_denied$;
+
+RESET ROLE;
+DO $c04_anon_acl$
+BEGIN
+  IF pg_catalog.has_function_privilege(
+       'anon', 'public.enseignants_pour_classe(uuid)', 'EXECUTE'
+     ) THEN
+    RAISE EXCEPTION 'C-04: anon unexpectedly has candidate RPC EXECUTE';
+  END IF;
+END
+$c04_anon_acl$;
+
+SET LOCAL ROLE anon;
+DO $c04_anon_denied$
+BEGIN
+  BEGIN
+    PERFORM 1 FROM public.enseignants_pour_classe(
+      'c04fffff-0000-0000-0000-000000000001'
+    );
+    RAISE EXCEPTION 'C-04: anon unexpectedly queried teacher candidates';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+END
+$c04_anon_denied$;
 RESET ROLE;
 ROLLBACK;
