@@ -416,6 +416,9 @@ enabled = false
 [functions.livekit-webhook]
 verify_jwt = false
 
+[functions.bibliotheque-lecture]
+verify_jwt = true
+
 # OAuth server configuration
 [auth.oauth_server]
 # Enable OAuth server functionality
