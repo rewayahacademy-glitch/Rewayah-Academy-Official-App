@@ -25,11 +25,12 @@ function appelantFactice(
     teacher_titre: string;
     libelle: string;
   }>,
+  sessionAutorisee = true,
 ): AppelantRecherche {
   const sql = {
     rpc: async (nom: string) => ({
-      data: nom === "app_account_valid"
-        ? true
+      data: nom === "rech_session_autorisee"
+        ? sessionAutorisee
         : nom === "app_role"
         ? "guardian"
         : null,
@@ -118,4 +119,15 @@ Deno.test("une famille autorisée sans classe reçoit une page vide", async () =
   assertEquals(body.elements, []);
   assertEquals(body.curseurSuivant, null);
   assertEquals(body.aPlus, false);
+});
+
+Deno.test("un jeton devenu périmé côté serveur ne lance pas la recherche", async () => {
+  const appelant = appelantFactice([], false);
+  const response = await traiter(requeteRecherche(), {
+    appelant: async () => appelant,
+    secretCurseur: "test-secret-with-at-least-32-bytes-long",
+  });
+  const body = await response.json();
+  assertEquals(response.status, 403);
+  assertEquals(body.statut, "contexteRevoque");
 });

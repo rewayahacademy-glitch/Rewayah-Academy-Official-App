@@ -105,7 +105,7 @@ async function contexteAutorise(
     { data: actif, error: erreurActif },
     { data: role, error: erreurRole },
   ] = await Promise.all([
-    sql.rpc("app_account_valid"),
+    sql.rpc("rech_session_autorisee"),
     sql.rpc("app_role"),
   ]);
   if (erreurActif || erreurRole) return "indisponible";
