@@ -217,6 +217,8 @@ class _Large extends StatelessWidget {
                       ChronoSalle(
                         bornes: vue.chrono!,
                         connexion: vue.connexion,
+                        pause: vue.pause,
+                        onPause: actions.onPause,
                         style: theme.textTheme.bodyLarge ?? const TextStyle(),
                       ),
                     _Connexion(vue: vue),
@@ -281,6 +283,8 @@ class _Etroit extends StatelessWidget {
         ? ChronoSalle(
             bornes: vue.chrono!,
             connexion: vue.connexion,
+            pause: vue.pause,
+            onPause: actions.onPause,
             style: theme.textTheme.bodyMedium ?? const TextStyle(),
           )
         : null;

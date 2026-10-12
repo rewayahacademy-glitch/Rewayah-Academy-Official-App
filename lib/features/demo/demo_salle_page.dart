@@ -17,6 +17,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/appairage/service_avatar.dart' show avatarUrlProvider;
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/pause_seance/port_pause_seance.dart'
+    show PauseSeance, StatutPause;
 import '../../core/router/routes.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/donnees_catalogue.dart';
@@ -548,9 +550,45 @@ class _SalleDemoState extends State<SalleDemo> {
     if (!widget.avecChrono) {
       return vue;
     }
+    final bool depasse = vue.horloge is HorlogeDepassee;
     return vue.copyWith(
-      chrono: vue.horloge is HorlogeDepassee ? _chronoDepasse : _chronoEnCours,
+      chrono: depasse ? _chronoDepasse : _chronoEnCours,
+      // LIVE-PAUSE-01 : la pause de la demonstration, locale a l'ecran.
+      pause: depasse ? null : _pause,
     );
+  }
+
+  /// LIVE-PAUSE-01 : la pause programmee 20 minutes apres T0 (dans huit
+  /// minutes), demarree et terminee a la main par l'enseignant de la demo.
+  late PauseSeance _pause = PauseSeance(
+    statut: StatutPause.programmee,
+    dureePrevueMinutes: 10,
+    debutPrevuUtc: _chronoEnCours.debutUtc.add(const Duration(minutes: 20)),
+    peutPiloter: true,
+  );
+
+  void _basculerPause() {
+    final PauseSeance p = _pause;
+    final DateTime maintenant = DateTime.now().toUtc();
+    setState(() {
+      _pause = switch (p.statut) {
+        StatutPause.enCours => PauseSeance(
+          statut: StatutPause.prise,
+          dureePrevueMinutes: p.dureePrevueMinutes,
+          debutPrevuUtc: p.debutPrevuUtc,
+          debutUtc: p.debutUtc,
+          finUtc: maintenant,
+          peutPiloter: true,
+        ),
+        _ => PauseSeance(
+          statut: StatutPause.enCours,
+          dureePrevueMinutes: p.dureePrevueMinutes,
+          debutPrevuUtc: p.debutPrevuUtc,
+          debutUtc: maintenant,
+          peutPiloter: true,
+        ),
+      };
+    });
   }
 
   late final BornesChrono _chronoEnCours = DonneesSeanceDemo.chronoDemo(
@@ -833,6 +871,7 @@ class _SalleDemoState extends State<SalleDemo> {
           ? () => setState(() => _zoom = 1)
           : null,
       onRetour: widget.onSortir,
+      onPause: widget.avecChrono && enseignant ? _basculerPause : null,
       onQuitter: enseignant
           ? widget.onSortir
           : () => setState(() => _quittee = true),

@@ -62,6 +62,41 @@ class BornesChrono {
   int get hashCode => Object.hash(debutUtc, finPrevueUtc);
 }
 
+/// Une pause de la seance, bornee par ses horodatages serveur, en UTC.
+///
+/// [finUtc] nul : la pause est en cours. LIVE-PAUSE-01 : le temps ecoule du
+/// chrono la decompte ; le temps restant prevu, lui, ne la retire pas.
+@immutable
+class PauseChrono {
+  /// Cree la pause.
+  PauseChrono({required this.debutUtc, this.finUtc})
+    : assert(finUtc == null || !finUtc.isBefore(debutUtc));
+
+  /// Le debut de la pause.
+  final DateTime debutUtc;
+
+  /// La fin de la pause, ou `null` si elle dure encore.
+  final DateTime? finUtc;
+
+  /// La part de cette pause comprise entre [depuis] et [jusqua].
+  Duration partie(DateTime depuis, DateTime jusqua) {
+    final DateTime debut = debutUtc.isBefore(depuis) ? depuis : debutUtc;
+    final DateTime fin = (finUtc != null && finUtc!.isBefore(jusqua))
+        ? finUtc!
+        : jusqua;
+    return fin.isAfter(debut) ? fin.difference(debut) : Duration.zero;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is PauseChrono &&
+      other.debutUtc == debutUtc &&
+      other.finUtc == finUtc;
+
+  @override
+  int get hashCode => Object.hash(debutUtc, finUtc);
+}
+
 /// Le chrono de la seance a un instant donne.
 @immutable
 class ChronoSeance {
@@ -70,6 +105,8 @@ class ChronoSeance {
     required this.duree,
     required this.ecoule,
     required this.restant,
+    this.enPause = false,
+    this.pause = Duration.zero,
   });
 
   /// Calcule le chrono de [bornes] a [maintenantUtc].
@@ -77,7 +114,11 @@ class ChronoSeance {
   /// Le temps ecoule ne depasse jamais la duree et le temps restant n'est
   /// jamais negatif : apres la fin prevue, la phase est
   /// [PhaseChrono.prevuEcoule] et les deux durees valent la duree et zero.
-  factory ChronoSeance.a(BornesChrono bornes, DateTime maintenantUtc) {
+  factory ChronoSeance.a(
+    BornesChrono bornes,
+    DateTime maintenantUtc, {
+    List<PauseChrono> pauses = const <PauseChrono>[],
+  }) {
     final DateTime maintenant = maintenantUtc.toUtc();
     final Duration duree = bornes.duree;
     if (maintenant.isBefore(bornes.debutUtc)) {
@@ -96,11 +137,25 @@ class ChronoSeance {
         restant: Duration.zero,
       );
     }
+    // Les pauses sortent du temps ecoule (le temps de cours), jamais du temps
+    // restant jusqu'a la fin prevue : l'horloge de la fin ne bouge pas.
+    Duration enPauseTotal = Duration.zero;
+    bool enCours = false;
+    for (final PauseChrono p in pauses) {
+      enPauseTotal += p.partie(bornes.debutUtc, maintenant);
+      if (p.finUtc == null && !p.debutUtc.isAfter(maintenant)) {
+        enCours = true;
+      }
+    }
+    final Duration brut = maintenant.difference(bornes.debutUtc);
+    final Duration net = brut - enPauseTotal;
     return ChronoSeance._(
       phase: PhaseChrono.enCours,
       duree: duree,
-      ecoule: maintenant.difference(bornes.debutUtc),
+      ecoule: net.isNegative ? Duration.zero : net,
       restant: bornes.finPrevueUtc.difference(maintenant),
+      enPause: enCours,
+      pause: enPauseTotal,
     );
   }
 
@@ -113,8 +168,15 @@ class ChronoSeance {
   /// Le temps ecoule depuis T0, entre zero et [duree].
   final Duration ecoule;
 
-  /// Le temps restant jusqu'a `00:00:00`, jamais negatif.
+  /// Le temps restant jusqu'a `00:00:00`, jamais negatif. Il ne retire pas
+  /// les pauses : la fin prevue reste celle de l'horloge.
   final Duration restant;
+
+  /// Une pause est en cours : le temps ecoule est fige.
+  final bool enPause;
+
+  /// Le temps de pause deja compte depuis T0.
+  final Duration pause;
 
   /// Vrai quand le chrono a quelque chose a dire : la seance a commence.
   bool get visible => phase != PhaseChrono.avantDebut;
@@ -125,13 +187,13 @@ class ChronoSeance {
   /// Les minutes entieres ecoulees (ce que lit un lecteur d'ecran).
   int get minutesEcoulees => ecoule.inMinutes;
 
-  /// Les minutes restantes que lit un lecteur d'ecran, derivees des minutes
-  /// ecoulees : les deux nombres changent au meme instant (une seule annonce
-  /// par minute), meme quand la duree prevue n'est pas un nombre rond de
-  /// minutes.
+  /// Les minutes restantes que lit un lecteur d'ecran, derivees avec les
+  /// secondes deja ecoulees de la minute courante : sans pause, elles changent
+  /// a la meme seconde que les minutes ecoulees (une seule annonce par
+  /// minute), meme quand la duree prevue n'est pas un nombre rond de minutes.
   int get minutesRestantes {
     final int secondes =
-        duree.inSeconds - minutesEcoulees * Duration.secondsPerMinute;
+        restant.inSeconds + ecoule.inSeconds % Duration.secondsPerMinute;
     return secondes <= 0 ? 0 : (secondes / Duration.secondsPerMinute).ceil();
   }
 
@@ -141,10 +203,13 @@ class ChronoSeance {
       other.phase == phase &&
       other.duree == duree &&
       other.ecoule == ecoule &&
-      other.restant == restant;
+      other.restant == restant &&
+      other.enPause == enPause &&
+      other.pause == pause;
 
   @override
-  int get hashCode => Object.hash(phase, duree, ecoule, restant);
+  int get hashCode =>
+      Object.hash(phase, duree, ecoule, restant, enPause, pause);
 }
 
 /// `HH:MM:SS`, chiffres latins, deux chiffres par champ. Une duree negative

@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../core/accessibilite/age_eleve.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/pause_seance/port_pause_seance.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_classe/controleur_recitation.dart';
 import '../../core/tc_classe/port_rappel_discret.dart';
@@ -310,6 +312,28 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
 
   /// Ouvre [route] sans quitter la salle : le controleur de session
   /// persistante garde la room, la barre « Cours en cours » y ramene (D-24).
+  /// LIVE-PAUSE-01 : demarre la pause programmee, ou la termine si elle est en
+  /// cours. Le serveur horodate ; l'etat affiche est toujours celui qu'il
+  /// rend (relu apres l'envoi, succes ou echec).
+  Future<void> _basculerPause(PauseSeance pause) async {
+    final String sessionId = widget.contexte.sessionId;
+    final PortPauseSeance port = ref.read(portPauseSeanceProvider);
+    final String cle = const Uuid().v4();
+    try {
+      if (pause.statut == StatutPause.enCours) {
+        await port.terminer(seanceId: sessionId, cleIdempotence: cle);
+      } else {
+        await port.demarrer(seanceId: sessionId, cleIdempotence: cle);
+      }
+    } on Object {
+      // La pause affichee reste celle que le serveur a rendue : relue
+      // ci-dessous, rien n'est affirme sans confirmation.
+    }
+    if (mounted) {
+      ref.invalidate(pauseSeanceProvider(sessionId));
+    }
+  }
+
   void _allerSansQuitter(String route) => GoRouter.maybeOf(context)?.go(route);
 
   /// Le Groupe de la seance, selon le role : la fiche du groupe pour
@@ -454,6 +478,13 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
         onReglages: () => _allerSansQuitter(Routes.compteReglages),
         onCompte: () => _allerSansQuitter(Routes.compte),
         onQuitter: () => unawaited(_sortir()),
+        // LIVE-PAUSE-01 : la commande suit la capacite lue du serveur, jamais
+        // le role ; sans source (production), elle n'existe pas.
+        onPause: switch (vue.pause) {
+          final PauseSeance p when p.peutPiloter && enseignant =>
+            () => unawaited(_basculerPause(p)),
+          _ => null,
+        },
         // Le rail enseignant (desktop) : la salle confirme la sortie, puis on
         // quitte vraiment avant d'aller ailleurs, comme le dit la confirmation.
         onNaviguer: enseignant
@@ -750,6 +781,9 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
           vue: seance.copyWith(
             supportPresente: contexte.supportPresente,
             contexte: _contexte,
+            // LIVE-PAUSE-01 : la pause lue du serveur ; une erreur ou une
+            // capacite absente (production) n'affiche rien.
+            pause: ref.watch(pauseSeanceProvider(contexte.sessionId)).value,
           ),
           salle: salle,
           support: slotSupport,

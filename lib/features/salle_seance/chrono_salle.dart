@@ -20,9 +20,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/pause_seance/port_pause_seance.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/chrono_seance.dart';
 import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../accueil_famille/ancre_horloge_serveur.dart';
 import 'vue_seance.dart' show ConnexionSeance;
 
@@ -47,8 +50,16 @@ class ChronoSalle extends StatefulWidget {
     required this.bornes,
     required this.style,
     this.connexion = ConnexionSeance.enLigne,
+    this.pause,
+    this.onPause,
     super.key,
   });
+
+  /// LIVE-PAUSE-01 : la pause programmee de la seance, ou `null`.
+  final PauseSeance? pause;
+
+  /// Demarre ou termine la pause ; `null` sans capacite (rien n'est rendu).
+  final VoidCallback? onPause;
 
   /// Le style du texte (celui de la ligne d'etat voisine).
   final TextStyle style;
@@ -65,6 +76,19 @@ class ChronoSalle extends StatefulWidget {
   /// La cle du noeud lu par le lecteur d'ecran.
   static const Key cleAnnonce = ValueKey<String>('chrono-salle-annonce');
 
+  /// La cle du texte de pause.
+  static const Key clePause = ValueKey<String>('chrono-salle-pause');
+
+  /// La cle du noeud de pause lu par le lecteur d'ecran.
+  static const Key cleAnnoncePause = ValueKey<String>(
+    'chrono-salle-annonce-pause',
+  );
+
+  /// La cle de la commande « Demarrer la pause » / « Terminer la pause ».
+  static const Key cleCommandePause = ValueKey<String>(
+    'chrono-salle-commande-pause',
+  );
+
   @override
   State<ChronoSalle> createState() => _ChronoSalleEtat();
 }
@@ -72,6 +96,7 @@ class ChronoSalle extends StatefulWidget {
 class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
   Timer? _minuteur;
   ChronoSeance? _chrono;
+  DateTime _instant = DateTime.now().toUtc();
 
   /// L'horloge du chrono : celle du conteneur de providers s'il y en a un,
   /// l'horloge de l'appareil sinon.
@@ -106,7 +131,9 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
   void didUpdateWidget(ChronoSalle ancien) {
     super.didUpdateWidget(ancien);
     final bool retablie = !ancien.connexion.etablie && widget.connexion.etablie;
-    if (ancien.bornes != widget.bornes || retablie) {
+    if (ancien.bornes != widget.bornes ||
+        ancien.pause != widget.pause ||
+        retablie) {
       _recalculer();
     }
   }
@@ -127,10 +154,35 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  /// Les pauses du chrono, d'apres l'etat servi : en cours ou prise.
+  List<PauseChrono> _pauses() {
+    final PauseSeance? p = widget.pause;
+    final DateTime? debut = p?.debutUtc;
+    if (p == null || debut == null) {
+      return const <PauseChrono>[];
+    }
+    return switch (p.statut) {
+      StatutPause.enCours => <PauseChrono>[PauseChrono(debutUtc: debut)],
+      StatutPause.prise when p.finUtc != null => <PauseChrono>[
+        PauseChrono(debutUtc: debut, finUtc: p.finUtc),
+      ],
+      _ => const <PauseChrono>[],
+    };
+  }
+
   void _recalculer() {
-    final ChronoSeance suivant = ChronoSeance.a(widget.bornes, _maintenant());
+    _instant = _maintenant();
+    final ChronoSeance suivant = ChronoSeance.a(
+      widget.bornes,
+      _instant,
+      pauses: _pauses(),
+    );
     if (suivant != _chrono) {
       setState(() => _chrono = suivant);
+    } else {
+      // La pause se lit sur l'instant : elle peut changer sans que le chrono
+      // change (« Pause dans 5 min » devient « dans 4 min »).
+      setState(() {});
     }
     _planifier();
   }
@@ -156,6 +208,51 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
   static String _chiffres(Duration duree) =>
       '\u2066${formaterChrono(duree)}\u2069';
 
+  /// L'heure locale de l'appareil, `HH:MM`, en chiffres de gauche a droite.
+  static String _heure(DateTime utc) {
+    final DateTime l = utc.toLocal();
+    String deux(int n) => n.toString().padLeft(2, '0');
+    return '\u2066${deux(l.hour)}:${deux(l.minute)}\u2069';
+  }
+
+  /// Ce que la pause dit a cet instant, ou `null` : le texte visible et sa
+  /// version lue.
+  ({String texte, String annonce})? _direPause(ChronoSeance chrono) {
+    final PauseSeance? p = widget.pause;
+    if (p == null || chrono.prevuEcoule) {
+      return null;
+    }
+    final d = t.salle.seance.pause;
+    switch (p.statut) {
+      case StatutPause.nonPrevue:
+      case StatutPause.nonPrise:
+        return null;
+      case StatutPause.programmee:
+        final DateTime? prevue = p.debutPrevuUtc;
+        if (prevue == null || !prevue.isAfter(_instant)) {
+          return (texte: d.prevue, annonce: d.prevue);
+        }
+        final int minutes =
+            (prevue.difference(_instant).inSeconds / Duration.secondsPerMinute)
+                .ceil();
+        return (
+          texte: LibellesGroupe.insecable(d.dans(minutes: minutes)),
+          annonce: LibellesGroupe.insecable(d.annonceDans(minutes: minutes)),
+        );
+      case StatutPause.enCours:
+        final DateTime? reprise = p.repriseUtc;
+        if (reprise == null) {
+          return (texte: d.prevue, annonce: d.prevue);
+        }
+        return (
+          texte: d.enCours(heure: _heure(reprise)),
+          annonce: d.annonceEnCours(heure: _heure(reprise)),
+        );
+      case StatutPause.prise:
+        return (texte: d.prise, annonce: d.prise);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ChronoSeance chrono = _chrono!;
@@ -177,22 +274,60 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
               restant: chrono.minutesRestantes,
             ),
           );
-    return Semantics(
+    final TextStyle style = AppPalette.of(context).inkMuted.applyTo(
+      widget.style.copyWith(
+        fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
+      ),
+    );
+    final PauseSeance? p = widget.pause;
+    final ({String texte, String annonce})? pause = _direPause(chrono);
+    final VoidCallback? commande = widget.onPause;
+    // Un widget lit une capacite, jamais un role : la commande n'existe que si
+    // le serveur l'a donnee (`peutPiloter`) et que l'appelant la fournit.
+    final bool commander =
+        commande != null &&
+        p != null &&
+        p.peutPiloter &&
+        !chrono.prevuEcoule &&
+        (p.statut == StatutPause.programmee || p.statut == StatutPause.enCours);
+    final Widget ligneChrono = Semantics(
       key: ChronoSalle.cleAnnonce,
       container: true,
       liveRegion: true,
       label: annonce,
       child: ExcludeSemantics(
-        child: Text(
-          texte,
-          key: ChronoSalle.cleTexte,
-          style: AppPalette.of(context).inkMuted.applyTo(
-            widget.style.copyWith(
-              fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
+        child: Text(texte, key: ChronoSalle.cleTexte, style: style),
+      ),
+    );
+    if (pause == null && !commander) {
+      return ligneChrono;
+    }
+    return Wrap(
+      spacing: AppSpacing.md,
+      runSpacing: AppSpacing.xs,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: <Widget>[
+        ligneChrono,
+        if (pause != null)
+          Semantics(
+            key: ChronoSalle.cleAnnoncePause,
+            container: true,
+            liveRegion: true,
+            label: pause.annonce,
+            child: ExcludeSemantics(
+              child: Text(pause.texte, key: ChronoSalle.clePause, style: style),
             ),
           ),
-        ),
-      ),
+        if (commander)
+          LienFleche(
+            key: ChronoSalle.cleCommandePause,
+            libelle: p.statut == StatutPause.enCours
+                ? d.pause.terminer
+                : d.pause.demarrer,
+            onPress: commande,
+            fleche: false,
+          ),
+      ],
     );
   }
 }
