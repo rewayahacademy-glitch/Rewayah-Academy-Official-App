@@ -8,7 +8,42 @@ INSERT INTO public.profiles
   (id, immutable_id, role, first_name, last_name, account_status, gender)
 VALUES
   ('c29a1000-0000-0000-0000-000000000001', 'C29-UPLOAD-ADMIN', 'admin', 'Upload', 'Admin', 'active', 'female'),
-  ('c29a1000-0000-0000-0000-000000000002', 'C29-UPLOAD-TEACH', 'teacher', 'Upload', 'Teacher', 'active', 'male');
+  ('c29a1000-0000-0000-0000-000000000002', 'C29-UPLOAD-TEACH', 'teacher', 'Upload', 'Teacher', 'provisional_active', 'male');
+
+-- 0089 requires current teacher contracts before the account becomes active.
+DO $fixture_teacher_contract$
+DECLARE
+  v_teacher_version text;
+  v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version
+    FROM public.contract_texts
+   WHERE contract_kind = 'teacher_nda' AND locale = 'fr' AND is_current;
+  SELECT version INTO v_notice_version
+    FROM public.contract_required_versions
+   WHERE contract_kind = 'recording_and_control_notice';
+
+  PERFORM set_config('request.jwt.claim.sub', 'c29a1000-0000-0000-0000-000000000002', true);
+  PERFORM set_config('test.uid', 'c29a1000-0000-0000-0000-000000000002', true);
+  PERFORM set_config('request.jwt.claims', '{"app_metadata":{"role":"teacher"}}', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+  PERFORM public.signer_contrat(v_teacher_version, 'Fixture CAP29 upload');
+  INSERT INTO public.contract_acceptances(profile_id, contract_kind, version)
+  VALUES (
+    'c29a1000-0000-0000-0000-000000000002',
+    'recording_and_control_notice',
+    v_notice_version
+  ) ON CONFLICT (profile_id, contract_kind, version) DO NOTHING;
+
+  PERFORM set_config('request.jwt.claim.sub', 'c29a1000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.uid', 'c29a1000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+  UPDATE public.profiles SET account_status = 'active'
+   WHERE id = 'c29a1000-0000-0000-0000-000000000002';
+END
+$fixture_teacher_contract$;
+
 INSERT INTO public.library_resource
   (id, title, short_title, resource_type, language, category, access_policy, offline_policy)
 VALUES
