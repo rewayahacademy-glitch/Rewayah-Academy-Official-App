@@ -757,6 +757,7 @@ class FichierADeposer {
     required this.nom,
     required this.octets,
     required this.mime,
+    this.sha256 = '',
   });
 
   /// Le nom, pour l'affichage seulement.
@@ -767,6 +768,9 @@ class FichierADeposer {
 
   /// Le type MIME annonce.
   final String mime;
+
+  /// Empreinte calculee sur le contenu avant la demande de signature.
+  final String sha256;
 }
 
 /// Une classe a laquelle on peut attribuer un support (spec §3.6).

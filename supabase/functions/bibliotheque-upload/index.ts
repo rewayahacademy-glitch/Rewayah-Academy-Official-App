@@ -19,6 +19,7 @@ const SHA256 = /^[0-9a-f]{64}$/;
 
 interface IntentionUpload {
   id: string;
+  expire_le: string;
   resource_version_id: string;
   finalite: "support" | "preuve";
   mime: string;
@@ -80,8 +81,8 @@ async function demanderDepot(
   if (!stockageConfigure("priveApplicatif")) {
     return refus("stockage indisponible", 503);
   }
-  const versionId = typeof corps.resource_version_id === "string"
-    ? corps.resource_version_id.trim()
+  const supportId = typeof corps.support_id === "string"
+    ? corps.support_id.trim()
     : "";
   const finalite = corps.finalite === "preuve"
     ? "preuve"
@@ -101,15 +102,15 @@ async function demanderDepot(
     ? fichier.sha256.trim().toLowerCase()
     : "";
   if (
-    !UUID.test(versionId) || !finalite ||
-    !/^[A-Za-z0-9][A-Za-z0-9._-]{0,159}$/.test(nom) ||
-    nom.length > 128 || !SHA256.test(empreinte) ||
+    !UUID.test(supportId) || !finalite ||
+    !/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(nom) ||
+    !SHA256.test(empreinte) ||
     !mimeAnnonceAutorise(mime, taille, finalite)
   ) {
     return refus("fichier invalide ou format non autorise");
   }
   const { data, error } = await compte.sql.rpc("demander_upload_bibliotheque", {
-    p_resource_version_id: versionId,
+    p_resource_id: supportId,
     p_finalite: finalite,
     p_nom_fichier: nom,
     p_mime: mime,
@@ -143,6 +144,7 @@ async function demanderDepot(
     });
     return json({
       upload_id: id,
+      expire_le_utc: intention.expire_le,
       url: signee.url,
       methode: "PUT",
       en_tetes_exiges: signee.enTetesExiges,

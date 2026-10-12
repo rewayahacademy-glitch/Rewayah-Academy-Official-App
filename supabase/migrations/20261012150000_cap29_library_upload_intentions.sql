@@ -24,7 +24,7 @@ REVOKE ALL ON TABLE private.library_upload_intentions
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 
 CREATE OR REPLACE FUNCTION public.demander_upload_bibliotheque(
-  p_resource_version_id uuid,
+  p_resource_id uuid,
   p_finalite text,
   p_nom_fichier text,
   p_mime text,
@@ -36,6 +36,7 @@ DECLARE
   v_version public.resource_version%ROWTYPE;
   v_intention_id uuid := pg_catalog.gen_random_uuid();
   v_cible_id uuid := pg_catalog.gen_random_uuid();
+  v_expire_le timestamptz := pg_catalog.clock_timestamp() + interval '15 minutes';
   v_nom text := pg_catalog.btrim(p_nom_fichier);
   v_mime text := pg_catalog.lower(pg_catalog.btrim(p_mime));
   v_limite bigint;
@@ -44,7 +45,7 @@ BEGIN
   IF COALESCE(public.app_account_valid() AND public.app_role() = 'admin', false) IS NOT TRUE THEN
     RAISE EXCEPTION 'BibliothequeUploadNonAutorise' USING ERRCODE = '42501';
   END IF;
-  IF p_resource_version_id IS NULL OR p_finalite IS NULL
+  IF p_resource_id IS NULL OR p_finalite IS NULL
      OR p_finalite NOT IN ('support', 'preuve') OR p_nom_fichier IS NULL
      OR pg_catalog.length(v_nom) NOT BETWEEN 1 AND 200
      OR pg_catalog.position('/' IN v_nom) > 0 OR pg_catalog.position(pg_catalog.chr(92) IN v_nom) > 0
@@ -68,12 +69,14 @@ BEGIN
     RAISE EXCEPTION 'BibliothequeUploadTypeOuTailleInvalide' USING ERRCODE = '22023';
   END IF;
 
-  SELECT * INTO v_version FROM public.resource_version
-   WHERE id = p_resource_version_id AND statut = 'brouillon' FOR UPDATE;
-  IF NOT FOUND OR NOT EXISTS (
-    SELECT 1 FROM public.library_resource r
-     WHERE r.id = v_version.resource_id AND r.archived_at IS NULL
-  ) THEN
+  SELECT v.* INTO v_version
+    FROM public.resource_version v
+    JOIN public.library_resource r ON r.id = v.resource_id
+   WHERE v.resource_id = p_resource_id
+     AND v.statut = 'brouillon' AND r.archived_at IS NULL
+   ORDER BY v.numero_version DESC
+   LIMIT 1 FOR UPDATE OF v;
+  IF NOT FOUND THEN
     RAISE EXCEPTION 'BibliothequeBrouillonIntrouvable' USING ERRCODE = '42501';
   END IF;
   IF p_finalite = 'support' AND v_version.download_asset_id IS NOT NULL THEN
@@ -89,14 +92,15 @@ BEGIN
   ) VALUES (
     v_intention_id, v_version.id, auth.uid(), p_finalite, v_nom, v_mime,
     p_taille, p_sha256, 'private/libraryupload/' || v_intention_id::text,
-    v_cle_finale, v_cible_id, pg_catalog.clock_timestamp() + interval '15 minutes'
+    v_cle_finale, v_cible_id, v_expire_le
   );
   RETURN pg_catalog.jsonb_build_object(
-    'id', v_intention_id, 'expire_le', pg_catalog.clock_timestamp() + interval '15 minutes',
+    'id', v_intention_id,
     'cle_temporaire', 'private/libraryupload/' || v_intention_id::text,
     'cle_finale', v_cle_finale, 'cible_id', v_cible_id,
     'resource_version_id', v_version.id, 'numero_version', v_version.numero_version,
-    'finalite', p_finalite, 'mime', v_mime, 'taille', p_taille
+    'finalite', p_finalite, 'mime', v_mime, 'taille', p_taille,
+    'expire_le', v_expire_le
   );
 END;
 $function$;

@@ -49,6 +49,7 @@ dependencies:
   # l'application reste Phosphor : voir la note sous `flutter:` plus bas.
   cupertino_icons: ^1.0.9
   crypto: ^3.0.7
+  http: ^1.6.0
   qr_flutter: ^4.1.0
   # Lecture du QR d'appairage par la camera (lot D, port K6 `LecteurQr`),
   # ajoutee en phase 0c1 du chantier Tuteur V1 (recommandation C05 section 6).
