@@ -1,7 +1,7 @@
 # COM-BACK-1 — proposition de contrat serveur (V1)
 
-Date : 2026-10-12  
-Branche : `codex/com-back-1-wip`  
+Date : 2026-10-12
+Branche : `codex/com-back-1-wip`
 Statut : proposition documentaire, aucun schéma ni RPC appliqué.
 
 ## Sources de contrat examinées
@@ -172,4 +172,3 @@ invariants indépendamment de l'interface.
 5. Rejouer une base PostgreSQL neuve, les scénarios d'accès/refus et les
    contrats Dart. Aucun résultat STAGING/PROD n'est implicite dans cette
    proposition.
-
