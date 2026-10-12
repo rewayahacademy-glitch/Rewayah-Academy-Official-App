@@ -45,10 +45,12 @@ insert into public.sessions (id, teacher_id, groupe_id, started_at, ended_at)
 values
   ('b15fffff-0000-0000-0000-000000000005',
    'b1500000-0000-0000-0000-000000000001',
-   'b15fffff-0000-0000-0000-000000000002', now(), now() + interval '1 hour'),
+   'b15fffff-0000-0000-0000-000000000002',
+   TIMESTAMPTZ '2030-01-02 03:00:00+00', TIMESTAMPTZ '2030-01-02 04:00:00+00'),
   ('b15fffff-0000-0000-0000-000000000006',
    'b1500000-0000-0000-0000-000000000002',
-   'b15fffff-0000-0000-0000-000000000003', now(), now() + interval '1 hour');
+   'b15fffff-0000-0000-0000-000000000003',
+   TIMESTAMPTZ '2030-01-02 03:00:00+00', TIMESTAMPTZ '2030-01-02 04:00:00+00');
 
 insert into public.session_participants (session_id, profile_id, role)
 values
