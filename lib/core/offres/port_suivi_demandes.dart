@@ -110,6 +110,10 @@ enum MotifCloture {
   /// La direction n'a pas retenu la demande.
   refusDirection,
 
+  /// L'eleve a deja une place en classe : la demande n'est plus necessaire
+  /// (R20). Ni un retrait de la famille ni un refus de la direction.
+  dejaEnClasse,
+
   /// Motif absent ou non reconnu : repli neutre du client (« Cette demande
   /// est close. »). Jamais un motif choisi a la place du serveur : un refus
   /// suppose serait faux pour un retrait de la famille, et l'inverse.

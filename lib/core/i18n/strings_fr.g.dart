@@ -15799,6 +15799,9 @@ class Traductions$suiviDemandes$notification$fr {
 	/// fr: 'Demande de créneau {dePrenom} : les cours ont commencé'
 	String coursCommences({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : les cours ont commencé';
 
+	/// fr: 'Demande de créneau {dePrenom} : élève déjà en classe, demande classée'
+	String dejaEnClasse({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : élève déjà en classe, demande classée';
+
 	/// fr: 'Demande de créneau {dePrenom} : votre classe a été réunie avec une autre, voir la nouvelle classe'
 	String changementFusion({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe a été réunie avec une autre, voir la nouvelle classe';
 
@@ -24865,6 +24868,9 @@ class Traductions$suiviDemandes$close$motif$fr {
 
 	/// fr: 'La direction n'a pas pu retenir cette demande.'
 	String get refusDirection => 'La direction n\'a pas pu retenir cette demande.';
+
+	/// fr: '{prenom} a déjà une place en classe : cette demande n'est plus nécessaire.'
+	String dejaEnClasse({required Object prenom}) => '${prenom} a déjà une place en classe : cette demande n\'est plus nécessaire.';
 
 	/// fr: 'Cette demande est close.'
 	String get inconnu => 'Cette demande est close.';
@@ -37678,6 +37684,7 @@ extension on Traductions {
 			'suiviDemandes.close.motif.offreRetiree' => 'L\'académie a retiré ce créneau de ses offres.',
 			'suiviDemandes.close.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
 			'suiviDemandes.close.motif.refusDirection' => 'La direction n\'a pas pu retenir cette demande.',
+			'suiviDemandes.close.motif.dejaEnClasse' => ({required Object prenom}) => '${prenom} a déjà une place en classe : cette demande n\'est plus nécessaire.',
 			'suiviDemandes.close.motif.inconnu' => 'Cette demande est close.',
 			'suiviDemandes.close.suite' => 'Vous pouvez choisir un autre créneau parmi ceux proposés.',
 			'suiviDemandes.close.suiteSansChoix' => 'Aucun autre créneau n\'est proposé pour le moment. Revenez sur cette page plus tard.',
@@ -37695,6 +37702,7 @@ extension on Traductions {
 			'suiviDemandes.notification.listeAttente' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre demande est en liste d\'attente',
 			'suiviDemandes.notification.eleveIntegre' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : élève intégré dans la classe',
 			'suiviDemandes.notification.coursCommences' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : les cours ont commencé',
+			'suiviDemandes.notification.dejaEnClasse' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : élève déjà en classe, demande classée',
 			'suiviDemandes.notification.changementFusion' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe a été réunie avec une autre, voir la nouvelle classe',
 			'suiviDemandes.notification.changementTransfert' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : nouvelle classe, voir le détail',
 			'suiviDemandes.jalon.date' => ({required Object date, required Object heure}) => '${date} à ${heure}',
@@ -37754,10 +37762,10 @@ extension on Traductions {
 			'argent.soldes.totalDetail' => 'Une lecture : chaque solde reste celui de son profil.',
 			'argent.soldes.aPayer' => 'À payer ce mois',
 			'argent.soldes.profilsFinances' => 'Profils financés',
-			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
-			'argent.soldes.paiements' => 'Paiements du mois',
 			_ => null,
 		} ?? switch (path) {
+			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
+			'argent.soldes.paiements' => 'Paiements du mois',
 			'argent.acces.enfantTitre' => 'Accès à cette classe temporairement indisponible',
 			'argent.acces.enfantMessage' => 'Votre tuteur peut gérer l\'accès.',
 			'argent.acces.regulariserTitre' => 'Accès à régulariser',
@@ -38268,10 +38276,10 @@ extension on Traductions {
 			'com.studio.aujourdhui.ouvrirDans' => ({required Object module, required Object libelle}) => 'Ouvrir dans ${module} : ${libelle}',
 			'com.studio.aujourdhui.modules.studio' => _root.com.socle.lexique.studio,
 			'com.studio.aujourdhui.modules.finance' => 'Finance',
-			'com.studio.aujourdhui.modules.planning' => 'Planning',
-			'com.studio.aujourdhui.modules.dossiers' => 'Dossiers',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.aujourdhui.modules.planning' => 'Planning',
+			'com.studio.aujourdhui.modules.dossiers' => 'Dossiers',
 			'com.studio.aujourdhui.modules.classes' => 'Classes',
 			'com.studio.aujourdhui.modules.admissions' => 'Admissions',
 			'com.studio.aujourdhui.modules.demandes' => 'Demandes',
@@ -38782,10 +38790,10 @@ extension on Traductions {
 			'comptable.statuts.obligation.aApprouver' => 'À approuver',
 			'comptable.statuts.obligation.approuvee' => 'Approuvée',
 			'comptable.statuts.obligation.refusee' => 'Refusée',
-			'comptable.statuts.obligation.payable' => 'Payable',
-			'comptable.statuts.obligation.payee' => 'Payée',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.obligation.payable' => 'Payable',
+			'comptable.statuts.obligation.payee' => 'Payée',
 			'comptable.statuts.obligation.annulee' => 'Annulée',
 			'comptable.statuts.remboursement.demande' => 'Demandé',
 			'comptable.statuts.remboursement.approbationRequise' => 'Approbation requise',
@@ -39296,10 +39304,10 @@ extension on Traductions {
 			'comptable.contractuels.colonneEcheance' => 'Échéance',
 			'comptable.contractuels.colonneStatut' => 'Statut',
 			'comptable.contractuels.typeRecurrente' => 'Récurrente',
-			'comptable.contractuels.typePonctuelle' => 'Ponctuelle',
-			'comptable.contractuels.echeanceLe' => ({required Object date}) => 'Échéance : ${date}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.contractuels.typePonctuelle' => 'Ponctuelle',
+			'comptable.contractuels.echeanceLe' => ({required Object date}) => 'Échéance : ${date}',
 			'comptable.contractuels.payer' => 'Payer',
 			'comptable.contractuels.payerLecteur' => ({required Object objet}) => 'Payer l\'obligation ${objet}',
 			'comptable.contractuels.approuver' => 'Approuver',

@@ -7391,6 +7391,7 @@
         "offreRetiree": "L'académie a retiré ce créneau de ses offres.",
         "classeNonConstituee": "La classe de ce créneau n'a pas pu être constituée.",
         "refusDirection": "La direction n'a pas pu retenir cette demande.",
+        "dejaEnClasse": "{prenom} a déjà une place en classe : cette demande n'est plus nécessaire.",
         "inconnu": "Cette demande est close."
       },
       "suite": "Vous pouvez choisir un autre créneau parmi ceux proposés.",
@@ -7413,6 +7414,7 @@
       "listeAttente": "Demande de créneau {dePrenom} : votre demande est en liste d'attente",
       "eleveIntegre": "Demande de créneau {dePrenom} : élève intégré dans la classe",
       "coursCommences": "Demande de créneau {dePrenom} : les cours ont commencé",
+      "dejaEnClasse": "Demande de créneau {dePrenom} : élève déjà en classe, demande classée",
       "changementFusion": "Demande de créneau {dePrenom} : votre classe a été réunie avec une autre, voir la nouvelle classe",
       "changementTransfert": "Demande de créneau {dePrenom} : nouvelle classe, voir le détail"
     },
