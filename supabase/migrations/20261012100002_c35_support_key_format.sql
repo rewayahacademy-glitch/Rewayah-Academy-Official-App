@@ -12,6 +12,8 @@ declare
   v_role public.app_role;
   v_resource_id uuid;
   v_access_policy public.library_access_policy;
+  v_asset_id uuid;
+  v_numero_version integer;
   v_key text;
 begin
   -- Keep this positive, null-safe role/account gate as the first executable
@@ -26,8 +28,8 @@ begin
 
   v_role := public.app_role();
 
-  select r.id, r.access_policy, da.cle_stockage
-    into v_resource_id, v_access_policy, v_key
+  select r.id, r.access_policy, da.id, v.numero_version, da.cle_stockage
+    into v_resource_id, v_access_policy, v_asset_id, v_numero_version, v_key
     from public.resource_version v
     join public.library_resource r
       on r.id = v.resource_id
@@ -79,7 +81,10 @@ begin
        )
      );
 
-  if not found or v_key is null or v_key !~ '^supports/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/[1-9][0-9]{0,8}/[A-Za-z0-9][A-Za-z0-9._-]{0,127}$' then
+  if not found or v_key is null or v_key !~ (
+    '^supports/' || v_asset_id::text || '/' || v_numero_version::text
+      || '/[A-Za-z0-9][A-Za-z0-9._-]{0,127}$'
+  ) then
     raise exception 'lecture refusee' using errcode = '42501';
   end if;
 
