@@ -198,6 +198,7 @@ class ActionsSeance {
     onContinuerSansMicro: onContinuerSansMicro,
     onOuvrirReglages: onOuvrirReglages,
     onContexte: onContexte,
+    onPause: onPause,
     onPresenter: onPresenter,
     onRanger: onRanger,
     onEffacerNotes: onEffacerNotes,
