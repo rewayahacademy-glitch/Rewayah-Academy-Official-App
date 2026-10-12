@@ -5,7 +5,8 @@ INSERT INTO auth.users(id,email) VALUES
  ('b1200000-0000-0000-0000-000000000001','b12-admin@test.invalid'),
  ('b1200000-0000-0000-0000-000000000002','b12-controller@test.invalid'),
  ('b1200000-0000-0000-0000-000000000003','b12-other@test.invalid'),
- ('b1200000-0000-0000-0000-000000000004','b12-teacher@test.invalid');
+ ('b1200000-0000-0000-0000-000000000004','b12-teacher@test.invalid'),
+ ('b1200000-0000-0000-0000-000000000099','b12-admin-no-profile@test.invalid');
 INSERT INTO public.profiles(id,immutable_id,role,household_id,first_name,last_name,account_status,gender)
 VALUES
  ('b1200000-0000-0000-0000-000000000001','B12-ADMIN-0001','admin',NULL,'Direction','B12','active','female'),
@@ -235,6 +236,40 @@ BEGIN
   EXCEPTION WHEN insufficient_privilege THEN NULL; END;
 END;
 $disabled_controller$;
+RESET ROLE;
+
+-- Un JWT admin sans profil ne passe aucune RPC, même si son rôle est valide.
+SELECT set_config('request.jwt.claim.sub','b1200000-0000-0000-0000-000000000099',true);
+SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"admin"}}',true);
+SET LOCAL ROLE authenticated;
+DO $admin_without_profile$
+BEGIN
+  BEGIN PERFORM public.controleur_lister_fils();
+    RAISE EXCEPTION 'B12: admin sans profil lit les fils';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.controleur_fil_de_mission('b1240000-0000-0000-0000-000000000001');
+    RAISE EXCEPTION 'B12: admin sans profil ouvre un fil';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.controleur_envoyer_message(
+      current_setting('test.b12_fil_id')::uuid,'b1230000-0000-0000-0000-000000000016','Interdit');
+    RAISE EXCEPTION 'B12: admin sans profil envoie un message';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN PERFORM public.controleur_lister_rapports();
+    RAISE EXCEPTION 'B12: admin sans profil lit les rapports';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END;
+$admin_without_profile$;
+
+-- Le complément n'est accessible qu'au contrôleur; vérifier ce rôle sans profil.
+SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"controller"}}',true);
+DO $controller_without_profile$
+BEGIN
+  BEGIN PERFORM public.controleur_ajouter_complement(
+      current_setting('test.b12_rapport_id')::uuid,'Interdit',NULL);
+    RAISE EXCEPTION 'B12: contrôleur sans profil ajoute un complément';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END;
+$controller_without_profile$;
 RESET ROLE;
 
 -- anon ne possede pas EXECUTE sur les RPC.
