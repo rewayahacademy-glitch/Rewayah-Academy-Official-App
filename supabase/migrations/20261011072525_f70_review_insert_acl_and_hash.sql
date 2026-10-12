@@ -56,7 +56,18 @@ CREATE POLICY contract_acceptances_self_insert
       contract_kind <> 'teacher_nda'
       OR (
         public.app_role() = 'teacher'::public.app_role
-        AND public.app_account_valid()
+        AND EXISTS (
+          SELECT 1
+          FROM public.profiles p
+          WHERE p.id = auth.uid()
+            AND p.role = 'teacher'::public.app_role
+            AND p.deleted_at IS NULL
+            AND p.account_status IN (
+              'pending_kyc'::public.account_status,
+              'provisional_active'::public.account_status,
+              'active'::public.account_status
+            )
+        )
         AND EXISTS (
           SELECT 1
           FROM public.contract_texts t
@@ -86,7 +97,18 @@ BEGIN
     auth.uid() IS NOT NULL
     AND NEW.profile_id = auth.uid()
     AND public.app_role() = 'teacher'::public.app_role
-    AND public.app_account_valid(),
+    AND EXISTS (
+      SELECT 1
+      FROM public.profiles p
+      WHERE p.id = auth.uid()
+        AND p.role = 'teacher'::public.app_role
+        AND p.deleted_at IS NULL
+        AND p.account_status IN (
+          'pending_kyc'::public.account_status,
+          'provisional_active'::public.account_status,
+          'active'::public.account_status
+        )
+    ),
     false
   ) THEN
     RAISE EXCEPTION USING ERRCODE = '42501', MESSAGE = 'acces_signature_refusee';
@@ -139,7 +161,7 @@ BEGIN
       AND p.tablename = 'contract_acceptances'
       AND p.policyname = 'contract_acceptances_self_insert'
       AND p.with_check LIKE '%app_role%'
-      AND p.with_check LIKE '%app_account_valid%'
+      AND p.with_check LIKE '%pending_kyc%'
   ) THEN
     RAISE EXCEPTION 'F70: signature guard trigger postflight failed';
   END IF;
