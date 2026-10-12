@@ -8,7 +8,9 @@
 // permis (Alimenter = l'action cle ; retrait = demande de validation,
 // bloque sans capacite, R-FIN-10), les sept coffres dans l'ordre §8.1, la
 // prevision en lignes datees et l'historique des allocations (aucun
-// graphique, DR-09 ; aucune allocation modifiable, §10.4).
+// graphique dans l'historique ; aucune allocation modifiable, §10.4). Les
+// graphiques de la repartition et de l'evolution viennent de COMPTA-GRAPH-1
+// (decision du directeur du 11/10, qui leve DR-09).
 //
 // Cinq etats par bloc (chargement, contenu, vide, erreur, hors ligne) ; une
 // source absente (`CapaciteIndisponible`, production) rend la page « en
@@ -20,6 +22,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 
 import '../../../core/capacites/capacite_indisponible.dart';
+import '../../../core/capacites/permission_insuffisante.dart';
 import '../../../core/capacites/port_politique_reserve.dart';
 import '../../../core/capacites/port_tresorerie.dart';
 import '../../../core/comptable/modeles_comptable.dart';
@@ -40,12 +43,14 @@ import '../../../core/widgets/comptable/ligne_activite.dart';
 import '../../../core/widgets/comptable/resume_tresorerie.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/etat_systeme.dart';
+import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/montant_sensible.dart';
 import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/pastilles_comptable.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/sous_navigation_domaine.dart';
+import '../graphiques/blocs_graphiques.dart';
 import 'carte_coffre.dart';
 import 'carte_politique_reserve.dart';
 import 'transfert/transfert_interne.dart';
@@ -103,8 +108,76 @@ class TresoreriePage extends ConsumerWidget {
   }
 }
 
+/// §49, « erreur partielle » : une partie de la page a ete lue, une autre
+/// non. Les blocs lus restent affiches (jamais un ecran vide pour un seul
+/// bloc en echec) ; une bande le dit et propose de relire. Elle ne parle pas
+/// d'une capacite absente (la page le dit deja) ni d'une permission refusee.
+class _BandeauErreurPartielle extends ConsumerWidget {
+  const _BandeauErreurPartielle();
+
+  static bool _echec(AsyncValue<Object?> v) =>
+      v.hasError &&
+      v.error is! CapaciteIndisponible &&
+      v.error is! PermissionInsuffisante;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<AsyncValue<Object?>> blocs = <AsyncValue<Object?>>[
+      ref.watch(syntheseTresorerieProvider),
+      ref.watch(coffresTresorerieProvider),
+      ref.watch(previsionTresorerieProvider),
+      ref.watch(historiqueTresorerieProvider),
+      ref.watch(indicateursReserveProvider),
+      ref.watch(politiqueReserveProvider),
+    ];
+    final bool unEchec = blocs.any(_echec);
+    final bool unSucces = blocs.any((AsyncValue<Object?> v) => v.hasValue);
+    if (!unEchec || !unSucces) return const SizedBox.shrink();
+    final tr = t.comptable.tresorerie;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
+      child: AppCard(
+        key: const ValueKey<String>('tresorerie-erreur-partielle'),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              tr.erreurPartielle,
+              style: AppPalette.of(context).inkAlert.applyTo(
+                Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+            Ecart.vSm,
+            LienFleche(
+              libelle: tr.erreurPartielleAction,
+              alignerEnDebut: true,
+              onPress: () => relireTresorerie(ref),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _Contenu extends StatelessWidget {
   const _Contenu({required this.ouvrirAlimentation});
+
+  final bool ouvrirAlimentation;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      const _BandeauErreurPartielle(),
+      _CorpsTresorerie(ouvrirAlimentation: ouvrirAlimentation),
+    ],
+  );
+}
+
+class _CorpsTresorerie extends StatelessWidget {
+  const _CorpsTresorerie({required this.ouvrirAlimentation});
 
   final bool ouvrirAlimentation;
 
@@ -130,6 +203,11 @@ class _Contenu extends StatelessWidget {
             mouvements,
             Ecart.vSection,
             const _BlocCoffres(),
+            Ecart.vSection,
+            // COMPTA-GRAPH-1 : la repartition des coffres et l'evolution.
+            const BlocRepartitionCoffres(),
+            Ecart.vXxl,
+            const BlocEvolution6Mois(),
             Ecart.vSection,
             const _BlocPrevision(),
             Ecart.vSection,
@@ -162,6 +240,15 @@ class _Contenu extends StatelessWidget {
                   ],
                 ),
               ),
+            ],
+          ),
+          Ecart.vSection,
+          const Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(child: BlocRepartitionCoffres()),
+              Ecart.hXxl,
+              Expanded(child: BlocEvolution6Mois()),
             ],
           ),
           Ecart.vSection,
@@ -203,10 +290,16 @@ class _Bloc<T> extends ConsumerWidget {
       squelette: squelette,
       vide: vide,
       onReessayer: () => relireTresorerie(ref),
-      erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
-          horsLigne && erreur is! CapaciteIndisponible
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: reessayer)
-          : null,
+      erreurVersEtat: (Object erreur, VoidCallback? reessayer) {
+        // §49 : une permission refusee n'est ni un echec reseau ni une
+        // capacite absente ; recommencer ne change rien, pas de « Reessayer ».
+        if (erreur is PermissionInsuffisante) {
+          return const EtatSysteme(nature: NatureEtat.permissionRefusee);
+        }
+        return horsLigne && erreur is! CapaciteIndisponible
+            ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: reessayer)
+            : null;
+      },
       construire: construire,
     );
   }

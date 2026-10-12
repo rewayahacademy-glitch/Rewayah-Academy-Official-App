@@ -185,6 +185,22 @@ class _Hub extends ConsumerWidget {
       ],
     );
 
+    // BIBLIO-LECTURE : la Bibliotheque se rejoint depuis le Compte du tuteur
+    // (et de l'adulte eleve autonome, un compte tuteur), pas seulement par
+    // une classe ou une adresse. `push` : le retour ramene au Compte.
+    final Widget bibliotheque = CarteRubriques(
+      icone: AppIcons.bibliotheque,
+      titre: t.tc.bibliotheque.titre,
+      resume: <String>[t.tc.bibliotheque.detail.entreeDetail],
+      lignes: <LigneRubrique>[
+        LigneRubrique(
+          icone: AppIcons.bibliotheque,
+          libelle: t.tc.bibliotheque.detail.entreeLigne,
+          onPress: () => GoRouter.of(context).push(Routes.tcBibliotheque),
+        ),
+      ],
+    );
+
     final Widget aide = CarteRubriques(
       icone: AppIcons.lecon,
       titre: t.compte.tuteur.aide.titre,
@@ -236,12 +252,24 @@ class _Hub extends ConsumerWidget {
                   SizedBox(width: ecart),
                   Expanded(
                     flex: 10,
-                    child: pile(<Widget>[informations, foyer, aide]),
+                    child: pile(<Widget>[
+                      informations,
+                      foyer,
+                      bibliotheque,
+                      aide,
+                    ]),
                   ),
                 ],
               )
             else
-              pile(<Widget>[acces, securite, informations, foyer, aide]),
+              pile(<Widget>[
+                acces,
+                securite,
+                informations,
+                foyer,
+                bibliotheque,
+                aide,
+              ]),
             SizedBox(height: ecart),
             const CarteDeconnexion(),
           ],

@@ -139,6 +139,16 @@ class SessionState {
   /// Un widget lit cette capacite, jamais le role.
   bool get aUnFoyer => role == AppRole.guardian;
 
+  /// La capacite d'ouvrir la Bibliotheque (`/tc/bibliotheque`) : les comptes a
+  /// qui le routeur l'ouvre, l'eleve et le tuteur (l'adulte eleve autonome est
+  /// un compte tuteur). Un widget lit cette capacite, jamais le role.
+  bool get peutOuvrirBibliotheque =>
+      role == AppRole.student || role == AppRole.guardian;
+
+  /// La capacite de lire le Coran dans le lecteur dedie : l'eleve, et
+  /// l'adulte eleve autonome servi par le serveur (C-24).
+  bool get peutLireLeCoran => role == AppRole.student || eleveAutonome;
+
   /// La capacite de gerer des appareils : tous les comptes, sauf le controle
   /// qualite, qui n'en enregistre pas.
   bool get peutGererAppareils => role != AppRole.controller;

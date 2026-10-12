@@ -78,20 +78,28 @@ values
   ('d1200000-0000-0000-0000-000000000201', 'Astronomie niveau 1',
    'Astronomie', 'lesson', 'D1', 'fr', 'science', 'inscrits', 'jamais', '{}'),
   ('d1200000-0000-0000-0000-000000000202', 'Astronomie brouillon',
-   'Brouillon', 'lesson', 'D1', 'fr', 'science', 'inscrits', 'jamais', '{}');
+   'Brouillon', 'lesson', 'D1', 'fr', 'science', 'inscrits', 'jamais', '{}'),
+  ('d1200000-0000-0000-0000-000000000203', 'Astronomie autre groupe',
+   'Astronomie privée', 'lesson', 'D1', 'fr', 'science', 'groupe_assigne', 'jamais', '{}');
 insert into public.resource_version
   (id, resource_id, numero_version, statut, publiee_le, publiee_par)
 values
   ('d1200000-0000-0000-0000-000000000211',
    'd1200000-0000-0000-0000-000000000201', 1, 'brouillon', null, null),
   ('d1200000-0000-0000-0000-000000000212',
-   'd1200000-0000-0000-0000-000000000202', 1, 'brouillon', null, null);
+   'd1200000-0000-0000-0000-000000000202', 1, 'brouillon', null, null),
+  ('d1200000-0000-0000-0000-000000000213',
+   'd1200000-0000-0000-0000-000000000203', 1, 'brouillon', null, null);
 
 insert into public.library_version_rights
   (resource_version_id, source_titre, titulaire, usages, attribution,
    approuve, revu_par, revu_le)
 values
   ('d1200000-0000-0000-0000-000000000211', 'Support synthétique D1',
+   'Académie de test', array['application', 'classe']::text[],
+   'Fixture de test, aucune licence réelle', true,
+   'd1200000-0000-0000-0000-000000000003', statement_timestamp()),
+  ('d1200000-0000-0000-0000-000000000213', 'Support synthétique privé D1',
    'Académie de test', array['application', 'classe']::text[],
    'Fixture de test, aucune licence réelle', true,
    'd1200000-0000-0000-0000-000000000003', statement_timestamp());
@@ -103,10 +111,19 @@ select set_config('request.jwt.claims', jsonb_build_object(
 )::text, true);
 update public.resource_version
    set statut = 'publiee'
- where id = 'd1200000-0000-0000-0000-000000000211';
+ where id in (
+   'd1200000-0000-0000-0000-000000000211',
+   'd1200000-0000-0000-0000-000000000213'
+ );
 update public.library_resource
    set current_version_id = 'd1200000-0000-0000-0000-000000000211'
  where id = 'd1200000-0000-0000-0000-000000000201';
+update public.library_resource
+   set current_version_id = 'd1200000-0000-0000-0000-000000000213'
+ where id = 'd1200000-0000-0000-0000-000000000203';
+insert into public.library_resource_groupe (resource_id, groupe_id)
+values ('d1200000-0000-0000-0000-000000000203',
+        'd1200000-0000-0000-0000-000000000103');
 
 set local role authenticated;
 
@@ -118,13 +135,25 @@ declare
   v_bad_query_denied boolean := false;
   v_foreign_cursor_denied boolean := false;
   v_query_cursor_denied boolean := false;
+  v_quota_denied boolean := false;
   v_token uuid;
+  v_item jsonb;
+  v_cursor_number integer;
 begin
   v_page := public.rech_d1_rechercher_classes('alpha', null, 1);
   if jsonb_array_length(v_page -> 'items') <> 1
      or v_page ->> 'has_more' <> 'true'
      or v_page ->> 'next_cursor' is null then
     raise exception 'RECH-D1: première page ou curseur absent';
+  end if;
+  v_item := v_page -> 'items' -> 0;
+  if pg_catalog.jsonb_object_length(v_item) <> 4
+     or not (v_item ?& array['kind', 'id', 'title', 'metadata'])
+     or pg_catalog.jsonb_object_length(v_item -> 'metadata') <> 4
+     or not (v_item -> 'metadata' ?& array[
+       'typePublic', 'weekday', 'hourLocal', 'timezone'
+     ]) then
+    raise exception 'RECH-D1: projection groupe non bornée';
   end if;
   v_token := (v_page ->> 'next_cursor')::uuid;
   v_page_two := public.rech_d1_rechercher_classes('alpha', v_token, 1);
@@ -170,6 +199,27 @@ begin
   if not v_query_cursor_denied then
     raise exception 'RECH-D1: curseur réutilisé avec une autre requête';
   end if;
+  -- The foreign and wrong-query attempts must not consume another caller's token.
+  -- Consume it as its owner before measuring the exact per-caller quota.
+  perform public.rech_d1_rechercher_classes('alpha', v_token, 1);
+
+  for v_cursor_number in 1..20 loop
+    perform public.rech_d1_curseur_creer(
+      'classes', pg_catalog.md5('quota-' || v_cursor_number::text),
+      'groupe', pg_catalog.gen_random_uuid(), 2
+    );
+  end loop;
+  begin
+    perform public.rech_d1_curseur_creer(
+      'classes', pg_catalog.md5('quota-overflow'), 'groupe',
+      pg_catalog.gen_random_uuid(), 2
+    );
+  exception when sqlstate '54000' then
+    v_quota_denied := true;
+  end;
+  if not v_quota_denied then
+    raise exception 'RECH-D1: le 21e curseur dépasse le quota';
+  end if;
 
   v_page := public.rech_d1_rechercher_classes('alpha', null, 50);
   if exists (
@@ -184,6 +234,11 @@ begin
      or v_page -> 'items' -> 0 ->> 'id' <> 'd1200000-0000-0000-0000-000000000201'
      or (v_page -> 'items' -> 0) ?| array['storage_key', 'signed_url', 'content', 'cover_asset'] then
     raise exception 'RECH-D1: support non publié ou champ interne exposé';
+  end if;
+  v_item := v_page -> 'items' -> 0;
+  if pg_catalog.jsonb_object_length(v_item) <> 7
+     or not (v_item ?& array['id', 'title', 'shortTitle', 'type', 'edition', 'language', 'category']) then
+    raise exception 'RECH-D1: projection support non bornée';
   end if;
 
   begin
@@ -202,6 +257,13 @@ begin
      or v_page -> 'items' -> 0 -> 'metadata' ? 'rythme' then
     raise exception 'RECH-D1: vitrine doit exposer uniquement l''offre publiée et les colonnes autorisées';
   end if;
+  v_item := v_page -> 'items' -> 0;
+  if pg_catalog.jsonb_object_length(v_item -> 'metadata') <> 6
+     or not (v_item -> 'metadata' ?& array[
+       'typePublic', 'langueCode', 'jours', 'heureLocale', 'dureeMinutes', 'fuseau'
+     ]) then
+    raise exception 'RECH-D1: projection offre non bornée';
+  end if;
 end;
 $scenario$;
 
@@ -215,26 +277,35 @@ begin
        'public.rech_d1_rechercher_supports(text,uuid,integer)', 'EXECUTE') then
     raise exception 'RECH-D1: endpoint accessible à anon';
   end if;
-  if (select prosecdef from pg_proc where oid =
+  if not (select prosecdef from pg_proc where oid =
        'public.rech_d1_rechercher_classes(text,uuid,integer)'::regprocedure)
-     or (select prosecdef from pg_proc where oid =
+     or not (select prosecdef from pg_proc where oid =
        'public.rech_d1_rechercher_supports(text,uuid,integer)'::regprocedure) then
-    raise exception 'RECH-D1: un endpoint contourne la RLS';
+    raise exception 'RECH-D1: endpoint DEFINER requis pour filtrer les candidats avant visibilité';
   end if;
-  if has_table_privilege('authenticated', 'public.groupes', 'SELECT')
-     or has_table_privilege('authenticated', 'public.offres_horaires', 'SELECT')
-     or not has_column_privilege('authenticated', 'public.groupes', 'libelle', 'SELECT')
-     or not has_column_privilege('authenticated', 'public.groupes', 'timezone_iana', 'SELECT')
-     or not has_column_privilege('authenticated', 'public.offres_horaires', 'heure_locale', 'SELECT')
-     or not has_column_privilege('authenticated', 'public.offres_horaires', 'etat', 'SELECT')
-     or has_column_privilege('authenticated', 'public.offres_horaires', 'rythme', 'SELECT')
-     or has_table_privilege('authenticated', 'public.library_resource', 'SELECT')
-     or has_table_privilege('authenticated', 'public.resource_version', 'SELECT')
-     or has_table_privilege('authenticated', 'public.library_resource_groupe', 'SELECT')
-     or not has_column_privilege('authenticated', 'public.library_resource', 'title', 'SELECT')
-     or not has_column_privilege('authenticated', 'public.resource_version', 'statut', 'SELECT')
-     or not has_column_privilege('authenticated', 'public.library_resource_groupe', 'resource_id', 'SELECT') then
-    raise exception 'RECH-D1: projection privileges are too broad or incomplete';
+  if not exists (
+       select 1 from pg_proc p
+        where p.oid = 'public.rech_d1_rechercher_classes(text,uuid,integer)'::regprocedure
+          and p.proowner = 'postgres'::regrole
+          and p.proconfig @> array['search_path=""']
+     )
+     or not exists (
+       select 1 from pg_proc p
+        where p.oid = 'public.rech_d1_rechercher_supports(text,uuid,integer)'::regprocedure
+          and p.proowner = 'postgres'::regrole
+          and p.proconfig @> array['search_path=""']
+     ) then
+    raise exception 'RECH-D1: DEFINER sans owner postgres ou search_path vide';
+  end if;
+  if has_function_privilege('service_role',
+       'public.rech_d1_rechercher_classes(text,uuid,integer)', 'EXECUTE')
+     or has_function_privilege('service_role',
+       'public.rech_d1_rechercher_supports(text,uuid,integer)', 'EXECUTE')
+     or not has_function_privilege('authenticated',
+       'public.rech_d1_rechercher_classes(text,uuid,integer)', 'EXECUTE')
+     or not has_function_privilege('authenticated',
+       'public.rech_d1_rechercher_supports(text,uuid,integer)', 'EXECUTE') then
+    raise exception 'RECH-D1: ACL des endpoints trop large ou inaccessible';
   end if;
   if has_schema_privilege('authenticated', 'private', 'USAGE')
      or has_function_privilege('authenticated',

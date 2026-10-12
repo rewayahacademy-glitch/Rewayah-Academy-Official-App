@@ -236,8 +236,8 @@ class Traductions$salle$fr {
 	// Translations
 	late final Traductions$salle$preparation$fr preparation = Traductions$salle$preparation$fr.internal(_root);
 
-	/// fr: 'Cours enregistré, visite de contrôle possible.'
-	String get bandeauPermanent => 'Cours enregistré, visite de contrôle possible.';
+	/// fr: 'Visite de contrôle possible.'
+	String get bandeauPermanent => 'Visite de contrôle possible.';
 
 	late final Traductions$salle$informationControle$fr informationControle = Traductions$salle$informationControle$fr.internal(_root);
 	late final Traductions$salle$secours$fr secours = Traductions$salle$secours$fr.internal(_root);
@@ -1526,6 +1526,8 @@ class Traductions$admin$fr {
 	late final Traductions$admin$agents$fr agents = Traductions$admin$agents$fr.internal(_root);
 	late final Traductions$admin$notifications$fr notifications = Traductions$admin$notifications$fr.internal(_root);
 	late final Traductions$admin$finance$fr finance = Traductions$admin$finance$fr.internal(_root);
+	late final Traductions$admin$planning$fr planning = Traductions$admin$planning$fr.internal(_root);
+	late final Traductions$admin$incidents$fr incidents = Traductions$admin$incidents$fr.internal(_root);
 	late final Traductions$admin$pilotage$fr pilotage = Traductions$admin$pilotage$fr.internal(_root);
 	late final Traductions$admin$fusion$fr fusion = Traductions$admin$fusion$fr.internal(_root);
 	late final Traductions$admin$tirage$fr tirage = Traductions$admin$tirage$fr.internal(_root);
@@ -2881,6 +2883,7 @@ class Traductions$comptable$fr {
 
 	// Translations
 	late final Traductions$comptable$nav$fr nav = Traductions$comptable$nav$fr.internal(_root);
+	late final Traductions$comptable$graphiques$fr graphiques = Traductions$comptable$graphiques$fr.internal(_root);
 	late final Traductions$comptable$onglets$fr onglets = Traductions$comptable$onglets$fr.internal(_root);
 	late final Traductions$comptable$commun$fr commun = Traductions$comptable$commun$fr.internal(_root);
 	late final Traductions$comptable$coffres$fr coffres = Traductions$comptable$coffres$fr.internal(_root);
@@ -6525,6 +6528,12 @@ class Traductions$admin$tableau$fr {
 
 	/// fr: 'Par horaire : les classes, leur remplissage, les demandes en attente et les enseignants libres ou manquants.'
 	String get outilsPilotageDetail => 'Par horaire : les classes, leur remplissage, les demandes en attente et les enseignants libres ou manquants.';
+
+	/// fr: 'Planning de la semaine'
+	String get outilsPlanning => 'Planning de la semaine';
+
+	/// fr: 'Les séances de la semaine, jour par jour, avec leur classe et leur enseignant.'
+	String get outilsPlanningDetail => 'Les séances de la semaine, jour par jour, avec leur classe et leur enseignant.';
 }
 
 // Path: admin.traitement
@@ -8942,6 +8951,129 @@ class Traductions$admin$finance$fr {
 	String get aValider => 'À valider';
 }
 
+// Path: admin.planning
+class Traductions$admin$planning$fr {
+	Traductions$admin$planning$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Planning'
+	String get titre => 'Planning';
+
+	/// fr: 'Les séances de la semaine, toutes classes confondues, jour par jour.'
+	String get sousTitre => 'Les séances de la semaine, toutes classes confondues, jour par jour.';
+
+	/// fr: 'Semaine du {date}'
+	String semaine({required Object date}) => 'Semaine du ${date}';
+
+	/// fr: 'Semaine du {date}'
+	String semaineSemantique({required Object date}) => 'Semaine du ${date}';
+
+	/// fr: 'Semaine précédente'
+	String get precedente => 'Semaine précédente';
+
+	/// fr: 'Semaine suivante'
+	String get suivante => 'Semaine suivante';
+
+	/// fr: 'Revenir à cette semaine'
+	String get cetteSemaine => 'Revenir à cette semaine';
+
+	/// fr: '{debut} à {fin}'
+	String horaire({required Object debut, required Object fin}) => '${debut} à ${fin}';
+
+	/// fr: 'Sans enseignant'
+	String get sansEnseignant => 'Sans enseignant';
+
+	/// fr: 'Enseignant : {nom}'
+	String avecEnseignant({required Object nom}) => 'Enseignant : ${nom}';
+
+	/// fr: 'Aucune séance cette semaine'
+	String get vide => 'Aucune séance cette semaine';
+
+	/// fr: 'Les séances apparaissent ici dès qu'une classe a un horaire cette semaine. Essayez une autre semaine.'
+	String get videDetail => 'Les séances apparaissent ici dès qu\'une classe a un horaire cette semaine. Essayez une autre semaine.';
+
+	/// fr: 'Le planning n'a pas pu être chargé'
+	String get sansDonnees => 'Le planning n\'a pas pu être chargé';
+
+	/// fr: 'Le planning n'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Le planning n\'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Disponible au branchement serveur'
+	String get indisponibleTitre => 'Disponible au branchement serveur';
+
+	/// fr: 'Le planning s'affichera ici dès le branchement serveur. D'ici là, rien n'est affiché : aucune séance n'est inventée.'
+	String get indisponiblePhrase => 'Le planning s\'affichera ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucune séance n\'est inventée.';
+
+	/// fr: 'Prévue'
+	String get statutPrevue => 'Prévue';
+
+	/// fr: 'En préparation'
+	String get statutPreparation => 'En préparation';
+
+	/// fr: 'Terminée'
+	String get statutTerminee => 'Terminée';
+
+	/// fr: 'Incident technique'
+	String get statutIncident => 'Incident technique';
+
+	/// fr: 'Enseignant absent'
+	String get statutEnseignantAbsent => 'Enseignant absent';
+
+	/// fr: 'Élève absent'
+	String get statutEleveAbsent => 'Élève absent';
+}
+
+// Path: admin.incidents
+class Traductions$admin$incidents$fr {
+	Traductions$admin$incidents$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Incidents des 24 dernières heures'
+	String get titre => 'Incidents des 24 dernières heures';
+
+	/// fr: 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».'
+	String get sousTitre => 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».';
+
+	/// fr: 'Séances en incident'
+	String get liste => 'Séances en incident';
+
+	/// fr: 'Incident technique'
+	String get natureTechnique => 'Incident technique';
+
+	/// fr: 'Enseignant absent'
+	String get natureEnseignantAbsent => 'Enseignant absent';
+
+	/// fr: 'Élève absent'
+	String get natureEleveAbsent => 'Élève absent';
+
+	/// fr: '{date}, {heure}'
+	String survenu({required Object date, required Object heure}) => '${date}, ${heure}';
+
+	/// fr: 'Aucun incident depuis 24 heures'
+	String get vide => 'Aucun incident depuis 24 heures';
+
+	/// fr: 'Une séance passée en incident, en absence d'enseignant ou en absence d'élève apparaît ici dès qu'elle change de statut.'
+	String get videDetail => 'Une séance passée en incident, en absence d\'enseignant ou en absence d\'élève apparaît ici dès qu\'elle change de statut.';
+
+	/// fr: 'Les incidents n'ont pas pu être chargés'
+	String get sansDonnees => 'Les incidents n\'ont pas pu être chargés';
+
+	/// fr: 'Les incidents n'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les incidents n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Disponible au branchement serveur'
+	String get indisponibleTitre => 'Disponible au branchement serveur';
+
+	/// fr: 'Les incidents s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché : aucun incident n'est inventé.'
+	String get indisponiblePhrase => 'Les incidents s\'afficheront ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucun incident n\'est inventé.';
+}
+
 // Path: admin.pilotage
 class Traductions$admin$pilotage$fr {
 	Traductions$admin$pilotage$fr.internal(this._root);
@@ -9349,14 +9481,29 @@ class Traductions$admin$tirage$fr {
 	/// fr: 'Règles du tirage'
 	String get reglesTitre => 'Règles du tirage';
 
-	/// fr: 'Ces règles s'appliquent aux prochains tirages. Les missions déjà attribuées ne changent pas. Chaque modification est inscrite au journal d'audit.'
-	String get reglesIntro => 'Ces règles s\'appliquent aux prochains tirages. Les missions déjà attribuées ne changent pas. Chaque modification est inscrite au journal d\'audit.';
+	/// fr: 'Ces règles s'appliquent aux prochains tirages. Les missions déjà attribuées ne changent pas. Chaque enregistrement crée une nouvelle version ; les anciennes sont conservées et ne se modifient jamais, et chacune est inscrite au journal d'audit.'
+	String get reglesIntro => 'Ces règles s\'appliquent aux prochains tirages. Les missions déjà attribuées ne changent pas. Chaque enregistrement crée une nouvelle version ; les anciennes sont conservées et ne se modifient jamais, et chacune est inscrite au journal d\'audit.';
 
 	/// fr: 'Fréquence'
 	String get frequenceTitre => 'Fréquence';
 
-	/// fr: 'Le nombre de missions qu'un contrôleur reçoit par semaine, au plus.'
-	String get frequenceDetail => 'Le nombre de missions qu\'un contrôleur reçoit par semaine, au plus.';
+	/// fr: 'Le nombre de missions qu'un contrôleur reçoit par semaine, au plus : de 0 à 50. Le serveur applique ce nombre.'
+	String get frequenceDetail => 'Le nombre de missions qu\'un contrôleur reçoit par semaine, au plus : de 0 à 50. Le serveur applique ce nombre.';
+
+	/// fr: 'Règles en vigueur : version {n}'
+	String versionEnVigueur({required Object n}) => 'Règles en vigueur : version ${n}';
+
+	/// fr: 'Aucune règle n'est encore enregistrée.'
+	String get aucuneVersion => 'Aucune règle n\'est encore enregistrée.';
+
+	/// fr: 'Avec 0, aucune séance n'est tirée pour contrôle.'
+	String get zeroPhrase => 'Avec 0, aucune séance n\'est tirée pour contrôle.';
+
+	/// fr: 'Entrez un nombre entier de 0 à 50, ou choisissez une des cartes.'
+	String get nombreInvalide => 'Entrez un nombre entier de 0 à 50, ou choisissez une des cartes.';
+
+	/// fr: 'Règles enregistrées, version {n}. Elles s'appliquent aux prochains tirages.'
+	String enregistreesVersion({required Object n}) => 'Règles enregistrées, version ${n}. Elles s\'appliquent aux prochains tirages.';
 
 	/// fr: '(one) {{n} mission par semaine} (other) {{n} missions par semaine}'
 	String missionsParSemaine({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
@@ -16119,6 +16266,114 @@ class Traductions$comptable$nav$fr {
 	String get compte => 'Compte';
 }
 
+// Path: comptable.graphiques
+class Traductions$comptable$graphiques$fr {
+	Traductions$comptable$graphiques$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.'
+	String get masque => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.';
+
+	/// fr: 'Voir les valeurs'
+	String get voirValeurs => 'Voir les valeurs';
+
+	/// fr: 'Masquer les valeurs'
+	String get masquerValeurs => 'Masquer les valeurs';
+
+	/// fr: 'Répartition par coffre'
+	String get repartitionTitre => 'Répartition par coffre';
+
+	/// fr: 'Répartition entre {n} coffres.'
+	String repartitionResume({required Object n}) => 'Répartition entre ${n} coffres.';
+
+	/// fr: 'Entrées et sorties sur 6 mois'
+	String get mensuelTitre => 'Entrées et sorties sur 6 mois';
+
+	/// fr: 'Entrées et sorties de {debut} à {fin}.'
+	String mensuelResume({required Object debut, required Object fin}) => 'Entrées et sorties de ${debut} à ${fin}.';
+
+	/// fr: 'Flux de trésorerie sur 30 jours'
+	String get fluxTitre => 'Flux de trésorerie sur 30 jours';
+
+	/// fr: 'Encaissements et décaissements du {debut} au {fin}.'
+	String fluxResume({required Object debut, required Object fin}) => 'Encaissements et décaissements du ${debut} au ${fin}.';
+
+	/// fr: 'Évolution sur 6 mois'
+	String get evolutionTitre => 'Évolution sur 6 mois';
+
+	/// fr: 'Trésorerie détenue de {debut} à {fin}.'
+	String evolutionResume({required Object debut, required Object fin}) => 'Trésorerie détenue de ${debut} à ${fin}.';
+
+	/// fr: 'Entrées'
+	String get legendeEntrees => 'Entrées';
+
+	/// fr: 'Sorties'
+	String get legendeSorties => 'Sorties';
+
+	/// fr: 'Encaissements'
+	String get legendeEncaissements => 'Encaissements';
+
+	/// fr: 'Décaissements'
+	String get legendeDecaissements => 'Décaissements';
+
+	/// fr: 'Trésorerie détenue'
+	String get legendeDetenue => 'Trésorerie détenue';
+
+	/// fr: 'Entrées et sorties'
+	String get kpiTitre => 'Entrées et sorties';
+
+	/// fr: 'Entrées'
+	String get kpiEntrees => 'Entrées';
+
+	/// fr: 'Sorties'
+	String get kpiSorties => 'Sorties';
+
+	/// fr: '30 derniers jours'
+	String get kpiPeriode => '30 derniers jours';
+
+	/// fr: '{pourcent} % par rapport à la période précédente'
+	String variation({required Object pourcent}) => '${pourcent} % par rapport à la période précédente';
+
+	/// fr: 'Rapports'
+	String get rapportsTitre => 'Rapports';
+
+	/// fr: 'Les entrées, les sorties et la trésorerie dans la durée.'
+	String get rapportsSousTitre => 'Les entrées, les sorties et la trésorerie dans la durée.';
+
+	/// fr: 'Aucune donnée à dessiner'
+	String get vide => 'Aucune donnée à dessiner';
+
+	/// fr: 'Les graphiques apparaîtront ici dès que des encaissements ou des paiements auront été enregistrés.'
+	String get videDetail => 'Les graphiques apparaîtront ici dès que des encaissements ou des paiements auront été enregistrés.';
+
+	/// fr: 'Les graphiques n'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les graphiques n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Les graphiques n'ont pas pu être chargés'
+	String get sansDonnees => 'Les graphiques n\'ont pas pu être chargés';
+
+	/// fr: 'Exporter le rapport'
+	String get exporterRapport => 'Exporter le rapport';
+
+	/// fr: 'Exporter la sélection'
+	String get exporterSelection => 'Exporter la sélection';
+
+	/// fr: 'Les exports ne sont pas encore disponibles : ils s'ouvriront dès le branchement serveur.'
+	String get exportIndisponible => 'Les exports ne sont pas encore disponibles : ils s\'ouvriront dès le branchement serveur.';
+
+	/// fr: 'Export en préparation'
+	String get exportEnCours => 'Export en préparation';
+
+	/// fr: 'Export prêt : {reference} ({lignes} lignes).'
+	String exportPret({required Object reference, required Object lignes}) => 'Export prêt : ${reference} (${lignes} lignes).';
+
+	/// fr: 'L'export n'a pas pu être préparé : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get exportEchec => 'L\'export n\'a pas pu être préparé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+}
+
 // Path: comptable.onglets
 class Traductions$comptable$onglets$fr {
 	Traductions$comptable$onglets$fr.internal(this._root);
@@ -16144,6 +16399,9 @@ class Traductions$comptable$onglets$fr {
 
 	/// fr: 'Rapprochement'
 	String get rapprochement => 'Rapprochement';
+
+	/// fr: 'Rapports'
+	String get rapports => 'Rapports';
 }
 
 // Path: comptable.commun
@@ -16431,6 +16689,9 @@ class Traductions$comptable$aujourdhui$fr {
 	/// fr: 'Alimenter la Réserve stratégique'
 	String get accesAlimenter => 'Alimenter la Réserve stratégique';
 
+	/// fr: 'Voir les rapports'
+	String get accesRapports => 'Voir les rapports';
+
 	/// fr: 'Aujourd'hui'
 	String get titre => 'Aujourd\'hui';
 
@@ -16647,6 +16908,12 @@ class Traductions$comptable$tresorerie$fr {
 
 	/// fr: 'Alimenter la Réserve stratégique'
 	String get alimenter => 'Alimenter la Réserve stratégique';
+
+	/// fr: 'Une partie de la page n'a pas pu être lue : le reste est à jour. Réessayez pour compléter.'
+	String get erreurPartielle => 'Une partie de la page n\'a pas pu être lue : le reste est à jour. Réessayez pour compléter.';
+
+	/// fr: 'Réessayer'
+	String get erreurPartielleAction => 'Réessayer';
 }
 
 // Path: comptable.encaissements
@@ -17563,6 +17830,24 @@ class Traductions$recherche$contexte$fr {
 
 	/// fr: 'Enseignant de la classe {classe}'
 	String enseignantDeClasse({required Object classe}) => 'Enseignant de la classe ${classe}';
+
+	/// fr: 'Profil de votre foyer'
+	String get personneFoyer => 'Profil de votre foyer';
+
+	/// fr: 'Profil de votre foyer · {classe}'
+	String personneFoyerClasse({required Object classe}) => 'Profil de votre foyer · ${classe}';
+
+	/// fr: 'Trouvé par son identifiant'
+	String get personneParIdentifiant => 'Trouvé par son identifiant';
+
+	/// fr: 'Trouvé par son identifiant · {classe}'
+	String personneParIdentifiantClasse({required Object classe}) => 'Trouvé par son identifiant · ${classe}';
+
+	/// fr: 'Canal du Studio'
+	String get canalStudio => 'Canal du Studio';
+
+	/// fr: 'Encaissement · {famille}'
+	String encaissement({required Object famille}) => 'Encaissement · ${famille}';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -21960,6 +22245,12 @@ class Traductions$tc$bibliotheque$detail$fr {
 
 	/// fr: 'Le Coran s’ouvre dans le lecteur dédié.'
 	String get renduCoran => 'Le Coran s’ouvre dans le lecteur dédié.';
+
+	/// fr: 'Toutes vos ressources de révision, au même endroit.'
+	String get entreeDetail => 'Toutes vos ressources de révision, au même endroit.';
+
+	/// fr: 'Ouvrir la bibliothèque'
+	String get entreeLigne => 'Ouvrir la bibliothèque';
 }
 
 // Path: tc.bibliotheque.action
@@ -22035,6 +22326,24 @@ class Traductions$tc$bibliotheque$rendu$fr {
 
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
+
+	/// fr: 'Ouvrir'
+	String get ouvrir => 'Ouvrir';
+
+	/// fr: 'Ouvrir le mushaf'
+	String get ouvrirMushaf => 'Ouvrir le mushaf';
+
+	/// fr: 'Le lien de lecture n'a pas pu être obtenu pour le moment.'
+	String get lienEchec => 'Le lien de lecture n\'a pas pu être obtenu pour le moment.';
+
+	/// fr: 'L'ouverture n'est pas disponible pour ce support.'
+	String get lienIndisponible => 'L\'ouverture n\'est pas disponible pour ce support.';
+
+	/// fr: 'L'ouverture pourra se faire quand la connexion reviendra.'
+	String get lienHorsLigne => 'L\'ouverture pourra se faire quand la connexion reviendra.';
+
+	/// fr: 'Votre navigateur a bloqué l'ouverture. Autorisez les fenêtres de ce site, puis réessayez.'
+	String get lienBloque => 'Votre navigateur a bloqué l\'ouverture. Autorisez les fenêtres de ce site, puis réessayez.';
 }
 
 // Path: tc.bibliotheque.actif
@@ -26281,6 +26590,24 @@ class Traductions$comptable$statuts$raison$fr {
 
 	/// fr: 'Capacité absente'
 	String get capaciteAbsente => 'Capacité absente';
+
+	/// fr: 'Délégations suspendues par la direction'
+	String get delegationsSuspendues => 'Délégations suspendues par la direction';
+
+	/// fr: 'Délégation expirée'
+	String get delegationExpiree => 'Délégation expirée';
+
+	/// fr: 'Sortie en attente du délai de sécurité'
+	String get sortieEnAttenteDelai => 'Sortie en attente du délai de sécurité';
+
+	/// fr: 'Coffre hors de la délégation'
+	String get coffreNonAutorise => 'Coffre hors de la délégation';
+
+	/// fr: 'Bénéficiaire exclu de la délégation'
+	String get beneficiaireExclu => 'Bénéficiaire exclu de la délégation';
+
+	/// fr: 'Au-dessus du plafond de cette délégation'
+	String get plafondExceptionDepasse => 'Au-dessus du plafond de cette délégation';
 }
 
 // Path: comptable.paiements.confirmation
@@ -27210,6 +27537,12 @@ class Traductions$comptable$beneficiaires$profil$fr {
 
 	/// fr: 'Choisissez un motif pour continuer.'
 	String get motifRequis => 'Choisissez un motif pour continuer.';
+
+	/// fr: 'Voir le fil de {nom}'
+	String voirFil({required Object nom}) => 'Voir le fil de ${nom}';
+
+	/// fr: 'Le fil de {nom} n'a pas pu s'ouvrir : il n'existe pas encore ou la lecture n'a pas abouti. Réessayez dans un instant.'
+	String voirFilRefuse({required Object nom}) => 'Le fil de ${nom} n\'a pas pu s\'ouvrir : il n\'existe pas encore ou la lecture n\'a pas abouti. Réessayez dans un instant.';
 }
 
 // Path: comptable.beneficiaires.recevoir
@@ -27402,6 +27735,12 @@ class Traductions$comptable$validation$detail$fr {
 
 	/// fr: 'Aucune entrée pour l'instant.'
 	String get historiqueVide => 'Aucune entrée pour l\'instant.';
+
+	/// fr: 'L'historique n'a pas pu être lu : ce n'est pas qu'il est vide. Réessayez dans un instant.'
+	String get historiqueErreur => 'L\'historique n\'a pas pu être lu : ce n\'est pas qu\'il est vide. Réessayez dans un instant.';
+
+	/// fr: 'Relire l'historique'
+	String get historiqueReessayer => 'Relire l\'historique';
 }
 
 // Path: comptable.validation.motifs
@@ -27631,6 +27970,258 @@ class Traductions$comptable$direction$delegationPanneau$fr {
 
 	/// fr: 'La politique tarifaire reste à la direction.'
 	String get politiqueTarifaireDetail => 'La politique tarifaire reste à la direction.';
+
+	/// fr: 'Suspendre toutes les délégations'
+	String get suspendreTitre => 'Suspendre toutes les délégations';
+
+	/// fr: 'Le Comptable ne peut plus rien exécuter seul, tout de suite : chaque opération repasse par la direction.'
+	String get suspendreDetail => 'Le Comptable ne peut plus rien exécuter seul, tout de suite : chaque opération repasse par la direction.';
+
+	/// fr: 'Suspendre toutes les délégations'
+	String get suspendreAction => 'Suspendre toutes les délégations';
+
+	/// fr: 'Suspendre toutes les délégations ?'
+	String get suspendreConfirmerTitre => 'Suspendre toutes les délégations ?';
+
+	/// fr: 'L'effet est immédiat : aucune opération du Comptable ne partira sans votre validation. La suspension est inscrite au journal.'
+	String get suspendreConfirmerPhrase => 'L\'effet est immédiat : aucune opération du Comptable ne partira sans votre validation. La suspension est inscrite au journal.';
+
+	/// fr: 'Suspendre'
+	String get suspendreConfirmer => 'Suspendre';
+
+	/// fr: 'Garder les délégations'
+	String get suspendreGarder => 'Garder les délégations';
+
+	/// fr: 'Réactiver les délégations'
+	String get reactiverTitre => 'Réactiver les délégations';
+
+	/// fr: 'Les délégations sont suspendues. Les lever est un acte de la direction, avec une raison écrite.'
+	String get reactiverDetail => 'Les délégations sont suspendues. Les lever est un acte de la direction, avec une raison écrite.';
+
+	/// fr: 'Réactiver les délégations'
+	String get reactiverAction => 'Réactiver les délégations';
+
+	/// fr: 'Le Comptable pourra de nouveau agir dans les limites de la politique. Une délégation expirée n'est jamais rétablie : il faudra la renouveler. Les sorties annulées restent annulées. La réactivation est inscrite au journal.'
+	String get reactiverPhrase => 'Le Comptable pourra de nouveau agir dans les limites de la politique. Une délégation expirée n\'est jamais rétablie : il faudra la renouveler. Les sorties annulées restent annulées. La réactivation est inscrite au journal.';
+
+	/// fr: 'Raison de la réactivation'
+	String get reactiverRaison => 'Raison de la réactivation';
+
+	/// fr: 'Elle est conservée au journal avec votre nom.'
+	String get reactiverRaisonAide => 'Elle est conservée au journal avec votre nom.';
+
+	/// fr: 'Écrivez la raison pour réactiver les délégations.'
+	String get reactiverRaisonVide => 'Écrivez la raison pour réactiver les délégations.';
+
+	/// fr: 'Réactiver'
+	String get reactiverConfirmer => 'Réactiver';
+
+	/// fr: 'Garder suspendues'
+	String get reactiverGarder => 'Garder suspendues';
+
+	/// fr: 'Délégations réactivées.'
+	String get reactiveeActive => 'Délégations réactivées.';
+
+	/// fr: 'Délégations réactivées, mais la délégation est expirée : renouvelez-la pour qu'elle reparte sur sa durée.'
+	String get reactiveeExpiree => 'Délégations réactivées, mais la délégation est expirée : renouvelez-la pour qu\'elle reparte sur sa durée.';
+
+	/// fr: 'La réactivation n'est pas confirmée : la demande n'est peut-être pas parvenue jusqu'à Rewayah, ou votre vérification en deux étapes est à refaire. Vérifiez l'état de la délégation avant de réessayer.'
+	String get reactiverEchec => 'La réactivation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah, ou votre vérification en deux étapes est à refaire. Vérifiez l\'état de la délégation avant de réessayer.';
+
+	/// fr: 'Délégations suspendues'
+	String get suspendueTitre => 'Délégations suspendues';
+
+	/// fr: 'Suspendues depuis le {date}. Le Comptable ne peut rien exécuter sans votre validation.'
+	String suspendueDepuis({required Object date}) => 'Suspendues depuis le ${date}. Le Comptable ne peut rien exécuter sans votre validation.';
+
+	/// fr: 'Le Comptable ne peut rien exécuter sans votre validation.'
+	String get suspendueSansDate => 'Le Comptable ne peut rien exécuter sans votre validation.';
+
+	/// fr: 'Suspension en cours'
+	String get suspendueEnCours => 'Suspension en cours';
+
+	/// fr: 'La suspension n'est pas confirmée : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Vérifiez l'état de la délégation avant de réessayer.'
+	String get suspendueEchec => 'La suspension n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez l\'état de la délégation avant de réessayer.';
+
+	/// fr: 'Expiration'
+	String get expirationTitre => 'Expiration';
+
+	/// fr: 'Chaque délégation expire et se renouvelle. Passé la date, le Comptable ne peut plus rien exécuter seul.'
+	String get expirationDetail => 'Chaque délégation expire et se renouvelle. Passé la date, le Comptable ne peut plus rien exécuter seul.';
+
+	/// fr: 'Expire le {date}'
+	String expireLe({required Object date}) => 'Expire le ${date}';
+
+	/// fr: 'Date d'expiration non communiquée'
+	String get expirationInconnue => 'Date d\'expiration non communiquée';
+
+	/// fr: 'Active'
+	String get etatActive => 'Active';
+
+	/// fr: 'Suspendue'
+	String get etatSuspendue => 'Suspendue';
+
+	/// fr: 'Expirée'
+	String get etatExpiree => 'Expirée';
+
+	/// fr: 'Renouvelable pour {jours} jours'
+	String renouvelablePour({required Object jours}) => 'Renouvelable pour ${jours} jours';
+
+	/// fr: 'Renouveler la délégation'
+	String get renouveler => 'Renouveler la délégation';
+
+	/// fr: 'Délégation renouvelée.'
+	String get renouvelee => 'Délégation renouvelée.';
+
+	/// fr: 'Le renouvellement n'est pas confirmé : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Vérifiez la date d'expiration avant de réessayer.'
+	String get renouvelerEchec => 'Le renouvellement n\'est pas confirmé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez la date d\'expiration avant de réessayer.';
+
+	/// fr: 'Sorties en attente'
+	String get sortiesTitre => 'Sorties en attente';
+
+	/// fr: 'Une sortie au-dessus du plafond par transaction attend un délai de sécurité avant de partir. Vous pouvez l'annuler d'ici là.'
+	String get sortiesDetail => 'Une sortie au-dessus du plafond par transaction attend un délai de sécurité avant de partir. Vous pouvez l\'annuler d\'ici là.';
+
+	/// fr: 'Délai de sécurité : {heures} h'
+	String sortiesDelai({required Object heures}) => 'Délai de sécurité : ${heures} h';
+
+	/// fr: 'Aucune sortie en attente.'
+	String get sortiesVide => 'Aucune sortie en attente.';
+
+	/// fr: 'Les sorties en attente n'ont pas pu être lues : il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get sortiesErreur => 'Les sorties en attente n\'ont pas pu être lues : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: '{objet} · part le {date}'
+	String sortiePart({required Object objet, required Object date}) => '${objet} · part le ${date}';
+
+	/// fr: 'Annuler'
+	String get sortieAnnuler => 'Annuler';
+
+	/// fr: 'Annuler la sortie de {beneficiaire}'
+	String sortieAnnulerNom({required Object beneficiaire}) => 'Annuler la sortie de ${beneficiaire}';
+
+	/// fr: 'Annuler cette sortie ?'
+	String get sortieAnnulerTitre => 'Annuler cette sortie ?';
+
+	/// fr: 'La sortie de {beneficiaire} ne partira pas. L'annulation est inscrite au journal.'
+	String sortieAnnulerPhrase({required Object beneficiaire}) => 'La sortie de ${beneficiaire} ne partira pas. L\'annulation est inscrite au journal.';
+
+	/// fr: 'Annuler la sortie'
+	String get sortieAnnulerConfirmer => 'Annuler la sortie';
+
+	/// fr: 'Garder la sortie'
+	String get sortieGarder => 'Garder la sortie';
+
+	/// fr: 'Sortie annulée.'
+	String get sortieAnnulee => 'Sortie annulée.';
+
+	/// fr: 'L'annulation n'est pas confirmée : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Relisez la liste avant de réessayer.'
+	String get sortieAnnulationEchec => 'L\'annulation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Relisez la liste avant de réessayer.';
+
+	/// fr: 'Exceptions'
+	String get exceptionsTitre => 'Exceptions';
+
+	/// fr: 'Réglages propres à une délégation. Un plafond d'exception est toujours plus bas que celui de la politique générale, jamais plus haut.'
+	String get exceptionsDetail => 'Réglages propres à une délégation. Un plafond d\'exception est toujours plus bas que celui de la politique générale, jamais plus haut.';
+
+	/// fr: 'Aucune exception : la politique générale s'applique à toutes les délégations.'
+	String get exceptionsVide => 'Aucune exception : la politique générale s\'applique à toutes les délégations.';
+
+	/// fr: 'Ajouter une exception'
+	String get exceptionAjouter => 'Ajouter une exception';
+
+	/// fr: 'Modifier l'exception de {libelle}'
+	String exceptionModifier({required Object libelle}) => 'Modifier l\'exception de ${libelle}';
+
+	/// fr: 'Délégation du Comptable'
+	String get exceptionLibelleDefaut => 'Délégation du Comptable';
+
+	/// fr: 'Coffres autorisés'
+	String get exceptionCoffres => 'Coffres autorisés';
+
+	/// fr: 'Aucun coffre autorisé'
+	String get exceptionCoffresAucun => 'Aucun coffre autorisé';
+
+	/// fr: 'Bénéficiaires exclus'
+	String get exceptionExclus => 'Bénéficiaires exclus';
+
+	/// fr: 'Aucun bénéficiaire exclu'
+	String get exceptionExclusAucun => 'Aucun bénéficiaire exclu';
+
+	/// fr: 'Plafond par transaction'
+	String get exceptionPlafond => 'Plafond par transaction';
+
+	/// fr: 'Celui de la politique générale'
+	String get exceptionPlafondGeneral => 'Celui de la politique générale';
+
+	/// fr: 'Exception de la délégation'
+	String get exceptionTitre => 'Exception de la délégation';
+
+	/// fr: 'Seuls ces coffres peuvent être touchés par la délégation. Aucun coffre coché : aucun coffre autorisé.'
+	String get exceptionCoffresDetail => 'Seuls ces coffres peuvent être touchés par la délégation. Aucun coffre coché : aucun coffre autorisé.';
+
+	/// fr: 'Plus bas que le plafond de la politique générale, jamais plus haut. Vide : celui de la politique générale.'
+	String get exceptionPlafondDetail => 'Plus bas que le plafond de la politique générale, jamais plus haut. Vide : celui de la politique générale.';
+
+	/// fr: 'Ce plafond doit être plus bas que celui de la politique générale.'
+	String get exceptionPlafondTropHaut => 'Ce plafond doit être plus bas que celui de la politique générale.';
+
+	/// fr: 'Fixez d'abord un plafond par transaction dans la politique générale : une exception ne peut qu'être plus basse.'
+	String get exceptionPlafondSansGeneral => 'Fixez d\'abord un plafond par transaction dans la politique générale : une exception ne peut qu\'être plus basse.';
+
+	/// fr: 'Exclure un bénéficiaire'
+	String get exceptionExclure => 'Exclure un bénéficiaire';
+
+	/// fr: 'Aucun autre bénéficiaire à exclure.'
+	String get exceptionExclureAucun => 'Aucun autre bénéficiaire à exclure.';
+
+	/// fr: 'Retirer {nom} des exclus'
+	String exceptionRetirerExclu({required Object nom}) => 'Retirer ${nom} des exclus';
+
+	/// fr: 'Garder l'exception'
+	String get exceptionGarder => 'Garder l\'exception';
+
+	/// fr: 'Retirer cette exception'
+	String get exceptionRetirer => 'Retirer cette exception';
+
+	/// fr: 'La délégation retrouve la politique générale. Rien n'est enregistré avant « Enregistrer ».'
+	String get exceptionRetirerPhrase => 'La délégation retrouve la politique générale. Rien n\'est enregistré avant « Enregistrer ».';
+
+	/// fr: 'Toujours sensible'
+	String get sensiblesTitre => 'Toujours sensible';
+
+	/// fr: 'Ces cinq cas demandent toujours une validation supplémentaire, quels que soient les réglages ci-dessus. Le premier paiement et les coordonnées récentes se règlent plus haut.'
+	String get sensiblesDetail => 'Ces cinq cas demandent toujours une validation supplémentaire, quels que soient les réglages ci-dessus. Le premier paiement et les coordonnées récentes se règlent plus haut.';
+
+	/// fr: 'Montant hors seuil'
+	String get sensibleHorsSeuil => 'Montant hors seuil';
+
+	/// fr: 'Un paiement au-dessus des plafonds fixés plus haut.'
+	String get sensibleHorsSeuilDetail => 'Un paiement au-dessus des plafonds fixés plus haut.';
+
+	/// fr: 'Paiement hors cycle'
+	String get sensibleHorsCycle => 'Paiement hors cycle';
+
+	/// fr: 'Un paiement qui ne suit pas la période de paie habituelle.'
+	String get sensibleHorsCycleDetail => 'Un paiement qui ne suit pas la période de paie habituelle.';
+
+	/// fr: 'Bénéficiaire lié à l'opérateur'
+	String get sensibleLieOperateur => 'Bénéficiaire lié à l\'opérateur';
+
+	/// fr: 'Un paiement vers une personne liée à l'opérateur de paiement.'
+	String get sensibleLieOperateurDetail => 'Un paiement vers une personne liée à l\'opérateur de paiement.';
+
+	/// fr: 'Fournisseur indisponible'
+	String get sensibleFournisseur => 'Fournisseur indisponible';
+
+	/// fr: 'Un paiement dont le fournisseur de paiement est indisponible.'
+	String get sensibleFournisseurDetail => 'Un paiement dont le fournisseur de paiement est indisponible.';
+
+	/// fr: 'Obligation manuelle non approuvée'
+	String get sensibleManuelle => 'Obligation manuelle non approuvée';
+
+	/// fr: 'Une obligation saisie à la main et pas encore approuvée.'
+	String get sensibleManuelleDetail => 'Une obligation saisie à la main et pas encore approuvée.';
 }
 
 // Path: recherche.etats.vide
@@ -30840,7 +31431,7 @@ extension on Traductions {
 			'salle.preparation.eleve.demo.pret' => 'Prêt',
 			'salle.preparation.eleve.demo.microBloque' => 'Micro bloqué',
 			'salle.preparation.eleve.demo.horsLigne' => 'Hors ligne',
-			'salle.bandeauPermanent' => 'Cours enregistré, visite de contrôle possible.',
+			'salle.bandeauPermanent' => 'Visite de contrôle possible.',
 			'salle.informationControle.lien' => 'En savoir plus',
 			'salle.informationControle.e1.titre' => 'Quelqu\'un veille sur ton cours',
 			'salle.informationControle.e1.p1' => 'Parfois, une personne de l\'académie regarde et écoute ton cours en direct.',
@@ -32308,6 +32899,8 @@ extension on Traductions {
 			'admin.tableau.attenteJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'En attente depuis ${jours} jour', other: 'En attente depuis ${jours} jours', ), 
 			'admin.tableau.outilsPilotage' => 'Pilotage des horaires',
 			'admin.tableau.outilsPilotageDetail' => 'Par horaire : les classes, leur remplissage, les demandes en attente et les enseignants libres ou manquants.',
+			'admin.tableau.outilsPlanning' => 'Planning de la semaine',
+			'admin.tableau.outilsPlanningDetail' => 'Les séances de la semaine, jour par jour, avec leur classe et leur enseignant.',
 			'admin.traitement.titre' => 'Espace de traitement',
 			'admin.traitement.sousTitre' => 'Examinez les éléments en attente dans Rewayah, puis ouvrez chacun là où il se traite.',
 			'admin.traitement.compteurUn' => '1 élément en attente',
@@ -32699,10 +33292,10 @@ extension on Traductions {
 			'admin.qualite.colonneStatut' => 'Statut',
 			'admin.qualite.statutOuvert' => 'Ouverte',
 			'admin.qualite.statutTraite' => 'Traitée',
-			'admin.qualite.depuisAujourdhui' => 'Aujourd\'hui',
-			'admin.qualite.depuisUnJour' => '1 jour',
 			_ => null,
 		} ?? switch (path) {
+			'admin.qualite.depuisAujourdhui' => 'Aujourd\'hui',
+			'admin.qualite.depuisUnJour' => '1 jour',
 			'admin.qualite.actionTraiter' => 'Marquer traité',
 			'admin.qualite.traiterTitre' => ({required Object personne}) => 'Marquer traité : ${personne}',
 			'admin.qualite.champNote' => 'Note (optionnelle)',
@@ -33213,10 +33806,10 @@ extension on Traductions {
 			'admin.finance.pol.erreurPlafond' => ({required Object base}) => 'Le plafond est sous la base garantie (${base}) : le taux baisserait quand la classe se remplit. Saisissez au moins la base.',
 			'admin.finance.pol.erreurClassesMax' => ({required Object objectif}) => 'Le maximum est sous l\'objectif (${objectif}) : saisissez au moins l\'objectif.',
 			'admin.finance.pol.erreurMinimum' => ({required Object capacite}) => 'Le minimum dépasse la plus petite classe (${capacite}) : elle ne pourrait jamais ouvrir. Saisissez au plus cette capacité.',
-			'admin.finance.pol.erreurRemise' => ({required Object tarif}) => 'La remise dépasse le tarif (${tarif}) : la mensualité deviendrait négative. Saisissez au plus ce montant.',
-			'admin.finance.pol.parHeure' => ({required Object montant}) => '${montant} / h',
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.pol.erreurRemise' => ({required Object tarif}) => 'La remise dépasse le tarif (${tarif}) : la mensualité deviendrait négative. Saisissez au plus ce montant.',
+			'admin.finance.pol.parHeure' => ({required Object montant}) => '${montant} / h',
 			'admin.finance.pol.suffixeParHeure' => ({required Object symbole}) => '${symbole} / h',
 			'admin.finance.pol.suffixeRemise' => ({required Object symbole}) => '${symbole} de remise',
 			'admin.finance.pol.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
@@ -33378,6 +33971,41 @@ extension on Traductions {
 			'admin.finance.pol.historiqueVide' => 'Aucune autre version pour l\'instant : seule la version active existe.',
 			'admin.finance.reserveDelegation' => 'Réserve et délégation',
 			'admin.finance.aValider' => 'À valider',
+			'admin.planning.titre' => 'Planning',
+			'admin.planning.sousTitre' => 'Les séances de la semaine, toutes classes confondues, jour par jour.',
+			'admin.planning.semaine' => ({required Object date}) => 'Semaine du ${date}',
+			'admin.planning.semaineSemantique' => ({required Object date}) => 'Semaine du ${date}',
+			'admin.planning.precedente' => 'Semaine précédente',
+			'admin.planning.suivante' => 'Semaine suivante',
+			'admin.planning.cetteSemaine' => 'Revenir à cette semaine',
+			'admin.planning.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
+			'admin.planning.sansEnseignant' => 'Sans enseignant',
+			'admin.planning.avecEnseignant' => ({required Object nom}) => 'Enseignant : ${nom}',
+			'admin.planning.vide' => 'Aucune séance cette semaine',
+			'admin.planning.videDetail' => 'Les séances apparaissent ici dès qu\'une classe a un horaire cette semaine. Essayez une autre semaine.',
+			'admin.planning.sansDonnees' => 'Le planning n\'a pas pu être chargé',
+			'admin.planning.erreur' => 'Le planning n\'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'admin.planning.indisponibleTitre' => 'Disponible au branchement serveur',
+			'admin.planning.indisponiblePhrase' => 'Le planning s\'affichera ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucune séance n\'est inventée.',
+			'admin.planning.statutPrevue' => 'Prévue',
+			'admin.planning.statutPreparation' => 'En préparation',
+			'admin.planning.statutTerminee' => 'Terminée',
+			'admin.planning.statutIncident' => 'Incident technique',
+			'admin.planning.statutEnseignantAbsent' => 'Enseignant absent',
+			'admin.planning.statutEleveAbsent' => 'Élève absent',
+			'admin.incidents.titre' => 'Incidents des 24 dernières heures',
+			'admin.incidents.sousTitre' => 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».',
+			'admin.incidents.liste' => 'Séances en incident',
+			'admin.incidents.natureTechnique' => 'Incident technique',
+			'admin.incidents.natureEnseignantAbsent' => 'Enseignant absent',
+			'admin.incidents.natureEleveAbsent' => 'Élève absent',
+			'admin.incidents.survenu' => ({required Object date, required Object heure}) => '${date}, ${heure}',
+			'admin.incidents.vide' => 'Aucun incident depuis 24 heures',
+			'admin.incidents.videDetail' => 'Une séance passée en incident, en absence d\'enseignant ou en absence d\'élève apparaît ici dès qu\'elle change de statut.',
+			'admin.incidents.sansDonnees' => 'Les incidents n\'ont pas pu être chargés',
+			'admin.incidents.erreur' => 'Les incidents n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'admin.incidents.indisponibleTitre' => 'Disponible au branchement serveur',
+			'admin.incidents.indisponiblePhrase' => 'Les incidents s\'afficheront ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucun incident n\'est inventé.',
 			'admin.pilotage.titre' => 'Pilotage des horaires',
 			'admin.pilotage.sousTitre' => 'Pour chaque horaire et chaque public : les classes, leur remplissage, les demandes en attente, et les enseignants libres ou manquants.',
 			'admin.pilotage.sansDonnees' => 'Le tableau de pilotage n\'a pas pu être chargé',
@@ -33494,9 +34122,14 @@ extension on Traductions {
 			'admin.tirage.reserveTitre' => 'Cet écran est réservé à la direction',
 			'admin.tirage.reservePhrase' => 'Votre compte n\'a pas accès aux tirages : ils sont réservés à la direction, pour que personne ne puisse prévoir qui sera contrôlé. Si vous en avez besoin, demandez l\'accès à la direction.',
 			'admin.tirage.reglesTitre' => 'Règles du tirage',
-			'admin.tirage.reglesIntro' => 'Ces règles s\'appliquent aux prochains tirages. Les missions déjà attribuées ne changent pas. Chaque modification est inscrite au journal d\'audit.',
+			'admin.tirage.reglesIntro' => 'Ces règles s\'appliquent aux prochains tirages. Les missions déjà attribuées ne changent pas. Chaque enregistrement crée une nouvelle version ; les anciennes sont conservées et ne se modifient jamais, et chacune est inscrite au journal d\'audit.',
 			'admin.tirage.frequenceTitre' => 'Fréquence',
-			'admin.tirage.frequenceDetail' => 'Le nombre de missions qu\'un contrôleur reçoit par semaine, au plus.',
+			'admin.tirage.frequenceDetail' => 'Le nombre de missions qu\'un contrôleur reçoit par semaine, au plus : de 0 à 50. Le serveur applique ce nombre.',
+			'admin.tirage.versionEnVigueur' => ({required Object n}) => 'Règles en vigueur : version ${n}',
+			'admin.tirage.aucuneVersion' => 'Aucune règle n\'est encore enregistrée.',
+			'admin.tirage.zeroPhrase' => 'Avec 0, aucune séance n\'est tirée pour contrôle.',
+			'admin.tirage.nombreInvalide' => 'Entrez un nombre entier de 0 à 50, ou choisissez une des cartes.',
+			'admin.tirage.enregistreesVersion' => ({required Object n}) => 'Règles enregistrées, version ${n}. Elles s\'appliquent aux prochains tirages.',
 			'admin.tirage.missionsParSemaine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} mission par semaine', other: '${n} missions par semaine', ), 
 			'admin.tirage.ponderationTitre' => 'Pondération',
 			'admin.tirage.ponderationDetail' => 'Plus le poids est fort, plus ces séances ont de chances d\'être tirées. Le tirage reste imprévisible pour l\'enseignant comme pour le contrôleur.',
@@ -33687,6 +34320,8 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.version.sansFichier' => 'Sans fichier',
 			'admin.bibliotheque.fiche.droitsChamps.revue' => 'Revue des droits',
 			'admin.bibliotheque.fiche.droitsChamps.source' => 'Source',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.fiche.droitsChamps.titulaire' => 'Titulaire du droit',
 			'admin.bibliotheque.fiche.droitsChamps.preuve' => 'Preuve d\'autorisation',
 			'admin.bibliotheque.fiche.droitsChamps.preuveOui' => 'Déposée',
@@ -33729,8 +34364,6 @@ extension on Traductions {
 			'admin.bibliotheque.import.etats.confirmation' => 'Envoi terminé, en attente de la confirmation du serveur…',
 			'admin.bibliotheque.import.etats.verification' => 'Vérification du fichier…',
 			'admin.bibliotheque.import.etats.pret' => 'Fichier vérifié. Passez aux droits.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.etats.annule' => 'Dépôt annulé.',
 			'admin.bibliotheque.import.erreurs.taille' => 'Ce fichier est trop volumineux. Choisissez un fichier plus léger.',
 			'admin.bibliotheque.import.erreurs.type' => 'Ce type de fichier n\'est pas pris en charge pour ce support. Choisissez un autre fichier.',
@@ -34201,6 +34834,8 @@ extension on Traductions {
 			'historique.duree.secondes' => ({required Object s}) => '${s} s',
 			'historique.duree.minutes' => ({required Object m}) => '${m} min',
 			'historique.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
+			_ => null,
+		} ?? switch (path) {
 			'historique.duree.heures' => ({required Object h}) => '${h} h',
 			'historique.duree.heuresMinutes' => ({required Object h, required Object m}) => '${h} h ${m}',
 			'historique.fuseauListe' => 'Heures affichées à l\'heure de cet appareil.',
@@ -34243,8 +34878,6 @@ extension on Traductions {
 			'historique.observations.visiteUne' => '1 visite',
 			'historique.observations.visites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} visite', other: '${n} visites', ), 
 			'historique.observations.dureeNonConfirmee' => 'Durée non confirmée',
-			_ => null,
-		} ?? switch (path) {
 			'historique.observations.terminee' => 'Terminée',
 			'historique.observations.nonRefermee' => 'Sortie non enregistrée',
 			'historique.observations.eleveInconnu' => 'Élève',
@@ -34715,6 +35348,8 @@ extension on Traductions {
 			'classe.cartes.feuille.retirerConfirmer' => 'Retirer la carte',
 			'classe.cartes.feuille.envoiNonConfirme' => 'La carte n\'est pas confirmée : la réponse n\'est pas arrivée. Enregistrez de nouveau dans un instant.',
 			'classe.cartes.feuille.retraitNonConfirme' => 'Le retrait n\'est pas confirmé : la réponse n\'est pas arrivée. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.cartes.feuille.defauts.titreVide' => 'Le titre manque. Écrivez quelques mots, par exemple « Sourate à réviser ».',
 			'classe.cartes.feuille.defauts.titreLong' => ({required Object max}) => 'Le titre dépasse ${max} caractères. Raccourcissez-le.',
 			'classe.cartes.feuille.defauts.texteLong' => ({required Object max}) => 'Le texte dépasse ${max} caractères. Raccourcissez-le ou partagez un lien.',
@@ -34757,8 +35392,6 @@ extension on Traductions {
 			'enseignant.signalement.categories.autre' => 'Autre',
 			'enseignant.signalement.details' => 'Détails internes',
 			'enseignant.signalement.detailsAide' => 'Lu par l\'équipe de l\'académie seulement.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.signalement.resume' => 'Résumé partageable',
 			'enseignant.signalement.resumeAide' => 'Peut être partagé avec la famille par l\'académie.',
 			'enseignant.signalement.notice' => 'Les détails internes ne sont pas envoyés automatiquement à la famille.',
@@ -35229,6 +35862,8 @@ extension on Traductions {
 			'enseignant.revenus.intro' => 'Une estimation de votre rémunération du mois choisi, Classe par Classe.',
 			'enseignant.revenus.introSansChoix' => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.',
 			'enseignant.revenus.estimation' => 'Estimation',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.periode' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
 			'enseignant.revenus.totalEstime' => 'Revenu estimé du mois',
 			'enseignant.revenus.totalDetail' => 'Rémunération pédagogique, hors aide Internet.',
@@ -35271,8 +35906,6 @@ extension on Traductions {
 			'enseignant.revenus.releveIndisponiblePhrase' => 'Les mois arrêtés par l\'académie s\'afficheront ici dès que le relevé sera en service. D\'ici là, seule l\'estimation du mois en cours est montrée.',
 			'enseignant.revenus.releveVide' => 'Aucun mois arrêté pour l\'instant',
 			'enseignant.revenus.releveVideDetail' => 'Chaque mois apparaîtra ici une fois arrêté par l\'académie.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.mention' => 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l\'académie fait foi.',
 			'enseignant.revenus.vide' => 'Aucune heure assurée ce mois-ci',
 			'enseignant.revenus.videDetail' => 'L\'estimation apparaîtra après votre première séance assurée du mois.',
@@ -35591,6 +36224,8 @@ extension on Traductions {
 			'tc.bibliotheque.detail.sansVersion' => 'Aucune version publiée : rien à ouvrir pour le moment.',
 			'tc.bibliotheque.detail.apercuIndisponible' => 'L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.',
 			'tc.bibliotheque.detail.renduCoran' => 'Le Coran s’ouvre dans le lecteur dédié.',
+			'tc.bibliotheque.detail.entreeDetail' => 'Toutes vos ressources de révision, au même endroit.',
+			'tc.bibliotheque.detail.entreeLigne' => 'Ouvrir la bibliothèque',
 			'tc.bibliotheque.action.telecharger' => 'Rendre disponible hors ligne',
 			'tc.bibliotheque.action.liberer' => 'Libérer la place',
 			'tc.bibliotheque.action.enregistrerCopie' => 'Enregistrer une copie',
@@ -35604,6 +36239,12 @@ extension on Traductions {
 			'tc.bibliotheque.rendu.imageInaccessible' => 'L\'image n\'a pas pu être chargée pour le moment.',
 			'tc.bibliotheque.rendu.imageIllisible' => 'Ce fichier image ne peut pas être affiché.',
 			'tc.bibliotheque.rendu.reessayer' => 'Réessayer',
+			'tc.bibliotheque.rendu.ouvrir' => 'Ouvrir',
+			'tc.bibliotheque.rendu.ouvrirMushaf' => 'Ouvrir le mushaf',
+			'tc.bibliotheque.rendu.lienEchec' => 'Le lien de lecture n\'a pas pu être obtenu pour le moment.',
+			'tc.bibliotheque.rendu.lienIndisponible' => 'L\'ouverture n\'est pas disponible pour ce support.',
+			'tc.bibliotheque.rendu.lienHorsLigne' => 'L\'ouverture pourra se faire quand la connexion reviendra.',
+			'tc.bibliotheque.rendu.lienBloque' => 'Votre navigateur a bloqué l\'ouverture. Autorisez les fenêtres de ce site, puis réessayez.',
 			'tc.bibliotheque.actif.indisponibleTitre' => 'Support présenté pas encore ouvert',
 			'tc.bibliotheque.actif.indisponible' => 'Le suivi du support présenté s\'ouvrira au branchement serveur.',
 			'tc.bibliotheque.actif.sansDonnees' => 'le support présenté',
@@ -35735,6 +36376,8 @@ extension on Traductions {
 			'tc.classe.recitation.actif' => ({required Object prenom}) => '${prenom} récite',
 			'tc.classe.recitation.pastille' => 'Récite',
 			'tc.classe.recitation.suivants' => 'Ensuite',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.recitation.personne' => 'Personne ne récite',
 			'tc.classe.recitation.arreter' => 'Arrêter la récitation',
 			'tc.classe.support.aucun' => 'Aucun support présenté',
@@ -35785,8 +36428,6 @@ extension on Traductions {
 			'tc.observation.entree.modeDiscret' => 'Observer discrètement',
 			'tc.observation.entree.modeDiscretDetail' => 'Invisible pour les participants. Sans micro ni caméra, sans annonce.',
 			'tc.observation.entree.modeVisible' => 'Rejoindre la classe',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.entree.modeVisibleDetail' => 'Visible par tous sous le nom Administration Rewayah. Micro et caméra permis, annonce faite.',
 			'tc.observation.entree.nomInstitutionnel' => 'Administration Rewayah',
 			'tc.observation.entree.visiteJournalisee' => 'Visite journalisée : identité, séance, entrée, sortie et durée.',
@@ -36249,6 +36890,8 @@ extension on Traductions {
 			'adulte.sortie.quitterConsequence' => 'Votre compte, vos cours, votre historique et votre solde restent disponibles. Le rattachement au forfait famille prendra fin.',
 			'adulte.sortie.forfaitPhrase' => ({required Object dePrenom}) => 'Vous faites partie du forfait famille ${dePrenom}.',
 			'adulte.sortie.resultatTitre' => 'Le rattachement au forfait famille a pris fin',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.sortie.resultatTitulaire' => 'Son compte, ses cours, son historique et son solde restent disponibles.',
 			'adulte.sortie.resultatSecondAdulte' => 'Votre compte, vos cours, votre historique et votre solde restent disponibles.',
 			'adulte.sortie.compris' => 'Compris',
@@ -36299,8 +36942,6 @@ extension on Traductions {
 			'adulte.reprise.phrases.examenLe' => ({required Object date}) => 'Sans réponse du titulaire, l\'administration pourra l\'examiner à partir du ${date}.',
 			'adulte.reprise.phrases.refuseeParTitulaire' => 'Le titulaire du foyer a refusé cette demande. L\'administration en est informée. Aucune permission du foyer n\'est transférée.',
 			'adulte.reprise.phrases.attenteAdministration' => 'Le titulaire n\'a pas répondu. Rien n\'est transféré automatiquement : l\'administration doit encore examiner la demande.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.phrases.validee' => 'L\'administration a validé la demande. Vous êtes désormais titulaire du foyer.',
 			'adulte.reprise.phrases.refusee' => 'L\'administration a refusé la demande. Aucune permission du foyer n\'est transférée.',
 			'adulte.reprise.phrases.redepotLe' => ({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}.',
@@ -36763,6 +37404,8 @@ extension on Traductions {
 			'com.socle.lexique.enregistrer' => 'Enregistrer',
 			'com.socle.lexique.signaler' => 'Signaler',
 			'com.socle.lexique.modeFocus' => 'Mode focus',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.lexique.quitterFocus' => 'Quitter le focus',
 			'com.socle.lexique.aTraiter' => 'À traiter',
 			'com.socle.lexique.actionRequise' => 'Action requise',
@@ -36813,8 +37456,6 @@ extension on Traductions {
 			'com.socle.navigation.provisoire.publierAnnonceDetail' => 'La publication d\'une annonce pour une Classe arrivera bientôt ici.',
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
 			'com.messages.entree.titreClasse' => 'Échanger sur cette Classe',
 			'com.messages.entree.titreDossier' => 'Échanger sur ce dossier',
@@ -37277,6 +37918,8 @@ extension on Traductions {
 			'com.studio.demo.choisir' => 'Choisissez une situation à essayer.',
 			'com.studio.demo.normale' => 'Le Studio et ses canaux',
 			'com.studio.demo.echec' => 'Envoi non confirmé',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.horsLigne' => 'Hors ligne',
 			'com.studio.demo.canalPrive' => 'Adresse d\'un canal privé qui ne vous est pas ouvert',
 			'com.studio.demo.sansCanaux' => 'Aucun canal ouvert',
@@ -37327,8 +37970,6 @@ extension on Traductions {
 			'com.studio.demo.f.lienRemplacements' => 'Remplacements de la semaine',
 			'com.studio.demo.f.lienCharte' => 'Charte de l\'équipe',
 			'com.studio.demo.f.brouillon' => 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.activitePaiement' => 'Paiement de septembre non confirmé pour la famille Haddad',
 			'com.studio.demo.f.objetEcheancier' => 'Échéancier de la famille Haddad',
 			'com.studio.demo.f.activiteDossierKarim' => 'Dossier de la famille Karim prêt pour une décision',
@@ -37548,12 +38189,46 @@ extension on Traductions {
 			'comptable.nav.paiements' => 'Paiements',
 			'comptable.nav.tresorerie' => 'Trésorerie',
 			'comptable.nav.compte' => 'Compte',
+			'comptable.graphiques.masque' => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.',
+			'comptable.graphiques.voirValeurs' => 'Voir les valeurs',
+			'comptable.graphiques.masquerValeurs' => 'Masquer les valeurs',
+			'comptable.graphiques.repartitionTitre' => 'Répartition par coffre',
+			'comptable.graphiques.repartitionResume' => ({required Object n}) => 'Répartition entre ${n} coffres.',
+			'comptable.graphiques.mensuelTitre' => 'Entrées et sorties sur 6 mois',
+			'comptable.graphiques.mensuelResume' => ({required Object debut, required Object fin}) => 'Entrées et sorties de ${debut} à ${fin}.',
+			'comptable.graphiques.fluxTitre' => 'Flux de trésorerie sur 30 jours',
+			'comptable.graphiques.fluxResume' => ({required Object debut, required Object fin}) => 'Encaissements et décaissements du ${debut} au ${fin}.',
+			'comptable.graphiques.evolutionTitre' => 'Évolution sur 6 mois',
+			'comptable.graphiques.evolutionResume' => ({required Object debut, required Object fin}) => 'Trésorerie détenue de ${debut} à ${fin}.',
+			'comptable.graphiques.legendeEntrees' => 'Entrées',
+			'comptable.graphiques.legendeSorties' => 'Sorties',
+			'comptable.graphiques.legendeEncaissements' => 'Encaissements',
+			'comptable.graphiques.legendeDecaissements' => 'Décaissements',
+			'comptable.graphiques.legendeDetenue' => 'Trésorerie détenue',
+			'comptable.graphiques.kpiTitre' => 'Entrées et sorties',
+			'comptable.graphiques.kpiEntrees' => 'Entrées',
+			'comptable.graphiques.kpiSorties' => 'Sorties',
+			'comptable.graphiques.kpiPeriode' => '30 derniers jours',
+			'comptable.graphiques.variation' => ({required Object pourcent}) => '${pourcent} % par rapport à la période précédente',
+			'comptable.graphiques.rapportsTitre' => 'Rapports',
+			'comptable.graphiques.rapportsSousTitre' => 'Les entrées, les sorties et la trésorerie dans la durée.',
+			'comptable.graphiques.vide' => 'Aucune donnée à dessiner',
+			'comptable.graphiques.videDetail' => 'Les graphiques apparaîtront ici dès que des encaissements ou des paiements auront été enregistrés.',
+			'comptable.graphiques.erreur' => 'Les graphiques n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'comptable.graphiques.sansDonnees' => 'Les graphiques n\'ont pas pu être chargés',
+			'comptable.graphiques.exporterRapport' => 'Exporter le rapport',
+			'comptable.graphiques.exporterSelection' => 'Exporter la sélection',
+			'comptable.graphiques.exportIndisponible' => 'Les exports ne sont pas encore disponibles : ils s\'ouvriront dès le branchement serveur.',
+			'comptable.graphiques.exportEnCours' => 'Export en préparation',
+			'comptable.graphiques.exportPret' => ({required Object reference, required Object lignes}) => 'Export prêt : ${reference} (${lignes} lignes).',
+			'comptable.graphiques.exportEchec' => 'L\'export n\'a pas pu être préparé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.onglets.aEffectuer' => 'À effectuer',
 			'comptable.onglets.contractuels' => 'Contractuels',
 			'comptable.onglets.beneficiaires' => 'Bénéficiaires',
 			'comptable.onglets.coffres' => 'Coffres',
 			'comptable.onglets.encaissements' => 'Encaissements',
 			'comptable.onglets.rapprochement' => 'Rapprochement',
+			'comptable.onglets.rapports' => 'Rapports',
 			'comptable.commun.montantMasque' => 'Montant masqué',
 			'comptable.commun.afficherMontants' => 'Afficher les montants',
 			'comptable.commun.masquerMontants' => 'Masquer les montants',
@@ -37671,6 +38346,12 @@ extension on Traductions {
 			'comptable.statuts.raison.doublonPotentiel' => 'Doublon potentiel',
 			'comptable.statuts.raison.nonApprouvee' => 'Obligation non approuvée',
 			'comptable.statuts.raison.capaciteAbsente' => 'Capacité absente',
+			'comptable.statuts.raison.delegationsSuspendues' => 'Délégations suspendues par la direction',
+			'comptable.statuts.raison.delegationExpiree' => 'Délégation expirée',
+			'comptable.statuts.raison.sortieEnAttenteDelai' => 'Sortie en attente du délai de sécurité',
+			'comptable.statuts.raison.coffreNonAutorise' => 'Coffre hors de la délégation',
+			'comptable.statuts.raison.beneficiaireExclu' => 'Bénéficiaire exclu de la délégation',
+			'comptable.statuts.raison.plafondExceptionDepasse' => 'Au-dessus du plafond de cette délégation',
 			'comptable.alertes.enseignantsAPayer' => 'Enseignants à payer',
 			'comptable.alertes.contractuelsAEcheance' => 'Contractuels à échéance',
 			'comptable.alertes.infosManquantes' => 'Infos paiement manquantes',
@@ -37703,6 +38384,7 @@ extension on Traductions {
 			'comptable.aujourdhui.accesEncaissements' => 'Voir les encaissements',
 			'comptable.aujourdhui.accesTresorerie' => 'Voir la trésorerie et les coffres',
 			'comptable.aujourdhui.accesAlimenter' => 'Alimenter la Réserve stratégique',
+			'comptable.aujourdhui.accesRapports' => 'Voir les rapports',
 			'comptable.aujourdhui.titre' => 'Aujourd\'hui',
 			'comptable.aujourdhui.sousTitre' => 'Que dois-je faire maintenant ?',
 			'comptable.aujourdhui.attention' => 'À traiter et alertes',
@@ -37750,6 +38432,8 @@ extension on Traductions {
 			'comptable.paiements.confirmation.aucunPretTitre' => 'Aucun paiement prêt',
 			'comptable.paiements.confirmation.aucunPret' => 'Rien ne partira. Ouvrez chaque paiement exclu pour lever sa raison, puis relancez le contrôle.',
 			'comptable.paiements.confirmation.erreursTitre' => 'Erreurs rendues par le contrôle',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.confirmerUn' => ({required Object montant}) => 'Confirmer le paiement de ${montant}',
 			'comptable.paiements.confirmation.confirmerLot' => ({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Confirmer le paiement prêt de ${montants}', other: 'Confirmer les ${n} paiements prêts : ${montants}', ), 
 			'comptable.paiements.confirmation.demanderValidation' => 'Demander validation',
@@ -37841,8 +38525,6 @@ extension on Traductions {
 			'comptable.paiements.detail.alerteEchec' => 'Le dernier envoi a échoué chez le prestataire. Vérifiez la méthode de paiement avant une nouvelle tentative.',
 			'comptable.paiements.detail.alerteInfos' => 'Le bénéficiaire n\'a pas encore de méthode de paiement complète. Relancez-le depuis son profil de paiement.',
 			'comptable.paiements.detail.alerteTitre' => 'À savoir avant de payer',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.detail.autoPaiementPhrase' => 'Ce paiement vous concerne : une autre personne habilitée le traitera. Personne ne peut exécuter son propre paiement.',
 			'comptable.paiements.detail.introuvableTitre' => 'Ce paiement est introuvable.',
 			'comptable.paiements.detail.introuvablePhrase' => 'Revenez à la liste des paiements à effectuer pour choisir un autre paiement.',
@@ -37945,6 +38627,8 @@ extension on Traductions {
 			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
 			'comptable.tresorerie.sousTitre' => 'La Trésorerie libre est le seul chiffre dépensable.',
 			'comptable.tresorerie.alimenter' => 'Alimenter la Réserve stratégique',
+			'comptable.tresorerie.erreurPartielle' => 'Une partie de la page n\'a pas pu être lue : le reste est à jour. Réessayez pour compléter.',
+			'comptable.tresorerie.erreurPartielleAction' => 'Réessayer',
 			'comptable.encaissements.filtreTous' => 'Tous',
 			'comptable.encaissements.filtreConfirmes' => 'Confirmés',
 			'comptable.encaissements.filtreEnAttente' => 'En attente',
@@ -38099,6 +38783,8 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.motifDemande' => 'Demande du bénéficiaire',
 			'comptable.beneficiaires.profil.motifDemandeDetail' => 'Le bénéficiaire a demandé à ne plus recevoir de versement pour l\'instant.',
 			'comptable.beneficiaires.profil.motifRequis' => 'Choisissez un motif pour continuer.',
+			'comptable.beneficiaires.profil.voirFil' => ({required Object nom}) => 'Voir le fil de ${nom}',
+			'comptable.beneficiaires.profil.voirFilRefuse' => ({required Object nom}) => 'Le fil de ${nom} n\'a pas pu s\'ouvrir : il n\'existe pas encore ou la lecture n\'a pas abouti. Réessayez dans un instant.',
 			'comptable.beneficiaires.titre' => 'Bénéficiaires',
 			'comptable.beneficiaires.sousTitre' => 'Coordonnées masquées : seul le bénéficiaire modifie les siennes.',
 			'comptable.beneficiaires.profilTitre' => 'Profil de paiement',
@@ -38246,6 +38932,8 @@ extension on Traductions {
 			'comptable.validation.detail.etat' => 'État',
 			'comptable.validation.detail.historique' => 'Historique',
 			'comptable.validation.detail.historiqueVide' => 'Aucune entrée pour l\'instant.',
+			'comptable.validation.detail.historiqueErreur' => 'L\'historique n\'a pas pu être lu : ce n\'est pas qu\'il est vide. Réessayez dans un instant.',
+			'comptable.validation.detail.historiqueReessayer' => 'Relire l\'historique',
 			'comptable.validation.valider' => 'Valider',
 			'comptable.validation.refuser' => 'Refuser',
 			'comptable.validation.annuler' => 'Annuler',
@@ -38258,6 +38946,8 @@ extension on Traductions {
 			'comptable.validation.motifs.justificatif' => 'Justificatif manquant ou illisible',
 			'comptable.validation.motifs.reserve' => 'Hors de la politique de la Réserve',
 			'comptable.validation.motifs.reporter' => 'À reporter au prochain cycle',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.motifs.autre' => 'Autre',
 			'comptable.validation.motifAutreChamp' => 'Précisez le motif',
 			'comptable.validation.erreurMotif' => 'Choisissez un motif pour refuser.',
@@ -38355,8 +39045,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.plafondIndice' => 'Aucun plafond',
 			'comptable.direction.delegationPanneau.validationsTitre' => 'Quand une seconde validation est exigée',
 			'comptable.direction.delegationPanneau.retraitReserve' => 'Retrait de la Réserve stratégique',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.retraitReserveDetail' => 'Interdit au Comptable sans validation.',
 			'comptable.direction.delegationPanneau.premierPaiement' => 'Premier paiement d\'un bénéficiaire',
 			'comptable.direction.delegationPanneau.premierPaiementDetail' => 'Le premier paiement vers un bénéficiaire demande une seconde validation.',
@@ -38372,6 +39060,90 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.montantManuelDetail' => 'Le montant d\'un paiement est toujours celui de l\'obligation.',
 			'comptable.direction.delegationPanneau.politiqueTarifaire' => 'Modifier les tarifs',
 			'comptable.direction.delegationPanneau.politiqueTarifaireDetail' => 'La politique tarifaire reste à la direction.',
+			'comptable.direction.delegationPanneau.suspendreTitre' => 'Suspendre toutes les délégations',
+			'comptable.direction.delegationPanneau.suspendreDetail' => 'Le Comptable ne peut plus rien exécuter seul, tout de suite : chaque opération repasse par la direction.',
+			'comptable.direction.delegationPanneau.suspendreAction' => 'Suspendre toutes les délégations',
+			'comptable.direction.delegationPanneau.suspendreConfirmerTitre' => 'Suspendre toutes les délégations ?',
+			'comptable.direction.delegationPanneau.suspendreConfirmerPhrase' => 'L\'effet est immédiat : aucune opération du Comptable ne partira sans votre validation. La suspension est inscrite au journal.',
+			'comptable.direction.delegationPanneau.suspendreConfirmer' => 'Suspendre',
+			'comptable.direction.delegationPanneau.suspendreGarder' => 'Garder les délégations',
+			'comptable.direction.delegationPanneau.reactiverTitre' => 'Réactiver les délégations',
+			'comptable.direction.delegationPanneau.reactiverDetail' => 'Les délégations sont suspendues. Les lever est un acte de la direction, avec une raison écrite.',
+			'comptable.direction.delegationPanneau.reactiverAction' => 'Réactiver les délégations',
+			'comptable.direction.delegationPanneau.reactiverPhrase' => 'Le Comptable pourra de nouveau agir dans les limites de la politique. Une délégation expirée n\'est jamais rétablie : il faudra la renouveler. Les sorties annulées restent annulées. La réactivation est inscrite au journal.',
+			'comptable.direction.delegationPanneau.reactiverRaison' => 'Raison de la réactivation',
+			'comptable.direction.delegationPanneau.reactiverRaisonAide' => 'Elle est conservée au journal avec votre nom.',
+			'comptable.direction.delegationPanneau.reactiverRaisonVide' => 'Écrivez la raison pour réactiver les délégations.',
+			'comptable.direction.delegationPanneau.reactiverConfirmer' => 'Réactiver',
+			'comptable.direction.delegationPanneau.reactiverGarder' => 'Garder suspendues',
+			'comptable.direction.delegationPanneau.reactiveeActive' => 'Délégations réactivées.',
+			'comptable.direction.delegationPanneau.reactiveeExpiree' => 'Délégations réactivées, mais la délégation est expirée : renouvelez-la pour qu\'elle reparte sur sa durée.',
+			'comptable.direction.delegationPanneau.reactiverEchec' => 'La réactivation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah, ou votre vérification en deux étapes est à refaire. Vérifiez l\'état de la délégation avant de réessayer.',
+			'comptable.direction.delegationPanneau.suspendueTitre' => 'Délégations suspendues',
+			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'Suspendues depuis le ${date}. Le Comptable ne peut rien exécuter sans votre validation.',
+			'comptable.direction.delegationPanneau.suspendueSansDate' => 'Le Comptable ne peut rien exécuter sans votre validation.',
+			'comptable.direction.delegationPanneau.suspendueEnCours' => 'Suspension en cours',
+			'comptable.direction.delegationPanneau.suspendueEchec' => 'La suspension n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez l\'état de la délégation avant de réessayer.',
+			'comptable.direction.delegationPanneau.expirationTitre' => 'Expiration',
+			'comptable.direction.delegationPanneau.expirationDetail' => 'Chaque délégation expire et se renouvelle. Passé la date, le Comptable ne peut plus rien exécuter seul.',
+			'comptable.direction.delegationPanneau.expireLe' => ({required Object date}) => 'Expire le ${date}',
+			'comptable.direction.delegationPanneau.expirationInconnue' => 'Date d\'expiration non communiquée',
+			'comptable.direction.delegationPanneau.etatActive' => 'Active',
+			'comptable.direction.delegationPanneau.etatSuspendue' => 'Suspendue',
+			'comptable.direction.delegationPanneau.etatExpiree' => 'Expirée',
+			'comptable.direction.delegationPanneau.renouvelablePour' => ({required Object jours}) => 'Renouvelable pour ${jours} jours',
+			'comptable.direction.delegationPanneau.renouveler' => 'Renouveler la délégation',
+			'comptable.direction.delegationPanneau.renouvelee' => 'Délégation renouvelée.',
+			'comptable.direction.delegationPanneau.renouvelerEchec' => 'Le renouvellement n\'est pas confirmé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez la date d\'expiration avant de réessayer.',
+			'comptable.direction.delegationPanneau.sortiesTitre' => 'Sorties en attente',
+			'comptable.direction.delegationPanneau.sortiesDetail' => 'Une sortie au-dessus du plafond par transaction attend un délai de sécurité avant de partir. Vous pouvez l\'annuler d\'ici là.',
+			'comptable.direction.delegationPanneau.sortiesDelai' => ({required Object heures}) => 'Délai de sécurité : ${heures} h',
+			'comptable.direction.delegationPanneau.sortiesVide' => 'Aucune sortie en attente.',
+			'comptable.direction.delegationPanneau.sortiesErreur' => 'Les sorties en attente n\'ont pas pu être lues : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'comptable.direction.delegationPanneau.sortiePart' => ({required Object objet, required Object date}) => '${objet} · part le ${date}',
+			'comptable.direction.delegationPanneau.sortieAnnuler' => 'Annuler',
+			'comptable.direction.delegationPanneau.sortieAnnulerNom' => ({required Object beneficiaire}) => 'Annuler la sortie de ${beneficiaire}',
+			'comptable.direction.delegationPanneau.sortieAnnulerTitre' => 'Annuler cette sortie ?',
+			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => 'La sortie de ${beneficiaire} ne partira pas. L\'annulation est inscrite au journal.',
+			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'Annuler la sortie',
+			'comptable.direction.delegationPanneau.sortieGarder' => 'Garder la sortie',
+			'comptable.direction.delegationPanneau.sortieAnnulee' => 'Sortie annulée.',
+			'comptable.direction.delegationPanneau.sortieAnnulationEchec' => 'L\'annulation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Relisez la liste avant de réessayer.',
+			'comptable.direction.delegationPanneau.exceptionsTitre' => 'Exceptions',
+			'comptable.direction.delegationPanneau.exceptionsDetail' => 'Réglages propres à une délégation. Un plafond d\'exception est toujours plus bas que celui de la politique générale, jamais plus haut.',
+			'comptable.direction.delegationPanneau.exceptionsVide' => 'Aucune exception : la politique générale s\'applique à toutes les délégations.',
+			'comptable.direction.delegationPanneau.exceptionAjouter' => 'Ajouter une exception',
+			'comptable.direction.delegationPanneau.exceptionModifier' => ({required Object libelle}) => 'Modifier l\'exception de ${libelle}',
+			'comptable.direction.delegationPanneau.exceptionLibelleDefaut' => 'Délégation du Comptable',
+			'comptable.direction.delegationPanneau.exceptionCoffres' => 'Coffres autorisés',
+			'comptable.direction.delegationPanneau.exceptionCoffresAucun' => 'Aucun coffre autorisé',
+			'comptable.direction.delegationPanneau.exceptionExclus' => 'Bénéficiaires exclus',
+			'comptable.direction.delegationPanneau.exceptionExclusAucun' => 'Aucun bénéficiaire exclu',
+			'comptable.direction.delegationPanneau.exceptionPlafond' => 'Plafond par transaction',
+			'comptable.direction.delegationPanneau.exceptionPlafondGeneral' => 'Celui de la politique générale',
+			'comptable.direction.delegationPanneau.exceptionTitre' => 'Exception de la délégation',
+			'comptable.direction.delegationPanneau.exceptionCoffresDetail' => 'Seuls ces coffres peuvent être touchés par la délégation. Aucun coffre coché : aucun coffre autorisé.',
+			'comptable.direction.delegationPanneau.exceptionPlafondDetail' => 'Plus bas que le plafond de la politique générale, jamais plus haut. Vide : celui de la politique générale.',
+			'comptable.direction.delegationPanneau.exceptionPlafondTropHaut' => 'Ce plafond doit être plus bas que celui de la politique générale.',
+			'comptable.direction.delegationPanneau.exceptionPlafondSansGeneral' => 'Fixez d\'abord un plafond par transaction dans la politique générale : une exception ne peut qu\'être plus basse.',
+			'comptable.direction.delegationPanneau.exceptionExclure' => 'Exclure un bénéficiaire',
+			'comptable.direction.delegationPanneau.exceptionExclureAucun' => 'Aucun autre bénéficiaire à exclure.',
+			'comptable.direction.delegationPanneau.exceptionRetirerExclu' => ({required Object nom}) => 'Retirer ${nom} des exclus',
+			'comptable.direction.delegationPanneau.exceptionGarder' => 'Garder l\'exception',
+			'comptable.direction.delegationPanneau.exceptionRetirer' => 'Retirer cette exception',
+			'comptable.direction.delegationPanneau.exceptionRetirerPhrase' => 'La délégation retrouve la politique générale. Rien n\'est enregistré avant « Enregistrer ».',
+			'comptable.direction.delegationPanneau.sensiblesTitre' => 'Toujours sensible',
+			'comptable.direction.delegationPanneau.sensiblesDetail' => 'Ces cinq cas demandent toujours une validation supplémentaire, quels que soient les réglages ci-dessus. Le premier paiement et les coordonnées récentes se règlent plus haut.',
+			'comptable.direction.delegationPanneau.sensibleHorsSeuil' => 'Montant hors seuil',
+			'comptable.direction.delegationPanneau.sensibleHorsSeuilDetail' => 'Un paiement au-dessus des plafonds fixés plus haut.',
+			'comptable.direction.delegationPanneau.sensibleHorsCycle' => 'Paiement hors cycle',
+			'comptable.direction.delegationPanneau.sensibleHorsCycleDetail' => 'Un paiement qui ne suit pas la période de paie habituelle.',
+			'comptable.direction.delegationPanneau.sensibleLieOperateur' => 'Bénéficiaire lié à l\'opérateur',
+			'comptable.direction.delegationPanneau.sensibleLieOperateurDetail' => 'Un paiement vers une personne liée à l\'opérateur de paiement.',
+			'comptable.direction.delegationPanneau.sensibleFournisseur' => 'Fournisseur indisponible',
+			'comptable.direction.delegationPanneau.sensibleFournisseurDetail' => 'Un paiement dont le fournisseur de paiement est indisponible.',
+			'comptable.direction.delegationPanneau.sensibleManuelle' => 'Obligation manuelle non approuvée',
+			'comptable.direction.delegationPanneau.sensibleManuelleDetail' => 'Une obligation saisie à la main et pas encore approuvée.',
 			'comptable.direction.titre' => 'Réserve et délégation',
 			'comptable.direction.sousTitre' => 'La politique de la Réserve stratégique et ce que le Comptable peut exécuter seul.',
 			'comptable.direction.reserve' => 'Politique de la Réserve stratégique',
@@ -38488,6 +39260,12 @@ extension on Traductions {
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'Mission de contrôle · ${enseignant}',
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'Élève de la classe ${classe}',
 			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'Enseignant de la classe ${classe}',
+			'recherche.contexte.personneFoyer' => 'Profil de votre foyer',
+			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'Profil de votre foyer · ${classe}',
+			'recherche.contexte.personneParIdentifiant' => 'Trouvé par son identifiant',
+			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'Trouvé par son identifiant · ${classe}',
+			'recherche.contexte.canalStudio' => 'Canal du Studio',
+			'recherche.contexte.encaissement' => ({required Object famille}) => 'Encaissement · ${famille}',
 			_ => null,
 		};
 	}

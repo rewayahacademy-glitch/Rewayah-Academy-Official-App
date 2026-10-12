@@ -56,3 +56,11 @@ final FutureProvider<List<EntreeJournal>> journalDelegationProvider =
       retry: _sansRetentative,
       dependencies: <ProviderOrFamily>[portDelegationFinanceProvider],
     );
+
+/// DELEG-FIN-1 : les sorties retenues par le delai de securite (CPT-BR-13).
+final FutureProvider<List<SortieEnAttente>> sortiesEnAttenteProvider =
+    FutureProvider<List<SortieEnAttente>>(
+      (Ref ref) => ref.watch(portControleDelegationProvider).sortiesEnAttente(),
+      retry: _sansRetentative,
+      dependencies: <ProviderOrFamily>[portControleDelegationProvider],
+    );

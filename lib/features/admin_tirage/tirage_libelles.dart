@@ -53,5 +53,27 @@ String libelleTypeCible(TypeCible type) => switch (type) {
   TypeCible.enseignant => t.admin.tirage.cibleEnseignant,
 };
 
-/// Les frequences proposees : une, deux ou trois missions par semaine.
-const List<int> frequencesProposees = <int>[1, 2, 3];
+/// Les frequences proposees ; la carte « Autre » prend tout entier de
+/// [missionsMin] a [missionsMax].
+const List<int> frequencesProposees = <int>[0, 1, 2, 3, 5, 10];
+
+/// Le nombre saisi, ou `null` s'il n'est pas un entier de [missionsMin] a
+/// [missionsMax] (courtoisie : le serveur decide).
+///
+/// Les chiffres arabo-indiens (U+0660 a U+0669) et persans (U+06F0 a
+/// U+06F9) sont ramenes en ASCII avant la lecture : « ٣٧ » vaut 37.
+int? lireMissions(String? texte) {
+  final String s = _enAscii((texte ?? '').trim());
+  if (!RegExp(r'^\d{1,3}$').hasMatch(s)) return null;
+  final int n = int.parse(s);
+  return n < missionsMin || n > missionsMax ? null : n;
+}
+
+/// Ramene les chiffres arabo-indiens et persans en chiffres ASCII.
+String _enAscii(String texte) => String.fromCharCodes(
+  texte.runes.map((int c) {
+    if (c >= 0x0660 && c <= 0x0669) return 0x30 + (c - 0x0660);
+    if (c >= 0x06F0 && c <= 0x06F9) return 0x30 + (c - 0x06F0);
+    return c;
+  }),
+);

@@ -47,10 +47,23 @@ String? cheminPourCible(CibleRecherche cible, EspaceRecherche espace) {
       return espace == EspaceRecherche.enseignant
           ? Routes.enseignantRemplacements
           : null;
+    case KindCible.operation:
+      return espace == EspaceRecherche.comptable
+          ? Routes.comptableEncaissementPour(cible.reference)
+          : null;
+    case KindCible.fil:
+      return switch (espace) {
+        EspaceRecherche.famille => Routes.tuteurFilPour(cible.reference),
+        EspaceRecherche.enseignant => Routes.enseignantFilPour(cible.reference),
+        EspaceRecherche.administration => Routes.adminFilPour(cible.reference),
+        _ => null,
+      };
+    case KindCible.canal:
+      return espace == EspaceRecherche.administration
+          ? Routes.canalStudioPour(cible.reference)
+          : null;
     case KindCible.enseignant:
     case KindCible.mission:
-    case KindCible.operation:
-    case KindCible.fil:
       return null;
   }
 }

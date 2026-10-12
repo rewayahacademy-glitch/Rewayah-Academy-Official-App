@@ -1131,7 +1131,6 @@ void main() {
     const Map<String, String> listeBlanche = <String, String>{
       // « Cours enregistre » : l'enregistrement AUDIO du cours (point de
       // contrat, arbitrage ouvert, 06), pas les notes.
-      'salle.bandeauPermanent': 'enregistrement audio du cours',
       'salle.seance.coursEnregistreCourt': 'enregistrement audio du cours',
       // ar « محفوظة في هذه الحصة فقط » : la conservation limitee a la
       // seance, dite honnetement (fr « conservees ... uniquement »).
@@ -1143,7 +1142,8 @@ void main() {
       'tc.parcours.postCours.enFile': 'file locale du post-cours',
       // Jonction avec la ligne arabe (ccr) : hors de la salle, l'arabe dit
       // « enregistre » par حفظ ; ce ne sont pas des notes ni le tableau.
-      'classe.cartes.enregistree': 'carte de classe enregistree (ar « حُفظ » traduit « enregistre »)',
+      'classe.cartes.enregistree':
+          'carte de classe enregistree (ar « حُفظ » traduit « enregistre »)',
       'enseignant.photo.succes': 'photo de profil enregistree',
       'enseignant.cahier.depose': 'cahier de transmission depose',
       'enseignant.profil.enregistre': 'profil enregistre',
@@ -1231,7 +1231,6 @@ void main() {
         'حفظ',
         'للحفظ',
         // Liste blanche : l'enregistrement audio du cours.
-        t.salle.bandeauPermanent,
         t.salle.seance.coursEnregistreCourt,
       ]) {
         expect(annonceUnSucces(passe, motifs: salle), isFalse, reason: passe);
