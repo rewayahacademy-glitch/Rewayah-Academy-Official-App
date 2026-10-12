@@ -48,18 +48,29 @@ CREATE TABLE public.tresorerie_a_reprendre (
   source_id text NOT NULL,
   raison text NOT NULL CHECK (raison IN (
     'taux_change_absent','regle_remuneration_absente','duree_indeterminee','politique_allocation_absente',
-    'montant_financier_invalide',
+    'montant_invalide',
     'debit_prestation_absent','devise_prestation_multiple','montant_prestation_insuffisant'
   )),
   decision_debut timestamptz,
   decision_fin timestamptz,
+  decision_montant_minor bigint,
+  decision_devise text,
+  abandon_motif text,
   decide_par uuid REFERENCES public.profiles(id),
   decide_le timestamptz,
   cree_le timestamptz NOT NULL DEFAULT now(),
   traite_le timestamptz,
   UNIQUE (source_type,source_id,raison),
-  CHECK ((decision_debut IS NULL AND decision_fin IS NULL AND decide_par IS NULL AND decide_le IS NULL)
-      OR (decision_debut IS NOT NULL AND decision_fin > decision_debut AND decide_par IS NOT NULL AND decide_le IS NOT NULL))
+  CHECK (
+    (decision_debut IS NOT NULL AND decision_fin > decision_debut AND decision_montant_minor IS NULL
+      AND decision_devise IS NULL AND abandon_motif IS NULL AND decide_par IS NOT NULL AND decide_le IS NOT NULL)
+    OR (decision_debut IS NULL AND decision_fin IS NULL AND decision_montant_minor > 0
+      AND decision_devise IS NOT NULL AND abandon_motif IS NULL AND decide_par IS NOT NULL AND decide_le IS NOT NULL)
+    OR (decision_debut IS NULL AND decision_fin IS NULL AND decision_montant_minor IS NULL
+      AND decision_devise IS NULL AND length(btrim(abandon_motif)) > 0 AND decide_par IS NOT NULL AND decide_le IS NOT NULL)
+    OR (decision_debut IS NULL AND decision_fin IS NULL AND decision_montant_minor IS NULL
+      AND decision_devise IS NULL AND abandon_motif IS NULL AND decide_par IS NULL AND decide_le IS NULL)
+  )
 );
 ALTER TABLE public.tresorerie_a_reprendre ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON public.tresorerie_a_reprendre FROM PUBLIC,anon,authenticated,agent_ro,service_role;
@@ -147,7 +158,10 @@ AS $function$
 DECLARE v_type text; v_sens text; v_coffre text; v_source_type text; v_ref bigint;
         v_amount bigint; v_currency text; v_occurred timestamptz; v_id text;
 BEGIN
-  IF OLD.confirme_par_prestataire_le IS NOT NULL OR NEW.confirme_par_prestataire_le IS NULL THEN RETURN NEW; END IF;
+  IF TG_OP='UPDATE' THEN
+    IF OLD.confirme_par_prestataire_le IS NOT NULL THEN RETURN NEW; END IF;
+  END IF;
+  IF NEW.confirme_par_prestataire_le IS NULL THEN RETURN NEW; END IF;
   IF NEW.reference_type='credit' THEN
     v_type:='encaissement'; v_sens:='entree'; v_coffre:='fonds_clients_engages';
   ELSIF NEW.reference_type='refund' THEN
@@ -167,7 +181,7 @@ BEGIN
   ELSE RETURN NEW;
   END IF;
   IF NEW.amount_minor<=0 THEN
-    PERFORM public.x217_mettre_en_file(v_type,NEW.id::text,'montant_financier_invalide');
+    PERFORM public.x217_mettre_en_file(v_type,NEW.id::text,'montant_invalide');
     RETURN NEW;
   END IF;
   v_ref:=public.x217_montant_ref(abs(NEW.amount_minor),NEW.currency,NEW.confirme_par_prestataire_le);
@@ -176,7 +190,7 @@ BEGIN
     RETURN NEW;
   END IF;
   IF v_ref<=0 THEN
-    PERFORM public.x217_mettre_en_file(v_type,NEW.id::text,'montant_financier_invalide');
+    PERFORM public.x217_mettre_en_file(v_type,NEW.id::text,'montant_invalide');
     RETURN NEW;
   END IF;
   INSERT INTO public.tresorerie_mouvements
@@ -189,7 +203,7 @@ BEGIN
 END;
 $function$;
 CREATE TRIGGER wallet_entries_tresorerie_confirmation
-  AFTER UPDATE OF confirme_par_prestataire_le ON public.wallet_entries
+  AFTER INSERT OR UPDATE OF confirme_par_prestataire_le ON public.wallet_entries
   FOR EACH ROW EXECUTE FUNCTION public.x217_alimenter_wallet_entry();
 
 CREATE FUNCTION public.x217_alimenter_payout()
@@ -199,19 +213,16 @@ DECLARE v_currency text; v_transfer uuid:=gen_random_uuid(); v_ref bigint;
         v_source text; v_at timestamptz:=clock_timestamp();
 BEGIN
   v_source:=NEW.id::text;
-  IF TG_OP='UPDATE' THEN
-    IF OLD.status IS NOT DISTINCT FROM NEW.status THEN RETURN NEW; END IF;
-  END IF;
   SELECT w.currency INTO v_currency FROM public.wallets w WHERE w.id=NEW.wallet_id;
   IF v_currency IS NULL OR NEW.amount_minor<=0 THEN
-    PERFORM public.x217_mettre_en_file('payout',v_source,'montant_financier_invalide'); RETURN NEW;
+    PERFORM public.x217_mettre_en_file('payout',v_source,'montant_invalide'); RETURN NEW;
   END IF;
   v_ref:=public.x217_montant_ref(NEW.amount_minor,v_currency,v_at);
   IF v_ref IS NULL THEN
     PERFORM public.x217_mettre_en_file('payout',v_source,'taux_change_absent'); RETURN NEW;
   END IF;
   IF v_ref<=0 THEN
-    PERFORM public.x217_mettre_en_file('payout',v_source,'montant_financier_invalide'); RETURN NEW;
+    PERFORM public.x217_mettre_en_file('payout',v_source,'montant_invalide'); RETURN NEW;
   END IF;
   IF NEW.status='requested' THEN
     INSERT INTO public.tresorerie_mouvements(coffre,sens,montant_minor,devise,montant_ref_minor,
@@ -275,30 +286,39 @@ DECLARE v_session public.sessions%ROWTYPE; v_rate public.regles_remuneration_ens
         v_due_ref bigint; v_taxes_ref bigint:=0; v_charges_ref bigint:=0;
         v_reserve_ref bigint:=0; v_libre_ref bigint:=0;
         v_transfer uuid := gen_random_uuid(); v_fx_at timestamptz;
-        v_decision_debut timestamptz; v_decision_fin timestamptz; v_zone text;
+        v_decision_debut timestamptz; v_decision_fin timestamptz;
+        v_decision_montant bigint; v_decision_devise text; v_zone text;
 BEGIN
   SELECT s.* INTO v_session FROM public.sessions s WHERE s.id=p_seance FOR UPDATE;
   IF NOT FOUND OR v_session.status NOT IN ('ended','tech_failure') THEN RETURN NULL; END IF;
-  SELECT q.decision_debut,q.decision_fin INTO v_decision_debut,v_decision_fin
+  SELECT q.decision_debut,q.decision_fin,q.decision_montant_minor,q.decision_devise
+    INTO v_decision_debut,v_decision_fin,v_decision_montant,v_decision_devise
     FROM public.tresorerie_a_reprendre q WHERE q.source_type='prestation'
       AND q.source_id=p_seance::text AND q.raison='duree_indeterminee' AND q.traite_le IS NULL
-      AND q.decision_debut IS NOT NULL ORDER BY q.id DESC LIMIT 1;
+      AND (q.decision_debut IS NOT NULL OR q.decision_montant_minor IS NOT NULL)
+    ORDER BY q.id DESC LIMIT 1;
   IF v_session.finance_started_at IS NULL THEN v_session.finance_started_at:=v_decision_debut; END IF;
   IF v_session.finance_ended_at IS NULL THEN v_session.finance_ended_at:=v_decision_fin; END IF;
-  IF (v_session.status='tech_failure' AND v_decision_debut IS NULL)
+  IF v_decision_debut IS NOT NULL THEN
+    v_session.finance_started_at:=v_decision_debut;
+    v_session.finance_ended_at:=v_decision_fin;
+  END IF;
+  IF v_decision_montant IS NULL AND ((v_session.status='tech_failure' AND v_decision_debut IS NULL)
      OR v_session.finance_started_at IS NULL OR v_session.finance_ended_at IS NULL
-     OR v_session.finance_ended_at<=v_session.finance_started_at THEN
+     OR v_session.finance_ended_at<=v_session.finance_started_at) THEN
     PERFORM public.x217_mettre_en_file('prestation',p_seance::text,'duree_indeterminee'); RETURN NULL;
   END IF;
-  v_seconds:=extract(epoch FROM (v_session.finance_ended_at-v_session.finance_started_at))::bigint;
+  IF v_decision_montant IS NULL THEN
+    v_seconds:=extract(epoch FROM (v_session.finance_ended_at-v_session.finance_started_at))::bigint;
+  END IF;
   SELECT coalesce(c.value #>> '{}','Europe/Paris') INTO v_zone
     FROM public.app_config c WHERE c.key='fuseau_comptable';
   v_zone:=coalesce(v_zone,'Europe/Paris');
   SELECT r.* INTO v_rate FROM public.regles_remuneration_enseignant r
-   WHERE r.date_effet <= (v_session.finance_started_at AT TIME ZONE v_zone)::date
+   WHERE (v_decision_montant IS NOT NULL OR r.date_effet <= (v_session.finance_started_at AT TIME ZONE v_zone)::date)
      AND (r.enseignant_id=v_session.teacher_id OR r.enseignant_id IS NULL)
    ORDER BY (r.enseignant_id IS NOT NULL) DESC,r.date_effet DESC,r.cree_le DESC LIMIT 1;
-  IF NOT FOUND THEN
+  IF NOT FOUND AND v_decision_montant IS NULL THEN
     PERFORM public.x217_mettre_en_file('prestation',p_seance::text,'regle_remuneration_absente'); RETURN NULL;
   END IF;
   SELECT count(DISTINCT w.currency),sum(abs(w.amount_minor)),min(w.currency)
@@ -308,13 +328,20 @@ BEGIN
   IF v_currency_count = 0 OR v_charge IS NULL THEN
     PERFORM public.x217_mettre_en_file('prestation',p_seance::text,'debit_prestation_absent'); RETURN NULL;
   END IF;
-  IF v_currency_count > 1 OR v_rate.devise<>v_currency THEN
+  IF v_currency_count > 1 OR (v_decision_montant IS NULL AND v_rate.devise<>v_currency) THEN
     PERFORM public.x217_mettre_en_file('prestation',p_seance::text,'devise_prestation_multiple'); RETURN NULL;
   END IF;
-  v_due:=round(v_rate.taux_minor_par_heure::numeric *
-    extract(epoch FROM (v_session.finance_ended_at-v_session.finance_started_at))/3600)::bigint;
+  IF v_decision_montant IS NOT NULL THEN
+    v_due:=v_decision_montant;
+    IF v_decision_devise<>v_currency THEN
+      PERFORM public.x217_mettre_en_file('prestation',p_seance::text,'montant_invalide'); RETURN NULL;
+    END IF;
+  ELSE
+    v_due:=round(v_rate.taux_minor_par_heure::numeric *
+      extract(epoch FROM (v_session.finance_ended_at-v_session.finance_started_at))/3600)::bigint;
+  END IF;
   IF v_due<=0 OR v_due>v_charge THEN
-    PERFORM public.x217_mettre_en_file('prestation',p_seance::text,'montant_prestation_insuffisant'); RETURN NULL;
+    PERFORM public.x217_mettre_en_file('prestation',p_seance::text,'montant_invalide'); RETURN NULL;
   END IF;
   v_fx_at:=v_session.finance_ended_at;
   v_ref:=public.x217_montant_ref(v_charge,v_currency,v_fx_at);
@@ -329,6 +356,7 @@ BEGIN
     v_reserve:=trunc(v_rem*v_policy.taux_reserve_permille/1000.0)::bigint;
   ELSIF v_rem>0 THEN
     PERFORM public.x217_mettre_en_file('prestation',p_seance::text,'politique_allocation_absente');
+    RETURN NULL;
   END IF;
   v_libre:=v_rem-v_taxes-v_charges-v_reserve;
   v_due_ref:=public.x217_montant_ref(v_due,v_currency,v_fx_at);
@@ -340,7 +368,7 @@ BEGIN
      OR (v_charges>0 AND coalesce(v_charges_ref,0)<=0)
      OR (v_reserve>0 AND coalesce(v_reserve_ref,0)<=0)
      OR (v_libre>0 AND coalesce(v_libre_ref,0)<=0) THEN
-    PERFORM public.x217_mettre_en_file('prestation',p_seance::text,'montant_financier_invalide');
+    PERFORM public.x217_mettre_en_file('prestation',p_seance::text,'montant_invalide');
     RETURN NULL;
   END IF;
   INSERT INTO public.tresorerie_mouvements(coffre,sens,montant_minor,devise,montant_ref_minor,devise_ref,
@@ -388,11 +416,49 @@ BEGIN
     RAISE EXCEPTION 'decision_tresorerie_refusee' USING ERRCODE='42501';
   END IF;
   UPDATE public.tresorerie_a_reprendre SET decision_debut=p_debut,decision_fin=p_fin,
+    decision_montant_minor=NULL,decision_devise=NULL,abandon_motif=NULL,
     decide_par=auth.uid(),decide_le=now()
-  WHERE id=p_id AND raison='duree_indeterminee' AND traite_le IS NULL;
+  WHERE id=p_id AND source_type='prestation' AND raison='duree_indeterminee' AND traite_le IS NULL;
   IF NOT FOUND THEN RAISE EXCEPTION 'decision_tresorerie_introuvable' USING ERRCODE='22023'; END IF;
   PERFORM public.log_sensitive_access('tresorerie_duree_decidee','tresorerie_a_reprendre',p_id::text,
     jsonb_build_object('debut',p_debut,'fin',p_fin));
+END;
+$function$;
+
+CREATE FUNCTION public.decider_tresorerie_montant(p_id bigint,p_montant_minor bigint,p_devise text)
+RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path = ''
+AS $function$
+BEGIN
+  IF NOT coalesce(public.app_account_valid() AND public.app_role()='admin'
+      AND auth.jwt()->>'aal'='aal2',false)
+     OR p_montant_minor<=0 OR p_devise IS NULL OR p_devise !~ '^[A-Z]{3}$' THEN
+    RAISE EXCEPTION 'decision_tresorerie_refusee' USING ERRCODE='42501';
+  END IF;
+  UPDATE public.tresorerie_a_reprendre SET decision_montant_minor=p_montant_minor,
+    decision_devise=p_devise,decision_debut=NULL,decision_fin=NULL,abandon_motif=NULL,
+    decide_par=auth.uid(),decide_le=now()
+  WHERE id=p_id AND source_type='prestation' AND raison='duree_indeterminee' AND traite_le IS NULL;
+  IF NOT FOUND THEN RAISE EXCEPTION 'decision_tresorerie_introuvable' USING ERRCODE='22023'; END IF;
+  PERFORM public.log_sensitive_access('tresorerie_montant_decide','tresorerie_a_reprendre',p_id::text,
+    jsonb_build_object('montant_minor',p_montant_minor,'devise',p_devise));
+END;
+$function$;
+
+CREATE FUNCTION public.abandonner_reprise_tresorerie(p_id bigint,p_motif text)
+RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path = ''
+AS $function$
+BEGIN
+  IF NOT coalesce(public.app_account_valid() AND public.app_role()='admin'
+      AND auth.jwt()->>'aal'='aal2',false) OR length(btrim(coalesce(p_motif,'')))<5 THEN
+    RAISE EXCEPTION 'decision_tresorerie_refusee' USING ERRCODE='42501';
+  END IF;
+  UPDATE public.tresorerie_a_reprendre SET abandon_motif=btrim(p_motif),
+    decision_debut=NULL,decision_fin=NULL,decision_montant_minor=NULL,decision_devise=NULL,
+    decide_par=auth.uid(),decide_le=now(),traite_le=now()
+  WHERE id=p_id AND traite_le IS NULL;
+  IF NOT FOUND THEN RAISE EXCEPTION 'decision_tresorerie_introuvable' USING ERRCODE='22023'; END IF;
+  PERFORM public.log_sensitive_access('tresorerie_reprise_abandonnee','tresorerie_a_reprendre',p_id::text,
+    jsonb_build_object('motif',btrim(p_motif)));
 END;
 $function$;
 
@@ -411,18 +477,28 @@ BEGIN
       SELECT * INTO v_entry FROM public.wallet_entries WHERE id=v_row.source_id::bigint;
       IF FOUND AND public.x217_montant_ref(abs(v_entry.amount_minor),v_entry.currency,v_entry.confirme_par_prestataire_le) IS NOT NULL THEN
         PERFORM public.x217_alimenter_wallet_entry_reprise(v_entry.id);
+        IF EXISTS (SELECT 1 FROM public.tresorerie_mouvements m WHERE m.source_type=v_row.source_type AND m.source_id=v_row.source_id) THEN
+        UPDATE public.tresorerie_a_reprendre SET traite_le=now() WHERE id=v_row.id;
+        v_processed:=v_processed+1;
+        END IF;
+      END IF;
+    ELSIF v_row.source_type='payout' AND v_row.raison IN ('taux_change_absent','montant_invalide') THEN
+      UPDATE public.payouts SET status=status WHERE id=v_row.source_id::uuid;
+      IF EXISTS (SELECT 1 FROM public.tresorerie_mouvements m WHERE m.source_type='payout' AND m.source_id=v_row.source_id) THEN
         UPDATE public.tresorerie_a_reprendre SET traite_le=now() WHERE id=v_row.id;
         v_processed:=v_processed+1;
       END IF;
     ELSIF v_row.source_type='prestation' AND v_row.raison='duree_indeterminee'
-      AND v_row.decision_debut IS NOT NULL THEN
+      AND (v_row.decision_debut IS NOT NULL OR v_row.decision_montant_minor IS NOT NULL) THEN
       SELECT * INTO v_session FROM public.sessions WHERE id=v_row.source_id::uuid;
       IF FOUND THEN
         PERFORM public.remuneration_due_seance(v_session.id);
-        UPDATE public.tresorerie_a_reprendre SET traite_le=now() WHERE id=v_row.id;
-        v_processed:=v_processed+1;
+        IF EXISTS (SELECT 1 FROM public.tresorerie_mouvements m WHERE m.source_type='prestation' AND m.source_id=v_row.source_id) THEN
+          UPDATE public.tresorerie_a_reprendre SET traite_le=now() WHERE id=v_row.id;
+          v_processed:=v_processed+1;
+        END IF;
       END IF;
-    ELSIF v_row.source_type='prestation' AND v_row.raison IN ('regle_remuneration_absente','debit_prestation_absent','devise_prestation_multiple','montant_prestation_insuffisant') THEN
+    ELSIF v_row.source_type='prestation' AND v_row.raison IN ('regle_remuneration_absente','debit_prestation_absent','devise_prestation_multiple','montant_prestation_insuffisant','politique_allocation_absente','montant_invalide','taux_change_absent') THEN
       PERFORM public.remuneration_due_seance(v_row.source_id::uuid);
       IF EXISTS (SELECT 1 FROM public.tresorerie_mouvements m WHERE m.source_type='prestation' AND m.source_id=v_row.source_id) THEN
         UPDATE public.tresorerie_a_reprendre SET traite_le=now() WHERE id=v_row.id;
@@ -465,6 +541,8 @@ ALTER FUNCTION public.x217_alimenter_payout() OWNER TO postgres;
 ALTER FUNCTION public.remuneration_due_seance(uuid) OWNER TO postgres;
 ALTER FUNCTION public.x217_sessions_cloture_tresorerie() OWNER TO postgres;
 ALTER FUNCTION public.decider_tresorerie_duree(bigint,timestamptz,timestamptz) OWNER TO postgres;
+ALTER FUNCTION public.decider_tresorerie_montant(bigint,bigint,text) OWNER TO postgres;
+ALTER FUNCTION public.abandonner_reprise_tresorerie(bigint,text) OWNER TO postgres;
 ALTER FUNCTION public.reprendre_alimentation_tresorerie() OWNER TO postgres;
 ALTER FUNCTION public.x217_alimenter_wallet_entry_reprise(bigint) OWNER TO postgres;
 REVOKE ALL ON FUNCTION public.x217_montant_ref(bigint,text,timestamptz) FROM PUBLIC,anon,authenticated,agent_ro,service_role;
@@ -477,6 +555,10 @@ REVOKE ALL ON FUNCTION public.x217_alimenter_wallet_entry_reprise(bigint) FROM P
 REVOKE ALL ON FUNCTION public.decider_tresorerie_duree(bigint,timestamptz,timestamptz) FROM PUBLIC,anon,agent_ro,service_role;
 REVOKE ALL ON FUNCTION public.reprendre_alimentation_tresorerie() FROM PUBLIC,anon,agent_ro,service_role;
 GRANT EXECUTE ON FUNCTION public.decider_tresorerie_duree(bigint,timestamptz,timestamptz) TO authenticated;
+REVOKE ALL ON FUNCTION public.decider_tresorerie_montant(bigint,bigint,text) FROM PUBLIC,anon,agent_ro,service_role;
+REVOKE ALL ON FUNCTION public.abandonner_reprise_tresorerie(bigint,text) FROM PUBLIC,anon,agent_ro,service_role;
+GRANT EXECUTE ON FUNCTION public.decider_tresorerie_montant(bigint,bigint,text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.abandonner_reprise_tresorerie(bigint,text) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.reprendre_alimentation_tresorerie() TO authenticated;
 
 DO $acl$
@@ -487,6 +569,10 @@ BEGIN
      OR has_function_privilege('service_role','public.reprendre_alimentation_tresorerie()','EXECUTE')
      OR has_function_privilege('anon','public.decider_tresorerie_duree(bigint,timestamptz,timestamptz)','EXECUTE')
      OR has_function_privilege('service_role','public.decider_tresorerie_duree(bigint,timestamptz,timestamptz)','EXECUTE')
+     OR has_function_privilege('anon','public.decider_tresorerie_montant(bigint,bigint,text)','EXECUTE')
+     OR has_function_privilege('service_role','public.decider_tresorerie_montant(bigint,bigint,text)','EXECUTE')
+     OR has_function_privilege('anon','public.abandonner_reprise_tresorerie(bigint,text)','EXECUTE')
+     OR has_function_privilege('service_role','public.abandonner_reprise_tresorerie(bigint,text)','EXECUTE')
      OR has_function_privilege('anon','public.x217_guard_confirmation_source()','EXECUTE')
      OR has_function_privilege('service_role','public.x217_guard_confirmation_source()','EXECUTE')
      OR has_function_privilege('anon','public.x217_alimenter_payout()','EXECUTE')
