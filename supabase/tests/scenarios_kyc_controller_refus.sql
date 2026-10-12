@@ -33,7 +33,7 @@ BEGIN
   BEGIN
     PERFORM 1 FROM public.read_kyc_documents();
     RAISE EXCEPTION 'KYC-LECTURE-1: le contrôleur a lu la file KYC';
-  EXCEPTION WHEN raise_exception THEN
+  EXCEPTION WHEN insufficient_privilege THEN
     IF SQLERRM <> 'acces KYC refuse' THEN RAISE; END IF;
   END;
 
@@ -43,7 +43,7 @@ BEGIN
     );
     RAISE EXCEPTION 'KYC-LECTURE-1: le contrôleur a ouvert une pièce KYC';
   EXCEPTION WHEN insufficient_privilege THEN
-    IF SQLERRM <> 'lecture des pieces d''identite reservee a la Direction' THEN RAISE; END IF;
+    IF SQLERRM <> 'lecture des pieces d''identite reservee a l''administration' THEN RAISE; END IF;
   END;
 END
 $controller_denied$;
