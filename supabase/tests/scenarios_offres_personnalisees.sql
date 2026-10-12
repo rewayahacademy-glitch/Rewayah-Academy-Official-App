@@ -478,13 +478,32 @@ BEGIN
     WHERE ligne->>'eleve_id' = 'f1490000-0000-0000-0000-000000000003'
       AND ligne->>'etape' = 'enseignant_affecte'
       AND ligne->>'enseignant' = 'Enseignant Test'
+      AND ligne->>'titre_public' = 'sayid'
       AND (ligne->>'debut_cours') !~ '(Z|[+-][0-9]{2}:[0-9]{2})$'
       AND (ligne->>'debut_cours')::timestamp::time = time '18:00'
   ) THEN
     RAISE EXCEPTION 'C-10 : nom de l''enseignant ou heure murale du cours absent';
   END IF;
 
-  RAISE NOTICE 'F1/C-10: demandes privées, suivi foyer, horaires muraux et ACL vérifiés';
+  -- C-04 : le RPC rend le titre distinct du nom; le genre reste serveur.
+  UPDATE public.profiles SET gender = 'female'
+   WHERE id = 'f1490000-0000-0000-0000-000000000997';
+  SELECT coalesce(jsonb_agg(to_jsonb(s)), '[]'::jsonb)
+    INTO v_reponse
+    FROM public.suivi_demandes_horaires_foyer() AS s;
+  IF NOT EXISTS (
+    SELECT 1
+    FROM jsonb_array_elements(v_reponse) AS ligne
+    WHERE ligne->>'eleve_id' = 'f1490000-0000-0000-0000-000000000003'
+      AND ligne->>'enseignant' = 'Enseignant Test'
+      AND ligne->>'titre_public' = 'sayyida'
+  ) THEN
+    RAISE EXCEPTION 'C-04 : titre_public ne suit pas le genre du profil enseignant';
+  END IF;
+  UPDATE public.profiles SET gender = 'male'
+   WHERE id = 'f1490000-0000-0000-0000-000000000997';
+
+  RAISE NOTICE 'F1/C-10: suivi, confidentialité, horaires muraux et titre C-04 vérifiés';
 END
 $quota$;
 
