@@ -8,7 +8,31 @@ INSERT INTO public.profiles
  (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 VALUES
  ('c29d2000-0000-0000-0000-000000000001','CAP29-RIGHTS-ADMIN','admin',NULL,'Admin','Rights','active','female'),
- ('c29d2000-0000-0000-0000-000000000002','CAP29-RIGHTS-TEACH','teacher',NULL,'Teacher','Rights','active','male');
+ ('c29d2000-0000-0000-0000-000000000002','CAP29-RIGHTS-TEACH','teacher',NULL,'Teacher','Rights','provisional_active','male');
+DO $teacher_contract_fixture$
+DECLARE v_nda_version text; v_notice_version text;
+BEGIN
+ SELECT version INTO v_nda_version FROM public.contract_texts
+  WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+ SELECT version INTO v_notice_version FROM public.contract_required_versions
+  WHERE contract_kind='recording_and_control_notice';
+ PERFORM set_config('request.jwt.claim.sub','c29d2000-0000-0000-0000-000000000002',true);
+ PERFORM set_config('test.uid','c29d2000-0000-0000-0000-000000000002',true);
+ PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+ PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+ PERFORM public.signer_contrat(v_nda_version,'Teacher Rights');
+ INSERT INTO public.contract_acceptances(profile_id,contract_kind,version)
+ VALUES ('c29d2000-0000-0000-0000-000000000002',
+         'recording_and_control_notice',v_notice_version)
+ ON CONFLICT DO NOTHING;
+ UPDATE public.profiles SET account_status='active'
+  WHERE id='c29d2000-0000-0000-0000-000000000002';
+ PERFORM set_config('request.jwt.claim.sub','',true);
+ PERFORM set_config('request.jwt.claims','',true);
+ PERFORM set_config('test.uid','',true);
+ PERFORM set_config('test.jwt','',true);
+END
+$teacher_contract_fixture$;
 INSERT INTO public.library_resource
  (id, title, short_title, resource_type, language, category, access_policy, offline_policy)
 VALUES
