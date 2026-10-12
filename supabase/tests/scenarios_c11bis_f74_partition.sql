@@ -6,6 +6,12 @@ DECLARE
   v_autre_niveau uuid;
   v_autre_public uuid;
   v_function oid;
+  v_niveau text;
+  v_niveaux text[] := ARRAY[
+    'debut_lettres', 'lettres_avec_aide', 'lecture_lente',
+    'lecture_courante', 'memorisation_partielle'
+  ];
+  v_niveau_ids uuid[] := '{}'::uuid[];
 BEGIN
   v_hommes := public.c11bis_id_regroupement(
     public.c11bis_cle_regroupement(
@@ -38,6 +44,19 @@ BEGIN
     RAISE EXCEPTION 'F74: gender, level, and audience must partition group IDs';
   END IF;
 
+  FOREACH v_niveau IN ARRAY v_niveaux LOOP
+    v_niveau_ids := pg_catalog.array_append(v_niveau_ids,
+      public.c11bis_id_regroupement(public.c11bis_cle_regroupement(
+        'enfant', 'ar', ARRAY[1, 3]::smallint[], ARRAY[18, 18]::smallint[],
+        'Europe/Paris', 'hommes', v_niveau
+      ))
+    );
+  END LOOP;
+  IF pg_catalog.cardinality(v_niveau_ids) <> 5
+     OR (SELECT pg_catalog.count(DISTINCT x) FROM pg_catalog.unnest(v_niveau_ids) x) <> 5 THEN
+    RAISE EXCEPTION 'F74: the five declared levels must partition group IDs';
+  END IF;
+
   IF v_hommes IS DISTINCT FROM public.c11bis_id_regroupement(
        public.c11bis_cle_regroupement(
          'enfant', 'ar', ARRAY[1, 3]::smallint[], ARRAY[18, 18]::smallint[],
@@ -51,8 +70,23 @@ BEGIN
        'authenticated', 'public.regroupements_demandes_horaires_admin()', 'EXECUTE'
      )
      OR pg_catalog.has_function_privilege(
-       'authenticated', 'public.creer_classe_depuis_regroupement(text, uuid, text)', 'EXECUTE'
+       'anon', 'public.regroupements_c11bis_admin()', 'EXECUTE'
      )
+     OR pg_catalog.has_function_privilege(
+       'service_role', 'public.regroupements_c11bis_admin()', 'EXECUTE'
+     )
+     OR pg_catalog.has_function_privilege(
+       'agent_ro', 'public.regroupements_c11bis_admin()', 'EXECUTE'
+     )
+     OR NOT pg_catalog.has_function_privilege(
+       'authenticated', 'public.regroupements_c11bis_admin()', 'EXECUTE'
+     )
+     OR pg_catalog.to_regprocedure(
+       'public.creer_classe_depuis_regroupement(text, uuid, text)'
+     ) IS NOT NULL
+     OR pg_catalog.to_regprocedure(
+       'public.creer_classe_depuis_regroupement_c11bis(text, uuid, text, text)'
+     ) IS NOT NULL
      OR pg_catalog.has_function_privilege(
        'anon', 'public.creer_classe_depuis_regroupement(uuid, uuid, text)', 'EXECUTE'
      )

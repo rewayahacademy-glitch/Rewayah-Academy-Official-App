@@ -101,10 +101,14 @@ class CibleTirage {
 class ReglesTirage {
   /// Cree les regles.
   const ReglesTirage({
+    this.version = 0,
     required this.missionsParSemaine,
     required this.ponderations,
     required this.cibles,
   });
+
+  /// Version immuable de la regle serveur (0 avant le premier enregistrement).
+  final int version;
 
   /// Le nombre de missions qu'un controleur recoit par semaine, au plus.
   final int missionsParSemaine;
@@ -121,6 +125,7 @@ class ReglesTirage {
     Map<CriterePonderation, NiveauPonderation>? ponderations,
     List<CibleTirage>? cibles,
   }) => ReglesTirage(
+    version: version,
     missionsParSemaine: missionsParSemaine ?? this.missionsParSemaine,
     ponderations: ponderations ?? this.ponderations,
     cibles: cibles ?? this.cibles,
@@ -331,7 +336,10 @@ sealed class ResultatRegles {
 /// Les regles sont enregistrees et journalisees.
 final class ReglesEnregistrees extends ResultatRegles {
   /// Cree le resultat.
-  const ReglesEnregistrees();
+  const ReglesEnregistrees({this.version = 0});
+
+  /// Version attribuee par le serveur.
+  final int version;
 }
 
 /// Le serveur a refuse les regles, avec son motif en clair.
@@ -369,6 +377,13 @@ abstract interface class PortTirageControle {
     FiltreTirages filtre, {
     required int page,
     required int taille,
+  });
+
+  /// Signale un conflit sur une mission attribuee. [cleConflit] doit rester
+  /// stable lors des reprises de la meme commande; le serveur est idempotent.
+  Future<void> declarerConflit(
+    String missionId, {
+    required String cleConflit,
   });
 }
 

@@ -176,7 +176,8 @@ DECLARE
   v_pret boolean;
   v_jours smallint[];
   v_heures smallint[];
-  v_regroupement text;
+  v_regroupement uuid;
+  v_regroupement_admin jsonb;
   v_offre uuid;
   v_result uuid;
   v_groupe uuid;
@@ -258,11 +259,21 @@ BEGIN
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000999', true);
   PERFORM set_config('request.jwt.claims',
     jsonb_build_object('app_metadata', jsonb_build_object('role', 'admin'))::text, true);
-  SELECT regroupement_id, nombre_eleves, quota, pret, jours, heures_locales
-    INTO v_regroupement, v_count, v_quota, v_pret, v_jours, v_heures
-   FROM public.regroupements_demandes_horaires_admin()
-   WHERE type_public = 'adulte' AND langue_code = 'francais'
-     AND fuseau_iana = 'Europe/Paris';
+  SELECT item INTO v_regroupement_admin
+    FROM public.regroupements_c11bis_admin() AS regroupements(item)
+   WHERE item->>'type_public' = 'adulte'
+     AND item->>'langue_code' = 'francais'
+     AND item->>'fuseau_iana' = 'Europe/Paris'
+     AND item->>'niveau' = 'lecture_lente';
+  v_regroupement := (v_regroupement_admin->>'regroupement_id')::uuid;
+  v_count := (v_regroupement_admin->>'nombre_eleves')::integer;
+  v_quota := (v_regroupement_admin->>'quota')::integer;
+  v_pret := (v_regroupement_admin->>'peut_creer_classe')::boolean;
+  SELECT array_agg((heure->>'jour_iso')::smallint ORDER BY position),
+         array_agg((heure->>'heure')::smallint ORDER BY position)
+    INTO v_jours, v_heures
+    FROM jsonb_array_elements(v_regroupement_admin->'occurrences')
+      WITH ORDINALITY AS horaires(heure, position);
   IF v_count <> v_capacite OR v_quota <> v_capacite OR NOT v_pret THEN
     RAISE EXCEPTION 'F1 quota: regroupement=% eleves=% quota=% pret=%',
       v_regroupement, v_count, v_quota, v_pret;
@@ -275,10 +286,10 @@ BEGIN
   END IF;
 
   v_groupe := public.creer_classe_depuis_regroupement(
-    v_regroupement, 'c1200000-0000-0000-0000-000000000001', 'Classe F1 C-12'
+    v_regroupement, 'c1201000-0000-0000-0000-000000000001'::uuid, 'Classe F1 C-12'
   );
   v_groupe_rejoue := public.creer_classe_depuis_regroupement(
-    v_regroupement, 'c1200000-0000-0000-0000-000000000001', 'Classe F1 C-12'
+    v_regroupement, 'c1201000-0000-0000-0000-000000000001'::uuid, 'Classe F1 C-12'
   );
   IF v_groupe_rejoue <> v_groupe
      OR NOT EXISTS (

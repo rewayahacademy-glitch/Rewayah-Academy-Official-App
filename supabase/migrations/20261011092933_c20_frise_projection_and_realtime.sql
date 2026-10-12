@@ -32,19 +32,18 @@ GRANT SELECT ON public.demande_evenements_foyer_v TO authenticated;
 
 DO $realtime$
 BEGIN
-  IF NOT EXISTS (
+  IF EXISTS (
     SELECT 1 FROM pg_catalog.pg_publication p
      WHERE p.pubname = 'supabase_realtime'
   ) THEN
-    RAISE EXCEPTION 'C-20: publication supabase_realtime absente';
-  END IF;
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_catalog.pg_publication_tables p
-     WHERE p.pubname = 'supabase_realtime'
-       AND p.schemaname = 'public'
-       AND p.tablename = 'demande_evenements'
-  ) THEN
-    ALTER PUBLICATION supabase_realtime ADD TABLE public.demande_evenements;
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_catalog.pg_publication_tables p
+       WHERE p.pubname = 'supabase_realtime'
+         AND p.schemaname = 'public'
+         AND p.tablename = 'demande_evenements'
+    ) THEN
+      ALTER PUBLICATION supabase_realtime ADD TABLE public.demande_evenements;
+    END IF;
   END IF;
 END;
 $realtime$;
@@ -55,11 +54,17 @@ BEGIN
      OR has_table_privilege('service_role', 'public.demande_evenements_foyer_v', 'SELECT')
      OR has_table_privilege('agent_ro', 'public.demande_evenements_foyer_v', 'SELECT')
      OR NOT has_table_privilege('authenticated', 'public.demande_evenements_foyer_v', 'SELECT')
-     OR NOT EXISTS (
-       SELECT 1 FROM pg_catalog.pg_publication_tables p
-        WHERE p.pubname = 'supabase_realtime'
-          AND p.schemaname = 'public'
-          AND p.tablename = 'demande_evenements'
+     OR (
+       EXISTS (
+         SELECT 1 FROM pg_catalog.pg_publication p
+          WHERE p.pubname = 'supabase_realtime'
+       )
+       AND NOT EXISTS (
+         SELECT 1 FROM pg_catalog.pg_publication_tables p
+          WHERE p.pubname = 'supabase_realtime'
+            AND p.schemaname = 'public'
+            AND p.tablename = 'demande_evenements'
+       )
      ) THEN
     RAISE EXCEPTION 'C-20: ACL/projection/realtime postflight echoue';
   END IF;
