@@ -12,11 +12,11 @@ BEGIN
   );
   v_before := 'IF NOT coalesce(public.app_role() = ''admin'', false)' || E'\n'
     || '     OR NOT coalesce(public.app_account_valid(), false) THEN' || E'\n'
-    || '    RAISE EXCEPTION ''lecture des pieces d''identite reservee a l''administration''' || E'\n'
+    || '    RAISE EXCEPTION ''lecture des pieces d''''identite reservee a l''''administration''' || E'\n'
     || '      USING errcode = ''42501'';' || E'\n'
     || '  END IF;';
   v_after := 'IF NOT coalesce(public.app_account_valid() AND public.app_role() = ''admin'', false) THEN' || E'\n'
-    || '    RAISE EXCEPTION ''lecture des pieces d''identite reservee a l''administration''' || E'\n'
+    || '    RAISE EXCEPTION ''lecture des pieces d''''identite reservee a l''''administration''' || E'\n'
     || '      USING errcode = ''42501'';' || E'\n'
     || '  END IF;';
   IF pg_catalog.strpos(v_definition, v_after) = 0 THEN
@@ -34,7 +34,7 @@ GRANT EXECUTE ON FUNCTION public.autoriser_lecture_piece_identite(uuid)
   TO authenticated;
 
 COMMENT ON FUNCTION public.autoriser_lecture_piece_identite(uuid) IS
-  'F86 candidate allowlist: signature=public.autoriser_lecture_piece_identite(uuid); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: only a valid active admin may authorize an identity-document read; non-admin, inactive admin, and missing-profile JWT are denied; the read remains scoped and audited.';
+  'F86 candidate allowlist: signature=public.autoriser_lecture_piece_identite(uuid); md5_functiondef=f9a8e46dc4227c5dc707303d56774fd6; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: only a valid active admin may authorize an identity-document read; non-admin, inactive admin, and missing-profile JWT are denied; the read remains scoped and audited.';
 
 DO $f86_postflight$
 DECLARE
@@ -47,6 +47,9 @@ BEGIN
     INTO v_owner, v_config
     FROM pg_catalog.pg_proc p WHERE p.oid = v_oid::oid;
   v_definition := pg_catalog.pg_get_functiondef(v_oid);
+  IF pg_catalog.md5(v_definition) IS DISTINCT FROM 'f9a8e46dc4227c5dc707303d56774fd6' THEN
+    RAISE EXCEPTION 'F86 postflight: unexpected autoriser_lecture_piece_identite hash';
+  END IF;
   IF v_owner IS DISTINCT FROM 'postgres'
      OR NOT coalesce(v_config @> ARRAY['search_path=""'], false)
      OR pg_catalog.strpos(v_definition, 'IF NOT coalesce(public.app_account_valid() AND public.app_role() = ''admin'', false) THEN') = 0
@@ -56,7 +59,7 @@ BEGIN
      OR NOT pg_catalog.has_function_privilege('authenticated', v_oid, 'EXECUTE')
      OR coalesce(pg_catalog.strpos(
        pg_catalog.obj_description(v_oid::oid, 'pg_proc'),
-       'md5_functiondef=A_CALCULER;'
+       'md5_functiondef=f9a8e46dc4227c5dc707303d56774fd6;'
      ), 0) = 0 THEN
     RAISE EXCEPTION 'F86 postflight: KYC read guard/ACL/owner/search_path/allowlist invalid';
   END IF;
