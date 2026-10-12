@@ -1442,5 +1442,131 @@ begin
 end
 $f86_admin_mutators$;
 
+-- A793 : les appelants voient le prochain instant d'un créneau déjà passé.
+-- Ce scénario exerce enseignants_pour (0014/0016), la matérialisation de
+-- groupe (0033), les deux chevauchements récurrents (0083) et les deux gardes
+-- F86 qui comparent les disponibilités élève/enseignant.
+do $next_occurrence_callers$
+declare
+  v_reference timestamptz := now();
+  v_weekday integer;
+  v_hour integer;
+  v_weekday_2 integer;
+  v_hour_2 integer;
+  v_teacher_weekday integer;
+  v_teacher_hour integer;
+  v_teacher_weekday_2 integer;
+  v_teacher_hour_2 integer;
+  v_next timestamptz;
+  v_next_2 timestamptz;
+  v_group_first timestamptz;
+  v_session_count integer;
+  v_common integer;
+  v_assignment uuid;
+begin
+  v_weekday := extract(isodow from (v_reference at time zone 'Europe/Paris'))::integer;
+  v_hour := extract(hour from (v_reference at time zone 'Europe/Paris'))::integer - 1;
+  if v_hour < 0 then
+    v_weekday := case when v_weekday = 1 then 7 else v_weekday - 1 end;
+    v_hour := 23;
+  end if;
+  -- Evite les horaires déjà occupés par les prises positives précédentes.
+  if (v_weekday = 1 and v_hour = 17)
+     or (v_weekday = 2 and v_hour = 18)
+     or (v_weekday = 3 and v_hour = 17)
+     or (v_weekday = 4 and v_hour between 9 and 13) then
+    v_weekday := case when v_weekday = 1 then 7 else v_weekday - 1 end;
+    v_hour := 0;
+  end if;
+  v_weekday_2 := v_weekday;
+  v_hour_2 := v_hour - 1;
+  if v_hour_2 < 0 then
+    v_weekday_2 := case when v_weekday_2 = 1 then 7 else v_weekday_2 - 1 end;
+    v_hour_2 := 22;
+  end if;
+
+  v_next := public.instant_creneau_reference(
+    v_weekday, v_hour, 'Europe/Paris', 0, v_reference
+  );
+  v_next_2 := public.instant_creneau_reference(
+    v_weekday_2, v_hour_2, 'Europe/Paris', 0, v_reference
+  );
+  if v_next <= v_reference or v_next_2 <= v_reference
+     or public.instant_creneau(v_weekday, v_hour, 'Europe/Paris') <> v_next then
+    raise exception 'A793: un créneau passé ne renvoie pas sa prochaine occurrence';
+  end if;
+
+  v_teacher_weekday := extract(isodow from (v_next at time zone 'Africa/Conakry'))::integer;
+  v_teacher_hour := extract(hour from (v_next at time zone 'Africa/Conakry'))::integer;
+  v_teacher_weekday_2 := extract(isodow from (v_next_2 at time zone 'Africa/Conakry'))::integer;
+  v_teacher_hour_2 := extract(hour from (v_next_2 at time zone 'Africa/Conakry'))::integer;
+
+  delete from public.weekly_availability
+   where profile_id in (
+     'aaaaaaaa-0000-0000-0000-000000000003',
+     'bbbbbbbb-0000-0000-0000-000000000002',
+     'cccccccc-0000-0000-0000-000000000001',
+     'cccccccc-0000-0000-0000-000000000002'
+   );
+  insert into public.weekly_availability(profile_id,weekday,hour_local,timezone_iana)
+  values
+    ('aaaaaaaa-0000-0000-0000-000000000003',v_weekday,v_hour,'Europe/Paris'),
+    ('bbbbbbbb-0000-0000-0000-000000000002',v_weekday_2,v_hour_2,'Europe/Paris'),
+    ('cccccccc-0000-0000-0000-000000000002',v_teacher_weekday,v_teacher_hour,'Africa/Conakry'),
+    ('cccccccc-0000-0000-0000-000000000002',v_teacher_weekday_2,v_teacher_hour_2,'Africa/Conakry');
+
+  if not app_private.creneaux_recurrents_se_chevauchent(
+       v_weekday,v_hour,'Europe/Paris',v_teacher_weekday,v_teacher_hour,
+       'Africa/Conakry',60)
+     or not app_private.creneau_recurrent_chevauche_session(
+       v_weekday,v_hour,'Europe/Paris',60,v_next,v_next+interval '30 minutes') then
+    raise exception 'A793: le consommateur 0083 ne voit pas le créneau suivant';
+  end if;
+
+  -- L'insertion d'un groupe traverse les triggers 0033 et matérialise son
+  -- premier début sur le même prochain instant, même si son heure est passée.
+  insert into public.groupes
+    (id,teacher_id,type_public,seuil_max,libelle,weekday,hour_local,timezone_iana)
+  values
+    ('a173ffff-0000-0000-0000-000000000011',
+     'cccccccc-0000-0000-0000-000000000001','enfant',5,
+     'A793 prochaine occurrence',v_weekday,v_hour,'Europe/Paris');
+  select count(*),min(started_at) into v_session_count,v_group_first
+  from public.sessions where groupe_id='a173ffff-0000-0000-0000-000000000011';
+  if v_session_count < 1 or v_group_first is distinct from v_next then
+    raise exception 'A793: 0033 a matérialisé %, attendu %',v_group_first,v_next;
+  end if;
+
+  set local role authenticated;
+  perform set_config('test.uid','dddddddd-0000-0000-0000-000000000001',true);
+  perform set_config('test.jwt','{"app_metadata":{"role":"admin"}}',true);
+  select count(*) into v_common
+  from public.enseignants_pour('aaaaaaaa-0000-0000-0000-000000000003') e
+  where e.teacher_id='cccccccc-0000-0000-0000-000000000002'
+    and e.creneaux_communs <> '[]'::jsonb;
+  if v_common <> 1 then
+    raise exception 'A793: 0014/0016 ne trouvent pas le créneau commun suivant';
+  end if;
+  v_assignment := public.attribuer_eleve(
+    'aaaaaaaa-0000-0000-0000-000000000003',
+    'cccccccc-0000-0000-0000-000000000002',v_weekday,v_hour,NULL
+  );
+  if v_assignment is null then
+    raise exception 'A793: garde F86 attribuer_eleve n''a pas affecté le créneau suivant';
+  end if;
+
+  perform set_config('test.uid','cccccccc-0000-0000-0000-000000000002',true);
+  perform set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+  v_assignment := public.prendre_eleve(
+    'bbbbbbbb-0000-0000-0000-000000000002',v_weekday_2,v_hour_2
+  );
+  if v_assignment is null then
+    raise exception 'A793: garde F86 prendre_eleve n''a pas pris le créneau suivant';
+  end if;
+  reset role;
+  raise notice 'A793 : appelants 0014/0016/0033/0083 et gardes F86 utilisent la prochaine occurrence';
+end
+$next_occurrence_callers$;
+
 reset role;
 rollback;
