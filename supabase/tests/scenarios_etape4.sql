@@ -61,15 +61,37 @@ values
   ('bbbbbbbb-0000-0000-0000-000000000002', 'STUD-KB-000003', 'student',
    'ffffffff-0000-0000-0000-00000000000b', 'Khadija', 'Barry', 'active', null),
   ('cccccccc-0000-0000-0000-000000000001', 'TEACH-OS-000001', 'teacher',
-   null, 'Omar', 'Sow', 'active', 'male'),
+   null, 'Omar', 'Sow', 'provisional_active', 'male'),
   ('cccccccc-0000-0000-0000-000000000002', 'TEACH-AB-000002', 'teacher',
-   null, 'Aissatou', 'Balde', 'active', 'female'),
+   null, 'Aissatou', 'Balde', 'provisional_active', 'female'),
   ('dddddddd-0000-0000-0000-000000000001', 'ADMIN-RA-000001', 'admin',
    null, 'Rewayah', 'Admin', 'active', 'female'),
   -- Un foyer sans aucun lien avec les deux enseignants : c'est lui qui mesure le
   -- defaut 3.5, les foyers A et B ayant tous deux un enfant suivi par Omar.
   ('99999999-0000-0000-0000-000000000001', 'GUARD-SC-000003', 'guardian',
    'ffffffff-0000-0000-0000-00000000000c', 'Sans', 'Cours', 'active', 'male');
+-- Fixture contractuel requis par 0089 : aucune garde d'activation n'est assouplie.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+    PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true);
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+      ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+  PERFORM set_config('request.jwt.claim.sub','',true);
+  PERFORM set_config('request.jwt.claims','',true);
+  PERFORM set_config('test.uid','',true);
+  PERFORM set_config('test.jwt','',true);
+END
+$fixture_teacher_contracts$;
 
 insert into public.student_profiles (profile_id, student_type, interface_mode, camera_policy, level)
 values
@@ -1180,13 +1202,35 @@ insert into public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status)
 values
   ('a1730000-0000-0000-0000-000000000001', 'H1-TEACHER-001', 'teacher',
-   null, 'Fixture', 'Teacher', 'active'),
+   null, 'Fixture', 'Teacher', 'provisional_active'),
   ('a1730000-0000-0000-0000-000000000002', 'H1-STUDENT-A-001', 'student',
    'a173ffff-0000-0000-0000-000000000001', 'Fixture', 'StudentA', 'active'),
   ('a1730000-0000-0000-0000-000000000003', 'H1-STUDENT-B-001', 'student',
    'a173ffff-0000-0000-0000-000000000001', 'Fixture', 'StudentB', 'active'),
   ('a1730000-0000-0000-0000-000000000004', 'H1-OUTSIDER-001', 'student',
    'a173ffff-0000-0000-0000-000000000002', 'Fixture', 'Outsider', 'active');
+-- Fixture contractuel requis par 0089 : aucune garde d'activation n'est assouplie.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+    PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true);
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+      ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+  PERFORM set_config('request.jwt.claim.sub','',true);
+  PERFORM set_config('request.jwt.claims','',true);
+  PERFORM set_config('test.uid','',true);
+  PERFORM set_config('test.jwt','',true);
+END
+$fixture_teacher_contracts$;
 insert into public.groupes
   (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana)
 values
