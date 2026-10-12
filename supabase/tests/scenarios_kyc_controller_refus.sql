@@ -1,7 +1,8 @@
 BEGIN;
 
 INSERT INTO auth.users (id, email)
-VALUES ('c1a10000-0000-0000-0000-000000000001', 'kyc-controller@example.test');
+VALUES ('c1a10000-0000-0000-0000-000000000001', 'kyc-controller@example.test'),
+       ('c1a10000-0000-0000-0000-000000000002', 'kyc-disabled-admin@example.test');
 INSERT INTO public.profiles
   (id, immutable_id, role, gender, first_name, last_name, account_status)
 VALUES
