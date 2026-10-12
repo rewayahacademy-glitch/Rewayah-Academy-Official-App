@@ -113,14 +113,16 @@ VALUES
  ('6f000000-0000-4000-8000-000000000118','6f000000-0000-4000-8000-000000000020',now()-interval '2 hours',now()+interval '1 hour','planned','standard'),
  ('6f000000-0000-4000-8000-000000000119','6f000000-0000-4000-8000-000000000021',now()+interval '3 hours',now()+interval '4 hours','planned','standard'),
  ('6f000000-0000-4000-8000-000000000120','6f000000-0000-4000-8000-000000000020',now()+interval '5 hours',now()+interval '6 hours','planned','standard'),
- ('6f000000-0000-4000-8000-000000000121','6f000000-0000-4000-8000-000000000021',now()+interval '7 hours',now()+interval '8 hours','planned','standard');
+ ('6f000000-0000-4000-8000-000000000121','6f000000-0000-4000-8000-000000000021',now()+interval '7 hours',now()+interval '8 hours','planned','standard'),
+ ('6f000000-0000-4000-8000-000000000124','6f000000-0000-4000-8000-000000000021',now()+interval '9 hours',now()+interval '10 hours','planned','standard');
 INSERT INTO public.wallet_entries(wallet_id,amount_minor,currency,reference_type,reference_id)
 VALUES
  ('6f000000-0000-4000-8000-000000000317',10000,'USD','debit','6f000000-0000-4000-8000-000000000117'),
  ('6f000000-0000-4000-8000-000000000317',10000,'USD','debit','6f000000-0000-4000-8000-000000000118'),
  ('6f000000-0000-4000-8000-000000000317',10000,'USD','debit','6f000000-0000-4000-8000-000000000119'),
  ('6f000000-0000-4000-8000-000000000318',10000,'EUR','debit','6f000000-0000-4000-8000-000000000120'),
- ('6f000000-0000-4000-8000-000000000317',1,'USD','debit','6f000000-0000-4000-8000-000000000121');
+ ('6f000000-0000-4000-8000-000000000317',1,'USD','debit','6f000000-0000-4000-8000-000000000121'),
+ ('6f000000-0000-4000-8000-000000000317',10000,'USD','debit','6f000000-0000-4000-8000-000000000124');
 
 INSERT INTO public.tresorerie_mouvements (
   coffre, sens, montant_minor, devise, montant_ref_minor, devise_ref,
@@ -278,9 +280,13 @@ UPDATE public.sessions SET status='preflight' WHERE id='6f000000-0000-4000-8000-
 UPDATE public.sessions SET status='in_progress' WHERE id='6f000000-0000-4000-8000-000000000121';
 SELECT pg_sleep(1);
 UPDATE public.sessions SET status='ended' WHERE id='6f000000-0000-4000-8000-000000000121';
+UPDATE public.sessions SET status='preflight' WHERE id='6f000000-0000-4000-8000-000000000124';
+UPDATE public.sessions SET status='in_progress' WHERE id='6f000000-0000-4000-8000-000000000124';
+UPDATE public.sessions SET status='tech_failure' WHERE id='6f000000-0000-4000-8000-000000000124';
 
 DO $session_finance$
 DECLARE v_due bigint;
+        v_started timestamptz; v_ended timestamptz;
 BEGIN
   SELECT count(*) INTO v_due FROM public.tresorerie_mouvements
    WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000117'
@@ -295,6 +301,16 @@ BEGIN
     WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000119'
       AND raison='duree_indeterminee') THEN
     RAISE EXCEPTION 'X2-17: duree interrompue non mise en reprise';
+  END IF;
+  SELECT finance_started_at,finance_ended_at INTO v_started,v_ended
+    FROM public.sessions WHERE id='6f000000-0000-4000-8000-000000000124';
+  IF v_started IS NULL OR v_ended IS NULL OR v_ended<=v_started THEN
+    RAISE EXCEPTION 'X2-17: la seance tech_failure doit conserver ses horodatages serveur';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.tresorerie_a_reprendre
+    WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000124'
+      AND raison='duree_indeterminee' AND traite_le IS NULL) THEN
+    RAISE EXCEPTION 'X2-17: la seance horodatee doit attendre une decision de duree';
   END IF;
   IF NOT EXISTS (SELECT 1 FROM public.tresorerie_a_reprendre
     WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000117'
@@ -333,12 +349,18 @@ SET LOCAL ROLE authenticated;
 SELECT set_config('test.uid','6f000000-0000-4000-8000-000000000018',true);
 SELECT set_config('test.jwt','{"app_metadata":{"role":"admin"},"aal":"aal2"}',true);
 DO $resume$
-DECLARE v_processed integer; v_pending bigint; v_abandon bigint;
+DECLARE v_processed integer; v_pending bigint; v_abandon bigint; v_duration_pending bigint;
 BEGIN
   SELECT id INTO v_pending FROM public.tresorerie_a_reprendre
    WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000119'
      AND raison='duree_indeterminee';
   PERFORM public.decider_tresorerie_montant(v_pending,500,'USD');
+  SELECT id INTO v_duration_pending FROM public.tresorerie_a_reprendre
+   WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000124'
+     AND raison='duree_indeterminee' AND traite_le IS NULL;
+  PERFORM public.decider_tresorerie_duree(
+    v_duration_pending,clock_timestamp()-interval '30 minutes',clock_timestamp()
+  );
   SELECT id INTO v_abandon FROM public.tresorerie_a_reprendre
    WHERE source_type='payout' AND source_id='6f000000-0000-4000-8000-000000000220'
      AND raison='montant_invalide';
@@ -355,6 +377,26 @@ BEGIN
       WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000119'
         AND coffre='reserve_strategique' AND montant_minor=950) THEN
     RAISE EXCEPTION 'X2-17: politique des coffres non appliquée à la reprise';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.tresorerie_mouvements
+      WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000124'
+        AND coffre='paie_a_decaisser' AND regle='remuneration_due'
+        AND sens='entree' AND montant_minor=9000)
+     OR NOT EXISTS (SELECT 1 FROM public.tresorerie_mouvements
+      WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000124'
+        AND coffre='taxes_obligations' AND montant_minor=100)
+     OR NOT EXISTS (SELECT 1 FROM public.tresorerie_mouvements
+      WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000124'
+        AND coffre='charges_essentielles' AND montant_minor=100)
+     OR NOT EXISTS (SELECT 1 FROM public.tresorerie_mouvements
+      WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000124'
+        AND coffre='reserve_strategique' AND montant_minor=100)
+     OR NOT EXISTS (SELECT 1 FROM public.tresorerie_mouvements
+      WHERE source_type='prestation' AND source_id='6f000000-0000-4000-8000-000000000124'
+        AND coffre='tresorerie_libre' AND montant_minor=700)
+     OR NOT EXISTS (SELECT 1 FROM public.tresorerie_a_reprendre
+      WHERE id=v_duration_pending AND traite_le IS NOT NULL) THEN
+    RAISE EXCEPTION 'X2-17: la decision de duree admin doit primer sur les horodatages serveur';
   END IF;
   IF NOT EXISTS (SELECT 1 FROM public.tresorerie_a_reprendre WHERE source_type='payout' AND source_id='6f000000-0000-4000-8000-000000000218' AND traite_le IS NOT NULL)
      OR NOT EXISTS (SELECT 1 FROM public.tresorerie_mouvements WHERE source_type='payout' AND source_id='6f000000-0000-4000-8000-000000000218')
