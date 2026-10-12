@@ -1602,6 +1602,8 @@ begin
 
   perform set_config('test.uid','cccccccc-0000-0000-0000-000000000002',true);
   perform set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+  perform set_config('request.jwt.claim.sub','cccccccc-0000-0000-0000-000000000002',true);
+  perform set_config('request.jwt.claims','{"sub":"cccccccc-0000-0000-0000-000000000002","app_metadata":{"role":"teacher"}}',true);
   v_assignment := public.prendre_eleve(
     'bbbbbbbb-0000-0000-0000-000000000002',v_weekday_2,v_hour_2
   );
