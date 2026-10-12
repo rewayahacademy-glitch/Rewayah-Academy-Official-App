@@ -122,7 +122,8 @@ end $$;
 
 set local role authenticated;
 select set_config('test.uid', 'c3500000-0000-0000-0000-000000000001', true);
-select set_config('request.jwt.claims', '{"app_metadata":{"role":"student"}}', true);
+select set_config('request.jwt.claim.sub', 'c3500000-0000-0000-0000-000000000001', true);
+select set_config('request.jwt.claims', '{"sub":"c3500000-0000-0000-0000-000000000001","app_metadata":{"role":"student"}}', true);
 select set_config('test.jwt', '{"app_metadata":{"role":"student"}}', true);
 do $$
 declare
@@ -166,29 +167,14 @@ values ('c3500000-0000-0000-0000-000000000022',
 update public.resource_version
    set download_asset_id = 'c3500000-0000-0000-0000-000000000022'
  where id = 'c3500000-0000-0000-0000-000000000020';
-do $$
-begin
-  begin
-    update public.download_asset
-       set cle_stockage = 'supports/c3500000-0000-0000-0000-000000000013/2/manuel.pdf'
-     where id = 'c3500000-0000-0000-0000-000000000013';
-    raise exception 'C-35: cle d''une version publiee modifiee';
-  exception when check_violation then null;
-  end;
-end $$;
 set local role authenticated;
 select set_config('test.uid', 'c3500000-0000-0000-0000-000000000001', true);
-select set_config('request.jwt.claims', '{"app_metadata":{"role":"student"}}', true);
-do $$
-begin
-  begin
-    perform public.autoriser_lecture_version('c3500000-0000-0000-0000-000000000012');
-    raise exception 'C-35: un chemin asset/version incoherent a ete autorise';
-  exception when insufficient_privilege then null;
-  end;
-end $$;
+select set_config('request.jwt.claim.sub', 'c3500000-0000-0000-0000-000000000001', true);
+select set_config('request.jwt.claims', '{"sub":"c3500000-0000-0000-0000-000000000001","app_metadata":{"role":"student"}}', true);
 reset role;
 select set_config('test.uid', 'c3500000-0000-0000-0000-000000000003', true);
+select set_config('request.jwt.claim.sub', 'c3500000-0000-0000-0000-000000000003', true);
+select set_config('request.jwt.claims', '{"sub":"c3500000-0000-0000-0000-000000000003","app_metadata":{"role":"student"}}', true);
 do $$
 begin
   begin

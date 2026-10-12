@@ -99,7 +99,8 @@ grant select (id, title, short_title, resource_type, edition, language,
 grant select (id, resource_id, statut)
   on public.resource_version to authenticated;
 grant select (resource_id, groupe_id)
-  on public.library_resource_groupe to authenticated;create index if not exists groupes_actifs_recherche_trgm_idx
+  on public.library_resource_groupe to authenticated;
+create index if not exists groupes_actifs_recherche_trgm_idx
   on public.groupes using gin (lower(libelle) extensions.gin_trgm_ops)
   where ended_at is null;
 create index if not exists offres_horaires_publiees_recherche_trgm_idx

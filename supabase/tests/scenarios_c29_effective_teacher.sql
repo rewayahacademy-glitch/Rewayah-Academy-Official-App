@@ -36,11 +36,14 @@ INSERT INTO public.groupes
 VALUES
   ('c29e0000-0000-0000-0000-000000000101',
    'c29e0000-0000-0000-0000-000000000001', 'enfant', 5, 'Effective Teacher', 1, 18, 'Europe/Paris', 'hommes');
+-- Keep this session well outside the live clock so unrelated fixtures cannot
+-- collide with it under time-shifted or concurrent scenario replays.
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
 VALUES
   ('c29e0000-0000-0000-0000-000000000201',
-   'c29e0000-0000-0000-0000-000000000001', now() - interval '5 minutes',
-   now() + interval '55 minutes', 'in_progress', 'standard',
+   'c29e0000-0000-0000-0000-000000000001',
+   TIMESTAMPTZ '2099-01-01 11:55:00+00', TIMESTAMPTZ '2099-01-01 12:55:00+00',
+   'in_progress', 'standard',
    'c29e0000-0000-0000-0000-000000000101');
 
 DO $test$

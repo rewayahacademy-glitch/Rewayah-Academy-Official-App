@@ -102,6 +102,9 @@ values
 insert into public.teacher_profiles (profile_id, country, timezone_iana) values
   ('cccccccc-0000-0000-0000-000000000001', 'FR', 'Europe/Paris'),
   ('cccccccc-0000-0000-0000-000000000002', 'GN', 'Africa/Conakry');
+-- prendre_eleve exige un profil enseignant dont le KYC est approuve.
+update public.teacher_profiles set kyc_status = 'approved'
+ where profile_id = 'cccccccc-0000-0000-0000-000000000002';
 
 -- Le fuseau dans lequel chacun pose ses creneaux, quel que soit son role.
 do $$
@@ -210,36 +213,112 @@ begin
     v_heure, v_jour;
 end $$;
 
--- La prochaine occurrence se calcule une fois dans le fuseau de reference de
--- la Classe, depuis une reference explicite. Chaque foyer recoit le meme debut
--- UTC, qu'il l'affiche ensuite dans son propre fuseau.
+-- Prochaine occurrence : références le dimanche autour de minuit UTC, valeurs
+-- attendues écrites en dur. Couvre le créneau encore futur, le créneau passé,
+-- le basculement de semaine et le retour DST entre les deux occurrences.
 do $$
 declare
-  v_reference timestamptz;
-  v_debut timestamptz;
-  v_paris timestamptz;
-  v_conakry timestamptz;
+  v_cas record;
+  v_obtenu timestamptz;
 begin
-  foreach v_reference in array ARRAY[
-    timestamptz '2026-10-12 00:30:00+00',
-    timestamptz '2026-10-12 10:30:00+00',
-    timestamptz '2026-10-12 12:30:00+00',
-    timestamptz '2026-10-12 16:30:00+00',
-    timestamptz '2026-10-12 17:30:00+00',
-    timestamptz '2026-10-12 23:30:00+00'
-  ] loop
-    v_debut := public.instant_creneau_reference(
-      1, 18, 'Europe/Paris', 0, v_reference
+  for v_cas in
+    select * from (values
+      (1, 18, 'Europe/Paris', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-19 16:00:00+00'),
+      (1, 18, 'Europe/Paris', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-19 16:00:00+00'),
+      (1, 18, 'Europe/Paris', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-19 16:00:00+00'),
+      (1,  0, 'Europe/Paris', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-18 22:00:00+00'),
+      (1,  0, 'Europe/Paris', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-25 23:00:00+00'),
+      (1,  0, 'Europe/Paris', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-25 23:00:00+00'),
+      (7, 23, 'Europe/Paris', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-25 22:00:00+00'),
+      (7, 23, 'Europe/Paris', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-25 22:00:00+00'),
+      (7, 23, 'Europe/Paris', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-25 22:00:00+00'),
+      (7, 21, 'Europe/Paris', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-25 20:00:00+00'),
+      (7, 21, 'Europe/Paris', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-25 20:00:00+00'),
+      (7, 21, 'Europe/Paris', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-25 20:00:00+00'),
+      (1, 22, 'Africa/Conakry', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-19 22:00:00+00'),
+      (1, 22, 'Africa/Conakry', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-19 22:00:00+00'),
+      (1, 22, 'Africa/Conakry', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-19 22:00:00+00'),
+      (1,  0, 'Europe/Paris', 1, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-25 23:00:00+00'),
+      (1,  0, 'Europe/Paris', 1, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-11-01 23:00:00+00'),
+      (1,  0, 'Europe/Paris', 1, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-11-01 23:00:00+00'),
+      (7, 23, 'Europe/Paris', 1, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-11-01 22:00:00+00'),
+      (7, 23, 'Europe/Paris', 1, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-11-01 22:00:00+00'),
+      (7, 23, 'Europe/Paris', 1, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-11-01 22:00:00+00')
+    ) as cas(weekday, heure, fuseau, offset_semaine, reference_at, attendu)
+  loop
+    v_obtenu := public.instant_creneau_reference(
+      v_cas.weekday, v_cas.heure, v_cas.fuseau,
+      v_cas.offset_semaine, v_cas.reference_at
     );
-    v_paris := ((v_debut at time zone 'Europe/Paris') at time zone 'Europe/Paris');
-    v_conakry := ((v_debut at time zone 'Africa/Conakry') at time zone 'Africa/Conakry');
-    if v_paris <> v_conakry or v_paris <> v_debut then
-      raise exception
-        'Instant ECHEC : Paris et Conakry ne partagent pas le debut UTC a la reference %',
-        v_reference;
+    if v_obtenu is distinct from v_cas.attendu then
+      raise exception 'Instant ECHEC: slot %, %h %, ref %, obtenu %, attendu %',
+        v_cas.weekday, v_cas.heure, v_cas.fuseau, v_cas.reference_at,
+        v_obtenu, v_cas.attendu;
     end if;
   end loop;
-  raise notice 'Instant ok : Paris et Conakry partagent le debut UTC aux six references';
+  raise notice 'Instant ok : 21 valeurs sans doublon d offset, bascule hebdomadaire et DST';
+end $$;
+
+-- La classe calcule une fois son occurrence dans le fuseau de reference.
+-- Paris et Conakry affichent ensuite le meme instant UTC, meme a cheval sur
+-- le dimanche UTC / lundi local et apres la fin de l'heure d'ete parisienne.
+do $$
+declare
+  v_cas record;
+  v_instant timestamptz;
+  v_paris_local timestamp without time zone;
+  v_conakry_local timestamp without time zone;
+begin
+  for v_cas in
+    select * from (values
+      (timestamptz '2026-10-25 00:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00'),
+      (timestamptz '2026-10-25 10:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00'),
+      (timestamptz '2026-10-25 12:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00'),
+      (timestamptz '2026-10-25 16:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00'),
+      (timestamptz '2026-10-25 17:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00'),
+      (timestamptz '2026-10-25 23:30:00+00', timestamptz '2026-10-26 17:00:00+00', timestamp '2026-10-26 18:00:00', timestamp '2026-10-26 17:00:00')
+    ) as cas(reference_at, attendu_utc, attendu_paris, attendu_conakry)
+  loop
+    v_instant := public.instant_creneau_reference(
+      1, 18, 'Europe/Paris', 0, v_cas.reference_at
+    );
+    v_paris_local := v_instant at time zone 'Europe/Paris';
+    v_conakry_local := v_instant at time zone 'Africa/Conakry';
+    if v_instant is distinct from v_cas.attendu_utc
+       or v_paris_local is distinct from v_cas.attendu_paris
+       or v_conakry_local is distinct from v_cas.attendu_conakry
+       or (v_paris_local at time zone 'Europe/Paris')
+          is distinct from (v_conakry_local at time zone 'Africa/Conakry') then
+      raise exception 'A778: instants Paris/Conakry divergents, ref %, UTC %, Paris %, Conakry %',
+        v_cas.reference_at, v_instant, v_paris_local, v_conakry_local;
+    end if;
+  end loop;
+  raise notice 'A778: les six références donnent le même instant UTC projeté à Paris et Conakry';
+end $$;
+
+-- Les consommateurs des migrations 0014, 0016, 0033 et 0083 ainsi que les
+-- gardes F86 (affectation et prise d'élève) appellent instant_creneau. Vérifier
+-- ici le contrat partagé : un horaire du dimanche déjà passé pointe au prochain
+-- dimanche; les comparaisons de créneaux n'utilisent donc pas l'occurrence passée.
+do $$
+declare
+  v_dimanche_precedent date;
+  v_reference timestamptz;
+  v_attendu timestamptz;
+  v_obtenu timestamptz;
+begin
+  v_dimanche_precedent := (pg_catalog.now() at time zone 'Europe/Paris')::date
+    - extract(isodow from pg_catalog.now() at time zone 'Europe/Paris')::int;
+  v_reference := (v_dimanche_precedent + time '23:30') at time zone 'Europe/Paris';
+  v_attendu := ((v_dimanche_precedent + 7) + time '23:00') at time zone 'Europe/Paris';
+  v_obtenu := public.instant_creneau_reference(
+    7, 23, 'Europe/Paris', 0, v_reference
+  );
+  if v_obtenu is distinct from v_attendu or v_obtenu <= v_reference then
+    raise exception 'F86/callers: le créneau passé ne pointe pas à la prochaine occurrence (%, attendu %) ',
+      v_obtenu, v_attendu;
+  end if;
+  raise notice 'Callers/F86 ok : le créneau du dimanche passé avance au dimanche suivant';
 end $$;
 
 -- ============================================================
@@ -1407,6 +1486,121 @@ begin
   update public.profiles set account_status = 'active' where id = v_admin;
 end
 $f86_admin_mutators$;
+
+-- A793 : les appelants voient le prochain instant d'un créneau déjà passé.
+-- Ce scénario exerce enseignants_pour (0014/0016), la matérialisation de
+-- groupe (0033), les deux chevauchements récurrents (0083) et les deux gardes
+-- F86 qui comparent les disponibilités élève/enseignant.
+do $next_occurrence_callers$
+declare
+  v_reference timestamptz := now();
+  v_weekday integer;
+  v_hour integer;
+  v_weekday_2 integer;
+  v_hour_2 integer;
+  v_teacher_weekday integer;
+  v_teacher_hour integer;
+  v_teacher_weekday_2 integer;
+  v_teacher_hour_2 integer;
+  v_next timestamptz;
+  v_next_2 timestamptz;
+  v_group_first timestamptz;
+  v_session_count integer;
+  v_common integer;
+  v_assignment uuid;
+begin
+  -- Deux horaires espacés d'une journée et toujours déjà passés aujourd'hui.
+  -- Les créneaux à 00 h évitent les séances matérialisées par les autres
+  -- scénarios de l'enseignant, dont les disponibilités sont en journée/soirée.
+  v_weekday := extract(isodow from (v_reference at time zone 'Europe/Paris'))::integer;
+  v_hour := 0;
+  v_weekday_2 := case when v_weekday = 1 then 7 else v_weekday - 1 end;
+  v_hour_2 := 0;
+
+  v_next := public.instant_creneau_reference(
+    v_weekday, v_hour, 'Europe/Paris', 0, v_reference
+  );
+  v_next_2 := public.instant_creneau_reference(
+    v_weekday_2, v_hour_2, 'Europe/Paris', 0, v_reference
+  );
+  if v_next <= v_reference or v_next_2 <= v_reference
+     or public.instant_creneau(v_weekday, v_hour, 'Europe/Paris') <> v_next then
+    raise exception 'A793: un créneau passé ne renvoie pas sa prochaine occurrence';
+  end if;
+
+  v_teacher_weekday := extract(isodow from (v_next at time zone 'Africa/Conakry'))::integer;
+  v_teacher_hour := extract(hour from (v_next at time zone 'Africa/Conakry'))::integer;
+  v_teacher_weekday_2 := extract(isodow from (v_next_2 at time zone 'Africa/Conakry'))::integer;
+  v_teacher_hour_2 := extract(hour from (v_next_2 at time zone 'Africa/Conakry'))::integer;
+
+  delete from public.weekly_availability
+   where profile_id in (
+     'aaaaaaaa-0000-0000-0000-000000000003',
+     'bbbbbbbb-0000-0000-0000-000000000002',
+     'cccccccc-0000-0000-0000-000000000001',
+     'cccccccc-0000-0000-0000-000000000002'
+   );
+  insert into public.weekly_availability(profile_id,weekday,hour_local,timezone_iana)
+  values
+    ('aaaaaaaa-0000-0000-0000-000000000003',v_weekday,v_hour,'Europe/Paris'),
+    ('bbbbbbbb-0000-0000-0000-000000000002',v_weekday_2,v_hour_2,'Europe/Paris'),
+    ('cccccccc-0000-0000-0000-000000000002',v_teacher_weekday,v_teacher_hour,'Africa/Conakry'),
+    ('cccccccc-0000-0000-0000-000000000002',v_teacher_weekday_2,v_teacher_hour_2,'Africa/Conakry');
+
+  if not app_private.creneaux_recurrents_se_chevauchent(
+       v_weekday,v_hour,'Europe/Paris',v_teacher_weekday,v_teacher_hour,
+       'Africa/Conakry',60)
+     or not app_private.creneau_recurrent_chevauche_session(
+       v_weekday,v_hour,'Europe/Paris',60,v_next,v_next+interval '30 minutes') then
+    raise exception 'A793: le consommateur 0083 ne voit pas le créneau suivant';
+  end if;
+
+  -- L'insertion d'un groupe traverse les triggers 0033 et matérialise son
+  -- premier début sur le même prochain instant, même si son heure est passée.
+  insert into public.groupes
+    (id,teacher_id,type_public,seuil_max,libelle,weekday,hour_local,timezone_iana)
+  values
+    ('a173ffff-0000-0000-0000-000000000011',
+     'cccccccc-0000-0000-0000-000000000001','enfant',5,
+     'A793 prochaine occurrence',v_weekday,v_hour,'Europe/Paris');
+  select count(*),min(started_at) into v_session_count,v_group_first
+  from public.sessions where groupe_id='a173ffff-0000-0000-0000-000000000011';
+  if v_session_count < 1 or v_group_first is distinct from v_next then
+    raise exception 'A793: 0033 a matérialisé %, attendu %',v_group_first,v_next;
+  end if;
+
+  set local role authenticated;
+  perform set_config('test.uid','dddddddd-0000-0000-0000-000000000001',true);
+  perform set_config('test.jwt','{"app_metadata":{"role":"admin"}}',true);
+  select count(*) into v_common
+  from public.enseignants_pour('aaaaaaaa-0000-0000-0000-000000000003') e
+  where e.teacher_id='cccccccc-0000-0000-0000-000000000002'
+    and e.creneaux_communs <> '[]'::jsonb;
+  if v_common <> 1 then
+    raise exception 'A793: 0014/0016 ne trouvent pas le créneau commun suivant';
+  end if;
+  v_assignment := public.attribuer_eleve(
+    'aaaaaaaa-0000-0000-0000-000000000003',
+    'cccccccc-0000-0000-0000-000000000002',v_weekday,v_hour,NULL
+  );
+  if v_assignment is null then
+    raise exception 'A793: garde F86 attribuer_eleve n''a pas affecté le créneau suivant';
+  end if;
+
+  perform set_config('test.uid','cccccccc-0000-0000-0000-000000000002',true);
+  perform set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+  perform set_config('request.jwt.claim.sub','cccccccc-0000-0000-0000-000000000002',true);
+  perform set_config('request.jwt.claims','{"sub":"cccccccc-0000-0000-0000-000000000002","app_metadata":{"role":"teacher"}}',true);
+  v_assignment := public.prendre_eleve(
+    'bbbbbbbb-0000-0000-0000-000000000002',v_weekday_2,v_hour_2
+  );
+  if v_assignment is null then
+    raise exception 'A793: garde F86 prendre_eleve n''a pas pris le créneau suivant';
+  end if;
+  reset role;
+  raise notice 'A793 : appelants 0014/0016/0033/0083 et gardes F86 utilisent la prochaine occurrence';
+end
+$next_occurrence_callers$;
 
 reset role;
 rollback;
