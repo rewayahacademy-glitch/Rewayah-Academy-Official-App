@@ -117,6 +117,65 @@ SELECT set_config('test.uid', 'b0400000-0000-0000-0000-000000000005', true);
 SELECT set_config('test.jwt',
   '{"app_metadata":{"role":"guardian","household_id":"b04fffff-0000-0000-0000-000000000002"}}', true);
 SELECT public.deposer_reprise_foyer('b0400000-0000-0000-0000-000000000021');
+RESET ROLE;
+SELECT set_config('test.reprise_id', (
+  SELECT id::text FROM public.reprises_foyer
+   WHERE household_id = 'b04fffff-0000-0000-0000-000000000002'
+     AND statut = 'a_examiner'
+), true);
+UPDATE public.reprises_foyer
+   SET examen_possible_le = pg_catalog.now() + interval '1 hour'
+ WHERE id = current_setting('test.reprise_id')::uuid;
+SET LOCAL ROLE authenticated;
+SELECT set_config('test.uid', 'b0400000-0000-0000-0000-000000000005', true);
+SELECT set_config('test.jwt',
+  '{"app_metadata":{"role":"guardian","household_id":"b04fffff-0000-0000-0000-000000000002"}}', true);
+DO $non_admin_decision$
+DECLARE v_denied boolean := false;
+BEGIN
+  BEGIN
+    PERFORM public.decider_reprise_foyer(
+      current_setting('test.reprise_id')::uuid,
+      false,
+      'b0400000-0000-0000-0000-000000000023'
+    );
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN
+    RAISE EXCEPTION 'B-04: un guardian a pu decider une reprise';
+  END IF;
+END
+$non_admin_decision$;
+SELECT set_config('test.uid', 'b0400000-0000-0000-0000-000000000001', true);
+SELECT set_config('test.jwt',
+  '{"app_metadata":{"role":"admin","household_id":"b04fffff-0000-0000-0000-000000000003"}}', true);
+DO $early_admin_decision$
+DECLARE v_row record; v_result jsonb;
+BEGIN
+  SELECT * INTO v_row FROM public.lister_reprises_admin()
+   WHERE id = current_setting('test.reprise_id')::uuid;
+  IF v_row.statut <> 'a_examiner' OR v_row.decidable THEN
+    RAISE EXCEPTION 'B-04: une reprise avant echeance est decidable';
+  END IF;
+  v_result := public.decider_reprise_foyer(
+    v_row.id, false, 'b0400000-0000-0000-0000-000000000023'
+  );
+  IF v_result->>'statut' <> 'deja_traitee'
+     OR v_result->>'foyer_personnel_cree' <> 'false' THEN
+    RAISE EXCEPTION 'B-04: decision admin acceptee avant examen_possible_le: %', v_result;
+  END IF;
+  SELECT * INTO v_row FROM public.lister_reprises_admin()
+   WHERE id = current_setting('test.reprise_id')::uuid;
+  IF v_row.statut <> 'a_examiner' OR v_row.decidable THEN
+    RAISE EXCEPTION 'B-04: la tentative prematuree a modifie la reprise';
+  END IF;
+END
+$early_admin_decision$;
+RESET ROLE;
+UPDATE public.reprises_foyer
+   SET examen_possible_le = pg_catalog.now() - interval '1 second'
+ WHERE id = current_setting('test.reprise_id')::uuid;
+SET LOCAL ROLE authenticated;
 SELECT set_config('test.uid', 'b0400000-0000-0000-0000-000000000001', true);
 SELECT set_config('test.jwt',
   '{"app_metadata":{"role":"admin","household_id":"b04fffff-0000-0000-0000-000000000003"}}', true);
