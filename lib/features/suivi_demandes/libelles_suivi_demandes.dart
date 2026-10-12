@@ -127,12 +127,14 @@ bool estRetiree(MotifCloture motif) => switch (motif) {
   MotifCloture.retraitFamille || MotifCloture.offreRetiree => true,
   MotifCloture.classeNonConstituee ||
   MotifCloture.refusDirection ||
+  MotifCloture.dejaEnClasse ||
   MotifCloture.inconnu => false,
 };
 
 /// L'etat court d'une demande : « Demande envoyee », « Classe validee »,
 /// « Enseignant affecte », « Demande retiree », « Demande non retenue »,
-/// « Demande close » (motif inconnu : ni retrait ni refus suppose).
+/// « Demande close » (motif inconnu ou eleve deja en classe : ni retrait ni
+/// refus suppose).
 String etatCourtDemande(SuiviDemande d) => switch (d.etape) {
   EtapeDemande.envoyee => t.suiviDemandes.etapes.envoyee,
   EtapeDemande.listeAttente => t.suiviDemandes.etapes.listeAttente,
@@ -141,20 +143,24 @@ String etatCourtDemande(SuiviDemande d) => switch (d.etape) {
   EtapeDemande.eleveIntegre => t.suiviDemandes.etapes.eleveIntegre,
   EtapeDemande.coursCommences => t.suiviDemandes.etapes.coursCommences,
   EtapeDemande.close =>
-    d.motif == MotifCloture.inconnu
+    d.motif == MotifCloture.inconnu || d.motif == MotifCloture.dejaEnClasse
         ? t.suiviDemandes.close.close
         : estRetiree(d.motif!)
         ? t.suiviDemandes.close.retiree
         : t.suiviDemandes.close.nonRetenue,
 };
 
-/// Le motif en clair d'une demande close.
-String motifDemande(MotifCloture motif) => switch (motif) {
+/// Le motif en clair d'une demande close. [prenom] sert au motif « deja en
+/// classe », qui nomme l'eleve.
+String motifDemande(MotifCloture motif, String prenom) => switch (motif) {
   MotifCloture.retraitFamille => t.suiviDemandes.close.motif.retraitFamille,
   MotifCloture.offreRetiree => t.suiviDemandes.close.motif.offreRetiree,
   MotifCloture.classeNonConstituee =>
     t.suiviDemandes.close.motif.classeNonConstituee,
   MotifCloture.refusDirection => t.suiviDemandes.close.motif.refusDirection,
+  MotifCloture.dejaEnClasse => t.suiviDemandes.close.motif.dejaEnClasse(
+    prenom: prenom,
+  ),
   MotifCloture.inconnu => t.suiviDemandes.close.motif.inconnu,
 };
 
@@ -206,9 +212,16 @@ String titreNotificationDemande(SuiviDemande d) => switch (d.etape) {
         cle: 'suiviDemandes.notification.enseignantAffecte',
       ),
     ),
+  EtapeDemande.close when d.motif == MotifCloture.dejaEnClasse =>
+    t.suiviDemandes.notification.dejaEnClasse(
+      dePrenom: deDevant(
+        d.prenom,
+        cle: 'suiviDemandes.notification.dejaEnClasse',
+      ),
+    ),
   EtapeDemande.close => t.suiviDemandes.notification.close(
     dePrenom: deDevant(d.prenom, cle: 'suiviDemandes.notification.close'),
-    motif: _minusculeInitiale(motifDemande(d.motif!)),
+    motif: _minusculeInitiale(motifDemande(d.motif!, d.prenom)),
   ),
 };
 

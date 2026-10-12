@@ -8494,6 +8494,7 @@
         "offreRetiree": "سحبت الأكاديمية هذا الموعد من عروضها.",
         "classeNonConstituee": "تعذّر تكوين فصل هذا الموعد.",
         "refusDirection": "لم تتمكن الإدارة من قبول هذا الطلب.",
+        "dejaEnClasse": "⁨{prenom}⁩ لديه مكان في فصل بالفعل: لم يعد هذا الطلب لازمًا.",
         "inconnu": "أُغلق هذا الطلب."
       },
       "suite": "يمكنكم اختيار موعد آخر من المواعيد المقترحة.",
@@ -8515,6 +8516,7 @@
       "enseignantAffecte": "طلب موعد ⁨{dePrenom}⁩: تم اعتماد الفصل وتعيين المعلم",
       "eleveIntegre": "طلب موعد ⁨{dePrenom}⁩: الطالب مندمج في الفصل",
       "coursCommences": "طلب موعد ⁨{dePrenom}⁩: بدأت الدروس",
+      "dejaEnClasse": "طلب موعد ⁨{dePrenom}⁩: الطالب في فصل بالفعل، أُغلق الطلب",
       "changementFusion": "طلب موعد ⁨{dePrenom}⁩: دُمج فصلكم مع فصل آخر، عرض الفصل الجديد",
       "changementTransfert": "طلب موعد ⁨{dePrenom}⁩: فصل جديد، عرض التفاصيل",
       "close": "طلب موعد ⁨{dePrenom}⁩: ⁨{motif}⁩"

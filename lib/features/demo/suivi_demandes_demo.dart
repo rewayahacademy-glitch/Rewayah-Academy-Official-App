@@ -119,6 +119,7 @@ class DemandeServeurDemo {
           MotifCloture.classeNonConstituee =>
             MotifClotureFrise.classeNonConstituee,
           MotifCloture.refusDirection => MotifClotureFrise.refusDirection,
+          MotifCloture.dejaEnClasse => MotifClotureFrise.dejaEnClasse,
           _ => MotifClotureFrise.inconnu,
         };
   }
@@ -304,7 +305,7 @@ class SuiviDemandesDemo implements PortSuiviDemandes {
         (EtapeDemande.envoyee, DateTime(2026, 10, 2, 9)),
         (EtapeDemande.close, DateTime(2026, 10, 3, 10)),
       ],
-      motifCloture: MotifClotureFrise.dejaEnClasse,
+      motif: MotifCloture.dejaEnClasse,
     ),
     DemandeServeurDemo(
       demandeId: 'demo-demande-ines',
@@ -569,7 +570,7 @@ class NotificationsSuiviDemandesDemo implements PortNotifications {
           for (final DemandeServeurDemo d in suivi.demandes)
             for (final (EtapeDemande etape, DateTime quand) in d.transitions)
               if (!(etape == EtapeDemande.close &&
-                  d.motifCloture == MotifClotureFrise.dejaEnClasse))
+                  d.motif == MotifCloture.dejaEnClasse))
                 NotificationTuteur(
                   id: '${d.demandeId}-${etape.name}',
                   titre: titreNotificationDemande(
@@ -589,7 +590,7 @@ class NotificationsSuiviDemandesDemo implements PortNotifications {
           // BACK-FRONT-SUIVI-1 : « deja en classe » n'a pas de motif dans le
           // suivi a trois etapes ; sa notification vient de la frise.
           for (final DemandeServeurDemo d in suivi.demandes)
-            if (d.motifCloture == MotifClotureFrise.dejaEnClasse)
+            if (d.motif == MotifCloture.dejaEnClasse)
               for (final (EtapeDemande etape, DateTime quand) in d.transitions)
                 if (etape == EtapeDemande.close)
                   NotificationTuteur(
