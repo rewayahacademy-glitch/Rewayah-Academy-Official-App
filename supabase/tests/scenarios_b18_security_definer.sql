@@ -174,6 +174,52 @@ end
 $b06_admin$;
 reset role;
 
+-- F86: les garde-fous KYC et d'affectation refusent aussi un compte admin
+-- suspendu, même lorsque le JWT annonce encore le rôle admin.
+update public.profiles
+   set account_status = 'suspended'
+ where id = 'b1800000-0000-0000-0000-000000000003';
+set local role authenticated;
+select set_config('request.jwt.claim.sub', 'b1800000-0000-0000-0000-000000000003', true);
+select set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', true);
+select set_config('test.uid', 'b1800000-0000-0000-0000-000000000003', true);
+select set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+do $f86_disabled_admin$
+declare
+  v_test record;
+  v_refuse boolean;
+begin
+  if public.app_account_valid() then
+    raise exception 'F86 fixture invalide: le compte admin doit être suspendu';
+  end if;
+
+  for v_test in
+    select * from (values
+      ('select public.decider_dossier(null::uuid, true)',
+       'seul un administrateur decide d''un dossier'),
+      ('select public.attribuer_eleve(null::uuid, null::uuid, 1, 1, null)',
+       'attribution manuelle reservee a l''administration')
+    ) as tests(commande, refus_attendu)
+  loop
+    v_refuse := false;
+    begin
+      execute v_test.commande;
+      raise exception 'F86 ECHEC: une RPC a accepté un compte admin suspendu';
+    exception when sqlstate 'P0001' then
+      if sqlerrm <> v_test.refus_attendu then raise; end if;
+      v_refuse := true;
+    end;
+    if not v_refuse then
+      raise exception 'F86 ECHEC: refus absent pour un compte admin suspendu';
+    end if;
+  end loop;
+end
+$f86_disabled_admin$;
+reset role;
+update public.profiles
+   set account_status = 'active'
+ where id = 'b1800000-0000-0000-0000-000000000003';
+
 do $b06_storage$
 begin
   if to_regclass('storage.objects') is not null
