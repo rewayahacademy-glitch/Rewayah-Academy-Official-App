@@ -239,6 +239,9 @@ BEGIN
 END;
 $function$;
 
+-- Defence en profondeur : la garde d'entree role/compte est volontairement
+-- identique au helper private.b12_mission_autorisee appele sur la mission ci-dessous.
+-- Le helper reste l'autorite effective sur le perimetre et le titulaire du fil.
 CREATE FUNCTION public.controleur_envoyer_message(p_fil_id uuid,p_cle_client uuid,p_texte text)
 RETURNS void LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path = '' AS $function$
 DECLARE v_mission_id uuid;
@@ -300,6 +303,8 @@ BEGIN
 END;
 $function$;
 
+-- Defence en profondeur : la garde d'entree role/compte reprend celle du helper
+-- private.b12_mission_autorisee, puis le rapport est borne a son controleur.
 CREATE FUNCTION public.controleur_ajouter_complement(p_rapport_id uuid,p_texte text,p_motif text DEFAULT NULL)
 RETURNS jsonb LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path = '' AS $function$
 DECLARE v_report public.rapports_mission%ROWTYPE; v_id uuid; v_at timestamptz;
@@ -380,6 +385,8 @@ BEGIN
        ) AS fingerprints(oid, expected)
        JOIN pg_catalog.pg_proc p ON p.oid=fingerprints.oid
        WHERE pg_catalog.md5(pg_catalog.pg_get_functiondef(p.oid)) <> fingerprints.expected
+          OR pg_catalog.obj_description(p.oid,'pg_proc') NOT LIKE
+             '%' || fingerprints.expected || '%'
      ) THEN
     RAISE EXCEPTION 'B12 schema, ACL, RLS ou allowlist F86 invalide';
   END IF;
