@@ -3,7 +3,8 @@ begin;
 
 insert into auth.users (id, email) values
   ('f1650000-0000-0000-0000-000000000001', 'f1-feedback-teacher@example.test'),
-  ('f1650000-0000-0000-0000-000000000002', 'f1-feedback-student@example.test');
+  ('f1650000-0000-0000-0000-000000000002', 'f1-feedback-student@example.test'),
+  ('f1650000-0000-0000-0000-000000000003', 'f1-feedback-disabled@example.test');
 insert into public.households (id, timezone)
 values ('f16fffff-0000-0000-0000-000000000001', 'Europe/Paris');
 insert into public.profiles
@@ -12,7 +13,9 @@ values
   ('f1650000-0000-0000-0000-000000000001', 'F1FEEDBACKTEACH', 'teacher',
    'f16fffff-0000-0000-0000-000000000001', 'Fixture', 'Teacher', 'provisional_active'),
   ('f1650000-0000-0000-0000-000000000002', 'F1FEEDBACKSTUD', 'student',
-   'f16fffff-0000-0000-0000-000000000001', 'Fixture', 'Student', 'active');
+   'f16fffff-0000-0000-0000-000000000001', 'Fixture', 'Student', 'active'),
+  ('f1650000-0000-0000-0000-000000000003', 'F1FEEDBACKDISAB', 'teacher',
+   'f16fffff-0000-0000-0000-000000000001', 'Disabled', 'Teacher', 'disabled');
 insert into public.student_profiles (profile_id, student_type, interface_mode)
 values ('f1650000-0000-0000-0000-000000000002', 'minor', 'child');
 insert into public.groupes
@@ -123,5 +126,73 @@ begin
 end
 $feedback_teacher$;
 
+reset role;
+
+set local role authenticated;
+select pg_catalog.set_config('test.uid', 'f1650000-0000-0000-0000-000000000003', true);
+select pg_catalog.set_config('test.jwt',
+  '{"app_metadata":{"role":"teacher","household_id":"f16fffff-0000-0000-0000-000000000001"}}', true);
+do $feedback_disabled_account$
+declare
+  v_question jsonb;
+begin
+  v_question := public.question_feedback_pour('f16fffff-0000-0000-0000-000000000001');
+  if v_question is not null then
+    raise exception 'B-11 feedback: disabled account received a question';
+  end if;
+
+  begin
+    perform public.soumettre_feedback(
+      'f16fffff-0000-0000-0000-000000000001', 'comprehension', 'bien'
+    );
+    raise exception 'B-11 feedback: disabled account submitted feedback';
+  exception when insufficient_privilege then null;
+  end;
+
+  begin
+    perform public.tendance_feedback_comprehension('f16fffff-0000-0000-0000-000000000002');
+    raise exception 'B-11 feedback: disabled account read the aggregate';
+  exception when insufficient_privilege then null;
+  end;
+end
+$feedback_disabled_account$;
+
+reset role;
+do $feedback_anon_acl$
+begin
+  if pg_catalog.has_function_privilege('anon', 'public.question_feedback_pour(uuid)', 'EXECUTE')
+     or pg_catalog.has_function_privilege('anon', 'public.soumettre_feedback(uuid,text,text)', 'EXECUTE')
+     or pg_catalog.has_function_privilege(
+       'anon', 'public.tendance_feedback_comprehension(uuid)', 'EXECUTE'
+     ) then
+    raise exception 'B-11 feedback: anon unexpectedly has feedback RPC execution';
+  end if;
+end
+$feedback_anon_acl$;
+
+set local role anon;
+do $feedback_anon_calls$
+begin
+  begin
+    perform public.question_feedback_pour('f16fffff-0000-0000-0000-000000000001');
+    raise exception 'B-11 feedback: anon requested a question';
+  exception when insufficient_privilege then null;
+  end;
+
+  begin
+    perform public.soumettre_feedback(
+      'f16fffff-0000-0000-0000-000000000001', 'comprehension', 'bien'
+    );
+    raise exception 'B-11 feedback: anon submitted feedback';
+  exception when insufficient_privilege then null;
+  end;
+
+  begin
+    perform public.tendance_feedback_comprehension('f16fffff-0000-0000-0000-000000000002');
+    raise exception 'B-11 feedback: anon read the aggregate';
+  exception when insufficient_privilege then null;
+  end;
+end
+$feedback_anon_calls$;
 reset role;
 rollback;
