@@ -86,7 +86,8 @@ revoke all on function private.rech_d1_curseur_lire(uuid, text, text, bigint)
   from public, anon, authenticated, service_role;
 revoke all on function private.rech_d1_curseur_creer(text, text, text, uuid, bigint)
   from public, anon, authenticated, service_role;
--- D1 reads only these projections; existing table RLS remains the row authority.
+-- Keep column allowlists for direct invoker-side consumers. The D1 RPCs below
+-- read index candidates with explicit caller visibility inside DEFINER code.
 grant select (id, libelle, type_public, weekday, hour_local, timezone_iana, ended_at)
   on public.groupes to authenticated;
 grant select (id, type_public, langue_code, jours, heure_locale,
@@ -113,7 +114,7 @@ create or replace function public.rech_d1_rechercher_classes(
 )
 returns jsonb
 language plpgsql
-security invoker
+security definer
 set search_path = ''
 as $function$
 declare
@@ -144,16 +145,26 @@ begin
       from public.rech_d1_curseur_lire(p_curseur, 'classes', v_hash, v_authz) c;
   end if;
 
-  with lignes as (
+  with groupes_candidats as materialized (
+    select g.id
+      from public.groupes g
+     where g.ended_at is null
+       and lower(g.libelle) like '%' || v_query || '%'
+  ), offres_candidates as materialized (
+    select o.id
+      from public.offres_horaires o
+     where o.etat = 'publiee'
+       and lower(o.langue_code || ' ' || o.type_public) like '%' || v_query || '%'
+  ), lignes as (
     select 'groupe'::text as kind, g.id,
            g.libelle as titre,
            pg_catalog.jsonb_build_object(
              'typePublic', g.type_public, 'weekday', g.weekday,
              'hourLocal', g.hour_local, 'timezone', g.timezone_iana
            ) as metadata
-      from public.groupes g
-     where g.ended_at is null
-       and lower(g.libelle) like '%' || v_query || '%'
+      from groupes_candidats c
+      join public.groupes g on g.id = c.id
+     where app_private.peut_lire_groupe(g.id, null)
     union all
     select 'offre'::text, o.id,
            o.langue_code || ' · ' || o.type_public,
@@ -162,9 +173,8 @@ begin
              'jours', o.jours, 'heureLocale', o.heure_locale,
              'dureeMinutes', o.duree_minutes, 'fuseau', o.fuseau_iana
            )
-      from public.offres_horaires o
-     where o.etat = 'publiee'
-       and lower(o.langue_code || ' ' || o.type_public) like '%' || v_query || '%'
+      from offres_candidates c
+      join public.offres_horaires o on o.id = c.id
   ), page as (
     select l.* from lignes l
      where v_after_kind is null or (l.kind, l.id) > (v_after_kind, v_after_id)
@@ -200,7 +210,7 @@ create or replace function public.rech_d1_rechercher_supports(
 )
 returns jsonb
 language plpgsql
-security invoker
+security definer
 set search_path = ''
 as $function$
 declare
@@ -230,18 +240,58 @@ begin
       from public.rech_d1_curseur_lire(p_curseur, 'supports', v_hash, v_authz) c;
   end if;
 
-  with lignes as (
-    select r.id, r.title, r.short_title, r.resource_type::text as resource_type,
-           r.edition, r.language, r.category
+  with supports_candidats as materialized (
+    select r.id
       from public.library_resource r
-      join public.resource_version v
-        on v.resource_id = r.id and v.id = r.current_version_id
-       and v.statut = 'publiee'
      where r.archived_at is null
        and (
          lower(r.title) || ' ' || lower(coalesce(r.short_title, '')) || ' ' ||
          lower(coalesce(r.edition, '')) || ' ' || lower(r.category)
        ) like '%' || v_query || '%'
+  ), lignes as (
+    select r.id, r.title, r.short_title, r.resource_type::text as resource_type,
+           r.edition, r.language, r.category
+      from supports_candidats c
+      join public.library_resource r on r.id = c.id
+      join public.resource_version v
+        on v.resource_id = r.id and v.id = r.current_version_id
+       and v.statut = 'publiee'
+     where r.archived_at is null
+       and public.app_account_valid()
+       and (
+         public.app_role() = 'admin'
+         or (
+           r.current_version_id is not null
+           and (
+             r.access_policy in ('publique', 'inscrits')
+             or (
+               r.access_policy in ('groupe_assigne', 'enseignant_seul')
+               and exists (
+                 select 1
+                   from public.library_resource_groupe lrg
+                  where lrg.resource_id = r.id
+                    and (
+                      (
+                        public.app_role() = 'teacher'
+                        and exists (
+                          select 1 from public.mes_groupes_v mg
+                           where mg.groupe_id = lrg.groupe_id
+                        )
+                      )
+                      or (
+                        public.app_role() in ('guardian', 'student')
+                        and r.access_policy = 'groupe_assigne'
+                        and exists (
+                          select 1 from public.mes_groupes_famille_v mg
+                           where mg.groupe_id = lrg.groupe_id
+                        )
+                      )
+                    )
+               )
+             )
+           )
+         )
+       )
   ), page as (
     select l.* from lignes l
      where v_after_id is null or l.id > v_after_id
@@ -278,10 +328,12 @@ grant execute on function public.rech_d1_rechercher_classes(text, uuid, integer)
   to authenticated;
 grant execute on function public.rech_d1_rechercher_supports(text, uuid, integer)
   to authenticated;
+alter function public.rech_d1_rechercher_classes(text, uuid, integer) owner to postgres;
+alter function public.rech_d1_rechercher_supports(text, uuid, integer) owner to postgres;
 
 comment on function public.rech_d1_rechercher_classes(text, uuid, integer) is
-  'D1 caller-scoped published class/offers projection; fresh authorization and table RLS on every page.';
+  'D1 caller-scoped published class/offers projection; fresh authorization and explicit visibility on every page; indexed candidates are selected before caller visibility.';
 comment on function public.rech_d1_rechercher_supports(text, uuid, integer) is
-  'D1 caller-scoped current published resource metadata; no storage keys, URLs, or content.';
+  'D1 caller-scoped current published resource metadata; explicit visibility per page; no storage keys, URLs, or content.';
 
 commit;
