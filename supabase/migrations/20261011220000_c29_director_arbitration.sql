@@ -288,7 +288,7 @@ BEGIN
 END;
 $function$;
 COMMENT ON FUNCTION public.demarrer_mission_controle(uuid) IS
- 'F86 candidate allowlist: signature=public.demarrer_mission_controle(uuid); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11.';
+ 'F86 candidate allowlist: signature=public.demarrer_mission_controle(uuid); md5_functiondef=3fe3b44c1d1451f72dcc0d0e47ceffcb; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11.';
 
 CREATE OR REPLACE FUNCTION public.ma_mission_controle()
 RETURNS jsonb LANGUAGE sql STABLE SECURITY DEFINER SET search_path = ''
@@ -310,7 +310,7 @@ AS $function$
     ORDER BY m.affectee_le DESC LIMIT 1),'{}'::jsonb);
 $function$;
 COMMENT ON FUNCTION public.ma_mission_controle() IS
- 'F86 candidate allowlist: signature=public.ma_mission_controle(); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11.';
+ 'F86 candidate allowlist: signature=public.ma_mission_controle(); md5_functiondef=bfc289f725aaf511f497e4c81faebf69; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11.';
 
 CREATE FUNCTION public.declarer_conflit_mission(p_mission_id uuid,p_cle uuid)
 RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path = ''
@@ -350,6 +350,6 @@ ALTER FUNCTION public.declarer_conflit_mission(uuid,uuid) OWNER TO postgres;
 REVOKE ALL ON FUNCTION public.declarer_conflit_mission(uuid,uuid) FROM PUBLIC,anon,service_role,agent_ro;
 GRANT EXECUTE ON FUNCTION public.declarer_conflit_mission(uuid,uuid) TO authenticated;
 COMMENT ON FUNCTION public.declarer_conflit_mission(uuid,uuid) IS
- 'F86 candidate allowlist: signature=public.declarer_conflit_mission(uuid,uuid); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11.';
+ 'F86 candidate allowlist: signature=public.declarer_conflit_mission(uuid,uuid); md5_functiondef=ec0543210cae0d373ef9f38749e4b136; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11.';
 
 COMMIT;

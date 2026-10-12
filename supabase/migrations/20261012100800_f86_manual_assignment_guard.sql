@@ -109,7 +109,7 @@ REVOKE ALL ON FUNCTION public.attribuer_eleve(uuid,uuid,integer,integer,text)
 GRANT EXECUTE ON FUNCTION public.attribuer_eleve(uuid,uuid,integer,integer,text)
   TO authenticated;
 COMMENT ON FUNCTION public.attribuer_eleve(uuid,uuid,integer,integer,text) IS
-  'F86 candidate allowlist: signature=public.attribuer_eleve(uuid,uuid,integer,integer,text); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
+  'F86 candidate allowlist: signature=public.attribuer_eleve(uuid,uuid,integer,integer,text); md5_functiondef=2ab697ec188114774c8a4dfe82aec439; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
 
 DO $postflight$
 DECLARE v_count integer; v_helper_ok boolean;

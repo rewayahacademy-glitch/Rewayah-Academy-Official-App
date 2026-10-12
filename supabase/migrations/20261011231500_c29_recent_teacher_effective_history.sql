@@ -156,5 +156,5 @@ END;
 $function$;
 ALTER FUNCTION private.c29_attribuer_mission_controle() OWNER TO postgres;
 COMMENT ON FUNCTION private.c29_attribuer_mission_controle() IS
- 'F86 candidate allowlist: signature=private.c29_attribuer_mission_controle(); md5_functiondef=A_CALCULER; guard_type=INTERNAL_TRIGGER; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: pondération récente uniquement si la première séance terminée non supprimée de l’enseignant effectivement en charge (titulaire ou remplacement B-09 confirmé) date des 90 derniers jours; la date de création du compte n’influence pas ce critère.';
+ 'F86 candidate allowlist: signature=private.c29_attribuer_mission_controle(); md5_functiondef=ceb2ac64c99895fa5c97d3f4b92bcf87; guard_type=INTERNAL_TRIGGER; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11. Must-pass: pondération récente uniquement si la première séance terminée non supprimée de l’enseignant effectivement en charge (titulaire ou remplacement B-09 confirmé) date des 90 derniers jours; la date de création du compte n’influence pas ce critère.';
 COMMIT;

@@ -51,7 +51,7 @@ REVOKE ALL ON FUNCTION public.decider_dossier(uuid,boolean,text)
   FROM PUBLIC,anon,service_role,agent_ro;
 GRANT EXECUTE ON FUNCTION public.decider_dossier(uuid,boolean,text) TO authenticated;
 COMMENT ON FUNCTION public.decider_dossier(uuid,boolean,text) IS
-  'F86 candidate allowlist: signature=public.decider_dossier(uuid,boolean,text); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
+  'F86 candidate allowlist: signature=public.decider_dossier(uuid,boolean,text); md5_functiondef=3df3c4b49ec8b5b885202d045a449edb; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
 
 DO $postflight$
 DECLARE v_count integer;

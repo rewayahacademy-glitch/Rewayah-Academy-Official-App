@@ -29,7 +29,7 @@ REVOKE ALL ON FUNCTION public.maj_eleve_pedagogie(uuid,text,text)
   FROM PUBLIC,anon,service_role,agent_ro;
 GRANT EXECUTE ON FUNCTION public.maj_eleve_pedagogie(uuid,text,text) TO authenticated;
 COMMENT ON FUNCTION public.maj_eleve_pedagogie(uuid,text,text) IS
-  'F86 candidate allowlist: signature=public.maj_eleve_pedagogie(uuid,text,text); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
+  'F86 candidate allowlist: signature=public.maj_eleve_pedagogie(uuid,text,text); md5_functiondef=d520a13d7d56c740fdadc8291b7b0ac6; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
 
 CREATE OR REPLACE FUNCTION public.poser_regle(
   p_profile_id uuid,
@@ -68,7 +68,7 @@ REVOKE ALL ON FUNCTION public.poser_regle(uuid,text,integer,text)
   FROM PUBLIC,anon,service_role,agent_ro;
 GRANT EXECUTE ON FUNCTION public.poser_regle(uuid,text,integer,text) TO authenticated;
 COMMENT ON FUNCTION public.poser_regle(uuid,text,integer,text) IS
-  'F86 candidate allowlist: signature=public.poser_regle(uuid,text,integer,text); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
+  'F86 candidate allowlist: signature=public.poser_regle(uuid,text,integer,text); md5_functiondef=a3c7d8e4a47b497ca8089389114eba8e; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
 
 CREATE OR REPLACE FUNCTION public.clore_regle(p_override_id uuid, p_motif text)
 RETURNS void
@@ -99,7 +99,7 @@ REVOKE ALL ON FUNCTION public.clore_regle(uuid,text)
   FROM PUBLIC,anon,service_role,agent_ro;
 GRANT EXECUTE ON FUNCTION public.clore_regle(uuid,text) TO authenticated;
 COMMENT ON FUNCTION public.clore_regle(uuid,text) IS
-  'F86 candidate allowlist: signature=public.clore_regle(uuid,text); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
+  'F86 candidate allowlist: signature=public.clore_regle(uuid,text); md5_functiondef=23aa85aa637e93ad3d27de78f0c157dd; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
 
 CREATE OR REPLACE FUNCTION public.decider_demande(
   p_request_id uuid,
@@ -166,7 +166,7 @@ REVOKE ALL ON FUNCTION public.decider_demande(uuid,boolean,text)
   FROM PUBLIC,anon,service_role,agent_ro;
 GRANT EXECUTE ON FUNCTION public.decider_demande(uuid,boolean,text) TO authenticated;
 COMMENT ON FUNCTION public.decider_demande(uuid,boolean,text) IS
-  'F86 candidate allowlist: signature=public.decider_demande(uuid,boolean,text); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
+  'F86 candidate allowlist: signature=public.decider_demande(uuid,boolean,text); md5_functiondef=ec9fe0b06d004bd701071201e3ad9707; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
 
 DO $postflight$
 DECLARE v_count integer;

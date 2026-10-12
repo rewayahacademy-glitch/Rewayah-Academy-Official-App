@@ -281,7 +281,7 @@ ALTER FUNCTION private.c29_clore_mission_controle() OWNER TO postgres;
 REVOKE ALL ON FUNCTION private.c29_clore_mission_controle()
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 COMMENT ON FUNCTION private.c29_clore_mission_controle() IS
-  'F86 candidate allowlist: signature=private.c29_clore_mission_controle(); md5_functiondef=A_CALCULER; guard_type=INTERNAL_TRIGGER; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11.';
+  'F86 candidate allowlist: signature=private.c29_clore_mission_controle(); md5_functiondef=f26da770b43eea7634344dc85896ea86; guard_type=INTERNAL_TRIGGER; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11.';
 CREATE TRIGGER c29_clore_mission_controle
   AFTER UPDATE OF status ON public.sessions
   FOR EACH ROW EXECUTE FUNCTION private.c29_clore_mission_controle();
@@ -367,6 +367,6 @@ REVOKE ALL ON FUNCTION public.historique_tirages(text,text,integer,integer)
   FROM PUBLIC, anon, service_role, agent_ro;
 GRANT EXECUTE ON FUNCTION public.historique_tirages(text,text,integer,integer) TO authenticated;
 COMMENT ON FUNCTION public.historique_tirages(text,text,integer,integer) IS
-  'F86 candidate allowlist: signature=public.historique_tirages(text,text,integer,integer); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11.';
+  'F86 candidate allowlist: signature=public.historique_tirages(text,text,integer,integer); md5_functiondef=f25154e7e0fbf38753a9da9a20ad7f72; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-11.';
 
 COMMIT;
