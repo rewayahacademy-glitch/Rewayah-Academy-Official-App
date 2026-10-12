@@ -49,6 +49,8 @@ $function$;
 alter function private.tirer_nombre_matricule(integer) owner to postgres;
 revoke all on function private.tirer_nombre_matricule(integer)
   from public, anon, authenticated, service_role;
+comment on function private.tirer_nombre_matricule(integer) is
+  'F86 candidate allowlist: signature=private.tirer_nombre_matricule(integer); md5_functiondef=A_CALCULER; guard_type=SERVER_INTERNAL; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
 
 create or replace function private.attribuer_matricule(
   p_profile_id uuid,
@@ -136,6 +138,8 @@ $function$;
 alter function private.attribuer_matricule(uuid, timestamptz) owner to postgres;
 revoke all on function private.attribuer_matricule(uuid, timestamptz)
   from public, anon, authenticated, service_role;
+comment on function private.attribuer_matricule(uuid, timestamptz) is
+  'F86 candidate allowlist: signature=private.attribuer_matricule(uuid,timestamptz); md5_functiondef=A_CALCULER; guard_type=SERVER_INTERNAL; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
 
 -- IMM-BACK-1 B: assign registry codes in the profile-creation transaction.
 create or replace function public.profiles_attribuer_matricule()
@@ -157,6 +161,8 @@ $function$;
 alter function public.profiles_attribuer_matricule() owner to postgres;
 revoke all on function public.profiles_attribuer_matricule()
   from public, anon, authenticated, service_role;
+comment on function public.profiles_attribuer_matricule() is
+  'F86 candidate allowlist: signature=public.profiles_attribuer_matricule(); md5_functiondef=A_CALCULER; guard_type=SERVER_TRIGGER; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
 create trigger profiles_assign_person_registration
 before insert on public.profiles
 for each row execute function public.profiles_attribuer_matricule();
@@ -233,6 +239,9 @@ revoke execute on function public.creer_profil_inscription(
 grant execute on function public.creer_profil_inscription(
   text, text, text, public.gender, text, boolean
 ) to authenticated;
+comment on function public.creer_profil_inscription(
+  text, text, text, public.gender, text, boolean
+) is 'F86 candidate allowlist: signature=public.creer_profil_inscription(text,text,text,public.gender,text,boolean); md5_functiondef=A_CALCULER; guard_type=PUBLIC_REGISTRATION; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
 
 create or replace function public.creer_profil_enfant(
   p_auth_user_id uuid,
@@ -298,6 +307,8 @@ revoke execute on function public.creer_profil_enfant(uuid, uuid, text, text, in
   from public, anon, authenticated;
 grant execute on function public.creer_profil_enfant(uuid, uuid, text, text, integer, text)
   to service_role;
+comment on function public.creer_profil_enfant(uuid, uuid, text, text, integer, text) is
+  'F86 candidate allowlist: signature=public.creer_profil_enfant(uuid,uuid,text,text,integer,text); md5_functiondef=A_CALCULER; guard_type=SERVICE_ROLE_ONLY; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
 
 -- Backfill old profiles in their original UTC registration year, then restore
 -- the existing unique/immutable guarantees with the server-issued RA value.
@@ -371,7 +382,7 @@ revoke all on function public.rechercher_personne_par_matricule(text)
 grant execute on function public.rechercher_personne_par_matricule(text)
   to authenticated;
 comment on function public.rechercher_personne_par_matricule(text) is
-  'Exact authenticated lookup by canonical RA matricule; accepts case and separators, and returns only profiles authorized by partie_concernee.';
+  'F86 candidate allowlist: signature=public.rechercher_personne_par_matricule(text); md5_functiondef=A_CALCULER; guard_type=AUTHENTICATED_PARTIE_CONCERNEE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Exact lookup by canonical RA matricule; accepts case and separators and returns only profiles authorized by partie_concernee.';
 
 do $verification$
 begin
