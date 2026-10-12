@@ -50,6 +50,10 @@ values
   ('b15fffff-0000-0000-0000-000000000006',
    'b1500000-0000-0000-0000-000000000002',
    'b15fffff-0000-0000-0000-000000000003',
+   TIMESTAMPTZ '2030-01-02 03:00:00+00', TIMESTAMPTZ '2030-01-02 04:00:00+00'),
+  ('b15fffff-0000-0000-0000-000000000014',
+   'b1500000-0000-0000-0000-000000000003',
+   'b15fffff-0000-0000-0000-000000000004',
    TIMESTAMPTZ '2030-01-02 03:00:00+00', TIMESTAMPTZ '2030-01-02 04:00:00+00');
 
 insert into public.session_participants (session_id, profile_id, role)
@@ -57,7 +61,9 @@ values
   ('b15fffff-0000-0000-0000-000000000005',
    'b1500000-0000-0000-0000-000000000001', 'teacher'),
   ('b15fffff-0000-0000-0000-000000000005',
-   'b1500000-0000-0000-0000-000000000004', 'student');
+   'b1500000-0000-0000-0000-000000000004', 'student'),
+  ('b15fffff-0000-0000-0000-000000000014',
+   'b1500000-0000-0000-0000-000000000003', 'teacher');
 
 insert into public.library_resource
   (id, title, short_title, resource_type, access_policy, offline_policy)
@@ -66,6 +72,14 @@ values
    'B15 fixture A', 'B15A', 'quran', 'enseignant_seul', 'jamais'),
   ('b15fffff-0000-0000-0000-000000000008',
    'B15 fixture B', 'B15B', 'quran', 'enseignant_seul', 'jamais');
+
+insert into public.annotation_layer
+  (id, resource_id, session_id, auteur_profile_id, portee)
+values
+  ('b15fffff-0000-0000-0000-000000000013',
+   'b15fffff-0000-0000-0000-000000000007',
+   'b15fffff-0000-0000-0000-000000000014',
+   'b1500000-0000-0000-0000-000000000003', 'seance');
 
 set local role authenticated;
 select set_config('test.uid', 'b1500000-0000-0000-0000-000000000001', true);
@@ -225,5 +239,69 @@ begin
 end
 $b15_student_read_only$;
 
+reset role;
+set local role authenticated;
+select set_config('test.uid', 'b1500000-0000-0000-0000-000000000003', true);
+select set_config('test.jwt',
+  '{"app_metadata":{"role":"teacher","household_id":"b15fffff-0000-0000-0000-000000000001"}}',
+  true);
+do $b15_disabled_account$
+begin
+  begin
+    perform public.tc_poser_annotation_marqueur(
+      'b15fffff-0000-0000-0000-000000000013',
+      'b15fffff-0000-0000-0000-000000000015',
+      '{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"debut":{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":1},"fin":{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":2}}',
+      'learn', 'disabled account');
+    raise exception 'B-15: disabled teacher placed an annotation marker';
+  exception when insufficient_privilege then null;
+  end;
+
+  begin
+    perform public.tc_annuler_derniere_annotation(
+      'b15fffff-0000-0000-0000-000000000013'
+    );
+    raise exception 'B-15: disabled teacher undid an annotation';
+  exception when insufficient_privilege then null;
+  end;
+end
+$b15_disabled_account$;
+
+reset role;
+do $b15_anon_acl$
+begin
+  if pg_catalog.has_function_privilege(
+       'anon', 'public.tc_poser_annotation_marqueur(uuid,uuid,jsonb,text,text)', 'EXECUTE'
+     )
+     or pg_catalog.has_function_privilege(
+       'anon', 'public.tc_annuler_derniere_annotation(uuid)', 'EXECUTE'
+     ) then
+    raise exception 'B-15: anon unexpectedly has annotation RPC execution';
+  end if;
+end
+$b15_anon_acl$;
+
+set local role anon;
+do $b15_anon_calls$
+begin
+  begin
+    perform public.tc_poser_annotation_marqueur(
+      'b15fffff-0000-0000-0000-000000000013',
+      'b15fffff-0000-0000-0000-000000000015',
+      '{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"debut":{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":1},"fin":{"resource_id":"b15fffff-0000-0000-0000-000000000007","resource_version_id":null,"type_ancrage":"page","page":2}}',
+      'learn', 'anon account');
+    raise exception 'B-15: anon placed an annotation marker';
+  exception when insufficient_privilege then null;
+  end;
+
+  begin
+    perform public.tc_annuler_derniere_annotation(
+      'b15fffff-0000-0000-0000-000000000013'
+    );
+    raise exception 'B-15: anon undid an annotation';
+  exception when insufficient_privilege then null;
+  end;
+end
+$b15_anon_calls$;
 reset role;
 rollback;
