@@ -210,34 +210,36 @@ begin
     v_heure, v_jour;
 end $$;
 
--- La semaine de reference d'un creneau ne depend pas du fuseau qui le demande.
---
--- Le defaut, mesure le 6 septembre 2026 a 22h23 UTC : instant_creneau ancrait sa
--- semaine sur `date_trunc('week', now() at time zone p_tz)`. A cette heure-la,
--- Paris etait deja lundi et Conakry encore dimanche, donc les deux fuseaux
--- dataient deux semaines differentes et le meme rendez-vous rendait deux
--- instants a SEPT JOURS d'ecart. Le feed de ENS-06 se vidait alors de toute
--- famille d'un autre fuseau, deux heures par semaine, sans erreur ni trace.
---
--- Compare a 18 h : aux instants de rejeu documentes (10:05 et 11:30 UTC),
--- cette heure reste a venir a Paris comme a Conakry. Ainsi le scenario compare
--- les prochaines occurrences de la meme semaine, sans faire basculer un fuseau
--- a la semaine suivante parce que midi local est deja passe.
+-- La prochaine occurrence se calcule une fois dans le fuseau de reference de
+-- la Classe, depuis une reference explicite. Chaque foyer recoit le meme debut
+-- UTC, qu'il l'affiche ensuite dans son propre fuseau.
 do $$
 declare
-  v_jour int;
-  v_ecart interval;
+  v_reference timestamptz;
+  v_debut timestamptz;
+  v_paris timestamptz;
+  v_conakry timestamptz;
 begin
-  for v_jour in 1 .. 7 loop
-    v_ecart := public.instant_creneau(v_jour, 18, 'Europe/Paris')
-             - public.instant_creneau(v_jour, 18, 'Africa/Conakry');
-    if abs(extract(epoch from v_ecart)) >= 86400 then
+  foreach v_reference in array ARRAY[
+    timestamptz '2026-10-12 00:30:00+00',
+    timestamptz '2026-10-12 10:30:00+00',
+    timestamptz '2026-10-12 12:30:00+00',
+    timestamptz '2026-10-12 16:30:00+00',
+    timestamptz '2026-10-12 17:30:00+00',
+    timestamptz '2026-10-12 23:30:00+00'
+  ] loop
+    v_debut := public.instant_creneau_reference(
+      1, 18, 'Europe/Paris', 0, v_reference
+    );
+    v_paris := ((v_debut at time zone 'Europe/Paris') at time zone 'Europe/Paris');
+    v_conakry := ((v_debut at time zone 'Africa/Conakry') at time zone 'Africa/Conakry');
+    if v_paris <> v_conakry or v_paris <> v_debut then
       raise exception
-        'Instant ECHEC : le jour % rend % d''ecart entre Paris et Conakry pour 18 h',
-        v_jour, v_ecart;
+        'Instant ECHEC : Paris et Conakry ne partagent pas le debut UTC a la reference %',
+        v_reference;
     end if;
   end loop;
-  raise notice 'Instant ok : la semaine de reference est la meme dans tous les fuseaux';
+  raise notice 'Instant ok : Paris et Conakry partagent le debut UTC aux six references';
 end $$;
 
 -- ============================================================

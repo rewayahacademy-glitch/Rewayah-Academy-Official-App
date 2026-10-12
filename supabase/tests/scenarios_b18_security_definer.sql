@@ -134,7 +134,7 @@ values
    'female', 'Fixture', 'Admin', 'active');
 
 -- F86: an existing admin role must not bypass an invalid/suspended account.
-UPDATE public.profiles SET account_status='suspended'
+UPDATE public.profiles SET account_status='disabled'
  WHERE id='b1800000-0000-0000-0000-000000000003';
 SET LOCAL ROLE authenticated;
 SELECT set_config('request.jwt.claim.sub', 'b1800000-0000-0000-0000-000000000003', true);
@@ -145,13 +145,13 @@ DO $f86_suspended_admin$
 BEGIN
   BEGIN
     PERFORM * FROM public.eleves_sans_enseignant();
-    RAISE EXCEPTION 'F86: suspended admin read the student assignment queue';
+    RAISE EXCEPTION 'F86: disabled admin read the student assignment queue';
   EXCEPTION WHEN raise_exception THEN
     IF SQLERRM <> 'attribution manuelle reservee a l''administration' THEN RAISE; END IF;
   END;
   BEGIN
     PERFORM * FROM public.enseignants_pour(NULL::uuid);
-    RAISE EXCEPTION 'F86: suspended admin read teacher assignment candidates';
+    RAISE EXCEPTION 'F86: disabled admin read teacher assignment candidates';
   EXCEPTION WHEN raise_exception THEN
     IF SQLERRM <> 'attribution manuelle reservee a l''administration' THEN RAISE; END IF;
   END;
