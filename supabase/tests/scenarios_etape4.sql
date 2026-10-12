@@ -210,45 +210,70 @@ begin
     v_heure, v_jour;
 end $$;
 
--- La prochaine occurrence se calcule une fois dans le fuseau de reference de
--- la Classe, depuis une reference explicite. Chaque foyer recoit le meme debut
--- UTC, qu'il l'affiche ensuite dans son propre fuseau.
+-- Prochaine occurrence : références le dimanche autour de minuit UTC, valeurs
+-- attendues écrites en dur. Couvre le créneau encore futur, le créneau passé,
+-- le basculement de semaine et le retour DST entre les deux occurrences.
 do $$
 declare
-  v_reference timestamptz;
-  v_debut_paris timestamptz;
-  v_debut_conakry timestamptz;
-  v_jour_conakry int;
-  v_heure_conakry int;
+  v_cas record;
+  v_obtenu timestamptz;
 begin
-  foreach v_reference in array ARRAY[
-    timestamptz '2026-10-12 00:30:00+00',
-    timestamptz '2026-10-12 10:30:00+00',
-    timestamptz '2026-10-12 12:30:00+00',
-    timestamptz '2026-10-12 16:30:00+00',
-    timestamptz '2026-10-12 17:30:00+00',
-    timestamptz '2026-10-12 23:30:00+00'
-  ] loop
-    -- Paris pose le lundi a 18 h dans le fuseau de reference de la Classe.
-    v_debut_paris := public.instant_creneau_reference(
-      1, 18, 'Europe/Paris', 0, v_reference
+  for v_cas in
+    select * from (values
+      (1, 18, 'Europe/Paris', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-19 16:00:00+00'),
+      (1, 18, 'Europe/Paris', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-19 16:00:00+00'),
+      (1, 18, 'Europe/Paris', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-19 16:00:00+00'),
+      (1,  0, 'Europe/Paris', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-18 22:00:00+00'),
+      (1,  0, 'Europe/Paris', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-25 23:00:00+00'),
+      (1,  0, 'Europe/Paris', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-25 23:00:00+00'),
+      (7, 23, 'Europe/Paris', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-25 22:00:00+00'),
+      (7, 23, 'Europe/Paris', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-25 22:00:00+00'),
+      (7, 23, 'Europe/Paris', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-25 22:00:00+00'),
+      (7, 21, 'Europe/Paris', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-25 20:00:00+00'),
+      (7, 21, 'Europe/Paris', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-25 20:00:00+00'),
+      (7, 21, 'Europe/Paris', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-25 20:00:00+00'),
+      (1, 22, 'Africa/Conakry', 0, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-19 22:00:00+00'),
+      (1, 22, 'Africa/Conakry', 0, timestamptz '2026-10-18 22:30:00+00', timestamptz '2026-10-19 22:00:00+00'),
+      (1, 22, 'Africa/Conakry', 0, timestamptz '2026-10-18 23:30:00+00', timestamptz '2026-10-19 22:00:00+00'),
+      (1,  0, 'Europe/Paris', 1, timestamptz '2026-10-18 21:30:00+00', timestamptz '2026-10-25 23:00:00+00')
+    ) as cas(weekday, heure, fuseau, offset_semaine, reference_at, attendu)
+  loop
+    v_obtenu := public.instant_creneau_reference(
+      v_cas.weekday, v_cas.heure, v_cas.fuseau,
+      v_cas.offset_semaine, v_cas.reference_at
     );
-    -- Calcul independant de la meme occurrence locale a Conakry, depuis la
-    -- meme reference. Les deux calculs doivent converger sur le meme instant.
-    v_jour_conakry := extract(isodow from
-      (v_debut_paris at time zone 'Africa/Conakry'))::int;
-    v_heure_conakry := extract(hour from
-      (v_debut_paris at time zone 'Africa/Conakry'))::int;
-    v_debut_conakry := public.instant_creneau_reference(
-      v_jour_conakry, v_heure_conakry, 'Africa/Conakry', 0, v_reference
-    );
-    if v_debut_paris <> v_debut_conakry then
-      raise exception
-        'Instant ECHEC : calcul Paris % et Conakry % divergent a la reference %',
-        v_debut_paris, v_debut_conakry, v_reference;
+    if v_obtenu is distinct from v_cas.attendu then
+      raise exception 'Instant ECHEC: slot %, %h %, ref %, obtenu %, attendu %',
+        v_cas.weekday, v_cas.heure, v_cas.fuseau, v_cas.reference_at,
+        v_obtenu, v_cas.attendu;
     end if;
   end loop;
-  raise notice 'Instant ok : calculs independants Paris/Conakry convergent aux six references';
+  raise notice 'Instant ok : 16 valeurs de prochaine occurrence, bascule hebdomadaire et DST';
+end $$;
+
+-- Les consommateurs des migrations 0014, 0016, 0033 et 0083 ainsi que les
+-- gardes F86 (affectation et prise d'élève) appellent instant_creneau. Vérifier
+-- ici le contrat partagé : un horaire du dimanche déjà passé pointe au prochain
+-- dimanche; les comparaisons de créneaux n'utilisent donc pas l'occurrence passée.
+do $$
+declare
+  v_dimanche_precedent date;
+  v_reference timestamptz;
+  v_attendu timestamptz;
+  v_obtenu timestamptz;
+begin
+  v_dimanche_precedent := (pg_catalog.now() at time zone 'Europe/Paris')::date
+    - extract(isodow from pg_catalog.now() at time zone 'Europe/Paris')::int;
+  v_reference := (v_dimanche_precedent + time '23:30') at time zone 'Europe/Paris';
+  v_attendu := ((v_dimanche_precedent + 7) + time '23:00') at time zone 'Europe/Paris';
+  v_obtenu := public.instant_creneau_reference(
+    7, 23, 'Europe/Paris', 0, v_reference
+  );
+  if v_obtenu is distinct from v_attendu or v_obtenu <= v_reference then
+    raise exception 'F86/callers: le créneau passé ne pointe pas à la prochaine occurrence (%, attendu %) ',
+      v_obtenu, v_attendu;
+  end if;
+  raise notice 'Callers/F86 ok : le créneau du dimanche passé avance au dimanche suivant';
 end $$;
 
 -- ============================================================
