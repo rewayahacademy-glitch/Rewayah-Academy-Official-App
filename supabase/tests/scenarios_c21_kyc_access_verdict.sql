@@ -22,6 +22,39 @@ VALUES
   ('c2100000-0000-0000-0000-000000000004', 'C21-TARGET-F', 'teacher',
    'c2100000-0000-0000-0000-000000000101', 'Target', 'F', 'female', 'active');
 
+-- Fixture contractuelle requise par 0089 : le scénario signe la version NDA courante.
+DO $fixture_teacher_nda$
+DECLARE
+  v_teacher record;
+  v_teacher_version text;
+BEGIN
+  SELECT version INTO v_teacher_version
+    FROM public.contract_texts
+   WHERE contract_kind = 'teacher_nda'
+     AND locale = 'fr'
+     AND is_current;
+
+  FOR v_teacher IN
+    SELECT id FROM public.profiles
+     WHERE id IN (
+       'c2100000-0000-0000-0000-000000000003',
+       'c2100000-0000-0000-0000-000000000004'
+     )
+  LOOP
+    PERFORM set_config('request.jwt.claim.sub', v_teacher.id::text, true);
+    PERFORM set_config('test.uid', v_teacher.id::text, true);
+    PERFORM set_config('request.jwt.claims', '{"app_metadata":{"role":"teacher"}}', true);
+    PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+    PERFORM public.signer_contrat(v_teacher_version, 'Fixture enseignant');
+  END LOOP;
+
+  PERFORM set_config('request.jwt.claim.sub', '', true);
+  PERFORM set_config('request.jwt.claims', '', true);
+  PERFORM set_config('test.uid', '', true);
+  PERFORM set_config('test.jwt', '', true);
+END
+$fixture_teacher_nda$;
+
 INSERT INTO public.kyc_documents (id, profile_id, doc_type, gender, object_key)
 VALUES
   ('c2100000-0000-0000-0000-000000000201',
