@@ -1,0 +1,204 @@
+diff --git a/docs/backend/F79_C21_ALLOWLIST_CANDIDATE.json b/docs/backend/F79_C21_ALLOWLIST_CANDIDATE.json
+new file mode 100644
+index 00000000..b23fa6cc
+--- /dev/null
++++ b/docs/backend/F79_C21_ALLOWLIST_CANDIDATE.json
+@@ -0,0 +1,20 @@
++{
++  "state": "CLAUDE_REVIEW_REQUIRED",
++  "migration": "0079_kyc_access_verdict.sql",
++  "signature": "public.verdict_acces_dossier_kyc(uuid)",
++  "md5_prosrc": "2b467cd3363c49316932828981a826f9",
++  "guard_type": "ROLE_POSITIVE_TEMPLATE",
++  "owner": "postgres",
++  "search_path": "",
++  "reviewer": "Claude à relire",
++  "date": "2026-10-11",
++  "must_pass": [
++    "controllers cannot obtain a KYC access verdict",
++    "same-gender admin receives memeGenre",
++    "admin without gender receives adminSansGenre when exception is inactive",
++    "enabled super-admin receives exceptionSuperAdmin for cross-gender access",
++    "missing or deleted dossier returns only profilNonAutorise",
++    "verdict returns no document metadata, object key, or signed URL",
++    "verdict itself writes no audit row; opening remains audited by the existing RPC"
++  ]
++}
+diff --git a/lib/core/dossier/port_acces_pieces_kyc_supabase.dart b/lib/core/dossier/port_acces_pieces_kyc_supabase.dart
+new file mode 100644
+index 00000000..caa00243
+--- /dev/null
++++ b/lib/core/dossier/port_acces_pieces_kyc_supabase.dart
+@@ -0,0 +1,51 @@
++import 'package:supabase_flutter/supabase_flutter.dart';
++
++import 'port_acces_pieces_kyc.dart';
++
++/// Adaptateur du verdict serveur C-21. Aucun genre n'est lu ou compare ici.
++class PortAccesPiecesKycSupabase implements PortAccesPiecesKyc {
++  const PortAccesPiecesKycSupabase(this._client);
++
++  final SupabaseClient _client;
++
++  @override
++  Future<AccesPieceKyc> pour(String dossierId) async {
++    try {
++      final Map<String, dynamic> resultat = await _client
++          .rpc<Map<String, dynamic>>(
++            'verdict_acces_dossier_kyc',
++            params: <String, dynamic>{'p_profile_id': dossierId},
++          );
++      return decoderVerdictAccesKyc(resultat);
++    } on PostgrestException catch (erreur) {
++      if (erreur.code == '42501') {
++        return const AccesRefuse(RefusPieceKyc.profilNonAutorise);
++      }
++      rethrow;
++    }
++  }
++
++  @override
++  Future<bool> exceptionActive() async =>
++      await _client.rpc<bool>('kyc_super_admin_exception_active');
++}
++
++/// Decode strictement les categories fixes du RPC sans exposer son SQL brut.
++AccesPieceKyc decoderVerdictAccesKyc(Map<String, dynamic> resultat) {
++  switch (resultat['type']) {
++    case 'memeGenre':
++      return const AccesMemeGenre();
++    case 'exceptionSuperAdmin':
++      return const AccesExceptionSuperAdmin();
++    case 'refus':
++      final RefusPieceKyc raison = switch (resultat['raison']) {
++        'genreDifferent' => RefusPieceKyc.genreDifferent,
++        'adminSansGenre' => RefusPieceKyc.adminSansGenre,
++        'profilNonAutorise' => RefusPieceKyc.profilNonAutorise,
++        _ => throw const FormatException('Motif de refus KYC inconnu.'),
++      };
++      return AccesRefuse(raison);
++    default:
++      throw const FormatException('Verdict KYC inconnu.');
++  }
++}
+diff --git a/lib/main.dart b/lib/main.dart
+index a1bc58ca..8fa14528 100644
+--- a/lib/main.dart
++++ b/lib/main.dart
+@@ -12,6 +12,8 @@ import 'core/capacites/port_classes_foyer.dart';
+ import 'core/capacites/revue_dossiers_depuis_validation.dart';
+ import 'core/config/ecran_configuration_absente.dart';
+ import 'core/config/env.dart';
++import 'core/dossier/port_acces_pieces_kyc.dart';
++import 'core/dossier/port_acces_pieces_kyc_supabase.dart';
+ import 'core/i18n/langue_demarrage.dart';
+ import 'core/i18n/strings.g.dart';
+ import 'core/observabilite/supervision.dart';
+@@ -33,6 +35,9 @@ List<Override> _surchargesAppReelle() => <Override>[
+   portClassesFoyerProvider.overrideWithValue(
+     ClassesFoyerSupabase(Supabase.instance.client),
+   ),
++  portAccesPiecesKycProvider.overrideWithValue(
++    PortAccesPiecesKycSupabase(Supabase.instance.client),
++  ),
+   surchargeRevueDossiersProduction,
+ ];
+ 
+diff --git a/supabase/migrations/0079_kyc_access_verdict.sql b/supabase/migrations/0079_kyc_access_verdict.sql
+new file mode 100644
+index 00000000..7c2a42c8
+--- /dev/null
++++ b/supabase/migrations/0079_kyc_access_verdict.sql
+@@ -0,0 +1,92 @@
++-- C-21 : verdict de portee KYC sans lecture de la piece ni effet d'audit.
++-- L'ouverture reste exclusivement dans autoriser_lecture_piece_identite().
++BEGIN;
++
++CREATE OR REPLACE FUNCTION public.verdict_acces_dossier_kyc(p_profile_id uuid)
++RETURNS jsonb
++LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = ''
++AS $function$
++DECLARE
++  v_gender public.gender;
++  v_piece_gender public.gender;
++  v_exception boolean;
++BEGIN
++  IF NOT coalesce(
++    public.app_role() = 'admin' AND public.app_account_valid(), false
++  ) THEN
++    RAISE EXCEPTION 'verdict KYC reserve a l''administration'
++      USING errcode = '42501';
++  END IF;
++  IF p_profile_id IS NULL THEN
++    RETURN jsonb_build_object('type', 'refus', 'raison', 'profilNonAutorise');
++  END IF;
++
++  SELECT p.gender INTO v_gender
++  FROM public.profiles p
++  WHERE p.id = auth.uid() AND p.deleted_at IS NULL;
++  IF NOT FOUND THEN
++    RETURN jsonb_build_object('type', 'refus', 'raison', 'profilNonAutorise');
++  END IF;
++
++  SELECT k.gender INTO v_piece_gender
++  FROM public.kyc_documents k
++  WHERE k.profile_id = p_profile_id AND k.deleted_at IS NULL
++  ORDER BY k.created_at DESC, k.id
++  LIMIT 1;
++  IF NOT FOUND THEN
++    RETURN jsonb_build_object('type', 'refus', 'raison', 'profilNonAutorise');
++  END IF;
++
++  v_exception := public.kyc_super_admin_exception_active();
++  IF v_gender IS NOT NULL AND v_gender = v_piece_gender THEN
++    RETURN jsonb_build_object('type', 'memeGenre');
++  END IF;
++  IF v_exception THEN
++    RETURN jsonb_build_object('type', 'exceptionSuperAdmin');
++  END IF;
++  IF v_gender IS NULL THEN
++    RETURN jsonb_build_object('type', 'refus', 'raison', 'adminSansGenre');
++  END IF;
++  RETURN jsonb_build_object('type', 'refus', 'raison', 'genreDifferent');
++END;
++$function$;
++ALTER FUNCTION public.verdict_acces_dossier_kyc(uuid) OWNER TO postgres;
++REVOKE ALL ON FUNCTION public.verdict_acces_dossier_kyc(uuid)
++  FROM PUBLIC, anon, agent_ro;
++GRANT EXECUTE ON FUNCTION public.verdict_acces_dossier_kyc(uuid)
++  TO authenticated;
++
++COMMENT ON FUNCTION public.verdict_acces_dossier_kyc(uuid) IS
++  'F79 candidate allowlist: signature=public.verdict_acces_dossier_kyc(uuid); '
++  'md5_prosrc=2b467cd3363c49316932828981a826f9; '
++  'guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; '
++  'reviewer=Claude à relire; date=2026-10-11. Must-pass: controller denied; '
++  'same gender; missing reader gender denied unless enabled super-admin '
++  'exception; cross-gender exception verdict; missing/deleted dossier denied; '
++  'no object key or document fields returned. Audit only on open.';
++
++DO $verification$
++BEGIN
++  IF NOT has_function_privilege(
++       'authenticated', 'public.verdict_acces_dossier_kyc(uuid)', 'EXECUTE'
++     )
++     OR has_function_privilege(
++       'anon', 'public.verdict_acces_dossier_kyc(uuid)', 'EXECUTE'
++     )
++     OR has_function_privilege(
++       'agent_ro', 'public.verdict_acces_dossier_kyc(uuid)', 'EXECUTE'
++     )
++     OR NOT EXISTS (
++       SELECT 1 FROM pg_catalog.pg_proc p
++       JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
++       WHERE n.nspname = 'public'
++         AND p.proname = 'verdict_acces_dossier_kyc'
++         AND p.prosecdef
++         AND p.proowner = 'postgres'::regrole
++         AND p.proconfig @> ARRAY['search_path=""']
++     )
++  THEN RAISE EXCEPTION '0079 controles verdict KYC incomplets'; END IF;
++END
++$verification$;
++
++COMMIT;

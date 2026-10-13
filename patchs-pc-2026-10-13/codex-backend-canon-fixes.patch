@@ -1,0 +1,237 @@
+diff --git a/supabase/migrations/20261011152844_cap29_rights_and_read.sql b/supabase/migrations/20261011152844_cap29_rights_and_read.sql
+deleted file mode 100644
+index 18735bad..00000000
+--- a/supabase/migrations/20261011152844_cap29_rights_and_read.sql
++++ /dev/null
+@@ -1,114 +0,0 @@
+-﻿begin;
+-
+-alter table public.library_resource
+-  add column revision integer not null default 1 check (revision > 0),
+-  add column updated_at timestamptz not null default clock_timestamp();
+-
+-create or replace function public.cap29_bump_resource_revision()
+-returns trigger language plpgsql set search_path = '' as $$
+-begin
+-  new.revision := old.revision + 1;
+-  new.updated_at := clock_timestamp();
+-  return new;
+-end;
+-$$;
+-create trigger cap29_bump_resource_revision
+-before update on public.library_resource
+-for each row execute function public.cap29_bump_resource_revision();
+-revoke all on function public.cap29_bump_resource_revision() from public, anon, authenticated, service_role, agent_ro;
+-
+-create schema if not exists private;
+-
+-do $$ begin
+-  create type private.statut_library_rights_proof as enum ('en_attente', 'confirmee');
+-exception when duplicate_object then null; end $$;
+-
+-create table private.library_rights_proofs (
+-  id uuid primary key default gen_random_uuid(),
+-  resource_id uuid not null references public.library_resource(id) on delete restrict,
+-  resource_version_id uuid not null references public.resource_version(id) on delete restrict,
+-  cle_stockage text not null check (cle_stockage ~ '^private/libraryproof/[0-9a-f-]{36}$'),
+-  sha256 text not null check (sha256 ~ '^[0-9a-f]{64}$'),
+-  mime text not null check (mime in ('application/pdf','image/jpeg','image/png')),
+-  taille bigint not null check (taille between 1 and 8388608),
+-  deposee_par uuid not null references public.profiles(id),
+-  deposee_le timestamptz not null default clock_timestamp(),
+-  statut private.statut_library_rights_proof not null default 'en_attente',
+-  unique (id, resource_version_id, resource_id)
+-);
+-alter table private.library_rights_proofs enable row level security;
+-revoke all on table private.library_rights_proofs from public, anon, authenticated, service_role, agent_ro;
+-
+-create table public.library_version_rights (
+-  resource_version_id uuid primary key references public.resource_version(id) on delete cascade,
+-  source_titre text not null,
+-  titulaire text not null,
+-  preuve_id uuid,
+-  usages text[] not null check (
+-    cardinality(usages) > 0 and usages <@ array['application','classe','telechargement','hors_ligne']::text[]
+-  ),
+-  attribution text not null,
+-  expire_le timestamptz,
+-  approuve boolean not null default false,
+-  revu_par uuid references public.profiles(id),
+-  revu_le timestamptz,
+-  resource_id uuid not null references public.library_resource(id) on delete restrict,
+-  foreign key (preuve_id, resource_version_id, resource_id)
+-    references private.library_rights_proofs(id, resource_version_id, resource_id) on delete restrict,
+-  check ((approuve and revu_par is not null and revu_le is not null) or not approuve)
+-);
+-alter table public.library_version_rights enable row level security;
+-grant select on public.library_version_rights to authenticated;
+-create policy library_version_rights_admin on public.library_version_rights
+-  for select to authenticated
+-  using (coalesce(public.app_account_valid() and public.app_role() = 'admin', false))
+-  ;
+-
+-create or replace function public.cap29_require_approved_rights()
+-returns trigger language plpgsql set search_path = '' as $$
+-declare v_rights public.library_version_rights%rowtype;
+-begin
+-  if old.statut = 'brouillon' and new.statut = 'publiee' then
+-    select * into v_rights from public.library_version_rights r
+-     where r.resource_version_id = new.id;
+-    if not found or not v_rights.approuve or v_rights.usages is null
+-       or cardinality(v_rights.usages) = 0
+-       or v_rights.expire_le is not null and v_rights.expire_le <= clock_timestamp() then
+-      raise exception 'CAP-29: droits absents, non approuves ou echus' using errcode = '23514';
+-    end if;
+-  end if;
+-  return new;
+-end;
+-$$;
+-create trigger cap29_require_approved_rights
+-before update of statut on public.resource_version
+-for each row execute function public.cap29_require_approved_rights();
+-revoke all on function public.cap29_require_approved_rights() from public, anon, authenticated, service_role, agent_ro;
+-
+-do $$
+-declare v_rls boolean;
+-begin
+-  select c.relrowsecurity into v_rls
+-    from pg_catalog.pg_class c join pg_catalog.pg_namespace n on n.oid=c.relnamespace
+-   where n.nspname='private' and c.relname='library_rights_proofs';
+-  if coalesce(v_rls,false) is not true
+-     or has_table_privilege('anon','private.library_rights_proofs','SELECT')
+-     or has_table_privilege('authenticated','private.library_rights_proofs','SELECT')
+-     or has_table_privilege('agent_ro','private.library_rights_proofs','SELECT') then
+-    raise exception 'CAP-29: preuves privees sans RLS ou lisibles par un role client';
+-  end if;
+-  if has_table_privilege('anon','public.library_version_rights','SELECT')
+-     or has_table_privilege('authenticated','public.library_version_rights','INSERT')
+-     or has_table_privilege('authenticated','public.library_version_rights','UPDATE')
+-     or has_table_privilege('agent_ro','public.library_version_rights','SELECT') then
+-    raise exception 'CAP-29: droits client trop larges avant RPC auditee';
+-  end if;
+-  if exists (
+-    select 1 from pg_catalog.pg_trigger t join pg_catalog.pg_proc p on p.oid=t.tgfoid
+-     where t.tgname in ('cap29_bump_resource_revision','cap29_require_approved_rights')
+-       and not t.tgisinternal and p.prosecdef
+-  ) then raise exception 'CAP-29: trigger SECURITY DEFINER interdit'; end if;
+-end;
+-$$;
+-
+-commit;
+diff --git a/supabase/tests/scenarios_c21_kyc_access_verdict.sql b/supabase/tests/scenarios_c21_kyc_access_verdict.sql
+index 853a4bc6..16658928 100644
+--- a/supabase/tests/scenarios_c21_kyc_access_verdict.sql
++++ b/supabase/tests/scenarios_c21_kyc_access_verdict.sql
+@@ -18,15 +18,16 @@ VALUES
+   ('c2100000-0000-0000-0000-000000000002', 'C21-ADMIN-F', 'admin',
+    'c2100000-0000-0000-0000-000000000101', 'Admin', 'F', 'female', 'active'),
+   ('c2100000-0000-0000-0000-000000000003', 'C21-TARGET-M', 'teacher',
+-   'c2100000-0000-0000-0000-000000000101', 'Target', 'M', 'male', 'active'),
++   'c2100000-0000-0000-0000-000000000101', 'Target', 'M', 'male', 'provisional_active'),
+   ('c2100000-0000-0000-0000-000000000004', 'C21-TARGET-F', 'teacher',
+-   'c2100000-0000-0000-0000-000000000101', 'Target', 'F', 'female', 'active');
++   'c2100000-0000-0000-0000-000000000101', 'Target', 'F', 'female', 'provisional_active');
+ 
+ -- Fixture contractuelle requise par 0089 : le scénario signe la version NDA courante.
+ DO $fixture_teacher_nda$
+ DECLARE
+   v_teacher record;
+   v_teacher_version text;
++  v_notice_version text;
+ BEGIN
+   SELECT version INTO v_teacher_version
+     FROM public.contract_texts
+@@ -34,6 +35,10 @@ BEGIN
+      AND locale = 'fr'
+      AND is_current;
+ 
++  SELECT version INTO v_notice_version
++    FROM public.contract_required_versions
++   WHERE contract_kind = 'recording_and_control_notice';
++
+   FOR v_teacher IN
+     SELECT id FROM public.profiles
+      WHERE id IN (
+@@ -46,6 +51,10 @@ BEGIN
+     PERFORM set_config('request.jwt.claims', '{"app_metadata":{"role":"teacher"}}', true);
+     PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+     PERFORM public.signer_contrat(v_teacher_version, 'Fixture enseignant');
++    INSERT INTO public.contract_acceptances(profile_id, contract_kind, version)
++    VALUES (v_teacher.id, 'recording_and_control_notice', v_notice_version)
++    ON CONFLICT (profile_id, contract_kind, version) DO NOTHING;
++    UPDATE public.profiles SET account_status = 'active' WHERE id = v_teacher.id;
+   END LOOP;
+ 
+   PERFORM set_config('request.jwt.claim.sub', '', true);
+diff --git a/supabase/tests/scenarios_c35_library_read.sql b/supabase/tests/scenarios_c35_library_read.sql
+index 2109fe00..4d559280 100644
+--- a/supabase/tests/scenarios_c35_library_read.sql
++++ b/supabase/tests/scenarios_c35_library_read.sql
+@@ -39,7 +39,7 @@ values
+   ('c3500000-0000-0000-0000-000000000011', 'C35 support', 'C35', 'pdf', 'groupe_assigne', 'jamais');
+ insert into public.resource_version (id, resource_id, numero_version, statut)
+ values ('c3500000-0000-0000-0000-000000000012',
+-        'c3500000-0000-0000-0000-000000000011', 1, 'publiee');
++        'c3500000-0000-0000-0000-000000000011', 1, 'brouillon');
+ insert into public.library_resource_groupe(resource_id,groupe_id)
+ values ('c3500000-0000-0000-0000-000000000011','c3500000-0000-0000-0000-000000000021');
+ insert into public.download_asset
+@@ -50,9 +50,8 @@ values ('c3500000-0000-0000-0000-000000000013',
+ update public.resource_version
+    set download_asset_id = 'c3500000-0000-0000-0000-000000000013'
+  where id = 'c3500000-0000-0000-0000-000000000012';
+-update public.library_resource
+-   set current_version_id = 'c3500000-0000-0000-0000-000000000012'
+- where id = 'c3500000-0000-0000-0000-000000000011';
++
++
+ insert into public.library_resource
+   (id, title, short_title, resource_type, access_policy, offline_policy)
+ values
+@@ -60,8 +59,8 @@ values
+   ('c3500000-0000-0000-0000-000000000017', 'C35 inscrits', 'C35 inscrits', 'pdf', 'inscrits', 'jamais');
+ insert into public.resource_version (id, resource_id, numero_version, statut)
+ values
+-  ('c3500000-0000-0000-0000-000000000015', 'c3500000-0000-0000-0000-000000000014', 1, 'publiee'),
+-  ('c3500000-0000-0000-0000-000000000018', 'c3500000-0000-0000-0000-000000000017', 1, 'publiee');
++  ('c3500000-0000-0000-0000-000000000015', 'c3500000-0000-0000-0000-000000000014', 1, 'brouillon'),
++  ('c3500000-0000-0000-0000-000000000018', 'c3500000-0000-0000-0000-000000000017', 1, 'brouillon');
+ insert into public.download_asset
+   (id, resource_version_id, format, cle_stockage, taille_octets, origine)
+ values
+@@ -75,10 +74,8 @@ update public.resource_version
+ update public.resource_version
+    set download_asset_id = 'c3500000-0000-0000-0000-000000000019'
+  where id = 'c3500000-0000-0000-0000-000000000018';
+-update public.library_resource set current_version_id = 'c3500000-0000-0000-0000-000000000015'
+- where id = 'c3500000-0000-0000-0000-000000000014';
+-update public.library_resource set current_version_id = 'c3500000-0000-0000-0000-000000000018'
+- where id = 'c3500000-0000-0000-0000-000000000017';
++
++
+ insert into public.library_version_rights
+   (resource_version_id, source_titre, titulaire, usages, attribution,
+    approuve, revu_par, revu_le, resource_id)
+@@ -96,6 +93,22 @@ values
+   ('c3500000-0000-0000-0000-000000000018', 'Support inscrit de test', 'Titulaire de test',
+    array['application'], 'Attribution de test', true,
+    'c3500000-0000-0000-0000-000000000002', now(), 'c3500000-0000-0000-0000-000000000017');
++-- CAP-29 : chaque version suit le cycle brouillon -> publiee avant le pointeur courant.
++select set_config('request.jwt.claim.sub', 'c3500000-0000-0000-0000-000000000002', true);
++update public.resource_version
++   set statut = 'publiee'
++ where id in ('c3500000-0000-0000-0000-000000000012',
++             'c3500000-0000-0000-0000-000000000015',
++             'c3500000-0000-0000-0000-000000000018');
++update public.library_resource
++   set current_version_id = 'c3500000-0000-0000-0000-000000000012'
++ where id = 'c3500000-0000-0000-0000-000000000011';
++update public.library_resource
++   set current_version_id = 'c3500000-0000-0000-0000-000000000015'
++ where id = 'c3500000-0000-0000-0000-000000000014';
++update public.library_resource
++   set current_version_id = 'c3500000-0000-0000-0000-000000000018'
++ where id = 'c3500000-0000-0000-0000-000000000017';
+ 
+ do $$
+ begin

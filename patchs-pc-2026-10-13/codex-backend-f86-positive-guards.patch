@@ -1,0 +1,100 @@
+diff --git a/supabase/migrations/20261011225536_f86_observation_controller_guard.sql b/supabase/migrations/20261011225536_f86_observation_controller_guard.sql
+new file mode 100644
+index 00000000..7194fa48
+--- /dev/null
++++ b/supabase/migrations/20261011225536_f86_observation_controller_guard.sql
+@@ -0,0 +1,94 @@
++BEGIN;
++
++-- F86: a valid account with no app_role must not fall through the controller gate.
++CREATE OR REPLACE FUNCTION public.rejoindre_observation(p_session_id uuid)
++RETURNS uuid
++LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path = ''
++AS $function$
++DECLARE
++  v_seance public.sessions%ROWTYPE;
++  v_role public.participant_role;
++BEGIN
++  IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'controller', false) THEN
++    RAISE EXCEPTION 'observation reservee au controle qualite'
++      USING ERRCODE = 'insufficient_privilege';
++  END IF;
++
++  SELECT * INTO v_seance FROM public.sessions s
++   WHERE s.id = p_session_id AND s.deleted_at IS NULL;
++  IF NOT FOUND THEN
++    RAISE EXCEPTION 'seance introuvable' USING ERRCODE = 'no_data_found';
++  END IF;
++
++  IF v_seance.status IN ('ended', 'canceled', 'canceled_late') THEN
++    RAISE EXCEPTION 'seance close' USING ERRCODE = 'check_violation';
++  END IF;
++  IF now() < v_seance.started_at THEN
++    RAISE EXCEPTION 'seance pas encore commencee' USING ERRCODE = 'check_violation';
++  END IF;
++  IF now() > v_seance.ended_at + interval '15 minutes' THEN
++    RAISE EXCEPTION 'seance terminee' USING ERRCODE = 'check_violation';
++  END IF;
++
++  SELECT sp.role INTO v_role FROM public.session_participants sp
++   WHERE sp.session_id = p_session_id AND sp.profile_id = auth.uid()
++     AND sp.deleted_at IS NULL;
++  IF FOUND AND v_role <> 'masked_controller' THEN
++    RAISE EXCEPTION 'observer une seance dont on est partie prenante est interdit'
++      USING ERRCODE = 'check_violation';
++  END IF;
++  IF v_seance.teacher_id = auth.uid() THEN
++    RAISE EXCEPTION 'observer une seance dont on est partie prenante est interdit'
++      USING ERRCODE = 'check_violation';
++  END IF;
++
++  INSERT INTO public.session_participants (session_id, profile_id, role)
++  VALUES (p_session_id, auth.uid(), 'masked_controller')
++  ON CONFLICT (session_id, profile_id) DO UPDATE
++    SET deleted_at = NULL, role = 'masked_controller';
++
++  PERFORM public.log_sensitive_access(
++    'controller_observation_started',
++    'session_participants',
++    p_session_id::text,
++    jsonb_build_object(
++      'teacher_id', v_seance.teacher_id,
++      'started_at', v_seance.started_at,
++      'hidden', true
++    )
++  );
++
++  RETURN p_session_id;
++END;
++$function$;
++ALTER FUNCTION public.rejoindre_observation(uuid) OWNER TO postgres;
++REVOKE EXECUTE ON FUNCTION public.rejoindre_observation(uuid) FROM PUBLIC, anon;
++GRANT EXECUTE ON FUNCTION public.rejoindre_observation(uuid) TO authenticated;
++COMMENT ON FUNCTION public.rejoindre_observation(uuid) IS
++  'F86 candidate allowlist: signature=public.rejoindre_observation(uuid); md5_functiondef=A_CALCULER; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12. Must-pass: require active account and controller role before session lookup or mutation.';
++
++DO $postflight$
++DECLARE
++  v_oid oid := pg_catalog.to_regprocedure('public.rejoindre_observation(uuid)');
++  v_definition text;
++BEGIN
++  IF v_oid IS NULL THEN
++    RAISE EXCEPTION 'F86: public.rejoindre_observation(uuid) is missing';
++  END IF;
++  SELECT pg_catalog.pg_get_functiondef(v_oid) INTO v_definition;
++  IF NOT (SELECT p.prosecdef AND p.proconfig @> ARRAY['search_path=""']
++          FROM pg_catalog.pg_proc p WHERE p.oid = v_oid)
++     OR pg_catalog.strpos(
++          pg_catalog.lower(v_definition),
++          'if not coalesce(public.app_account_valid() and public.app_role() = ''controller'', false) then'
++        ) = 0
++     OR pg_catalog.has_function_privilege('anon', v_oid, 'EXECUTE')
++     OR NOT pg_catalog.has_function_privilege('authenticated', v_oid, 'EXECUTE')
++     OR coalesce(pg_catalog.obj_description(v_oid, 'pg_proc'), '')
++        NOT LIKE '%md5_functiondef=A_CALCULER%' THEN
++    RAISE EXCEPTION 'F86: rejoindre_observation guard postflight failed';
++  END IF;
++END;
++$postflight$;
++
++COMMIT;

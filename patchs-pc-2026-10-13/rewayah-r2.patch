@@ -1,0 +1,2977 @@
+diff --git a/assets/i18n/fr.i18n.json b/assets/i18n/fr.i18n.json
+index 2016e470..1fe8a73a 100644
+--- a/assets/i18n/fr.i18n.json
++++ b/assets/i18n/fr.i18n.json
+@@ -533,11 +533,122 @@
+     "sansPhoto": "Pas encore de photo"
+   },
+ 
++  "compte": {
++    "titre": "Compte",
++    "intro": "Votre espace personnel, vos accès et les réglages de cette application.",
++    "profil": "Mon profil",
++    "profilDetail": "Identité, contact et accès vérifiés",
++    "reglages": "Réglages de l'application",
++    "reglagesDetail": "Apparence, accessibilité, notifications et données",
++    "profils": "Profils du foyer",
++    "profilsDetail": "Gérer les profils des enfants de votre foyer",
++    "appareils": "Appareils et sécurité",
++    "appareilsDetail": "Appareils appairés et accès de la famille",
++    "confidentialite": "Confidentialité et aide",
++    "confidentialiteDetail": "Informations, consentements et diagnostic",
++    "deconnexion": "Se déconnecter",
++    "deconnexionDetail": "Fermer cette session sur l'appareil",
++    "espaces": "Espaces autorisés",
++    "espacesDetail": "Ces accès viennent de l'autorisation du compte.",
++    "actif": "Accès actif",
++    "habilitation": "Selon habilitation",
++    "lectureSeule": "Lecture seule",
++    "nonDisponible": "Non disponible",
++    "identifiant": "Identifiant",
++    "statut": "Statut du compte",
++    "statutActif": "Actif",
++    "statutProvisoire": "Accès provisoire",
++    "informations": "Informations personnelles",
++    "academie": "Académie et périmètre",
++    "securite": "Sécurité",
++    "modifier": "Modifier",
++    "contact": "Contact de connexion",
++    "contactDetail": "Géré par la méthode de connexion actuelle",
++    "langue": "Langue",
++    "fuseau": "Fuseau horaire",
++    "cameraLabel": "Caméra",
++    "foyer": "Foyer",
++    "foyerDetail": "Relation de tutelle vérifiée",
++    "enseignantDetail": "Prénom professionnel et identifiant validé",
++    "personnelDetail": "Rôles, délégations et périmètre lus depuis le compte",
++    "reglagesTitre": "Réglages de l'application",
++    "reglagesIntro": "Ces choix s'appliquent à cet appareil et ne changent pas vos droits.",
++    "apparence": "Apparence",
++    "themeSysteme": "Système",
++    "themeSystemeDetail": "Suivre le réglage de l'appareil",
++    "themeClair": "Clair",
++    "themeSombre": "Sombre",
++    "accessibilite": "Accessibilité",
++    "animations": "Réduire les animations",
++    "animationsDetail": "Respecte aussi la préférence de réduction du système",
++    "effets": "Réduire les effets visuels",
++    "effetsDetail": "Retire les ombres et les effets décoratifs",
++    "lisibilite": "Aperçu de lisibilité",
++    "lisibiliteDetail": "Un texte de démonstration avec la taille actuelle",
++    "langueRegion": "Langue et région",
++    "francais": "Français",
++    "francaisDetail": "Traduction complète disponible",
++    "arabe": "العربية",
++    "arabeDetail": "Traduction en préparation",
++    "fuseauDetail": "Valeur locale affichée par l'appareil",
++    "notifications": "Notifications",
++    "notificationsEtat": "Permission du système non vérifiée",
++    "notificationsCours": "Cours et rappels",
++    "notificationsCoursDetail": "Rappels liés à vos cours",
++    "notificationsFoyer": "Foyer",
++    "notificationsFoyerDetail": "Informations utiles pour le foyer",
++    "coursDonnees": "Cours et données",
++    "economieDonnees": "Économie de données",
++    "economieDonneesDetail": "Réduit en priorité la qualité vidéo",
++    "lecture": "Lecture",
++    "lectureGrande": "Texte de lecture agrandi",
++    "lectureGrandeDetail": "Préférence locale pour les contenus de lecture",
++    "appareilsSecurite": "Appareils et sécurité",
++    "appareilsSecuriteDetail": "La liste et la révocation restent dans le foyer",
++    "aide": "Aide",
++    "aideDetail": "Diagnostic réseau et version de l'application",
++    "profilsTitre": "Profils du foyer",
++    "profilsIntro": "Chaque enfant conserve son identité et ses réglages propres.",
++    "profilEnfant": "Profil de {prenom}",
++    "identifiantEnfant": "Identifiant {identifiant}",
++    "modeEnfant": "Mode enfant",
++    "modeStandard": "Mode standard",
++    "cameraAutorisee": "Caméra autorisée",
++    "cameraInterdite": "Caméra non disponible",
++    "accesJusqua": "Accès jusqu'au {date}",
++    "accesSansFin": "Accès sans date de fin",
++    "ouvrirProfil": "Ouvrir le profil",
++    "ajouterEnfant": "Ajouter un enfant",
++    "reglerEnfant": "Ouvrir les réglages de {prenom}",
++    "aucunProfil": "Aucun profil enfant dans ce foyer",
++    "aucunProfilDetail": "Ajoutez un enfant depuis la gestion du foyer.",
++    "erreurProfils": "Les profils du foyer n'ont pas pu être lus.",
++    "reessayer": "Réessayer",
++    "roles": {
++      "admin": "Administration",
++      "superAdmin": "Super-administration",
++      "accountant": "Comptabilité",
++      "controller": "Contrôle",
++      "teacher": "Enseignement",
++      "guardian": "Tutorat",
++      "student": "Élève"
++    },
++    "roleDetail": {
++      "admin": "Décisions et gestion autorisées",
++      "superAdmin": "Politiques et délégations autorisées",
++      "accountant": "Données financières autorisées",
++      "controller": "Séances et audits autorisés",
++      "teacher": "Cours et élèves attribués",
++      "guardian": "Foyer et enfants liés",
++      "student": "Cours et lecture personnels"
++    }
++  },
+   "nav": {
+     "eleve": {
+       "accueil": "Accueil",
+       "coran": "Coran",
+-      "suivi": "Suivi"
++      "suivi": "Suivi",
++      "compte": "Compte"
+     },
+     "tuteur": {
+       "accueil": "Accueil",
+@@ -549,7 +660,8 @@
+     "enseignant": {
+       "journee": "Journée",
+       "creneaux": "Créneaux",
+-      "profil": "Profil"
++      "profil": "Profil",
++      "compte": "Compte"
+     },
+     "controleur": {
+       "planning": "Planning"
+@@ -739,6 +851,30 @@
+       "aucunEleveEnAttente": "Aucun élève en attente sur vos heures",
+       "voirCreneaux": "Voir mes créneaux",
+       "erreur": "La journée n'a pas pu être lue en entier. Réessayez dans un instant."
++    },
++    "profil": {
++      "titre": "Profil enseignant",
++      "intro": "Les informations professionnelles connues par Rewayah.",
++      "identite": "Identité professionnelle",
++      "prenom": "Prénom professionnel",
++      "identifiant": "Identifiant enseignant",
++      "statut": "Statut du compte",
++      "pays": "Pays de rattachement",
++      "langues": "Langues d'enseignement",
++      "capacite": "Capacité hebdomadaire",
++      "heures": "{nombre} h par semaine",
++      "verification": "Vérification d'identité",
++      "verificationEnAttente": "Vérification en cours",
++      "verificationValidee": "Identité vérifiée",
++      "verificationRefusee": "Vérification à reprendre",
++      "statutEnAttente": "En attente de validation",
++      "statutSuspendu": "Accès suspendu",
++      "vide": "Votre profil enseignant n'est pas disponible.",
++      "videDetail": "Les informations professionnelles apparaîtront ici lorsqu'elles seront disponibles.",
++      "erreur": "Le profil enseignant n'a pas pu être lu. Réessayez dans un instant.",
++      "horsLigne": "Votre profil enseignant n'est pas disponible hors ligne.",
++      "horsLigneDetail": "Reconnectez-vous pour consulter les informations à jour.",
++      "reessayer": "Réessayer"
+     }
+   },
+ 
+diff --git a/docs/HANDOFF.md b/docs/HANDOFF.md
+index b51ad6a6..e38ea532 100644
+--- a/docs/HANDOFF.md
++++ b/docs/HANDOFF.md
+@@ -1,3 +1,24 @@
++# Mise à jour courante - 14 septembre 2026
++
++`ENS-05` est terminé : `/enseignant/profil` rend un profil enseignant minimal
++en lecture seule depuis les contrats existants `profiles` et
++`teacher_profiles`. Le lot expose uniquement prénom, identifiant immuable,
++pays, langues, plafond hebdomadaire, statut du compte et statut KYC. Aucun
++finance, salaire, KPI fictif, migration ou modification backend n'a été ajouté.
++
++États vérifiés : chargement (`Skeleton`), contenu, absence, erreur récupérable,
++hors ligne, RTL et texte à 200 %. Preuves exactes : `flutter analyze --no-pub`
++→ **No issues found** ; `flutter test --no-pub
++test/features/profil_enseignant_test.dart test/router/navigation_test.dart` →
++**11 tests passés** ; `dart run tool/verifier_jetons.dart` → **130 fichiers,
++aucune violation** ; `git diff --check` → **propre**. Aucun test manuel
++navigateur ni déploiement n'a été mesuré par ce lot.
++
++**Prochain prompt :** « Relire `docs/HANDOFF.md` et `docs/PROGRESS.md`, puis
++prendre uniquement le prochain lot autorisé par le propriétaire. `ENS-05` est
++livré et vérifié. Ne pas commencer `CPT-01` ni `N6`, ne pas modifier le backend
++ou les migrations, et préserver les travaux concurrents. »
++
+ # HANDOFF — à lire en premier, avant toute action
+ 
+ > 👪 **13 septembre 2026, neuvième session — `TUT-06` est fait, et un cours
+diff --git a/docs/PROGRESS.md b/docs/PROGRESS.md
+index 9d5cbc89..f2d54c7d 100644
+--- a/docs/PROGRESS.md
++++ b/docs/PROGRESS.md
+@@ -1,3 +1,24 @@
++# Mise à jour courante - 14 septembre 2026
++
++`ENS-05` est terminé dans `rewayah-r2`. La route `/enseignant/profil` rend un
++profil enseignant minimal en lecture seule depuis les contrats existants
++`profiles` et `teacher_profiles`. Aucun finance, salaire, KPI inventé,
++migration ou modification backend n'a été ajouté. Les états chargement, vide,
++erreur récupérable, hors ligne et contenu sont couverts ; le test ciblé couvre
++aussi RTL et texte à 200 %.
++
++Preuves exactes : `flutter analyze --no-pub` → **No issues found** ; `flutter
++test --no-pub test/features/profil_enseignant_test.dart
++test/router/navigation_test.dart` → **11 tests passés** ; `dart run
++tool/verifier_jetons.dart` → **130 fichiers, aucune violation** ; `git diff
++--check` → **propre**. Aucun test manuel navigateur ni déploiement n'a été
++mesuré par ce lot.
++
++**Prochain prompt :** « Relire `docs/HANDOFF.md` et `docs/PROGRESS.md`, puis
++prendre uniquement le prochain lot autorisé par le propriétaire. `ENS-05` est
++livré et vérifié. Ne pas commencer `CPT-01` ni `N6`, ne pas modifier le backend
++ou les migrations, et préserver les travaux concurrents. »
++
+ # PROGRESS — État d'avancement du projet
+ 
+ > Suivi tenu par l'agent de code, une étape à la fois, jamais en bloc.
+diff --git a/docs/design/08-catalogue-ecrans.md b/docs/design/08-catalogue-ecrans.md
+index f5b4a598..628b521b 100644
+--- a/docs/design/08-catalogue-ecrans.md
++++ b/docs/design/08-catalogue-ecrans.md
+@@ -23,6 +23,16 @@ réellement dans `lib/`, au 7 septembre 2026.
+ | `TUT-00c/b` | Contrat | Tuteur, enseignant | C | 1 | `/attente/contrat` | Page | Page centrée | **repris (R0)**, fiche §6 |
+ | `TUT-00c/c` | Dépôt de la pièce | Tuteur, enseignant | C | 1 | `/attente/piece` | Page | Page centrée | **repris (R0)**, fiche §6 |
+ 
++### Zone Compte
++
++| Code | Écran | Rôle | Niv. | Prof. | Route | Mobile | Desktop | État |
++| :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
++| `ACC-00` | Compte et espaces | Tous les rôles actifs | C | 0 | `/compte` | Page séquencée | Page + colonne de contexte | **R3 en cours** |
++| `ACC-01` | Profil personnel | Tous les rôles actifs | C | 1 | `/compte/profil` | Page | Page bornée à 760 | **R3 en cours** |
++| `ACC-02` | Réglages locaux | Tous les rôles actifs | C | 1 | `/compte/reglages` | Lignes groupées | Lignes groupées bornées à 760 | **R3 en cours** |
++| `ACC-03` | Profils du foyer | Tuteur, élève adulte autonome | C | 1 | `/compte/profils` | Liste de profils | Liste + détail | **R3 en cours** |
++| `ACC-03/a` | Profil enfant | Tuteur | C | 2 | `/compte/profils/:profilId` | Page | Page bornée à 760 | **R3 en cours** |
++
+ ### Zone Foyer
+ 
+ | Code | Écran | Rôle | Niv. | Prof. | Route | Mobile | Desktop | État |
+@@ -2280,3 +2290,142 @@ filtre client** — un `select()` nu rend au tuteur son foyer et rien d'autre.
+   de corriger ce qui compte pour la paie de l'enseignant.
+ 
+ Construit le 13 septembre 2026, lot `TUT-06`.
++
++### `ACC-00` Compte et espaces
++
++```
++CODE              CPT-00
++Nom               Compte et espaces
++Role              Tous les roles actifs
++Zone              Compte
++Niveau de charge  C
++Ecran parent      destination partagee
++Profondeur        0
++Question          Quel est mon espace, et ou regler ce qui m'appartient ?
++
++Priorites         P0  profil personnel et statut de session
++                  P0  espaces autorises, sans elevation depuis l'ecran
++                  P0  acces direct aux reglages et aux profils du foyer
++                  P1  appareils et securite quand le contrat les expose
++                  P1  aide, confidentialite et deconnexion
++
++Action principale     aucune : l'ecran oriente et ne valide pas de donnee
++Actions secondaires   ouvrir le profil, ouvrir les reglages, ouvrir les profils
++Action tertiaire      aide et deconnexion
++Destructif            deconnexion, avec confirmation si une classe est active
++
++Mobile            Une colonne, sections lisibles et actions de 48 minimum
++Tablette          Une colonne bornee, profil en tete et sections espacees
++Desktop           Profil a gauche, contexte et acces a droite si la largeur le permet
++
++Etats             loading   squelette de la carte d'identite
++                  content   profil, espaces et acces utiles
++                  empty     aucun module metier : profil, reglages et deconnexion
++                  error     lecture distante indisponible, sans effacer le profil local
++                  offline   acces locaux conserves, actions distantes expliquees
++
++Invariants        l'espace personnel ne devoile pas les roles internes par defaut
++                  un cumul enseignant/admin est affiche comme capacite accordee,
++                  jamais comme un choix qui attribue un role
++                  les donnees enfant restent dans le perimetre du foyer
++                  aucune coordonnee familiale n'est projetee vers l'enseignant
++```
++
++### `ACC-01` Profil personnel
++
++```
++CODE              ACC-01
++Nom               Profil personnel
++Role              Tous les roles actifs
++Zone              Compte
++Niveau de charge  C
++Ecran parent      CPT-00
++Profondeur        1
++Question          Quelles informations personnelles sont connues et modifiables ?
++
++Priorites         P0  nom principal, identifiant immuable et statut
++                  P0  distinction editable / lecture seule
++                  P0  role et perimetre issus de l'autorisation existante
++                  P1  contact, langue et fuseau, seulement si le contrat les expose
++                  P1  cumul administration/enseignement et limites de capacite
++
++Mobile            Sections empilees, une action Modifier par section
++Desktop           Colonne bornee a 760, details adjacents seulement si utile
++
++Etats             loading, content, empty, error et offline selon la source
++                  de donnees. Une valeur absente se lit « Non disponible ».
++
++Invariants        identifiant, roles, delegations, niveau valide et statut ne
++                  sont jamais editables depuis cette page
++                  l'enseignant n'affiche pas les contacts du foyer
++                  les roles privilegies ne sont ni auto-attribuables ni masques
++```
++
++### `ACC-02` Réglages locaux
++
++```
++CODE              ACC-02
++Nom               Reglages locaux
++Role              Tous les roles actifs
++Zone              Compte
++Niveau de charge  C
++Ecran parent      CPT-00
++Profondeur        1
++Question          Comment l'application doit-elle se comporter sur cet appareil ?
++
++Priorites         P0  theme systeme/clair/sombre, applique immediatement
++                  P0  mouvement et effets visuels, combines avec le systeme
++                  P0  langue, fuseau et notifications, avec permission OS distincte
++                  P1  economie de donnees, rendu de lecture et appareils
++                  P1  aide, confidentialite et diagnostic
++                  P1  simulateur de role, taille et reseau uniquement en galerie
++
++Mobile            Lignes groupees, controle natif en fin de ligne
++Desktop           Meme ordre, colonne bornee a 760
++
++Etats             loading   valeurs locales par defaut
++                  content   lignes et controles interactifs
++                  empty     aucune preference distante, les preferences locales
++                            restent utilisables
++                  error     la valeur locale reste visible, la valeur distante
++                            est marquee indisponible
++                  offline   les changements locaux restent disponibles
++
++Invariants        une preference locale ne se transforme pas en mutation metier
++                  le test micro/camera est volontaire et ne publie rien
++                  aucun secret, token ou code personnel n'est affiche
++                  le simulateur est clairement marque demonstration et absent
++                  des versions de production
++```
++
++### `ACC-03` Profils du foyer et `ACC-03/a` Profil enfant
++
++```
++CODE              ACC-03 / ACC-03/a
++Nom               Profils du foyer / Profil enfant
++Role              Tuteur ; projection limitee pour l'eleve adulte autonome
++Zone              Compte et foyer
++Niveau de charge  C / C
++Ecran parent      CPT-00 puis CPT-03
++Profondeur        1 puis 2
++Question          Qui compose mon foyer, et que puis-je regler pour chaque enfant ?
++
++Priorites         P0  un profil par enfant, photo autorisee ou initiales
++                  P0  prenom, identifiant immuable, mode et acces connus
++                  P0  profil enfant distinct du profil du tuteur
++                  P1  acces aux reglages enfant existants
++                  P1  appareils et dernier usage dans le perimetre du foyer
++
++Mobile            Liste puis page successive, jamais un panneau minuscule
++Desktop           Liste + detail seulement si la largeur le permet
++
++Etats             loading, content, empty, error et offline ; un foyer sans
++                  enfant conserve le bouton Ajouter un enfant existant
++
++Invariants        aucune photo enfant hors du foyer ; aucune coordonnee familiale
++                  l'identifiant, les inscriptions et niveaux evalues sont en lecture seule
++                  les mutations de photo/mode/camera restent celles de TUT-05
++                  aucun tuteur ne cree ni ne deplace un horaire depuis ce parcours
++```
++
++Ajoutés au lot R3 de Compte/Réglages/Profils, sans modifier les contrats métier.
+diff --git a/lib/app.dart b/lib/app.dart
+index e89670f2..218e6209 100644
+--- a/lib/app.dart
++++ b/lib/app.dart
+@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import 'package:go_router/go_router.dart';
+ 
+ import 'core/i18n/strings.g.dart';
++import 'core/preferences/preferences_locales.dart';
+ import 'core/router/app_router.dart';
+ import 'core/session/session_controleur.dart';
+ import 'core/session/session_state.dart';
+@@ -15,12 +16,8 @@ import 'core/theme/app_theme.dart';
+ /// l'arborescence de navigation (ADR-009) : c'est pour cela que le mode est lu
+ /// ici, une seule fois, et non dans chaque ecran.
+ ///
+-/// Le theme sombre (lot T3, Bible V2 section 7.3, ADR-019, ecart 23 de
+-/// `decisions.md`) suit `ThemeMode.system` : l'application respecte le
+-/// reglage clair/sombre du systeme d'exploitation. Aucune bascule manuelle
+-/// n'existe encore dans un ecran du produit, faute d'entree au catalogue
+-/// (`docs/design/08-catalogue-ecrans.md`) -- ce lot ferme le mecanisme du
+-/// theme, pas une preference utilisateur dediee.
++/// Le theme et les preferences d'accessibilite locales sont lus ici afin que
++/// le choix de l'utilisateur ne soit pas limite a l'ecran des reglages.
+ class RewayahApp extends ConsumerWidget {
+   /// Cree la racine.
+   const RewayahApp({super.key});
+@@ -29,13 +26,16 @@ class RewayahApp extends ConsumerWidget {
+   Widget build(BuildContext context, WidgetRef ref) {
+     final GoRouter routeur = ref.watch(routeurProvider);
+     final SessionState session = ref.watch(sessionProvider);
++    final PreferencesLocales preferences = ref.watch(
++      preferencesLocalesProvider,
++    );
+ 
+     return MaterialApp.router(
+       title: 'Rewayah Academy',
+       debugShowCheckedModeBanner: false,
+       theme: AppTheme.pour(session.interfaceMode, Brightness.light),
+       darkTheme: AppTheme.pour(session.interfaceMode, Brightness.dark),
+-      themeMode: ThemeMode.system,
++      themeMode: preferences.theme.mode,
+       routerConfig: routeur,
+       locale: TranslationProvider.of(context).flutterLocale,
+       supportedLocales: AppLocaleUtils.supportedLocales,
+diff --git a/lib/core/i18n/strings.g.dart b/lib/core/i18n/strings.g.dart
+index 4e29d862..35653d9a 100644
+--- a/lib/core/i18n/strings.g.dart
++++ b/lib/core/i18n/strings.g.dart
+@@ -4,7 +4,7 @@
+ /// To regenerate, run: `dart run slang`
+ ///
+ /// Locales: 2
+-/// Strings: 662 (331 per locale)
++/// Strings: 790 (395 per locale)
+ 
+ // coverage:ignore-file
+ // ignore_for_file: type=lint, unused_import
+diff --git a/lib/core/i18n/strings_fr.g.dart b/lib/core/i18n/strings_fr.g.dart
+index 7089b74f..061a12f1 100644
+--- a/lib/core/i18n/strings_fr.g.dart
++++ b/lib/core/i18n/strings_fr.g.dart
+@@ -65,6 +65,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
+ 	late final Traductions$pin$fr pin = Traductions$pin$fr.internal(_root);
+ 	late final Traductions$choix$fr choix = Traductions$choix$fr.internal(_root);
+ 	late final Traductions$avatar$fr avatar = Traductions$avatar$fr.internal(_root);
++	late final Traductions$compte$fr compte = Traductions$compte$fr.internal(_root);
+ 	late final Traductions$nav$fr nav = Traductions$nav$fr.internal(_root);
+ 	late final Traductions$eleve$fr eleve = Traductions$eleve$fr.internal(_root);
+ 	late final Traductions$tuteur$fr tuteur = Traductions$tuteur$fr.internal(_root);
+@@ -1153,6 +1154,288 @@ class Traductions$avatar$fr {
+ 	String get sansPhoto => 'Pas encore de photo';
+ }
+ 
++// Path: compte
++class Traductions$compte$fr {
++	Traductions$compte$fr.internal(this._root);
++
++	final Traductions _root; // ignore: unused_field
++
++	// Translations
++
++	/// fr: 'Compte'
++	String get titre => 'Compte';
++
++	/// fr: 'Votre espace personnel, vos accès et les réglages de cette application.'
++	String get intro => 'Votre espace personnel, vos accès et les réglages de cette application.';
++
++	/// fr: 'Mon profil'
++	String get profil => 'Mon profil';
++
++	/// fr: 'Identité, contact et accès vérifiés'
++	String get profilDetail => 'Identité, contact et accès vérifiés';
++
++	/// fr: 'Réglages de l'application'
++	String get reglages => 'Réglages de l\'application';
++
++	/// fr: 'Apparence, accessibilité, notifications et données'
++	String get reglagesDetail => 'Apparence, accessibilité, notifications et données';
++
++	/// fr: 'Profils du foyer'
++	String get profils => 'Profils du foyer';
++
++	/// fr: 'Gérer les profils des enfants de votre foyer'
++	String get profilsDetail => 'Gérer les profils des enfants de votre foyer';
++
++	/// fr: 'Appareils et sécurité'
++	String get appareils => 'Appareils et sécurité';
++
++	/// fr: 'Appareils appairés et accès de la famille'
++	String get appareilsDetail => 'Appareils appairés et accès de la famille';
++
++	/// fr: 'Confidentialité et aide'
++	String get confidentialite => 'Confidentialité et aide';
++
++	/// fr: 'Informations, consentements et diagnostic'
++	String get confidentialiteDetail => 'Informations, consentements et diagnostic';
++
++	/// fr: 'Se déconnecter'
++	String get deconnexion => 'Se déconnecter';
++
++	/// fr: 'Fermer cette session sur l'appareil'
++	String get deconnexionDetail => 'Fermer cette session sur l\'appareil';
++
++	/// fr: 'Espaces autorisés'
++	String get espaces => 'Espaces autorisés';
++
++	/// fr: 'Ces accès viennent de l'autorisation du compte.'
++	String get espacesDetail => 'Ces accès viennent de l\'autorisation du compte.';
++
++	/// fr: 'Accès actif'
++	String get actif => 'Accès actif';
++
++	/// fr: 'Selon habilitation'
++	String get habilitation => 'Selon habilitation';
++
++	/// fr: 'Lecture seule'
++	String get lectureSeule => 'Lecture seule';
++
++	/// fr: 'Non disponible'
++	String get nonDisponible => 'Non disponible';
++
++	/// fr: 'Identifiant'
++	String get identifiant => 'Identifiant';
++
++	/// fr: 'Statut du compte'
++	String get statut => 'Statut du compte';
++
++	/// fr: 'Actif'
++	String get statutActif => 'Actif';
++
++	/// fr: 'Accès provisoire'
++	String get statutProvisoire => 'Accès provisoire';
++
++	/// fr: 'Informations personnelles'
++	String get informations => 'Informations personnelles';
++
++	/// fr: 'Académie et périmètre'
++	String get academie => 'Académie et périmètre';
++
++	/// fr: 'Sécurité'
++	String get securite => 'Sécurité';
++
++	/// fr: 'Modifier'
++	String get modifier => 'Modifier';
++
++	/// fr: 'Contact de connexion'
++	String get contact => 'Contact de connexion';
++
++	/// fr: 'Géré par la méthode de connexion actuelle'
++	String get contactDetail => 'Géré par la méthode de connexion actuelle';
++
++	/// fr: 'Langue'
++	String get langue => 'Langue';
++
++	/// fr: 'Fuseau horaire'
++	String get fuseau => 'Fuseau horaire';
++
++	/// fr: 'Caméra'
++	String get cameraLabel => 'Caméra';
++
++	/// fr: 'Foyer'
++	String get foyer => 'Foyer';
++
++	/// fr: 'Relation de tutelle vérifiée'
++	String get foyerDetail => 'Relation de tutelle vérifiée';
++
++	/// fr: 'Prénom professionnel et identifiant validé'
++	String get enseignantDetail => 'Prénom professionnel et identifiant validé';
++
++	/// fr: 'Rôles, délégations et périmètre lus depuis le compte'
++	String get personnelDetail => 'Rôles, délégations et périmètre lus depuis le compte';
++
++	/// fr: 'Réglages de l'application'
++	String get reglagesTitre => 'Réglages de l\'application';
++
++	/// fr: 'Ces choix s'appliquent à cet appareil et ne changent pas vos droits.'
++	String get reglagesIntro => 'Ces choix s\'appliquent à cet appareil et ne changent pas vos droits.';
++
++	/// fr: 'Apparence'
++	String get apparence => 'Apparence';
++
++	/// fr: 'Système'
++	String get themeSysteme => 'Système';
++
++	/// fr: 'Suivre le réglage de l'appareil'
++	String get themeSystemeDetail => 'Suivre le réglage de l\'appareil';
++
++	/// fr: 'Clair'
++	String get themeClair => 'Clair';
++
++	/// fr: 'Sombre'
++	String get themeSombre => 'Sombre';
++
++	/// fr: 'Accessibilité'
++	String get accessibilite => 'Accessibilité';
++
++	/// fr: 'Réduire les animations'
++	String get animations => 'Réduire les animations';
++
++	/// fr: 'Respecte aussi la préférence de réduction du système'
++	String get animationsDetail => 'Respecte aussi la préférence de réduction du système';
++
++	/// fr: 'Réduire les effets visuels'
++	String get effets => 'Réduire les effets visuels';
++
++	/// fr: 'Retire les ombres et les effets décoratifs'
++	String get effetsDetail => 'Retire les ombres et les effets décoratifs';
++
++	/// fr: 'Aperçu de lisibilité'
++	String get lisibilite => 'Aperçu de lisibilité';
++
++	/// fr: 'Un texte de démonstration avec la taille actuelle'
++	String get lisibiliteDetail => 'Un texte de démonstration avec la taille actuelle';
++
++	/// fr: 'Langue et région'
++	String get langueRegion => 'Langue et région';
++
++	/// fr: 'Français'
++	String get francais => 'Français';
++
++	/// fr: 'Traduction complète disponible'
++	String get francaisDetail => 'Traduction complète disponible';
++
++	/// fr: 'العربية'
++	String get arabe => 'العربية';
++
++	/// fr: 'Traduction en préparation'
++	String get arabeDetail => 'Traduction en préparation';
++
++	/// fr: 'Valeur locale affichée par l'appareil'
++	String get fuseauDetail => 'Valeur locale affichée par l\'appareil';
++
++	/// fr: 'Notifications'
++	String get notifications => 'Notifications';
++
++	/// fr: 'Permission du système non vérifiée'
++	String get notificationsEtat => 'Permission du système non vérifiée';
++
++	/// fr: 'Cours et rappels'
++	String get notificationsCours => 'Cours et rappels';
++
++	/// fr: 'Rappels liés à vos cours'
++	String get notificationsCoursDetail => 'Rappels liés à vos cours';
++
++	/// fr: 'Foyer'
++	String get notificationsFoyer => 'Foyer';
++
++	/// fr: 'Informations utiles pour le foyer'
++	String get notificationsFoyerDetail => 'Informations utiles pour le foyer';
++
++	/// fr: 'Cours et données'
++	String get coursDonnees => 'Cours et données';
++
++	/// fr: 'Économie de données'
++	String get economieDonnees => 'Économie de données';
++
++	/// fr: 'Réduit en priorité la qualité vidéo'
++	String get economieDonneesDetail => 'Réduit en priorité la qualité vidéo';
++
++	/// fr: 'Lecture'
++	String get lecture => 'Lecture';
++
++	/// fr: 'Texte de lecture agrandi'
++	String get lectureGrande => 'Texte de lecture agrandi';
++
++	/// fr: 'Préférence locale pour les contenus de lecture'
++	String get lectureGrandeDetail => 'Préférence locale pour les contenus de lecture';
++
++	/// fr: 'Appareils et sécurité'
++	String get appareilsSecurite => 'Appareils et sécurité';
++
++	/// fr: 'La liste et la révocation restent dans le foyer'
++	String get appareilsSecuriteDetail => 'La liste et la révocation restent dans le foyer';
++
++	/// fr: 'Aide'
++	String get aide => 'Aide';
++
++	/// fr: 'Diagnostic réseau et version de l'application'
++	String get aideDetail => 'Diagnostic réseau et version de l\'application';
++
++	/// fr: 'Profils du foyer'
++	String get profilsTitre => 'Profils du foyer';
++
++	/// fr: 'Chaque enfant conserve son identité et ses réglages propres.'
++	String get profilsIntro => 'Chaque enfant conserve son identité et ses réglages propres.';
++
++	/// fr: 'Profil de {prenom}'
++	String profilEnfant({required Object prenom}) => 'Profil de ${prenom}';
++
++	/// fr: 'Identifiant {identifiant}'
++	String identifiantEnfant({required Object identifiant}) => 'Identifiant ${identifiant}';
++
++	/// fr: 'Mode enfant'
++	String get modeEnfant => 'Mode enfant';
++
++	/// fr: 'Mode standard'
++	String get modeStandard => 'Mode standard';
++
++	/// fr: 'Caméra autorisée'
++	String get cameraAutorisee => 'Caméra autorisée';
++
++	/// fr: 'Caméra non disponible'
++	String get cameraInterdite => 'Caméra non disponible';
++
++	/// fr: 'Accès jusqu'au {date}'
++	String accesJusqua({required Object date}) => 'Accès jusqu\'au ${date}';
++
++	/// fr: 'Accès sans date de fin'
++	String get accesSansFin => 'Accès sans date de fin';
++
++	/// fr: 'Ouvrir le profil'
++	String get ouvrirProfil => 'Ouvrir le profil';
++
++	/// fr: 'Ajouter un enfant'
++	String get ajouterEnfant => 'Ajouter un enfant';
++
++	/// fr: 'Ouvrir les réglages de {prenom}'
++	String reglerEnfant({required Object prenom}) => 'Ouvrir les réglages de ${prenom}';
++
++	/// fr: 'Aucun profil enfant dans ce foyer'
++	String get aucunProfil => 'Aucun profil enfant dans ce foyer';
++
++	/// fr: 'Ajoutez un enfant depuis la gestion du foyer.'
++	String get aucunProfilDetail => 'Ajoutez un enfant depuis la gestion du foyer.';
++
++	/// fr: 'Les profils du foyer n'ont pas pu être lus.'
++	String get erreurProfils => 'Les profils du foyer n\'ont pas pu être lus.';
++
++	/// fr: 'Réessayer'
++	String get reessayer => 'Réessayer';
++
++	late final Traductions$compte$roles$fr roles = Traductions$compte$roles$fr.internal(_root);
++	late final Traductions$compte$roleDetail$fr roleDetail = Traductions$compte$roleDetail$fr.internal(_root);
++}
++
+ // Path: nav
+ class Traductions$nav$fr {
+ 	Traductions$nav$fr.internal(this._root);
+@@ -1198,6 +1481,7 @@ class Traductions$enseignant$fr {
+ 
+ 	// Translations
+ 	late final Traductions$enseignant$journee$fr journee = Traductions$enseignant$journee$fr.internal(_root);
++	late final Traductions$enseignant$profil$fr profil = Traductions$enseignant$profil$fr.internal(_root);
+ }
+ 
+ // Path: controleur
+@@ -1759,6 +2043,66 @@ class Traductions$admin$journal$fr {
+ 	String get fin => 'Vous êtes remonté jusqu\'à la première entrée du journal.';
+ }
+ 
++// Path: compte.roles
++class Traductions$compte$roles$fr {
++	Traductions$compte$roles$fr.internal(this._root);
++
++	final Traductions _root; // ignore: unused_field
++
++	// Translations
++
++	/// fr: 'Administration'
++	String get admin => 'Administration';
++
++	/// fr: 'Super-administration'
++	String get superAdmin => 'Super-administration';
++
++	/// fr: 'Comptabilité'
++	String get accountant => 'Comptabilité';
++
++	/// fr: 'Contrôle'
++	String get controller => 'Contrôle';
++
++	/// fr: 'Enseignement'
++	String get teacher => 'Enseignement';
++
++	/// fr: 'Tutorat'
++	String get guardian => 'Tutorat';
++
++	/// fr: 'Élève'
++	String get student => 'Élève';
++}
++
++// Path: compte.roleDetail
++class Traductions$compte$roleDetail$fr {
++	Traductions$compte$roleDetail$fr.internal(this._root);
++
++	final Traductions _root; // ignore: unused_field
++
++	// Translations
++
++	/// fr: 'Décisions et gestion autorisées'
++	String get admin => 'Décisions et gestion autorisées';
++
++	/// fr: 'Politiques et délégations autorisées'
++	String get superAdmin => 'Politiques et délégations autorisées';
++
++	/// fr: 'Données financières autorisées'
++	String get accountant => 'Données financières autorisées';
++
++	/// fr: 'Séances et audits autorisés'
++	String get controller => 'Séances et audits autorisés';
++
++	/// fr: 'Cours et élèves attribués'
++	String get teacher => 'Cours et élèves attribués';
++
++	/// fr: 'Foyer et enfants liés'
++	String get guardian => 'Foyer et enfants liés';
++
++	/// fr: 'Cours et lecture personnels'
++	String get student => 'Cours et lecture personnels';
++}
++
+ // Path: nav.eleve
+ class Traductions$nav$eleve$fr {
+ 	Traductions$nav$eleve$fr.internal(this._root);
+@@ -1775,6 +2119,9 @@ class Traductions$nav$eleve$fr {
+ 
+ 	/// fr: 'Suivi'
+ 	String get suivi => 'Suivi';
++
++	/// fr: 'Compte'
++	String get compte => 'Compte';
+ }
+ 
+ // Path: nav.tuteur
+@@ -1817,6 +2164,9 @@ class Traductions$nav$enseignant$fr {
+ 
+ 	/// fr: 'Profil'
+ 	String get profil => 'Profil';
++
++	/// fr: 'Compte'
++	String get compte => 'Compte';
+ }
+ 
+ // Path: nav.controleur
+@@ -2380,6 +2730,81 @@ class Traductions$enseignant$journee$fr {
+ 	String get erreur => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.';
+ }
+ 
++// Path: enseignant.profil
++class Traductions$enseignant$profil$fr {
++	Traductions$enseignant$profil$fr.internal(this._root);
++
++	final Traductions _root; // ignore: unused_field
++
++	// Translations
++
++	/// fr: 'Profil enseignant'
++	String get titre => 'Profil enseignant';
++
++	/// fr: 'Les informations professionnelles connues par Rewayah.'
++	String get intro => 'Les informations professionnelles connues par Rewayah.';
++
++	/// fr: 'Identité professionnelle'
++	String get identite => 'Identité professionnelle';
++
++	/// fr: 'Prénom professionnel'
++	String get prenom => 'Prénom professionnel';
++
++	/// fr: 'Identifiant enseignant'
++	String get identifiant => 'Identifiant enseignant';
++
++	/// fr: 'Statut du compte'
++	String get statut => 'Statut du compte';
++
++	/// fr: 'Pays de rattachement'
++	String get pays => 'Pays de rattachement';
++
++	/// fr: 'Langues d'enseignement'
++	String get langues => 'Langues d\'enseignement';
++
++	/// fr: 'Capacité hebdomadaire'
++	String get capacite => 'Capacité hebdomadaire';
++
++	/// fr: '{nombre} h par semaine'
++	String heures({required Object nombre}) => '${nombre} h par semaine';
++
++	/// fr: 'Vérification d'identité'
++	String get verification => 'Vérification d\'identité';
++
++	/// fr: 'Vérification en cours'
++	String get verificationEnAttente => 'Vérification en cours';
++
++	/// fr: 'Identité vérifiée'
++	String get verificationValidee => 'Identité vérifiée';
++
++	/// fr: 'Vérification à reprendre'
++	String get verificationRefusee => 'Vérification à reprendre';
++
++	/// fr: 'En attente de validation'
++	String get statutEnAttente => 'En attente de validation';
++
++	/// fr: 'Accès suspendu'
++	String get statutSuspendu => 'Accès suspendu';
++
++	/// fr: 'Votre profil enseignant n'est pas disponible.'
++	String get vide => 'Votre profil enseignant n\'est pas disponible.';
++
++	/// fr: 'Les informations professionnelles apparaîtront ici lorsqu'elles seront disponibles.'
++	String get videDetail => 'Les informations professionnelles apparaîtront ici lorsqu\'elles seront disponibles.';
++
++	/// fr: 'Le profil enseignant n'a pas pu être lu. Réessayez dans un instant.'
++	String get erreur => 'Le profil enseignant n\'a pas pu être lu. Réessayez dans un instant.';
++
++	/// fr: 'Votre profil enseignant n'est pas disponible hors ligne.'
++	String get horsLigne => 'Votre profil enseignant n\'est pas disponible hors ligne.';
++
++	/// fr: 'Reconnectez-vous pour consulter les informations à jour.'
++	String get horsLigneDetail => 'Reconnectez-vous pour consulter les informations à jour.';
++
++	/// fr: 'Réessayer'
++	String get reessayer => 'Réessayer';
++}
++
+ // Path: controleur.planning
+ class Traductions$controleur$planning$fr {
+ 	Traductions$controleur$planning$fr.internal(this._root);
+@@ -2932,9 +3357,116 @@ extension on Traductions {
+ 			'choix.autreInvite' => 'Précisez',
+ 			'choix.selectionMultiple' => 'Plusieurs réponses possibles',
+ 			'avatar.sansPhoto' => 'Pas encore de photo',
++			'compte.titre' => 'Compte',
++			'compte.intro' => 'Votre espace personnel, vos accès et les réglages de cette application.',
++			'compte.profil' => 'Mon profil',
++			'compte.profilDetail' => 'Identité, contact et accès vérifiés',
++			'compte.reglages' => 'Réglages de l\'application',
++			'compte.reglagesDetail' => 'Apparence, accessibilité, notifications et données',
++			'compte.profils' => 'Profils du foyer',
++			'compte.profilsDetail' => 'Gérer les profils des enfants de votre foyer',
++			'compte.appareils' => 'Appareils et sécurité',
++			'compte.appareilsDetail' => 'Appareils appairés et accès de la famille',
++			'compte.confidentialite' => 'Confidentialité et aide',
++			'compte.confidentialiteDetail' => 'Informations, consentements et diagnostic',
++			'compte.deconnexion' => 'Se déconnecter',
++			'compte.deconnexionDetail' => 'Fermer cette session sur l\'appareil',
++			'compte.espaces' => 'Espaces autorisés',
++			'compte.espacesDetail' => 'Ces accès viennent de l\'autorisation du compte.',
++			'compte.actif' => 'Accès actif',
++			'compte.habilitation' => 'Selon habilitation',
++			'compte.lectureSeule' => 'Lecture seule',
++			'compte.nonDisponible' => 'Non disponible',
++			'compte.identifiant' => 'Identifiant',
++			'compte.statut' => 'Statut du compte',
++			'compte.statutActif' => 'Actif',
++			'compte.statutProvisoire' => 'Accès provisoire',
++			'compte.informations' => 'Informations personnelles',
++			'compte.academie' => 'Académie et périmètre',
++			'compte.securite' => 'Sécurité',
++			'compte.modifier' => 'Modifier',
++			'compte.contact' => 'Contact de connexion',
++			'compte.contactDetail' => 'Géré par la méthode de connexion actuelle',
++			'compte.langue' => 'Langue',
++			'compte.fuseau' => 'Fuseau horaire',
++			'compte.cameraLabel' => 'Caméra',
++			'compte.foyer' => 'Foyer',
++			'compte.foyerDetail' => 'Relation de tutelle vérifiée',
++			'compte.enseignantDetail' => 'Prénom professionnel et identifiant validé',
++			'compte.personnelDetail' => 'Rôles, délégations et périmètre lus depuis le compte',
++			'compte.reglagesTitre' => 'Réglages de l\'application',
++			'compte.reglagesIntro' => 'Ces choix s\'appliquent à cet appareil et ne changent pas vos droits.',
++			'compte.apparence' => 'Apparence',
++			'compte.themeSysteme' => 'Système',
++			'compte.themeSystemeDetail' => 'Suivre le réglage de l\'appareil',
++			'compte.themeClair' => 'Clair',
++			'compte.themeSombre' => 'Sombre',
++			'compte.accessibilite' => 'Accessibilité',
++			'compte.animations' => 'Réduire les animations',
++			'compte.animationsDetail' => 'Respecte aussi la préférence de réduction du système',
++			'compte.effets' => 'Réduire les effets visuels',
++			'compte.effetsDetail' => 'Retire les ombres et les effets décoratifs',
++			'compte.lisibilite' => 'Aperçu de lisibilité',
++			'compte.lisibiliteDetail' => 'Un texte de démonstration avec la taille actuelle',
++			'compte.langueRegion' => 'Langue et région',
++			'compte.francais' => 'Français',
++			'compte.francaisDetail' => 'Traduction complète disponible',
++			'compte.arabe' => 'العربية',
++			'compte.arabeDetail' => 'Traduction en préparation',
++			'compte.fuseauDetail' => 'Valeur locale affichée par l\'appareil',
++			'compte.notifications' => 'Notifications',
++			'compte.notificationsEtat' => 'Permission du système non vérifiée',
++			'compte.notificationsCours' => 'Cours et rappels',
++			'compte.notificationsCoursDetail' => 'Rappels liés à vos cours',
++			'compte.notificationsFoyer' => 'Foyer',
++			'compte.notificationsFoyerDetail' => 'Informations utiles pour le foyer',
++			'compte.coursDonnees' => 'Cours et données',
++			_ => null,
++		} ?? switch (path) {
++			'compte.economieDonnees' => 'Économie de données',
++			'compte.economieDonneesDetail' => 'Réduit en priorité la qualité vidéo',
++			'compte.lecture' => 'Lecture',
++			'compte.lectureGrande' => 'Texte de lecture agrandi',
++			'compte.lectureGrandeDetail' => 'Préférence locale pour les contenus de lecture',
++			'compte.appareilsSecurite' => 'Appareils et sécurité',
++			'compte.appareilsSecuriteDetail' => 'La liste et la révocation restent dans le foyer',
++			'compte.aide' => 'Aide',
++			'compte.aideDetail' => 'Diagnostic réseau et version de l\'application',
++			'compte.profilsTitre' => 'Profils du foyer',
++			'compte.profilsIntro' => 'Chaque enfant conserve son identité et ses réglages propres.',
++			'compte.profilEnfant' => ({required Object prenom}) => 'Profil de ${prenom}',
++			'compte.identifiantEnfant' => ({required Object identifiant}) => 'Identifiant ${identifiant}',
++			'compte.modeEnfant' => 'Mode enfant',
++			'compte.modeStandard' => 'Mode standard',
++			'compte.cameraAutorisee' => 'Caméra autorisée',
++			'compte.cameraInterdite' => 'Caméra non disponible',
++			'compte.accesJusqua' => ({required Object date}) => 'Accès jusqu\'au ${date}',
++			'compte.accesSansFin' => 'Accès sans date de fin',
++			'compte.ouvrirProfil' => 'Ouvrir le profil',
++			'compte.ajouterEnfant' => 'Ajouter un enfant',
++			'compte.reglerEnfant' => ({required Object prenom}) => 'Ouvrir les réglages de ${prenom}',
++			'compte.aucunProfil' => 'Aucun profil enfant dans ce foyer',
++			'compte.aucunProfilDetail' => 'Ajoutez un enfant depuis la gestion du foyer.',
++			'compte.erreurProfils' => 'Les profils du foyer n\'ont pas pu être lus.',
++			'compte.reessayer' => 'Réessayer',
++			'compte.roles.admin' => 'Administration',
++			'compte.roles.superAdmin' => 'Super-administration',
++			'compte.roles.accountant' => 'Comptabilité',
++			'compte.roles.controller' => 'Contrôle',
++			'compte.roles.teacher' => 'Enseignement',
++			'compte.roles.guardian' => 'Tutorat',
++			'compte.roles.student' => 'Élève',
++			'compte.roleDetail.admin' => 'Décisions et gestion autorisées',
++			'compte.roleDetail.superAdmin' => 'Politiques et délégations autorisées',
++			'compte.roleDetail.accountant' => 'Données financières autorisées',
++			'compte.roleDetail.controller' => 'Séances et audits autorisés',
++			'compte.roleDetail.teacher' => 'Cours et élèves attribués',
++			'compte.roleDetail.guardian' => 'Foyer et enfants liés',
++			'compte.roleDetail.student' => 'Cours et lecture personnels',
+ 			'nav.eleve.accueil' => 'Accueil',
+ 			'nav.eleve.coran' => 'Coran',
+ 			'nav.eleve.suivi' => 'Suivi',
++			'nav.eleve.compte' => 'Compte',
+ 			'nav.tuteur.accueil' => 'Accueil',
+ 			'nav.tuteur.foyer' => 'Foyer',
+ 			'nav.tuteur.disponibilites' => 'Disponibilités',
+@@ -2943,6 +3475,7 @@ extension on Traductions {
+ 			'nav.enseignant.journee' => 'Journée',
+ 			'nav.enseignant.creneaux' => 'Créneaux',
+ 			'nav.enseignant.profil' => 'Profil',
++			'nav.enseignant.compte' => 'Compte',
+ 			'nav.controleur.planning' => 'Planning',
+ 			'nav.admin.tableauDeBord' => 'Tableau de bord',
+ 			'nav.admin.dossiers' => 'Dossiers',
+@@ -2996,8 +3529,6 @@ extension on Traductions {
+ 			'tuteur.accueil.assisterRefuse' => 'Le cours n\'a pas pu être rejoint. Il vient peut-être de se terminer.',
+ 			'tuteur.accueil.enCours' => ({required Object prenom}) => 'En cours avec ${prenom}',
+ 			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'Commencé il y a ${minutes} min',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'tuteur.accueil.depuisInstant' => 'Vient de commencer',
+ 			'tuteur.accueil.aujourdhui' => ({required Object heure, required Object prenom}) => 'Aujourd\'hui à ${heure}, avec ${prenom}',
+ 			'tuteur.accueil.unAutreJour' => ({required Object jour, required Object heure, required Object prenom}) => '${jour} à ${heure}, avec ${prenom}',
+@@ -3108,6 +3639,28 @@ extension on Traductions {
+ 			'enseignant.journee.aucunEleveEnAttente' => 'Aucun élève en attente sur vos heures',
+ 			'enseignant.journee.voirCreneaux' => 'Voir mes créneaux',
+ 			'enseignant.journee.erreur' => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.',
++			'enseignant.profil.titre' => 'Profil enseignant',
++			'enseignant.profil.intro' => 'Les informations professionnelles connues par Rewayah.',
++			'enseignant.profil.identite' => 'Identité professionnelle',
++			'enseignant.profil.prenom' => 'Prénom professionnel',
++			'enseignant.profil.identifiant' => 'Identifiant enseignant',
++			'enseignant.profil.statut' => 'Statut du compte',
++			'enseignant.profil.pays' => 'Pays de rattachement',
++			'enseignant.profil.langues' => 'Langues d\'enseignement',
++			'enseignant.profil.capacite' => 'Capacité hebdomadaire',
++			'enseignant.profil.heures' => ({required Object nombre}) => '${nombre} h par semaine',
++			'enseignant.profil.verification' => 'Vérification d\'identité',
++			'enseignant.profil.verificationEnAttente' => 'Vérification en cours',
++			'enseignant.profil.verificationValidee' => 'Identité vérifiée',
++			'enseignant.profil.verificationRefusee' => 'Vérification à reprendre',
++			'enseignant.profil.statutEnAttente' => 'En attente de validation',
++			'enseignant.profil.statutSuspendu' => 'Accès suspendu',
++			'enseignant.profil.vide' => 'Votre profil enseignant n\'est pas disponible.',
++			'enseignant.profil.videDetail' => 'Les informations professionnelles apparaîtront ici lorsqu\'elles seront disponibles.',
++			'enseignant.profil.erreur' => 'Le profil enseignant n\'a pas pu être lu. Réessayez dans un instant.',
++			'enseignant.profil.horsLigne' => 'Votre profil enseignant n\'est pas disponible hors ligne.',
++			'enseignant.profil.horsLigneDetail' => 'Reconnectez-vous pour consulter les informations à jour.',
++			'enseignant.profil.reessayer' => 'Réessayer',
+ 			'controleur.planning.titre' => 'Planning global',
+ 			'controleur.planning.visiteJournalisee' => 'Votre entrée est enregistrée : votre nom, la séance, l\'heure. Les participants, eux, ne vous voient pas.',
+ 			'controleur.planning.tousEtats' => 'Tout',
+diff --git a/lib/core/preferences/preferences_locales.dart b/lib/core/preferences/preferences_locales.dart
+new file mode 100644
+index 00000000..8f93f2d4
+--- /dev/null
++++ b/lib/core/preferences/preferences_locales.dart
+@@ -0,0 +1,114 @@
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++
++/// Le choix local du thème. Il ne modifie aucune préférence de profil distante.
++enum PreferenceTheme {
++  systeme,
++  clair,
++  sombre;
++
++  /// La valeur attendue par [MaterialApp].
++  ThemeMode get mode => switch (this) {
++    PreferenceTheme.systeme => ThemeMode.system,
++    PreferenceTheme.clair => ThemeMode.light,
++    PreferenceTheme.sombre => ThemeMode.dark,
++  };
++}
++
++/// Préférences de comportement conservées pendant la vie de l'application.
++///
++/// Le dépôt ne possède pas encore de stockage dédié aux préférences locales.
++/// Ce modèle reste donc volontairement en mémoire : il rend le parcours
++/// testable maintenant, sans faire croire qu'une écriture distante a réussi.
++@immutable
++class PreferencesLocales {
++  /// Crée les valeurs locales par défaut.
++  const PreferencesLocales({
++    this.theme = PreferenceTheme.systeme,
++    this.animationsReduites = false,
++    this.effetsReduits = false,
++    this.notificationsCours = true,
++    this.notificationsFoyer = true,
++    this.economieDonnees = false,
++    this.lectureGrande = false,
++  });
++
++  /// Thème d'affichage local.
++  final PreferenceTheme theme;
++
++  /// Désactive les transitions décoratives.
++  final bool animationsReduites;
++
++  /// Retire les ombres et filtres décoratifs.
++  final bool effetsReduits;
++
++  /// Notifications liées aux cours.
++  final bool notificationsCours;
++
++  /// Notifications liées au foyer.
++  final bool notificationsFoyer;
++
++  /// Préférence de qualité média locale.
++  final bool economieDonnees;
++
++  /// Taille de lecture préférée, quand le moteur la supporte.
++  final bool lectureGrande;
++
++  /// Retourne une copie avec les valeurs modifiées.
++  PreferencesLocales copyWith({
++    PreferenceTheme? theme,
++    bool? animationsReduites,
++    bool? effetsReduits,
++    bool? notificationsCours,
++    bool? notificationsFoyer,
++    bool? economieDonnees,
++    bool? lectureGrande,
++  }) => PreferencesLocales(
++    theme: theme ?? this.theme,
++    animationsReduites: animationsReduites ?? this.animationsReduites,
++    effetsReduits: effetsReduits ?? this.effetsReduits,
++    notificationsCours: notificationsCours ?? this.notificationsCours,
++    notificationsFoyer: notificationsFoyer ?? this.notificationsFoyer,
++    economieDonnees: economieDonnees ?? this.economieDonnees,
++    lectureGrande: lectureGrande ?? this.lectureGrande,
++  );
++}
++
++/// Contrôleur de préférences locales, sans mutation métier.
++final NotifierProvider<PreferencesLocalesControleur, PreferencesLocales>
++preferencesLocalesProvider =
++    NotifierProvider<PreferencesLocalesControleur, PreferencesLocales>(
++      PreferencesLocalesControleur.new,
++    );
++
++/// Porte les changements locaux de la page Réglages.
++class PreferencesLocalesControleur extends Notifier<PreferencesLocales> {
++  @override
++  PreferencesLocales build() => const PreferencesLocales();
++
++  /// Change le thème immédiatement.
++  void theme(PreferenceTheme valeur) => state = state.copyWith(theme: valeur);
++
++  /// Change la réduction des animations.
++  void animations(bool valeur) =>
++      state = state.copyWith(animationsReduites: valeur);
++
++  /// Change la réduction des effets.
++  void effets(bool valeur) => state = state.copyWith(effetsReduits: valeur);
++
++  /// Change l'abonnement local aux cours.
++  void notificationsCours(bool valeur) =>
++      state = state.copyWith(notificationsCours: valeur);
++
++  /// Change l'abonnement local aux nouvelles du foyer.
++  void notificationsFoyer(bool valeur) =>
++      state = state.copyWith(notificationsFoyer: valeur);
++
++  /// Active l'économie de données locale.
++  void economieDonnees(bool valeur) =>
++      state = state.copyWith(economieDonnees: valeur);
++
++  /// Change la taille de lecture locale.
++  void lectureGrande(bool valeur) =>
++      state = state.copyWith(lectureGrande: valeur);
++}
+diff --git a/lib/core/router/app_router.dart b/lib/core/router/app_router.dart
+index 37404751..ea0ddd17 100644
+--- a/lib/core/router/app_router.dart
++++ b/lib/core/router/app_router.dart
+@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
+ import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import 'package:go_router/go_router.dart';
+ 
++import '../../features/_dev/galerie/compte_galerie.dart';
+ import '../../features/_dev/galerie/galerie_page.dart';
+ import '../../features/accueil_eleve/accueil_eleve_page.dart';
+ import '../../features/accueil_famille/accueil_famille_page.dart';
+@@ -13,6 +14,7 @@ import '../../features/admin_tableau/tableau_de_bord_page.dart';
+ import '../../features/appareils/ajouter_enfant_page.dart';
+ import '../../features/appareils/appairage_page.dart';
+ import '../../features/appareils/appareils_page.dart';
++import '../../features/compte/compte_page.dart';
+ import '../../features/connexion/connexion_page.dart';
+ import '../../features/controleur/planning_page.dart';
+ import '../../features/coran/coran_page.dart';
+@@ -24,6 +26,7 @@ import '../../features/dossier/signature_page.dart';
+ import '../../features/eleve_connexion/eleve_connexion_page.dart';
+ import '../../features/inscription/inscription_page.dart';
+ import '../../features/journee/journee_page.dart';
++import '../../features/profil_enseignant/profil_enseignant_page.dart';
+ import '../../features/reglages_enfant/reglages_enfant_page.dart';
+ import '../../features/salle/salle_page.dart';
+ import '../../features/suivi_foyer/suivi_foyer_page.dart';
+@@ -104,6 +107,32 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
+         builder: (BuildContext _, GoRouterState _) => const DepotPiecePage(),
+       ),
+ 
++      // Compte. Cet espace est partage par les roles actifs, mais ses
++      // capacites restent celles projetees par la session et le serveur.
++      GoRoute(
++        path: Routes.compte,
++        builder: (BuildContext _, GoRouterState _) => const ComptePage(),
++      ),
++      GoRoute(
++        path: Routes.compteProfil,
++        builder: (BuildContext _, GoRouterState _) =>
++            const ProfilPersonnelPage(),
++      ),
++      GoRoute(
++        path: Routes.compteReglages,
++        builder: (BuildContext _, GoRouterState _) =>
++            const ReglagesComptePage(),
++      ),
++      GoRoute(
++        path: Routes.compteProfils,
++        builder: (BuildContext _, GoRouterState _) => const ProfilsComptePage(),
++      ),
++      GoRoute(
++        path: '${Routes.compteProfilEnfant}/:profilId',
++        builder: (BuildContext _, GoRouterState etat) =>
++            ProfilEnfantPage(profilId: etat.pathParameters['profilId'] ?? ''),
++      ),
++
+       // Eleve. Meme arborescence en mode enfant et en mode standard : c'est ce
+       // que chaque ecran AFFICHE qui change, jamais la structure (ADR-009). La
+       // barre a trois destinations en mode standard, zero en mode enfant :
+@@ -232,7 +261,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
+               GoRoute(
+                 path: Routes.enseignantProfil,
+                 builder: (BuildContext _, GoRouterState _) =>
+-                    EcranAConstruire(destination: t.nav.enseignant.profil),
++                    const ProfilEnseignantPage(),
+               ),
+             ],
+           ),
+@@ -300,8 +329,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
+       // Comptable : le role existe, son interface arrive en V1 (ADR-003).
+       GoRoute(
+         path: Routes.comptable,
+-        builder: (BuildContext _, GoRouterState _) =>
+-            const EcranAConstruire(destination: 'Espace comptable'),
++        builder: (BuildContext _, GoRouterState _) => const ComptePage(),
+       ),
+ 
+       // Salle. Le billet passe par `extra`, jamais par l'URL (ADR-005).
+@@ -326,6 +354,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
+           path: Routes.galerie,
+           builder: (BuildContext _, GoRouterState _) => const GaleriePage(),
+         ),
++      if (Env.galerieActive)
++        GoRoute(
++          path: Routes.galerieCompte,
++          builder: (BuildContext _, GoRouterState _) =>
++              const CompteGaleriePage(),
++        ),
+     ],
+   );
+ });
+diff --git a/lib/core/router/redirection.dart b/lib/core/router/redirection.dart
+index 10d8e703..21ddc4a0 100644
+--- a/lib/core/router/redirection.dart
++++ b/lib/core/router/redirection.dart
+@@ -22,7 +22,9 @@ String? deciderRedirection({
+   // La galerie de developpement echappe a la porte : elle ne montre que des
+   // composants, aucune donnee. Elle n'est de toute facon pas compilee en
+   // production.
+-  if (Env.galerieActive && cheminDemande == Routes.galerie) {
++  if (Env.galerieActive &&
++      (cheminDemande == Routes.galerie ||
++          cheminDemande.startsWith('${Routes.galerie}/'))) {
+     return null;
+   }
+ 
+@@ -83,6 +85,13 @@ String? deciderRedirection({
+         return presentable ? null : racine;
+       }
+ 
++      // Le compte est un espace commun : un tuteur, un administrateur, un
++      // comptable ou un controleur ne doit pas etre renvoye sur sa racine
++      // metier pour consulter ses preferences locales.
++      if (_dansLeSousArbre(cheminDemande, Routes.compte)) {
++        return null;
++      }
++
+       // Une route d'un autre role demandee directement par URL renvoie chez
+       // soi, sur le Web comme ailleurs.
+       final String prefixe = Routes.prefixePour(role);
+diff --git a/lib/core/router/routes.dart b/lib/core/router/routes.dart
+index e1aca38f..b7783291 100644
+--- a/lib/core/router/routes.dart
++++ b/lib/core/router/routes.dart
+@@ -145,6 +145,30 @@ abstract final class Routes {
+   /// Galerie des composants. Compilee seulement avec `--dart-define=GALERIE=true`.
+   static const String galerie = '/_galerie';
+ 
++  /// Galerie des surfaces Compte, compilee seulement en developpement.
++  static const String galerieCompte = '/_galerie/compte';
++
++  // --- Compte -------------------------------------------------------------
++
++  /// Portail commun aux comptes actifs, hors des arbres metier.
++  static const String compte = '/compte';
++
++  /// Profil de la personne connectee.
++  static const String compteProfil = '/compte/profil';
++
++  /// Preferences locales de l'application.
++  static const String compteReglages = '/compte/reglages';
++
++  /// Profils d'enfants du foyer.
++  static const String compteProfils = '/compte/profils';
++
++  /// Detail d'un profil enfant.
++  static const String compteProfilEnfant = '/compte/profils';
++
++  /// Chemin d'un profil enfant.
++  static String compteProfilEnfantPour(String profilId) =>
++      '$compteProfilEnfant/$profilId';
++
+   /// Routes atteignables sans session resolue.
+   static const Set<String> publiques = <String>{connexion, galerie};
+ 
+diff --git a/lib/core/widgets/nav_shell.dart b/lib/core/widgets/nav_shell.dart
+index 21d2a120..46809a70 100644
+--- a/lib/core/widgets/nav_shell.dart
++++ b/lib/core/widgets/nav_shell.dart
+@@ -69,6 +69,11 @@ List<Destination> destinationsPour({
+                 icone: AppIcons.suivi,
+                 chemin: Routes.eleveSuivi,
+               ),
++              Destination(
++                libelle: t.nav.eleve.compte,
++                icone: AppIcons.profil,
++                chemin: Routes.compte,
++              ),
+             ],
+     AppRole.guardian => <Destination>[
+       Destination(
+@@ -108,6 +113,11 @@ List<Destination> destinationsPour({
+         icone: AppIcons.profil,
+         chemin: Routes.enseignantProfil,
+       ),
++      Destination(
++        libelle: t.nav.enseignant.compte,
++        icone: AppIcons.reglages,
++        chemin: Routes.compte,
++      ),
+     ],
+     // L'admin tient quatre destinations : les demandes (ADM-06) restent
+     // atteintes depuis leur compteur et la liste a traiter, jamais depuis la
+@@ -402,7 +412,9 @@ class _Cote extends StatelessWidget {
+         child: enColonne
+             ? SafeArea(child: chrome)
+             : DrawerTheme(
+-                data: DrawerThemeData(width: AppGabarit.largeurBarreLaterale),
++                data: const DrawerThemeData(
++                  width: AppGabarit.largeurBarreLaterale,
++                ),
+                 child: NavigationDrawerTheme(
+                   data: NavigationDrawerThemeData(
+                     tileHeight: AppMetriques.of(context).cibleTactile,
+diff --git a/lib/core/widgets/setting_row.dart b/lib/core/widgets/setting_row.dart
+index 91f15369..62af5005 100644
+--- a/lib/core/widgets/setting_row.dart
++++ b/lib/core/widgets/setting_row.dart
+@@ -15,6 +15,7 @@ class SettingRow extends StatelessWidget {
+     super.key,
+     this.description,
+     this.value,
++    this.controle,
+     this.onPress,
+     this.enabled = true,
+   });
+@@ -22,6 +23,11 @@ class SettingRow extends StatelessWidget {
+   final String title;
+   final String? description;
+   final String? value;
++
++  /// Controle natif place en fin de ligne, sans enveloppe interactive.
++  ///
++  /// Un [Switch] ou un [Radio] conserve ainsi sa gestion de focus et de geste.
++  final Widget? controle;
+   final AppIcon icon;
+   final VoidCallback? onPress;
+   final bool enabled;
+@@ -90,6 +96,7 @@ class SettingRow extends StatelessWidget {
+                 ),
+               ),
+             ],
++            if (controle != null) ...<Widget>[Ecart.hSm, controle!],
+             if (onPress != null) ...<Widget>[
+               Ecart.hSm,
+               IconTheme(
+diff --git a/lib/features/_dev/galerie/compte_galerie.dart b/lib/features/_dev/galerie/compte_galerie.dart
+new file mode 100644
+index 00000000..3a993a99
+--- /dev/null
++++ b/lib/features/_dev/galerie/compte_galerie.dart
+@@ -0,0 +1,301 @@
++import 'package:flutter/foundation.dart';
++import 'package:flutter/material.dart';
++
++import '../../../core/i18n/strings.g.dart';
++import '../../../core/icons/app_icons.dart';
++import '../../../core/theme/app_palette.dart';
++import '../../../core/theme/app_spacing.dart';
++import '../../../core/widgets/action_principale.dart';
++import '../../../core/widgets/app_card.dart';
++import '../../../core/widgets/avatar_tile.dart';
++import '../../../core/widgets/empty_state.dart';
++import '../../../core/widgets/page_shell.dart';
++import '../../../core/widgets/section_header.dart';
++import '../../../core/widgets/setting_row.dart';
++import '../../../core/widgets/skeleton.dart';
++
++/// Fixtures locales de la surface Compte.
++///
++/// Cette enum et les donnees rendues ici appartiennent au banc de developpement
++/// uniquement. Elles ne remplacent ni [SessionState] ni les projections du
++/// serveur et ne sont jamais utilisees par une route de production.
++enum CompteGalerieFixture {
++  profilIncomplet,
++  adminCapacites,
++  tuteurPlusieursEnfants,
++  vide,
++  erreur,
++  chargement,
++  horsLigne,
++}
++
++extension on CompteGalerieFixture {
++  String get nom => switch (this) {
++    CompteGalerieFixture.profilIncomplet => 'Profil personnel incomplet',
++    CompteGalerieFixture.adminCapacites => 'Administration et capacites',
++    CompteGalerieFixture.tuteurPlusieursEnfants =>
++      'Tuteur avec plusieurs enfants',
++    CompteGalerieFixture.vide => 'Etat vide',
++    CompteGalerieFixture.erreur => 'Etat erreur',
++    CompteGalerieFixture.chargement => 'Etat chargement',
++    CompteGalerieFixture.horsLigne => 'Etat hors ligne',
++  };
++}
++
++/// Galerie de developpement dediee a Compte, Reglages et Profils.
++///
++/// Les six fixtures demandees par le lot R3 sont explicites et deterministes.
++/// Le septieme cas montre le bandeau hors ligne attendu par les pages R3.
++class CompteGaleriePage extends StatefulWidget {
++  /// Cree la galerie Compte.
++  const CompteGaleriePage({super.key});
++
++  @override
++  State<CompteGaleriePage> createState() => _CompteGaleriePageState();
++}
++
++class _CompteGaleriePageState extends State<CompteGaleriePage> {
++  CompteGalerieFixture _selection = CompteGalerieFixture.profilIncomplet;
++
++  @override
++  Widget build(BuildContext context) {
++    if (kReleaseMode) {
++      return const Scaffold(
++        body: Center(child: Text('Galerie Compte indisponible en production')),
++      );
++    }
++
++    return PageShell(
++      titre: 'Galerie Compte',
++      entete: const Text(
++        'Fixtures locales de Compte, Reglages et Profils. Aucune donnee distante.',
++      ),
++      child: Column(
++        crossAxisAlignment: CrossAxisAlignment.stretch,
++        children: <Widget>[
++          _SelecteurFixture(
++            selection: _selection,
++            onSelection: (CompteGalerieFixture fixture) =>
++                setState(() => _selection = fixture),
++          ),
++          Ecart.vSection,
++          _contenu(_selection),
++        ],
++      ),
++    );
++  }
++
++  Widget _contenu(CompteGalerieFixture fixture) => switch (fixture) {
++    CompteGalerieFixture.profilIncomplet => const _ProfilIncomplet(),
++    CompteGalerieFixture.adminCapacites => const _AdminCapacites(),
++    CompteGalerieFixture.tuteurPlusieursEnfants => const _PlusieursEnfants(),
++    CompteGalerieFixture.vide => const EmptyState(
++      message: 'Aucun profil enfant dans ce foyer',
++      invitation: 'Le tuteur peut ajouter un enfant depuis le foyer.',
++      icone: AppIcons.foyer,
++      registre: RegistreVide.subi,
++    ),
++    CompteGalerieFixture.erreur => const _EtatErreur(),
++    CompteGalerieFixture.chargement => const _EtatChargement(),
++    CompteGalerieFixture.horsLigne => const _EtatHorsLigne(),
++  };
++}
++
++class _SelecteurFixture extends StatelessWidget {
++  const _SelecteurFixture({required this.selection, required this.onSelection});
++
++  final CompteGalerieFixture selection;
++  final ValueChanged<CompteGalerieFixture> onSelection;
++
++  @override
++  Widget build(BuildContext context) => Wrap(
++    spacing: AppSpacing.sm,
++    runSpacing: AppSpacing.sm,
++    children: <Widget>[
++      for (final CompteGalerieFixture fixture in CompteGalerieFixture.values)
++        ActionPrincipale(
++          libelle: fixture.nom,
++          niveau: fixture == selection
++              ? NiveauAction.principale
++              : NiveauAction.secondaire,
++          pleineLargeur: false,
++          onPress: () => onSelection(fixture),
++        ),
++    ],
++  );
++}
++
++class _ProfilIncomplet extends StatelessWidget {
++  const _ProfilIncomplet();
++
++  @override
++  Widget build(BuildContext context) => Column(
++    crossAxisAlignment: CrossAxisAlignment.stretch,
++    children: <Widget>[
++      AppCard(
++        dominante: true,
++        entete: const Text('Profil personnel incomplet'),
++        child: Row(
++          children: <Widget>[
++            const AvatarTile(prenom: 'Amina'),
++            Ecart.hXl,
++            Expanded(
++              child: Text(
++                'Amina',
++                style: Theme.of(context).textTheme.headlineSmall,
++              ),
++            ),
++          ],
++        ),
++      ),
++      Ecart.vSection,
++      SectionHeader(titre: t.compte.informations),
++      const SettingRow(
++        title: 'Identifiant',
++        value: 'STUD-AD-000001',
++        icon: AppIcons.profil,
++        enabled: false,
++      ),
++      const SettingRow(
++        title: 'Contact de connexion',
++        value: 'Non disponible',
++        description: 'La methode de connexion actuelle ne le projette pas.',
++        icon: AppIcons.profil,
++        enabled: false,
++      ),
++      const SettingRow(
++        title: 'Fuseau horaire',
++        value: 'Non disponible',
++        icon: AppIcons.reglages,
++        enabled: false,
++      ),
++    ],
++  );
++}
++
++class _AdminCapacites extends StatelessWidget {
++  const _AdminCapacites();
++
++  @override
++  Widget build(BuildContext context) => const Column(
++    crossAxisAlignment: CrossAxisAlignment.stretch,
++    children: <Widget>[
++      AppCard(
++        dominante: true,
++        entete: Text('Administration'),
++        child: Text(
++          'Fixture de lecture seule. La session porte une autorisation admin; aucune ligne ne peut attribuer un role.',
++        ),
++      ),
++      Ecart.vSection,
++      SectionHeader(titre: 'Matrice de capacites'),
++      SettingRow(
++        title: 'Gerer les horaires',
++        value: 'Selon habilitation serveur',
++        icon: AppIcons.tableauDeBord,
++        enabled: false,
++      ),
++      SettingRow(
++        title: 'Projection enseignement',
++        value: 'Lecture seule',
++        icon: AppIcons.journee,
++        enabled: false,
++      ),
++      SettingRow(
++        title: 'Attribuer un role',
++        value: 'Jamais depuis le client',
++        icon: AppIcons.controleQualite,
++        enabled: false,
++      ),
++    ],
++  );
++}
++
++class _PlusieursEnfants extends StatelessWidget {
++  const _PlusieursEnfants();
++
++  @override
++  Widget build(BuildContext context) => Column(
++    crossAxisAlignment: CrossAxisAlignment.stretch,
++    children: <Widget>[
++      const AppCard(
++        dominante: true,
++        entete: Text('Tuteur avec plusieurs enfants'),
++        child: Text(
++          'Chaque profil reste dans le perimetre du foyer et conserve son identifiant.',
++        ),
++      ),
++      Ecart.vSection,
++      for (final ({String prenom, String id}) enfant
++          in <({String prenom, String id})>[
++            (prenom: 'Amina', id: 'STUD-CH-000001'),
++            (prenom: 'Yusuf', id: 'STUD-CH-000002'),
++            (prenom: 'Mariam', id: 'STUD-CH-000003'),
++          ])
++        Padding(
++          padding: const EdgeInsets.only(bottom: AppSpacing.md),
++          child: AppCard(
++            child: Row(
++              children: <Widget>[
++                AvatarTile(prenom: enfant.prenom),
++                Ecart.hXl,
++                Expanded(
++                  child: Column(
++                    crossAxisAlignment: CrossAxisAlignment.start,
++                    children: <Widget>[
++                      Text(
++                        enfant.prenom,
++                        style: Theme.of(context).textTheme.titleLarge,
++                      ),
++                      Ecart.vXs,
++                      Text(enfant.id),
++                    ],
++                  ),
++                ),
++              ],
++            ),
++          ),
++        ),
++    ],
++  );
++}
++
++class _EtatErreur extends StatelessWidget {
++  const _EtatErreur();
++  @override
++  Widget build(BuildContext context) => AppCard(
++    surface: AppPalette.of(context).washAlert,
++    entete: const Text('Les profils du foyer n ont pas pu etre lus.'),
++    child: ActionPrincipale(
++      libelle: t.compte.reessayer,
++      niveau: NiveauAction.secondaire,
++      pleineLargeur: false,
++      onPress: () {},
++    ),
++  );
++}
++
++class _EtatChargement extends StatelessWidget {
++  const _EtatChargement();
++
++  @override
++  Widget build(BuildContext context) => Semantics(
++    label: 'Profils du foyer en chargement',
++    child: const AppCard(child: Skeleton.liste(differe: false)),
++  );
++}
++
++class _EtatHorsLigne extends StatelessWidget {
++  const _EtatHorsLigne();
++
++  @override
++  Widget build(BuildContext context) => AppCard(
++    surface: AppPalette.of(context).washWarning,
++    entete: const Text('Hors ligne'),
++    child: Text(
++      t.reseau.horsLigne,
++      style: AppPalette.of(context).washWarning
++          .applyTo(Theme.of(context).textTheme.bodyLarge ?? const TextStyle()),
++    ),
++  );
++}
+diff --git a/lib/features/admin_tableau/tableau_de_bord_page.dart b/lib/features/admin_tableau/tableau_de_bord_page.dart
+index db355c14..fc56cbd7 100644
+--- a/lib/features/admin_tableau/tableau_de_bord_page.dart
++++ b/lib/features/admin_tableau/tableau_de_bord_page.dart
+@@ -13,6 +13,8 @@ import '../../core/theme/app_palette.dart';
+ import '../../core/theme/app_spacing.dart';
+ import '../../core/widgets/empty_state.dart';
+ import '../../core/widgets/page_shell.dart';
++import '../../core/widgets/section_header.dart';
++import '../../core/widgets/setting_row.dart';
+ import '../../core/widgets/signal_row.dart';
+ import '../../core/widgets/stat_tile.dart';
+ 
+@@ -198,6 +200,14 @@ class TableauDeBordPage extends ConsumerWidget {
+           ],
+           Ecart.vMd,
+           Text(t.admin.tableau.aTraiterPortee, style: textes.bodySmall),
++          Ecart.vSection,
++          SectionHeader(titre: t.compte.titre),
++          SettingRow(
++            title: t.compte.profil,
++            description: t.compte.profilDetail,
++            icon: AppIcons.profil,
++            onPress: () => context.push(Routes.compte),
++          ),
+         ],
+       ),
+     );
+diff --git a/lib/features/compte/compte_page.dart b/lib/features/compte/compte_page.dart
+new file mode 100644
+index 00000000..08bace0f
+--- /dev/null
++++ b/lib/features/compte/compte_page.dart
+@@ -0,0 +1,752 @@
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:go_router/go_router.dart';
++
++import '../../core/appairage/service_appairage.dart';
++import '../../core/auth/service_auth.dart';
++import '../../core/domain/enums.dart';
++import '../../core/i18n/strings.g.dart';
++import '../../core/icons/app_icons.dart';
++import '../../core/preferences/preferences_locales.dart';
++import '../../core/router/routes.dart';
++import '../../core/session/session_controleur.dart';
++import '../../core/session/session_state.dart';
++import '../../core/theme/app_palette.dart';
++import '../../core/theme/app_spacing.dart';
++import '../../core/widgets/app_card.dart';
++import '../../core/widgets/avatar_tile.dart';
++import '../../core/widgets/empty_state.dart';
++import '../../core/widgets/page_shell.dart';
++import '../../core/widgets/section_header.dart';
++import '../../core/widgets/setting_row.dart';
++import '../../core/widgets/skeleton.dart';
++
++/// Le portail commun du compte, accessible depuis tous les roles actifs.
++///
++/// Les donnees personnelles absentes de [SessionState] restent explicitement
++/// inconnues : cet ecran ne fabrique ni nom, ni courriel, ni autorisation.
++class ComptePage extends ConsumerWidget {
++  /// Cree le portail du compte.
++  const ComptePage({super.key});
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final SessionState session = ref.watch(sessionProvider);
++    final _CompteProjection projection = _CompteProjection.depuis(session);
++
++    return PageShell(
++      titre: t.compte.titre,
++      entete: Text(t.compte.intro),
++      child: Column(
++        crossAxisAlignment: CrossAxisAlignment.stretch,
++        children: <Widget>[
++          AppCard(
++            dominante: true,
++            entete: _EnteteCompte(projection: projection),
++            child: Text(
++              projection.resume,
++              style: Theme.of(context).textTheme.bodyLarge,
++            ),
++          ),
++          Ecart.vSection,
++          SectionHeader(titre: t.compte.informations),
++          SettingRow(
++            title: t.compte.profil,
++            description: t.compte.profilDetail,
++            icon: AppIcons.profil,
++            onPress: () => context.push(Routes.compteProfil),
++          ),
++          SettingRow(
++            title: t.compte.reglages,
++            description: t.compte.reglagesDetail,
++            icon: AppIcons.reglages,
++            onPress: () => context.push(Routes.compteReglages),
++          ),
++          if (projection.afficheFoyer)
++            SettingRow(
++              title: t.compte.profils,
++              description: t.compte.profilsDetail,
++              icon: AppIcons.foyer,
++              onPress: () => context.push(Routes.compteProfils),
++            ),
++          SettingRow(
++            title: t.compte.appareils,
++            description: t.compte.appareilsDetail,
++            icon: AppIcons.appareil,
++            onPress: projection.afficheFoyer
++                ? () => context.push(Routes.tuteurFoyer)
++                : null,
++            enabled: projection.afficheFoyer,
++          ),
++          SettingRow(
++            title: t.compte.confidentialite,
++            description: t.compte.confidentialiteDetail,
++            icon: AppIcons.controleQualite,
++            enabled: false,
++          ),
++          Ecart.vSection,
++          SectionHeader(titre: t.compte.espaces),
++          Text(t.compte.espacesDetail),
++          Ecart.vSm,
++          for (final _EspaceCompte espace in projection.espaces)
++            SettingRow(
++              key: ValueKey<String>(espace.code),
++              title: espace.libelle,
++              description: espace.detail,
++              value: t.compte.habilitation,
++              icon: espace.icone,
++              enabled: false,
++            ),
++          Ecart.vSection,
++          SettingRow(
++            title: t.compte.deconnexion,
++            description: t.compte.deconnexionDetail,
++            icon: AppIcons.sortie,
++            onPress: () => ref.read(serviceAuthProvider).deconnexion(),
++          ),
++        ],
++      ),
++    );
++  }
++}
++
++/// Profil de la personne connectee, sans edition locale trompeuse.
++class ProfilPersonnelPage extends ConsumerWidget {
++  /// Cree la page de profil.
++  const ProfilPersonnelPage({super.key});
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final _CompteProjection projection = _CompteProjection.depuis(
++      ref.watch(sessionProvider),
++    );
++
++    return PageShell(
++      titre: t.compte.profil,
++      child: Column(
++        crossAxisAlignment: CrossAxisAlignment.stretch,
++        children: <Widget>[
++          AppCard(
++            dominante: true,
++            child: _EnteteCompte(projection: projection),
++          ),
++          Ecart.vSection,
++          SectionHeader(titre: t.compte.informations),
++          _LigneLecture(
++            titre: t.compte.identifiant,
++            valeur: projection.profileId ?? t.compte.nonDisponible,
++            icon: AppIcons.profil,
++          ),
++          _LigneLecture(
++            titre: t.compte.contact,
++            valeur: t.compte.nonDisponible,
++            detail: t.compte.contactDetail,
++            icon: AppIcons.profil,
++          ),
++          _LigneLecture(
++            titre: t.compte.langue,
++            valeur: t.compte.francais,
++            icon: AppIcons.reglages,
++          ),
++          _LigneLecture(
++            titre: t.compte.fuseau,
++            valeur: t.compte.nonDisponible,
++            icon: AppIcons.reglages,
++          ),
++          Ecart.vSection,
++          SectionHeader(titre: t.compte.academie),
++          for (final _EspaceCompte espace in projection.espaces)
++            _LigneLecture(
++              key: ValueKey<String>('profile-${espace.code}'),
++              titre: espace.libelle,
++              valeur: t.compte.habilitation,
++              detail: espace.detail,
++              icon: espace.icone,
++            ),
++          Ecart.vSection,
++          SectionHeader(titre: t.compte.securite),
++          _LigneLecture(
++            titre: t.compte.statut,
++            valeur: projection.statut,
++            icon: AppIcons.controleQualite,
++          ),
++          if (projection.afficheFoyer)
++            SettingRow(
++              title: t.compte.profils,
++              description: t.compte.profilsDetail,
++              icon: AppIcons.foyer,
++              onPress: () => context.push(Routes.compteProfils),
++            ),
++        ],
++      ),
++    );
++  }
++}
++
++/// Preferences qui restent dans l'appareil et prennent effet immediatement.
++class ReglagesComptePage extends ConsumerWidget {
++  /// Cree les reglages locaux.
++  const ReglagesComptePage({super.key});
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final PreferencesLocales preferences = ref.watch(
++      preferencesLocalesProvider,
++    );
++    final bool foyerDisponible = ref.watch(
++      sessionProvider.select(
++        (SessionState session) => session.role == AppRole.guardian,
++      ),
++    );
++    final PreferencesLocalesControleur controleur = ref.read(
++      preferencesLocalesProvider.notifier,
++    );
++
++    return PageShell(
++      titre: t.compte.reglagesTitre,
++      entete: Text(t.compte.reglagesIntro),
++      child: Column(
++        crossAxisAlignment: CrossAxisAlignment.stretch,
++        children: <Widget>[
++          SectionHeader(titre: t.compte.apparence),
++          RadioGroup<PreferenceTheme>(
++            groupValue: preferences.theme,
++            onChanged: (PreferenceTheme? valeur) {
++              if (valeur != null) controleur.theme(valeur);
++            },
++            child: Column(
++              crossAxisAlignment: CrossAxisAlignment.stretch,
++              children: <Widget>[
++                SettingRow(
++                  title: t.compte.themeSysteme,
++                  description: t.compte.themeSystemeDetail,
++                  icon: AppIcons.reglages,
++                  controle: const Radio<PreferenceTheme>(
++                    value: PreferenceTheme.systeme,
++                  ),
++                ),
++                SettingRow(
++                  title: t.compte.themeClair,
++                  icon: AppIcons.reglages,
++                  controle: const Radio<PreferenceTheme>(
++                    value: PreferenceTheme.clair,
++                  ),
++                ),
++                SettingRow(
++                  title: t.compte.themeSombre,
++                  icon: AppIcons.reglages,
++                  controle: const Radio<PreferenceTheme>(
++                    value: PreferenceTheme.sombre,
++                  ),
++                ),
++              ],
++            ),
++          ),
++          Ecart.vSection,
++          SectionHeader(titre: t.compte.accessibilite),
++          SettingRow(
++            title: t.compte.animations,
++            description: t.compte.animationsDetail,
++            icon: AppIcons.journee,
++            controle: Switch.adaptive(
++              value: preferences.animationsReduites,
++              onChanged: controleur.animations,
++            ),
++          ),
++          SettingRow(
++            title: t.compte.effets,
++            description: t.compte.effetsDetail,
++            icon: AppIcons.reglages,
++            controle: Switch.adaptive(
++              value: preferences.effetsReduits,
++              onChanged: controleur.effets,
++            ),
++          ),
++          AppCard(
++            surface: AppPalette.of(context).washAccent,
++            child: Text(
++              t.compte.lisibiliteDetail,
++              style: Theme.of(context).textTheme.bodyLarge,
++            ),
++          ),
++          Ecart.vSection,
++          SectionHeader(titre: t.compte.langueRegion),
++          SettingRow(
++            title: t.compte.francais,
++            description: t.compte.francaisDetail,
++            value: t.compte.actif,
++            icon: AppIcons.reglages,
++            enabled: false,
++          ),
++          SettingRow(
++            title: t.compte.arabe,
++            description: t.compte.arabeDetail,
++            value: t.compte.nonDisponible,
++            icon: AppIcons.reglages,
++            enabled: false,
++          ),
++          SettingRow(
++            title: t.compte.fuseau,
++            description: t.compte.fuseauDetail,
++            value: t.compte.nonDisponible,
++            icon: AppIcons.reglages,
++            enabled: false,
++          ),
++          Ecart.vSection,
++          SectionHeader(titre: t.compte.notifications),
++          SettingRow(
++            title: t.compte.notificationsCours,
++            description: t.compte.notificationsCoursDetail,
++            icon: AppIcons.cours,
++            controle: Switch.adaptive(
++              value: preferences.notificationsCours,
++              onChanged: controleur.notificationsCours,
++            ),
++          ),
++          SettingRow(
++            title: t.compte.notificationsFoyer,
++            description: t.compte.notificationsFoyerDetail,
++            icon: AppIcons.foyer,
++            controle: Switch.adaptive(
++              value: preferences.notificationsFoyer,
++              onChanged: controleur.notificationsFoyer,
++            ),
++          ),
++          Text(t.compte.notificationsEtat),
++          Ecart.vSection,
++          SectionHeader(titre: t.compte.coursDonnees),
++          SettingRow(
++            title: t.compte.economieDonnees,
++            description: t.compte.economieDonneesDetail,
++            icon: AppIcons.horsLigne,
++            controle: Switch.adaptive(
++              value: preferences.economieDonnees,
++              onChanged: controleur.economieDonnees,
++            ),
++          ),
++          SettingRow(
++            title: t.compte.lectureGrande,
++            description: t.compte.lectureGrandeDetail,
++            icon: AppIcons.coran,
++            controle: Switch.adaptive(
++              value: preferences.lectureGrande,
++              onChanged: controleur.lectureGrande,
++            ),
++          ),
++          Ecart.vSection,
++          SettingRow(
++            title: t.compte.appareils,
++            description: t.compte.appareilsDetail,
++            icon: AppIcons.appareil,
++            onPress: foyerDisponible
++                ? () => context.push(Routes.tuteurFoyer)
++                : null,
++            enabled: foyerDisponible,
++          ),
++          SettingRow(
++            title: t.compte.confidentialite,
++            description: t.compte.confidentialiteDetail,
++            icon: AppIcons.controleQualite,
++            enabled: false,
++          ),
++        ],
++      ),
++    );
++  }
++}
++
++/// Profils enfants visibles par un tuteur ou un adulte autonome.
++class ProfilsComptePage extends ConsumerWidget {
++  /// Cree la liste des profils du foyer.
++  const ProfilsComptePage({super.key});
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final AsyncValue<List<EleveDuFoyer>> profils = ref.watch(
++      elevesDuFoyerProvider,
++    );
++
++    return PageShell(
++      titre: t.compte.profilsTitre,
++      entete: Text(t.compte.profilsIntro),
++      child: profils.when(
++        loading: () => const Skeleton.liste(differe: false),
++        error: (Object _, StackTrace _) => EmptyState(
++          message: t.compte.erreurProfils,
++          invitation: t.compte.reessayer,
++          icone: AppIcons.avertissement,
++          libelleAction: t.compte.reessayer,
++          onAction: () => ref.invalidate(elevesDuFoyerProvider),
++        ),
++        data: (List<EleveDuFoyer> enfants) => enfants.isEmpty
++            ? EmptyState(
++                message: t.compte.aucunProfil,
++                invitation: t.compte.aucunProfilDetail,
++                icone: AppIcons.foyer,
++                libelleAction: t.compte.ajouterEnfant,
++                onAction: () => context.push(Routes.tuteurAjouterEnfant),
++              )
++            : Column(
++                crossAxisAlignment: CrossAxisAlignment.stretch,
++                children: <Widget>[
++                  for (final EleveDuFoyer enfant in enfants)
++                    Padding(
++                      padding: const EdgeInsets.only(bottom: AppSpacing.md),
++                      child: AppCard(
++                        key: ValueKey<String>(enfant.id),
++                        onPress: () => context.push(
++                          Routes.compteProfilEnfantPour(enfant.id),
++                        ),
++                        libelleSemantique: t.compte.ouvrirProfil,
++                        child: _EnfantResume(enfant: enfant),
++                      ),
++                    ),
++                ],
++              ),
++      ),
++    );
++  }
++}
++
++/// Detail d'un profil enfant, dans le perimetre de gestion du tuteur.
++class ProfilEnfantPage extends ConsumerWidget {
++  /// Cree le detail d'enfant.
++  const ProfilEnfantPage({required this.profilId, super.key});
++
++  /// Identifiant immuable de la route.
++  final String profilId;
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final AsyncValue<List<EleveDuFoyer>> profils = ref.watch(
++      elevesDuFoyerProvider,
++    );
++
++    return PageShell(
++      titre: t.compte.profilEnfant(prenom: t.compte.nonDisponible),
++      child: profils.when(
++        loading: () => const Skeleton.liste(differe: false),
++        error: (Object _, StackTrace _) => EmptyState(
++          message: t.compte.erreurProfils,
++          invitation: t.compte.reessayer,
++          icone: AppIcons.avertissement,
++          libelleAction: t.compte.reessayer,
++          onAction: () => ref.invalidate(elevesDuFoyerProvider),
++        ),
++        data: (List<EleveDuFoyer> enfants) {
++          EleveDuFoyer? enfant;
++          for (final EleveDuFoyer profil in enfants) {
++            if (profil.id == profilId) {
++              enfant = profil;
++              break;
++            }
++          }
++          if (enfant == null) {
++            return EmptyState(
++              message: t.compte.aucunProfil,
++              invitation: t.compte.aucunProfilDetail,
++              icone: AppIcons.foyer,
++              registre: RegistreVide.subi,
++            );
++          }
++          return _DetailEnfant(enfant: enfant);
++        },
++      ),
++    );
++  }
++}
++
++class _EnteteCompte extends StatelessWidget {
++  const _EnteteCompte({required this.projection});
++
++  final _CompteProjection projection;
++
++  @override
++  Widget build(BuildContext context) {
++    return Row(
++      crossAxisAlignment: CrossAxisAlignment.center,
++      children: <Widget>[
++        AvatarTile(
++          prenom: projection.libelleRole,
++          diametre: AppSpacing.xxxl * 2,
++        ),
++        Ecart.hXl,
++        Expanded(
++          child: Column(
++            crossAxisAlignment: CrossAxisAlignment.start,
++            children: <Widget>[
++              Text(
++                projection.libelleRole,
++                style: Theme.of(context).textTheme.headlineSmall,
++              ),
++              Ecart.vXs,
++              Text(projection.statut),
++              if (projection.profileId != null) ...<Widget>[
++                Ecart.vXs,
++                Text(projection.profileId!),
++              ],
++            ],
++          ),
++        ),
++      ],
++    );
++  }
++}
++
++class _LigneLecture extends StatelessWidget {
++  const _LigneLecture({
++    required this.titre,
++    required this.valeur,
++    required this.icon,
++    this.detail,
++    super.key,
++  });
++
++  final String titre;
++  final String valeur;
++  final String? detail;
++  final AppIcon icon;
++
++  @override
++  Widget build(BuildContext context) => SettingRow(
++    title: titre,
++    description: detail,
++    value: valeur,
++    icon: icon,
++    enabled: false,
++  );
++}
++
++class _EnfantResume extends StatelessWidget {
++  const _EnfantResume({required this.enfant});
++
++  final EleveDuFoyer enfant;
++
++  @override
++  Widget build(BuildContext context) => Row(
++    children: <Widget>[
++      AvatarTile(prenom: enfant.prenom),
++      Ecart.hXl,
++      Expanded(
++        child: Column(
++          crossAxisAlignment: CrossAxisAlignment.start,
++          children: <Widget>[
++            Text(enfant.prenom, style: Theme.of(context).textTheme.titleLarge),
++            Ecart.vXs,
++            Text(
++              t.compte.identifiantEnfant(
++                identifiant: enfant.identifiantImmuable,
++              ),
++            ),
++            Ecart.vXs,
++            Text(
++              enfant.mode == InterfaceMode.enfant
++                  ? t.compte.modeEnfant
++                  : t.compte.modeStandard,
++            ),
++          ],
++        ),
++      ),
++      Icon(AppIcons.chevron.repos),
++    ],
++  );
++}
++
++class _DetailEnfant extends StatelessWidget {
++  const _DetailEnfant({required this.enfant});
++
++  final EleveDuFoyer enfant;
++
++  @override
++  Widget build(BuildContext context) => Column(
++    crossAxisAlignment: CrossAxisAlignment.stretch,
++    children: <Widget>[
++      AppCard(
++        dominante: true,
++        child: Row(
++          children: <Widget>[
++            AvatarTile(prenom: enfant.prenom),
++            Ecart.hXl,
++            Expanded(
++              child: Text(
++                enfant.prenom,
++                style: Theme.of(context).textTheme.headlineSmall,
++              ),
++            ),
++          ],
++        ),
++      ),
++      Ecart.vSection,
++      SectionHeader(titre: t.compte.informations),
++      _LigneLecture(
++        titre: t.compte.identifiant,
++        valeur: enfant.identifiantImmuable,
++        icon: AppIcons.profil,
++      ),
++      _LigneLecture(
++        titre: t.compte.modeEnfant,
++        valeur: enfant.mode == InterfaceMode.enfant
++            ? t.compte.modeEnfant
++            : t.compte.modeStandard,
++        icon: AppIcons.coran,
++      ),
++      _LigneLecture(
++        titre: t.compte.cameraLabel,
++        valeur: enfant.camera == CameraPolicy.allowed
++            ? t.compte.cameraAutorisee
++            : t.compte.cameraInterdite,
++        icon: AppIcons.camera,
++      ),
++      _LigneLecture(
++        titre: t.compte.statut,
++        valeur: enfant.finAcces == null
++            ? t.compte.accesSansFin
++            : t.compte.accesJusqua(date: _dateCourte(enfant.finAcces!)),
++        icon: AppIcons.controleQualite,
++      ),
++      Ecart.vSection,
++      SettingRow(
++        title: t.compte.reglages,
++        description: t.compte.reglagesDetail,
++        icon: AppIcons.reglages,
++        onPress: () => context.push(Routes.tuteurReglages),
++      ),
++    ],
++  );
++
++  String _dateCourte(DateTime date) =>
++      date.toLocal().toIso8601String().split('T').first;
++}
++
++class _CompteProjection {
++  const _CompteProjection({
++    required this.libelleRole,
++    required this.resume,
++    required this.statut,
++    required this.espaces,
++    required this.afficheFoyer,
++    this.profileId,
++  });
++
++  factory _CompteProjection.depuis(SessionState session) {
++    final AppRole role = session.role ?? AppRole.student;
++    final String libelleRole = _libelleRole(role);
++    final bool foyer = role == AppRole.guardian;
++    return _CompteProjection(
++      libelleRole: libelleRole,
++      resume: role == AppRole.admin
++          ? t.compte.roleDetail.admin
++          : _detailRole(role),
++      statut: switch (session.accountStatus) {
++        AccountStatus.active => t.compte.statutActif,
++        AccountStatus.provisionalActive => t.compte.statutProvisoire,
++        _ => t.compte.nonDisponible,
++      },
++      espaces: _espacesPour(role),
++      afficheFoyer: foyer,
++      profileId: session.profileId,
++    );
++  }
++
++  final String libelleRole;
++  final String resume;
++  final String statut;
++  final List<_EspaceCompte> espaces;
++  final bool afficheFoyer;
++  final String? profileId;
++}
++
++class _EspaceCompte {
++  const _EspaceCompte({
++    required this.code,
++    required this.libelle,
++    required this.detail,
++    required this.icone,
++  });
++
++  final String code;
++  final String libelle;
++  final String detail;
++  final AppIcon icone;
++}
++
++String _libelleRole(AppRole role) => switch (role) {
++  AppRole.admin => t.compte.roles.admin,
++  AppRole.accountant => t.compte.roles.accountant,
++  AppRole.controller => t.compte.roles.controller,
++  AppRole.teacher => t.compte.roles.teacher,
++  AppRole.guardian => t.compte.roles.guardian,
++  AppRole.student => t.compte.roles.student,
++};
++
++String _detailRole(AppRole role) => switch (role) {
++  AppRole.admin => t.compte.roleDetail.admin,
++  AppRole.accountant => t.compte.roleDetail.accountant,
++  AppRole.controller => t.compte.roleDetail.controller,
++  AppRole.teacher => t.compte.roleDetail.teacher,
++  AppRole.guardian => t.compte.roleDetail.guardian,
++  AppRole.student => t.compte.roleDetail.student,
++};
++
++List<_EspaceCompte> _espacesPour(AppRole role) {
++  _EspaceCompte espace(
++    String code,
++    String libelle,
++    String detail,
++    AppIcon icon,
++  ) => _EspaceCompte(code: code, libelle: libelle, detail: detail, icone: icon);
++
++  return switch (role) {
++    // SessionState porte un seul role effectif. Ne pas deduire un cumul de
++    // roles depuis le mot « administration » : une capacite supplementaire
++    // devra venir d'une projection serveur explicite.
++    AppRole.admin => <_EspaceCompte>[
++      espace(
++        'admin',
++        t.compte.roles.admin,
++        t.compte.roleDetail.admin,
++        AppIcons.tableauDeBord,
++      ),
++    ],
++    AppRole.accountant => <_EspaceCompte>[
++      espace(
++        'comptable',
++        t.compte.roles.accountant,
++        t.compte.roleDetail.accountant,
++        AppIcons.dossiers,
++      ),
++    ],
++    AppRole.controller => <_EspaceCompte>[
++      espace(
++        'controleur',
++        t.compte.roles.controller,
++        t.compte.roleDetail.controller,
++        AppIcons.controleQualite,
++      ),
++    ],
++    AppRole.teacher => <_EspaceCompte>[
++      espace(
++        'enseignant',
++        t.compte.roles.teacher,
++        t.compte.roleDetail.teacher,
++        AppIcons.journee,
++      ),
++    ],
++    AppRole.guardian => <_EspaceCompte>[
++      espace(
++        'tuteur',
++        t.compte.roles.guardian,
++        t.compte.roleDetail.guardian,
++        AppIcons.foyer,
++      ),
++    ],
++    AppRole.student => <_EspaceCompte>[
++      espace(
++        'eleve',
++        t.compte.roles.student,
++        t.compte.roleDetail.student,
++        AppIcons.coran,
++      ),
++    ],
++  };
++}
+diff --git a/lib/features/controleur/planning_page.dart b/lib/features/controleur/planning_page.dart
+index a666508e..b173ca34 100644
+--- a/lib/features/controleur/planning_page.dart
++++ b/lib/features/controleur/planning_page.dart
+@@ -20,6 +20,7 @@ import '../../core/widgets/empty_state.dart';
+ import '../../core/widgets/filter_pill.dart';
+ import '../../core/widgets/local_feedback.dart';
+ import '../../core/widgets/page_shell.dart';
++import '../../core/widgets/setting_row.dart';
+ import '../../core/widgets/skeleton.dart';
+ import '../../core/widgets/status_pill.dart';
+ import 'vue_planning.dart';
+@@ -161,13 +162,25 @@ class _PlanningControleurPageEtat
+       // La collection defile elle-meme : l'en-tete de colonnes reste collee en
+       // haut du tableau, et les filtres restent atteignables sans remonter.
+       defilante: false,
+-      entete: _Entete(
+-        vue: vue,
+-        filtre: _filtre,
+-        enseignantId: _enseignantId,
+-        echec: _echec,
+-        onEtat: _changerEtat,
+-        onEnseignant: _changerEnseignant,
++      entete: Column(
++        crossAxisAlignment: CrossAxisAlignment.stretch,
++        children: <Widget>[
++          SettingRow(
++            title: t.compte.titre,
++            description: t.compte.profilDetail,
++            icon: AppIcons.profil,
++            onPress: () => GoRouter.of(context).push(Routes.compte),
++          ),
++          Ecart.vMd,
++          _Entete(
++            vue: vue,
++            filtre: _filtre,
++            enseignantId: _enseignantId,
++            echec: _echec,
++            onEtat: _changerEtat,
++            onEnseignant: _changerEnseignant,
++          ),
++        ],
+       ),
+       child: Expanded(
+         child: _Corps(
+@@ -276,8 +289,11 @@ class _Rangee extends StatelessWidget {
+   final List<Widget> pilules;
+ 
+   @override
+-  Widget build(BuildContext context) =>
+-      Wrap(spacing: AppSpacing.sm, runSpacing: AppSpacing.sm, children: pilules);
++  Widget build(BuildContext context) => Wrap(
++    spacing: AppSpacing.sm,
++    runSpacing: AppSpacing.sm,
++    children: pilules,
++  );
+ }
+ 
+ /// La liste, et ses cinq etats.
+@@ -429,7 +445,8 @@ List<ColonneDonnees<LignePlanning>> colonnesPlanning({
+     flex: 2,
+     // Vide quand la seance n'a pas lieu maintenant : c'est ce vide qui fait
+     // disparaitre la cellule de la carte, plutot qu'un bouton inerte.
+-    texte: (LignePlanning l) => l.observable ? t.controleur.planning.observer : '',
++    texte: (LignePlanning l) =>
++        l.observable ? t.controleur.planning.observer : '',
+     rendu: (BuildContext _, LignePlanning l) => l.observable
+         ? ActionPrincipale(
+             libelle: t.controleur.planning.observer,
+diff --git a/lib/features/reglages_enfant/reglages_enfant_page.dart b/lib/features/reglages_enfant/reglages_enfant_page.dart
+index a3eb8028..1b0465e7 100644
+--- a/lib/features/reglages_enfant/reglages_enfant_page.dart
++++ b/lib/features/reglages_enfant/reglages_enfant_page.dart
+@@ -6,6 +6,7 @@ import '../../core/appairage/service_appairage.dart';
+ import '../../core/appairage/service_avatar.dart';
+ import '../../core/domain/enums.dart';
+ import '../../core/i18n/strings.g.dart';
++import '../../core/icons/app_icons.dart';
+ import '../../core/matching/service_matching.dart';
+ import '../../core/planning/service_planning.dart';
+ import '../../core/regles/service_regles.dart';
+@@ -19,6 +20,8 @@ import '../../core/widgets/bento_tile.dart';
+ import '../../core/widgets/choice_card_group.dart';
+ import '../../core/widgets/empty_state.dart';
+ import '../../core/widgets/page_shell.dart';
++import '../../core/widgets/section_header.dart';
++import '../../core/widgets/setting_row.dart';
+ 
+ /// `TUT-05` : les reglages du tuteur, enfant par enfant.
+ ///
+@@ -52,6 +55,26 @@ class ReglagesEnfantPage extends ConsumerWidget {
+         children: <Widget>[
+           Text(t.tuteur.reglages.intro, style: textes.bodySmall),
+           Ecart.vXl,
++          SectionHeader(titre: t.compte.titre),
++          SettingRow(
++            title: t.compte.profil,
++            description: t.compte.profilDetail,
++            icon: AppIcons.profil,
++            onPress: () => context.push(Routes.compteProfil),
++          ),
++          SettingRow(
++            title: t.compte.profils,
++            description: t.compte.profilsDetail,
++            icon: AppIcons.foyer,
++            onPress: () => context.push(Routes.compteProfils),
++          ),
++          SettingRow(
++            title: t.compte.reglages,
++            description: t.compte.reglagesDetail,
++            icon: AppIcons.reglages,
++            onPress: () => context.push(Routes.compteReglages),
++          ),
++          Ecart.vXl,
+           if (enfants.hasValue && foyer.isEmpty)
+             EmptyState(
+               message: t.tuteur.reglages.aucunEnfant,
+diff --git a/test/features/compte_galerie_test.dart b/test/features/compte_galerie_test.dart
+new file mode 100644
+index 00000000..0fd0dc86
+--- /dev/null
++++ b/test/features/compte_galerie_test.dart
+@@ -0,0 +1,37 @@
++import 'package:flutter_test/flutter_test.dart';
++import 'package:rewayah_academy/features/_dev/galerie/compte_galerie.dart';
++
++import '../support/harnais.dart';
++
++void main() {
++  testWidgets('la galerie Compte expose les fixtures R3', (
++    WidgetTester tester,
++  ) async {
++    await tester.pumpWidget(hote(const CompteGaleriePage()));
++
++    expect(find.text('Profil personnel incomplet'), findsWidgets);
++    expect(find.text('Administration et capacites'), findsOneWidget);
++    expect(find.text('Tuteur avec plusieurs enfants'), findsOneWidget);
++    expect(find.text('Etat vide'), findsOneWidget);
++    expect(find.text('Etat erreur'), findsOneWidget);
++    expect(find.text('Etat chargement'), findsOneWidget);
++    expect(find.text('Etat hors ligne'), findsOneWidget);
++    expect(find.text('STUD-AD-000001'), findsOneWidget);
++  });
++
++  testWidgets('la fixture admin reste une projection en lecture seule', (
++    WidgetTester tester,
++  ) async {
++    await tester.pumpWidget(hote(const CompteGaleriePage()));
++    await tester.tap(find.text('Administration et capacites'));
++    await tester.pump();
++
++    expect(
++      find.text(
++        'Fixture de lecture seule. La session porte une autorisation admin; aucune ligne ne peut attribuer un role.',
++      ),
++      findsOneWidget,
++    );
++    expect(find.text('Jamais depuis le client'), findsOneWidget);
++  });
++}
+diff --git a/test/features/compte_test.dart b/test/features/compte_test.dart
+new file mode 100644
+index 00000000..7e07b94a
+--- /dev/null
++++ b/test/features/compte_test.dart
+@@ -0,0 +1,224 @@
++import 'dart:async';
++
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_riverpod/misc.dart' show Override;
++import 'package:flutter_test/flutter_test.dart';
++import 'package:rewayah_academy/core/appairage/service_appairage.dart';
++import 'package:rewayah_academy/core/domain/enums.dart';
++import 'package:rewayah_academy/core/i18n/strings.g.dart';
++import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
++import 'package:rewayah_academy/core/session/session_controleur.dart';
++import 'package:rewayah_academy/core/session/session_state.dart';
++import 'package:rewayah_academy/core/widgets/skeleton.dart';
++import 'package:rewayah_academy/features/compte/compte_page.dart';
++
++import '../support/harnais.dart';
++
++EleveDuFoyer _enfant({String id = 'e1', String prenom = 'Amina'}) =>
++    EleveDuFoyer(
++      id: id,
++      prenom: prenom,
++      identifiantImmuable: 'STUD-AD-000001',
++      mode: InterfaceMode.enfant,
++      camera: CameraPolicy.forbidden,
++    );
++
++void main() {
++  test('les preferences locales se modifient sans service distant', () {
++    final ProviderContainer conteneur = ProviderContainer();
++    addTearDown(conteneur.dispose);
++
++    expect(
++      conteneur.read(preferencesLocalesProvider).theme,
++      PreferenceTheme.systeme,
++    );
++    conteneur
++        .read(preferencesLocalesProvider.notifier)
++        .theme(PreferenceTheme.sombre);
++    conteneur
++        .read(preferencesLocalesProvider.notifier)
++        .notificationsCours(false);
++
++    expect(
++      conteneur.read(preferencesLocalesProvider),
++      allOf(
++        isA<PreferencesLocales>(),
++        predicate<PreferencesLocales>(
++          (PreferencesLocales preferences) =>
++              preferences.theme == PreferenceTheme.sombre &&
++              !preferences.notificationsCours,
++        ),
++      ),
++    );
++  });
++
++  testWidgets('les reglages presentent les sections locales', (
++    WidgetTester tester,
++  ) async {
++    await tester.pumpWidget(
++      hote(
++        const ReglagesComptePage(),
++        surcharges: <Override>[
++          sourceSessionProvider.overrideWithValue(FausseSourceSession()),
++        ],
++      ),
++    );
++
++    expect(find.text(t.compte.apparence), findsOneWidget);
++    expect(find.text(t.compte.accessibilite), findsOneWidget);
++    expect(find.text(t.compte.notifications), findsOneWidget);
++    expect(find.text(t.compte.economieDonnees), findsOneWidget);
++    expect(find.byType(Switch), findsNWidgets(6));
++    expect(find.byType(Radio<PreferenceTheme>), findsNWidgets(3));
++  });
++
++  testWidgets('les reglages restent lisibles en RTL a 200 pour cent', (
++    WidgetTester tester,
++  ) async {
++    tester.view.physicalSize = const Size(390, 8000);
++    tester.view.devicePixelRatio = 1;
++    addTearDown(tester.view.reset);
++
++    await tester.pumpWidget(
++      hote(
++        const MediaQuery(
++          data: MediaQueryData(
++            size: Size(390, 8000),
++            textScaler: TextScaler.linear(2),
++            disableAnimations: true,
++          ),
++          child: Directionality(
++            textDirection: TextDirection.rtl,
++            child: ReglagesComptePage(),
++          ),
++        ),
++        surcharges: <Override>[
++          sourceSessionProvider.overrideWithValue(FausseSourceSession()),
++        ],
++      ),
++    );
++    await tester.pump();
++
++    expect(tester.takeException(), isNull);
++    expect(find.byType(Switch), findsNWidgets(6));
++    expect(find.byType(Radio<PreferenceTheme>), findsNWidgets(3));
++  });
++
++  testWidgets('un tuteur voit les profils rendus par le foyer', (
++    WidgetTester tester,
++  ) async {
++    final FauxServiceAppairage service = FauxServiceAppairage()
++      ..elevesRendus = <EleveDuFoyer>[_enfant()];
++
++    await tester.pumpWidget(
++      hote(
++        const ProfilsComptePage(),
++        surcharges: <Override>[
++          serviceAppairageProvider.overrideWithValue(service),
++        ],
++      ),
++    );
++    await tester.pumpAndSettle();
++
++    expect(find.text('Amina'), findsWidgets);
++    expect(find.textContaining('STUD-AD-000001'), findsOneWidget);
++    expect(find.text(t.compte.modeEnfant), findsOneWidget);
++  });
++
++  testWidgets('les profils tiennent en RTL a 200 pour cent', (
++    WidgetTester tester,
++  ) async {
++    final FauxServiceAppairage service = FauxServiceAppairage()
++      ..elevesRendus = <EleveDuFoyer>[_enfant()];
++    tester.view.physicalSize = const Size(390, 8000);
++    tester.view.devicePixelRatio = 1;
++    addTearDown(tester.view.reset);
++
++    await tester.pumpWidget(
++      hote(
++        const MediaQuery(
++          data: MediaQueryData(
++            size: Size(390, 8000),
++            textScaler: TextScaler.linear(2),
++            disableAnimations: true,
++          ),
++          child: Directionality(
++            textDirection: TextDirection.rtl,
++            child: ProfilsComptePage(),
++          ),
++        ),
++        surcharges: <Override>[
++          serviceAppairageProvider.overrideWithValue(service),
++        ],
++      ),
++    );
++    await tester.pumpAndSettle();
++
++    expect(tester.takeException(), isNull);
++    expect(find.text('Amina'), findsWidgets);
++  });
++
++  testWidgets('un admin ne voit pas de roles deduits par la page Compte', (
++    WidgetTester tester,
++  ) async {
++    const SessionState session = SessionState(
++      resolue: true,
++      role: AppRole.admin,
++      profileId: 'admin-1',
++      accountStatus: AccountStatus.active,
++      lectureProfil: LectureProfil.presente,
++    );
++
++    await tester.pumpWidget(
++      hote(
++        const ComptePage(),
++        surcharges: <Override>[
++          sourceSessionProvider.overrideWithValue(FausseSourceSession(session)),
++        ],
++      ),
++    );
++    await tester.pump();
++
++    expect(find.text(t.compte.roles.admin), findsWidgets);
++    expect(find.text(t.compte.roles.teacher), findsNothing);
++    expect(find.text(t.compte.roles.accountant), findsNothing);
++  });
++
++  testWidgets('les profils exposent le chargement sous forme de squelette', (
++    WidgetTester tester,
++  ) async {
++    final Completer<List<EleveDuFoyer>> attente =
++        Completer<List<EleveDuFoyer>>();
++    await tester.pumpWidget(
++      hote(
++        const ProfilsComptePage(),
++        surcharges: <Override>[
++          elevesDuFoyerProvider.overrideWith((ref) => attente.future),
++        ],
++      ),
++    );
++
++    await tester.pump();
++    expect(find.byType(Skeleton), findsOneWidget);
++  });
++
++  testWidgets('les profils exposent une erreur recuperable', (
++    WidgetTester tester,
++  ) async {
++    await tester.pumpWidget(
++      hote(
++        const ProfilsComptePage(),
++        surcharges: <Override>[
++          elevesDuFoyerProvider.overrideWith(
++            (ref) async => throw StateError('fixture'),
++          ),
++        ],
++      ),
++    );
++
++    await tester.pumpAndSettle();
++    expect(find.text(t.compte.erreurProfils), findsOneWidget);
++    expect(find.text(t.compte.reessayer), findsWidgets);
++  });
++}
+diff --git a/test/router/navigation_test.dart b/test/router/navigation_test.dart
+index 0e5cf4a6..87df2613 100644
+--- a/test/router/navigation_test.dart
++++ b/test/router/navigation_test.dart
+@@ -19,6 +19,7 @@ void main() {
+           Routes.eleve,
+           Routes.eleveCoran,
+           Routes.eleveSuivi,
++          Routes.compte,
+         ],
+         AppRole.guardian: <String>[
+           Routes.tuteurAccueil,
+@@ -30,6 +31,7 @@ void main() {
+           Routes.enseignantJournee,
+           Routes.enseignantCreneaux,
+           Routes.enseignantProfil,
++          Routes.compte,
+         ],
+         AppRole.admin: <String>[
+           Routes.adminTableauDeBord,
+diff --git a/test/router/redirection_test.dart b/test/router/redirection_test.dart
+index ff487024..3561d440 100644
+--- a/test/router/redirection_test.dart
++++ b/test/router/redirection_test.dart
+@@ -41,6 +41,10 @@ void main() {
+       Routes.adminAttribution,
+       Routes.adminJournal,
+       Routes.comptable,
++      Routes.compte,
++      Routes.compteProfil,
++      Routes.compteReglages,
++      Routes.compteProfils,
+       Routes.salle,
+     ];
+ 
+@@ -148,6 +152,20 @@ void main() {
+         isNull,
+       );
+     });
++
++    test('un compte actif atteint le portail commun depuis chaque role', () {
++      for (final AppRole role in AppRole.values) {
++        expect(
++          deciderRedirection(
++            session: _session(role: role),
++            cheminDemande: Routes.compteReglages,
++            maintenant: maintenant,
++          ),
++          isNull,
++          reason: 'le role ${role.valeurSql} doit atteindre ses reglages',
++        );
++      }
++    });
+   });
+ 
+   group('ADR-005 : la salle n est ni partageable ni memorisable', () {

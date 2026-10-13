@@ -1,0 +1,343 @@
+diff --git a/CORE24_CLASSES_COMPLIANCE_AUDIT.md b/CORE24_CLASSES_COMPLIANCE_AUDIT.md
+new file mode 100644
+index 00000000..639cdc84
+--- /dev/null
++++ b/CORE24_CLASSES_COMPLIANCE_AUDIT.md
+@@ -0,0 +1,337 @@
++# CORE24 Classes V2 — audit forensique de conformité
++
++Audit read-only réalisé sur le worktree rewayah-classes-v2, sans correction,
++stage, commit, merge, push, migration distante, action Supabase distante ou
++déploiement.
++
++## 1. VERDICT EXÉCUTIF
++
++Verdict : READY_FOR_INTEGRATION = NO.
++
++Le lot contient une quantité substantielle de SQL et de modèles métier utiles,
++mais il n'est pas démontré comme un vertical slice utilisable. Le point le plus
++important est le câblage incomplet : ServiceClassesAdmin appelle les nouvelles
++RPC, tandis que lib/features/classes/domaine/providers.dart conserve
++ClassesAdminDepuisExistant et MarketplaceDepuisExistant; les opérations
++élève/enseignant/foyer renvoient explicitement capaciteAbsente dans
++adaptateurs_existants.dart. L'ancienne création Admin exige encore un
++enseignant alors que le nouveau dispatch doit créer un groupe DRAFT sans
++titulaire.
++
++Comptage des lignes des deux matrices ci-dessous, soit prompt initial et
++contrôle CORE24 :
++
++- IMPLEMENTED : 14
++- PARTIAL : 46
++- MISSING : 1
++- CONTRADICTED : 4
++- NOT_VERIFIABLE : 18
++
++La preuve locale annoncée ne suffit pas à convertir les statuts partiels en
++implémentés : les scénarios PostgreSQL n'ont pas été rejoués, les tests Flutter
++sont majoritairement unitaires/UI, et le contrôle des changements relève une
++ligne vide finale dans
++supabase/tests/scenarios_core24_interface_guidee.sql.
++
++### Périmètre et état Git
++
++| Élément | Constat |
++|---|---|
++| Branche auditée | integration/core24-classes-v2 |
++| HEAD observé | e8beeb7a2b8ae8d15bab1aca621b594909675c93 — docs(core24): publish global implementation report |
++| Commit annoncé dans la mission | 8923564 est un commit documentaire intermédiaire, non le HEAD final observé |
++| Base de reconstruction | 9a3ff0d dans l'ascendance |
++| Worktree au départ | M windows/flutter/generated_plugin_registrant.cc, .h, generated_plugins.cmake ; modifications préexistantes/concurrentes conservées |
++| Livraison distante | aucun push, migration distante ou déploiement établi dans le dépôt audité |
++
++## 2. MATRICE COMPLÈTE DU PROMPT INITIAL
++
++La source réellement retrouvée est D:\RA _APP\init_prompt.txt. Le chemin
++<CHEMIN_PROMPT_INITIAL> du fichier de mission était un placeholder. Le prompt
++initial est une architecture globale, pas un contrat détaillé de chaque RPC
++CORE24. Les statuts distinguent ce qui existe dans le dépôt de ce qui est
++prouvé dans le lot audité.
++
++| ID | Exigence | Statut | Preuve code/SQL | Test | Commentaire |
++|---|---|---|---|---|---|
++| P01 | Flutter multi-plateforme, routeur par rôle et UI adaptative | IMPLEMENTED | pubspec.yaml; lib/core/router/app_router.dart; lib/core/widgets/nav_shell.dart | test/widgets/nav_shell_adaptatif_test.dart | Socle présent et testé localement au niveau widget. |
++| P02 | Supabase PostgreSQL, RLS, stockage privé, Realtime et Edge Functions | PARTIAL | migrations/RLS; supabase/functions/; services Supabase | scénarios SQL historiques | Le socle existe, mais aucune exécution PostgreSQL/Edge runtime de ce lot ne le prouve. |
++| P03 | VideoSessionProvider avec Google Meet par défaut et bascule Jitsi/Zoom | CONTRADICTED | lib/core/video/video_session_provider.dart; livekit_session_provider.dart importe livekit_client | test/video/modeles_video_test.dart | Le provider concret du dépôt est LiveKit; aucun provider Google Meet/Jitsi/Zoom équivalent trouvé. |
++| P04 | Tchat confiné 1-to-1 post-match | NOT_VERIFIABLE | aucun raccord probant dans le périmètre Classes V2 | aucun test identifié | Non démontré par le lot audité. |
++| P05 | Vocaux compressés Opus/Ogg avec plafond annoncé | IMPLEMENTED | supabase/tests/scenarios_r2.sql:145-154 | scenarios_r2.sql | Le scénario R2 porte un artefact Ogg/Opus et ses limites; ce n'est pas une preuve du parcours Core24. |
++| P06 | Images WebP | NOT_VERIFIABLE | assets WebP existants, sans preuve de toute la chaîne annoncée | aucun test d'acceptation | Présence d'un format d'asset ne prouve pas la politique média complète. |
++| P07 | Stockage S3-compatible MinIO/R2/Supabase Storage | PARTIAL | buckets Supabase et migrations R2 | supabase/tests/scenarios_r2.sql | Supabase Storage est présent; l'exploitation Egress/R2 n'est pas démontrée comme opérationnelle. |
++| P08 | Flux Flutterwave Bulk Transfers vers Mobile Money/virement | NOT_VERIFIABLE | aucun code probant dans ce lot; paiement déclaré hors périmètre Core24 | aucun test | Non vérifiable sans inventer une capacité absente. |
++| P09 | Webhook sécurisé par hash et facture PDF native | NOT_VERIFIABLE | aucun raccord de paiement/facturation dans ce lot | aucun test | Déclaré hors périmètre dans le rapport, donc non livré par ce chantier. |
++| P10 | Exports PDF/Excel natifs sans Google Apps Script | PARTIAL | packages/exporteurs existants | tests de modules existants | Les primitives existent, mais l'exporteur complet demandé n'est pas démontré ici. |
++| P11 | Palette Primary #8652E6 | IMPLEMENTED | lib/core/theme/app_palette.dart:57-60 | test/theme/contraste_test.dart | Valeur présente. |
++| P12 | Palette DarkText #1C1D21 | IMPLEMENTED | lib/core/theme/app_palette.dart:61-64 et :98-99 | test/theme/contraste_test.dart | Valeur utilisée dans les paires sémantiques. |
++| P13 | Palette BorderNeutral #CCBCBC | CONTRADICTED | app_palette.dart:101-103 utilise #E3DEE9/#84798F | tests de contraste uniquement | Les couleurs de bordure observées ne sont pas #CCBCBC. |
++| P14 | Palette Background #F1E3E4 | CONTRADICTED | app_palette.dart:45-50 utilise #F8F7FA/#F0EDF4 | tests de contraste uniquement | Le fond clair observé diffère explicitement. |
++| P15 | Palette AccentSuccess #70EE9C | IMPLEMENTED | app_palette.dart:61-64 | test/theme/contraste_test.dart | Valeur présente. |
++| P16 | Palette AlertRed #FF385C | CONTRADICTED | app_palette.dart:69-71 utilise #B01B3C | tests de contraste uniquement | La valeur observée est différente. |
++| P17 | Palette StatusPending #FFB703 | IMPLEMENTED | app_palette.dart:65-67 | test/theme/contraste_test.dart | Valeur présente. |
++| P18 | Landing zéro confiance jusqu'à account_status=ACTIVE, NDA et pièce d'identité | PARTIAL | core24_private.enseignant_autorise; app_account_valid; migrations KYC | scénarios KYC/RLS existants | Des barrières existent, mais le parcours complet n'est pas prouvé dans ce lot. |
++| P19 | Six rôles et cloisonnement hermétique | PARTIAL | rôles/RLS dans migrations et routeur | tests RLS existants | Les politiques existent, mais l'herméticité de tous les écrans et rôles n'est pas établie par une preuve runtime complète. |
++| P20 | WatermarkedView sur écrans et documents | NOT_VERIFIABLE | symbole non établi dans les preuves du lot | aucun test identifié | Non démontré comme exigence globalement satisfaite. |
++| P21 | Exclusion des fichiers de bibliothèque publique du guard téléchargement | NOT_VERIFIABLE | aucun guard complet identifié dans ce chantier | aucun test ciblé | Non prouvé. |
++| P22 | Guard sur exports sensibles avec approbation Admin temps réel | NOT_VERIFIABLE | aucun workflow complet code/SQL trouvé dans ce lot | aucun test ciblé | Non prouvé. |
++| P23 | Blocage automatique au-delà de 3 téléchargements en 10 minutes | NOT_VERIFIABLE | aucun mécanisme probant identifié | aucun test ciblé | Non prouvé. |
++| P24 | KYC chiffré AES-256, URL signée 5 minutes, consultation staff féminin | PARTIAL | buckets privés, fonctions R2/KYC et RLS | scenarios_r2.sql | Plusieurs garde-fous existent, mais la chaîne exacte n'est pas prouvée ensemble. |
++| P25 | Identifiants immuables thread-safe au format imposé | NOT_VERIFIABLE | identifiants métier existants, format complet non établi | aucun test ciblé | Non prouvé au format exact. |
++| P26 | Appairage par code 6 caractères valide 15 minutes | IMPLEMENTED | lib/core/appairage/service_appairage.dart; RPC/migrations d'appairage | tests appairage existants | Capacité existante antérieurement au lot et couverte par des tests dédiés. |
++| P27 | Choix de profil enfant protégé par PIN 4 chiffres | IMPLEMENTED | service/appairage et parcours enfant | tests appairage/UI existants | Capacité existante et couverte; pas une preuve spécifique d'intégration Classes V2. |
++| P28 | Onboarding par cartes cliquables sans saisie libre inutile | PARTIAL | lib/features/parcours_offres/parcours_offres_page.dart | test/parcours/parcours_offres_test.dart | Parcours progressif et états existent, mais les adaptateurs Classes restent incomplets. |
++| P29 | Moteur JSON Schema administrable | NOT_VERIFIABLE | aucun moteur administrable probant dans le lot | aucun test ciblé | Non prouvé. |
++| P30 | Heures UTC ISO 8601, conversion locale et DST | PARTIAL | instant_creneau, disponibilité enseignant, offre timezone | tests de parcours et code SQL | Les conversions/DST sont codées, sans replay PostgreSQL ni alerte 30 jours. |
++| P31 | Matching inversé et assignation manuelle Admin | PARTIAL | service Admin et RPC pool/dispatch; ancienne surface groupes | tests parser uniquement | Les primitives Admin existent, mais le parcours normal conserve un adaptateur legacy. |
++| P32 | Pauses/prière avec remboursement ou compensation de minutes | NOT_VERIFIABLE | aucun code probant dans ce lot | aucun test ciblé | Non prouvé. |
++| P33 | Plafond enseignant 15–25 h selon score de performance | NOT_VERIFIABLE | max_primary_groups existe, pas ce plafond horaire | aucun test ciblé | Exigence distincte non démontrée. |
++| P34 | Pre-flight ping/micro/batterie et heartbeat de séance | PARTIAL | lib/core/video/; présence académique et LiveKit | tests vidéo/présence existants | Présence et provider existent; le contrat complet pre-flight/heartbeat mobile n'est pas prouvé. |
++| P35 | Bouton d'absence bidirectionnel à T+5 | PARTIAL | présence/session et UI existantes | tests présence | Une partie présence existe; le parcours bidirectionnel exact n'est pas établi. |
++| P36 | Contrôle incognito du Contrôleur | IMPLEMENTED | capacités observateur et projection présence | test/teaching_core/q/q04_capacites_admin_controleur_test.dart | Les tests couvrent l'invisibilité et l'audit de l'observateur incognito. |
++| P37 | Cahier de transmission 3 clics, nomination À Évaluer et imputabilité | PARTIAL | modèles/flux Teaching Core | tests Teaching Core partiels | Des composants existent, mais la condition de paie et la matrice complète ne sont pas prouvées. |
++| P38 | Examen anonyme et matrice phonétique/Makharij | PARTIAL | tests/capacités Teaching Core; show_evaluator_identity dans le socle | tests Teaching Core | L'anonymat est couvert par des composants existants; la matrice métier complète ne l'est pas. |
++| P39 | Portefeuille 50 dollars/60 jours et blocage à solde nul | NOT_VERIFIABLE | paiement hors périmètre Core24 | aucun test ciblé | Non prouvé. |
++| P40 | Relances comptables groupées Push/Email/WhatsApp | NOT_VERIFIABLE | aucun code probant dans le lot | aucun test ciblé | Non prouvé. |
++| P41 | Verrou 48 h sur modification RIB/Mobile Money | NOT_VERIFIABLE | aucun code probant dans le lot | aucun test ciblé | Non prouvé. |
++| P42 | audit_logs append-only | IMPLEMENTED | migrations d'audit et appels de journalisation | scénarios sécurité existants | Le mécanisme existe; cela ne valide pas export et notification. |
++| P43 | Export PDF/Excel avec sélecteur de colonnes | NOT_VERIFIABLE | aucun sélecteur complet dans le lot | aucun test ciblé | Non prouvé. |
++| P44 | Soft delete par deleted_at | IMPLEMENTED | tables/migrations R2 et projections | scenarios_r2.sql | Présent dans le socle existant. |
++| P45 | FamilyLiveMonitoringCard en temps réel | IMPLEMENTED | écran/widget famille et flux présence | couverture historique TUT-01; tests présence | Composant existant, mais pas une preuve de correction des raccords Classes V2. |
++| P46 | Bibliothèque Coran 30 Juz en split-screen/PiP | PARTIAL | 0013_corpus_coranique.sql; lib/features/tc_mushaf/ | tests Coran/mushaf | Les 30 Juz et le lecteur existent; le PiP/split-screen simultané avec visio n'est pas prouvé. |
++| P47 | Espace d'actualités unidirectionnel | NOT_VERIFIABLE | aucun code probant identifié dans ce lot | aucun test ciblé | Non prouvé. |
++
++## 3. MATRICE CORE24 CLASSES ET FILET A–W
++
++| ID | Exigence | Statut | Preuve code/SQL | Test | Commentaire |
++|---|---|---|---|---|---|
++| C-A1 | Distinguer offre horaire, groupe, session et classe live | IMPLEMENTED | offres_horaires, groupes, sessions; service_classes_admin.dart; LiveKit | parsers Admin et tests vidéo | Les modèles/relations distincts existent côté serveur et Flutter. |
++| C-A2 | Fable reste acquisition/offres et Core24 porte le groupe pédagogique, sans troisième modèle concurrent | PARTIAL | lib/features/classes/domaine/providers.dart; adaptateurs_existants.dart; service_groupes.dart | aucun test de câblage | Le provider Classes branche encore l'ancien service/adaptateur. |
++| C-B1 | Offre publique sans enseignant, photo, badge, nombre d'inscrits, places ou ID groupe exposé | PARTIAL | 20260923000500 offre Admin; offres_compatibles; ancien parser/UI groupes | tests parser/pool uniquement | Le SQL permet une offre sans enseignant, mais la projection publique n'a pas de test complet. |
++| C-B2 | Offre enfant générique puis dispatch interne par cohorte | PARTIAL | 20260923000100:203-232; 20260923000200:192-470 | scenarios_core24_classes_reconciliation.sql | Le mécanisme est codé, mais non rejoué et non démontré de bout en bout. |
++| C-C1 | Poular, français, anglais distincts de la locale UI | PARTIAL | offres_compatibles, modèles langue; i18n Flutter | tests parcours langue | La langue est présente côté serveur, mais les trois valeurs et le découplage UI ne sont pas démontrés dans le nouveau flux. |
++| C-C2 | Langue contrainte réellement dans pool et dispatch | PARTIAL | offres_compatibles et dispatcher_offre_horaire filtrent langue_cours | parser pool, pas exécution SQL | Enforcement statique présent, comportement runtime non vérifié. |
++| C-D1 | Cohortes canoniques 6–9, 10–13, 14–17, 18+; anciennes tranches inactives | PARTIAL | 20260923000100:17-39 | scénario vérifie seulement forme/noms | Les quatre cohortes sont déclarées; frontières 9/10, 13/14 et 17/18 non testées. |
++| C-D2 | DOB canonique, calcul âge/cohorte, RLS, legacy sans invention, <6 non dispatché | PARTIAL | definir_date_naissance_apprenant; update révoqué; <6 retourne null | scenarios_core24_classes_reconciliation.sql:60-196 | Code présent; confidentialité enseignant, legacy et anniversaire ne sont pas couverts. |
++| C-E1 | Onboarding progressif création → express → prédiagnostic → entrée → diagnostic ultérieur | PARTIAL | RPC onboarding 20260923000100; parcours_offres_page.dart | test/parcours/parcours_offres_test.dart | États UI présents, mais le chemin complet Classes n'est pas raccordé. |
++| C-E2 | Une question par étape, peu de saisie, réutilisation de DOB sans redemande | PARTIAL | parcours offres; RPC onboarding | tests d'états et 6 réponses groupées | Conformité détaillée non prouvée. |
++| C-F | Débutant : aucun D0, aucune fausse complétion, provenance traçable, niveau/pool débutant | PARTIAL | placement_basis; diagnostic_statut=non_requis; dispatcher_offre_horaire | scénario SQL, non exécuté | Le code va dans le bon sens; runtime et adaptateurs restent non raccordés. |
++| C-G | Non-débutant : 2–4 questions, pas de niveau officiel, app accessible, dispatch bloqué avant diagnostic | PARTIAL | prédiagnostic/offres; dispatch exige diagnostic fait + progression | tests parcours; scénario sans fixtures | Les filtres existent; le blocage réel et le workflow complet ne sont pas prouvés. |
++| C-H | Diagnostic réel pending → diagnosticien → résultat structuré → niveau officiel → completed → pool; pas d'écriture cliente du niveau | PARTIAL | tables/projections diagnostic; dispatch exige progression; profils restreints | aucun scénario Core24 complet | Une partie du verrou existe; workflow qualifié et raccord Admin non démontrés. |
++| C-I | Corridor académique séparant dispatch conservateur, placement voisin et santé de cohorte | MISSING | aucune fonction/table dédiée identifiée | aucun test | Aucun mécanisme distinct de corridor n'est prouvé. |
++| C-J1 | Dispatch automatique par offre + langue + type + cohorte + niveau/corridor puis FIFO | PARTIAL | dispatcher_offre_horaire; offres_compatibles | parser pool; pas de replay | Filtres/FIFO dans SQL, exécution automatique non démontrée. |
++| C-J2 | Résultats exacts 7/8/12/13 selon cap 5 et minimum 3 | NOT_VERIFIABLE | commentaires du scénario dispatch, sans fixtures/assertions | scenarios_core24_dispatch.sql:32-46 ne teste que la config | Aucun test des quatre répartitions. |
++| C-K1 | Transaction serveur et verrouillage de concurrence | PARTIAL | FOR UPDATE sur offre/profils/intention | aucun test concurrent | Verrouillage statique présent; deux appels simultanés non exécutés. |
++| C-K2 | Pas de double traitement/affectation; unicité/idempotence | PARTIAL | choix idempotent; session_participants_one_teacher_uidx; pas de contrainte visible d'étudiant actif | aucun test concurrent | Le risque est réduit mais l'invariant global n'est pas prouvé. |
++| C-L | Groupe DRAFT teacher_id=NULL; READY/PUBLISHED/ACTIVE impossibles sans titulaire | PARTIAL | 20260923000100:155-197; transitionner_groupe_classes | scénario vérifie DRAFT et update direct, pas transitions | CHECK et transition présents; ancien Admin refuse encore DRAFT sans enseignant. |
++| C-M | groupes.teacher_id est titulaire permanent et ne change pas lors d'un remplacement | PARTIAL | affecter_titulaire_groupe; accepter_invitation_remplacement | parser replacement seulement | Remplacement ne met pas à jour le groupe; affectation Admin ne restreint pas visiblement une réaffectation. |
++| C-N | Admissibilité : rôle/statut/KYC/NDA/access, langue, qualification, pattern complet | PARTIAL | core24_private.enseignant_autorise; enseignant_admissible_pour_groupe | aucun test complet | Contrôles codés; composition non prouvée par fixture/replay. |
++| C-O | Conflit réel par durée, timezone, DST et chevauchement partiel | PARTIAL | teacher_slot_available, instant_creneau, tstzrange | aucun scénario de conflit | SQL substantiel, scénario obligatoire absent. |
++| C-P | max_primary_groups, défaut 2, consommé serveur et indépendant du niveau élève | PARTIAL | enseignant_admissible_pour_groupe, config défaut 2 | aucun test d'acceptation | Vérification codée; refus au troisième groupe non démontré. |
++| C-Q1 | Standby → candidats → invitations → acceptation atomique → un gagnant | PARTIAL | RPC remplacement 20260923000500:725-924 | parser + privilèges uniquement | Workflow SQL existe; pas de test d'état/session simultané. |
++| C-Q2 | Autres invitations révoquées, session teacher changé, groupe titulaire inchangé | PARTIAL | accepter_invitation_remplacement; index session_participants_one_teacher_uidx | aucun test comportemental | Opérations visibles; aucune preuve d'exécution atomique et pas de recheck explicite du statut final. |
++| C-R1 | Tuteur toujours visible et décision directe; enfant >=10 demande; <10 refusé | PARTIAL | demander_affichage_standard; activer_affichage_standard_tuteur; service/interface | scenarios_core24_interface_guidee.sql; test réglages avec fake | SQL couvre >=10/tuteur direct; <10/inconnu et UI réelle manquent. |
++| C-R2 | Demande n'active rien, seul tuteur approuve, auto-approbation interdite, DOB inconnue sans supposition | PARTIAL | repondre_demande_affichage_standard; RLS/interface | SQL couvre pending et guardian direct | Autorité séparée codée; cas limites non prouvés. |
++| C-R3 | Notice permanente Interface guidée/Affichage standard sans lien avec cohorte pédagogique | PARTIAL | accueil_eleve_page.dart:227; service_interface_guidee.dart; profils_du_foyer_v | aucun test notice tuteur complet | Notice élève présente; notice tuteur et contenu exact non établis. |
++| C-S | Préférence = ranking, indisponibilité = exclusion, aucun horaire sur mesure, fallback notification seulement | PARTIAL | parcours_offres_page.dart; signaler_horaire_insatisfait; proposer_creneau absent | parcours_offres_test.dart:473 | L'intention existe, mais l'UI foyer expose une action dont l'adaptateur renvoie capaciteAbsente. |
++| C-T1 | Admin offre/pool/diagnostic/groupes/titulaire/validation-publication | PARTIAL | groupes_page.dart; ServiceClassesAdmin; RPC Admin | parser service seulement | Actions présentes, mais création/lecture normale et parcours candidat restent legacy/incomplets. |
++| C-T2 | Admin contrôle le moteur, sans liste arbitraire d'UUID | PARTIAL | dispatch RPC admin et groupes_page.dart; ancien service_groupes.dart | aucun test UI de dispatch | Nouveau chemin partiel; surface legacy reste active. |
++| C-U1 | RLS interdit niveau/cohorte/groupe/teacher/publish/dispatch/KYC aux familles | PARTIAL | revoke/grant dans migrations 001/004/005; RPC admin | scénarios de privilèges | Privilèges restreints; replay RLS exhaustif absent. |
++| C-U2 | Famille ne voit pas les données privées d'autres familles | PARTIAL | policies famille/self et groupes_admin masqué | scénarios interface/présence existants | Policies présentes; attaques croisées du nouveau schéma non testées. |
++| C-V1 | Migrations ajoutées, ordre et dépendances identifiés | IMPLEMENTED | sept migrations 20260921000000 à 20260923000500 | git log/diff statique | Fichiers ajoutés et ordre lexicographique identifiables. |
++| C-V2 | Réconciliation propre de 0043 et aucun changement distant | PARTIAL | CREATE OR REPLACE/revokes; aucune modification historique selon diff | replay frais bloqué; Docker bloqué | Réconciliation tentée; préfixes dupliqués et absence de replay empêchent validation complète. |
++| C-W | Couverture frontières, débutant, diagnostic, langues, dispatch 7/8/12/13, concurrence, publication, conflit, plafond, remplacement, guidée et RLS | PARTIAL | six scénarios SQL Core24 + tests Dart ciblés | mapping §6 | Fichiers présents mais plusieurs vérifient seulement existence/privilèges. |
++
++## 4. MANQUES CRITIQUES
++
++1. **Vertical slice non câblé.** providers.dart branche classesAdminProvider
++sur ClassesAdminDepuisExistant et le marketplace sur
++MarketplaceDepuisExistant. Dans adaptateurs_existants.dart, les opérations
++classes_disponibles, candidater_classe, inscrire_classe et proposer_creneau
++renvoient EchecDomaine(MotifEchec.capaciteAbsente). Les pages enseignant et
++foyer appellent pourtant ces ports. L'utilisateur ne peut donc pas suivre le
++parcours annoncé jusqu'à l'inscription effective.
++
++2. **Contradiction DRAFT/Admin.** Le nouveau SQL crée un groupe sans enseignant,
++mais ClassesAdminDepuisExistant.publier rejette un draft sans enseignant et
++service_groupes.creer appelle l'ancien creer_groupe avec
++p_teacher_profile_id obligatoire. Cette contradiction empêche le flux
++offre → dispatch → DRAFT → affectation → publication.
++
++3. **Dispatch critique non prouvé.** dispatcher_offre_horaire utilise des
++verrous, mais aucun scénario ne joue 7/8/12/13 ni deux dispatchs simultanés.
++Aucune contrainte dédiée démontrant l'impossibilité pour un élève d'entrer
++dans deux groupes concurrents n'a été identifiée dans le lot.
++
++4. **Diagnostic et cohortes incomplets côté preuve.** Le code dérive la cohorte
++depuis la date de naissance et verrouille certains champs, mais les frontières
++9/10, 13/14, 17/18, l'anniversaire, les profils legacy et le diagnostic réel
++ne sont pas couverts par des scénarios exécutables.
++
++5. **Admissibilité/remplacement sans preuve comportementale.** Le SQL contient
++des contrôles de qualification, langue, disponibilité, DST, conflit et
++max_primary_groups, mais aucun test ne démontre le refus de chaque cas.
++L'acceptation de remplacement ne revalide pas explicitement au dernier moment
++que la session est encore dans l'état planifié/preflight.
++
++6. **Interface guidée non entièrement intégrée.** Les RPC de sécurité sont
++présents, mais la surface tuteur et le test UI observé utilisent encore des
++fakes/anciens services. Les cas enfant <10, date inconnue et auto-approbation
++ne sont pas couverts par le scénario SQL livré.
++
++7. **Preuve de validation exagérée.** Le rapport annonce git diff --check PASS,
++alors que git diff --check 9a3ff0d..HEAD signale une ligne vide finale dans
++supabase/tests/scenarios_core24_interface_guidee.sql. Le rapport annonce aussi
++1767 tests Flutter, mais cela ne constitue pas l'exécution des migrations ni
++une preuve navigateur/authentifiée.
++
++## 5. MANQUES NON BLOQUANTS
++
++- Notice UX tuteur permanente et wording complet Interface guidée/Affichage
++  standard.
++- Tests de frontières et de propriétés qui ne bloquent pas la structure SQL
++  mais bloquent la déclaration de conformité.
++- Sélecteur d'export, news, certains domaines paiement et la palette complète
++  du prompt initial, qui sont hors du vertical slice Classes mais empêchent la
++  conclusion globale « tout le prompt initial est implémenté ».
++- Nettoyage documentaire du rapport, notamment la référence au commit 8923564
++  comme final alors que le HEAD audité est e8beeb7.
++
++## 6. TEST COVERAGE MAP
++
++| Requirement | Test exact | Ce que le test vérifie réellement | Limite |
++|---|---|---|---|
++| Cohortes et DOB | supabase/tests/scenarios_core24_classes_reconciliation.sql — assertions cohorte, DOB, débutant, <6, update direct | Forme des cohortes, dérivation 10–13 sur fixture, refus d'update direct, débutant non_requis | Non exécuté; frontières et legacy absents. |
++| Dispatch | supabase/tests/scenarios_core24_dispatch.sql — fonctions/privilèges/config | Présence RPC, grants et valeurs de capacité/minimum | Aucun candidat, groupe ou résultat 7/8/12/13. |
++| Lifecycle | supabase/tests/scenarios_core24_group_lifecycle.sql — existence/privilèges | Existence des RPC | Aucun passage DRAFT→READY→PUBLISHED→ACTIVE. |
++| Interface guidée | supabase/tests/scenarios_core24_interface_guidee.sql — fixtures 10 ans, demande pending, activation tuteur | Enfant 10 ans ne s'active pas immédiatement; tuteur peut activer | Pas de <10, DOB inconnue, auto-approbation; EOF non conforme au diff-check. |
++| Remplacement | supabase/tests/scenarios_core24_teacher_replacement_admin.sql — fonctions, grants, revokes | Surface et privilèges | Pas d'éligibilité réelle, course, gagnant, invariant session/groupe. |
++| Service Admin | test/core/admin/service_classes_admin_test.dart — parsers draft/pool | Parsing d'un draft sans teacher et du pool langue/cohorte/diagnostic | Aucun test RPC ni UI. |
++| Service remplacement | test/core/planning/service_remplacement_session_test.dart — parser identité masquée | Parsing d'une réponse | Aucun workflow. |
++| Parcours offres | test/parcours/parcours_offres_test.dart — états, date, fuseau, débutant, absence d'horaire | UI et modèle d'offres existants | Fixtures avec ancien vocabulaire enfant_8_10; pas de Classes V2 E2E. |
++| Interface UI | test/features/reglages_enfant_test.dart | Scénario avec FauxServiceAppairage | Ne traverse pas les nouvelles RPC interface. |
++| Analyse Flutter | CORE24_CLASSES_IMPLEMENTATION_REPORT.md:67-74 | Déclare analyze/tests PASS | Déclaration non rejouée dans cet audit; ne couvre pas PostgreSQL/runtime. |
++
++Les tests obligatoires non présents comme comportements exécutables sont :
++frontières 9/10, 13/14, 17/18; anniversaire sans transfert; non-débutant
++bloqué; langues isolées; 7/8/12/13; concurrence; publication sans professeur;
++incompatibilité langue; conflit; troisième groupe; remplacement sans changement
++de titulaire; enfant <10; date inconnue; auto-approbation.
++
++## 7. RAPPORT 8923564 VS RÉALITÉ
++
++| Affirmation vérifiée | Statut | Preuve et jugement |
++|---|---|---|
++| 8923564 est le commit final annoncé | PARTIAL | Le commit existe et est documentaire; le HEAD observé est e8beeb7, avec les commits d'implémentation et le rapport après 8923564. |
++| Branche isolée et production/migrations distantes inchangées | CONFIRMED au niveau du dépôt | Branche/worktree local identifiés; aucun push/déploiement dans l'historique audité. L'état distant n'a pas été contacté. |
++| Toutes les spécifications fonctionnelles sont implémentées | FALSE | Les adaptateurs Classes et marketplace contiennent des retours explicites capaciteAbsente; l'ancien Admin exige encore un enseignant pour publier. |
++| Quatre cohortes et DOB canonique | PARTIAL | Migrations 20260923000100; code présent, couverture des frontières/legacy et replay absents. |
++| Dispatch verrouillé, idempotent, sans double affectation | PARTIAL | FOR UPDATE et logique d'intention présentes; aucun test concurrent ni preuve d'invariant global d'élève. |
++| DRAFT puis publication Admin | PARTIAL | SQL lifecycle présent; chemin Flutter legacy contradictoire et transitions non rejouées. |
++| Titulaire, admissibilité, capacité et remplacement complets | PARTIAL | RPC substantiels présents; tests comportementaux absents, acceptation replacement sans recheck explicite du statut. |
++| Interface guidée corrigée | PARTIAL | RPC autoritaires présents; UI/fakes et cas limites ne couvrent pas la règle entière. |
++| RLS et surface RPC sécurisées | PARTIAL | Revokes/grants et scénarios de privilèges présents; non exécutés sur PostgreSQL frais. |
++| flutter analyze, 1767 tests, diff-check PASS | NOT_VERIFIABLE / FALSE pour diff-check | Le rapport est une déclaration; le dépôt montre une ligne vide finale détectée par git diff --check 9a3ff0d..HEAD. Même un PASS Flutter ne prouve pas les migrations ni l'E2E. |
++| Aucun déploiement | CONFIRMED dans les limites du dépôt | Aucun commit/push/deploy observé; cela ne prouve pas l'état externe sans le contacter. |
++
++## 8. DIFF RÉEL DU CHANTIER
++
++### Commits au-dessus de 9a3ff0d
++
++196eb06 arbitrage canonique; 86e588f présence académique; f483425 dispatch
++transactionnel; e005729 sérialisation choix répétés; 3793c8e cycle DRAFT;
++dcafddf onboarding/interface; 8923564 état intermédiaire; 8f819d0
++titulaires/admissibilité/Admin/remplacement; e8beeb7 rapport global.
++
++### Migrations ajoutées
++
++- supabase/migrations/20260921000000_core24_private_schema.sql
++- supabase/migrations/20260922000100_core24_presence_academique.sql
++- supabase/migrations/20260923000100_core24_classes_reconciliation.sql
++- supabase/migrations/20260923000200_core24_dispatch_transactionnel.sql
++- supabase/migrations/20260923000300_core24_group_lifecycle.sql
++- supabase/migrations/20260923000400_core24_interface_guidee.sql
++- supabase/migrations/20260923000500_core24_enseignant_remplacement_admin.sql
++
++Le diff indique aucune migration historique modifiée. Des préfixes historiques
++dupliqués (0030, 0032, 0033) sont signalés par le rapport et le replay frais
++était bloqué avant exécution.
++
++### Fichiers métier, UI et tests
++
++- Admin/classes : lib/core/admin/service_classes_admin.dart,
++  lib/core/admin/service_groupes.dart, lib/features/admin_groupes/groupes_page.dart.
++- Domaine Classes : lib/features/classes/domaine/*, routes et surfaces associées.
++- Parcours : lib/features/parcours_offres/parcours_offres_page.dart,
++  lib/features/enseignant_classes/classes_enseignant_page.dart,
++  lib/features/tuteur_classes/classes_foyer_page.dart.
++- Guidée/remplacement : lib/core/interface_guidee/service_interface_guidee.dart,
++  lib/core/planning/service_remplacement_session.dart, réglages enfant.
++- Fonctions LiveKit touchées : supabase/functions/_shared/livekit.dart,
++  livekit_test.dart, supabase/functions/livekit-webhook/index.ts.
++- Rapport/arbitrage : CORE24_CLASSES_IMPLEMENTATION_REPORT.md,
++  docs/architecture/CORE24_CLASSES_ARBITRATION_FINAL.md.
++- Tests : six scénarios SQL Core24; deux tests Dart de service; modifications
++  de reglages_enfant_test.dart, parcours_offres_test.dart et des harnais.
++
++## 9. PATCH PLAN FUTUR — NON IMPLÉMENTÉ
++
++1. **Raccorder le vertical slice utilisateur.**
++   - Exigence : C-A2, C-T, C-S et usage réel.
++   - Fichiers : providers.dart, adaptateurs_existants.dart, pages enseignant/foyer,
++     services RPC.
++   - Attendu : les ports visibles appellent les nouvelles capacités serveur;
++     aucune action proposée ne termine en capaciteAbsente.
++   - Acceptation : test widget + fake RPC contractuel, puis scénario
++     authentifié offre→intention→groupe→inscription.
++
++2. **Supprimer la contradiction DRAFT/legacy Admin.**
++   - Exigence : C-L et C-T.
++   - Fichiers : service_groupes.dart, adaptateurs_existants.dart, groupes_page.dart.
++   - Attendu : création/dispatch produit un vrai DRAFT sans titulaire; seule
++     la transition contrôlée exige le titulaire.
++   - Acceptation : scénario SQL DRAFT null puis refus READY/PUBLISHED/ACTIVE sans
++     titulaire, et test UI de publication via la nouvelle RPC.
++
++3. **Prouver le dispatch et l'idempotence.**
++   - Exigence : C-J et C-K.
++   - Fichiers : migrations dispatch et schéma de membres/intention.
++   - Attendu : cas 7/8/12/13, deux appels simultanés, aucun élève dans deux
++     groupes et invariant d'unicité explicite.
++   - Acceptation : replay PostgreSQL concurrent avec assertions de cardinalité,
++     FIFO, minimum, plafond et absence de double affectation.
++
++4. **Fermer le diagnostic/cohorte et la confidentialité.**
++   - Exigence : C-D, C-F, C-G, C-H, C-I.
++   - Fichiers : migrations onboarding/diagnostic, projection pool, UI parcours.
++   - Attendu : frontières, anniversaire, legacy sans invention, corridor
++     explicite, diagnostic réel avant dispatch non-débutant.
++   - Acceptation : matrice SQL complète 5/6/9/10/13/14/17/18, profils sans DOB,
++     débutant et non-débutant.
++
++5. **Tester l'admissibilité et le remplacement.**
++   - Exigence : C-N, C-O, C-P, C-Q.
++   - Fichiers : migration teacher/replacement et service Admin.
++   - Attendu : refus rôle/KYC/langue/qualification/disponibilité/conflit/cap;
++     acceptation replacement seulement planned/preflight, un gagnant, groupe
++     inchangé.
++   - Acceptation : fixtures SQL d'acceptation et course concurrente.
++
++6. **Finaliser Interface guidée et disponibilité famille.**
++   - Exigence : C-R et C-S.
++   - Fichiers : service UI guidée, réglages enfant, pages foyer, scénarios SQL.
++   - Attendu : notice tuteur permanente, cas <10/inconnu, approbation externe,
++     distinction préférence/indisponibilité et fallback sans promesse.
++   - Acceptation : tests RPC/RLS réels et widget tests traversant les services
++     non-fakes.
++
++7. **Réaliser une validation runtime séparée.**
++   - Exigence : toutes les conclusions d'intégration.
++   - Environnement : Docker/PostgreSQL Supabase local, navigateur, auth/OTP et
++     LiveKit de staging.
++   - Attendu : migrations rejouables, analyse/tests, navigateur authentifié,
++     preuves non sensibles et manifest de build.
++   - Acceptation : rapport distinct indiquant SHA, artefacts, limites et absence
++     de déploiement non autorisé.
++

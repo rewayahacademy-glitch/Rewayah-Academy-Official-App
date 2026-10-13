@@ -1,0 +1,227 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 8d5460ec..76beaa9f 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -47,6 +47,10 @@ jobs:
+         shell: bash
+         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_core24_presence.sql
+ 
++      - name: Conformite KYC Core24
++        shell: bash
++        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_core24_conformite.sql
++
+       # Inscription bornee a deux roles, depot KYC de l'enseignant, cloisonnement
+       # de genre, appareil partage, plafond d'appareils, codes d'appairage,
+       # immuabilite des signatures, etancheite du journal d'audit, RLS partout,
+diff --git a/ASTRA_24H_BLOCKERS_V2.md b/ASTRA_24H_BLOCKERS_V2.md
+new file mode 100644
+index 00000000..614c40a4
+--- /dev/null
++++ b/ASTRA_24H_BLOCKERS_V2.md
+@@ -0,0 +1,23 @@
++# Astra Core24 V2 - coordination et blocages (22 septembre 2026)
++
++1. Claude Code refond actuellement classes/groupes/matching. Classes,
++   inscriptions et dispatch restent une zone de coordination : aucune
++   implementation concurrente Astra. A reception de son SHA final, reconciler
++   d'abord avec Astra. Un groupe peut rester en brouillon sans enseignant, mais
++   ne doit jamais etre publiable sans enseignant titulaire admissible.
++2. Le commit Fable `50fae3c` reste en attente, non fusionne. Ne pas integrer
++   un autre lot Fable touchant onboarding/classes maintenant.
++3. La presence automatique est codee et testee localement, mais pas activee
++   sur le projet distant. `pg_cron` et `pg_net` ne sont pas actives sur
++   `gggmtelinlpseweouyav` a la lecture read-only du 22 septembre. La migration
++   de presence prepare l'activation pg_cron (disponible en version 1.6.4) lors
++   de son application future, mais ni cron reel ni LiveKit reel ne sont prouves.
++   La fonction webhook distante reste sur son ancienne version active ; la
++   configuration Cloud porte les noms requis, pas la configuration self-host.
++4. Le scenario N2 historique est adapte et valide par segments, mais sa
++   relance integree et la CI distante restent a faire. La recette Flutter,
++   Edge, navigateur, LiveKit et la revue de securite restent necessaires.
++
++Aucun deploiement staging, aucune migration distante, aucune fusion Fable
++onboarding/classes et aucun `CORE24_READY_SHA` avant reconciliation et tests
++complets. Le jeton Supabase local n'est ni copie ni affiche.
+diff --git a/ASTRA_24H_CHANGELOG_V2.md b/ASTRA_24H_CHANGELOG_V2.md
+index 6626fd3f..586c6454 100644
+--- a/ASTRA_24H_CHANGELOG_V2.md
++++ b/ASTRA_24H_CHANGELOG_V2.md
+@@ -25,9 +25,17 @@ avant / vert apres correction, 3 tests Flutter passes, analyse ciblee sans
+ anomalie, git diff --check sans erreur. Le harnais a besoin du stub Storage
+ ajoute pour les migrations Teaching Core. Ce stub ne va jamais sur Supabase.
+ 
+-Validation distante et recette globale non encore executees. La CLI Supabase
+-repond Unauthorized ; la connexion SQL trouvee localement vise un autre projet
+-que l'application. Aucun appel SQL n'a ete fait vers ce projet.
++Recette globale non encore executee. Acces Supabase retabli le 22 septembre
++2026 avec le jeton local explicitement fourni par le proprietaire : login CLI
++reussi et worktree lie a `gggmtelinlpseweouyav` (ACTIVE_HEALTHY, eu-west-1).
++Lecture SQL via Management API verifiee en mode read_only (Postgres 17.6).
++La commande CLI db query reste bloquee a Initialising login role et a ete
++interrompue ; utiliser l'API officielle ciblee, pas l'ancienne URL SQL locale
++qui vise un autre projet. Aucun appel SQL n'a ete fait vers cet autre projet.
++Le jeton n'est ni dans le depot ni dans ce rapport ; son expiration demeure.
++La base distante contient deja les migrations observation 0039 a 0042,
++jusqu'a `20260921133843` : reconciliation obligatoire avant toute application
++du lot Astra. Aucune migration distante Astra appliquee a ce stade.
+ 
+ ## P0.2 : socle KYC local
+ 
+@@ -50,3 +58,31 @@ Fable a livre `ae59cd7` sur la base `ae61eb6`, descendante de `d5eb74c`.
+ Les corrections intermediaires de main sont donc necessaires a son integration,
+ notamment 0035 (visibilite Bibliotheque) et 0038 (hook de jeton).
+ Ses changements non commites ne sont pas integres.
++
++Le second lot Classroom de Fable a ensuite ete livre sous `50fae3c` et le
++worktree Fable est propre. Ce commit n'est pas encore fusionne dans Astra ;
++il touche `app_router.dart`, deja modifie localement par l'integration P0.
++
++## Gel de coordination du 22 septembre 2026
++
++Le proprietaire a gele classes, inscriptions et dispatch pendant la refonte
++classes/groupes/matching de Claude Code. Les modifications locales existantes
++sont preservees; aucune nouvelle implementation concurrente n'est lancee.
++Le lot Fable `50fae3c` reste non fusionne.
++
++Le lot presence automatique ajoute la migration locale 003 et le scenario SQL
++associe. La chaine de 48 migrations, les scenarios presence et conformite
++passent sur PostgreSQL local neuf. Le projet Supabase lie est le bon, mais
++`pg_cron` n'est pas encore actif; aucune migration distante ou staging n'a ete
++execute. Aucun `CORE24_READY_SHA` n'est annonce.
++
++Le controle Deno a revele une incompatibilite de type preexistante dans
++`_shared/livekit.ts` avec le SDK LiveKit epingle. L'enumeration `TrackSource`
++remplace les chaines; un test de jeton local confirme les sources audio et
++camera. Le typage du webhook est maintenant vert.
++
++Le workflow CI prepare le stub Storage avant les migrations, execute les
++scenarios presence/conformite avant les grants historiques des autres tests,
++et controle maintenant le webhook et le jeton LiveKit sous Deno. Il n'a pas
++ete lance a distance. Les fixtures du scenario N2 ont ete adaptees a la
++nouvelle porte KYC et a la portee de lecture d'`etat_presence`.
+diff --git a/ASTRA_24H_SCHEMA_IMPACT_V2.md b/ASTRA_24H_SCHEMA_IMPACT_V2.md
+new file mode 100644
+index 00000000..36d47ba7
+--- /dev/null
++++ b/ASTRA_24H_SCHEMA_IMPACT_V2.md
+@@ -0,0 +1,22 @@
++# Astra Core24 V2 - impact schema local
++
++Les migrations Astra suivantes sont locales uniquement. Aucune n'a ete
++appliquee au projet distant `gggmtelinlpseweouyav`.
++
++- `20260921000100_core24_rpc_groupes_uniques.sql` retire les anciennes
++  surcharges RPC ambigues; les signatures etendues de 0033 restent canoniques.
++- `20260921000200_core24_conformite.sql` ajoute les exigences KYC enseignant,
++  la dispense Admin auditee, la projection de conformite, le controle d'objet
++  Storage mineur et le wrapper du jeton video. Le moteur video 0042 passe dans
++  `core24_private`; les vues enseignant exigent la clearance du compte.
++- `20260922000100_core24_presence_academique.sql` ajoute
++  `attendance_records` et `attendance_intervals` (RLS lecture, aucune ecriture
++  client), lie les livraisons LiveKit a la seance et au profil, finalise apres
++  delai configurable, derive les secondes enseignant des evenements signes et
++  permet la correction Admin auditee. La migration cree un job minute si
++  `pg_cron` est disponible lors de son application future.
++
++Les migrations distantes existantes 0039 a 0042 sont integrees au Git Astra
++via `ce7e7e7`, mais aucune migration Astra distante n'est appliquee. Classes
++sans enseignant, candidatures, inscriptions et dispatch attendent le SHA final
++de Claude Code pour l'architecture classes/matching.
+diff --git a/ASTRA_24H_TEST_REPORT_V2.md b/ASTRA_24H_TEST_REPORT_V2.md
+new file mode 100644
+index 00000000..1bb9a90a
+--- /dev/null
++++ b/ASTRA_24H_TEST_REPORT_V2.md
+@@ -0,0 +1,47 @@
++# Astra Core24 V2 - rapport de tests local (22 septembre 2026)
++
++## Verifie
++
++- PostgreSQL 17 local isole : 48 migrations rejouees depuis une base neuve,
++  y compris `20260922000100_core24_presence_academique.sql`.
++- `scenarios_core24_presence.sql` : passe. Couvre evenements room signes,
++  idempotence, T-20 borne a T0, retard, reconnexion, intervalles, no-show apres
++  grace, salle sans preuve => revue, horodatage de reception => revue,
++  livraison signee non attribuable => revue, fermeture par room_finished,
++  depart pre-cours puis retour tardif, heures enseignant, refus de forge client
++  et correction Admin motivee avec audit. Les deux derniers cas ont ete
++  verifies rouge avant correction, puis vert sur la fonction SQL locale.
++- `scenarios_core24_conformite.sql` : passe sur la meme base.
++- `scenarios_n2.sql` historique : N1-N7 passent sur base neuve apres ajout
++  des fixtures KYC/photo ; N8-N10 passent ensuite en rejeu cible apres
++  simulation explicite de l'enseignant autorise pour `etat_presence`.
++- `deno check --node-modules-dir=none` du webhook : passe apres correction
++  du type `TrackSource` dans le module LiveKit partage.
++- `deno test --node-modules-dir=none --allow-env` : 1 test local de jeton
++  LiveKit passe (audio seul, audio et camera).
++- Supabase CLI : projet lie `gggmtelinlpseweouyav`, ACTIVE_HEALTHY.
++- `livekit-webhook` distant existe et est `ACTIVE` avec `verify_jwt=false` ;
++  c'est l'ancienne version deployee, pas le code local modifie.
++- Metadonnees de secrets uniquement : les trois noms `LIVEKIT_CLOUD_*` requis
++  sont presents ; les trois noms `LIVEKIT_SELFHOST_*` ne le sont pas. Aucune
++  valeur n'a ete lue ou affichee, et cela ne prouve pas une room reelle.
++- Management API, requete SQL `read_only=true` : ni `pg_cron` ni `pg_net`
++  actives sur le projet distant ; `pg_cron` est disponible en version 1.6.4.
++  Aucun SQL de mutation envoye.
++
++## Limites et echecs
++
++- Le scenario N2 modifie n'a pas encore ete rejoue en une seule invocation
++  depuis une base neuve ; les segments N1-N7 et N8-N10 ont ete valides dans
++  cet ordre sur le meme conteneur local.
++- `deno check --no-remote` seul etait impossible avec cache vide ; la
++  verification complete ci-dessus a telecharge les dependances publiques dans
++  un cache temporaire hors depot.
++- Le conteneur PostgreSQL standard n'a pas `pg_cron`. Le branchement de cron
++  dans la migration est conditionnel et n'a pas ete execute sur le distant.
++- La version finale de la fonction de finalisation a ete rechargee et testee
++  localement apres le rejeu initial des 48 migrations ; le rejeu de la chaine
++  entiere apres ces deux derniers ajustements reste a refaire en CI.
++- Aucune suite Flutter complete, build release, parcours navigateur authentifie,
++  salle LiveKit reelle, staging ou migration distante valides. Core24 n'est pas
++  pret et aucun `CORE24_READY_SHA` n'est declare.
+diff --git a/supabase/tests/scenarios_n2.sql b/supabase/tests/scenarios_n2.sql
+index ecb015f0..bfca5bf6 100644
+--- a/supabase/tests/scenarios_n2.sql
++++ b/supabase/tests/scenarios_n2.sql
+@@ -69,6 +69,19 @@ values
+   ('b2000000-0000-0000-0000-000000000002', 'minor', 'standard', 'allowed'),
+   ('b2000000-0000-0000-0000-000000000003', 'minor', 'standard', 'forbidden');
+ 
++-- Depuis Core24, la meme fixture doit satisfaire les portes KYC/contrat et
++-- la photo Storage reelle des mineurs. Aucun gate n'est relache pour N2.
++insert into public.teacher_profiles(profile_id, kyc_status)
++values ('b2000000-0000-0000-0000-000000000001', 'approved');
++insert into public.contract_acceptances(profile_id, contract_kind, version)
++values ('b2000000-0000-0000-0000-000000000001', 'teacher_nda', 'v1');
++update public.student_profiles set avatar_storage_key = profile_id::text || '/photo.jpg'
++where profile_id in ('b2000000-0000-0000-0000-000000000002',
++                     'b2000000-0000-0000-0000-000000000003');
++insert into storage.objects(bucket_id, name) values
++  ('avatars', 'b2000000-0000-0000-0000-000000000002/photo.jpg'),
++  ('avatars', 'b2000000-0000-0000-0000-000000000003/photo.jpg');
++
+ -- Le MVP-0 plafonne une seance a deux participants (`guard_session_participant_cap`,
+ -- 0001). La salle de N2 doit pourtant savoir accueillir un enseignant, deux
+ -- eleves et un controleur invisible -- c'est le cas du groupe prevu par
+@@ -367,6 +380,11 @@ end $$;
+ -- N6 : `en_connexion` -- l'etat que N1 refusait de deviner
+ -- ============================================================
+ 
++-- Depuis 0042, etat_presence verifie l'appelant meme si la fixture execute
++-- ses RPC de service sous service_role. Bilal voit les presences de sa seance.
++select set_config('test.uid', 'b2000000-0000-0000-0000-000000000001', false);
++select set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', false);
++
+ do $$
+ declare
+   v_etat public.presence_state;
+@@ -477,6 +495,8 @@ begin
+   perform public.quitter_salle('b2aaaaaa-0000-0000-0000-00000000000a');
+ 
+   set local role service_role;
++  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000001', true);
++  perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+   v_etat := public.etat_presence(
+     'b2aaaaaa-0000-0000-0000-00000000000a',
+     'b2000000-0000-0000-0000-000000000002');
