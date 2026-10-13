@@ -108,4 +108,36 @@ end
 $b09_anonymous_denied$;
 
 reset role;
+
+update public.profiles set account_status = 'disabled'
+ where id = 'b0900000-0000-0000-0000-000000000001';
+select set_config('request.jwt.claim.sub', 'b0900000-0000-0000-0000-000000000001', true);
+select set_config('request.jwt.claims',
+  '{"sub":"b0900000-0000-0000-0000-000000000001","app_metadata":{"role":"guardian","household_id":"b09fffff-0000-0000-0000-000000000001"}}',
+  true);
+select set_config('test.uid', 'b0900000-0000-0000-0000-000000000001', true);
+select set_config('test.jwt',
+  '{"app_metadata":{"role":"guardian","household_id":"b09fffff-0000-0000-0000-000000000001"}}',
+  true);
+set local role authenticated;
+do $b09_disabled_recipient_denied$
+declare
+  v_count integer;
+  v_changed integer;
+begin
+  select count(*) into v_count from public.notifications;
+  if v_count <> 0 then
+    raise exception 'B-09: disabled recipient could read notifications';
+  end if;
+
+  update public.notifications set lu_le = pg_catalog.now()
+   where id = 'b09fffff-0000-0000-0000-000000000002';
+  get diagnostics v_changed = row_count;
+  if v_changed <> 0 then
+    raise exception 'B-09: disabled recipient could acknowledge a notification';
+  end if;
+end
+$b09_disabled_recipient_denied$;
+
+reset role;
 rollback;
