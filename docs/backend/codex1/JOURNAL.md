@@ -15,4 +15,8 @@
 
 - Branch: `codex/backend-b09-notifications-negative-r1` @ `89d5e772a78255837bf36f7157f76808fcdad9a4`.
 - Adds a disabled-recipient probe to `scenarios_b09_notifications.sql`: authenticated user with disabled profile sees zero notification rows and cannot set `lu_le`. Existing recipient isolation and anon refusals remain.
-- `git diff --check` clean; only the scenario changed and the named dollar delimiter is paired. No local `psql`/`pg_isready`; SQL/PG17 replay unavailable. JWT expiry remains a gateway/API test; no STAGING/PROD.
+- `git diff --check` clean; only the scenario changed and the named dollar delimiter is paired. No local `psql`/`pg_isready`; SQL/PG17 replay unavailable. JWT expiry remains a gateway/API test; no STAGING/PROD.## 2026-10-13 - C-35 disabled-reader negative scenario
+
+- Branch: `codex/backend-c35-library-read-negative-r1` @ `dad52bc79c0de63f75bd4608bbd69f8eb7fadb89`.
+- Extends `scenarios_c35_library_read.sql`: after positive authorized reads and the active outsider refusal, disables the student account and asserts `autoriser_lecture_version(uuid)` refuses it. Existing anon ACL and direct-table denials remain.
+- `git diff --check` clean; one SQL scenario changed; named dollar delimiter paired. No local `psql`/`pg_isready`, so SQL/PG17 replay is unavailable. JWT expiry is a gateway/API check; no STAGING/PROD.
