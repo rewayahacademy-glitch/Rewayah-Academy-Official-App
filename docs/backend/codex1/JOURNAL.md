@@ -23,4 +23,8 @@
 
 - Branch: `codex/backend-b13-anon-negative-r1` @ `1a0f9ab0745ab5e1cc10caff3a688e86dcf83740`.
 - Extends `scenarios_b13_admin_suspended.sql` with an anon SELECT ACL assertion and a direct anonymous read refusal for `guardian_session_visit`; the active-admin and disabled-admin coverage remains.
-- `git diff --check` clean; one SQL scenario changed and both named dollar delimiters are paired. No local `psql`/`pg_isready`, so no SQL/PG17 replay. No STAGING/PROD.
+- `git diff --check` clean; one SQL scenario changed and both named dollar delimiters are paired. No local `psql`/`pg_isready`, so no SQL/PG17 replay. No STAGING/PROD.## 2026-10-13 - F86 observation-join negative contexts
+
+- Branch: `codex/backend-f86-observation-context-negative-r1` @ `4109340f989a748e8c104c02bf69a0d71537d1aa`.
+- Extends `scenarios_f86_observation_join.sql` with refusals for an active guardian role, a disabled account claiming controller, and anon (ACL plus direct call). Existing null-role refusal remains.
+- `git diff --check` clean; one SQL scenario changed; all four named dollar tags are paired. No local `psql`/`pg_isready`, so PG17 replay and mutation proof are unavailable. No STAGING/PROD.
