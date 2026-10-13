@@ -107,4 +107,28 @@ end
 $b13_disabled_admin$;
 
 reset role;
+
+do $b13_anonymous_acl$
+begin
+  if pg_catalog.has_table_privilege(
+       'anon', 'public.guardian_session_visit', 'SELECT'
+     ) then
+    raise exception 'B-13: anon retains SELECT on observation history';
+  end if;
+end
+$b13_anonymous_acl$;
+
+set local role anon;
+do $b13_anonymous_denied$
+begin
+  begin
+    perform 1 from public.guardian_session_visit;
+    raise exception 'B-13: anonymous observation-history read was accepted';
+  exception when insufficient_privilege then
+    null;
+  end;
+end
+$b13_anonymous_denied$;
+
+reset role;
 rollback;
