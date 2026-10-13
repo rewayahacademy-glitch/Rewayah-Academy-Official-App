@@ -1,0 +1,1047 @@
+diff --git a/assets/i18n/fr.i18n.json b/assets/i18n/fr.i18n.json
+index ef5a1be3..722891df 100644
+--- a/assets/i18n/fr.i18n.json
++++ b/assets/i18n/fr.i18n.json
+@@ -142,14 +142,7 @@
+   "connexion": {
+     "titre": "Se connecter",
+     "intro": "Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.",
+-    "introDemo": "Choisissez un rôle avec admin@demo.test, comptable@demo.test, controleur@demo.test, enseignant@demo.test, tuteur@demo.test, eleve@demo.test ou enfant@demo.test. N'importe quel mot de passe non vide fonctionne, sans Supabase.",
+-    "demoTitre": "Accès direct",
+-    "demoDetail": "Accès fictif temporaire destiné à essayer les interfaces Rewayah.",
+     "courriel": "Votre adresse électronique",
+-    "motDePasse": "Mot de passe",
+-    "seConnecter": "Se connecter",
+-    "erreurMotDePasse": "Saisissez votre mot de passe.",
+-    "erreurConnexion": "La connexion n'a pas abouti. Vérifiez vos identifiants puis réessayez.",
+     "envoyerLien": "Recevoir le lien",
+     "avecGoogle": "Continuer avec Google",
+     "ou": "ou",
+diff --git a/dart_define.example.json b/dart_define.example.json
+index 419da4a5..53f33bec 100644
+--- a/dart_define.example.json
++++ b/dart_define.example.json
+@@ -5,7 +5,5 @@
+   "SUPABASE_ANON_KEY": "",
+ 
+   "_galerie": "Mettez GALERIE a true pour compiler la galerie de composants sur /_galerie. Une version de production la laisse a false.",
+-  "_demo_auth": "Activez DEMO_AUTH pour proposer l'acces temporaire par email et mot de passe, sans OTP.",
+-  "GALERIE": false,
+-  "DEMO_AUTH": false
++  "GALERIE": false
+ }
+diff --git a/lib/core/auth/service_auth.dart b/lib/core/auth/service_auth.dart
+index fc65ed62..88671115 100644
+--- a/lib/core/auth/service_auth.dart
++++ b/lib/core/auth/service_auth.dart
+@@ -8,20 +8,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
+ /// Une interface plutot qu'un appel direct a Supabase, pour la meme raison que
+ /// [SourceSession] : les ecrans et leurs tests doivent tourner sans reseau.
+ ///
+-/// En production, le parcours reste limite au lien a usage unique et a Google.
+-/// Une compilation locale peut activer le parcours courriel/mot de passe via
+-/// `DEMO_AUTH`; la validation du compte et des droits reste cote Supabase.
++/// Le parcours reste limite au lien a usage unique et a Google. Aucun mot de
++/// passe n'est accepte par le client.
+ abstract interface class ServiceAuth {
+   /// Envoie un lien de connexion a usage unique.
+   Future<void> envoyerLienCourriel(String courriel);
+ 
+-  /// Ouvre une session avec un courriel et un mot de passe.
+-  ///
+-  /// Ce chemin est reserve a la demonstration locale et reste masque quand
+-  /// `DEMO_AUTH` n'est pas active. La validation du compte et des droits reste
+-  /// entierement cote Supabase.
+-  Future<void> connexionMotDePasse(String courriel, String motDePasse);
+-
+   /// Ouvre le parcours Google.
+   Future<void> connexionGoogle();
+ 
+@@ -40,14 +32,6 @@ class ServiceAuthSupabase implements ServiceAuth {
+   Future<void> envoyerLienCourriel(String courriel) =>
+       _client.auth.signInWithOtp(email: courriel.trim());
+ 
+-  @override
+-  Future<void> connexionMotDePasse(String courriel, String motDePasse) async {
+-    await _client.auth.signInWithPassword(
+-      email: courriel.trim(),
+-      password: motDePasse,
+-    );
+-  }
+-
+   @override
+   Future<void> connexionGoogle() =>
+       _client.auth.signInWithOAuth(OAuthProvider.google);
+diff --git a/lib/core/config/env.dart b/lib/core/config/env.dart
+index 45a44654..58a2b944 100644
+--- a/lib/core/config/env.dart
++++ b/lib/core/config/env.dart
+@@ -1,3 +1,5 @@
++import 'dart:convert';
++
+ /// Configuration d'execution, injectee a la compilation.
+ ///
+ /// **Aucune valeur reelle n'est ecrite dans le depot.** Les cles vivent dans
+@@ -24,21 +26,77 @@ abstract final class Env {
+   /// Faux par defaut : une version de production ne contient pas la galerie.
+   static const bool galerieActive = bool.fromEnvironment('GALERIE');
+ 
+-  /// Active le formulaire email/mot de passe pour les essais d'interface.
++  /// Vrai quand la configuration minimale est presente et plausible.
++  static bool get configuree =>
++      _urlSupabaseValide(supabaseUrl) && cleSupabaseValide(supabaseAnonKey);
++
++  /// Verifie une cle client Supabase sans l'afficher ni faire d'appel reseau.
+   ///
+-  /// Faux par defaut et compile-time : chaque environnement choisit
+-  /// explicitement s'il expose ce parcours avec `DEMO_AUTH=true`.
+-  static const bool authParMotDePasseActive = bool.fromEnvironment('DEMO_AUTH');
++  /// Les anciennes cles `anon` sont des JWT HS256 portant les claims
++  /// Supabase attendus. Les nouvelles cles publishable sont opaques et
++  /// commencent par `sb_publishable_`. Cette verification bloque les
++  /// placeholders et les chaines mal formees ; elle ne remplace pas la RLS
++  /// ni une verification de connexion au projet.
++  static bool cleSupabaseValide(String value) {
++    final String key = value.trim();
++    if (key != value || key.isEmpty || _estPlaceholder(key)) {
++      return false;
++    }
+ 
+-  /// Vrai quand la configuration minimale est presente.
+-  static bool get configuree =>
+-      supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
++    if (key.startsWith('sb_publishable_')) {
++      return RegExp(r'^sb_publishable_[A-Za-z0-9_-]{24,}$').hasMatch(key);
++    }
++
++    final List<String> parts = key.split('.');
++    if (parts.length != 3 ||
++        parts.any(
++          (String part) => !RegExp(r'^[A-Za-z0-9_-]+$').hasMatch(part),
++        )) {
++      return false;
++    }
++
++    try {
++      final dynamic header = jsonDecode(
++        utf8.decode(base64Url.decode(base64Url.normalize(parts[0]))),
++      );
++      final dynamic payload = jsonDecode(
++        utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
++      );
++      return header is Map &&
++          payload is Map &&
++          header['alg'] == 'HS256' &&
++          payload['iss'] == 'supabase' &&
++          payload['role'] == 'anon';
++    } on FormatException {
++      return false;
++    }
++  }
++
++  static bool _urlSupabaseValide(String value) {
++    final Uri? uri = Uri.tryParse(value);
++    return value == value.trim() &&
++        uri != null &&
++        uri.scheme == 'https' &&
++        uri.host.isNotEmpty &&
++        !_estPlaceholder(uri.host);
++  }
++
++  static bool _estPlaceholder(String value) {
++    final String lower = value.toLowerCase();
++    return lower.contains('dummy') ||
++        lower.contains('fake') ||
++        lower.contains('factice') ||
++        lower.contains('placeholder') ||
++        lower.contains('playground') ||
++        lower.contains('never-used') ||
++        lower.contains('example');
++  }
+ 
+   /// Message d'aide affiche quand la configuration manque, pour qu'un
+   /// developpeur qui lance l'application sans `--dart-define` comprenne
+   /// immediatement quoi faire.
+   static const String aideConfiguration =
+-      'SUPABASE_URL et SUPABASE_ANON_KEY sont absents. '
++      'SUPABASE_URL et SUPABASE_ANON_KEY sont absents ou invalides. '
+       'Lancez avec --dart-define-from-file=dart_define.json, '
+       'sur le modele de dart_define.example.json.';
+ }
+diff --git a/lib/core/i18n/strings.g.dart b/lib/core/i18n/strings.g.dart
+index 89e6dea7..eab84e11 100644
+--- a/lib/core/i18n/strings.g.dart
++++ b/lib/core/i18n/strings.g.dart
+@@ -4,7 +4,7 @@
+ /// To regenerate, run: `dart run slang`
+ ///
+ /// Locales: 2
+-/// Strings: 833 (416 per locale)
++/// Strings: 826 (413 per locale)
+ 
+ // coverage:ignore-file
+ // ignore_for_file: type=lint, unused_import
+diff --git a/lib/core/i18n/strings_fr.g.dart b/lib/core/i18n/strings_fr.g.dart
+index 43a2f911..00ed2003 100644
+--- a/lib/core/i18n/strings_fr.g.dart
++++ b/lib/core/i18n/strings_fr.g.dart
+@@ -482,30 +482,9 @@ class Traductions$connexion$fr {
+ 	/// fr: 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.'
+ 	String get intro => 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.';
+ 
+-	/// fr: 'Choisissez un rôle avec admin@demo.test, comptable@demo.test, controleur@demo.test, enseignant@demo.test, tuteur@demo.test, eleve@demo.test ou enfant@demo.test. N'importe quel mot de passe non vide fonctionne, sans Supabase.'
+-	String get introDemo => 'Choisissez un rôle avec admin@demo.test, comptable@demo.test, controleur@demo.test, enseignant@demo.test, tuteur@demo.test, eleve@demo.test ou enfant@demo.test. N\'importe quel mot de passe non vide fonctionne, sans Supabase.';
+-
+-	/// fr: 'Accès direct'
+-	String get demoTitre => 'Accès direct';
+-
+-	/// fr: 'Accès fictif temporaire destiné à essayer les interfaces Rewayah.'
+-	String get demoDetail => 'Accès fictif temporaire destiné à essayer les interfaces Rewayah.';
+-
+ 	/// fr: 'Votre adresse électronique'
+ 	String get courriel => 'Votre adresse électronique';
+ 
+-	/// fr: 'Mot de passe'
+-	String get motDePasse => 'Mot de passe';
+-
+-	/// fr: 'Se connecter'
+-	String get seConnecter => 'Se connecter';
+-
+-	/// fr: 'Saisissez votre mot de passe.'
+-	String get erreurMotDePasse => 'Saisissez votre mot de passe.';
+-
+-	/// fr: 'La connexion n'a pas abouti. Vérifiez vos identifiants puis réessayez.'
+-	String get erreurConnexion => 'La connexion n\'a pas abouti. Vérifiez vos identifiants puis réessayez.';
+-
+ 	/// fr: 'Recevoir le lien'
+ 	String get envoyerLien => 'Recevoir le lien';
+ 
+@@ -3106,14 +3085,7 @@ extension on Traductions {
+ 			'attente.seDeconnecter' => 'Se déconnecter',
+ 			'connexion.titre' => 'Se connecter',
+ 			'connexion.intro' => 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.',
+-			'connexion.introDemo' => 'Choisissez un rôle avec admin@demo.test, comptable@demo.test, controleur@demo.test, enseignant@demo.test, tuteur@demo.test, eleve@demo.test ou enfant@demo.test. N\'importe quel mot de passe non vide fonctionne, sans Supabase.',
+-			'connexion.demoTitre' => 'Accès direct',
+-			'connexion.demoDetail' => 'Accès fictif temporaire destiné à essayer les interfaces Rewayah.',
+ 			'connexion.courriel' => 'Votre adresse électronique',
+-			'connexion.motDePasse' => 'Mot de passe',
+-			'connexion.seConnecter' => 'Se connecter',
+-			'connexion.erreurMotDePasse' => 'Saisissez votre mot de passe.',
+-			'connexion.erreurConnexion' => 'La connexion n\'a pas abouti. Vérifiez vos identifiants puis réessayez.',
+ 			'connexion.envoyerLien' => 'Recevoir le lien',
+ 			'connexion.avecGoogle' => 'Continuer avec Google',
+ 			'connexion.ou' => 'ou',
+@@ -3506,8 +3478,6 @@ extension on Traductions {
+ 			'compte.arabe' => 'العربية',
+ 			'compte.arabeDetail' => 'Traduction en préparation',
+ 			'compte.fuseauDetail' => 'Valeur locale affichée par l\'appareil',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'compte.notifications' => 'Notifications',
+ 			'compte.notificationsEtat' => 'Permission du système non vérifiée',
+ 			'compte.notificationsCours' => 'Cours et rappels',
+@@ -3515,6 +3485,8 @@ extension on Traductions {
+ 			'compte.notificationsFoyer' => 'Foyer',
+ 			'compte.notificationsFoyerDetail' => 'Informations utiles pour le foyer',
+ 			'compte.coursDonnees' => 'Cours et données',
++			_ => null,
++		} ?? switch (path) {
+ 			'compte.economieDonnees' => 'Économie de données',
+ 			'compte.economieDonneesDetail' => 'Réduit en priorité la qualité vidéo',
+ 			'compte.lecture' => 'Lecture',
+diff --git a/lib/core/session/session_controleur.dart b/lib/core/session/session_controleur.dart
+index 58f3f53e..40fdf216 100644
+--- a/lib/core/session/session_controleur.dart
++++ b/lib/core/session/session_controleur.dart
+@@ -3,42 +3,9 @@ import 'dart:async';
+ import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import 'package:supabase_flutter/supabase_flutter.dart';
+ 
+-import '../config/env.dart';
+-import '../domain/enums.dart';
+ import 'session_state.dart';
+ import 'source_session.dart';
+ 
+-/// Active le raccourci de demonstration uniquement dans le build qui le demande.
+-final Provider<bool> demoAuthActiveProvider = Provider<bool>(
+-  (Ref ref) => Env.authParMotDePasseActive,
+-);
+-
+-/// Role et variante d'interface demandes par une adresse fictive.
+-typedef AccesDemo = ({AppRole role, InterfaceMode mode});
+-
+-/// Traduit le prefixe d'un courriel fictif en interface de demonstration.
+-///
+-/// Le domaine est libre : `admin@demo.test` et `admin@example.test` ouvrent le
+-/// meme espace. Aucun de ces identifiants n'est envoye a Supabase.
+-AccesDemo? accesDemoDepuisCourriel(String courriel) {
+-  final String prefixe = courriel.trim().toLowerCase().split('@').first;
+-  return switch (prefixe) {
+-    'admin' => (role: AppRole.admin, mode: InterfaceMode.standard),
+-    'comptable' ||
+-    'accountant' => (role: AppRole.accountant, mode: InterfaceMode.standard),
+-    'controleur' ||
+-    'controller' => (role: AppRole.controller, mode: InterfaceMode.standard),
+-    'enseignant' ||
+-    'teacher' => (role: AppRole.teacher, mode: InterfaceMode.standard),
+-    'tuteur' ||
+-    'guardian' => (role: AppRole.guardian, mode: InterfaceMode.standard),
+-    'eleve' ||
+-    'student' => (role: AppRole.student, mode: InterfaceMode.standard),
+-    'enfant' || 'child' => (role: AppRole.student, mode: InterfaceMode.enfant),
+-    _ => null,
+-  };
+-}
+-
+ /// La source de session utilisee par l'application.
+ ///
+ /// Les tests la remplacent par une source en memoire : le routeur se verifie
+@@ -58,45 +25,14 @@ final NotifierProvider<SessionControleur, SessionState> sessionProvider =
+ /// Maintient [SessionState] a jour a partir de la [SourceSession].
+ class SessionControleur extends Notifier<SessionState> {
+   StreamSubscription<SessionState>? _abonnement;
+-  bool _demoActive = false;
+ 
+   @override
+   SessionState build() {
+     final SourceSession source = ref.watch(sourceSessionProvider);
+ 
+-    _abonnement = source.etats().listen((SessionState etat) {
+-      if (!_demoActive) {
+-        state = etat;
+-      }
+-    });
++    _abonnement = source.etats().listen((SessionState etat) => state = etat);
+     ref.onDispose(() => unawaited(_abonnement?.cancel()));
+ 
+     return const SessionState.chargement();
+   }
+-
+-  /// Ouvre une session locale de demonstration sans contacter Supabase.
+-  void ouvrirDemo(AccesDemo acces) {
+-    if (!ref.read(demoAuthActiveProvider)) {
+-      throw StateError('Le mode de demonstration n est pas compile.');
+-    }
+-    _demoActive = true;
+-    state = SessionState(
+-      resolue: true,
+-      role: acces.role,
+-      profileId: 'demo-${acces.role.valeurSql}',
+-      accountStatus: AccountStatus.active,
+-      interfaceMode: acces.mode,
+-      lectureProfil: LectureProfil.presente,
+-    );
+-  }
+-
+-  /// Ferme la session locale et indique si une session demo etait active.
+-  bool fermerDemo() {
+-    if (!_demoActive) {
+-      return false;
+-    }
+-    _demoActive = false;
+-    state = const SessionState.deconnecte();
+-    return true;
+-  }
+ }
+diff --git a/lib/features/compte/compte_page.dart b/lib/features/compte/compte_page.dart
+index 7b7fd1c7..4b8af2ea 100644
+--- a/lib/features/compte/compte_page.dart
++++ b/lib/features/compte/compte_page.dart
+@@ -104,14 +104,8 @@ class ComptePage extends ConsumerWidget {
+             title: t.compte.deconnexion,
+             description: t.compte.deconnexionDetail,
+             icon: AppIcons.sortie,
+-            onPress: () {
+-              final bool demoFermee = ref
+-                  .read(sessionProvider.notifier)
+-                  .fermerDemo();
+-              if (!demoFermee) {
+-                unawaited(ref.read(serviceAuthProvider).deconnexion());
+-              }
+-            },
++            onPress: () =>
++                unawaited(ref.read(serviceAuthProvider).deconnexion()),
+           ),
+         ],
+       ),
+diff --git a/lib/features/connexion/connexion_page.dart b/lib/features/connexion/connexion_page.dart
+index 7de0c70c..d4b7799f 100644
+--- a/lib/features/connexion/connexion_page.dart
++++ b/lib/features/connexion/connexion_page.dart
+@@ -5,10 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import 'package:go_router/go_router.dart';
+ 
+ import '../../core/auth/service_auth.dart';
+-import '../../core/config/env.dart';
+ import '../../core/i18n/strings.g.dart';
+ import '../../core/router/routes.dart';
+-import '../../core/session/session_controleur.dart';
+ import '../../core/theme/app_palette.dart';
+ import '../../core/theme/app_radius.dart';
+ import '../../core/theme/app_spacing.dart';
+@@ -18,22 +16,15 @@ import '../../core/widgets/page_shell.dart';
+ 
+ /// `TUT-00` : la connexion.
+ ///
+-/// Dans un build `DEMO_AUTH`, une adresse fictive choisit localement le role et
+-/// ne contacte pas Supabase. Le lien recu par courriel et Google restent
+-/// disponibles. C'est aussi le seul ecran du produit atteignable sans session.
++/// Le lien recu par courriel et Google sont les deux parcours adultes. C'est
++/// aussi le seul ecran du produit atteignable sans session.
+ ///
+ /// L'etat « lien envoye » ne se ferme pas tout seul et ne compte pas a rebours :
+ /// rien ne se ferme sur minuterie dans ce produit
+ /// (`docs/produit/parcours-utilisateurs.md`, regles communes).
+ class ConnexionPage extends ConsumerStatefulWidget {
+   /// Cree l'ecran de connexion.
+-  const ConnexionPage({super.key, this.demoAuth});
+-
+-  /// Permet de tester le parcours sans modifier les defines de compilation.
+-  ///
+-  /// L'appel du routeur ne renseigne pas cette valeur et suit donc
+-  /// [Env.authParMotDePasseActive].
+-  final bool? demoAuth;
++  const ConnexionPage({super.key});
+ 
+   @override
+   ConsumerState<ConnexionPage> createState() => _ConnexionPageState();
+@@ -41,19 +32,13 @@ class ConnexionPage extends ConsumerStatefulWidget {
+ 
+ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
+   final TextEditingController _courriel = TextEditingController();
+-  final TextEditingController _motDePasse = TextEditingController();
+   bool _envoi = false;
+-  bool _connexionEnCours = false;
+   bool _envoye = false;
+   String? _erreur;
+-  String? _erreurConnexion;
+-
+-  bool get _modeDemo => widget.demoAuth ?? ref.read(demoAuthActiveProvider);
+ 
+   @override
+   void dispose() {
+     _courriel.dispose();
+-    _motDePasse.dispose();
+     super.dispose();
+   }
+ 
+@@ -95,44 +80,6 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
+     }
+   }
+ 
+-  Future<void> _connecterMotDePasse() async {
+-    if (!_adressePlausible) {
+-      setState(() => _erreur = t.connexion.erreurCourriel);
+-      return;
+-    }
+-    if (_motDePasse.text.isEmpty) {
+-      setState(() => _erreurConnexion = t.connexion.erreurMotDePasse);
+-      return;
+-    }
+-
+-    setState(() {
+-      _connexionEnCours = true;
+-      _erreur = null;
+-      _erreurConnexion = null;
+-    });
+-    try {
+-      if (ref.read(demoAuthActiveProvider)) {
+-        final AccesDemo? acces = accesDemoDepuisCourriel(_courriel.text);
+-        if (acces == null) {
+-          throw const FormatException('role demo inconnu');
+-        }
+-        ref.read(sessionProvider.notifier).ouvrirDemo(acces);
+-      } else {
+-        await ref
+-            .read(serviceAuthProvider)
+-            .connexionMotDePasse(_courriel.text, _motDePasse.text);
+-      }
+-    } on Object {
+-      if (mounted) {
+-        setState(() => _erreurConnexion = t.connexion.erreurConnexion);
+-      }
+-    } finally {
+-      if (mounted) {
+-        setState(() => _connexionEnCours = false);
+-      }
+-    }
+-  }
+-
+   @override
+   Widget build(BuildContext context) {
+     return PageShell(
+@@ -157,22 +104,11 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
+                       )
+                     : _Saisie(
+                         controleur: _courriel,
+-                        motDePasse: _motDePasse,
+                         erreur: _erreur,
+-                        erreurConnexion: _erreurConnexion,
+                         envoi: _envoi,
+-                        connexionEnCours: _connexionEnCours,
+-                        modeDemo: _modeDemo,
+                         peutEnvoyer: _adressePlausible,
+-                        onChanged: () => setState(() {
+-                          _erreur = null;
+-                          _erreurConnexion = null;
+-                        }),
+-                        onMotDePasseChanged: () => setState(() {
+-                          _erreurConnexion = null;
+-                        }),
++                        onChanged: () => setState(() => _erreur = null),
+                         onEnvoyer: () => unawaited(_envoyerLien()),
+-                        onConnexion: () => unawaited(_connecterMotDePasse()),
+                         onGoogle: () => unawaited(_google()),
+                         onEleve: () =>
+                             GoRouter.of(context).go(Routes.connexionEleve),
+@@ -237,66 +173,40 @@ class _MarqueConnexion extends StatelessWidget {
+ class _Saisie extends StatelessWidget {
+   const _Saisie({
+     required this.controleur,
+-    required this.motDePasse,
+     required this.erreur,
+-    required this.erreurConnexion,
+     required this.envoi,
+-    required this.connexionEnCours,
+-    required this.modeDemo,
+     required this.peutEnvoyer,
+     required this.onChanged,
+-    required this.onMotDePasseChanged,
+     required this.onEnvoyer,
+-    required this.onConnexion,
+     required this.onGoogle,
+     required this.onEleve,
+   });
+ 
+   final TextEditingController controleur;
+-  final TextEditingController motDePasse;
+   final String? erreur;
+-  final String? erreurConnexion;
+   final bool envoi;
+-  final bool connexionEnCours;
+-  final bool modeDemo;
+   final bool peutEnvoyer;
+   final VoidCallback onChanged;
+-  final VoidCallback onMotDePasseChanged;
+   final VoidCallback onEnvoyer;
+-  final VoidCallback onConnexion;
+   final VoidCallback onGoogle;
+   final VoidCallback onEleve;
+ 
+   @override
+   Widget build(BuildContext context) {
+     final TextTheme textes = Theme.of(context).textTheme;
+-    final AppPalette palette = AppPalette.of(context);
+ 
+     return Column(
+       crossAxisAlignment: CrossAxisAlignment.stretch,
+       children: <Widget>[
+-        if (modeDemo) ...<Widget>[
+-          Text(
+-            t.connexion.demoTitre,
+-            style: palette.inkAccent.applyTo(
+-              textes.labelLarge ?? const TextStyle(),
+-            ),
+-          ),
+-          Ecart.vMd,
+-        ],
+         Text(t.connexion.titre, style: textes.headlineMedium),
+         Ecart.vSm,
+-        Text(
+-          modeDemo ? t.connexion.introDemo : t.connexion.intro,
+-          style: textes.bodyMedium,
+-        ),
++        Text(t.connexion.intro, style: textes.bodyMedium),
+         Ecart.vXxl,
+         TextField(
+           key: const ValueKey<String>('connexion-courriel'),
+           controller: controleur,
+           onChanged: (String _) => onChanged(),
+-          onSubmitted: (String _) =>
+-              modeDemo ? FocusScope.of(context).nextFocus() : onEnvoyer(),
++          onSubmitted: (String _) => onEnvoyer(),
+           keyboardType: TextInputType.emailAddress,
+           autofillHints: const <String>[AutofillHints.email],
+           textInputAction: TextInputAction.go,
+@@ -307,59 +217,34 @@ class _Saisie extends StatelessWidget {
+           ),
+         ),
+         Ecart.vLg,
+-        if (modeDemo) ...<Widget>[
+-          TextField(
+-            key: const ValueKey<String>('connexion-mot-de-passe'),
+-            controller: motDePasse,
+-            onChanged: (String _) => onMotDePasseChanged(),
+-            onSubmitted: (String _) => onConnexion(),
+-            obscureText: true,
+-            autofillHints: const <String>[AutofillHints.password],
+-            textInputAction: TextInputAction.done,
+-            decoration: _decorationChamp(
+-              context,
+-              libelle: t.connexion.motDePasse,
+-              erreur: erreurConnexion,
++        ActionPrincipale(
++          libelle: t.connexion.envoyerLien,
++          onPress: peutEnvoyer ? onEnvoyer : null,
++          enCours: envoi,
++        ),
++        Ecart.vXl,
++        Row(
++          children: <Widget>[
++            const Expanded(child: Divider()),
++            Padding(
++              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
++              child: Text(t.connexion.ou, style: textes.bodySmall),
+             ),
+-          ),
+-          Ecart.vLg,
+-          ActionPrincipale(
+-            libelle: t.connexion.seConnecter,
+-            onPress: peutEnvoyer && motDePasse.text.isNotEmpty
+-                ? onConnexion
+-                : null,
+-            enCours: connexionEnCours,
+-          ),
+-        ] else ...<Widget>[
+-          ActionPrincipale(
+-            libelle: t.connexion.envoyerLien,
+-            onPress: peutEnvoyer ? onEnvoyer : null,
+-            enCours: envoi,
+-          ),
+-          Ecart.vXl,
+-          Row(
+-            children: <Widget>[
+-              const Expanded(child: Divider()),
+-              Padding(
+-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+-                child: Text(t.connexion.ou, style: textes.bodySmall),
+-              ),
+-              const Expanded(child: Divider()),
+-            ],
+-          ),
+-          Ecart.vXl,
+-          ActionPrincipale(
+-            libelle: t.connexion.avecGoogle,
+-            onPress: onGoogle,
+-            niveau: NiveauAction.secondaire,
+-          ),
+-          Ecart.vXxl,
+-          ActionPrincipale(
+-            libelle: t.eleveConnexion.entrerCode,
+-            onPress: onEleve,
+-            niveau: NiveauAction.tertiaire,
+-          ),
+-        ],
++            const Expanded(child: Divider()),
++          ],
++        ),
++        Ecart.vXl,
++        ActionPrincipale(
++          libelle: t.connexion.avecGoogle,
++          onPress: onGoogle,
++          niveau: NiveauAction.secondaire,
++        ),
++        Ecart.vXxl,
++        ActionPrincipale(
++          libelle: t.eleveConnexion.entrerCode,
++          onPress: onEleve,
++          niveau: NiveauAction.tertiaire,
++        ),
+       ],
+     );
+   }
+diff --git a/test/config/supabase_key_validation_test.dart b/test/config/supabase_key_validation_test.dart
+new file mode 100644
+index 00000000..a1f58a9c
+--- /dev/null
++++ b/test/config/supabase_key_validation_test.dart
+@@ -0,0 +1,31 @@
++import 'package:flutter_test/flutter_test.dart';
++import 'package:rewayah_academy/core/config/env.dart';
++
++void main() {
++  test('refuse les cles factices et les formes incompletes', () {
++    expect(
++      Env.cleSupabaseValide('cle-factice-playground-ne-jamais-utilisee'),
++      isFalse,
++    );
++    expect(Env.cleSupabaseValide('eyJhbGciOiJIUzI1NiJ9.dummy.dummy'), isFalse);
++    expect(Env.cleSupabaseValide('sb_publishable_fake'), isFalse);
++    expect(Env.cleSupabaseValide(''), isFalse);
++  });
++
++  test('accepte une cle publishable opaque bien formee', () {
++    expect(
++      Env.cleSupabaseValide('sb_publishable_0123456789abcdefghijklmnop_abcdef'),
++      isTrue,
++    );
++  });
++
++  test('accepte la forme legacy anon JWT attendue par Supabase', () {
++    expect(
++      Env.cleSupabaseValide(
++        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.'
++        'eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIn0.signature',
++      ),
++      isTrue,
++    );
++  });
++}
+diff --git a/test/features/connexion_test.dart b/test/features/connexion_test.dart
+index 7bbb6582..c92224d5 100644
+--- a/test/features/connexion_test.dart
++++ b/test/features/connexion_test.dart
+@@ -1,14 +1,10 @@
++import 'dart:io';
++
+ import 'package:flutter/material.dart';
+-import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import 'package:flutter_riverpod/misc.dart' show Override;
+ import 'package:flutter_test/flutter_test.dart';
+ import 'package:rewayah_academy/core/auth/service_auth.dart';
+-import 'package:rewayah_academy/core/domain/enums.dart';
+ import 'package:rewayah_academy/core/i18n/strings.g.dart';
+-import 'package:rewayah_academy/core/session/session_controleur.dart';
+-import 'package:rewayah_academy/core/session/session_state.dart';
+-import 'package:rewayah_academy/core/widgets/action_principale.dart';
+-import 'package:rewayah_academy/core/widgets/app_card.dart';
+ import 'package:rewayah_academy/features/connexion/connexion_page.dart';
+ 
+ import '../support/harnais.dart';
+@@ -25,86 +21,20 @@ Future<FauxServiceAuth> _monter(WidgetTester tester) async {
+ }
+ 
+ void main() {
+-  group('acces demo fictif', () {
+-    test('chaque adresse de role produit l interface attendue', () {
+-      final Map<String, ({AppRole role, InterfaceMode mode})> attendus = {
+-        'admin@demo.test': (role: AppRole.admin, mode: InterfaceMode.standard),
+-        'comptable@demo.test': (
+-          role: AppRole.accountant,
+-          mode: InterfaceMode.standard,
+-        ),
+-        'controleur@demo.test': (
+-          role: AppRole.controller,
+-          mode: InterfaceMode.standard,
+-        ),
+-        'enseignant@demo.test': (
+-          role: AppRole.teacher,
+-          mode: InterfaceMode.standard,
+-        ),
+-        'tuteur@demo.test': (
+-          role: AppRole.guardian,
+-          mode: InterfaceMode.standard,
+-        ),
+-        'eleve@demo.test': (
+-          role: AppRole.student,
+-          mode: InterfaceMode.standard,
+-        ),
+-        'enfant@demo.test': (role: AppRole.student, mode: InterfaceMode.enfant),
+-      };
+-
+-      for (final MapEntry<String, ({AppRole role, InterfaceMode mode})> entree
+-          in attendus.entries) {
+-        expect(accesDemoDepuisCourriel(entree.key), entree.value);
+-      }
+-      expect(accesDemoDepuisCourriel('inconnu@demo.test'), isNull);
+-    });
+-
+-    testWidgets('le mode demo ouvre le role sans appeler Supabase', (
+-      WidgetTester tester,
+-    ) async {
+-      final FauxServiceAuth auth = FauxServiceAuth();
+-      final FausseSourceSession source = FausseSourceSession();
+-      await tester.pumpWidget(
+-        hote(
+-          const ConnexionPage(),
+-          surcharges: <Override>[
+-            demoAuthActiveProvider.overrideWithValue(true),
+-            sourceSessionProvider.overrideWithValue(source),
+-            serviceAuthProvider.overrideWithValue(auth),
+-          ],
+-        ),
+-      );
+-
+-      await tester.enterText(
+-        find.byKey(const ValueKey<String>('connexion-courriel')),
+-        'admin@demo.test',
+-      );
+-      await tester.enterText(
+-        find.byKey(const ValueKey<String>('connexion-mot-de-passe')),
+-        'nimporte-quoi',
+-      );
+-      await tester.pump();
+-      final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
+-        find.widgetWithText(ActionPrincipale, t.connexion.seConnecter),
+-      );
+-      bouton.onPress!();
+-      await tester.pumpAndSettle();
+-
+-      final ProviderContainer conteneur = ProviderScope.containerOf(
+-        tester.element(find.byType(ConnexionPage)),
+-      );
+-      expect(auth.connexionsMotDePasse, isEmpty);
+-      expect(
+-        conteneur.read(sessionProvider),
+-        const SessionState(
+-          resolue: true,
+-          role: AppRole.admin,
+-          profileId: 'demo-admin',
+-          accountStatus: AccountStatus.active,
+-          lectureProfil: LectureProfil.presente,
+-        ),
+-      );
+-    });
++  test('aucun parcours mot de passe ou session fictive ne reste compile', () {
++    final String service = File('lib/core/auth/service_auth.dart')
++        .readAsStringSync();
++    final String environnement = File('lib/core/config/env.dart')
++        .readAsStringSync();
++    final String session = File('lib/core/session/session_controleur.dart')
++        .readAsStringSync();
++
++    expect(service, isNot(contains('signInWithPassword')));
++    expect(service, isNot(contains('connexionMotDePasse')));
++    expect(service, contains('signInWithOAuth(OAuthProvider.google)'));
++    expect(environnement, isNot(contains('DEMO_AUTH')));
++    expect(session, isNot(contains('ouvrirDemo')));
++    expect(session, isNot(contains('accesDemoDepuisCourriel')));
+   });
+ 
+   group('courrielPlausible', () {
+@@ -163,6 +93,19 @@ void main() {
+       expect(find.text(t.connexion.lienEnvoye), findsOneWidget);
+     });
+ 
++    testWidgets('le bouton Google ouvre le parcours OAuth', (
++      WidgetTester tester,
++    ) async {
++      final FauxServiceAuth auth = await _monter(tester);
++      final Finder boutonGoogle = find.text(t.connexion.avecGoogle);
++
++      await tester.ensureVisible(boutonGoogle);
++      await tester.tap(boutonGoogle);
++      await tester.pumpAndSettle();
++
++      expect(auth.google, 1);
++    });
++
+     testWidgets('l ecran de confirmation ne se ferme pas tout seul', (
+       WidgetTester tester,
+     ) async {
+@@ -196,8 +139,7 @@ void main() {
+     testWidgets('aucun champ de mot de passe n existe sur cet ecran', (
+       WidgetTester tester,
+     ) async {
+-      // La compilation de production reste sans mot de passe. Le parcours de
+-      // demonstration est couvert explicitement par les tests ci-dessous.
++      // Le produit ne compile aucun parcours avec mot de passe.
+       await _monter(tester);
+       final Iterable<TextField> champs = tester.widgetList<TextField>(
+         find.byType(TextField),
+@@ -205,110 +147,5 @@ void main() {
+       expect(champs, hasLength(1));
+       expect(champs.single.obscureText, isFalse);
+     });
+-
+-    testWidgets('le mode demo ne propose aucun parcours Supabase', (
+-      WidgetTester tester,
+-    ) async {
+-      tester.view.devicePixelRatio = 1;
+-      tester.view.physicalSize = const Size(390, 844);
+-      addTearDown(tester.view.resetDevicePixelRatio);
+-      addTearDown(tester.view.resetPhysicalSize);
+-
+-      await tester.pumpWidget(
+-        hote(
+-          const ConnexionPage(demoAuth: true),
+-          surcharges: <Override>[
+-            serviceAuthProvider.overrideWithValue(FauxServiceAuth()),
+-          ],
+-        ),
+-      );
+-      await tester.pumpAndSettle();
+-
+-      final AppCard carte = tester.widget<AppCard>(
+-        find.byKey(const ValueKey<String>('connexion-carte')),
+-      );
+-      expect(carte.dominante, isTrue);
+-
+-      final ActionPrincipale connexion = tester.widget<ActionPrincipale>(
+-        find.widgetWithText(ActionPrincipale, t.connexion.seConnecter),
+-      );
+-      expect(connexion.niveau, NiveauAction.principale);
+-      expect(find.text(t.connexion.envoyerLien), findsNothing);
+-      expect(find.text(t.connexion.avecGoogle), findsNothing);
+-      expect(find.text(t.eleveConnexion.entrerCode), findsNothing);
+-      expect(tester.takeException(), isNull);
+-    });
+-
+-    testWidgets('le mode demonstration accepte email et mot de passe', (
+-      WidgetTester tester,
+-    ) async {
+-      final FauxServiceAuth auth = FauxServiceAuth();
+-      await tester.pumpWidget(
+-        hote(
+-          const ConnexionPage(demoAuth: true),
+-          surcharges: <Override>[serviceAuthProvider.overrideWithValue(auth)],
+-        ),
+-      );
+-
+-      await tester.enterText(
+-        find.byKey(const ValueKey<String>('connexion-courriel')),
+-        ' fatou@example.test ',
+-      );
+-      await tester.pump();
+-      await tester.enterText(
+-        find.byKey(const ValueKey<String>('connexion-mot-de-passe')),
+-        'essai-local',
+-      );
+-      await tester.pump();
+-      final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
+-        find.widgetWithText(ActionPrincipale, t.connexion.seConnecter),
+-      );
+-      expect(bouton.onPress, isNotNull);
+-      bouton.onPress!();
+-      await tester.pumpAndSettle();
+-
+-      expect(
+-        auth.connexionsMotDePasse,
+-        <({String courriel, String motDePasse})>[
+-          (courriel: 'fatou@example.test', motDePasse: 'essai-local'),
+-        ],
+-      );
+-    });
+-
+-    testWidgets('le mode demonstration affiche une erreur recuperable', (
+-      WidgetTester tester,
+-    ) async {
+-      final FauxServiceAuth auth = FauxServiceAuth()
+-        ..erreurAJeter = StateError('refuse');
+-      await tester.pumpWidget(
+-        hote(
+-          const ConnexionPage(demoAuth: true),
+-          surcharges: <Override>[serviceAuthProvider.overrideWithValue(auth)],
+-        ),
+-      );
+-
+-      await tester.enterText(
+-        find.byKey(const ValueKey<String>('connexion-courriel')),
+-        'fatou@example.test',
+-      );
+-      await tester.pump();
+-      await tester.enterText(
+-        find.byKey(const ValueKey<String>('connexion-mot-de-passe')),
+-        'essai-local',
+-      );
+-      await tester.pump();
+-      final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
+-        find.widgetWithText(ActionPrincipale, t.connexion.seConnecter),
+-      );
+-      expect(bouton.onPress, isNotNull);
+-      bouton.onPress!();
+-      await tester.pumpAndSettle();
+-
+-      expect(find.text(t.connexion.erreurConnexion), findsOneWidget);
+-      expect(
+-        find.byKey(const ValueKey<String>('connexion-courriel')),
+-        findsOneWidget,
+-      );
+-    });
+   });
+ }
+diff --git a/test/support/harnais.dart b/test/support/harnais.dart
+index 06c93ebd..09ce23cb 100644
+--- a/test/support/harnais.dart
++++ b/test/support/harnais.dart
+@@ -166,10 +166,6 @@ class FauxServiceAuth implements ServiceAuth {
+   /// Le nombre d'ouvertures du parcours Google.
+   int google = 0;
+ 
+-  /// Les identifiants utilises pour une connexion de demonstration.
+-  final List<({String courriel, String motDePasse})> connexionsMotDePasse =
+-      <({String courriel, String motDePasse})>[];
+-
+   /// Le nombre de deconnexions.
+   int deconnexions = 0;
+ 
+@@ -195,19 +191,6 @@ class FauxServiceAuth implements ServiceAuth {
+     google++;
+   }
+ 
+-  @override
+-  Future<void> connexionMotDePasse(String courriel, String motDePasse) async {
+-    final Object? erreur = erreurAJeter;
+-    if (erreur != null) {
+-      // ignore: only_throw_errors
+-      throw erreur;
+-    }
+-    connexionsMotDePasse.add((
+-      courriel: courriel.trim(),
+-      motDePasse: motDePasse,
+-    ));
+-  }
+-
+   @override
+   Future<void> deconnexion() async {
+     deconnexions++;
+@@ -611,7 +594,9 @@ class FauxServiceAttribution implements ServiceAttribution {
+     ({String eleveId, String enseignantId, Creneau creneau, String? motif})
+   >
+   attributions =
+-      <({String eleveId, String enseignantId, Creneau creneau, String? motif})>[];
++      <
++        ({String eleveId, String enseignantId, Creneau creneau, String? motif})
++      >[];
+ 
+   /// Ce que la lecture de la file doit jeter.
+   Object? erreurFoyers;
+@@ -706,7 +691,14 @@ class FauxServiceJournal implements ServiceJournal {
+     ({String? acteur, String? type, DateTime? depuis, CurseurJournal? curseur})
+   >
+   lectures =
+-      <({String? acteur, String? type, DateTime? depuis, CurseurJournal? curseur})>[];
++      <
++        ({
++          String? acteur,
++          String? type,
++          DateTime? depuis,
++          CurseurJournal? curseur,
++        })
++      >[];
+ 
+   /// Ce que la lecture doit jeter.
+   Object? erreurEntrees;
+@@ -750,7 +742,9 @@ class FauxServiceJournal implements ServiceJournal {
+       );
+     }
+     if (depuis != null) {
+-      retenues = retenues.where((EntreeJournal e) => !e.survenuLe.isBefore(depuis));
++      retenues = retenues.where(
++        (EntreeJournal e) => !e.survenuLe.isBefore(depuis),
++      );
+     }
+     if (curseur != null) {
+       // Le meme keyset que la base : strictement avant le couple donne.
+@@ -930,10 +924,7 @@ class FauxStockageSecurise implements StockageSecurise {
+   Future<String?> jetonAppareil(String profilId) async => jetons[profilId];
+ 
+   @override
+-  Future<void> enregistrerJetonAppareil(
+-    String profilId,
+-    String jeton,
+-  ) async {
++  Future<void> enregistrerJetonAppareil(String profilId, String jeton) async {
+     jetons[profilId] = jeton;
+   }
+ 
+@@ -943,8 +934,7 @@ class FauxStockageSecurise implements StockageSecurise {
+   }
+ 
+   @override
+-  Future<String?> empreintePin(String profilId) async =>
+-      empreintes[profilId];
++  Future<String?> empreintePin(String profilId) async => empreintes[profilId];
+ 
+   @override
+   Future<void> enregistrerEmpreintePin(
