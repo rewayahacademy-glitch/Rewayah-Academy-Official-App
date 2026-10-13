@@ -142,7 +142,28 @@ Améliorer ces sondes est un bonus, pas un préalable.
 Les deux Codex travaillaient en local sur des dossiers `D:\rewayah-*` (worktrees Git).
 Tout ce qui figure dans ce document est **déjà sur GitHub**.
 
-Avant de supprimer un dossier `D:\rewayah-*`, lancer ces deux commandes à l'intérieur :
+Constat du 13/10 : `D:\rewayah-app` existe mais n'est pas lui-même un dépôt Git. Les
+dépôts sont plus bas dans l'arborescence ou ailleurs (Codex 2 en a examiné 12). Pour les
+trouver tous et les vérifier d'un coup, lancer ce script dans PowerShell. Il ne fait que
+lire et ne supprime rien :
+
+```powershell
+$racines = 'D:\', "$env:USERPROFILE"
+Get-ChildItem $racines -Recurse -Force -Depth 5 -Filter .git -ErrorAction SilentlyContinue |
+  ForEach-Object { Split-Path $_.FullName -Parent } | Sort-Object -Unique | ForEach-Object {
+    $s = git -C $_ status --short 2>$null
+    $l = git -C $_ log --branches --not --remotes --oneline 2>$null
+    if (-not $s -and -not $l) { "PROPRE   $_" } else { "A GARDER $_" }
+  }
+```
+
+- `PROPRE` : tout est sur GitHub, le dossier peut être supprimé.
+- `A GARDER` : il reste du travail non poussé. Ne rien supprimer.
+- Un dossier qui n'apparaît pas dans la liste n'est pas un dépôt. Ne le supprimer qu'après
+  avoir regardé ce qu'il contient.
+
+Méthode manuelle, équivalente : avant de supprimer un dossier, lancer ces deux
+commandes à l'intérieur :
 
 ```
 git status --short
