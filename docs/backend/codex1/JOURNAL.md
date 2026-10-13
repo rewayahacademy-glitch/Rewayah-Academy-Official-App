@@ -39,4 +39,8 @@
 
 - Branch: `codex/backend-b08-summary-negative-context-r1` @ `c381f48c7153beb553a53e3e6ff53f42b1bead12`.
 - Extends `scenarios_b08_progression_famille.sql` with anon ACL/direct-call denial and a disabled teacher refusal against the valid owned session/student summary path. Existing cross-teacher and guardian refusals remain.
+- `git diff --check` clean; one SQL scenario changed; all three named dollar tags are paired. No local `psql`/`pg_isready`, so SQL/PG17 replay is unavailable. No STAGING/PROD.## 2026-10-13 - C-20 timeline privacy scenarios
+
+- Branch: `codex/backend-c20-timeline-negative-r1` @ `b9165888fd22710827fcce6d49bbfc10deaec051`.
+- Extends `scenarios_c20_demande_timeline.sql` with an active second household that sees zero rows from both timeline projection and base table, plus anon SELECT ACL/direct-read refusals for both.
 - `git diff --check` clean; one SQL scenario changed; all three named dollar tags are paired. No local `psql`/`pg_isready`, so SQL/PG17 replay is unavailable. No STAGING/PROD.
