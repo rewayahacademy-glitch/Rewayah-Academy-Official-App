@@ -19,4 +19,8 @@
 
 - Branch: `codex/backend-c35-library-read-negative-r1` @ `dad52bc79c0de63f75bd4608bbd69f8eb7fadb89`.
 - Extends `scenarios_c35_library_read.sql`: after positive authorized reads and the active outsider refusal, disables the student account and asserts `autoriser_lecture_version(uuid)` refuses it. Existing anon ACL and direct-table denials remain.
-- `git diff --check` clean; one SQL scenario changed; named dollar delimiter paired. No local `psql`/`pg_isready`, so SQL/PG17 replay is unavailable. JWT expiry is a gateway/API check; no STAGING/PROD.
+- `git diff --check` clean; one SQL scenario changed; named dollar delimiter paired. No local `psql`/`pg_isready`, so SQL/PG17 replay is unavailable. JWT expiry is a gateway/API check; no STAGING/PROD.## 2026-10-13 - B-13 anonymous-read negative scenario
+
+- Branch: `codex/backend-b13-anon-negative-r1` @ `1a0f9ab0745ab5e1cc10caff3a688e86dcf83740`.
+- Extends `scenarios_b13_admin_suspended.sql` with an anon SELECT ACL assertion and a direct anonymous read refusal for `guardian_session_visit`; the active-admin and disabled-admin coverage remains.
+- `git diff --check` clean; one SQL scenario changed and both named dollar delimiters are paired. No local `psql`/`pg_isready`, so no SQL/PG17 replay. No STAGING/PROD.
