@@ -189,6 +189,96 @@ begin
   end loop;
 end $$;
 
+-- A2b : l'emission et la revocation sont fermees aux appels anon.
+do $agent_admin_rpc_anon$
+declare
+  v_id uuid := (select valeur::uuid from agt_fixture where cle = 'id_masque');
+begin
+  if has_function_privilege(
+       'anon', 'public.creer_jeton_agent(text,uuid,integer,boolean)', 'EXECUTE'
+     )
+     or has_function_privilege(
+       'anon', 'public.revoquer_jeton_agent(uuid)', 'EXECUTE'
+     ) then
+    raise exception 'A2b : anon conserve EXECUTE sur une RPC admin des jetons';
+  end if;
+
+  set local role anon;
+  begin
+    perform public.creer_jeton_agent(
+      'anon', 'a7000000-0000-0000-0000-000000000002', 1, true);
+    raise exception 'A2b : anon a emis un jeton';
+  exception when insufficient_privilege then
+    null;
+  end;
+
+  begin
+    perform public.revoquer_jeton_agent(v_id);
+    raise exception 'A2b : anon a revoque un jeton';
+  exception when insufficient_privilege then
+    null;
+  end;
+  reset role;
+end $agent_admin_rpc_anon$;
+
+-- A2c : un compte admin desactive ne peut ni emettre ni revoquer.
+do $agent_admin_disabled$
+declare
+  v_admin constant uuid := 'a7000000-0000-0000-0000-000000000004';
+  v_id uuid := (select valeur::uuid from agt_fixture where cle = 'id_masque');
+begin
+  set local role postgres;
+  update public.profiles set account_status = 'disabled' where id = v_admin;
+
+  set local role authenticated;
+  perform set_config('test.uid', v_admin::text, true);
+  perform set_config('request.jwt.claim.sub', v_admin::text, true);
+  perform set_config('request.jwt.claims',
+    format('{"sub":"%s","app_metadata":{"role":"admin"}}', v_admin), true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+
+  begin
+    perform public.creer_jeton_agent(
+      'admin desactive', 'a7000000-0000-0000-0000-000000000002', 1, true);
+    raise exception 'A2c : un compte admin desactive a emis un jeton';
+  exception when insufficient_privilege then null;
+  end;
+
+  begin
+    perform public.revoquer_jeton_agent(v_id);
+    raise exception 'A2c : un compte admin desactive a revoque un jeton';
+  exception when insufficient_privilege then null;
+  end;
+
+  set local role postgres;
+  update public.profiles set account_status = 'active' where id = v_admin;
+end $agent_admin_disabled$;
+
+-- A2d : les autres parcours ne peuvent pas revoquer un jeton existant.
+do $agent_revoke_non_admin$
+declare
+  v_role text;
+  v_id uuid := (select valeur::uuid from agt_fixture where cle = 'id_masque');
+begin
+  foreach v_role in array array['teacher', 'guardian', 'student', 'controller', 'accountant']
+  loop
+    begin
+      set local role authenticated;
+      perform set_config('test.uid', 'a7000000-0000-0000-0000-000000000001', true);
+      perform set_config('request.jwt.claim.sub', 'a7000000-0000-0000-0000-000000000001', true);
+      perform set_config('request.jwt.claims',
+        format('{"sub":"a7000000-0000-0000-0000-000000000001","app_metadata":{"role":"%s"}}', v_role), true);
+      perform set_config('test.jwt',
+        format('{"app_metadata":{"role":"%s"}}', v_role), true);
+
+      perform public.revoquer_jeton_agent(v_id);
+      raise exception 'A2d : le parcours % a pu revoquer un jeton', v_role;
+    exception when insufficient_privilege then
+      null;
+    end;
+  end loop;
+end $agent_revoke_non_admin$;
+
 -- ============================================================
 -- A3 : la duree est plafonnee cote SERVEUR
 -- ============================================================
