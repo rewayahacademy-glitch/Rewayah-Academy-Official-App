@@ -31,4 +31,8 @@
 
 - Branch: `codex/backend-f86-take-student-context-negative-r1` @ `43621e0b9ad6363e338bd75fccedc61c95c2f45d`.
 - Extends `scenarios_f86_take_student.sql` with refusals for an active guardian role and a disabled account claiming teacher, plus anon ACL and direct-call denials. The existing missing-role refusal remains.
-- `git diff --check` clean; one SQL scenario changed; all four named dollar tags are paired. No local `psql`/`pg_isready`, so PG17 replay and mutation proof are unavailable. No STAGING/PROD.
+- `git diff --check` clean; one SQL scenario changed; all four named dollar tags are paired. No local `psql`/`pg_isready`, so PG17 replay and mutation proof are unavailable. No STAGING/PROD.## 2026-10-13 - B-11 student concern anon RPC scenarios
+
+- Branch: `codex/backend-b11-student-concern-anon-r1` @ `33c6f60fa7567bd3896b658fa634c25421e9a8ff`.
+- Extends `scenarios_b11_student_concern.sql` with anon EXECUTE checks and direct-call refusals for submit, read, and transmit RPCs; existing other-teacher, disabled-teacher, and family-isolation coverage remains.
+- `git diff --check` clean; one SQL scenario changed; both named dollar tags are paired. No local `psql`/`pg_isready`, so SQL/PG17 replay is unavailable. No STAGING/PROD.
