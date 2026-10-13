@@ -11,4 +11,8 @@
 
 - Existing branch: `codex/backend-f86-registration-acl-r3` @ `9f0349b3785fd5d6a3eec45f19b8e862fbd3d499`, exact remote ref verified.
 - Static review confirms the Edge sets server app_metadata `child_of`; the RPC requires matching raw_app_meta_data, a recent Auth user, no existing profile, no confirmed email and no Auth session. The SQL scenarios contain guardian identity setup, role/status refusals, anon EXECUTE checks, and an unproven third-party account refusal.
-- No additional source change was necessary for the visible dashboard CHANGES. Remaining proof blocker: no local `psql` or `pg_isready`, so PG17 replay and the `creer_profil_enfant` `md5(pg_get_functiondef)` value cannot be produced here. The migration comment remains `A_CALCULER` for that function. No remote DB, STAGING or PROD used.
+- No additional source change was necessary for the visible dashboard CHANGES. Remaining proof blocker: no local `psql` or `pg_isready`, so PG17 replay and the `creer_profil_enfant` `md5(pg_get_functiondef)` value cannot be produced here. The migration comment remains `A_CALCULER` for that function. No remote DB, STAGING or PROD used.## 2026-10-13 - B-09 disabled-recipient negative scenario
+
+- Branch: `codex/backend-b09-notifications-negative-r1` @ `89d5e772a78255837bf36f7157f76808fcdad9a4`.
+- Adds a disabled-recipient probe to `scenarios_b09_notifications.sql`: authenticated user with disabled profile sees zero notification rows and cannot set `lu_le`. Existing recipient isolation and anon refusals remain.
+- `git diff --check` clean; only the scenario changed and the named dollar delimiter is paired. No local `psql`/`pg_isready`; SQL/PG17 replay unavailable. JWT expiry remains a gateway/API test; no STAGING/PROD.
