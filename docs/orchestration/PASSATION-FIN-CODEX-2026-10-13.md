@@ -178,3 +178,15 @@ git log --branches --not --remotes --oneline
 Exception connue : Codex 1 garde trois fichiers Windows `generated_*`, modifiés
 localement et volontairement non poussés. Ce sont des fichiers générés, sans valeur, qui
 peuvent être perdus.
+
+## 8. Ménage du PC terminé (13/10/2026) : ce qui a été archivé sur GitHub
+
+Le PC du directeur ne contient plus de travail unique. Tout ce qui n'existait qu'en local est sur GitHub :
+
+- `archive/pc-2026-10-13/*` : 17 branches locales jamais poussées (astra/core24, integration/core24-classes-v2*, adrc/m1-m4, codex/login-demo, vague5, r2, etc.). Travail de septembre, dépassé ; à consulter seulement pour retrouver une décision.
+- `archive/pc-2026-10-13/patchs` : modifications non commitées des copies supprimées. Quatre sont dépassées par le canon (canon-fixes, f86-positive-guards → F86 `4109340f`, c21-kyc-verdict → `0091_c21_kyc_access_verdict.sql`, astra-core24).
+  **À reprendre :** `rewayah-prod-release.patch` retire de l'app le mode démo par mot de passe (`DEMO_AUTH`, `connexionMotDePasse`, `ouvrirDemo`), qui est toujours dans `main` mais inactif en production (la compilation ne définit pas `DEMO_AUTH`). C'est un petit lot de nettoyage sûr, à rejouer sur une branche, avec `dart run slang` et les tests de connexion.
+- `codex/site-public-local-2026-10-13` @ `31134c81` : **version la plus récente du site public** (reprise finale, SITE_06 et SITE_07, nouvelles images, `site.js`). Elle remplace `codex/site-public-preview-main` @ `6549d3c2`. Non publiée. Le `flutter-deploy.yml` modifié de cette copie n'a pas été poussé ; le directeur en garde une copie sur son Bureau.
+- Le dépôt principal du PC (`D:\RA _APP\RA -OFFICIAL-APP`) exclut `docs/current/captures` (sparse-checkout, 567 Mo). Pour les remettre : `git sparse-checkout disable`.
+
+Règle pour la suite : ne plus versionner de captures en masse (4 879 images, 567 Mo dans `docs/current/captures`). Une capture par écran validé au plus ; les autres restent dans le scratchpad ou en pièce jointe de PR.
