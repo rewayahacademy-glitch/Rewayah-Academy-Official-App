@@ -1,8 +1,14 @@
-# Journal Codex 1
+# Codex 1 journal
 
-## 2026-10-13 — B-09 notifications, intégration sur canon courant
+## 2026-10-13 - B-09 notifications integration WIP
 
-- Branche du lot : `codex/backend-b09-notifications-integration-r1` @ `a8c7a6a5763a9def9c2b4b8ceeb12b7b349bc140`.
-- Réunit sur la tête canon `481e9921a2a59fbe8a5c5985a709597a1697f329` l’adaptateur à neuf événements/quatre destinations, le traitement par ligne des événements inconnus, le provider/page et les libellés FR/AR avec leurs sources.
-- `dart run slang` : réussi. `dart analyze --fatal-infos` sur l’adaptateur, le résolveur, le provider et le test : aucun diagnostic. Tests ciblés B-09 : 34/34 réussis. `git diff --check` propre; aucun chemin réservé Codex 2 modifié.
-- `dart tool/verifier_revue.dart` interrompu après plus de deux minutes sans sortie; résultat non établi. Pas de test SQL/PG17, pas de fusion dans canon-fixes (branche source non confirmée), aucun STAGING/PROD.
+- Lot branch: `codex/backend-b09-notifications-integration-r1` @ `a8c7a6a5763a9def9c2b4b8ceeb12b7b349bc140`.
+- Combines on canon `481e9921a2a59fbe8a5c5985a709597a1697f329` the adapter for nine events/four destinations, per-row handling of unknown events, provider/page, and FR/AR labels with sources.
+- `dart run slang` succeeded. Targeted `dart analyze --fatal-infos` reported no diagnostics. B-09 targeted tests: 34/34 passed. `git diff --check` clean; no Codex 2 reserved paths changed.
+- `dart tool/verifier_revue.dart` was interrupted after over two minutes without output; result unknown. No SQL/PG17 replay. No canon-fixes integration because the source branch is not CONFIRMED. No STAGING/PROD.
+
+## BLOCKED - F86 child registration follow-up
+
+- Existing branch: `codex/backend-f86-registration-acl-r3` @ `9f0349b3785fd5d6a3eec45f19b8e862fbd3d499`, exact remote ref verified.
+- Static review confirms the Edge sets server app_metadata `child_of`; the RPC requires matching raw_app_meta_data, a recent Auth user, no existing profile, no confirmed email and no Auth session. The SQL scenarios contain guardian identity setup, role/status refusals, anon EXECUTE checks, and an unproven third-party account refusal.
+- No additional source change was necessary for the visible dashboard CHANGES. Remaining proof blocker: no local `psql` or `pg_isready`, so PG17 replay and the `creer_profil_enfant` `md5(pg_get_functiondef)` value cannot be produced here. The migration comment remains `A_CALCULER` for that function. No remote DB, STAGING or PROD used.
