@@ -35,4 +35,8 @@
 
 - Branch: `codex/backend-b11-student-concern-anon-r1` @ `33c6f60fa7567bd3896b658fa634c25421e9a8ff`.
 - Extends `scenarios_b11_student_concern.sql` with anon EXECUTE checks and direct-call refusals for submit, read, and transmit RPCs; existing other-teacher, disabled-teacher, and family-isolation coverage remains.
-- `git diff --check` clean; one SQL scenario changed; both named dollar tags are paired. No local `psql`/`pg_isready`, so SQL/PG17 replay is unavailable. No STAGING/PROD.
+- `git diff --check` clean; one SQL scenario changed; both named dollar tags are paired. No local `psql`/`pg_isready`, so SQL/PG17 replay is unavailable. No STAGING/PROD.## 2026-10-13 - B-08 published summary negative contexts
+
+- Branch: `codex/backend-b08-summary-negative-context-r1` @ `c381f48c7153beb553a53e3e6ff53f42b1bead12`.
+- Extends `scenarios_b08_progression_famille.sql` with anon ACL/direct-call denial and a disabled teacher refusal against the valid owned session/student summary path. Existing cross-teacher and guardian refusals remain.
+- `git diff --check` clean; one SQL scenario changed; all three named dollar tags are paired. No local `psql`/`pg_isready`, so SQL/PG17 replay is unavailable. No STAGING/PROD.
