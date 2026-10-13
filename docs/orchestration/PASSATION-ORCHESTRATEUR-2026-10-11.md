@@ -1,5 +1,7 @@
 # Passation de l'orchestration — 11/10/2026, 10 h 30 (UTC+3)
 
+> **Remplacé par `PASSATION-ORCHESTRATEUR-2026-10-13.md`** pour l'état des lots, des sessions et de Codex. Les §3, §4 et §12 restent valables.
+
 De : orchestrateur Claude, session cloud `session_01B8we8bPK1a6aYoBmRntpd8`.
 À : le nouvel orchestrateur, sur ordre du directeur.
 Raison : le directeur a constaté des oublis (voir « Erreurs à ne pas refaire »).
