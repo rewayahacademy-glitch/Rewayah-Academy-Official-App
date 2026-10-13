@@ -1,5 +1,16 @@
 {
   "notifications": {
+    "evenements": {
+      "demandeRecue": "تم استلام طلب موعد جديد.",
+      "demandePresentation": "تم استلام طلب عرض قياسي.",
+      "classeValidee": "الفصل جاهز وينتظر معلمه.",
+      "enseignantAffecte": "تم تعيين معلم للفصل.",
+      "demandeClose": "أُغلق طلب الموعد.",
+      "remplacementPropose": "عُرضت عليك حصة بديلة.",
+      "remplacementPris": "تم إسناد حصة بديلة.",
+      "controleMissionAttribuee": "تم إسناد مهمة مراقبة إليك.",
+      "controleMissionNonControlee": "لم تتم مراجعة مهمة مراقبة."
+    },
     "titre": "الإشعارات",
     "indisponibleTitre": "الإشعارات غير متاحة بعد",
     "indisponiblePhrase": "ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية بمجرد فتحها.",
