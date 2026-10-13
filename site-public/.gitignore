@@ -1,0 +1,3 @@
+tests/.qa-build/
+tests/.audit-chrome/
+**/__pycache__/
