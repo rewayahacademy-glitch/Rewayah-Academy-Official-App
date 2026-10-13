@@ -27,4 +27,8 @@
 
 - Branch: `codex/backend-f86-observation-context-negative-r1` @ `4109340f989a748e8c104c02bf69a0d71537d1aa`.
 - Extends `scenarios_f86_observation_join.sql` with refusals for an active guardian role, a disabled account claiming controller, and anon (ACL plus direct call). Existing null-role refusal remains.
+- `git diff --check` clean; one SQL scenario changed; all four named dollar tags are paired. No local `psql`/`pg_isready`, so PG17 replay and mutation proof are unavailable. No STAGING/PROD.## 2026-10-13 - F86 take-student negative contexts
+
+- Branch: `codex/backend-f86-take-student-context-negative-r1` @ `43621e0b9ad6363e338bd75fccedc61c95c2f45d`.
+- Extends `scenarios_f86_take_student.sql` with refusals for an active guardian role and a disabled account claiming teacher, plus anon ACL and direct-call denials. The existing missing-role refusal remains.
 - `git diff --check` clean; one SQL scenario changed; all four named dollar tags are paired. No local `psql`/`pg_isready`, so PG17 replay and mutation proof are unavailable. No STAGING/PROD.
