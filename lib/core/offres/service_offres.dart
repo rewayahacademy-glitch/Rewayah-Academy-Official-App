@@ -112,7 +112,7 @@ class ServiceOffresSupabase implements ServiceOffres {
         .from('langues_cours')
         .select('code, nom_humain')
         .eq('actif', true)
-        .order('ordre');
+        .order('ordre', ascending: true);
     return lignes.map(LangueCours.depuisJson).toList(growable: false);
   }
 
@@ -122,7 +122,7 @@ class ServiceOffresSupabase implements ServiceOffres {
         .from('cohortes_age')
         .select('code, nom_humain, type_public')
         .eq('actif', true)
-        .order('ordre');
+        .order('ordre', ascending: true);
     return lignes.map(CohorteAge.depuisJson).toList(growable: false);
   }
 
@@ -247,4 +247,79 @@ offresCompatiblesProvider =
     FutureProvider.family<List<OffreHoraire>, CleOffres>(
       (Ref ref, CleOffres cle) =>
           ref.watch(serviceOffresProvider).offresCompatibles(cle),
+    );
+
+/// Pourquoi une lecture du parcours a echoue, dit en termes d'ecran.
+enum PanneParcours {
+  /// Le serveur n'a pas encore les tables ou fonctions du parcours : la
+  /// migration `0043` n'est pas appliquee. Etat indisponible honnete, jamais
+  /// une erreur a reessayer.
+  indisponible,
+
+  /// Le reseau ne repond pas : on garde les reponses et on propose de
+  /// reessayer.
+  horsLigne,
+
+  /// Toute autre erreur.
+  erreur,
+}
+
+/// Classe une erreur de lecture du parcours.
+///
+/// `42P01` (table inconnue), `42883` (fonction inconnue), `PGRST202` et
+/// `PGRST205` (fonction ou relation absente du cache de schema) disent que le
+/// backend du parcours n'existe pas encore sur ce serveur.
+PanneParcours classerPanneParcours(Object erreur) {
+  if (erreur is PostgrestException) {
+    return switch (erreur.code) {
+      '42P01' ||
+      '42883' ||
+      'PGRST202' ||
+      'PGRST205' => PanneParcours.indisponible,
+      _ => PanneParcours.erreur,
+    };
+  }
+  final String texte = erreur.toString();
+  if (texte.contains('SocketException') ||
+      texte.contains('ClientException') ||
+      texte.contains('Failed host lookup') ||
+      texte.contains('Connection refused')) {
+    return PanneParcours.horsLigne;
+  }
+  return PanneParcours.erreur;
+}
+
+/// Les reponses en cours d'un apprenant, gardees hors de la page.
+///
+/// Quitter le questionnaire (Retour, autre onglet) puis y revenir retrouve la
+/// page et les reponses deja touchees : retour sans perte, reprise. Rien n'est
+/// ecrit au serveur avant la fin des questions.
+class BrouillonParcours {
+  /// Page courante, nulle tant que l'on ne sait pas d'ou partir.
+  int? page;
+
+  /// Tranche d'age touchee.
+  String? cohorte;
+
+  /// Langue du cours touchee.
+  String? langue;
+
+  /// Fuseau touche.
+  String? fuseau;
+
+  /// Niveau declare touche.
+  NiveauDeclare? niveau;
+
+  /// Objectif touche.
+  ObjectifApprentissage? objectif;
+
+  /// Moments de la journee retenus (noms d'enum).
+  final Set<String> moments = <String>{};
+}
+
+/// Les brouillons du questionnaire, par apprenant, pour la duree de la
+/// session de l'application.
+final Provider<Map<String, BrouillonParcours>> brouillonsParcoursProvider =
+    Provider<Map<String, BrouillonParcours>>(
+      (Ref ref) => <String, BrouillonParcours>{},
     );

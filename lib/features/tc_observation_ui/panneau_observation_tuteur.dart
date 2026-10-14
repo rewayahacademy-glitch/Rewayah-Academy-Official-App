@@ -1,42 +1,58 @@
-import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/tc_observation/vue_budget_observation.dart';
-import '../../core/theme/app_metriques.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/app_card.dart';
-import '../../core/widgets/avatar_tile.dart';
-import '../../core/widgets/empty_state.dart';
+import '../../core/video/video_session_provider.dart';
+import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/status_pill.dart';
+import 'barre_commandes_observation.dart';
+import 'compteur_visite.dart';
 import 'vue_observation_tuteur.dart';
 
-/// En deca de ce reste, le compte a rebours passe au ton d'avertissement.
-///
-/// Un seuil d'**affichage**, pas une regle : il ne raccourcit ni n'allonge
-/// quoi que ce soit, il prepare seulement le tuteur a la fin de sa visite. Sans
-/// lui, la salle se fermerait sur un chiffre encore calme.
-const Duration seuilFinProcheObservation = Duration(seconds: 30);
-
-/// Ce que le tuteur voit pendant sa visite.
+/// La salle d'observation : ce que le tuteur voit pendant sa visite (lot O,
+/// sous-paquet 2 ; maquettes V8 M3, M4 et D1, decision du directeur `03`
+/// section 1 bis-5).
 ///
 /// **Presentation seule, aucun provider.** Le panneau recoit une
 /// [VueObservationTuteur] deja calculee : c'est ce qui rend l'invariant « aucun
 /// roster complet » verifiable par un test de widget aussi bien que par un test
 /// de fonction pure.
 ///
+/// Composition, de haut en bas : le **bandeau pleine largeur** du decompte et
+/// des visites restantes ([BandeauDecompteVisite]), l'en-tete (classe, enfant
+/// et enseignant, etat du direct), le **support dominant**, les deux vignettes
+/// secondaires (sous le support sur telephone, en colonne a droite des la
+/// tablette, comme D1), la barre de trois commandes. « Agrandir » retire
+/// l'en-tete et les vignettes : le bandeau et « Quitter » restent toujours a
+/// l'ecran.
+///
 /// Le support partage est un **emplacement**, pas une implementation : c'est la
 /// Classe Live qui sait afficher le Coran ou un PDF, et une seconde surface de
 /// rendu serait une seconde Bibliotheque. Tant que l'hote n'en fournit pas, le
 /// panneau le dit en clair.
-class PanneauObservationTuteur extends StatelessWidget {
+///
+/// **Aucun faux direct** : la pastille suit l'etat reel du lien
+/// ([etatSalle]) ; pendant une reconnexion elle dit « Reconnexion » et le
+/// decompte continue, jamais remis a zero.
+class PanneauObservationTuteur extends StatefulWidget {
   /// Cree le panneau.
   const PanneauObservationTuteur({
     required this.vue,
     required this.onQuitter,
     super.key,
+    this.titre,
+    this.sousTitre,
+    this.etatSalle = EtatSalle.connecte,
     this.supportPartage,
     this.videoEnseignant,
     this.videoEnfant,
@@ -47,8 +63,17 @@ class PanneauObservationTuteur extends StatelessWidget {
   /// Ce qui est expose au tuteur.
   final VueObservationTuteur vue;
 
-  /// La sortie volontaire.
+  /// La sortie volontaire (la page demande confirmation avant).
   final VoidCallback onQuitter;
+
+  /// Le nom de la classe. `null` : « Observation en cours ».
+  final String? titre;
+
+  /// « Mariam · Sayyida Amina ». `null` : les noms portes par la salle.
+  final String? sousTitre;
+
+  /// L'etat du lien avec la salle video.
+  final EtatSalle etatSalle;
 
   /// Le support partage, fourni par l'hote. `null` = pas encore branche.
   final Widget? supportPartage;
@@ -61,9 +86,6 @@ class PanneauObservationTuteur extends StatelessWidget {
   final Widget? videoEnseignant;
 
   /// L'image de l'enfant du tuteur. `null` quand sa camera est fermee.
-  ///
-  /// C'est la raison meme de la visite : le parent vient voir si son enfant
-  /// participe. Une vignette de nom seul ne repond pas a cette question.
   final Widget? videoEnfant;
 
   /// Vrai quand la derniere lecture de budget a echoue.
@@ -71,205 +93,750 @@ class PanneauObservationTuteur extends StatelessWidget {
 
   /// Vrai quand la salle video n'a pas pu s'ouvrir.
   ///
-  /// Meme idiome que [budgetIncertain] : une ligne discrete, pas un ecran de
-  /// remplacement. La visite continue de se consommer cote serveur, et un
-  /// panneau sans compte a rebours ni bouton « Quitter » empecherait le tuteur
-  /// de la refermer.
+  /// Une ligne discrete, pas un ecran de remplacement : la visite continue de
+  /// se consommer cote serveur, et un panneau sans compte a rebours ni bouton
+  /// « Quitter » empecherait le tuteur de la refermer.
   final bool videoIndisponible;
 
   @override
-  Widget build(BuildContext context) {
+  State<PanneauObservationTuteur> createState() =>
+      _PanneauObservationTuteurEtat();
+}
+
+class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
+  /// Vrai quand le support occupe toute la salle. Etat d'ecran seulement.
+  bool _agrandi = false;
+
+  bool get _lienVivant => switch (widget.etatSalle) {
+    EtatSalle.connecte || EtatSalle.retabli || EtatSalle.instable => true,
+    _ => false,
+  };
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (BuildContext context, BoxConstraints cadre) {
+      final bool large =
+          AppGabarit.classe(cadre.maxWidth) != ClasseLargeur.compacte;
+      final VueObservationTuteur vue = widget.vue;
+      final AppPalette palette = AppPalette.of(context);
+      final Widget barre = BarreCommandesObservation(
+        sonRecu: _lienVivant && !widget.videoIndisponible,
+        agrandi: _agrandi,
+        onAgrandir: () => setState(() => _agrandi = !_agrandi),
+        onQuitter: widget.onQuitter,
+        large: large,
+      );
+      final Widget bandeau = BandeauDecompteVisite(
+        budget: vue.budget,
+        budgetIncertain: widget.budgetIncertain,
+      );
+
+      // PAGESHELL-200-1b : les colonnes de la salle disent a `PageShell` ce
+      // qui leur manque. A 200 % sous une tete qui defile (320x568, telephone
+      // en paysage sous les barres du systeme), le bandeau et la barre
+      // agrandis ne tiennent plus dans la hauteur laissee : la page defile
+      // d'autant, et la barre se rejoint au lieu d'etre coupee.
+      // PAGESHELL-200-1c : le minimum utile de la zone du support n'est plus
+      // une cible tactile (une fenetre de 48 px ou l'on ne voyait que le
+      // haut de l'en-tete). Le support ne descend jamais sous sa hauteur
+      // lisible ; son defileur ([DefileurCorps]) dit a la page ce qu'il
+      // cache, et la page, tete fixe ou non, lui donne cette hauteur et
+      // defile pour le reste. PAGESHELL-200-1d (decide par delegation le
+      // 05/10) : sur telephone, le reste comprend les vignettes ; la page
+      // defilee jusqu'au bout montre le support, les deux cameras et la
+      // barre. `minimumEtire` garde le support lisible quand « Agrandir »
+      // retire le defileur (le support seul, sans en-tete ni vignettes).
+      if (!large) {
+        return ColonneCorps(
+          minimumEtire: _hauteurMinSupport,
+          children: <Widget>[
+            bandeau,
+            Ecart.vMd,
+            Expanded(child: _corpsTelephone()),
+            Ecart.vMd,
+            barre,
+            Ecart.vLg,
+          ],
+        );
+      }
+      // Des la tablette (D1) : la salle est UNE carte (en-tete, support,
+      // vignettes, barre), sous le bandeau du decompte.
+      return ColonneCorps(
+        children: <Widget>[
+          bandeau,
+          Ecart.vMd,
+          Expanded(
+            child: DecoratedBox(
+              decoration: palette.surfaceRaised.decoration(
+                borderRadius: AppRadius.arrondiLg,
+                side: palette.borderHairline.asBorderSide(),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: ColonneCorps(
+                  minimumEtire: _hauteurMinSupport,
+                  children: <Widget>[
+                    Expanded(child: _corpsLarge()),
+                    Ecart.vMd,
+                    barre,
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Ecart.vLg,
+        ],
+      );
+    },
+  );
+
+  /// Telephone (M4) : en-tete, support, deux vignettes cote a cote. Le support
+  /// remplit la hauteur restante, jamais moins que [_hauteurMinSupport] :
+  /// quand la hauteur manque (telephone en paysage, texte agrandi, Interface
+  /// guidee), la page lui donne de quoi montrer l'en-tete, le support et les
+  /// vignettes entiers, et c'est la page qui defile (PAGESHELL-200-1c,
+  /// PAGESHELL-200-1d) ; jamais un debordement, jamais une camera cachee
+  /// dans un defileur imbrique.
+  Widget _corpsTelephone() => LayoutBuilder(
+    builder: (BuildContext context, BoxConstraints cadre) {
+      if (_agrandi) {
+        return _support();
+      }
+      return DefileurCorps(
+        builder: (BuildContext context, ScrollController defileur) =>
+            SingleChildScrollView(
+              controller: defileur,
+              child: _PileTelephone(
+                hauteur: cadre.maxHeight,
+                // OBS-COUPE-1b : sans support partage, la ligne d'attente
+                // prend la hauteur qu'il lui faut (a 320 px et 200 %,
+                // « s'affiche ici » etait rogne a mi-texte dans 200
+                // points) ; un support reel recoit une hauteur fixe, il ne
+                // sait pas se mesurer seul.
+                supportExtensible: widget.supportPartage == null,
+                children: <Widget>[
+                  _entete(),
+                  _support(),
+                  Row(
+                    children: <Widget>[
+                      Expanded(child: _vignetteEnseignant()),
+                      Ecart.hMd,
+                      Expanded(child: _vignetteEnfant()),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+      );
+    },
+  );
+
+  /// Des la tablette (D1) : en-tete, puis le support a environ trois
+  /// quarts de la largeur et la colonne des vignettes a droite. Quand la
+  /// hauteur manque (texte a 300 % sur une tablette, la barre en deux
+  /// rangees), la salle defile avec un support de hauteur minimale, comme
+  /// sur telephone : jamais un debordement (PAGESHELL-200-1).
+  Widget _corpsLarge() => Builder(
+    builder: (BuildContext context) {
+      final Widget salle = Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(flex: 7, child: _support()),
+          if (!_agrandi) ...<Widget>[
+            Ecart.hMd,
+            Expanded(
+              flex: 2,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    _vignetteEnseignant(),
+                    Ecart.vMd,
+                    _vignetteEnfant(),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ],
+      );
+      if (_agrandi) {
+        return salle;
+      }
+      // Le support prend la hauteur que l'en-tete laisse, jamais moins que
+      // [_hauteurMinSupport] : quand l'en-tete agrandi n'en laisse pas
+      // assez, la salle defile au lieu de deborder.
+      return DefileurCorps(
+        builder: (BuildContext context, ScrollController defileur) =>
+            CustomScrollView(
+              controller: defileur,
+              slivers: <Widget>[
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[_entete(), Ecart.vMd],
+                  ),
+                ),
+                SliverLayoutBuilder(
+                  builder: (BuildContext context, SliverConstraints place) =>
+                      SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: math.max(
+                            _hauteurMinSupport,
+                            place.viewportMainAxisExtent -
+                                place.precedingScrollExtent,
+                          ),
+                          child: salle,
+                        ),
+                      ),
+                ),
+              ],
+            ),
+      );
+    },
+  );
+
+  /// Le plus petit support qui reste lisible : en deca, la salle defile.
+  static const double _hauteurMinSupport = 200;
+
+  Widget _entete() {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final TextStyle discret = palette.inkMuted.applyTo(
-      textes.bodySmall ?? const TextStyle(),
-    );
+    final v = t.tc.observation.visite;
+    final String? sousTitre =
+        widget.sousTitre ??
+        _joindre(widget.vue.monEnfant?.nom, widget.vue.enseignant?.nom);
+    final String? detail = widget.videoIndisponible
+        ? v.videoIndisponible
+        : widget.etatSalle == EtatSalle.reconnexion
+        ? v.reconnexionDetail
+        : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        _Compteur(vue: vue),
-        if (budgetIncertain) ...<Widget>[
-          Ecart.vSm,
-          Text(t.tc.observation.visite.budgetIncertain, style: discret),
-        ],
-        if (videoIndisponible) ...<Widget>[
-          Ecart.vSm,
-          Text(t.tc.observation.visite.videoIndisponible, style: discret),
-        ],
-        Ecart.vLg,
-        supportPartage ??
-            EmptyState(
-              message: t.tc.observation.visite.supportIndisponible,
-              icone: AppIcons.coran,
-              registre: RegistreVide.subi,
-            ),
-        Ecart.vLg,
-        _Vignette(
-          etiquette: t.tc.observation.visite.enseignant,
-          prenom: vue.enseignant?.nom,
-          video: videoEnseignant,
-        ),
-        Ecart.vMd,
-        _Vignette(
-          etiquette: t.tc.observation.visite.monEnfant,
-          prenom: vue.monEnfant?.nom,
-          absent: t.tc.observation.visite.enfantAbsent,
-          video: videoEnfant,
-        ),
-        Ecart.vLg,
-        // Le rappel des interdictions est permanent, pas conditionnel : le
-        // tuteur n'a aucune commande de media a l'ecran, et un ecran sans
-        // commande ne dit pas de lui-meme pourquoi.
-        Text(t.tc.observation.visite.mediaFerme, style: discret),
-        Ecart.vXl,
-        ActionPrincipale(
-          libelle: t.tc.observation.visite.quitter,
-          onPress: onQuitter,
-          niveau: NiveauAction.secondaire,
-        ),
-      ],
-    );
-  }
-}
-
-/// Le compte a rebours discret du budget restant.
-class _Compteur extends StatelessWidget {
-  const _Compteur({required this.vue});
-
-  final VueObservationTuteur vue;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    final VueBudgetObservation? budget = vue.budget;
-
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: Text(t.tc.observation.visite.titre, style: textes.titleMedium),
-        ),
-        if (budget != null) ...<Widget>[
-          Ecart.hSm,
-          Text(
-            t.tc.observation.visite.visites(
-              rang: budget.rangVisite,
-              total: budget.visitesMax,
-            ),
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
-          ),
-          Ecart.hSm,
-          StatusPill(
-            libelle: t.tc.observation.visite.restant(
-              secondes: budget.secondesRestantes,
-            ),
-            ton: budget.restantAffiche <= seuilFinProcheObservation
-                ? TonEtat.avertissement
-                : TonEtat.accent,
-          ),
-        ],
-      ],
-    );
-  }
-}
-
-/// Une des deux seules vignettes que la visite expose.
-class _Vignette extends StatelessWidget {
-  const _Vignette({
-    required this.etiquette,
-    required this.prenom,
-    this.absent,
-    this.video,
-  });
-
-  final String etiquette;
-  final String? prenom;
-
-  /// L'image de cette personne, quand elle en publie une.
-  ///
-  /// Elle **s'ajoute** au nom, elle ne le remplace pas : un cadre video sans
-  /// legende obligerait le tuteur a deviner qui il regarde, et la retenue de la
-  /// visite tient justement a ce que chaque vignette soit nommee.
-  final Widget? video;
-
-  /// Ce qui se dit quand la personne n'est pas la. `null` = ne rien dire.
-  ///
-  /// L'absence de l'enfant se dit -- c'est la raison meme de la visite. Celle
-  /// de l'enseignant ne se dit pas ici : un cours sans enseignant a deja son
-  /// message, et le tuteur n'a rien a en faire depuis une fenetre de deux
-  /// minutes.
-  final String? absent;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    final String? nom = prenom;
-
-    if (nom == null) {
-      final String? message = absent;
-      if (message == null) {
-        return const SizedBox.shrink();
-      }
-      return AppCard(
-        child: Text(
-          message,
-          style: palette.inkMuted.applyTo(
-            textes.bodyMedium ?? const TextStyle(),
-          ),
-        ),
-      );
-    }
-
-    final Widget ligne = Row(
-      children: <Widget>[
-        AvatarTile(prenom: nom),
-        Ecart.hMd,
-        Expanded(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                etiquette,
-                style: palette.inkMuted.applyTo(
-                  textes.bodySmall ?? const TextStyle(),
+        // PAGESHELL-200-1b : en Interface guidee a 320 px et 200 %, le titre
+        // serre contre la pastille se coupait dans un mot (« Class / e »).
+        // La pastille passe sous le titre quand les deux ne tiennent pas sur
+        // une ligne ; le titre garde toute la largeur, et un mot trop long
+        // pour elle se reduit (borne de lisibilite) au lieu d'etre coupe.
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Semantics(
+                  header: true,
+                  child: TexteSansCoupure(
+                    widget.titre ?? v.titre,
+                    style: palette.inkStrong.applyTo(
+                      textes.titleMedium ?? const TextStyle(),
+                    ),
+                  ),
                 ),
-              ),
-              Text(nom, style: textes.titleMedium),
-            ],
-          ),
+                if (sousTitre != null)
+                  TexteSansCoupure(
+                    sousTitre,
+                    style: palette.inkMuted.applyTo(
+                      textes.bodySmall ?? const TextStyle(),
+                    ),
+                  ),
+              ],
+            ),
+            _pastilleDirect(),
+          ],
         ),
+        if (detail != null) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              detail,
+              style: palette.inkMuted.applyTo(
+                textes.bodySmall ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
       ],
     );
+  }
 
-    final Widget? image = video;
-    if (image == null) {
-      return AppCard(child: ligne);
+  /// L'etat reel du direct : jamais « En direct » quand le lien est perdu.
+  Widget _pastilleDirect() {
+    final v = t.tc.observation.visite;
+    if (widget.videoIndisponible || widget.etatSalle == EtatSalle.echec) {
+      return StatusPill(libelle: v.videoCoupee, ton: TonEtat.alerte);
     }
+    return switch (widget.etatSalle) {
+      EtatSalle.connecte ||
+      EtatSalle.retabli ||
+      EtatSalle.instable => PastilleEtatSeance(
+        etat: EtatPastilleSeance.enDirect,
+        libelle: v.enDirect,
+      ),
+      EtatSalle.reconnexion => StatusPill(
+        libelle: v.reconnexion,
+        ton: TonEtat.avertissement,
+      ),
+      _ => StatusPill(libelle: v.connexion, ton: TonEtat.neutre),
+    };
+  }
 
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ClipRRect(
-            borderRadius: AppMetriques.of(context).arrondi,
-            // `AspectRatio` plutot qu'une hauteur fixe : le panneau se lit sur
-            // un telephone de 390 points comme sur un bureau, et un cadre video
-            // a hauteur figee y serait tantot ecrase, tantot demesure.
-            child: AspectRatio(aspectRatio: _formatVideo, child: image),
-          ),
-          Ecart.vSm,
-          ligne,
-        ],
+  Widget _support() {
+    final AppPalette palette = AppPalette.of(context);
+    return DecoratedBox(
+      key: const ValueKey<String>('support-observation'),
+      decoration: palette.surfaceRaised.decoration(
+        borderRadius: AppRadius.arrondiMd,
+        side: palette.borderHairline.asBorderSide(),
+      ),
+      child: ClipRRect(
+        borderRadius: AppRadius.arrondiMd,
+        child:
+            widget.supportPartage ??
+            // Aucun support partage : une ligne discrete au centre, pas un
+            // etat vide de page (le support reste la zone dominante).
+            // PAGESHELL-200-1c : quand la page defile de toute facon, elle
+            // donne a la ligne la hauteur qu'il lui faut (Interface guidee a
+            // 200 % en paysage : « s'affiche ici » etait rogne a mi-ligne).
+            Center(
+              child: DefileurCorps(
+                builder: (BuildContext _, ScrollController defileur) =>
+                    SingleChildScrollView(
+                      controller: defileur,
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ExcludeSemantics(
+                            child: IconTheme(
+                              data: palette.inkFaint.asIconTheme(
+                                size: AppSpacing.xxxl,
+                              ),
+                              child: Icon(AppIcons.bibliotheque.repos),
+                            ),
+                          ),
+                          Ecart.vSm,
+                          Text(
+                            t.tc.observation.visite.supportIndisponible,
+                            textAlign: TextAlign.center,
+                            style: palette.inkMuted.applyTo(
+                              Theme.of(context).textTheme.bodyMedium ??
+                                  const TextStyle(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+              ),
+            ),
       ),
     );
   }
 
-  /// Le format d'un cadre video, celui que les cameras produisent.
-  static const double _formatVideo = 16 / 9;
+  Widget _vignetteEnseignant() => _Vignette(
+    cle: const ValueKey<String>('vignette-enseignant'),
+    personne: widget.vue.enseignant,
+    repli: t.tc.observation.visite.enseignant,
+    video: widget.videoEnseignant,
+  );
+
+  Widget _vignetteEnfant() => _Vignette(
+    cle: const ValueKey<String>('vignette-enfant'),
+    personne: widget.vue.monEnfant,
+    repli: t.tc.observation.visite.monEnfant,
+    video: widget.videoEnfant,
+  );
+
+  static String? _joindre(String? a, String? b) {
+    final List<String> parties = <String>[?a, ?b];
+    return parties.isEmpty ? null : parties.join(' · ');
+  }
+}
+
+/// Une des deux seules vignettes que la visite expose (M3, M4, D1).
+///
+/// L'image, quand la personne en publie une, **s'ajoute** a son nom, elle ne
+/// le remplace pas : un cadre video sans legende obligerait le tuteur a deviner
+/// qui il regarde. Sans image : l'initiale et « Camera fermee » ; personne
+/// dans la salle : « Pas encore dans la salle », jamais « absent » (la
+/// presence est dite par le serveur, pas deduite d'une connexion).
+class _Vignette extends StatelessWidget {
+  const _Vignette({
+    required this.cle,
+    required this.personne,
+    required this.repli,
+    this.video,
+  });
+
+  final Key cle;
+  final ParticipantSalle? personne;
+
+  /// Le libelle quand le nom n'est pas connu : « Votre enfant », « Enseignant ».
+  final String repli;
+  final Widget? video;
+
+  /// Le format d'une vignette : 4:3, celui des maquettes (M4 ≈ 176 x 126,
+  /// D1 ≈ 272 x 200).
+  static const double _format = 4 / 3;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final ParticipantSalle? p = personne;
+    final String nom = p?.nom ?? repli;
+    final bool parle = p?.parle ?? false;
+    final Widget? image = p == null ? null : video;
+    final v = t.tc.observation.visite;
+
+    final Widget fond = image != null
+        ? SizedBox.expand(child: image)
+        : ColoredBox(
+            color: palette.surfaceSunken.background,
+            // AVATAR-1 : le petit cercle du composant partage, contenu dans la
+            // vignette ; la legende est l'unique ligne de texte.
+            child: p == null
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm,
+                      ),
+                      child: Text(
+                        v.pasEncoreLa,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: palette.inkMuted.applyTo(
+                          textes.bodySmall ?? const TextStyle(),
+                        ),
+                      ),
+                    ),
+                  )
+                // TUILE-TUTEUR-1 : la meme tuile sans image que la salle et
+                // la scene live (VIDEO-TUILE-1) : cercle, nom centre dessous ;
+                // « Camera fermee » est lu, la tuile parle dans son coin.
+                : TuileSansImage(
+                    prenom: p.nom,
+                    nom: nom,
+                    libelleSansImage: v.cameraFermee,
+                    styleNom: palette.surfaceSunken.applyTo(
+                      textes.labelMedium ?? const TextStyle(),
+                    ),
+                    coin: parle ? const _OndesParole() : null,
+                  ),
+          );
+    // Sans image, le nom est deja sous le cercle : l'etiquette du bas ne le
+    // redit pas.
+    final bool etiquette = image != null || p == null;
+
+    // Une vignette est un cadre video de taille fixe : son texte grossit
+    // jusqu'au seuil des commandes, pas au-dela (les noms se relisent en
+    // taille pleine dans l'en-tete).
+    return MediaQuery.withClampedTextScaling(
+      maxScaleFactor: seuilTexteEmpile,
+      child: _cadre(
+        palette,
+        fond,
+        nom,
+        parle,
+        v.parle(nom: nom),
+        etiquette: etiquette,
+        sansImage: etiquette ? null : v.cameraFermee,
+      ),
+    );
+  }
+
+  Widget _cadre(
+    AppPalette palette,
+    Widget fond,
+    String nom,
+    bool parle,
+    String nomQuiParle, {
+    required bool etiquette,
+    required String? sansImage,
+  }) {
+    return Semantics(
+      key: cle,
+      container: true,
+      // TUILE-TUTEUR-1b : sans image, le cadre dit tout en un seul noeud
+      // (« Mariam, Camera fermee ») ; la tuile partagee ne le redit pas
+      // dessous, sinon le nom est annonce deux fois.
+      label: <String>[if (parle) nomQuiParle else nom, ?sansImage].join(', '),
+      excludeSemantics: sansImage != null,
+      child: DecoratedBox(
+        position: DecorationPosition.foreground,
+        decoration: BoxDecoration(
+          borderRadius: AppRadius.arrondiSm,
+          // Le liseré d'accent ne s'affiche que sur un signal reel du moteur
+          // (`ParticipantSalle.parle`), jamais par defaut (V8, D1).
+          border: parle
+              ? Border.fromBorderSide(palette.inkAccent.asBorderSide(width: 2))
+              : null,
+        ),
+        child: ClipRRect(
+          borderRadius: AppRadius.arrondiSm,
+          child: AspectRatio(
+            aspectRatio: _format,
+            child: Stack(
+              children: <Widget>[
+                Positioned.fill(child: fond),
+                if (etiquette)
+                  PositionedDirectional(
+                    start: AppSpacing.sm,
+                    bottom: AppSpacing.sm,
+                    end: AppSpacing.sm,
+                    child: Align(
+                      alignment: AlignmentDirectional.bottomStart,
+                      child: _Etiquette(nom: nom, parle: parle),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Les ondes de parole, seules, dans le coin d'une tuile sans image (signal
+/// reel seulement, comme l'etiquette).
+class _OndesParole extends StatelessWidget {
+  const _OndesParole();
+
+  @override
+  Widget build(BuildContext context) => IconTheme(
+    data: AppPalette.of(context).pointsStatut.succes
+        .asIconTheme(size: AppSpacing.lg),
+    child: Icon(AppIcons.libelleAudio.repos),
+  );
+}
+
+/// L'etiquette du nom sur la vignette : pilule sombre, nom, ondes quand la
+/// personne parle (signal reel seulement).
+class _Etiquette extends StatelessWidget {
+  const _Etiquette({required this.nom, required this.parle});
+
+  final String nom;
+  final bool parle;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+
+    return ExcludeSemantics(
+      child: DecoratedBox(
+        decoration: palette.surfaceInverse.decoration(
+          borderRadius: AppRadius.arrondiFull,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm,
+            vertical: AppSpacing.xs,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Flexible(
+                child: Text(
+                  nom,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: palette.surfaceInverse.applyTo(
+                    textes.labelMedium ?? const TextStyle(),
+                  ),
+                ),
+              ),
+              if (parle) ...<Widget>[
+                Ecart.hXs,
+                IconTheme(
+                  data: palette.pointsStatut.succes.asIconTheme(
+                    size: AppSpacing.lg,
+                  ),
+                  child: Icon(AppIcons.libelleAudio.repos),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// La salle du telephone dans son defileur (PAGESHELL-200-1c) : l'en-tete,
+/// le support, les vignettes.
+///
+/// L'en-tete et les vignettes gardent leur hauteur naturelle ; le support
+/// prend ce qu'ils laissent de [hauteur] (celle du defileur), jamais moins
+/// que [_PanneauObservationTuteurEtat._hauteurMinSupport]. Quand la salle
+/// tient, rien ne defile ; sinon, le support garde sa hauteur lisible au
+/// lieu d'etre ecrase (102 px en Interface guidee a 390x844, avant).
+class _PileTelephone extends MultiChildRenderObjectWidget {
+  const _PileTelephone({
+    required this.hauteur,
+    required this.supportExtensible,
+    required super.children,
+  }) : assert(children.length == 3, 'en-tete, support, vignettes');
+
+  /// La hauteur du defileur.
+  final double hauteur;
+
+  /// Vrai quand le support peut depasser la hauteur donnee pour montrer son
+  /// contenu (la ligne d'attente) ; faux pour un support reel, de hauteur
+  /// fixe.
+  final bool supportExtensible;
+
+  @override
+  _RenduPileTelephone createRenderObject(BuildContext context) =>
+      _RenduPileTelephone(hauteur, supportExtensible);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenduPileTelephone renderObject,
+  ) {
+    renderObject
+      ..hauteur = hauteur
+      ..supportExtensible = supportExtensible;
+  }
+}
+
+class _DonneesPile extends ContainerBoxParentData<RenderBox> {}
+
+class _RenduPileTelephone extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _DonneesPile>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _DonneesPile> {
+  _RenduPileTelephone(this._hauteur, this._supportExtensible);
+
+  double _hauteur;
+  set hauteur(double valeur) {
+    if (valeur == _hauteur) {
+      return;
+    }
+    _hauteur = valeur;
+    markNeedsLayout();
+  }
+
+  bool _supportExtensible;
+  set supportExtensible(bool valeur) {
+    if (valeur == _supportExtensible) {
+      return;
+    }
+    _supportExtensible = valeur;
+    markNeedsLayout();
+  }
+
+  static const double _ecart = AppSpacing.md;
+  static const double _minimum =
+      _PanneauObservationTuteurEtat._hauteurMinSupport;
+
+  List<RenderBox> get _enfants => getChildrenAsList();
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _DonneesPile) {
+      child.parentData = _DonneesPile();
+    }
+  }
+
+  /// La hauteur du support, l'en-tete et les vignettes mesures.
+  double _support(double entete, double vignettes) {
+    final double reste = _hauteur.isFinite
+        ? _hauteur - entete - vignettes - 2 * _ecart
+        : 0;
+    return math.max(_minimum, reste);
+  }
+
+  double _intrinseque(double largeur, {required bool max}) {
+    final List<RenderBox> e = _enfants;
+    double h(RenderBox b) => max
+        ? b.getMaxIntrinsicHeight(largeur)
+        : b.getMinIntrinsicHeight(largeur);
+    final double entete = h(e[0]);
+    final double vignettes = h(e[2]);
+    return entete + _support(entete, vignettes) + vignettes + 2 * _ecart;
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) => _enfants.fold(
+    0,
+    (double m, RenderBox b) => math.max(m, b.getMinIntrinsicWidth(height)),
+  );
+
+  @override
+  double computeMaxIntrinsicWidth(double height) => _enfants.fold(
+    0,
+    (double m, RenderBox b) => math.max(m, b.getMaxIntrinsicWidth(height)),
+  );
+
+  @override
+  double computeMinIntrinsicHeight(double width) =>
+      _intrinseque(width, max: false);
+
+  @override
+  double computeMaxIntrinsicHeight(double width) =>
+      _intrinseque(width, max: true);
+
+  @override
+  Size computeDryLayout(covariant BoxConstraints constraints) {
+    final List<RenderBox> e = _enfants;
+    final BoxConstraints largeur = BoxConstraints.tightFor(
+      width: constraints.maxWidth,
+    );
+    final double entete = e[0].getDryLayout(largeur).height;
+    final double vignettes = e[2].getDryLayout(largeur).height;
+    return constraints.constrain(
+      Size(
+        constraints.maxWidth,
+        entete + _support(entete, vignettes) + vignettes + 2 * _ecart,
+      ),
+    );
+  }
+
+  @override
+  void performLayout() {
+    final List<RenderBox> e = _enfants;
+    final double largeur = constraints.maxWidth;
+    final BoxConstraints pleine = BoxConstraints.tightFor(width: largeur);
+    e[0].layout(pleine, parentUsesSize: true);
+    e[2].layout(pleine, parentUsesSize: true);
+    final double entete = e[0].size.height;
+    final double vignettes = e[2].size.height;
+    final double hauteurSupport = _support(entete, vignettes);
+    e[1].layout(
+      _supportExtensible
+          ? BoxConstraints(
+              minWidth: largeur,
+              maxWidth: largeur,
+              minHeight: hauteurSupport,
+            )
+          : BoxConstraints.tight(Size(largeur, hauteurSupport)),
+      parentUsesSize: true,
+    );
+    double y = 0;
+    (e[0].parentData! as _DonneesPile).offset = Offset.zero;
+    y += entete + _ecart;
+    (e[1].parentData! as _DonneesPile).offset = Offset(0, y);
+    y += e[1].size.height + _ecart;
+    (e[2].parentData! as _DonneesPile).offset = Offset(0, y);
+    y += vignettes;
+    size = constraints.constrain(Size(largeur, y));
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) =>
+      defaultHitTestChildren(result, position: position);
+
+  @override
+  void paint(PaintingContext context, Offset offset) =>
+      defaultPaint(context, offset);
 }

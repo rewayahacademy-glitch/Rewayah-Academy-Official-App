@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 /// Le theme n'expose jamais une couleur seule : il expose des paires, pour que
 /// l'erreur de contraste devienne structurellement impossible plutot que
 /// dependante de la vigilance de qui ecrit l'ecran.
-/// Voir `docs/produit/design-tokens.md` section 1.
+/// Voir `docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 1.
 ///
 /// Un widget qui prend `background` sans `onBackground`, ou l'inverse, est un
 /// signal de revue de code a corriger avant fusion.
@@ -95,6 +95,62 @@ class AppInkColor {
   @override
   bool operator ==(Object other) =>
       other is AppInkColor && other._value == _value;
+
+  @override
+  int get hashCode => _value.hashCode;
+}
+
+/// Une couleur d'indicateur : un point de statut plein, jamais un texte ni un
+/// fond de texte.
+///
+/// Les points de statut (succes, attention, alerte, neutre) doublent toujours
+/// un libelle et une etiquette semantique. Ils visent 3:1 contre les surfaces
+/// ou ils se posent (element graphique, WCAG 1.4.11), pas 4,5:1 : exposes en
+/// [AppInkColor], ils pourraient servir d'encre de texte et tomberaient sous
+/// le seuil. Cette classe ne sait donc construire qu'un disque plein, ou le
+/// theme d'une icone pleine.
+@immutable
+class AppIndicatorColor {
+  /// Cree une couleur d'indicateur.
+  const AppIndicatorColor(this._value);
+
+  final Color _value;
+
+  /// Un disque plein de cette couleur.
+  ///
+  /// [cerclage] est la surface sur laquelle le point est pose : sur un avatar,
+  /// un anneau de la couleur du fond detache le point de la photo.
+  BoxDecoration pastille({AppColorPair? cerclage, double largeurCerclage = 2}) {
+    return BoxDecoration(
+      shape: BoxShape.circle,
+      color: _value,
+      border: cerclage == null
+          ? null
+          : Border.fromBorderSide(
+              BorderSide(color: cerclage.background, width: largeurCerclage),
+            ),
+    );
+  }
+
+  /// Construit un theme d'icone de cet indicateur (coche d'une pastille).
+  IconThemeData asIconTheme({double? size}) =>
+      IconThemeData(color: _value, size: size);
+
+  /// Valeur brute, reservee aux tests de contraste et aux outils de
+  /// verification. Ne pas utiliser dans un widget.
+  @visibleForTesting
+  Color get debugValue => _value;
+
+  /// Interpolation, requise par [ThemeExtension].
+  static AppIndicatorColor lerp(
+    AppIndicatorColor a,
+    AppIndicatorColor b,
+    double t,
+  ) => AppIndicatorColor(Color.lerp(a._value, b._value, t)!);
+
+  @override
+  bool operator ==(Object other) =>
+      other is AppIndicatorColor && other._value == _value;
 
   @override
   int get hashCode => _value.hashCode;

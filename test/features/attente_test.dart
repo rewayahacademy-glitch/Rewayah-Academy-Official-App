@@ -1,10 +1,21 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/marque_page.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
+import 'package:rewayah_academy/features/dossier/signature_page.dart';
+import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
 
 import '../support/harnais.dart';
 
@@ -18,7 +29,10 @@ Future<void> _monter(WidgetTester tester, FauxServiceDossier dossier) async {
   await tester.pumpAndSettle();
 }
 
+// K-47 (HL-A-6) : la piece, sa verification et son refus ne concernent que
+// l'enseignant ; le tuteur se construit avec [role] explicite.
 EtatDossier _etat({
+  AppRole role = AppRole.teacher,
   AccountStatus statut = AccountStatus.pendingKyc,
   bool accuse = false,
   bool contrat = false,
@@ -26,9 +40,10 @@ EtatDossier _etat({
   StatutPiece? statutPiece,
   String? motif,
   DateTime? depose,
+  bool? correction,
 }) => EtatDossier(
   profilExiste: true,
-  role: AppRole.guardian,
+  role: role,
   statutCompte: statut,
   accuseSigne: accuse,
   contratSigne: contrat,
@@ -36,9 +51,76 @@ EtatDossier _etat({
   statutPiece: statutPiece,
   motifRefus: motif,
   deposeLe: depose,
+  correctionAutorisee: correction,
 );
 
 void main() {
+  // AD-NETTOYAGE-2 (m6, m7, m8, m11).
+  group('mise en page du portail d attente', () {
+    testWidgets('une seule tete : le titre de la page, pas le mot-marque', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = _etat(
+          accuse: true,
+          contrat: true,
+          piece: true,
+          statutPiece: StatutPiece.enAttente,
+        );
+      await _monter(tester, dossier);
+      expect(find.byType(MarquePage), findsNothing);
+      expect(find.text(t.attente.titreDossier), findsOneWidget);
+    });
+
+    testWidgets('1440 : la colonne est bornee a 760 et Actualiser tient au '
+        'bord de fin', (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(1440, 900);
+      addTearDown(tester.view.reset);
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = _etat(
+          accuse: true,
+          contrat: true,
+          piece: true,
+          statutPiece: StatutPiece.enAttente,
+        );
+      await _monter(tester, dossier);
+      final Rect carte = tester.getRect(find.byType(AppCard));
+      expect(carte.width, lessThanOrEqualTo(AppPage.largeurReglages));
+      final Rect actualiser = tester.getRect(
+        find.widgetWithText(ActionPrincipale, t.attente.actualiser),
+      );
+      // Au bord de fin de la colonne, pas au centre : le bouton est a droite
+      // de la moitie de la carte, et aligne sur son bord de fin.
+      expect(actualiser.right, closeTo(carte.right, 1));
+      expect(actualiser.width, lessThan(carte.width - 4 * AppSpacing.lg));
+    });
+
+    testWidgets('refus : l element a reprendre, en minuscule apres la '
+        'ponctuation, et le motif en encre normale', (
+      WidgetTester tester,
+    ) async {
+      const String motif = 'Photo illisible, merci de la reprendre.';
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = _etat(
+          accuse: true,
+          contrat: true,
+          piece: true,
+          statutPiece: StatutPiece.refusee,
+          motif: motif,
+        );
+      await _monter(tester, dossier);
+      expect(
+        t.attente.refuseDetail(element: t.attente.pieceIdentite),
+        startsWith('Élément à reprendre'),
+      );
+      final Text texteMotif = tester.widget<Text>(find.text(motif));
+      final Text titre = tester.widget<Text>(find.text(t.attente.refuse));
+      // Le motif n'est plus plus visible que le titre « Dossier refusé ».
+      expect(texteMotif.style!.fontSize!, lessThan(titre.style!.fontSize!));
+    });
+  });
+
   group('Scenario 10 : le portail d attente affiche le bon etat', () {
     testWidgets('dossier incomplet : la liste de ce qui manque, dans l ordre', (
       WidgetTester tester,
@@ -150,6 +232,67 @@ void main() {
     });
   });
 
+  group('La prochaine action mene au bon contrat, geste depuis le portail', () {
+    Future<void> monter(
+      WidgetTester tester, {
+      required UsageInscription? usage,
+    }) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = _etat(role: AppRole.guardian, accuse: true);
+      final List<Override> surcharges = <Override>[
+        serviceDossierProvider.overrideWithValue(dossier),
+      ];
+      if (usage != null) {
+        surcharges.add(
+          brouillonInscriptionProvider.overrideWith(
+            () => _ControleurBrouillonDeTest(usage),
+          ),
+        );
+      }
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.attente,
+          routes: <RouteBase>[
+            GoRoute(
+              path: Routes.attente,
+              builder: (BuildContext _, GoRouterState _) => const AttentePage(),
+            ),
+            GoRoute(
+              path: Routes.attenteContrat,
+              builder: (BuildContext _, GoRouterState _) => const ContratPage(),
+            ),
+          ],
+          surcharges: surcharges,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // HL-A-5 : l'action est sous la carte d'etat, dans le corps defilant.
+      await tester.ensureVisible(find.text(t.attente.signerLeContrat));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.attente.signerLeContrat));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('inscription « Moi uniquement » : variante eleve adulte', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, usage: UsageInscription.moi);
+
+      expect(find.text(t.consentement.texte.caseAdulte), findsOneWidget);
+      expect(find.text(t.consentement.texte.caseResponsable), findsNothing);
+    });
+
+    testWidgets('sans brouillon (rechargement) : variante responsable legal', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, usage: null);
+
+      expect(find.text(t.consentement.texte.caseResponsable), findsOneWidget);
+      expect(find.text(t.consentement.texte.caseAdulte), findsNothing);
+    });
+  });
+
   group('EtatDossier : ce qui manque, et dans quel ordre', () {
     test('un refus prime sur une piece manquante', () {
       // C est le refus qui porte le motif, donc ce que la famille doit lire.
@@ -205,4 +348,305 @@ void main() {
       },
     );
   });
+
+  group('AD-10 : correction, correction interdite, relecture au retour', () {
+    Future<(FausseSourceSession, FauxServiceAuth)> monter(
+      WidgetTester tester,
+      EtatDossier etat,
+    ) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()..etatRendu = etat;
+      final FausseSourceSession source = FausseSourceSession();
+      final FauxServiceAuth auth = FauxServiceAuth();
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.attente,
+          routes: <RouteBase>[
+            GoRoute(
+              path: Routes.attente,
+              builder: (BuildContext _, GoRouterState _) => const AttentePage(),
+            ),
+            GoRoute(
+              path: Routes.attenteContrat,
+              builder: (BuildContext _, GoRouterState _) => const ContratPage(),
+            ),
+            GoRoute(
+              path: Routes.attentePiece,
+              builder: (BuildContext _, GoRouterState _) =>
+                  const Text('route-piece'),
+            ),
+          ],
+          surcharges: <Override>[
+            serviceDossierProvider.overrideWithValue(dossier),
+            sourceSessionProvider.overrideWithValue(source),
+            serviceAuthProvider.overrideWithValue(auth),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      return (source, auth);
+    }
+
+    testWidgets(
+      'T6 correction interdite : le texte de la spec, sans Corriger',
+      (WidgetTester tester) async {
+        final (FausseSourceSession _, FauxServiceAuth auth) = await monter(
+          tester,
+          _etat(
+            accuse: true,
+            contrat: true,
+            piece: true,
+            statutPiece: StatutPiece.refusee,
+            motif: 'Motif fictif.',
+            correction: false,
+          ),
+        );
+
+        expect(find.text(t.attente.refuse), findsOneWidget);
+        expect(find.text(t.attente.correctionImpossible), findsOneWidget);
+        expect(find.text(t.attente.corriger), findsNothing);
+        expect(
+          find.text(t.attente.refuseDetail(element: t.attente.pieceIdentite)),
+          findsNothing,
+        );
+
+        await tester.tap(find.text(t.attente.seDeconnecter));
+        await tester.pumpAndSettle();
+        expect(auth.deconnexions, 1);
+      },
+    );
+
+    testWidgets('T7 Corriger mene au premier element a corriger', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        _etat(
+          accuse: true,
+          piece: true,
+          statutPiece: StatutPiece.refusee,
+          motif: 'Motif fictif.',
+        ),
+      );
+
+      // Le texte nomme l'element que « Corriger » ouvre, et non la piece.
+      expect(
+        find.text(t.attente.refuseDetail(element: t.attente.signatureContrat)),
+        findsOneWidget,
+      );
+      await tester.tap(find.text(t.attente.corriger));
+      await tester.pumpAndSettle();
+      expect(find.byType(ContratPage), findsOneWidget);
+      expect(find.text('route-piece'), findsNothing);
+    });
+
+    testWidgets('Corriger mene au depot quand seule la piece est refusee', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        _etat(
+          accuse: true,
+          contrat: true,
+          piece: true,
+          statutPiece: StatutPiece.refusee,
+          motif: 'Motif fictif.',
+        ),
+      );
+
+      await tester.tap(find.text(t.attente.corriger));
+      await tester.pumpAndSettle();
+      expect(find.text('route-piece'), findsOneWidget);
+    });
+
+    testWidgets('en verification : aucune promesse, et l actualisation relit', (
+      WidgetTester tester,
+    ) async {
+      final (FausseSourceSession source, FauxServiceAuth _) = await monter(
+        tester,
+        _etat(
+          accuse: true,
+          contrat: true,
+          piece: true,
+          statutPiece: StatutPiece.enAttente,
+        ),
+      );
+
+      expect(find.textContaining('notification'), findsNothing);
+      await tester.tap(find.text(t.attente.actualiser));
+      await tester.pumpAndSettle();
+      expect(source.rafraichissements, 1);
+    });
+
+    testWidgets('T8 le retour dans l application relit la session', (
+      WidgetTester tester,
+    ) async {
+      final (FausseSourceSession source, FauxServiceAuth _) = await monter(
+        tester,
+        _etat(
+          accuse: true,
+          contrat: true,
+          piece: true,
+          statutPiece: StatutPiece.enAttente,
+        ),
+      );
+
+      // Les transitions une a une, comme la plateforme les envoie.
+      for (final AppLifecycleState s in <AppLifecycleState>[
+        AppLifecycleState.inactive,
+        AppLifecycleState.hidden,
+        AppLifecycleState.paused,
+      ]) {
+        tester.binding.handleAppLifecycleStateChanged(s);
+      }
+      await tester.pump();
+      expect(source.rafraichissements, 0);
+      for (final AppLifecycleState s in <AppLifecycleState>[
+        AppLifecycleState.hidden,
+        AppLifecycleState.inactive,
+        AppLifecycleState.resumed,
+      ]) {
+        tester.binding.handleAppLifecycleStateChanged(s);
+      }
+      await tester.pumpAndSettle();
+      expect(source.rafraichissements, 1);
+    });
+
+    // K-47 (HL-A-6) : le tuteur ne depose aucune piece et n'attend aucune
+    // validation ; ses accords restent.
+    testWidgets('tuteur incomplet : l accuse et le contrat, jamais la piece', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, _etat(role: AppRole.guardian));
+
+      expect(find.text(t.attente.accordsARelire), findsOneWidget);
+      expect(find.text(t.attente.carteAccuse), findsOneWidget);
+      expect(find.text(t.attente.signatureContrat), findsOneWidget);
+      expect(find.text(t.attente.pieceIdentite), findsNothing);
+      expect(find.text(t.attente.deposerLaPiece), findsNothing);
+      expect(find.text(t.attente.dossierIncomplet), findsNothing);
+      expect(find.text(t.attente.titreDossier), findsNothing);
+    });
+
+    testWidgets(
+      'tuteur accords signes, compte en attente : etat honnete, sans piece',
+      (WidgetTester tester) async {
+        final (FausseSourceSession source, FauxServiceAuth auth) = await monter(
+          tester,
+          _etat(role: AppRole.guardian, accuse: true, contrat: true),
+        );
+
+        expect(find.text(t.attente.accesTitre), findsOneWidget);
+        expect(find.text(t.attente.accesEnPreparation), findsOneWidget);
+        expect(find.textContaining(t.attente.aucunDocument), findsOneWidget);
+        // Aucune ouverture n'est promise « en cours » : la sortie est dite.
+        expect(find.textContaining(t.attente.accesContact), findsOneWidget);
+        expect(find.text(t.attente.titreCompte), findsWidgets);
+        for (final String interdit in <String>[
+          t.attente.titre,
+          t.attente.enVerification,
+          t.attente.delai,
+          t.attente.pieceIdentite,
+          t.attente.deposerLaPiece,
+          t.attente.corriger,
+        ]) {
+          expect(find.text(interdit), findsNothing, reason: interdit);
+        }
+
+        await tester.tap(find.text(t.attente.actualiserCompte));
+        await tester.pumpAndSettle();
+        expect(source.rafraichissements, 1);
+
+        await tester.tap(find.text(t.attente.seDeconnecter));
+        await tester.pumpAndSettle();
+        expect(auth.deconnexions, 1);
+      },
+    );
+
+    testWidgets(
+      'tuteur avec une ancienne piece refusee : ni refus ni Corriger',
+      (WidgetTester tester) async {
+        await monter(
+          tester,
+          _etat(
+            role: AppRole.guardian,
+            accuse: true,
+            contrat: true,
+            piece: true,
+            statutPiece: StatutPiece.refusee,
+            motif: 'Motif fictif.',
+          ),
+        );
+
+        expect(find.text(t.attente.refuse), findsNothing);
+        expect(find.text('Motif fictif.'), findsNothing);
+        expect(find.text(t.attente.corriger), findsNothing);
+        expect(find.text(t.attente.accesEnPreparation), findsOneWidget);
+        expect(find.text('route-piece'), findsNothing);
+      },
+    );
+
+    test('tuteur : aucune piece exigee, meme si la base ne le dit pas', () {
+      final EtatDossier lu = EtatDossier.depuisJson(const <String, dynamic>{
+        'profil': true,
+        'role': 'guardian',
+        'statut': 'pending_kyc',
+        'contrat_signe': true,
+        'accuse_signe': true,
+      });
+      expect(lu.pieceExigee, isFalse);
+      expect(lu.manquants, isEmpty);
+      expect(lu.etape, EtapeDossier.accesEnPreparation);
+    });
+
+    testWidgets(
+      'role illisible : etat illisible et Reessayer, jamais la piece',
+      (WidgetTester tester) async {
+        final FauxServiceDossier dossier = FauxServiceDossier()
+          ..etatRendu = const EtatDossier(
+            profilExiste: true,
+            statutCompte: AccountStatus.pendingKyc,
+          );
+        await _monter(tester, dossier);
+
+        expect(find.text(t.attente.illisible), findsOneWidget);
+        expect(find.text(t.commun.reessayer), findsOneWidget);
+        expect(find.text(t.attente.pieceIdentite), findsNothing);
+        expect(find.text(t.attente.deposerLaPiece), findsNothing);
+        expect(
+          const EtatDossier(profilExiste: true).pieceExigee,
+          isFalse,
+          reason: 'un role absent n exige aucune piece',
+        );
+      },
+    );
+
+    test('T11 correction_autorisee absente : nulle, la correction reste', () {
+      final EtatDossier sans = EtatDossier.depuisJson(const <String, dynamic>{
+        'profil': true,
+        'piece_statut': 'rejected',
+      });
+      final EtatDossier interdite = EtatDossier.depuisJson(
+        const <String, dynamic>{
+          'profil': true,
+          'piece_statut': 'rejected',
+          'correction_autorisee': false,
+        },
+      );
+      expect(sans.correctionAutorisee, isNull);
+      expect(interdite.correctionAutorisee, isFalse);
+      expect(sans == interdite, isFalse);
+    });
+  });
+}
+
+/// Un brouillon d'inscription fige a un usage, pour tester la variante lue
+/// par le portail d'attente sans rejouer les quatre etapes.
+class _ControleurBrouillonDeTest extends BrouillonInscriptionControleur {
+  _ControleurBrouillonDeTest(this._usage);
+
+  final UsageInscription _usage;
+
+  @override
+  BrouillonInscription build() =>
+      const BrouillonInscription().copier(usage: _usage);
 }

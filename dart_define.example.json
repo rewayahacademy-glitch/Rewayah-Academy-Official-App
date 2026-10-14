@@ -1,5 +1,5 @@
 {
-  "_lisez_moi": "Copiez ce fichier en dart_define.json et remplissez les valeurs. dart_define.json est ignore par git : aucune cle ne doit etre versionnee (docs/agent-onboarding.md etape D).",
+  "_lisez_moi": "Copiez ce fichier en dart_define.json et remplissez les valeurs. dart_define.json est ignore par git : aucune cle ne doit etre versionnee (docs/archive/2026-09-pre-remise-a-plat/agent-onboarding.md etape D).",
 
   "SUPABASE_URL": "https://gggmtelinlpseweouyav.supabase.co",
   "SUPABASE_ANON_KEY": "",

@@ -9,7 +9,7 @@ import 'status_pill.dart';
 
 /// Un chiffre et son libelle, dans une carte qui mene a son ecran d'action.
 ///
-/// Trois regles, et elles se tiennent (`docs/design/02-regles-ux.md`) :
+/// Trois regles, et elles se tiennent (`docs/archive/2026-09-pre-remise-a-plat/design/02-regles-ux.md`) :
 ///
 /// 1. **Le zero s'affiche comme les autres valeurs**, jamais masque. Un
 ///    compteur qui disparait a zero fait douter s'il a ete charge ou s'il est

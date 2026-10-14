@@ -70,7 +70,7 @@ abstract class PortRappelDiscret {
   /// en est. Sans cette lecture, l'interface ne pourrait qu'envoyer pour
   /// apprendre que c'est trop tot -- donc afficher un echec la ou la spec
   /// demande de ne rien afficher. La demande d'amendement est ecrite en section
-  /// 2 de `docs/teaching-core/TC_CONTRACT_REQUEST_E.md`.
+  /// 2 de `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_E.md`.
   Duration? cooldownRestant({
     required String sessionId,
     required String academyId,

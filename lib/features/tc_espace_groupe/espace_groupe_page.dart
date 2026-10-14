@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/capacites/port_acces_foyer.dart';
+import '../../core/i18n/isolat_bidi.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
@@ -15,14 +18,19 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../acces_finance/acces_finance.dart';
+import '../recherche/entree_recherche.dart';
 import '../tc_catalogue/routes_tc_b.dart';
 import '../tc_mes_groupes/carte_groupe.dart';
 import '../tc_mes_groupes/chemins_tc_a.dart';
 import '../tc_mes_groupes/photo_enseignant.dart';
+import 'bloc_cartes_classe.dart';
 import 'carte_session.dart';
 import 'emplacements_groupe.dart';
 
@@ -46,7 +54,28 @@ class EspaceGroupePage extends ConsumerWidget {
     this.onRejoindre,
     this.onReprendreLeCours,
     this.contenuRoster,
+    this.titre,
+    this.tutoiement = false,
+    this.pied,
+    this.enPile = false,
   });
+
+  /// Vrai en Mode Accessibilite (pose par l'hote, MA-4) : l'identite en
+  /// pile. Lire ici le fournisseur de session casserait les hotes sans
+  /// session (tests des autres roles).
+  final bool enPile;
+
+  /// Le titre de destination, quand l'espace EST une destination de la
+  /// coquille (Ma classe du Mode Accessibilite, MA-4) : il remplace alors le
+  /// chemin de sortie « Mes classes », qui contredirait l'onglet. Nul
+  /// partout ailleurs : rendu inchange.
+  final String? titre;
+
+  /// Vrai pour l'eleve mineur : la carte de seance le tutoie (MA4, MA-3).
+  final bool tutoiement;
+
+  /// Ce que l'hote pose en dernier (MA-4 : le Suivi, puis l'aide, MA14).
+  final Widget? pied;
 
   /// Le groupe a ouvrir.
   final String groupeId;
@@ -75,16 +104,58 @@ class EspaceGroupePage extends ConsumerWidget {
     // Pas de titre d'ecran : l'identite du groupe EST le titre, et elle porte
     // la photo, la couleur et la capacite. Un « Mes groupes » en tete
     // repeterait le libelle du chemin de sortie, juste en dessous.
-    return PageShell(
-      entete: const _Sortie(),
-      child: _Corps(
-        groupeId: groupeId,
-        role: role,
+    final String? titreDestination = titre;
+    // L'acces de l'eleve connecte (FI-9a, revue FI-VAGUE-R R4-01), la meme
+    // regle que son Accueil et Mes groupes : seances fermees, Rejoindre est
+    // retire et la copie neutre le dit, sans cause ni montant ; tant que
+    // l'acces se lit, le bouton reste present et inerte. Lu borne a sa
+    // session : un tuteur ou un enseignant n'a pas de ligne, rien ne change.
+    final AsyncValue<AccesBeneficiaire?> ligneAcces = ref.watch(
+      accesAppelantProvider,
+    );
+    final ({bool ferme, bool enLecture}) acces = rejoindreSelonAcces(
+      ligneAcces,
+    );
+    final Widget lecteur = LecteurGroupe(
+      groupeId: groupeId,
+      role: role,
+      construire: (BuildContext _, LectureGroupe lecture) => _Colonnes(
+        lecture: lecture,
         onRejoindre: onRejoindre,
         onReprendreLeCours: onReprendreLeCours,
         contenuRoster: contenuRoster,
+        tutoiement: tutoiement,
+        enPile: enPile,
+        accesFerme: acces.ferme,
+        accesEnLecture: acces.enLecture,
       ),
     );
+    final Widget corps = acces.ferme
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              // L'adulte autonome y revient depuis la salle : sa copie, jamais
+              // celle du tuteur (contre-revue FI-VAGUE-CORR).
+              BandeauAccesFerme(
+                acces: ligneAcces.value,
+                tutoiement: tutoiement,
+              ),
+              Ecart.vLg,
+              lecteur,
+            ],
+          )
+        : lecteur;
+    final Widget? basDePage = pied;
+    final Widget contenu = basDePage == null
+        ? corps
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[corps, Ecart.vSection, basDePage],
+          );
+    if (titreDestination != null) {
+      return PageShell(titre: titreDestination, child: contenu);
+    }
+    return PageShell(entete: const _Sortie(), child: contenu);
   }
 }
 
@@ -97,35 +168,149 @@ class _Sortie extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Au bord de debut (contrat B). `IntrinsicWidth` : sans lui,
+    // `ActionPrincipale` s'etirerait et centrerait son libelle ; borne par la
+    // largeur disponible, le libelle passe a la ligne a 200 %.
     return Align(
       alignment: AlignmentDirectional.centerStart,
-      child: ActionPrincipale(
-        libelle: LibellesGroupe.retour,
-        niveau: NiveauAction.tertiaire,
-        pleineLargeur: false,
-        // `go` et non `pop` : l'espace peut avoir ete ouvert par une adresse,
-        // et une sortie qui n'existe que sur une pile laisserait l'utilisateur
-        // enferme.
-        onPress: () => GoRouter.of(context).go(CheminsTcA.mesGroupes),
+      child: IntrinsicWidth(
+        child: ActionPrincipale(
+          libelle: LibellesGroupe.retour,
+          niveau: NiveauAction.tertiaire,
+          pleineLargeur: false,
+          // `go` et non `pop` : l'espace peut avoir ete ouvert par une adresse,
+          // et une sortie qui n'existe que sur une pile laisserait l'utilisateur
+          // enferme.
+          onPress: () => GoRouter.of(context).go(CheminsTcA.mesGroupes),
+        ),
       ),
     );
   }
 }
 
-class _Corps extends ConsumerWidget {
-  const _Corps({
-    required this.groupeId,
-    required this.role,
-    this.onRejoindre,
-    this.onReprendreLeCours,
-    this.contenuRoster,
+/// Ce qu'un groupe rend une fois lu : l'espace du role, et ce que la carte de
+/// seance CL-4 doit savoir du reseau et de l'horloge.
+///
+/// Partage par l'Espace Groupe et l'accueil de l'eleve adulte (EA-2, K-51) :
+/// la carte dit la meme chose ici et la-bas, parce qu'elle est lue et cablee
+/// au meme endroit.
+@immutable
+class LectureGroupe {
+  /// Cree la lecture.
+  const LectureGroupe({
+    required this.espace,
+    required this.portTravailBranche,
+    required this.horsLigne,
+    required this.annulee,
+    required this.lectureEchouee,
+    required this.onReessayer,
   });
 
+  /// L'espace du groupe pour le role qui regarde.
+  final GroupHomeVM espace;
+
+  /// Vrai quand le port du travail a venir est branche.
+  final bool portTravailBranche;
+
+  /// Vrai hors ligne : « Rejoindre » est alors desactive.
+  final bool horsLigne;
+
+  /// Vrai quand la seance du jour est annulee.
+  final bool annulee;
+
+  /// Vrai quand l'horloge n'a jamais pu etre lue.
+  final bool lectureEchouee;
+
+  /// Relit le reseau et l'horloge.
+  final VoidCallback onReessayer;
+
+  /// La carte de seance CL-4, cablee sur cette lecture. Hors ligne,
+  /// l'emplacement devient une ligne d'etat avec « Reessayer » ; sans
+  /// [onRejoindre], le bouton n'est pas rendu. [tutoiement] : l'eleve
+  /// mineur est tutoye (MA4, MA-3).
+  ///
+  /// [accesFerme] : les seances de l'eleve connecte sont fermees (FI-9a),
+  /// Rejoindre est retire ; [accesEnLecture] : son acces se lit encore,
+  /// Rejoindre reste present (revue FI-VAGUE-R R4-01), jamais grise :
+  /// l'appui dit d'attendre un instant (BOUTONS-GRISES-1).
+  Widget carte({
+    void Function(GroupSummaryVM groupe)? onRejoindre,
+    bool tutoiement = false,
+    bool accesFerme = false,
+    bool accesEnLecture = false,
+  }) {
+    final GroupSummaryVM identite = espace.identite;
+    return CarteSession(
+      espace: espace,
+      horsLigne: horsLigne,
+      annulee: annulee,
+      lectureEchouee: lectureEchouee,
+      onReessayer: onReessayer,
+      tutoiement: tutoiement,
+      entreeRetiree: accesFerme,
+      attenteEntree: accesEnLecture
+          ? (tutoiement
+                ? t.eleve.accueil.entreeSePrepare
+                : t.tc.groupe.carte.entreeSePrepare)
+          : null,
+      onRejoindre: onRejoindre == null ? null : () => onRejoindre(identite),
+    );
+  }
+
+  /// L'identite du groupe puis la carte de seance, dans cet ordre. [enPile] :
+  /// l'identite en pile (Mode Accessibilite, MA-4).
+  List<Widget> identiteEtCarte({
+    void Function(GroupSummaryVM groupe)? onRejoindre,
+    bool tutoiement = false,
+    bool enPile = false,
+    bool accesFerme = false,
+    bool accesEnLecture = false,
+  }) => <Widget>[
+    IdentiteGroupe(
+      groupe: espace.identite,
+      // Cote famille, une photo absente se replie sur les initiales, sans
+      // pastille : « Photo a fournir » est une information interne.
+      repliInitiales: espace.estCoteFamille,
+      enPile: enPile,
+      // MA-DEC-1 (decision A5 = a du 27/09) : en Mode Accessibilite, l'eleve
+      // voit sa progression, pas le nombre de places (il sert la vente).
+      afficherCapacite: !(enPile && espace.role == RoleEspaceGroupe.eleve),
+    ),
+    Ecart.vXl,
+    carte(
+      onRejoindre: onRejoindre,
+      tutoiement: tutoiement,
+      accesFerme: accesFerme,
+      accesEnLecture: accesEnLecture,
+    ),
+  ];
+}
+
+/// Lit un groupe (identite, horloge, reseau, annulation, travail a venir) et
+/// rend [construire] sur la lecture ; le chargement, l'erreur et le groupe
+/// introuvable sont dits ici, une seule fois pour tous les ecrans.
+class LecteurGroupe extends ConsumerWidget {
+  /// Cree le lecteur.
+  const LecteurGroupe({
+    required this.groupeId,
+    required this.construire,
+    super.key,
+    this.role = RoleEspaceGroupe.eleve,
+    this.squelette = const SqueletteGroupe(),
+  });
+
+  /// La forme du chargement : celle de l'ecran qui lit le groupe (l'Accueil
+  /// adulte garde sa grille Bento, DASH-EA-PROD).
+  final Widget squelette;
+
+  /// Le groupe a lire.
   final String groupeId;
+
+  /// Qui regarde.
   final RoleEspaceGroupe role;
-  final void Function(GroupSummaryVM groupe)? onRejoindre;
-  final void Function(GroupSummaryVM groupe)? onReprendreLeCours;
-  final Widget? contenuRoster;
+
+  /// Ce qui se construit sur la lecture.
+  final Widget Function(BuildContext context, LectureGroupe lecture) construire;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -143,14 +328,7 @@ class _Corps extends ConsumerWidget {
     }
 
     if (!lecture.hasValue) {
-      return const Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Skeleton.tuileBento(hauteur: 120),
-          Ecart.vLg,
-          Skeleton.tuileBento(hauteur: 240),
-        ],
-      );
+      return squelette;
     }
 
     final GroupSummaryVM? trouve = lecture.requireValue;
@@ -169,65 +347,102 @@ class _Corps extends ConsumerWidget {
     // Le temps se rafraichit par le flux du port ; l'identite du groupe, elle,
     // ne bouge pas. Tant que le flux n'a rien emis, l'horloge de la carte fait
     // foi : la page n'attend pas un tic pour s'afficher.
-    final SessionClockVM? tic = ref
-        .watch(horlogeGroupeProvider(groupeId))
-        .value;
+    final AsyncValue<SessionClockVM> flux = ref.watch(
+      horlogeGroupeProvider(groupeId),
+    );
+    final SessionClockVM? tic = flux.value;
     final GroupSummaryVM identite = tic == null
         ? trouve
         : trouve.avecHorloge(tic);
 
     final PortTravailAVenir? travail = ref.watch(portTravailAVenirProvider);
+    final List<SlotAction> actions =
+        ref
+            .watch(travailAVenirProvider((groupeId: groupeId, studentId: null)))
+            .value ??
+        const <SlotAction>[];
     final GroupHomeVM espace = GroupHomeVM.pourRole(
       identite: identite,
       role: role,
+      // R17 : trois actions au plus.
+      actions: actions.take(3).toList(),
     );
-    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
 
-    return _Colonnes(
-      espace: espace,
-      portTravailBranche: travail != null,
-      horsLigne: horsLigne,
-      onRejoindre: onRejoindre,
-      onReprendreLeCours: onReprendreLeCours,
-      contenuRoster: contenuRoster,
+    return construire(
+      context,
+      LectureGroupe(
+        espace: espace,
+        portTravailBranche: travail != null,
+        horsLigne: ref.watch(horsLigneProvider).value ?? false,
+        annulee: ref.watch(seanceAnnuleeProvider(groupeId)),
+        lectureEchouee: flux.hasError && tic == null,
+        onReessayer: () => ref
+          ..invalidate(horsLigneProvider)
+          ..invalidate(horlogeGroupeProvider(groupeId)),
+      ),
     );
   }
 }
 
-/// La page verticale, et sa mise en colonnes.
+/// La forme de ce qui arrive : l'identite, puis la carte de seance.
+class SqueletteGroupe extends StatelessWidget {
+  /// Cree le squelette.
+  const SqueletteGroupe({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        ExcludeSemantics(child: Skeleton.tuileBento()),
+        Ecart.vXl,
+        SqueletteCarteSession(),
+      ],
+    );
+  }
+}
+
+/// La page, composee par rangees (revue UX, ajustement n° 2).
+///
+/// Rangee 1 : [identite + seance | Avant le prochain cours, cartes de la
+/// classe] ; rangee 2 :
+/// [bibliotheque | progression].
 class _Colonnes extends StatelessWidget {
   const _Colonnes({
-    required this.espace,
-    required this.portTravailBranche,
-    required this.horsLigne,
+    required this.lecture,
     this.onRejoindre,
     this.onReprendreLeCours,
     this.contenuRoster,
+    this.tutoiement = false,
+    this.enPile = false,
+    this.accesFerme = false,
+    this.accesEnLecture = false,
   });
 
-  final GroupHomeVM espace;
-  final bool portTravailBranche;
-  final bool horsLigne;
+  final bool tutoiement;
+  final bool enPile;
+  final bool accesFerme;
+  final bool accesEnLecture;
+  final LectureGroupe lecture;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(GroupSummaryVM groupe)? onReprendreLeCours;
   final Widget? contenuRoster;
 
   @override
   Widget build(BuildContext context) {
+    final GroupHomeVM espace = lecture.espace;
     final GroupSummaryVM identite = espace.identite;
-    final void Function(GroupSummaryVM groupe)? entrer = onRejoindre;
     final void Function(GroupSummaryVM groupe)? reprendre = onReprendreLeCours;
     final SlotRoster? roster = espace.roster;
 
-    final Widget session = CarteSession(
-      espace: espace,
-      onRejoindre: horsLigne || entrer == null ? null : () => entrer(identite),
-    );
-
-    // Contextuelle, jamais permanente : rien a reprendre tant que la seance
-    // n'a pas commence, et plus rien une fois qu'elle est close.
+    // R16 : contextuelle, jamais permanente. Rien a reprendre tant que la
+    // seance n'a pas commence, et plus rien une fois qu'elle est close.
+    // Sans action de reprise branchee, le bouton n'est pas rendu (jamais
+    // grise, BOUTONS-GRISES-1).
     final bool reprisePossible =
-        !espace.estCoteFamille && (espace.horloge?.enDirect ?? false);
+        !espace.estCoteFamille &&
+        (espace.horloge?.enDirect ?? false) &&
+        reprendre != null;
     final Widget? reprise = reprisePossible
         ? Align(
             alignment: AlignmentDirectional.centerStart,
@@ -235,70 +450,142 @@ class _Colonnes extends StatelessWidget {
               libelle: LibellesGroupe.reprendreLeCours,
               niveau: NiveauAction.secondaire,
               pleineLargeur: false,
-              onPress: reprendre == null ? null : () => reprendre(identite),
+              onPress: () => reprendre(identite),
             ),
           )
         : null;
 
-    final List<Widget> tete = <Widget>[
-      IdentiteGroupe(groupe: identite),
-      Ecart.vXl,
-      session,
+    final List<Widget> identiteEtSeance = <Widget>[
+      ...lecture.identiteEtCarte(
+        onRejoindre: onRejoindre,
+        tutoiement: tutoiement,
+        enPile: enPile,
+        accesFerme: accesFerme,
+        accesEnLecture: accesEnLecture,
+      ),
       if (reprise != null) ...<Widget>[Ecart.vLg, reprise],
-      Ecart.vSection,
-      EmplacementAvantProchainCours(
-        actions: espace.avantProchainCours,
-        portBranche: portTravailBranche,
-      ),
     ];
-
-    final List<Widget> suite = <Widget>[
-      BlocBibliotheque(
-        emplacement: espace.bibliotheque,
-        // Ouvre la Bibliotheque sur ce groupe : l'identifiant voyage dans
-        // l'adresse, ce qui le fait survivre a un rechargement de page.
-        onVoirTout: () => GoRouter.of(
-          context,
-        ).go(RoutesTcB.avecGroupe(espace.bibliotheque.groupeId)),
-      ),
-      if (roster != null) ...<Widget>[
-        Ecart.vSection,
+    final Widget avant = EmplacementAvantProchainCours(
+      actions: espace.avantProchainCours,
+      portBranche: lecture.portTravailBranche,
+    );
+    // CARTES-PERSO-1 : les cartes que l'enseignant compose, sous « Avant le
+    // prochain cours ». La capacite de les modifier vient de leur lecture.
+    final Widget cartes = BlocCartesClasse(
+      groupeId: identite.groupeId,
+      prochaineSeance: identite.prochaineSeance?.debutUtc.toLocal(),
+    );
+    final Widget bibliotheque = BlocBibliotheque(
+      emplacement: espace.bibliotheque,
+      // Ouvre la Bibliotheque sur ce groupe : l'identifiant voyage dans
+      // l'adresse, ce qui le fait survivre a un rechargement de page.
+      onVoirTout: () =>
+          GoRouter.of(context)
+              .go(RoutesTcB.avecGroupe(espace.bibliotheque.groupeId)),
+    );
+    final List<Widget> secondaire = <Widget>[
+      if (roster != null)
         BlocRoster(emplacement: roster, contenu: contenuRoster),
-      ],
-      if (espace.progression != null) ...<Widget>[
-        Ecart.vSection,
+      if (roster != null && espace.progression != null) Ecart.vSection,
+      if (espace.progression != null)
         BlocProgression(emplacement: espace.progression!),
-      ],
     ];
 
-    // Deux colonnes des la tablette : la Session et ce qu'il faut preparer a
-    // gauche, la Bibliotheque et le secondaire a droite. L'ordre de lecture est
-    // conserve, gauche puis droite. En dessous, une seule colonne : sur 390 de
-    // large, deux colonnes ne se lisent pas.
-    if (AppGabarit.de(context).estLarge) {
-      return Row(
+    return ColonnesParRangees(
+      rangees: <(List<Widget>, List<Widget>)>[
+        (identiteEtSeance, <Widget>[avant, Ecart.vSection, cartes]),
+        (
+          <Widget>[
+            bibliotheque,
+            EntreeRechercheSupports(espace: espacePourRoleGroupe(espace.role)),
+          ],
+          secondaire,
+        ),
+      ],
+    );
+  }
+}
+
+/// Des rangees de deux colonnes (la principale, deux tiers ; la laterale, un
+/// tiers), seulement quand la largeur utile divisee par le facteur de texte
+/// atteint 840 (ajustements n° 3 et 4) ; en dessous, une colonne, dans le
+/// meme ordre : la principale puis la laterale de chaque rangee. Chaque
+/// rangee est un `FocusTraversalGroup` : le focus parcourt une rangee avant
+/// la suivante. Partage par l'Espace Groupe et l'accueil de l'eleve adulte.
+class ColonnesParRangees extends StatelessWidget {
+  /// Cree la disposition.
+  const ColonnesParRangees({required this.rangees, super.key});
+
+  /// Les rangees, (principale, laterale), dans l'ordre de lecture.
+  final List<(List<Widget>, List<Widget>)> rangees;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) {
+        final double facteur = MediaQuery.textScalerOf(contexte).scale(1);
+        final bool deuxColonnes =
+            contraintes.maxWidth / facteur >= AppGabarit.seuilEtendu;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            for (final (int i, (List<Widget>, List<Widget>) r)
+                in rangees.indexed) ...<Widget>[
+              if (i > 0) Ecart.vSection,
+              if (deuxColonnes)
+                Rangee(principale: r.$1, laterale: r.$2)
+              else
+                FocusTraversalGroup(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      ...r.$1,
+                      if (r.$2.isNotEmpty) ...<Widget>[Ecart.vSection, ...r.$2],
+                    ],
+                  ),
+                ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Une rangee de deux colonnes : la principale (deux tiers) et la laterale,
+/// separees de 24. Un groupe de focus.
+class Rangee extends StatelessWidget {
+  /// Cree la rangee.
+  const Rangee({required this.principale, required this.laterale, super.key});
+
+  /// La colonne principale.
+  final List<Widget> principale;
+
+  /// La colonne laterale.
+  final List<Widget> laterale;
+
+  @override
+  Widget build(BuildContext context) {
+    return FocusTraversalGroup(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Expanded(
+            flex: 2,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: tete,
+              children: principale,
             ),
           ),
-          Ecart.hXl,
+          Ecart.hXxl,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: suite,
+              children: laterale,
             ),
           ),
         ],
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[...tete, Ecart.vSection, ...suite],
+      ),
     );
   }
 }
@@ -311,7 +598,30 @@ class _Colonnes extends StatelessWidget {
 /// meme groupe aux yeux de la famille.
 class IdentiteGroupe extends StatelessWidget {
   /// Cree l'identite.
-  const IdentiteGroupe({required this.groupe, super.key, this.urlPhoto});
+  const IdentiteGroupe({
+    required this.groupe,
+    super.key,
+    this.urlPhoto,
+    this.repliInitiales = false,
+    this.ligneDiscrete,
+    this.typePublic,
+    this.enPile = false,
+    this.afficherCapacite = true,
+  });
+
+  /// Faux : la pastille « N eleves sur M places » n'est pas montree
+  /// (eleve en Mode Accessibilite, decision A5 = a).
+  final bool afficherCapacite;
+
+  /// Vrai en Mode Accessibilite (MA-4) : la photo au-dessus, le nom en
+  /// dessous sur toute la largeur, qui ne passe a la ligne qu'entre les mots.
+  /// La pile vient aussi seule des que le texte atteint 200 %.
+  final bool enPile;
+
+  /// Le type de groupe (« Enfants », « Adultes »), deja traduit, ajoute a la
+  /// ligne de contexte cote enseignant : une information pedagogique
+  /// (revue CL-4.R, m7). `null` cote famille.
+  final String? typePublic;
 
   /// Le groupe.
   final GroupSummaryVM groupe;
@@ -319,79 +629,149 @@ class IdentiteGroupe extends StatelessWidget {
   /// L'URL signee de la photo, quand l'hote sait la resoudre.
   final String? urlPhoto;
 
+  /// Vrai cote eleve et tuteur : une photo absente devient les initiales,
+  /// sans pastille « Photo a fournir » (information interne).
+  final bool repliInitiales;
+
+  /// Une ligne discrete sous l'enseignant, quand l'hote en a une : le
+  /// rendez-vous hebdomadaire, cote enseignant (CL-4.4b).
+  final String? ligneDiscrete;
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
-    final String coursEtNiveau = LibellesGroupe.coursEtNiveau(
-      cours: groupe.nomCours,
-      niveau: groupe.niveauHumain,
+    final String? discrete = ligneDiscrete;
+    final String coursEtNiveau = LibellesGroupe.joindre(
+      LibellesGroupe.coursEtNiveau(
+        cours: groupe.nomCours,
+        niveau: groupe.niveauHumain,
+      ),
+      typePublic,
     );
 
-    return MergeSemantics(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          PhotoEnseignant(enseignant: groupe.enseignant, urlSignee: urlPhoto),
-          Ecart.hLg,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    LisereGroupe(jeton: groupe.couleurJeton),
-                    Ecart.hSm,
-                    Expanded(
-                      child: Text(
-                        groupe.libelle,
-                        style: textes.headlineSmall ?? const TextStyle(),
-                      ),
-                    ),
-                  ],
-                ),
-                Ecart.vXs,
-                Text(
-                  LibellesGroupe.enseignantNomme(groupe.enseignant),
-                  style: textes.titleSmall ?? const TextStyle(),
-                ),
-                if (coursEtNiveau.isNotEmpty) ...<Widget>[
-                  Ecart.vXs,
-                  Text(
-                    coursEtNiveau,
-                    style: palette.inkMuted.applyTo(
-                      textes.bodySmall ?? const TextStyle(),
-                    ),
-                  ),
-                ],
-                Ecart.vSm,
-                Wrap(
-                  spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.sm,
-                  children: <Widget>[
-                    StatusPill(
-                      libelle: LibellesGroupe.capacitePhrase(
-                        membres: groupe.nombreMembres,
-                        seuil: groupe.seuilMax,
-                      ),
-                      ton: groupe.complet
-                          ? TonEtat.avertissement
-                          : TonEtat.neutre,
-                    ),
-                    if (groupe.enseignant.photoManquante)
-                      StatusPill(
-                        libelle: LibellesGroupe.photoManquante,
-                        ton: TonEtat.avertissement,
-                      ),
-                  ],
-                ),
-              ],
-            ),
+    // Cote famille, les initiales (`AvatarTile`), jamais d'avertissement pour
+    // une photo manquante ; rendu d'origine garde pour tous les roles.
+    final Widget photo = repliInitiales
+        ? AvatarTile(
+            prenom: groupe.enseignant.nomAffichage,
+            urlSignee: urlPhoto,
+            diametre: AppAvatar.grand,
+          )
+        : PhotoEnseignant(
+            enseignant: groupe.enseignant,
+            urlSignee: urlPhoto,
+            diametre: AppAvatar.grand,
+          );
+    // A 200 % (ou en Mode Accessibilite), une colonne a cote d'un grand
+    // cercle couperait le nom au milieu d'un mot : la pile lui rend la
+    // largeur entiere (MA-4).
+    final bool pile = enPile || MediaQuery.textScalerOf(context).scale(1) >= 2;
+    final Widget titre = Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        LisereGroupe(jeton: groupe.couleurJeton),
+        Ecart.hSm,
+        Expanded(
+          // En pile seulement (Mode Accessibilite ou 200 %), a l'affichage :
+          // le trait d'union insecable (U+2011) garde « An-Nour » entier
+          // (MA-4). Rendu standard inchange.
+          child: Text(
+            pile ? groupe.libelle.replaceAll('-', '‑') : groupe.libelle,
+            style: textes.headlineSmall ?? const TextStyle(),
           ),
-        ],
-      ),
+        ),
+      ],
     );
+    final Widget cours = Text(
+      coursEtNiveau,
+      style: palette.inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
+    );
+    final bool aPastilles =
+        afficherCapacite ||
+        (!repliInitiales && groupe.enseignant.photoManquante);
+    final Widget pastilles = Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
+      children: <Widget>[
+        if (afficherCapacite)
+          // COUPE-MOTS-3b : « 3 élèves sur 6 places », jamais « élèves sur 6
+          // places 3 » dans l'interface arabe.
+          StatusPill(
+            libelle: isolerSiAutreSens(
+              LibellesGroupe.capacitePhrase(
+                membres: groupe.nombreMembres,
+                seuil: groupe.seuilMax,
+              ),
+              Directionality.of(context),
+            ),
+            ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
+          ),
+        if (!repliInitiales && groupe.enseignant.photoManquante)
+          StatusPill(
+            libelle: LibellesGroupe.photoManquante,
+            ton: TonEtat.avertissement,
+          ),
+      ],
+    );
+    final String nomEnseignant = LibellesGroupe.enseignantNomme(
+      groupe.enseignant,
+    );
+    final String? role = (discrete != null && discrete.isNotEmpty)
+        ? discrete
+        : null;
+    final TextStyle styleRole = palette.inkMuted.applyTo(
+      textes.bodySmall ?? const TextStyle(),
+    );
+    // AVATAR-1 : le couple photo + nom de l'enseignant est celui du composant
+    // partage. En pile (MA-4), la photo est au-dessus de tout le texte, son nom
+    // centre dessous sur le meme axe ; sinon, le nom est centre verticalement
+    // sur le cercle, sous le titre, le cours et le niveau (CLV-02).
+    final Widget texte = pile
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: AvatarNom.vertical(
+                  prenom: groupe.enseignant.nomAffichage,
+                  nom: nomEnseignant,
+                  pays: groupe.enseignant.pays,
+                  role: role,
+                  diametre: AppAvatar.grand,
+                  avatar: photo,
+                  styleNom: textes.titleSmall,
+                  styleRole: styleRole,
+                ),
+              ),
+              Ecart.vMd,
+              titre,
+              if (coursEtNiveau.isNotEmpty) ...<Widget>[Ecart.vXs, cours],
+              if (aPastilles) ...<Widget>[Ecart.vSm, pastilles],
+            ],
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              titre,
+              if (coursEtNiveau.isNotEmpty) ...<Widget>[Ecart.vXs, cours],
+              Ecart.vSm,
+              AvatarNom.enLigne(
+                prenom: groupe.enseignant.nomAffichage,
+                nom: nomEnseignant,
+                pays: groupe.enseignant.pays,
+                role: role,
+                diametre: AppAvatar.grand,
+                ecart: AppSpacing.lg,
+                avatar: photo,
+                styleNom: textes.titleSmall,
+                styleRole: styleRole,
+              ),
+              if (aPastilles) ...<Widget>[Ecart.vSm, pastilles],
+            ],
+          );
+    return MergeSemantics(child: texte);
   }
 }

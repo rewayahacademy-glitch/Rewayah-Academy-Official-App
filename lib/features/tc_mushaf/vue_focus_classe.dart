@@ -8,8 +8,6 @@ import '../../core/icons/app_icons.dart';
 import '../../core/tc_coran/etat_lecture_coran.dart';
 import '../../core/tc_coran/moteur_mushaf.dart';
 import '../../core/tc_coran/page_mushaf_vm.dart';
-import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
 import 'vue_verset_agrandi.dart';
 
@@ -24,13 +22,16 @@ import 'vue_verset_agrandi.dart';
 /// quand il y en a un ; hors classe, il centre la page ouverte.
 class VueFocusClasse extends ConsumerWidget {
   /// Cree le rendu focus.
-  const VueFocusClasse({super.key});
+  const VueFocusClasse({this.pageFeuilletee, super.key});
+
+  /// La page du feuillet (MUSHAF-MODES), ou `null` pour la page ouverte.
+  final int? pageFeuilletee;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final EtatLectureCoran etat = ref.watch(lectureCoranProvider);
     final AsyncValue<PageMushafVM> page = ref.watch(
-      pageMushafProvider(etat.page),
+      pageMushafProvider(pageFeuilletee ?? etat.page),
     );
 
     if (!page.hasValue || page.value == null) {
@@ -64,48 +65,28 @@ class VueFocusClasse extends ConsumerWidget {
       etat.plageFocus,
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (etat.plageFocus == null) const _SansPlage(),
-        Expanded(
-          // Le passage retenu occupe le centre de l'ecran : c'est la seule
-          // difference visible entre focus et lecture agrandie, et c'est celle
-          // qui compte quand un enseignant dit « regardez ici ».
-          child: Center(
-            child: ColonneVersetsReflow(
-              versets: retenus,
-              zoom: etat.zoomLocal,
-              sections: vue.sections,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// Le mot discret qui explique un focus sans plage designee.
-class _SansPlage extends StatelessWidget {
-  const _SansPlage();
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.sm,
-      ),
-      child: Text(
-        '${t.tc.coran.focus.aucunePlage}. '
-        '${t.tc.coran.focus.aucunePlageDetail}',
-        textAlign: TextAlign.center,
-        style: palette.inkMuted.applyTo(
-          textes.labelSmall ?? const TextStyle(),
-        ),
+    // MUSHAF-MODES : meme rendu que la lecture agrandie (texte continu, rosace
+    // en ligne), plus le surlignage discret de la plage que l'enseignant
+    // designe ; hors classe, la page ouverte en entier, sans phrase d'aide.
+    if (vue.estMadina15) {
+      return ColonneContinueDeLaPage(
+        vue: vue,
+        zoom: etat.zoomLocal,
+        surlignes: <String>{
+          if (retenus.length < vue.versets.length)
+            for (final VersetCoran v in retenus) v.reference,
+        },
+        selectionnable: pageFeuilletee == null,
+      );
+    }
+    // Le passage retenu occupe le centre de l'ecran : c'est la seule difference
+    // visible entre focus et lecture agrandie, et c'est celle qui compte quand
+    // un enseignant dit « regardez ici ».
+    return Center(
+      child: ColonneVersetsReflow(
+        versets: retenus,
+        zoom: etat.zoomLocal,
+        sections: vue.sections,
       ),
     );
   }

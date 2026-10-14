@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 
 /// Les cinq rayons de l'application, pas un de plus.
 ///
-/// Source : `docs/produit/design-tokens.md` section 8.
+/// Source : `docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 8.
 /// `tool/verifier_jetons.dart` echoue sur tout `BorderRadius.circular` construit
 /// avec une valeur litterale ailleurs que dans ce fichier : c'est ainsi qu'un
 /// rayon de 20 invente au fil d'un ecran ne peut pas entrer dans le produit.

@@ -4,9 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/config_edition.dart';
 import '../../core/admin/service_configuration.dart';
+import '../../core/capacites/port_politique_revue_kyc.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
@@ -14,7 +17,7 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 
 /// `ADM-17` : Configuration > Conservation des donnees, troisieme fonction du
 /// domaine (contrat metier reçu le 19 septembre 2026,
-/// `docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
+/// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
 ///
 /// Deux delais aujourd'hui : les enregistrements de seance
 /// (`recording_retention_days`) et les documents d'identite deposes
@@ -35,7 +38,9 @@ class ConservationDonneesPage extends ConsumerWidget {
     return PageShell(
       titre: t.admin.conservationDonnees.titre,
       entete: SousNavigationDomaine(
-        onglets: ongletsConfiguration(),
+        onglets: ongletsConfiguration(
+          politiqueRevueKyc: ref.watch(peutReglerPolitiqueKycProvider),
+        ),
         indexActif: 2,
       ),
       child: Column(
@@ -77,15 +82,16 @@ class _Corps extends StatelessWidget {
     String erreurEcriture(String message) =>
         t.admin.conservationDonnees.erreurEcriture(message: message);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
+    return CarteLignes(
+      lignes: <Widget>[
         ConfigLigneEntiere(
           titre: t.admin.conservationDonnees.enregistrements,
           description: t.admin.conservationDonnees.enregistrementsDetail,
           cle: 'recording_retention_days',
           valeur: v['recording_retention_days'] ?? 0,
-          affichage: (int n) => t.admin.conservationDonnees.uniteJours(n: '$n'),
+          affichage: (int n) => LibellesGroupe.valeurSeule(
+            t.admin.conservationDonnees.uniteJours(n: n),
+          ),
           champValeur: t.admin.conservationDonnees.champValeur,
           envoyer: t.admin.conservationDonnees.envoyer,
           valeurInvalide: t.admin.conservationDonnees.valeurInvalide,
@@ -97,7 +103,9 @@ class _Corps extends StatelessWidget {
           description: t.admin.conservationDonnees.documentsIdentiteDetail,
           cle: 'kyc_retention_days',
           valeur: v['kyc_retention_days'] ?? 0,
-          affichage: (int n) => t.admin.conservationDonnees.uniteJours(n: '$n'),
+          affichage: (int n) => LibellesGroupe.valeurSeule(
+            t.admin.conservationDonnees.uniteJours(n: n),
+          ),
           champValeur: t.admin.conservationDonnees.champValeur,
           envoyer: t.admin.conservationDonnees.envoyer,
           valeurInvalide: t.admin.conservationDonnees.valeurInvalide,

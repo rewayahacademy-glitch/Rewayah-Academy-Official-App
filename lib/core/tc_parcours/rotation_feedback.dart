@@ -8,7 +8,7 @@ import 'session_feedback.dart';
 /// pas systematique » (spec section 12.1) : la cadence appartient a
 /// `app_config`, comme les trois seuils de presence, pour se regler sans
 /// redeploiement. La demande est ecrite dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_H.md` section 3.
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_H.md` section 3.
 const int cadenceFeedbackParDefaut = 4;
 
 /// Les questions du micro-feedback, dans l'ordre de la rotation.

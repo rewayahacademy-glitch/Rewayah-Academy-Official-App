@@ -85,17 +85,20 @@ class Seance {
     required this.enseignantPrenom,
     required this.enseignantIdentifiant,
     this.minutesInterruption = 0,
+    this.enseignantPays,
   });
 
   /// Lit une ligne de la vue.
+  ///
+  /// **Parsing strict des bornes** : un `started_at` ou un `ended_at` absent ou
+  /// illisible leve une `FormatException`, il ne devient jamais
+  /// `DateTime.now()`. L'ancien repli fabriquait une seance « en cours » a
+  /// l'instant de la lecture. Pour ecarter une ligne illisible d'une liste
+  /// plutot que de faire echouer toute la lecture, voir [Seance.lire].
   factory Seance.depuisJson(Map<String, dynamic> json) => Seance(
     id: json['session_id'] as String,
-    debut:
-        DateTime.tryParse(json['started_at'] as String? ?? '')?.toLocal() ??
-        DateTime.now(),
-    fin:
-        DateTime.tryParse(json['ended_at'] as String? ?? '')?.toLocal() ??
-        DateTime.now(),
+    debut: _instant(json, 'started_at'),
+    fin: _instant(json, 'ended_at'),
     statut: StatutSeance.depuisSql(json['status'] as String?),
     eleveId: json['student_id'] as String? ?? '',
     elevePrenom: json['student_first_name'] as String? ?? '',
@@ -104,7 +107,34 @@ class Seance {
     enseignantPrenom: json['teacher_first_name'] as String? ?? '',
     enseignantIdentifiant: json['teacher_immutable_id'] as String? ?? '',
     minutesInterruption: (json['prayer_pause_minutes'] as num?)?.toInt() ?? 0,
+    // ENS-PAYS-1 : lu des que `mes_seances_v` l'expose (BR-1), nul avant.
+    enseignantPays: json['teacher_country'] as String?,
   );
+
+  /// Lit une ligne de la vue, ou rend `null` si elle est illisible.
+  ///
+  /// Une ligne sans identifiant ou sans bornes lisibles est **ecartee**, jamais
+  /// completee : une seance dont on ne sait pas quand elle a lieu ne peut ni
+  /// s'afficher, ni decider d'un etat.
+  static Seance? lire(Map<String, dynamic> json) {
+    if (json['session_id'] is! String) {
+      return null;
+    }
+    try {
+      return Seance.depuisJson(json);
+    } on FormatException {
+      return null;
+    }
+  }
+
+  static DateTime _instant(Map<String, dynamic> json, String cle) {
+    final Object? valeur = json[cle];
+    final DateTime? lu = valeur is String ? DateTime.tryParse(valeur) : null;
+    if (lu == null) {
+      throw FormatException('borne de seance illisible : $cle');
+    }
+    return lu.toLocal();
+  }
 
   /// Identifiant de la seance.
   final String id;
@@ -138,6 +168,10 @@ class Seance {
 
   /// Minutes d'interruption consignees, prieres comprises (ADR-017).
   final int minutesInterruption;
+
+  /// Le pays declare par l'enseignant (ENS-PAYS-1). `null` quand il n'est
+  /// pas declare ou tant que la vue ne l'expose pas : rien ne s'affiche.
+  final String? enseignantPays;
 
   /// La duree prevue.
   Duration get duree => fin.difference(debut);
@@ -302,7 +336,7 @@ class ServicePlanningSupabase implements ServicePlanning {
         .from('mes_seances_v')
         .select()
         .order('started_at');
-    return lignes.map(Seance.depuisJson).toList();
+    return lignes.map(Seance.lire).nonNulls.toList();
   }
 
   @override
@@ -334,9 +368,18 @@ final FutureProviderFamily<List<Creneau>, String> disponibilitesProvider =
     );
 
 /// Les seances de l'appelant.
+///
+/// **Aucune retentative silencieuse** (DASH-ELV-ERR-b, revue DASH-ELV-ERR-R
+/// m1). Riverpod relance par defaut dix fois, de 200 ms a 6,4 s, toute erreur
+/// qui n'etend pas `Error` : une vraie panne (`SocketException`,
+/// `PostgrestException`) laissait l'accueil eleve sur son squelette pendant
+/// pres de 40 s avant de dire que les cours manquent. Le bouton « Reessayer »
+/// de l'ecran est la retentative explicite, comme pour
+/// `dossiersEnAttenteProvider` (`service_validation.dart`).
 final FutureProvider<List<Seance>> seancesProvider =
     FutureProvider<List<Seance>>(
       (Ref ref) => ref.watch(servicePlanningProvider).seances(),
+      retry: (int retryCount, Object error) => null,
     );
 
 /// Les affectations qui concernent l'appelant.

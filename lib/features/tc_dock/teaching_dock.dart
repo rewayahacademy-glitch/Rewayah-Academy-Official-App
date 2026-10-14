@@ -9,6 +9,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/tc_outils/annotation_layer.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/evenements_outils.dart';
+import '../../core/tc_outils/fonction_indisponible.dart';
 import '../../core/tc_outils/intention_pedagogique.dart';
 import '../../core/tc_outils/learning_assignment.dart';
 import '../../core/tc_outils/libelles_outils.dart';
@@ -20,9 +21,9 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/bouton_outil.dart';
 import '../../core/widgets/local_feedback.dart';
 import 'barre_stylet.dart';
-import 'bouton_outil.dart';
 import 'feuille_choix.dart';
 
 /// Le Teaching Dock : sept outils, flottants, jamais devant le texte.
@@ -62,6 +63,12 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
 
   String? _message;
   LearningAssignment? _dernierTravail;
+
+  /// Le message calme d'une fonction dont le serveur n'est pas branche
+  /// (SALLE-ROBUSTE). Le compteur change la cle du retour local : sans lui, un
+  /// second appui sur le meme outil ne le reafficherait pas.
+  String? _indisponible;
+  int _nombreIndisponible = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -144,6 +151,11 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
           ? CrossAxisAlignment.start
           : CrossAxisAlignment.center,
       children: <Widget>[
+        if (_indisponible != null)
+          LocalFeedback(
+            key: ValueKey<int>(_nombreIndisponible),
+            message: _indisponible,
+          ),
         if (_message != null)
           LocalFeedback(
             message: _message,
@@ -206,6 +218,13 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
           EvenementMasquage(plan: ref.read(etatOutilsProvider).masquage),
         );
       case OutilDock.stylet:
+        // Sans serveur d'annotations, un trait dessine ne serait conserve
+        // nulle part : le stylet ne s'arme pas, et le dit.
+        if (ref.read(portAnnotationsProvider) is PortIndisponible) {
+          _direIndisponible();
+          return;
+        }
+        controleur.choisirOutil(outil);
       case OutilDock.pointeur:
         controleur.choisirOutil(outil);
       case OutilDock.revision:
@@ -219,6 +238,10 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
     SelectionSupport? selection,
   ) async {
     if (support == null || selection == null) {
+      return;
+    }
+    if (ref.read(portAnnotationsProvider) is PortIndisponible) {
+      _direIndisponible();
       return;
     }
     final IntentionPedagogique? intention =
@@ -248,7 +271,14 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
       plage: selection.plage,
       intention: intention,
     );
-    await annotations.poserMarqueur(couche.id, marqueur);
+    try {
+      await annotations.poserMarqueur(couche.id, marqueur);
+    } on FonctionIndisponible {
+      if (mounted) {
+        _direIndisponible();
+      }
+      return;
+    }
     _emettre(
       EvenementMarqueur.pose(coucheId: couche.id, marqueur: marqueur),
     );
@@ -266,6 +296,10 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
     if (support == null || selection == null || groupeId == null) {
       return;
     }
+    if (ref.read(portAssignationsProvider) is PortIndisponible) {
+      _direIndisponible();
+      return;
+    }
     final IntentionPedagogique? intention =
         await FeuilleChoix.ouvrirIntention(
           context,
@@ -276,15 +310,23 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
     if (intention == null || !mounted) {
       return;
     }
-    final LearningAssignment travail = await ref
-        .read(portAssignationsProvider)
-        .creerDepuisSelection(
-          groupId: groupeId,
-          resourceId: support.resourceId,
-          resourceVersionId: support.resourceVersionId,
-          contentRange: selection.plage,
-          purpose: intention,
-        );
+    final LearningAssignment travail;
+    try {
+      travail = await ref
+          .read(portAssignationsProvider)
+          .creerDepuisSelection(
+            groupId: groupeId,
+            resourceId: support.resourceId,
+            resourceVersionId: support.resourceVersionId,
+            contentRange: selection.plage,
+            purpose: intention,
+          );
+    } on FonctionIndisponible {
+      if (mounted) {
+        _direIndisponible();
+      }
+      return;
+    }
     if (!mounted) {
       return;
     }
@@ -293,6 +335,14 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
     setState(() {
       _dernierTravail = travail;
       _message = t.tc.outils.revision.posee;
+    });
+  }
+
+  /// Dit calmement qu'une fonction n'est pas encore disponible.
+  void _direIndisponible() {
+    setState(() {
+      _indisponible = t.tc.indisponible;
+      _nombreIndisponible++;
     });
   }
 

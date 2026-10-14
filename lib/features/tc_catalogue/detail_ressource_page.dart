@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/router/chemin_retour.dart';
+import '../../core/router/routes.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
@@ -21,6 +24,7 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import 'carte_ressource.dart';
 import 'libelles_bibliotheque.dart';
+import 'rendu_ressource.dart';
 import 'vignette_ressource.dart';
 
 /// Le detail minimal d'une ressource.
@@ -53,6 +57,7 @@ class _DetailEtat extends ConsumerState<DetailRessourcePage> {
 
     return PageShell(
       titre: t.tc.bibliotheque.detail.titre,
+      onRetour: _retour(context),
       child: switch (detail) {
         AsyncValue<DetailRessource?>(hasValue: true) =>
           detail.requireValue == null
@@ -74,6 +79,7 @@ class _DetailEtat extends ConsumerState<DetailRessourcePage> {
                 ),
         AsyncValue<DetailRessource?>(hasError: true) => EmptyState(
           message: t.tc.bibliotheque.indisponible.message,
+          invitation: t.tc.bibliotheque.indisponible.invitation,
           icone: AppIcons.avertissement,
           libelleAction: t.tc.bibliotheque.indisponible.action,
           onAction: () =>
@@ -82,6 +88,28 @@ class _DetailEtat extends ConsumerState<DetailRessourcePage> {
         _ => const Skeleton.texte(lignes: 6),
       },
     );
+  }
+
+  /// Le disque retour : d'abord le chemin `?retour=` de l'adresse (la
+  /// bibliotheque d'une classe, cote tuteur), **valide comme chemin interne**
+  /// (`cheminRetourValide`) ; sinon l'ecran d'en dessous (la Bibliotheque,
+  /// route parente, cote eleve). Sans l'un ni l'autre (lien profond,
+  /// rechargement hors de la classe) : la Bibliotheque elle-meme, jamais une
+  /// impasse (revue C, m5).
+  VoidCallback? _retour(BuildContext context) {
+    final GoRouter? routeur = GoRouter.maybeOf(context);
+    if (routeur == null) {
+      return null;
+    }
+    final String? retour = cheminRetourValide(
+      GoRouterState.of(context).uri.queryParameters['retour'],
+    );
+    if (retour != null) {
+      return () => routeur.go(retour);
+    }
+    return routeur.canPop()
+        ? routeur.pop
+        : () => routeur.go(Routes.tcBibliotheque);
   }
 
   Future<void> _telecharger() async {
@@ -94,7 +122,9 @@ class _DetailEtat extends ConsumerState<DetailRessourcePage> {
       // L'echec est nomme et montre. Le taire laisserait la personne relancer
       // indefiniment un geste qui ne peut pas aboutir.
       if (mounted) {
-        setState(() => _message = t.tc.bibliotheque.message.telechargementImpossible);
+        setState(
+          () => _message = t.tc.bibliotheque.message.telechargementImpossible,
+        );
       }
     } finally {
       if (mounted) setState(() => _enCours = false);
@@ -193,8 +223,10 @@ class _Corps extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       r.title,
+                      // Le titre de la ressource : un cran sous le titre d'ecran
+                      // de la page (HIER-1), jamais a la meme taille.
                       style: palette.surfaceRaised.applyTo(
-                        textes.headlineSmall ?? const TextStyle(),
+                        textes.titleLarge ?? const TextStyle(),
                       ),
                     ),
                     Ecart.vXs,
@@ -219,7 +251,7 @@ class _Corps extends StatelessWidget {
           ),
         ),
         Ecart.vXl,
-        Text(_noticeRendu(r), style: textes.bodyMedium),
+        RenduRessource(detail: detail),
         if (r.levelScope.isNotEmpty) ...<Widget>[
           Ecart.vSection,
           SectionHeader(titre: t.tc.bibliotheque.detail.niveaux),
@@ -320,13 +352,4 @@ class _Corps extends StatelessWidget {
     if (r.edition != null) r.edition!,
     r.language,
   ].join(' · ');
-
-  /// Ce que le produit sait faire de ce support aujourd'hui.
-  static String _noticeRendu(LibraryResource r) {
-    if (!r.publiee) return t.tc.bibliotheque.detail.sansVersion;
-    if (r.resourceType == TypeRessource.quran) {
-      return t.tc.bibliotheque.detail.renduCoran;
-    }
-    return t.tc.bibliotheque.detail.apercuIndisponible;
-  }
 }

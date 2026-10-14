@@ -52,9 +52,8 @@ void main() {
     await souffler();
   }
 
-  Future<void> entrer({
-    RoleObservateur role = RoleObservateur.tuteur,
-  }) => moteur.entrer(sessionId: _seance, role: role);
+  Future<void> entrer({RoleObservateur role = RoleObservateur.tuteur}) =>
+      moteur.entrer(sessionId: _seance, role: role);
 
   group('Entree : le serveur decide, le client ne decide rien', () {
     test('une politique desactivee ferme la porte, et le dit', () async {
@@ -108,10 +107,7 @@ void main() {
 
       expect(moteur.etat.phase, PhaseVisite.indisponible);
       expect(moteur.etat.phase, isNot(PhaseVisite.enVisite));
-      expect(
-        moteur.etat.echec?.motif,
-        MotifEchecObservation.capaciteAbsente,
-      );
+      expect(moteur.etat.echec?.motif, MotifEchecObservation.capaciteAbsente);
     });
 
     test('le role demande est celui qu\'on lui passe', () async {
@@ -200,20 +196,22 @@ void main() {
       expect(moteur.etat.fin, FinDeVisite.quotaAtteint);
     });
 
-    test('le compte a rebours local termine la visite quand il tombe a zero',
-        () async {
-      // L'asymetrie voulue : le client peut abreger sa propre visite, il ne
-      // peut pas l'allonger.
-      await entrer();
+    test(
+      'le compte a rebours local termine la visite quand il tombe a zero',
+      () async {
+        // L'asymetrie voulue : le client peut abreger sa propre visite, il ne
+        // peut pas l'allonger.
+        await entrer();
 
-      horloge.avancer(const Duration(seconds: 121));
-      await battre();
-      await souffler();
+        horloge.avancer(const Duration(seconds: 121));
+        await battre();
+        await souffler();
 
-      expect(moteur.etat.phase, PhaseVisite.terminee);
-      expect(moteur.etat.fin, FinDeVisite.quotaAtteint);
-      expect(visites.sorties, <String>[_seance]);
-    });
+        expect(moteur.etat.phase, PhaseVisite.terminee);
+        expect(moteur.etat.fin, FinDeVisite.quotaAtteint);
+        expect(visites.sorties, <String>[_seance]);
+      },
+    );
 
     test('la visite ne se rouvre pas toute seule apres sa fin', () async {
       await entrer();
@@ -228,34 +226,38 @@ void main() {
   });
 
   group('Sortie', () {
-    test('une sortie volontaire ferme la visite et previent le serveur',
-        () async {
-      await entrer();
+    test(
+      'une sortie volontaire ferme la visite et previent le serveur',
+      () async {
+        await entrer();
 
-      await moteur.sortir();
+        await moteur.sortir();
 
-      expect(moteur.etat.phase, PhaseVisite.terminee);
-      expect(moteur.etat.fin, FinDeVisite.sortieVolontaire);
-      expect(moteur.etat.sortieConfirmee, isTrue);
-      expect(visites.sorties, <String>[_seance]);
-    });
+        expect(moteur.etat.phase, PhaseVisite.terminee);
+        expect(moteur.etat.fin, FinDeVisite.sortieVolontaire);
+        expect(moteur.etat.sortieConfirmee, isTrue);
+        expect(visites.sorties, <String>[_seance]);
+      },
+    );
 
-    test('une sortie que le serveur ne confirme pas est dite, jamais avalee',
-        () async {
-      // Le precedent nomme par le contrat : `ServiceVideo.annoncerSortie`
-      // avale son echec. Acceptable pour une trace, inacceptable pour un
-      // quota.
-      visites.echecSortie = const EchecObservation(
-        MotifEchecObservation.reseau,
-      );
-      await entrer();
+    test(
+      'une sortie que le serveur ne confirme pas est dite, jamais avalee',
+      () async {
+        // Le precedent nomme par le contrat : `ServiceVideo.annoncerSortie`
+        // avale son echec. Acceptable pour une trace, inacceptable pour un
+        // quota.
+        visites.echecSortie = const EchecObservation(
+          MotifEchecObservation.reseau,
+        );
+        await entrer();
 
-      await moteur.sortir();
+        await moteur.sortir();
 
-      expect(moteur.etat.phase, PhaseVisite.terminee);
-      expect(moteur.etat.sortieConfirmee, isFalse);
-      expect(moteur.etat.echec?.motif, MotifEchecObservation.reseau);
-    });
+        expect(moteur.etat.phase, PhaseVisite.terminee);
+        expect(moteur.etat.sortieConfirmee, isFalse);
+        expect(moteur.etat.echec?.motif, MotifEchecObservation.reseau);
+      },
+    );
 
     test('fermer l\'ecran n\'annonce aucune sortie', () async {
       // Une page demontee n'est pas une sortie : c'est le serveur qui referme

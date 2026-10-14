@@ -11,7 +11,7 @@ import '../theme/app_spacing.dart';
 /// Un bloc de chargement, a la forme du contenu final.
 ///
 /// Deux regles, portees par le composant et non par la vigilance de qui ecrit
-/// l'ecran (`docs/design/02-regles-ux.md` section 6) :
+/// l'ecran (`docs/archive/2026-09-pre-remise-a-plat/design/02-regles-ux.md` section 6) :
 ///
 /// 1. **Rien ne s'affiche avant 200 ms.** Un squelette qui clignote coute plus
 ///    cher qu'il ne rassure. Le delai est tenu ici, pas dans l'ecran ;

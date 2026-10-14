@@ -8,7 +8,7 @@ import 'port_corpus_coran.dart';
 /// appartiennent a Agent B : aucun identifiant reel n'existe encore. Le moteur
 /// a pourtant besoin d'un identifiant pour construire une [ContentPosition]
 /// partageable. Cette constante sert de pont jusqu'a l'integration ; la demande
-/// est ecrite dans `docs/teaching-core/TC_CONTRACT_REQUEST_C.md`.
+/// est ecrite dans `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_C.md`.
 ///
 /// Elle reprend le **code** de l'edition, jamais un uuid : l'identifiant de la
 /// ligne `mushaf` est genere par la base et differe d'un environnement a

@@ -1,13 +1,18 @@
+// ENS-02 Aujourd'hui (EN-2) : carte « Prochaine seance » (E11), « Ma
+// journee », « A terminer » (K-45), « Alertes utiles », une ou deux colonnes.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/enseignant/absence_remplacement.dart';
+import 'package:rewayah_academy/core/enseignant/cta_seance.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
-import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/priere/horaires_priere.dart';
 import 'package:rewayah_academy/core/priere/libelle_priere.dart';
@@ -15,16 +20,42 @@ import 'package:rewayah_academy/core/priere/reglages_priere.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/router/billet_salle.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/grille_bento.dart';
+import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
+import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/com_communaute/entree_communaute.dart';
+import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
+import '../capture/outil_capture.dart'
+    show
+        capturer,
+        capturerVue,
+        chargerPolicesDuDepot,
+        fixerVueCapture,
+        hoteCapture,
+        masquerRubanDebug,
+        sautSansCapture;
+import '../support/aucun_mot_coupe.dart';
+import '../support/garde_interface.dart';
 import '../support/harnais.dart';
+import '../support/hors_ligne_une_fois.dart';
 
 const String _monId = 't1';
+
+/// Le « maintenant » des tests : lundi 28 septembre 2026, 16 h.
+final DateTime _m = DateTime(2026, 9, 28, 16);
 
 const SessionState _sessionEnseignant = SessionState(
   resolue: true,
@@ -43,31 +74,15 @@ const ReglagesPriere _paris = ReglagesPriere(
   lieu: 'Paris',
 );
 
-EleveEnAttente _enAttente({
-  required String eleveId,
-  required int jour,
-  required int heure,
-  String prenom = 'Ibrahim',
-}) => EleveEnAttente(
-  eleveId: eleveId,
-  prenom: prenom,
-  identifiantImmuable: 'STUD-IB-000004',
-  creneau: Creneau(jour: jour, heure: heure, fuseau: 'Europe/Paris'),
-  depuis: DateTime.now(),
-  mode: InterfaceMode.enfant,
-);
-
 PresenceParticipant _presence({
   required EtatPresence etat,
   String profilId = 'e1',
-  String prenom = 'Khadija',
-  String role = 'student',
-  String identifiant = 'STUD-KB-000003',
+  String prenom = 'Maryam',
 }) => PresenceParticipant(
   profilId: profilId,
-  role: role,
+  role: 'student',
   prenom: prenom,
-  identifiantImmuable: identifiant,
+  identifiantImmuable: 'STUD-XX-000003',
   etat: etat,
   consolide: false,
 );
@@ -84,77 +99,97 @@ FauxServiceRegles _reglesAvecPause(int minutes) =>
 
 List<Override> _surcharges({
   FauxServiceEnseignant? enseignant,
-  FauxServiceMatching? matching,
   FauxServiceRegles? regles,
   FauxServicePriere? priere,
-  FauxServicePreVol? preVol,
   FauxServicePresence? presence,
   FauxServiceReseau? reseau,
+  DateTime? maintenant,
+  DateTime Function()? horloge,
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(
     FausseSourceSession(_sessionEnseignant),
   ),
-  // `seancesEnseignantProvider` et non `seancesProvider` : une entree par
-  // seance, et non une par eleve.
   serviceEnseignantProvider.overrideWithValue(
     enseignant ?? FauxServiceEnseignant(),
   ),
-  serviceMatchingProvider.overrideWithValue(matching ?? FauxServiceMatching()),
+  serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
   serviceReglesProvider.overrideWithValue(regles ?? FauxServiceRegles()),
   servicePriereProvider.overrideWithValue(priere ?? FauxServicePriere()),
-  // Sans ces trois faux, l'ecran lirait le materiel, le reseau et la presence
-  // de la machine qui execute les tests : le pre-vol echouerait faute de
-  // peripherique, et Supabase n'est pas initialise.
-  servicePreVolProvider.overrideWithValue(preVol ?? FauxServicePreVol()),
+  servicePreVolProvider.overrideWithValue(FauxServicePreVol()),
   servicePresenceProvider.overrideWithValue(presence ?? FauxServicePresence()),
   serviceReseauProvider.overrideWithValue(reseau ?? FauxServiceReseau()),
+  maintenantJourneeProvider.overrideWithValue(
+    horloge ?? () => maintenant ?? _m,
+  ),
 ];
 
-/// L'heure locale d'un instant, comme l'ecran l'ecrit.
-String _hhmm(DateTime quand) =>
-    '${quand.hour.toString().padLeft(2, '0')}:'
-    '${quand.minute.toString().padLeft(2, '0')}';
+/// La page dans le vrai theme clair ou sombre, a une echelle de texte donnee.
+Widget _hoteCarte({
+  required Brightness luminosite,
+  required double echelleTexte,
+  required List<Override> surcharges,
+  TextDirection? direction,
+}) => ProviderScope(
+  overrides: surcharges,
+  child: TranslationProvider(
+    child: MaterialApp(
+      theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+      darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+      themeMode: luminosite == Brightness.dark
+          ? ThemeMode.dark
+          : ThemeMode.light,
+      builder: (BuildContext context, Widget? app) => MediaQuery(
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: TextScaler.linear(echelleTexte)),
+        child: direction == null
+            ? app!
+            : Directionality(textDirection: direction, child: app!),
+      ),
+      home: const JourneePage(),
+    ),
+  ),
+);
 
-/// Une fenetre haute, le temps d'un test.
-///
-/// La colonne d'une journee chargee depasse l'ecran d'un telephone, et un
-/// `ListView` ne construit pas ce qui n'est pas visible : sans cette fenetre,
-/// le test mesure la hauteur du viewport et non le contenu de la colonne. La
-/// deuxieme priere du jour manquait pour cette seule raison.
-void _fenetreHaute(WidgetTester tester) {
-  tester.view.physicalSize = const Size(1200, 2400);
+void _fenetre(WidgetTester tester, Size taille) {
+  tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
 }
 
-/// La fenetre du telephone ou l'enseignant travaille.
-void _fenetreTelephone(WidgetTester tester) {
-  tester.view.physicalSize = const Size(390, 844);
-  tester.view.devicePixelRatio = 1;
-  addTearDown(tester.view.resetPhysicalSize);
-  addTearDown(tester.view.resetDevicePixelRatio);
-}
+SeanceEnseignant _anNour({StatutSeance statut = StatutSeance.planifiee}) =>
+    seanceDeTest(
+      id: 'an-nour',
+      debut: DateTime(2026, 9, 28, 17, 30),
+      statut: statut,
+      nbParticipants: 4,
+      groupeId: 'g-an-nour',
+      groupeLibelle: 'An-Nour',
+    );
 
-/// Un instant du jour civil local courant, a l'heure demandee.
-DateTime _aujourdhuiA(int heure, [int minute = 0]) {
-  final DateTime maintenant = DateTime.now();
-  return DateTime(
-    maintenant.year,
-    maintenant.month,
-    maintenant.day,
-    heure,
-    minute,
-  );
-}
+CahierEnRetard _cahier(String id, String classe, int jour) => CahierEnRetard(
+  seanceId: id,
+  debut: DateTime(2026, 9, jour, 17),
+  fin: DateTime(2026, 9, jour, 17, 45),
+  nbParticipants: 3,
+  heuresDeRetard: 30,
+  groupeId: 'g-$id',
+  groupeLibelle: classe,
+);
 
-/// Le routeur minimal du lot : la Journee, et les deux ecrans contextuels
-/// qu'elle ouvre. Ils sont reduits a un marqueur : ce qui se mesure ici est le
-/// chemin, pas l'ecran d'arrivee, qui appartient a un autre agent.
 List<RouteBase> _routes() => <RouteBase>[
   GoRoute(
     path: Routes.enseignantJournee,
     builder: (BuildContext _, GoRouterState _) => const JourneePage(),
+  ),
+  GoRoute(
+    path: Routes.salle,
+    builder: (BuildContext _, GoRouterState etat) {
+      final BilletSalle? billet = etat.extra as BilletSalle?;
+      return Text(
+        'salle:${billet?.sessionId}:${billet?.preparation}:${billet?.groupeId}',
+      );
+    },
   ),
   GoRoute(
     path: '/enseignant/groupe/:groupeId',
@@ -168,16 +203,174 @@ List<RouteBase> _routes() => <RouteBase>[
   ),
 ];
 
+/// Un service dont seule la lecture des cahiers en retard echoue.
+class _EnseignantRetardsEnEchec extends FauxServiceEnseignant {
+  @override
+  Future<List<CahierEnRetard>> cahiersEnRetard() async =>
+      throw StateError('cahiers en retard indisponibles');
+}
+
+/// Un service dont seule la lecture des horaires de priere echoue.
+class _PriereEnEchec extends FauxServicePriere {
+  @override
+  Future<ReglagesPriere?> reglages(String enseignantId) async =>
+      throw StateError('horaires de priere indisponibles');
+}
+
+Future<void> _ouvrir(
+  WidgetTester tester, {
+  FauxServiceEnseignant? enseignant,
+  FauxServiceRegles? regles,
+  FauxServicePriere? priere,
+  FauxServicePresence? presence,
+  FauxServiceReseau? reseau,
+  DateTime? maintenant,
+  Size taille = const Size(390, 2400),
+  List<Override> autres = const <Override>[],
+}) async {
+  _fenetre(tester, taille);
+  await tester.pumpWidget(
+    hote(
+      const JourneePage(),
+      surcharges: <Override>[
+        ..._surcharges(
+          enseignant: enseignant,
+          regles: regles,
+          priere: priere,
+          presence: presence,
+          reseau: reseau,
+          maintenant: maintenant,
+        ),
+        ...autres,
+      ],
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
 void main() {
-  group('ENS-02 : les six etats de l ecran', () {
-    testWidgets('loading : la premiere lecture montre un squelette', (
+  group('ANNUL-VIS-1 : le cours annule du jour', () {
+    testWidgets('pastille, horaire barre, pourquoi, surface enfoncee', (
       WidgetTester tester,
     ) async {
-      // Sans delai, le faux resout son futur dans la micro-tache que le premier
-      // `pump` vide, et l'etat de chargement n'existe jamais.
+      await _ouvrir(
+        tester,
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[
+            _anNour(statut: StatutSeance.annulee),
+          ],
+      );
+      final Finder carte = find.byKey(
+        const ValueKey<String>('journee-cours-annule'),
+      );
+      expect(carte, findsOneWidget);
+      expect(
+        find.descendant(of: carte, matching: find.text(t.etat.seanceAnnulee)),
+        findsOneWidget,
+      );
+      final TexteHeureSeance heure = tester.widget<TexteHeureSeance>(
+        find.descendant(of: carte, matching: find.byType(TexteHeureSeance)),
+      );
+      expect(heure.annulee, isTrue);
+      final Text texte = tester.widget<Text>(
+        find.descendant(of: carte, matching: find.text(heure.heure)),
+      );
+      expect(texte.style!.decoration, TextDecoration.lineThrough);
+      expect(
+        find.descendant(
+          of: carte,
+          matching: find.text(t.etat.motifNonCommunique),
+        ),
+        findsOneWidget,
+      );
+      expect(tester.widget<AppCard>(carte).surface, isNotNull);
+    });
+
+    // SALLE-CORR-3 (releve VERIF-CORR-2) : la carte nomme sa Classe et y mene.
+    testWidgets('nomme la Classe, « Voir la Classe » y mene', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.enseignantJournee,
+          routes: _routes(),
+          surcharges: _surcharges(
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[
+                _anNour(statut: StatutSeance.annulee),
+              ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final Finder carte = find.byKey(
+        const ValueKey<String>('journee-cours-annule'),
+      );
+      expect(
+        find.descendant(of: carte, matching: find.text('An-Nour')),
+        findsOneWidget,
+      );
+      final Finder lien = find.descendant(
+        of: carte,
+        matching: find.text(t.enseignant.journee.voirClasse),
+      );
+      expect(lien, findsOneWidget);
+      await tester.ensureVisible(lien);
+      await tester.tap(lien);
+      await tester.pumpAndSettle();
+      expect(find.text('groupe:g-an-nour'), findsOneWidget);
+    });
+  });
+
+  group('SALLE-CORR-3 : captures du cours annule', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille, double texte, double densite)
+        in <(String, Size, double, double)>[
+          ('320_x2', const Size(320, 1400), 2, 2),
+          ('390', const Size(390, 1400), 1, 3),
+          ('1440', const Size(1440, 1100), 1, 1),
+        ]) {
+      for (final (String m, ThemeMode mode) in <(String, ThemeMode)>[
+        ('clair', ThemeMode.light),
+        ('sombre', ThemeMode.dark),
+      ]) {
+        testWidgets('journee_annule_${l}_$m', (WidgetTester tester) async {
+          fixerVueCapture(tester, taille, densite);
+          await tester.pumpWidget(
+            hoteCapture(
+              const JourneePage(),
+              surcharges: _surcharges(
+                enseignant: FauxServiceEnseignant()
+                  ..seancesRendues = <SeanceEnseignant>[
+                    _anNour(statut: StatutSeance.annulee),
+                  ],
+              ),
+              themeMode: mode,
+              echelleTexte: texte,
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          await tester.ensureVisible(
+            find.byKey(const ValueKey<String>('journee-cours-annule')),
+          );
+          await tester.pumpAndSettle();
+          debugPrint(
+            'PNG ${await capturer(tester, 'salle_corr3_journee_annule_${l}_$m')}',
+          );
+        });
+      }
+    }
+  });
+
+  group('ENS-02 : les etats de l ecran', () {
+    testWidgets('chargement : un squelette, puis le contenu', (
+      WidgetTester tester,
+    ) async {
       final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
         ..delai = const Duration(milliseconds: 40);
-
+      _fenetre(tester, const Size(390, 2400));
       await tester.pumpWidget(
         hote(
           const JourneePage(),
@@ -185,48 +378,37 @@ void main() {
         ),
       );
       await tester.pump();
-
       expect(find.byType(Skeleton), findsWidgets);
-      expect(find.text(t.commun.chargement), findsNothing);
-
       await tester.pumpAndSettle();
-      // Et le squelette cede la place : un seul chemin de chargement, celui-la.
       expect(find.byType(Skeleton), findsNothing);
     });
 
-    testWidgets('empty : aucun cours a venir, et rien aujourd hui', (
+    testWidgets('titre « Aujourd hui » et la date du jour', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(
-        hote(const JourneePage(), surcharges: _surcharges()),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text(t.enseignant.journee.aucunCours), findsOneWidget);
-      expect(find.text(t.enseignant.journee.aucunCoursDetail), findsOneWidget);
-      expect(find.text(t.enseignant.journee.rienAujourdhui), findsOneWidget);
+      await _ouvrir(tester);
+      expect(find.text(t.enseignant.journee.titre), findsWidgets);
+      expect(find.text('Lundi 28 septembre'), findsOneWidget);
     });
 
-    testWidgets('error : une phrase, et de quoi relire', (
+    testWidgets('vide : aucune seance, ni A terminer ni Alertes', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(tester);
+      expect(find.text(t.enseignant.journee.aucuneSeance), findsOneWidget);
+      expect(find.text(t.enseignant.journee.rienAujourdhui), findsOneWidget);
+      expect(find.text(t.enseignant.journee.aTerminer), findsNothing);
+      expect(find.text(t.enseignant.journee.alertesUtiles), findsNothing);
+    });
+
+    testWidgets('erreur : une phrase, et de quoi relire', (
       WidgetTester tester,
     ) async {
       final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
         ..erreurLecture = StateError('vue absente');
-
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(enseignant: enseignant),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // C'est l'etat que la migration `0025` non appliquee produit en reel :
-      // il n'est pas optionnel.
+      await _ouvrir(tester, enseignant: enseignant);
       expect(find.text(t.enseignant.journee.erreur), findsOneWidget);
-      expect(find.text(t.commun.reessayer), findsWidgets);
 
-      // Et la lecture repart quand on la demande.
       final int avant = enseignant.lecturesSeances;
       enseignant.erreurLecture = null;
       await tester.tap(find.text(t.commun.reessayer).first);
@@ -234,841 +416,1239 @@ void main() {
       expect(enseignant.lecturesSeances, greaterThan(avant));
     });
 
-    testWidgets(
-      'offline : dans la fenetre, la salle ne s ouvre pas et le dit',
-      (WidgetTester tester) async {
-        final DateTime debut = DateTime.now().add(const Duration(minutes: 5));
-        final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-          ..seancesRendues = <SeanceEnseignant>[seanceDeTest(debut: debut)];
-
-        await tester.pumpWidget(
-          hote(
-            const JourneePage(),
-            surcharges: _surcharges(
-              enseignant: enseignant,
-              reseau: FauxServiceReseau(horsLigneRendu: true),
-            ),
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        // Un geste qui echouerait apres le tap coute plus cher que son absence.
-        expect(find.text(t.enseignant.journee.lancer), findsNothing);
-        expect(
-          find.text(t.enseignant.journee.lancerHorsLigne),
-          findsOneWidget,
-        );
-      },
-    );
-  });
-
-  group('ENS-02 : le bloc dominant', () {
-    testWidgets('un cours de groupe porte le nom du groupe et son effectif', (
+    testWidgets('retires : eleves en attente et cours individuel', (
       WidgetTester tester,
     ) async {
-      final DateTime debut = DateTime.now().add(
-        const Duration(minutes: 25, seconds: 30),
+      await _ouvrir(
+        tester,
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[
+            seanceDeTest(debut: DateTime(2026, 9, 28, 17, 30)),
+          ],
       );
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[
-          seanceDeTest(
-            debut: debut,
-            nbParticipants: 5,
-            groupeId: 'g1',
-            groupeLibelle: 'Perles du Coran',
-            seuilMax: 5,
-          ),
-        ];
+      expect(find.text(t.enseignant.journee.enAttenteTitre), findsNothing);
+      expect(find.text(t.enseignant.journee.coursIndividuel), findsNothing);
+      // Une seance sans nom de Classe dit « Classe », rien d'autre.
+      expect(find.text(t.enseignant.journee.classe), findsOneWidget);
+    });
+  });
 
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(enseignant: enseignant),
-        ),
-      );
-      await tester.pumpAndSettle();
+  // LIB-ERR-1 : le texte de l'echec partiel dit exactement ce qui a echoue.
+  group('LIB-ERR-1 : echec partiel de la journee', () {
+    final Finder message = find.byKey(
+      const ValueKey<String>('journee-erreur-partielle'),
+    );
 
-      expect(find.text(t.enseignant.journee.prochainCours), findsOneWidget);
-      expect(find.text('Perles du Coran'), findsWidgets);
+    testWidgets('seuls les cahiers en retard echouent : le texte les nomme, '
+        'pas les prieres', (WidgetTester tester) async {
+      await _ouvrir(tester, enseignant: _EnseignantRetardsEnEchec());
+      expect(message, findsOneWidget);
       expect(
-        find.text(t.enseignant.journee.effectif(nombre: '5')),
+        tester.widget<Text>(message).data,
+        t.enseignant.journee.erreurPartielleCahiers,
+      );
+      expect(tester.widget<Text>(message).data, contains('cahiers'));
+      expect(tester.widget<Text>(message).data, isNot(contains('prière')));
+      expect(tester.widget<Text>(message).data, isNot(contains('pauses')));
+      expect(
+        find.byKey(
+          const ValueKey<String>('journee-erreur-partielle-reessayer'),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('seuls les horaires de priere echouent : le texte les nomme, '
+        'pas les cahiers', (WidgetTester tester) async {
+      await _ouvrir(tester, priere: _PriereEnEchec());
+      expect(message, findsOneWidget);
+      expect(
+        tester.widget<Text>(message).data,
+        t.enseignant.journee.erreurPartielle,
+      );
+      expect(tester.widget<Text>(message).data, contains('prière'));
+      expect(tester.widget<Text>(message).data, isNot(contains('cahiers')));
+    });
+
+    testWidgets('priere et cahiers echouent : le texte dit les deux', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(
+        tester,
+        enseignant: _EnseignantRetardsEnEchec(),
+        priere: _PriereEnEchec(),
+      );
+      expect(
+        tester.widget<Text>(message).data,
+        t.enseignant.journee.erreurPartielleTout,
+      );
+      expect(tester.widget<Text>(message).data, contains('prière'));
+      expect(tester.widget<Text>(message).data, contains('cahiers'));
+    });
+
+    testWidgets('tout est lu : aucun message d echec', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(tester);
+      expect(message, findsNothing);
+    });
+  });
+
+  group('ENS-02 : la carte « Prochaine seance » (E11, E12)', () {
+    testWidgets('peu de donnees : nom, heure, duree, eleves', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(
+        tester,
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[_anNour()],
+      );
+      expect(find.text(t.enseignant.journee.prochaineSeance), findsOneWidget);
+      expect(find.text('An-Nour'), findsOneWidget);
+      expect(
+        find.text(t.enseignant.journee.plage(debut: '17:30', fin: '18:15')),
         findsWidgets,
       );
-      expect(
-        find.text(t.enseignant.journee.minuteurMinutes(minutes: '25')),
-        findsOneWidget,
-      );
+      expect(find.text(t.enseignant.journee.effectif(nombre: 4)), findsWidgets);
     });
 
-    testWidgets('une seance de groupe ne compte qu une ligne de colonne', (
+    testWidgets('avant la fenetre : le contexte, puis Preparer la seance', (
       WidgetTester tester,
     ) async {
-      // C'est le defaut central que ce lot repare : `mes_seances_v` rend une
-      // ligne par eleve, et un cours de cinq enfants y apparait cinq fois.
-      // `mes_seances_enseignant_v` en rend une seule, et la colonne aussi.
-      final DateTime debut = _aujourdhuiA(9);
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[
-          seanceDeTest(
-            debut: debut,
-            nbParticipants: 5,
-            groupeId: 'g1',
-            groupeLibelle: 'Perles du Coran',
-          ),
-        ];
-
-      _fenetreHaute(tester);
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(enseignant: enseignant),
-        ),
+      await _ouvrir(
+        tester,
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[_anNour()],
       );
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text(t.enseignant.journee.ligneCours(prenom: 'Perles du Coran')),
-        findsOneWidget,
-      );
+      expect(find.text(t.enseignant.journee.preparerSeance), findsOneWidget);
+      expect(find.text("Préparer l'entrée"), findsNothing);
     });
 
-    testWidgets('hors de la fenetre d ouverture, une phrase remplace le bouton', (
+    testWidgets('fenetre ouverte : Rejoindre la salle (CTA-FIN-1)', (
       WidgetTester tester,
     ) async {
-      final DateTime debut = DateTime.now().add(const Duration(minutes: 30));
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[seanceDeTest(debut: debut)];
-
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(enseignant: enseignant),
-        ),
+      await _ouvrir(
+        tester,
+        maintenant: DateTime(2026, 9, 28, 17, 25),
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[_anNour()],
       );
-      await tester.pumpAndSettle();
-
-      // La base refuserait le jeton avant `debut - 10 min` (ADR-005).
-      expect(find.text(t.enseignant.journee.lancer), findsNothing);
-      expect(
-        find.text(t.enseignant.journee.lancementPlusTard),
-        findsOneWidget,
-      );
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsOneWidget);
+      expect(find.text("Préparer l'entrée"), findsNothing);
+      expect(find.text(t.enseignant.journee.preparerSeance), findsNothing);
     });
 
-    testWidgets('dans la fenetre, le pre-vol passe et le bouton existe', (
-      WidgetTester tester,
-    ) async {
-      final DateTime debut = DateTime.now().add(const Duration(minutes: 9));
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[seanceDeTest(debut: debut)];
-      final FauxServicePreVol preVol = FauxServicePreVol();
-
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(enseignant: enseignant, preVol: preVol),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text(t.enseignant.journee.preflightOk), findsOneWidget);
-      expect(find.text(t.enseignant.journee.lancer), findsOneWidget);
-      expect(find.text(t.enseignant.journee.lancementPlusTard), findsNothing);
-      // Le pre-vol est lu par `preVolProvider`, pas par un appel imperatif.
-      expect(preVol.verifications, 1);
-    });
-
-    testWidgets('un cours deja commence annonce son heure de fin', (
-      WidgetTester tester,
-    ) async {
-      final DateTime debut = DateTime.now().subtract(
-        const Duration(minutes: 10),
-      );
-      final SeanceEnseignant seance = seanceDeTest(
-        debut: debut,
-        statut: StatutSeance.enCours,
-      );
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[seance];
-
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(enseignant: enseignant),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text(t.enseignant.journee.coursEnCours), findsOneWidget);
-      expect(find.text(t.etat.enDirect), findsOneWidget);
-      expect(
-        find.text(t.enseignant.journee.jusqua(heure: _hhmm(seance.fin))),
-        findsOneWidget,
-      );
-      expect(find.text(t.enseignant.journee.lancer), findsOneWidget);
-    });
-
-    testWidgets('une seance sans groupe ne promet aucun nom', (
-      WidgetTester tester,
-    ) async {
-      // `SeanceEnseignant` ne porte aucun prenom : plutot qu'un tiret ou un
-      // libelle invente, la carte dit ce qu'elle sait.
-      final DateTime debut = DateTime.now().add(const Duration(minutes: 30));
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[seanceDeTest(debut: debut)];
-
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(enseignant: enseignant),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text(t.enseignant.journee.coursIndividuel), findsWidgets);
-      expect(find.text(t.enseignant.journee.voirGroupe), findsNothing);
-    });
-  });
-
-  group('ENS-02 : le pre-vol echoue', () {
-    testWidgets('sans micro, pas de bouton : la raison et un reessai', (
-      WidgetTester tester,
-    ) async {
-      final DateTime debut = DateTime.now().add(const Duration(minutes: 5));
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[seanceDeTest(debut: debut)];
-      final FauxServicePreVol preVol = FauxServicePreVol(
-        microDisponible: false,
-      );
-
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(enseignant: enseignant, preVol: preVol),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text(t.enseignant.journee.lancer), findsNothing);
-      expect(
-        find.text(t.enseignant.journee.preflightSansMicro),
-        findsOneWidget,
-      );
-
-      // Le micro branche, « Reessayer » relance vraiment la verification.
-      preVol.microDisponible = true;
-      await tester.tap(find.text(t.commun.reessayer));
-      await tester.pumpAndSettle();
-      expect(preVol.verifications, 2);
-      expect(find.text(t.enseignant.journee.lancer), findsOneWidget);
-    });
-
-    testWidgets('une permission refusee ne se dit pas « aucun micro »', (
-      WidgetTester tester,
-    ) async {
-      final DateTime debut = DateTime.now().add(const Duration(minutes: 5));
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[seanceDeTest(debut: debut)];
-
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(
-            enseignant: enseignant,
-            preVol: FauxServicePreVol(
-              microDisponible: false,
-              permissionRefusee: true,
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // Deux pannes, deux remedes : brancher un micro n'a rien a voir avec
-      // autoriser le navigateur.
-      expect(find.text(t.enseignant.journee.preflightBloque), findsOneWidget);
-      expect(find.text(t.enseignant.journee.preflightSansMicro), findsNothing);
-    });
-  });
-
-  group('ENS-02 : un eleve absent est detecte', () {
-    testWidgets('pendant le cours, l absence se dit avec un prenom', (
-      WidgetTester tester,
-    ) async {
-      final DateTime debut = DateTime.now().subtract(
-        const Duration(minutes: 5),
-      );
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[
-          seanceDeTest(
-            debut: debut,
-            statut: StatutSeance.enCours,
-            nbParticipants: 3,
-            groupeId: 'g1',
-            groupeLibelle: 'Perles du Coran',
-          ),
-        ];
-
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(
-            enseignant: enseignant,
-            presence: FauxServicePresence(
-              lignes: <PresenceParticipant>[
-                _presence(etat: EtatPresence.presente, prenom: 'Omar'),
-                _presence(
-                  etat: EtatPresence.absente,
-                  profilId: 'e2',
-                  prenom: 'Khadija',
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text(t.enseignant.journee.absenceDetectee(eleve: 'Khadija')),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('une presence inconnue ne s annonce pas comme une absence', (
-      WidgetTester tester,
-    ) async {
-      // Invariant J3 : `null` dit « je ne sais pas », et ne se dit jamais
-      // « absent ». Une liste vide dit « personne ».
-      final DateTime debut = DateTime.now().subtract(
-        const Duration(minutes: 5),
-      );
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[
-          seanceDeTest(debut: debut, statut: StatutSeance.enCours),
-        ];
-
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(
-            enseignant: enseignant,
-            // `lignes` nul par defaut : la presence est indisponible.
-            presence: FauxServicePresence(),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text(t.enseignant.journee.absenceDetectee(eleve: 'Khadija')),
-        findsNothing,
-      );
-      expect(find.text(t.enseignant.journee.coursEnCours), findsOneWidget);
-    });
-
-    testWidgets('les alertes restent rares : deux lignes, puis un compte', (
-      WidgetTester tester,
-    ) async {
-      final DateTime debut = DateTime.now().subtract(
-        const Duration(minutes: 5),
-      );
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[
-          seanceDeTest(
-            debut: debut,
-            statut: StatutSeance.enCours,
-            nbParticipants: 5,
-            groupeId: 'g1',
-            groupeLibelle: 'Perles du Coran',
-          ),
-        ];
-
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(
-            enseignant: enseignant,
-            presence: FauxServicePresence(
-              lignes: <PresenceParticipant>[
-                _presence(etat: EtatPresence.absente, prenom: 'Un'),
-                _presence(
-                  etat: EtatPresence.absente,
-                  profilId: 'e2',
-                  prenom: 'Deux',
-                ),
-                _presence(
-                  etat: EtatPresence.absente,
-                  profilId: 'e3',
-                  prenom: 'Trois',
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text(t.enseignant.journee.absenceDetectee(eleve: 'Un')),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.enseignant.journee.absenceDetectee(eleve: 'Deux')),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.enseignant.journee.absenceDetectee(eleve: 'Trois')),
-        findsNothing,
-      );
-      expect(
-        find.text(t.enseignant.journee.autresAbsences(nombre: '1')),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('avant l heure du cours, aucune absence n est annoncee', (
-      WidgetTester tester,
-    ) async {
-      final DateTime debut = DateTime.now().add(const Duration(minutes: 30));
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[seanceDeTest(debut: debut)];
-
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(
-            enseignant: enseignant,
-            presence: FauxServicePresence(
-              lignes: <PresenceParticipant>[
-                _presence(etat: EtatPresence.absente),
-              ],
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // Personne n'est attendu en salle : une absence n'existe pas encore.
-      expect(
-        find.text(t.enseignant.journee.absenceDetectee(eleve: 'Khadija')),
-        findsNothing,
-      );
-    });
-  });
-
-  group('ENS-02 : les rapports en attente', () {
-    testWidgets('au dela de vingt-quatre heures, la ligne parle de retard', (
-      WidgetTester tester,
-    ) async {
-      final DateTime hier = DateTime.now().subtract(const Duration(days: 2));
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..retardsRendus = <CahierEnRetard>[
-          CahierEnRetard(
-            seanceId: 's9',
-            debut: hier,
-            fin: hier.add(const Duration(minutes: 45)),
-            nbParticipants: 4,
-            heuresDeRetard: 30,
-            groupeId: 'g1',
-            groupeLibelle: 'Perles du Coran',
-          ),
-        ];
-
-      _fenetreHaute(tester);
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(enseignant: enseignant),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text(t.enseignant.journee.rapportsTitre), findsOneWidget);
-      expect(
-        find.text(t.enseignant.journee.rapportRetard(heures: '30')),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.enseignant.journee.rapportAttente(heures: '30')),
-        findsNothing,
-      );
-    });
-
-    testWidgets('la ligne mene au cahier de la seance concernee', (
-      WidgetTester tester,
-    ) async {
-      final DateTime hier = DateTime.now().subtract(const Duration(days: 1));
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..retardsRendus = <CahierEnRetard>[
-          CahierEnRetard(
-            seanceId: 's9',
-            debut: hier,
-            fin: hier.add(const Duration(minutes: 45)),
-            nbParticipants: 1,
-            heuresDeRetard: 3,
-          ),
-        ];
-
-      _fenetreHaute(tester);
+    testWidgets('le bouton mene a la Classe', (WidgetTester tester) async {
+      _fenetre(tester, const Size(390, 2400));
       await tester.pumpWidget(
         hoteRoutant(
           depart: Routes.enseignantJournee,
           routes: _routes(),
-          surcharges: _surcharges(enseignant: enseignant),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.tap(
-        find.text(
-          t.enseignant.journee.rapportLigne(
-            jour: t.disponibilites.joursLongs[hier.weekday - 1],
-            heure: _hhmm(hier),
+          surcharges: _surcharges(
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[_anNour()],
           ),
         ),
       );
       await tester.pumpAndSettle();
-
-      expect(find.text('cahier:s9'), findsOneWidget);
+      await tester.tap(find.text(t.enseignant.journee.preparerSeance));
+      await tester.pumpAndSettle();
+      expect(find.text('groupe:g-an-nour'), findsOneWidget);
     });
 
-    testWidgets('aucun rapport en attente : aucune section', (
+    testWidgets('hors ligne : la ligne d etat et Reessayer, sans bouton', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(
-        hote(const JourneePage(), surcharges: _surcharges()),
+      await _ouvrir(
+        tester,
+        reseau: FauxServiceReseau(horsLigneRendu: true),
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[_anNour()],
       );
-      await tester.pumpAndSettle();
-
-      // Une section vide serait un rappel de rien : la ligne disparait d'elle
-      // meme des que le cahier est depose.
-      expect(find.text(t.enseignant.journee.rapportsTitre), findsNothing);
+      expect(find.text(t.classe.entree.horsLigne), findsOneWidget);
+      expect(find.text(t.enseignant.journee.preparerSeance), findsNothing);
     });
   });
 
-  group('ENS-02 : une seule colonne, du haut vers le bas', () {
-    testWidgets('cours, pause et prieres y sont des entrees de meme nature', (
-      WidgetTester tester,
-    ) async {
-      final DateTime premier = _aujourdhuiA(9);
-      final DateTime second = _aujourdhuiA(10, 30);
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[
-          seanceDeTest(
-            debut: premier,
-            duree: const Duration(hours: 1),
-            groupeId: 'g1',
-            groupeLibelle: 'Perles du Coran',
-            nbParticipants: 5,
-          ),
-          seanceDeTest(
-            id: 's2',
-            debut: second,
-            duree: const Duration(hours: 1),
-            groupeId: 'g2',
-            groupeLibelle: 'Les Compagnons',
-            nbParticipants: 6,
-          ),
-        ];
-      final FauxServicePriere priere = FauxServicePriere()
-        ..parEnseignant[_monId] = _paris;
+  group('E11 : emplacementJournee, sans fork d EmplacementEntree', () {
+    EmplacementEntree ligne(EtatEntree etat) => EmplacementEntree(
+      role: RoleEntree.enseignant,
+      etat: etat,
+      forme: FormeEntree.ligne,
+      libelle: 'contexte',
+      annonce: 'annonce',
+    );
 
-      _fenetreHaute(tester);
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(
-            enseignant: enseignant,
-            priere: priere,
-            regles: _reglesAvecPause(30),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
+    EmplacementEntree pour(
+      EtatEntree etat,
+      EtatCtaSeance cta, {
+      EtatAbsence? absence,
+    }) => emplacementJournee(
+      ligne(etat),
+      nomClasse: 'An-Nour',
+      cta: cta,
+      absence: absence,
+    );
 
-      expect(
-        find.text(t.enseignant.journee.ligneCours(prenom: 'Perles du Coran')),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.enseignant.journee.ligneCours(prenom: 'Les Compagnons')),
-        findsOneWidget,
-      );
-      // Le trou de trente minutes entre les deux cours est une pause, parce que
-      // la regle de cet enseignant le dit.
-      expect(find.text(t.enseignant.journee.lignePause), findsOneWidget);
+    test(
+      'avant l heure : Preparer la seance, la ligne devient le contexte',
+      () {
+        final EmplacementEntree e = pour(
+          EtatEntree.aVenir,
+          EtatCtaSeance.preparer,
+        );
+        expect(e.estBouton, isTrue);
+        expect(e.libelle, t.enseignant.journee.preparerSeance);
+        expect(e.detail, 'contexte');
+        expect(e.annonce, 'annonce');
+      },
+    );
 
-      // Les prieres du jour ne sont pas dans un bloc a part : chacune est une
-      // ligne de la meme colonne.
-      final List<InterruptionPriere> interruptions = interruptionsEntre(
-        reglages: _paris,
-        debut: _aujourdhuiA(0),
-        fin: DateTime(
-          DateTime.now().year,
-          DateTime.now().month,
-          DateTime.now().day + 1,
-        ),
-      );
-      expect(interruptions, isNotEmpty);
-      for (final InterruptionPriere interruption in interruptions) {
+    test(
+      'pendant le creneau : Rejoindre la salle, jamais Preparer l entree',
+      () {
+        for (final EtatEntree etat in <EtatEntree>[
+          EtatEntree.fenetreOuverte,
+          EtatEntree.attente,
+          EtatEntree.enDirect,
+        ]) {
+          final EmplacementEntree e = pour(etat, EtatCtaSeance.rejoindre);
+          expect(e.estBouton, isTrue);
+          expect(e.libelle, t.enseignant.journee.rejoindreSalle);
+          expect(e.libelle, isNot("Préparer l'entrée"));
+          expect(e.libelleLecteur, contains('An-Nour'));
+        }
+      },
+    );
+
+    test(
+      'temps ecoule, cahier non depose : Remplir le cahier, obligatoire',
+      () {
+        final EmplacementEntree e = pour(
+          EtatEntree.terminee,
+          EtatCtaSeance.remplirCahier,
+        );
+        expect(e.estBouton, isTrue);
+        expect(e.libelle, t.enseignant.journee.remplirCahier);
         expect(
-          find.text(libellePriere(interruption.priere)),
-          findsWidgets,
-          reason: 'la priere doit etre une ligne de la colonne',
+          e.detail,
+          t.enseignant.journee.cahierObligatoire(classe: "d'An-Nour"),
+        );
+        expect(e.libelleLecteur, contains('An-Nour'));
+      },
+    );
+
+    test('cahier depose : une ligne seule, le lien est rendu par la carte', () {
+      final EmplacementEntree e = pour(
+        EtatEntree.terminee,
+        EtatCtaSeance.voirCahier,
+      );
+      expect(e.estBouton, isFalse);
+    });
+
+    test('annulee : Voir la Classe', () {
+      expect(
+        pour(EtatEntree.annulee, EtatCtaSeance.voirClasse).libelle,
+        t.enseignant.journee.voirClasse,
+      );
+    });
+
+    test('absence declaree : Voir la Classe, sauf demande annulee', () {
+      for (final EtatAbsence absence in EtatAbsence.values) {
+        final EmplacementEntree e = pour(
+          EtatEntree.aVenir,
+          EtatCtaSeance.preparer,
+          absence: absence,
+        );
+        expect(
+          e.libelle,
+          absence == EtatAbsence.demandeAnnulee
+              ? t.enseignant.journee.preparerSeance
+              : t.enseignant.journee.voirClasse,
         );
       }
     });
 
-    testWidgets('sans regle de pause lisible, aucun trou n est une pause', (
-      WidgetTester tester,
-    ) async {
-      final DateTime premier = _aujourdhuiA(9);
-      final DateTime second = _aujourdhuiA(10, 30);
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[
-          seanceDeTest(
-            debut: premier,
-            duree: const Duration(hours: 1),
-            groupeLibelle: 'Perles du Coran',
-            groupeId: 'g1',
-          ),
-          seanceDeTest(
-            id: 's2',
-            debut: second,
-            duree: const Duration(hours: 1),
-            groupeLibelle: 'Les Compagnons',
-            groupeId: 'g2',
-          ),
-        ];
-
-      _fenetreHaute(tester);
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          // La meme journee, sans la regle : la valeur ne se remplace pas par
-          // une constante, et les deux cours restent exacts.
-          surcharges: _surcharges(enseignant: enseignant),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text(t.enseignant.journee.lignePause), findsNothing);
-      expect(
-        find.text(t.enseignant.journee.ligneCours(prenom: 'Perles du Coran')),
-        findsOneWidget,
-      );
+    test('jamais de bouton grise : chaque etat porte un libelle plein', () {
+      for (final EtatCtaSeance cta in EtatCtaSeance.values) {
+        final EmplacementEntree e = pour(EtatEntree.aVenir, cta);
+        expect(e.libelle, isNotEmpty);
+        expect(e.reessayer, isFalse);
+      }
     });
 
-    testWidgets('une journee vide dit quand le prochain cours arrive', (
-      WidgetTester tester,
-    ) async {
-      final DateTime plusTard = DateTime.now().add(const Duration(days: 2));
-      final DateTime debut = DateTime(
-        plusTard.year,
-        plusTard.month,
-        plusTard.day,
-        17,
-      );
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[seanceDeTest(debut: debut)];
-
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(enseignant: enseignant),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text(t.enseignant.journee.rienAujourdhui), findsOneWidget);
+    test('preparation et reessai restent tels quels (jamais grise)', () {
+      final EmplacementEntree prep = ligne(EtatEntree.preparation);
       expect(
-        find.text(
-          t.enseignant.journee.rienAujourdhuiDetail(
-            jour: t.disponibilites.joursLongs[debut.weekday - 1],
-            heure: '17:00',
-          ),
+        emplacementJournee(
+          prep,
+          nomClasse: 'x',
+          cta: EtatCtaSeance.remplirCahier,
         ),
-        findsOneWidget,
+        same(prep),
       );
-      // Le bloc dominant n'est pas borne a aujourd'hui : il dit quand on
-      // reprend, au lieu de rester vide.
+      const EmplacementEntree reessai = EmplacementEntree(
+        role: RoleEntree.enseignant,
+        etat: EtatEntree.indisponible,
+        forme: FormeEntree.ligne,
+        libelle: 'hors ligne',
+        annonce: 'hors ligne',
+        reessayer: true,
+      );
       expect(
-        find.text(
-          t.enseignant.journee.unAutreJour(
-            jour: t.disponibilites.joursLongs[debut.weekday - 1],
-            heure: '17:00',
-          ),
+        emplacementJournee(
+          reessai,
+          nomClasse: 'x',
+          cta: EtatCtaSeance.remplirCahier,
         ),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('la journee finie se dit en une phrase, au singulier', (
-      WidgetTester tester,
-    ) async {
-      // Le premier instant du jour civil, et une minute de cours : la seule
-      // fenetre ou ce test pourrait mentir dure soixante secondes par nuit.
-      final DateTime debut = _aujourdhuiA(0);
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[
-          seanceDeTest(
-            debut: debut,
-            duree: const Duration(minutes: 1),
-            statut: StatutSeance.terminee,
-            cahierDepose: true,
-          ),
-        ];
-
-      _fenetreHaute(tester);
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(enseignant: enseignant),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text(t.enseignant.journee.journeeTermineeUn),
-        findsOneWidget,
+        same(reessai),
       );
     });
   });
 
-  group('ENS-02 : les acces contextuels et le secondaire', () {
-    testWidgets('la carte de seance mene a la fiche de son groupe', (
+  group('CTA-FIN-1 : le bouton de la carte selon le moment', () {
+    // La seance An-Nour : 17 h 30 a 18 h 15 ; la salle ouvre a 17 h 20.
+    Future<void> carte(
+      WidgetTester tester,
+      DateTime maintenant, {
+      StatutSeance statut = StatutSeance.planifiee,
+      bool depose = false,
+      Size taille = const Size(390, 2400),
+      double texte = 1,
+      Brightness theme = Brightness.light,
+    }) async {
+      _fenetre(tester, taille);
+      await tester.pumpWidget(
+        _hoteCarte(
+          luminosite: theme,
+          echelleTexte: texte,
+          surcharges: _surcharges(
+            maintenant: maintenant,
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[
+                seanceDeTest(
+                  id: 'an-nour',
+                  debut: DateTime(2026, 9, 28, 17, 30),
+                  statut: statut,
+                  nbParticipants: 4,
+                  cahierDepose: depose,
+                  groupeId: 'g-an-nour',
+                  groupeLibelle: 'An-Nour',
+                ),
+              ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    final Finder pastille = find.text(t.etat.enDirect);
+
+    testWidgets('avant l heure : Preparer la seance, sans pastille', (
       WidgetTester tester,
     ) async {
-      final DateTime debut = DateTime.now().add(const Duration(minutes: 30));
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[
-          seanceDeTest(
-            debut: debut,
-            nbParticipants: 5,
-            groupeId: 'g1',
-            groupeLibelle: 'Perles du Coran',
-          ),
-        ];
+      await carte(tester, DateTime(2026, 9, 28, 16));
+      expect(find.text(t.enseignant.journee.preparerSeance), findsOneWidget);
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsNothing);
+      expect(pastille, findsNothing);
+    });
 
+    testWidgets('pendant le creneau : Rejoindre la salle et En direct', (
+      WidgetTester tester,
+    ) async {
+      await carte(
+        tester,
+        DateTime(2026, 9, 28, 17, 40),
+        statut: StatutSeance.enCours,
+      );
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsOneWidget);
+      expect(find.text(t.enseignant.journee.preparerSeance), findsNothing);
+      expect(find.text("Préparer l'entrée"), findsNothing);
+      expect(pastille, findsOneWidget);
+    });
+
+    testWidgets('un cours qui deborde garde Rejoindre la salle', (
+      WidgetTester tester,
+    ) async {
+      await carte(
+        tester,
+        DateTime(2026, 9, 28, 18, 50),
+        statut: StatutSeance.enCours,
+      );
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsOneWidget);
+      expect(find.text(t.enseignant.journee.remplirCahier), findsNothing);
+      expect(pastille, findsOneWidget);
+    });
+
+    testWidgets('temps ecoule, cahier non depose : Remplir le cahier', (
+      WidgetTester tester,
+    ) async {
+      await carte(
+        tester,
+        DateTime(2026, 9, 28, 18, 40),
+        statut: StatutSeance.terminee,
+      );
+      expect(find.text(t.enseignant.journee.remplirCahier), findsOneWidget);
+      expect(
+        find.text(t.enseignant.journee.cahierObligatoire(classe: "d'An-Nour")),
+        findsOneWidget,
+      );
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsNothing);
+      expect(pastille, findsNothing);
+    });
+
+    testWidgets('Rejoindre la salle ouvre la salle par son pre-vol', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester, const Size(390, 2400));
       await tester.pumpWidget(
         hoteRoutant(
           depart: Routes.enseignantJournee,
           routes: _routes(),
-          surcharges: _surcharges(enseignant: enseignant),
+          surcharges: _surcharges(
+            maintenant: DateTime(2026, 9, 28, 17, 40),
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[
+                _anNour(statut: StatutSeance.enCours),
+              ],
+          ),
         ),
       );
       await tester.pumpAndSettle();
-
-      await tester.tap(find.text(t.enseignant.journee.voirGroupe));
+      await tester.tap(find.text(t.enseignant.journee.rejoindreSalle));
       await tester.pumpAndSettle();
-
-      expect(find.text('groupe:g1'), findsOneWidget);
+      expect(find.text('salle:an-nour:true:g-an-nour'), findsOneWidget);
     });
 
-    testWidgets('le compteur compte les eleves, pas les lignes du feed', (
+    testWidgets('Remplir le cahier ouvre le cahier de la seance', (
       WidgetTester tester,
     ) async {
-      // Le feed rend une ligne par creneau compatible : Ibrahim y figure trois
-      // fois. Compter les lignes annoncerait quatre familles pour deux.
-      final FauxServiceMatching matching = FauxServiceMatching()
-        ..feed = <EleveEnAttente>[
-          _enAttente(eleveId: 'e1', jour: 2, heure: 17),
-          _enAttente(eleveId: 'e1', jour: 3, heure: 17),
-          _enAttente(eleveId: 'e1', jour: 4, heure: 18),
-          _enAttente(eleveId: 'e2', jour: 5, heure: 9, prenom: 'Fatou'),
+      _fenetre(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.enseignantJournee,
+          routes: _routes(),
+          surcharges: _surcharges(
+            maintenant: DateTime(2026, 9, 28, 18, 40),
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[
+                _anNour(statut: StatutSeance.terminee),
+              ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.enseignant.journee.remplirCahier));
+      await tester.pumpAndSettle();
+      expect(find.text('cahier:an-nour'), findsOneWidget);
+    });
+
+    testWidgets('cahier depose : Voir le cahier en lien, sans bouton plein', (
+      WidgetTester tester,
+    ) async {
+      await carte(
+        tester,
+        DateTime(2026, 9, 28, 18, 40),
+        statut: StatutSeance.terminee,
+        depose: true,
+      );
+      final Finder lien = find.byKey(
+        const ValueKey<String>('journee-voir-cahier'),
+      );
+      expect(lien, findsOneWidget);
+      expect(
+        find.text(t.enseignant.journee.voirCahier(classe: "d'An-Nour")),
+        findsOneWidget,
+      );
+      expect(find.text(t.enseignant.journee.remplirCahier), findsNothing);
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsNothing);
+      expect(find.byType(ActionPrincipale), findsNothing);
+    });
+
+    testWidgets('Voir le cahier ouvre le cahier de la seance', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.enseignantJournee,
+          routes: _routes(),
+          surcharges: _surcharges(
+            maintenant: DateTime(2026, 9, 28, 18, 40),
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[
+                seanceDeTest(
+                  id: 'an-nour',
+                  debut: DateTime(2026, 9, 28, 17, 30),
+                  statut: StatutSeance.terminee,
+                  cahierDepose: true,
+                  groupeId: 'g-an-nour',
+                  groupeLibelle: 'An-Nour',
+                ),
+              ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey<String>('journee-voir-cahier')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('cahier:an-nour'), findsOneWidget);
+    });
+
+    testWidgets('l etat se rafraichit a la minute : la salle ouvre', (
+      WidgetTester tester,
+    ) async {
+      DateTime maintenant = DateTime(2026, 9, 28, 17, 19);
+      _fenetre(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        hote(
+          const JourneePage(),
+          surcharges: _surcharges(
+            horloge: () => maintenant,
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[_anNour()],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.enseignant.journee.preparerSeance), findsOneWidget);
+      maintenant = DateTime(2026, 9, 28, 17, 21);
+      await tester.pump(const Duration(minutes: 1));
+      await tester.pumpAndSettle();
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsOneWidget);
+      expect(find.text(t.enseignant.journee.preparerSeance), findsNothing);
+    });
+
+    final List<(String, Size, double, Brightness)>
+    vues = <(String, Size, double, Brightness)>[
+      ('320 px, texte x1, clair', const Size(320, 2400), 1, Brightness.light),
+      ('320 px, texte x2, clair', const Size(320, 2400), 2, Brightness.light),
+      ('320 px, texte x2, sombre', const Size(320, 2400), 2, Brightness.dark),
+      ('1440 px, texte x1, clair', const Size(1440, 1000), 1, Brightness.light),
+      ('1440 px, texte x2, sombre', const Size(1440, 1000), 2, Brightness.dark),
+    ];
+    final List<(String, DateTime, StatutSeance, String)> moments =
+        <(String, DateTime, StatutSeance, String)>[
+          (
+            'avant l heure',
+            DateTime(2026, 9, 28, 16),
+            StatutSeance.planifiee,
+            t.enseignant.journee.preparerSeance,
+          ),
+          (
+            'pendant le creneau',
+            DateTime(2026, 9, 28, 17, 40),
+            StatutSeance.enCours,
+            t.enseignant.journee.rejoindreSalle,
+          ),
+          (
+            'temps ecoule',
+            DateTime(2026, 9, 28, 18, 40),
+            StatutSeance.terminee,
+            t.enseignant.journee.remplirCahier,
+          ),
         ];
-
-      await tester.pumpWidget(
-        hote(const JourneePage(), surcharges: _surcharges(matching: matching)),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('2'), findsWidgets);
-      expect(find.text(t.enseignant.journee.enAttenteLibelle), findsOneWidget);
-    });
-
-    testWidgets('un compteur a zero s affiche, il ne disparait pas', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        hote(const JourneePage(), surcharges: _surcharges()),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('0'), findsWidgets);
-      expect(find.text(t.enseignant.journee.voirCreneaux), findsOneWidget);
-    });
+    for (final (String, Size, double, Brightness) vue in vues) {
+      for (final (String, DateTime, StatutSeance, String) moment in moments) {
+        testWidgets(
+          'le bouton reste centre et dans l ecran, ${moment.$1} : ${vue.$1}',
+          (WidgetTester tester) async {
+            await carte(
+              tester,
+              moment.$2,
+              statut: moment.$3,
+              taille: vue.$2,
+              texte: vue.$3,
+              theme: vue.$4,
+            );
+            verifierBoutonCentre(
+              tester,
+              find.byType(ActionPrincipale).first,
+              moment.$4,
+            );
+            final Object? exception = tester.takeException();
+            expect(
+              exception,
+              isNull,
+              reason: exception is FlutterError
+                  ? exception.toStringDeep()
+                  : '$exception',
+            );
+          },
+        );
+      }
+    }
   });
 
-  group('ENS-02 : mobile d abord', () {
-    testWidgets('a 390 x 844, rien ne deborde', (WidgetTester tester) async {
-      final DateTime debut = DateTime.now().add(const Duration(minutes: 5));
-      final DateTime hier = DateTime.now().subtract(const Duration(days: 2));
+  group('ENS-02 : Ma journee', () {
+    testWidgets('cours, pause et prieres dans la meme colonne', (
+      WidgetTester tester,
+    ) async {
       final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
         ..seancesRendues = <SeanceEnseignant>[
           seanceDeTest(
-            debut: debut,
-            nbParticipants: 5,
+            debut: DateTime(2026, 9, 28, 9),
+            duree: const Duration(hours: 1),
             groupeId: 'g1',
-            groupeLibelle: 'Perles du Coran',
-          ),
-        ]
-        ..retardsRendus = <CahierEnRetard>[
-          CahierEnRetard(
-            seanceId: 's9',
-            debut: hier,
-            fin: hier.add(const Duration(minutes: 45)),
+            groupeLibelle: 'An-Nour',
             nbParticipants: 4,
-            heuresDeRetard: 30,
+          ),
+          seanceDeTest(
+            id: 's2',
+            debut: DateTime(2026, 9, 28, 10, 30),
+            duree: const Duration(hours: 1),
+            groupeId: 'g2',
+            groupeLibelle: 'Al-Badr',
+            nbParticipants: 3,
           ),
         ];
       final FauxServicePriere priere = FauxServicePriere()
         ..parEnseignant[_monId] = _paris;
+      await _ouvrir(
+        tester,
+        maintenant: DateTime(2026, 9, 28, 8),
+        enseignant: enseignant,
+        priere: priere,
+        regles: _reglesAvecPause(30),
+      );
 
-      _fenetreTelephone(tester);
+      expect(find.text(t.enseignant.journee.maJournee), findsOneWidget);
+      expect(
+        find.text(t.enseignant.journee.classeNommee(classe: 'Al-Badr')),
+        findsOneWidget,
+      );
+      expect(find.text(t.enseignant.journee.lignePause), findsOneWidget);
+      final List<InterruptionPriere> interruptions = interruptionsEntre(
+        reglages: _paris,
+        debut: DateTime(2026, 9, 28),
+        fin: DateTime(2026, 9, 29),
+      );
+      expect(interruptions, isNotEmpty);
+      for (final InterruptionPriere interruption in interruptions) {
+        expect(find.text(libellePriere(interruption.priere)), findsWidgets);
+      }
+    });
+  });
+
+  group('ENS-02 : A terminer (K-45)', () {
+    testWidgets('trois cahiers au plus, une phrase qui aide, le point', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(
+        tester,
+        enseignant: FauxServiceEnseignant()
+          ..retardsRendus = <CahierEnRetard>[
+            _cahier('a', 'Al-Badr', 26),
+            _cahier('b', 'An-Nour', 24),
+            _cahier('c', 'Al-Fatiha', 23),
+            _cahier('d', 'Al-Ikhlas', 22),
+          ],
+      );
+      expect(find.text(t.enseignant.journee.aTerminer), findsOneWidget);
+      expect(find.text(t.enseignant.journee.aTerminerAide), findsOneWidget);
+      expect(find.byType(PointRappel), findsOneWidget);
+      // Le plus ancien d'abord (Q9) : Al-Badr, le plus recent, attend « Voir tout ».
+      expect(
+        find.text(
+          t.enseignant.journee.cahierLigne(classe: deDevant('Al-Ikhlas')),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          t.enseignant.journee.cahierLigne(classe: deDevant('Al-Fatiha')),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          t.enseignant.journee.cahierLigne(classe: deDevant('Al-Badr')),
+        ),
+        findsNothing,
+      );
+    });
+
+    testWidgets('la ligne mene au cahier de la seance', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester, const Size(390, 2400));
       await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(enseignant: enseignant, priere: priere),
+        hoteRoutant(
+          depart: Routes.enseignantJournee,
+          routes: _routes(),
+          surcharges: _surcharges(
+            enseignant: FauxServiceEnseignant()
+              ..retardsRendus = <CahierEnRetard>[_cahier('a', 'Al-Badr', 26)],
+          ),
         ),
       );
       await tester.pumpAndSettle();
+      await tester.tap(
+        find.text(
+          t.enseignant.journee.cahierLigne(classe: deDevant('Al-Badr')),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('cahier:a'), findsOneWidget);
+    });
 
-      // `tester.takeException()` remonte les debordements de mise en page :
-      // l'ecran de l'enseignant se lit sur un telephone, ou nulle part.
+    testWidgets('le point pulse quelques secondes, puis reste fixe', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        hote(
+          const JourneePage(),
+          surcharges: _surcharges(
+            enseignant: FauxServiceEnseignant()
+              ..retardsRendus = <CahierEnRetard>[_cahier('a', 'Al-Badr', 26)],
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(find.byKey(const ValueKey<String>('point-rappel-halo')), findsOne);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey<String>('point-rappel-halo')),
+        findsNothing,
+      );
+      expect(find.byKey(const ValueKey<String>('point-rappel')), findsOne);
+    });
+
+    testWidgets('mouvement reduit : le point est fixe d emblee', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester, const Size(390, 2400));
+      tester.platformDispatcher.accessibilityFeaturesTestValue =
+          const FakeAccessibilityFeatures(disableAnimations: true);
+      addTearDown(
+        tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+      );
+      await tester.pumpWidget(
+        hote(
+          const JourneePage(),
+          surcharges: _surcharges(
+            enseignant: FauxServiceEnseignant()
+              ..retardsRendus = <CahierEnRetard>[_cahier('a', 'Al-Badr', 26)],
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(
+        find.byKey(const ValueKey<String>('point-rappel-halo')),
+        findsNothing,
+      );
+      expect(find.byKey(const ValueKey<String>('point-rappel')), findsOne);
+    });
+  });
+
+  group('ENS-02 : Alertes utiles', () {
+    testWidgets('une absence pendant le cours se dit avec un prenom', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(
+        tester,
+        maintenant: DateTime(2026, 9, 28, 17, 40),
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[
+            _anNour(statut: StatutSeance.enCours),
+          ],
+        presence: FauxServicePresence(
+          lignes: <PresenceParticipant>[
+            _presence(etat: EtatPresence.presente, prenom: 'Yusuf'),
+            _presence(
+              etat: EtatPresence.absente,
+              profilId: 'e2',
+              prenom: 'Maryam',
+            ),
+          ],
+        ),
+      );
+      expect(find.text(t.enseignant.journee.alertesUtiles), findsOneWidget);
+      expect(
+        find.text(t.enseignant.journee.absenceDetectee(eleve: 'Maryam')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('une presence inconnue n est pas une alerte', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(
+        tester,
+        maintenant: DateTime(2026, 9, 28, 17, 40),
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[
+            _anNour(statut: StatutSeance.enCours),
+          ],
+      );
+      expect(find.text(t.enseignant.journee.alertesUtiles), findsNothing);
+    });
+  });
+
+  group('ENS-02 : une ou deux colonnes', () {
+    Future<void> journeeComplete(WidgetTester tester, Size taille) => _ouvrir(
+      tester,
+      taille: taille,
+      enseignant: FauxServiceEnseignant()
+        ..seancesRendues = <SeanceEnseignant>[_anNour()]
+        ..retardsRendus = <CahierEnRetard>[_cahier('a', 'Al-Badr', 26)],
+    );
+
+    // BENTO-2 (DASH_STRATEGIE.md §3.5) : Ma journee a droite de la carte,
+    // A terminer (rang 4) sous la carte, dans la meme colonne.
+    testWidgets('bureau : Ma journee a droite, A terminer sous la carte', (
+      WidgetTester tester,
+    ) async {
+      await journeeComplete(tester, const Size(1440, 1000));
+      final Offset carte = tester.getTopLeft(find.text('An-Nour'));
+      final double xJournee = tester
+          .getTopLeft(find.text(t.enseignant.journee.maJournee))
+          .dx;
+      final Offset cahiers = tester.getTopLeft(
+        find.text(t.enseignant.journee.aTerminer),
+      );
+      expect(xJournee, greaterThan(carte.dx + 300));
+      expect(cahiers.dx, lessThan(carte.dx + 300));
+      expect(cahiers.dy, greaterThan(carte.dy));
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('a 200 % de taille de texte, rien ne deborde', (
+    testWidgets('mobile : une colonne, A terminer sous Ma journee', (
       WidgetTester tester,
     ) async {
-      final DateTime debut = DateTime.now().add(const Duration(minutes: 5));
-      final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
-        ..seancesRendues = <SeanceEnseignant>[
-          seanceDeTest(
-            debut: debut,
-            nbParticipants: 5,
-            groupeId: 'g1',
-            groupeLibelle: 'Perles du Coran',
-          ),
-        ];
+      await journeeComplete(tester, const Size(390, 2400));
+      final double yJournee = tester
+          .getTopLeft(find.text(t.enseignant.journee.maJournee))
+          .dy;
+      final double yCahiers = tester
+          .getTopLeft(find.text(t.enseignant.journee.aTerminer))
+          .dy;
+      expect(yCahiers, greaterThan(yJournee));
+      expect(tester.takeException(), isNull);
+    });
 
-      _fenetreTelephone(tester);
-      // L'echelle se pose sur le dispatcher, pas dans un `MediaQuery` local :
-      // `MaterialApp` reconstruit le sien depuis la vue et ecraserait celui-la.
+    testWidgets('a 200 % de texte sur mobile, rien ne deborde', (
+      WidgetTester tester,
+    ) async {
       tester.platformDispatcher.textScaleFactorTestValue = 2;
       addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-
-      await tester.pumpWidget(
-        hote(
-          const JourneePage(),
-          surcharges: _surcharges(enseignant: enseignant),
-        ),
-      );
-      await tester.pumpAndSettle();
-
+      await journeeComplete(tester, const Size(390, 2400));
       expect(tester.takeException(), isNull);
     });
   });
+
+  group('BENTO-2b/2c : « A terminer » ne coupe aucun mot', () {
+    // Les mesures de texte n'ont de sens qu'avec les vraies polices.
+    setUpAll(chargerPolicesDuDepot);
+
+    // BENTO-2c (M1 de BENTO-2b-R) : avec 4 cahiers, « Voir tout » s'affiche
+    // et ne laissait au titre que ~160 px a 320 x2 (« termi/ner »,
+    // « Obligatoi/re »). On mesure tout le bloc (la `Column` de
+    // « A terminer », qui existait deja avant le correctif), pas seulement
+    // l'en-tete.
+    final List<CahierEnRetard> quatre = <CahierEnRetard>[
+      _cahier('a', 'Al-Badr', 26),
+      _cahier('b', 'As-Salam', 25),
+      _cahier('c', 'Al-Fatiha', 23),
+      _cahier('d', 'Al-Ikhlas', 22),
+    ];
+    for (final int nombre in const <int>[2, 4]) {
+      for (final (double, double) cas in const <(double, double)>[
+        (320, 1),
+        (320, 2),
+        (390, 2),
+        (768, 1),
+        (768, 2),
+      ]) {
+        for (final TextDirection sens in TextDirection.values) {
+          testWidgets('$nombre cahiers, ${cas.$1.toInt()} px, '
+              'texte x${cas.$2.toInt()}, ${sens.name}', (
+            WidgetTester tester,
+          ) async {
+            _fenetre(tester, Size(cas.$1, 3000));
+            await tester.pumpWidget(
+              _hoteCarte(
+                luminosite: Brightness.light,
+                echelleTexte: cas.$2,
+                direction: sens,
+                surcharges: _surcharges(
+                  enseignant: FauxServiceEnseignant()
+                    ..seancesRendues = <SeanceEnseignant>[_anNour()]
+                    ..retardsRendus = quatre.take(nombre).toList(),
+                ),
+              ),
+            );
+            await tester.pumpAndSettle();
+            expect(tester.takeException(), isNull);
+            final Finder titre = find.text(t.enseignant.journee.aTerminer);
+            expect(titre, findsOneWidget);
+            final Finder voirTout = find.byKey(
+              const ValueKey<String>('journee-a-terminer-voir-tout'),
+            );
+            expect(voirTout, nombre > 3 ? findsOneWidget : findsNothing);
+            final Finder bloc = find
+                .ancestor(of: titre, matching: find.byType(Column))
+                .first;
+            expect(bloc, findsOneWidget);
+            // Le bloc contient bien ce qu'on mesure : titre, pastille,
+            // lignes de cahier et, avec 4 cahiers, « Voir tout ».
+            expect(
+              find.descendant(
+                of: bloc,
+                matching: find.text(t.enseignant.cahier.obligatoire),
+              ),
+              findsOneWidget,
+            );
+            if (nombre > 3) {
+              expect(
+                find.descendant(of: bloc, matching: voirTout),
+                findsOneWidget,
+              );
+            }
+            verifierAucunMotCoupe(tester, bloc);
+            // « Voir tout » ne sort pas du bloc et reste une cible entiere.
+            if (nombre > 3) {
+              final Rect rBloc = tester.getRect(bloc);
+              final Rect rLien = tester.getRect(voirTout);
+              expect(rLien.left, greaterThanOrEqualTo(rBloc.left - 0.5));
+              expect(rLien.right, lessThanOrEqualTo(rBloc.right + 0.5));
+            }
+          });
+        }
+      }
+    }
+  });
+
+  // COM-F-b (QUESTIONS Q2, 02_DEC-10, K-42) : la ligne « Communaute
+  // enseignants » a son emplacement dans « Ma journee », toujours rendu ;
+  // jamais un cinquieme bloc, jamais dans « Alertes utiles ».
+  group('COM-F-b : l emplacement Communaute, quatre blocs au plus', () {
+    Finder colonneDe(Finder entree) =>
+        find.ancestor(of: entree, matching: find.byType(Column)).first;
+
+    void verifier(WidgetTester tester) {
+      final Finder entree = find.byType(EntreeCommunaute);
+      expect(entree, findsOneWidget);
+      final GrilleBento grille = tester.widget<GrilleBento>(
+        find.byType(GrilleBento),
+      );
+      expect(grille.tuiles.length, lessThanOrEqualTo(4));
+      // Le plus proche parent est la colonne de « Ma journee ».
+      expect(
+        find.descendant(
+          of: colonneDe(entree),
+          matching: find.text(t.enseignant.journee.maJournee),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: colonneDe(entree),
+          matching: find.text(t.enseignant.journee.alertesUtiles),
+        ),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+    }
+
+    testWidgets('les quatre blocs rendus : toujours quatre, pas cinq', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(
+        tester,
+        maintenant: DateTime(2026, 9, 28, 17, 40),
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[
+            _anNour(statut: StatutSeance.enCours),
+          ]
+          ..retardsRendus = <CahierEnRetard>[_cahier('a', 'Al-Badr', 26)],
+        presence: FauxServicePresence(
+          lignes: <PresenceParticipant>[
+            _presence(etat: EtatPresence.absente, prenom: 'Maryam'),
+          ],
+        ),
+      );
+      // Les quatre blocs sont bien la, sans quoi « quatre au plus » ne
+      // prouverait rien.
+      expect(find.text(t.enseignant.journee.aTerminer), findsOneWidget);
+      expect(find.text(t.enseignant.journee.alertesUtiles), findsOneWidget);
+      expect(
+        tester.widget<GrilleBento>(find.byType(GrilleBento)).tuiles.length,
+        4,
+      );
+      verifier(tester);
+    });
+
+    testWidgets(
+      'journee vide : l emplacement reste pose (bloc toujours rendu)',
+      (WidgetTester tester) async {
+        await _ouvrir(tester);
+        expect(find.text(t.enseignant.journee.alertesUtiles), findsNothing);
+        verifier(tester);
+      },
+    );
+
+    testWidgets('R-27, production : Communaute fermee, la ligne n est pas '
+        'rendue', (WidgetTester tester) async {
+      await _ouvrir(
+        tester,
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[_anNour()],
+      );
+      final Finder entree = find.byType(EntreeCommunaute);
+      expect(entree, findsOneWidget);
+      expect(find.byKey(EntreeCommunaute.cleLien), findsNothing);
+      expect(find.text(t.com.socle.lexique.communaute), findsNothing);
+      expect(tester.getSize(entree).height, 0);
+    });
+
+    testWidgets('remplie par COM-COMU (Communaute ouverte, demonstration) : '
+        'l ecart du socle, puis la ligne', (WidgetTester tester) async {
+      await _ouvrir(
+        tester,
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[_anNour()],
+        autres: surchargesCommunauteDemo(SituationDemoCommunaute.nominal),
+      );
+      // La voie COM-COMU remplit l'emplacement : la ligne a une hauteur, et
+      // l'ecart fixe par la page (contrat du socle) la precede.
+      final Finder entree = find.byType(EntreeCommunaute);
+      expect(tester.getSize(entree).height, greaterThan(0));
+      expect(
+        find.descendant(
+          of: entree,
+          matching: find.byKey(EntreeCommunaute.cleLien),
+        ),
+        findsOneWidget,
+      );
+      final EntreeCommunaute widget = tester.widget<EntreeCommunaute>(entree);
+      expect(widget.ecartAvant, same(Ecart.vMd));
+      expect(
+        find.descendant(of: entree, matching: find.byWidget(Ecart.vMd)),
+        findsOneWidget,
+      );
+    });
+  });
+
+  // EA-HL-DOUBLE-1e : l'echec partiel ne redit pas le reseau sous le
+  // bandeau (ni « connexion », ni « reseau », sans exception pour
+  // « connexion instable »), dit une cause probable sans l'affirmer, que les
+  // seances affichees sont a jour, et EXACTEMENT ce qui a echoue : les
+  // cahiers seuls, les prieres et pauses seules, ou tout (repris de
+  // LIB-LOT3-2, revue adverse du 1e).
+  group('Echec partiel : exact et sans redire le reseau (EA-HL-DOUBLE-1e)', () {
+    for (final (String, bool, bool, String Function()) cas
+        in <(String, bool, bool, String Function())>[
+          (
+            'prieres et pauses',
+            true,
+            false,
+            () => t.enseignant.journee.erreurPartielle,
+          ),
+          (
+            'cahiers seuls',
+            false,
+            true,
+            () => t.enseignant.journee.erreurPartielleCahiers,
+          ),
+          ('tout', true, true, () => t.enseignant.journee.erreurPartielleTout),
+        ]) {
+      for (final bool horsLigne in <bool>[true, false]) {
+        testWidgets('${cas.$1}, ${horsLigne ? 'hors ligne' : 'en ligne'}', (
+          WidgetTester tester,
+        ) async {
+          await _ouvrir(
+            tester,
+            priere: cas.$2 ? _PriereEnPanne() : null,
+            reseau: FauxServiceReseau(horsLigneRendu: horsLigne),
+            enseignant: (cas.$3 ? _CahiersEnPanne() : FauxServiceEnseignant())
+              ..seancesRendues = <SeanceEnseignant>[_anNour()],
+          );
+          final Finder phrase = find.byKey(
+            const ValueKey<String>('journee-erreur-partielle'),
+          );
+          expect(phrase, findsOneWidget);
+          final String texte = tester.widget<Text>(phrase).data!;
+          expect(texte, cas.$4());
+          // Ce qui n'a pas echoue n'est pas nomme.
+          expect(texte.contains('prière'), cas.$2, reason: texte);
+          expect(texte.contains('cahiers'), cas.$3, reason: texte);
+          expect(
+            RegExp(
+              'connexion|réseau|internet|service',
+              caseSensitive: false,
+            ).hasMatch(texte),
+            isFalse,
+            reason: texte,
+          );
+          expect(motifHorsLigne.hasMatch(texte), isFalse, reason: texte);
+          expect(texte, contains('il est possible que la demande'));
+          if (horsLigne) {
+            expectHorsLigneUneFois();
+          } else {
+            expect(signauxHorsLigne(), findsNothing);
+          }
+        });
+      }
+    }
+  });
+
+  // EA-HL-DOUBLE-1e : captures de preuve de l'echec partiel de la Journee,
+  // hors ligne (sous le bandeau) et en ligne, 390, 1440, sombre, 320 texte
+  // x2 en LTR et RTL. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1e', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, Brightness, double, TextDirection, bool) cas
+        in <(String, Size, Brightness, double, TextDirection, bool)>[
+          (
+            '390_clair',
+            const Size(390, 1400),
+            Brightness.light,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '390_sombre',
+            const Size(390, 1400),
+            Brightness.dark,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '320x2_clair',
+            const Size(320, 2600),
+            Brightness.light,
+            2,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '320x2_rtl_clair',
+            const Size(320, 2600),
+            Brightness.light,
+            2,
+            TextDirection.rtl,
+            true,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 1000),
+            Brightness.light,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '390_en_ligne_clair',
+            const Size(390, 1400),
+            Brightness.light,
+            1,
+            TextDirection.ltr,
+            false,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        _fenetre(tester, cas.$2);
+        await tester.pumpWidget(
+          _hoteCarte(
+            luminosite: cas.$3,
+            echelleTexte: cas.$4,
+            direction: cas.$5,
+            surcharges: _surcharges(
+              priere: _PriereEnPanne(),
+              reseau: FauxServiceReseau(horsLigneRendu: cas.$6),
+              enseignant: FauxServiceEnseignant()
+                ..seancesRendues = <SeanceEnseignant>[_anNour()],
+            ),
+          ),
+        );
+        for (int i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(tester.takeException(), isNull);
+        expect(find.text(t.enseignant.journee.erreurPartielle), findsOneWidget);
+        if (cas.$6) {
+          expectHorsLigneUneFois();
+        }
+        verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1e_journee_partielle_${cas.$1}')}',
+        );
+      });
+    }
+
+    // Les cas « cahiers seuls » et « tout » (revue adverse du 1e), hors
+    // ligne sous le bandeau, a 390 et a 320 texte x2 en LTR et RTL.
+    for (final (String, bool) panne in <(String, bool)>[
+      ('cahiers', false),
+      ('tout', true),
+    ]) {
+      for (final (String, Size, double, TextDirection) cas
+          in <(String, Size, double, TextDirection)>[
+            ('390_clair', const Size(390, 1400), 1, TextDirection.ltr),
+            ('320x2_clair', const Size(320, 2600), 2, TextDirection.ltr),
+            ('320x2_rtl_clair', const Size(320, 2600), 2, TextDirection.rtl),
+          ]) {
+        testWidgets('${panne.$1} ${cas.$1}', (WidgetTester tester) async {
+          _fenetre(tester, cas.$2);
+          await tester.pumpWidget(
+            _hoteCarte(
+              luminosite: Brightness.light,
+              echelleTexte: cas.$3,
+              direction: cas.$4,
+              surcharges: _surcharges(
+                priere: panne.$2 ? _PriereEnPanne() : null,
+                reseau: FauxServiceReseau(horsLigneRendu: true),
+                enseignant: _CahiersEnPanne()
+                  ..seancesRendues = <SeanceEnseignant>[_anNour()],
+              ),
+            ),
+          );
+          for (int i = 0; i < 10; i++) {
+            await tester.pump(const Duration(milliseconds: 100));
+          }
+          expect(tester.takeException(), isNull);
+          expect(
+            find.text(
+              panne.$2
+                  ? t.enseignant.journee.erreurPartielleTout
+                  : t.enseignant.journee.erreurPartielleCahiers,
+            ),
+            findsOneWidget,
+          );
+          expectHorsLigneUneFois();
+          verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1e_journee_partielle_${panne.$1}_${cas.$1}')}',
+          );
+        });
+      }
+    }
+  });
+}
+
+/// Les horaires de priere ne se lisent pas : l'echec partiel de la Journee.
+class _PriereEnPanne extends FauxServicePriere {
+  @override
+  Future<ReglagesPriere?> reglages(String enseignantId) async =>
+      throw StateError('lecture des reglages impossible');
+}
+
+/// Les cahiers de transmission en retard ne se lisent pas : l'echec
+/// partiel « cahiers » de la Journee.
+class _CahiersEnPanne extends FauxServiceEnseignant {
+  @override
+  Future<List<CahierEnRetard>> cahiersEnRetard() async =>
+      throw StateError('lecture des cahiers en retard impossible');
+
 }

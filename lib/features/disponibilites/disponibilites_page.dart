@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bento_tile.dart';
@@ -15,7 +16,7 @@ import 'grille_semaine.dart';
 ///
 /// Ecran absent des specs d'origine, et pourtant necessaire : le matching
 /// inverse suppose que les creneaux eleves existent, mais rien ne les produisait
-/// (`docs/produit/parcours-utilisateurs.md`, tableau des ecrans manquants).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, tableau des ecrans manquants).
 ///
 /// Sous la grille, une phrase dit **ce que cela produit**. Un ecran qui demande
 /// un effort sans en montrer l'effet ne l'obtient pas.
@@ -136,7 +137,9 @@ class _BlocEnfantEtat extends ConsumerState<_BlocEnfant> {
             Text(
               poses.length == 1
                   ? t.disponibilites.poseeUne
-                  : t.disponibilites.posees(nombre: '${poses.length}'),
+                  : LibellesGroupe.valeurSeule(
+                      t.disponibilites.posees(nombre: poses.length),
+                    ),
               style: textes.bodySmall,
             ),
           if (_erreur || creneaux.hasError) ...<Widget>[

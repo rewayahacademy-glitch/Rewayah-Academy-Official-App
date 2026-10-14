@@ -1,0 +1,655 @@
+// OFFRES-FAM-1 : l'adaptateur de demonstration du suivi des demandes de
+// creneau, et les notifications de ses transitions. Rien ne quitte
+// l'appareil (K-28).
+//
+// Il simule ce que le serveur fera (ligne Backend OFFRES-FAM-1) :
+// - l'etape de chaque demande et ses transitions, diffusees a la famille ;
+// - ce que le serveur SAIT et ne rend PAS : le nombre d'autres demandeurs du
+//   meme regroupement et l'enseignant propose avant sa confirmation. Ces
+//   donnees vivent ici pour que les tests prouvent qu'elles ne sortent
+//   jamais du port ;
+// - les heures en heure murale du fuseau du foyer.
+import 'dart:async';
+
+import 'package:flutter_riverpod/misc.dart' show Override;
+
+import '../../core/capacites/port_notifications.dart';
+import '../../core/offres/port_frise_demande.dart';
+import '../../core/offres/port_suivi_demandes.dart';
+import '../../core/router/routes.dart';
+import '../suivi_demandes/libelles_suivi_demandes.dart';
+import '../suivi_famille/libelles_suivi_famille.dart';
+import 'mode_demonstration.dart' show DonneesDemo;
+
+/// Une demande telle que le serveur simule la connait.
+class DemandeServeurDemo {
+  /// Cree la demande, a l'etape [etape].
+  DemandeServeurDemo({
+    required this.demandeId,
+    required this.eleveId,
+    required this.prenom,
+    required this.creneau,
+    required this.etape,
+    required this.transitions,
+    this.fuseauIana = 'Europe/Paris',
+    this.personnalise = false,
+    this.autresDemandeurs = 0,
+    this.enseignant,
+    this.debutCours,
+    this.motif,
+    this.peutChoisirAutreCreneau = false,
+    this.attenteDepuis,
+    this.attenteJusquA,
+    this.motifAttente,
+    this.integreLe,
+    this.premiereSeanceLe,
+    this.premiereSeancePrevue,
+    this.motifCloture,
+    this.changement,
+  });
+
+  /// L'identifiant.
+  final String demandeId;
+
+  /// L'eleve.
+  final String eleveId;
+
+  /// Son prenom.
+  final String prenom;
+
+  /// Les jours choisis et l'heure de chacun.
+  final CreneauDemande creneau;
+
+  /// Le fuseau du foyer.
+  final String fuseauIana;
+
+  /// Creneau personnalise.
+  final bool personnalise;
+
+  /// Donnee serveur seulement : les autres eleves du regroupement.
+  int autresDemandeurs;
+
+  /// Donnee serveur : l'enseignant propose, puis confirme.
+  String? enseignant;
+
+  /// L'etape atteinte.
+  EtapeDemande etape;
+
+  /// Chaque transition atteinte et son instant.
+  final List<(EtapeDemande, DateTime)> transitions;
+
+  /// Le debut des cours, heure murale du foyer.
+  DateTime? debutCours;
+
+  /// Le motif d'une demande close.
+  MotifCloture? motif;
+
+  /// Capacite de rechoisir.
+  bool peutChoisirAutreCreneau;
+
+  /// SUIVI-FAMILLE : entree en liste d'attente, et sortie (classe creee) ;
+  /// tant que [attenteJusquA] est nul, la famille attend.
+  DateTime? attenteDepuis;
+
+  /// Fin de l'attente.
+  DateTime? attenteJusquA;
+
+  /// Pourquoi la famille attend.
+  MotifAttente? motifAttente;
+
+  /// L'eleve est integre a la classe.
+  DateTime? integreLe;
+
+  /// La premiere seance a eu lieu.
+  DateTime? premiereSeanceLe;
+
+  /// La premiere seance, date connue du serveur (jamais estimee).
+  DateTime? premiereSeancePrevue;
+
+  /// BACK-FRONT-SUIVI-1 : le motif de cloture de la frise, quand il differe
+  /// des motifs d'OFFRES-FAM-1 (« deja en classe »). Sinon deduit de [motif].
+  MotifClotureFrise? motifCloture;
+
+  MotifClotureFrise? _clotureFrise() {
+    if (etape != EtapeDemande.close) return null;
+    return motifCloture ??
+        switch (motif) {
+          MotifCloture.retraitFamille => MotifClotureFrise.retraitFamille,
+          MotifCloture.offreRetiree => MotifClotureFrise.offreRetiree,
+          MotifCloture.classeNonConstituee =>
+            MotifClotureFrise.classeNonConstituee,
+          MotifCloture.refusDirection => MotifClotureFrise.refusDirection,
+          MotifCloture.dejaEnClasse => MotifClotureFrise.dejaEnClasse,
+          _ => MotifClotureFrise.inconnu,
+        };
+  }
+
+  DateTime? _quand(EtapeDemande e) {
+    for (final (EtapeDemande x, DateTime q) in transitions) {
+      if (x == e) return q;
+    }
+    return null;
+  }
+
+  /// La frise que le port rend a la famille.
+  FriseDemande versFrise() {
+    final DateTime? envoyee = _quand(EtapeDemande.envoyee);
+    final DateTime? classe = _quand(EtapeDemande.classeValidee);
+    final DateTime? affecte = _quand(EtapeDemande.enseignantAffecte);
+    final bool attente = attenteDepuis != null;
+    final TypeEtapeFrise? courante = attente && attenteJusquA == null
+        ? TypeEtapeFrise.enAttente
+        : classe == null
+        ? TypeEtapeFrise.classeCreee
+        : affecte == null
+        ? TypeEtapeFrise.enseignantAffecte
+        : integreLe == null
+        ? TypeEtapeFrise.eleveIntegre
+        : premiereSeanceLe == null
+        ? TypeEtapeFrise.premiereSeance
+        : null;
+    return FriseDemande(
+      demandeId: demandeId,
+      eleveId: eleveId,
+      prenom: prenom,
+      fuseauIana: fuseauIana,
+      courante: courante,
+      motifAttente: motifAttente,
+      cloture: _clotureFrise(),
+      peutChoisirAutreCreneau: peutChoisirAutreCreneau,
+      etapes: <EtapeFrise>[
+        EtapeFrise(type: TypeEtapeFrise.envoyee, quand: envoyee),
+        if (attente)
+          EtapeFrise(type: TypeEtapeFrise.enAttente, quand: attenteDepuis),
+        // Une demande close ne montre que les etapes franchies.
+        if (etape != EtapeDemande.close || classe != null)
+          EtapeFrise(type: TypeEtapeFrise.classeCreee, quand: classe),
+        if (etape != EtapeDemande.close || affecte != null)
+          EtapeFrise(type: TypeEtapeFrise.enseignantAffecte, quand: affecte),
+        if (etape != EtapeDemande.close)
+          EtapeFrise(type: TypeEtapeFrise.eleveIntegre, quand: integreLe),
+        if (etape != EtapeDemande.close)
+          EtapeFrise(
+            type: TypeEtapeFrise.premiereSeance,
+            quand: premiereSeanceLe ?? premiereSeancePrevue,
+          ),
+      ],
+    );
+  }
+
+  /// Chaque passage d'etape de la frise, avec son instant.
+  List<(TypeEtapeFrise, DateTime)> passages() => <(TypeEtapeFrise, DateTime)>[
+    for (final EtapeFrise e in versFrise().etapes)
+      if (e.quand != null &&
+          !(e.type == TypeEtapeFrise.premiereSeance &&
+              premiereSeanceLe == null))
+        (e.type, e.quand!),
+  ];
+
+  /// Ce qui a change dans la classe de l'eleve (fusion, transfert).
+  ChangementClasse? changement;
+
+  /// Ce que le port rend a la famille.
+  SuiviDemande versFamille() => SuiviDemande(
+    demandeId: demandeId,
+    eleveId: eleveId,
+    prenom: prenom,
+    etape: etape,
+    creneau: creneau,
+    fuseauIana: fuseauIana,
+    personnalise: personnalise,
+    enseignant: enseignant,
+    debutCours: debutCours,
+    motif: motif,
+    peutChoisirAutreCreneau: peutChoisirAutreCreneau,
+    // R20 : l'instant de chaque etape franchie (la derniere fois si une
+    // etape a ete atteinte deux fois).
+    jalons: <EtapeDemande, DateTime>{
+      for (final (EtapeDemande e, DateTime quand) in transitions) e: quand,
+    },
+    changement: changement,
+  );
+}
+
+/// Le port de demonstration : une liste de demandes et leurs transitions.
+class SuiviDemandesDemo implements PortSuiviDemandes {
+  /// Cree le port sur [demandes]. [echec] : la lecture echoue.
+  SuiviDemandesDemo(this.demandes, {this.echec = false});
+
+  /// Le foyer de demonstration : Yusuf a demande un creneau personnalise
+  /// (etape 1), Aicha a sa classe et son enseignante (etape 3).
+  factory SuiviDemandesDemo.demonstration() => SuiviDemandesDemo(
+    <DemandeServeurDemo>[demandeYusufEnvoyee(), demandeAichaAffectee()],
+  );
+
+  /// Les quatre etapes, une par eleve.
+  factory SuiviDemandesDemo.quatreEtapes() =>
+      SuiviDemandesDemo(<DemandeServeurDemo>[
+        demandeYusufEnvoyee(),
+        DemandeServeurDemo(
+          demandeId: 'demo-demande-ines',
+          eleveId: 'demo-eleve-ines',
+          prenom: 'Inès',
+          creneau: CreneauDemande(
+            // C-10 bis : une heure differente selon le jour.
+            occurrences: const <OccurrenceCreneau>[
+              OccurrenceCreneau(jourIso: 6, heure: 10),
+              OccurrenceCreneau(jourIso: 7, heure: 11, minute: 30),
+            ],
+          ),
+          etape: EtapeDemande.classeValidee,
+          transitions: <(EtapeDemande, DateTime)>[
+            (EtapeDemande.envoyee, DateTime(2026, 10, 3, 9, 12)),
+            (EtapeDemande.classeValidee, DateTime(2026, 10, 7, 14)),
+          ],
+          autresDemandeurs: 5,
+          // Propose par le systeme, pas encore confirme : jamais rendu.
+          enseignant: 'Sayyida Khadija',
+        ),
+        demandeAichaAffectee(),
+        DemandeServeurDemo(
+          demandeId: 'demo-demande-bilal',
+          eleveId: 'demo-eleve-bilal',
+          prenom: 'Bilal',
+          creneau: CreneauDemande(
+            occurrences: const <OccurrenceCreneau>[
+              OccurrenceCreneau(jourIso: 3, heure: 19, minute: 30),
+            ],
+          ),
+          etape: EtapeDemande.close,
+          transitions: <(EtapeDemande, DateTime)>[
+            (EtapeDemande.envoyee, DateTime(2026, 9, 28, 20, 5)),
+            (EtapeDemande.close, DateTime(2026, 10, 6, 11)),
+          ],
+          motif: MotifCloture.offreRetiree,
+          peutChoisirAutreCreneau: true,
+        ),
+      ]);
+
+  /// SUIVI-FAMILLE : trois frises. Yusuf attend une place (classes pleines),
+  /// Aicha a son enseignante, Ines est integree et sa premiere seance est
+  /// fixee.
+  factory SuiviDemandesDemo.frises() => SuiviDemandesDemo(<DemandeServeurDemo>[
+    demandeYusufEnvoyee()
+      ..attenteDepuis = DateTime(2026, 10, 9, 8, 15)
+      ..motifAttente = MotifAttente.classesPleines,
+    demandeAichaAffectee(),
+    DemandeServeurDemo(
+      demandeId: 'demo-demande-bilal',
+      eleveId: 'demo-eleve-bilal',
+      prenom: 'Bilal',
+      creneau: CreneauDemande(
+        occurrences: const <OccurrenceCreneau>[
+          OccurrenceCreneau(jourIso: 3, heure: 19, minute: 30),
+        ],
+      ),
+      etape: EtapeDemande.close,
+      transitions: <(EtapeDemande, DateTime)>[
+        (EtapeDemande.envoyee, DateTime(2026, 9, 28, 20, 5)),
+        (EtapeDemande.close, DateTime(2026, 10, 6, 11)),
+      ],
+      motif: MotifCloture.offreRetiree,
+      peutChoisirAutreCreneau: true,
+    ),
+    DemandeServeurDemo(
+      demandeId: 'demo-demande-hana',
+      eleveId: 'demo-eleve-hana',
+      prenom: 'Hana',
+      creneau: CreneauDemande(
+        occurrences: const <OccurrenceCreneau>[
+          OccurrenceCreneau(jourIso: 2, heure: 18),
+        ],
+      ),
+      etape: EtapeDemande.close,
+      transitions: <(EtapeDemande, DateTime)>[
+        (EtapeDemande.envoyee, DateTime(2026, 10, 2, 9)),
+        (EtapeDemande.close, DateTime(2026, 10, 3, 10)),
+      ],
+      motif: MotifCloture.dejaEnClasse,
+    ),
+    DemandeServeurDemo(
+      demandeId: 'demo-demande-ines',
+      eleveId: 'demo-eleve-ines',
+      prenom: 'Inès',
+      creneau: CreneauDemande(
+        occurrences: const <OccurrenceCreneau>[
+          OccurrenceCreneau(jourIso: 6, heure: 10),
+        ],
+      ),
+      etape: EtapeDemande.enseignantAffecte,
+      transitions: <(EtapeDemande, DateTime)>[
+        (EtapeDemande.envoyee, DateTime(2026, 10, 1, 9)),
+        (EtapeDemande.classeValidee, DateTime(2026, 10, 4, 15)),
+        (EtapeDemande.enseignantAffecte, DateTime(2026, 10, 5, 9, 30)),
+      ],
+      enseignant: 'Sayyida Khadija',
+      integreLe: DateTime(2026, 10, 6, 18),
+      premiereSeancePrevue: DateTime(2026, 10, 17, 10),
+    ),
+  ]);
+
+  /// R7, R9, R10, R11, R20 : quatre eleves du meme foyer, chacun avec son
+  /// propre suivi. Yusuf attend en liste d'attente (ni rang ni delai), Ines a
+  /// sa classe prete qui attend son enseignant, Aicha a ete passee dans une
+  /// autre classe (transfert) et est integree, Bilal a vu sa classe reunie
+  /// avec une autre (fusion) et ses cours ont commence. Aucun suivi ne dit
+  /// que des enfants sont ensemble ou separes.
+  factory SuiviDemandesDemo.echelle() => SuiviDemandesDemo(<DemandeServeurDemo>[
+    DemandeServeurDemo(
+      demandeId: 'demo-demande-yusuf',
+      eleveId: DonneesDemo.yusufId,
+      prenom: 'Yusuf',
+      creneau: CreneauDemande(
+        occurrences: const <OccurrenceCreneau>[
+          OccurrenceCreneau(jourIso: 1, heure: 18),
+        ],
+      ),
+      etape: EtapeDemande.listeAttente,
+      transitions: <(EtapeDemande, DateTime)>[
+        (EtapeDemande.envoyee, DateTime(2026, 10, 8, 19, 40)),
+        (EtapeDemande.listeAttente, DateTime(2026, 10, 8, 19, 41)),
+      ],
+      autresDemandeurs: 29,
+    ),
+    DemandeServeurDemo(
+      demandeId: 'demo-demande-ines',
+      eleveId: 'demo-eleve-ines',
+      prenom: 'Inès',
+      creneau: CreneauDemande(
+        occurrences: const <OccurrenceCreneau>[
+          OccurrenceCreneau(jourIso: 6, heure: 10),
+          OccurrenceCreneau(jourIso: 7, heure: 11, minute: 30),
+        ],
+      ),
+      etape: EtapeDemande.classeValidee,
+      transitions: <(EtapeDemande, DateTime)>[
+        (EtapeDemande.envoyee, DateTime(2026, 10, 3, 9, 12)),
+        (EtapeDemande.classeValidee, DateTime(2026, 10, 7, 14)),
+      ],
+      autresDemandeurs: 5,
+      // Propose par le systeme, pas encore confirme : jamais rendu.
+      enseignant: 'Sayyida Khadija',
+    ),
+    DemandeServeurDemo(
+      demandeId: 'demo-demande-aicha',
+      eleveId: DonneesDemo.aichaId,
+      prenom: 'Aïcha',
+      creneau: CreneauDemande(
+        occurrences: const <OccurrenceCreneau>[
+          OccurrenceCreneau(jourIso: 1, heure: 17, minute: 30),
+          OccurrenceCreneau(jourIso: 3, heure: 17, minute: 30),
+        ],
+      ),
+      etape: EtapeDemande.eleveIntegre,
+      transitions: <(EtapeDemande, DateTime)>[
+        (EtapeDemande.envoyee, DateTime(2026, 9, 30, 18, 2)),
+        (EtapeDemande.classeValidee, DateTime(2026, 10, 2, 10)),
+        (EtapeDemande.enseignantAffecte, DateTime(2026, 10, 5, 16, 30)),
+        (EtapeDemande.eleveIntegre, DateTime(2026, 10, 5, 16, 45)),
+      ],
+      autresDemandeurs: 4,
+      enseignant: 'Sayyida Maryam',
+      debutCours: DateTime(2026, 10, 19, 17, 30),
+      changement: ChangementClasse(
+        type: TypeChangementClasse.transfert,
+        quand: DateTime(2026, 10, 9, 11, 20),
+        classe: 'Filles, lundi et mercredi 17:30',
+        enseignant: 'Sayyida Maryam',
+        creneau: CreneauDemande(
+          occurrences: const <OccurrenceCreneau>[
+            OccurrenceCreneau(jourIso: 1, heure: 17, minute: 30),
+            OccurrenceCreneau(jourIso: 3, heure: 17, minute: 30),
+          ],
+        ),
+      ),
+    ),
+    DemandeServeurDemo(
+      demandeId: 'demo-demande-bilal',
+      eleveId: 'demo-eleve-bilal',
+      prenom: 'Bilal',
+      creneau: CreneauDemande(
+        occurrences: const <OccurrenceCreneau>[
+          OccurrenceCreneau(jourIso: 3, heure: 19, minute: 30),
+        ],
+      ),
+      etape: EtapeDemande.coursCommences,
+      transitions: <(EtapeDemande, DateTime)>[
+        (EtapeDemande.envoyee, DateTime(2026, 9, 21, 20, 5)),
+        (EtapeDemande.classeValidee, DateTime(2026, 9, 24, 10)),
+        (EtapeDemande.enseignantAffecte, DateTime(2026, 9, 25, 9, 30)),
+        (EtapeDemande.eleveIntegre, DateTime(2026, 9, 25, 9, 31)),
+        (EtapeDemande.coursCommences, DateTime(2026, 10, 7, 19, 30)),
+      ],
+      enseignant: 'Sayyid Omar',
+      debutCours: DateTime(2026, 10, 7, 19, 30),
+      changement: ChangementClasse(
+        type: TypeChangementClasse.fusion,
+        quand: DateTime(2026, 10, 9, 18),
+        classe: 'Garçons, mercredi 19:30',
+        enseignant: 'Sayyid Omar',
+        creneau: CreneauDemande(
+          occurrences: const <OccurrenceCreneau>[
+            OccurrenceCreneau(jourIso: 3, heure: 19, minute: 30),
+          ],
+        ),
+      ),
+    ),
+  ]);
+
+  /// Yusuf : creneau personnalise, en attente du quota.
+  static DemandeServeurDemo demandeYusufEnvoyee() => DemandeServeurDemo(
+    demandeId: 'demo-demande-yusuf',
+    eleveId: DonneesDemo.yusufId,
+    prenom: 'Yusuf',
+    creneau: CreneauDemande(
+      // Choisis jeudi, lundi, mardi : le creneau les range du lundi au jeudi.
+      occurrences: const <OccurrenceCreneau>[
+        OccurrenceCreneau(jourIso: 4, heure: 18),
+        OccurrenceCreneau(jourIso: 1, heure: 18),
+        OccurrenceCreneau(jourIso: 2, heure: 18),
+      ],
+    ),
+    etape: EtapeDemande.envoyee,
+    transitions: <(EtapeDemande, DateTime)>[
+      (EtapeDemande.envoyee, DateTime(2026, 10, 8, 19, 40)),
+    ],
+    personnalise: true,
+    autresDemandeurs: 3,
+  );
+
+  /// Aicha : classe validee, enseignante affectee, debut fixe.
+  static DemandeServeurDemo demandeAichaAffectee() => DemandeServeurDemo(
+    demandeId: 'demo-demande-aicha',
+    eleveId: DonneesDemo.aichaId,
+    prenom: 'Aïcha',
+    creneau: CreneauDemande(
+      occurrences: const <OccurrenceCreneau>[
+        OccurrenceCreneau(jourIso: 1, heure: 17, minute: 30),
+        OccurrenceCreneau(jourIso: 3, heure: 17, minute: 30),
+      ],
+    ),
+    etape: EtapeDemande.enseignantAffecte,
+    transitions: <(EtapeDemande, DateTime)>[
+      (EtapeDemande.envoyee, DateTime(2026, 9, 30, 18, 2)),
+      (EtapeDemande.classeValidee, DateTime(2026, 10, 2, 10)),
+      (EtapeDemande.enseignantAffecte, DateTime(2026, 10, 5, 16, 30)),
+    ],
+    autresDemandeurs: 4,
+    enseignant: 'Sayyida Maryam',
+    debutCours: DateTime(2026, 10, 19, 17, 30),
+  );
+
+  /// Les demandes du serveur simule.
+  final List<DemandeServeurDemo> demandes;
+
+  /// Vrai : la lecture echoue (serveur muet).
+  final bool echec;
+
+  final StreamController<void> _changements =
+      StreamController<void>.broadcast();
+
+  /// Les changements, pour les ports qui lisent le meme serveur simule.
+  Stream<void> get changements => _changements.stream;
+
+  /// Annonce un changement fait directement sur une demande.
+  void notifier() => _changements.add(null);
+
+  /// Fait passer [demandeId] a l'etape [etape], le [quand] donne.
+  void avancer(
+    String demandeId,
+    EtapeDemande etape,
+    DateTime quand, {
+    MotifCloture? motif,
+    DateTime? debutCours,
+  }) {
+    final DemandeServeurDemo d = demandes.firstWhere(
+      (DemandeServeurDemo e) => e.demandeId == demandeId,
+    );
+    d
+      ..etape = etape
+      ..motif = motif ?? d.motif
+      ..debutCours = debutCours ?? d.debutCours
+      ..transitions.add((etape, quand));
+    _changements.add(null);
+  }
+
+  List<SuiviDemande> _lire() => <SuiviDemande>[
+    for (final DemandeServeurDemo d in demandes) d.versFamille(),
+  ];
+
+  @override
+  Stream<List<SuiviDemande>> suivre() async* {
+    if (echec) {
+      throw StateError('serveur');
+    }
+    yield _lire();
+    await for (final void _ in _changements.stream) {
+      yield _lire();
+    }
+  }
+}
+
+/// Le port de frise de demonstration, sur le meme serveur simule.
+class FriseDemandesDemo implements PortFriseDemandes {
+  /// Cree la frise de [suivi].
+  FriseDemandesDemo(this.suivi);
+
+  /// Le serveur simule.
+  final SuiviDemandesDemo suivi;
+
+  @override
+  Stream<List<FriseDemande>> suivre() async* {
+    if (suivi.echec) throw StateError('serveur');
+    List<FriseDemande> lire() => <FriseDemande>[
+      for (final DemandeServeurDemo d in suivi.demandes) d.versFrise(),
+    ];
+    yield lire();
+    await for (final void _ in suivi.changements) {
+      yield lire();
+    }
+  }
+}
+
+/// Les notifications de chaque transition des demandes simulees : une par
+/// etape atteinte, la plus recente d'abord, vers l'ecran de suivi.
+///
+/// Le port des notifications n'a pas de type : une notification est un titre
+/// deja redige et une destination. Ce titre vient de
+/// [titreNotificationDemande], comme la carte du suivi.
+class NotificationsSuiviDemandesDemo implements PortNotifications {
+  /// Cree les notifications de [suivi].
+  const NotificationsSuiviDemandesDemo(this.suivi);
+
+  /// Le suivi simule.
+  final SuiviDemandesDemo suivi;
+
+  @override
+  Future<List<NotificationTuteur>> liste() async {
+    final List<NotificationTuteur> toutes =
+        <NotificationTuteur>[
+          for (final DemandeServeurDemo d in suivi.demandes)
+            for (final (EtapeDemande etape, DateTime quand) in d.transitions)
+              if (!(etape == EtapeDemande.close &&
+                  d.motif == MotifCloture.dejaEnClasse))
+                NotificationTuteur(
+                  id: '${d.demandeId}-${etape.name}',
+                  titre: titreNotificationDemande(
+                    SuiviDemande(
+                      demandeId: d.demandeId,
+                      eleveId: d.eleveId,
+                      prenom: d.prenom,
+                      etape: etape,
+                      creneau: d.creneau,
+                      fuseauIana: d.fuseauIana,
+                      motif: d.motif,
+                    ),
+                  ),
+                  date: quand,
+                  destination: Routes.tuteurDemandes,
+                ),
+          // BACK-FRONT-SUIVI-1 : « deja en classe » n'a pas de motif dans le
+          // suivi a trois etapes ; sa notification vient de la frise.
+          for (final DemandeServeurDemo d in suivi.demandes)
+            if (d.motif == MotifCloture.dejaEnClasse)
+              for (final (EtapeDemande etape, DateTime quand) in d.transitions)
+                if (etape == EtapeDemande.close)
+                  NotificationTuteur(
+                    id: '${d.demandeId}-close',
+                    titre: titreNotificationCloture(
+                      MotifClotureFrise.dejaEnClasse,
+                      d.prenom,
+                    ),
+                    date: quand,
+                    destination: Routes.tuteurDemande(d.demandeId),
+                  ),
+          // SUIVI-FAMILLE : les passages que le suivi a trois etapes ne
+          // connait pas (attente, integration, premiere seance).
+          for (final DemandeServeurDemo d in suivi.demandes)
+            for (final (TypeEtapeFrise type, DateTime quand) in d.passages())
+              if (type == TypeEtapeFrise.enAttente ||
+                  type == TypeEtapeFrise.eleveIntegre ||
+                  type == TypeEtapeFrise.premiereSeance)
+                NotificationTuteur(
+                  id: '${d.demandeId}-${type.name}',
+                  titre: titreNotificationFrise(type, d.prenom),
+                  date: quand,
+                  destination: Routes.tuteurDemande(d.demandeId),
+                ),
+          for (final DemandeServeurDemo d in suivi.demandes)
+            if (d.changement case final ChangementClasse c)
+              NotificationTuteur(
+                id: '${d.demandeId}-changement',
+                titre: titreNotificationChangement(d.versFamille()),
+                date: c.quand,
+                destination: Routes.tuteurChangementPour(d.demandeId),
+              ),
+        ]..sort(
+          (NotificationTuteur a, NotificationTuteur b) =>
+              b.date.compareTo(a.date),
+        );
+    return toutes;
+  }
+
+  @override
+  Future<NotificationTuteur?> detail(String id) async {
+    for (final NotificationTuteur n in await liste()) {
+      if (n.id == id) return n;
+    }
+    return null;
+  }
+}
+
+/// Les surcharges du suivi des demandes pour la demonstration tuteur.
+List<Override> surchargesSuiviDemandesDemo() {
+  // ECHELLE-FAM-ETATS-1 : la visite montre chaque etat (liste d'attente,
+  // classe prete, eleve integre, cours commences) et les changements de
+  // classe, un suivi par enfant.
+  final SuiviDemandesDemo suivi = SuiviDemandesDemo.echelle();
+  return <Override>[
+    portSuiviDemandesProvider.overrideWithValue(suivi),
+    portFriseDemandesProvider.overrideWithValue(FriseDemandesDemo(suivi)),
+    portNotificationsProvider.overrideWithValue(
+      NotificationsSuiviDemandesDemo(suivi),
+    ),
+  ];
+}

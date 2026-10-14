@@ -15,6 +15,22 @@ abstract class PortTelechargement {
   /// (patron `ServiceAvatarSupabase.urlSignee`). Leve [EchecArtefact] quand
   /// aucun stockage ne peut la produire.
   Future<Uri> urlEphemere(DownloadAsset asset);
+
+  /// Vrai quand la source rend des liens de lecture (BIBLIO-LECTURE, contrat
+  /// C-35). Faux (production, tant que le serveur n'en rend pas) : l'ecran ne
+  /// pose aucun bouton « Ouvrir » et dit que l'apercu n'existe pas encore ;
+  /// jamais un bouton qui echouerait au toucher.
+  bool get lienLectureServi;
+
+  /// Un lien de **lecture** court pour la version [resourceVersionId] : un GET
+  /// rendu par le serveur, valable 60 s au plus, apres re-controle des droits
+  /// (spec CAP-29 §6, C-30 et C-35).
+  ///
+  /// Le lien n'est **jamais garde ni journalise** : l'appelant l'ouvre
+  /// aussitot, puis l'oublie, et en redemande un a chaque ouverture. Leve
+  /// [EchecArtefact] quand la source n'en rend aucun pour cette version (ni
+  /// droit, ni artefact), et toute autre exception pour une panne a relancer.
+  Future<Uri> lienLecture(String resourceVersionId);
 }
 
 /// Comment la Bibliotheque obtient les octets d'un artefact.
@@ -23,7 +39,7 @@ abstract class PortTelechargement {
 /// « Enregistrer une copie » a besoin d'octets, que `PortTelechargement` rend
 /// une URL et non un corps, et qu'aucun client HTTP n'est expose dans `lib/`.
 /// Sa promotion en contrat partage est demandee dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_B.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_B.md`.
 abstract interface class LecteurArtefact {
   /// Les octets d'un artefact, ou `null` quand ils ne sont pas obtenables.
   ///

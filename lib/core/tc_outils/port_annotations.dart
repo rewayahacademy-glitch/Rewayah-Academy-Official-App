@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import 'annotation_layer.dart';
+import 'fonction_indisponible.dart';
 
 /// La lecture et l'ecriture des couches d'annotation.
 ///
@@ -203,15 +204,59 @@ class AnnotationsMemoire implements PortAnnotations {
   );
 }
 
+/// Le depot d'annotations quand aucun serveur n'est branche.
+///
+/// SALLE-ROBUSTE : aucune couche n'existe (`couche` rend `null`, que les
+/// ecrans traitent deja comme « rien a annoter »), aucun flux n'emet, et toute
+/// ecriture leve [FonctionIndisponible]. Il ne simule rien : un trait dessine
+/// ici ne serait pas conserve, et le dire vaut mieux que le laisser croire.
+class AnnotationsIndisponibles implements PortAnnotations, PortIndisponible {
+  /// Cree le depot indisponible.
+  const AnnotationsIndisponibles();
+
+  static const FonctionIndisponible _echec = FonctionIndisponible(
+    'annotations',
+  );
+
+  @override
+  Future<AnnotationLayer?> couche({
+    required String resourceId,
+    String? sessionId,
+    required PorteeAnnotation portee,
+  }) async => null;
+
+  @override
+  Stream<AnnotationLayer> suivre({
+    required String resourceId,
+    String? sessionId,
+  }) => const Stream<AnnotationLayer>.empty();
+
+  @override
+  Future<void> ajouterTrait(String coucheId, TraitVectoriel trait) =>
+      Future<void>.error(_echec);
+
+  @override
+  Future<void> retirerTrait(String coucheId, String traitId) =>
+      Future<void>.error(_echec);
+
+  @override
+  Future<void> poserMarqueur(String coucheId, MarqueurSemantique marqueur) =>
+      Future<void>.error(_echec);
+
+  @override
+  Future<void> retirerMarqueur(String coucheId, String marqueurId) =>
+      Future<void>.error(_echec);
+
+  @override
+  Future<void> annulerDernier(String coucheId) => Future<void>.error(_echec);
+}
+
 /// Le depot d'annotations employe par l'application.
 ///
-/// Surcharge par Agent Z a l'integration, comme les trente et un services du
-/// depot : le provider est declare dans le fichier du service, sans racine
-/// d'injection.
+/// Sans serveur, il rend [AnnotationsIndisponibles] : l'ecran se vide au lieu
+/// de lever. Agent Z le surcharge a l'integration (`AnnotationsMemoire` pour
+/// les tests et la demonstration).
 final Provider<PortAnnotations> portAnnotationsProvider =
     Provider<PortAnnotations>(
-      (Ref ref) => throw UnimplementedError(
-        'PortAnnotations : aucune implementation serveur. '
-        'Surcharger ce provider (AnnotationsMemoire en attendant la table).',
-      ),
+      (Ref ref) => const AnnotationsIndisponibles(),
     );

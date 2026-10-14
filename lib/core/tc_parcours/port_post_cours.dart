@@ -12,6 +12,7 @@ import '../tc_bibliotheque/content_position.dart';
 import '../tc_bibliotheque/content_range.dart';
 import '../tc_classe/port_roster_enseignant.dart';
 import '../tc_classe/teacher_student_projection.dart';
+import '../tc_outils/fonction_indisponible.dart';
 import '../tc_outils/intention_pedagogique.dart';
 import '../tc_outils/learning_assignment.dart';
 import '../tc_outils/port_assignations.dart';
@@ -290,18 +291,35 @@ class PostCoursDepuisCahier implements PortPostCours {
   }
 }
 
+/// Le post-cours quand aucun serveur n'est branche.
+///
+/// SALLE-ROBUSTE : il se compose de cinq morceaux dont trois n'ont pas encore
+/// de source serveur. Preparer ou enregistrer leve [FonctionIndisponible] :
+/// l'ecran dit que la fonction n'est pas encore disponible, au lieu de
+/// proposer une version partielle qui laisserait croire a un cours cloture.
+class PostCoursIndisponible implements PortPostCours, PortIndisponible {
+  /// Cree le post-cours indisponible.
+  const PostCoursIndisponible();
+
+  static const FonctionIndisponible _echec = FonctionIndisponible('post-cours');
+
+  @override
+  Future<PostCoursVM> preparer(String sessionId) =>
+      Future<PostCoursVM>.error(_echec);
+
+  @override
+  Future<SortPostCours> enregistrer(PostCoursVM saisie) =>
+      Future<SortPostCours>.error(_echec);
+}
+
 /// Le post-cours employe par l'application.
 ///
-/// Il se compose de cinq morceaux, dont trois n'ont pas encore de source
-/// serveur (roster projete, etat partage persiste, table d'assignations). Le
-/// provider echoue plutot que d'en rendre une version partielle qui laisserait
-/// croire a un cours cloture.
+/// Sans serveur, il rend [PostCoursIndisponible]. L'integration compose
+/// `PostCoursDepuisCahier` avec `ServiceEnseignant`, `SoumissionCahier`, le
+/// roster d'Agent E, une `SourceContenuSeance` et le `PortAssignations`
+/// d'Agent D.
 final Provider<PortPostCours> portPostCoursProvider = Provider<PortPostCours>(
-  (Ref ref) => throw UnimplementedError(
-    'PortPostCours : composer PostCoursDepuisCahier avec ServiceEnseignant, '
-    "SoumissionCahier, le roster d'Agent E, une SourceContenuSeance et le "
-    "PortAssignations d'Agent D.",
-  ),
+  (Ref ref) => const PostCoursIndisponible(),
 );
 
 /// Le post-cours prerempli d'une seance.

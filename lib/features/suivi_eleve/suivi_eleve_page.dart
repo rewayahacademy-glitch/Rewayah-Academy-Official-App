@@ -15,6 +15,8 @@ import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
+import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/skeleton.dart';
 import '../suivi_foyer/vue_suivi_foyer.dart';
 
@@ -106,11 +108,13 @@ class _Corps extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (erreur && vue.total == 0) {
-      return EmptyState(
-        message: t.eleve.suivi.erreur,
-        icone: AppIcons.avertissement,
-        libelleAction: t.commun.reessayer,
-        onAction: onReessayer,
+      return _VideDefilant(
+        child: EmptyState(
+          message: t.eleve.suivi.erreur,
+          icone: AppIcons.avertissement,
+          libelleAction: t.commun.reessayer,
+          onAction: onReessayer,
+        ),
       );
     }
 
@@ -119,10 +123,12 @@ class _Corps extends StatelessWidget {
     }
 
     if (vue.lignes.isEmpty) {
-      return EmptyState(
-        message: t.eleve.suivi.vide,
-        invitation: t.eleve.suivi.videDetail,
-        registre: RegistreVide.subi,
+      return _VideDefilant(
+        child: EmptyState(
+          message: t.eleve.suivi.vide,
+          invitation: t.eleve.suivi.videDetail,
+          registre: RegistreVide.subi,
+        ),
       );
     }
 
@@ -148,7 +154,13 @@ class _Corps extends StatelessWidget {
     return DataCollection<LigneSuivi>(
       lignes: vue.lignes,
       cle: (LigneSuivi ligne) => ValueKey<String>(ligne.seance.id),
-      colonnes: _colonnesSuiviEleve(maintenant: maintenant),
+      colonnes: _colonnesSuiviEleve(
+        maintenant: maintenant,
+        avecPays: vue.lignes.any(
+          (LigneSuivi l) =>
+              PaysEnseignant.nomAffichable(l.seance.enseignantPays) != null,
+        ),
+      ),
       piedDePage: erreurLecture == null
           ? _PiedDePage(vue: vue)
           : Column(
@@ -185,6 +197,7 @@ class _PiedDePage extends StatelessWidget {
 
 List<ColonneDonnees<LigneSuivi>> _colonnesSuiviEleve({
   required DateTime maintenant,
+  bool avecPays = false,
 }) => <ColonneDonnees<LigneSuivi>>[
   ColonneDonnees<LigneSuivi>(
     titre: t.eleve.suivi.colonneDate,
@@ -203,6 +216,19 @@ List<ColonneDonnees<LigneSuivi>> _colonnesSuiviEleve({
     flex: 5,
     texte: _enseignant,
   ),
+  // ENS-PAYS-1 : le pays de l'enseignant, comme dans les tableaux de
+  // l'administration, seulement quand une ligne au moins le porte (pas de
+  // colonne vide avant BR-1).
+  if (avecPays)
+    ColonneDonnees<LigneSuivi>(
+      titre: t.enseignant.profil.pays,
+      role: RoleColonne.aPart,
+      flex: 3,
+      texte: (LigneSuivi l) =>
+          PaysEnseignant.nomAffichable(l.seance.enseignantPays) ?? '',
+      rendu: (BuildContext _, LigneSuivi l) =>
+          PaysEnseignant(pays: l.seance.enseignantPays),
+    ),
   ColonneDonnees<LigneSuivi>(
     titre: t.eleve.suivi.colonneEtat,
     role: RoleColonne.aPart,
@@ -216,6 +242,15 @@ List<ColonneDonnees<LigneSuivi>> _colonnesSuiviEleve({
               nom: t.eleve.suivi.moi,
               vue: ligne.presence,
               afficherConsolide: false,
+            )
+          : ligne.sort == SortDuCours.annule
+          // Une seance annulee se reconnait d'un coup d'oeil (ANNUL-VIS-1).
+          ? Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: PastilleEtatSeance(
+                etat: EtatPastilleSeance.annulee,
+                libelle: _libelleEtat(ligne),
+              ),
             )
           : Text(
               _libelleEtat(ligne),
@@ -262,3 +297,30 @@ String _hhmm(DateTime quand) =>
 
 String _jjmmaaaa(DateTime quand) =>
     '${quand.day.toString().padLeft(2, '0')}/${quand.month.toString().padLeft(2, '0')}/${quand.year}';
+
+/// Un etat vide centre qui defile quand il ne tient pas : la page ne defile
+/// pas (`defilante: false`), et la barre du bas du Mode Accessibilite
+/// (MA-CMD-1, onglets de 72) lui laisse moins de hauteur a 390.
+class _VideDefilant extends StatelessWidget {
+  const _VideDefilant({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: contraintes.hasBoundedHeight
+                  ? contraintes.maxHeight
+                  : 0,
+            ),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+}

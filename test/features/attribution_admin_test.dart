@@ -6,10 +6,14 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_attribution.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_attribution/attribution_page.dart';
+
+import '../support/garde_interface.dart';
 
 import '../support/harnais.dart';
 
@@ -80,6 +84,46 @@ Future<void> _monter(
 }
 
 void main() {
+  group('ADM-05 : cartes separees de 16 (K-55)', () {
+    for (final double largeur in <double>[700, 1400]) {
+      testWidgets('les enseignants proposes ne se collent pas a $largeur px', (
+        WidgetTester tester,
+      ) async {
+        _fenetre(tester, largeur: largeur);
+        final FauxServiceAttribution service = FauxServiceAttribution()
+          ..foyers = <FoyerEnAttente>[_eleve()]
+          ..enseignants['e1'] = <EnseignantCandidat>[
+            _enseignant(communs: <Creneau>[_creneau(2, 17)]),
+            _enseignant(
+              id: 't2',
+              prenom: 'Ibrahim',
+              communs: <Creneau>[_creneau(2, 17)],
+            ),
+            _enseignant(
+              id: 't3',
+              prenom: 'Awa',
+              communs: <Creneau>[_creneau(2, 17)],
+            ),
+          ];
+
+        await _monter(tester, service: service, admin: FauxServiceAdmin());
+        await tester.tap(find.text('Yacine'));
+        await tester.pumpAndSettle();
+        // Le choix d'un enseignant insere la confirmation entre deux cartes :
+        // le cas le plus serre, avec la liste sans choix.
+        verifierAucuneCarteCollee(tester, estCarte: (Widget w) => w is AppCard);
+        await tester.tap(find.text('Omar Sow'));
+        await tester.pumpAndSettle();
+
+        final int n = verifierAucuneCarteCollee(
+          tester,
+          estCarte: (Widget w) => w is AppCard,
+        );
+        expect(n, greaterThanOrEqualTo(4));
+      });
+    }
+  });
+
   group('ADM-05 : deux listes, et un geste qui ne ment pas', () {
     testWidgets(
       'l\'eleve sans creneau reste dans la file, et ne se choisit pas',
@@ -180,18 +224,24 @@ void main() {
         t.admin.attribution.attribuer(eleve: 'Yacine', enseignant: 'Ibrahim'),
       );
 
-      // Le champ est la, l'avertissement aussi, et le bouton reste inerte : la
+      // Les motifs proposes sont la (FORM-L1) ; le bouton n'est jamais grise
+      // (K-56) : presse sans motif, il dit ce qui manque, rien ne part. La
       // base refuserait de toute facon (ADR-021), l'ecran le dit avant.
-      expect(find.text(t.admin.attribution.motif), findsOneWidget);
-      expect(tester.widget<ActionPrincipale>(bouton).onPress, isNull);
+      expect(find.text(t.motifs.attribution.confirmee), findsOneWidget);
+      expect(tester.widget<ActionPrincipale>(bouton).onPress, isNotNull);
+      await tester.tap(bouton);
+      await tester.pumpAndSettle();
+      expect(find.text(t.formulaire.motif.manque), findsOneWidget);
+      expect(service.attributions, isEmpty);
 
+      await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+      await tester.pumpAndSettle();
+      expect(find.text(t.admin.attribution.motif), findsOneWidget);
       await tester.enterText(
         find.byType(TextField),
         'Aucun enseignant libre sur ce creneau, accord verbal.',
       );
       await tester.pumpAndSettle();
-
-      expect(tester.widget<ActionPrincipale>(bouton).onPress, isNotNull);
       await tester.tap(bouton);
       await tester.pumpAndSettle();
 
@@ -256,14 +306,21 @@ void main() {
       // Deux heures possibles : choisir a la place de l'administration serait
       // poser une heure de cours par defaut.
       expect(find.text(t.admin.attribution.quelleHeure), findsOneWidget);
-      expect(tester.widget<ActionPrincipale>(bouton).onPress, isNull);
+      // Jamais grise (K-56) : presse trop tot, il demande l'heure.
+      await tester.tap(bouton);
+      await tester.pumpAndSettle();
+      expect(find.text(t.admin.attribution.manqueHeure), findsOneWidget);
+      expect(service.attributions, isEmpty);
 
       await tester.tap(
-        find.text(t.admin.attribution.creneau(jour: 'jeudi', heure: '18')),
+        find.text(
+          LibellesGroupe.insecable(
+            t.admin.attribution.creneau(jour: 'jeudi', heure: '18'),
+          ),
+        ),
       );
       await tester.pumpAndSettle();
 
-      expect(tester.widget<ActionPrincipale>(bouton).onPress, isNotNull);
       await tester.tap(bouton);
       await tester.pumpAndSettle();
 

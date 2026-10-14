@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/port_catalogue.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/resource_version.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/vue_catalogue.dart';
 import 'package:rewayah_academy/core/tc_telechargement/download_asset.dart';
+import 'package:rewayah_academy/features/tc_catalogue/bibliotheque_page.dart';
 import 'package:rewayah_academy/features/tc_catalogue/carte_ressource.dart';
 import 'package:rewayah_academy/features/tc_catalogue/detail_ressource_page.dart';
 import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart';
 import 'package:rewayah_academy/features/tc_catalogue/vignette_ressource.dart';
+
+import '../../capture/outil_capture.dart';
+import '../../support/aucun_mot_coupe.dart';
+import '../../support/garde_interface.dart';
+import '../../support/harnais.dart' show hoteRoutant;
+import '../../support/hors_ligne_une_fois.dart';
 
 import 'faux/faux_ports_b.dart';
 import 'support/hote_b.dart';
@@ -118,7 +129,46 @@ void main() {
 
       expect(find.text(t.tc.bibliotheque.indisponible.message), findsOneWidget);
       expect(find.text(t.tc.bibliotheque.vide.message), findsNothing);
+      // EA-HL-DOUBLE-1f (K-59) : la cause probable est dite sans etre
+      // affirmee, et « momentanement indisponible » n'est plus dit.
+      expect(
+        find.text(t.tc.bibliotheque.indisponible.invitation),
+        findsOneWidget,
+      );
+      expect(causesAffirmees(), findsNothing);
     });
+  });
+
+  group('Bibliotheque : cartes separees de 16 (K-55)', () {
+    for (final double largeur in <double>[320, 1440]) {
+      testWidgets('les cartes de ressource ne se collent pas a $largeur px', (
+        WidgetTester tester,
+      ) async {
+        tester.view.physicalSize = Size(largeur, 4000);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+
+        await tester.pumpWidget(
+          hoteB(
+            surface(),
+            surcharges: surchargesCatalogue(
+              ressources: <LibraryResource>[
+                ressource(id: 'r1', titre: 'Alphabet arabe'),
+                ressource(id: 'r2', titre: 'Regles du meem'),
+                ressource(id: 'r3', titre: 'Le Coran'),
+              ],
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final int n = verifierAucuneCarteCollee(
+          tester,
+          estCarte: (Widget w) => w is CarteRessource,
+        );
+        expect(n, 3);
+      });
+    }
   });
 
   group('Bibliotheque : recherche et filtres', () {
@@ -134,17 +184,17 @@ void main() {
       fenetreHaute(tester);
 
       await tester.pumpWidget(
-        hoteB(
-          surface(),
-          surcharges: surchargesCatalogue(ressources: trois()),
-        ),
+        hoteB(surface(), surcharges: surchargesCatalogue(ressources: trois())),
       );
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byType(TextField), 'biologie');
       await tester.pumpAndSettle();
 
-      expect(find.text(t.tc.bibliotheque.aucunResultat.message), findsOneWidget);
+      expect(
+        find.text(t.tc.bibliotheque.aucunResultat.message),
+        findsOneWidget,
+      );
       expect(find.byType(CarteRessource), findsNothing);
 
       await tester.tap(find.text(t.tc.bibliotheque.effacerRecherche).last);
@@ -159,10 +209,7 @@ void main() {
       fenetreHaute(tester);
 
       await tester.pumpWidget(
-        hoteB(
-          surface(),
-          surcharges: surchargesCatalogue(ressources: trois()),
-        ),
+        hoteB(surface(), surcharges: surchargesCatalogue(ressources: trois())),
       );
       await tester.pumpAndSettle();
 
@@ -179,10 +226,7 @@ void main() {
       fenetreHaute(tester);
 
       await tester.pumpWidget(
-        hoteB(
-          surface(),
-          surcharges: surchargesCatalogue(ressources: trois()),
-        ),
+        hoteB(surface(), surcharges: surchargesCatalogue(ressources: trois())),
       );
       await tester.pumpAndSettle();
 
@@ -320,8 +364,14 @@ void main() {
 
       // Le bouton n'est pas grise : il n'existe pas, et une phrase prend sa
       // place.
-      expect(find.text(t.tc.bibliotheque.action.enregistrerCopie), findsNothing);
-      expect(find.text(t.tc.bibliotheque.message.aucunTelechargement), findsOneWidget);
+      expect(
+        find.text(t.tc.bibliotheque.action.enregistrerCopie),
+        findsNothing,
+      );
+      expect(
+        find.text(t.tc.bibliotheque.message.aucunTelechargement),
+        findsOneWidget,
+      );
     });
 
     testWidgets('un PDF annonce que son apercu n est pas encore disponible', (
@@ -344,7 +394,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(t.tc.bibliotheque.detail.apercuIndisponible), findsOneWidget);
+      expect(
+        find.text(t.tc.bibliotheque.detail.apercuIndisponible),
+        findsOneWidget,
+      );
     });
 
     testWidgets('un telechargement impossible est dit, pas tu', (
@@ -410,7 +463,10 @@ void main() {
       expect(selecteur.appels.single.nom, 'Règles du meem.pdf');
       expect(selecteur.appels.single.mime, 'application/pdf');
       expect(selecteur.appels.single.taille, 4);
-      expect(find.text(t.tc.bibliotheque.message.copieEnregistree), findsOneWidget);
+      expect(
+        find.text(t.tc.bibliotheque.message.copieEnregistree),
+        findsOneWidget,
+      );
 
       await tester.pump(const Duration(seconds: 4));
       await tester.pumpAndSettle();
@@ -448,16 +504,16 @@ void main() {
         hoteB(
           surface(groupeId: 'g1'),
           surcharges: surchargesCatalogue(
-            ressources: <LibraryResource>[r, ressource(id: 'r2')],
+            ressources: <LibraryResource>[
+              r,
+              ressource(id: 'r2'),
+            ],
             assignations: <String, List<String>>{
               'g1': <String>['r2'],
             },
             reprise: ReprisLecture(
               ressource: r,
-              position: const ContentPosition.page(
-                resourceId: 'r1',
-                page: 12,
-              ),
+              position: const ContentPosition.page(resourceId: 'r1', page: 12),
               vueLeUtc: DateTime.utc(2026, 9, 19),
             ),
           ),
@@ -474,5 +530,141 @@ void main() {
 
       expect(yContinuer, lessThan(yGroupe));
     });
+  });
+
+  // EA-HL-DOUBLE-1f : l'indication du champ de recherche etait tronquee a
+  // 320 px en texte x2 ; elle passe a la ligne.
+  group('320 texte x2 (polices du depot)', () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('320 texte x2, ${sens.name} : aucun mot coupe ni tronque', (
+        WidgetTester tester,
+      ) async {
+        tester.view.physicalSize = const Size(320, 1400);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          hoteRoutant(
+            depart: '/',
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/',
+                builder: (BuildContext _, GoRouterState _) =>
+                    const BibliothequePage(),
+              ),
+            ],
+            surcharges: surchargesCatalogue(catalogue: CatalogueEnEchec()),
+            direction: sens,
+            echelle: 2,
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.text(t.tc.bibliotheque.rechercheIndication),
+          findsOneWidget,
+        );
+        verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+      });
+    }
+  });
+
+  // EA-HL-DOUBLE-1f : captures de preuve de la panne de la bibliotheque,
+  // page entiere sous le bandeau, hors ligne (390 clair et sombre, 320
+  // texte x2 en LTR et RTL) et en ligne. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1f', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String, Size, ThemeMode, double, TextDirection, bool) cas
+        in <(String, Size, ThemeMode, double, TextDirection, bool)>[
+          (
+            '390_clair',
+            const Size(390, 844),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '320x2_clair',
+            const Size(320, 1200),
+            ThemeMode.light,
+            2,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '320x2_rtl_clair',
+            const Size(320, 1200),
+            ThemeMode.light,
+            2,
+            TextDirection.rtl,
+            true,
+          ),
+          (
+            '320x2_rtl_sombre',
+            const Size(320, 1200),
+            ThemeMode.dark,
+            2,
+            TextDirection.rtl,
+            true,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '390_en_ligne_clair',
+            const Size(390, 844),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+            false,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        fixerVueCapture(tester, cas.$2, 1);
+        await tester.pumpWidget(
+          hoteCapture(
+            Directionality(
+              textDirection: cas.$5,
+              child: const BibliothequePage(),
+            ),
+            surcharges: <Override>[
+              ...surchargesCatalogue(catalogue: CatalogueEnEchec()),
+              horsLigneProvider.overrideWith(
+                (Ref _) => Stream<bool>.value(cas.$6),
+              ),
+            ],
+            themeMode: cas.$3,
+            echelleTexte: cas.$4,
+          ),
+        );
+        await stabiliser(tester);
+        expect(tester.takeException(), isNull);
+        expect(
+          find.text(t.tc.bibliotheque.indisponible.invitation),
+          findsOneWidget,
+        );
+        expect(causesAffirmees(), findsNothing);
+        if (cas.$6) {
+          expectHorsLigneUneFois();
+        }
+        verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+        debugPrint(
+          'PNG ${await capturer(tester, 'ea_hl_double1f_bibliotheque_echec_${cas.$1}')}',
+        );
+      });
+    }
   });
 }

@@ -181,7 +181,7 @@ class LibraryResource {
   /// Lit un manifeste rendu par la couche serveur.
   ///
   /// La forme attendue est celle demandee dans
-  /// `docs/teaching-core/TC_CONTRACT_REQUEST_B.md` : tant que la table
+  /// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_B.md` : tant que la table
   /// n'existe pas, cette fabrique n'a aucun appelant en production, mais elle
   /// fige le contrat de nommage cote SQL.
   factory LibraryResource.depuisJson(Map<String, dynamic> json) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../mouvement/mouvement.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
@@ -13,7 +14,7 @@ import 'pressable.dart';
 /// `elevation1`, arrondi du mode courant.
 ///
 /// **Seul point d'entree d'une surface de contenu.** Aucun ecran ne compose sa
-/// propre [BoxDecoration] : `docs/design/07-catalogue-composants.md` section 6
+/// propre [BoxDecoration] : `docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 6
 /// dit que les surfaces viennent d'`AppCard` et de `PageShell`.
 ///
 /// Deux regles portees par le composant et non par la vigilance :
@@ -38,6 +39,8 @@ class AppCard extends StatelessWidget {
     this.dominante = false,
     this.entete,
     this.actions,
+    this.focusNode,
+    this.lien = false,
   });
 
   /// Le contenu de la carte.
@@ -76,6 +79,14 @@ class AppCard extends StatelessWidget {
   final Widget? entete;
   final Widget? actions;
 
+  /// Le noeud de focus de la carte pressable, pour que l'ecran y rende le
+  /// focus a la fermeture d'un panneau ouvert par elle (W2 2.4.3).
+  final FocusNode? focusNode;
+
+  /// Vrai quand la carte entiere mene a un endroit : elle s'annonce alors
+  /// comme lien (`Semantics.link`) et non comme bouton, comme [Pressable.lien].
+  final bool lien;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -97,6 +108,8 @@ class AppCard extends StatelessWidget {
     return Pressable.selon(
       onPress: onPress,
       libelleSemantique: libelleSemantique,
+      focusNode: focusNode,
+      lien: lien,
       respecterCibleTactile: false,
       arrondiFocus: dominante ? AppRadius.arrondiLg : AppRadius.arrondiMd,
       constructeur: (BuildContext contexte, EtatPression etat) =>
@@ -111,7 +124,11 @@ class AppCard extends StatelessWidget {
     AppColorPair paire,
     EtatPression etat,
   ) {
-    return Container(
+    // Selection, survol et pression changent fond et contour en fondu court
+    // (P2-16) ; l'enfoncement 0.98 reste celui de [Pressable], sans doublon.
+    return AnimatedContainer(
+      duration: Mouvement.duree(context, Mouvement.court),
+      curve: Mouvement.entree,
       constraints: BoxConstraints(minHeight: metriques.cibleTactile),
       padding: EdgeInsets.all(
         marge ??

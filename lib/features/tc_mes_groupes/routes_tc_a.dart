@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_classe/session_live_vm.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
@@ -20,7 +21,7 @@ import 'mes_groupes_page.dart';
 /// de [CheminsTcA] dans `routes.dart` et ajuste `redirection.dart`.
 ///
 /// Trois points a traiter a l'integration, detailles en section 7 de
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_A.md` :
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_A.md` :
 ///
 /// 1. `redirection.dart` renvoie toute route hors prefixe de role vers la
 ///    racine du role : sans ajustement, `/tc/groupes` est **inatteignable** ;
@@ -33,7 +34,14 @@ List<RouteBase> routesTcA({RoleEspaceGroupe role = RoleEspaceGroupe.eleve}) =>
     <RouteBase>[
       GoRoute(
         path: CheminsTcA.mesGroupes,
-        builder: (_, _) => const MesGroupesPage(),
+        // « Rejoindre » des cartes ouvre la salle comme celui de l'Espace
+        // Groupe (BOUTONS-GRISES-1) : non branche, il etait rendu inerte.
+        builder: (BuildContext contexte, GoRouterState _) => MesGroupesPage(
+          onRejoindre: (GroupSummaryVM groupe) =>
+              role == RoleEspaceGroupe.eleve
+              ? preparerSalleEleve(contexte, groupe)
+              : _rejoindre(contexte, groupe),
+        ),
         routes: <RouteBase>[
           GoRoute(
             path: CheminsTcA.segmentEspaceGroupe,
@@ -45,13 +53,35 @@ List<RouteBase> routesTcA({RoleEspaceGroupe role = RoleEspaceGroupe.eleve}) =>
                 role: role,
                 contenuRoster: RosterEnseignantSlot(groupeId: groupeId),
                 onRejoindre: (GroupSummaryVM groupe) =>
-                    _rejoindre(contexte, groupe),
+                    role == RoleEspaceGroupe.eleve
+                    ? preparerSalleEleve(contexte, groupe)
+                    : _rejoindre(contexte, groupe),
               );
             },
           ),
         ],
       ),
     ];
+
+/// L'eleve : « Rejoindre » ouvre la salle canonique, qui montre d'abord
+/// sa preparation presque silencieuse (PRE-ELV-01, CL-4.6). Aucune nouvelle
+/// route : le billet passe par `extra`, jamais par l'URL (ADR-005).
+/// Aussi le « Rejoindre » de l'Accueil adulte (DASH-EA-PROD).
+void preparerSalleEleve(BuildContext contexte, GroupSummaryVM groupe) {
+  final String? sessionId = groupe.prochaineSeance?.sessionId;
+  if (sessionId == null) {
+    return;
+  }
+  GoRouter.of(contexte).go(
+    Routes.salle,
+    extra: BilletSalle(
+      sessionId: sessionId,
+      emisA: DateTime.now(),
+      preparation: true,
+      groupeId: groupe.groupeId,
+    ),
+  );
+}
 
 /// Ouvre la Classe Live du groupe, avec son contexte.
 ///
@@ -75,6 +105,7 @@ void _rejoindre(BuildContext contexte, GroupSummaryVM groupe) {
         nomAffichage: groupe.enseignant.nomAffichage,
         titre: groupe.enseignant.titre,
         photoCleOuUrl: groupe.enseignant.photoUrlOuCle,
+        pays: groupe.enseignant.pays,
       ),
       horloge: groupe.horloge,
       seuilMax: groupe.seuilMax,

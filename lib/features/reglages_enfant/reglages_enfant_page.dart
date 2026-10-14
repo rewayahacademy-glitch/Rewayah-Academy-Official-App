@@ -1,44 +1,58 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/domain/enums.dart';
+import '../../core/formulaires/motifs_proposes.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/matching/service_matching.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/regles/service_regles.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/bento_tile.dart';
+import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
+import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/setting_row.dart';
 
-/// `TUT-05` : les reglages du tuteur, enfant par enfant.
+/// `TUT-05` : les demandes du tuteur, profil eleve par profil eleve.
 ///
-/// **Un enfant par carte, trois reglages : photo, camera, mode d'interface.**
-/// Le texte dit la consequence en clair, avec le prenom de l'enfant, jamais un
-/// libelle abstrait : « Le bouton camera n'apparaitra pas pour Ibrahim » et non
-/// « camera : desactivee » (`docs/produit/parcours-utilisateurs.md`, ADR-009).
+/// **Une fonction = un seul endroit** (03, section 1 ter point 1) : depuis le
+/// lot B (fiche eleve), la photo, la camera et l'interface de chaque eleve se
+/// reglent dans sa fiche (`/tuteur/foyer/:eleveId/{informations,camera,
+/// interface}`). Cette page n'en garde qu'un **renvoi** par eleve vers la
+/// fiche, jamais une copie des reglages. La route `/tuteur/reglages` sera
+/// redirigee vers le Foyer par le coordinateur (mapping C6, demande B-4).
 ///
-/// Ces reglages s'appliquent a la seance suivante, jamais pendant un cours :
-/// l'ecran le dit une fois, en tete, plutot que de le repeter sur chaque carte.
-///
-/// C'est aussi d'ici que le tuteur **demande** : reaffectation, duree de seance
-/// et minimum payable. Une demande n'a pas d'ecran a elle, elle part de l'ecran
-/// ou la regle se constate (ADR-017, section 5 de `etape-4-dashboards.md`).
+/// C'est encore d'ici que le tuteur **demande** : reaffectation, duree de
+/// seance et minimum payable. Une demande n'a pas d'ecran a elle, elle part de
+/// l'ecran ou la regle se constate (ADR-017, section 5 de
+/// `etape-4-dashboards.md`).
 class ReglagesEnfantPage extends ConsumerWidget {
   /// Cree l'ecran des reglages.
   const ReglagesEnfantPage({super.key});
+
+  /// Le renvoi d'un eleve vers sa fiche.
+  static Key renvoiKey(String eleveId) => Key('reglagesEnfant.renvoi.$eleveId');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,36 +63,40 @@ class ReglagesEnfantPage extends ConsumerWidget {
     final List<EleveDuFoyer> foyer = enfants.value ?? const <EleveDuFoyer>[];
 
     return PageShell(
-      titre: t.tuteur.reglages.titre,
+      titre: t.reglagesEnfant.titre,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(t.tuteur.reglages.intro, style: textes.bodySmall),
+          TexteSansCoupure(t.reglagesEnfant.intro, style: textes.bodySmall),
           Ecart.vXl,
           SectionHeader(titre: t.compte.titre),
-          SettingRow(
-            title: t.compte.profil,
-            description: t.compte.profilDetail,
-            icon: AppIcons.profil,
-            onPress: () => context.push(Routes.compteProfil),
-          ),
-          SettingRow(
-            title: t.compte.profils,
-            description: t.compte.profilsDetail,
-            icon: AppIcons.foyer,
-            onPress: () => context.push(Routes.compteProfils),
-          ),
-          SettingRow(
-            title: t.compte.reglages,
-            description: t.compte.reglagesDetail,
-            icon: AppIcons.reglages,
-            onPress: () => context.push(Routes.compteReglages),
+          CarteLignes(
+            lignes: <Widget>[
+              SettingRow(
+                title: t.compte.profil,
+                description: t.compte.profilDetail,
+                icon: AppIcons.profil,
+                onPress: () => context.push(Routes.compteProfil),
+              ),
+              SettingRow(
+                title: t.compte.profils,
+                description: t.compte.profilsDetail,
+                icon: AppIcons.foyer,
+                onPress: () => context.push(Routes.compteProfils),
+              ),
+              SettingRow(
+                title: t.compte.reglages,
+                description: t.compte.reglagesDetail,
+                icon: AppIcons.reglages,
+                onPress: () => context.push(Routes.compteReglages),
+              ),
+            ],
           ),
           Ecart.vXl,
           if (enfants.hasValue && foyer.isEmpty)
             EmptyState(
-              message: t.tuteur.reglages.aucunEnfant,
-              invitation: t.tuteur.reglages.aucunEnfantDetail,
+              message: t.enfant.aucun,
+              invitation: t.enfant.aucunDetail,
               libelleAction: t.enfant.titre,
               onAction: () =>
                   GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
@@ -95,208 +113,52 @@ class ReglagesEnfantPage extends ConsumerWidget {
   }
 }
 
-/// Une carte par enfant : sa photo, sa camera, son affichage, ses demandes.
-class _CarteEnfant extends ConsumerStatefulWidget {
+/// Une carte par eleve : sa photo et son prenom, le renvoi vers sa fiche,
+/// ses demandes. Aucun identifiant interne a l'ecran.
+class _CarteEnfant extends StatelessWidget {
   const _CarteEnfant({required this.enfant});
 
   final EleveDuFoyer enfant;
 
   @override
-  ConsumerState<_CarteEnfant> createState() => _CarteEnfantEtat();
-}
-
-class _CarteEnfantEtat extends ConsumerState<_CarteEnfant> {
-  bool _photoEnCours = false;
-  bool _reglageEnCours = false;
-  String? _erreur;
-
-  EleveDuFoyer get _enfant => widget.enfant;
-
-  /// Ecrit un reglage, puis relit le foyer.
-  ///
-  /// L'ecran ne garde aucune copie locale de la valeur : ce que la base a
-  /// accepte est ce qui s'affiche. Un etat local optimiste montrerait une
-  /// camera autorisee la ou la policy vient de refuser l'ecriture.
-  Future<void> _ecrire({
-    InterfaceMode? mode,
-    CameraPolicy? camera,
-    String? cleAvatar,
-  }) async {
-    setState(() {
-      _reglageEnCours = true;
-      _erreur = null;
-    });
-    try {
-      await ref
-          .read(serviceAppairageProvider)
-          .majReglages(
-            eleveId: _enfant.id,
-            mode: mode,
-            camera: camera,
-            cleAvatar: cleAvatar,
-          );
-      ref.invalidate(elevesDuFoyerProvider);
-    } on Object catch (erreur) {
-      if (mounted) {
-        setState(() => _erreur = _message(erreur));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _reglageEnCours = false);
-      }
-    }
-  }
-
-  Future<void> _changerPhoto() async {
-    setState(() {
-      _photoEnCours = true;
-      _erreur = null;
-    });
-    try {
-      final PhotoEnfant? photo = await ref
-          .read(selecteurPhotoProvider)
-          .choisirPhoto();
-      if (photo == null) {
-        return;
-      }
-      if (photo.octets.lengthInBytes > ServiceAvatar.tailleMaximaleOctets) {
-        // Le refus se dit AVANT l'envoi : le seau refuserait aussi, mais apres
-        // avoir fait monter quatre mega-octets sur une connexion de telephone.
-        if (mounted) {
-          setState(
-            () => _erreur = t.tuteur.reglages.photoTropLourde(
-              taille: '${ServiceAvatar.tailleMaximaleOctets ~/ (1024 * 1024)}',
-            ),
-          );
-        }
-        return;
-      }
-
-      final String cle = await ref
-          .read(serviceAvatarProvider)
-          .televerser(eleveId: _enfant.id, photo: photo);
-      await _ecrire(cleAvatar: cle);
-      // La photo remplacee ne doit pas rester servie par l'URL precedente.
-      ref.invalidate(avatarUrlProvider);
-    } on Object catch (erreur) {
-      if (mounted) {
-        setState(() => _erreur = _message(erreur));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _photoEnCours = false);
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    final bool cameraAutorisee = _enfant.camera == CameraPolicy.allowed;
-    final bool modeEnfant = _enfant.mode == InterfaceMode.enfant;
 
     return BentoTile(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              _Photo(enfant: _enfant),
-              Ecart.hMd,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(_enfant.prenom, style: textes.titleLarge),
-                    Text(_enfant.identifiantImmuable, style: textes.bodySmall),
-                  ],
-                ),
-              ),
-            ],
+          // AVATAR-1 : couple avatar + prenom du composant partage.
+          AvatarNom.enLigne(
+            prenom: enfant.prenom,
+            diametre: AppAvatar.grand,
+            avatar: _Photo(enfant: enfant),
+            styleNom: textes.titleLarge,
           ),
           Ecart.vMd,
-
-          // 1. La photo.
-          Text(t.tuteur.reglages.photo, style: textes.titleMedium),
-          Text(
-            _enfant.cleAvatar == null
-                ? t.tuteur.reglages.photoAucune(prenom: _enfant.prenom)
-                : t.tuteur.reglages.photoPresente(prenom: _enfant.prenom),
-            style: textes.bodySmall,
-          ),
-          Ecart.vSm,
-          ActionPrincipale(
-            libelle: _enfant.cleAvatar == null
-                ? t.tuteur.reglages.photoAjouter
-                : t.tuteur.reglages.photoChanger,
-            // Tertiaire, pas secondaire : la photo se change rarement, et la
-            // carte porte deja deux secondaires (camera, mode). Au dela de
-            // deux, `02-regles-ux.md` section 4 est violee -- constat du
-            // 11 septembre 2026, six secondaires empiles sur cette carte.
-            niveau: NiveauAction.tertiaire,
-            enCours: _photoEnCours,
-            onPress: _changerPhoto,
-          ),
-          Ecart.vLg,
-
-          // 2. La camera. Le texte dit la CONSEQUENCE, avec le prenom.
-          Text(t.tuteur.reglages.camera, style: textes.titleMedium),
-          Text(
-            cameraAutorisee
-                ? t.tuteur.reglages.cameraAutorisee(prenom: _enfant.prenom)
-                : t.tuteur.reglages.cameraInterdite(prenom: _enfant.prenom),
-            style: textes.bodySmall,
-          ),
-          Ecart.vSm,
-          ActionPrincipale(
-            libelle: cameraAutorisee
-                ? t.tuteur.reglages.cameraRetirer(prenom: _enfant.prenom)
-                : t.tuteur.reglages.cameraAutoriser(prenom: _enfant.prenom),
-            niveau: NiveauAction.secondaire,
-            enCours: _reglageEnCours,
-            onPress: () => _ecrire(
-              camera: cameraAutorisee
-                  ? CameraPolicy.forbidden
-                  : CameraPolicy.allowed,
+          // Photo, camera et interface : un renvoi vers la fiche, leur seule
+          // place (lot B, LB-3).
+          KeyedSubtree(
+            key: ReglagesEnfantPage.renvoiKey(enfant.id),
+            child: GroupeReglages(
+              lignes: <LigneRubrique>[
+                LigneRubrique(
+                  icone: AppIcons.reglages,
+                  libelle: t.reglagesEnfant.renvoi,
+                  legende: t.reglagesEnfant.renvoiLegende(
+                    dePrenom: deDevant(
+                      enfant.prenom,
+                      cle: 'reglagesEnfant.renvoiLegende',
+                    ),
+                  ),
+                  onPress: () =>
+                      GoRouter.of(context).go(Routes.ficheElevePour(enfant.id)),
+                ),
+              ],
             ),
           ),
           Ecart.vLg,
-
-          // 3. Le mode d'interface.
-          Text(t.tuteur.reglages.mode, style: textes.titleMedium),
-          Text(
-            modeEnfant
-                ? t.tuteur.reglages.modeEnfant(prenom: _enfant.prenom)
-                : t.tuteur.reglages.modeStandard(prenom: _enfant.prenom),
-            style: textes.bodySmall,
-          ),
-          Ecart.vSm,
-          ActionPrincipale(
-            libelle: modeEnfant
-                ? t.tuteur.reglages.modePasserStandard(prenom: _enfant.prenom)
-                : t.tuteur.reglages.modePasserEnfant(prenom: _enfant.prenom),
-            niveau: NiveauAction.secondaire,
-            enCours: _reglageEnCours,
-            onPress: () => _ecrire(
-              mode: modeEnfant ? InterfaceMode.standard : InterfaceMode.enfant,
-            ),
-          ),
-
-          if (_erreur != null) ...<Widget>[
-            Ecart.vSm,
-            Text(
-              t.tuteur.reglages.erreur(message: _erreur!),
-              // L'encre d'alerte, jamais la paire : `surfaceAlert` ecrit en
-              // blanc, illisible sur la page.
-              style: palette.inkAlert.applyTo(
-                textes.bodySmall ?? const TextStyle(),
-              ),
-            ),
-          ],
-
-          Ecart.vLg,
-          _Demandes(enfant: _enfant),
+          _Demandes(enfant: enfant),
         ],
       ),
     );
@@ -322,7 +184,7 @@ class _Photo extends ConsumerWidget {
     return AvatarTile(
       prenom: enfant.prenom,
       urlSignee: url,
-      diametre: AppSpacing.xxxl * 2,
+      diametre: AppAvatar.grand,
     );
   }
 }
@@ -350,7 +212,8 @@ class _Demandes extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.tuteur.reglages.demandes, style: textes.titleMedium),
+        // COUPE-MOTS-4 : « changement » ne se coupe plus en Interface guidee.
+        TexteSansCoupure(t.tuteur.reglages.demandes, style: textes.titleMedium),
         Ecart.vSm,
         // Les trois demandes sont tertiaires, pas secondaires : ce sont des
         // requetes administratives que l'administration tranche, pas des
@@ -368,7 +231,7 @@ class _Demandes extends ConsumerWidget {
         else
           // Le bouton n'est pas rendu : la phrase explique la limite, comme le
           // plafond de `ENS-06`.
-          Text(
+          TexteSansCoupure(
             t.tuteur.reglages.demandeSansEnseignant(prenom: enfant.prenom),
             style: textes.bodySmall,
           ),
@@ -407,7 +270,7 @@ class _Demandes extends ConsumerWidget {
 /// Meme forme que celle de `ENS-06` : un choix quand il y a une valeur a
 /// demander, un motif toujours, et une confirmation qui remplace le formulaire.
 /// **Le motif est obligatoire de bout en bout** : la base refuse une demande
-/// sans lui, et l'ecran ne rend pas le bouton tant qu'il manque.
+/// sans lui, et l'ecran le dit quand on presse sans (bouton jamais grise).
 @visibleForTesting
 class FeuilleDemandeTuteur extends ConsumerStatefulWidget {
   /// Cree la feuille.
@@ -435,7 +298,15 @@ class FeuilleDemandeTuteur extends ConsumerStatefulWidget {
 class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
   final TextEditingController _motif = TextEditingController();
   int? _valeur;
+
+  /// Le choix de la duree et le champ du motif : le focus y revient quand
+  /// c'est eux qui manquent (BOUTONS-GRISES-1, reserve SUPERPOS-1b).
+  final FocusNode _focusValeur = FocusNode(debugLabel: 'demande-valeur');
+  final GlobalKey<SelecteurMotifEtat> _selecteurMotif =
+      GlobalKey<SelecteurMotifEtat>();
+
   bool _enCours = false;
+  bool _motifManquant = false;
   String? _erreur;
   bool _envoyee = false;
 
@@ -451,10 +322,31 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
   @override
   void dispose() {
     _motif.dispose();
+    _focusValeur.dispose();
     super.dispose();
   }
 
   Future<void> _envoyer() async {
+    // Bouton jamais grise (K-56) : presse trop tot, il dit ce qui manque,
+    // l'annonce au lecteur d'ecran et rend le focus au champ fautif
+    // (BOUTONS-GRISES-1, reserve SUPERPOS-1b).
+    if (_avecValeur && _valeur == null) {
+      final String message = t.tuteur.reglages.demandeManqueValeur;
+      setState(() => _erreur = message);
+      signalerManque(context, message, champ: _focusValeur);
+      return;
+    }
+    if (_motif.text.trim().isEmpty) {
+      setState(() {
+        _erreur = null;
+        _motifManquant = true;
+      });
+      // Le focus va a la premiere puce, ou au champ libre si « Autre » est
+      // ouvert : le geste qui manque.
+      _selecteurMotif.currentState?.focaliser();
+      signalerManque(context, t.formulaire.motif.manque);
+      return;
+    }
     setState(() {
       _enCours = true;
       _erreur = null;
@@ -498,103 +390,139 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
             valeurRegleProvider((profilId: widget.enfant.id, cle: cle)),
           );
 
-    return Padding(
-      padding: EdgeInsetsDirectional.only(
-        start: metriques.marge,
-        end: metriques.marge,
-        top: metriques.marge,
-        bottom: MediaQuery.viewInsetsOf(context).bottom + metriques.marge,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(_titre(), style: textes.titleMedium),
-          Ecart.vMd,
-          if (_envoyee)
-            Text(t.tuteur.reglages.demandeEnvoyee, style: textes.bodyMedium)
-          else ...<Widget>[
-            if (actuelle?.value != null) ...<Widget>[
-              Text(
-                t.tuteur.reglages.demandeActuelle(
-                  minutes: '${actuelle!.requireValue}',
-                ),
-                style: textes.bodySmall,
-              ),
-              Ecart.vMd,
-            ],
-            if (_avecValeur) ...<Widget>[
-              ChoiceCardGroup(
-                options: <OptionChoix>[
-                  for (final int minutes in dureesProposees)
-                    OptionChoix(
-                      valeur: '$minutes',
-                      libelle: t.tuteur.reglages.demandeMinutes(
-                        minutes: '$minutes',
-                      ),
+    // FORM-L1 : les puces de motifs allongent la feuille ; elle defile au
+    // lieu de deborder (vue basse, texte agrandi).
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsetsDirectional.only(
+          start: metriques.marge,
+          end: metriques.marge,
+          top: metriques.marge,
+          bottom: MediaQuery.viewInsetsOf(context).bottom + metriques.marge,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            TexteSansCoupure(_titre(), style: textes.titleMedium),
+            Ecart.vMd,
+            if (_envoyee)
+              TexteSansCoupure(
+                t.tuteur.reglages.demandeEnvoyee,
+                style: textes.bodyMedium,
+              )
+            else ...<Widget>[
+              if (actuelle?.value != null) ...<Widget>[
+                TexteSansCoupure(
+                  LibellesGroupe.insecable(
+                    t.tuteur.reglages.demandeActuelle(
+                      minutes: '${actuelle!.requireValue}',
                     ),
-                ],
-                onChange: (ReponseChoix reponse) => setState(() {
-                  _valeur = int.tryParse(
-                    reponse.valeurs.isEmpty
-                        ? reponse.saisieLibre ?? ''
-                        : reponse.valeurs.first,
-                  );
-                }),
-              ),
-              Ecart.vMd,
-            ],
-            TextField(
-              controller: _motif,
-              decoration: InputDecoration(
-                labelText: t.tuteur.reglages.demandeMotif,
-              ),
-              // Sans ceci, le bouton ne se reconstruit pas a la frappe et reste
-              // inerte alors que le motif est saisi (piege de l'etape 3).
-              onChanged: (String _) => setState(() {}),
-              maxLines: 2,
-            ),
-            if (_erreur != null) ...<Widget>[
-              Ecart.vSm,
-              Text(
-                _erreur!,
-                style: palette.inkAlert.applyTo(
-                  textes.bodySmall ?? const TextStyle(),
+                  ),
+                  style: textes.bodySmall,
                 ),
+                Ecart.vMd,
+              ],
+              if (_avecValeur) ...<Widget>[
+                Focus(
+                  focusNode: _focusValeur,
+                  child: ChoiceCardGroup(
+                    options: <OptionChoix>[
+                      for (final int minutes in dureesProposees)
+                        OptionChoix(
+                          valeur: '$minutes',
+                          libelle: LibellesGroupe.valeurSeule(
+                            t.tuteur.reglages.demandeMinutes(
+                              minutes: '$minutes',
+                            ),
+                          ),
+                        ),
+                    ],
+                    onChange: (ReponseChoix reponse) => setState(() {
+                      _erreur = null;
+                      _valeur = int.tryParse(
+                        reponse.valeurs.isEmpty
+                            ? reponse.saisieLibre ?? ''
+                            : reponse.valeurs.first,
+                      );
+                    }),
+                  ),
+                ),
+                Ecart.vMd,
+              ],
+              // COUPE-MOTS-FOND-1 (6) : « changement ? » (espace insecable)
+              // est un seul bloc ; en Interface guidee a 320 px texte x2, il
+              // ne tenait qu'a 0,8 px pres, et le « ? » partait seul a la
+              // ligne des que la feuille etait plus etroite. Le bloc se
+              // reduit, borne, au lieu d'etre casse.
+              TexteSansCoupure(
+                t.tuteur.reglages.demandeMotif,
+                style: textes.titleSmall,
               ),
-            ],
-            if (_motif.text.trim().isEmpty) ...<Widget>[
-              Ecart.vSm,
+              Ecart.vXs,
               Text(
                 t.tuteur.reglages.demandeMotifRequis,
                 style: textes.bodySmall,
               ),
+              Ecart.vSm,
+              SelecteurMotif(
+                motifs: _motifsProposes(),
+                controleur: _motif,
+                key: _selecteurMotif,
+                libelleChamp: t.tuteur.reglages.demandeMotif,
+                erreur: _motifManquant ? t.formulaire.motif.manque : null,
+                onChange: (String _) => setState(() => _motifManquant = false),
+              ),
+              if (_erreur != null) ...<Widget>[
+                Ecart.vSm,
+                Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    _erreur!,
+                    style: palette.inkAlert.applyTo(
+                      textes.bodySmall ?? const TextStyle(),
+                    ),
+                  ),
+                ),
+              ],
+              Ecart.vMd,
+              ActionPrincipale(
+                libelle: t.tuteur.reglages.demandeEnvoyer,
+                enCours: _enCours,
+                onPress: _envoyer,
+              ),
             ],
-            Ecart.vMd,
-            ActionPrincipale(
-              libelle: t.tuteur.reglages.demandeEnvoyer,
-              enCours: _enCours,
-              onPress: _pret ? _envoyer : null,
-            ),
           ],
-        ],
+        ),
       ),
     );
   }
 
-  /// Vrai quand la demande peut aboutir : un motif, et une valeur si la sorte
-  /// en attend une.
-  bool get _pret =>
-      _motif.text.trim().isNotEmpty && (!_avecValeur || _valeur != null);
+  /// Les motifs proposes selon ce qui est demande (FORM-L1).
+  List<String> _motifsProposes() => switch (widget.sorte) {
+    SorteDemande.reaffectation => MotifsProposes.reglageEnseignant(),
+    SorteDemande.plafond || SorteDemande.regle =>
+      widget.cle == CleRegle.minimumPayable
+          ? MotifsProposes.reglageMinimum()
+          : MotifsProposes.reglageDuree(),
+  };
 
   String _titre() => switch (widget.sorte) {
     SorteDemande.reaffectation => t.tuteur.reglages.demandeTitreReaffectation(
-      prenom: widget.enfant.prenom,
+      dePrenom: deDevant(
+        widget.enfant.prenom,
+        cle: 'tuteur.reglages.demandeTitreReaffectation',
+      ),
     ),
     SorteDemande.plafond || SorteDemande.regle =>
       widget.cle == CleRegle.minimumPayable
           ? t.tuteur.reglages.demandeTitreMinimum(prenom: widget.enfant.prenom)
-          : t.tuteur.reglages.demandeTitreDuree(prenom: widget.enfant.prenom),
+          : t.tuteur.reglages.demandeTitreDuree(
+              dePrenom: deDevant(
+                widget.enfant.prenom,
+                cle: 'tuteur.reglages.demandeTitreDuree',
+              ),
+            ),
   };
 }
 

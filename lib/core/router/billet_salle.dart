@@ -18,7 +18,18 @@ import 'package:flutter/foundation.dart';
 @immutable
 class BilletSalle {
   /// Cree un billet pour une seance.
-  const BilletSalle({required this.sessionId, required this.emisA});
+  const BilletSalle({
+    required this.sessionId,
+    required this.emisA,
+    this.preparation = false,
+    this.groupeId,
+  });
+
+  /// Ouvrir d'abord la preparation de l'enseignant (CLV-03, CL-4.5).
+  final bool preparation;
+
+  /// La classe d'origine, pour « Retour a la Classe ».
+  final String? groupeId;
 
   /// La seance visee.
   final String sessionId;

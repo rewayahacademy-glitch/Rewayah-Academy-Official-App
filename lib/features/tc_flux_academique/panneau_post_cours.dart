@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_outils/fonction_indisponible.dart';
 import '../../core/tc_outils/learning_assignment.dart';
 import '../../core/tc_parcours/libelles_parcours.dart';
 import '../../core/tc_parcours/plage_lisible.dart';
@@ -17,6 +19,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// Le panneau d'apres-cours (spec section 9.5).
 ///
@@ -80,11 +83,15 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
   Widget _corps(BuildContext context, AsyncValue<PostCoursVM> lecture) {
     if (!lecture.hasValue) {
       if (lecture.hasError) {
+        // Un post-cours dont le serveur n'est pas branche ne se recommence
+        // pas : on le dit, sans action qui ne mene nulle part (SALLE-ROBUSTE).
+        if (lecture.error is FonctionIndisponible) {
+          return EmptyState(message: t.tc.indisponible);
+        }
         return EmptyState(
           message: t.tc.parcours.postCours.repriseInconnue,
           libelleAction: t.tc.parcours.postCours.valider,
-          onAction: () =>
-              ref.invalidate(postCoursProvider(widget.sessionId)),
+          onAction: () => ref.invalidate(postCoursProvider(widget.sessionId)),
         );
       }
       return const Skeleton.liste(lignes: 3);
@@ -99,8 +106,10 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
       children: <Widget>[
         // 1. CE QUE LE SYSTEME SAIT DEJA, en premier et sans champ.
         Text(
-          t.tc.parcours.postCours.duree(
-            minutes: postCours.dureeReelle.inMinutes,
+          LibellesGroupe.insecable(
+            t.tc.parcours.postCours.duree(
+              minutes: postCours.dureeReelle.inMinutes,
+            ),
           ),
           style: textes.bodyMedium,
         ),
@@ -115,12 +124,10 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
         Ecart.vXl,
 
         // 3. CE QUE L'ENSEIGNANT AJOUTE, en dernier, et facultatif.
-        TextField(
-          controller: _notes,
-          maxLines: 2,
-          decoration: InputDecoration(
-            labelText: t.tc.parcours.postCours.exceptions,
-          ),
+        ZoneSaisie(
+          controleur: _notes,
+          minLignes: 2,
+          libelle: t.tc.parcours.postCours.exceptions,
         ),
         Ecart.vLg,
 
@@ -159,9 +166,11 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
       _erreur = null;
     });
 
-    final PortPostCours port = ref.read(portPostCoursProvider);
     final PostCoursVM saisie = postCours.avecNotes(_notes.text);
     try {
+      // La lecture du port est DANS le `try` : un port qui echoue a se
+      // construire ne doit pas laisser l'ecran bloque sur « envoi en cours ».
+      final PortPostCours port = ref.read(portPostCoursProvider);
       final SortPostCours sort = await port.enregistrer(saisie);
       if (!mounted) {
         return;
@@ -171,6 +180,13 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
         _sort = sort;
       });
       widget.onTermine?.call(sort);
+    } on FonctionIndisponible {
+      if (mounted) {
+        setState(() {
+          _envoi = false;
+          _erreur = t.tc.indisponible;
+        });
+      }
     } on Object {
       if (mounted) {
         setState(() {
@@ -233,7 +249,7 @@ class _Exceptions extends StatelessWidget {
               ],
             ),
           ),
-          Ecart.vSm,
+          Ecart.vLg,
         ],
       ],
     );
@@ -316,7 +332,7 @@ class _Travail extends StatelessWidget {
                 ],
               ),
             ),
-            Ecart.vSm,
+            Ecart.vLg,
           ],
       ],
     );

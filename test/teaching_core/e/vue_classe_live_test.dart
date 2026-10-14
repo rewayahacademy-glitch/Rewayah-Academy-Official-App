@@ -33,7 +33,7 @@ void main() {
       SessionLiveVM(
         sessionId: 's1',
         groupeId: 'g1',
-        libelleGroupe: 'Groupe Al-Fatiha',
+        libelleGroupe: 'Classe Al-Fatiha',
         enseignant: const EnseignantDeClasse(
           nomAffichage: 'Youssouf',
           titre: TitreEnseignant.sayyid,

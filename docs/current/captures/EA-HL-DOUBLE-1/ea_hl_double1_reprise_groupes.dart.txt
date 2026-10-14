@@ -1,0 +1,548 @@
+// EA-HL-DOUBLE-1, reprise apres revue adverse : archive des groupes de
+// capture « Capture EA-HL-DOUBLE-1 » poses dans les fichiers de test des
+// ecrans (ils reutilisent le harnais prive de chaque fichier). Lancement :
+//   CAPTURE_DIR=$PWD/docs/current/captures/EA-HL-DOUBLE-1 flutter test \
+//     --concurrency=2 <fichier> --plain-name 'Capture EA-HL-DOUBLE-1'
+// Outils partages : test/capture/outil_capture.dart (capturerVue,
+// masquerRubanDebug) et test/support/hors_ligne_une_fois.dart.
+
+// ===== test/features/appareils/emetteur_qr_test.dart =====
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve, hors ligne avec et sans
+  // code. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, ThemeMode, Size) cas in <(String, ThemeMode, Size)>[
+      ('avec_code_390_clair', ThemeMode.light, const Size(390, 844)),
+      ('avec_code_390_sombre', ThemeMode.dark, const Size(390, 844)),
+      ('avec_code_320_clair', ThemeMode.light, const Size(320, 900)),
+      ('avec_code_1440_clair', ThemeMode.light, const Size(1440, 900)),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        final ReseauPilote reseau = ReseauPilote();
+        await _monter(
+          tester,
+          service: _service(),
+          statut: FauxStatutCode(),
+          reseau: reseau,
+          mode: cas.$2,
+          taille: cas.$3,
+        );
+        reseau.poser(horsLigne: true);
+        await stabiliser(tester);
+        expectHorsLigneUneFois();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_appairage_${cas.$1}')}',
+        );
+      });
+    }
+    testWidgets('sans_code_390_clair', (WidgetTester tester) async {
+      final ReseauPilote reseau = ReseauPilote()..poser(horsLigne: true);
+      await _monter(
+        tester,
+        service: _service()..erreurAJeter = StateError('reseau'),
+        statut: FauxStatutCode(),
+        reseau: reseau,
+      );
+      expectHorsLigneUneFois();
+      debugPrint(
+        'PNG ${await capturerVue(tester, 'ea_hl_double1_appairage_sans_code_390_clair')}',
+      );
+    });
+  });
+
+// ===== test/features/creneaux_test.dart =====
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve, hors ligne, la note dit
+  // ce qui ne peut pas se faire, le bandeau seul dit le reseau. Sautees sans
+  // CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String, Size, ThemeMode, double, InterfaceMode) cas
+        in <(String, Size, ThemeMode, double, InterfaceMode)>[
+          (
+            '390_clair',
+            const Size(390, 844),
+            ThemeMode.light,
+            1,
+            InterfaceMode.standard,
+          ),
+          (
+            '390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            1,
+            InterfaceMode.standard,
+          ),
+          (
+            '320x2_clair',
+            const Size(320, 900),
+            ThemeMode.light,
+            2,
+            InterfaceMode.standard,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            1,
+            InterfaceMode.standard,
+          ),
+          (
+            '390_guidee',
+            const Size(390, 844),
+            ThemeMode.light,
+            1,
+            InterfaceMode.enfant,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        fixerVueCapture(tester, cas.$2, 1);
+        final FauxServicePlanning planning = FauxServicePlanning()
+          ..creneaux[_monId] = <Creneau>[
+            const Creneau(jour: 2, heure: 17, fuseau: 'Europe/Paris'),
+          ];
+        await tester.pumpWidget(
+          hoteCapture(
+            const CreneauxPage(),
+            surcharges: _surcharges(
+              matching: FauxServiceMatching(),
+              planning: planning,
+              regles: _reglesAvecPlafond(5),
+              horsLigne: true,
+            ),
+            themeMode: cas.$3,
+            echelleTexte: cas.$4,
+            interfaceMode: cas.$5,
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(
+          find.text(t.enseignant.creneaux.horsLigneGrille),
+          findsOneWidget,
+        );
+        expectHorsLigneUneFois();
+        debugPrint(
+          'PNG ${await capturer(tester, 'ea_hl_double1_creneaux_${cas.$1}')}',
+        );
+      });
+    }
+  });
+
+// ===== test/features/bienvenue_enseignant_test.dart =====
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve, hors ligne, la note dit
+  // ce qui ne peut pas se faire, le bandeau seul dit le reseau. Sautees sans
+  // CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size) cas in <(String, Size)>[
+      ('390_clair', const Size(390, 844)),
+      ('320_clair', const Size(320, 900)),
+      ('1440_clair', const Size(1440, 900)),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await _monter(tester, horsLigne: true);
+        tester.view.physicalSize = cas.$2;
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text(t.enseignant.bienvenue.horsLigne), findsOneWidget);
+        expectHorsLigneUneFois();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_bienvenue_${cas.$1}')}',
+        );
+      });
+    }
+  });
+
+// ===== test/features/foyer/ma_famille_adulte_test.dart =====
+    // EA-HL-DOUBLE-1 (reprise) : captures de preuve du Foyer hors ligne,
+    // sans donnees (le bloc dit ce qui manque) et avec donnees (le bandeau
+    // seul). Sautees sans CAPTURE_DIR.
+    group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String, Size) cas in <(String, Size)>[
+        ('390', const Size(390, 844)),
+        ('320', const Size(320, 900)),
+        ('1440', const Size(1440, 900)),
+      ]) {
+        testWidgets('sans donnees ${cas.$1}', (WidgetTester tester) async {
+          await monterPage(
+            tester,
+            eleves: () => Future<List<EleveDuFoyer>>.error(Exception('x')),
+            horsLigne: true,
+            identite: () => Future<IdentiteTitulaire>.error(Exception('x')),
+          );
+          tester.view.physicalSize = cas.$2;
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          expectHorsLigneUneFois();
+          expect(find.byType(EtatSansDonnees), findsNWidgets(2));
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1_foyer_sans_donnees_${cas.$1}_clair')}',
+          );
+        });
+      }
+      testWidgets('avec donnees 390', (WidgetTester tester) async {
+        await monterPage(
+          tester,
+          eleves: () async => const <EleveDuFoyer>[],
+          horsLigne: true,
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expectAvecDonnees();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_foyer_avec_donnees_390_clair')}',
+        );
+      });
+    });
+
+// ===== test/features/accueil_adulte/accueil_adulte_page_test.dart =====
+      for (final (double, double) cas in const <(double, double)>[
+        (320, 2),
+        (768, 1),
+        (768, 2),
+        (1440, 1),
+        (1440, 2),
+      ]) {
+        for (final TextDirection sens in TextDirection.values) {
+          testWidgets('${cas.$1.toInt()} px, texte x${cas.$2.toInt()}, '
+              '${sens.name}', (WidgetTester tester) async {
+            taille(tester, Size(cas.$1, 4000));
+            await monterCoquille(
+              tester,
+              adresseDemoAdulte(EcranDemoAdulte.accueil),
+              echelle: cas.$2,
+              direction: sens,
+            );
+            expect(tester.takeException(), isNull);
+            expect(find.byType(GrilleBento), findsOneWidget);
+            verifierAucunMotCoupe(tester, find.byType(GrilleBento));
+          });
+        }
+      }
+    });
+  });
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve de l'Historique hors
+  // ligne, sans donnees et avec donnees deja lues puis relues en echec ;
+  // clair, sombre, 1440 et texte x2 (l'Accueil est capture par
+  // test/capture/ea_hl_double1_capture_test.dart).
+  // Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    Future<void> capturerPage(
+      WidgetTester tester,
+      String nom, {
+      required Widget page,
+      required Override lecture,
+      required ProviderOrFamily fournisseur,
+      required bool relire,
+      Size taille = const Size(390, 844),
+      ThemeMode mode = ThemeMode.light,
+      double echelle = 1,
+      InterfaceMode interface = InterfaceMode.standard,
+    }) async {
+      fixerVueCapture(tester, taille, 1);
+      await tester.pumpWidget(
+        hoteCapture(
+          page,
+          surcharges: <Override>[
+            horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+            lecture,
+          ],
+          themeMode: mode,
+          echelleTexte: echelle,
+          interfaceMode: interface,
+        ),
+      );
+      await stabiliser(tester);
+      if (relire) {
+        ProviderScope.containerOf(tester.element(find.byType(page.runtimeType)))
+            .invalidate(fournisseur);
+        await stabiliser(tester);
+      }
+      expect(tester.takeException(), isNull);
+      if (relire) {
+        expectAvecDonnees();
+      } else {
+        expect(find.byType(EtatSansDonnees), findsOneWidget);
+        expectHorsLigneUneFois();
+      }
+      debugPrint('PNG ${await capturer(tester, 'ea_hl_double1_$nom')}');
+    }
+
+    Override historique({required bool dabord}) {
+      int lectures = 0;
+      return historiqueSeancesAdulteProvider.overrideWith((Ref _) {
+        lectures++;
+        return dabord && lectures == 1
+            ? Future<List<SeancePasseeAdulte>>.value(
+                DonneesAdulteDemo.historiqueSeances(),
+              )
+            : Future<List<SeancePasseeAdulte>>.error(StateError('reseau'));
+      });
+    }
+
+    for (final (String, Size, ThemeMode, double) cas
+        in <(String, Size, ThemeMode, double)>[
+          ('390_clair', const Size(390, 844), ThemeMode.light, 1),
+          ('390_sombre', const Size(390, 844), ThemeMode.dark, 1),
+          ('320x2_clair', const Size(320, 900), ThemeMode.light, 2),
+        ]) {
+      testWidgets('historique sans donnees ${cas.$1}', (
+        WidgetTester tester,
+      ) async {
+        await capturerPage(
+          tester,
+          'historique_sans_donnees_${cas.$1}',
+          page: HistoriqueSeancesAdultePage(onRetour: () {}),
+          lecture: historique(dabord: false),
+          fournisseur: historiqueSeancesAdulteProvider,
+          relire: false,
+          taille: cas.$2,
+          mode: cas.$3,
+          echelle: cas.$4,
+        );
+      });
+    }
+    for (final (String, Size) cas in <(String, Size)>[
+      ('390_clair', const Size(390, 844)),
+      ('1440_clair', const Size(1440, 900)),
+    ]) {
+      testWidgets('historique avec donnees ${cas.$1}', (
+        WidgetTester tester,
+      ) async {
+        await capturerPage(
+          tester,
+          'historique_avec_donnees_${cas.$1}',
+          page: HistoriqueSeancesAdultePage(onRetour: () {}),
+          lecture: historique(dabord: true),
+          fournisseur: historiqueSeancesAdulteProvider,
+          relire: true,
+          taille: cas.$2,
+        );
+      });
+    }
+  });
+
+// ===== test/features/appareils_test.dart =====
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve des appareils hors ligne,
+  // sans donnees (le bloc dit ce qui manque) et avec donnees (le bandeau
+  // seul). Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, String, Size, double, bool) cas
+        in <(String, String, Size, double, bool)>[
+          (
+            'foyer_sans_donnees_390',
+            Routes.tuteurFoyerAppareils,
+            const Size(390, 844),
+            1,
+            true,
+          ),
+          (
+            'foyer_sans_donnees_320x2',
+            Routes.tuteurFoyerAppareils,
+            const Size(320, 900),
+            2,
+            true,
+          ),
+          (
+            'eleve_sans_donnees_390',
+            _page('e1'),
+            const Size(390, 844),
+            1,
+            true,
+          ),
+          (
+            'foyer_avec_donnees_390',
+            Routes.tuteurFoyerAppareils,
+            const Size(390, 844),
+            1,
+            false,
+          ),
+          (
+            'eleve_avec_donnees_390',
+            _page('e1'),
+            const Size(390, 844),
+            1,
+            false,
+          ),
+          (
+            'eleve_avec_donnees_1440',
+            _page('e1'),
+            const Size(1440, 900),
+            1,
+            false,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        final FauxAppairagePilote service = _foyer();
+        if (cas.$5) {
+          service.attenteLecture = Completer<void>();
+        }
+        await _monter(
+          tester,
+          service: service,
+          depart: cas.$2,
+          horsLigne: true,
+          taille: cas.$3,
+          echelleTexte: cas.$4,
+        );
+        expect(tester.takeException(), isNull);
+        if (cas.$5) {
+          expect(find.byType(EtatSansDonnees), findsOneWidget);
+          expectHorsLigneUneFois();
+        } else {
+          expectAvecDonnees();
+        }
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_appareils_${cas.$1}_clair')}',
+        );
+      });
+    }
+  });
+
+// ===== test/features/foyer/fiche_eleve_test.dart =====
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve de la fiche eleve hors
+  // ligne, sans donnees et avec donnees. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, bool) cas in <(String, Size, bool)>[
+      ('sans_donnees_390', const Size(390, 844), true),
+      ('sans_donnees_320', const Size(320, 900), true),
+      ('avec_donnees_390', const Size(390, 844), false),
+      ('avec_donnees_1440', const Size(1440, 900), false),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await _monter(
+          tester,
+          appairage: _foyerA()..echoue = cas.$3,
+          depart: Routes.ficheEleveSousPage(a1, 'informations'),
+          taille: cas.$2,
+          autres: <Override>[
+            horsLigneProvider.overrideWith(
+              (Ref ref) => Stream<bool>.value(true),
+            ),
+          ],
+        );
+        expect(tester.takeException(), isNull);
+        if (cas.$3) {
+          expectSansDonnees(t.ficheEleve.sansDonnees);
+        } else {
+          expectAvecDonnees();
+        }
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_fiche_eleve_${cas.$1}_clair')}',
+        );
+      });
+    }
+  });
+
+// ===== test/features/journee/listes_journee_test.dart =====
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve des listes de la Journee
+  // hors ligne sans donnees, LTR et RTL, texte x2. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUp(masquerRubanDebug);
+    for (final (String, Widget) page in <(String, Widget)>[
+      ('a_terminer', const ListeATerminerPage()),
+      ('alertes', const ListeAlertesPage()),
+    ]) {
+      for (final (String, double, double, TextDirection) cas
+          in <(String, double, double, TextDirection)>[
+            ('390', 390, 1, TextDirection.ltr),
+            ('320x2', 320, 2, TextDirection.ltr),
+            ('320x2_rtl', 320, 2, TextDirection.rtl),
+          ]) {
+        testWidgets('${page.$1} ${cas.$1}', (WidgetTester tester) async {
+          await _monter(
+            tester,
+            page.$2,
+            _Etat.horsLigne,
+            direction: cas.$4,
+            largeur: cas.$2,
+            echelle: cas.$3,
+          );
+          tester.view.physicalSize = Size(cas.$2, 900);
+          await tester.pump();
+          expect(tester.takeException(), isNull);
+          expectHorsLigneUneFois();
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1_journee_${page.$1}_sans_donnees_${cas.$1}_clair')}',
+          );
+        });
+      }
+    }
+  });
+
+// ===== test/router/etats_transverses_test.dart =====
+    group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String, Size) cas in <(String, Size)>[
+        ('390', const Size(390, 844)),
+        ('320', const Size(320, 900)),
+        ('1440', const Size(1440, 900)),
+      ]) {
+        testWidgets(cas.$1, (WidgetTester tester) async {
+          final SourcePilotee source = SourcePilotee(injoignable);
+          addTearDown(source.fermer);
+          await monterRouteur(
+            tester,
+            Routes.tuteurAccueil,
+            source: source,
+            taille: cas.$2,
+            surcharges: <Override>[
+              horsLigneProvider.overrideWith(
+                (Ref _) => Stream<bool>.value(true),
+              ),
+            ],
+          );
+          expect(tester.takeException(), isNull);
+          expectHorsLigneUneFois();
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1_demarrage_${cas.$1}_clair')}',
+          );
+        });
+      }
+    });
+
+// ===== test/teaching_core/g/entree_explication_test.dart =====
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve de la verification de
+  // l'observation hors ligne : le motif dit ce qui manque, le bandeau seul
+  // dit le reseau. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, ThemeMode) cas in <(String, Size, ThemeMode)>[
+      ('390_clair', const Size(390, 844), ThemeMode.light),
+      ('390_sombre', const Size(390, 844), ThemeMode.dark),
+      ('320_clair', const Size(320, 900), ThemeMode.light),
+      ('1440_clair', const Size(1440, 900), ThemeMode.light),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        final FauxPortPolitique politique = FauxPortPolitique()
+          ..echecBudget = const EchecObservation(MotifEchecObservation.reseau);
+        addTearDown(politique.fermer);
+        await _monter(
+          tester,
+          politique: politique,
+          horsLigne: true,
+          taille: cas.$2,
+          mode: cas.$3,
+        );
+        await _presser(tester, find.text(t.classe.observer));
+        expect(tester.takeException(), isNull);
+        expectHorsLigneUneFois();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_observation_${cas.$1}')}',
+        );
+      });
+    }
+  });
+

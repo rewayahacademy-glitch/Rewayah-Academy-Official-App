@@ -1,15 +1,17 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/session_live_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/status_pill.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
+import 'encre_salle.dart';
 import 'roster_classe.dart';
 import 'vue_classe_live.dart';
 
@@ -37,12 +39,15 @@ String? libelleTempsRestant(SessionClockVM? horloge) {
   }
   final int heures = restant.inHours;
   final int minutes = restant.inMinutes % Duration.minutesPerHour;
-  return heures == 0
-      ? t.tc.classe.entete.resteMinutes(minutes: restant.inMinutes)
-      : t.tc.classe.entete.resteHeuresMinutes(
-          heures: heures,
-          minutes: minutes.toString().padLeft(2, '0'),
-        );
+  // DUREE-INSECABLE-1 : la duree restante n'est jamais scindee.
+  return LibellesGroupe.insecable(
+    heures == 0
+        ? t.tc.classe.entete.resteMinutes(minutes: restant.inMinutes)
+        : t.tc.classe.entete.resteHeuresMinutes(
+            heures: heures,
+            minutes: minutes.toString().padLeft(2, '0'),
+          ),
+  );
 }
 
 /// Le nom de l'enseignant, precede de son titre.
@@ -81,6 +86,7 @@ class EnteteClasse extends StatelessWidget {
     required this.roster,
     super.key,
     this.annonces = const <AnnonceObservation>[],
+    this.monTuteurObserve = false,
     this.onVoirRoster,
   });
 
@@ -94,7 +100,17 @@ class EnteteClasse extends StatelessWidget {
   final RosterClasseVM roster;
 
   /// Les observateurs annonces. Vide = personne n'observe.
+  ///
+  /// **Reserve a l'enseignant** : le serveur refuse cette lecture a tout autre
+  /// appelant, et elle porte les prenoms de TOUS les enfants observes.
   final List<AnnonceObservation> annonces;
+
+  /// Vrai quand le tuteur de l'eleve qui regarde cet ecran observe la seance.
+  ///
+  /// **A ne remplir que pour l'eleve lui-meme.** C'est une information sur SON
+  /// foyer : la faire circuler vers un autre role la transformerait en
+  /// information sur le foyer d'autrui.
+  final bool monTuteurObserve;
 
   /// Ouvre la feuille de roster. `null` quand le roster est deja en colonne.
   final VoidCallback? onVoirRoster;
@@ -106,6 +122,17 @@ class EnteteClasse extends StatelessWidget {
     final String? compteur = vue.compteurCompact;
     final VoidCallback? voirRoster = onVoirRoster;
     final String? mot = _motDuLien(vue.motLien);
+    final String? photoEnseignant = session.enseignant.photoCleOuUrl;
+    // L'en-tete est pose sur le fond inverse de la salle (`PageImmersive`),
+    // qui donne son encre par `DefaultTextStyle`. Les styles du theme portent
+    // l'encre du fond clair : on leur rend celle de la paire, sinon le nom
+    // s'ecrit en encre sombre sur fond sombre (releve ENS-PAYS-1, capture
+    // 320 x2 de la classe en direct).
+    final Color? encre = DefaultTextStyle.of(context).style.color;
+    final TextStyle styleNom = (textes.titleSmall ?? const TextStyle())
+        .copyWith(color: encre);
+    final TextStyle styleLigne = (textes.labelMedium ?? const TextStyle())
+        .copyWith(color: encre);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -116,37 +143,47 @@ class EnteteClasse extends StatelessWidget {
             // La photo enseignant est OBLIGATOIRE (decision D-01). Quand elle
             // manque, on ne pose pas un avatar generique : cela masquerait une
             // donnee absente au lieu de la signaler. On ecrit qu'elle manque.
-            if (session.enseignant.photoCleOuUrl case final String photo)
-              ...<Widget>[
-              AvatarTile(
-                prenom: session.enseignant.nomAffichage,
-                urlSignee: photo,
-              ),
-              Ecart.hSm,
-            ],
             Expanded(
               child: MergeSemantics(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      session.libelleGroupe,
-                      overflow: TextOverflow.ellipsis,
-                      style: textes.titleSmall ?? const TextStyle(),
-                    ),
-                    Text(
-                      nomAvecTitre(session.enseignant),
-                      overflow: TextOverflow.ellipsis,
-                      style: textes.labelMedium ?? const TextStyle(),
-                    ),
-                  ],
-                ),
+                // AVATAR-1 : couple avatar + nom du composant partage, le nom
+                // de l'enseignant centre sur le cercle, une ligne de role (la
+                // classe).
+                // ENS-PAYS-SALLE-1 (decision Q-4 = b du 05/10) : le pays de
+                // l'enseignant ne s'affiche que sur les cartes, jamais dans
+                // la salle pendant le cours. Aucun `pays:` ici, aucune ligne
+                // `PaysEnseignant` dans la branche sans photo.
+                child: photoEnseignant != null
+                    ? AvatarNom.enLigne(
+                        prenom: session.enseignant.nomAffichage,
+                        urlSignee: photoEnseignant,
+                        nom: nomAvecTitre(session.enseignant),
+                        role: session.libelleGroupe,
+                        diametre: AppAvatar.petit,
+                        ecart: AppSpacing.sm,
+                        styleNom: styleNom,
+                        styleRole: styleLigne,
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            session.libelleGroupe,
+                            overflow: TextOverflow.ellipsis,
+                            style: styleNom,
+                          ),
+                          Text(
+                            nomAvecTitre(session.enseignant),
+                            overflow: TextOverflow.ellipsis,
+                            style: styleLigne,
+                          ),
+                        ],
+                      ),
               ),
             ),
             if (restant != null) ...<Widget>[
               Ecart.hSm,
-              Text(restant, style: textes.labelLarge ?? const TextStyle()),
+              Text(restant, style: styleDuFond(context, textes.labelLarge)),
             ],
             if (compteur != null && voirRoster != null) ...<Widget>[
               Ecart.hSm,
@@ -177,7 +214,7 @@ class EnteteClasse extends StatelessWidget {
           // le risque, elle n'annonce pas une coupure qui n'a pas eu lieu.
           Text(
             t.tc.classe.lien.retourDeSuspension,
-            style: textes.labelMedium ?? const TextStyle(),
+            style: styleDuFond(context, textes.labelMedium),
           ),
         ],
         // **Le composant d'Agent G, pas une seconde ecriture du meme.** Il
@@ -185,32 +222,28 @@ class EnteteClasse extends StatelessWidget {
         // notification de sortie (decision D-14) -- la ligne disparait, et
         // c'est tout.
         //
-        // **Cette ligne ne peut pas encore s'allumer, et ce n'est pas une
-        // panne.** La chaine, rejouee de bout en bout le 21/09/2026 :
-        // `annonces_observation` ne lit que `guardian_session_visit` ou
-        // `role = 'guardian_observer'` et `left_at is null`
-        // (`0033_tc_vues_rpc.sql:1292-1296`) ; la seule ecriture de cette
-        // table est `entrer_observation` (`0033:1172`) ; `entrer_observation`
-        // n'est appelee que par `VisiteObservationSupabase`
-        // (`lib/core/tc_observation/port_visite_observation.dart:97`), que
-        // seule `EntreeObservationPage` emprunte, laquelle n'est atteignable
-        // que par `/tc/observation/:seanceId` -- une route bien enregistree
-        // (`app_router.dart:591`) mais vers laquelle AUCUN fichier de `lib/`
-        // ne navigue : `RoutesTcG.versObservation` n'a aucun appelant. Le
-        // bouton « Assister » du tuteur passe encore par la porte d'avant,
-        // `assister_seance` (`accueil_famille_page.dart:181` ->
-        // `service_video.dart:131`).
-        //
-        // La bascule d'« Assister » vers la porte d'observation est en attente
-        // VOLONTAIRE : sans la migration `0037`, `entrer_observation` ne rend
-        // pas `enfant_profile_id`, et le panneau du tuteur lui dirait
-        // « Votre enfant n'a pas d'image ouverte » meme camera ouverte.
-        // `0037` n'est pas appliquee (derniere migration en base le
-        // 21/09/2026 : `0033_tc_vues_rpc_durcissement_grants`). Basculer
-        // avant, ce serait livrer au parent l'inverse du service promis.
+        // **La chaine est desormais entiere**, rejouee de bout en bout le
+        // 21/09/2026 : `entrer_observation` (seule ecriture de
+        // `guardian_session_visit`) est appelee par `EntreeObservationPage`,
+        // atteignable par `/tc/observation/:seanceId`, vers laquelle le bouton
+        // « Assister » du tuteur navigue maintenant
+        // (`accueil_famille_page.dart`). Les migrations `0035` a `0037`, `0039`
+        // et `0040` sont appliquees ; `0037` fait rendre `enfant_profile_id`,
+        // sans quoi le panneau du tuteur aurait dit « Votre enfant n'a pas
+        // d'image ouverte » meme camera ouverte.
         if (annonces.isNotEmpty) ...<Widget>[
           Ecart.vSm,
           IndicateurObservation(annonces: annonces),
+        ],
+        // **La symetrie cote enfant, dans la MEME colonne** : une mention, pas
+        // un bloc. Elle ne s'allume que pour l'enfant reellement observe, et la
+        // borne est en base -- `annonce_observation_pour_moi` (`0040`) porte
+        // `enfant_profile_id = auth.uid()` dans son WHERE. Les quatre autres
+        // enfants du groupe recoivent `observe: false` et ne lisent rien
+        // (specification 11.3).
+        if (monTuteurObserve) ...<Widget>[
+          Ecart.vSm,
+          const IndicateurObservationEnfant(visible: true),
         ],
       ],
     );

@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +8,7 @@ import '../../core/tc_classe/controleur_recitation.dart';
 import '../../core/tc_classe/port_rappel_discret.dart';
 import '../../core/tc_classe/rappel_discret.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/empty_state.dart';
@@ -95,14 +96,16 @@ class _FicheSeanceEtat extends ConsumerState<FicheSeance> {
   /// l'action redeviendra possible.
   String _messageEchec(EchecRappel echec, PortRappelDiscret rappel) =>
       switch (echec.motif) {
-        MotifEchecRappel.cooldown => t.tc.classe.rappel.cooldown(
-          secondes:
-              (rappel.cooldownRestant(
-                        sessionId: widget.sessionId,
-                        academyId: widget.eleve.academyId,
-                      ) ??
-                      rappel.cooldown)
-                  .inSeconds,
+        MotifEchecRappel.cooldown => LibellesGroupe.insecable(
+          t.tc.classe.rappel.cooldown(
+            secondes:
+                (rappel.cooldownRestant(
+                          sessionId: widget.sessionId,
+                          academyId: widget.eleve.academyId,
+                        ) ??
+                        rappel.cooldown)
+                    .inSeconds,
+          ),
         ),
         MotifEchecRappel.droitRefuse => t.tc.classe.rappel.echecDroit,
         MotifEchecRappel.transport => t.tc.classe.rappel.echec,
@@ -118,8 +121,7 @@ class _FicheSeanceEtat extends ConsumerState<FicheSeance> {
   Widget build(BuildContext context) {
     final TeacherStudentProjection eleve = widget.eleve;
     final TextTheme textes = Theme.of(context).textTheme;
-    final bool recite =
-        ref.watch(recitationProvider).actif == eleve.academyId;
+    final bool recite = ref.watch(recitationProvider).actif == eleve.academyId;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -136,7 +138,8 @@ class _FicheSeanceEtat extends ConsumerState<FicheSeance> {
               libelle: libelleEtatProjete(eleve.liveStatus),
               ton: tonEtatProjete(eleve.liveStatus),
             ),
-            // « Interface guidee », JAMAIS « mode enfant » (decision D-07).
+            // « Mode Accessibilite » en libelle neutre, JAMAIS « mode
+            // enfant » ni raison ou diagnostic (decision D-07, Q6 du 27/09).
             if (eleve.interfaceGuidee) ...<Widget>[
               Ecart.hSm,
               StatusPill(

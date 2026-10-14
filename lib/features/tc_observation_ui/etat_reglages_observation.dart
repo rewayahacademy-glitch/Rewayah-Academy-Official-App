@@ -57,7 +57,7 @@ class EtatReglagesObservation {
   ///
   /// **Un garde-fou de saisie, pas une regle produit.** La regle est en base,
   /// tenue par une contrainte `CHECK` demandee dans
-  /// `docs/teaching-core/TC_CONTRACT_REQUEST_G.md` ; celle-ci evite seulement
+  /// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_G.md` ; celle-ci evite seulement
   /// qu'un appui maintenu sur « Augmenter » ne propose mille visites.
   static const int visitesMax = 10;
 

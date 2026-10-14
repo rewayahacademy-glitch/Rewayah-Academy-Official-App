@@ -69,13 +69,14 @@ values
   ('b2000000-0000-0000-0000-000000000002', 'minor', 'standard', 'allowed'),
   ('b2000000-0000-0000-0000-000000000003', 'minor', 'standard', 'forbidden');
 
--- Le MVP-0 plafonne une seance a deux participants (`guard_session_participant_cap`,
+-- Le MVP-0 plafonne une seance a deux participants (guard_session_participant_cap,
 -- 0001). La salle de N2 doit pourtant savoir accueillir un enseignant, deux
--- eleves et un controleur invisible -- c'est le cas du groupe prevu par
--- l'ADR-001, et c'est CTR-02 qui l'impose de toute facon. On leve donc le
--- plafond comme l'administration le ferait, et on le repose en fin de fichier :
--- les scenarios partagent une base, en laisser un ouvert changerait le sens
--- des fichiers suivants.
+-- eleves et un controleur invisible. On memorise la configuration exacte
+-- pour restaurer l'etat partage, y compris une cle absente.
+create temporary table n2_allow_multi_snapshot as
+select value from public.app_config
+where key = 'allow_multi_participant_sessions';
+
 update public.app_config set value = 'true'::jsonb
  where key = 'allow_multi_participant_sessions';
 insert into public.app_config (key, value)
@@ -120,6 +121,12 @@ declare
   v_b jsonb;
   v_routes int;
 begin
+  -- autoriser_jeton_video (0042) valide le compte de l'appelant avant
+  -- d'émettre le jeton. Le scénario représente successivement chaque profil.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000001', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"teacher","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   set local role service_role;
 
   v_a := public.autoriser_jeton_video(
@@ -127,6 +134,10 @@ begin
     'b2000000-0000-0000-0000-000000000001',
     'wss://cloud.example', 'wss://self.example');
 
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000002', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   v_b := public.autoriser_jeton_video(
     'b2aaaaaa-0000-0000-0000-00000000000a',
     'b2000000-0000-0000-0000-000000000002',
@@ -157,7 +168,13 @@ end $$;
 --      une seance deja routee
 -- ============================================================
 
-do $$
+-- N2 et N3 restaurent les valeurs d'origine, pas les valeurs par defaut :
+-- cette base est partagee par les scenarios et peut deja etre configuree.
+create temporary table n2_video_config_snapshot as
+select id, active_provider, ws_url_override, canary_provider, canary_percentage
+from public.video_config;
+
+do $n2$
 declare
   v_avant text;
   v_apres text;
@@ -171,6 +188,10 @@ begin
      set active_provider = 'self_hosted', ws_url_override = 'wss://ailleurs.example'
    where id;
 
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000003', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   perform public.autoriser_jeton_video(
     'b2aaaaaa-0000-0000-0000-00000000000a',
     'b2000000-0000-0000-0000-000000000003',
@@ -184,17 +205,21 @@ begin
       v_avant, v_apres;
   end if;
 
-  -- On remet la configuration d'origine pour la suite.
-  update public.video_config
-     set active_provider = 'cloud', ws_url_override = null
-   where id;
-end $$;
+  -- Restaurer la configuration exacte capturee avant N2 sous le role du
+  -- runner : service_role n'a pas acces a la table temporaire de snapshot.
+  reset role;
+  update public.video_config current_config
+     set active_provider = snapshot.active_provider,
+         ws_url_override = snapshot.ws_url_override
+    from pg_temp.n2_video_config_snapshot snapshot
+   where current_config.id = snapshot.id;
+end $n2$;
 
 -- ============================================================
 -- N3 : le canari est deterministe, et il aiguille reellement
 -- ============================================================
 
-do $$
+do $n3$
 declare
   v_p1 public.video_provider;
   v_p2 public.video_provider;
@@ -252,9 +277,15 @@ begin
    where teacher_id = 'b2000000-0000-0000-0000-000000000001'
      and started_at > now() + interval '7 days';
 
-  update public.video_config
-     set canary_provider = null, canary_percentage = 0 where id;
-end $$;
+  -- Restaurer la configuration temporaire depuis le rôle du runner.
+  reset role;
+  update public.video_config current_config
+     set canary_provider = snapshot.canary_provider,
+         canary_percentage = snapshot.canary_percentage
+    from pg_temp.n2_video_config_snapshot snapshot
+   where current_config.id = snapshot.id;
+end $n3$;
+drop table pg_temp.n2_video_config_snapshot;
 
 -- ============================================================
 -- N4 : les capacites se deduisent du role et de la politique camera,
@@ -301,6 +332,10 @@ begin
   end if;
 
   -- Le controleur : invisible et muet, decide en base et non par une case.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000004', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"controller","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   v_ctrl := public.autoriser_jeton_video(
     'b2aaaaaa-0000-0000-0000-00000000000a',
     'b2000000-0000-0000-0000-000000000004',
@@ -323,7 +358,11 @@ declare
 begin
   set local role service_role;
 
-  -- Non inscrit.
+  -- Non inscrit : compte actif, mais absent de la seance.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000005', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   v_ok := false;
   begin
     perform public.autoriser_jeton_video(
@@ -336,7 +375,11 @@ begin
     raise exception 'N5 ECHEC : un non-inscrit a obtenu un jeton pour la salle';
   end if;
 
-  -- Trop tot : la seance commence dans trois heures, la fenetre ouvre a T-10.
+  -- Trop tot : compte inscrit actif, mais avant l'ouverture T-10.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000002', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   v_ok := false;
   begin
     perform public.autoriser_jeton_video(
@@ -349,7 +392,11 @@ begin
     raise exception 'N5 ECHEC : jeton emis trois heures avant le debut';
   end if;
 
-  -- Seance close : elle ne rouvre pas.
+  -- Seance close : le meme compte inscrit est toujours valide.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000002', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   v_ok := false;
   begin
     perform public.autoriser_jeton_video(
@@ -371,6 +418,12 @@ do $$
 declare
   v_etat public.presence_state;
 begin
+  -- etat_presence revalide l'appelant depuis 0042, même pour ce test
+  -- exécuté sous service_role : on représente ici le compte actif de l'élève.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000002', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   set local role service_role;
 
   -- Un jeton vient d'etre emis pour Nour, et aucun `joined` n'est arrive.
@@ -407,6 +460,11 @@ declare
   v_etat    public.presence_state;
   v_room    text;
 begin
+  -- Le webhook et le calcul d'état sont évalués pour le compte actif concerné.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000002', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   set local role service_role;
 
   select room_name into v_room from public.session_video_route
@@ -506,6 +564,12 @@ begin
     'evt_n2_0005', 'participant_left', v_room,
     'b2000000-0000-0000-0000-000000000003', now(), '{}'::jsonb);
 
+  -- La lecture de son etat est faite par Idriss lui-meme : 0042 borne
+  -- etat_presence au compte concerne si l'appelant n'est pas admin/enseignant.
+  perform set_config('test.uid', 'b2000000-0000-0000-0000-000000000003', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"student","household_id":"b2ffffff-0000-0000-0000-00000000000a"}}',
+    true);
   v_etat := public.etat_presence(
     'b2aaaaaa-0000-0000-0000-00000000000a',
     'b2000000-0000-0000-0000-000000000003');
@@ -601,11 +665,20 @@ begin
   end if;
 end $$;
 
--- Le plafond de participants est repose tel qu'il etait : les fichiers de
--- scenarios partagent une base, et en laisser un ouvert changerait
--- silencieusement le sens de ceux qui suivent.
-update public.app_config set value = 'false'::jsonb
- where key = 'allow_multi_participant_sessions';
+-- Restaurer exactement la valeur precedente. Si la cle n'existait pas,
+-- retirer la ligne de fixture ajoutee au debut du fichier.
+do $$
+begin
+  if exists (select 1 from pg_temp.n2_allow_multi_snapshot) then
+    update public.app_config
+       set value = (select value from pg_temp.n2_allow_multi_snapshot)
+     where key = 'allow_multi_participant_sessions';
+  else
+    delete from public.app_config
+     where key = 'allow_multi_participant_sessions';
+  end if;
+end $$;
+drop table pg_temp.n2_allow_multi_snapshot;
 
 do $$
 begin

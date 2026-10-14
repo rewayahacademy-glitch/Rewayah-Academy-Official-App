@@ -20,8 +20,34 @@ import '../../core/widgets/choice_card_group.dart';
 /// `core` par une demande de contrat : deux ecrans qui proposeraient deux listes
 /// differentes de makharij seraient pires qu'une liste trop courte.
 List<OptionChoix> referentielMakharij() => <OptionChoix>[
-  OptionChoix(valeur: 'sin_sad', libelle: t.enseignant.cahier.makhrajSinSad),
-  OptionChoix(valeur: 'ta_tah', libelle: t.enseignant.cahier.makhrajTaTah),
-  OptionChoix(valeur: 'dhal_zay', libelle: t.enseignant.cahier.makhrajDhalZay),
-  OptionChoix(valeur: 'ha_hah', libelle: t.enseignant.cahier.makhrajHaHah),
+  OptionChoix(
+    valeur: 'sin_sad',
+    libelle: isolerPaireArabe(t.enseignant.cahier.makhrajSinSad),
+  ),
+  OptionChoix(
+    valeur: 'ta_tah',
+    libelle: isolerPaireArabe(t.enseignant.cahier.makhrajTaTah),
+  ),
+  OptionChoix(
+    valeur: 'dhal_zay',
+    libelle: isolerPaireArabe(t.enseignant.cahier.makhrajDhalZay),
+  ),
+  OptionChoix(
+    valeur: 'ha_hah',
+    libelle: isolerPaireArabe(t.enseignant.cahier.makhrajHaHah),
+  ),
 ];
+
+/// Isole la paire de lettres arabes entre parentheses d'un libelle francais.
+///
+/// EN-7c-200 : dans « Sîn / Sâd (س / ص) », la paire arabe est un passage de
+/// droite a gauche dans une phrase de gauche a droite. A 200 % de texte, la
+/// ligne se coupait dans la paire et l'algorithme bidirectionnel reordonnait
+/// chaque morceau a part : « Sîn / Sâd (/ س » puis « ص) ». La paire est donc
+/// encadree d'un isolat droite-a-gauche (U+2067 ... U+2069), qui la place d'un
+/// bloc, et ses espaces deviennent insecables, pour qu'aucune coupure ne la
+/// separe. Ce sont des lettres en libelle, pas du texte coranique.
+String isolerPaireArabe(String libelle) => libelle.replaceAllMapped(
+  RegExp('\\(([^()]*[\u0600-\u06FF][^()]*)\\)'),
+  (Match m) => '(\u2067${m[1]!.replaceAll(' ', '\u00A0')}\u2069)',
+);

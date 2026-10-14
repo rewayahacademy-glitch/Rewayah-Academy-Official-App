@@ -7,7 +7,8 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/video_session_provider.dart';
-import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/avatar_nom.dart';
+import 'encre_salle.dart';
 import 'vue_classe_live.dart';
 
 /// La scene video de la Classe Live.
@@ -26,7 +27,7 @@ import 'vue_classe_live.dart';
 /// ces trois classes sont **privees a ce fichier**, qui est de surcroit nomme
 /// INTERDIT a Agent E. Elles sont donc inaccessibles, pas seulement
 /// inconvenables. La demande de promotion vers `lib/core/widgets/` est en
-/// section 5 de `docs/teaching-core/TC_CONTRACT_REQUEST_E.md` ; tant qu'elle
+/// section 5 de `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_E.md` ; tant qu'elle
 /// n'est pas faite, deux galeries existent et peuvent diverger.
 class SceneClasse extends StatelessWidget {
   /// Cree la scene.
@@ -52,7 +53,7 @@ class SceneClasse extends StatelessWidget {
         child: Text(
           t.tc.classe.scene.vide,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+          style: styleDuFond(context, Theme.of(context).textTheme.bodyMedium),
         ),
       );
     }
@@ -143,42 +144,43 @@ class _Cadre extends ConsumerWidget {
         borderRadius: metriques.arrondi,
         child: Stack(
           children: <Widget>[
+            // VIDEO-TUILE-1 : sans image, la tuile partagee (cercle et nom
+            // centre dessous) ; l'etiquette du bas reste sur une video reelle.
             Positioned.fill(
-              child:
-                  image ??
-                  _SansImage(nom: participant.nom, avecLegende: !compact),
+              child: image ?? _SansImage(participant: participant),
             ),
-            PositionedDirectional(
-              start: AppSpacing.sm,
-              bottom: AppSpacing.sm,
-              end: AppSpacing.sm,
-              // Une seule lecture pour les technologies d'assistance : le nom,
-              // puis ce qui manque.
-              child: MergeSemantics(
-                child: Row(
-                  children: <Widget>[
-                    Flexible(
-                      child: Text(
-                        participant.nom,
-                        overflow: TextOverflow.ellipsis,
-                        style: palette.surfaceSunken.applyTo(
-                          textes.labelMedium ?? const TextStyle(),
+            if (image != null)
+              PositionedDirectional(
+                start: AppSpacing.sm,
+                bottom: AppSpacing.sm,
+                end: AppSpacing.sm,
+                // Une seule lecture pour les technologies d'assistance : le nom,
+                // puis ce qui manque.
+                child: MergeSemantics(
+                  child: Row(
+                    children: <Widget>[
+                      Flexible(
+                        child: Text(
+                          participant.nom,
+                          overflow: TextOverflow.ellipsis,
+                          style: palette.surfaceSunken.applyTo(
+                            textes.labelMedium ?? const TextStyle(),
+                          ),
                         ),
                       ),
-                    ),
-                    if (!participant.micro) ...<Widget>[
-                      Ecart.hXs,
-                      Text(
-                        t.tc.classe.commandes.microCoupe,
-                        style: palette.surfaceSunken.applyTo(
-                          textes.labelSmall ?? const TextStyle(),
+                      if (!participant.micro) ...<Widget>[
+                        Ecart.hXs,
+                        Text(
+                          t.tc.classe.commandes.microCoupe,
+                          style: palette.surfaceSunken.applyTo(
+                            textes.labelSmall ?? const TextStyle(),
+                          ),
                         ),
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -186,38 +188,26 @@ class _Cadre extends ConsumerWidget {
   }
 }
 
-/// Ce qui occupe un cadre sans image.
+/// Ce qui occupe un cadre sans image : la tuile partagee (VIDEO-TUILE-1).
 class _SansImage extends StatelessWidget {
-  const _SansImage({required this.nom, required this.avecLegende});
+  const _SansImage({required this.participant});
 
-  final String nom;
-  final bool avecLegende;
+  final ParticipantSalle participant;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-
-    return Center(
-      child: Semantics(
-        label: avecLegende ? null : t.tc.classe.scene.sansImage,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            AvatarTile(prenom: nom),
-            if (avecLegende) ...<Widget>[
-              Ecart.vSm,
-              Text(
-                t.tc.classe.scene.sansImage,
-                textAlign: TextAlign.center,
-                style: palette.surfaceSunken.applyTo(
-                  textes.labelSmall ?? const TextStyle(),
-                ),
-              ),
-            ],
-          ],
-        ),
+    return TuileSansImage(
+      prenom: participant.nom,
+      nom: participant.nom,
+      libelleSansImage: t.tc.classe.scene.sansImage,
+      libelleMicroCoupe: participant.micro
+          ? null
+          : t.tc.classe.commandes.microCoupe,
+      couleurIcone: palette.surfaceSunken.onBackground,
+      styleNom: palette.surfaceSunken.applyTo(
+        textes.labelMedium ?? const TextStyle(),
       ),
     );
   }

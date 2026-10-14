@@ -7,16 +7,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
+import 'package:rewayah_academy/core/dossier/resignature_contrat.dart';
 import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/dossier/versions_contrat.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart'
+    show DisqueRetour;
+import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
 
+import '../support/annonces.dart';
 import '../support/harnais.dart';
 
 /// Une destination de retour, pour que le `go` de fin de page aboutisse.
@@ -77,21 +83,69 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(t.contrat.pointEnregistrement), findsOneWidget);
-      expect(find.text(t.contrat.pointControle), findsOneWidget);
+      // Le texte A3 valide le 02/10/2026, paragraphe par paragraphe ; les
+      // anciens points (version 2026-09) ne sont plus affiches.
+      expect(find.text(t.contrat.a3.titre), findsWidgets);
+      for (final ParagrapheTexte p in paragraphesA3()) {
+        expect(find.text(p.titre), findsOneWidget);
+        expect(find.text(p.corps!), findsOneWidget);
+      }
+      expect(find.text(t.contrat.pointEnregistrement), findsNothing);
+      expect(find.text(t.contrat.pointControle), findsNothing);
 
-      await tester.tap(find.text(t.accuse.compris));
+      await tester.tap(find.text(t.contrat.a3.jaiLu));
       await tester.pumpAndSettle();
 
       expect(dossier.contratsAcceptes, <SorteContrat>[
         SorteContrat.accuseEnregistrementControle,
       ]);
+      expect(dossier.versionsAcceptees, <String>[
+        VersionsContrat.textesJuridiques,
+      ]);
+    });
+
+    testWidgets('un enseignant accuse le texte E1, pas le texte A3', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = const EtatDossier(
+          profilExiste: true,
+          role: AppRole.teacher,
+          statutCompte: AccountStatus.pendingKyc,
+        );
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.attenteAccuse,
+          routes: <RouteBase>[
+            GoRoute(
+              path: Routes.attenteAccuse,
+              builder: (BuildContext _, GoRouterState _) => const AccusePage(),
+            ),
+            _portail(),
+          ],
+          surcharges: <Override>[
+            serviceDossierProvider.overrideWithValue(dossier),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.contrat.e1.quoi), findsOneWidget);
+      expect(find.text(t.contrat.e1.pourquoi), findsOneWidget);
+      expect(find.text(t.contrat.e1.refus), findsOneWidget);
+      expect(find.text(t.contrat.a3.quoi), findsNothing);
+      expect(find.text(t.contrat.a3.desaccord), findsNothing);
     });
   });
 
   group('Le contrat depend du role, et lui seul', () {
-    Future<FauxServiceDossier> monter(WidgetTester tester, AppRole role) async {
+    Future<FauxServiceDossier> monter(
+      WidgetTester tester,
+      AppRole role, {
+      bool demonstration = false,
+    }) async {
       final FauxServiceDossier dossier = FauxServiceDossier()
+        ..demonstration = demonstration
         ..etatRendu = EtatDossier(
           profilExiste: true,
           role: role,
@@ -110,6 +164,9 @@ void main() {
           ],
           surcharges: <Override>[
             serviceDossierProvider.overrideWithValue(dossier),
+            // La re-signature (JUR-LIEN-385-1) lit la session : elle a son
+            // propre test, dossier_resignature_test.dart.
+            resignatureContratEnseignantProvider.overrideWithValue(false),
           ],
         ),
       );
@@ -117,19 +174,96 @@ void main() {
       return dossier;
     }
 
-    testWidgets('un enseignant signe son contrat, avec la clause coordonnees', (
+    testWidgets('demonstration : un enseignant signe la version 2026-10-jur, '
+        'avec la clause des visites et la case art. 9', (
       WidgetTester tester,
     ) async {
-      final FauxServiceDossier dossier = await monter(tester, AppRole.teacher);
+      final List<String> annonces = ecouterAnnonces(tester);
+      final FauxServiceDossier dossier = await monter(
+        tester,
+        AppRole.teacher,
+        demonstration: true,
+      );
 
       // C'est le controle anti-pillage central de l'ADR-008 : il doit etre lu,
       // pas seulement signe.
       expect(find.text(t.contrat.pointCoordonnees), findsOneWidget);
+      // La clause des visites de controle, en paragraphe separe (texte valide
+      // le 02/10/2026, POLITIQUE_CONTROLE_ENSEIGNANTS.md partie A).
+      expect(find.text(t.contrat.clauseControle.titre), findsOneWidget);
+      expect(find.text(t.contrat.clauseControle.texte), findsOneWidget);
+      expect(find.text(t.contrat.e1.quoi), findsOneWidget);
 
+      // Case de l'article 9 jamais precochee : sans elle, rien n'est signe.
+      // Le bouton n'est jamais grise (BOUTONS-GRISES-1) : l'appui dit ce qui
+      // manque, l'annonce et rend le focus a la case.
+      await tester.tap(find.text(t.contrat.accepter));
+      await tester.pumpAndSettle();
+      expect(dossier.contratsAcceptes, isEmpty);
+      expect(find.text(t.formulaire.manqueAccord), findsOneWidget);
+      expect(annonces, <String>[t.formulaire.manqueAccord]);
+      expect(FocusManager.instance.primaryFocus?.debugLabel, 'case-religion');
+
+      final Finder caseReligion = find.text(
+        t.contrat.clauseControle.caseReligion,
+      );
+      await tester.ensureVisible(caseReligion);
+      await tester.tap(caseReligion);
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.contrat.accepter));
       await tester.pumpAndSettle();
       expect(dossier.contratsAcceptes, <SorteContrat>[
         SorteContrat.contratEnseignant,
+      ]);
+      expect(dossier.versionsAcceptees, <String>[
+        VersionsContrat.textesJuridiques,
+      ]);
+    });
+
+    testWidgets('hors demonstration, politique de controle publiee : un '
+        'enseignant signe la version 2026-10-jur, avec la clause, son lien '
+        'vers la politique et la case art. 9', (WidgetTester tester) async {
+      final FauxServiceDossier dossier = await monter(tester, AppRole.teacher);
+
+      // La version 2026-10-jur, comme en demonstration.
+      expect(find.text(t.contrat.clauseControle.titre), findsOneWidget);
+      expect(find.text(t.contrat.clauseControle.texte), findsOneWidget);
+      expect(find.text(t.contrat.e1.quoi), findsOneWidget);
+      expect(find.text(t.contrat.pointCoordonnees), findsOneWidget);
+      // Rien des textes d'origine de la version 2026-09.
+      expect(find.text(t.contrat.intro), findsNothing);
+      expect(find.text(t.contrat.pointEnregistrement), findsNothing);
+      expect(find.text(t.contrat.pointControle), findsNothing);
+
+      // La politique que la clause fait « confirmer avoir recue » se lit
+      // depuis la clause, avant la signature.
+      final Finder lien = find.text(t.contrat.politique.lien);
+      await tester.ensureVisible(lien);
+      await tester.tap(lien);
+      await tester.pumpAndSettle();
+      expect(find.text(t.contrat.politique.titre), findsOneWidget);
+      expect(find.text(t.contrat.politique.s1.titre), findsOneWidget);
+      await tester.tap(find.byType(DisqueRetour).last);
+      await tester.pumpAndSettle();
+      expect(find.text(t.contrat.politique.titre), findsNothing);
+
+      // Case de l'article 9 jamais precochee : sans elle, rien n'est signe.
+      await tester.tap(find.text(t.contrat.accepter));
+      await tester.pumpAndSettle();
+      expect(dossier.contratsAcceptes, isEmpty);
+      final Finder caseReligion = find.text(
+        t.contrat.clauseControle.caseReligion,
+      );
+      await tester.ensureVisible(caseReligion);
+      await tester.tap(caseReligion);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.contrat.accepter));
+      await tester.pumpAndSettle();
+      expect(dossier.contratsAcceptes, <SorteContrat>[
+        SorteContrat.contratEnseignant,
+      ]);
+      expect(dossier.versionsAcceptees, <String>[
+        VersionsContrat.textesJuridiques,
       ]);
     });
 
@@ -139,11 +273,27 @@ void main() {
       final FauxServiceDossier dossier = await monter(tester, AppRole.guardian);
 
       expect(find.text(t.contrat.pointCoordonnees), findsNothing);
+      expect(find.text(t.contrat.clauseControle.texte), findsNothing);
+      expect(find.text(t.contrat.clauseControle.caseReligion), findsNothing);
+      expect(find.text(t.contrat.a3.quoi), findsOneWidget);
+      expect(find.text(t.contrat.a3.desaccord), findsOneWidget);
 
+      // Case d'observation jamais precochee : sans elle, rien n'est signe.
+      await tester.tap(find.text(t.contrat.accepter));
+      await tester.pumpAndSettle();
+      expect(dossier.contratsAcceptes, isEmpty);
+
+      final Finder caseAccord = find.text(t.consentement.texte.caseResponsable);
+      await tester.ensureVisible(caseAccord);
+      await tester.tap(caseAccord);
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.contrat.accepter));
       await tester.pumpAndSettle();
       expect(dossier.contratsAcceptes, <SorteContrat>[
         SorteContrat.conditionsTuteur,
+      ]);
+      expect(dossier.versionsAcceptees, <String>[
+        VersionsContrat.avecObservation,
       ]);
     });
   });
@@ -236,6 +386,61 @@ void main() {
       await tester.tap(find.text(t.kyc.choisirFichier));
       await tester.pumpAndSettle();
       expect(dossier.depots, isEmpty);
+    });
+
+    // BOUTONS-GRISES-1 : « Envoyer ma piece » et « Choisir la photo » ne sont
+    // jamais grises ; presses trop tot, ils disent ce qui manque, l'annoncent
+    // au lecteur d'ecran et rendent le focus au bon geste.
+    testWidgets('envoyer sans type : actif, dit ce qui manque, focus au type', (
+      WidgetTester tester,
+    ) async {
+      final List<String> annonces = ecouterAnnonces(tester);
+      final (FauxServiceDossier dossier, _) = await monter(tester, _piece());
+
+      final ActionPrincipale envoyer = tester.widget<ActionPrincipale>(
+        find.widgetWithText(ActionPrincipale, t.kyc.envoyer),
+      );
+      expect(envoyer.onPress, isNotNull);
+      expect(
+        tester
+            .widget<LienFleche>(
+              find.widgetWithText(LienFleche, t.kyc.choisirFichier),
+            )
+            .onPress,
+        isNotNull,
+      );
+
+      await tester.tap(find.text(t.kyc.envoyer));
+      await tester.pumpAndSettle();
+
+      expect(dossier.depots, isEmpty);
+      expect(find.text(t.kyc.manqueType), findsOneWidget);
+      expect(annonces, <String>[t.kyc.manqueType]);
+      expect(FocusManager.instance.primaryFocus?.debugLabel, 'type-piece');
+    });
+
+    testWidgets('envoyer sans photo : dit ce qui manque, focus au lien', (
+      WidgetTester tester,
+    ) async {
+      final List<String> annonces = ecouterAnnonces(tester);
+      final (FauxServiceDossier dossier, _) = await monter(tester, _piece());
+
+      await tester.tap(find.text(t.kyc.carteIdentite));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.kyc.envoyer));
+      await tester.pumpAndSettle();
+
+      expect(dossier.depots, isEmpty);
+      expect(find.text(t.kyc.manquePhoto), findsOneWidget);
+      expect(annonces, <String>[t.kyc.manquePhoto]);
+      expect(FocusManager.instance.primaryFocus?.debugLabel, 'fichier-piece');
+
+      // Le geste suivant efface la phrase : choisir la photo, puis envoyer.
+      await tester.tap(find.text(t.kyc.choisirFichier));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.kyc.envoyer));
+      await tester.pumpAndSettle();
+      expect(dossier.depots, hasLength(1));
     });
 
     testWidgets('un depot complet transmet la piece', (
@@ -333,6 +538,55 @@ void main() {
       // L unicite en base porte sur profil, sorte et version : faire bouger
       // cette valeur redemande la signature a tout le monde, ce qui est voulu.
       expect(VersionsContrat.courante, isNotEmpty);
+    });
+
+    test('garde-fou : 2026-10-jur pour l enseignant seulement en '
+        'demonstration ou une fois la politique publiee', () {
+      // La politique est publiee (05/10/2026) : 2026-10-jur par defaut.
+      expect(
+        VersionsContrat.pour(SorteContrat.contratEnseignant),
+        VersionsContrat.textesJuridiques,
+      );
+      // Si l'interrupteur repassait a faux, la version d'origine hors
+      // demonstration.
+      expect(
+        VersionsContrat.pour(
+          SorteContrat.contratEnseignant,
+          politiquePubliee: false,
+        ),
+        VersionsContrat.courante,
+      );
+      expect(
+        VersionsContrat.pour(
+          SorteContrat.contratEnseignant,
+          demonstration: true,
+        ),
+        VersionsContrat.textesJuridiques,
+      );
+      expect(
+        VersionsContrat.pour(
+          SorteContrat.contratEnseignant,
+          politiquePubliee: true,
+        ),
+        VersionsContrat.textesJuridiques,
+      );
+      // Les autres sortes ne dependent pas de l interrupteur.
+      for (final bool demo in <bool>[false, true]) {
+        expect(
+          VersionsContrat.pour(
+            SorteContrat.accuseEnregistrementControle,
+            demonstration: demo,
+          ),
+          VersionsContrat.textesJuridiques,
+        );
+        expect(
+          VersionsContrat.pour(
+            SorteContrat.conditionsTuteur,
+            demonstration: demo,
+          ),
+          VersionsContrat.avecObservation,
+        );
+      }
     });
   });
 }

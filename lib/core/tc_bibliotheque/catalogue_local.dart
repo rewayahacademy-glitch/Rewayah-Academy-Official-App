@@ -14,7 +14,7 @@ import 'resource_version.dart';
 /// `download_asset` n'est en base : les migrations `0001` a `0029` ont ete
 /// relues, et aucun bucket Storage n'existe en dehors de `kyc` et `avatars`.
 /// La demande SQL correspondante est dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_B.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_B.md`.
 ///
 /// Il n'est pas une maquette pour autant : c'est **le** point d'implementation
 /// des regles de tri, de recherche et de reprise, et il applique exactement
@@ -160,12 +160,11 @@ class VersionsLocales implements PortVersionsRessource {
 
   @override
   Future<List<ResourceVersion>> historique(String resourceId) async {
-    final List<ResourceVersion> trie = List<ResourceVersion>.of(
-      _liste(resourceId),
-    )..sort(
-      (ResourceVersion a, ResourceVersion b) =>
-          b.numeroVersion.compareTo(a.numeroVersion),
-    );
+    final List<ResourceVersion> trie =
+        List<ResourceVersion>.of(_liste(resourceId))..sort(
+          (ResourceVersion a, ResourceVersion b) =>
+              b.numeroVersion.compareTo(a.numeroVersion),
+        );
     return List<ResourceVersion>.unmodifiable(trie);
   }
 
@@ -186,11 +185,28 @@ class ArtefactsLocaux implements PortTelechargement, LecteurArtefact {
     Map<String, List<DownloadAsset>> parVersion =
         const <String, List<DownloadAsset>>{},
     Map<String, List<int>> octetsParCle = const <String, List<int>>{},
+    Map<String, Uri> liensLecture = const <String, Uri>{},
   }) : _parVersion = Map<String, List<DownloadAsset>>.of(parVersion),
-       _octets = Map<String, List<int>>.of(octetsParCle);
+       _octets = Map<String, List<int>>.of(octetsParCle),
+       _liens = Map<String, Uri>.of(liensLecture);
 
   final Map<String, List<DownloadAsset>> _parVersion;
   final Map<String, List<int>> _octets;
+  final Map<String, Uri> _liens;
+
+  /// Servi seulement quand le double en porte (tests, demonstration) : le
+  /// depot local n'en rend jamais en production.
+  @override
+  bool get lienLectureServi => _liens.isNotEmpty;
+
+  @override
+  Future<Uri> lienLecture(String resourceVersionId) async {
+    final Uri? lien = _liens[resourceVersionId];
+    if (lien == null) {
+      throw const EchecArtefact('aucun lien de lecture : voir le contrat C-35');
+    }
+    return lien;
+  }
 
   @override
   Future<DownloadAsset?> artefactDe(

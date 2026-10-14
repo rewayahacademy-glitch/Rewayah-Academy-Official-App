@@ -7,7 +7,7 @@ import '../domain/enums.dart';
 /// Cette porte est une **commodite d'experience**, pas une barriere de
 /// securite : la protection reelle reste la RLS de l'etape 1. Un compte qui
 /// contournerait cette redirection ne lirait rien de plus en base
-/// (`docs/architecture/etape-2-core-flutter.md` section 3).
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 3).
 enum PorteAcces {
   /// La session n'est pas encore resolue. Aucune redirection tant qu'on ne
   /// sait pas : rediriger sur un etat inconnu ferait clignoter l'ecran.
@@ -21,7 +21,7 @@ enum PorteAcces {
   /// Sans cette porte, un compte tout juste cree n'avait ni role ni foyer dans
   /// son jeton, tombait en [deconnecte] et repartait sur l'ecran de connexion :
   /// le produit n'avait aucune porte d'entree
-  /// (`docs/architecture/etape-3-auth-kyc.md` section 2.1).
+  /// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-3-auth-kyc.md` section 2.1).
   inscription,
 
   /// Dossier non valide. Portail d'attente uniquement, quelle que soit l'URL
@@ -30,6 +30,12 @@ enum PorteAcces {
 
   /// Compte suspendu. Portail d'attente, avec un motif different.
   suspendu,
+
+  /// La session existe, mais le serveur n'a pas repondu a la lecture du
+  /// profil (reseau coupe, delai depasse) : **rien n'est ouvert**, et
+  /// l'ecran dit « hors ligne » au lieu d'afficher le portail d'un dossier
+  /// qui n'est pas en attente (mandat Tuteur V1 section 8, contradiction X21).
+  horsLigne,
 
   /// Acces complet aux routes du role.
   actif,
@@ -51,8 +57,12 @@ enum LectureProfil {
   /// Lue, une ligne.
   presente,
 
-  /// La lecture a echoue, reseau ou refus. On ne devine pas.
+  /// Le serveur a repondu par un refus ou une erreur. On ne devine pas.
   echouee,
+
+  /// Le serveur n'a pas repondu : reseau coupe ou delai depasse. Ni une
+  /// absence, ni un refus : on ferme, et on le dit.
+  injoignable,
 }
 
 /// L'etat de session dont depend toute la navigation.
@@ -72,6 +82,7 @@ class SessionState {
     this.interfaceMode = InterfaceMode.standard,
     this.lectureProfil = LectureProfil.enAttente,
     this.observation,
+    this.eleveAutonome = false,
   });
 
   /// L'etat initial, avant toute resolution.
@@ -112,11 +123,44 @@ class SessionState {
   /// bouton qui echouera est une promesse non tenue, pas une securite.
   final Observation? observation;
 
+  /// Capacite « eleve autonome » servie par le serveur (contrat C-24,
+  /// `port_capacite_eleve.dart`) : le compte suit lui-meme des cours. Faux
+  /// par defaut et tant que le serveur n'a pas repondu. Un widget lit cette
+  /// capacite, jamais `AppRole.student`.
+  final bool eleveAutonome;
+
   /// Vrai quand une session existe.
   bool get connecte => profileId != null;
 
   /// La capacite d'ecrire. **Un widget lit une capacite, jamais un role.**
   bool get peutEcrire => observation == null;
+
+  /// La capacite de tenir un foyer (profils eleves, appareils, recharge).
+  /// Un widget lit cette capacite, jamais le role.
+  bool get aUnFoyer => role == AppRole.guardian;
+
+  /// La capacite d'ouvrir la Bibliotheque (`/tc/bibliotheque`) : les comptes a
+  /// qui le routeur l'ouvre, l'eleve et le tuteur (l'adulte eleve autonome est
+  /// un compte tuteur). Un widget lit cette capacite, jamais le role.
+  bool get peutOuvrirBibliotheque =>
+      role == AppRole.student || role == AppRole.guardian;
+
+  /// La capacite de lire le Coran dans le lecteur dedie : l'eleve, et
+  /// l'adulte eleve autonome servi par le serveur (C-24).
+  bool get peutLireLeCoran => role == AppRole.student || eleveAutonome;
+
+  /// La capacite de gerer des appareils : tous les comptes, sauf le controle
+  /// qualite, qui n'en enregistre pas.
+  bool get peutGererAppareils => role != AppRole.controller;
+
+  /// La capacite d'observer une seance comme tuteur (visite budgetee).
+  bool get observeEnFamille => role == AppRole.guardian;
+
+  /// La capacite d'observer une seance comme direction (discret ou visible).
+  bool get observeEnDirection => role == AppRole.admin;
+
+  /// La capacite d'observer une seance comme controle qualite.
+  bool get observeEnControle => role == AppRole.controller;
 
   /// La capacite de voir le domaine Direction du panneau admin, meme regle
   /// que [peutEcrire] : un widget lit une capacite, jamais un role.
@@ -124,7 +168,7 @@ class SessionState {
   /// **Fixee a `false`** : ni `AppRole` (plat -- `admin`, `accountant`,
   /// `controller`, `teacher`, `guardian`, `student`), ni le jeton (`role`,
   /// `householdId`, `sujet`) ne portent de permission infra-role
-  /// (`docs/architecture/ADMIN_IA_AUDIT.md`). Direction reste dans la sidebar comme
+  /// (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`). Direction reste dans la sidebar comme
   /// domaine reserve tant qu'aucune decision de modele de permission n'a ete
   /// prise ; le jour ou elle le sera, cette seule ligne changera.
   bool get peutVoirDirection => false;
@@ -148,10 +192,15 @@ class SessionState {
       case LectureProfil.absente:
         return PorteAcces.inscription;
 
-      // Refus ou reseau : on ferme. Ouvrir l'inscription ici laisserait un
-      // compte suspendu s'en refabriquer un.
+      // Refus : on ferme. Ouvrir l'inscription ici laisserait un compte
+      // suspendu s'en refabriquer un.
       case LectureProfil.echouee:
         return PorteAcces.attente;
+
+      // Aucune reponse : on ferme aussi, mais sur l'etat hors ligne, pas sur
+      // le portail d'un dossier qui n'attend rien.
+      case LectureProfil.injoignable:
+        return PorteAcces.horsLigne;
 
       case LectureProfil.presente:
         // Le profil existe mais le jeton ne porte pas encore son role : c'est
@@ -181,6 +230,7 @@ class SessionState {
     InterfaceMode? interfaceMode,
     LectureProfil? lectureProfil,
     Observation? observation,
+    bool? eleveAutonome,
   }) {
     return SessionState(
       resolue: resolue ?? this.resolue,
@@ -191,6 +241,7 @@ class SessionState {
       interfaceMode: interfaceMode ?? this.interfaceMode,
       lectureProfil: lectureProfil ?? this.lectureProfil,
       observation: observation ?? this.observation,
+      eleveAutonome: eleveAutonome ?? this.eleveAutonome,
     );
   }
 
@@ -204,7 +255,8 @@ class SessionState {
       other.accountStatus == accountStatus &&
       other.interfaceMode == interfaceMode &&
       other.lectureProfil == lectureProfil &&
-      other.observation == observation;
+      other.observation == observation &&
+      other.eleveAutonome == eleveAutonome;
 
   @override
   int get hashCode => Object.hash(
@@ -216,6 +268,7 @@ class SessionState {
     interfaceMode,
     lectureProfil,
     observation,
+    eleveAutonome,
   );
 }
 

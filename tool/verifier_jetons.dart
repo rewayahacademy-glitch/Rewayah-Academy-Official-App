@@ -2,7 +2,7 @@
 //
 // Ces regles sont ecrites ici plutot que confiees a la relecture, parce qu'une
 // relecture les laisse passer un jour ou l'autre
-// (docs/architecture/etape-2-core-flutter.md section 7).
+// (docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md section 7).
 //
 // Lancement : dart run tool/verifier_jetons.dart
 
@@ -25,7 +25,7 @@ class Violation {
 ///
 /// Etendue vers le haut par la refonte : 40, 48 et 64 servent le rythme de
 /// page, la ou les paliers courts servaient l'interieur des composants
-/// (`docs/produit/design-tokens.md` section 7).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 7).
 const Set<String> echelleEspacement = <String>{
   '4',
   '8',
@@ -45,7 +45,7 @@ const Set<String> echelleEspacement = <String>{
 ///
 /// Une regle de style qui n'est pas verifiee par un outil n'est pas une regle :
 /// c'est un souhait, et l'etape suivante la contredit
-/// (`docs/design/01-systeme-visuel.md` section 9).
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 9).
 const String _fichierPalette = 'core/theme/app_palette.dart';
 const String _fichierRayons = 'core/theme/app_radius.dart';
 
@@ -78,6 +78,13 @@ const List<String> _fichiersOmbre = <String>[
 final RegExp _couleurLitterale = RegExp(r'Color\(0x|Colors\.[a-zA-Z]');
 final RegExp _ombreLitterale = RegExp(r'\bBoxShadow\s*\(');
 final RegExp _crenageLitteral = RegExp(r'\bletterSpacing\s*:');
+
+/// `fontWeight:` en argument nomme. Les polices du produit sont variables :
+/// une graisse posee sans l'axe `wght` ne change pas le dessin, Flutter
+/// synthetise au mieux un faux gras (revue phase 0 du chantier Tuteur V1,
+/// mesure a 40 px). Hors d'`app_typography.dart`, une graisse passe par
+/// `AppTypography.graisse`, qui pose les deux.
+final RegExp _graisseLitterale = RegExp(r'\bfontWeight\s*:');
 final RegExp _dureeAnimation = RegExp(r'\bDuration\s*\(\s*milliseconds\s*:');
 final RegExp _courbeNommee = RegExp(r'\bCurves\.[a-zA-Z]');
 final RegExp _rayonLitteral = RegExp(
@@ -88,15 +95,68 @@ final RegExp _rayonLitteral = RegExp(
 ///
 /// Le renommage des jetons s'est fait en une passe au lot T. Sans cette regle,
 /// les deux vocabulaires cohabiteraient, et le mauvais serait recopie
-/// (`docs/produit/design-tokens.md` section 1.8).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 1.8).
+///
+/// Les deux familles francaises de la refonte, Instrument Sans et Bricolage
+/// Grotesque, sont retirees des assets depuis le 24/09/2026 (chantier Tuteur
+/// V1, decisions du coordinateur section 3.4) : elles rejoignent la liste.
+/// `\bNotoSans\b` n'attrape pas `NotoSansArabic` (pas de frontiere de mot).
 const Map<String, String> vocabulairePerime = <String, String>{
   'surfaceBase': 'surfaceCanvas',
   'borderDefault': 'borderHairline, borderResting ou borderStrong',
   'textOnLightAccent': 'inkAccent',
   'textOnLightAlert': 'inkAlert',
-  'VarelaRound': 'BricolageGrotesque',
-  'NotoSans': 'InstrumentSans',
+  'VarelaRound': 'DMSans (titres) ou PlusJakartaSans (corps)',
+  'NotoSans': 'PlusJakartaSans',
+  'InstrumentSans': 'PlusJakartaSans (AppFontFamily.corps)',
+  'BricolageGrotesque': 'DMSans (AppFontFamily.titre)',
 };
+
+/// Les familles de police autorisees : quatre de texte (deux arabes, deux
+/// francaises) et les deux graisses d'icones Phosphor, pas une de plus.
+///
+/// Miroir de `AppFontFamily.texte` et du `pubspec.yaml` (decisions du
+/// coordinateur du 24/09/2026, section 3.4). Toute famille declaree au
+/// `pubspec.yaml` ou nommee dans le code hors de cette liste est une
+/// violation, et chacune doit y etre declaree.
+///
+/// MUSHAF-15L (decision du directeur du 11/10/2026) : `UthmanicHafs`, la police
+/// KFGQPC de la mise en page du Mushaf de Medine, est la seule famille ajoutee
+/// (`docs/current/coran/PUBSPEC_MUSHAF_15L.md`).
+const Set<String> famillesAutorisees = <String>{
+  'UthmanTahaNaskh',
+  'UthmanicHafs',
+  'NotoSansArabic',
+  'PlusJakartaSans',
+  'DMSans',
+  'Phosphor',
+  'PhosphorFill',
+};
+
+/// Les deux seuls fichiers qui nomment une famille de police : la
+/// typographie (texte) et le catalogue d'icones (Phosphor). Partout ailleurs,
+/// un texte prend un role du theme ou un style d'`AppTypography`, jamais un
+/// `fontFamily` pose a la main : c'est ce qui garde la bascule d'une famille
+/// a un seul fichier.
+const List<String> _fichiersPolice = <String>[
+  _fichierTypographie,
+  'core/icons/app_icons.dart',
+];
+
+/// `fontFamily:` en argument nomme. `fontFamilyFallback:` n'est pas vise.
+final RegExp _familleDePolice = RegExp(r'\bfontFamily\s*:');
+
+/// Un nom de famille ecrit en toutes lettres : argument `fontFamily: '...'`,
+/// ou constante `static const String x = '...'` des fichiers de police.
+final RegExp _familleLitterale = RegExp(
+  r'''\bfontFamily\s*:\s*['"]([^'"]+)['"]''',
+);
+final RegExp _constanteChaine = RegExp(
+  r'''\bstatic\s+const\s+String\s+\w+\s*=\s*['"]([^'"]+)['"]''',
+);
+
+/// Une declaration de famille du `pubspec.yaml`.
+final RegExp _familleDuPubspec = RegExp(r'^\s*-\s*family:\s*(\S+)\s*$');
 
 /// Les icones se declarent en un seul endroit : `AppIcons`. Les polices
 /// Phosphor sont integrees en assets, il n'y a donc aucun paquet a importer,
@@ -117,7 +177,7 @@ const String _fichierTabBarOnTap = 'core/widgets/sous_navigation_domaine.dart';
 /// Les boutons de Material.
 ///
 /// Ajoutee au lot C, en meme temps que les quatre niveaux d'`ActionPrincipale`
-/// (`docs/design/07-catalogue-composants.md` section 6). Un bouton Material
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 6). Un bouton Material
 /// rapporterait la palette de Material avec lui, et son etat desactive
 /// travaille par transparence, ce qui fait tomber le texte sous le seuil de
 /// contraste. **Verifiee en la faisant echouer** sur un fichier piege.
@@ -135,7 +195,7 @@ final RegExp _constructeurGoRouter = RegExp(r'\bGoRouter\s*\(');
 final RegExp _mDash = RegExp('—');
 
 /// Trois regles ajoutees au lot B0, adoption de la Bible Frontend V2
-/// (ADR-019, `docs/design/00-bible-frontend-v2.md`).
+/// (ADR-019, `docs/archive/2026-09-pre-remise-a-plat/design/00-bible-frontend-v2.md`).
 
 /// `EdgeInsets.fromLTRB` est directionnel par construction : ses quatre
 /// arguments positionnels sont gauche/haut/droite/bas, jamais debut/fin. Toute
@@ -217,9 +277,12 @@ final RegExp _emoji = RegExp(
 /// directionnelles dans les ecrans, or elles echappaient au controle
 /// d'espacement. Chaque marge reprise au lot R serait donc sortie de l'echelle
 /// sans que rien ne le dise.
+///
+/// Le `SizedBox` est pris seul : `FractionallySizedBox` porte une fraction
+/// (`widthFactor: 0.86`), pas un ecart, et tombait a tort dans ce controle.
 final RegExp _appelEspacement = RegExp(
   r'(?:EdgeInsets(?:Directional)?'
-  r'\.(?:all|symmetric|only|fromLTRB|fromSTEB)|SizedBox)\(',
+  r'\.(?:all|symmetric|only|fromLTRB|fromSTEB)|(?<![A-Za-z0-9_])SizedBox)\(',
 );
 
 /// Un argument dont la valeur est **entierement** un nombre litteral.
@@ -242,11 +305,16 @@ final RegExp _argumentDecoration = RegExp(r'^\s*decoration\s*:');
 /// `showDialog`, avec ou sans argument de type.
 final RegExp _showDialog = RegExp(r'\bshowDialog\s*(?:<[^>]*>)?\s*\(');
 
-/// Le seul fichier autorise a ouvrir une boite de dialogue : celui du composant
-/// de confirmation destructive. Il n'en ouvre aucune aujourd'hui (il passe par
-/// une feuille), mais s'il en ouvrait une un jour, c'est la qu'elle vivrait.
-const String _fichierConfirmDestructif =
-    'core/widgets/confirm_destructive.dart';
+/// Les deux seuls fichiers autorises a ouvrir une boite de dialogue : le point
+/// d'entree unique des surfaces modales, `AppBottomSheet.ouvrir`, qui ouvre
+/// une boite de dialogue centree sur bureau au lieu d'une feuille de telephone
+/// etiree (contrat K5 du chantier Tuteur V1, phase 0c1 du 24/09/2026), et le
+/// composant de confirmation destructive, qui passe par lui. Exemption
+/// NOMINATIVE : un ecran n'ouvre jamais de dialogue lui-meme.
+const Set<String> _fichiersDialogue = <String>{
+  'core/widgets/app_bottom_sheet.dart',
+  'core/widgets/confirm_destructive.dart',
+};
 
 void main() {
   final Directory racine = Directory.current;
@@ -298,6 +366,12 @@ void main() {
           !chemin.endsWith(_fichierTypographie)) {
         violations.add(Violation(chemin, numero, 'crenage-litteral', ligne));
       }
+      if (_graisseLitterale.hasMatch(code) &&
+          !chemin.endsWith(_fichierTypographie)) {
+        violations.add(
+          Violation(chemin, numero, 'graisse-hors-typographie', ligne),
+        );
+      }
       if (_dureeAnimation.hasMatch(code) &&
           !chemin.endsWith(_fichierMouvement)) {
         violations.add(Violation(chemin, numero, 'duree-litterale', ligne));
@@ -327,6 +401,34 @@ void main() {
         }
       }
 
+      // 1 quinquies. Aucune famille de police posee hors de la typographie et
+      // du catalogue d'icones, et aucune famille hors de la liste fermee.
+      if (_familleDePolice.hasMatch(code) &&
+          !_fichiersPolice.any(chemin.endsWith)) {
+        violations.add(
+          Violation(chemin, numero, 'police-hors-typographie', ligne),
+        );
+      }
+      final List<String> famillesNommees = <String>[
+        for (final RegExpMatch m in _familleLitterale.allMatches(code))
+          m.group(1)!,
+        if (_fichiersPolice.any(chemin.endsWith))
+          for (final RegExpMatch m in _constanteChaine.allMatches(code))
+            m.group(1)!,
+      ];
+      for (final String famille in famillesNommees) {
+        if (!famillesAutorisees.contains(famille)) {
+          violations.add(
+            Violation(
+              chemin,
+              numero,
+              'famille-non-autorisee',
+              '$famille : familles autorisees ${famillesAutorisees.join(', ')}',
+            ),
+          );
+        }
+      }
+
       // 2. Une seule librairie d'icones, un seul point d'entree.
       if (_iconeHorsCatalogue.hasMatch(code) &&
           !chemin.endsWith('core/icons/app_icons.dart')) {
@@ -348,13 +450,14 @@ void main() {
         violations.add(Violation(chemin, numero, 'bouton-material', ligne));
       }
 
-      // 3 bis (suite). Aucun showDialog hors de ConfirmDestructive : une
-      // confirmation destructive passe par ce composant, jamais par une
+      // 3 bis (suite). Aucun showDialog hors du point d'entree des surfaces
+      // modales : une confirmation destructive passe par ConfirmDestructive,
+      // une surface modale par AppBottomSheet.ouvrir, jamais par une
       // AlertDialog posee dans un ecran
-      // (`docs/design/07-catalogue-composants.md` section 6). Zero occurrence
-      // aujourd'hui ; la regle garde la porte fermee. Ajoutee au lot R.
+      // (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 6). Ajoutee au lot
+      // R ; AppBottomSheet admis le 24/09/2026 pour sa forme de bureau.
       if (_showDialog.hasMatch(code) &&
-          !chemin.endsWith(_fichierConfirmDestructif)) {
+          !_fichiersDialogue.any(chemin.endsWith)) {
         violations.add(
           Violation(chemin, numero, 'showdialog-hors-confirmation', ligne),
         );
@@ -383,15 +486,11 @@ void main() {
       // _violationsPositionDirectionnelle.
       if (_edgeInsetsFromLTRB.hasMatch(code) &&
           !chemin.contains(_dossierTheme)) {
-        violations.add(
-          Violation(chemin, numero, 'direction-non-geree', ligne),
-        );
+        violations.add(Violation(chemin, numero, 'direction-non-geree', ligne));
       }
       if (_alignementNonDirectionnel.hasMatch(code) &&
           !chemin.contains(_dossierTheme)) {
-        violations.add(
-          Violation(chemin, numero, 'direction-non-geree', ligne),
-        );
+        violations.add(Violation(chemin, numero, 'direction-non-geree', ligne));
       }
 
       // 4 ter. Un ecran de lib/features/ passe par une coquille (PageShell,
@@ -427,7 +526,7 @@ void main() {
 
     // 5 bis. Aucun `Container` porteur d'une `decoration` sous `lib/features/` :
     // les surfaces d'un ecran viennent d'`AppCard` et de `PageShell`
-    // (`docs/design/07-catalogue-composants.md` section 6). La regle nomme
+    // (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 6). La regle nomme
     // `Container`, pas `DecoratedBox` : le seul `DecoratedBox` de `features/`
     // est celui de `GrilleSemaine`, composant partage que l'arborescence a
     // laisse la. Ajoutee au lot R avec la reprise de `TUT-01`, premiere a
@@ -471,6 +570,37 @@ void main() {
           1,
           'arborescence-dupliquee',
           'un fichier de routes par mode existe',
+        ),
+      );
+    }
+  }
+
+  // 7 bis. Le `pubspec.yaml` ne declare que les familles autorisees, et
+  // toutes. Une police ajoutee sans passer par cette liste serait une
+  // cinquieme famille de texte, ce que la charte refuse.
+  final File pubspec = File('${racine.path}/pubspec.yaml');
+  if (pubspec.existsSync()) {
+    final List<String> lignes = pubspec.readAsLinesSync();
+    final Set<String> declarees = <String>{};
+    for (int i = 0; i < lignes.length; i++) {
+      final RegExpMatch? m = _familleDuPubspec.firstMatch(lignes[i]);
+      if (m == null) {
+        continue;
+      }
+      declarees.add(m.group(1)!);
+      if (!famillesAutorisees.contains(m.group(1))) {
+        violations.add(
+          Violation('pubspec.yaml', i + 1, 'famille-non-autorisee', lignes[i]),
+        );
+      }
+    }
+    for (final String attendue in famillesAutorisees.difference(declarees)) {
+      violations.add(
+        Violation(
+          'pubspec.yaml',
+          1,
+          'famille-absente',
+          '$attendue autorisee mais non declaree',
         ),
       );
     }
@@ -617,9 +747,8 @@ List<Violation> _violationsPositionDirectionnelle(
       }
 
       final String arguments = code.substring(ouverture + 1, fin);
-      final bool porteLeftOuRight = _decouperNiveauUn(
-        arguments,
-      ).any(_argumentLeftOuRight.hasMatch);
+      final bool porteLeftOuRight = _decouperNiveauUn(arguments)
+          .any(_argumentLeftOuRight.hasMatch);
       if (!porteLeftOuRight) {
         continue;
       }

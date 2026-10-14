@@ -1,18 +1,25 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
-import 'package:rewayah_academy/core/appairage/service_avatar.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
+import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/features/reglages_enfant/reglages_enfant_page.dart';
 
+import '../router/support_routeur.dart';
+import '../support/annonces.dart';
 import '../support/harnais.dart';
 
 EleveDuFoyer _enfant({
@@ -41,8 +48,8 @@ Affectation _affectation({String eleveId = 'e1'}) => Affectation(
   depuis: DateTime(2026, 9, 1),
 );
 
-/// Une fenetre haute : une carte d'enfant porte trois reglages et trois
-/// demandes, et un `ListView` ne construit pas ce qui n'est pas visible.
+/// Une fenetre haute : une carte d'eleve porte un renvoi et trois demandes,
+/// et un `ListView` ne construit pas ce qui n'est pas visible.
 void _fenetreHaute(WidgetTester tester) {
   tester.view.physicalSize = const Size(1200, 3600);
   tester.view.devicePixelRatio = 1;
@@ -54,17 +61,11 @@ List<Override> _surcharges({
   required FauxServiceAppairage appairage,
   FauxServicePlanning? planning,
   FauxServiceMatching? matching,
-  FauxServiceAvatar? avatar,
-  FauxSelecteurPhoto? selecteur,
   FauxServiceRegles? regles,
 }) => <Override>[
   serviceAppairageProvider.overrideWithValue(appairage),
   servicePlanningProvider.overrideWithValue(planning ?? FauxServicePlanning()),
   serviceMatchingProvider.overrideWithValue(matching ?? FauxServiceMatching()),
-  serviceAvatarProvider.overrideWithValue(avatar ?? FauxServiceAvatar()),
-  selecteurPhotoProvider.overrideWithValue(
-    selecteur ?? FauxSelecteurPhoto(null),
-  ),
   serviceReglesProvider.overrideWithValue(regles ?? FauxServiceRegles()),
 ];
 
@@ -73,8 +74,6 @@ Future<void> _monter(
   required FauxServiceAppairage appairage,
   FauxServicePlanning? planning,
   FauxServiceMatching? matching,
-  FauxServiceAvatar? avatar,
-  FauxSelecteurPhoto? selecteur,
   FauxServiceRegles? regles,
 }) async {
   _fenetreHaute(tester);
@@ -85,8 +84,6 @@ Future<void> _monter(
         appairage: appairage,
         planning: planning,
         matching: matching,
-        avatar: avatar,
-        selecteur: selecteur,
         regles: regles,
       ),
     ),
@@ -94,217 +91,162 @@ Future<void> _monter(
   await tester.pumpAndSettle();
 }
 
+/// Monte l'application sur son vrai routeur et demande `/tuteur/reglages`.
+Future<GoRouter> _monterRouteur(
+  WidgetTester tester,
+  FauxServiceAppairage appairage,
+) async {
+  tester.view.physicalSize = const Size(390, 844);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  late GoRouter routeur;
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: surchargesRouteur(
+        FausseSourceSession(sessionActive(AppRole.guardian)),
+        appairage: appairage,
+      ),
+      child: TranslationProvider(
+        child: Consumer(
+          builder: (BuildContext _, WidgetRef ref, Widget? _) {
+            routeur = ref.read(routeurProvider);
+            return MaterialApp.router(
+              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              routerConfig: routeur,
+            );
+          },
+        ),
+      ),
+    ),
+  );
+  await stabiliser(tester);
+  routeur.go(Routes.tuteurReglages);
+  await stabiliser(tester);
+  return routeur;
+}
+
 void main() {
-  group('TUT-05 : le texte dit la consequence, avec le prenom', () {
-    testWidgets('camera interdite : le bouton n apparaitra pas pour l enfant', (
-      WidgetTester tester,
-    ) async {
-      await _monter(
-        tester,
-        appairage: FauxServiceAppairage()
-          ..elevesRendus = <EleveDuFoyer>[_enfant(prenom: 'Ibrahim')],
+  group(
+    'TUT-05 : photo, camera et interface ont une seule place, la fiche',
+    () {
+      testWidgets('aucun reglage de photo, de camera ni d interface ici', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          appairage: FauxServiceAppairage()
+            ..elevesRendus = <EleveDuFoyer>[_enfant(prenom: 'Ibrahim')],
+        );
+
+        // Les anciens reglages ne sont plus rendus : ils vivent dans la fiche
+        // de l'eleve (lot B, LB-3). Une fonction = un seul endroit.
+        for (final String ancien in <String>[
+          t.tuteur.reglages.photoAjouter,
+          t.tuteur.reglages.photoChanger,
+          t.tuteur.reglages.cameraAutoriser(dePrenom: deDevant('Ibrahim')),
+          t.tuteur.reglages.cameraRetirer(dePrenom: deDevant('Ibrahim')),
+          t.tuteur.reglages.modePasserStandard(prenom: 'Ibrahim'),
+          t.tuteur.reglages.modePasserEnfant(prenom: 'Ibrahim'),
+          t.tuteur.reglages.cameraInterdite(prenom: 'Ibrahim'),
+        ]) {
+          expect(find.text(ancien), findsNothing, reason: ancien);
+        }
+        // Un seul renvoi par eleve, vers sa fiche.
+        expect(find.text(t.reglagesEnfant.renvoi), findsOneWidget);
+        expect(
+          find.text(
+            t.reglagesEnfant.renvoiLegende(dePrenom: deDevant('Ibrahim')),
+          ),
+          findsOneWidget,
+        );
+        // Aucun identifiant interne a l'ecran.
+        expect(find.textContaining('STUD-'), findsNothing);
+        expect(find.text(t.reglagesEnfant.intro), findsOneWidget);
+      });
+
+      testWidgets(
+        'l adresse /tuteur/reglages mene au Foyer (C6, vrai routeur)',
+        (WidgetTester tester) async {
+          final GoRouter routeur = await _monterRouteur(
+            tester,
+            FauxServiceAppairage()..elevesRendus = <EleveDuFoyer>[_enfant()],
+          );
+
+          expect(lieu(routeur), Routes.tuteurFoyer);
+          expect(find.byType(ReglagesEnfantPage), findsNothing);
+        },
       );
 
-      // La phrase de la fiche produit, mot pour mot dans son intention : la
-      // consequence, pas un libelle abstrait comme « camera : desactivee ».
-      expect(
-        find.text(t.tuteur.reglages.cameraInterdite(prenom: 'Ibrahim')),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.tuteur.reglages.cameraAutorisee(prenom: 'Ibrahim')),
-        findsNothing,
-      );
-    });
+      testWidgets('foyer vide : le vocabulaire est celui du profil eleve', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          appairage: FauxServiceAppairage()..elevesRendus = <EleveDuFoyer>[],
+        );
 
-    testWidgets('camera autorisee : la mesure inverse, sur le meme ecran', (
-      WidgetTester tester,
-    ) async {
-      await _monter(
-        tester,
-        appairage: FauxServiceAppairage()
-          ..elevesRendus = <EleveDuFoyer>[
-            _enfant(camera: CameraPolicy.allowed),
-          ],
-      );
-
-      expect(
-        find.text(t.tuteur.reglages.cameraAutorisee(prenom: 'Amina')),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.tuteur.reglages.cameraRetirer(prenom: 'Amina')),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('l ecran dit une fois que rien ne change pendant un cours', (
-      WidgetTester tester,
-    ) async {
-      await _monter(
-        tester,
-        appairage: FauxServiceAppairage()
-          ..elevesRendus = <EleveDuFoyer>[_enfant()],
-      );
-
-      expect(find.text(t.tuteur.reglages.intro), findsOneWidget);
-    });
-  });
-
-  group('TUT-05 : trois colonnes, pas une de plus', () {
-    testWidgets('basculer la camera n envoie que la camera', (
-      WidgetTester tester,
-    ) async {
-      final FauxServiceAppairage appairage = FauxServiceAppairage()
-        ..elevesRendus = <EleveDuFoyer>[_enfant()];
-      await _monter(tester, appairage: appairage);
-
-      await tester.tap(
-        find.text(t.tuteur.reglages.cameraAutoriser(prenom: 'Amina')),
-      );
-      await tester.pumpAndSettle();
-
-      expect(appairage.reglagesEcrits, hasLength(1));
-      final ({
-        String eleveId,
-        InterfaceMode? mode,
-        CameraPolicy? camera,
-        String? cleAvatar,
-      })
-      ecrit = appairage.reglagesEcrits.single;
-      expect(ecrit.eleveId, 'e1');
-      expect(ecrit.camera, CameraPolicy.allowed);
-      // Ce qui ne change pas n'est pas envoye : un envoi des trois colonnes a
-      // chaque geste ecraserait ce qu'un autre appareil du foyer vient de
-      // poser.
-      expect(ecrit.mode, isNull);
-      expect(ecrit.cleAvatar, isNull);
-
-      // Et l'ecran relit ce que la base a accepte, sans etat local optimiste.
-      expect(
-        find.text(t.tuteur.reglages.cameraAutorisee(prenom: 'Amina')),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('basculer le mode n envoie que le mode', (
-      WidgetTester tester,
-    ) async {
-      final FauxServiceAppairage appairage = FauxServiceAppairage()
-        ..elevesRendus = <EleveDuFoyer>[_enfant()];
-      await _monter(tester, appairage: appairage);
-
-      await tester.tap(
-        find.text(t.tuteur.reglages.modePasserStandard(prenom: 'Amina')),
-      );
-      await tester.pumpAndSettle();
-
-      expect(appairage.reglagesEcrits.single.mode, InterfaceMode.standard);
-      expect(appairage.reglagesEcrits.single.camera, isNull);
-      expect(
-        find.text(t.tuteur.reglages.modeStandard(prenom: 'Amina')),
-        findsOneWidget,
-      );
-    });
-  });
-
-  group('TUT-05 : la photo', () {
-    testWidgets('une photo choisie est deposee, puis sa cle est ecrite', (
-      WidgetTester tester,
-    ) async {
-      final FauxServiceAppairage appairage = FauxServiceAppairage()
-        ..elevesRendus = <EleveDuFoyer>[_enfant()];
-      final FauxServiceAvatar avatar = FauxServiceAvatar();
-      final FauxSelecteurPhoto selecteur = FauxSelecteurPhoto(
-        PhotoEnfant(
-          octets: Uint8List.fromList(<int>[1, 2, 3]),
-          nomFichier: 'amina.jpg',
-        ),
-      );
-
-      await _monter(
-        tester,
-        appairage: appairage,
-        avatar: avatar,
-        selecteur: selecteur,
-      );
-
-      expect(
-        find.text(t.tuteur.reglages.photoAucune(prenom: 'Amina')),
-        findsOneWidget,
-      );
-      await tester.tap(find.text(t.tuteur.reglages.photoAjouter));
-      await tester.pumpAndSettle();
-
-      // Le depot va bien dans le dossier de l'ENFANT : c'est lui que la policy
-      // de stockage compare, pas l'identifiant du tuteur.
-      expect(avatar.depots.single.eleveId, 'e1');
-      // Et la cle rendue est ecrite par le seul chemin qui touche aux trois
-      // colonnes.
-      expect(
-        appairage.reglagesEcrits.single.cleAvatar,
-        '${avatar.depots.single.eleveId}/1.jpg',
-      );
-      expect(
-        find.text(t.tuteur.reglages.photoPresente(prenom: 'Amina')),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('une photo trop lourde est refusee avant d etre envoyee', (
-      WidgetTester tester,
-    ) async {
-      final FauxServiceAvatar avatar = FauxServiceAvatar();
-      final FauxSelecteurPhoto selecteur = FauxSelecteurPhoto(
-        PhotoEnfant(
-          octets: Uint8List(ServiceAvatar.tailleMaximaleOctets + 1),
-          nomFichier: 'enorme.png',
-        ),
-      );
-
-      await _monter(
-        tester,
-        appairage: FauxServiceAppairage()
-          ..elevesRendus = <EleveDuFoyer>[_enfant()],
-        avatar: avatar,
-        selecteur: selecteur,
-      );
-
-      await tester.tap(find.text(t.tuteur.reglages.photoAjouter));
-      await tester.pumpAndSettle();
-
-      // Rien n'est monte : le refus se dit avant l'envoi, pas apres quatre
-      // mega-octets sur une connexion de telephone.
-      expect(avatar.depots, isEmpty);
-      expect(
-        find.textContaining(t.tuteur.reglages.photoTropLourde(taille: '4')),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('un abandon du selecteur ne change rien', (
-      WidgetTester tester,
-    ) async {
-      final FauxServiceAppairage appairage = FauxServiceAppairage()
-        ..elevesRendus = <EleveDuFoyer>[_enfant()];
-      final FauxServiceAvatar avatar = FauxServiceAvatar();
-
-      await _monter(
-        tester,
-        appairage: appairage,
-        avatar: avatar,
-        selecteur: FauxSelecteurPhoto(null),
-      );
-
-      await tester.tap(find.text(t.tuteur.reglages.photoAjouter));
-      await tester.pumpAndSettle();
-
-      expect(avatar.depots, isEmpty);
-      expect(appairage.reglagesEcrits, isEmpty);
-    });
-  });
+        expect(find.text(t.enfant.aucun), findsOneWidget);
+        expect(find.text(t.enfant.aucunDetail), findsOneWidget);
+        expect(find.textContaining('Aucun enfant'), findsNothing);
+        expect(find.textContaining('appairer'), findsNothing);
+      });
+    },
+  );
 
   group('TUT-05 : les demandes du tuteur', () {
+    // SUPERPOS-1, reprise du relecteur : la feuille de demande, en
+    // Interface guidee (activable aussi par un adulte) et a 320 en texte
+    // double, depassait l'ecran de 268 px : le bouton d'envoi etait hors
+    // d'atteinte. Elle defile. Contre-epreuve faite : sur l'ancien code, la
+    // colonne de la feuille deborde.
+    for (final InterfaceMode mode in InterfaceMode.values) {
+      testWidgets('feuille de demande a 320 x2 (${mode.name}) : rien ne '
+          'deborde, l envoi s atteint', (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        tester.platformDispatcher.textScaleFactorTestValue = 2;
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        await tester.pumpWidget(
+          hote(
+            const ReglagesEnfantPage(),
+            mode: mode,
+            surcharges: _surcharges(
+              appairage: FauxServiceAppairage()
+                ..elevesRendus = <EleveDuFoyer>[_enfant()],
+              planning: FauxServicePlanning()
+                ..affectationsRendues = <Affectation>[_affectation()],
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        final Finder demande = find.text(
+          t.tuteur.reglages.demandeReaffectation,
+        );
+        await tester.ensureVisible(demande);
+        await tester.pumpAndSettle();
+        await tester.tap(demande);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        // Le motif : « Autre », puis le texte (FORM-L1, SelecteurMotif).
+        await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+        await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField), 'Horaire impossible');
+        await tester.pumpAndSettle();
+        final Finder envoyer = find.widgetWithText(
+          ActionPrincipale,
+          t.tuteur.reglages.demandeEnvoyer,
+        );
+        await tester.ensureVisible(envoyer);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        final Rect r = tester.getRect(envoyer);
+        expect(r.top, greaterThanOrEqualTo(0));
+        expect(r.bottom, lessThanOrEqualTo(640));
+      });
+    }
+
     testWidgets('sans enseignant, la reaffectation n est pas proposee', (
       WidgetTester tester,
     ) async {
@@ -343,18 +285,27 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text(t.tuteur.reglages.demandeTitreReaffectation(prenom: 'Amina')),
+        find.text(
+          t.tuteur.reglages.demandeTitreReaffectation(
+            dePrenom: deDevant('Amina'),
+          ),
+        ),
         findsOneWidget,
       );
       // Sans motif, le bouton n'aboutit pas : la base refuse une demande sans
-      // lui, et l'ecran ne fait pas semblant.
+      // lui. Il n'est jamais grise (K-56) : il dit ce qui manque (FORM-L1).
       final Finder envoyer = find.widgetWithText(
         ActionPrincipale,
         t.tuteur.reglages.demandeEnvoyer,
       );
-      expect(tester.widget<ActionPrincipale>(envoyer).onPress, isNull);
+      expect(tester.widget<ActionPrincipale>(envoyer).onPress, isNotNull);
+      await tester.tap(envoyer);
+      await tester.pumpAndSettle();
+      expect(find.text(t.formulaire.motif.manque), findsOneWidget);
+      expect(matching.demandes, isEmpty);
 
-      await tester.enterText(find.byType(TextField), 'Horaire impossible');
+      // Le motif propose part tel quel.
+      await tester.tap(find.text(t.motifs.reglageEnseignant.horaire));
       await tester.pumpAndSettle();
       await tester.tap(envoyer);
       await tester.pumpAndSettle();
@@ -362,9 +313,63 @@ void main() {
       expect(matching.demandes, hasLength(1));
       expect(matching.demandes.single.sorte, SorteDemande.reaffectation);
       expect(matching.demandes.single.sujetId, 'e1');
-      expect(matching.demandes.single.motif, 'Horaire impossible');
+      expect(
+        matching.demandes.single.motif,
+        t.motifs.reglageEnseignant.horaire,
+      );
       expect(matching.demandes.single.valeur, isNull);
       expect(find.text(t.tuteur.reglages.demandeEnvoyee), findsOneWidget);
+    });
+
+    // BOUTONS-GRISES-1 (reserve SUPERPOS-1b) : la phrase qui dit ce qui
+    // manque est annoncee au lecteur d'ecran et le focus va au champ fautif.
+    testWidgets('demande de duree trop tot : annoncee, focus au champ', (
+      WidgetTester tester,
+    ) async {
+      final List<String> annonces = ecouterAnnonces(tester);
+      final FauxServiceMatching matching = FauxServiceMatching();
+      await _monter(
+        tester,
+        appairage: FauxServiceAppairage()
+          ..elevesRendus = <EleveDuFoyer>[_enfant()],
+        matching: matching,
+      );
+      await tester.tap(find.text(t.tuteur.reglages.demandeDuree));
+      await tester.pumpAndSettle();
+
+      final Finder envoyer = find.widgetWithText(
+        ActionPrincipale,
+        t.tuteur.reglages.demandeEnvoyer,
+      );
+      await tester.ensureVisible(envoyer);
+      await tester.tap(envoyer);
+      await tester.pumpAndSettle();
+
+      expect(matching.demandes, isEmpty);
+      expect(find.text(t.tuteur.reglages.demandeManqueValeur), findsOneWidget);
+      expect(annonces, <String>[t.tuteur.reglages.demandeManqueValeur]);
+      expect(FocusManager.instance.primaryFocus?.debugLabel, 'demande-valeur');
+
+      // La duree choisie, le motif manque : annonce, focus a la premiere puce.
+      await tester.tap(
+        find.text(
+          LibellesGroupe.valeurSeule(
+            t.tuteur.reglages.demandeMinutes(minutes: '30'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(envoyer);
+      await tester.tap(envoyer);
+      await tester.pumpAndSettle();
+
+      expect(matching.demandes, isEmpty);
+      expect(find.text(t.formulaire.motif.manque), findsOneWidget);
+      expect(annonces.last, t.formulaire.motif.manque);
+      expect(
+        FocusManager.instance.primaryFocus?.debugLabel,
+        SelecteurMotif.focusPremierePuce,
+      );
     });
 
     testWidgets('une demande de duree porte la valeur choisie', (
@@ -395,14 +400,26 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text(t.tuteur.reglages.demandeActuelle(minutes: '45')),
+        find.text(
+          LibellesGroupe.insecable(
+            t.tuteur.reglages.demandeActuelle(minutes: '45'),
+          ),
+        ),
         findsOneWidget,
       );
 
       await tester.tap(
-        find.text(t.tuteur.reglages.demandeMinutes(minutes: '30')),
+        find.text(
+          LibellesGroupe.valeurSeule(
+            t.tuteur.reglages.demandeMinutes(minutes: '30'),
+          ),
+        ),
       );
-      await tester.enterText(find.byType(TextField).first, 'Elle decroche');
+      // « Autre » : le motif ecrit a la main part tel quel.
+      await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+      await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).last, 'Elle decroche');
       await tester.pumpAndSettle();
       await tester.tap(
         find.widgetWithText(ActionPrincipale, t.tuteur.reglages.demandeEnvoyer),
@@ -411,6 +428,7 @@ void main() {
 
       expect(matching.demandes.single.sorte, SorteDemande.regle);
       expect(matching.demandes.single.valeur, 30);
+      expect(matching.demandes.single.motif, 'Elle decroche');
     });
   });
 }

@@ -1,0 +1,229 @@
+// La navigation precedent / suivant, facon lecteur de musique.
+//
+// NAV-FLECHES-1 (revue du directeur, 02/10/2026, K-54, K-56). Fleche a gauche,
+// position courante au centre, fleche a droite : deux icones rondes de meme
+// taille, centrees dans leur disque, cible tactile du mode d'interface (48 en
+// standard). Aux bornes (premiere page, derniere page) la fleche DISPARAIT :
+// elle n'est pas grisee, une commande qui ne peut pas aboutir n'est pas rendue
+// (lib/CLAUDE.md). Sa place reste reservee, pour que la position reste au
+// centre et que l'autre fleche ne bouge pas.
+//
+// Sens de lecture : la fleche « precedent » est au bord de debut de la ligne
+// (a gauche en francais, a droite en arabe) et pointe vers lui ; « suivant »
+// au bord de fin. Le glyphe est celui du jeu d'icones des jetons
+// ([AppIcons.suivant], qui ne se miroite pas seul) : c'est ici, et ici
+// seulement, qu'il est retourne selon `Directionality`.
+//
+// Un seul composant pour la salle, le lecteur de Coran et la presentation de
+// l'enseignant : on l'ameliore, on n'en recree pas un.
+
+import 'package:flutter/material.dart';
+
+import '../i18n/isolat_bidi.dart';
+import '../icons/app_icons.dart';
+import '../theme/app_color_pair.dart';
+import '../theme/app_metriques.dart';
+import '../theme/app_palette.dart';
+import '../theme/app_radius.dart';
+import '../theme/app_spacing.dart';
+import 'pressable.dart';
+
+/// La barre precedent / position / suivant.
+class BarrePrecedentSuivant extends StatelessWidget {
+  const BarrePrecedentSuivant({
+    required this.position,
+    required this.libellePrecedent,
+    required this.libelleSuivant,
+    this.positionSemantique,
+    this.onPrecedent,
+    this.onSuivant,
+    this.etendue = true,
+    this.actives = true,
+    this.encrePosition,
+    super.key,
+  });
+
+  /// La position courante, au centre (« 12 / 604 »).
+  final String position;
+
+  /// Ce que le lecteur d'ecran annonce pour la position (« Page 12 sur 604 »).
+  /// Par defaut, [position].
+  final String? positionSemantique;
+
+  /// Ce que le lecteur d'ecran annonce pour la fleche de debut
+  /// (« Verset precedent », « Page precedente »).
+  final String libellePrecedent;
+
+  /// Idem pour la fleche de fin (« Verset suivant »).
+  final String libelleSuivant;
+
+  /// `null` : on est au debut, la fleche n'est pas rendue (pas grisee).
+  final VoidCallback? onPrecedent;
+
+  /// `null` : on est a la fin, la fleche n'est pas rendue (pas grisee).
+  final VoidCallback? onSuivant;
+
+  /// Vrai : la barre prend toute la largeur offerte, la position au centre.
+  /// Faux : la barre se resserre autour de son contenu (pastille de la salle).
+  final bool etendue;
+
+  /// Faux : la commande est momentanement inactive (reconnexion, envoi en
+  /// cours). Une fleche qui a un rappel reste PRESENTE, inerte et attenuee : la
+  /// barre ne change pas de forme sans explication. C'est different de la borne
+  /// atteinte (rappel nul), ou la fleche disparait.
+  final bool actives;
+
+  /// La paire de la surface sur laquelle la barre est posee, quand ce n'est
+  /// pas celle de la page : la salle en direct (`surfaceInverse`,
+  /// SALLE-ENCRE-1). Seule la position (« 42 / 604 ») en prend l'encre ; les
+  /// fleches gardent leur disque `surfaceRaised`. `null` : `inkStrong`.
+  final AppColorPair? encrePosition;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final double cible = AppMetriques.of(context).cibleTactile;
+    final bool arabe = Directionality.of(context) == TextDirection.rtl;
+    final Widget centre = Semantics(
+      label: positionSemantique ?? position,
+      excludeSemantics: true,
+      liveRegion: true,
+      // CORAN-320-1b : la position a le sens de son propre texte. Sans
+      // caractere fort (« 1 / 604 »), elle se lit de gauche a droite : dans
+      // une interface en arabe, elle s'affichait « 604 / 1 ». Une position
+      // redigee en toutes lettres garde le sens de sa langue.
+      child: Directionality(
+        textDirection: sensDuTexte(position) ?? TextDirection.ltr,
+        child: Text(
+          position,
+          key: const ValueKey<String>('nav-position'),
+          textAlign: TextAlign.center,
+          style: (encrePosition?.applyTo ?? palette.inkStrong.applyTo)(
+            Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+          ),
+        ),
+      ),
+    );
+    return Row(
+      key: const ValueKey<String>('nav-precedent-suivant'),
+      mainAxisSize: etendue ? MainAxisSize.max : MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        FlecheRonde(
+          cleDisque: const ValueKey<String>('nav-precedent'),
+          libelle: libellePrecedent,
+          onPress: onPrecedent,
+          actives: actives,
+          // Le glyphe pointe a droite : « precedent » le retourne en lecture de
+          // gauche a droite, « suivant » en arabe.
+          retourne: !arabe,
+          cote: cible,
+        ),
+        if (etendue)
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+              child: centre,
+            ),
+          )
+        else
+          // Resserree : la position cede devant les fleches (CORAN-320-FOND-1).
+          // Sans `Flexible`, une position longue (« Page 604 sur 604 ») a
+          // texte x2 faisait deborder la rangee de 72 points a 320 ; elle passe
+          // maintenant a la ligne.
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              child: centre,
+            ),
+          ),
+        FlecheRonde(
+          cleDisque: const ValueKey<String>('nav-suivant'),
+          libelle: libelleSuivant,
+          onPress: onSuivant,
+          actives: actives,
+          retourne: arabe,
+          cote: cible,
+        ),
+      ],
+    );
+  }
+}
+
+/// Une fleche ronde, ou sa place vide quand [onPress] est nul.
+///
+/// Le bouton rond partage des fleches de page : la barre precedent / suivant
+/// et les fleches de chaque cote de la page du Mushaf (`FlechePageMushaf`) le
+/// reutilisent, au lieu de recreer son disque.
+class FlecheRonde extends StatelessWidget {
+  /// Cree une fleche.
+  ///
+  /// [retourne] : vrai quand la fleche pointe vers la gauche. Le glyphe de
+  /// [AppIcons.suivant] pointe vers la droite et ne se miroite pas seul : c'est
+  /// l'appelant qui dit le cote, selon le sens de lecture (la barre) ou selon
+  /// le cote physique (les fleches du Mushaf).
+  const FlecheRonde({
+    required this.libelle,
+    required this.onPress,
+    required this.retourne,
+    super.key,
+    this.cleDisque,
+    this.actives = true,
+    this.cote,
+  });
+
+  /// La cle du disque : presente seulement quand la fleche est rendue (une
+  /// fleche absente ne se trouve pas).
+  final Key? cleDisque;
+
+  /// Ce que le lecteur d'ecran annonce.
+  final String libelle;
+
+  /// `null` : la fleche n'est pas rendue, sa place reste.
+  final VoidCallback? onPress;
+
+  /// Vrai : la fleche pointe vers la gauche.
+  final bool retourne;
+
+  /// Faux : fleche presente mais inerte et attenuee.
+  final bool actives;
+
+  /// Le cote du disque ; par defaut la cible tactile du mode d'interface.
+  final double? cote;
+
+  @override
+  Widget build(BuildContext context) {
+    final double dimension = cote ?? AppMetriques.of(context).cibleTactile;
+    final VoidCallback? action = onPress;
+    // La place reste reservee : la position ne bouge pas, l'autre fleche non
+    // plus.
+    if (action == null) return SizedBox.square(dimension: dimension);
+    final AppPalette palette = AppPalette.of(context);
+    return Pressable(
+      onPress: action,
+      actif: actives,
+      libelleSemantique: libelle,
+      arrondiFocus: AppRadius.arrondiFull,
+      child: SizedBox.square(
+        key: cleDisque,
+        dimension: dimension,
+        child: DecoratedBox(
+          decoration: palette.surfaceRaised.decoration(
+            borderRadius: AppRadius.arrondiFull,
+            side: palette.borderResting.asBorderSide(),
+          ),
+          child: Center(
+            child: IconTheme(
+              data: (actives ? palette.inkStrong : palette.inkMuted)
+                  .asIconTheme(size: AppSpacing.xxl),
+              child: Transform.flip(
+                flipX: retourne,
+                child: Icon(AppIcons.suivant.repos),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

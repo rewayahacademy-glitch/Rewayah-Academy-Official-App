@@ -124,7 +124,7 @@ abstract class PortCatalogue {
 /// **Ajout d'Agent B au contrat canonique**, dans l'esprit de CONTRACTS
 /// section 0 (« un port rend un resultat type ou leve une exception de son
 /// domaine `EchecXxx` »). Sa promotion est demandee dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_B.md`. Elle distingue un refus
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_B.md`. Elle distingue un refus
 /// serveur d'une absence : une absence ouvre un etat vide, un refus ouvre un
 /// etat explique.
 class EchecCatalogue implements Exception {

@@ -15,13 +15,16 @@ import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dart';
 import 'package:rewayah_academy/features/disponibilites/grille_semaine.dart';
 
+import '../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
+import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
+import '../support/hors_ligne_une_fois.dart';
 
 /// Une destination-temoin, pour mesurer ou une action mene vraiment.
 GoRoute _temoin(String chemin, String texte) => GoRoute(
   path: chemin,
-  builder: (BuildContext _, GoRouterState _) =>
-      Scaffold(body: Text(texte)),
+  builder: (BuildContext _, GoRouterState _) => Scaffold(body: Text(texte)),
 );
 
 /// Une session d'enseignant resolue, dont seul le statut varie.
@@ -46,6 +49,11 @@ Future<void> _monter(
   bool echecProfil = false,
   AccountStatus? statut = AccountStatus.active,
   bool horsLigne = false,
+  PrerequisEnseignant? prerequis,
+  ThemeMode themeMode = ThemeMode.light,
+  InterfaceMode interface = InterfaceMode.standard,
+  TextDirection? direction,
+  double echelle = 1,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -56,6 +64,10 @@ Future<void> _monter(
   await tester.pumpWidget(
     hoteRoutant(
       depart: Routes.enseignantBienvenue,
+      mode: interface,
+      themeMode: themeMode,
+      direction: direction,
+      echelle: echelle,
       routes: <RouteBase>[
         GoRoute(
           path: Routes.enseignantBienvenue,
@@ -65,8 +77,10 @@ Future<void> _monter(
         _temoin(Routes.enseignantCreneaux, 'creneaux'),
         _temoin(Routes.enseignantJournee, 'journee'),
         _temoin(Routes.attente, 'portail'),
+        _temoin(Routes.enseignantProfil, 'profil'),
       ],
       surcharges: <Override>[
+        prerequisEnseignantProvider.overrideWithValue(prerequis),
         sourceSessionProvider.overrideWithValue(
           FausseSourceSession(_session(statut)),
         ),
@@ -119,19 +133,94 @@ void main() {
       expect(find.text(t.enseignant.bienvenue.declarer), findsOneWidget);
     });
 
-    testWidgets('les trois pas suivants sont dits, dans l ordre', (
+    // EN-6 : la prose « cinq enfants ou six adultes » est retiree (E6,
+    // 00_MAQUETTES planche 1 R2) ; ce test remplace « les trois pas ».
+    testWidgets('la prose des groupes de cinq ou six n existe plus', (
       WidgetTester tester,
     ) async {
       await _monter(tester);
       await tester.pumpAndSettle();
 
-      for (final String pas in <String>[
-        t.enseignant.bienvenue.pas1,
-        t.enseignant.bienvenue.pas2,
-        t.enseignant.bienvenue.pas3,
-      ]) {
-        expect(find.text(pas), findsOneWidget);
-      }
+      expect(find.textContaining('cinq enfants'), findsNothing);
+      expect(find.textContaining('six adultes'), findsNothing);
+    });
+  });
+
+  group('ENS-01 : « A completer » et le premier manque (EN-6)', () {
+    testWidgets('sans prerequis rendus, aucune carte n est inventee', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.enseignant.bienvenue.aCompleter), findsNothing);
+      expect(find.text(t.enseignant.bienvenue.declarer), findsOneWidget);
+    });
+
+    testWidgets('photo manquante : compteur en texte, lignes faites absentes', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        prerequis: const PrerequisEnseignant(
+          photo: false,
+          langues: true,
+          fuseau: true,
+          disponibilites: true,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.enseignant.bienvenue.aCompleter), findsOneWidget);
+      expect(
+        find.text(t.enseignant.bienvenue.compteur(fait: 3, total: 4)),
+        findsOneWidget,
+      );
+      expect(find.text(t.enseignant.bienvenue.prerequisLangues), findsNothing);
+      expect(find.text(t.enseignant.bienvenue.prerequisFuseau), findsNothing);
+      expect(find.text(t.enseignant.bienvenue.prerequisPhoto), findsOneWidget);
+      expect(find.text(t.enseignant.bienvenue.ctaPhoto), findsOneWidget);
+    });
+
+    testWidgets('informations a verifier : le bouton mene au profil', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        prerequis: const PrerequisEnseignant(
+          photo: true,
+          langues: true,
+          fuseau: false,
+          disponibilites: false,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text(t.enseignant.bienvenue.ctaInformations));
+      await tester.pumpAndSettle();
+      expect(find.text('profil'), findsOneWidget);
+    });
+
+    testWidgets('tout est complet : « Voir ma journee », une seule sortie', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        prerequis: const PrerequisEnseignant(
+          photo: true,
+          langues: true,
+          fuseau: true,
+          disponibilites: true,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.enseignant.bienvenue.aCompleter), findsNothing);
+      expect(find.text(t.enseignant.bienvenue.prerequisPhoto), findsNothing);
+      expect(find.text(t.enseignant.bienvenue.versJournee), findsNothing);
+      await tester.tap(find.text(t.enseignant.bienvenue.ctaJournee));
+      await tester.pumpAndSettle();
+      expect(find.text('journee'), findsOneWidget);
     });
   });
 
@@ -147,8 +236,11 @@ void main() {
       await _monter(tester);
       await tester.pumpAndSettle();
 
-      expect(find.text(t.contrat.pointEnregistrement), findsOneWidget);
-      expect(find.text(t.contrat.pointControle), findsOneWidget);
+      // Texte E1 valide le 02/10/2026 : l'enregistrement et la visite de
+      // controle sont dits dans le meme paragraphe, puis qui peut ecouter.
+      expect(find.text(t.contrat.e1.quoi), findsOneWidget);
+      expect(find.text(t.contrat.a3.qui), findsOneWidget);
+      expect(find.text(t.contrat.pointEnregistrement), findsNothing);
     });
   });
 
@@ -284,7 +376,118 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(t.enseignant.bienvenue.horsLigne), findsOneWidget);
+      // EA-HL-DOUBLE-1 (reprise) : la note dit ce qui ne peut pas se faire ;
+      // le bandeau seul dit « hors ligne ».
+      expectHorsLigneUneFois();
       expect(find.text(t.enseignant.bienvenue.declarer), findsOneWidget);
     });
+  });
+
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve, hors ligne, la note dit
+  // ce qui ne peut pas se faire, le bandeau seul dit le reseau. Sautees sans
+  // CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size) cas in <(String, Size)>[
+      ('390_clair', const Size(390, 844)),
+      ('320_clair', const Size(320, 900)),
+      ('1440_clair', const Size(1440, 900)),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await _monter(tester, horsLigne: true);
+        tester.view.physicalSize = cas.$2;
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text(t.enseignant.bienvenue.horsLigne), findsOneWidget);
+        expectHorsLigneUneFois();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_bienvenue_${cas.$1}')}',
+        );
+      });
+    }
+  });
+  // EA-HL-DOUBLE-1d (vu sur la capture) : a 320 texte x2, « Bienvenue, »
+  // ne tenait pas en titre et se coupait. Le titre borne son echelle.
+  // JONCTION-LIGNES-1 : mesure avec les polices du depot. La police de test
+  // donne a chaque glyphe une largeur d'1 em : le texte A3 valide mot pour
+  // mot (JUR-APP-1, « l'enregistrement. ») n'y tient a aucune echelle.
+  group('320 texte x2, polices du depot', () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('320 texte x2 ${sens.name} : aucun mot coupe', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester, direction: sens, echelle: 2);
+        tester.view.physicalSize = const Size(320, 1800);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+      });
+    }
+  });
+
+  // EA-HL-DOUBLE-1d : sombre, Interface guidee et 320 texte x2 en LTR et
+  // RTL de la bienvenue hors ligne (revue EA-HL-DOUBLE-1c-R, mineur 2).
+  // Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1d', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, ThemeMode, InterfaceMode, TextDirection, double)
+        cas
+        in <(String, Size, ThemeMode, InterfaceMode, TextDirection, double)>[
+          (
+            '390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            TextDirection.ltr,
+            1,
+          ),
+          (
+            '390_guidee',
+            const Size(390, 844),
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            TextDirection.ltr,
+            1,
+          ),
+          (
+            '320x2_clair',
+            const Size(320, 1800),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            TextDirection.ltr,
+            2,
+          ),
+          (
+            '320x2_rtl_clair',
+            const Size(320, 1800),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            TextDirection.rtl,
+            2,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await _monter(
+          tester,
+          horsLigne: true,
+          themeMode: cas.$3,
+          interface: cas.$4,
+          direction: cas.$5,
+          echelle: cas.$6,
+        );
+        tester.view.physicalSize = cas.$2;
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text(t.enseignant.bienvenue.horsLigne), findsOneWidget);
+        expectHorsLigneUneFois();
+        verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1d_bienvenue_${cas.$1}')}',
+        );
+      });
+    }
   });
 }

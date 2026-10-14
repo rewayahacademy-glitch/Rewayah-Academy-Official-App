@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
+import '../i18n/isolat_bidi.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
@@ -10,7 +12,7 @@ import 'pressable.dart';
 
 /// Ce qu'une colonne devient quand le tableau se replie en cartes.
 ///
-/// C'est la regle de transformation de `docs/design/05-regles-responsive.md`
+/// C'est la regle de transformation de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md`
 /// section 4, portee par le type plutot que par la vigilance : « la colonne
 /// identifiante devient le titre, deux a trois colonnes deviennent la ligne
 /// secondaire, le reste passe dans le detail ».
@@ -102,7 +104,59 @@ class DataCollection<T> extends StatelessWidget {
     this.piedDePage,
     this.cle,
     this.onSelectionner,
+    this.defileAvecLaPage = false,
+    this.estSelectionnee,
+    this.defileSeule = true,
   });
+
+  /// Dit si une ligne est la ligne choisie (inspecteur, AD-X). Nul : aucune
+  /// ligne n'est marquee, comme avant l'ajout de ce parametre. La ligne
+  /// choisie se marque par le fond, un contour et `Semantics(selected)`,
+  /// jamais par la couleur seule ; en cartes, par `AppCard.selectionnee`.
+  final bool Function(T ligne)? estSelectionnee;
+
+  /// Vrai quand la collection se rend en tableau (desktop), faux quand elle
+  /// se replie en cartes. Le seul endroit qui compare le gabarit : une page
+  /// qui choisit entre son propre defilement et celui de la collection lit
+  /// cette regle-ci.
+  static bool enTableau(BuildContext context) =>
+      AppGabarit.de(context) == Gabarit.desktop;
+
+  /// Vrai : la collection **ne defile pas elle-meme**, elle prend la hauteur
+  /// de ses lignes et defile avec la page (`PageShell(defilante: true)`).
+  ///
+  /// Pourquoi (ONGLETS-COUPE-1) : en cartes, il n'y a pas d'en-tete de
+  /// colonnes a garder colle. Une page qui pose une introduction, des actions
+  /// et des filtres au-dessus d'une collection qui defile seule ne laissait,
+  /// a 320 px et au texte agrandi, plus aucune hauteur a la liste : la
+  /// colonne debordait de 52 a 480 px. En cartes, tout defile donc ensemble ;
+  /// en tableau, l'en-tete reste colle et la collection defile seule.
+  final bool defileAvecLaPage;
+
+  /// Faux quand la collection est **une section** d'une liste qui defile
+  /// deja (Pedagogie > Qualite : une collection par type d'anomalie, toutes
+  /// dans le meme defilement) : elle pose alors toutes ses lignes a leur
+  /// hauteur, sans defileur propre, et l'en-tete de colonnes ouvre la
+  /// section. Une liste dans une liste qui defile n'a pas de hauteur
+  /// (« Vertical viewport was given unbounded height », FILTRES-1b) ; vrai
+  /// par defaut, le comportement d'avant.
+  final bool defileSeule;
+
+  /// La hauteur sous laquelle une collection ne se lit plus : un titre et
+  /// deux lignes de texte, a l'echelle du texte de [context]. C'est le
+  /// `minimumEtire` d'une `ColonneCorps` qui la porte (FILTRES-1b) : a 320 px
+  /// texte x2, l'intro et la rangee de filtres ne laissent plus de place a
+  /// la liste, et la page defile au lieu de deborder.
+  static double minimumLisible(BuildContext context) {
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    double ligne(TextStyle? style) =>
+        echelle.scale(style?.fontSize ?? 14) * (style?.height ?? 1.2);
+    return ligne(textes.titleMedium) +
+        AppSpacing.sm +
+        ligne(textes.bodyLarge) * 2 +
+        AppSpacing.lg * 2;
+  }
 
   /// Les colonnes, dans l'ordre d'affichage.
   final List<ColonneDonnees<T>> colonnes;
@@ -122,26 +176,180 @@ class DataCollection<T> extends StatelessWidget {
   /// la collection en pure lecture, comme avant l'ajout de ce parametre.
   final void Function(T ligne)? onSelectionner;
 
+  /// Vrai quand chaque colonne du tableau tient, a [largeur] et a l'echelle
+  /// du texte de [context] : le mot le plus long de son en-tete et de chacune
+  /// de ses cellules entre dans sa colonne SANS reduction (COUPE-MOTS-FOND-1).
+  ///
+  /// Une date (« 23/09/2026 »), une heure (« 18:12:00 »), un identifiant
+  /// (« TEACHER-AS-000001 ») sont chacun un mot : ils ne se coupent jamais,
+  /// et un en-tete ne se tronque plus (« Entr... »). Quand le texte agrandi
+  /// ne tient pas, la collection passe en cartes, meme sur un bureau.
+  @visibleForTesting
+  static bool tientEnTableau<T>(
+    BuildContext context, {
+    required List<ColonneDonnees<T>> colonnes,
+    required List<T> lignes,
+    required double largeur,
+  }) {
+    if (!largeur.isFinite || colonnes.isEmpty) return true;
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    // Seul le texte AGRANDI fait replier le tableau : a la taille du theme,
+    // la colonne trop etroite pour un identifiant le reduit, borne
+    // (COUPE-MOTS-4), comme avant.
+    if (echelle.scale(1) <= 1) return true;
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle enTete = textes.labelMedium ?? const TextStyle();
+    final TextStyle cellule = textes.bodySmall ?? const TextStyle();
+    // Le cache : un meme jeu de lignes (meme objet), a la meme echelle et a
+    // la meme largeur, n'est mesure qu'une fois. Chaque mise en page du
+    // LayoutBuilder (defilement, animation) relisait sinon chaque cellule par
+    // TextPainter. Tout ce qui change la mesure entre dans la cle : colonnes
+    // (titre, flex, chiffres tabulaires, rendu riche), styles, langue, sens.
+    final Object cleCache = (
+      echelle,
+      largeur,
+      enTete,
+      cellule,
+      DefaultTextStyle.of(context).style,
+      Directionality.of(context),
+      Localizations.maybeLocaleOf(context),
+      <String>[
+        for (final ColonneDonnees<T> c in colonnes)
+          '${c.titre}\u0000${c.flex}\u0000${c.tabulaire}\u0000'
+              '${c.rendu != null}',
+      ].join('\u0001'),
+    );
+    final Map<Object, bool> cache = _cacheTientEnTableau[lignes] ??=
+        <Object, bool>{};
+    final bool? connu = cache[cleCache];
+    if (connu != null) return connu;
+    // Quelques largeurs seulement (redimensionnement) : le cache reste borne.
+    if (cache.length >= _tailleCacheTientEnTableau) cache.clear();
+    mesuresTientEnTableau++;
+    return cache[cleCache] = _mesurerTableau<T>(
+      context,
+      colonnes: colonnes,
+      lignes: lignes,
+      largeur: largeur,
+      echelle: echelle,
+      enTete: enTete,
+      cellule: cellule,
+    );
+  }
+
+  /// Le cache de [tientEnTableau], par identite du jeu de lignes : il
+  /// disparait avec la liste.
+  static final Expando<Map<Object, bool>> _cacheTientEnTableau =
+      Expando<Map<Object, bool>>('tientEnTableau');
+
+  /// Le nombre d'entrees gardees par jeu de lignes.
+  static const int _tailleCacheTientEnTableau = 8;
+
+  /// Le nombre de mesures reelles de [tientEnTableau] (cache manque) : un
+  /// test prouve qu'une seconde mise en page des memes lignes ne remesure pas.
+  @visibleForTesting
+  static int mesuresTientEnTableau = 0;
+
+  /// La mesure de [tientEnTableau], sans cache.
+  static bool _mesurerTableau<T>(
+    BuildContext context, {
+    required List<ColonneDonnees<T>> colonnes,
+    required List<T> lignes,
+    required double largeur,
+    required TextScaler echelle,
+    required TextStyle enTete,
+    required TextStyle cellule,
+  }) {
+    final int flexTotal = colonnes.fold<int>(
+      0,
+      (int somme, ColonneDonnees<T> c) => somme + c.flex,
+    );
+    final double utile = largeur - 2 * AppSpacing.lg;
+    for (final ColonneDonnees<T> colonne in colonnes) {
+      final double place = utile * colonne.flex / flexTotal - AppSpacing.md;
+      // Un rendu riche (une pastille) entoure son texte d'une marge.
+      final double marge = colonne.rendu == null ? 0 : 2 * AppSpacing.md;
+      if (largeurMotLePlusLong(context, colonne.titre, enTete, echelle) >
+          place) {
+        return false;
+      }
+      final Set<String> valeurs = <String>{
+        for (final T ligne in lignes)
+          identifiantsInsecables(colonne.texte(ligne)),
+      };
+      final TextStyle style = colonne.tabulaire
+          ? AppTypography.tabulaire(cellule)
+          : cellule;
+      // Chaque valeur mesuree seule : le mot le plus long de la colonne est
+      // le plus long de ses valeurs (aucune chaine jointe, garde DUREE-FOND-1).
+      for (final String valeur in valeurs) {
+        if (largeurMotLePlusLong(context, valeur, style, echelle) + marge >
+            place) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final bool tableau = AppGabarit.de(context) == Gabarit.desktop;
+    final bool tableau = enTableau(context);
+    // JONCTION-LIGNES-1 : deux lignes de travail ont pose le meme besoin sous
+    // deux noms ([defileAvecLaPage], ONGLETS-COUPE-1 ; [defileSeule] a faux,
+    // FILTRES-1b). Un seul comportement : toutes les lignes a leur hauteur,
+    // sans defileur propre.
+    final bool enBloc = defileAvecLaPage || !defileSeule;
 
-    if (!tableau) {
-      return _Defilement<T>(
-        lignes: lignes,
-        piedDePage: piedDePage,
-        cle: cle,
-        espacement: AppSpacing.md,
-        constructeur: (BuildContext contexte, T ligne) => _Carte<T>(
-          colonnes: colonnes,
-          ligne: ligne,
-          onSelectionner: onSelectionner,
-        ),
-      );
-    }
+    Widget cartes() => _Defilement<T>(
+      enBloc: enBloc,
+      lignes: lignes,
+      piedDePage: piedDePage,
+      cle: cle,
+      espacement: AppSpacing.md,
+      constructeur: (BuildContext contexte, T ligne) => _Carte<T>(
+        colonnes: colonnes,
+        ligne: ligne,
+        onSelectionner: onSelectionner,
+        selectionnee: estSelectionnee?.call(ligne) ?? false,
+      ),
+    );
 
+    if (!tableau) return cartes();
+
+    // COUPE-MOTS-FOND-1 : un tableau ou une colonne coupe un mot (texte
+    // agrandi) se replie en cartes, comme sur une tablette.
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) =>
+          tientEnTableau<T>(
+            contexte,
+            colonnes: colonnes,
+            lignes: lignes,
+            largeur: contraintes.maxWidth,
+          )
+          ? _tableau(contexte, enBloc)
+          : cartes(),
+    );
+  }
+
+  Widget _tableau(BuildContext context, bool enBloc) {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
+    final Widget corps = _Defilement<T>(
+      enBloc: enBloc,
+      lignes: lignes,
+      piedDePage: piedDePage,
+      cle: cle,
+      espacement: 0,
+      constructeur: (BuildContext contexte, T ligne) => _LigneTableau<T>(
+        colonnes: colonnes,
+        ligne: ligne,
+        onSelectionner: onSelectionner,
+        // Nul sans [estSelectionnee] : un tableau sans selection
+        // n'annonce aucun etat « non selectionne ».
+        selectionnee: estSelectionnee?.call(ligne),
+      ),
+    );
 
     // Le filet et l'arrondi sont portes par le bloc entier, et le decoupage par
     // un seul `ClipRRect` : arrondir separement les deux coins hauts de
@@ -155,23 +363,11 @@ class DataCollection<T> extends StatelessWidget {
       child: ClipRRect(
         borderRadius: metriques.arrondi,
         child: Column(
+          mainAxisSize: enBloc ? MainAxisSize.min : MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             _EnTeteTableau<T>(colonnes: colonnes),
-            Expanded(
-              child: _Defilement<T>(
-                lignes: lignes,
-                piedDePage: piedDePage,
-                cle: cle,
-                espacement: 0,
-                constructeur: (BuildContext contexte, T ligne) =>
-                    _LigneTableau<T>(
-                      colonnes: colonnes,
-                      ligne: ligne,
-                      onSelectionner: onSelectionner,
-                    ),
-              ),
-            ),
+            Flexible(fit: enBloc ? FlexFit.loose : FlexFit.tight, child: corps),
           ],
         ),
       ),
@@ -185,9 +381,14 @@ class _Defilement<T> extends StatelessWidget {
     required this.lignes,
     required this.constructeur,
     required this.espacement,
+    required this.enBloc,
     this.piedDePage,
     this.cle,
   });
+
+  /// Vrai : toutes les lignes sont posees, sans defilement propre (voir
+  /// [DataCollection.defileAvecLaPage]).
+  final bool enBloc;
 
   final List<T> lignes;
   final Widget Function(BuildContext context, T ligne) constructeur;
@@ -200,6 +401,10 @@ class _Defilement<T> extends StatelessWidget {
     final int total = lignes.length + (piedDePage == null ? 0 : 1);
 
     return ListView.builder(
+      shrinkWrap: enBloc,
+      primary: enBloc ? false : null,
+      physics: enBloc ? const NeverScrollableScrollPhysics() : null,
+      padding: enBloc ? EdgeInsets.zero : null,
       itemCount: total,
       itemBuilder: (BuildContext contexte, int index) {
         if (index >= lignes.length) {
@@ -259,12 +464,11 @@ class _EnTeteTableau<T> extends StatelessWidget {
                     padding: const EdgeInsetsDirectional.only(
                       end: AppSpacing.md,
                     ),
-                    child: Text(
-                      colonne.titre,
-                      style: style,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    // COUPE-MOTS-FOND-1 : l'en-tete passe a la ligne entre
+                    // ses mots, jamais tronque (« Entr... ») ; la collection
+                    // garantit que chacun de ses mots tient
+                    // ([DataCollection.tientEnTableau]).
+                    child: TexteSansCoupure(colonne.titre, style: style),
                   ),
                 ),
             ],
@@ -281,11 +485,16 @@ class _LigneTableau<T> extends StatelessWidget {
     required this.colonnes,
     required this.ligne,
     this.onSelectionner,
+    this.selectionnee,
   });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
   final void Function(T ligne)? onSelectionner;
+
+  /// Nul quand le tableau n'a pas de selection : la ligne ne porte alors
+  /// aucun etat `selected` (ni vrai ni faux) dans l'arbre semantique.
+  final bool? selectionnee;
 
   @override
   Widget build(BuildContext context) {
@@ -319,17 +528,29 @@ class _LigneTableau<T> extends StatelessWidget {
       ),
     );
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        border: Border(bottom: palette.borderHairline.asBorderSide()),
+    return Semantics(
+      selected: selectionnee,
+      child: DecoratedBox(
+        // La ligne choisie : fond doux et contour d'accent de 2, comme
+        // `AppCard.selectionnee` (jamais la couleur seule).
+        decoration: selectionnee ?? false
+            ? BoxDecoration(
+                color: palette.washAccent.background,
+                border: Border.fromBorderSide(
+                  palette.inkAccent.asBorderSide(width: 2),
+                ),
+              )
+            : BoxDecoration(
+                border: Border(bottom: palette.borderHairline.asBorderSide()),
+              ),
+        child: onSelectionner == null
+            ? contenu
+            : Pressable(
+                onPress: () => onSelectionner!(ligne),
+                respecterCibleTactile: false,
+                child: contenu,
+              ),
       ),
-      child: onSelectionner == null
-          ? contenu
-          : Pressable(
-              onPress: () => onSelectionner!(ligne),
-              respecterCibleTactile: false,
-              child: contenu,
-            ),
     );
   }
 }
@@ -356,10 +577,19 @@ class _Cellule<T> extends StatelessWidget {
     if (rendu != null) {
       return rendu(context, ligne);
     }
+    // DUREE-INSECABLE-5 : la valeur suit le titre de la colonne dans le
+    // libelle parle ; une valeur ancree pour s'afficher seule (« 12 jours »,
+    // marque U+200E en tete) y perd son ancre ([sansAncre]), qui n'a pas a
+    // se trouver au milieu d'un libelle. Le texte affiche, seul dans sa
+    // cellule, la garde.
     return Semantics(
-      label: '${colonne.titre} : ${colonne.texte(ligne)}',
+      label: '${colonne.titre} : ${sansAncre(colonne.texte(ligne))}',
       excludeSemantics: true,
-      child: Text(colonne.texte(ligne), style: style),
+      // COUPE-MOTS-4 : un mot plus long que sa colonne (un identifiant)
+      // reduit son echelle au lieu d'etre coupe. COUPE-MOTS-FOND-1 : le
+      // tableau n'est rendu que si chaque mot tient sans reduction
+      // ([DataCollection.tientEnTableau]) ; la reduction reste un filet.
+      child: _TexteCollection(colonne.texte(ligne), style: style),
     );
   }
 }
@@ -370,11 +600,13 @@ class _Carte<T> extends StatelessWidget {
     required this.colonnes,
     required this.ligne,
     this.onSelectionner,
+    this.selectionnee = false,
   });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
   final void Function(T ligne)? onSelectionner;
+  final bool selectionnee;
 
   @override
   Widget build(BuildContext context) {
@@ -397,32 +629,43 @@ class _Carte<T> extends StatelessWidget {
       }
     }
 
-    final String resume = secondaires
-        .map((ColonneDonnees<T> c) => c.texte(ligne))
-        .where((String v) => v.isNotEmpty)
-        // Le point median, et non un tiret : le tiret cadratin est refuse par
-        // `tool/verifier_jetons.dart`, et le tiret court se confond avec un
-        // signe moins dans une colonne de chiffres.
-        .join(' · ');
+    // Le point median, et non un tiret : le tiret cadratin est refuse par
+    // `tool/verifier_jetons.dart`, et le tiret court se confond avec un
+    // signe moins dans une colonne de chiffres. DUREE-INSECABLE-4 :
+    // [enchainer] ne garde l'ancre de sens (U+200E) qu'en tete de la ligne.
+    //
+    // Relecture de COUPE-MOTS-FOND-1 : une valeur deja lue en tete de carte
+    // (titre, ou sous-titre quand l'identifiant n'y tient pas : « Personne »
+    // puis « TEACHER-AS-000002 ») ne se repete pas en tete du resume.
+    final String? enTete = titre != null && titre.rendu == null
+        ? identifiantsInsecables(titre.texte(ligne)).trim()
+        : null;
+    final String resume = enchainer(
+      secondaires
+          .map((ColonneDonnees<T> c) => c.texte(ligne))
+          .where(
+            (String v) =>
+                enTete == null || identifiantsInsecables(v).trim() != enTete,
+          ),
+      ' · ',
+    );
 
     // La carte entiere se lit comme un seul element : sans ce regroupement, un
     // lecteur d'ecran enoncerait quatre fragments sans lien entre eux.
     return MergeSemantics(
       child: AppCard(
+        selectionnee: selectionnee,
         onPress: onSelectionner == null ? null : () => onSelectionner!(ligne),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             if (titre != null) ...<Widget>[
               titre.rendu?.call(context, ligne) ??
-                  Text(
-                    titre.texte(ligne),
-                    style: textes.titleMedium ?? const TextStyle(),
-                  ),
+                  _TitreCarte<T>(colonne: titre, ligne: ligne),
               Ecart.vSm,
             ],
             if (resume.isNotEmpty)
-              Text(
+              _TexteCollection(
                 resume,
                 style: palette.inkMuted.applyTo(
                   textes.bodySmall ?? const TextStyle(),
@@ -433,7 +676,7 @@ class _Carte<T> extends StatelessWidget {
                   colonne.texte(ligne).isNotEmpty) ...<Widget>[
                 Ecart.vSm,
                 colonne.rendu?.call(context, ligne) ??
-                    Text(
+                    _TexteCollection(
                       colonne.texte(ligne),
                       style: palette.inkMuted.applyTo(
                         AppTypography.tabulaire(
@@ -447,4 +690,175 @@ class _Carte<T> extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Un identifiant technique a traits d'union ordinaires, dans un texte :
+/// des segments en capitales et chiffres, un chiffre au moins
+/// (« TEACHER-RB-000001 »).
+final RegExp _identifiantATraits = RegExp(
+  r'(?<![A-Za-z0-9])(?=[A-Z0-9-]*[0-9])[A-Z0-9]+(?:-[A-Z0-9]+)+(?![A-Za-z0-9])',
+);
+
+/// [texte] tel que la collection l'affiche : chaque identifiant technique
+/// qu'il contient (« Rachid · TEACHER-RB-000001 ») prend des traits d'union
+/// insecables (U+2011), pour passer entier a la ligne au lieu de se couper
+/// a son trait (COUPE-MOTS-FOND-1, comme `identifiantInsecable` de
+/// COUPE-MOTS-4, mais pour tous les appelants). Les mots composes en
+/// minuscules (« Al-Badr ») ne sont pas touches.
+@visibleForTesting
+String identifiantsInsecables(String texte) => texte.replaceAllMapped(
+  _identifiantATraits,
+  (Match m) => m.group(0)!.replaceAll('-', '\u2011'),
+);
+
+/// Le titre d'une carte (COUPE-MOTS-FOND-1, point 2).
+///
+/// Un titre qui tient a la taille des titres de carte (`titleMedium`, a
+/// l'echelle de l'appareil) est rendu tel quel. Un titre fait d'un seul mot
+/// qui n'y tient pas (un identifiant technique « GUARDIAN-FD-000014 » a
+/// traits insecables, a 320 px texte x2) n'est ni coupe a ses traits ni
+/// reduit sous la taille des autres titres : l'en-tete de sa colonne
+/// (« Personne ») reste le titre, a la taille des titres, et l'identifiant
+/// passe en sous-titre, entier, insecable, au style des valeurs tabulaires.
+/// La hierarchie est gardee : chaque carte a un titre a la meme taille.
+class _TitreCarte<T> extends StatelessWidget {
+  const _TitreCarte({required this.colonne, required this.ligne});
+
+  final ColonneDonnees<T> colonne;
+  final T ligne;
+
+  /// Vrai quand [texte] est un seul mot (aucune espace ou il puisse passer
+  /// a la ligne) plus large que [largeur] a la taille de [style].
+  static bool motSeulTropLong(
+    BuildContext context,
+    String texte,
+    TextStyle style,
+    double largeur,
+  ) {
+    if (!largeur.isFinite) return false;
+    if (texte.trim().contains(RegExp(r'[\s\u200B]'))) return false;
+    return largeurMotLePlusLong(
+          context,
+          texte,
+          style,
+          MediaQuery.textScalerOf(context),
+        ) >
+        largeur;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle styleTitre = textes.titleMedium ?? const TextStyle();
+    final String texte = colonne.texte(ligne);
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints c) {
+        if (!motSeulTropLong(contexte, texte, styleTitre, c.maxWidth)) {
+          return _TexteCollection(texte, style: styleTitre);
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            // L'en-tete est lu dans la voix de la carte avec la valeur.
+            TexteSansCoupure(colonne.titre, style: styleTitre),
+            Ecart.vXs,
+            _TexteCollection(
+              texte,
+              style: AppTypography.tabulaire(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Un texte de la collection (cellule, titre, ligne de carte) : un
+/// [TexteSansCoupure] dont les identifiants techniques ne se coupent jamais
+/// a leurs traits (COUPE-MOTS-FOND-1).
+///
+/// Le texte reste celui de la donnee tant que la ligne ne passe pas a un
+/// trait d'identifiant ; seulement quand elle s'y couperait (« Rachid ·
+/// TEACHER-RB- / 000001 »), les traits de l'identifiant deviennent
+/// insecables ([identifiantsInsecables]) et il passe entier a la ligne. Le
+/// lecteur d'ecran lit toujours le texte d'origine.
+class _TexteCollection extends StatelessWidget {
+  const _TexteCollection(this.texte, {required this.style});
+
+  final String texte;
+  final TextStyle style;
+
+  /// Vrai quand, pose a [largeur], [texte] passe a la ligne au milieu d'un
+  /// identifiant.
+  static bool _coupeUnIdentifiant(
+    BuildContext context,
+    String texte,
+    TextStyle style,
+    double largeur,
+  ) {
+    if (!largeur.isFinite) return false;
+    final List<RegExpMatch> ids = _identifiantATraits
+        .allMatches(texte)
+        .toList();
+    if (ids.isEmpty) return false;
+    final TextPainter peintre = TextPainter(
+      text: TextSpan(
+        text: texte,
+        style: DefaultTextStyle.of(context).style.merge(style),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+    )..layout(maxWidth: largeur);
+    try {
+      for (final RegExpMatch m in ids) {
+        final int debut = peintre
+            .getLineBoundary(TextPosition(offset: m.start))
+            .end;
+        if (debut < m.end) return true;
+      }
+      return false;
+    } finally {
+      peintre.dispose();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_identifiantATraits.hasMatch(texte)) {
+      return TexteSansCoupure(texte, style: style);
+    }
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints c) =>
+          _coupeUnIdentifiant(contexte, texte, style, c.maxWidth)
+          ? Semantics(
+              label: texte,
+              excludeSemantics: true,
+              child: TexteSansCoupure(
+                identifiantsInsecables(texte),
+                style: style,
+              ),
+            )
+          : TexteSansCoupure(texte, style: style),
+    );
+  }
+}
+
+/// La place d'une zone qui porte une [DataCollection] dans la colonne d'une
+/// page : **etiree** (`Expanded`) quand la collection defile seule (tableau,
+/// en-tete colle), **a sa hauteur** quand elle defile avec la page (cartes,
+/// voir [DataCollection.defileAvecLaPage]).
+///
+/// A poser directement dans un `Column`, la ou la page posait un `Expanded`.
+class PlaceCollection extends StatelessWidget {
+  /// Cree la place.
+  const PlaceCollection({required this.child, super.key});
+
+  /// La zone : la collection, ou ce qui la contient.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) =>
+      DataCollection.enTableau(context) ? Expanded(child: child) : child;
 }

@@ -1,5 +1,5 @@
 -- 0001: Fondations — schéma, RLS, fonctions, triggers
--- Source de vérité: docs/architecture/etape-0-1-fondations.md
+-- Source de vérité: docs/archive/2026-09-pre-remise-a-plat/architecture/etape-0-1-fondations.md
 -- Règles: RLS partout, SECURITY DEFINER => search_path='', argent en entiers,
 --         role/foyer lus du JWT (hook custom_access_token), deleted_at partout.
 

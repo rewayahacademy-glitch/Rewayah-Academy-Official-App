@@ -123,7 +123,7 @@ class BlocAvantProchainCours extends ConsumerWidget {
       children: <Widget>[
         for (final SlotAction action in actions) ...<Widget>[
           _Action(action: action, onAction: onAction),
-          Ecart.vSm,
+          Ecart.vLg,
         ],
       ],
     );

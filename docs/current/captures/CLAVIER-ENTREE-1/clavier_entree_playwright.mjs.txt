@@ -1,0 +1,175 @@
+// CLAVIER-ENTREE-1 : preuve dans un vrai navigateur (Chromium de Playwright,
+// /opt/pw-browsers, jamais « playwright install »).
+//
+// 1. Entree (et Entree du pave numerique) activent un bouton bati sur
+//    Pressable, dans un ecran connecte de demonstration (?demo=admin, centre
+//    de commande) : « Voir toutes les alertes » (ActionPrincipale de
+//    SectionHeader, donc Pressable), atteint au clavier seul par Tab.
+//    Temoins : la barre d'espace, qui marchait deja, et la ligne
+//    « Operations » de la barre laterale (NavigationRail de Material, qui
+//    ecoute deja ButtonActivateIntent).
+// 2. Une langue systeme mal formee (navigator.languages = « en-US@posix »,
+//    celle de Chromium headless sans LANG) ne fait plus tomber l'application :
+//    elle demarre, en francais.
+//
+// Compilation : flutter build web --release
+//   --dart-define=SUPABASE_URL=https://local-navigateur.invalid
+//   --dart-define=SUPABASE_ANON_KEY=sb_publishable_LocalNavigateurTest0123456789
+//   --dart-define=ENVIRONNEMENT=developpement
+// (configuration plausible mais factice : aucune requete ne sort, tout ce qui
+// n'est pas le serveur local est refuse ; CanvasKit est servi depuis le build).
+//
+// Usage : PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers \
+//   node clavier_entree.mjs <dossier build/web> <dossier captures> [prefixe]
+import http from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
+import { createRequire } from 'node:module';
+const require = createRequire('/opt/node-tools/node_modules/');
+const { chromium } = require('playwright');
+
+const racine = path.resolve(process.argv[2]);
+const sortie = path.resolve(process.argv[3]);
+const prefixe = process.argv[4] ?? 'pw';
+fs.mkdirSync(sortie, { recursive: true });
+const types = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript',
+  '.wasm': 'application/wasm', '.json': 'application/json', '.png': 'image/png',
+  '.ttf': 'font/ttf', '.otf': 'font/otf', '.css': 'text/css' };
+const serveur = http.createServer((req, res) => {
+  const p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+  let f = path.join(racine, p === '/' ? 'index.html' : p);
+  if (!f.startsWith(racine) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) {
+    res.writeHead(404); res.end(); return;
+  }
+  res.writeHead(200, { 'content-type': types[path.extname(f)] ?? 'application/octet-stream' });
+  fs.createReadStream(f).pipe(res);
+});
+await new Promise((r) => serveur.listen(0, '127.0.0.1', r));
+const base = `http://127.0.0.1:${serveur.address().port}`;
+const dire = (m) => console.log(m);
+let echecs = 0;
+const verifier = (cond, msg) => { dire(`${cond ? 'OK   ' : 'ECHEC'} ${msg}`); if (!cond) echecs++; };
+
+const navigateur = await chromium.launch();
+dire(`Serveur local : ${base} ; navigateur : Chromium ${navigateur.version()}`);
+
+async function preparer(contexte) {
+  await contexte.route('**/*', (route) => {
+    const u = new URL(route.request().url());
+    if (u.host === 'www.gstatic.com' && u.pathname.startsWith('/flutter-canvaskit/')) {
+      const f = path.join(racine, 'canvaskit', u.pathname.split('/').slice(3).join('/'));
+      if (fs.existsSync(f)) return route.fulfill({ path: f, contentType: types[path.extname(f)] });
+      return route.abort();
+    }
+    if (u.origin === base) return route.continue();
+    return route.abort();
+  });
+}
+
+async function attendre(page, predicat, delai = 60000) {
+  const debut = Date.now();
+  while (Date.now() - debut < delai) {
+    if (predicat(page.url())) return true;
+    await page.waitForTimeout(250);
+  }
+  return false;
+}
+
+// Les boutons vises, avec le fragment d'adresse que leur activation ouvre.
+const CIBLES = [
+  { libelle: 'Voir toutes les alertes', attendu: '#/admin/alertes', nature: 'Pressable (ActionPrincipale)' },
+  { libelle: 'Opérations', attendu: '#/admin/operations', nature: 'temoin Material (NavigationRail)' },
+];
+
+async function ouvrirCentre(nom) {
+  const ctx = await navigateur.newContext({ viewport: { width: 1280, height: 800 }, locale: 'fr-FR' });
+  await preparer(ctx);
+  const page = await ctx.newPage();
+  page.on('pageerror', (e) => dire(`  (erreur de page : ${String(e).slice(0, 200)})`));
+  await page.goto(`${base}/?demo=admin`);
+  verifier(await attendre(page, (u) => u.endsWith('#/admin')), `${nom} : centre de commande -> ${page.url()}`);
+  await page.waitForTimeout(3000);
+  return { ctx, page };
+}
+
+const libelleActif = (page) =>
+  page.evaluate(() => {
+    const e = document.activeElement;
+    // Le nom accessible, ou sa premiere ligne de texte (la ligne suivante est
+    // la description, « Onglet 2 sur 7 »).
+    return (e?.getAttribute('aria-label') ?? e?.textContent ?? '').trim().split('\n')[0].trim();
+  });
+
+// Passe A, arbre d'accessibilite active (comme sous lecteur d'ecran) : Tab
+// jusqu'a ce que l'element actif du document porte le nom accessible de la
+// cible ; on retient le nombre de Tab.
+// Passe B, arbre d'accessibilite inactif (clavier seul, aucun lecteur
+// d'ecran) : le meme nombre de Tab ; la capture montre le focus pose.
+for (const cible of CIBLES) {
+  dire(`-- ${cible.libelle} : ${cible.nature}`);
+  let tabsCible = 0;
+  for (const passe of ['A', 'B']) {
+    for (const touche of ['Enter', 'NumpadEnter', 'Space']) {
+      const nom = `${passe} ${touche}`;
+      const { ctx, page } = await ouvrirCentre(nom);
+      if (passe === 'A') {
+        await page.evaluate(() => document.querySelector('flt-semantics-placeholder')?.click());
+        await page.waitForTimeout(1000);
+        let i = 0;
+        while (i < 40 && (await libelleActif(page)) !== cible.libelle) {
+          await page.keyboard.press('Tab');
+          await page.waitForTimeout(250);
+          i++;
+        }
+        tabsCible = i;
+        verifier((await libelleActif(page)) === cible.libelle,
+          `${nom} : element actif « ${await libelleActif(page)} » apres ${i} Tab`);
+      } else {
+        for (let i = 0; i < tabsCible; i++) {
+          await page.keyboard.press('Tab');
+          await page.waitForTimeout(250);
+        }
+        dire(`  ${nom} : ${tabsCible} Tab, sans arbre d'accessibilite`);
+      }
+      const fichier = `${prefixe}_${cible.attendu.split('/').pop()}_${passe}_${touche}`;
+      await page.screenshot({ path: path.join(sortie, `${fichier}_1_focus.png`) });
+      const avant = page.url();
+      await page.keyboard.press(touche);
+      const parti = await attendre(page, (u) => u !== avant, 5000);
+      await page.waitForTimeout(800);
+      await page.screenshot({ path: path.join(sortie, `${fichier}_2_apres.png`) });
+      verifier(parti && page.url().includes(cible.attendu),
+        `${nom} active « ${cible.libelle} » : ${avant} -> ${page.url()}`);
+      await ctx.close();
+    }
+  }
+}
+
+// 2. Langue systeme mal formee.
+{
+  const ctx = await navigateur.newContext({ viewport: { width: 1280, height: 800 } });
+  await ctx.addInitScript(() => {
+    Object.defineProperty(Navigator.prototype, 'languages', { get: () => ['en-US@posix'] });
+    Object.defineProperty(Navigator.prototype, 'language', { get: () => 'en-US@posix' });
+  });
+  await preparer(ctx);
+  const page = await ctx.newPage();
+  const erreurs = [];
+  page.on('pageerror', (e) => { erreurs.push(String(e)); dire(`  (erreur de page : ${String(e).slice(0, 200)})`); });
+  await page.goto(`${base}/?demo=admin`);
+  const langues = await page.evaluate(() => navigator.languages.join(','));
+  dire(`  navigator.languages = ${langues}`);
+  const demarre = await attendre(page, (u) => u.endsWith('#/admin'), 60000);
+  await page.waitForTimeout(3000);
+  await page.screenshot({ path: path.join(sortie, `${prefixe}_langue_en-US-posix.png`) });
+  verifier(demarre, `langue « en-US@posix » : l'application demarre -> ${page.url()}`);
+  verifier(!erreurs.some((e) => e.includes('RangeError')), `aucune RangeError (${erreurs.length} erreur(s) de page)`);
+  const langue = await page.evaluate(() => document.documentElement.getAttribute('lang'));
+  verifier(langue === 'fr', `langue du document = ${langue}`);
+  await ctx.close();
+}
+
+await navigateur.close();
+serveur.close();
+dire(`${echecs} echec(s)`);
+process.exit(echecs === 0 ? 0 : 1);

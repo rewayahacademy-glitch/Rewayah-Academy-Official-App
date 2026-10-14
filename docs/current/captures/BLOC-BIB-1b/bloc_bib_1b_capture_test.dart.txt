@@ -1,0 +1,130 @@
+// BLOC-BIB-1b (reserves 1 et 2 de la revue BLOC-BIB-1-R) : captures
+// avant / apres du titre de la Bibliotheque a texte x2.
+// - Ma classe de l'eleve adulte (« Ressources de la classe ») : 320 et 390 px
+//   clair, 320 sombre, 320 RTL, comme les autres ecrans de BLOC-BIB-1.
+// - Les quatre ecrans (accueil adulte, Ma classe adulte, Espace Groupe eleve,
+//   Espace Classe enseignant) : 1440x2 clair, 390x2 sombre RTL, et en
+//   Interface guidee 320x2 clair, 390x2 sombre RTL, 1440x2 clair.
+// `BLOC_BIB_PHASE` (avant | apres) prefixe les fichiers. La ligne `BLOC`
+// imprime la position du bloc Bibliotheque (pour les planches recadrees).
+// Saute sans CAPTURE_DIR (voir LISEZ-MOI.md). A copier dans test/capture/.
+
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/demo/classe_demo.dart'
+    show EtatDemoClasse;
+import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
+import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
+import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.dart';
+
+import 'outil_capture.dart';
+
+final String _phase = Platform.environment['BLOC_BIB_PHASE'] ?? 'apres';
+
+Future<void> _monter(
+  WidgetTester tester,
+  String adresse,
+  InterfaceMode interface,
+  ThemeMode mode,
+  TextDirection sens,
+) async {
+  final GoRouter routeur = GoRouter(
+    initialLocation: adresse,
+    routes: <RouteBase>[...routesDemoAdulte('dev'), ...routesDemoClasse('dev')],
+  );
+  addTearDown(routeur.dispose);
+  await tester.pumpWidget(
+    ProviderScope(
+      child: TranslationProvider(
+        child: RepaintBoundary(
+          key: cadreCapture,
+          child: MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.pour(interface, Brightness.light),
+            darkTheme: AppTheme.pour(interface, Brightness.dark),
+            themeMode: mode,
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            builder: (BuildContext c, Widget? app) => MediaQuery(
+              data: MediaQuery.of(c)
+                  .copyWith(textScaler: const TextScaler.linear(2)),
+              child: Directionality(textDirection: sens, child: app!),
+            ),
+            routerConfig: routeur,
+          ),
+        ),
+      ),
+    ),
+  );
+  await stabiliser(tester);
+}
+
+typedef _Cas = (double, ThemeMode, TextDirection, InterfaceMode);
+
+void main() {
+  group('Capture : BLOC-BIB-1b', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    // Adresse, hauteur a 320/390, hauteur a 1440.
+    final Map<String, (String, double, double)> ecrans =
+        <String, (String, double, double)>{
+          'adulte': (adresseDemoAdulte(EcranDemoAdulte.accueil), 5600, 3000),
+          'maclasse': (adresseDemoAdulte(EcranDemoAdulte.maClasse), 4400, 2600),
+          'espacegroupe': (
+            adresseDemoClasse(RoleEntree.eleve, EtatDemoClasse.aVenir),
+            3600,
+            2600,
+          ),
+          'espaceclasse_ens': (
+            adresseDemoClasse(RoleEntree.enseignant, EtatDemoClasse.aVenir),
+            6000,
+            3400,
+          ),
+        };
+    const InterfaceMode std = InterfaceMode.standard;
+    const InterfaceMode guidee = InterfaceMode.enfant;
+    const List<_Cas> pourTous = <_Cas>[
+      (1440, ThemeMode.light, TextDirection.ltr, std),
+      (390, ThemeMode.dark, TextDirection.rtl, std),
+      (320, ThemeMode.light, TextDirection.ltr, guidee),
+      (390, ThemeMode.dark, TextDirection.rtl, guidee),
+      (1440, ThemeMode.light, TextDirection.ltr, guidee),
+    ];
+    const List<_Cas> pourMaClasse = <_Cas>[
+      (320, ThemeMode.light, TextDirection.ltr, std),
+      (390, ThemeMode.light, TextDirection.ltr, std),
+      (320, ThemeMode.dark, TextDirection.ltr, std),
+      (320, ThemeMode.light, TextDirection.rtl, std),
+    ];
+    for (final MapEntry<String, (String, double, double)> e in ecrans.entries) {
+      for (final (double l, ThemeMode m, TextDirection s, InterfaceMode i)
+          in <_Cas>[if (e.key == 'maclasse') ...pourMaClasse, ...pourTous]) {
+        final String nom =
+            '${_phase}_${e.key}_${l.toInt()}x2_'
+            '${m == ThemeMode.light ? 'clair' : 'sombre'}'
+            '${s == TextDirection.rtl ? '_rtl' : ''}'
+            '${i == guidee ? '_guidee' : ''}';
+        testWidgets(nom, (WidgetTester tester) async {
+          final double h = l >= 1000 ? e.value.$3 : e.value.$2;
+          fixerVueCapture(tester, Size(l, h), 1);
+          await _monter(tester, e.value.$1, i, m, s);
+          expect(tester.takeException(), isNull);
+          final Rect bloc = tester.getRect(find.byType(BlocBibliotheque));
+          expect(bloc.bottom, lessThanOrEqualTo(h), reason: 'bloc visible');
+          debugPrint('BLOC $nom ${bloc.left} ${bloc.top} ${bloc.right}');
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
+  });
+}

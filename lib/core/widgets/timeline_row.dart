@@ -4,6 +4,7 @@ import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../planning/journee.dart';
 import '../priere/libelle_priere.dart';
+import '../tc_groupe/libelles_tc_groupe.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
@@ -15,7 +16,7 @@ import '../theme/app_spacing.dart';
 /// le deroule et jamais dans un encadre a cote. Un ecran qui choisirait une
 /// ligne differente selon la sorte casserait cette colonne ; c'est pourquoi le
 /// composant decide lui-meme du libelle et de l'icone a partir de la sorte
-/// (`docs/design/07-catalogue-composants.md` section 2). Ce qui distingue les
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 2). Ce qui distingue les
 /// trois est le libelle, jamais la seule couleur.
 class TimelineRow extends StatelessWidget {
   /// Cree une ligne de journee.
@@ -35,40 +36,48 @@ class TimelineRow extends StatelessWidget {
     );
     final int minutes = entree.duree.inMinutes;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        IconTheme(
-          data: encres.asIconTheme(size: AppSpacing.xl),
-          child: Icon(_icone(entree.sorte).repos),
-        ),
-        Ecart.hMd,
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                t.enseignant.journee.plage(
-                  debut: _hhmm(entree.debut),
-                  fin: _hhmm(entree.fin),
-                ),
-                style: encres.applyTo(textes.bodySmall ?? const TextStyle()),
-              ),
-              Text(_libelle(entree), style: textes.titleMedium),
-              if (entree.sorte == SorteEntree.cours)
+    // Une seance se lit d'un tenant : plage, libelle, eleves et duree (W-243).
+    return MergeSemantics(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          IconTheme(
+            data: encres.asIconTheme(size: AppSpacing.xl),
+            child: Icon(_icone(entree.sorte).repos),
+          ),
+          Ecart.hMd,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
                 Text(
-                  entree.seance?.eleveIdentifiant ?? '',
+                  t.enseignant.journee.plage(
+                    debut: _hhmm(entree.debut),
+                    fin: _hhmm(entree.fin),
+                  ),
                   style: encres.applyTo(textes.bodySmall ?? const TextStyle()),
                 ),
-            ],
+                Text(_libelle(entree), style: textes.titleMedium),
+                if (entree.sorte == SorteEntree.cours)
+                  Text(
+                    entree.seance?.eleveIdentifiant ?? '',
+                    style: encres.applyTo(
+                      textes.bodySmall ?? const TextStyle(),
+                    ),
+                  ),
+              ],
+            ),
           ),
-        ),
-        Ecart.hSm,
-        Text(
-          t.enseignant.journee.duree(minutes: '$minutes'),
-          style: encres.applyTo(textes.bodySmall ?? const TextStyle()),
-        ),
-      ],
+          Ecart.hSm,
+          Text(
+            // DUREE-INSECABLE-1 : « 45 min » jamais scinde.
+            LibellesGroupe.insecable(
+              t.enseignant.journee.duree(minutes: '$minutes'),
+            ),
+            style: encres.applyTo(textes.bodySmall ?? const TextStyle()),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -81,7 +90,13 @@ AppIcon _icone(SorteEntree sorte) => switch (sorte) {
 };
 
 /// Le libelle d'une entree, selon sa sorte.
+///
+/// Une seance de Classe (sans eleve unique, `eleveId` vide) porte deja son
+/// nom, « Classe An-Nour » : il est dit seul, sans « Cours avec la »
+/// (recette EN-12, decision EN-RC).
 String _libelle(EntreeJournee entree) => switch (entree.sorte) {
+  SorteEntree.cours when entree.seance?.eleveId.isEmpty ?? false =>
+    entree.seance!.elevePrenom,
   SorteEntree.cours => t.enseignant.journee.ligneCours(
     prenom: entree.seance?.elevePrenom ?? '',
   ),

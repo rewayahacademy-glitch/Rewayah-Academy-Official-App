@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
+import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/i18n/cle_audio.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -16,6 +18,7 @@ import '../../core/priere/service_priere.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -25,16 +28,22 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/audio_label.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/ornement_marque.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
+import '../../core/widgets/pays_enseignant.dart';
+import '../../core/widgets/raccourci_tactile.dart';
+import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
-import '../../core/widgets/status_pill.dart';
+import '../acces_finance/acces_finance.dart';
 
 /// Ce que le bloc principal de `ELV-02` annonce.
 ///
 /// Les six etats sont ceux que la fiche produit tabule, dans son ordre : cours
 /// dans plus d'une heure, cours dans moins de cinq minutes, cours en direct,
 /// aucun cours aujourd'hui, seance annulee, hors ligne
-/// (`docs/produit/parcours-utilisateurs.md`, fiche `ELV-02`).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, fiche `ELV-02`).
 enum EtatAccueilEleve {
   /// Un cours plus tard dans la journee.
   ///
@@ -57,8 +66,9 @@ enum EtatAccueilEleve {
 
   /// Un cours en direct, sans reseau pour y entrer.
   ///
-  /// L'ecran reste identique : seul le bloc « Rejoindre » devient inerte et
-  /// gagne le pictogramme de reseau.
+  /// L'ecran reste identique : le bloc « Rejoindre » dit l'attente de
+  /// l'entree a l'appui (jamais grise, BOUTONS-GRISES-1) et gagne le
+  /// pictogramme d'attente.
   horsLigne,
 }
 
@@ -116,7 +126,7 @@ EtatAccueilEleve etatAccueilEleve({
 /// `ELV-02` : l'accueil de l'eleve.
 ///
 /// **Deux blocs, rien d'autre.** En mode enfant, aucune navigation : l'ecran est
-/// le produit (`docs/architecture/etape-4-dashboards.md` section 5). Le premier
+/// le produit (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-4-dashboards.md` section 5). Le premier
 /// bloc dit ce qui vient, dans ses six etats ; le second, permanent, mene au
 /// Coran.
 ///
@@ -169,7 +179,14 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
     // reponse manque, l'appareil est repute en ligne.
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
 
-    if (!seances.hasValue && seances.isLoading) {
+    // DASH-ELV-ERR-b (revue DASH-ELV-ERR-R, m1 et i1) : l'echec passe avant
+    // le squelette. Pendant la relecture lancee par « Reessayer », Riverpod
+    // garde l'erreur precedente (`hasError` reste vrai, `isLoading` monte) :
+    // le message et le Coran restent a l'ecran, seul le bouton dit qu'il
+    // travaille.
+    final bool echec = seances.hasError && !seances.hasValue;
+
+    if (!echec && !seances.hasValue && seances.isLoading) {
       return const PageShell(child: Skeleton.liste(lignes: 2));
     }
 
@@ -198,11 +215,31 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
         ? const <InterruptionPriere>[]
         : interruptionsDe(prochain, reglages.value);
 
+    // L'acces de l'eleve connecte (FI-9a) : seances ouvertes, essai ou
+    // fermees, jamais une cause ni un montant (guide §1.7, lecon 15). Lu
+    // borne a sa session (`PortMonAcces`, FI-BR-08, revue FI-VAGUE-R R4-02) :
+    // l'acces des freres et soeurs n'est jamais charge ici. Une lecture
+    // absente ou en echec ne change rien a l'ecran (port neutre en
+    // production) : Rejoindre ne disparait que sur un « ferme » explicite,
+    // et jamais selon un solde, que ce port ne porte pas. L'enfant ne voit
+    // que l'etat « ferme », jamais « Essai : n/2 » ni « Accès actif » (FI-Q12
+    // (b), decide par delegation le 05/10 ; revue FI-VAGUE-R R4-03).
+    final AsyncValue<AccesBeneficiaire?>? acces = prochain == null
+        ? null
+        : ref.watch(accesAppelantProvider);
+    final bool accesFerme =
+        ouvertureSeances(acces?.value) == OuvertureSeances.fermees;
+    // Tant que l'acces se lit, Rejoindre reste present sans entrer (revue
+    // FI-9a) : un bouton actif qui disparaitrait ensuite serait une promesse
+    // retiree.
+    final bool accesEnLecture = acces != null && accesEnAttente(acces);
+
     // `PageShell` porte le fond creme, la gouttiere du gabarit courant, la
     // colonne centree et bornee a 1200 (« centre et borne, on n'ajoute rien »,
-    // `docs/design/05-regles-responsive.md` section 3) et le bandeau hors ligne.
+    // `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 3) et le bandeau hors ligne.
     // L'ecran ne rend plus que ses deux blocs.
-    final bool enChargement = seances.isLoading && seances.value == null;
+    final bool enChargement =
+        !echec && seances.isLoading && seances.value == null;
 
     return PageShell(
       child: enChargement
@@ -211,20 +248,56 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
               children: <Widget>[
                 Skeleton.tuileBento(hauteur: 160),
                 Ecart.vXl,
-                Skeleton.tuileBento(hauteur: 80),
+                Skeleton.tuileBento(hauteur: 156),
               ],
             )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                _BlocPrincipal(
-                  etat: etat,
-                  prochain: prochain,
-                  interruptions: interruptions,
-                  maintenant: _maintenant,
-                ),
+                // DASH-ELV-ERR (DASH_STRATEGIE D10, D11) : une lecture en
+                // echec n'est jamais « pas de cours aujourd'hui ». Le bloc dit
+                // que les cours manquent et propose de relire ; le Coran, lu
+                // ailleurs, reste en place. Une erreur apres une valeur deja
+                // lue garde cette valeur (DASH-ELV-ERR-b, m3) : l'eleve voit
+                // encore son prochain cours plutot qu'un message. Hors ligne,
+                // le bloc dit la cause par sa nature (K-59, m2).
+                if (accesFerme) ...<Widget>[
+                  BandeauAccesFerme(acces: acces?.value),
+                  Ecart.vLg,
+                ],
+                if (echec)
+                  EtatSysteme(
+                    key: const ValueKey<String>('accueil-eleve-erreur'),
+                    nature: horsLigne
+                        ? NatureEtat.horsLigne
+                        : NatureEtat.echecServeur,
+                    // Hors ligne se dit une fois (EA-HL-DOUBLE-1d) : le
+                    // « wifi barre » est celui du bandeau de `PageShell` ;
+                    // sous lui, le bloc prend l'attente (sablier).
+                    icone: horsLigne ? AppIcons.attente : null,
+                    // Le titre commun hors ligne vouvoie ; l'accueil eleve
+                    // tutoie.
+                    titre: horsLigne
+                        ? t.eleve.accueil.erreurCoursHorsLigneTitre
+                        : null,
+                    phrase: t.eleve.accueil.erreurCours,
+                    onAction: () => ref.invalidate(seancesProvider),
+                    actionEnCours: seances.isLoading,
+                  )
+                else
+                  _BlocPrincipal(
+                    etat: etat,
+                    prochain: prochain,
+                    interruptions: interruptions,
+                    maintenant: _maintenant,
+                    accesFerme: accesFerme,
+                    accesEnLecture: accesEnLecture,
+                  ),
                 Ecart.vXl,
                 const _BlocCoran(),
+                // BRAND-ORN-1 : la signature de la marque, une fois, au pied.
+                Ecart.vXxl,
+                const Center(child: OrnementMarque.signature()),
               ],
             ),
     );
@@ -238,6 +311,8 @@ class _BlocPrincipal extends StatelessWidget {
     required this.prochain,
     required this.interruptions,
     required this.maintenant,
+    this.accesFerme = false,
+    this.accesEnLecture = false,
   });
 
   final EtatAccueilEleve etat;
@@ -245,13 +320,19 @@ class _BlocPrincipal extends StatelessWidget {
   final List<InterruptionPriere> interruptions;
   final DateTime maintenant;
 
+  /// Seances fermees (FI-9a) : Rejoindre n'est pas rendu.
+  final bool accesFerme;
+
+  /// L'acces se lit encore : Rejoindre dit d'attendre un instant.
+  final bool accesEnLecture;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final bool imminent = etat == EtatAccueilEleve.coursImminent;
     final bool mouvementReduit = AppMouvement.mouvementReduit(context);
 
-    // **Une seule zone pleine par ecran** (`docs/design/01-systeme-visuel.md`
+    // **Une seule zone pleine par ecran** (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md`
     // section 3) : le bloc imminent, et lui seul. Le cours en direct redevient
     // une carte normale avec sa pastille verte et son bouton d'entree en
     // `surfacePrimary`. Une paire dit sur quoi elle s'ecrit : les styles des
@@ -264,7 +345,7 @@ class _BlocPrincipal extends StatelessWidget {
       surface: imminent ? palette.surfacePrimary : null,
       // Sous mouvement reduit, la pulsation disparait et une bordure
       // `borderStrong` fixe porte a sa place l'information d'imminence
-      // (`docs/design/04-systeme-mouvement.md` section 5).
+      // (`docs/archive/2026-09-pre-remise-a-plat/design/04-systeme-mouvement.md` section 5).
       contourFort: imminent && mouvementReduit,
       child: switch (etat) {
         EtatAccueilEleve.coursPlusTard ||
@@ -279,10 +360,13 @@ class _BlocPrincipal extends StatelessWidget {
           seance: prochain!,
           paire: paire,
           interruptions: interruptions,
-          joignable: etat == EtatAccueilEleve.coursEnDirect,
+          joignable: etat == EtatAccueilEleve.coursEnDirect && !accesEnLecture,
+          accesFerme: accesFerme,
+          accesEnLecture: accesEnLecture,
         ),
         EtatAccueilEleve.seanceAnnulee => _SansCoursAujourdhui(
           message: t.eleve.accueil.annulee,
+          annulee: true,
           prochain: prochain,
           interruptions: interruptions,
           paire: paire,
@@ -342,6 +426,12 @@ class _CoursAVenir extends StatelessWidget {
           t.eleve.accueil.avec(prenom: seance.enseignantPrenom),
           style: paire.applyTo(textes.titleMedium ?? const TextStyle()),
         ),
+        // ENS-PAYS-1 : le pays de l'enseignant sous son prenom, rien s'il
+        // n'est pas declare.
+        PaysEnseignant(
+          pays: seance.enseignantPays,
+          style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
+        ),
         _Interruptions(interruptions: interruptions, paire: paire),
       ],
     );
@@ -355,12 +445,24 @@ class _CoursEnDirect extends StatelessWidget {
     required this.paire,
     required this.interruptions,
     required this.joignable,
+    this.accesFerme = false,
+    this.accesEnLecture = false,
   });
 
   final Seance seance;
   final AppColorPair paire;
   final List<InterruptionPriere> interruptions;
   final bool joignable;
+
+  /// Seances fermees (FI-9a) : une limite de droit, pas une panne. Le bouton
+  /// est absent, jamais grise ; le bandeau au-dessus du bloc dit l'etat, sans
+  /// cause (guide §1.7).
+  final bool accesFerme;
+
+  /// L'acces se lit encore (revue FI-9a) : le bouton est present sans entrer
+  /// ([joignable] est alors faux), sans le message hors ligne, le temps que
+  /// la lecture aboutisse.
+  final bool accesEnLecture;
 
   @override
   Widget build(BuildContext context) {
@@ -371,10 +473,10 @@ class _CoursEnDirect extends StatelessWidget {
       children: <Widget>[
         // La pastille verte de la fiche produit, portee par le composant
         // d'etat : une pastille pleine `surfaceSuccess` et son mot, jamais la
-        // couleur seule (`docs/design/01-systeme-visuel.md` section 8).
-        Align(
+        // couleur seule (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 8).
+        const Align(
           alignment: AlignmentDirectional.centerStart,
-          child: StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes),
+          child: PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
         ),
         Ecart.vSm,
         AudioLabel(cle: ClesAudio.eleveAccueilCoursEnDirect, surface: paire),
@@ -383,51 +485,130 @@ class _CoursEnDirect extends StatelessWidget {
           t.eleve.accueil.avec(prenom: seance.enseignantPrenom),
           style: paire.applyTo(textes.titleMedium ?? const TextStyle()),
         ),
-        _Interruptions(interruptions: interruptions, paire: paire),
-        Ecart.vLg,
-        // Hors ligne, le bouton reste **present et inerte**, contrairement a la
-        // regle du bouton absent qui vaut pour une limite de droit. Ce n'est pas
-        // une limite, c'est une panne passagere : un bouton disparu ferait
-        // croire a l'enfant que son cours n'existe plus, alors qu'il attend le
-        // reseau. `ActionPrincipale` signale l'inertie en changeant de PAIRE, et
-        // non par de la transparence, qui ferait tomber son texte sous le seuil.
-        ActionPrincipale(
-          libelle: t.eleve.accueil.rejoindre,
-          onPress: joignable
-              ? () => GoRouter.of(context).go(
-                  Routes.salle,
-                  // Le billet passe par `extra`, jamais par l'URL (ADR-005).
-                  extra: BilletSalle(
-                    sessionId: seance.id,
-                    emisA: DateTime.now(),
-                  ),
-                )
-              : null,
+        // ENS-PAYS-1 : le pays de l'enseignant sous son prenom, rien s'il
+        // n'est pas declare.
+        PaysEnseignant(
+          pays: seance.enseignantPays,
+          style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
         ),
-        if (!joignable) ...<Widget>[
-          Ecart.vSm,
-          Row(
-            children: <Widget>[
-              IconTheme(
-                data: IconThemeData(
-                  color: paire.onBackground,
-                  size: AppSpacing.xl,
-                ),
-                child: Icon(AppIcons.horsLigne.repos),
-              ),
-              Ecart.hSm,
-              Flexible(
-                child: Text(
-                  t.eleve.accueil.horsLigne,
-                  style: paire.applyTo(textes.titleMedium ?? const TextStyle()),
-                ),
-              ),
-            ],
+        _Interruptions(interruptions: interruptions, paire: paire),
+        if (!accesFerme) ...<Widget>[
+          Ecart.vLg,
+          // Hors ligne, le bouton reste **present**, contrairement a la regle
+          // du bouton absent qui vaut pour une limite de droit. Ce n'est pas une
+          // limite, c'est une panne passagere : un bouton disparu ferait croire
+          // a l'enfant que son cours n'existe plus, alors qu'il attend le
+          // reseau.
+          //
+          // BOUTONS-GRISES-1 : present, mais jamais grise. Tant que l'entree
+          // ne peut pas aboutir, l'appui dit pourquoi (annonce au lecteur
+          // d'ecran) au lieu de rester sans reponse.
+          _Rejoindre(
+            joignable: joignable,
+            accesEnLecture: accesEnLecture,
+            paire: paire,
+            onRejoindre: () => GoRouter.of(context).go(
+              Routes.salle,
+              // Le billet passe par `extra`, jamais par l'URL (ADR-005).
+              extra: BilletSalle(sessionId: seance.id, emisA: DateTime.now()),
+            ),
           ),
-          Ecart.vXs,
-          Text(
-            t.eleve.accueil.horsLigneDetail,
-            style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
+          if (!joignable && !accesEnLecture) ...<Widget>[
+            Ecart.vSm,
+            Row(
+              children: <Widget>[
+                IconTheme(
+                  data: IconThemeData(
+                    color: paire.onBackground,
+                    size: AppSpacing.xl,
+                  ),
+                  // Hors ligne se dit une fois (EA-HL-DOUBLE-1) : le « wifi
+                  // barre » est celui du bandeau ; ici, l'attente de l'entree.
+                  child: Icon(AppIcons.attente.repos),
+                ),
+                Ecart.hSm,
+                Flexible(
+                  child: Text(
+                    t.eleve.accueil.horsLigne,
+                    style: paire.applyTo(
+                      textes.titleMedium ?? const TextStyle(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Ecart.vXs,
+            Text(
+              t.eleve.accueil.horsLigneDetail,
+              style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
+            ),
+          ],
+        ],
+      ],
+    );
+  }
+}
+
+/// « Rejoindre » du cours en direct, jamais grise (BOUTONS-GRISES-1).
+///
+/// Joignable, l'appui entre dans la salle. Sinon, il dit pourquoi : l'acces
+/// se lit encore (phrase sous le bouton, annoncee), ou l'entree attend le
+/// reseau (la phrase deja posee sous le bouton est annoncee).
+class _Rejoindre extends StatefulWidget {
+  const _Rejoindre({
+    required this.joignable,
+    required this.accesEnLecture,
+    required this.paire,
+    required this.onRejoindre,
+  });
+
+  final bool joignable;
+  final bool accesEnLecture;
+  final AppColorPair paire;
+  final VoidCallback onRejoindre;
+
+  @override
+  State<_Rejoindre> createState() => _RejoindreEtat();
+}
+
+class _RejoindreEtat extends State<_Rejoindre> {
+  bool _attenteDite = false;
+
+  void _appui() {
+    if (widget.joignable) {
+      widget.onRejoindre();
+      return;
+    }
+    if (widget.accesEnLecture) {
+      setState(() => _attenteDite = true);
+    }
+    signalerManque(
+      context,
+      widget.accesEnLecture
+          ? t.eleve.accueil.entreeSePrepare
+          : t.eleve.accueil.horsLigneDetail,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        ActionPrincipale(libelle: t.eleve.accueil.rejoindre, onPress: _appui),
+        if (_attenteDite &&
+            widget.accesEnLecture &&
+            !widget.joignable) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              t.eleve.accueil.entreeSePrepare,
+              style: widget.paire.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
           ),
         ],
       ],
@@ -449,9 +630,14 @@ class _SansCoursAujourdhui extends StatelessWidget {
     required this.interruptions,
     required this.paire,
     required this.maintenant,
+    this.annulee = false,
   });
 
   final String message;
+
+  /// Vrai quand le message dit une seance annulee : la pastille « Annulee »
+  /// ouvre le bloc (ANNUL-VIS-1), le mot ne reste pas seul dans le texte.
+  final bool annulee;
   final Seance? prochain;
   final List<InterruptionPriere> interruptions;
   final AppColorPair paire;
@@ -467,6 +653,12 @@ class _SansCoursAujourdhui extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        if (annulee) ...<Widget>[
+          const Align(
+            child: PastilleEtatSeance(etat: EtatPastilleSeance.annulee),
+          ),
+          Ecart.vSm,
+        ],
         _etatVide(cours, jours),
         _Interruptions(interruptions: interruptions, paire: paire),
       ],
@@ -478,7 +670,7 @@ class _SansCoursAujourdhui extends StatelessWidget {
       message: message,
       // Registre **subi** : l'enfant ne peut rien y faire, son enseignant
       // prepare le prochain cours. Proposer un bouton ici mentirait sur ce que
-      // l'enfant peut obtenir (`docs/design/02-regles-ux.md` section 6).
+      // l'enfant peut obtenir (`docs/archive/2026-09-pre-remise-a-plat/design/02-regles-ux.md` section 6).
       registre: RegistreVide.subi,
       // Un etat vide est une invitation, pas un constat. Le prochain cours peut
       // tomber le jour meme : une seance annulee le matin n'empeche pas celle
@@ -487,7 +679,9 @@ class _SansCoursAujourdhui extends StatelessWidget {
         (null, _) => t.eleve.accueil.aucunCoursDetail,
         (_, <= 0) => t.eleve.accueil.prochainAujourdhui,
         (_, 1) => t.eleve.accueil.prochainDemain,
-        (_, _) => t.eleve.accueil.prochainDansJours(jours: '$jours'),
+        (_, _) => LibellesGroupe.insecable(
+          t.eleve.accueil.prochainDansJours(jours: jours),
+        ),
       },
     );
   }
@@ -552,6 +746,34 @@ class _Interruptions extends StatelessWidget {
 }
 
 /// Le second bloc, permanent : le Coran.
+///
+/// Deux etages, une action par zone (demande du directeur du 04/10/2026 :
+/// « chaque element a part et lisible ») :
+/// - en-tete sans texte : le livre au bord de debut, le haut-parleur au bord
+///   de fin ;
+/// - une [SettingRow] nue : titre, phrase et chevron, le lien qui ouvre le
+///   Coran (`ELV-04`).
+///
+/// Le livre ouvre aussi le Coran : c'est un [RaccourciTactile] du lien,
+/// touchable au doigt et a la souris, hors du clavier et du lecteur d'ecran
+/// (un seul lien « Le Coran »). La tuile ne se presse pas : les cibles sont
+/// soeurs, jamais l'une dans l'autre.
+///
+/// Le haut-parleur dit « Le Coran » a qui ne lit pas encore ; pour le lecteur
+/// d'ecran, c'est le bouton « Ecouter : Le Coran », distinct du lien.
+///
+/// Sur grand ecran, le contenu garde la largeur de la colonne de l'etat vide
+/// ([AppPage.largeurEtatVide]), calee sur le bord de debut de la carte comme
+/// le contenu des autres tuiles Bento (a gauche en LTR, a droite en RTL) : le
+/// haut-parleur reste pres du titre qu'il prononce au lieu de partir au bout
+/// d'une carte de 1 100 points.
+///
+/// Les icones gardent leur taille quand le texte est agrandi (spec
+/// CORAN-CARTE-1, point 6, acte) : elles vivent seules sur leur ligne et
+/// grandissent avec l'Interface guidee (le mode enfant), jamais avec
+/// l'echelle du texte. A 320 points et texte x2, le livre et le haut-parleur
+/// gardent donc leur taille pendant que le titre et la phrase doublent ;
+/// c'est voulu, ce n'est pas un oubli.
 class _BlocCoran extends StatelessWidget {
   const _BlocCoran();
 
@@ -559,30 +781,59 @@ class _BlocCoran extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppMetriques metriques = AppMetriques.of(context);
     final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
+    final double tailleLivre = metriques.estEnfant
+        ? AppSpacing.xxxl
+        : AppSpacing.xxl;
+    // L'en-tete a la hauteur de la cible tactile, le livre y est centre, avec
+    // cet air au-dessus de lui. Le meme air est rendu sous la phrase (la
+    // ligne nue pose son texte en bas de sa cible), pour que la carte
+    // respire autant en haut qu'en bas.
+    final double airEntete = (metriques.cibleTactile - tailleLivre) / 2;
+    void ouvrir() => GoRouter.of(context).go(Routes.eleveCoran);
 
     return BentoTile(
-      libelleSemantique: t.eleve.accueil.coran,
-      onPress: () => GoRouter.of(context).go(Routes.eleveCoran),
-      child: Row(
-        children: <Widget>[
-          IconTheme(
-            data: palette.inkAccent.asIconTheme(
-              size: metriques.estEnfant ? AppSpacing.xxxl : AppSpacing.xxl,
-            ),
-            child: Icon(AppIcons.coran.repos),
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: AppPage.largeurEtatVide),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  RaccourciTactile(
+                    onPress: ouvrir,
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      widthFactor: 1,
+                      child: IconTheme(
+                        data: palette.inkAccent.asIconTheme(size: tailleLivre),
+                        child: Icon(AppIcons.coran.repos),
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  AudioLabel(
+                    cle: ClesAudio.eleveAccueilCoran,
+                    afficherTexte: false,
+                    alignerEnFin: true,
+                    libelleSemantique: t.eleve.accueil.coranEcouter,
+                  ),
+                ],
+              ),
+              Ecart.vSm,
+              SettingRow(
+                title: t.eleve.accueil.coran,
+                description: t.eleve.accueil.coranDetail,
+                nue: true,
+                lien: true,
+                onPress: ouvrir,
+              ),
+              SizedBox(height: airEntete),
+            ],
           ),
-          Ecart.hMd,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const AudioLabel(cle: ClesAudio.eleveAccueilCoran),
-                Text(t.eleve.accueil.coranDetail, style: textes.bodyMedium),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -615,7 +866,7 @@ class _PulsationEtat extends State<_Pulsation>
   // Le battement se compose des deux seules courbes du produit : l'entree a
   // l'aller, la sortie au retour. Aucune troisieme courbe n'est necessaire, et
   // le systeme de mouvement n'en autorise pas
-  // (`docs/design/04-systeme-mouvement.md` section 2).
+  // (`docs/archive/2026-09-pre-remise-a-plat/design/04-systeme-mouvement.md` section 2).
   late final Animation<double> _echelle = Tween<double>(begin: 1, end: 1.02)
       .animate(
         CurvedAnimation(
@@ -654,16 +905,21 @@ class _PulsationEtat extends State<_Pulsation>
 /// deux ecrans ne s'adressent pas a la meme personne, et « Dans 25 min » tutoye
 /// ici ce qu'il vouvoie la-bas.
 String _compteARebours(Duration reste) {
-  final int minutes = reste.inMinutes;
+  final int minutes = LibellesGroupe.minutesAvant(reste);
   if (minutes <= 0) {
     return t.eleve.accueil.imminent;
   }
+  // DUREE-INSECABLE-1 : la duree ne se scinde jamais sur deux lignes.
   if (minutes < Duration.minutesPerHour) {
-    return t.eleve.accueil.dansMinutes(minutes: '$minutes');
+    return LibellesGroupe.insecable(
+      t.eleve.accueil.dansMinutes(minutes: '$minutes'),
+    );
   }
-  return t.eleve.accueil.dansHeures(
-    heures: '${minutes ~/ Duration.minutesPerHour}',
-    minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
+  return LibellesGroupe.insecable(
+    t.eleve.accueil.dansHeures(
+      heures: '${minutes ~/ Duration.minutesPerHour}',
+      minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
+    ),
   );
 }
 

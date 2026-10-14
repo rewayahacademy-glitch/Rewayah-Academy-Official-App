@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_outils/fonction_indisponible.dart';
 import '../../core/tc_parcours/libelles_parcours.dart';
 import '../../core/tc_parcours/port_signalement.dart';
 import '../../core/tc_parcours/student_concern.dart';
@@ -10,6 +15,8 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/choice_card_group.dart';
+import '../../core/widgets/selecteur_motif.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// Le signalement structure, depuis la fiche d'un eleve (spec section 12.2).
 ///
@@ -83,6 +90,7 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
 
   CategorieSignalement _categorie = CategorieSignalement.pedagogique;
   bool _envoi = false;
+  bool _interneManquante = false;
   String? _erreur;
 
   @override
@@ -115,9 +123,7 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
         Ecart.vSm,
         ChoiceCardGroup(
           autoriserSaisieLibre: false,
-          valeurInitiale: ReponseChoix(
-            valeurs: <String>{_categorie.valeurSql},
-          ),
+          valeurInitiale: ReponseChoix(valeurs: <String>{_categorie.valeurSql}),
           options: <OptionChoix>[
             for (final CategorieSignalement categorie
                 in CategorieSignalement.values)
@@ -130,18 +136,20 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
         ),
         Ecart.vXl,
 
-        TextField(
-          controller: _interne,
-          maxLines: 3,
+        ZoneSaisie(
+          controleur: _interne,
+          libelle: t.tc.parcours.signalement.interne,
+          minLignes: 3,
           // Le bouton depend de ce champ : sans ce rappel, il resterait inerte
           // alors que la note est saisie.
-          onChanged: (String _) => setState(() {}),
-          decoration: InputDecoration(
-            labelText: t.tc.parcours.signalement.interne,
-          ),
+          onChanged: (String _) => setState(() => _interneManquante = false),
+          // Bouton jamais grise (K-56) : la note manquante se dit ici.
+          erreur: _interneManquante
+              ? t.tc.parcours.signalement.interneRequis
+              : null,
         ),
         Ecart.vXs,
-        Text(
+        TexteSansCoupure(
           t.tc.parcours.signalement.interneAide,
           style: palette.inkMuted.applyTo(
             textes.bodySmall ?? const TextStyle(),
@@ -149,13 +157,9 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
         ),
         Ecart.vLg,
 
-        TextField(
-          controller: _famille,
-          maxLines: 3,
-          decoration: InputDecoration(
-            labelText: t.tc.parcours.signalement.famille,
-          ),
-        ),
+        // L7 : une phrase-type bienveillante par categorie, « Autre » pour
+        // l'ecrire ; facultatif, rien n'est retenu d'office.
+        Text(t.tc.parcours.signalement.famille, style: textes.titleSmall),
         Ecart.vXs,
         Text(
           t.tc.parcours.signalement.familleAide,
@@ -163,21 +167,36 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
             textes.bodySmall ?? const TextStyle(),
           ),
         ),
+        Ecart.vSm,
+        SelecteurMotif(
+          motifs: MotifsProposes.signalement(_categorie.valeurSql),
+          controleur: _famille,
+          libelleChamp: t.choix.autreInvite,
+          lignesMin: 2,
+          lignesMax: 3,
+        ),
         Ecart.vXl,
 
-        ActionPrincipale(
-          libelle: t.tc.parcours.signalement.envoyer,
-          enCours: _envoi,
-          onPress: _interne.text.trim().isEmpty ? null : _envoyer,
-        ),
-        if (_interne.text.trim().isEmpty) ...<Widget>[
-          Ecart.vSm,
+        // Un bouton qui ne peut pas aboutir n'est pas rendu : une phrase dit
+        // la limite (SALLE-ROBUSTE, serveur des signalements non branche).
+        if (ref.watch(portSignalementProvider) is PortIndisponible)
           Text(
-            t.tc.parcours.signalement.interneRequis,
+            t.tc.indisponible,
             textAlign: TextAlign.center,
-            style: textes.bodySmall,
+            style: textes.bodyMedium,
+          )
+        else
+          ActionPrincipale(
+            libelle: t.tc.parcours.signalement.envoyer,
+            enCours: _envoi,
+            onPress: () {
+              if (_interne.text.trim().isEmpty) {
+                setState(() => _interneManquante = true);
+              } else {
+                unawaited(_envoyer());
+              }
+            },
           ),
-        ],
         if (_erreur case final String message) ...<Widget>[
           Ecart.vMd,
           Text(
@@ -202,7 +221,15 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
       choix.valeurs.first,
     );
     if (choisie != null) {
-      setState(() => _categorie = choisie);
+      setState(() {
+        // Une phrase-type de l'ancienne categorie ne vaut plus : elle
+        // s'efface ; un texte ecrit a la main reste.
+        if (MotifsProposes.signalement(_categorie.valeurSql)
+            .contains(_famille.text)) {
+          _famille.clear();
+        }
+        _categorie = choisie;
+      });
     }
   }
 
@@ -227,6 +254,15 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
           );
       if (mounted) {
         Navigator.of(context).pop(signalement);
+      }
+    } on FonctionIndisponible {
+      // Le serveur des signalements n'est pas branche : rien n'est parti, et
+      // recommencer ne servirait a rien (SALLE-ROBUSTE).
+      if (mounted) {
+        setState(() {
+          _envoi = false;
+          _erreur = t.tc.indisponible;
+        });
       }
     } on Object {
       // Volontairement un `Object` : le port peut lever son propre

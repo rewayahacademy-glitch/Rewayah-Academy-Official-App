@@ -5,6 +5,7 @@ import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_qualite.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -13,9 +14,11 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/zone_saisie.dart';
 
 /// `ADM-14` : Pedagogie > Qualite, dernier ecran du domaine.
 ///
@@ -52,38 +55,46 @@ class _QualitePageEtat extends ConsumerState<QualitePage> {
 
     return PageShell(
       titre: t.admin.qualite.titre,
-      entete: SousNavigationDomaine(onglets: ongletsPedagogie(), indexActif: 4),
+      entete: SousNavigationDomaine(onglets: ongletsPedagogie(), indexActif: 5),
       defilante: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      // FILTRES-1b : une seule colonne de corps (intro, filtres, liste) qui
+      // dit a `PageShell` la hauteur qui lui manque : a 320 px texte x2,
+      // l'intro et la rangee de filtres ne laissent plus de place a la
+      // liste, la page defile alors au lieu de deborder, et la liste garde
+      // au moins un titre de groupe et une ligne lisibles.
+      child: ColonneCorps(
+        minimumEtire: DataCollection.minimumLisible(context),
         children: <Widget>[
           Text(t.admin.qualite.intro, style: textes.bodyMedium),
           Ecart.vXl,
-          switch (anomalies) {
+          ...switch (anomalies) {
             AsyncValue<List<AnomalieQualite>>(hasValue: true) =>
               anomalies.requireValue.isEmpty
-                  ? EmptyState(
-                      message: t.admin.qualite.aucune,
-                      invitation: t.admin.qualite.aucuneDetail,
-                      icone: AppIcons.succes,
-                      registre: RegistreVide.bonneNouvelle,
-                    )
-                  : Expanded(
-                      child: _Corps(
-                        anomalies: anomalies.requireValue,
-                        filtre: _filtre,
-                        onFiltre: (_Filtre f) => setState(() => _filtre = f),
-                        onTraiter: (AnomalieQualite a) =>
-                            _ouvrirTraitement(context, ref, a),
+                  ? <Widget>[
+                      EmptyState(
+                        message: t.admin.qualite.aucune,
+                        invitation: t.admin.qualite.aucuneDetail,
+                        icone: AppIcons.succes,
+                        registre: RegistreVide.bonneNouvelle,
                       ),
+                    ]
+                  : _corps(
+                      context,
+                      anomalies: anomalies.requireValue,
+                      filtre: _filtre,
+                      onFiltre: (_Filtre f) => setState(() => _filtre = f),
+                      onTraiter: (AnomalieQualite a) =>
+                          _ouvrirTraitement(context, ref, a),
                     ),
-            AsyncValue<List<AnomalieQualite>>(hasError: true) => EmptyState(
-              message: t.admin.qualite.erreur,
-              icone: AppIcons.avertissement,
-              libelleAction: t.commun.reessayer,
-              onAction: () => ref.invalidate(anomaliesQualiteProvider),
-            ),
-            _ => const Skeleton.liste(lignes: 5),
+            AsyncValue<List<AnomalieQualite>>(hasError: true) => <Widget>[
+              EmptyState(
+                message: t.admin.qualite.erreur,
+                icone: AppIcons.avertissement,
+                libelleAction: t.commun.reessayer,
+                onAction: () => ref.invalidate(anomaliesQualiteProvider),
+              ),
+            ],
+            _ => const <Widget>[Skeleton.liste(lignes: 5)],
           },
         ],
       ),
@@ -91,97 +102,87 @@ class _QualitePageEtat extends ConsumerState<QualitePage> {
   }
 }
 
-class _Corps extends StatelessWidget {
-  const _Corps({
-    required this.anomalies,
-    required this.filtre,
-    required this.onFiltre,
-    required this.onTraiter,
-  });
+bool _correspond(AnomalieQualite a, _Filtre f) => switch (f) {
+  _Filtre.toutes => true,
+  _Filtre.ouvertes => a.controleStatut == StatutControleQualite.ouvert,
+  _Filtre.traitees => a.controleStatut == StatutControleQualite.traite,
+};
 
-  final List<AnomalieQualite> anomalies;
-  final _Filtre filtre;
-  final void Function(_Filtre filtre) onFiltre;
-  final void Function(AnomalieQualite anomalie) onTraiter;
+String _libelleFiltre(_Filtre f) => switch (f) {
+  _Filtre.toutes => t.admin.qualite.filtreToutes,
+  _Filtre.ouvertes => t.admin.qualite.filtreOuvertes,
+  _Filtre.traitees => t.admin.qualite.filtreTraitees,
+};
 
-  bool _correspond(AnomalieQualite a, _Filtre f) => switch (f) {
-    _Filtre.toutes => true,
-    _Filtre.ouvertes => a.controleStatut == StatutControleQualite.ouvert,
-    _Filtre.traitees => a.controleStatut == StatutControleQualite.traite,
-  };
+String _libelleGroupe(TypeAnomalieQualite type) => switch (type) {
+  TypeAnomalieQualite.rapportManquant => t.admin.qualite.groupeRapportManquant,
+  TypeAnomalieQualite.blocageSansSuivi =>
+    t.admin.qualite.groupeBlocageSansSuivi,
+  TypeAnomalieQualite.evaluationEnRetard =>
+    t.admin.qualite.groupeEvaluationEnRetard,
+};
 
-  String _libelleFiltre(_Filtre f) => switch (f) {
-    _Filtre.toutes => t.admin.qualite.filtreToutes,
-    _Filtre.ouvertes => t.admin.qualite.filtreOuvertes,
-    _Filtre.traitees => t.admin.qualite.filtreTraitees,
-  };
+/// La rangee de filtres et la liste, enfants de la colonne de corps.
+List<Widget> _corps(
+  BuildContext context, {
+  required List<AnomalieQualite> anomalies,
+  required _Filtre filtre,
+  required void Function(_Filtre filtre) onFiltre,
+  required void Function(AnomalieQualite anomalie) onTraiter,
+}) {
+  final List<AnomalieQualite> visibles = anomalies
+      .where((AnomalieQualite a) => _correspond(a, filtre))
+      .toList(growable: false);
 
-  String _libelleGroupe(TypeAnomalieQualite type) => switch (type) {
-    TypeAnomalieQualite.rapportManquant => t.admin.qualite.groupeRapportManquant,
-    TypeAnomalieQualite.blocageSansSuivi => t.admin.qualite.groupeBlocageSansSuivi,
-    TypeAnomalieQualite.evaluationEnRetard =>
-      t.admin.qualite.groupeEvaluationEnRetard,
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    final List<AnomalieQualite> visibles = anomalies
-        .where((AnomalieQualite a) => _correspond(a, filtre))
-        .toList(growable: false);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
-            for (final _Filtre f in _Filtre.values)
-              FilterPill(
-                libelle: _libelleFiltre(f),
-                compteur: anomalies
-                    .where((AnomalieQualite a) => _correspond(a, f))
-                    .length,
-                retenue: filtre == f,
-                onPress: () => onFiltre(f),
-              ),
-          ],
-        ),
-        Ecart.vLg,
-        if (visibles.isEmpty)
-          EmptyState(
-            message: t.admin.qualite.aucune,
-            invitation: t.admin.qualite.aucuneDetail,
-            icone: AppIcons.rienAAfficher,
-            registre: RegistreVide.subi,
-          )
-        else
-          Expanded(
-            child: ListView(
-              children: <Widget>[
-                for (final TypeAnomalieQualite type in TypeAnomalieQualite.values)
-                  if (visibles.any((AnomalieQualite a) => a.type == type)) ...<Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                      child: Text(
-                        _libelleGroupe(type),
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                    _GroupeAnomalies(
-                      anomalies: visibles
-                          .where((AnomalieQualite a) => a.type == type)
-                          .toList(growable: false),
-                      onTraiter: onTraiter,
-                    ),
-                    Ecart.vXl,
-                  ],
-              ],
-            ),
+  return <Widget>[
+    RangeeFiltres(
+      filtres: <Widget>[
+        for (final _Filtre f in _Filtre.values)
+          FilterPill(
+            libelle: _libelleFiltre(f),
+            compteur: anomalies
+                .where((AnomalieQualite a) => _correspond(a, f))
+                .length,
+            retenue: filtre == f,
+            onPress: () => onFiltre(f),
           ),
       ],
-    );
-  }
+    ),
+    Ecart.vLg,
+    if (visibles.isEmpty)
+      EmptyState(
+        message: t.admin.qualite.aucune,
+        invitation: t.admin.qualite.aucuneDetail,
+        icone: AppIcons.rienAAfficher,
+        registre: RegistreVide.subi,
+      )
+    else
+      Expanded(
+        child: ListView(
+          children: <Widget>[
+            for (final TypeAnomalieQualite type in TypeAnomalieQualite.values)
+              if (visibles.any(
+                (AnomalieQualite a) => a.type == type,
+              )) ...<Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: Text(
+                    _libelleGroupe(type),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                _GroupeAnomalies(
+                  anomalies: visibles
+                      .where((AnomalieQualite a) => a.type == type)
+                      .toList(growable: false),
+                  onTraiter: onTraiter,
+                ),
+                Ecart.vXl,
+              ],
+          ],
+        ),
+      ),
+  ];
 }
 
 class _GroupeAnomalies extends StatelessWidget {
@@ -193,8 +194,11 @@ class _GroupeAnomalies extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DataCollection<AnomalieQualite>(
+      // Une section de la liste de la page, qui defile deja (FILTRES-1b).
+      defileSeule: false,
       lignes: anomalies,
-      cle: (AnomalieQualite a) => ValueKey<String>('${a.type.valeurSql}-${a.refId}'),
+      cle: (AnomalieQualite a) =>
+          ValueKey<String>('${a.type.valeurSql}-${a.refId}'),
       colonnes: <ColonneDonnees<AnomalieQualite>>[
         ColonneDonnees<AnomalieQualite>(
           titre: t.admin.qualite.colonnePersonne,
@@ -209,7 +213,8 @@ class _GroupeAnomalies extends StatelessWidget {
         ),
         ColonneDonnees<AnomalieQualite>(
           titre: t.admin.qualite.colonneStatut,
-          texte: (AnomalieQualite a) => a.controleStatut == StatutControleQualite.traite
+          texte: (AnomalieQualite a) =>
+              a.controleStatut == StatutControleQualite.traite
               ? t.admin.qualite.statutTraite
               : t.admin.qualite.statutOuvert,
           rendu: (BuildContext _, AnomalieQualite a) => StatusPill(
@@ -250,7 +255,9 @@ class _GroupeAnomalies extends StatelessWidget {
 String _depuis(int jours) => switch (jours) {
   <= 0 => t.admin.qualite.depuisAujourdhui,
   1 => t.admin.qualite.depuisUnJour,
-  final int j => t.admin.qualite.depuisJours(jours: '$j'),
+  final int j => LibellesGroupe.valeurSeule(
+    t.admin.qualite.depuisJours(jours: j),
+  ),
 };
 
 String _message(Object erreur) {
@@ -306,12 +313,15 @@ class _FeuilleTraitementEtat extends State<_FeuilleTraitement> {
       _erreur = null;
     });
     try {
-      await widget.onEnvoyer(_note.text.trim().isEmpty ? null : _note.text.trim());
+      await widget.onEnvoyer(
+        _note.text.trim().isEmpty ? null : _note.text.trim(),
+      );
       widget.onSucces();
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
       setState(
-        () => _erreur = t.admin.qualite.traiterErreur(message: _message(erreur)),
+        () =>
+            _erreur = t.admin.qualite.traiterErreur(message: _message(erreur)),
       );
     } finally {
       if (mounted) setState(() => _envoi = false);
@@ -323,14 +333,17 @@ class _FeuilleTraitementEtat extends State<_FeuilleTraitement> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        TextField(
-          controller: _note,
-          maxLines: 2,
-          decoration: InputDecoration(labelText: t.admin.qualite.champNote),
+        ZoneSaisie(
+          controleur: _note,
+          minLignes: 2,
+          libelle: t.admin.qualite.champNote,
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
-          Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            _erreur!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ],
         Ecart.vLg,
         ActionPrincipale(

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/offre_horaire.dart';
 
@@ -241,8 +242,8 @@ String titreEtape(EtapeParcours etape) => switch (etape) {
   EtapeParcours.offreIndisponible => t.parcours.etatOffreIndisponible,
   EtapeParcours.diagnosticRequis => t.parcours.etatDiagnosticRequis,
   EtapeParcours.diagnosticEnAttente => t.parcours.etatDiagnosticEnAttente,
-  EtapeParcours.groupeEnFormation => t.parcours.etatGroupeEnFormation,
-  EtapeParcours.groupeConfirme => t.parcours.etatGroupeConfirme,
+  EtapeParcours.groupeEnFormation => t.parcours.etatClasseEnFormation,
+  EtapeParcours.groupeConfirme => t.parcours.etatClasseConfirmee,
 };
 
 /// Le detail de l'etat d'un apprenant.
@@ -254,7 +255,7 @@ String titreEtape(EtapeParcours etape) => switch (etape) {
 String detailEtape(
   EtapeParcours etape, {
   required String prenom,
-  required int minimumLancement,
+  required int? minimumLancement,
 }) => switch (etape) {
   EtapeParcours.aPersonnaliser => t.parcours.etatAPersonnaliserDetail(
     prenom: prenom,
@@ -266,17 +267,20 @@ String detailEtape(
     prenom: prenom,
   ),
   EtapeParcours.diagnosticRequis => t.parcours.etatDiagnosticRequisDetail(
-    prenom: prenom,
+    dePrenom: deDevant(prenom),
   ),
   EtapeParcours.diagnosticEnAttente => t.parcours.etatDiagnosticEnAttenteDetail(
-    prenom: prenom,
+    dePrenom: deDevant(prenom),
   ),
   // Le minimum vient d'`app_config` par `regles_academie()`, jamais d'une
-  // constante ecrite ici : il change par decision d'exploitation.
-  EtapeParcours.groupeEnFormation => t.parcours.etatGroupeEnFormationDetail(
-    minimum: minimumLancement,
-  ),
-  EtapeParcours.groupeConfirme => t.parcours.etatGroupeConfirmeDetail(
-    prenom: prenom,
+  // constante ecrite ici : il change par decision d'exploitation. Tant que
+  // la regle n'est pas encore chargee, ne rien affirmer sur un chiffre
+  // (LA-F, constat honnetete : 0 serait une information fausse).
+  EtapeParcours.groupeEnFormation =>
+    minimumLancement == null
+        ? t.parcours.etatClasseEnFormationDetailSansMinimum
+        : t.parcours.etatClasseEnFormationDetail(minimum: minimumLancement),
+  EtapeParcours.groupeConfirme => t.parcours.etatClasseConfirmeeDetail(
+    dePrenom: deDevant(prenom),
   ),
 };

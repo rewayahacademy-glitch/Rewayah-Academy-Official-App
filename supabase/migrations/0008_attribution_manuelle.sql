@@ -1,8 +1,8 @@
 -- 0008 : `ADM-05`, l'attribution manuelle.
 --
--- Perimetre fixe par docs/design/08-catalogue-ecrans.md (ligne `ADM-05`,
+-- Perimetre fixe par docs/archive/2026-09-pre-remise-a-plat/design/08-catalogue-ecrans.md (ligne `ADM-05`,
 -- « Deux listes empilees / Deux listes cote a cote ») et par
--- docs/produit/parcours-utilisateurs.md section 5 (« Ecran de secours quand le
+-- docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md section 5 (« Ecran de secours quand le
 -- matching inverse ne produit rien. Liste des foyers en attente, liste des
 -- enseignants disponibles, attribution en deux taps »).
 --

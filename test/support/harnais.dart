@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +15,7 @@ import 'package:rewayah_academy/core/appairage/service_enfant.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/cache/secure/stockage_securise.dart';
 import 'package:rewayah_academy/core/cache/sync/file_rapports.dart';
+import 'package:rewayah_academy/core/capacites/port_consentements.dart';
 import 'package:rewayah_academy/core/controle/service_controle.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
@@ -30,8 +32,10 @@ import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/priere/reglages_priere.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
+import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
 import 'package:rewayah_academy/core/suivi/service_suivi.dart';
@@ -39,6 +43,8 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+
+import 'sens_et_echelle.dart';
 
 /// L'hote minimal d'un ecran sous test.
 ///
@@ -59,22 +65,38 @@ Widget hote(
   ),
 );
 
+/// Un appareil sans personne connectee, pour un ecran monte seul : les
+/// lectures d'argent suivent la personne de la session (revue FI-VAGUE-R
+/// R7-04), et la source reelle lirait Supabase. La session reste « sans
+/// profil » du debut a la fin : aucune relecture parasite.
+Override sansPersonneConnectee() =>
+    sourceSessionProvider.overrideWithValue(FausseSourceSession());
+
 /// L'hote d'un ecran qui navigue.
 ///
 /// Certains ecrans de l'etape 3 se terminent par un `go` vers le portail : sans
 /// routeur, ils echouent au moment ou l'on teste justement ce qu'ils font de
 /// reussi. Le routeur du test reste minimal, il ne rejoue pas celui de
 /// l'application.
+///
+/// [themeMode], [direction] et [echelle] servent aux captures (sombre, RTL,
+/// texte x2 ; EA-HL-DOUBLE-1d) ; par defaut, l'arbre reste celui d'avant.
 Widget hoteRoutant({
   required String depart,
   required List<RouteBase> routes,
   List<Override> surcharges = const <Override>[],
   InterfaceMode mode = InterfaceMode.standard,
+  ThemeMode themeMode = ThemeMode.light,
+  TextDirection? direction,
+  double echelle = 1,
 }) => ProviderScope(
   overrides: surcharges,
   child: TranslationProvider(
     child: MaterialApp.router(
       theme: AppTheme.pour(mode, Brightness.light),
+      darkTheme: AppTheme.pour(mode, Brightness.dark),
+      themeMode: themeMode,
+      builder: sensEtEchelle(direction: direction, echelle: echelle),
       routerConfig: GoRouter(initialLocation: depart, routes: routes),
     ),
   ),
@@ -92,8 +114,15 @@ class FauxServiceDossier implements ServiceDossier {
   final List<({AppRole role, String prenom, String nom, Genre? genre})>
   profilsCrees = <({AppRole role, String prenom, String nom, Genre? genre})>[];
 
+  /// Vrai pour simuler le service de la demonstration.
+  @override
+  bool demonstration = false;
+
   /// Les contrats acceptes.
   final List<SorteContrat> contratsAcceptes = <SorteContrat>[];
+
+  /// Les versions acceptees, dans le meme ordre que [contratsAcceptes].
+  final List<String> versionsAcceptees = <String>[];
 
   /// Les pieces deposees.
   final List<PieceAEnvoyer> depots = <PieceAEnvoyer>[];
@@ -131,6 +160,7 @@ class FauxServiceDossier implements ServiceDossier {
   Future<void> accepterContrat(SorteContrat sorte, String version) async {
     _peutEchouer();
     contratsAcceptes.add(sorte);
+    versionsAcceptees.add(version);
   }
 
   @override
@@ -403,9 +433,22 @@ class FauxServiceValidation implements ServiceValidation {
     return file;
   }
 
+  /// Les cles signees, dans l'ordre (AD-7).
+  final List<String> apercus = <String>[];
+
+  /// Ce que la signature doit jeter (AD-7 : StorageException 404...).
+  Object? erreurApercu;
+
   @override
-  Future<String> apercu(String cleObjet) async =>
-      'https://exemple.test/$cleObjet';
+  Future<String> apercu(String cleObjet) async {
+    apercus.add(cleObjet);
+    final Object? erreur = erreurApercu;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    return 'https://exemple.test/$cleObjet';
+  }
 
   @override
   Future<void> decider({
@@ -614,7 +657,9 @@ class FauxServiceAttribution implements ServiceAttribution {
     ({String eleveId, String enseignantId, Creneau creneau, String? motif})
   >
   attributions =
-      <({String eleveId, String enseignantId, Creneau creneau, String? motif})>[];
+      <
+        ({String eleveId, String enseignantId, Creneau creneau, String? motif})
+      >[];
 
   /// Ce que la lecture de la file doit jeter.
   Object? erreurFoyers;
@@ -709,7 +754,14 @@ class FauxServiceJournal implements ServiceJournal {
     ({String? acteur, String? type, DateTime? depuis, CurseurJournal? curseur})
   >
   lectures =
-      <({String? acteur, String? type, DateTime? depuis, CurseurJournal? curseur})>[];
+      <
+        ({
+          String? acteur,
+          String? type,
+          DateTime? depuis,
+          CurseurJournal? curseur,
+        })
+      >[];
 
   /// Ce que la lecture doit jeter.
   Object? erreurEntrees;
@@ -753,7 +805,9 @@ class FauxServiceJournal implements ServiceJournal {
       );
     }
     if (depuis != null) {
-      retenues = retenues.where((EntreeJournal e) => !e.survenuLe.isBefore(depuis));
+      retenues = retenues.where(
+        (EntreeJournal e) => !e.survenuLe.isBefore(depuis),
+      );
     }
     if (curseur != null) {
       // Le meme keyset que la base : strictement avant le couple donne.
@@ -933,10 +987,7 @@ class FauxStockageSecurise implements StockageSecurise {
   Future<String?> jetonAppareil(String profilId) async => jetons[profilId];
 
   @override
-  Future<void> enregistrerJetonAppareil(
-    String profilId,
-    String jeton,
-  ) async {
+  Future<void> enregistrerJetonAppareil(String profilId, String jeton) async {
     jetons[profilId] = jeton;
   }
 
@@ -946,8 +997,7 @@ class FauxStockageSecurise implements StockageSecurise {
   }
 
   @override
-  Future<String?> empreintePin(String profilId) async =>
-      empreintes[profilId];
+  Future<String?> empreintePin(String profilId) async => empreintes[profilId];
 
   @override
   Future<void> enregistrerEmpreintePin(
@@ -1428,7 +1478,7 @@ class FauxServiceSuivi implements ServiceSuivi {
 ///
 /// **Aucun agent metier ne modifie ce faux.** Un besoin non couvert se demande
 /// par `CONTRACT_REQUEST_<AGENT>.md`
-/// (`docs/architecture/TEACHER_FILE_OWNERSHIP.md`).
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/TEACHER_FILE_OWNERSHIP.md`).
 class FauxServiceEnseignant implements ServiceEnseignant {
   /// Les seances rendues.
   List<SeanceEnseignant> seancesRendues = const <SeanceEnseignant>[];
@@ -1553,13 +1603,13 @@ class FauxDepotRapports implements DepotRapports {
   Object? erreurAJeter;
 
   /// Les cles presentes, du plus ancien au plus recent.
-  List<String> get cles => (_lignes.values.toList()
-        ..sort(
-          (RapportEnAttente a, RapportEnAttente b) =>
-              a.redigeA.compareTo(b.redigeA),
-        ))
-      .map((RapportEnAttente r) => r.cleIdempotence)
-      .toList(growable: false);
+  List<String> get cles =>
+      (_lignes.values.toList()..sort(
+            (RapportEnAttente a, RapportEnAttente b) =>
+                a.redigeA.compareTo(b.redigeA),
+          ))
+          .map((RapportEnAttente r) => r.cleIdempotence)
+          .toList(growable: false);
 
   @override
   Future<List<RapportEnAttente>> enAttente() async =>
@@ -1617,6 +1667,52 @@ SeanceEnseignant seanceDeTest({
   minutesInterruption: minutesInterruption,
 );
 
+/// Un port de consentements en memoire (contrat K6).
+class FauxPortConsentements implements PortConsentements {
+  /// Ce que [signees] renvoie.
+  List<Acceptation> signeesRendues = <Acceptation>[];
+
+  /// Ce que [aRenouveler] renvoie.
+  List<ConsentementRequis> aRenouvelerRendu = <ConsentementRequis>[];
+
+  /// Ce que la prochaine lecture ou ecriture doit jeter.
+  Object? erreurAJeter;
+
+  /// Les acceptations enregistrees par [accepter].
+  final List<({SorteContrat sorte, String version})> accepteEnregistre =
+      <({SorteContrat sorte, String version})>[];
+
+  @override
+  Future<List<Acceptation>> signees() async {
+    if (erreurAJeter case final Object e) {
+      // ignore: only_throw_errors
+      throw e;
+    }
+    return signeesRendues;
+  }
+
+  @override
+  Future<List<ConsentementRequis>> aRenouveler() async {
+    if (erreurAJeter case final Object e) {
+      // ignore: only_throw_errors
+      throw e;
+    }
+    return aRenouvelerRendu;
+  }
+
+  @override
+  Future<void> accepter({
+    required SorteContrat sorte,
+    required String version,
+  }) async {
+    if (erreurAJeter case final Object e) {
+      // ignore: only_throw_errors
+      throw e;
+    }
+    accepteEnregistre.add((sorte: sorte, version: version));
+  }
+}
+
 /// Un eleve pret a l'emploi dans un test.
 MembreSeance membreDeTest({
   String studentId = 'e1',
@@ -1631,3 +1727,13 @@ MembreSeance membreDeTest({
   niveau: niveau,
   riwaya: riwaya,
 );
+
+/// Une image PNG synthetique de 1 x 1 (transparente) : jamais une vraie piece.
+final Uint8List pngSynthetique = Uint8List.fromList(<int>[
+  0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, //
+  0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, //
+  0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4, 0x89, 0x00, 0x00, 0x00, //
+  0x0A, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00, //
+  0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, //
+  0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82,
+]);

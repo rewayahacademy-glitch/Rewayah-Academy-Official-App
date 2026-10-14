@@ -24,7 +24,7 @@ class AppIcon {
 /// **C'est le seul fichier du depot autorise a construire un [IconData].** Une
 /// seule librairie d'icones dans tout le projet, pas de melange Material,
 /// Font Awesome ou autre, et zero emoji
-/// (`docs/produit/design-tokens.md` section 3).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 3).
 /// `tool/verifier_jetons.dart` echoue si un autre fichier de `lib/` en
 /// construit un.
 ///
@@ -79,6 +79,31 @@ abstract final class AppIcons {
   static const AppIcon reglages = AppIcon._(
     IconData(0xe272, fontFamily: _repos),
     IconData(0xe272, fontFamily: _actif),
+  );
+
+  /// Historique du tuteur (seances et observations passees) : Phosphor
+  /// `clock-counter-clockwise` (0xe1a0, releve dans `phosphor_flutter` 2.1.0,
+  /// `phosphor_icons_regular.dart` et `phosphor_icons_fill.dart` ; present
+  /// dans les tables `cmap` des deux polices embarquees, verifie le 24/09).
+  /// Une horloge ne se miroite pas en arabe (`06-accessibilite.md` section 5).
+  static const AppIcon historique = AppIcon._(
+    IconData(0xe1a0, fontFamily: _repos),
+    IconData(0xe1a0, fontFamily: _actif),
+  );
+
+  /// Replier la navigation laterale : Phosphor `caret-double-left` (0xe128,
+  /// meme releve). Directionnelle : en arabe, la barre est a droite et se
+  /// replie vers la droite.
+  static const AppIcon replierNavigation = AppIcon._(
+    IconData(0xe128, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xe128, fontFamily: _actif, matchTextDirection: true),
+  );
+
+  /// Deplier la navigation laterale : Phosphor `caret-double-right` (0xe12a,
+  /// meme releve), miroitee comme [replierNavigation].
+  static const AppIcon deplierNavigation = AppIcon._(
+    IconData(0xe12a, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xe12a, fontFamily: _actif, matchTextDirection: true),
   );
 
   // --- Navigation, enseignant --------------------------------------------
@@ -210,6 +235,36 @@ abstract final class AppIcons {
     IconData(0xe42a, fontFamily: _actif),
   );
 
+  /// Quitter la seance, dans le dock : le combine raccroche (phone-disconnect).
+  static const AppIcon raccrocher = AppIcon._(
+    IconData(0xe3bc, fontFamily: _repos),
+    IconData(0xe3bc, fontFamily: _actif),
+  );
+
+  /// Agrandir le support en plein ecran (corners-out).
+  static const AppIcon agrandir = AppIcon._(
+    IconData(0xe1d0, fontFamily: _repos),
+    IconData(0xe1d0, fontFamily: _actif),
+  );
+
+  /// Reduire le support agrandi (corners-in), pendant d'[agrandir].
+  static const AppIcon reduire = AppIcon._(
+    IconData(0xe1ce, fontFamily: _repos),
+    IconData(0xe1ce, fontFamily: _actif),
+  );
+
+  /// Zoom local : agrandir (magnifying-glass-plus).
+  static const AppIcon zoomPlus = AppIcon._(
+    IconData(0xe310, fontFamily: _repos),
+    IconData(0xe310, fontFamily: _actif),
+  );
+
+  /// Zoom local : reduire (magnifying-glass-minus).
+  static const AppIcon zoomMoins = AppIcon._(
+    IconData(0xe30e, fontFamily: _repos),
+    IconData(0xe30e, fontFamily: _actif),
+  );
+
   /// Le bandeau permanent de la salle : cours enregistre, controle possible.
   static const AppIcon controleQualite = AppIcon._(
     IconData(0xe40c, fontFamily: _repos),
@@ -313,10 +368,105 @@ abstract final class AppIcons {
     IconData(0xe3d4, fontFamily: _actif),
   );
 
+  /// Reduction du zoom : Phosphor `minus` (0xe32a, releve dans
+  /// `phosphor_flutter` 2.1.0), pendant d'[ajouter]. Distinct de [reduire]
+  /// (corners-in, support agrandi de la salle).
+  static const AppIcon moins = AppIcon._(
+    IconData(0xe32a, fontFamily: _repos),
+    IconData(0xe32a, fontFamily: _actif),
+  );
+
+  /// Ajustement a l'ecran : Phosphor `corners-in` (0xe1ce, releve dans
+  /// `phosphor_flutter` 2.1.0).
+  static const AppIcon ajusterEcran = AppIcon._(
+    IconData(0xe1ce, fontFamily: _repos),
+    IconData(0xe1ce, fontFamily: _actif),
+  );
+
   /// Progression vers l'element suivant.
   static const AppIcon suivant = AppIcon._(
     IconData(0xe13a, fontFamily: _repos),
     IconData(0xe13a, fontFamily: _actif),
+  );
+
+  /// La fleche du CTA dominant et des liens « Voir tout » : Phosphor
+  /// `arrow-right` (0xe06c, point de code releve dans `phosphor_flutter`
+  /// 2.1.0, dont les deux polices embarquees sont des copies a l'octet pres).
+  ///
+  /// Elle porte `matchTextDirection` : c'est une direction de lecture (« aller
+  /// vers »), elle pointe a gauche en arabe.
+  static const AppIcon flecheAction = AppIcon._(
+    IconData(0xe06c, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xe06c, fontFamily: _actif, matchTextDirection: true),
+  );
+
+  /// Theme clair de la bascule soleil / lune de l'en-tete : Phosphor `sun`
+  /// (0xe472, releve dans `phosphor_flutter` 2.1.0 comme [flecheAction]).
+  static const AppIcon themeClair = AppIcon._(
+    IconData(0xe472, fontFamily: _repos),
+    IconData(0xe472, fontFamily: _actif),
+  );
+
+  /// Theme sombre de la meme bascule : Phosphor `moon` (0xe330).
+  static const AppIcon themeSombre = AppIcon._(
+    IconData(0xe330, fontFamily: _repos),
+    IconData(0xe330, fontFamily: _actif),
+  );
+
+  /// Le retour de l'en-tete de page (disque de 48) : Phosphor `arrow-left`
+  /// (0xe058, releve dans `phosphor_flutter` 2.1.0,
+  /// `phosphor_icons_regular.dart` et `phosphor_icons_fill.dart`).
+  ///
+  /// Elle porte `matchTextDirection` : revenir, c'est aller vers le debut de
+  /// la lecture, donc a droite en arabe.
+  static const AppIcon retour = AppIcon._(
+    IconData(0xe058, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xe058, fontFamily: _actif, matchTextDirection: true),
+  );
+
+  // --- Etats systeme (contrat K5) ------------------------------------------
+  //
+  // Points de code releves dans `phosphor_flutter` 2.1.0
+  // (`phosphor_icons_regular.dart`), jamais devines ; leur presence dans les
+  // deux polices embarquees est verifiee par test (`test/icons/`).
+
+  /// Chargement prolonge, dossier en attente : Phosphor `hourglass-medium`
+  /// (0xe2b8).
+  static const AppIcon attente = AppIcon._(
+    IconData(0xe2b8, fontFamily: _repos),
+    IconData(0xe2b8, fontFamily: _actif),
+  );
+
+  /// Reconnexion en cours : Phosphor `arrows-clockwise` (0xe094). Une
+  /// rotation, pas une direction de lecture : elle ne se miroite pas.
+  static const AppIcon reconnexion = AppIcon._(
+    IconData(0xe094, fontFamily: _repos),
+    IconData(0xe094, fontFamily: _actif),
+  );
+
+  /// Acces refuse : Phosphor `lock` (0xe2fa).
+  static const AppIcon verrou = AppIcon._(
+    IconData(0xe2fa, fontFamily: _repos),
+    IconData(0xe2fa, fontFamily: _actif),
+  );
+
+  /// Session expiree, se reconnecter : Phosphor `sign-in` (0xe428).
+  static const AppIcon seReconnecter = AppIcon._(
+    IconData(0xe428, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xe428, fontFamily: _actif, matchTextDirection: true),
+  );
+
+  /// Autorisation refusee (camera, notifications) : Phosphor `prohibit`
+  /// (0xe3de).
+  static const AppIcon interdit = AppIcon._(
+    IconData(0xe3de, fontFamily: _repos),
+    IconData(0xe3de, fontFamily: _actif),
+  );
+
+  /// Ressource retiree ou expiree : Phosphor `file-x` (0xe23c).
+  static const AppIcon ressourceRetiree = AppIcon._(
+    IconData(0xe23c, fontFamily: _repos),
+    IconData(0xe23c, fontFamily: _actif),
   );
 
   /// Le chevron d'une ligne qui mene ailleurs : `SignalRow`, `ChildCard`,
@@ -325,7 +475,7 @@ abstract final class AppIcons {
   /// **Meme glyphe que [suivant], et pourtant une entree separee** : celle-ci
   /// porte `matchTextDirection`, donc elle se miroite en arabe, alors que
   /// [suivant] designe la progression du temps, qui ne se miroite pas
-  /// (`docs/design/06-accessibilite.md` section 5). Les deux ne peuvent donc
+  /// (`docs/archive/2026-09-pre-remise-a-plat/design/06-accessibilite.md` section 5). Les deux ne peuvent donc
   /// pas etre la meme icone, malgre le meme dessin.
   static const AppIcon chevron = AppIcon._(
     IconData(0xe13a, fontFamily: _repos, matchTextDirection: true),
@@ -339,7 +489,7 @@ abstract final class AppIcons {
   /// et rend la main sur place. Et [chevron] porte `matchTextDirection`, donc
   /// en arabe il finirait par pointer a gauche : une direction cardinale
   /// fausse pour un menu, qui ne s'ouvre pas plus a gauche qu'a droite. Le bas
-  /// ne se miroite pas (`docs/design/06-accessibilite.md` section 5).
+  /// ne se miroite pas (`docs/archive/2026-09-pre-remise-a-plat/design/06-accessibilite.md` section 5).
   static const AppIcon menuDeroulant = AppIcon._(
     IconData(0xe136, fontFamily: _repos),
     IconData(0xe136, fontFamily: _actif),
@@ -438,6 +588,115 @@ abstract final class AppIcons {
     IconData(0xe29a, fontFamily: _actif),
   );
 
+  // --- Salle de seance, enseignant (CLV-06, vague Classe) -----------------
+  // Points de code verifies sur une planche rendue de la police embarquee.
+
+  /// Outil Pointeur de la salle : Phosphor `cursor` (0xe1dc).
+  static const AppIcon curseur = AppIcon._(
+    IconData(0xe1dc, fontFamily: _repos),
+    IconData(0xe1dc, fontFamily: _actif),
+  );
+
+  /// Outil Marquer de la salle : Phosphor `pencil-simple` (0xe3b4).
+  static const AppIcon crayon = AppIcon._(
+    IconData(0xe3b4, fontFamily: _repos),
+    IconData(0xe3b4, fontFamily: _actif),
+  );
+
+  /// Outil Masquer de la salle : Phosphor `eye` (0xe220).
+  static const AppIcon oeil = AppIcon._(
+    IconData(0xe220, fontFamily: _repos),
+    IconData(0xe220, fontFamily: _actif),
+  );
+
+  /// Outil Annoter de la salle : Phosphor `note-pencil` (0xe34c), un carre
+  /// et un crayon (images CLV-06), distinct du crayon seul de Marquer.
+  static const AppIcon annoter = AppIcon._(
+    IconData(0xe34c, fontFamily: _repos),
+    IconData(0xe34c, fontFamily: _actif),
+  );
+
+  /// Reseau (dock enseignant) : Phosphor `wifi-high` (0xe4ea).
+  static const AppIcon reseau = AppIcon._(
+    IconData(0xe4ea, fontFamily: _repos),
+    IconData(0xe4ea, fontFamily: _actif),
+  );
+
+  /// Bouton Eleves de la salle : Phosphor `users-three` (0xe68e).
+  static const AppIcon eleves = AppIcon._(
+    IconData(0xe68e, fontFamily: _repos),
+    IconData(0xe68e, fontFamily: _actif),
+  );
+
+  /// Bouton Supports de la salle : Phosphor `file-text` (0xe23a).
+  static const AppIcon supports = AppIcon._(
+    IconData(0xe23a, fontFamily: _repos),
+    IconData(0xe23a, fontFamily: _actif),
+  );
+
+  /// Rail enseignant : Classes, Phosphor `graduation-cap` (0xe62c).
+  static const AppIcon classes = AppIcon._(
+    IconData(0xe62c, fontFamily: _repos),
+    IconData(0xe62c, fontFamily: _actif),
+  );
+
+  /// Rail enseignant : Ressources et marque, Phosphor `book-open` (0xe0e6).
+  static const AppIcon livreOuvert = AppIcon._(
+    IconData(0xe0e6, fontFamily: _repos),
+    IconData(0xe0e6, fontFamily: _actif),
+  );
+
+  /// Fermer un panneau de la salle : Phosphor `x` (0xe4f6).
+  static const AppIcon fermer = AppIcon._(
+    IconData(0xe4f6, fontFamily: _repos),
+    IconData(0xe4f6, fontFamily: _actif),
+  );
+
+  /// Panneau Eleves (CLV-07) : Rappeler, Phosphor `phone` (0xe3b8).
+  static const AppIcon rappeler = AppIcon._(
+    IconData(0xe3b8, fontFamily: _repos),
+    IconData(0xe3b8, fontFamily: _actif),
+  );
+
+  /// Panneau Eleves (CLV-07) : Choisir pour reciter, Phosphor `play`
+  /// (0xe3d0). Le triangle ne se miroite pas : il dit « lancer ».
+  static const AppIcon reciter = AppIcon._(
+    IconData(0xe3d0, fontFamily: _repos),
+    IconData(0xe3d0, fontFamily: _actif),
+  );
+
+  /// Panneau Eleves (CLV-07) : Noter, Phosphor `file-text` (0xe23a).
+  static const AppIcon noter = AppIcon._(
+    IconData(0xe23a, fontFamily: _repos),
+    IconData(0xe23a, fontFamily: _actif),
+  );
+
+  /// Panneau Eleves (CLV-07) : Signaler un besoin, Phosphor `flag` (0xe244).
+  static const AppIcon signaler = AppIcon._(
+    IconData(0xe244, fontFamily: _repos),
+    IconData(0xe244, fontFamily: _actif),
+  );
+
+  /// Panneau Eleves (CLV-07) : fiche depliee, Phosphor `caret-up` (0xe13c).
+  /// Direction cardinale : ne se miroite pas.
+  static const AppIcon replier = AppIcon._(
+    IconData(0xe13c, fontFamily: _repos),
+    IconData(0xe13c, fontFamily: _actif),
+  );
+
+  /// Volet Eleves (CLV-07, web etroit) : la liste continue plus bas, Phosphor
+  /// `caret-down` (0xe136). Direction cardinale : ne se miroite pas.
+  static const AppIcon suiteEnBas = AppIcon._(
+    IconData(0xe136, fontFamily: _repos),
+    IconData(0xe136, fontFamily: _actif),
+  );
+
+  /// Rail enseignant : Journee, Phosphor `house` (0xe2c2).
+  static const AppIcon maison = AppIcon._(
+    IconData(0xe2c2, fontFamily: _repos),
+    IconData(0xe2c2, fontFamily: _actif),
+  );
+
   /// Teaching Dock (D) : annuler le dernier trait. Remplace [reaffectation].
   static const AppIcon annuler = AppIcon._(
     IconData(0xe038, fontFamily: _repos),
@@ -478,6 +737,13 @@ abstract final class AppIcons {
     IconData(0xe6ec, fontFamily: _actif),
   );
 
+  /// Couleur d'un profil (`ph-palette`) : la ligne « Couleur du profil » de
+  /// la fiche eleve (K-62, FI-2).
+  static const AppIcon palette = AppIcon._(
+    IconData(0xe6c8, fontFamily: _repos),
+    IconData(0xe6c8, fontFamily: _actif),
+  );
+
   /// Observation (G) : politique personnalisee par groupe. Remplace [foyer].
   static const AppIcon personnalisationGroupe = AppIcon._(
     IconData(0xe434, fontFamily: _repos),
@@ -489,5 +755,276 @@ abstract final class AppIcons {
   static const AppIcon observationFermee = AppIcon._(
     IconData(0xe222, fontFamily: _repos),
     IconData(0xe222, fontFamily: _actif),
+  );
+
+  /// Observation (G) : **un tuteur observe en ce moment**, oeil ouvert.
+  ///
+  /// L'indicateur de l'enseignant et celui de l'enfant observe portaient
+  /// jusqu'ici [foyer], un pictogramme de maison : il disait « famille », pas
+  /// « quelqu'un regarde ». La regle de visibilite du 21/09 demande un oeil.
+  ///
+  /// Point de code **releve en sondant la police**, jamais devine
+  /// (`docs/HANDOFF.md` section 15.4 : la police embarquee n'a pas de noms de
+  /// glyphes, sa table `post` est en version 3.0). La lecture est corroboree
+  /// par ses deux voisins immediats, deja au catalogue et deja nommes :
+  /// `0xe222` rend l'oeil ferme ([observationFermee]) et `0xe224` l'oeil barre
+  /// ([masquer]). Les trois se lisent donc comme une famille, et le glyphe est
+  /// present dans les DEUX graisses embarquees.
+  static const AppIcon observationEnCours = AppIcon._(
+    IconData(0xe220, fontFamily: _repos),
+    IconData(0xe220, fontFamily: _actif),
+  );
+
+  // --- Genre et horloge (demande du directeur, 25/09) ---------------------
+  //
+  // Points de code **lus dans la police embarquee** : la table `post` n'a pas
+  // de noms, mais la table GSUB porte les ligatures Phosphor (suite de
+  // lettres vers glyphe). Les noms ci-dessous sont ces ligatures, relues sur
+  // `assets/fonts/Phosphor-Regular.ttf` le 25/09/2026 ; chaque point de code
+  // est present dans les DEUX graisses. Phosphor n'a ni `woman`, ni `girl`,
+  // ni `lady`, ni `user-female` : le symbole de genre est ce qu'il offre.
+
+  /// Genre : femme. Phosphor `gender-female` (0xe6e0).
+  static const AppIcon femme = AppIcon._(
+    IconData(0xe6e0, fontFamily: _repos),
+    IconData(0xe6e0, fontFamily: _actif),
+  );
+
+  /// Genre : homme. Phosphor `gender-male` (0xe6e2).
+  static const AppIcon homme = AppIcon._(
+    IconData(0xe6e2, fontFamily: _repos),
+    IconData(0xe6e2, fontFamily: _actif),
+  );
+
+  /// Heure, duree ecoulee : Phosphor `clock` (0xe19a). Fin de visite
+  /// d'observation (maquette M5), a la place du sablier [attente].
+  static const AppIcon horloge = AppIcon._(
+    IconData(0xe19a, fontFamily: _repos),
+    IconData(0xe19a, fontFamily: _actif),
+  );
+
+  /// Discussion, fil de messages : Phosphor `chats-circle` (0xe17e, releve
+  /// dans les ligatures de la police embarquee). Destination Echanges du
+  /// controleur (CTR-04, CT-6).
+  static const AppIcon discussion = AppIcon._(
+    IconData(0xe17e, fontFamily: _repos),
+    IconData(0xe17e, fontFamily: _actif),
+  );
+
+  /// Envoyer un message : Phosphor `paper-plane-right` (0xe396, releve dans
+  /// les ligatures de la police embarquee). Bouton d'envoi du fil (CT-6).
+  static const AppIcon envoyerMessage = AppIcon._(
+    IconData(0xe396, fontFamily: _repos),
+    IconData(0xe396, fontFamily: _actif),
+  );
+
+  /// Information, aide : Phosphor `info` (0xe2ce, releve dans
+  /// `@phosphor-icons/web` 2.1.1). Devant « Comment ca marche ? » de la
+  /// classe (maquette M1, revue C m4).
+  static const AppIcon info = AppIcon._(
+    IconData(0xe2ce, fontFamily: _repos),
+    IconData(0xe2ce, fontFamily: _actif),
+  );
+
+  // --- Communications (COM-F, complements COM-0b, 02_DEC-01) -------------
+  // Posees d'avance par le socle pour les cinq voies, ce fichier etant gele
+  // apres COM-F (02_DECOUPAGE, regle 5) : une icone oubliee devient une ligne
+  // traitee a COM-FUS, jamais une icone detournee. Points de code releves dans
+  // `@phosphor-icons/web` 2.1.1 (`src/regular/style.css`), glyphes compares a
+  // ceux de `assets/fonts` (memes contours, dans les deux graisses).
+  // « Mention » n'est pas posee : son besoin n'est pas prouve (02_DEC-01) ;
+  // le badge dit « Mention » avec [profil].
+
+  /// Piece jointe : l'entree « Joindre un fichier » et la carte d'une piece
+  /// (COM-F, spec section 12).
+  /// Phosphor `paperclip` (0xe39a).
+  static const AppIcon pieceJointe = AppIcon._(
+    IconData(0xe39a, fontFamily: _repos),
+    IconData(0xe39a, fontFamily: _actif),
+  );
+
+  /// Element epingle d'un canal du Studio (COM-STU, « Elements epingles »).
+  /// Phosphor `push-pin` (0xe3e2).
+  static const AppIcon epingle = AppIcon._(
+    IconData(0xe3e2, fontFamily: _repos),
+    IconData(0xe3e2, fontFamily: _actif),
+  );
+
+  /// Lien partage dans un fil ou une publication (COM-MSG, COM-COMU, COM-STU).
+  /// Phosphor `link-simple` (0xe2e6).
+  static const AppIcon lien = AppIcon._(
+    IconData(0xe2e6, fontFamily: _repos),
+    IconData(0xe2e6, fontFamily: _actif),
+  );
+
+  /// Signet : les elements enregistres d'une personne (Studio, « Enregistres »,
+  /// spec section 18). Ajoute par decision du directeur du 05/10 (D-FUS-9,
+  /// choix a), a la place du repli [cahier].
+  /// Phosphor `bookmark-simple` (0xe0ea), ligature verifiee dans les deux
+  /// polices de `assets/fonts`.
+  static const AppIcon signet = AppIcon._(
+    IconData(0xe0ea, fontFamily: _repos),
+    IconData(0xe0ea, fontFamily: _actif),
+  );
+
+  /// Telecharger un fichier partage, par jeton ephemere seulement (COM-BR-04).
+  /// Distinct de [enAttenteEnvoi] (`cloud-arrow-up`), qui dit un envoi.
+  /// Phosphor `download-simple` (0xe20c).
+  static const AppIcon telecharger = AppIcon._(
+    IconData(0xe20c, fontFamily: _repos),
+    IconData(0xe20c, fontFamily: _actif),
+  );
+
+  /// Arreter l'enregistrement d'un message vocal (COM-VOC). Jamais un envoi
+  /// automatique : l'arret mene a la pre-ecoute. Distinct de [pause]
+  /// (`coffee`), qui dit une pause de la journee.
+  /// Phosphor `stop` (0xe46c).
+  static const AppIcon arret = AppIcon._(
+    IconData(0xe46c, fontFamily: _repos),
+    IconData(0xe46c, fontFamily: _actif),
+  );
+
+  /// Annonce de Classe et Administration des communications (COM-ANN,
+  /// COM-W04).
+  /// Phosphor `megaphone` (0xe324).
+  static const AppIcon annonce = AppIcon._(
+    IconData(0xe324, fontFamily: _repos),
+    IconData(0xe324, fontFamily: _actif),
+  );
+
+  /// Le Studio, l'espace de travail de l'equipe interne (Q1, `/admin/studio`).
+  /// Propre au Studio : il n'emprunte plus [discussion], qui reste l'icone des
+  /// Echanges du controleur (revue COM-F-R, M1).
+  /// Phosphor `briefcase` (0xe0ee).
+  static const AppIcon studio = AppIcon._(
+    IconData(0xe0ee, fontFamily: _repos),
+    IconData(0xe0ee, fontFamily: _actif),
+  );
+
+  // --- Etats d'une invitation au forfait famille (EA-PL) -----------------
+  // Une icone par etat, pour le lire sans le texte (demande du directeur,
+  // 02/10). Points de code releves dans `phosphor_flutter` 2.1.0, dont les
+  // polices sont celles de `assets/fonts` (meme empreinte).
+
+  /// Invitation envoyee : Phosphor `paper-plane-tilt` (0xe398).
+  static const AppIcon invitationEnvoyee = AppIcon._(
+    IconData(0xe398, fontFamily: _repos),
+    IconData(0xe398, fontFamily: _actif),
+  );
+
+  /// Invitation acceptee : Phosphor `user-check` (0xeafa).
+  static const AppIcon invitationAcceptee = AppIcon._(
+    IconData(0xeafa, fontFamily: _repos),
+    IconData(0xeafa, fontFamily: _actif),
+  );
+
+  /// Invitation refusee : Phosphor `user-minus` (0xe4ce).
+  static const AppIcon invitationRefusee = AppIcon._(
+    IconData(0xe4ce, fontFamily: _repos),
+    IconData(0xe4ce, fontFamily: _actif),
+  );
+
+  /// Invitation qui n'est plus valable (expiree ou annulee, une seule forme
+  /// cote destinataire) : Phosphor `hourglass` (0xe2b2), distinct du sablier
+  /// d'attente [attente] (`hourglass-medium`).
+  static const AppIcon invitationExpiree = AppIcon._(
+    IconData(0xe2b2, fontFamily: _repos),
+    IconData(0xe2b2, fontFamily: _actif),
+  );
+
+  // --- Comptable V1 (CPT-F, `UX_REVIEW_FINANCE_COMPTABLE_L0.md` §6.1) ------
+  //
+  // Toutes les icones de la vague Comptable, posees d'un coup par CPT-F :
+  // ce fichier est gele ensuite, une voie qui en veut une autre ecrit une
+  // ligne pour CPT-FUS. Aucune icone de marque de prestataire (DR-21). Points
+  // de code releves dans `phosphor_flutter` 2.1.0 (memes polices que
+  // `assets/fonts`), et verifies presents dans les deux graisses embarquees.
+
+  /// Destination Paiements du Comptable (paiements sortants) : Phosphor
+  /// `hand-coins` (0xea8c).
+  static const AppIcon paiements = AppIcon._(
+    IconData(0xea8c, fontFamily: _repos),
+    IconData(0xea8c, fontFamily: _actif),
+  );
+
+  /// Destination Tresorerie et coffre de tresorerie : Phosphor `vault`
+  /// (0xe76e).
+  static const AppIcon coffre = AppIcon._(
+    IconData(0xe76e, fontFamily: _repos),
+    IconData(0xe76e, fontFamily: _actif),
+  );
+
+  /// Reserve strategique (bouclier) : Phosphor `shield-check` (0xe40c).
+  static const AppIcon reserve = AppIcon._(
+    IconData(0xe40c, fontFamily: _repos),
+    IconData(0xe40c, fontFamily: _actif),
+  );
+
+  /// Argent en transit (engage, non confirme) : Phosphor `arrows-left-right`
+  /// (0xe0a0). Un aller-retour, pas une direction de lecture : ne se miroite
+  /// pas.
+  static const AppIcon enTransit = AppIcon._(
+    IconData(0xe0a0, fontFamily: _repos),
+    IconData(0xe0a0, fontFamily: _actif),
+  );
+
+  /// Entree d'argent (encaissement) : Phosphor `arrow-circle-down-left`
+  /// (0xe02a), miroitee en arabe.
+  static const AppIcon entreeArgent = AppIcon._(
+    IconData(0xe02a, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xe02a, fontFamily: _actif, matchTextDirection: true),
+  );
+
+  /// Sortie d'argent (paiement sortant, decaissement) : Phosphor
+  /// `arrow-circle-up-right` (0xe034), miroitee en arabe.
+  static const AppIcon sortieArgent = AppIcon._(
+    IconData(0xe034, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xe034, fontFamily: _actif, matchTextDirection: true),
+  );
+
+  /// Encaissement, recu d'un prestataire : Phosphor `receipt` (0xe3ec).
+  static const AppIcon encaissement = AppIcon._(
+    IconData(0xe3ec, fontFamily: _repos),
+    IconData(0xe3ec, fontFamily: _actif),
+  );
+
+  /// Rapprochement (lien entre un attendu et une transaction) : Phosphor
+  /// `link` (0xe2e2).
+  static const AppIcon rapprochement = AppIcon._(
+    IconData(0xe2e2, fontFamily: _repos),
+    IconData(0xe2e2, fontFamily: _actif),
+  );
+
+  /// Contractuel et obligation de contractuel : Phosphor `briefcase`
+  /// (0xe0ee).
+  static const AppIcon contractuel = AppIcon._(
+    IconData(0xe0ee, fontFamily: _repos),
+    IconData(0xe0ee, fontFamily: _actif),
+  );
+
+  /// Beneficiaire d'un paiement : Phosphor `user` (0xe4c2), distinct du
+  /// groupe [eleves] (`users-three`).
+  static const AppIcon beneficiaire = AppIcon._(
+    IconData(0xe4c2, fontFamily: _repos),
+    IconData(0xe4c2, fontFamily: _actif),
+  );
+
+  /// Echeance datee : Phosphor `calendar` (0xe108).
+  static const AppIcon echeance = AppIcon._(
+    IconData(0xe108, fontFamily: _repos),
+    IconData(0xe108, fontFamily: _actif),
+  );
+
+  /// Ecart signale sur une ligne de calcul (« Signaler un ecart ») : Phosphor
+  /// `warning-circle` (0xe4e2), distinct du triangle [avertissement].
+  static const AppIcon ecartSignale = AppIcon._(
+    IconData(0xe4e2, fontFamily: _repos),
+    IconData(0xe4e2, fontFamily: _actif),
+  );
+
+  /// Suspendre un paiement ou un payout : Phosphor `pause-circle` (0xe3a0).
+  static const AppIcon suspendre = AppIcon._(
+    IconData(0xe3a0, fontFamily: _repos),
+    IconData(0xe3a0, fontFamily: _actif),
   );
 }

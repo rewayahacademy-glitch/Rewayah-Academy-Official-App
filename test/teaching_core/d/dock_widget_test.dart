@@ -15,7 +15,7 @@ import 'package:rewayah_academy/core/tc_outils/port_assignations.dart';
 import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart';
 import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
-import 'package:rewayah_academy/features/tc_dock/bouton_outil.dart';
+import 'package:rewayah_academy/core/widgets/bouton_outil.dart';
 import 'package:rewayah_academy/features/tc_dock/teaching_dock.dart';
 
 import 'faux/faux_dock_hote.dart';
@@ -260,10 +260,11 @@ void main() {
       ]) {
         expect(boutonNomme(libelle), findsOneWidget);
       }
-      // « Stylet » nomme deux boutons : celui du dock qui arme l'outil, et
-      // celui de la barre qui choisit l'encre. Le mot est le bon des deux
-      // cotes, et la barre n'existe que si le premier est arme.
-      expect(boutonNomme(t.tc.outils.trait.stylet), findsNWidgets(2));
+      // Le dock arme l'outil par « Stylet » ; la barre choisit l'encre par
+      // « Stylo » (TB-7b, plan V2 §20). La barre n'existe que si le premier
+      // est arme.
+      expect(boutonNomme(t.tc.outils.dock.stylet), findsOneWidget);
+      expect(boutonNomme(t.tc.outils.trait.stylet), findsOneWidget);
     });
   });
 

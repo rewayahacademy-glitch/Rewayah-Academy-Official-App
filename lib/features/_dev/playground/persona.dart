@@ -233,8 +233,10 @@ List<Persona> personasDuBench({required DateTime maintenant}) => <Persona>[
     ),
   ),
   personne(
-    id: 'famille-incomplet',
-    libelle: 'Famille - dossier incomplet',
+    // AD-NETTOYAGE (n2) : K-47, le tuteur n'a plus de « dossier » ; ce persona
+    // est celui dont les accords ne sont pas encore signes.
+    id: 'famille-accords',
+    libelle: 'Famille - accords a signer',
     graine: Graine(
       session: _sessionTuteur(AccountStatus.pendingKyc),
       etatDossier: const EtatDossier(
@@ -245,37 +247,17 @@ List<Persona> personasDuBench({required DateTime maintenant}) => <Persona>[
     ),
   ),
   personne(
-    id: 'famille-verification',
-    libelle: 'Famille - dossier en verification',
+    // K-47 (HL-A-6) : le tuteur ne depose aucune piece ; accords signes, il
+    // attend seulement l'ouverture de son acces (BR-1). Plus de persona
+    // famille « en verification » ni « piece refusee ».
+    id: 'famille-acces',
+    libelle: 'Famille - acces en preparation',
     graine: Graine(
       session: _sessionTuteur(AccountStatus.pendingKyc),
-      etatDossier: EtatDossier(
+      etatDossier: const EtatDossier(
         profilExiste: true,
         role: AppRole.guardian,
         statutCompte: AccountStatus.pendingKyc,
-        pieceDeposee: true,
-        statutPiece: StatutPiece.enAttente,
-        deposeLe: maintenant.subtract(const Duration(days: 2)),
-        contratSigne: true,
-        accuseSigne: true,
-      ),
-    ),
-  ),
-  personne(
-    id: 'famille-refus',
-    libelle: 'Famille - piece refusee',
-    graine: Graine(
-      session: _sessionTuteur(AccountStatus.pendingKyc),
-      etatDossier: EtatDossier(
-        profilExiste: true,
-        role: AppRole.guardian,
-        statutCompte: AccountStatus.pendingKyc,
-        pieceDeposee: true,
-        statutPiece: StatutPiece.refusee,
-        motifRefus:
-            'La photo est trop sombre pour verifier l\'identite. '
-            'Reprenez-la en plein jour, sans flash ni reflet.',
-        deposeLe: maintenant.subtract(const Duration(days: 5)),
         contratSigne: true,
         accuseSigne: true,
       ),
@@ -288,12 +270,12 @@ List<Persona> personasDuBench({required DateTime maintenant}) => <Persona>[
   ),
   personne(
     id: 'eleve-standard',
-    libelle: 'Eleve (interface standard)',
+    libelle: 'Élève (interface standard)',
     graine: _graineEleve(InterfaceMode.standard, maintenant),
   ),
   personne(
     id: 'eleve-enfant',
-    libelle: 'Eleve (interface enfant)',
+    libelle: 'Élève (Mode Accessibilité)',
     graine: _graineEleve(InterfaceMode.enfant, maintenant),
   ),
   personne(

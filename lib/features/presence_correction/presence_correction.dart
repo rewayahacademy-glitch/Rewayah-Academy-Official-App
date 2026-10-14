@@ -123,7 +123,10 @@ class PresenceCorrectionLibelles {
     required this.succes,
     required this.erreur,
     required this.horsLigne,
-    required this.journalisation,
+    this.journalisation,
+    this.motifsCorrection = const <String>[],
+    this.motifsExcuse = const <String>[],
+    this.motifManquant,
   });
 
   final String titre;
@@ -138,5 +141,18 @@ class PresenceCorrectionLibelles {
   final String succes;
   final String erreur;
   final String horsLigne;
-  final String journalisation;
+
+  /// Le rappel de la trace, affiche seulement s'il est donne. Le cahier de
+  /// l'enseignant n'en donne pas (K-45 : ton jamais punitif).
+  final String? journalisation;
+
+  /// Les motifs proposes en puces pour une correction manuelle (FORM-L1).
+  /// Vide : le champ libre s'affiche seul.
+  final List<String> motifsCorrection;
+
+  /// Les motifs proposes en puces pour une absence excusee (FORM-L1).
+  final List<String> motifsExcuse;
+
+  /// Ce qui s'affiche quand on confirme sans motif ; a defaut, [motifRequis].
+  final String? motifManquant;
 }

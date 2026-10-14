@@ -64,6 +64,7 @@ class CompteAdmin {
     required this.contrats,
     required this.aEnseignant,
     required this.enfantsDuFoyer,
+    this.paysEnseignant,
   });
 
   /// Lit une ligne rendue par `comptes_admin()`.
@@ -89,6 +90,8 @@ class CompteAdmin {
       contrats: entier('contrats'),
       aEnseignant: json['a_enseignant'] as bool? ?? false,
       enfantsDuFoyer: entier('enfants_du_foyer'),
+      // ENS-PAYS-1 : lu des que `comptes_admin()` le rend (BR-1), nul avant.
+      paysEnseignant: json['teacher_country'] as String?,
     );
   }
 
@@ -104,6 +107,11 @@ class CompteAdmin {
 
   /// Le nom de famille. Nul dans les memes conditions que le prenom.
   final String? nom;
+
+  /// Le pays declare, pour un compte enseignant seulement (ENS-PAYS-1). Nul
+  /// pour les autres roles, quand rien n'est declare, sous masquage, ou tant
+  /// que le serveur ne le rend pas (BR-1).
+  final String? paysEnseignant;
 
   /// Le role du compte.
   final AppRole? role;
@@ -145,7 +153,23 @@ class CompteAdmin {
   }
 
   /// Vrai quand ce compte attend une decision de l'administration.
-  bool get attendUneDecision => etat == AccountStatus.pendingKyc;
+  ///
+  /// Seul un enseignant en attente attend une decision (K-47) : la
+  /// verification d'identite et la validation ne concernent que lui. Un tuteur
+  /// `pending_kyc` ne depose rien et n'attend aucune validation.
+  bool get attendUneDecision =>
+      etat == AccountStatus.pendingKyc && role == AppRole.teacher;
+
+  /// Vrai quand l'acces provisoire est echu : la meme definition que le
+  /// compteur « Acces echus » du Centre de commande (compte provisoire dont
+  /// la date de fin d'acces est passee), lue sur les memes colonnes
+  /// (DASH-ADM-ECHUS).
+  bool accesEchu(DateTime maintenant) {
+    final DateTime? fin = accesJusquAu;
+    return etat == AccountStatus.provisionalActive &&
+        fin != null &&
+        fin.isBefore(maintenant);
+  }
 
   /// Depuis combien de jours ce compte attend, en jours pleins.
   int joursDAttente(DateTime maintenant) =>

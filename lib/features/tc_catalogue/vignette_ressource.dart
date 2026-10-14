@@ -20,7 +20,7 @@ import '../../core/theme/app_spacing.dart';
 /// theme, qui est READ-ONLY, et le motif est peint dans l'encre de sa propre
 /// paire. Une palette de couvertures administree -- l'equivalent de celle des
 /// groupes, decision D-18 -- est demandee a Agent Z dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_B.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_B.md`.
 ///
 /// [image] est le point d'entree de la couverture **deposee**, celle que
 /// `cover_asset` designe. Elle est fournie par l'appelant et non chargee ici :
@@ -138,7 +138,7 @@ class VignetteRessource extends StatelessWidget {
 /// Le peintre des quatre motifs.
 ///
 /// Un `CustomPainter` et non quatre assets : quatre images embarquees
-/// peseraient sur les 20 Mo que `docs/produit/bibliotheque-contenu.md` fixe a
+/// peseraient sur les 20 Mo que `docs/archive/2026-09-pre-remise-a-plat/produit/bibliotheque-contenu.md` fixe a
 /// l'application entiere, pour un dessin qui tient en vingt lignes.
 class _MotifPeintre extends CustomPainter {
   const _MotifPeintre({required this.motif, required this.encre});

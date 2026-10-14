@@ -2,25 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
+import '../../core/communications/modeles_communication.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
+import '../../core/reseau/service_reseau.dart';
+import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/group_home_vm.dart';
+import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_groupe/port_groupes.dart';
+import '../../core/tc_horloge/port_horloge_seance.dart';
+import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/bento_tile.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
-import '../../core/widgets/stat_tile.dart';
 import '../../core/widgets/status_pill.dart';
+import '../com_annonces/annonces_de_classe.dart';
+import '../com_messages/entree_messages_contexte.dart';
+import '../foyer/photo_eleve.dart' show PhotoEleve;
+import '../tc_espace_groupe/bloc_cartes_classe.dart';
+import '../tc_espace_groupe/carte_session.dart';
+import '../tc_espace_groupe/emplacements_groupe.dart';
+import '../tc_espace_groupe/espace_groupe_page.dart' show IdentiteGroupe;
+import 'bloc_pause_classe.dart';
+import 'fiche_eleve_enseignant.dart';
+import 'preparation_seance.dart';
 
 /// `ENS-07` : la fiche d'un groupe, telle que son enseignant la lit.
 ///
@@ -45,54 +66,151 @@ import '../../core/widgets/status_pill.dart';
 /// Ce n'est pas le niveau institutionnel du programme, qui vit dans
 /// `progression_historique` : le libelle dit « niveau indique », et jamais
 /// « niveau du programme » (en-tete de `0021`).
+///
+/// **CL-4.4 : l'Espace Classe enseignant (CLS-ENS-01 et 02).** La fiche porte
+/// desormais, dans cet ordre : l'identite de la Classe, la carte de seance
+/// (`CarteSession` partagee avec l'eleve, « Preparer l'entree »), la
+/// preparation de la prochaine seance, les eleves, les supports recents. Sans
+/// onglets. Le seul bouton principal est celui de la carte de seance.
 class FicheGroupePage extends ConsumerWidget {
   /// Cree la fiche d'un groupe.
-  const FicheGroupePage({required this.groupeId, super.key});
+  const FicheGroupePage({
+    required this.groupeId,
+    super.key,
+    this.onPreparer,
+    this.onOuvrirEleve,
+  });
 
   /// Le groupe a montrer.
   final String groupeId;
 
+  /// **Le point d'entree unique vers la fiche eleve (`ENS-11`, etape EN-4).**
+  /// Avec lui, toute la ligne d'un eleve se presse et le transmet avec son
+  /// `studentId`. Sans lui, la ligne ne se presse pas et ne porte aucun
+  /// chevron : rien ne promet un ecran qui n'existe pas encore.
+  final void Function(String studentId)? onOuvrirEleve;
+
+  /// Le point d'entree du routeur et de la demonstration (EN-4) : avec lui,
+  /// toute la ligne d'un eleve ouvre sa fiche (ENS-11), que l'Espace Classe
+  /// ouvre lui-meme parce qu'il detient la projection de l'eleve. Il n'a rien
+  /// d'autre a faire.
+  static void ficheEleve(String studentId) {}
+
+  /// Ce que fait « Preparer l'entree ». Par defaut, le chemin existant vers la
+  /// preparation : `/salle` avec son billet, qui ouvre d'abord le pre-vol
+  /// complet de l'enseignant. La demonstration le remplace.
+  final void Function(String sessionId)? onPreparer;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Pas de titre d'ecran (CL-4.4b) : comme chez l'eleve, le nom de la
+    // Classe EST le titre, porte par `IdentiteGroupe`. Le chemin de sortie,
+    // visible et en haut, au bord de debut : cet ecran n'a pas de barre de
+    // navigation pour le porter.
     return PageShell(
-      titre: t.enseignant.ficheGroupe.titre,
-      // Le chemin de sortie, visible et en haut : cet ecran n'a pas de barre de
-      // navigation pour le porter.
-      entete: const _Sortie(),
-      child: _Corps(groupeId: groupeId),
+      entete: const SortieEspaceClasse(),
+      child: _Corps(
+        groupeId: groupeId,
+        onPreparer: onPreparer,
+        onOuvrirEleve: onOuvrirEleve,
+      ),
     );
   }
 }
 
-/// Le retour vers la Journee.
-class _Sortie extends StatelessWidget {
-  const _Sortie();
+/// Le retour vers la Journee, au bord de debut (contrat B). La revue de la
+/// Classe le reprend tel quel (EN-RC).
+class SortieEspaceClasse extends StatelessWidget {
+  /// Cree le retour.
+  const SortieEspaceClasse({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: AlignmentDirectional.centerStart,
+    return _EnDebut(
       child: ActionPrincipale(
-        libelle: t.enseignant.ficheGroupe.retour,
+        // Libelle neutre : la fiche s'ouvre depuis Mes classes comme depuis
+        // Aujourd'hui, et le retour ramene la ou l'on etait (R1).
+        libelle: t.commun.retour,
         niveau: NiveauAction.tertiaire,
         pleineLargeur: false,
-        // `go` et non `pop` : la fiche peut avoir ete ouverte par une adresse,
-        // et une sortie qui ne fonctionne que sur une pile existante laisserait
-        // l'enseignant enferme.
-        onPress: () => GoRouter.of(context).go(Routes.enseignantJournee),
+        // `pop` quand la pile le permet ; sinon `go` vers la Journee : la
+        // fiche peut avoir ete ouverte par une adresse, et une sortie qui ne
+        // fonctionne que sur une pile existante laisserait l'enseignant
+        // enferme.
+        onPress: () {
+          final GoRouter routeur = GoRouter.of(context);
+          if (routeur.canPop()) {
+            routeur.pop();
+          } else {
+            routeur.go(Routes.enseignantJournee);
+          }
+        },
       ),
     );
   }
 }
 
 /// Les cinq etats de la fiche, plus « ce groupe n'est pas le votre ».
-class _Corps extends ConsumerWidget {
-  const _Corps({required this.groupeId});
+class _Corps extends ConsumerStatefulWidget {
+  const _Corps({required this.groupeId, this.onPreparer, this.onOuvrirEleve});
 
   final String groupeId;
+  final void Function(String sessionId)? onPreparer;
+  final void Function(String studentId)? onOuvrirEleve;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_Corps> createState() => _CorpsState();
+}
+
+class _CorpsState extends ConsumerState<_Corps> {
+  /// L'eleve dont la fiche occupe la colonne des eleves, sur bureau (EN-4).
+  String? _ouvert;
+
+  /// Vrai quand l'Espace Classe tient sur deux colonnes : la fiche s'ouvre
+  /// alors en panneau, a la place du roster ; sinon, en feuille.
+  bool _large = false;
+
+  /// Un noeud de focus par ligne d'eleve, pour y rendre le focus quand le
+  /// panneau de sa fiche se ferme (UX_REVIEW_04 n° 12 b, W-243).
+  final Map<String, FocusNode> _noeuds = <String, FocusNode>{};
+
+  FocusNode _noeud(String studentId) =>
+      _noeuds.putIfAbsent(studentId, FocusNode.new);
+
+  @override
+  void dispose() {
+    for (final FocusNode noeud in _noeuds.values) {
+      noeud.dispose();
+    }
+    super.dispose();
+  }
+
+  /// Ferme le panneau et rend le focus a la ligne de l'eleve.
+  void _fermer() {
+    final String? id = _ouvert;
+    setState(() => _ouvert = null);
+    if (id == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted) _noeuds[id]?.requestFocus();
+    });
+  }
+
+  /// ENS-11 : toute la ligne d'un eleve ouvre sa fiche, feuille sous 840,
+  /// panneau au-dessus. Le rappel `onOuvrirEleve` est ensuite prevenu.
+  void _ouvrir(EleveFiche eleve) {
+    if (_large) {
+      setState(() => _ouvert = eleve.membre.studentId);
+    } else {
+      ouvrirFicheEleve(context, eleve);
+    }
+    widget.onOuvrirEleve?.call(eleve.membre.studentId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final String groupeId = widget.groupeId;
+    final void Function(String sessionId)? onPreparer = widget.onPreparer;
+    final void Function(String studentId)? onOuvrirEleve = widget.onOuvrirEleve;
     final AsyncValue<List<GroupeEnseignant>> groupes = ref.watch(
       groupesEnseignantProvider,
     );
@@ -113,15 +231,23 @@ class _Corps extends ConsumerWidget {
     }
 
     if (!groupes.hasValue || !membres.hasValue) {
-      // Le squelette prend la forme de ce qui arrive : l'en-tete du groupe,
-      // puis trois lignes de membre.
-      return const Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Skeleton.tuileBento(hauteur: 140),
-          Ecart.vXl,
-          Skeleton.liste(lignes: 3),
-        ],
+      // Le squelette prend la forme de ce qui arrive : l'identite de la
+      // Classe, la carte de seance, puis trois lignes d'eleve. Un seul noeud
+      // lu, les os exclus (revue UX n° 10).
+      return Semantics(
+        label: t.enseignant.ficheGroupe.chargementClasse,
+        child: const ExcludeSemantics(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Skeleton.tuileBento(hauteur: 140),
+              Ecart.vXl,
+              SqueletteCarteSession(),
+              Ecart.vXl,
+              Skeleton.liste(lignes: 3),
+            ],
+          ),
+        ),
       );
     }
 
@@ -146,126 +272,490 @@ class _Corps extends ConsumerWidget {
     }
 
     final Widget entete = _EnteteGroupe(groupe: groupe);
-    final Widget liste = _Membres(membres: membres.requireValue);
-    final Widget revue = Align(
-      alignment: AlignmentDirectional.centerStart,
-      child: ActionPrincipale(
-        libelle: t.enseignant.ficheGroupe.revue,
-        niveau: NiveauAction.tertiaire,
-        pleineLargeur: false,
-        onPress: () => GoRouter.of(context).go(Routes.revuePour(groupe.id)),
+    final Widget seance = _Seance(groupeId: groupe.id, onPreparer: onPreparer);
+    final Widget preparation = _Preparation(groupeId: groupe.id);
+    final Widget eleves = _Membres(
+      membres: membres.requireValue,
+      projections: ref.watch(projectionElevesProvider(groupe.id)),
+      noeud: _noeud,
+      onOuvrirEleve: onOuvrirEleve == null
+          ? null
+          : (String id) {
+              final EleveFiche? fiche = _fiche(
+                membres.requireValue,
+                groupe,
+                id,
+              );
+              if (fiche != null) _ouvrir(fiche);
+            },
+      revue: IntrinsicWidth(
+        child: ActionPrincipale(
+          libelle: t.enseignant.ficheGroupe.revue,
+          niveau: NiveauAction.tertiaire,
+          pleineLargeur: false,
+          onPress: () => GoRouter.of(context).push(Routes.revuePour(groupe.id)),
+        ),
       ),
     );
+    // EN-3 : « Ressources recentes », trois au plus (planche 2). « Voir tout »
+    // n'est pas pose : aucune destination enseignant ne liste encore les
+    // ressources d'une Classe.
+    final Widget ressources = BlocBibliotheque(
+      emplacement: SlotBibliotheque(groupeId: groupe.id),
+      titre: t.enseignant.ficheGroupe.ressourcesTitre,
+      limite: 3,
+    );
+    // Rendue seulement quand le serveur (ou la demonstration) la fournit.
+    final ProgressionCompacte? avancement = ref.watch(
+      progressionGroupeProvider(groupe.id),
+    );
 
-    // [RESPONSIVE] Deux colonnes a partir de 1200 : le groupe et son creneau a
-    // gauche, ses eleves a droite. En dessous, une seule colonne -- c'est la ou
-    // l'enseignant lit, et une fiche coupee en deux sur 390 de large ne se lit
-    // pas.
-    if (AppGabarit.de(context) == Gabarit.desktop) {
-      return Row(
+    // CARTES-PERSO-1 : les cartes de la Classe, que l'enseignant touche pour
+    // les modifier (la capacite vient de leur lecture, jamais du role). La
+    // prochaine seance, quand elle est lue, devient l'echeance proposee.
+    final Widget cartes = BlocCartesClasse(
+      groupeId: groupe.id,
+      prochaineSeance: ref
+          .watch(groupeProvider(groupe.id))
+          .value
+          ?.prochaineSeance
+          ?.debutUtc
+          .toLocal(),
+    );
+
+    // La Classe, dans l'ordre de lecture : seance, preparation, cartes,
+    // progression, ressources.
+    final List<Widget> classe = <Widget>[
+      seance,
+      Ecart.vSection,
+      preparation,
+      Ecart.vSection,
+      cartes,
+      // LIVE-PAUSE-01 : la pause programmee de la Classe (la capacite vient de
+      // la lecture du reglage, jamais du role).
+      Ecart.vSection,
+      BlocPauseClasse(groupeId: groupe.id),
+      if (avancement != null) ...<Widget>[
+        Ecart.vSection,
+        _ProgressionClasse(valeur: avancement),
+      ],
+      Ecart.vSection,
+      ressources,
+      // COM-F : les emplacements des Communications (annonces de la Classe,
+      // entree des Messages), vides tant que leurs voies ne les remplissent
+      // pas ; en fin de section, l'ecart entre sections se pose avant eux,
+      // rendu seulement quand ils rendent quelque chose.
+      AnnoncesDeClasse(classeId: groupe.id, ecartAvant: Ecart.vSection),
+      EntreeMessagesContexte(
+        type: TypeObjetLie.classe,
+        objetId: groupe.id,
+        ecartAvant: Ecart.vSection,
+      ),
+    ];
+
+    // [RESPONSIVE] EN-3 (planche 2, rectification 5) : sur bureau, deux
+    // colonnes, la Classe au debut et les eleves a la fin. Deux colonnes
+    // seulement quand la largeur utile divisee par le facteur de texte
+    // atteint 840 ; en dessous, une colonne : la Classe puis les eleves.
+    // Chaque colonne est un `FocusTraversalGroup`, le focus suit l'ordre de
+    // lecture. Pas d'onglets, pas de troisieme zone.
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) {
+        final double facteur = MediaQuery.textScalerOf(contexte).scale(1);
+        final bool deuxColonnes =
+            contraintes.maxWidth / facteur >= AppGabarit.seuilEtendu;
+        _large = deuxColonnes;
+        final EleveFiche? ouverte = deuxColonnes
+            ? _fiche(membres.requireValue, groupe, _ouvert)
+            : null;
+
+        final Widget colonneClasse = FocusTraversalGroup(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: classe,
+          ),
+        );
+        final Widget colonneEleves = FocusTraversalGroup(child: eleves);
+
+        if (!deuxColonnes) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              entete,
+              Ecart.vSection,
+              colonneClasse,
+              Ecart.vSection,
+              colonneEleves,
+            ],
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            entete,
+            Ecart.vSection,
+            _Rangee(
+              debut: colonneClasse,
+              fin: switch (ouverte) {
+                null => colonneEleves,
+                final EleveFiche e => FocusTraversalGroup(
+                  child: PanneauFicheEleve(
+                    key: ValueKey<String>('panneau-${e.membre.studentId}'),
+                    eleve: e,
+                    onFermer: _fermer,
+                  ),
+                ),
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// La vue de fiche d'un eleve de la Classe, ou nul s'il n'y est plus.
+  EleveFiche? _fiche(
+    List<MembreSeance> membres,
+    GroupeEnseignant groupe,
+    String? id,
+  ) {
+    if (id == null) return null;
+    for (final MembreSeance m in membres) {
+      if (m.studentId == id) {
+        return EleveFiche(
+          membre: m,
+          classe: groupe.libelle,
+          projection: ref.read(projectionElevesProvider(groupe.id))[id],
+        );
+      }
+    }
+    return null;
+  }
+}
+
+/// Une rangee de deux colonnes egales, separees de 24. Un groupe de focus.
+class _Rangee extends StatelessWidget {
+  const _Rangee({required this.debut, required this.fin});
+
+  final Widget debut;
+  final Widget fin;
+
+  @override
+  Widget build(BuildContext context) {
+    return FocusTraversalGroup(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[entete, Ecart.vXl, revue],
-            ),
-          ),
-          Ecart.hXl,
-          Expanded(child: liste),
+          Expanded(child: debut),
+          Ecart.hXxl,
+          Expanded(child: fin),
         ],
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[entete, Ecart.vXl, liste, Ecart.vXl, revue],
+      ),
     );
   }
 }
 
-/// Le groupe, son public, son rendez-vous hebdomadaire et ses places libres.
-class _EnteteGroupe extends StatelessWidget {
-  const _EnteteGroupe({required this.groupe});
+/// Pose une action au bord de debut, a sa largeur naturelle.
+///
+/// `IntrinsicWidth` : sans lui, `ActionPrincipale` s'etirerait sur toute la
+/// largeur et centrerait son libelle. Borne par la largeur disponible, le
+/// libelle passe a la ligne a 200 % au lieu de deborder.
+class _EnDebut extends StatelessWidget {
+  const _EnDebut({required this.child});
 
-  final GroupeEnseignant groupe;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: IntrinsicWidth(child: child),
+    );
+  }
+}
+
+/// La carte de la prochaine seance, vue par l'enseignant (CLS-ENS-01, 02).
+///
+/// La **meme** `CarteSession` que l'eleve, avec `RoleEntree.enseignant` : a
+/// l'ouverture, l'emplacement devient « Preparer l'entree », qui mene a la
+/// preparation (le pre-vol de la salle), jamais directement dans la salle.
+class _Seance extends ConsumerWidget {
+  const _Seance({required this.groupeId, this.onPreparer});
+
+  final String groupeId;
+  final void Function(String sessionId)? onPreparer;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<GroupSummaryVM?> lecture = ref.watch(
+      groupeProvider(groupeId),
+    );
+
+    if (!lecture.hasValue && !lecture.hasError) {
+      return const SqueletteCarteSession();
+    }
+
+    final GroupSummaryVM? classe = lecture.value;
+    if (lecture.hasError || classe == null) {
+      // La seance n'a pas pu etre lue : la carte le dit, et n'offre qu'une
+      // relecture. Le reste de la fiche reste lisible.
+      return AppCard(
+        dominante: true,
+        child: EmptyState(
+          // FINITIONS-CORR2-1 : le message, en style titre, dit seulement ce
+          // qui a echoue ; la cause probable et quoi faire passent dans la
+          // ligne d'invitation, comme la bibliotheque et l'observation (la
+          // phrase entiere faisait 14 lignes en gras a 320 px texte x2).
+          message: lecture.hasError
+              ? t.classe.entree.indisponibleCourt
+              : t.classe.entree.aucune,
+          invitation: lecture.hasError
+              ? t.classe.entree.indisponibleInvitation
+              : null,
+          icone: AppIcons.cours,
+          // EA-HL-DOUBLE-1f : un registre subi taisait le bouton, et
+          // « Reessayez dans un instant » restait sans action.
+          registre: lecture.hasError
+              ? RegistreVide.actionnable
+              : RegistreVide.subi,
+          libelleAction: lecture.hasError ? t.classe.entree.reessayer : null,
+          onAction: lecture.hasError
+              ? () => ref.invalidate(groupeProvider(groupeId))
+              : null,
+        ),
+      );
+    }
+
+    final AsyncValue<SessionClockVM> flux = ref.watch(
+      horlogeGroupeProvider(groupeId),
+    );
+    final SessionClockVM? tic = flux.value;
+    final GroupSummaryVM identite = tic == null
+        ? classe
+        : classe.avecHorloge(tic);
+    final GroupHomeVM espace = GroupHomeVM.pourRole(
+      identite: identite,
+      role: RoleEspaceGroupe.enseignant,
+    );
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final String? sessionId =
+        identite.horloge?.sessionId ?? identite.prochaineSeance?.sessionId;
+    final void Function(String sessionId) preparer =
+        onPreparer ?? _versPreparation(context, groupeId);
+
+    return CarteSession(
+      espace: espace,
+      horsLigne: horsLigne,
+      annulee: ref.watch(seanceAnnuleeProvider(groupeId)),
+      lectureEchouee: flux.hasError && tic == null,
+      onReessayer: () => ref
+        ..invalidate(horsLigneProvider)
+        ..invalidate(horlogeGroupeProvider(groupeId)),
+      onRejoindre: horsLigne || sessionId == null
+          ? null
+          : () => preparer(sessionId),
+    );
+  }
+
+  /// Le chemin existant vers la preparation : la salle canonique, qui montre
+  /// d'abord le pre-vol complet de l'enseignant (`PreCours`) et n'entre
+  /// qu'apres. Le billet passe par `extra`, jamais par l'URL (ADR-005).
+  static void Function(String) _versPreparation(
+    BuildContext context,
+    String groupeId,
+  ) =>
+      (String sessionId) => GoRouter.of(context).go(
+        Routes.salle,
+        extra: BilletSalle(
+          sessionId: sessionId,
+          emisA: DateTime.now(),
+          preparation: true,
+          groupeId: groupeId,
+        ),
+      );
+}
+
+/// La preparation de la prochaine seance : support prevu, position de
+/// reprise, objectif. Aucun lien « Modifier » : aucune destination d'edition
+/// n'existe encore.
+class _Preparation extends ConsumerWidget {
+  const _Preparation({required this.groupeId});
+
+  final String groupeId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final PreparationSeance? preparation = ref.watch(
+      preparationSeanceProvider(groupeId),
+    );
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
+
+    final List<(String, String?)> candidates = <(String, String?)>[
+      (t.enseignant.ficheGroupe.supportPrevu, preparation?.supportPrevu),
+      (t.enseignant.ficheGroupe.positionReprise, preparation?.positionReprise),
+      (t.enseignant.ficheGroupe.objectif, preparation?.objectif),
+    ];
+    final List<(String, String)> lignes = <(String, String)>[
+      for (final (String libelle, String? valeur) in candidates)
+        if (valeur != null && valeur.trim().isNotEmpty)
+          (libelle, valeur.trim()),
+    ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        BentoTile(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      groupe.libelle,
-                      style: textes.headlineSmall ?? const TextStyle(),
-                    ),
+        SectionHeader(titre: t.enseignant.ficheGroupe.preparationTitre),
+        Ecart.vSm,
+        AppCard(
+          child: lignes.isEmpty
+              ? TexteSansCoupure(
+                  t.enseignant.ficheGroupe.preparationVide,
+                  style: palette.inkMuted.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
                   ),
-                  if (groupe.complet)
-                    StatusPill(
-                      libelle: t.enseignant.ficheGroupe.complet,
-                      ton: TonEtat.avertissement,
-                    ),
-                ],
-              ),
-              Ecart.vXs,
-              Text(
-                _nomType(groupe.type),
-                style: palette.inkMuted.applyTo(
-                  textes.bodySmall ?? const TextStyle(),
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    for (final (int i, (String, String) ligne)
+                        in lignes.indexed) ...<Widget>[
+                      if (i > 0) Ecart.vLg,
+                      MergeSemantics(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            // Passe a la ligne entre les mots, jamais dans
+                            // un mot (« compréhension », COUPE-MOTS-3).
+                            TexteSansCoupure(
+                              ligne.$1,
+                              style: palette.inkMuted.applyTo(
+                                textes.bodySmall ?? const TextStyle(),
+                              ),
+                            ),
+                            Ecart.vXs,
+                            TexteSansCoupure(
+                              ligne.$2,
+                              style: textes.titleSmall ?? const TextStyle(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
-              ),
-              Ecart.vLg,
-              Text(
-                t.enseignant.ficheGroupe.creneauTitre,
-                style: textes.labelLarge ?? const TextStyle(),
-              ),
-              Ecart.vXs,
-              // Une seule visio commune par semaine depuis le pivot : le
-              // creneau du groupe EST l'heure du cours.
-              Text(
-                t.enseignant.ficheGroupe.creneauHebdo(
-                  jour: _jour(groupe.creneau),
-                  heure: _heure(groupe.creneau),
-                ),
-                style: textes.titleMedium ?? const TextStyle(),
-              ),
-            ],
-          ),
-        ),
-        Ecart.vMd,
-        // Le seuil affiche est celui du groupe, jamais un chiffre calcule ici :
-        // cinq enfants, six adultes, et c'est la base qui le tient. Le zero
-        // s'affiche comme les autres valeurs.
-        //
-        // Sans `onPress` : l'enseignant ne compose pas son groupe, ce compteur
-        // est un constat, et il n'existe aucun ecran d'action ou le mener.
-        StatTile(
-          valeur: groupe.placesLibres,
-          libelle: groupe.placesLibres == 1
-              ? t.enseignant.ficheGroupe.placesLibresUn
-              : t.enseignant.ficheGroupe.placesLibres,
-          ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
         ),
       ],
     );
   }
 }
 
-/// Les eleves du groupe, ou le fait qu'il n'y en ait aucun.
+/// L'identite de la Classe, la **meme** que chez l'eleve (CL-4.4b).
+///
+/// `IdentiteGroupe` partage : le nom de la Classe en titre, le cours et le
+/// niveau, l'enseignant, puis la capacite en petite `StatusPill`
+/// (« 3 eleves sur 6 places »). Le rendez-vous hebdomadaire tient sur une
+/// ligne discrete. Aucune tuile « places libres » pleine largeur.
+///
+/// Tant que le resume de la Classe n'est pas lu, ou s'il ne peut pas l'etre,
+/// le nom, l'horaire et la capacite se lisent sur `mes_groupes_v`, dans le
+/// meme ordre et la meme forme.
+class _EnteteGroupe extends ConsumerWidget {
+  const _EnteteGroupe({required this.groupe});
+
+  final GroupeEnseignant groupe;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Une seule visio commune par semaine depuis le pivot : le creneau du
+    // groupe EST l'heure du cours.
+    final String horaire = t.enseignant.ficheGroupe.creneauHebdo(
+      jour: _jour(groupe.creneau),
+      heure: _heure(groupe.creneau),
+    );
+    // Enfants ou Adultes : une information pedagogique, sur la ligne de
+    // contexte discrete (revue CL-4.R, m7). Cles existantes, aucune jumelle.
+    final String typePublic = switch (groupe.type) {
+      TypePublicGroupe.enfant => t.admin.groupes.typeEnfant,
+      TypePublicGroupe.adulte => t.admin.groupes.typeAdulte,
+    };
+    final GroupSummaryVM? resume = ref.watch(groupeProvider(groupe.id)).value;
+    if (resume != null) {
+      // Initiales en repli, jamais de pastille « Photo a fournir » ici :
+      // l'enseignant lit sa Classe, pas son dossier (CL-4.4).
+      return IdentiteGroupe(
+        groupe: resume,
+        repliInitiales: true,
+        ligneDiscrete: horaire,
+        typePublic: typePublic,
+      );
+    }
+
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+    return MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(
+            groupe.libelle,
+            style: textes.headlineSmall ?? const TextStyle(),
+          ),
+          Ecart.vXs,
+          Text(
+            typePublic,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+          Ecart.vXs,
+          Text(
+            horaire,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+          Ecart.vSm,
+          // Le seuil affiche est celui du groupe, jamais un chiffre calcule
+          // ici : cinq enfants, six adultes, et c'est la base qui le tient.
+          // COUPE-MOTS-3b : jamais « élèves sur 6 places 3 » en arabe.
+          StatusPill(
+            libelle: isolerSiAutreSens(
+              LibellesGroupe.capacitePhrase(
+                membres: groupe.nbMembres,
+                seuil: groupe.seuilMax,
+              ),
+              Directionality.of(context),
+            ),
+            ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// La section « Eleves », ou le fait qu'il n'y en ait aucun.
 class _Membres extends StatelessWidget {
-  const _Membres({required this.membres});
+  const _Membres({
+    required this.membres,
+    required this.projections,
+    required this.revue,
+    this.onOuvrirEleve,
+    this.noeud,
+  });
 
   final List<MembreSeance> membres;
+  final Map<String, ProjectionEleve> projections;
+  final Widget revue;
+  final void Function(String studentId)? onOuvrirEleve;
+
+  /// Le noeud de focus de la ligne d'un eleve.
+  final FocusNode Function(String studentId)? noeud;
 
   @override
   Widget build(BuildContext context) {
@@ -273,10 +763,10 @@ class _Membres extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         SectionHeader(
-          titre: t.enseignant.ficheGroupe.membresTitre,
+          titre: t.enseignant.ficheGroupe.elevesTitre,
           compteur: membres.length,
         ),
-        Ecart.vMd,
+        Ecart.vSm,
         if (membres.isEmpty)
           EmptyState(
             message: t.enseignant.ficheGroupe.aucunMembre,
@@ -287,84 +777,168 @@ class _Membres extends StatelessWidget {
             registre: RegistreVide.subi,
           )
         else
-          for (final MembreSeance membre in membres)
-            Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-              child: _LigneMembre(membre: membre),
-            ),
+          // Une seule surface groupee, une ligne par eleve (CL-4.4b), jamais
+          // une carte par eleve.
+          GroupeReglages(
+            lignes: <LigneRubrique>[
+              for (final MembreSeance membre in membres)
+                _ligneMembre(
+                  membre,
+                  projections[membre.studentId],
+                  onOuvrirEleve,
+                  noeud?.call(membre.studentId),
+                  Directionality.of(context),
+                ),
+            ],
+          ),
+        Ecart.vSm,
+        // Au bord de fin, sous la carte : un lien, pas une action principale.
+        Align(alignment: AlignmentDirectional.centerEnd, child: revue),
       ],
     );
   }
 }
 
-/// Un eleve : son prenom, son identifiant immuable, son niveau indique.
+/// Un eleve, une ligne : sa photo (`PhotoEleve`, initiales en repli ; E5,
+/// K-44), son prenom en titre, puis une seule ligne secondaire « niveau ·
+/// reprise ». Aucun indicateur par eleve (N2 du directeur, 27/09, EN-IND). En
+/// texte neutre : rien de ce que R15 interdit, le modele n'en porte pas.
 ///
-/// Non actionnable, donc ni `SignalRow` ni `Pressable` : depuis la fiche, un
-/// eleve ne mene a aucun ecran que l'enseignant ait le droit d'ouvrir. La ligne
-/// est lue **d'un bloc** par les technologies d'assistance, sinon trois textes
-/// se liraient comme trois elements sans rapport.
-class _LigneMembre extends StatelessWidget {
-  const _LigneMembre({required this.membre});
+/// L'identifiant immuable reste lisible, discret, en fin de ligne.
+///
+/// Avec [onOuvrirEleve], **toute la ligne** est une seule cible, lue d'un bloc,
+/// sans icone d'action concurrente (UX_REVIEW_04 n° 9 d). Sans lui, la ligne
+/// ne se presse pas (`MergeSemantics`).
+LigneRubrique _ligneMembre(
+  MembreSeance membre,
+  ProjectionEleve? projection,
+  void Function(String studentId)? onOuvrirEleve,
+  FocusNode? focusNode,
+  TextDirection sens,
+) {
+  final String? niveau = membre.niveau?.trim();
+  final String? page = projection?.pageReprise?.trim();
+  // Une seule ligne secondaire (K-42 style §4) : le dernier point reste dans
+  // la fiche eleve (ENS-11), qu'une pression sur la ligne ouvre.
+  // RTL-ISOL-1 : chaque segment ecrit dans l'autre sens que l'interface
+  // (« Niveau 1 » en arabe), et la page dans l'autre sens que sa phrase
+  // (« الاستئناف: Page 24 »), est isole : le separateur suit le sens de
+  // l'interface et rien ne se melange. Ordre des segments : celui de
+  // l'interface, niveau d'abord (option la plus prudente, decide par
+  // delegation le 09/10, regle DIR-REP-1).
+  final String legende = <String>[
+    if (niveau != null && niveau.isNotEmpty) isolerSiAutreSens(niveau, sens),
+    if (page != null && page.isNotEmpty)
+      isolerSiAutreSens(
+        phraseAvecValeur(
+          (String p) => t.enseignant.ficheGroupe.repriseEleve(page: p),
+          page,
+        ),
+        sens,
+      ),
+  ].join(' · ');
 
-  final MembreSeance membre;
+  return LigneRubrique(
+    // `libelle` rend le prenom, ou l'identifiant immuable quand la base l'a
+    // masque en observation.
+    libelle: membre.libelle,
+    // La photo de l'eleve, visible de son enseignant (E5, decision du
+    // directeur du 26/09/2026, K-44). La ligne est lue par le prenom.
+    meneur: ExcludeSemantics(
+      child: PhotoEleve(
+        prenom: membre.libelle,
+        cleAvatar: projection?.cleAvatar,
+        diametre: AppAvatar.petit,
+      ),
+    ),
+    // L'identifiant immuable reste lisible, discret, en fin de ligne. [A11Y]
+    valeur: membre.identifiantImmuable == membre.libelle
+        ? null
+        : membre.identifiantImmuable,
+    legende: legende.isEmpty ? null : legende,
+    onPress: onOuvrirEleve == null
+        ? null
+        : () => onOuvrirEleve(membre.studentId),
+    focusNode: focusNode,
+  );
+}
+
+/// « Progression de la Classe » en une ligne : l'etape commune et sa valeur
+/// ecrites, puis la barre, en un seul noeud (UX_REVIEW_04 n° 9 b). Une
+/// barre, jamais un anneau.
+///
+/// COUPE-MOTS-3 : le texte a la moitie de la ligne, la barre l'autre. Quand
+/// le mot le plus long du texte n'y tient pas (« Chapit / re 1 » a 320 px,
+/// texte x2, Interface guidee), la barre passe dessous et le texte prend
+/// toute la ligne : il passe a la ligne entre les mots, jamais dans un mot.
+class _ProgressionClasse extends StatelessWidget {
+  const _ProgressionClasse({required this.valeur});
+
+  final ProgressionCompacte valeur;
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    final String? niveau = membre.niveau;
-
-    return MergeSemantics(
-      child: AppCard(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            // `libelle` rend le prenom, ou l'identifiant immuable quand la base
-            // l'a masque en observation : un eleve reste designable.
-            Text(
-              membre.libelle,
-              style: textes.titleSmall ?? const TextStyle(),
+    final String texte = t.classe.entree.progressionValeur(
+      chapitre: valeur.chapitre,
+      pourcentage: (valeur.fraction * 100).round(),
+    );
+    // COUPE-MOTS-3b : une etape ecrite dans l'autre sens que l'interface
+    // (« Chapitre 1 · 60 % » en arabe) est isolee a l'affichage : elle ne se
+    // lit plus « % 1 · 60 ». Le lecteur d'ecran lit le texte nu.
+    final String affiche = isolerSiAutreSens(texte, Directionality.of(context));
+    final TextStyle? style = Theme.of(context).textTheme.titleSmall;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        SectionHeader(titre: t.enseignant.ficheGroupe.progressionTitre),
+        Ecart.vSm,
+        Semantics(
+          label: texte,
+          child: ExcludeSemantics(
+            child: LayoutBuilder(
+              builder: (BuildContext contexte, BoxConstraints c) {
+                final Widget barre = LinearProgressIndicator(
+                  value: valeur.fraction,
+                );
+                final double moitie = (c.maxWidth - AppSpacing.lg) / 2;
+                final bool empile =
+                    largeurMotLePlusLong(
+                      contexte,
+                      texte,
+                      style,
+                      MediaQuery.textScalerOf(contexte),
+                    ) >
+                    moitie;
+                if (empile) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      TexteSansCoupure(affiche, style: style),
+                      Ecart.vSm,
+                      barre,
+                    ],
+                  );
+                }
+                return Row(
+                  children: <Widget>[
+                    Flexible(child: Text(affiche, style: style)),
+                    Ecart.hLg,
+                    Expanded(child: barre),
+                  ],
+                );
+              },
             ),
-            Ecart.vXs,
-            // L'identifiant immuable ne se coupe pas : c'est le seul moyen de
-            // nommer un eleve sans nom de famille, y compris a 200 % de taille
-            // de texte. [A11Y]
-            Text(
-              membre.identifiantImmuable,
-              style: palette.inkMuted.applyTo(
-                textes.bodySmall ?? const TextStyle(),
-              ),
-            ),
-            if (niveau != null && niveau.trim().isNotEmpty) ...<Widget>[
-              Ecart.vXs,
-              Text(
-                t.enseignant.ficheGroupe.niveauIndique(niveau: niveau.trim()),
-                style: palette.inkMuted.applyTo(
-                  textes.bodySmall ?? const TextStyle(),
-                ),
-              ),
-            ],
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
 
-/// Le nom du public d'un groupe.
-///
-/// Les deux libelles existent deja sous `admin.groupes.*` : en declarer des
-/// jumeaux sous `enseignant.*` donnerait deux cles pour le meme mot.
-String _nomType(TypePublicGroupe type) => switch (type) {
-  TypePublicGroupe.enfant => t.admin.groupes.typeEnfant,
-  TypePublicGroupe.adulte => t.admin.groupes.typeAdulte,
-};
-
 /// Le jour du creneau, en clair. `t.disponibilites.joursLongs` est lu par sept
 /// ecrans : c'est la seule liste de jours du produit.
-String _jour(Creneau creneau) =>
-    t.disponibilites.joursLongs[creneau.jour - 1];
+String _jour(Creneau creneau) => t.disponibilites.joursLongs[creneau.jour - 1];
 
 /// L'heure pleine du creneau, sur deux chiffres.
 ///
