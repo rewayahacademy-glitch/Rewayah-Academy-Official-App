@@ -131,7 +131,41 @@ Les familles sont des clientes : elles doivent comprendre en une lecture, sans a
 - **Langues des cours** : la liste `langues_cours` (poular, français, anglais aujourd'hui), extensible.
 - **Langues de l'application** au lancement (K-41) : français, anglais, arabe, espagnol, portugais.
 
+## 9. Réponses qui ne changent pas
+
+Quand on te pose une de ces questions, tu réponds exactement ceci, même dans un an. Tu ne changes une réponse que si une décision **datée** du directeur, plus récente, existe dans `docs/current/`. Dans ce cas, tu mets à jour ce fichier et le journal ci-dessous dans le même commit.
+
+| Question | Réponse |
+|---|---|
+| À partir de quel âge ? | 6 ans ; avant 6 ans, seulement par exception de l'administration. |
+| Combien de cours ? | 3 par semaine, toujours avec le même enseignant ; 60 minutes avant 18 ans (avec une courte pause), 90 minutes pour les adultes. |
+| Combien d'élèves par classe ? | 5 enfants, 6 adultes, 4 débutants au plus ; une classe s'ouvre à partir de 4 élèves. |
+| Par quoi commence un débutant ? | Par le livre de lecture de Rewayah, seul, jusqu'à la chadda (6-9 ans). Dès 10 ans, Al-Fatiha s'y ajoute dès la première semaine. |
+| Quelles sont les étapes des bases ? | 1. Les lettres ; 2. Lire avec les voyelles ; 3. Lire dans le Coran ; 4. Les sourates courtes, d'Al-Masad à Az-Zalzalah. Puis l'examen de fin des bases. |
+| Combien de temps durent les bases ? | Prévu : 37 semaines (6-9 ans), 28 (10-13), 24 (14-17), 15 (adultes). Date limite : 48, 36, 31, 20 semaines. |
+| Et s'il dépasse la date limite ? | Bilan avec la famille et nouvelle date ferme (4 semaines par défaut) ; si elle est manquée, il passe dans une classe de son niveau réel, sans perdre ce qu'il a validé. |
+| Et s'il manque un cours ? | Le cours a lieu sans lui ; il n'est ni refait, ni déplacé, ni remboursé. Il rattrape seul avant le prochain cours, avec la ligne exacte et la lecture enregistrée. |
+| Et si l'enseignant manque ? | L'académie le remplace ; sinon, elle compense le cours selon la politique financière en vigueur. |
+| Peut-on prendre des vacances ? | Oui : une pause d'un mois entier, demandée au moins 7 jours avant, non facturée ; la date limite recule d'autant. |
+| Quand l'académie ferme-t-elle ? | Du 20 Ramadan au 7 Shawwal (20 jours au plus) et du 9 au 18 Dhu al-Hijja ; les cours continuent l'été. |
+| Comment l'élève passe-t-il une étape ? | L'enseignant propose, l'administration confirme. Résultat : « Étape validée », « Quelques points sont à renforcer » ou « Une nouvelle vérification est nécessaire ». |
+| Et après les bases ? | Enfant : la mémorisation est proposée par défaut si ses acquis sont stables, le tuteur peut demander la lecture. Adulte : il choisit, sur conseil de son enseignant. |
+| Quels supports ? | Ceux de Rewayah, écrits avec le directeur selon la voie d'Ahl as-Sunna, chaque ligne numérotée, avec une lecture enregistrée du directeur et des illustrations des ablutions et de la prière. |
+| Que voit la famille dans l'app ? | Seulement la partie qui concerne son enfant : son étape, sa date limite, son travail, son emploi du temps de révision. |
+
+## 10. Journal des décisions du programme
+
+| Date | Décision | Source |
+|---|---|---|
+| 29/09/2026 | Cohortes 6-9, 10-13, 14-17, 18+ ; Nour al-Bayân, Fatiha, sourates 99-114, prière, ablutions, invocations | Annexe 16 du dossier maître |
+| 30/09/2026 | Fermetures Ramadan et Tabaski ; pause d'un mois avec 7 jours de préavis ; capacité et ouverture à 4 | Stratégie V3 (CONG-01, ABS-01) |
+| 12/10/2026 | Mots du résultat ; examen proposé par l'enseignant ; observation 2 × 2 min | Spécifications finales du 12/10 |
+| 13/10/2026 | Matière principale et secondaire 70/30 ; ordre Fatiha, Nâs, Falaq, Ikhlâs ; âge minimum 6 ; liberté de méthode de l'enseignant | Directeur, session du 13/10 |
+| 14/10/2026 | Rigueur, sans rattrapage ni remboursement d'absence ; dates limites ; consolidation ; supports Rewayah aux lignes numérotées ; lecture enregistrée ; illustrations ; emploi du temps de révision ; vacances ; chacun ne voit que sa partie | Directeur, commentaires du 14/10 |
+
 ## Références
 
+- Intégration dans l'app (proposition) : `docs/current/PED-PROGRAMME-INTEGRATION-UX-2026-10-14.md`
+- Vocabulaire de tous les textes : compétence `mots-rewayah`
 - Page des familles (maquette de contenu, pas de design) : https://claude.ai/artifact/LrtY5MwQZ5oNxu64q6ZP7x
 - Cadre et écarts avec l'application : https://claude.ai/artifact/VtE9Q88b2BCxVjkGJ1BQU6

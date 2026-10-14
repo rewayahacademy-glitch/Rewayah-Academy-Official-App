@@ -85,7 +85,7 @@ Statuts : **DÉCIDÉ** (directeur, daté) · **PROPOSÉ** (non adopté) · **REM
 | Enregistrement | Ne jamais afficher « cours enregistré » sans enregistrement réel ; pas de captation tant que la politique n'est pas validée (12/10) | Contradictoire : textes et ADR-002 parlent d'enregistrement 30 jours |
 | Fenêtre d'entrée | Une seule, vers T-20, réglable | Trois fenêtres coexistent (« dix minutes avant » dans les textes) |
 | Vocabulaire | « Classe » (pas « groupe ») ; « Interface guidée » (pas « mode enfant ») ; « Ajouter un profil élève » ; jamais « Cours en cours » | Textes contraires encore présents |
-| Navigation tuteur | Accueil · Foyer · Historique · Compte | Écart dans `nav_shell.dart` (Disponibilités, ancien matching) |
+| Navigation tuteur | Accueil · Foyer · Historique · Compte | CONFORME sur l'intégration ccr (`nav_shell.dart:131-148`) |
 
 ## 6. Finance (consignée, hors périmètre tant que la direction ne l'ouvre pas)
 
@@ -111,7 +111,7 @@ Statuts : **DÉCIDÉ** (directeur, daté) · **PROPOSÉ** (non adopté) · **REM
 
 | Sujet | Règle retenue | État du dépôt |
 |---|---|---|
-| Polices | DM Sans pour les titres, Plus Jakarta Sans pour le texte latin. Source : V3 du 30/09, confirmée le 12/10 | Le dépôt utilise Bricolage Grotesque et Instrument Sans |
+| Polices | DM Sans pour les titres, Plus Jakarta Sans pour le texte latin. Source : V3 du 30/09, confirmée le 12/10 | CONFORME sur l'intégration ccr (`app_typography.dart:33-36`). L'écart relevé ne concernait qu'une ancienne copie |
 | Validation d'un dossier | Le serveur calcule `can_validate` et les blocages. Une confirmation est demandée avant de valider. Les accords signés sont vérifiés | Les trois cases sont locales, sans confirmation, et les accords ne sont pas lus |
 | Genre de l'administrateur | La règle existe en base. Un écran doit permettre de compléter ce champ | L'administrateur est bloqué sans moyen de corriger |
 | Photo de l'enseignant | Obligatoire et distincte de la pièce d'identité | Le champ est facultatif en base, et `decisions.md:1809` dit encore « jamais de photo » |
@@ -158,7 +158,7 @@ Aucune décision du directeur ne les règle directement. Je les tranche d'après
 | Cahier : 4 niveaux par séance ; famille : 3 états | Le cahier reste tel quel (K-45 gelé). Pour la famille : `aRevoir` et `enProgres` deviennent « À renforcer », `acquis` et `maitrise` deviennent « Acquis ». « Stable » est calculé par le serveur (3 observations sur 2 semaines, dont une non préparée) | « Stable » ne peut pas venir d'une seule séance (RA-CUR §9.2) |
 | Résultat d'évaluation : `reussi / echec / a_revoir` en base | Le stockage reste ; à l'écran : « Étape validée », « Une nouvelle vérification est nécessaire », « Quelques points sont à renforcer » | 12/10 §12.4 |
 | Limite d'appareils : 2 en dur (ADR-010) ou aucune valeur en dur | **Un réglage**, 2 par défaut | Rien en dur (consigne du directeur) |
-| Polices : Bricolage Grotesque / Instrument Sans (dépôt) ou DM Sans / Plus Jakarta Sans | **DM Sans et Plus Jakarta Sans** | V3 du 30/09 et 12/10, plus récents que le dépôt |
+| Polices : Bricolage Grotesque / Instrument Sans (dépôt) ou DM Sans / Plus Jakarta Sans | **DM Sans et Plus Jakarta Sans**, déjà en place sur ccr | V3 du 30/09 et 12/10 ; l'écart ne concernait qu'une ancienne copie |
 | Essai « gratuit » : écrit (V4, 02/10) ou à prouver (12/10) | **2 séances gratuites** ; la page publique l'écrit dès que la politique publiée le porte | V4 est une décision ; le 12/10 demande seulement la preuve dans la politique publiée |
 | Capacité du contrôleur sur les pièces d'identité | **Retirée** | Annexe 11 et 12/10 §04.3 |
 | Dates limites au-delà des bases (lecture complète, mémorisation) | Le principe s'applique à chaque étape de chaque niveau ; les valeurs se fixent quand ces niveaux seront écrits | Décision du 14/10 : « ne pas laisser à l'infini » |
@@ -169,4 +169,4 @@ Aucune décision du directeur ne les règle directement. Je les tranche d'après
 1. Liste validée des paroles de la prière, des ablutions et des invocations : validation scientifique du directeur.
 2. Ce que paie une famille pendant la fermeture de Ramadan : la règle CONG-02 existe (plancher 25/30 USD) ; à confirmer seulement si la direction veut la changer.
 
-Tout le reste est tranché par ce registre selon la règle « la décision la plus récente l'emporte ». Les écarts d'application (§3, §5, §7, §8) attendent l'ouverture du backend par le directeur.
+Tout le reste est tranché par ce registre selon la règle « la décision la plus récente l'emporte ». Les écarts d'application sont inscrits au tableau de suivi le 14/10 : `ALIGN-1410-FRONT` (écrans, Claude), `ALIGN-1410-BACK` (serveur, Codex), `PED-INTEGR-UX`, `PED-INTEGR-BACK` et `PED-SUPPORTS`.
