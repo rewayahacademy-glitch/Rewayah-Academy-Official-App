@@ -5,7 +5,7 @@ description: Règles pour écrire ou modifier tout ce qui touche le programme ac
 
 # Programme Rewayah
 
-Le programme est le nerf de l'académie. Ce fichier fixe le cadre, le vocabulaire et les règles de stabilité décidés par le directeur le 13/10/2026. En cas de doute, une décision écrite du directeur (tableau de suivi, `docs/current/`) l'emporte sur ce fichier.
+Le programme est le nerf de l'académie. Ce fichier fixe le cadre, le vocabulaire et les règles de stabilité décidés par le directeur le 13/10/2026. Les sources d'origine sont dans `docs/current/sources-directeur-2026-10/`, et leurs contradictions sont tranchées dans `docs/current/REGISTRE-RECONCILIATION-2026-10-14.md` : lis ce registre avant d'écrire. Règle : la décision explicite la plus récente du directeur l'emporte ; une proposition (jury, expert, agent) n'est jamais une décision.
 
 ## 1. Le cadre : les questions de l'élève
 
@@ -30,32 +30,36 @@ Chaque étape répond ensuite, toujours dans cet ordre :
   - 2. Lire avec les voyelles (jusqu'à la chadda)
   - 3. Lire dans le Coran (fin du livre, puis le Mushaf)
   - 4. Les sourates courtes, d'Al-Masad (111) à Az-Zalzalah (99)
-- **6 à 10 ans** : le livre seul jusqu'à la chadda. Ensuite viennent en plus Al-Fatiha (environ 3 semaines), puis An-Nâs, Al-Falaq et Al-Ikhlâs (environ 2 semaines chacune), puis les paroles de la prière, puis les autres invocations.
-- **11 ans et plus** : Al-Fatiha en plus dès la première semaine, parce que la prière est obligatoire dès la puberté. C'est un réglage.
+- **6 à 9 ans** : le livre seul jusqu'à la chadda. Ensuite viennent en plus Al-Fatiha (environ 3 semaines), puis An-Nâs, Al-Falaq et Al-Ikhlâs (environ 2 semaines chacune), puis les paroles de la prière et les ablutions (démonstration pratique, sans fiqh détaillé), puis les autres invocations.
+- **10 ans et plus** (cohortes 10-13, 14-17, 18+) : Al-Fatiha en plus dès la première semaine, parce que l'enfant doit prier à cet âge. C'est un réglage.
 - Le livre fini et validé, le Coran devient l'essentiel. La révision de la lecture, les invocations et l'adab passent en plus.
-- Après les bases vient l'examen de fin des bases. L'élève choisit ensuite : lire tout le Coran, ou le mémoriser.
+- Après les bases vient l'examen de fin des bases. Ensuite : pour un enfant, la mémorisation est proposée par défaut si les acquis sont stables, et le tuteur peut demander la lecture ; un adulte choisit entre lire tout le Coran et le mémoriser, sur conseil de l'enseignant.
 
 ## 3. Ce qui existe déjà : ne rien ajouter à l'enseignant
 
 - **Le cahier de séance** (K-45) : moins de 45 secondes, gelé. N'y ajoute aucun champ sans décision datée du directeur.
-- **Bilan de fin des étapes 1 à 3** : il passe par l'évaluation « périodique » existante (réussi, pas encore, à revoir), pendant un cours normal.
-- **Fin des bases** : un examen à l'une des 3 sessions annuelles (fin décembre, après le Ramadan, fin août), en ligne. La famille peut y assister.
+- **États de compétence visibles** : À renforcer, Acquis, Stable. Jamais d'autre échelle face aux familles.
+- **Bilan de fin des étapes 1 à 3** : il passe par l'évaluation « périodique » existante, pendant un cours normal.
+- **Mots du résultat** : « Étape validée », « Quelques points sont à renforcer », « Une nouvelle vérification est nécessaire ». Jamais « échec ».
+- **Fin des bases** : l'enseignant propose l'élève quand il est prêt ; l'examen a lieu dans une séance d'évaluation planifiée. La famille peut assister si l'administration ouvre la séance.
+- **Rencontres de récitation (Majālis)** : 4 par an, dont une juste après l'Aïd al-Fitr. Elles encouragent, elles ne font jamais passer d'étape.
 - **Le passage d'étape** : l'enseignant propose et l'administration confirme. Jamais automatique.
 - **Réglages de l'application (0043)** :
   - 3 cours par semaine ;
   - 60 minutes pour les moins de 18 ans, 90 minutes pour les adultes ;
-  - 5 enfants ou 6 adultes par classe au plus ;
-  - 3 élèves pour ouvrir une classe.
+  - 5 enfants, 6 adultes, 4 débutants par classe au plus (décision V3/V4) ;
+  - 4 élèves pour ouvrir une classe (décision V3/V4 ; la base dit encore 3, écart à corriger).
+- **Cohortes** : 6-9, 10-13, 14-17, 18+ (décision du 29/09, confirmée le 12/10 ; la base a encore 5-7, 8-10, 11-14, 15-17).
 - **Âge minimum** : 6 ans, avec une exception possible accordée par l'administration.
 
 ## 4. Le calendrier
 
-Sources : Google Drive, « Calendrier des évaluations 2025-2026 » et « Congé du Ramadan 2026 ».
+Source : décision CONG-01 du 30/09/2026. Elle remplace le calendrier Drive 2025-2026 de l'ancienne académie.
 
-- **Ramadan** : congé. L'élève repart avec un programme de révision.
-- **Aïd al-Adha** : une semaine de congé.
-- **Examens** : environ 10 jours de révision avant chaque session.
+- **Ramadan** : les cours continuent au début du mois, avec moins de nouveau et plus de révision. Fermeture du 20 Ramadan au 7 Shawwal inclus, 20 jours au plus.
+- **Aïd al-Adha (Tabaski)** : fermeture du 9 au 18 Dhu al-Hijja inclus, 10 jours.
 - **Été** : les cours continuent.
+- **Vacances de la famille hors calendrier** : c'est une pause individuelle (un mois civil complet, annoncé 7 jours avant).
 
 Les dates sont des réglages publiés chaque année et ne s'écrivent jamais en dur. Pendant un congé, l'objectif de l'élève est gelé.
 
