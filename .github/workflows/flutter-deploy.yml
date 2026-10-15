@@ -30,7 +30,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    branches: [main, 'ccr-1b1bfa0b-m1kvkk']
   workflow_dispatch:
 
 # Deux poussees rapprochees deployaient deux bundles dans un ordre non garanti.
@@ -86,19 +86,28 @@ jobs:
       - name: Refuse de partir si un secret manque
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          PROD_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          PROD_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          STAGING_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+          STAGING_SUPABASE_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY }}
         shell: bash
         run: |
           manquants=""
-          for nom in VERCEL_ORG_ID VERCEL_PROJECT_ID VERCEL_TOKEN SUPABASE_URL SUPABASE_ANON_KEY; do
+          for nom in VERCEL_ORG_ID VERCEL_PROJECT_ID VERCEL_TOKEN; do
             if [ -z "${!nom}" ]; then manquants="$manquants $nom"; fi
           done
+          if [ "${{ steps.cible.outputs.production }}" = "true" ]; then
+            [ -n "$PROD_SUPABASE_URL" ] || manquants="$manquants SUPABASE_URL"
+            [ -n "$PROD_SUPABASE_ANON_KEY" ] || manquants="$manquants SUPABASE_ANON_KEY"
+          else
+            [ -n "$STAGING_SUPABASE_URL" ] || manquants="$manquants STAGING_SUPABASE_URL"
+            [ -n "$STAGING_SUPABASE_ANON_KEY" ] || manquants="$manquants STAGING_SUPABASE_ANON_KEY"
+          fi
           if [ -n "$manquants" ]; then
             echo "::error title=Secrets GitHub absents::$manquants -- a creer dans Settings > Secrets and variables > Actions"
             exit 1
           fi
-          echo "Les cinq secrets exiges sont presents."
+          echo "Les secrets requis pour la cible sont presents."
 
       - uses: subosito/flutter-action@v2
         with:
@@ -121,14 +130,36 @@ jobs:
       # lui, `Env.environnement` vaut `developpement` (env.dart:59-62) et les
       # erreurs de la production arrivaient dans Sentry melangees a celles des
       # postes.
-      - name: Build Flutter Web (release)
+      - name: Build Flutter Web (production)
+        if: steps.cible.outputs.production == 'true'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SENTRY_DSN_FLUTTER: ${{ secrets.SENTRY_DSN_FLUTTER }}
         run: |
           flutter build web \
             --release \
-            --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
-            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} \
-            --dart-define=ENVIRONNEMENT=${{ steps.cible.outputs.environnement }} \
-            --dart-define=SENTRY_DSN_FLUTTER=${{ secrets.SENTRY_DSN_FLUTTER }} \
+            --dart-define=SUPABASE_URL="$SUPABASE_URL" \
+            --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
+            --dart-define=ENVIRONNEMENT=production \
+            --dart-define=SENTRY_DSN_FLUTTER="$SENTRY_DSN_FLUTTER" \
+            --dart-define=GALERIE=false \
+            --dart-define=PLAYGROUND=false \
+            --dart-define=AUTH_PAR_MOT_DE_PASSE=false
+
+      - name: Build Flutter Web (staging)
+        if: steps.cible.outputs.production != 'true'
+        env:
+          SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY }}
+          SENTRY_DSN_FLUTTER: ${{ secrets.STAGING_SENTRY_DSN_FLUTTER }}
+        run: |
+          flutter build web \
+            --release \
+            --dart-define=SUPABASE_URL="$SUPABASE_URL" \
+            --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
+            --dart-define=ENVIRONNEMENT=staging \
+            --dart-define=SENTRY_DSN_FLUTTER="$SENTRY_DSN_FLUTTER" \
             --dart-define=GALERIE=false \
             --dart-define=PLAYGROUND=false \
             --dart-define=AUTH_PAR_MOT_DE_PASSE=false
@@ -149,15 +180,31 @@ jobs:
             echo "::error title=Bundle incomplet::$manquants absent(s) de build/web"
             exit 1
           fi
-          # L'URL Supabase est une constante compilee : si elle n'est pas dans
-          # main.dart.js, le --dart-define n'a pas pris et l'application
-          # partirait sans dorsale. On cherche la chaine litterale, jamais la
-          # cle -- qui n'a rien a faire dans un journal de CI.
-          if ! grep -qF "${{ secrets.SUPABASE_URL }}" build/web/main.dart.js; then
-            echo "::error title=Bundle non configure::l URL Supabase n est pas compilee dans main.dart.js"
+          echo "Bundle complet."
+
+      - name: Verifie l URL Supabase du bundle production
+        if: steps.cible.outputs.production == 'true'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        shell: bash
+        run: |
+          if ! grep -qF "$SUPABASE_URL" build/web/main.dart.js; then
+            echo "::error title=Bundle non configure::l URL Supabase production n est pas compilee dans main.dart.js"
             exit 1
           fi
-          echo "Bundle complet et configure."
+          echo "URL Supabase production compilee."
+
+      - name: Verifie l URL Supabase du bundle staging
+        if: steps.cible.outputs.production != 'true'
+        env:
+          SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+        shell: bash
+        run: |
+          if ! grep -qF "$SUPABASE_URL" build/web/main.dart.js; then
+            echo "::error title=Bundle non configure::l URL Supabase STAGING n est pas compilee dans main.dart.js"
+            exit 1
+          fi
+          echo "URL Supabase STAGING compilee."
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
