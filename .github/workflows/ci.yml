@@ -16,10 +16,10 @@ jobs:
     # branches `ui/*` ne touchent pas `supabase/`.
     if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
     runs-on: ubuntu-latest
-    container: postgres:17-alpine
+    container: public.ecr.aws/docker/library/postgres:17-alpine
     services:
       postgres:
-        image: postgres:17-alpine
+        image: public.ecr.aws/docker/library/postgres:17-alpine
         env:
           POSTGRES_HOST_AUTH_METHOD: trust
         options: >-
@@ -45,6 +45,12 @@ jobs:
             echo "--- $f"
             psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
           done
+
+      # OFFRES-I5 : les créneaux demandés en privé ne deviennent une offre
+      # publique qu'au quota configuré (5 enfants / 6 adultes).
+      - name: Scenarios du créneau personnalisé au quota (F1)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_offres_personnalisees.sql
 
       # Inscription bornee a deux roles, depot KYC de l'enseignant, cloisonnement
       # de genre, appareil partage, plafond d'appareils, codes d'appairage,
@@ -192,6 +198,26 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b18_security_definer.sql
 
+      # SEC-01 : identité opaque de l'agent, résolution de la portée actuelle et révocation.
+      - name: Scenario SEC-01 (identité agent / profil observé)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_agent_identity.sql
+
+      # B-07 : profil autonome adulte du titulaire, idempotence et rôle guardian conservé.
+      - name: Scenarios du profil adulte titulaire (B-07)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b07_profil_titulaire.sql
+
+      # B-03 : invitation neutre, email vérifié, expiration, idempotence et cloisonnement foyer.
+      - name: Scenarios des invitations conjoint (B-03)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b03_invitations_foyer.sql
+
+      # B-08 : résumé explicitement publié, auteur enseignant et cloisonnement par foyer.
+      - name: Scenarios de progression et résumés famille (B-08)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b08_progression_famille.sql
+
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
     if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
@@ -227,6 +253,10 @@ jobs:
             supabase/functions/piece-identite-depot/index.ts \
             supabase/functions/piece-identite-confirme/index.ts \
             supabase/functions/archive-seance-acces/index.ts
+
+      # SEC-01 : la session d'agent conserve l'identité du jeton dans le JWT.
+      - name: Type-check de la session agent
+        run: deno check supabase/functions/agent-session/index.ts
 
       # Aucune valeur de secret ne doit exister dans le depot. Les NOMS des
       # variables R2 ont le droit d'y etre, et y sont ; leurs valeurs jamais.
