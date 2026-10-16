@@ -5,6 +5,10 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
+import 'core/admin/incidents_seances_supabase.dart';
+import 'core/admin/planning_direction_supabase.dart';
+import 'core/admin/port_incidents_seances.dart';
+import 'core/admin/port_planning_direction.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
@@ -12,9 +16,15 @@ import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
 import 'core/config/ecran_configuration_absente.dart';
 import 'core/config/env.dart';
+import 'core/controle/port_tirage_controle.dart';
+import 'core/controle/port_tirage_controle_supabase.dart';
+import 'core/foyer/port_reprises_admin.dart';
+import 'core/foyer/reprises_admin_supabase.dart';
 import 'core/i18n/langue_demarrage.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/observabilite/supervision.dart';
+import 'core/offres/port_regroupements_admin.dart';
+import 'core/offres/regroupements_c11bis_supabase.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/source_session_agent.dart';
 import 'features/_dev/playground/playground_racine.dart';
@@ -34,6 +44,23 @@ List<Override> _surchargesAppReelle() => <Override>[
     ClassesFoyerSupabase(Supabase.instance.client),
   ),
   surchargeRevueDossiersProduction,
+  // Direction : chaque port d'administration lit et ecrit par les RPC de
+  // STAGING, avec le jeton de la session (le serveur reste la barriere).
+  portIncidentsSeancesProvider.overrideWithValue(
+    IncidentsSeancesSupabase(Supabase.instance.client),
+  ),
+  portPlanningDirectionProvider.overrideWithValue(
+    PlanningDirectionSupabase(Supabase.instance.client),
+  ),
+  portReprisesAdminProvider.overrideWithValue(
+    ReprisesAdminSupabase(Supabase.instance.client),
+  ),
+  portRegroupementsAdminProvider.overrideWithValue(
+    RegroupementsC11bisSupabase(Supabase.instance.client),
+  ),
+  portTirageControleProvider.overrideWithValue(
+    PortTirageControleSupabase(Supabase.instance.client),
+  ),
 ];
 
 /// Point d'entree unique de l'application.
