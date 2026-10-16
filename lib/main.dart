@@ -20,6 +20,8 @@ import 'core/config/ecran_configuration_absente.dart';
 import 'core/config/env.dart';
 import 'core/controle/port_tirage_controle.dart';
 import 'core/controle/port_tirage_controle_supabase.dart';
+import 'core/dossier/port_acces_pieces_kyc.dart';
+import 'core/dossier/port_acces_pieces_kyc_supabase.dart';
 import 'core/foyer/port_reprises_admin.dart';
 import 'core/foyer/reprises_admin_supabase.dart';
 import 'core/i18n/langue_demarrage.dart';
@@ -29,6 +31,9 @@ import 'core/offres/frise_demandes_supabase.dart';
 import 'core/offres/port_frise_demande.dart';
 import 'core/offres/port_regroupements_admin.dart';
 import 'core/offres/regroupements_c11bis_supabase.dart';
+import 'core/recrutement/port_signature_contrat.dart';
+import 'core/recrutement/port_statuts_signature.dart';
+import 'core/recrutement/port_statuts_signature_supabase.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/source_session_agent.dart';
 import 'features/_dev/playground/playground_racine.dart';
@@ -72,6 +77,17 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portReponsePresentationProvider.overrideWithValue(
     ReponsePresentationSupabase(Supabase.instance.client),
+  ),
+  // Dossiers et recrutement : verdict d'acces aux pieces KYC, statuts des
+  // signatures et signature du contrat enseignant versionne (F70).
+  portAccesPiecesKycProvider.overrideWithValue(
+    PortAccesPiecesKycSupabase(Supabase.instance.client),
+  ),
+  portStatutsSignatureProvider.overrideWithValue(
+    StatutsSignatureSupabase(Supabase.instance.client),
+  ),
+  portSignatureContratProvider.overrideWithValue(
+    SignatureContratSupabase(Supabase.instance.client),
   ),
 ];
 
