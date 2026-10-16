@@ -5,9 +5,12 @@ BEGIN;
 INSERT INTO auth.users (id, email) VALUES
   ('c2000000-0000-0000-0000-000000000001', 'c20-guardian@example.test'),
   ('c2000000-0000-0000-0000-000000000002', 'c20-student@example.test'),
-  ('c2000000-0000-0000-0000-000000000003', 'c20-teacher@example.test');
+  ('c2000000-0000-0000-0000-000000000003', 'c20-teacher@example.test'),
+  ('c2000000-0000-0000-0000-000000000004', 'c20-other-guardian@example.test');
 INSERT INTO public.households (id, timezone)
-VALUES ('c20fffff-0000-0000-0000-000000000001', 'Europe/Paris');
+VALUES
+  ('c20fffff-0000-0000-0000-000000000001', 'Europe/Paris'),
+  ('c20fffff-0000-0000-0000-000000000005', 'Europe/Paris');
 INSERT INTO public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status)
 VALUES
@@ -16,10 +19,15 @@ VALUES
   ('c2000000-0000-0000-0000-000000000002', 'C20STUDENT00001', 'student',
    'c20fffff-0000-0000-0000-000000000001', 'Eleve', 'Test', 'active'),
   ('c2000000-0000-0000-0000-000000000003', 'C20TEACHER0001', 'teacher',
-   NULL, 'Enseignant', 'Test', 'provisional_active');
+   NULL, 'Enseignant', 'Test', 'provisional_active'),
+  ('c2000000-0000-0000-0000-000000000004', 'C20GUARDIAN0002', 'guardian',
+   'c20fffff-0000-0000-0000-000000000005', 'Autre', 'Tuteur', 'active');
 UPDATE public.households
    SET primary_guardian_id = 'c2000000-0000-0000-0000-000000000001'
  WHERE id = 'c20fffff-0000-0000-0000-000000000001';
+UPDATE public.households
+   SET primary_guardian_id = 'c2000000-0000-0000-0000-000000000004'
+ WHERE id = 'c20fffff-0000-0000-0000-000000000005';
 
 INSERT INTO public.groupes
   (id, teacher_id, etat, type_public, seuil_max, libelle, weekday, hour_local)
@@ -122,5 +130,52 @@ BEGIN
   END IF;
 END;
 $rls$;
+
+SELECT set_config('test.uid', 'c2000000-0000-0000-0000-000000000004', true);
+SELECT set_config('request.jwt.claim.sub', 'c2000000-0000-0000-0000-000000000004', true);
+SELECT set_config('test.jwt',
+  '{"app_metadata":{"role":"guardian","household_id":"c20fffff-0000-0000-0000-000000000005"}}', true);
+SELECT set_config('request.jwt.claims',
+  '{"sub":"c2000000-0000-0000-0000-000000000004","app_metadata":{"role":"guardian","household_id":"c20fffff-0000-0000-0000-000000000005"}}', true);
+DO $other_household_denied$
+DECLARE
+  v_view_count integer;
+  v_table_count integer;
+BEGIN
+  SELECT count(*) INTO v_view_count FROM public.demande_evenements_foyer_v;
+  SELECT count(*) INTO v_table_count FROM public.demande_evenements;
+  IF v_view_count <> 0 OR v_table_count <> 0 THEN
+    RAISE EXCEPTION 'C-20: another active household read timeline events';
+  END IF;
+END
+$other_household_denied$;
+
+RESET ROLE;
+DO $anon_timeline_acl$
+BEGIN
+  IF pg_catalog.has_table_privilege('anon', 'public.demande_evenements', 'SELECT')
+     OR pg_catalog.has_table_privilege('anon', 'public.demande_evenements_foyer_v', 'SELECT') THEN
+    RAISE EXCEPTION 'C-20: anon retains SELECT on timeline table or projection';
+  END IF;
+END
+$anon_timeline_acl$;
+SET LOCAL ROLE anon;
+DO $anon_timeline_denied$
+BEGIN
+  BEGIN
+    PERFORM 1 FROM public.demande_evenements_foyer_v;
+    RAISE EXCEPTION 'C-20: anon read the timeline projection';
+  EXCEPTION WHEN insufficient_privilege THEN
+    NULL;
+  END;
+  BEGIN
+    PERFORM 1 FROM public.demande_evenements;
+    RAISE EXCEPTION 'C-20: anon read the timeline table';
+  EXCEPTION WHEN insufficient_privilege THEN
+    NULL;
+  END;
+END
+$anon_timeline_denied$;
+RESET ROLE;
 
 ROLLBACK;
