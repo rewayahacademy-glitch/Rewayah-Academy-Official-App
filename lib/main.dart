@@ -8,16 +8,24 @@ import 'app.dart';
 import 'core/accessibilite/port_reponse_presentation.dart';
 import 'core/accessibilite/reponse_presentation_supabase.dart';
 import 'core/admin/bibliotheque_admin_supabase.dart';
+import 'core/admin/classes_admin_supabase.dart';
+import 'core/admin/fusion_classes_supabase.dart';
 import 'core/admin/incidents_seances_supabase.dart';
+import 'core/admin/pilotage_supabase.dart';
 import 'core/admin/planning_direction_supabase.dart';
 import 'core/admin/port_bibliotheque_admin.dart';
+import 'core/admin/port_classes_admin.dart';
+import 'core/admin/port_fusion_classes.dart';
 import 'core/admin/port_incidents_seances.dart';
+import 'core/admin/port_pilotage.dart';
 import 'core/admin/port_planning_direction.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
+import 'core/capacites/enseignants_classe_supabase.dart';
 import 'core/capacites/identite_titulaire_supabase.dart';
 import 'core/capacites/port_classes_foyer.dart';
+import 'core/capacites/port_enseignants_classe.dart';
 import 'core/capacites/port_identite_titulaire.dart';
 import 'core/capacites/port_profil_eleve_titulaire.dart';
 import 'core/capacites/port_progression_famille.dart';
@@ -37,6 +45,7 @@ import 'core/controle/port_tirage_controle_supabase.dart';
 import 'core/dossier/port_acces_pieces_kyc.dart';
 import 'core/dossier/port_acces_pieces_kyc_supabase.dart';
 import 'core/enseignant/absence_remplacement.dart';
+import 'core/enseignant/port_remplacements.dart';
 import 'core/enseignant/remplacements_supabase.dart';
 import 'core/foyer/port_reprises_admin.dart';
 import 'core/foyer/reprises_admin_supabase.dart';
@@ -51,6 +60,8 @@ import 'core/offres/port_regroupements_admin.dart';
 import 'core/offres/port_suivi_demandes.dart';
 import 'core/offres/regroupements_c11bis_supabase.dart';
 import 'core/offres/regroupements_pages_supabase.dart';
+import 'core/recrutement/invitations_enseignant_supabase.dart';
+import 'core/recrutement/port_invitations_enseignant.dart';
 import 'core/recrutement/port_signature_contrat.dart';
 import 'core/recrutement/port_statuts_signature.dart';
 import 'core/recrutement/port_statuts_signature_supabase.dart';
@@ -58,6 +69,8 @@ import 'core/session/port_capacite_eleve.dart';
 import 'core/session/port_capacite_eleve_supabase.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/source_session_agent.dart';
+import 'core/tc_bibliotheque/port_support_actif.dart';
+import 'core/tc_bibliotheque/support_actif_supabase.dart';
 import 'core/tc_etat_partage/etat_partage_supabase.dart';
 import 'core/tc_etat_partage/providers_tc_etat_partage.dart';
 import 'core/tc_observation/historique_observations_admin_supabase.dart';
@@ -67,12 +80,14 @@ import 'core/tc_outils/annotations_supabase.dart';
 import 'core/tc_outils/assignations_supabase.dart';
 import 'core/tc_outils/port_annotations.dart';
 import 'core/tc_outils/port_assignations.dart';
+import 'core/tc_parcours/contenu_seance_supabase.dart';
 import 'core/tc_parcours/feedback_supabase.dart';
 import 'core/tc_parcours/port_feedback.dart';
 import 'core/tc_parcours/port_signalement.dart';
 import 'core/tc_parcours/port_travail_a_venir.dart';
 import 'core/tc_parcours/signalement_supabase.dart';
 import 'features/_dev/playground/playground_racine.dart';
+import 'features/bienvenue_enseignant/prerequis_enseignant_supabase.dart';
 import 'features/com_annonces/annonces_supabase.dart';
 import 'features/com_annonces/port_annonces.dart';
 import 'features/com_messages/messages_metier_supabase.dart';
@@ -117,10 +132,34 @@ List<Override> _surchargesAppReelle() => <Override>[
   portRegroupementsPagesProvider.overrideWithValue(
     RegroupementsPagesSupabase(Supabase.instance.client),
   ),
-  // Bibliotheque d'administration (CAP-29) : lectures, revue des droits et
-  // depot R2 ; les ecritures sans RPC restent fermees.
+  // Bibliotheque d'administration (CAP-29) : lectures, revue des droits,
+  // depot R2 et ecritures (brouillon, controle, publication, attribution,
+  // retrait) ; seule la mise a jour d'un brouillon reste fermee (aucune RPC).
   portBibliothequeAdminProvider.overrideWithValue(
     BibliothequeAdminSupabase(Supabase.instance.client),
+  ),
+  // Classes de la direction (CONTRATS-MANQUANTS) : liste paginee et
+  // numerotee (R16, R17), fusion et transfert (R9, R10), pilotage par
+  // horaire (R19), enseignants proposables a la creation (CLASSE-FORM-1).
+  portClassesAdminProvider.overrideWithValue(
+    ClassesAdminSupabase(Supabase.instance.client),
+  ),
+  portFusionClassesProvider.overrideWithValue(
+    FusionClassesSupabase(Supabase.instance.client),
+  ),
+  portPilotageProvider.overrideWithValue(
+    PilotageSupabase(Supabase.instance.client),
+  ),
+  portEnseignantsClasseProvider.overrideWithValue(
+    EnseignantsClasseSupabase(Supabase.instance.client),
+  ),
+  // Recrutement : invitation d'un enseignant par la direction et
+  // verification du code par le candidat (C-13, C-14).
+  portInvitationsEnseignantProvider.overrideWithValue(
+    InvitationsEnseignantSupabase(Supabase.instance.client),
+  ),
+  portVerificationInvitationProvider.overrideWithValue(
+    VerificationInvitationSupabase(Supabase.instance.client),
   ),
   portTirageControleProvider.overrideWithValue(
     PortTirageControleSupabase(Supabase.instance.client),
@@ -192,6 +231,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   reponseRemplacementProvider.overrideWithValue(
     ReponseRemplacementSupabase(Supabase.instance.client),
   ),
+  // Tableau commun des remplacements (REMPL-1), filtre par le serveur.
+  portRemplacementsProvider.overrideWithValue(
+    RemplacementsSupabase(Supabase.instance.client),
+  ),
+  // Prerequis de l'enseignant (ENS-01), calcules par le serveur.
+  surchargePrerequisEnseignant(),
   // Famille et titulaire : progression d'un eleve, profil eleve du
   // titulaire, invitation du second adulte, capacite « eleve autonome ».
   portProgressionFamilleProvider.overrideWithValue(
@@ -216,6 +261,14 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portSignalementProvider.overrideWithValue(
     SignalementSupabase(Supabase.instance.client),
+  ),
+  // Support actif de la seance (CAP29-G) et travail a venir de la classe
+  // (« Avant le prochain cours ») : assignations ouvertes et reprise.
+  portSupportActifProvider.overrideWithValue(
+    SupportActifSupabase(Supabase.instance.client),
+  ),
+  portTravailAVenirProvider.overrideWithValue(
+    travailAVenirSupabase(Supabase.instance.client),
   ),
   // Communications (COM-BACK-1) : Messages metier et annonces de Classe sur
   // les RPC `com_*`, nommes dans la langue courante.
