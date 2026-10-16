@@ -1,7 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../capacites/port_enseignants_classe.dart' show GenreClasse;
-import 'occurrence_creneau.dart';
 import 'offre_horaire.dart' show NiveauDeclare, PublicOffre;
 import 'port_regroupements_admin.dart';
 
