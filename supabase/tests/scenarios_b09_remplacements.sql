@@ -131,6 +131,106 @@ BEGIN
 END;
 $test$;
 RESET ROLE;
+SELECT set_config('request.jwt.claim.sub','b0900000-0000-0000-0000-000000000003',true);
+SELECT set_config('test.uid','b0900000-0000-0000-0000-000000000003',true);
+SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+SELECT set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+SET LOCAL ROLE authenticated;
+DO $wrong_role$
+BEGIN
+ BEGIN
+  PERFORM public.designer_remplacant_admin(
+   'b0900000-0000-0000-0000-000000000202',
+   'b0900000-0000-0000-0000-000000000002',
+   'b0900000-0000-0000-0000-000000000306');
+  RAISE EXCEPTION 'B09: un enseignant a désigné un remplaçant admin';
+ EXCEPTION WHEN insufficient_privilege THEN NULL;
+ END;
+END;
+$wrong_role$;
+SELECT set_config('request.jwt.claim.sub','b0900000-0000-0000-0000-000000000004',true);
+SELECT set_config('test.uid','b0900000-0000-0000-0000-000000000004',true);
+SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"admin"}}',true);
+SELECT set_config('test.jwt','{"app_metadata":{"role":"admin"}}',true);
+DO $wrong_role_admin$
+BEGIN
+ BEGIN
+  PERFORM public.declarer_absence_seance(
+   'b0900000-0000-0000-0000-000000000201',
+   'b0900000-0000-0000-0000-000000000310');
+  RAISE EXCEPTION 'B09: un administrateur a déclaré une absence enseignant';
+ EXCEPTION WHEN insufficient_privilege THEN NULL;
+ END;
+ BEGIN
+  PERFORM public.prendre_remplacement(
+   'b0900000-0000-0000-0000-000000000201',
+   'b0900000-0000-0000-0000-000000000311');
+  RAISE EXCEPTION 'B09: un administrateur a pris un remplacement enseignant';
+ EXCEPTION WHEN insufficient_privilege THEN NULL;
+ END;
+END;
+$wrong_role_admin$;
+RESET ROLE;
+
+UPDATE public.profiles SET account_status='disabled'
+ WHERE id IN ('b0900000-0000-0000-0000-000000000001',
+              'b0900000-0000-0000-0000-000000000002');
+SELECT set_config('request.jwt.claim.sub','b0900000-0000-0000-0000-000000000001',true);
+SELECT set_config('test.uid','b0900000-0000-0000-0000-000000000001',true);
+SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+SELECT set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+SET LOCAL ROLE authenticated;
+DO $disabled_teacher$
+BEGIN
+ BEGIN
+  PERFORM public.declarer_absence_seance(
+   'b0900000-0000-0000-0000-000000000201',
+   'b0900000-0000-0000-0000-000000000301');
+  RAISE EXCEPTION 'B09: un enseignant désactivé a déclaré une absence';
+ EXCEPTION WHEN insufficient_privilege THEN NULL;
+ END;
+ PERFORM set_config('request.jwt.claim.sub','b0900000-0000-0000-0000-000000000002',true);
+ PERFORM set_config('test.uid','b0900000-0000-0000-0000-000000000002',true);
+ BEGIN
+  PERFORM public.prendre_remplacement(
+   'b0900000-0000-0000-0000-000000000201',
+   'b0900000-0000-0000-0000-000000000303');
+  RAISE EXCEPTION 'B09: un remplaçant désactivé a conservé sa prise';
+ EXCEPTION WHEN insufficient_privilege THEN NULL;
+ END;
+END;
+$disabled_teacher$;
+RESET ROLE;
+
+SET LOCAL ROLE anon;
+DO $anonymous$
+BEGIN
+ BEGIN
+  PERFORM public.declarer_absence_seance(
+   'b0900000-0000-0000-0000-000000000201',
+   'b0900000-0000-0000-0000-000000000307');
+  RAISE EXCEPTION 'B09: anon a déclaré une absence';
+ EXCEPTION WHEN insufficient_privilege THEN NULL;
+ END;
+ BEGIN
+  PERFORM public.prendre_remplacement(
+   'b0900000-0000-0000-0000-000000000201',
+   'b0900000-0000-0000-0000-000000000308');
+  RAISE EXCEPTION 'B09: anon a pris un remplacement';
+ EXCEPTION WHEN insufficient_privilege THEN NULL;
+ END;
+ BEGIN
+  PERFORM public.designer_remplacant_admin(
+   'b0900000-0000-0000-0000-000000000202',
+   'b0900000-0000-0000-0000-000000000003',
+   'b0900000-0000-0000-0000-000000000309');
+  RAISE EXCEPTION 'B09: anon a désigné un remplaçant';
+ EXCEPTION WHEN insufficient_privilege THEN NULL;
+ END;
+END;
+$anonymous$;
+RESET ROLE;
+
 DO $postflight$
 BEGIN
  IF (SELECT count(*) FROM public.notifications WHERE evenement='remplacement_propose' AND params->>'session_id'='b0900000-0000-0000-0000-000000000201') <> 2
@@ -141,10 +241,16 @@ BEGIN
     OR (SELECT count(*) FROM public.audit_logs WHERE action IN ('replacement_absence_declared','replacement_claimed') AND row_id='b0900000-0000-0000-0000-000000000201') <> 2 THEN
    RAISE EXCEPTION 'B09: append-only state, titulaire ou audit incorrect';
  END IF;
- IF has_function_privilege('anon','public.prendre_remplacement(uuid,uuid)','EXECUTE')
+ IF has_function_privilege('anon','public.declarer_absence_seance(uuid,uuid)','EXECUTE')
+    OR has_function_privilege('anon','public.prendre_remplacement(uuid,uuid)','EXECUTE')
+    OR has_function_privilege('anon','public.designer_remplacant_admin(uuid,uuid,uuid)','EXECUTE')
+    OR has_function_privilege('service_role','public.declarer_absence_seance(uuid,uuid)','EXECUTE')
     OR has_function_privilege('service_role','public.prendre_remplacement(uuid,uuid)','EXECUTE')
-    OR has_function_privilege('agent_ro','public.prendre_remplacement(uuid,uuid)','EXECUTE') THEN
-   RAISE EXCEPTION 'B09: ACL prendre_remplacement incorrecte';
+    OR has_function_privilege('service_role','public.designer_remplacant_admin(uuid,uuid,uuid)','EXECUTE')
+    OR has_function_privilege('agent_ro','public.declarer_absence_seance(uuid,uuid)','EXECUTE')
+    OR has_function_privilege('agent_ro','public.prendre_remplacement(uuid,uuid)','EXECUTE')
+    OR has_function_privilege('agent_ro','public.designer_remplacant_admin(uuid,uuid,uuid)','EXECUTE') THEN
+   RAISE EXCEPTION 'B09: ACL RPC remplacement incorrecte';
  END IF;
 END;
 $postflight$;
