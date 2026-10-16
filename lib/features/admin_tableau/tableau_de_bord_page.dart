@@ -187,6 +187,15 @@ class TableauDeBordPage extends ConsumerWidget {
           onPress: () =>
               GoRouter.of(context).go(Routes.adminOperationsRegroupements),
         ),
+        // L2-05 : les creneaux de la vitrine, crees et publies par
+        // l'administration seule.
+        SettingRow(
+          key: const ValueKey<String>('tableau-offres'),
+          title: t.admin.tableau.outilsOffres,
+          description: t.admin.tableau.outilsOffresDetail,
+          icon: AppIcons.creneaux,
+          onPress: () => GoRouter.of(context).go(Routes.adminOperationsOffres),
+        ),
         // ECHELLE-ADM-PILOTAGE-1 : la demande et l'offre d'enseignants par
         // horaire, R7 et R19.
         SettingRow(

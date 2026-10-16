@@ -666,6 +666,10 @@ abstract final class Routes {
   static const String adminOperationsRegroupements =
       '/admin/operations/regroupements';
 
+  /// L2-05 : l'administration des offres vitrine (creer, publier, retirer),
+  /// sous Operations.
+  static const String adminOperationsOffres = '/admin/operations/offres';
+
   /// ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire (classes,
   /// remplissage, demandes, enseignants libres et manquants), sous
   /// Operations.

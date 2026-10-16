@@ -58,6 +58,7 @@ void main() {
       Routes.adminPersonnesDossiers,
       Routes.adminOperationsAttributions,
       Routes.adminOperationsRegroupements,
+      Routes.adminOperationsOffres,
       Routes.adminOperationsPilotage,
       Routes.adminSecuriteAuditJournal,
       Routes.adminSecuriteAuditObservations,
