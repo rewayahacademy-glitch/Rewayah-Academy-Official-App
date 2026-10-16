@@ -18,6 +18,13 @@ abstract final class AppFontFamily {
   /// Arabe, documents : Coran, hadiths, livres, lettres, textes pedagogiques.
   static const String arabeDocument = 'UthmanTahaNaskh';
 
+  /// Arabe, mise en page du Mushaf de Medine (MUSHAF-15L) : KFGQPC
+  /// UthmanicHafs v3.0, qui porte tous les codepoints du texte et ses signes
+  /// de pause. **Hors de [texte]** tant que `pubspec.yaml` ne la declare pas
+  /// (`docs/current/coran/PUBSPEC_MUSHAF_15L.md`) : une famille declaree par
+  /// le seul code ne se charge pas.
+  static const String arabeMushaf = 'UthmanicHafs';
+
   /// Arabe, interface : RTL, menus, boutons, labels, navigation.
   static const String arabeInterface = 'NotoSansArabic';
 
@@ -247,6 +254,17 @@ abstract final class AppTypography {
     FontWeight poids = FontWeight.w600,
     double? interligne,
   }) => tabulaire(_corps(taille, interligne ?? (taille + 8) / taille, poids));
+
+  /// Le texte de la page du Mushaf de Medine (MUSHAF-15L), en UthmanicHafs,
+  /// avec la police des documents en repli pour les glyphes qu'elle porte.
+  static TextStyle mushaf15L({double taille = 100, double interligne = 1}) {
+    return TextStyle(
+      fontFamily: AppFontFamily.arabeMushaf,
+      fontFamilyFallback: const <String>[AppFontFamily.arabeDocument],
+      fontSize: taille,
+      height: interligne,
+    );
+  }
 
   /// Style de rendu d'un document arabe : Coran, hadith, livre, lettre.
   ///

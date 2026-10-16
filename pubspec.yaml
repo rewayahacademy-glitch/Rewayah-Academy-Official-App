@@ -115,6 +115,12 @@ flutter:
       fonts:
         - asset: assets/fonts/UthmanTahaNaskh-Regular.otf
 
+    # Coran, mise en page du Mushaf de Medine en 15 lignes (MUSHAF-15L) : la
+    # police KFGQPC qui porte tous les codepoints du texte et ses signes de pause.
+    - family: UthmanicHafs
+      fonts:
+        - asset: assets/fonts/UthmanicHafs-v-3.0.ttf
+
     # Arabe, interface : RTL, menus, boutons, labels.
     # Police variable : la graisse se pilote par FontVariation dans AppTypography.
     - family: NotoSansArabic

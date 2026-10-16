@@ -9,8 +9,11 @@
 import 'package:flutter/material.dart';
 
 import '../../core/domain/enums.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/pause_seance/port_pause_seance.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
@@ -468,6 +471,16 @@ class _CarteRecapitulatif extends StatelessWidget {
         haut: Text(t.salle.fin.enseignant.cahierSeance, style: simple),
         bas: fin.cahierACompleter ? const _BadgeCahier() : null,
       ),
+      // LIVE-PAUSE-01 : le systeme dit si la pause a ete prise ou non. Rien
+      // n'est rendu quand aucune pause n'etait prevue.
+      if (_phrasePause(vue.pause ?? const PauseSeance.nonPrevue())
+          case final String phrase)
+        _LigneRecap(
+          icone: AppIcons.horloge,
+          haut: Text(t.salle.seance.pause.recapTitre, style: simple),
+          bas: Text(phrase, style: fort),
+          cle: const ValueKey<String>('fin-recapitulatif-pause'),
+        ),
     ];
     return Semantics(
       container: true,
@@ -499,8 +512,34 @@ class _CarteRecapitulatif extends StatelessWidget {
   }
 }
 
+/// La phrase du recapitulatif sur la pause, ou `null` sans pause prevue.
+String? _phrasePause(PauseSeance pause) {
+  switch (pause.statut) {
+    case StatutPause.nonPrevue:
+      return null;
+    case StatutPause.prise:
+      final int minutes = (pause.dureeReelle?.inMinutes ?? 0).clamp(1, 1440);
+      return isolerSens(
+        LibellesGroupe.insecable(
+          t.salle.seance.pause.recapPrise(minutes: minutes),
+        ),
+      );
+    case StatutPause.programmee:
+    case StatutPause.enCours:
+    case StatutPause.nonPrise:
+      return isolerSens(t.salle.seance.pause.recapNonPrise);
+  }
+}
+
 class _LigneRecap extends StatelessWidget {
-  const _LigneRecap({required this.icone, required this.haut, this.bas});
+  const _LigneRecap({
+    required this.icone,
+    required this.haut,
+    this.bas,
+    this.cle,
+  });
+
+  final Key? cle;
 
   final AppIcon icone;
   final Widget haut;
@@ -510,6 +549,7 @@ class _LigneRecap extends StatelessWidget {
   Widget build(BuildContext context) {
     final Widget? suite = bas;
     return Padding(
+      key: cle,
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       child: Row(
         children: <Widget>[

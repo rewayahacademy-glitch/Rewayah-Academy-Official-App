@@ -8,6 +8,7 @@ import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/planning/service_planning.dart';
@@ -78,7 +79,7 @@ class _Hub extends ConsumerWidget {
         : null;
     final AsyncValue<String> fuseau = ref.watch(monFuseauProvider);
     final String? ville = fuseau.hasValue && !fuseau.hasError
-        ? villeDuFuseau(fuseau.requireValue)
+        ? villeDuFuseauLibelle(fuseau.requireValue)
         : null;
     final AsyncValue<bool> profilPropre = ref.watch(
       profilEleveTitulaireExisteProvider,

@@ -17,6 +17,8 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/rosace_verset.dart';
+import 'police_mushaf.dart';
+import 'texte_continu_mushaf.dart';
 import 'textes_lecteur_coran.dart';
 
 /// Le rendu « lecture agrandie » : un verset a la fois, reflowable.
@@ -33,13 +35,19 @@ import 'textes_lecteur_coran.dart';
 /// du contrat `SharedContentState` et la decision D-21.
 class VueVersetAgrandi extends ConsumerWidget {
   /// Cree le rendu verset.
-  const VueVersetAgrandi({super.key});
+  ///
+  /// [pageFeuilletee] : la page a rendre quand ce rendu est un feuillet d'un
+  /// feuilletage (MUSHAF-MODES) ; `null`, la page ouverte du lecteur.
+  const VueVersetAgrandi({this.pageFeuilletee, super.key});
+
+  /// La page du feuillet, ou `null` pour la page ouverte.
+  final int? pageFeuilletee;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final EtatLectureCoran etat = ref.watch(lectureCoranProvider);
     final AsyncValue<PageMushafVM> page = ref.watch(
-      pageMushafProvider(etat.page),
+      pageMushafProvider(pageFeuilletee ?? etat.page),
     );
 
     if (!page.hasValue || page.value == null) {
@@ -50,10 +58,57 @@ class VueVersetAgrandi extends ConsumerWidget {
       return _EtatNonLisible(vue: vue);
     }
 
+    // MUSHAF-MODES : avec la mise en page de Medine, les versets se suivent en
+    // texte continu, la rosace en ligne. Le texte KFGQPC va avec UthmanicHafs,
+    // et seulement avec elle ; sans la police, le texte Tanzil simple.
+    if (vue.estMadina15) {
+      return ColonneContinueDeLaPage(
+        vue: vue,
+        zoom: etat.zoomLocal,
+        selectionnable: pageFeuilletee == null,
+      );
+    }
     return ColonneVersetsReflow(
       versets: vue.versets,
       zoom: etat.zoomLocal,
       sections: vue.sections,
+    );
+  }
+}
+
+/// La page de Medine en texte continu : choisit le texte selon la police.
+class ColonneContinueDeLaPage extends ConsumerWidget {
+  /// Cree la colonne.
+  const ColonneContinueDeLaPage({
+    required this.vue,
+    required this.zoom,
+    this.surlignes = const <String>{},
+    this.selectionnable = true,
+    super.key,
+  });
+
+  /// La page.
+  final PageMushafVM vue;
+
+  /// Le grossissement local.
+  final double zoom;
+
+  /// Les references a surligner (focus).
+  final Set<String> surlignes;
+
+  /// Faux dans un feuilletage tactile.
+  final bool selectionnable;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool police =
+        ref.watch(policeMushafDisponibleProvider).value ?? false;
+    return ColonneContinueMushaf(
+      versets: police ? versetsKfgqpc(vue) : versetsTanzil(vue),
+      zoom: zoom,
+      policeKfgqpc: police,
+      surlignes: surlignes,
+      selectionnable: selectionnable,
     );
   }
 }
@@ -126,6 +181,20 @@ class ColonneVersetsReflow extends StatelessWidget {
           largeurMaximaleColonne: AppPage.largeurLecture,
         );
 
+        final Widget colonne = Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            for (final VersetCoran verset in versets) ...<Widget>[
+              BlocVerset(
+                verset: verset,
+                metrique: metrique,
+                debutDeSourate: _commenceUneSourate(verset),
+              ),
+              const SizedBox(height: AppSpacing.xxl),
+            ],
+          ],
+        );
+
         return SingleChildScrollView(
           padding: EdgeInsetsDirectional.symmetric(
             horizontal: gabarit.gouttiere,
@@ -134,25 +203,7 @@ class ColonneVersetsReflow extends StatelessWidget {
           child: Center(
             child: SizedBox(
               width: metrique.largeurColonne,
-              child: SelectionArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    if (metrique.zoomBride) ...<Widget>[
-                      _NoticeZoomBride(metrique: metrique),
-                      const SizedBox(height: AppSpacing.lg),
-                    ],
-                    for (final VersetCoran verset in versets) ...<Widget>[
-                      BlocVerset(
-                        verset: verset,
-                        metrique: metrique,
-                        debutDeSourate: _commenceUneSourate(verset),
-                      ),
-                      const SizedBox(height: AppSpacing.xxl),
-                    ],
-                  ],
-                ),
-              ),
+              child: SelectionArea(child: colonne),
             ),
           ),
         );
@@ -237,26 +288,6 @@ class BlocVerset extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-/// La notice du zoom borne.
-class _NoticeZoomBride extends StatelessWidget {
-  const _NoticeZoomBride({required this.metrique});
-
-  final MetriqueTexteCoran metrique;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-
-    return Text(
-      '${t.tc.coran.zoom.bride} '
-      '${t.tc.coran.zoom.valeur(pourcent: (metrique.zoomApplique * 100).round())}',
-      textAlign: TextAlign.center,
-      style: palette.inkMuted.applyTo(textes.labelSmall ?? const TextStyle()),
     );
   }
 }

@@ -8,6 +8,7 @@ import '../../core/tc_coran/port_corpus_coran.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
@@ -26,20 +27,32 @@ import '../../core/widgets/empty_state.dart';
 /// serait faux : il croirait que le mot n'y est pas.
 class FeuilleNavigationCoran extends ConsumerStatefulWidget {
   /// Cree la feuille.
-  const FeuilleNavigationCoran({required this.onAller, super.key});
+  const FeuilleNavigationCoran({
+    required this.onAller,
+    this.onAPropos,
+    super.key,
+  });
 
   /// Appele avec la page choisie.
   final void Function(int page) onAller;
+
+  /// Ouvre la feuille « A propos de cette edition » (MUSHAF-15L) : `null` hors
+  /// de la page du Mushaf de Medine, l'entree n'est alors pas rendue.
+  final VoidCallback? onAPropos;
+
+  /// La cle de l'entree « A propos de cette edition ».
+  static const Key aProposKey = ValueKey<String>('mushaf-a-propos-entree');
 
   /// Ouvre la feuille.
   static Future<void> ouvrir(
     BuildContext context, {
     required void Function(int page) onAller,
+    VoidCallback? onAPropos,
   }) => AppBottomSheet.ouvrir<void>(
     context,
     titre: t.tc.coran.navigation.titre,
     constructeur: (BuildContext context) =>
-        FeuilleNavigationCoran(onAller: onAller),
+        FeuilleNavigationCoran(onAller: onAller, onAPropos: onAPropos),
   );
 
   @override
@@ -118,6 +131,16 @@ class _FeuilleNavigationCoranEtat
             ),
             const SizedBox(height: AppSpacing.lg),
           ],
+        if (widget.onAPropos != null)
+          ActionPrincipale(
+            key: FeuilleNavigationCoran.aProposKey,
+            libelle: t.tc.coran.mushaf.page15.aProposOuvrir,
+            niveau: NiveauAction.tertiaire,
+            onPress: () {
+              Navigator.of(context).pop();
+              widget.onAPropos!();
+            },
+          ),
       ],
     );
   }

@@ -205,9 +205,11 @@ void main() {
               tester.getSize(find.byKey(MushafPage.commandesKey)).height,
               lessThanOrEqualTo(48),
             );
+            // CORAN-320-FOND-1 : l'en-tete porte maintenant les deux boutons
+            // de taille ; son titre peut passer sur deux lignes a 320 x2.
             expect(
               tester.getSize(find.byKey(MushafPage.enteteKey)).height,
-              lessThanOrEqualTo(48 + 8),
+              lessThanOrEqualTo(48 + 16),
             );
             expect(find.text(t.eleve.coran.agrandir), findsNothing);
             // Le juz, que ces rendus n'ont nulle part ailleurs.
@@ -228,8 +230,8 @@ void main() {
       }
     }
 
-    testWidgets('le panneau « Mode de lecture » deplie le reglage de taille '
-        'en lecture agrandie, et il agit', (WidgetTester tester) async {
+    testWidgets('le reglage de taille est dans l en-tete, le panneau dit la '
+        'valeur', (WidgetTester tester) async {
       final List<String> erreurs = await monter(
         tester,
         mode: ModeRenduCoran.versetAgrandi,
@@ -237,22 +239,12 @@ void main() {
         echelle: 2,
       );
       expect(erreurs, isEmpty);
-      await tester.tap(find.byKey(_options));
+      // CORAN-320-FOND-1 : les deux boutons sont dans l'en-tete, sans ouvrir
+      // « Mode de lecture ».
+      expect(find.byKey(MushafPage.agrandirKey), findsOneWidget);
+      await tester.tap(find.byKey(MushafPage.agrandirKey));
       await tester.pump();
-      // Le reglage est dans le panneau de l'en-tete, pas dans la pagination.
-      expect(
-        find.descendant(
-          of: find.byKey(MushafPage.enteteKey),
-          matching: find.text(t.eleve.coran.reduire),
-        ),
-        findsOneWidget,
-      );
-      expect(find.text(t.eleve.coran.reduire), findsOneWidget);
-      expect(
-        find.textContaining(t.tc.coran.zoom.valeur(pourcent: 100)),
-        findsOneWidget,
-      );
-      await tester.tap(find.text(t.eleve.coran.agrandir));
+      await tester.tap(find.byKey(_options));
       await tester.pump();
       expect(
         find.textContaining(t.tc.coran.zoom.valeur(pourcent: 120)),
@@ -265,46 +257,36 @@ void main() {
     });
   });
 
-  group('CORAN-320-1b : etat vide du focus (aucun passage designe)', () {
-    for (final double echelle in <double>[1, 1.3, 2]) {
-      testWidgets('320x568 x$echelle : aucun debordement, le mot n est pas '
-          'recouvert par l attribution', (WidgetTester tester) async {
-        final List<String> erreurs = await monter(
-          tester,
-          mode: ModeRenduCoran.focus,
-          taille: const Size(320, 568),
-          echelle: echelle,
+  group(
+    'MUSHAF-MODES (d) : focus hors classe, la page ouverte est centree',
+    () {
+      for (final double echelle in <double>[1, 1.3, 2]) {
+        testWidgets(
+          '320x568 x$echelle : aucune phrase d aide, aucun debordement',
+          (WidgetTester tester) async {
+            final List<String> erreurs = await monter(
+              tester,
+              mode: ModeRenduCoran.focus,
+              taille: const Size(320, 568),
+              echelle: echelle,
+            );
+            expect(erreurs, isEmpty);
+            expect(
+              find.textContaining(t.tc.coran.focus.aucunePlage),
+              findsNothing,
+            );
+            expect(find.byType(ColonneVersetsReflow), findsOneWidget);
+            final Rect zone = tester.getRect(find.byType(VueFocusClasse));
+            final Rect attribution = tester.getRect(
+              find.byKey(MushafPage.attributionKey),
+            );
+            expect(zone.bottom, lessThanOrEqualTo(attribution.top + 0.5));
+            expect(tester.takeException(), isNull);
+          },
         );
-        expect(erreurs, isEmpty);
-        final Finder mot = find.textContaining(t.tc.coran.focus.aucunePlage);
-        expect(mot, findsOneWidget);
-        final Rect zone = tester.getRect(find.byType(VueFocusClasse));
-        final Rect attribution = tester.getRect(
-          find.byKey(MushafPage.attributionKey),
-        );
-        expect(zone.bottom, lessThanOrEqualTo(attribution.top + 0.5));
-        expect(tester.getRect(mot).top, greaterThanOrEqualTo(zone.top));
-        expect(tester.takeException(), isNull);
-      });
-    }
-
-    testWidgets('320x568 x2 : le mot tient en entier dans sa bande', (
-      WidgetTester tester,
-    ) async {
-      await monter(
-        tester,
-        mode: ModeRenduCoran.focus,
-        taille: const Size(320, 568),
-        echelle: 2,
-      );
-      final Rect zone = tester.getRect(find.byType(VueFocusClasse));
-      final Rect mot = tester.getRect(
-        find.textContaining(t.tc.coran.focus.aucunePlage),
-      );
-      expect(mot.bottom, lessThanOrEqualTo(zone.top + zone.height / 3 + 0.5));
-      verifierEcranSansMotCoupe(tester);
-    });
-  });
+      }
+    },
+  );
 
   testWidgets('lecture agrandie 320x568 x2 rtl : la valeur du reglage de '
       'taille est isolee (« 100 % », jamais « % 100 »)', (
@@ -335,23 +317,6 @@ void main() {
       reason: 'le nombre avant le signe, de gauche a droite',
     );
     verifierEcranSansMotCoupe(tester);
-    expect(tester.takeException(), isNull);
-  });
-
-  testWidgets('focus 320x568 x2 rtl : la phrase francaise est isolee, son '
-      'point ne passe pas en tete', (WidgetTester tester) async {
-    await monter(
-      tester,
-      mode: ModeRenduCoran.focus,
-      taille: const Size(320, 568),
-      echelle: 2,
-      sens: TextDirection.rtl,
-    );
-    final String mot = tester
-        .widget<Text>(find.textContaining(t.tc.coran.focus.aucunePlage))
-        .data!;
-    expect(mot, startsWith('\u2068'));
-    expect(mot, endsWith('\u2069'));
     expect(tester.takeException(), isNull);
   });
 

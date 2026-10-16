@@ -17,12 +17,15 @@ import 'package:go_router/go_router.dart';
 import '../../core/appairage/service_avatar.dart' show avatarUrlProvider;
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/pause_seance/port_pause_seance.dart'
+    show PauseSeance, StatutPause;
 import '../../core/router/routes.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
 import '../../core/tc_outils/annotation_layer.dart'
     show AnnotationLayer, TraitVectoriel;
 import '../../core/tc_outils/etat_outils.dart';
@@ -73,6 +76,8 @@ List<RouteBase> routesDemoSalle(String environnement) {
         enregistrement:
             _lire(EtatEnregistrement.values, etat.uri.queryParameters['enr']) ??
             EtatEnregistrement.actif,
+        // LIVE-CHRONO-01 : le chrono de la salle (`&chrono=1`).
+        avecChrono: etat.uri.queryParameters['chrono'] == '1',
       ),
     ),
   ];
@@ -122,8 +127,13 @@ class DemoSallePage extends StatelessWidget {
     this.observateur,
     this.titre = TitreEnseignant.sayyid,
     this.enregistrement = EtatEnregistrement.actif,
+    this.avecChrono = false,
     super.key,
   });
+
+  /// LIVE-CHRONO-01 : montre le chrono dans l'en-tete (`&chrono=1`). Faux par
+  /// defaut : les autres demonstrations gardent leur en-tete d'origine.
+  final bool avecChrono;
 
   final RoleSeance? role;
 
@@ -171,6 +181,7 @@ class DemoSallePage extends StatelessWidget {
           role: r,
           etat: etat ?? DonneesSeanceDemo.etatBaseTb(s),
           situation: s,
+          avecChrono: avecChrono,
           titre: titre,
           enregistrement: enregistrement,
           onSortir: () => context.go(Routes.demoSalle),
@@ -184,6 +195,7 @@ class DemoSallePage extends StatelessWidget {
       role: r,
       etat: e,
       titre: titre,
+      avecChrono: avecChrono,
       onSortir: () => context.go(Routes.demoSalle),
     );
     return _themePour(context, r, salle);
@@ -432,8 +444,12 @@ class SalleDemo extends StatefulWidget {
     this.prenomEleve = DonneesSeanceDemo.eleveCourant,
     this.situation,
     this.enregistrement = EtatEnregistrement.actif,
+    this.avecChrono = false,
     super.key,
   });
+
+  /// LIVE-CHRONO-01 : l'en-tete porte le chrono de la seance.
+  final bool avecChrono;
 
   final RoleSeance role;
   final EtatDemoSalle etat;
@@ -513,7 +529,7 @@ class _SalleDemoState extends State<SalleDemo> {
     String prenomEleve = DonneesSeanceDemo.eleveCourant,
   }) {
     final SituationTb? s = widget.situation;
-    return s == null
+    final VueSeance vue = s == null
         ? DonneesSeanceDemo.vue(
             widget.role,
             widget.etat,
@@ -528,7 +544,60 @@ class _SalleDemoState extends State<SalleDemo> {
             etat: widget.etat,
             enregistrement: widget.enregistrement,
           );
+    // LIVE-CHRONO-01 : la demonstration porte les bornes d'une vraie seance,
+    // fixees une fois a l'ouverture de l'ecran. Hors `&chrono=1`, l'en-tete
+    // garde sa forme d'origine (les mesures d'autres lots en dependent).
+    if (!widget.avecChrono) {
+      return vue;
+    }
+    final bool depasse = vue.horloge is HorlogeDepassee;
+    return vue.copyWith(
+      chrono: depasse ? _chronoDepasse : _chronoEnCours,
+      // LIVE-PAUSE-01 : la pause de la demonstration, locale a l'ecran.
+      pause: depasse ? null : _pause,
+    );
   }
+
+  /// LIVE-PAUSE-01 : la pause programmee 20 minutes apres T0 (dans huit
+  /// minutes), demarree et terminee a la main par l'enseignant de la demo.
+  late PauseSeance _pause = PauseSeance(
+    statut: StatutPause.programmee,
+    dureePrevueMinutes: 10,
+    debutPrevuUtc: _chronoEnCours.debutUtc.add(const Duration(minutes: 20)),
+    peutPiloter: true,
+  );
+
+  void _basculerPause() {
+    final PauseSeance p = _pause;
+    final DateTime maintenant = DateTime.now().toUtc();
+    setState(() {
+      _pause = switch (p.statut) {
+        StatutPause.enCours => PauseSeance(
+          statut: StatutPause.prise,
+          dureePrevueMinutes: p.dureePrevueMinutes,
+          debutPrevuUtc: p.debutPrevuUtc,
+          debutUtc: p.debutUtc,
+          finUtc: maintenant,
+          peutPiloter: true,
+        ),
+        _ => PauseSeance(
+          statut: StatutPause.enCours,
+          dureePrevueMinutes: p.dureePrevueMinutes,
+          debutPrevuUtc: p.debutPrevuUtc,
+          debutUtc: maintenant,
+          peutPiloter: true,
+        ),
+      };
+    });
+  }
+
+  late final BornesChrono _chronoEnCours = DonneesSeanceDemo.chronoDemo(
+    DateTime.now(),
+  );
+  late final BornesChrono _chronoDepasse = DonneesSeanceDemo.chronoDemo(
+    DateTime.now(),
+    depasse: true,
+  );
 
   /// La file de recitation locale (EN-9) : « Faire reciter » donne la parole
   /// sans serveur, par le modele de `ControleurRecitation`.
@@ -802,6 +871,7 @@ class _SalleDemoState extends State<SalleDemo> {
           ? () => setState(() => _zoom = 1)
           : null,
       onRetour: widget.onSortir,
+      onPause: widget.avecChrono && enseignant ? _basculerPause : null,
       onQuitter: enseignant
           ? widget.onSortir
           : () => setState(() => _quittee = true),
