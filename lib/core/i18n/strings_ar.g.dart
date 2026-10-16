@@ -961,6 +961,9 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String get courrielIndice => 'name@example.com';
 	@override String get motDePasseDemo => 'كلمة مرور العرض التجريبي';
 	@override String get envoyerLien => 'استلام الرابط';
+	@override String get entrerDemo => 'الدخول إلى العرض التجريبي';
+	@override String get introDemo => 'وضع العرض التجريبي: لن يُرسل أي رابط. ستدخل مباشرة دون بريد إلكتروني.';
+	@override String get essayerDemo => 'تجربة العرض التجريبي';
 	@override String get avecGoogle => 'المتابعة بحساب Google';
 	@override String get ou => 'أو';
 	@override String get lienEnvoye => 'أُرسل الرابط';
@@ -19867,6 +19870,9 @@ extension on TraductionsAr {
 			'connexion.courrielIndice' => 'name@example.com',
 			'connexion.motDePasseDemo' => 'كلمة مرور العرض التجريبي',
 			'connexion.envoyerLien' => 'استلام الرابط',
+			'connexion.entrerDemo' => 'الدخول إلى العرض التجريبي',
+			'connexion.introDemo' => 'وضع العرض التجريبي: لن يُرسل أي رابط. ستدخل مباشرة دون بريد إلكتروني.',
+			'connexion.essayerDemo' => 'تجربة العرض التجريبي',
 			'connexion.avecGoogle' => 'المتابعة بحساب Google',
 			'connexion.ou' => 'أو',
 			'connexion.lienEnvoye' => 'أُرسل الرابط',
@@ -20098,11 +20104,11 @@ extension on TraductionsAr {
 			'adulte.monEspace.coursAccesLegende' => 'الفصل والحصص والوصول',
 			'adulte.monEspace.paiements' => 'المدفوعات',
 			'adulte.monEspace.paiementsLegende' => 'السجل والإيصالات',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.monEspace.accords' => 'موافقاتي',
 			'adulte.monEspace.accordsLegende' => 'الموافقات الممنوحة للأكاديمية',
 			'adulte.monEspace.securiteLegende' => 'طريقة الدخول وعنوانه',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.monEspace.pageAccords.indisponibleTitre' => 'موافقاتك غير قابلة للاطلاع بعد',
 			'adulte.monEspace.pageAccords.indisponiblePhrase' => 'قبول كل موافقة أو رفضها أو سحبها غير ممكن في التطبيق بعد. لا تُطلب منك أي موافقة هنا.',
 			'adulte.monEspace.pageCoursAcces.indisponibleTitre' => 'الدروس والوصول غير قابلة للاطلاع بعد',
@@ -20612,11 +20618,11 @@ extension on TraductionsAr {
 			'controleur.historique.cleReponse' => 'الرد',
 			'controleur.historique.sansComplement' => 'لا تكملة.',
 			'controleur.historique.faitsIndisponibles' => 'السجل التلقائي لهذه الزيارة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. سيظهر هنا بمجرد وصوله. باقي التقرير موثوق.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.motif' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
 			'controleur.historique.ajouterComplement' => 'إضافة تكملة',
 			'controleur.complement.bandeau' => 'ستُضاف هذه التكملة إلى التقرير الموجود.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.complement.questionMotif' => 'لماذا تضيف هذه التكملة؟',
 			'controleur.complement.contexteMotif' => 'اختياري: السبب يساعد الإدارة على قراءة التكملة. التقرير الأصلي لا يتغير.',
 			'controleur.complement.precision' => 'توضيح',
