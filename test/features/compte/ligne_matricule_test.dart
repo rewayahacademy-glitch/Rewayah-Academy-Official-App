@@ -3,8 +3,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/identite/matricule_demo.dart';
@@ -13,7 +15,9 @@ import 'package:rewayah_academy/core/identite/port_matricule.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
+import 'package:rewayah_academy/features/compte/donnees_compte.dart';
 import 'package:rewayah_academy/features/compte/ligne_matricule.dart';
+import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 import '../../support/harnais.dart';
 
@@ -187,6 +191,45 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('RA-26-0042'), findsOneWidget);
+  });
+
+  testWidgets('Mon espace de l eleve adulte : la ligne apparait', (
+    WidgetTester tester,
+  ) async {
+    await _taille(tester, 390);
+    await tester.pumpWidget(
+      hote(
+        const MonEspaceAdultePage(),
+        surcharges: <Override>[
+          sourceSessionProvider.overrideWithValue(
+            FausseSourceSession(
+              const SessionState(
+                resolue: true,
+                role: AppRole.student,
+                profileId: 'p1',
+                accountStatus: AccountStatus.active,
+              ),
+            ),
+          ),
+          portMatriculeProvider.overrideWithValue(
+            const MatriculeDemo(<String, Matricule>{'p1': _eleve}),
+          ),
+          identiteTitulaireProvider.overrideWith(
+            (Ref _) async => const IdentiteTitulaire(
+              prenom: 'Awa',
+              nom: 'Ba',
+              methodeConnexion: MethodeConnexion.inconnue,
+            ),
+          ),
+          monEspaceAdulteProvider.overrideWith(
+            (Ref _) async => const MonEspaceAdulteVM(),
+          ),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('RA-26-4817'), findsOneWidget);
+    expect(find.byKey(LigneMatricule.copierKey), findsOneWidget);
   });
 
   group('matriculeDepuisLigne', () {
