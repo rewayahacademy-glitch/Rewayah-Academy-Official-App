@@ -6,6 +6,7 @@ import '../../../core/domain/enums.dart';
 import '../../../core/dossier/service_dossier.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
+import '../../../core/recrutement/port_invitations_enseignant.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/session/session_controleur.dart';
 import '../../../core/widgets/action_principale.dart';
@@ -51,6 +52,12 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
       _envoi = true;
       _erreur = null;
     });
+    // RACCORDEMENT-1016 (D) : le code verifie par le candidat enseignant est
+    // consomme par le serveur avec la creation du profil, dans la meme
+    // transaction. Il ne sert qu'a l'enseignant.
+    final String? codeInvitation = usage.role == AppRole.teacher
+        ? ref.read(codeInvitationRetenuProvider)
+        : null;
     try {
       if (!brouillon.profilCree) {
         await ref
@@ -60,9 +67,22 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
               prenom: brouillon.prenom,
               nom: brouillon.nom,
               genre: brouillon.genre,
+              codeInvitation: codeInvitation,
             );
         ref.read(brouillonInscriptionProvider.notifier).noterProfilCree();
+        ref.read(codeInvitationRetenuProvider.notifier).oublier();
       }
+    } on InvitationNonConsommee {
+      // Aucun profil n'a ete cree : le code est oublie, le candidat en
+      // demande un nouveau (K-59 : ce qui manque, pourquoi, quoi faire).
+      ref.read(codeInvitationRetenuProvider.notifier).oublier();
+      if (mounted) {
+        setState(() {
+          _envoi = false;
+          _erreur = t.inscription.erreurInvitation;
+        });
+      }
+      return;
     } on Object {
       if (mounted) {
         setState(() {

@@ -166,8 +166,8 @@ BEGIN
   PERFORM pg_temp.vrai(public.library_get_catalogue_facettes() = '{"niveaux": ["debutant"], "langues": ["ar", "fr"]}'::jsonb,
     'facettes : niveaux et langues presents');
   PERFORM pg_temp.vrai(public.library_get_detail((v ->> 'id')::uuid) -> 'capacites'
-    = '{"peutModifier": false, "peutPublier": true, "peutAttribuer": false, "peutRetirer": true}'::jsonb,
-    'fiche : capacites calculees (pas d''attribution avant publication)');
+    = '{"peutModifier": true, "peutPublier": true, "peutAttribuer": false, "peutRetirer": true}'::jsonb,
+    'fiche : capacites calculees (modifiable, pas d''attribution avant publication, 20261016102100)');
 END $brouillon$;
 RESET ROLE;
 

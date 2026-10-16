@@ -8,9 +8,10 @@
 // `library_creer_brouillon`, `library_nouvelle_version`,
 // `library_controler_version`, `library_publier_version`,
 // `library_classes_attribuables`, `library_attribuer` et `library_retirer`.
-// Les criteres de controle et la publiabilite sont ceux du serveur. Seule la
-// mise a jour d'un brouillon (`mettreAJour`) n'a ni colonnes ni RPC : elle
-// reste fermee, comme la capacite `peutModifier` que le serveur rend a faux.
+// Les criteres de controle et la publiabilite sont ceux du serveur. La mise a
+// jour de la fiche (`mettreAJour`) passe par `library_mettre_a_jour`
+// (RACCORDEMENT-1016, migration 20261016102100), sous controle de revision ;
+// le serveur rend `peutModifier` tant que le support n'est pas retire.
 
 import 'dart:typed_data';
 
@@ -187,13 +188,25 @@ class BibliothequeAdminSupabase implements PortBibliothequeAdmin {
     return _texte(r, 'id');
   }
 
-  // La mise a jour d'un brouillon n'a ni colonnes ni RPC serveur : fermee.
   @override
   Future<ResultatEcriture> mettreAJour({
     required String supportId,
     required ModificationSupport modification,
     required int revisionAttendue,
-  }) => Future<ResultatEcriture>.error(const BibliothequeNonAutorisee());
+  }) async {
+    final Map<String, dynamic> r = await _rpc(
+      'library_mettre_a_jour',
+      <String, dynamic>{
+        'p_resource_id': supportId,
+        'p_modification': modificationJson(modification),
+        'p_revision_attendue': revisionAttendue,
+      },
+    );
+    final int revision = (r['revision'] as num?)?.toInt() ?? revisionAttendue;
+    return r['resultat'] == 'EcritureFaite'
+        ? EcritureFaite(revision: revision)
+        : const EcritureEnConflit();
+  }
 
   @override
   Future<String> nouvelleVersion(String supportId) async => _texte(
@@ -327,6 +340,23 @@ ClasseAttribuable classeAttribuableJson(Map<String, dynamic> c) =>
       epinglee: c['epinglee'] == true,
     );
 
+/// La modification envoyee a `library_mettre_a_jour` : seuls les champs
+/// renseignes partent (un champ absent ne change rien) ; une chaine vide
+/// efface un champ facultatif, le serveur decide du reste.
+Map<String, dynamic> modificationJson(ModificationSupport m) =>
+    <String, dynamic>{
+      if (m.titre != null) 'titre': m.titre,
+      if (m.titreCourt != null) 'titreCourt': m.titreCourt,
+      if (m.edition != null) 'edition': m.edition,
+      if (m.organisme != null) 'organisme': m.organisme,
+      if (m.description != null) 'description': m.description,
+      if (m.conditionsAttribution != null)
+        'conditionsAttribution': m.conditionsAttribution,
+      if (m.visibilite != null) 'visibilite': m.visibilite!.valeurSql,
+      if (m.politiqueHorsLigne != null)
+        'politiqueHorsLigne': m.politiqueHorsLigne!.valeurSql,
+    };
+
 /// Une ligne du catalogue rendue par `library_get_catalogue`.
 SupportAdmin supportCatalogueJson(Map<String, dynamic> m) => SupportAdmin(
   id: _texte(m, 'id'),
@@ -394,6 +424,9 @@ FicheSupport ficheSupportJson(
     revision: (m['revision'] as num).toInt(),
     titreCourt: s['titreCourt'] is String ? s['titreCourt'] as String : '',
     edition: s['edition'] is String ? s['edition'] as String : null,
+    organisme: _optionnel(s['organisme']),
+    description: _optionnel(s['description']),
+    conditionsAttribution: _optionnel(s['conditionsAttribution']),
     politiqueHorsLigne:
         PolitiqueOffline.depuisSql(s['politiqueHorsLigne'] as String?) ??
         PolitiqueOffline.jamais,

@@ -8,6 +8,12 @@
 // Non branche par defaut : `portAnnoncesProvider` reste neutre tant que les
 // migrations ne sont pas appliquees et que les libelles des publics ne sont
 // pas valides (voir le rapport COM-BACK-1).
+//
+// RACCORDEMENT-1016 (E) : les annonces « toute l'academie » et « public »
+// destinees a la personne (`com_annonces_academie`, migration
+// 20261016102300) rejoignent la liste de chaque Classe qu'elle lit, rendues
+// dans le contexte de cette Classe. Tant que la RPC n'est pas deployee, la
+// liste garde les seules annonces de la Classe.
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/communications_supabase.dart';
@@ -41,15 +47,50 @@ class AnnoncesSupabase implements PortAnnonces {
         'p_groupe_id': classeId,
       }),
     );
+    final List<AnnonceClasse> deLaClasse = <AnnonceClasse>[
+      for (final Map<String, dynamic> a in listeJson(v['annonces']))
+        annonceClasseJson(a, libelles),
+    ];
+    final Set<String> vues = <String>{
+      for (final AnnonceClasse a in deLaClasse) a.id,
+    };
+    final List<AnnonceClasse> annonces = <AnnonceClasse>[
+      ...deLaClasse,
+      for (final AnnonceClasse a in await _annoncesAcademie(classeId))
+        if (vues.add(a.id)) a,
+    ]..sort(_plusRecenteDabord);
     return AnnoncesDeLaClasse(
-      annonces: List<AnnonceClasse>.unmodifiable(<AnnonceClasse>[
-        for (final Map<String, dynamic> a in listeJson(v['annonces']))
-          annonceClasseJson(a, libelles),
-      ]),
+      annonces: List<AnnonceClasse>.unmodifiable(annonces),
       capacites: <CapaciteAnnonces>{
         if (v['peut_publier'] == true) CapaciteAnnonces.publier,
       },
     );
+  }
+
+  /// Les annonces generales destinees a la personne, dans le contexte de la
+  /// Classe [classeId]. Une RPC absente ou refusee n'emporte pas la liste de
+  /// la Classe : elle rend une liste vide.
+  Future<List<AnnonceClasse>> _annoncesAcademie(String classeId) async {
+    final Object? brut;
+    try {
+      brut = await _appel('com_annonces_academie', <String, dynamic>{
+        'p_groupe_id': classeId,
+      });
+    } on Object catch (e) {
+      if (estRefusOuAbsence(e)) return const <AnnonceClasse>[];
+      rethrow;
+    }
+    return <AnnonceClasse>[
+      for (final Map<String, dynamic> a in listeJson(
+        objetJson(brut)['annonces'],
+      ))
+        if (a['classe'] is Map) annonceClasseJson(a, libelles),
+    ];
+  }
+
+  static int _plusRecenteDabord(AnnonceClasse a, AnnonceClasse b) {
+    final int parDate = b.publieeLe.compareTo(a.publieeLe);
+    return parDate != 0 ? parDate : b.id.compareTo(a.id);
   }
 
   @override
@@ -59,7 +100,11 @@ class AnnoncesSupabase implements PortAnnonces {
       final Object? v = await _lire('com_annonce_lire', <String, dynamic>{
         'p_annonce_id': id,
       });
-      return v == null ? null : annonceClasseJson(objetJson(v), libelles);
+      // Une annonce generale sans Classe de contexte (personne sans Classe)
+      // ne se rend pas comme annonce de Classe.
+      return v is Map && v['classe'] is Map
+          ? annonceClasseJson(objetJson(v), libelles)
+          : null;
     } on CapaciteIndisponible {
       return null;
     }

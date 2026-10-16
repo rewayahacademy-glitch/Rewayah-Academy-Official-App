@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
+import 'core/accessibilite/accueil_accessibilite_supabase.dart';
+import 'core/accessibilite/port_accueil_accessibilite.dart';
 import 'core/accessibilite/port_reponse_presentation.dart';
 import 'core/accessibilite/reponse_presentation_supabase.dart';
 import 'core/admin/bibliotheque_admin_supabase.dart';
@@ -133,8 +135,8 @@ List<Override> _surchargesAppReelle() => <Override>[
     RegroupementsPagesSupabase(Supabase.instance.client),
   ),
   // Bibliotheque d'administration (CAP-29) : lectures, revue des droits,
-  // depot R2 et ecritures (brouillon, controle, publication, attribution,
-  // retrait) ; seule la mise a jour d'un brouillon reste fermee (aucune RPC).
+  // depot R2 et ecritures (brouillon, mise a jour de la fiche, controle,
+  // publication, attribution, retrait).
   portBibliothequeAdminProvider.overrideWithValue(
     BibliothequeAdminSupabase(Supabase.instance.client),
   ),
@@ -269,6 +271,15 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portTravailAVenirProvider.overrideWithValue(
     travailAVenirSupabase(Supabase.instance.client),
+  ),
+  // Accueil de l'eleve en Mode Accessibilite (RACCORDEMENT-1016) : prenom,
+  // Classe et prochaine seance reelle (`prochaine_seance_groupe`, puis
+  // `horloge_seance`), travail a venir de la Classe.
+  portAccueilAccessibiliteProvider.overrideWithValue(
+    AccueilAccessibiliteSupabase(
+      Supabase.instance.client,
+      travail: travailAVenirSupabase(Supabase.instance.client),
+    ),
   ),
   // Communications (COM-BACK-1) : Messages metier et annonces de Classe sur
   // les RPC `com_*`, nommes dans la langue courante.

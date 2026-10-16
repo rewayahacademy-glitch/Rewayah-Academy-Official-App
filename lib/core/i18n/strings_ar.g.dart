@@ -1060,6 +1060,7 @@ class _Traductions$inscription$ar extends Traductions$inscription$fr {
 	@override String get modifier => 'تعديل';
 	@override String get reessayer => 'إعادة المحاولة';
 	@override String get erreurActualisation => 'أُنشئ حسابك، لكن تعذّر تحديث الاتصال. أعد المحاولة، أو سجّل الخروج ثم الدخول من جديد.';
+	@override String get erreurInvitation => 'تعذّر استخدام رمز الدعوة: انتهت صلاحيته، أو استُعمل من قبل، أو لا يطابق عنوانك. اطلب رمزًا جديدًا من الإدارة، ثم أدخله من جديد.';
 	@override late final _Traductions$inscription$usage$ar usage = _Traductions$inscription$usage$ar._(_root);
 	@override late final _Traductions$inscription$recap$ar recap = _Traductions$inscription$recap$ar._(_root);
 }
@@ -19771,6 +19772,7 @@ extension on TraductionsAr {
 			'inscription.modifier' => 'تعديل',
 			'inscription.reessayer' => 'إعادة المحاولة',
 			'inscription.erreurActualisation' => 'أُنشئ حسابك، لكن تعذّر تحديث الاتصال. أعد المحاولة، أو سجّل الخروج ثم الدخول من جديد.',
+			'inscription.erreurInvitation' => 'تعذّر استخدام رمز الدعوة: انتهت صلاحيته، أو استُعمل من قبل، أو لا يطابق عنوانك. اطلب رمزًا جديدًا من الإدارة، ثم أدخله من جديد.',
 			'inscription.usage.question' => 'أي نوع من الحسابات تريد إنشاءه؟',
 			'inscription.usage.moiTitre' => 'أنا فقط',
 			'inscription.usage.moiDescription' => 'أريد متابعة الدروس بملفي الخاص كطالب.',

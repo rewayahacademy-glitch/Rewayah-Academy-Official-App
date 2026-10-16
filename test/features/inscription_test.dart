@@ -9,6 +9,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -47,9 +48,16 @@ class _DossierLent extends FauxServiceDossier {
     required String prenom,
     required String nom,
     Genre? genre,
+    String? codeInvitation,
   }) async {
     await _porte.future;
-    await super.creerProfil(role: role, prenom: prenom, nom: nom, genre: genre);
+    await super.creerProfil(
+      role: role,
+      prenom: prenom,
+      nom: nom,
+      genre: genre,
+      codeInvitation: codeInvitation,
+    );
   }
 }
 
@@ -60,6 +68,7 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
   FausseSourceSession? source,
   FauxServiceDossier? dossierFourni,
   FauxServiceAuth? auth,
+  String? codeRetenu,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -103,11 +112,34 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
         serviceDossierProvider.overrideWithValue(dossier),
         sourceSessionProvider.overrideWithValue(session),
         serviceAuthProvider.overrideWithValue(auth ?? FauxServiceAuth()),
+        if (codeRetenu != null)
+          codeInvitationRetenuProvider.overrideWith(
+            () => _CodeDejaRetenu(codeRetenu),
+          ),
       ],
     ),
   );
   await tester.pumpAndSettle();
   return (dossier, session);
+}
+
+/// Un code d'invitation deja verifie et retenu (RECRUT-ECRANS, C-14).
+class _CodeDejaRetenu extends CodeInvitationRetenu {
+  _CodeDejaRetenu(this._code);
+  final String _code;
+  @override
+  String? build() => _code;
+}
+
+/// Le parcours enseignant jusqu'a la creation.
+Future<void> _enseignantJusquALaCreation(WidgetTester tester) async {
+  await _taper(tester, find.byKey(const Key('inscription-lien-enseignant')));
+  await tester.enterText(find.byKey(const Key('inscription-prenom')), 'Ali');
+  await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
+  await _continuer(tester);
+  await _taper(tester, find.text(t.inscription.genreHomme));
+  await _continuer(tester);
+  await _taper(tester, find.text(t.inscription.creer));
 }
 
 /// Le CTA en pilule de la page courante.
@@ -206,6 +238,43 @@ void main() {
       await _continuer(tester);
       await _taper(tester, find.text(t.inscription.creer));
       expect(dossier.profilsCrees.single.role, AppRole.teacher);
+    });
+
+    // RACCORDEMENT-1016 (D) : le code verifie part avec la creation du
+    // profil enseignant, et un refus du serveur se dit sans avancer.
+    testWidgets('le code d invitation retenu part avec le profil enseignant', (
+      WidgetTester tester,
+    ) async {
+      final (FauxServiceDossier dossier, _) = await _monter(
+        tester,
+        codeRetenu: 'ABCD-EFGH-JKMN',
+      );
+      await _enseignantJusquALaCreation(tester);
+      expect(dossier.profilsCrees.single.role, AppRole.teacher);
+      expect(dossier.codesInvitation.single, 'ABCD-EFGH-JKMN');
+      expect(find.text('ATTENTE'), findsOneWidget);
+    });
+
+    testWidgets('sans code retenu, le profil enseignant part sans code', (
+      WidgetTester tester,
+    ) async {
+      final (FauxServiceDossier dossier, _) = await _monter(tester);
+      await _enseignantJusquALaCreation(tester);
+      expect(dossier.codesInvitation.single, isNull);
+    });
+
+    testWidgets('code refuse par le serveur : message K-59, aucune avance', (
+      WidgetTester tester,
+    ) async {
+      final (FauxServiceDossier dossier, _) = await _monter(
+        tester,
+        codeRetenu: 'ABCD-EFGH-JKMN',
+      );
+      dossier.erreurAJeter = const InvitationNonConsommee('expiree');
+      await _enseignantJusquALaCreation(tester);
+      expect(find.text(t.inscription.erreurInvitation), findsOneWidget);
+      expect(find.text('ATTENTE'), findsNothing);
+      expect(find.text('4 sur 4'), findsOneWidget);
     });
 
     testWidgets('« Moi et ma famille » pose « Suivez-vous aussi des cours ? » '

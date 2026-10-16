@@ -114,6 +114,10 @@ class FauxServiceDossier implements ServiceDossier {
   final List<({AppRole role, String prenom, String nom, Genre? genre})>
   profilsCrees = <({AppRole role, String prenom, String nom, Genre? genre})>[];
 
+  /// Le code d'invitation transmis a chaque creation de profil (nul hors
+  /// enseignant invite).
+  final List<String?> codesInvitation = <String?>[];
+
   /// Vrai pour simuler le service de la demonstration.
   @override
   bool demonstration = false;
@@ -145,8 +149,10 @@ class FauxServiceDossier implements ServiceDossier {
     required String prenom,
     required String nom,
     Genre? genre,
+    String? codeInvitation,
   }) async {
     _peutEchouer();
+    codesInvitation.add(codeInvitation);
     profilsCrees.add((role: role, prenom: prenom, nom: nom, genre: genre));
   }
 

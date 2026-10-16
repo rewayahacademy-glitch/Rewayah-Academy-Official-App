@@ -835,6 +835,9 @@ class Traductions$inscription$fr {
 	/// fr: 'Votre compte est créé, mais la connexion n'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.'
 	String get erreurActualisation => 'Votre compte est créé, mais la connexion n\'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.';
 
+	/// fr: 'Votre code d'invitation n'a pas pu être utilisé : il a expiré, a déjà servi ou ne correspond pas à votre adresse. Demandez un nouveau code à la direction, puis saisissez-le de nouveau.'
+	String get erreurInvitation => 'Votre code d\'invitation n\'a pas pu être utilisé : il a expiré, a déjà servi ou ne correspond pas à votre adresse. Demandez un nouveau code à la direction, puis saisissez-le de nouveau.';
+
 	late final Traductions$inscription$usage$fr usage = Traductions$inscription$usage$fr.internal(_root);
 	late final Traductions$inscription$recap$fr recap = Traductions$inscription$recap$fr.internal(_root);
 }
@@ -32648,6 +32651,7 @@ extension on Traductions {
 			'inscription.modifier' => 'Modifier',
 			'inscription.reessayer' => 'Réessayer',
 			'inscription.erreurActualisation' => 'Votre compte est créé, mais la connexion n\'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.',
+			'inscription.erreurInvitation' => 'Votre code d\'invitation n\'a pas pu être utilisé : il a expiré, a déjà servi ou ne correspond pas à votre adresse. Demandez un nouveau code à la direction, puis saisissez-le de nouveau.',
 			'inscription.usage.question' => 'Quel type de compte souhaitez-vous créer ?',
 			'inscription.usage.moiTitre' => 'Moi uniquement',
 			'inscription.usage.moiDescription' => 'Je souhaite suivre les cours avec mon propre profil élève.',

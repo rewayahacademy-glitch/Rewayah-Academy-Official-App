@@ -876,6 +876,7 @@
     "modifier": "Modifier",
     "reessayer": "Réessayer",
     "erreurActualisation": "Votre compte est créé, mais la connexion n'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.",
+    "erreurInvitation": "Votre code d'invitation n'a pas pu être utilisé\u00a0: il a expiré, a déjà servi ou ne correspond pas à votre adresse. Demandez un nouveau code à la direction, puis saisissez-le de nouveau.",
     "usage": {
       "question": "Quel type de compte souhaitez-vous créer\u00a0?",
       "moiTitre": "Moi uniquement",
