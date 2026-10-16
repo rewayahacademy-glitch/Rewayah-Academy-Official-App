@@ -9560,8 +9560,11 @@ class Traductions$admin$tirage$fr {
 	/// fr: 'Avec 0, aucune séance n'est tirée pour contrôle.'
 	String get zeroPhrase => 'Avec 0, aucune séance n\'est tirée pour contrôle.';
 
-	/// fr: 'Entrez un nombre entier de 0 à 50, ou choisissez une des cartes.'
-	String get nombreInvalide => 'Entrez un nombre entier de 0 à 50, ou choisissez une des cartes.';
+	/// fr: 'Entrez un nombre entier de 0 à 50, ou choisissez une des valeurs proposées.'
+	String get nombreInvalide => 'Entrez un nombre entier de 0 à 50, ou choisissez une des valeurs proposées.';
+
+	/// fr: 'Nombre'
+	String get frequenceAutreChamp => 'Nombre';
 
 	/// fr: 'Règles enregistrées, version {n}. Elles s'appliquent aux prochains tirages.'
 	String enregistreesVersion({required Object n}) => 'Règles enregistrées, version ${n}. Elles s\'appliquent aux prochains tirages.';
@@ -32956,9 +32959,9 @@ extension on Traductions {
 			'foyer.membres' => 'Profils élèves',
 			'foyer.vide.titre' => 'Aucun profil élève pour l\'instant',
 			'foyer.vide.phrase' => 'Ajoutez un profil élève pour l\'inscrire dans une classe et relier son appareil.',
-			'foyer.membre.sansClasse' => 'Pas encore de classe',
 			_ => null,
 		} ?? switch (path) {
+			'foyer.membre.sansClasse' => 'Pas encore de classe',
 			'foyer.membre.classeEchec' => 'Classe non lue',
 			'foyer.membre.accesSansEcheance' => 'Accès sans échéance',
 			'foyer.membre.accesJusquau' => ({required Object date}) => 'Accès jusqu\'au ${date}',
@@ -33470,9 +33473,9 @@ extension on Traductions {
 			'dossiers.file.actualiser' => 'Actualiser les dossiers',
 			'dossiers.file.aucuneSelection' => 'Sélectionnez un dossier à examiner.',
 			'dossiers.file.suivants' => 'Charger les dossiers suivants',
-			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'Ouvrir le dossier de ${nom}',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'Ouvrir le dossier de ${nom}',
 			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'Ouvrir le dossier d\'${nom}',
 			'dossiers.file.enVerification' => 'En cours de vérification',
 			'dossiers.file.sansNom' => 'Dossier sans nom disponible',
@@ -33984,9 +33987,9 @@ extension on Traductions {
 			'admin.groupes.formulaire.aucunCreneauLibre' => ({required Object nom}) => '${nom} n\'a aucun créneau libre déclaré : choisissez un jour et une heure ci-dessous.',
 			'admin.groupes.formulaire.disponibilitesInconnues' => ({required Object deNom}) => 'Les disponibilités ${deNom} ne sont pas encore lisibles ici : choisissez un jour et une heure ci-dessous.',
 			'admin.groupes.formulaire.jour' => 'Jour',
-			'admin.groupes.formulaire.heure' => 'Heure',
 			_ => null,
 		} ?? switch (path) {
+			'admin.groupes.formulaire.heure' => 'Heure',
 			'admin.groupes.formulaire.heureValeur' => ({required Object heure}) => '${heure} h',
 			'admin.groupes.formulaire.fuseauEnseignant' => ({required Object fuseau}) => 'Heures lues dans le fuseau ${fuseau}, celui de l\'enseignant.',
 			'admin.groupes.formulaire.fuseauDefaut' => ({required Object fuseau}) => 'Heures lues dans le fuseau ${fuseau}, retenu par défaut.',
@@ -34498,9 +34501,9 @@ extension on Traductions {
 			'admin.agents.duree' => 'Pendant combien de temps',
 			'admin.agents.dureeHeure' => ({required Object nombre}) => '${nombre} h',
 			'admin.agents.dureePlafond' => 'Vingt-quatre heures au maximum, et la base le vérifie elle-même.',
-			'admin.agents.identite' => 'Les prénoms',
 			_ => null,
 		} ?? switch (path) {
+			'admin.agents.identite' => 'Les prénoms',
 			'admin.agents.identiteMasquee' => 'Masqués',
 			'admin.agents.identiteMasqueeDetail' => 'L\'agent lit les identifiants (ELV-0042) à la place des prénoms. La substitution est faite par la base : le prénom ne sort pas.',
 			'admin.agents.identiteVisible' => 'Visibles',
@@ -34962,7 +34965,8 @@ extension on Traductions {
 			'admin.tirage.versionEnVigueur' => ({required Object n}) => 'Règles en vigueur : version ${n}',
 			'admin.tirage.aucuneVersion' => 'Aucune règle n\'est encore enregistrée.',
 			'admin.tirage.zeroPhrase' => 'Avec 0, aucune séance n\'est tirée pour contrôle.',
-			'admin.tirage.nombreInvalide' => 'Entrez un nombre entier de 0 à 50, ou choisissez une des cartes.',
+			'admin.tirage.nombreInvalide' => 'Entrez un nombre entier de 0 à 50, ou choisissez une des valeurs proposées.',
+			'admin.tirage.frequenceAutreChamp' => 'Nombre',
 			'admin.tirage.enregistreesVersion' => ({required Object n}) => 'Règles enregistrées, version ${n}. Elles s\'appliquent aux prochains tirages.',
 			'admin.tirage.missionsParSemaine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} mission par semaine', other: '${n} missions par semaine', ), 
 			'admin.tirage.ponderationTitre' => 'Pondération',
@@ -35011,10 +35015,10 @@ extension on Traductions {
 			'admin.tirage.colonneCritere' => 'Tirage',
 			'admin.tirage.colonneStatut' => 'Mission',
 			'admin.tirage.statutAttribuee' => 'Attribuée',
-			'admin.tirage.statutEnCours' => 'Contrôle en cours',
-			'admin.tirage.statutControlee' => 'Contrôlée',
 			_ => null,
 		} ?? switch (path) {
+			'admin.tirage.statutEnCours' => 'Contrôle en cours',
+			'admin.tirage.statutControlee' => 'Contrôlée',
 			'admin.tirage.statutNonControlee' => 'Non contrôlée',
 			'admin.tirage.statutDejaControlee' => 'Déjà contrôlée par un autre',
 			'admin.tirage.rapportEnvoye' => 'Rapport envoyé à l\'administration',
@@ -35525,10 +35529,10 @@ extension on Traductions {
 			'compte.modeEnfant' => 'Mode Accessibilité',
 			'compte.modeStandard' => 'Mode standard',
 			'compte.cameraLabel' => 'Caméra',
-			'compte.cameraAutorisee' => 'Autorisée',
-			'compte.cameraInterdite' => 'Interdite',
 			_ => null,
 		} ?? switch (path) {
+			'compte.cameraAutorisee' => 'Autorisée',
+			'compte.cameraInterdite' => 'Interdite',
 			'compte.accesSansFin' => 'Accès sans date de fin',
 			'compte.accesJusqua' => ({required Object date}) => 'Accès jusqu\'au ${date}',
 			'compte.statutActif' => 'Actif',
@@ -36039,10 +36043,10 @@ extension on Traductions {
 			'classe.entree.demo.etats.aVenir' => 'À venir',
 			'classe.entree.demo.etats.fenetreOuverte' => 'Fenêtre ouverte',
 			'classe.entree.demo.etats.preparation' => 'Préparation en cours',
-			'classe.entree.demo.etats.attente' => 'Attente avant le début',
-			'classe.entree.demo.etats.enDirect' => 'En direct',
 			_ => null,
 		} ?? switch (path) {
+			'classe.entree.demo.etats.attente' => 'Attente avant le début',
+			'classe.entree.demo.etats.enDirect' => 'En direct',
 			'classe.entree.demo.etats.tempsEcoule' => 'Temps prévu écoulé',
 			'classe.entree.demo.etats.terminee' => 'Terminée',
 			'classe.entree.demo.etats.annulee' => 'Annulée',
@@ -36553,10 +36557,10 @@ extension on Traductions {
 			'enseignant.profil.compteValide' => 'Compte enseignant vérifié',
 			'enseignant.profil.intro' => 'Ce que l\'académie sait de vous, et ce que vous pouvez y changer.',
 			'enseignant.profil.identite' => 'Identité professionnelle',
-			'enseignant.profil.pays' => 'Pays',
-			'enseignant.profil.langues' => 'Langues',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.profil.pays' => 'Pays',
+			'enseignant.profil.langues' => 'Langues',
 			'enseignant.profil.fuseau' => 'Fuseau de mes cours',
 			'enseignant.profil.fuseauDetail' => 'C\'est lui qui décide de l\'heure de vos créneaux, pas l\'heure de cet appareil.',
 			'enseignant.profil.plafond' => 'Plafond hebdomadaire',
@@ -37067,10 +37071,10 @@ extension on Traductions {
 			'tc.bibliotheque.titre' => 'Bibliothèque',
 			'tc.bibliotheque.rechercheIndication' => 'Titre, niveau, sourate ou page',
 			'tc.bibliotheque.rechercheLibelle' => 'Rechercher un support',
-			'tc.bibliotheque.effacerRecherche' => 'Tout afficher',
-			'tc.bibliotheque.filtre.type' => 'Type',
 			_ => null,
 		} ?? switch (path) {
+			'tc.bibliotheque.effacerRecherche' => 'Tout afficher',
+			'tc.bibliotheque.filtre.type' => 'Type',
 			'tc.bibliotheque.filtre.disponibilite' => 'Disponibilité',
 			'tc.bibliotheque.sections.continuer' => 'Continuer',
 			'tc.bibliotheque.sections.pourCeGroupe' => 'Pour cette Classe',
@@ -37581,10 +37585,10 @@ extension on Traductions {
 			'adulte.recharge.statut' => 'Statut de l\'attribution',
 			'adulte.recharge.total' => 'Total à payer',
 			'adulte.recharge.payer' => ({required Object montant}) => 'Payer ${montant}',
-			'adulte.recharge.horsLignePayer' => 'Vous pourrez payer quand la connexion sera revenue.',
-			'adulte.recharge.paiementEchecTitre' => 'Le paiement n\'a pas été confirmé.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.recharge.horsLignePayer' => 'Vous pourrez payer quand la connexion sera revenue.',
+			'adulte.recharge.paiementEchecTitre' => 'Le paiement n\'a pas été confirmé.',
 			'adulte.recharge.paiementEchecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.recharge.paiementIndisponibleTitre' => 'Paiement pas encore disponible',
 			'adulte.recharge.paiementIndisponiblePhrase' => 'Aucun paiement n\'a été effectué. Le paiement en ligne n\'est pas encore ouvert dans l\'application.',
@@ -38095,10 +38099,10 @@ extension on Traductions {
 			'suiviDemandes.prochaine.eleveIntegre' => 'Prochaine étape : le début des cours',
 			'suiviDemandes.debutCours' => 'Début des cours',
 			'suiviDemandes.debutValeur' => ({required Object date, required Object heure, required Object deVille}) => '${date} à ${heure}, heure ${deVille}',
-			'suiviDemandes.debutAFixer' => 'La date du premier cours s\'affichera ici dès qu\'elle sera fixée.',
-			'suiviDemandes.enseignant' => 'Enseignant',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.debutAFixer' => 'La date du premier cours s\'affichera ici dès qu\'elle sera fixée.',
+			'suiviDemandes.enseignant' => 'Enseignant',
 			'suiviDemandes.personnaliseNotice' => 'Ce créneau ne s\'ouvrira que si d\'autres élèves le choisissent et remplissent la classe.',
 			'suiviDemandes.close.retiree' => 'Demande retirée',
 			'suiviDemandes.close.nonRetenue' => 'Demande non retenue',
@@ -38609,10 +38613,10 @@ extension on Traductions {
 			'com.communaute.entree.detail' => 'Questions, méthodes et ressources entre enseignants',
 			'com.communaute.demo.avertissement' => 'Publication à revoir : publicité',
 			'com.communaute.demo.lienAffilie' => 'Lien affilié bloqué',
-			'com.communaute.demo.vente' => 'Vente bloquée',
-			'com.communaute.demo.signalementNonConfirme' => 'Signalement non confirmé',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.demo.vente' => 'Vente bloquée',
+			'com.communaute.demo.signalementNonConfirme' => 'Signalement non confirmé',
 			'com.communaute.demo.choisir' => 'Choisissez une situation à essayer, vue par un enseignant.',
 			'com.communaute.demo.aujourdhui' => 'Aujourd\'hui, avec le raccourci',
 			'com.communaute.demo.nominal' => 'Six publications',
@@ -39123,10 +39127,10 @@ extension on Traductions {
 			'comptable.commun.enPreparationTitre' => 'Cet écran est en préparation.',
 			'comptable.commun.enPreparationPhrase' => 'Aucun chiffre n\'est affiché ici pour l\'instant. Aucun paiement n\'est possible depuis cet écran.',
 			'comptable.commun.reserveStrategique' => 'Réserve stratégique',
-			'comptable.commun.tresorerieLibre' => 'Trésorerie libre',
-			'comptable.commun.tresorerieDetenue' => 'Trésorerie détenue',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.commun.tresorerieLibre' => 'Trésorerie libre',
+			'comptable.commun.tresorerieDetenue' => 'Trésorerie détenue',
 			'comptable.commun.fondsProteges' => 'Fonds protégés',
 			'comptable.commun.enTransit' => 'En transit',
 			'comptable.commun.tresorerieLibreDetail' => 'Ce qui reste réellement disponible après les fonds protégés, les obligations et le transit.',
@@ -39637,10 +39641,10 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.derniereModification' => 'Dernière modification',
 			'comptable.beneficiaires.profil.capacite' => 'Capacité de paiement du corridor',
 			'comptable.beneficiaires.profil.capaciteNonEvaluee' => 'Pas encore évaluée',
-			'comptable.beneficiaires.profil.enAttente' => 'Paiements qui attendent ce profil',
-			'comptable.beneficiaires.profil.proprietaire' => ({required Object nom}) => 'Seul ${nom} peut saisir ou modifier ses coordonnées de paiement. Vous en voyez une version masquée.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.profil.enAttente' => 'Paiements qui attendent ce profil',
+			'comptable.beneficiaires.profil.proprietaire' => ({required Object nom}) => 'Seul ${nom} peut saisir ou modifier ses coordonnées de paiement. Vous en voyez une version masquée.',
 			'comptable.beneficiaires.profil.historiqueTitre' => 'Historique des paiements',
 			'comptable.beneficiaires.profil.historiqueVide' => 'Aucun paiement versé à ce bénéficiaire pour l\'instant.',
 			'comptable.beneficiaires.profil.journalTitre' => 'Journal du profil',
@@ -40151,6 +40155,8 @@ extension on Traductions {
 			'recherche.contexte.personneParIdentifiant' => 'Trouvé par son identifiant',
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'Trouvé par son identifiant · ${classe}',
 			'recherche.contexte.canalStudio' => 'Canal du Studio',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'Encaissement · ${famille}',
 			_ => null,
 		};
