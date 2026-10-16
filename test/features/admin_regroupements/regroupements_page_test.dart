@@ -988,4 +988,58 @@ void main() {
       });
     }
   });
+
+  group('Un seul bouton plein par liste (L4-03, contrat B)', () {
+    // Les boutons de carte ont la clé « regroupement-action-<id> » ; les autres
+    // `ActionPrincipale` de l'écran (en-tête, navigation) ne comptent pas.
+    Finder boutonsDeCarte() => find.byWidgetPredicate(
+      (Widget w) =>
+          w is ActionPrincipale &&
+          w.key is ValueKey<String> &&
+          (w.key! as ValueKey<String>).value.startsWith('regroupement-action-'),
+    );
+
+    for (final double largeur in <double>[1440, 390]) {
+      testWidgets(
+        'trois classes pretes : un seul bouton plein a ${largeur.toInt()} px',
+        (WidgetTester tester) async {
+          await _monter(
+            tester,
+            port: _PortLecture(
+              () async => <RegroupementDemandes>[
+                _reg('pr-1', eleves: 7, quota: 7),
+                _reg('pr-2', eleves: 6, quota: 6),
+                _reg('pr-3', eleves: 5, quota: 5),
+              ],
+            ),
+            largeur: largeur,
+          );
+          expect(tester.takeException(), isNull);
+          expect(boutonsDeCarte(), findsNWidgets(3));
+
+          // La premiere prete (la plus nombreuse) porte le seul bouton plein ;
+          // les deux autres, la meme action en niveau secondaire.
+          expect(
+            tester.widget<ActionPrincipale>(_action('pr-1')).niveau,
+            NiveauAction.principale,
+          );
+          expect(
+            tester.widget<ActionPrincipale>(_action('pr-2')).niveau,
+            NiveauAction.secondaire,
+          );
+          expect(
+            tester.widget<ActionPrincipale>(_action('pr-3')).niveau,
+            NiveauAction.secondaire,
+          );
+          for (final Element e in boutonsDeCarte().evaluate()) {
+            final ActionPrincipale b = e.widget as ActionPrincipale;
+            expect(b.libelle, t.admin.regroupements.creer);
+            expect(b.onPress, isNotNull);
+          }
+          verifierUnSeulBoutonPlein(tester);
+          await _demonter(tester);
+        },
+      );
+    }
+  });
 }
