@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
+import 'core/accessibilite/port_reponse_presentation.dart';
+import 'core/accessibilite/reponse_presentation_supabase.dart';
 import 'core/admin/incidents_seances_supabase.dart';
 import 'core/admin/planning_direction_supabase.dart';
 import 'core/admin/port_incidents_seances.dart';
@@ -23,6 +25,8 @@ import 'core/foyer/reprises_admin_supabase.dart';
 import 'core/i18n/langue_demarrage.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/observabilite/supervision.dart';
+import 'core/offres/frise_demandes_supabase.dart';
+import 'core/offres/port_frise_demande.dart';
 import 'core/offres/port_regroupements_admin.dart';
 import 'core/offres/regroupements_c11bis_supabase.dart';
 import 'core/session/session_controleur.dart';
@@ -60,6 +64,14 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portTirageControleProvider.overrideWithValue(
     PortTirageControleSupabase(Supabase.instance.client),
+  ),
+  // Famille : la frise des demandes et la reponse aux demandes de
+  // presentation, bornees au foyer de la session par le serveur.
+  portFriseDemandesProvider.overrideWithValue(
+    FriseDemandesSupabase(Supabase.instance.client),
+  ),
+  portReponsePresentationProvider.overrideWithValue(
+    ReponsePresentationSupabase(Supabase.instance.client),
   ),
 ];
 
