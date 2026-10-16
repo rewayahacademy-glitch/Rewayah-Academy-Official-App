@@ -9,6 +9,7 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -46,6 +47,27 @@ enum _Filtre { toutes, ouvertes, traitees }
 class _QualitePageEtat extends ConsumerState<QualitePage> {
   _Filtre _filtre = _Filtre.ouvertes;
 
+  /// Le contenu une fois la valeur la : l'etat vide, ou les filtres et la liste.
+  List<Widget> _corpsOuVide(
+    BuildContext context,
+    List<AnomalieQualite> anomalies,
+  ) => anomalies.isEmpty
+      ? <Widget>[
+          EmptyState(
+            message: t.admin.qualite.aucune,
+            invitation: t.admin.qualite.aucuneDetail,
+            icone: AppIcons.succes,
+            registre: RegistreVide.bonneNouvelle,
+          ),
+        ]
+      : _corps(
+          context,
+          anomalies: anomalies,
+          filtre: _filtre,
+          onFiltre: (_Filtre f) => setState(() => _filtre = f),
+          onTraiter: (AnomalieQualite a) => _ouvrirTraitement(context, ref, a),
+        );
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
@@ -67,35 +89,19 @@ class _QualitePageEtat extends ConsumerState<QualitePage> {
         children: <Widget>[
           Text(t.admin.qualite.intro, style: textes.bodyMedium),
           Ecart.vXl,
-          ...switch (anomalies) {
-            AsyncValue<List<AnomalieQualite>>(hasValue: true) =>
-              anomalies.requireValue.isEmpty
-                  ? <Widget>[
-                      EmptyState(
-                        message: t.admin.qualite.aucune,
-                        invitation: t.admin.qualite.aucuneDetail,
-                        icone: AppIcons.succes,
-                        registre: RegistreVide.bonneNouvelle,
-                      ),
-                    ]
-                  : _corps(
-                      context,
-                      anomalies: anomalies.requireValue,
-                      filtre: _filtre,
-                      onFiltre: (_Filtre f) => setState(() => _filtre = f),
-                      onTraiter: (AnomalieQualite a) =>
-                          _ouvrirTraitement(context, ref, a),
-                    ),
-            AsyncValue<List<AnomalieQualite>>(hasError: true) => <Widget>[
-              EmptyState(
-                message: t.admin.qualite.erreur,
-                icone: AppIcons.avertissement,
-                libelleAction: t.commun.reessayer,
-                onAction: () => ref.invalidate(anomaliesQualiteProvider),
-              ),
-            ],
-            _ => const <Widget>[Skeleton.liste(lignes: 5)],
-          },
+          // Le corps porte un `Expanded` : il reste enfant direct de la
+          // colonne. Hors valeur (chargement, chargement prolonge, echec),
+          // `BlocAsynchrone` dit l'attente et rend la lecture recuperable.
+          if (anomalies.hasValue)
+            ..._corpsOuVide(context, anomalies.requireValue)
+          else
+            BlocAsynchrone<List<AnomalieQualite>>(
+              valeur: anomalies,
+              squelette: const Skeleton.liste(lignes: 5),
+              titreEchec: t.admin.qualite.erreur,
+              onReessayer: () => ref.invalidate(anomaliesQualiteProvider),
+              construire: (List<AnomalieQualite> _) => const SizedBox.shrink(),
+            ),
         ],
       ),
     );

@@ -17,6 +17,7 @@ import '../../core/admin/port_bibliotheque_admin.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/widgets/chargement_avec_delais.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/skeleton.dart';
 
@@ -84,7 +85,10 @@ class PorteBibliotheque extends ConsumerWidget {
             );
     }
     if (!caps.hasValue) {
-      return const Skeleton.liste(lignes: 4);
+      return ChargementAvecDelais(
+        squelette: const Skeleton.liste(lignes: 4),
+        onReessayer: () => ref.invalidate(capacitesBibliothequeProvider),
+      );
     }
     final CapacitesBibliotheque c = caps.requireValue;
     if (!c.peutLire) {
