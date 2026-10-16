@@ -222,6 +222,14 @@
     }
   },
   "commun": {
+    "roles": {
+      "eleve": "طالب",
+      "tuteur": "ولي أمر",
+      "enseignant": "معلّم",
+      "administration": "الإدارة",
+      "controleur": "مراقب",
+      "comptable": "محاسب"
+    },
     "classeDistincte": {
       "numero": "⁨{libelle}⁩ · رقم ⁨{numero}⁩",
       "code": "⁨{libelle}⁩ · ⁨{code}⁩",
@@ -1961,6 +1969,10 @@
     "statutProvisoire": "مفعَّل مؤقتًا",
     "profilEnfant": "ملف ⁨{dePrenom}⁩",
     "identifiantEnfant": "المعرّف: ⁨{identifiant}⁩",
+    "matricule": "رقم التسجيل {valeur} · {role}",
+    "copier": "نسخ",
+    "copierMatricule": "نسخ رقم التسجيل",
+    "matriculeCopie": "تم النسخ",
     "roles": {
       "admin": "مدير",
       "accountant": "محاسب",

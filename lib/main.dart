@@ -53,6 +53,8 @@ import 'core/foyer/port_reprises_admin.dart';
 import 'core/foyer/reprises_admin_supabase.dart';
 import 'core/i18n/langue_demarrage.dart';
 import 'core/i18n/strings.g.dart';
+import 'core/identite/matricule_supabase.dart';
+import 'core/identite/port_matricule.dart';
 import 'core/observabilite/supervision.dart';
 import 'core/offres/demandes_suivi_supabase.dart';
 import 'core/offres/frise_demandes_supabase.dart';
@@ -204,6 +206,9 @@ List<Override> _surchargesAppReelle() => <Override>[
       Supabase.instance.client,
       motDePassePossible: Env.authParMotDePasseActive,
     ),
+  ),
+  portMatriculeProvider.overrideWithValue(
+    MatriculeSupabase(Supabase.instance.client),
   ),
   portSeriesTresorerieProvider.overrideWithValue(
     SeriesTresorerieSupabase(Supabase.instance.client),
