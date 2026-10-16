@@ -56,8 +56,10 @@ import 'core/i18n/strings.g.dart';
 import 'core/observabilite/supervision.dart';
 import 'core/offres/demandes_suivi_supabase.dart';
 import 'core/offres/frise_demandes_supabase.dart';
+import 'core/offres/offres_admin_supabase.dart';
 import 'core/offres/page_regroupements.dart';
 import 'core/offres/port_frise_demande.dart';
+import 'core/offres/port_offres_admin.dart';
 import 'core/offres/port_regroupements_admin.dart';
 import 'core/offres/port_suivi_demandes.dart';
 import 'core/offres/regroupements_c11bis_supabase.dart';
@@ -129,6 +131,10 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portRegroupementsAdminProvider.overrideWithValue(
     RegroupementsC11bisSupabase(Supabase.instance.client),
+  ),
+  // L2-05 : les offres vitrine (creer, publier, retirer) par les RPC de 0043.
+  portOffresAdminProvider.overrideWithValue(
+    OffresAdminSupabase(Supabase.instance.client),
   ),
   // Liste paginee des regroupements (fonction Edge `regroupements-pages`).
   portRegroupementsPagesProvider.overrideWithValue(

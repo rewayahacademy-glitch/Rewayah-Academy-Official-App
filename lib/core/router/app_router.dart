@@ -24,6 +24,7 @@ import '../../features/admin_invitations/invitations_page.dart';
 import '../../features/admin_journal/incidents_page.dart';
 import '../../features/admin_journal/journal_page.dart';
 import '../../features/admin_observations/observations_admin_page.dart';
+import '../../features/admin_offres/admin_offres_page.dart';
 import '../../features/admin_pedagogie_bibliotheque/attribution/attribution_page.dart';
 import '../../features/admin_pedagogie_bibliotheque/catalogue/catalogue_page.dart';
 import '../../features/admin_pedagogie_bibliotheque/fiche/fiche_page.dart';
@@ -1452,6 +1453,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.operations,
           child: RegroupementsPage(),
+        ),
+      ),
+      // L2-05 : les offres vitrine (creer, publier, retirer), atteintes depuis
+      // l'Accueil comme les Classes a ouvrir.
+      GoRoute(
+        path: Routes.adminOperationsOffres,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: AdminOffresPage(),
         ),
       ),
       GoRoute(
