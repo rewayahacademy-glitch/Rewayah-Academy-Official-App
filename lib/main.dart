@@ -14,8 +14,14 @@ import 'core/admin/port_planning_direction.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
+import 'core/capacites/identite_titulaire_supabase.dart';
 import 'core/capacites/port_classes_foyer.dart';
+import 'core/capacites/port_identite_titulaire.dart';
+import 'core/capacites/port_series_tresorerie.dart';
+import 'core/capacites/port_support.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
+import 'core/capacites/series_tresorerie_supabase.dart';
+import 'core/capacites/support_supabase.dart';
 import 'core/config/ecran_configuration_absente.dart';
 import 'core/config/env.dart';
 import 'core/controle/port_tirage_controle.dart';
@@ -36,7 +42,16 @@ import 'core/recrutement/port_statuts_signature.dart';
 import 'core/recrutement/port_statuts_signature_supabase.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/source_session_agent.dart';
+import 'core/tc_etat_partage/etat_partage_supabase.dart';
+import 'core/tc_etat_partage/providers_tc_etat_partage.dart';
+import 'core/tc_observation/historique_observations_admin_supabase.dart';
+import 'core/tc_observation/historique_observations_supabase.dart';
+import 'core/tc_observation/port_historique_observations.dart';
 import 'features/_dev/playground/playground_racine.dart';
+import 'features/controleur/echanges_controleur.dart';
+import 'features/controleur/echanges_controleur_supabase.dart';
+import 'features/controleur/historique_controleur.dart';
+import 'features/controleur/historique_controleur_supabase.dart';
 import 'features/demo/dossiers_demo.dart';
 import 'features/demo/mode_demonstration.dart';
 import 'features/demo/racine_demonstrable.dart';
@@ -88,6 +103,36 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portSignatureContratProvider.overrideWithValue(
     SignatureContratSupabase(Supabase.instance.client),
+  ),
+  // Ports a defaut « indisponible » (ou en memoire) dont l'adaptateur
+  // serveur existe : compte, tresorerie, observations, controleur, support
+  // et etat partage de la classe.
+  portIdentiteTitulaireProvider.overrideWithValue(
+    IdentiteTitulaireSupabase(
+      Supabase.instance.client,
+      motDePassePossible: Env.authParMotDePasseActive,
+    ),
+  ),
+  portSeriesTresorerieProvider.overrideWithValue(
+    SeriesTresorerieSupabase(Supabase.instance.client),
+  ),
+  portHistoriqueObservationsProvider.overrideWithValue(
+    HistoriqueObservationsSupabase(() => Supabase.instance.client),
+  ),
+  portHistoriqueObservationsAdminProvider.overrideWithValue(
+    HistoriqueObservationsAdminSupabase(() => Supabase.instance.client),
+  ),
+  portEchangesProvider.overrideWithValue(
+    EchangesControleurSupabase(Supabase.instance.client),
+  ),
+  portHistoriqueProvider.overrideWithValue(
+    HistoriqueControleurSupabase(Supabase.instance.client),
+  ),
+  portSupportProvider.overrideWithValue(
+    SupportSupabase(Supabase.instance.client),
+  ),
+  portEtatPartagePersistantProvider.overrideWithValue(
+    EtatPartageSupabase(Supabase.instance.client),
   ),
 ];
 
