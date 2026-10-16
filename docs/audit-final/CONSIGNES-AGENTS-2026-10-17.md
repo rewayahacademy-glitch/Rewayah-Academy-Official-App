@@ -23,6 +23,8 @@
   `docker run -d --name pg-<ID> -e POSTGRES_HOST_AUTH_METHOD=trust -p 127.0.0.1:<PORT>:5432 postgres:17`
   puis `until pg_isready -h 127.0.0.1 -p <PORT>; do sleep 1; done`. Remplace le port 55432 des fiches par le tien. Une base neuve par rejeu (`create database x`, ou `template`). `docker rm -f pg-<ID>` à la fin.
 - Rejeu complet : `psql -h 127.0.0.1 -p <PORT> -U postgres -d <base> -v ON_ERROR_STOP=1 -q -f supabase/tests/stub_auth.sql`, puis chaque `supabase/migrations/*.sql` dans l'ordre du nom, puis les scénarios.
+- Fichiers de travail : dans `/tmp/claude-0/-home-user-Rewayah-Academy-Official-App/37ff0dc5-64c8-5d90-a02d-24473d02f0f3/scratchpad/<ID>/` seulement, jamais à la racine du scratchpad ni dans `/tmp`.
+- Scénario de refus : vérifier SQLSTATE 42501 exactement ; une erreur de clé étrangère ou de contrainte ne prouve pas un refus.
 - Flutter : `/tmp/claude-0/-home-user-Rewayah-Academy-Official-App/37ff0dc5-64c8-5d90-a02d-24473d02f0f3/scratchpad/flutter/bin` à ajouter au `PATH` (seulement si ta fiche touche `lib/` ou `test/`).
 - Jamais `sleep` pour attendre autre chose que ton propre Postgres.
 
