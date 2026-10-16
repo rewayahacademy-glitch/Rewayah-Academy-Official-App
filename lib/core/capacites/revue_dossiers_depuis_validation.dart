@@ -362,6 +362,11 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
       if (m.contains('un refus exige un motif')) {
         throw const ErreurRevueDossier(CodeErreurRevue.motifRequis);
       }
+      // L1-05 : `decider_dossier` refuse une seconde decision (« dossier déjà
+      // décidé »). Le serveur a repondu : c'est un fait, pas un echec.
+      if (m.contains('dossier déjà décidé')) {
+        throw const ErreurRevueDossier(CodeErreurRevue.dejaDecide);
+      }
       if (e.code == '42501' ||
           m.contains('introuvable ou hors du perimetre') ||
           m.contains('seul un administrateur')) {
