@@ -3,6 +3,9 @@
 -- d'un « pas d'erreur ».
 
 -- Droits facon Supabase (alter default privileges du projet).
+-- Auth provenance fields are added only to this scenario fixture.
+alter table auth.users add column if not exists raw_app_meta_data jsonb not null default '{}'::jsonb;
+alter table auth.users add column if not exists created_at timestamptz not null default now();
 grant usage on schema public to anon, authenticated, service_role;
 do $scenario_grants$
 declare
@@ -347,12 +350,22 @@ end $$;
 -- S6 et S7 : appareil partage, puis plafond
 -- ============================================================
 
+update auth.users set raw_app_meta_data = jsonb_build_object(
+  'child_of', '11111111-1111-1111-1111-111111111111'
+) where id in ('44444444-4444-4444-4444-444444444444',
+               '55555555-5555-5555-5555-555555555555');
+select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', false);
+select set_config('request.jwt.claims',
+  '{"sub":"11111111-1111-1111-1111-111111111111","app_metadata":{"role":"guardian"}}', false);
+
 select public.creer_profil_enfant(
   '44444444-4444-4444-4444-444444444444',
   '11111111-1111-1111-1111-111111111111', 'Amina', 'Diallo', 7) is not null as enfant1;
 select public.creer_profil_enfant(
   '55555555-5555-5555-5555-555555555555',
   '11111111-1111-1111-1111-111111111111', 'Ibrahim', 'Diallo', 12) is not null as enfant2;
+select set_config('request.jwt.claim.sub', '', false);
+select set_config('request.jwt.claims', '', false);
 
 do $$
 begin

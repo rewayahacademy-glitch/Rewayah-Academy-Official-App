@@ -9,7 +9,7 @@
 // existe pour porter une identite, pas pour se connecter. Il entre par un code
 // d'appairage, puis par le jeton d'appareil (ADR-010).
 
-import { appelant, clientService, enTetesCors, json, refus } from '../_shared/clients.ts'
+import { appelant, clientAuthentifie, clientService, enTetesCors, json, refus } from '../_shared/clients.ts'
 
 Deno.serve(async (requete: Request) => {
   if (requete.method === 'OPTIONS') {
@@ -46,20 +46,24 @@ Deno.serve(async (requete: Request) => {
   }
 
   const service = clientService()
+  const clientTuteur = clientAuthentifie(requete)
+  if (!clientTuteur) {
+    return refus('session absente', 401)
+  }
   const identifiant = crypto.randomUUID()
   const courriel = `eleve-${identifiant}@${domaine}`
 
   const { data: compte, error: erreurCompte } = await service.auth.admin.createUser({
     email: courriel,
-    email_confirm: true,
+    email_confirm: false,
     password: crypto.randomUUID() + crypto.randomUUID(),
-    user_metadata: { cree_par: tuteur.id },
+    app_metadata: { child_of: tuteur.id },
   })
   if (erreurCompte || !compte.user) {
     return refus('creation du compte impossible', 500)
   }
 
-  const { data: profil, error: erreurProfil } = await service.rpc('creer_profil_enfant', {
+  const { data: profil, error: erreurProfil } = await clientTuteur.rpc('creer_profil_enfant', {
     p_auth_user_id: compte.user.id,
     p_guardian_id: tuteur.id,
     p_first_name: prenom,
