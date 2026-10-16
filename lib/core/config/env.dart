@@ -36,10 +36,14 @@ abstract final class Env {
   /// `portLayoutMushafProvider` rend alors `LayoutMadina15` au lieu de
   /// `LayoutLignesIndisponible`.
   ///
-  /// Faux par defaut, donc faux en production tant qu'on ne le passe pas.
-  /// Actif en developpement et en galerie : la galerie et le Playground, eux
-  /// aussi absents d'une production, l'allument sans autre commande.
-  static const bool mushaf15L = bool.fromEnvironment('MUSHAF_15L');
+  /// Vrai par defaut depuis le 16/10/2026 (constat du directeur : les
+  /// versions deployees montraient la composition approchee, les captures du
+  /// lot la page de Medine). `--dart-define=MUSHAF_15L=false` revient a
+  /// l'ancienne composition.
+  static const bool mushaf15L = bool.fromEnvironment(
+    'MUSHAF_15L',
+    defaultValue: true,
+  );
 
   /// Le drapeau MUSHAF-15L effectivement applique (developpement et galerie
   /// l'allument).

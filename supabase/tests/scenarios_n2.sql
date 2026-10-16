@@ -12,6 +12,7 @@
 -- precedents ont ecrit, et l'emission d'un jeton ecrit dans `audit_logs`.
 
 -- Droits facon Supabase (alter default privileges du projet).
+\ir _acl_photo.sql
 grant usage on schema public to anon, authenticated, service_role;
 grant all on all tables in schema public to authenticated, service_role;
 grant all on all sequences in schema public to authenticated, service_role;
@@ -54,7 +55,7 @@ insert into public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 values
   ('b2000000-0000-0000-0000-000000000001', 'TEACH-N2-000001', 'teacher',
-   'b2ffffff-0000-0000-0000-00000000000a', 'Bilal', 'Ndiaye', 'active', 'male'),
+   'b2ffffff-0000-0000-0000-00000000000a', 'Bilal', 'Ndiaye', 'provisional_active', 'male'),
   ('b2000000-0000-0000-0000-000000000002', 'STUD-N2-000001', 'student',
    'b2ffffff-0000-0000-0000-00000000000a', 'Nour', 'Ndiaye', 'active', 'female'),
   ('b2000000-0000-0000-0000-000000000003', 'STUD-N2-000002', 'student',
@@ -63,6 +64,24 @@ values
    'b2ffffff-0000-0000-0000-00000000000a', 'Khadija', 'Ba', 'active', 'female'),
   ('b2000000-0000-0000-0000-000000000005', 'STUD-N2-000003', 'student',
    'b2ffffff-0000-0000-0000-00000000000a', 'Salim', 'Ba', 'active', 'male');
+-- Fixture contractuel requis par 0089 : aucune garde d'activation n'est assouplie.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+    PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true);
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+      ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+END
+$fixture_teacher_contracts$;
 
 insert into public.student_profiles (profile_id, student_type, interface_mode, camera_policy)
 values
@@ -684,3 +703,69 @@ do $$
 begin
   raise notice 'N2 : dix controles verts.';
 end $$;
+
+-- ============================================================
+-- N8 : l'appel reel de create-room-token -- service_role SANS auth.uid()
+-- (constate sur STAGING le 16/10/2026 : 403 pour tous). Le compte valide
+-- est celui de p_profile_id ; un compte suspendu reste refuse.
+-- ============================================================
+
+do $n8$
+declare
+  v_jeton jsonb;
+  v_ok boolean;
+begin
+  perform set_config('test.uid', '', true);
+  perform set_config('test.jwt', '{}', true);
+  set local role service_role;
+
+  v_jeton := public.autoriser_jeton_video(
+    'b2aaaaaa-0000-0000-0000-00000000000a',
+    'b2000000-0000-0000-0000-000000000002',
+    'wss://cloud.example', 'wss://self.example');
+  if v_jeton ->> 'role' is distinct from 'student' then
+    raise exception 'N8 ECHEC : eleve inscrit refuse sans auth.uid()';
+  end if;
+
+  reset role;
+  update public.profiles set account_status = 'disabled'
+   where id = 'b2000000-0000-0000-0000-000000000002';
+  set local role service_role;
+  v_ok := false;
+  begin
+    perform public.autoriser_jeton_video(
+      'b2aaaaaa-0000-0000-0000-00000000000a',
+      'b2000000-0000-0000-0000-000000000002',
+      'wss://cloud.example', 'wss://self.example');
+  exception when insufficient_privilege then v_ok := sqlerrm = 'compte non valide';
+  end;
+  reset role;
+  update public.profiles set account_status = 'active'
+   where id = 'b2000000-0000-0000-0000-000000000002';
+  if not v_ok then
+    raise exception 'N8 ECHEC : compte suspendu a obtenu un jeton sans auth.uid()';
+  end if;
+
+  -- L'enseignant attitre sans ligne session_participants (cas des seances de
+  -- classe materialisees) obtient son jeton d'enseignant.
+  update public.session_participants set deleted_at = now()
+   where session_id = 'b2aaaaaa-0000-0000-0000-00000000000a'
+     and profile_id = (select teacher_id from public.sessions
+                        where id = 'b2aaaaaa-0000-0000-0000-00000000000a');
+  set local role service_role;
+  v_jeton := public.autoriser_jeton_video(
+    'b2aaaaaa-0000-0000-0000-00000000000a',
+    (select teacher_id from public.sessions where id = 'b2aaaaaa-0000-0000-0000-00000000000a'),
+    'wss://cloud.example', 'wss://self.example');
+  reset role;
+  update public.session_participants set deleted_at = null
+   where session_id = 'b2aaaaaa-0000-0000-0000-00000000000a'
+     and profile_id = (select teacher_id from public.sessions
+                        where id = 'b2aaaaaa-0000-0000-0000-00000000000a');
+  if v_jeton ->> 'role' is distinct from 'teacher'
+     or (v_jeton -> 'capabilities' ->> 'can_publish_data')::boolean is not true then
+    raise exception 'N8 ECHEC : enseignant attitre refuse ou sans capacites d''enseignant';
+  end if;
+end $n8$;
+
+\ir _acl_retablir.sql

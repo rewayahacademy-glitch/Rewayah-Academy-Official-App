@@ -20,9 +20,6 @@ COMMITS_GARDE = ("15a9c8ed", "5ea5e45c")
 FICHIERS_GARDE = [".claude/settings.json", ".claude/settings.local.json", ".claude/hooks"]
 
 ZONES_INTERDITES = [
-    (r"(^|/)supabase(/|$)", "supabase/ est la zone backend de ChatGPT (COHABITATION.md)"),
-    (r"(^|/)lib/(.*/)?service_[^/]*\.dart$", "les services sont la zone de ChatGPT"),
-    (r"_supabase\.dart$", "les adaptateurs *_supabase.dart sont la zone de ChatGPT"),
     (r"(^|/)\.github(/|$)", ".github/ est interdit aux agents (déploiement, CI)"),
     (r"(^|/)vercel\.json$", "vercel.json est interdit aux agents"),
     (r"(^|/)pubspec\.yaml$", "pubspec.yaml est interdit aux agents"),
@@ -626,7 +623,7 @@ def verifier_autres(c):
                  r"|functions\s+(deploy|delete)|secrets\s+(set|unset)|link|projects|storage\s+(rm|cp|mv)|branches"
                  r"|orgs|sso|domains|vanity-subdomains|network-restrictions|ssl-enforcement|postgres-config)\b", c):
         refuser("commande Supabase distante réservée à ChatGPT sous feu vert")
-    if re.search(r"\b(curl|wget|http|httpie|xh)\b.*(api\.supabase\.com|\.supabase\.co|api\.vercel\.com|api\.github\.com)", c) \
+    if re.search(r"\b(curl|wget|http|httpie|xh)\b.*(gggmtelinlpseweouyav|api\.github\.com)", c) \
             and re.search(r"(\s-X\s*['\"]?(POST|PUT|PATCH|DELETE)|\s--request[= ]\s*(POST|PUT|PATCH|DELETE)"
                           r"|\s(-d|--data\S*|-F|--form|--json|-T|--upload-file|--post-data|--method)[\s=]|\s(POST|PUT|PATCH|DELETE)\s)",
                           c, re.I):

@@ -1,0 +1,155 @@
+-- CAP29 R2 upload: intentions are tied to an owned draft and fixed-size object.
+BEGIN;
+
+INSERT INTO auth.users (id, email) VALUES
+  ('c29a1000-0000-0000-0000-000000000001', 'cap29-upload-admin@test.invalid'),
+  ('c29a1000-0000-0000-0000-000000000002', 'cap29-upload-teacher@test.invalid');
+INSERT INTO public.profiles
+  (id, immutable_id, role, first_name, last_name, account_status, gender)
+VALUES
+  ('c29a1000-0000-0000-0000-000000000001', 'C29-UPLOAD-ADMIN', 'admin', 'Upload', 'Admin', 'active', 'female'),
+  ('c29a1000-0000-0000-0000-000000000002', 'C29-UPLOAD-TEACH', 'teacher', 'Upload', 'Teacher', 'provisional_active', 'male');
+
+-- 0089 requires current teacher contracts before the account becomes active.
+DO $fixture_teacher_contract$
+DECLARE
+  v_teacher_version text;
+  v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version
+    FROM public.contract_texts
+   WHERE contract_kind = 'teacher_nda' AND locale = 'fr' AND is_current;
+  SELECT version INTO v_notice_version
+    FROM public.contract_required_versions
+   WHERE contract_kind = 'recording_and_control_notice';
+
+  PERFORM set_config('request.jwt.claim.sub', 'c29a1000-0000-0000-0000-000000000002', true);
+  PERFORM set_config('test.uid', 'c29a1000-0000-0000-0000-000000000002', true);
+  PERFORM set_config('request.jwt.claims', '{"app_metadata":{"role":"teacher"}}', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+  PERFORM public.signer_contrat(v_teacher_version, 'Fixture CAP29 upload');
+  INSERT INTO public.contract_acceptances(profile_id, contract_kind, version)
+  VALUES (
+    'c29a1000-0000-0000-0000-000000000002',
+    'recording_and_control_notice',
+    v_notice_version
+  ) ON CONFLICT (profile_id, contract_kind, version) DO NOTHING;
+
+  PERFORM set_config('request.jwt.claim.sub', 'c29a1000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('test.uid', 'c29a1000-0000-0000-0000-000000000001', true);
+  PERFORM set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', true);
+  PERFORM set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+  UPDATE public.profiles SET account_status = 'active'
+   WHERE id = 'c29a1000-0000-0000-0000-000000000002';
+END
+$fixture_teacher_contract$;
+
+INSERT INTO public.library_resource
+  (id, title, short_title, resource_type, language, category, access_policy, offline_policy)
+VALUES
+  ('c29a1000-0000-0000-0000-000000000003', 'Upload draft', 'Upload', 'pdf', 'fr', 'cours', 'admin', 'jamais');
+INSERT INTO public.resource_version (id, resource_id, numero_version)
+VALUES ('c29a1000-0000-0000-0000-000000000004',
+        'c29a1000-0000-0000-0000-000000000003', 1);
+INSERT INTO private.library_upload_confirmation_secrets(singleton, secret)
+VALUES (true, 'test-only-cap29-upload-confirmation-key-32-bytes');
+
+SELECT set_config('request.jwt.claim.sub', 'c29a1000-0000-0000-0000-000000000001', true);
+SELECT set_config('test.uid', 'c29a1000-0000-0000-0000-000000000001', true);
+SELECT set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', true);
+SELECT set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+SET LOCAL ROLE authenticated;
+DO $test$
+DECLARE
+  v_intention jsonb;
+  v_signature text;
+  v_result jsonb;
+  v_sha text := 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc';
+BEGIN
+  IF has_function_privilege('anon', 'public.demander_upload_bibliotheque(uuid,text,text,text,bigint,text)', 'EXECUTE')
+     OR has_function_privilege('anon', 'public.confirmer_upload_bibliotheque(uuid,text,bigint,text,text)', 'EXECUTE')
+     OR has_function_privilege('anon', 'public.lire_upload_bibliotheque(uuid)', 'EXECUTE')
+     OR has_function_privilege('anon', 'public.annuler_upload_bibliotheque(uuid)', 'EXECUTE') THEN
+    RAISE EXCEPTION 'CAP29 upload: anon conserve EXECUTE';
+  END IF;
+  v_intention := public.demander_upload_bibliotheque(
+    'c29a1000-0000-0000-0000-000000000003', 'support', 'manuel.pdf',
+    'application/pdf', 1234,
+    'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+  );
+  IF v_intention->>'cle_temporaire' <> ('private/libraryupload/' || (v_intention->>'id'))
+     OR v_intention->>'cle_finale' !~ '^supports/[0-9a-f-]{36}/1/manuel\.pdf$' THEN
+    RAISE EXCEPTION 'CAP29 upload: chemin de depot inattendu: %', v_intention;
+  END IF;
+  IF public.annuler_upload_bibliotheque((v_intention->>'id')::uuid) IS NOT TRUE THEN
+    RAISE EXCEPTION 'CAP29 upload: annulation attendue';
+  END IF;
+  BEGIN
+    PERFORM public.demander_upload_bibliotheque(
+      'c29a1000-0000-0000-0000-000000000003', 'support', 'archive.zip',
+      'application/zip', 1234,
+      'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+    );
+    RAISE EXCEPTION 'CAP29 upload: type non pris en charge accepté';
+  EXCEPTION WHEN invalid_parameter_value THEN
+    NULL;
+  END;
+
+  v_intention := public.demander_upload_bibliotheque(
+    'c29a1000-0000-0000-0000-000000000003', 'support', 'signe.pdf',
+    'application/pdf', 1234, v_sha
+  );
+  -- A well-formed but incorrect MAC isolates the DB-side HMAC comparison.
+  -- Removing that comparison lets this call confirm the upload and turns red.
+  BEGIN
+    PERFORM public.confirmer_upload_bibliotheque(
+      (v_intention->>'id')::uuid, 'application/pdf', 1234, v_sha,
+      pg_catalog.repeat('0', 64)
+    );
+    RAISE EXCEPTION 'CAP29 upload: signature HMAC invalide acceptee';
+  EXCEPTION WHEN insufficient_privilege THEN
+    NULL;
+  END;
+
+  v_signature := pg_catalog.encode(
+    extensions.hmac(
+      pg_catalog.convert_to(
+        (v_intention->>'id')::uuid::text || E'\n' || v_sha || E'\n1234',
+        'UTF8'
+      ),
+      pg_catalog.convert_to('test-only-cap29-upload-confirmation-key-32-bytes', 'UTF8'),
+      'sha256'
+    ),
+    'hex'
+  );
+  v_result := public.confirmer_upload_bibliotheque(
+    (v_intention->>'id')::uuid, 'application/pdf', 1234, v_sha, v_signature
+  );
+  IF v_result->>'etat' <> 'pret' THEN
+    RAISE EXCEPTION 'CAP29 upload: signature Edge simulée refusée: %', v_result;
+  END IF;
+END
+$test$;
+RESET ROLE;
+
+SELECT set_config('request.jwt.claim.sub', 'c29a1000-0000-0000-0000-000000000002', true);
+SELECT set_config('test.uid', 'c29a1000-0000-0000-0000-000000000002', true);
+SELECT set_config('request.jwt.claims', '{"app_metadata":{"role":"teacher"}}', true);
+SELECT set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+SET LOCAL ROLE authenticated;
+DO $refus$
+BEGIN
+  BEGIN
+    PERFORM public.demander_upload_bibliotheque(
+      'c29a1000-0000-0000-0000-000000000003', 'support', 'manuel.pdf',
+      'application/pdf', 1234,
+      'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    );
+    RAISE EXCEPTION 'CAP29 upload: enseignant a créé une intention admin';
+  EXCEPTION WHEN insufficient_privilege THEN
+    NULL;
+  END;
+END
+$refus$;
+RESET ROLE;
+ROLLBACK;

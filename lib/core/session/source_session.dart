@@ -81,7 +81,13 @@ class SourceSessionSupabase implements SourceSession {
       // demarrage indefiniment (C01 section 4).
       final Map<String, dynamic>? ligne = await _client
           .from('profiles')
-          .select('account_status, student_profiles(interface_mode)')
+          // La cle est nommee : student_profiles porte deux cles vers profiles
+          // (profile_id et titulaire_profile_id, 0052) et un embed sans nom
+          // echoue en PGRST201, ce qui fermait tout compte sur le portail.
+          .select(
+            'account_status, '
+            'student_profiles!student_profiles_profile_id_fkey(interface_mode)',
+          )
           .eq('id', profileId)
           .maybeSingle()
           .timeout(AppDelais.requeteMax);

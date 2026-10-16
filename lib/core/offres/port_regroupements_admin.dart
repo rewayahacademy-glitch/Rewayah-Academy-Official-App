@@ -41,7 +41,7 @@ import '../capacites/capacite_indisponible.dart';
 import '../capacites/port_enseignants_classe.dart' show GenreClasse;
 import 'decoupage_classes.dart';
 import 'occurrence_creneau.dart';
-import 'offre_horaire.dart' show PublicOffre;
+import 'offre_horaire.dart' show NiveauDeclare, PublicOffre;
 
 export 'decoupage_classes.dart' show DecoupageClasses, decouperDemandes;
 export 'occurrence_creneau.dart' show OccurrenceCreneau;
@@ -131,6 +131,10 @@ class RegroupementDemandes {
     required this.public,
     required this.langueCode,
     required this.langueNom,
+    this.genrePublic,
+    this.niveau,
+    this.aCompleter = false,
+    this.motifACompleter,
     required this.fuseau,
     required Iterable<OccurrenceCreneau> occurrences,
     required this.nombreEleves,
@@ -166,6 +170,18 @@ class RegroupementDemandes {
 
   /// Le nom affichable de la langue d'enseignement.
   final String langueNom;
+
+  /// Cloisonnement dérivé par le serveur. Nul pour une demande à compléter.
+  final GenreClasse? genrePublic;
+
+  /// Niveau déclaré figé sur la demande. Nul quand il manque.
+  final NiveauDeclare? niveau;
+
+  /// Demande isolée dont le genre ou le niveau doit être complété.
+  final bool aCompleter;
+
+  /// `genre_inconnu` ou `niveau_inconnu`, fourni par le serveur.
+  final String? motifACompleter;
 
   /// Le fuseau IANA des demandes : celui des heures de reference.
   final String fuseau;

@@ -34,6 +34,7 @@ import '../com_annonces/port_annonces.dart';
 import '../suivi_foyer/composants_historique.dart';
 import '../suivi_foyer/filtres_historique.dart';
 import 'detail_notification.dart';
+import 'notifications_supabase_provider.dart';
 
 /// Le centre de notifications partage (`NotificationCenter`, spec
 /// Communications V1, sections 13.1 et 18 ; COM-ANN-1).
@@ -204,7 +205,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   /// et seule cette derniere est alors dite non confirmee.
   Future<void> _marquerLue(NotificationTuteur n) async {
     if (n.lue) return;
-    final PortNotifications port = ref.read(portNotificationsProvider);
+    final PortNotifications port = ref.read(notificationsPagePortProvider);
     final PortAnnonces annonces = ref.read(portAnnoncesProvider);
     final String? annonceId = n.annonceId;
     try {
@@ -452,7 +453,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 /// Les notifications, dans l'ordre du port (la plus recente d'abord).
 final FutureProvider<List<NotificationTuteur>> notificationsTuteurProvider =
     FutureProvider<List<NotificationTuteur>>(
-      (Ref ref) => ref.watch(portNotificationsProvider).liste(),
+      (Ref ref) => ref.watch(notificationsPagePortProvider).liste(),
     );
 
 /// L'horloge du centre de notifications : l'instant de reference de la date

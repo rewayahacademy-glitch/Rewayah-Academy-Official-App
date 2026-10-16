@@ -76,7 +76,11 @@ class SourceSessionAgent implements SourceSession {
     try {
       final Map<String, dynamic>? ligne = await _client
           .from('profiles')
-          .select('account_status, student_profiles(interface_mode)')
+          // Cle nommee : deux cles relient student_profiles a profiles (0052).
+          .select(
+            'account_status, '
+            'student_profiles!student_profiles_profile_id_fkey(interface_mode)',
+          )
           .eq('id', profileId)
           .maybeSingle();
 

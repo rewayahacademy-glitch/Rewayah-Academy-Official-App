@@ -260,15 +260,12 @@ void main() {
 
   group('source de layout et credit', () {
     test(
-      'sans drapeau, la source est « indisponible » ; avec, c\'est Medine',
+      'par defaut (16/10), la source est Medine en 15 lignes',
       () async {
-        expect(Env.mushaf15LActif, isFalse);
+        expect(Env.mushaf15LActif, isTrue);
         final ProviderContainer c = ProviderContainer();
         addTearDown(c.dispose);
-        expect(
-          c.read(portLayoutMushafProvider),
-          isA<LayoutLignesIndisponible>(),
-        );
+        expect(c.read(portLayoutMushafProvider), isA<LayoutMadina15>());
       },
     );
 

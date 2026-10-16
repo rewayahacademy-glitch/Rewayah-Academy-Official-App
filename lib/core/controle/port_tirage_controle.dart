@@ -108,15 +108,13 @@ const int missionsMax = 50;
 class ReglesTirage {
   /// Cree les regles.
   const ReglesTirage({
+    this.version = 0,
     required this.missionsParSemaine,
     required this.ponderations,
     required this.cibles,
-    this.version = 0,
   });
 
-  /// La version de ces regles, rendue par le serveur : chaque enregistrement
-  /// en cree une nouvelle (ajout seul, les anciennes ne changent jamais).
-  /// 0 : aucune regle n'a encore ete enregistree.
+  /// Version immuable creee par le serveur (0 avant le premier enregistrement).
   final int version;
 
   /// Le nombre de missions qu'un controleur recoit par semaine, au plus
@@ -388,6 +386,10 @@ abstract interface class PortTirageControle {
     required int page,
     required int taille,
   });
+
+  /// Signale un conflit sur une mission attribuee. [cleConflit] doit rester
+  /// stable lors des reprises de la meme commande; le serveur est idempotent.
+  Future<void> declarerConflit(String missionId, {required String cleConflit});
 }
 
 /// L'identifiant de la dependance serveur, pour la trace et les tests

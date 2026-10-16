@@ -60,6 +60,32 @@ Deno.test('7e -- un identifiant qui n est pas un UUID est refuse', () => {
   assertThrows(() => cleDe('priveApplicatif', 'Export Des Eleves', ARCHIVE), ErreurCleObjet)
 })
 
+Deno.test('7e bis -- famille de preuve CAP29 autorisee, familles inconnues refusees', () => {
+  const cle = cleDe('priveApplicatif', 'libraryproof', ARCHIVE)
+  assertEquals(cle, `private/libraryproof/${ARCHIVE}`)
+  assertEquals(verifierCle('priveApplicatif', cle), cle)
+  assertThrows(() => cleDe('priveApplicatif', 'secretbucket', ARCHIVE), ErreurCleObjet)
+  assertThrows(() => verifierCle('priveApplicatif', `private/secretbucket/${ARCHIVE}`), ErreurCleObjet)
+})
+
+Deno.test('7e ter -- famille temporaire d upload de bibliotheque autorisee', () => {
+  const cle = cleDe('priveApplicatif', 'libraryupload', ARCHIVE)
+  assertEquals(cle, `private/libraryupload/${ARCHIVE}`)
+  assertEquals(verifierCle('priveApplicatif', cle), cle)
+  assertThrows(() => verifierCle('supports', cle), ErreurCleObjet)
+})
+
+Deno.test('7e quater -- le chemin supports contient asset, version et nom de fichier', () => {
+  const cle = `supports/${ARCHIVE}/12/manuel.pdf`
+  assertEquals(verifierCle('supports', cle), cle)
+  for (const invalide of [
+    `private/supports/${ARCHIVE}`,
+    `supports/${ARCHIVE}/0/manuel.pdf`,
+    `supports/${ARCHIVE}/12/../manuel.pdf`,
+    `supports/${ARCHIVE}/12/manuel.pdf/extra`,
+  ]) assertThrows(() => verifierCle('supports', invalide), ErreurCleObjet)
+})
+
 Deno.test('7f -- la casse est normalisee, pour ne pas creer deux objets', () => {
   assertEquals(
     cleDe('pieceIdentite', PROFIL.toUpperCase(), DOCUMENT.toUpperCase()),

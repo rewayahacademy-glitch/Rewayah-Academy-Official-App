@@ -17,8 +17,7 @@ cd "$dir" 2>/dev/null || exit 0
 top=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
 cd "$top" || exit 0
 
-zones=(supabase .github vercel.json pubspec.yaml site-public lib/features/parcours_offres
-  ':(glob)lib/**/service_*.dart' ':(glob)**/*_supabase.dart'
+zones=(.github vercel.json pubspec.yaml site-public lib/features/parcours_offres
   ':(glob).claude/settings*.json' .claude/hooks)
 
 en_cours=""

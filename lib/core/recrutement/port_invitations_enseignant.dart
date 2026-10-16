@@ -172,8 +172,10 @@ final FutureProvider<List<Invitation>> invitationsEnseignantProvider =
     }, retry: (int _, Object _) => null);
 
 /// Le code d'invitation verifie, conserve pour l'inscription enseignant :
-/// `ServiceDossier.creerProfil` le recevra (parametre `codeInvitation`, a
-/// ajouter par Codex, C-14). Jamais ecrit sur disque, jamais journalise.
+/// `ServiceDossier.creerProfil` le recoit (parametre `codeInvitation`, C-14)
+/// et le serveur le consomme avec la creation du profil
+/// (`inscrire_enseignant_invite`, RACCORDEMENT-1016). Jamais ecrit sur
+/// disque, jamais journalise.
 final NotifierProvider<CodeInvitationRetenu, String?>
 codeInvitationRetenuProvider = NotifierProvider<CodeInvitationRetenu, String?>(
   CodeInvitationRetenu.new,

@@ -17,6 +17,7 @@
 -- N4 ajoute -- le prenom et la consolidation.
 
 -- Droits facon Supabase (alter default privileges du projet).
+\ir _acl_photo.sql
 grant usage on schema public to anon, authenticated, service_role;
 grant all on all tables in schema public to authenticated, service_role;
 grant all on all sequences in schema public to authenticated, service_role;
@@ -70,7 +71,7 @@ insert into public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 values
   ('b4000000-0000-0000-0000-000000000001', 'TEACH-N4-000001', 'teacher',
-   'b4ffffff-0000-0000-0000-00000000000c', 'Yacine', 'Belhadj', 'active', 'male'),
+   'b4ffffff-0000-0000-0000-00000000000c', 'Yacine', 'Belhadj', 'provisional_active', 'male'),
   ('b4000000-0000-0000-0000-000000000002', 'STUD-N4-000001', 'student',
    'b4ffffff-0000-0000-0000-00000000000a', 'Maryam', 'Cherif', 'active', 'female'),
   ('b4000000-0000-0000-0000-000000000003', 'STUD-N4-000002', 'student',
@@ -80,13 +81,31 @@ values
   ('b4000000-0000-0000-0000-000000000005', 'GUAR-N4-000001', 'guardian',
    'b4ffffff-0000-0000-0000-00000000000a', 'Karim', 'Cherif', 'active', 'male'),
   ('b4000000-0000-0000-0000-000000000006', 'TEACH-N4-000002', 'teacher',
-   'b4ffffff-0000-0000-0000-00000000000c', 'Hafsa', 'Toumi', 'active', 'female'),
+   'b4ffffff-0000-0000-0000-00000000000c', 'Hafsa', 'Toumi', 'provisional_active', 'female'),
   ('b4000000-0000-0000-0000-000000000007', 'STUD-N4-000003', 'student',
    'b4ffffff-0000-0000-0000-00000000000b', 'Zineb', 'Toumi', 'active', 'female'),
   ('b4000000-0000-0000-0000-000000000008', 'STUD-N4-000004', 'student',
    'b4ffffff-0000-0000-0000-00000000000b', 'Tarek', 'Saidi', 'active', 'male'),
   ('b4000000-0000-0000-0000-000000000009', 'ADMIN-N4-00001', 'admin',
    'b4ffffff-0000-0000-0000-00000000000c', 'Amine', 'Rahal', 'active', 'male');
+-- Fixture contractuel requis par 0089 : aucune garde d'activation n'est assouplie.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+    PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true);
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+      ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+END
+$fixture_teacher_contracts$;
 
 insert into public.student_profiles (profile_id, student_type, interface_mode, camera_policy)
 values
@@ -454,3 +473,5 @@ end $$;
 
 update public.app_config set value = 'false'::jsonb
  where key = 'allow_multi_participant_sessions';
+
+\ir _acl_retablir.sql

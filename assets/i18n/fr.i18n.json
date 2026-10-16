@@ -814,6 +814,7 @@
     "changerAdresse": "Utiliser une autre adresse",
     "erreurCourriel": "Cette adresse ne semble pas valide.",
     "erreurEnvoi": "L'envoi n'a pas abouti. Réessayez dans un instant.",
+    "erreurMotDePasse": "Adresse ou mot de passe incorrect. Vérifiez les deux, ou videz le mot de passe pour recevoir un lien par courriel.",
     "appareilEleveAide": "Vous êtes tuteur et vous préparez l'appareil d'un élève\u00a0?",
     "appareilEleve": "Connecter l'appareil d'un élève",
     "renvoyer": "Renvoyer le lien",
@@ -875,6 +876,7 @@
     "modifier": "Modifier",
     "reessayer": "Réessayer",
     "erreurActualisation": "Votre compte est créé, mais la connexion n'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.",
+    "erreurInvitation": "Votre code d'invitation n'a pas pu être utilisé\u00a0: il a expiré, a déjà servi ou ne correspond pas à votre adresse. Demandez un nouveau code à la direction, puis saisissez-le de nouveau.",
     "usage": {
       "question": "Quel type de compte souhaitez-vous créer\u00a0?",
       "moiTitre": "Moi uniquement",
@@ -3596,6 +3598,15 @@
       "famillesPrevenues": "Les familles ont été prévenues.",
       "fusionDejaFaite": "Un autre membre de la direction vient de fusionner cette classe : rien n'a été fait en double. Fermez cette feuille pour retrouver la liste à jour.",
       "fusionRefusee": "La fusion n'a pas eu lieu : {motif}. Vérifiez les classes, puis recommencez.",
+      "motif": {
+        "classeIntrouvable": "l'une des deux classes est introuvable",
+        "sourceCloturee": "la classe à fusionner est déjà clôturée",
+        "cibleCloturee": "la classe qui accueille est clôturée",
+        "cibleIncompatible": "les deux classes n'ont pas le même horaire ou la même catégorie",
+        "ciblePleine": "la classe qui accueille n'a plus assez de place",
+        "eleveAbsent": "l'élève ne fait plus partie de cette classe",
+        "inconnu": "Rewayah a refusé l'opération sans en préciser la raison"
+      },
       "fusionNonConfirmee": "La fusion n'est pas confirmée : la réponse du serveur n'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans fusion en double.",
       "manqueCible": "Il manque la classe qui accueille les élèves : choisissez-la dans la liste.",
       "transfertTitre": "Transférer un élève {deLibelle}",
@@ -4618,6 +4629,18 @@
     "dateCourteSansAnnee": "{jour} {mois}"
   },
   "notifications": {
+    "evenements": {
+      "demandeRecue": "Une nouvelle demande de créneau a été reçue.",
+      "demandePresentation": "Une demande de présentation standard a été reçue.",
+      "classeValidee": "La classe est prête et attend son enseignant.",
+      "enseignantAffecte": "Un enseignant a été affecté à la classe.",
+      "demandeClose": "Une demande de créneau a été clôturée.",
+      "remplacementPropose": "Un remplacement de cours vous est proposé.",
+      "remplacementPris": "Un remplacement de cours a été attribué.",
+      "controleMissionAttribuee": "Une mission de contrôle vous a été attribuée.",
+      "controleMissionNonControlee": "Une mission de contrôle est restée sans vérification.",
+      "classeChangee": "Un élève de la famille a rejoint une autre classe, au même horaire."
+    },
     "filtres": {
       "libelle": "Filtrer les notifications",
       "toutes": "Toutes",

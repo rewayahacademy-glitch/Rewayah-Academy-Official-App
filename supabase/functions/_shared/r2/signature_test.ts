@@ -28,12 +28,13 @@ const SEANCE = '0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d'
 const ARCHIVE = 'd4c3b2a1-5f6e-4b7a-9c8d-1e2f3a4b5c6d'
 
 const env: LecteurEnvironnement = (nom) => {
+  if (nom === 'R2_BUCKET_SUPPORTS') return 'rewayah-supports'
   for (const domaine of DOMAINES) {
     const p = prefixeSecrets(domaine)
     if (nom === `${p}_ACCOUNT_ID`) return HEX32
     if (nom === `${p}_ACCESS_KEY_ID`) return HEX32
     if (nom === `${p}_SECRET_ACCESS_KEY`) return HEX64
-    if (nom === `${p}_BUCKET_NAME`) return seauAttendu(domaine)
+    if (nom === `${p}_BUCKET_NAME`) return seauAttendu(domaine) ?? undefined
     if (nom === `${p}_ENDPOINT`) return `https://${HEX32}.eu.r2.cloudflarestorage.com`
   }
   return undefined
@@ -70,6 +71,19 @@ Deno.test('D16 -- l URL n est pas permanente : elle porte date, duree et portee'
   assertEquals(p.get('X-Amz-Algorithm'), 'AWS4-HMAC-SHA256')
 })
 
+Deno.test('D16b -- le support de bibliotheque est ouvert inline et signe pour 60 secondes', async () => {
+  const { url, expireDansSecondes } = await signerLecture(
+    'supports',
+    `supports/${DOCUMENT}/1/manuel.pdf`,
+    { dureeSecondes: 60, contentDisposition: 'inline', env },
+  )
+  const params = new URL(url).searchParams
+  assertEquals(params.get('response-content-disposition'), 'inline')
+  assertEquals(params.get('X-Amz-Expires'), '60')
+  assert(params.get('X-Amz-Signature'))
+  assertEquals(expireDansSecondes, 60)
+})
+
 Deno.test('D17 -- la methode est bornee : lecture et depot ne signent pas la meme chose', async () => {
   const cle = cleDe('pieceIdentite', PROFIL, DOCUMENT)
   const lecture = await signerLecture('pieceIdentite', cle, { env })
@@ -86,6 +100,29 @@ Deno.test('D17 -- la methode est bornee : lecture et depot ne signent pas la mem
     new URL(lecture.url).searchParams.get('X-Amz-Signature') !==
       new URL(depot.url).searchParams.get('X-Amz-Signature'),
   )
+})
+
+Deno.test('D17b -- libraryupload signe un PUT temporaire borne au type et a la taille', async () => {
+  const cle = cleDe('priveApplicatif', 'libraryupload', ARCHIVE)
+  const depot = await signerDepot('priveApplicatif', cle, {
+    typeMime: 'application/pdf',
+    tailleOctets: 2048,
+    typesAutorises: ['application/pdf'],
+    tailleMaximaleOctets: 50 * 1024 * 1024,
+    env,
+  })
+  const query = new URL(depot.url).searchParams
+  assert(query.get('X-Amz-Signature'))
+  assertEquals(query.get('X-Amz-Expires'), String(DUREE_DEPOT_S))
+  assertEquals(depot.enTetesExiges['content-type'], 'application/pdf')
+  assertEquals(depot.enTetesExiges['content-length'], '2048')
+  await assertRejects(() => signerDepot('priveApplicatif', cle, {
+    typeMime: 'application/zip',
+    tailleOctets: 2048,
+    typesAutorises: ['application/pdf'],
+    tailleMaximaleOctets: 50 * 1024 * 1024,
+    env,
+  }))
 })
 
 Deno.test('D19 -- aucun parametre n est encode en + : ce serait un 403 chez R2', async () => {
@@ -133,15 +170,17 @@ Deno.test('B10 -- chaque domaine signe vers son propre seau', async () => {
     ['archiveSeance', cleDe('archiveSeance', SEANCE, ARCHIVE)],
     ['pieceJointeMessage', cleDe('pieceJointeMessage', SEANCE, ARCHIVE)],
     ['priveApplicatif', cleDe('priveApplicatif', 'export', ARCHIVE)],
+    ['supports', `supports/${DOCUMENT}/1/manuel.pdf`],
   ]
   for (const [domaine, cle] of cas) {
     const { url } = await signerLecture(domaine, cle, { env })
     const chemin = new URL(url).pathname
-    assertEquals(chemin, `/${seauAttendu(domaine)}/${cle}`)
+    assertEquals(chemin, `/${domaine === 'supports' ? 'rewayah-supports' : seauAttendu(domaine)}/${cle}`)
     // Et surtout : aucun autre seau n apparait dans l URL.
     for (const autre of DOMAINES) {
       if (autre !== domaine) {
-        assert(!url.includes(seauAttendu(autre)), `${domaine} ne doit pas atteindre ${seauAttendu(autre)}`)
+        const autreSeau = autre === 'supports' ? 'rewayah-supports' : seauAttendu(autre)
+        if (autreSeau) assert(!url.includes(autreSeau), `${domaine} ne doit pas atteindre ${autreSeau}`)
       }
     }
   }

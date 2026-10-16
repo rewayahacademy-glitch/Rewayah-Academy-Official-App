@@ -24,6 +24,8 @@ class DemandePresentation {
     required this.eleveId,
     required this.prenom,
     required this.demandeeLe,
+    this.instantUtc,
+    this.fuseauIana,
   });
 
   /// L'identifiant de la demande.
@@ -35,8 +37,16 @@ class DemandePresentation {
   /// Son prenom.
   final String prenom;
 
-  /// Quand elle a ete faite (heure murale du fuseau du foyer).
+  /// Champs calendaires de l'heure murale du foyer, fournis par le serveur.
+  /// Ils ne doivent pas être convertis vers le fuseau de l'appareil ;
+  /// [fuseauIana] indique le fuseau auquel ils appartiennent.
   final DateTime demandeeLe;
+
+  /// Instant d'origine UTC, conservé séparément de l'heure murale.
+  final DateTime? instantUtc;
+
+  /// Fuseau IANA du foyer, résolu côté serveur.
+  final String? fuseauIana;
 }
 
 /// Le port de reponse du tuteur.

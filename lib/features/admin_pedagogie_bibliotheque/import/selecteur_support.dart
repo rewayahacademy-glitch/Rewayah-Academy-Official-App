@@ -8,6 +8,7 @@ library;
 
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,8 +34,12 @@ class FichierChoisi {
   final String mime;
 
   /// Le descriptif envoye au port.
-  FichierADeposer get descriptif =>
-      FichierADeposer(nom: nom, octets: octets.length, mime: mime);
+  FichierADeposer get descriptif => FichierADeposer(
+    nom: nom,
+    octets: octets.length,
+    mime: mime,
+    sha256: sha256.convert(octets).toString(),
+  );
 }
 
 /// Ce que l'on accepte pour un type de support : extensions et MIME.
