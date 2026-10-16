@@ -47,6 +47,7 @@ import '../../com_annonces/port_annonces.dart';
 import '../../com_annonces/port_regles_audience.dart';
 import '../../com_annonces/publier_annonce_classe_page.dart';
 import '../../notifications/notifications_page.dart';
+import '../../notifications/notifications_supabase_provider.dart';
 import 'com_messages_demo.dart';
 import 'demo_communications_page.dart';
 
@@ -1105,6 +1106,10 @@ class _ComAnnoncesDemoState extends State<ComAnnoncesDemo> {
       // l'application gardent leurs ports neutres.
       overrides: <Override>[
         portNotificationsProvider.overrideWithValue(ports.notifications),
+        // La lecture passe par ce fournisseur, derive du port ci-dessus dans
+        // le scope racine : sans cette surcharge, la lecture atteint le port
+        // neutre (NotificationsIndisponibles) et ne s'enregistre pas.
+        notificationsPagePortProvider.overrideWithValue(ports.notifications),
         notificationsTuteurProvider.overrideWith(
           (Ref _) => ports.notifications.liste(),
         ),

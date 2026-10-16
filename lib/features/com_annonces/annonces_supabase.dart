@@ -51,14 +51,18 @@ class AnnoncesSupabase implements PortAnnonces {
       for (final Map<String, dynamic> a in listeJson(v['annonces']))
         annonceClasseJson(a, libelles),
     ];
-    final Set<String> vues = <String>{
-      for (final AnnonceClasse a in deLaClasse) a.id,
-    };
-    final List<AnnonceClasse> annonces = <AnnonceClasse>[
+    // Fusion des deux lectures, puis dedoublonnage par identifiant : une
+    // annonce generale ne figure qu'une fois, la premiere occurrence gagne.
+    final List<AnnonceClasse> fusionnees = <AnnonceClasse>[
       ...deLaClasse,
-      for (final AnnonceClasse a in await _annoncesAcademie(classeId))
-        if (vues.add(a.id)) a,
-    ]..sort(_plusRecenteDabord);
+      ...await _annoncesAcademie(classeId),
+    ];
+    final Map<String, AnnonceClasse> parId = <String, AnnonceClasse>{};
+    for (final AnnonceClasse a in fusionnees) {
+      parId.putIfAbsent(a.id, () => a);
+    }
+    final List<AnnonceClasse> annonces = parId.values.toList()
+      ..sort(_plusRecenteDabord);
     return AnnoncesDeLaClasse(
       annonces: List<AnnonceClasse>.unmodifiable(annonces),
       capacites: <CapaciteAnnonces>{
