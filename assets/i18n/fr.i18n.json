@@ -5376,6 +5376,10 @@
         "pasCetteFois": "Pas cette fois"
       },
       "erreurPartielleCahiers": "Vos cahiers de transmission à terminer n'ont pas pu être chargés\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour\u00a0: elles n'en dépendent pas. Réessayez dans un instant.",
+      "cahiersEnvoyes(param=n)": {
+        "one": "{n} cahier envoyé",
+        "other": "{n} cahiers envoyés"
+      },
       "effectif(param=nombre)": {
         "one": "{nombre} élève",
         "other": "{nombre} élèves"
