@@ -42,6 +42,7 @@ class FauxAnnonces implements PortAnnonces {
           auteur: a.auteur,
           niveau: a.niveau,
           lue: true,
+          generale: a.generale,
         )
       : a;
 
@@ -150,11 +151,13 @@ AnnonceClasse annonceDeTest({
   bool lue = false,
   NiveauAttention niveau = NiveauAttention.aLire,
   DateTime? publieeLe,
+  bool generale = false,
 }) => AnnonceClasse(
   id: id,
   titre: titre,
   texte: texte,
   publieeLe: publieeLe ?? DateTime.utc(2026, 10, 3, 16),
+  generale: generale,
   auteur: const Participant(
     id: 'e1',
     nomAffiche: 'Enseignante',

@@ -116,6 +116,10 @@ class CarteAnnonceClasse extends StatelessWidget {
     );
     final IndicateurAttention indicateur = indicateurDe(annonce);
 
+    // Une annonce generale affiche sa portee, pas la Classe de contexte.
+    final String portee = annonce.generale
+        ? a.toutesAcademie
+        : traitsDUnionInsecables(annonce.classe.libelle);
     final Widget contenu = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -123,7 +127,7 @@ class CarteAnnonceClasse extends StatelessWidget {
         // Le mot « Annonce » et la Classe, puis le niveau en toutes lettres.
         Text(
           // « An-Nour » ne se coupe pas au trait d'union (lot L).
-          '${a.annonce} · ${traitsDUnionInsecables(annonce.classe.libelle)}',
+          '${a.annonce} · $portee',
           style: palette.inkMuted.applyTo(
             textes.labelMedium ?? const TextStyle(),
           ),
@@ -210,7 +214,9 @@ class CarteAnnonceClasse extends StatelessWidget {
         return Semantics(
           container: true,
           label: a.carteSemantique(
-            classe: annonce.classe.libelle,
+            classe: annonce.generale
+                ? a.toutesAcademie
+                : annonce.classe.libelle,
             titre: annonce.titre,
           ),
           child: CarteGroupee(

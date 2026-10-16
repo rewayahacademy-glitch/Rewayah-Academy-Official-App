@@ -212,8 +212,11 @@ AnnonceClasse annonceClasseJson(
 ) {
   final Map<String, dynamic> classe = objetJson(a['classe']);
   final bool lue = a['lue'] == true;
+  // Seule une annonce generale porte `portee` (com_annonces_academie).
+  final bool generale = a['portee'] is String;
   final Object? auteur = a['auteur'];
   return AnnonceClasse(
+    generale: generale,
     id: texteJson(a, 'id'),
     titre: texteJson(a, 'titre'),
     texte: texteJson(a, 'texte'),

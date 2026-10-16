@@ -16361,6 +16361,9 @@ class Traductions$com$annonces$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	/// fr: 'Toute l'académie'
+	String get toutesAcademie => 'Toute l\'académie';
+
 	late final Traductions$com$annonces$publieur$fr publieur = Traductions$com$annonces$publieur$fr.internal(_root);
 	late final Traductions$com$annonces$administration$fr administration = Traductions$com$annonces$administration$fr.internal(_root);
 	late final Traductions$com$annonces$demoPublication$fr demoPublication = Traductions$com$annonces$demoPublication$fr.internal(_root);
@@ -38889,6 +38892,7 @@ extension on Traductions {
 			'com.studio.demo.f.objetDossierBenali' => 'Dossier de la famille Benali',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'Aucune activité à traiter ici.',
+			'com.annonces.toutesAcademie' => 'Toute l\'académie',
 			'com.annonces.publieur.titre' => 'Nouvelle annonce',
 			'com.annonces.publieur.etapes.contenu' => 'Contenu de l\'annonce',
 			'com.annonces.publieur.etapes.audience' => 'Destinataires de l\'annonce',

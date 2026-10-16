@@ -34,6 +34,7 @@ class AnnonceClasse {
     this.auteur,
     this.niveau = NiveauAttention.aLire,
     this.lue = false,
+    this.generale = false,
   }) : assert(id.isNotEmpty, 'Une annonce porte son identifiant.'),
        assert(
          classe.type == TypeObjetLie.classe,
@@ -65,6 +66,11 @@ class AnnonceClasse {
 
   /// Vrai si la personne l'a deja lue (le port le dit).
   final bool lue;
+
+  /// Vrai pour une annonce generale de l'academie (« Toute l'academie »)
+  /// rendue dans le contexte d'une Classe : la carte affiche la portee, pas
+  /// le nom de la Classe de contexte.
+  final bool generale;
 }
 
 /// La nature d'une audience d'annonce (spec section 13.4).

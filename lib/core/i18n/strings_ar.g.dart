@@ -3717,6 +3717,7 @@ class _Traductions$com$annonces$ar extends Traductions$com$annonces$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get toutesAcademie => 'كل الأكاديمية';
 	@override late final _Traductions$com$annonces$publieur$ar publieur = _Traductions$com$annonces$publieur$ar._(_root);
 	@override late final _Traductions$com$annonces$administration$ar administration = _Traductions$com$annonces$administration$ar._(_root);
 	@override late final _Traductions$com$annonces$demoPublication$ar demoPublication = _Traductions$com$annonces$demoPublication$ar._(_root);
@@ -16874,6 +16875,7 @@ extension on TraductionsAr {
 			'com.studio.demo.f.objetDossierBenali' => 'ملف أسرة بن علي',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'لا يوجد نشاط للمعالجة هنا.',
+			'com.annonces.toutesAcademie' => 'كل الأكاديمية',
 			'com.annonces.publieur.titre' => 'إعلان جديد',
 			'com.annonces.publieur.etapes.contenu' => 'محتوى الإعلان',
 			'com.annonces.publieur.etapes.audience' => 'مستلمو الإعلان',

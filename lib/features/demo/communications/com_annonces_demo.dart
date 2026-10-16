@@ -577,6 +577,7 @@ class AnnoncesDemonstration implements PortAnnonces {
           auteur: a.auteur,
           niveau: a.niveau,
           lue: true,
+          generale: a.generale,
         )
       : a;
 

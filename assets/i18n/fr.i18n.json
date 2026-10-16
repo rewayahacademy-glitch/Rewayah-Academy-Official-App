@@ -8451,6 +8451,7 @@
       "vide": "Aucune activité à traiter ici."
     },
     "annonces": {
+      "toutesAcademie": "Toute l'académie",
       "publieur": {
         "titre": "Nouvelle annonce",
         "etapes": {
