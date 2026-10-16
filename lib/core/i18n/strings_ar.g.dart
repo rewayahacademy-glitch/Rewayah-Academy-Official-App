@@ -5061,7 +5061,8 @@ class _Traductions$admin$tirage$ar extends Traductions$admin$tirage$fr {
 	@override String versionEnVigueur({required Object n}) => 'القواعد السارية: النسخة ⁨${n}⁩';
 	@override String get aucuneVersion => 'لم تُسجَّل أي قاعدة بعد.';
 	@override String get zeroPhrase => 'مع القيمة 0، لا تُسحب أي حصة للمراقبة.';
-	@override String get nombreInvalide => 'أدخل عددًا صحيحًا من 0 إلى 50، أو اختر إحدى البطاقات.';
+	@override String get nombreInvalide => 'أدخل عددًا صحيحًا من 0 إلى 50، أو اختر إحدى القيم المقترحة.';
+	@override String get frequenceAutreChamp => 'عدد';
 	@override String enregistreesVersion({required Object n}) => 'سُجّلت القواعد، النسخة ⁨${n}⁩. تسري على السحوب القادمة.';
 	@override String missionsParSemaine({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
 		zero: 'لا مهمة في الأسبوع',
@@ -18190,7 +18191,8 @@ extension on TraductionsAr {
 			'admin.tirage.versionEnVigueur' => ({required Object n}) => 'القواعد السارية: النسخة ⁨${n}⁩',
 			'admin.tirage.aucuneVersion' => 'لم تُسجَّل أي قاعدة بعد.',
 			'admin.tirage.zeroPhrase' => 'مع القيمة 0، لا تُسحب أي حصة للمراقبة.',
-			'admin.tirage.nombreInvalide' => 'أدخل عددًا صحيحًا من 0 إلى 50، أو اختر إحدى البطاقات.',
+			'admin.tirage.nombreInvalide' => 'أدخل عددًا صحيحًا من 0 إلى 50، أو اختر إحدى القيم المقترحة.',
+			'admin.tirage.frequenceAutreChamp' => 'عدد',
 			'admin.tirage.enregistreesVersion' => ({required Object n}) => 'سُجّلت القواعد، النسخة ⁨${n}⁩. تسري على السحوب القادمة.',
 			'admin.tirage.missionsParSemaine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا مهمة في الأسبوع', one: 'مهمة واحدة في الأسبوع', two: 'مهمتان في الأسبوع', few: '⁨${n}⁩ مهام في الأسبوع', many: '⁨${n}⁩ مهمة في الأسبوع', other: '⁨${n}⁩ مهمة في الأسبوع', ), 
 			'admin.tirage.ponderationTitre' => 'الترجيح',
@@ -18561,9 +18563,9 @@ extension on TraductionsAr {
 			'comptable.onglets.beneficiaires' => 'المستفيدون',
 			'comptable.onglets.coffres' => 'الصناديق',
 			'comptable.onglets.encaissements' => 'المقبوضات',
-			'comptable.onglets.rapprochement' => 'المطابقة',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.onglets.rapprochement' => 'المطابقة',
 			'comptable.onglets.rapports' => 'التقارير',
 			'comptable.commun.montantMasque' => 'مبلغ مخفي',
 			'comptable.commun.afficherMontants' => 'إظهار المبالغ',
@@ -19075,9 +19077,9 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.typeEnseignant' => 'معلم',
 			'comptable.beneficiaires.typeContractuel' => 'متعاقد',
 			'comptable.beneficiaires.enAttente' => ({required Object n}) => '${n} قيد الانتظار',
-			'comptable.beneficiaires.aucunEnAttente' => 'لا شيء',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.aucunEnAttente' => 'لا شيء',
 			'comptable.beneficiaires.vide' => 'لا يوجد مستفيد حاليًا.',
 			'comptable.beneficiaires.videDetail' => 'يظهر المعلمون والمتعاقدون هنا بمجرد وجود دفعة تخصهم.',
 			'comptable.beneficiaires.videFiltre' => 'لا يوجد مستفيد بعامل التصفية هذا.',
@@ -19589,9 +19591,9 @@ extension on TraductionsAr {
 			'ficheEleve.interface.application' => ({required Object dePrenom}) => 'يُطبَّق التغيير عند الفتح التالي لـRewayah على جهاز ⁨${dePrenom}⁩.',
 			'ficheEleve.interface.demandeEleve' => 'طلب التغيير من الطالب نفسه غير متاح بعد.',
 			'ficheEleve.interface.enCours' => 'جارٍ الحفظ',
-			'ficheEleve.interface.echec' => ({required Object dePrenom}) => 'لم يُحفظ التغيير، غالبًا بسبب انقطاع الاتصال بـRewayah. تحقّق من اتصالك، ثم المس اختيارك من جديد. يبقى العرض الحالي لـ⁨${dePrenom}⁩ كما هو على جهازه.',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.interface.echec' => ({required Object dePrenom}) => 'لم يُحفظ التغيير، غالبًا بسبب انقطاع الاتصال بـRewayah. تحقّق من اتصالك، ثم المس اختيارك من جديد. يبقى العرض الحالي لـ⁨${dePrenom}⁩ كما هو على جهازه.',
 			'ficheEleve.interface.horsLigne' => 'أنت غير متصل. يمكن تغيير العرض عند عودة الاتصال.',
 			'ficheEleve.camera.titre' => 'الكاميرا أثناء الدرس',
 			'ficheEleve.camera.ligne' => 'الكاميرا أثناء الحصص',
@@ -20103,9 +20105,9 @@ extension on TraductionsAr {
 			'adulte.monEspace.coursAcces' => 'الدروس والوصول',
 			'adulte.monEspace.coursAccesLegende' => 'الفصل والحصص والوصول',
 			'adulte.monEspace.paiements' => 'المدفوعات',
-			'adulte.monEspace.paiementsLegende' => 'السجل والإيصالات',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.monEspace.paiementsLegende' => 'السجل والإيصالات',
 			'adulte.monEspace.accords' => 'موافقاتي',
 			'adulte.monEspace.accordsLegende' => 'الموافقات الممنوحة للأكاديمية',
 			'adulte.monEspace.securiteLegende' => 'طريقة الدخول وعنوانه',
@@ -20617,9 +20619,9 @@ extension on TraductionsAr {
 			'controleur.historique.cleElevesPresents' => 'الحاضرون',
 			'controleur.historique.cleReponse' => 'الرد',
 			'controleur.historique.sansComplement' => 'لا تكملة.',
-			'controleur.historique.faitsIndisponibles' => 'السجل التلقائي لهذه الزيارة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. سيظهر هنا بمجرد وصوله. باقي التقرير موثوق.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.historique.faitsIndisponibles' => 'السجل التلقائي لهذه الزيارة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. سيظهر هنا بمجرد وصوله. باقي التقرير موثوق.',
 			'controleur.historique.motif' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
 			'controleur.historique.ajouterComplement' => 'إضافة تكملة',
 			'controleur.complement.bandeau' => 'ستُضاف هذه التكملة إلى التقرير الموجود.',

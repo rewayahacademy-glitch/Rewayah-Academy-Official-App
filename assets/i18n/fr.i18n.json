@@ -3736,7 +3736,8 @@
       "versionEnVigueur": "Règles en vigueur : version {n}",
       "aucuneVersion": "Aucune règle n'est encore enregistrée.",
       "zeroPhrase": "Avec 0, aucune séance n'est tirée pour contrôle.",
-      "nombreInvalide": "Entrez un nombre entier de 0 à 50, ou choisissez une des cartes.",
+      "nombreInvalide": "Entrez un nombre entier de 0 à 50, ou choisissez une des valeurs proposées.",
+      "frequenceAutreChamp": "Nombre",
       "enregistreesVersion": "Règles enregistrées, version {n}. Elles s'appliquent aux prochains tirages.",
       "missionsParSemaine": {
         "one": "{n} mission par semaine",

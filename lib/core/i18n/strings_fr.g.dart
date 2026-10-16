@@ -9731,8 +9731,11 @@ class Traductions$admin$tirage$fr {
 	/// fr: 'Avec 0, aucune séance n'est tirée pour contrôle.'
 	String get zeroPhrase => 'Avec 0, aucune séance n\'est tirée pour contrôle.';
 
-	/// fr: 'Entrez un nombre entier de 0 à 50, ou choisissez une des cartes.'
-	String get nombreInvalide => 'Entrez un nombre entier de 0 à 50, ou choisissez une des cartes.';
+	/// fr: 'Entrez un nombre entier de 0 à 50, ou choisissez une des valeurs proposées.'
+	String get nombreInvalide => 'Entrez un nombre entier de 0 à 50, ou choisissez une des valeurs proposées.';
+
+	/// fr: 'Nombre'
+	String get frequenceAutreChamp => 'Nombre';
 
 	/// fr: 'Règles enregistrées, version {n}. Elles s'appliquent aux prochains tirages.'
 	String enregistreesVersion({required Object n}) => 'Règles enregistrées, version ${n}. Elles s\'appliquent aux prochains tirages.';
@@ -35312,7 +35315,8 @@ extension on Traductions {
 			'admin.tirage.versionEnVigueur' => ({required Object n}) => 'Règles en vigueur : version ${n}',
 			'admin.tirage.aucuneVersion' => 'Aucune règle n\'est encore enregistrée.',
 			'admin.tirage.zeroPhrase' => 'Avec 0, aucune séance n\'est tirée pour contrôle.',
-			'admin.tirage.nombreInvalide' => 'Entrez un nombre entier de 0 à 50, ou choisissez une des cartes.',
+			'admin.tirage.nombreInvalide' => 'Entrez un nombre entier de 0 à 50, ou choisissez une des valeurs proposées.',
+			'admin.tirage.frequenceAutreChamp' => 'Nombre',
 			'admin.tirage.enregistreesVersion' => ({required Object n}) => 'Règles enregistrées, version ${n}. Elles s\'appliquent aux prochains tirages.',
 			'admin.tirage.missionsParSemaine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} mission par semaine', other: '${n} missions par semaine', ), 
 			'admin.tirage.ponderationTitre' => 'Pondération',
@@ -35802,9 +35806,9 @@ extension on Traductions {
 			'nav.deplier' => 'Déplier la navigation',
 			'compte.titre' => 'Mon compte',
 			'compte.intro' => 'Vos informations, vos préférences et vos accès, au même endroit.',
-			'compte.informations' => 'Informations',
 			_ => null,
 		} ?? switch (path) {
+			'compte.informations' => 'Informations',
 			'compte.profil' => 'Profil',
 			'compte.profilDetail' => 'Voir et gérer vos informations',
 			'compte.reglages' => 'Réglages',
@@ -36316,9 +36320,9 @@ extension on Traductions {
 			'tuteur.accueil.blocReglages' => 'Réglages par enfant',
 			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
 			'tuteur.accueil.blocGroupesDetail' => 'La classe, l\'enseignant et le prochain cours de chaque enfant.',
-			'tuteur.accueil.acces' => 'Accès',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.acces' => 'Accès',
 			'tuteur.accueil.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
 			'tuteur.accueil.erreur' => 'Le foyer n\'a pas pu être lu en entier. Réessayez dans un instant.',
@@ -36830,9 +36834,9 @@ extension on Traductions {
 			'enseignant.cahier.travailMaison' => ({required Object deEleve}) => 'Devoir ${deEleve}',
 			'enseignant.cahier.travailMaisonDetail' => 'Ajustez la suggestion, ou laissez-la telle quelle.',
 			'enseignant.cahier.travailMaisonSaisi' => 'Vous avez déjà noté ce devoir. Modifiez-le ou laissez-le tel quel.',
-			'enseignant.cahier.suite' => ({required Object eleve}) => 'La suite pour ${eleve}',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.suite' => ({required Object eleve}) => 'La suite pour ${eleve}',
 			'enseignant.cahier.suiteContinuer' => 'Continuer',
 			'enseignant.cahier.suiteRenforcer' => 'Renforcer',
 			'enseignant.cahier.suspendreNouveau' => 'Suspendre le nouveau',
@@ -37344,9 +37348,9 @@ extension on Traductions {
 			'controleur.controle.duree' => ({required Object minutes}) => '${minutes} min prévues',
 			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
 			'controleur.controle.chargement' => 'Lecture de votre prochaine visite.',
-			'controleur.controle.erreur' => 'Votre prochaine visite n\'a pas pu être lue. Réessayez dans un instant.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.controle.erreur' => 'Votre prochaine visite n\'a pas pu être lue. Réessayez dans un instant.',
 			'aConstruire.titre' => 'Écran à construire',
 			'aConstruire.detail' => 'Cet écran arrive à l\'étape 3.',
 			'galerie.titre' => 'Galerie des composants',
@@ -37858,9 +37862,9 @@ extension on Traductions {
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
-			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, la classe et votre nom sont déjà joints.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, la classe et votre nom sont déjà joints.',
 			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
 			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
 			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',
@@ -38372,9 +38376,9 @@ extension on Traductions {
 			'suiviFamille.contexte' => 'Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.',
 			'suiviFamille.carteTitre' => ({required Object dePrenom}) => 'Demande ${dePrenom}',
 			'suiviFamille.detailTitre' => ({required Object dePrenom}) => 'Suivi de la demande ${dePrenom}',
-			'suiviFamille.etapeCourante' => ({required Object etape}) => 'Étape en cours : ${etape}',
 			_ => null,
 		} ?? switch (path) {
+			'suiviFamille.etapeCourante' => ({required Object etape}) => 'Étape en cours : ${etape}',
 			'suiviFamille.toutFait' => 'Toutes les étapes sont franchies.',
 			'suiviFamille.voirSuivi' => 'Voir le suivi',
 			'suiviFamille.vide' => 'Aucune demande pour le moment.',
@@ -38886,9 +38890,9 @@ extension on Traductions {
 			'com.communaute.videToutes' => 'Aucune publication pour le moment.',
 			'com.communaute.flux.ouvrir' => ({required Object titre}) => 'Ouvrir la publication ${titre}',
 			'com.communaute.flux.reponseUne' => '1 réponse',
-			'com.communaute.flux.reponses' => ({required Object nombre}) => '${nombre} réponses',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.flux.reponses' => ({required Object nombre}) => '${nombre} réponses',
 			'com.communaute.flux.aucuneReponse' => 'Aucune réponse',
 			'com.communaute.flux.categorie' => ({required Object categorie}) => 'Catégorie ${categorie}',
 			'com.communaute.recherche.ouvrir' => 'Rechercher une publication',
@@ -39400,9 +39404,9 @@ extension on Traductions {
 			'com.annonces.demo.f.annonceNourTitre' => 'Récitation de fin de trimestre devant les familles',
 			'com.annonces.demo.f.annonceNourTexte' => 'Chères familles, la Classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.',
 			'com.annonces.demo.f.annonceFajrTitre' => 'Révision avant l\'évaluation de jeudi',
-			'com.annonces.demo.f.annonceFajrTexte' => 'Révisez les dix derniers versets de la sourate Al-Mulk avant jeudi.',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.demo.f.annonceFajrTexte' => 'Révisez les dix derniers versets de la sourate Al-Mulk avant jeudi.',
 			'com.annonces.demo.f.tuteurUrgent' => 'La séance de ce soir est annulée',
 			'com.annonces.demo.f.tuteurUrgentTexte' => 'L\'enseignante est absente ce soir. La séance est reportée à jeudi, même heure. Vous n\'avez rien à faire.',
 			'com.annonces.demo.f.tuteurReponse' => 'Réponse attendue : accord pour la récitation de Yasmine',
@@ -39914,9 +39918,9 @@ extension on Traductions {
 			'comptable.encaissements.enAttenteNote' => 'En attente de la confirmation du prestataire : rien n\'est encore acquis.',
 			'comptable.encaissements.journal' => 'Journal de l\'encaissement',
 			'comptable.encaissements.journalVide' => 'Aucune opération enregistrée pour cet encaissement.',
-			'comptable.encaissements.rap.vueTransactions' => 'À rapprocher',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.rap.vueTransactions' => 'À rapprocher',
 			'comptable.encaissements.rap.vueRemboursements' => 'Remboursements',
 			'comptable.encaissements.rap.natPaiementAttendu' => 'Paiement attendu',
 			'comptable.encaissements.rap.natTransaction' => 'Transaction prestataire',
@@ -40428,9 +40432,9 @@ extension on Traductions {
 			'reprisesAdmin.refuserQuestion' => ({required Object prenom}) => 'Refuser la reprise du foyer par ${prenom} ?',
 			'reprisesAdmin.refuserConsequence' => 'Aucune permission n\'est transférée. La personne pourra déposer une nouvelle demande après le délai prévu.',
 			'reprisesAdmin.validee' => 'Reprise validée.',
-			'reprisesAdmin.refusee' => 'Reprise refusée.',
 			_ => null,
 		} ?? switch (path) {
+			'reprisesAdmin.refusee' => 'Reprise refusée.',
 			'reprisesAdmin.dejaTraitee' => 'Cette demande a déjà été traitée. La liste est à jour.',
 			'reprisesAdmin.echecReseau' => 'La décision n\'a pas pu être confirmée. Vérifiez la liste avant de réessayer.',
 			'reprisesAdmin.vide' => 'Aucune demande de reprise à traiter.',
