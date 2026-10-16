@@ -118,6 +118,53 @@ begin
   raise notice 'L1-08 ok : l''administrateur valide lit et ecrit';
 end $$;
 
+-- Depots (piece, signature) : un compte disabled est refuse (42501), pending_kyc passe.
+insert into auth.users (id, email) values
+  ('10000108-0000-0000-0000-000000000005', 'profD@example.test'),
+  ('10000108-0000-0000-0000-000000000006', 'profP@example.test');
+insert into public.profiles (id, immutable_id, role, first_name, last_name, account_status, gender)
+values
+  ('10000108-0000-0000-0000-000000000005', 'TCH-L108-000005', 'teacher', 'Prof', 'Suspendu', 'disabled', 'male'),
+  ('10000108-0000-0000-0000-000000000006', 'TCH-L108-000006', 'teacher', 'Prof', 'Attente', 'pending_kyc', 'male');
+
+do $$
+declare
+  v_u text; v_etat text; v_ok boolean; v_code text;
+begin
+  foreach v_u in array array['10000108-0000-0000-0000-000000000005', '10000108-0000-0000-0000-000000000006'] loop
+    v_etat := case when v_u like '%5' then 'disabled' else 'pending_kyc' end;
+    perform set_config('request.jwt.claim.sub', v_u, true);
+    perform set_config('request.jwt.claims', '{"app_metadata":{"role":"teacher"}}', true);
+    set local role authenticated;
+    -- piece KYC
+    begin
+      insert into public.kyc_documents (profile_id, doc_type, gender, object_key)
+      values (v_u::uuid, 'id_card', 'male', v_u || '/piece.webp');
+      v_ok := true; v_code := null;
+    exception when others then v_ok := false; v_code := sqlstate; end;
+    if v_etat = 'disabled' and (v_ok or v_code <> '42501') then
+      reset role;
+      raise exception 'L1-08 ECHEC compte disabled : depot KYC ok=% sqlstate=% (attendu refus 42501)', v_ok, v_code;
+    elsif v_etat = 'pending_kyc' and not v_ok then
+      reset role;
+      raise exception 'L1-08 ECHEC compte pending_kyc : depot KYC refuse (%)', v_code;
+    end if;
+    -- signature de contrat
+    begin
+      insert into public.contract_acceptances (profile_id, contract_kind, version)
+      values (v_u::uuid, 'guardian_terms', 'l108');
+      v_ok := true; v_code := null;
+    exception when others then v_ok := false; v_code := sqlstate; end;
+    reset role;
+    if v_etat = 'disabled' and (v_ok or v_code <> '42501') then
+      raise exception 'L1-08 ECHEC compte disabled : signature ok=% sqlstate=% (attendu refus 42501)', v_ok, v_code;
+    elsif v_etat = 'pending_kyc' and not v_ok then
+      raise exception 'L1-08 ECHEC compte pending_kyc : signature refusee (%)', v_code;
+    end if;
+  end loop;
+  raise notice 'L1-08 ok : disabled refuse (42501) au depot et a la signature, pending_kyc admis';
+end $$;
+
 -- Controle automatique : exactement les huit policies laissees, aucune autre.
 do $$
 declare v_liste text; v_nb int;

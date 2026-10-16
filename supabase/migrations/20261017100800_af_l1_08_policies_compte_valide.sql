@@ -61,8 +61,8 @@
 --   'pending_kyc' (depot de la piece, signature du contrat). Les envelopper empeche
 --   l'enseignant de deposer sa piece : scenarios_etape3 (S3, ligne 137) et
 --   scenarios_hook_jeton (ligne 366) passent au rouge. Elles restent ouvertes au compte
---   en attente ; un compte 'disabled' n'a pas de raison d'y ecrire mais ce n'est pas
---   un droit d'administration. A decider par le directeur si l'on veut exclure 'disabled'.
+--   en attente, mais recoivent une garde etroite (decision de l'orchestrateur) : un compte
+--   disabled ou supprime (deleted_at non nul) ne depose ni piece ni signature.
 -- Hors liste : wallet_entries_admin_accountant_all n'existe plus (remplacee par L1-06,
 -- elle ne teste plus un role nu). Aucune des 49 policies n'etait deja gardee.
 
@@ -219,6 +219,22 @@ alter policy webhook_events_admin_read on public.webhook_events
 alter policy weekly_availability_admin_all on public.weekly_availability
   using (coalesce(((public.app_role() = 'admin'::app_role)) and public.app_account_valid(), false))
   with check (coalesce(((public.app_role() = 'admin'::app_role)) and public.app_account_valid(), false));
+-- Policies de depot (comptes pending_kyc admis) : garde etroite, un compte disabled ou
+-- supprime ne depose ni piece ni signature. Meme texte exporte, sans app_account_valid().
+alter policy kyc_staff_self_insert on public.kyc_documents
+  with check (coalesce((((profile_id = auth.uid()) AND (public.app_role() = ANY (ARRAY['teacher'::app_role, 'controller'::app_role])))) and exists (select 1 from public.profiles pv where pv.id = auth.uid() and pv.account_status <> 'disabled' and pv.deleted_at is null), false));
+
+alter policy kyc_guardian_insert on public.kyc_documents
+  with check (coalesce((((public.app_role() = 'guardian'::app_role) AND (EXISTS ( SELECT 1
+   FROM profiles p
+  WHERE ((p.id = kyc_documents.profile_id) AND (p.household_id = app_household_id()) AND (p.deleted_at IS NULL)))))) and exists (select 1 from public.profiles pv where pv.id = auth.uid() and pv.account_status <> 'disabled' and pv.deleted_at is null), false));
+
+alter policy contract_acceptances_self_insert on public.contract_acceptances
+  with check (coalesce((((profile_id = auth.uid()) AND ((contract_kind <> 'teacher_nda'::text) OR ((public.app_role() = 'teacher'::app_role) AND (EXISTS ( SELECT 1
+   FROM profiles p
+  WHERE ((p.id = auth.uid()) AND (p.role = 'teacher'::app_role) AND (p.deleted_at IS NULL) AND (p.account_status = ANY (ARRAY['pending_kyc'::account_status, 'provisional_active'::account_status, 'active'::account_status]))))) AND (EXISTS ( SELECT 1
+   FROM contract_texts t
+  WHERE ((t.contract_kind = 'teacher_nda'::text) AND (t.version = contract_acceptances.version) AND (t.locale = 'fr'::text) AND t.is_current))))))) and exists (select 1 from public.profiles pv where pv.id = auth.uid() and pv.account_status <> 'disabled' and pv.deleted_at is null), false));
 
 do $postflight$
 declare v_liste text;
