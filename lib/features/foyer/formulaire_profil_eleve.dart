@@ -18,6 +18,7 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_card.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -95,6 +96,9 @@ class FormulaireProfilEleve extends ConsumerStatefulWidget {
 
   /// Le groupe des trois choix « pour qui » (`ChoiceCardGroup`).
   static const Key choixKey = Key('profilEleve.choix');
+
+  /// La carte qui explique pourquoi « Moi-meme » n'est pas proposé (L4-05).
+  static const Key moiExpliqueKey = Key('profilEleve.moiExplique');
 
   /// L'action du bas (« Suivant » puis « Creer le profil »).
   static const Key actionKey = Key('profilEleve.action');
@@ -426,6 +430,7 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
 
   Widget _pagePourQui(BuildContext context) {
     final bool enfantCreable = _creable(PourQui.enfantOuMineur);
+    final bool moiCreable = _creable(PourQui.moiMeme);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -452,19 +457,39 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
             // Pas de choix « Un proche adulte » (F2, EA-5) : un adulte n'est
             // jamais un profil gere ; il a son propre compte, et la place
             // adulte du foyer se dit sur la ligne de Ma famille.
-            OptionChoix(
-              valeur: PourQui.moiMeme.name,
-              libelle: t.foyer.ajout.pourQui.moiTitre,
-              icone: AppIcons.avatarSansPhoto,
-              description: t.foyer.ajout.pourQui.moiDescription,
-              disponible: _creable(PourQui.moiMeme),
-              raisonIndisponible: t.foyer.ajout.pourQui.indisponible,
-            ),
+            if (moiCreable)
+              OptionChoix(
+                valeur: PourQui.moiMeme.name,
+                libelle: t.foyer.ajout.pourQui.moiTitre,
+                icone: AppIcons.avatarSansPhoto,
+                description: t.foyer.ajout.pourQui.moiDescription,
+              ),
           ],
           onChange: (ReponseChoix reponse) => setState(() {
             _pourQui = _pourQuiDe(reponse);
           }),
         ),
+        // L4-05 (K-58, K-59) : « Moi-meme » n'est pas un choix grise. Quand
+        // il n'est pas creable depuis ce compte (DB-FOY-01), la carte dit
+        // pourquoi, sans radio ni geste : l'adulte autonome existe, il
+        // s'inscrit depuis son propre compte.
+        if (!moiCreable) ...<Widget>[
+          Ecart.vMd,
+          AppCard(
+            key: FormulaireProfilEleve.moiExpliqueKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  t.foyer.ajout.pourQui.moiTitre,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                Ecart.vXs,
+                Text(t.foyer.ajout.pourQui.moiDescription),
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }

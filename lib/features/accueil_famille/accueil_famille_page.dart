@@ -266,7 +266,6 @@ class _Contenu extends ConsumerWidget {
     final Widget? bandeau = blocage
         ? BandeauBlocage(
             prenom: profil.prenom,
-            compact: compact,
             onConnecter: () => routeur.go(Routes.appairerPour(eleveId)),
           )
         : null;

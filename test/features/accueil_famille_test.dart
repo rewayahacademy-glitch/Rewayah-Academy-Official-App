@@ -356,56 +356,43 @@ void main() {
       expect(_lieu(routeur), Routes.appairerPour(_a1));
     });
 
-    testWidgets('bandeau telephone : « Connecter un appareil » a droite du '
-        'texte a 390 (V1 #17), sous le texte a 200 pour cent', (
+    testWidgets('L4-05 : une seule alerte d appareil, le meme composant a 390 '
+        'et a 1440, son bouton est le seul bouton plein', (
       WidgetTester tester,
     ) async {
-      final Finder titre = find.text(
-        t.tuteur.accueil.blocageAppareilTitre(prenom: 'Élève A1'),
-      );
-      final Finder action = find.text(t.tuteur.accueil.connecterAppareil);
-
-      await _monter(tester, appareils: <AppareilAppaire>[]);
-      await _ouvrirAccueilParLaBarre(tester);
-      await tester.ensureVisible(action);
-      await stabiliser(tester);
-      expect(
-        tester.getTopLeft(action).dx,
-        greaterThan(tester.getTopRight(titre).dx),
-      );
-      expect(
-        tester.getTopLeft(action).dy,
-        lessThan(tester.getBottomLeft(find.byType(BandeauBlocage)).dy),
-      );
-      expect(tester.takeException(), isNull);
-
-      // Texte x2 : le bandeau seul, texte agrandi par son MediaQuery (la
-      // barre basse a texte x2 est couverte par test/accessibilite).
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-          home: MediaQuery(
-            data: const MediaQueryData(
-              size: Size(390, 844),
-              textScaler: TextScaler.linear(2),
-            ),
-            child: Scaffold(
-              body: SingleChildScrollView(
-                child: BandeauBlocage(
-                  prenom: 'Élève A1',
-                  compact: true,
-                  onConnecter: () {},
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-      expect(
-        tester.getTopLeft(action).dy,
-        greaterThan(tester.getBottomLeft(titre).dy),
-      );
-      expect(tester.takeException(), isNull);
+      for (final Size taille in <Size>[
+        const Size(390, 844),
+        const Size(1440, 900),
+      ]) {
+        await _monter(
+          tester,
+          appareils: <AppareilAppaire>[],
+          taille: taille,
+          depart: Routes.tuteurAccueil,
+        );
+        final Finder alerte = find.byKey(BandeauBlocage.cleAlerte);
+        expect(alerte, findsOneWidget, reason: '${taille.width}');
+        expect(
+          tester.widget(alerte).runtimeType.toString(),
+          'BandeauAttention',
+        );
+        final Finder action = find.descendant(
+          of: alerte,
+          matching: find.byType(ActionPrincipale),
+        );
+        expect(action, findsOneWidget);
+        expect(
+          tester.widget<ActionPrincipale>(action).niveau,
+          NiveauAction.principale,
+        );
+        // Un seul bouton plein sur l'accueil : celui de l'alerte.
+        final int pleins = tester
+            .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
+            .where((ActionPrincipale a) => a.niveau == NiveauAction.principale)
+            .length;
+        expect(pleins, 1, reason: '${taille.width}');
+        expect(tester.takeException(), isNull);
+      }
     });
 
     testWidgets('un appareil actif : aucun blocage', (
@@ -509,6 +496,7 @@ void main() {
           appareils: <AppareilAppaire>[],
         );
         expect(find.byType(BandeauBlocage), findsOneWidget);
+        expect(find.byKey(BandeauBlocage.cleAlerte), findsOneWidget);
         final List<ActionPrincipale> seules = principales(tester).toList();
         expect(seules, hasLength(1));
         expect(seules.single.libelle, t.tuteur.accueil.connecterAppareil);
@@ -946,9 +934,9 @@ void main() {
             seances: <SeanceFamille>[
               _prochaine(
                 // Arrondi a la minute superieure depuis COM-RC tour 7 (lot L,
-              // LibellesGroupe.minutesAvant) : 3 h 27 min 30 s se lit
-              // « 3 h 28 ».
-              avant: const Duration(hours: 3, minutes: 27, seconds: 30),
+                // LibellesGroupe.minutesAvant) : 3 h 27 min 30 s se lit
+                // « 3 h 28 ».
+                avant: const Duration(hours: 3, minutes: 27, seconds: 30),
               ),
             ],
           );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
@@ -116,7 +117,14 @@ class ListePreparation extends StatelessWidget {
     final AsyncValue<List<SlotAction>?>? valeur = travail;
 
     final Widget corps;
-    if (valeur == null || (valeur.hasValue && valeur.value == null)) {
+    if (valeur == null) {
+      // L4-05 : classe inconnue, rien a lire. Dire « pas encore relie »
+      // serait faux (le port est branche) ; la section n'invente rien.
+      corps = const SizedBox.shrink();
+    } else if (valeur.hasError && valeur.error is CapaciteIndisponible) {
+      corps = Text(t.tuteur.accueil.travailIndisponible, style: discret);
+    } else if (valeur.hasValue && valeur.value == null) {
+      // Port pas branche (`null`) : la seule situation ou la phrase est vraie.
       corps = Text(t.tuteur.accueil.travailIndisponible, style: discret);
     } else if (valeur.hasError) {
       corps = Text(t.tuteur.accueil.travailIllisible, style: discret);
