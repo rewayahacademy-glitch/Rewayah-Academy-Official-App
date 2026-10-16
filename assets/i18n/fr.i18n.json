@@ -1,5 +1,13 @@
 {
   "commun": {
+    "roles": {
+      "eleve": "Élève",
+      "tuteur": "Tuteur",
+      "enseignant": "Enseignant",
+      "administration": "Administration",
+      "controleur": "Contrôleur",
+      "comptable": "Comptable"
+    },
     "classeDistincte": {
       "numero": "{libelle} · n° {numero}",
       "code": "{libelle} · {code}",
@@ -4332,6 +4340,10 @@
     "statutProvisoire": "Actif, à titre provisoire",
     "profilEnfant": "Profil {dePrenom}",
     "identifiantEnfant": "Identifiant\u00a0: {identifiant}",
+    "matricule": "Matricule {valeur} · {role}",
+    "copier": "Copier",
+    "copierMatricule": "Copier le matricule",
+    "matriculeCopie": "Copié",
     "roles": {
       "admin": "Administrateur",
       "accountant": "Comptable",

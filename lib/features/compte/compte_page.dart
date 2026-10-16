@@ -29,6 +29,7 @@ import '../../core/widgets/skeleton.dart';
 import '../paiements_recus/rubrique_recevoir_paiements.dart';
 import '../salle_seance/libelles_salle_b.dart';
 import 'espaces_compte.dart';
+import 'ligne_matricule.dart';
 
 /// Le portail commun du compte, accessible depuis tous les roles actifs.
 ///
@@ -57,9 +58,17 @@ class ComptePage extends ConsumerWidget {
           AppCard(
             dominante: true,
             entete: _EnteteCompte(projection: projection),
-            child: Text(
-              projection.resume,
-              style: Theme.of(context).textTheme.bodyLarge,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  projection.resume,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                // IMM-FRONT-1 : le matricule, pour tout role, sous le nom.
+                if (projection.profileId case final String profileId)
+                  LigneMatricule(profileId: profileId),
+              ],
             ),
           ),
           Ecart.vSection,

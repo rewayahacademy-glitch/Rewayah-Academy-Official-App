@@ -31,6 +31,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_financiere.dart';
 import '../../core/widgets/selecteur_couleur_profil.dart';
 import '../../core/widgets/skeleton.dart';
+import '../compte/ligne_matricule.dart';
 import 'finances_foyer.dart';
 import 'foyer_page.dart';
 import 'ligne_membre.dart';
@@ -629,30 +630,37 @@ class _Entete extends StatelessWidget {
     return SurfaceFiche(
       // AVATAR-1 : couple avatar + nom du composant partage, nom et une
       // ligne de role (la classe).
-      child: AvatarNom.enLigne(
-        prenom: profil.prenom,
-        role: ligneClasse,
-        diametre: AppAvatar.grand,
-        ecart: AppSpacing.lg,
-        // Le bandeau part du bord haut de la surface (marge
-        // `SurfaceFiche.marge`, K-62) ; le cercle reste donc en haut.
-        cercleEnHaut: true,
-        enveloppeAvatar: BandeauProfil.enveloppe(
-          diametre: AppAvatar.grand,
-          accent: accent,
-          remontee: SurfaceFiche.marge,
-        ),
-        avatar: PhotoEleve(
-          prenom: profil.prenom,
-          cleAvatar: profil.cleAvatar,
-          diametre: AppAvatar.grand,
-        ),
-        styleNom: palette.inkStrong.applyTo(
-          textes.titleLarge ?? const TextStyle(),
-        ),
-        styleRole: palette.inkMuted.applyTo(
-          textes.bodyMedium ?? const TextStyle(),
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          AvatarNom.enLigne(
+            prenom: profil.prenom,
+            role: ligneClasse,
+            diametre: AppAvatar.grand,
+            ecart: AppSpacing.lg,
+            // Le bandeau part du bord haut de la surface (marge
+            // `SurfaceFiche.marge`, K-62) ; le cercle reste donc en haut.
+            cercleEnHaut: true,
+            enveloppeAvatar: BandeauProfil.enveloppe(
+              diametre: AppAvatar.grand,
+              accent: accent,
+              remontee: SurfaceFiche.marge,
+            ),
+            avatar: PhotoEleve(
+              prenom: profil.prenom,
+              cleAvatar: profil.cleAvatar,
+              diametre: AppAvatar.grand,
+            ),
+            styleNom: palette.inkStrong.applyTo(
+              textes.titleLarge ?? const TextStyle(),
+            ),
+            styleRole: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+          // IMM-FRONT-1 : le matricule de l'enfant, sous son prenom.
+          LigneMatricule(profileId: profil.eleveId),
+        ],
       ),
     );
   }
