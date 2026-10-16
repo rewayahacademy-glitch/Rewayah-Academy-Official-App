@@ -211,4 +211,115 @@ BEGIN
 END
 $notifications$;
 
+-- A81/C22/F86: these RPCs are authenticated-only. Check both the ACL and the
+-- observable denial under the anonymous database role.
+SELECT set_config('request.jwt.claim.sub', '', true);
+SELECT set_config('request.jwt.claims', '{}', true);
+SELECT set_config('test.uid', '', true);
+SELECT set_config('test.jwt', '{}', true);
+SET LOCAL ROLE anon;
+DO $anonymous_denied$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM unnest(ARRAY[
+      'public.demander_presentation_standard()'::regprocedure,
+      'public.lire_demandes_presentation_en_attente()'::regprocedure,
+      'public.lire_demandes_presentation_en_attente_avec_fuseau()'::regprocedure,
+      'public.repondre_demande_presentation(uuid,text)'::regprocedure,
+      'public.accepter_demande_presentation(uuid)'::regprocedure,
+      'public.refuser_demande_presentation(uuid)'::regprocedure
+    ]) AS rpc(oid)
+    WHERE pg_catalog.has_function_privilege('anon', rpc.oid, 'EXECUTE')
+  ) THEN
+    RAISE EXCEPTION 'A81/C22: anon conserve EXECUTE sur une RPC de presentation';
+  END IF;
+
+  BEGIN
+    PERFORM public.demander_presentation_standard();
+    RAISE EXCEPTION 'A81/C22: anon a cree une demande de presentation';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN
+    PERFORM 1 FROM public.lire_demandes_presentation_en_attente();
+    RAISE EXCEPTION 'A81/C22: anon a lu les demandes de presentation';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN
+    PERFORM 1 FROM public.lire_demandes_presentation_en_attente_avec_fuseau();
+    RAISE EXCEPTION 'C22: anon a lu les demandes avec fuseau';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN
+    PERFORM public.repondre_demande_presentation(
+      'a8000000-0000-0000-0000-000000000201', 'refusee'
+    );
+    RAISE EXCEPTION 'A81: anon a repondu a une demande de presentation';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN
+    PERFORM public.accepter_demande_presentation(
+      'a8000000-0000-0000-0000-000000000201'
+    );
+    RAISE EXCEPTION 'A81: anon a accepte une demande de presentation';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN
+    PERFORM public.refuser_demande_presentation(
+      'a8000000-0000-0000-0000-000000000201'
+    );
+    RAISE EXCEPTION 'A81: anon a refuse une demande de presentation';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END
+$anonymous_denied$;
+RESET ROLE;
+
+-- Invalid account status must stop the RPCs even when the JWT role is correct.
+UPDATE public.profiles SET account_status = 'disabled'
+WHERE id = 'a8000000-0000-0000-0000-000000000003';
+SELECT set_config('request.jwt.claim.sub', 'a8000000-0000-0000-0000-000000000003', true);
+SELECT set_config('request.jwt.claims', '{"app_metadata":{"role":"student"}}', true);
+SELECT set_config('test.uid', 'a8000000-0000-0000-0000-000000000003', true);
+SELECT set_config('test.jwt', '{"app_metadata":{"role":"student"}}', true);
+SET LOCAL ROLE authenticated;
+DO $disabled_student_denied$
+BEGIN
+  BEGIN
+    PERFORM public.demander_presentation_standard();
+    RAISE EXCEPTION 'F86: un eleve desactive a cree une demande de presentation';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END
+$disabled_student_denied$;
+RESET ROLE;
+UPDATE public.profiles SET account_status = 'active'
+WHERE id = 'a8000000-0000-0000-0000-000000000003';
+
+UPDATE public.profiles SET account_status = 'disabled'
+WHERE id = 'a8000000-0000-0000-0000-000000000001';
+SELECT set_config('request.jwt.claim.sub', 'a8000000-0000-0000-0000-000000000001', true);
+SELECT set_config('request.jwt.claims',
+  '{"app_metadata":{"role":"guardian","household_id":"a8000000-0000-0000-0000-000000000101"}}', true);
+SELECT set_config('test.uid', 'a8000000-0000-0000-0000-000000000001', true);
+SELECT set_config('test.jwt',
+  '{"app_metadata":{"role":"guardian","household_id":"a8000000-0000-0000-0000-000000000101"}}', true);
+SET LOCAL ROLE authenticated;
+DO $disabled_guardian_denied$
+DECLARE
+  v_id uuid := current_setting('test.presentation_id')::uuid;
+BEGIN
+  BEGIN
+    PERFORM 1 FROM public.lire_demandes_presentation_en_attente();
+    RAISE EXCEPTION 'F86: un tuteur desactive a lu les demandes de presentation';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN
+    PERFORM 1 FROM public.lire_demandes_presentation_en_attente_avec_fuseau();
+    RAISE EXCEPTION 'F86: un tuteur desactive a lu les demandes avec fuseau';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN
+    PERFORM public.accepter_demande_presentation(v_id);
+    RAISE EXCEPTION 'F86: un tuteur desactive a accepte une demande';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  BEGIN
+    PERFORM public.refuser_demande_presentation(v_id);
+    RAISE EXCEPTION 'F86: un tuteur desactive a refuse une demande';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END
+$disabled_guardian_denied$;
+RESET ROLE;
+
 ROLLBACK;
