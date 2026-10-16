@@ -35,7 +35,11 @@ abstract interface class ServiceSuivi {
   /// Le sens du tri s'ecrit toujours : `order()` de postgrest trie en
   /// descendant par defaut, et c'est exactement le piege qui avait inverse le
   /// feed de `ENS-06`. Ici le descendant est voulu, et c'est ecrit.
-  Future<List<Seance>> seances();
+  ///
+  /// [eleveId] : le profil de l'eleve dont on lit les cours. Donne, la requete
+  /// porte `student_id = eleveId` (L2-04). `null` garde la lecture de tout le
+  /// foyer, celle du tuteur ; la vue borne deja la lecture cote serveur (L1-04).
+  Future<List<Seance>> seances({String? eleveId});
 
   /// La presence des membres du foyer sur ces memes cours.
   ///
@@ -54,10 +58,15 @@ class ServiceSuiviSupabase implements ServiceSuivi {
   final SupabaseClient _client;
 
   @override
-  Future<List<Seance>> seances() async {
-    final List<Map<String, dynamic>> lignes = await _client
-        .from('mes_seances_v')
-        .select()
+  Future<List<Seance>> seances({String? eleveId}) async {
+    // Lecture volontaire de tout le foyer (tuteur) quand [eleveId] est nul :
+    // la vue filtre par role cote serveur (L1-04). Pour un eleve, le filtre
+    // `student_id` est ajoute ici, pas dans l'appelant (L2-04).
+    var requete = _client.from('mes_seances_v').select();
+    if (eleveId != null) {
+      requete = requete.eq('student_id', eleveId);
+    }
+    final List<Map<String, dynamic>> lignes = await requete
         .order('started_at', ascending: false)
         .limit(plafondSuiviFoyer);
     return lignes.map(Seance.depuisJson).toList();
@@ -87,12 +96,25 @@ class ServiceSuiviSupabase implements ServiceSuivi {
   }
 }
 
+/// Les cours de l'eleve connecte, le plus recent d'abord (L2-04).
+///
+/// Le profil vient de la session, jamais du role. Sans profil, la lecture
+/// reste celle du foyer, bornee par la vue cote serveur (L1-04).
+final FutureProvider<List<Seance>> seancesDeMonSuiviProvider =
+    FutureProvider<List<Seance>>((Ref ref) {
+      final String? eleveId = ref.watch(profilCourantProvider);
+      return ref.watch(serviceSuiviProvider).seances(eleveId: eleveId);
+    });
+
 /// Le service de suivi employe par l'application.
 final Provider<ServiceSuivi> serviceSuiviProvider = Provider<ServiceSuivi>(
   (Ref ref) => ServiceSuiviSupabase(Supabase.instance.client),
 );
 
 /// Les cours du foyer, le plus recent d'abord.
+///
+/// Lecture volontaire de tout le foyer (tuteur) : l'ecran de l'eleve utilise
+/// [seancesDeMonSuiviProvider] (L2-04).
 final FutureProvider<List<Seance>> seancesDuSuiviProvider =
     FutureProvider<List<Seance>>(
       (Ref ref) => ref.watch(serviceSuiviProvider).seances(),
