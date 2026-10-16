@@ -9,7 +9,8 @@
       "remplacementPropose": "عُرضت عليك حصة بديلة.",
       "remplacementPris": "تم إسناد حصة بديلة.",
       "controleMissionAttribuee": "تم إسناد مهمة مراقبة إليك.",
-      "controleMissionNonControlee": "لم تتم مراجعة مهمة مراقبة."
+      "controleMissionNonControlee": "لم تتم مراجعة مهمة مراقبة.",
+      "classeChangee": "انتقل أحد طلاب العائلة إلى فصل آخر في الموعد نفسه."
     },
     "titre": "الإشعارات",
     "indisponibleTitre": "الإشعارات غير متاحة بعد",
@@ -5282,6 +5283,15 @@
       "famillesPrevenues": "تم إبلاغ الأسر.",
       "fusionDejaFaite": "دمج عضو آخر من الإدارة هذا الفصل للتو: لم يُنجَز شيء مرتين. أغلقوا هذه الورقة لرؤية القائمة المحدّثة.",
       "fusionRefusee": "لم يتم الدمج: ⁨{motif}⁩. تحققوا من الفصول ثم أعيدوا المحاولة.",
+      "motif": {
+        "classeIntrouvable": "تعذّر العثور على أحد الفصلين",
+        "sourceCloturee": "الفصل المراد دمجه مغلق بالفعل",
+        "cibleCloturee": "الفصل المستقبِل مغلق",
+        "cibleIncompatible": "ليس للفصلين الموعد نفسه أو الفئة نفسها",
+        "ciblePleine": "لم يعد في الفصل المستقبِل مكان كافٍ",
+        "eleveAbsent": "لم يعد الطالب ضمن هذا الفصل",
+        "inconnu": "رفضت رواية العملية دون ذكر السبب"
+      },
       "fusionNonConfirmee": "الدمج غير مؤكَّد: لم يصل رد الخادم. اضغطوا من جديد: سيُستأنف الطلب نفسه دون دمج مكرر.",
       "manqueCible": "ينقص الفصل الذي يستقبل الطلاب: اختاروه من القائمة.",
       "transfertTitre": "نقل طالب من ⁨{deLibelle}⁩",

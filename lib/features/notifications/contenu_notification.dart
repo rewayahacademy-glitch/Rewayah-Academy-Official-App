@@ -18,6 +18,7 @@ NotificationContenu contenuNotificationPour(
       t.notifications.evenements.controleMissionAttribuee,
     'controle_mission_non_controlee' =>
       t.notifications.evenements.controleMissionNonControlee,
+    'classe_changee' => t.notifications.evenements.classeChangee,
     _ => throw const FormatException('Événement de notification inconnu.'),
   };
   return NotificationContenu(titre: titre);

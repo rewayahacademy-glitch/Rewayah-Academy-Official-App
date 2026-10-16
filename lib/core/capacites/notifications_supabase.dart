@@ -32,6 +32,8 @@ const Set<String> _evenementsPrisEnCharge = <String>{
   'demande_presentation',
   'controle_mission_attribuee',
   'controle_mission_non_controlee',
+  // Fusion ou transfert de l'eleve vers une classe parallele (R9, R10).
+  'classe_changee',
 };
 
 const Set<String> _destinationsAutorisees = <String>{
@@ -45,10 +47,7 @@ const Set<String> _destinationsAutorisees = <String>{
 class NotificationsSupabase
     implements PortNotifications, PortLectureNotifications {
   /// Crée l'adaptateur avec le client de l'application et le résolveur localisé.
-  const NotificationsSupabase(
-    this._client, {
-    required this.contenuPour,
-  });
+  const NotificationsSupabase(this._client, {required this.contenuPour});
 
   final SupabaseClient _client;
   final NotificationContenuResolver contenuPour;
@@ -218,7 +217,8 @@ Map<String, dynamic> _parametresAffichables(Map<dynamic, dynamic> bruts) {
 TypeNotification _typePour(String evenement) => switch (evenement) {
   'demande_recue' => TypeNotification.messageMetier,
   'classe_validee' ||
-  'enseignant_affecte' => TypeNotification.changementPlanning,
+  'enseignant_affecte' ||
+  'classe_changee' => TypeNotification.changementPlanning,
   'demande_close' => TypeNotification.decisionDossier,
   'remplacement_propose' ||
   'remplacement_pris' => TypeNotification.remplacement,

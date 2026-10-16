@@ -3596,6 +3596,15 @@
       "famillesPrevenues": "Les familles ont été prévenues.",
       "fusionDejaFaite": "Un autre membre de la direction vient de fusionner cette classe : rien n'a été fait en double. Fermez cette feuille pour retrouver la liste à jour.",
       "fusionRefusee": "La fusion n'a pas eu lieu : {motif}. Vérifiez les classes, puis recommencez.",
+      "motif": {
+        "classeIntrouvable": "l'une des deux classes est introuvable",
+        "sourceCloturee": "la classe à fusionner est déjà clôturée",
+        "cibleCloturee": "la classe qui accueille est clôturée",
+        "cibleIncompatible": "les deux classes n'ont pas le même horaire ou la même catégorie",
+        "ciblePleine": "la classe qui accueille n'a plus assez de place",
+        "eleveAbsent": "l'élève ne fait plus partie de cette classe",
+        "inconnu": "Rewayah a refusé l'opération sans en préciser la raison"
+      },
       "fusionNonConfirmee": "La fusion n'est pas confirmée : la réponse du serveur n'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans fusion en double.",
       "manqueCible": "Il manque la classe qui accueille les élèves : choisissez-la dans la liste.",
       "transfertTitre": "Transférer un élève {deLibelle}",
@@ -4627,7 +4636,8 @@
       "remplacementPropose": "Un remplacement de cours vous est proposé.",
       "remplacementPris": "Un remplacement de cours a été attribué.",
       "controleMissionAttribuee": "Une mission de contrôle vous a été attribuée.",
-      "controleMissionNonControlee": "Une mission de contrôle est restée sans vérification."
+      "controleMissionNonControlee": "Une mission de contrôle est restée sans vérification.",
+      "classeChangee": "Un élève de la famille a rejoint une autre classe, au même horaire."
     },
     "filtres": {
       "libelle": "Filtrer les notifications",
