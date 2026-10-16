@@ -646,6 +646,11 @@ begin
   end if;
 end;
 $caller_chosen_code$;
+-- RECH-BACK-3 : la recherche exige un jeton frais (authorization_version du profil).
+select set_config('test.av1', authorization_version::text, true)
+  from public.profiles where id = 'a1100000-0000-0000-0000-000000000001';
+select set_config('test.av2', authorization_version::text, true)
+  from public.profiles where id = 'a1100000-0000-0000-0000-000000000002';
 set local session authorization authenticated;
 
 -- Exact lookup accepts separators/case but never reveals non-related profiles.
@@ -663,7 +668,8 @@ begin
     'sub', 'a1100000-0000-0000-0000-000000000001',
     'role', 'authenticated',
     'app_metadata', jsonb_build_object(
-      'role', 'guardian', 'household_id', 'a11fffff-0000-0000-0000-000000000001'
+      'role', 'guardian', 'household_id', 'a11fffff-0000-0000-0000-000000000001',
+      'authorization_version', current_setting('test.av1')::bigint
     )
   )::text, true);
   select count(*) into v_rows
@@ -683,7 +689,8 @@ begin
     'sub', 'a1100000-0000-0000-0000-000000000002',
     'role', 'authenticated',
     'app_metadata', jsonb_build_object(
-      'role', 'guardian', 'household_id', 'a11fffff-0000-0000-0000-000000000002'
+      'role', 'guardian', 'household_id', 'a11fffff-0000-0000-0000-000000000002',
+      'authorization_version', current_setting('test.av2')::bigint
     )
   )::text, true);
   if exists (select 1 from public.rechercher_personne_par_matricule(v_code)) then
