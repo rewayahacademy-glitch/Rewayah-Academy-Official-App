@@ -247,4 +247,142 @@ BEGIN
 END
 $admin_approval$;
 
+RESET ROLE;
+UPDATE public.profiles SET account_status = 'disabled'
+ WHERE id = 'b0400000-0000-0000-0000-000000000007';
+SET LOCAL ROLE authenticated;
+SELECT set_config('test.uid', 'b0400000-0000-0000-0000-000000000007', true);
+SELECT set_config('test.jwt',
+  '{"app_metadata":{"role":"guardian","household_id":"b04fffff-0000-0000-0000-000000000004"}}', true);
+DO $disabled_guardian$
+DECLARE v_denied boolean;
+BEGIN
+  v_denied := false;
+  BEGIN
+    PERFORM public.deposer_reprise_foyer('b0400000-0000-0000-0000-000000000041');
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'B-04: disabled guardian deposited a request'; END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM public.etat_reprise_foyer();
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'B-04: disabled guardian read request state'; END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM public.refuser_reprise_foyer('b0400000-0000-0000-0000-000000000042');
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'B-04: disabled guardian refused a request'; END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM * FROM public.lister_reprises_admin();
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'B-04: disabled guardian listed requests'; END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM public.decider_reprise_foyer(
+      current_setting('test.reprise_id')::uuid, false,
+      'b0400000-0000-0000-0000-000000000043'
+    );
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'B-04: disabled guardian decided a request'; END IF;
+END
+$disabled_guardian$;
+
+RESET ROLE;
+UPDATE public.profiles SET account_status = 'disabled'
+ WHERE id = 'b0400000-0000-0000-0000-000000000001';
+SET LOCAL ROLE authenticated;
+SELECT set_config('test.uid', 'b0400000-0000-0000-0000-000000000001', true);
+SELECT set_config('test.jwt',
+  '{"app_metadata":{"role":"admin","household_id":"b04fffff-0000-0000-0000-000000000003"}}', true);
+DO $disabled_admin$
+DECLARE v_denied boolean := false;
+BEGIN
+  BEGIN
+    PERFORM * FROM public.lister_reprises_admin();
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'B-04: disabled admin listed requests'; END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM public.decider_reprise_foyer(
+      current_setting('test.reprise_id')::uuid, false,
+      'b0400000-0000-0000-0000-000000000044'
+    );
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'B-04: disabled admin decided a request'; END IF;
+END
+$disabled_admin$;
+RESET ROLE;
+
+DO $anon_acl$
+BEGIN
+  IF pg_catalog.has_function_privilege('anon', 'public.deposer_reprise_foyer(uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.refuser_reprise_foyer(uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.etat_reprise_foyer()', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.lister_reprises_admin()', 'EXECUTE')
+     OR pg_catalog.has_function_privilege(
+       'anon', 'public.decider_reprise_foyer(uuid,boolean,uuid)', 'EXECUTE'
+     ) THEN
+    RAISE EXCEPTION 'B-04: anon unexpectedly has family recovery RPC EXECUTE';
+  END IF;
+END
+$anon_acl$;
+
+SET LOCAL ROLE anon;
+DO $anon_calls$
+DECLARE v_denied boolean;
+BEGIN
+  v_denied := false;
+  BEGIN
+    PERFORM public.deposer_reprise_foyer('b0400000-0000-0000-0000-000000000045');
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'B-04: anon deposited a request'; END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM public.refuser_reprise_foyer('b0400000-0000-0000-0000-000000000046');
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'B-04: anon refused a request'; END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM public.etat_reprise_foyer();
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'B-04: anon read request state'; END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM * FROM public.lister_reprises_admin();
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'B-04: anon listed requests'; END IF;
+
+  v_denied := false;
+  BEGIN
+    PERFORM public.decider_reprise_foyer(
+      current_setting('test.reprise_id')::uuid, false,
+      'b0400000-0000-0000-0000-000000000047'
+    );
+  EXCEPTION WHEN insufficient_privilege THEN v_denied := true;
+  END;
+  IF NOT v_denied THEN RAISE EXCEPTION 'B-04: anon decided a request'; END IF;
+END
+$anon_calls$;
+RESET ROLE;
+
 ROLLBACK;
