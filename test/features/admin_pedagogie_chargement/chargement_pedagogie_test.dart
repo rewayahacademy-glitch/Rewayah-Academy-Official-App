@@ -36,6 +36,7 @@ import 'package:rewayah_academy/features/admin_pedagogie_programmes/programmes_p
 import 'package:rewayah_academy/features/admin_pedagogie_progression/progression_page.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_qualite/qualite_page.dart';
 import 'package:rewayah_academy/features/demo/bibliotheque_admin_demo.dart';
+import 'package:rewayah_academy/features/demo/services_admin_demo.dart';
 
 import '../../support/harnais.dart' show FauxServiceReseau;
 import '../../support/monter_admin_demo.dart';
@@ -261,6 +262,23 @@ void main() {
       bibliotheque: port,
     );
     await _parcourirApresMontage(tester, () => port.lectures.appels);
+  });
+
+  testWidgets('demonstration : Diagnostics montre l\'erreur avant 8 s', (
+    tester,
+  ) async {
+    await _monterPage(tester, const DiagnosticsPage(), <Override>[
+      serviceProgrammeProvider.overrideWithValue(const ServiceProgrammeDemo()),
+      serviceDiagnosticsProvider.overrideWithValue(
+        const ServiceDiagnosticsDemo(),
+      ),
+    ]);
+    await tester.pump(const Duration(seconds: 3));
+    // Service indisponible : l'etat « pas encore disponible » (sans nouvelle
+    // tentative), pas le squelette jusqu'a 40 s.
+    expect(_prolonge, findsNothing);
+    expect(find.text(t.commun.etats.indisponible.titre), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
   });
 
   testWidgets('le chargement qui aboutit ne dit jamais rien', (tester) async {

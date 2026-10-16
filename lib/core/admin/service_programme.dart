@@ -61,14 +61,11 @@ class VersionProgramme {
       creeParIdentifiant: json['cree_par_immutable_id'] as String? ?? '',
       creeParPrenom: json['cree_par_prenom'] as String?,
       creeParNom: json['cree_par_nom'] as String?,
-      publieeAt: DateTime.tryParse(
-        json['publiee_at'] as String? ?? '',
-      )?.toLocal(),
+      publieeAt: DateTime.tryParse(json['publiee_at'] as String? ?? '')
+          ?.toLocal(),
       nombreNiveaux: entier('nombre_niveaux'),
       createdAt:
-          DateTime.tryParse(
-            json['created_at'] as String? ?? '',
-          )?.toLocal() ??
+          DateTime.tryParse(json['created_at'] as String? ?? '')?.toLocal() ??
           DateTime.now(),
     );
   }
@@ -200,7 +197,10 @@ abstract interface class ServiceProgramme {
   });
 
   /// Publie une version brouillon. Fige tous ses niveaux definitivement.
-  Future<void> publierVersion({required String versionId, required String motif});
+  Future<void> publierVersion({
+    required String versionId,
+    required String motif,
+  });
 }
 
 /// L'implementation reelle.
@@ -307,10 +307,13 @@ final Provider<ServiceProgramme> serviceProgrammeProvider =
     );
 
 /// Les versions du programme, pour l'ecran Admin > Pedagogie > Programmes.
-final FutureProvider<List<VersionProgramme>> versionsProgrammeProvider =
-    FutureProvider<List<VersionProgramme>>(
-      (Ref ref) => ref.watch(serviceProgrammeProvider).versions(),
-    );
+final FutureProvider<List<VersionProgramme>>
+versionsProgrammeProvider = FutureProvider<List<VersionProgramme>>(
+  (Ref ref) => ref.watch(serviceProgrammeProvider).versions(),
+  // Pas de nouvelle tentative automatique : `versionActiveProgrammeProvider`
+  // attend ce futur, et le retry par defaut le tenait en squelette ~40 s.
+  retry: (int _, Object _) => null,
+);
 
 /// Les niveaux d'une version donnee.
 final FutureProviderFamily<List<NiveauProgramme>, String>
@@ -333,4 +336,4 @@ final FutureProvider<VersionProgramme?> versionActiveProgrammeProvider =
         if (v.statut == StatutVersionProgramme.publiee) return v;
       }
       return null;
-    });
+    }, retry: (int _, Object _) => null);
