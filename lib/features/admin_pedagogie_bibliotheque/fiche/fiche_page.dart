@@ -39,6 +39,7 @@ import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/chargement_avec_delais.dart';
 import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
 import '../../../core/widgets/page_shell.dart';
@@ -225,7 +226,10 @@ class _FicheEtat extends State<_Fiche> {
   Widget build(BuildContext context) {
     final a = t.admin.bibliotheque;
     if (_chargement && _fiche == null) {
-      return const Skeleton.liste(lignes: 5);
+      return ChargementAvecDelais(
+        squelette: const Skeleton.liste(lignes: 5),
+        onReessayer: () => unawaited(_charger()),
+      );
     }
     final Object? e = _erreur;
     if (e != null && _fiche == null) {

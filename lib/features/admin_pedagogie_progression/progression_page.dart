@@ -12,6 +12,8 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/chargement_avec_delais.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -62,38 +64,35 @@ class _ProgressionPageEtat extends ConsumerState<ProgressionPage> {
         children: <Widget>[
           Text(t.admin.progression.intro, style: textes.bodyMedium),
           Ecart.vXl,
-          switch (eleves) {
-            AsyncValue<List<EleveProgression>>(hasValue: true) =>
-              eleves.requireValue.isEmpty
-                  ? EmptyState(
-                      message: t.admin.progression.aucun,
-                      invitation: t.admin.progression.aucunDetail,
-                      icone: AppIcons.rienAAfficher,
-                      registre: RegistreVide.subi,
-                    )
-                  : PlaceCollection(
-                      child: _Corps(
-                        eleves: eleves.requireValue,
-                        cycle: _cycle,
-                        onCycle: (String? c) => setState(() => _cycle = c),
-                        onPoserException: (
-                          EleveProgression e,
-                          TypeExceptionProgression type,
-                        ) => _ouvrirPoseException(context, ref, e, type),
-                        onClorerException: (EleveProgression e) =>
-                            _ouvrirClotureException(context, ref, e),
-                        onPromouvoir: (EleveProgression e) =>
-                            _ouvrirPromotion(context, ref, e),
-                      ),
-                    ),
-            AsyncValue<List<EleveProgression>>(hasError: true) => EmptyState(
-              message: t.admin.progression.erreur,
-              icone: AppIcons.avertissement,
-              libelleAction: t.commun.reessayer,
-              onAction: () => ref.invalidate(progressionProvider),
+          PlaceCollection(
+            child: BlocAsynchrone<List<EleveProgression>>(
+              valeur: eleves,
+              squelette: const SqueletteDansZone(
+                child: Skeleton.liste(lignes: 5),
+              ),
+              titreEchec: t.admin.progression.erreur,
+              onReessayer: () => ref.invalidate(progressionProvider),
+              vide: EmptyState(
+                message: t.admin.progression.aucun,
+                invitation: t.admin.progression.aucunDetail,
+                icone: AppIcons.rienAAfficher,
+                registre: RegistreVide.subi,
+              ),
+              construire: (List<EleveProgression> v) => _Corps(
+                eleves: v,
+                cycle: _cycle,
+                onCycle: (String? c) => setState(() => _cycle = c),
+                onPoserException: (
+                  EleveProgression e,
+                  TypeExceptionProgression type,
+                ) => _ouvrirPoseException(context, ref, e, type),
+                onClorerException: (EleveProgression e) =>
+                    _ouvrirClotureException(context, ref, e),
+                onPromouvoir: (EleveProgression e) =>
+                    _ouvrirPromotion(context, ref, e),
+              ),
             ),
-            _ => const Skeleton.liste(lignes: 5),
-          },
+          ),
         ],
       ),
     );
