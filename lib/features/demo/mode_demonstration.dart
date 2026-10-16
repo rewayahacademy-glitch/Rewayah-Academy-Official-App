@@ -45,6 +45,8 @@ import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/dossier/service_validation.dart';
 import '../../core/finance/finances_profil.dart';
+import '../../core/identite/matricule_demo.dart';
+import '../../core/identite/port_matricule.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/page_regroupements.dart'
     show portRegroupementsPagesProvider;
@@ -76,6 +78,7 @@ import '../recherche/domaines/familles_eleves/moteurs_familles_eleves.dart';
 import '../recherche/domaines/familles_eleves/port_resolution_ra.dart';
 import '../recherche/domaines/familles_eleves/resolution_ra_demo.dart';
 import 'admin_x_demo.dart';
+import 'adulte_demo.dart';
 import 'alertes_demo.dart';
 import 'bibliotheque_admin_demo.dart';
 import 'cartes_classe_demo.dart';
@@ -288,6 +291,11 @@ List<Override> surchargesDemoTuteur({
     // Presence (Accueil, verification prealable) et pieces signees (Compte).
     servicePresenceProvider.overrideWithValue(const PresenceDemo()),
     acceptationsProvider.overrideWith((Ref ref) async => const <Acceptation>[]),
+    // L2-07 : le matricule visible en demonstration (IMM-FRONT-1), fictif,
+    // pour le tuteur, les enfants et les adultes du foyer Diallo.
+    portMatriculeProvider.overrideWithValue(
+      const MatriculeDemo(_matriculesDemo),
+    ),
     // RECH-1 : la recherche de demonstration (milliers de classes et de
     // supports fictifs), en fin de liste : des tests indexent les premieres
     // surcharges. En production, aucun moteur n'est raccorde.
@@ -849,3 +857,32 @@ List<Override> surchargesInvitationsDemo() {
     portVerificationInvitationProvider.overrideWithValue(invitations),
   ];
 }
+
+/// Les matricules fictifs de la demonstration (L2-07, DECISION-IMMATRICULATION
+/// section 1) : format `RA-AA-NNNN`, role affiche a cote. Les anciens codes
+/// (`RA-CD0034`) ne sont pas repris. Un enfant garde son matricule d'un
+/// foyer de demonstration a l'autre (Aicha, deux fixtures, une personne).
+const Map<String, Matricule> _matriculesDemo = <String, Matricule>{
+  DonneesDemo.tuteurId: Matricule(
+    valeur: 'RA-26-5301',
+    role: RoleAffiche.tuteur,
+  ),
+  DonneesDemo.aichaId: Matricule(valeur: 'RA-26-5302', role: RoleAffiche.eleve),
+  DonneesDemo.yusufId: Matricule(valeur: 'RA-26-5303', role: RoleAffiche.eleve),
+  DonneesAdulteDemo.mamadouId: Matricule(
+    valeur: 'RA-26-5304',
+    role: RoleAffiche.eleve,
+  ),
+  DonneesAdulteDemo.mariamaId: Matricule(
+    valeur: 'RA-26-5305',
+    role: RoleAffiche.eleve,
+  ),
+  DonneesAdulteDemo.aichaId: Matricule(
+    valeur: 'RA-26-5302',
+    role: RoleAffiche.eleve,
+  ),
+  DonneesAdulteDemo.oumarId: Matricule(
+    valeur: 'RA-26-5306',
+    role: RoleAffiche.eleve,
+  ),
+};
