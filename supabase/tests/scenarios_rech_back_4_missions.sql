@@ -12,7 +12,7 @@ values
   ('d1400000-0000-0000-0000-000000000001', 'D3-ADMIN', 'admin', 'D3', 'Admin', 'active', 'male'),
   ('d1400000-0000-0000-0000-000000000002', 'D3-TEACHER', 'teacher', 'D3', 'Teacher', 'provisional_active', 'male'),
   ('d1400000-0000-0000-0000-000000000003', 'D3-CONTROLLER', 'controller', 'D3', 'Controller', 'active', 'female'),
-  ('d1400000-0000-0000-0000-000000000004', 'D3-CONTROLLER-DISABLED', 'controller', 'D3', 'Controller', 'Disabled', 'disabled', 'female');
+  ('d1400000-0000-0000-0000-000000000004', 'D3-CONTROLLER-DISABLED', 'controller', 'D3', 'Controller', 'disabled', 'female');
 -- 0089 requires current teacher NDA and recording notice before activation.
 do $fixture_teacher_contract$
 declare
@@ -53,7 +53,9 @@ values
   ('d1400000-0000-0000-0000-000000000101',
    'd1400000-0000-0000-0000-000000000002', 'enfant', 5, 'D3 mission fixture A', 1, 9, 'indetermine'),
   ('d1400000-0000-0000-0000-000000000102',
-   'd1400000-0000-0000-0000-000000000002', 'enfant', 5, 'D3 mission fixture B', 2, 10, 'indetermine');
+   'd1400000-0000-0000-0000-000000000002', 'enfant', 5, 'D3 mission fixture B', 2, 10, 'indetermine'),
+  ('d1400000-0000-0000-0000-000000000103',
+   'd1400000-0000-0000-0000-000000000002', 'enfant', 5, 'D3 mission fixture C', 3, 11, 'indetermine');
 insert into public.sessions
   (id, teacher_id, started_at, ended_at, status, groupe_id)
 values
@@ -64,8 +66,8 @@ values
    'd1400000-0000-0000-0000-000000000002', now() - interval '1 hour',
    now() + interval '1 hour', 'in_progress', 'd1400000-0000-0000-0000-000000000102'),
   ('d1400000-0000-0000-0000-000000000203',
-   'd1400000-0000-0000-0000-000000000002', now() - interval '30 minutes',
-   now() + interval '30 minutes', 'in_progress', 'd1400000-0000-0000-0000-000000000101');
+   'd1400000-0000-0000-0000-000000000002', now() + interval '2 hours',
+   now() + interval '3 hours', 'in_progress', 'd1400000-0000-0000-0000-000000000103');
 
 insert into private.controle_capacites
   (id, profile_id, approved_by, active_from, expires_at,
@@ -92,7 +94,7 @@ values
    'aleatoire', now() - interval '2 hours', now() - interval '1 minute', 'attribuee'),
   ('d1400000-0000-0000-0000-000000000403',
    'd1400000-0000-0000-0000-000000000203',
-   'd1400000-0000-0000-0000-000000000101',
+   'd1400000-0000-0000-0000-000000000103',
    'd1400000-0000-0000-0000-000000000002',
    'd1400000-0000-0000-0000-000000000004', 1, current_date,
    'aleatoire', now(), now() + interval '30 minutes', 'attribuee');
