@@ -529,7 +529,7 @@ class FauxServicePlanning implements ServicePlanning {
   }
 
   @override
-  Future<List<Seance>> seances() async => seancesRendues;
+  Future<List<Seance>> seances({String? eleveId}) async => seancesRendues;
 
   @override
   Future<List<Affectation>> affectations() async => affectationsRendues;
@@ -1458,7 +1458,7 @@ class FauxServiceSuivi implements ServiceSuivi {
   int lectures = 0;
 
   @override
-  Future<List<Seance>> seances() async {
+  Future<List<Seance>> seances({String? eleveId}) async {
     lectures++;
     final Duration? attente = delai;
     if (attente != null) {

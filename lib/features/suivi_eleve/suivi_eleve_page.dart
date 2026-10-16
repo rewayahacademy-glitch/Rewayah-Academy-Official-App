@@ -58,13 +58,13 @@ class _SuiviElevePageEtat extends ConsumerState<SuiviElevePage> {
 
   void _relire() {
     ref
-      ..invalidate(seancesDuSuiviProvider)
+      ..invalidate(seancesDeMonSuiviProvider)
       ..invalidate(presenceDuSuiviProvider);
   }
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<List<Seance>> seances = ref.watch(seancesDuSuiviProvider);
+    final AsyncValue<List<Seance>> seances = ref.watch(seancesDeMonSuiviProvider);
     final AsyncValue<List<PresenceParticipant>?> presences = ref.watch(
       presenceDuSuiviProvider,
     );
