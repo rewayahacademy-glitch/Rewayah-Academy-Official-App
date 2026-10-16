@@ -36,6 +36,8 @@ import 'core/controle/port_tirage_controle.dart';
 import 'core/controle/port_tirage_controle_supabase.dart';
 import 'core/dossier/port_acces_pieces_kyc.dart';
 import 'core/dossier/port_acces_pieces_kyc_supabase.dart';
+import 'core/enseignant/absence_remplacement.dart';
+import 'core/enseignant/remplacements_supabase.dart';
 import 'core/foyer/port_reprises_admin.dart';
 import 'core/foyer/reprises_admin_supabase.dart';
 import 'core/i18n/langue_demarrage.dart';
@@ -182,6 +184,13 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portEtatPartagePersistantProvider.overrideWithValue(
     EtatPartageSupabase(Supabase.instance.client),
+  ),
+  // Enseignant : absence sur une seance et prise d'un remplacement (B-09).
+  declarationAbsenceProvider.overrideWithValue(
+    DeclarationAbsenceSupabase(Supabase.instance.client),
+  ),
+  reponseRemplacementProvider.overrideWithValue(
+    ReponseRemplacementSupabase(Supabase.instance.client),
   ),
   // Famille et titulaire : progression d'un eleve, profil eleve du
   // titulaire, invitation du second adulte, capacite « eleve autonome ».
