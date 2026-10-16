@@ -2300,6 +2300,7 @@ class Traductions$notifications$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$notifications$evenements$fr evenements = Traductions$notifications$evenements$fr.internal(_root);
 	late final Traductions$notifications$filtres$fr filtres = Traductions$notifications$filtres$fr.internal(_root);
 
 	/// fr: 'Aucune notification dans ce filtre'
@@ -10434,6 +10435,42 @@ class Traductions$historique$compteRendu$fr {
 
 	/// fr: 'Voir la progression'
 	String get voirProgression => 'Voir la progression';
+}
+
+// Path: notifications.evenements
+class Traductions$notifications$evenements$fr {
+	Traductions$notifications$evenements$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une nouvelle demande de créneau a été reçue.'
+	String get demandeRecue => 'Une nouvelle demande de créneau a été reçue.';
+
+	/// fr: 'Une demande de présentation standard a été reçue.'
+	String get demandePresentation => 'Une demande de présentation standard a été reçue.';
+
+	/// fr: 'La classe est prête et attend son enseignant.'
+	String get classeValidee => 'La classe est prête et attend son enseignant.';
+
+	/// fr: 'Un enseignant a été affecté à la classe.'
+	String get enseignantAffecte => 'Un enseignant a été affecté à la classe.';
+
+	/// fr: 'Une demande de créneau a été clôturée.'
+	String get demandeClose => 'Une demande de créneau a été clôturée.';
+
+	/// fr: 'Un remplacement de cours vous est proposé.'
+	String get remplacementPropose => 'Un remplacement de cours vous est proposé.';
+
+	/// fr: 'Un remplacement de cours a été attribué.'
+	String get remplacementPris => 'Un remplacement de cours a été attribué.';
+
+	/// fr: 'Une mission de contrôle vous a été attribuée.'
+	String get controleMissionAttribuee => 'Une mission de contrôle vous a été attribuée.';
+
+	/// fr: 'Une mission de contrôle est restée sans vérification.'
+	String get controleMissionNonControlee => 'Une mission de contrôle est restée sans vérification.';
 }
 
 // Path: notifications.filtres
@@ -35675,6 +35712,15 @@ extension on Traductions {
 			'historique.compteRendu.voirTravail' => 'Voir le travail à préparer',
 			'historique.compteRendu.voirProgression' => 'Voir la progression',
 			'historique.dateCourteSansAnnee' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
+			'notifications.evenements.demandeRecue' => 'Une nouvelle demande de créneau a été reçue.',
+			'notifications.evenements.demandePresentation' => 'Une demande de présentation standard a été reçue.',
+			'notifications.evenements.classeValidee' => 'La classe est prête et attend son enseignant.',
+			'notifications.evenements.enseignantAffecte' => 'Un enseignant a été affecté à la classe.',
+			'notifications.evenements.demandeClose' => 'Une demande de créneau a été clôturée.',
+			'notifications.evenements.remplacementPropose' => 'Un remplacement de cours vous est proposé.',
+			'notifications.evenements.remplacementPris' => 'Un remplacement de cours a été attribué.',
+			'notifications.evenements.controleMissionAttribuee' => 'Une mission de contrôle vous a été attribuée.',
+			'notifications.evenements.controleMissionNonControlee' => 'Une mission de contrôle est restée sans vérification.',
 			'notifications.filtres.libelle' => 'Filtrer les notifications',
 			'notifications.filtres.toutes' => 'Toutes',
 			'notifications.filtres.nonLues' => 'Non lues',
@@ -35953,6 +35999,8 @@ extension on Traductions {
 			'classe.entree.demo.formeBouton' => 'Forme : bouton',
 			'classe.entree.demo.formeLigne' => 'Forme : ligne d\'état',
 			'classe.entree.demo.lecteur' => ({required Object texte}) => 'Lecteur d\'écran : ${texte}',
+			_ => null,
+		} ?? switch (path) {
 			'classe.entree.demo.annonce' => ({required Object texte}) => 'Annonce : ${texte}',
 			'classe.entree.demo.detail' => ({required Object texte}) => 'Détail : ${texte}',
 			'classe.entree.demo.retour' => 'Retour à la liste',
@@ -35962,8 +36010,6 @@ extension on Traductions {
 			'classe.ressources' => 'Bibliothèque',
 			'classe.progression' => 'Progression',
 			'classe.observer' => 'Observer la séance',
-			_ => null,
-		} ?? switch (path) {
 			'classe.titre' => 'Classe',
 			'classe.historique' => 'Historique',
 			'classe.sousTitre' => ({required Object prenom, required Object enseignant}) => '${prenom} · ${enseignant}',
@@ -36467,6 +36513,8 @@ extension on Traductions {
 			'enseignant.profil.statutValideDetail' => 'Vous pouvez enseigner et déclarer vos heures.',
 			'enseignant.profil.statutEnAttente' => 'Dossier en cours de vérification',
 			'enseignant.profil.statutEnAttenteDetail' => 'L\'académie vérifie vos pièces. Vous n\'avez rien de plus à faire.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.statutProvisoire' => 'Accès provisoire',
 			'enseignant.profil.statutProvisoireDetail' => 'Vous enseignez déjà. Votre dossier reste à compléter, sans coupure automatique.',
 			'enseignant.profil.statutSuspendu' => 'Compte suspendu',
@@ -36476,8 +36524,6 @@ extension on Traductions {
 			'enseignant.profil.statutDivergent' => 'Ce statut vient de changer. Rouvrez l\'application pour que votre accès suive.',
 			'enseignant.profil.verification' => 'Vérification du dossier',
 			'enseignant.profil.verificationEnAttente' => 'En attente',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.verificationValidee' => 'Validée',
 			'enseignant.profil.verificationRefusee' => 'À reprendre',
 			'enseignant.profil.contratSection' => 'Contrat et accusés',
@@ -36981,6 +37027,8 @@ extension on Traductions {
 			'tc.bibliotheque.sections.resultats' => 'Résultats',
 			'tc.bibliotheque.vide.message' => 'Aucun support publié pour le moment',
 			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les supports de vos cours.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.aucunResultat.message' => 'Aucun support ne correspond',
 			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
 			'tc.bibliotheque.indisponible.message' => 'La bibliothèque n\'a pas pu être chargée',
@@ -36990,8 +37038,6 @@ extension on Traductions {
 			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir.',
 			'tc.bibliotheque.offline.aTelecharger' => 'À télécharger',
 			'tc.bibliotheque.offline.enCours' => 'Téléchargement',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.offline.enCache' => 'En cache',
 			'tc.bibliotheque.offline.telecharge' => 'Téléchargé',
 			'tc.bibliotheque.offline.indisponible' => 'Hors ligne indisponible',
@@ -37495,6 +37541,8 @@ extension on Traductions {
 			'adulte.recharge.profilUnique' => 'Profil à recharger',
 			'adulte.recharge.soldeActuel' => ({required Object montant}) => 'Solde actuel : ${montant}',
 			'adulte.recharge.montantSuggere' => ({required Object montant}) => 'Montant suggéré : ${montant}',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.montantPour' => ({required Object prenom}) => 'Montant pour ${prenom}',
 			'adulte.recharge.diminuer' => ({required Object prenom}) => 'Diminuer le montant pour ${prenom}',
 			'adulte.recharge.augmenter' => ({required Object prenom}) => 'Augmenter le montant pour ${prenom}',
@@ -37504,8 +37552,6 @@ extension on Traductions {
 			'adulte.recharge.payerSeul' => 'Payer',
 			'adulte.recharge.ajouter' => ({required Object prenom}) => 'Ajouter ${prenom} à la recharge',
 			'adulte.recharge.regularisationDe' => ({required Object prenom, required Object message}) => '${prenom} : ${message}',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.commandeRendue' => 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.',
 			'adulte.recharge.suivrePaiement' => 'Suivre le paiement',
 			'adulte.recharge.resultat.preparationTitre' => 'Paiement en préparation',
@@ -38009,6 +38055,8 @@ extension on Traductions {
 			'suiviDemandes.close.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
 			'suiviDemandes.close.motif.refusDirection' => 'La direction n\'a pas pu retenir cette demande.',
 			'suiviDemandes.close.motif.dejaEnClasse' => ({required Object prenom}) => '${prenom} a déjà une place en classe : cette demande n\'est plus nécessaire.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.close.motif.inconnu' => 'Cette demande est close.',
 			'suiviDemandes.close.suite' => 'Vous pouvez choisir un autre créneau parmi ceux proposés.',
 			'suiviDemandes.close.suiteSansChoix' => 'Aucun autre créneau n\'est proposé pour le moment. Revenez sur cette page plus tard.',
@@ -38018,8 +38066,6 @@ extension on Traductions {
 			'suiviDemandes.sansDonnees' => 'Le suivi des demandes n\'a pas pu être chargé',
 			'suiviDemandes.accueil.titre' => 'Vos demandes de créneau',
 			'suiviDemandes.accueil.ligne' => ({required Object prenom, required Object etat}) => '${prenom} : ${etat}',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.accueil.voir' => 'Voir le suivi des demandes',
 			'suiviDemandes.notification.envoyee' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre demande est arrivée à l\'administration',
 			'suiviDemandes.notification.classeValidee' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe est prête, elle attend son enseignant',
@@ -38523,6 +38569,8 @@ extension on Traductions {
 			'com.communaute.demo.indisponible' => 'Service pas encore disponible',
 			'com.communaute.demo.horsLigne' => 'Hors ligne',
 			'com.communaute.demo.envoiNonConfirme' => 'Envoi non confirmé',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.demo.moderationIndisponible' => 'Modération indisponible',
 			'com.communaute.demo.lecteurSeul' => 'Lecture seule, sans publication',
 			'com.communaute.demo.f.categoriePedagogie' => 'Pédagogie',
@@ -38532,8 +38580,6 @@ extension on Traductions {
 			'com.communaute.demo.f.prenomSoi' => 'Ibrahim',
 			'com.communaute.demo.f.samira' => 'Samira Belkacem',
 			'com.communaute.demo.f.fonctionSamira' => 'Enseignante, Classe An-Nour',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.demo.f.nour' => 'Nour El Idrissi',
 			'com.communaute.demo.f.fonctionNour' => 'Enseignante, Classe Al-Fajr',
 			'com.communaute.demo.f.yasmine' => 'Yasmine Haddad',
@@ -39037,6 +39083,8 @@ extension on Traductions {
 			'comptable.commun.manque' => 'Manque à compléter',
 			'comptable.commun.atteint' => ({required Object pourcent}) => '${pourcent} % atteint',
 			'comptable.commun.modeCalcul' => 'Mode de calcul',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.commun.modeMontantFixe' => 'Montant cible fixe',
 			'comptable.commun.modeCouvertureMois' => 'Couverture en mois de charges essentielles',
 			'comptable.commun.derniereAllocation' => ({required Object date}) => 'Dernière allocation : ${date}',
@@ -39046,8 +39094,6 @@ extension on Traductions {
 			'comptable.commun.destinationMasquee' => ({required Object type, required Object suffixe}) => '${type} •••• ${suffixe}',
 			'comptable.commun.destinationMasqueeLecteur' => ({required Object type, required Object suffixe}) => '${type}, numéro masqué, se termine par ${suffixe}',
 			'comptable.commun.destinationAucune' => 'Aucune méthode de paiement',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.commun.paysDevise' => ({required Object pays, required Object devise}) => '${pays} · ${devise}',
 			'comptable.commun.verification' => 'Vérification',
 			'comptable.commun.activiteInitiateurDate' => ({required Object initiateur, required Object date}) => '${initiateur} · ${date}',
@@ -39551,6 +39597,8 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.relancerDetail' => 'Ouvre le fil « Profil de paiement » avec un message prérempli, dans les Messages métier.',
 			'comptable.beneficiaires.profil.demanderMiseAJour' => ({required Object nom}) => 'Demander une mise à jour à ${nom}',
 			'comptable.beneficiaires.profil.suspendre' => ({required Object nom}) => 'Suspendre les paiements de ${nom}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.profil.reprendre' => ({required Object nom}) => 'Reprendre les paiements de ${nom}',
 			'comptable.beneficiaires.profil.externe' => ({required Object nom}) => '${nom} n\'a pas de compte Rewayah : une invitation sécurisée lui permet de saisir lui-même sa méthode. Renvoyez-la depuis son obligation, dans Contractuels.',
 			'comptable.beneficiaires.profil.voirContractuels' => 'Voir les obligations des contractuels',
@@ -39560,8 +39608,6 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.messageModele' => 'Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.',
 			'comptable.beneficiaires.profil.miseAJourDemandee' => ({required Object nom}) => 'Demande de mise à jour enregistrée pour ${nom}.',
 			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => 'Paiements de ${nom} suspendus : aucun versement ne part tant qu\'ils ne sont pas repris.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.profil.repris' => ({required Object nom}) => 'Paiements de ${nom} repris.',
 			'comptable.beneficiaires.profil.erreurAction' => 'L\'action n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.beneficiaires.profil.erreurIndisponible' => 'Cette action n\'est pas encore branchée sur le service qui la traite. Réessayez plus tard.',
