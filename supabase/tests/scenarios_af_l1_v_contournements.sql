@@ -369,10 +369,40 @@ begin
   end if;
   select count(*) into n from public.profils_du_foyer_v where id = 'a1f00000-0000-4000-8000-000000000006';
   if n <> 0 then
-    raise notice 'L1-V DEFAUT C9 : enfant lit profils_du_foyer_v de sa soeur (prenom, matricule, camera, interface, fin d''acces) : % ligne', n;
-  else
-    raise notice 'L1-V OK C9 : profils_du_foyer_v ne montre pas la soeur';
+    raise exception 'L1-V C9: enfant lit profils_du_foyer_v de sa soeur (prenom, matricule, camera, interface, fin d''acces) : % ligne', n;
   end if;
+  select count(*) into n from public.profils_du_foyer_v where id = 'a1f00000-0000-4000-8000-000000000005';
+  if n <> 1 then raise exception 'L1-V C9: enfant ne lit plus sa propre ligne (%)', n; end if;
+  select count(*) into n from public.profils_du_foyer_v;
+  if n <> 1 then raise exception 'L1-V C9: enfant lit % lignes de profils_du_foyer_v, attendu 1', n; end if;
+  raise notice 'L1-V OK C9 : profils_du_foyer_v ne montre pas la soeur, l''enfant lit sa propre ligne';
+end $$;
+reset role;
+
+-- C9b. Le tuteur du foyer F1 lit toujours ses deux enfants dans la vue ; l'adulte
+-- autonome (F2) lit sa propre ligne.
+select set_config('request.jwt.claim.sub', 'a1f00000-0000-4000-8000-000000000004', true);
+select set_config('request.jwt.claims',
+  '{"app_metadata":{"role":"guardian","household_id":"a1f00000-0000-4000-8000-0000000000f1"}}', true);
+set local role authenticated;
+do $$
+declare n int;
+begin
+  select count(*) into n from public.profils_du_foyer_v;
+  if n <> 2 then raise exception 'L1-V C9b: le tuteur F1 lit % lignes de profils_du_foyer_v, attendu 2', n; end if;
+  raise notice 'L1-V OK C9b : le tuteur lit ses 2 enfants dans profils_du_foyer_v';
+end $$;
+reset role;
+select set_config('request.jwt.claim.sub', 'a1f00000-0000-4000-8000-000000000007', true);
+select set_config('request.jwt.claims',
+  '{"app_metadata":{"role":"student","household_id":"a1f00000-0000-4000-8000-0000000000f2"}}', true);
+set local role authenticated;
+do $$
+declare n int;
+begin
+  select count(*) into n from public.profils_du_foyer_v;
+  if n <> 1 then raise exception 'L1-V C9b: l''adulte autonome lit % lignes de profils_du_foyer_v, attendu 1', n; end if;
+  raise notice 'L1-V OK C9b : l''adulte autonome lit sa propre ligne';
 end $$;
 reset role;
 
