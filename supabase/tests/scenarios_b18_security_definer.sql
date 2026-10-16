@@ -332,7 +332,7 @@ end
 $m4_catalog$;
 
 create temporary table profile_guard_fixture on commit drop as
-select role, household_id, account_status, access_until
+select role, household_id, account_status, access_until, gender
 from public.profiles
 where id = 'b1840000-0000-0000-0000-000000000004';
 create trigger profile_guard_fixture_trigger

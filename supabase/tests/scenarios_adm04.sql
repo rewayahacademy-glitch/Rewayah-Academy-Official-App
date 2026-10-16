@@ -165,9 +165,9 @@ begin
     reset role;
   end loop;
 
-  -- Et ce que le controleur garde : la lecture de la table elle-meme, telle
-  -- que 0001 la lui a donnee. Si ce bloc echouait, la migration 0009 aurait
-  -- retire un droit existant au lieu d'en ajouter un.
+  -- Le controleur ne lit plus la table : depuis L1-08 (audit final 16/10/2026, P2-1),
+  -- audit_logs_read est reservee a l'administrateur valide (le journal contient des
+  -- payloads KYC et des jetons video). Avant L1-08, il gardait sa lecture (6 lignes).
   set local role authenticated;
   perform set_config('test.uid', 'a4000000-0000-0000-0000-000000000004', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
@@ -175,11 +175,11 @@ begin
    where table_name = 'adm04_fixture';
   reset role;
 
-  if v_lignes <> 6 then
-    raise exception 'J1 ECHEC : le controleur devait garder sa lecture de table, lu % lignes', v_lignes;
+  if v_lignes <> 0 then
+    raise exception 'J1 ECHEC : le controleur ne doit plus lire le journal (L1-08, P2-1), lu % lignes', v_lignes;
   end if;
 
-  raise notice 'J1 ok : les trois fonctions sont reservees a l''administration, et la policy du controleur est intacte';
+  raise notice 'J1 ok : les trois fonctions sont reservees a l''administration, et le controleur ne lit plus la table (L1-08)';
 end $$;
 
 -- ============================================================
