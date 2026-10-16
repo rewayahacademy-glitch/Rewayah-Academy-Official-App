@@ -214,4 +214,50 @@ end
 $b11_family_isolation$;
 
 reset role;
+
+do $b11_anon_rpc_acl$
+begin
+  if pg_catalog.has_function_privilege(
+       'anon', 'public.deposer_student_concern(text,uuid,uuid,text,text,text)', 'EXECUTE'
+     )
+     or pg_catalog.has_function_privilege(
+       'anon', 'public.mes_student_concerns(uuid)', 'EXECUTE'
+     )
+     or pg_catalog.has_function_privilege(
+       'anon', 'public.transmettre_student_concern(uuid,text)', 'EXECUTE'
+     ) then
+    raise exception 'B-11: anon retains EXECUTE on student concern RPCs';
+  end if;
+end
+$b11_anon_rpc_acl$;
+
+set local role anon;
+do $b11_anon_rpc_denied$
+begin
+  begin
+    perform public.deposer_student_concern(
+      'pedagogique', null, null, 'unknown', 'Anon probe', null
+    );
+    raise exception 'B-11: anon submitted a student concern';
+  exception when insufficient_privilege then
+    null;
+  end;
+
+  begin
+    perform public.mes_student_concerns(null::uuid);
+    raise exception 'B-11: anon read student concerns';
+  exception when insufficient_privilege then
+    null;
+  end;
+
+  begin
+    perform public.transmettre_student_concern(null::uuid, 'tuteur_du_mineur');
+    raise exception 'B-11: anon transmitted a student concern';
+  exception when insufficient_privilege then
+    null;
+  end;
+end
+$b11_anon_rpc_denied$;
+
+reset role;
 rollback;
