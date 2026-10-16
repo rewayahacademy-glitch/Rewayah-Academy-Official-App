@@ -56,7 +56,7 @@ BEGIN
      OR v_auth_user #>> '{raw_app_meta_data,child_of}' IS DISTINCT FROM auth.uid()::text
      OR nullif(v_auth_user->>'created_at', '') IS NULL
      OR (v_auth_user->>'created_at')::timestamptz < pg_catalog.now() - interval '15 minutes'
-     OR (v_auth_user->>'created_at')::timestamptz > pg_catalog.now()
+     OR (v_auth_user->>'created_at')::timestamptz > pg_catalog.now() + interval '1 minute'
      OR nullif(v_auth_user->>'email_confirmed_at', '') IS NOT NULL
      OR v_has_session
      OR EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = p_auth_user_id) THEN
@@ -90,9 +90,18 @@ REVOKE ALL ON FUNCTION public.creer_profil_enfant(uuid, uuid, text, text, intege
   FROM PUBLIC, anon, service_role, agent_ro;
 GRANT EXECUTE ON FUNCTION public.creer_profil_enfant(uuid, uuid, text, text, integer, text)
   TO authenticated;
+-- Aucun chemin service_role : la fonction Edge appelle avec le JWT du tuteur.
+REVOKE EXECUTE ON FUNCTION public.creer_profil_enfant(uuid, uuid, text, text, integer, text)
+  FROM service_role;
+REVOKE EXECUTE ON FUNCTION public.creer_profil_inscription(
+  text, text, text, public.gender, text, boolean
+) FROM service_role;
 
 COMMENT ON FUNCTION public.creer_profil_enfant(uuid, uuid, text, text, integer, text) IS
-  'F86 candidate allowlist: signature=public.creer_profil_enfant(uuid,uuid,text,text,integer,text); md5_functiondef=A_CALCULER; guard_type=AUTHENTICATED_GUARDIAN_AND_SERVER_CHILD_OF_RECENT_UNCONFIRMED_NO_SESSION_NO_PROFILE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-13.';
+  'F86 candidate allowlist: signature=public.creer_profil_enfant(uuid,uuid,text,text,integer,text); md5_functiondef=26c2c85d5c801937154bddcf9bf0c5bd; guard_type=AUTHENTICATED_GUARDIAN_AND_SERVER_CHILD_OF_RECENT_UNCONFIRMED_NO_SESSION_NO_PROFILE; created_at_window=[now()-15min,now()+1min]; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-16.';
+COMMENT ON FUNCTION public.creer_profil_inscription(
+  text, text, text, public.gender, text, boolean
+) IS 'F86 candidate allowlist: signature=public.creer_profil_inscription(text,text,text,public.gender,text,boolean); md5_functiondef=6e62676fc9cce5c0f76d7f6ae39d6959; guard_type=PUBLIC_REGISTRATION; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-16.';
 
 DO $postflight$
 BEGIN
@@ -110,7 +119,15 @@ BEGIN
        SELECT 1 FROM pg_catalog.pg_proc p
         WHERE p.oid = 'public.creer_profil_enfant(uuid,uuid,text,text,integer,text)'::regprocedure
           AND p.proconfig @> ARRAY['search_path=""']::text[]
-     ) THEN
+     )
+     OR pg_catalog.has_function_privilege('service_role',
+       'public.creer_profil_inscription(text,text,text,public.gender,text,boolean)', 'EXECUTE')
+     OR pg_catalog.md5(pg_catalog.pg_get_functiondef(
+       'public.creer_profil_enfant(uuid,uuid,text,text,integer,text)'::regprocedure
+     )) <> '26c2c85d5c801937154bddcf9bf0c5bd'
+     OR pg_catalog.md5(pg_catalog.pg_get_functiondef(
+       'public.creer_profil_inscription(text,text,text,public.gender,text,boolean)'::regprocedure
+     )) <> '6e62676fc9cce5c0f76d7f6ae39d6959' THEN
     RAISE EXCEPTION 'F86 child-origin guard postflight failed';
   END IF;
 END

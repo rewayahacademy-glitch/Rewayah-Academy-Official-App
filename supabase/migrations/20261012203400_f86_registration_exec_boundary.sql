@@ -81,8 +81,7 @@ GRANT EXECUTE ON FUNCTION public.creer_profil_inscription(
   text, text, text, public.gender, text, boolean
 ) TO authenticated;
 
-COMMENT ON FUNCTION public.creer_profil_enfant(uuid, uuid, text, text, integer, text) IS
-  'F86 candidate allowlist: signature=public.creer_profil_enfant(uuid,uuid,text,text,integer,text); md5_functiondef=A_CALCULER; guard_type=AUTHENTICATED_GUARDIAN_ONLY; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-12.';
+-- Empreinte F86 : posee par 20261013000200, qui fixe la definition finale.
 
 DO $postflight$
 BEGIN

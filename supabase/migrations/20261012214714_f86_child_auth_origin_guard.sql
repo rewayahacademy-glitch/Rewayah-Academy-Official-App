@@ -88,8 +88,7 @@ GRANT EXECUTE ON FUNCTION public.creer_profil_inscription(
   text, text, text, public.gender, text, boolean
 ) TO authenticated;
 
-COMMENT ON FUNCTION public.creer_profil_enfant(uuid, uuid, text, text, integer, text) IS
-  'F86 candidate allowlist: signature=public.creer_profil_enfant(uuid,uuid,text,text,integer,text); md5_functiondef=A_CALCULER; guard_type=AUTHENTICATED_GUARDIAN_AND_SERVER_CHILD_OF_RECENT_NO_PROFILE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-13.';
+-- Empreinte F86 de creer_profil_enfant : posee par 20261013000200.
 COMMENT ON FUNCTION public.creer_profil_inscription(
   text, text, text, public.gender, text, boolean
 ) IS 'F86 candidate allowlist: signature=public.creer_profil_inscription(text,text,text,public.gender,text,boolean); md5_functiondef=6e62676fc9cce5c0f76d7f6ae39d6959; guard_type=PUBLIC_REGISTRATION; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-10-13.';
