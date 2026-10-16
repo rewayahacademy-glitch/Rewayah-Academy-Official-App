@@ -185,6 +185,24 @@ begin
 end $$;
 reset role;
 
+update public.profiles set account_status = 'disabled'
+ where id = 'c3500000-0000-0000-0000-000000000001';
+set local role authenticated;
+select set_config('test.uid', 'c3500000-0000-0000-0000-000000000001', true);
+select set_config('request.jwt.claim.sub', 'c3500000-0000-0000-0000-000000000001', true);
+select set_config('request.jwt.claims', '{"sub":"c3500000-0000-0000-0000-000000000001","app_metadata":{"role":"student"}}', true);
+select set_config('test.jwt', '{"app_metadata":{"role":"student"}}', true);
+do $c35_disabled_account_denied$
+begin
+  begin
+    perform public.autoriser_lecture_version('c3500000-0000-0000-0000-000000000012');
+    raise exception 'C-35: un compte desactive a pu lire une cle de stockage';
+  exception when insufficient_privilege then null;
+  end;
+end
+$c35_disabled_account_denied$;
+reset role;
+
 do $$
 declare
   v_count integer;
