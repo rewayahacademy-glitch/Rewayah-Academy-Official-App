@@ -22,6 +22,8 @@ import 'core/capacites/port_support.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
 import 'core/capacites/series_tresorerie_supabase.dart';
 import 'core/capacites/support_supabase.dart';
+import 'core/communications/communications_supabase.dart';
+import 'core/communications/libelles_communication_slang.dart';
 import 'core/config/ecran_configuration_absente.dart';
 import 'core/config/env.dart';
 import 'core/controle/port_tirage_controle.dart';
@@ -48,6 +50,10 @@ import 'core/tc_observation/historique_observations_admin_supabase.dart';
 import 'core/tc_observation/historique_observations_supabase.dart';
 import 'core/tc_observation/port_historique_observations.dart';
 import 'features/_dev/playground/playground_racine.dart';
+import 'features/com_annonces/annonces_supabase.dart';
+import 'features/com_annonces/port_annonces.dart';
+import 'features/com_messages/messages_metier_supabase.dart';
+import 'features/com_messages/port_messages_metier.dart';
 import 'features/controleur/echanges_controleur.dart';
 import 'features/controleur/echanges_controleur_supabase.dart';
 import 'features/controleur/historique_controleur.dart';
@@ -133,6 +139,20 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portEtatPartagePersistantProvider.overrideWithValue(
     EtatPartageSupabase(Supabase.instance.client),
+  ),
+  // Communications (COM-BACK-1) : Messages metier et annonces de Classe sur
+  // les RPC `com_*`, nommes dans la langue courante.
+  portMessagesMetierProvider.overrideWithValue(
+    MessagesMetierSupabase(
+      appelRpcSupabase(Supabase.instance.client),
+      libelles: const LibellesCommunicationSlang(),
+    ),
+  ),
+  portAnnoncesProvider.overrideWithValue(
+    AnnoncesSupabase(
+      appelRpcSupabase(Supabase.instance.client),
+      libelles: const LibellesCommunicationSlang(),
+    ),
   ),
 ];
 
