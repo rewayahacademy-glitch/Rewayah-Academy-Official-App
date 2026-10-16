@@ -380,6 +380,36 @@ void main() {
     },
   );
 
+  // L2-02 : l'apercu est demande par identifiant de document ; un refus de la
+  // porte (403) est un acces interdit, jamais une panne.
+  test('L2-02 : apercu par documentId, le refus de la porte remonte', () async {
+    final List<String> demandes = <String>[];
+    final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
+      () async => <DossierAValider>[
+        DossierAValider(
+          documentId: 'd1',
+          profilId: 'p1',
+          type: TypePiece.carteIdentite,
+          cleObjet: 'x/d1.png',
+          deposeLe: DateTime.utc(2026, 9, 25, 14, 30),
+          prenom: 'Omar',
+          nom: 'Test',
+          identifiantImmuable: 'ID-p1',
+          role: AppRole.teacher,
+        ),
+      ],
+      apercu: (String documentId) async {
+        demandes.add(documentId);
+        throw const ApercuRefuse();
+      },
+    );
+    await expectLater(
+      port.demanderVuePiece(dossierId: 'p1', documentId: 'd1'),
+      throwsA(isA<ApercuRefuse>()),
+    );
+    expect(demandes, <String>['d1']);
+  });
+
   // AD-RC m2 : la validation reste fermee en production jusqu'a BR-1, par
   // l'adaptateur lui-meme et non par le seul bouton de l'ecran.
   test('valider : AD-BR-02, sans lecture de file ni appel RPC', () async {

@@ -101,7 +101,8 @@ void main() {
     );
     await _stabiliser(tester);
     expect(find.byType(VisionneusePiece), findsOneWidget);
-    expect(service.apercus, <String>['p1/piece.webp']);
+    // L2-02 : l'aperçu est demandé par identifiant de document, plus par clé.
+    expect(service.apercus, <String>['doc1']);
     expect(find.textContaining('http'), findsNothing);
     await _toucher(
       tester,

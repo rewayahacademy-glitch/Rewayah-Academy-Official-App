@@ -60,8 +60,9 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
 
   final Future<List<DossierAValider>> Function() lire;
 
-  /// Signe l'URL courte d'un objet ; nul, la piece reste indisponible.
-  final Future<String> Function(String cleObjet)? apercu;
+  /// Signe l'URL courte d'une piece, par son identifiant de document (la
+  /// cle d'objet reste cote serveur) ; nul, la piece reste indisponible.
+  final Future<String> Function(String documentId)? apercu;
 
   /// L'heure courante (tests) ; DateTime.now par defaut.
   final DateTime Function()? horloge;
@@ -285,7 +286,11 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
     final DateTime maintenant = (horloge ?? DateTime.now)().toUtc();
     final String url;
     try {
-      url = await signer(cle);
+      url = await signer(documentId);
+    } on ApercuRefuse {
+      // La porte serveur a refuse : une regle (genre), pas une panne. Le refus
+      // remonte tel quel pour que la visionneuse en dise la cause.
+      rethrow;
     } on StorageException catch (e) {
       throw ErreurRevueDossier(switch (e.statusCode) {
         '403' => CodeErreurRevue.interdit,

@@ -6656,6 +6656,7 @@ class _Traductions$dossiers$visionneuse$ar extends Traductions$dossiers$visionne
 	@override String get recharger => 'إعادة تحميل الوثيقة';
 	@override String get formatNonPrisEnCharge => 'لا يمكن عرض تنسيق هذه الوثيقة.';
 	@override String get accesRetire => 'لم يعد لديك وصول إلى هذه الوثيقة.';
+	@override String get apercuRefuse => 'هذه الوثيقة غير مرئية بحسابك.';
 	@override String get horsLigne => 'أنت غير متصل. لا يمكن تحميل الوثيقة.';
 	@override String get aucune => 'لا وثيقة متاحة.';
 	@override String get fermerPiece => 'إغلاق الوثيقة';
@@ -19980,9 +19981,9 @@ extension on TraductionsAr {
 			'adulte.invitation.enteteElle' => 'حساب شخصي لها',
 			'adulte.invitation.enteteLui' => 'حساب شخصي له',
 			'adulte.invitation.phraseElle' => 'ستستخدم زوجتك حسابها الخاص. لن تستطيع إدارة أسرتك ولا ملفات الطلاب التي أنشأتها.',
-			'adulte.invitation.phraseLui' => 'سيستخدم زوجك حسابه الخاص. لن يستطيع إدارة أسرتك ولا ملفات الطلاب التي أنشأتها.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.invitation.phraseLui' => 'سيستخدم زوجك حسابه الخاص. لن يستطيع إدارة أسرتك ولا ملفات الطلاب التي أنشأتها.',
 			'adulte.invitation.prenom' => 'الاسم',
 			'adulte.invitation.nom' => 'اللقب',
 			'adulte.invitation.nomAide' => 'اختياري.',
@@ -20220,6 +20221,7 @@ extension on TraductionsAr {
 			'dossiers.visionneuse.recharger' => 'إعادة تحميل الوثيقة',
 			'dossiers.visionneuse.formatNonPrisEnCharge' => 'لا يمكن عرض تنسيق هذه الوثيقة.',
 			'dossiers.visionneuse.accesRetire' => 'لم يعد لديك وصول إلى هذه الوثيقة.',
+			'dossiers.visionneuse.apercuRefuse' => 'هذه الوثيقة غير مرئية بحسابك.',
 			'dossiers.visionneuse.horsLigne' => 'أنت غير متصل. لا يمكن تحميل الوثيقة.',
 			'dossiers.visionneuse.aucune' => 'لا وثيقة متاحة.',
 			'dossiers.visionneuse.fermerPiece' => 'إغلاق الوثيقة',
@@ -20493,10 +20495,10 @@ extension on TraductionsAr {
 			'controleur.observation.aSuivreAide' => 'حين يجب مراجعة نقطة في زيارة قادمة · تظهر في التقرير كنقطة للمتابعة',
 			'controleur.observation.interventionAdmin' => 'تدخل الإدارة مطلوب',
 			'controleur.observation.interventionAdminAide' => 'حين يجب أن تتصرف الإدارة · سيُطلب نصك، وتستلمه مع التقرير',
-			'controleur.observation.questionDomaine' => 'أي مجال تخص؟',
-			'controleur.observation.contexteDomaine' => 'يساعد المجال الإدارة على قراءة ملاحظتك.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.questionDomaine' => 'أي مجال تخص؟',
+			'controleur.observation.contexteDomaine' => 'يساعد المجال الإدارة على قراءة ملاحظتك.',
 			'controleur.observation.pedagogie' => 'التعليم',
 			'controleur.observation.pedagogieAide' => 'حين يتعلق الأمر بالتدريس: الشرح، التدرج، المواد',
 			'controleur.observation.interaction' => 'التفاعل مع الطلاب',
