@@ -4,13 +4,15 @@ begin;
 insert into auth.users (id, email) values
   ('d1400000-0000-0000-0000-000000000001', 'rech-d3-admin@example.test'),
   ('d1400000-0000-0000-0000-000000000002', 'rech-d3-teacher@example.test'),
-  ('d1400000-0000-0000-0000-000000000003', 'rech-d3-controller@example.test');
+  ('d1400000-0000-0000-0000-000000000003', 'rech-d3-controller@example.test'),
+  ('d1400000-0000-0000-0000-000000000004', 'rech-d3-controller-disabled@example.test');
 insert into public.profiles
   (id, immutable_id, role, first_name, last_name, account_status, gender)
 values
   ('d1400000-0000-0000-0000-000000000001', 'D3-ADMIN', 'admin', 'D3', 'Admin', 'active', 'male'),
   ('d1400000-0000-0000-0000-000000000002', 'D3-TEACHER', 'teacher', 'D3', 'Teacher', 'provisional_active', 'male'),
-  ('d1400000-0000-0000-0000-000000000003', 'D3-CONTROLLER', 'controller', 'D3', 'Controller', 'active', 'female');
+  ('d1400000-0000-0000-0000-000000000003', 'D3-CONTROLLER', 'controller', 'D3', 'Controller', 'active', 'female'),
+  ('d1400000-0000-0000-0000-000000000004', 'D3-CONTROLLER-DISABLED', 'controller', 'D3', 'Controller', 'Disabled', 'disabled', 'female');
 -- 0089 requires current teacher NDA and recording notice before activation.
 do $fixture_teacher_contract$
 declare
@@ -60,7 +62,10 @@ values
    now() - interval '1 hour', 'ended', 'd1400000-0000-0000-0000-000000000101'),
   ('d1400000-0000-0000-0000-000000000202',
    'd1400000-0000-0000-0000-000000000002', now() - interval '1 hour',
-   now() + interval '1 hour', 'in_progress', 'd1400000-0000-0000-0000-000000000102');
+   now() + interval '1 hour', 'in_progress', 'd1400000-0000-0000-0000-000000000102'),
+  ('d1400000-0000-0000-0000-000000000203',
+   'd1400000-0000-0000-0000-000000000002', now() - interval '30 minutes',
+   now() + interval '30 minutes', 'in_progress', 'd1400000-0000-0000-0000-000000000101');
 
 insert into private.controle_capacites
   (id, profile_id, approved_by, active_from, expires_at,
@@ -69,7 +74,11 @@ values
   ('d1400000-0000-0000-0000-000000000301',
    'd1400000-0000-0000-0000-000000000003',
    'd1400000-0000-0000-0000-000000000001', now() - interval '1 day',
-   now() + interval '1 day', true, 'd1400000-0000-0000-0000-000000000302');
+   now() + interval '1 day', true, 'd1400000-0000-0000-0000-000000000302'),
+  ('d1400000-0000-0000-0000-000000000303',
+   'd1400000-0000-0000-0000-000000000004',
+   'd1400000-0000-0000-0000-000000000001', now() - interval '1 day',
+   now() + interval '1 day', true, 'd1400000-0000-0000-0000-000000000304');
 
 insert into private.controle_missions
   (id, session_id, groupe_id, enseignant_effectif_id, controleur_id,
@@ -80,7 +89,13 @@ values
    'd1400000-0000-0000-0000-000000000101',
    'd1400000-0000-0000-0000-000000000002',
    'd1400000-0000-0000-0000-000000000003', 1, current_date,
-   'aleatoire', now() - interval '2 hours', now() - interval '1 minute', 'attribuee');
+   'aleatoire', now() - interval '2 hours', now() - interval '1 minute', 'attribuee'),
+  ('d1400000-0000-0000-0000-000000000403',
+   'd1400000-0000-0000-0000-000000000203',
+   'd1400000-0000-0000-0000-000000000101',
+   'd1400000-0000-0000-0000-000000000002',
+   'd1400000-0000-0000-0000-000000000004', 1, current_date,
+   'aleatoire', now(), now() + interval '30 minutes', 'attribuee');
 
 select set_config('request.jwt.claim.sub', 'd1400000-0000-0000-0000-000000000003', true);
 select set_config('request.jwt.claims', jsonb_build_object(
@@ -125,5 +140,43 @@ begin
 end;
 $active$;
 
+reset role;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', 'd1400000-0000-0000-0000-000000000004', true);
+select set_config('test.uid', 'd1400000-0000-0000-0000-000000000004', true);
+select set_config('request.jwt.claims', jsonb_build_object(
+  'sub', 'd1400000-0000-0000-0000-000000000004',
+  'app_metadata', jsonb_build_object('role', 'controller', 'authorization_version', 1)
+)::text, true);
+select set_config('test.jwt', jsonb_build_object(
+  'app_metadata', jsonb_build_object('role', 'controller', 'authorization_version', 1)
+)::text, true);
+do $disabled_controller$
+begin
+  if public.ma_mission_controle() <> '{}'::jsonb then
+    raise exception 'RECH-D3: disabled controller saw an otherwise valid mission';
+  end if;
+end;
+$disabled_controller$;
+
+reset role;
+do $anon_acl$
+begin
+  if pg_catalog.has_function_privilege('anon', 'public.ma_mission_controle()', 'EXECUTE') then
+    raise exception 'RECH-D3: anon unexpectedly has mission RPC EXECUTE';
+  end if;
+end;
+$anon_acl$;
+
+set local role anon;
+do $anon_call$
+begin
+  begin
+    perform public.ma_mission_controle();
+    raise exception 'RECH-D3: anon read a control mission';
+  exception when insufficient_privilege then null;
+  end;
+end;
+$anon_call$;
 reset role;
 rollback;
