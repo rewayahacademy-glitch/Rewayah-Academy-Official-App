@@ -579,6 +579,8 @@ end $$;
 
 select set_config('test.uid', '22222222-2222-2222-2222-222222222222', false);
 select set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', false);
+select set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', false);
+select set_config('request.jwt.claims', '{"sub":"22222222-2222-2222-2222-222222222222","app_metadata":{"role":"teacher"}}', false);
 
 do $$
 declare v_etat jsonb;
@@ -614,6 +616,8 @@ begin
   set local role authenticated;
   perform set_config('test.uid', '22222222-2222-2222-2222-222222222222', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+  perform set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', true);
+  perform set_config('request.jwt.claims', '{"sub":"22222222-2222-2222-2222-222222222222","app_metadata":{"role":"teacher"}}', true);
   perform public.signer_contrat('2026-10-jur', 'Yasmine Test');
 end $$;
 
@@ -654,6 +658,8 @@ begin
   set local role authenticated;
   perform set_config('test.uid', '11111111-1111-1111-1111-111111111111', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"guardian"}}', true);
+  perform set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', true);
+  perform set_config('request.jwt.claims', '{"sub":"11111111-1111-1111-1111-111111111111","app_metadata":{"role":"guardian"}}', true);
   begin
     insert into public.contract_acceptances (
       profile_id, contract_kind, version, signer_name
@@ -668,6 +674,8 @@ begin
 
   perform set_config('test.uid', '66666666-6666-6666-6666-666666666666', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+  perform set_config('request.jwt.claim.sub', '66666666-6666-6666-6666-666666666666', true);
+  perform set_config('request.jwt.claims', '{"sub":"66666666-6666-6666-6666-666666666666","app_metadata":{"role":"teacher"}}', true);
   begin
     insert into public.contract_acceptances (
       profile_id, contract_kind, version, signer_name
@@ -682,6 +690,8 @@ begin
 
   perform set_config('test.uid', '22222222-2222-2222-2222-222222222222', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+  perform set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', true);
+  perform set_config('request.jwt.claims', '{"sub":"22222222-2222-2222-2222-222222222222","app_metadata":{"role":"teacher"}}', true);
 
   begin
     insert into public.contract_acceptances (
