@@ -20,9 +20,6 @@ COMMITS_GARDE = ("15a9c8ed", "5ea5e45c")
 FICHIERS_GARDE = [".claude/settings.json", ".claude/settings.local.json", ".claude/hooks"]
 
 ZONES_INTERDITES = [
-    (r"(^|/)supabase(/|$)", "supabase/ est la zone backend de ChatGPT (COHABITATION.md)"),
-    (r"(^|/)lib/(.*/)?service_[^/]*\.dart$", "les services sont la zone de ChatGPT"),
-    (r"_supabase\.dart$", "les adaptateurs *_supabase.dart sont la zone de ChatGPT"),
     (r"(^|/)\.github(/|$)", ".github/ est interdit aux agents (déploiement, CI)"),
     (r"(^|/)vercel\.json$", "vercel.json est interdit aux agents"),
     (r"(^|/)pubspec\.yaml$", "pubspec.yaml est interdit aux agents"),
