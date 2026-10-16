@@ -41,10 +41,12 @@ import 'core/i18n/strings.g.dart';
 import 'core/observabilite/supervision.dart';
 import 'core/offres/demandes_suivi_supabase.dart';
 import 'core/offres/frise_demandes_supabase.dart';
+import 'core/offres/page_regroupements.dart';
 import 'core/offres/port_frise_demande.dart';
 import 'core/offres/port_regroupements_admin.dart';
 import 'core/offres/port_suivi_demandes.dart';
 import 'core/offres/regroupements_c11bis_supabase.dart';
+import 'core/offres/regroupements_pages_supabase.dart';
 import 'core/recrutement/port_signature_contrat.dart';
 import 'core/recrutement/port_statuts_signature.dart';
 import 'core/recrutement/port_statuts_signature_supabase.dart';
@@ -106,6 +108,10 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portRegroupementsAdminProvider.overrideWithValue(
     RegroupementsC11bisSupabase(Supabase.instance.client),
+  ),
+  // Liste paginee des regroupements (fonction Edge `regroupements-pages`).
+  portRegroupementsPagesProvider.overrideWithValue(
+    RegroupementsPagesSupabase(Supabase.instance.client),
   ),
   portTirageControleProvider.overrideWithValue(
     PortTirageControleSupabase(Supabase.instance.client),
