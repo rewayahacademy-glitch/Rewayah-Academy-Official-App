@@ -4745,5 +4745,6 @@
   "commun.roles.enseignant": "DECISION-IMMATRICULATION-2026-10-12 section 1 (matricule visible par son titulaire et le tuteur, role a cote, copie ; fiche L2-07, IMM-FRONT-1) ; libelle fixe par la fiche du lot",
   "commun.roles.administration": "DECISION-IMMATRICULATION-2026-10-12 section 1 (matricule visible par son titulaire et le tuteur, role a cote, copie ; fiche L2-07, IMM-FRONT-1) ; libelle fixe par la fiche du lot",
   "commun.roles.controleur": "DECISION-IMMATRICULATION-2026-10-12 section 1 (matricule visible par son titulaire et le tuteur, role a cote, copie ; fiche L2-07, IMM-FRONT-1) ; libelle fixe par la fiche du lot",
-  "commun.roles.comptable": "DECISION-IMMATRICULATION-2026-10-12 section 1 (matricule visible par son titulaire et le tuteur, role a cote, copie ; fiche L2-07, IMM-FRONT-1) ; libelle fixe par la fiche du lot"
+  "commun.roles.comptable": "DECISION-IMMATRICULATION-2026-10-12 section 1 (matricule visible par son titulaire et le tuteur, role a cote, copie ; fiche L2-07, IMM-FRONT-1) ; libelle fixe par la fiche du lot",
+  "com.annonces.toutesAcademie": "L2-10 (17/10/2026, piege 7 du lot) : une annonce generale rendue dans le contexte d'une Classe affiche « Toute l'academie » au lieu du libelle de la Classe ; demande de l'orchestrateur de nuit ; libelle FR existant (com.annonces.demoPublication.toutes), AR « كل الأكاديمية » demande par l'orchestrateur"
 }

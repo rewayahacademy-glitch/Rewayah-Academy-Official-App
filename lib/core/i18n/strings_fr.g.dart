@@ -16401,6 +16401,10 @@ class Traductions$com$annonces$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+
+	/// fr: 'Toute l'académie'
+	String get toutesAcademie => 'Toute l\'académie';
+
 	late final Traductions$com$annonces$publieur$fr publieur = Traductions$com$annonces$publieur$fr.internal(_root);
 	late final Traductions$com$annonces$administration$fr administration = Traductions$com$annonces$administration$fr.internal(_root);
 	late final Traductions$com$annonces$demoPublication$fr demoPublication = Traductions$com$annonces$demoPublication$fr.internal(_root);
@@ -38939,6 +38943,7 @@ extension on Traductions {
 			'com.studio.demo.f.objetDossierBenali' => 'Dossier de la famille Benali',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'Aucune activité à traiter ici.',
+			'com.annonces.toutesAcademie' => 'Toute l\'académie',
 			'com.annonces.publieur.titre' => 'Nouvelle annonce',
 			'com.annonces.publieur.etapes.contenu' => 'Contenu de l\'annonce',
 			'com.annonces.publieur.etapes.audience' => 'Destinataires de l\'annonce',
@@ -39172,9 +39177,9 @@ extension on Traductions {
 			'comptable.onglets.aEffectuer' => 'À effectuer',
 			'comptable.onglets.contractuels' => 'Contractuels',
 			'comptable.onglets.beneficiaires' => 'Bénéficiaires',
-			'comptable.onglets.coffres' => 'Coffres',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.onglets.coffres' => 'Coffres',
 			'comptable.onglets.encaissements' => 'Encaissements',
 			'comptable.onglets.rapprochement' => 'Rapprochement',
 			'comptable.onglets.rapports' => 'Rapports',
@@ -39686,9 +39691,9 @@ extension on Traductions {
 			'comptable.beneficiaires.colonneEtat' => 'État du profil',
 			'comptable.beneficiaires.colonneEnAttente' => 'Paiements en attente',
 			'comptable.beneficiaires.typeEnseignant' => 'Enseignant',
-			'comptable.beneficiaires.typeContractuel' => 'Contractuel',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.typeContractuel' => 'Contractuel',
 			'comptable.beneficiaires.enAttente' => ({required Object n}) => '${n} en attente',
 			'comptable.beneficiaires.aucunEnAttente' => 'Aucun',
 			'comptable.beneficiaires.vide' => 'Aucun bénéficiaire pour l\'instant.',
@@ -40200,9 +40205,9 @@ extension on Traductions {
 			'recherche.guide.initial.titre' => 'Trouver un support',
 			'recherche.guide.initial.phrase' => 'Écris un mot pour trouver un de tes supports.',
 			'recherche.guide.limite' => 'Seulement tes supports et tes leçons.',
-			'recherche.entree.supports' => 'Rechercher dans les supports',
 			_ => null,
 		} ?? switch (path) {
+			'recherche.entree.supports' => 'Rechercher dans les supports',
 			'recherche.contexte.remplacementOuvert' => 'Remplacement à prendre',
 			'recherche.contexte.remplacementMien' => 'Votre remplacement',
 			'recherche.contexte.mission' => 'Mission de contrôle',

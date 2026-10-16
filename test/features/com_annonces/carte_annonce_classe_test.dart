@@ -83,6 +83,32 @@ void main() {
       expect(find.byKey(CarteAnnonceClasse.cleMarquerLue), findsNothing);
     });
 
+    testWidgets('annonce generale rendue dans une Classe : la carte dit « Toute '
+        'l academie », jamais le nom de la Classe de contexte', (
+      WidgetTester tester,
+    ) async {
+      await _poser(
+        tester,
+        CarteAnnonceClasse(annonce: annonceDeTest(generale: true)),
+      );
+      expect(
+        find.text('${t.com.annonces.annonce} · ${t.com.annonces.toutesAcademie}'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('An-⁠Nour'), findsNothing);
+      expect(
+        find.bySemanticsLabel(
+          RegExp(
+            '^${RegExp.escape(t.com.annonces.carteSemantique(
+              classe: t.com.annonces.toutesAcademie,
+              titre: 'Récitation de fin de trimestre',
+            ))}',
+          ),
+        ),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('lue : plus de badge « A lire », ni « Marquer comme lue »', (
       WidgetTester tester,
     ) async {

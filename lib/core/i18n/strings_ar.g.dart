@@ -3737,6 +3737,7 @@ class _Traductions$com$annonces$ar extends Traductions$com$annonces$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get toutesAcademie => 'كل الأكاديمية';
 	@override late final _Traductions$com$annonces$publieur$ar publieur = _Traductions$com$annonces$publieur$ar._(_root);
 	@override late final _Traductions$com$annonces$administration$ar administration = _Traductions$com$annonces$administration$ar._(_root);
 	@override late final _Traductions$com$annonces$demoPublication$ar demoPublication = _Traductions$com$annonces$demoPublication$ar._(_root);
@@ -16904,6 +16905,7 @@ extension on TraductionsAr {
 			'com.studio.demo.f.objetDossierBenali' => 'ملف أسرة بن علي',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'لا يوجد نشاط للمعالجة هنا.',
+			'com.annonces.toutesAcademie' => 'كل الأكاديمية',
 			'com.annonces.publieur.titre' => 'إعلان جديد',
 			'com.annonces.publieur.etapes.contenu' => 'محتوى الإعلان',
 			'com.annonces.publieur.etapes.audience' => 'مستلمو الإعلان',
@@ -16923,9 +16925,9 @@ extension on TraductionsAr {
 			'com.annonces.publieur.nature.toutes' => 'تستلمه الأكاديمية كلها. خصصه لما يهم الجميع.',
 			'com.annonces.publieur.quand.maintenant' => 'فور التأكيد',
 			'com.annonces.publieur.quand.maintenantDetail' => 'يُرسل الإعلان فور تأكيد النشر.',
-			'com.annonces.publieur.quand.creneau' => ({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.publieur.quand.creneau' => ({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}',
 			'com.annonces.publieur.quand.creneauDetail' => 'ينتظر الإعلان هذا التاريخ. ستجده في الإعلانات المجدولة.',
 			'com.annonces.publieur.apercu.a' => ({required Object cible}) => 'إلى: ${cible}',
 			'com.annonces.publieur.apercu.diffusionMaintenant' => 'النشر: فور التأكيد',
@@ -17437,9 +17439,9 @@ extension on TraductionsAr {
 			'admin.qualite.statutOuvert' => 'مفتوحة',
 			'admin.qualite.statutTraite' => 'معالَجة',
 			'admin.qualite.depuisAujourdhui' => 'اليوم',
-			'admin.qualite.depuisUnJour' => 'يوم واحد',
 			_ => null,
 		} ?? switch (path) {
+			'admin.qualite.depuisUnJour' => 'يوم واحد',
 			'admin.qualite.depuisJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'اليوم', one: 'يوم واحد', two: 'يومان', few: '⁨${jours}⁩ أيام', many: '⁨${jours}⁩ يومًا', other: '⁨${jours}⁩ يوم', ), 
 			'admin.qualite.actionTraiter' => 'تعليم كمعالَج',
 			'admin.qualite.traiterTitre' => ({required Object personne}) => 'تعليم كمعالَج: ⁨${personne}⁩',
@@ -17951,9 +17953,9 @@ extension on TraductionsAr {
 			'admin.pilotage.filtreTousPublics' => 'كل الفئات',
 			'admin.pilotage.position' => ({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩',
 			'admin.pilotage.positionSemantique' => ({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩ من لوحة المتابعة',
-			'admin.pilotage.precedente' => 'الصفحة السابقة من لوحة المتابعة',
 			_ => null,
 		} ?? switch (path) {
+			'admin.pilotage.precedente' => 'الصفحة السابقة من لوحة المتابعة',
 			'admin.pilotage.suivante' => 'الصفحة التالية من لوحة المتابعة',
 			'admin.pilotage.resume' => ({required Object debut, required Object fin, required Object total}) => 'المواعيد من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩',
 			'admin.fusion.actionFusionner' => 'الدمج مع فصل موازٍ',
@@ -18465,9 +18467,9 @@ extension on TraductionsAr {
 			'comptable.statuts.paiement.retourne' => 'مُسترَد / مُعاد',
 			'comptable.statuts.paiement.indisponible' => 'غير متاح',
 			'comptable.statuts.encaissement.enAttente' => 'قيد الانتظار',
-			'comptable.statuts.encaissement.confirme' => 'مؤكَّد',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.encaissement.confirme' => 'مؤكَّد',
 			'comptable.statuts.encaissement.echoue' => 'فاشل',
 			'comptable.statuts.encaissement.rembourse' => 'مُسترَد',
 			'comptable.statuts.encaissement.partiellementRembourse' => 'مُسترَد جزئيًا',
@@ -18979,9 +18981,9 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.recevoir.preferee' => 'الوسيلة المفضلة',
 			'comptable.beneficiaires.recevoir.inactive' => 'وسيلة سابقة، محفوظة غير مفعّلة',
 			'comptable.beneficiaires.recevoir.choisirPreferee' => ({required Object methode}) => 'جعل ${methode} وسيلتي المفضلة',
-			'comptable.beneficiaires.recevoir.remplacer' => ({required Object methode}) => 'استبدال ${methode}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.remplacer' => ({required Object methode}) => 'استبدال ${methode}',
 			'comptable.beneficiaires.recevoir.supprimer' => ({required Object methode}) => 'حذف ${methode}',
 			'comptable.beneficiaires.recevoir.supprimerQuestion' => ({required Object methode}) => 'حذف ${methode}؟',
 			'comptable.beneficiaires.recevoir.supprimerConsequence' => 'لن تستلم بعد الآن أي دفعة على هذه الوسيلة. إن كانت الوحيدة، فستنتظر دفعتك القادمة وسيلة جديدة.',
@@ -19493,9 +19495,9 @@ extension on TraductionsAr {
 			'parcours.objectifApprendreALire' => 'تعلّم القراءة',
 			'parcours.objectifDevenirFluide' => 'القراءة بطلاقة أكبر',
 			'parcours.objectifMemoriser' => 'الحفظ',
-			'parcours.objectifIndecis' => 'لا أعرف بعد',
 			_ => null,
 		} ?? switch (path) {
+			'parcours.objectifIndecis' => 'لا أعرف بعد',
 			'parcours.momentsQuestion' => 'أي أوقات اليوم تناسبك أكثر؟',
 			'parcours.momentsRaison' => 'هذه الإجابة لا تنشئ أي موعد ولا تحجز شيئًا. تفيد فقط في إبراز المواعيد الأنسب لك من بين التي تقترحها الأكاديمية. سترى كل المواعيد الأخرى أدناه.',
 			'parcours.momentMatin' => 'الصباح',
@@ -20007,9 +20009,9 @@ extension on TraductionsAr {
 			'adulte.famille.place.invitationEnvoyee' => 'أُرسلت الدعوة',
 			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '⁨${prenom}⁩، زوجتك',
 			'adulte.famille.place.monConjoint' => ({required Object prenom}) => '⁨${prenom}⁩، زوجك',
-			'adulte.famille.place.validationEnAttente' => 'بانتظار الاعتماد الإداري',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.famille.place.validationEnAttente' => 'بانتظار الاعتماد الإداري',
 			'adulte.famille.place.validationRefusee' => 'رفضت الإدارة الاعتماد',
 			'adulte.famille.place.nouvelleDemande' => 'تقديم طلب جديد',
 			'adulte.famille.place.nouvelleInvitation' => ({required Object date}) => 'دعوة جديدة ممكنة ابتداءً من ⁨${date}⁩',
@@ -20521,9 +20523,9 @@ extension on TraductionsAr {
 			'controleur.compteRendu.ecrireAdmin' => 'مراسلة الإدارة',
 			'controleur.compteRendu.visiteEnCours' => 'جارٍ إرسال الزيارة إلى الإدارة.',
 			'controleur.compteRendu.visiteTransmise' => 'أُرسلت الزيارة وسجلها التلقائي إلى الإدارة.',
-			'controleur.compteRendu.visiteEchec' => 'لم يُؤكَّد إرسال الزيارة: لم يستجب الاتصال أو الخادم. أعد المحاولة؛ يبقى سجل الزيارة محفوظًا على الخادم.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.compteRendu.visiteEchec' => 'لم يُؤكَّد إرسال الزيارة: لم يستجب الاتصال أو الخادم. أعد المحاولة؛ يبقى سجل الزيارة محفوظًا على الخادم.',
 			'controleur.compteRendu.aTerminer' => 'تقرير للإنهاء',
 			'controleur.compteRendu.reprendre' => 'استئناف التقرير',
 			'controleur.observation.important' => 'أنت تبلغ عن نقطة مهمة: سيُطلب نصك.',
