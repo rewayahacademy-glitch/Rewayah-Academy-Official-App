@@ -472,4 +472,57 @@ BEGIN
 END
 $audit_retrait$;
 
+DO $b08_summary_anon_acl$
+BEGIN
+  IF pg_catalog.has_function_privilege(
+       'anon', 'public.enregistrer_resume_seance(uuid,uuid,text,uuid,boolean)', 'EXECUTE'
+     ) THEN
+    RAISE EXCEPTION 'B-08: anon retains EXECUTE on enregistrer_resume_seance';
+  END IF;
+END
+$b08_summary_anon_acl$;
+
+SET LOCAL ROLE anon;
+DO $b08_summary_anon_denied$
+BEGIN
+  BEGIN
+    PERFORM public.enregistrer_resume_seance(
+      'b0800000-0000-0000-0000-000000000301',
+      'b0800000-0000-0000-0000-000000000003',
+      'Anonymous summary probe', NULL, true
+    );
+    RAISE EXCEPTION 'B-08: anon published a family summary';
+  EXCEPTION WHEN insufficient_privilege THEN
+    NULL;
+  END;
+END
+$b08_summary_anon_denied$;
+
+RESET ROLE;
+UPDATE public.profiles SET account_status = 'disabled'
+ WHERE id = 'b0800000-0000-0000-0000-000000000001';
+SET LOCAL ROLE authenticated;
+SELECT set_config('test.uid', 'b0800000-0000-0000-0000-000000000001', true);
+SELECT set_config('request.jwt.claim.sub', 'b0800000-0000-0000-0000-000000000001', true);
+SELECT set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+SELECT set_config('request.jwt.claims', '{"sub":"b0800000-0000-0000-0000-000000000001","app_metadata":{"role":"teacher"}}', true);
+DO $b08_summary_disabled_teacher_denied$
+DECLARE
+  v_denied boolean := false;
+BEGIN
+  BEGIN
+    PERFORM public.enregistrer_resume_seance(
+      'b0800000-0000-0000-0000-000000000301',
+      'b0800000-0000-0000-0000-000000000003',
+      'Disabled teacher probe', NULL, true
+    );
+  EXCEPTION WHEN raise_exception THEN
+    v_denied := true;
+  END;
+  IF NOT v_denied THEN
+    RAISE EXCEPTION 'B-08: disabled teacher published a valid family summary';
+  END IF;
+END
+$b08_summary_disabled_teacher_denied$;
+
 ROLLBACK;
