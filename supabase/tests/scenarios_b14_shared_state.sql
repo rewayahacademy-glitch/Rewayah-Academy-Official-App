@@ -160,6 +160,33 @@ select public.effacer_etat_partage('b14fffff-0000-0000-0000-000000000009');
 
 reset role;
 
+-- Le compte desactive agit sur SES propres seances (une en cours, une cloturee
+-- avec un etat partage a effacer) : seul account_status peut motiver le refus.
+insert into public.sessions (id, teacher_id, started_at, ended_at)
+values
+  ('b14fffff-0000-0000-0000-00000000000a',
+   'b1400000-0000-0000-0000-000000000004',
+   TIMESTAMPTZ '2030-01-03 03:00:00+00', TIMESTAMPTZ '2030-01-03 04:00:00+00');
+insert into public.sessions (id, teacher_id, started_at, ended_at, status)
+values
+  ('b14fffff-0000-0000-0000-00000000000b',
+   'b1400000-0000-0000-0000-000000000004',
+   TIMESTAMPTZ '2020-01-02 03:00:00+00',
+   TIMESTAMPTZ '2020-01-02 04:00:00+00', 'ended');
+insert into public.session_participants (session_id, profile_id, role)
+values
+  ('b14fffff-0000-0000-0000-00000000000a',
+   'b1400000-0000-0000-0000-000000000004', 'teacher'),
+  ('b14fffff-0000-0000-0000-00000000000b',
+   'b1400000-0000-0000-0000-000000000004', 'teacher');
+insert into public.session_shared_content
+  (session_id, resource_id, content_position, display_mode, revision, updated_by)
+values
+  ('b14fffff-0000-0000-0000-00000000000b',
+   'b14fffff-0000-0000-0000-000000000006',
+   '{"resource_id":"b14fffff-0000-0000-0000-000000000006","resource_version_id":null,"type_ancrage":"page","page":2,"sourate":null,"ayah":null,"section_id":null,"fraction":null}',
+   'page', 1, 'b1400000-0000-0000-0000-000000000004');
+
 set local role authenticated;
 select set_config('test.uid', 'b1400000-0000-0000-0000-000000000004', true);
 select set_config('test.jwt',
@@ -169,7 +196,7 @@ do $b14_disabled_account$
 begin
   begin
     perform public.publier_etat_partage(
-      'b14fffff-0000-0000-0000-000000000004',
+      'b14fffff-0000-0000-0000-00000000000a',
       'b14fffff-0000-0000-0000-000000000006', null,
       '{"resource_id":"b14fffff-0000-0000-0000-000000000006","resource_version_id":null,"type_ancrage":"page","page":8,"sourate":null,"ayah":null,"section_id":null,"fraction":null}',
       null, 'page', '[]', '[]', null, 1
@@ -179,7 +206,7 @@ begin
   end;
 
   begin
-    perform public.effacer_etat_partage('b14fffff-0000-0000-0000-000000000009');
+    perform public.effacer_etat_partage('b14fffff-0000-0000-0000-00000000000b');
     raise exception 'B-14: disabled teacher erased shared state';
   exception when insufficient_privilege then null;
   end;
