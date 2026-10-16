@@ -72,10 +72,13 @@ import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
 import '../../core/theme/accent_profil.dart';
 import '../admin_tableau/activite_recente.dart';
+import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
 import '../recherche/domaines/familles_eleves/moteurs_familles_eleves.dart';
 import '../recherche/domaines/familles_eleves/port_resolution_ra.dart';
 import '../recherche/domaines/familles_eleves/resolution_ra_demo.dart';
 import 'admin_x_demo.dart';
+import 'adulte_demo.dart'
+    show DonneesAdulteDemo, GenreTitulaireDemo, VueDemoAdulte;
 import 'alertes_demo.dart';
 import 'bibliotheque_admin_demo.dart';
 import 'cartes_classe_demo.dart';
@@ -254,6 +257,18 @@ List<Override> surchargesDemoTuteur({
       (Ref ref) async => const <ParcoursApprenant>[],
     ),
     monFuseauProvider.overrideWith((Ref ref) async => 'Europe/Paris'),
+    // Mon compte du tuteur de demonstration lit l'identite du titulaire ; sans
+    // ce double, le port « indisponible » la rend en tete de page. Identite
+    // existante du foyer Diallo (aucun nom nouveau). Avec un dossier, la
+    // personne est une enseignante, et l'eleve adulte fournit sa propre
+    // identite (eleves passes) : pas de double.
+    if (!avecDossier && eleves == null)
+      identiteTitulaireProvider.overrideWith(
+        (Ref ref) async => DonneesAdulteDemo.identite(
+          GenreTitulaireDemo.homme,
+          VueDemoAdulte.titulaire,
+        ),
+      ),
     // OFFRES-FAM-1 : le suivi des demandes du foyer de demonstration, et les
     // notifications de ses transitions (foyer de demonstration seulement).
     if (!avecDossier && eleves == null) ...surchargesSuiviDemandesDemo(),
