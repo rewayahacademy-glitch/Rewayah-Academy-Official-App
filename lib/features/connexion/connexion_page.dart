@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 
 import '../../core/auth/service_auth.dart';
+import '../../core/config/env.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/marque/logo_google.dart';
 import '../../core/router/routes.dart';
@@ -17,9 +18,48 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/marque_page.dart';
 import '../../core/widgets/page_shell.dart';
+import '../demo/mode_demonstration.dart';
 import '../demo/racine_demonstrable.dart';
 import 'feuille_appareil_eleve.dart';
 import 'recuperation_page.dart';
+
+/// L'environnement compile, lu par un provider pour que les tests le
+/// surchargent. La garde reste [environnementAutoriseDemo], la meme que
+/// `/demo/*` : ce provider ne fait que lui passer la valeur.
+final Provider<String> environnementConnexionProvider = Provider<String>(
+  (Ref ref) => Env.environnement,
+);
+
+/// Le chemin que prend le bouton principal. Le libelle et l'action sortent de
+/// cette seule fonction, pour que le bouton ne mente jamais.
+enum CheminConnexion {
+  /// Mot de passe de demonstration saisi : connexion sans lien.
+  motDePasse,
+
+  /// Adresse fictive de demonstration, sans mot de passe : entree directe.
+  demoDirecte,
+
+  /// Tous les autres cas : un lien part par courriel.
+  lien,
+}
+
+/// Le chemin pour un etat donne du formulaire. Pure, pour etre testee seule.
+CheminConnexion cheminConnexion({
+  required bool demo,
+  required String courriel,
+  required String motDePasse,
+}) {
+  if (!demo) {
+    return CheminConnexion.lien;
+  }
+  if (motDePasse.isNotEmpty) {
+    return CheminConnexion.motDePasse;
+  }
+  if (accesDemoDepuisCourriel(courriel) != null) {
+    return CheminConnexion.demoDirecte;
+  }
+  return CheminConnexion.lien;
+}
 
 /// Largeur de la carte d'entree.
 ///
@@ -109,23 +149,33 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     super.dispose();
   }
 
-  /// Vrai quand l'ecran doit proposer le raccourci de demonstration.
+  /// Vrai quand l'ecran propose le champ de mot de passe de demonstration.
+  ///
+  /// Deux verrous, tous deux hors production : le drapeau de compilation
+  /// (`AUTH_PAR_MOT_DE_PASSE`) et la garde d'environnement de `/demo/*`.
   ///
   /// `read` et non `watch` : c'est une decision de compilation, elle ne change
   /// pas sous les pieds d'un ecran deja monte.
-  bool get _demo => widget.demoAuth ?? ref.read(demoAuthActiveProvider);
+  bool get _demo =>
+      widget.demoAuth ??
+      (ref.read(demoAuthActiveProvider) &&
+          environnementAutoriseDemo(ref.read(environnementConnexionProvider)));
 
-  Future<void> _soumettre() => _demo ? _ouvrirDemonstration() : _envoyerLien();
+  /// Le chemin decide de l'action ; le libelle de [_Saisie] lit la meme fonction.
+  Future<void> _soumettre() {
+    final CheminConnexion chemin = cheminConnexion(
+      demo: _demo,
+      courriel: _courriel.text,
+      motDePasse: _motDePasse.text,
+    );
+    return chemin == CheminConnexion.lien
+        ? _envoyerLien()
+        : _ouvrirDemonstration();
+  }
 
   Future<void> _envoyerLien() async {
     if (!courrielPlausible(_courriel.text)) {
       setState(() => _erreur = t.connexion.erreurCourriel);
-      return;
-    }
-    // Un mot de passe saisi decide du chemin : le bouton principal connecte
-    // avec lui, au lieu d'envoyer un lien que la personne n'attend pas.
-    if (_motDePasse.text.isNotEmpty) {
-      await _ouvrirDemonstration();
       return;
     }
     setState(() {
@@ -352,6 +402,13 @@ class _Saisie extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    // Lu au rendu : chaque frappe reconstruit l'ecran (onChanged).
+    final CheminConnexion chemin = cheminConnexion(
+      demo: demo,
+      courriel: courriel.text,
+      motDePasse: motDePasse.text,
+    );
+    final bool versLien = chemin == CheminConnexion.lien;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -359,7 +416,7 @@ class _Saisie extends StatelessWidget {
         Text(t.connexion.titre, style: textes.headlineMedium),
         Ecart.vMd,
         Text(
-          t.connexion.intro,
+          versLien ? t.connexion.intro : t.connexion.introDemo,
           style: palette.inkMuted.applyTo(
             textes.bodyMedium ?? const TextStyle(),
           ),
@@ -393,7 +450,7 @@ class _Saisie extends StatelessWidget {
         ],
         Ecart.vXl,
         ActionPrincipale(
-          libelle: t.connexion.envoyerLien,
+          libelle: versLien ? t.connexion.envoyerLien : t.connexion.entrerDemo,
           onPress: onSoumettre,
           enCours: envoi,
         ),

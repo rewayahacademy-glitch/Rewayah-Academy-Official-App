@@ -86,7 +86,7 @@ void main() {
       );
       await tester.pump();
       final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
-        find.widgetWithText(ActionPrincipale, t.connexion.envoyerLien),
+        find.widgetWithText(ActionPrincipale, t.connexion.entrerDemo),
       );
       bouton.onPress!();
       await tester.pumpAndSettle();
@@ -356,7 +356,7 @@ void main() {
       );
       await tester.pump();
       final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
-        find.widgetWithText(ActionPrincipale, t.connexion.envoyerLien),
+        find.widgetWithText(ActionPrincipale, t.connexion.entrerDemo),
       );
       expect(bouton.onPress, isNotNull);
       bouton.onPress!();
@@ -393,7 +393,7 @@ void main() {
       );
       await tester.pump();
       final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
-        find.widgetWithText(ActionPrincipale, t.connexion.envoyerLien),
+        find.widgetWithText(ActionPrincipale, t.connexion.entrerDemo),
       );
       expect(bouton.onPress, isNotNull);
       bouton.onPress!();
