@@ -76,6 +76,7 @@ declare
     'creer_offre_horaire(text,text,text,smallint[],smallint,smallint)',
     'creer_profil_eleve_titulaire()',
     'creer_profil_enfant(uuid,uuid,text,text,integer,text)',
+    'creer_profil_enfant(uuid,uuid,text,text,integer,text,text)',
     'creer_profil_inscription(text,text,text,gender,text,boolean)',
     'creer_version_programme(uuid)',
     'decider_demande(uuid,boolean,text)',
