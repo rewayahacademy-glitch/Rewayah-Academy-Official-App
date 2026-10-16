@@ -72,5 +72,49 @@ begin
 end
 $b10_disabled_admin_cannot_configure$;
 
+do $b10_disabled_admin_cannot_read$
+declare
+  v_count integer;
+begin
+  begin
+    select count(*) into v_count from public.canal_support();
+    raise exception 'B-10: disabled admin unexpectedly read the support channel';
+  exception when insufficient_privilege then
+    null;
+  end;
+end
+$b10_disabled_admin_cannot_read$;
+
+reset role;
+
+do $b10_anon_acl$
+begin
+  if pg_catalog.has_function_privilege('anon', 'public.canal_support()', 'EXECUTE')
+     or pg_catalog.has_function_privilege(
+       'anon', 'public.configurer_canal_support(text,text)', 'EXECUTE'
+     ) then
+    raise exception 'B-10: anon unexpectedly has support RPC execution';
+  end if;
+end
+$b10_anon_acl$;
+
+set local role anon;
+do $b10_anon_calls$
+begin
+  begin
+    perform public.canal_support();
+    raise exception 'B-10: anon unexpectedly read the support channel';
+  exception when insufficient_privilege then
+    null;
+  end;
+
+  begin
+    perform public.configurer_canal_support('courriel', 'anon@example.test');
+    raise exception 'B-10: anon unexpectedly configured the support channel';
+  exception when insufficient_privilege then
+    null;
+  end;
+end
+$b10_anon_calls$;
 reset role;
 rollback;
