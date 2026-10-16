@@ -26,6 +26,7 @@
 --      etat de seance.
 
 -- Droits facon Supabase (alter default privileges du projet).
+\ir _acl_photo.sql
 grant usage on schema public to anon, authenticated, service_role;
 grant all on all tables in schema public to authenticated, service_role;
 grant all on all sequences in schema public to authenticated, service_role;
@@ -491,3 +492,5 @@ end $$;
 
 -- Retour a un role neutre pour les fichiers suivants.
 reset role;
+
+\ir _acl_retablir.sql

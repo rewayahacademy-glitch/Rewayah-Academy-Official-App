@@ -7,6 +7,7 @@
 -- base : il insere ses fixtures.
 
 -- Droits facon Supabase (alter default privileges du projet).
+\ir _acl_photo.sql
 grant usage on schema public to anon, authenticated, service_role;
 grant all on all tables in schema public to authenticated, service_role;
 grant all on all sequences in schema public to authenticated, service_role;
@@ -537,3 +538,5 @@ do $$
 begin
   raise notice 'ADM-05 : neuf controles verts.';
 end $$;
+
+\ir _acl_retablir.sql

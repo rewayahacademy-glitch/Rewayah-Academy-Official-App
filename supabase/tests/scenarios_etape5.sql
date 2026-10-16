@@ -7,6 +7,7 @@
 -- base : il insere ses fixtures.
 
 -- Droits facon Supabase (alter default privileges du projet).
+\ir _acl_photo.sql
 grant usage on schema public to anon, authenticated, service_role;
 grant all on all tables in schema public to authenticated, service_role;
 grant all on all sequences in schema public to authenticated, service_role;
@@ -487,3 +488,5 @@ begin
   raise notice 'Vue OK : etat, heure d''entree et statut de seance voyagent ensemble';
 end;
 $$;
+
+\ir _acl_retablir.sql

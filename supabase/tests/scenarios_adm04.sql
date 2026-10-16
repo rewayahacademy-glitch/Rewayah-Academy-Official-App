@@ -20,6 +20,7 @@
 -- passe apres lui, y compris lui-meme au prochain tour.
 
 -- Droits facon Supabase (alter default privileges du projet).
+\ir _acl_photo.sql
 grant usage on schema public to anon, authenticated, service_role;
 grant all on all tables in schema public to authenticated, service_role;
 grant all on all sequences in schema public to authenticated, service_role;
@@ -610,3 +611,5 @@ begin
 
   raise notice 'J9 ok : les filtres ne proposent que ce que le journal contient';
 end $$;
+
+\ir _acl_retablir.sql

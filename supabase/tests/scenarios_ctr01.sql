@@ -19,6 +19,7 @@
 -- fonction que l'ADR-011 confirme pour le MVP-0.
 
 -- Droits facon Supabase (alter default privileges du projet).
+\ir _acl_photo.sql
 grant usage on schema public to anon, authenticated, service_role;
 grant all on all tables in schema public to authenticated, service_role;
 grant all on all sequences in schema public to authenticated, service_role;
@@ -597,3 +598,5 @@ begin
     raise exception 'C10 : refus attendu, mais le tuteur a ete inscrit comme %', v_role;
   end if;
 end $$;
+
+\ir _acl_retablir.sql

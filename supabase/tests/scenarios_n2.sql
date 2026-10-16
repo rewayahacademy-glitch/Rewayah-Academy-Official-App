@@ -12,6 +12,7 @@
 -- precedents ont ecrit, et l'emission d'un jeton ecrit dans `audit_logs`.
 
 -- Droits facon Supabase (alter default privileges du projet).
+\ir _acl_photo.sql
 grant usage on schema public to anon, authenticated, service_role;
 grant all on all tables in schema public to authenticated, service_role;
 grant all on all sequences in schema public to authenticated, service_role;
@@ -702,3 +703,5 @@ do $$
 begin
   raise notice 'N2 : dix controles verts.';
 end $$;
+
+\ir _acl_retablir.sql

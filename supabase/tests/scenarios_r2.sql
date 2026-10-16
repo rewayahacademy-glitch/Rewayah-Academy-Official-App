@@ -26,6 +26,7 @@
 -- `audit_logs`.
 
 -- Droits facon Supabase (alter default privileges du projet).
+\ir _acl_photo.sql
 grant usage on schema public to anon, authenticated, service_role;
 grant all on all tables in schema public to authenticated, service_role;
 grant all on all sequences in schema public to authenticated, service_role;
@@ -848,3 +849,5 @@ begin
     raise exception 'R13 : % cles de configuration ressemblent a un secret R2', v_fuite;
   end if;
 end $$;
+
+\ir _acl_retablir.sql

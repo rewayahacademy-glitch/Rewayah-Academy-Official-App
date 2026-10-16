@@ -17,6 +17,7 @@
 -- N4 ajoute -- le prenom et la consolidation.
 
 -- Droits facon Supabase (alter default privileges du projet).
+\ir _acl_photo.sql
 grant usage on schema public to anon, authenticated, service_role;
 grant all on all tables in schema public to authenticated, service_role;
 grant all on all sequences in schema public to authenticated, service_role;
@@ -472,3 +473,5 @@ end $$;
 
 update public.app_config set value = 'false'::jsonb
  where key = 'allow_multi_participant_sessions';
+
+\ir _acl_retablir.sql
