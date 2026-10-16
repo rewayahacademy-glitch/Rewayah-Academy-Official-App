@@ -35,9 +35,11 @@ import 'core/foyer/reprises_admin_supabase.dart';
 import 'core/i18n/langue_demarrage.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/observabilite/supervision.dart';
+import 'core/offres/demandes_suivi_supabase.dart';
 import 'core/offres/frise_demandes_supabase.dart';
 import 'core/offres/port_frise_demande.dart';
 import 'core/offres/port_regroupements_admin.dart';
+import 'core/offres/port_suivi_demandes.dart';
 import 'core/offres/regroupements_c11bis_supabase.dart';
 import 'core/recrutement/port_signature_contrat.dart';
 import 'core/recrutement/port_statuts_signature.dart';
@@ -49,6 +51,9 @@ import 'core/tc_etat_partage/providers_tc_etat_partage.dart';
 import 'core/tc_observation/historique_observations_admin_supabase.dart';
 import 'core/tc_observation/historique_observations_supabase.dart';
 import 'core/tc_observation/port_historique_observations.dart';
+import 'core/tc_outils/assignations_supabase.dart';
+import 'core/tc_outils/port_assignations.dart';
+import 'core/tc_parcours/port_travail_a_venir.dart';
 import 'features/_dev/playground/playground_racine.dart';
 import 'features/com_annonces/annonces_supabase.dart';
 import 'features/com_annonces/port_annonces.dart';
@@ -98,6 +103,17 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portReponsePresentationProvider.overrideWithValue(
     ReponsePresentationSupabase(Supabase.instance.client),
+  ),
+  portSuiviDemandesProvider.overrideWithValue(
+    DemandesSuiviSupabase(Supabase.instance.client),
+  ),
+  // Travail a preparer d'une Classe (learning_assignment, RLS 0061) : ecriture
+  // enseignante du dock et lecture de la famille.
+  portAssignationsProvider.overrideWithValue(
+    AssignationsSupabase(Supabase.instance.client),
+  ),
+  assignationsFamilleProvider.overrideWithValue(
+    AssignationsSupabase(Supabase.instance.client),
   ),
   // Dossiers et recrutement : verdict d'acces aux pieces KYC, statuts des
   // signatures et signature du contrat enseignant versionne (F70).
