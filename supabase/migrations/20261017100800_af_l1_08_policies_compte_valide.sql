@@ -66,6 +66,8 @@
 -- Hors liste : wallet_entries_admin_accountant_all n'existe plus (remplacee par L1-06,
 -- elle ne teste plus un role nu). Aucune des 49 policies n'etait deja gardee.
 
+begin;
+
 alter policy app_config_admin_read on public.app_config
   using (coalesce(((public.app_role() = 'admin'::app_role)) and public.app_account_valid(), false));
 
@@ -249,3 +251,5 @@ begin
     raise exception 'L1-08 postflight: policies sans app_account_valid : %', coalesce(v_liste, '(aucune)');
   end if;
 end $postflight$;
+
+commit;
