@@ -814,6 +814,7 @@
     "changerAdresse": "Utiliser une autre adresse",
     "erreurCourriel": "Cette adresse ne semble pas valide.",
     "erreurEnvoi": "L'envoi n'a pas abouti. Réessayez dans un instant.",
+    "erreurMotDePasse": "Adresse ou mot de passe incorrect. Vérifiez les deux, ou videz le mot de passe pour recevoir un lien par courriel.",
     "appareilEleveAide": "Vous êtes tuteur et vous préparez l'appareil d'un élève\u00a0?",
     "appareilEleve": "Connecter l'appareil d'un élève",
     "renvoyer": "Renvoyer le lien",

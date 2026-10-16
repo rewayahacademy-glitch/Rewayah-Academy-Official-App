@@ -122,6 +122,12 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
       setState(() => _erreur = t.connexion.erreurCourriel);
       return;
     }
+    // Un mot de passe saisi decide du chemin : le bouton principal connecte
+    // avec lui, au lieu d'envoyer un lien que la personne n'attend pas.
+    if (_motDePasse.text.isNotEmpty) {
+      await _ouvrirDemonstration();
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -189,6 +195,10 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
         await ref
             .read(serviceAuthProvider)
             .connexionMotDePasse(_courriel.text.trim(), _motDePasse.text);
+      }
+    } on AuthException {
+      if (mounted) {
+        setState(() => _erreur = t.connexion.erreurMotDePasse);
       }
     } on Object {
       if (mounted) {

@@ -962,6 +962,7 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String get changerAdresse => 'استخدام عنوان آخر';
 	@override String get erreurCourriel => 'يبدو أن هذا العنوان غير صالح.';
 	@override String get erreurEnvoi => 'لم يكتمل الإرسال. أعد المحاولة بعد لحظة.';
+	@override String get erreurMotDePasse => 'العنوان أو كلمة المرور غير صحيحين. تحقّق منهما، أو اترك كلمة المرور فارغة لتصلك رسالة بالرابط.';
 	@override String get appareilEleveAide => 'أنت وليّ أمر وتجهّز جهاز طالب؟';
 	@override String get appareilEleve => 'ربط جهاز طالب';
 	@override String get renvoyer => 'إعادة إرسال الرابط';
@@ -19678,6 +19679,7 @@ extension on TraductionsAr {
 			'connexion.changerAdresse' => 'استخدام عنوان آخر',
 			'connexion.erreurCourriel' => 'يبدو أن هذا العنوان غير صالح.',
 			'connexion.erreurEnvoi' => 'لم يكتمل الإرسال. أعد المحاولة بعد لحظة.',
+			'connexion.erreurMotDePasse' => 'العنوان أو كلمة المرور غير صحيحين. تحقّق منهما، أو اترك كلمة المرور فارغة لتصلك رسالة بالرابط.',
 			'connexion.appareilEleveAide' => 'أنت وليّ أمر وتجهّز جهاز طالب؟',
 			'connexion.appareilEleve' => 'ربط جهاز طالب',
 			'connexion.renvoyer' => 'إعادة إرسال الرابط',
@@ -19977,9 +19979,9 @@ extension on TraductionsAr {
 			'adulte.invitation.enteteLui' => 'حساب شخصي له',
 			'adulte.invitation.phraseElle' => 'ستستخدم زوجتك حسابها الخاص. لن تستطيع إدارة أسرتك ولا ملفات الطلاب التي أنشأتها.',
 			'adulte.invitation.phraseLui' => 'سيستخدم زوجك حسابه الخاص. لن يستطيع إدارة أسرتك ولا ملفات الطلاب التي أنشأتها.',
-			'adulte.invitation.prenom' => 'الاسم',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.invitation.prenom' => 'الاسم',
 			'adulte.invitation.nom' => 'اللقب',
 			'adulte.invitation.nomAide' => 'اختياري.',
 			'adulte.invitation.courriel' => 'البريد الإلكتروني',
@@ -20491,9 +20493,9 @@ extension on TraductionsAr {
 			'controleur.observation.interventionAdminAide' => 'حين يجب أن تتصرف الإدارة · سيُطلب نصك، وتستلمه مع التقرير',
 			'controleur.observation.questionDomaine' => 'أي مجال تخص؟',
 			'controleur.observation.contexteDomaine' => 'يساعد المجال الإدارة على قراءة ملاحظتك.',
-			'controleur.observation.pedagogie' => 'التعليم',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.pedagogie' => 'التعليم',
 			'controleur.observation.pedagogieAide' => 'حين يتعلق الأمر بالتدريس: الشرح، التدرج، المواد',
 			'controleur.observation.interaction' => 'التفاعل مع الطلاب',
 			'controleur.observation.interactionAide' => 'حين يتعلق الأمر بالتواصل بين المعلم والطلاب',

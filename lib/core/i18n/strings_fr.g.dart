@@ -718,6 +718,9 @@ class Traductions$connexion$fr {
 	/// fr: 'L'envoi n'a pas abouti. Réessayez dans un instant.'
 	String get erreurEnvoi => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.';
 
+	/// fr: 'Adresse ou mot de passe incorrect. Vérifiez les deux, ou videz le mot de passe pour recevoir un lien par courriel.'
+	String get erreurMotDePasse => 'Adresse ou mot de passe incorrect. Vérifiez les deux, ou videz le mot de passe pour recevoir un lien par courriel.';
+
 	/// fr: 'Vous êtes tuteur et vous préparez l'appareil d'un élève ?'
 	String get appareilEleveAide => 'Vous êtes tuteur et vous préparez l\'appareil d\'un élève ?';
 
@@ -32589,6 +32592,7 @@ extension on Traductions {
 			'connexion.changerAdresse' => 'Utiliser une autre adresse',
 			'connexion.erreurCourriel' => 'Cette adresse ne semble pas valide.',
 			'connexion.erreurEnvoi' => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.',
+			'connexion.erreurMotDePasse' => 'Adresse ou mot de passe incorrect. Vérifiez les deux, ou videz le mot de passe pour recevoir un lien par courriel.',
 			'connexion.appareilEleveAide' => 'Vous êtes tuteur et vous préparez l\'appareil d\'un élève ?',
 			'connexion.appareilEleve' => 'Connecter l\'appareil d\'un élève',
 			'connexion.renvoyer' => 'Renvoyer le lien',
@@ -32949,9 +32953,9 @@ extension on Traductions {
 			'foyer.vide.titre' => 'Aucun profil élève pour l\'instant',
 			'foyer.vide.phrase' => 'Ajoutez un profil élève pour l\'inscrire dans une classe et relier son appareil.',
 			'foyer.membre.sansClasse' => 'Pas encore de classe',
-			'foyer.membre.classeEchec' => 'Classe non lue',
 			_ => null,
 		} ?? switch (path) {
+			'foyer.membre.classeEchec' => 'Classe non lue',
 			'foyer.membre.accesSansEcheance' => 'Accès sans échéance',
 			'foyer.membre.accesJusquau' => ({required Object date}) => 'Accès jusqu\'au ${date}',
 			'foyer.membre.accesExpire' => ({required Object date}) => 'Accès expiré depuis le ${date}',
@@ -33463,9 +33467,9 @@ extension on Traductions {
 			'dossiers.file.aucuneSelection' => 'Sélectionnez un dossier à examiner.',
 			'dossiers.file.suivants' => 'Charger les dossiers suivants',
 			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'Ouvrir le dossier de ${nom}',
-			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'Ouvrir le dossier d\'${nom}',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'Ouvrir le dossier d\'${nom}',
 			'dossiers.file.enVerification' => 'En cours de vérification',
 			'dossiers.file.sansNom' => 'Dossier sans nom disponible',
 			'dossiers.file.legende' => ({required Object type, required Object date}) => '${type} · ${date}',
@@ -33977,9 +33981,9 @@ extension on Traductions {
 			'admin.groupes.formulaire.disponibilitesInconnues' => ({required Object deNom}) => 'Les disponibilités ${deNom} ne sont pas encore lisibles ici : choisissez un jour et une heure ci-dessous.',
 			'admin.groupes.formulaire.jour' => 'Jour',
 			'admin.groupes.formulaire.heure' => 'Heure',
-			'admin.groupes.formulaire.heureValeur' => ({required Object heure}) => '${heure} h',
 			_ => null,
 		} ?? switch (path) {
+			'admin.groupes.formulaire.heureValeur' => ({required Object heure}) => '${heure} h',
 			'admin.groupes.formulaire.fuseauEnseignant' => ({required Object fuseau}) => 'Heures lues dans le fuseau ${fuseau}, celui de l\'enseignant.',
 			'admin.groupes.formulaire.fuseauDefaut' => ({required Object fuseau}) => 'Heures lues dans le fuseau ${fuseau}, retenu par défaut.',
 			'admin.groupes.formulaire.fuseauNonTransmis' => ({required Object fuseau}) => 'Heures lues dans le fuseau ${fuseau}, celui que le serveur retient pour l\'instant. Le fuseau de l\'enseignant sera pris en compte dès que le serveur l\'acceptera.',
@@ -34491,9 +34495,9 @@ extension on Traductions {
 			'admin.agents.dureeHeure' => ({required Object nombre}) => '${nombre} h',
 			'admin.agents.dureePlafond' => 'Vingt-quatre heures au maximum, et la base le vérifie elle-même.',
 			'admin.agents.identite' => 'Les prénoms',
-			'admin.agents.identiteMasquee' => 'Masqués',
 			_ => null,
 		} ?? switch (path) {
+			'admin.agents.identiteMasquee' => 'Masqués',
 			'admin.agents.identiteMasqueeDetail' => 'L\'agent lit les identifiants (ELV-0042) à la place des prénoms. La substitution est faite par la base : le prénom ne sort pas.',
 			'admin.agents.identiteVisible' => 'Visibles',
 			'admin.agents.identiteVisibleDetail' => 'L\'agent lit les prénoms, comme la personne observée les voit.',
@@ -35005,9 +35009,9 @@ extension on Traductions {
 			'admin.tirage.statutAttribuee' => 'Attribuée',
 			'admin.tirage.statutEnCours' => 'Contrôle en cours',
 			'admin.tirage.statutControlee' => 'Contrôlée',
-			'admin.tirage.statutNonControlee' => 'Non contrôlée',
 			_ => null,
 		} ?? switch (path) {
+			'admin.tirage.statutNonControlee' => 'Non contrôlée',
 			'admin.tirage.statutDejaControlee' => 'Déjà contrôlée par un autre',
 			'admin.tirage.rapportEnvoye' => 'Rapport envoyé à l\'administration',
 			'admin.tirage.critereAleatoire' => 'Au hasard',
@@ -35519,9 +35523,9 @@ extension on Traductions {
 			'compte.cameraLabel' => 'Caméra',
 			'compte.cameraAutorisee' => 'Autorisée',
 			'compte.cameraInterdite' => 'Interdite',
-			'compte.accesSansFin' => 'Accès sans date de fin',
 			_ => null,
 		} ?? switch (path) {
+			'compte.accesSansFin' => 'Accès sans date de fin',
 			'compte.accesJusqua' => ({required Object date}) => 'Accès jusqu\'au ${date}',
 			'compte.statutActif' => 'Actif',
 			'compte.statutProvisoire' => 'Actif, à titre provisoire',
@@ -36033,9 +36037,9 @@ extension on Traductions {
 			'classe.entree.demo.etats.preparation' => 'Préparation en cours',
 			'classe.entree.demo.etats.attente' => 'Attente avant le début',
 			'classe.entree.demo.etats.enDirect' => 'En direct',
-			'classe.entree.demo.etats.tempsEcoule' => 'Temps prévu écoulé',
 			_ => null,
 		} ?? switch (path) {
+			'classe.entree.demo.etats.tempsEcoule' => 'Temps prévu écoulé',
 			'classe.entree.demo.etats.terminee' => 'Terminée',
 			'classe.entree.demo.etats.annulee' => 'Annulée',
 			'classe.entree.demo.etats.horsLigne' => 'Hors ligne',
@@ -36547,9 +36551,9 @@ extension on Traductions {
 			'enseignant.profil.identite' => 'Identité professionnelle',
 			'enseignant.profil.pays' => 'Pays',
 			'enseignant.profil.langues' => 'Langues',
-			'enseignant.profil.fuseau' => 'Fuseau de mes cours',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.profil.fuseau' => 'Fuseau de mes cours',
 			'enseignant.profil.fuseauDetail' => 'C\'est lui qui décide de l\'heure de vos créneaux, pas l\'heure de cet appareil.',
 			'enseignant.profil.plafond' => 'Plafond hebdomadaire',
 			'enseignant.profil.plafondDetail' => 'Fixé par l\'académie.',
@@ -37061,9 +37065,9 @@ extension on Traductions {
 			'tc.bibliotheque.rechercheLibelle' => 'Rechercher un support',
 			'tc.bibliotheque.effacerRecherche' => 'Tout afficher',
 			'tc.bibliotheque.filtre.type' => 'Type',
-			'tc.bibliotheque.filtre.disponibilite' => 'Disponibilité',
 			_ => null,
 		} ?? switch (path) {
+			'tc.bibliotheque.filtre.disponibilite' => 'Disponibilité',
 			'tc.bibliotheque.sections.continuer' => 'Continuer',
 			'tc.bibliotheque.sections.pourCeGroupe' => 'Pour cette Classe',
 			'tc.bibliotheque.sections.groupe' => 'Supports à afficher',
@@ -37575,9 +37579,9 @@ extension on Traductions {
 			'adulte.recharge.payer' => ({required Object montant}) => 'Payer ${montant}',
 			'adulte.recharge.horsLignePayer' => 'Vous pourrez payer quand la connexion sera revenue.',
 			'adulte.recharge.paiementEchecTitre' => 'Le paiement n\'a pas été confirmé.',
-			'adulte.recharge.paiementEchecPhrase' => 'Vérifiez avant de réessayer.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.recharge.paiementEchecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.recharge.paiementIndisponibleTitre' => 'Paiement pas encore disponible',
 			'adulte.recharge.paiementIndisponiblePhrase' => 'Aucun paiement n\'a été effectué. Le paiement en ligne n\'est pas encore ouvert dans l\'application.',
 			'adulte.recharge.revenirPaiements' => 'Revenir aux paiements du foyer',
@@ -38089,9 +38093,9 @@ extension on Traductions {
 			'suiviDemandes.debutValeur' => ({required Object date, required Object heure, required Object deVille}) => '${date} à ${heure}, heure ${deVille}',
 			'suiviDemandes.debutAFixer' => 'La date du premier cours s\'affichera ici dès qu\'elle sera fixée.',
 			'suiviDemandes.enseignant' => 'Enseignant',
-			'suiviDemandes.personnaliseNotice' => 'Ce créneau ne s\'ouvrira que si d\'autres élèves le choisissent et remplissent la classe.',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.personnaliseNotice' => 'Ce créneau ne s\'ouvrira que si d\'autres élèves le choisissent et remplissent la classe.',
 			'suiviDemandes.close.retiree' => 'Demande retirée',
 			'suiviDemandes.close.nonRetenue' => 'Demande non retenue',
 			'suiviDemandes.close.close' => 'Demande close',
@@ -38603,9 +38607,9 @@ extension on Traductions {
 			'com.communaute.demo.lienAffilie' => 'Lien affilié bloqué',
 			'com.communaute.demo.vente' => 'Vente bloquée',
 			'com.communaute.demo.signalementNonConfirme' => 'Signalement non confirmé',
-			'com.communaute.demo.choisir' => 'Choisissez une situation à essayer, vue par un enseignant.',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.demo.choisir' => 'Choisissez une situation à essayer, vue par un enseignant.',
 			'com.communaute.demo.aujourdhui' => 'Aujourd\'hui, avec le raccourci',
 			'com.communaute.demo.nominal' => 'Six publications',
 			'com.communaute.demo.publication' => 'Une publication ouverte',
@@ -39117,9 +39121,9 @@ extension on Traductions {
 			'comptable.commun.reserveStrategique' => 'Réserve stratégique',
 			'comptable.commun.tresorerieLibre' => 'Trésorerie libre',
 			'comptable.commun.tresorerieDetenue' => 'Trésorerie détenue',
-			'comptable.commun.fondsProteges' => 'Fonds protégés',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.commun.fondsProteges' => 'Fonds protégés',
 			'comptable.commun.enTransit' => 'En transit',
 			'comptable.commun.tresorerieLibreDetail' => 'Ce qui reste réellement disponible après les fonds protégés, les obligations et le transit.',
 			'comptable.commun.objectifFixe' => 'Objectif : montant fixe',
@@ -39631,9 +39635,9 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.capaciteNonEvaluee' => 'Pas encore évaluée',
 			'comptable.beneficiaires.profil.enAttente' => 'Paiements qui attendent ce profil',
 			'comptable.beneficiaires.profil.proprietaire' => ({required Object nom}) => 'Seul ${nom} peut saisir ou modifier ses coordonnées de paiement. Vous en voyez une version masquée.',
-			'comptable.beneficiaires.profil.historiqueTitre' => 'Historique des paiements',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.profil.historiqueTitre' => 'Historique des paiements',
 			'comptable.beneficiaires.profil.historiqueVide' => 'Aucun paiement versé à ce bénéficiaire pour l\'instant.',
 			'comptable.beneficiaires.profil.journalTitre' => 'Journal du profil',
 			'comptable.beneficiaires.profil.journalVide' => 'Aucune modification enregistrée sur ce profil pour l\'instant.',
