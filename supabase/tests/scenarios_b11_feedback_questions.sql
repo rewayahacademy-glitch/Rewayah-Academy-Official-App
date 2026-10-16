@@ -3,7 +3,8 @@ begin;
 
 insert into auth.users (id, email) values
   ('f1650000-0000-0000-0000-000000000001', 'f1-feedback-teacher@example.test'),
-  ('f1650000-0000-0000-0000-000000000002', 'f1-feedback-student@example.test');
+  ('f1650000-0000-0000-0000-000000000002', 'f1-feedback-student@example.test'),
+  ('f1650000-0000-0000-0000-000000000003', 'f1-feedback-disabled@example.test');
 insert into public.households (id, timezone)
 values ('f16fffff-0000-0000-0000-000000000001', 'Europe/Paris');
 insert into public.profiles
@@ -12,7 +13,9 @@ values
   ('f1650000-0000-0000-0000-000000000001', 'F1FEEDBACKTEACH', 'teacher',
    'f16fffff-0000-0000-0000-000000000001', 'Fixture', 'Teacher', 'provisional_active'),
   ('f1650000-0000-0000-0000-000000000002', 'F1FEEDBACKSTUD', 'student',
-   'f16fffff-0000-0000-0000-000000000001', 'Fixture', 'Student', 'active');
+   'f16fffff-0000-0000-0000-000000000001', 'Fixture', 'Student', 'active'),
+  ('f1650000-0000-0000-0000-000000000003', 'F1FEEDBACKDISAB', 'teacher',
+   'f16fffff-0000-0000-0000-000000000001', 'Disabled', 'Teacher', 'disabled');
 insert into public.student_profiles (profile_id, student_type, interface_mode)
 values ('f1650000-0000-0000-0000-000000000002', 'minor', 'child');
 insert into public.groupes
@@ -123,5 +126,119 @@ begin
 end
 $feedback_teacher$;
 
+reset role;
+
+-- Le compte desactive agit sur SON groupe et SA seance (il en est participant et
+-- elle est echantillonnee pour lui) : seul account_status peut motiver le refus.
+insert into public.groupes
+  (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local)
+values ('f16fffff-0000-0000-0000-000000000003',
+        'f1650000-0000-0000-0000-000000000003', 'enfant', 5,
+        'Feedback disabled fixture', 2, 11);
+do $feedback_disabled_fixture$
+declare
+  v_session uuid;
+  v_sel text;
+  v_cadence integer := public.app_config_int('feedback_cadence_seances', 4);
+  v_hash bytea;
+  v_bucket bigint;
+  v_found boolean := false;
+  i integer;
+begin
+  select (c.value #>> '{}') into v_sel
+  from public.app_config c where c.key = 'feedback_empreinte_sel';
+  v_sel := coalesce(v_sel, '');
+  for i in 200..400 loop
+    v_session := ('f16fffff-0000-0000-0000-' || pg_catalog.lpad(i::text, 12, '0'))::uuid;
+    v_hash := extensions.digest(
+      v_sel || '|f1650000-0000-0000-0000-000000000003|' || v_session::text, 'sha256');
+    v_bucket := get_byte(v_hash, 0)::bigint * 16777216
+              + get_byte(v_hash, 1)::bigint * 65536
+              + get_byte(v_hash, 2)::bigint * 256
+              + get_byte(v_hash, 3)::bigint;
+    if mod(v_bucket, v_cadence::bigint) = 0 then
+      insert into public.sessions (id, teacher_id, groupe_id, started_at, ended_at)
+      values (v_session, 'f1650000-0000-0000-0000-000000000003',
+              'f16fffff-0000-0000-0000-000000000003',
+              TIMESTAMPTZ '2031-01-02 03:00:00+00' + pg_catalog.make_interval(days => i),
+              TIMESTAMPTZ '2031-01-02 04:00:00+00' + pg_catalog.make_interval(days => i));
+      insert into public.session_participants(session_id, profile_id, role)
+      values (v_session, 'f1650000-0000-0000-0000-000000000003', 'student');
+      perform pg_catalog.set_config('test.disabled_session', v_session::text, true);
+      v_found := true;
+      exit;
+    end if;
+  end loop;
+  if not v_found then
+    raise exception 'B-11 feedback: aucune seance echantillonnee pour le compte desactive';
+  end if;
+end
+$feedback_disabled_fixture$;
+
+set local role authenticated;
+select pg_catalog.set_config('test.uid', 'f1650000-0000-0000-0000-000000000003', true);
+select pg_catalog.set_config('test.jwt',
+  '{"app_metadata":{"role":"teacher","household_id":"f16fffff-0000-0000-0000-000000000001"}}', true);
+do $feedback_disabled_account$
+declare
+  v_question jsonb;
+  v_session uuid := pg_catalog.current_setting('test.disabled_session')::uuid;
+begin
+  v_question := public.question_feedback_pour(v_session);
+  if v_question is not null then
+    raise exception 'B-11 feedback: disabled account received a question';
+  end if;
+
+  begin
+    perform public.soumettre_feedback(v_session, 'comprehension', 'bien');
+    raise exception 'B-11 feedback: disabled account submitted feedback';
+  exception when insufficient_privilege then null;
+  end;
+
+  begin
+    perform public.tendance_feedback_comprehension('f16fffff-0000-0000-0000-000000000003');
+    raise exception 'B-11 feedback: disabled account read the aggregate';
+  exception when insufficient_privilege then null;
+  end;
+end
+$feedback_disabled_account$;
+
+reset role;
+do $feedback_anon_acl$
+begin
+  if pg_catalog.has_function_privilege('anon', 'public.question_feedback_pour(uuid)', 'EXECUTE')
+     or pg_catalog.has_function_privilege('anon', 'public.soumettre_feedback(uuid,text,text)', 'EXECUTE')
+     or pg_catalog.has_function_privilege(
+       'anon', 'public.tendance_feedback_comprehension(uuid)', 'EXECUTE'
+     ) then
+    raise exception 'B-11 feedback: anon unexpectedly has feedback RPC execution';
+  end if;
+end
+$feedback_anon_acl$;
+
+set local role anon;
+do $feedback_anon_calls$
+begin
+  begin
+    perform public.question_feedback_pour('f16fffff-0000-0000-0000-000000000001');
+    raise exception 'B-11 feedback: anon requested a question';
+  exception when insufficient_privilege then null;
+  end;
+
+  begin
+    perform public.soumettre_feedback(
+      'f16fffff-0000-0000-0000-000000000001', 'comprehension', 'bien'
+    );
+    raise exception 'B-11 feedback: anon submitted feedback';
+  exception when insufficient_privilege then null;
+  end;
+
+  begin
+    perform public.tendance_feedback_comprehension('f16fffff-0000-0000-0000-000000000002');
+    raise exception 'B-11 feedback: anon read the aggregate';
+  exception when insufficient_privilege then null;
+  end;
+end
+$feedback_anon_calls$;
 reset role;
 rollback;
