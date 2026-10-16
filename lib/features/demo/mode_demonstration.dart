@@ -70,6 +70,7 @@ import '../../core/tc_observation/activation_observation.dart';
 import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
+import '../../core/tc_parcours/port_travail_a_venir.dart';
 import '../../core/theme/accent_profil.dart';
 import '../admin_tableau/activite_recente.dart';
 import '../recherche/domaines/familles_eleves/moteurs_familles_eleves.dart';
@@ -80,6 +81,7 @@ import 'alertes_demo.dart';
 import 'bibliotheque_admin_demo.dart';
 import 'cartes_classe_demo.dart';
 import 'catalogue_demo.dart';
+import 'classe_demo.dart' show TravailAVenirDemo;
 import 'classe_form_demo.dart';
 import 'classes_admin_demo.dart';
 import 'dossiers_demo.dart';
@@ -241,6 +243,9 @@ List<Override> surchargesDemoTuteur({
       }),
     ),
     portClassesFoyerProvider.overrideWithValue(const ClassesFoyerDemo()),
+    // L4-05 : « Avant le prochain cours » lit un travail realiste, jamais
+    // « pas encore relie » alors que le port existe.
+    portTravailAVenirProvider.overrideWithValue(const TravailAVenirDemo()),
     portSeancesFamilleProvider.overrideWithValue(SeancesFamilleDemo()),
     portCatalogueClassesProvider.overrideWithValue(
       const CatalogueClassesDemo(),
@@ -603,7 +608,13 @@ abstract final class DonneesDemo {
   static const String groupeAicha = 'demo-groupe-coran-1';
   static const String groupeYusuf = 'demo-groupe-arabe-1';
 
-  static final DateTime finAcces = DateTime.utc(2099, 12, 31);
+  /// La fin d'acces de demonstration : le dernier jour du mois suivant,
+  /// calculee une fois au chargement (L4-05), jamais une date de 2099.
+  static final DateTime finAcces = finAccesDepuis(DateTime.now());
+
+  /// Le dernier jour (UTC) du mois suivant [maintenant]. Pure, pour les tests.
+  static DateTime finAccesDepuis(DateTime maintenant) =>
+      DateTime.utc(maintenant.year, maintenant.month + 2, 0);
 
   static final List<EleveDuFoyer> eleves = <EleveDuFoyer>[
     EleveDuFoyer(

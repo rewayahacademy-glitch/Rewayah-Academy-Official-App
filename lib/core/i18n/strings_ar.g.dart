@@ -12080,7 +12080,7 @@ class _Traductions$foyer$ajout$pourQui$ar extends Traductions$foyer$ajout$pourQu
 	@override String get enfantDescription => 'ملف مرتبط بأسرتك، تديره نيابة عنه.';
 	@override String get enfantAttente => 'ممكن بمجرد فتح وصولك.';
 	@override String get moiTitre => 'أنا';
-	@override String get moiDescription => 'غير ممكن بعد: متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا.';
+	@override String get moiDescription => 'يسجّل البالغ نفسه من حسابه الخاص.';
 }
 
 // Path: foyer.ajout.identite
@@ -20048,7 +20048,7 @@ extension on TraductionsAr {
 			'foyer.ajout.pourQui.enfantDescription' => 'ملف مرتبط بأسرتك، تديره نيابة عنه.',
 			'foyer.ajout.pourQui.enfantAttente' => 'ممكن بمجرد فتح وصولك.',
 			'foyer.ajout.pourQui.moiTitre' => 'أنا',
-			'foyer.ajout.pourQui.moiDescription' => 'غير ممكن بعد: متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا.',
+			'foyer.ajout.pourQui.moiDescription' => 'يسجّل البالغ نفسه من حسابه الخاص.',
 			'foyer.ajout.identite.question' => 'من هو الطالب؟',
 			'foyer.ajout.identite.sousTitre' => 'اسمه ولقبه وعمره.',
 			'foyer.ajout.identite.prenom' => 'الاسم',

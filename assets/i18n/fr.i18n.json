@@ -1353,7 +1353,7 @@
         "enfantDescription": "Un profil rattaché à votre foyer, que vous gérez pour lui.",
         "enfantAttente": "Possible dès que votre accès est ouvert.",
         "moiTitre": "Moi-même",
-        "moiDescription": "Pas encore possible\u00a0: suivre vous-même les cours avec votre propre profil élève sera proposé prochainement."
+        "moiDescription": "Un adulte s'inscrit depuis son propre compte."
       },
       "identite": {
         "question": "Qui est l'élève\u00a0?",

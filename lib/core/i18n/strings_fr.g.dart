@@ -19534,8 +19534,8 @@ class Traductions$foyer$ajout$pourQui$fr {
 	/// fr: 'Moi-même'
 	String get moiTitre => 'Moi-même';
 
-	/// fr: 'Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement.'
-	String get moiDescription => 'Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement.';
+	/// fr: 'Un adulte s'inscrit depuis son propre compte.'
+	String get moiDescription => 'Un adulte s\'inscrit depuis son propre compte.';
 }
 
 // Path: foyer.ajout.identite
@@ -33265,7 +33265,7 @@ extension on Traductions {
 			'foyer.ajout.pourQui.enfantDescription' => 'Un profil rattaché à votre foyer, que vous gérez pour lui.',
 			'foyer.ajout.pourQui.enfantAttente' => 'Possible dès que votre accès est ouvert.',
 			'foyer.ajout.pourQui.moiTitre' => 'Moi-même',
-			'foyer.ajout.pourQui.moiDescription' => 'Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement.',
+			'foyer.ajout.pourQui.moiDescription' => 'Un adulte s\'inscrit depuis son propre compte.',
 			'foyer.ajout.identite.question' => 'Qui est l\'élève ?',
 			'foyer.ajout.identite.sousTitre' => 'Son prénom, son nom et son âge.',
 			'foyer.ajout.identite.prenom' => 'Prénom',

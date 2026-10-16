@@ -356,56 +356,43 @@ void main() {
       expect(_lieu(routeur), Routes.appairerPour(_a1));
     });
 
-    testWidgets('bandeau telephone : « Connecter un appareil » a droite du '
-        'texte a 390 (V1 #17), sous le texte a 200 pour cent', (
+    testWidgets('L4-05 : une seule alerte d appareil, le meme composant a 390 '
+        'et a 1440, son bouton n est pas le bouton plein', (
       WidgetTester tester,
     ) async {
-      final Finder titre = find.text(
-        t.tuteur.accueil.blocageAppareilTitre(prenom: 'Élève A1'),
-      );
-      final Finder action = find.text(t.tuteur.accueil.connecterAppareil);
-
-      await _monter(tester, appareils: <AppareilAppaire>[]);
-      await _ouvrirAccueilParLaBarre(tester);
-      await tester.ensureVisible(action);
-      await stabiliser(tester);
-      expect(
-        tester.getTopLeft(action).dx,
-        greaterThan(tester.getTopRight(titre).dx),
-      );
-      expect(
-        tester.getTopLeft(action).dy,
-        lessThan(tester.getBottomLeft(find.byType(BandeauBlocage)).dy),
-      );
-      expect(tester.takeException(), isNull);
-
-      // Texte x2 : le bandeau seul, texte agrandi par son MediaQuery (la
-      // barre basse a texte x2 est couverte par test/accessibilite).
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-          home: MediaQuery(
-            data: const MediaQueryData(
-              size: Size(390, 844),
-              textScaler: TextScaler.linear(2),
-            ),
-            child: Scaffold(
-              body: SingleChildScrollView(
-                child: BandeauBlocage(
-                  prenom: 'Élève A1',
-                  compact: true,
-                  onConnecter: () {},
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-      expect(
-        tester.getTopLeft(action).dy,
-        greaterThan(tester.getBottomLeft(titre).dy),
-      );
-      expect(tester.takeException(), isNull);
+      for (final Size taille in <Size>[
+        const Size(390, 844),
+        const Size(1440, 900),
+      ]) {
+        await _monter(
+          tester,
+          appareils: <AppareilAppaire>[],
+          taille: taille,
+          depart: Routes.tuteurAccueil,
+        );
+        final Finder alerte = find.byKey(BandeauBlocage.cleAlerte);
+        expect(alerte, findsOneWidget, reason: '${taille.width}');
+        expect(
+          tester.widget(alerte).runtimeType.toString(),
+          'BandeauAttention',
+        );
+        final Finder action = find.descendant(
+          of: alerte,
+          matching: find.byType(ActionPrincipale),
+        );
+        expect(action, findsOneWidget);
+        expect(
+          tester.widget<ActionPrincipale>(action).niveau,
+          NiveauAction.secondaire,
+        );
+        // Aucun bouton plein dans l'alerte, et pas plus d'un sur l'accueil.
+        final int pleins = tester
+            .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
+            .where((ActionPrincipale a) => a.niveau == NiveauAction.principale)
+            .length;
+        expect(pleins, lessThanOrEqualTo(1), reason: '${taille.width}');
+        expect(tester.takeException(), isNull);
+      }
     });
 
     testWidgets('un appareil actif : aucun blocage', (
@@ -455,9 +442,9 @@ void main() {
     });
   });
 
-  // DASH-TUT-CTA (DASH_STRATEGIE §3.4, D4, D5) : un seul bouton primaire au
-  // plus ; avec blocage, c'est « Connecter un appareil » ; sans blocage,
-  // aucun, et la carte classe est le lien.
+  // DASH-TUT-CTA (DASH_STRATEGIE §3.4, D4, D5), amende par L4-05 (K-40) :
+  // aucun bouton plein sur l'Accueil ; avec blocage, « Connecter un
+  // appareil » est un bouton tonal ; la carte classe est le lien.
   group('DASH-TUT-CTA : un seul bouton dominant', () {
     Iterable<ActionPrincipale> principales(WidgetTester tester) => tester
         .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
@@ -485,21 +472,28 @@ void main() {
       expect(_lieu(routeur), Routes.classePour('classe-a', eleveId: _a1));
     });
 
-    testWidgets('avec blocage : « Connecter un appareil » est le seul '
-        'bouton primaire', (WidgetTester tester) async {
+    // L4-05 : l'alerte n'a plus le bouton plein ; son bouton est tonal.
+    testWidgets('avec blocage : « Connecter un appareil » est un bouton '
+        'secondaire, aucun bouton plein', (WidgetTester tester) async {
       await _monter(tester, appareils: <AppareilAppaire>[]);
       await _ouvrirAccueilParLaBarre(tester);
 
-      final List<ActionPrincipale> seules = principales(tester).toList();
-      expect(seules, hasLength(1));
-      expect(seules.single.libelle, t.tuteur.accueil.connecterAppareil);
+      expect(principales(tester), isEmpty);
+      final Iterable<ActionPrincipale> connecter = tester
+          .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
+          .where(
+            (ActionPrincipale a) =>
+                a.libelle == t.tuteur.accueil.connecterAppareil,
+          );
+      expect(connecter, hasLength(1));
+      expect(connecter.single.niveau, NiveauAction.secondaire);
     });
 
     // DASH-TUT-CTA-b (defaut 1 de DASH-TUT-CTA-R) : D5 ne prevoit aucune
     // exception pour la tablette ni le bureau.
     for (final Size taille in const <Size>[Size(1440, 900), Size(900, 1000)]) {
-      testWidgets('avec blocage, gabarit ${taille.width.toInt()} : « Connecter '
-          'un appareil » est le seul bouton primaire', (
+      testWidgets('avec blocage, gabarit ${taille.width.toInt()} : aucun '
+          'bouton plein, alerte identique', (
         WidgetTester tester,
       ) async {
         await _monter(
@@ -509,9 +503,8 @@ void main() {
           appareils: <AppareilAppaire>[],
         );
         expect(find.byType(BandeauBlocage), findsOneWidget);
-        final List<ActionPrincipale> seules = principales(tester).toList();
-        expect(seules, hasLength(1));
-        expect(seules.single.libelle, t.tuteur.accueil.connecterAppareil);
+        expect(find.byKey(BandeauBlocage.cleAlerte), findsOneWidget);
+        expect(principales(tester), isEmpty);
       });
     }
 
@@ -946,9 +939,9 @@ void main() {
             seances: <SeanceFamille>[
               _prochaine(
                 // Arrondi a la minute superieure depuis COM-RC tour 7 (lot L,
-              // LibellesGroupe.minutesAvant) : 3 h 27 min 30 s se lit
-              // « 3 h 28 ».
-              avant: const Duration(hours: 3, minutes: 27, seconds: 30),
+                // LibellesGroupe.minutesAvant) : 3 h 27 min 30 s se lit
+                // « 3 h 28 ».
+                avant: const Duration(hours: 3, minutes: 27, seconds: 30),
               ),
             ],
           );
