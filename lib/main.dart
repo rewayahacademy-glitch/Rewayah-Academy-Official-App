@@ -7,8 +7,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app.dart';
 import 'core/accessibilite/port_reponse_presentation.dart';
 import 'core/accessibilite/reponse_presentation_supabase.dart';
+import 'core/admin/bibliotheque_admin_supabase.dart';
 import 'core/admin/incidents_seances_supabase.dart';
 import 'core/admin/planning_direction_supabase.dart';
+import 'core/admin/port_bibliotheque_admin.dart';
 import 'core/admin/port_incidents_seances.dart';
 import 'core/admin/port_planning_direction.dart';
 import 'core/agent/amorce_agent.dart';
@@ -112,6 +114,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // Liste paginee des regroupements (fonction Edge `regroupements-pages`).
   portRegroupementsPagesProvider.overrideWithValue(
     RegroupementsPagesSupabase(Supabase.instance.client),
+  ),
+  // Bibliotheque d'administration (CAP-29) : lectures, revue des droits et
+  // depot R2 ; les ecritures sans RPC restent fermees.
+  portBibliothequeAdminProvider.overrideWithValue(
+    BibliothequeAdminSupabase(Supabase.instance.client),
   ),
   portTirageControleProvider.overrideWithValue(
     PortTirageControleSupabase(Supabase.instance.client),
