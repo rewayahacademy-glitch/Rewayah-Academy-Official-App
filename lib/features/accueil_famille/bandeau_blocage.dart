@@ -25,9 +25,9 @@ bool aucunAppareilPret(List<AppareilAppaire> appareils, String eleveId) =>
 /// L4-05 : **un seul rendu aux deux largeurs**, le [BandeauAttention] du
 /// depot (avertissement : icone, titre, phrase). Avant, une carte jaune a
 /// bouton plein sur telephone et un texte nu a bouton plein sur bureau
-/// faisaient deux composants pour un bloc, et deux boutons pleins a 390. Le
-/// bouton « Connecter un appareil » est secondaire (tonal) : le bouton plein
-/// de l'ecran reste celui de la Classe (K-40).
+/// faisaient deux composants pour un bloc. Le bouton « Connecter un
+/// appareil » reste le seul bouton plein de l'Accueil bloque (decision D5,
+/// DASH-TUT-CTA, qui prime sur la fiche L4-05).
 class BandeauBlocage extends StatelessWidget {
   /// Cree le bandeau.
   const BandeauBlocage({
@@ -56,7 +56,8 @@ class BandeauBlocage extends StatelessWidget {
         child: ActionPrincipale(
           libelle: t.tuteur.accueil.connecterAppareil,
           onPress: onConnecter,
-          niveau: NiveauAction.secondaire,
+          // D5 / DASH-TUT-CTA : la tache immediate porte le seul bouton plein.
+          niveau: NiveauAction.principale,
           pleineLargeur: false,
         ),
       ),

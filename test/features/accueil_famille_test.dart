@@ -357,7 +357,7 @@ void main() {
     });
 
     testWidgets('L4-05 : une seule alerte d appareil, le meme composant a 390 '
-        'et a 1440, son bouton n est pas le bouton plein', (
+        'et a 1440, son bouton est le seul bouton plein', (
       WidgetTester tester,
     ) async {
       for (final Size taille in <Size>[
@@ -383,14 +383,14 @@ void main() {
         expect(action, findsOneWidget);
         expect(
           tester.widget<ActionPrincipale>(action).niveau,
-          NiveauAction.secondaire,
+          NiveauAction.principale,
         );
-        // Aucun bouton plein dans l'alerte, et pas plus d'un sur l'accueil.
+        // Un seul bouton plein sur l'accueil : celui de l'alerte.
         final int pleins = tester
             .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
             .where((ActionPrincipale a) => a.niveau == NiveauAction.principale)
             .length;
-        expect(pleins, lessThanOrEqualTo(1), reason: '${taille.width}');
+        expect(pleins, 1, reason: '${taille.width}');
         expect(tester.takeException(), isNull);
       }
     });
@@ -442,9 +442,9 @@ void main() {
     });
   });
 
-  // DASH-TUT-CTA (DASH_STRATEGIE §3.4, D4, D5), amende par L4-05 (K-40) :
-  // aucun bouton plein sur l'Accueil ; avec blocage, « Connecter un
-  // appareil » est un bouton tonal ; la carte classe est le lien.
+  // DASH-TUT-CTA (DASH_STRATEGIE §3.4, D4, D5) : un seul bouton primaire au
+  // plus ; avec blocage, c'est « Connecter un appareil » ; sans blocage,
+  // aucun, et la carte classe est le lien.
   group('DASH-TUT-CTA : un seul bouton dominant', () {
     Iterable<ActionPrincipale> principales(WidgetTester tester) => tester
         .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
@@ -472,28 +472,21 @@ void main() {
       expect(_lieu(routeur), Routes.classePour('classe-a', eleveId: _a1));
     });
 
-    // L4-05 : l'alerte n'a plus le bouton plein ; son bouton est tonal.
-    testWidgets('avec blocage : « Connecter un appareil » est un bouton '
-        'secondaire, aucun bouton plein', (WidgetTester tester) async {
+    testWidgets('avec blocage : « Connecter un appareil » est le seul '
+        'bouton primaire', (WidgetTester tester) async {
       await _monter(tester, appareils: <AppareilAppaire>[]);
       await _ouvrirAccueilParLaBarre(tester);
 
-      expect(principales(tester), isEmpty);
-      final Iterable<ActionPrincipale> connecter = tester
-          .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
-          .where(
-            (ActionPrincipale a) =>
-                a.libelle == t.tuteur.accueil.connecterAppareil,
-          );
-      expect(connecter, hasLength(1));
-      expect(connecter.single.niveau, NiveauAction.secondaire);
+      final List<ActionPrincipale> seules = principales(tester).toList();
+      expect(seules, hasLength(1));
+      expect(seules.single.libelle, t.tuteur.accueil.connecterAppareil);
     });
 
     // DASH-TUT-CTA-b (defaut 1 de DASH-TUT-CTA-R) : D5 ne prevoit aucune
     // exception pour la tablette ni le bureau.
     for (final Size taille in const <Size>[Size(1440, 900), Size(900, 1000)]) {
-      testWidgets('avec blocage, gabarit ${taille.width.toInt()} : aucun '
-          'bouton plein, alerte identique', (
+      testWidgets('avec blocage, gabarit ${taille.width.toInt()} : « Connecter '
+          'un appareil » est le seul bouton primaire', (
         WidgetTester tester,
       ) async {
         await _monter(
@@ -504,7 +497,9 @@ void main() {
         );
         expect(find.byType(BandeauBlocage), findsOneWidget);
         expect(find.byKey(BandeauBlocage.cleAlerte), findsOneWidget);
-        expect(principales(tester), isEmpty);
+        final List<ActionPrincipale> seules = principales(tester).toList();
+        expect(seules, hasLength(1));
+        expect(seules.single.libelle, t.tuteur.accueil.connecterAppareil);
       });
     }
 
