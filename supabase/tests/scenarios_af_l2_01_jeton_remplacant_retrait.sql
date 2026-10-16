@@ -70,7 +70,7 @@ VALUES ('a2010000-0000-0000-0000-000000000102','a2010000-0000-0000-0000-00000000
 -- Partie 1 : seance du groupe 101, attitre = holder (001), salle ouverte.
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id, join_opens_at)
 VALUES ('a2010000-0000-0000-0000-000000000202',
- 'a2010000-0000-0000-0000-000000000001', clock_timestamp()+interval '3 days', clock_timestamp()+interval '3 days 1 hour',
+ 'a2010000-0000-0000-0000-000000000001', ((date_trunc('day', clock_timestamp() at time zone 'Europe/Paris') + interval '3 days 3 hours') at time zone 'Europe/Paris'), ((date_trunc('day', clock_timestamp() at time zone 'Europe/Paris') + interval '3 days 4 hours') at time zone 'Europe/Paris'),
  'planned','standard','a2010000-0000-0000-0000-000000000101', clock_timestamp()-interval '1 hour');
 -- L'attitre garde meme une ligne participant 'teacher' : elle ne doit plus ouvrir la salle une fois remplace.
 INSERT INTO public.session_participants (session_id, profile_id, role)
@@ -143,11 +143,11 @@ RESET ROLE;
 -- Partie 2 : retrait d'un eleve. Une seance a venir et une passee, avec participant.
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id, join_opens_at)
 VALUES ('a2010000-0000-0000-0000-000000000203',
- 'a2010000-0000-0000-0000-000000000011', clock_timestamp()+interval '5 days 3 hours 17 minutes', clock_timestamp()+interval '5 days 4 hours 17 minutes',
+ 'a2010000-0000-0000-0000-000000000011', ((date_trunc('day', clock_timestamp() at time zone 'Europe/Paris') + interval '5 days 3 hours') at time zone 'Europe/Paris'), ((date_trunc('day', clock_timestamp() at time zone 'Europe/Paris') + interval '5 days 4 hours') at time zone 'Europe/Paris'),
  'planned','standard','a2010000-0000-0000-0000-000000000102', clock_timestamp()-interval '1 hour');
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
 VALUES ('a2010000-0000-0000-0000-000000000204',
- 'a2010000-0000-0000-0000-000000000011', clock_timestamp()-interval '6 days', clock_timestamp()-interval '6 days' + interval '1 hour',
+ 'a2010000-0000-0000-0000-000000000011', ((date_trunc('day', clock_timestamp() at time zone 'Europe/Paris') + interval '-6 days 3 hours') at time zone 'Europe/Paris'), ((date_trunc('day', clock_timestamp() at time zone 'Europe/Paris') + interval '-6 days 4 hours') at time zone 'Europe/Paris'),
  'ended','standard','a2010000-0000-0000-0000-000000000102');
 INSERT INTO public.session_participants (session_id, profile_id, role) VALUES
  ('a2010000-0000-0000-0000-000000000203','a2010000-0000-0000-0000-000000000012','student'),

@@ -42,7 +42,7 @@ VALUES ('b0900000-0000-0000-0000-000000000101',
  'b0900000-0000-0000-0000-000000000001','enfant',5,'B09 class',1,18,'Europe/Paris','hommes');
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
 VALUES ('b0900000-0000-0000-0000-000000000201',
- 'b0900000-0000-0000-0000-000000000001', clock_timestamp()+interval '2 days', clock_timestamp()+interval '2 days 1 hour',
+ 'b0900000-0000-0000-0000-000000000001', ((date_trunc('day', clock_timestamp() at time zone 'Europe/Paris') + interval '2 days 3 hours') at time zone 'Europe/Paris'), ((date_trunc('day', clock_timestamp() at time zone 'Europe/Paris') + interval '2 days 4 hours') at time zone 'Europe/Paris'),
  'planned','standard','b0900000-0000-0000-0000-000000000101');
 
 SELECT set_config('request.jwt.claim.sub','b0900000-0000-0000-0000-000000000001',true);
@@ -102,7 +102,7 @@ RESET ROLE;
 
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
 VALUES ('b0900000-0000-0000-0000-000000000202',
- 'b0900000-0000-0000-0000-000000000001', clock_timestamp()+interval '3 days', clock_timestamp()+interval '3 days 1 hour',
+ 'b0900000-0000-0000-0000-000000000001', ((date_trunc('day', clock_timestamp() at time zone 'Europe/Paris') + interval '3 days 3 hours') at time zone 'Europe/Paris'), ((date_trunc('day', clock_timestamp() at time zone 'Europe/Paris') + interval '3 days 4 hours') at time zone 'Europe/Paris'),
  'planned','standard','b0900000-0000-0000-0000-000000000101');
 SELECT set_config('request.jwt.claim.sub','b0900000-0000-0000-0000-000000000004',true);
 SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"admin"}}',true);
