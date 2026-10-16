@@ -12339,10 +12339,10 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Vos cahiers de transmission à terminer n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour : elles n'en dépendent pas. Réessayez dans un instant.'
 	String get erreurPartielleCahiers => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.';
 
-	/// fr: '(one) {{n} cahier envoyé} (other) {{n} cahiers envoyés}'
+	/// fr: '(one) {{n} cahier de transmission envoyé} (other) {{n} cahiers de transmission envoyés}'
 	String cahiersEnvoyes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
-		one: '${n} cahier envoyé',
-		other: '${n} cahiers envoyés',
+		one: '${n} cahier de transmission envoyé',
+		other: '${n} cahiers de transmission envoyés',
 	);
 
 	/// fr: '(one) {{nombre} élève} (other) {{nombre} élèves}'
@@ -36741,7 +36741,7 @@ extension on Traductions {
 			'enseignant.journee.remplacement.assurer' => 'Assurer ce remplacement',
 			'enseignant.journee.remplacement.pasCetteFois' => 'Pas cette fois',
 			'enseignant.journee.erreurPartielleCahiers' => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
-			'enseignant.journee.cahiersEnvoyes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} cahier envoyé', other: '${n} cahiers envoyés', ), 
+			'enseignant.journee.cahiersEnvoyes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} cahier de transmission envoyé', other: '${n} cahiers de transmission envoyés', ), 
 			'enseignant.journee.effectif' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} élève', other: '${nombre} élèves', ), 
 			'enseignant.remplacements.titre' => 'Remplacements',
 			'enseignant.remplacements.contexte' => 'Ouverts à tous les enseignants : le premier qui accepte assure la séance.',
