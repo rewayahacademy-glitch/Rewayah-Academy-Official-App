@@ -1946,6 +1946,7 @@
       "recharger": "Recharger la pièce",
       "formatNonPrisEnCharge": "Ce format de pièce ne peut pas être affiché.",
       "accesRetire": "Vous n’avez plus accès à cette pièce.",
+      "apercuRefuse": "Cette pièce n'est pas visible avec votre compte.",
       "horsLigne": "La pièce n'a pas pu être chargée.",
       "aucune": "Aucune pièce n’est disponible.",
       "fermerPiece": "Fermer la pièce",

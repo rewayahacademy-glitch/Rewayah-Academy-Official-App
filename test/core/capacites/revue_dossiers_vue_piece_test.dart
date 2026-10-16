@@ -68,7 +68,8 @@ void main() {
       _d('p1/piece.png'),
       signes,
     ).demanderVuePiece(dossierId: 'p1', documentId: 'doc');
-    expect(signes, <String>['p1/piece.png']);
+    // L2-02 : l'apercu est demande par identifiant de document, jamais par cle.
+    expect(signes, <String>['doc']);
     expect(vue.source, isA<SourcePieceUrl>());
     expect(vue.expireLeUtc, maintenant.add(const Duration(seconds: 60)));
     expect(vue.typeMime, 'image/png');
