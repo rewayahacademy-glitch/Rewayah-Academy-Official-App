@@ -16,7 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Riverpod 3 a sorti `Override` de l'export principal.
 import 'package:flutter_riverpod/misc.dart' show Override, ProviderException;
 import 'package:supabase_flutter/supabase_flutter.dart'
-    show PostgrestException, StorageException;
+    show FunctionException, PostgrestException;
 
 import '../admin/service_comptes.dart' show EtatPiece;
 import '../domain/enums.dart';
@@ -291,10 +291,15 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
       // La porte serveur a refuse : une regle (genre), pas une panne. Le refus
       // remonte tel quel pour que la visionneuse en dise la cause.
       rethrow;
-    } on StorageException catch (e) {
-      throw ErreurRevueDossier(switch (e.statusCode) {
-        '403' => CodeErreurRevue.interdit,
-        '400' || '404' => CodeErreurRevue.introuvable,
+    } on FunctionException catch (e) {
+      // La porte `piece-identite-acces` repond par un statut : 403 est un
+      // refus de regle (traite comme `ApercuRefuse`), 400 et 404 un document
+      // introuvable, le reste une panne temporaire.
+      if (e.status == 403) {
+        throw const ApercuRefuse();
+      }
+      throw ErreurRevueDossier(switch (e.status) {
+        400 || 404 => CodeErreurRevue.introuvable,
         _ => CodeErreurRevue.indisponibleTemporairement,
       });
     } on Object {

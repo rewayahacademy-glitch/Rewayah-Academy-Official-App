@@ -8,7 +8,7 @@ import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/core/capacites/revue_dossiers_depuis_validation.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show StorageException;
+import 'package:supabase_flutter/supabase_flutter.dart' show FunctionException;
 
 DossierAValider _d(
   String cle, {
@@ -139,26 +139,41 @@ void main() {
     );
   });
 
-  test('StorageException 403 : interdit ; 404 : introuvable', () async {
-    expect(
-      await code(
-        () => port(
+  test(
+    'FunctionException 403 : refus (ApercuRefuse) ; 400 et 404 : introuvable ; '
+    '500 : indisponible',
+    () async {
+      await expectLater(
+        port(
           _d('p1/a.png'),
           <String>[],
-          erreur: const StorageException('non', statusCode: '403'),
+          erreur: const FunctionException(status: 403),
         ).demanderVuePiece(dossierId: 'p1', documentId: 'doc'),
-      ),
-      CodeErreurRevue.interdit,
-    );
-    expect(
-      await code(
-        () => port(
-          _d('p1/a.png'),
-          <String>[],
-          erreur: const StorageException('non', statusCode: '404'),
-        ).demanderVuePiece(dossierId: 'p1', documentId: 'doc'),
-      ),
-      CodeErreurRevue.introuvable,
-    );
-  });
+        throwsA(isA<ApercuRefuse>()),
+      );
+      for (final int statut in <int>[400, 404]) {
+        expect(
+          await code(
+            () => port(
+              _d('p1/a.png'),
+              <String>[],
+              erreur: FunctionException(status: statut),
+            ).demanderVuePiece(dossierId: 'p1', documentId: 'doc'),
+          ),
+          CodeErreurRevue.introuvable,
+          reason: '$statut',
+        );
+      }
+      expect(
+        await code(
+          () => port(
+            _d('p1/a.png'),
+            <String>[],
+            erreur: const FunctionException(status: 500),
+          ).demanderVuePiece(dossierId: 'p1', documentId: 'doc'),
+        ),
+        CodeErreurRevue.indisponibleTemporairement,
+      );
+    },
+  );
 }
