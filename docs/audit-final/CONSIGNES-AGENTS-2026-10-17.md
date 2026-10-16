@@ -26,6 +26,7 @@
 - Fichiers de travail : dans `/tmp/claude-0/-home-user-Rewayah-Academy-Official-App/37ff0dc5-64c8-5d90-a02d-24473d02f0f3/scratchpad/<ID>/` seulement, jamais à la racine du scratchpad ni dans `/tmp`.
 - Scénario de refus : vérifier SQLSTATE 42501 exactement ; une erreur de clé étrangère ou de contrainte ne prouve pas un refus.
 - Flutter : `/tmp/claude-0/-home-user-Rewayah-Academy-Official-App/37ff0dc5-64c8-5d90-a02d-24473d02f0f3/scratchpad/flutter/bin` à ajouter au `PATH` (seulement si ta fiche touche `lib/` ou `test/`).
+- Aucun outil de session distante (create_session, send_message, archive_session, send_later) : seul l orchestrateur pilote les sessions.
 - Jamais `sleep` pour attendre autre chose que ton propre Postgres.
 
 ## Écriture
