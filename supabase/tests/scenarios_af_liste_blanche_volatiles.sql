@@ -196,10 +196,7 @@ declare
     'traiter_anomalie_qualite(text,uuid,text)',
     'transferer_eleve(uuid,uuid,uuid,text)',
     'transmettre_student_concern(uuid,text)',
-    'verifier_chaine_audit(integer)',
-    'log_sensitive_access(text,text,text,jsonb)',  -- A RETIRER PAR L1-01
-    'materialiser_seances(uuid)',  -- A RETIRER PAR L1-01
-    'record_session_event(uuid,uuid,session_event_type,text)'  -- A RETIRER PAR L1-01
+    'verifier_chaine_audit(integer)'
   ];
   v_anon_ok text[] := array['agent_pre_request()'];
   v_hors_liste text;
