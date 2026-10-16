@@ -27,6 +27,10 @@ class AssignationsSupabase implements PortAssignations {
     return rows.map(_depuisJson).toList(growable: false);
   }
 
+  /// Le travail ouvert le plus urgent, par la RPC `assignations_a_venir`
+  /// (migration 20261016100500) : le serveur filtre par eleve a la source
+  /// (collectifs et nominatifs de cet eleve), trie par echeance et garantit
+  /// le plafond de trois. Le tri local ne fait que le confirmer.
   @override
   Future<List<LearningAssignment>> aVenir({
     required String groupId,
@@ -36,16 +40,21 @@ class AssignationsSupabase implements PortAssignations {
     final int maximum = limite.clamp(0, 3).toInt();
     if (maximum == 0) return const <LearningAssignment>[];
 
-    final List<Map<String, dynamic>> rows = await _rowsVisibles(
-      groupId,
-      studentId: studentId,
-      uniquementOuverts: true,
-      // Pour une recherche combinant les assignations du groupe et d'un élève,
-      // les trois premières de chaque ensemble suffisent à calculer le top 3.
-      limite: maximum,
+    final Object? brut = await _client.rpc<Object?>(
+      'assignations_a_venir',
+      params: <String, dynamic>{
+        'p_group_id': groupId,
+        'p_student_id': studentId,
+        'p_limite': maximum,
+      },
     );
-    final List<LearningAssignment> travaux = rows.map(_depuisJson).toList()
-      ..sort(_parUrgence);
+    if (brut is! List) {
+      throw const FormatException('Liste d assignations attendue');
+    }
+    final List<LearningAssignment> travaux = <LearningAssignment>[
+      for (final Object? row in brut)
+        if (row is Map) _depuisJson(Map<String, dynamic>.from(row)),
+    ]..sort(_parUrgence);
     return List<LearningAssignment>.unmodifiable(travaux.take(maximum));
   }
 
