@@ -17,8 +17,12 @@ import 'core/capacites/classes_foyer_supabase.dart';
 import 'core/capacites/identite_titulaire_supabase.dart';
 import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/port_identite_titulaire.dart';
+import 'core/capacites/port_profil_eleve_titulaire.dart';
+import 'core/capacites/port_progression_famille.dart';
 import 'core/capacites/port_series_tresorerie.dart';
 import 'core/capacites/port_support.dart';
+import 'core/capacites/profil_eleve_titulaire_supabase.dart';
+import 'core/capacites/progression_famille_supabase.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
 import 'core/capacites/series_tresorerie_supabase.dart';
 import 'core/capacites/support_supabase.dart';
@@ -44,6 +48,8 @@ import 'core/offres/regroupements_c11bis_supabase.dart';
 import 'core/recrutement/port_signature_contrat.dart';
 import 'core/recrutement/port_statuts_signature.dart';
 import 'core/recrutement/port_statuts_signature_supabase.dart';
+import 'core/session/port_capacite_eleve.dart';
+import 'core/session/port_capacite_eleve_supabase.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/source_session_agent.dart';
 import 'core/tc_etat_partage/etat_partage_supabase.dart';
@@ -51,9 +57,15 @@ import 'core/tc_etat_partage/providers_tc_etat_partage.dart';
 import 'core/tc_observation/historique_observations_admin_supabase.dart';
 import 'core/tc_observation/historique_observations_supabase.dart';
 import 'core/tc_observation/port_historique_observations.dart';
+import 'core/tc_outils/annotations_supabase.dart';
 import 'core/tc_outils/assignations_supabase.dart';
+import 'core/tc_outils/port_annotations.dart';
 import 'core/tc_outils/port_assignations.dart';
+import 'core/tc_parcours/feedback_supabase.dart';
+import 'core/tc_parcours/port_feedback.dart';
+import 'core/tc_parcours/port_signalement.dart';
 import 'core/tc_parcours/port_travail_a_venir.dart';
+import 'core/tc_parcours/signalement_supabase.dart';
 import 'features/_dev/playground/playground_racine.dart';
 import 'features/com_annonces/annonces_supabase.dart';
 import 'features/com_annonces/port_annonces.dart';
@@ -67,6 +79,8 @@ import 'features/demo/dossiers_demo.dart';
 import 'features/demo/mode_demonstration.dart';
 import 'features/demo/racine_demonstrable.dart';
 import 'features/demo/repere_demonstration.dart';
+import 'features/foyer/invitation_conjoint.dart';
+import 'features/foyer/invitation_conjoint_supabase.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
 /// le port des classes du foyer bascule sur l'adaptateur Supabase des que le
@@ -155,6 +169,31 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portEtatPartagePersistantProvider.overrideWithValue(
     EtatPartageSupabase(Supabase.instance.client),
+  ),
+  // Famille et titulaire : progression d'un eleve, profil eleve du
+  // titulaire, invitation du second adulte, capacite « eleve autonome ».
+  portProgressionFamilleProvider.overrideWithValue(
+    ProgressionFamilleSupabase(Supabase.instance.client),
+  ),
+  portProfilEleveTitulaireProvider.overrideWithValue(
+    ProfilEleveTitulaireSupabase(Supabase.instance.client),
+  ),
+  portInvitationConjointProvider.overrideWithValue(
+    InvitationConjointSupabase(Supabase.instance.client),
+  ),
+  portCapaciteEleveProvider.overrideWithValue(
+    PortCapaciteEleveSupabase(Supabase.instance.client),
+  ),
+  // Salle et parcours : annotations persistantes, retour de comprehension et
+  // signalements, sous RLS et RPC bornees au groupe.
+  portAnnotationsProvider.overrideWithValue(
+    AnnotationsSupabase(Supabase.instance.client),
+  ),
+  portFeedbackProvider.overrideWithValue(
+    FeedbackSupabase(Supabase.instance.client),
+  ),
+  portSignalementProvider.overrideWithValue(
+    SignalementSupabase(Supabase.instance.client),
   ),
   // Communications (COM-BACK-1) : Messages metier et annonces de Classe sur
   // les RPC `com_*`, nommes dans la langue courante.
