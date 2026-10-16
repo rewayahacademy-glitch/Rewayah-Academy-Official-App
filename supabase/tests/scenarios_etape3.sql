@@ -6,6 +6,21 @@
 -- Auth provenance fields are added only to this scenario fixture.
 alter table auth.users add column if not exists raw_app_meta_data jsonb not null default '{}'::jsonb;
 alter table auth.users add column if not exists created_at timestamptz not null default now();
+-- Les droits globaux ci-dessous reproduisent les privilèges par défaut de
+-- Supabase, mais ils arrivent APRÈS les migrations et annulent leurs REVOKE
+-- explicites. La CI rejoue tous les scénarios sur la même base : on photographie
+-- les ACL des migrations ici et on les rétablit en fin de fichier, sinon les
+-- scénarios suivants (C-21, C-35...) voient tomber des invariants de production.
+create temp table acl_avant_etape3 as
+  select case c.relkind when 'S' then 'sequence' else 'table' end as genre,
+         c.oid, c.relacl as acl
+    from pg_catalog.pg_class c
+   where c.relnamespace = 'public'::regnamespace
+     and c.relkind in ('r', 'v', 'm', 'p', 'S', 'f')
+  union all
+  select 'fn', p.oid, p.proacl
+    from pg_catalog.pg_proc p
+   where p.pronamespace = 'public'::regnamespace and p.prokind in ('f', 'p');
 grant usage on schema public to anon, authenticated, service_role;
 do $scenario_grants$
 declare
@@ -29,12 +44,6 @@ $scenario_grants$;
 grant select on table public.contract_acceptances to authenticated;
 grant all on all sequences in schema public to authenticated, service_role;
 grant all on all functions in schema public to service_role;
--- Ce grant global reproduit les privilèges par défaut que Supabase pose à la
--- création, mais il arrive APRÈS les migrations et annule donc leurs REVOKE
--- explicites. Rétablir ceux qui sont des invariants de production, sinon le
--- scénario suivant de la CI (même base) les voit tomber : C-21, le verdict
--- KYC n'est jamais un point d'entrée service_role (20261011190004).
-revoke execute on function public.verdict_acces_dossier_kyc(uuid) from service_role;
 
 insert into auth.users (id, email) values
   ('11111111-1111-1111-1111-111111111111', 'tuteur@example.test'),
@@ -896,5 +905,34 @@ begin
     if position('contract_not_signed_current:teacher_nda' in sqlerrm) = 0 then raise; end if;
   end;
 end $$;
+
+-- Rétablir les ACL des migrations pour authenticated et service_role
+-- (voir la photographie en tête de fichier).
+do $acl_restauration$
+declare
+  v record;
+  v_priv record;
+begin
+  for v in select a.genre, a.oid, a.acl from pg_temp.acl_avant_etape3 a loop
+    if v.genre <> 'fn' then
+      execute format('revoke all on %s %s from authenticated, service_role', v.genre, v.oid::regclass);
+    else
+      execute format('revoke all on function %s from authenticated, service_role', v.oid::regprocedure);
+    end if;
+    for v_priv in
+      select x.privilege_type, r.rolname
+        from pg_catalog.aclexplode(v.acl) x
+        join pg_catalog.pg_roles r on r.oid = x.grantee
+       where r.rolname in ('authenticated', 'service_role')
+    loop
+      if v.genre <> 'fn' then
+        execute format('grant %s on %s %s to %I', v_priv.privilege_type, v.genre, v.oid::regclass, v_priv.rolname);
+      else
+        execute format('grant %s on function %s to %I', v_priv.privilege_type, v.oid::regprocedure, v_priv.rolname);
+      end if;
+    end loop;
+  end loop;
+end
+$acl_restauration$;
 
 select 'TOUS LES SCENARIOS SQL DE L''ETAPE 3 SONT PASSES' as verdict;
