@@ -29,6 +29,12 @@ $scenario_grants$;
 grant select on table public.contract_acceptances to authenticated;
 grant all on all sequences in schema public to authenticated, service_role;
 grant all on all functions in schema public to service_role;
+-- Ce grant global reproduit les privilèges par défaut que Supabase pose à la
+-- création, mais il arrive APRÈS les migrations et annule donc leurs REVOKE
+-- explicites. Rétablir ceux qui sont des invariants de production, sinon le
+-- scénario suivant de la CI (même base) les voit tomber : C-21, le verdict
+-- KYC n'est jamais un point d'entrée service_role (20261011190004).
+revoke execute on function public.verdict_acces_dossier_kyc(uuid) from service_role;
 
 insert into auth.users (id, email) values
   ('11111111-1111-1111-1111-111111111111', 'tuteur@example.test'),
