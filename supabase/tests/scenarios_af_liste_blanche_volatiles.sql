@@ -2,6 +2,13 @@
 -- connecte. Audit final 16/10/2026, lot L1-09. Toute fonction qui apparait ici
 -- a ete relue : garde positive sur le role ET app_account_valid(), ou fonction
 -- d'ecriture volontairement ouverte. Ajouter une ligne = une relecture.
+-- La presence dans la liste ne prouve pas la garde (cas geler_archive_seance, corrige
+-- par L1-08-reprise) : la requete de controle est
+--   select p.oid::regprocedure from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+--    where n.nspname = 'public' and p.provolatile = 'v' and p.prosecdef
+--      and has_function_privilege('authenticated', p.oid, 'execute')
+--      and p.prosrc like '%app_role()%' and p.prosrc not like '%app_account_valid%';
+-- et elle rend zero ligne.
 --
 -- Ce scenario ne vaut que sous le stub de `stub_auth.sql` qui pose les
 -- privileges par defaut de Supabase : sur l'ancien stub, `authenticated` n'avait
