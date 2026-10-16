@@ -4,6 +4,7 @@ import 'package:rewayah_academy/core/mouvement/apparition_douce.dart';
 import 'package:rewayah_academy/core/mouvement/bascule_etat.dart';
 import 'package:rewayah_academy/core/mouvement/mouvement.dart';
 import 'package:rewayah_academy/core/mouvement/transitions.dart';
+import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 
 Widget _cadre(Widget enfant, {bool reduit = false}) => MaterialApp(
   home: MediaQuery(
@@ -14,13 +15,22 @@ Widget _cadre(Widget enfant, {bool reduit = false}) => MaterialApp(
 
 void main() {
   group('Mouvement', () {
-    test('les durees restent entre 150 et 300 ms', () {
+    test('chaque duree lit son jeton AppMouvement', () {
+      expect(Mouvement.court, AppMouvement.micro);
+      expect(Mouvement.moyen, AppMouvement.navigation);
+      expect(Mouvement.long, AppMouvement.navigation);
+      expect(Mouvement.maximum, AppMouvement.plafond);
+      expect(Mouvement.entree, AppMouvement.entree);
+      expect(Mouvement.sortie, AppMouvement.sortie);
+    });
+
+    test('aucune duree de Mouvement ne depasse le plafond', () {
       for (final Duration d in <Duration>[
         Mouvement.court,
         Mouvement.moyen,
         Mouvement.long,
       ]) {
-        expect(d.inMilliseconds, inInclusiveRange(150, 300));
+        expect(d, lessThanOrEqualTo(Mouvement.maximum));
       }
       expect(Mouvement.echelon.inMilliseconds, inInclusiveRange(30, 40));
       // Le dernier element echelonne finit sous la borne haute + echelons.
