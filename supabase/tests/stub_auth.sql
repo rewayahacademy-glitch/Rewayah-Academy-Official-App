@@ -4,6 +4,18 @@ create role anon nologin;
 create role authenticated nologin;
 create role service_role nologin bypassrls;
 create role supabase_auth_admin nologin bypassrls;
+
+-- Privileges par defaut identiques a un projet Supabase (16/10/2026, audit final,
+-- lot L1-09). Sans eux, la CI ne voit pas qu'une fonction est executable par
+-- tout compte connecte : `revoke from public` ne retire pas un grant explicite.
+-- `agent_ro` n'est pas cree ici : 0014_acces_agent.sql le cree.
+grant usage on schema public to anon, authenticated, service_role;
+alter default privileges for role postgres in schema public
+  grant all on tables to anon, authenticated, service_role;
+alter default privileges for role postgres in schema public
+  grant all on sequences to anon, authenticated, service_role;
+alter default privileges for role postgres in schema public
+  grant all on functions to anon, authenticated, service_role;
 create schema auth;
 grant usage on schema auth to anon, authenticated;
 create table auth.users (
