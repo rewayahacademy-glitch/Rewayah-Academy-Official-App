@@ -507,7 +507,7 @@ class _Traductions$compte$ar extends Traductions$compte$fr {
 	@override String get statutProvisoire => 'مفعَّل مؤقتًا';
 	@override String profilEnfant({required Object dePrenom}) => 'ملف ⁨${dePrenom}⁩';
 	@override String identifiantEnfant({required Object identifiant}) => 'المعرّف: ⁨${identifiant}⁩';
-	@override String matricule({required Object valeur, required Object role}) => 'رقم التسجيل ${valeur} · ${role}';
+	@override String matricule({required Object valeur, required Object role}) => 'رقم التسجيل ⁨${valeur}⁩ · ⁨${role}⁩';
 	@override String get copier => 'نسخ';
 	@override String get copierMatricule => 'نسخ رقم التسجيل';
 	@override String get matriculeCopie => 'تم النسخ';
@@ -2676,6 +2676,7 @@ class _Traductions$enseignant$journee$ar extends Traductions$enseignant$journee$
 	@override String get erreur => 'تعذّرت قراءة اليوم كاملًا. أعد المحاولة بعد لحظة.';
 	@override String get coursIndividuel => 'درس فردي';
 	@override String cahiersEnvoyes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لم يُرسَل أي دفتر',
 		one: 'تم إرسال دفتر واحد',
 		two: 'تم إرسال دفترين',
 		few: 'تم إرسال ⁨${n}⁩ دفاتر',
@@ -15041,7 +15042,7 @@ extension on TraductionsAr {
 			'enseignant.journee.voirCreneaux' => 'عرض مواعيدي',
 			'enseignant.journee.erreur' => 'تعذّرت قراءة اليوم كاملًا. أعد المحاولة بعد لحظة.',
 			'enseignant.journee.coursIndividuel' => 'درس فردي',
-			'enseignant.journee.cahiersEnvoyes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'تم إرسال دفتر واحد', two: 'تم إرسال دفترين', few: 'تم إرسال ⁨${n}⁩ دفاتر', many: 'تم إرسال ⁨${n}⁩ دفترًا', other: 'تم إرسال ⁨${n}⁩ دفتر', ), 
+			'enseignant.journee.cahiersEnvoyes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يُرسَل أي دفتر', one: 'تم إرسال دفتر واحد', two: 'تم إرسال دفترين', few: 'تم إرسال ⁨${n}⁩ دفاتر', many: 'تم إرسال ⁨${n}⁩ دفترًا', other: 'تم إرسال ⁨${n}⁩ دفتر', ), 
 			'enseignant.journee.effectif' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${nombre}⁩ طلاب', many: '⁨${nombre}⁩ طالبًا', other: '⁨${nombre}⁩ طالب', ), 
 			'enseignant.journee.effectifUn' => 'طالب واحد',
 			'enseignant.journee.preflightOk' => 'الميكروفون جاهز',
@@ -15534,7 +15535,7 @@ extension on TraductionsAr {
 			'compte.statutProvisoire' => 'مفعَّل مؤقتًا',
 			'compte.profilEnfant' => ({required Object dePrenom}) => 'ملف ⁨${dePrenom}⁩',
 			'compte.identifiantEnfant' => ({required Object identifiant}) => 'المعرّف: ⁨${identifiant}⁩',
-			'compte.matricule' => ({required Object valeur, required Object role}) => 'رقم التسجيل ${valeur} · ${role}',
+			'compte.matricule' => ({required Object valeur, required Object role}) => 'رقم التسجيل ⁨${valeur}⁩ · ⁨${role}⁩',
 			'compte.copier' => 'نسخ',
 			'compte.copierMatricule' => 'نسخ رقم التسجيل',
 			'compte.matriculeCopie' => 'تم النسخ',

@@ -1401,6 +1401,7 @@
       "erreur": "تعذّرت قراءة اليوم كاملًا. أعد المحاولة بعد لحظة.",
       "coursIndividuel": "درس فردي",
       "cahiersEnvoyes(param=n)": {
+        "zero": "لم يُرسَل أي دفتر",
         "one": "تم إرسال دفتر واحد",
         "two": "تم إرسال دفترين",
         "few": "تم إرسال ⁨{n}⁩ دفاتر",
@@ -1969,7 +1970,7 @@
     "statutProvisoire": "مفعَّل مؤقتًا",
     "profilEnfant": "ملف ⁨{dePrenom}⁩",
     "identifiantEnfant": "المعرّف: ⁨{identifiant}⁩",
-    "matricule": "رقم التسجيل {valeur} · {role}",
+    "matricule": "رقم التسجيل \u2068{valeur}\u2069 · \u2068{role}\u2069",
     "copier": "نسخ",
     "copierMatricule": "نسخ رقم التسجيل",
     "matriculeCopie": "تم النسخ",
