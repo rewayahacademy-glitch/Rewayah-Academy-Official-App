@@ -1082,9 +1082,6 @@ class FauxServiceVideo implements ServiceVideo {
   /// Les seances ou une visite de controle a ete inscrite, dans l'ordre.
   final List<String> observations = <String>[];
 
-  /// Les seances ou un tuteur s'est inscrit comme temoin, dans l'ordre.
-  final List<String> assistances = <String>[];
-
   /// Ce que la prochaine inscription doit jeter, s'il y a lieu.
   ///
   /// Sans lui, le refus de la porte ne serait pas mesurable : il vient de la
@@ -1100,16 +1097,6 @@ class FauxServiceVideo implements ServiceVideo {
       throw refus;
     }
     observations.add(seanceId);
-  }
-
-  @override
-  Future<void> assisterEnTuteur(String seanceId) async {
-    final Object? refus = refusInscription;
-    if (refus != null) {
-      // ignore: only_throw_errors
-      throw refus;
-    }
-    assistances.add(seanceId);
   }
 
   @override
