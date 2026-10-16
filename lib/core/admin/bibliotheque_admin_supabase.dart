@@ -4,16 +4,19 @@
 // `admin_library_review_rights`, plus le depot R2 de la fonction Edge
 // `bibliotheque-upload` ([BibliothequeUploadSupabase]).
 //
-// Le serveur rend aujourd'hui `peutImporter`, `peutPublier` et
-// `peutAttribuer` a faux : les ecritures sans RPC (brouillon, publication,
-// attribution, retrait) restent fermees, jamais simulees. Le controle de
-// publication n'a pas de RPC : tous ses criteres se lisent « inconnu » et la
-// version n'est pas publiable.
+// Les ecritures passent par les RPC de la migration 20261016100700 :
+// `library_creer_brouillon`, `library_nouvelle_version`,
+// `library_controler_version`, `library_publier_version`,
+// `library_classes_attribuables`, `library_attribuer` et `library_retirer`.
+// Les criteres de controle et la publiabilite sont ceux du serveur. Seule la
+// mise a jour d'un brouillon (`mettreAJour`) n'a ni colonnes ni RPC : elle
+// reste fermee, comme la capacite `peutModifier` que le serveur rend a faux.
 
 import 'dart:typed_data';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../classes/nom_classe_distinct.dart';
 import '../i18n/strings.g.dart';
 import 'bibliotheque_upload_supabase.dart';
 import 'modeles_bibliotheque_admin.dart';
@@ -160,20 +163,31 @@ class BibliothequeAdminSupabase implements PortBibliothequeAdmin {
   Future<void> annulerUpload(String uploadId) => _depot.annulerUpload(uploadId);
 
   @override
-  Future<ControleVersion> controler(String versionId) async => ControleVersion(
-    criteres: <CritereControle>[
-      for (final CleCritere cle in CleCritere.values)
-        CritereControle(cle: cle, etat: EtatCritere.inconnu),
-    ],
-    publiable: false,
+  Future<ControleVersion> controler(String versionId) async => controleJson(
+    await _rpc('library_controler_version', <String, dynamic>{
+      'p_version_id': versionId,
+    }),
   );
 
-  // Ecritures sans RPC serveur : fermees, comme les capacites rendues.
-
   @override
-  Future<String> creerBrouillon(NouveauSupport saisie) =>
-      Future<String>.error(const BibliothequeNonAutorisee());
+  Future<String> creerBrouillon(NouveauSupport saisie) async {
+    final String? niveau = saisie.niveau?.trim();
+    final Map<String, dynamic> r = await _rpc(
+      'library_creer_brouillon',
+      <String, dynamic>{
+        'p_saisie': <String, dynamic>{
+          'titre': saisie.titre.trim(),
+          'type': saisie.type.valeurSql,
+          'langue': saisie.langue.trim(),
+          'categorie': saisie.categorie.trim(),
+          if (niveau != null && niveau.isNotEmpty) 'niveau': niveau,
+        },
+      },
+    );
+    return _texte(r, 'id');
+  }
 
+  // La mise a jour d'un brouillon n'a ni colonnes ni RPC serveur : fermee.
   @override
   Future<ResultatEcriture> mettreAJour({
     required String supportId,
@@ -182,8 +196,12 @@ class BibliothequeAdminSupabase implements PortBibliothequeAdmin {
   }) => Future<ResultatEcriture>.error(const BibliothequeNonAutorisee());
 
   @override
-  Future<String> nouvelleVersion(String supportId) =>
-      Future<String>.error(const BibliothequeNonAutorisee());
+  Future<String> nouvelleVersion(String supportId) async => _texte(
+    await _rpc('library_nouvelle_version', <String, dynamic>{
+      'p_resource_id': supportId,
+    }),
+    'version_id',
+  );
 
   @override
   Future<ResultatPublication> publier({
@@ -191,14 +209,50 @@ class BibliothequeAdminSupabase implements PortBibliothequeAdmin {
     required String versionId,
     required int revisionAttendue,
     required String cle,
-  }) => Future<ResultatPublication>.error(const BibliothequeNonAutorisee());
+  }) async {
+    final Map<String, dynamic> r = await _rpc(
+      'library_publier_version',
+      <String, dynamic>{
+        'p_resource_id': supportId,
+        'p_version_id': versionId,
+        'p_revision_attendue': revisionAttendue,
+        'p_cle': cle,
+      },
+    );
+    return switch (r['resultat']) {
+      'VersionPubliee' => VersionPubliee(
+        revision: (r['revision'] as num).toInt(),
+      ),
+      'PublicationBloquee' => PublicationBloquee(
+        controleJson(_objet(r['controle'])),
+      ),
+      'PublicationEnConflit' => const PublicationEnConflit(),
+      _ => throw const FormatException('Resultat de publication inconnu.'),
+    };
+  }
 
   @override
   Future<PageClasses> classes({
     required String supportId,
     String? curseur,
     int limite = 25,
-  }) => Future<PageClasses>.error(const BibliothequeNonAutorisee());
+  }) async {
+    final Map<String, dynamic> page = await _rpc(
+      'library_classes_attribuables',
+      <String, dynamic>{
+        'p_resource_id': supportId,
+        'p_curseur': curseur,
+        'p_limite': limite,
+      },
+    );
+    return PageClasses(
+      elements: List<ClasseAttribuable>.unmodifiable(<ClasseAttribuable>[
+        for (final Object? e in _liste(page['elements']))
+          classeAttribuableJson(_objet(e)),
+      ]),
+      curseur: page['curseur'] is String ? page['curseur'] as String : null,
+    );
+  }
 
   @override
   Future<ResultatEcriture> attribuer({
@@ -206,15 +260,72 @@ class BibliothequeAdminSupabase implements PortBibliothequeAdmin {
     required Set<String> classeIds,
     required bool epingler,
     required int revisionAttendue,
-  }) => Future<ResultatEcriture>.error(const BibliothequeNonAutorisee());
+  }) async => _ecriture(
+    await _rpc('library_attribuer', <String, dynamic>{
+      'p_resource_id': supportId,
+      'p_classe_ids': classeIds.toList(growable: false),
+      'p_epingler': epingler,
+      'p_revision_attendue': revisionAttendue,
+    }),
+    revisionAttendue,
+  );
 
   @override
   Future<ResultatEcriture> retirer({
     required String supportId,
     required String motif,
     required int revisionAttendue,
-  }) => Future<ResultatEcriture>.error(const BibliothequeNonAutorisee());
+  }) async => _ecriture(
+    await _rpc('library_retirer', <String, dynamic>{
+      'p_resource_id': supportId,
+      'p_motif': motif.trim(),
+      'p_revision_attendue': revisionAttendue,
+    }),
+    revisionAttendue,
+  );
 }
+
+ResultatEcriture _ecriture(Map<String, dynamic> r, int revisionAttendue) =>
+    r['resultat'] == 'EcritureFaite'
+    ? EcritureFaite(
+        revision: (r['revision'] as num?)?.toInt() ?? revisionAttendue,
+      )
+    : const EcritureEnConflit();
+
+/// Le controle rendu par `library_controler_version` (et dans un refus de
+/// publication). Un critere absent ou illisible se lit « inconnu », jamais
+/// presume valide.
+ControleVersion controleJson(Map<String, dynamic> m) {
+  final Map<String, EtatCritere> lus = <String, EtatCritere>{
+    for (final Object? c in _liste(m['criteres']))
+      if (c is Map && c['cle'] is String)
+        c['cle'] as String: switch (c['etat']) {
+          'valide' => EtatCritere.valide,
+          'bloque' => EtatCritere.bloque,
+          _ => EtatCritere.inconnu,
+        },
+  };
+  return ControleVersion(
+    criteres: List<CritereControle>.unmodifiable(<CritereControle>[
+      for (final CleCritere cle in CleCritere.values)
+        CritereControle(cle: cle, etat: lus[cle.name] ?? EtatCritere.inconnu),
+    ]),
+    publiable: m['publiable'] == true,
+  );
+}
+
+/// Une classe rendue par `library_classes_attribuables`, nommee sans
+/// ambiguite parmi ses classes paralleles (R16).
+ClasseAttribuable classeAttribuableJson(Map<String, dynamic> c) =>
+    ClasseAttribuable(
+      id: _texte(c, 'id'),
+      nom: nomClasseDistinct(
+        c['libelle'] is String ? c['libelle'] as String : '',
+        numero: (c['numero'] as num?)?.toInt(),
+      ),
+      dejaServie: c['deja_servie'] == true,
+      epinglee: c['epinglee'] == true,
+    );
 
 /// Une ligne du catalogue rendue par `library_get_catalogue`.
 SupportAdmin supportCatalogueJson(Map<String, dynamic> m) => SupportAdmin(

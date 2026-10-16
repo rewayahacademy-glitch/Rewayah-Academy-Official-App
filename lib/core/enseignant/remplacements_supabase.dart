@@ -6,13 +6,16 @@
 // (genre, KYC, compte actif), la prise atomique. L'etat rendu est celui de
 // sa reponse, jamais calcule ici (E6, E7).
 //
-// Le tableau commun des offres (`PortRemplacements.suivre`) n'a pas encore de
-// RPC de lecture : il reste absent.
+// Le tableau commun des offres (`PortRemplacements.suivre`) se lit par la RPC
+// `offres_remplacement` (migration 20261016100800), deja filtree par genre
+// et par compatibilite cote serveur ; il se relit tant que l'ecran ecoute (la
+// table des remplacements n'est publiee a aucun client).
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 import 'absence_remplacement.dart';
+import 'port_remplacements.dart';
 
 const String _espaceCles = '6f1d2c84-93a7-5b0e-8c41-2e7a9d5b3f60';
 
@@ -81,4 +84,84 @@ class ReponseRemplacementSupabase implements ReponseRemplacement {
       return false;
     }
   }
+}
+
+/// L'intervalle de relecture du tableau commun, tant que l'ecran l'ecoute.
+const Duration intervalleOffresRemplacement = Duration(seconds: 30);
+
+/// Le tableau commun des remplacements servi par Supabase.
+class RemplacementsSupabase implements PortRemplacements {
+  /// Cree l'adaptateur sur le client de l'application.
+  const RemplacementsSupabase(this._client);
+
+  final SupabaseClient _client;
+
+  @override
+  Stream<List<OffreCommune>> suivre() async* {
+    yield await _charger();
+    await for (final void _ in Stream<void>.periodic(
+      intervalleOffresRemplacement,
+    )) {
+      yield await _charger();
+    }
+  }
+
+  Future<List<OffreCommune>> _charger() async {
+    final Object? brut = await _client.rpc<Object?>('offres_remplacement');
+    if (brut is! List) throw const FormatException('Liste attendue.');
+    return List<OffreCommune>.unmodifiable(<OffreCommune>[
+      for (final Object? o in brut)
+        if (o is Map)
+          if (offreCommuneJson(Map<String, dynamic>.from(o))
+              case final OffreCommune offre)
+            offre,
+    ]);
+  }
+
+  @override
+  Future<ResultatPriseRemplacement> prendre(String seanceId) async {
+    final Object? reponse = await _client.rpc<Object?>(
+      'prendre_remplacement',
+      params: <String, dynamic>{
+        'p_session_id': seanceId,
+        'p_cle_idempotence': cleRemplacement('prise', seanceId),
+      },
+    );
+    return switch (reponse is Map ? reponse['etat'] : null) {
+      'acceptee' => ResultatPriseRemplacement.acceptee,
+      'dejaPrise' => ResultatPriseRemplacement.dejaPrise,
+      _ => throw const FormatException('Reponse de prise inconnue.'),
+    };
+  }
+}
+
+/// Une offre rendue par `offres_remplacement` ; nulle quand elle est
+/// incomplete (une ligne mal formee ne masque pas les autres).
+OffreCommune? offreCommuneJson(Map<String, dynamic> o) {
+  final DateTime? debut = o['debut'] is String
+      ? DateTime.tryParse(o['debut'] as String)?.toLocal()
+      : null;
+  final DateTime? fin = o['fin'] is String
+      ? DateTime.tryParse(o['fin'] as String)?.toLocal()
+      : null;
+  final EtatOffreCommune? etat = switch (o['etat']) {
+    'ouverte' => EtatOffreCommune.ouverte,
+    'prise_par_moi' => EtatOffreCommune.priseParMoi,
+    'prise_par_un_collegue' => EtatOffreCommune.priseParUnCollegue,
+    _ => null,
+  };
+  if (o['seance_id'] is! String || debut == null || fin == null) return null;
+  if (etat == null) return null;
+  return OffreCommune(
+    offre: OffreRemplacement(
+      seanceId: o['seance_id'] as String,
+      groupeId: o['groupe_id'] as String?,
+      classe: o['classe'] as String? ?? '',
+      numeroDansFamille: (o['numero_dans_famille'] as num?)?.toInt(),
+      debut: debut,
+      fin: fin,
+      nbEleves: (o['nb_eleves'] as num?)?.toInt() ?? 0,
+    ),
+    etat: etat,
+  );
 }
