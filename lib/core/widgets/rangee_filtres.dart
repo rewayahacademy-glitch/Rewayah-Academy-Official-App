@@ -59,10 +59,16 @@ import 'menu_filtre.dart';
 /// donnees de l'ecran (classes, roles, types d'evenement).
 class RangeeFiltres extends StatefulWidget {
   /// Cree la rangee.
-  const RangeeFiltres({required this.filtres, super.key});
+  const RangeeFiltres({required this.filtres, this.replier = true, super.key});
 
   /// Les puces, dans l'ordre de lecture.
   final List<Widget> filtres;
+
+  /// Vrai (par defaut) pour un **filtre de liste** : trois puces au plus,
+  /// puis « Plus » (L4-07). Faux pour un **choix ferme de formulaire** (la
+  /// frequence du tirage, L4-04) : chaque valeur doit rester visible, la
+  /// rangee n'a pas de « Plus » et defile si elle ne tient pas.
+  final bool replier;
 
   /// La couleur du curseur de defilement : a mi-chemin entre le filet
   /// (`borderHairline`, la piste) et le bord fort (`borderStrong`, le bord
@@ -352,7 +358,9 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
         final List<bool> retenues = <bool>[
           for (final Widget w in widget.filtres) _retenu(w),
         ];
-        final List<int> comptes = _comptesPlus(retenues);
+        final List<int> comptes = widget.replier
+            ? _comptesPlus(retenues)
+            : const <int>[];
         final int visibles = math.min(_visibles, retenues.length);
         final int compteCache = visibles < retenues.length
             ? retenues.skip(visibles).where((bool r) => r).length
@@ -400,6 +408,7 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
                     retenues: retenues,
                     comptes: comptes,
                     largeurMax: largeurMax,
+                    replier: widget.replier,
                     surVisibles: _annoncerVisibles,
                     children: <Widget>[
                       for (int i = 0; i < widget.filtres.length; i++)
@@ -721,6 +730,7 @@ class _RangeeAdaptative extends MultiChildRenderObjectWidget {
     required this.retenues,
     required this.comptes,
     required this.largeurMax,
+    required this.replier,
     required this.surVisibles,
     required super.children,
   });
@@ -738,6 +748,9 @@ class _RangeeAdaptative extends MultiChildRenderObjectWidget {
   /// La largeur de la rangee.
   final double largeurMax;
 
+  /// Faux : toutes les puces sont montrees, sans « Plus ».
+  final bool replier;
+
   /// Appele, a la mise en page, avec le nombre de puces montrees.
   final ValueChanged<int> surVisibles;
 
@@ -749,6 +762,7 @@ class _RangeeAdaptative extends MultiChildRenderObjectWidget {
     largeurMax,
     surVisibles,
     Directionality.of(context),
+    replier,
   );
 
   @override
@@ -759,6 +773,7 @@ class _RangeeAdaptative extends MultiChildRenderObjectWidget {
       ..comptes = comptes
       ..largeurMax = largeurMax
       ..surVisibles = surVisibles
+      ..replier = replier
       ..sens = Directionality.of(context);
   }
 }
@@ -784,6 +799,7 @@ class RenduRangeeFiltres extends RenderBox
     this._largeurMax,
     this.surVisibles,
     this._sens,
+    this._replier,
   );
 
   /// Le nombre de puces montrees au plus : trois, puis « Plus ».
@@ -826,6 +842,13 @@ class RenduRangeeFiltres extends RenderBox
     markNeedsLayout();
   }
 
+  bool _replier;
+  set replier(bool v) {
+    if (v == _replier) return;
+    _replier = v;
+    markNeedsLayout();
+  }
+
   @override
   void setupParentData(RenderBox child) {
     if (child.parentData is! _DonneesRangee) {
@@ -849,6 +872,8 @@ class RenduRangeeFiltres extends RenderBox
     final List<RenderBox> enfants = getChildrenAsList();
     final int n = math.min(_nbPuces, enfants.length);
     if (n == 0) return (k: 0, variante: -1);
+    // Choix ferme : toutes les puces, sans « Plus » ; la rangee defile.
+    if (!_replier) return (k: n, variante: -1);
     final List<double> largeurs = <double>[
       for (int i = 0; i < n; i++) taille(enfants[i]).width,
     ];
