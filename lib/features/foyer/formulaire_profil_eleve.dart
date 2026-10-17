@@ -645,7 +645,9 @@ class _ChoixAge extends StatelessWidget {
         ),
         Ecart.vXs,
         Text(
-          t.foyer.ajout.identite.ageAide,
+          LibellesGroupe.insecable(
+            t.foyer.ajout.identite.ageAide(min: bornes.min),
+          ),
           style: palette.inkMuted.applyTo(
             textes.bodyMedium ?? const TextStyle(),
           ),

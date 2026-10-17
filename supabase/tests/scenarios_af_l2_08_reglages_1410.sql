@@ -15,10 +15,19 @@ insert into auth.users (id, email) values
   ('a2080000-0000-0000-0000-000000000014', 'l208-e11@example.test'),
   ('a2080000-0000-0000-0000-000000000015', 'l208-e15@example.test'),
   ('a2080000-0000-0000-0000-000000000016', 'l208-e18@example.test'),
-  ('a2080000-0000-0000-0000-000000000017', 'l208-e5c@example.test');
+  ('a2080000-0000-0000-0000-000000000017', 'l208-e5c@example.test'),
+  ('a2080000-0000-0000-0000-000000000018', 'l208-e7a@example.test'),
+  ('a2080000-0000-0000-0000-000000000019', 'l208-e5d@example.test'),
+  ('a2080000-0000-0000-0000-000000000020', 'l208-autre-tuteur@example.test');
 update auth.users set raw_app_meta_data = jsonb_build_object(
   'child_of', 'a2080000-0000-0000-0000-000000000001')
- where id::text like 'a2080000-0000-0000-0000-0000000000_%' and id::text >= 'a2080000-0000-0000-0000-000000000011';
+ where id::text like 'a2080000-0000-0000-0000-0000000000_%' and id::text >= 'a2080000-0000-0000-0000-000000000011'
+   and id::text <> 'a2080000-0000-0000-0000-000000000019'
+   and id::text <> 'a2080000-0000-0000-0000-000000000020';
+-- Le compte ...19 porte un child_of etranger au tuteur du test (l'autre tuteur).
+update auth.users set raw_app_meta_data = jsonb_build_object(
+  'child_of', 'a2080000-0000-0000-0000-000000000020')
+ where id = 'a2080000-0000-0000-0000-000000000019';
 
 insert into public.households (id, timezone)
 values ('a208ffff-0000-0000-0000-000000000001', 'Europe/Paris');
@@ -140,6 +149,27 @@ begin
          and payload ->> 'motif' = 'dispense accordee, frere aine inscrit'
          and payload ->> 'admin_id' = v_a::text) <> 1 then
     raise exception 'L2-08: exception d''age non journalisee';
+  end if;
+
+  -- Reprise D-6. L'exception ne vaut que sous 6 ans.
+  -- Administrateur avec motif pour 7 ans, tuteur different de l'appelant : la
+  -- voie tuteur s'applique, donc refus 42501 et aucun profil.
+  v_r := pg_temp.l208_essai(v_a, 'admin', 'a2080000-0000-0000-0000-000000000018', 7, 'motif quelconque');
+  if v_r <> '42501' then raise exception 'L2-08 D-6: admin 7 ans avec motif, sqlstate %', v_r; end if;
+  if exists (select 1 from public.profiles where id = 'a2080000-0000-0000-0000-000000000018') then
+    raise exception 'L2-08 D-6: un refus a laisse un profil';
+  end if;
+  -- Administrateur avec motif pour 5 ans, mais compte enfant dont child_of
+  -- n'est pas ce tuteur : l'exception ne contourne pas le lien child_of.
+  v_r := pg_temp.l208_essai(v_a, 'admin', 'a2080000-0000-0000-0000-000000000019', 5, 'dispense accordee');
+  if v_r <> '42501' then raise exception 'L2-08 D-6: admin 5 ans, child_of etranger, sqlstate %', v_r; end if;
+  if exists (select 1 from public.profiles where id = 'a2080000-0000-0000-0000-000000000019') then
+    raise exception 'L2-08 D-6: child_of etranger a laisse un profil';
+  end if;
+  -- Le 5 ans accepte plus haut est journalise une seule fois, avec l'age.
+  if (select count(*) from public.audit_logs
+       where action = 'age_exception' and payload ->> 'age' = '5') <> 1 then
+    raise exception 'L2-08 D-6: journal age_exception inattendu';
   end if;
 
   -- Un tuteur ne peut pas lancer la voie administrateur pour un autre foyer

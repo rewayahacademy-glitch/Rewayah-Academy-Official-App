@@ -286,7 +286,7 @@ void main() {
       expect(service.enfantsCrees, isEmpty);
     });
 
-    testWidgets('FORM-L6 : l age se choisit dans les bornes (3 a 18), il ne se '
+    testWidgets('FORM-L6 : l age se choisit dans les bornes (6 a 18), il ne se '
         'tape pas ; sans choix, l erreur dit quoi faire', (
       WidgetTester tester,
     ) async {
@@ -303,14 +303,21 @@ void main() {
         ),
         findsNothing,
       );
-      for (int age = 3; age <= 18; age++) {
+      for (int age = 6; age <= 18; age++) {
         expect(
           find.byKey(FormulaireProfilEleve.ageChoixKey(age)),
           findsOneWidget,
           reason: 'puce $age',
         );
       }
-      expect(find.byKey(FormulaireProfilEleve.ageChoixKey(2)), findsNothing);
+      expect(find.byKey(FormulaireProfilEleve.ageChoixKey(5)), findsNothing);
+      expect(find.byKey(FormulaireProfilEleve.ageChoixKey(3)), findsNothing);
+      expect(
+        find.text(
+          LibellesGroupe.insecable(t.foyer.ajout.identite.ageAide(min: 6)),
+        ),
+        findsOneWidget,
+      );
       expect(find.byKey(FormulaireProfilEleve.ageChoixKey(19)), findsNothing);
 
       await tester.enterText(
@@ -428,7 +435,7 @@ void main() {
         // DUREE-INSECABLE-4 : « 18 ans » insecable a l'ecran.
         find.text(
           LibellesGroupe.insecable(
-            t.foyer.ajout.erreurs.ageHorsBornes(min: 3, max: 18),
+            t.foyer.ajout.erreurs.ageHorsBornes(min: 6, max: 18),
           ),
         ),
         findsOneWidget,
