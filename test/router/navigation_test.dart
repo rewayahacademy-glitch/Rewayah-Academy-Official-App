@@ -601,6 +601,9 @@ void main() {
           lectureProfil: LectureProfil.injoignable,
         ),
         for (final AppRole role in AppRole.values) _session(role),
+        // L1-10 : la seconde etape du controleur ne s'ouvre qu'a lui, tant que
+        // la capacite `mfaRequise` est vraie.
+        _session(AppRole.controller).copyWith(mfaRequise: true),
       ];
       final List<String> declares = cheminsDeclares(routeur);
       expect(declares, isNotEmpty);

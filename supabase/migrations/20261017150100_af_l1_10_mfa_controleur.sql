@@ -103,6 +103,9 @@ CREATE OR REPLACE FUNCTION public.controleur_fil_de_mission(p_mission_id uuid)
 AS $function$
 DECLARE v_result jsonb;
 BEGIN
+  IF NOT coalesce(public.app_account_valid(), false) THEN
+    RAISE EXCEPTION 'B12 mission indisponible' USING ERRCODE='42501';
+  END IF;
   IF public.app_role() = 'controller' AND coalesce(public.app_aal(), 'aal1') <> 'aal2' THEN
     RAISE EXCEPTION 'seconde étape de connexion requise' USING ERRCODE = 'insufficient_privilege';
   END IF;

@@ -2484,6 +2484,7 @@ class Traductions$controleur$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$controleur$mfa$fr mfa = Traductions$controleur$mfa$fr.internal(_root);
 	late final Traductions$controleur$historique$fr historique = Traductions$controleur$historique$fr.internal(_root);
 	late final Traductions$controleur$complement$fr complement = Traductions$controleur$complement$fr.internal(_root);
 	late final Traductions$controleur$compteRendu$fr compteRendu = Traductions$controleur$compteRendu$fr.internal(_root);
@@ -13543,6 +13544,72 @@ class Traductions$enseignant$revenus$fr {
 
 	/// fr: 'L'estimation apparaîtra après votre première séance assurée du mois.'
 	String get videDetail => 'L\'estimation apparaîtra après votre première séance assurée du mois.';
+}
+
+// Path: controleur.mfa
+class Traductions$controleur$mfa$fr {
+	Traductions$controleur$mfa$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Protégez votre compte de contrôleur'
+	String get titreEnrolement => 'Protégez votre compte de contrôleur';
+
+	/// fr: 'Ce compte donne accès à des séances où se trouvent des enfants. Un mot de passe volé ne doit pas suffire : ajoutez une seconde étape avec une application d'authentification.'
+	String get introEnrolement => 'Ce compte donne accès à des séances où se trouvent des enfants. Un mot de passe volé ne doit pas suffire : ajoutez une seconde étape avec une application d\'authentification.';
+
+	/// fr: 'Dans votre application d'authentification, scannez ce code.'
+	String get etapeScanner => 'Dans votre application d\'authentification, scannez ce code.';
+
+	/// fr: 'Code à scanner pour ajouter ce compte à votre application d'authentification'
+	String get libelleQr => 'Code à scanner pour ajouter ce compte à votre application d\'authentification';
+
+	/// fr: 'Vous ne pouvez pas scanner ? Saisissez cette clé dans l'application.'
+	String get cleManuelle => 'Vous ne pouvez pas scanner ? Saisissez cette clé dans l\'application.';
+
+	/// fr: 'Saisissez le code à six chiffres affiché par l'application.'
+	String get etapeCode => 'Saisissez le code à six chiffres affiché par l\'application.';
+
+	/// fr: 'Code à six chiffres'
+	String get champCode => 'Code à six chiffres';
+
+	/// fr: 'Activer la protection'
+	String get activer => 'Activer la protection';
+
+	/// fr: 'Confirmez votre connexion'
+	String get titreVerification => 'Confirmez votre connexion';
+
+	/// fr: 'Ouvrez votre application d'authentification et saisissez le code à six chiffres affiché pour ce compte.'
+	String get introVerification => 'Ouvrez votre application d\'authentification et saisissez le code à six chiffres affiché pour ce compte.';
+
+	/// fr: 'Confirmer'
+	String get confirmer => 'Confirmer';
+
+	/// fr: 'Saisissez les six chiffres du code.'
+	String get codeIncomplet => 'Saisissez les six chiffres du code.';
+
+	/// fr: 'Ce code n'est pas bon. Vérifiez l'heure de votre téléphone, puis saisissez le code qui s'affiche maintenant.'
+	String get codeRefuse => 'Ce code n\'est pas bon. Vérifiez l\'heure de votre téléphone, puis saisissez le code qui s\'affiche maintenant.';
+
+	/// fr: 'Je n'ai pas d'application d'authentification'
+	String get sansApplication => 'Je n\'ai pas d\'application d\'authentification';
+
+	/// fr: 'Il vous faut une application d'authentification'
+	String get videTitre => 'Il vous faut une application d\'authentification';
+
+	/// fr: 'Installez-en une sur votre téléphone, par exemple Google Authenticator, Microsoft Authenticator ou Aegis, puis revenez ici. Pour être aidé, écrivez à l'administration de l'académie.'
+	String get videPhrase => 'Installez-en une sur votre téléphone, par exemple Google Authenticator, Microsoft Authenticator ou Aegis, puis revenez ici. Pour être aidé, écrivez à l\'administration de l\'académie.';
+
+	/// fr: 'J'ai installé l'application'
+	String get videRetour => 'J\'ai installé l\'application';
+
+	/// fr: 'Se déconnecter'
+	String get seDeconnecter => 'Se déconnecter';
+
+	/// fr: 'Vérification de votre compte en cours'
+	String get chargement => 'Vérification de votre compte en cours';
 }
 
 // Path: controleur.historique
@@ -37127,6 +37194,25 @@ extension on Traductions {
 			'enseignant.revenus.mention' => 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l\'académie fait foi.',
 			'enseignant.revenus.vide' => 'Aucune heure assurée ce mois-ci',
 			'enseignant.revenus.videDetail' => 'L\'estimation apparaîtra après votre première séance assurée du mois.',
+			'controleur.mfa.titreEnrolement' => 'Protégez votre compte de contrôleur',
+			'controleur.mfa.introEnrolement' => 'Ce compte donne accès à des séances où se trouvent des enfants. Un mot de passe volé ne doit pas suffire : ajoutez une seconde étape avec une application d\'authentification.',
+			'controleur.mfa.etapeScanner' => 'Dans votre application d\'authentification, scannez ce code.',
+			'controleur.mfa.libelleQr' => 'Code à scanner pour ajouter ce compte à votre application d\'authentification',
+			'controleur.mfa.cleManuelle' => 'Vous ne pouvez pas scanner ? Saisissez cette clé dans l\'application.',
+			'controleur.mfa.etapeCode' => 'Saisissez le code à six chiffres affiché par l\'application.',
+			'controleur.mfa.champCode' => 'Code à six chiffres',
+			'controleur.mfa.activer' => 'Activer la protection',
+			'controleur.mfa.titreVerification' => 'Confirmez votre connexion',
+			'controleur.mfa.introVerification' => 'Ouvrez votre application d\'authentification et saisissez le code à six chiffres affiché pour ce compte.',
+			'controleur.mfa.confirmer' => 'Confirmer',
+			'controleur.mfa.codeIncomplet' => 'Saisissez les six chiffres du code.',
+			'controleur.mfa.codeRefuse' => 'Ce code n\'est pas bon. Vérifiez l\'heure de votre téléphone, puis saisissez le code qui s\'affiche maintenant.',
+			'controleur.mfa.sansApplication' => 'Je n\'ai pas d\'application d\'authentification',
+			'controleur.mfa.videTitre' => 'Il vous faut une application d\'authentification',
+			'controleur.mfa.videPhrase' => 'Installez-en une sur votre téléphone, par exemple Google Authenticator, Microsoft Authenticator ou Aegis, puis revenez ici. Pour être aidé, écrivez à l\'administration de l\'académie.',
+			'controleur.mfa.videRetour' => 'J\'ai installé l\'application',
+			'controleur.mfa.seDeconnecter' => 'Se déconnecter',
+			'controleur.mfa.chargement' => 'Vérification de votre compte en cours',
 			'controleur.historique.titre' => 'Historique',
 			'controleur.historique.provisoire' => 'Cet écran est en préparation.',
 			'controleur.historique.envoye' => 'Envoyé',
@@ -37320,6 +37406,8 @@ extension on Traductions {
 			'controleur.controle.titre' => 'Contrôle',
 			'controleur.controle.mission' => 'Votre prochaine Classe à observer',
 			'controleur.controle.missionEnDirect' => 'Classe à observer maintenant',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.controle.commencer' => 'Commencer le contrôle',
 			'controleur.controle.vide' => 'Aucun contrôle n\'est à réaliser pour le moment.',
 			'controleur.controle.videAide' => 'Rewayah vous proposera une Classe à observer lorsqu\'une séance compatible sera disponible.',
@@ -37339,8 +37427,6 @@ extension on Traductions {
 			'galerie.avertissement' => 'Banc d\'essai de développement. Absent des versions de production.',
 			'galerie.paires' => 'Paires de couleurs',
 			'galerie.elevation' => 'Élévation et rayons',
-			_ => null,
-		} ?? switch (path) {
 			'galerie.typographie' => 'Échelles typographiques',
 			'galerie.polices' => 'Polices',
 			'galerie.composants' => 'Composants partagés',
@@ -37834,6 +37920,8 @@ extension on Traductions {
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
 			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.signalement.titre' => 'Signaler un besoin',
 			'tc.parcours.signalement.categorie' => 'De quoi s\'agit-il ?',
 			'tc.parcours.signalement.categorieValeur.pedagogique' => 'Pédagogique',
@@ -37853,8 +37941,6 @@ extension on Traductions {
 			'tc.parcours.postCours.titre' => 'Après le cours',
 			'tc.parcours.postCours.duree' => ({required Object minutes}) => 'Durée réelle ${minutes} min',
 			'tc.parcours.postCours.exceptions' => 'À confirmer',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.postCours.toutEstNominal' => 'Rien ne demande votre attention.',
 			'tc.parcours.postCours.reprise' => 'Reprise proposée',
 			'tc.parcours.postCours.repriseInconnue' => 'Aucune position de reprise connue pour cette séance.',
@@ -38348,6 +38434,8 @@ extension on Traductions {
 			'motifs.signalement.pedagogique.echange' => 'Un échange avec l\'académie est proposé.',
 			'motifs.signalement.presence.absences' => 'Plusieurs absences récentes : la régularité aide à progresser.',
 			'motifs.signalement.presence.retards' => 'Arrivées en retard lors des dernières séances.',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.signalement.presence.prevenir' => 'Merci de prévenir l\'académie en cas d\'absence.',
 			'motifs.signalement.technique.son' => 'Le son ou la connexion a gêné le cours.',
 			'motifs.signalement.technique.essai' => 'Un essai de l\'appareil avant le cours est conseillé.',
@@ -38367,8 +38455,6 @@ extension on Traductions {
 			'suiviFamille.erreur' => 'Le suivi n\'a pas pu être chargé. Réessayez.',
 			'suiviFamille.sansDonnees' => 'vos demandes',
 			'suiviFamille.introuvable' => 'Cette demande n\'existe plus ou n\'est pas la vôtre.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.retour' => 'Retour aux demandes',
 			'suiviFamille.fuseau' => ({required Object deVille}) => 'Heures affichées : heure ${deVille}.',
 			'suiviFamille.prevue' => ({required Object date, required Object heure}) => 'Prévue le ${date} à ${heure}',
@@ -38862,6 +38948,8 @@ extension on Traductions {
 			'com.communaute.lien.commercialInterdit' => 'Lien commercial interdit',
 			'com.communaute.lien.nonVerifie' => 'Lien non vérifié',
 			'com.communaute.lien.semantique' => ({required Object adresse, required Object etat}) => '${adresse}, ${etat}',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.sousTitre' => 'Échanges et entraide entre enseignants',
 			'com.communaute.sections' => 'Catégories de la Communauté enseignants',
 			'com.communaute.toutes' => 'Toutes',
@@ -38881,8 +38969,6 @@ extension on Traductions {
 			'com.communaute.moment.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il y a ${n} min', other: 'Il y a ${n} min', ), 
 			'com.communaute.moment.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il y a ${n} h', other: 'Il y a ${n} h', ), 
 			'com.communaute.moment.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il y a ${n} j', other: 'Il y a ${n} j', ), 
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.moment.date' => ({required Object jour, required Object mois}) => 'Le ${jour}/${mois}',
 			'com.communaute.publication.auteur' => ({required Object fonction, required Object moment}) => '${fonction} · ${moment}',
 			'com.communaute.publication.enregistrer' => 'Enregistrer la publication',
@@ -39376,6 +39462,8 @@ extension on Traductions {
 			'com.annonces.demo.classeNour' => 'Classe An-Nour',
 			'com.annonces.demo.classeFajr' => 'Classe Al-Fajr',
 			'com.annonces.demo.enseignante' => 'Enseignante de la Classe',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demo.f.adminStudioMention' => 'Studio : une discussion du canal Programmes vous mentionne',
 			'com.annonces.demo.f.adminStudioReponse' => 'Studio : nouvelle réponse à votre message sur le programme de printemps',
 			'com.annonces.demo.f.adminStudioDecision' => 'Studio : une décision est demandée sur le support de la leçon 4',
@@ -39395,8 +39483,6 @@ extension on Traductions {
 			'com.annonces.demo.f.adulteSeance' => 'Votre séance de mardi est déplacée à 19 h',
 			'com.annonces.demo.f.adulteMessage' => 'Nouveau message de votre enseignante',
 			'com.annonces.demo.f.enseignantFamille' => 'Message de la famille de Yasmine, Classe An-Nour',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.enseignantDirection' => 'Annonce de la direction : calendrier des vacances d\'hiver',
 			'com.annonces.demo.f.enseignantDirectionTexte' => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.',
 			'com.annonces.demo.f.enseignantPlanning' => 'Votre planning de la semaine prochaine a changé',
@@ -39890,6 +39976,8 @@ extension on Traductions {
 			'comptable.encaissements.date' => 'Date',
 			'comptable.encaissements.etat' => 'État',
 			'comptable.encaissements.devise' => 'Devise',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.affectation' => 'Affectation par profil',
 			'comptable.encaissements.affectationAucune' => 'La source n\'a rendu aucune affectation pour cet encaissement.',
 			'comptable.encaissements.rapprochement' => 'Rapprochement',
@@ -39909,8 +39997,6 @@ extension on Traductions {
 			'comptable.encaissements.rap.natPayout' => 'Payout',
 			'comptable.encaissements.rap.natPreuve' => 'Preuve',
 			'comptable.encaissements.rap.natureDate' => ({required Object nature, required Object date}) => '${nature} · ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.choisirTitre' => 'Choisissez une transaction.',
 			'comptable.encaissements.rap.choisirPhrase' => 'Ses correspondances proposées, son état et son journal s\'ouvrent ici.',
 			'comptable.encaissements.rap.videTitre' => 'Rien à rapprocher.',
@@ -40404,6 +40490,8 @@ extension on Traductions {
 			'reprisesAdmin.deposeeLe' => 'Déposée le',
 			'reprisesAdmin.etat.aExaminer' => 'À examiner',
 			'reprisesAdmin.etat.refuseeParTitulaire' => 'Refusée par le titulaire',
+			_ => null,
+		} ?? switch (path) {
 			'reprisesAdmin.examenLe' => ({required Object date}) => 'Examen possible à partir du ${date}.',
 			'reprisesAdmin.refuseeInfo' => 'Le titulaire a refusé cette demande. Aucune décision n\'est attendue.',
 			'reprisesAdmin.valider' => 'Valider la reprise',
@@ -40423,8 +40511,6 @@ extension on Traductions {
 			'reprisesAdmin.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'recherche.titre' => 'Rechercher',
 			'recherche.retour' => 'Retour',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.champ.libelle' => 'Rechercher',
 			'recherche.champ.aide' => 'Un mot',
 			'recherche.espace.famille' => 'Dans votre espace Tuteur',

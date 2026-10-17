@@ -548,6 +548,12 @@ abstract final class Routes {
   /// barre »). Une seule carte de mission, jamais de planning (CT-2, C3).
   static const String controleur = '/controleur';
 
+  /// La seconde etape de connexion du controleur (L1-10) : enrolement d'un
+  /// facteur TOTP, ou verification a chaque connexion. Hors coquille, sans
+  /// barre : tant que la capacite `mfaRequise` est vraie, c'est la seule page
+  /// atteignable.
+  static const String mfaControleur = '/controleur/mfa';
+
   /// Historique (CTR-05), deuxieme destination. Page provisoire jusqu'a CT-7.
   static const String controleurHistorique = '/controleur/historique';
 
