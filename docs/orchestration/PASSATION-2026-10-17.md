@@ -62,6 +62,6 @@ Chaque point : présent dans le code, testé localement ; les migrations sont en
 - La base de test est à jour : la version de test peut être mise en ligne avec le bouton « Run workflow » de `flutter-deploy.yml`, depuis la branche d'intégration.
 - Une décision vous appartient : aujourd'hui la comptabilité enregistre un paiement directement ; un document de septembre prévoyait que le comptable prépare et que la direction valide. Sans réponse, la règle actuelle reste.
 
-## Reste connu, hors de ce lot
+## En plus de la liste
 
-- Écrans du comptable (paiements, trésorerie, contractuels, bénéficiaires, encaissements) et revenus de l'enseignant : leur bloc hors ligne dit encore « Vous êtes hors ligne » sous le bandeau, au lieu de dire ce qui manque (règle EA-HL-DOUBLE-1). Même correction que celle faite sur le Foyer, écran par écran.
+- Le bloc hors ligne des écrans du comptable, de la finance de la direction et des revenus de l'enseignant dit ce qui manque au lieu de redire « hors ligne » (EA-HL-DOUBLE-1), comme sur le Foyer.
