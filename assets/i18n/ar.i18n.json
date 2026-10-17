@@ -6872,6 +6872,13 @@
     "modeStandard": "الوضع العادي"
   },
   "ficheEleve": {
+    "mouvements": {
+      "nature": {
+        "debitSeance": "خصم حصة",
+        "correction": "تصحيح الرصيد",
+        "remboursement": "استرداد"
+      }
+    },
     "titreRepli": "ملف الطالب",
     "parametres": "إعدادات الطالب",
     "appareilsGroupe": "الأجهزة",
@@ -7460,6 +7467,8 @@
       "familleDescription": "سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.",
       "enseignant": "لدي رمز دعوة",
       "enseignantInvite": "هل أنت معلّم؟ تدعوك الأكاديمية عبر البريد الإلكتروني.",
+      "comptable": "لدي رمز محاسب",
+      "comptableInvite": "هل أنت محاسب؟ تدعوك الإدارة عبر البريد الإلكتروني.",
       "coursQuestion": "هل تتابع أنت أيضًا دروسًا؟",
       "coursOui": "نعم",
       "coursNon": "لا",
@@ -7474,7 +7483,8 @@
       "usage": "نوع الحساب",
       "identite": "الاسم",
       "genre": "الجنس",
-      "enseignant": "معلم"
+      "enseignant": "معلم",
+      "comptable": "محاسب"
     }
   },
   "consentement": {
@@ -8867,6 +8877,33 @@
       "personneParIdentifiantClasse(param=classe)": "وُجد بمعرّفه · ⁨{classe}⁩",
       "canalStudio": "قناة الاستوديو",
       "encaissement(param=famille)": "تحصيل · ⁨{famille}⁩"
+    }
+  },
+  "recrutement": {
+    "invitations": {
+      "comptable": {
+        "titrePage": "دعوة شخص",
+        "sousTitrePage": "اختر دور الشخص، ثم أدخل عنوانه. كل رمز يُستعمل مرة واحدة وتنتهي صلاحيته.",
+        "choixQuestion": "ما دور هذا الشخص؟",
+        "enseignantTitre": "معلم",
+        "enseignantExplication": "يدرّس الصفوف. بعد تسجيله، يوقّع عقده قبل أول حصة له.",
+        "comptableTitre": "محاسب",
+        "comptableExplication": "يتابع المدفوعات والتحصيلات والخزينة. لا يدرّس أي صف.",
+        "champEmail": "عنوان البريد الإلكتروني للمحاسب",
+        "creee": "أُنشئت الدعوة. أرسل هذا الرمز إلى المحاسب: ⁨{code}⁩",
+        "doubleVerification": "التحقق المزدوج مطلوب: لا يدعو محاسبًا أو يلغي دعوته إلا الإدارة المتصلة بالتحقق المزدوج. أعد الاتصال بالتحقق المزدوج، ثم أعد المحاولة.",
+        "liste": "دعوات المحاسبين",
+        "vide": "لا توجد دعوة محاسب حاليًا",
+        "videDetail": "ادعُ محاسبًا بعنوان بريده الإلكتروني: يظهر الرمز هنا."
+      }
+    },
+    "candidat": {
+      "comptable": {
+        "titre": "رمز المحاسب الخاص بك",
+        "intro": "للتسجيل كمحاسب، أدخل رمز الدعوة الذي تلقيته من الإدارة.",
+        "valideDetail": "يمكنك إنشاء ملفك كمحاسب.",
+        "indisponible": "سيتوفر التحقق من رموز المحاسبين عند ربط الخادم."
+      }
     }
   }
 }

@@ -925,6 +925,8 @@
       "familleDescription": "Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.",
       "enseignant": "J'ai un code d'invitation",
       "enseignantInvite": "Vous êtes enseignant\u00a0? L'académie vous invite par courriel.",
+      "comptable": "J'ai un code de comptable",
+      "comptableInvite": "Vous êtes comptable\u00a0? La direction vous invite par courriel.",
       "coursQuestion": "Suivez-vous aussi des cours ?",
       "coursOui": "Oui",
       "coursNon": "Non",
@@ -939,7 +941,8 @@
       "usage": "Type de compte",
       "identite": "Nom",
       "genre": "Genre",
-      "enseignant": "Enseignant"
+      "enseignant": "Enseignant",
+      "comptable": "Comptable"
     }
   },
   "contrat": {
@@ -1659,7 +1662,10 @@
         "mensualiteDe": "Mensualité {mois} {annee}",
         "avoir": "Avoir",
         "remise": "Remise",
-        "taxe": "Taxe applicable"
+        "taxe": "Taxe applicable",
+        "debitSeance": "Débit de séance",
+        "correction": "Correction du solde",
+        "remboursement": "Remboursement"
       },
       "statut": {
         "enregistre": "Enregistré",
@@ -1891,7 +1897,22 @@
       "revoquerPour": "Révoquer l'invitation de {email}",
       "revoquerQuestion": "Révoquer l'invitation de {email} ?",
       "revoquerConsequence": "Le code ne pourra plus servir. Vous pourrez inviter la même adresse de nouveau.",
-      "revoquerEchec": "La révocation n'est pas confirmée. Actualisez la liste avant de recommencer."
+      "revoquerEchec": "La révocation n'est pas confirmée. Actualisez la liste avant de recommencer.",
+      "comptable": {
+        "titrePage": "Inviter une personne",
+        "sousTitrePage": "Choisissez le rôle de la personne, puis saisissez son adresse. Chaque code sert une seule fois et expire.",
+        "choixQuestion": "Quel rôle aura cette personne\u00a0?",
+        "enseignantTitre": "Un enseignant",
+        "enseignantExplication": "Il anime des classes. Après son inscription, il signe son contrat avant sa première séance.",
+        "comptableTitre": "Un comptable",
+        "comptableExplication": "Il suit les paiements, les encaissements et la trésorerie. Il n'anime aucune classe.",
+        "champEmail": "Adresse de courriel du comptable",
+        "creee": "Invitation créée. Transmettez ce code au comptable\u00a0: {code}",
+        "doubleVerification": "Double vérification requise\u00a0: seule la direction connectée avec sa double vérification peut inviter un comptable ou révoquer son invitation. Reconnectez-vous avec la double vérification, puis réessayez.",
+        "liste": "Invitations de comptables",
+        "vide": "Aucune invitation de comptable pour le moment",
+        "videDetail": "Invitez un comptable avec son adresse e-mail\u00a0: le code apparaît ici."
+      }
     },
     "candidat": {
       "titre": "Votre code",
@@ -1914,7 +1935,13 @@
       "ressaisir": "Saisir un autre code",
       "horsLigne": "Le code n'a pas été vérifié. Réessayez dans un instant.",
       "erreur": "Le code n'a pas pu être vérifié. Réessayez dans un instant.",
-      "indisponible": "La vérification des invitations sera disponible au branchement du serveur."
+      "indisponible": "La vérification des invitations sera disponible au branchement du serveur.",
+      "comptable": {
+        "titre": "Votre code de comptable",
+        "intro": "Pour vous inscrire comme comptable, saisissez le code d'invitation reçu de la direction.",
+        "valideDetail": "Vous pouvez créer votre profil de comptable.",
+        "indisponible": "La vérification des codes de comptable sera disponible au branchement du serveur."
+      }
     },
     "signature": {
       "titre": "Contrat",

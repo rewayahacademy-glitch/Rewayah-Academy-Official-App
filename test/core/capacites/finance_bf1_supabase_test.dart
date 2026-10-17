@@ -263,14 +263,22 @@ void main() {
       );
     });
 
-    test('natures serveur sans equivalent : rangees, montant signe garde', () {
+    test('chaque nature serveur a sa valeur, montant signe garde', () {
       final MouvementProfil r = mouvementProfilJson(
         _mouvement('remboursement', -1000),
       );
-      expect(r.nature, NatureMouvement.debitPeriode);
+      expect(r.nature, NatureMouvement.remboursement);
       expect(r.montant, const Montant(-1000, 'USD'));
       expect(
         mouvementProfilJson(_mouvement('correction', -5)).nature,
+        NatureMouvement.correction,
+      );
+      expect(
+        mouvementProfilJson(_mouvement('debit', -1200)).nature,
+        NatureMouvement.debitSeance,
+      );
+      expect(
+        mouvementProfilJson(_mouvement('debit_periode', -1200)).nature,
         NatureMouvement.debitPeriode,
       );
       expect(

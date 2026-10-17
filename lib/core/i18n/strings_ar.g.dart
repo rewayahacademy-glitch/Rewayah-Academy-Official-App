@@ -92,6 +92,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$formulaire$ar formulaire = _Traductions$formulaire$ar._(_root);
 	@override late final _Traductions$motifs$ar motifs = _Traductions$motifs$ar._(_root);
 	@override late final _Traductions$recherche$ar recherche = _Traductions$recherche$ar._(_root);
+	@override late final _Traductions$recrutement$ar recrutement = _Traductions$recrutement$ar._(_root);
 }
 
 // Path: notifications
@@ -765,6 +766,7 @@ class _Traductions$ficheEleve$ar extends Traductions$ficheEleve$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$ficheEleve$mouvements$ar mouvements = _Traductions$ficheEleve$mouvements$ar._(_root);
 	@override String get titreRepli => 'ملف الطالب';
 	@override String get parametres => 'إعدادات الطالب';
 	@override String get appareilsGroupe => 'الأجهزة';
@@ -1572,6 +1574,17 @@ class _Traductions$recherche$ar extends Traductions$recherche$fr {
 	@override late final _Traductions$recherche$guide$ar guide = _Traductions$recherche$guide$ar._(_root);
 	@override late final _Traductions$recherche$entree$ar entree = _Traductions$recherche$entree$ar._(_root);
 	@override late final _Traductions$recherche$contexte$ar contexte = _Traductions$recherche$contexte$ar._(_root);
+}
+
+// Path: recrutement
+class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
+	_Traductions$recrutement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$invitations$ar invitations = _Traductions$recrutement$invitations$ar._(_root);
+	@override late final _Traductions$recrutement$candidat$ar candidat = _Traductions$recrutement$candidat$ar._(_root);
 }
 
 // Path: notifications.evenements
@@ -5755,6 +5768,16 @@ class _Traductions$comptable$demo$ar extends Traductions$comptable$demo$fr {
 	@override String get groupeDirection => 'الإدارة';
 }
 
+// Path: ficheEleve.mouvements
+class _Traductions$ficheEleve$mouvements$ar extends Traductions$ficheEleve$mouvements$fr {
+	_Traductions$ficheEleve$mouvements$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$ficheEleve$mouvements$nature$ar nature = _Traductions$ficheEleve$mouvements$nature$ar._(_root);
+}
+
 // Path: ficheEleve.introuvable
 class _Traductions$ficheEleve$introuvable$ar extends Traductions$ficheEleve$introuvable$fr {
 	_Traductions$ficheEleve$introuvable$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -6184,6 +6207,8 @@ class _Traductions$inscription$usage$ar extends Traductions$inscription$usage$fr
 	@override String get familleDescription => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.';
 	@override String get enseignant => 'لدي رمز دعوة';
 	@override String get enseignantInvite => 'هل أنت معلّم؟ تدعوك الأكاديمية عبر البريد الإلكتروني.';
+	@override String get comptable => 'لدي رمز محاسب';
+	@override String get comptableInvite => 'هل أنت محاسب؟ تدعوك الإدارة عبر البريد الإلكتروني.';
 	@override String get coursQuestion => 'هل تتابع أنت أيضًا دروسًا؟';
 	@override String get coursOui => 'نعم';
 	@override String get coursNon => 'لا';
@@ -6206,6 +6231,7 @@ class _Traductions$inscription$recap$ar extends Traductions$inscription$recap$fr
 	@override String get identite => 'الاسم';
 	@override String get genre => 'الجنس';
 	@override String get enseignant => 'معلم';
+	@override String get comptable => 'محاسب';
 }
 
 // Path: consentement.texte
@@ -7572,6 +7598,26 @@ class _Traductions$recherche$contexte$ar extends Traductions$recherche$contexte$
 	@override String personneParIdentifiantClasse({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩';
 	@override String get canalStudio => 'قناة الاستوديو';
 	@override String encaissement({required Object famille}) => 'تحصيل · ⁨${famille}⁩';
+}
+
+// Path: recrutement.invitations
+class _Traductions$recrutement$invitations$ar extends Traductions$recrutement$invitations$fr {
+	_Traductions$recrutement$invitations$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$invitations$comptable$ar comptable = _Traductions$recrutement$invitations$comptable$ar._(_root);
+}
+
+// Path: recrutement.candidat
+class _Traductions$recrutement$candidat$ar extends Traductions$recrutement$candidat$fr {
+	_Traductions$recrutement$candidat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$candidat$comptable$ar comptable = _Traductions$recrutement$candidat$comptable$ar._(_root);
 }
 
 // Path: commun.etats.chargementProlonge
@@ -11880,6 +11926,18 @@ class _Traductions$comptable$direction$delegationPanneau$ar extends Traductions$
 	@override String get sensibleManuelleDetail => 'التزام أُدخل يدويًا ولم يُعتمد بعد.';
 }
 
+// Path: ficheEleve.mouvements.nature
+class _Traductions$ficheEleve$mouvements$nature$ar extends Traductions$ficheEleve$mouvements$nature$fr {
+	_Traductions$ficheEleve$mouvements$nature$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get debitSeance => 'خصم حصة';
+	@override String get correction => 'تصحيح الرصيد';
+	@override String get remboursement => 'استرداد';
+}
+
 // Path: appareils.emetteur.verification
 class _Traductions$appareils$emetteur$verification$ar extends Traductions$appareils$emetteur$verification$fr {
 	_Traductions$appareils$emetteur$verification$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -12392,6 +12450,41 @@ class _Traductions$recherche$guide$initial$ar extends Traductions$recherche$guid
 	// Translations
 	@override String get titre => 'البحث عن مادة';
 	@override String get phrase => 'اكتب كلمة لتجد إحدى موادك.';
+}
+
+// Path: recrutement.invitations.comptable
+class _Traductions$recrutement$invitations$comptable$ar extends Traductions$recrutement$invitations$comptable$fr {
+	_Traductions$recrutement$invitations$comptable$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titrePage => 'دعوة شخص';
+	@override String get sousTitrePage => 'اختر دور الشخص، ثم أدخل عنوانه. كل رمز يُستعمل مرة واحدة وتنتهي صلاحيته.';
+	@override String get choixQuestion => 'ما دور هذا الشخص؟';
+	@override String get enseignantTitre => 'معلم';
+	@override String get enseignantExplication => 'يدرّس الصفوف. بعد تسجيله، يوقّع عقده قبل أول حصة له.';
+	@override String get comptableTitre => 'محاسب';
+	@override String get comptableExplication => 'يتابع المدفوعات والتحصيلات والخزينة. لا يدرّس أي صف.';
+	@override String get champEmail => 'عنوان البريد الإلكتروني للمحاسب';
+	@override String creee({required Object code}) => 'أُنشئت الدعوة. أرسل هذا الرمز إلى المحاسب: ⁨${code}⁩';
+	@override String get doubleVerification => 'التحقق المزدوج مطلوب: لا يدعو محاسبًا أو يلغي دعوته إلا الإدارة المتصلة بالتحقق المزدوج. أعد الاتصال بالتحقق المزدوج، ثم أعد المحاولة.';
+	@override String get liste => 'دعوات المحاسبين';
+	@override String get vide => 'لا توجد دعوة محاسب حاليًا';
+	@override String get videDetail => 'ادعُ محاسبًا بعنوان بريده الإلكتروني: يظهر الرمز هنا.';
+}
+
+// Path: recrutement.candidat.comptable
+class _Traductions$recrutement$candidat$comptable$ar extends Traductions$recrutement$candidat$comptable$fr {
+	_Traductions$recrutement$candidat$comptable$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'رمز المحاسب الخاص بك';
+	@override String get intro => 'للتسجيل كمحاسب، أدخل رمز الدعوة الذي تلقيته من الإدارة.';
+	@override String get valideDetail => 'يمكنك إنشاء ملفك كمحاسب.';
+	@override String get indisponible => 'سيتوفر التحقق من رموز المحاسبين عند ربط الخادم.';
 }
 
 // Path: classe.entree.demo.roles
@@ -19342,6 +19435,9 @@ extension on TraductionsAr {
 			'galerie.composants' => 'المكونات المشتركة',
 			'galerie.modeEnfant' => 'الواجهة الموجَّهة',
 			'galerie.modeStandard' => 'الوضع العادي',
+			'ficheEleve.mouvements.nature.debitSeance' => 'خصم حصة',
+			'ficheEleve.mouvements.nature.correction' => 'تصحيح الرصيد',
+			'ficheEleve.mouvements.nature.remboursement' => 'استرداد',
 			'ficheEleve.titreRepli' => 'ملف الطالب',
 			'ficheEleve.parametres' => 'إعدادات الطالب',
 			'ficheEleve.appareilsGroupe' => 'الأجهزة',
@@ -19496,11 +19592,11 @@ extension on TraductionsAr {
 			'parcours.offreChoisie' => 'الموعد المختار',
 			'parcours.aucuneOffre' => 'لا موعد مفتوح يناسب بعد',
 			'parcours.aucuneOffreDetail' => 'تفتح الأكاديمية مواعيد جديدة مع توالي التسجيلات. يمكنك إبلاغنا بحاجتك: هذا يساعدنا على تحديد ما نفتحه.',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.refusAucun' => 'لا يناسبني أي من هذه المواعيد',
 			'parcours.refusPrevenir' => 'إعلامي إن فُتحت مواعيد جديدة',
 			'parcours.refusEffet' => 'نسجّل أن الطلب موجود. هذا لا ينشئ فصلًا، ولا يبحث عن معلم، ولا يعد بأي موعد مستقبلي.',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.refusEnregistre' => 'تم التسجيل. سنعلمك إن فُتح موعد مناسب.',
 			'parcours.etatAPersonnaliser' => 'مسار للتخصيص',
 			'parcours.etatAPersonnaliserDetail' => ({required Object prenom}) => 'بعض الأسئلة، ولن نعرض لك إلا ما يناسب ⁨${prenom}⁩.',
@@ -19821,6 +19917,8 @@ extension on TraductionsAr {
 			'inscription.usage.familleDescription' => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.',
 			'inscription.usage.enseignant' => 'لدي رمز دعوة',
 			'inscription.usage.enseignantInvite' => 'هل أنت معلّم؟ تدعوك الأكاديمية عبر البريد الإلكتروني.',
+			'inscription.usage.comptable' => 'لدي رمز محاسب',
+			'inscription.usage.comptableInvite' => 'هل أنت محاسب؟ تدعوك الإدارة عبر البريد الإلكتروني.',
 			'inscription.usage.coursQuestion' => 'هل تتابع أنت أيضًا دروسًا؟',
 			'inscription.usage.coursOui' => 'نعم',
 			'inscription.usage.coursNon' => 'لا',
@@ -19834,6 +19932,7 @@ extension on TraductionsAr {
 			'inscription.recap.identite' => 'الاسم',
 			'inscription.recap.genre' => 'الجنس',
 			'inscription.recap.enseignant' => 'معلم',
+			'inscription.recap.comptable' => 'محاسب',
 			'consentement.titre' => 'الموافقات',
 			'consentement.texte.titre' => 'زيارات أولياء الأمور',
 			'consentement.texte.quiResponsable' => 'يمكن لأولياء أمور الطلاب الحاضرين متابعة الحصة لوقت قصير.',
@@ -20007,14 +20106,14 @@ extension on TraductionsAr {
 			'adulte.famille.profilNonCreePhrase' => 'في العرض التجريبي، لا يُرسل شيء. تبقى «أسرتي» كما كانت.',
 			'adulte.famille.profilNonCreePhraseSeul' => 'في العرض التجريبي، لا يُرسل شيء. تبقى مساحتك كطالب كما كانت.',
 			'adulte.famille.monProfilIndisponibleTitre' => 'غير متاح بعد',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.monProfilIndisponiblePhrase' => 'إنشاء ملف طالب منفصل غير متاح بعد. تبقى دروسك و«أسرتي» كما هي.',
 			'adulte.famille.indisponibleTitre' => 'قسم الأسرة غير متاح بعد',
 			'adulte.famille.indisponiblePhrase' => 'ستظهر أسرتك أو باقة أسرتك هنا بمجرد إتاحتها.',
 			'adulte.famille.place.ajouterConjointe' => 'إضافة زوجة',
 			'adulte.famille.place.ajouterConjoint' => 'إضافة زوج',
 			'adulte.famille.place.inviterConjointe' => 'ادعُ زوجتك للانضمام إلى Rewayah بحسابها الخاص.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.place.inviterConjoint' => 'ادعُ زوجك للانضمام إلى Rewayah بحسابه الخاص.',
 			'adulte.famille.place.invitationEnvoyee' => 'أُرسلت الدعوة',
 			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '⁨${prenom}⁩، زوجتك',
@@ -20521,14 +20620,14 @@ extension on TraductionsAr {
 			'controleur.complement.revenir' => 'العودة إلى التقرير',
 			'controleur.compteRendu.titre' => 'التقرير',
 			'controleur.compteRendu.provisoire' => 'هذه الشاشة قيد التحضير.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.revenir' => 'العودة إلى المراقبة',
 			'controleur.compteRendu.sousTitre' => ({required Object classe, required Object heure}) => '⁨${classe}⁩ · ⁨${heure}⁩',
 			'controleur.compteRendu.faits' => 'السجل التلقائي للحصة',
 			'controleur.compteRendu.faitsReplies' => 'السجل التلقائي للحصة، مطوي',
 			'controleur.compteRendu.faitsDeplies' => 'السجل التلقائي للحصة، مفتوح',
 			'controleur.compteRendu.faitsChargement' => 'جارٍ قراءة السجل التلقائي للحصة: الساعات، الطلاب الحاضرون، إعادة الاتصال.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.faitsAbsents' => 'السجل التلقائي للحصة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. يمكنك الرد دونه؛ وسيُرفق بالتقرير بمجرد وصوله.',
 			'controleur.compteRendu.cleHoraire' => 'الموعد المقرر',
 			'controleur.compteRendu.horaire' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
@@ -20894,6 +20993,23 @@ extension on TraductionsAr {
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
 			'recherche.contexte.canalStudio' => 'قناة الاستوديو',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'تحصيل · ⁨${famille}⁩',
+			'recrutement.invitations.comptable.titrePage' => 'دعوة شخص',
+			'recrutement.invitations.comptable.sousTitrePage' => 'اختر دور الشخص، ثم أدخل عنوانه. كل رمز يُستعمل مرة واحدة وتنتهي صلاحيته.',
+			'recrutement.invitations.comptable.choixQuestion' => 'ما دور هذا الشخص؟',
+			'recrutement.invitations.comptable.enseignantTitre' => 'معلم',
+			'recrutement.invitations.comptable.enseignantExplication' => 'يدرّس الصفوف. بعد تسجيله، يوقّع عقده قبل أول حصة له.',
+			'recrutement.invitations.comptable.comptableTitre' => 'محاسب',
+			'recrutement.invitations.comptable.comptableExplication' => 'يتابع المدفوعات والتحصيلات والخزينة. لا يدرّس أي صف.',
+			'recrutement.invitations.comptable.champEmail' => 'عنوان البريد الإلكتروني للمحاسب',
+			'recrutement.invitations.comptable.creee' => ({required Object code}) => 'أُنشئت الدعوة. أرسل هذا الرمز إلى المحاسب: ⁨${code}⁩',
+			'recrutement.invitations.comptable.doubleVerification' => 'التحقق المزدوج مطلوب: لا يدعو محاسبًا أو يلغي دعوته إلا الإدارة المتصلة بالتحقق المزدوج. أعد الاتصال بالتحقق المزدوج، ثم أعد المحاولة.',
+			'recrutement.invitations.comptable.liste' => 'دعوات المحاسبين',
+			'recrutement.invitations.comptable.vide' => 'لا توجد دعوة محاسب حاليًا',
+			'recrutement.invitations.comptable.videDetail' => 'ادعُ محاسبًا بعنوان بريده الإلكتروني: يظهر الرمز هنا.',
+			'recrutement.candidat.comptable.titre' => 'رمز المحاسب الخاص بك',
+			'recrutement.candidat.comptable.intro' => 'للتسجيل كمحاسب، أدخل رمز الدعوة الذي تلقيته من الإدارة.',
+			'recrutement.candidat.comptable.valideDetail' => 'يمكنك إنشاء ملفك كمحاسب.',
+			'recrutement.candidat.comptable.indisponible' => 'سيتوفر التحقق من رموز المحاسبين عند ربط الخادم.',
 			_ => null,
 		};
 	}

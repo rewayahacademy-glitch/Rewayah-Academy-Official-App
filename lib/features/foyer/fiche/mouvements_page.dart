@@ -109,6 +109,9 @@ String libelleMouvement(MouvementProfil m) => switch (m.nature) {
   NatureMouvement.avoir => t.ficheEleve.mouvements.nature.avoir,
   NatureMouvement.remise => t.ficheEleve.mouvements.nature.remise,
   NatureMouvement.taxe => t.ficheEleve.mouvements.nature.taxe,
+  NatureMouvement.debitSeance => t.ficheEleve.mouvements.nature.debitSeance,
+  NatureMouvement.correction => t.ficheEleve.mouvements.nature.correction,
+  NatureMouvement.remboursement => t.ficheEleve.mouvements.nature.remboursement,
 };
 
 /// L'icone du type d'un mouvement (guide §5.2, revue 5 b) : decorative, le
@@ -116,8 +119,11 @@ String libelleMouvement(MouvementProfil m) => switch (m.nature) {
 AppIcon iconeMouvement(NatureMouvement nature) => switch (nature) {
   NatureMouvement.recharge => AppIcons.ajouter,
   NatureMouvement.debitPeriode => AppIcons.creneaux,
+  NatureMouvement.debitSeance => AppIcons.cours,
   NatureMouvement.avoir || NatureMouvement.remise => AppIcons.finance,
   NatureMouvement.taxe => AppIcons.info,
+  NatureMouvement.correction => AppIcons.crayon,
+  NatureMouvement.remboursement => AppIcons.sortieArgent,
 };
 
 String _deuxChiffres(int n) => n.toString().padLeft(2, '0');

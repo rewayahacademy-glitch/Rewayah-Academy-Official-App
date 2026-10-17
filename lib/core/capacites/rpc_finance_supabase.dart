@@ -198,20 +198,18 @@ LigneMensualite _ligneMensualite(Map<String, dynamic> l) {
 
 /// La nature d'un mouvement rendu par le serveur.
 ///
-/// Le serveur distingue aussi `debit` (debit de seance), `correction`
-/// (ajustement negatif) et `remboursement` : [NatureMouvement] n'a pas encore
-/// de valeur pour eux (le libelle vit dans les ecrans), ils se rangent donc
-/// sous [NatureMouvement.debitPeriode], leur montant restant signe tel que
-/// rendu. A affiner quand l'ecran saura les nommer.
+/// Chaque nature serveur a sa valeur : `debit` (debit de seance),
+/// `correction` (ajustement negatif) et `remboursement` ne se rangent plus
+/// sous la mensualite (lot F2). Le montant reste signe tel que rendu.
 NatureMouvement natureMouvementJson(Object? v) => switch (v) {
   'recharge' => NatureMouvement.recharge,
   'avoir' => NatureMouvement.avoir,
   'remise' => NatureMouvement.remise,
   'taxe' => NatureMouvement.taxe,
-  'debit_periode' ||
-  'debit' ||
-  'correction' ||
-  'remboursement' => NatureMouvement.debitPeriode,
+  'debit_periode' => NatureMouvement.debitPeriode,
+  'debit' => NatureMouvement.debitSeance,
+  'correction' => NatureMouvement.correction,
+  'remboursement' => NatureMouvement.remboursement,
   _ => throw FormatException('nature de mouvement inconnue: $v'),
 };
 

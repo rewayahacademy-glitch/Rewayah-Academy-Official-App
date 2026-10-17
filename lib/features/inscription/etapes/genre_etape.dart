@@ -29,6 +29,9 @@ class GenreEtape extends ConsumerWidget {
     // Lot E2 : chaque option s'explique. L'enseignant lit pourquoi sa piece
     // d'identite en depend ; les autres, a quoi sert la reponse.
     final bool enseignant = brouillon.usage == UsageInscription.enseignant;
+    // Lot F2 : le comptable ne suit pas de cours et ne depose pas de piece ;
+    // aucune des deux explications ne le concerne.
+    final bool comptable = brouillon.usage == UsageInscription.comptable;
 
     return CoquilleEtape(
       route: _route,
@@ -53,7 +56,9 @@ class GenreEtape extends ConsumerWidget {
           OptionChoix(
             valeur: Genre.homme.name,
             libelle: t.inscription.genreHomme,
-            explication: enseignant
+            explication: comptable
+                ? null
+                : enseignant
                 ? t.inscription.genreHommeEnseignant
                 : t.inscription.genreHommeExplication,
             icone: AppIcons.homme,
@@ -67,7 +72,9 @@ class GenreEtape extends ConsumerWidget {
           OptionChoix(
             valeur: Genre.femme.name,
             libelle: t.inscription.genreFemme,
-            explication: enseignant
+            explication: comptable
+                ? null
+                : enseignant
                 ? t.inscription.genreFemmeEnseignant
                 : t.inscription.genreFemmeExplication,
             icone: AppIcons.femme,
