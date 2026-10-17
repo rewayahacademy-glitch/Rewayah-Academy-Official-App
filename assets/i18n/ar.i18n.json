@@ -2673,19 +2673,34 @@
         "derniereSeance": "آخر حصة",
         "aReprendre": "للاستئناف",
         "presenceRecente": "الحضور الأخير",
-        "travailActuel": "العمل الحالي"
+        "travailActuel": "العمل الحالي",
+        "page": "الصفحة ⁨{page}⁩",
+        "travailEnCours": "العناصر: ⁨{nombre}⁩",
+        "assiduite": "الدروس: ⁨{presences}⁩ من ⁨{total}⁩",
+        "interfaceGuidee": "الواجهة الموجَّهة",
+        "sansPedagogie": "المتابعة التعليمية غير متاحة",
+        "sansPedagogieDetail": "المسار والأهداف والعمل الجاري غير مفتوحة للمعلم بعد."
       },
       "action": {
-        "noter": "تدوين ملاحظة"
+        "noter": "تدوين ملاحظة",
+        "rappel": "نداء هادئ",
+        "reciter": "اختيار للتلاوة",
+        "signaler": "الإبلاغ عن حاجة",
+        "contexte": "فتح السياق"
       },
       "rappel": {
-        "recu": "المعلم يناديك"
+        "recu": "المعلم يناديك",
+        "echec": "لم يصل التنبيه عبر الشبكة. أعد المحاولة بعد لحظة.",
+        "echecDroit": "دخولك إلى هذه الحصة لا يسمح بنداء طالب",
+        "cooldown": "تم النداء. مجددًا بعد ⁨{secondes}⁩ ث"
       },
       "recitation": {
         "titre": "التلاوة",
         "actif": "التلاوة: ⁨{prenom}⁩",
         "pastille": "في التلاوة",
-        "personne": "لا أحد يتلو"
+        "personne": "لا أحد يتلو",
+        "suivants": "بعد ذلك",
+        "arreter": "إيقاف التلاوة"
       },
       "prevol": {
         "titre": "قبل فتح الدرس",

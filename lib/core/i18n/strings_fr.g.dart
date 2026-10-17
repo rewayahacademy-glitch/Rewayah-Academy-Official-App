@@ -744,7 +744,7 @@ class Traductions$connexion$fr {
 	String get titreCreation => 'Créer votre compte';
 
 	/// fr: 'Indiquez votre adresse : nous vous envoyons un lien qui crée votre compte. Aucun mot de passe à choisir.'
-	String get introCreation => 'Indiquez votre adresse : nous vous envoyons un lien qui crée votre compte. Aucun mot de passe à choisir.';
+	String get introCreation => 'Indiquez votre adresse : nous vous envoyons un lien qui crée votre compte. Aucun mot de passe à choisir.';
 
 	/// fr: 'Recevoir le lien d'inscription'
 	String get envoyerLienCreation => 'Recevoir le lien d\'inscription';
@@ -24046,6 +24046,24 @@ class Traductions$tc$classe$fiche$fr {
 
 	/// fr: 'Travail actuel'
 	String get travailActuel => 'Travail actuel';
+
+	/// fr: 'Page {page}'
+	String page({required Object page}) => 'Page ${page}';
+
+	/// fr: '{nombre} élément(s)'
+	String travailEnCours({required Object nombre}) => '${nombre} élément(s)';
+
+	/// fr: '{presences} / {total} cours'
+	String assiduite({required Object presences, required Object total}) => '${presences} / ${total} cours';
+
+	/// fr: 'Interface guidée'
+	String get interfaceGuidee => 'Interface guidée';
+
+	/// fr: 'Suivi pédagogique indisponible'
+	String get sansPedagogie => 'Suivi pédagogique indisponible';
+
+	/// fr: 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l'enseignant.'
+	String get sansPedagogieDetail => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.';
 }
 
 // Path: tc.classe.action
@@ -24058,6 +24076,18 @@ class Traductions$tc$classe$action$fr {
 
 	/// fr: 'Noter'
 	String get noter => 'Noter';
+
+	/// fr: 'Rappel discret'
+	String get rappel => 'Rappel discret';
+
+	/// fr: 'Choisir pour réciter'
+	String get reciter => 'Choisir pour réciter';
+
+	/// fr: 'Signaler un besoin'
+	String get signaler => 'Signaler un besoin';
+
+	/// fr: 'Ouvrir le contexte'
+	String get contexte => 'Ouvrir le contexte';
 }
 
 // Path: tc.classe.rappel
@@ -24070,6 +24100,15 @@ class Traductions$tc$classe$rappel$fr {
 
 	/// fr: 'Le professeur vous appelle'
 	String get recu => 'Le professeur vous appelle';
+
+	/// fr: 'Le rappel est resté sans réponse du réseau. Réessayez dans un instant.'
+	String get echec => 'Le rappel est resté sans réponse du réseau. Réessayez dans un instant.';
+
+	/// fr: 'Votre accès à cette séance ne permet pas d'appeler un élève'
+	String get echecDroit => 'Votre accès à cette séance ne permet pas d\'appeler un élève';
+
+	/// fr: 'Déjà appelé. À nouveau dans {secondes} s'
+	String cooldown({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s';
 }
 
 // Path: tc.classe.recitation
@@ -24091,6 +24130,12 @@ class Traductions$tc$classe$recitation$fr {
 
 	/// fr: 'Personne ne récite'
 	String get personne => 'Personne ne récite';
+
+	/// fr: 'Ensuite'
+	String get suivants => 'Ensuite';
+
+	/// fr: 'Arrêter la récitation'
+	String get arreter => 'Arrêter la récitation';
 }
 
 // Path: tc.classe.prevol
@@ -32925,7 +32970,7 @@ extension on Traductions {
 			'connexion.modeConnexion' => 'J\'ai déjà un compte',
 			'connexion.modeCreation' => 'Créer un compte',
 			'connexion.titreCreation' => 'Créer votre compte',
-			'connexion.introCreation' => 'Indiquez votre adresse : nous vous envoyons un lien qui crée votre compte. Aucun mot de passe à choisir.',
+			'connexion.introCreation' => 'Indiquez votre adresse : nous vous envoyons un lien qui crée votre compte. Aucun mot de passe à choisir.',
 			'connexion.envoyerLienCreation' => 'Recevoir le lien d\'inscription',
 			'connexion.intro' => 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.',
 			'connexion.courriel' => 'Votre adresse électronique',
@@ -37713,12 +37758,27 @@ extension on Traductions {
 			'tc.classe.fiche.aReprendre' => 'À reprendre',
 			'tc.classe.fiche.presenceRecente' => 'Présence récente',
 			'tc.classe.fiche.travailActuel' => 'Travail actuel',
+			'tc.classe.fiche.page' => ({required Object page}) => 'Page ${page}',
+			'tc.classe.fiche.travailEnCours' => ({required Object nombre}) => '${nombre} élément(s)',
+			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} cours',
+			'tc.classe.fiche.interfaceGuidee' => 'Interface guidée',
+			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
+			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',
 			'tc.classe.action.noter' => 'Noter',
+			'tc.classe.action.rappel' => 'Rappel discret',
+			'tc.classe.action.reciter' => 'Choisir pour réciter',
+			'tc.classe.action.signaler' => 'Signaler un besoin',
+			'tc.classe.action.contexte' => 'Ouvrir le contexte',
 			'tc.classe.rappel.recu' => 'Le professeur vous appelle',
+			'tc.classe.rappel.echec' => 'Le rappel est resté sans réponse du réseau. Réessayez dans un instant.',
+			'tc.classe.rappel.echecDroit' => 'Votre accès à cette séance ne permet pas d\'appeler un élève',
+			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s',
 			'tc.classe.recitation.titre' => 'Récitation',
 			'tc.classe.recitation.actif' => ({required Object prenom}) => '${prenom} récite',
 			'tc.classe.recitation.pastille' => 'Récite',
 			'tc.classe.recitation.personne' => 'Personne ne récite',
+			'tc.classe.recitation.suivants' => 'Ensuite',
+			'tc.classe.recitation.arreter' => 'Arrêter la récitation',
 			'tc.classe.prevol.titre' => 'Avant d\'ouvrir le cours',
 			'tc.classe.prevol.microOk' => 'Micro détecté',
 			'tc.classe.prevol.microAbsent' => 'Aucun micro utilisable',
@@ -37884,6 +37944,8 @@ extension on Traductions {
 			'tc.parcours.intention.revoir' => 'À revoir',
 			'tc.parcours.intention.renforcer' => 'À renforcer',
 			'tc.parcours.intention.entretenir' => 'À entretenir',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.intention.evaluation' => 'Pour l\'évaluation',
 			'tc.parcours.plage.versets' => ({required Object sourate, required Object premier, required Object dernier}) => 'Sourate ${sourate}, versets ${premier} à ${dernier}',
 			'tc.parcours.plage.versetUnique' => ({required Object sourate, required Object premier}) => 'Sourate ${sourate}, verset ${premier}',
@@ -37899,8 +37961,6 @@ extension on Traductions {
 			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
 			'tc.parcours.feedback.comprehension.difficile' => 'Pas vraiment',
 			'tc.parcours.feedback.comprehension.bien' => 'Plutôt oui',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
@@ -38398,6 +38458,8 @@ extension on Traductions {
 			'motifs.refusDossier.illisible' => 'Pièce d\'identité illisible',
 			'motifs.refusDossier.expiree' => 'Pièce d\'identité expirée',
 			'motifs.refusDossier.nom' => 'Nom différent de celui du compte',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.refusDossier.nonTransmise' => 'Pièce requise non transmise',
 			'motifs.refusDossier.accord' => 'Accord requis manquant',
 			'motifs.presenceCorrigee.nonDetectee' => 'Présence non détectée par l\'application',
@@ -38413,8 +38475,6 @@ extension on Traductions {
 			'motifs.reglageEnseignant.niveau' => 'Niveau qui ne correspond plus',
 			'motifs.reglageEnseignant.fuseau' => 'Changement de fuseau horaire',
 			'motifs.reglageEnseignant.fratrie' => 'Réunir les enfants du foyer',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.reglageDuree.tropLongue' => 'Durée trop longue pour l\'âge',
 			'motifs.reglageDuree.plusDeTemps' => 'Besoin de plus de temps',
 			'motifs.reglageDuree.pause' => 'Pause nécessaire pendant le cours',
@@ -38912,6 +38972,8 @@ extension on Traductions {
 			'com.vocal.demo.situations' => 'Situations de démonstration',
 			'com.vocal.demo.autorise' => 'Micro autorisé',
 			'com.vocal.demo.aDemander' => 'À demander',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.demo.refuse' => 'Micro refusé',
 			'com.vocal.demo.nonConfirme' => 'Non confirmé',
 			'com.vocal.demo.indisponible' => 'Indisponible',
@@ -38927,8 +38989,6 @@ extension on Traductions {
 			'com.communaute.garde.avertissement' => 'Cette publication semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de publier.',
 			'com.communaute.garde.bloqueAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
 			'com.communaute.garde.bloqueVente' => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.garde.titreAvertissement' => 'Publication à revoir',
 			'com.communaute.garde.titreBlocage' => 'Publication bloquée',
 			'com.communaute.garde.motif' => ({required Object motif}) => 'Motif : ${motif}',
@@ -39426,6 +39486,8 @@ extension on Traductions {
 			'com.annonces.demoPublication.recitationTexte' => 'La Classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.',
 			'com.annonces.demoPublication.rentreeTitre' => 'Reprise des cours après les vacances',
 			'com.annonces.demoPublication.rentreeTexte' => 'Les séances reprennent le lundi 6 janvier aux horaires habituels.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demoPublication.signalementAffilie' => 'Publication « Fiches de tajwid à imprimer »',
 			'com.annonces.demoPublication.extraitAffilie' => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.',
 			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
@@ -39441,8 +39503,6 @@ extension on Traductions {
 			'com.annonces.ouvrirClasse' => 'Ouvrir la Classe',
 			'com.annonces.ouvrirClasseSemantique' => ({required Object classe}) => 'Ouvrir ${classe}',
 			'com.annonces.marquerLue' => 'Marquer comme lue',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.lue' => 'Lue',
 			'com.annonces.carteSemantique' => ({required Object classe, required Object titre}) => 'Annonce de ${classe} : ${titre}',
 			'com.annonces.introuvableTitre' => 'Cette annonce n\'est plus disponible',
@@ -39940,6 +40000,8 @@ extension on Traductions {
 			'comptable.encaissements.filtreRembourses' => 'Remboursés',
 			'comptable.encaissements.filtreContestes' => 'Contestés',
 			'comptable.encaissements.filtreARapprocher' => 'À rapprocher',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.recherche' => 'Rechercher une famille ou une référence',
 			'comptable.encaissements.colDate' => 'Date',
 			'comptable.encaissements.colFamille' => 'Famille',
@@ -39955,8 +40017,6 @@ extension on Traductions {
 			'comptable.encaissements.videPhrase' => 'Les paiements des familles apparaîtront ici dès que le prestataire les aura transmis.',
 			'comptable.encaissements.videFiltreTitre' => 'Aucun encaissement ne correspond.',
 			'comptable.encaissements.videFiltrePhrase' => 'Choisissez « Tous » ou effacez la recherche pour revoir toute la liste.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.voirTous' => 'Voir tous les encaissements',
 			'comptable.encaissements.ouvrirDetailLecteur' => ({required Object famille}) => 'Ouvrir le détail de l\'encaissement de ${famille}',
 			'comptable.encaissements.fermerDetail' => 'Fermer le détail',
@@ -40454,6 +40514,8 @@ extension on Traductions {
 			'comptable.direction.delegation' => 'Délégation financière',
 			'comptable.demo.titre' => 'Démonstration Comptable',
 			'comptable.demo.mention' => 'Données fictives, aucun paiement, aucun envoi.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.demo.intro' => 'Choisissez un écran du Comptable. Les montants sont masqués par défaut ; la variante « montants affichés » les révèle pour la durée de la page.',
 			'comptable.demo.montantsMasques' => 'Montants masqués',
 			'comptable.demo.montantsAffiches' => 'Montants affichés',
@@ -40469,8 +40531,6 @@ extension on Traductions {
 			'presentationTuteur.acceptee' => ({required Object prenom}) => 'Présentation standard activée pour ${prenom}.',
 			'presentationTuteur.refusee' => ({required Object dePrenom}) => 'Demande ${dePrenom} refusée.',
 			'presentationTuteur.echecReponse' => 'Votre réponse n\'a pas pu être confirmée. La demande reste en attente : réessayez.',
-			_ => null,
-		} ?? switch (path) {
 			'presentationTuteur.vide' => 'Aucune demande de présentation en attente.',
 			'presentationTuteur.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',
 			'presentationTuteur.sansDonnees' => 'les demandes de présentation',

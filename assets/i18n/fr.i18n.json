@@ -838,7 +838,7 @@
     "modeConnexion": "J'ai déjà un compte",
     "modeCreation": "Créer un compte",
     "titreCreation": "Créer votre compte",
-    "introCreation": "Indiquez votre adresse : nous vous envoyons un lien qui crée votre compte. Aucun mot de passe à choisir.",
+    "introCreation": "Indiquez votre adresse : nous vous envoyons un lien qui crée votre compte. Aucun mot de passe à choisir.",
     "envoyerLienCreation": "Recevoir le lien d'inscription",
     "intro": "Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.",
     "courriel": "Votre adresse électronique",
@@ -6550,19 +6550,34 @@
         "derniereSeance": "Dernière séance",
         "aReprendre": "À reprendre",
         "presenceRecente": "Présence récente",
-        "travailActuel": "Travail actuel"
+        "travailActuel": "Travail actuel",
+        "page": "Page {page}",
+        "travailEnCours": "{nombre} élément(s)",
+        "assiduite": "{presences} / {total} cours",
+        "interfaceGuidee": "Interface guidée",
+        "sansPedagogie": "Suivi pédagogique indisponible",
+        "sansPedagogieDetail": "Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l'enseignant."
       },
       "action": {
-        "noter": "Noter"
+        "noter": "Noter",
+        "rappel": "Rappel discret",
+        "reciter": "Choisir pour réciter",
+        "signaler": "Signaler un besoin",
+        "contexte": "Ouvrir le contexte"
       },
       "rappel": {
-        "recu": "Le professeur vous appelle"
+        "recu": "Le professeur vous appelle",
+        "echec": "Le rappel est resté sans réponse du réseau. Réessayez dans un instant.",
+        "echecDroit": "Votre accès à cette séance ne permet pas d'appeler un élève",
+        "cooldown": "Déjà appelé. À nouveau dans {secondes} s"
       },
       "recitation": {
         "titre": "Récitation",
         "actif": "{prenom} récite",
         "pastille": "Récite",
-        "personne": "Personne ne récite"
+        "personne": "Personne ne récite",
+        "suivants": "Ensuite",
+        "arreter": "Arrêter la récitation"
       },
       "prevol": {
         "titre": "Avant d'ouvrir le cours",

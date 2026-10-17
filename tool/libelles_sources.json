@@ -4913,5 +4913,13 @@
   "connexion.modeCreation": "audit d'entree du 17/10/2026 E1-E2 et passation du 17/10 point 5 (L4) : deux chemins distincts a la connexion, creer un compte ou se connecter",
   "connexion.titreCreation": "audit d'entree du 17/10/2026 E1-E2 et passation du 17/10 point 5 (L4) : deux chemins distincts a la connexion, creer un compte ou se connecter",
   "connexion.introCreation": "audit d'entree du 17/10/2026 E1-E2 et passation du 17/10 point 5 (L4) : deux chemins distincts a la connexion, creer un compte ou se connecter",
-  "connexion.envoyerLienCreation": "audit d'entree du 17/10/2026 E1-E2 et passation du 17/10 point 5 (L4) : deux chemins distincts a la connexion, creer un compte ou se connecter"
+  "connexion.envoyerLienCreation": "audit d'entree du 17/10/2026 E1-E2 et passation du 17/10 point 5 (L4) : deux chemins distincts a la connexion, creer un compte ou se connecter",
+  "tc.classe.fiche.interfaceGuidee": "réponse A-03 du directeur, 17/10/2026 (option 1, « Interface guidée » partout) ; clé modifiée dans assets/i18n/fr.i18n.json et ar.i18n.json",
+  "tc.classe.action.contexte": "dossier maitre du 14/10/2026, section 10 (fiche pedagogique de seance, rappel discret 10.2, file de recitation 10.3) ; passation du 17/10 point 7 : fiche portee de l'ancienne classe dans /salle",
+  "tc.classe.fiche.sansPedagogieDetail": "dossier maitre du 14/10/2026, section 10 (fiche pedagogique de seance, rappel discret 10.2, file de recitation 10.3) ; passation du 17/10 point 7 : fiche portee de l'ancienne classe dans /salle",
+  "tc.classe.fiche.travailEnCours": "dossier maitre du 14/10/2026, section 10 (fiche pedagogique de seance, rappel discret 10.2, file de recitation 10.3) ; passation du 17/10 point 7 : fiche portee de l'ancienne classe dans /salle",
+  "tc.classe.rappel.cooldown": "dossier maitre du 14/10/2026, section 10 (fiche pedagogique de seance, rappel discret 10.2, file de recitation 10.3) ; passation du 17/10 point 7 : fiche portee de l'ancienne classe dans /salle",
+  "tc.classe.rappel.echec": "dossier maitre du 14/10/2026, section 10 (fiche pedagogique de seance, rappel discret 10.2, file de recitation 10.3) ; passation du 17/10 point 7 : fiche portee de l'ancienne classe dans /salle",
+  "tc.classe.rappel.echecDroit": "dossier maitre du 14/10/2026, section 10 (fiche pedagogique de seance, rappel discret 10.2, file de recitation 10.3) ; passation du 17/10 point 7 : fiche portee de l'ancienne classe dans /salle",
+  "tc.classe.recitation.arreter": "dossier maitre du 14/10/2026, section 10 (fiche pedagogique de seance, rappel discret 10.2, file de recitation 10.3) ; passation du 17/10 point 7 : fiche portee de l'ancienne classe dans /salle"
 }

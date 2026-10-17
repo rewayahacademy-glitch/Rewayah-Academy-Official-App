@@ -263,7 +263,12 @@ class BoutonRoster extends StatelessWidget {
     required this.attendus,
     required this.onOuvrir,
     super.key,
+    this.encre,
   });
+
+  /// L'encre du lien, pour une surface qui n'est pas celle de la page (la
+  /// salle en direct) ; par defaut celle de [LienFleche].
+  final TextStyle Function(TextStyle base)? encre;
 
   /// Le compteur deja compose, par exemple « 4/4 ».
   final String compteur;
@@ -290,6 +295,7 @@ class BoutonRoster extends StatelessWidget {
       ),
       onPress: onOuvrir,
       fleche: false,
+      encre: encre,
     );
   }
 }

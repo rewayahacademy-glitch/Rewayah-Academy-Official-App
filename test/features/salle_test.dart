@@ -11,6 +11,10 @@ import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_classe/port_rappel_discret.dart';
+import 'package:rewayah_academy/core/tc_classe/rappel_discret.dart';
+import 'package:rewayah_academy/core/tc_classe/roster_enseignant.dart';
+import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
@@ -1548,5 +1552,116 @@ void main() {
         );
       });
     }
+  });
+
+  // Point 7 de la passation du 17/10 (spec section 10) : la fiche
+  // pedagogique de seance, portee de l'ancienne classe dans `/salle`.
+  group('La fiche de seance de l enseignant', () {
+    Future<FauxRappelDiscret> monter(
+      WidgetTester tester, {
+      AppRole role = AppRole.teacher,
+      String acces = 'teacher',
+      EchecRappel? echec,
+    }) async {
+      final FauxRappelDiscret rappel = FauxRappelDiscret(echec: echec);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: <Override>[
+          ..._surcharges(
+            video: FauxServiceVideo(acces0: _acces(acces)),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+            role: role,
+            presence: FauxServicePresence(
+              lignes: <PresenceParticipant>[
+                _presence(
+                  EtatPresence.presente,
+                  profilId: 'e1',
+                  prenom: 'Amina',
+                ),
+                _presence(
+                  EtatPresence.enAttente,
+                  profilId: 'e2',
+                  prenom: 'Ilyas',
+                ),
+                _presence(
+                  EtatPresence.presente,
+                  profilId: 'p1',
+                  prenom: 'Omar',
+                  role: 'teacher',
+                ),
+              ],
+            ),
+          ),
+          portRosterEnseignantProvider.overrideWithValue(
+            FauxRosterEnseignant(
+              fiches: const <TeacherStudentProjection>[
+                TeacherStudentProjection(
+                  firstName: 'Amina',
+                  academyId: 'ID-e1',
+                  level: 'Decodage consolide',
+                  liveStatus: EtatPresenceProjete.inconnu,
+                  interfaceGuidee: false,
+                ),
+              ],
+            ),
+          ),
+          portRappelDiscretProvider.overrideWithValue(rappel),
+        ],
+      );
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 'p1', role: 'teacher', nom: 'Omar', local: true),
+        _personne(identite: 'e1', role: 'student', nom: 'Amina'),
+      ]);
+      await tester.pumpAndSettle();
+      return rappel;
+    }
+
+    testWidgets('le compteur des eleves ouvre la liste, puis la fiche ; '
+        'un rappel qui part ne dit rien', (WidgetTester tester) async {
+      final FauxRappelDiscret rappel = await monter(tester);
+      final Finder bouton = find.byKey(const ValueKey<String>('salle-eleves'));
+      expect(bouton, findsOneWidget);
+      await tester.tap(bouton);
+      await tester.pumpAndSettle();
+      expect(find.text(t.tc.classe.roster.titre), findsWidgets);
+
+      await tester.tap(find.text('Amina').last);
+      await tester.pumpAndSettle();
+      expect(find.text('Decodage consolide'), findsOneWidget);
+      await tester.ensureVisible(find.text(t.tc.classe.action.rappel));
+      await tester.tap(find.text(t.tc.classe.action.rappel));
+      await tester.pump();
+      await tester.pump();
+      expect(rappel.appels, <(String, String)>[(_seance, 'ID-e1')]);
+      expect(find.text(t.tc.classe.rappel.echec), findsNothing);
+    });
+
+    testWidgets('un rappel qui echoue est le seul a dire quelque chose', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        echec: const EchecRappel(MotifEchecRappel.transport),
+      );
+      await tester.tap(find.byKey(const ValueKey<String>('salle-eleves')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Amina').last);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(t.tc.classe.action.rappel));
+      await tester.tap(find.text(t.tc.classe.action.rappel));
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(t.tc.classe.rappel.echec), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('l eleve n a ni compteur ni fiche de ses camarades', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, role: AppRole.student, acces: 'student');
+      expect(find.byKey(const ValueKey<String>('salle-eleves')), findsNothing);
+    });
   });
 }
