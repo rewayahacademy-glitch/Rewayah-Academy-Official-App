@@ -4,7 +4,7 @@
 // - `ContratPage` ouvre la signature serveur pour un enseignant des que le
 //   port existe, et garde l'ancien parcours sans port ; un tuteur garde
 //   toujours les conditions ;
-// - le lien « Je suis enseignant » de l'inscription mene au code d'invitation
+// - le lien « J'ai un code d'invitation » de l'inscription mene au code d'invitation
 //   quand le serveur verifie les invitations, et garde l'ancien parcours
 //   sinon (ou si un code valide est deja retenu).
 import 'package:flutter/material.dart';
@@ -139,12 +139,15 @@ void main() {
       expect(find.text('temoin:${Routes.inscriptionIdentite}'), findsOneWidget);
     });
 
-    testWidgets('sans serveur : l\'ancien parcours, rien ne change', (
+    testWidgets('sans serveur : le champ du code, jamais l\'ancien parcours', (
       tester,
     ) async {
       await _monterUsage(tester);
       await toucherLienEnseignant(tester);
-      expect(find.text('temoin:${Routes.inscriptionIdentite}'), findsOneWidget);
+      expect(
+        find.text('temoin:${Routes.inscriptionInvitation}'),
+        findsOneWidget,
+      );
     });
   });
 }

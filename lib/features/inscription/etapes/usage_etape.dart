@@ -6,14 +6,15 @@ import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/recrutement/port_invitations_enseignant.dart';
 import '../../../core/router/routes.dart';
+import '../../../core/theme/app_palette.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../brouillon_inscription.dart';
 import '../inscription_page.dart';
 
 /// `/inscription/usage` : deux cartes exactement, aucune preselection, aucune
-/// carte « Autre » ; l'enseignant passe par un lien discret (mandat A,
-/// 05_LOTS_PHASE1.md section A, sous-paquet 2).
+/// carte « Autre » ; l'enseignant passe par un lien discret vers le code
+/// d'invitation (mandat A, 05_LOTS_PHASE1.md section A, sous-paquet 2 ; L1-11).
 class UsageEtape extends ConsumerWidget {
   /// Cree l'etape.
   const UsageEtape({super.key});
@@ -50,27 +51,41 @@ class UsageEtape extends ConsumerWidget {
               (retenu == UsageInscription.famille && suitDesCours == null)
           ? null
           : () => avancerDepuis(context, _route),
-      complement: Center(
-        child: ActionPrincipale(
-          key: const Key('inscription-lien-enseignant'),
-          libelle: t.inscription.usage.enseignant,
-          niveau: NiveauAction.tertiaire,
-          pleineLargeur: false,
-          onPress: () {
-            controleur.choisirUsage(UsageInscription.enseignant);
-            // RECRUT-ECRANS : des que le serveur verifie les invitations,
-            // l'inscription enseignant exige un code valide (le serveur le
-            // consomme a la creation du profil). Sans port, l'ancien parcours.
-            final bool exigeCode =
-                ref.read(portVerificationInvitationProvider) != null &&
-                ref.read(codeInvitationRetenuProvider) == null;
-            if (exigeCode) {
-              context.go(Routes.inscriptionInvitation);
-            } else {
-              avancerDepuis(context, _route);
-            }
-          },
-        ),
+      // L1-11 (A-07, option 1) : l'enseignant n'entre que par invitation. Une
+      // phrase dit pourquoi il n'y a pas de carte, et le lien ouvre le champ du
+      // code ; jamais de bouton grise (K-59).
+      complement: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(
+            t.inscription.usage.enseignantInvite,
+            key: const Key('inscription-enseignant-invite'),
+            textAlign: TextAlign.center,
+            style: AppPalette.of(context).inkMuted.applyTo(
+              Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+          Center(
+            child: ActionPrincipale(
+              key: const Key('inscription-lien-enseignant'),
+              libelle: t.inscription.usage.enseignant,
+              niveau: NiveauAction.tertiaire,
+              pleineLargeur: false,
+              onPress: () {
+                controleur.choisirUsage(UsageInscription.enseignant);
+                // Le serveur refuse tout profil enseignant sans code valide :
+                // sans code retenu, on ouvre toujours le champ du code (si la
+                // verification n'est pas branchee, l'ecran le dit).
+                if (ref.read(codeInvitationRetenuProvider) == null) {
+                  context.go(Routes.inscriptionInvitation);
+                } else {
+                  avancerDepuis(context, _route);
+                }
+              },
+            ),
+          ),
+        ],
       ),
       // Le groupe partage (ADR-013), sans carte « Autre » : deux cartes
       // exactement, a description (demande B-3 levee par COORD).

@@ -48,6 +48,13 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     if (usage == null) {
       return;
     }
+    // L1-11 : le serveur refuse un profil enseignant sans code ; on renvoie au
+    // champ du code plutot que d'envoyer un appel voue au refus.
+    if (usage.role == AppRole.teacher &&
+        ref.read(codeInvitationRetenuProvider) == null) {
+      context.go(Routes.inscriptionInvitation);
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;

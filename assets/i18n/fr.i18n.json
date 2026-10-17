@@ -905,7 +905,8 @@
       "moiDescription": "Je souhaite suivre les cours avec mon propre profil élève.",
       "familleTitre": "Moi et ma famille",
       "familleDescription": "Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.",
-      "enseignant": "Je suis enseignant",
+      "enseignant": "J'ai un code d'invitation",
+      "enseignantInvite": "Vous êtes enseignant\u00a0? L'académie vous invite par courriel.",
       "coursQuestion": "Suivez-vous aussi des cours ?",
       "coursOui": "Oui",
       "coursNon": "Non"

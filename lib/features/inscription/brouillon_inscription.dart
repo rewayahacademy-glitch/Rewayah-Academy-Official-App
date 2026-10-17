@@ -15,7 +15,7 @@ enum UsageInscription {
   /// « Moi et ma famille » : un tuteur de foyer.
   famille(AppRole.guardian),
 
-  /// « Je suis enseignant » : le tunnel enseignant, meme ecran.
+  /// « J'ai un code d'invitation » : le tunnel enseignant, meme ecran.
   enseignant(AppRole.teacher);
 
   const UsageInscription(this.role);
