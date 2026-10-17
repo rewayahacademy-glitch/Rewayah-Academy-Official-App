@@ -1029,7 +1029,7 @@ class _Traductions$attente$ar extends Traductions$attente$fr {
 	@override String get accesContact => 'يمكن للأكاديمية فتحه لك: تواصل معها.';
 	@override String get actualiserCompte => 'تحديث';
 	@override String get lireEtAccepter => 'قراءة شروطنا وقبولها';
-	@override String get nosConditions => 'شروطنا، للقراءة والقبول';
+	@override String get nosConditions => 'يلزم قراءة الشروط والموافقة عليها';
 	@override String get etatAAccepter => 'للقبول';
 	@override String reste({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
 		zero: 'لم يبق أي عنصر للتقديم.',
@@ -1055,7 +1055,7 @@ class _Traductions$accords$ar extends Traductions$accords$fr {
 
 	// Translations
 	@override String get titre => 'شروطنا';
-	@override String get intro => 'اقرأ كل نص، ثم حدّد المربع الذي يليه. يصبح زر «التالي» متاحًا عندما تُحدَّد كل المربعات.';
+	@override String get intro => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.';
 	@override String get caseSavoir => 'قرأت وفهمت ما يجب أن أعرفه.';
 	@override String get sectionContrat => 'عقدك';
 	@override String get caseContrat => 'قرأت عقدي وأوافق عليه، بما في ذلك زيارات المراقبة.';
@@ -1270,7 +1270,7 @@ class _Traductions$contrat$ar extends Traductions$contrat$fr {
 	// Translations
 	@override String get titre => 'ما توقّع عليه';
 	@override String get intro => 'نقطتان أهم من غيرهما. هما مكتوبتان هنا بوضوح بدل أن تكونا وسط نص طويل.';
-	@override String get pointEnregistrement => 'قد يُسجَّل الدرس صوتيًا. وفي هذه الحالة يُحفظ ثلاثين يومًا، ثم يُحذف. كل استماع يُدوَّن في السجل، مع اسم المستمع.';
+	@override String get pointEnregistrement => 'سوف يتم تسجيل صوتيات الدروس والاحتفاظ بها خلال 30 يوما قبل حذفها. ولا يستمع إليها أحد سوى الأشخاص المرخصين لهم لغرض التحقيق والمراقبة، ويتم تسجيل كل العمليات في سجل المنصة بما في ذلك اسم المستمع والتاريخ.';
 	@override String get pointControle => 'يمكن لمراقب جودة أن يحضر درسًا دون أن يُرى. تذكّر القاعة بذلك باستمرار، سواء جرت الزيارة أم لا.';
 	@override String get pointCoordonnees => 'لا ترى أبدًا بيانات اتصال أسرة: لا الاسم الكامل، ولا البريد الإلكتروني، ولا الهاتف.';
 	@override String get lireTexte => 'قراءة النص كاملًا';
@@ -19861,7 +19861,7 @@ extension on TraductionsAr {
 			'attente.accesContact' => 'يمكن للأكاديمية فتحه لك: تواصل معها.',
 			'attente.actualiserCompte' => 'تحديث',
 			'attente.lireEtAccepter' => 'قراءة شروطنا وقبولها',
-			'attente.nosConditions' => 'شروطنا، للقراءة والقبول',
+			'attente.nosConditions' => 'يلزم قراءة الشروط والموافقة عليها',
 			'attente.etatAAccepter' => 'للقبول',
 			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبق أي عنصر للتقديم.', one: 'بقي عنصر واحد للتقديم.', two: 'بقي عنصران للتقديم.', few: 'بقيت ⁨${n}⁩ عناصر للتقديم.', many: 'بقي ⁨${n}⁩ عنصرًا للتقديم.', other: 'بقي ⁨${n}⁩ عنصر للتقديم.', ), 
 			'attente.etatAFournir' => 'للتقديم',
@@ -19871,7 +19871,7 @@ extension on TraductionsAr {
 			'attente.illisible' => 'حالة ملفك لا تظهر الآن.',
 			'attente.horsLigne' => 'أنت غير متصل. ستظهر حالة ملفك بمجرد عودة الشبكة.',
 			'accords.titre' => 'شروطنا',
-			'accords.intro' => 'اقرأ كل نص، ثم حدّد المربع الذي يليه. يصبح زر «التالي» متاحًا عندما تُحدَّد كل المربعات.',
+			'accords.intro' => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.',
 			'accords.caseSavoir' => 'قرأت وفهمت ما يجب أن أعرفه.',
 			'accords.sectionContrat' => 'عقدك',
 			'accords.caseContrat' => 'قرأت عقدي وأوافق عليه، بما في ذلك زيارات المراقبة.',
@@ -20475,7 +20475,7 @@ extension on TraductionsAr {
 			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
 			'contrat.titre' => 'ما توقّع عليه',
 			'contrat.intro' => 'نقطتان أهم من غيرهما. هما مكتوبتان هنا بوضوح بدل أن تكونا وسط نص طويل.',
-			'contrat.pointEnregistrement' => 'قد يُسجَّل الدرس صوتيًا. وفي هذه الحالة يُحفظ ثلاثين يومًا، ثم يُحذف. كل استماع يُدوَّن في السجل، مع اسم المستمع.',
+			'contrat.pointEnregistrement' => 'سوف يتم تسجيل صوتيات الدروس والاحتفاظ بها خلال 30 يوما قبل حذفها. ولا يستمع إليها أحد سوى الأشخاص المرخصين لهم لغرض التحقيق والمراقبة، ويتم تسجيل كل العمليات في سجل المنصة بما في ذلك اسم المستمع والتاريخ.',
 			'contrat.pointControle' => 'يمكن لمراقب جودة أن يحضر درسًا دون أن يُرى. تذكّر القاعة بذلك باستمرار، سواء جرت الزيارة أم لا.',
 			'contrat.pointCoordonnees' => 'لا ترى أبدًا بيانات اتصال أسرة: لا الاسم الكامل، ولا البريد الإلكتروني، ولا الهاتف.',
 			'contrat.lireTexte' => 'قراءة النص كاملًا',
