@@ -1239,6 +1239,12 @@ class _Traductions$kyc$ar extends Traductions$kyc$fr {
 	@override String get carteIdentite => 'بطاقة هوية';
 	@override String get passeport => 'جواز سفر';
 	@override String get titreSejour => 'بطاقة إقامة';
+	@override String get autrePiece => 'وثيقة رسمية أخرى';
+	@override String get explicationCarteIdentite => 'بطاقة الهوية الوطنية لبلدك، سارية المفعول. صوّر الوجه الذي يحمل صورتك واسمك.';
+	@override String get explicationPasseport => 'جواز سفرك الساري المفعول. صوّر الصفحة التي تحمل صورتك واسمك.';
+	@override String get explicationTitreSejour => 'البطاقة التي يمنحها البلد الذي تقيم فيه إن لم تكن من مواطنيه، سارية المفعول.';
+	@override String get explicationAutre => 'وثيقة أخرى صادرة عن جهة إدارية، تحمل صورتك واسمك.';
+	@override String get exempleAutre => 'رخصة قيادة أو بطاقة قنصلية';
 	@override String get choisirFichier => 'اختيار الصورة';
 	@override String get fichierChoisi => 'الصورة جاهزة للإرسال';
 	@override String get envoyer => 'إرسال وثيقتي';
@@ -20505,6 +20511,12 @@ extension on TraductionsAr {
 			'kyc.carteIdentite' => 'بطاقة هوية',
 			'kyc.passeport' => 'جواز سفر',
 			'kyc.titreSejour' => 'بطاقة إقامة',
+			'kyc.autrePiece' => 'وثيقة رسمية أخرى',
+			'kyc.explicationCarteIdentite' => 'بطاقة الهوية الوطنية لبلدك، سارية المفعول. صوّر الوجه الذي يحمل صورتك واسمك.',
+			'kyc.explicationPasseport' => 'جواز سفرك الساري المفعول. صوّر الصفحة التي تحمل صورتك واسمك.',
+			'kyc.explicationTitreSejour' => 'البطاقة التي يمنحها البلد الذي تقيم فيه إن لم تكن من مواطنيه، سارية المفعول.',
+			'kyc.explicationAutre' => 'وثيقة أخرى صادرة عن جهة إدارية، تحمل صورتك واسمك.',
+			'kyc.exempleAutre' => 'رخصة قيادة أو بطاقة قنصلية',
 			'kyc.choisirFichier' => 'اختيار الصورة',
 			'kyc.fichierChoisi' => 'الصورة جاهزة للإرسال',
 			'kyc.envoyer' => 'إرسال وثيقتي',
@@ -20626,14 +20638,14 @@ extension on TraductionsAr {
 			'controleur.historique.sectionEchanges' => 'المراسلات مع الإدارة',
 			'controleur.historique.cleClasse' => 'الفصل',
 			'controleur.historique.cleEnseignant' => 'المعلم',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.cleDate' => 'التاريخ',
 			'controleur.historique.cleDuree' => 'مدة المتابعة',
 			'controleur.historique.cleElevesPresents' => 'الحاضرون',
 			'controleur.historique.cleReponse' => 'الرد',
 			'controleur.historique.sansComplement' => 'لا تكملة.',
 			'controleur.historique.faitsIndisponibles' => 'السجل التلقائي لهذه الزيارة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. سيظهر هنا بمجرد وصوله. باقي التقرير موثوق.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.historique.motif' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
 			'controleur.historique.ajouterComplement' => 'إضافة تكملة',
 			'controleur.complement.bandeau' => 'ستُضاف هذه التكملة إلى التقرير الموجود.',

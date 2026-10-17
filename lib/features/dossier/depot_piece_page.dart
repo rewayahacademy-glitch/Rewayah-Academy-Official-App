@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/auth/service_auth.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
@@ -14,10 +14,8 @@ import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/app_card.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/lien_fleche.dart';
-import '../../core/widgets/marque_page.dart';
 import '../../core/widgets/page_shell.dart';
 
 /// Le depot de la piece d'identite.
@@ -25,6 +23,13 @@ import '../../core/widgets/page_shell.dart';
 /// Le genre transmis avec la piece n'est pas une donnee d'etat civil : c'est ce
 /// qui decide **quel membre du personnel pourra la regarder** (audit 1.3). Il
 /// vient du profil renseigne a l'inscription, pas d'une saisie de plus.
+///
+/// Lot E7 (DECISION-ENTREE-2026-10-17, qui remplace ici BOUTONS-GRISES-1) :
+/// un retour vers le portail d'attente et « Se deconnecter » ; chaque type de
+/// piece est explique et se choisit dans une selection simple, jamais saisi ;
+/// « Choisir la photo » parait une fois le type choisi et « Envoyer ma
+/// piece », toujours visible, n'agit qu'une fois la photo choisie. Une phrase dit d'avance ce qui reste
+/// a faire : aucun reproche apres coup.
 class DepotPiecePage extends ConsumerStatefulWidget {
   /// Cree l'ecran de depot.
   const DepotPiecePage({super.key});
@@ -39,46 +44,7 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
   bool _envoi = false;
   String? _erreur;
 
-  /// Le choix du type, ou le focus revient quand il manque.
-  final FocusNode _focusType = FocusNode(debugLabel: 'type-piece');
-
-  /// Le lien « Choisir la photo », ou le focus revient quand elle manque.
-  final FocusNode _focusFichier = FocusNode(debugLabel: 'fichier-piece');
-
-  final GlobalKey _cleType = GlobalKey();
-
-  @override
-  void dispose() {
-    _focusType.dispose();
-    _focusFichier.dispose();
-    super.dispose();
-  }
-
-  /// Bouton jamais grise (BOUTONS-GRISES-1) : presse trop tot, il dit ce qui
-  /// manque, l'annonce au lecteur d'ecran et ramene le focus au bon geste.
-  void _direManque() {
-    final bool sansType = _type == null;
-    final String message = sansType ? t.kyc.manqueType : t.kyc.manquePhoto;
-    setState(() => _erreur = message);
-    if (sansType) {
-      final BuildContext? choix = _cleType.currentContext;
-      if (choix != null) {
-        unawaited(Scrollable.ensureVisible(choix));
-      }
-    }
-    signalerManque(
-      context,
-      message,
-      champ: sansType ? _focusType : _focusFichier,
-    );
-  }
-
-  Future<void> _choisir() async {
-    final TypePiece? type = _type;
-    if (type == null) {
-      _direManque();
-      return;
-    }
+  Future<void> _choisir(TypePiece type) async {
     setState(() => _erreur = null);
     final PieceAEnvoyer? choisie = await ref
         .read(selecteurFichierProvider)
@@ -103,12 +69,7 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
     setState(() => _piece = choisie);
   }
 
-  Future<void> _envoyer() async {
-    final PieceAEnvoyer? piece = _piece;
-    if (piece == null) {
-      _direManque();
-      return;
-    }
+  Future<void> _envoyer(PieceAEnvoyer piece) async {
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -134,120 +95,122 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final TypePiece? type = _type;
+    final PieceAEnvoyer? piece = _piece;
+
+    // Ce qui reste a faire, dit d'avance et sans encre d'alerte : le bouton
+    // qui attend ne reproche rien quand on l'atteint.
+    final String? aFaire = type == null
+        ? t.kyc.manqueType
+        : piece == null
+        ? t.kyc.manquePhoto
+        : null;
 
     return PageShell(
-      // Les DEUX gestes du depot vivent ici, dans l'ordre ou on les fait.
-      //
-      // Defaut mesure le 20 septembre 2026, et c'en etait un vrai : « Choisir la
-      // photo » etait pose en bas de la carte, donc **sous la ligne de
-      // flottaison d'un telephone**. A 390 x 844, son centre tombait a 971, hors
-      // du viewport. Un enseignant comme un tuteur voyait donc un « Envoyer ma
-      // piece » inerte, colle en bas, et devait deviner qu'il fallait faire
-      // defiler pour trouver le geste qui vient avant. Les trois tests rouges de
-      // `dossier_test.dart` mesuraient exactement cela, et accusaient le test.
-      //
-      // Le remede n'est pas de faire defiler le test : c'est de mettre le
-      // premier geste la ou il est toujours atteignable. Le corps defilant garde
-      // ce qui se lit -- le texte et le choix du type -- et la zone collee garde
-      // ce qui s'actionne. Rien n'est renomme, aucune etape n'est ajoutee : le
-      // parcours du tuteur est inchange.
+      titre: t.kyc.titre,
+      // Le depot s'ouvre depuis le portail d'attente : on y revient sans
+      // rien perdre du dossier.
+      onRetour: _envoi ? null : () => GoRouter.of(context).go(Routes.attente),
+      // Les gestes du depot vivent dans la zone collee, dans l'ordre ou on
+      // les fait : a 390 x 844, « Choisir la photo » tombait autrefois sous la
+      // ligne de flottaison (dossier_test.dart, 20/09/2026).
       actions: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          if (_erreur != null) ...<Widget>[
+          if (_erreur != null || aFaire != null) ...<Widget>[
             Semantics(
-              liveRegion: true,
+              liveRegion: _erreur != null,
               child: Text(
-                _erreur!,
+                _erreur ?? aFaire!,
                 textAlign: TextAlign.center,
-                style: palette.inkAlert.applyTo(
-                  textes.bodyMedium ?? const TextStyle(),
-                ),
+                style: (_erreur != null ? palette.inkAlert : palette.inkMuted)
+                    .applyTo(textes.bodyMedium ?? const TextStyle()),
               ),
             ),
             Ecart.vMd,
           ],
           // Choisir un fichier est une action secondaire : une ligne de lien,
-          // jamais un bouton plein (K-56, PHOTO-LIEN-1). "Envoyer" reste l'unique
-          // bouton plein.
-          // Jamais grises (BOUTONS-GRISES-1) : sans type ou sans photo,
-          // l'appui dit ce qui manque au-dessus des actions.
-          LienFleche(
-            libelle: _piece == null
-                ? t.kyc.choisirFichier
-                : t.kyc.fichierChoisi,
-            focusNode: _focusFichier,
-            onPress: () => unawaited(_choisir()),
-          ),
-          Ecart.vMd,
+          // jamais un bouton plein (K-56, PHOTO-LIEN-1). Sans type, le
+          // selecteur ne saurait pas quelle piece il recoit : le lien n'est
+          // pas rendu (un `LienFleche` sans action garde l'encre d'un lien
+          // actif) et la phrase au-dessus dit de choisir la piece d'abord.
+          if (type != null) ...<Widget>[
+            LienFleche(
+              libelle: piece == null
+                  ? t.kyc.choisirFichier
+                  : t.kyc.fichierChoisi,
+              onPress: () => unawaited(_choisir(type)),
+            ),
+            Ecart.vMd,
+          ],
+          // DECISION-ENTREE-2026-10-17 : inactif tant qu'aucune photo n'est
+          // choisie, comme dans les autres apps.
           ActionPrincipale(
             libelle: t.kyc.envoyer,
             enCours: _envoi,
-            onPress: () => unawaited(_envoyer()),
+            onPress: piece == null ? null : () => unawaited(_envoyer(piece)),
+          ),
+          Ecart.vXs,
+          Center(
+            child: ActionPrincipale(
+              key: const Key('piece-deconnexion'),
+              libelle: t.attente.seDeconnecter,
+              niveau: NiveauAction.tertiaire,
+              pleineLargeur: false,
+              onPress: () =>
+                  unawaited(ref.read(serviceAuthProvider).deconnexion()),
+            ),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          const MarquePage(),
-          Ecart.vXxxl,
-          AppCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                TexteSansCoupure(t.kyc.titre, style: textes.headlineSmall),
-                Ecart.vMd,
-                TexteSansCoupure(t.kyc.intro, style: textes.bodyMedium),
-                // KYC-PHOTO-1 : jamais publique, la direction seule.
-                Ecart.vSm,
-                TexteSansCoupure(
-                  t.kyc.confidentialite,
-                  style: textes.bodyMedium,
-                ),
-                Ecart.vXxl,
-                TexteSansCoupure(t.kyc.typeQuestion, style: textes.titleMedium),
-                Ecart.vMd,
-                Focus(
-                  key: _cleType,
-                  focusNode: _focusType,
-                  child: ChoiceCardGroup(
-                    options: <OptionChoix>[
-                      OptionChoix(
-                        valeur: TypePiece.carteIdentite.valeurSql,
-                        libelle: t.kyc.carteIdentite,
-                      ),
-                      OptionChoix(
-                        valeur: TypePiece.passeport.valeurSql,
-                        libelle: t.kyc.passeport,
-                      ),
-                      OptionChoix(
-                        valeur: TypePiece.titreSejour.valeurSql,
-                        libelle: t.kyc.titreSejour,
-                      ),
-                      // `other` existe en base : « Autre » est un type choisi
-                      // comme les trois autres. La carte « Autre » generique
-                      // ouvrait un champ libre dont le contenu n'etait jamais lu
-                      // (FORM-L11) : elle est retiree, la saisie ne servait a rien.
-                      OptionChoix(
-                        valeur: TypePiece.autre.valeurSql,
-                        libelle: t.kyc.autrePiece,
-                      ),
-                    ],
-                    autoriserSaisieLibre: false,
-                    onChange: (ReponseChoix reponse) => setState(() {
-                      final String? valeur = reponse.valeurs.isEmpty
-                          ? null
-                          : reponse.valeurs.first;
-                      _type = TypePiece.depuisSql(valeur);
-                      _piece = null;
-                      _erreur = null;
-                    }),
-                  ),
-                ),
-              ],
-            ),
+          TexteSansCoupure(t.kyc.intro, style: textes.bodyMedium),
+          // KYC-PHOTO-1 : jamais publique, la direction seule.
+          Ecart.vSm,
+          TexteSansCoupure(t.kyc.confidentialite, style: textes.bodyMedium),
+          Ecart.vXxl,
+          TexteSansCoupure(t.kyc.typeQuestion, style: textes.titleMedium),
+          Ecart.vMd,
+          // Les cartes de choix posees a meme la page, jamais dans une autre
+          // carte (audit d'entree E14).
+          ChoiceCardGroup(
+            options: <OptionChoix>[
+              OptionChoix(
+                valeur: TypePiece.carteIdentite.valeurSql,
+                libelle: t.kyc.carteIdentite,
+                explication: t.kyc.explicationCarteIdentite,
+              ),
+              OptionChoix(
+                valeur: TypePiece.passeport.valeurSql,
+                libelle: t.kyc.passeport,
+                explication: t.kyc.explicationPasseport,
+              ),
+              OptionChoix(
+                valeur: TypePiece.titreSejour.valeurSql,
+                libelle: t.kyc.titreSejour,
+                explication: t.kyc.explicationTitreSejour,
+              ),
+              // `other` existe en base : « Autre » est un type choisi comme
+              // les trois autres, jamais un champ libre (FORM-L11).
+              OptionChoix(
+                valeur: TypePiece.autre.valeurSql,
+                libelle: t.kyc.autrePiece,
+                explication: t.kyc.explicationAutre,
+                exemple: t.kyc.exempleAutre,
+              ),
+            ],
+            autoriserSaisieLibre: false,
+            onChange: (ReponseChoix reponse) => setState(() {
+              final String? valeur = reponse.valeurs.isEmpty
+                  ? null
+                  : reponse.valeurs.first;
+              _type = TypePiece.depuisSql(valeur);
+              _piece = null;
+              _erreur = null;
+            }),
           ),
         ],
       ),
