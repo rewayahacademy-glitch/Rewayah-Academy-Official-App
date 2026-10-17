@@ -999,7 +999,12 @@ void main() {
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
           expectHorsLigneUneFois();
-          expect(find.byType(EtatSansDonnees), findsNWidgets(2));
+          // L11 : la synthese des soldes (FI-5) est venue s'ajouter ; selon
+          // la largeur, elle est a l'ecran ou plus bas. Les deux blocs du
+          // foyer sont toujours la, et tout bloc dit ce qui manque.
+          expect(find.text(t.foyer.profilsSansDonnees), findsOneWidget);
+          expect(find.text(t.foyer.titulaireSansDonnees), findsOneWidget);
+          expect(find.byType(EtatSansDonnees), findsAtLeastNWidgets(2));
           debugPrint(
             'PNG ${await capturerVue(tester, 'ea_hl_double1_foyer_sans_donnees_${cas.$1}_clair')}',
           );

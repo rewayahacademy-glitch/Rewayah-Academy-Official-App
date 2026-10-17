@@ -19,6 +19,7 @@ import '../../core/finance/format_montant.dart';
 import '../../core/finance/periode_a_financer.dart';
 import '../../core/finance/politique_commerciale.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -110,7 +111,10 @@ class SyntheseSoldesFoyer extends ConsumerWidget {
     if (erreur != null) {
       void relire() => ref.invalidate(financesFoyerProvider);
       corps = (ref.watch(horsLigneProvider).value ?? false)
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
+          ? EtatSansDonnees(
+              quoi: t.foyer.finances.sansDonnees,
+              onAction: relire,
+            )
           : EtatSysteme(
               nature: NatureEtat.echecServeur,
               titre: t.foyer.finances.indisponibleTitre,

@@ -14,6 +14,7 @@ import '../../../core/foyer/selection_eleve.dart';
 import '../../../core/i18n/elision.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
+import '../../../core/reseau/etat_sans_donnees.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_gabarit.dart';
@@ -262,7 +263,10 @@ class _HistoriqueProfil extends ConsumerWidget {
       );
     } else if (erreur != null) {
       corps = (ref.watch(horsLigneProvider).value ?? false)
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
+          ? EtatSansDonnees(
+              quoi: t.ficheEleve.mouvements.sansDonnees,
+              onAction: relire,
+            )
           : EtatSysteme(
               nature: NatureEtat.echecServeur,
               titre: t.ficheEleve.mouvements.erreurTitre(
@@ -392,7 +396,10 @@ class EtatsFinancesProfil extends ConsumerWidget {
     }
     if (erreur != null) {
       return (ref.watch(horsLigneProvider).value ?? false)
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: onRelire)
+          ? EtatSansDonnees(
+              quoi: t.ficheEleve.finances.sansDonnees,
+              onAction: onRelire,
+            )
           : EtatSysteme(
               nature: NatureEtat.echecServeur,
               titre: textes.erreurTitre,

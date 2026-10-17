@@ -142,9 +142,16 @@ void main() {
                 ),
               ),
             );
-            final Finder amina = find.text('Amina');
+            // L11 : la ligne d'eleve porte desormais prenom et initiale ;
+            // on la retrouve par sa cle, plus par le texte exact.
+            final Finder amina = find.byKey(
+              ObservationControlePage.cleEleve('a1'),
+            );
             expect(amina, findsOneWidget);
-            expect(find.text('Bilal'), findsNothing);
+            expect(
+              find.byKey(ObservationControlePage.cleEleve('b1')),
+              findsNothing,
+            );
             await tester.ensureVisible(amina);
             await stabiliser(tester);
             debugPrint(

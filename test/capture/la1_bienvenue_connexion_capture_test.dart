@@ -84,16 +84,29 @@ void main() {
       ('connexion', Routes.connexion),
       ('connexion_recuperation', Routes.connexionRecuperation),
     ]) {
-      for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
         testWidgets('$nom 390x844, ${mode.name}', (WidgetTester tester) async {
-          await _monter(tester, route, mode: mode, taille: const Size(390, 844));
+          await _monter(
+            tester,
+            route,
+            mode: mode,
+            taille: const Size(390, 844),
+          );
           debugPrint(
             'PNG ${await capturer(tester, 'la1_${nom}_390x844_${mode.name}')}',
           );
         });
 
         testWidgets('$nom 1440x900, ${mode.name}', (WidgetTester tester) async {
-          await _monter(tester, route, mode: mode, taille: const Size(1440, 900));
+          await _monter(
+            tester,
+            route,
+            mode: mode,
+            taille: const Size(1440, 900),
+          );
           debugPrint(
             'PNG ${await capturer(tester, 'la1_${nom}_1440x900_${mode.name}')}',
           );
@@ -119,7 +132,10 @@ void main() {
           final GoRouter routeur = await _monter(
             tester,
             route,
-            taille: Size(_largeurLogique, _largeurLogique * hauteurPx / largeurPx),
+            taille: Size(
+              _largeurLogique,
+              _largeurLogique * hauteurPx / largeurPx,
+            ),
           );
           fixerVueMaquette(
             tester,

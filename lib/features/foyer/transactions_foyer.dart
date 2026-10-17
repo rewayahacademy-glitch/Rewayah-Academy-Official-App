@@ -16,6 +16,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/finance/mouvements_profil.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
@@ -87,7 +88,10 @@ class DernieresTransactionsFoyer extends ConsumerWidget {
     final Widget corps;
     if (erreur != null) {
       corps = (ref.watch(horsLigneProvider).value ?? false)
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
+          ? EtatSansDonnees(
+              quoi: t.foyer.transactions.sansDonnees,
+              onAction: relire,
+            )
           : EtatSysteme(
               nature: NatureEtat.echecServeur,
               titre: t.foyer.transactions.erreurTitre,

@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/etat_sans_donnees.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/offline_banner.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart'
@@ -26,7 +27,9 @@ import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
+import '../router/support_routeur.dart' show sessionActive;
 import '../support/aucun_mot_coupe.dart';
+import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';
 import 'outil_capture.dart';
 
@@ -355,6 +358,10 @@ void main() {
               horsLigneProvider.overrideWith(
                 (Ref _) => Stream<bool>.value(true),
               ),
+              // L11 : la session lue en memoire, jamais le vrai client.
+              sourceSessionProvider.overrideWithValue(
+                FausseSourceSession(sessionActive(AppRole.guardian)),
+              ),
               identiteTitulaireProvider.overrideWith(
                 (Ref _) async => DonneesAdulteDemo.identite(
                   GenreTitulaireDemo.homme,
@@ -392,6 +399,10 @@ void main() {
             surcharges: <Override>[
               horsLigneProvider.overrideWith(
                 (Ref _) => Stream<bool>.value(true),
+              ),
+              // L11 : la session lue en memoire, jamais le vrai client.
+              sourceSessionProvider.overrideWithValue(
+                FausseSourceSession(sessionActive(AppRole.guardian)),
               ),
               identiteTitulaireProvider.overrideWith(
                 (Ref _) => Future<IdentiteTitulaire>.error(StateError('x')),

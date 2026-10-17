@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
@@ -28,6 +29,7 @@ import 'package:rewayah_academy/features/dossier/signature_page.dart';
 import 'package:rewayah_academy/features/salle_seance/information_controle.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
+import '../router/support_routeur.dart' show sessionActive;
 import '../support/harnais.dart';
 import 'outil_capture.dart';
 
@@ -64,7 +66,13 @@ Future<void> _monterDossier(
   );
   await tester.pumpWidget(
     ProviderScope(
-      overrides: <Override>[serviceDossierProvider.overrideWithValue(dossier)],
+      overrides: <Override>[
+        serviceDossierProvider.overrideWithValue(dossier),
+        // L11 : la session lue en memoire, jamais le vrai client.
+        sourceSessionProvider.overrideWithValue(
+          FausseSourceSession(sessionActive(AppRole.teacher)),
+        ),
+      ],
       child: TranslationProvider(
         child: RepaintBoundary(
           key: cadreCapture,

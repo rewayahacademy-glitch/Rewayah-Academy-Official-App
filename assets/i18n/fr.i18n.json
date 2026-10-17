@@ -1429,7 +1429,8 @@
       "aucunDebit": "Aucun débit prévu",
       "essaiSansMax": "Essai\u00a0: {n} séance(s) utilisée(s)",
       "manque": "Il manque {montant} pour la prochaine période.",
-      "indisponibleTitre": "Les soldes ne peuvent pas être lus"
+      "indisponibleTitre": "Les soldes ne peuvent pas être lus",
+      "sansDonnees": "Les soldes de votre foyer n'ont pas pu être chargés"
     },
     "transactions": {
       "titre": "Dernières transactions",
@@ -1438,7 +1439,8 @@
       "voirToutSemantique": "Voir tout\u00a0: historique des paiements du foyer",
       "videTitre": "Aucune transaction pour l'instant",
       "videPhrase": "Les recharges et les mensualités des profils apparaîtront ici.",
-      "erreurTitre": "Les dernières transactions ne peuvent pas être lues"
+      "erreurTitre": "Les dernières transactions ne peuvent pas être lues",
+      "sansDonnees": "Les derniers mouvements du foyer n'ont pas pu être chargés"
     }
   },
   "ficheEleve": {
@@ -1622,7 +1624,8 @@
       "recuIndisponibleTitre": "Le reçu n'est pas encore disponible",
       "recuIndisponiblePhrase": "Le téléchargement des reçus arrive avec la mise en service des paiements. Chaque paiement reste visible dans les mouvements.",
       "recuEchecTitre": "Le reçu n'a pas pu être préparé",
-      "recuEchecPhrase": "Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+      "recuEchecPhrase": "Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "sansDonnees": "Les finances de ce profil n'ont pas pu être chargées"
     },
     "mouvements": {
       "titre": "Mouvements",
@@ -1667,7 +1670,8 @@
       "videPhrase": "Aucune recharge ni aucune mensualité n'est encore enregistrée pour {prenom}. Les mouvements apparaîtront ici après le premier paiement.",
       "erreurTitre": "Les mouvements {dePrenom} ne peuvent pas être lus",
       "indisponibleTitre": "Les mouvements ne sont pas encore disponibles",
-      "indisponiblePhrase": "Les recharges et mensualités {dePrenom} s'afficheront ici dès leur mise en service."
+      "indisponiblePhrase": "Les recharges et mensualités {dePrenom} s'afficheront ici dès leur mise en service.",
+      "sansDonnees": "Les mouvements de ce profil n'ont pas pu être chargés"
     }
   },
   "disponibilites": {
@@ -3514,7 +3518,8 @@
         "historiqueDetail": "Toutes les versions, la plus récente d'abord. Rien ne s'y modifie\u00a0: une version publiée reste telle quelle.",
         "historiqueVersion": "Version {version}",
         "historiqueActive": "Version active",
-        "historiqueVide": "Aucune autre version pour l'instant\u00a0: seule la version active existe."
+        "historiqueVide": "Aucune autre version pour l'instant\u00a0: seule la version active existe.",
+        "sansDonnees": "Les prix publiés n'ont pas pu être chargés"
       },
       "reserveDelegation": "Réserve et délégation",
       "aValider": "À valider",
@@ -7211,16 +7216,16 @@
       "invitationSansCompte": "L'invitation ouverte sans compte.",
       "reseauCoupe": "Le réseau est coupé\u00a0: l'Accueil et Ma classe hors ligne.",
       "donnees": {
-        "soldeTitulaire": "Solde de démonstration 1",
-        "soldeSecondAdulte": "Solde de démonstration 2",
-        "soldeAicha": "Solde de démonstration 3",
-        "soldeOumar": "Solde de démonstration 4",
+        "soldeTitulaire": "Solde d'exemple 1",
+        "soldeSecondAdulte": "Solde d'exemple 2",
+        "soldeAicha": "Solde d'exemple 3",
+        "soldeOumar": "Solde d'exemple 4",
         "totalAvecSecondAdulte": "Total de démonstration A",
         "totalSansSecondAdulte": "Total de démonstration B",
         "prixOffreA": "5,00 € (démonstration)",
         "prixOffreB": "10,00 € (démonstration)",
-        "detailOffreA": "Solde de démonstration A",
-        "detailOffreB": "Solde de démonstration B",
+        "detailOffreA": "Solde d'exemple A",
+        "detailOffreB": "Solde d'exemple B",
         "totalRecharge5": "5,00 € (démonstration)",
         "totalRecharge10": "10,00 € (démonstration)",
         "totalRecharge15": "15,00 € (démonstration)",

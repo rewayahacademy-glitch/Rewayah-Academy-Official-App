@@ -281,13 +281,13 @@ void main() {
             _mamadou,
             'Mamadou',
             t.adulte.demo.donnees.prixOffreB,
-            'Solde de démonstration B',
+            "Solde d'exemple B",
           ),
           (
             _aicha,
             'Aïcha',
             t.adulte.demo.donnees.prixOffreA,
-            'Solde de démonstration A',
+            "Solde d'exemple A",
           ),
         ]) {
       final Key ligne = RechargeFoyerPage.ligneDe(id);

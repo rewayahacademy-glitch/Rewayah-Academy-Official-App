@@ -250,7 +250,9 @@ void main() {
         await stabiliser(tester);
         expect(tester.takeException(), isNull);
         // ignore: avoid_print
-        print('PNG ${await capturer(tester, 'forml5_liste_bas_320x700_x2_${mode.name}')}');
+        print(
+          'PNG ${await capturer(tester, 'forml5_liste_bas_320x700_x2_${mode.name}')}',
+        );
       });
     }
   });
