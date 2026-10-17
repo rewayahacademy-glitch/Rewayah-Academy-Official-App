@@ -1,5 +1,7 @@
 # Audit final de conformité, de sécurité, de simplicité et de finition - octobre 2026
 
+> Mise à jour L4-V du 17/10/2026 : sur 133 exigences, 65 conformes, 45 partielles, 16 absentes, 4 contraires, 3 non vérifiables (le 16/10 : 43, 48, 19, 20, 3 ; la section 1 ci-dessous disait 47 partielles, la matrice en compte 48). Niveau `testé localement` seulement, aucune migration de la nuit n'étant appliquée sur STAGING ; rejeu de l'arbre final et suite complète à reporter depuis L3-V. Détail ligne par ligne dans `docs/audit-final/MATRICE-CONFORMITE.md`, preuves dans `docs/audit-final/verifications/L4-V-2026-10.md`. Le corps ci-dessous est le rapport du 16/10, inchangé.
+
 - Date : 16/10/2026.
 - Auditeur : session Claude Code (Fable), lecture seule. Aucun code, aucune migration, aucune configuration n'a été modifié. Rien n'a été écrit sur STAGING ni sur la production.
 - Code audité : branche `claude/backend-reprise`, SHA `0df3e9fa` (PR 37 vers `ccr-1b1bfa0b-m1kvkk`).
