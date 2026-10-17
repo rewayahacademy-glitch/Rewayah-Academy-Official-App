@@ -6132,7 +6132,8 @@ class _Traductions$inscription$usage$ar extends Traductions$inscription$usage$fr
 	@override String get moiDescription => 'أريد متابعة الدروس بملفي الخاص كطالب.';
 	@override String get familleTitre => 'أنا وأسرتي';
 	@override String get familleDescription => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.';
-	@override String get enseignant => 'أنا معلم';
+	@override String get enseignant => 'لدي رمز دعوة';
+	@override String get enseignantInvite => 'هل أنت معلّم؟ تدعوك الأكاديمية عبر البريد الإلكتروني.';
 	@override String get coursQuestion => 'هل تتابع أنت أيضًا دروسًا؟';
 	@override String get coursOui => 'نعم';
 	@override String get coursNon => 'لا';
@@ -19908,7 +19909,8 @@ extension on TraductionsAr {
 			'inscription.usage.moiDescription' => 'أريد متابعة الدروس بملفي الخاص كطالب.',
 			'inscription.usage.familleTitre' => 'أنا وأسرتي',
 			'inscription.usage.familleDescription' => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.',
-			'inscription.usage.enseignant' => 'أنا معلم',
+			'inscription.usage.enseignant' => 'لدي رمز دعوة',
+			'inscription.usage.enseignantInvite' => 'هل أنت معلّم؟ تدعوك الأكاديمية عبر البريد الإلكتروني.',
 			'inscription.usage.coursQuestion' => 'هل تتابع أنت أيضًا دروسًا؟',
 			'inscription.usage.coursOui' => 'نعم',
 			'inscription.usage.coursNon' => 'لا',
@@ -20076,9 +20078,9 @@ extension on TraductionsAr {
 			'adulte.famille.ajouter' => 'إضافة أسرتي',
 			'adulte.famille.ajouterLegende' => 'سجّل أطفالك وادعُ زوجك أو زوجتك للانضمام إلى باقة الأسرة.',
 			'adulte.famille.ajouterPhrase' => 'يمكنك إضافة أطفالك ودعوة زوجك أو زوجتك للانضمام إلى باقة الأسرة. تبقى مساحتك كطالب كما هي.',
-			'adulte.famille.inscrireEnfant' => 'تسجيل طفل',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.famille.inscrireEnfant' => 'تسجيل طفل',
 			'adulte.famille.maFamille' => 'أسرتي',
 			'adulte.famille.forfaitFamille' => 'باقة الأسرة',
 			'adulte.famille.retourMonEspace' => 'العودة إلى مساحتي',
@@ -20590,9 +20592,9 @@ extension on TraductionsAr {
 			'controleur.complement.sansMotif' => 'لا سبب',
 			'controleur.complement.cleTexte' => 'التكملة',
 			'controleur.complement.envoyer' => 'إرسال التكملة',
-			'controleur.complement.echec' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا، أعد المحاولة بعد لحظة. يبقى التقرير الأصلي سليمًا.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.complement.echec' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا، أعد المحاولة بعد لحظة. يبقى التقرير الأصلي سليمًا.',
 			'controleur.complement.envoyeTitre' => 'أُضيفت التكملة',
 			'controleur.complement.envoyePhrase' => 'تظهر تحت التقرير الأصلي، الذي يبقى دون تغيير.',
 			'controleur.complement.revenir' => 'العودة إلى التقرير',

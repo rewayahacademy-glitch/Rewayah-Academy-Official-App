@@ -4114,8 +4114,11 @@ class Traductions$inscription$usage$fr {
 	/// fr: 'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.'
 	String get familleDescription => 'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.';
 
-	/// fr: 'Je suis enseignant'
-	String get enseignant => 'Je suis enseignant';
+	/// fr: 'J'ai un code d'invitation'
+	String get enseignant => 'J\'ai un code d\'invitation';
+
+	/// fr: 'Vous êtes enseignant ? L'académie vous invite par courriel.'
+	String get enseignantInvite => 'Vous êtes enseignant ? L\'académie vous invite par courriel.';
 
 	/// fr: 'Suivez-vous aussi des cours ?'
 	String get coursQuestion => 'Suivez-vous aussi des cours ?';
@@ -32856,7 +32859,8 @@ extension on Traductions {
 			'inscription.usage.moiDescription' => 'Je souhaite suivre les cours avec mon propre profil élève.',
 			'inscription.usage.familleTitre' => 'Moi et ma famille',
 			'inscription.usage.familleDescription' => 'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.',
-			'inscription.usage.enseignant' => 'Je suis enseignant',
+			'inscription.usage.enseignant' => 'J\'ai un code d\'invitation',
+			'inscription.usage.enseignantInvite' => 'Vous êtes enseignant ? L\'académie vous invite par courriel.',
 			'inscription.usage.coursQuestion' => 'Suivez-vous aussi des cours ?',
 			'inscription.usage.coursOui' => 'Oui',
 			'inscription.usage.coursNon' => 'Non',
@@ -33141,9 +33145,9 @@ extension on Traductions {
 			'appareils.emetteur.erreur.generiquePhrase' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
 			'appareils.regenerer' => 'Générer un nouveau code',
 			'appareils.revoquer' => 'Retirer',
-			'appareils.revoquerConfirmation' => 'Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l\'aura pas reconnecté avec un nouveau code.',
 			_ => null,
 		} ?? switch (path) {
+			'appareils.revoquerConfirmation' => 'Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l\'aura pas reconnecté avec un nouveau code.',
 			'enfant.titre' => 'Ajouter un profil élève',
 			'enfant.aucun' => 'Aucun profil élève dans le foyer',
 			'enfant.aucunDetail' => 'Ajoutez d\'abord un profil élève depuis le Foyer.',
@@ -33655,9 +33659,9 @@ extension on Traductions {
 			'recrutement.statuts.inviter' => 'Inviter un enseignant',
 			'dossiers.titre' => 'Dossiers à valider',
 			'dossiers.sousTitre' => 'Examinez les dossiers prêts pour une décision.',
-			'dossiers.aucun' => 'Aucun dossier n\'attend de validation.',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.aucun' => 'Aucun dossier n\'attend de validation.',
 			'dossiers.aucunDetail' => 'Les nouveaux dossiers apparaîtront ici lorsqu\'ils seront prêts.',
 			'dossiers.file.chargement' => 'Chargement des dossiers…',
 			'dossiers.file.erreur' => 'Impossible de charger les dossiers.',
@@ -34169,9 +34173,9 @@ extension on Traductions {
 			'admin.groupes.formulaire.manqueNom' => 'Il manque le nom de la classe : écrivez-le dans le dernier champ.',
 			'admin.groupes.formulaire.manqueEnseignantHommes' => ({required Object nom}) => '${nom} ne peut pas prendre une classe d\'hommes : choisissez un enseignant homme dans la liste.',
 			'admin.groupes.formulaire.manqueEnseignantGarcons' => ({required Object nom}) => '${nom} ne peut pas prendre une classe de garçons : choisissez un enseignant homme dans la liste.',
-			'admin.groupes.formulaire.manqueEnseignantFemmes' => ({required Object nom}) => '${nom} ne peut pas prendre une classe de femmes : choisissez une enseignante dans la liste.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.groupes.formulaire.manqueEnseignantFemmes' => ({required Object nom}) => '${nom} ne peut pas prendre une classe de femmes : choisissez une enseignante dans la liste.',
 			'admin.groupes.formulaire.manqueEnseignantFilles' => ({required Object nom}) => '${nom} ne peut pas prendre une classe de filles : choisissez une enseignante dans la liste.',
 			'admin.groupes.formulaire.manqueEnseignantPris' => ({required Object nom}) => '${nom} est déjà en classe à ce créneau : changez de créneau ou choisissez une autre personne dans la liste.',
 			'admin.groupes.formulaire.manqueListeEnseignants' => 'La liste des enseignants n\'est pas encore à jour, donc l\'enseignant choisi n\'a pas pu être vérifié : attendez qu\'elle s\'affiche, puis pressez de nouveau.',
@@ -34683,9 +34687,9 @@ extension on Traductions {
 			'admin.comptes.colonneEtat' => 'État',
 			'admin.comptes.colonnePiece' => 'Pièce d\'identité',
 			'admin.comptes.colonneAttente' => 'Inscrit depuis',
-			'admin.comptes.colonneContrats' => 'Contrats',
 			_ => null,
 		} ?? switch (path) {
+			'admin.comptes.colonneContrats' => 'Contrats',
 			'admin.comptes.etatEnAttente' => 'En attente',
 			'admin.comptes.etatActif' => 'Actif',
 			'admin.comptes.etatProvisoire' => 'Provisoire',
@@ -35197,9 +35201,9 @@ extension on Traductions {
 			'admin.tirage.niveauNormal' => 'Poids normal',
 			'admin.tirage.niveauFort' => 'Poids fort',
 			'admin.tirage.ciblesTitre' => 'Classes ou enseignants à cibler',
-			'admin.tirage.ciblesDetail' => 'Une cible est tirée en priorité quand sa séance est en direct. Elle n\'est jamais annoncée au contrôleur ni à l\'enseignant.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.tirage.ciblesDetail' => 'Une cible est tirée en priorité quand sa séance est en direct. Elle n\'est jamais annoncée au contrôleur ni à l\'enseignant.',
 			'admin.tirage.aucuneCible' => 'Aucune cible : toutes les séances en direct ont les mêmes chances, au poids près.',
 			'admin.tirage.cibleClasse' => 'Classe',
 			'admin.tirage.cibleEnseignant' => 'Enseignant',
@@ -35711,9 +35715,9 @@ extension on Traductions {
 			'compte.themeClairDetail' => 'Fond clair, quel que soit le réglage de votre appareil',
 			'compte.themeSombre' => 'Sombre',
 			'compte.themeSombreDetail' => 'Fond sombre, quel que soit le réglage de votre appareil',
-			'compte.accessibilite' => 'Accessibilité',
 			_ => null,
 		} ?? switch (path) {
+			'compte.accessibilite' => 'Accessibilité',
 			'compte.animations' => 'Réduire les animations',
 			'compte.animationsDetail' => 'Limite les mouvements à l\'écran',
 			'compte.effets' => 'Réduire les effets',
@@ -36225,9 +36229,9 @@ extension on Traductions {
 			'tuteur.reglages.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
 			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.reglages.aucunEnfantDetail' => 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.',
-			'tuteur.reglages.erreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.reglages.erreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'classe.entree.coursDans' => ({required Object duree}) => 'Cours dans ${duree}',
 			'classe.entree.coursImminent' => 'Cours dans moins d\'une minute',
 			'classe.entree.rejoindre' => 'Rejoindre',
@@ -36739,9 +36743,9 @@ extension on Traductions {
 			'enseignant.cahier.niveauARevoirDetail' => 'La leçon est à reprendre à la prochaine séance.',
 			'enseignant.cahier.niveauEnProgresDetail' => 'L\'élève avance, quelques erreurs restent.',
 			'enseignant.cahier.niveauAcquisDetail' => 'La leçon est sue, avec peu d\'erreurs.',
-			'enseignant.cahier.niveauMaitriseDetail' => 'La leçon est sue sans erreur, l\'élève peut avancer.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.niveauMaitriseDetail' => 'La leçon est sue sans erreur, l\'élève peut avancer.',
 			'enseignant.cahier.faiblesseMakharijDetail' => 'La prononciation des lettres.',
 			'enseignant.cahier.faiblesseMaddDetail' => 'Les allongements.',
 			'enseignant.cahier.faiblesseGhunnaDetail' => 'Le son nasal.',
@@ -37253,9 +37257,9 @@ extension on Traductions {
 			'tc.groupe.carte.prochainCours' => 'Prochain cours',
 			'tc.groupe.carte.aucuneSeance' => 'Aucune séance planifiée',
 			'tc.groupe.carte.aucuneSeanceDetail' => 'Le planning de cette classe n\'est pas encore posé.',
-			'tc.groupe.carte.duree' => ({required Object valeur}) => 'Durée ${valeur}',
 			_ => null,
 		} ?? switch (path) {
+			'tc.groupe.carte.duree' => ({required Object valeur}) => 'Durée ${valeur}',
 			'tc.groupe.carte.dureeLibelle' => 'Durée',
 			'tc.groupe.carte.rejoindre' => 'Rejoindre',
 			'tc.groupe.carte.entreeSePrepare' => 'Votre entrée se prépare. Réessayez dans un instant.',
@@ -37767,9 +37771,9 @@ extension on Traductions {
 			'adulte.accueil.prochaineSeance' => 'Prochaine séance',
 			'adulte.accueil.parcours' => 'Mon parcours',
 			'adulte.accueil.dernieresSeances' => 'Dernières séances',
-			'adulte.accueil.ressources' => 'Ressources de la classe',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.accueil.ressources' => 'Ressources de la classe',
 			'adulte.accueil.absence' => 'Absence',
 			'adulte.accueil.aucuneClasse' => 'Aucune classe pour le moment.',
 			'adulte.accueil.aucuneClasseDetail' => 'Votre prochaine séance s\'affichera ici dès que votre classe sera ouverte.',
@@ -38281,9 +38285,9 @@ extension on Traductions {
 			'suiviFamille.notification.enAttente' => ({required Object dePrenom}) => 'Demande ${dePrenom} : en liste d\'attente',
 			'suiviFamille.notification.eleveIntegre' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève intégré à la classe',
 			'suiviFamille.notification.premiereSeance' => ({required Object dePrenom}) => 'Demande ${dePrenom} : première séance effectuée',
-			'suiviFamille.notification.close' => ({required Object dePrenom, required Object motif}) => 'Demande ${dePrenom} : ${motif}',
 			_ => null,
 		} ?? switch (path) {
+			'suiviFamille.notification.close' => ({required Object dePrenom, required Object motif}) => 'Demande ${dePrenom} : ${motif}',
 			'suiviFamille.notification.dejaEnClasse' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève déjà en classe, demande classée',
 			'suiviFamille.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}',
 			'suiviFamille.close.etat' => 'Demande close',
@@ -38795,9 +38799,9 @@ extension on Traductions {
 			'com.communaute.reponses.envoyer' => 'Envoyer la réponse',
 			'com.communaute.reponses.champVide' => 'Écrivez une réponse pour l\'envoyer.',
 			'com.communaute.reponses.enCours' => 'Envoi en cours',
-			'com.communaute.reponses.nonConfirmee' => 'Cette réponse n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Renvoyez-la dans un instant.',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.reponses.nonConfirmee' => 'Cette réponse n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Renvoyez-la dans un instant.',
 			'com.communaute.reponses.refusee' => 'Refusée par la politique de la Communauté',
 			'com.communaute.reponses.reessayer' => 'Renvoyer la réponse',
 			'com.communaute.reponses.indisponible' => 'Les réponses ne sont pas encore disponibles ici.',
@@ -39309,9 +39313,9 @@ extension on Traductions {
 			'comptable.nav.compte' => 'Compte',
 			'comptable.graphiques.masque' => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.',
 			'comptable.graphiques.voirValeurs' => 'Voir les valeurs',
-			'comptable.graphiques.masquerValeurs' => 'Masquer les valeurs',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.graphiques.masquerValeurs' => 'Masquer les valeurs',
 			'comptable.graphiques.repartitionTitre' => 'Répartition par coffre',
 			'comptable.graphiques.repartitionResume' => ({required Object n}) => 'Répartition entre ${n} coffres.',
 			'comptable.graphiques.mensuelTitre' => 'Entrées et sorties sur 6 mois',
@@ -39823,9 +39827,9 @@ extension on Traductions {
 			'comptable.encaissements.rap.actualiser' => 'Actualiser',
 			'comptable.encaissements.rap.journal' => 'Journal de la transaction',
 			'comptable.encaissements.rap.journalVide' => 'Aucune opération enregistrée pour cette transaction.',
-			'comptable.encaissements.rap.beneficiaire' => 'Bénéficiaire',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.rap.beneficiaire' => 'Bénéficiaire',
 			'comptable.encaissements.rap.motif' => 'Motif',
 			'comptable.encaissements.rap.montant' => 'Montant',
 			'comptable.encaissements.rap.source' => 'Source',
@@ -40337,9 +40341,9 @@ extension on Traductions {
 			'recherche.domaines.personnes' => 'Personnes',
 			'recherche.domaines.enseignants' => 'Enseignants',
 			'recherche.domaines.pedagogie' => 'Élèves',
-			'recherche.domaines.controle' => 'Contrôle',
 			_ => null,
 		} ?? switch (path) {
+			'recherche.domaines.controle' => 'Contrôle',
 			'recherche.domaines.finances' => 'Finances',
 			'recherche.domaines.fils' => 'Fils de discussion',
 			'recherche.domaines.remplacements' => 'Remplacements',

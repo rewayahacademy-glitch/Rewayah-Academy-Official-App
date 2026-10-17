@@ -91,7 +91,7 @@ end $$;
 do $$
 begin
   begin
-    perform public.creer_profil_inscription('teacher', 'Fatou', 'Diallo');
+    perform public.creer_profil_inscription('guardian', 'Fatou', 'Diallo');
     raise exception 'S3 ECHEC : un second profil a pu etre cree pour le meme compte';
   exception when sqlstate 'P0001' then
     if position('deja un profil' in sqlerrm) = 0 then raise; end if;
@@ -99,9 +99,9 @@ begin
   raise notice 'S3c ok : un compte ne peut pas se creer deux profils';
 end $$;
 
--- L'enseignant s'inscrit. Il ne doit PAS recevoir de foyer.
+-- L'enseignant (fixture : la porte publique est fermee depuis L1-11, le corps interne reste celui de l'invitation). Il ne doit PAS recevoir de foyer.
 select set_config('test.uid', '22222222-2222-2222-2222-222222222222', false);
-select public.creer_profil_inscription('teacher', 'Moussa', 'Barry', 'male') is not null
+select private.creer_profil_inscription_interne('teacher', 'Moussa', 'Barry', 'male') is not null
        as enseignant_cree;
 
 do $$
@@ -250,7 +250,7 @@ end $$;
 -- Le dossier feminin vient d'une enseignante reelle, puisque le genre du
 -- dossier est desormais celui du profil et ne peut plus etre pose a la main.
 select set_config('test.uid', '66666666-6666-6666-6666-666666666666', false);
-select public.creer_profil_inscription('teacher', 'Aissatou', 'Balde', 'female')
+select private.creer_profil_inscription_interne('teacher', 'Aissatou', 'Balde', 'female')
        is not null as enseignante_creee;
 
 do $$

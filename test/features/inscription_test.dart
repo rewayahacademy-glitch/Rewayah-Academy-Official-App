@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'
+    show ProviderContainer, ProviderScope;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -103,6 +105,11 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
               const RecapitulatifEtape(),
         ),
         GoRoute(
+          path: Routes.inscriptionInvitation,
+          builder: (BuildContext _, GoRouterState _) =>
+              const Scaffold(body: Text('CODE-INVITATION')),
+        ),
+        GoRoute(
           path: Routes.attente,
           builder: (BuildContext _, GoRouterState _) =>
               const Scaffold(body: Text('ATTENTE')),
@@ -131,14 +138,19 @@ class _CodeDejaRetenu extends CodeInvitationRetenu {
   String? build() => _code;
 }
 
-/// Le parcours enseignant jusqu'a la creation.
-Future<void> _enseignantJusquALaCreation(WidgetTester tester) async {
+/// Le parcours enseignant jusqu'au recapitulatif.
+Future<void> _enseignantJusquAuRecap(WidgetTester tester) async {
   await _taper(tester, find.byKey(const Key('inscription-lien-enseignant')));
   await tester.enterText(find.byKey(const Key('inscription-prenom')), 'Ali');
   await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
   await _continuer(tester);
   await _taper(tester, find.text(t.inscription.genreHomme));
   await _continuer(tester);
+}
+
+/// Le parcours enseignant jusqu'a la creation.
+Future<void> _enseignantJusquALaCreation(WidgetTester tester) async {
+  await _enseignantJusquAuRecap(tester);
   await _taper(tester, find.text(t.inscription.creer));
 }
 
@@ -192,7 +204,14 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.text('Je suis enseignant'), findsOneWidget);
+      expect(find.text('J\'ai un code d\'invitation'), findsOneWidget);
+      expect(
+        find.text(
+          'Vous êtes enseignant\u00a0? L\'académie vous invite par courriel.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('Je suis enseignant'), findsNothing);
       expect(find.text('Autre'), findsNothing);
       expect(find.text('1 sur 4'), findsOneWidget);
       expect(_cta(tester).onPress, isNull);
@@ -219,7 +238,7 @@ void main() {
       expect(find.text('ATTENTE'), findsOneWidget);
     });
 
-    testWidgets('le lien enseignant declare le role enseignant', (
+    testWidgets('le lien enseignant sans code ouvre le champ du code', (
       WidgetTester tester,
     ) async {
       final (FauxServiceDossier dossier, _) = await _monter(tester);
@@ -227,17 +246,18 @@ void main() {
         tester,
         find.byKey(const Key('inscription-lien-enseignant')),
       );
-      expect(find.text('2 sur 4'), findsOneWidget);
-      await tester.enterText(
-        find.byKey(const Key('inscription-prenom')),
-        'Ali',
+      expect(find.text('CODE-INVITATION'), findsOneWidget);
+      expect(dossier.profilsCrees, isEmpty);
+    });
+
+    test('libelles de la fiche L1-11 en arabe', () async {
+      await LocaleSettings.setLocale(AppLocale.ar);
+      addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+      expect(
+        t.inscription.usage.enseignantInvite,
+        'هل أنت معلّم؟ تدعوك الأكاديمية عبر البريد الإلكتروني.',
       );
-      await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
-      await _continuer(tester);
-      await _taper(tester, find.text(t.inscription.genreHomme));
-      await _continuer(tester);
-      await _taper(tester, find.text(t.inscription.creer));
-      expect(dossier.profilsCrees.single.role, AppRole.teacher);
+      expect(t.inscription.usage.enseignant, 'لدي رمز دعوة');
     });
 
     // RACCORDEMENT-1016 (D) : le code verifie part avec la creation du
@@ -255,12 +275,22 @@ void main() {
       expect(find.text('ATTENTE'), findsOneWidget);
     });
 
-    testWidgets('sans code retenu, le profil enseignant part sans code', (
+    testWidgets('profil enseignant sans code : aucun appel, retour au code', (
       WidgetTester tester,
     ) async {
-      final (FauxServiceDossier dossier, _) = await _monter(tester);
-      await _enseignantJusquALaCreation(tester);
-      expect(dossier.codesInvitation.single, isNull);
+      final (FauxServiceDossier dossier, _) = await _monter(
+        tester,
+        codeRetenu: 'ABCD-EFGH-JKMN',
+      );
+      await _enseignantJusquAuRecap(tester);
+      // Le code est perdu entre-temps : le recapitulatif ne tente rien.
+      final ProviderContainer conteneur = ProviderScope.containerOf(
+        tester.element(find.byType(RecapitulatifEtape)),
+      );
+      conteneur.read(codeInvitationRetenuProvider.notifier).oublier();
+      await _taper(tester, find.text(t.inscription.creer));
+      expect(dossier.profilsCrees, isEmpty);
+      expect(find.text('CODE-INVITATION'), findsOneWidget);
     });
 
     testWidgets('code refuse par le serveur : message K-59, aucune avance', (

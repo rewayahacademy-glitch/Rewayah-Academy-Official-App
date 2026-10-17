@@ -141,7 +141,7 @@ class CoquilleEtape extends ConsumerWidget {
   /// Une ligne sous le CTA (erreur, precision).
   final Widget? souscription;
 
-  /// Un lien discret sous le CTA (par exemple « Je suis enseignant »).
+  /// Un lien discret sous le CTA (par exemple « J'ai un code d'invitation »).
   final Widget? complement;
 
   @override
