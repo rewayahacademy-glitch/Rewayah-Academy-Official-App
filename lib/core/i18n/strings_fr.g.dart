@@ -14385,15 +14385,7 @@ class Traductions$tc$classe$fr {
 	late final Traductions$tc$classe$action$fr action = Traductions$tc$classe$action$fr.internal(_root);
 	late final Traductions$tc$classe$rappel$fr rappel = Traductions$tc$classe$rappel$fr.internal(_root);
 	late final Traductions$tc$classe$recitation$fr recitation = Traductions$tc$classe$recitation$fr.internal(_root);
-	late final Traductions$tc$classe$support$fr support = Traductions$tc$classe$support$fr.internal(_root);
-	late final Traductions$tc$classe$commandes$fr commandes = Traductions$tc$classe$commandes$fr.internal(_root);
-	late final Traductions$tc$classe$scene$fr scene = Traductions$tc$classe$scene$fr.internal(_root);
-	late final Traductions$tc$classe$reseau$fr reseau = Traductions$tc$classe$reseau$fr.internal(_root);
-	late final Traductions$tc$classe$attente$fr attente = Traductions$tc$classe$attente$fr.internal(_root);
-	late final Traductions$tc$classe$lien$fr lien = Traductions$tc$classe$lien$fr.internal(_root);
-	late final Traductions$tc$classe$barre$fr barre = Traductions$tc$classe$barre$fr.internal(_root);
 	late final Traductions$tc$classe$prevol$fr prevol = Traductions$tc$classe$prevol$fr.internal(_root);
-	late final Traductions$tc$classe$observation$fr observation = Traductions$tc$classe$observation$fr.internal(_root);
 }
 
 // Path: tc.realtime
@@ -23697,18 +23689,6 @@ class Traductions$tc$classe$entete$fr {
 
 	// Translations
 	late final Traductions$tc$classe$entete$titreEnseignant$fr titreEnseignant = Traductions$tc$classe$entete$titreEnseignant$fr.internal(_root);
-
-	/// fr: 'Reste {minutes} min'
-	String resteMinutes({required Object minutes}) => 'Reste ${minutes} min';
-
-	/// fr: 'Reste {heures} h {minutes}'
-	String resteHeuresMinutes({required Object heures, required Object minutes}) => 'Reste ${heures} h ${minutes}';
-
-	/// fr: 'Séance toujours en direct'
-	String get coursEnCours => 'Séance toujours en direct';
-
-	/// fr: 'Photo enseignant manquante'
-	String get photoManquante => 'Photo enseignant manquante';
 }
 
 // Path: tc.classe.roster
@@ -23797,32 +23777,14 @@ class Traductions$tc$classe$fiche$fr {
 	/// fr: 'Dernière séance'
 	String get derniereSeance => 'Dernière séance';
 
-	/// fr: 'Page {page}'
-	String page({required Object page}) => 'Page ${page}';
-
-	/// fr: '{nombre} élément(s)'
-	String travailEnCours({required Object nombre}) => '${nombre} élément(s)';
-
 	/// fr: 'À reprendre'
 	String get aReprendre => 'À reprendre';
 
 	/// fr: 'Présence récente'
 	String get presenceRecente => 'Présence récente';
 
-	/// fr: '{presences} / {total} cours'
-	String assiduite({required Object presences, required Object total}) => '${presences} / ${total} cours';
-
 	/// fr: 'Travail actuel'
 	String get travailActuel => 'Travail actuel';
-
-	/// fr: 'Interface guidée'
-	String get interfaceGuidee => 'Interface guidée';
-
-	/// fr: 'Suivi pédagogique indisponible'
-	String get sansPedagogie => 'Suivi pédagogique indisponible';
-
-	/// fr: 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l'enseignant.'
-	String get sansPedagogieDetail => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.';
 }
 
 // Path: tc.classe.action
@@ -23833,20 +23795,8 @@ class Traductions$tc$classe$action$fr {
 
 	// Translations
 
-	/// fr: 'Rappel discret'
-	String get rappel => 'Rappel discret';
-
-	/// fr: 'Choisir pour réciter'
-	String get reciter => 'Choisir pour réciter';
-
 	/// fr: 'Noter'
 	String get noter => 'Noter';
-
-	/// fr: 'Signaler un besoin'
-	String get signaler => 'Signaler un besoin';
-
-	/// fr: 'Ouvrir le contexte'
-	String get contexte => 'Ouvrir le contexte';
 }
 
 // Path: tc.classe.rappel
@@ -23859,15 +23809,6 @@ class Traductions$tc$classe$rappel$fr {
 
 	/// fr: 'Le professeur vous appelle'
 	String get recu => 'Le professeur vous appelle';
-
-	/// fr: 'Le rappel n'a pas pu être envoyé'
-	String get echec => 'Le rappel n\'a pas pu être envoyé';
-
-	/// fr: 'Votre accès à cette séance ne permet pas d'appeler un élève'
-	String get echecDroit => 'Votre accès à cette séance ne permet pas d\'appeler un élève';
-
-	/// fr: 'Déjà appelé. À nouveau dans {secondes} s'
-	String cooldown({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s';
 }
 
 // Path: tc.classe.recitation
@@ -23887,167 +23828,8 @@ class Traductions$tc$classe$recitation$fr {
 	/// fr: 'Récite'
 	String get pastille => 'Récite';
 
-	/// fr: 'Ensuite'
-	String get suivants => 'Ensuite';
-
 	/// fr: 'Personne ne récite'
 	String get personne => 'Personne ne récite';
-
-	/// fr: 'Arrêter la récitation'
-	String get arreter => 'Arrêter la récitation';
-}
-
-// Path: tc.classe.support
-class Traductions$tc$classe$support$fr {
-	Traductions$tc$classe$support$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Aucun support présenté'
-	String get aucun => 'Aucun support présenté';
-
-	/// fr: 'Ouvrez la Bibliothèque pour présenter un support à la Classe.'
-	String get aucunDetail => 'Ouvrez la Bibliothèque pour présenter un support à la Classe.';
-
-	/// fr: 'Bibliothèque'
-	String get bibliotheque => 'Bibliothèque';
-
-	/// fr: 'Bibliothèque non branchée'
-	String get bibliothequeAbsente => 'Bibliothèque non branchée';
-
-	/// fr: 'Le choix de support sera disponible dès l'intégration du catalogue.'
-	String get bibliothequeAbsenteDetail => 'Le choix de support sera disponible dès l\'intégration du catalogue.';
-}
-
-// Path: tc.classe.commandes
-class Traductions$tc$classe$commandes$fr {
-	Traductions$tc$classe$commandes$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Ouvrir le micro'
-	String get micro => 'Ouvrir le micro';
-
-	/// fr: 'Fermer le micro'
-	String get microFermer => 'Fermer le micro';
-
-	/// fr: 'Ouvrir la caméra'
-	String get camera => 'Ouvrir la caméra';
-
-	/// fr: 'Fermer la caméra'
-	String get cameraFermer => 'Fermer la caméra';
-
-	/// fr: 'Micro fermé'
-	String get microCoupe => 'Micro fermé';
-
-	/// fr: 'Quitter'
-	String get quitter => 'Quitter';
-
-	/// fr: 'Quitter le cours ?'
-	String get quitterQuestion => 'Quitter le cours ?';
-
-	/// fr: 'Votre sortie sera enregistrée. Vous pourrez revenir tant que la séance est ouverte.'
-	String get quitterConsequence => 'Votre sortie sera enregistrée. Vous pourrez revenir tant que la séance est ouverte.';
-
-	/// fr: 'Fermer la Bibliothèque'
-	String get fermerBibliotheque => 'Fermer la Bibliothèque';
-}
-
-// Path: tc.classe.scene
-class Traductions$tc$classe$scene$fr {
-	Traductions$tc$classe$scene$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Vous êtes seul dans la salle pour le moment'
-	String get vide => 'Vous êtes seul dans la salle pour le moment';
-
-	/// fr: 'Sans image'
-	String get sansImage => 'Sans image';
-}
-
-// Path: tc.classe.reseau
-class Traductions$tc$classe$reseau$fr {
-	Traductions$tc$classe$reseau$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Réseau bon'
-	String get bon => 'Réseau bon';
-
-	/// fr: 'Réseau instable'
-	String get mediocre => 'Réseau instable';
-
-	/// fr: 'Réseau perdu'
-	String get perdu => 'Réseau perdu';
-}
-
-// Path: tc.classe.attente
-class Traductions$tc$classe$attente$fr {
-	Traductions$tc$classe$attente$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Vérification de votre micro'
-	String get materiel => 'Vérification de votre micro';
-
-	/// fr: 'Ouverture du cours'
-	String get ouverture => 'Ouverture du cours';
-
-	/// fr: 'Connexion au cours'
-	String get connexion => 'Connexion au cours';
-
-	/// fr: 'Le cours n'est pas accessible pour le moment'
-	String get refus => 'Le cours n\'est pas accessible pour le moment';
-}
-
-// Path: tc.classe.lien
-class Traductions$tc$classe$lien$fr {
-	Traductions$tc$classe$lien$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Connexion instable'
-	String get instable => 'Connexion instable';
-
-	/// fr: 'Reconnexion en cours'
-	String get reconnexion => 'Reconnexion en cours';
-
-	/// fr: 'Connexion rétablie'
-	String get retabli => 'Connexion rétablie';
-
-	/// fr: 'Connexion perdue'
-	String get echec => 'Connexion perdue';
-
-	/// fr: 'Le cours a été mis en pause par le système. Vérification du lien en cours.'
-	String get retourDeSuspension => 'Le cours a été mis en pause par le système. Vérification du lien en cours.';
-}
-
-// Path: tc.classe.barre
-class Traductions$tc$classe$barre$fr {
-	Traductions$tc$classe$barre$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Séance en direct'
-	String get titre => 'Séance en direct';
-
-	/// fr: 'Revenir au cours {deGroupe}'
-	String revenir({required Object deGroupe}) => 'Revenir au cours ${deGroupe}';
 }
 
 // Path: tc.classe.prevol
@@ -24078,18 +23860,6 @@ class Traductions$tc$classe$prevol$fr {
 
 	/// fr: 'Vérifier à nouveau'
 	String get reessayer => 'Vérifier à nouveau';
-}
-
-// Path: tc.classe.observation
-class Traductions$tc$classe$observation$fr {
-	Traductions$tc$classe$observation$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Reste {secondes} s'
-	String restant({required Object secondes}) => 'Reste ${secondes} s';
 }
 
 // Path: tc.realtime.transport
@@ -37584,10 +37354,6 @@ extension on Traductions {
 			'tc.outils.annotation.aucuneSelection' => 'Sélectionnez d\'abord un passage.',
 			'tc.classe.entete.titreEnseignant.sayyid' => 'Sayyid',
 			'tc.classe.entete.titreEnseignant.sayyida' => 'Sayyida',
-			'tc.classe.entete.resteMinutes' => ({required Object minutes}) => 'Reste ${minutes} min',
-			'tc.classe.entete.resteHeuresMinutes' => ({required Object heures, required Object minutes}) => 'Reste ${heures} h ${minutes}',
-			'tc.classe.entete.coursEnCours' => 'Séance toujours en direct',
-			'tc.classe.entete.photoManquante' => 'Photo enseignant manquante',
 			'tc.classe.roster.titre' => 'Élèves',
 			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
 			'tc.classe.roster.indisponible' => 'Roster indisponible',
@@ -37608,60 +37374,15 @@ extension on Traductions {
 			'tc.classe.fiche.niveau' => 'Niveau',
 			'tc.classe.fiche.objectif' => 'Objectif actuel',
 			'tc.classe.fiche.derniereSeance' => 'Dernière séance',
-			'tc.classe.fiche.page' => ({required Object page}) => 'Page ${page}',
-			'tc.classe.fiche.travailEnCours' => ({required Object nombre}) => '${nombre} élément(s)',
 			'tc.classe.fiche.aReprendre' => 'À reprendre',
 			'tc.classe.fiche.presenceRecente' => 'Présence récente',
-			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} cours',
 			'tc.classe.fiche.travailActuel' => 'Travail actuel',
-			'tc.classe.fiche.interfaceGuidee' => 'Interface guidée',
-			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
-			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',
-			'tc.classe.action.rappel' => 'Rappel discret',
-			'tc.classe.action.reciter' => 'Choisir pour réciter',
 			'tc.classe.action.noter' => 'Noter',
-			'tc.classe.action.signaler' => 'Signaler un besoin',
-			'tc.classe.action.contexte' => 'Ouvrir le contexte',
 			'tc.classe.rappel.recu' => 'Le professeur vous appelle',
-			'tc.classe.rappel.echec' => 'Le rappel n\'a pas pu être envoyé',
-			'tc.classe.rappel.echecDroit' => 'Votre accès à cette séance ne permet pas d\'appeler un élève',
-			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s',
 			'tc.classe.recitation.titre' => 'Récitation',
 			'tc.classe.recitation.actif' => ({required Object prenom}) => '${prenom} récite',
 			'tc.classe.recitation.pastille' => 'Récite',
-			'tc.classe.recitation.suivants' => 'Ensuite',
 			'tc.classe.recitation.personne' => 'Personne ne récite',
-			'tc.classe.recitation.arreter' => 'Arrêter la récitation',
-			'tc.classe.support.aucun' => 'Aucun support présenté',
-			'tc.classe.support.aucunDetail' => 'Ouvrez la Bibliothèque pour présenter un support à la Classe.',
-			'tc.classe.support.bibliotheque' => 'Bibliothèque',
-			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
-			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
-			'tc.classe.commandes.micro' => 'Ouvrir le micro',
-			'tc.classe.commandes.microFermer' => 'Fermer le micro',
-			'tc.classe.commandes.camera' => 'Ouvrir la caméra',
-			'tc.classe.commandes.cameraFermer' => 'Fermer la caméra',
-			'tc.classe.commandes.microCoupe' => 'Micro fermé',
-			'tc.classe.commandes.quitter' => 'Quitter',
-			'tc.classe.commandes.quitterQuestion' => 'Quitter le cours ?',
-			'tc.classe.commandes.quitterConsequence' => 'Votre sortie sera enregistrée. Vous pourrez revenir tant que la séance est ouverte.',
-			'tc.classe.commandes.fermerBibliotheque' => 'Fermer la Bibliothèque',
-			'tc.classe.scene.vide' => 'Vous êtes seul dans la salle pour le moment',
-			'tc.classe.scene.sansImage' => 'Sans image',
-			'tc.classe.reseau.bon' => 'Réseau bon',
-			'tc.classe.reseau.mediocre' => 'Réseau instable',
-			'tc.classe.reseau.perdu' => 'Réseau perdu',
-			'tc.classe.attente.materiel' => 'Vérification de votre micro',
-			'tc.classe.attente.ouverture' => 'Ouverture du cours',
-			'tc.classe.attente.connexion' => 'Connexion au cours',
-			'tc.classe.attente.refus' => 'Le cours n\'est pas accessible pour le moment',
-			'tc.classe.lien.instable' => 'Connexion instable',
-			'tc.classe.lien.reconnexion' => 'Reconnexion en cours',
-			'tc.classe.lien.retabli' => 'Connexion rétablie',
-			'tc.classe.lien.echec' => 'Connexion perdue',
-			'tc.classe.lien.retourDeSuspension' => 'Le cours a été mis en pause par le système. Vérification du lien en cours.',
-			'tc.classe.barre.titre' => 'Séance en direct',
-			'tc.classe.barre.revenir' => ({required Object deGroupe}) => 'Revenir au cours ${deGroupe}',
 			'tc.classe.prevol.titre' => 'Avant d\'ouvrir le cours',
 			'tc.classe.prevol.microOk' => 'Micro détecté',
 			'tc.classe.prevol.microAbsent' => 'Aucun micro utilisable',
@@ -37669,7 +37390,6 @@ extension on Traductions {
 			'tc.classe.prevol.cameraAbsente' => 'Aucune caméra. Le cours reste possible.',
 			'tc.classe.prevol.permissionRefusee' => 'Accès au micro refusé. Autorisez-le pour ouvrir le cours.',
 			'tc.classe.prevol.reessayer' => 'Vérifier à nouveau',
-			'tc.classe.observation.restant' => ({required Object secondes}) => 'Reste ${secondes} s',
 			'tc.realtime.transport.partage_indisponible' => 'Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page.',
 			'tc.realtime.etat.restauration_impossible' => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.',
 			'tc.observation.entree.titre' => 'Observer la séance',
@@ -37868,8 +37588,6 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
@@ -37920,6 +37638,8 @@ extension on Traductions {
 			'adulte.monEspace.informations' => 'Mes informations',
 			'adulte.monEspace.coursAcces' => 'Cours et accès',
 			'adulte.monEspace.coursAccesLegende' => 'Classe, séances et accès',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.monEspace.paiements' => 'Paiements',
 			'adulte.monEspace.paiementsLegende' => 'Historique et reçus',
 			'adulte.monEspace.accords' => 'Mes accords',
@@ -38382,8 +38102,6 @@ extension on Traductions {
 			'suiviFamille.carteTitre' => ({required Object dePrenom}) => 'Demande ${dePrenom}',
 			'suiviFamille.detailTitre' => ({required Object dePrenom}) => 'Suivi de la demande ${dePrenom}',
 			'suiviFamille.etapeCourante' => ({required Object etape}) => 'Étape en cours : ${etape}',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.toutFait' => 'Toutes les étapes sont franchies.',
 			'suiviFamille.voirSuivi' => 'Voir le suivi',
 			'suiviFamille.vide' => 'Aucune demande pour le moment.',
@@ -38434,6 +38152,8 @@ extension on Traductions {
 			'suiviDemandes.heureFuseau' => ({required Object heure, required Object deVille}) => '${heure}, heure ${deVille}',
 			'suiviDemandes.creneauxChoisis' => 'Jours et heures choisis',
 			'suiviDemandes.jourHeure' => ({required Object jour, required Object heure}) => '${jour} ${heure}',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.fuseauChoisi' => 'Fuseau horaire',
 			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => 'Heure ${deVille}',
 			'suiviDemandes.etapes.envoyee' => 'Demande envoyée',
@@ -38896,8 +38616,6 @@ extension on Traductions {
 			'com.communaute.flux.reponses' => ({required Object nombre}) => '${nombre} réponses',
 			'com.communaute.flux.aucuneReponse' => 'Aucune réponse',
 			'com.communaute.flux.categorie' => ({required Object categorie}) => 'Catégorie ${categorie}',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.recherche.ouvrir' => 'Rechercher une publication',
 			'com.communaute.recherche.champ' => 'Rechercher une publication',
 			'com.communaute.recherche.aide' => 'Un mot du titre ou du texte',
@@ -38948,6 +38666,8 @@ extension on Traductions {
 			'com.communaute.composer.texteManquant' => 'Écrivez le texte de la publication pour publier.',
 			'com.communaute.composer.pieces' => 'Pièces jointes',
 			'com.communaute.composer.pieceRefusee' => 'Retirez les fichiers refusés avant de publier.',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.composer.choixIndisponible' => 'Le choix d\'un fichier n\'est pas encore disponible ici.',
 			'com.communaute.composer.publier' => 'Publier',
 			'com.communaute.composer.fermer' => 'Fermer la nouvelle publication',
@@ -39410,8 +39130,6 @@ extension on Traductions {
 			'com.annonces.demo.f.annonceFajrTexte' => 'Révisez les dix derniers versets de la sourate Al-Mulk avant jeudi.',
 			'com.annonces.demo.f.tuteurUrgent' => 'La séance de ce soir est annulée',
 			'com.annonces.demo.f.tuteurUrgentTexte' => 'L\'enseignante est absente ce soir. La séance est reportée à jeudi, même heure. Vous n\'avez rien à faire.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.tuteurReponse' => 'Réponse attendue : accord pour la récitation de Yasmine',
 			'com.annonces.demo.f.tuteurReponseTexte' => 'L\'enseignante attend votre accord pour que Yasmine récite devant les familles. Répondez-lui depuis l\'Espace Classe.',
 			'com.annonces.demo.f.tuteurMessage' => 'Nouveau message de l\'enseignante de la Classe An-Nour',
@@ -39462,6 +39180,8 @@ extension on Traductions {
 			'comptable.graphiques.rapportsTitre' => 'Rapports',
 			'comptable.graphiques.rapportsSousTitre' => 'Les entrées, les sorties et la trésorerie dans la durée.',
 			'comptable.graphiques.vide' => 'Aucune donnée à dessiner',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.graphiques.videDetail' => 'Les graphiques apparaîtront ici dès que des encaissements ou des paiements auront été enregistrés.',
 			'comptable.graphiques.erreur' => 'Les graphiques n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.graphiques.sansDonnees' => 'Les graphiques n\'ont pas pu être chargés',
@@ -39924,8 +39644,6 @@ extension on Traductions {
 			'comptable.encaissements.rap.vueTransactions' => 'À rapprocher',
 			'comptable.encaissements.rap.vueRemboursements' => 'Remboursements',
 			'comptable.encaissements.rap.natPaiementAttendu' => 'Paiement attendu',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.natTransaction' => 'Transaction prestataire',
 			'comptable.encaissements.rap.natMensualite' => 'Solde ou mensualité',
 			'comptable.encaissements.rap.natFrais' => 'Frais',
@@ -39976,6 +39694,8 @@ extension on Traductions {
 			'comptable.encaissements.detailTitre' => 'Détail de l\'encaissement',
 			'comptable.encaissements.rapprochementTitre' => 'Rapprochement',
 			'comptable.encaissements.rapprochementSousTitre' => 'Relier chaque transaction à ce qui l\'attendait.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.intro' => 'Le profil de paiement de chaque enseignant et de chaque contractuel. Seul le bénéficiaire saisit ou modifie ses coordonnées : vous pouvez le relancer, lui demander une mise à jour ou suspendre ses paiements.',
 			'comptable.beneficiaires.filtreTous' => 'Tous',
 			'comptable.beneficiaires.filtreInfos' => 'Infos manquantes',
@@ -40438,8 +40158,6 @@ extension on Traductions {
 			'reprisesAdmin.refusee' => 'Reprise refusée.',
 			'reprisesAdmin.dejaTraitee' => 'Cette demande a déjà été traitée. La liste est à jour.',
 			'reprisesAdmin.echecReseau' => 'La décision n\'a pas pu être confirmée. Vérifiez la liste avant de réessayer.',
-			_ => null,
-		} ?? switch (path) {
 			'reprisesAdmin.vide' => 'Aucune demande de reprise à traiter.',
 			'reprisesAdmin.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',
 			'reprisesAdmin.sansDonnees' => 'les demandes de reprise',
@@ -40490,6 +40208,8 @@ extension on Traductions {
 			'recherche.etats.sessionExpiree.titre' => 'Votre session a expiré.',
 			'recherche.etats.sessionExpiree.phrase' => 'Reconnectez-vous pour reprendre la recherche.',
 			'recherche.etats.nonRaccorde.titre' => 'Recherche indisponible pour le moment.',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.etats.nonRaccorde.phrase' => 'Cette recherche n\'est pas encore ouverte dans votre espace.',
 			'recherche.etats.nonRaccorde.action' => 'Retour',
 			'recherche.etats.inaccessible.titre' => 'Cet élément n\'est plus accessible.',

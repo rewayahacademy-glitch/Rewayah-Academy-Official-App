@@ -5,8 +5,8 @@
 //    inseree ailleurs (test/support/garde_ancres.dart).
 // 2. Les unites hors duree (« 18 ans », « 8 Mo », « 150 % ») sont
 //    insecables, et la garde de source les connait.
-// 3. Le message de rappel en attente (« A nouveau dans 30 s ») est verifie
-//    sur l'ecran reel : la fiche de seance, rendue et pressee.
+// 3. Le message de rappel en attente etait verifie sur la fiche de seance de
+//    l'ancienne Classe Live, supprimee le 17/10/2026 (DECISION-ENTREE).
 // 4. CarteSession : en interface de droite a gauche, un libelle francais
 //    garde sa ponctuation a sa place (isole dans son sens) ; a 1440 px, la
 //    carte garde une largeur de lecture.
@@ -25,8 +25,6 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/presence/vue_presence.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
-import 'package:rewayah_academy/core/tc_classe/port_rappel_discret.dart';
-import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
@@ -42,14 +40,11 @@ import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_support.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
-import 'package:rewayah_academy/features/tc_classe_live/fiche_seance.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 
 import '../support/garde_ancres.dart';
 import '../support/garde_durees.dart';
 import '../support/harnais.dart';
-import '../teaching_core/e/faux/faux_classe.dart';
-import '../teaching_core/e/support/hote_classe.dart';
 
 const String _nbsp = '\u00A0';
 const String _lrm = '\u200E';
@@ -419,46 +414,6 @@ String premier(int n) => lu(LibellesGroupe.dureeSeule(Duration(minutes: n)), nul
     });
   });
 
-  group('3. Rappel discret en attente, sur la fiche reelle', () {
-    testWidgets('« A nouveau dans 30 s » ne se coupe pas', (
-      WidgetTester tester,
-    ) async {
-      const TeacherStudentProjection eleve = TeacherStudentProjection(
-        firstName: 'Amina',
-        academyId: 'RA-AB0012',
-        liveStatus: EtatPresenceProjete.present,
-        interfaceGuidee: false,
-      );
-      await tester.pumpWidget(
-        hoteClasse(
-          const FicheSeance(eleve: eleve, sessionId: 's1'),
-          surcharges: surchargesClasse(
-            moteur: FauxMoteurClasse(),
-            video: FauxServiceVideoClasse(),
-            preVol: FauxPreVolClasse(),
-            rappel: FauxRappelDiscret(
-              echec: const EchecRappel(MotifEchecRappel.cooldown),
-              restant: const Duration(seconds: 30),
-            ),
-          ),
-        ),
-      );
-      await tester.pump();
-      await tester.tap(find.text(t.tc.classe.action.rappel));
-      await tester.pump();
-      await tester.pump();
-
-      final List<String> textes = _textes(tester, find.byType(FicheSeance));
-      final String message = textes.firstWhere(
-        (String s) => s.contains('30'),
-        orElse: () => fail('aucun message de rappel rendu : $textes'),
-      );
-      expect(message, endsWith('30${_nbsp}s'));
-      expect(message, isNot(contains('30 s')));
-      await tester.pump(const Duration(seconds: 5));
-    });
-  });
-
   group('4. CarteSession : sens du contenu et largeur de lecture', () {
     testWidgets('RTL : chaque libelle francais ponctue est isole dans son '
         'sens', (WidgetTester tester) async {
@@ -497,48 +452,6 @@ String premier(int n) => lu(LibellesGroupe.dureeSeule(Duration(minutes: n)), nul
         }
       }
       expect(ponctues, greaterThan(0));
-    });
-
-    testWidgets('RTL : sur la fiche reelle, le message du rappel garde son '
-        'point a sa place', (WidgetTester tester) async {
-      const TeacherStudentProjection eleve = TeacherStudentProjection(
-        firstName: 'Amina',
-        academyId: 'RA-AB0012',
-        liveStatus: EtatPresenceProjete.present,
-        interfaceGuidee: false,
-      );
-      await tester.pumpWidget(
-        hoteClasse(
-          const Directionality(
-            textDirection: TextDirection.rtl,
-            child: FicheSeance(eleve: eleve, sessionId: 's1'),
-          ),
-          surcharges: surchargesClasse(
-            moteur: FauxMoteurClasse(),
-            video: FauxServiceVideoClasse(),
-            preVol: FauxPreVolClasse(),
-            rappel: FauxRappelDiscret(
-              echec: const EchecRappel(MotifEchecRappel.cooldown),
-              restant: const Duration(seconds: 30),
-            ),
-          ),
-        ),
-      );
-      await tester.pump();
-      await tester.tap(find.text(t.tc.classe.action.rappel));
-      await tester.pump();
-      await tester.pump();
-
-      final List<String> textes = _textes(tester, find.byType(FicheSeance));
-      final String message = textes.firstWhere(
-        (String s) => s.contains('30'),
-        orElse: () => fail('aucun message de rappel rendu : $textes'),
-      );
-      // Isole dans son sens : le point final reste apres « 30 s ».
-      expect(message, allOf(startsWith(_fsi), endsWith(_pdi)));
-      expect(message, contains('30${_nbsp}s'));
-      expect(message, isNot(contains('30 s')));
-      await tester.pump(const Duration(seconds: 5));
     });
 
     testWidgets('RTL : attente, changement d heure, conseil d appareil et '

@@ -2636,11 +2636,7 @@
         "titreEnseignant": {
           "sayyid": "سيد",
           "sayyida": "سيدة"
-        },
-        "resteMinutes": "المتبقي ⁨{minutes}⁩ د",
-        "resteHeuresMinutes": "المتبقي ⁨{heures}⁩ س ⁨{minutes}⁩ د",
-        "coursEnCours": "الحصة ما زالت مباشرة",
-        "photoManquante": "صورة المعلم غير موجودة"
+        }
       },
       "roster": {
         "titre": "الطلاب",
@@ -2667,80 +2663,21 @@
         "niveau": "المستوى",
         "objectif": "الهدف الحالي",
         "derniereSeance": "آخر حصة",
-        "page": "الصفحة ⁨{page}⁩",
-        "travailEnCours": "العناصر: ⁨{nombre}⁩",
         "aReprendre": "للاستئناف",
         "presenceRecente": "الحضور الأخير",
-        "assiduite": "الدروس: ⁨{presences}⁩ من ⁨{total}⁩",
-        "travailActuel": "العمل الحالي",
-        "interfaceGuidee": "الواجهة الموجَّهة",
-        "sansPedagogie": "المتابعة التعليمية غير متاحة",
-        "sansPedagogieDetail": "المسار والأهداف والعمل الجاري غير مفتوحة للمعلم بعد."
+        "travailActuel": "العمل الحالي"
       },
       "action": {
-        "rappel": "نداء هادئ",
-        "reciter": "اختيار للتلاوة",
-        "noter": "تدوين ملاحظة",
-        "signaler": "الإبلاغ عن حاجة",
-        "contexte": "فتح السياق"
+        "noter": "تدوين ملاحظة"
       },
       "rappel": {
-        "recu": "المعلم يناديك",
-        "echec": "تعذّر إرسال النداء",
-        "echecDroit": "دخولك إلى هذه الحصة لا يسمح بنداء طالب",
-        "cooldown": "تم النداء. مجددًا بعد ⁨{secondes}⁩ ث"
+        "recu": "المعلم يناديك"
       },
       "recitation": {
         "titre": "التلاوة",
         "actif": "التلاوة: ⁨{prenom}⁩",
         "pastille": "في التلاوة",
-        "suivants": "بعد ذلك",
-        "personne": "لا أحد يتلو",
-        "arreter": "إيقاف التلاوة"
-      },
-      "support": {
-        "aucun": "لا مادة معروضة",
-        "aucunDetail": "افتح المكتبة لعرض مادة على الفصل.",
-        "bibliotheque": "المكتبة",
-        "bibliothequeAbsente": "المكتبة غير موصولة",
-        "bibliothequeAbsenteDetail": "سيتاح اختيار المادة بمجرد دمج الفهرس."
-      },
-      "commandes": {
-        "micro": "فتح الميكروفون",
-        "microFermer": "إغلاق الميكروفون",
-        "camera": "فتح الكاميرا",
-        "cameraFermer": "إغلاق الكاميرا",
-        "microCoupe": "الميكروفون مغلق",
-        "quitter": "مغادرة",
-        "quitterQuestion": "مغادرة الدرس؟",
-        "quitterConsequence": "سيُسجَّل خروجك. يمكنك العودة ما دامت الحصة مفتوحة.",
-        "fermerBibliotheque": "إغلاق المكتبة"
-      },
-      "scene": {
-        "vide": "أنت وحدك في القاعة الآن",
-        "sansImage": "دون صورة"
-      },
-      "reseau": {
-        "bon": "الشبكة جيدة",
-        "mediocre": "الشبكة غير مستقرة",
-        "perdu": "انقطعت الشبكة"
-      },
-      "attente": {
-        "materiel": "جارٍ التحقق من الميكروفون",
-        "ouverture": "جارٍ فتح الدرس",
-        "connexion": "جارٍ الاتصال بالدرس",
-        "refus": "الدرس غير متاح الآن"
-      },
-      "lien": {
-        "instable": "الاتصال غير مستقر",
-        "reconnexion": "جارٍ إعادة الاتصال",
-        "retabli": "عاد الاتصال",
-        "echec": "انقطع الاتصال",
-        "retourDeSuspension": "أوقف النظام الدرس مؤقتًا. جارٍ التحقق من الاتصال."
-      },
-      "barre": {
-        "titre": "حصة مباشرة",
-        "revenir": "العودة إلى درس ⁨{deGroupe}⁩"
+        "personne": "لا أحد يتلو"
       },
       "prevol": {
         "titre": "قبل فتح الدرس",
@@ -2750,9 +2687,6 @@
         "cameraAbsente": "لا كاميرا. يبقى الدرس ممكنًا.",
         "permissionRefusee": "رُفض الوصول إلى الميكروفون. اسمح به لفتح الدرس.",
         "reessayer": "التحقق من جديد"
-      },
-      "observation": {
-        "restant": "بقيت ⁨{secondes}⁩ ث"
       }
     },
     "realtime": {

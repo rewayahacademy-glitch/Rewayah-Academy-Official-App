@@ -6,7 +6,7 @@
 //    الاستئناف: Page 24 », chaque segment isole) ; le conseil d'appareil de
 //    l'accueil famille (« ... pris en charge. », jamais « .téléphone »).
 // 2. `EmptyState` partage : le constat et l'invitation (« ... ouverts à
-//    l'enseignant. » sur la fiche de seance, jamais « .l'enseignant »).
+//    l'enseignant. », jamais « .l'enseignant »).
 // 3. « A propos de cette classe » (« ... règles de tajwid. ») et
 //    l'introduction de Comptes (« ... qui le montre. »).
 // 4. Observation du Controleur (reserve 3 de COUPE-MOTS-3b) : valeurs
@@ -33,7 +33,6 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/isolat_bidi.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
-import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
 import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -47,12 +46,9 @@ import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
-import 'package:rewayah_academy/features/tc_classe_live/fiche_seance.dart';
 
 import '../capture/outil_capture.dart';
 import '../support/harnais.dart';
-import '../teaching_core/e/faux/faux_classe.dart';
-import '../teaching_core/e/support/hote_classe.dart';
 
 const String _fsi = '\u2068';
 const String _pdi = '\u2069';
@@ -484,55 +480,6 @@ void main() {
           tester,
           marque: 'Tablette',
           precedent: 'charge',
-          suivant: '.',
-        );
-      }
-    });
-
-    testWidgets('EmptyState de la fiche de seance : le point reste en fin de '
-        'phrase ($cas)', (WidgetTester tester) async {
-      const TeacherStudentProjection fiche = TeacherStudentProjection(
-        firstName: 'Ilyas',
-        academyId: 'RA-CD0044',
-        liveStatus: EtatPresenceProjete.present,
-        interfaceGuidee: false,
-      );
-      await _monter(
-        tester,
-        langue,
-        () => ProviderScope(
-          overrides: surchargesClasse(
-            moteur: FauxMoteurClasse(),
-            video: FauxServiceVideoClasse(),
-            preVol: FauxPreVolClasse(),
-            rappel: FauxRappelDiscret(),
-          ),
-          child: const Scaffold(
-            body: SingleChildScrollView(
-              child: FicheSeance(eleve: fiche, sessionId: 's1'),
-            ),
-          ),
-        ),
-      );
-      // Traduit en arabe depuis la reunion de la ligne arabe (10/10) : le
-      // point reste en fin de phrase, dans le sens de sa langue.
-      if (arabe) {
-        expect(t.tc.classe.fiche.sansPedagogieDetail, endsWith('بعد.'));
-        _suit(
-          _paragraphe(tester, 'غير مفتوحة'),
-          precedent: 'بعد',
-          suivant: '.',
-          sens: TextDirection.rtl,
-        );
-      } else {
-        expect(
-          t.tc.classe.fiche.sansPedagogieDetail,
-          endsWith("l'enseignant."),
-        );
-        _aDroiteDe(
-          tester,
-          marque: 'ouverts',
-          precedent: 'enseignant',
           suivant: '.',
         );
       }

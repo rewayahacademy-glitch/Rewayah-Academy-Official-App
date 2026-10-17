@@ -326,47 +326,6 @@ void main() {
       });
     }
 
-    // ENS-PAYS-SALLE-1 (decision Q-4 = b du 05/10) : le pays de l'enseignant
-    // s'affiche sur les cartes, jamais dans la salle pendant le cours. Le
-    // contexte declare pourtant « Guinée » : l'en-tete doit le taire, avec ou
-    // sans photo, pour le tuteur comme pour le controleur, a 390 et 320 x2.
-    for (final EcranPays e in ecransClasseLive()) {
-      testWidgets('classe en direct ${e.nom} : aucun pays dans l en-tete', (
-        WidgetTester tester,
-      ) async {
-        for (final (Size taille, double echelle) in <(Size, double)>[
-          (const Size(390, 844), 1),
-          (const Size(320, 700), 2),
-        ]) {
-          await _monter(tester, e, taille: taille, echelle: echelle);
-          expect(tester.takeException(), isNull, reason: '${e.nom} $taille');
-          // L'en-tete est bien la : le nom de l'enseignant s'affiche.
-          expect(
-            find.textContaining('Youssouf', findRichText: true),
-            findsWidgets,
-            reason: '${e.nom} $taille : nom de l enseignant',
-          );
-          expect(find.byType(PaysEnseignant), findsNothing, reason: e.nom);
-          expect(find.byKey(PaysEnseignant.ligneKey), findsNothing);
-          expect(find.byKey(PaysEnseignant.drapeauKey), findsNothing);
-          expect(
-            find.textContaining('Guinée', findRichText: true),
-            findsNothing,
-            reason: '${e.nom} $taille : pays absent de la salle',
-          );
-        }
-      });
-    }
-
-    testWidgets('classe en direct, identite masquee : aucun pays', (
-      WidgetTester tester,
-    ) async {
-      for (final bool photo in <bool>[true, false]) {
-        await _monter(tester, classeLiveTuteur(photo: photo, prenom: ''));
-        expect(find.byKey(PaysEnseignant.ligneKey), findsNothing);
-      }
-    });
-
     testWidgets('eleve : pays non declare, aucune ligne de pays', (
       WidgetTester tester,
     ) async {

@@ -28,7 +28,6 @@ const List<String> _horsLot = <String>[
   'lib/features/admin_finance/',
   'lib/features/comptable',
   'lib/features/salle/',
-  'lib/features/tc_classe_live/',
   'lib/features/_dev/',
 ];
 

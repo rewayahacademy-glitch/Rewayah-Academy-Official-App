@@ -1,11 +1,9 @@
-import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3 : il vit
 // dans `misc.dart`, alors que `ProviderScope.overrides` en attend une liste.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
@@ -17,17 +15,14 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
-import 'package:rewayah_academy/features/tc_classe_live/classe_live_page.dart';
-import 'package:rewayah_academy/features/tc_classe_live/routes_tc_e.dart';
 
 import '../faux/faux_classe.dart';
 
-/// L'hote de test d'Agent E.
+/// L'hote de test d'Agent E : surface, surcharges et hote minimal d'un widget.
 ///
-/// **Le `GoRouter` est construit ICI, hors de `lib/`** (decision D-04) :
-/// `tool/verifier_jetons.dart` fait echouer la CI si un second fichier de `lib/`
-/// en construit un. `routesTcE()` retourne des routes ; c'est ce fichier, et
-/// Agent Z a l'integration, qui les monte.
+/// L'ancienne Classe Live (`/tc/classe`) a ete supprimee le 17/10/2026
+/// (`docs/current/DECISION-ENTREE-2026-10-17.md`) ; il ne reste ici que les
+/// aides communes aux tests des widgets du lot E.
 
 /// Les trois largeurs de reference du produit.
 ///
@@ -109,67 +104,3 @@ Widget hoteClasse(
     ),
   ),
 );
-
-/// Monte la Classe Live dans un routeur minimal.
-///
-/// La destination de sortie est reelle : sans elle, on testerait une sortie qui
-/// ne mene nulle part.
-Future<void> monterClasse(
-  WidgetTester tester, {
-  required ContexteClasseLive contexte,
-  required List<Override> surcharges,
-  LargeurEcran ecran = LargeurEcran.tablette,
-  InterfaceMode mode = InterfaceMode.standard,
-  Brightness luminosite = Brightness.light,
-  bool mouvementReduit = false,
-  ValueListenable<ContexteClasseLive>? contexteVivant,
-}) async {
-  poserEcran(tester, ecran);
-  await tester.pumpWidget(
-    ProviderScope(
-      overrides: surcharges,
-      child: TranslationProvider(
-        child: MaterialApp.router(
-          theme: AppTheme.pour(mode, luminosite),
-          // Pendant une visite, le point d'enregistrement clignote sans fin :
-          // `pumpAndSettle` ne s'arreterait jamais. Le mouvement reduit le
-          // fige (`AppMouvement.mouvementReduit`), sans rien changer d'autre.
-          builder: mouvementReduit
-              ? (BuildContext context, Widget? enfant) => MediaQuery(
-                  data: MediaQuery.of(context)
-                      .copyWith(disableAnimations: true),
-                  child: enfant ?? const SizedBox.shrink(),
-                )
-              : null,
-          routerConfig: GoRouter(
-            initialLocation: RoutesTcE.classe,
-            routes: <RouteBase>[
-              GoRoute(
-                path: RoutesTcE.classe,
-                // `contexteVivant` : le contexte change sans remonter la page
-                // (fin du partage, nouveau support), l'etat local survit.
-                builder: (BuildContext _, GoRouterState _) =>
-                    contexteVivant == null
-                    ? ClasseLivePage(contexte: contexte)
-                    : ValueListenableBuilder<ContexteClasseLive>(
-                        valueListenable: contexteVivant,
-                        builder: (
-                          BuildContext _,
-                          ContexteClasseLive c,
-                          Widget? _,
-                        ) => ClasseLivePage(contexte: c),
-                      ),
-              ),
-              GoRoute(
-                path: '/tc/groupe-de-test',
-                builder: (BuildContext _, GoRouterState _) =>
-                    const Text('espace groupe'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ),
-  );
-  await tester.pumpAndSettle();
-}

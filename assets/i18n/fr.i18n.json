@@ -6440,11 +6440,7 @@
         "titreEnseignant": {
           "sayyid": "Sayyid",
           "sayyida": "Sayyida"
-        },
-        "resteMinutes": "Reste {minutes} min",
-        "resteHeuresMinutes": "Reste {heures} h {minutes}",
-        "coursEnCours": "Séance toujours en direct",
-        "photoManquante": "Photo enseignant manquante"
+        }
       },
       "roster": {
         "titre": "Élèves",
@@ -6471,80 +6467,21 @@
         "niveau": "Niveau",
         "objectif": "Objectif actuel",
         "derniereSeance": "Dernière séance",
-        "page": "Page {page}",
-        "travailEnCours": "{nombre} élément(s)",
         "aReprendre": "À reprendre",
         "presenceRecente": "Présence récente",
-        "assiduite": "{presences} / {total} cours",
-        "travailActuel": "Travail actuel",
-        "interfaceGuidee": "Interface guidée",
-        "sansPedagogie": "Suivi pédagogique indisponible",
-        "sansPedagogieDetail": "Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l'enseignant."
+        "travailActuel": "Travail actuel"
       },
       "action": {
-        "rappel": "Rappel discret",
-        "reciter": "Choisir pour réciter",
-        "noter": "Noter",
-        "signaler": "Signaler un besoin",
-        "contexte": "Ouvrir le contexte"
+        "noter": "Noter"
       },
       "rappel": {
-        "recu": "Le professeur vous appelle",
-        "echec": "Le rappel n'a pas pu être envoyé",
-        "echecDroit": "Votre accès à cette séance ne permet pas d'appeler un élève",
-        "cooldown": "Déjà appelé. À nouveau dans {secondes} s"
+        "recu": "Le professeur vous appelle"
       },
       "recitation": {
         "titre": "Récitation",
         "actif": "{prenom} récite",
         "pastille": "Récite",
-        "suivants": "Ensuite",
-        "personne": "Personne ne récite",
-        "arreter": "Arrêter la récitation"
-      },
-      "support": {
-        "aucun": "Aucun support présenté",
-        "aucunDetail": "Ouvrez la Bibliothèque pour présenter un support à la Classe.",
-        "bibliotheque": "Bibliothèque",
-        "bibliothequeAbsente": "Bibliothèque non branchée",
-        "bibliothequeAbsenteDetail": "Le choix de support sera disponible dès l'intégration du catalogue."
-      },
-      "commandes": {
-        "micro": "Ouvrir le micro",
-        "microFermer": "Fermer le micro",
-        "camera": "Ouvrir la caméra",
-        "cameraFermer": "Fermer la caméra",
-        "microCoupe": "Micro fermé",
-        "quitter": "Quitter",
-        "quitterQuestion": "Quitter le cours\u00a0?",
-        "quitterConsequence": "Votre sortie sera enregistrée. Vous pourrez revenir tant que la séance est ouverte.",
-        "fermerBibliotheque": "Fermer la Bibliothèque"
-      },
-      "scene": {
-        "vide": "Vous êtes seul dans la salle pour le moment",
-        "sansImage": "Sans image"
-      },
-      "reseau": {
-        "bon": "Réseau bon",
-        "mediocre": "Réseau instable",
-        "perdu": "Réseau perdu"
-      },
-      "attente": {
-        "materiel": "Vérification de votre micro",
-        "ouverture": "Ouverture du cours",
-        "connexion": "Connexion au cours",
-        "refus": "Le cours n'est pas accessible pour le moment"
-      },
-      "lien": {
-        "instable": "Connexion instable",
-        "reconnexion": "Reconnexion en cours",
-        "retabli": "Connexion rétablie",
-        "echec": "Connexion perdue",
-        "retourDeSuspension": "Le cours a été mis en pause par le système. Vérification du lien en cours."
-      },
-      "barre": {
-        "titre": "Séance en direct",
-        "revenir": "Revenir au cours {deGroupe}"
+        "personne": "Personne ne récite"
       },
       "prevol": {
         "titre": "Avant d'ouvrir le cours",
@@ -6554,9 +6491,6 @@
         "cameraAbsente": "Aucune caméra. Le cours reste possible.",
         "permissionRefusee": "Accès au micro refusé. Autorisez-le pour ouvrir le cours.",
         "reessayer": "Vérifier à nouveau"
-      },
-      "observation": {
-        "restant": "Reste {secondes} s"
       }
     },
     "realtime": {

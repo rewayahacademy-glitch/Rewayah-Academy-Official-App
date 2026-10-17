@@ -29,14 +29,11 @@ import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/filtres_historique.dart'
     show dureeLisible;
-import 'package:rewayah_academy/features/tc_classe_live/entete_classe.dart'
-    show libelleTempsRestant;
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../router/support_routeur.dart' show stabiliser;
 import '../support/aucun_mot_coupe.dart';
-import '../teaching_core/fixtures/fixtures_horloge.dart';
 
 /// Les espaces ou une ligne peut se couper.
 final RegExp _espaceSecable = RegExp('[ \t\n]');
@@ -137,21 +134,6 @@ void main() {
         ),
       );
       expect(find.text('45\u00A0min'), findsOneWidget);
-    });
-
-    test('en-tete de la classe : libelleTempsRestant', () {
-      for (final Duration avantFin in const <Duration>[
-        Duration(minutes: 45),
-        Duration(hours: 1, minutes: 20),
-      ]) {
-        final String? texte = libelleTempsRestant(
-          horlogeSeance(
-            maintenant: debutSeanceAvantDst.add(dureeSeance).subtract(avantFin),
-          ),
-        );
-        expect(texte, isNotNull);
-        expect(_duree(texte!).contains(_espaceSecable), isFalse, reason: texte);
-      }
     });
   });
 

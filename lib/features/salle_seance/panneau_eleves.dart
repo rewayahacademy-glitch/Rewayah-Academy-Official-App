@@ -1,9 +1,9 @@
 // Le panneau Eleves (CLV-07), enseignant seulement.
 //
-// Repris de /tc/classe sans en dupliquer la logique : memes intitules que
-// `FicheSeance` (Niveau, Objectif actuel, Derniere seance, A reprendre,
-// Presence recente, Travail actuel), memes quatre actions (Rappeler, Choisir
-// pour reciter, Noter, Signaler un besoin), statuts de la liste de la vue
+// Repris de l'ancienne fiche de seance de `/tc/classe` (supprimee le
+// 17/10/2026) : memes intitules (Niveau, Objectif actuel, Derniere seance,
+// A reprendre, Presence recente, Travail actuel), memes quatre actions
+// (Rappeler, Choisir pour reciter, Noter, Signaler un besoin), statuts de la liste de la vue
 // (`VueSeance.eleves`, source unique du compteur, I-6). Connaissance privee
 // minimale : ni telephone, ni e-mail, ni tuteur, ni « present » / « absent ».
 

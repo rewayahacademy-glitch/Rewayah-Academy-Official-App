@@ -2,8 +2,8 @@
 //
 // Toutes les regles de `10_classe/V/01_MATRICE_ROLES.md` (pilotage) vivent
 // ICI, en getters purs : les widgets ne decident rien, ils lisent. Ni LiveKit
-// ni Supabase : une `VueSeance` se construit depuis `/salle`, depuis
-// `/tc/classe` ou depuis la demonstration (`lib/features/demo/seance_demo.dart`).
+// ni Supabase : une `VueSeance` se construit depuis `/salle` ou depuis la
+// demonstration (`lib/features/demo/seance_demo.dart`).
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show StringCharacters;
@@ -144,7 +144,7 @@ class EleveSeance {
   /// repli. Nulle en demonstration, qui n'a aucune photo stockee.
   final String? cleAvatar;
 
-  /// L'identifiant d'academie (`/tc/classe`) : les actions de la fiche
+  /// L'identifiant d'academie : les actions de la fiche
   /// (rappel, recitation) visent un inscrit par lui, jamais par son prenom.
   /// `null` en demonstration et dans `/salle`.
   final String? id;

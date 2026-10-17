@@ -86,8 +86,7 @@ abstract final class DepuisSalle {
       cameraEnseignantActive:
           (enseignant ? salle.moi?.camera : salle.dominant?.camera) ?? false,
       cameraAutorisee: salle.peutMontrer,
-      // L'eleve ne lit jamais la liste de ses camarades (roster enseignant),
-      // comme dans `depuis_classe_live.dart`.
+      // L'eleve ne lit jamais la liste de ses camarades (roster enseignant).
       eleves: enseignant
           ? <EleveSeance>[
               for (final PresenceParticipant p in lignes)

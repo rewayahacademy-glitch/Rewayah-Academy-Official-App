@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
+import 'package:rewayah_academy/features/salle/pre_vol_classe.dart';
 import 'package:rewayah_academy/features/salle/vue_salle.dart';
-import 'package:rewayah_academy/features/tc_classe_live/pre_vol_classe.dart';
 
 import 'support/hote_classe.dart';
 
