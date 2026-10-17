@@ -64,13 +64,18 @@ abstract final class Routes {
   /// Portail d'attente : dossier en verification, refuse, ou compte suspendu.
   static const String attente = '/attente';
 
-  /// La carte a accuser une fois : enregistrement audio et visite de controle.
-  ///
-  /// Premiere des trois etapes du portail, avant le contrat : elle dit en
-  /// langage clair ce que le contrat formalisera ensuite (ADR-011).
+  /// Lot E6 (decision du directeur du 17/10/2026) : la page unique des
+  /// accords. Tous les textes que le role doit accepter, l'un sous l'autre,
+  /// chacun avec sa case, et un seul bouton « Suivant », inactif tant qu'une
+  /// case manque.
+  static const String attenteAccords = '/attente/accords';
+
+  /// Ancienne adresse de la carte a accuser une fois : elle mene desormais a
+  /// [attenteAccords], qui porte ce texte avec sa case.
   static const String attenteAccuse = '/attente/accuse';
 
-  /// Lecture et signature du contrat propre au role.
+  /// Ancienne adresse du contrat propre au role : elle mene desormais a
+  /// [attenteAccords] (parametre `pour` conserve).
   static const String attenteContrat = '/attente/contrat';
 
   /// Depot de la piece d'identite.
