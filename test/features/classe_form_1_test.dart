@@ -181,6 +181,17 @@ Future<void> _ouvrir(
 
 Finder _cle(String cle) => find.byKey(ValueKey<String>(cle));
 
+/// Le texte tel qu'il se lit. Depuis le lot E2, une carte de choix garde
+/// entiers les mots composes de toutes ses lignes, plus seulement du titre
+/// (`nomsComposesEntiers` sur la description aussi) : quand la ligne se
+/// coupait juste apres « vous- », un gluon invisible (U+2060) suit le trait
+/// et « vous-meme » passe entier a la ligne. Le texte rendu differe donc de
+/// la cle d'un caractere invisible ; ce qui se lit est le meme.
+Finder _texteLu(String texte) => find.byWidgetPredicate(
+  (Widget w) =>
+      w is RichText && w.text.toPlainText().replaceAll('\u2060', '') == texte,
+);
+
 Finder get _champNom =>
     find.descendant(of: _cle('classe-nom'), matching: find.byType(TextField));
 
@@ -691,10 +702,10 @@ void main() {
             .split('\u0000')
             .first;
         expect(find.textContaining(premierChoix), findsNothing);
-        expect(find.text(f.aideEnseignantSansSource), findsOneWidget);
-        expect(find.text(f.aideEnseignant), findsNothing);
-        expect(find.text(f.genreFillesDetailSansSource), findsOneWidget);
-        expect(find.text(f.genreFillesDetail), findsNothing);
+        expect(_texteLu(f.aideEnseignantSansSource), findsOneWidget);
+        expect(_texteLu(f.aideEnseignant), findsNothing);
+        expect(_texteLu(f.genreFillesDetailSansSource), findsOneWidget);
+        expect(_texteLu(f.genreFillesDetail), findsNothing);
       });
 
       testWidgets('aucun enseignant actif : etat vide', (
