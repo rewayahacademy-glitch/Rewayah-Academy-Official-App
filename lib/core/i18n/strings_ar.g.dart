@@ -592,6 +592,7 @@ class _Traductions$choix$ar extends Traductions$choix$fr {
 	@override String get autre => 'أخرى';
 	@override String get autreInvite => 'حدّد';
 	@override String get selectionMultiple => 'يمكن اختيار عدة إجابات';
+	@override String exemple({required Object texte}) => 'مثلًا: ${texte}';
 }
 
 // Path: admin
@@ -1060,6 +1061,10 @@ class _Traductions$inscription$ar extends Traductions$inscription$fr {
 	@override String get genreHomme => 'رجل';
 	@override String get genreFemme => 'امرأة';
 	@override String get genreRaison => 'تُستخدم هذه الإجابة فقط لتسليم وثيقة هويتك إلى موظف من الجنس نفسه.';
+	@override String get genreHommeExplication => 'إذا كنت تتابع دروسًا، تراعي الأكاديمية ذلك في تكوين الصفوف واختيار المعلّم.';
+	@override String get genreFemmeExplication => 'إذا كنتِ تتابعين دروسًا، تراعي الأكاديمية ذلك في تكوين الصفوف واختيار المعلّمة.';
+	@override String get genreHommeEnseignant => 'سيراجع وثيقة هويتك رجلٌ من الفريق.';
+	@override String get genreFemmeEnseignant => 'ستراجع وثيقة هويتك امرأةٌ من الفريق.';
 	@override String get recapitulatif => 'قبل المتابعة';
 	@override String get creer => 'إنشاء حسابي';
 	@override String get erreur => 'لم يكتمل إنشاء الحساب. أعد المحاولة بعد لحظة.';
@@ -6137,6 +6142,12 @@ class _Traductions$inscription$usage$ar extends Traductions$inscription$usage$fr
 	@override String get coursQuestion => 'هل تتابع أنت أيضًا دروسًا؟';
 	@override String get coursOui => 'نعم';
 	@override String get coursNon => 'لا';
+	@override String get moiExemple => 'تتعلّم التلاوة لنفسك، دون تسجيل أي طفل.';
+	@override String get familleExemple => 'تسجّل ياسمين، 9 سنوات، وبلال، 12 سنة.';
+	@override String get coursOuiExplication => 'تتابع أنت أيضًا دروسًا، إلى جانب دروس أقاربك.';
+	@override String get coursOuiExemple => 'يتابع أطفالك صفّهم وتتابع أنت صفّك.';
+	@override String get coursNonExplication => 'تسجّل أقاربك وتتابع تقدّمهم، دون دروس لك. يمكنك تغيير رأيك لاحقًا.';
+	@override String get coursNonExemple => 'تسجّل ابنتك وتتابع حصصها من حسابك.';
 }
 
 // Path: inscription.recap
@@ -17169,6 +17180,7 @@ extension on TraductionsAr {
 			'choix.autre' => 'أخرى',
 			'choix.autreInvite' => 'حدّد',
 			'choix.selectionMultiple' => 'يمكن اختيار عدة إجابات',
+			'choix.exemple' => ({required Object texte}) => 'مثلًا: ${texte}',
 			'admin.finance.aValider' => 'للمصادقة',
 			'admin.tableau.titre' => 'مركز القيادة',
 			'admin.tableau.dossiers' => 'ملفات للاعتماد',
@@ -17507,9 +17519,9 @@ extension on TraductionsAr {
 			'admin.regles.appareilsParEleveDetail' => 'عدد الأجهزة التي يمكن أن تكون نشطة لطالب في الوقت نفسه.',
 			'admin.regles.seancesSimultanees' => 'الحصص المتزامنة لكل ملف',
 			'admin.regles.seancesSimultaneesDetail' => 'عدد الحصص التي يمكن لملف واحد متابعتها في الوقت نفسه.',
-			'admin.regles.uniteMinutes' => ({required Object n}) => '⁨${n}⁩ د',
 			_ => null,
 		} ?? switch (path) {
+			'admin.regles.uniteMinutes' => ({required Object n}) => '⁨${n}⁩ د',
 			'admin.regles.uniteSemaines' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ أسبوع', one: 'أسبوع واحد', two: 'أسبوعان', few: '⁨${n}⁩ أسابيع', many: '⁨${n}⁩ أسبوعًا', other: '⁨${n}⁩ أسبوع', ), 
 			'admin.regles.uniteNombre' => ({required Object n}) => '⁨${n}⁩',
 			'admin.fonctionnalites.titre' => 'الوظائف',
@@ -18021,9 +18033,9 @@ extension on TraductionsAr {
 			'admin.pilotage.colonneClasses' => 'الفصول',
 			'admin.pilotage.colonneRemplissage' => 'الامتلاء',
 			'admin.pilotage.colonneDemandes' => 'الطلبات المعلّقة',
-			'admin.pilotage.colonneLibres' => 'المعلمون المتاحون',
 			_ => null,
 		} ?? switch (path) {
+			'admin.pilotage.colonneLibres' => 'المعلمون المتاحون',
 			'admin.pilotage.colonneManquants' => 'المعلمون الناقصون',
 			'admin.pilotage.colonneEtat' => 'ما يستدعي الانتباه',
 			'admin.pilotage.remplissage' => ({required Object taux, required Object effectif, required Object capacite}) => '⁨${taux}⁩٪ (⁨${effectif}⁩ من ⁨${capacite}⁩)',
@@ -18535,9 +18547,9 @@ extension on TraductionsAr {
 			'comptable.coffres.paieADecaisser' => 'رواتب مستحقة الصرف',
 			'comptable.coffres.chargesEssentielles' => 'المصاريف الأساسية',
 			'comptable.coffres.taxesObligations' => 'الضرائب والالتزامات',
-			'comptable.coffres.reserveStrategique' => 'الاحتياطي الاستراتيجي',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.coffres.reserveStrategique' => 'الاحتياطي الاستراتيجي',
 			'comptable.coffres.enTransit' => 'قيد التحويل',
 			'comptable.coffres.tresorerieLibre' => 'الخزينة الحرة',
 			'comptable.statuts.paiement.aCalculer' => 'قيد الحساب',
@@ -19049,9 +19061,9 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.profil.motifDemandeDetail' => 'طلب المستفيد عدم استلام أي دفعة حاليًا.',
 			'comptable.beneficiaires.profil.motifRequis' => 'اختر سببًا للمتابعة.',
 			'comptable.beneficiaires.profil.voirFil' => ({required Object nom}) => 'عرض محادثة ⁨${nom}⁩',
-			'comptable.beneficiaires.profil.voirFilRefuse' => ({required Object nom}) => 'تعذّر فتح محادثة ⁨${nom}⁩: لم تُنشأ بعد أو لم تنجح القراءة. أعد المحاولة بعد لحظة.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.profil.voirFilRefuse' => ({required Object nom}) => 'تعذّر فتح محادثة ⁨${nom}⁩: لم تُنشأ بعد أو لم تنجح القراءة. أعد المحاولة بعد لحظة.',
 			'comptable.beneficiaires.titre' => 'المستفيدون',
 			'comptable.beneficiaires.sousTitre' => 'البيانات مخفية: المستفيد وحده يعدّل بياناته.',
 			'comptable.beneficiaires.profilTitre' => 'ملف الدفع',
@@ -19563,9 +19575,9 @@ extension on TraductionsAr {
 			'parcours.finDetail' => 'سُجِّل هذا الموعد كتفضيل لك. لا يحجز مقعدًا بعد.',
 			'parcours.finAjouterDetail' => 'هل يرغب شخص آخر من الأسرة في التعلم؟',
 			'parcours.finAjouterProfil' => 'إضافة ملف طالب',
-			'parcours.ageQuestion' => ({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟',
 			_ => null,
 		} ?? switch (path) {
+			'parcours.ageQuestion' => ({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟',
 			'parcours.ageRaison' => 'العمر يحدد مدة الحصص وعدد الطلاب في الفصل. لا نطلب تاريخ الميلاد: تكفي الفئة العمرية.',
 			'parcours.langueQuestion' => 'بأي لغة يُقدَّم الدرس؟',
 			'parcours.langueRaison' => 'هي اللغة التي سيتكلمها المعلم أثناء الحصة. وهي مستقلة عن لغة التطبيق، التي يمكنك تغييرها في أي وقت من إعداداتك.',
@@ -19893,6 +19905,10 @@ extension on TraductionsAr {
 			'inscription.genreHomme' => 'رجل',
 			'inscription.genreFemme' => 'امرأة',
 			'inscription.genreRaison' => 'تُستخدم هذه الإجابة فقط لتسليم وثيقة هويتك إلى موظف من الجنس نفسه.',
+			'inscription.genreHommeExplication' => 'إذا كنت تتابع دروسًا، تراعي الأكاديمية ذلك في تكوين الصفوف واختيار المعلّم.',
+			'inscription.genreFemmeExplication' => 'إذا كنتِ تتابعين دروسًا، تراعي الأكاديمية ذلك في تكوين الصفوف واختيار المعلّمة.',
+			'inscription.genreHommeEnseignant' => 'سيراجع وثيقة هويتك رجلٌ من الفريق.',
+			'inscription.genreFemmeEnseignant' => 'ستراجع وثيقة هويتك امرأةٌ من الفريق.',
 			'inscription.recapitulatif' => 'قبل المتابعة',
 			'inscription.creer' => 'إنشاء حسابي',
 			'inscription.erreur' => 'لم يكتمل إنشاء الحساب. أعد المحاولة بعد لحظة.',
@@ -19914,6 +19930,12 @@ extension on TraductionsAr {
 			'inscription.usage.coursQuestion' => 'هل تتابع أنت أيضًا دروسًا؟',
 			'inscription.usage.coursOui' => 'نعم',
 			'inscription.usage.coursNon' => 'لا',
+			'inscription.usage.moiExemple' => 'تتعلّم التلاوة لنفسك، دون تسجيل أي طفل.',
+			'inscription.usage.familleExemple' => 'تسجّل ياسمين، 9 سنوات، وبلال، 12 سنة.',
+			'inscription.usage.coursOuiExplication' => 'تتابع أنت أيضًا دروسًا، إلى جانب دروس أقاربك.',
+			'inscription.usage.coursOuiExemple' => 'يتابع أطفالك صفّهم وتتابع أنت صفّك.',
+			'inscription.usage.coursNonExplication' => 'تسجّل أقاربك وتتابع تقدّمهم، دون دروس لك. يمكنك تغيير رأيك لاحقًا.',
+			'inscription.usage.coursNonExemple' => 'تسجّل ابنتك وتتابع حصصها من حسابك.',
 			'inscription.recap.usage' => 'نوع الحساب',
 			'inscription.recap.identite' => 'الاسم',
 			'inscription.recap.genre' => 'الجنس',
@@ -20067,6 +20089,8 @@ extension on TraductionsAr {
 			'adulte.recharge.revenirPaiements' => 'العودة إلى مدفوعات الأسرة',
 			'adulte.paiements.beneficiaires' => 'المستفيدون',
 			'adulte.paiements.recharger' => 'شحن',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'ملخص الأسرة: ⁨${valeur}⁩. يبقى كل رصيد خاصًا بمستفيده.',
 			'adulte.paiements.bientotEpuise' => 'على وشك النفاد',
 			'adulte.paiements.inactif' => 'غير نشط',
@@ -20078,8 +20102,6 @@ extension on TraductionsAr {
 			'adulte.famille.ajouter' => 'إضافة أسرتي',
 			'adulte.famille.ajouterLegende' => 'سجّل أطفالك وادعُ زوجك أو زوجتك للانضمام إلى باقة الأسرة.',
 			'adulte.famille.ajouterPhrase' => 'يمكنك إضافة أطفالك ودعوة زوجك أو زوجتك للانضمام إلى باقة الأسرة. تبقى مساحتك كطالب كما هي.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.inscrireEnfant' => 'تسجيل طفل',
 			'adulte.famille.maFamille' => 'أسرتي',
 			'adulte.famille.forfaitFamille' => 'باقة الأسرة',
@@ -20581,6 +20603,8 @@ extension on TraductionsAr {
 			'controleur.complement.faitNouveau' => 'معلومة جديدة',
 			'controleur.complement.faitNouveauAide' => 'حين تعرفها بعد الزيارة · تحمل تاريخ يوم الإضافة',
 			'controleur.complement.questionTexte' => 'ماذا تضيف إلى التقرير؟',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.complement.texteObligatoire' => 'إلزامي: ما لاحظته، في جمل قليلة.',
 			'controleur.complement.libelleTexte' => 'التكملة',
 			'controleur.complement.aideTexte' => 'ما لاحظته أو عرفته منذ الزيارة.',
@@ -20592,8 +20616,6 @@ extension on TraductionsAr {
 			'controleur.complement.sansMotif' => 'لا سبب',
 			'controleur.complement.cleTexte' => 'التكملة',
 			'controleur.complement.envoyer' => 'إرسال التكملة',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.complement.echec' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا، أعد المحاولة بعد لحظة. يبقى التقرير الأصلي سليمًا.',
 			'controleur.complement.envoyeTitre' => 'أُضيفت التكملة',
 			'controleur.complement.envoyePhrase' => 'تظهر تحت التقرير الأصلي، الذي يبقى دون تغيير.',

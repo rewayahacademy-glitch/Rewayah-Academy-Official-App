@@ -251,8 +251,11 @@ void main() {
             final Rect apres = tester.getRect(find.byKey(cles[i]));
             // SUPERPOS-1 : cote a cote, les cartes s'empilent quand un mot
             // ne tient pas dans une carte (320 px) ; l'ecart se mesure sur
-            // l'axe reellement pris.
-            final bool enLigne = coteACote && apres.top < avant.bottom;
+            // l'axe reellement pris. Lot E2 : a 1440, les options passent en
+            // bento, liste comprise ; deux cartes d'une meme bande se
+            // mesurent aussi a l'horizontale (deux cartes de liste qui se
+            // recouvriraient donnent toujours un ecart negatif).
+            final bool enLigne = apres.top < avant.bottom;
             final double ecart = enLigne
                 ? apres.left - avant.right
                 : apres.top - avant.bottom;

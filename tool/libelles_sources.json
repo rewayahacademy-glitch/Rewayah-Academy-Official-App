@@ -4811,5 +4811,16 @@
   "compte.modeEnfant": "réponse A-03 du directeur, 17/10/2026 (option 1, « Interface guidée » partout) ; clé modifiée dans assets/i18n/fr.i18n.json et ar.i18n.json",
   "classe.entree.demo.roles.guidee": "réponse A-03 du directeur, 17/10/2026 (option 1, « Interface guidée » partout) ; clé modifiée dans assets/i18n/fr.i18n.json et ar.i18n.json",
   "galerie.modeEnfant": "réponse A-03 du directeur, 17/10/2026 (option 1, « Interface guidée » partout) ; clé modifiée dans assets/i18n/fr.i18n.json et ar.i18n.json",
-  "tc.classe.fiche.interfaceGuidee": "réponse A-03 du directeur, 17/10/2026 (option 1, « Interface guidée » partout) ; clé modifiée dans assets/i18n/fr.i18n.json et ar.i18n.json"
+  "tc.classe.fiche.interfaceGuidee": "réponse A-03 du directeur, 17/10/2026 (option 1, « Interface guidée » partout) ; clé modifiée dans assets/i18n/fr.i18n.json et ar.i18n.json",
+  "choix.exemple": "lot E2 (decision du directeur du 17/10/2026, DECISION-ENTREE-2026-10-17 : chaque choix est explique, avec un exemple quand il aide a comprendre) ; redige par l'agent, a valider par le directeur",
+  "inscription.usage.moiExemple": "lot E2 (decision du directeur du 17/10/2026, DECISION-ENTREE-2026-10-17 : chaque choix est explique, avec un exemple quand il aide a comprendre) ; redige par l'agent, a valider par le directeur",
+  "inscription.usage.familleExemple": "lot E2 (decision du directeur du 17/10/2026, DECISION-ENTREE-2026-10-17 : chaque choix est explique, avec un exemple quand il aide a comprendre) ; redige par l'agent, a valider par le directeur",
+  "inscription.usage.coursOuiExplication": "lot E2 (decision du directeur du 17/10/2026, DECISION-ENTREE-2026-10-17 : chaque choix est explique, avec un exemple quand il aide a comprendre) ; redige par l'agent, a valider par le directeur",
+  "inscription.usage.coursOuiExemple": "lot E2 (decision du directeur du 17/10/2026, DECISION-ENTREE-2026-10-17 : chaque choix est explique, avec un exemple quand il aide a comprendre) ; redige par l'agent, a valider par le directeur",
+  "inscription.usage.coursNonExplication": "lot E2 (decision du directeur du 17/10/2026, DECISION-ENTREE-2026-10-17 : chaque choix est explique, avec un exemple quand il aide a comprendre) ; redige par l'agent, a valider par le directeur",
+  "inscription.usage.coursNonExemple": "lot E2 (decision du directeur du 17/10/2026, DECISION-ENTREE-2026-10-17 : chaque choix est explique, avec un exemple quand il aide a comprendre) ; redige par l'agent, a valider par le directeur",
+  "inscription.genreHommeExplication": "lot E2 (decision du directeur du 17/10/2026, DECISION-ENTREE-2026-10-17 : chaque choix est explique, avec un exemple quand il aide a comprendre) ; redige par l'agent, a valider par le directeur",
+  "inscription.genreFemmeExplication": "lot E2 (decision du directeur du 17/10/2026, DECISION-ENTREE-2026-10-17 : chaque choix est explique, avec un exemple quand il aide a comprendre) ; redige par l'agent, a valider par le directeur",
+  "inscription.genreHommeEnseignant": "lot E2 (decision du directeur du 17/10/2026, DECISION-ENTREE-2026-10-17 : chaque choix est explique, avec un exemple quand il aide a comprendre) ; redige par l'agent, a valider par le directeur",
+  "inscription.genreFemmeEnseignant": "lot E2 (decision du directeur du 17/10/2026, DECISION-ENTREE-2026-10-17 : chaque choix est explique, avec un exemple quand il aide a comprendre) ; redige par l'agent, a valider par le directeur"
 }

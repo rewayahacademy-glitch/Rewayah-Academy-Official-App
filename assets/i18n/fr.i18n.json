@@ -885,6 +885,10 @@
     "genreHomme": "Un homme",
     "genreFemme": "Une femme",
     "genreRaison": "Cette réponse ne sert qu'à confier votre pièce d'identité à un membre du personnel du même genre.",
+    "genreHommeExplication": "Si vous suivez des cours, l'académie en tient compte pour former les classes et choisir l'enseignant.",
+    "genreFemmeExplication": "Si vous suivez des cours, l'académie en tient compte pour former les classes et choisir l'enseignante.",
+    "genreHommeEnseignant": "Votre pièce d'identité sera relue par un homme de l'équipe.",
+    "genreFemmeEnseignant": "Votre pièce d'identité sera relue par une femme de l'équipe.",
     "recapitulatif": "Avant de continuer",
     "creer": "Créer mon compte",
     "erreur": "La création du compte n'a pas abouti. Réessayez dans un instant.",
@@ -906,7 +910,13 @@
       "enseignantInvite": "Vous êtes enseignant\u00a0? L'académie vous invite par courriel.",
       "coursQuestion": "Suivez-vous aussi des cours ?",
       "coursOui": "Oui",
-      "coursNon": "Non"
+      "coursNon": "Non",
+      "moiExemple": "vous apprenez la récitation pour vous-même, sans inscrire d'enfant.",
+      "familleExemple": "vous inscrivez Yasmine, 9 ans, et Bilal, 12 ans.",
+      "coursOuiExplication": "Vous suivez vous aussi des cours, en plus de ceux de vos proches.",
+      "coursOuiExemple": "vos enfants suivent leur classe et vous suivez la vôtre.",
+      "coursNonExplication": "Vous inscrivez vos proches et suivez leurs progrès, sans cours pour vous. Vous pourrez changer d'avis plus tard.",
+      "coursNonExemple": "vous inscrivez votre fille et suivez ses séances depuis votre compte."
     },
     "recap": {
       "usage": "Type de compte",
@@ -4125,7 +4135,8 @@
   "choix": {
     "autre": "Autre",
     "autreInvite": "Précisez",
-    "selectionMultiple": "Plusieurs réponses possibles"
+    "selectionMultiple": "Plusieurs réponses possibles",
+    "exemple": "Par exemple\u00a0: {texte}"
   },
   "parcours": {
     "titre": "Le parcours {dePrenom}",
