@@ -187,6 +187,61 @@ retomber sur l'un d'eux, et l'inscription échoue alors sur
 `profiles_immutable_id_unique`. C'est arrivé une fois pendant ce chargement
 (`RA-26-9004`). Correctif à prévoir : réserver ces 5 matricules dans le registre.
 
+## Huit semaines de vie rejouées sur le STAGING (17/10, soir)
+
+`node tool/simulation/jouer_vie_staging.mjs` écrit les étapes
+`tool/simulation/vie_staging/NN_*.sql` et le résumé `scenario.json`. Les
+étapes ont été appliquées dans l'ordre sur le STAGING. `vie_staging/nettoyage.sql`
+les retire.
+
+Ce qui a été joué entre le 22 août et le 17 octobre :
+
+- **Séances** : 480 copiées des créneaux réels. 472 sont tenues et 6 annulées (2 sur 100).
+  Les 2 séances de 19 h ce soir existaient déjà, donc leurs copies sont écartées.
+- **Présences** : 1 916 présences d'élèves sur 2 229 places, soit 86 %. Les élèves
+  occupés manquent 1 séance sur 4 et les autres 1 sur 12. 20 élèves ont manqué au
+  moins un quart de leurs séances. Les enseignants sont présents partout.
+- **Départs** : 6 élèves partent, un par semaine, avec leur motif.
+- **Suspensions** : les 5 familles défaillantes (9 élèves) sont suspendues le
+  1er octobre et quittent leur classe.
+- **Changements de classe** : 3 adultes changent de classe le 5 octobre.
+- **Signalements** : les enseignants en déposent 8 (5 pour absences, 3 pour des
+  demandes de changement), dont 2 transmis à la famille.
+- **Demandes** : 3 adultes demandent un autre créneau et attendent une réponse.
+  L'application leur a envoyé 3 notifications « demande reçue ».
+- **Résultat le 17/10, vérifié par lecture** : 85 élèves encore en classe, 14 classes
+  sur 20 avec des places libres et 6 classes sous le minimum. Les classes 11, 14
+  et 17 n'ont plus que 2 enfants, et les classes 3 et 4 d'adultes plus que
+  3 femmes.
+
+### Ce que la vie rejouée révèle sur l'application
+
+Les constats marqués « code » sont lus dans les migrations. Les fonctions de
+l'administration n'ont pas pu être appelées, car le garde-fou refuse
+`set_config` dans une lecture. Les autres sont testés sur staging.
+
+1. **L'administration ne voit pas les impayés (code).** `indicateurs_admin()`
+   ne compte comme « comptes échus » que les comptes `provisional_active`. Les
+   25 élèves dont l'accès est échu sont `active` : le compteur affiche 0.
+2. **Une famille suspendue garde son accès (code).** `app_account_valid()` ne
+   lit pas `households.status` : seule la date `access_until` coupe l'accès.
+3. **Aucune relance ni échéance dans l'application (code).** Les relances,
+   environ 14 par mois dans le modèle, se feront hors de l'application.
+4. **Changer de créneau n'a pas de bouton (code).** `transferer_eleve` refuse
+   une classe d'un autre horaire (`cible_incompatible`). Il faut retirer
+   l'élève puis le réinscrire, en deux gestes.
+5. **Retirer un élève sans la RPC laisse ses séances à venir (staging).**
+   Aucun déclencheur sur `groupe_membres` ne libère les séances : seule
+   `retirer_eleve_groupe` le fait.
+6. **Les séances ne se ferment pas seules (staging).** Les 2 séances de ce soir
+   restent « planned » après leur heure, tant que personne ne les lance.
+7. **Le compteur « rapports manquants » sature (code et staging).** 472 séances
+   tenues n'ont aucun compte rendu, et chacune compte dans
+   `indicateurs_admin().rapports_manquants`.
+8. **Rien ne rassemble les absences ni les plaintes pour l'administration
+   (code).** Une famille ne peut pas déposer de plainte elle-même : seul
+   l'enseignant signale, et la famille passe par la messagerie.
+
 ## Ce que le modèle ne compte pas encore
 
 - **TVA.** Prix publiés hors taxes : la TVA s'ajoute au prix et ne change pas
