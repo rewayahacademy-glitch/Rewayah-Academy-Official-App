@@ -1,6 +1,5 @@
 // SUPERPOS-1b : captures de preuve, avant (tete `5a52ff30`) et apres
-// (variable `PHASE`, par defaut `apres`). Demande des reglages de l'enfant
-// (bouton jamais grise : appui sans motif, appui sans duree), saisie du code
+// (variable `PHASE`, par defaut `apres`). Saisie du code
 // de l'appareil eleve (refus « revoque » a 320 x2, francais et arabe), apercu
 // avec bandeaux (un seul point d'attention). Jamais sans `CAPTURE_DIR`.
 
@@ -17,14 +16,10 @@ import 'package:rewayah_academy/core/alertes/alerte.dart';
 import 'package:rewayah_academy/core/alertes/port_alertes.dart';
 import 'package:rewayah_academy/core/appairage/lecteur_qr.dart';
 import 'package:rewayah_academy/core/appairage/profils_locaux.dart';
-import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/appairage/service_enfant.dart';
 import 'package:rewayah_academy/core/cache/secure/stockage_securise.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/matching/service_matching.dart';
-import 'package:rewayah_academy/core/planning/service_planning.dart';
-import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
@@ -35,7 +30,6 @@ import 'package:rewayah_academy/core/widgets/offline_banner.dart';
 import 'package:rewayah_academy/features/alertes/bandeau_alerte_urgente.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 import 'package:rewayah_academy/features/eleve_connexion/saisie_code_page.dart';
-import 'package:rewayah_academy/features/reglages_enfant/reglages_enfant_page.dart';
 
 import '../features/appareils/faux_lecteur_qr.dart';
 import '../router/support_routeur.dart' hide stabiliser;
@@ -89,49 +83,6 @@ Future<void> _stabiliser(WidgetTester tester) async {
   await stabiliser(tester);
 }
 
-List<Override> _surchargesReglages() => <Override>[
-  serviceAppairageProvider.overrideWithValue(
-    FauxServiceAppairage()
-      ..elevesRendus = <EleveDuFoyer>[
-        const EleveDuFoyer(
-          id: 'e1',
-          prenom: 'Amina',
-          identifiantImmuable: 'STUD-AD-000001',
-          mode: InterfaceMode.enfant,
-          camera: CameraPolicy.forbidden,
-        ),
-      ],
-  ),
-  servicePlanningProvider.overrideWithValue(
-    FauxServicePlanning()
-      ..affectationsRendues = <Affectation>[
-        Affectation(
-          id: 'a1',
-          enseignantId: 't1',
-          enseignantPrenom: 'Aminata',
-          enseignantIdentifiant: 'TEACH-AD-000001',
-          eleveId: 'e1',
-          elevePrenom: 'Amina',
-          creneau: const Creneau(jour: 2, heure: 17, fuseau: 'Europe/Paris'),
-          depuis: DateTime(2026, 9, 1),
-        ),
-      ],
-  ),
-  serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
-  serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
-];
-
-Future<void> _taperEnvoyer(WidgetTester tester) async {
-  final Finder envoyer = find.widgetWithText(
-    ActionPrincipale,
-    t.tuteur.reglages.demandeEnvoyer,
-  );
-  await tester.ensureVisible(envoyer);
-  await _stabiliser(tester);
-  await tester.tap(envoyer, warnIfMissed: false);
-  await _stabiliser(tester);
-}
-
 void main() {
   group('Capture : SUPERPOS-1b', skip: sautSansCapture, () {
     setUpAll(() async {
@@ -140,88 +91,6 @@ void main() {
       await LocaleSettings.setLocale(AppLocale.fr);
     });
     setUp(masquerRubanDebug);
-
-    // La demande des reglages de l'enfant : appui sur l'envoi sans motif.
-    for (final (Size, double, InterfaceMode, ThemeMode, TextDirection, String) c
-        in <(Size, double, InterfaceMode, ThemeMode, TextDirection, String)>[
-          (
-            const Size(320, 640),
-            2,
-            InterfaceMode.standard,
-            ThemeMode.light,
-            TextDirection.ltr,
-            '320x2_clair',
-          ),
-          (
-            const Size(320, 640),
-            2,
-            InterfaceMode.enfant,
-            ThemeMode.dark,
-            TextDirection.rtl,
-            '320x2_guidee_sombre_rtl',
-          ),
-          (
-            const Size(390, 844),
-            1,
-            InterfaceMode.standard,
-            ThemeMode.light,
-            TextDirection.ltr,
-            '390',
-          ),
-        ]) {
-      testWidgets('reglages, appui sans motif ${c.$6}', (
-        WidgetTester tester,
-      ) async {
-        _vue(tester, c.$1, c.$2);
-        await tester.pumpWidget(
-          _app(
-            mode: c.$3,
-            theme: c.$4,
-            sens: c.$5,
-            home: const ReglagesEnfantPage(),
-            surcharges: _surchargesReglages(),
-          ),
-        );
-        await _stabiliser(tester);
-        final Finder demande = find.text(
-          t.tuteur.reglages.demandeReaffectation,
-        );
-        await tester.ensureVisible(demande);
-        await tester.tap(demande);
-        await _stabiliser(tester);
-        debugPrint(
-          'PNG ${await capturerVue(tester, _nom('reglages_vide_${c.$6}'))}',
-        );
-        await _taperEnvoyer(tester);
-        debugPrint(
-          'PNG ${await capturerVue(tester, _nom('reglages_appui_${c.$6}'))}',
-        );
-      });
-    }
-
-    // La demande de duree : motif saisi, aucune duree choisie, appui.
-    testWidgets('reglages, duree non choisie 320x2', (
-      WidgetTester tester,
-    ) async {
-      _vue(tester, const Size(320, 640), 2);
-      await tester.pumpWidget(
-        _app(
-          home: const ReglagesEnfantPage(),
-          surcharges: _surchargesReglages(),
-        ),
-      );
-      await _stabiliser(tester);
-      final Finder demande = find.text(t.tuteur.reglages.demandeDuree);
-      await tester.ensureVisible(demande);
-      await tester.tap(demande);
-      await _stabiliser(tester);
-      await tester.enterText(find.byType(TextField).first, 'Elle décroche.');
-      await _stabiliser(tester);
-      await _taperEnvoyer(tester);
-      debugPrint(
-        'PNG ${await capturerVue(tester, _nom('reglages_duree_320x2'))}',
-      );
-    });
 
     // La saisie du code : refus « revoque » a 320 x2.
     for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {

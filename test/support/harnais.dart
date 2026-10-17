@@ -473,9 +473,6 @@ class FauxServicePlanning implements ServicePlanning {
   /// Les seances rendues.
   List<Seance> seancesRendues = const <Seance>[];
 
-  /// Les affectations rendues.
-  List<Affectation> affectationsRendues = const <Affectation>[];
-
   /// Le fuseau rendu.
   String fuseau = 'Europe/Paris';
 
@@ -529,9 +526,6 @@ class FauxServicePlanning implements ServicePlanning {
 
   @override
   Future<List<Seance>> seances({String? eleveId}) async => seancesRendues;
-
-  @override
-  Future<List<Affectation>> affectations() async => affectationsRendues;
 }
 
 /// Un service de matching en memoire.

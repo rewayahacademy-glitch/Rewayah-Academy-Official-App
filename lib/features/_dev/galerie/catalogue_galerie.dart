@@ -113,7 +113,6 @@ import '../../../core/widgets/timeline_row.dart';
 import '../../../core/widgets/vue_etat_communication.dart';
 import '../../../core/widgets/zone_saisie.dart';
 import '../../admin_tableau/tuiles_compteur.dart';
-import '../../disponibilites/grille_semaine.dart';
 import '../../enseignant_classes/mes_classes_page.dart' show MarquesClasse;
 import 'entrees_etats_comptable.dart';
 import 'entrees_etats_tuteur.dart';
@@ -216,12 +215,6 @@ class EntreeGalerie {
   /// Tous ses etats, dans l'ordre ou ils se lisent.
   final List<EtatGalerie> etats;
 }
-
-/// Deux creneaux poses, pour la grille de la galerie.
-const List<Creneau> _creneauxExemple = <Creneau>[
-  Creneau(jour: 2, heure: 17, fuseau: 'Europe/Paris'),
-  Creneau(jour: 4, heure: 18, fuseau: 'Europe/Paris'),
-];
 
 /// Un cours, pour la journee de la galerie.
 final Seance _seanceExemple = Seance(
@@ -1643,29 +1636,6 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           valeurInitiale: ReponseChoix(valeurs: <String>{'enfant'}),
           autoriserSaisieLibre: false,
           onChange: _choixIgnore,
-        ),
-      ),
-    ],
-  ),
-  EntreeGalerie(
-    nom: 'GrilleSemaine',
-    famille: FamilleComposant.composantEtat,
-    etats: <EtatGalerie>[
-      EtatGalerie(
-        'deux cases posees',
-        (BuildContext _) => const GrilleSemaine(
-          creneaux: _creneauxExemple,
-          fuseau: 'Europe/Paris',
-          onBasculer: _basculeIgnoree,
-        ),
-      ),
-      EtatGalerie(
-        'enregistrement en cours',
-        (BuildContext _) => const GrilleSemaine(
-          creneaux: _creneauxExemple,
-          fuseau: 'Europe/Paris',
-          enCours: true,
-          onBasculer: _basculeIgnoree,
         ),
       ),
     ],
@@ -3964,8 +3934,6 @@ void _moisIgnore(DateTime mois) {}
 void _codeIgnore(String code) {}
 
 void _choixIgnore(ReponseChoix reponse) {}
-
-void _basculeIgnoree(Creneau creneau, bool posee) {}
 
 /// Les textes du fil de la galerie (CT-6).
 final TextesFilDiscussion _textesFil = TextesFilDiscussion(

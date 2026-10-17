@@ -26,8 +26,6 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/matching/service_matching.dart';
-import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -41,7 +39,6 @@ import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.d
 import 'package:rewayah_academy/features/controleur/observation_controle.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
 import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
-import 'package:rewayah_academy/features/reglages_enfant/reglages_enfant_page.dart';
 
 import '../features/coupe_mots_4/support_coupe_mots_4.dart';
 import '../fixtures/tuteur/foyers.dart';
@@ -204,36 +201,6 @@ void main() {
         );
         debugPrint(
           'PNG ${await capturerVue(tester, '${_prefixe}_comptes_320x2_$l')}',
-        );
-      });
-
-      testWidgets('reglages enfant motif $l', (WidgetTester tester) async {
-        await monterCoupeMots4(
-          tester,
-          () => const ReglagesEnfantPage(),
-          langue: langue,
-          interface: InterfaceMode.enfant,
-          hauteur: 1600,
-          surcharges: <Override>[
-            serviceAppairageProvider.overrideWithValue(
-              FauxServiceAppairage()
-                ..elevesRendus = <EleveDuFoyer>[FoyersFictifs.a1],
-            ),
-            servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
-            serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
-            serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
-          ],
-        );
-        final Finder demande = find.text(t.tuteur.reglages.demandeDuree);
-        await tester.ensureVisible(demande);
-        await tester.pumpAndSettle();
-        await tester.tap(demande);
-        await tester.pumpAndSettle();
-        final Finder motif = find.text(t.tuteur.reglages.demandeMotif);
-        await tester.ensureVisible(motif.last);
-        await tester.pumpAndSettle();
-        debugPrint(
-          'PNG ${await capturerVue(tester, '${_prefixe}_reglages_motif_guidee_320x2_$l')}',
         );
       });
 

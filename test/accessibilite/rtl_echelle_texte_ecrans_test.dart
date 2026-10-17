@@ -7,7 +7,6 @@ import 'package:rewayah_academy/core/admin/service_groupes.dart'
     show TypePublicGroupe;
 import 'package:rewayah_academy/core/appairage/profils_locaux.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
-import 'package:rewayah_academy/core/appairage/service_avatar.dart';
 import 'package:rewayah_academy/core/appairage/service_enfant.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/cache/secure/stockage_securise.dart';
@@ -41,7 +40,6 @@ import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dar
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
-import 'package:rewayah_academy/features/disponibilites/disponibilites_page.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
@@ -49,7 +47,6 @@ import 'package:rewayah_academy/features/eleve_connexion/eleve_connexion_page.da
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
 import 'package:rewayah_academy/features/inscription/inscription_page.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
-import 'package:rewayah_academy/features/reglages_enfant/reglages_enfant_page.dart';
 import 'package:rewayah_academy/features/revue_groupe/revue_groupe_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 
@@ -61,7 +58,7 @@ import '../support/harnais.dart';
 ///
 /// `test/widgets/catalogue_galerie_test.dart` fait deja cette preuve, mais
 /// seulement sur les **composants isoles** de la galerie, avec leurs etats
-/// synthetiques. Ici, ce sont les **vingt-quatre ecrans reels**, montes avec
+/// synthetiques. Ici, ce sont les **vingt-deux ecrans reels**, montes avec
 /// leurs propres services factices, qui sont rejoues. Un ecran qui deborderait
 /// seulement a cause de sa propre mise en page (et pas d'un composant partage)
 /// n'aurait ete vu par aucun autre test avant celui-ci.
@@ -69,7 +66,8 @@ import '../support/harnais.dart';
 /// **Le lot Enseignant en a ajoute quatre** (`ENS-01`, `ENS-04`, `ENS-07`,
 /// `ENS-08`) et a donne au cinquieme, `ENS-02`, le service qui lui manquait
 /// depuis le pivot du 19 septembre 2026. Le compte gele passe donc de vingt a
-/// vingt-quatre : un ecran neuf absent de cette liste n'aurait AUCUNE preuve de
+/// vingt-quatre, puis a vingt-deux (lot B1, 17/10 : `TUT-04` et `TUT-05`,
+/// ecrans morts de l'ancien matching, sont retires) : un ecran neuf absent de cette liste n'aurait AUCUNE preuve de
 /// rendu arabe, et le compte gele est ce qui empeche de l'oublier en silence.
 ///
 /// `ENS-03`, la salle, n'y figure toujours pas et ce n'est pas un oubli : elle
@@ -138,7 +136,7 @@ class _EcranAVerifier {
   construire;
 }
 
-/// Les vingt-quatre ecrans reels du catalogue, dans l'ordre de
+/// Les vingt-deux ecrans reels du catalogue, dans l'ordre de
 /// `08-catalogue-ecrans.md`.
 ///
 /// Les quatre ecrans du lot Enseignant sont groupes derriere `ENS-02` plutot que
@@ -234,11 +232,8 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
       routes: <RouteBase>[
         GoRoute(
           path: Routes.attentePiece,
-          builder: (BuildContext _, GoRouterState _) => _enveloppe(
-            const DepotPiecePage(),
-            direction: d,
-            echelleTexte: e,
-          ),
+          builder: (BuildContext _, GoRouterState _) =>
+              _enveloppe(const DepotPiecePage(), direction: d, echelleTexte: e),
         ),
         _portail(),
       ],
@@ -267,8 +262,7 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
         ),
         GoRoute(
           path: Routes.tuteurAjouterEnfant,
-          builder: (BuildContext _, GoRouterState _) =>
-              const Text('TUT-02/a'),
+          builder: (BuildContext _, GoRouterState _) => const Text('TUT-02/a'),
         ),
         GoRoute(
           path: Routes.tuteurReglages,
@@ -309,30 +303,6 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
       ),
       surcharges: <Override>[
         serviceAppairageProvider.overrideWithValue(FauxServiceAppairage()),
-      ],
-    ),
-  ),
-  _EcranAVerifier(
-    'TUT-04',
-    (TextDirection d, double e) => hote(
-      _enveloppe(const DisponibilitesPage(), direction: d, echelleTexte: e),
-      surcharges: <Override>[
-        serviceAppairageProvider.overrideWithValue(FauxServiceAppairage()),
-        servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
-      ],
-    ),
-  ),
-  _EcranAVerifier(
-    'TUT-05',
-    (TextDirection d, double e) => hote(
-      _enveloppe(const ReglagesEnfantPage(), direction: d, echelleTexte: e),
-      surcharges: <Override>[
-        serviceAppairageProvider.overrideWithValue(FauxServiceAppairage()),
-        servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
-        serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
-        serviceAvatarProvider.overrideWithValue(FauxServiceAvatar()),
-        selecteurPhotoProvider.overrideWithValue(FauxSelecteurPhoto(null)),
-        serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
       ],
     ),
   ),
@@ -633,14 +603,15 @@ void main() {
   final List<_EcranAVerifier> ecrans = _ecrans();
 
   test(
-    'vingt-quatre ecrans reels sont couverts, un par identifiant du catalogue',
+    'vingt-deux ecrans reels sont couverts, un par identifiant du catalogue',
     () {
       // Garde-fou : un ecran ajoute au catalogue sans entree ici passerait
       // inapercu, comme `catalogue_galerie_test.dart` le fait deja pour les
       // composants. Le compte est passe de vingt a vingt-quatre avec le lot
-      // Enseignant (`ENS-01`, `ENS-04`, `ENS-07`, `ENS-08`).
-      expect(ecrans.length, 24);
-      expect(ecrans.map((_EcranAVerifier e) => e.nom).toSet().length, 24);
+      // Enseignant (`ENS-01`, `ENS-04`, `ENS-07`, `ENS-08`), puis a
+      // vingt-deux avec le lot B1 (`TUT-04` et `TUT-05` retires).
+      expect(ecrans.length, 22);
+      expect(ecrans.map((_EcranAVerifier e) => e.nom).toSet().length, 22);
     },
   );
 

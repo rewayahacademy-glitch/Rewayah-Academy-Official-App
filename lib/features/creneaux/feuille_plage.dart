@@ -9,7 +9,6 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_filtre.dart';
 import 'plages.dart';
@@ -53,10 +52,8 @@ class FeuillePlage extends ConsumerStatefulWidget {
     required this.profilId,
     required this.fuseau,
     required this.existantes,
-    required this.engagees,
     required this.onEcrit,
     super.key,
-    this.engagementsConfirmes = true,
     this.modifiee,
   });
 
@@ -68,14 +65,6 @@ class FeuillePlage extends ConsumerStatefulWidget {
 
   /// Les heures deja posees a l'ouverture.
   final Set<HeureSemaine> existantes;
-
-  /// Les heures qui portent deja une Classe.
-  final Set<HeureSemaine> engagees;
-
-  /// Faux quand les Classes engagees n'ont pas pu etre lues : tout retrait
-  /// est alors confirme, prudemment, puisqu'un conflit ne peut pas etre
-  /// exclu.
-  final bool engagementsConfirmes;
 
   /// La plage touchee pour la modifier ; nulle pour un ajout.
   final Plage? modifiee;
@@ -153,32 +142,6 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
 
   Creneau _creneau(HeureSemaine h) =>
       Creneau(jour: h.jour, heure: h.heure, fuseau: widget.fuseau);
-
-  /// Les heures engagees parmi [retraits].
-  List<HeureSemaine> _engageesParmi(List<HeureSemaine> retraits) =>
-      retraits.where(widget.engagees.contains).toList();
-
-  /// Demande confirmation quand un retrait touche une heure engagee, ou
-  /// quand les engagements ne sont pas confirmes. Retirer n'annule aucun
-  /// cours : la confirmation le dit.
-  Future<bool> _confirmerRetrait(
-    List<HeureSemaine> retraits,
-    List<HeureSemaine> engagees,
-  ) {
-    if (retraits.isEmpty || (engagees.isEmpty && widget.engagementsConfirmes)) {
-      return Future<bool>.value(true);
-    }
-    final List<HeureSemaine> visees = engagees.isEmpty ? retraits : engagees;
-    final String heures = visees.map(nommerHeure).join(', ');
-    return ConfirmDestructive.demander(
-      context,
-      question: t.enseignant.creneaux.confirmerRetraitQuestion(heures: heures),
-      consequence: engagees.isEmpty
-          ? t.enseignant.creneaux.retraitSansEngagements(heures: heures)
-          : t.enseignant.creneaux.confirmerRetraitConsequence(heures: heures),
-      libelleConfirmer: t.enseignant.creneaux.confirmerRetraitAction,
-    );
-  }
 
   /// Relit les heures posees apres un echec ; garde ce que la feuille sait
   /// si la relecture echoue elle aussi.
@@ -288,10 +251,6 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
       );
       return;
     }
-    final List<HeureSemaine> engagees = _engageesParmi(plan.retraits);
-    if (!await _confirmerRetrait(plan.retraits, engagees) || !mounted) {
-      return;
-    }
     setState(() {
       _envoi = true;
       _echec = null;
@@ -303,11 +262,7 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
     }
     // Succes seulement quand TOUTES les operations sont confirmees.
     if (echecs.ajouts.isEmpty && echecs.retraits.isEmpty) {
-      Navigator.of(context).pop(
-        engagees.isEmpty
-            ? reussite
-            : '$reussite ${t.enseignant.creneaux.seanceContinue(heures: engagees.map(nommerHeure).join(', '))}',
-      );
+      Navigator.of(context).pop(reussite);
       return;
     }
     setState(() {
@@ -334,10 +289,6 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
         plage.heures.intersection(_existantes).toList()..sort(
           (HeureSemaine x, HeureSemaine y) => x.heure.compareTo(y.heure),
         );
-    final List<HeureSemaine> engagees = _engageesParmi(retraits);
-    if (!await _confirmerRetrait(retraits, engagees) || !mounted) {
-      return;
-    }
     setState(() {
       _envoi = true;
       _echec = null;
@@ -353,11 +304,7 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
         de: libelleDe(plage.de),
         a: libelleA(plage.a),
       );
-      Navigator.of(context).pop(
-        engagees.isEmpty
-            ? supprimee
-            : '$supprimee ${t.enseignant.creneaux.seanceContinue(heures: engagees.map(nommerHeure).join(', '))}',
-      );
+      Navigator.of(context).pop(supprimee);
       return;
     }
     setState(() {
@@ -380,11 +327,6 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final PlanPlage plan = _plan;
     final Plage? modifiee = _modifiee;
-    final List<HeureSemaine> engageesModifiee = modifiee == null
-        ? const <HeureSemaine>[]
-        : (widget.engagees.where(modifiee.contient).toList()..sort(
-            (HeureSemaine x, HeureSemaine y) => x.heure.compareTo(y.heure),
-          ));
     final TextStyle etiquette = textes.labelLarge ?? const TextStyle();
     final TextStyle detail = textes.bodySmall ?? const TextStyle();
 
@@ -514,19 +456,6 @@ class _FeuillePlageEtat extends ConsumerState<FeuillePlage> {
               a: libelleA(posee.a),
             ),
             style: textes.bodyMedium,
-          ),
-        ],
-        if (engageesModifiee.isNotEmpty) ...<Widget>[
-          Ecart.vMd,
-          TexteSansCoupure(
-            engageesModifiee.length == 1
-                ? t.enseignant.creneaux.heureEngagee(
-                    heures: nommerHeure(engageesModifiee.single),
-                  )
-                : t.enseignant.creneaux.heuresEngagees(
-                    heures: engageesModifiee.map(nommerHeure).join(', '),
-                  ),
-            style: palette.inkWarning.applyTo(detail),
           ),
         ],
         if (_manqueJour) ...<Widget>[

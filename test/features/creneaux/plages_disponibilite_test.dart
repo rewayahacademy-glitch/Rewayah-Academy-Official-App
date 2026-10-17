@@ -7,7 +7,7 @@
 // `weekly_availability` les stocke).
 //
 // Contre-epreuve : ce fichier echoue sur l'ancien `creneaux_page.dart`
-// (liste par jour « 17 h, 18 h » et `GrilleSemaine`) : ni ligne « de 17 h »,
+// (liste par jour « 17 h, 18 h » et grille de cases) : ni ligne « de 17 h »,
 // ni « Ajouter une plage ».
 
 import 'package:flutter/material.dart';
@@ -30,7 +30,6 @@ import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
 import 'package:rewayah_academy/features/creneaux/feuille_plage.dart';
 import 'package:rewayah_academy/features/creneaux/plages.dart';
 import 'package:rewayah_academy/features/creneaux/plages_disponibilite.dart';
-import 'package:rewayah_academy/features/disponibilites/grille_semaine.dart';
 
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/garde_interface.dart';
@@ -69,18 +68,6 @@ class _PlanningCapricieux extends FauxServicePlanning {
     return super.poser(profilId: profilId, creneau: creneau);
   }
 }
-
-Affectation _affectation({required int jour, required int heure}) =>
-    Affectation(
-      id: 'a-$jour-$heure',
-      enseignantId: _monId,
-      enseignantPrenom: 'Omar',
-      enseignantIdentifiant: 'TEACH-OS-000001',
-      eleveId: 'e1',
-      elevePrenom: 'Yasmine',
-      creneau: Creneau(jour: jour, heure: heure, fuseau: _fuseau),
-      depuis: DateTime(2026, 9),
-    );
 
 Widget _hote(
   FauxServicePlanning planning, {
@@ -194,8 +181,6 @@ void main() {
       expect(_ligne('Mardi', 9, 11), findsOneWidget);
       expect(find.text(_de(17)), findsOneWidget);
       expect(find.text(_a(23)), findsOneWidget);
-      // La grille de cases n'est plus rendue a l'enseignant.
-      expect(find.byType(GrilleSemaine), findsNothing);
       // Trois colonnes alignees : « de » commence au meme bord sur chaque
       // ligne, « a » aussi, quel que soit le jour.
       expect(
@@ -293,33 +278,6 @@ void main() {
       expect(find.text(t.enseignant.creneaux.aucuneHeure), findsOneWidget);
       expect(find.text(t.enseignant.creneaux.ajouterPlage), findsOneWidget);
       verifierUnSeulBoutonPlein(tester);
-    });
-
-    testWidgets('le conflit avec une Classe est ECRIT sur la plage', (
-      WidgetTester tester,
-    ) async {
-      final FauxServicePlanning planning = FauxServicePlanning()
-        ..creneaux[_monId] = _plage(4, 9, 11)
-        ..affectationsRendues = <Affectation>[_affectation(jour: 4, heure: 9)];
-      await _monter(tester, planning);
-
-      expect(
-        find.text(
-          t.enseignant.creneaux.plageEngagee(
-            heures: nommerHeure((jour: 4, heure: 9)),
-          ),
-        ),
-        findsOneWidget,
-      );
-      // Une seule fois : pas de seconde phrase sous la carte.
-      expect(
-        find.text(
-          t.enseignant.creneaux.heureEngagee(
-            heures: nommerHeure((jour: 4, heure: 9)),
-          ),
-        ),
-        findsNothing,
-      );
     });
 
     testWidgets('offline : la liste se lit, rien ne s ouvre', (
@@ -692,45 +650,6 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(t.enseignant.creneaux.aucuneHeure), findsOneWidget);
-    });
-
-    testWidgets('supprimer une plage engagee : confirmee, et retirer '
-        'n annule aucun cours', (WidgetTester tester) async {
-      final FauxServicePlanning planning = FauxServicePlanning()
-        ..creneaux[_monId] = _plage(4, 9, 10)
-        ..affectationsRendues = <Affectation>[_affectation(jour: 4, heure: 9)];
-      await _monter(tester, planning);
-
-      await _toucher(tester, _ligne('Jeudi', 9, 10));
-      await _toucher(tester, find.text(t.enseignant.creneaux.supprimerPlage));
-
-      // La confirmation dit la consequence ; renoncer ne retire rien.
-      expect(
-        find.text(
-          t.enseignant.creneaux.confirmerRetraitConsequence(
-            heures: nommerHeure((jour: 4, heure: 9)),
-          ),
-        ),
-        findsOneWidget,
-      );
-      await _toucher(tester, find.text(t.commun.annuler));
-      expect(planning.retires, isEmpty);
-
-      await _toucher(tester, find.text(t.enseignant.creneaux.supprimerPlage));
-      await _toucher(
-        tester,
-        find.text(t.enseignant.creneaux.confirmerRetraitAction),
-      );
-
-      expect(planning.retires.length, 1);
-      expect(
-        find.textContaining(
-          t.enseignant.creneaux.seanceContinue(
-            heures: nommerHeure((jour: 4, heure: 9)),
-          ),
-        ),
-        findsOneWidget,
-      );
     });
   });
 

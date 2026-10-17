@@ -13,7 +13,6 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dart';
-import 'package:rewayah_academy/features/disponibilites/grille_semaine.dart';
 
 import '../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
@@ -245,17 +244,6 @@ void main() {
   });
 
   group('ENS-01 : elle conduit a ENS-06, elle ne le refait pas', () {
-    testWidgets('aucune grille de semaine n est rendue ici', (
-      WidgetTester tester,
-    ) async {
-      // Deux grilles jumelles finiraient par diverger : la declaration des
-      // disponibilites vit dans `ENS-06`, et la bienvenue n'y touche pas.
-      await _monter(tester);
-      await tester.pumpAndSettle();
-
-      expect(find.byType(GrilleSemaine), findsNothing);
-    });
-
     testWidgets('l action principale mene aux creneaux', (
       WidgetTester tester,
     ) async {

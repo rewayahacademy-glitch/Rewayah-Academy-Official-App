@@ -123,8 +123,7 @@ List<EntreeGalerie> entreesEtatsComptable() => <EntreeGalerie>[
     ],
   ),
   // Une FAMILLE de neuf pastilles dans un seul fichier, inscrite sous le nom
-  // du fichier (`pastilles_comptable.dart`) : l'exception inverse de
-  // `GrilleSemaine` (un composant hors de lib/core/widgets). Un etat par
+  // du fichier (`pastilles_comptable.dart`). Un etat par
   // pastille, chacune dans un etat representatif ; les autres valeurs se
   // lisent dans `test/core/widgets/pastilles_comptable_test.dart`.
   EntreeGalerie(
