@@ -24,6 +24,7 @@ import 'package:rewayah_academy/core/capacites/rpc_finance_supabase.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -226,7 +227,10 @@ void main() {
             .text,
         '50',
       );
-      expect(find.text(p.enregistrer(prenom: 'Bilal')), findsOneWidget);
+      expect(
+        find.text(p.enregistrer(dePrenom: deDevant('Bilal'))),
+        findsOneWidget,
+      );
       verifierUnSeulBoutonPlein(tester);
       await tester.enterText(
         _champ(FeuillePaiement.cleReference),
@@ -238,7 +242,10 @@ void main() {
       expect(port.envois.single.$2, const Montant(5000, 'USD'));
       expect(port.envois.single.$4, 'VIR-2026-10');
       expect(find.text(p.faitTitre), findsOneWidget);
-      expect(find.text(p.moisRegle(prenom: 'Bilal')), findsOneWidget);
+      expect(
+        find.text(p.moisRegle(dePrenom: deDevant('Bilal'))),
+        findsOneWidget,
+      );
       expect(find.byKey(FeuillePaiement.cleEnregistrer), findsNothing);
       expect(port.lectures, 1);
       await _toucher(tester, find.text(p.fermer));
@@ -258,7 +265,10 @@ void main() {
       await _enregistrer(tester);
       expect(port.envois.single.$2, const Montant(3000, 'USD'));
       expect(port.envois.single.$4, isNull);
-      expect(find.text(p.ilManque(prenom: 'Bilal')), findsOneWidget);
+      expect(
+        find.text(p.ilManque(dePrenom: deDevant('Bilal'))),
+        findsOneWidget,
+      );
       expect(
         find.descendant(
           of: find.byKey(FeuillePaiement.cleManque),
@@ -341,7 +351,10 @@ void main() {
       expect(port.envois[1].$3, port.envois[0].$3);
       expect(port.envois[1].$2, const Montant(5050, 'USD'));
       expect(port.envois[0].$2, const Montant(5050, 'USD'));
-      expect(find.text(p.moisRegle(prenom: 'Bilal')), findsOneWidget);
+      expect(
+        find.text(p.moisRegle(dePrenom: deDevant('Bilal'))),
+        findsOneWidget,
+      );
     });
 
     testWidgets('hors ligne : une phrase, aucun envoi possible', (

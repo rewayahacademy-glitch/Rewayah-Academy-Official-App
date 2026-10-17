@@ -364,10 +364,12 @@ void main() {
       expect(find.byType(AdminShell), findsOneWidget);
       expect(find.byType(FinancePage), findsOneWidget);
       expect(find.byType(ReserveDelegationPage), findsOneWidget);
-      // Troisieme onglet ; « A valider » (CPT-VAL-1) vient en quatrieme.
-      expect(ongletsFinance(), hasLength(4));
+      // Troisieme onglet ; « A valider » (CPT-VAL-1) vient en quatrieme,
+      // « Paiements » (FAC-C-01) en cinquieme.
+      expect(ongletsFinance(), hasLength(5));
       expect(ongletsFinance()[2].chemin, Routes.adminFinanceReserveDelegation);
-      expect(ongletsFinance().last.chemin, Routes.adminFinanceAValider);
+      expect(ongletsFinance()[3].chemin, Routes.adminFinanceAValider);
+      expect(ongletsFinance().last.chemin, Routes.adminFinancePaiements);
       expect(find.text(t.admin.finance.reserveDelegation), findsWidgets);
     });
 

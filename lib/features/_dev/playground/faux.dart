@@ -75,6 +75,8 @@ class FauxServiceDossier implements ServiceDossier {
     required String nom,
     Genre? genre,
     String? codeInvitation,
+    UsageTitulaire? usage,
+    bool suitDesCours = false,
   }) async {
     _peutEchouer();
     profilsCrees.add((role: role, prenom: prenom, nom: nom, genre: genre));

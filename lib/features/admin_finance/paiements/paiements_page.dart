@@ -25,6 +25,7 @@ import '../../../core/capacites/port_paiements_saisis.dart';
 import '../../../core/finance/finances_profil.dart';
 import '../../../core/finance/format_montant.dart';
 import '../../../core/finance/montant.dart';
+import '../../../core/i18n/elision.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/theme/app_palette.dart';
@@ -364,9 +365,9 @@ class _FeuillePaiementState extends ConsumerState<FeuillePaiement> {
         final String message = !r.nouveau
             ? p.dejaEnregistre
             : f?.etat == EtatFinancier.finance
-            ? p.moisRegle(prenom: prenom)
+            ? p.moisRegle(dePrenom: deDevant(prenom))
             : manque != null
-            ? p.ilManque(prenom: prenom)
+            ? p.ilManque(dePrenom: deDevant(prenom))
             : p.enregistreSansEtat(prenom: prenom);
         return <Widget>[
           BandeauAttention(
@@ -457,7 +458,7 @@ class _FeuillePaiementState extends ConsumerState<FeuillePaiement> {
             key: FeuillePaiement.cleEnregistrer,
             libelle: _phase == _Phase.inconnue
                 ? p.reessayer
-                : p.enregistrer(prenom: widget.eleve.prenom),
+                : p.enregistrer(dePrenom: deDevant(widget.eleve.prenom)),
             enCours: envoi,
             onPress: _enregistrer,
           ),

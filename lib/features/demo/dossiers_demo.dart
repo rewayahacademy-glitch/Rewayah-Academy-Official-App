@@ -767,6 +767,8 @@ class ServiceDossierDemo implements ServiceDossier {
     required String nom,
     Genre? genre,
     String? codeInvitation,
+    UsageTitulaire? usage,
+    bool suitDesCours = false,
   }) async {}
 
   @override

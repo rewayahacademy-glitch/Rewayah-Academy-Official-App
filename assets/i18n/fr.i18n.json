@@ -942,7 +942,10 @@
       "identite": "Nom",
       "genre": "Genre",
       "enseignant": "Enseignant",
-      "comptable": "Comptable"
+      "comptable": "Comptable",
+      "cours": "Vos propres cours",
+      "coursOui": "Vous suivez aussi des cours",
+      "coursNon": "Pas de cours pour vous"
     }
   },
   "contrat": {
@@ -3571,14 +3574,14 @@
         "erreurMontant": "Ce montant n'est pas lisible. Écrivez un montant supérieur à zéro, par exemple 50 ou 50,50.",
         "reference": "Référence du paiement (facultatif)",
         "referenceAide": "Par exemple le numéro du virement\u00a0: il aide à retrouver ce paiement plus tard.",
-        "enregistrer": "Enregistrer le paiement de {prenom}",
+        "enregistrer": "Enregistrer le paiement {dePrenom}",
         "annuler": "Annuler",
         "fermer": "Fermer",
         "reessayer": "Réessayer",
-        "horsLigne": "Pas de connexion\u00a0: rien ne peut être enregistré. Reconnectez-vous puis rouvrez cette fiche.",
+        "horsLigne": "Rien ne peut être enregistré pour l'instant. Rouvrez cette fiche quand le réseau sera revenu.",
         "faitTitre": "Paiement enregistré",
-        "moisRegle": "Le mois de {prenom} est réglé.",
-        "ilManque": "Le mois de {prenom} n'est pas encore réglé. Il le sera dès que le complément sera enregistré.",
+        "moisRegle": "Le mois {dePrenom} est réglé.",
+        "ilManque": "Le mois {dePrenom} n'est pas encore réglé. Il le sera dès que le complément sera enregistré.",
         "enregistreSansEtat": "Le paiement est crédité à {prenom}.",
         "dejaEnregistre": "Ce paiement était déjà enregistré\u00a0: rien n'a été ajouté.",
         "refusTitre": "Paiement refusé",

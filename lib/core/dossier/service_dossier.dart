@@ -66,12 +66,19 @@ abstract interface class ServiceDossier {
   /// Pour un enseignant, le profil est alors cree ET le code consomme dans
   /// la meme transaction serveur ; un code refuse leve
   /// [InvitationNonConsommee] et ne cree rien.
+  ///
+  /// [usage] et [suitDesCours] (L5-01) : pour un titulaire de foyer, le
+  /// choix « Moi » ou « Famille » et la reponse « Suivez-vous aussi des
+  /// cours ? ». Le serveur les garde avec le profil, dans la meme
+  /// transaction ; « Moi » ouvre toujours la fiche d'eleve du titulaire.
   Future<void> creerProfil({
     required AppRole role,
     required String prenom,
     required String nom,
     Genre? genre,
     String? codeInvitation,
+    UsageTitulaire? usage,
+    bool suitDesCours = false,
   });
 
   /// Ou en est le dossier.
@@ -115,7 +122,22 @@ class ServiceDossierSupabase implements ServiceDossier {
     required String nom,
     Genre? genre,
     String? codeInvitation,
+    UsageTitulaire? usage,
+    bool suitDesCours = false,
   }) async {
+    if (role == AppRole.guardian && usage != null) {
+      await _client.rpc<Object?>(
+        'inscrire_titulaire',
+        params: <String, dynamic>{
+          'p_usage': usage.valeurSql,
+          'p_first_name': prenom,
+          'p_last_name': nom,
+          'p_gender': genre?.valeurSql,
+          'p_suit_des_cours': suitDesCours,
+        },
+      );
+      return;
+    }
     if (role == AppRole.teacher && codeInvitation != null) {
       final Object? reponse = await _client.rpc<Object?>(
         'inscrire_enseignant_invite',

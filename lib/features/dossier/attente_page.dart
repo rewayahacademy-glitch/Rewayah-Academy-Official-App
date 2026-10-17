@@ -88,9 +88,15 @@ class _AttentePageState extends ConsumerState<AttentePage> {
     final _Prochaine? prochaine = lu != null
         ? _prochaine(
             lu,
-            adulte:
+            // L5-01 : l'usage garde par le serveur d'abord ; le brouillon
+            // ne sert qu'aux comptes crees avant.
+            adulte: switch (lu.usage) {
+              UsageTitulaire.moi => true,
+              UsageTitulaire.famille => false,
+              null =>
                 ref.watch(brouillonInscriptionProvider).usage ==
-                UsageInscription.moi,
+                    UsageInscription.moi,
+            },
           )
         : illisible
         ? _Prochaine(
@@ -225,7 +231,8 @@ List<_Element> _elements(EtatDossier etat) {
 
 /// `adulte` : l'inscription vient de « Moi uniquement » (eleve adulte, son
 /// propre tuteur) ; les accords s'ouvrent alors en variante eleve adulte
-/// (`?pour=moi`). Sans brouillon (rechargement), variante responsable legal.
+/// (`?pour=moi`). L'usage vient du serveur (L5-01) ; pour un compte cree
+/// avant, du brouillon, et sans brouillon, variante responsable legal.
 _Prochaine? _prochaine(EtatDossier etat, {required bool adulte}) {
   final List<_Element> restants = _elements(etat);
   return switch (etat.etape) {

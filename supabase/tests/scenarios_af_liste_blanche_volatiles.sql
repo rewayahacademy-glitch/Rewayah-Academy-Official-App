@@ -131,6 +131,7 @@ declare
     'guard_session_state_transition()',
     'indicateurs_admin()',
     'inscrire_comptable_invite(text,text,text,gender)',
+    'inscrire_titulaire(text,text,text,gender,text,boolean)',
     'inscrire_enseignant_invite(text,text,text,gender)',
     'inviter_conjoint(text,uuid)',
     'inviter_comptable(text)',

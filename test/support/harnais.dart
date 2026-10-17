@@ -117,6 +117,10 @@ class FauxServiceDossier implements ServiceDossier {
   /// enseignant invite).
   final List<String?> codesInvitation = <String?>[];
 
+  /// L5-01 : l'usage et la reponse « suit des cours » de chaque creation.
+  final List<({UsageTitulaire? usage, bool suitDesCours})> usages =
+      <({UsageTitulaire? usage, bool suitDesCours})>[];
+
   /// Vrai pour simuler le service de la demonstration.
   @override
   bool demonstration = false;
@@ -149,9 +153,12 @@ class FauxServiceDossier implements ServiceDossier {
     required String nom,
     Genre? genre,
     String? codeInvitation,
+    UsageTitulaire? usage,
+    bool suitDesCours = false,
   }) async {
     _peutEchouer();
     codesInvitation.add(codeInvitation);
+    usages.add((usage: usage, suitDesCours: suitDesCours));
     profilsCrees.add((role: role, prenom: prenom, nom: nom, genre: genre));
   }
 
