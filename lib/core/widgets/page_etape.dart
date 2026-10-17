@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../i18n/strings.g.dart';
+import '../theme/app_gabarit.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -21,6 +22,15 @@ import 'page_shell.dart';
 ///
 /// Un seul composant pour tous les parcours par etapes : un lot qui a besoin
 /// d'une variante l'ajoute ici, il n'en recree pas une copie locale.
+/// `PageParcours` lui delegue (lot E3, audit d'entree du 17/10, L3).
+///
+/// **Borne sur grand ecran** (demande du directeur du 17/10 : pas de cartes
+/// du mobile etirees) : la rangee d'etape, le contenu et l'action tiennent
+/// dans une seule colonne centree de [largeurColonne], la largeur de lecture
+/// deja retenue par l'ajout d'un profil eleve. Sur telephone la colonne
+/// prend toute la largeur et rien ne change. Hors telephone, l'action prend
+/// la largeur de son contenu (et non 1136 points pour un verbe) et se range
+/// au bord de fin de la colonne : a droite en francais, a gauche en arabe.
 class PageEtape extends StatelessWidget {
   /// Cree une page d'etape.
   const PageEtape({
@@ -55,21 +65,74 @@ class PageEtape extends StatelessWidget {
   /// Faux quand le contenu gere son propre defilement.
   final bool defilante;
 
+  /// La largeur maximale de la colonne d'etape (rangee, contenu, action).
+  /// La largeur de lecture d'une tache focalisee : environ 68 caracteres de
+  /// texte courant, celle de la colonne de l'ajout d'un profil eleve.
+  static const double largeurColonne = AppPage.largeurDialogue;
+
+  /// La cle de la colonne bornee du contenu (mesuree par les tests).
+  static const Key colonneKey = ValueKey<String>('page-etape-colonne');
+
+  /// La cle du bloc d'action borne (mesure par les tests).
+  static const Key actionKey = ValueKey<String>('page-etape-action');
+
   /// Le bandeau hors ligne de la page (voir [PageShell.bandeauHorsLigne]) :
   /// une etape des Communications y pose le sien (D-FUS-3).
   final Widget bandeauHorsLigne;
 
   @override
   Widget build(BuildContext context) {
+    final bool telephone = AppGabarit.de(context) == Gabarit.mobile;
+    final Widget? zoneAction = switch (action) {
+      null => null,
+      final Widget a => _ColonneEtape(
+        child: KeyedSubtree(
+          key: actionKey,
+          child: telephone
+              ? a
+              // Hors telephone : la largeur du contenu de l'action (la plus
+              // large de ses lignes), au bord de fin de la colonne.
+              : Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  heightFactor: 1,
+                  child: IntrinsicWidth(child: a),
+                ),
+        ),
+      ),
+    };
     return PageShell(
       actionsCoquille: false,
-      entete: RangeeEtape(numero: numero, total: total, onRetour: onRetour),
-      actions: action,
+      entete: _ColonneEtape(
+        child: RangeeEtape(numero: numero, total: total, onRetour: onRetour),
+      ),
+      actions: zoneAction,
       defilante: defilante,
       bandeauHorsLigne: bandeauHorsLigne,
-      child: child,
+      child: _ColonneEtape(cle: colonneKey, child: child),
     );
   }
+}
+
+/// La colonne d'etape : centree, bornee a [PageEtape.largeurColonne]. Sur
+/// telephone, la largeur offerte est deja plus etroite : elle la prend.
+class _ColonneEtape extends StatelessWidget {
+  const _ColonneEtape({required this.child, this.cle});
+
+  final Widget child;
+  final Key? cle;
+
+  @override
+  Widget build(BuildContext context) => Align(
+    alignment: AlignmentDirectional.topCenter,
+    heightFactor: 1,
+    child: ConstrainedBox(
+      key: cle,
+      constraints: const BoxConstraints(maxWidth: PageEtape.largeurColonne),
+      // Toute la largeur de la colonne, meme pour un contenu court : il
+      // commence au bord de debut de la colonne, il n'est pas centre.
+      child: SizedBox(width: double.infinity, child: child),
+    ),
+  );
 }
 
 /// La rangee d'etape de la planche V6 : disque retour, progression continue,

@@ -15,6 +15,8 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart'
+    show DisqueRetour;
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
 import 'package:rewayah_academy/features/controleur/controle_page.dart';
@@ -84,7 +86,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await _jusquALObservation(tester, ChoixCompteRendu.ajouterObservation);
-    expect(find.text(t.inscription.etapeSur(n: 1, total: 5)), findsOneWidget);
+    expect(find.text(t.commun.etape.sur(n: 1, total: 5)), findsOneWidget);
     expect(find.text(o.questionNature), findsOneWidget);
     // Aucune preselection, aucune liste deroulante, aucun interrupteur.
     expect(find.byType(DropdownButton<String>), findsNothing);
@@ -135,8 +137,8 @@ void main() {
     expect(find.text(t.controleur.compteRendu.notice), findsOneWidget);
 
     // Le retour garde les reponses.
-    await _toucher(tester, find.text(t.commun.retour));
-    await _toucher(tester, find.text(t.commun.retour));
+    await _toucher(tester, find.byType(DisqueRetour));
+    await _toucher(tester, find.byType(DisqueRetour));
     expect(find.text(o.questionPersonne), findsOneWidget);
     expect(find.text(o.questionEleve), findsOneWidget);
     await _toucher(tester, _bouton(t.commun.continuer));
