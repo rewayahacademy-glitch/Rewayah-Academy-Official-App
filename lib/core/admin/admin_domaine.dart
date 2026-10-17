@@ -210,6 +210,8 @@ ongletsFinance() => <({String libelle, String chemin})>[
   ),
   // CPT-VAL-1 (decision Q-8 = (a) du 05/10) : les demandes du Comptable.
   (libelle: t.admin.finance.aValider, chemin: Routes.adminFinanceAValider),
+  // FAC-C-01 (passation du 17/10, point 3) : les paiements recus.
+  (libelle: t.admin.finance.paiements, chemin: Routes.adminFinancePaiements),
 ];
 
 /// Les fonctions livrees du domaine Configuration, dans l'ordre du contrat

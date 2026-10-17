@@ -28,12 +28,14 @@ import 'core/capacites/enseignants_classe_supabase.dart';
 import 'core/capacites/identite_titulaire_supabase.dart';
 import 'core/capacites/mes_finances_supabase.dart';
 import 'core/capacites/paiements_foyer_supabase.dart';
+import 'core/capacites/paiements_saisis_supabase.dart';
 import 'core/capacites/politiques_commerciales_supabase.dart';
 import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/port_enseignants_classe.dart';
 import 'core/capacites/port_identite_titulaire.dart';
 import 'core/capacites/port_mes_finances.dart';
 import 'core/capacites/port_paiements_foyer.dart';
+import 'core/capacites/port_paiements_saisis.dart';
 import 'core/capacites/port_politiques_commerciales.dart';
 import 'core/capacites/port_profil_eleve_titulaire.dart';
 import 'core/capacites/port_progression_famille.dart';
@@ -258,6 +260,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // direction en double verification.
   portPolitiquesCommercialesProvider.overrideWithValue(
     PolitiquesCommercialesSupabase(Supabase.instance.client),
+  ),
+  // Saisie des paiements recus (FAC-C-01, migration 20261017172000) : la
+  // direction et la comptabilite, attribues a un eleve.
+  portPaiementsSaisisProvider.overrideWithValue(
+    PaiementsSaisisSupabase(Supabase.instance.client),
   ),
   portHistoriqueObservationsProvider.overrideWithValue(
     HistoriqueObservationsSupabase(() => Supabase.instance.client),

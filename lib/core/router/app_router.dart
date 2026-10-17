@@ -1633,6 +1633,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           child: FinancePage(onglet: OngletFinance.aValider),
         ),
       ),
+      // Paiements (FAC-C-01, passation du 17/10 point 3) : le cinquieme
+      // onglet du meme domaine.
+      GoRoute(
+        path: Routes.adminFinancePaiements,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.finance,
+          child: FinancePage(onglet: OngletFinance.paiements),
+        ),
+      ),
       // Domaine Configuration : la racine redirige vers Regles, sa fonction
       // primaire -- meme mecanique que Pedagogie plus haut. Academie, Classe
       // en ligne, Notifications et Localisation n'ont pas de route : aucune

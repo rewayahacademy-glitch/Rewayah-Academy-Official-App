@@ -942,6 +942,11 @@ abstract final class Routes {
   /// qu'une autre personne habilitee valide ou refuse.
   static const String adminFinanceAValider = '/admin/finance/a-valider';
 
+  /// Le cinquieme onglet du domaine Finance de la direction : « Paiements »
+  /// (passation du 17/10/2026 point 3, FAC-C-01) : un paiement recu hors de
+  /// l'application, attribue a un eleve.
+  static const String adminFinancePaiements = '/admin/finance/paiements';
+
   /// La coquille du Comptable en demonstration : `?ecran=...&montants=...`.
   /// Enregistree seulement hors production (`environnementAutoriseDemo`).
   static const String demoComptable = '/demo/comptable';
