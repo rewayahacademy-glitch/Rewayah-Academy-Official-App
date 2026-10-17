@@ -1210,6 +1210,12 @@ class _Traductions$kyc$ar extends Traductions$kyc$fr {
 	@override String get carteIdentite => 'بطاقة هوية';
 	@override String get passeport => 'جواز سفر';
 	@override String get titreSejour => 'بطاقة إقامة';
+	@override String get autrePiece => 'وثيقة رسمية أخرى';
+	@override String get explicationCarteIdentite => 'بطاقة الهوية الوطنية لبلدك، سارية المفعول. صوّر الوجه الذي يحمل صورتك واسمك.';
+	@override String get explicationPasseport => 'جواز سفرك الساري المفعول. صوّر الصفحة التي تحمل صورتك واسمك.';
+	@override String get explicationTitreSejour => 'البطاقة التي يمنحها البلد الذي تقيم فيه إن لم تكن من مواطنيه، سارية المفعول.';
+	@override String get explicationAutre => 'وثيقة أخرى صادرة عن جهة إدارية، تحمل صورتك واسمك.';
+	@override String get exempleAutre => 'رخصة قيادة أو بطاقة قنصلية';
 	@override String get choisirFichier => 'اختيار الصورة';
 	@override String get fichierChoisi => 'الصورة جاهزة للإرسال';
 	@override String get envoyer => 'إرسال وثيقتي';
@@ -20464,6 +20470,12 @@ extension on TraductionsAr {
 			'kyc.carteIdentite' => 'بطاقة هوية',
 			'kyc.passeport' => 'جواز سفر',
 			'kyc.titreSejour' => 'بطاقة إقامة',
+			'kyc.autrePiece' => 'وثيقة رسمية أخرى',
+			'kyc.explicationCarteIdentite' => 'بطاقة الهوية الوطنية لبلدك، سارية المفعول. صوّر الوجه الذي يحمل صورتك واسمك.',
+			'kyc.explicationPasseport' => 'جواز سفرك الساري المفعول. صوّر الصفحة التي تحمل صورتك واسمك.',
+			'kyc.explicationTitreSejour' => 'البطاقة التي يمنحها البلد الذي تقيم فيه إن لم تكن من مواطنيه، سارية المفعول.',
+			'kyc.explicationAutre' => 'وثيقة أخرى صادرة عن جهة إدارية، تحمل صورتك واسمك.',
+			'kyc.exempleAutre' => 'رخصة قيادة أو بطاقة قنصلية',
 			'kyc.choisirFichier' => 'اختيار الصورة',
 			'kyc.fichierChoisi' => 'الصورة جاهزة للإرسال',
 			'kyc.envoyer' => 'إرسال وثيقتي',
@@ -20597,14 +20609,14 @@ extension on TraductionsAr {
 			'controleur.complement.questionMotif' => 'لماذا تضيف هذه التكملة؟',
 			'controleur.complement.contexteMotif' => 'اختياري: السبب يساعد الإدارة على قراءة التكملة. التقرير الأصلي لا يتغير.',
 			'controleur.complement.precision' => 'توضيح',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.complement.precisionAide' => 'حين تنقص تفصيلة · يكمّل التقرير دون أن يغيّر فيه شيئًا',
 			'controleur.complement.correction' => 'تصحيح',
 			'controleur.complement.correctionAide' => 'حين تكون معلومة في التقرير غير دقيقة · يبقى الأصل مقروءًا، ويظهر التصحيح تحته',
 			'controleur.complement.faitNouveau' => 'معلومة جديدة',
 			'controleur.complement.faitNouveauAide' => 'حين تعرفها بعد الزيارة · تحمل تاريخ يوم الإضافة',
 			'controleur.complement.questionTexte' => 'ماذا تضيف إلى التقرير؟',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.complement.texteObligatoire' => 'إلزامي: ما لاحظته، في جمل قليلة.',
 			'controleur.complement.libelleTexte' => 'التكملة',
 			'controleur.complement.aideTexte' => 'ما لاحظته أو عرفته منذ الزيارة.',

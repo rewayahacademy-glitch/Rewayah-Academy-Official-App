@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/resignature_contrat.dart';
@@ -301,8 +302,9 @@ void main() {
   group('Le depot de la piece d identite', () {
     Future<(FauxServiceDossier, FauxSelecteurFichier)> monter(
       WidgetTester tester,
-      PieceAEnvoyer? choisie,
-    ) async {
+      PieceAEnvoyer? choisie, {
+      FauxServiceAuth? auth,
+    }) async {
       // Mesure sur un telephone reel, jamais sur la surface par defaut :
       // 390 x 844 est le gabarit de reference du produit.
       //
@@ -341,6 +343,7 @@ void main() {
           surcharges: <Override>[
             serviceDossierProvider.overrideWithValue(dossier),
             selecteurFichierProvider.overrideWithValue(selecteur),
+            serviceAuthProvider.overrideWithValue(auth ?? FauxServiceAuth()),
           ],
         ),
       );
@@ -357,6 +360,9 @@ void main() {
       // present et hors cadre est un bouton absent pour la personne qui tient
       // le telephone.
       await monter(tester, _piece());
+      // Lot E7 : « Choisir la photo » parait une fois le type choisi.
+      await tester.tap(find.text(t.kyc.carteIdentite));
+      await tester.pumpAndSettle();
 
       for (final String libelle in <String>[
         t.kyc.choisirFichier,
@@ -383,24 +389,51 @@ void main() {
     ) async {
       final (FauxServiceDossier dossier, _) = await monter(tester, _piece());
 
-      await tester.tap(find.text(t.kyc.choisirFichier));
+      // Sans type, ni photo a choisir ni envoi possible.
+      expect(find.text(t.kyc.choisirFichier), findsNothing);
+      await tester.tap(find.text(t.kyc.envoyer), warnIfMissed: false);
       await tester.pumpAndSettle();
       expect(dossier.depots, isEmpty);
     });
 
-    // BOUTONS-GRISES-1 : « Envoyer ma piece » et « Choisir la photo » ne sont
-    // jamais grises ; presses trop tot, ils disent ce qui manque, l'annoncent
-    // au lecteur d'ecran et rendent le focus au bon geste.
-    testWidgets('envoyer sans type : actif, dit ce qui manque, focus au type', (
-      WidgetTester tester,
-    ) async {
+    // DECISION-ENTREE-2026-10-17 (lot E7), qui remplace ici BOUTONS-GRISES-1 :
+    // « Choisir la photo » n'agit qu'avec un type, « Envoyer ma piece »
+    // qu'avec une photo. Ce qui reste a faire est dit d'avance, jamais
+    // reproche a l'appui.
+    testWidgets('sans type : pas de photo, envoi inactif, la phrase le dit '
+        "d'avance", (WidgetTester tester) async {
       final List<String> annonces = ecouterAnnonces(tester);
       final (FauxServiceDossier dossier, _) = await monter(tester, _piece());
 
-      final ActionPrincipale envoyer = tester.widget<ActionPrincipale>(
+      ActionPrincipale envoyer() => tester.widget<ActionPrincipale>(
         find.widgetWithText(ActionPrincipale, t.kyc.envoyer),
       );
-      expect(envoyer.onPress, isNotNull);
+      expect(envoyer().onPress, isNull);
+      // Sans type, le selecteur ne saurait pas quelle piece il recoit : le
+      // lien n'est pas rendu, la phrase dit de choisir la piece d'abord.
+      expect(find.text(t.kyc.choisirFichier), findsNothing);
+      expect(find.text(t.kyc.manqueType), findsOneWidget);
+
+      await tester.tap(find.text(t.kyc.envoyer), warnIfMissed: false);
+      await tester.pumpAndSettle();
+
+      expect(dossier.depots, isEmpty);
+      expect(annonces, isEmpty, reason: 'aucun reproche apres coup');
+      expect(find.text(t.kyc.manqueType), findsOneWidget);
+    });
+
+    testWidgets('type choisi : la photo agit, l envoi attend la photo', (
+      WidgetTester tester,
+    ) async {
+      final (FauxServiceDossier dossier, _) = await monter(tester, _piece());
+      ActionPrincipale envoyer() => tester.widget<ActionPrincipale>(
+        find.widgetWithText(ActionPrincipale, t.kyc.envoyer),
+      );
+
+      await tester.tap(find.text(t.kyc.carteIdentite));
+      await tester.pumpAndSettle();
+
+      expect(envoyer().onPress, isNull);
       expect(
         tester
             .widget<LienFleche>(
@@ -409,38 +442,90 @@ void main() {
             .onPress,
         isNotNull,
       );
-
-      await tester.tap(find.text(t.kyc.envoyer));
-      await tester.pumpAndSettle();
-
-      expect(dossier.depots, isEmpty);
-      expect(find.text(t.kyc.manqueType), findsOneWidget);
-      expect(annonces, <String>[t.kyc.manqueType]);
-      expect(FocusManager.instance.primaryFocus?.debugLabel, 'type-piece');
-    });
-
-    testWidgets('envoyer sans photo : dit ce qui manque, focus au lien', (
-      WidgetTester tester,
-    ) async {
-      final List<String> annonces = ecouterAnnonces(tester);
-      final (FauxServiceDossier dossier, _) = await monter(tester, _piece());
-
-      await tester.tap(find.text(t.kyc.carteIdentite));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text(t.kyc.envoyer));
-      await tester.pumpAndSettle();
-
-      expect(dossier.depots, isEmpty);
       expect(find.text(t.kyc.manquePhoto), findsOneWidget);
-      expect(annonces, <String>[t.kyc.manquePhoto]);
-      expect(FocusManager.instance.primaryFocus?.debugLabel, 'fichier-piece');
+      expect(find.text(t.kyc.manqueType), findsNothing);
 
-      // Le geste suivant efface la phrase : choisir la photo, puis envoyer.
       await tester.tap(find.text(t.kyc.choisirFichier));
       await tester.pumpAndSettle();
+
+      expect(envoyer().onPress, isNotNull);
+      expect(find.text(t.kyc.manquePhoto), findsNothing);
+      expect(find.text(t.kyc.fichierChoisi), findsOneWidget);
+
       await tester.tap(find.text(t.kyc.envoyer));
       await tester.pumpAndSettle();
       expect(dossier.depots, hasLength(1));
+    });
+
+    testWidgets('changer de type efface la photo et rend l envoi inactif', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, _piece());
+      await tester.tap(find.text(t.kyc.carteIdentite));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.kyc.choisirFichier));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text(t.kyc.passeport));
+      await tester.tap(find.text(t.kyc.passeport));
+      await tester.pumpAndSettle();
+
+      expect(
+        tester
+            .widget<ActionPrincipale>(
+              find.widgetWithText(ActionPrincipale, t.kyc.envoyer),
+            )
+            .onPress,
+        isNull,
+      );
+      expect(find.text(t.kyc.manquePhoto), findsOneWidget);
+    });
+
+    testWidgets('chaque type de piece est explique, Autre avec un exemple', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, _piece());
+      for (final String explication in <String>[
+        t.kyc.explicationCarteIdentite,
+        t.kyc.explicationPasseport,
+        t.kyc.explicationTitreSejour,
+        t.kyc.explicationAutre,
+      ]) {
+        expect(find.text(explication), findsOneWidget, reason: explication);
+      }
+      expect(
+        find.text(t.choix.exemple(texte: t.kyc.exempleAutre)),
+        findsOneWidget,
+      );
+      // Choisi dans la selection, jamais saisi a la main.
+      expect(find.byType(TextField), findsNothing);
+    });
+
+    testWidgets('le retour ramene au portail d attente', (
+      WidgetTester tester,
+    ) async {
+      final (FauxServiceDossier dossier, _) = await monter(tester, _piece());
+
+      await tester.tap(find.byType(DisqueRetour));
+      await tester.pumpAndSettle();
+
+      expect(find.text('portail'), findsOneWidget);
+      expect(dossier.depots, isEmpty);
+    });
+
+    testWidgets('Se deconnecter est atteignable sans defiler et deconnecte', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceAuth auth = FauxServiceAuth();
+      await monter(tester, _piece(), auth: auth);
+
+      final Finder sortie = find.byKey(const Key('piece-deconnexion'));
+      expect(sortie, findsOneWidget);
+      expect(tester.getRect(sortie).bottom, lessThanOrEqualTo(844));
+
+      await tester.tap(sortie);
+      await tester.pumpAndSettle();
+      expect(auth.deconnexions, 1);
     });
 
     testWidgets('un depot complet transmet la piece', (
