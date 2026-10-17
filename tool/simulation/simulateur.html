@@ -1,0 +1,344 @@
+<title>Simulateur économique Rewayah</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Mise en page : colonne de réglages à gauche, résultats à droite ; une seule colonne sur téléphone.
+   Couleurs et polices reprises de docs/produit/design-tokens.md (palette de l'application). */
+:root {
+  --canvas: #F8F4EE; --raised: #FFFFFF; --sunken: #F3EDE7;
+  --hairline: #DCD2C8; --resting: #C9BCB1; --strong: #8F8279;
+  --ink: #1C1D21; --muted: #5E564F; --faint: #756B63;
+  --accent: #8652E6; --on-accent: #FFFFFF; --wash-accent: #E9E0FC; --ink-accent: #5B36B0;
+  --wash-success: #C6F0D9; --ink-success: #0F5F35;
+  --wash-warning: #FCE7B8; --ink-warning: #6B4A00;
+  --wash-alert: #FBE3E9; --ink-alert: #B01B3C;
+  --s-teach: #8652E6; --s-fees: #B01B3C; --s-video: #FFB703; --s-infra: #8F8279; --s-tax: #5E564F; --s-admin: #3E7CB1; --s-result: #2E9E62;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --canvas: #17161A; --raised: #222027; --sunken: #1C1B20;
+  --hairline: #34303A; --resting: #4A4550; --strong: #8A8290;
+  --ink: #F3EEE8; --muted: #BDB4AC; --faint: #9A918A;
+  --accent: #A57FF0; --on-accent: #17161A; --wash-accent: #2E2445; --ink-accent: #CDB8FB;
+  --wash-success: #173A27; --ink-success: #8FE8B5;
+  --wash-warning: #3A2E10; --ink-warning: #FFD37A;
+  --wash-alert: #3D1820; --ink-alert: #FF9AAE;
+  --s-teach: #A57FF0; --s-fees: #E5587A; --s-video: #FFC53D; --s-infra: #9A918A; --s-tax: #6E6670; --s-admin: #6FA8DC; --s-result: #5FD493;
+  color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --canvas: #17161A; --raised: #222027; --sunken: #1C1B20;
+  --hairline: #34303A; --resting: #4A4550; --strong: #8A8290;
+  --ink: #F3EEE8; --muted: #BDB4AC; --faint: #9A918A;
+  --accent: #A57FF0; --on-accent: #17161A; --wash-accent: #2E2445; --ink-accent: #CDB8FB;
+  --wash-success: #173A27; --ink-success: #8FE8B5;
+  --wash-warning: #3A2E10; --ink-warning: #FFD37A;
+  --wash-alert: #3D1820; --ink-alert: #FF9AAE;
+  --s-teach: #A57FF0; --s-fees: #E5587A; --s-video: #FFC53D; --s-infra: #9A918A; --s-tax: #6E6670; --s-admin: #6FA8DC; --s-result: #5FD493;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--canvas); color: var(--ink); font: 15px/1.5 var(--body); font-variant-numeric: tabular-nums; }
+.page { max-width: 1240px; margin: 0 auto; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 24px; }
+header { display: grid; gap: 6px; }
+h1, h2 { font-family: var(--display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(26px, 4vw, 36px); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 19px; font-weight: 700; }
+.lede { color: var(--muted); max-width: 70ch; margin: 0; }
+.mise-en-page { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 860px) { .mise-en-page { grid-template-columns: minmax(0, 1fr); } }
+.reglages { background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r); padding: 18px; display: grid; gap: 18px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
+@media (max-width: 860px) { .reglages { position: static; } }
+fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 12px; }
+legend { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--faint); margin-bottom: 4px; }
+.champ { display: grid; gap: 4px; }
+.champ label { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; color: var(--muted); }
+.champ output { color: var(--ink); font-weight: 600; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+input[type="number"] { width: 100%; font: inherit; color: var(--ink); background: var(--sunken); border: 1px solid var(--resting); border-radius: 8px; padding: 6px 10px; }
+input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.deux { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.bascule { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.bascule input { accent-color: var(--accent); width: 16px; height: 16px; }
+.segments { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.segments button { font: inherit; font-size: 14px; padding: 7px 8px; border-radius: 8px; border: 1px solid var(--resting); background: var(--raised); color: var(--ink); cursor: pointer; }
+.segments button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
+.aide { font-size: 13px; color: var(--faint); margin: 0; }
+.resultats { display: grid; gap: 20px; min-width: 0; }
+.tuiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.tuile { background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r); padding: 14px 16px; display: grid; gap: 2px; align-content: start; }
+.tuile .libelle { font-size: 13px; color: var(--muted); }
+.tuile .valeur { font-family: var(--display); font-size: 28px; font-weight: 700; line-height: 1.15; }
+.tuile .detail { font-size: 13px; color: var(--faint); }
+.tuile.accent { background: var(--wash-accent); border-color: transparent; }
+.tuile.accent .valeur { color: var(--ink-accent); }
+.bloc { background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r); padding: 18px; display: grid; gap: 14px; min-width: 0; }
+.bloc > p { margin: 0; color: var(--muted); font-size: 14px; }
+.barre { display: flex; height: 34px; border-radius: 8px; overflow: hidden; background: var(--sunken); }
+.barre span { display: block; height: 100%; min-width: 2px; }
+.legende { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--muted); }
+.legende i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.table-defile { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 10px; background: var(--sunken); }
+td { padding: 8px 10px; border-top: 1px solid var(--hairline); }
+td.n, th.n { text-align: right; white-space: nowrap; }
+tr.total td { font-weight: 700; border-top: 1px solid var(--strong); }
+tr.moins td:first-child { padding-left: 22px; color: var(--muted); }
+.pastille { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; }
+.pastille.ok { background: var(--wash-success); color: var(--ink-success); }
+.pastille.att { background: var(--wash-warning); color: var(--ink-warning); }
+.pastille.ko { background: var(--wash-alert); color: var(--ink-alert); }
+.colonnes { display: flex; align-items: flex-end; gap: 6px; height: 140px; padding-top: 18px; }
+.colonnes div { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; font-size: 11px; color: var(--faint); min-width: 0; }
+.colonnes b { display: block; width: 100%; background: var(--accent); border-radius: 4px 4px 0 0; opacity: 0.85; }
+.colonnes .m1 b { background: var(--resting); }
+.deux-blocs { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+.notes { font-size: 14px; color: var(--muted); display: grid; gap: 6px; margin: 0; padding-left: 18px; }
+.calcul { font-size: 13px; color: var(--faint); }
+@media (prefers-reduced-motion: no-preference) { .barre span, .colonnes b { transition: width 0.25s ease, height 0.25s ease; } }
+</style>
+
+<div class="page">
+  <header>
+    <h1>Simulateur économique Rewayah</h1>
+    <p class="lede">100 élèves, leurs familles, leurs groupes et leurs enseignants, rejoués sur douze mois avec leurs comportements : paiement en avance, à l'heure, en retard ou jamais ; absences ; plaintes ; départs. Chaque chiffre est le résultat de centaines de mois simulés. Changez une hypothèse dans les réglages : tout se recalcule.</p>
+  </header>
+
+  <div class="mise-en-page">
+    <form class="reglages" id="reglages" autocomplete="off">
+      <fieldset>
+        <legend>Comportement des familles</legend>
+        <div class="segments" role="group" aria-label="Scénario" id="scenarios"></div>
+        <p class="aide" id="scenario-aide"></p>
+      </fieldset>
+      <fieldset>
+        <legend>Tarifs mensuels</legend>
+        <div class="deux">
+          <div class="champ"><label for="tarifEnfant">Enfant ($)</label><input type="number" id="tarifEnfant" min="0" step="1" value="50"></div>
+          <div class="champ"><label for="tarifAdulte">Adulte ($)</label><input type="number" id="tarifAdulte" min="0" step="1" value="60"></div>
+        </div>
+        <p class="aide">Remise famille : 5 $ sur la 3e personne, 7 $ sur chaque personne à partir de la 4e.</p>
+      </fieldset>
+      <fieldset>
+        <legend>Effectif</legend>
+        <div class="champ"><label for="partEnfants">Part d'enfants <output id="o-partEnfants"></output></label><input type="range" id="partEnfants" min="0" max="100" step="5" value="45"></div>
+        <label class="bascule"><input type="checkbox" id="separer" checked> Groupes d'adultes séparés hommes / femmes</label>
+      </fieldset>
+      <fieldset>
+        <legend>Enseignants</legend>
+        <div class="champ"><label for="marge">Marge visée pour l'académie <output id="o-marge"></output></label><input type="range" id="marge" min="0" max="60" step="5" value="30"></div>
+        <div class="champ"><label for="taux">Taux horaire appliqué ($/h)</label><input type="number" id="taux" min="0" step="0.5" value="8.5"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Coûts</legend>
+        <div class="champ"><label for="kbps">Débit visio par participant <output id="o-kbps"></output></label><input type="range" id="kbps" min="100" max="1500" step="50" value="700"></div>
+        <div class="champ"><label for="horsEurope">Cartes hors Europe <output id="o-horsEurope"></output></label><input type="range" id="horsEurope" min="0" max="100" step="5" value="50"></div>
+        <label class="bascule"><input type="checkbox" id="conversion" checked> Conversion USD → EUR (2 %)</label>
+        <div class="champ"><label for="prelevements">Taxes et cotisations sur l'encaissé <output id="o-prelevements"></output></label><input type="range" id="prelevements" min="0" max="40" step="1" value="0"></div>
+        <div class="champ"><label for="admin">Équipe d'administration ($/mois)</label><input type="number" id="admin" min="0" step="50" value="0"></div>
+      </fieldset>
+    </form>
+
+    <main class="resultats" aria-live="polite">
+      <div class="tuiles" id="tuiles"></div>
+
+      <section class="bloc">
+        <h2>Où va un dollar encaissé</h2>
+        <div class="barre" id="barre" role="img"></div>
+        <div class="legende" id="legende"></div>
+      </section>
+
+      <section class="bloc">
+        <h2>Le mois type, ligne par ligne</h2>
+        <p>Moyennes sur les mois 3 à 12 de tous les tirages : elles s'additionnent exactement, contrairement aux médianes.</p>
+        <div class="table-defile"><table id="compte"></table></div>
+      </section>
+
+      <div class="deux-blocs">
+        <section class="bloc">
+          <h2>Encaissé mois par mois</h2>
+          <p>Médiane. Le premier mois est plus bas : les paiements en retard n'arrivent qu'au mois suivant.</p>
+          <div class="colonnes" id="trajectoire" role="img"></div>
+        </section>
+        <section class="bloc">
+          <h2>Taux enseignant maximal</h2>
+          <p>Taux horaire qui laisse la marge visée 9 mois sur 10, puis 1 mois sur 2.</p>
+          <div class="table-defile"><table id="taux-table"></table></div>
+        </section>
+      </div>
+
+      <section class="bloc">
+        <h2>Groupes</h2>
+        <p id="groupes-resume"></p>
+        <div class="table-defile"><table id="groupes"></table></div>
+      </section>
+
+      <section class="bloc">
+        <h2>Enseignants</h2>
+        <div class="table-defile"><table id="enseignants"></table></div>
+      </section>
+
+      <section class="bloc">
+        <h2>Hypothèses à confirmer</h2>
+        <ul class="notes">
+          <li>Services : Supabase Pro 25 $, une base staging 10 $, Vercel Pro 20 $, LiveKit palier Ship 50 $ (150 000 minutes et 250 Go inclus, puis 0,0005 $ la minute et 0,12 $ le Go), domaine 1,25 $, compte bancaire 10 $. GitHub, Sentry et l'email restent dans leurs quotas gratuits. Grilles publiques relevées le 17 octobre 2026.</li>
+          <li>Non inclus : sauvegarde PITR de Supabase (environ 100 $), comptes développeur Apple (99 $ par an) et Google Play (25 $), à ajouter quand l'application native sera publiée.</li>
+          <li>Cartes : grille Stripe France, 1,5 % en Europe, 2,5 % au Royaume-Uni, 3,25 % ailleurs, plus 0,25 € et 2 % de conversion si l'on facture en dollars sur un compte en euros.</li>
+          <li>Virements aux enseignants en GNF ou XOF : 2 % plus 1 $ par virement.</li>
+          <li>Taxes, TVA et cotisations : à zéro par défaut, faute de connaître la structure juridique. Si l'académie est une entreprise française, la TVA à 20 % s'applique au-delà du seuil de franchise, et un mois type le dépasse sur l'année.</li>
+          <li>Une place libérée par un départ est reprise un mois plus tard par une nouvelle famille.</li>
+        </ul>
+        <p class="calcul" id="calcul"></p>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script type="module">
+import { SCENARIOS, parametresScenario, simuler, seancesParMois } from './modele_academie.mjs';
+
+const TIRAGES = 400;
+const etat = { scenario: 'realiste' };
+try { const s = localStorage.getItem('rewayah-simu-scenario'); if (s && SCENARIOS[s]) etat.scenario = s; } catch {}
+
+const $ = (id) => document.getElementById(id);
+const nombre = (id) => Math.max(0, Number($(id).value) || 0);
+const usd = (c) => `${(Math.round(c / 100) || 0).toLocaleString('fr-FR')} $`;
+const heures = (h) => h.toLocaleString('fr-FR', { maximumFractionDigits: 1 });
+const usd2 = (c) => `${(c / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} $`;
+const pct = (x) => `${Math.round(x * 100)} %`;
+const echapper = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+for (const [code, sc] of Object.entries(SCENARIOS)) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.textContent = sc.titre; b.dataset.code = code;
+  b.addEventListener('click', () => {
+    etat.scenario = code;
+    try { localStorage.setItem('rewayah-simu-scenario', code); } catch {}
+    planifier();
+  });
+  $('scenarios').append(b);
+}
+
+function parametres() {
+  const h = nombre('horsEurope') / 100;
+  return parametresScenario(etat.scenario, {
+    tirages: TIRAGES,
+    effectif: { partEnfants: nombre('partEnfants') / 100 },
+    tarifs: { enfantCentimes: Math.round(nombre('tarifEnfant') * 100), adulteCentimes: Math.round(nombre('tarifAdulte') * 100) },
+    groupes: { separerAdultesParSexe: $('separer').checked },
+    livekit: { debitDescendantKbps: nombre('kbps') },
+    paiementEnLigne: { origineCartes: { eee: 1 - h, royaumeUni: h * 0.2, international: h * 0.8 }, conversionBps: $('conversion').checked ? 200 : 0 },
+    fiscalite: { prelevementsBps: Math.round(nombre('prelevements') * 100) },
+    administration: { coutMensuelCentimes: Math.round(nombre('admin') * 100) },
+  });
+}
+
+let minuteur;
+function planifier() { clearTimeout(minuteur); minuteur = setTimeout(rendre, 120); }
+
+function rendre() {
+  const debut = performance.now();
+  const p = parametres();
+  const marge = nombre('marge') / 100;
+  const taux = Math.round(nombre('taux') * 100);
+  const r = simuler(p, { marges: [0.2, 0.3, 0.4, marge].filter((x, i, t) => t.indexOf(x) === i).sort(), tauxEnseignantCentimes: taux });
+  const m = r.moisType;
+  const pop = r.population;
+
+  for (const b of $('scenarios').children) b.setAttribute('aria-pressed', String(b.dataset.code === etat.scenario));
+  $('scenario-aide').textContent = SCENARIOS[etat.scenario].description;
+  $('o-partEnfants').textContent = `${nombre('partEnfants')} %`;
+  $('o-marge').textContent = `${nombre('marge')} %`;
+  $('o-kbps').textContent = `${nombre('kbps')} kbps`;
+  $('o-horsEurope').textContent = `${nombre('horsEurope')} %`;
+  $('o-prelevements').textContent = `${nombre('prelevements')} %`;
+
+  const vise = r.tauxEnseignantMax.find((x) => x.marge === marge);
+  const margeObtenue = m.encaisse.moyenne ? m.resultat.moyenne / m.encaisse.moyenne : 0;
+  const etatMarge = margeObtenue >= marge ? 'ok' : margeObtenue >= 0 ? 'att' : 'ko';
+  $('tuiles').innerHTML = [
+    tuile('Encaissé par mois', usd(m.encaisse.p50), `1 mois sur 10 sous ${usd(m.encaisse.p10)}`),
+    tuile('Reste avant enseignants', usd(m.resultatAvantEnseignants.p50), `après frais, services, taxes, administration`),
+    tuile(`Taux max pour ${pct(marge)} de marge`, `${usd2(vise.prudent)} / h`, `prudent ; ${usd2(vise.median)} un mois sur deux`, 'accent'),
+    tuile(`Résultat à ${usd2(taux)} / h`, usd(m.resultat.p50),
+      `<span class="pastille ${etatMarge}">marge ${pct(margeObtenue)}</span> · 1 mois sur 10 sous ${usd(m.resultat.p10)}`),
+  ].join('');
+
+  const parts = [
+    ['Enseignants', m.enseignants.moyenne, '--s-teach'],
+    ['Frais de carte', m.fraisCarte.moyenne, '--s-fees'],
+    ['LiveKit', m.livekit.moyenne, '--s-video'],
+    ['Autres services', m.servicesFixes + m.r2.moyenne, '--s-infra'],
+    ['Taxes', m.prelevements.moyenne, '--s-tax'],
+    ['Administration', p.administration.coutMensuelCentimes, '--s-admin'],
+    ['Résultat', Math.max(0, m.resultat.moyenne), '--s-result'],
+  ];
+  const total = parts.reduce((s, [, v]) => s + Math.max(0, v), 0) || 1;
+  $('barre').innerHTML = parts.map(([n, v, c]) => `<span title="${n}" style="width:${(Math.max(0, v) / total) * 100}%;background:var(${c})"></span>`).join('');
+  $('barre').setAttribute('aria-label', parts.map(([n, v]) => `${n} ${pct(v / total)}`).join(', '));
+  $('legende').innerHTML = parts.map(([n, v, c]) => `<span><i style="background:var(${c})"></i>${n} ${pct(Math.max(0, v) / total)}</span>`).join('');
+
+  const decalage = m.encaisse.moyenne - m.facture.moyenne + m.impaye.moyenne;
+  const lignes = [
+    ['Facturé aux familles', m.facture.moyenne, ''],
+    ['dont remises familiales accordées', -m.remises.moyenne, 'moins'],
+    ['Impayés perdus', -m.impaye.moyenne, 'moins'],
+    ['Décalage des paiements en retard', decalage, 'moins'],
+    ['Encaissé', m.encaisse.moyenne, 'total'],
+    ['Frais de carte et de conversion', -m.fraisCarte.moyenne, 'moins'],
+    [`LiveKit (${Math.round(m.minutesParticipant.moyenne).toLocaleString('fr-FR')} min, ${Math.round(m.goLivekit.moyenne)} Go)`, -m.livekit.moyenne, 'moins'],
+    ['Supabase, Vercel, domaine, banque, stockage', -(m.servicesFixes + m.r2.moyenne), 'moins'],
+    ['Taxes et cotisations', -m.prelevements.moyenne, 'moins'],
+    ['Équipe d’administration', -p.administration.coutMensuelCentimes, 'moins'],
+    [`Enseignants à ${usd2(taux)} / h (${Math.round(m.heuresEnseignees.moyenne)} h), virements compris`, -m.enseignants.moyenne, 'moins'],
+    ['Résultat de l’académie', m.resultat.moyenne, 'total'],
+  ];
+  $('compte').innerHTML = `<thead><tr><th>Poste</th><th class="n">Par mois</th></tr></thead><tbody>${
+    lignes.map(([l, v, c]) => `<tr class="${c}"><td>${echapper(l)}</td><td class="n">${c === 'moins' && Math.round(v / 100) > 0 ? '+' : ''}${usd(v)}</td></tr>`).join('')
+  }</tbody>`;
+
+  const max = Math.max(...r.trajectoire.map((x) => x.encaisseP50), 1);
+  $('trajectoire').innerHTML = r.trajectoire.map((x) =>
+    `<div class="${x.mois === 1 ? 'm1' : ''}" title="Mois ${x.mois} : ${usd(x.encaisseP50)}, ${x.elevesActifsP50} élèves"><b style="height:${Math.round((x.encaisseP50 / max) * 100)}px"></b>${x.mois}</div>`).join('');
+  $('trajectoire').setAttribute('aria-label', r.trajectoire.map((x) => `mois ${x.mois} ${usd(x.encaisseP50)}`).join(', '));
+
+  $('taux-table').innerHTML = `<thead><tr><th>Marge</th><th class="n">9 mois / 10</th><th class="n">1 mois / 2</th></tr></thead><tbody>${
+    r.tauxEnseignantMax.map((t) => `<tr${t.marge === marge ? ' class="total"' : ''}><td>${pct(t.marge)}</td><td class="n">${usd2(t.prudent)}</td><td class="n">${usd2(t.median)}</td></tr>`).join('')
+  }</tbody>`;
+
+  const tarif = (g) => (g.type === 'enfant' ? p.tarifs.enfantCentimes : p.tarifs.adulteCentimes);
+  const plein = (g) => (g.type === 'enfant' ? p.groupes.maxEnfants : p.groupes.maxAdultes);
+  const sousRemplis = pop.groupes.filter((g) => g.taille < plein(g)).length;
+  $('groupes-resume').textContent =
+    `${pop.groupes.length} groupes pour ${pop.eleves} élèves (${pop.enfants} enfants, ${pop.adultes} adultes) répartis en ${pop.foyers} familles. ` +
+    `${sousRemplis} groupes ne sont pas pleins : chaque place vide coûte une mensualité sans réduire les heures payées.`;
+  $('groupes').innerHTML = `<thead><tr><th>Groupe</th><th>Public</th><th class="n">Élèves</th><th class="n">Heures / mois</th><th class="n">Recette / mois</th><th class="n">Recette / heure</th><th class="n">Enseignant</th></tr></thead><tbody>${
+    pop.groupes.map((g) => {
+      const recette = g.taille * tarif(g);
+      const etatG = g.taille >= plein(g) ? 'ok' : g.sousMinimum ? 'ko' : 'att';
+      const publicG = g.type === 'enfant' ? `Enfants ${g.tranche} ans` : `Adultes ${g.public === 'F' ? 'femmes' : g.public === 'M' ? 'hommes' : 'mixte'}`;
+      return `<tr><td>G${g.id + 1}</td><td>${publicG}</td><td class="n"><span class="pastille ${etatG}">${g.taille} / ${plein(g)}</span></td><td class="n">${heures(g.heuresParMois)}</td><td class="n">${usd(recette)}</td><td class="n">${usd2(recette / g.heuresParMois)}</td><td class="n">E${g.enseignant + 1}</td></tr>`;
+    }).join('')
+  }</tbody>`;
+
+  $('enseignants').innerHTML = `<thead><tr><th>Enseignant</th><th>Groupes</th><th class="n">Heures / mois</th><th class="n">Paie à ${usd2(taux)} / h</th></tr></thead><tbody>${
+    pop.enseignants.map((e) => `<tr><td>E${e.id + 1} · ${e.sexe === 'F' ? 'enseignante' : 'enseignant'}</td><td>${e.groupes.map((id) => `G${id + 1}`).join(', ')}</td><td class="n">${heures(e.heuresParMois)}</td><td class="n">${usd(e.heuresParMois * taux)}</td></tr>`).join('')
+  }</tbody>`;
+
+  $('calcul').textContent = `${TIRAGES} tirages de 12 mois, ${seancesParMois(p.rythme)} séances par groupe et par mois, graine ${p.graine}. Calculé en ${Math.round(performance.now() - debut)} ms.`;
+}
+
+function tuile(libelle, valeur, detail, classe = '') {
+  return `<div class="tuile ${classe}"><span class="libelle">${libelle}</span><span class="valeur">${valeur}</span><span class="detail">${detail}</span></div>`;
+}
+
+$('reglages').addEventListener('input', planifier);
+$('reglages').addEventListener('submit', (e) => e.preventDefault());
+rendre();
+</script>
