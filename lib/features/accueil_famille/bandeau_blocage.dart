@@ -51,14 +51,20 @@ class BandeauBlocage extends StatelessWidget {
       key: cleAlerte,
       titre: t.tuteur.accueil.blocageAppareilTitre(prenom: prenom),
       message: t.tuteur.accueil.blocageAppareilPhrase(prenom: prenom),
-      action: Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: ActionPrincipale(
-          libelle: t.tuteur.accueil.connecterAppareil,
-          onPress: onConnecter,
-          // D5 / DASH-TUT-CTA : la tache immediate porte le seul bouton plein.
-          niveau: NiveauAction.principale,
-          pleineLargeur: false,
+      // L4-05-reprise (defaut D-1) : le bouton garde son propre noeud
+      // semantique, avec son role de bouton. Sans cette frontiere, il se
+      // fondait dans le titre de l'alerte (titre et bouton a la fois).
+      action: Semantics(
+        container: true,
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: ActionPrincipale(
+            libelle: t.tuteur.accueil.connecterAppareil,
+            onPress: onConnecter,
+            // D5 / DASH-TUT-CTA : la tache immediate porte le seul bouton plein.
+            niveau: NiveauAction.principale,
+            pleineLargeur: false,
+          ),
         ),
       ),
     );
