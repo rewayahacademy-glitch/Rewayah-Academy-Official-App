@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
@@ -90,7 +92,7 @@ class ChoiceCardGroup extends StatefulWidget {
 
   /// Vrai pour poser les options **cote a cote** (demande A-5.2, maquette
   /// « onboarding Mble d ») : cartes de meme hauteur, contenu centre, icone
-  /// dans un disque au-dessus du titre, radio en haut a droite. Faite pour
+  /// dans un disque au-dessus du titre, radio en haut cote `start`. Faite pour
   /// deux ou trois options courtes ; la carte « Autre », si elle est permise,
   /// reste pleine largeur dessous. Faux par defaut : rendu en liste inchange.
   final bool coteACote;
@@ -370,6 +372,14 @@ class _Carte extends StatelessWidget {
       ?raisonIndisponible,
     ].join('. ');
 
+    // E1 (demande du directeur du 17/10) : **toute la carte est la cible** et
+    // elle doit se lire comme telle. Le [Pressable] couvre toute la surface
+    // (geste opaque, curseur main sur le Web, clavier), le repere de
+    // selection est en tete cote `start`, et le survol change le fond (calque
+    // d'interaction, comme `AppCard`) et le titre (encre d'accent), pas
+    // seulement le filet. La hauteur minimale (112, 224 cote a cote) depasse
+    // toujours la cible tactile du mode courant.
+    final double cible = AppMetriques.of(context).cibleTactile;
     return Semantics(
       checked: retenue,
       inMutuallyExclusiveGroup: radio,
@@ -378,55 +388,100 @@ class _Carte extends StatelessWidget {
         actif: _disponible,
         libelleSemantique: lu,
         respecterCibleTactile: false,
+        arrondiFocus: AppRadius.arrondiLg,
         // La selection passe d'une teinte a l'autre en fondu court (P2-16).
-        constructeur: (BuildContext contexte, EtatPression etat) =>
-            AnimatedContainer(
-              duration: Mouvement.duree(contexte, Mouvement.court),
-              curve: Mouvement.entree,
-              constraints: BoxConstraints(
-                minHeight: verticale
-                    ? AppPage.hauteurChoix * 2
-                    : AppPage.hauteurChoix,
-              ),
-              padding: const EdgeInsets.all(AppSpacing.xl),
-              decoration: AppElevation.avecFilet(
-                surface: paire,
-                filet: retenue || etat.survole || etat.presse
-                    ? palette.borderStrong
-                    : palette.borderResting,
-                ombre: palette.ombre,
-                arrondi: AppRadius.arrondiLg,
-                ombres: AppElevation.niveau0,
-              ),
-              // Le libelle lu est [lu] : les textes visibles ne sont pas relus
-              // une seconde fois a sa suite.
-              child: ExcludeSemantics(
-                child: verticale
-                    ? _contenuVertical(palette, paire, textes, styleSecondaire)
-                    : _contenuListe(palette, paire, textes, styleSecondaire),
+        constructeur: (BuildContext contexte, EtatPression etat) {
+          final bool interaction = etat.survole || etat.presse;
+          return AnimatedContainer(
+            duration: Mouvement.duree(contexte, Mouvement.court),
+            curve: Mouvement.entree,
+            constraints: BoxConstraints(
+              minHeight: math.max(
+                cible,
+                verticale ? AppPage.hauteurChoix * 2 : AppPage.hauteurChoix,
               ),
             ),
+            padding: const EdgeInsets.all(AppSpacing.xl),
+            decoration:
+                AppElevation.avecFilet(
+                  surface: paire,
+                  // Retenue : le filet prend l'encre d'accent, la bordure qui
+                  // porte le sens ; survol et pression : le filet fort.
+                  filet: retenue
+                      ? palette.inkAccent
+                      : interaction
+                      ? palette.borderStrong
+                      : palette.borderResting,
+                  ombre: palette.ombre,
+                  arrondi: AppRadius.arrondiLg,
+                  ombres: AppElevation.niveau0,
+                ).copyWith(
+                  // Survol et pression : le calque d'interaction d'`AppCard`.
+                  color: interaction
+                      ? Color.alphaBlend(
+                          palette.calqueInteraction(presse: etat.presse),
+                          paire.background,
+                        )
+                      : null,
+                ),
+            // Le libelle lu est [lu] : les textes visibles ne sont pas relus
+            // une seconde fois a sa suite.
+            child: ExcludeSemantics(
+              child: verticale
+                  ? _contenuVertical(
+                      palette,
+                      paire,
+                      textes,
+                      styleSecondaire,
+                      survole: interaction,
+                    )
+                  : _contenuListe(
+                      palette,
+                      paire,
+                      textes,
+                      styleSecondaire,
+                      survole: interaction,
+                    ),
+            ),
+          );
+        },
       ),
     );
   }
 }
 
 extension on _Carte {
-  /// Le style du titre : celui de la paire, ou le ton doux si l'option est
+  /// Le style du titre : celui de la paire, l'encre d'accent au survol (la
+  /// carte se lit comme une cible), ou le ton doux si l'option est
   /// indisponible.
-  TextStyle _styleTitre(AppPalette palette, AppColorPair paire, TextTheme t) =>
-      _disponible
-      ? paire.applyTo(t.titleMedium ?? const TextStyle())
-      : palette.inkMuted.applyTo(t.titleMedium ?? const TextStyle());
+  TextStyle _styleTitre(
+    AppPalette palette,
+    AppColorPair paire,
+    TextTheme t, {
+    required bool survole,
+  }) => !_disponible
+      ? palette.inkMuted.applyTo(t.titleMedium ?? const TextStyle())
+      : survole
+      ? palette.inkAccent.applyTo(t.titleMedium ?? const TextStyle())
+      : paire.applyTo(t.titleMedium ?? const TextStyle());
+
+  /// Le repere de selection, toujours dessine et toujours en tete de carte
+  /// cote `start` : radio en selection unique, case en selection multiple.
+  /// Il double la teinte : une selection qui ne se lirait qu'a la couleur
+  /// n'existerait pas pour un daltonien.
+  Widget get _repere => radio
+      ? RadioChoix(retenue: retenue, disponible: _disponible)
+      : CaseChoix(retenue: retenue, disponible: _disponible);
 
   /// Les textes de la carte et leur style : titre, description, raison.
   List<(String, TextStyle)> _textesStyles(
     AppPalette palette,
     AppColorPair paire,
     TextTheme textes,
-    TextStyle styleSecondaire,
-  ) => <(String, TextStyle)>[
-    (libelle, _styleTitre(palette, paire, textes)),
+    TextStyle styleSecondaire, {
+    required bool survole,
+  }) => <(String, TextStyle)>[
+    (libelle, _styleTitre(palette, paire, textes, survole: survole)),
     if (description != null) (description!, styleSecondaire),
     if (raisonIndisponible != null)
       (
@@ -435,13 +490,14 @@ extension on _Carte {
       ),
   ];
 
-  /// Le contenu de la carte en liste : icone, textes, radio (ou coche).
+  /// Le contenu de la carte en liste : repere (radio ou case) en tete cote
+  /// `start`, icone, textes.
   ///
   /// COUPE-MOTS-4 (decide par delegation le 09/10) : a 320 en texte double,
   /// l'icone et le radio laissaient trop peu de place aux textes, et des
   /// mots s'y coupaient (« nor / malement », « administ / ration »,
   /// « Acc / essibilité »). Quand un mot d'un texte ne tient pas a cote
-  /// d'eux, a l'echelle de l'appareil, l'icone et le radio passent sur une
+  /// d'eux, a l'echelle de l'appareil, le radio et l'icone passent sur une
   /// rangee au-dessus et les textes prennent toute la largeur de la carte.
   /// Chaque texte passe par [TexteSansCoupure] : un mot qui ne tiendrait
   /// toujours pas se reduit (echelle bornee) au lieu d'etre coupe.
@@ -449,13 +505,15 @@ extension on _Carte {
     AppPalette palette,
     AppColorPair paire,
     TextTheme textes,
-    TextStyle styleSecondaire,
-  ) {
+    TextStyle styleSecondaire, {
+    required bool survole,
+  }) {
     final List<(String, TextStyle)> aEcrire = _textesStyles(
       palette,
       paire,
       textes,
       styleSecondaire,
+      survole: survole,
     );
     final Widget? symbole = icone == null
         ? null
@@ -465,19 +523,7 @@ extension on _Carte {
                 : palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
             child: Icon(icone!.resoudre(selectionne: retenue)),
           );
-    // Le radio ou la coche doublent la couleur : une selection qui ne se
-    // lirait qu'a la teinte n'existerait pas pour un daltonien.
-    final Widget? indicateur = radio
-        ? RadioChoix(retenue: retenue, disponible: _disponible)
-        : retenue
-        ? IconTheme(
-            data: IconThemeData(
-              color: paire.onBackground,
-              size: AppSpacing.xxl,
-            ),
-            child: Icon(AppIcons.succes.actif),
-          )
-        : null;
+    final Widget indicateur = _repere;
     final Widget colonne = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -505,10 +551,9 @@ extension on _Carte {
     );
     return LayoutBuilder(
       builder: (BuildContext contexte, BoxConstraints contraintes) {
-        // La place prise a cote des textes : l'icone et le radio, chacun
-        // avec son ecart. En selection multiple, la place de la coche est
-        // gardee meme decochee : la carte ne change pas de disposition
-        // quand on la coche.
+        // La place prise a cote des textes : le repere et l'icone, chacun
+        // avec son ecart. Le repere est toujours dessine : la carte ne
+        // change pas de disposition quand on la coche.
         final double cote =
             (symbole == null ? 0 : AppSpacing.xxl + AppSpacing.md) +
             AppSpacing.md +
@@ -524,9 +569,10 @@ extension on _Carte {
         if (!empile) {
           return Row(
             children: <Widget>[
+              indicateur,
+              Ecart.hMd,
               if (symbole != null) ...<Widget>[symbole, Ecart.hMd],
               Expanded(child: colonne),
-              if (indicateur != null) ...<Widget>[Ecart.hMd, indicateur],
             ],
           );
         }
@@ -536,9 +582,8 @@ extension on _Carte {
           children: <Widget>[
             Row(
               children: <Widget>[
-                ?symbole,
-                const Spacer(),
-                indicateur ?? const SizedBox.square(dimension: AppSpacing.xxl),
+                indicateur,
+                if (symbole != null) ...<Widget>[Ecart.hMd, symbole],
               ],
             ),
             Ecart.vSm,
@@ -549,8 +594,8 @@ extension on _Carte {
     );
   }
 
-  /// Le contenu de la carte cote a cote : radio ou coche en haut a droite,
-  /// icone dans un disque puis titre, centres.
+  /// Le contenu de la carte cote a cote : repere (radio ou case) en haut
+  /// cote `start` (E1, 17/10), icone dans un disque puis titre, centres.
   ///
   /// SUPERPOS-1 (decision du 05/10/2026, prise par delegation) : le radio a
   /// sa propre ligne, en tete, dans le flux. Peint dans un `Stack`, il
@@ -561,27 +606,17 @@ extension on _Carte {
     AppPalette palette,
     AppColorPair paire,
     TextTheme textes,
-    TextStyle styleSecondaire,
-  ) {
+    TextStyle styleSecondaire, {
+    required bool survole,
+  }) {
     const double disque = AppSpacing.respiration + AppSpacing.sm;
     final AppColorPair fondDisque = retenue
         ? palette.surfaceActionDouce
         : palette.surfaceSunken;
-    final Widget indicateur = radio
-        ? RadioChoix(retenue: retenue, disponible: _disponible)
-        : retenue
-        ? IconTheme(
-            data: IconThemeData(
-              color: paire.onBackground,
-              size: AppSpacing.xxl,
-            ),
-            child: Icon(AppIcons.succes.actif),
-          )
-        : const SizedBox.square(dimension: AppSpacing.xxl);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Align(alignment: AlignmentDirectional.topEnd, child: indicateur),
+        Align(alignment: AlignmentDirectional.topStart, child: _repere),
         Ecart.vXs,
         Expanded(
           child: Center(
@@ -619,6 +654,7 @@ extension on _Carte {
                       paire,
                       textes,
                       styleSecondaire,
+                      survole: survole,
                     ).indexed) ...<Widget>[
                   if (i > 0)
                     texte == raisonIndisponible ? Ecart.vSm : Ecart.vXs,
@@ -683,6 +719,52 @@ class RadioChoix extends StatelessWidget {
                         color: palette.surfacePrimary.background,
                       ),
                     ),
+                  ),
+                )
+              : null,
+        ),
+      ),
+    );
+  }
+}
+
+/// La case dessinee d'une carte de choix en selection multiple : carre a
+/// filet, plein et coche quand l'option est retenue. Memes encres que
+/// [RadioChoix] ; sans semantique propre : la carte porte l'etat coche.
+class CaseChoix extends StatelessWidget {
+  /// Cree la case.
+  const CaseChoix({required this.retenue, super.key, this.disponible = true});
+
+  /// Vrai quand l'option est retenue.
+  final bool retenue;
+
+  /// Faux pour une option indisponible.
+  final bool disponible;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final AppInkColor bord = RadioChoix(
+      retenue: retenue,
+      disponible: disponible,
+    ).anneau(palette);
+    return ExcludeSemantics(
+      child: SizedBox.square(
+        dimension: AppSpacing.xxl,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.arrondiXs,
+            color: retenue ? palette.surfacePrimary.background : null,
+            border: Border.fromBorderSide(bord.asBorderSide(width: 2)),
+          ),
+          child: retenue
+              ? _Croissance(
+                  child: IconTheme(
+                    data: IconThemeData(
+                      color: palette.surfacePrimary.onBackground,
+                      size: AppSpacing.lg,
+                    ),
+                    child: Icon(AppIcons.succes.actif),
                   ),
                 )
               : null,

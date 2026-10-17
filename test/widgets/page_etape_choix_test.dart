@@ -376,7 +376,7 @@ void main() {
     for (final Brightness luminosite in Brightness.values) {
       testWidgets(
         'cote a cote : meme rangee, meme hauteur, icone au-dessus du titre, '
-        'radio en haut a droite, tape Femme, $luminosite',
+        'radio en haut cote start (E1), tape Femme, $luminosite',
         (WidgetTester tester) async {
           fixerVue(tester, vueMobile);
           ReponseChoix? recue;
@@ -414,7 +414,7 @@ void main() {
               matching: find.byType(RadioChoix),
             ),
           );
-          expect(radio.center.dx, greaterThan(homme.center.dx));
+          expect(radio.center.dx, lessThan(homme.center.dx));
           expect(radio.center.dy, lessThan(titre.top));
 
           await tester.tap(find.byKey(const Key('opt-femme')));
