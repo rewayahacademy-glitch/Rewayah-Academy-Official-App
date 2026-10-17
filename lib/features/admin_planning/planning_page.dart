@@ -111,7 +111,7 @@ class _PlanningPageEtat extends ConsumerState<PlanningPage> {
                 return EtatSysteme(
                   key: const ValueKey<String>('planning-indisponible'),
                   nature: NatureEtat.indisponible,
-                  titre: l.indisponibleTitre,
+                  titre: t.commun.etats.branchementServeur,
                   phrase: l.indisponiblePhrase,
                   dependance: erreur.dependance,
                 );

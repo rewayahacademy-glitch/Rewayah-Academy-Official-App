@@ -111,7 +111,7 @@ Future<void> _ouvrir(
     case _Ecran.reglage:
       // Une duree et un motif proposes, retenus.
       await toucher(find.text(t.tuteur.reglages.demandeDuree));
-      await toucher(find.text(t.tuteur.reglages.demandeMinutes(minutes: '45')));
+      await toucher(find.text(t.commun.formats.minutes(minutes: '45')));
       await toucher(find.text(t.motifs.reglageDuree.tropLongue));
       await tester.ensureVisible(find.byKey(SelecteurMotif.clePuce(0)));
       await stabiliser(tester);

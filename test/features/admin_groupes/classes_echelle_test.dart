@@ -236,7 +236,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(t.admin.groupes.liste.position(page: '1', total: '26')),
+        find.text(t.commun.formats.pageSur(page: '1', total: '26')),
         findsOneWidget,
       );
 

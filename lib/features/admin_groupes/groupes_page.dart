@@ -639,7 +639,7 @@ class _Corps extends StatelessWidget {
         icone: AppIcons.rienAAfficher,
       );
     }
-    final String position = l.position(
+    final String position = t.commun.formats.pageSur(
       page: '${page.page}',
       total: '${page.pages}',
     );

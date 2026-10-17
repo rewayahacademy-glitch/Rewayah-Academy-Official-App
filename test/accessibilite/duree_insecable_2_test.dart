@@ -40,7 +40,7 @@ final RegExp _espaceSecable = RegExp('[ \t\n]');
 const List<String> _libellesADuree = <String>[
   'enseignant.cahier.duree',
   'enseignant.cahier.dureeEtInterruption',
-  'enseignant.creneaux.duree',
+  'commun.formats.minutes',
   'controleur.historique.duree',
   'controleur.compteRendu.debutRetard',
   'salle.seance.minutesRestantes',

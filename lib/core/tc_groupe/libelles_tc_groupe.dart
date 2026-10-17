@@ -357,7 +357,7 @@ abstract final class LibellesGroupe {
   static String dureeLisible(Duration duree) {
     final int minutes = duree.inMinutes;
     if (minutes < Duration.minutesPerHour) {
-      return insecable(t.tc.groupe.duree.minutes(minutes: minutes));
+      return insecable(t.commun.formats.minutes(minutes: minutes));
     }
     final int heures = minutes ~/ Duration.minutesPerHour;
     final int reste = minutes % Duration.minutesPerHour;

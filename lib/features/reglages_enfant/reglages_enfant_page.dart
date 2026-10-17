@@ -432,9 +432,7 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
                         OptionChoix(
                           valeur: '$minutes',
                           libelle: LibellesGroupe.valeurSeule(
-                            t.tuteur.reglages.demandeMinutes(
-                              minutes: '$minutes',
-                            ),
+                            t.commun.formats.minutes(minutes: '$minutes'),
                           ),
                         ),
                     ],

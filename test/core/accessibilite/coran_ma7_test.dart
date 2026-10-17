@@ -474,7 +474,10 @@ void main() {
         final String titre = tester
             .widget<EnteteLecteurCoranAccessibilite>(entete)
             .titre;
-        expect(titre, contains(t.eleve.coran.page(page: '1', total: '604')));
+        expect(
+          titre,
+          contains(t.commun.formats.pageSur(page: '1', total: '604')),
+        );
         // Le seul texte de l'en-tete est le titre (le retour est une icone).
         final Finder texte = find.descendant(
           of: entete,
