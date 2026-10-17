@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/foyer/port_creation_profil_eleve.dart';
@@ -21,12 +20,12 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/etat_systeme.dart';
-import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/zone_saisie.dart' show ZoneSaisie;
 import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
+import 'choix_age.dart';
 
 /// La porte d'acces du titulaire, qui decide de ce qui est creable (K3).
 ///
@@ -597,96 +596,19 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
           ),
         ),
         Ecart.vMd,
-        _ChoixAge(
+        ChoixAge(
           key: FormulaireProfilEleve.ageKey,
           bornes: _bornes,
           choisi: int.tryParse(_age.text.trim()),
+          // DUREE-INSECABLE : « 6 ans » insecable, enveloppe a l'appel.
+          aide: LibellesGroupe.insecable(
+            t.foyer.ajout.identite.ageAide(min: _bornes.min),
+          ),
+          clePuce: FormulaireProfilEleve.ageChoixKey,
           erreur: erreurAge,
           figee: _envoi,
           onChoisir: choisirAge,
         ),
-      ],
-    );
-  }
-}
-
-/// L'age se choisit parmi des puces bornees (jamais tape) : une puce par age
-/// des bornes, la puce retenue sur la paire douce d'accent (`FilterPill`).
-class _ChoixAge extends StatelessWidget {
-  const _ChoixAge({
-    required this.bornes,
-    required this.choisi,
-    required this.erreur,
-    required this.onChoisir,
-    super.key,
-    this.figee = false,
-  });
-
-  final BornesAge bornes;
-  final int? choisi;
-  final String? erreur;
-  final ValueChanged<int> onChoisir;
-
-  /// Vrai pendant l'envoi : le choix est fige le temps de la reponse.
-  final bool figee;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Text(
-          t.foyer.ajout.identite.age,
-          style: palette.inkStrong.applyTo(
-            textes.titleMedium ?? const TextStyle(),
-          ),
-        ),
-        Ecart.vXs,
-        Text(
-          LibellesGroupe.insecable(
-            t.foyer.ajout.identite.ageAide(min: bornes.min),
-          ),
-          style: palette.inkMuted.applyTo(
-            textes.bodyMedium ?? const TextStyle(),
-          ),
-        ),
-        Ecart.vSm,
-        // Choix de formulaire, pas un filtre : l'age du profil.
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
-            for (int age = bornes.min; age <= bornes.max; age++)
-              FilterPill(
-                key: FormulaireProfilEleve.ageChoixKey(age),
-                libelle: '$age',
-                retenue: age == choisi,
-                // Jamais grisee (BOUTONS-GRISES-1) : pendant l'envoi, le
-                // choix est fige le temps de la reponse, et l'appui le dit
-                // au lecteur d'ecran au lieu de rester muet.
-                onPress: figee
-                    ? () => signalerManque(
-                        context,
-                        t.foyer.ajout.identite.ageFige,
-                      )
-                    : () => onChoisir(age),
-              ),
-          ],
-        ),
-        if (erreur case final String message) ...<Widget>[
-          Ecart.vSm,
-          Semantics(
-            liveRegion: true,
-            child: Text(
-              message,
-              style: palette.inkAlert.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
-              ),
-            ),
-          ),
-        ],
       ],
     );
   }

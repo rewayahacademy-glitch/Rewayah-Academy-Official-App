@@ -807,7 +807,9 @@ class _Traductions$parcours$ar extends Traductions$parcours$fr {
 	@override String get finAjouterDetail => 'هل يرغب شخص آخر من الأسرة في التعلم؟';
 	@override String get finAjouterProfil => 'إضافة ملف طالب';
 	@override String ageQuestion({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟';
-	@override String get ageRaison => 'العمر يحدد مدة الحصص وعدد الطلاب في الفصل. لا نطلب تاريخ الميلاد: تكفي الفئة العمرية.';
+	@override String get ageRaison => 'العمر يحدد مدة الحصص وعدد الطلاب في الفصل. لا نطلب تاريخ الميلاد: يكفي العمر بالسنوات.';
+	@override String get ageAide => 'اختر العمر بالسنوات من القائمة، كما عند إضافة الملف.';
+	@override String get ageSansTranche => 'لا يوجد فصل مخصص لهذا العمر حاليًا. يمكن لفريق الأكاديمية توجيهكم.';
 	@override String get langueQuestion => 'بأي لغة يُقدَّم الدرس؟';
 	@override String get langueRaison => 'هي اللغة التي سيتكلمها المعلم أثناء الحصة. وهي مستقلة عن لغة التطبيق، التي يمكنك تغييرها في أي وقت من إعداداتك.';
 	@override String get lieuQuestion => 'أين تقيم؟';
@@ -19613,7 +19615,9 @@ extension on TraductionsAr {
 			_ => null,
 		} ?? switch (path) {
 			'parcours.ageQuestion' => ({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟',
-			'parcours.ageRaison' => 'العمر يحدد مدة الحصص وعدد الطلاب في الفصل. لا نطلب تاريخ الميلاد: تكفي الفئة العمرية.',
+			'parcours.ageRaison' => 'العمر يحدد مدة الحصص وعدد الطلاب في الفصل. لا نطلب تاريخ الميلاد: يكفي العمر بالسنوات.',
+			'parcours.ageAide' => 'اختر العمر بالسنوات من القائمة، كما عند إضافة الملف.',
+			'parcours.ageSansTranche' => 'لا يوجد فصل مخصص لهذا العمر حاليًا. يمكن لفريق الأكاديمية توجيهكم.',
 			'parcours.langueQuestion' => 'بأي لغة يُقدَّم الدرس؟',
 			'parcours.langueRaison' => 'هي اللغة التي سيتكلمها المعلم أثناء الحصة. وهي مستقلة عن لغة التطبيق، التي يمكنك تغييرها في أي وقت من إعداداتك.',
 			'parcours.lieuQuestion' => 'أين تقيم؟',
@@ -20122,10 +20126,10 @@ extension on TraductionsAr {
 			'adulte.recharge.indisponiblePhrase' => 'عروض الشحن غير متاحة في التطبيق بعد. لا دفع ممكن هنا الآن.',
 			'adulte.recharge.verificationEchecTitre' => 'لم تكتمل المراجعة.',
 			'adulte.recharge.verificationEchecPhrase' => 'اختياراتك محفوظة. يمكنك إعادة المحاولة.',
-			'adulte.recharge.recapitulatif' => 'الملخص حسب المستفيد',
-			'adulte.recharge.montantPaye' => 'المبلغ المدفوع',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.recharge.recapitulatif' => 'الملخص حسب المستفيد',
+			'adulte.recharge.montantPaye' => 'المبلغ المدفوع',
 			'adulte.recharge.soldeAttribue' => 'الرصيد المخصص',
 			'adulte.recharge.statut' => 'حالة التخصيص',
 			'adulte.recharge.total' => 'المجموع المستحق',
@@ -20636,10 +20640,10 @@ extension on TraductionsAr {
 			'controleur.historique.sectionObservation' => 'ملاحظة المراقب',
 			'controleur.historique.sectionComplements' => 'التكملات',
 			'controleur.historique.sectionEchanges' => 'المراسلات مع الإدارة',
-			'controleur.historique.cleClasse' => 'الفصل',
-			'controleur.historique.cleEnseignant' => 'المعلم',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.historique.cleClasse' => 'الفصل',
+			'controleur.historique.cleEnseignant' => 'المعلم',
 			'controleur.historique.cleDate' => 'التاريخ',
 			'controleur.historique.cleDuree' => 'مدة المتابعة',
 			'controleur.historique.cleElevesPresents' => 'الحاضرون',

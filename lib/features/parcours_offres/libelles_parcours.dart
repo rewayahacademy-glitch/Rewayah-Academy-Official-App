@@ -284,3 +284,35 @@ String detailEtape(
     dePrenom: deDevant(prenom),
   ),
 };
+
+/// La tranche d'age qui couvre [age], parmi les [cohortes] rendues par le
+/// serveur, ou `null` si aucune ne le couvre.
+///
+/// **Conversion cote ecran, contrat serveur inchange.** L'app ne demande
+/// l'age qu'en annees (`ChoixAge`) ; `enregistrer_profil_apprentissage`
+/// attend, lui, un code de tranche (`p_cohorte`). D'habitude il n'y a rien a
+/// convertir : `creer_profil_enfant` deduit deja la tranche de l'age a la
+/// creation du profil, et le parcours la reprend telle quelle. Cette fonction
+/// ne sert qu'au repli, quand la fiche n'a pas encore de tranche (profil cree
+/// avant cette deduction, ou 18 ans, que les tranches « enfant » ne couvrent
+/// pas a la creation).
+///
+/// Les bornes se lisent dans le code de la tranche (`enfant_6_9`,
+/// `adulte_18_plus`), car la lecture des tranches ne rend pas encore
+/// `age_min` ni `age_max_inclus` : point signale au backend. Une tranche dont
+/// le code ne suit pas ce motif n'est jamais retenue par devinette.
+String? cohortePourAge(int age, List<CohorteAge> cohortes) {
+  final RegExp motif = RegExp(r'_(\d+)_(\d+|plus)$');
+  for (final CohorteAge c in cohortes) {
+    final RegExpMatch? m = motif.firstMatch(c.code);
+    if (m == null) {
+      continue;
+    }
+    final int min = int.parse(m.group(1)!);
+    final int? max = m.group(2) == 'plus' ? null : int.parse(m.group(2)!);
+    if (age >= min && (max == null || age <= max)) {
+      return c.code;
+    }
+  }
+  return null;
+}

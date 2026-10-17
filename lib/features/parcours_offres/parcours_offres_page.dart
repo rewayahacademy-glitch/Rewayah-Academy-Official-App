@@ -20,6 +20,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/schedule_option.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
+import '../foyer/choix_age.dart';
 import 'libelles_parcours.dart';
 
 /// Le parcours de personnalisation, puis le choix d'un horaire vitrine.
@@ -47,12 +48,24 @@ class ParcoursOffresPage extends ConsumerStatefulWidget {
   /// L'apprenant concerne.
   final String eleveId;
 
+  /// Le choix de l'age, pose seulement si la fiche n'a pas de tranche.
+  static const Key ageKey = Key('parcours.age');
+
+  /// La puce d'un age.
+  static Key ageChoixKey(int age) => Key('parcours.age.$age');
+
   @override
   ConsumerState<ParcoursOffresPage> createState() => _ParcoursOffresPageState();
 }
 
 /// Les questions du parcours, dans l'ordre.
 enum _Question { age, langue, lieu, niveau, objectif, moments, offres }
+
+/// L'age choisi au repli (en annees), par apprenant, en memoire seulement :
+/// au retour sur la question, la puce touchee reste retenue. Le serveur ne
+/// recoit que la tranche qui en decoule (`cohortePourAge`).
+final Provider<Map<String, int>> _agesParcoursProvider =
+    Provider<Map<String, int>>((Ref ref) => <String, int>{});
 
 class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
   bool _envoi = false;
@@ -105,7 +118,24 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
 
   /// Les questions de cet apprenant ; le total « n sur N » se calcule sur
   /// cette liste.
-  List<_Question> get _questions => _Question.values;
+  ///
+  /// **L'age n'est demande qu'une fois** (DECISION-ENTREE-2026-10-17) : a
+  /// l'ajout du profil, en annees. Le serveur en a deduit la tranche ; le
+  /// parcours la reprend et ne repose pas la question. Elle ne revient, sous
+  /// la meme forme (en annees), que si la fiche n'a pas encore de tranche.
+  List<_Question> get _questions => <_Question>[
+    for (final _Question q in _Question.values)
+      if (q != _Question.age || _ageADemander) q,
+  ];
+
+  /// Vrai quand le serveur ne connait pas la tranche, ou quand la question a
+  /// deja ete repondue ici (la liste ne change pas sous les pieds).
+  bool get _ageADemander =>
+      _b.cohorte != null || _apprenant?.cohorteCode == null;
+
+  /// Retour : la premiere question quitte le questionnaire (le brouillon
+  /// reste), les suivantes reviennent a la precedente.
+  VoidCallback _retour(_Question q) => _numero(q) == 1 ? _quitter : _reculer;
 
   int get _total => _questions.length;
 
@@ -213,7 +243,8 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
       ref
         ..invalidate(parcoursFoyerProvider)
         ..invalidate(offresCompatiblesProvider)
-        ..read(brouillonsParcoursProvider).remove(widget.eleveId);
+        ..read(brouillonsParcoursProvider).remove(widget.eleveId)
+        ..read(_agesParcoursProvider).remove(widget.eleveId);
       if (mounted) {
         setState(() => _fini = true);
       }
@@ -394,12 +425,28 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
     );
   }
 
-  // --- 1. L'age, jamais une date de naissance ------------------------------
+  // --- 1. L'age, au repli seulement, et en annees ------------------------
 
+  /// Posee seulement si la fiche n'a pas encore de tranche (voir
+  /// [_questions]) : meme titre et memes puces qu'a l'ajout du profil
+  /// (`ChoixAge`), jamais une tranche, jamais une date de naissance. La
+  /// tranche envoyee au serveur se deduit de l'age (`cohortePourAge`).
   Widget _pageAge() {
     final AsyncValue<List<CohorteAge>> cohortes = ref.watch(
       cohortesAgeProvider,
     );
+    final int? age = ref.read(_agesParcoursProvider)[widget.eleveId];
+    final bool sansTranche =
+        age != null &&
+        cohortes.hasValue &&
+        cohortePourAge(age, cohortes.requireValue) == null;
+
+    void choisir(int choisi) => setState(() {
+      ref.read(_agesParcoursProvider)[widget.eleveId] = choisi;
+      _b.cohorte = cohortes.hasValue
+          ? cohortePourAge(choisi, cohortes.requireValue)
+          : null;
+    });
 
     return PageParcours(
       numero: _numero(_Question.age),
@@ -412,21 +459,13 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
       // Premiere question : Retour quitte le questionnaire, le brouillon reste.
       onRetour: _quitter,
       enfant: cohortes.hasValue
-          ? ChoiceCardGroup(
-              // La liste des tranches est fermee et vient du serveur : aucune
-              // reponse « Autre » n'aurait de sens, puisqu'il n'existe pas de
-              // tranche que l'academie ne connaisse pas.
-              autoriserSaisieLibre: false,
-              valeurInitiale: _cohorte == null
-                  ? null
-                  : ReponseChoix(valeurs: <String>{_cohorte!}),
-              options: <OptionChoix>[
-                for (final CohorteAge c in cohortes.requireValue)
-                  OptionChoix(valeur: c.code, libelle: c.nom),
-              ],
-              onChange: (ReponseChoix r) => setState(
-                () => _b.cohorte = r.valeurs.isEmpty ? null : r.valeurs.first,
-              ),
+          ? ChoixAge(
+              key: ParcoursOffresPage.ageKey,
+              choisi: age,
+              aide: t.parcours.ageAide,
+              clePuce: ParcoursOffresPage.ageChoixKey,
+              erreur: sansTranche ? t.parcours.ageSansTranche : null,
+              onChoisir: choisir,
             )
           : cohortes.hasError
           ? _Refus(message: _messagePanne(cohortes.error!))
@@ -449,7 +488,7 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
       explication: _pour(t.parcours.langueRaison),
       libelleAction: t.commun.continuer,
       onAction: _langue == null ? null : _avancer,
-      onRetour: _reculer,
+      onRetour: _retour(_Question.langue),
       enfant: langues.hasValue
           ? ChoiceCardGroup(
               autoriserSaisieLibre: false,

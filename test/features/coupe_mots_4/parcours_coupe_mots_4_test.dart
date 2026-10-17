@@ -1,6 +1,7 @@
 // COUPE-MOTS-4 (1), appelant `ParcoursOffresPage` de `ChoiceCardGroup` : les
-// six questions du parcours (age, langue, lieu, niveau, objectif, moments),
-// chacune en cartes de choix. 320 px, texte x2, francais (LTR) et arabe
+// cinq questions du parcours en cartes de choix (langue, lieu, niveau,
+// objectif, moments). L'age n'y est plus repose quand le serveur connait la
+// tranche (lot L8) ; au repli il se choisit en puces, pas en cartes. 320 px, texte x2, francais (LTR) et arabe
 // (RTL), Interface standard et guidee : aucun mot coupe a aucune etape.
 
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -28,10 +29,12 @@ void main() {
 
   for (final AppLocale langue in languesCoupeMots4) {
     for (final InterfaceMode interface in interfacesCoupeMots4) {
-      testWidgets('${langue.name} ${nomInterface(interface)} 320 x2 : les six '
+      testWidgets('${langue.name} ${nomInterface(interface)} 320 x2 : les cinq '
           'questions du parcours', (WidgetTester tester) async {
         final FauxServiceOffres faux = FauxServiceOffres(
-          parcoursRendu: <ParcoursApprenant>[apprenantDeTest()],
+          parcoursRendu: <ParcoursApprenant>[
+            apprenantDeTest(cohorte: 'enfant_8_10'),
+          ],
         );
         await monterCoupeMots4(
           tester,
@@ -59,7 +62,7 @@ void main() {
           if (suite.evaluate().isEmpty) break;
           await _toucher(tester, suite.last);
         }
-        expect(etapes, greaterThanOrEqualTo(6));
+        expect(etapes, greaterThanOrEqualTo(5));
       });
     }
   }

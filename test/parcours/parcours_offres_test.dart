@@ -612,7 +612,12 @@ void main() {
         await tester.pumpAndSettle();
       }
 
-      await repondre('8 à 10 ans');
+      // La fiche n'a pas encore de tranche : l'age revient, en annees, et la
+      // tranche envoyee en decoule.
+      await tester.tap(find.byKey(ParcoursOffresPage.ageChoixKey(9)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.commun.continuer));
+      await tester.pumpAndSettle();
       expect(faux.profilsEnregistres, isEmpty);
       await repondre('Français');
       await repondre('France, Belgique, Espagne');
@@ -649,7 +654,7 @@ void main() {
         hote(const ParcoursOffresPage(eleveId: 'e1'), surcharges: _avec(faux)),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('8 à 10 ans'));
+      await tester.tap(find.byKey(ParcoursOffresPage.ageChoixKey(9)));
       await tester.pumpAndSettle();
       await tester.tap(find.text(t.commun.continuer));
       await tester.pumpAndSettle();
@@ -856,7 +861,7 @@ void main() {
   });
 
   group('les regles dures du parcours', () {
-    testWidgets('aucune tranche d age n est presel ectionnee au depart', (
+    testWidgets('aucun age n est preselectionne au depart', (
       WidgetTester tester,
     ) async {
       final FauxServiceOffres faux = FauxServiceOffres(
@@ -876,7 +881,7 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.tap(find.text('8 à 10 ans'));
+      await tester.tap(find.byKey(ParcoursOffresPage.ageChoixKey(9)));
       await tester.pumpAndSettle();
       await tester.tap(find.text(t.commun.continuer));
       await tester.pumpAndSettle();
@@ -956,5 +961,100 @@ void main() {
         expect(faux.signaux.length, 1);
       },
     );
+  });
+
+  group('l age n est demande qu une fois, en annees', () {
+    test('la tranche se deduit de l age, jamais par devinette', () {
+      const List<CohorteAge> tranches = <CohorteAge>[
+        CohorteAge(
+          code: 'enfant_6_9',
+          nom: '6 à 9 ans',
+          typePublic: PublicOffre.enfants,
+        ),
+        CohorteAge(
+          code: 'enfant_10_13',
+          nom: '10 à 13 ans',
+          typePublic: PublicOffre.enfants,
+        ),
+        CohorteAge(
+          code: 'adulte_18_plus',
+          nom: '18 ans et plus',
+          typePublic: PublicOffre.adultes,
+        ),
+        CohorteAge(
+          code: 'speciale',
+          nom: 'Classe spéciale',
+          typePublic: PublicOffre.enfants,
+        ),
+      ];
+      expect(cohortePourAge(6, tranches), 'enfant_6_9');
+      expect(cohortePourAge(9, tranches), 'enfant_6_9');
+      expect(cohortePourAge(10, tranches), 'enfant_10_13');
+      expect(cohortePourAge(18, tranches), 'adulte_18_plus');
+      expect(cohortePourAge(40, tranches), 'adulte_18_plus');
+      // 14 a 17 ans : aucune tranche rendue ne les couvre.
+      expect(cohortePourAge(15, tranches), isNull);
+    });
+
+    testWidgets(
+      'tranche connue du serveur : le parcours commence a la langue',
+      (WidgetTester tester) async {
+        final FauxServiceOffres faux = FauxServiceOffres(
+          parcoursRendu: <ParcoursApprenant>[
+            apprenantDeTest(cohorte: 'enfant_8_10'),
+          ],
+        );
+
+        await tester.pumpWidget(
+          hote(
+            const ParcoursOffresPage(eleveId: 'e1'),
+            surcharges: _avec(faux),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text(t.parcours.langueQuestion), findsOneWidget);
+        expect(
+          find.text(t.parcours.ageQuestion(prenom: 'Amina')),
+          findsNothing,
+        );
+        expect(find.byKey(ParcoursOffresPage.ageKey), findsNothing);
+      },
+    );
+
+    testWidgets('au repli, l age se choisit en annees, comme au profil', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres faux = FauxServiceOffres(
+        parcoursRendu: <ParcoursApprenant>[apprenantDeTest()],
+      );
+
+      await tester.pumpWidget(
+        hote(const ParcoursOffresPage(eleveId: 'e1'), surcharges: _avec(faux)),
+      );
+      await tester.pumpAndSettle();
+
+      // Meme titre qu'a l'ajout du profil, aucune tranche proposee.
+      expect(find.text(t.foyer.ajout.identite.age), findsOneWidget);
+      expect(find.text('8 à 10 ans'), findsNothing);
+      expect(find.byKey(ParcoursOffresPage.ageChoixKey(6)), findsOneWidget);
+      expect(find.byKey(ParcoursOffresPage.ageChoixKey(18)), findsOneWidget);
+
+      // 6 ans : aucune tranche rendue ne le couvre. Le parcours le dit et
+      // n'avance pas.
+      await tester.tap(find.byKey(ParcoursOffresPage.ageChoixKey(6)));
+      await tester.pumpAndSettle();
+      expect(find.text(t.parcours.ageSansTranche), findsOneWidget);
+      await tester.tap(find.text(t.commun.continuer));
+      await tester.pumpAndSettle();
+      expect(find.text(t.parcours.langueQuestion), findsNothing);
+
+      await tester.tap(find.byKey(ParcoursOffresPage.ageChoixKey(18)));
+      await tester.pumpAndSettle();
+      expect(find.text(t.parcours.ageSansTranche), findsNothing);
+      await tester.tap(find.text(t.commun.continuer));
+      await tester.pumpAndSettle();
+      expect(find.text(t.parcours.langueQuestion), findsOneWidget);
+    });
   });
 }
