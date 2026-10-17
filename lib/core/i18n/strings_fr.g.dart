@@ -5650,8 +5650,8 @@ class Traductions$ficheEleve$finances$fr {
 	/// fr: 'Les finances ne sont pas encore disponibles'
 	String get indisponibleTitre => 'Les finances ne sont pas encore disponibles';
 
-	/// fr: 'Le solde et la mensualité {dePrenom} s'afficheront ici dès leur mise en service.'
-	String indisponiblePhrase({required Object dePrenom}) => 'Le solde et la mensualité ${dePrenom} s\'afficheront ici dès leur mise en service.';
+	/// fr: 'Le solde et la mensualité {dePrenom} apparaîtront ici dès que l'académie les aura publiés.'
+	String indisponiblePhrase({required Object dePrenom}) => 'Le solde et la mensualité ${dePrenom} apparaîtront ici dès que l\'académie les aura publiés.';
 
 	/// fr: 'Les finances {dePrenom} ne peuvent pas être lues'
 	String erreurTitre({required Object dePrenom}) => 'Les finances ${dePrenom} ne peuvent pas être lues';
@@ -11089,6 +11089,12 @@ class Traductions$tuteur$accueil$fr {
 	/// fr: 'Choisissez une classe pour {quePrenom} puisse commencer les cours.'
 	String sansClassePhrase({required Object quePrenom}) => 'Choisissez une classe pour ${quePrenom} puisse commencer les cours.';
 
+	/// fr: 'Finances {dePrenom}'
+	String financesTitre({required Object dePrenom}) => 'Finances ${dePrenom}';
+
+	/// fr: 'Solde, prochain débit et ce qu'il reste à financer.'
+	String get financesPhrase => 'Solde, prochain débit et ce qu\'il reste à financer.';
+
 	/// fr: 'Aucun profil élève pour l'instant'
 	String get foyerVideTitre => 'Aucun profil élève pour l\'instant';
 
@@ -12194,6 +12200,12 @@ class Traductions$enseignant$journee$fr {
 
 	/// fr: '{eleve} a perdu la connexion.'
 	String coupureDetectee({required Object eleve}) => '${eleve} a perdu la connexion.';
+
+	/// fr: 'Votre rémunération estimée du mois, Classe par Classe.'
+	String get revenusDetail => 'Votre rémunération estimée du mois, Classe par Classe.';
+
+	/// fr: 'Voir vos revenus estimés du mois'
+	String get revenusLecteur => 'Voir vos revenus estimés du mois';
 
 	/// fr: 'Le cours de {heure} est annulé.'
 	String coursAnnule({required Object heure}) => 'Le cours de ${heure} est annulé.';
@@ -13505,6 +13517,12 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Les mois arrêtés par l'académie s'afficheront ici dès que le relevé sera en service. D'ici là, seule l'estimation du mois en cours est montrée.'
 	String get releveIndisponiblePhrase => 'Les mois arrêtés par l\'académie s\'afficheront ici dès que le relevé sera en service. D\'ici là, seule l\'estimation du mois en cours est montrée.';
 
+	/// fr: 'Vos revenus ne sont pas encore publiés'
+	String get indisponibleTitre => 'Vos revenus ne sont pas encore publiés';
+
+	/// fr: 'Votre estimation du mois apparaîtra ici dès que l'académie l'aura publiée. Aucun montant n'est calculé sur cet appareil.'
+	String get indisponiblePhrase => 'Votre estimation du mois apparaîtra ici dès que l\'académie l\'aura publiée. Aucun montant n\'est calculé sur cet appareil.';
+
 	/// fr: 'Aucun mois arrêté pour l'instant'
 	String get releveVide => 'Aucun mois arrêté pour l\'instant';
 
@@ -14495,6 +14513,9 @@ class Traductions$adulte$accueil$fr {
 	/// fr: 'Votre prochaine séance s'affichera ici dès que votre classe sera ouverte.'
 	String get aucuneClasseDetail => 'Votre prochaine séance s\'affichera ici dès que votre classe sera ouverte.';
 
+	/// fr: 'Votre solde, votre période financée et votre mensualité.'
+	String get financesPhrase => 'Votre solde, votre période financée et votre mensualité.';
+
 	/// fr: 'Votre prochaine séance et vos dernières séances n'ont pas pu être chargées'
 	String get sansDonnees => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées';
 
@@ -15321,8 +15342,8 @@ class Traductions$adulte$finances$fr {
 	/// fr: 'Vos finances ne sont pas encore disponibles'
 	String get indisponibleTitre => 'Vos finances ne sont pas encore disponibles';
 
-	/// fr: 'Votre solde, votre période financée et votre mensualité s'afficheront ici dès leur mise en service.'
-	String get indisponiblePhrase => 'Votre solde, votre période financée et votre mensualité s\'afficheront ici dès leur mise en service.';
+	/// fr: 'Votre solde, votre période financée et votre mensualité apparaîtront ici dès que l'académie les aura publiés. Aucun paiement ne vous est demandé ici.'
+	String get indisponiblePhrase => 'Votre solde, votre période financée et votre mensualité apparaîtront ici dès que l\'académie les aura publiés. Aucun paiement ne vous est demandé ici.';
 
 	/// fr: 'Vos finances ne peuvent pas être lues'
 	String get erreurTitre => 'Vos finances ne peuvent pas être lues';
@@ -33506,7 +33527,7 @@ extension on Traductions {
 			'ficheEleve.finances.confirmationTitre' => 'Paiement en cours de confirmation',
 			'ficheEleve.finances.confirmationPhrase' => 'Ne payez pas une seconde fois : la période se met à jour dès la confirmation.',
 			'ficheEleve.finances.indisponibleTitre' => 'Les finances ne sont pas encore disponibles',
-			'ficheEleve.finances.indisponiblePhrase' => ({required Object dePrenom}) => 'Le solde et la mensualité ${dePrenom} s\'afficheront ici dès leur mise en service.',
+			'ficheEleve.finances.indisponiblePhrase' => ({required Object dePrenom}) => 'Le solde et la mensualité ${dePrenom} apparaîtront ici dès que l\'académie les aura publiés.',
 			'ficheEleve.finances.erreurTitre' => ({required Object dePrenom}) => 'Les finances ${dePrenom} ne peuvent pas être lues',
 			'ficheEleve.finances.videTitre' => ({required Object prenom}) => 'Aucune finance enregistrée pour ${prenom}',
 			'ficheEleve.finances.videPhrase' => 'Aucun solde ni aucune mensualité n\'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.',
@@ -36260,6 +36281,8 @@ extension on Traductions {
 			'tuteur.accueil.classeIllisible' => 'La classe n\'a pas pu être lue.',
 			'tuteur.accueil.sansClasseTitre' => ({required Object prenom}) => 'Aucune classe pour ${prenom}',
 			'tuteur.accueil.sansClassePhrase' => ({required Object quePrenom}) => 'Choisissez une classe pour ${quePrenom} puisse commencer les cours.',
+			'tuteur.accueil.financesTitre' => ({required Object dePrenom}) => 'Finances ${dePrenom}',
+			'tuteur.accueil.financesPhrase' => 'Solde, prochain débit et ce qu\'il reste à financer.',
 			'tuteur.accueil.foyerVideTitre' => 'Aucun profil élève pour l\'instant',
 			'tuteur.accueil.foyerVidePhrase' => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.',
 			'tuteur.accueil.ajouterProfil' => 'Ajouter un profil élève',
@@ -36324,10 +36347,10 @@ extension on Traductions {
 			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
 			'tuteur.reglages.photo' => 'Photo',
 			'tuteur.reglages.photoAucune' => ({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.',
-			'tuteur.reglages.photoPresente' => ({required Object dePrenom}) => 'La photo ${dePrenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.',
-			'tuteur.reglages.photoAjouter' => 'Ajouter une photo',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.reglages.photoPresente' => ({required Object dePrenom}) => 'La photo ${dePrenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.',
+			'tuteur.reglages.photoAjouter' => 'Ajouter une photo',
 			'tuteur.reglages.photoChanger' => 'Changer la photo',
 			'tuteur.reglages.photoTropLourde' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
 			'tuteur.reglages.camera' => 'Caméra',
@@ -36688,6 +36711,8 @@ extension on Traductions {
 			'enseignant.journee.erreurPartielleTout' => 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
 			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => '${eleve} n\'est pas entré en salle.',
 			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} a perdu la connexion.',
+			'enseignant.journee.revenusDetail' => 'Votre rémunération estimée du mois, Classe par Classe.',
+			'enseignant.journee.revenusLecteur' => 'Voir vos revenus estimés du mois',
 			'enseignant.journee.coursAnnule' => ({required Object heure}) => 'Le cours de ${heure} est annulé.',
 			'enseignant.journee.rapportsTitre' => 'Rapports en attente',
 			'enseignant.journee.rapportLigne' => ({required Object jour, required Object heure}) => 'Cours du ${jour} à ${heure}',
@@ -36836,12 +36861,12 @@ extension on Traductions {
 			'enseignant.cahier.suspendreNouveauDetail' => 'La révision continue, rien de nouveau n\'est ajouté pour cet élève.',
 			'enseignant.cahier.position' => ({required Object sourate, required Object verset}) => 'Lecture : sourate ${sourate}, verset ${verset}',
 			'enseignant.cahier.makhrajSinSad' => 'Sîn / Sâd (س / ص)',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.makhrajTaTah' => 'Tâ / Tâ emphatique (ت / ط)',
 			'enseignant.cahier.makhrajDhalZay' => 'Dhâl / Zây (ذ / ز)',
 			'enseignant.cahier.makhrajHaHah' => 'Hâ / Hâ\' (ه / ح)',
 			'enseignant.cahier.exceptionTitre' => 'Signaler une exception',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.exceptionCorriger' => 'Corriger la présence',
 			'enseignant.cahier.exceptionExcuser' => 'Excuser l\'absence',
 			'enseignant.cahier.exceptionConfirmation' => 'Confirmer l\'exception',
@@ -37129,6 +37154,8 @@ extension on Traductions {
 			'enseignant.revenus.releveSection' => 'Relevé',
 			'enseignant.revenus.releveIndisponibleTitre' => 'Le relevé n\'est pas encore disponible',
 			'enseignant.revenus.releveIndisponiblePhrase' => 'Les mois arrêtés par l\'académie s\'afficheront ici dès que le relevé sera en service. D\'ici là, seule l\'estimation du mois en cours est montrée.',
+			'enseignant.revenus.indisponibleTitre' => 'Vos revenus ne sont pas encore publiés',
+			'enseignant.revenus.indisponiblePhrase' => 'Votre estimation du mois apparaîtra ici dès que l\'académie l\'aura publiée. Aucun montant n\'est calculé sur cet appareil.',
 			'enseignant.revenus.releveVide' => 'Aucun mois arrêté pour l\'instant',
 			'enseignant.revenus.releveVideDetail' => 'Chaque mois apparaîtra ici une fois arrêté par l\'académie.',
 			'enseignant.revenus.mention' => 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l\'académie fait foi.',
@@ -37348,14 +37375,14 @@ extension on Traductions {
 			'controleur.controle.missionEnDirect' => 'Classe à observer maintenant',
 			'controleur.controle.commencer' => 'Commencer le contrôle',
 			'controleur.controle.vide' => 'Aucun contrôle n\'est à réaliser pour le moment.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.controle.videAide' => 'Rewayah vous proposera une Classe à observer lorsqu\'une séance compatible sera disponible.',
 			'controleur.controle.indisponible' => 'Cette visite n\'est plus proposée : la séance a été annulée ou confiée à un autre contrôleur.',
 			'controleur.controle.attente' => 'Le contrôle s\'ouvrira dès que la séance sera en direct.',
 			'controleur.controle.dejaEnCours' => 'Un contrôle est déjà en cours dans cette classe.',
 			'controleur.controle.dejaEnCoursAide' => 'Un seul contrôle à la fois par classe. Choisissez une autre séance, ou revenez plus tard : vous pourrez commencer quand ce contrôle sera terminé.',
 			'controleur.controle.incognito' => 'Votre présence n\'est pas annoncée en temps réel.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.controle.duree' => ({required Object minutes}) => '${minutes} min prévues',
 			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
@@ -37862,14 +37889,14 @@ extension on Traductions {
 			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
 			'tc.parcours.signalement.titre' => 'Signaler un besoin',
 			'tc.parcours.signalement.categorie' => 'De quoi s\'agit-il ?',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.signalement.categorieValeur.pedagogique' => 'Pédagogique',
 			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
 			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
@@ -37902,6 +37929,7 @@ extension on Traductions {
 			'adulte.accueil.absence' => 'Absence',
 			'adulte.accueil.aucuneClasse' => 'Aucune classe pour le moment.',
 			'adulte.accueil.aucuneClasseDetail' => 'Votre prochaine séance s\'affichera ici dès que votre classe sera ouverte.',
+			'adulte.accueil.financesPhrase' => 'Votre solde, votre période financée et votre mensualité.',
 			'adulte.accueil.sansDonnees' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées',
 			'adulte.accueil.echec' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'adulte.historique.titre' => 'Mes séances passées',
@@ -38265,7 +38293,7 @@ extension on Traductions {
 			'adulte.demo.etats.notificationDansLApplication' => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.',
 			'adulte.demo.etats.emancipation' => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.',
 			'adulte.finances.indisponibleTitre' => 'Vos finances ne sont pas encore disponibles',
-			'adulte.finances.indisponiblePhrase' => 'Votre solde, votre période financée et votre mensualité s\'afficheront ici dès leur mise en service.',
+			'adulte.finances.indisponiblePhrase' => 'Votre solde, votre période financée et votre mensualité apparaîtront ici dès que l\'académie les aura publiés. Aucun paiement ne vous est demandé ici.',
 			'adulte.finances.erreurTitre' => 'Vos finances ne peuvent pas être lues',
 			'adulte.finances.videTitre' => 'Aucune finance enregistrée',
 			'adulte.finances.videPhrase' => 'Aucun solde ni aucune mensualité n\'est encore rendu pour votre profil. Ils apparaîtront ici après votre inscription à une classe.',
@@ -38375,6 +38403,8 @@ extension on Traductions {
 			'motifs.signalement.technique.essai' => 'Un essai de l\'appareil avant le cours est conseillé.',
 			'motifs.signalement.technique.camera' => 'La caméra ou le micro n\'a pas fonctionné.',
 			'motifs.signalement.changement.classe' => 'Un changement de classe est à l\'étude.',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.signalement.changement.niveau' => 'Le niveau de la classe ne semble plus adapté.',
 			'motifs.signalement.changement.suite' => 'L\'académie reviendra vers vous pour en parler.',
 			'suiviFamille.titre' => 'Suivi des demandes',
@@ -38382,8 +38412,6 @@ extension on Traductions {
 			'suiviFamille.carteTitre' => ({required Object dePrenom}) => 'Demande ${dePrenom}',
 			'suiviFamille.detailTitre' => ({required Object dePrenom}) => 'Suivi de la demande ${dePrenom}',
 			'suiviFamille.etapeCourante' => ({required Object etape}) => 'Étape en cours : ${etape}',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.toutFait' => 'Toutes les étapes sont franchies.',
 			'suiviFamille.voirSuivi' => 'Voir le suivi',
 			'suiviFamille.vide' => 'Aucune demande pour le moment.',
@@ -38889,6 +38917,8 @@ extension on Traductions {
 			'com.communaute.toutes' => 'Toutes',
 			'com.communaute.videTitre' => 'Aucune publication',
 			'com.communaute.rechercheVideTitre' => 'Aucun résultat',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.rechercheVide' => 'Aucune publication ne correspond à votre recherche. Essayez un autre mot.',
 			'com.communaute.videToutes' => 'Aucune publication pour le moment.',
 			'com.communaute.flux.ouvrir' => ({required Object titre}) => 'Ouvrir la publication ${titre}',
@@ -38896,8 +38926,6 @@ extension on Traductions {
 			'com.communaute.flux.reponses' => ({required Object nombre}) => '${nombre} réponses',
 			'com.communaute.flux.aucuneReponse' => 'Aucune réponse',
 			'com.communaute.flux.categorie' => ({required Object categorie}) => 'Catégorie ${categorie}',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.recherche.ouvrir' => 'Rechercher une publication',
 			'com.communaute.recherche.champ' => 'Rechercher une publication',
 			'com.communaute.recherche.aide' => 'Un mot du titre ou du texte',
@@ -39403,6 +39431,8 @@ extension on Traductions {
 			'com.annonces.demo.f.adminStudioDecision' => 'Studio : une décision est demandée sur le support de la leçon 4',
 			'com.annonces.demo.f.adminStudioAssigne' => 'Studio : la relecture du support de Tajwid vous est assignée',
 			'com.annonces.demo.f.adminStudioInterne' => 'Annonce interne de l\'équipe Studio : réunion d\'équipe jeudi à 18 h',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demo.f.adminStudioContexte' => 'Studio : un support est prêt pour la Classe An-Nour',
 			'com.annonces.demo.f.annonceNourTitre' => 'Récitation de fin de trimestre devant les familles',
 			'com.annonces.demo.f.annonceNourTexte' => 'Chères familles, la Classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.',
@@ -39410,8 +39440,6 @@ extension on Traductions {
 			'com.annonces.demo.f.annonceFajrTexte' => 'Révisez les dix derniers versets de la sourate Al-Mulk avant jeudi.',
 			'com.annonces.demo.f.tuteurUrgent' => 'La séance de ce soir est annulée',
 			'com.annonces.demo.f.tuteurUrgentTexte' => 'L\'enseignante est absente ce soir. La séance est reportée à jeudi, même heure. Vous n\'avez rien à faire.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.tuteurReponse' => 'Réponse attendue : accord pour la récitation de Yasmine',
 			'com.annonces.demo.f.tuteurReponseTexte' => 'L\'enseignante attend votre accord pour que Yasmine récite devant les familles. Répondez-lui depuis l\'Espace Classe.',
 			'com.annonces.demo.f.tuteurMessage' => 'Nouveau message de l\'enseignante de la Classe An-Nour',
@@ -39917,6 +39945,8 @@ extension on Traductions {
 			'comptable.encaissements.rapprochement' => 'Rapprochement',
 			'comptable.encaissements.rapprochementAucun' => 'Pas encore rapproché',
 			'comptable.encaissements.ouvrirRapprochement' => 'Ouvrir le rapprochement',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.confirmeNote' => '« Confirmé » s\'affiche seulement après la confirmation du prestataire.',
 			'comptable.encaissements.enAttenteNote' => 'En attente de la confirmation du prestataire : rien n\'est encore acquis.',
 			'comptable.encaissements.journal' => 'Journal de l\'encaissement',
@@ -39924,8 +39954,6 @@ extension on Traductions {
 			'comptable.encaissements.rap.vueTransactions' => 'À rapprocher',
 			'comptable.encaissements.rap.vueRemboursements' => 'Remboursements',
 			'comptable.encaissements.rap.natPaiementAttendu' => 'Paiement attendu',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.natTransaction' => 'Transaction prestataire',
 			'comptable.encaissements.rap.natMensualite' => 'Solde ou mensualité',
 			'comptable.encaissements.rap.natFrais' => 'Frais',
@@ -40431,6 +40459,8 @@ extension on Traductions {
 			'reprisesAdmin.valider' => 'Valider la reprise',
 			'reprisesAdmin.refuser' => 'Refuser la reprise',
 			'reprisesAdmin.validerQuestion' => ({required Object prenom}) => 'Valider la reprise du foyer par ${prenom} ?',
+			_ => null,
+		} ?? switch (path) {
 			'reprisesAdmin.validerConsequence' => 'Cette personne deviendra titulaire du foyer. Cette décision transfère la titularité.',
 			'reprisesAdmin.refuserQuestion' => ({required Object prenom}) => 'Refuser la reprise du foyer par ${prenom} ?',
 			'reprisesAdmin.refuserConsequence' => 'Aucune permission n\'est transférée. La personne pourra déposer une nouvelle demande après le délai prévu.',
@@ -40438,8 +40468,6 @@ extension on Traductions {
 			'reprisesAdmin.refusee' => 'Reprise refusée.',
 			'reprisesAdmin.dejaTraitee' => 'Cette demande a déjà été traitée. La liste est à jour.',
 			'reprisesAdmin.echecReseau' => 'La décision n\'a pas pu être confirmée. Vérifiez la liste avant de réessayer.',
-			_ => null,
-		} ?? switch (path) {
 			'reprisesAdmin.vide' => 'Aucune demande de reprise à traiter.',
 			'reprisesAdmin.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',
 			'reprisesAdmin.sansDonnees' => 'les demandes de reprise',

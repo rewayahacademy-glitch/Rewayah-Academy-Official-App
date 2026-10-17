@@ -64,6 +64,7 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../acces_finance/acces_finance.dart';
+import '../acces_finance/carte_acces_finance.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart'
     show LecteurGroupe, LectureGroupe;
@@ -171,7 +172,16 @@ class AccueilAdultePage extends ConsumerWidget {
     this.onRejoindre,
     this.onVoirRessources,
     this.onVoirDernieresSeances,
+    this.onMesFinances,
   });
+
+  /// Ouvre ses finances (`/eleve/finances`, lot F1). Nul : pas de carte (D9).
+  /// La carte reste sous tous les etats de l'accueil : ses finances ne
+  /// dependent pas de cette lecture.
+  final VoidCallback? onMesFinances;
+
+  /// La cle de la carte « Paiements ».
+  static const Key financesKey = Key('adulte.accueil.finances');
 
   /// Ouvre le centre de notifications. Nul : pas de cloche (aucune cloche
   /// inerte, D9).
@@ -237,25 +247,58 @@ class AccueilAdultePage extends ConsumerWidget {
       actionsEntete: entete == null && onNotifications != null
           ? <Widget>[ClocheNotifications(onPress: onNotifications)]
           : const <Widget>[],
-      child: echecHorsLigne
-          ? EtatSansDonnees(
-              key: sansDonneesKey,
-              quoi: t.adulte.accueil.sansDonnees,
-              onAction: relire,
-            )
-          : BlocAsynchrone<AccueilAdulteVM>(
-              valeur: lecture,
-              squelette: const SqueletteAccueilAdulte(),
-              titreEchec: t.adulte.accueil.echec,
-              onReessayer: relire,
-              construire: (AccueilAdulteVM vue) => _Corps(
-                vue: vue,
-                acces: acces,
-                onRejoindre: onRejoindre,
-                onVoirRessources: onVoirRessources,
-                onVoirDernieresSeances: onVoirDernieresSeances,
+      child: _AvecFinances(
+        onMesFinances: onMesFinances,
+        child: echecHorsLigne
+            ? EtatSansDonnees(
+                key: sansDonneesKey,
+                quoi: t.adulte.accueil.sansDonnees,
+                onAction: relire,
+              )
+            : BlocAsynchrone<AccueilAdulteVM>(
+                valeur: lecture,
+                squelette: const SqueletteAccueilAdulte(),
+                titreEchec: t.adulte.accueil.echec,
+                onReessayer: relire,
+                construire: (AccueilAdulteVM vue) => _Corps(
+                  vue: vue,
+                  acces: acces,
+                  onRejoindre: onRejoindre,
+                  onVoirRessources: onVoirRessources,
+                  onVoirDernieresSeances: onVoirDernieresSeances,
+                ),
               ),
-            ),
+      ),
+    );
+  }
+}
+
+/// L'accueil, suivi de la carte de ses finances quand elle a une
+/// destination. Pleine largeur, sous la grille : jamais deux cartes de meme
+/// taille cote a cote.
+class _AvecFinances extends StatelessWidget {
+  const _AvecFinances({required this.child, required this.onMesFinances});
+
+  final Widget child;
+  final VoidCallback? onMesFinances;
+
+  @override
+  Widget build(BuildContext context) {
+    final VoidCallback? ouvrir = onMesFinances;
+    if (ouvrir == null) return child;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        child,
+        Ecart.vSection,
+        CarteAccesFinance(
+          key: AccueilAdultePage.financesKey,
+          titre: t.adulte.monEspace.paiements,
+          phrase: t.adulte.accueil.financesPhrase,
+          onPress: ouvrir,
+        ),
+      ],
     );
   }
 }

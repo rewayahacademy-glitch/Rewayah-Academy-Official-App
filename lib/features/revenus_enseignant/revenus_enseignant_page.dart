@@ -115,7 +115,8 @@ final FutureProvider<List<LigneReleve>> releveEnseignantProvider =
       return ref.watch(portRevenusEnseignantProvider).releve();
     }, retry: (int retryCount, Object error) => null);
 
-/// `/enseignant/revenus` : l'estimation du mois, atteinte depuis le Profil.
+/// `/enseignant/revenus` : l'estimation du mois, atteinte depuis le Profil
+/// et depuis Aujourd'hui (lot F1).
 class RevenusEnseignantPage extends ConsumerWidget {
   /// Cree l'ecran.
   const RevenusEnseignantPage({super.key, this.onRetour});
@@ -171,6 +172,18 @@ class RevenusEnseignantPage extends ConsumerWidget {
                   valeur: revenus,
                   squelette: const Skeleton.liste(lignes: 6),
                   onReessayer: relire,
+                  // Lot F1 : sans source (production), la page dit que
+                  // l'academie n'a encore rien publie, jamais un chiffre.
+                  erreurVersEtat: (Object erreur, VoidCallback? _) =>
+                      erreur is CapaciteIndisponible
+                      ? EtatSysteme(
+                          key: indisponibleKey,
+                          nature: NatureEtat.indisponible,
+                          titre: t.enseignant.revenus.indisponibleTitre,
+                          phrase: t.enseignant.revenus.indisponiblePhrase,
+                          dependance: erreur.dependance,
+                        )
+                      : null,
                   estVide: (RevenusEnseignant r) => r.classes.isEmpty,
                   vide: EmptyState(
                     message: t.enseignant.revenus.vide,
@@ -187,6 +200,11 @@ class RevenusEnseignantPage extends ConsumerWidget {
 
   /// La cle du choix du mois.
   static const Key selecteurMoisKey = ValueKey<String>('fi-revenus-mois');
+
+  /// La cle de l'etat « pas encore publies » (production, lot F1).
+  static const Key indisponibleKey = ValueKey<String>(
+    'fi-revenus-indisponible',
+  );
 
   static void _retour(BuildContext context) {
     if (context.canPop()) {

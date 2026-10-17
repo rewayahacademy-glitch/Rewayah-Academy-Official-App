@@ -457,6 +457,30 @@ void main() {
       expect(_lieu(routeur), Routes.seancePour('s0'));
     });
 
+    testWidgets('lot F1 : la carte des finances mene en un geste aux '
+        'finances du profil choisi, qui disent « pas encore publie »', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(tester);
+      await _ouvrirAccueilParLaBarre(tester);
+      final Finder carte = find.byKey(AccueilFamillePage.financesKey);
+      expect(carte, findsOneWidget);
+      expect(
+        find.text(
+          t.tuteur.accueil.financesTitre(
+            dePrenom: deDevant('Élève A1', cle: 'tuteur.accueil.financesTitre'),
+          ),
+        ),
+        findsOneWidget,
+      );
+      await _toucher(tester, carte);
+      expect(_lieu(routeur), Routes.ficheEleveSousPage(_a1, 'finances'));
+      expect(
+        find.text(t.ficheEleve.finances.indisponibleTitre),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('travail branche : trois actions au plus, « Voir tout » ouvre '
         'le travail de la classe', (WidgetTester tester) async {
       final GoRouter routeur = await _monter(

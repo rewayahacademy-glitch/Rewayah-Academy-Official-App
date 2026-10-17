@@ -1143,11 +1143,20 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     const ProfilEnseignantPage(),
               ),
               // Mes revenus (FI-10) : une pose de la branche Profil, ou elle
-              // s'ouvre ; la barre garde Profil actif.
+              // s'ouvre ; la barre garde Profil actif. Ouverte depuis
+              // Aujourd'hui (`?depuis=journee`, lot F1), le retour y ramene.
               GoRoute(
                 path: Routes.enseignantRevenus,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const RevenusEnseignantPage(),
+                builder: (BuildContext contexte, GoRouterState etat) =>
+                    RevenusEnseignantPage(
+                      onRetour:
+                          etat.uri.queryParameters['depuis'] ==
+                              Routes.origineJournee
+                          ? () =>
+                                GoRouter.of(contexte)
+                                    .go(Routes.enseignantJournee)
+                          : null,
+                    ),
               ),
             ],
           ),

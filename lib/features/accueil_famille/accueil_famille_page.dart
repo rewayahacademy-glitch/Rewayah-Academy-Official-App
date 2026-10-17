@@ -30,6 +30,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
+import '../acces_finance/carte_acces_finance.dart';
 import '../parcours_offres/bloc_parcours.dart';
 import '../presentation_tuteur/demandes_presentation_page.dart'
     show CarteDemandePresentation;
@@ -93,6 +94,9 @@ presenceEleveProvider =
 class AccueilFamillePage extends ConsumerStatefulWidget {
   /// Cree l'Accueil.
   const AccueilFamillePage({super.key, this.horloge = DateTime.now});
+
+  /// La cle de la carte des finances du profil choisi (lot F1).
+  static const Key financesKey = Key('tuteur.accueil.finances');
 
   /// L'horloge de l'appareil, **pour mesurer un ecoulement seulement** :
   /// l'instant affiche est l'instant serveur lu a l'ouverture, avance du
@@ -296,6 +300,19 @@ class _Contenu extends ConsumerWidget {
       onReessayer: () => ref.invalidate(derniereSeanceProvider(eleveId)),
     );
 
+    // Lot F1 : les finances du profil choisi en un geste (solde, prochain
+    // debit, ce qu'il reste a financer). Aucun chiffre ici : la fiche
+    // Finances est la seule lecture, et dit « pas encore publie » tant que
+    // le serveur ne rend rien (FI-BR-03).
+    final Widget finances = CarteAccesFinance(
+      key: AccueilFamillePage.financesKey,
+      titre: t.tuteur.accueil.financesTitre(
+        dePrenom: deDevant(profil.prenom, cle: 'tuteur.accueil.financesTitre'),
+      ),
+      phrase: t.tuteur.accueil.financesPhrase,
+      onPress: () => routeur.go(Routes.ficheEleveSousPage(eleveId, 'finances')),
+    );
+
     // BENTO-2 : la grille Bento partagee, disposition de DASH_STRATEGIE.md
     // §3.4. Le blocage, s'il existe, d'abord et en large ; la classe et sa
     // prochaine seance, puis « Avant le prochain cours », en grandes tuiles
@@ -348,6 +365,13 @@ class _Contenu extends ConsumerWidget {
                   etendue: EtendueBento.large,
                   etendueLarge: const EtendueBento(4, 1),
                   child: AppCard(marge: marge, child: derniereSeance),
+                ),
+                // Pleine largeur, apres la derniere seance : jamais cote a
+                // cote avec une carte de meme taille.
+                TuileBento(
+                  etendue: EtendueBento.large,
+                  etendueLarge: const EtendueBento(4, 1),
+                  child: finances,
                 ),
               ],
             );
