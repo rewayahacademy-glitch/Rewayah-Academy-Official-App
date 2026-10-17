@@ -157,7 +157,6 @@ import '../../features/suivi_foyer/detail_seance_page.dart';
 import '../../features/suivi_foyer/observations_page.dart';
 import '../../features/suivi_foyer/suivi_foyer_page.dart';
 import '../../features/tc_catalogue/routes_tc_b.dart';
-import '../../features/tc_classe_live/routes_tc_e.dart';
 import '../../features/tc_mes_groupes/routes_tc_a.dart';
 import '../../features/tc_mushaf/mushaf_page.dart';
 import '../../features/tc_mushaf/routes_tc_c.dart';
@@ -1930,7 +1929,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ...routesTcA(role: sessionRole),
       ...routesTcB(),
       ...routesTcC(),
-      ...routesTcE(),
+      // routesTcE() (Classe Live, /tc/classe) n'est plus montee : une seule
+      // salle, /salle (arbitrage A-05, audit final 16/10/2026, lot L3-01).
+      // Les capacites D/F/H restent dans le code, non routees.
       ...routesTcG(),
 
       // Salle. Le billet passe par `extra`, jamais par l'URL (ADR-005).
