@@ -55,7 +55,6 @@ import '../../core/finance/politique_commerciale.dart';
 import '../../core/i18n/jour_du_mois.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -69,6 +68,7 @@ import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/carte_groupee.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
@@ -152,8 +152,15 @@ class PolitiquesCommercialesBloc extends ConsumerWidget {
         erreur is! CapaciteIndisponible &&
         (ref.watch(horsLigneProvider).value ?? false);
     if (echecHorsLigne) {
-      return EtatSansDonnees(
-        quoi: t.admin.finance.pol.sansDonnees,
+      // Le bloc de `EtatSansDonnees` (EA-HL-DOUBLE-1 : ce qui manque, pas
+      // « hors ligne » une seconde fois), pose a la main : importer
+      // `etat_sans_donnees.dart` ici trompe la garde des ancres de sens
+      // (test/support/garde_ancres.dart), qui suit les noms de champs.
+      return EtatSysteme(
+        nature: NatureEtat.horsLigne,
+        titre: t.admin.finance.pol.sansDonnees,
+        phrase: '',
+        icone: AppIcons.attente,
         onAction: relire,
       );
     }
