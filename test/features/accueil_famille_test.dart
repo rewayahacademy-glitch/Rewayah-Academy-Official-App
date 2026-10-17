@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderParagraph;
+import 'package:flutter/semantics.dart' show SemanticsNode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -393,6 +394,43 @@ void main() {
         expect(pleins, 1, reason: '${taille.width}');
         expect(tester.takeException(), isNull);
       }
+    });
+
+    testWidgets('L4-05-reprise : « Connecter un appareil » est un noeud '
+        'a part, bouton, distinct du titre de l alerte ; le titre reste un '
+        'titre', (WidgetTester tester) async {
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      await _monter(
+        tester,
+        appareils: <AppareilAppaire>[],
+        depart: Routes.tuteurAccueil,
+      );
+      final Finder alerte = find.byKey(BandeauBlocage.cleAlerte);
+      final Finder bouton = find.descendant(
+        of: alerte,
+        matching: find.byType(ActionPrincipale),
+      );
+      expect(bouton, findsOneWidget);
+
+      final SemanticsNode noeudAlerte = tester.getSemantics(alerte);
+      final SemanticsNode noeudBouton = tester.getSemantics(bouton);
+      expect(identical(noeudBouton, noeudAlerte), isFalse);
+      expect(
+        noeudBouton,
+        isSemantics(
+          label: t.tuteur.accueil.connecterAppareil,
+          isButton: true,
+          isHeader: false,
+          hasTapAction: true,
+        ),
+      );
+      expect(
+        tester.getSemantics(
+          find.text(t.tuteur.accueil.blocageAppareilTitre(prenom: 'Élève A1')),
+        ),
+        isSemantics(isHeader: true, isButton: false),
+      );
+      semantique.dispose();
     });
 
     testWidgets('un appareil actif : aucun blocage', (
