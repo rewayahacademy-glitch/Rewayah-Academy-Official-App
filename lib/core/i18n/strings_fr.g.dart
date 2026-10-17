@@ -2203,8 +2203,8 @@ class Traductions$compte$fr {
 	/// fr: 'Ouvrir le profil'
 	String get ouvrirProfil => 'Ouvrir le profil';
 
-	/// fr: 'Mode Accessibilité'
-	String get modeEnfant => 'Mode Accessibilité';
+	/// fr: 'Interface guidée'
+	String get modeEnfant => 'Interface guidée';
 
 	/// fr: 'Mode standard'
 	String get modeStandard => 'Mode standard';
@@ -2538,8 +2538,8 @@ class Traductions$galerie$fr {
 	/// fr: 'Composants partagés'
 	String get composants => 'Composants partagés';
 
-	/// fr: 'Mode Accessibilité'
-	String get modeEnfant => 'Mode Accessibilité';
+	/// fr: 'Interface guidée'
+	String get modeEnfant => 'Interface guidée';
 
 	/// fr: 'Mode standard'
 	String get modeStandard => 'Mode standard';
@@ -4273,8 +4273,8 @@ class Traductions$accessibilite$demo$fr {
 
 	// Translations
 
-	/// fr: 'Démonstration du Mode Accessibilité'
-	String get titre => 'Démonstration du Mode Accessibilité';
+	/// fr: 'Démonstration de l'Interface guidée'
+	String get titre => 'Démonstration de l\'Interface guidée';
 
 	/// fr: 'Données fictives, aucun envoi.'
 	String get mention => 'Données fictives, aucun envoi.';
@@ -4495,8 +4495,8 @@ class Traductions$accessibilite$monEspace$fr {
 	/// fr: 'Mon espace'
 	String get titre => 'Mon espace';
 
-	/// fr: 'Mode Accessibilité'
-	String get mode => 'Mode Accessibilité';
+	/// fr: 'Interface guidée'
+	String get mode => 'Interface guidée';
 
 	/// fr: 'Une interface simplifiée et adaptée pour un apprentissage plus serein.'
 	String get modeDetail => 'Une interface simplifiée et adaptée pour un apprentissage plus serein.';
@@ -5275,8 +5275,8 @@ class Traductions$ficheEleve$interface$fr {
 	/// fr: 'Choisissez comment Rewayah s'affiche sur l'appareil {dePrenom}. Vous pourrez changer ce choix à tout moment.'
 	String intro({required Object dePrenom}) => 'Choisissez comment Rewayah s\'affiche sur l\'appareil ${dePrenom}. Vous pourrez changer ce choix à tout moment.';
 
-	/// fr: 'Mode Accessibilité'
-	String get guidee => 'Mode Accessibilité';
+	/// fr: 'Interface guidée'
+	String get guidee => 'Interface guidée';
 
 	/// fr: 'Quand {prenom} préfère des écrans aérés : textes plus grands, une action à la fois. Mêmes rubriques et mêmes droits.'
 	String guideeDescription({required Object prenom}) => 'Quand ${prenom} préfère des écrans aérés : textes plus grands, une action à la fois. Mêmes rubriques et mêmes droits.';
@@ -23800,8 +23800,8 @@ class Traductions$tc$classe$fiche$fr {
 	/// fr: 'Travail actuel'
 	String get travailActuel => 'Travail actuel';
 
-	/// fr: 'Mode Accessibilité'
-	String get interfaceGuidee => 'Mode Accessibilité';
+	/// fr: 'Interface guidée'
+	String get interfaceGuidee => 'Interface guidée';
 
 	/// fr: 'Suivi pédagogique indisponible'
 	String get sansPedagogie => 'Suivi pédagogique indisponible';
@@ -29345,8 +29345,8 @@ class Traductions$salle$preparation$eleve$demo$fr {
 	/// fr: 'Préparation élève'
 	String get section => 'Préparation élève';
 
-	/// fr: 'Préparation élève, Mode Accessibilité'
-	String get sectionGuidee => 'Préparation élève, Mode Accessibilité';
+	/// fr: 'Préparation élève, Interface guidée'
+	String get sectionGuidee => 'Préparation élève, Interface guidée';
 
 	/// fr: 'Vérification en cours'
 	String get verification => 'Vérification en cours';
@@ -29390,8 +29390,8 @@ class Traductions$salle$seance$demo$roles$fr {
 	/// fr: 'Élève standard'
 	String get eleve => 'Élève standard';
 
-	/// fr: 'Mode Accessibilité'
-	String get guidee => 'Mode Accessibilité';
+	/// fr: 'Interface guidée'
+	String get guidee => 'Interface guidée';
 
 	/// fr: 'Enseignant'
 	String get enseignant => 'Enseignant';
@@ -30311,8 +30311,8 @@ class Traductions$classe$entree$demo$roles$fr {
 	/// fr: 'Élève'
 	String get eleve => 'Élève';
 
-	/// fr: 'Élève, Mode Accessibilité'
-	String get guidee => 'Élève, Mode Accessibilité';
+	/// fr: 'Élève, Interface guidée'
+	String get guidee => 'Élève, Interface guidée';
 
 	/// fr: 'Enseignant'
 	String get enseignant => 'Enseignant';
@@ -32414,7 +32414,7 @@ extension on Traductions {
 			'salle.preparation.eleve.guidee.microBloque' => 'Le micro est bloqué.',
 			'salle.preparation.eleve.guidee.horsLigne' => 'La connexion ne marche pas pour l\'instant.',
 			'salle.preparation.eleve.demo.section' => 'Préparation élève',
-			'salle.preparation.eleve.demo.sectionGuidee' => 'Préparation élève, Mode Accessibilité',
+			'salle.preparation.eleve.demo.sectionGuidee' => 'Préparation élève, Interface guidée',
 			'salle.preparation.eleve.demo.verification' => 'Vérification en cours',
 			'salle.preparation.eleve.demo.pret' => 'Prêt',
 			'salle.preparation.eleve.demo.microBloque' => 'Micro bloqué',
@@ -32653,7 +32653,7 @@ extension on Traductions {
 			'salle.seance.demo.groupes.secours' => 'Situations de secours',
 			'salle.seance.demo.groupes.tableau' => 'Supports et tableau',
 			'salle.seance.demo.roles.eleve' => 'Élève standard',
-			'salle.seance.demo.roles.guidee' => 'Mode Accessibilité',
+			'salle.seance.demo.roles.guidee' => 'Interface guidée',
 			'salle.seance.demo.roles.enseignant' => 'Enseignant',
 			'salle.seance.demo.roles.tuteur' => 'Tuteur observateur',
 			'salle.seance.demo.roles.controleur' => 'Contrôleur',
@@ -33032,7 +33032,7 @@ extension on Traductions {
 			'contrat.politique.s9.blocs.0' => 'Intérêt légitime de l\'académie et des élèves : protéger des enfants et garantir la qualité des cours (UK GDPR art. 6(1)(f)). Le test de mise en balance est écrit et signé. Nous ne vous demandons pas votre « consentement » au contrôle, car vous ne pourriez pas le refuser librement.',
 			'contrat.politique.s10.titre' => '10. Contact',
 			'contrat.politique.s10.texte' => ({required Object contact}) => 'Responsable : Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité : ${contact}. Représentant dans l\'UE : pas encore désigné ; l\'application ne s\'ouvre pas aux familles de l\'Union européenne avant sa désignation.',
-			'accessibilite.demo.titre' => 'Démonstration du Mode Accessibilité',
+			'accessibilite.demo.titre' => 'Démonstration de l\'Interface guidée',
 			'accessibilite.demo.mention' => 'Données fictives, aucun envoi.',
 			'accessibilite.demo.intro' => 'Choisissez un élève et un moment de la séance.',
 			'accessibilite.demo.eleveMineure' => 'Mariam, élève mineure',
@@ -33088,7 +33088,7 @@ extension on Traductions {
 			'accessibilite.apres.prochaineInconnue' => 'Ta prochaine séance s\'affichera dans ta Classe.',
 			'accessibilite.apres.prochaineInconnueVous' => 'Votre prochaine séance s\'affichera dans votre Classe.',
 			'accessibilite.monEspace.titre' => 'Mon espace',
-			'accessibilite.monEspace.mode' => 'Mode Accessibilité',
+			'accessibilite.monEspace.mode' => 'Interface guidée',
 			'accessibilite.monEspace.modeDetail' => 'Une interface simplifiée et adaptée pour un apprentissage plus serein.',
 			'accessibilite.monEspace.modeActif' => 'Activé',
 			'accessibilite.monEspace.presentationStandard' => 'Présentation standard',
@@ -33391,7 +33391,7 @@ extension on Traductions {
 			'ficheEleve.inscription.relireClasse' => 'Relire la classe',
 			'ficheEleve.interface.titre' => 'Interface',
 			'ficheEleve.interface.intro' => ({required Object dePrenom}) => 'Choisissez comment Rewayah s\'affiche sur l\'appareil ${dePrenom}. Vous pourrez changer ce choix à tout moment.',
-			'ficheEleve.interface.guidee' => 'Mode Accessibilité',
+			'ficheEleve.interface.guidee' => 'Interface guidée',
 			'ficheEleve.interface.guideeDescription' => ({required Object prenom}) => 'Quand ${prenom} préfère des écrans aérés : textes plus grands, une action à la fois. Mêmes rubriques et mêmes droits.',
 			'ficheEleve.interface.standard' => 'Présentation standard',
 			'ficheEleve.interface.standardDescription' => ({required Object prenom}) => 'Quand ${prenom} est à l\'aise avec des écrans plus denses : plus d\'informations par écran. Mêmes rubriques et mêmes droits.',
@@ -35866,7 +35866,7 @@ extension on Traductions {
 			'compte.aucunProfilDetail' => 'Ajoutez un enfant pour commencer',
 			'compte.ajouterEnfant' => 'Ajouter un enfant',
 			'compte.ouvrirProfil' => 'Ouvrir le profil',
-			'compte.modeEnfant' => 'Mode Accessibilité',
+			'compte.modeEnfant' => 'Interface guidée',
 			'compte.modeStandard' => 'Mode standard',
 			'compte.cameraLabel' => 'Caméra',
 			'compte.cameraAutorisee' => 'Autorisée',
@@ -36380,7 +36380,7 @@ extension on Traductions {
 			'classe.entree.demo.mention' => 'Démonstration',
 			'classe.entree.demo.intro' => 'Données fictives, aucun appel serveur. Chaque lien montre ce que dit l\'emplacement d\'entrée pour un rôle et un moment.',
 			'classe.entree.demo.roles.eleve' => 'Élève',
-			'classe.entree.demo.roles.guidee' => 'Élève, Mode Accessibilité',
+			'classe.entree.demo.roles.guidee' => 'Élève, Interface guidée',
 			'classe.entree.demo.roles.enseignant' => 'Enseignant',
 			'classe.entree.demo.etats.aVenir' => 'À venir',
 			'classe.entree.demo.etats.fenetreOuverte' => 'Fenêtre ouverte',
@@ -37344,7 +37344,7 @@ extension on Traductions {
 			'galerie.typographie' => 'Échelles typographiques',
 			'galerie.polices' => 'Polices',
 			'galerie.composants' => 'Composants partagés',
-			'galerie.modeEnfant' => 'Mode Accessibilité',
+			'galerie.modeEnfant' => 'Interface guidée',
 			'galerie.modeStandard' => 'Mode standard',
 			'tc.groupe.mesGroupes.titre' => 'Mes classes',
 			'tc.groupe.mesGroupes.aucun' => 'Aucune classe pour le moment',
@@ -37588,7 +37588,7 @@ extension on Traductions {
 			'tc.classe.fiche.presenceRecente' => 'Présence récente',
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} cours',
 			'tc.classe.fiche.travailActuel' => 'Travail actuel',
-			'tc.classe.fiche.interfaceGuidee' => 'Mode Accessibilité',
+			'tc.classe.fiche.interfaceGuidee' => 'Interface guidée',
 			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
 			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',
 			'tc.classe.action.rappel' => 'Rappel discret',

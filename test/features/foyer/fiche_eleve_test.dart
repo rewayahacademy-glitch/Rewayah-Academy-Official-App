@@ -693,14 +693,14 @@ void main() {
       expect(find.text(t.ficheEleve.interface.standard), findsOneWidget);
     });
 
-    testWidgets('MA-9 : depuis la coquille du tuteur, la page dit « Mode '
-        'Accessibilité » et « Présentation standard », sans age ; toucher la '
+    testWidgets('MA-9 : depuis la coquille du tuteur, la page dit « Interface '
+        'guidée » et « Présentation standard », sans age ; toucher la '
         'carte hors de son titre ecrit le choix', (WidgetTester tester) async {
       final _AppairagePilote appairage = _foyerA();
       await _monter(tester, appairage: appairage);
       await _ouvrirFicheA1(tester);
       // La fiche annonce l'etat actuel avec le nouveau terme (K-57).
-      expect(find.text('Mode Accessibilité'), findsOneWidget);
+      expect(find.text('Interface guidée'), findsOneWidget);
       await _ouvrirLigne(tester, t.ficheEleve.lignes.interface);
 
       // Phrase de contexte en tete, puis une ligne « quand / consequence »
@@ -709,7 +709,7 @@ void main() {
         find.textContaining('Choisissez comment Rewayah s\'affiche'),
         findsOneWidget,
       );
-      expect(find.text('Mode Accessibilité'), findsOneWidget);
+      expect(find.text('Interface guidée'), findsOneWidget);
       expect(find.text('Présentation standard'), findsOneWidget);
       expect(find.textContaining('préfère des écrans aérés'), findsOneWidget);
       expect(find.textContaining('plus denses'), findsOneWidget);
@@ -725,7 +725,7 @@ void main() {
         for (final String interdit in <String>[
           'âge',
           ' ans',
-          'interface guidée',
+          'mode accessibilité',
           'interface standard',
           'handicap',
           'diagnostic',

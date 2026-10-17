@@ -498,7 +498,7 @@ class _Traductions$compte$ar extends Traductions$compte$fr {
 	@override String get aucunProfilDetail => 'أضف طفلًا للبدء';
 	@override String get ajouterEnfant => 'إضافة طفل';
 	@override String get ouvrirProfil => 'فتح الملف';
-	@override String get modeEnfant => 'وضع إمكانية الوصول';
+	@override String get modeEnfant => 'الواجهة الموجَّهة';
 	@override String get modeStandard => 'الوضع العادي';
 	@override String get cameraLabel => 'الكاميرا';
 	@override String get cameraAutorisee => 'مسموح بها';
@@ -752,7 +752,7 @@ class _Traductions$galerie$ar extends Traductions$galerie$fr {
 	@override String get typographie => 'سلالم الخطوط';
 	@override String get polices => 'الخطوط';
 	@override String get composants => 'المكونات المشتركة';
-	@override String get modeEnfant => 'وضع إمكانية الوصول';
+	@override String get modeEnfant => 'الواجهة الموجَّهة';
 	@override String get modeStandard => 'الوضع العادي';
 }
 
@@ -2065,7 +2065,7 @@ class _Traductions$accessibilite$demo$ar extends Traductions$accessibilite$demo$
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => 'عرض تجريبي لوضع إمكانية الوصول';
+	@override String get titre => 'عرض تجريبي للواجهة الموجَّهة';
 	@override String get mention => 'بيانات وهمية، لا إرسال.';
 	@override String get intro => 'اختر طالبًا ولحظة من الحصة.';
 	@override String get eleveMineure => 'مريم، طالبة قاصر';
@@ -2146,7 +2146,7 @@ class _Traductions$accessibilite$monEspace$ar extends Traductions$accessibilite$
 
 	// Translations
 	@override String get titre => 'مساحتي';
-	@override String get mode => 'وضع إمكانية الوصول';
+	@override String get mode => 'الواجهة الموجَّهة';
 	@override String get modeDetail => 'واجهة مبسطة ومكيَّفة لتعلم أكثر طمأنينة.';
 	@override String get modeActif => 'مفعَّل';
 	@override String get presentationStandard => 'العرض العادي';
@@ -5871,7 +5871,7 @@ class _Traductions$ficheEleve$interface$ar extends Traductions$ficheEleve$interf
 	// Translations
 	@override String get titre => 'الواجهة';
 	@override String intro({required Object dePrenom}) => 'اختر كيف يظهر Rewayah على جهاز ⁨${dePrenom}⁩. يمكنك تغيير هذا الاختيار في أي وقت.';
-	@override String get guidee => 'وضع إمكانية الوصول';
+	@override String get guidee => 'الواجهة الموجَّهة';
 	@override String guideeDescription({required Object prenom}) => 'حين يفضّل ⁨${prenom}⁩ شاشات خفيفة: نصوص أكبر، وإجراء واحد في كل مرة. الأقسام نفسها والصلاحيات نفسها.';
 	@override String get standard => 'العرض العادي';
 	@override String standardDescription({required Object prenom}) => 'حين يرتاح ⁨${prenom}⁩ لشاشات أكثف: معلومات أكثر في كل شاشة. الأقسام نفسها والصلاحيات نفسها.';
@@ -9244,7 +9244,7 @@ class _Traductions$tc$classe$fiche$ar extends Traductions$tc$classe$fiche$fr {
 	@override String get presenceRecente => 'الحضور الأخير';
 	@override String assiduite({required Object presences, required Object total}) => 'الدروس: ⁨${presences}⁩ من ⁨${total}⁩';
 	@override String get travailActuel => 'العمل الحالي';
-	@override String get interfaceGuidee => 'وضع إمكانية الوصول';
+	@override String get interfaceGuidee => 'الواجهة الموجَّهة';
 	@override String get sansPedagogie => 'المتابعة التعليمية غير متاحة';
 	@override String get sansPedagogieDetail => 'المسار والأهداف والعمل الجاري غير مفتوحة للمعلم بعد.';
 }
@@ -12504,7 +12504,7 @@ class _Traductions$classe$entree$demo$roles$ar extends Traductions$classe$entree
 
 	// Translations
 	@override String get eleve => 'الطالب';
-	@override String get guidee => 'الطالب، وضع إمكانية الوصول';
+	@override String get guidee => 'الطالب، الواجهة الموجَّهة';
 	@override String get enseignant => 'المعلم';
 }
 
@@ -12565,7 +12565,7 @@ class _Traductions$salle$preparation$eleve$demo$ar extends Traductions$salle$pre
 
 	// Translations
 	@override String get section => 'استعداد الطالب';
-	@override String get sectionGuidee => 'استعداد الطالب، وضع إمكانية الوصول';
+	@override String get sectionGuidee => 'استعداد الطالب، الواجهة الموجَّهة';
 	@override String get verification => 'التحقق جارٍ';
 	@override String get pret => 'جاهز';
 	@override String get microBloque => 'الميكروفون محظور';
@@ -12592,7 +12592,7 @@ class _Traductions$salle$seance$demo$roles$ar extends Traductions$salle$seance$d
 
 	// Translations
 	@override String get eleve => 'طالب عادي';
-	@override String get guidee => 'وضع إمكانية الوصول';
+	@override String get guidee => 'الواجهة الموجَّهة';
 	@override String get enseignant => 'المعلم';
 	@override String get tuteur => 'وليّ الأمر المتابِع';
 	@override String get controleur => 'المراقِب';
@@ -14285,7 +14285,7 @@ extension on TraductionsAr {
 			'accessibilite.tutoiement.annonceAttente' => 'أنت في القاعة',
 			'accessibilite.tutoiement.horsLigne' => 'أنت غير متصل. تحتاج الحصة إلى اتصال.',
 			'accessibilite.tutoiement.finPhrase' => 'تجد عملك في فصلك.',
-			'accessibilite.demo.titre' => 'عرض تجريبي لوضع إمكانية الوصول',
+			'accessibilite.demo.titre' => 'عرض تجريبي للواجهة الموجَّهة',
 			'accessibilite.demo.mention' => 'بيانات وهمية، لا إرسال.',
 			'accessibilite.demo.intro' => 'اختر طالبًا ولحظة من الحصة.',
 			'accessibilite.demo.eleveMineure' => 'مريم، طالبة قاصر',
@@ -14321,7 +14321,7 @@ extension on TraductionsAr {
 			'accessibilite.apres.revoirSupportDetail' => 'تبقى المادة في فصلك.',
 			'accessibilite.apres.revoirSupportDetailVous' => 'تبقى المادة في فصلك.',
 			'accessibilite.monEspace.titre' => 'مساحتي',
-			'accessibilite.monEspace.mode' => 'وضع إمكانية الوصول',
+			'accessibilite.monEspace.mode' => 'الواجهة الموجَّهة',
 			'accessibilite.monEspace.modeDetail' => 'واجهة مبسطة ومكيَّفة لتعلم أكثر طمأنينة.',
 			'accessibilite.monEspace.modeActif' => 'مفعَّل',
 			'accessibilite.monEspace.presentationStandard' => 'العرض العادي',
@@ -14357,7 +14357,7 @@ extension on TraductionsAr {
 			'classe.entree.demo.mention' => 'عرض تجريبي',
 			'classe.entree.demo.intro' => 'بيانات وهمية، دون أي اتصال بالخادم. كل رابط يُظهر ما تقوله خانة الدخول لدور ولحظة.',
 			'classe.entree.demo.roles.eleve' => 'الطالب',
-			'classe.entree.demo.roles.guidee' => 'الطالب، وضع إمكانية الوصول',
+			'classe.entree.demo.roles.guidee' => 'الطالب، الواجهة الموجَّهة',
 			'classe.entree.demo.roles.enseignant' => 'المعلم',
 			'classe.entree.demo.etats.aVenir' => 'قادمة',
 			'classe.entree.demo.etats.fenetreOuverte' => 'النافذة مفتوحة',
@@ -14617,7 +14617,7 @@ extension on TraductionsAr {
 			'salle.preparation.eleve.guidee.microBloque' => 'الميكروفون محظور.',
 			'salle.preparation.eleve.guidee.horsLigne' => 'الاتصال لا يعمل الآن.',
 			'salle.preparation.eleve.demo.section' => 'استعداد الطالب',
-			'salle.preparation.eleve.demo.sectionGuidee' => 'استعداد الطالب، وضع إمكانية الوصول',
+			'salle.preparation.eleve.demo.sectionGuidee' => 'استعداد الطالب، الواجهة الموجَّهة',
 			'salle.preparation.eleve.demo.verification' => 'التحقق جارٍ',
 			'salle.preparation.eleve.demo.pret' => 'جاهز',
 			'salle.preparation.eleve.demo.microBloque' => 'الميكروفون محظور',
@@ -14826,7 +14826,7 @@ extension on TraductionsAr {
 			'salle.seance.demo.groupes.secours' => 'حالات الاحتياط',
 			'salle.seance.demo.groupes.tableau' => 'المواد والسبورة',
 			'salle.seance.demo.roles.eleve' => 'طالب عادي',
-			'salle.seance.demo.roles.guidee' => 'وضع إمكانية الوصول',
+			'salle.seance.demo.roles.guidee' => 'الواجهة الموجَّهة',
 			'salle.seance.demo.roles.enseignant' => 'المعلم',
 			'salle.seance.demo.roles.tuteur' => 'وليّ الأمر المتابِع',
 			'salle.seance.demo.roles.controleur' => 'المراقِب',
@@ -15540,7 +15540,7 @@ extension on TraductionsAr {
 			'compte.aucunProfilDetail' => 'أضف طفلًا للبدء',
 			'compte.ajouterEnfant' => 'إضافة طفل',
 			'compte.ouvrirProfil' => 'فتح الملف',
-			'compte.modeEnfant' => 'وضع إمكانية الوصول',
+			'compte.modeEnfant' => 'الواجهة الموجَّهة',
 			'compte.modeStandard' => 'الوضع العادي',
 			'compte.cameraLabel' => 'الكاميرا',
 			'compte.cameraAutorisee' => 'مسموح بها',
@@ -16076,7 +16076,7 @@ extension on TraductionsAr {
 			'tc.classe.fiche.presenceRecente' => 'الحضور الأخير',
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => 'الدروس: ⁨${presences}⁩ من ⁨${total}⁩',
 			'tc.classe.fiche.travailActuel' => 'العمل الحالي',
-			'tc.classe.fiche.interfaceGuidee' => 'وضع إمكانية الوصول',
+			'tc.classe.fiche.interfaceGuidee' => 'الواجهة الموجَّهة',
 			'tc.classe.fiche.sansPedagogie' => 'المتابعة التعليمية غير متاحة',
 			'tc.classe.fiche.sansPedagogieDetail' => 'المسار والأهداف والعمل الجاري غير مفتوحة للمعلم بعد.',
 			'tc.classe.action.rappel' => 'نداء هادئ',
@@ -19521,7 +19521,7 @@ extension on TraductionsAr {
 			'galerie.typographie' => 'سلالم الخطوط',
 			'galerie.polices' => 'الخطوط',
 			'galerie.composants' => 'المكونات المشتركة',
-			'galerie.modeEnfant' => 'وضع إمكانية الوصول',
+			'galerie.modeEnfant' => 'الواجهة الموجَّهة',
 			'galerie.modeStandard' => 'الوضع العادي',
 			'ficheEleve.titreRepli' => 'ملف الطالب',
 			'ficheEleve.parametres' => 'إعدادات الطالب',
@@ -19585,7 +19585,7 @@ extension on TraductionsAr {
 			'ficheEleve.inscription.relireClasse' => 'إعادة قراءة الفصل',
 			'ficheEleve.interface.titre' => 'الواجهة',
 			'ficheEleve.interface.intro' => ({required Object dePrenom}) => 'اختر كيف يظهر Rewayah على جهاز ⁨${dePrenom}⁩. يمكنك تغيير هذا الاختيار في أي وقت.',
-			'ficheEleve.interface.guidee' => 'وضع إمكانية الوصول',
+			'ficheEleve.interface.guidee' => 'الواجهة الموجَّهة',
 			'ficheEleve.interface.guideeDescription' => ({required Object prenom}) => 'حين يفضّل ⁨${prenom}⁩ شاشات خفيفة: نصوص أكبر، وإجراء واحد في كل مرة. الأقسام نفسها والصلاحيات نفسها.',
 			'ficheEleve.interface.standard' => 'العرض العادي',
 			'ficheEleve.interface.standardDescription' => ({required Object prenom}) => 'حين يرتاح ⁨${prenom}⁩ لشاشات أكثف: معلومات أكثر في كل شاشة. الأقسام نفسها والصلاحيات نفسها.',

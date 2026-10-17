@@ -294,7 +294,7 @@
         },
         "demo": {
           "section": "Préparation élève",
-          "sectionGuidee": "Préparation élève, Mode Accessibilité",
+          "sectionGuidee": "Préparation élève, Interface guidée",
           "verification": "Vérification en cours",
           "pret": "Prêt",
           "microBloque": "Micro bloqué",
@@ -580,7 +580,7 @@
         },
         "roles": {
           "eleve": "Élève standard",
-          "guidee": "Mode Accessibilité",
+          "guidee": "Interface guidée",
           "enseignant": "Enseignant",
           "tuteur": "Tuteur observateur",
           "controleur": "Contrôleur"
@@ -1047,7 +1047,7 @@
   },
   "accessibilite": {
     "demo": {
-      "titre": "Démonstration du Mode Accessibilité",
+      "titre": "Démonstration de l'Interface guidée",
       "mention": "Données fictives, aucun envoi.",
       "intro": "Choisissez un élève et un moment de la séance.",
       "eleveMineure": "Mariam, élève mineure",
@@ -1115,7 +1115,7 @@
     },
     "monEspace": {
       "titre": "Mon espace",
-      "mode": "Mode Accessibilité",
+      "mode": "Interface guidée",
       "modeDetail": "Une interface simplifiée et adaptée pour un apprentissage plus serein.",
       "modeActif": "Activé",
       "presentationStandard": "Présentation standard",
@@ -1505,7 +1505,7 @@
     "interface": {
       "titre": "Interface",
       "intro": "Choisissez comment Rewayah s'affiche sur l'appareil {dePrenom}. Vous pourrez changer ce choix à tout moment.",
-      "guidee": "Mode Accessibilité",
+      "guidee": "Interface guidée",
       "guideeDescription": "Quand {prenom} préfère des écrans aérés\u00a0: textes plus grands, une action à la fois. Mêmes rubriques et mêmes droits.",
       "standard": "Présentation standard",
       "standardDescription": "Quand {prenom} est à l'aise avec des écrans plus denses\u00a0: plus d'informations par écran. Mêmes rubriques et mêmes droits.",
@@ -4403,7 +4403,7 @@
     "aucunProfilDetail": "Ajoutez un enfant pour commencer",
     "ajouterEnfant": "Ajouter un enfant",
     "ouvrirProfil": "Ouvrir le profil",
-    "modeEnfant": "Mode Accessibilité",
+    "modeEnfant": "Interface guidée",
     "modeStandard": "Mode standard",
     "cameraLabel": "Caméra",
     "cameraAutorisee": "Autorisée",
@@ -5020,7 +5020,7 @@
         "intro": "Données fictives, aucun appel serveur. Chaque lien montre ce que dit l'emplacement d'entrée pour un rôle et un moment.",
         "roles": {
           "eleve": "Élève",
-          "guidee": "Élève, Mode Accessibilité",
+          "guidee": "Élève, Interface guidée",
           "enseignant": "Enseignant"
         },
         "etats": {
@@ -6115,7 +6115,7 @@
     "typographie": "Échelles typographiques",
     "polices": "Polices",
     "composants": "Composants partagés",
-    "modeEnfant": "Mode Accessibilité",
+    "modeEnfant": "Interface guidée",
     "modeStandard": "Mode standard"
   },
   "tc": {
@@ -6470,7 +6470,7 @@
         "presenceRecente": "Présence récente",
         "assiduite": "{presences} / {total} cours",
         "travailActuel": "Travail actuel",
-        "interfaceGuidee": "Mode Accessibilité",
+        "interfaceGuidee": "Interface guidée",
         "sansPedagogie": "Suivi pédagogique indisponible",
         "sansPedagogieDetail": "Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l'enseignant."
       },
