@@ -14,7 +14,7 @@ enum AdminDomaine {
   accueil,
 
   /// Groupes pedagogiques (fonction primaire depuis le pivot du 19 septembre
-  /// 2026, migration `0017`), attribution manuelle et demandes
+  /// 2026, migration `0017`), regroupements des demandes et demandes
   /// (reaffectation, regles).
   operations,
 
@@ -244,7 +244,7 @@ List<({String libelle, String chemin})> ongletsConfiguration({
 
 /// Les deux fonctions pairs du domaine Operations (AD-X) : l'Espace de
 /// traitement (`ADM-18`, image ADMIN-SHELL-02), racine du domaine, et les
-/// Classes (`ADM-09`, image ADMIN-SHELL-03). Attribution et Demandes restent
+/// Classes (`ADM-09`, image ADMIN-SHELL-03). Regroupements et Demandes restent
 /// des fonctions secondaires, atteintes depuis l'Accueil et depuis la file.
 /// Consommee par `SousNavigationDomaine` dans l'en-tete des deux ecrans.
 List<({String libelle, String chemin})> ongletsOperations() =>

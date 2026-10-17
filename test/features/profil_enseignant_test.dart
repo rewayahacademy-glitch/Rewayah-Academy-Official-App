@@ -340,7 +340,7 @@ void main() {
       WidgetTester tester,
     ) async {
       // Le talon d'avant ce lot refabriquait deux compteurs depuis
-      // `seancesProvider` et `elevesEnAttenteProvider`, dont l'un dedupliquait
+      // `seancesProvider` et un feed d'eleves en attente (retire, L3-02), dont l'un dedupliquait
       // `seances.map(eleveId).toSet()` -- fragile depuis le pivot groupes, ou
       // `mes_seances_v` rend une ligne par eleve. Ces deux lectures ont disparu,
       // et leurs libelles avec elles.

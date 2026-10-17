@@ -10,7 +10,6 @@ import '../../features/accueil_adulte/routes_accueil_adulte.dart';
 import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart';
-import '../../features/admin_attribution/attribution_page.dart';
 import '../../features/admin_comptes/comptes_page.dart';
 import '../../features/admin_configuration_conservation_donnees/conservation_donnees_page.dart';
 import '../../features/admin_configuration_fonctionnalites/fonctionnalites_page.dart';
@@ -1349,13 +1348,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           child: PlanningPage(),
         ),
       ),
-      GoRoute(
-        path: Routes.adminOperationsAttributions,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
-          domaine: AdminDomaine.operations,
-          child: AttributionPage(),
-        ),
-      ),
       // La reaffectation (demandes) reste atteinte depuis l'Accueil, jamais
       // depuis un second niveau de la sidebar
       // (docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md).
@@ -1736,9 +1728,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             Routes.adminPersonnesComptes,
       ),
       GoRoute(
+        // L3-02 (A-06) : l'attribution individuelle est retiree, les anciens
+        // liens menent a la creation des classes.
         path: '/admin/attribution',
         redirect: (BuildContext _, GoRouterState _) =>
-            Routes.adminOperationsAttributions,
+            Routes.adminOperationsRegroupements,
       ),
       GoRoute(
         path: '/admin/demandes',

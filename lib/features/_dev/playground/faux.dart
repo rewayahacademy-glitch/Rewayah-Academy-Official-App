@@ -432,36 +432,10 @@ class FauxServicePlanning implements ServicePlanning {
 
 /// Un service de matching en memoire.
 class FauxServiceMatching implements ServiceMatching {
-  /// Le feed rendu.
-  List<EleveEnAttente> feed = const <EleveEnAttente>[];
-
-  /// Les prises demandees.
-  final List<({String eleveId, Creneau creneau})> prises =
-      <({String eleveId, Creneau creneau})>[];
-
   /// Les demandes deposees.
   final List<({SorteDemande sorte, String sujetId, String motif, int? valeur})>
   demandes =
       <({SorteDemande sorte, String sujetId, String motif, int? valeur})>[];
-
-  /// Ce que la prochaine prise doit jeter.
-  Object? erreurPrise;
-
-  @override
-  Future<List<EleveEnAttente>> elevesEnAttente() async => feed;
-
-  @override
-  Future<void> prendre({
-    required String eleveId,
-    required Creneau creneau,
-  }) async {
-    final Object? erreur = erreurPrise;
-    if (erreur != null) {
-      // ignore: only_throw_errors
-      throw erreur;
-    }
-    prises.add((eleveId: eleveId, creneau: creneau));
-  }
 
   @override
   Future<void> demander({

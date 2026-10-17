@@ -615,10 +615,6 @@ abstract final class Routes {
   static const String adminOperationsTraitement =
       '/admin/operations/traitement';
 
-  /// Attribution manuelle (`ADM-05`), sous Operations.
-  static const String adminOperationsAttributions =
-      '/admin/operations/attributions';
-
   /// Demandes et regles (`ADM-06`), sous Operations.
   static const String adminOperationsDemandes = '/admin/operations/demandes';
 

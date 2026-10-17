@@ -162,6 +162,10 @@ begin
       'a5000000-0000-0000-0000-000000000002',
       'a5000000-0000-0000-0000-000000000011', 2, 17, null);
   exception when others then
+    -- L3-02 : fermee par revoke, refus 42501 exact (et non plus la garde de role).
+    if sqlstate <> '42501' then
+      raise exception 'A1 ECHEC : SQLSTATE % (attendu 42501) : %', sqlstate, sqlerrm;
+    end if;
     v_ok := true;
   end;
   if not v_ok then
@@ -289,7 +293,7 @@ declare
   v_seances int;
   v_trace jsonb;
 begin
-  set local role authenticated;
+  reset role; -- L3-02 : attribuer_eleve est fermee aux comptes connectes, la garde interne se rejoue sous postgres
   perform set_config('test.uid', 'a5000000-0000-0000-0000-000000000021', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
 
@@ -350,7 +354,7 @@ do $$
 declare
   v_ok boolean := false;
 begin
-  set local role authenticated;
+  reset role; -- L3-02 : attribuer_eleve est fermee aux comptes connectes, la garde interne se rejoue sous postgres
   perform set_config('test.uid', 'a5000000-0000-0000-0000-000000000021', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
 
@@ -380,7 +384,7 @@ declare
   v_assignment uuid;
   v_trace jsonb;
 begin
-  set local role authenticated;
+  reset role; -- L3-02 : attribuer_eleve est fermee aux comptes connectes, la garde interne se rejoue sous postgres
   perform set_config('test.uid', 'a5000000-0000-0000-0000-000000000021', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
 
@@ -436,7 +440,7 @@ do $$
 declare
   v_ok boolean := false;
 begin
-  set local role authenticated;
+  reset role; -- L3-02 : attribuer_eleve est fermee aux comptes connectes, la garde interne se rejoue sous postgres
   perform set_config('test.uid', 'a5000000-0000-0000-0000-000000000021', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
 
@@ -470,7 +474,7 @@ begin
   values ('a5000000-0000-0000-0000-000000000011', 'max_students_per_teacher',
           '1'::jsonb, 'Periode d''essai.', 'a5000000-0000-0000-0000-000000000021');
 
-  set local role authenticated;
+  reset role; -- L3-02 : attribuer_eleve est fermee aux comptes connectes, la garde interne se rejoue sous postgres
   perform set_config('test.uid', 'a5000000-0000-0000-0000-000000000021', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
 

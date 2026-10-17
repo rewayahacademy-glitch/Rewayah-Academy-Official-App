@@ -2241,50 +2241,6 @@
         "other": "{valeur} élèves"
       }
     },
-    "attribution": {
-      "titre": "Attribution",
-      "intro": "Quand aucun enseignant n'a pris un enfant, c'est ici qu'on lui en donne un.",
-      "colonneEleves": "Élèves sans enseignant",
-      "colonneEnseignants": "Enseignants",
-      "aucunEleve": "Chaque élève a son enseignant",
-      "aucunEleveDetail": "Les enfants que personne n'a encore pris apparaîtront ici, celui qui attend depuis le plus longtemps en premier.",
-      "erreurEleves": "La file n'a pas pu être lue. Réessayez dans un instant.",
-      "erreurEnseignants": "Les enseignants n'ont pas pu être lus. Réessayez dans un instant.",
-      "attendAujourdhui": "Inscrit aujourd'hui",
-      "attendUnJour": "Attend depuis 1 jour",
-      "niveau": "Niveau {niveau}",
-      "heureProposee": "1 heure proposée",
-      "sansHeure": "Aucune heure proposée",
-      "sansHeureDetail": "Tant que la famille n'a posé aucun créneau, personne ne peut lui donner d'enseignant, pas même vous. Le geste est chez elle, sur ses disponibilités.",
-      "changerEleve": "Choisir un autre élève",
-      "choisirEleve": "Choisissez un élève",
-      "choisirEleveDetail": "Les enseignants s'afficheront ici, ceux qui partagent une heure avec lui en premier.",
-      "complet": "Plafond atteint",
-      "libreSur": "Libre {jour} à {heure} h",
-      "libreSurPlusieurs": "Libre sur {nombre} des heures proposées",
-      "sansHeureCommune": "Aucune heure commune",
-      "quelleHeure": "Sur quelle heure\u00a0?",
-      "manqueHeure": "Il manque l'heure\u00a0: choisissez-la sous «\u00a0Sur quelle heure\u00a0?\u00a0».",
-      "creneau": "{jour} à {heure} h",
-      "motif": "Pourquoi passer outre\u00a0?",
-      "motifRequis": "{prenom} n'a pas posé cette heure. L'attribuer quand même peut se justifier, et cela s'inscrit au journal.",
-      "attribuer": "Attribuer {eleve} à {enseignant}",
-      "journalisation": "Chaque attribution est journalisée\u00a0: qui a décidé, quand, sur quelle heure, et le motif s'il a fallu passer outre.",
-      "effet": "L'élève quitte cette file et ses cours sont posés au calendrier tout de suite.",
-      "erreur": "L'attribution n'a pas abouti\u00a0: {message}",
-      "attendJours(param=jours)": {
-        "one": "Attend depuis {jours} jour",
-        "other": "Attend depuis {jours} jours"
-      },
-      "heuresProposees(param=nombre)": {
-        "one": "{nombre} heure proposée",
-        "other": "{nombre} heures proposées"
-      },
-      "charge(param=actifs)": {
-        "one": "{actifs} élève sur {plafond}",
-        "other": "{actifs} élèves sur {plafond}"
-      }
-    },
     "groupes": {
       "titre": "Classes",
       "filtreToutes": "Toutes les classes",
@@ -4308,7 +4264,6 @@
       "tableauDeBord": "Tableau de bord",
       "dossiers": "Dossiers",
       "demandes": "Demandes",
-      "attribution": "Attribution",
       "journal": "Journal",
       "comptes": "Comptes",
       "accesAgents": "Accès des agents",
@@ -7325,12 +7280,6 @@
       "transfert": "Élèves transférés dans d'autres classes",
       "remplacement": "Enseignant absent sans remplacement",
       "parErreur": "Classe créée par erreur"
-    },
-    "attribution": {
-      "confirmee": "Heure confirmée avec la famille",
-      "aucuneCommune": "Aucune heure commune",
-      "continuite": "Continuité avec le même enseignant",
-      "famille": "Demande de la famille"
     },
     "refusDemande": {
       "aucunEnseignant": "Aucun enseignant disponible sur cet horaire",

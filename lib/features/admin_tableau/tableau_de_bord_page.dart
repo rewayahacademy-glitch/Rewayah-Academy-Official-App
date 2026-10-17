@@ -382,7 +382,7 @@ const List<(EtendueBento, EtendueBento?)> _etendues =
 /// deux chiffres quelles que soient leurs valeurs (D3 : cinq indicateurs dans
 /// tous les cas).
 ///
-/// Quatre portent vers un ecran d'action (dossiers, demandes, attribution,
+/// Quatre portent vers un ecran d'action (dossiers, demandes, regroupements,
 /// rapports manquants). Incidents et acces echus n'ont encore aucune page qui
 /// s'ouvre filtree sur ce qu'ils comptent (DASH-ADM-INC, DASH-ADM-ECHUS) : une
 /// tuile sans appui est un rapport, jamais un bouton grise (D9).
@@ -431,7 +431,7 @@ class _Compteurs extends StatelessWidget {
         valeur: indicateurs.foyersSansEnseignant,
         libelle: t.admin.tableau.foyers,
         onPress: () =>
-            GoRouter.of(context).go(Routes.adminOperationsAttributions),
+            GoRouter.of(context).go(Routes.adminOperationsRegroupements),
       ),
       TuileCompteur(
         valeur: indicateurs.rapportsManquants,
