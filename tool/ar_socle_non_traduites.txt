@@ -1008,7 +1008,6 @@ identiteProfil.classe
 identiteProfil.lecteurAdulte
 identiteProfil.lecteurAvecClasse
 identiteProfil.lecteurEnfant
-kyc.autrePiece
 motifs.ajoutEleve.attente
 motifs.ajoutEleve.diagnostic
 motifs.ajoutEleve.famille

@@ -593,7 +593,7 @@ class _Traductions$choix$ar extends Traductions$choix$fr {
 	@override String get autre => 'أخرى';
 	@override String get autreInvite => 'حدّد';
 	@override String get selectionMultiple => 'يمكن اختيار عدة إجابات';
-	@override String exemple({required Object texte}) => 'مثلًا: ${texte}';
+	@override String exemple({required Object texte}) => 'مثلًا: ⁨${texte}⁩';
 }
 
 // Path: admin
@@ -17215,7 +17215,7 @@ extension on TraductionsAr {
 			'choix.autre' => 'أخرى',
 			'choix.autreInvite' => 'حدّد',
 			'choix.selectionMultiple' => 'يمكن اختيار عدة إجابات',
-			'choix.exemple' => ({required Object texte}) => 'مثلًا: ${texte}',
+			'choix.exemple' => ({required Object texte}) => 'مثلًا: ⁨${texte}⁩',
 			'admin.finance.aValider' => 'للمصادقة',
 			'admin.tableau.titre' => 'مركز القيادة',
 			'admin.tableau.dossiers' => 'ملفات للاعتماد',
