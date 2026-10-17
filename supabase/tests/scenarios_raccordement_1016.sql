@@ -120,6 +120,13 @@ INSERT INTO public.groupe_membres(groupe_id, student_id) VALUES
  ('d1600000-0000-4000-8000-0000000000c1','d1600000-0000-4000-8000-0000000000e1'),
  ('d1600000-0000-4000-8000-0000000000c1','d1600000-0000-4000-8000-0000000000e2'),
  ('d1600000-0000-4000-8000-0000000000c2','d1600000-0000-4000-8000-0000000000e3');
+-- Une Classe creee genere desormais ses seances a venir (lots posterieurs au
+-- 16/10) : on les retire, pour que les seances posees ici soient les seules.
+DELETE FROM public.session_participants sp USING public.sessions s
+ WHERE sp.session_id = s.id
+   AND s.groupe_id IN ('d1600000-0000-4000-8000-0000000000c1', 'd1600000-0000-4000-8000-0000000000c2');
+DELETE FROM public.sessions
+ WHERE groupe_id IN ('d1600000-0000-4000-8000-0000000000c1', 'd1600000-0000-4000-8000-0000000000c2');
 -- C1 : une seance passee, une annulee (plus tot), la prochaine, une suivante.
 INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, status, groupe_id) VALUES
  ('d1600000-0000-4000-8000-000000000501','d1600000-0000-4000-8000-0000000000b1',
