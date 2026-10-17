@@ -93,6 +93,28 @@ enfants mixtes, 50/50 Europe/Amérique du Nord, 45 % d'enfants, enseignants à
 Chaque dollar de plus sur l'enfant rapporte environ 41 $ par mois. Chaque dollar
 de plus sur l'adulte en rapporte environ 50 $.
 
+## Population de test sur le STAGING
+
+Les mêmes 100 élèves existent comme profils réels sur le projet STAGING
+(`xldmmlrnxyabdtvxqbyy`, jamais la production). Il y a 67 familles sans compte
+tuteur, 20 classes, 10 enseignants et 4 personnes en administration.
+
+- Chaque élève a sa tranche d'âge, son niveau déclaré, son objectif et sa langue.
+  La langue est le français pour les familles européennes, l'anglais pour les
+  familles d'Amérique du Nord et du Royaume-Uni.
+- La date d'accès payé suit le profil de paiement de la famille. Les familles en
+  retard lourd ou défaillantes apparaissent donc comme comptes échus côté
+  administration.
+- Les comptes n'ont pas de mot de passe. Les adresses sont en `@sim.rewayah.invalid`.
+  Les identifiants commencent par `e51` (élèves), `e52` (enseignants),
+  `e53` (administration), `e54` (familles) et `e55` (classes).
+- Générateur : `node tool/simulation/generer_population_staging.mjs`. Il écrit les
+  étapes `supabase/seed/staging_population_test/NN_*.sql`, le retrait
+  `supabase/seed/staging_population_test_nettoyage.sql` et les personas
+  `tool/simulation/population_staging.json` (paiement, disponibilité, plaintes).
+- Chaque étape fait quelques kilo-octets au plus. Au-delà, l'outil MCP
+  d'application dépasse son délai de 60 s sans que la requête n'atteigne la base.
+
 ## Ce que le modèle ne compte pas encore
 
 - **Taxes, TVA, cotisations** : 0 par défaut, structure juridique non connue. Un
