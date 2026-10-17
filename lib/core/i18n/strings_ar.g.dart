@@ -10698,7 +10698,7 @@ class _Traductions$admin$finance$pai$ar extends Traductions$admin$finance$pai$fr
 	@override String get refusDroits => 'الإدارة والمحاسبة وحدهما تسجلان الدفعات. لم يُسجَّل شيء.';
 	@override String get refusInvalide => 'لم يُقبل المبلغ أو العملة أو الطالب. لم يُسجَّل شيء: تحقق من المبلغ وأعد المحاولة من القائمة.';
 	@override String get inconnuTitre => 'الدفعة غير مؤكدة';
-	@override String get inconnuPhrase => 'لم يصل الرد. المس « إعادة المحاولة »: لن تُحتسب الدفعة نفسها مرتين أبدا.';
+	@override String get inconnuPhrase => 'لم يصل الرد. المس «إعادة المحاولة»: لن تُحتسب الدفعة نفسها مرتين أبدا.';
 }
 
 // Path: admin.finance.fac
@@ -10725,7 +10725,7 @@ class _Traductions$admin$finance$fac$ar extends Traductions$admin$finance$fac$fr
 	@override String get refusMois => 'لا يُفوتر إلا الشهر الجاري والشهر التالي. لم يُصدر شيء: أغلق هذه البطاقة واختر أحدهما.';
 	@override String get refusSansPrix => 'لا ينطبق أي سعر منشور على هذا الشهر. لم يُصدر شيء: انشر الأسعار أولًا في تبويب الأسعار، ثم أعد المحاولة.';
 	@override String get inconnuTitre => 'الإصدار غير مؤكد';
-	@override String get inconnuPhrase => 'لم يصل الرد. المس « إعادة المحاولة »: لا تُصدر فاتورة صدرت من قبل مرتين أبدًا.';
+	@override String get inconnuPhrase => 'لم يصل الرد. المس «إعادة المحاولة»: لا تُصدر فاتورة صدرت من قبل مرتين أبدًا.';
 }
 
 // Path: admin.groupes.cahiers
@@ -17266,7 +17266,7 @@ extension on TraductionsAr {
 			'admin.finance.pai.refusDroits' => 'الإدارة والمحاسبة وحدهما تسجلان الدفعات. لم يُسجَّل شيء.',
 			'admin.finance.pai.refusInvalide' => 'لم يُقبل المبلغ أو العملة أو الطالب. لم يُسجَّل شيء: تحقق من المبلغ وأعد المحاولة من القائمة.',
 			'admin.finance.pai.inconnuTitre' => 'الدفعة غير مؤكدة',
-			'admin.finance.pai.inconnuPhrase' => 'لم يصل الرد. المس « إعادة المحاولة »: لن تُحتسب الدفعة نفسها مرتين أبدا.',
+			'admin.finance.pai.inconnuPhrase' => 'لم يصل الرد. المس «إعادة المحاولة»: لن تُحتسب الدفعة نفسها مرتين أبدا.',
 			'admin.finance.fac.factures' => 'فواتير الشهر',
 			'admin.finance.fac.ligne' => ({required Object deMois}) => 'فواتير ⁨${deMois}⁩',
 			'admin.finance.fac.moisCourant' => 'الشهر الجاري.',
@@ -17284,7 +17284,7 @@ extension on TraductionsAr {
 			'admin.finance.fac.refusMois' => 'لا يُفوتر إلا الشهر الجاري والشهر التالي. لم يُصدر شيء: أغلق هذه البطاقة واختر أحدهما.',
 			'admin.finance.fac.refusSansPrix' => 'لا ينطبق أي سعر منشور على هذا الشهر. لم يُصدر شيء: انشر الأسعار أولًا في تبويب الأسعار، ثم أعد المحاولة.',
 			'admin.finance.fac.inconnuTitre' => 'الإصدار غير مؤكد',
-			'admin.finance.fac.inconnuPhrase' => 'لم يصل الرد. المس « إعادة المحاولة »: لا تُصدر فاتورة صدرت من قبل مرتين أبدًا.',
+			'admin.finance.fac.inconnuPhrase' => 'لم يصل الرد. المس «إعادة المحاولة»: لا تُصدر فاتورة صدرت من قبل مرتين أبدًا.',
 			'admin.tableau.titre' => 'مركز القيادة',
 			'admin.tableau.dossiers' => 'ملفات للاعتماد',
 			'admin.tableau.dossiersDetail' => 'فتح القائمة، الأقدم أولًا.',

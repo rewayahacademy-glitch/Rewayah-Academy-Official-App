@@ -25172,17 +25172,17 @@ class Traductions$adulte$demo$donnees$fr {
 
 	// Translations
 
-	/// fr: 'Solde d'exemple 1'
-	String get soldeTitulaire => 'Solde d\'exemple 1';
+	/// fr: 'Solde de démonstration 1'
+	String get soldeTitulaire => 'Solde de démonstration 1';
 
-	/// fr: 'Solde d'exemple 2'
-	String get soldeSecondAdulte => 'Solde d\'exemple 2';
+	/// fr: 'Solde de démonstration 2'
+	String get soldeSecondAdulte => 'Solde de démonstration 2';
 
-	/// fr: 'Solde d'exemple 3'
-	String get soldeAicha => 'Solde d\'exemple 3';
+	/// fr: 'Solde de démonstration 3'
+	String get soldeAicha => 'Solde de démonstration 3';
 
-	/// fr: 'Solde d'exemple 4'
-	String get soldeOumar => 'Solde d\'exemple 4';
+	/// fr: 'Solde de démonstration 4'
+	String get soldeOumar => 'Solde de démonstration 4';
 
 	/// fr: 'Total de démonstration A'
 	String get totalAvecSecondAdulte => 'Total de démonstration A';
@@ -25196,11 +25196,11 @@ class Traductions$adulte$demo$donnees$fr {
 	/// fr: '10,00 € (démonstration)'
 	String get prixOffreB => '10,00 € (démonstration)';
 
-	/// fr: 'Solde d'exemple A'
-	String get detailOffreA => 'Solde d\'exemple A';
+	/// fr: 'Solde de démonstration A'
+	String get detailOffreA => 'Solde de démonstration A';
 
-	/// fr: 'Solde d'exemple B'
-	String get detailOffreB => 'Solde d\'exemple B';
+	/// fr: 'Solde de démonstration B'
+	String get detailOffreB => 'Solde de démonstration B';
 
 	/// fr: '5,00 € (démonstration)'
 	String get totalRecharge5 => '5,00 € (démonstration)';
@@ -38178,16 +38178,16 @@ extension on Traductions {
 			'adulte.demo.invitationRecueConjoint' => 'L\'invitation reçue par le conjoint, dans son propre compte.',
 			'adulte.demo.invitationSansCompte' => 'L\'invitation ouverte sans compte.',
 			'adulte.demo.reseauCoupe' => 'Le réseau est coupé : l\'Accueil et Ma classe hors ligne.',
-			'adulte.demo.donnees.soldeTitulaire' => 'Solde d\'exemple 1',
-			'adulte.demo.donnees.soldeSecondAdulte' => 'Solde d\'exemple 2',
-			'adulte.demo.donnees.soldeAicha' => 'Solde d\'exemple 3',
-			'adulte.demo.donnees.soldeOumar' => 'Solde d\'exemple 4',
+			'adulte.demo.donnees.soldeTitulaire' => 'Solde de démonstration 1',
+			'adulte.demo.donnees.soldeSecondAdulte' => 'Solde de démonstration 2',
+			'adulte.demo.donnees.soldeAicha' => 'Solde de démonstration 3',
+			'adulte.demo.donnees.soldeOumar' => 'Solde de démonstration 4',
 			'adulte.demo.donnees.totalAvecSecondAdulte' => 'Total de démonstration A',
 			'adulte.demo.donnees.totalSansSecondAdulte' => 'Total de démonstration B',
 			'adulte.demo.donnees.prixOffreA' => '5,00 € (démonstration)',
 			'adulte.demo.donnees.prixOffreB' => '10,00 € (démonstration)',
-			'adulte.demo.donnees.detailOffreA' => 'Solde d\'exemple A',
-			'adulte.demo.donnees.detailOffreB' => 'Solde d\'exemple B',
+			'adulte.demo.donnees.detailOffreA' => 'Solde de démonstration A',
+			'adulte.demo.donnees.detailOffreB' => 'Solde de démonstration B',
 			'adulte.demo.donnees.totalRecharge5' => '5,00 € (démonstration)',
 			'adulte.demo.donnees.totalRecharge10' => '10,00 € (démonstration)',
 			'adulte.demo.donnees.totalRecharge15' => '15,00 € (démonstration)',
