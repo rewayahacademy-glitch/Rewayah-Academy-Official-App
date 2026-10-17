@@ -224,6 +224,9 @@ class FeuillePaiement extends ConsumerStatefulWidget {
   /// La cle du champ de la reference.
   static const Key cleReference = ValueKey<String>('paiement-reference');
 
+  /// La cle de la ligne du reste a payer apres un paiement partiel.
+  static const Key cleManque = ValueKey<String>('paiement-manque');
+
   /// La cle du bouton qui enregistre.
   static const Key cleEnregistrer = ValueKey<String>('paiement-enregistrer');
 
@@ -363,7 +366,7 @@ class _FeuillePaiementState extends ConsumerState<FeuillePaiement> {
             : f?.etat == EtatFinancier.finance
             ? p.moisRegle(prenom: prenom)
             : manque != null
-            ? p.ilManque(montant: formaterMontant(manque), prenom: prenom)
+            ? p.ilManque(prenom: prenom)
             : p.enregistreSansEtat(prenom: prenom);
         return <Widget>[
           BandeauAttention(
@@ -371,6 +374,20 @@ class _FeuillePaiementState extends ConsumerState<FeuillePaiement> {
             message: message,
             ton: TonEtat.succes,
           ),
+          if (r.nouveau &&
+              f?.etat != EtatFinancier.finance &&
+              manque != null) ...<Widget>[
+            Ecart.vMd,
+            CarteLignes(
+              lignes: <Widget>[
+                SettingRow(
+                  key: FeuillePaiement.cleManque,
+                  title: p.resteAPayer,
+                  value: formaterMontant(manque),
+                ),
+              ],
+            ),
+          ],
         ];
       case _Phase.refusee:
         return <Widget>[

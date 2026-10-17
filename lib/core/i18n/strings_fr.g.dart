@@ -21586,8 +21586,8 @@ class Traductions$admin$finance$pai$fr {
 	/// fr: 'Le mois de {prenom} est réglé.'
 	String moisRegle({required Object prenom}) => 'Le mois de ${prenom} est réglé.';
 
-	/// fr: 'Il manque encore {montant} pour régler le mois de {prenom}. Le mois sera réglé dès que le complément sera enregistré.'
-	String ilManque({required Object montant, required Object prenom}) => 'Il manque encore ${montant} pour régler le mois de ${prenom}. Le mois sera réglé dès que le complément sera enregistré.';
+	/// fr: 'Le mois de {prenom} n'est pas encore réglé. Il le sera dès que le complément sera enregistré.'
+	String ilManque({required Object prenom}) => 'Le mois de ${prenom} n\'est pas encore réglé. Il le sera dès que le complément sera enregistré.';
 
 	/// fr: 'Le paiement est crédité à {prenom}.'
 	String enregistreSansEtat({required Object prenom}) => 'Le paiement est crédité à ${prenom}.';
@@ -35210,7 +35210,7 @@ extension on Traductions {
 			'admin.finance.pai.horsLigne' => 'Pas de connexion : rien ne peut être enregistré. Reconnectez-vous puis rouvrez cette fiche.',
 			'admin.finance.pai.faitTitre' => 'Paiement enregistré',
 			'admin.finance.pai.moisRegle' => ({required Object prenom}) => 'Le mois de ${prenom} est réglé.',
-			'admin.finance.pai.ilManque' => ({required Object montant, required Object prenom}) => 'Il manque encore ${montant} pour régler le mois de ${prenom}. Le mois sera réglé dès que le complément sera enregistré.',
+			'admin.finance.pai.ilManque' => ({required Object prenom}) => 'Le mois de ${prenom} n\'est pas encore réglé. Il le sera dès que le complément sera enregistré.',
 			'admin.finance.pai.enregistreSansEtat' => ({required Object prenom}) => 'Le paiement est crédité à ${prenom}.',
 			'admin.finance.pai.dejaEnregistre' => 'Ce paiement était déjà enregistré : rien n\'a été ajouté.',
 			'admin.finance.pai.refusTitre' => 'Paiement refusé',

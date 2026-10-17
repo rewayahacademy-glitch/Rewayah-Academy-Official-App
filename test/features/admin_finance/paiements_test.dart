@@ -258,12 +258,11 @@ void main() {
       await _enregistrer(tester);
       expect(port.envois.single.$2, const Montant(3000, 'USD'));
       expect(port.envois.single.$4, isNull);
+      expect(find.text(p.ilManque(prenom: 'Bilal')), findsOneWidget);
       expect(
-        find.text(
-          p.ilManque(
-            montant: formaterMontant(const Montant(2000, 'USD')),
-            prenom: 'Bilal',
-          ),
+        find.descendant(
+          of: find.byKey(FeuillePaiement.cleManque),
+          matching: find.text(formaterMontant(const Montant(2000, 'USD'))),
         ),
         findsOneWidget,
       );

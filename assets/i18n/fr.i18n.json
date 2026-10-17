@@ -3578,7 +3578,7 @@
         "horsLigne": "Pas de connexion\u00a0: rien ne peut être enregistré. Reconnectez-vous puis rouvrez cette fiche.",
         "faitTitre": "Paiement enregistré",
         "moisRegle": "Le mois de {prenom} est réglé.",
-        "ilManque": "Il manque encore {montant} pour régler le mois de {prenom}. Le mois sera réglé dès que le complément sera enregistré.",
+        "ilManque": "Le mois de {prenom} n'est pas encore réglé. Il le sera dès que le complément sera enregistré.",
         "enregistreSansEtat": "Le paiement est crédité à {prenom}.",
         "dejaEnregistre": "Ce paiement était déjà enregistré\u00a0: rien n'a été ajouté.",
         "refusTitre": "Paiement refusé",
