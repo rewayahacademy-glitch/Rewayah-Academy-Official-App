@@ -3,10 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
-import '../../core/tc_classe/session_live_vm.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
-import '../tc_classe_live/classe_live_page.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart';
 import '../tc_espace_groupe/roster_enseignant_slot.dart';
 import 'chemins_tc_a.dart';
@@ -38,9 +36,7 @@ List<RouteBase> routesTcA({RoleEspaceGroupe role = RoleEspaceGroupe.eleve}) =>
         // Groupe (BOUTONS-GRISES-1) : non branche, il etait rendu inerte.
         builder: (BuildContext contexte, GoRouterState _) => MesGroupesPage(
           onRejoindre: (GroupSummaryVM groupe) =>
-              role == RoleEspaceGroupe.eleve
-              ? preparerSalleEleve(contexte, groupe)
-              : _rejoindre(contexte, groupe),
+              preparerSalleEleve(contexte, groupe),
         ),
         routes: <RouteBase>[
           GoRoute(
@@ -53,9 +49,7 @@ List<RouteBase> routesTcA({RoleEspaceGroupe role = RoleEspaceGroupe.eleve}) =>
                 role: role,
                 contenuRoster: RosterEnseignantSlot(groupeId: groupeId),
                 onRejoindre: (GroupSummaryVM groupe) =>
-                    role == RoleEspaceGroupe.eleve
-                    ? preparerSalleEleve(contexte, groupe)
-                    : _rejoindre(contexte, groupe),
+                    preparerSalleEleve(contexte, groupe),
               );
             },
           ),
@@ -63,10 +57,12 @@ List<RouteBase> routesTcA({RoleEspaceGroupe role = RoleEspaceGroupe.eleve}) =>
       ),
     ];
 
-/// L'eleve : « Rejoindre » ouvre la salle canonique, qui montre d'abord
-/// sa preparation presque silencieuse (PRE-ELV-01, CL-4.6). Aucune nouvelle
-/// route : le billet passe par `extra`, jamais par l'URL (ADR-005).
-/// Aussi le « Rejoindre » de l'Accueil adulte (DASH-EA-PROD).
+/// « Rejoindre » ouvre la salle canonique `/salle` avec sa preparation, pour
+/// tout role (eleve, enseignant, adulte) : la preparation est celle de la
+/// seance du groupe, et `/salle` la montre selon le role de la session.
+/// Aucune nouvelle route : le billet passe par `extra`, jamais par l'URL
+/// (ADR-005). Aussi le « Rejoindre » de l'Accueil adulte (DASH-EA-PROD).
+/// Le nom est reste (usage dans `routes_accueil_adulte.dart`).
 void preparerSalleEleve(BuildContext contexte, GroupSummaryVM groupe) {
   final String? sessionId = groupe.prochaineSeance?.sessionId;
   if (sessionId == null) {
@@ -79,36 +75,6 @@ void preparerSalleEleve(BuildContext contexte, GroupSummaryVM groupe) {
       emisA: DateTime.now(),
       preparation: true,
       groupeId: groupe.groupeId,
-    ),
-  );
-}
-
-/// Ouvre la Classe Live du groupe, avec son contexte.
-///
-/// **Silencieux sans seance materialisee.** Le bouton « Rejoindre » de
-/// `CarteSession` ne se rend deja que fenetre ouverte -- horloge, jamais
-/// l'ecran -- donc `prochaineSeance?.sessionId` est nul seulement si
-/// l'occurrence n'a pas ete materialisee cote serveur : `ContexteClasseLive`
-/// exige un `sessionId`, on ne navigue pas plutot que d'en inventer un.
-void _rejoindre(BuildContext contexte, GroupSummaryVM groupe) {
-  final String? sessionId = groupe.prochaineSeance?.sessionId;
-  if (sessionId == null) {
-    return;
-  }
-  GoRouter.of(contexte).go(
-    Routes.tcClasse,
-    extra: ContexteClasseLive(
-      sessionId: sessionId,
-      groupeId: groupe.groupeId,
-      libelleGroupe: groupe.libelle,
-      enseignant: EnseignantDeClasse(
-        nomAffichage: groupe.enseignant.nomAffichage,
-        titre: groupe.enseignant.titre,
-        photoCleOuUrl: groupe.enseignant.photoUrlOuCle,
-        pays: groupe.enseignant.pays,
-      ),
-      horloge: groupe.horloge,
-      seuilMax: groupe.seuilMax,
     ),
   );
 }
