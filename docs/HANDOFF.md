@@ -1,5 +1,22 @@
 # HANDOFF — à lire en premier, avant toute action
 
+> 📊 **17 octobre 2026 — simulation économique à 100 élèves (couche 3 du
+> système de test), hors application.** Demande opérateur : 100 profils de
+> test, enseignants (1 pour 2 groupes), administration (4), puis calcul de ce
+> que l'académie encaisse et peut payer aux enseignants. Tarifs donnés :
+> enfant 50 $, adulte 60 $, remise 5 $ sur la 3e personne d'une famille et 7 $
+> par personne dès la 4e. Livré : modèle de Monte-Carlo sans dépendance
+> `tool/simulation/modele_academie.mjs`, rapport `simuler.mjs`, tableau
+> interactif `simulateur.html` (publié en artifact), synthèse
+> **[docs/produit/simulation-economique.md](produit/simulation-economique.md)**.
+> ✅ **Mesuré** : `node --test tool/simulation/modele_academie.test.mjs`
+> 11/11 ; scénario réaliste, encaissé médian 5 208 $ / mois, taux enseignant
+> max 8,85 $ / h pour 30 % de marge tenue 9 mois sur 10 (taxes et paie admin
+> à zéro faute de données). Aucun fichier Flutter ni migration touché.
+> ⏭ **Reste** : couche 1 (population de test sur un projet Supabase staging
+> à créer, l'unique projet actuel tenant lieu de prod) et couche 2 (parcours
+> joués dans l'app) ; questions ouvertes en fin de synthèse.
+
 > 🚀 **19 septembre 2026, soir (session suivante) — audit final de placement
 > UX du panneau Admin, un écart trouvé et corrigé.** Mission reçue : contrôle
 > final UX, classification de chaque élément visible de l'espace Admin selon
