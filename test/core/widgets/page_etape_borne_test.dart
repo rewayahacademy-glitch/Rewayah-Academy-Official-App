@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/page_etape.dart';
 import 'package:rewayah_academy/core/widgets/page_parcours.dart';
 
@@ -124,5 +125,32 @@ void main() {
     expect(find.byType(RangeeEtape), findsOneWidget);
     expect(find.text(t.commun.etape.sur(n: 2, total: 7)), findsOneWidget);
     expect(find.text(t.inscription.etapeSur(n: 2, total: 7)), findsNothing);
+  });
+
+  // Lot E9 : une etape de choix garde une colonne assez large pour le bento
+  // des cartes (quatre colonnes de grille), centree, rangee comprise.
+  testWidgets('1440, etape de choix : colonne large et centree', (
+    WidgetTester tester,
+  ) async {
+    await _monter(
+      tester,
+      vueBureau,
+      const PageEtape(
+        numero: 1,
+        total: 4,
+        colonneLarge: true,
+        child: Text('Pour qui est ce compte ?'),
+      ),
+    );
+    final Rect colonne = _colonne(tester);
+    // Toute la largeur offerte a 1440 (1136), dans la borne large : quatre
+    // colonnes de grille, la ou 560 n'en donne que deux.
+    expect(colonne.width, greaterThan(PageEtape.largeurColonne));
+    expect(colonne.width, lessThanOrEqualTo(PageEtape.largeurColonneLarge));
+    expect(GrilleBento.colonnesPour(colonne.width), 4);
+    expect(GrilleBento.colonnesPour(PageEtape.largeurColonne), 2);
+    expect(colonne.center.dx, closeTo(vueBureau.width / 2, 0.5));
+    final Rect rangee = tester.getRect(find.byType(RangeeEtape));
+    expect(rangee.width, closeTo(colonne.width, 0.5));
   });
 }

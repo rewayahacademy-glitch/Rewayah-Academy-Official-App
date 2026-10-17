@@ -44,6 +44,7 @@ class UsageEtape extends ConsumerWidget {
 
     return CoquilleEtape(
       route: _route,
+      choix: true,
       question: t.inscription.usage.question,
       libelleAction: t.commun.continuer,
       onAction:

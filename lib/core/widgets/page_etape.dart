@@ -31,6 +31,16 @@ import 'page_shell.dart';
 /// prend toute la largeur et rien ne change. Hors telephone, l'action prend
 /// la largeur de son contenu (et non 1136 points pour un verbe) et se range
 /// au bord de fin de la colonne : a droite en francais, a gauche en arabe.
+///
+/// **Colonne large des etapes de choix** (lot E9) : une etape dont le
+/// contenu est un groupe de cartes de choix passe [colonneLarge] a vrai. Sa
+/// colonne prend alors [largeurColonneLarge], la largeur maximale du contenu
+/// des autres pages : assez pour les quatre colonnes de la disposition bento
+/// de `ChoiceCardGroup` (decision du directeur du 17/10 : sur web, des cartes
+/// propres au grand ecran, en bento). Dans 560 points, la grille n'a que deux
+/// colonnes : le bento ne s'activait jamais et la liste du telephone restait.
+/// A 800, il s'active mais la tuile carree, large de 188 points, monte a 724
+/// de haut pour tenir son explication et son exemple.
 class PageEtape extends StatelessWidget {
   /// Cree une page d'etape.
   const PageEtape({
@@ -41,6 +51,7 @@ class PageEtape extends StatelessWidget {
     this.onRetour,
     this.action,
     this.defilante = true,
+    this.colonneLarge = false,
     this.bandeauHorsLigne = const OfflineBanner(),
   }) : assert(total > 0 && numero >= 1 && numero <= total, 'etape hors borne');
 
@@ -70,6 +81,13 @@ class PageEtape extends StatelessWidget {
   /// texte courant, celle de la colonne de l'ajout d'un profil eleve.
   static const double largeurColonne = AppPage.largeurDialogue;
 
+  /// La largeur maximale de la colonne d'une etape de choix ([colonneLarge]).
+  static const double largeurColonneLarge = AppPage.largeurMaxContenu;
+
+  /// Vrai pour une etape de choix : colonne de [largeurColonneLarge], ou les
+  /// cartes de choix passent en bento sur grand ecran.
+  final bool colonneLarge;
+
   /// La cle de la colonne bornee du contenu (mesuree par les tests).
   static const Key colonneKey = ValueKey<String>('page-etape-colonne');
 
@@ -83,9 +101,13 @@ class PageEtape extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool telephone = AppGabarit.de(context) == Gabarit.mobile;
+    final double largeur = colonneLarge
+        ? PageEtape.largeurColonneLarge
+        : PageEtape.largeurColonne;
     final Widget? zoneAction = switch (action) {
       null => null,
       final Widget a => _ColonneEtape(
+        largeur: largeur,
         child: KeyedSubtree(
           key: actionKey,
           child: telephone
@@ -103,22 +125,24 @@ class PageEtape extends StatelessWidget {
     return PageShell(
       actionsCoquille: false,
       entete: _ColonneEtape(
+        largeur: largeur,
         child: RangeeEtape(numero: numero, total: total, onRetour: onRetour),
       ),
       actions: zoneAction,
       defilante: defilante,
       bandeauHorsLigne: bandeauHorsLigne,
-      child: _ColonneEtape(cle: colonneKey, child: child),
+      child: _ColonneEtape(largeur: largeur, cle: colonneKey, child: child),
     );
   }
 }
 
-/// La colonne d'etape : centree, bornee a [PageEtape.largeurColonne]. Sur
-/// telephone, la largeur offerte est deja plus etroite : elle la prend.
+/// La colonne d'etape : centree, bornee a [largeur]. Sur telephone, la
+/// largeur offerte est deja plus etroite : elle la prend.
 class _ColonneEtape extends StatelessWidget {
-  const _ColonneEtape({required this.child, this.cle});
+  const _ColonneEtape({required this.child, required this.largeur, this.cle});
 
   final Widget child;
+  final double largeur;
   final Key? cle;
 
   @override
@@ -127,7 +151,7 @@ class _ColonneEtape extends StatelessWidget {
     heightFactor: 1,
     child: ConstrainedBox(
       key: cle,
-      constraints: const BoxConstraints(maxWidth: PageEtape.largeurColonne),
+      constraints: BoxConstraints(maxWidth: largeur),
       // Toute la largeur de la colonne, meme pour un contenu court : il
       // commence au bord de debut de la colonne, il n'est pas centre.
       child: SizedBox(width: double.infinity, child: child),

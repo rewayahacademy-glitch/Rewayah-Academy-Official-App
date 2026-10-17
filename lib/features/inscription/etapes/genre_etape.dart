@@ -32,6 +32,7 @@ class GenreEtape extends ConsumerWidget {
 
     return CoquilleEtape(
       route: _route,
+      choix: true,
       question: t.inscription.genreQuestion,
       // K-47 : la seule raison dite est la relecture de la piece, qui ne
       // concerne que l'enseignant ; aucune explication pour le tuteur.

@@ -109,7 +109,13 @@ class CoquilleEtape extends ConsumerWidget {
     this.enCours = false,
     this.souscription,
     this.complement,
+    this.choix = false,
   });
+
+  /// Vrai quand l'etape est un choix entre des cartes (usage, genre) : la
+  /// colonne large de [PageEtape.colonneLarge], ou les cartes passent en
+  /// bento sur grand ecran.
+  final bool choix;
 
   /// La route de l'etape (sert au rang).
   final String route;
@@ -156,6 +162,7 @@ class CoquilleEtape extends ConsumerWidget {
       numero: rangEtape(route),
       total: etapesInscription.length,
       onRetour: onRetour,
+      colonneLarge: choix,
       action: Column(
         crossAxisAlignment: AppGabarit.de(context) == Gabarit.mobile
             ? CrossAxisAlignment.stretch
