@@ -288,6 +288,6 @@ String? libelleJalon(DateTime? quand, {DateTime? precedent}) {
       ? null
       : intervalleDemande(quand.difference(precedent));
   return ecoule == null
-      ? t.suiviDemandes.jalon.date(date: date, heure: heure)
+      ? t.commun.formats.dateHeure(date: date, heure: heure)
       : t.suiviDemandes.jalon.apres(date: date, heure: heure, duree: ecoule);
 }

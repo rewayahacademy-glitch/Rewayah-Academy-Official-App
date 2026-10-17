@@ -203,9 +203,7 @@ class _Reglage extends StatelessWidget {
         Segment<int>(
           valeur: v,
           libelle: isolerSens(
-            LibellesGroupe.insecable(
-              t.enseignant.ficheGroupe.pause.minutes(minutes: v),
-            ),
+            LibellesGroupe.insecable(t.commun.formats.minutes(minutes: v)),
           ),
         ),
     ];

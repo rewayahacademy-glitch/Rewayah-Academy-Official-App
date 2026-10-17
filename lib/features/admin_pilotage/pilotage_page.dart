@@ -513,7 +513,7 @@ class _Tableau extends StatelessWidget {
           if (page.pages > 1) ...<Widget>[
             Ecart.vSm,
             BarrePrecedentSuivant(
-              position: l.position(
+              position: t.commun.formats.pageSur(
                 page: '${page.page}',
                 total: '${page.pages}',
               ),

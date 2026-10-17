@@ -694,7 +694,7 @@ class _PiedDePage extends ConsumerWidget {
         const SizedBox(height: AppSpacing.sm),
         Text(
           <String>[
-            t.eleve.coran.page(
+            t.commun.formats.pageSur(
               page: '${vue.numero}',
               total: '${vue.nombrePages}',
             ),

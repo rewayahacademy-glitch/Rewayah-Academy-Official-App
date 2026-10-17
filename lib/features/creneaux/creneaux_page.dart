@@ -230,7 +230,7 @@ class _DetailOffrePageEtat extends State<DetailOffrePage> {
       LigneCleValeur(
         cle: t.enseignant.creneaux.cleDuree,
         valeur: LibellesGroupe.valeurSeule(
-          t.enseignant.creneaux.duree(minutes: '${offre.dureeMinutes}'),
+          t.commun.formats.minutes(minutes: '${offre.dureeMinutes}'),
         ),
       ),
   ];

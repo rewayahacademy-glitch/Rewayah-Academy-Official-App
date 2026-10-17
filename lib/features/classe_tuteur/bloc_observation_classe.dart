@@ -48,9 +48,7 @@ String _dureeVisiteSecable(Duration duree) {
     );
   }
   if (secondes == 0) {
-    return LibellesGroupe.insecable(
-      t.classe.observation.minutes(minutes: minutes),
-    );
+    return LibellesGroupe.insecable(t.commun.formats.minutes(minutes: minutes));
   }
   return LibellesGroupe.insecable(
     t.classe.observation.minutesSecondes(minutes: minutes, secondes: secondes),

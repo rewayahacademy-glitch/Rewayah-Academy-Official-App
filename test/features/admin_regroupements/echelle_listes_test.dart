@@ -282,9 +282,7 @@ void main() {
       expect(port.pagesDemandees, 1);
       final int pages = (volume.length / 25).ceil();
       expect(
-        find.text(
-          t.admin.regroupements.liste.position(page: '1', total: '$pages'),
-        ),
+        find.text(t.commun.formats.pageSur(page: '1', total: '$pages')),
         findsOneWidget,
       );
       expect(_cle('nav-precedent'), findsNothing);

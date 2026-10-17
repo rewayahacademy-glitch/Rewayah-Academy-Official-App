@@ -1,5 +1,10 @@
 {
   "commun": {
+    "formats": {
+      "dateHeure": "{date} à {heure}",
+      "minutes": "{minutes} min",
+      "pageSur": "Page {page} sur {total}"
+    },
     "roles": {
       "eleve": "Élève",
       "tuteur": "Tuteur",
@@ -63,6 +68,7 @@
       "autresPlusieurs": "{n} autres personnes correspondent\u00a0: précisez la recherche pour les voir."
     },
     "etats": {
+      "branchementServeur": "Disponible au branchement serveur",
       "chargementProlonge": {
         "titre": "La connexion prend plus de temps que prévu",
         "phrase": "Vous pouvez patienter encore un peu ou réessayer."
@@ -2316,7 +2322,6 @@
         "filtreTousEnseignants": "Tous les enseignants",
         "sansEnseignant": "Sans enseignant",
         "etatAttente": "En attente d'enseignant",
-        "position": "Page {page} sur {total}",
         "positionSemantique": "Page {page} sur {total} de la liste des classes",
         "precedente": "Page précédente des classes",
         "suivante": "Page suivante des classes",
@@ -2721,7 +2726,6 @@
         "filtreTousPublics": "Tous les publics",
         "aucunAvecCeFiltre": "Aucune demande avec ce filtre",
         "aucunAvecCeFiltreDetail": "Changez de filtre pour voir les autres demandes réunies.",
-        "position": "Page {page} sur {total}",
         "positionSemantique": "Page {page} sur {total} de la liste des demandes réunies",
         "precedente": "Page précédente des demandes réunies",
         "suivante": "Page suivante des demandes réunies",
@@ -3548,7 +3552,6 @@
       "videDetail": "Les séances apparaissent ici dès qu'une classe a un horaire cette semaine. Essayez une autre semaine.",
       "sansDonnees": "Le planning n'a pas pu être chargé",
       "erreur": "Le planning n'a pas pu être lu\u00a0: il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
-      "indisponibleTitre": "Disponible au branchement serveur",
       "indisponiblePhrase": "Le planning s'affichera ici dès le branchement serveur. D'ici là, rien n'est affiché\u00a0: aucune séance n'est inventée.",
       "statutPrevue": "Prévue",
       "statutPreparation": "En préparation",
@@ -3569,7 +3572,6 @@
       "videDetail": "Une séance passée en incident, en absence d'enseignant ou en absence d'élève apparaît ici dès qu'elle change de statut.",
       "sansDonnees": "Les incidents n'ont pas pu être chargés",
       "erreur": "Les incidents n'ont pas pu être lus\u00a0: il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
-      "indisponibleTitre": "Disponible au branchement serveur",
       "indisponiblePhrase": "Les incidents s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché\u00a0: aucun incident n'est inventé."
     },
     "pilotage": {
@@ -3636,7 +3638,6 @@
       "filtreAttente": "En attente d'enseignant",
       "filtrePublic": "Public",
       "filtreTousPublics": "Tous les publics",
-      "position": "Page {page} sur {total}",
       "positionSemantique": "Page {page} sur {total} du tableau de pilotage",
       "precedente": "Page précédente du tableau de pilotage",
       "suivante": "Page suivante du tableau de pilotage",
@@ -3722,8 +3723,7 @@
         "other": "Fusion avec {autre} : {n} élèves accueillis"
       },
       "evenementTransfertSortant": "{prenom} transféré vers {autre}",
-      "evenementTransfertEntrant": "{prenom} transféré depuis {autre}",
-      "quand": "{date} à {heure}"
+      "evenementTransfertEntrant": "{prenom} transféré depuis {autre}"
     },
     "tirage": {
       "titre": "Tirage des contrôles",
@@ -3806,12 +3806,10 @@
       "videDetail": "Les tirages apparaîtront ici dès que des séances seront en direct.",
       "aucunAvecCeFiltre": "Aucun tirage avec ce filtre",
       "aucunAvecCeFiltreDetail": "Changez de filtre pour voir les autres tirages.",
-      "position": "Page {page} sur {total}",
       "positionSemantique": "Page {page} sur {total} de l'historique des tirages",
       "precedente": "Page précédente de l'historique des tirages",
       "suivante": "Page suivante de l'historique des tirages",
-      "resume": "Tirages {debut} à {fin} sur {total}",
-      "quand": "{date} à {heure}"
+      "resume": "Tirages {debut} à {fin} sur {total}"
     },
     "bibliotheque": {
       "titre": "Bibliothèque",
@@ -4818,7 +4816,6 @@
     },
     "coran": {
       "titre": "Le Coran",
-      "page": "Page {page} sur {total}",
       "juz": "Juz {juz}",
       "mecquoise": "Révélée à La Mecque",
       "medinoise": "Révélée à Médine",
@@ -4977,7 +4974,6 @@
       "demandeTitreDuree": "La durée des cours {dePrenom}",
       "demandeTitreMinimum": "La durée minimale payable pour {prenom}",
       "demandeActuelle": "Aujourd'hui\u00a0: {minutes} min",
-      "demandeMinutes": "{minutes} min",
       "demandeMotif": "Pourquoi ce changement\u00a0?",
       "demandeMotifRequis": "Un motif est nécessaire\u00a0: c'est lui qui permet de trancher.",
       "demandeManqueValeur": "Il manque la durée demandée\u00a0: choisissez-la dans la liste, ou touchez «\u00a0Autre\u00a0» et écrivez-la.",
@@ -5072,7 +5068,6 @@
       "resume": "{visites} · {duree} par visite",
       "restanteAucune": "Aucune visite restante pour cette séance",
       "restanteUne": "1 visite restante pour cette séance",
-      "minutes": "{minutes} min",
       "minutesSecondes": "{minutes} min {secondes} s",
       "secondes": "{secondes} s",
       "motif": {
@@ -5379,7 +5374,6 @@
       "ligneCours": "Cours avec {prenom}",
       "lignePause": "Pause",
       "plage": "{debut} à {fin}",
-      "duree": "{minutes} min",
       "rienAujourdhui": "Rien de prévu aujourd'hui",
       "rienAujourdhuiDetail": "Votre prochain cours est {jour} à {heure}.",
       "journeeTerminee": "{nombre} cours donnés aujourd'hui.",
@@ -5740,7 +5734,6 @@
       "cleFuseau": "Fuseau de référence",
       "cleHeureLocale": "Heure locale",
       "cleDuree": "Durée",
-      "duree": "{minutes} min",
       "plagesContexte": "Une ligne par plage. Touchez une plage pour la modifier ou la supprimer.",
       "plageDe": "de\u00a0{heure}\u00a0h",
       "plageA": "à\u00a0{heure}\u00a0h",
@@ -5808,7 +5801,6 @@
         "moment": "Moment de la pause",
         "momentAide": "Minutes après le début de la séance.",
         "duree": "Durée de la pause",
-        "minutes": "{minutes} min",
         "resume": "Pause de {duree} min, {moment} min après le début.",
         "enregistrer": "Enregistrer la pause",
         "enregistree": "Pause enregistrée.",
@@ -6181,7 +6173,6 @@
         "terminee": "Cours terminé"
       },
       "duree": {
-        "minutes": "{minutes} min",
         "heures": "{heures} h",
         "heuresMinutes": "{heures} h {minutes}"
       },
@@ -7477,7 +7468,6 @@
     "introuvable": "Cette demande n'existe plus ou n'est pas la vôtre.",
     "retour": "Retour aux demandes",
     "fuseau": "Heures affichées : heure {deVille}.",
-    "horodatage": "{date} à {heure}",
     "prevue": "Prévue le {date} à {heure}",
     "etapes": {
       "envoyee": "Demande envoyée",
@@ -7613,7 +7603,6 @@
       "changementTransfert": "Demande de créneau {dePrenom} : nouvelle classe, voir le détail"
     },
     "jalon": {
-      "date": "{date} à {heure}",
       "apres": "{date} à {heure}, {duree}",
       "aussitot": "aussitôt",
       "minutes": {
