@@ -21353,6 +21353,24 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'La réponse n'est pas arrivée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vérifiez la version active avant de réessayer.'
 	String get publicationNonConfirmeeDetail => 'La réponse n\'est pas arrivée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vérifiez la version active avant de réessayer.';
 
+	/// fr: 'Version publiée'
+	String get publicationFaite => 'Version publiée';
+
+	/// fr: 'Rewayah a enregistré la nouvelle version. Elle s'appliquera à partir de sa date d'effet ; d'ici là, la version active continue de s'appliquer.'
+	String get publicationFaiteDetail => 'Rewayah a enregistré la nouvelle version. Elle s\'appliquera à partir de sa date d\'effet ; d\'ici là, la version active continue de s\'appliquer.';
+
+	/// fr: 'Publication refusée'
+	String get publicationRefusee => 'Publication refusée';
+
+	/// fr: 'Seule la direction, connectée avec la double vérification, publie les prix. Rien n'a été publié : reconnectez-vous avec votre code de vérification, puis réessayez.'
+	String get publicationRefuseeDetail => 'Seule la direction, connectée avec la double vérification, publie les prix. Rien n\'a été publié : reconnectez-vous avec votre code de vérification, puis réessayez.';
+
+	/// fr: 'Une valeur ne convient pas'
+	String get publicationInvalide => 'Une valeur ne convient pas';
+
+	/// fr: 'Rewayah a refusé cette version : la date d'effet doit être à venir et après la dernière version, et chaque remise doit rester inférieure au tarif. Rien n'a été publié : corrigez puis réessayez.'
+	String get publicationInvalideDetail => 'Rewayah a refusé cette version : la date d\'effet doit être à venir et après la dernière version, et chaque remise doit rester inférieure au tarif. Rien n\'a été publié : corrigez puis réessayez.';
+
 	/// fr: 'Corrigez d'abord les champs signalés'
 	String get champsACorriger => 'Corrigez d\'abord les champs signalés';
 
@@ -35016,6 +35034,12 @@ extension on Traductions {
 			'admin.finance.pol.publicationIndisponibleDetail' => 'Rien n\'a été publié : le service de publication n\'est pas encore branché. La version active continue de s\'appliquer. Gardez cet écran ouvert pour conserver vos modifications, ou revenez quand la publication sera ouverte.',
 			'admin.finance.pol.publicationNonConfirmee' => 'Publication non confirmée',
 			'admin.finance.pol.publicationNonConfirmeeDetail' => 'La réponse n\'est pas arrivée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vérifiez la version active avant de réessayer.',
+			'admin.finance.pol.publicationFaite' => 'Version publiée',
+			'admin.finance.pol.publicationFaiteDetail' => 'Rewayah a enregistré la nouvelle version. Elle s\'appliquera à partir de sa date d\'effet ; d\'ici là, la version active continue de s\'appliquer.',
+			'admin.finance.pol.publicationRefusee' => 'Publication refusée',
+			'admin.finance.pol.publicationRefuseeDetail' => 'Seule la direction, connectée avec la double vérification, publie les prix. Rien n\'a été publié : reconnectez-vous avec votre code de vérification, puis réessayez.',
+			'admin.finance.pol.publicationInvalide' => 'Une valeur ne convient pas',
+			'admin.finance.pol.publicationInvalideDetail' => 'Rewayah a refusé cette version : la date d\'effet doit être à venir et après la dernière version, et chaque remise doit rester inférieure au tarif. Rien n\'a été publié : corrigez puis réessayez.',
 			'admin.finance.pol.champsACorriger' => 'Corrigez d\'abord les champs signalés',
 			'admin.finance.pol.champsACorrigerDetail' => 'Un champ vide, mal saisi ou incohérent empêche de préparer la publication : corrigez chaque champ signalé comme sa phrase l\'indique, puis publiez.',
 			'admin.finance.pol.apercu' => 'Aperçu avant publication',
@@ -35180,14 +35204,14 @@ extension on Traductions {
 			'admin.fusion.motif.cibleCloturee' => 'la classe qui accueille est clôturée',
 			'admin.fusion.motif.cibleIncompatible' => 'les deux classes n\'ont pas le même horaire ou la même catégorie',
 			'admin.fusion.motif.ciblePleine' => 'la classe qui accueille n\'a plus assez de place',
+			_ => null,
+		} ?? switch (path) {
 			'admin.fusion.motif.eleveAbsent' => 'l\'élève ne fait plus partie de cette classe',
 			'admin.fusion.motif.inconnu' => 'Rewayah a refusé l\'opération sans en préciser la raison',
 			'admin.fusion.fusionNonConfirmee' => 'La fusion n\'est pas confirmée : la réponse du serveur n\'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans fusion en double.',
 			'admin.fusion.manqueCible' => 'Il manque la classe qui accueille les élèves : choisissez-la dans la liste.',
 			'admin.fusion.transfertTitre' => ({required Object deLibelle}) => 'Transférer un élève ${deLibelle}',
 			'admin.fusion.transfertContexte' => 'Choisissez l\'élève, puis la classe parallèle qui l\'accueille. Le transfert est tracé, et la famille en est prévenue.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.fusion.eleveTitre' => 'Élève à transférer',
 			'admin.fusion.aucunEleve' => 'Cette classe n\'a aucun élève',
 			'admin.fusion.aucunEleveDetail' => 'Il n\'y a personne à transférer.',
@@ -35694,14 +35718,14 @@ extension on Traductions {
 			'nav.admin.dossiers' => 'Dossiers',
 			'nav.admin.demandes' => 'Demandes',
 			'nav.admin.journal' => 'Journal',
+			_ => null,
+		} ?? switch (path) {
 			'nav.admin.comptes' => 'Comptes',
 			'nav.admin.accesAgents' => 'Accès des agents',
 			'nav.admin.accueil' => 'Accueil',
 			'nav.admin.operations' => 'Opérations',
 			'nav.admin.personnes' => 'Personnes',
 			'nav.admin.pedagogie' => 'Pédagogie',
-			_ => null,
-		} ?? switch (path) {
 			'nav.admin.finance' => 'Finance',
 			'nav.admin.configuration' => 'Configuration',
 			'nav.admin.securite' => 'Sécurité et audit',
@@ -36208,14 +36232,14 @@ extension on Traductions {
 			'tuteur.accueil.assisterRefuse' => 'Le cours n\'a pas pu être rejoint. Il vient peut-être de se terminer.',
 			'tuteur.accueil.enCours' => ({required Object prenom}) => 'En cours avec ${prenom}',
 			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'Commencé il y a ${minutes} min',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.depuisInstant' => 'Vient de commencer',
 			'tuteur.accueil.aujourdhui' => ({required Object heure, required Object prenom}) => 'Aujourd\'hui à ${heure}, avec ${prenom}',
 			'tuteur.accueil.unAutreJour' => ({required Object jour, required Object heure, required Object prenom}) => '${jour} à ${heure}, avec ${prenom}',
 			'tuteur.accueil.rienAujourdhui' => 'Rien aujourd\'hui',
 			'tuteur.accueil.aucunCoursPrevu' => 'Aucun cours programmé pour l\'instant',
 			'tuteur.accueil.aucunCoursPrevuDetail' => 'Les cours de la semaine sont préparés à l\'avance. Celui-ci apparaîtra ici.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.enRecherche' => 'En recherche d\'un enseignant',
 			'tuteur.accueil.enRechercheDepuis' => ({required Object date}) => 'Demande déposée le ${date}',
 			'tuteur.accueil.enRechercheSansDate' => ({required Object prenom}) => 'Un enseignant prendra ${prenom} en charge parmi les heures proposées.',
@@ -36722,14 +36746,14 @@ extension on Traductions {
 			'enseignant.cahier.videDetail' => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier de transmission.',
 			'enseignant.cahier.introuvable' => 'Séance introuvable',
 			'enseignant.cahier.introuvableDetail' => 'Cette séance n\'est pas l\'une des vôtres, ou le lien est incomplet. Revenez à votre journée pour choisir une séance.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.erreur' => 'Le constat n\'a pas pu être lu.',
 			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier de transmission sans le constat.',
 			'enseignant.cahier.echecEnvoi' => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.',
 			'enseignant.cahier.dejaDepose' => 'Le cahier de transmission de cette séance est déjà déposé.',
 			'enseignant.cahier.dejaDeposeDetail' => 'Un cahier de transmission ne se dépose qu\'une fois, et il ne se supprime pas d\'ici.',
 			'enseignant.cahier.depose' => 'Cahier de transmission enregistré',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.deposeDetail' => 'L\'académie l\'a reçu.',
 			'enseignant.cahier.enFileTitre' => 'En attente d\'envoi',
 			'enseignant.cahier.enFile' => 'Le cahier de transmission sera envoyé lorsque la connexion reviendra.',
@@ -37236,14 +37260,14 @@ extension on Traductions {
 			'controleur.echanges.champLibelle' => 'Répondre à l\'administration',
 			'controleur.echanges.envoyer' => 'Envoyer',
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object deAuteur, required Object texte}) => 'Nouveau message ${deAuteur} : ${texte}',
 			'controleur.echanges.contexteCompact' => ({required Object heure}) => 'Contexte joint à vos messages : séance de ${heure}',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.demo.titre' => 'Démonstration contrôleur',
 			'controleur.demo.mention' => 'Données fictives, aucun envoi.',
 			'controleur.demo.intro' => 'Choisissez un écran du contrôle et une situation de visite.',
@@ -37750,14 +37774,14 @@ extension on Traductions {
 			'tc.parcours.postCours.exceptions' => 'À confirmer',
 			'tc.parcours.postCours.toutEstNominal' => 'Rien ne demande votre attention.',
 			'tc.parcours.postCours.reprise' => 'Reprise proposée',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.postCours.repriseInconnue' => 'Aucune position de reprise connue pour cette séance.',
 			'tc.parcours.postCours.travail' => 'Travail proposé',
 			'tc.parcours.postCours.travailAucun' => 'Aucun travail proposé pour l\'instant.',
 			'tc.parcours.postCours.valider' => 'Valider',
 			'tc.parcours.postCours.enFile' => 'Enregistré. Il partira dès le retour du réseau.',
 			'tc.parcours.postCours.envoye' => 'Cours clôturé.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.indisponible' => 'Cette fonction n\'est pas encore disponible. Rien n\'est perdu, le cours continue et elle arrivera bientôt.',
 			'adulte.nav.accueil' => 'Accueil',
 			'adulte.nav.maClasse' => 'Ma classe',
@@ -38264,14 +38288,14 @@ extension on Traductions {
 			'suiviFamille.prevue' => ({required Object date, required Object heure}) => 'Prévue le ${date} à ${heure}',
 			'suiviFamille.etapes.envoyee' => 'Demande envoyée',
 			'suiviFamille.etapes.enAttente' => 'En liste d\'attente',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.etapes.classeCreee' => 'Classe créée',
 			'suiviFamille.etapes.enseignantAffecte' => 'Enseignant affecté',
 			'suiviFamille.etapes.eleveIntegre' => 'Élève intégré',
 			'suiviFamille.etapes.premiereSeance' => 'Première séance',
 			'suiviFamille.etats.fait' => 'Fait',
 			'suiviFamille.etats.enCours' => 'En cours',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.etats.aVenir' => 'À venir',
 			'suiviFamille.motif.classesPleines' => 'Toutes les classes de ce créneau sont complètes. Vous serez prévenu dès qu\'une place se libère.',
 			'suiviFamille.motif.aucunEnseignantLibre' => 'Aucun enseignant n\'est libre sur ce créneau pour le moment. Vous serez prévenu dès que ce changera.',
@@ -38778,14 +38802,14 @@ extension on Traductions {
 			'com.communaute.publication.enregistrer' => 'Enregistrer la publication',
 			'com.communaute.publication.enregistree' => 'Publication enregistrée',
 			'com.communaute.publication.retirer' => 'Retirer des éléments enregistrés',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.publication.menu' => ({required Object titre}) => 'Actions sur la publication ${titre}',
 			'com.communaute.publication.signaler' => 'Signaler la publication',
 			'com.communaute.publication.signalee' => 'Le contenu a été signalé à l\'équipe de modération.',
 			'com.communaute.publication.choisirTitre' => 'Aucune publication ouverte',
 			'com.communaute.publication.choisir' => 'Choisissez une publication dans la liste pour la lire et y répondre.',
 			'com.communaute.publication.introuvableTitre' => 'Publication indisponible',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.publication.introuvable' => 'Cette publication a été retirée ou ne vous est plus accessible. Revenez aux publications pour en choisir une autre.',
 			'com.communaute.publication.revenir' => 'Revenir aux publications',
 			'com.communaute.reponses.titre' => ({required Object nombre}) => 'Réponses (${nombre})',
@@ -39292,14 +39316,14 @@ extension on Traductions {
 			'com.annonces.demo.f.enseignantPlanning' => 'Votre planning de la semaine prochaine a changé',
 			'com.annonces.demo.f.enseignantMention' => 'Une publication de la Communauté vous mentionne',
 			'com.annonces.demo.f.enseignantReponse' => 'Nouvelle réponse à votre publication',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demo.f.enseignantAdministration' => 'Message de l\'Administration : pièces à fournir',
 			'com.annonces.demo.f.adminDossiers' => 'Trois dossiers d\'inscription sont à traiter',
 			'com.annonces.demo.f.adminSignalement' => 'Une publication de la Communauté a été signalée',
 			'com.annonces.demo.f.adminReponse' => 'Réponse de la famille de Bilal à votre message',
 			'com.annonces.demo.f.adminPlanifiee' => 'Une annonce planifiée est à vérifier avant publication',
 			'com.annonces.demo.f.adminOperationnel' => 'Classe An-Nour : effectif complet',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.controleurMission' => 'Nouvelle mission : visite de la Classe An-Nour',
 			'com.annonces.demo.f.controleurChangement' => 'Votre mission de jeudi est déplacée à 18 h',
 			'com.annonces.demo.f.controleurReponse' => 'Réponse de l\'Administration à votre rapport',
@@ -39806,14 +39830,14 @@ extension on Traductions {
 			'comptable.encaissements.rap.videTitre' => 'Rien à rapprocher.',
 			'comptable.encaissements.rap.videPhrase' => 'Chaque transaction reçue est déjà reliée à ce qui l\'attendait.',
 			'comptable.encaissements.rap.videFiltreTitre' => 'Aucune transaction dans cet état.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.rap.videFiltrePhrase' => 'Choisissez « Tous » pour revoir toutes les transactions.',
 			'comptable.encaissements.rap.voirToutes' => 'Voir toutes les transactions',
 			'comptable.encaissements.rap.ouvrirLecteur' => ({required Object libelle}) => 'Ouvrir le rapprochement de ${libelle}',
 			'comptable.encaissements.rap.candidats' => 'Correspondances proposées',
 			'comptable.encaissements.rap.candidatsAucun' => 'La source ne propose aucune correspondance pour cette transaction.',
 			'comptable.encaissements.rap.relieA' => ({required Object libelle}) => 'Reliée à : ${libelle}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.rapprocher' => 'Rapprocher',
 			'comptable.encaissements.rap.rapprocherLecteur' => ({required Object libelle}) => 'Rapprocher avec ${libelle}',
 			'comptable.encaissements.rap.doublonTitre' => 'Doublon potentiel',
@@ -40320,14 +40344,14 @@ extension on Traductions {
 			'recherche.espace.famille' => 'Dans votre espace Tuteur',
 			'recherche.espace.eleve' => 'Dans votre espace Élève',
 			'recherche.espace.eleveGuide' => 'Dans votre espace Élève',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.espace.enseignant' => 'Dans votre espace Enseignant',
 			'recherche.espace.controleur' => 'Dans votre espace Contrôle',
 			'recherche.espace.comptable' => 'Dans votre espace Comptabilité',
 			'recherche.espace.administration' => 'Dans votre espace Administration',
 			'recherche.initial.titre' => 'Rechercher dans votre espace',
 			'recherche.initial.phrase' => 'Saisissez un nom, une classe ou un support. Rien n\'est cherché avant que vous écriviez.',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.courte' => 'Saisissez au moins 3 caractères.',
 			'recherche.chargement' => 'Recherche en cours…',
 			'recherche.lent' => 'La recherche prend plus de temps que prévu. Les résultats déjà reçus restent affichés.',

@@ -28,11 +28,13 @@ import 'core/capacites/enseignants_classe_supabase.dart';
 import 'core/capacites/identite_titulaire_supabase.dart';
 import 'core/capacites/mes_finances_supabase.dart';
 import 'core/capacites/paiements_foyer_supabase.dart';
+import 'core/capacites/politiques_commerciales_supabase.dart';
 import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/port_enseignants_classe.dart';
 import 'core/capacites/port_identite_titulaire.dart';
 import 'core/capacites/port_mes_finances.dart';
 import 'core/capacites/port_paiements_foyer.dart';
+import 'core/capacites/port_politiques_commerciales.dart';
 import 'core/capacites/port_profil_eleve_titulaire.dart';
 import 'core/capacites/port_progression_famille.dart';
 import 'core/capacites/port_revenus_enseignant.dart';
@@ -250,6 +252,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portPaiementsFoyerProvider.overrideWithValue(
     PaiementsFoyerSupabase(Supabase.instance.client),
+  ),
+  // Politique commerciale versionnee (FAC-A-01, migration 20261017170000) :
+  // lecture par la direction et la comptabilite, publication par la
+  // direction en double verification.
+  portPolitiquesCommercialesProvider.overrideWithValue(
+    PolitiquesCommercialesSupabase(Supabase.instance.client),
   ),
   portHistoriqueObservationsProvider.overrideWithValue(
     HistoriqueObservationsSupabase(() => Supabase.instance.client),

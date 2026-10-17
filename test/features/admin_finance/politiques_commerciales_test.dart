@@ -49,6 +49,7 @@ import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_finance/politiques_commerciales.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
@@ -119,9 +120,14 @@ class _Port implements PortPolitiquesCommerciales {
         )
       : Future<PolitiqueCommerciale>.error(erreur!);
 
+  /// Le nombre de lectures des versions (relecture apres publication).
+  int lectures = 0;
+
   @override
-  Future<List<PolitiqueCommerciale>> versions() async =>
-      versionsRendues ?? <PolitiqueCommerciale>[];
+  Future<List<PolitiqueCommerciale>> versions() async {
+    lectures++;
+    return versionsRendues ?? <PolitiqueCommerciale>[];
+  }
 
   @override
   Future<void> publier(PolitiqueCommerciale brouillon) {
@@ -852,8 +858,11 @@ void main() {
     });
 
     for (final (String nom, Object? rendu) in <(String, Object?)>[
-      ('une reponse sans erreur', null),
       ('une erreur reseau', const SocketException('coupure')),
+      (
+        'une erreur serveur inattendue',
+        const PostgrestException(message: 'x', code: '57014'),
+      ),
     ]) {
       testWidgets('$nom : « Publication non confirmee », jamais un succes ni '
           'le brouillon dit publie', (WidgetTester tester) async {
@@ -893,6 +902,65 @@ void main() {
         );
         expect(tester.takeException(), isNull);
       });
+    }
+
+    testWidgets('reponse du serveur : « Version publiee », versions relues, '
+        'le message survit a la relecture', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 2600));
+      final _Port port = _Port(
+        versionsRendues: _avecBrouillon().versionsRendues,
+        publication: null,
+      );
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      final int lecturesAvant = port.lectures;
+      await _publier(tester);
+
+      expect(port.publies, hasLength(1));
+      expect(port.lectures, greaterThan(lecturesAvant));
+      expect(
+        find.descendant(
+          of: find.byKey(PolitiquesCommercialesContenu.publicationKey),
+          matching: find.text(pol.publicationFaite),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(pol.publicationFaiteDetail), findsOneWidget);
+      expect(find.text(pol.publicationNonConfirmee), findsNothing);
+      verifierUnSeulBoutonPlein(tester);
+      expect(tester.takeException(), isNull);
+    });
+
+    for (final (String code, String titre, String detail)
+        in <(String, String, String)>[
+          ('42501', pol.publicationRefusee, pol.publicationRefuseeDetail),
+          ('22023', pol.publicationInvalide, pol.publicationInvalideDetail),
+        ]) {
+      testWidgets(
+        'refus $code du serveur : « $titre », rien n est dit publie',
+        (WidgetTester tester) async {
+          _taille(tester, const Size(1440, 2600));
+          final _Port port = _Port(
+            versionsRendues: _avecBrouillon().versionsRendues,
+            publication: PostgrestException(message: 'refus', code: code),
+          );
+          await tester.pumpWidget(_hote(surcharges: _avec(port)));
+          await tester.pumpAndSettle();
+          await _publier(tester);
+
+          expect(
+            find.descendant(
+              of: find.byKey(PolitiquesCommercialesContenu.publicationKey),
+              matching: find.text(titre),
+            ),
+            findsOneWidget,
+          );
+          expect(find.text(detail), findsOneWidget);
+          expect(find.text(pol.publicationFaite), findsNothing);
+          expect(_dansEntete(find.text(pol.statutBrouillon)), findsOneWidget);
+          expect(tester.takeException(), isNull);
+        },
+      );
     }
 
     testWidgets('demonstration : la publication reste indisponible', (

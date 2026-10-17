@@ -45,6 +45,7 @@
 import 'package:flutter/foundation.dart' show listEquals, setEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_politiques_commerciales.dart';
@@ -108,6 +109,28 @@ final FutureProvider<PolitiquesLues> politiquesCommercialesProvider =
       return lirePolitiques(ref.watch(portPolitiquesCommercialesProvider));
     }, retry: (int retryCount, Object error) => null);
 
+/// Vrai quand le serveur vient de confirmer une publication : le message
+/// « Version publiee » survit a la relecture des versions, qui reconstruit le
+/// contenu sur le nouveau brouillon. Oublie a la premiere saisie et a la
+/// sortie de l'onglet.
+class PublicationPolitiqueControleur extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  /// Retient la publication confirmee.
+  void confirmer() => state = true;
+
+  /// Oublie la publication confirmee.
+  void oublier() => state = false;
+}
+
+/// La publication confirmee de l'onglet en cours.
+final NotifierProvider<PublicationPolitiqueControleur, bool>
+publicationPolitiqueProvider =
+    NotifierProvider.autoDispose<PublicationPolitiqueControleur, bool>(
+      PublicationPolitiqueControleur.new,
+    );
+
 /// L'onglet Politiques commerciales : chargement, contenu, sans brouillon
 /// (vide), erreur, hors ligne, et « Pas encore disponible » tant que le port
 /// rend `CapaciteIndisponible` (production, FI-BR-01).
@@ -120,6 +143,8 @@ class PolitiquesCommercialesBloc extends ConsumerWidget {
     final AsyncValue<PolitiquesLues> lues = ref.watch(
       politiquesCommercialesProvider,
     );
+    // Garde en vie la publication confirmee le temps de l'onglet.
+    ref.watch(publicationPolitiqueProvider);
     void relire() => ref.invalidate(politiquesCommercialesProvider);
     final Object? erreur = lues.hasError ? lues.error : null;
     final bool echecHorsLigne =
@@ -306,13 +331,23 @@ class PolitiquesCommercialesContenu extends ConsumerStatefulWidget {
 }
 
 /// Le resultat d'une tentative de publication.
-enum _Publication { aucune, champsACorriger, indisponible, nonConfirmee }
+enum _Publication {
+  aucune,
+  champsACorriger,
+  indisponible,
+  nonConfirmee,
+  faite,
+  refusee,
+  invalide,
+}
 
 class _PolitiquesCommercialesContenuState
     extends ConsumerState<PolitiquesCommercialesContenu> {
   final Map<String, TextEditingController> _saisies =
       <String, TextEditingController>{};
-  _Publication _publication = _Publication.aucune;
+  late _Publication _publication = ref.read(publicationPolitiqueProvider)
+      ? _Publication.faite
+      : _Publication.aucune;
   bool _enCours = false;
 
   /// L'activation de l'essai a l'ecran, dans un brouillon (guide §5.7,
@@ -341,8 +376,10 @@ class _PolitiquesCommercialesContenuState
   }
 
   void _rafraichir() => setState(() {
-    if (_publication == _Publication.champsACorriger) {
+    if (_publication == _Publication.champsACorriger ||
+        _publication == _Publication.faite) {
       _publication = _Publication.aucune;
+      ref.read(publicationPolitiqueProvider.notifier).oublier();
     }
   });
 
@@ -724,12 +761,20 @@ class _PolitiquesCommercialesContenuState
       await ref
           .read(portPolitiquesCommercialesProvider)
           .publier(_brouillonAEcran());
-      // Aucune implementation ne publie a ce jour ; une reponse sans
-      // erreur reste non confirmee tant que la version active n'est pas
-      // relue (D5).
-      resultat = _Publication.nonConfirmee;
+      // Le serveur rend la version qu'il a inscrite (FAC-A-01) : la
+      // publication est faite. Les versions sont relues pour proposer le
+      // brouillon suivant.
+      resultat = _Publication.faite;
     } on CapaciteIndisponible {
       resultat = _Publication.indisponible;
+    } on PostgrestException catch (e) {
+      // 42501 : hors direction en double verification ; 22023 : une valeur
+      // refusee (date d'effet, numero, remise). Le reste n'est pas confirme.
+      resultat = switch (e.code) {
+        '42501' => _Publication.refusee,
+        '22023' => _Publication.invalide,
+        _ => _Publication.nonConfirmee,
+      };
     } on Object {
       resultat = _Publication.nonConfirmee;
     }
@@ -738,6 +783,10 @@ class _PolitiquesCommercialesContenuState
       _enCours = false;
       _publication = resultat;
     });
+    if (resultat == _Publication.faite) {
+      ref.read(publicationPolitiqueProvider.notifier).confirmer();
+      ref.invalidate(politiquesCommercialesProvider);
+    }
   }
 
   @override
@@ -977,6 +1026,21 @@ class _PolitiquesCommercialesContenuState
       _Publication.nonConfirmee => (
         pol.publicationNonConfirmee,
         pol.publicationNonConfirmeeDetail,
+        TonEtat.alerte,
+      ),
+      _Publication.faite => (
+        pol.publicationFaite,
+        pol.publicationFaiteDetail,
+        TonEtat.succes,
+      ),
+      _Publication.refusee => (
+        pol.publicationRefusee,
+        pol.publicationRefuseeDetail,
+        TonEtat.alerte,
+      ),
+      _Publication.invalide => (
+        pol.publicationInvalide,
+        pol.publicationInvalideDetail,
         TonEtat.alerte,
       ),
     };
