@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import {
   PARAMETRES_DEFAUT, parametresScenario, mensualiteFoyer, remiseFamiliale, repartirEnGroupes,
   seancesParMois, fraisCarte, coutLivekit, genererPopulation, simuler, tauxHoraireMax, coutEnseignants,
-  grilleScenarios, fusionner,
+  grilleScenarios, fusionner, impotSocietesMensuel, beneficeAvantImpotPour, resultatMois, margeDeManoeuvre,
 } from './modele_academie.mjs';
 
 const tarifs = PARAMETRES_DEFAUT.tarifs;
@@ -38,8 +38,41 @@ test('classes de min à max places ; le surplus attend une place', () => {
   assert.deepEqual(repartirEnGroupes(0, 6, 5), { tailles: [], enAttente: 0 });
 });
 
-test('frais de carte : 1,5 % + 2 % de conversion + 0,29 $ sur 50 $', () => {
-  assert.equal(fraisCarte(5000, 'eee', PARAMETRES_DEFAUT.paiementEnLigne), 175 + 29);
+test('frais de carte Stripe Royaume-Uni : 2,5 % (EEE) + 2 % de conversion + 0,27 $ sur 50 $', () => {
+  assert.equal(fraisCarte(5000, 'eee', PARAMETRES_DEFAUT.paiementEnLigne), 225 + 27);
+  assert.equal(fraisCarte(5000, 'royaumeUni', PARAMETRES_DEFAUT.paiementEnLigne), 175 + 27);
+});
+
+test('impôt britannique : 19 % sous 50 000 £ par an, 25 % au-delà de 250 000 £, continu entre les deux', () => {
+  const f = PARAMETRES_DEFAUT.fiscalite;
+  assert.equal(impotSocietesMensuel(-50000, f), 0);
+  assert.equal(impotSocietesMensuel(200000, f), 38000);
+  const bas = (50000 * f.centimesParLivre) / 12;
+  const haut = (250000 * f.centimesParLivre) / 12;
+  assert.ok(Math.abs(impotSocietesMensuel(bas + 1, f) - 0.19 * bas) < 2, 'pas de saut au seuil bas');
+  assert.equal(impotSocietesMensuel(Math.round(haut), f), Math.round(0.25 * haut));
+});
+
+test('bénéfice avant impôt pour garder 2 000 $ net : 2 000 / 0,81', () => {
+  const f = PARAMETRES_DEFAUT.fiscalite;
+  const avant = beneficeAvantImpotPour(200000, f);
+  assert.ok(avant - impotSocietesMensuel(avant, f) >= 200000);
+  assert.ok(avant - 1 - impotSocietesMensuel(avant - 1, f) < 200000);
+  assert.equal(beneficeAvantImpotPour(0, f), 0);
+});
+
+test('marge de manœuvre : perdre exactement ce montant ramène à la cible', () => {
+  const p = PARAMETRES_DEFAUT;
+  const mois = {
+    encaisseCentimes: 500000, fraisCarteCentimes: 25000, resultatAvantEnseignantsCentimes: 350000,
+    heuresEnseigneesCentiemes: 30000, virementsEnseignants: 10,
+  };
+  const m = margeDeManoeuvre(mois, 400, 0, p);
+  const avant = resultatMois(mois, 400, p).avantImpot;
+  assert.ok(Math.abs(m.encaissementPerdable * 0.95 - avant) < 2);
+  assert.equal(m.enfants, Math.floor(m.encaissementPerdable / 5000));
+  assert.equal(m.adultes, Math.floor(m.encaissementPerdable / 6000));
+  assert.equal(m.remiseMaxBps, Math.floor((m.encaissementPerdable * 10000) / 500000));
 });
 
 test('LiveKit : forfait seul sous les quotas, surcoût au-delà', () => {
@@ -99,17 +132,42 @@ test('les montants restent des entiers en centimes', () => {
   for (const cle of ['facture', 'encaisse', 'impaye', 'fraisCarte', 'livekit', 'resultatAvantEnseignants']) {
     for (const q of ['p10', 'p50', 'p90']) assert.ok(Number.isInteger(r.moisType[cle][q]), `${cle}.${q}`);
   }
-  for (const t of r.tauxEnseignantMax) assert.ok(Number.isInteger(t.prudent) && Number.isInteger(t.median));
+  for (const t of [r.tauxEnseignantMax.rentable, r.tauxEnseignantMax.objectif, ...r.tauxEnseignantMax.marges]) {
+    assert.ok(Number.isInteger(t.prudent) && Number.isInteger(t.median));
+  }
+  for (const cle of ['avantImpot', 'impot', 'resultat']) assert.ok(Number.isInteger(r.moisType[cle].p50), cle);
 });
 
-test('le taux maximal laisse exactement la marge visée', () => {
+test('le taux maximal laisse exactement la marge visée, après impôt', () => {
   const p = PARAMETRES_DEFAUT;
   const mois = {
     encaisseCentimes: 500000, resultatAvantEnseignantsCentimes: 450000,
     heuresEnseigneesCentiemes: 30000, virementsEnseignants: 10,
   };
-  const taux = tauxHoraireMax(mois, 0.3, p);
-  const reste = mois.resultatAvantEnseignantsCentimes - coutEnseignants(mois, taux, p).total;
-  assert.ok(reste >= 0.3 * mois.encaisseCentimes);
-  assert.ok(reste - 0.3 * mois.encaisseCentimes < 400, 'pas plus de 1 centime par heure laissé sur la table');
+  const cible = (x) => 0.3 * x.encaisseCentimes;
+  const taux = tauxHoraireMax(mois, cible, p);
+  assert.ok(resultatMois(mois, taux, p).net >= cible(mois));
+  assert.ok(resultatMois(mois, taux + 1, p).net < cible(mois), 'un centime de plus fait passer sous la marge');
+  assert.equal(tauxHoraireMax({ ...mois, resultatAvantEnseignantsCentimes: -1 }, () => 0, p), 0);
+});
+
+test('élèves perdus : places vides sans regroupement, moins de classes avec', () => {
+  const base = parametresScenario('ideal', { tirages: 5 });
+  const r0 = simuler(base);
+  const vides = simuler(fusionner(base, { pertes: { enfants: 10, adultes: 0, regrouper: false } }));
+  const regroupes = simuler(fusionner(base, { pertes: { enfants: 10, adultes: 0, regrouper: true } }));
+  assert.equal(vides.population.groupes.length, r0.population.groupes.length);
+  assert.equal(vides.moisType.elevesActifs.p50, r0.moisType.elevesActifs.p50 - 10);
+  assert.ok(regroupes.population.groupes.length < r0.population.groupes.length);
+  assert.ok(vides.moisType.resultat.p50 < regroupes.moisType.resultat.p50, 'regrouper coûte moins cher');
+});
+
+test('instabilité : plus de changements, plus de travail et moins de résultat', () => {
+  const calme = simuler(parametresScenario('realiste', { tirages: 60 }));
+  const agite = simuler(parametresScenario('realiste', {
+    tirages: 60, comportements: { changementMensuel: 0.1, multiplicateurDeparts: 3, delaiRemplacementMois: 2 },
+  }));
+  assert.ok(agite.moisType.changements.p50 > calme.moisType.changements.p50);
+  assert.ok(agite.moisType.heuresAdministration.p50 > calme.moisType.heuresAdministration.p50);
+  assert.ok(agite.moisType.resultat.p50 < calme.moisType.resultat.p50);
 });

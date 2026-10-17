@@ -12,7 +12,7 @@
 // Ce fichier n'a aucune dépendance : il tourne sous Node (`simuler.mjs`,
 // tests) et tel quel dans le navigateur (tableau interactif).
 
-export const VERSION_MODELE = 1;
+export const VERSION_MODELE = 2;
 
 // ---------------------------------------------------------------------------
 // Paramètres
@@ -73,7 +73,16 @@ export const PARAMETRES_DEFAUT = Object.freeze({
     mixiteEnfants: 'mixte',
   },
 
-  administration: { effectif: 4, coutMensuelCentimes: 0 },
+  // Directeur, 17/10/2026 : compter 5 personnes à 300 $ par mois.
+  administration: {
+    effectif: 5,
+    salaireMensuelCentimes: 30000,
+    // Temps de travail estimé par événement, pour mesurer la charge de
+    // l'équipe (ne change pas sa paie, qui est fixe).
+    minutesParEvenement: {
+      relance: 10, plainte: 15, changement: 30, changementRefuse: 15, depart: 20, arrivee: 45,
+    },
+  },
 
   comportements: {
     // Par foyer payeur. dansLeMois + moisSuivant + impaye = 1.
@@ -98,16 +107,28 @@ export const PARAMETRES_DEFAUT = Object.freeze({
     // Une place libérée est reprise par un nouvel inscrit après ce délai.
     // `null` : aucune nouvelle inscription.
     delaiRemplacementMois: 1,
+    // Instabilité : demandes de changement de classe ou de créneau. Un élève
+    // qui change libère sa place ; s'il n'y a aucune place dans une autre
+    // classe de sa catégorie, la demande est refusée et il part parfois.
+    changementMensuel: 0.02,
+    departSiRefus: 0.3,
+    multiplicateurDeparts: 1,
   },
 
-  // Encaissement par carte (grille Stripe France publique, octobre 2026).
-  // Les familles viennent d'Europe et d'Amérique du Nord ; une carte
-  // américaine ou canadienne est une carte internationale pour Stripe France.
+  // Élèves perdus pour de bon, sans remplacement. `regrouper` : les classes
+  // sont refaites avec les élèves restants (moins de classes et d'heures
+  // payées) ; sinon les places restent vides.
+  pertes: { enfants: 0, adultes: 0, regrouper: false },
+
+  // Encaissement par carte : l'académie est une société britannique, donc
+  // grille Stripe Royaume-Uni (1,5 % carte britannique, 2,5 % carte de l'EEE,
+  // 3,25 % carte internationale, plus 20 p). Une carte américaine ou
+  // canadienne est internationale.
   paiementEnLigne: {
     origineCartes: { eee: 0.425, royaumeUni: 0.075, international: 0.5 },
-    bps: { eee: 150, royaumeUni: 250, international: 325 },
-    fixeCentimes: 29, // 0,25 € converti en dollars
-    conversionBps: 200, // prix en USD, compte réglé en EUR
+    bps: { eee: 250, royaumeUni: 150, international: 325 },
+    fixeCentimes: 27, // 20 p convertis en dollars
+    conversionBps: 200, // prix en USD, compte réglé en GBP
   },
 
   // Taux de référence 4 $/h, configurable et daté (docs/current/07 §26) ;
@@ -119,12 +140,23 @@ export const PARAMETRES_DEFAUT = Object.freeze({
     fraisVirementFixeCentimes: 100,
   },
 
-  // Objectif de l'académie : 2 000 $ net par mois (docs/current/07 §27).
+  // Objectif de l'académie : 2 000 $ net par mois (docs/current/07 §27),
+  // compté après administration et impôt.
   objectifs: { resultatNetCentimes: 200000, marges: [0.3, 0.35, 0.4] },
 
-  // Prélèvements assis sur l'encaissé (TVA, cotisations…). Zéro par défaut
-  // tant que la structure juridique n'est pas connue : à renseigner.
-  fiscalite: { prelevementsBps: 0 },
+  // Directeur, 17/10/2026 : académie enregistrée au Royaume-Uni, impôt sur
+  // les bénéfices seulement ; les prix publiés s'entendent hors taxes, que
+  // chaque famille ajoute. Impôt sur les sociétés 2026-27 : 19 % jusqu'à
+  // 50 000 £ de bénéfice annuel, 25 % au-delà de 250 000 £, allègement
+  // dégressif entre les deux (25 % moins 3/200 de l'écart au seuil haut).
+  fiscalite: {
+    impotSocietes: {
+      tauxReduitBps: 1900, tauxNormalBps: 2500,
+      seuilBasLivres: 50000, seuilHautLivres: 250000,
+      allegementNumerateur: 3, allegementDenominateur: 200,
+    },
+    centimesParLivre: 133, // 1 £ ≈ 1,33 $, à mettre à jour
+  },
 
   services: [
     { nom: 'Supabase Pro', centimes: 2500 },
@@ -170,6 +202,7 @@ export const SCENARIOS = Object.freeze({
           occupe: { poids: 0 }, disponible: { poids: 1, absence: 0, departMensuel: 0 },
         },
         plaintes: { jamais: { poids: 1 }, parfois: { poids: 0 }, souvent: { poids: 0 } },
+        changementMensuel: 0,
       },
       rythme: { probabiliteAnnulation: 0 },
     },
@@ -317,6 +350,36 @@ export function goDescendants(minutesParticipant, kbps) {
   return (minutesParticipant * 60 * kbps) / 8 / 1e6;
 }
 
+/**
+ * Impôt britannique sur les sociétés d'un mois, en centimes : le bénéfice du
+ * mois est ramené à l'année pour choisir le taux. Rien à payer sur une perte.
+ */
+export function impotSocietesMensuel(beneficeCentimes, fiscalite) {
+  if (beneficeCentimes <= 0) return 0;
+  const is = fiscalite.impotSocietes;
+  const annuel = beneficeCentimes * 12;
+  const bas = is.seuilBasLivres * fiscalite.centimesParLivre;
+  const haut = is.seuilHautLivres * fiscalite.centimesParLivre;
+  let impot;
+  if (annuel <= bas) impot = (annuel * is.tauxReduitBps) / 10000;
+  else if (annuel >= haut) impot = (annuel * is.tauxNormalBps) / 10000;
+  else impot = (annuel * is.tauxNormalBps) / 10000 - ((haut - annuel) * is.allegementNumerateur) / is.allegementDenominateur;
+  return Math.round(impot / 12);
+}
+
+/** Bénéfice avant impôt nécessaire pour garder `netCentimes` après impôt. */
+export function beneficeAvantImpotPour(netCentimes, fiscalite) {
+  if (netCentimes <= 0) return netCentimes;
+  let bas = netCentimes;
+  let haut = netCentimes * 2;
+  while (bas < haut) {
+    const milieu = Math.floor((bas + haut) / 2);
+    if (milieu - impotSocietesMensuel(milieu, fiscalite) >= netCentimes) haut = milieu;
+    else bas = milieu + 1;
+  }
+  return bas;
+}
+
 // ---------------------------------------------------------------------------
 // Hasard reproductible
 // ---------------------------------------------------------------------------
@@ -382,8 +445,10 @@ function nouvelEleve(aleatoire, p, gabarit) {
 export function genererPopulation(p) {
   const aleatoire = generateur(p.graine);
   const e = p.effectif;
-  const nbEnfants = Math.round(e.eleves * e.partEnfants);
-  const nbAdultes = e.eleves - nbEnfants;
+  const regroupes = p.pertes.regrouper ? p.pertes : { enfants: 0, adultes: 0 };
+  const nbEnfantsInscrits = Math.round(e.eleves * e.partEnfants);
+  const nbEnfants = Math.max(0, nbEnfantsInscrits - regroupes.enfants);
+  const nbAdultes = Math.max(0, e.eleves - nbEnfantsInscrits - regroupes.adultes);
   const eleves = [];
   const foyers = [];
   const sexe = () => (aleatoire() < e.partFeminin ? 'F' : 'M');
@@ -511,12 +576,38 @@ function simulerTirage(population, p, aleatoire) {
   const foyers = population.foyers.map((x) => ({ ...x, membres: [...x.membres], impayes: 0, reporte: 0 }));
   const mois = [];
 
+  // Places de chaque catégorie de classe (type, tranche, public), pour les
+  // changements de classe ou de créneau.
+  const categorie = (eleve) => {
+    const g = population.groupes[eleve.groupe];
+    return `${g.type}|${g.tranche}|${g.public}`;
+  };
+  const places = new Map();
+  for (const eleve of eleves.filter((x) => x.groupe !== undefined)) {
+    const cle = categorie(eleve);
+    if (!places.has(cle)) places.set(cle, []);
+    places.get(cle).push(eleve.id);
+  }
+
+  // Élèves perdus pour de bon : leur place reste vide (sans regroupement).
+  if (!p.pertes.regrouper) {
+    for (const [type, nombre] of [['enfant', p.pertes.enfants], ['adulte', p.pertes.adultes]]) {
+      const candidats = eleves.filter((x) => x.actif && x.type === type);
+      for (let i = 0; i < Math.min(nombre, candidats.length); i++) {
+        const j = i + Math.floor(aleatoire() * (candidats.length - i));
+        [candidats[i], candidats[j]] = [candidats[j], candidats[i]];
+        Object.assign(candidats[i], { actif: false, ferme: true });
+      }
+    }
+  }
+
   for (let m = 1; m <= p.mois; m++) {
     const r = {
       mois: m, factureCentimes: 0, encaisseCentimes: 0, impayeCentimes: 0, reporteCentimes: 0,
       remisesCentimes: 0, fraisCarteCentimes: 0, paiements: 0, heuresEnseigneesCentiemes: 0,
       minutesParticipant: 0, seancesTenues: 0, seancesAnnulees: 0, plaintes: 0, departs: 0,
-      suspensions: 0, elevesActifs: 0, foyersActifs: 0,
+      suspensions: 0, elevesActifs: 0, foyersActifs: 0, arrivees: 0, relances: 0,
+      changements: 0, changementsRefuses: 0,
     };
     const encaisser = (foyer, montant) => {
       r.encaisseCentimes += montant;
@@ -530,6 +621,7 @@ function simulerTirage(population, p, aleatoire) {
         const foyer = { id: foyers.length, ...nouveauFoyer(aleatoire, p), membres: [eleve.id], impayes: 0, reporte: 0 };
         foyers.push(foyer);
         Object.assign(eleve, nouvelEleve(aleatoire, p, eleve), { foyer: foyer.id, actif: true, retourAuMois: null });
+        r.arrivees++;
       }
     }
 
@@ -554,8 +646,10 @@ function simulerTirage(population, p, aleatoire) {
       } else if (tirage < profil.dansLeMois + profil.moisSuivant) {
         foyer.reporte = du;
         r.reporteCentimes += du;
+        r.relances++;
       } else {
         r.impayeCentimes += du;
+        r.relances++;
         foyer.impayes++;
         if (foyer.impayes >= c.moisImpayesAvantSuspension) {
           r.suspensions++;
@@ -583,23 +677,48 @@ function simulerTirage(population, p, aleatoire) {
       }
     }
 
-    // 4. Plaintes et départs.
+    // 4. Plaintes, départs et demandes de changement de classe ou de créneau.
+    const deplaces = new Set();
     for (const eleve of eleves) {
-      if (!eleve.actif) continue;
+      if (!eleve.actif || deplaces.has(eleve.id)) continue;
       r.elevesActifs++;
       const plainte = c.plaintes[eleve.plaintes];
       r.plaintes += tirerPoisson(aleatoire, plainte.parMois);
-      if (aleatoire() < c.disponibilite[eleve.disponibilite].departMensuel + plainte.departMensuel) {
+      const depart = (c.disponibilite[eleve.disponibilite].departMensuel + plainte.departMensuel) * c.multiplicateurDeparts;
+      if (aleatoire() < depart) {
         liberer(eleve, m, c, r);
+        continue;
       }
+      if (eleve.groupe === undefined || aleatoire() >= c.changementMensuel) continue;
+      r.changements++;
+      const libres = places.get(categorie(eleve)).filter((id) =>
+        eleves[id].groupe !== eleve.groupe && !eleves[id].actif && !eleves[id].ferme);
+      if (libres.length === 0) {
+        r.changementsRefuses++;
+        if (aleatoire() < c.departSiRefus) liberer(eleve, m, c, r);
+        continue;
+      }
+      const cible = eleves[libres[Math.floor(aleatoire() * libres.length)]];
+      Object.assign(cible, {
+        foyer: eleve.foyer, disponibilite: eleve.disponibilite, plaintes: eleve.plaintes, sexe: eleve.sexe,
+        actif: true, retourAuMois: null,
+      });
+      if (!foyers[eleve.foyer].membres.includes(cible.id)) foyers[eleve.foyer].membres.push(cible.id);
+      deplaces.add(cible.id);
+      // La place quittée se libère comme après un départ, sans perdre l'élève.
+      eleve.actif = false;
+      eleve.retourAuMois = c.delaiRemplacementMois == null ? null : m + 1 + c.delaiRemplacementMois;
     }
 
+    const minutes = p.administration.minutesParEvenement;
+    r.heuresAdministration = (
+      r.relances * minutes.relance + r.plaintes * minutes.plainte +
+      (r.changements - r.changementsRefuses) * minutes.changement + r.changementsRefuses * minutes.changementRefuse +
+      r.departs * minutes.depart + r.arrivees * minutes.arrivee) / 60;
     r.coutsServicesCentimes = coutsServices(r, p);
-    r.prelevementsCentimes = Math.round((r.encaisseCentimes * p.fiscalite.prelevementsBps) / 10000);
     r.virementsEnseignants = population.enseignants.length;
     r.resultatAvantEnseignantsCentimes =
-      r.encaisseCentimes - r.fraisCarteCentimes - r.coutsServicesCentimes.total - r.prelevementsCentimes -
-      p.administration.coutMensuelCentimes;
+      r.encaisseCentimes - r.fraisCarteCentimes - r.coutsServicesCentimes.total - coutAdministration(p);
     mois.push(r);
   }
   return mois;
@@ -609,6 +728,10 @@ function liberer(eleve, m, c, r) {
   eleve.actif = false;
   eleve.retourAuMois = c.delaiRemplacementMois == null ? null : m + 1 + c.delaiRemplacementMois;
   r.departs++;
+}
+
+export function coutAdministration(p) {
+  return p.administration.effectif * p.administration.salaireMensuelCentimes;
 }
 
 function coutsServices(r, p) {
@@ -623,18 +746,6 @@ function coutsServices(r, p) {
   return { livekit, goLivekit: go, r2, fixes, total: livekit + r2 + fixes };
 }
 
-/**
- * Taux horaire enseignant maximal (centimes/h) tenant la marge `marge`
- * (0,3 = 30 % de l'encaissé) sur un mois simulé.
- */
-export function tauxHoraireMax(moisSimule, marge, p) {
-  const heures = moisSimule.heuresEnseigneesCentiemes / 100;
-  if (heures === 0) return 0;
-  const fixeVirements = moisSimule.virementsEnseignants * p.enseignants.fraisVirementFixeCentimes;
-  const disponible = moisSimule.resultatAvantEnseignantsCentimes - marge * moisSimule.encaisseCentimes - fixeVirements;
-  return Math.max(0, Math.floor(disponible / (heures * (1 + p.enseignants.fraisVirementBps / 10000))));
-}
-
 /** Coût complet de la paie enseignante pour un taux donné. */
 export function coutEnseignants(moisSimule, tauxCentimesParHeure, p) {
   const brut = Math.round((moisSimule.heuresEnseigneesCentiemes * tauxCentimesParHeure) / 100);
@@ -642,6 +753,52 @@ export function coutEnseignants(moisSimule, tauxCentimesParHeure, p) {
     Math.round((brut * p.enseignants.fraisVirementBps) / 10000) +
     moisSimule.virementsEnseignants * p.enseignants.fraisVirementFixeCentimes;
   return { brut, frais, total: brut + frais };
+}
+
+/** Résultat d'un mois simulé pour un taux enseignant : avant impôt, impôt, net. */
+export function resultatMois(moisSimule, tauxCentimesParHeure, p) {
+  const avantImpot = moisSimule.resultatAvantEnseignantsCentimes - coutEnseignants(moisSimule, tauxCentimesParHeure, p).total;
+  const impot = impotSocietesMensuel(avantImpot, p.fiscalite);
+  return { avantImpot, impot, net: avantImpot - impot };
+}
+
+/**
+ * Taux horaire enseignant maximal (centimes/h) qui garde, après impôt, au
+ * moins `cibleNet(mois)` centimes. 0 si la cible est hors d'atteinte même
+ * sans payer les enseignants.
+ */
+export function tauxHoraireMax(moisSimule, cibleNet, p) {
+  const tient = (taux) => resultatMois(moisSimule, taux, p).net >= cibleNet(moisSimule);
+  if (!tient(0)) return 0;
+  let bas = 0;
+  let haut = 100000;
+  while (bas < haut) {
+    const milieu = Math.ceil((bas + haut) / 2);
+    if (tient(milieu)) bas = milieu;
+    else haut = milieu - 1;
+  }
+  return bas;
+}
+
+/**
+ * Ce que l'académie peut se permettre en un mois avant de passer sous
+ * `cibleNetCentimes` après impôt : encaissement qu'on peut perdre, nombre
+ * d'enfants ou d'adultes perdus ou en bourse complète, remise maximale sur
+ * toutes les mensualités. Négatif : la cible est déjà manquée de ce montant.
+ */
+export function margeDeManoeuvre(moisSimule, tauxCentimesParHeure, cibleNetCentimes, p) {
+  const avantImpot = resultatMois(moisSimule, tauxCentimesParHeure, p).avantImpot;
+  const ecart = avantImpot - beneficeAvantImpotPour(cibleNetCentimes, p.fiscalite);
+  // Un dollar d'encaissement en moins économise aussi ses frais de carte.
+  const partFrais = moisSimule.encaisseCentimes ? moisSimule.fraisCarteCentimes / moisSimule.encaisseCentimes : 0;
+  const encaissementPerdable = Math.round(ecart / (1 - partFrais));
+  return {
+    encaissementPerdable,
+    enfants: Math.floor(encaissementPerdable / p.tarifs.enfantCentimes),
+    adultes: Math.floor(encaissementPerdable / p.tarifs.adulteCentimes),
+    remiseMaxBps: moisSimule.encaisseCentimes
+      ? Math.floor((encaissementPerdable * 10000) / moisSimule.encaisseCentimes) : 0,
+  };
 }
 
 export function centile(valeurs, q) {
@@ -654,7 +811,8 @@ const moyenne = (valeurs) => valeurs.reduce((s, v) => s + v, 0) / Math.max(1, va
 
 /**
  * Lance la simulation complète d'un jeu de paramètres.
- * `marges` : marges cibles pour lesquelles calculer le taux enseignant max.
+ * `marges` : marges cibles (part de l'encaissé gardée après impôt) pour
+ * lesquelles calculer le taux enseignant max.
  * `tauxEnseignantCentimes` : taux horaire appliqué pour le résultat final.
  */
 export function simuler(
@@ -671,6 +829,9 @@ export function simuler(
   const distribution = (valeurs) => ({
     p10: centile(valeurs, 0.1), p50: centile(valeurs, 0.5), p90: centile(valeurs, 0.9), moyenne: moyenne(valeurs),
   });
+  const auTaux = stables.map((x) => resultatMois(x, tauxEnseignantCentimes, p));
+  const auPlafond = stables.map((x) => resultatMois(x, p.enseignants.plafondCentimes, p));
+  const objectif = p.objectifs.resultatNetCentimes;
 
   const trajectoire = Array.from({ length: p.mois }, (_, i) => {
     const duMois = tirages.map((mois) => mois[i]);
@@ -680,6 +841,20 @@ export function simuler(
       elevesActifsP50: centile(duMois.map((x) => x.elevesActifs), 0.5),
     };
   });
+
+  // p10 = tenu 9 mois sur 10 (prudent) ; p50 = un mois sur deux.
+  const tauxMax = (cible) => {
+    const taux = stables.map((x) => tauxHoraireMax(x, cible, p));
+    return { prudent: centile(taux, 0.1), median: centile(taux, 0.5) };
+  };
+  const manoeuvre = (cibleNet) => {
+    const m = stables.map((x) => margeDeManoeuvre(x, tauxEnseignantCentimes, cibleNet, p));
+    const champ = (cle) => ({ prudent: centile(m.map((x) => x[cle]), 0.1), median: centile(m.map((x) => x[cle]), 0.5) });
+    return {
+      encaissementPerdable: champ('encaissementPerdable'), enfants: champ('enfants'),
+      adultes: champ('adultes'), remiseMaxBps: champ('remiseMaxBps'),
+    };
+  };
 
   return {
     parametres: p,
@@ -695,30 +870,35 @@ export function simuler(
       goLivekit: distribution(stables.map((x) => x.coutsServicesCentimes.goLivekit)),
       r2: distribution(stables.map((x) => x.coutsServicesCentimes.r2)),
       servicesFixes: stables[0]?.coutsServicesCentimes.fixes ?? 0,
-      prelevements: distribution(serie('prelevementsCentimes')),
+      administration: coutAdministration(p),
       resultatAvantEnseignants: distribution(serie('resultatAvantEnseignantsCentimes')),
       enseignants: distribution(stables.map((x) => coutEnseignants(x, tauxEnseignantCentimes, p).total)),
-      resultat: distribution(stables.map(
-        (x) => x.resultatAvantEnseignantsCentimes - coutEnseignants(x, tauxEnseignantCentimes, p).total)),
-      resultatAuPlafond: distribution(stables.map(
-        (x) => x.resultatAvantEnseignantsCentimes - coutEnseignants(x, p.enseignants.plafondCentimes, p).total)),
-      // Part des mois où le résultat atteint l'objectif net.
-      objectifAtteint: stables.filter(
-        (x) => x.resultatAvantEnseignantsCentimes - coutEnseignants(x, tauxEnseignantCentimes, p).total >=
-          p.objectifs.resultatNetCentimes).length / Math.max(1, stables.length),
+      avantImpot: distribution(auTaux.map((x) => x.avantImpot)),
+      impot: distribution(auTaux.map((x) => x.impot)),
+      resultat: distribution(auTaux.map((x) => x.net)),
+      resultatAuPlafond: distribution(auPlafond.map((x) => x.net)),
+      // Part des mois où le résultat net atteint l'objectif, puis ne perd pas d'argent.
+      objectifAtteint: auTaux.filter((x) => x.net >= objectif).length / Math.max(1, stables.length),
+      rentable: auTaux.filter((x) => x.net >= 0).length / Math.max(1, stables.length),
       heuresEnseignees: distribution(stables.map((x) => x.heuresEnseigneesCentiemes / 100)),
       minutesParticipant: distribution(serie('minutesParticipant')),
       seancesTenues: distribution(serie('seancesTenues')),
       plaintes: distribution(serie('plaintes')),
       departs: distribution(serie('departs')),
+      arrivees: distribution(serie('arrivees')),
       suspensions: distribution(serie('suspensions')),
+      relances: distribution(serie('relances')),
+      changements: distribution(serie('changements')),
+      changementsRefuses: distribution(serie('changementsRefuses')),
+      heuresAdministration: distribution(serie('heuresAdministration')),
       elevesActifs: distribution(serie('elevesActifs')),
     },
-    // p10 = taux tenu dans 90 % des mois (prudent) ; p50 = un mois sur deux.
-    tauxEnseignantMax: marges.map((marge) => {
-      const taux = stables.map((x) => tauxHoraireMax(x, marge, p));
-      return { marge, prudent: centile(taux, 0.1), median: centile(taux, 0.5) };
-    }),
+    tauxEnseignantMax: {
+      rentable: tauxMax(() => 0),
+      objectif: tauxMax(() => objectif),
+      marges: marges.map((marge) => ({ marge, ...tauxMax((x) => marge * x.encaisseCentimes) })),
+    },
+    margeDeManoeuvre: { rentable: manoeuvre(0), objectif: manoeuvre(objectif) },
     trajectoire,
   };
 }

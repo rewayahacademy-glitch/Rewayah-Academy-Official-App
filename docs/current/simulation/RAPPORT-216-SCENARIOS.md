@@ -1,313 +1,377 @@
 # Simulation économique — 216 scénarios
 
-216 combinaisons × 300 tirages × 12 mois, graine 20261017. Chiffres d'un mois type (mois 3 à 12, médiane). Enseignants payés 4,00 $ / h (taux de référence) ; objectif 2 000 $ net par mois.
+216 combinaisons × 300 tirages × 12 mois, graine 20261017, modèle v2. Chiffres d'un mois type (mois 3 à 12, médiane). Enseignants payés 4,00 $ / h, administration 5 × 300 $, impôt britannique sur les sociétés sur le bénéfice, cartes Stripe Royaume-Uni. Objectif 2 000 $ net par mois après tout cela.
+
+« Prudent » veut dire tenu 9 mois sur 10 : un mois sur 10 seulement fait moins bien.
 
 ## Vue d’ensemble
 
 |  | Pire scénario | 1 sur 10 | Médian | 9 sur 10 | Meilleur |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Encaissé par mois | 4 550 $ | 4 747 $ | 5 179 $ | 5 472 $ | 5 637 $ |
-| Résultat à 4,00 $ / h | 2 969 $ | 3 114 $ | 3 506 $ | 3 716 $ | 3 883 $ |
-| Résultat au plafond 7,00 $ / h | 2 074 $ | 2 160 $ | 2 551 $ | 2 734 $ | 2 889 $ |
-| Mois où l'objectif 2 000 $ est atteint | 100 % | 100 % | 100 % | 100 % | 100 % |
-| Taux max pour 30 % de marge (9 mois sur 10) | 8,13 $ | 8,28 $ | 9,43 $ | 10,37 $ | 11,04 $ |
+| Encaissé par mois | 4 525 $ | 4 702 $ | 5 139 $ | 5 444 $ | 5 637 $ |
+| Impôt sur les sociétés | 274 $ | 293 $ | 370 $ | 416 $ | 447 $ |
+| Net à 4,00 $ / h | 1 167 $ | 1 251 $ | 1 578 $ | 1 773 $ | 1 908 $ |
+| Net au plafond 7,00 $ / h | 441 $ | 477 $ | 803 $ | 971 $ | 1 102 $ |
+| Mois où l'objectif 2 000 $ est atteint | 0 % | 0 % | 1 % | 4 % | 13 % |
+| Mois sans perte | 100 % | 100 % | 100 % | 100 % | 100 % |
+| Taux max pour ne pas perdre d’argent (prudent) | 7,29 $ | 7,39 $ | 9,14 $ | 10,61 $ | 11,35 $ |
+| Taux max pour garder 2 000 $ (prudent) | 0,00 $ | 0,00 $ | 1,35 $ | 3,05 $ | 3,65 $ |
+| Taux max pour 30 % de marge (prudent) | 2,28 $ | 2,47 $ | 3,52 $ | 4,48 $ | 4,80 $ |
+| Encaissement qu’on peut perdre sans perte (prudent) | 1 044 $ | 1 130 $ | 1 717 $ | 2 277 $ | 2 479 $ |
+| Remise max sur tous, sans perte (prudent) | 26 % | 27 % | 36 % | 42 % | 44 % |
 | Élèves sans classe | 0 | 0 | 0 | 7 | 7 |
 | Classes | 17 | 18 | 20 | 21 | 21 |
-| Enseignants | 9 | 9 | 10 | 11 | 11 |
 
-L'objectif de 2 000 $ est atteint dans au moins 9 mois sur 10 pour 216 scénarios sur 216.
+L'objectif de 2 000 $ net est atteint dans au moins 9 mois sur 10 pour 0 scénarios sur 216. L'académie ne perd pas d'argent 9 mois sur 10 dans 216 scénarios sur 216.
 
 ## Ce que change chaque choix
 
 Moyenne sur tous les scénarios qui partagent ce choix.
 
-| Dimension | Choix | Encaissé | Résultat à 4,00 $ / h | Objectif atteint | Taux max 30 % | Sans classe | Classes |
+| Dimension | Choix | Encaissé | Net à 4,00 $ / h | Objectif atteint | Taux max sans perte | Sans classe | Classes |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| paiement | Idéal | 5 371 $ | 3 660 $ | 100 % | 10,36 $ | 2.1 | 19.4 |
-| paiement | Optimiste | 5 248 $ | 3 578 $ | 100 % | 9,67 $ | 2.1 | 19.4 |
-| paiement | Réaliste | 5 099 $ | 3 438 $ | 100 % | 9,24 $ | 2.1 | 19.4 |
-| paiement | Pessimiste | 4 796 $ | 3 150 $ | 100 % | 8,40 $ | 2.1 | 19.4 |
-| mixiteAdultes | Adultes séparés | 5 129 $ | 3 443 $ | 100 % | 9,32 $ | 2.1 | 19.6 |
-| mixiteAdultes | Adultes mixtes | 5 128 $ | 3 470 $ | 100 % | 9,51 $ | 2.1 | 19.2 |
-| mixiteEnfants | Enfants mixtes | 5 224 $ | 3 524 $ | 100 % | 9,44 $ | 0.0 | 19.8 |
-| mixiteEnfants | Enfants séparés dès 10 ans | 5 120 $ | 3 442 $ | 100 % | 9,35 $ | 2.3 | 19.5 |
-| mixiteEnfants | Enfants séparés | 5 042 $ | 3 404 $ | 100 % | 9,46 $ | 4.0 | 18.8 |
-| origine | 70 % Europe | 5 129 $ | 3 472 $ | 100 % | 9,46 $ | 2.1 | 19.4 |
-| origine | 50 / 50 | 5 129 $ | 3 457 $ | 100 % | 9,42 $ | 2.1 | 19.4 |
-| origine | 70 % Amérique du Nord | 5 129 $ | 3 440 $ | 100 % | 9,37 $ | 2.1 | 19.4 |
-| partEnfants | 30 % d’enfants | 5 264 $ | 3 556 $ | 100 % | 9,53 $ | 2.7 | 18.5 |
-| partEnfants | 45 % d’enfants | 5 056 $ | 3 405 $ | 100 % | 9,39 $ | 3.7 | 19.0 |
-| partEnfants | 60 % d’enfants | 5 066 $ | 3 408 $ | 100 % | 9,33 $ | 0.0 | 20.7 |
+| paiement | Idéal | 5 371 $ | 1 732 $ | 0 % | 10,63 $ | 2.1 | 19.4 |
+| paiement | Optimiste | 5 202 $ | 1 632 $ | 3 % | 9,42 $ | 2.1 | 19.4 |
+| paiement | Réaliste | 5 053 $ | 1 518 $ | 2 % | 8,79 $ | 2.1 | 19.4 |
+| paiement | Pessimiste | 4 755 $ | 1 289 $ | 0 % | 7,58 $ | 2.1 | 19.4 |
+| mixiteAdultes | Adultes séparés | 5 096 $ | 1 533 $ | 1 % | 9,01 $ | 2.1 | 19.6 |
+| mixiteAdultes | Adultes mixtes | 5 094 $ | 1 553 $ | 2 % | 9,20 $ | 2.1 | 19.2 |
+| mixiteEnfants | Enfants mixtes | 5 188 $ | 1 595 $ | 2 % | 9,21 $ | 0.0 | 19.8 |
+| mixiteEnfants | Enfants séparés dès 10 ans | 5 086 $ | 1 531 $ | 1 % | 9,03 $ | 2.3 | 19.5 |
+| mixiteEnfants | Enfants séparés | 5 011 $ | 1 503 $ | 1 % | 9,07 $ | 4.0 | 18.8 |
+| origine | 70 % Europe | 5 095 $ | 1 550 $ | 2 % | 9,13 $ | 2.1 | 19.4 |
+| origine | 50 / 50 | 5 095 $ | 1 542 $ | 1 % | 9,10 $ | 2.1 | 19.4 |
+| origine | 70 % Amérique du Nord | 5 095 $ | 1 536 $ | 1 % | 9,08 $ | 2.1 | 19.4 |
+| partEnfants | 30 % d’enfants | 5 229 $ | 1 623 $ | 3 % | 9,34 $ | 2.7 | 18.5 |
+| partEnfants | 45 % d’enfants | 5 023 $ | 1 502 $ | 1 % | 9,01 $ | 3.7 | 19.0 |
+| partEnfants | 60 % d’enfants | 5 034 $ | 1 504 $ | 1 % | 8,96 $ | 0.0 | 20.7 |
 
-## Les 10 pires scénarios
+## Et si des familles ne paient pas ?
 
-| Scénario | Encaissé | Résultat à 4,00 $ / h | 1 mois sur 10 sous | Objectif | Taux max 30 % | Sans classe |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Pessimiste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 4 550 $ | 2 969 $ | 2 504 $ | 100 % | 8,30 $ | 7 |
-| Pessimiste · Adultes séparés · Enfants séparés · 50 / 50 · 45 % d’enfants | 4 550 $ | 2 986 $ | 2 516 $ | 100 % | 8,35 $ | 7 |
-| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 4 571 $ | 2 993 $ | 2 532 $ | 100 % | 8,36 $ | 7 |
-| Pessimiste · Adultes séparés · Enfants séparés · 70 % Europe · 45 % d’enfants | 4 550 $ | 2 999 $ | 2 529 $ | 100 % | 8,39 $ | 7 |
-| Pessimiste · Adultes mixtes · Enfants séparés · 50 / 50 · 45 % d’enfants | 4 571 $ | 3 007 $ | 2 547 $ | 100 % | 8,40 $ | 7 |
-| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Europe · 45 % d’enfants | 4 571 $ | 3 021 $ | 2 558 $ | 100 % | 8,45 $ | 7 |
-| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 4 701 $ | 3 058 $ | 2 568 $ | 100 % | 8,20 $ | 4 |
-| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 4 700 $ | 3 059 $ | 2 587 $ | 100 % | 8,24 $ | 4 |
-| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 4 701 $ | 3 075 $ | 2 582 $ | 100 % | 8,25 $ | 4 |
-| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 4 739 $ | 3 076 $ | 2 580 $ | 100 % | 8,13 $ | 0 |
+Scénario de référence : comportement réaliste, adultes séparés, enfants mixtes, 50 % Europe / 50 % Amérique du Nord, 45 % d’enfants, enseignants à 4,00 $ / h. Un seul levier bouge à la fois.
 
-## Les 10 meilleurs scénarios
+Chaque mois, une part des familles ne paie pas du tout et une autre paie avec un mois de retard. Elles restent inscrites. Chaque case : net par mois, puis l’argent qui manque en caisse à la fin du mois à cause des retards (il arrive le mois suivant).
 
-| Scénario | Encaissé | Résultat à 4,00 $ / h | 1 mois sur 10 sous | Objectif | Taux max 30 % | Sans classe |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Idéal · Adultes mixtes · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 637 $ | 3 883 $ | 3 883 $ | 100 % | 10,61 $ | 0 |
-| Idéal · Adultes mixtes · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 637 $ | 3 869 $ | 3 869 $ | 100 % | 10,56 $ | 0 |
-| Idéal · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 637 $ | 3 850 $ | 3 850 $ | 100 % | 10,51 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 5 504 $ | 3 812 $ | 3 812 $ | 100 % | 10,78 $ | 3 |
-| Idéal · Adultes séparés · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 637 $ | 3 803 $ | 3 803 $ | 100 % | 10,00 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 5 504 $ | 3 797 $ | 3 797 $ | 100 % | 10,74 $ | 3 |
-| Idéal · Adultes séparés · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 637 $ | 3 789 $ | 3 789 $ | 100 % | 9,96 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 496 $ | 3 788 $ | 3 490 $ | 100 % | 9,95 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 5 504 $ | 3 779 $ | 3 779 $ | 100 % | 10,68 $ | 3 |
-| Optimiste · Adultes mixtes · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 496 $ | 3 773 $ | 3 476 $ | 100 % | 9,90 $ | 0 |
+| Ne paient pas ↓ / En retard d’un mois → | 0 % | 20 % | 40 % | 60 % |
+| --- | ---: | ---: | ---: | ---: |
+| **0 %** | 1 702 $ · caisse −0 $ | 1 700 $ · caisse −1 045 $ | 1 697 $ · caisse −2 119 $ | 1 704 $ · caisse −3 174 $ |
+| **5 %** | 1 512 $ · caisse −0 $ | 1 495 $ · caisse −1 048 $ | 1 499 $ · caisse −2 110 $ | 1 499 $ · caisse −3 178 $ |
+| **10 %** | 1 306 $ · caisse −0 $ | 1 291 $ · caisse −1 045 $ | 1 287 $ · caisse −2 120 $ | 1 289 $ · caisse −3 195 $ |
+| **15 %** | 1 102 $ · caisse −0 $ | 1 093 $ · caisse −1 050 $ | 1 089 $ · caisse −2 118 $ | 1 085 $ · caisse −3 196 $ |
+| **20 %** | 892 $ · caisse −0 $ | 884 $ · caisse −1 055 $ | 890 $ · caisse −2 114 $ | 878 $ · caisse −3 208 $ |
+| **30 %** | 483 $ · caisse −0 $ | 473 $ · caisse −1 046 $ | 471 $ · caisse −2 137 $ | 468 $ · caisse −3 211 $ |
+| **40 %** | 75 $ · caisse −0 $ | 63 $ · caisse −1 050 $ | 63 $ · caisse −2 138 $ | 72 $ · caisse −3 215 $ |
+| **50 %** | -413 $ · caisse −0 $ | -429 $ · caisse −1 060 $ | -434 $ · caisse −2 143 $ | — |
+
+L’objectif de 2 000 $ n’est pas atteint même sans aucun impayé. L’académie perd de l’argent dès 50 % de familles qui ne paient pas.
+Le retard seul ne fait presque rien perdre sur l’année : il vide la caisse en fin de mois. Il faut donc une réserve au moins égale à la colonne « caisse ».
+
+## Et si on perd des élèves ?
+
+Scénario de référence : comportement réaliste, adultes séparés, enfants mixtes, 50 % Europe / 50 % Amérique du Nord, 45 % d’enfants, enseignants à 4,00 $ / h. Un seul levier bouge à la fois.
+
+Les élèves perdus ne sont pas remplacés. « Places vides » : les classes restent telles quelles, les enseignants sont payés pareil. « Classes regroupées » : l’administration refait les classes avec ceux qui restent, il y a moins d’heures à payer.
+
+| Élèves perdus | enfants, places vides | enfants, classes regroupées | adultes, places vides | adultes, classes regroupées |
+| --- | ---: | ---: | ---: | ---: |
+| **0** | 1 566 $ · 20 classes | 1 566 $ · 20 classes | 1 566 $ · 20 classes | 1 566 $ · 20 classes |
+| **5** | 1 400 $ · 20 classes | 1 406 $ · 18 classes | 1 352 $ · 20 classes | 1 419 $ · 19 classes |
+| **10** | 1 228 $ · 20 classes | 1 284 $ · 17 classes | 1 139 $ · 20 classes | 1 221 $ · 19 classes |
+| **15** | 1 061 $ · 20 classes | 1 147 $ · 17 classes | 930 $ · 20 classes | 1 047 $ · 17 classes |
+| **20** | 890 $ · 20 classes | 1 030 $ · 15 classes | 721 $ · 20 classes | 968 $ · 16 classes |
+| **30** | 593 $ · 20 classes | 746 $ · 13 classes | 317 $ · 20 classes | 636 $ · 14 classes |
+
+## Et si ça bouge trop ?
+
+Scénario de référence : comportement réaliste, adultes séparés, enfants mixtes, 50 % Europe / 50 % Amérique du Nord, 45 % d’enfants, enseignants à 4,00 $ / h. Un seul levier bouge à la fois.
+
+Un élève qui change de classe ou de créneau libère sa place : elle reste vide jusqu’à ce qu’une nouvelle famille la prenne. S’il n’y a aucune place libre dans une autre classe de son âge, la demande est refusée et 3 élèves sur 10 partent alors. Les heures d’administration sont une estimation (relance 10 min, plainte 15 min, changement 30 min, départ 20 min, arrivée 45 min).
+
+| Stabilité | Ce que ça veut dire | Élèves présents | Départs / mois | Changements / mois | Refusés | Heures d’administration / mois | Net / mois |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| **Calme** | départs ÷ 2, 1 % demandent à changer, place reprise en 1 mois | 97 | 2 | 1 | 0 | 12 | 1 628 $ |
+| **Normal (référence)** | départs du scénario, 2 % demandent à changer, 1 mois | 95 | 3 | 2 | 0 | 14 | 1 566 $ |
+| **Agité** | départs × 2, 6 % demandent à changer, 1 mois | 91 | 5 | 5 | 1 | 16 | 1 421 $ |
+| **Très agité** | départs × 3, 10 % demandent à changer, place reprise en 2 mois | 80 | 6 | 7 | 0 | 17 | 953 $ |
+| **Personne ne remplace** | départs du scénario, aucune nouvelle inscription | 78 | 2 | 1 | 0 | 9 | 901 $ |
+
+## Ce qu’on peut se permettre, scénario par scénario
+
+Toutes les valeurs sont prudentes (tenues 9 mois sur 10), enseignants à 4,00 $ / h.
+
+- **Perte max sans perte** : encaissement mensuel qu’on peut perdre (impayés, départs, bourses, remises) avant que l’académie perde de l’argent.
+- **Enfants / adultes perdus ou boursiers max** : même montant, compté en mensualités d’enfant (50 $) ou d’adulte (60 $). Une bourse complète coûte exactement comme un élève perdu dont la place reste vide ; deux demi-bourses comptent pour une.
+- **Remise max** : remise en pourcentage qu’on peut faire sur toutes les mensualités. Elle donne le prix plancher : prix × (1 − remise). « Aucune » : la cible est déjà manquée, du montant indiqué.
+
+### Les 10 pires scénarios
+
+| Scénario | Encaissé | Net à 4,00 $ / h | Net 1 mois sur 10 | Objectif | Taux max sans perte | Perte max sans perte | Enfants / adultes perdus ou boursiers max | Remise max sans perte | Remise max pour 2 000 $ |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 4 525 $ | 1 167 $ | 800 $ | 0 % | 7,30 $ | 1 044 $ | 20 / 17 | 26 % | aucune (manque 1 564 $) |
+| Pessimiste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 4 536 $ | 1 170 $ | 801 $ | 0 % | 7,29 $ | 1 044 $ | 20 / 17 | 26 % | aucune (manque 1 565 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés · 50 / 50 · 45 % d’enfants | 4 525 $ | 1 173 $ | 808 $ | 0 % | 7,34 $ | 1 052 $ | 21 / 17 | 26 % | aucune (manque 1 551 $) |
+| Pessimiste · Adultes séparés · Enfants séparés · 50 / 50 · 45 % d’enfants | 4 536 $ | 1 176 $ | 807 $ | 0 % | 7,31 $ | 1 050 $ | 21 / 17 | 26 % | aucune (manque 1 553 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Europe · 45 % d’enfants | 4 525 $ | 1 181 $ | 811 $ | 0 % | 7,35 $ | 1 055 $ | 21 / 17 | 26 % | aucune (manque 1 545 $) |
+| Pessimiste · Adultes séparés · Enfants séparés · 70 % Europe · 45 % d’enfants | 4 536 $ | 1 184 $ | 814 $ | 0 % | 7,35 $ | 1 057 $ | 21 / 17 | 26 % | aucune (manque 1 539 $) |
+| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 4 648 $ | 1 213 $ | 854 $ | 0 % | 7,35 $ | 1 113 $ | 22 / 18 | 27 % | aucune (manque 1 495 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 4 651 $ | 1 218 $ | 833 $ | 0 % | 7,29 $ | 1 086 $ | 21 / 18 | 26 % | aucune (manque 1 522 $) |
+| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 4 648 $ | 1 221 $ | 860 $ | 0 % | 7,39 $ | 1 119 $ | 22 / 18 | 27 % | aucune (manque 1 483 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 4 651 $ | 1 225 $ | 841 $ | 0 % | 7,32 $ | 1 093 $ | 21 / 18 | 26 % | aucune (manque 1 509 $) |
+
+### Les 10 meilleurs scénarios
+
+| Scénario | Encaissé | Net à 4,00 $ / h | Net 1 mois sur 10 | Objectif | Taux max sans perte | Perte max sans perte | Enfants / adultes perdus ou boursiers max | Remise max sans perte | Remise max pour 2 000 $ |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Idéal · Adultes mixtes · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 637 $ | 1 908 $ | 1 908 $ | 0 % | 11,10 $ | 2 479 $ | 49 / 41 | 44 % | aucune (manque 120 $) |
+| Idéal · Adultes mixtes · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 637 $ | 1 900 $ | 1 900 $ | 0 % | 11,07 $ | 2 473 $ | 49 / 41 | 44 % | aucune (manque 131 $) |
+| Idéal · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 637 $ | 1 894 $ | 1 894 $ | 0 % | 11,05 $ | 2 469 $ | 49 / 41 | 44 % | aucune (manque 138 $) |
+| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 5 504 $ | 1 850 $ | 1 850 $ | 0 % | 11,17 $ | 2 404 $ | 48 / 40 | 44 % | aucune (manque 194 $) |
+| Idéal · Adultes séparés · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 637 $ | 1 843 $ | 1 843 $ | 0 % | 10,47 $ | 2 394 $ | 47 / 39 | 42 % | aucune (manque 205 $) |
+| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 5 504 $ | 1 842 $ | 1 842 $ | 0 % | 11,14 $ | 2 399 $ | 47 / 39 | 44 % | aucune (manque 205 $) |
+| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 5 504 $ | 1 838 $ | 1 838 $ | 0 % | 11,12 $ | 2 395 $ | 47 / 39 | 44 % | aucune (manque 212 $) |
+| Idéal · Adultes séparés · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 637 $ | 1 835 $ | 1 835 $ | 0 % | 10,44 $ | 2 388 $ | 47 / 39 | 42 % | aucune (manque 215 $) |
+| Idéal · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 637 $ | 1 829 $ | 1 829 $ | 0 % | 10,42 $ | 2 384 $ | 47 / 39 | 42 % | aucune (manque 222 $) |
+| Idéal · Adultes mixtes · Enfants séparés · 70 % Europe · 30 % d’enfants | 5 404 $ | 1 817 $ | 1 817 $ | 0 % | 11,35 $ | 2 362 $ | 47 / 39 | 44 % | aucune (manque 237 $) |
 
 ## Quel prix fixer
 
-Comportement réaliste, adultes séparés, enfants mixtes, 50 % Europe / 50 % Amérique du Nord, 45 % d'enfants. Chaque case : résultat médian à 4,00 $ / h, puis part des mois qui atteignent 2 000 $.
+Scénario de référence : comportement réaliste, adultes séparés, enfants mixtes, 50 % Europe / 50 % Amérique du Nord, 45 % d’enfants, enseignants à 4,00 $ / h. Chaque case : net médian, puis part des mois qui atteignent 2 000 $.
 
 | Enfant ↓ / Adulte → | 50 $ | 55 $ | 60 $ | 65 $ | 70 $ |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| **40 $** | 2 602 $ · 99 % | 2 849 $ · 100 % | 3 100 $ · 100 % | 3 348 $ · 100 % | 3 597 $ · 100 % |
-| **45 $** | 2 808 $ · 100 % | 3 056 $ · 100 % | 3 303 $ · 100 % | 3 554 $ · 100 % | 3 802 $ · 100 % |
-| **50 $** | 3 014 $ · 100 % | 3 261 $ · 100 % | 3 509 $ · 100 % | 3 758 $ · 100 % | 4 007 $ · 100 % |
-| **55 $** | 3 216 $ · 100 % | 3 468 $ · 100 % | 3 715 $ · 100 % | 3 963 $ · 100 % | 4 212 $ · 100 % |
-| **60 $** | 3 420 $ · 100 % | 3 671 $ · 100 % | 3 923 $ · 100 % | 4 169 $ · 100 % | 4 418 $ · 100 % |
+| **40 $** | 843 $ · 0 % | 1 041 $ · 0 % | 1 241 $ · 0 % | 1 441 $ · 1 % | 1 641 $ · 6 % |
+| **45 $** | 1 006 $ · 0 % | 1 205 $ · 0 % | 1 403 $ · 0 % | 1 602 $ · 4 % | 1 803 $ · 20 % |
+| **50 $** | 1 170 $ · 0 % | 1 367 $ · 0 % | 1 566 $ · 3 % | 1 765 $ · 16 % | 1 964 $ · 44 % |
+| **55 $** | 1 331 $ · 0 % | 1 531 $ · 2 % | 1 730 $ · 13 % | 1 927 $ · 39 % | 2 127 $ · 70 % |
+| **60 $** | 1 494 $ · 1 % | 1 692 $ · 10 % | 1 894 $ · 33 % | 2 091 $ · 65 % | 2 289 $ · 87 % |
 
-Taux enseignant maximal tenant 30 % de marge 9 mois sur 10, selon le prix :
+Taux enseignant maximal (prudent) pour ne pas perdre d’argent, puis pour garder 2 000 $ :
 
 | Enfant ↓ / Adulte → | 50 $ | 55 $ | 60 $ | 65 $ | 70 $ |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| **40 $** | 7,39 $ | 7,89 $ | 8,38 $ | 8,86 $ | 9,34 $ |
-| **45 $** | 7,78 $ | 8,27 $ | 8,77 $ | 9,25 $ | 9,75 $ |
-| **50 $** | 8,18 $ | 8,66 $ | 9,15 $ | 9,65 $ | 10,14 $ |
-| **55 $** | 8,56 $ | 9,06 $ | 9,55 $ | 10,04 $ | 10,53 $ |
-| **60 $** | 8,95 $ | 9,44 $ | 9,94 $ | 10,43 $ | 10,92 $ |
+| **40 $** | 6,31 $ · impossible | 7,01 $ · impossible | 7,71 $ · 0,12 $ | 8,41 $ · 0,83 $ | 9,12 $ · 1,53 $ |
+| **45 $** | 6,89 $ · impossible | 7,59 $ · 0,01 $ | 8,28 $ · 0,70 $ | 8,99 $ · 1,40 $ | 9,68 $ · 2,10 $ |
+| **50 $** | 7,44 $ · impossible | 8,16 $ · 0,57 $ | 8,87 $ · 1,28 $ | 9,55 $ · 1,98 $ | 10,26 $ · 2,68 $ |
+| **55 $** | 8,01 $ · 0,42 $ | 8,72 $ · 1,14 $ | 9,44 $ · 1,84 $ | 10,14 $ · 2,55 $ | 10,83 $ · 3,25 $ |
+| **60 $** | 8,58 $ · 0,98 $ | 9,28 $ · 1,70 $ | 10,00 $ · 2,41 $ | 10,71 $ · 3,11 $ | 11,41 $ · 3,82 $ |
 
 ## Les 216 scénarios
 
-| Scénario | Encaissé | Résultat à 4,00 $ / h | 1 mois sur 10 sous | Objectif | Taux max 30 % | Sans classe |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Idéal · Adultes mixtes · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 637 $ | 3 883 $ | 3 883 $ | 100 % | 10,61 $ | 0 |
-| Idéal · Adultes mixtes · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 637 $ | 3 869 $ | 3 869 $ | 100 % | 10,56 $ | 0 |
-| Idéal · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 637 $ | 3 850 $ | 3 850 $ | 100 % | 10,51 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 5 504 $ | 3 812 $ | 3 812 $ | 100 % | 10,78 $ | 3 |
-| Idéal · Adultes séparés · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 637 $ | 3 803 $ | 3 803 $ | 100 % | 10,00 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 5 504 $ | 3 797 $ | 3 797 $ | 100 % | 10,74 $ | 3 |
-| Idéal · Adultes séparés · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 637 $ | 3 789 $ | 3 789 $ | 100 % | 9,96 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 496 $ | 3 788 $ | 3 490 $ | 100 % | 9,95 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 5 504 $ | 3 779 $ | 3 779 $ | 100 % | 10,68 $ | 3 |
-| Optimiste · Adultes mixtes · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 496 $ | 3 773 $ | 3 476 $ | 100 % | 9,90 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés · 70 % Europe · 30 % d’enfants | 5 404 $ | 3 770 $ | 3 770 $ | 100 % | 11,04 $ | 5 |
-| Idéal · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 637 $ | 3 769 $ | 3 769 $ | 100 % | 9,91 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés · 50 / 50 · 30 % d’enfants | 5 404 $ | 3 756 $ | 3 756 $ | 100 % | 11,00 $ | 5 |
-| Optimiste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 496 $ | 3 756 $ | 3 459 $ | 100 % | 9,85 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 5 404 $ | 3 738 $ | 3 738 $ | 100 % | 10,93 $ | 5 |
-| Idéal · Adultes séparés · Enfants mixtes · 70 % Europe · 45 % d’enfants | 5 472 $ | 3 737 $ | 3 737 $ | 100 % | 10,32 $ | 0 |
-| Idéal · Adultes mixtes · Enfants mixtes · 70 % Europe · 45 % d’enfants | 5 472 $ | 3 737 $ | 3 737 $ | 100 % | 10,32 $ | 0 |
-| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 5 504 $ | 3 730 $ | 3 730 $ | 100 % | 10,14 $ | 3 |
-| Idéal · Adultes séparés · Enfants mixtes · 50 / 50 · 45 % d’enfants | 5 472 $ | 3 722 $ | 3 722 $ | 100 % | 10,27 $ | 0 |
-| Idéal · Adultes mixtes · Enfants mixtes · 50 / 50 · 45 % d’enfants | 5 472 $ | 3 722 $ | 3 722 $ | 100 % | 10,27 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 5 365 $ | 3 717 $ | 3 416 $ | 100 % | 10,09 $ | 3 |
-| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 5 504 $ | 3 716 $ | 3 716 $ | 100 % | 10,10 $ | 3 |
-| Optimiste · Adultes séparés · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 496 $ | 3 712 $ | 3 418 $ | 100 % | 9,38 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 5 365 $ | 3 702 $ | 3 403 $ | 100 % | 10,05 $ | 3 |
-| Idéal · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 5 472 $ | 3 701 $ | 3 701 $ | 100 % | 10,21 $ | 0 |
-| Idéal · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 5 472 $ | 3 701 $ | 3 701 $ | 100 % | 10,21 $ | 0 |
-| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 5 504 $ | 3 698 $ | 3 698 $ | 100 % | 10,05 $ | 3 |
-| Optimiste · Adultes séparés · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 496 $ | 3 697 $ | 3 404 $ | 100 % | 9,34 $ | 0 |
-| Idéal · Adultes séparés · Enfants séparés · 70 % Europe · 30 % d’enfants | 5 404 $ | 3 690 $ | 3 690 $ | 100 % | 10,36 $ | 5 |
-| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 5 365 $ | 3 683 $ | 3 386 $ | 100 % | 9,99 $ | 3 |
-| Optimiste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 496 $ | 3 679 $ | 3 385 $ | 100 % | 9,29 $ | 0 |
-| Idéal · Adultes séparés · Enfants séparés · 50 / 50 · 30 % d’enfants | 5 404 $ | 3 676 $ | 3 676 $ | 100 % | 10,32 $ | 5 |
-| Optimiste · Adultes mixtes · Enfants séparés · 70 % Europe · 30 % d’enfants | 5 263 $ | 3 673 $ | 3 384 $ | 100 % | 10,32 $ | 5 |
-| Optimiste · Adultes mixtes · Enfants séparés · 50 / 50 · 30 % d’enfants | 5 263 $ | 3 659 $ | 3 371 $ | 100 % | 10,28 $ | 5 |
-| Idéal · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 5 404 $ | 3 657 $ | 3 657 $ | 100 % | 10,26 $ | 5 |
-| Optimiste · Adultes séparés · Enfants mixtes · 70 % Europe · 45 % d’enfants | 5 351 $ | 3 656 $ | 3 352 $ | 100 % | 9,67 $ | 0 |
-| Idéal · Adultes séparés · Enfants mixtes · 70 % Europe · 60 % d’enfants | 5 298 $ | 3 655 $ | 3 655 $ | 100 % | 10,62 $ | 0 |
-| Idéal · Adultes mixtes · Enfants mixtes · 70 % Europe · 60 % d’enfants | 5 298 $ | 3 655 $ | 3 655 $ | 100 % | 10,62 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants mixtes · 70 % Europe · 45 % d’enfants | 5 349 $ | 3 655 $ | 3 358 $ | 100 % | 9,66 $ | 0 |
-| Réaliste · Adultes mixtes · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 348 $ | 3 648 $ | 3 285 $ | 100 % | 9,50 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 5 263 $ | 3 641 $ | 3 352 $ | 100 % | 10,22 $ | 5 |
-| Optimiste · Adultes séparés · Enfants mixtes · 50 / 50 · 45 % d’enfants | 5 351 $ | 3 641 $ | 3 337 $ | 100 % | 9,62 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants mixtes · 50 / 50 · 45 % d’enfants | 5 349 $ | 3 640 $ | 3 343 $ | 100 % | 9,62 $ | 0 |
-| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 5 368 $ | 3 638 $ | 3 336 $ | 100 % | 9,47 $ | 3 |
-| Idéal · Adultes séparés · Enfants mixtes · 50 / 50 · 60 % d’enfants | 5 298 $ | 3 638 $ | 3 638 $ | 100 % | 10,57 $ | 0 |
-| Idéal · Adultes mixtes · Enfants mixtes · 50 / 50 · 60 % d’enfants | 5 298 $ | 3 638 $ | 3 638 $ | 100 % | 10,57 $ | 0 |
-| Réaliste · Adultes mixtes · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 348 $ | 3 634 $ | 3 271 $ | 100 % | 9,46 $ | 0 |
-| Idéal · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 5 298 $ | 3 625 $ | 3 625 $ | 100 % | 10,53 $ | 0 |
-| Idéal · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 5 298 $ | 3 625 $ | 3 625 $ | 100 % | 10,53 $ | 0 |
-| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 5 368 $ | 3 624 $ | 3 322 $ | 100 % | 9,43 $ | 3 |
-| Optimiste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 5 351 $ | 3 621 $ | 3 318 $ | 100 % | 9,56 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 5 349 $ | 3 620 $ | 3 325 $ | 100 % | 9,56 $ | 0 |
-| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 5 289 $ | 3 617 $ | 3 617 $ | 100 % | 10,37 $ | 4 |
-| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 5 289 $ | 3 617 $ | 3 617 $ | 100 % | 10,37 $ | 4 |
-| Réaliste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 348 $ | 3 616 $ | 3 255 $ | 100 % | 9,41 $ | 0 |
-| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 5 368 $ | 3 606 $ | 3 304 $ | 100 % | 9,38 $ | 3 |
-| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 5 289 $ | 3 603 $ | 3 603 $ | 100 % | 10,33 $ | 4 |
-| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 5 289 $ | 3 603 $ | 3 603 $ | 100 % | 10,33 $ | 4 |
-| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 5 298 $ | 3 601 $ | 3 601 $ | 100 % | 10,19 $ | 0 |
-| Idéal · Adultes séparés · Enfants séparés · 70 % Europe · 60 % d’enfants | 5 298 $ | 3 601 $ | 3 601 $ | 100 % | 10,19 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 5 298 $ | 3 601 $ | 3 601 $ | 100 % | 10,19 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés · 70 % Europe · 60 % d’enfants | 5 298 $ | 3 601 $ | 3 601 $ | 100 % | 10,19 $ | 0 |
-| Optimiste · Adultes séparés · Enfants séparés · 70 % Europe · 30 % d’enfants | 5 271 $ | 3 600 $ | 3 305 $ | 100 % | 9,70 $ | 5 |
-| Optimiste · Adultes séparés · Enfants séparés · 50 / 50 · 30 % d’enfants | 5 271 $ | 3 586 $ | 3 291 $ | 100 % | 9,66 $ | 5 |
-| Optimiste · Adultes séparés · Enfants mixtes · 70 % Europe · 60 % d’enfants | 5 188 $ | 3 584 $ | 3 265 $ | 100 % | 9,90 $ | 0 |
-| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 5 298 $ | 3 583 $ | 3 583 $ | 100 % | 10,13 $ | 0 |
-| Idéal · Adultes séparés · Enfants séparés · 50 / 50 · 60 % d’enfants | 5 298 $ | 3 583 $ | 3 583 $ | 100 % | 10,13 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 5 298 $ | 3 583 $ | 3 583 $ | 100 % | 10,13 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés · 50 / 50 · 60 % d’enfants | 5 298 $ | 3 583 $ | 3 583 $ | 100 % | 10,13 $ | 0 |
-| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 5 289 $ | 3 582 $ | 3 582 $ | 100 % | 10,26 $ | 4 |
-| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 5 289 $ | 3 582 $ | 3 582 $ | 100 % | 10,26 $ | 4 |
-| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 5 223 $ | 3 581 $ | 3 211 $ | 100 % | 9,64 $ | 3 |
-| Optimiste · Adultes mixtes · Enfants mixtes · 70 % Europe · 60 % d’enfants | 5 183 $ | 3 580 $ | 3 253 $ | 100 % | 9,89 $ | 0 |
-| Réaliste · Adultes séparés · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 353 $ | 3 572 $ | 3 207 $ | 100 % | 8,96 $ | 0 |
-| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 5 298 $ | 3 570 $ | 3 570 $ | 100 % | 10,09 $ | 0 |
-| Idéal · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 5 298 $ | 3 570 $ | 3 570 $ | 100 % | 10,09 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 5 298 $ | 3 570 $ | 3 570 $ | 100 % | 10,09 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 5 298 $ | 3 570 $ | 3 570 $ | 100 % | 10,09 $ | 0 |
-| Optimiste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 5 271 $ | 3 568 $ | 3 275 $ | 100 % | 9,60 $ | 5 |
-| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 5 223 $ | 3 568 $ | 3 198 $ | 100 % | 9,60 $ | 3 |
-| Optimiste · Adultes séparés · Enfants mixtes · 50 / 50 · 60 % d’enfants | 5 188 $ | 3 567 $ | 3 249 $ | 100 % | 9,85 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants mixtes · 50 / 50 · 60 % d’enfants | 5 183 $ | 3 562 $ | 3 237 $ | 100 % | 9,83 $ | 0 |
-| Réaliste · Adultes séparés · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 353 $ | 3 559 $ | 3 191 $ | 100 % | 8,92 $ | 0 |
-| Optimiste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 5 188 $ | 3 554 $ | 3 237 $ | 100 % | 9,81 $ | 0 |
-| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 5 223 $ | 3 550 $ | 3 182 $ | 100 % | 9,55 $ | 3 |
-| Optimiste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 5 183 $ | 3 549 $ | 3 224 $ | 100 % | 9,79 $ | 0 |
-| Réaliste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 353 $ | 3 541 $ | 3 175 $ | 100 % | 8,87 $ | 0 |
-| Réaliste · Adultes mixtes · Enfants séparés · 70 % Europe · 30 % d’enfants | 5 115 $ | 3 535 $ | 3 190 $ | 100 % | 9,89 $ | 5 |
-| Optimiste · Adultes mixtes · Enfants séparés · 70 % Europe · 60 % d’enfants | 5 193 $ | 3 535 $ | 3 188 $ | 100 % | 9,45 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 5 166 $ | 3 533 $ | 3 243 $ | 100 % | 9,71 $ | 4 |
-| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 5 191 $ | 3 531 $ | 3 216 $ | 100 % | 9,50 $ | 0 |
-| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 5 166 $ | 3 531 $ | 3 232 $ | 100 % | 9,69 $ | 4 |
-| Optimiste · Adultes séparés · Enfants séparés · 70 % Europe · 60 % d’enfants | 5 188 $ | 3 530 $ | 3 208 $ | 100 % | 9,50 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés · 70 % Europe · 45 % d’enfants | 5 139 $ | 3 528 $ | 3 528 $ | 100 % | 10,51 $ | 7 |
-| Idéal · Adultes séparés · Enfants séparés · 70 % Europe · 45 % d’enfants | 5 139 $ | 3 527 $ | 3 527 $ | 100 % | 10,51 $ | 7 |
-| Réaliste · Adultes séparés · Enfants mixtes · 70 % Europe · 45 % d’enfants | 5 209 $ | 3 526 $ | 3 132 $ | 100 % | 9,20 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 5 179 $ | 3 523 $ | 3 205 $ | 100 % | 9,48 $ | 0 |
-| Réaliste · Adultes mixtes · Enfants séparés · 50 / 50 · 30 % d’enfants | 5 115 $ | 3 522 $ | 3 177 $ | 100 % | 9,84 $ | 5 |
-| Réaliste · Adultes mixtes · Enfants mixtes · 70 % Europe · 45 % d’enfants | 5 205 $ | 3 520 $ | 3 142 $ | 100 % | 9,22 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 5 166 $ | 3 518 $ | 3 229 $ | 100 % | 9,67 $ | 4 |
-| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 5 166 $ | 3 517 $ | 3 219 $ | 100 % | 9,64 $ | 4 |
-| Optimiste · Adultes mixtes · Enfants séparés · 50 / 50 · 60 % d’enfants | 5 193 $ | 3 517 $ | 3 171 $ | 100 % | 9,39 $ | 0 |
-| Idéal · Adultes mixtes · Enfants séparés · 50 / 50 · 45 % d’enfants | 5 139 $ | 3 515 $ | 3 515 $ | 100 % | 10,47 $ | 7 |
-| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 5 191 $ | 3 514 $ | 3 198 $ | 100 % | 9,45 $ | 0 |
-| Idéal · Adultes séparés · Enfants séparés · 50 / 50 · 45 % d’enfants | 5 139 $ | 3 514 $ | 3 514 $ | 100 % | 10,46 $ | 7 |
-| Optimiste · Adultes séparés · Enfants séparés · 50 / 50 · 60 % d’enfants | 5 188 $ | 3 513 $ | 3 191 $ | 100 % | 9,44 $ | 0 |
-| Réaliste · Adultes séparés · Enfants mixtes · 50 / 50 · 45 % d’enfants | 5 209 $ | 3 509 $ | 3 118 $ | 100 % | 9,15 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 5 179 $ | 3 506 $ | 3 188 $ | 100 % | 9,43 $ | 0 |
-| Réaliste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 5 115 $ | 3 505 $ | 3 161 $ | 100 % | 9,79 $ | 5 |
-| Réaliste · Adultes mixtes · Enfants mixtes · 50 / 50 · 45 % d’enfants | 5 205 $ | 3 504 $ | 3 127 $ | 100 % | 9,17 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 5 193 $ | 3 504 $ | 3 159 $ | 100 % | 9,35 $ | 0 |
-| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 5 191 $ | 3 500 $ | 3 186 $ | 100 % | 9,41 $ | 0 |
-| Optimiste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 5 188 $ | 3 500 $ | 3 179 $ | 100 % | 9,41 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 5 166 $ | 3 499 $ | 3 209 $ | 100 % | 9,60 $ | 4 |
-| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 5 166 $ | 3 497 $ | 3 201 $ | 100 % | 9,58 $ | 4 |
-| Idéal · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 5 139 $ | 3 495 $ | 3 495 $ | 100 % | 10,40 $ | 7 |
-| Idéal · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 5 139 $ | 3 494 $ | 3 494 $ | 100 % | 10,40 $ | 7 |
-| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 5 179 $ | 3 493 $ | 3 176 $ | 100 % | 9,39 $ | 0 |
-| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 5 211 $ | 3 490 $ | 3 129 $ | 100 % | 9,07 $ | 3 |
-| Réaliste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 5 209 $ | 3 490 $ | 3 100 $ | 100 % | 9,10 $ | 0 |
-| Réaliste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 5 205 $ | 3 485 $ | 3 109 $ | 100 % | 9,12 $ | 0 |
-| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 5 211 $ | 3 477 $ | 3 115 $ | 100 % | 9,03 $ | 3 |
-| Réaliste · Adultes séparés · Enfants séparés · 70 % Europe · 30 % d’enfants | 5 124 $ | 3 460 $ | 3 101 $ | 100 % | 9,26 $ | 5 |
-| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 5 211 $ | 3 459 $ | 3 099 $ | 100 % | 8,98 $ | 3 |
-| Optimiste · Adultes séparés · Enfants séparés · 70 % Europe · 45 % d’enfants | 5 026 $ | 3 451 $ | 3 158 $ | 100 % | 9,81 $ | 7 |
-| Réaliste · Adultes mixtes · Enfants mixtes · 70 % Europe · 60 % d’enfants | 5 043 $ | 3 450 $ | 3 069 $ | 100 % | 9,47 $ | 0 |
-| Réaliste · Adultes séparés · Enfants séparés · 50 / 50 · 30 % d’enfants | 5 124 $ | 3 447 $ | 3 087 $ | 100 % | 9,21 $ | 5 |
-| Optimiste · Adultes mixtes · Enfants séparés · 70 % Europe · 45 % d’enfants | 5 018 $ | 3 447 $ | 3 166 $ | 100 % | 9,83 $ | 7 |
-| Réaliste · Adultes séparés · Enfants mixtes · 70 % Europe · 60 % d’enfants | 5 034 $ | 3 439 $ | 3 066 $ | 100 % | 9,48 $ | 0 |
-| Optimiste · Adultes séparés · Enfants séparés · 50 / 50 · 45 % d’enfants | 5 026 $ | 3 438 $ | 3 146 $ | 100 % | 9,77 $ | 7 |
-| Optimiste · Adultes mixtes · Enfants séparés · 50 / 50 · 45 % d’enfants | 5 018 $ | 3 434 $ | 3 152 $ | 100 % | 9,79 $ | 7 |
-| Réaliste · Adultes mixtes · Enfants mixtes · 50 / 50 · 60 % d’enfants | 5 043 $ | 3 431 $ | 3 052 $ | 100 % | 9,42 $ | 0 |
-| Réaliste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 5 124 $ | 3 430 $ | 3 072 $ | 100 % | 9,16 $ | 5 |
-| Réaliste · Adultes séparés · Enfants mixtes · 50 / 50 · 60 % d’enfants | 5 034 $ | 3 423 $ | 3 050 $ | 100 % | 9,42 $ | 0 |
-| Optimiste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 5 026 $ | 3 419 $ | 3 127 $ | 100 % | 9,71 $ | 7 |
-| Réaliste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 5 043 $ | 3 417 $ | 3 038 $ | 100 % | 9,38 $ | 0 |
-| Optimiste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 5 018 $ | 3 415 $ | 3 134 $ | 100 % | 9,73 $ | 7 |
-| Réaliste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 5 034 $ | 3 408 $ | 3 037 $ | 100 % | 9,38 $ | 0 |
-| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 5 016 $ | 3 393 $ | 3 035 $ | 100 % | 9,26 $ | 4 |
-| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 5 035 $ | 3 391 $ | 3 012 $ | 100 % | 9,08 $ | 0 |
-| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 5 015 $ | 3 388 $ | 3 043 $ | 100 % | 9,28 $ | 4 |
-| Réaliste · Adultes mixtes · Enfants séparés · 70 % Europe · 60 % d’enfants | 5 031 $ | 3 385 $ | 3 016 $ | 100 % | 9,07 $ | 0 |
-| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 5 031 $ | 3 382 $ | 3 003 $ | 100 % | 9,06 $ | 0 |
-| Réaliste · Adultes séparés · Enfants séparés · 70 % Europe · 60 % d’enfants | 5 030 $ | 3 381 $ | 3 004 $ | 100 % | 9,07 $ | 0 |
-| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 5 016 $ | 3 378 $ | 3 019 $ | 100 % | 9,21 $ | 4 |
-| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 5 015 $ | 3 374 $ | 3 029 $ | 100 % | 9,23 $ | 4 |
-| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 5 035 $ | 3 374 $ | 2 995 $ | 100 % | 9,02 $ | 0 |
-| Réaliste · Adultes mixtes · Enfants séparés · 50 / 50 · 60 % d’enfants | 5 031 $ | 3 366 $ | 3 002 $ | 100 % | 9,02 $ | 0 |
-| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 5 031 $ | 3 365 $ | 2 987 $ | 100 % | 9,01 $ | 0 |
-| Réaliste · Adultes séparés · Enfants séparés · 50 / 50 · 60 % d’enfants | 5 030 $ | 3 362 $ | 2 987 $ | 100 % | 9,02 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 046 $ | 3 359 $ | 2 917 $ | 100 % | 8,75 $ | 0 |
-| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 5 016 $ | 3 359 $ | 3 002 $ | 100 % | 9,16 $ | 4 |
-| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 5 035 $ | 3 359 $ | 2 983 $ | 100 % | 8,99 $ | 0 |
-| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 5 015 $ | 3 354 $ | 3 011 $ | 100 % | 9,18 $ | 4 |
-| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 5 031 $ | 3 352 $ | 2 975 $ | 100 % | 8,97 $ | 0 |
-| Réaliste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 5 031 $ | 3 352 $ | 2 987 $ | 100 % | 8,98 $ | 0 |
-| Réaliste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 5 030 $ | 3 349 $ | 2 974 $ | 100 % | 8,97 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 046 $ | 3 347 $ | 2 904 $ | 100 % | 8,71 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 046 $ | 3 330 $ | 2 889 $ | 100 % | 8,66 $ | 0 |
-| Réaliste · Adultes mixtes · Enfants séparés · 70 % Europe · 45 % d’enfants | 4 886 $ | 3 323 $ | 2 941 $ | 100 % | 9,33 $ | 7 |
-| Réaliste · Adultes séparés · Enfants séparés · 70 % Europe · 45 % d’enfants | 4 878 $ | 3 314 $ | 2 946 $ | 100 % | 9,34 $ | 7 |
-| Réaliste · Adultes mixtes · Enfants séparés · 50 / 50 · 45 % d’enfants | 4 886 $ | 3 309 $ | 2 927 $ | 100 % | 9,29 $ | 7 |
-| Réaliste · Adultes séparés · Enfants séparés · 50 / 50 · 45 % d’enfants | 4 878 $ | 3 300 $ | 2 933 $ | 100 % | 9,30 $ | 7 |
-| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 4 918 $ | 3 292 $ | 2 855 $ | 100 % | 8,85 $ | 3 |
-| Réaliste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 4 886 $ | 3 290 $ | 2 912 $ | 100 % | 9,23 $ | 7 |
-| Réaliste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 4 878 $ | 3 282 $ | 2 917 $ | 100 % | 9,24 $ | 7 |
-| Pessimiste · Adultes séparés · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 046 $ | 3 279 $ | 2 840 $ | 100 % | 8,24 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 4 918 $ | 3 278 $ | 2 843 $ | 100 % | 8,81 $ | 3 |
-| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Europe · 30 % d’enfants | 4 843 $ | 3 272 $ | 2 822 $ | 100 % | 9,04 $ | 5 |
-| Pessimiste · Adultes séparés · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 046 $ | 3 267 $ | 2 826 $ | 100 % | 8,20 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 4 918 $ | 3 264 $ | 2 829 $ | 100 % | 8,77 $ | 3 |
-| Pessimiste · Adultes mixtes · Enfants séparés · 50 / 50 · 30 % d’enfants | 4 843 $ | 3 258 $ | 2 811 $ | 100 % | 9,00 $ | 5 |
-| Pessimiste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 046 $ | 3 250 $ | 2 811 $ | 100 % | 8,16 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 4 843 $ | 3 242 $ | 2 798 $ | 100 % | 8,96 $ | 5 |
-| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 4 919 $ | 3 211 $ | 2 757 $ | 100 % | 8,30 $ | 3 |
-| Pessimiste · Adultes séparés · Enfants mixtes · 70 % Europe · 45 % d’enfants | 4 868 $ | 3 200 $ | 2 714 $ | 100 % | 8,31 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants mixtes · 70 % Europe · 45 % d’enfants | 4 868 $ | 3 197 $ | 2 725 $ | 100 % | 8,34 $ | 0 |
-| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 4 919 $ | 3 197 $ | 2 743 $ | 100 % | 8,26 $ | 3 |
-| Pessimiste · Adultes séparés · Enfants séparés · 70 % Europe · 30 % d’enfants | 4 835 $ | 3 188 $ | 2 748 $ | 100 % | 8,48 $ | 5 |
-| Pessimiste · Adultes séparés · Enfants mixtes · 50 / 50 · 45 % d’enfants | 4 868 $ | 3 184 $ | 2 701 $ | 100 % | 8,27 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants mixtes · 50 / 50 · 45 % d’enfants | 4 868 $ | 3 182 $ | 2 711 $ | 100 % | 8,29 $ | 0 |
-| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 4 919 $ | 3 180 $ | 2 728 $ | 100 % | 8,22 $ | 3 |
-| Pessimiste · Adultes séparés · Enfants séparés · 50 / 50 · 30 % d’enfants | 4 835 $ | 3 174 $ | 2 737 $ | 100 % | 8,45 $ | 5 |
-| Pessimiste · Adultes séparés · Enfants mixtes · 70 % Europe · 60 % d’enfants | 4 750 $ | 3 169 $ | 2 671 $ | 100 % | 8,59 $ | 0 |
-| Pessimiste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 4 868 $ | 3 168 $ | 2 684 $ | 100 % | 8,23 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 4 868 $ | 3 166 $ | 2 695 $ | 100 % | 8,24 $ | 0 |
-| Pessimiste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 4 835 $ | 3 158 $ | 2 723 $ | 100 % | 8,40 $ | 5 |
-| Pessimiste · Adultes séparés · Enfants mixtes · 50 / 50 · 60 % d’enfants | 4 750 $ | 3 152 $ | 2 656 $ | 100 % | 8,54 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants mixtes · 70 % Europe · 60 % d’enfants | 4 728 $ | 3 144 $ | 2 674 $ | 100 % | 8,60 $ | 0 |
-| Pessimiste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 4 750 $ | 3 140 $ | 2 645 $ | 100 % | 8,50 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants mixtes · 50 / 50 · 60 % d’enfants | 4 728 $ | 3 127 $ | 2 659 $ | 100 % | 8,54 $ | 0 |
-| Pessimiste · Adultes séparés · Enfants séparés · 70 % Europe · 60 % d’enfants | 4 756 $ | 3 121 $ | 2 645 $ | 100 % | 8,28 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 4 728 $ | 3 114 $ | 2 646 $ | 100 % | 8,50 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 4 747 $ | 3 114 $ | 2 624 $ | 100 % | 8,25 $ | 0 |
-| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 4 745 $ | 3 110 $ | 2 615 $ | 100 % | 8,24 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Europe · 60 % d’enfants | 4 739 $ | 3 105 $ | 2 608 $ | 100 % | 8,21 $ | 0 |
-| Pessimiste · Adultes séparés · Enfants séparés · 50 / 50 · 60 % d’enfants | 4 756 $ | 3 104 $ | 2 632 $ | 100 % | 8,24 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 4 747 $ | 3 098 $ | 2 608 $ | 100 % | 8,20 $ | 0 |
-| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 4 745 $ | 3 094 $ | 2 600 $ | 100 % | 8,19 $ | 0 |
-| Pessimiste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 4 756 $ | 3 091 $ | 2 620 $ | 100 % | 8,20 $ | 0 |
-| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 4 700 $ | 3 091 $ | 2 614 $ | 100 % | 8,32 $ | 4 |
-| Pessimiste · Adultes mixtes · Enfants séparés · 50 / 50 · 60 % d’enfants | 4 739 $ | 3 090 $ | 2 591 $ | 100 % | 8,17 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 4 701 $ | 3 089 $ | 2 594 $ | 100 % | 8,29 $ | 4 |
-| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 4 747 $ | 3 085 $ | 2 598 $ | 100 % | 8,17 $ | 0 |
-| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 4 745 $ | 3 081 $ | 2 589 $ | 100 % | 8,15 $ | 0 |
-| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 4 700 $ | 3 076 $ | 2 601 $ | 100 % | 8,28 $ | 4 |
-| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 4 739 $ | 3 076 $ | 2 580 $ | 100 % | 8,13 $ | 0 |
-| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 4 701 $ | 3 075 $ | 2 582 $ | 100 % | 8,25 $ | 4 |
-| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 4 700 $ | 3 059 $ | 2 587 $ | 100 % | 8,24 $ | 4 |
-| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 4 701 $ | 3 058 $ | 2 568 $ | 100 % | 8,20 $ | 4 |
-| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Europe · 45 % d’enfants | 4 571 $ | 3 021 $ | 2 558 $ | 100 % | 8,45 $ | 7 |
-| Pessimiste · Adultes mixtes · Enfants séparés · 50 / 50 · 45 % d’enfants | 4 571 $ | 3 007 $ | 2 547 $ | 100 % | 8,40 $ | 7 |
-| Pessimiste · Adultes séparés · Enfants séparés · 70 % Europe · 45 % d’enfants | 4 550 $ | 2 999 $ | 2 529 $ | 100 % | 8,39 $ | 7 |
-| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 4 571 $ | 2 993 $ | 2 532 $ | 100 % | 8,36 $ | 7 |
-| Pessimiste · Adultes séparés · Enfants séparés · 50 / 50 · 45 % d’enfants | 4 550 $ | 2 986 $ | 2 516 $ | 100 % | 8,35 $ | 7 |
-| Pessimiste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 4 550 $ | 2 969 $ | 2 504 $ | 100 % | 8,30 $ | 7 |
+| Scénario | Encaissé | Net à 4,00 $ / h | Net 1 mois sur 10 | Objectif | Taux max sans perte | Perte max sans perte | Enfants / adultes perdus ou boursiers max | Remise max sans perte | Remise max pour 2 000 $ |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Idéal · Adultes mixtes · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 637 $ | 1 908 $ | 1 908 $ | 0 % | 11,10 $ | 2 479 $ | 49 / 41 | 44 % | aucune (manque 120 $) |
+| Idéal · Adultes mixtes · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 637 $ | 1 900 $ | 1 900 $ | 0 % | 11,07 $ | 2 473 $ | 49 / 41 | 44 % | aucune (manque 131 $) |
+| Idéal · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 637 $ | 1 894 $ | 1 894 $ | 0 % | 11,05 $ | 2 469 $ | 49 / 41 | 44 % | aucune (manque 138 $) |
+| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 5 504 $ | 1 850 $ | 1 850 $ | 0 % | 11,17 $ | 2 404 $ | 48 / 40 | 44 % | aucune (manque 194 $) |
+| Idéal · Adultes séparés · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 637 $ | 1 843 $ | 1 843 $ | 0 % | 10,47 $ | 2 394 $ | 47 / 39 | 42 % | aucune (manque 205 $) |
+| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 5 504 $ | 1 842 $ | 1 842 $ | 0 % | 11,14 $ | 2 399 $ | 47 / 39 | 44 % | aucune (manque 205 $) |
+| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 5 504 $ | 1 838 $ | 1 838 $ | 0 % | 11,12 $ | 2 395 $ | 47 / 39 | 44 % | aucune (manque 212 $) |
+| Idéal · Adultes séparés · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 637 $ | 1 835 $ | 1 835 $ | 0 % | 10,44 $ | 2 388 $ | 47 / 39 | 42 % | aucune (manque 215 $) |
+| Idéal · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 637 $ | 1 829 $ | 1 829 $ | 0 % | 10,42 $ | 2 384 $ | 47 / 39 | 42 % | aucune (manque 222 $) |
+| Idéal · Adultes mixtes · Enfants séparés · 70 % Europe · 30 % d’enfants | 5 404 $ | 1 817 $ | 1 817 $ | 0 % | 11,35 $ | 2 362 $ | 47 / 39 | 44 % | aucune (manque 237 $) |
+| Idéal · Adultes mixtes · Enfants séparés · 50 / 50 · 30 % d’enfants | 5 404 $ | 1 809 $ | 1 809 $ | 0 % | 11,32 $ | 2 356 $ | 47 / 39 | 44 % | aucune (manque 248 $) |
+| Idéal · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 5 404 $ | 1 805 $ | 1 805 $ | 0 % | 11,30 $ | 2 352 $ | 47 / 39 | 44 % | aucune (manque 255 $) |
+| Optimiste · Adultes mixtes · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 446 $ | 1 792 $ | 1 552 $ | 13 % | 9,89 $ | 2 017 $ | 40 / 33 | 39 % | aucune (manque 583 $) |
+| Idéal · Adultes séparés · Enfants mixtes · 70 % Europe · 45 % d’enfants | 5 472 $ | 1 789 $ | 1 789 $ | 0 % | 10,66 $ | 2 321 $ | 46 / 38 | 42 % | aucune (manque 274 $) |
+| Idéal · Adultes mixtes · Enfants mixtes · 70 % Europe · 45 % d’enfants | 5 472 $ | 1 789 $ | 1 789 $ | 0 % | 10,66 $ | 2 321 $ | 46 / 38 | 42 % | aucune (manque 274 $) |
+| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 5 504 $ | 1 785 $ | 1 785 $ | 0 % | 10,51 $ | 2 319 $ | 46 / 38 | 42 % | aucune (manque 280 $) |
+| Optimiste · Adultes mixtes · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 446 $ | 1 784 $ | 1 544 $ | 12 % | 9,86 $ | 2 011 $ | 40 / 33 | 39 % | aucune (manque 593 $) |
+| Idéal · Adultes séparés · Enfants mixtes · 50 / 50 · 45 % d’enfants | 5 472 $ | 1 779 $ | 1 779 $ | 0 % | 10,62 $ | 2 314 $ | 46 / 38 | 42 % | aucune (manque 287 $) |
+| Idéal · Adultes mixtes · Enfants mixtes · 50 / 50 · 45 % d’enfants | 5 472 $ | 1 779 $ | 1 779 $ | 0 % | 10,62 $ | 2 314 $ | 46 / 38 | 42 % | aucune (manque 287 $) |
+| Optimiste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 446 $ | 1 779 $ | 1 539 $ | 12 % | 9,84 $ | 2 007 $ | 40 / 33 | 39 % | aucune (manque 601 $) |
+| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 5 504 $ | 1 777 $ | 1 777 $ | 0 % | 10,48 $ | 2 313 $ | 46 / 38 | 42 % | aucune (manque 291 $) |
+| Idéal · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 5 472 $ | 1 773 $ | 1 773 $ | 0 % | 10,60 $ | 2 310 $ | 46 / 38 | 42 % | aucune (manque 295 $) |
+| Idéal · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 5 472 $ | 1 773 $ | 1 773 $ | 0 % | 10,60 $ | 2 310 $ | 46 / 38 | 42 % | aucune (manque 295 $) |
+| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 5 504 $ | 1 772 $ | 1 772 $ | 0 % | 10,46 $ | 2 309 $ | 46 / 38 | 42 % | aucune (manque 298 $) |
+| Idéal · Adultes séparés · Enfants séparés · 70 % Europe · 30 % d’enfants | 5 404 $ | 1 752 $ | 1 752 $ | 0 % | 10,65 $ | 2 277 $ | 45 / 37 | 42 % | aucune (manque 322 $) |
+| Idéal · Adultes séparés · Enfants séparés · 50 / 50 · 30 % d’enfants | 5 404 $ | 1 744 $ | 1 744 $ | 0 % | 10,62 $ | 2 271 $ | 45 / 37 | 42 % | aucune (manque 333 $) |
+| Idéal · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 5 404 $ | 1 740 $ | 1 740 $ | 0 % | 10,61 $ | 2 268 $ | 45 / 37 | 42 % | aucune (manque 339 $) |
+| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 5 314 $ | 1 734 $ | 1 499 $ | 8 % | 9,92 $ | 1 948 $ | 38 / 32 | 39 % | aucune (manque 652 $) |
+| Optimiste · Adultes séparés · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 444 $ | 1 727 $ | 1 494 $ | 8 % | 9,34 $ | 1 942 $ | 38 / 32 | 38 % | aucune (manque 658 $) |
+| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 5 314 $ | 1 727 $ | 1 491 $ | 7 % | 9,89 $ | 1 942 $ | 38 / 32 | 39 % | aucune (manque 662 $) |
+| Idéal · Adultes séparés · Enfants mixtes · 70 % Europe · 60 % d’enfants | 5 298 $ | 1 722 $ | 1 722 $ | 0 % | 10,82 $ | 2 235 $ | 44 / 37 | 42 % | aucune (manque 360 $) |
+| Idéal · Adultes mixtes · Enfants mixtes · 70 % Europe · 60 % d’enfants | 5 298 $ | 1 722 $ | 1 722 $ | 0 % | 10,82 $ | 2 235 $ | 44 / 37 | 42 % | aucune (manque 360 $) |
+| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 5 314 $ | 1 721 $ | 1 486 $ | 6 % | 9,86 $ | 1 937 $ | 38 / 32 | 39 % | aucune (manque 670 $) |
+| Optimiste · Adultes séparés · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 444 $ | 1 719 $ | 1 487 $ | 7 % | 9,32 $ | 1 937 $ | 38 / 32 | 38 % | aucune (manque 667 $) |
+| Optimiste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 444 $ | 1 714 $ | 1 480 $ | 7 % | 9,30 $ | 1 930 $ | 38 / 32 | 38 % | aucune (manque 677 $) |
+| Idéal · Adultes séparés · Enfants mixtes · 50 / 50 · 60 % d’enfants | 5 298 $ | 1 712 $ | 1 712 $ | 0 % | 10,78 $ | 2 228 $ | 44 / 37 | 42 % | aucune (manque 375 $) |
+| Idéal · Adultes mixtes · Enfants mixtes · 50 / 50 · 60 % d’enfants | 5 298 $ | 1 712 $ | 1 712 $ | 0 % | 10,78 $ | 2 228 $ | 44 / 37 | 42 % | aucune (manque 375 $) |
+| Idéal · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 5 298 $ | 1 709 $ | 1 709 $ | 0 % | 10,76 $ | 2 225 $ | 44 / 37 | 42 % | aucune (manque 380 $) |
+| Idéal · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 5 298 $ | 1 709 $ | 1 709 $ | 0 % | 10,76 $ | 2 225 $ | 44 / 37 | 42 % | aucune (manque 380 $) |
+| Optimiste · Adultes mixtes · Enfants séparés · 70 % Europe · 30 % d’enfants | 5 220 $ | 1 705 $ | 1 471 $ | 5 % | 10,07 $ | 1 912 $ | 38 / 31 | 39 % | aucune (manque 687 $) |
+| Optimiste · Adultes mixtes · Enfants séparés · 50 / 50 · 30 % d’enfants | 5 220 $ | 1 696 $ | 1 465 $ | 4 % | 10,04 $ | 1 907 $ | 38 / 31 | 39 % | aucune (manque 697 $) |
+| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 5 289 $ | 1 692 $ | 1 692 $ | 0 % | 10,56 $ | 2 196 $ | 43 / 36 | 42 % | aucune (manque 400 $) |
+| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 5 289 $ | 1 692 $ | 1 692 $ | 0 % | 10,56 $ | 2 196 $ | 43 / 36 | 42 % | aucune (manque 400 $) |
+| Optimiste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 5 220 $ | 1 691 $ | 1 458 $ | 4 % | 10,02 $ | 1 902 $ | 38 / 31 | 39 % | aucune (manque 706 $) |
+| Optimiste · Adultes séparés · Enfants mixtes · 70 % Europe · 45 % d’enfants | 5 306 $ | 1 689 $ | 1 453 $ | 4 % | 9,52 $ | 1 886 $ | 37 / 31 | 38 % | aucune (manque 710 $) |
+| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 5 289 $ | 1 683 $ | 1 683 $ | 0 % | 10,53 $ | 2 190 $ | 43 / 36 | 41 % | aucune (manque 412 $) |
+| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 5 289 $ | 1 683 $ | 1 683 $ | 0 % | 10,53 $ | 2 190 $ | 43 / 36 | 41 % | aucune (manque 412 $) |
+| Optimiste · Adultes mixtes · Enfants mixtes · 70 % Europe · 45 % d’enfants | 5 294 $ | 1 681 $ | 1 447 $ | 5 % | 9,49 $ | 1 879 $ | 37 / 31 | 38 % | aucune (manque 718 $) |
+| Optimiste · Adultes séparés · Enfants mixtes · 50 / 50 · 45 % d’enfants | 5 306 $ | 1 680 $ | 1 444 $ | 4 % | 9,49 $ | 1 879 $ | 37 / 31 | 38 % | aucune (manque 723 $) |
+| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 5 298 $ | 1 678 $ | 1 678 $ | 0 % | 10,37 $ | 2 178 $ | 43 / 36 | 41 % | aucune (manque 418 $) |
+| Idéal · Adultes séparés · Enfants séparés · 70 % Europe · 60 % d’enfants | 5 298 $ | 1 678 $ | 1 678 $ | 0 % | 10,37 $ | 2 178 $ | 43 / 36 | 41 % | aucune (manque 418 $) |
+| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 5 298 $ | 1 678 $ | 1 678 $ | 0 % | 10,37 $ | 2 178 $ | 43 / 36 | 41 % | aucune (manque 418 $) |
+| Idéal · Adultes mixtes · Enfants séparés · 70 % Europe · 60 % d’enfants | 5 298 $ | 1 678 $ | 1 678 $ | 0 % | 10,37 $ | 2 178 $ | 43 / 36 | 41 % | aucune (manque 418 $) |
+| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 5 289 $ | 1 677 $ | 1 677 $ | 0 % | 10,50 $ | 2 185 $ | 43 / 36 | 41 % | aucune (manque 421 $) |
+| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 5 289 $ | 1 677 $ | 1 677 $ | 0 % | 10,50 $ | 2 185 $ | 43 / 36 | 41 % | aucune (manque 421 $) |
+| Optimiste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 5 306 $ | 1 674 $ | 1 438 $ | 4 % | 9,46 $ | 1 874 $ | 37 / 31 | 38 % | aucune (manque 732 $) |
+| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 5 317 $ | 1 673 $ | 1 430 $ | 4 % | 9,31 $ | 1 858 $ | 37 / 30 | 37 % | aucune (manque 741 $) |
+| Optimiste · Adultes mixtes · Enfants mixtes · 50 / 50 · 45 % d’enfants | 5 294 $ | 1 672 $ | 1 438 $ | 4 % | 9,46 $ | 1 872 $ | 37 / 31 | 37 % | aucune (manque 731 $) |
+| Réaliste · Adultes mixtes · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 285 $ | 1 669 $ | 1 374 $ | 8 % | 9,21 $ | 1 786 $ | 35 / 29 | 36 % | aucune (manque 813 $) |
+| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 5 298 $ | 1 668 $ | 1 668 $ | 0 % | 10,33 $ | 2 170 $ | 43 / 36 | 41 % | aucune (manque 432 $) |
+| Idéal · Adultes séparés · Enfants séparés · 50 / 50 · 60 % d’enfants | 5 298 $ | 1 668 $ | 1 668 $ | 0 % | 10,33 $ | 2 170 $ | 43 / 36 | 41 % | aucune (manque 432 $) |
+| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 5 298 $ | 1 668 $ | 1 668 $ | 0 % | 10,33 $ | 2 170 $ | 43 / 36 | 41 % | aucune (manque 432 $) |
+| Idéal · Adultes mixtes · Enfants séparés · 50 / 50 · 60 % d’enfants | 5 298 $ | 1 668 $ | 1 668 $ | 0 % | 10,33 $ | 2 170 $ | 43 / 36 | 41 % | aucune (manque 432 $) |
+| Optimiste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 5 294 $ | 1 666 $ | 1 432 $ | 4 % | 9,43 $ | 1 867 $ | 37 / 31 | 37 % | aucune (manque 739 $) |
+| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 5 317 $ | 1 666 $ | 1 422 $ | 3 % | 9,28 $ | 1 851 $ | 37 / 30 | 37 % | aucune (manque 753 $) |
+| Idéal · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 5 298 $ | 1 664 $ | 1 664 $ | 0 % | 10,32 $ | 2 167 $ | 43 / 36 | 41 % | aucune (manque 437 $) |
+| Idéal · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 5 298 $ | 1 664 $ | 1 664 $ | 0 % | 10,32 $ | 2 167 $ | 43 / 36 | 41 % | aucune (manque 437 $) |
+| Idéal · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 5 298 $ | 1 664 $ | 1 664 $ | 0 % | 10,32 $ | 2 167 $ | 43 / 36 | 41 % | aucune (manque 437 $) |
+| Idéal · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 5 298 $ | 1 664 $ | 1 664 $ | 0 % | 10,32 $ | 2 167 $ | 43 / 36 | 41 % | aucune (manque 437 $) |
+| Réaliste · Adultes mixtes · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 285 $ | 1 661 $ | 1 367 $ | 7 % | 9,18 $ | 1 780 $ | 35 / 29 | 36 % | aucune (manque 824 $) |
+| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 5 317 $ | 1 660 $ | 1 416 $ | 3 % | 9,26 $ | 1 848 $ | 36 / 30 | 37 % | aucune (manque 761 $) |
+| Réaliste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 285 $ | 1 656 $ | 1 362 $ | 7 % | 9,16 $ | 1 776 $ | 35 / 29 | 36 % | aucune (manque 832 $) |
+| Optimiste · Adultes séparés · Enfants séparés · 70 % Europe · 30 % d’enfants | 5 229 $ | 1 650 $ | 1 412 $ | 2 % | 9,46 $ | 1 835 $ | 36 / 30 | 37 % | aucune (manque 765 $) |
+| Optimiste · Adultes séparés · Enfants séparés · 50 / 50 · 30 % d’enfants | 5 229 $ | 1 642 $ | 1 404 $ | 2 % | 9,43 $ | 1 829 $ | 36 / 30 | 37 % | aucune (manque 776 $) |
+| Optimiste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 5 229 $ | 1 637 $ | 1 400 $ | 2 % | 9,42 $ | 1 825 $ | 36 / 30 | 37 % | aucune (manque 783 $) |
+| Optimiste · Adultes séparés · Enfants mixtes · 70 % Europe · 60 % d’enfants | 5 142 $ | 1 630 $ | 1 374 $ | 3 % | 9,55 $ | 1 784 $ | 35 / 29 | 37 % | aucune (manque 813 $) |
+| Optimiste · Adultes mixtes · Enfants mixtes · 70 % Europe · 60 % d’enfants | 5 138 $ | 1 627 $ | 1 375 $ | 3 % | 9,55 $ | 1 785 $ | 35 / 29 | 37 % | aucune (manque 812 $) |
+| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 5 172 $ | 1 626 $ | 1 340 $ | 4 % | 9,30 $ | 1 742 $ | 34 / 29 | 36 % | aucune (manque 857 $) |
+| Idéal · Adultes mixtes · Enfants séparés · 70 % Europe · 45 % d’enfants | 5 139 $ | 1 621 $ | 1 621 $ | 0 % | 10,56 $ | 2 105 $ | 42 / 35 | 41 % | aucune (manque 492 $) |
+| Idéal · Adultes séparés · Enfants séparés · 70 % Europe · 45 % d’enfants | 5 139 $ | 1 621 $ | 1 621 $ | 0 % | 10,55 $ | 2 104 $ | 42 / 35 | 41 % | aucune (manque 493 $) |
+| Optimiste · Adultes séparés · Enfants mixtes · 50 / 50 · 60 % d’enfants | 5 142 $ | 1 620 $ | 1 365 $ | 3 % | 9,51 $ | 1 776 $ | 35 / 29 | 37 % | aucune (manque 826 $) |
+| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 5 172 $ | 1 618 $ | 1 333 $ | 4 % | 9,27 $ | 1 736 $ | 34 / 28 | 36 % | aucune (manque 870 $) |
+| Optimiste · Adultes mixtes · Enfants mixtes · 50 / 50 · 60 % d’enfants | 5 138 $ | 1 617 $ | 1 366 $ | 3 % | 9,52 $ | 1 779 $ | 35 / 29 | 37 % | aucune (manque 825 $) |
+| Optimiste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 5 142 $ | 1 616 $ | 1 361 $ | 3 % | 9,49 $ | 1 773 $ | 35 / 29 | 37 % | aucune (manque 832 $) |
+| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 5 172 $ | 1 613 $ | 1 327 $ | 4 % | 9,25 $ | 1 732 $ | 34 / 28 | 36 % | aucune (manque 877 $) |
+| Idéal · Adultes mixtes · Enfants séparés · 50 / 50 · 45 % d’enfants | 5 139 $ | 1 613 $ | 1 613 $ | 0 % | 10,53 $ | 2 098 $ | 41 / 34 | 41 % | aucune (manque 503 $) |
+| Optimiste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 5 138 $ | 1 613 $ | 1 362 $ | 3 % | 9,50 $ | 1 776 $ | 35 / 29 | 37 % | aucune (manque 831 $) |
+| Réaliste · Adultes séparés · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 292 $ | 1 612 $ | 1 327 $ | 4 % | 8,75 $ | 1 724 $ | 34 / 28 | 35 % | aucune (manque 875 $) |
+| Idéal · Adultes séparés · Enfants séparés · 50 / 50 · 45 % d’enfants | 5 139 $ | 1 612 $ | 1 612 $ | 0 % | 10,52 $ | 2 097 $ | 41 / 34 | 41 % | aucune (manque 504 $) |
+| Idéal · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 5 139 $ | 1 607 $ | 1 607 $ | 0 % | 10,50 $ | 2 094 $ | 41 / 34 | 41 % | aucune (manque 512 $) |
+| Idéal · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 5 139 $ | 1 607 $ | 1 607 $ | 0 % | 10,50 $ | 2 093 $ | 41 / 34 | 41 % | aucune (manque 513 $) |
+| Réaliste · Adultes séparés · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 292 $ | 1 605 $ | 1 319 $ | 4 % | 8,73 $ | 1 717 $ | 34 / 28 | 35 % | aucune (manque 887 $) |
+| Réaliste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 292 $ | 1 599 $ | 1 315 $ | 3 % | 8,71 $ | 1 714 $ | 34 / 28 | 35 % | aucune (manque 894 $) |
+| Réaliste · Adultes mixtes · Enfants séparés · 70 % Europe · 30 % d’enfants | 5 073 $ | 1 593 $ | 1 307 $ | 3 % | 9,40 $ | 1 698 $ | 33 / 28 | 36 % | aucune (manque 901 $) |
+| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 5 123 $ | 1 592 $ | 1 366 $ | 2 % | 9,41 $ | 1 774 $ | 35 / 29 | 37 % | aucune (manque 823 $) |
+| Optimiste · Adultes séparés · Enfants séparés · 70 % Europe · 60 % d’enfants | 5 148 $ | 1 590 $ | 1 331 $ | 3 % | 9,14 $ | 1 727 $ | 34 / 28 | 36 % | aucune (manque 869 $) |
+| Optimiste · Adultes mixtes · Enfants séparés · 70 % Europe · 60 % d’enfants | 5 148 $ | 1 590 $ | 1 336 $ | 2 % | 9,16 $ | 1 734 $ | 34 / 28 | 36 % | aucune (manque 863 $) |
+| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 5 146 $ | 1 590 $ | 1 332 $ | 2 % | 9,16 $ | 1 729 $ | 34 / 28 | 36 % | aucune (manque 867 $) |
+| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 5 118 $ | 1 588 $ | 1 354 $ | 1 % | 9,34 $ | 1 758 $ | 35 / 29 | 36 % | aucune (manque 839 $) |
+| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 5 140 $ | 1 586 $ | 1 329 $ | 2 % | 9,14 $ | 1 724 $ | 34 / 28 | 36 % | aucune (manque 871 $) |
+| Réaliste · Adultes mixtes · Enfants séparés · 50 / 50 · 30 % d’enfants | 5 073 $ | 1 586 $ | 1 300 $ | 3 % | 9,37 $ | 1 692 $ | 33 / 28 | 36 % | aucune (manque 911 $) |
+| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 5 123 $ | 1 585 $ | 1 358 $ | 2 % | 9,38 $ | 1 767 $ | 35 / 29 | 37 % | aucune (manque 835 $) |
+| Optimiste · Adultes mixtes · Enfants séparés · 50 / 50 · 60 % d’enfants | 5 148 $ | 1 581 $ | 1 326 $ | 2 % | 9,13 $ | 1 726 $ | 34 / 28 | 36 % | aucune (manque 877 $) |
+| Réaliste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 5 073 $ | 1 580 $ | 1 295 $ | 2 % | 9,35 $ | 1 689 $ | 33 / 28 | 36 % | aucune (manque 919 $) |
+| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 5 146 $ | 1 580 $ | 1 322 $ | 2 % | 9,12 $ | 1 721 $ | 34 / 28 | 36 % | aucune (manque 882 $) |
+| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 5 118 $ | 1 580 $ | 1 346 $ | 1 % | 9,31 $ | 1 752 $ | 35 / 29 | 36 % | aucune (manque 850 $) |
+| Optimiste · Adultes séparés · Enfants séparés · 50 / 50 · 60 % d’enfants | 5 148 $ | 1 580 $ | 1 321 $ | 2 % | 9,10 $ | 1 720 $ | 34 / 28 | 36 % | aucune (manque 884 $) |
+| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 5 123 $ | 1 578 $ | 1 351 $ | 2 % | 9,35 $ | 1 761 $ | 35 / 29 | 37 % | aucune (manque 845 $) |
+| Optimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 5 146 $ | 1 578 $ | 1 320 $ | 2 % | 9,11 $ | 1 719 $ | 34 / 28 | 36 % | aucune (manque 885 $) |
+| Optimiste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 5 148 $ | 1 577 $ | 1 317 $ | 2 % | 9,09 $ | 1 717 $ | 34 / 28 | 36 % | aucune (manque 890 $) |
+| Optimiste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 5 148 $ | 1 576 $ | 1 322 $ | 1 % | 9,11 $ | 1 723 $ | 34 / 28 | 36 % | aucune (manque 883 $) |
+| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 5 140 $ | 1 576 $ | 1 319 $ | 2 % | 9,10 $ | 1 717 $ | 34 / 28 | 36 % | aucune (manque 887 $) |
+| Réaliste · Adultes séparés · Enfants mixtes · 70 % Europe · 45 % d’enfants | 5 154 $ | 1 575 $ | 1 291 $ | 3 % | 8,89 $ | 1 677 $ | 33 / 27 | 35 % | aucune (manque 919 $) |
+| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 5 118 $ | 1 575 $ | 1 342 $ | 1 % | 9,28 $ | 1 748 $ | 34 / 29 | 36 % | aucune (manque 859 $) |
+| Réaliste · Adultes mixtes · Enfants mixtes · 70 % Europe · 45 % d’enfants | 5 153 $ | 1 572 $ | 1 281 $ | 3 % | 8,86 $ | 1 663 $ | 33 / 27 | 35 % | aucune (manque 933 $) |
+| Optimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 5 140 $ | 1 572 $ | 1 316 $ | 1 % | 9,09 $ | 1 714 $ | 34 / 28 | 36 % | aucune (manque 891 $) |
+| Réaliste · Adultes séparés · Enfants mixtes · 50 / 50 · 45 % d’enfants | 5 154 $ | 1 566 $ | 1 284 $ | 3 % | 8,87 $ | 1 670 $ | 33 / 27 | 35 % | aucune (manque 932 $) |
+| Réaliste · Adultes mixtes · Enfants mixtes · 50 / 50 · 45 % d’enfants | 5 153 $ | 1 564 $ | 1 272 $ | 2 % | 8,83 $ | 1 655 $ | 33 / 27 | 35 % | aucune (manque 947 $) |
+| Réaliste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 5 154 $ | 1 559 $ | 1 278 $ | 3 % | 8,84 $ | 1 665 $ | 33 / 27 | 35 % | aucune (manque 942 $) |
+| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 5 170 $ | 1 559 $ | 1 273 $ | 2 % | 8,72 $ | 1 654 $ | 33 / 27 | 34 % | aucune (manque 946 $) |
+| Réaliste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 5 153 $ | 1 557 $ | 1 266 $ | 2 % | 8,81 $ | 1 650 $ | 33 / 27 | 35 % | aucune (manque 958 $) |
+| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 5 170 $ | 1 552 $ | 1 264 $ | 2 % | 8,69 $ | 1 646 $ | 32 / 27 | 34 % | aucune (manque 958 $) |
+| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 5 170 $ | 1 547 $ | 1 259 $ | 2 % | 8,67 $ | 1 641 $ | 32 / 27 | 34 % | aucune (manque 966 $) |
+| Réaliste · Adultes séparés · Enfants séparés · 70 % Europe · 30 % d’enfants | 5 088 $ | 1 538 $ | 1 243 $ | 1 % | 8,81 $ | 1 615 $ | 32 / 26 | 34 % | aucune (manque 984 $) |
+| Optimiste · Adultes séparés · Enfants séparés · 70 % Europe · 45 % d’enfants | 4 989 $ | 1 532 $ | 1 288 $ | 0 % | 9,31 $ | 1 673 $ | 33 / 27 | 36 % | aucune (manque 925 $) |
+| Réaliste · Adultes séparés · Enfants séparés · 50 / 50 · 30 % d’enfants | 5 088 $ | 1 531 $ | 1 235 $ | 1 % | 8,79 $ | 1 607 $ | 32 / 26 | 34 % | aucune (manque 997 $) |
+| Réaliste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 5 088 $ | 1 527 $ | 1 230 $ | 1 % | 8,77 $ | 1 604 $ | 32 / 26 | 34 % | aucune (manque 1 004 $) |
+| Optimiste · Adultes séparés · Enfants séparés · 50 / 50 · 45 % d’enfants | 4 989 $ | 1 525 $ | 1 282 $ | 0 % | 9,28 $ | 1 668 $ | 33 / 27 | 36 % | aucune (manque 934 $) |
+| Optimiste · Adultes mixtes · Enfants séparés · 70 % Europe · 45 % d’enfants | 4 976 $ | 1 524 $ | 1 291 $ | 1 % | 9,32 $ | 1 676 $ | 33 / 27 | 36 % | aucune (manque 921 $) |
+| Optimiste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 4 989 $ | 1 519 $ | 1 276 $ | 0 % | 9,26 $ | 1 664 $ | 33 / 27 | 36 % | aucune (manque 944 $) |
+| Optimiste · Adultes mixtes · Enfants séparés · 50 / 50 · 45 % d’enfants | 4 976 $ | 1 516 $ | 1 284 $ | 1 % | 9,29 $ | 1 670 $ | 33 / 27 | 36 % | aucune (manque 932 $) |
+| Réaliste · Adultes mixtes · Enfants mixtes · 70 % Europe · 60 % d’enfants | 4 989 $ | 1 514 $ | 1 214 $ | 1 % | 8,90 $ | 1 577 $ | 31 / 26 | 34 % | aucune (manque 1 020 $) |
+| Optimiste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 4 976 $ | 1 510 $ | 1 277 $ | 1 % | 9,26 $ | 1 665 $ | 33 / 27 | 36 % | aucune (manque 942 $) |
+| Réaliste · Adultes séparés · Enfants mixtes · 70 % Europe · 60 % d’enfants | 4 981 $ | 1 508 $ | 1 230 $ | 1 % | 8,96 $ | 1 597 $ | 31 / 26 | 35 % | aucune (manque 998 $) |
+| Réaliste · Adultes mixtes · Enfants mixtes · 50 / 50 · 60 % d’enfants | 4 989 $ | 1 504 $ | 1 205 $ | 1 % | 8,86 $ | 1 568 $ | 31 / 26 | 34 % | aucune (manque 1 034 $) |
+| Réaliste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 4 989 $ | 1 499 $ | 1 201 $ | 1 % | 8,84 $ | 1 565 $ | 31 / 26 | 34 % | aucune (manque 1 042 $) |
+| Réaliste · Adultes séparés · Enfants mixtes · 50 / 50 · 60 % d’enfants | 4 981 $ | 1 498 $ | 1 222 $ | 1 % | 8,93 $ | 1 590 $ | 31 / 26 | 34 % | aucune (manque 1 013 $) |
+| Réaliste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 4 981 $ | 1 494 $ | 1 219 $ | 1 % | 8,91 $ | 1 587 $ | 31 / 26 | 34 % | aucune (manque 1 018 $) |
+| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 4 980 $ | 1 483 $ | 1 192 $ | 1 % | 8,71 $ | 1 549 $ | 30 / 25 | 34 % | aucune (manque 1 048 $) |
+| Réaliste · Adultes séparés · Enfants séparés · 70 % Europe · 60 % d’enfants | 5 003 $ | 1 482 $ | 1 182 $ | 0 % | 8,58 $ | 1 535 $ | 30 / 25 | 33 % | aucune (manque 1 061 $) |
+| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 4 976 $ | 1 480 $ | 1 188 $ | 1 % | 8,69 $ | 1 542 $ | 30 / 25 | 34 % | aucune (manque 1 055 $) |
+| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 4 997 $ | 1 478 $ | 1 168 $ | 1 % | 8,52 $ | 1 516 $ | 30 / 25 | 33 % | aucune (manque 1 080 $) |
+| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 4 980 $ | 1 475 $ | 1 186 $ | 1 % | 8,68 $ | 1 543 $ | 30 / 25 | 34 % | aucune (manque 1 059 $) |
+| Réaliste · Adultes mixtes · Enfants séparés · 70 % Europe · 60 % d’enfants | 4 988 $ | 1 473 $ | 1 172 $ | 1 % | 8,54 $ | 1 522 $ | 30 / 25 | 33 % | aucune (manque 1 074 $) |
+| Réaliste · Adultes séparés · Enfants séparés · 50 / 50 · 60 % d’enfants | 5 003 $ | 1 473 $ | 1 175 $ | 0 % | 8,54 $ | 1 528 $ | 30 / 25 | 33 % | aucune (manque 1 073 $) |
+| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 4 976 $ | 1 472 $ | 1 180 $ | 1 % | 8,66 $ | 1 535 $ | 30 / 25 | 33 % | aucune (manque 1 067 $) |
+| Réaliste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 5 003 $ | 1 468 $ | 1 170 $ | 0 % | 8,52 $ | 1 525 $ | 30 / 25 | 33 % | aucune (manque 1 081 $) |
+| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 4 980 $ | 1 468 $ | 1 179 $ | 1 % | 8,66 $ | 1 538 $ | 30 / 25 | 33 % | aucune (manque 1 070 $) |
+| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 4 997 $ | 1 467 $ | 1 159 $ | 1 % | 8,48 $ | 1 508 $ | 30 / 25 | 33 % | aucune (manque 1 095 $) |
+| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 4 984 $ | 1 466 $ | 1 171 $ | 1 % | 8,53 $ | 1 520 $ | 30 / 25 | 33 % | aucune (manque 1 076 $) |
+| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 4 976 $ | 1 466 $ | 1 173 $ | 1 % | 8,63 $ | 1 529 $ | 30 / 25 | 33 % | aucune (manque 1 078 $) |
+| Réaliste · Adultes mixtes · Enfants séparés · 50 / 50 · 60 % d’enfants | 4 988 $ | 1 462 $ | 1 164 $ | 1 % | 8,50 $ | 1 515 $ | 30 / 25 | 33 % | aucune (manque 1 088 $) |
+| Réaliste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 4 997 $ | 1 462 $ | 1 155 $ | 1 % | 8,47 $ | 1 504 $ | 30 / 25 | 33 % | aucune (manque 1 101 $) |
+| Pessimiste · Adultes mixtes · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 015 $ | 1 460 $ | 1 086 $ | 2 % | 8,13 $ | 1 412 $ | 28 / 23 | 31 % | aucune (manque 1 188 $) |
+| Réaliste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 4 988 $ | 1 458 $ | 1 160 $ | 1 % | 8,49 $ | 1 511 $ | 30 / 25 | 33 % | aucune (manque 1 095 $) |
+| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 4 984 $ | 1 455 $ | 1 161 $ | 1 % | 8,49 $ | 1 511 $ | 30 / 25 | 33 % | aucune (manque 1 092 $) |
+| Pessimiste · Adultes mixtes · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 015 $ | 1 454 $ | 1 080 $ | 1 % | 8,11 $ | 1 407 $ | 28 / 23 | 31 % | aucune (manque 1 198 $) |
+| Réaliste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 4 984 $ | 1 452 $ | 1 156 $ | 0 % | 8,48 $ | 1 507 $ | 30 / 25 | 33 % | aucune (manque 1 099 $) |
+| Pessimiste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 015 $ | 1 447 $ | 1 075 $ | 1 % | 8,08 $ | 1 402 $ | 28 / 23 | 31 % | aucune (manque 1 206 $) |
+| Réaliste · Adultes séparés · Enfants séparés · 70 % Europe · 45 % d’enfants | 4 835 $ | 1 417 $ | 1 139 $ | 0 % | 8,69 $ | 1 480 $ | 29 / 24 | 33 % | aucune (manque 1 118 $) |
+| Réaliste · Adultes mixtes · Enfants séparés · 70 % Europe · 45 % d’enfants | 4 833 $ | 1 413 $ | 1 126 $ | 0 % | 8,65 $ | 1 462 $ | 29 / 24 | 33 % | aucune (manque 1 135 $) |
+| Réaliste · Adultes séparés · Enfants séparés · 50 / 50 · 45 % d’enfants | 4 835 $ | 1 409 $ | 1 132 $ | 0 % | 8,66 $ | 1 474 $ | 29 / 24 | 33 % | aucune (manque 1 130 $) |
+| Réaliste · Adultes mixtes · Enfants séparés · 50 / 50 · 45 % d’enfants | 4 833 $ | 1 405 $ | 1 118 $ | 0 % | 8,62 $ | 1 456 $ | 29 / 24 | 33 % | aucune (manque 1 148 $) |
+| Réaliste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 4 835 $ | 1 403 $ | 1 127 $ | 0 % | 8,64 $ | 1 469 $ | 29 / 24 | 33 % | aucune (manque 1 138 $) |
+| Réaliste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 4 833 $ | 1 400 $ | 1 114 $ | 0 % | 8,60 $ | 1 452 $ | 29 / 24 | 33 % | aucune (manque 1 154 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 4 870 $ | 1 395 $ | 1 034 $ | 1 % | 8,08 $ | 1 345 $ | 26 / 22 | 31 % | aucune (manque 1 256 $) |
+| Pessimiste · Adultes séparés · Enfants mixtes · 70 % Europe · 30 % d’enfants | 5 005 $ | 1 389 $ | 1 024 $ | 1 % | 7,66 $ | 1 332 $ | 26 / 22 | 29 % | aucune (manque 1 270 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 4 870 $ | 1 387 $ | 1 029 $ | 1 % | 8,05 $ | 1 340 $ | 26 / 22 | 30 % | aucune (manque 1 266 $) |
+| Pessimiste · Adultes séparés · Enfants mixtes · 50 / 50 · 30 % d’enfants | 5 005 $ | 1 384 $ | 1 018 $ | 1 % | 7,65 $ | 1 327 $ | 26 / 22 | 29 % | aucune (manque 1 280 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 4 870 $ | 1 381 $ | 1 023 $ | 1 % | 8,03 $ | 1 335 $ | 26 / 22 | 30 % | aucune (manque 1 275 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Europe · 30 % d’enfants | 4 798 $ | 1 380 $ | 1 026 $ | 1 % | 8,22 $ | 1 334 $ | 26 / 22 | 31 % | aucune (manque 1 266 $) |
+| Pessimiste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 30 % d’enfants | 5 005 $ | 1 378 $ | 1 012 $ | 1 % | 7,62 $ | 1 321 $ | 26 / 22 | 29 % | aucune (manque 1 289 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés · 50 / 50 · 30 % d’enfants | 4 798 $ | 1 374 $ | 1 019 $ | 1 % | 8,20 $ | 1 328 $ | 26 / 22 | 31 % | aucune (manque 1 278 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 4 798 $ | 1 368 $ | 1 014 $ | 0 % | 8,18 $ | 1 323 $ | 26 / 22 | 31 % | aucune (manque 1 286 $) |
+| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 30 % d’enfants | 4 870 $ | 1 332 $ | 976 $ | 0 % | 7,64 $ | 1 269 $ | 25 / 21 | 29 % | aucune (manque 1 331 $) |
+| Pessimiste · Adultes séparés · Enfants mixtes · 70 % Europe · 45 % d’enfants | 4 828 $ | 1 327 $ | 933 $ | 0 % | 7,54 $ | 1 212 $ | 24 / 20 | 28 % | aucune (manque 1 384 $) |
+| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 30 % d’enfants | 4 870 $ | 1 325 $ | 971 $ | 0 % | 7,61 $ | 1 265 $ | 25 / 21 | 29 % | aucune (manque 1 339 $) |
+| Pessimiste · Adultes mixtes · Enfants mixtes · 70 % Europe · 45 % d’enfants | 4 825 $ | 1 323 $ | 934 $ | 1 % | 7,55 $ | 1 212 $ | 24 / 20 | 28 % | aucune (manque 1 383 $) |
+| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 30 % d’enfants | 4 870 $ | 1 320 $ | 966 $ | 0 % | 7,59 $ | 1 259 $ | 25 / 20 | 29 % | aucune (manque 1 349 $) |
+| Pessimiste · Adultes séparés · Enfants séparés · 70 % Europe · 30 % d’enfants | 4 795 $ | 1 318 $ | 955 $ | 0 % | 7,70 $ | 1 241 $ | 24 / 20 | 29 % | aucune (manque 1 358 $) |
+| Pessimiste · Adultes séparés · Enfants mixtes · 50 / 50 · 45 % d’enfants | 4 828 $ | 1 318 $ | 926 $ | 0 % | 7,51 $ | 1 204 $ | 24 / 20 | 28 % | aucune (manque 1 398 $) |
+| Pessimiste · Adultes mixtes · Enfants mixtes · 50 / 50 · 45 % d’enfants | 4 825 $ | 1 314 $ | 927 $ | 1 % | 7,53 $ | 1 205 $ | 24 / 20 | 28 % | aucune (manque 1 396 $) |
+| Pessimiste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 4 828 $ | 1 312 $ | 919 $ | 0 % | 7,48 $ | 1 199 $ | 23 / 19 | 28 % | aucune (manque 1 408 $) |
+| Pessimiste · Adultes séparés · Enfants séparés · 50 / 50 · 30 % d’enfants | 4 795 $ | 1 310 $ | 950 $ | 0 % | 7,67 $ | 1 237 $ | 24 / 20 | 29 % | aucune (manque 1 368 $) |
+| Pessimiste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 45 % d’enfants | 4 825 $ | 1 307 $ | 919 $ | 1 % | 7,50 $ | 1 198 $ | 23 / 19 | 28 % | aucune (manque 1 410 $) |
+| Pessimiste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 30 % d’enfants | 4 795 $ | 1 305 $ | 944 $ | 0 % | 7,64 $ | 1 231 $ | 24 / 20 | 28 % | aucune (manque 1 378 $) |
+| Pessimiste · Adultes séparés · Enfants mixtes · 70 % Europe · 60 % d’enfants | 4 702 $ | 1 295 $ | 917 $ | 0 % | 7,70 $ | 1 191 $ | 23 / 19 | 28 % | aucune (manque 1 406 $) |
+| Pessimiste · Adultes mixtes · Enfants mixtes · 70 % Europe · 60 % d’enfants | 4 698 $ | 1 290 $ | 921 $ | 0 % | 7,70 $ | 1 196 $ | 23 / 19 | 28 % | aucune (manque 1 400 $) |
+| Pessimiste · Adultes séparés · Enfants mixtes · 50 / 50 · 60 % d’enfants | 4 702 $ | 1 284 $ | 908 $ | 0 % | 7,66 $ | 1 181 $ | 23 / 19 | 28 % | aucune (manque 1 422 $) |
+| Pessimiste · Adultes mixtes · Enfants mixtes · 50 / 50 · 60 % d’enfants | 4 698 $ | 1 282 $ | 914 $ | 0 % | 7,67 $ | 1 189 $ | 23 / 19 | 28 % | aucune (manque 1 414 $) |
+| Pessimiste · Adultes séparés · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 4 702 $ | 1 280 $ | 903 $ | 0 % | 7,65 $ | 1 177 $ | 23 / 19 | 28 % | aucune (manque 1 430 $) |
+| Pessimiste · Adultes mixtes · Enfants mixtes · 70 % Amérique du Nord · 60 % d’enfants | 4 698 $ | 1 277 $ | 909 $ | 0 % | 7,66 $ | 1 185 $ | 23 / 19 | 28 % | aucune (manque 1 421 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Europe · 60 % d’enfants | 4 708 $ | 1 254 $ | 870 $ | 0 % | 7,37 $ | 1 130 $ | 22 / 18 | 27 % | aucune (manque 1 468 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 4 704 $ | 1 251 $ | 862 $ | 0 % | 7,34 $ | 1 120 $ | 22 / 18 | 27 % | aucune (manque 1 477 $) |
+| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 60 % d’enfants | 4 702 $ | 1 247 $ | 871 $ | 0 % | 7,38 $ | 1 131 $ | 22 / 18 | 27 % | aucune (manque 1 467 $) |
+| Pessimiste · Adultes séparés · Enfants séparés · 70 % Europe · 60 % d’enfants | 4 701 $ | 1 247 $ | 863 $ | 0 % | 7,35 $ | 1 120 $ | 22 / 18 | 27 % | aucune (manque 1 477 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés · 50 / 50 · 60 % d’enfants | 4 708 $ | 1 245 $ | 862 $ | 0 % | 7,34 $ | 1 122 $ | 22 / 18 | 27 % | aucune (manque 1 481 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 4 704 $ | 1 241 $ | 854 $ | 0 % | 7,31 $ | 1 112 $ | 22 / 18 | 26 % | aucune (manque 1 492 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 4 708 $ | 1 239 $ | 858 $ | 0 % | 7,32 $ | 1 119 $ | 22 / 18 | 27 % | aucune (manque 1 489 $) |
+| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 60 % d’enfants | 4 702 $ | 1 238 $ | 861 $ | 0 % | 7,34 $ | 1 122 $ | 22 / 18 | 27 % | aucune (manque 1 483 $) |
+| Pessimiste · Adultes séparés · Enfants séparés · 50 / 50 · 60 % d’enfants | 4 701 $ | 1 238 $ | 854 $ | 0 % | 7,31 $ | 1 111 $ | 22 / 18 | 27 % | aucune (manque 1 492 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 4 704 $ | 1 237 $ | 850 $ | 0 % | 7,30 $ | 1 108 $ | 22 / 18 | 26 % | aucune (manque 1 499 $) |
+| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 60 % d’enfants | 4 702 $ | 1 234 $ | 856 $ | 0 % | 7,33 $ | 1 117 $ | 22 / 18 | 27 % | aucune (manque 1 491 $) |
+| Pessimiste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 60 % d’enfants | 4 701 $ | 1 233 $ | 850 $ | 0 % | 7,30 $ | 1 108 $ | 22 / 18 | 26 % | aucune (manque 1 499 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 4 651 $ | 1 232 $ | 847 $ | 0 % | 7,35 $ | 1 100 $ | 21 / 18 | 27 % | aucune (manque 1 497 $) |
+| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Europe · 45 % d’enfants | 4 648 $ | 1 228 $ | 867 $ | 0 % | 7,41 $ | 1 126 $ | 22 / 18 | 27 % | aucune (manque 1 472 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 4 651 $ | 1 225 $ | 841 $ | 0 % | 7,32 $ | 1 093 $ | 21 / 18 | 26 % | aucune (manque 1 509 $) |
+| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 50 / 50 · 45 % d’enfants | 4 648 $ | 1 221 $ | 860 $ | 0 % | 7,39 $ | 1 119 $ | 22 / 18 | 27 % | aucune (manque 1 483 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 4 651 $ | 1 218 $ | 833 $ | 0 % | 7,29 $ | 1 086 $ | 21 / 18 | 26 % | aucune (manque 1 522 $) |
+| Pessimiste · Adultes séparés · Enfants séparés dès 10 ans · 70 % Amérique du Nord · 45 % d’enfants | 4 648 $ | 1 213 $ | 854 $ | 0 % | 7,35 $ | 1 113 $ | 22 / 18 | 27 % | aucune (manque 1 495 $) |
+| Pessimiste · Adultes séparés · Enfants séparés · 70 % Europe · 45 % d’enfants | 4 536 $ | 1 184 $ | 814 $ | 0 % | 7,35 $ | 1 057 $ | 21 / 17 | 26 % | aucune (manque 1 539 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Europe · 45 % d’enfants | 4 525 $ | 1 181 $ | 811 $ | 0 % | 7,35 $ | 1 055 $ | 21 / 17 | 26 % | aucune (manque 1 545 $) |
+| Pessimiste · Adultes séparés · Enfants séparés · 50 / 50 · 45 % d’enfants | 4 536 $ | 1 176 $ | 807 $ | 0 % | 7,31 $ | 1 050 $ | 21 / 17 | 26 % | aucune (manque 1 553 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés · 50 / 50 · 45 % d’enfants | 4 525 $ | 1 173 $ | 808 $ | 0 % | 7,34 $ | 1 052 $ | 21 / 17 | 26 % | aucune (manque 1 551 $) |
+| Pessimiste · Adultes séparés · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 4 536 $ | 1 170 $ | 801 $ | 0 % | 7,29 $ | 1 044 $ | 20 / 17 | 26 % | aucune (manque 1 565 $) |
+| Pessimiste · Adultes mixtes · Enfants séparés · 70 % Amérique du Nord · 45 % d’enfants | 4 525 $ | 1 167 $ | 800 $ | 0 % | 7,30 $ | 1 044 $ | 20 / 17 | 26 % | aucune (manque 1 564 $) |
