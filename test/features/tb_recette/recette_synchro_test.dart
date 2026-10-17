@@ -12,10 +12,9 @@
 // - la salle de demonstration (`DemoSallePage`) ne se branche pas sur ce
 //   flux : ses pages, affichages, « Presenter » et « Effacer les notes »
 //   restent locaux (demo_salle_page.dart, `_changerPage`, `_presenter`,
-//   `_effacerNotes` : « rien n'est diffuse ») ; la Classe Live ne lit pas
-//   `portEtatPartageProvider` non plus. Les vues d'eleve ci-dessous sont donc
-//   la Classe Live reelle dont le support est rendu depuis le flux par
-//   l'hote du test (le seul point d'entree que la page offre) ;
+//   `_effacerNotes` : « rien n'est diffuse »). Les preuves sur l'ancienne
+//   Classe Live (`/tc/classe`) sont parties avec elle le 17/10/2026
+//   (`docs/current/DECISION-ENTREE-2026-10-17.md`) ;
 // - aucun recepteur d'encre n'existe dans lib/ : les evenements
 //   `tc.outils.*` sont emis (CoucheAnnotation -> DiffusionOutils) mais aucun
 //   code ne les applique chez l'eleve. R-07 et R-10 se prouvent donc au
@@ -31,15 +30,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
-import 'package:rewayah_academy/core/tc_classe/session_live_vm.dart';
 import 'package:rewayah_academy/core/tc_etat_partage/etat_partage_memoire.dart';
-import 'package:rewayah_academy/core/tc_etat_partage/port_etat_partage.dart';
 import 'package:rewayah_academy/core/tc_etat_partage/service_etat_partage.dart';
 import 'package:rewayah_academy/core/tc_etat_partage/shared_content_state.dart';
-import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
 import 'package:rewayah_academy/core/tc_outils/etat_outils.dart';
 import 'package:rewayah_academy/core/tc_outils/evenements_outils.dart';
@@ -55,19 +50,15 @@ import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
-import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart'
     show RoleSeance;
-import 'package:rewayah_academy/features/tc_classe_live/classe_live_page.dart';
 import 'package:rewayah_academy/features/tc_dock/barre_stylet.dart';
 import 'package:rewayah_academy/features/tc_dock/couche_annotation.dart';
 
 import '../../router/support_routeur.dart';
 import '../../teaching_core/d/support/hote_d.dart'
     show hoteSansScope, supportTest;
-import '../../teaching_core/e/faux/faux_classe.dart';
-import '../../teaching_core/e/support/hote_classe.dart';
 
 const String _seance = 'seance-t2';
 const String _prof = 'prof-1';
@@ -153,106 +144,6 @@ class _Flux {
   }
 }
 
-/// Le support rendu chez l'eleve depuis l'etat partage, tel que l'hote de la
-/// Classe Live le lui donne (le seul point d'entree de la page).
-class _SupportPartage extends StatefulWidget {
-  const _SupportPartage({required this.port});
-
-  final PortEtatPartage port;
-
-  static const Key cle = ValueKey<String>('t2-support-partage');
-
-  /// Combien de fois la vue s'est abonnee (un remontage se compte ici).
-  static int abonnements = 0;
-
-  /// Combien de vues du support sont montees en ce moment.
-  static int montees = 0;
-
-  @override
-  State<_SupportPartage> createState() => _SupportPartageEtat();
-}
-
-class _SupportPartageEtat extends State<_SupportPartage> {
-  SharedContentState? _etat;
-  StreamSubscription<SharedContentState>? _abonnement;
-
-  @override
-  void initState() {
-    super.initState();
-    _SupportPartage.abonnements++;
-    _SupportPartage.montees++;
-    _abonnement = widget.port.suivre(_seance).listen((SharedContentState e) {
-      if (mounted) setState(() => _etat = e);
-    });
-  }
-
-  @override
-  void dispose() {
-    _SupportPartage.montees--;
-    unawaited(_abonnement?.cancel());
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final SharedContentState? e = _etat;
-    return Text(
-      e == null
-          ? 'rien'
-          : '${e.resourceId} p${e.contentPosition.page} '
-                '${e.displayMode.valeurSql} r${e.revision} ${e.updatedBy}',
-      key: _SupportPartage.cle,
-    );
-  }
-}
-
-String _vu(WidgetTester tester) =>
-    tester.widget<Text>(find.byKey(_SupportPartage.cle)).data!;
-
-ContexteClasseLive _contexte(PortEtatPartage port) => ContexteClasseLive(
-  sessionId: _seance,
-  groupeId: 'g1',
-  libelleGroupe: 'Groupe Al-Fatiha',
-  enseignant: const EnseignantDeClasse(
-    nomAffichage: 'Youssouf',
-    titre: TitreEnseignant.sayyid,
-    photoCleOuUrl: 'https://exemple.invalid/photo.jpg',
-  ),
-  supportActifId: 'res-1',
-  support: (BuildContext _) => _SupportPartage(port: port),
-  seuilMax: 5,
-);
-
-({FauxMoteurClasse moteur, List<Override> surcharges}) _banc(String role) {
-  final List<String> journal = <String>[];
-  final FauxMoteurClasse moteur = FauxMoteurClasse(journal: journal);
-  return (
-    moteur: moteur,
-    surcharges: surchargesClasse(
-      moteur: moteur,
-      video: FauxServiceVideoClasse(acces0: accesDe(role), journal: journal),
-      preVol: FauxPreVolClasse(),
-      presence: FauxPresenceClasse(
-        lignes: <PresenceParticipant>[
-          presenceDe(profilId: 'p1', prenom: 'Amina', identifiant: 'RA-Amina'),
-          presenceDe(
-            profilId: 't1',
-            prenom: 'Youssouf',
-            role: 'teacher',
-            identifiant: 'RA-Youssouf',
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-/// Les textes montes, pour la recherche d'un bouton « Suivre ».
-List<String> _textes(WidgetTester tester) => <String>[
-  for (final Element e in find.byType(RichText).evaluate())
-    (e.widget as RichText).text.toPlainText(),
-];
-
 void main() {
   // ---------------------------------------------------------------- R-11 --
   group('R-11 : arrivee tardive et reconnexion, flux reel', () {
@@ -298,55 +189,6 @@ void main() {
       for (int i = 1; i < recus.length; i++) {
         expect(recus[i].revision, greaterThan(recus[i - 1].revision));
       }
-    });
-
-    testWidgets('Classe Live eleve : arrivee tardive, l\'etat actuel sans '
-        '« Suivre » ; coupure puis retablissement, l\'etat manque rattrape, '
-        'le moteur ne repart pas', (WidgetTester tester) async {
-      final _Flux flux = _Flux()..brancherCoupures();
-      addTearDown(flux.liberer);
-      // Avant l'arrivee de l'eleve : page 12, affichage focus.
-      await tester.runAsync(() async {
-        await flux.chezLeProf.publier(_etat(revision: 0, page: 3));
-        await flux.chezLeProf.publier(
-          _etat(revision: 1, page: 12, mode: ModeAffichagePartage.focus),
-        );
-      });
-      final banc = _banc('student');
-      await monterClasse(
-        tester,
-        contexte: _contexte(flux.chezLEleve),
-        surcharges: banc.surcharges,
-        ecran: LargeurEcran.mobile,
-      );
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(_vu(tester), 'res-1 p12 focus r1 $_prof');
-      expect(
-        _textes(tester).where((String x) => x.startsWith('Suivre')),
-        isEmpty,
-        reason: 'aucun bouton « Suivre » : l\'etat arrive seul',
-      );
-      expect(banc.moteur.entrees, hasLength(1));
-      // Coupure de l'eleve, deux revisions manquees.
-      flux.eleveCoupe = true;
-      flux.eleve.poserEtat(EtatTransport.interrompu);
-      await tester.runAsync(() async {
-        await flux.chezLeProf.publier(_etat(revision: 2, page: 13));
-        await flux.chezLeProf.publier(
-          _etat(revision: 3, page: 20, mode: ModeAffichagePartage.page),
-        );
-      });
-      await tester.pumpAndSettle();
-      expect(_vu(tester), 'res-1 p12 focus r1 $_prof', reason: 'coupe');
-      flux.eleveCoupe = false;
-      flux.eleve.poserEtat(EtatTransport.retabli);
-      await tester.runAsync(pumpEventQueue);
-      await tester.pumpAndSettle();
-      expect(_vu(tester), 'res-1 p20 page r3 $_prof');
-      // La reprise du tableau ne reconnecte pas la salle.
-      expect(banc.moteur.entrees, hasLength(1));
-      expect(banc.moteur.departs, 0);
     });
   });
 
@@ -746,156 +588,5 @@ void main() {
         await tester.pumpWidget(const SizedBox());
       }
     });
-  });
-
-  // -------------------------------------------------------------- UX-24 --
-  testWidgets('UX-24 etendu (Classe Live) : focus, panneau, rotation ; une '
-      'entree, zero depart, page et affichage partages identiques', (
-    WidgetTester tester,
-  ) async {
-    final _Flux flux = _Flux();
-    addTearDown(flux.liberer);
-    _SupportPartage.abonnements = 0;
-    _SupportPartage.montees = 0;
-    await tester.runAsync(
-      () => flux.chezLeProf.publier(
-        _etat(revision: 4, page: 9, mode: ModeAffichagePartage.verse),
-      ),
-    );
-    final banc = _banc('teacher');
-    await monterClasse(
-      tester,
-      contexte: _contexte(flux.chezLeProf),
-      surcharges: banc.surcharges,
-      ecran: LargeurEcran.desktop,
-    );
-    await tester.pumpAndSettle();
-    const String attendu = 'res-1 p9 verse r4 $_prof';
-    expect(_vu(tester), attendu);
-    final int ecritures = flux.backend.ecritures;
-    // Revue TB-R 10/10, n14 : le compteur de remontage est lu. Une seule vue
-    // du support est montee a chaque etape ; un remontage n'est admis que
-    // la ou il est mesure aujourd'hui (focus, sortie, rotation), et il relit
-    // l'etat partage sans reconnexion (assertions ci-dessous). Limite ecrite :
-    // la Classe Live remonte la vue du support a chaque changement de
-    // disposition (mesure : +2 au focus, +1 a la sortie, +1 par rotation) ;
-    // un vrai support rechargerait sa page. Le panneau, lui, ne remonte rien.
-    expect(_SupportPartage.abonnements, 1);
-    expect(_SupportPartage.montees, 1);
-    int abonnementsVus = _SupportPartage.abonnements;
-    void inchange(String etape, {bool remontageAdmis = false}) {
-      expect(tester.takeException(), isNull, reason: etape);
-      expect(banc.moteur.entrees, hasLength(1), reason: etape);
-      expect(banc.moteur.departs, 0, reason: etape);
-      expect(_vu(tester), attendu, reason: etape);
-      expect(flux.backend.ecritures, ecritures, reason: etape);
-      expect(flux.prof.emis, hasLength(1), reason: '$etape : rien publie');
-      expect(
-        _SupportPartage.montees,
-        1,
-        reason: '$etape : une seule vue du support montee',
-      );
-      if (!remontageAdmis) {
-        expect(
-          _SupportPartage.abonnements,
-          abonnementsVus,
-          reason: '$etape : la vue du support s\'est remontee',
-        );
-      }
-      abonnementsVus = _SupportPartage.abonnements;
-    }
-
-    // Focus, depuis les Commandes, puis sortie.
-    await tester.tap(find.byKey(DeclencheurCommandes.cle));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(CommandesPedagogiques.cleFocus));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey<String>('tete-focus')), findsOneWidget);
-    inchange('focus', remontageAdmis: true);
-    await tester.tap(find.byKey(const ValueKey<String>('bouton-agrandir')));
-    await tester.pumpAndSettle();
-    inchange('sortie du focus', remontageAdmis: true);
-    // Un panneau : les Participants replies puis les Commandes ouvertes.
-    await tester.tap(find.byKey(PanneauSeance.cleReduireParticipants));
-    await tester.pumpAndSettle();
-    expect(find.text('Amina'), findsNothing, reason: 'Participants replies');
-    // Les Commandes, ouvertes pour le focus, le sont restees a la sortie ;
-    // sinon, le declencheur les rouvre.
-    if (find.byKey(CommandesPedagogiques.cle).evaluate().isEmpty) {
-      await tester.tap(find.byKey(DeclencheurCommandes.cle));
-      await tester.pumpAndSettle();
-    }
-    expect(find.byKey(CommandesPedagogiques.cle), findsOneWidget);
-    inchange('panneau');
-    // Rotation : portrait, paysage, telephone.
-    for (final Size taille in <Size>[
-      const Size(900, 1400),
-      const Size(1400, 900),
-      const Size(390, 844),
-      const Size(844, 390),
-    ]) {
-      tester.view.physicalSize = taille;
-      await tester.pumpAndSettle();
-      inchange(
-        'rotation ${taille.width.toInt()}x${taille.height.toInt()}',
-        remontageAdmis: true,
-      );
-    }
-    // Contre-epreuve : la vue n'est pas figee, une vraie revision la change
-    // (et ne reconnecte toujours pas).
-    await tester.runAsync(
-      () => flux.chezLeProf.publier(_etat(revision: 5, page: 10)),
-    );
-    await tester.runAsync(pumpEventQueue);
-    await tester.pumpAndSettle();
-    expect(_vu(tester), 'res-1 p10 page r5 $_prof');
-    expect(banc.moteur.entrees, hasLength(1));
-    expect(banc.moteur.departs, 0);
-  });
-
-  // -------------------------------------------------------------- UX-17 --
-  testWidgets('UX-17 cote eleve : l\'apercu de l\'enseignant ne publie '
-      'rien, l\'eleve garde sa page ; a Presenter seulement, il change ; le '
-      'moteur ne part ni ne rentre', (WidgetTester tester) async {
-    final _Flux flux = _Flux();
-    addTearDown(flux.liberer);
-    await tester.runAsync(
-      () => flux.chezLeProf.publier(_etat(revision: 0, page: 4)),
-    );
-    final banc = _banc('student');
-    await monterClasse(
-      tester,
-      contexte: _contexte(flux.chezLEleve),
-      surcharges: banc.surcharges,
-      ecran: LargeurEcran.mobile,
-    );
-    await tester.pumpAndSettle();
-    expect(_vu(tester), 'res-1 p4 page r0 $_prof');
-    // L'apercu de la Bibliotheque est local a l'enseignant : il lit l'etat
-    // courant, il n'en publie aucun. Pendant qu'il le parcourt, la classe
-    // ne recoit rien.
-    final SharedContentState? lu = await tester.runAsync<SharedContentState?>(
-      () => flux.chezLeProf.etatCourant(_seance),
-    );
-    expect(lu!.revision, 0);
-    for (int i = 0; i < 5; i++) {
-      await tester.pump(const Duration(milliseconds: 200));
-    }
-    expect(flux.prof.emis, hasLength(1), reason: 'l\'apercu ne publie rien');
-    expect(_vu(tester), 'res-1 p4 page r0 $_prof');
-    expect(banc.moteur.entrees, hasLength(1));
-    expect(banc.moteur.departs, 0);
-    // « Presenter » : une revision, et la vue de l'eleve change.
-    await tester.runAsync(
-      () => flux.chezLeProf.publier(
-        _etat(revision: 1, page: 1, ressource: 'res-2'),
-      ),
-    );
-    await tester.runAsync(pumpEventQueue);
-    await tester.pumpAndSettle();
-    expect(_vu(tester), 'res-2 p1 page r1 $_prof');
-    expect(banc.moteur.entrees, hasLength(1));
-    expect(banc.moteur.departs, 0);
-    expect(tester.takeException(), isNull);
   });
 }

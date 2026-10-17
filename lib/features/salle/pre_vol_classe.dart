@@ -5,8 +5,8 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/video/pre_vol.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/status_pill.dart';
-import '../salle/vue_salle.dart';
 import 'encre_salle.dart';
+import 'vue_salle.dart';
 
 /// Ce que le pre-cours montre, selon le role.
 ///

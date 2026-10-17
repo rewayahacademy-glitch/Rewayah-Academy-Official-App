@@ -17,8 +17,6 @@ import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/suivi/service_suivi.dart';
-import 'package:rewayah_academy/core/tc_classe/session_live_vm.dart';
-import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_horloge/demonstration_horloge.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
@@ -39,7 +37,6 @@ import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/suivi_eleve/suivi_eleve_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/detail_seance_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
-import 'package:rewayah_academy/features/tc_classe_live/classe_live_page.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
 
@@ -47,8 +44,6 @@ import '../../capture/outil_capture.dart' show cadreCapture, stabiliser;
 import '../../support/harnais.dart';
 import '../../teaching_core/a/support/hote_tc_a.dart'
     show surchargesDemonstration;
-import '../../teaching_core/e/faux/faux_classe.dart';
-import '../../teaching_core/e/support/hote_classe.dart' show surchargesClasse;
 
 /// Un ecran recense, et ce qu'il doit montrer.
 class EcranPays {
@@ -284,9 +279,9 @@ List<EcranPays> ecransPays() => <EcranPays>[
     surcharges: surchargesDemoTuteur(environnement: 'staging'),
     pays: const <String>['Maroc', 'France'],
   ),
-  // ENS-PAYS-SALLE-1 (Q-4 = b) : la classe en direct n'affiche plus le pays
-  // de l'enseignant. Ses deux en-tetes sont sortis de ce recensement et
-  // verifies a part (`ecransClasseLive`).
+  // ENS-PAYS-SALLE-1 (Q-4 = b) : la salle n'affiche pas le pays de
+  // l'enseignant ; l'ancienne classe en direct `/tc/classe` a ete supprimee
+  // le 17/10/2026, ses en-tetes ne sont plus recenses ici.
   EcranPays(
     role: 'eleve',
     nom: 'eleve_espace_groupe',
@@ -331,67 +326,6 @@ List<EcranPays> ecransPays() => <EcranPays>[
     construire: () => const DetailSeancePage(seanceId: 's-passee-2'),
     surcharges: _surchargesSuiviFoyer(),
     pays: const <String>['Mali'],
-  ),
-];
-
-/// Le contexte de la Classe Live : l'enseignant du groupe Al-Fatiha de la
-/// demonstration, tel que `routes_tc_a.dart` le transmet depuis sa carte.
-ContexteClasseLive _contexteLive({
-  bool photo = true,
-  String prenom = 'Youssouf',
-}) => ContexteClasseLive(
-  sessionId: 's-live',
-  groupeId: GroupesDemonstration.alFatiha,
-  libelleGroupe: 'Classe Al-Fatiha',
-  enseignant: EnseignantDeClasse(
-    nomAffichage: prenom,
-    titre: TitreEnseignant.sayyid,
-    photoCleOuUrl: photo ? 'https://exemple.invalid/youssouf.jpg' : null,
-    pays: 'Guinée',
-  ),
-);
-
-/// La Classe Live vue par le tuteur observateur, avec ou sans photo de
-/// l'enseignant (les deux branches de `EnteteClasse`), et un prenom vide
-/// pour l'identite masquee. Le pays est declare (Guinée) dans le contexte,
-/// mais la salle ne l'affiche pas (ENS-PAYS-SALLE-1, Q-4 = b) : `pays` vide.
-EcranPays classeLiveTuteur({bool photo = true, String prenom = 'Youssouf'}) =>
-    EcranPays(
-      role: 'tuteur',
-      nom: photo ? 'tuteur_classe_live' : 'tuteur_classe_live_sans_photo',
-      construire: () => ClasseLivePage(
-        contexte: _contexteLive(photo: photo, prenom: prenom),
-      ),
-      surcharges: _surchargesLive('guardian'),
-      pays: const <String>[],
-    );
-
-/// La Classe Live vue par le controleur : meme en-tete `EnteteClasse`.
-EcranPays classeLiveControleur({bool photo = true}) => EcranPays(
-  role: 'controleur',
-  nom: photo ? 'controleur_classe_live' : 'controleur_classe_live_sans_photo',
-  construire: () => ClasseLivePage(contexte: _contexteLive(photo: photo)),
-  surcharges: _surchargesLive('controller'),
-  pays: const <String>[],
-);
-
-/// Les en-tetes de la classe en direct, avec et sans photo, pour les deux
-/// roles qui les voient. Le pays declare de l'enseignant n'y apparait pas.
-List<EcranPays> ecransClasseLive() => <EcranPays>[
-  for (final bool photo in <bool>[true, false]) ...<EcranPays>[
-    classeLiveTuteur(photo: photo),
-    classeLiveControleur(photo: photo),
-  ],
-];
-
-/// Les faux de la Classe Live pour un role du jeton qui n'a pas de salle de
-/// seance (tuteur observateur, controleur) : l'en-tete `EnteteClasse` est
-/// alors celui qui presente l'enseignant.
-List<Override> _surchargesLive(String role) => <Override>[
-  ...surchargesClasse(
-    moteur: FauxMoteurClasse(),
-    video: FauxServiceVideoClasse(acces0: accesDe(role)),
-    preVol: FauxPreVolClasse(),
   ),
 ];
 

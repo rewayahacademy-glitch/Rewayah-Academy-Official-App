@@ -6,7 +6,6 @@
 //   progression, ligne des eleves, duree avant le cours) ;
 // - `ma_classe_adulte` : la section « A propos » (« ... règles de tajwid. ») ;
 // - `comptes` : l'introduction de Comptes (point final) ;
-// - `fiche_seance_vide` : l'EmptyState partage de la fiche de seance.
 // Prefixe des PNG : variable `CAPTURE_PREFIXE` (avant | apres).
 // `CAPTURE_ARABE_SEUL=1` ne garde que l'arabe. Saute sans CAPTURE_DIR.
 
@@ -22,7 +21,6 @@ import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
-import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
@@ -30,11 +28,8 @@ import 'package:rewayah_academy/features/demo/classe_demo.dart'
     show EtatDemoClasse;
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
-import 'package:rewayah_academy/features/tc_classe_live/fiche_seance.dart';
 
 import '../support/harnais.dart';
-import '../teaching_core/e/faux/faux_classe.dart';
-import '../teaching_core/e/support/hote_classe.dart';
 import 'outil_capture.dart';
 
 final String _prefixe = Platform.environment['CAPTURE_PREFIXE'] ?? 'apres';
@@ -187,40 +182,6 @@ void main() {
                 serviceComptesProvider.overrideWithValue(_Comptes()),
                 serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
               ],
-              themeMode: v.clarte == Brightness.dark
-                  ? ThemeMode.dark
-                  : ThemeMode.light,
-              echelleTexte: v.echelle,
-            ),
-          );
-          await stabiliser(tester);
-        });
-
-        cas('fiche_seance_vide', (WidgetTester tester) async {
-          fixerVueCapture(
-            tester,
-            Size(v.largeur, v.echelle == 2 ? 2400 : 1000),
-            1,
-          );
-          const TeacherStudentProjection fiche = TeacherStudentProjection(
-            firstName: 'Ilyas',
-            academyId: 'RA-CD0044',
-            liveStatus: EtatPresenceProjete.present,
-            interfaceGuidee: false,
-          );
-          await tester.pumpWidget(
-            hoteCapture(
-              const Scaffold(
-                body: SingleChildScrollView(
-                  child: FicheSeance(eleve: fiche, sessionId: 's1'),
-                ),
-              ),
-              surcharges: surchargesClasse(
-                moteur: FauxMoteurClasse(),
-                video: FauxServiceVideoClasse(),
-                preVol: FauxPreVolClasse(),
-                rappel: FauxRappelDiscret(),
-              ),
               themeMode: v.clarte == Brightness.dark
                   ? ThemeMode.dark
                   : ThemeMode.light,

@@ -4,10 +4,8 @@ import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/tc_classe/roster_classe_vm.dart';
 import 'package:rewayah_academy/core/tc_classe/roster_enseignant.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
-import 'package:rewayah_academy/features/tc_classe_live/fiche_seance.dart';
-import 'package:rewayah_academy/features/tc_classe_live/roster_classe.dart';
+import 'package:rewayah_academy/features/tc_espace_groupe/roster_classe.dart';
 
-import 'faux/faux_classe.dart';
 import 'support/hote_classe.dart';
 
 /// **Le test de non-regression le plus important du lot.**
@@ -176,72 +174,6 @@ void main() {
       expect(find.text('Amina'), findsOneWidget);
       expect(find.text('RA-AB0012'), findsOneWidget);
       aucunInterdit(motsRendus(tester));
-    });
-
-    testWidgets('la fiche pedagogique ne rend aucune PII', (
-      WidgetTester tester,
-    ) async {
-      final TeacherStudentProjection fiche = ficheDepuisRosterV(
-        ligneRosterPolluee(),
-      );
-      await tester.pumpWidget(
-        hoteClasse(
-          FicheSeance(eleve: fiche, sessionId: 's1'),
-          surcharges: surchargesClasse(
-            moteur: FauxMoteurClasse(),
-            video: FauxServiceVideoClasse(),
-            preVol: FauxPreVolClasse(),
-            rappel: FauxRappelDiscret(),
-          ),
-        ),
-      );
-      await tester.pump();
-
-      expect(find.text('Amina'), findsOneWidget);
-      expect(find.text('RA-AB0012'), findsOneWidget);
-      expect(find.text('Decodage consolide'), findsOneWidget);
-      aucunInterdit(motsRendus(tester));
-    });
-
-    testWidgets('aucune UI n ecrit « mode enfant »', (
-      WidgetTester tester,
-    ) async {
-      // Decision D-07, puis A-03 (17/10/2026) : le nom visible est « Interface guidée ». La valeur SQL
-      // reste `'child'`, et ce n'est pas un renommage de donnee.
-      const TeacherStudentProjection fiche = TeacherStudentProjection(
-        firstName: 'Ilyas',
-        academyId: 'RA-CD0044',
-        liveStatus: EtatPresenceProjete.present,
-        interfaceGuidee: true,
-        level: 'Debutant',
-      );
-      await tester.pumpWidget(
-        hoteClasse(
-          const FicheSeance(eleve: fiche, sessionId: 's1'),
-          surcharges: surchargesClasse(
-            moteur: FauxMoteurClasse(),
-            video: FauxServiceVideoClasse(),
-            preVol: FauxPreVolClasse(),
-            rappel: FauxRappelDiscret(),
-          ),
-        ),
-      );
-      await tester.pump();
-
-      final String tout = motsRendus(tester).join(' | ').toLowerCase();
-      expect(tout.contains('mode enfant'), isFalse);
-      // A-03 (17/10/2026) : libelle neutre « Interface guidée », sans
-      // raison ni diagnostic ni age.
-      expect(tout.contains('interface guidée'), isTrue);
-      expect(tout.contains('mode accessibilité'), isFalse);
-      for (final String interdit in <String>[
-        'handicap',
-        'diagnostic',
-        'trouble',
-        ' ans',
-      ]) {
-        expect(tout.contains(interdit), isFalse, reason: interdit);
-      }
     });
   });
 }

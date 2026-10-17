@@ -46,20 +46,17 @@ const Set<String> _permises = <String>{
   'tc.bibliotheque.offline.indisponible',
   'tc.bibliotheque.action.telecharger',
   'tc.bibliotheque.message.telechargementImpossible',
-  // La salle et la classe en direct (`PageImmersive`, sans bandeau) disent
-  // elles-memes l'etat de leur lien.
+  // La salle (`PageImmersive`, sans bandeau) dit elle-meme l'etat de son lien.
   'salle.secours.reconnexion',
   'salle.seance.statut.connexionInterrompue',
   'salle.lienPerdu',
-  'tc.classe.reseau.perdu',
-  'tc.classe.lien.echec',
   'tc.observation.visite.reconnexionDetail',
   'salle.refusReseauDetail',
   'salle.preparation.eleve.guidee.horsLigne',
   'salle.secours.echecGuidee',
   'salle.seance.demo.etats.echec',
-  // La qualite du lien de la salle et de la classe en direct (« Connexion
-  // instable », « Reseau faible »), dite par la salle elle-meme, sans
+  // La qualite du lien de la salle (« Connexion instable », « Reseau
+  // faible »), dite par la salle elle-meme, sans
   // bandeau (EA-HL-DOUBLE-1e : la garde cherche desormais ces formes
   // partout ailleurs, sans exception).
   'salle.preparation.connexionInstable',
@@ -67,8 +64,6 @@ const Set<String> _permises = <String>{
   'salle.secours.reseauFaible',
   'salle.secours.reseauFaibleGuidee',
   'salle.lienMediocre',
-  'tc.classe.reseau.mediocre',
-  'tc.classe.lien.instable',
   // Etiquettes du selecteur d'etats des demonstrations de la salle.
   'salle.preparation.demo.reseauFaible',
   'salle.seance.demo.etats.reseauFaible',

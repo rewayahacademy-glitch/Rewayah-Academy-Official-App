@@ -3,7 +3,6 @@ affirmation-reseau|assets/i18n/fr.i18n.json|admin.groupes.observationErreur : Le
 affirmation-reseau|assets/i18n/fr.i18n.json|disponibilites.erreur : Ce créneau n'a pas pu être enregistré. Réessayez.
 affirmation-reseau|assets/i18n/fr.i18n.json|enseignant.cahier.echecEnvoi : Le cahier de transmission n'a pas pu être enregistré. Réessayez.
 affirmation-reseau|assets/i18n/fr.i18n.json|parcours.erreur : Cette réponse n'a pas pu être enregistrée. Réessayez.
-affirmation-reseau|assets/i18n/fr.i18n.json|tc.classe.rappel.echec : Le rappel n'a pas pu être envoyé
 affirmation-reseau|assets/i18n/fr.i18n.json|tc.parcours.signalement.echec : Le signalement n'a pas pu être transmis. Réessayez.
 bouton-grise|lib/features/_dev/galerie/catalogue_galerie.dart|onPress: actif ? _rien : null
 bouton-grise|lib/features/_dev/galerie/catalogue_galerie.dart|onPress: null
@@ -36,10 +35,6 @@ bouton-grise|lib/features/salle_seance/rail_seance.dart|onPress: groupe == null 
 bouton-grise|lib/features/salle_seance/selecteur_ressources.dart|onPress: ouvrir == null ? null : () => ouvrir(s)
 bouton-grise|lib/features/tc_catalogue/detail_ressource_page.dart|onPress: null
 bouton-grise|lib/features/tc_catalogue/surface_bibliotheque.dart|onPress: ouvrable ? () => widget.onChoisir(r, position) : null
-bouton-grise|lib/features/tc_classe_live/classe_live_page.dart|onPress: enSalle ? () => unawaited(onCamera(cameraOuverte)) : null
-bouton-grise|lib/features/tc_classe_live/classe_live_page.dart|onPress: enSalle ? () => unawaited(onMicro(microOuvert)) : null
-bouton-grise|lib/features/tc_classe_live/classe_live_page.dart|onPress: enSalle ? onBibliotheque : null
-bouton-grise|lib/features/tc_classe_live/fiche_seance.dart|onPress: recite ? null : onReciter
 bouton-grise|lib/features/tc_flux_academique/bloc_avant_prochain_cours.dart|onPress: rappel == null ? null : () => rappel(action)
 erreur-sans-action|assets/i18n/fr.i18n.json|admin.agents.erreur : La liste des jetons n'a pas pu être lue.
 erreur-sans-action|assets/i18n/fr.i18n.json|admin.attribution.erreur : L'attribution n'a pas abouti : {message}
@@ -842,28 +837,10 @@ libelle-sans-source|assets/i18n/fr.i18n.json|tc.bibliotheque.rechercheIndication
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.bibliotheque.rechercheLibelle : Rechercher un support
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.bibliotheque.vide.invitation : Vos enseignants déposeront ici les supports de vos cours.
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.bibliotheque.vide.message : Aucun support publié pour le moment
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.action.contexte : Ouvrir le contexte
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.action.reciter : Choisir pour réciter
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.attente.connexion : Connexion au cours
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.attente.materiel : Vérification de votre micro
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.attente.ouverture : Ouverture du cours
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.attente.refus : Le cours n'est pas accessible pour le moment
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.barre.revenir : Revenir au cours de {groupe}
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.commandes.camera : Ouvrir la caméra
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.commandes.cameraFermer : Fermer la caméra
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.commandes.fermerBibliotheque : Fermer la Bibliothèque
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.commandes.quitterConsequence : Votre sortie sera enregistrée. Vous pourrez revenir tant que la séance est ouverte.
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.commandes.quitterQuestion : Quitter le cours ?
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.entete.photoManquante : Photo enseignant manquante
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.fiche.derniereSeance : Dernière séance
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.fiche.objectif : Objectif actuel
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.fiche.presenceRecente : Présence récente
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.fiche.sansPedagogieDetail : Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l'enseignant.
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.fiche.travailActuel : Travail actuel
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.fiche.travailEnCours : {nombre} élément(s)
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.lien.instable : Connexion instable
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.lien.retabli : Connexion rétablie
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.lien.retourDeSuspension : Le cours a été mis en pause par le système. Vérification du lien en cours.
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.prevol.cameraAbsente : Aucune caméra. Le cours reste possible.
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.prevol.cameraOk : Caméra détectée
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.prevol.microAbsent : Aucun micro utilisable
@@ -871,22 +848,13 @@ libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.prevol.microOk : Micro d�
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.prevol.permissionRefusee : Accès au micro refusé. Autorisez-le pour ouvrir le cours.
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.prevol.reessayer : Vérifier à nouveau
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.prevol.titre : Avant d'ouvrir le cours
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.rappel.cooldown : Déjà appelé. À nouveau dans {secondes} s
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.rappel.echec : Le rappel n'a pas pu être envoyé
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.rappel.echecDroit : Votre accès à cette séance ne permet pas d'appeler un élève
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.rappel.recu : Le professeur vous appelle
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.recitation.arreter : Arrêter la récitation
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.recitation.personne : Personne ne récite
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.reseau.mediocre : Réseau instable
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.reseau.perdu : Réseau perdu
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.roster.indisponible : Roster indisponible
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.roster.indisponibleDetail : Les états de vos élèves n'ont pas pu être lus. Le cours continue.
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.roster.ouvrirFiche : Ouvrir la fiche de {prenom}
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.roster.vide : Aucun élève inscrit
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.roster.videDetail : Cette séance n'a aucun élève inscrit. Vérifiez le groupe.
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.scene.vide : Vous êtes seul dans la salle pour le moment
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.support.aucunDetail : Ouvrez la Bibliothèque pour présenter un support au groupe.
-libelle-sans-source|assets/i18n/fr.i18n.json|tc.classe.support.bibliothequeAbsenteDetail : Le choix de support sera disponible dès l'intégration du catalogue.
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.coran.fidelite.approcheeDetail : Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l'édition n'est pas encore importé.
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.coran.fidelite.fidele : Composition de l'édition
 libelle-sans-source|assets/i18n/fr.i18n.json|tc.coran.focus.aucunePlage : Aucun passage mis en avant

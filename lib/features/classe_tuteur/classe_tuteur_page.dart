@@ -34,8 +34,8 @@ import 'contexte_classe.dart';
 /// - UNE carte groupee de rubriques a filets : Planning, Travail a preparer,
 ///   Bibliotheque, Progression, Historique.
 ///
-/// **Aucune entree « Rejoindre »** : la salle `/tc/classe` n'est pas ouverte
-/// au tuteur ; il observe par l'entree du lot O, selon la politique serveur.
+/// **Aucune entree « Rejoindre »** : la salle n'est pas ouverte au tuteur ;
+/// il observe par l'entree du lot O, selon la politique serveur.
 class ClasseTuteurPage extends ConsumerStatefulWidget {
   /// Cree la page.
   const ClasseTuteurPage({

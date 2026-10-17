@@ -5,11 +5,8 @@
 //   RTL (isolat partage FSI ... PDI, isolerDansInterface) ;
 // - CarteSession a 1440 px (texte x1 clair, texte x2 sombre) : la carte
 //   garde la largeur de lecture (AppPage.largeurLecture), au bord de debut ;
-// - fiche de seance, rappel discret en attente, 320 px texte x2, LTR et
-//   RTL : « A nouveau dans 30 s » sur une ligne, point a sa place
-//   (LocalFeedback isole son message). Defaut anterieur visible, hors de
-//   cette etape : l'etat vide partage (EmptyState) n'isole pas encore son
-//   texte (« .l'enseignant » en RTL).
+// - la fiche de seance de l'ancienne Classe Live n'est plus capturee : elle a
+//   ete supprimee le 17/10/2026 (DECISION-ENTREE).
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,15 +14,10 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/tc_classe/port_rappel_discret.dart';
-import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/tc_classe_live/fiche_seance.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 
-import '../teaching_core/e/faux/faux_classe.dart';
-import '../teaching_core/e/support/hote_classe.dart' show surchargesClasse;
 import 'outil_capture.dart';
 
 typedef _Cas = ({
@@ -141,46 +133,6 @@ void main() {
           await capturer(tester, nom);
         });
       }
-    }
-
-    for (final TextDirection sens in TextDirection.values) {
-      final String nom = 'fiche_rappel_attente_320x2_light_${sens.name}';
-      testWidgets(nom, (WidgetTester tester) async {
-        fixerVueCapture(tester, const Size(320, 1500), 1);
-        await tester.pumpWidget(
-          _hote(
-            enfant: const FicheSeance(
-              eleve: TeacherStudentProjection(
-                firstName: 'Amina',
-                academyId: 'RA-AB0012',
-                liveStatus: EtatPresenceProjete.present,
-                interfaceGuidee: false,
-              ),
-              sessionId: 's1',
-            ),
-            texte: 2,
-            luminosite: Brightness.light,
-            sens: sens,
-            surcharges: surchargesClasse(
-              moteur: FauxMoteurClasse(),
-              video: FauxServiceVideoClasse(),
-              preVol: FauxPreVolClasse(),
-              rappel: FauxRappelDiscret(
-                echec: const EchecRappel(MotifEchecRappel.cooldown),
-                restant: const Duration(seconds: 30),
-              ),
-            ),
-          ),
-        );
-        await tester.pump();
-        await tester.tap(find.text(t.tc.classe.action.rappel));
-        await tester.pump();
-        // Le retour local apparait en fondu : on le laisse entrer.
-        await tester.pump(const Duration(milliseconds: 600));
-        await capturer(tester, nom);
-        expect(tester.takeException(), isNull);
-        await tester.pump(const Duration(seconds: 6));
-      });
     }
   });
 }

@@ -18,7 +18,6 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
 import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
@@ -26,7 +25,6 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
-import 'package:rewayah_academy/features/tc_classe_live/fiche_seance.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../fixtures/tuteur/foyers.dart';
@@ -34,8 +32,6 @@ import '../../router/support_routeur.dart' hide stabiliser;
 import '../../support/harnais.dart';
 import '../../teaching_core/c/faux/faux_corpus_coran.dart';
 import '../../teaching_core/c/goldens/corpus_reference.dart';
-import '../../teaching_core/e/faux/faux_classe.dart';
-import '../../teaching_core/e/support/hote_classe.dart';
 
 const List<(String, Size)> _tailles = <(String, Size)>[
   ('390', Size(390, 1900)),
@@ -642,47 +638,6 @@ void main() {
           await stabiliser(tester);
           debugPrint(
             'PNG ${await capturer(tester, 'ma9/ma9_interface_tuteur_${l}_${mode.name}')}',
-          );
-        });
-        testWidgets('fiche_seance_${l}_${mode.name}', (
-          WidgetTester tester,
-        ) async {
-          fixerVueCapture(tester, taille, 1);
-          await tester.pumpWidget(
-            hoteCapture(
-              const Scaffold(
-                body: Align(
-                  alignment: Alignment.topCenter,
-                  child: SizedBox(
-                    width: 420,
-                    child: Padding(
-                      padding: EdgeInsets.all(24),
-                      child: FicheSeance(
-                        eleve: TeacherStudentProjection(
-                          firstName: 'Ilyas',
-                          academyId: 'RA-CD0044',
-                          liveStatus: EtatPresenceProjete.present,
-                          interfaceGuidee: true,
-                          level: 'Debutant',
-                        ),
-                        sessionId: 's1',
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              themeMode: mode,
-              surcharges: surchargesClasse(
-                moteur: FauxMoteurClasse(),
-                video: FauxServiceVideoClasse(),
-                preVol: FauxPreVolClasse(),
-                rappel: FauxRappelDiscret(),
-              ),
-            ),
-          );
-          await stabiliser(tester);
-          debugPrint(
-            'PNG ${await capturer(tester, 'ma9/ma9_fiche_seance_${l}_${mode.name}')}',
           );
         });
       }

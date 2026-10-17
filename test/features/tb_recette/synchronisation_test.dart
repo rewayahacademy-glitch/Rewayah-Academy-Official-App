@@ -1148,8 +1148,6 @@ void main() {
       'ficheEleve.informations.succes': 'photo de la fiche eleve enregistree',
       'parcours.finTitre': 'preference du parcours enregistree',
       'consentement.compte.merci': 'consentement du compte enregistre',
-      // Futur : la sortie sera inscrite au journal.
-      'tc.classe.commandes.quitterConsequence': 'sortie journalisee',
     };
 
     final Map<String, Map<String, String>> valeurs =

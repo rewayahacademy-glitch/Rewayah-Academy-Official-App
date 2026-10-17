@@ -10,7 +10,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/status_pill.dart';
-import 'encre_salle.dart';
+import '../salle/encre_salle.dart';
 
 /// Le mot qui nomme un etat projete.
 ///
@@ -254,7 +254,7 @@ class _RosterVide extends StatelessWidget {
 ///
 /// Il n'existe **que la ou le roster est replie** : a cote d'une colonne qui
 /// montre les cinq lignes, il ferait doublon, et un doublon finit par diverger.
-/// La decision est prise par `VueClasseLive`, pas ici.
+/// La decision est prise par l'ecran qui le monte, pas ici.
 class BoutonRoster extends StatelessWidget {
   /// Cree le bouton.
   const BoutonRoster({

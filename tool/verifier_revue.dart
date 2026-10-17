@@ -1225,14 +1225,13 @@ bool _enCoursFixe(String t, int position) {
 }
 
 /// Les chemins hors de cette etape (BOUTONS-GRISES-1) : voie TB (salle,
-/// classe en direct, dock), communications, finance, comptable, et les
+/// dock), communications, finance, comptable, et les
 /// fichiers reserves a d'autres sessions. Leurs cas sont comptes a part
 /// (`bouton-grise-conditionnel-exclu`), jamais caches.
 const List<String> exclusBoutonsConditionnels = <String>[
   'lib/features/salle/',
   'lib/features/salle_seance/',
   'lib/features/salle_enseignant/',
-  'lib/features/tc_classe_live/',
   'lib/features/tc_dock/',
   'lib/features/com_',
   'lib/core/communications/',

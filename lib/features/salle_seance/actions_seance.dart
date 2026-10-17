@@ -107,7 +107,7 @@ class ActionsSeance {
   final VoidCallback? onOuvrirReglages;
 
   // Les quatre actions de la fiche d'un eleve (panneau Eleves, CLV-07),
-  // reprises de `FicheSeance` (/tc/classe) : aucune ne touche au support ni
+  // reprises de l'ancienne fiche de seance : aucune ne touche au support ni
   // a la page. `null` : l'action n'est pas rendue (jamais grisee).
   final ValueChanged<EleveSeance>? onRappeler;
   final ValueChanged<EleveSeance>? onChoisirPourReciter;
