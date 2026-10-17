@@ -55,16 +55,7 @@ class _FeuilleRetraitOffreEtat extends ConsumerState<FeuilleRetraitOffre> {
       _envoi = true;
       _message = null;
     });
-    String? echec;
-    try {
-      await ref
-          .read(portOffresAdminProvider)
-          .retirer(widget.offre.id, motif: motif);
-    } on OffreAdminRefusee catch (e) {
-      echec = t.admin.offres.refusee(motif: e.message);
-    } on Object {
-      echec = t.admin.offres.nonConfirmee;
-    }
+    final String? echec = await _envoyer(motif);
     if (!mounted) return;
     if (echec != null) {
       setState(() {
@@ -74,6 +65,23 @@ class _FeuilleRetraitOffreEtat extends ConsumerState<FeuilleRetraitOffre> {
       return;
     }
     Navigator.of(context).pop(true);
+  }
+
+  /// Envoie le retrait et rend la phrase du refus, ou `null` quand le serveur
+  /// l'a confirme. Une fonction a part, comme la creation : le resultat passe
+  /// par un `return`, jamais par une variable affectee dans un `catch` apres
+  /// un `await` (cause du formulaire d'offre reste ouvert en web, L2-05-reprise).
+  Future<String?> _envoyer(String motif) async {
+    try {
+      await ref
+          .read(portOffresAdminProvider)
+          .retirer(widget.offre.id, motif: motif);
+      return null;
+    } on OffreAdminRefusee catch (e) {
+      return t.admin.offres.refusee(motif: e.message);
+    } on Object {
+      return t.admin.offres.nonConfirmee;
+    }
   }
 
   @override

@@ -29,6 +29,7 @@ import '../../core/offres/offre_horaire.dart' show LangueCours, PublicOffre;
 import '../../core/offres/port_offres_admin.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart' show LibellesGroupe;
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/champ_etiquete.dart' show TitreChamp;
@@ -79,7 +80,7 @@ class _NouvelleOffrePageEtat extends ConsumerState<NouvelleOffrePage> {
         : _jours.isEmpty
         ? f.manqueJour
         : (attendu != null && _jours.length != attendu)
-        ? f.manqueNombre(n: '$attendu')
+        ? LibellesGroupe.insecable(f.manqueNombre(n: '$attendu'))
         : null;
     if (manque != null) {
       setState(() => _message = manque);
@@ -89,22 +90,7 @@ class _NouvelleOffrePageEtat extends ConsumerState<NouvelleOffrePage> {
       _envoi = true;
       _message = null;
     });
-    final PortOffresAdmin port = ref.read(portOffresAdminProvider);
-    String? echec;
-    try {
-      await port.creer(
-        typePublic: _public.valeurSql,
-        langueCode: langue!,
-        fuseauIana: _fuseau,
-        jours: (_jours.toList()..sort()),
-        heureLocale: _heure,
-        dureeMinutes: _duree ?? regles?.dureeParDefaut(_public),
-      );
-    } on OffreAdminRefusee catch (e) {
-      echec = t.admin.offres.refusee(motif: e.message);
-    } on Object {
-      echec = t.admin.offres.nonConfirmee;
-    }
+    final String? echec = await _creer(regles, langue!);
     if (!mounted) return;
     if (echec != null) {
       setState(() {
@@ -114,6 +100,38 @@ class _NouvelleOffrePageEtat extends ConsumerState<NouvelleOffrePage> {
       return;
     }
     Navigator.of(context).pop(true);
+  }
+
+  /// Envoie la creation et rend la phrase du refus, ou `null` quand le serveur
+  /// l'a confirmee.
+  ///
+  /// **Une fonction a part, et la raison est une cause trouvee dans le
+  /// navigateur (L2-05-reprise, D-3).** Ecrit en ligne (`String? echec;` puis
+  /// `try { await port.creer(...) } catch { echec = ... }` dans `_envoyer`),
+  /// le code compile par dart2js en release donnait a `echec`, apres un
+  /// `await` reussi dont le resultat est ignore, la valeur d'un autre
+  /// registre : le formulaire lisait un refus, restait ouvert et ne relisait
+  /// pas la liste, alors que l'offre etait creee. Les tests widget (VM, et
+  /// `--platform chrome`) ne le voient pas. Ici le resultat passe par un
+  /// `return`, jamais par une variable affectee dans un `catch` apres un
+  /// `await`.
+  Future<String?> _creer(ReglesCreationOffre? regles, String langue) async {
+    final PortOffresAdmin port = ref.read(portOffresAdminProvider);
+    try {
+      await port.creer(
+        typePublic: _public.valeurSql,
+        langueCode: langue,
+        fuseauIana: _fuseau,
+        jours: (_jours.toList()..sort()),
+        heureLocale: _heure,
+        dureeMinutes: _duree ?? regles?.dureeParDefaut(_public),
+      );
+      return null;
+    } on OffreAdminRefusee catch (e) {
+      return t.admin.offres.refusee(motif: e.message);
+    } on Object {
+      return t.admin.offres.nonConfirmee;
+    }
   }
 
   @override
@@ -253,7 +271,9 @@ class _NouvelleOffrePageEtat extends ConsumerState<NouvelleOffrePage> {
         TitreChamp(f.jours, style: textes.titleMedium, obligatoire: true),
         Ecart.vXs,
         Text(
-          f.joursAide(n: '${regles.regles.seancesParSemaine}'),
+          LibellesGroupe.insecable(
+            f.joursAide(n: '${regles.regles.seancesParSemaine}'),
+          ),
           style: textes.bodySmall,
         ),
         Ecart.vMd,

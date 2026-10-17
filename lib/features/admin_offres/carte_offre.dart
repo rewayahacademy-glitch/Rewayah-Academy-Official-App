@@ -82,29 +82,35 @@ class CarteOffre extends StatelessWidget {
         ],
       ),
       actions: actions
-          ? Wrap(
-              spacing: AppSpacing.md,
-              runSpacing: AppSpacing.md,
-              children: <Widget>[
-                if (onPublier != null)
-                  ActionPrincipale(
-                    key: ValueKey<String>('offre-publier-${of.id}'),
-                    libelle: o.publier,
-                    libelleSemantique: o.publierPour(resume: resume),
-                    niveau: NiveauAction.secondaire,
-                    pleineLargeur: false,
-                    onPress: onPublier,
-                  ),
-                if (onRetirer != null)
-                  ActionPrincipale(
-                    key: ValueKey<String>('offre-retirer-${of.id}'),
-                    libelle: o.retirer,
-                    libelleSemantique: o.retirerPour(resume: resume),
-                    niveau: NiveauAction.secondaire,
-                    pleineLargeur: false,
-                    onPress: onRetirer,
-                  ),
-              ],
+          // Au bord trailing (DESIGN-GOV contrat B) : a droite en francais, a
+          // gauche en arabe, par `AlignmentDirectional` et `WrapAlignment.end`.
+          ? Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: Wrap(
+                alignment: WrapAlignment.end,
+                spacing: AppSpacing.md,
+                runSpacing: AppSpacing.md,
+                children: <Widget>[
+                  if (onPublier != null)
+                    ActionPrincipale(
+                      key: ValueKey<String>('offre-publier-${of.id}'),
+                      libelle: o.publier,
+                      libelleSemantique: o.publierPour(resume: resume),
+                      niveau: NiveauAction.secondaire,
+                      pleineLargeur: false,
+                      onPress: onPublier,
+                    ),
+                  if (onRetirer != null)
+                    ActionPrincipale(
+                      key: ValueKey<String>('offre-retirer-${of.id}'),
+                      libelle: o.retirer,
+                      libelleSemantique: o.retirerPour(resume: resume),
+                      niveau: NiveauAction.secondaire,
+                      pleineLargeur: false,
+                      onPress: onRetirer,
+                    ),
+                ],
+              ),
             )
           : null,
       child: Column(

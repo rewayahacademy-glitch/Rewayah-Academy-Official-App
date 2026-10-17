@@ -336,7 +336,8 @@ void main() {
       await _ouvrirCreation(tester);
       await _toucher(tester, _cle('offre-jour-1'));
       await _toucher(tester, _boutonCreer());
-      expect(find.text('Choisissez exactement 3 jours'), findsOneWidget);
+      // Le nombre et son unite sont insecables (U+00A0, DUREE-INSECABLE-3).
+      expect(find.text('Choisissez exactement 3\u00a0jours'), findsOneWidget);
       expect(port.creations, isEmpty);
     });
 
@@ -363,6 +364,26 @@ void main() {
       expect(find.text(t.admin.offres.creee), findsOneWidget);
       expect(find.text('Brouillon'), findsNWidgets(2));
     });
+
+    testWidgets(
+      'apres une creation confirmee : formulaire ferme, liste relue',
+      (WidgetTester tester) async {
+        final _Faux port = _Faux();
+        await _monter(tester, port: port);
+        final int lecturesAvant = port.lectures;
+        await _ouvrirCreation(tester);
+        for (final int j in <int>[1, 3, 6]) {
+          await _toucher(tester, _cle('offre-jour-$j'));
+        }
+        await _toucher(tester, _boutonCreer());
+        // L2-05-reprise (D-3) : le formulaire ne reste jamais ouvert apres une
+        // creation que le serveur a confirmee, et la liste est relue.
+        expect(_cle('nouvelle-offre-bloc'), findsNothing);
+        expect(find.text(t.admin.offres.creee), findsOneWidget);
+        expect(port.lectures, greaterThan(lecturesAvant));
+        expect(find.textContaining('Refusé par le serveur'), findsNothing);
+      },
+    );
 
     testWidgets('un refus du serveur est dit, la saisie reste', (
       WidgetTester tester,
