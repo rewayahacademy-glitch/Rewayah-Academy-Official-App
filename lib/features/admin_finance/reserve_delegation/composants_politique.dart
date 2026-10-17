@@ -53,7 +53,10 @@ class BlocPolitique<T> extends ConsumerWidget {
         erreur is! CapaciteIndisponible &&
         (ref.watch(horsLigneProvider).value ?? false);
     if (horsLigne) {
-      return EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire);
+      return EtatSysteme.sansDonnees(
+        quoi: t.sansDonnees.reserve,
+        onAction: relire,
+      );
     }
     return BlocAsynchrone<T>(
       valeur: valeur,

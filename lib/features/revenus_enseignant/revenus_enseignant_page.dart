@@ -152,7 +152,10 @@ class RevenusEnseignantPage extends ConsumerWidget {
       ),
       onRetour: onRetour ?? () => _retour(context),
       child: echecHorsLigne
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
+          ? EtatSysteme.sansDonnees(
+              quoi: t.sansDonnees.revenus,
+              onAction: relire,
+            )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
@@ -869,7 +872,10 @@ class _Releve extends ConsumerWidget {
           );
         }
         return horsLigne
-            ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: reessayer)
+            ? EtatSysteme.sansDonnees(
+                quoi: t.sansDonnees.revenus,
+                onAction: reessayer,
+              )
             : null;
       },
       vide: EmptyState(

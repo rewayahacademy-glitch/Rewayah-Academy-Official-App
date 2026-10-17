@@ -122,8 +122,8 @@ class _BeneficiairesPageEtat extends ConsumerState<BeneficiairesPage> {
               }
               if (horsLigne) {
                 return SingleChildScrollView(
-                  child: EtatSysteme(
-                    nature: NatureEtat.horsLigne,
+                  child: EtatSysteme.sansDonnees(
+                    quoi: t.sansDonnees.beneficiaires,
                     onAction: reessayer,
                   ),
                 );

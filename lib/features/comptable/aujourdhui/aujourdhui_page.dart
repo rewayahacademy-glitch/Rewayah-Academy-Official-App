@@ -102,7 +102,10 @@ class AujourdhuiComptablePage extends ConsumerWidget {
       onRetour: fileComplete ? () => context.go(Routes.comptable) : null,
       actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       child: echecHorsLigne
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
+          ? EtatSysteme.sansDonnees(
+              quoi: t.sansDonnees.aujourdhui,
+              onAction: relire,
+            )
           : BlocAsynchrone<AujourdhuiComptable>(
               valeur: jour,
               squelette: const Skeleton.liste(lignes: 6),

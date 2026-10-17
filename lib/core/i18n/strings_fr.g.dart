@@ -98,6 +98,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$presentationTuteur$fr presentationTuteur = Traductions$presentationTuteur$fr.internal(_root);
 	late final Traductions$reprisesAdmin$fr reprisesAdmin = Traductions$reprisesAdmin$fr.internal(_root);
 	late final Traductions$recherche$fr recherche = Traductions$recherche$fr.internal(_root);
+	late final Traductions$sansDonnees$fr sansDonnees = Traductions$sansDonnees$fr.internal(_root);
 }
 
 // Path: commun
@@ -3100,6 +3101,54 @@ class Traductions$recherche$fr {
 	late final Traductions$recherche$guide$fr guide = Traductions$recherche$guide$fr.internal(_root);
 	late final Traductions$recherche$entree$fr entree = Traductions$recherche$entree$fr.internal(_root);
 	late final Traductions$recherche$contexte$fr contexte = Traductions$recherche$contexte$fr.internal(_root);
+}
+
+// Path: sansDonnees
+class Traductions$sansDonnees$fr {
+	Traductions$sansDonnees$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vos paiements reçus n'ont pas pu être chargés'
+	String get paiementsRecus => 'Vos paiements reçus n\'ont pas pu être chargés';
+
+	/// fr: 'Vos revenus n'ont pas pu être chargés'
+	String get revenus => 'Vos revenus n\'ont pas pu être chargés';
+
+	/// fr: 'Le tableau du jour n'a pas pu être chargé'
+	String get aujourdhui => 'Le tableau du jour n\'a pas pu être chargé';
+
+	/// fr: 'Ce paiement n'a pas pu être chargé'
+	String get paiement => 'Ce paiement n\'a pas pu être chargé';
+
+	/// fr: 'Les paiements à effectuer n'ont pas pu être chargés'
+	String get paiementsAEffectuer => 'Les paiements à effectuer n\'ont pas pu être chargés';
+
+	/// fr: 'Les encaissements n'ont pas pu être chargés'
+	String get encaissements => 'Les encaissements n\'ont pas pu être chargés';
+
+	/// fr: 'La trésorerie n'a pas pu être chargée'
+	String get tresorerie => 'La trésorerie n\'a pas pu être chargée';
+
+	/// fr: 'Cette obligation n'a pas pu être chargée'
+	String get obligation => 'Cette obligation n\'a pas pu être chargée';
+
+	/// fr: 'Les contractuels n'ont pas pu être chargés'
+	String get contractuels => 'Les contractuels n\'ont pas pu être chargés';
+
+	/// fr: 'La politique de réserve n'a pas pu être chargée'
+	String get reserve => 'La politique de réserve n\'a pas pu être chargée';
+
+	/// fr: 'La vue d'ensemble des finances n'a pas pu être chargée'
+	String get vueGlobale => 'La vue d\'ensemble des finances n\'a pas pu être chargée';
+
+	/// fr: 'Les bénéficiaires n'ont pas pu être chargés'
+	String get beneficiaires => 'Les bénéficiaires n\'ont pas pu être chargés';
+
+	/// fr: 'Ce profil de paiement n'a pas pu être chargé'
+	String get profilPaiement => 'Ce profil de paiement n\'a pas pu être chargé';
 }
 
 // Path: commun.formats
@@ -40462,6 +40511,19 @@ extension on Traductions {
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'Trouvé par son identifiant · ${classe}',
 			'recherche.contexte.canalStudio' => 'Canal du Studio',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'Encaissement · ${famille}',
+			'sansDonnees.paiementsRecus' => 'Vos paiements reçus n\'ont pas pu être chargés',
+			'sansDonnees.revenus' => 'Vos revenus n\'ont pas pu être chargés',
+			'sansDonnees.aujourdhui' => 'Le tableau du jour n\'a pas pu être chargé',
+			'sansDonnees.paiement' => 'Ce paiement n\'a pas pu être chargé',
+			'sansDonnees.paiementsAEffectuer' => 'Les paiements à effectuer n\'ont pas pu être chargés',
+			'sansDonnees.encaissements' => 'Les encaissements n\'ont pas pu être chargés',
+			'sansDonnees.tresorerie' => 'La trésorerie n\'a pas pu être chargée',
+			'sansDonnees.obligation' => 'Cette obligation n\'a pas pu être chargée',
+			'sansDonnees.contractuels' => 'Les contractuels n\'ont pas pu être chargés',
+			'sansDonnees.reserve' => 'La politique de réserve n\'a pas pu être chargée',
+			'sansDonnees.vueGlobale' => 'La vue d\'ensemble des finances n\'a pas pu être chargée',
+			'sansDonnees.beneficiaires' => 'Les bénéficiaires n\'ont pas pu être chargés',
+			'sansDonnees.profilPaiement' => 'Ce profil de paiement n\'a pas pu être chargé',
 			_ => null,
 		};
 	}

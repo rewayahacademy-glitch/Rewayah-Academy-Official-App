@@ -219,7 +219,7 @@ void main() {
         port: PortEnEchec(StateError('x')),
         horsLigne: true,
       );
-      expect(find.text(t.commun.etats.horsLigne.titre), findsOneWidget);
+      expect(find.text(t.sansDonnees.contractuels), findsOneWidget);
     });
   });
 

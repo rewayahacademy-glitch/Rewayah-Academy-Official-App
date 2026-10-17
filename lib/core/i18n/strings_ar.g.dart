@@ -90,6 +90,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$formulaire$ar formulaire = _Traductions$formulaire$ar._(_root);
 	@override late final _Traductions$recherche$ar recherche = _Traductions$recherche$ar._(_root);
 	@override late final _Traductions$recrutement$ar recrutement = _Traductions$recrutement$ar._(_root);
+	@override late final _Traductions$sansDonnees$ar sansDonnees = _Traductions$sansDonnees$ar._(_root);
 }
 
 // Path: notifications
@@ -1531,6 +1532,28 @@ class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
 	// Translations
 	@override late final _Traductions$recrutement$invitations$ar invitations = _Traductions$recrutement$invitations$ar._(_root);
 	@override late final _Traductions$recrutement$candidat$ar candidat = _Traductions$recrutement$candidat$ar._(_root);
+}
+
+// Path: sansDonnees
+class _Traductions$sansDonnees$ar extends Traductions$sansDonnees$fr {
+	_Traductions$sansDonnees$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get paiementsRecus => 'تعذّر تحميل مدفوعاتك المستلمة';
+	@override String get revenus => 'تعذّر تحميل مداخيلك';
+	@override String get aujourdhui => 'تعذّر تحميل لوحة اليوم';
+	@override String get paiement => 'تعذّر تحميل هذه الدفعة';
+	@override String get paiementsAEffectuer => 'تعذّر تحميل المدفوعات المستحقة';
+	@override String get encaissements => 'تعذّر تحميل المقبوضات';
+	@override String get tresorerie => 'تعذّر تحميل الخزينة';
+	@override String get obligation => 'تعذّر تحميل هذا الالتزام';
+	@override String get contractuels => 'تعذّر تحميل المتعاقدين';
+	@override String get reserve => 'تعذّر تحميل سياسة الاحتياطي';
+	@override String get vueGlobale => 'تعذّر تحميل النظرة العامة على المالية';
+	@override String get beneficiaires => 'تعذّر تحميل المستفيدين';
+	@override String get profilPaiement => 'تعذّر تحميل ملف الدفع هذا';
 }
 
 // Path: notifications.evenements
@@ -21126,6 +21149,19 @@ extension on TraductionsAr {
 			'recrutement.candidat.comptable.intro' => 'للتسجيل كمحاسب، أدخل رمز الدعوة الذي تلقيته من الإدارة.',
 			'recrutement.candidat.comptable.valideDetail' => 'يمكنك إنشاء ملفك كمحاسب.',
 			'recrutement.candidat.comptable.indisponible' => 'سيتوفر التحقق من رموز المحاسبين عند ربط الخادم.',
+			'sansDonnees.paiementsRecus' => 'تعذّر تحميل مدفوعاتك المستلمة',
+			'sansDonnees.revenus' => 'تعذّر تحميل مداخيلك',
+			'sansDonnees.aujourdhui' => 'تعذّر تحميل لوحة اليوم',
+			'sansDonnees.paiement' => 'تعذّر تحميل هذه الدفعة',
+			'sansDonnees.paiementsAEffectuer' => 'تعذّر تحميل المدفوعات المستحقة',
+			'sansDonnees.encaissements' => 'تعذّر تحميل المقبوضات',
+			'sansDonnees.tresorerie' => 'تعذّر تحميل الخزينة',
+			'sansDonnees.obligation' => 'تعذّر تحميل هذا الالتزام',
+			'sansDonnees.contractuels' => 'تعذّر تحميل المتعاقدين',
+			'sansDonnees.reserve' => 'تعذّر تحميل سياسة الاحتياطي',
+			'sansDonnees.vueGlobale' => 'تعذّر تحميل النظرة العامة على المالية',
+			'sansDonnees.beneficiaires' => 'تعذّر تحميل المستفيدين',
+			'sansDonnees.profilPaiement' => 'تعذّر تحميل ملف الدفع هذا',
 			_ => null,
 		};
 	}

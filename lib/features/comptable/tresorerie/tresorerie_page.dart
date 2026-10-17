@@ -321,7 +321,10 @@ class _Bloc<T> extends ConsumerWidget {
           return const EtatSysteme(nature: NatureEtat.permissionRefusee);
         }
         return horsLigne && erreur is! CapaciteIndisponible
-            ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: reessayer)
+            ? EtatSysteme.sansDonnees(
+                quoi: t.sansDonnees.tresorerie,
+                onAction: reessayer,
+              )
             : null;
       },
       construire: construire,

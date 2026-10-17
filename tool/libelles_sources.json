@@ -4920,5 +4920,18 @@
   "adulte.demo.donnees.detailOffreA": "L11 du 17/10/2026 : libelles de la demonstration de la recharge raccourcis (un mot long se coupait a 320 px, texte x2) ; donnees de demonstration, jamais en production",
   "adulte.demo.donnees.detailOffreB": "L11 du 17/10/2026 : libelles de la demonstration de la recharge raccourcis (un mot long se coupait a 320 px, texte x2) ; donnees de demonstration, jamais en production",
   "comptable.paiementsFamilles.titre": "passation du 17/10/2026 point 3 : la direction ou le comptable enregistrent un paiement recu hors de l'application, attribue a un eleve (FAC-C-01)",
-  "comptable.paiementsFamilles.entree": "passation du 17/10/2026 point 3 : la direction ou le comptable enregistrent un paiement recu hors de l'application, attribue a un eleve (FAC-C-01)"
+  "comptable.paiementsFamilles.entree": "passation du 17/10/2026 point 3 : la direction ou le comptable enregistrent un paiement recu hors de l'application, attribue a un eleve (FAC-C-01)",
+  "sansDonnees.paiementsRecus": "EA-HL-DOUBLE-1 (hors ligne dit une seule fois, le bloc dit ce qui manque), etendu le 17/10/2026 aux ecrans du comptable, de la finance de la direction et des revenus",
+  "sansDonnees.revenus": "EA-HL-DOUBLE-1 (hors ligne dit une seule fois, le bloc dit ce qui manque), etendu le 17/10/2026 aux ecrans du comptable, de la finance de la direction et des revenus",
+  "sansDonnees.aujourdhui": "EA-HL-DOUBLE-1 (hors ligne dit une seule fois, le bloc dit ce qui manque), etendu le 17/10/2026 aux ecrans du comptable, de la finance de la direction et des revenus",
+  "sansDonnees.paiement": "EA-HL-DOUBLE-1 (hors ligne dit une seule fois, le bloc dit ce qui manque), etendu le 17/10/2026 aux ecrans du comptable, de la finance de la direction et des revenus",
+  "sansDonnees.paiementsAEffectuer": "EA-HL-DOUBLE-1 (hors ligne dit une seule fois, le bloc dit ce qui manque), etendu le 17/10/2026 aux ecrans du comptable, de la finance de la direction et des revenus",
+  "sansDonnees.encaissements": "EA-HL-DOUBLE-1 (hors ligne dit une seule fois, le bloc dit ce qui manque), etendu le 17/10/2026 aux ecrans du comptable, de la finance de la direction et des revenus",
+  "sansDonnees.tresorerie": "EA-HL-DOUBLE-1 (hors ligne dit une seule fois, le bloc dit ce qui manque), etendu le 17/10/2026 aux ecrans du comptable, de la finance de la direction et des revenus",
+  "sansDonnees.obligation": "EA-HL-DOUBLE-1 (hors ligne dit une seule fois, le bloc dit ce qui manque), etendu le 17/10/2026 aux ecrans du comptable, de la finance de la direction et des revenus",
+  "sansDonnees.contractuels": "EA-HL-DOUBLE-1 (hors ligne dit une seule fois, le bloc dit ce qui manque), etendu le 17/10/2026 aux ecrans du comptable, de la finance de la direction et des revenus",
+  "sansDonnees.reserve": "EA-HL-DOUBLE-1 (hors ligne dit une seule fois, le bloc dit ce qui manque), etendu le 17/10/2026 aux ecrans du comptable, de la finance de la direction et des revenus",
+  "sansDonnees.vueGlobale": "EA-HL-DOUBLE-1 (hors ligne dit une seule fois, le bloc dit ce qui manque), etendu le 17/10/2026 aux ecrans du comptable, de la finance de la direction et des revenus",
+  "sansDonnees.beneficiaires": "EA-HL-DOUBLE-1 (hors ligne dit une seule fois, le bloc dit ce qui manque), etendu le 17/10/2026 aux ecrans du comptable, de la finance de la direction et des revenus",
+  "sansDonnees.profilPaiement": "EA-HL-DOUBLE-1 (hors ligne dit une seule fois, le bloc dit ce qui manque), etendu le 17/10/2026 aux ecrans du comptable, de la finance de la direction et des revenus"
 }

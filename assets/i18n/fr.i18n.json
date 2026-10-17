@@ -9990,5 +9990,20 @@
       "canalStudio": "Canal du Studio",
       "encaissement(param=famille)": "Encaissement · {famille}"
     }
+  },
+  "sansDonnees": {
+    "paiementsRecus": "Vos paiements reçus n'ont pas pu être chargés",
+    "revenus": "Vos revenus n'ont pas pu être chargés",
+    "aujourdhui": "Le tableau du jour n'a pas pu être chargé",
+    "paiement": "Ce paiement n'a pas pu être chargé",
+    "paiementsAEffectuer": "Les paiements à effectuer n'ont pas pu être chargés",
+    "encaissements": "Les encaissements n'ont pas pu être chargés",
+    "tresorerie": "La trésorerie n'a pas pu être chargée",
+    "obligation": "Cette obligation n'a pas pu être chargée",
+    "contractuels": "Les contractuels n'ont pas pu être chargés",
+    "reserve": "La politique de réserve n'a pas pu être chargée",
+    "vueGlobale": "La vue d'ensemble des finances n'a pas pu être chargée",
+    "beneficiaires": "Les bénéficiaires n'ont pas pu être chargés",
+    "profilPaiement": "Ce profil de paiement n'a pas pu être chargé"
   }
 }

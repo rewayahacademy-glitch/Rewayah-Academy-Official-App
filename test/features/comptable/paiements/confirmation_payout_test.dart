@@ -271,85 +271,90 @@ void main() {
   });
 
   group('le lot (§41)', () {
-    testWidgets('R-FIN-22 et R-FIN-23 : 11 prets / 2 exclus, l\'exclusion dite, '
-        'seuls les prets partent', (WidgetTester tester) async {
-      final EtatDemoPaiements etat = EtatDemoPaiements();
-      await monterPaiements(
-        tester,
-        const PaiementsAEffectuerPage(),
-        surcharges: surchargesDemo(etat),
-        taille: telephone,
-      );
-      await appuyer(
-        tester,
-        find.byKey(PaiementsAEffectuerPage.cleSelectionnerPrets),
-      );
-      // Une ligne non prete retenue en plus : le preflight l'exclura.
-      final Finder caseInfos = find.byKey(
-        CaseObligation.cleDe(PaiementsDemo.obligationInfosManquantes),
-      );
-      await appuyer(tester, caseInfos);
-      expect(find.text(p.selection(n: 13)), findsOneWidget);
-      await appuyer(tester, find.byKey(BarreSelection.clePayer));
-      final Finder feuille = find.byType(PayoutConfirmationSheet);
-      expect(feuille, findsOneWidget);
-      expect(
-        find.text('${c.prets(n: 11)} / ${c.exclus(n: 2)}'),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const ValueKey<String>('payout-exclus')),
-        findsOneWidget,
-      );
-      expect(
-        find.descendant(
-          of: feuille,
-          matching: find.text(
-            libelleRaisonBlocage(RaisonBlocage.fournisseurIndisponible),
+    testWidgets(
+      'R-FIN-22 et R-FIN-23 : 11 prets / 2 exclus, l\'exclusion dite, '
+      'seuls les prets partent',
+      (WidgetTester tester) async {
+        final EtatDemoPaiements etat = EtatDemoPaiements();
+        await monterPaiements(
+          tester,
+          const PaiementsAEffectuerPage(),
+          surcharges: surchargesDemo(etat),
+          taille: telephone,
+        );
+        await appuyer(
+          tester,
+          find.byKey(PaiementsAEffectuerPage.cleSelectionnerPrets),
+        );
+        // Une ligne non prete retenue en plus : le preflight l'exclura.
+        final Finder caseInfos = find.byKey(
+          CaseObligation.cleDe(PaiementsDemo.obligationInfosManquantes),
+        );
+        await appuyer(tester, caseInfos);
+        expect(find.text(p.selection(n: 13)), findsOneWidget);
+        await appuyer(tester, find.byKey(BarreSelection.clePayer));
+        final Finder feuille = find.byType(PayoutConfirmationSheet);
+        expect(feuille, findsOneWidget);
+        expect(
+          find.text('${c.prets(n: 11)} / ${c.exclus(n: 2)}'),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey<String>('payout-exclus')),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: feuille,
+            matching: find.text(
+              libelleRaisonBlocage(RaisonBlocage.fournisseurIndisponible),
+            ),
           ),
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.descendant(
-          of: feuille,
-          matching: find.text(
-            libelleRaisonBlocage(RaisonBlocage.infosManquantes),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: feuille,
+            matching: find.text(
+              libelleRaisonBlocage(RaisonBlocage.infosManquantes),
+            ),
           ),
-        ),
-        findsOneWidget,
-      );
-      // Le bouton dit le total rendu par la source, en clair.
-      expect(
-        find.descendant(
-          of: feuille,
-          matching: find.text(MontantSensible.masquePour('USD')),
-        ),
-        findsNothing,
-      );
-      await appuyer(tester, find.byKey(PayoutConfirmationSheet.cleConfirmer));
-      // Un des prets est recalcule a la source pendant la confirmation :
-      // tout le lot est refuse, rien ne part (DR-13).
-      expect(find.text(c.recalculeTitre), findsOneWidget);
-      expect(etat.envoisAcceptes, 0);
-      await appuyer(tester, find.byKey(PayoutConfirmationSheet.cleRelancer));
-      expect(
-        find.text('${c.prets(n: 11)} / ${c.exclus(n: 2)}'),
-        findsOneWidget,
-      );
-      await appuyer(tester, find.byKey(PayoutConfirmationSheet.cleConfirmer));
-      expect(find.text(c.soumisTitre), findsOneWidget);
-      expect(etat.envoisAcceptes, 11);
-      expect(
-        etat.obligations[PaiementsDemo.obligationFournisseurIndisponible]!.etat,
-        EtatPaiementSortant.pretAPayer,
-        reason: 'un exclu ne part jamais avec le lot',
-      );
-      expect(
-        etat.obligations[PaiementsDemo.obligationInfosManquantes]!.etat,
-        EtatPaiementSortant.infosManquantes,
-      );
-    });
+          findsOneWidget,
+        );
+        // Le bouton dit le total rendu par la source, en clair.
+        expect(
+          find.descendant(
+            of: feuille,
+            matching: find.text(MontantSensible.masquePour('USD')),
+          ),
+          findsNothing,
+        );
+        await appuyer(tester, find.byKey(PayoutConfirmationSheet.cleConfirmer));
+        // Un des prets est recalcule a la source pendant la confirmation :
+        // tout le lot est refuse, rien ne part (DR-13).
+        expect(find.text(c.recalculeTitre), findsOneWidget);
+        expect(etat.envoisAcceptes, 0);
+        await appuyer(tester, find.byKey(PayoutConfirmationSheet.cleRelancer));
+        expect(
+          find.text('${c.prets(n: 11)} / ${c.exclus(n: 2)}'),
+          findsOneWidget,
+        );
+        await appuyer(tester, find.byKey(PayoutConfirmationSheet.cleConfirmer));
+        expect(find.text(c.soumisTitre), findsOneWidget);
+        expect(etat.envoisAcceptes, 11);
+        expect(
+          etat
+              .obligations[PaiementsDemo.obligationFournisseurIndisponible]!
+              .etat,
+          EtatPaiementSortant.pretAPayer,
+          reason: 'un exclu ne part jamais avec le lot',
+        );
+        expect(
+          etat.obligations[PaiementsDemo.obligationInfosManquantes]!.etat,
+          EtatPaiementSortant.infosManquantes,
+        );
+      },
+    );
 
     testWidgets('un paiement sensible retenu dans un lot en est exclu '
         '(pas de contournement en le noyant, §47)', (

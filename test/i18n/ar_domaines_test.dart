@@ -79,6 +79,8 @@ const Map<String, int> _domaines = <String, int>{
   'recherche': 55,
   // AR-SUIVI-FAMILLE.
   'suiviFamille': 40,
+  // EA-HL-DOUBLE-1 etendu (17/10) : ce qui manque, hors ligne, par ecran.
+  'sansDonnees': 12,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :

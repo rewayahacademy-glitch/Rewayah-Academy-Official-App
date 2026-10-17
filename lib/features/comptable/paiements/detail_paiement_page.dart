@@ -151,7 +151,10 @@ class _DetailPaiementPageState extends ConsumerState<DetailPaiementPage> {
       );
     }
     if (horsLigne) {
-      return EtatSysteme(nature: NatureEtat.horsLigne, onAction: _relire);
+      return EtatSysteme.sansDonnees(
+        quoi: t.sansDonnees.paiement,
+        onAction: _relire,
+      );
     }
     return null;
   }

@@ -157,7 +157,10 @@ class _ObligationContractuelPageState
               avecAide: !barreCompacte,
             ),
       child: echecHorsLigne
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: _relire)
+          ? EtatSysteme.sansDonnees(
+              quoi: t.sansDonnees.obligation,
+              onAction: _relire,
+            )
           : BlocAsynchrone<ObligationContractuel>(
               valeur: lecture,
               squelette: const Skeleton.liste(lignes: 6),
