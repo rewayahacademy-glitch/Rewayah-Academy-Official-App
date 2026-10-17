@@ -26,15 +26,16 @@ class GenreEtape extends ConsumerWidget {
       brouillonInscriptionProvider.notifier,
     );
     final Genre? genre = brouillon.genre;
+    // Lot E2 : chaque option s'explique. L'enseignant lit pourquoi sa piece
+    // d'identite en depend ; les autres, a quoi sert la reponse.
+    final bool enseignant = brouillon.usage == UsageInscription.enseignant;
 
     return CoquilleEtape(
       route: _route,
       question: t.inscription.genreQuestion,
       // K-47 : la seule raison dite est la relecture de la piece, qui ne
       // concerne que l'enseignant ; aucune explication pour le tuteur.
-      explication: brouillon.usage == UsageInscription.enseignant
-          ? t.inscription.genreRaison
-          : null,
+      explication: enseignant ? t.inscription.genreRaison : null,
       libelleAction: t.commun.continuer,
       onAction: genre == null ? null : () => avancerDepuis(context, _route),
       onRetour: () => reculerDepuis(context, _route),
@@ -51,12 +52,30 @@ class GenreEtape extends ConsumerWidget {
           OptionChoix(
             valeur: Genre.homme.name,
             libelle: t.inscription.genreHomme,
+            explication: enseignant
+                ? t.inscription.genreHommeEnseignant
+                : t.inscription.genreHommeExplication,
             icone: AppIcons.homme,
+            illustration: IllustrationChoix(
+              AppIcons.homme,
+              autour: <AppIcon>[
+                if (enseignant) AppIcons.verrou else AppIcons.classes,
+              ],
+            ),
           ),
           OptionChoix(
             valeur: Genre.femme.name,
             libelle: t.inscription.genreFemme,
+            explication: enseignant
+                ? t.inscription.genreFemmeEnseignant
+                : t.inscription.genreFemmeExplication,
             icone: AppIcons.femme,
+            illustration: IllustrationChoix(
+              AppIcons.femme,
+              autour: <AppIcon>[
+                if (enseignant) AppIcons.verrou else AppIcons.classes,
+              ],
+            ),
           ),
         ],
         onChange: (ReponseChoix reponse) {

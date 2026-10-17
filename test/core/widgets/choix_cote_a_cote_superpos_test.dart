@@ -102,15 +102,18 @@ void main() {
         final Finder icone = find.byIcon(
           i == 0 ? AppIcons.homme.actif : AppIcons.femme.repos,
         );
-        // Le disque de l'icone (pas seulement le glyphe).
+        // Le disque de l'icone (pas seulement le glyphe) ; en bento (lot E2,
+        // au-dela de 900 px), toute la scene de l'illustration.
         final Finder disque = find.ancestor(
           of: icone,
-          matching: find.byWidgetPredicate(
-            (Widget w) =>
-                w is SizedBox &&
-                w.width == AppSpacing.respiration + AppSpacing.sm &&
-                w.height == w.width,
-          ),
+          matching: cas.$1 >= ChoiceCardGroup.seuilBento
+              ? find.byType(VueIllustrationChoix)
+              : find.byWidgetPredicate(
+                  (Widget w) =>
+                      w is SizedBox &&
+                      w.width == AppSpacing.respiration + AppSpacing.sm &&
+                      w.height == w.width,
+                ),
         );
         expect(disque, findsOneWidget);
         verifierSansChevauchement(tester, <Finder>[

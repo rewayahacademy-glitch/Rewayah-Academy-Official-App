@@ -99,17 +99,33 @@ class UsageEtape extends ConsumerWidget {
                 ? null
                 : ReponseChoix(valeurs: <String>{retenu.name}),
             options: <OptionChoix>[
+              // Lot E2 : chaque option s'explique, avec un exemple, et
+              // s'illustre en bento sur grand ecran.
               OptionChoix(
                 valeur: UsageInscription.moi.name,
                 libelle: t.inscription.usage.moiTitre,
-                description: t.inscription.usage.moiDescription,
+                explication: t.inscription.usage.moiDescription,
+                exemple: t.inscription.usage.moiExemple,
                 icone: AppIcons.profil,
+                illustration: const IllustrationChoix(
+                  AppIcons.profil,
+                  autour: <AppIcon>[AppIcons.livreOuvert, AppIcons.horloge],
+                ),
               ),
               OptionChoix(
                 valeur: UsageInscription.famille.name,
                 libelle: t.inscription.usage.familleTitre,
-                description: t.inscription.usage.familleDescription,
+                explication: t.inscription.usage.familleDescription,
+                exemple: t.inscription.usage.familleExemple,
                 icone: AppIcons.foyer,
+                illustration: const IllustrationChoix(
+                  AppIcons.foyer,
+                  autour: <AppIcon>[
+                    AppIcons.eleves,
+                    AppIcons.livreOuvert,
+                    AppIcons.suivi,
+                  ],
+                ),
               ),
             ],
             onChange: (ReponseChoix reponse) {
@@ -143,10 +159,24 @@ class UsageEtape extends ConsumerWidget {
                 OptionChoix(
                   valeur: 'oui',
                   libelle: t.inscription.usage.coursOui,
+                  explication: t.inscription.usage.coursOuiExplication,
+                  exemple: t.inscription.usage.coursOuiExemple,
+                  icone: AppIcons.livreOuvert,
+                  illustration: const IllustrationChoix(
+                    AppIcons.livreOuvert,
+                    autour: <AppIcon>[AppIcons.profil, AppIcons.eleves],
+                  ),
                 ),
                 OptionChoix(
                   valeur: 'non',
                   libelle: t.inscription.usage.coursNon,
+                  explication: t.inscription.usage.coursNonExplication,
+                  exemple: t.inscription.usage.coursNonExemple,
+                  icone: AppIcons.suivi,
+                  illustration: const IllustrationChoix(
+                    AppIcons.suivi,
+                    autour: <AppIcon>[AppIcons.eleves],
+                  ),
                 ),
               ],
               onChange: (ReponseChoix reponse) {
