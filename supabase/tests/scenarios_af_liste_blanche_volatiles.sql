@@ -104,6 +104,9 @@ declare
     'dossiers_en_attente()',
     'effacer_etat_partage(uuid)',
     'eleves_sans_enseignant()',
+    -- FAC-B-01, FAC-C-01 (17/10) : direction ou comptabilite, compte valide.
+    'emettre_factures_mois(date)',
+    'enregistrer_paiement(uuid,bigint,text,text,uuid)',
     'enregistrer_profil_apprentissage(uuid,text,text,text,text,text)',
     'enregistrer_regles_tirage(jsonb,uuid)',
     'enregistrer_resultat_evaluation(uuid,text,text)',
@@ -163,6 +166,8 @@ declare
     'publier_etat_partage(uuid,uuid,uuid,jsonb,jsonb,text,jsonb,jsonb,jsonb,integer)',
     'publier_evaluation(uuid,text,text)',
     'publier_offre_horaire(uuid)',
+    -- FAC-A-01 (17/10) : direction, compte valide, double verification.
+    'publier_politique_commerciale(jsonb)',
     'publier_resume_seance(uuid,uuid,text,text)',
     'publier_version_programme(uuid,text)',
     'quitter_salle(uuid)',
