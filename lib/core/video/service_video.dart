@@ -57,13 +57,6 @@ abstract interface class ServiceVideo {
   /// encore commencee, et une seance dont l'appelant est deja partie prenante.
   Future<void> observerEnControle(String seanceId);
 
-  /// Inscrit l'appelant comme **temoin visible** du cours de son enfant.
-  ///
-  /// L'inverse exact de la precedente : le tuteur entre muet mais visible, et
-  /// sa presence n'a rien d'une visite de controle -- l'enseignant doit savoir
-  /// qu'un parent regarde.
-  Future<void> assisterEnTuteur(String seanceId);
-
   /// Annonce un depart **volontaire**, avant de se deconnecter.
   ///
   /// C'est la seule ecriture de presence confiee au client, et c'est elle qui
@@ -124,12 +117,6 @@ class ServiceVideoSupabase implements ServiceVideo {
   @override
   Future<void> observerEnControle(String seanceId) => _client.rpc<void>(
     'rejoindre_observation',
-    params: <String, dynamic>{'p_session_id': seanceId},
-  );
-
-  @override
-  Future<void> assisterEnTuteur(String seanceId) => _client.rpc<void>(
-    'assister_seance',
     params: <String, dynamic>{'p_session_id': seanceId},
   );
 

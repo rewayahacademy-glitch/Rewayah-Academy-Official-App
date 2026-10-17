@@ -618,7 +618,7 @@ class _Entete extends ConsumerWidget {
         const SizedBox(height: AppSpacing.xs),
         Text(
           <String>[
-            t.eleve.coran.page(
+            t.commun.formats.pageSur(
               page: '${vue?.numero ?? 1}',
               total: '${vue?.nombrePages ?? pagesMushafMedine}',
             ),

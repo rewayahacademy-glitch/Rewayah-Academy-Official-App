@@ -222,10 +222,28 @@
     }
   },
   "commun": {
+    "formats": {
+      "dateHeure": "⁨{date}⁩ في ⁨{heure}⁩",
+      "minutes": "⁨{minutes}⁩ د",
+      "pageSur": "الصفحة ⁨{page}⁩ من ⁨{total}⁩"
+    },
+    "roles": {
+      "eleve": "طالب",
+      "tuteur": "ولي أمر",
+      "enseignant": "معلّم",
+      "administration": "الإدارة",
+      "controleur": "مراقب",
+      "comptable": "محاسب"
+    },
     "classeDistincte": {
       "numero": "⁨{libelle}⁩ · رقم ⁨{numero}⁩",
       "code": "⁨{libelle}⁩ · ⁨{code}⁩",
       "enseignant": "⁨{libelle}⁩ · مع ⁨{enseignant}⁩"
+    },
+    "filtres": {
+      "plus": "المزيد",
+      "plusAvec": "المزيد، ⁨{n}⁩",
+      "titreFeuille": "مرشحات أخرى"
     },
     "recherche": {
       "effacer": "مسح البحث",
@@ -281,6 +299,7 @@
       "indisponible": "غير متاح"
     },
     "etats": {
+      "branchementServeur": "متاح عند ربط الخادم",
       "chargementProlonge": {
         "titre": "الاتصال يستغرق وقتًا أطول من المتوقع",
         "phrase": "يمكنك الانتظار قليلًا أو إعادة المحاولة."
@@ -580,7 +599,6 @@
       "resume": "⁨{visites}⁩ · ⁨{duree}⁩ لكل زيارة",
       "restanteAucune": "لا زيارة متبقية لهذه الحصة",
       "restanteUne": "زيارة واحدة متبقية لهذه الحصة",
-      "minutes": "⁨{minutes}⁩ د",
       "minutesSecondes": "⁨{minutes}⁩ د ⁨{secondes}⁩ ث",
       "secondes": "⁨{secondes}⁩ ث",
       "motif": {
@@ -1333,7 +1351,6 @@
     },
     "coran": {
       "titre": "القرآن",
-      "page": "الصفحة ⁨{page}⁩ من ⁨{total}⁩",
       "juz": "الجزء ⁨{juz}⁩",
       "mecquoise": "مكية",
       "medinoise": "مدنية",
@@ -1384,7 +1401,6 @@
       "ligneCours": "درس مع ⁨{prenom}⁩",
       "lignePause": "استراحة",
       "plage": "⁨{debut}⁩ إلى ⁨{fin}⁩",
-      "duree": "⁨{minutes}⁩ د",
       "rienAujourdhui": "لا شيء مقرر اليوم",
       "rienAujourdhuiDetail": "درسك القادم ⁨{jour}⁩ الساعة ⁨{heure}⁩.",
       "journeeTerminee": "عدد الدروس المقدَّمة اليوم: ⁨{nombre}⁩.",
@@ -1392,6 +1408,14 @@
       "voirCreneaux": "عرض مواعيدي",
       "erreur": "تعذّرت قراءة اليوم كاملًا. أعد المحاولة بعد لحظة.",
       "coursIndividuel": "درس فردي",
+      "cahiersEnvoyes(param=n)": {
+        "zero": "لم يُرسَل أي دفتر متابعة",
+        "one": "تم إرسال دفتر متابعة واحد",
+        "two": "تم إرسال دفتري متابعة",
+        "few": "تم إرسال ⁨{n}⁩ دفاتر متابعة",
+        "many": "تم إرسال ⁨{n}⁩ دفترًا متابعة",
+        "other": "تم إرسال ⁨{n}⁩ دفتر متابعة"
+      },
       "effectif(param=nombre)": {
         "zero": "لا طالب",
         "one": "طالب واحد",
@@ -1496,7 +1520,6 @@
         "moment": "وقت الاستراحة",
         "momentAide": "بالدقائق بعد بداية الحصة.",
         "duree": "مدة الاستراحة",
-        "minutes": "⁨{minutes}⁩ د",
         "resume": "استراحة ⁨{duree}⁩ د، بعد ⁨{moment}⁩ د من البداية.",
         "enregistrer": "حفظ الاستراحة",
         "enregistree": "سُجّلت الاستراحة.",
@@ -1856,8 +1879,7 @@
       "cleRecurrence": "التكرار",
       "cleFuseau": "المنطقة الزمنية المرجعية",
       "cleHeureLocale": "التوقيت المحلي",
-      "cleDuree": "المدة",
-      "duree": "⁨{minutes}⁩ د"
+      "cleDuree": "المدة"
     },
     "revue": {
       "titre": "مراجعة الفصل",
@@ -1954,6 +1976,10 @@
     "statutProvisoire": "مفعَّل مؤقتًا",
     "profilEnfant": "ملف ⁨{dePrenom}⁩",
     "identifiantEnfant": "المعرّف: ⁨{identifiant}⁩",
+    "matricule": "رقم التسجيل \u2068{valeur}\u2069 · \u2068{role}\u2069",
+    "copier": "نسخ",
+    "copierMatricule": "نسخ رقم التسجيل",
+    "matriculeCopie": "تم النسخ",
     "roles": {
       "admin": "مدير",
       "accountant": "محاسب",
@@ -2226,7 +2252,6 @@
       "demandeTitreDuree": "مدة دروس ⁨{dePrenom}⁩",
       "demandeTitreMinimum": "المدة الدنيا المدفوعة لـ⁨{prenom}⁩",
       "demandeActuelle": "حاليًا: ⁨{minutes}⁩ د",
-      "demandeMinutes": "⁨{minutes}⁩ د",
       "demandeMotif": "لماذا هذا التغيير؟",
       "demandeMotifRequis": "السبب ضروري: هو الذي يسمح بالحسم.",
       "demandeEnvoyer": "إرسال الطلب",
@@ -2356,7 +2381,6 @@
         "terminee": "انتهى الدرس"
       },
       "duree": {
-        "minutes": "⁨{minutes}⁩ د",
         "heures": "⁨{heures}⁩ س",
         "heuresMinutes": "⁨{heures}⁩ س ⁨{minutes}⁩ د"
       },
@@ -3874,6 +3898,7 @@
       "vide": "لا يوجد نشاط للمعالجة هنا."
     },
     "annonces": {
+      "toutesAcademie": "كل الأكاديمية",
       "publieur": {
         "titre": "إعلان جديد",
         "etapes": {
@@ -4148,6 +4173,8 @@
         "many": "ينتظر منذ ⁨{jours}⁩ يومًا",
         "other": "ينتظر منذ ⁨{jours}⁩ يوم"
       },
+      "outilsOffres": "عروض الواجهة",
+      "outilsOffresDetail": "إنشاء المواعيد التي تراها العائلات في الواجهة ونشرها وإزالتها.",
       "outilsPilotage": "متابعة المواعيد",
       "outilsPilotageDetail": "لكل موعد: الفصول ونسبة امتلائها والطلبات المعلّقة والمعلمون المتاحون أو الناقصون.",
       "outilsPlanning": "جدول الأسبوع",
@@ -4465,7 +4492,6 @@
         "filtreTousEnseignants": "كل المعلمين",
         "sansEnseignant": "بلا معلم",
         "etatAttente": "في انتظار معلم",
-        "position": "الصفحة ⁨{page}⁩ من ⁨{total}⁩",
         "positionSemantique": "الصفحة ⁨{page}⁩ من ⁨{total}⁩ من قائمة الفصول",
         "precedente": "الصفحة السابقة من الفصول",
         "suivante": "الصفحة التالية من الفصول",
@@ -5034,6 +5060,71 @@
       "vide": "لا إشعارات",
       "videDetail": "لا شيء يُذكر الآن."
     },
+    "offres": {
+      "titre": "عروض الواجهة",
+      "sousTitre": "المواعيد التي تراها العائلات وتختار منها. الإدارة وحدها تنشر، ولا تعرض الواجهة أي معلّم.",
+      "nouvelle": "عرض جديد",
+      "vide": "لا توجد عروض حتى الآن. أنشئ العرض الأول لفتح الواجهة للعائلات.",
+      "erreur": "تعذّر عرض العروض: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد قليل.",
+      "sansDonnees": "تعذّر تحميل العروض",
+      "horsLigneAction": "سيكون نشر العرض وإزالته ممكنًا عند عودة الاتصال.",
+      "etatBrouillon": "مسودة",
+      "etatPubliee": "منشور",
+      "etatRetiree": "مُزال",
+      "cleJours": "الأيام",
+      "cleHeure": "الساعة",
+      "cleFuseau": "المنطقة الزمنية",
+      "clePublic": "الفئة",
+      "cleLangue": "اللغة",
+      "cleDuree": "المدة",
+      "cleMotif": "سبب الإزالة",
+      "heure": "الساعة ⁨{heure}⁩",
+      "duree": "⁨{minutes}⁩ د",
+      "publier": "نشر",
+      "retirer": "إزالة",
+      "publierPour": "نشر العرض ⁨{resume}⁩",
+      "retirerPour": "إزالة العرض ⁨{resume}⁩",
+      "publiee": "تم نشر العرض. تراه العائلات في الواجهة.",
+      "retiree": "تمت إزالة العرض من الواجهة.",
+      "creee": "أُنشئ العرض كمسودة. انشره لفتحه للعائلات.",
+      "nonConfirmee": "تعذّر تأكيد الإجراء: لم يتغيّر شيء. أعد المحاولة بعد قليل.",
+      "refusee": "رفض الخادم الطلب: ⁨{motif}⁩",
+      "retraitTitre": "إزالة هذا العرض",
+      "retraitExplication": "الطلبات المقدّمة على هذا العرض محفوظة: على الإدارة معالجتها.",
+      "motifLibelle": "سبب الإزالة",
+      "motifManque": "اذكر سبب الإزالة",
+      "serveur": {
+        "reserve": "الإدارة وحدها تستطيع إدارة العروض.",
+        "dejaPubliee": "هذا العرض منشور بالفعل.",
+        "dejaRetiree": "هذا العرض مُزال بالفعل.",
+        "introuvable": "هذا العرض غير موجود.",
+        "motifRequis": "يجب ذكر سبب لإزالة العرض.",
+        "joursInvalides": "الأيام المختارة غير صالحة.",
+        "nombreJours": "عدد الأيام لا يطابق عدد الحصص الأسبوعية في الأكاديمية.",
+        "fuseauInconnu": "هذه المنطقة الزمنية غير معروفة.",
+        "publicInconnu": "هذه الفئة غير معروفة.",
+        "doublon": "يوجد عرض مطابق بالفعل.",
+        "jourManquant": "اختر يومًا واحدًا على الأقل"
+      },
+      "retraitHorsLigne": "ستكون إزالة العرض ممكنة عند عودة الاتصال. يبقى السبب الذي كتبته معروضًا.",
+      "formulaire": {
+        "question": "أي موعد تفتحه للعائلات؟",
+        "explication": "العرض المنشور لا يُعدَّل: لتغييره أزله ثم أنشئ عرضًا آخر. لا يُختار هنا أي معلّم.",
+        "public": "الفئة",
+        "langue": "لغة الدرس",
+        "fuseau": "المنطقة الزمنية",
+        "jours": "الأيام",
+        "joursAide": "عدد الأيام المطلوبة في الأسبوع: ⁨{n}⁩.",
+        "heure": "الساعة المحلية",
+        "duree": "مدة الحصة",
+        "creer": "إنشاء العرض",
+        "manqueJour": "اختر يومًا واحدًا على الأقل",
+        "manqueNombre": "اختر الأيام بعدد ⁨{n}⁩ بالضبط",
+        "manqueLangue": "اختر لغة الدرس",
+        "horsLigne": "سيكون إنشاء العرض ممكنًا عند عودة الاتصال. تبقى اختياراتك معروضة.",
+        "regles": "تعذّرت قراءة قواعد الأكاديمية: سيُتحقَّق من عدد الأيام عند الإرسال."
+      }
+    },
     "regroupements": {
       "demandes": {
         "zero": "لا طلب",
@@ -5091,7 +5182,6 @@
         "filtreTousPublics": "كل الفئات",
         "aucunAvecCeFiltre": "لا طلبات بهذا المعيار",
         "aucunAvecCeFiltreDetail": "غيّروا المعيار لرؤية بقية الطلبات المجمّعة.",
-        "position": "الصفحة ⁨{page}⁩ من ⁨{total}⁩",
         "positionSemantique": "الصفحة ⁨{page}⁩ من ⁨{total}⁩ من قائمة الطلبات المجمّعة",
         "precedente": "الصفحة السابقة من الطلبات المجمّعة",
         "suivante": "الصفحة التالية من الطلبات المجمّعة",
@@ -5113,7 +5203,6 @@
       "videDetail": "تظهر الحصص هنا بمجرد أن يكون لفصل موعد هذا الأسبوع. جرّب أسبوعًا آخر.",
       "sansDonnees": "تعذّر تحميل الجدول",
       "erreur": "تعذّرت قراءة الجدول: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.",
-      "indisponibleTitre": "متاح عند ربط الخادم",
       "indisponiblePhrase": "سيظهر الجدول هنا فور ربط الخادم. إلى ذلك الحين لا يُعرض شيء: لا تُختلق أي حصة.",
       "statutPrevue": "مقرَّرة",
       "statutPreparation": "قيد التحضير",
@@ -5134,7 +5223,6 @@
       "videDetail": "تظهر هنا كل حصة تتحول إلى عطل أو غياب معلم أو غياب طالب فور تغيّر حالتها.",
       "sansDonnees": "تعذّر تحميل الحوادث",
       "erreur": "تعذّرت قراءة الحوادث: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.",
-      "indisponibleTitre": "متاح عند ربط الخادم",
       "indisponiblePhrase": "ستظهر الحوادث هنا فور ربط الخادم. إلى ذلك الحين لا يُعرض شيء: لا يُختلق أي حادث."
     },
     "pilotage": {
@@ -5221,7 +5309,6 @@
       "filtreAttente": "في انتظار معلم",
       "filtrePublic": "الفئة",
       "filtreTousPublics": "كل الفئات",
-      "position": "الصفحة ⁨{page}⁩ من ⁨{total}⁩",
       "positionSemantique": "الصفحة ⁨{page}⁩ من ⁨{total}⁩ من لوحة المتابعة",
       "precedente": "الصفحة السابقة من لوحة المتابعة",
       "suivante": "الصفحة التالية من لوحة المتابعة",
@@ -5331,8 +5418,7 @@
         "other": "دمج مع ⁨{autre}⁩: استُقبل ⁨{n}⁩ طالب"
       },
       "evenementTransfertSortant": "نُقل ⁨{prenom}⁩ إلى ⁨{autre}⁩",
-      "evenementTransfertEntrant": "نُقل ⁨{prenom}⁩ من ⁨{autre}⁩",
-      "quand": "⁨{date}⁩ في ⁨{heure}⁩"
+      "evenementTransfertEntrant": "نُقل ⁨{prenom}⁩ من ⁨{autre}⁩"
     },
     "tirage": {
       "titre": "قرعة المراقبة",
@@ -5350,7 +5436,8 @@
       "versionEnVigueur": "القواعد السارية: النسخة ⁨{n}⁩",
       "aucuneVersion": "لم تُسجَّل أي قاعدة بعد.",
       "zeroPhrase": "مع القيمة 0، لا تُسحب أي حصة للمراقبة.",
-      "nombreInvalide": "أدخل عددًا صحيحًا من 0 إلى 50، أو اختر إحدى البطاقات.",
+      "nombreInvalide": "أدخل عددًا صحيحًا من 0 إلى 50، أو اختر إحدى القيم المقترحة.",
+      "frequenceAutreChamp": "عدد",
       "enregistreesVersion": "سُجّلت القواعد، النسخة ⁨{n}⁩. تسري على السحوب القادمة.",
       "missionsParSemaine": {
         "zero": "لا مهمة في الأسبوع",
@@ -5418,12 +5505,10 @@
       "videDetail": "ستظهر القرعات هنا بمجرد وجود حصص مباشرة.",
       "aucunAvecCeFiltre": "لا قرعات بهذا المعيار",
       "aucunAvecCeFiltreDetail": "غيّروا المعيار لرؤية بقية القرعات.",
-      "position": "الصفحة ⁨{page}⁩ من ⁨{total}⁩",
       "positionSemantique": "الصفحة ⁨{page}⁩ من ⁨{total}⁩ من سجل القرعات",
       "precedente": "الصفحة السابقة من سجل القرعات",
       "suivante": "الصفحة التالية من سجل القرعات",
-      "resume": "القرعات من ⁨{debut}⁩ إلى ⁨{fin}⁩ من أصل ⁨{total}⁩",
-      "quand": "⁨{date}⁩ في ⁨{heure}⁩"
+      "resume": "القرعات من ⁨{debut}⁩ إلى ⁨{fin}⁩ من أصل ⁨{total}⁩"
     },
     "bibliotheque": {
       "titre": "المكتبة",
@@ -7338,6 +7423,9 @@
     "courrielIndice": "name@example.com",
     "motDePasseDemo": "كلمة مرور العرض التجريبي",
     "envoyerLien": "استلام الرابط",
+    "entrerDemo": "الدخول إلى العرض التجريبي",
+    "introDemo": "وضع العرض التجريبي: لن يُرسل أي رابط. ستدخل مباشرة دون بريد إلكتروني.",
+    "essayerDemo": "تجربة العرض التجريبي",
     "avecGoogle": "المتابعة بحساب Google",
     "ou": "أو",
     "lienEnvoye": "أُرسل الرابط",
@@ -7572,7 +7660,7 @@
         "enfantDescription": "ملف مرتبط بأسرتك، تديره نيابة عنه.",
         "enfantAttente": "ممكن بمجرد فتح وصولك.",
         "moiTitre": "أنا",
-        "moiDescription": "غير ممكن بعد: متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا."
+        "moiDescription": "يسجّل البالغ نفسه من حسابه الخاص."
       },
       "identite": {
         "question": "من هو الطالب؟",
@@ -7581,7 +7669,7 @@
         "nom": "اللقب",
         "nomAide": "لا يُعرض لقب العائلة على المعلم أبدًا.",
         "age": "العمر",
-        "ageAide": "العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك.",
+        "ageAide": "العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك. الحد الأدنى للعمر ⁨{min}⁩ سنوات.",
         "ageFige": "الإرسال جارٍ: يمكن تغيير العمر بعد الرد."
       },
       "erreurs": {
@@ -8005,6 +8093,7 @@
       "recharger": "إعادة تحميل الوثيقة",
       "formatNonPrisEnCharge": "لا يمكن عرض تنسيق هذه الوثيقة.",
       "accesRetire": "لم يعد لديك وصول إلى هذه الوثيقة.",
+      "apercuRefuse": "هذه الوثيقة غير مرئية بحسابك.",
       "horsLigne": "أنت غير متصل. لا يمكن تحميل الوثيقة.",
       "aucune": "لا وثيقة متاحة.",
       "fermerPiece": "إغلاق الوثيقة",
@@ -8509,7 +8598,6 @@
     "introuvable": "هذا الطلب لم يعد موجودًا أو ليس من طلباتكم.",
     "retour": "العودة إلى الطلبات",
     "fuseau": "الأوقات المعروضة بتوقيت ⁨{deVille}⁩.",
-    "horodatage": "⁨{date}⁩ في ⁨{heure}⁩",
     "prevue": "مقررة ⁨{date}⁩ في ⁨{heure}⁩",
     "etapes": {
       "envoyee": "تم إرسال الطلب",
@@ -8617,7 +8705,6 @@
     "enseignant": "المعلم",
     "personnaliseNotice": "لن يُفتح هذا الموعد إلا إذا اختاره طلاب آخرون واكتمل الفصل.",
     "jalon": {
-      "date": "⁨{date}⁩ في ⁨{heure}⁩",
       "apres": "⁨{date}⁩ في ⁨{heure}⁩، ⁨{duree}⁩",
       "aussitot": "فورًا",
       "minutes": {

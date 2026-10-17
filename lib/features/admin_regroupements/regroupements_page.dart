@@ -393,7 +393,10 @@ class _Contenu extends StatelessWidget {
           Ecart.vSm,
           BarrePrecedentSuivant(
             key: const ValueKey<String>('regroupements-pagination'),
-            position: l.position(page: '${page.page}', total: '${page.pages}'),
+            position: t.commun.formats.pageSur(
+              page: '${page.page}',
+              total: '${page.pages}',
+            ),
             positionSemantique: l.positionSemantique(
               page: '${page.page}',
               total: '${page.pages}',

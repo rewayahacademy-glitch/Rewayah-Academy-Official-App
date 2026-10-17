@@ -207,8 +207,8 @@ void main() {
     );
 
     testWidgets(
-      'proche adulte absent (F2, EA-5) ; moi-meme visible, dit indisponible, '
-      'ne se choisit pas',
+      'proche adulte absent (F2, EA-5) ; moi-meme est expliquee (L4-05), '
+      'ni radio grise ni choix',
       (WidgetTester tester) async {
         await _monter(tester, appairage: _AppairageCreant());
         await _ouvrirAjout(tester);
@@ -218,25 +218,25 @@ void main() {
         expect(find.text('Un proche adulte'), findsNothing);
         expect(find.text(t.foyer.ajout.pourQui.moiTitre), findsOneWidget);
         expect(find.text(t.foyer.ajout.pourQui.moiDescription), findsOne);
-        expect(find.text(t.foyer.ajout.pourQui.indisponible), findsOneWidget);
+        expect(
+          t.foyer.ajout.pourQui.moiDescription,
+          "Un adulte s'inscrit depuis son propre compte.",
+        );
+        // La carte d'explication n'est pas dans le groupe de choix : aucun
+        // radio ne porte « Moi-meme », aucune mention « Indisponible ».
+        expect(find.byKey(FormulaireProfilEleve.moiExpliqueKey), findsOne);
+        expect(
+          find.descendant(
+            of: find.byKey(FormulaireProfilEleve.choixKey),
+            matching: find.text(t.foyer.ajout.pourQui.moiTitre),
+          ),
+          findsNothing,
+        );
+        expect(find.text(t.foyer.ajout.pourQui.indisponible), findsNothing);
 
         await _toucher(tester, find.text(t.foyer.ajout.pourQui.moiTitre));
         expect(_action(tester), isNull);
         expect(find.text(t.foyer.ajout.pourQui.question), findsOneWidget);
-
-        // Semantique : groupe exclusif, cartes indisponibles non actives.
-        final SemanticsHandle poignee = tester.ensureSemantics();
-        expect(
-          tester.getSemantics(find.text(t.foyer.ajout.pourQui.moiTitre)),
-          isSemantics(
-            isInMutuallyExclusiveGroup: true,
-            hasCheckedState: true,
-            isChecked: false,
-            hasEnabledState: true,
-            isEnabled: false,
-          ),
-        );
-        poignee.dispose();
       },
     );
 
@@ -286,7 +286,7 @@ void main() {
       expect(service.enfantsCrees, isEmpty);
     });
 
-    testWidgets('FORM-L6 : l age se choisit dans les bornes (3 a 18), il ne se '
+    testWidgets('FORM-L6 : l age se choisit dans les bornes (6 a 18), il ne se '
         'tape pas ; sans choix, l erreur dit quoi faire', (
       WidgetTester tester,
     ) async {
@@ -303,14 +303,21 @@ void main() {
         ),
         findsNothing,
       );
-      for (int age = 3; age <= 18; age++) {
+      for (int age = 6; age <= 18; age++) {
         expect(
           find.byKey(FormulaireProfilEleve.ageChoixKey(age)),
           findsOneWidget,
           reason: 'puce $age',
         );
       }
-      expect(find.byKey(FormulaireProfilEleve.ageChoixKey(2)), findsNothing);
+      expect(find.byKey(FormulaireProfilEleve.ageChoixKey(5)), findsNothing);
+      expect(find.byKey(FormulaireProfilEleve.ageChoixKey(3)), findsNothing);
+      expect(
+        find.text(
+          LibellesGroupe.insecable(t.foyer.ajout.identite.ageAide(min: 6)),
+        ),
+        findsOneWidget,
+      );
       expect(find.byKey(FormulaireProfilEleve.ageChoixKey(19)), findsNothing);
 
       await tester.enterText(
@@ -428,7 +435,7 @@ void main() {
         // DUREE-INSECABLE-4 : « 18 ans » insecable a l'ecran.
         find.text(
           LibellesGroupe.insecable(
-            t.foyer.ajout.erreurs.ageHorsBornes(min: 3, max: 18),
+            t.foyer.ajout.erreurs.ageHorsBornes(min: 6, max: 18),
           ),
         ),
         findsOneWidget,
@@ -603,8 +610,8 @@ void main() {
         await _ouvrirAjout(tester);
 
         expect(find.text(t.foyer.ajout.pourQui.enfantAttente), findsOneWidget);
-        // « Moi-meme » seul dit « Indisponible » : plus de proche adulte (F2).
-        expect(find.text(t.foyer.ajout.pourQui.indisponible), findsOneWidget);
+        // « Moi-meme » est expliquee, plus grisee (L4-05).
+        expect(find.text(t.foyer.ajout.pourQui.indisponible), findsNothing);
         await _toucher(tester, find.text(t.foyer.ajout.pourQui.enfantTitre));
         expect(_action(tester), isNull);
       },

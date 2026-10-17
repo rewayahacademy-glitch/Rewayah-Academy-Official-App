@@ -35,6 +35,7 @@ import 'package:rewayah_academy/features/comptable/encaissements/rapprochement/p
 import 'package:rewayah_academy/features/comptable/encaissements/rapprochement/remboursements_avoirs.dart';
 import 'package:rewayah_academy/features/demo/comptable/encaissements_demo.dart';
 
+import '../../../support/rangee_plus.dart';
 import 'support_encaissements.dart';
 
 /// Un port de rapprochement qui retient les cles et peut echouer une fois.
@@ -175,12 +176,13 @@ void main() {
         ),
         findsOneWidget,
       );
-      await tester.tap(
+      // L4-07 : « Conflit » est rangee sous « Plus ».
+      await toucherFiltre(
+        tester,
         find.byKey(
           ReconciliationWorkspace.filtreKey(EtatRapprochement.conflit),
         ),
       );
-      await tester.pumpAndSettle();
       expect(find.text('Famille Touré · carte bancaire'), findsOneWidget);
       expect(find.text('Famille Bah · carte bancaire'), findsNothing);
       expect(tester.takeException(), isNull);

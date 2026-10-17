@@ -1,5 +1,18 @@
 {
   "commun": {
+    "formats": {
+      "dateHeure": "{date} à {heure}",
+      "minutes": "{minutes} min",
+      "pageSur": "Page {page} sur {total}"
+    },
+    "roles": {
+      "eleve": "Élève",
+      "tuteur": "Tuteur",
+      "enseignant": "Enseignant",
+      "administration": "Administration",
+      "controleur": "Contrôleur",
+      "comptable": "Comptable"
+    },
     "classeDistincte": {
       "numero": "{libelle} · n° {numero}",
       "code": "{libelle} · {code}",
@@ -55,6 +68,7 @@
       "autresPlusieurs": "{n} autres personnes correspondent\u00a0: précisez la recherche pour les voir."
     },
     "etats": {
+      "branchementServeur": "Disponible au branchement serveur",
       "chargementProlonge": {
         "titre": "La connexion prend plus de temps que prévu",
         "phrase": "Vous pouvez patienter encore un peu ou réessayer."
@@ -180,6 +194,11 @@
     },
     "sections": {
       "page": "Sections de la page"
+    },
+    "filtres": {
+      "plus": "Plus",
+      "plusAvec": "Plus, {n}",
+      "titreFeuille": "Autres filtres"
     },
     "recherche": {
       "effacer": "Effacer la recherche",
@@ -807,6 +826,9 @@
     "courrielIndice": "vous@exemple.com",
     "motDePasseDemo": "Mot de passe de démonstration",
     "envoyerLien": "Recevoir le lien",
+    "entrerDemo": "Entrer dans la démonstration",
+    "introDemo": "Mode démonstration\u00a0: aucun lien ne sera envoyé. Vous entrez directement, sans courriel.",
+    "essayerDemo": "Essayer la démonstration",
     "avecGoogle": "Continuer avec Google",
     "ou": "ou",
     "lienEnvoye": "Lien envoyé",
@@ -1345,7 +1367,7 @@
         "enfantDescription": "Un profil rattaché à votre foyer, que vous gérez pour lui.",
         "enfantAttente": "Possible dès que votre accès est ouvert.",
         "moiTitre": "Moi-même",
-        "moiDescription": "Pas encore possible\u00a0: suivre vous-même les cours avec votre propre profil élève sera proposé prochainement."
+        "moiDescription": "Un adulte s'inscrit depuis son propre compte."
       },
       "identite": {
         "question": "Qui est l'élève\u00a0?",
@@ -1355,7 +1377,7 @@
         "nomAide": "Le nom de famille n'est jamais montré à l'enseignant.",
         "nomAidePrerempli": "Prérempli avec le nom de votre compte\u00a0: modifiez-le si l'élève porte un autre nom. Jamais montré à l'enseignant.",
         "age": "Âge, en années",
-        "ageAide": "L'âge fixe l'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.",
+        "ageAide": "L'âge fixe l'affichage et la caméra au départ. Vous pourrez changer les deux ensuite. L'âge minimum est de {min} ans.",
         "ageFige": "L'envoi est en cours : l'âge pourra être changé après la réponse."
       },
       "erreurs": {
@@ -1946,6 +1968,7 @@
       "recharger": "Recharger la pièce",
       "formatNonPrisEnCharge": "Ce format de pièce ne peut pas être affiché.",
       "accesRetire": "Vous n’avez plus accès à cette pièce.",
+      "apercuRefuse": "Cette pièce n'est pas visible avec votre compte.",
       "horsLigne": "La pièce n'a pas pu être chargée.",
       "aucune": "Aucune pièce n’est disponible.",
       "fermerPiece": "Fermer la pièce",
@@ -2102,6 +2125,8 @@
       "outilsTraitementDetail": "Les dossiers d'identité et les demandes en attente, dans une seule file.",
       "outilsRegroupements": "Classes à ouvrir",
       "outilsRegroupementsDetail": "Les demandes des familles réunies quand elles se ressemblent, et la création de leur classe.",
+      "outilsOffres": "Offres vitrine",
+      "outilsOffresDetail": "Créer, publier et retirer les créneaux que les familles voient dans la vitrine.",
       "attenteJours(param=jours)": {
         "one": "En attente depuis {jours} jour",
         "other": "En attente depuis {jours} jours"
@@ -2297,7 +2322,6 @@
         "filtreTousEnseignants": "Tous les enseignants",
         "sansEnseignant": "Sans enseignant",
         "etatAttente": "En attente d'enseignant",
-        "position": "Page {page} sur {total}",
         "positionSemantique": "Page {page} sur {total} de la liste des classes",
         "precedente": "Page précédente des classes",
         "suivante": "Page suivante des classes",
@@ -2538,6 +2562,71 @@
         "seuilHorsLigne": "Le seuil pourra être enregistré quand la connexion sera revenue. Votre choix reste affiché."
       }
     },
+    "offres": {
+      "titre": "Offres vitrine",
+      "sousTitre": "Les créneaux que les familles voient et choisissent. Seule l'administration publie, et la vitrine ne montre aucun enseignant.",
+      "nouvelle": "Nouvelle offre",
+      "vide": "Aucune offre pour l'instant. Créez la première pour ouvrir la vitrine aux familles.",
+      "erreur": "Les offres n'ont pas pu être affichées\u00a0: il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "sansDonnees": "Les offres n'ont pas pu être chargées",
+      "horsLigneAction": "Publier et retirer une offre sera possible quand la connexion sera revenue.",
+      "etatBrouillon": "Brouillon",
+      "etatPubliee": "Publiée",
+      "etatRetiree": "Retirée",
+      "cleJours": "Jours",
+      "cleHeure": "Heure",
+      "cleFuseau": "Fuseau",
+      "clePublic": "Public",
+      "cleLangue": "Langue",
+      "cleDuree": "Durée",
+      "cleMotif": "Motif du retrait",
+      "heure": "{heure}\u00a0h",
+      "duree": "{minutes}\u00a0min",
+      "publier": "Publier",
+      "retirer": "Retirer",
+      "publierPour": "Publier l'offre {resume}",
+      "retirerPour": "Retirer l'offre {resume}",
+      "publiee": "Offre publiée. Les familles la voient dans la vitrine.",
+      "retiree": "Offre retirée de la vitrine.",
+      "creee": "Offre créée en brouillon. Publiez-la pour l'ouvrir aux familles.",
+      "nonConfirmee": "L'action n'a pas pu être confirmée\u00a0: rien n'a changé. Réessayez dans un instant.",
+      "refusee": "Refusé par le serveur\u00a0: {motif}",
+      "retraitTitre": "Retirer cette offre",
+      "retraitExplication": "Les demandes déjà posées sur cette offre sont conservées\u00a0: l'administration doit les traiter.",
+      "motifLibelle": "Motif du retrait",
+      "motifManque": "Indiquez le motif du retrait",
+      "serveur": {
+        "reserve": "Seule l'administration peut gérer les offres.",
+        "dejaPubliee": "Cette offre est déjà publiée.",
+        "dejaRetiree": "Cette offre est déjà retirée.",
+        "introuvable": "Cette offre est introuvable.",
+        "motifRequis": "Un motif est requis pour retirer une offre.",
+        "joursInvalides": "Les jours choisis ne sont pas valides.",
+        "nombreJours": "Le nombre de jours ne correspond pas aux séances par semaine de l'académie.",
+        "fuseauInconnu": "Ce fuseau horaire est inconnu.",
+        "publicInconnu": "Ce public est inconnu.",
+        "doublon": "Une offre identique existe déjà.",
+        "jourManquant": "Choisissez au moins un jour"
+      },
+      "retraitHorsLigne": "L'offre pourra être retirée quand la connexion sera revenue. Votre motif reste affiché.",
+      "formulaire": {
+        "question": "Quel créneau ouvrir aux familles\u00a0?",
+        "explication": "Une offre publiée ne se modifie pas\u00a0: pour la changer, retirez-la puis créez-en une autre. Aucun enseignant n'est choisi ici.",
+        "public": "Public",
+        "langue": "Langue du cours",
+        "fuseau": "Fuseau horaire",
+        "jours": "Jours",
+        "joursAide": "Choisissez {n} jours par semaine.",
+        "heure": "Heure locale",
+        "duree": "Durée d'une séance",
+        "creer": "Créer l'offre",
+        "manqueJour": "Choisissez au moins un jour",
+        "manqueNombre": "Choisissez exactement {n} jours",
+        "manqueLangue": "Choisissez la langue du cours",
+        "horsLigne": "L'offre pourra être créée quand la connexion sera revenue. Vos choix restent affichés.",
+        "regles": "Les règles de l'académie n'ont pas pu être lues\u00a0: le nombre de jours sera vérifié à l'envoi."
+      }
+    },
     "regroupements": {
       "titre": "Classes à ouvrir",
       "sousTitre": "Les demandes des familles qui se ressemblent sont réunies\u00a0: mêmes jours, même heure, même fuseau, même public, même langue.",
@@ -2637,7 +2726,6 @@
         "filtreTousPublics": "Tous les publics",
         "aucunAvecCeFiltre": "Aucune demande avec ce filtre",
         "aucunAvecCeFiltreDetail": "Changez de filtre pour voir les autres demandes réunies.",
-        "position": "Page {page} sur {total}",
         "positionSemantique": "Page {page} sur {total} de la liste des demandes réunies",
         "precedente": "Page précédente des demandes réunies",
         "suivante": "Page suivante des demandes réunies",
@@ -3464,7 +3552,6 @@
       "videDetail": "Les séances apparaissent ici dès qu'une classe a un horaire cette semaine. Essayez une autre semaine.",
       "sansDonnees": "Le planning n'a pas pu être chargé",
       "erreur": "Le planning n'a pas pu être lu\u00a0: il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
-      "indisponibleTitre": "Disponible au branchement serveur",
       "indisponiblePhrase": "Le planning s'affichera ici dès le branchement serveur. D'ici là, rien n'est affiché\u00a0: aucune séance n'est inventée.",
       "statutPrevue": "Prévue",
       "statutPreparation": "En préparation",
@@ -3485,7 +3572,6 @@
       "videDetail": "Une séance passée en incident, en absence d'enseignant ou en absence d'élève apparaît ici dès qu'elle change de statut.",
       "sansDonnees": "Les incidents n'ont pas pu être chargés",
       "erreur": "Les incidents n'ont pas pu être lus\u00a0: il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
-      "indisponibleTitre": "Disponible au branchement serveur",
       "indisponiblePhrase": "Les incidents s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché\u00a0: aucun incident n'est inventé."
     },
     "pilotage": {
@@ -3552,7 +3638,6 @@
       "filtreAttente": "En attente d'enseignant",
       "filtrePublic": "Public",
       "filtreTousPublics": "Tous les publics",
-      "position": "Page {page} sur {total}",
       "positionSemantique": "Page {page} sur {total} du tableau de pilotage",
       "precedente": "Page précédente du tableau de pilotage",
       "suivante": "Page suivante du tableau de pilotage",
@@ -3638,8 +3723,7 @@
         "other": "Fusion avec {autre} : {n} élèves accueillis"
       },
       "evenementTransfertSortant": "{prenom} transféré vers {autre}",
-      "evenementTransfertEntrant": "{prenom} transféré depuis {autre}",
-      "quand": "{date} à {heure}"
+      "evenementTransfertEntrant": "{prenom} transféré depuis {autre}"
     },
     "tirage": {
       "titre": "Tirage des contrôles",
@@ -3657,7 +3741,8 @@
       "versionEnVigueur": "Règles en vigueur : version {n}",
       "aucuneVersion": "Aucune règle n'est encore enregistrée.",
       "zeroPhrase": "Avec 0, aucune séance n'est tirée pour contrôle.",
-      "nombreInvalide": "Entrez un nombre entier de 0 à 50, ou choisissez une des cartes.",
+      "nombreInvalide": "Entrez un nombre entier de 0 à 50, ou choisissez une des valeurs proposées.",
+      "frequenceAutreChamp": "Nombre",
       "enregistreesVersion": "Règles enregistrées, version {n}. Elles s'appliquent aux prochains tirages.",
       "missionsParSemaine": {
         "one": "{n} mission par semaine",
@@ -3721,12 +3806,10 @@
       "videDetail": "Les tirages apparaîtront ici dès que des séances seront en direct.",
       "aucunAvecCeFiltre": "Aucun tirage avec ce filtre",
       "aucunAvecCeFiltreDetail": "Changez de filtre pour voir les autres tirages.",
-      "position": "Page {page} sur {total}",
       "positionSemantique": "Page {page} sur {total} de l'historique des tirages",
       "precedente": "Page précédente de l'historique des tirages",
       "suivante": "Page suivante de l'historique des tirages",
-      "resume": "Tirages {debut} à {fin} sur {total}",
-      "quand": "{date} à {heure}"
+      "resume": "Tirages {debut} à {fin} sur {total}"
     },
     "bibliotheque": {
       "titre": "Bibliothèque",
@@ -4331,6 +4414,10 @@
     "statutProvisoire": "Actif, à titre provisoire",
     "profilEnfant": "Profil {dePrenom}",
     "identifiantEnfant": "Identifiant\u00a0: {identifiant}",
+    "matricule": "Matricule {valeur} · {role}",
+    "copier": "Copier",
+    "copierMatricule": "Copier le matricule",
+    "matriculeCopie": "Copié",
     "roles": {
       "admin": "Administrateur",
       "accountant": "Comptable",
@@ -4729,7 +4816,6 @@
     },
     "coran": {
       "titre": "Le Coran",
-      "page": "Page {page} sur {total}",
       "juz": "Juz {juz}",
       "mecquoise": "Révélée à La Mecque",
       "medinoise": "Révélée à Médine",
@@ -4888,7 +4974,6 @@
       "demandeTitreDuree": "La durée des cours {dePrenom}",
       "demandeTitreMinimum": "La durée minimale payable pour {prenom}",
       "demandeActuelle": "Aujourd'hui\u00a0: {minutes} min",
-      "demandeMinutes": "{minutes} min",
       "demandeMotif": "Pourquoi ce changement\u00a0?",
       "demandeMotifRequis": "Un motif est nécessaire\u00a0: c'est lui qui permet de trancher.",
       "demandeManqueValeur": "Il manque la durée demandée\u00a0: choisissez-la dans la liste, ou touchez «\u00a0Autre\u00a0» et écrivez-la.",
@@ -4983,7 +5068,6 @@
       "resume": "{visites} · {duree} par visite",
       "restanteAucune": "Aucune visite restante pour cette séance",
       "restanteUne": "1 visite restante pour cette séance",
-      "minutes": "{minutes} min",
       "minutesSecondes": "{minutes} min {secondes} s",
       "secondes": "{secondes} s",
       "motif": {
@@ -5290,7 +5374,6 @@
       "ligneCours": "Cours avec {prenom}",
       "lignePause": "Pause",
       "plage": "{debut} à {fin}",
-      "duree": "{minutes} min",
       "rienAujourdhui": "Rien de prévu aujourd'hui",
       "rienAujourdhuiDetail": "Votre prochain cours est {jour} à {heure}.",
       "journeeTerminee": "{nombre} cours donnés aujourd'hui.",
@@ -5376,6 +5459,10 @@
         "pasCetteFois": "Pas cette fois"
       },
       "erreurPartielleCahiers": "Vos cahiers de transmission à terminer n'ont pas pu être chargés\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour\u00a0: elles n'en dépendent pas. Réessayez dans un instant.",
+      "cahiersEnvoyes(param=n)": {
+        "one": "{n} cahier de transmission envoyé",
+        "other": "{n} cahiers de transmission envoyés"
+      },
       "effectif(param=nombre)": {
         "one": "{nombre} élève",
         "other": "{nombre} élèves"
@@ -5647,7 +5734,6 @@
       "cleFuseau": "Fuseau de référence",
       "cleHeureLocale": "Heure locale",
       "cleDuree": "Durée",
-      "duree": "{minutes} min",
       "plagesContexte": "Une ligne par plage. Touchez une plage pour la modifier ou la supprimer.",
       "plageDe": "de\u00a0{heure}\u00a0h",
       "plageA": "à\u00a0{heure}\u00a0h",
@@ -5715,7 +5801,6 @@
         "moment": "Moment de la pause",
         "momentAide": "Minutes après le début de la séance.",
         "duree": "Durée de la pause",
-        "minutes": "{minutes} min",
         "resume": "Pause de {duree} min, {moment} min après le début.",
         "enregistrer": "Enregistrer la pause",
         "enregistree": "Pause enregistrée.",
@@ -6088,7 +6173,6 @@
         "terminee": "Cours terminé"
       },
       "duree": {
-        "minutes": "{minutes} min",
         "heures": "{heures} h",
         "heuresMinutes": "{heures} h {minutes}"
       },
@@ -7384,7 +7468,6 @@
     "introuvable": "Cette demande n'existe plus ou n'est pas la vôtre.",
     "retour": "Retour aux demandes",
     "fuseau": "Heures affichées : heure {deVille}.",
-    "horodatage": "{date} à {heure}",
     "prevue": "Prévue le {date} à {heure}",
     "etapes": {
       "envoyee": "Demande envoyée",
@@ -7520,7 +7603,6 @@
       "changementTransfert": "Demande de créneau {dePrenom} : nouvelle classe, voir le détail"
     },
     "jalon": {
-      "date": "{date} à {heure}",
       "apres": "{date} à {heure}, {duree}",
       "aussitot": "aussitôt",
       "minutes": {
@@ -8446,6 +8528,7 @@
       "vide": "Aucune activité à traiter ici."
     },
     "annonces": {
+      "toutesAcademie": "Toute l'académie",
       "publieur": {
         "titre": "Nouvelle annonce",
         "etapes": {

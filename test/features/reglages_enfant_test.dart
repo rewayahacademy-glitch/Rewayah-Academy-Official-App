@@ -353,9 +353,7 @@ void main() {
       // La duree choisie, le motif manque : annonce, focus a la premiere puce.
       await tester.tap(
         find.text(
-          LibellesGroupe.valeurSeule(
-            t.tuteur.reglages.demandeMinutes(minutes: '30'),
-          ),
+          LibellesGroupe.valeurSeule(t.commun.formats.minutes(minutes: '30')),
         ),
       );
       await tester.pumpAndSettle();
@@ -410,9 +408,7 @@ void main() {
 
       await tester.tap(
         find.text(
-          LibellesGroupe.valeurSeule(
-            t.tuteur.reglages.demandeMinutes(minutes: '30'),
-          ),
+          LibellesGroupe.valeurSeule(t.commun.formats.minutes(minutes: '30')),
         ),
       );
       // « Autre » : le motif ecrit a la main part tel quel.

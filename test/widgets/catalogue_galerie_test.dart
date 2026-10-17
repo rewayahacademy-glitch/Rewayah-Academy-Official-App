@@ -27,6 +27,7 @@ const List<String> composantsDuCatalogue = <String>[
   'SectionHeader',
   'StatusPill',
   'Skeleton',
+  'ChargementAvecDelais',
   'LocalFeedback',
   'StatTile',
   'SignalRow',

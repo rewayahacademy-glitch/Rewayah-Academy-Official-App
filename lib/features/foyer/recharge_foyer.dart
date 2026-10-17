@@ -1085,34 +1085,29 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         ],
         // Un seul bouton dominant, 16 sous le moyen de paiement. Une fois la
         // commande rendue, le seul geste est son suivi (FI-8).
-        if (commande != null) ...<Widget>[
+        if (commande != null || !arrete) ...<Widget>[
           Ecart.vLg,
           _Actions(
             principale: ActionPrincipale(
-              key: RechargeFoyerPage.suivreKey,
-              libelle: t.adulte.recharge.suivrePaiement,
-              fleche: true,
-              onPress: () => widget.onPaye(commande),
-              pleineLargeur: false,
-            ),
-          ),
-        ] else if (!arrete) ...<Widget>[
-          Ecart.vLg,
-          _Actions(
-            principale: ActionPrincipale(
-              key: RechargeFoyerPage.payerKey,
+              key: commande != null
+                  ? RechargeFoyerPage.suivreKey
+                  : RechargeFoyerPage.payerKey,
               // Le total que la source vient de rendre : un choix change, le
               // bouton dit le nouveau total, jamais l'ancien.
-              libelle: recapitulatif != null && !_verifEnCours
+              libelle: commande != null
+                  ? t.adulte.recharge.suivrePaiement
+                  : recapitulatif != null && !_verifEnCours
                   ? t.adulte.recharge.payer(montant: recapitulatif.total)
                   : t.adulte.recharge.payerSeul,
-              onPress: switch (recapitulatif) {
-                final RecapitulatifRecharge r when payable => () => unawaited(
-                  _payer(r),
-                ),
-                _ => null,
-              },
-              enCours: _paiementEnCours || _verifEnCours,
+              fleche: commande != null,
+              onPress: commande != null
+                  ? () => widget.onPaye(commande)
+                  : switch (recapitulatif) {
+                      final RecapitulatifRecharge r when payable =>
+                        () => unawaited(_payer(r)),
+                      _ => null,
+                    },
+              enCours: commande == null && (_paiementEnCours || _verifEnCours),
               pleineLargeur: false,
             ),
           ),

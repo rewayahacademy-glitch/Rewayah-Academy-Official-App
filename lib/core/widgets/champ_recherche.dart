@@ -99,6 +99,21 @@ class ChampRecherche extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Un champ de recherche n'a pas a s'etirer sur 1046 points : il se borne
+    // a la largeur d'un formulaire, pose au debut de la ligne, comme la
+    // recherche de la coquille d'administration (L4-07). Sur telephone, la
+    // colonne est plus etroite que la borne et rien ne change.
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      heightFactor: 1,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: AppPage.largeurFormulaire),
+        child: _champ(context),
+      ),
+    );
+  }
+
+  Widget _champ(BuildContext context) {
     final r = t.commun.recherche;
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {

@@ -421,7 +421,7 @@ class _EtatPageMadina15 extends State<PageMadina15> {
                 ),
                 SizedBox(height: corps * 0.3),
                 Semantics(
-                  label: t.eleve.coran.page(
+                  label: t.commun.formats.pageSur(
                     page: '${vue.numero}',
                     total: '${vue.nombrePages}',
                   ),

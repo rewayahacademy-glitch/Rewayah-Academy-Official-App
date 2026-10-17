@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/domain/enums.dart';
+import '../../core/dossier/service_validation.dart' show ApercuRefuse;
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -55,6 +56,7 @@ enum _Etat {
   indisponible,
   expire,
   accesRetire,
+  apercuRefuse,
   horsLigne,
   aucune,
 }
@@ -148,6 +150,7 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
       case _Etat.erreur ||
           _Etat.format ||
           _Etat.accesRetire ||
+          _Etat.apercuRefuse ||
           _Etat.indisponible ||
           _Etat.aucune:
         _lue = false;
@@ -210,6 +213,9 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
       };
     } on CapaciteIndisponible {
       suivant = _Etat.indisponible;
+    } on ApercuRefuse {
+      // La porte a refuse la piece selon le genre : une regle, pas une panne.
+      suivant = _Etat.apercuRefuse;
     } on Object {
       suivant = _Etat.erreur;
     }
@@ -477,6 +483,10 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
       _Etat.accesRetire => etat(
         nature: NatureEtat.accesRefuse,
         phrase: v.accesRetire,
+      ),
+      _Etat.apercuRefuse => etat(
+        nature: NatureEtat.accesRefuse,
+        phrase: v.apercuRefuse,
       ),
       _Etat.horsLigne => etat(
         nature: NatureEtat.horsLigne,

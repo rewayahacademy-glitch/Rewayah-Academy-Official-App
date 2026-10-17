@@ -22,7 +22,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../compte/compte_page.dart';
 
@@ -128,28 +128,14 @@ class _MonEspaceAccessibiliteEtat extends State<MonEspaceAccessibilite> {
             // MA15 : a texte agrandi, l'avatar passe au-dessus du prenom, qui
             // prend toute la largeur (aucun mot coupe).
             child: MediaQuery.textScalerOf(context).scale(1) > seuilTexteEmpile
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      AvatarTile(prenom: widget.prenom),
-                      Ecart.vMd,
-                      Text(
-                        widget.prenom,
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                    ],
+                ? AvatarNom.vertical(
+                    prenom: widget.prenom,
+                    styleNom: Theme.of(context).textTheme.headlineSmall,
                   )
-                : Row(
-                    children: <Widget>[
-                      AvatarTile(prenom: widget.prenom),
-                      Ecart.hXl,
-                      Expanded(
-                        child: Text(
-                          widget.prenom,
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                      ),
-                    ],
+                : AvatarNom.enLigne(
+                    prenom: widget.prenom,
+                    ecart: AppSpacing.xl,
+                    styleNom: Theme.of(context).textTheme.headlineSmall,
                   ),
           ),
           Ecart.vSection,

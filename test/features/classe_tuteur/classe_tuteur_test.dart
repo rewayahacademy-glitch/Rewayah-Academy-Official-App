@@ -402,7 +402,7 @@ void main() {
           t.classe.observation.resume(
             visites: t.classe.observation.visites(nombre: 2),
             duree: LibellesGroupe.insecable(
-              t.classe.observation.minutes(minutes: 2),
+              t.commun.formats.minutes(minutes: 2),
             ),
           ),
         ),
@@ -833,7 +833,7 @@ void main() {
     test('duree d une visite : minutes, secondes, jamais arrondie', () {
       expect(
         dureeVisite(const Duration(seconds: 120)),
-        LibellesGroupe.insecable(t.classe.observation.minutes(minutes: 2)),
+        LibellesGroupe.insecable(t.commun.formats.minutes(minutes: 2)),
       );
       expect(
         dureeVisite(const Duration(seconds: 80)),

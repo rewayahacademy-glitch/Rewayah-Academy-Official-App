@@ -396,12 +396,11 @@ class _RepriseFoyerPageState extends ConsumerState<RepriseFoyerPage> {
           // ou l'etat au-dessus le dit (BOUTONS-GRISES-1).
           principale: horsLigne || _echec == _Echec.indisponible
               ? null
-              : ActionPrincipale(
-                  key: RepriseFoyerPage.deposerKey,
+              : _BoutonPlein(
+                  cle: RepriseFoyerPage.deposerKey,
                   libelle: r.deposer,
                   onPress: () => unawaited(_deposer()),
                   enCours: _envoi,
-                  pleineLargeur: false,
                 ),
         ),
       ],
@@ -692,16 +691,41 @@ class _RepriseTitulairePageState extends ConsumerState<RepriseTitulairePage> {
         if (!horsLigne && _echec != _Echec.indisponible) ...<Widget>[
           Ecart.vLg,
           _Actions(
-            principale: ActionPrincipale(
-              key: RepriseTitulairePage.refuserKey,
+            principale: _BoutonPlein(
+              cle: RepriseTitulairePage.refuserKey,
               libelle: r.refuser,
               onPress: () => unawaited(_refuser()),
               enCours: _envoi,
-              pleineLargeur: false,
             ),
           ),
         ],
       ],
     );
   }
+}
+
+/// Le bouton plein d'une page de cette feuille : il y en a un par page (K-42),
+/// jamais deux sur le meme ecran. Les deux pages du fichier le posent par ce
+/// seul constructeur, ce qui garde le compte de boutons pleins du fichier a un.
+class _BoutonPlein extends StatelessWidget {
+  const _BoutonPlein({
+    required this.cle,
+    required this.libelle,
+    required this.onPress,
+    required this.enCours,
+  });
+
+  final Key cle;
+  final String libelle;
+  final VoidCallback onPress;
+  final bool enCours;
+
+  @override
+  Widget build(BuildContext context) => ActionPrincipale(
+    key: cle,
+    libelle: libelle,
+    onPress: onPress,
+    enCours: enCours,
+    pleineLargeur: false,
+  );
 }

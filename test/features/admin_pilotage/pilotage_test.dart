@@ -334,7 +334,7 @@ void main() {
       expect(banc.pilotage.pagesDemandees, 1);
       final int pages = (lignes.length / 25).ceil();
       expect(
-        find.text(t.admin.pilotage.position(page: '1', total: '$pages')),
+        find.text(t.commun.formats.pageSur(page: '1', total: '$pages')),
         findsOneWidget,
       );
       expect(

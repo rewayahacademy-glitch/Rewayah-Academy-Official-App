@@ -32,6 +32,7 @@ import 'package:rewayah_academy/features/demo/tirage_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/rangee_plus.dart';
 
 Future<void> _monter(
   WidgetTester tester,
@@ -177,7 +178,8 @@ void main() {
     testWidgets('une mission non controlee : son rapport est parti a '
         'l administration (BR-CT-15)', (WidgetTester tester) async {
       await _monter(tester, TirageDemo());
-      await _toucher(tester, _cle('tirage-filtre-nonControlee'));
+      await toucherFiltre(tester, _cle('tirage-filtre-nonControlee'));
+      await _laisser(tester);
       final int attendues = historique
           .where((TirageAudite t) => t.statut == StatutTirage.nonControlee)
           .length;
@@ -442,6 +444,47 @@ void main() {
         find.text(t.admin.tirage.enregistreesVersion(n: 2)),
         findsOneWidget,
       );
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('L4-04 « Autre : 7 » part, une nouvelle version naît', (
+      WidgetTester tester,
+    ) async {
+      final TirageDemo port = TirageDemo();
+      await _monter(tester, port);
+      await saisirAutre(tester, '7');
+      expect(_cle('tirage-nombre-invalide'), findsNothing);
+      await _toucher(tester, _bouton('tirage-enregistrer'));
+      expect(port.reglesCourantes.missionsParSemaine, 7);
+      expect(port.reglesCourantes.version, 2);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('L4-04 « Autre : 51 » est invalide, rien ne part', (
+      WidgetTester tester,
+    ) async {
+      final TirageDemo port = TirageDemo();
+      await _monter(tester, port);
+      await saisirAutre(tester, '51');
+      expect(_cle('tirage-nombre-invalide'), findsOneWidget);
+      await _toucher(tester, _bouton('tirage-enregistrer'));
+      expect(port.clesRecues, isEmpty, reason: 'rien ne part');
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('L4-04 chaque puce de frequence porte sa phrase complete', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, TirageDemo());
+      for (final int n in frequencesProposees) {
+        expect(
+          find.bySemanticsLabel(
+            RegExp('^${RegExp.escape(t.admin.tirage.missionsParSemaine(n: n))}'),
+          ),
+          findsOneWidget,
+          reason: 'phrase complete de la puce $n',
+        );
+      }
       await tester.pumpWidget(const SizedBox());
     });
 

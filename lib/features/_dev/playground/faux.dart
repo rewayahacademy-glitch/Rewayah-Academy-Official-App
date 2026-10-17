@@ -424,7 +424,7 @@ class FauxServicePlanning implements ServicePlanning {
   }
 
   @override
-  Future<List<Seance>> seances() async => seancesRendues;
+  Future<List<Seance>> seances({String? eleveId}) async => seancesRendues;
 
   @override
   Future<List<Affectation>> affectations() async => affectationsRendues;

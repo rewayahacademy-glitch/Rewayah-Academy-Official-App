@@ -10,8 +10,10 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/champ_etiquete.dart';
+import '../../core/widgets/chargement_avec_delais.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -78,61 +80,41 @@ class _ProgrammesPageEtat extends ConsumerState<ProgrammesPage> {
             onPress: () => _ouvrirCreationVersion(context, ref, source: null),
           ),
           Ecart.vXl,
-          switch (versions) {
-            AsyncValue<List<VersionProgramme>>(hasValue: true) =>
-              versions.requireValue.isEmpty
-                  ? EmptyState(
-                      message: t.admin.programmes.aucuneVersion,
-                      invitation: t.admin.programmes.aucuneVersionDetail,
-                      icone: AppIcons.rienAAfficher,
-                      registre: RegistreVide.subi,
-                    )
-                  : PlaceCollection(
-                      child: _Corps(
-                        versions: versions.requireValue,
-                        versionId: _versionId ?? versions.requireValue.first.id,
-                        onSelectionner: (String id) =>
-                            setState(() => _versionId = id),
-                        onCreerDepuis: (VersionProgramme source) =>
-                            _ouvrirCreationVersion(
-                              context,
-                              ref,
-                              source: source,
-                            ),
-                        onAjouterNiveau: (VersionProgramme version) =>
-                            _ouvrirAjoutNiveau(context, ref, version),
-                        onModifierNiveau:
-                            (
-                              VersionProgramme version,
-                              NiveauProgramme niveau,
-                            ) => _ouvrirModifierNiveau(
-                              context,
-                              ref,
-                              version,
-                              niveau,
-                            ),
-                        onSupprimerNiveau:
-                            (
-                              VersionProgramme version,
-                              NiveauProgramme niveau,
-                            ) => _ouvrirSupprimerNiveau(
-                              context,
-                              ref,
-                              version,
-                              niveau,
-                            ),
-                        onPublier: (VersionProgramme version) =>
-                            _ouvrirPublication(context, ref, version),
-                      ),
-                    ),
-            AsyncValue<List<VersionProgramme>>(hasError: true) => EmptyState(
-              message: t.admin.programmes.erreur,
-              icone: AppIcons.avertissement,
-              libelleAction: t.commun.reessayer,
-              onAction: () => ref.invalidate(versionsProgrammeProvider),
+          PlaceCollection(
+            child: BlocAsynchrone<List<VersionProgramme>>(
+              valeur: versions,
+              squelette: const SqueletteDansZone(
+                child: Skeleton.liste(lignes: 5),
+              ),
+              titreEchec: t.admin.programmes.erreur,
+              onReessayer: () => ref.invalidate(versionsProgrammeProvider),
+              vide: EmptyState(
+                message: t.admin.programmes.aucuneVersion,
+                invitation: t.admin.programmes.aucuneVersionDetail,
+                icone: AppIcons.rienAAfficher,
+                registre: RegistreVide.subi,
+              ),
+              construire: (List<VersionProgramme> v) => _Corps(
+                versions: v,
+                versionId: _versionId ?? v.first.id,
+                onSelectionner: (String id) => setState(() => _versionId = id),
+                onCreerDepuis: (VersionProgramme source) =>
+                    _ouvrirCreationVersion(context, ref, source: source),
+                onAjouterNiveau: (VersionProgramme version) =>
+                    _ouvrirAjoutNiveau(context, ref, version),
+                onModifierNiveau: (
+                  VersionProgramme version,
+                  NiveauProgramme niveau,
+                ) => _ouvrirModifierNiveau(context, ref, version, niveau),
+                onSupprimerNiveau: (
+                  VersionProgramme version,
+                  NiveauProgramme niveau,
+                ) => _ouvrirSupprimerNiveau(context, ref, version, niveau),
+                onPublier: (VersionProgramme version) =>
+                    _ouvrirPublication(context, ref, version),
+              ),
             ),
-            _ => const Skeleton.liste(lignes: 5),
-          },
+          ),
         ],
       ),
     );
@@ -356,86 +338,81 @@ class _Niveaux extends ConsumerWidget {
       niveauxProgrammeProvider(version.id),
     );
 
-    return switch (niveaux) {
-      AsyncValue<List<NiveauProgramme>>(hasValue: true) =>
-        niveaux.requireValue.isEmpty
-            ? EmptyState(
-                message: t.admin.programmes.niveauAucun,
-                invitation: t.admin.programmes.niveauAucunDetail,
-                icone: AppIcons.rienAAfficher,
-                registre: RegistreVide.subi,
-              )
-            : DataCollection<NiveauProgramme>(
-                defileAvecLaPage: !DataCollection.enTableau(context),
-                lignes: niveaux.requireValue,
-                cle: (NiveauProgramme n) => ValueKey<String>(n.id),
-                colonnes: <ColonneDonnees<NiveauProgramme>>[
-                  ColonneDonnees<NiveauProgramme>(
-                    titre: t.admin.programmes.titre,
-                    role: RoleColonne.identifiante,
-                    flex: 2,
-                    texte: (NiveauProgramme n) => n.nomHumain,
-                    rendu: (BuildContext context, NiveauProgramme n) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          n.nomHumain,
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                        Text(
-                          t.admin.programmes.codeTechnique(
-                            code: n.codeTechnique,
-                          ),
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
+    return BlocAsynchrone<List<NiveauProgramme>>(
+      valeur: niveaux,
+      squelette: const SqueletteDansZone(child: Skeleton.liste(lignes: 4)),
+      titreEchec: t.admin.programmes.erreur,
+      onReessayer: () => ref.invalidate(niveauxProgrammeProvider(version.id)),
+      vide: EmptyState(
+        message: t.admin.programmes.niveauAucun,
+        invitation: t.admin.programmes.niveauAucunDetail,
+        icone: AppIcons.rienAAfficher,
+        registre: RegistreVide.subi,
+      ),
+      construire: (List<NiveauProgramme> v) => ZoneEtiree(
+        child: DataCollection<NiveauProgramme>(
+          defileAvecLaPage: !DataCollection.enTableau(context),
+          lignes: v,
+          cle: (NiveauProgramme n) => ValueKey<String>(n.id),
+          colonnes: <ColonneDonnees<NiveauProgramme>>[
+            ColonneDonnees<NiveauProgramme>(
+              titre: t.admin.programmes.titre,
+              role: RoleColonne.identifiante,
+              flex: 2,
+              texte: (NiveauProgramme n) => n.nomHumain,
+              rendu: (BuildContext context, NiveauProgramme n) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    n.nomHumain,
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
-                  ColonneDonnees<NiveauProgramme>(
-                    titre: t.admin.programmes.champCycle,
-                    texte: (NiveauProgramme n) => n.cycle,
+                  Text(
+                    t.admin.programmes.codeTechnique(code: n.codeTechnique),
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
-                  ColonneDonnees<NiveauProgramme>(
-                    titre: t.admin.programmes.champOrdre,
-                    tabulaire: true,
-                    texte: (NiveauProgramme n) => '${n.ordre}',
-                  ),
-                  if (version.modifiable)
-                    ColonneDonnees<NiveauProgramme>(
-                      titre: '',
-                      role: RoleColonne.aPart,
-                      flex: 0,
-                      // Vide a dessein, meme convention que
-                      // `admin_groupes/groupes_page.dart` : un menu d'actions
-                      // n'a rien a dire en texte.
-                      texte: (NiveauProgramme _) => '',
-                      rendreMemeSiTexteVide: true,
-                      rendu: (BuildContext _, NiveauProgramme n) => MenuActions(
-                        tooltip: n.nomHumain,
-                        actions: <EntreeAction>[
-                          EntreeAction(
-                            libelle: t.admin.programmes.modifierNiveau,
-                            onChoix: () => onModifier(n),
-                          ),
-                          EntreeAction(
-                            libelle: t.admin.programmes.supprimerNiveau,
-                            destructif: true,
-                            onChoix: () => onSupprimer(n),
-                          ),
-                        ],
-                      ),
-                    ),
                 ],
               ),
-      AsyncValue<List<NiveauProgramme>>(hasError: true) => EmptyState(
-        message: t.admin.programmes.erreur,
-        icone: AppIcons.avertissement,
-        libelleAction: t.commun.reessayer,
-        onAction: () => ref.invalidate(niveauxProgrammeProvider(version.id)),
+            ),
+            ColonneDonnees<NiveauProgramme>(
+              titre: t.admin.programmes.champCycle,
+              texte: (NiveauProgramme n) => n.cycle,
+            ),
+            ColonneDonnees<NiveauProgramme>(
+              titre: t.admin.programmes.champOrdre,
+              tabulaire: true,
+              texte: (NiveauProgramme n) => '${n.ordre}',
+            ),
+            if (version.modifiable)
+              ColonneDonnees<NiveauProgramme>(
+                titre: '',
+                role: RoleColonne.aPart,
+                flex: 0,
+                // Vide a dessein, meme convention que
+                // `admin_groupes/groupes_page.dart` : un menu d'actions
+                // n'a rien a dire en texte.
+                texte: (NiveauProgramme _) => '',
+                rendreMemeSiTexteVide: true,
+                rendu: (BuildContext _, NiveauProgramme n) => MenuActions(
+                  tooltip: n.nomHumain,
+                  actions: <EntreeAction>[
+                    EntreeAction(
+                      libelle: t.admin.programmes.modifierNiveau,
+                      onChoix: () => onModifier(n),
+                    ),
+                    EntreeAction(
+                      libelle: t.admin.programmes.supprimerNiveau,
+                      destructif: true,
+                      onChoix: () => onSupprimer(n),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
-      _ => const Skeleton.liste(lignes: 4),
-    };
+    );
   }
 }
 

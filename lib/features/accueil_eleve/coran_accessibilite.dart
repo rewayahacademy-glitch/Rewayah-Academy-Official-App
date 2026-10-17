@@ -497,7 +497,7 @@ class _LecteurCoranAccessibiliteEtat
           key: LecteurCoranAccessibilite.enteteKey,
           titre: <String>[
             sourate?.nomTranslittere ?? t.eleve.coran.titre,
-            t.eleve.coran.page(
+            t.commun.formats.pageSur(
               page: '${vue?.numero ?? etat.page}',
               total: '${vue?.nombrePages ?? pagesMushafMedine}',
             ),

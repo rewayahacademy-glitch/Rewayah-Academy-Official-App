@@ -37,6 +37,7 @@ import '../../../core/router/routes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/bandeau_attention.dart';
+import '../../../core/widgets/chargement_avec_delais.dart';
 import '../../../core/widgets/data_collection.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/etat_systeme.dart';
@@ -268,7 +269,10 @@ class _CatalogueEtat extends ConsumerState<_Catalogue> {
     final c = a.catalogue;
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     if (_chargement && _lignes.isEmpty) {
-      return const Skeleton.liste(lignes: 6);
+      return ChargementAvecDelais(
+        squelette: const Skeleton.liste(lignes: 6),
+        onReessayer: () => unawaited(_charger()),
+      );
     }
     final Object? erreur = _erreur;
     if (erreur != null) {

@@ -368,8 +368,11 @@ begin
     pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Haut', 100), c_age);
   perform pg_temp.f86_attendu('age absent',
     pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Absent', null), c_age);
-  perform pg_temp.f86_attendu('age 3 accepte',
-    pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Min', 3), c_ok);
+  -- L2-08 (decision du 13/10) : l'age minimum est 6 ans, 3 n'est plus accepte.
+  perform pg_temp.f86_attendu('age 3 refuse (minimum 6 ans)',
+    pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Min', 3), 'âge minimum 6 ans');
+  perform pg_temp.f86_attendu('age 6 accepte',
+    pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Min', 6), c_ok);
   perform pg_temp.f86_attendu('age 99 accepte',
     pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Max', 99), c_ok);
 

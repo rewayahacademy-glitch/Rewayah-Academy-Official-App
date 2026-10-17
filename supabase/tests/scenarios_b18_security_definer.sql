@@ -38,8 +38,9 @@ begin
   begin
     perform public.creer_groupe(null::uuid, null::text, null::text, null::smallint, null::smallint, null::smallint);
     raise exception 'B-18: short creer_groupe overload accepted missing claims';
-  exception when raise_exception then
-    if sqlerrm <> 'creation de groupe reservee a l''administration' then raise; end if;
+  exception when insufficient_privilege then
+    -- L3-06 : surcharge courte retiree (revoke), refus 42501 avant tout corps.
+    null;
   end;
   begin
     perform public.modifier_groupe(null::uuid, null::text, null::smallint, null::smallint, null::smallint, null::text, null::smallint);
@@ -50,8 +51,9 @@ begin
   begin
     perform public.modifier_groupe(null::uuid, null::text, null::smallint, null::smallint, null::smallint);
     raise exception 'B-18: short modifier_groupe overload accepted missing claims';
-  exception when raise_exception then
-    if sqlerrm <> 'modification de groupe reservee a l''administration' then raise; end if;
+  exception when insufficient_privilege then
+    -- L3-06 : surcharge courte retiree (revoke), refus 42501 avant tout corps.
+    null;
   end;
   begin
     perform 1 from public.read_kyc_documents();

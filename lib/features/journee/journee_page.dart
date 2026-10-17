@@ -44,13 +44,15 @@ import '../../core/controle/service_controle.dart' show graceApresFin;
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/enseignant/cta_seance.dart';
-import '../../core/enseignant/depot_cahiers.dart' show cahiersEnFileProvider;
+import '../../core/enseignant/depot_cahiers.dart'
+    show cahiersEnFileProvider, soumissionCahierProvider;
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/port_remplacements.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/observabilite/journal_dev.dart';
 import '../../core/planning/journee.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
@@ -77,6 +79,7 @@ import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
+import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/point_rappel.dart';
@@ -109,12 +112,63 @@ final Provider<DateTime Function()> maintenantJourneeProvider =
     Provider<DateTime Function()>((Ref _) => DateTime.now);
 
 /// `ENS-02`, la racine du role Enseignant.
-class JourneePage extends ConsumerWidget {
+///
+/// **La file des cahiers se rejoue ici** (L2-03) : une fois a l'ouverture,
+/// apres le premier rendu, puis a chaque retour du reseau (hors ligne vers en
+/// ligne). Un cahier qui reste en file n'est pas une erreur pour l'enseignant.
+class JourneePage extends ConsumerStatefulWidget {
   /// Cree l'ecran de la journee.
   const JourneePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<JourneePage> createState() => _JourneePageEtat();
+}
+
+class _JourneePageEtat extends ConsumerState<JourneePage> {
+  ProviderSubscription<AsyncValue<bool>>? _reseau;
+
+  /// Le retour local de la file rejouee (L2-03), `null` quand rien n'a ete envoye.
+  String? _retour;
+
+  @override
+  void initState() {
+    super.initState();
+    _reseau = ref.listenManual<AsyncValue<bool>>(horsLigneProvider, (
+      AsyncValue<bool>? avant,
+      AsyncValue<bool> apres,
+    ) {
+      if ((avant?.value ?? false) && apres.value == false) {
+        _rejouerCahiers();
+      }
+    });
+    // Apres le premier rendu : l'ecran s'affiche sans attendre la file.
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted) {
+        _rejouerCahiers();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _reseau?.close();
+    super.dispose();
+  }
+
+  Future<void> _rejouerCahiers() async {
+    try {
+      final int n = await ref.read(soumissionCahierProvider).rejouer();
+      if (n > 0 && mounted) {
+        setState(() => _retour = t.enseignant.journee.cahiersEnvoyes(n: n));
+      }
+    } on Object catch (erreur) {
+      // La file garde le cahier : rien ne s'affiche, l'ecran reste intact.
+      journalDev('rejeu des cahiers differe : $erreur');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final DateTime Function() lire = ref.watch(maintenantJourneeProvider);
     // Un seul `PageShell`, quel que soit l'etat : le titre ne disparait pas
     // pendant une charge, et le bandeau hors ligne du shell coiffe la page.
@@ -123,7 +177,13 @@ class JourneePage extends ConsumerWidget {
       constructeur: (DateTime maintenant) => PageShell(
         titre: t.enseignant.journee.titre,
         sousTitre: dateLisible(maintenant),
-        child: _Corps(maintenant: maintenant),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            LocalFeedback(message: _retour),
+            _Corps(maintenant: maintenant),
+          ],
+        ),
       ),
     );
   }

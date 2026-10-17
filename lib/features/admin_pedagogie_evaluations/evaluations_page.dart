@@ -15,8 +15,10 @@ import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/champ_date.dart';
 import '../../core/widgets/champ_etiquete.dart';
+import '../../core/widgets/chargement_avec_delais.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -76,27 +78,25 @@ class _EvaluationsPageEtat extends ConsumerState<EvaluationsPage> {
             onPress: () => _ouvrirPlanification(context, ref),
           ),
           Ecart.vXl,
-          switch (evaluations) {
-            AsyncValue<List<EvaluationAdmin>>(hasValue: true) =>
-              PlaceCollection(
-                child: _Corps(
-                  evaluations: evaluations.requireValue,
-                  filtre: _filtre,
-                  onFiltre: (_Filtre f) => setState(() => _filtre = f),
-                  onEnregistrerResultat: (EvaluationAdmin e) =>
-                      _ouvrirResultat(context, ref, e),
-                  onAnnuler: (EvaluationAdmin e) =>
-                      _ouvrirAnnulation(context, ref, e),
-                ),
+          PlaceCollection(
+            child: BlocAsynchrone<List<EvaluationAdmin>>(
+              valeur: evaluations,
+              squelette: const SqueletteDansZone(
+                child: Skeleton.liste(lignes: 5),
               ),
-            AsyncValue<List<EvaluationAdmin>>(hasError: true) => EmptyState(
-              message: t.admin.evaluations.erreur,
-              icone: AppIcons.avertissement,
-              libelleAction: t.commun.reessayer,
-              onAction: () => ref.invalidate(evaluationsProvider),
+              titreEchec: t.admin.evaluations.erreur,
+              onReessayer: () => ref.invalidate(evaluationsProvider),
+              construire: (List<EvaluationAdmin> v) => _Corps(
+                evaluations: v,
+                filtre: _filtre,
+                onFiltre: (_Filtre f) => setState(() => _filtre = f),
+                onEnregistrerResultat: (EvaluationAdmin e) =>
+                    _ouvrirResultat(context, ref, e),
+                onAnnuler: (EvaluationAdmin e) =>
+                    _ouvrirAnnulation(context, ref, e),
+              ),
             ),
-            _ => const Skeleton.liste(lignes: 5),
-          },
+          ),
         ],
       ),
     );

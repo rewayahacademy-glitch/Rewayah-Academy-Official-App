@@ -41,6 +41,7 @@ class AppCard extends StatelessWidget {
     this.actions,
     this.focusNode,
     this.lien = false,
+    this.largeurMax,
   });
 
   /// Le contenu de la carte.
@@ -87,8 +88,28 @@ class AppCard extends StatelessWidget {
   /// comme lien (`Semantics.link`) et non comme bouton, comme [Pressable.lien].
   final bool lien;
 
+  /// La largeur maximale de la carte, posee au debut de la ligne (L4-07) :
+  /// une carte de 229 de contenu ne s'etire pas sur 1046 sur bureau. `null` :
+  /// la carte prend la largeur qu'on lui offre. Les [actions] se posent a leur
+  /// largeur, en fin de carte, sans etirer leur cible.
+  final double? largeurMax;
+
   @override
   Widget build(BuildContext context) {
+    final Widget carte = _construire(context);
+    final double? borne = largeurMax;
+    if (borne == null) return carte;
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      heightFactor: 1,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: borne),
+        child: carte,
+      ),
+    );
+  }
+
+  Widget _construire(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
     final AppColorPair paire = selectionnee
@@ -170,7 +191,15 @@ class AppCard extends StatelessWidget {
                   children: <Widget>[
                     if (entete != null) ...<Widget>[entete!, Ecart.vLg],
                     child,
-                    if (actions != null) ...<Widget>[Ecart.vLg, actions!],
+                    if (actions != null) ...<Widget>[
+                      Ecart.vLg,
+                      // Les actions gardent leur largeur, en fin de carte : une
+                      // cible de lien ne s'etire pas sur toute la carte (L4-07).
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: actions!,
+                      ),
+                    ],
                   ],
                 ),
         ),

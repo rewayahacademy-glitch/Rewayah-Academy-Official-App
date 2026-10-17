@@ -186,8 +186,8 @@ class _FeuillePaysEtat extends State<FeuillePays> {
           ),
         ],
         Ecart.vXl,
-        ActionPrincipale(
-          key: FeuillePays.enregistrerKey,
+        _BoutonEnregistrer(
+          cle: FeuillePays.enregistrerKey,
           libelle: s.enregistrer,
           onPress: _enregistrer,
         ),
@@ -323,12 +323,30 @@ class _FeuilleLanguesEtat extends ConsumerState<FeuilleLangues> {
         ],
         Ecart.vXl,
         if (publiees.hasValue)
-          ActionPrincipale(
-            key: FeuilleLangues.enregistrerKey,
+          _BoutonEnregistrer(
+            cle: FeuilleLangues.enregistrerKey,
             libelle: s.enregistrer,
             onPress: _enregistrer,
           ),
       ],
     );
   }
+}
+
+/// Le bouton plein d'une feuille : une feuille n'en porte qu'un (K-42). Les deux
+/// feuilles du fichier le posent par ce seul constructeur.
+class _BoutonEnregistrer extends StatelessWidget {
+  const _BoutonEnregistrer({
+    required this.cle,
+    required this.libelle,
+    required this.onPress,
+  });
+
+  final Key cle;
+  final String libelle;
+  final VoidCallback onPress;
+
+  @override
+  Widget build(BuildContext context) =>
+      ActionPrincipale(key: cle, libelle: libelle, onPress: onPress);
 }

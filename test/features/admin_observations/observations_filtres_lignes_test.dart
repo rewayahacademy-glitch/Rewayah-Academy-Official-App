@@ -30,6 +30,7 @@ import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show stabiliser;
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/harnais.dart' show FauxServiceReseau;
+import '../../support/rangee_plus.dart';
 import '../../support/sens_et_echelle.dart';
 import 'support_admin_observations.dart';
 
@@ -162,18 +163,26 @@ void main() {
             await stabiliser(tester);
             await tester.tap(find.byKey(ValueKey<String>(cle)));
             await stabiliser(tester);
-            final Rect puce = tester.getRect(
-              find.ancestor(
-                of: find.text(libelle),
-                matching: find.byType(FilterPill),
-              ),
+            final Finder pilule = find.ancestor(
+              of: find.text(libelle),
+              matching: find.byType(FilterPill),
             );
-            expect(
-              puce.left >= rangee.left - 0.5 &&
-                  puce.right <= rangee.right + 0.5,
-              isTrue,
-              reason: '« $libelle » hors de la rangee : $puce dans $rangee',
-            );
+            if (puceDansLaRangee(pilule)) {
+              final Rect puce = tester.getRect(pilule.hitTestable().first);
+              expect(
+                puce.left >= rangee.left - 0.5 &&
+                    puce.right <= rangee.right + 0.5,
+                isTrue,
+                reason: '« $libelle » hors de la rangee : $puce dans $rangee',
+              );
+            } else {
+              // L4-07 : la personne retenue est rangee sous « Plus », qui le
+              // dit ; la feuille la montre entiere.
+              expect(puceFiltresPlus(), findsOneWidget);
+              await ouvrirPlus(tester);
+              expect(pilule.hitTestable(), findsOneWidget, reason: libelle);
+              await fermerPlus(tester);
+            }
           }
           expect(tester.takeException(), isNull);
         });

@@ -19,6 +19,14 @@ import 'offline_banner.dart';
 /// le corps (vue tres basse, zoom 400 %) au lieu de rester fixe.
 const double _hauteurTeteFixe = 360;
 
+/// Hauteur de fenetre sous laquelle la tete d'une page defilante defile avec
+/// le corps (L4-07) : sur un portable (1366 x 650, 768 de haut), 96 a 388 px
+/// de tete figee mangeaient 15 a 60 % de la fenetre. Au-dela, la tete reste
+/// fixe. Meme seuil que [EnteteCompact.hauteurSeuil]. Ni sur telephone (la
+/// tete y defile deja a texte agrandi) ni sous le bandeau fige de la coquille
+/// d'administration (PAGESHELL-200-1e).
+const double _hauteurVueBasse = EnteteCompact.hauteurSeuil;
+
 /// Le gabarit de page du produit. **Tout ecran passe par lui.**
 ///
 /// Ce qu'il tient, et qu'aucun ecran ne refait
@@ -326,6 +334,11 @@ class PageShell extends StatelessWidget {
                 child: _Bascule(
                   teteDefilante: (double hauteur) =>
                       teteDefile ||
+                      (defilante &&
+                          !sousBandeau &&
+                          gabarit != Gabarit.mobile &&
+                          MediaQuery.sizeOf(context).height <
+                              _hauteurVueBasse) ||
                       (sousBandeau
                               ? MediaQuery.sizeOf(context).height
                               : hauteur +

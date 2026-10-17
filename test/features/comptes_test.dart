@@ -13,6 +13,7 @@ import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 
 import '../router/support_routeur.dart';
 import '../support/harnais.dart';
+import '../support/rangee_plus.dart';
 
 /// Le defaut que cet ecran repare, mesure en production le 18 septembre 2026 :
 /// trois enseignants inscrits attendaient depuis sept jours, contrats signes,
@@ -62,6 +63,11 @@ CompteAdmin _compte({
   aEnseignant: false,
   enfantsDuFoyer: 0,
 );
+
+/// La puce « Plus » de la rangee de filtres (L4-07), qui n'est pas un filtre.
+bool _estPlus(FilterPill p) =>
+    p.key is ValueKey<String> &&
+    (p.key! as ValueKey<String>).value.startsWith('rangee-filtres-plus-');
 
 void main() {
   Future<void> monter(
@@ -381,8 +387,7 @@ void main() {
     expect(find.text('2 personnes attendent une décision.'), findsOneWidget);
 
     // Retenue, la pastille montre exactement ces deux enseignants.
-    await tester.tap(pastille);
-    await tester.pumpAndSettle();
+    await toucherFiltre(tester, pastille);
     expect(
       find.textContaining(identifiantInsecable('TEACHER-AS-000001')),
       findsWidgets,
@@ -436,6 +441,7 @@ void main() {
     expect(tester.takeException(), isNull);
     final List<FilterPill> pastilles = tester
         .widgetList<FilterPill>(find.byType(FilterPill))
+        .where((FilterPill p) => !_estPlus(p))
         .toList();
     final FilterPill tous = pastilles.firstWhere(
       (FilterPill p) => p.libelle == 'Tous',
@@ -452,8 +458,7 @@ void main() {
     expect(sansDecision.compteur, 2);
 
     // Retenue, « Sans décision » montre les deux tuteurs, avec ce badge.
-    await tester.tap(find.byWidget(sansDecision));
-    await tester.pumpAndSettle();
+    await toucherFiltre(tester, find.byWidget(sansDecision));
     expect(
       find.textContaining(identifiantInsecable('GUARDIAN-MS-000003')),
       findsWidgets,
@@ -546,8 +551,7 @@ void main() {
     );
 
     // « En attente » ne contient qu'un enseignant.
-    await tester.tap(find.text('En attente'));
-    await tester.pumpAndSettle();
+    await toucherFiltre(tester, find.text('En attente'));
     expect(
       find.textContaining(identifiantInsecable('TEACHER-AS-000001')),
       findsWidgets,
@@ -555,10 +559,10 @@ void main() {
 
     // Croise avec le role tuteur, il ne reste rien. Le menu se cible par son
     // type : « Rôle » nomme aussi une colonne du tableau.
-    await tester.tap(find.byType(MenuFiltre<AppRole>));
-    await tester.pumpAndSettle();
+    await ouvrirMenuFiltre(tester, find.byType(MenuFiltre<AppRole>));
     await tester.tap(find.text('Tuteur').last);
     await tester.pumpAndSettle();
+    await fermerPlus(tester);
 
     expect(tester.takeException(), isNull);
     expect(find.text('Aucun compte avec ce filtre'), findsOneWidget);
@@ -620,11 +624,9 @@ void main() {
         const ValueKey<String>('comptes-filtre-echus'),
       );
       expect(filtre, findsOneWidget);
-      await tester.tap(filtre);
-      await tester.pumpAndSettle();
+      await toucherFiltre(tester, filtre);
       expect(find.textContaining('Encore'), findsWidgets);
-      await tester.tap(filtre);
-      await tester.pumpAndSettle();
+      await toucherFiltre(tester, filtre);
       expect(find.textContaining('Encore'), findsNothing);
     });
 
@@ -636,12 +638,11 @@ void main() {
       await monter(tester, _FauxServiceComptes(jeu()), echusSeulement: true);
       List<String> retenues() => tester
           .widgetList<FilterPill>(find.byType(FilterPill))
-          .where((FilterPill p) => p.retenue)
+          .where((FilterPill p) => p.retenue && !_estPlus(p))
           .map((FilterPill p) => p.libelle)
           .toList();
       expect(retenues(), <String>['Accès échus']);
-      await tester.tap(find.widgetWithText(FilterPill, 'Tous'));
-      await tester.pumpAndSettle();
+      await toucherFiltre(tester, find.widgetWithText(FilterPill, 'Tous'));
       expect(retenues(), <String>['Tous']);
       expect(find.textContaining('Encore'), findsWidgets);
     });
@@ -696,16 +697,13 @@ void main() {
       final Finder filtre = find.byKey(
         const ValueKey<String>('comptes-filtre-echus'),
       );
-      await tester.tap(filtre);
-      await tester.pumpAndSettle();
+      await toucherFiltre(tester, filtre);
       expect(adresse(), '/c');
       expect(find.textContaining('Encore'), findsWidgets);
-      await tester.tap(filtre);
-      await tester.pumpAndSettle();
+      await toucherFiltre(tester, filtre);
       expect(adresse(), '/c?filtre=echus');
       expect(find.textContaining('Encore'), findsNothing);
-      await tester.tap(find.widgetWithText(FilterPill, 'Tous'));
-      await tester.pumpAndSettle();
+      await toucherFiltre(tester, find.widgetWithText(FilterPill, 'Tous'));
       expect(adresse(), '/c');
     });
 

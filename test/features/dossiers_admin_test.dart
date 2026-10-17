@@ -14,7 +14,7 @@ import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show StorageException;
+import 'package:supabase_flutter/supabase_flutter.dart' show FunctionException;
 
 import '../support/dossiers_production.dart';
 import '../support/harnais.dart';
@@ -384,7 +384,7 @@ void main() {
       await _taper(tester, t.dossiers.revue.voirPiece);
       await _attendrePiecePeinte(tester);
       expect(find.byType(VisionneusePiece), findsOneWidget);
-      expect(service.apercus, <String>['p1/piece.webp']);
+      expect(service.apercus, <String>['doc1']);
       expect(find.textContaining('http'), findsNothing);
       expect(find.textContaining('piece.webp'), findsNothing);
 
@@ -448,10 +448,10 @@ void main() {
         tester,
         FauxServiceValidation()
           ..file = <DossierAValider>[_dossier()]
-          ..erreurApercu = const StorageException('Erreur', statusCode: '500'),
+          ..erreurApercu = const FunctionException(status: 500),
       );
       await _taper(tester, t.dossiers.revue.voirPiece);
-      expect(service.apercus, <String>['p1/piece.webp']);
+      expect(service.apercus, <String>['doc1']);
       expect(find.text(t.dossiers.revue.pieceIndisponible), findsOneWidget);
       await tester.tap(
         find.descendant(
@@ -470,13 +470,10 @@ void main() {
         tester,
         FauxServiceValidation()
           ..file = <DossierAValider>[_dossier()]
-          ..erreurApercu = const StorageException(
-            'Object not found',
-            statusCode: '404',
-          ),
+          ..erreurApercu = const FunctionException(status: 404),
       );
       await _taper(tester, t.dossiers.revue.voirPiece);
-      expect(service.apercus, <String>['p1/piece.webp']);
+      expect(service.apercus, <String>['doc1']);
       expect(find.text(t.dossiers.visionneuse.erreur), findsOneWidget);
       await tester.tap(
         find.descendant(

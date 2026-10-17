@@ -141,7 +141,7 @@ class PlaceConjointPage extends StatelessWidget {
       corps: Row(
         children: <Widget>[
           // Le second adulte : ses initiales, jamais sa photo (Q4).
-          AvatarTile(prenom: prenom, diametre: AppSpacing.section),
+          AvatarTile(prenom: prenom, diametre: AppAvatar.moyen),
           const SizedBox(width: AppSpacing.md),
           // Libelle provisoire, lexique D4.
           Expanded(

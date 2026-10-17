@@ -194,7 +194,7 @@ void main() {
     FlutterMemoryAllocations.instance.addListener(suivre);
     addTearDown(() => FlutterMemoryAllocations.instance.removeListener(suivre));
     tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(320, 420);
+    tester.view.physicalSize = const Size(320, 900);
     addTearDown(tester.view.reset);
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     tester.platformDispatcher.textScaleFactorTestValue = 1.3;
@@ -206,9 +206,10 @@ void main() {
     final int avantBascules = crees;
     tester.view.physicalSize = const Size(320, 300);
     await tester.pumpAndSettle();
-    tester.view.physicalSize = const Size(320, 420);
+    tester.view.physicalSize = const Size(320, 900);
     await tester.pumpAndSettle();
-    // Deux bascules : deux nouveaux defileurs, les anciens deja liberes.
+    // Deux bascules (tete fixe a 900, qui defile a 300, sous le seuil de 800 de
+    // la tete defilante) : deux nouveaux defileurs, les anciens deja liberes.
     expect(crees - avantBascules, greaterThanOrEqualTo(2));
 
     await tester.pumpWidget(const SizedBox());

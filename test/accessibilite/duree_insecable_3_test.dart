@@ -62,7 +62,7 @@ void main() {
           'presence.attenteMinutes',
           'tc.classe.rappel.cooldown',
           'tc.observation.reglages.uniteSecondes',
-          'tuteur.reglages.demandeMinutes',
+          'commun.formats.minutes',
           'admin.regles.uniteMinutes',
           'consentement.comment.visites',
         ]),
