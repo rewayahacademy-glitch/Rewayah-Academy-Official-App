@@ -33,6 +33,17 @@ GoRouterPageBuilder glissee(Widget Function(GoRouterState etat) ecran) =>
     (BuildContext context, GoRouterState etat) =>
         pageGlissee(context, etat, ecran(etat));
 
+/// Part de la transition pendant laquelle la page recouverte s'efface,
+/// avant que la nouvelle n'apparaisse (fondu en passage, LG-FLASH).
+const double partEffacement = 0.3;
+
+/// LG-FLASH : un fondu **en passage**, jamais un fondu enchaine. Avant, la
+/// nouvelle page apparaissait par transparence au-dessus de l'ancienne : les
+/// deux textes se superposaient le temps de la transition, « un autre
+/// contenu qui s'affiche d'un coup et disparait ». Desormais la page
+/// recouverte s'efface d'abord (animation secondaire, debut de la courbe),
+/// puis la nouvelle apparait (fin de la courbe) ; au retour, l'inverse. Entre
+/// les deux, le fond opaque du theme pose par `RewayahApp`.
 Widget _glisseEtFondu(
   BuildContext context,
   Animation<double> animation,
@@ -44,18 +55,32 @@ Widget _glisseEtFondu(
     curve: Mouvement.accentuee,
     reverseCurve: Mouvement.sortie,
   );
+  final CurvedAnimation apparition = CurvedAnimation(
+    parent: animation,
+    curve: const Interval(partEffacement, 1, curve: Mouvement.accentuee),
+    reverseCurve: const Interval(partEffacement, 1, curve: Mouvement.sortie),
+  );
+  final Animation<double> effacement = ReverseAnimation(
+    CurvedAnimation(
+      parent: secondaire,
+      curve: const Interval(0, partEffacement),
+    ),
+  );
   final double dx = Directionality.of(context) == TextDirection.rtl
       ? -0.06
       : 0.06;
   return RepaintBoundary(
     child: FadeTransition(
-      opacity: courbe,
-      child: SlideTransition(
-        position: Tween<Offset>(
-          begin: Offset(dx, 0),
-          end: Offset.zero,
-        ).animate(courbe),
-        child: child,
+      opacity: effacement,
+      child: FadeTransition(
+        opacity: apparition,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: Offset(dx, 0),
+            end: Offset.zero,
+          ).animate(courbe),
+          child: child,
+        ),
       ),
     ),
   );

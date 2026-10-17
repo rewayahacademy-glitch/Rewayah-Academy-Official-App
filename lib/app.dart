@@ -10,6 +10,7 @@ import 'core/preferences/preferences_locales.dart';
 import 'core/router/app_router.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/session_state.dart';
+import 'core/theme/app_palette.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/bandeau_observation.dart';
 
@@ -80,15 +81,29 @@ class RewayahApp extends ConsumerWidget {
             ? child
             : builder!(context, child);
         final Observation? observation = session.observation;
+        // LG-FLASH : un fond opaque, celui du theme, sous TOUTES les routes.
+        // Sans lui, une frame ou le contenu n'est pas encore opaque (fondu
+        // d'onglet, page qui entre) laissait la toile transparente, et le
+        // navigateur montrait le fond creme de `web/index.html` : un flash
+        // clair a chaque changement d'ecran en mode sombre.
+        final Color fond = AppPalette.of(context).surfaceCanvas.background;
         if (observation == null) {
-          return ReglageMouvement(child: rendu ?? const SizedBox.shrink());
+          return ReglageMouvement(
+            child: ColoredBox(
+              color: fond,
+              child: rendu ?? const SizedBox.shrink(),
+            ),
+          );
         }
         return ReglageMouvement(
-          child: Column(
-            children: <Widget>[
-              BandeauObservation(observation: observation),
-              Expanded(child: rendu ?? const SizedBox.shrink()),
-            ],
+          child: ColoredBox(
+            color: fond,
+            child: Column(
+              children: <Widget>[
+                BandeauObservation(observation: observation),
+                Expanded(child: rendu ?? const SizedBox.shrink()),
+              ],
+            ),
           ),
         );
       },
