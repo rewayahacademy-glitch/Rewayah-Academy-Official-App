@@ -237,7 +237,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(h.provisoire), findsNothing);
     expect(find.byKey(ComplementRapportPage.bandeauKey), findsOneWidget);
-    await tester.tap(find.text(t.commun.retour).last);
+    await tester.tap(find.byType(DisqueRetour).last);
     await tester.pumpAndSettle();
     expect(find.text(h.sectionMission), findsOneWidget);
 
@@ -530,7 +530,7 @@ void main() {
     expect(find.text('Texte à garder.'), findsOneWidget);
     expect(find.text(t.commun.reessayer), findsOneWidget);
     // Retour au texte : la saisie est intacte.
-    await tester.tap(find.text(t.commun.retour).last);
+    await tester.tap(find.byType(DisqueRetour).last);
     await tester.pumpAndSettle();
     expect(find.text('Texte à garder.'), findsOneWidget);
   });
