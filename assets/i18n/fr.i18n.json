@@ -3554,6 +3554,26 @@
         "refusInvalide": "Le montant, la devise ou l'élève n'a pas été accepté. Rien n'a été enregistré\u00a0: vérifiez le montant et réessayez depuis la liste.",
         "inconnuTitre": "Paiement non confirmé",
         "inconnuPhrase": "La réponse n'est pas arrivée. Touchez «\u00a0Réessayer\u00a0»\u00a0: le même paiement ne sera jamais compté deux fois."
+      },
+      "fac": {
+        "factures": "Factures du mois",
+        "ligne": "Factures {deMois}",
+        "moisCourant": "Le mois en cours.",
+        "moisSuivant": "Le mois prochain, à émettre avant son début.",
+        "emettre": "Émettre",
+        "emettreMois": "Émettre les factures {deMois}",
+        "explication": "Chaque élève inscrit reçoit sa facture du mois, au prix publié en vigueur, avec la réduction famille. Les crédits déjà reçus règlent aussitôt les mois qu'ils couvrent. Une facture déjà émise ne l'est jamais une seconde fois.",
+        "faitTitre": "Émission terminée",
+        "faitPhrase": "Les familles voient leur facture et ce qu'il leur reste à payer.",
+        "dejaEmises": "Toutes les factures de ce mois étaient déjà émises : rien n'a été ajouté.",
+        "emises": "Factures émises",
+        "financees": "Mois réglés par les crédits reçus",
+        "refusTitre": "Émission refusée",
+        "refusDroits": "Seules la direction et la comptabilité émettent les factures. Rien n'a été émis.",
+        "refusMois": "Seuls le mois en cours et le suivant se facturent. Rien n'a été émis : fermez cette fiche et choisissez l'un des deux.",
+        "refusSansPrix": "Aucun prix publié ne s'applique à ce mois. Rien n'a été émis : publiez d'abord les prix dans l'onglet des prix, puis réessayez.",
+        "inconnuTitre": "Émission non confirmée",
+        "inconnuPhrase": "La réponse n'est pas arrivée. Touchez « Réessayer » : une facture déjà émise ne l'est jamais deux fois."
       }
     },
     "planning": {

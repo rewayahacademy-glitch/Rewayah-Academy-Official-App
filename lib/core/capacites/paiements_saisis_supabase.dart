@@ -64,6 +64,41 @@ class PaiementsSaisisSupabase implements PortPaiementsSaisis {
     }
     return paiementEnregistreJson(brut);
   }
+
+  @override
+  Future<FacturesEmises> emettreFactures(DateTime mois) async {
+    final Object? brut;
+    try {
+      brut = await appelerFinance(
+        _appel,
+        'emettre_factures_mois',
+        _dependance,
+        <String, dynamic>{'p_mois': premierDuMoisSql(mois)},
+      );
+    } on PostgrestException catch (e) {
+      throw switch (e.code) {
+        '42501' => const RefusPaiement(MotifRefusPaiement.droits),
+        '22023' => const RefusPaiement(MotifRefusPaiement.invalide),
+        'P0002' => const RefusPaiement(MotifRefusPaiement.sansPolitique),
+        _ => e,
+      };
+    }
+    return facturesEmisesJson(brut);
+  }
+}
+
+/// Le premier jour du mois de [d], au format `AAAA-MM-01` de la base.
+String premierDuMoisSql(DateTime d) =>
+    '${d.year.toString().padLeft(4, '0')}-'
+    '${d.month.toString().padLeft(2, '0')}-01';
+
+/// Le resultat de `emettre_factures_mois`.
+FacturesEmises facturesEmisesJson(Object? brut) {
+  final Map<String, dynamic> j = objetJson(brut, 'factures');
+  return FacturesEmises(
+    emises: entierJson(j, 'emises'),
+    financees: entierJson(j, 'financees'),
+  );
 }
 
 /// Une ligne de `eleves_pour_paiement`.

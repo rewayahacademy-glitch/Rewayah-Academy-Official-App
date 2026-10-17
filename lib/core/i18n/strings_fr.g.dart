@@ -9135,6 +9135,7 @@ class Traductions$admin$finance$fr {
 	String get paiements => 'Paiements';
 
 	late final Traductions$admin$finance$pai$fr pai = Traductions$admin$finance$pai$fr.internal(_root);
+	late final Traductions$admin$finance$fac$fr fac = Traductions$admin$finance$fac$fr.internal(_root);
 }
 
 // Path: admin.planning
@@ -21421,6 +21422,69 @@ class Traductions$admin$finance$pai$fr {
 
 	/// fr: 'La réponse n'est pas arrivée. Touchez « Réessayer » : le même paiement ne sera jamais compté deux fois.'
 	String get inconnuPhrase => 'La réponse n\'est pas arrivée. Touchez « Réessayer » : le même paiement ne sera jamais compté deux fois.';
+}
+
+// Path: admin.finance.fac
+class Traductions$admin$finance$fac$fr {
+	Traductions$admin$finance$fac$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Factures du mois'
+	String get factures => 'Factures du mois';
+
+	/// fr: 'Factures {deMois}'
+	String ligne({required Object deMois}) => 'Factures ${deMois}';
+
+	/// fr: 'Le mois en cours.'
+	String get moisCourant => 'Le mois en cours.';
+
+	/// fr: 'Le mois prochain, à émettre avant son début.'
+	String get moisSuivant => 'Le mois prochain, à émettre avant son début.';
+
+	/// fr: 'Émettre'
+	String get emettre => 'Émettre';
+
+	/// fr: 'Émettre les factures {deMois}'
+	String emettreMois({required Object deMois}) => 'Émettre les factures ${deMois}';
+
+	/// fr: 'Chaque élève inscrit reçoit sa facture du mois, au prix publié en vigueur, avec la réduction famille. Les crédits déjà reçus règlent aussitôt les mois qu'ils couvrent. Une facture déjà émise ne l'est jamais une seconde fois.'
+	String get explication => 'Chaque élève inscrit reçoit sa facture du mois, au prix publié en vigueur, avec la réduction famille. Les crédits déjà reçus règlent aussitôt les mois qu\'ils couvrent. Une facture déjà émise ne l\'est jamais une seconde fois.';
+
+	/// fr: 'Émission terminée'
+	String get faitTitre => 'Émission terminée';
+
+	/// fr: 'Les familles voient leur facture et ce qu'il leur reste à payer.'
+	String get faitPhrase => 'Les familles voient leur facture et ce qu\'il leur reste à payer.';
+
+	/// fr: 'Toutes les factures de ce mois étaient déjà émises : rien n'a été ajouté.'
+	String get dejaEmises => 'Toutes les factures de ce mois étaient déjà émises : rien n\'a été ajouté.';
+
+	/// fr: 'Factures émises'
+	String get emises => 'Factures émises';
+
+	/// fr: 'Mois réglés par les crédits reçus'
+	String get financees => 'Mois réglés par les crédits reçus';
+
+	/// fr: 'Émission refusée'
+	String get refusTitre => 'Émission refusée';
+
+	/// fr: 'Seules la direction et la comptabilité émettent les factures. Rien n'a été émis.'
+	String get refusDroits => 'Seules la direction et la comptabilité émettent les factures. Rien n\'a été émis.';
+
+	/// fr: 'Seuls le mois en cours et le suivant se facturent. Rien n'a été émis : fermez cette fiche et choisissez l'un des deux.'
+	String get refusMois => 'Seuls le mois en cours et le suivant se facturent. Rien n\'a été émis : fermez cette fiche et choisissez l\'un des deux.';
+
+	/// fr: 'Aucun prix publié ne s'applique à ce mois. Rien n'a été émis : publiez d'abord les prix dans l'onglet des prix, puis réessayez.'
+	String get refusSansPrix => 'Aucun prix publié ne s\'applique à ce mois. Rien n\'a été émis : publiez d\'abord les prix dans l\'onglet des prix, puis réessayez.';
+
+	/// fr: 'Émission non confirmée'
+	String get inconnuTitre => 'Émission non confirmée';
+
+	/// fr: 'La réponse n'est pas arrivée. Touchez « Réessayer » : une facture déjà émise ne l'est jamais deux fois.'
+	String get inconnuPhrase => 'La réponse n\'est pas arrivée. Touchez « Réessayer » : une facture déjà émise ne l\'est jamais deux fois.';
 }
 
 // Path: admin.fusion.motif
@@ -35049,6 +35113,24 @@ extension on Traductions {
 			'admin.finance.pai.refusInvalide' => 'Le montant, la devise ou l\'élève n\'a pas été accepté. Rien n\'a été enregistré : vérifiez le montant et réessayez depuis la liste.',
 			'admin.finance.pai.inconnuTitre' => 'Paiement non confirmé',
 			'admin.finance.pai.inconnuPhrase' => 'La réponse n\'est pas arrivée. Touchez « Réessayer » : le même paiement ne sera jamais compté deux fois.',
+			'admin.finance.fac.factures' => 'Factures du mois',
+			'admin.finance.fac.ligne' => ({required Object deMois}) => 'Factures ${deMois}',
+			'admin.finance.fac.moisCourant' => 'Le mois en cours.',
+			'admin.finance.fac.moisSuivant' => 'Le mois prochain, à émettre avant son début.',
+			'admin.finance.fac.emettre' => 'Émettre',
+			'admin.finance.fac.emettreMois' => ({required Object deMois}) => 'Émettre les factures ${deMois}',
+			'admin.finance.fac.explication' => 'Chaque élève inscrit reçoit sa facture du mois, au prix publié en vigueur, avec la réduction famille. Les crédits déjà reçus règlent aussitôt les mois qu\'ils couvrent. Une facture déjà émise ne l\'est jamais une seconde fois.',
+			'admin.finance.fac.faitTitre' => 'Émission terminée',
+			'admin.finance.fac.faitPhrase' => 'Les familles voient leur facture et ce qu\'il leur reste à payer.',
+			'admin.finance.fac.dejaEmises' => 'Toutes les factures de ce mois étaient déjà émises : rien n\'a été ajouté.',
+			'admin.finance.fac.emises' => 'Factures émises',
+			'admin.finance.fac.financees' => 'Mois réglés par les crédits reçus',
+			'admin.finance.fac.refusTitre' => 'Émission refusée',
+			'admin.finance.fac.refusDroits' => 'Seules la direction et la comptabilité émettent les factures. Rien n\'a été émis.',
+			'admin.finance.fac.refusMois' => 'Seuls le mois en cours et le suivant se facturent. Rien n\'a été émis : fermez cette fiche et choisissez l\'un des deux.',
+			'admin.finance.fac.refusSansPrix' => 'Aucun prix publié ne s\'applique à ce mois. Rien n\'a été émis : publiez d\'abord les prix dans l\'onglet des prix, puis réessayez.',
+			'admin.finance.fac.inconnuTitre' => 'Émission non confirmée',
+			'admin.finance.fac.inconnuPhrase' => 'La réponse n\'est pas arrivée. Touchez « Réessayer » : une facture déjà émise ne l\'est jamais deux fois.',
 			'admin.planning.titre' => 'Planning',
 			'admin.planning.sousTitre' => 'Les séances de la semaine, toutes classes confondues, jour par jour.',
 			'admin.planning.semaine' => ({required Object date}) => 'Semaine du ${date}',
@@ -35144,6 +35226,8 @@ extension on Traductions {
 			'admin.fusion.enseignantDe' => ({required Object nom}) => 'Enseignant : ${nom}',
 			'admin.fusion.sansEnseignant' => 'Sans enseignant pour l\'instant',
 			'admin.fusion.aucuneCible' => 'Aucune classe parallèle n\'a assez de place',
+			_ => null,
+		} ?? switch (path) {
 			'admin.fusion.aucuneCibleDetail' => 'Il faut une classe du même horaire et de la même catégorie, avec de la place pour tous les élèves de celle-ci.',
 			'admin.fusion.erreurCibles' => 'Les classes parallèles n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.fusion.sansDonneesCibles' => 'La liste des classes parallèles n\'a pas pu être chargée',
@@ -35162,8 +35246,6 @@ extension on Traductions {
 			'admin.fusion.fusionDejaFaite' => 'Un autre membre de la direction vient de fusionner cette classe : rien n\'a été fait en double. Fermez cette feuille pour retrouver la liste à jour.',
 			'admin.fusion.fusionRefusee' => ({required Object motif}) => 'La fusion n\'a pas eu lieu : ${motif}. Vérifiez les classes, puis recommencez.',
 			'admin.fusion.motif.classeIntrouvable' => 'l\'une des deux classes est introuvable',
-			_ => null,
-		} ?? switch (path) {
 			'admin.fusion.motif.sourceCloturee' => 'la classe à fusionner est déjà clôturée',
 			'admin.fusion.motif.cibleCloturee' => 'la classe qui accueille est clôturée',
 			'admin.fusion.motif.cibleIncompatible' => 'les deux classes n\'ont pas le même horaire ou la même catégorie',
@@ -35658,6 +35740,8 @@ extension on Traductions {
 			'avatar.sansPhoto' => 'Pas encore de photo',
 			'nav.eleve.accueil' => 'Accueil',
 			'nav.eleve.maClasse' => 'Ma classe',
+			_ => null,
+		} ?? switch (path) {
 			'nav.eleve.coran' => 'Coran',
 			'nav.eleve.monEspace' => 'Mon espace',
 			'nav.eleve.suivi' => 'Suivi',
@@ -35676,8 +35760,6 @@ extension on Traductions {
 			'nav.controleur.planning' => 'Planning',
 			'nav.controleur.controle' => 'Contrôle',
 			'nav.controleur.historique' => 'Historique',
-			_ => null,
-		} ?? switch (path) {
 			'nav.controleur.echanges' => 'Échanges',
 			'nav.controleur.compte' => 'Compte',
 			'nav.admin.tableauDeBord' => 'Tableau de bord',
@@ -36172,6 +36254,8 @@ extension on Traductions {
 			'tuteur.accueil.connecterAppareil' => 'Connecter un appareil',
 			'tuteur.accueil.avantProchainCours' => 'Avant le prochain cours',
 			'tuteur.accueil.voirTout' => 'Voir tout',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.travailIndisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tuteur.accueil.travailIllisible' => 'Le travail à préparer n\'a pas pu être lu.',
 			'tuteur.accueil.rienAPreparer' => 'Rien à préparer pour l\'instant',
@@ -36190,8 +36274,6 @@ extension on Traductions {
 			'tuteur.accueil.etatCourt.annulee' => 'Séance annulée',
 			'tuteur.accueil.etatCourt.nonTenue' => 'Séance non tenue',
 			'tuteur.accueil.etatCourt.terminee' => 'Séance terminée',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.etatCourt.aucune' => 'Aucune séance',
 			'tuteur.accueil.etatCourt.illisible' => 'Non disponible',
 			'tuteur.accueil.assister' => 'Assister',
@@ -36686,6 +36768,8 @@ extension on Traductions {
 			'enseignant.cahier.toutEstNominalDetail' => 'Validez, et votre journée continue.',
 			'enseignant.cahier.exceptions' => 'À regarder',
 			'enseignant.cahier.uneException' => '1 élève demande un regard.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.nominaux' => 'Rien à signaler',
 			'enseignant.cahier.curriculumFige' => 'Le niveau et le programme sont ceux de l\'académie : ils ne se modifient pas depuis le cahier de transmission.',
 			'enseignant.cahier.valider' => 'Valider le cahier de transmission',
@@ -36704,8 +36788,6 @@ extension on Traductions {
 			'enseignant.cahier.depose' => 'Cahier de transmission enregistré',
 			'enseignant.cahier.deposeDetail' => 'L\'académie l\'a reçu.',
 			'enseignant.cahier.enFileTitre' => 'En attente d\'envoi',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.enFile' => 'Le cahier de transmission sera envoyé lorsque la connexion reviendra.',
 			'enseignant.cahier.enFileDetail' => 'Le cahier de transmission sera envoyé lorsque la connexion reviendra.',
 			'enseignant.cahier.enFileDetailHorsLigne' => 'Sans réseau, le cahier de transmission reste sur cet appareil et part dès que le réseau revient. Vous pouvez enchaîner sur votre cours suivant.',
@@ -37200,6 +37282,8 @@ extension on Traductions {
 			'controleur.echanges.reponseRecue' => 'Réponse reçue',
 			'controleur.echanges.enAttente' => 'En attente',
 			'controleur.echanges.vide' => 'Aucun échange avec l\'administration pour le moment.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.echanges.contexte' => 'Contexte de la visite, joint automatiquement',
 			'controleur.echanges.cleClasse' => 'Classe',
 			'controleur.echanges.cleDate' => 'Date',
@@ -37218,8 +37302,6 @@ extension on Traductions {
 			'controleur.echanges.contexteCompact' => ({required Object heure}) => 'Contexte joint à vos messages : séance de ${heure}',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
 			'controleur.demo.mention' => 'Données fictives, aucun envoi.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.demo.intro' => 'Choisissez un écran du contrôle et une situation de visite.',
 			'controleur.demo.etatAucune' => 'Aucune visite',
 			'controleur.demo.etatPasEncoreEnDirect' => 'Séance pas encore en direct',
@@ -37714,6 +37796,8 @@ extension on Traductions {
 			'tc.parcours.feedback.confiance.difficile' => 'Pas encore',
 			'tc.parcours.feedback.confiance.bien' => 'Plutôt',
 			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.merci' => 'Merci.',
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
@@ -37732,8 +37816,6 @@ extension on Traductions {
 			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, la classe et votre nom sont déjà joints.',
 			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
 			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',
 			'tc.parcours.signalement.echec' => 'Le signalement n\'a pas pu être transmis. Réessayez.',
 			'tc.parcours.postCours.titre' => 'Après le cours',
@@ -38228,6 +38310,8 @@ extension on Traductions {
 			'suiviFamille.contexte' => 'Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.',
 			'suiviFamille.carteTitre' => ({required Object dePrenom}) => 'Demande ${dePrenom}',
 			'suiviFamille.detailTitre' => ({required Object dePrenom}) => 'Suivi de la demande ${dePrenom}',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.etapeCourante' => ({required Object etape}) => 'Étape en cours : ${etape}',
 			'suiviFamille.toutFait' => 'Toutes les étapes sont franchies.',
 			'suiviFamille.voirSuivi' => 'Voir le suivi',
@@ -38246,8 +38330,6 @@ extension on Traductions {
 			'suiviFamille.etapes.eleveIntegre' => 'Élève intégré',
 			'suiviFamille.etapes.premiereSeance' => 'Première séance',
 			'suiviFamille.etats.fait' => 'Fait',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.etats.enCours' => 'En cours',
 			'suiviFamille.etats.aVenir' => 'À venir',
 			'suiviFamille.motif.classesPleines' => 'Toutes les classes de ce créneau sont complètes. Vous serez prévenu dès qu\'une place se libère.',
@@ -38742,6 +38824,8 @@ extension on Traductions {
 			'com.communaute.flux.reponseUne' => '1 réponse',
 			'com.communaute.flux.reponses' => ({required Object nombre}) => '${nombre} réponses',
 			'com.communaute.flux.aucuneReponse' => 'Aucune réponse',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.flux.categorie' => ({required Object categorie}) => 'Catégorie ${categorie}',
 			'com.communaute.recherche.ouvrir' => 'Rechercher une publication',
 			'com.communaute.recherche.champ' => 'Rechercher une publication',
@@ -38760,8 +38844,6 @@ extension on Traductions {
 			'com.communaute.publication.signalee' => 'Le contenu a été signalé à l\'équipe de modération.',
 			'com.communaute.publication.choisirTitre' => 'Aucune publication ouverte',
 			'com.communaute.publication.choisir' => 'Choisissez une publication dans la liste pour la lire et y répondre.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.publication.introuvableTitre' => 'Publication indisponible',
 			'com.communaute.publication.introuvable' => 'Cette publication a été retirée ou ne vous est plus accessible. Revenez aux publications pour en choisir une autre.',
 			'com.communaute.publication.revenir' => 'Revenir aux publications',
@@ -39256,6 +39338,8 @@ extension on Traductions {
 			'com.annonces.demo.f.annonceFajrTitre' => 'Révision avant l\'évaluation de jeudi',
 			'com.annonces.demo.f.annonceFajrTexte' => 'Révisez les dix derniers versets de la sourate Al-Mulk avant jeudi.',
 			'com.annonces.demo.f.tuteurUrgent' => 'La séance de ce soir est annulée',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demo.f.tuteurUrgentTexte' => 'L\'enseignante est absente ce soir. La séance est reportée à jeudi, même heure. Vous n\'avez rien à faire.',
 			'com.annonces.demo.f.tuteurReponse' => 'Réponse attendue : accord pour la récitation de Yasmine',
 			'com.annonces.demo.f.tuteurReponseTexte' => 'L\'enseignante attend votre accord pour que Yasmine récite devant les familles. Répondez-lui depuis l\'Espace Classe.',
@@ -39274,8 +39358,6 @@ extension on Traductions {
 			'com.annonces.demo.f.adminSignalement' => 'Une publication de la Communauté a été signalée',
 			'com.annonces.demo.f.adminReponse' => 'Réponse de la famille de Bilal à votre message',
 			'com.annonces.demo.f.adminPlanifiee' => 'Une annonce planifiée est à vérifier avant publication',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.adminOperationnel' => 'Classe An-Nour : effectif complet',
 			'com.annonces.demo.f.controleurMission' => 'Nouvelle mission : visite de la Classe An-Nour',
 			'com.annonces.demo.f.controleurChangement' => 'Votre mission de jeudi est déplacée à 18 h',
@@ -39770,6 +39852,8 @@ extension on Traductions {
 			'comptable.encaissements.journalVide' => 'Aucune opération enregistrée pour cet encaissement.',
 			'comptable.encaissements.rap.vueTransactions' => 'À rapprocher',
 			'comptable.encaissements.rap.vueRemboursements' => 'Remboursements',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.rap.natPaiementAttendu' => 'Paiement attendu',
 			'comptable.encaissements.rap.natTransaction' => 'Transaction prestataire',
 			'comptable.encaissements.rap.natMensualite' => 'Solde ou mensualité',
@@ -39788,8 +39872,6 @@ extension on Traductions {
 			'comptable.encaissements.rap.ouvrirLecteur' => ({required Object libelle}) => 'Ouvrir le rapprochement de ${libelle}',
 			'comptable.encaissements.rap.candidats' => 'Correspondances proposées',
 			'comptable.encaissements.rap.candidatsAucun' => 'La source ne propose aucune correspondance pour cette transaction.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.relieA' => ({required Object libelle}) => 'Reliée à : ${libelle}',
 			'comptable.encaissements.rap.rapprocher' => 'Rapprocher',
 			'comptable.encaissements.rap.rapprocherLecteur' => ({required Object libelle}) => 'Rapprocher avec ${libelle}',
@@ -40284,6 +40366,8 @@ extension on Traductions {
 			'reprisesAdmin.validee' => 'Reprise validée.',
 			'reprisesAdmin.refusee' => 'Reprise refusée.',
 			'reprisesAdmin.dejaTraitee' => 'Cette demande a déjà été traitée. La liste est à jour.',
+			_ => null,
+		} ?? switch (path) {
 			'reprisesAdmin.echecReseau' => 'La décision n\'a pas pu être confirmée. Vérifiez la liste avant de réessayer.',
 			'reprisesAdmin.vide' => 'Aucune demande de reprise à traiter.',
 			'reprisesAdmin.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',
@@ -40302,8 +40386,6 @@ extension on Traductions {
 			'recherche.espace.comptable' => 'Dans votre espace Comptabilité',
 			'recherche.espace.administration' => 'Dans votre espace Administration',
 			'recherche.initial.titre' => 'Rechercher dans votre espace',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.initial.phrase' => 'Saisissez un nom, une classe ou un support. Rien n\'est cherché avant que vous écriviez.',
 			'recherche.courte' => 'Saisissez au moins 3 caractères.',
 			'recherche.chargement' => 'Recherche en cours…',

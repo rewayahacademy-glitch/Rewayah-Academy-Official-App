@@ -165,4 +165,50 @@ void main() {
       throwsFormatException,
     );
   });
+
+  test(
+    'emettre les factures : le mois en AAAA-MM-01, le resultat lu',
+    () async {
+      final List<(String, Map<String, dynamic>?)> appels =
+          <(String, Map<String, dynamic>?)>[];
+      final PaiementsSaisisSupabase port = PaiementsSaisisSupabase.avecAppel((
+        String f,
+        Map<String, dynamic>? p,
+      ) async {
+        appels.add((f, p));
+        return jsonDecode(
+          '{"mois": "2026-10-01", "emises": 2, "financees": 1}',
+        );
+      });
+      final FacturesEmises r = await port.emettreFactures(DateTime(2026, 10));
+      expect(appels.single.$1, 'emettre_factures_mois');
+      expect(appels.single.$2, <String, dynamic>{'p_mois': '2026-10-01'});
+      expect(r.emises, 2);
+      expect(r.financees, 1);
+    },
+  );
+
+  for (final (String code, MotifRefusPaiement motif)
+      in <(String, MotifRefusPaiement)>[
+        ('42501', MotifRefusPaiement.droits),
+        ('22023', MotifRefusPaiement.invalide),
+        ('P0002', MotifRefusPaiement.sansPolitique),
+      ]) {
+    test('emettre, refus $code : RefusPaiement(${motif.name})', () async {
+      final PaiementsSaisisSupabase port = PaiementsSaisisSupabase.avecAppel(
+        (String _, Map<String, dynamic>? _) async =>
+            throw PostgrestException(message: 'refus', code: code),
+      );
+      await expectLater(
+        port.emettreFactures(DateTime(2026, 10)),
+        throwsA(
+          isA<RefusPaiement>().having(
+            (RefusPaiement r) => r.motif,
+            'motif',
+            motif,
+          ),
+        ),
+      );
+    });
+  }
 }

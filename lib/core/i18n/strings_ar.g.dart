@@ -3788,6 +3788,7 @@ class _Traductions$admin$finance$ar extends Traductions$admin$finance$fr {
 	@override String get paiements => 'المدفوعات';
 	@override late final _Traductions$admin$finance$pol$ar pol = _Traductions$admin$finance$pol$ar._(_root);
 	@override late final _Traductions$admin$finance$pai$ar pai = _Traductions$admin$finance$pai$ar._(_root);
+	@override late final _Traductions$admin$finance$fac$ar fac = _Traductions$admin$finance$fac$ar._(_root);
 }
 
 // Path: admin.tableau
@@ -10688,6 +10689,33 @@ class _Traductions$admin$finance$pai$ar extends Traductions$admin$finance$pai$fr
 	@override String get inconnuPhrase => 'لم يصل الرد. المس « إعادة المحاولة »: لن تُحتسب الدفعة نفسها مرتين أبدا.';
 }
 
+// Path: admin.finance.fac
+class _Traductions$admin$finance$fac$ar extends Traductions$admin$finance$fac$fr {
+	_Traductions$admin$finance$fac$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get factures => 'فواتير الشهر';
+	@override String ligne({required Object deMois}) => 'فواتير ⁨${deMois}⁩';
+	@override String get moisCourant => 'الشهر الجاري.';
+	@override String get moisSuivant => 'الشهر القادم، تُصدر قبل بدايته.';
+	@override String get emettre => 'إصدار';
+	@override String emettreMois({required Object deMois}) => 'إصدار فواتير ⁨${deMois}⁩';
+	@override String get explication => 'يتلقى كل طالب مسجّل فاتورة شهره، بالسعر المنشور الساري، مع تخفيض الأسرة. وتسوّي الأرصدة المستلمة سابقًا فورًا الأشهر التي تغطيها. ولا تُصدر فاتورة صدرت من قبل مرة ثانية أبدًا.';
+	@override String get faitTitre => 'اكتمل الإصدار';
+	@override String get faitPhrase => 'ترى الأسر فاتورتها وما بقي عليها دفعه.';
+	@override String get dejaEmises => 'كانت جميع فواتير هذا الشهر صادرة من قبل: لم يُضف شيء.';
+	@override String get emises => 'الفواتير الصادرة';
+	@override String get financees => 'الأشهر المسوّاة بالأرصدة المستلمة';
+	@override String get refusTitre => 'رُفض الإصدار';
+	@override String get refusDroits => 'الإدارة والمحاسبة وحدهما تصدران الفواتير. لم يُصدر شيء.';
+	@override String get refusMois => 'لا يُفوتر إلا الشهر الجاري والشهر التالي. لم يُصدر شيء: أغلق هذه البطاقة واختر أحدهما.';
+	@override String get refusSansPrix => 'لا ينطبق أي سعر منشور على هذا الشهر. لم يُصدر شيء: انشر الأسعار أولًا في تبويب الأسعار، ثم أعد المحاولة.';
+	@override String get inconnuTitre => 'الإصدار غير مؤكد';
+	@override String get inconnuPhrase => 'لم يصل الرد. المس « إعادة المحاولة »: لا تُصدر فاتورة صدرت من قبل مرتين أبدًا.';
+}
+
 // Path: admin.groupes.cahiers
 class _Traductions$admin$groupes$cahiers$ar extends Traductions$admin$groupes$cahiers$fr {
 	_Traductions$admin$groupes$cahiers$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -17227,6 +17255,24 @@ extension on TraductionsAr {
 			'admin.finance.pai.refusInvalide' => 'لم يُقبل المبلغ أو العملة أو الطالب. لم يُسجَّل شيء: تحقق من المبلغ وأعد المحاولة من القائمة.',
 			'admin.finance.pai.inconnuTitre' => 'الدفعة غير مؤكدة',
 			'admin.finance.pai.inconnuPhrase' => 'لم يصل الرد. المس « إعادة المحاولة »: لن تُحتسب الدفعة نفسها مرتين أبدا.',
+			'admin.finance.fac.factures' => 'فواتير الشهر',
+			'admin.finance.fac.ligne' => ({required Object deMois}) => 'فواتير ⁨${deMois}⁩',
+			'admin.finance.fac.moisCourant' => 'الشهر الجاري.',
+			'admin.finance.fac.moisSuivant' => 'الشهر القادم، تُصدر قبل بدايته.',
+			'admin.finance.fac.emettre' => 'إصدار',
+			'admin.finance.fac.emettreMois' => ({required Object deMois}) => 'إصدار فواتير ⁨${deMois}⁩',
+			'admin.finance.fac.explication' => 'يتلقى كل طالب مسجّل فاتورة شهره، بالسعر المنشور الساري، مع تخفيض الأسرة. وتسوّي الأرصدة المستلمة سابقًا فورًا الأشهر التي تغطيها. ولا تُصدر فاتورة صدرت من قبل مرة ثانية أبدًا.',
+			'admin.finance.fac.faitTitre' => 'اكتمل الإصدار',
+			'admin.finance.fac.faitPhrase' => 'ترى الأسر فاتورتها وما بقي عليها دفعه.',
+			'admin.finance.fac.dejaEmises' => 'كانت جميع فواتير هذا الشهر صادرة من قبل: لم يُضف شيء.',
+			'admin.finance.fac.emises' => 'الفواتير الصادرة',
+			'admin.finance.fac.financees' => 'الأشهر المسوّاة بالأرصدة المستلمة',
+			'admin.finance.fac.refusTitre' => 'رُفض الإصدار',
+			'admin.finance.fac.refusDroits' => 'الإدارة والمحاسبة وحدهما تصدران الفواتير. لم يُصدر شيء.',
+			'admin.finance.fac.refusMois' => 'لا يُفوتر إلا الشهر الجاري والشهر التالي. لم يُصدر شيء: أغلق هذه البطاقة واختر أحدهما.',
+			'admin.finance.fac.refusSansPrix' => 'لا ينطبق أي سعر منشور على هذا الشهر. لم يُصدر شيء: انشر الأسعار أولًا في تبويب الأسعار، ثم أعد المحاولة.',
+			'admin.finance.fac.inconnuTitre' => 'الإصدار غير مؤكد',
+			'admin.finance.fac.inconnuPhrase' => 'لم يصل الرد. المس « إعادة المحاولة »: لا تُصدر فاتورة صدرت من قبل مرتين أبدًا.',
 			'admin.tableau.titre' => 'مركز القيادة',
 			'admin.tableau.dossiers' => 'ملفات للاعتماد',
 			'admin.tableau.dossiersDetail' => 'فتح القائمة، الأقدم أولًا.',
@@ -17550,6 +17596,8 @@ extension on TraductionsAr {
 			'admin.regles.dureeSeanceDetail' => 'المدة الافتراضية للحصة، قبل أي استثناء فردي.',
 			'admin.regles.dureeMinimalePayee' => 'المدة الدنيا المدفوعة',
 			'admin.regles.dureeMinimalePayeeDetail' => 'دون هذه المدة، تبقى الحصة المختصرة مدفوعة كاملة.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.pauseEntreSeances' => 'الاستراحة بين حصتين',
 			'admin.regles.pauseEntreSeancesDetail' => 'الوقت الأدنى المتروك للمعلم بين حصتين متتاليتين.',
 			'admin.regles.elevesParEnseignant' => 'الطلاب لكل معلم',
@@ -17568,8 +17616,6 @@ extension on TraductionsAr {
 			'admin.regles.uniteSemaines' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ أسبوع', one: 'أسبوع واحد', two: 'أسبوعان', few: '⁨${n}⁩ أسابيع', many: '⁨${n}⁩ أسبوعًا', other: '⁨${n}⁩ أسبوع', ), 
 			'admin.regles.uniteNombre' => ({required Object n}) => '⁨${n}⁩',
 			'admin.fonctionnalites.titre' => 'الوظائف',
-			_ => null,
-		} ?? switch (path) {
 			'admin.fonctionnalites.intro' => 'الوظائف التي تغيّر سلوك المنصة كلها.',
 			'admin.fonctionnalites.erreur' => 'تعذّرت قراءة الوظائف. أعد المحاولة بعد لحظة.',
 			'admin.fonctionnalites.erreurEcriture' => ({required Object message}) => 'لم يكتمل الحفظ: ⁨${message}⁩',
@@ -18064,6 +18110,8 @@ extension on TraductionsAr {
 			'admin.pilotage.cleClasses' => 'الفصول',
 			'admin.pilotage.cleAttente' => 'في انتظار معلم',
 			'admin.pilotage.cleSousMinimum' => 'دون الحد الأدنى',
+			_ => null,
+		} ?? switch (path) {
 			'admin.pilotage.cleDemandes' => 'الطلبات المعلّقة',
 			'admin.pilotage.cleLibres' => 'المعلمون المتاحون',
 			'admin.pilotage.cleManquants' => 'المعلمون الناقصون',
@@ -18082,8 +18130,6 @@ extension on TraductionsAr {
 			'admin.pilotage.colonneManquants' => 'المعلمون الناقصون',
 			'admin.pilotage.colonneEtat' => 'ما يستدعي الانتباه',
 			'admin.pilotage.remplissage' => ({required Object taux, required Object effectif, required Object capacite}) => '⁨${taux}⁩٪ (⁨${effectif}⁩ من ⁨${capacite}⁩)',
-			_ => null,
-		} ?? switch (path) {
 			'admin.pilotage.remplissageInconnu' => 'لا أماكن مفتوحة',
 			'admin.pilotage.aucun' => 'لا أحد',
 			'admin.pilotage.nombreEtGenres' => ({required Object n, required Object genres}) => '⁨${n}⁩ (⁨${genres}⁩)',
@@ -18578,6 +18624,8 @@ extension on TraductionsAr {
 			'comptable.commun.destination' => 'الوجهة',
 			'comptable.commun.destinationMasquee' => ({required Object type, required Object suffixe}) => '${type} •••• ${suffixe}',
 			'comptable.commun.destinationMasqueeLecteur' => ({required Object type, required Object suffixe}) => '${type}، الرقم مخفي، ينتهي بـ ${suffixe}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.commun.destinationAucune' => 'لا توجد وسيلة دفع',
 			'comptable.commun.paysDevise' => ({required Object pays, required Object devise}) => '${pays} · ${devise}',
 			'comptable.commun.verification' => 'التحقق',
@@ -18596,8 +18644,6 @@ extension on TraductionsAr {
 			'comptable.coffres.enTransit' => 'قيد التحويل',
 			'comptable.coffres.tresorerieLibre' => 'الخزينة الحرة',
 			'comptable.statuts.paiement.aCalculer' => 'قيد الحساب',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.paiement.calcule' => 'محسوب',
 			'comptable.statuts.paiement.aVerifier' => 'للتحقق',
 			'comptable.statuts.paiement.infosManquantes' => 'معلومات الدفع ناقصة',
@@ -19092,6 +19138,8 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.profil.relanceRefusee' => ({required Object nom}) => 'لا يمكن فتح محادثة «ملف الدفع» مع ${nom}: لا تسمح Rewayah بذلك لهذا المستفيد. اطلب تحديثًا بدلًا من ذلك، أو أبلغ الإدارة.',
 			'comptable.beneficiaires.profil.messageModele' => 'يجب إكمال معلومات الدفع الخاصة بك قبل دفعتك القادمة. يمكنك إضافتها من مساحتك الشخصية.',
 			'comptable.beneficiaires.profil.miseAJourDemandee' => ({required Object nom}) => 'سُجّل طلب التحديث لـ ${nom}.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => 'أُوقفت مدفوعات ${nom}: لن تُصرف أي دفعة ما لم تُستأنف.',
 			'comptable.beneficiaires.profil.repris' => ({required Object nom}) => 'استُؤنفت مدفوعات ${nom}.',
 			'comptable.beneficiaires.profil.erreurAction' => 'لم يكتمل الإجراء. تحقق من اتصالك، ثم أعد المحاولة.',
@@ -19110,8 +19158,6 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.titre' => 'المستفيدون',
 			'comptable.beneficiaires.sousTitre' => 'البيانات مخفية: المستفيد وحده يعدّل بياناته.',
 			'comptable.beneficiaires.profilTitre' => 'ملف الدفع',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.rubrique' => 'المدفوعات',
 			'comptable.beneficiaires.recevoir.ligneDetail' => 'وسائل الدفع الخاصة بك، تديرها أنت وحدك.',
 			'comptable.beneficiaires.recevoir.noticeDetail' => 'أضف وسيلة دفع لتتمكن الأكاديمية من صرف دفعتك القادمة.',
@@ -19606,6 +19652,8 @@ extension on TraductionsAr {
 			'parcours.erreur' => 'تعذّر حفظ هذه الإجابة. أعد المحاولة.',
 			'parcours.chargement' => 'نحضّر خياراتك.',
 			'parcours.pourPrenom' => ({required Object prenom}) => 'لـ⁨${prenom}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.retourAccueil' => 'العودة إلى الرئيسية',
 			'parcours.retourFoyer' => 'العودة إلى الأسرة',
 			'parcours.reessayer' => 'إعادة المحاولة',
@@ -19624,8 +19672,6 @@ extension on TraductionsAr {
 			'parcours.ageQuestion' => ({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟',
 			'parcours.ageRaison' => 'العمر يحدد مدة الحصص وعدد الطلاب في الفصل. لا نطلب تاريخ الميلاد: يكفي العمر بالسنوات.',
 			'parcours.ageAide' => 'اختر العمر بالسنوات من القائمة، كما عند إضافة الملف.',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.ageSansTranche' => 'لا يوجد فصل مخصص لهذا العمر حاليًا. يمكن لفريق الأكاديمية توجيهكم.',
 			'parcours.langueQuestion' => 'بأي لغة يُقدَّم الدرس؟',
 			'parcours.langueRaison' => 'هي اللغة التي سيتكلمها المعلم أثناء الحصة. وهي مستقلة عن لغة التطبيق، التي يمكنك تغييرها في أي وقت من إعداداتك.',
@@ -20120,6 +20166,8 @@ extension on TraductionsAr {
 			'adulte.historique.vide' => 'لا حصة ماضية حتى الآن.',
 			'adulte.historique.videDetail' => 'ستظهر حصصك هنا بعد درسك الأول.',
 			'adulte.maClasse.aPropos' => 'عن هذا الفصل',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.maClasse.participants' => 'المشاركون',
 			'adulte.maClasse.vous' => ({required Object prenom}) => '⁨${prenom}⁩ (أنت)',
 			'adulte.maClasse.progression' => 'تقدمي في هذا الفصل',
@@ -20138,8 +20186,6 @@ extension on TraductionsAr {
 			'adulte.monEspace.pageAccords.indisponiblePhrase' => 'قبول كل موافقة أو رفضها أو سحبها غير ممكن في التطبيق بعد. لا تُطلب منك أي موافقة هنا.',
 			'adulte.monEspace.pageCoursAcces.indisponibleTitre' => 'الدروس والوصول غير قابلة للاطلاع بعد',
 			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'تفاصيل دروسك وحصصك ووصولك غير متاحة في التطبيق بعد.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.coranDemo.titre' => 'متاح بعد تسجيل الدخول',
 			'adulte.coranDemo.phrase' => 'ليس هذا عطلًا: العرض التجريبي لا يحتوي على نص القرآن. بعد الدخول إلى مساحتك كطالب، يُفتح هنا.',
 			'adulte.recharge.titre' => 'شحن جديد',
@@ -20634,6 +20680,8 @@ extension on TraductionsAr {
 			'controleur.historique.titre' => 'السجل',
 			'controleur.historique.provisoire' => 'هذه الشاشة قيد التحضير.',
 			'controleur.historique.envoye' => 'أُرسل',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.complementAjoute' => 'أُضيفت تكملة',
 			'controleur.historique.aTerminer' => 'للإنهاء',
 			'controleur.historique.filtreEtat' => 'الحالة',
@@ -20652,8 +20700,6 @@ extension on TraductionsAr {
 			'controleur.historique.sectionComplements' => 'التكملات',
 			'controleur.historique.sectionEchanges' => 'المراسلات مع الإدارة',
 			'controleur.historique.cleClasse' => 'الفصل',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.historique.cleEnseignant' => 'المعلم',
 			'controleur.historique.cleDate' => 'التاريخ',
 			'controleur.historique.cleDuree' => 'مدة المتابعة',

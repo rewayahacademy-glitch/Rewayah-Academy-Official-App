@@ -41,6 +41,7 @@ import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/setting_row.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../reserve_delegation/composants_politique.dart' show BlocPolitique;
+import 'factures_mois.dart';
 
 /// Les eleves que la saisie peut viser, rendus par la source.
 final FutureProvider<List<ElevePourPaiement>> elevesPourPaiementProvider =
@@ -111,6 +112,14 @@ class PaiementsBloc extends ConsumerWidget {
           ),
         ),
         Ecart.vXl,
+        // Les factures du mois avant la liste : on facture, puis on
+        // enregistre ce qui est recu (FAC-B-01).
+        SectionHeader(titre: t.admin.finance.fac.factures),
+        Ecart.vMd,
+        BlocFacturesMois(
+          onEmises: () => ref.invalidate(elevesPourPaiementProvider),
+        ),
+        Ecart.vSection,
         BlocPolitique<List<ElevePourPaiement>>(
           fournisseur: elevesPourPaiementProvider,
           construire: (List<ElevePourPaiement> eleves) =>

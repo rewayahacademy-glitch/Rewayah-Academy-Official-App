@@ -62,7 +62,9 @@ class AccentsProfilsEnMemoire implements PortAccentsProfils {
 
 /// Le port des accents ; la demonstration le surcharge.
 final Provider<PortAccentsProfils> portAccentsProfilsProvider =
-    Provider<PortAccentsProfils>((Ref _) => const AccentsProfilsIndisponibles());
+    Provider<PortAccentsProfils>(
+      (Ref _) => const AccentsProfilsIndisponibles(),
+    );
 
 /// Les accents du foyer, relus apres chaque choix (`ref.invalidate`).
 final FutureProvider<Map<String, AccentProfil>> accentsProfilsProvider =
@@ -73,6 +75,7 @@ final FutureProvider<Map<String, AccentProfil>> accentsProfilsProvider =
 /// L'accent du profil [profilId] quand il est connu, `null` sinon (lecture
 /// en cours, en echec, indisponible ou aucun choix) : l'ecran pose alors le
 /// cercle seul, sans bandeau, jamais une couleur au hasard.
-AccentProfil? accentLu(AsyncValue<Map<String, AccentProfil>> accents,
-        String profilId) =>
-    accents.hasValue ? accents.value![profilId] : null;
+AccentProfil? accentLu(
+  AsyncValue<Map<String, AccentProfil>> accents,
+  String profilId,
+) => accents.hasValue ? accents.value![profilId] : null;

@@ -30,6 +30,7 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/admin_finance/paiements/factures_mois.dart';
 import 'package:rewayah_academy/features/admin_finance/paiements/paiements_page.dart';
 
 import '../../support/garde_interface.dart';
@@ -70,7 +71,21 @@ class _Port implements PortPaiementsSaisis {
     this.liste = const <ElevePourPaiement>[_bilal, _yasmine],
     this.erreurListe,
     this.reponses = const <Object>[],
+    this.reponsesFactures = const <Object>[],
   });
+
+  /// Une reponse par emission de factures : un [FacturesEmises] ou l'erreur.
+  final List<Object> reponsesFactures;
+  final List<DateTime> emissions = <DateTime>[];
+
+  @override
+  Future<FacturesEmises> emettreFactures(DateTime mois) {
+    emissions.add(mois);
+    final Object r = reponsesFactures[emissions.length - 1];
+    return r is FacturesEmises
+        ? Future<FacturesEmises>.value(r)
+        : Future<FacturesEmises>.error(r);
+  }
 
   final List<ElevePourPaiement> liste;
   final Object? erreurListe;
@@ -365,6 +380,130 @@ void main() {
       await _ouvrirBilal(tester);
       expect(find.text(p.horsLigne), findsOneWidget);
       expect(find.byKey(FeuillePaiement.cleEnregistrer), findsNothing);
+    });
+  });
+
+  // FAC-B-01 : les factures du mois, emises depuis l'onglet.
+  group('factures du mois', () {
+    final f = t.admin.finance.fac;
+    final (DateTime courant, DateTime suivant) = moisFacturables(
+      DateTime.now(),
+    );
+
+    Future<void> ouvrirCourant(WidgetTester tester) =>
+        _toucher(tester, find.byKey(BlocFacturesMois.cleMois(courant)));
+
+    testWidgets('deux lignes, le mois en cours et le suivant', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(_hote(_Port()));
+      await tester.pumpAndSettle();
+      expect(find.byKey(BlocFacturesMois.cleMois(courant)), findsOneWidget);
+      expect(find.byKey(BlocFacturesMois.cleMois(suivant)), findsOneWidget);
+    });
+
+    testWidgets('emettre : le mois part au premier jour, l issue est celle '
+        'rendue, la liste se relit', (WidgetTester tester) async {
+      final _Port port = _Port(
+        reponsesFactures: const <Object>[
+          FacturesEmises(emises: 2, financees: 1),
+        ],
+      );
+      await tester.pumpWidget(_hote(port));
+      await tester.pumpAndSettle();
+      final int lecturesAvant = port.lectures;
+      await ouvrirCourant(tester);
+      expect(find.text(f.explication), findsOneWidget);
+      await _toucher(tester, find.byKey(FeuilleFacturesMois.cleEmettre));
+      expect(port.emissions, <DateTime>[courant]);
+      expect(find.text(f.faitTitre), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(FeuilleFacturesMois.cleEmises),
+          matching: find.text('2'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(FeuilleFacturesMois.cleFinancees),
+          matching: find.text('1'),
+        ),
+        findsOneWidget,
+      );
+      // Une seule action une fois l'issue connue : fermer.
+      expect(find.byKey(FeuilleFacturesMois.cleEmettre), findsNothing);
+      await _toucher(tester, find.text(p.fermer));
+      expect(port.lectures, greaterThan(lecturesAvant));
+    });
+
+    testWidgets('deja emises : rien n a ete ajoute, et c est dit', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        _hote(
+          _Port(
+            reponsesFactures: const <Object>[
+              FacturesEmises(emises: 0, financees: 0),
+            ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await ouvrirCourant(tester);
+      await _toucher(tester, find.byKey(FeuilleFacturesMois.cleEmettre));
+      expect(find.text(f.dejaEmises), findsOneWidget);
+    });
+
+    for (final (MotifRefusPaiement motif, String phrase)
+        in <(MotifRefusPaiement, String)>[
+          (MotifRefusPaiement.droits, f.refusDroits),
+          (MotifRefusPaiement.invalide, f.refusMois),
+          (MotifRefusPaiement.sansPolitique, f.refusSansPrix),
+        ]) {
+      testWidgets('refus ${motif.name} : dit, rien n est emis', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(
+          _hote(_Port(reponsesFactures: <Object>[RefusPaiement(motif)])),
+        );
+        await tester.pumpAndSettle();
+        await ouvrirCourant(tester);
+        await _toucher(tester, find.byKey(FeuilleFacturesMois.cleEmettre));
+        expect(find.text(f.refusTitre), findsOneWidget);
+        expect(find.text(phrase), findsOneWidget);
+      });
+    }
+
+    testWidgets('issue inconnue : Reessayer renvoie le meme mois', (
+      WidgetTester tester,
+    ) async {
+      final _Port port = _Port(
+        reponsesFactures: <Object>[
+          StateError('coupure'),
+          const FacturesEmises(emises: 3, financees: 0),
+        ],
+      );
+      await tester.pumpWidget(_hote(port));
+      await tester.pumpAndSettle();
+      await ouvrirCourant(tester);
+      await _toucher(tester, find.byKey(FeuilleFacturesMois.cleEmettre));
+      expect(find.text(f.inconnuTitre), findsOneWidget);
+      await _toucher(tester, find.byKey(FeuilleFacturesMois.cleEmettre));
+      expect(port.emissions, <DateTime>[courant, courant]);
+      expect(find.text(f.faitTitre), findsOneWidget);
+    });
+
+    testWidgets('hors ligne : rien ne part, une phrase le dit', (
+      WidgetTester tester,
+    ) async {
+      final _Port port = _Port();
+      await tester.pumpWidget(_hote(port, horsLigne: true));
+      await tester.pumpAndSettle();
+      await ouvrirCourant(tester);
+      expect(find.byKey(FeuilleFacturesMois.cleEmettre), findsNothing);
+      expect(find.text(p.horsLigne), findsOneWidget);
+      expect(port.emissions, isEmpty);
     });
   });
 

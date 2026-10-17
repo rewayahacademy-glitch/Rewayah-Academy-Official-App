@@ -63,13 +63,29 @@ class PaiementEnregistre {
   final FinancesProfil? finance;
 }
 
+/// Les factures d'un mois, emises par la source (FAC-B-01).
+@immutable
+class FacturesEmises {
+  /// Cree le resultat.
+  const FacturesEmises({required this.emises, required this.financees});
+
+  /// Les factures creees par cet envoi (zero si tout etait deja emis).
+  final int emises;
+
+  /// Les mois reglees aussitot par les credits deja recus.
+  final int financees;
+}
+
 /// Pourquoi la source refuse une saisie.
 enum MotifRefusPaiement {
   /// La personne connectee n'a pas le droit de saisir.
   droits,
 
-  /// Montant, devise ou eleve refuses.
+  /// Montant, devise, eleve ou mois refuses.
   invalide,
+
+  /// Aucun prix publie pour le mois demande.
+  sansPolitique,
 }
 
 /// La source a refuse la saisie : rien n'a ete enregistre.
@@ -98,6 +114,11 @@ abstract interface class PortPaiementsSaisis {
     required String cle,
     String? reference,
   });
+
+  /// Emet les factures de [mois] (le premier jour du mois) pour tous les
+  /// eleves ; une facture deja emise ne l'est jamais deux fois. Leve
+  /// [RefusPaiement] quand la source refuse.
+  Future<FacturesEmises> emettreFactures(DateTime mois);
 }
 
 /// Aucune source : l'ecran dit « Pas encore disponible ».
@@ -119,6 +140,10 @@ class PaiementsSaisisIndisponibles implements PortPaiementsSaisis {
     String? reference,
   }) =>
       Future<PaiementEnregistre>.error(const CapaciteIndisponible('FI-BR-14'));
+
+  @override
+  Future<FacturesEmises> emettreFactures(DateTime mois) =>
+      Future<FacturesEmises>.error(const CapaciteIndisponible('FI-BR-14'));
 }
 
 /// La saisie des paiements ; indisponible tant que rien ne la surcharge.

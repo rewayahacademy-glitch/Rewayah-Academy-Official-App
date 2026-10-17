@@ -66,6 +66,4 @@ class ClassesFoyerIndisponible implements PortClassesFoyer {
 /// ici : un provider partage ne doit pas dependre implicitement d'un service
 /// reseau (`Supabase.instance`) pour son comportement par defaut.
 final Provider<PortClassesFoyer> portClassesFoyerProvider =
-    Provider<PortClassesFoyer>(
-      (Ref ref) => const ClassesFoyerIndisponible(),
-    );
+    Provider<PortClassesFoyer>((Ref ref) => const ClassesFoyerIndisponible());
