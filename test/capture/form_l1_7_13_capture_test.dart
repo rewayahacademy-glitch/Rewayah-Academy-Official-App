@@ -1,5 +1,5 @@
-// Captures de recette de FORM-L1-7-13 : motifs en puces (cloture d'une classe,
-// demande de reglage du tuteur) et valeurs proposees d'un reglage entier
+// Captures de recette de FORM-L1-7-13 : motifs en puces (cloture d'une classe)
+// et valeurs proposees d'un reglage entier
 // (L13). 390x844 et 1440x900, clair et sombre ; 320 a texte x2, clair et
 // sombre (K-61). Saute sans CAPTURE_DIR (voir `test/capture/LISEZ-MOI.md`).
 
@@ -18,13 +18,12 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
-import 'package:rewayah_academy/features/reglages_enfant/reglages_enfant_page.dart';
 
 import '../features/support_form_l2.dart';
 import '../support/harnais.dart';
 import 'outil_capture.dart';
 
-enum _Ecran { cloture, reglage, configuration }
+enum _Ecran { cloture, configuration }
 
 class _Configuration implements ServiceConfiguration {
   @override
@@ -62,7 +61,6 @@ Future<void> _ouvrir(
   ];
   final Widget page = switch (ecran) {
     _Ecran.cloture => const GroupesPage(),
-    _Ecran.reglage => const ReglagesEnfantPage(),
     _Ecran.configuration => Scaffold(
       body: SafeArea(
         child: ConfigLigneEntiere(
@@ -106,13 +104,6 @@ Future<void> _ouvrir(
       await toucher(
         find.widgetWithText(ActionPrincipale, t.admin.groupes.cloturerEnvoyer),
       );
-      await tester.ensureVisible(find.byKey(SelecteurMotif.clePuce(0)));
-      await stabiliser(tester);
-    case _Ecran.reglage:
-      // Une duree et un motif proposes, retenus.
-      await toucher(find.text(t.tuteur.reglages.demandeDuree));
-      await toucher(find.text(t.commun.formats.minutes(minutes: '45')));
-      await toucher(find.text(t.motifs.reglageDuree.tropLongue));
       await tester.ensureVisible(find.byKey(SelecteurMotif.clePuce(0)));
       await stabiliser(tester);
     case _Ecran.configuration:

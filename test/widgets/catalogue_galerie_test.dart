@@ -63,7 +63,6 @@ const List<String> composantsDuCatalogue = <String>[
   'OfflineBanner',
   'ChoiceCardGroup',
   'ActionPrincipale',
-  'GrilleSemaine',
   'PageParcours',
   // Section 2 : ce que la refonte a produit en chemin, hors liste d'origine.
   'MarquePage',
@@ -195,9 +194,8 @@ const List<String> composantsDuCatalogue = <String>[
   // CPT-F (spec §16.3) : la destination de paiement masquee du personnel.
   'LigneDestinationMasquee',
   // CPT-F (spec §40) : une FAMILLE de neuf pastilles de statut dans un seul
-  // fichier, inscrite sous le nom du fichier. C'est l'exception inverse de
-  // `GrilleSemaine` : ici, un nom de catalogue qui n'est pas une classe ;
-  // l'entree de galerie montre chacune des neuf pastilles.
+  // fichier, inscrite sous le nom du fichier : ici, un nom de catalogue qui
+  // n'est pas une classe ; l'entree de galerie montre chacune des neuf pastilles.
   'PastillesComptable',
   // CPT-F, CPT-TRES, CPT-JOUR : le sous-dossier lib/core/widgets/comptable/,
   // inscrit par CPT-RC (revue CPT-R, m1) ; le controle des fichiers lit
@@ -323,11 +321,7 @@ void main() {
             ..sort();
 
       final List<String> attendus =
-          composantsDuCatalogue
-              .where((String c) => c != 'GrilleSemaine')
-              .map(_enSerpent)
-              .toList()
-            ..sort();
+          composantsDuCatalogue.map(_enSerpent).toList()..sort();
 
       expect(fichiers, attendus);
     });

@@ -9,7 +9,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
-import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_color_pair.dart';
 import 'package:rewayah_academy/core/theme/app_elevation.dart';
@@ -37,7 +36,6 @@ import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/stat_tile.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
-import 'package:rewayah_academy/features/disponibilites/grille_semaine.dart';
 
 import '../support/harnais.dart';
 import '../theme/support/contraste.dart';
@@ -837,37 +835,6 @@ void main() {
     });
   });
 
-  group('GrilleSemaine : les trois surfaces', () {
-    testWidgets('une case vide est enfoncee, une case posee est douce', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        hoteComposant(
-          const SingleChildScrollView(
-            child: GrilleSemaine(
-              creneaux: <Creneau>[
-                Creneau(jour: 1, heure: 6, fuseau: 'Europe/Paris'),
-              ],
-              fuseau: 'Europe/Paris',
-              onBasculer: _basculeIgnoree,
-            ),
-          ),
-        ),
-      );
-
-      final Iterable<DecoratedBox> cases = tester.widgetList<DecoratedBox>(
-        find.byType(DecoratedBox),
-      );
-      final Set<Color?> fonds = cases
-          .map((DecoratedBox b) => (b.decoration as BoxDecoration).color)
-          .toSet();
-      expect(fonds, contains(palette.surfaceSunken.background));
-      expect(fonds, contains(palette.washAccent.background));
-      // L'aplat violet d'avant la refonte n'y est plus.
-      expect(fonds, isNot(contains(palette.surfacePrimary.background)));
-    });
-  });
-
   group('BentoTile : registre unique et sans ombre de liste', () {
     testWidgets('au repos : surfaceRaised, filet hairline, niveau E0', (
       WidgetTester tester,
@@ -1072,5 +1039,3 @@ void main() {
 void _rien() {}
 
 void _allerNullePart(String chemin) {}
-
-void _basculeIgnoree(Creneau creneau, bool posee) {}

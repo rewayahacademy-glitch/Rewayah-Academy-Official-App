@@ -22,21 +22,6 @@ import '../../core/widgets/skeleton.dart';
 import 'feuille_plage.dart';
 import 'plages.dart';
 
-/// Les heures qui portent deja une Classe de cet enseignant : le **conflit**.
-///
-/// Le conflit se **voit**, il ne se bloque pas : retirer une disponibilite
-/// n'annule aucun cours (`weekly_availability` et
-/// `teacher_student_assignments` sont deux tables). Deduplique : deux eleves
-/// sur la meme heure ne font qu'un conflit.
-Set<HeureSemaine> heuresEngagees(
-  List<Affectation> affectations,
-  String monId,
-) => <HeureSemaine>{
-  for (final Affectation a in affectations)
-    if (a.active && a.enseignantId == monId)
-      (jour: a.creneau.jour, heure: a.creneau.heure),
-};
-
 /// `ENS-06` « Mes disponibilites » : une ligne par plage (DISPO-1).
 ///
 /// Le directeur, 01/10 23:16 : la grille de cases jour x heure etait trop
@@ -44,9 +29,6 @@ Set<HeureSemaine> heuresEngagees(
 /// « Lundi | de 17 h | a 23 h », et « Ajouter une plage » ouvre une feuille
 /// (jours en puces, « de » et « a » dans deux listes, raccourcis). Toucher une
 /// plage ouvre la meme feuille, preremplie, pour la modifier ou la supprimer.
-///
-/// La grille `GrilleSemaine` reste celle de la famille (`TUT-04`) : elle n'est
-/// plus rendue ici.
 class PlagesDisponibilite extends ConsumerStatefulWidget {
   /// Cree la section.
   const PlagesDisponibilite({super.key});
@@ -63,8 +45,6 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
     required String monId,
     required String fuseau,
     required Set<HeureSemaine> existantes,
-    required Set<HeureSemaine> engagees,
-    required bool engagementsConfirmes,
     Plage? plage,
   }) async {
     final String? message = await AppBottomSheet.ouvrir<String>(
@@ -78,8 +58,6 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
         profilId: monId,
         fuseau: fuseau,
         existantes: existantes,
-        engagees: engagees,
-        engagementsConfirmes: engagementsConfirmes,
         modifiee: plage,
         // Chaque ecriture partielle relit la liste : ce qui est passe se voit
         // derriere la feuille, meme si l'enseignant la ferme sur un echec.
@@ -105,9 +83,6 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
     final AsyncValue<String> fuseau = ref.watch(monFuseauProvider);
     final AsyncValue<List<Creneau>> creneaux = ref.watch(
       disponibilitesProvider(monId),
-    );
-    final AsyncValue<List<Affectation>> affectations = ref.watch(
-      affectationsProvider,
     );
     // Tant que la reponse n'est pas la, l'appareil est repute en ligne : un
     // bandeau affiche pendant la premiere frame clignoterait a chaque montage.
@@ -138,23 +113,12 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
     final List<Creneau> poses = creneaux.requireValue;
     final Set<HeureSemaine> existantes = heuresDe(poses);
     final List<Plage> plages = deduirePlages(existantes);
-    final Set<HeureSemaine> engagees = heuresEngagees(
-      affectations.value ?? const <Affectation>[],
-      monId,
-    );
-    // Les engagements non lus ne sont pas « aucun engagement » : sans eux,
-    // un conflit ne peut pas etre signale, et l'ecran le dit.
-    final bool engagementsConfirmes = affectations.hasValue;
-    final bool engagementsEnEchec =
-        !affectations.hasValue && affectations.hasError;
     final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
 
     void ouvrir([Plage? plage]) => _ouvrir(
       monId: monId,
       fuseau: fuseau.requireValue,
       existantes: existantes,
-      engagees: engagees,
-      engagementsConfirmes: engagementsConfirmes,
       plage: plage,
     );
 
@@ -177,7 +141,6 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
           Ecart.vMd,
           _ListePlages(
             plages: plages,
-            engagees: engagees,
             // Hors ligne, la liste reste CONSULTABLE mais inerte : une plage
             // touchee sans reseau echouerait apres le geste.
             onToucher: horsLigne ? null : ouvrir,
@@ -196,25 +159,6 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
             t.enseignant.creneaux.horsLigneGrille,
             style: palette.inkWarning.applyTo(
               textes.bodySmall ?? const TextStyle(),
-            ),
-          ),
-        ],
-        // Le conflit avec une Classe est ecrit UNE fois, sur la plage.
-        if (engagementsEnEchec) ...<Widget>[
-          Ecart.vSm,
-          TexteSansCoupure(
-            t.enseignant.creneaux.engagementsNonConfirmes,
-            style: palette.inkWarning.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
-          ),
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: ActionPrincipale(
-              libelle: t.commun.reessayer,
-              niveau: NiveauAction.tertiaire,
-              pleineLargeur: false,
-              onPress: () => ref.invalidate(affectationsProvider),
             ),
           ),
         ],
@@ -248,14 +192,9 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
 /// tiennent ; a texte agrandi ou sur une ligne etroite, la ligne s'empile
 /// (« Lundi » puis « de 17 h a 23 h ») au lieu de couper un mot.
 class _ListePlages extends StatelessWidget {
-  const _ListePlages({
-    required this.plages,
-    required this.engagees,
-    required this.onToucher,
-  });
+  const _ListePlages({required this.plages, required this.onToucher});
 
   final List<Plage> plages;
-  final Set<HeureSemaine> engagees;
   final void Function(Plage plage)? onToucher;
 
   /// Ce que la ligne pose autour des colonnes : retrait de debut (16), ecart
@@ -328,16 +267,6 @@ class _ListePlages extends StatelessWidget {
     required double de,
     required TextStyle style,
   }) {
-    final List<HeureSemaine> engagement =
-        engagees.where(plage.contient).toList()..sort(
-          (HeureSemaine x, HeureSemaine y) => x.heure.compareTo(y.heure),
-        );
-    // Le conflit est ECRIT sur la plage, jamais porte par la seule couleur.
-    final String? conflit = engagement.isEmpty
-        ? null
-        : t.enseignant.creneaux.plageEngagee(
-            heures: engagement.map(nommerHeure).join(', '),
-          );
     final String nom = jourCapitalise(plage.jour);
     final String debut = libelleDe(plage.de);
     final String fin = libelleA(plage.a);
@@ -373,13 +302,12 @@ class _ListePlages extends StatelessWidget {
           style: style,
         ),
         pastilleSousLibelle: false,
-        legende: conflit,
         onPress: onPress,
       );
     }
     return LigneRubrique(
       libelle: nom,
-      legende: <String>['$debut $fin', ?conflit].join('\n'),
+      legende: '$debut $fin',
       onPress: onPress,
     );
   }

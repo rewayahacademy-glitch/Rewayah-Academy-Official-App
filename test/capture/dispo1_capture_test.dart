@@ -51,18 +51,6 @@ List<Override> _surcharges() => <Override>[
         ..._plage(4, 9, 11),
         ..._plage(6, 8, 12),
         ..._plage(7, 8, 12),
-      ]
-      ..affectationsRendues = <Affectation>[
-        Affectation(
-          id: 'a1',
-          enseignantId: _monId,
-          enseignantPrenom: 'Omar',
-          enseignantIdentifiant: 'TEACH-OS-000001',
-          eleveId: 'e1',
-          elevePrenom: 'Yasmine',
-          creneau: const Creneau(jour: 4, heure: 9, fuseau: 'Europe/Paris'),
-          depuis: DateTime(2026, 9),
-        ),
       ],
   ),
   serviceReglesProvider.overrideWithValue(FauxServiceRegles()),

@@ -527,9 +527,7 @@ void main() {
     // 5 bis. Aucun `Container` porteur d'une `decoration` sous `lib/features/` :
     // les surfaces d'un ecran viennent d'`AppCard` et de `PageShell`
     // (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 6). La regle nomme
-    // `Container`, pas `DecoratedBox` : le seul `DecoratedBox` de `features/`
-    // est celui de `GrilleSemaine`, composant partage que l'arborescence a
-    // laisse la. Ajoutee au lot R avec la reprise de `TUT-01`, premiere a
+    // `Container`, pas `DecoratedBox`. Ajoutee au lot R avec la reprise de `TUT-01`, premiere a
     // retirer son `Container` decore, la pastille verte passee a `StatusPill`.
     if (chemin.startsWith('lib/features/')) {
       violations.addAll(_containersDecoresDeFeatures(chemin, contenu));

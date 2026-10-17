@@ -189,72 +189,7 @@ class Seance {
   }
 }
 
-/// Qui suit qui, tel que `mes_affectations_v` l'expose.
-///
-/// Elle existe avant la premiere seance : c'est ce qui permet a `TUT-01`
-/// d'afficher « en recherche d'un enseignant » plutot qu'un ecran vide.
-@immutable
-class Affectation {
-  /// Cree une affectation.
-  const Affectation({
-    required this.id,
-    required this.enseignantId,
-    required this.enseignantPrenom,
-    required this.enseignantIdentifiant,
-    required this.eleveId,
-    required this.elevePrenom,
-    required this.creneau,
-    required this.depuis,
-    this.closeLe,
-  });
-
-  /// Lit une ligne de la vue.
-  factory Affectation.depuisJson(Map<String, dynamic> json) => Affectation(
-    id: json['id'] as String,
-    enseignantId: json['teacher_id'] as String? ?? '',
-    enseignantPrenom: json['teacher_first_name'] as String? ?? '',
-    enseignantIdentifiant: json['teacher_immutable_id'] as String? ?? '',
-    eleveId: json['student_id'] as String? ?? '',
-    elevePrenom: json['student_first_name'] as String? ?? '',
-    creneau: Creneau.depuisJson(json),
-    depuis:
-        DateTime.tryParse(json['created_at'] as String? ?? '')?.toLocal() ??
-        DateTime.now(),
-    closeLe: DateTime.tryParse(json['ended_at'] as String? ?? '')?.toLocal(),
-  );
-
-  /// Identifiant de l'affectation.
-  final String id;
-
-  /// Identifiant du profil enseignant.
-  final String enseignantId;
-
-  /// Prenom de l'enseignant.
-  final String enseignantPrenom;
-
-  /// Identifiant immuable de l'enseignant.
-  final String enseignantIdentifiant;
-
-  /// Identifiant du profil eleve.
-  final String eleveId;
-
-  /// Prenom de l'eleve.
-  final String elevePrenom;
-
-  /// Le rendez-vous hebdomadaire qui en decoule.
-  final Creneau creneau;
-
-  /// Depuis quand elle dure.
-  final DateTime depuis;
-
-  /// Quand elle a ete close, s'il y a lieu.
-  final DateTime? closeLe;
-
-  /// Vrai tant qu'elle lie l'eleve et l'enseignant.
-  bool get active => closeLe == null;
-}
-
-/// Les disponibilites, les seances et les affectations.
+/// Les disponibilites et les seances.
 ///
 /// **Aucune duree n'est calculee ici.** La duree d'une seance vient de la base,
 /// qui applique la regle de cet eleve : voir `ServiceRegles`.
@@ -280,9 +215,6 @@ abstract interface class ServicePlanning {
   /// (L2-04). `null` garde la lecture de tout le foyer (tuteur, accueil famille),
   /// bornee cote serveur par `mes_seances_v` (L1-04).
   Future<List<Seance>> seances({String? eleveId});
-
-  /// Les affectations qui concernent l'appelant.
-  Future<List<Affectation>> affectations();
 }
 
 /// L'implementation reelle.
@@ -346,15 +278,6 @@ class ServicePlanningSupabase implements ServicePlanning {
     final List<Map<String, dynamic>> lignes = await requete.order('started_at');
     return lignes.map(Seance.lire).nonNulls.toList();
   }
-
-  @override
-  Future<List<Affectation>> affectations() async {
-    final List<Map<String, dynamic>> lignes = await _client
-        .from('mes_affectations_v')
-        .select()
-        .order('created_at');
-    return lignes.map(Affectation.depuisJson).toList();
-  }
 }
 
 /// Le service de planning employe par l'application.
@@ -398,18 +321,9 @@ final Provider<String?> profilCourantProvider = Provider<String?>((Ref ref) {
 /// de l'ecran est la retentative explicite, comme pour
 /// `dossiersEnAttenteProvider` (`service_validation.dart`).
 final FutureProvider<List<Seance>> seancesProvider =
-    FutureProvider<List<Seance>>(
-      (Ref ref) {
-        // L'accueil eleve lit les seances de l'eleve connecte (L2-04). Sans
-        // profil, la lecture reste celle du foyer, bornee par L1-04.
-        final String? eleveId = ref.watch(profilCourantProvider);
-        return ref.watch(servicePlanningProvider).seances(eleveId: eleveId);
-      },
-      retry: (int retryCount, Object error) => null,
-    );
-
-/// Les affectations qui concernent l'appelant.
-final FutureProvider<List<Affectation>> affectationsProvider =
-    FutureProvider<List<Affectation>>(
-      (Ref ref) => ref.watch(servicePlanningProvider).affectations(),
-    );
+    FutureProvider<List<Seance>>((Ref ref) {
+      // L'accueil eleve lit les seances de l'eleve connecte (L2-04). Sans
+      // profil, la lecture reste celle du foyer, bornee par L1-04.
+      final String? eleveId = ref.watch(profilCourantProvider);
+      return ref.watch(servicePlanningProvider).seances(eleveId: eleveId);
+    }, retry: (int retryCount, Object error) => null);

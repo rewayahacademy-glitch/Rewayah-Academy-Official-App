@@ -369,9 +369,6 @@ class FauxServicePlanning implements ServicePlanning {
   /// Les seances rendues.
   List<Seance> seancesRendues = const <Seance>[];
 
-  /// Les affectations rendues.
-  List<Affectation> affectationsRendues = const <Affectation>[];
-
   /// Le fuseau rendu.
   String fuseau = 'Europe/Paris';
 
@@ -425,9 +422,6 @@ class FauxServicePlanning implements ServicePlanning {
 
   @override
   Future<List<Seance>> seances({String? eleveId}) async => seancesRendues;
-
-  @override
-  Future<List<Affectation>> affectations() async => affectationsRendues;
 }
 
 /// Un service de matching en memoire.
@@ -644,10 +638,7 @@ class FauxStockageSecurise implements StockageSecurise {
   Future<String?> jetonAppareil(String profilId) async => jetons[profilId];
 
   @override
-  Future<void> enregistrerJetonAppareil(
-    String profilId,
-    String jeton,
-  ) async {
+  Future<void> enregistrerJetonAppareil(String profilId, String jeton) async {
     jetons[profilId] = jeton;
   }
 
@@ -657,8 +648,7 @@ class FauxStockageSecurise implements StockageSecurise {
   }
 
   @override
-  Future<String?> empreintePin(String profilId) async =>
-      empreintes[profilId];
+  Future<String?> empreintePin(String profilId) async => empreintes[profilId];
 
   @override
   Future<void> enregistrerEmpreintePin(

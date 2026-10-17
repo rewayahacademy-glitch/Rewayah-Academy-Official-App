@@ -1,7 +1,7 @@
 // SUPERPOS-1, reprise du relecteur : captures de preuve, avant (tete de la
 // branche avant la reprise, 2b42d97d) et apres (variable `PHASE`, par defaut
 // `apres`). En-tete compact (« Dossiers a valider », fil des echanges), fil a
-// l'arrivee, Interface guidee (fil, demande des reglages de l'enfant),
+// l'arrivee, Interface guidee (fil),
 // lecteur du Coran du Mode Accessibilite avec lecteur d'ecran, aides et
 // erreurs de l'invitation du conjoint. Jamais sans `CAPTURE_DIR`.
 
@@ -14,13 +14,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/coran/service_coran.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/matching/service_matching.dart';
-import 'package:rewayah_academy/core/planning/service_planning.dart';
-import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
@@ -34,9 +30,7 @@ import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
-import 'package:rewayah_academy/features/reglages_enfant/reglages_enfant_page.dart';
 
-import '../support/harnais.dart';
 import '../teaching_core/c/faux/faux_corpus_coran.dart';
 import '../teaching_core/c/goldens/corpus_reference.dart';
 import 'outil_capture.dart';
@@ -223,75 +217,6 @@ void main() {
         );
         await _stabiliser(tester);
         debugPrint('PNG ${await capturerVue(tester, _nom('fil_${c.$6}'))}');
-      });
-    }
-
-    // Interface guidee, activee par un adulte : la demande des reglages de
-    // l'enfant (zone de saisie partagee).
-    for (final (Size, double, String) c in <(Size, double, String)>[
-      (const Size(320, 640), 2, '320x2'),
-      (const Size(390, 844), 1, '390'),
-    ]) {
-      testWidgets('reglages de l\'enfant, Interface guidee ${c.$3}', (
-        WidgetTester tester,
-      ) async {
-        _vue(tester, c.$1, c.$2);
-        await tester.pumpWidget(
-          _app(
-            mode: InterfaceMode.enfant,
-            home: const ReglagesEnfantPage(),
-            surcharges: <Override>[
-              serviceAppairageProvider.overrideWithValue(
-                FauxServiceAppairage()
-                  ..elevesRendus = <EleveDuFoyer>[
-                    const EleveDuFoyer(
-                      id: 'e1',
-                      prenom: 'Amina',
-                      identifiantImmuable: 'STUD-AD-000001',
-                      mode: InterfaceMode.enfant,
-                      camera: CameraPolicy.forbidden,
-                    ),
-                  ],
-              ),
-              servicePlanningProvider.overrideWithValue(
-                FauxServicePlanning()
-                  ..affectationsRendues = <Affectation>[
-                    Affectation(
-                      id: 'a1',
-                      enseignantId: 't1',
-                      enseignantPrenom: 'Aminata',
-                      enseignantIdentifiant: 'TEACH-AD-000001',
-                      eleveId: 'e1',
-                      elevePrenom: 'Amina',
-                      creneau: const Creneau(
-                        jour: 2,
-                        heure: 17,
-                        fuseau: 'Europe/Paris',
-                      ),
-                      depuis: DateTime(2026, 9, 1),
-                    ),
-                  ],
-              ),
-              serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
-              serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
-            ],
-          ),
-        );
-        await _stabiliser(tester);
-        final Finder demande = find.text(
-          t.tuteur.reglages.demandeReaffectation,
-        );
-        await tester.ensureVisible(demande);
-        await tester.tap(demande);
-        await _stabiliser(tester);
-        await tester.enterText(
-          find.byType(TextField),
-          'Le créneau du mardi ne convient plus depuis la rentrée.',
-        );
-        await _stabiliser(tester);
-        debugPrint(
-          'PNG ${await capturerVue(tester, _nom('reglages_guidee_${c.$3}'))}',
-        );
       });
     }
 
