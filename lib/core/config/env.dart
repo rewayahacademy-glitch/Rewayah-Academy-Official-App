@@ -61,8 +61,9 @@ abstract final class Env {
   /// Active l'observation reelle par le tuteur (visite d'une seance en
   /// direct, contrat K4).
   ///
-  /// **Faux par defaut, et force a faux hors developpement quoi qu'on passe**
-  /// (point P3 du chantier Tuteur V1) : l'observation ne s'ouvre pas sur une
+  /// **Faux par defaut, et force a faux hors developpement et staging quoi
+  /// qu'on passe** (point P3 du chantier Tuteur V1) : l'observation ne
+  /// s'ouvre pas sur une
   /// protection locale tant que le serveur ne garantit ni la presence de
   /// l'enfant, ni la fin de visite, ni l'emission du jeton video (dependances
   /// DB-OBS-01, 02, 03, 05). Faux, le bloc Observation dit « pas encore
@@ -76,8 +77,8 @@ abstract final class Env {
 
   /// L'interrupteur d'observation reelle effectivement applique.
   ///
-  /// Faux partout sauf en `developpement`, quelle que soit la valeur compilee
-  /// de [observationTuteurReelle]. Les ecrans le lisent par
+  /// Faux partout sauf en `developpement` et `staging`, quelle que soit la
+  /// valeur compilee de [observationTuteurReelle]. Les ecrans le lisent par
   /// `observationTuteurReelleProvider`, jamais ici.
   static bool get observationTuteurReelleActive => observationTuteurReelleSelon(
     demandee: observationTuteurReelle,
@@ -86,15 +87,22 @@ abstract final class Env {
 
   /// La regle de forcage, pure pour etre verifiee sans compilation dediee.
   ///
-  /// **Liste d'autorisation, pas d'exclusion** : les apercus de pull request
-  /// sont compiles avec `ENVIRONNEMENT=staging` et les memes cles Supabase que
-  /// la production (`flutter-deploy.yml`), et une valeur mal orthographiee
-  /// (`Production`) passerait une liste d'exclusion. Seul `developpement`
-  /// ouvre l'interrupteur.
+  /// **Liste d'autorisation, pas d'exclusion.** `developpement` depuis le
+  /// debut ; `staging` depuis la decision A-09 (audit final du 16/10/2026,
+  /// apres la vague 1 de securite) pour recetter l'observation a quatre
+  /// roles sur la preversion. `production` reste fermee tant qu'aucune
+  /// recette n'a ete signee. Une valeur mal orthographiee (`Production`,
+  /// `Staging`) reste fermee : c'est pour cela qu'on ne passe pas par une
+  /// liste d'exclusion. Attention : les apercus de pull request sont compiles
+  /// avec `ENVIRONNEMENT=staging` et, a ce jour, les memes cles Supabase que
+  /// la production (`flutter-deploy.yml`) ; n'y passer
+  /// `OBSERVATION_TUTEUR_REELLE=true` qu'une fois l'apercu pointe sur STAGING.
   static bool observationTuteurReelleSelon({
     required bool demandee,
     required String environnement,
-  }) => demandee && environnement == 'developpement';
+  }) =>
+      demandee &&
+      (environnement == 'developpement' || environnement == 'staging');
 
   /// DSN Sentry du projet Flutter (onboarding etape F, critere 0.6).
   ///

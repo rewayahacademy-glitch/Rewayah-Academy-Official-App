@@ -16,7 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Riverpod 3 a sorti `Override` de l'export principal.
 import 'package:flutter_riverpod/misc.dart' show Override, ProviderException;
 import 'package:supabase_flutter/supabase_flutter.dart'
-    show PostgrestException, StorageException;
+    show FunctionException, PostgrestException;
 
 import '../admin/service_comptes.dart' show EtatPiece;
 import '../domain/enums.dart';
@@ -60,8 +60,9 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
 
   final Future<List<DossierAValider>> Function() lire;
 
-  /// Signe l'URL courte d'un objet ; nul, la piece reste indisponible.
-  final Future<String> Function(String cleObjet)? apercu;
+  /// Signe l'URL courte d'une piece, par son identifiant de document (la
+  /// cle d'objet reste cote serveur) ; nul, la piece reste indisponible.
+  final Future<String> Function(String documentId)? apercu;
 
   /// L'heure courante (tests) ; DateTime.now par defaut.
   final DateTime Function()? horloge;
@@ -285,11 +286,20 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
     final DateTime maintenant = (horloge ?? DateTime.now)().toUtc();
     final String url;
     try {
-      url = await signer(cle);
-    } on StorageException catch (e) {
-      throw ErreurRevueDossier(switch (e.statusCode) {
-        '403' => CodeErreurRevue.interdit,
-        '400' || '404' => CodeErreurRevue.introuvable,
+      url = await signer(documentId);
+    } on ApercuRefuse {
+      // La porte serveur a refuse : une regle (genre), pas une panne. Le refus
+      // remonte tel quel pour que la visionneuse en dise la cause.
+      rethrow;
+    } on FunctionException catch (e) {
+      // La porte `piece-identite-acces` repond par un statut : 403 est un
+      // refus de regle (traite comme `ApercuRefuse`), 400 et 404 un document
+      // introuvable, le reste une panne temporaire.
+      if (e.status == 403) {
+        throw const ApercuRefuse();
+      }
+      throw ErreurRevueDossier(switch (e.status) {
+        400 || 404 => CodeErreurRevue.introuvable,
         _ => CodeErreurRevue.indisponibleTemporairement,
       });
     } on Object {
@@ -361,6 +371,11 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
       final String m = e.message;
       if (m.contains('un refus exige un motif')) {
         throw const ErreurRevueDossier(CodeErreurRevue.motifRequis);
+      }
+      // L1-05 : `decider_dossier` refuse une seconde decision (« dossier déjà
+      // décidé »). Le serveur a repondu : c'est un fait, pas un echec.
+      if (m.contains('dossier déjà décidé')) {
+        throw const ErreurRevueDossier(CodeErreurRevue.dejaDecide);
       }
       if (e.code == '42501' ||
           m.contains('introuvable ou hors du perimetre') ||

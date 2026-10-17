@@ -193,9 +193,6 @@ class ServiceVideoControleurDemo implements ServiceVideo {
   Future<void> observerEnControle(String seanceId) async {}
 
   @override
-  Future<void> assisterEnTuteur(String seanceId) async {}
-
-  @override
   Future<void> annoncerSortie(String seanceId) async {}
 }
 

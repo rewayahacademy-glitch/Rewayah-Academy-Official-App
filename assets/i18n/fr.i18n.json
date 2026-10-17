@@ -1,5 +1,18 @@
 {
   "commun": {
+    "formats": {
+      "dateHeure": "{date} à {heure}",
+      "minutes": "{minutes} min",
+      "pageSur": "Page {page} sur {total}"
+    },
+    "roles": {
+      "eleve": "Élève",
+      "tuteur": "Tuteur",
+      "enseignant": "Enseignant",
+      "administration": "Administration",
+      "controleur": "Contrôleur",
+      "comptable": "Comptable"
+    },
     "classeDistincte": {
       "numero": "{libelle} · n° {numero}",
       "code": "{libelle} · {code}",
@@ -55,6 +68,7 @@
       "autresPlusieurs": "{n} autres personnes correspondent\u00a0: précisez la recherche pour les voir."
     },
     "etats": {
+      "branchementServeur": "Disponible au branchement serveur",
       "chargementProlonge": {
         "titre": "La connexion prend plus de temps que prévu",
         "phrase": "Vous pouvez patienter encore un peu ou réessayer."
@@ -181,6 +195,11 @@
     "sections": {
       "page": "Sections de la page"
     },
+    "filtres": {
+      "plus": "Plus",
+      "plusAvec": "Plus, {n}",
+      "titreFeuille": "Autres filtres"
+    },
     "recherche": {
       "effacer": "Effacer la recherche",
       "fermer": "Fermer la recherche"
@@ -275,7 +294,7 @@
         },
         "demo": {
           "section": "Préparation élève",
-          "sectionGuidee": "Préparation élève, Mode Accessibilité",
+          "sectionGuidee": "Préparation élève, Interface guidée",
           "verification": "Vérification en cours",
           "pret": "Prêt",
           "microBloque": "Micro bloqué",
@@ -350,7 +369,6 @@
       },
       "enLigne": "En ligne",
       "reconnexion": "Reconnexion",
-      "coursEnregistreCourt": "Le cours est enregistré.",
       "votreParentObserve": "Votre parent observe la séance.",
       "tonParentObserve": "Ton parent observe la séance.",
       "tuteurDeObserve": "Tuteur {dePrenom} observe.",
@@ -534,14 +552,12 @@
       "capsule": {
         "avatar": "Afficher les informations {deNom}",
         "controlePossible": "Contrôle possible. Afficher les informations",
-        "controleActif": "Contrôle actif. Afficher les informations",
-        "enregistrementActif": "Enregistrement actif"
+        "controleActif": "Contrôle actif. Afficher les informations"
       },
       "contexte": {
         "titre": "Informations de la séance",
         "reseau": "Réseau",
         "detailReseau": "Détail du réseau",
-        "enregistrementActif": "Enregistrement actif",
         "controle": "Contrôle",
         "controlePossible": "Contrôle possible",
         "controleActif": "Contrôle actif",
@@ -561,7 +577,7 @@
         },
         "roles": {
           "eleve": "Élève standard",
-          "guidee": "Mode Accessibilité",
+          "guidee": "Interface guidée",
           "enseignant": "Enseignant",
           "tuteur": "Tuteur observateur",
           "controleur": "Contrôleur"
@@ -789,6 +805,9 @@
     "aucunDocument": "Vous n'avez aucun document à envoyer.",
     "accesContact": "L'académie peut l'ouvrir pour vous\u00a0: joignez-la.",
     "actualiserCompte": "Actualiser",
+    "lireEtAccepter": "Lire et accepter nos conditions",
+    "nosConditions": "Nos conditions, à lire et à accepter",
+    "etatAAccepter": "À accepter",
     "reste": {
       "one": "Il reste un élément à fournir.",
       "other": "Il reste {n} éléments à fournir."
@@ -800,6 +819,20 @@
     "illisible": "L'état de votre compte ne s'affiche pas pour le moment.",
     "horsLigne": "L'état de votre compte s'affichera dès le retour du réseau."
   },
+  "accords": {
+    "titre": "Nos conditions",
+    "intro": "Lisez chaque texte, puis cochez la case qui le suit. Le bouton «\u00a0Suivant\u00a0» s'active quand tout est coché.",
+    "caseSavoir": "J'ai lu et compris ce que je dois savoir.",
+    "sectionContrat": "Votre contrat",
+    "caseContrat": "J'ai lu et j'accepte mon contrat, visites de contrôle comprises.",
+    "reste": {
+      "one": "Il reste un accord à cocher.",
+      "other": "Il reste {n} accords à cocher."
+    },
+    "toutCoche": "Tout est coché.",
+    "suivant": "Suivant",
+    "dejaAcceptes": "Vos accords sont déjà enregistrés."
+  },
   "connexion": {
     "titre": "Se connecter",
     "intro": "Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.",
@@ -807,6 +840,9 @@
     "courrielIndice": "vous@exemple.com",
     "motDePasseDemo": "Mot de passe de démonstration",
     "envoyerLien": "Recevoir le lien",
+    "entrerDemo": "Entrer dans la démonstration",
+    "introDemo": "Mode démonstration\u00a0: aucun lien ne sera envoyé. Vous entrez directement, sans courriel.",
+    "essayerDemo": "Essayer la démonstration",
     "avecGoogle": "Continuer avec Google",
     "ou": "ou",
     "lienEnvoye": "Lien envoyé",
@@ -866,6 +902,10 @@
     "genreHomme": "Un homme",
     "genreFemme": "Une femme",
     "genreRaison": "Cette réponse ne sert qu'à confier votre pièce d'identité à un membre du personnel du même genre.",
+    "genreHommeExplication": "Si vous suivez des cours, l'académie en tient compte pour former les classes et choisir l'enseignant.",
+    "genreFemmeExplication": "Si vous suivez des cours, l'académie en tient compte pour former les classes et choisir l'enseignante.",
+    "genreHommeEnseignant": "Votre pièce d'identité sera relue par un homme de l'équipe.",
+    "genreFemmeEnseignant": "Votre pièce d'identité sera relue par une femme de l'équipe.",
     "recapitulatif": "Avant de continuer",
     "creer": "Créer mon compte",
     "erreur": "La création du compte n'a pas abouti. Réessayez dans un instant.",
@@ -883,22 +923,32 @@
       "moiDescription": "Je souhaite suivre les cours avec mon propre profil élève.",
       "familleTitre": "Moi et ma famille",
       "familleDescription": "Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.",
-      "enseignant": "Je suis enseignant",
+      "enseignant": "J'ai un code d'invitation",
+      "enseignantInvite": "Vous êtes enseignant\u00a0? L'académie vous invite par courriel.",
+      "comptable": "J'ai un code de comptable",
+      "comptableInvite": "Vous êtes comptable\u00a0? La direction vous invite par courriel.",
       "coursQuestion": "Suivez-vous aussi des cours ?",
       "coursOui": "Oui",
-      "coursNon": "Non"
+      "coursNon": "Non",
+      "moiExemple": "vous apprenez la récitation pour vous-même, sans inscrire d'enfant.",
+      "familleExemple": "vous inscrivez Yasmine, 9 ans, et Bilal, 12 ans.",
+      "coursOuiExplication": "Vous suivez vous aussi des cours, en plus de ceux de vos proches.",
+      "coursOuiExemple": "vos enfants suivent leur classe et vous suivez la vôtre.",
+      "coursNonExplication": "Vous inscrivez vos proches et suivez leurs progrès, sans cours pour vous. Vous pourrez changer d'avis plus tard.",
+      "coursNonExemple": "vous inscrivez votre fille et suivez ses séances depuis votre compte."
     },
     "recap": {
       "usage": "Type de compte",
       "identite": "Nom",
       "genre": "Genre",
-      "enseignant": "Enseignant"
+      "enseignant": "Enseignant",
+      "comptable": "Comptable"
     }
   },
   "contrat": {
     "titre": "Ce que vous signez",
     "intro": "Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu'au milieu d'un texte long.",
-    "pointEnregistrement": "Chaque cours est enregistré en audio, conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.",
+    "pointEnregistrement": "Un cours peut être enregistré en audio. Dans ce cas, il est conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.",
     "pointControle": "Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.",
     "pointCoordonnees": "Vous ne voyez jamais les coordonnées d'une famille\u00a0: ni nom complet, ni courriel, ni téléphone.",
     "lireTexte": "Lire le texte complet",
@@ -909,9 +959,9 @@
     "horsLigne": "Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.",
     "caseRequise": "Cochez la case pour continuer.",
     "a3": {
-      "titre": "Les cours sont enregistrés (le son seulement)",
+      "titre": "Les cours peuvent être enregistrés (le son seulement)",
       "quoiTitre": "Ce que nous faisons.",
-      "quoi": "Chaque cours est enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct\u00a0: elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. La salle le rappelle en permanence.",
+      "quoi": "Un cours peut être enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct\u00a0: elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. La salle le rappelle en permanence.",
       "pourquoiTitre": "Pourquoi.",
       "pourquoi": "Pour protéger les enfants et les enseignants. Si quelqu'un signale un problème, nous pouvons vérifier ce qui s'est passé.",
       "quiTitre": "Qui peut écouter l'enregistrement.",
@@ -923,7 +973,7 @@
       "jaiLu": "J'ai lu"
     },
     "e1": {
-      "quoi": "Chaque cours est enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct\u00a0: elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. Elle envoie ensuite un compte rendu à l'académie. La salle le rappelle en permanence.",
+      "quoi": "Un cours peut être enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct\u00a0: elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. Elle envoie ensuite un compte rendu à l'académie. La salle le rappelle en permanence.",
       "pourquoi": "Pour protéger les enfants et les enseignants. Si quelqu'un signale un problème, nous pouvons vérifier ce qui s'est passé. C'est aussi une preuve pour vous si une famille se plaint à tort.",
       "refusTitre": "Si vous refusez.",
       "refus": "Nous ne pouvons pas vous confier d'élèves, car cette mesure protège les enfants. Nous vous le disons avant votre signature."
@@ -1025,7 +1075,7 @@
   },
   "accessibilite": {
     "demo": {
-      "titre": "Démonstration du Mode Accessibilité",
+      "titre": "Démonstration de l'Interface guidée",
       "mention": "Données fictives, aucun envoi.",
       "intro": "Choisissez un élève et un moment de la séance.",
       "eleveMineure": "Mariam, élève mineure",
@@ -1093,7 +1143,7 @@
     },
     "monEspace": {
       "titre": "Mon espace",
-      "mode": "Mode Accessibilité",
+      "mode": "Interface guidée",
       "modeDetail": "Une interface simplifiée et adaptée pour un apprentissage plus serein.",
       "modeActif": "Activé",
       "presentationStandard": "Présentation standard",
@@ -1162,6 +1212,11 @@
     "passeport": "Passeport",
     "titreSejour": "Titre de séjour",
     "autrePiece": "Autre pièce officielle",
+    "explicationCarteIdentite": "La carte d'identité nationale de votre pays, en cours de validité. Photographiez le côté qui porte votre photo et votre nom.",
+    "explicationPasseport": "Votre passeport en cours de validité. Photographiez la page qui porte votre photo et votre nom.",
+    "explicationTitreSejour": "La carte remise par le pays où vous vivez quand vous n'en avez pas la nationalité, en cours de validité.",
+    "explicationAutre": "Une autre pièce délivrée par une administration, qui porte votre photo et votre nom.",
+    "exempleAutre": "un permis de conduire ou une carte consulaire",
     "choisirFichier": "Choisir la photo",
     "fichierChoisi": "Photo prête à être envoyée",
     "envoyer": "Envoyer ma pièce",
@@ -1345,7 +1400,7 @@
         "enfantDescription": "Un profil rattaché à votre foyer, que vous gérez pour lui.",
         "enfantAttente": "Possible dès que votre accès est ouvert.",
         "moiTitre": "Moi-même",
-        "moiDescription": "Pas encore possible\u00a0: suivre vous-même les cours avec votre propre profil élève sera proposé prochainement."
+        "moiDescription": "Un adulte s'inscrit depuis son propre compte."
       },
       "identite": {
         "question": "Qui est l'élève\u00a0?",
@@ -1355,7 +1410,7 @@
         "nomAide": "Le nom de famille n'est jamais montré à l'enseignant.",
         "nomAidePrerempli": "Prérempli avec le nom de votre compte\u00a0: modifiez-le si l'élève porte un autre nom. Jamais montré à l'enseignant.",
         "age": "Âge, en années",
-        "ageAide": "L'âge fixe l'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.",
+        "ageAide": "L'âge fixe l'affichage et la caméra au départ. Vous pourrez changer les deux ensuite. L'âge minimum est de {min} ans.",
         "ageFige": "L'envoi est en cours : l'âge pourra être changé après la réponse."
       },
       "erreurs": {
@@ -1483,7 +1538,7 @@
     "interface": {
       "titre": "Interface",
       "intro": "Choisissez comment Rewayah s'affiche sur l'appareil {dePrenom}. Vous pourrez changer ce choix à tout moment.",
-      "guidee": "Mode Accessibilité",
+      "guidee": "Interface guidée",
       "guideeDescription": "Quand {prenom} préfère des écrans aérés\u00a0: textes plus grands, une action à la fois. Mêmes rubriques et mêmes droits.",
       "standard": "Présentation standard",
       "standardDescription": "Quand {prenom} est à l'aise avec des écrans plus denses\u00a0: plus d'informations par écran. Mêmes rubriques et mêmes droits.",
@@ -1570,7 +1625,7 @@
       "confirmationTitre": "Paiement en cours de confirmation",
       "confirmationPhrase": "Ne payez pas une seconde fois\u00a0: la période se met à jour dès la confirmation.",
       "indisponibleTitre": "Les finances ne sont pas encore disponibles",
-      "indisponiblePhrase": "Le solde et la mensualité {dePrenom} s'afficheront ici dès leur mise en service.",
+      "indisponiblePhrase": "Le solde et la mensualité {dePrenom} apparaîtront ici dès que l'académie les aura publiés.",
       "erreurTitre": "Les finances {dePrenom} ne peuvent pas être lues",
       "videTitre": "Aucune finance enregistrée pour {prenom}",
       "videPhrase": "Aucun solde ni aucune mensualité n'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.",
@@ -1607,7 +1662,10 @@
         "mensualiteDe": "Mensualité {mois} {annee}",
         "avoir": "Avoir",
         "remise": "Remise",
-        "taxe": "Taxe applicable"
+        "taxe": "Taxe applicable",
+        "debitSeance": "Débit de séance",
+        "correction": "Correction du solde",
+        "remboursement": "Remboursement"
       },
       "statut": {
         "enregistre": "Enregistré",
@@ -1839,7 +1897,22 @@
       "revoquerPour": "Révoquer l'invitation de {email}",
       "revoquerQuestion": "Révoquer l'invitation de {email} ?",
       "revoquerConsequence": "Le code ne pourra plus servir. Vous pourrez inviter la même adresse de nouveau.",
-      "revoquerEchec": "La révocation n'est pas confirmée. Actualisez la liste avant de recommencer."
+      "revoquerEchec": "La révocation n'est pas confirmée. Actualisez la liste avant de recommencer.",
+      "comptable": {
+        "titrePage": "Inviter une personne",
+        "sousTitrePage": "Choisissez le rôle de la personne, puis saisissez son adresse. Chaque code sert une seule fois et expire.",
+        "choixQuestion": "Quel rôle aura cette personne\u00a0?",
+        "enseignantTitre": "Un enseignant",
+        "enseignantExplication": "Il anime des classes. Après son inscription, il signe son contrat avant sa première séance.",
+        "comptableTitre": "Un comptable",
+        "comptableExplication": "Il suit les paiements, les encaissements et la trésorerie. Il n'anime aucune classe.",
+        "champEmail": "Adresse de courriel du comptable",
+        "creee": "Invitation créée. Transmettez ce code au comptable\u00a0: {code}",
+        "doubleVerification": "Double vérification requise\u00a0: seule la direction connectée avec sa double vérification peut inviter un comptable ou révoquer son invitation. Reconnectez-vous avec la double vérification, puis réessayez.",
+        "liste": "Invitations de comptables",
+        "vide": "Aucune invitation de comptable pour le moment",
+        "videDetail": "Invitez un comptable avec son adresse e-mail\u00a0: le code apparaît ici."
+      }
     },
     "candidat": {
       "titre": "Votre code",
@@ -1862,7 +1935,13 @@
       "ressaisir": "Saisir un autre code",
       "horsLigne": "Le code n'a pas été vérifié. Réessayez dans un instant.",
       "erreur": "Le code n'a pas pu être vérifié. Réessayez dans un instant.",
-      "indisponible": "La vérification des invitations sera disponible au branchement du serveur."
+      "indisponible": "La vérification des invitations sera disponible au branchement du serveur.",
+      "comptable": {
+        "titre": "Votre code de comptable",
+        "intro": "Pour vous inscrire comme comptable, saisissez le code d'invitation reçu de la direction.",
+        "valideDetail": "Vous pouvez créer votre profil de comptable.",
+        "indisponible": "La vérification des codes de comptable sera disponible au branchement du serveur."
+      }
     },
     "signature": {
       "titre": "Contrat",
@@ -1946,6 +2025,7 @@
       "recharger": "Recharger la pièce",
       "formatNonPrisEnCharge": "Ce format de pièce ne peut pas être affiché.",
       "accesRetire": "Vous n’avez plus accès à cette pièce.",
+      "apercuRefuse": "Cette pièce n'est pas visible avec votre compte.",
       "horsLigne": "La pièce n'a pas pu être chargée.",
       "aucune": "Aucune pièce n’est disponible.",
       "fermerPiece": "Fermer la pièce",
@@ -2102,6 +2182,8 @@
       "outilsTraitementDetail": "Les dossiers d'identité et les demandes en attente, dans une seule file.",
       "outilsRegroupements": "Classes à ouvrir",
       "outilsRegroupementsDetail": "Les demandes des familles réunies quand elles se ressemblent, et la création de leur classe.",
+      "outilsOffres": "Offres vitrine",
+      "outilsOffresDetail": "Créer, publier et retirer les créneaux que les familles voient dans la vitrine.",
       "attenteJours(param=jours)": {
         "one": "En attente depuis {jours} jour",
         "other": "En attente depuis {jours} jours"
@@ -2216,50 +2298,6 @@
         "other": "{valeur} élèves"
       }
     },
-    "attribution": {
-      "titre": "Attribution",
-      "intro": "Quand aucun enseignant n'a pris un enfant, c'est ici qu'on lui en donne un.",
-      "colonneEleves": "Élèves sans enseignant",
-      "colonneEnseignants": "Enseignants",
-      "aucunEleve": "Chaque élève a son enseignant",
-      "aucunEleveDetail": "Les enfants que personne n'a encore pris apparaîtront ici, celui qui attend depuis le plus longtemps en premier.",
-      "erreurEleves": "La file n'a pas pu être lue. Réessayez dans un instant.",
-      "erreurEnseignants": "Les enseignants n'ont pas pu être lus. Réessayez dans un instant.",
-      "attendAujourdhui": "Inscrit aujourd'hui",
-      "attendUnJour": "Attend depuis 1 jour",
-      "niveau": "Niveau {niveau}",
-      "heureProposee": "1 heure proposée",
-      "sansHeure": "Aucune heure proposée",
-      "sansHeureDetail": "Tant que la famille n'a posé aucun créneau, personne ne peut lui donner d'enseignant, pas même vous. Le geste est chez elle, sur ses disponibilités.",
-      "changerEleve": "Choisir un autre élève",
-      "choisirEleve": "Choisissez un élève",
-      "choisirEleveDetail": "Les enseignants s'afficheront ici, ceux qui partagent une heure avec lui en premier.",
-      "complet": "Plafond atteint",
-      "libreSur": "Libre {jour} à {heure} h",
-      "libreSurPlusieurs": "Libre sur {nombre} des heures proposées",
-      "sansHeureCommune": "Aucune heure commune",
-      "quelleHeure": "Sur quelle heure\u00a0?",
-      "manqueHeure": "Il manque l'heure\u00a0: choisissez-la sous «\u00a0Sur quelle heure\u00a0?\u00a0».",
-      "creneau": "{jour} à {heure} h",
-      "motif": "Pourquoi passer outre\u00a0?",
-      "motifRequis": "{prenom} n'a pas posé cette heure. L'attribuer quand même peut se justifier, et cela s'inscrit au journal.",
-      "attribuer": "Attribuer {eleve} à {enseignant}",
-      "journalisation": "Chaque attribution est journalisée\u00a0: qui a décidé, quand, sur quelle heure, et le motif s'il a fallu passer outre.",
-      "effet": "L'élève quitte cette file et ses cours sont posés au calendrier tout de suite.",
-      "erreur": "L'attribution n'a pas abouti\u00a0: {message}",
-      "attendJours(param=jours)": {
-        "one": "Attend depuis {jours} jour",
-        "other": "Attend depuis {jours} jours"
-      },
-      "heuresProposees(param=nombre)": {
-        "one": "{nombre} heure proposée",
-        "other": "{nombre} heures proposées"
-      },
-      "charge(param=actifs)": {
-        "one": "{actifs} élève sur {plafond}",
-        "other": "{actifs} élèves sur {plafond}"
-      }
-    },
     "groupes": {
       "titre": "Classes",
       "filtreToutes": "Toutes les classes",
@@ -2297,7 +2335,6 @@
         "filtreTousEnseignants": "Tous les enseignants",
         "sansEnseignant": "Sans enseignant",
         "etatAttente": "En attente d'enseignant",
-        "position": "Page {page} sur {total}",
         "positionSemantique": "Page {page} sur {total} de la liste des classes",
         "precedente": "Page précédente des classes",
         "suivante": "Page suivante des classes",
@@ -2538,6 +2575,71 @@
         "seuilHorsLigne": "Le seuil pourra être enregistré quand la connexion sera revenue. Votre choix reste affiché."
       }
     },
+    "offres": {
+      "titre": "Offres vitrine",
+      "sousTitre": "Les créneaux que les familles voient et choisissent. Seule l'administration publie, et la vitrine ne montre aucun enseignant.",
+      "nouvelle": "Nouvelle offre",
+      "vide": "Aucune offre pour l'instant. Créez la première pour ouvrir la vitrine aux familles.",
+      "erreur": "Les offres n'ont pas pu être affichées\u00a0: il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "sansDonnees": "Les offres n'ont pas pu être chargées",
+      "horsLigneAction": "Publier et retirer une offre sera possible quand la connexion sera revenue.",
+      "etatBrouillon": "Brouillon",
+      "etatPubliee": "Publiée",
+      "etatRetiree": "Retirée",
+      "cleJours": "Jours",
+      "cleHeure": "Heure",
+      "cleFuseau": "Fuseau",
+      "clePublic": "Public",
+      "cleLangue": "Langue",
+      "cleDuree": "Durée",
+      "cleMotif": "Motif du retrait",
+      "heure": "{heure}\u00a0h",
+      "duree": "{minutes}\u00a0min",
+      "publier": "Publier",
+      "retirer": "Retirer",
+      "publierPour": "Publier l'offre {resume}",
+      "retirerPour": "Retirer l'offre {resume}",
+      "publiee": "Offre publiée. Les familles la voient dans la vitrine.",
+      "retiree": "Offre retirée de la vitrine.",
+      "creee": "Offre créée en brouillon. Publiez-la pour l'ouvrir aux familles.",
+      "nonConfirmee": "L'action n'a pas pu être confirmée\u00a0: rien n'a changé. Réessayez dans un instant.",
+      "refusee": "Refusé par le serveur\u00a0: {motif}",
+      "retraitTitre": "Retirer cette offre",
+      "retraitExplication": "Les demandes déjà posées sur cette offre sont conservées\u00a0: l'administration doit les traiter.",
+      "motifLibelle": "Motif du retrait",
+      "motifManque": "Indiquez le motif du retrait",
+      "serveur": {
+        "reserve": "Seule l'administration peut gérer les offres.",
+        "dejaPubliee": "Cette offre est déjà publiée.",
+        "dejaRetiree": "Cette offre est déjà retirée.",
+        "introuvable": "Cette offre est introuvable.",
+        "motifRequis": "Un motif est requis pour retirer une offre.",
+        "joursInvalides": "Les jours choisis ne sont pas valides.",
+        "nombreJours": "Le nombre de jours ne correspond pas aux séances par semaine de l'académie.",
+        "fuseauInconnu": "Ce fuseau horaire est inconnu.",
+        "publicInconnu": "Ce public est inconnu.",
+        "doublon": "Une offre identique existe déjà.",
+        "jourManquant": "Choisissez au moins un jour"
+      },
+      "retraitHorsLigne": "L'offre pourra être retirée quand la connexion sera revenue. Votre motif reste affiché.",
+      "formulaire": {
+        "question": "Quel créneau ouvrir aux familles\u00a0?",
+        "explication": "Une offre publiée ne se modifie pas\u00a0: pour la changer, retirez-la puis créez-en une autre. Aucun enseignant n'est choisi ici.",
+        "public": "Public",
+        "langue": "Langue du cours",
+        "fuseau": "Fuseau horaire",
+        "jours": "Jours",
+        "joursAide": "Choisissez {n} jours par semaine.",
+        "heure": "Heure locale",
+        "duree": "Durée d'une séance",
+        "creer": "Créer l'offre",
+        "manqueJour": "Choisissez au moins un jour",
+        "manqueNombre": "Choisissez exactement {n} jours",
+        "manqueLangue": "Choisissez la langue du cours",
+        "horsLigne": "L'offre pourra être créée quand la connexion sera revenue. Vos choix restent affichés.",
+        "regles": "Les règles de l'académie n'ont pas pu être lues\u00a0: le nombre de jours sera vérifié à l'envoi."
+      }
+    },
     "regroupements": {
       "titre": "Classes à ouvrir",
       "sousTitre": "Les demandes des familles qui se ressemblent sont réunies\u00a0: mêmes jours, même heure, même fuseau, même public, même langue.",
@@ -2637,7 +2739,6 @@
         "filtreTousPublics": "Tous les publics",
         "aucunAvecCeFiltre": "Aucune demande avec ce filtre",
         "aucunAvecCeFiltreDetail": "Changez de filtre pour voir les autres demandes réunies.",
-        "position": "Page {page} sur {total}",
         "positionSemantique": "Page {page} sur {total} de la liste des demandes réunies",
         "precedente": "Page précédente des demandes réunies",
         "suivante": "Page suivante des demandes réunies",
@@ -3464,7 +3565,6 @@
       "videDetail": "Les séances apparaissent ici dès qu'une classe a un horaire cette semaine. Essayez une autre semaine.",
       "sansDonnees": "Le planning n'a pas pu être chargé",
       "erreur": "Le planning n'a pas pu être lu\u00a0: il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
-      "indisponibleTitre": "Disponible au branchement serveur",
       "indisponiblePhrase": "Le planning s'affichera ici dès le branchement serveur. D'ici là, rien n'est affiché\u00a0: aucune séance n'est inventée.",
       "statutPrevue": "Prévue",
       "statutPreparation": "En préparation",
@@ -3485,7 +3585,6 @@
       "videDetail": "Une séance passée en incident, en absence d'enseignant ou en absence d'élève apparaît ici dès qu'elle change de statut.",
       "sansDonnees": "Les incidents n'ont pas pu être chargés",
       "erreur": "Les incidents n'ont pas pu être lus\u00a0: il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
-      "indisponibleTitre": "Disponible au branchement serveur",
       "indisponiblePhrase": "Les incidents s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché\u00a0: aucun incident n'est inventé."
     },
     "pilotage": {
@@ -3552,7 +3651,6 @@
       "filtreAttente": "En attente d'enseignant",
       "filtrePublic": "Public",
       "filtreTousPublics": "Tous les publics",
-      "position": "Page {page} sur {total}",
       "positionSemantique": "Page {page} sur {total} du tableau de pilotage",
       "precedente": "Page précédente du tableau de pilotage",
       "suivante": "Page suivante du tableau de pilotage",
@@ -3638,8 +3736,7 @@
         "other": "Fusion avec {autre} : {n} élèves accueillis"
       },
       "evenementTransfertSortant": "{prenom} transféré vers {autre}",
-      "evenementTransfertEntrant": "{prenom} transféré depuis {autre}",
-      "quand": "{date} à {heure}"
+      "evenementTransfertEntrant": "{prenom} transféré depuis {autre}"
     },
     "tirage": {
       "titre": "Tirage des contrôles",
@@ -3657,7 +3754,8 @@
       "versionEnVigueur": "Règles en vigueur : version {n}",
       "aucuneVersion": "Aucune règle n'est encore enregistrée.",
       "zeroPhrase": "Avec 0, aucune séance n'est tirée pour contrôle.",
-      "nombreInvalide": "Entrez un nombre entier de 0 à 50, ou choisissez une des cartes.",
+      "nombreInvalide": "Entrez un nombre entier de 0 à 50, ou choisissez une des valeurs proposées.",
+      "frequenceAutreChamp": "Nombre",
       "enregistreesVersion": "Règles enregistrées, version {n}. Elles s'appliquent aux prochains tirages.",
       "missionsParSemaine": {
         "one": "{n} mission par semaine",
@@ -3721,12 +3819,10 @@
       "videDetail": "Les tirages apparaîtront ici dès que des séances seront en direct.",
       "aucunAvecCeFiltre": "Aucun tirage avec ce filtre",
       "aucunAvecCeFiltreDetail": "Changez de filtre pour voir les autres tirages.",
-      "position": "Page {page} sur {total}",
       "positionSemantique": "Page {page} sur {total} de l'historique des tirages",
       "precedente": "Page précédente de l'historique des tirages",
       "suivante": "Page suivante de l'historique des tirages",
-      "resume": "Tirages {debut} à {fin} sur {total}",
-      "quand": "{date} à {heure}"
+      "resume": "Tirages {debut} à {fin} sur {total}"
     },
     "bibliotheque": {
       "titre": "Bibliothèque",
@@ -4088,7 +4184,8 @@
   "choix": {
     "autre": "Autre",
     "autreInvite": "Précisez",
-    "selectionMultiple": "Plusieurs réponses possibles"
+    "selectionMultiple": "Plusieurs réponses possibles",
+    "exemple": "Par exemple\u00a0: {texte}"
   },
   "parcours": {
     "titre": "Le parcours {dePrenom}",
@@ -4115,7 +4212,9 @@
     "finAjouterDetail": "Une autre personne du foyer souhaite apprendre\u00a0?",
     "finAjouterProfil": "Ajouter un profil élève",
     "ageQuestion": "Quel âge a {prenom}\u00a0?",
-    "ageRaison": "L'âge décide de la durée des séances et du nombre d'élèves par classe. Nous ne demandons pas de date de naissance\u00a0: une tranche suffit.",
+    "ageRaison": "L'âge décide de la durée des séances et du nombre d'élèves par classe. Nous ne demandons pas de date de naissance\u00a0: l'âge en années suffit.",
+    "ageAide": "Choisissez l'âge en années dans la liste, comme à l'ajout du profil.",
+    "ageSansTranche": "Aucune classe n'est prévue pour cet âge pour l'instant. L'équipe de l'académie peut vous orienter.",
     "langueQuestion": "Dans quelle langue le cours doit-il être donné\u00a0?",
     "langueRaison": "C'est la langue que l'enseignant parlera pendant la séance. Elle est indépendante de la langue de l'application, que vous pouvez changer à tout moment dans vos réglages.",
     "lieuQuestion": "Où vous trouvez-vous\u00a0?",
@@ -4225,7 +4324,6 @@
       "tableauDeBord": "Tableau de bord",
       "dossiers": "Dossiers",
       "demandes": "Demandes",
-      "attribution": "Attribution",
       "journal": "Journal",
       "comptes": "Comptes",
       "accesAgents": "Accès des agents",
@@ -4320,7 +4418,7 @@
     "aucunProfilDetail": "Ajoutez un enfant pour commencer",
     "ajouterEnfant": "Ajouter un enfant",
     "ouvrirProfil": "Ouvrir le profil",
-    "modeEnfant": "Mode Accessibilité",
+    "modeEnfant": "Interface guidée",
     "modeStandard": "Mode standard",
     "cameraLabel": "Caméra",
     "cameraAutorisee": "Autorisée",
@@ -4331,6 +4429,10 @@
     "statutProvisoire": "Actif, à titre provisoire",
     "profilEnfant": "Profil {dePrenom}",
     "identifiantEnfant": "Identifiant\u00a0: {identifiant}",
+    "matricule": "Matricule {valeur} · {role}",
+    "copier": "Copier",
+    "copierMatricule": "Copier le matricule",
+    "matriculeCopie": "Copié",
     "roles": {
       "admin": "Administrateur",
       "accountant": "Comptable",
@@ -4729,7 +4831,6 @@
     },
     "coran": {
       "titre": "Le Coran",
-      "page": "Page {page} sur {total}",
       "juz": "Juz {juz}",
       "mecquoise": "Révélée à La Mecque",
       "medinoise": "Révélée à Médine",
@@ -4797,6 +4898,8 @@
       "classeIllisible": "La classe n'a pas pu être lue.",
       "sansClasseTitre": "Aucune classe pour {prenom}",
       "sansClassePhrase": "Choisissez une classe pour {quePrenom} puisse commencer les cours.",
+      "financesTitre": "Finances {dePrenom}",
+      "financesPhrase": "Solde, prochain débit et ce qu'il reste à financer.",
       "foyerVideTitre": "Aucun profil élève pour l'instant",
       "foyerVidePhrase": "Ajoutez un profil élève pour choisir une classe et suivre ses séances.",
       "ajouterProfil": "Ajouter un profil élève",
@@ -4888,7 +4991,6 @@
       "demandeTitreDuree": "La durée des cours {dePrenom}",
       "demandeTitreMinimum": "La durée minimale payable pour {prenom}",
       "demandeActuelle": "Aujourd'hui\u00a0: {minutes} min",
-      "demandeMinutes": "{minutes} min",
       "demandeMotif": "Pourquoi ce changement\u00a0?",
       "demandeMotifRequis": "Un motif est nécessaire\u00a0: c'est lui qui permet de trancher.",
       "demandeManqueValeur": "Il manque la durée demandée\u00a0: choisissez-la dans la liste, ou touchez «\u00a0Autre\u00a0» et écrivez-la.",
@@ -4935,7 +5037,7 @@
         "intro": "Données fictives, aucun appel serveur. Chaque lien montre ce que dit l'emplacement d'entrée pour un rôle et un moment.",
         "roles": {
           "eleve": "Élève",
-          "guidee": "Élève, Mode Accessibilité",
+          "guidee": "Élève, Interface guidée",
           "enseignant": "Enseignant"
         },
         "etats": {
@@ -4983,7 +5085,6 @@
       "resume": "{visites} · {duree} par visite",
       "restanteAucune": "Aucune visite restante pour cette séance",
       "restanteUne": "1 visite restante pour cette séance",
-      "minutes": "{minutes} min",
       "minutesSecondes": "{minutes} min {secondes} s",
       "secondes": "{secondes} s",
       "motif": {
@@ -5290,7 +5391,6 @@
       "ligneCours": "Cours avec {prenom}",
       "lignePause": "Pause",
       "plage": "{debut} à {fin}",
-      "duree": "{minutes} min",
       "rienAujourdhui": "Rien de prévu aujourd'hui",
       "rienAujourdhuiDetail": "Votre prochain cours est {jour} à {heure}.",
       "journeeTerminee": "{nombre} cours donnés aujourd'hui.",
@@ -5308,6 +5408,8 @@
       "erreurPartielleTout": "Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n'ont pas pu être chargés\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour\u00a0: elles n'en dépendent pas. Réessayez dans un instant.",
       "absenceDetectee": "{eleve} n'est pas entré en salle.",
       "coupureDetectee": "{eleve} a perdu la connexion.",
+      "revenusDetail": "Votre rémunération estimée du mois, Classe par Classe.",
+      "revenusLecteur": "Voir vos revenus estimés du mois",
       "coursAnnule": "Le cours de {heure} est annulé.",
       "rapportsTitre": "Rapports en attente",
       "rapportLigne": "Cours du {jour} à {heure}",
@@ -5376,6 +5478,10 @@
         "pasCetteFois": "Pas cette fois"
       },
       "erreurPartielleCahiers": "Vos cahiers de transmission à terminer n'ont pas pu être chargés\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour\u00a0: elles n'en dépendent pas. Réessayez dans un instant.",
+      "cahiersEnvoyes(param=n)": {
+        "one": "{n} cahier de transmission envoyé",
+        "other": "{n} cahiers de transmission envoyés"
+      },
       "effectif(param=nombre)": {
         "one": "{nombre} élève",
         "other": "{nombre} élèves"
@@ -5647,7 +5753,6 @@
       "cleFuseau": "Fuseau de référence",
       "cleHeureLocale": "Heure locale",
       "cleDuree": "Durée",
-      "duree": "{minutes} min",
       "plagesContexte": "Une ligne par plage. Touchez une plage pour la modifier ou la supprimer.",
       "plageDe": "de\u00a0{heure}\u00a0h",
       "plageA": "à\u00a0{heure}\u00a0h",
@@ -5715,7 +5820,6 @@
         "moment": "Moment de la pause",
         "momentAide": "Minutes après le début de la séance.",
         "duree": "Durée de la pause",
-        "minutes": "{minutes} min",
         "resume": "Pause de {duree} min, {moment} min après le début.",
         "enregistrer": "Enregistrer la pause",
         "enregistree": "Pause enregistrée.",
@@ -5784,6 +5888,8 @@
       "releveSection": "Relevé",
       "releveIndisponibleTitre": "Le relevé n'est pas encore disponible",
       "releveIndisponiblePhrase": "Les mois arrêtés par l'académie s'afficheront ici dès que le relevé sera en service. D'ici là, seule l'estimation du mois en cours est montrée.",
+      "indisponibleTitre": "Vos revenus ne sont pas encore publiés",
+      "indisponiblePhrase": "Votre estimation du mois apparaîtra ici dès que l'académie l'aura publiée. Aucun montant n'est calculé sur cet appareil.",
       "releveVide": "Aucun mois arrêté pour l'instant",
       "releveVideDetail": "Chaque mois apparaîtra ici une fois arrêté par l'académie.",
       "mention": "Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l'académie fait foi.",
@@ -5792,6 +5898,27 @@
     }
   },
   "controleur": {
+    "mfa": {
+      "titreEnrolement": "Protégez votre compte de contrôleur",
+      "introEnrolement": "Ce compte donne accès à des séances où se trouvent des enfants. Un mot de passe volé ne doit pas suffire : ajoutez une seconde étape avec une application d'authentification.",
+      "etapeScanner": "Dans votre application d'authentification, scannez ce code.",
+      "libelleQr": "Code à scanner pour ajouter ce compte à votre application d'authentification",
+      "cleManuelle": "Vous ne pouvez pas scanner ? Saisissez cette clé dans l'application.",
+      "etapeCode": "Saisissez le code à six chiffres affiché par l'application.",
+      "champCode": "Code à six chiffres",
+      "activer": "Activer la protection",
+      "titreVerification": "Confirmez votre connexion",
+      "introVerification": "Ouvrez votre application d'authentification et saisissez le code à six chiffres affiché pour ce compte.",
+      "confirmer": "Confirmer",
+      "codeIncomplet": "Saisissez les six chiffres du code.",
+      "codeRefuse": "Ce code n'est pas bon. Vérifiez l'heure de votre téléphone, puis saisissez le code qui s'affiche maintenant.",
+      "sansApplication": "Je n'ai pas d'application d'authentification",
+      "videTitre": "Il vous faut une application d'authentification",
+      "videPhrase": "Installez-en une sur votre téléphone, par exemple Google Authenticator, Microsoft Authenticator ou Aegis, puis revenez ici. Pour être aidé, écrivez à l'administration de l'académie.",
+      "videRetour": "J'ai installé l'application",
+      "seDeconnecter": "Se déconnecter",
+      "chargement": "Vérification de votre compte en cours"
+    },
     "historique": {
       "titre": "Historique",
       "provisoire": "Cet écran est en préparation.",
@@ -6030,7 +6157,7 @@
     "typographie": "Échelles typographiques",
     "polices": "Polices",
     "composants": "Composants partagés",
-    "modeEnfant": "Mode Accessibilité",
+    "modeEnfant": "Interface guidée",
     "modeStandard": "Mode standard"
   },
   "tc": {
@@ -6088,7 +6215,6 @@
         "terminee": "Cours terminé"
       },
       "duree": {
-        "minutes": "{minutes} min",
         "heures": "{heures} h",
         "heuresMinutes": "{heures} h {minutes}"
       },
@@ -6349,11 +6475,7 @@
         "titreEnseignant": {
           "sayyid": "Sayyid",
           "sayyida": "Sayyida"
-        },
-        "resteMinutes": "Reste {minutes} min",
-        "resteHeuresMinutes": "Reste {heures} h {minutes}",
-        "coursEnCours": "Séance toujours en direct",
-        "photoManquante": "Photo enseignant manquante"
+        }
       },
       "roster": {
         "titre": "Élèves",
@@ -6380,80 +6502,21 @@
         "niveau": "Niveau",
         "objectif": "Objectif actuel",
         "derniereSeance": "Dernière séance",
-        "page": "Page {page}",
-        "travailEnCours": "{nombre} élément(s)",
         "aReprendre": "À reprendre",
         "presenceRecente": "Présence récente",
-        "assiduite": "{presences} / {total} cours",
-        "travailActuel": "Travail actuel",
-        "interfaceGuidee": "Mode Accessibilité",
-        "sansPedagogie": "Suivi pédagogique indisponible",
-        "sansPedagogieDetail": "Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l'enseignant."
+        "travailActuel": "Travail actuel"
       },
       "action": {
-        "rappel": "Rappel discret",
-        "reciter": "Choisir pour réciter",
-        "noter": "Noter",
-        "signaler": "Signaler un besoin",
-        "contexte": "Ouvrir le contexte"
+        "noter": "Noter"
       },
       "rappel": {
-        "recu": "Le professeur vous appelle",
-        "echec": "Le rappel n'a pas pu être envoyé",
-        "echecDroit": "Votre accès à cette séance ne permet pas d'appeler un élève",
-        "cooldown": "Déjà appelé. À nouveau dans {secondes} s"
+        "recu": "Le professeur vous appelle"
       },
       "recitation": {
         "titre": "Récitation",
         "actif": "{prenom} récite",
         "pastille": "Récite",
-        "suivants": "Ensuite",
-        "personne": "Personne ne récite",
-        "arreter": "Arrêter la récitation"
-      },
-      "support": {
-        "aucun": "Aucun support présenté",
-        "aucunDetail": "Ouvrez la Bibliothèque pour présenter un support à la Classe.",
-        "bibliotheque": "Bibliothèque",
-        "bibliothequeAbsente": "Bibliothèque non branchée",
-        "bibliothequeAbsenteDetail": "Le choix de support sera disponible dès l'intégration du catalogue."
-      },
-      "commandes": {
-        "micro": "Ouvrir le micro",
-        "microFermer": "Fermer le micro",
-        "camera": "Ouvrir la caméra",
-        "cameraFermer": "Fermer la caméra",
-        "microCoupe": "Micro fermé",
-        "quitter": "Quitter",
-        "quitterQuestion": "Quitter le cours\u00a0?",
-        "quitterConsequence": "Votre sortie sera enregistrée. Vous pourrez revenir tant que la séance est ouverte.",
-        "fermerBibliotheque": "Fermer la Bibliothèque"
-      },
-      "scene": {
-        "vide": "Vous êtes seul dans la salle pour le moment",
-        "sansImage": "Sans image"
-      },
-      "reseau": {
-        "bon": "Réseau bon",
-        "mediocre": "Réseau instable",
-        "perdu": "Réseau perdu"
-      },
-      "attente": {
-        "materiel": "Vérification de votre micro",
-        "ouverture": "Ouverture du cours",
-        "connexion": "Connexion au cours",
-        "refus": "Le cours n'est pas accessible pour le moment"
-      },
-      "lien": {
-        "instable": "Connexion instable",
-        "reconnexion": "Reconnexion en cours",
-        "retabli": "Connexion rétablie",
-        "echec": "Connexion perdue",
-        "retourDeSuspension": "Le cours a été mis en pause par le système. Vérification du lien en cours."
-      },
-      "barre": {
-        "titre": "Séance en direct",
-        "revenir": "Revenir au cours {deGroupe}"
+        "personne": "Personne ne récite"
       },
       "prevol": {
         "titre": "Avant d'ouvrir le cours",
@@ -6463,9 +6526,6 @@
         "cameraAbsente": "Aucune caméra. Le cours reste possible.",
         "permissionRefusee": "Accès au micro refusé. Autorisez-le pour ouvrir le cours.",
         "reessayer": "Vérifier à nouveau"
-      },
-      "observation": {
-        "restant": "Reste {secondes} s"
       }
     },
     "realtime": {
@@ -6782,6 +6842,7 @@
       "absence": "Absence",
       "aucuneClasse": "Aucune classe pour le moment.",
       "aucuneClasseDetail": "Votre prochaine séance s'affichera ici dès que votre classe sera ouverte.",
+      "financesPhrase": "Votre solde, votre période financée et votre mensualité.",
       "sansDonnees": "Votre prochaine séance et vos dernières séances n'ont pas pu être chargées",
       "echec": "Votre prochaine séance et vos dernières séances n'ont pas pu être chargées\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
     },
@@ -7195,7 +7256,7 @@
     },
     "finances": {
       "indisponibleTitre": "Vos finances ne sont pas encore disponibles",
-      "indisponiblePhrase": "Votre solde, votre période financée et votre mensualité s'afficheront ici dès leur mise en service.",
+      "indisponiblePhrase": "Votre solde, votre période financée et votre mensualité apparaîtront ici dès que l'académie les aura publiés. Aucun paiement ne vous est demandé ici.",
       "erreurTitre": "Vos finances ne peuvent pas être lues",
       "videTitre": "Aucune finance enregistrée",
       "videPhrase": "Aucun solde ni aucune mensualité n'est encore rendu pour votre profil. Ils apparaîtront ici après votre inscription à une classe.",
@@ -7241,12 +7302,6 @@
       "transfert": "Élèves transférés dans d'autres classes",
       "remplacement": "Enseignant absent sans remplacement",
       "parErreur": "Classe créée par erreur"
-    },
-    "attribution": {
-      "confirmee": "Heure confirmée avec la famille",
-      "aucuneCommune": "Aucune heure commune",
-      "continuite": "Continuité avec le même enseignant",
-      "famille": "Demande de la famille"
     },
     "refusDemande": {
       "aucunEnseignant": "Aucun enseignant disponible sur cet horaire",
@@ -7384,7 +7439,6 @@
     "introuvable": "Cette demande n'existe plus ou n'est pas la vôtre.",
     "retour": "Retour aux demandes",
     "fuseau": "Heures affichées : heure {deVille}.",
-    "horodatage": "{date} à {heure}",
     "prevue": "Prévue le {date} à {heure}",
     "etapes": {
       "envoyee": "Demande envoyée",
@@ -7520,7 +7574,6 @@
       "changementTransfert": "Demande de créneau {dePrenom} : nouvelle classe, voir le détail"
     },
     "jalon": {
-      "date": "{date} à {heure}",
       "apres": "{date} à {heure}, {duree}",
       "aussitot": "aussitôt",
       "minutes": {
@@ -8446,6 +8499,7 @@
       "vide": "Aucune activité à traiter ici."
     },
     "annonces": {
+      "toutesAcademie": "Toute l'académie",
       "publieur": {
         "titre": "Nouvelle annonce",
         "etapes": {

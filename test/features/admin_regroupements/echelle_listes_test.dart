@@ -35,6 +35,7 @@ import 'package:rewayah_academy/features/demo/regroupements_demo.dart';
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/rangee_plus.dart';
 
 class _SansEnseignants implements PortEnseignantsClasse {
   @override
@@ -281,9 +282,7 @@ void main() {
       expect(port.pagesDemandees, 1);
       final int pages = (volume.length / 25).ceil();
       expect(
-        find.text(
-          t.admin.regroupements.liste.position(page: '1', total: '$pages'),
-        ),
+        find.text(t.commun.formats.pageSur(page: '1', total: '$pages')),
         findsOneWidget,
       );
       expect(_cle('nav-precedent'), findsNothing);
@@ -317,8 +316,8 @@ void main() {
       await _laisser(tester);
 
       final Finder prets = _cle('regroupements-filtre-prets');
-      await tester.ensureVisible(prets);
-      await tester.tap(prets);
+      // L4-07 : selon la place, la puce est dans la rangee ou sous « Plus ».
+      await toucherFiltre(tester, prets);
       await _laisser(tester);
       final int nombrePrets = volume
           .where((RegroupementDemandes g) => g.pret)

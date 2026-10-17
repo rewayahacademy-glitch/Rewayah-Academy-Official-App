@@ -72,7 +72,7 @@ class TimelineRow extends StatelessWidget {
           Text(
             // DUREE-INSECABLE-1 : « 45 min » jamais scinde.
             LibellesGroupe.insecable(
-              t.enseignant.journee.duree(minutes: '$minutes'),
+              t.commun.formats.minutes(minutes: '$minutes'),
             ),
             style: encres.applyTo(textes.bodySmall ?? const TextStyle()),
           ),

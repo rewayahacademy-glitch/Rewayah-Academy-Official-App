@@ -26,15 +26,21 @@ import 'core/agent/session_agent.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
 import 'core/capacites/enseignants_classe_supabase.dart';
 import 'core/capacites/identite_titulaire_supabase.dart';
+import 'core/capacites/mes_finances_supabase.dart';
+import 'core/capacites/paiements_foyer_supabase.dart';
 import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/port_enseignants_classe.dart';
 import 'core/capacites/port_identite_titulaire.dart';
+import 'core/capacites/port_mes_finances.dart';
+import 'core/capacites/port_paiements_foyer.dart';
 import 'core/capacites/port_profil_eleve_titulaire.dart';
 import 'core/capacites/port_progression_famille.dart';
+import 'core/capacites/port_revenus_enseignant.dart';
 import 'core/capacites/port_series_tresorerie.dart';
 import 'core/capacites/port_support.dart';
 import 'core/capacites/profil_eleve_titulaire_supabase.dart';
 import 'core/capacites/progression_famille_supabase.dart';
+import 'core/capacites/revenus_enseignant_supabase.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
 import 'core/capacites/series_tresorerie_supabase.dart';
 import 'core/capacites/support_supabase.dart';
@@ -53,16 +59,22 @@ import 'core/foyer/port_reprises_admin.dart';
 import 'core/foyer/reprises_admin_supabase.dart';
 import 'core/i18n/langue_demarrage.dart';
 import 'core/i18n/strings.g.dart';
+import 'core/identite/matricule_supabase.dart';
+import 'core/identite/port_matricule.dart';
 import 'core/observabilite/supervision.dart';
 import 'core/offres/demandes_suivi_supabase.dart';
 import 'core/offres/frise_demandes_supabase.dart';
+import 'core/offres/offres_admin_supabase.dart';
 import 'core/offres/page_regroupements.dart';
 import 'core/offres/port_frise_demande.dart';
+import 'core/offres/port_offres_admin.dart';
 import 'core/offres/port_regroupements_admin.dart';
 import 'core/offres/port_suivi_demandes.dart';
 import 'core/offres/regroupements_c11bis_supabase.dart';
 import 'core/offres/regroupements_pages_supabase.dart';
+import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
+import 'core/recrutement/port_invitations_comptable.dart';
 import 'core/recrutement/port_invitations_enseignant.dart';
 import 'core/recrutement/port_signature_contrat.dart';
 import 'core/recrutement/port_statuts_signature.dart';
@@ -130,6 +142,10 @@ List<Override> _surchargesAppReelle() => <Override>[
   portRegroupementsAdminProvider.overrideWithValue(
     RegroupementsC11bisSupabase(Supabase.instance.client),
   ),
+  // L2-05 : les offres vitrine (creer, publier, retirer) par les RPC de 0043.
+  portOffresAdminProvider.overrideWithValue(
+    OffresAdminSupabase(Supabase.instance.client),
+  ),
   // Liste paginee des regroupements (fonction Edge `regroupements-pages`).
   portRegroupementsPagesProvider.overrideWithValue(
     RegroupementsPagesSupabase(Supabase.instance.client),
@@ -162,6 +178,17 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portVerificationInvitationProvider.overrideWithValue(
     VerificationInvitationSupabase(Supabase.instance.client),
+  ),
+  // Invitation d'un comptable par la direction (BF1-03, 20261017160200) :
+  // ports branches, ecrans d'emission et d'inscription a venir.
+  portInvitationsComptableProvider.overrideWithValue(
+    InvitationsComptableSupabase(Supabase.instance.client),
+  ),
+  portVerificationInvitationComptableProvider.overrideWithValue(
+    VerificationInvitationComptableSupabase(Supabase.instance.client),
+  ),
+  portInscriptionComptableProvider.overrideWithValue(
+    InscriptionComptableSupabase(Supabase.instance.client),
   ),
   portTirageControleProvider.overrideWithValue(
     PortTirageControleSupabase(Supabase.instance.client),
@@ -205,8 +232,24 @@ List<Override> _surchargesAppReelle() => <Override>[
       motDePassePossible: Env.authParMotDePasseActive,
     ),
   ),
+  portMatriculeProvider.overrideWithValue(
+    MatriculeSupabase(Supabase.instance.client),
+  ),
   portSeriesTresorerieProvider.overrideWithValue(
     SeriesTresorerieSupabase(Supabase.instance.client),
+  ),
+  // Finance hors administration (BF1, migrations 20261017160000 et
+  // 20261017160100) : revenus de l'enseignant connecte, finances de l'eleve
+  // adulte sur son profil, finance et paiements du foyer pour le titulaire.
+  // La recharge reste indisponible : aucun prestataire de paiement reel.
+  portRevenusEnseignantProvider.overrideWithValue(
+    RevenusEnseignantSupabase(Supabase.instance.client),
+  ),
+  portMesFinancesProvider.overrideWithValue(
+    MesFinancesSupabase(Supabase.instance.client),
+  ),
+  portPaiementsFoyerProvider.overrideWithValue(
+    PaiementsFoyerSupabase(Supabase.instance.client),
   ),
   portHistoriqueObservationsProvider.overrideWithValue(
     HistoriqueObservationsSupabase(() => Supabase.instance.client),

@@ -639,11 +639,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         vue.role == RoleSalle.eleve &&
         (ref.watch(monTuteurObserveProvider(widget.seanceId)).value ?? false);
 
-    // **L'annonce a l'enseignant, ici AUSSI.** Il y a deux salles d'enseignant :
-    // `ClasseLivePage` (`/tc/classe`) et celle-ci, ou mene le bouton « Lancer »
-    // de sa journee (`ENS-02`). Ne poser l'annonce que sur la premiere laissait
-    // un enseignant faire cours deux minutes devant un parent sans le savoir,
-    // sur le chemin qu'il emprunte reellement.
+    // **L'annonce a l'enseignant, ici.** C'est la seule salle d'enseignant
+    // (l'ancienne `/tc/classe` est supprimee depuis le 17/10/2026), ou mene le
+    // bouton « Lancer » de sa journee (`ENS-02`). Sans elle, un enseignant
+    // ferait cours devant un parent sans le savoir.
     //
     // Meme raison qu'au-dessus pour la condition de role : elle n'ajoute aucune
     // securite -- `annonces_observation` leve `insufficient_privilege` pour qui
@@ -908,11 +907,9 @@ class _Entete extends StatelessWidget {
             child: LignePresence(nom: t.presence.mienne, vue: etat),
           ),
         ],
-        // **L'enfant apprend que son tuteur regarde, ici aussi.** Il y a DEUX
-        // salles cote eleve : celle-ci, ou mene « Rejoindre » depuis l'accueil
-        // `ELV-02`, et `ClasseLivePage` (`/tc/classe`), ou mene « Rejoindre »
-        // depuis `/tc/groupes`. Ne poser le temoin que dans l'une laisserait
-        // l'autre chemin muet.
+        // **L'enfant apprend que son tuteur regarde, ici.** C'est la seule
+        // salle cote eleve (l'ancienne `/tc/classe` est supprimee depuis le
+        // 17/10/2026), ou mene « Rejoindre » depuis l'accueil `ELV-02`.
         //
         // La borne de vie privee est en base : `annonce_observation_pour_moi`
         // (`0040`) porte `enfant_profile_id = auth.uid()` dans son WHERE, donc
@@ -921,7 +918,7 @@ class _Entete extends StatelessWidget {
           Ecart.vSm,
           const IndicateurObservationEnfant(visible: true),
         ],
-        // Le meme composant qu'en Classe Live, pas une seconde ecriture : il
+        // Le composant partage de l'observation, pas une seconde ecriture : il
         // porte deja la regle (rien quand personne n'observe, aucune
         // notification de sortie).
         if (annonces.isNotEmpty) ...<Widget>[
@@ -2443,23 +2440,25 @@ class _PreparationBranchee extends ConsumerWidget {
     final PreparationSeance? preparation = groupe == null
         ? null
         : ref.watch(preparationSeanceProvider(groupe));
-    return Scaffold(
-      body: SafeArea(
-        child: PreparationEnseignant(
-          resultat: ref.watch(preVolProvider).value,
-          reseau: switch (horsLigne.value) {
-            null => horsLigne.hasError ? ReseauPreparation.bonne : null,
-            true => ReseauPreparation.horsLigne,
-            false => ReseauPreparation.bonne,
-          },
-          contexte: ContextePreparation(
-            support: preparation?.supportPrevu,
-            reprise: preparation?.positionReprise,
-          ),
-          onEntrer: onEntrer,
-          onRetour: onRetour,
-          onReessayer: () => ref.invalidate(preVolProvider),
+    return PageShell(
+      defilante: false,
+      actionsCoquille: false,
+      // La preparation porte son propre message hors ligne (L3-07-reprise).
+      bandeauHorsLigne: const SizedBox.shrink(),
+      child: PreparationEnseignant(
+        resultat: ref.watch(preVolProvider).value,
+        reseau: switch (horsLigne.value) {
+          null => horsLigne.hasError ? ReseauPreparation.bonne : null,
+          true => ReseauPreparation.horsLigne,
+          false => ReseauPreparation.bonne,
+        },
+        contexte: ContextePreparation(
+          support: preparation?.supportPrevu,
+          reprise: preparation?.positionReprise,
         ),
+        onEntrer: onEntrer,
+        onRetour: onRetour,
+        onReessayer: () => ref.invalidate(preVolProvider),
       ),
     );
   }
@@ -2482,23 +2481,25 @@ class _PreparationEleveBranchee extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<bool> horsLigne = ref.watch(horsLigneProvider);
-    return Scaffold(
-      body: SafeArea(
-        child: PreparationEleve(
-          guidee: guidee,
-          resultat: ref.watch(preVolProvider).value,
-          reseau: switch (horsLigne.value) {
-            null => horsLigne.hasError ? ReseauPreparation.bonne : null,
-            true => ReseauPreparation.horsLigne,
-            false => ReseauPreparation.bonne,
-          },
-          onEntrer: () => onEntrer(sansMicro: false),
-          onContinuerSansMicro: () => onEntrer(sansMicro: true),
-          onRetour: onRetour,
-          onReessayer: () => ref
-            ..invalidate(preVolProvider)
-            ..invalidate(horsLigneProvider),
-        ),
+    return PageShell(
+      defilante: false,
+      actionsCoquille: false,
+      // La preparation porte son propre message hors ligne (L3-07-reprise).
+      bandeauHorsLigne: const SizedBox.shrink(),
+      child: PreparationEleve(
+        guidee: guidee,
+        resultat: ref.watch(preVolProvider).value,
+        reseau: switch (horsLigne.value) {
+          null => horsLigne.hasError ? ReseauPreparation.bonne : null,
+          true => ReseauPreparation.horsLigne,
+          false => ReseauPreparation.bonne,
+        },
+        onEntrer: () => onEntrer(sansMicro: false),
+        onContinuerSansMicro: () => onEntrer(sansMicro: true),
+        onRetour: onRetour,
+        onReessayer: () => ref
+          ..invalidate(preVolProvider)
+          ..invalidate(horsLigneProvider),
       ),
     );
   }

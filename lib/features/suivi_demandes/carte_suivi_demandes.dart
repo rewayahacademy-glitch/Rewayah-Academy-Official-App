@@ -61,6 +61,7 @@ class CarteSuiviDemandes extends ConsumerWidget {
       children: <Widget>[
         AppCard(
           key: const ValueKey<String>('carte-suivi-demandes'),
+          largeurMax: AppPage.largeurFormulaire,
           entete: Semantics(
             header: true,
             child: TexteSansCoupure(

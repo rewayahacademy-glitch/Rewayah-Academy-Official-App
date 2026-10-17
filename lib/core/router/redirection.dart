@@ -1,7 +1,6 @@
 import '../../features/demo/mode_demonstration.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
-import '../preferences/presentation_vue.dart';
 import '../session/session_state.dart';
 import 'billet_salle.dart';
 import 'chemin_retour.dart';
@@ -35,10 +34,6 @@ import 'routes.dart';
 ///
 /// [cheminComplet] est l'adresse demandee avec sa requete (le `retour`), et
 /// [retour] le parametre `retour` de cette adresse.
-///
-/// [presentation] dit si la presentation publique a deja ete vue sur cet
-/// appareil (PUB-1) : elle ne compte que pour la racine d'un visiteur sans
-/// session.
 String? deciderRedirection({
   required SessionState session,
   required String cheminDemande,
@@ -49,7 +44,6 @@ String? deciderRedirection({
   String? retour,
   String environnement = Env.environnement,
   bool resignatureContrat = false,
-  EtatPresentation presentation = EtatPresentation.aVoir,
 }) {
   // La salle de demonstration passe sans session hors production : donnees
   // fictives, aucun appel serveur (K-28). En production, la route n'existe
@@ -111,16 +105,11 @@ String? deciderRedirection({
       if (!routeConnue) {
         return null;
       }
-      // La racine d'un visiteur sans session (demande A-1, PUB-1) : la
-      // presentation publique `/bienvenue` a la premiere visite sur cet
-      // appareil, la connexion ensuite. Tant que l'appareil n'a pas ete lu,
-      // on ne decide rien : l'ecran de demarrage reste, sans clignotement.
+      // La racine d'un visiteur sans session mene directement a la
+      // connexion : plus de pages de presentation avant (directeur, 17/10 ;
+      // la page d'accueil du site suffit).
       if (cheminDemande == Routes.racine) {
-        return switch (presentation) {
-          EtatPresentation.inconnu => null,
-          EtatPresentation.aVoir => Routes.bienvenue,
-          EtatPresentation.vue => Routes.connexion,
-        };
+        return Routes.connexion;
       }
       // Session expiree, ou lien profond ouvert sans session : la connexion
       // garde la destination, si c'en est une (R7 : un chemin interne valide,
@@ -146,7 +135,7 @@ String? deciderRedirection({
 
     // Un compte en portail d'attente n'atteint aucune route protegee, quelle
     // que soit l'URL tapee directement dans un navigateur. Le portail a ses
-    // propres pages, accusé, contrat et depot de piece : c'est le sous-arbre
+    // propres pages, accords et depot de piece : c'est le sous-arbre
     // entier qui est ouvert, pas la seule racine.
     case PorteAcces.attente:
     case PorteAcces.suspendu:
@@ -159,12 +148,13 @@ String? deciderRedirection({
         return Routes.attente;
       }
       // Q-2 = a : l'enseignant en attente qui a signe le contrat 2026-09
-      // signe d'abord la nouvelle version.
+      // signe d'abord la nouvelle version, sur la page unique des accords
+      // (lot E6, decision du directeur du 17/10/2026).
       if (_resignature(session, resignatureContrat) &&
           session.porte == PorteAcces.attente &&
           routeConnue &&
-          cheminDemande != Routes.attenteContrat) {
-        return Routes.attenteContrat;
+          cheminDemande != Routes.attenteAccords) {
+        return Routes.attenteAccords;
       }
       return _dansLeSousArbre(cheminDemande, Routes.attente) || !routeConnue
           ? null
@@ -186,6 +176,19 @@ String? deciderRedirection({
             : Routes.enseignantContrat;
       }
       if (cheminDemande == Routes.enseignantContrat) {
+        return racine;
+      }
+
+      // L1-10 : la seconde etape de connexion du controleur passe avant toute
+      // navigation. On lit la capacite `mfaRequise`, jamais le role. Meme une
+      // adresse inconnue y renvoie : rien d'autre n'est ouvert. Une fois la
+      // seconde etape verifiee, la page n'a plus de raison d'etre.
+      if (session.mfaRequise) {
+        return _dansLeSousArbre(cheminDemande, Routes.mfaControleur)
+            ? null
+            : Routes.mfaControleur;
+      }
+      if (_dansLeSousArbre(cheminDemande, Routes.mfaControleur)) {
         return racine;
       }
 
@@ -275,7 +278,7 @@ String? deciderRedirection({
       // EA-ROLE-1 : l'adulte inscrit est un compte tuteur ; la capacite
       // « eleve autonome » servie (C-24) lui ouvre son espace d'eleve
       // (`/eleve/*`), `/eleve` le ramenant a l'accueil adulte. Le tuteur
-      // seul reste refuse, et `/tc/classe` l'est aussi aux deux.
+      // seul reste refuse.
       if (role == AppRole.guardian && session.eleveAutonome) {
         if (cheminDemande == Routes.eleve) {
           return Routes.eleveAdulte;
@@ -379,7 +382,7 @@ bool _dansLeSousArbre(String chemin, String racine) =>
 ///
 /// **Chaque sous-arbre porte ses propres roles**, contrairement au prefixe
 /// unique de [Routes.prefixePour] : `/tc/groupes` s'ouvre a l'eleve et au
-/// tuteur, `/tc/classe` a l'enseignant et a l'eleve, `/tc/mushaf` au seul
+/// tuteur, `/tc/mushaf` au seul
 /// eleve, `/tc/observation/...` au tuteur, a l'admin et au controleur. La
 /// table vient du plan d'integration Teaching Core, section 8.2.
 bool _teachingCoreAutorise(String chemin, AppRole role) {
@@ -393,9 +396,6 @@ bool _teachingCoreAutorise(String chemin, AppRole role) {
     return role == AppRole.student ||
         role == AppRole.guardian ||
         role == AppRole.teacher;
-  }
-  if (_dansLeSousArbre(chemin, Routes.tcClasse)) {
-    return role == AppRole.teacher || role == AppRole.student;
   }
   if (_dansLeSousArbre(chemin, Routes.tcMushaf)) {
     return role == AppRole.student;

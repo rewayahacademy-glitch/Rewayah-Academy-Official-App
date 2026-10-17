@@ -6,12 +6,14 @@ import '../../../core/domain/enums.dart';
 import '../../../core/dossier/service_dossier.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
+import '../../../core/recrutement/port_invitations_comptable.dart';
 import '../../../core/recrutement/port_invitations_enseignant.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/session/session_controleur.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/groupe_reglages.dart';
 import '../brouillon_inscription.dart';
+import '../code_comptable_retenu.dart';
 import '../inscription_page.dart';
 
 /// `/inscription/recapitulatif` : les reponses, un « Modifier » par ligne, et
@@ -20,8 +22,8 @@ import '../inscription_page.dart';
 /// Double soumission bloquee (drapeau pose avant tout `await`). Impasse apres
 /// `refreshSession` corrigee : une fois le profil cree, une nouvelle tentative
 /// ne rappelle que le rafraichissement (la creation refuserait un doublon), et
-/// la page part d'elle-meme vers `/attente`, le routeur redirigeant selon la
-/// porte ; si la porte reste `inscription`, on revient ici avec un message et
+/// la page part d'elle-meme vers `/attente` (`/comptable` pour le comptable
+/// invite, lot F2), le routeur redirigeant selon la porte ; si la porte reste `inscription`, on revient ici avec un message et
 /// deux issues (reessayer, se deconnecter).
 class RecapitulatifEtape extends ConsumerStatefulWidget {
   /// Cree l'etape.
@@ -46,6 +48,17 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     );
     final UsageInscription? usage = brouillon.usage;
     if (usage == null) {
+      return;
+    }
+    if (usage == UsageInscription.comptable) {
+      await _creerComptable(brouillon);
+      return;
+    }
+    // L1-11 : le serveur refuse un profil enseignant sans code ; on renvoie au
+    // champ du code plutot que d'envoyer un appel voue au refus.
+    if (usage.role == AppRole.teacher &&
+        ref.read(codeInvitationRetenuProvider) == null) {
+      context.go(Routes.inscriptionInvitation);
       return;
     }
     setState(() {
@@ -76,38 +89,78 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
       // Aucun profil n'a ete cree : le code est oublie, le candidat en
       // demande un nouveau (K-59 : ce qui manque, pourquoi, quoi faire).
       ref.read(codeInvitationRetenuProvider.notifier).oublier();
-      if (mounted) {
-        setState(() {
-          _envoi = false;
-          _erreur = t.inscription.erreurInvitation;
-        });
-      }
+      _echec(t.inscription.erreurInvitation);
       return;
     } on Object {
-      if (mounted) {
-        setState(() {
-          _envoi = false;
-          _erreur = t.inscription.erreur;
-        });
-      }
+      _echec(t.inscription.erreur);
       return;
     }
+    await _actualiserPuisAller(Routes.attente);
+  }
+
+  /// Lot F2 : l'inscription du comptable invite, par
+  /// `inscrire_comptable_invite` a la place de `creer_profil_inscription`.
+  /// Le serveur consomme le code avec la creation du profil, actif d'emblee :
+  /// l'arrivee se fait sur `/comptable`.
+  Future<void> _creerComptable(BrouillonInscription brouillon) async {
+    final PortInscriptionComptable? port = ref.read(
+      portInscriptionComptableProvider,
+    );
+    final String? code = ref.read(codeComptableRetenuProvider);
+    if (!brouillon.profilCree && (port == null || code == null)) {
+      context.go(Routes.inscriptionInvitationComptable);
+      return;
+    }
+    setState(() {
+      _envoi = true;
+      _erreur = null;
+    });
+    if (!brouillon.profilCree) {
+      final ResultatInscriptionComptable resultat;
+      try {
+        resultat = await port!.inscrire(
+          code: code!,
+          prenom: brouillon.prenom,
+          nom: brouillon.nom,
+          genre: brouillon.genre?.valeurSql,
+        );
+      } on Object {
+        _echec(t.inscription.erreur);
+        return;
+      }
+      if (resultat != ResultatInscriptionComptable.consommee) {
+        // Aucun profil n'a ete cree : le code est oublie (K-59).
+        ref.read(codeComptableRetenuProvider.notifier).oublier();
+        _echec(t.inscription.erreurInvitation);
+        return;
+      }
+      ref.read(brouillonInscriptionProvider.notifier).noterProfilCree();
+      ref.read(codeComptableRetenuProvider.notifier).oublier();
+    }
+    await _actualiserPuisAller(Routes.comptable);
+  }
+
+  void _echec(String message) {
+    if (mounted) {
+      setState(() {
+        _envoi = false;
+        _erreur = message;
+      });
+    }
+  }
+
+  Future<void> _actualiserPuisAller(String destination) async {
     try {
       // Le role et le foyer sont injectes dans le jeton par le hook de la base :
       // le jeton emis avant la creation ne les porte pas encore.
       await ref.read(sourceSessionProvider).rafraichir();
     } on Object {
-      if (mounted) {
-        setState(() {
-          _envoi = false;
-          _erreur = t.inscription.erreurActualisation;
-        });
-      }
+      _echec(t.inscription.erreurActualisation);
       return;
     }
     if (mounted) {
       setState(() => _envoi = false);
-      context.go(Routes.attente);
+      context.go(destination);
     }
   }
 
@@ -166,6 +219,7 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
               UsageInscription.moi => t.inscription.usage.moiTitre,
               UsageInscription.famille => t.inscription.usage.familleTitre,
               UsageInscription.enseignant => t.inscription.recap.enseignant,
+              UsageInscription.comptable => t.inscription.recap.comptable,
               null => '',
             },
             controle: modifier(

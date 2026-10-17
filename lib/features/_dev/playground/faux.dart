@@ -369,9 +369,6 @@ class FauxServicePlanning implements ServicePlanning {
   /// Les seances rendues.
   List<Seance> seancesRendues = const <Seance>[];
 
-  /// Les affectations rendues.
-  List<Affectation> affectationsRendues = const <Affectation>[];
-
   /// Le fuseau rendu.
   String fuseau = 'Europe/Paris';
 
@@ -424,44 +421,15 @@ class FauxServicePlanning implements ServicePlanning {
   }
 
   @override
-  Future<List<Seance>> seances() async => seancesRendues;
-
-  @override
-  Future<List<Affectation>> affectations() async => affectationsRendues;
+  Future<List<Seance>> seances({String? eleveId}) async => seancesRendues;
 }
 
 /// Un service de matching en memoire.
 class FauxServiceMatching implements ServiceMatching {
-  /// Le feed rendu.
-  List<EleveEnAttente> feed = const <EleveEnAttente>[];
-
-  /// Les prises demandees.
-  final List<({String eleveId, Creneau creneau})> prises =
-      <({String eleveId, Creneau creneau})>[];
-
   /// Les demandes deposees.
   final List<({SorteDemande sorte, String sujetId, String motif, int? valeur})>
   demandes =
       <({SorteDemande sorte, String sujetId, String motif, int? valeur})>[];
-
-  /// Ce que la prochaine prise doit jeter.
-  Object? erreurPrise;
-
-  @override
-  Future<List<EleveEnAttente>> elevesEnAttente() async => feed;
-
-  @override
-  Future<void> prendre({
-    required String eleveId,
-    required Creneau creneau,
-  }) async {
-    final Object? erreur = erreurPrise;
-    if (erreur != null) {
-      // ignore: only_throw_errors
-      throw erreur;
-    }
-    prises.add((eleveId: eleveId, creneau: creneau));
-  }
 
   @override
   Future<void> demander({
@@ -670,10 +638,7 @@ class FauxStockageSecurise implements StockageSecurise {
   Future<String?> jetonAppareil(String profilId) async => jetons[profilId];
 
   @override
-  Future<void> enregistrerJetonAppareil(
-    String profilId,
-    String jeton,
-  ) async {
+  Future<void> enregistrerJetonAppareil(String profilId, String jeton) async {
     jetons[profilId] = jeton;
   }
 
@@ -683,8 +648,7 @@ class FauxStockageSecurise implements StockageSecurise {
   }
 
   @override
-  Future<String?> empreintePin(String profilId) async =>
-      empreintes[profilId];
+  Future<String?> empreintePin(String profilId) async => empreintes[profilId];
 
   @override
   Future<void> enregistrerEmpreintePin(

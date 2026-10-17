@@ -86,7 +86,7 @@ void main() {
       );
       await tester.pump();
       final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
-        find.widgetWithText(ActionPrincipale, t.connexion.envoyerLien),
+        find.widgetWithText(ActionPrincipale, t.connexion.entrerDemo),
       );
       bouton.onPress!();
       await tester.pumpAndSettle();
@@ -226,12 +226,12 @@ void main() {
           .map((ActionPrincipale a) => a.niveau)
           .toList();
 
-      // Lien, Google, entree eleve, puis les deux sorties discretes (LA-1) :
-      // recuperation d'acces et accueil public, en texte seul.
+      // Lien, Google, entree eleve, puis la sortie discrete (LA-1) : la
+      // recuperation d'acces, en texte seul. Plus de lien vers une
+      // presentation (17/10).
       expect(rangs, <NiveauAction>[
         NiveauAction.principale,
         NiveauAction.secondaire,
-        NiveauAction.tertiaire,
         NiveauAction.tertiaire,
         NiveauAction.tertiaire,
       ]);
@@ -356,7 +356,7 @@ void main() {
       );
       await tester.pump();
       final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
-        find.widgetWithText(ActionPrincipale, t.connexion.envoyerLien),
+        find.widgetWithText(ActionPrincipale, t.connexion.entrerDemo),
       );
       expect(bouton.onPress, isNotNull);
       bouton.onPress!();
@@ -393,7 +393,7 @@ void main() {
       );
       await tester.pump();
       final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
-        find.widgetWithText(ActionPrincipale, t.connexion.envoyerLien),
+        find.widgetWithText(ActionPrincipale, t.connexion.entrerDemo),
       );
       expect(bouton.onPress, isNotNull);
       bouton.onPress!();

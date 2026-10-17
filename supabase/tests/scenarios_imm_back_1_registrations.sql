@@ -167,7 +167,8 @@ begin
   perform set_config('request.jwt.claim.sub', 'a1100000-0000-0000-0000-000000000006', true);
   perform set_config('request.jwt.claims',
     '{"sub":"a1100000-0000-0000-0000-000000000006","app_metadata":{"role":"teacher"}}', true);
-  v_profile := public.creer_profil_inscription(
+  -- Depuis L1-11 la porte publique refuse l'enseignant : fixture par le corps interne.
+  v_profile := private.creer_profil_inscription_interne(
     'teacher', 'Omar', 'Signup', null, 'Europe/Paris', false
   );
   if not exists (select 1 from private.person_registrations r
@@ -368,8 +369,11 @@ begin
     pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Haut', 100), c_age);
   perform pg_temp.f86_attendu('age absent',
     pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Absent', null), c_age);
-  perform pg_temp.f86_attendu('age 3 accepte',
-    pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Min', 3), c_ok);
+  -- L2-08 (decision du 13/10) : l'age minimum est 6 ans, 3 n'est plus accepte.
+  perform pg_temp.f86_attendu('age 3 refuse (minimum 6 ans)',
+    pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Min', 3), 'âge minimum 6 ans');
+  perform pg_temp.f86_attendu('age 6 accepte',
+    pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Min', 6), c_ok);
   perform pg_temp.f86_attendu('age 99 accepte',
     pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Max', 99), c_ok);
 
@@ -456,7 +460,7 @@ begin
     'role non ouvert a l''inscription publique : student');
   perform pg_temp.f86_attendu('enseignant apprenant personnel',
     pg_temp.f86_essai_inscription(n, 'teacher', 'Enseignant', 'Apprenant', true),
-    'profil apprenant personnel reserve au titulaire');
+    'inscription enseignant sur invitation seulement');
   perform pg_temp.f86_attendu('second profil',
     pg_temp.f86_essai_inscription('a1100000-0000-0000-0000-000000000001',
       'guardian', 'Deja', 'Inscrit', false),
@@ -469,8 +473,10 @@ begin
     'prenom et nom sont requis');
   perform pg_temp.f86_attendu('inscription tuteur apprenant acceptee',
     pg_temp.f86_essai_inscription(n, 'guardian', 'Tuteur', 'Apprenant', true), c_ok);
-  perform pg_temp.f86_attendu('inscription enseignant acceptee',
-    pg_temp.f86_essai_inscription(n, 'teacher', 'Enseignant', 'Valide', false), c_ok);
+  -- L1-11 : la porte publique est fermee a l'enseignant (invitation seulement).
+  perform pg_temp.f86_attendu('inscription enseignant sans invitation refusee',
+    pg_temp.f86_essai_inscription(n, 'teacher', 'Enseignant', 'Valide', false),
+    'inscription enseignant sur invitation seulement');
   if exists (select 1 from public.profiles where id = n) then
     raise exception 'IMM-BACK-1: une sonde d''inscription a laisse un profil';
   end if;

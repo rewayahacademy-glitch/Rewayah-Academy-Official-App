@@ -13,7 +13,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
-import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart'
     show SalleDemo;
@@ -21,7 +20,6 @@ import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrome_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
-import 'package:rewayah_academy/features/salle_seance/depuis_classe_live.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart'
     show TeteSalleBornee;
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
@@ -111,28 +109,6 @@ String _annonce(WidgetTester tester) =>
     tester.getSemantics(find.byKey(ChronoSalle.cleAnnonce)).label;
 
 void main() {
-  test('la source /tc/classe donne ses horodatages au chrono, rien sinon', () {
-    expect(DepuisClasseLive.chronoDe(null), isNull);
-    final SessionClockVM horloge = SessionClockVM.depuisFenetre(
-      fenetre: FenetreSeance(
-        debutUtc: _t0,
-        finPrevueUtc: _t0.add(const Duration(minutes: 45)),
-        fenetreAcces: const Duration(minutes: 20),
-        graceApresFin: const Duration(minutes: 15),
-      ),
-      maintenantServeurUtc: _t0.add(const Duration(minutes: 5)),
-      horlogeUtilisateur: const HorlogeAffichee(
-        fuseauIana: 'Europe/Paris',
-        libelleVille: 'Paris',
-        heureLocaleRendue: '20:05',
-        dateLocaleRendue: 'Lundi 12 octobre',
-      ),
-    );
-    final BornesChrono? bornes = DepuisClasseLive.chronoDe(horloge);
-    expect(bornes, _bornes);
-    expect(bornes!.duree, const Duration(minutes: 45));
-  });
-
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
   testWidgets('en cours : temps ecoule et temps restant, au format HH:MM:SS', (

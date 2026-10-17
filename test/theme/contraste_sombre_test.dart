@@ -24,9 +24,9 @@ void main() {
   );
 
   test('le sombre est une ardoise bleu-violet (decisions, section 3.1)', () {
-    expect(palette.surfaceCanvas.background, const Color(0xFF1A1A25));
-    expect(palette.surfaceRaised.background, const Color(0xFF22222E));
-    expect(palette.surfaceOverlay.background, const Color(0xFF2B2B39));
+    expect(palette.surfaceCanvas.background, const Color(0xFF16161E));
+    expect(palette.surfaceRaised.background, const Color(0xFF272734));
+    expect(palette.surfaceOverlay.background, const Color(0xFF2D2D3B));
     expect(palette.surfaceSunken.background, const Color(0xFF262534));
     expect(palette.borderHairline.debugValue, const Color(0xFF32323F));
     expect(palette.inkMuted.debugValue, const Color(0xFFAEB1CE));
@@ -34,7 +34,7 @@ void main() {
     expect(palette.surfacePrimary.background, const Color(0xFFBA98FB));
     expect(palette.surfacePrimary.onBackground, const Color(0xFF25113F));
     expect(palette.inkAlert.debugValue, const Color(0xFFF4777D));
-    expect(palette.surfaceMiseEnAvant.background, const Color(0xFF2B2B39));
+    expect(palette.surfaceMiseEnAvant.background, const Color(0xFF2D2D3B));
     // Figee.
     expect(palette.surfaceQuran.background, const Color(0xFF2E2417));
     expect(palette.surfaceQuran.onBackground, const Color(0xFFF5F1E9));

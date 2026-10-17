@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../tc_groupe/libelles_tc_groupe.dart';
+import '../theme/app_gabarit.dart';
 import '../theme/app_palette.dart';
-import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'action_principale.dart';
-import 'page_shell.dart';
+import 'page_etape.dart';
 
 /// La coquille d'une page de parcours : une question, une action.
 ///
@@ -25,6 +25,13 @@ import 'page_shell.dart';
 /// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 1). Elle avait son propre
 /// `Scaffold`, sa propre gouttiere et son propre bandeau hors ligne : trois
 /// choses que le gabarit de page tient desormais pour tout le produit.
+///
+/// **Lot E3 (audit d'entree du 17/10, L3) : un seul gabarit d'etape.** Elle
+/// garde son API (les parcours qui l'emploient ne changent pas) mais delegue
+/// a [PageEtape] : meme rangee d'etape (disque retour, progression continue,
+/// « n sur N »), meme colonne bornee sur grand ecran, meme action en pilule,
+/// pleine largeur sur telephone, a largeur de contenu au bord de fin
+/// ailleurs. Il n'y a plus qu'une facon de compter les etapes.
 class PageParcours extends StatelessWidget {
   /// Cree une page de parcours.
   const PageParcours({
@@ -78,42 +85,19 @@ class PageParcours extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+    final bool telephone = AppGabarit.de(context) == Gabarit.mobile;
 
-    return PageShell(
-      entete: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          // Les deux elements sont flexibles, et c'est une correction : a 200
-          // pour cent de taille de texte comme en mode enfant, « Retour » et
-          // « Etape 2 sur 3 » ne tenaient plus sur une ligne et la Row
-          // debordait de huit points. Le catalogue de galerie l'a trouve.
-          Row(
-            children: <Widget>[
-              if (onRetour != null)
-                Flexible(
-                  child: ActionPrincipale(
-                    libelle: t.commun.retour,
-                    onPress: onRetour,
-                    niveau: NiveauAction.tertiaire,
-                    pleineLargeur: false,
-                  ),
-                ),
-              const Spacer(),
-              Flexible(
-                child: Text(
-                  t.inscription.etapeSur(n: numero, total: total),
-                  textAlign: TextAlign.end,
-                  style: textes.bodySmall,
-                ),
-              ),
-            ],
-          ),
-          Ecart.vMd,
-          _Progression(numero: numero, total: total),
-        ],
-      ),
-      actions: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    return PageEtape(
+      numero: numero,
+      total: total,
+      onRetour: onRetour,
+      action: Column(
+        // Telephone : le bouton prend la bande du pouce. Ailleurs : chaque
+        // ligne garde sa largeur, rangee au bord de fin (voir [PageEtape]).
+        crossAxisAlignment: telephone
+            ? CrossAxisAlignment.stretch
+            : CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (souscription != null) ...<Widget>[souscription!, Ecart.vMd],
@@ -121,6 +105,8 @@ class PageParcours extends StatelessWidget {
             libelle: libelleAction,
             onPress: onAction,
             enCours: enCours,
+            pilule: true,
+            fleche: true,
           ),
           if (minutesRestantes != null) ...<Widget>[
             Ecart.vSm,
@@ -128,8 +114,10 @@ class PageParcours extends StatelessWidget {
               LibellesGroupe.insecable(
                 t.inscription.tempsRestant(minutes: minutesRestantes!),
               ),
-              textAlign: TextAlign.center,
-              style: textes.bodySmall,
+              textAlign: telephone ? TextAlign.center : TextAlign.end,
+              style: palette.inkMuted.applyTo(
+                textes.bodySmall ?? const TextStyle(),
+              ),
             ),
           ],
         ],
@@ -146,59 +134,15 @@ class PageParcours extends StatelessWidget {
           ),
           if (explication != null) ...<Widget>[
             Ecart.vSm,
-            TexteSansCoupure(explication!, style: textes.bodyMedium),
+            TexteSansCoupure(
+              explication!,
+              style: palette.inkMuted.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
           ],
           Ecart.vXxl,
           enfant,
-        ],
-      ),
-    );
-  }
-}
-
-/// La barre d'avancement du parcours.
-///
-/// Des segments plutot qu'une barre continue : on compte des pages, et un
-/// enfant comme un parent presse lit mieux « trois traits sur cinq » qu'un
-/// pourcentage.
-class _Progression extends StatelessWidget {
-  const _Progression({required this.numero, required this.total});
-
-  final int numero;
-  final int total;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-
-    return Semantics(
-      label: t.inscription.etapeSur(n: numero, total: total),
-      excludeSemantics: true,
-      child: Row(
-        children: <Widget>[
-          for (int i = 1; i <= total; i++)
-            Expanded(
-              child: Padding(
-                // Directionnel : en arabe, la progression se lit de droite a
-                // gauche et l'ecart doit suivre.
-                padding: const EdgeInsetsDirectional.only(end: AppSpacing.xs),
-                child: SizedBox(
-                  height: AppSpacing.xs,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: AppRadius.arrondiFull,
-                      // La piste d'une barre de progression est une surface
-                      // enfoncee (`01-systeme-visuel.md` section 2) : elle
-                      // etait transparente avec un filet, donc invisible sur
-                      // le fond de page.
-                      color: i <= numero
-                          ? palette.surfacePrimary.background
-                          : palette.surfaceSunken.background,
-                    ),
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );

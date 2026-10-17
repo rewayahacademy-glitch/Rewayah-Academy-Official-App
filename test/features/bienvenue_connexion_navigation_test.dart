@@ -1,4 +1,4 @@
-// Sous-paquet LA-1 (bienvenue, connexion, recuperation) : boutons tapes
+// Sous-paquet LA-1 (connexion, recuperation) : boutons tapes
 // depuis la navigation reelle (routeur de l'application), pas seulement
 // `routeur.go`.
 
@@ -47,32 +47,37 @@ void main() {
     });
 
     testWidgets(
-      'depuis /connexion, « Decouvrir Rewayah Academy » mene a /bienvenue, '
-      'puis « Commencer » ramene a /connexion',
+      'plus de pages de presentation : /connexion ne porte plus « Decouvrir », '
+      'et l ancienne adresse /bienvenue mene a /connexion',
       (WidgetTester tester) async {
         final GoRouter routeur = await monterRouteur(
           tester,
-          Routes.connexion,
+          Routes.bienvenue,
           source: FausseSourceSession(),
         );
 
-        final Finder decouvrir = find.text(t.connexion.decouvrir);
-        await tester.ensureVisible(decouvrir);
-        await tester.pumpAndSettle();
-        await tester.tap(decouvrir);
-        await tester.pumpAndSettle();
-
-        expect(lieu(routeur), Routes.bienvenue);
-
-        final Finder commencer = find.text(t.bienvenue.commencer);
-        await tester.ensureVisible(commencer);
-        await tester.pumpAndSettle();
-        await tester.tap(commencer);
-        await tester.pumpAndSettle();
-
         expect(lieu(routeur), Routes.connexion);
+        expect(find.byType(ConnexionPage), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey<String>('connexion-decouvrir')),
+          findsNothing,
+        );
+        expect(find.text(t.connexion.decouvrir), findsNothing);
       },
     );
+
+    testWidgets('la racine d un visiteur sans session mene a /connexion', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monterRouteur(
+        tester,
+        Routes.racine,
+        source: FausseSourceSession(),
+      );
+
+      expect(lieu(routeur), Routes.connexion);
+      expect(find.byType(ConnexionPage), findsOneWidget);
+    });
 
     testWidgets(
       'une URL de retour avec error_code=otp_expired mene a la recuperation '

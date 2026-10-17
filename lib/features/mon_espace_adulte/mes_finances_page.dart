@@ -15,9 +15,10 @@
 // des profils du foyer ne sont lus ici ; aucun filtre « par personne ».
 //
 // En production le port rend `CapaciteIndisponible` : la page le dit, sans
-// bouton. Les destinations sont passees par la coquille : la coquille adulte
-// n'existe encore qu'en demonstration (choix provisoire Q2, deux coquilles) ;
-// `/eleve/finances` (guide §4) arrivera avec elle.
+// bouton ni chiffre. Les destinations sont passees par la coquille : la
+// demonstration (Mon espace > Paiements) et, depuis le lot F1, la route reelle
+// `/eleve/finances` (guide, section 4 ; `routes_accueil_adulte.dart`), ouverte depuis
+// l'Accueil adulte au seul compte « eleve autonome ».
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

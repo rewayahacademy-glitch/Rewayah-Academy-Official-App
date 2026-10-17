@@ -525,31 +525,31 @@ class EcranPreparationDemo extends StatelessWidget {
       permissionRefusee: etat == PreparationDemo.permissionRefusee,
     );
     return RepereDemonstration(
-      child: Scaffold(
-        body: SafeArea(
-          child: PreparationEnseignant(
-            key: ValueKey<PreparationDemo>(etat),
-            resultat: resultat,
-            reseau: etat == PreparationDemo.reseauFaible
-                ? ReseauPreparation.instable
-                : ReseauPreparation.bonne,
-            contexte: ContextePreparation(
-              classe: DonneesClasseDemo.classe,
-              debut: 'Dans 8 min',
-              support: DonneesClasseDemo.supportPrevu,
-              reprise: 'Page 24',
-              eleves: '${DonneesClasseDemo.eleves.length}',
-            ),
-            onEntrer: () => context.go(Routes.demoClasse),
-            onRetour: () => context.go(
-              adresseDemoClasse(
-                RoleEntree.enseignant,
-                EtatDemoClasse.fenetreOuverte,
-              ),
-            ),
-            onReessayer: () {},
-            onTesterCamera: () {},
+      child: PageShell(
+        defilante: false,
+        actionsCoquille: false,
+        child: PreparationEnseignant(
+          key: ValueKey<PreparationDemo>(etat),
+          resultat: resultat,
+          reseau: etat == PreparationDemo.reseauFaible
+              ? ReseauPreparation.instable
+              : ReseauPreparation.bonne,
+          contexte: ContextePreparation(
+            classe: DonneesClasseDemo.classe,
+            debut: 'Dans 8 min',
+            support: DonneesClasseDemo.supportPrevu,
+            reprise: 'Page 24',
+            eleves: '${DonneesClasseDemo.eleves.length}',
           ),
+          onEntrer: () => context.go(Routes.demoClasse),
+          onRetour: () => context.go(
+            adresseDemoClasse(
+              RoleEntree.enseignant,
+              EtatDemoClasse.fenetreOuverte,
+            ),
+          ),
+          onReessayer: () {},
+          onTesterCamera: () {},
         ),
       ),
     );
@@ -629,29 +629,29 @@ class EcranPreparationEleveDemo extends StatelessWidget {
       ),
     };
     return RepereDemonstration(
-      child: Scaffold(
-        body: SafeArea(
-          child: PreparationEleve(
-            key: ValueKey<String>('${etat.name}-$guidee'),
-            guidee: guidee,
-            resultat: resultat,
-            reseau: switch (etat) {
-              PreparationEleveDemo.verification => null,
-              PreparationEleveDemo.horsLigne => ReseauPreparation.horsLigne,
-              PreparationEleveDemo.pret ||
-              PreparationEleveDemo.microBloque => ReseauPreparation.bonne,
-            },
-            onEntrer: () => context.go(Routes.demoClasse),
-            onContinuerSansMicro: () => context.go(Routes.demoClasse),
-            onReessayer: () {},
-            onRetour: () => context.go(
-              guidee
-                  ? Routes.demoClasse
-                  : adresseDemoClasse(
-                      RoleEntree.eleve,
-                      EtatDemoClasse.fenetreOuverte,
-                    ),
-            ),
+      child: PageShell(
+        defilante: false,
+        actionsCoquille: false,
+        child: PreparationEleve(
+          key: ValueKey<String>('${etat.name}-$guidee'),
+          guidee: guidee,
+          resultat: resultat,
+          reseau: switch (etat) {
+            PreparationEleveDemo.verification => null,
+            PreparationEleveDemo.horsLigne => ReseauPreparation.horsLigne,
+            PreparationEleveDemo.pret ||
+            PreparationEleveDemo.microBloque => ReseauPreparation.bonne,
+          },
+          onEntrer: () => context.go(Routes.demoClasse),
+          onContinuerSansMicro: () => context.go(Routes.demoClasse),
+          onReessayer: () {},
+          onRetour: () => context.go(
+            guidee
+                ? Routes.demoClasse
+                : adresseDemoClasse(
+                    RoleEntree.eleve,
+                    EtatDemoClasse.fenetreOuverte,
+                  ),
           ),
         ),
       ),

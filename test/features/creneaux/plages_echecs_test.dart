@@ -45,11 +45,9 @@ List<Creneau> _plage(int jour, int de, int a) => <Creneau>[
     Creneau(jour: jour, heure: h, fuseau: 'Europe/Paris'),
 ];
 
-/// Refuse les retraits de certaines heures ; peut aussi refuser la lecture
-/// des Classes engagees.
+/// Refuse les retraits de certaines heures.
 class _Planning extends FauxServicePlanning {
   final Set<int> retraitsRefuses = <int>{};
-  bool affectationsEnEchec = false;
 
   @override
   Future<void> retirer({
@@ -60,14 +58,6 @@ class _Planning extends FauxServicePlanning {
       throw StateError('refus ${creneau.heure}');
     }
     return super.retirer(profilId: profilId, creneau: creneau);
-  }
-
-  @override
-  Future<List<Affectation>> affectations() async {
-    if (affectationsEnEchec) {
-      throw StateError('lecture');
-    }
-    return super.affectations();
   }
 }
 
@@ -250,33 +240,6 @@ void main() {
     await _toucher(tester, find.text(t.enseignant.creneaux.supprimerPlage));
     expect(_heuresPosees(planning, 2), isEmpty);
     expect(_feuille, findsNothing);
-  });
-
-  testWidgets('engagements non lus : dit, relance, et tout retrait est '
-      'confirme par prudence', (WidgetTester tester) async {
-    final _Planning planning = _Planning()
-      ..creneaux[_monId] = _plage(4, 9, 10)
-      ..affectationsEnEchec = true;
-    await _monter(tester, planning);
-
-    expect(
-      find.text(t.enseignant.creneaux.engagementsNonConfirmes),
-      findsOneWidget,
-    );
-    expect(find.text(t.commun.reessayer), findsOneWidget);
-
-    await _toucher(tester, find.text(_de(9)));
-    await _toucher(tester, find.text(t.enseignant.creneaux.supprimerPlage));
-    expect(
-      find.text(
-        t.enseignant.creneaux.retraitSansEngagements(
-          heures: nommerHeure((jour: 4, heure: 9)),
-        ),
-      ),
-      findsOneWidget,
-    );
-    await _toucher(tester, find.text(t.commun.annuler));
-    expect(planning.retires, isEmpty);
   });
 
   testWidgets('reseau perdu feuille ouverte : Enregistrer n est plus rendu, '

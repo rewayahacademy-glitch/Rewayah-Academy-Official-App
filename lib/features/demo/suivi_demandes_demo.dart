@@ -328,6 +328,18 @@ class SuiviDemandesDemo implements PortSuiviDemandes {
     ),
   ]);
 
+  /// Le suivi du foyer de demonstration (L4-05) : seulement les enfants
+  /// de [DonneesDemo.eleves]. Yusuf attend en liste d'attente, Aicha est
+  /// integree apres un transfert. Aucun prenom n'y est etranger au foyer.
+  factory SuiviDemandesDemo.foyer() => SuiviDemandesDemo(
+    SuiviDemandesDemo.echelle().demandes
+        .where(
+          (DemandeServeurDemo d) =>
+              DonneesDemo.eleves.any((e) => e.id == d.eleveId),
+        )
+        .toList(),
+  );
+
   /// R7, R9, R10, R11, R20 : quatre eleves du meme foyer, chacun avec son
   /// propre suivi. Yusuf attend en liste d'attente (ni rang ni delai), Ines a
   /// sa classe prete qui attend son enseignant, Aicha a ete passee dans une
@@ -641,10 +653,11 @@ class NotificationsSuiviDemandesDemo implements PortNotifications {
 
 /// Les surcharges du suivi des demandes pour la demonstration tuteur.
 List<Override> surchargesSuiviDemandesDemo() {
-  // ECHELLE-FAM-ETATS-1 : la visite montre chaque etat (liste d'attente,
-  // classe prete, eleve integre, cours commences) et les changements de
-  // classe, un suivi par enfant.
-  final SuiviDemandesDemo suivi = SuiviDemandesDemo.echelle();
+  // L4-05 : la visite ne nomme que les enfants du foyer de demonstration
+  // (liste d'attente, eleve integre apres un transfert), jamais un prenom
+  // qui contredit l'Accueil. La palette complete des quatre etats reste
+  // dans `echelle()`, pour les tests.
+  final SuiviDemandesDemo suivi = SuiviDemandesDemo.foyer();
   return <Override>[
     portSuiviDemandesProvider.overrideWithValue(suivi),
     portFriseDemandesProvider.overrideWithValue(FriseDemandesDemo(suivi)),

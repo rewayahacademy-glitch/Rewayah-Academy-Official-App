@@ -90,7 +90,5 @@ const Map<String, Set<String>> detteCoupeMots = <String, Set<String>>{
 /// paragraphe RTL (`ponctuationsIsolees`, « ? changement », « .trancher ») :
 /// ailleurs, l'arabe ne traduit qu'une petite partie des cles et le repli
 /// francais, attendu, y place chaque point final en tete de ligne. Un ecran
-/// entre dans cette liste quand sa traduction arabe est complete ; les
-/// reglages de l'enfant sont mesures par leur propre test
-/// (`coupe_mots_reglages_enfant_test.dart`), toujours avec cette lecture.
+/// entre dans cette liste quand sa traduction arabe est complete.
 const Set<String> ecransTraduitsEnArabe = <String>{};

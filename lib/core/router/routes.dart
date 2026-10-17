@@ -32,7 +32,8 @@ abstract final class Routes {
   /// La recuperation d'acces : un nouveau lien, jamais un mot de passe.
   static const String connexionRecuperation = '/connexion/recuperation';
 
-  /// L'accueil public avant connexion.
+  /// L'ancienne presentation avant connexion, supprimee le 17/10 : l'adresse
+  /// reste publique et mene a la connexion (signets, PWA installees).
   static const String bienvenue = '/bienvenue';
 
   /// Inscription : le compte existe, le profil reste a creer.
@@ -57,19 +58,29 @@ abstract final class Routes {
   /// verifie des l'ouverture.
   static const String inscriptionInvitation = '/inscription/invitation';
 
+  /// Lot F2 : le code d'invitation du candidat comptable (BF1-03), sous la
+  /// meme porte. Le parametre `code` d'un lien est verifie des l'ouverture.
+  static const String inscriptionInvitationComptable =
+      '/inscription/invitation-comptable';
+
   /// Recapitulatif, avant la creation du profil.
   static const String inscriptionRecapitulatif = '/inscription/recapitulatif';
 
   /// Portail d'attente : dossier en verification, refuse, ou compte suspendu.
   static const String attente = '/attente';
 
-  /// La carte a accuser une fois : enregistrement audio et visite de controle.
-  ///
-  /// Premiere des trois etapes du portail, avant le contrat : elle dit en
-  /// langage clair ce que le contrat formalisera ensuite (ADR-011).
+  /// Lot E6 (decision du directeur du 17/10/2026) : la page unique des
+  /// accords. Tous les textes que le role doit accepter, l'un sous l'autre,
+  /// chacun avec sa case, et un seul bouton « Suivant », inactif tant qu'une
+  /// case manque.
+  static const String attenteAccords = '/attente/accords';
+
+  /// Ancienne adresse de la carte a accuser une fois : elle mene desormais a
+  /// [attenteAccords], qui porte ce texte avec sa case.
   static const String attenteAccuse = '/attente/accuse';
 
-  /// Lecture et signature du contrat propre au role.
+  /// Ancienne adresse du contrat propre au role : elle mene desormais a
+  /// [attenteAccords] (parametre `pour` conserve).
   static const String attenteContrat = '/attente/contrat';
 
   /// Depot de la piece d'identite.
@@ -119,6 +130,14 @@ abstract final class Routes {
   /// La frise d'une de ses demandes.
   static String eleveAdulteDemande(String demandeId) =>
       '$eleveAdulteDemandes/$demandeId';
+
+  /// Ses finances (FI-9b, guide Finance V4 section 4 « Eleve adulte » ; lot F1) :
+  /// le solde, la periode financee et la mensualite de son seul profil.
+  /// Ouverte au seul compte « eleve autonome » (C-24), jamais d'apres le role.
+  static const String eleveFinances = '/eleve/finances';
+
+  /// L'historique des mouvements de son seul profil.
+  static const String eleveFinancesMouvements = '$eleveFinances/mouvements';
 
   // --- fin du bloc DASH-EA-PROD ---------------------------------------------
 
@@ -298,9 +317,6 @@ abstract final class Routes {
   /// d'ephemere et doit survivre a un rechargement, comme l'appairage.
   static String parcoursPour(String eleveId) => '$tuteurParcours/$eleveId';
 
-  /// Disponibilites du foyer.
-  static const String tuteurDisponibilites = '/tuteur/disponibilites';
-
   /// Reglages par enfant.
   static const String tuteurReglages = '/tuteur/reglages';
 
@@ -470,6 +486,16 @@ abstract final class Routes {
   /// atteinte depuis le Profil (le Compte de l'enseignant), dans sa branche.
   static const String enseignantRevenus = '/enseignant/revenus';
 
+  /// La valeur de `?depuis=` des revenus ouverts depuis Aujourd'hui (lot F1).
+  static const String origineJournee = 'journee';
+
+  /// Les revenus ouverts depuis Aujourd'hui : le retour y ramene, pas au
+  /// Profil (lot F1).
+  static final String enseignantRevenusDepuisJournee = Uri(
+    path: enseignantRevenus,
+    queryParameters: <String, String>{'depuis': origineJournee},
+  ).toString();
+
   // Les quatre routes suivantes ne sont **pas** des destinations de premier
   // niveau : la barre de l'enseignant en tient quatre, Aujourd'hui, Classes,
   // Disponibilites et Profil (E10, decision du directeur du 26/09/2026, qui
@@ -548,6 +574,12 @@ abstract final class Routes {
   /// barre »). Une seule carte de mission, jamais de planning (CT-2, C3).
   static const String controleur = '/controleur';
 
+  /// La seconde etape de connexion du controleur (L1-10) : enrolement d'un
+  /// facteur TOTP, ou verification a chaque connexion. Hors coquille, sans
+  /// barre : tant que la capacite `mfaRequise` est vraie, c'est la seule page
+  /// atteignable.
+  static const String mfaControleur = '/controleur/mfa';
+
   /// Historique (CTR-05), deuxieme destination. Page provisoire jusqu'a CT-7.
   static const String controleurHistorique = '/controleur/historique';
 
@@ -615,10 +647,6 @@ abstract final class Routes {
   static const String adminOperationsTraitement =
       '/admin/operations/traitement';
 
-  /// Attribution manuelle (`ADM-05`), sous Operations.
-  static const String adminOperationsAttributions =
-      '/admin/operations/attributions';
-
   /// Demandes et regles (`ADM-06`), sous Operations.
   static const String adminOperationsDemandes = '/admin/operations/demandes';
 
@@ -665,6 +693,10 @@ abstract final class Routes {
   /// la creation de leur classe, sous Operations.
   static const String adminOperationsRegroupements =
       '/admin/operations/regroupements';
+
+  /// L2-05 : l'administration des offres vitrine (creer, publier, retirer),
+  /// sous Operations.
+  static const String adminOperationsOffres = '/admin/operations/offres';
 
   /// ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire (classes,
   /// remplissage, demandes, enseignants libres et manquants), sous
@@ -1132,11 +1164,6 @@ abstract final class Routes {
   /// Le moteur Coran hors classe (C). Route interne : la destination
   /// `/eleve/coran` pointe directement sur ce moteur, voir `app_router.dart`.
   static const String tcMushaf = '/tc/mushaf';
-
-  /// La Classe Live (E). Roles autorises : enseignant, eleve. Atteinte par le
-  /// bouton « Rejoindre » et la barre « Cours en cours », jamais par URL
-  /// tapee (ADR-005).
-  static const String tcClasse = '/tc/classe';
 
   /// La porte d'observation d'une seance (G). Roles autorises : tuteur,
   /// admin, controleur.

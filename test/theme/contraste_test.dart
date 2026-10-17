@@ -18,7 +18,7 @@ void main() {
 
   test('les valeurs claires sont celles des decisions du 24/09 (3.1)', () {
     // Gardees.
-    expect(palette.surfaceCanvas.background, const Color(0xFFF8F7FA));
+    expect(palette.surfaceCanvas.background, const Color(0xFFF1EFF4));
     expect(palette.surfaceRaised.background, const Color(0xFFFFFFFF));
     expect(palette.surfaceSunken.background, const Color(0xFFF0EDF4));
     expect(palette.surfacePrimary.background, const Color(0xFF8652E6));

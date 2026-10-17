@@ -16,9 +16,9 @@ import '../../core/widgets/action_principale.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
 
-/// Libelle de l'entree. En dur, comme le repere : le mode n'existe que hors
-/// production, il n'entre pas dans les traductions du produit.
-const String libelleEntreeDemonstration = 'Essayer la démonstration';
+/// Libelle de l'entree, traduit (`connexion.essayerDemo`, FR et AR). Un getter
+/// et non une constante : la traduction se lit au moment du rendu.
+String get libelleEntreeDemonstration => t.connexion.essayerDemo;
 
 /// Le lanceur de la demonstration, ou `null` (production, tests ordinaires) :
 /// l'entree ne s'affiche que s'il existe.

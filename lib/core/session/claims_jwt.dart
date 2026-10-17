@@ -16,7 +16,12 @@ import 'package:flutter/foundation.dart';
 /// navigation, jamais a autoriser un acces. La barriere reste la RLS.
 @immutable
 class ClaimsJwt {
-  const ClaimsJwt._({this.role, this.householdId, this.sujet});
+  const ClaimsJwt._({
+    this.role,
+    this.householdId,
+    this.sujet,
+    this.niveauAssurance,
+  });
 
   /// Aucune revendication : jeton absent ou illisible.
   const ClaimsJwt.vide() : this._();
@@ -34,6 +39,11 @@ class ClaimsJwt {
   /// personne observee** : il n'y a alors aucun `Session` gotrue d'ou le tirer,
   /// et c'est le seul endroit ou cette identite se lit.
   final String? sujet;
+
+  /// Le niveau d'assurance de l'authentification (`aal1` ou `aal2`), pose par
+  /// le serveur d'authentification dans le jeton, jamais par le hook. `aal2`
+  /// dit que la seconde etape (TOTP) a ete verifiee a cette connexion.
+  final String? niveauAssurance;
 
   /// Decode la charge utile d'un jeton d'acces.
   ///
@@ -68,6 +78,7 @@ class ClaimsJwt {
         role: metadonnees['role'] as String?,
         householdId: metadonnees['household_id'] as String?,
         sujet: decode['sub'] as String?,
+        niveauAssurance: decode['aal'] as String?,
       );
     } on FormatException {
       return const ClaimsJwt.vide();
@@ -79,8 +90,9 @@ class ClaimsJwt {
       other is ClaimsJwt &&
       other.role == role &&
       other.householdId == householdId &&
-      other.sujet == sujet;
+      other.sujet == sujet &&
+      other.niveauAssurance == niveauAssurance;
 
   @override
-  int get hashCode => Object.hash(role, householdId, sujet);
+  int get hashCode => Object.hash(role, householdId, sujet, niveauAssurance);
 }

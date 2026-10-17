@@ -2,8 +2,8 @@
 //
 // Toutes les regles de `10_classe/V/01_MATRICE_ROLES.md` (pilotage) vivent
 // ICI, en getters purs : les widgets ne decident rien, ils lisent. Ni LiveKit
-// ni Supabase : une `VueSeance` se construit depuis `/salle`, depuis
-// `/tc/classe` ou depuis la demonstration (`lib/features/demo/seance_demo.dart`).
+// ni Supabase : une `VueSeance` se construit depuis `/salle` ou depuis la
+// demonstration (`lib/features/demo/seance_demo.dart`).
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show StringCharacters;
@@ -144,7 +144,7 @@ class EleveSeance {
   /// repli. Nulle en demonstration, qui n'a aucune photo stockee.
   final String? cleAvatar;
 
-  /// L'identifiant d'academie (`/tc/classe`) : les actions de la fiche
+  /// L'identifiant d'academie : les actions de la fiche
   /// (rappel, recitation) visent un inscrit par lui, jamais par son prenom.
   /// `null` en demonstration et dans `/salle`.
   final String? id;
@@ -585,10 +585,6 @@ class VueSeance {
   /// notice de l'enseignant est « Un parent observe cette seance » (EN-9).
   static const bool optionQ4 = false;
 
-  /// Q5 : guidee, texte court « Le cours est enregistre. » (non : texte
-  /// complet).
-  static const bool optionQ5 = false;
-
   /// Q6 : zoom local de l'eleve standard, qui ne publie rien.
   static const bool optionQ6 = true;
 
@@ -1004,9 +1000,7 @@ class VueSeance {
   /// Le texte de la mention d'enregistrement, ou `null` (non confirme, fin).
   String? get texteMention {
     if (!enregistrementConfirme || estFinie) return null;
-    return _guidee && optionQ5
-        ? t.salle.seance.coursEnregistreCourt
-        : t.salle.bandeauPermanent;
+    return t.salle.bandeauPermanent;
   }
 
   /// La visite est-elle annoncee a ce role ? Toujours a l'enseignant ;
@@ -1367,10 +1361,10 @@ class VueSeance {
   /// Le contexte deplie se montre : seulement depuis la capsule.
   bool get contexteOuvert => voitCapsule && contexte != ContexteOuvert.aucun;
 
-  /// Le point rouge : seulement si l'enregistrement est ACTIF (UX-12, TB12).
-  /// Inactif ou inconnu : aucun point, jamais un voyant qui pretend.
-  bool get voitPointEnregistrement =>
-      enregistrement == EtatEnregistrement.actif && !estFinie;
+  /// Le point rouge d'enregistrement n'est jamais montre : aucun cours n'est
+  /// capte (reponse A-01 du directeur, 17/10/2026). Le champ [enregistrement]
+  /// reste lu par la demonstration, sans effet a l'ecran.
+  bool get voitPointEnregistrement => false;
 
   /// L'oeil : seulement si la donnee du controle existe (§4.3).
   bool get voitOeilControle => controle != null;

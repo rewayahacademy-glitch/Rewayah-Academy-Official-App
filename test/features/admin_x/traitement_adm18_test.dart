@@ -27,6 +27,7 @@ import 'package:rewayah_academy/features/admin_traitement/traitement_page.dart';
 
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
+import '../../support/rangee_plus.dart';
 
 /// Lundi 5 octobre 2026, dix heures.
 final DateTime _maintenant = DateTime(2026, 10, 5, 10);
@@ -218,8 +219,8 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, taille: const Size(1440, 900));
-      await tester.tap(find.text(t.admin.traitement.filtreDemandes));
-      await tester.pumpAndSettle();
+      // L4-07 : selon la place, les puces sont dans la rangee ou sous « Plus ».
+      await toucherFiltre(tester, find.text(t.admin.traitement.filtreDemandes));
       final Finder file = find.byKey(TraitementPage.cleFile);
       expect(
         find.descendant(of: file, matching: find.text('Sami')),
@@ -230,12 +231,11 @@ void main() {
         findsNothing,
       );
 
-      await tester.tap(find.text(t.admin.traitement.filtreTous));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byType(MenuFiltre<TriFile>));
-      await tester.pumpAndSettle();
+      await toucherFiltre(tester, find.text(t.admin.traitement.filtreTous));
+      await ouvrirMenuFiltre(tester, find.byType(MenuFiltre<TriFile>));
       await tester.tap(find.text(t.admin.traitement.triAncien).last);
       await tester.pumpAndSettle();
+      await fermerPlus(tester);
       expect(
         _ordre(tester, <String>['Amina Exemple', 'Omar Exemple']),
         <String>['Omar Exemple', 'Amina Exemple'],

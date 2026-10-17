@@ -488,7 +488,6 @@ void main() {
       Routes.tuteurAjouterEnfantAncien: Routes.tuteurAjouterEnfant,
       '${Routes.tuteurAjouterEnfantAncien}?pour=moi':
           Routes.tuteurAjouterPourMoi,
-      Routes.tuteurDisponibilites: Routes.tuteurFoyer,
       // Mapping C6, demande B-4 : les reglages par eleve sont dans la fiche.
       Routes.tuteurReglages: Routes.tuteurFoyer,
       '${Routes.ficheElevePour('e1')}/appareils/connexion': Routes.appairerPour(
@@ -601,6 +600,9 @@ void main() {
           lectureProfil: LectureProfil.injoignable,
         ),
         for (final AppRole role in AppRole.values) _session(role),
+        // L1-10 : la seconde etape du controleur ne s'ouvre qu'a lui, tant que
+        // la capacite `mfaRequise` est vraie.
+        _session(AppRole.controller).copyWith(mfaRequise: true),
       ];
       final List<String> declares = cheminsDeclares(routeur);
       expect(declares, isNotEmpty);

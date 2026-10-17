@@ -34,14 +34,6 @@ abstract final class MotifsProposes {
     t.motifs.clotureClasse.parErreur,
   ];
 
-  /// Attribuer sur une heure que la famille n'a pas posee.
-  static List<String> attribution() => <String>[
-    t.motifs.attribution.confirmee,
-    t.motifs.attribution.aucuneCommune,
-    t.motifs.attribution.continuite,
-    t.motifs.attribution.famille,
-  ];
-
   /// Refuser une demande (la phrase part a la partie qui a demande).
   static List<String> refusDemande() => <String>[
     t.motifs.refusDemande.aucunEnseignant,
@@ -143,30 +135,6 @@ abstract final class MotifsProposes {
     t.motifs.presenceExcusee.reseau,
     t.motifs.presenceExcusee.conge,
     t.motifs.presenceExcusee.familiale,
-  ];
-
-  /// Demande du tuteur : changer d'enseignant.
-  static List<String> reglageEnseignant() => <String>[
-    t.motifs.reglageEnseignant.horaire,
-    t.motifs.reglageEnseignant.niveau,
-    t.motifs.reglageEnseignant.fuseau,
-    t.motifs.reglageEnseignant.fratrie,
-  ];
-
-  /// Demande du tuteur : changer la duree des cours.
-  static List<String> reglageDuree() => <String>[
-    t.motifs.reglageDuree.tropLongue,
-    t.motifs.reglageDuree.plusDeTemps,
-    t.motifs.reglageDuree.pause,
-    t.motifs.reglageDuree.horaire,
-  ];
-
-  /// Demande du tuteur : changer la duree minimale payable.
-  static List<String> reglageMinimum() => <String>[
-    t.motifs.reglageMinimum.ecourtees,
-    t.motifs.reglageMinimum.reseau,
-    t.motifs.reglageMinimum.duree,
-    t.motifs.reglageMinimum.horaire,
   ];
 
   /// Phrases-types d'un signalement enseignant, par categorie (L7). La

@@ -76,6 +76,23 @@ void main() {
       );
     });
 
+    test(
+      'l age minimum est 6 ans : 3 a 5 ans sont hors bornes (L2-08 D-6)',
+      () {
+        expect(bornes.min, 6);
+        for (final int age in <int>[3, 4, 5]) {
+          expect(
+            _complet.copyWith(age: age).valider(bornes),
+            <ChampProfilEleve, ErreurChamp>{
+              ChampProfilEleve.age: ErreurChamp.horsBornes,
+            },
+            reason: '$age ans',
+          );
+        }
+        expect(_complet.copyWith(age: 6).valider(bornes), isEmpty);
+      },
+    );
+
     test('effacer l age le rend de nouveau requis', () {
       expect(
         _complet.sansAge().valider(bornes),

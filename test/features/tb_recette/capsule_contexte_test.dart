@@ -75,7 +75,6 @@ Future<void> _monter(
 
 final Finder _capsule = find.byKey(CapsuleSeance.cle);
 final Finder _avatar = find.byKey(CapsuleSeance.cleAvatar);
-final Finder _point = find.byKey(CapsuleSeance.clePoint);
 final Finder _oeil = find.byKey(CapsuleSeance.cleOeil);
 final Finder _contexte = find.byKey(SectionContexte.cle);
 final Finder _reduire = find.byKey(SectionContexte.cleReduire);
@@ -116,10 +115,16 @@ void main() {
             ),
             findsNothing,
           );
-          // Pas d'oeil sans donnee de controle (TB-BR-24) ; enregistrement de
-          // demonstration actif : un point.
+          // Pas d'oeil sans donnee de controle (TB-BR-24) ; aucun temoin
+          // d'enregistrement, meme en demonstration (A-01, 17/10/2026).
           expect(_oeil, findsNothing);
-          expect(_point, findsOneWidget);
+          expect(
+            find.descendant(
+              of: _capsule,
+              matching: find.byType(PointEnregistrement),
+            ),
+            findsNothing,
+          );
           // Rien n'est deplie au depart.
           expect(_contexte, findsNothing);
         });
@@ -166,7 +171,7 @@ void main() {
             await tester.tap(_avatar);
             await stabiliser(tester);
             expect(_contexte, findsOneWidget);
-            // Le contexte normal : le nom, le reseau, l'enregistrement actif.
+            // Le contexte normal : le nom et le reseau, sans enregistrement.
             expect(
               find.descendant(of: _contexte, matching: find.text(_nom)),
               findsOneWidget,
@@ -181,11 +186,9 @@ void main() {
             expect(
               find.descendant(
                 of: _contexte,
-                matching: find.text(
-                  t.salle.seance.contexte.enregistrementActif,
-                ),
+                matching: find.byType(PointEnregistrement),
               ),
-              findsOneWidget,
+              findsNothing,
             );
             // Aucun controle fabrique : pas de donnee, pas de section.
             expect(find.byKey(SectionContexte.cleControle), findsNothing);
@@ -290,7 +293,7 @@ void main() {
     setUpAll(chargerPolicesDuDepot);
     for (final RoleSeance role in RoleSeance.values) {
       testWidgets(role.name, (WidgetTester tester) async {
-        const Size petit = Size(320, 700);
+        const Size petit = Size(320, 660);
         await _monter(
           tester,
           DemoSallePage(role: role, situation: SituationTb.ctx02),
@@ -381,11 +384,15 @@ void main() {
         await stabiliser(tester);
         expect(_contexte, findsOneWidget);
         expect(defilement(liste).position.pixels, 0);
-        expect(
-          tester.getRect(controle).top,
-          greaterThanOrEqualTo(tester.getRect(liste).bottom - 1),
-          reason: 'precondition : la section doit etre hors de vue',
-        );
+        // Sans la ligne d'enregistrement (A-01), le panneau guide est assez
+        // court pour que la section tienne a l'ecran sans defilement.
+        if (role != RoleSeance.guidee) {
+          expect(
+            tester.getRect(controle).top,
+            greaterThanOrEqualTo(tester.getRect(liste).bottom - 1),
+            reason: 'precondition : la section doit etre hors de vue',
+          );
+        }
 
         // L'oeil : la meme liste defile jusqu'a la section, rien d'autre.
         await reduire();
@@ -424,26 +431,19 @@ void main() {
     expect(focus?.debugLabel, 'capsule-avatar');
   });
 
-  group('UX-12 : aucun point rouge sans enregistrement actif', () {
-    test('la vue : point seulement si actif', () {
+  group('A-01 : aucun point d\'enregistrement, quel que soit l\'etat', () {
+    test('la vue : jamais de point', () {
       for (final EtatEnregistrement e in EtatEnregistrement.values) {
         final VueSeance v = DonneesSeanceDemo.vueTb(
           RoleSeance.eleve,
           SituationTb.ui01,
           enregistrement: e,
         );
-        expect(
-          v.voitPointEnregistrement,
-          e == EtatEnregistrement.actif,
-          reason: e.name,
-        );
+        expect(v.voitPointEnregistrement, isFalse, reason: e.name);
       }
     });
     for (final RoleSeance role in RoleSeance.values) {
-      for (final EtatEnregistrement e in <EtatEnregistrement>[
-        EtatEnregistrement.inactif,
-        EtatEnregistrement.inconnu,
-      ]) {
+      for (final EtatEnregistrement e in EtatEnregistrement.values) {
         testWidgets('${role.name} ${e.name} : capsule sans point, contexte '
             'sans enregistrement', (WidgetTester tester) async {
           await _monter(
@@ -455,7 +455,6 @@ void main() {
             ),
           );
           expect(_capsule, findsOneWidget);
-          expect(_point, findsNothing);
           expect(
             find.descendant(
               of: _capsule,
@@ -470,14 +469,7 @@ void main() {
             ),
             findsNothing,
           );
-          expect(
-            find.text(t.salle.seance.contexte.enregistrementActif),
-            findsNothing,
-          );
-          expect(
-            find.bySemanticsLabel(t.salle.seance.capsule.enregistrementActif),
-            findsNothing,
-          );
+          expect(find.bySemanticsLabel('Enregistrement actif'), findsNothing);
         });
       }
     }
@@ -490,7 +482,6 @@ void main() {
       );
       await stabiliser(tester);
       expect(_capsule, findsOneWidget);
-      expect(_point, findsNothing);
     });
   });
 
@@ -511,7 +502,7 @@ void main() {
           find.bySemanticsLabel('Contrôle actif. Afficher les informations'),
           findsNothing,
         );
-        expect(find.bySemanticsLabel('Enregistrement actif'), findsWidgets);
+        expect(find.bySemanticsLabel('Enregistrement actif'), findsNothing);
         // « Reduire » visible, nom lu selon le panneau.
         await tester.ensureVisible(_reduire);
         await tester.pump();
@@ -527,7 +518,7 @@ void main() {
           find.descendant(of: _reduire, matching: find.text('Réduire')),
           findsOneWidget,
         );
-        for (final Finder cible in <Finder>[_avatar, _point, _oeil, _reduire]) {
+        for (final Finder cible in <Finder>[_avatar, _oeil, _reduire]) {
           final Size s = tester.getSize(cible);
           expect(s.width, greaterThanOrEqualTo(48), reason: '$cible');
           expect(s.height, greaterThanOrEqualTo(48), reason: '$cible');
@@ -632,9 +623,9 @@ void main() {
     for (final RoleSeance role in RoleSeance.values) {
       for (final (Size, double, TextDirection) cas
           in <(Size, double, TextDirection)>[
-            (const Size(320, 700), 1, TextDirection.ltr),
-            (const Size(320, 700), 2, TextDirection.ltr),
-            (const Size(320, 700), 2, TextDirection.rtl),
+            (const Size(320, 660), 1, TextDirection.ltr),
+            (const Size(320, 660), 2, TextDirection.ltr),
+            (const Size(320, 660), 2, TextDirection.rtl),
             (_telephone, 2, TextDirection.rtl),
             (_bureau, 2, TextDirection.ltr),
           ]) {
@@ -648,7 +639,7 @@ void main() {
             sens: cas.$3,
           );
           expect(tester.takeException(), isNull, reason: 'debordement');
-          for (final Finder f in <Finder>[_avatar, _point, _oeil]) {
+          for (final Finder f in <Finder>[_avatar, _oeil]) {
             final Rect r = tester.getRect(f);
             expect(r.left, greaterThanOrEqualTo(0));
             expect(r.right, lessThanOrEqualTo(cas.$1.width));

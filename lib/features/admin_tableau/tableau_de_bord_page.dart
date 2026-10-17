@@ -187,6 +187,15 @@ class TableauDeBordPage extends ConsumerWidget {
           onPress: () =>
               GoRouter.of(context).go(Routes.adminOperationsRegroupements),
         ),
+        // L2-05 : les creneaux de la vitrine, crees et publies par
+        // l'administration seule.
+        SettingRow(
+          key: const ValueKey<String>('tableau-offres'),
+          title: t.admin.tableau.outilsOffres,
+          description: t.admin.tableau.outilsOffresDetail,
+          icon: AppIcons.creneaux,
+          onPress: () => GoRouter.of(context).go(Routes.adminOperationsOffres),
+        ),
         // ECHELLE-ADM-PILOTAGE-1 : la demande et l'offre d'enseignants par
         // horaire, R7 et R19.
         SettingRow(
@@ -373,7 +382,7 @@ const List<(EtendueBento, EtendueBento?)> _etendues =
 /// deux chiffres quelles que soient leurs valeurs (D3 : cinq indicateurs dans
 /// tous les cas).
 ///
-/// Quatre portent vers un ecran d'action (dossiers, demandes, attribution,
+/// Quatre portent vers un ecran d'action (dossiers, demandes, regroupements,
 /// rapports manquants). Incidents et acces echus n'ont encore aucune page qui
 /// s'ouvre filtree sur ce qu'ils comptent (DASH-ADM-INC, DASH-ADM-ECHUS) : une
 /// tuile sans appui est un rapport, jamais un bouton grise (D9).
@@ -422,7 +431,7 @@ class _Compteurs extends StatelessWidget {
         valeur: indicateurs.foyersSansEnseignant,
         libelle: t.admin.tableau.foyers,
         onPress: () =>
-            GoRouter.of(context).go(Routes.adminOperationsAttributions),
+            GoRouter.of(context).go(Routes.adminOperationsRegroupements),
       ),
       TuileCompteur(
         valeur: indicateurs.rapportsManquants,

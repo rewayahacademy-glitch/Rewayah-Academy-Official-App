@@ -6,7 +6,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../admin/service_comptes.dart' show EtatPiece;
 import '../domain/enums.dart';
-import 'service_dossier.dart';
 
 /// Un dossier a valider, tel que `dossiers_en_attente()` le rend.
 ///
@@ -166,8 +165,10 @@ abstract interface class ServiceValidation {
   /// La file, la plus ancienne en premier.
   Future<List<DossierAValider>> enAttente();
 
-  /// Une URL signee de courte duree pour l'apercu de la piece.
-  Future<String> apercu(String cleObjet);
+  /// Une URL signee de courte duree pour l'apercu de la piece, demandee par
+  /// l'identifiant du DOCUMENT : la cle d'objet est resolue par le serveur
+  /// (fonction `piece-identite-acces`), jamais envoyee par le client.
+  Future<String> apercu(String documentId);
 
   /// Le verdict. Un refus exige un motif : la base le refuse sans.
   Future<void> decider({
@@ -184,6 +185,16 @@ abstract interface class ServiceValidation {
 class GenreLecteurInconnu implements Exception {
   /// Cree l'exception.
   const GenreLecteurInconnu();
+}
+
+/// Levee quand la porte `piece-identite-acces` refuse l'apercu (statut 403).
+///
+/// Ce n'est pas une panne : la visibilite de la piece depend du genre du
+/// lecteur (migration `0088`), et le serveur a tranche. L'ecran le dit comme
+/// tel, sans parler d'erreur.
+class ApercuRefuse implements Exception {
+  /// Cree l'exception.
+  const ApercuRefuse();
 }
 
 /// L'implementation reelle.
@@ -217,10 +228,29 @@ class ServiceValidationSupabase implements ServiceValidation {
     }
   }
 
+  /// La porte `piece-identite-acces` : elle verifie le compte, journalise
+  /// l'acces, resout la cle d'objet cote serveur et signe une lecture courte.
+  /// Le corps ne porte que l'identifiant du document.
   @override
-  Future<String> apercu(String cleObjet) => _client.storage
-      .from(ServiceDossierSupabase.seauKyc)
-      .createSignedUrl(cleObjet, dureeApercuSecondes);
+  Future<String> apercu(String documentId) async {
+    try {
+      final FunctionResponse reponse = await _client.functions.invoke(
+        'piece-identite-acces',
+        body: <String, dynamic>{'document_id': documentId},
+      );
+      final Object? corps = reponse.data;
+      final Object? url = corps is Map ? corps['url'] : null;
+      if (url is! String || url.isEmpty) {
+        throw const FormatException('Apercu de piece sans URL.');
+      }
+      return url;
+    } on FunctionException catch (erreur) {
+      if (erreur.status == 403) {
+        throw const ApercuRefuse();
+      }
+      rethrow;
+    }
+  }
 
   @override
   Future<void> decider({

@@ -10,7 +10,6 @@ import '../../features/accueil_adulte/routes_accueil_adulte.dart';
 import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart';
-import '../../features/admin_attribution/attribution_page.dart';
 import '../../features/admin_comptes/comptes_page.dart';
 import '../../features/admin_configuration_conservation_donnees/conservation_donnees_page.dart';
 import '../../features/admin_configuration_fonctionnalites/fonctionnalites_page.dart';
@@ -24,6 +23,7 @@ import '../../features/admin_invitations/invitations_page.dart';
 import '../../features/admin_journal/incidents_page.dart';
 import '../../features/admin_journal/journal_page.dart';
 import '../../features/admin_observations/observations_admin_page.dart';
+import '../../features/admin_offres/admin_offres_page.dart';
 import '../../features/admin_pedagogie_bibliotheque/attribution/attribution_page.dart';
 import '../../features/admin_pedagogie_bibliotheque/catalogue/catalogue_page.dart';
 import '../../features/admin_pedagogie_bibliotheque/fiche/fiche_page.dart';
@@ -48,7 +48,6 @@ import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_eleve_page.dart';
 import '../../features/appareils/appareils_page.dart';
-import '../../features/bienvenue/bienvenue_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
 import '../../features/classe_tuteur/catalogue_classes_page.dart';
@@ -109,6 +108,7 @@ import '../../features/demo/demo_controleur_page.dart';
 import '../../features/demo/demo_enseignant_page.dart';
 import '../../features/demo/demo_finance_page.dart';
 import '../../features/demo/demo_salle_page.dart';
+import '../../features/dossier/accords_page.dart';
 import '../../features/dossier/attente_page.dart';
 import '../../features/dossier/depot_piece_page.dart';
 import '../../features/dossier/signature_page.dart';
@@ -136,6 +136,7 @@ import '../../features/inscription/etapes/recapitulatif_etape.dart';
 import '../../features/inscription/etapes/usage_etape.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../../features/journee/journee_page.dart';
+import '../../features/mfa_controleur/mfa_controleur_page.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
@@ -156,7 +157,6 @@ import '../../features/suivi_foyer/detail_seance_page.dart';
 import '../../features/suivi_foyer/observations_page.dart';
 import '../../features/suivi_foyer/suivi_foyer_page.dart';
 import '../../features/tc_catalogue/routes_tc_b.dart';
-import '../../features/tc_classe_live/routes_tc_e.dart';
 import '../../features/tc_mes_groupes/routes_tc_a.dart';
 import '../../features/tc_mushaf/mushaf_page.dart';
 import '../../features/tc_mushaf/routes_tc_c.dart';
@@ -170,7 +170,6 @@ import '../finance/montant.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../mouvement/transitions.dart';
-import '../preferences/presentation_vue.dart';
 import '../recherche/controleur_recherche.dart';
 import '../recherche/modeles_recherche.dart';
 import '../session/session_controleur.dart';
@@ -219,15 +218,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
     rafraichisseur.declencher();
   });
 
-  // PUB-1 : la racine d'un visiteur sans session depend de la presentation
-  // deja vue sur cet appareil, lue apres le demarrage.
-  ref.listen<EtatPresentation>(presentationProvider, (
-    EtatPresentation? _,
-    EtatPresentation _,
-  ) {
-    rafraichisseur.declencher();
-  });
-
   // Lu une fois, a la construction du routeur : un role ne change pas sans
   // reconnexion, qui recree ce provider. `routesTcA` n'en a besoin que pour
   // distinguer l'affichage eleve/tuteur au sein de l'Espace Groupe -- la
@@ -241,15 +231,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
     refreshListenable: rafraichisseur,
     redirect: (BuildContext _, GoRouterState etat) {
       final SessionState session = ref.read(sessionProvider);
-      // La preference n'est lue que pour la racine d'un visiteur sans
-      // session : un compte connecte ne touche jamais ce stockage.
-      if (session.porte == PorteAcces.deconnecte &&
-          etat.matchedLocation == Routes.racine) {
-        ref.read(presentationProvider.notifier).charger();
-      }
       return deciderRedirection(
         session: session,
-        presentation: ref.read(presentationProvider),
         cheminDemande: etat.matchedLocation,
         billet: etat.extra is BilletSalle ? etat.extra! as BilletSalle : null,
         maintenant: DateTime.now(),
@@ -308,12 +291,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           courrielInitial: etat.extra is String ? etat.extra! as String : null,
         ),
       ),
-      // L'accueil public : la racine d'un visiteur deconnecte y mene
-      // (`deciderRedirection`, demande A-1) ; une route protegee demandee
-      // sans session va toujours a la connexion, avec son retour.
+      // Plus de pages de presentation avant la connexion (directeur, 17/10 :
+      // la page d'accueil du site suffit). L'ancienne adresse, encore dans des
+      // signets et des PWA installees, mene a la connexion.
       GoRoute(
         path: Routes.bienvenue,
-        builder: (BuildContext _, GoRouterState _) => const BienvenuePage(),
+        redirect: (BuildContext _, GoRouterState _) => Routes.connexion,
       ),
       GoRoute(
         path: Routes.inscription,
@@ -330,6 +313,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.inscriptionInvitation,
         builder: (BuildContext _, GoRouterState etat) => InvitationCandidatPage(
           codeInitial: etat.uri.queryParameters['code'],
+        ),
+      ),
+      GoRoute(
+        path: Routes.inscriptionInvitationComptable,
+        builder: (BuildContext _, GoRouterState etat) => InvitationCandidatPage(
+          codeInitial: etat.uri.queryParameters['code'],
+          comptable: true,
         ),
       ),
       GoRoute(
@@ -352,19 +342,28 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.agentEntree,
         builder: (BuildContext _, GoRouterState _) => const AgentEntreePage(),
       ),
-      // Le portail d'attente et ses trois pages. Le sous-arbre entier est
-      // ouvert a un compte en attente, la racine seule ne suffirait pas.
+      // Le portail d'attente et ses pages. Le sous-arbre entier est ouvert a
+      // un compte en attente, la racine seule ne suffirait pas.
       GoRoute(
         path: Routes.attente,
         builder: (BuildContext _, GoRouterState _) => const AttentePage(),
       ),
+      // Lot E6 (decision du directeur du 17/10/2026) : une seule page des
+      // accords. Les deux anciennes adresses, l'accuse et le contrat, y
+      // menent ; le parametre `pour` (eleve adulte) est garde.
+      GoRoute(
+        path: Routes.attenteAccords,
+        builder: (BuildContext _, GoRouterState _) => const AccordsPage(),
+      ),
       GoRoute(
         path: Routes.attenteAccuse,
-        builder: (BuildContext _, GoRouterState _) => const AccusePage(),
+        redirect: (BuildContext _, GoRouterState etat) =>
+            versLesAccords(etat.uri),
       ),
       GoRoute(
         path: Routes.attenteContrat,
-        builder: (BuildContext _, GoRouterState _) => const ContratPage(),
+        redirect: (BuildContext _, GoRouterState etat) =>
+            versLesAccords(etat.uri),
       ),
       GoRoute(
         path: Routes.attentePiece,
@@ -534,12 +533,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               ? null
               : etat.uri.queryParameters,
         ).toString(),
-      ),
-      // Le matching par disponibilites est remplace (`docs/current/00`) : la
-      // page reste dans le code, sa route mene au Foyer.
-      GoRoute(
-        path: Routes.tuteurDisponibilites,
-        redirect: (BuildContext _, GoRouterState _) => Routes.tuteurFoyer,
       ),
       // Les reglages par eleve vivent dans la fiche (photo, camera, interface ;
       // lot B, LB-3) : l'ancienne page ferait un second endroit pour la meme
@@ -1157,11 +1150,20 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     const ProfilEnseignantPage(),
               ),
               // Mes revenus (FI-10) : une pose de la branche Profil, ou elle
-              // s'ouvre ; la barre garde Profil actif.
+              // s'ouvre ; la barre garde Profil actif. Ouverte depuis
+              // Aujourd'hui (`?depuis=journee`, lot F1), le retour y ramene.
               GoRoute(
                 path: Routes.enseignantRevenus,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const RevenusEnseignantPage(),
+                builder: (BuildContext contexte, GoRouterState etat) =>
+                    RevenusEnseignantPage(
+                      onRetour:
+                          etat.uri.queryParameters['depuis'] ==
+                              Routes.origineJournee
+                          ? () =>
+                                GoRouter.of(contexte)
+                                    .go(Routes.enseignantJournee)
+                          : null,
+                    ),
               ),
             ],
           ),
@@ -1214,6 +1216,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: '${Routes.enseignantGroupe}/:groupeId/annonce',
         builder: (BuildContext _, GoRouterState etat) =>
             PublierAnnonceClassePage(groupeId: _parametre(etat, 'groupeId')),
+      ),
+
+      // Controleur : la seconde etape de connexion (TOTP, L1-10), hors de la
+      // coquille : le routeur n'ouvre rien d'autre tant qu'elle est requise.
+      GoRoute(
+        path: Routes.mfaControleur,
+        builder: (BuildContext _, GoRouterState _) => const MfaControleurPage(),
       ),
 
       // Controleur : quatre destinations, Controle, Historique, Echanges,
@@ -1348,13 +1357,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           child: PlanningPage(),
         ),
       ),
-      GoRoute(
-        path: Routes.adminOperationsAttributions,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
-          domaine: AdminDomaine.operations,
-          child: AttributionPage(),
-        ),
-      ),
       // La reaffectation (demandes) reste atteinte depuis l'Accueil, jamais
       // depuis un second niveau de la sidebar
       // (docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md).
@@ -1452,6 +1454,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.operations,
           child: RegroupementsPage(),
+        ),
+      ),
+      // L2-05 : les offres vitrine (creer, publier, retirer), atteintes depuis
+      // l'Accueil comme les Classes a ouvrir.
+      GoRoute(
+        path: Routes.adminOperationsOffres,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: AdminOffresPage(),
         ),
       ),
       GoRoute(
@@ -1726,9 +1737,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             Routes.adminPersonnesComptes,
       ),
       GoRoute(
+        // L3-02 (A-06) : l'attribution individuelle est retiree, les anciens
+        // liens menent a la creation des classes.
         path: '/admin/attribution',
         redirect: (BuildContext _, GoRouterState _) =>
-            Routes.adminOperationsAttributions,
+            Routes.adminOperationsRegroupements,
       ),
       GoRoute(
         path: '/admin/demandes',
@@ -1911,16 +1924,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ],
       ),
 
-      // Teaching Core (plan d'integration, etape 7). Cinq lots, cinq
+      // Teaching Core (plan d'integration, etape 7). Quatre lots, quatre
       // fonctions qui RETOURNENT des routes sans jamais construire de
       // `GoRouter` (decision D-04) : `routesTcA`, `routesTcB`, `routesTcC`,
-      // `routesTcE`, `routesTcG`. Chaque chemin porte son autorisation de
+      // `routesTcG`. Chaque chemin porte son autorisation de
       // role dans `redirection.dart` (`_teachingCoreAutorise`), sans quoi
       // `/tc/` serait inatteignable pour tous les roles.
       ...routesTcA(role: sessionRole),
       ...routesTcB(),
       ...routesTcC(),
-      ...routesTcE(),
+      // Une seule salle, /salle (arbitrage A-05, audit final 16/10/2026) :
+      // l'ancienne classe /tc/classe n'a plus de route.
       ...routesTcG(),
 
       // Salle. Le billet passe par `extra`, jamais par l'URL (ADR-005).

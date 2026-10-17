@@ -11,7 +11,7 @@ String _deuxChiffres(int n) => n.toString().padLeft(2, '0');
 /// serveur les a tracees, en heure locale.
 String libelleQuand(DateTime date) {
   final DateTime d = date.toLocal();
-  return t.admin.fusion.quand(
+  return t.commun.formats.dateHeure(
     date: '${_deuxChiffres(d.day)}/${_deuxChiffres(d.month)}/${d.year}',
     heure: '${_deuxChiffres(d.hour)}:${_deuxChiffres(d.minute)}',
   );

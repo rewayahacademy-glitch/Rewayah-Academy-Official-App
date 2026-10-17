@@ -26,7 +26,6 @@ import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/journal/service_journal.dart';
-import 'package:rewayah_academy/core/matching/service_attribution.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
@@ -474,9 +473,6 @@ class FauxServicePlanning implements ServicePlanning {
   /// Les seances rendues.
   List<Seance> seancesRendues = const <Seance>[];
 
-  /// Les affectations rendues.
-  List<Affectation> affectationsRendues = const <Affectation>[];
-
   /// Le fuseau rendu.
   String fuseau = 'Europe/Paris';
 
@@ -529,44 +525,15 @@ class FauxServicePlanning implements ServicePlanning {
   }
 
   @override
-  Future<List<Seance>> seances() async => seancesRendues;
-
-  @override
-  Future<List<Affectation>> affectations() async => affectationsRendues;
+  Future<List<Seance>> seances({String? eleveId}) async => seancesRendues;
 }
 
 /// Un service de matching en memoire.
 class FauxServiceMatching implements ServiceMatching {
-  /// Le feed rendu.
-  List<EleveEnAttente> feed = const <EleveEnAttente>[];
-
-  /// Les prises demandees.
-  final List<({String eleveId, Creneau creneau})> prises =
-      <({String eleveId, Creneau creneau})>[];
-
   /// Les demandes deposees.
   final List<({SorteDemande sorte, String sujetId, String motif, int? valeur})>
   demandes =
       <({SorteDemande sorte, String sujetId, String motif, int? valeur})>[];
-
-  /// Ce que la prochaine prise doit jeter.
-  Object? erreurPrise;
-
-  @override
-  Future<List<EleveEnAttente>> elevesEnAttente() async => feed;
-
-  @override
-  Future<void> prendre({
-    required String eleveId,
-    required Creneau creneau,
-  }) async {
-    final Object? erreur = erreurPrise;
-    if (erreur != null) {
-      // ignore: only_throw_errors
-      throw erreur;
-    }
-    prises.add((eleveId: eleveId, creneau: creneau));
-  }
 
   @override
   Future<void> demander({
@@ -642,96 +609,6 @@ class FauxServiceAdmin implements ServiceAdmin {
     String? motif,
   }) async {
     verdicts.add((demandeId: demandeId, accepte: accepte, motif: motif));
-  }
-}
-
-/// Un service d'attribution en memoire.
-///
-/// `ADM-05` est le seul ecran du produit dont les deux listes viennent de deux
-/// lectures distinctes : sans ce faux, on ne pourrait mesurer ni l'ordre de la
-/// file, ni le motif exige hors disponibilite.
-class FauxServiceAttribution implements ServiceAttribution {
-  /// La colonne de gauche.
-  List<FoyerEnAttente> foyers = const <FoyerEnAttente>[];
-
-  /// La colonne de droite, par eleve.
-  final Map<String, List<EnseignantCandidat>> enseignants =
-      <String, List<EnseignantCandidat>>{};
-
-  /// Les attributions demandees, dans l'ordre.
-  final List<
-    ({String eleveId, String enseignantId, Creneau creneau, String? motif})
-  >
-  attributions =
-      <
-        ({String eleveId, String enseignantId, Creneau creneau, String? motif})
-      >[];
-
-  /// Ce que la lecture de la file doit jeter.
-  Object? erreurFoyers;
-
-  /// Ce que la lecture des enseignants doit jeter.
-  Object? erreurEnseignants;
-
-  /// Ce que la prochaine attribution doit jeter.
-  Object? erreurAttribution;
-
-  /// Le temps que prend une lecture.
-  ///
-  /// Sans lui, aucun test ne peut regarder l'ecran **pendant** le chargement :
-  /// un faux qui rend tout de suite resout son futur dans la micro-tache que le
-  /// premier `pump` vide, et l'etat d'attente n'existe jamais.
-  Duration delai = Duration.zero;
-
-  Future<void> _attendre() async {
-    if (delai > Duration.zero) {
-      await Future<void>.delayed(delai);
-    }
-  }
-
-  @override
-  Future<List<FoyerEnAttente>> foyersEnAttente() async {
-    await _attendre();
-    final Object? erreur = erreurFoyers;
-    if (erreur != null) {
-      // ignore: only_throw_errors
-      throw erreur;
-    }
-    return foyers;
-  }
-
-  @override
-  Future<List<EnseignantCandidat>> enseignantsPour(String eleveId) async {
-    await _attendre();
-    final Object? erreur = erreurEnseignants;
-    if (erreur != null) {
-      // ignore: only_throw_errors
-      throw erreur;
-    }
-    return enseignants[eleveId] ?? const <EnseignantCandidat>[];
-  }
-
-  @override
-  Future<void> attribuer({
-    required String eleveId,
-    required String enseignantId,
-    required Creneau creneau,
-    String? motif,
-  }) async {
-    final Object? erreur = erreurAttribution;
-    if (erreur != null) {
-      // ignore: only_throw_errors
-      throw erreur;
-    }
-    attributions.add((
-      eleveId: eleveId,
-      enseignantId: enseignantId,
-      creneau: creneau,
-      motif: motif,
-    ));
-    // Le faux relit ce qu'il a ecrit, comme la base : l'eleve attribue quitte
-    // la file, et c'est ce que l'ecran doit refleter sans etat local.
-    foyers = foyers.where((FoyerEnAttente f) => f.eleveId != eleveId).toList();
   }
 }
 
@@ -1082,9 +959,6 @@ class FauxServiceVideo implements ServiceVideo {
   /// Les seances ou une visite de controle a ete inscrite, dans l'ordre.
   final List<String> observations = <String>[];
 
-  /// Les seances ou un tuteur s'est inscrit comme temoin, dans l'ordre.
-  final List<String> assistances = <String>[];
-
   /// Ce que la prochaine inscription doit jeter, s'il y a lieu.
   ///
   /// Sans lui, le refus de la porte ne serait pas mesurable : il vient de la
@@ -1100,16 +974,6 @@ class FauxServiceVideo implements ServiceVideo {
       throw refus;
     }
     observations.add(seanceId);
-  }
-
-  @override
-  Future<void> assisterEnTuteur(String seanceId) async {
-    final Object? refus = refusInscription;
-    if (refus != null) {
-      // ignore: only_throw_errors
-      throw refus;
-    }
-    assistances.add(seanceId);
   }
 
   @override
@@ -1458,7 +1322,7 @@ class FauxServiceSuivi implements ServiceSuivi {
   int lectures = 0;
 
   @override
-  Future<List<Seance>> seances() async {
+  Future<List<Seance>> seances({String? eleveId}) async {
     lectures++;
     final Duration? attente = delai;
     if (attente != null) {
@@ -1522,7 +1386,7 @@ class FauxServiceEnseignant implements ServiceEnseignant {
   ///
   /// Nul par defaut. Sans delai, un faux resout son futur dans la micro-tache
   /// que le premier `pump` vide, et l'etat de chargement n'existe jamais : c'est
-  /// la meme raison qu'a [FauxServiceAttribution].
+  /// la meme raison que pour les autres faux a delai.
   Duration? delai;
 
   /// Combien de fois les seances ont ete lues.

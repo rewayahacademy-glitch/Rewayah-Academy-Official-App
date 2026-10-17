@@ -83,6 +83,7 @@ class SessionState {
     this.lectureProfil = LectureProfil.enAttente,
     this.observation,
     this.eleveAutonome = false,
+    this.mfaRequise = false,
   });
 
   /// L'etat initial, avant toute resolution.
@@ -128,6 +129,12 @@ class SessionState {
   /// par defaut et tant que le serveur n'a pas repondu. Un widget lit cette
   /// capacite, jamais `AppRole.student`.
   final bool eleveAutonome;
+
+  /// Capacite « seconde etape requise » : le compte doit encore enroler ou
+  /// verifier un facteur TOTP avant de naviguer (jeton `aal1` pour un compte
+  /// que le serveur exige en `aal2`, L1-10). Calculee a la lecture du jeton,
+  /// faux par defaut. Un widget lit cette capacite, jamais le role.
+  final bool mfaRequise;
 
   /// Vrai quand une session existe.
   bool get connecte => profileId != null;
@@ -231,6 +238,7 @@ class SessionState {
     LectureProfil? lectureProfil,
     Observation? observation,
     bool? eleveAutonome,
+    bool? mfaRequise,
   }) {
     return SessionState(
       resolue: resolue ?? this.resolue,
@@ -242,6 +250,7 @@ class SessionState {
       lectureProfil: lectureProfil ?? this.lectureProfil,
       observation: observation ?? this.observation,
       eleveAutonome: eleveAutonome ?? this.eleveAutonome,
+      mfaRequise: mfaRequise ?? this.mfaRequise,
     );
   }
 
@@ -256,7 +265,8 @@ class SessionState {
       other.interfaceMode == interfaceMode &&
       other.lectureProfil == lectureProfil &&
       other.observation == observation &&
-      other.eleveAutonome == eleveAutonome;
+      other.eleveAutonome == eleveAutonome &&
+      other.mfaRequise == mfaRequise;
 
   @override
   int get hashCode => Object.hash(
@@ -269,6 +279,7 @@ class SessionState {
     lectureProfil,
     observation,
     eleveAutonome,
+    mfaRequise,
   );
 }
 

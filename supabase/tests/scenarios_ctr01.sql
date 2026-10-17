@@ -186,7 +186,7 @@ declare
 begin
   set local role authenticated;
   perform set_config('test.uid', 'c1000000-0000-0000-0000-000000000003', true);
-  perform set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
+  perform set_config('test.jwt', '{"aal":"aal2","app_metadata":{"role":"controller"}}', true);
 
   v_retour := public.rejoindre_observation('c1aaaaaa-0000-0000-0000-00000000000a');
 
@@ -274,7 +274,7 @@ declare
 begin
   set local role authenticated;
   perform set_config('test.uid', 'c1000000-0000-0000-0000-000000000003', true);
-  perform set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
+  perform set_config('test.jwt', '{"aal":"aal2","app_metadata":{"role":"controller"}}', true);
 
   perform public.rejoindre_observation('c1aaaaaa-0000-0000-0000-00000000000d');
 
@@ -398,7 +398,7 @@ declare
 begin
   set local role authenticated;
   perform set_config('test.uid', 'c1000000-0000-0000-0000-000000000004', true);
-  perform set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
+  perform set_config('test.jwt', '{"aal":"aal2","app_metadata":{"role":"controller"}}', true);
   perform public.rejoindre_observation('c1aaaaaa-0000-0000-0000-00000000000a');
 
   select count(*) into v_par_bilal from public.session_participants
@@ -479,7 +479,7 @@ begin
   end;
 
   perform set_config('test.uid', 'c1000000-0000-0000-0000-000000000003', true);
-  perform set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
+  perform set_config('test.jwt', '{"aal":"aal2","app_metadata":{"role":"controller"}}', true);
 
   begin
     perform public.rejoindre_observation('c1aaaaaa-0000-0000-0000-00000000000b');
@@ -521,7 +521,7 @@ declare
 begin
   set local role authenticated;
   perform set_config('test.uid', 'c1000000-0000-0000-0000-000000000003', true);
-  perform set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
+  perform set_config('test.jwt', '{"aal":"aal2","app_metadata":{"role":"controller"}}', true);
 
   perform public.rejoindre_observation('c1aaaaaa-0000-0000-0000-00000000000a');
 

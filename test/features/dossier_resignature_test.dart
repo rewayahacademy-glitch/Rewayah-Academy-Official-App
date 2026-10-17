@@ -204,18 +204,20 @@ void main() {
       },
     );
 
-    test('enseignant en attente a re-signer : le contrat du portail', () {
+    // Lot E6 (decision du directeur du 17/10/2026) : la nouvelle signature se
+    // fait sur la page unique des accords.
+    test('enseignant en attente a re-signer : la page des accords', () {
       expect(
         decider(
           Routes.attente,
           resignature: true,
           statut: AccountStatus.pendingKyc,
         ),
-        Routes.attenteContrat,
+        Routes.attenteAccords,
       );
       expect(
         decider(
-          Routes.attenteContrat,
+          Routes.attenteAccords,
           resignature: true,
           statut: AccountStatus.pendingKyc,
         ),

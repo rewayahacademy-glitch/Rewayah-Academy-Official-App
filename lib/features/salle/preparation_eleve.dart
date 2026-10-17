@@ -20,7 +20,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../salle_seance/feuille_micro_bloque.dart';
-import '../tc_classe_live/pre_vol_classe.dart';
+import 'pre_vol_classe.dart';
 import 'preparation_enseignant.dart';
 import 'vue_salle.dart';
 

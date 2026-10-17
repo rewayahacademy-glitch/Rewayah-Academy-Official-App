@@ -16,6 +16,8 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_delais.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart'
+    show DisqueRetour;
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
 import 'package:rewayah_academy/features/controleur/mission_controle.dart';
@@ -238,7 +240,7 @@ void main() {
     expect(find.text(t.controleur.compteRendu.envoyeTitre), findsNothing);
     expect(find.text(o.echec), findsOneWidget);
     // « Retour » repond de nouveau : il ramene au texte, garde.
-    await toucher(find.text(t.commun.retour).last);
+    await toucher(find.byType(DisqueRetour).last);
     expect(find.text(o.questionTexte), findsOneWidget);
     expect(find.text('Bonne ambiance.'), findsOneWidget);
   });

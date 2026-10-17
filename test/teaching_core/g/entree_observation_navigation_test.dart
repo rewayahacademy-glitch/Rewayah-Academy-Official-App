@@ -92,20 +92,7 @@ List<Override> _surcharges({
   ),
   serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
   servicePlanningProvider.overrideWithValue(
-    FauxServicePlanning()
-      ..seancesRendues = <Seance>[_seanceEnCours()]
-      ..affectationsRendues = <Affectation>[
-        Affectation(
-          id: 'a1',
-          enseignantId: 't1',
-          enseignantPrenom: 'Amina',
-          enseignantIdentifiant: 'TEACH-TC-000001',
-          eleveId: 'e1',
-          elevePrenom: 'Mariam',
-          creneau: const Creneau(jour: 2, heure: 17, fuseau: 'Europe/Paris'),
-          depuis: DateTime(2026, 9, 1),
-        ),
-      ],
+    FauxServicePlanning()..seancesRendues = <Seance>[_seanceEnCours()],
   ),
   serviceAppairageProvider.overrideWithValue(
     FauxServiceAppairage()

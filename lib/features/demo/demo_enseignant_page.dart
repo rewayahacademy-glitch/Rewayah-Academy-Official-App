@@ -21,7 +21,7 @@ import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/port_remplacements.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/matching/service_matching.dart';
+import '../../core/mouvement/mouvement.dart';
 import '../../core/offres/service_offres.dart' show languesCoursProvider;
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
@@ -51,6 +51,7 @@ import '../enseignant_classes/mes_classes_page.dart';
 import '../journee/journee_page.dart';
 import '../profil_enseignant/photo_publique.dart';
 import '../profil_enseignant/profil_enseignant_page.dart';
+import '../revenus_enseignant/entree_revenus.dart';
 import '../revenus_enseignant/revenus_enseignant_page.dart';
 import 'classe_demo.dart' show DonneesClasseDemo, EtatDemoClasse;
 import 'demo_classe_page.dart' show adresseDemoClasse;
@@ -154,6 +155,11 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
   );
   return <Override>[
     sessionProvider.overrideWith(_SessionEnseignantDemo.new),
+    // Lot F1 : la ligne « Revenus estimés » d'Aujourd'hui reste dans la
+    // demonstration.
+    destinationRevenusProvider.overrideWithValue(
+      adresseDemoEnseignant(EcranDemoEnseignant.revenus, etat: etat),
+    ),
     horsLigneProvider.overrideWith(
       (Ref _) => Stream<bool>.value(etat == EtatDemoEnseignant.horsLigne),
     ),
@@ -200,9 +206,6 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
     cahiersEnRetardProvider.overrideWith(
       (Ref _) async => DonneesEnseignantDemo.cahiersEnRetard(etat),
     ),
-    elevesEnAttenteProvider.overrideWith(
-      (Ref _) async => const <EleveEnAttente>[],
-    ),
     reglagesPriereProvider(id).overrideWith((Ref _) async => null),
     valeurRegleProvider((profilId: id, cle: CleRegle.pauseEntreCours))
         .overrideWith((Ref _) async => 10),
@@ -226,7 +229,6 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
       (Ref _) async =>
           vide ? const <Creneau>[] : DonneesEnseignantDemo.disponibilites,
     ),
-    affectationsProvider.overrideWith((Ref _) async => const <Affectation>[]),
     // Classes disponibles (ENS-06), une par etat.
     offresClassesProvider.overrideWithValue(
       vide ? const <OffreClasseDemo>[] : DonneesEnseignantDemo.offres,
@@ -316,7 +318,7 @@ class DeclarationAbsenceDemo implements DeclarationAbsence {
   @override
   Future<EtatAbsence?> declarer(String seanceId) =>
       Future<EtatAbsence?>.delayed(
-        const Duration(milliseconds: 600),
+        Mouvement.maximum,
         () => horsLigne ? null : DonneesEnseignantDemo.etatAbsenceDeclaree,
       );
 }
@@ -332,7 +334,7 @@ class ReponseRemplacementDemo implements ReponseRemplacement {
 
   @override
   Future<bool> assurer(OffreRemplacement offre) =>
-      Future<bool>.delayed(const Duration(milliseconds: 600), () => !horsLigne);
+      Future<bool>.delayed(Mouvement.maximum, () => !horsLigne);
 }
 
 /// L'envoi de la demonstration : rien ne part, la cle est fictive. Le succes
@@ -342,7 +344,7 @@ class _EnvoiPhotoDemo implements EnvoiPhotoPublique {
 
   @override
   Future<String> envoyer(PhotoChoisie photo) => Future<String>.delayed(
-    const Duration(milliseconds: 600),
+    Mouvement.maximum,
     () => 'demo/enseignant/${DonneesEnseignantDemo.enseignantId}.png',
   );
 }
@@ -548,7 +550,7 @@ class SoumissionCahierDemo implements SoumissionCahier {
   @override
   Future<SortCahier> soumettre(CahierARendre cahier) =>
       Future<SortCahier>.delayed(
-        const Duration(milliseconds: 600),
+        Mouvement.maximum,
         () => enFile ? SortCahier.enFile : SortCahier.envoye,
       );
 

@@ -29,6 +29,7 @@ import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/avatar_tile.dart' show AppAvatar;
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
@@ -172,7 +173,7 @@ class _Soldes extends StatelessWidget {
                 meneur: PhotoEleve(
                   prenom: b.prenom,
                   cleAvatar: b.cleAvatar,
-                  diametre: AppSpacing.section,
+                  diametre: AppAvatar.moyen,
                 ),
                 libelle: b.prenom,
                 // Le solde tel que rendu, sans unite ajoutee (E2, Q9).

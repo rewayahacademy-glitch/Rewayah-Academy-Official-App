@@ -75,7 +75,7 @@ void main() {
     test('A3, E1 et la clause enseignant', () {
       expect(
         t.contrat.a3.titre,
-        'Les cours sont enregistrés (le son seulement)',
+        'Les cours peuvent être enregistrés (le son seulement)',
       );
       expect(t.contrat.a3.quoi, contains("L'image n'est pas enregistrée."));
       expect(t.contrat.a3.qui, isNot(contains('qui a écouté')));

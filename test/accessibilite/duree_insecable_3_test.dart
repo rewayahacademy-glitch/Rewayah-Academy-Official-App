@@ -60,9 +60,8 @@ void main() {
         containsAll(<String>[
           'presence.silenceMinutes',
           'presence.attenteMinutes',
-          'tc.classe.rappel.cooldown',
           'tc.observation.reglages.uniteSecondes',
-          'tuteur.reglages.demandeMinutes',
+          'commun.formats.minutes',
           'admin.regles.uniteMinutes',
           'consentement.comment.visites',
         ]),
@@ -165,10 +164,8 @@ String b() {
   });
 
   group('Durees et unites restantes : valeurs rendues', () {
-    // DUREE-INSECABLE-4 : le rappel se verifie sur l'ecran reel (fiche de
-    // seance et Classe Live), plus en appelant `insecable` soi-meme :
-    // test/accessibilite/duree_insecable_4_test.dart et
-    // test/teaching_core/e/classe_live_page_test.dart.
+    // DUREE-INSECABLE-4 : le rappel se verifiait sur la fiche de seance de
+    // l'ancienne Classe Live, supprimee le 17/10/2026 (DECISION-ENTREE).
 
     test('regles de l academie : « 45 min » insecable et ancree', () {
       expect(uniteMinutesRegle(45), '${_lrm}45${_nbsp}min');

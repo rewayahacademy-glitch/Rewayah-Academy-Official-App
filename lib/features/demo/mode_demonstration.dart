@@ -45,6 +45,8 @@ import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/dossier/service_validation.dart';
 import '../../core/finance/finances_profil.dart';
+import '../../core/identite/matricule_demo.dart';
+import '../../core/identite/port_matricule.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/page_regroupements.dart'
     show portRegroupementsPagesProvider;
@@ -70,16 +72,20 @@ import '../../core/tc_observation/activation_observation.dart';
 import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
+import '../../core/tc_parcours/port_travail_a_venir.dart';
 import '../../core/theme/accent_profil.dart';
 import '../admin_tableau/activite_recente.dart';
+import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
 import '../recherche/domaines/familles_eleves/moteurs_familles_eleves.dart';
 import '../recherche/domaines/familles_eleves/port_resolution_ra.dart';
 import '../recherche/domaines/familles_eleves/resolution_ra_demo.dart';
 import 'admin_x_demo.dart';
+import 'adulte_demo.dart';
 import 'alertes_demo.dart';
 import 'bibliotheque_admin_demo.dart';
 import 'cartes_classe_demo.dart';
 import 'catalogue_demo.dart';
+import 'classe_demo.dart' show TravailAVenirDemo;
 import 'classe_form_demo.dart';
 import 'classes_admin_demo.dart';
 import 'dossiers_demo.dart';
@@ -241,6 +247,9 @@ List<Override> surchargesDemoTuteur({
       }),
     ),
     portClassesFoyerProvider.overrideWithValue(const ClassesFoyerDemo()),
+    // L4-05 : « Avant le prochain cours » lit un travail realiste, jamais
+    // « pas encore relie » alors que le port existe.
+    portTravailAVenirProvider.overrideWithValue(const TravailAVenirDemo()),
     portSeancesFamilleProvider.overrideWithValue(SeancesFamilleDemo()),
     portCatalogueClassesProvider.overrideWithValue(
       const CatalogueClassesDemo(),
@@ -254,6 +263,18 @@ List<Override> surchargesDemoTuteur({
       (Ref ref) async => const <ParcoursApprenant>[],
     ),
     monFuseauProvider.overrideWith((Ref ref) async => 'Europe/Paris'),
+    // Mon compte du tuteur de demonstration lit l'identite du titulaire ; sans
+    // ce double, le port « indisponible » la rend en tete de page. Identite
+    // existante du foyer Diallo (aucun nom nouveau). Avec un dossier, la
+    // personne est une enseignante, et l'eleve adulte fournit sa propre
+    // identite (eleves passes) : pas de double.
+    if (!avecDossier && eleves == null)
+      identiteTitulaireProvider.overrideWith(
+        (Ref ref) async => DonneesAdulteDemo.identite(
+          GenreTitulaireDemo.homme,
+          VueDemoAdulte.titulaire,
+        ),
+      ),
     // OFFRES-FAM-1 : le suivi des demandes du foyer de demonstration, et les
     // notifications de ses transitions (foyer de demonstration seulement).
     if (!avecDossier && eleves == null) ...surchargesSuiviDemandesDemo(),
@@ -288,6 +309,11 @@ List<Override> surchargesDemoTuteur({
     // Presence (Accueil, verification prealable) et pieces signees (Compte).
     servicePresenceProvider.overrideWithValue(const PresenceDemo()),
     acceptationsProvider.overrideWith((Ref ref) async => const <Acceptation>[]),
+    // L2-07 : le matricule visible en demonstration (IMM-FRONT-1), fictif,
+    // pour le tuteur, les enfants et les adultes du foyer Diallo.
+    portMatriculeProvider.overrideWithValue(
+      const MatriculeDemo(_matriculesDemo),
+    ),
     // RECH-1 : la recherche de demonstration (milliers de classes et de
     // supports fictifs), en fin de liste : des tests indexent les premieres
     // surcharges. En production, aucun moteur n'est raccorde.
@@ -603,7 +629,13 @@ abstract final class DonneesDemo {
   static const String groupeAicha = 'demo-groupe-coran-1';
   static const String groupeYusuf = 'demo-groupe-arabe-1';
 
-  static final DateTime finAcces = DateTime.utc(2099, 12, 31);
+  /// La fin d'acces de demonstration : le dernier jour du mois suivant,
+  /// calculee une fois au chargement (L4-05), jamais une date de 2099.
+  static final DateTime finAcces = finAccesDepuis(DateTime.now());
+
+  /// Le dernier jour (UTC) du mois suivant [maintenant]. Pure, pour les tests.
+  static DateTime finAccesDepuis(DateTime maintenant) =>
+      DateTime.utc(maintenant.year, maintenant.month + 2, 0);
 
   static final List<EleveDuFoyer> eleves = <EleveDuFoyer>[
     EleveDuFoyer(
@@ -849,3 +881,32 @@ List<Override> surchargesInvitationsDemo() {
     portVerificationInvitationProvider.overrideWithValue(invitations),
   ];
 }
+
+/// Les matricules fictifs de la demonstration (L2-07, DECISION-IMMATRICULATION
+/// section 1) : format `RA-AA-NNNN`, role affiche a cote. Les anciens codes
+/// (`RA-CD0034`) ne sont pas repris. Un enfant garde son matricule d'un
+/// foyer de demonstration a l'autre (Aicha, deux fixtures, une personne).
+const Map<String, Matricule> _matriculesDemo = <String, Matricule>{
+  DonneesDemo.tuteurId: Matricule(
+    valeur: 'RA-26-5301',
+    role: RoleAffiche.tuteur,
+  ),
+  DonneesDemo.aichaId: Matricule(valeur: 'RA-26-5302', role: RoleAffiche.eleve),
+  DonneesDemo.yusufId: Matricule(valeur: 'RA-26-5303', role: RoleAffiche.eleve),
+  DonneesAdulteDemo.mamadouId: Matricule(
+    valeur: 'RA-26-5304',
+    role: RoleAffiche.eleve,
+  ),
+  DonneesAdulteDemo.mariamaId: Matricule(
+    valeur: 'RA-26-5305',
+    role: RoleAffiche.eleve,
+  ),
+  DonneesAdulteDemo.aichaId: Matricule(
+    valeur: 'RA-26-5302',
+    role: RoleAffiche.eleve,
+  ),
+  DonneesAdulteDemo.oumarId: Matricule(
+    valeur: 'RA-26-5306',
+    role: RoleAffiche.eleve,
+  ),
+};

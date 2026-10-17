@@ -384,7 +384,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(CompteRenduControlePage), findsOneWidget);
 
-    // Ajouter une observation mene a CTR-03A (CT-5).
+    // Ajouter une observation mene a CTR-03A (CT-5). Les cartes illustrees
+    // sont plus hautes : amener la carte a l'ecran avant de la toucher.
+    await tester.ensureVisible(
+      find.byKey(
+        CompteRenduControlePage.cleChoix(ChoixCompteRendu.ajouterObservation),
+      ),
+    );
+    await tester.pumpAndSettle();
     await tester.tap(
       find.byKey(
         CompteRenduControlePage.cleChoix(ChoixCompteRendu.ajouterObservation),

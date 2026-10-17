@@ -43,7 +43,7 @@ String _date(DateTime d) => t.commun.dates.jourDate(
 
 /// « Lundi 19 octobre à 17:30 » : les champs de l'heure murale du foyer,
 /// lus tels quels (jamais convertis par l'appareil).
-String horodatage(DateTime d) => t.suiviFamille.horodatage(
+String horodatage(DateTime d) => t.commun.formats.dateHeure(
   date: _date(d),
   heure: hhmmDemande(d.hour, d.minute),
 );

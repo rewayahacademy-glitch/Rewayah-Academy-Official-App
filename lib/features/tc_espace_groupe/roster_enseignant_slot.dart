@@ -6,7 +6,7 @@ import '../../core/tc_classe/roster_enseignant.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
 import '../../core/tc_horloge/port_horloge_seance.dart';
 import '../../core/widgets/skeleton.dart';
-import '../tc_classe_live/roster_classe.dart';
+import 'roster_classe.dart';
 
 /// Le contenu du slot roster de l'Espace Groupe (§5.5 du plan d'integration
 /// Teaching Core), branche sur `PortRosterEnseignant` (Agent E).

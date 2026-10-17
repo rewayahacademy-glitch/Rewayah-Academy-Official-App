@@ -21,6 +21,7 @@ library;
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
@@ -228,6 +229,32 @@ class _ReglesEtat extends ConsumerState<_Regles> {
   /// 0 a 50 : rien ne part, l'ecran le dit (jamais un bouton grise).
   bool _nombreInvalide = false;
 
+  /// Vrai quand l'utilisateur a ouvert « Autre ». La case reste ouverte tant
+  /// qu'il ne touche pas une frequence proposee.
+  bool _autreOuvert = false;
+
+  /// Compte les ouvertures de « Autre » : le champ repart de la valeur en
+  /// vigueur a chaque ouverture (sa cle en depend).
+  int _ouvertureAutre = 0;
+
+  /// « Autre » est retenu : ouvert par l'utilisateur, ou valeur lue qui n'est
+  /// pas une des frequences proposees (elle s'affiche alors dans le champ).
+  bool _autreRetenu(ReglesTirage regles) =>
+      _autreOuvert || !frequencesProposees.contains(regles.missionsParSemaine);
+
+  void _ouvrirAutre() {
+    if (_autreOuvert) return;
+    setState(() {
+      _autreOuvert = true;
+      _ouvertureAutre++;
+    });
+  }
+
+  void _choisirNombre(ReglesTirage regles, int n) {
+    setState(() => _autreOuvert = false);
+    _choisirFrequence(regles, ReponseChoix(valeurs: <String>{'$n'}));
+  }
+
   void _modifier(ReglesTirage regles) => setState(() {
     _brouillon = regles;
     _message = null;
@@ -320,6 +347,7 @@ class _ReglesEtat extends ConsumerState<_Regles> {
         setState(() {
           _brouillon = suivante.requireValue;
           _version++;
+          _autreOuvert = false;
         });
       }
     });
@@ -376,28 +404,55 @@ class _ReglesEtat extends ConsumerState<_Regles> {
                 Ecart.vXs,
                 TexteSansCoupure(r.frequenceDetail, style: textes.bodySmall),
                 Ecart.vMd,
-                ChoiceCardGroup(
+                RangeeFiltres(
+                  // Choix ferme de formulaire : chaque valeur reste visible.
+                  replier: false,
                   key: ValueKey<String>('tirage-frequence-$_version'),
-                  valeurInitiale:
-                      frequencesProposees.contains(regles.missionsParSemaine)
-                      ? ReponseChoix(
-                          valeurs: <String>{'${regles.missionsParSemaine}'},
-                        )
-                      : ReponseChoix(
-                          valeurs: const <String>{ChoiceCardGroup.valeurAutre},
-                          saisieLibre: '${regles.missionsParSemaine}',
-                        ),
-                  options: <OptionChoix>[
+                  filtres: <Widget>[
                     for (final int n in frequencesProposees)
-                      OptionChoix(
-                        cle: ValueKey<String>('tirage-frequence-$n'),
-                        valeur: '$n',
-                        libelle: r.missionsParSemaine(n: n),
+                      _PuceFrequence(
+                        key: ValueKey<String>('tirage-frequence-$n'),
+                        libelle: '$n',
+                        phrase: r.missionsParSemaine(n: n),
+                        retenue:
+                            !_autreRetenu(regles) &&
+                            regles.missionsParSemaine == n,
+                        onPress: () => _choisirNombre(regles, n),
                       ),
+                    _PuceFrequence(
+                      key: const ValueKey<String>('tirage-frequence-autre'),
+                      libelle: t.choix.autre,
+                      phrase: t.choix.autre,
+                      retenue: _autreRetenu(regles),
+                      onPress: _ouvrirAutre,
+                    ),
                   ],
-                  onChange: (ReponseChoix reponse) =>
-                      _choisirFrequence(regles, reponse),
                 ),
+                if (_autreRetenu(regles)) ...<Widget>[
+                  Ecart.vSm,
+                  TextFormField(
+                    key: ValueKey<String>(
+                      'tirage-autre-$_version-$_ouvertureAutre',
+                    ),
+                    initialValue: '${regles.missionsParSemaine}',
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[0-9\u0660-\u0669\u06F0-\u06F9]'),
+                      ),
+                    ],
+                    onChanged: (String texte) => _choisirFrequence(
+                      regles,
+                      ReponseChoix(
+                        valeurs: const <String>{ChoiceCardGroup.valeurAutre},
+                        saisieLibre: texte,
+                      ),
+                    ),
+                    decoration: InputDecoration(
+                      labelText: r.frequenceAutreChamp,
+                    ),
+                  ),
+                ],
                 if (_nombreInvalide) ...<Widget>[
                   Ecart.vSm,
                   TexteSansCoupure(
@@ -544,6 +599,33 @@ class _ReglesEtat extends ConsumerState<_Regles> {
 
 /// Une cible, avec son type et, si la direction peut modifier, de quoi la
 /// retirer.
+/// Une puce de frequence : une [FilterPill] dont la phrase complete (« 2
+/// missions par semaine ») est lue par le lecteur d'ecran (K-58). Elle dit si
+/// elle est retenue, pour que [RangeeFiltres] la voie.
+class _PuceFrequence extends StatelessWidget implements PuceFiltre {
+  const _PuceFrequence({
+    required this.libelle,
+    required this.phrase,
+    required this.retenue,
+    required this.onPress,
+    super.key,
+  });
+
+  final String libelle;
+  final String phrase;
+
+  @override
+  final bool retenue;
+
+  final VoidCallback onPress;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: phrase,
+    child: FilterPill(libelle: libelle, retenue: retenue, onPress: onPress),
+  );
+}
+
 class _LigneCible extends StatelessWidget {
   const _LigneCible({required this.cible, required this.onRetirer});
 
@@ -866,7 +948,10 @@ class _Tableau extends StatelessWidget {
         if (page.pages > 1) ...<Widget>[
           Ecart.vSm,
           BarrePrecedentSuivant(
-            position: r.position(page: '${page.page}', total: '${page.pages}'),
+            position: t.commun.formats.pageSur(
+              page: '${page.page}',
+              total: '${page.pages}',
+            ),
             positionSemantique: r.positionSemantique(
               page: '${page.page}',
               total: '${page.pages}',

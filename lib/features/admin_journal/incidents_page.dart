@@ -76,7 +76,7 @@ class IncidentsPage extends ConsumerWidget {
                 return EtatSysteme(
                   key: const ValueKey<String>('incidents-indisponible'),
                   nature: NatureEtat.indisponible,
-                  titre: l.indisponibleTitre,
+                  titre: t.commun.etats.branchementServeur,
                   phrase: l.indisponiblePhrase,
                   dependance: erreur.dependance,
                 );

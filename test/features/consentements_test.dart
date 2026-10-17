@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/consentements/consentement_observation_page.dart';
+import 'package:rewayah_academy/features/consentements/texte_observation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../support/annonces.dart';
@@ -225,7 +226,7 @@ void main() {
       ) async {
         final FauxPortConsentements port = await _monter(tester);
 
-        await _tapperVisible(tester, find.byType(Checkbox));
+        await _tapperVisible(tester, find.byType(CaseAccordObservation));
         await _tapperVisible(
           tester,
           find.widgetWithText(ActionPrincipale, t.consentement.texte.continuer),
@@ -249,7 +250,7 @@ void main() {
             code: '23505',
           );
 
-          await _tapperVisible(tester, find.byType(Checkbox));
+          await _tapperVisible(tester, find.byType(CaseAccordObservation));
           await _tapperVisible(
             tester,
             find.widgetWithText(
@@ -268,7 +269,7 @@ void main() {
         final FauxPortConsentements port = await _monter(tester);
         port.erreurAJeter = StateError('reseau');
 
-        await _tapperVisible(tester, find.byType(Checkbox));
+        await _tapperVisible(tester, find.byType(CaseAccordObservation));
         await _tapperVisible(
           tester,
           find.widgetWithText(ActionPrincipale, t.consentement.texte.continuer),

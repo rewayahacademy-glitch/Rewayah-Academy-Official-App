@@ -317,7 +317,6 @@ void main() {
             ),
             for (final (String route, String code) in <(String, String)>[
               (Routes.adminOperationsDemandes, 'ADM-06'),
-              (Routes.adminOperationsAttributions, 'ADM-05'),
               (Routes.adminPedagogieQualite, 'ADM-14'),
               (Routes.adminOperationsGroupes, 'GROUPES'),
               (Routes.adminSecuriteAuditAccesAgents, 'ADM-07'),
@@ -392,7 +391,7 @@ void main() {
     for (final (String Function() libelle, String code) cas
         in <(String Function(), String)>[
           (() => t.admin.tableau.demandes, 'ADM-06'),
-          (() => t.admin.tableau.foyers, 'ADM-05'),
+          (() => t.admin.tableau.foyers, 'OFFRES-ADM-1'),
           (() => t.admin.tableau.rapports, 'ADM-14'),
           (() => t.admin.groupes.titre, 'GROUPES'),
           (() => t.admin.tableau.outilsComptes, 'ADM-08'),

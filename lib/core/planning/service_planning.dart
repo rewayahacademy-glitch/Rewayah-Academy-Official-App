@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/enums.dart';
+import '../session/session_controleur.dart';
 
 /// Une case de la grille hebdomadaire.
 ///
@@ -188,72 +189,7 @@ class Seance {
   }
 }
 
-/// Qui suit qui, tel que `mes_affectations_v` l'expose.
-///
-/// Elle existe avant la premiere seance : c'est ce qui permet a `TUT-01`
-/// d'afficher « en recherche d'un enseignant » plutot qu'un ecran vide.
-@immutable
-class Affectation {
-  /// Cree une affectation.
-  const Affectation({
-    required this.id,
-    required this.enseignantId,
-    required this.enseignantPrenom,
-    required this.enseignantIdentifiant,
-    required this.eleveId,
-    required this.elevePrenom,
-    required this.creneau,
-    required this.depuis,
-    this.closeLe,
-  });
-
-  /// Lit une ligne de la vue.
-  factory Affectation.depuisJson(Map<String, dynamic> json) => Affectation(
-    id: json['id'] as String,
-    enseignantId: json['teacher_id'] as String? ?? '',
-    enseignantPrenom: json['teacher_first_name'] as String? ?? '',
-    enseignantIdentifiant: json['teacher_immutable_id'] as String? ?? '',
-    eleveId: json['student_id'] as String? ?? '',
-    elevePrenom: json['student_first_name'] as String? ?? '',
-    creneau: Creneau.depuisJson(json),
-    depuis:
-        DateTime.tryParse(json['created_at'] as String? ?? '')?.toLocal() ??
-        DateTime.now(),
-    closeLe: DateTime.tryParse(json['ended_at'] as String? ?? '')?.toLocal(),
-  );
-
-  /// Identifiant de l'affectation.
-  final String id;
-
-  /// Identifiant du profil enseignant.
-  final String enseignantId;
-
-  /// Prenom de l'enseignant.
-  final String enseignantPrenom;
-
-  /// Identifiant immuable de l'enseignant.
-  final String enseignantIdentifiant;
-
-  /// Identifiant du profil eleve.
-  final String eleveId;
-
-  /// Prenom de l'eleve.
-  final String elevePrenom;
-
-  /// Le rendez-vous hebdomadaire qui en decoule.
-  final Creneau creneau;
-
-  /// Depuis quand elle dure.
-  final DateTime depuis;
-
-  /// Quand elle a ete close, s'il y a lieu.
-  final DateTime? closeLe;
-
-  /// Vrai tant qu'elle lie l'eleve et l'enseignant.
-  bool get active => closeLe == null;
-}
-
-/// Les disponibilites, les seances et les affectations.
+/// Les disponibilites et les seances.
 ///
 /// **Aucune duree n'est calculee ici.** La duree d'une seance vient de la base,
 /// qui applique la regle de cet eleve : voir `ServiceRegles`.
@@ -274,10 +210,11 @@ abstract interface class ServicePlanning {
   Future<void> retirer({required String profilId, required Creneau creneau});
 
   /// Les seances de l'appelant, quel que soit son role.
-  Future<List<Seance>> seances();
-
-  /// Les affectations qui concernent l'appelant.
-  Future<List<Affectation>> affectations();
+  ///
+  /// [eleveId] : quand il est donne, la requete porte `student_id = eleveId`
+  /// (L2-04). `null` garde la lecture de tout le foyer (tuteur, accueil famille),
+  /// bornee cote serveur par `mes_seances_v` (L1-04).
+  Future<List<Seance>> seances({String? eleveId});
 }
 
 /// L'implementation reelle.
@@ -331,21 +268,15 @@ class ServicePlanningSupabase implements ServicePlanning {
   }
 
   @override
-  Future<List<Seance>> seances() async {
-    final List<Map<String, dynamic>> lignes = await _client
-        .from('mes_seances_v')
-        .select()
-        .order('started_at');
+  Future<List<Seance>> seances({String? eleveId}) async {
+    // Lecture de tout le foyer quand [eleveId] est nul (tuteur, accueil famille,
+    // borne serveur L1-04). Un eleve passe son propre profil (L2-04).
+    var requete = _client.from('mes_seances_v').select();
+    if (eleveId != null) {
+      requete = requete.eq('student_id', eleveId);
+    }
+    final List<Map<String, dynamic>> lignes = await requete.order('started_at');
     return lignes.map(Seance.lire).nonNulls.toList();
-  }
-
-  @override
-  Future<List<Affectation>> affectations() async {
-    final List<Map<String, dynamic>> lignes = await _client
-        .from('mes_affectations_v')
-        .select()
-        .order('created_at');
-    return lignes.map(Affectation.depuisJson).toList();
   }
 }
 
@@ -367,6 +298,19 @@ final FutureProviderFamily<List<Creneau>, String> disponibilitesProvider =
           ref.watch(servicePlanningProvider).disponibilites(profilId),
     );
 
+/// Le profil de la session courante, ou `null` si la session n'est pas lisible.
+///
+/// Une session illisible (Supabase non initialise, par exemple dans un test qui
+/// ne surcharge pas la session) rend `null` au lieu de casser l'ecran. `null`
+/// garde la lecture du foyer, bornee par la vue cote serveur (L1-04).
+final Provider<String?> profilCourantProvider = Provider<String?>((Ref ref) {
+  try {
+    return ref.watch(sessionProvider).profileId;
+  } on Object {
+    return null;
+  }
+});
+
 /// Les seances de l'appelant.
 ///
 /// **Aucune retentative silencieuse** (DASH-ELV-ERR-b, revue DASH-ELV-ERR-R
@@ -377,13 +321,9 @@ final FutureProviderFamily<List<Creneau>, String> disponibilitesProvider =
 /// de l'ecran est la retentative explicite, comme pour
 /// `dossiersEnAttenteProvider` (`service_validation.dart`).
 final FutureProvider<List<Seance>> seancesProvider =
-    FutureProvider<List<Seance>>(
-      (Ref ref) => ref.watch(servicePlanningProvider).seances(),
-      retry: (int retryCount, Object error) => null,
-    );
-
-/// Les affectations qui concernent l'appelant.
-final FutureProvider<List<Affectation>> affectationsProvider =
-    FutureProvider<List<Affectation>>(
-      (Ref ref) => ref.watch(servicePlanningProvider).affectations(),
-    );
+    FutureProvider<List<Seance>>((Ref ref) {
+      // L'accueil eleve lit les seances de l'eleve connecte (L2-04). Sans
+      // profil, la lecture reste celle du foyer, bornee par L1-04.
+      final String? eleveId = ref.watch(profilCourantProvider);
+      return ref.watch(servicePlanningProvider).seances(eleveId: eleveId);
+    }, retry: (int retryCount, Object error) => null);

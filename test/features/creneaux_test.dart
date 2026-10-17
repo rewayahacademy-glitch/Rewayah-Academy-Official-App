@@ -13,9 +13,7 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
-import 'package:rewayah_academy/features/creneaux/plages.dart';
 import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
-import 'package:rewayah_academy/features/disponibilites/grille_semaine.dart';
 
 import '../support/harnais.dart';
 
@@ -27,23 +25,6 @@ const SessionState _sessionEnseignant = SessionState(
   profileId: _monId,
   accountStatus: AccountStatus.active,
   lectureProfil: LectureProfil.presente,
-);
-
-Affectation _affectation({
-  required String eleveId,
-  int jour = 4,
-  int heure = 9,
-  DateTime? closeLe,
-}) => Affectation(
-  id: 'a-$eleveId',
-  enseignantId: _monId,
-  enseignantPrenom: 'Omar',
-  enseignantIdentifiant: 'TEACH-OS-000001',
-  eleveId: eleveId,
-  elevePrenom: 'Élève $eleveId',
-  creneau: Creneau(jour: jour, heure: heure, fuseau: 'Europe/Paris'),
-  depuis: DateTime.now(),
-  closeLe: closeLe,
 );
 
 /// Les surcharges communes.
@@ -171,8 +152,6 @@ void main() {
       expect(find.text('Lundi'), findsOneWidget);
       expect(find.textContaining(_de(17)), findsOneWidget);
       expect(find.textContaining(_a(19)), findsOneWidget);
-      // Plus de grille de cases a l'enseignant (directeur, 01/10).
-      expect(find.byType(GrilleSemaine), findsNothing);
       expect(find.text(t.enseignant.creneaux.ajouterPlage), findsOneWidget);
     });
 
@@ -333,49 +312,6 @@ void main() {
             jours: 'mardi',
             de: _de(17),
             a: _a(23),
-          ),
-        ),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('conflit : une heure qui porte un eleve se VOIT', (
-      WidgetTester tester,
-    ) async {
-      // Le conflit se voit, il ne se bloque pas : retirer une disponibilite
-      // n'annule aucun cours ; la suppression est confirmee et le dit.
-      final FauxServicePlanning planning = FauxServicePlanning()
-        ..creneaux[_monId] = <Creneau>[
-          const Creneau(jour: 4, heure: 9, fuseau: 'Europe/Paris'),
-        ]
-        ..affectationsRendues = <Affectation>[_affectation(eleveId: 'x1')];
-
-      await _monter(tester, planning: planning);
-
-      // 1. Le conflit est visible AVANT le geste.
-      expect(
-        find.textContaining(
-          t.enseignant.creneaux.plageEngagee(
-            heures: nommerHeure((jour: 4, heure: 9)),
-          ),
-        ),
-        findsOneWidget,
-      );
-
-      await _toucher(tester, find.text('Jeudi'));
-      await _toucher(tester, find.text(t.enseignant.creneaux.supprimerPlage));
-      await _toucher(
-        tester,
-        find.text(t.enseignant.creneaux.confirmerRetraitAction),
-      );
-
-      // 2. Le geste passe, et la confirmation dit ce qu'il ne fait PAS.
-      expect(planning.retires.length, 1);
-      expect(planning.retires.single.creneau.heure, 9);
-      expect(
-        find.textContaining(
-          t.enseignant.creneaux.seanceContinue(
-            heures: nommerHeure((jour: 4, heure: 9)),
           ),
         ),
         findsOneWidget,

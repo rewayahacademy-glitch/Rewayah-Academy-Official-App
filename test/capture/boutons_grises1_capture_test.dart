@@ -65,7 +65,7 @@ void main() {
   for (final AppLocale langue in languesCoupeMots4) {
     final String l = langue.name;
 
-    testWidgets('depot : sans type puis sans photo, 320 x2 $l', (
+    testWidgets('depot : sans type puis sans photo, dit d avance, 320 x2 $l', (
       WidgetTester tester,
     ) async {
       await monterCoupeMots4(
@@ -80,16 +80,14 @@ void main() {
           ),
         ],
       );
-      await tester.tap(find.text(t.kyc.envoyer));
-      await stabiliser(tester);
+      // Lot E7 (DECISION-ENTREE-2026-10-17) : l'envoi attend, inactif, et
+      // la phrase de ce qui manque est dite d'avance, sans appui.
       expect(find.text(t.kyc.manqueType), findsOneWidget);
       verifierEcranSansMotCoupe(tester);
       await _capturer(tester, 'depot_manque_type_320x2_$l');
 
       await tester.ensureVisible(find.text(t.kyc.carteIdentite));
       await tester.tap(find.text(t.kyc.carteIdentite));
-      await stabiliser(tester);
-      await tester.tap(find.text(t.kyc.envoyer));
       await stabiliser(tester);
       expect(find.text(t.kyc.manquePhoto), findsOneWidget);
       verifierEcranSansMotCoupe(tester);

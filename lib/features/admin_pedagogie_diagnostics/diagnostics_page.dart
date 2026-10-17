@@ -13,6 +13,7 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/selecteur_motif.dart';
@@ -115,41 +116,35 @@ class _DiagnosticsPageEtat extends ConsumerState<DiagnosticsPage> {
     return PageShell(
       titre: t.admin.diagnostics.titre,
       entete: SousNavigationDomaine(onglets: ongletsPedagogie(), indexActif: 0),
-      child: switch (versionActive) {
-        AsyncValue<VersionProgramme?>(hasValue: true) =>
-          versionActive.requireValue == null
-              ? EmptyState(
-                  message: t.admin.diagnostics.aucunProgramme,
-                  invitation: t.admin.diagnostics.aucunProgrammeDetail,
-                  icone: AppIcons.rienAAfficher,
-                  registre: RegistreVide.subi,
-                )
-              : _Corps(
-                  version: versionActive.requireValue!,
-                  niveauId: _niveauId,
-                  motif: _motif,
-                  envoi: _envoi,
-                  erreur: _erreur,
-                  motifManquant: _motifManquant,
-                  onNiveau: (String id) => setState(() {
-                    _niveauId = id;
-                    _erreur = null;
-                  }),
-                  onMotifChange: (String _) => setState(() {
-                    _erreur = null;
-                    _motifManquant = false;
-                  }),
-                  onDecider: (String studentId) =>
-                      unawaited(_decider(studentId)),
-                ),
-        AsyncValue<VersionProgramme?>(hasError: true) => EmptyState(
-          message: t.admin.diagnostics.erreur,
-          icone: AppIcons.avertissement,
-          libelleAction: t.commun.reessayer,
-          onAction: () => ref.invalidate(versionActiveProgrammeProvider),
+      child: BlocAsynchrone<VersionProgramme?>(
+        valeur: versionActive,
+        squelette: const Skeleton.liste(lignes: 4),
+        titreEchec: t.admin.diagnostics.erreur,
+        onReessayer: () => ref.invalidate(versionActiveProgrammeProvider),
+        vide: EmptyState(
+          message: t.admin.diagnostics.aucunProgramme,
+          invitation: t.admin.diagnostics.aucunProgrammeDetail,
+          icone: AppIcons.rienAAfficher,
+          registre: RegistreVide.subi,
         ),
-        _ => const Skeleton.liste(lignes: 4),
-      },
+        construire: (VersionProgramme? version) => _Corps(
+          version: version!,
+          niveauId: _niveauId,
+          motif: _motif,
+          envoi: _envoi,
+          erreur: _erreur,
+          motifManquant: _motifManquant,
+          onNiveau: (String id) => setState(() {
+            _niveauId = id;
+            _erreur = null;
+          }),
+          onMotifChange: (String _) => setState(() {
+            _erreur = null;
+            _motifManquant = false;
+          }),
+          onDecider: (String studentId) => unawaited(_decider(studentId)),
+        ),
+      ),
     );
   }
 }
@@ -188,38 +183,31 @@ class _Corps extends ConsumerWidget {
       niveauxProgrammeProvider(version.id),
     );
 
-    return switch (file) {
-      // Les getters, jamais le type d'execution : meme regle que
-      // `admin_dossiers/dossiers_page.dart`.
-      AsyncValue<List<EleveADiagnostiquer>>(hasValue: true) =>
-        file.requireValue.isEmpty
-            ? EmptyState(
-                message: t.admin.diagnostics.aucun,
-                invitation: t.admin.diagnostics.aucunDetail,
-                icone: AppIcons.succes,
-                registre: RegistreVide.bonneNouvelle,
-              )
-            : _Decision(
-                eleve: file.requireValue.first,
-                restants: file.requireValue.length,
-                niveaux: niveaux,
-                niveauId: niveauId,
-                motif: motif,
-                envoi: envoi,
-                erreur: erreur,
-                motifManquant: motifManquant,
-                onNiveau: onNiveau,
-                onMotifChange: onMotifChange,
-                onDecider: () => onDecider(file.requireValue.first.studentId),
-              ),
-      AsyncValue<List<EleveADiagnostiquer>>(hasError: true) => EmptyState(
-        message: t.admin.diagnostics.erreur,
-        icone: AppIcons.avertissement,
-        libelleAction: t.commun.reessayer,
-        onAction: () => ref.invalidate(diagnosticsATraiterProvider),
+    return BlocAsynchrone<List<EleveADiagnostiquer>>(
+      valeur: file,
+      squelette: const Skeleton.liste(lignes: 4),
+      titreEchec: t.admin.diagnostics.erreur,
+      onReessayer: () => ref.invalidate(diagnosticsATraiterProvider),
+      vide: EmptyState(
+        message: t.admin.diagnostics.aucun,
+        invitation: t.admin.diagnostics.aucunDetail,
+        icone: AppIcons.succes,
+        registre: RegistreVide.bonneNouvelle,
       ),
-      _ => const Skeleton.liste(lignes: 4),
-    };
+      construire: (List<EleveADiagnostiquer> v) => _Decision(
+        eleve: v.first,
+        restants: v.length,
+        niveaux: niveaux,
+        niveauId: niveauId,
+        motif: motif,
+        envoi: envoi,
+        erreur: erreur,
+        motifManquant: motifManquant,
+        onNiveau: onNiveau,
+        onMotifChange: onMotifChange,
+        onDecider: () => onDecider(v.first.studentId),
+      ),
+    );
   }
 }
 

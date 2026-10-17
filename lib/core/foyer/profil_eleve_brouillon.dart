@@ -42,8 +42,9 @@ enum ErreurChamp {
 
 /// Les bornes d'age acceptees par le formulaire.
 ///
-/// **La borne serveur fait foi** : `creer_profil_enfant()` accepte 3 a 99 ans
-/// et refuse le reste (`age hors bornes`). Aucune source serveur ne rend
+/// **La borne serveur fait foi** : `creer_profil_enfant()` refuse moins de 6 ans
+/// sauf exception tracee de l'administration (3 a 5 ans, parcours
+/// administrateur, hors de ce formulaire) et plus de 99 ans. Aucune source serveur ne rend
 /// encore les bornes a l'ecran (dependances DB-TRV-05 et DB-ADM-05).
 @immutable
 class BornesAge {
@@ -51,11 +52,11 @@ class BornesAge {
   const BornesAge({required this.min, required this.max})
     : assert(min <= max, 'une borne basse ne depasse pas la borne haute');
 
-  /// La borne **deja en production** dans `ajouter_enfant_page.dart` (3 a 18
-  /// ans), reprise ici pour qu'Admission et Foyer n'en ecrivent pas chacun une
+  /// L'age minimum de 6 ans (decision du 13/10/2026) et la borne haute
+  /// de `ajouter_enfant_page.dart` (18 ans), repris ici pour qu'Admission et Foyer n'en ecrivent pas chacun une
   /// seconde. Ce n'est pas une regle nouvelle : elle disparait le jour ou le
   /// serveur rend les bornes (DB-ADM-05).
-  static const BornesAge clientActuelle = BornesAge(min: 3, max: 18);
+  static const BornesAge clientActuelle = BornesAge(min: 6, max: 18);
 
   /// Age minimal, inclus.
   final int min;

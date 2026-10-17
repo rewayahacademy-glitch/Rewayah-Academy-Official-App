@@ -71,6 +71,8 @@ import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -269,6 +271,9 @@ class MonEspaceAdultePage extends ConsumerWidget {
             construire: (IdentiteTitulaire lue) => CarteIdentiteCompte(
               identite: lue,
               large: large,
+              profileId: ref.watch(
+                sessionProvider.select((SessionState e) => e.profileId),
+              ),
               role: t.adulte.monEspace.role,
               pastilleEtatNormal: false,
               photo: (double diametre) => PhotoEleve(

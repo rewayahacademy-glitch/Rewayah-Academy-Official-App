@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/groupe_reglages.dart';
 
@@ -128,21 +129,57 @@ class CaseAccordTexte extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ValueChanged<bool>? geste = onChanged;
-    return AppCard(
-      // Toute la ligne est la cible (case et libelle), par le composant
-      // Material lui-meme : ni geste nu, ni case precochee.
-      // Material transparent : l'ondulation se peint au-dessus du fond de carte.
-      child: Material(
-        type: MaterialType.transparency,
-        child: CheckboxListTile(
-          focusNode: focusNode,
-          value: cochee,
-          onChanged: geste == null
-              ? null
-              : (bool? valeur) => geste(valeur ?? false),
-          controlAffinity: ListTileControlAffinity.leading,
-          contentPadding: EdgeInsets.zero,
-          title: Text(libelle, style: Theme.of(context).textTheme.bodyLarge),
+    // E1 (demande du directeur du 17/10) : la carte entiere est la cible. Un
+    // appui n'importe ou sur la carte, marge comprise, coche ou decoche :
+    // `AppCard(onPress:)` pose un [Pressable] sur toute la surface (geste
+    // opaque, curseur main sur le Web, Entree et Espace au clavier). Cochee,
+    // la carte prend le registre de la selection (fond doux, contour
+    // d'accent) : l'etat se voit sur toute la carte, pas sur la seule case.
+    //
+    // La case dessinee est une `Checkbox` Material, sans geste, sans focus et
+    // sans semantique propres : la carte porte les trois, une seule cible et
+    // un seul arret de tabulation.
+    // Sans geste (envoi en cours, accord deja fige), la carte ne se presse
+    // pas : meme regle qu'avant E1, quand `onChanged` nul figeait la case.
+    // Case d'accord inactive voulue (DECISION-ENTREE-2026-10-17, accords et
+    // consentements), admise dans tool/revue_socle.txt.
+    return Semantics(
+      checked: cochee,
+      child: AppCard(
+        selectionnee: cochee,
+        focusNode: focusNode,
+        libelleSemantique: libelle,
+        onPress: geste == null ? null : () => geste(!cochee),
+        child: Row(
+          children: <Widget>[
+            ExcludeSemantics(
+              child: ExcludeFocus(
+                child: IgnorePointer(
+                  // Material transparent : la case le demande, sans peindre
+                  // de fond sur celui de la carte.
+                  child: Material(
+                    type: MaterialType.transparency,
+                    // Un rappel vide garde a la case l'aspect actif tant que
+                    // la carte se presse ; c'est la carte qui agit.
+                    child: Checkbox(
+                      value: cochee,
+                      onChanged: geste == null ? null : (bool? _) {},
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Ecart.hMd,
+            Expanded(
+              child: ExcludeSemantics(
+                excluding: geste != null,
+                child: Text(
+                  libelle,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

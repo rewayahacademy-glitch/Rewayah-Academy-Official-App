@@ -85,7 +85,6 @@ void main() {
     test('voie TB, communications, finance, comptable : comptes a part', () {
       for (final String chemin in <String>[
         'lib/features/salle/salle_page.dart',
-        'lib/features/tc_classe_live/classe_live_page.dart',
         'lib/features/tc_dock/barre_stylet.dart',
         'lib/features/com_messages/x.dart',
         'lib/features/admin_finance/x.dart',

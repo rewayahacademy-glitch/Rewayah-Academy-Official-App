@@ -335,24 +335,24 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
   /// `PreparationEleve`, tout pret, sans micro ni serveur. Elle defile :
   /// a 200 %, le bouton de l'etape reste atteignable (aucun pied collant).
   Widget _preparation() => RepereDemonstration(
-    child: Scaffold(
-      body: SafeArea(
-        child: PreparationEleve(
-          key: const ValueKey<String>('demo-accessibilite-preparation'),
-          guidee: true,
-          resultat: const ResultatPreVol(
-            microDisponible: true,
-            cameraDisponible: true,
-            sortieAudioDisponible: true,
-            permissionRefusee: false,
-          ),
-          reseau: ReseauPreparation.bonne,
-          onEntrer: () => _etapeSuivante(EtapeDemoAccessibilite.salle),
-          onContinuerSansMicro: () =>
-              _etapeSuivante(EtapeDemoAccessibilite.salle),
-          onReessayer: () {},
-          onRetour: () => _etapeSuivante(EtapeDemoAccessibilite.classe),
+    child: PageShell(
+      defilante: false,
+      actionsCoquille: false,
+      child: PreparationEleve(
+        key: const ValueKey<String>('demo-accessibilite-preparation'),
+        guidee: true,
+        resultat: const ResultatPreVol(
+          microDisponible: true,
+          cameraDisponible: true,
+          sortieAudioDisponible: true,
+          permissionRefusee: false,
         ),
+        reseau: ReseauPreparation.bonne,
+        onEntrer: () => _etapeSuivante(EtapeDemoAccessibilite.salle),
+        onContinuerSansMicro: () =>
+            _etapeSuivante(EtapeDemoAccessibilite.salle),
+        onReessayer: () {},
+        onRetour: () => _etapeSuivante(EtapeDemoAccessibilite.classe),
       ),
     ),
   );

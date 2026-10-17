@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/appairage/service_appairage.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/icons/app_icons.dart';
-import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/app_card.dart';
+import '../../core/widgets/bandeau_attention.dart';
 
 /// Vrai quand les donnees **confirment** qu'aucun appareil n'est pret pour
 /// [eleveId] : la liste des appareils du foyer est lue, et aucun appareil
@@ -25,126 +22,51 @@ bool aucunAppareilPret(List<AppareilAppaire> appareils, String eleveId) =>
 /// pret » ; « photo requise » n'a aucune regle en base (point P6) et le
 /// dossier a completer relève du portail d'attente.
 ///
-/// - Telephone ([compact]) : bandeau pleine largeur en registre doux
-///   d'avertissement, icone, titre, phrase concrete, action **a droite du
-///   texte** comme la maquette V1 (#17) des [largeurActionADroite] dp ; sous
-///   le texte en dessous de cette largeur ou quand le texte est agrandi au-dela
-///   de [echelleActionADroite] (texte x2 : la colonne de texte resterait trop
-///   etroite a cote du bouton).
-/// - Tablette et bureau : tete de la colonne de droite, icone d'appareil,
-///   titre, phrase et le meme bouton primaire sous le texte (DASH-TUT-CTA-b :
-///   D5 ne fait aucune exception au gabarit, le lien fleche de la maquette V2
-///   est abandonne).
+/// L4-05 : **un seul rendu aux deux largeurs**, le [BandeauAttention] du
+/// depot (avertissement : icone, titre, phrase). Avant, une carte jaune a
+/// bouton plein sur telephone et un texte nu a bouton plein sur bureau
+/// faisaient deux composants pour un bloc. Le bouton « Connecter un
+/// appareil » reste le seul bouton plein de l'Accueil bloque (decision D5,
+/// DASH-TUT-CTA, qui prime sur la fiche L4-05).
 class BandeauBlocage extends StatelessWidget {
   /// Cree le bandeau.
   const BandeauBlocage({
     required this.prenom,
-    required this.compact,
     required this.onConnecter,
     super.key,
   });
 
+  /// La cle du bandeau d'alerte, identique a toute largeur.
+  static const Key cleAlerte = ValueKey<String>('accueil-alerte-appareil');
+
   /// Le prenom de l'eleve concerne.
   final String prenom;
-
-  /// Vrai sur telephone.
-  final bool compact;
 
   /// Ouvre l'emetteur de code d'appairage de cet eleve.
   final VoidCallback onConnecter;
 
-  /// Largeur d'ecran (dp) a partir de laquelle l'action du telephone se pose
-  /// a droite du texte (maquette V1).
-  static const double largeurActionADroite = 360;
-
-  /// Echelle de texte au-dela de laquelle l'action revient sous le texte.
-  static const double echelleActionADroite = 1.3;
-
-  /// Part maximale de la largeur du bandeau laissee a l'action a droite.
-  static const double _partAction = 0.38;
-
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final bool actionADroite =
-        compact &&
-        MediaQuery.sizeOf(context).width >= largeurActionADroite &&
-        MediaQuery.textScalerOf(context).scale(1) <= echelleActionADroite;
-
-    final Widget action = ActionPrincipale(
-      libelle: t.tuteur.accueil.connecterAppareil,
-      onPress: onConnecter,
-      // DASH-TUT-CTA (D5) : la tache immediate porte le seul bouton primaire
-      // de l'Accueil ; la carte classe n'est plus qu'un lien.
-      niveau: NiveauAction.principale,
-      pleineLargeur: false,
-    );
-
-    final Widget textesBlocage = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Semantics(
-          header: true,
-          child: Text(
-            t.tuteur.accueil.blocageAppareilTitre(prenom: prenom),
-            style: palette.inkStrong.applyTo(
-              textes.titleSmall ?? const TextStyle(),
-            ),
+    return BandeauAttention(
+      key: cleAlerte,
+      titre: t.tuteur.accueil.blocageAppareilTitre(prenom: prenom),
+      message: t.tuteur.accueil.blocageAppareilPhrase(prenom: prenom),
+      // L4-05-reprise (defaut D-1) : le bouton garde son propre noeud
+      // semantique, avec son role de bouton. Sans cette frontiere, il se
+      // fondait dans le titre de l'alerte (titre et bouton a la fois).
+      action: Semantics(
+        container: true,
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: ActionPrincipale(
+            libelle: t.tuteur.accueil.connecterAppareil,
+            onPress: onConnecter,
+            // D5 / DASH-TUT-CTA : la tache immediate porte le seul bouton plein.
+            niveau: NiveauAction.principale,
+            pleineLargeur: false,
           ),
         ),
-        Ecart.vXs,
-        Text(
-          t.tuteur.accueil.blocageAppareilPhrase(prenom: prenom),
-          style: palette.inkMuted.applyTo(
-            textes.bodyMedium ?? const TextStyle(),
-          ),
-        ),
-        // Sur tous les gabarits, la tache immediate est le bouton primaire
-        // (D5, §3.4, annexe TUT-01) : plus de lien fleche sur bureau.
-        if (!actionADroite) ...<Widget>[Ecart.vMd, action],
-      ],
-    );
-
-    final Widget contenu = Row(
-      crossAxisAlignment: actionADroite
-          ? CrossAxisAlignment.center
-          : CrossAxisAlignment.start,
-      children: <Widget>[
-        ExcludeSemantics(
-          child: IconTheme(
-            data: palette.inkWarning.asIconTheme(
-              size: compact ? AppSpacing.xxl : AppSpacing.section,
-            ),
-            child: Icon(
-              compact
-                  ? AppIcons.avertissement.repos
-                  : AppIcons.tabletteOuOrdinateur.repos,
-            ),
-          ),
-        ),
-        Ecart.hLg,
-        Expanded(child: textesBlocage),
-        if (actionADroite) ...<Widget>[
-          Ecart.hMd,
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.sizeOf(context).width * _partAction,
-            ),
-            child: action,
-          ),
-        ],
-      ],
-    );
-
-    if (!compact) {
-      return contenu;
-    }
-    return AppCard(
-      surface: palette.washWarning,
-      marge: AppSpacing.lg,
-      child: contenu,
+      ),
     );
   }
 }

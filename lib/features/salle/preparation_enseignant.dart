@@ -16,7 +16,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
-import '../tc_classe_live/pre_vol_classe.dart';
+import 'pre_vol_classe.dart';
 import 'vue_salle.dart';
 
 /// L'etat de la connexion, lu sans second moteur de mesure (R12).

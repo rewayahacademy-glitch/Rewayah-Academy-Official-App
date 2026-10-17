@@ -738,6 +738,42 @@ void main() {
     });
   });
 
+  // Lot F2 : debit de seance, correction et remboursement ont leur libelle,
+  // jamais « Mensualite ».
+  group('Natures sans mensualite', () {
+    for (final (NatureMouvement nature, String libelle)
+        in <(NatureMouvement, String)>[
+          (
+            NatureMouvement.debitSeance,
+            t.ficheEleve.mouvements.nature.debitSeance,
+          ),
+          (
+            NatureMouvement.correction,
+            t.ficheEleve.mouvements.nature.correction,
+          ),
+          (
+            NatureMouvement.remboursement,
+            t.ficheEleve.mouvements.nature.remboursement,
+          ),
+        ]) {
+      test('${nature.name} : son propre libelle', () {
+        final MouvementProfil m = MouvementProfil(
+          id: 'm-${nature.name}',
+          date: DonneesFinanceDemo.dateRecharge,
+          nature: nature,
+          montant: DonneesFinanceDemo.usd(-5),
+          periode: DateTime(2026, 10),
+        );
+        expect(libelleMouvement(m), libelle);
+        expect(libelleMouvement(m), isNot(contains('Mensualité')));
+        expect(
+          iconeMouvement(nature),
+          isNot(iconeMouvement(NatureMouvement.debitPeriode)),
+        );
+      });
+    }
+  });
+
   group('Etats', () {
     testWidgets('vide : « Aucun mouvement » (essai)', (
       WidgetTester tester,

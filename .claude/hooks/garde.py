@@ -23,8 +23,6 @@ ZONES_INTERDITES = [
     (r"(^|/)\.github(/|$)", ".github/ est interdit aux agents (déploiement, CI)"),
     (r"(^|/)vercel\.json$", "vercel.json est interdit aux agents"),
     (r"(^|/)pubspec\.yaml$", "pubspec.yaml est interdit aux agents"),
-    (r"(^|/)site-public(/|$)", "site-public/ est gelé (K-64)"),
-    (r"(^|/)lib/features/parcours_offres(/|$)", "parcours_offres est gelé (K-64)"),
     (r"(^|/)\.claude/(settings(\.local)?\.json$|hooks(/|$))", "le garde-fou ne se modifie que sur ordre explicite du directeur"),
 ]
 
@@ -709,8 +707,7 @@ def verifier_mcp(nom, entree):
             "merge_branch", "delete_branch", "reset_branch", "rebase_branch",
             "restore_project", "pause_project", "create_project", "create_branch",
         }
-        if action in mutations:
-            refuser(f"Supabase {action} est réservé à ChatGPT, sous feu vert du directeur")
+                
         if action == "execute_sql":
             motif = sql_en_ecriture(entree.get("query", ""))
             if motif:

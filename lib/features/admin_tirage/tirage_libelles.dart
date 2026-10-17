@@ -10,7 +10,7 @@ String _deuxChiffres(int n) => n.toString().padLeft(2, '0');
 /// « 10/10/2026 à 18:05 », en heure locale.
 String libelleQuandTirage(DateTime date) {
   final DateTime d = date.toLocal();
-  return t.admin.tirage.quand(
+  return t.commun.formats.dateHeure(
     date: '${_deuxChiffres(d.day)}/${_deuxChiffres(d.month)}/${d.year}',
     heure: '${_deuxChiffres(d.hour)}:${_deuxChiffres(d.minute)}',
   );

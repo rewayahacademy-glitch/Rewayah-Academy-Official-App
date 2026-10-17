@@ -38,8 +38,9 @@ begin
   begin
     perform public.creer_groupe(null::uuid, null::text, null::text, null::smallint, null::smallint, null::smallint);
     raise exception 'B-18: short creer_groupe overload accepted missing claims';
-  exception when raise_exception then
-    if sqlerrm <> 'creation de groupe reservee a l''administration' then raise; end if;
+  exception when insufficient_privilege then
+    -- L3-06 : surcharge courte retiree (revoke), refus 42501 avant tout corps.
+    null;
   end;
   begin
     perform public.modifier_groupe(null::uuid, null::text, null::smallint, null::smallint, null::smallint, null::text, null::smallint);
@@ -50,8 +51,9 @@ begin
   begin
     perform public.modifier_groupe(null::uuid, null::text, null::smallint, null::smallint, null::smallint);
     raise exception 'B-18: short modifier_groupe overload accepted missing claims';
-  exception when raise_exception then
-    if sqlerrm <> 'modification de groupe reservee a l''administration' then raise; end if;
+  exception when insufficient_privilege then
+    -- L3-06 : surcharge courte retiree (revoke), refus 42501 avant tout corps.
+    null;
   end;
   begin
     perform 1 from public.read_kyc_documents();
@@ -102,8 +104,8 @@ begin
       ('demandes_en_attente', 'select * from public.demandes_en_attente()', 'file des demandes reservee a l''administration'),
       ('journal_audit_filtres', 'select public.journal_audit_filtres()', 'journal d''audit reserve a l''administration'),
       ('maj_eleve_pedagogie', 'select public.maj_eleve_pedagogie(null::uuid, ''inconnu'', ''inconnu'')', 'seul un administrateur modifie le niveau ou la riwaya'),
-      ('decider_dossier', 'select public.decider_dossier(null::uuid, true)', 'seul un administrateur decide d''un dossier'),
-      ('attribuer_eleve', 'select public.attribuer_eleve(null::uuid, null::uuid, 1, 1, null)', 'attribution manuelle reservee a l''administration')
+      -- L3-02 : attribuer_eleve est fermee par revoke (42501), couverte par scenarios_af_l3_02_matching_ferme.sql.
+      ('decider_dossier', 'select public.decider_dossier(null::uuid, true)', 'seul un administrateur decide d''un dossier')
     ) as tests(nom, commande, refus_attendu)
   loop
     begin
@@ -116,7 +118,7 @@ begin
     end;
   end loop;
 
-  raise notice 'B2 ok : compte Auth sans profil refusé par les huit RPC sensibles';
+  raise notice 'B2 ok : compte Auth sans profil refusé par les sept RPC sensibles';
 end
 $b2$;
 reset role;
@@ -332,7 +334,7 @@ end
 $m4_catalog$;
 
 create temporary table profile_guard_fixture on commit drop as
-select role, household_id, account_status, access_until
+select role, household_id, account_status, access_until, gender
 from public.profiles
 where id = 'b1840000-0000-0000-0000-000000000004';
 create trigger profile_guard_fixture_trigger

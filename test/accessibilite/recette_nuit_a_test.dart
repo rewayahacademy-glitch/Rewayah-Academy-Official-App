@@ -67,7 +67,6 @@ void main() {
       Routes.tuteurDemandes,
       Routes.tuteurPresentation,
       Routes.tuteurReglages,
-      Routes.tuteurDisponibilites,
       Routes.ficheElevePour('inconnu'),
       Routes.parcoursPour('inconnu'),
       Routes.seancePour('inconnue'),

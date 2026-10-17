@@ -30,6 +30,17 @@ enum NatureMouvement {
   /// La taxe applicable a la periode (guide §5.2) : debit, distinct de la
   /// mensualite.
   taxe,
+
+  /// Le debit d'une seance (`debit` cote serveur) : distinct de la
+  /// mensualite, jamais affiche « Mensualite ».
+  debitSeance,
+
+  /// Une correction negative du solde (`correction` cote serveur).
+  correction,
+
+  /// Un remboursement (`remboursement` cote serveur), montant signe tel que
+  /// rendu.
+  remboursement,
 }
 
 /// L'etat d'un mouvement. Un etat se dit par un texte, jamais par la couleur

@@ -66,7 +66,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
       onBackground: Color(0xFF110E20),
     ),
     surfaceCanvas: AppColorPair(
-      background: Color(0xFFF8F7FA),
+      background: Color(0xFFF1EFF4),
       onBackground: Color(0xFF110E20),
     ),
     surfaceSunken: AppColorPair(
@@ -156,11 +156,11 @@ class AppPalette extends ThemeExtension<AppPalette> {
 
   factory AppPalette.sombre() => const AppPalette(
     surfaceRaised: AppColorPair(
-      background: Color(0xFF22222E),
+      background: Color(0xFF272734),
       onBackground: Color(0xFFF5F2FA),
     ),
     surfaceCanvas: AppColorPair(
-      background: Color(0xFF1A1A25),
+      background: Color(0xFF16161E),
       onBackground: Color(0xFFF5F2FA),
     ),
     surfaceSunken: AppColorPair(
@@ -168,12 +168,12 @@ class AppPalette extends ThemeExtension<AppPalette> {
       onBackground: Color(0xFFF5F2FA),
     ),
     surfaceOverlay: AppColorPair(
-      background: Color(0xFF2B2B39),
+      background: Color(0xFF2D2D3B),
       onBackground: Color(0xFFF5F2FA),
     ),
     // Meme ecart relatif au fond qu'en clair (manifeste, section 6.2).
     surfaceMiseEnAvant: AppColorPair(
-      background: Color(0xFF2B2B39),
+      background: Color(0xFF2D2D3B),
       onBackground: Color(0xFFF5F2FA),
     ),
     // En sombre, le CTA dominant devient l'accent plein : plus sature qu'en
@@ -330,9 +330,14 @@ class AppPalette extends ThemeExtension<AppPalette> {
       teintesIdentite[index % teintesIdentite.length];
 
   bool get estSombre => surfaceCanvas.background.computeLuminance() < 0.5;
+
+  /// Le filet de contour d'une carte. A-12 (directeur, 17/10/2026) : la carte
+  /// se lisait a 1,07 (clair) et 1,10 (sombre) contre le fond ; le filet passe
+  /// de 0,08 a 0,14 (clair) et 0,12 (sombre) d'opacite, la carte reste blanche
+  /// et le fond reste proche du blanc (luminance relative 0,86).
   AppInkColor get contourCarte => AppInkColor(
     (estSombre ? const Color(0xFFFFFFFF) : const Color(0xFF211E28)).withValues(
-      alpha: 0.08,
+      alpha: estSombre ? 0.12 : 0.14,
     ),
   );
 

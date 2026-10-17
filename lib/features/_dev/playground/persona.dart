@@ -66,14 +66,8 @@ class Graine {
   /// Les seances de l'appelant.
   List<Seance> seances = const <Seance>[];
 
-  /// Les affectations qui concernent l'appelant.
-  List<Affectation> affectations = const <Affectation>[];
-
   /// Les creneaux poses, par profil.
   Map<String, List<Creneau>> creneaux = const <String, List<Creneau>>{};
-
-  /// Le feed d'eleves sans enseignant.
-  List<EleveEnAttente> feed = const <EleveEnAttente>[];
 
   /// La file des demandes de l'administration.
   List<Demande> demandes = const <Demande>[];
@@ -146,10 +140,8 @@ Persona personne({
     ..appareilsRendus = graine.appareils;
   final FauxServicePlanning planning = FauxServicePlanning()
     ..seancesRendues = graine.seances
-    ..affectationsRendues = graine.affectations
     ..creneaux.addAll(graine.creneaux);
-  final FauxServiceMatching matching = FauxServiceMatching()
-    ..feed = graine.feed;
+  final FauxServiceMatching matching = FauxServiceMatching();
   final FauxServiceAdmin admin = FauxServiceAdmin()
     ..indicateursRendus = graine.indicateurs
     ..file = graine.demandes;
@@ -355,22 +347,6 @@ Graine _graineEleve(InterfaceMode mode, DateTime maintenant) =>
           statut: StatutSeance.planifiee,
         ),
       ]
-      ..affectations = <Affectation>[
-        Affectation(
-          id: 'a-1',
-          enseignantId: enseignant,
-          enseignantPrenom: enseignantPrenom,
-          enseignantIdentifiant: 'imm-t-1',
-          eleveId: eleve1,
-          elevePrenom: prenom1,
-          creneau: Creneau(
-            jour: maintenant.weekday,
-            heure: 16,
-            fuseau: 'Europe/Paris',
-          ),
-          depuis: maintenant.subtract(const Duration(days: 30)),
-        ),
-      ]
       ..prieres = <String, ReglagesPriere>{enseignant: _reglagesPriere()};
 
 /// La graine de l'enseignant : creneaux, feed, regles bornees en base.
@@ -394,36 +370,6 @@ Graine _graineEnseignant(DateTime maintenant) =>
         ),
         _seance(id: 's-2', debut: maintenant, statut: StatutSeance.planifiee),
       ]
-      ..affectations = <Affectation>[
-        Affectation(
-          id: 'a-1',
-          enseignantId: enseignant,
-          enseignantPrenom: enseignantPrenom,
-          enseignantIdentifiant: 'imm-t-1',
-          eleveId: eleve1,
-          elevePrenom: prenom1,
-          creneau: Creneau(
-            jour: maintenant.weekday,
-            heure: 16,
-            fuseau: 'Europe/Paris',
-          ),
-          depuis: maintenant.subtract(const Duration(days: 30)),
-        ),
-        Affectation(
-          id: 'a-2',
-          enseignantId: enseignant,
-          enseignantPrenom: enseignantPrenom,
-          enseignantIdentifiant: 'imm-t-1',
-          eleveId: eleve2,
-          elevePrenom: prenom2,
-          creneau: Creneau(
-            jour: maintenant.weekday,
-            heure: 18,
-            fuseau: 'Europe/Paris',
-          ),
-          depuis: maintenant.subtract(const Duration(days: 10)),
-        ),
-      ]
       ..creneaux = <String, List<Creneau>>{
         enseignant: <Creneau>[
           Creneau(
@@ -440,20 +386,6 @@ Graine _graineEnseignant(DateTime maintenant) =>
           ),
         ],
       }
-      ..feed = <EleveEnAttente>[
-        EleveEnAttente(
-          eleveId: 'e-3',
-          prenom: 'Amina',
-          identifiantImmuable: 'imm-e-3',
-          creneau: Creneau(
-            jour: maintenant.weekday,
-            heure: 16,
-            fuseau: 'Europe/Paris',
-          ),
-          depuis: maintenant.subtract(const Duration(days: 5)),
-          mode: InterfaceMode.standard,
-        ),
-      ]
       ..regles = <String, List<RegleProfil>>{
         enseignant: <RegleProfil>[
           _regle(
@@ -537,22 +469,6 @@ Graine _graineTuteur(DateTime maintenant) =>
           id: 's-3',
           debut: maintenant.add(const Duration(days: 1)),
           statut: StatutSeance.planifiee,
-        ),
-      ]
-      ..affectations = <Affectation>[
-        Affectation(
-          id: 'a-1',
-          enseignantId: enseignant,
-          enseignantPrenom: enseignantPrenom,
-          enseignantIdentifiant: 'imm-t-1',
-          eleveId: eleve1,
-          elevePrenom: prenom1,
-          creneau: Creneau(
-            jour: maintenant.weekday,
-            heure: 16,
-            fuseau: 'Europe/Paris',
-          ),
-          depuis: maintenant.subtract(const Duration(days: 30)),
         ),
       ]
       ..creneaux = <String, List<Creneau>>{

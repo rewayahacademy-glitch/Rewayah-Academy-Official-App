@@ -16,8 +16,6 @@ import 'package:rewayah_academy/core/widgets/app_card.dart';
 
 import '../garde/coupe_mots_balayage_admin_test.dart' show ecransAdmin;
 import '../garde/coupe_mots_balayage_pages_test.dart' show ecransPages;
-import '../garde/coupe_mots_reglages_enfant_test.dart'
-    show ouvrirDemande, reglagesEnfant;
 import '../support/balayage_ecrans.dart';
 import '../support/garde_coupe_mots_rendu.dart';
 import 'outil_capture.dart';
@@ -125,28 +123,6 @@ void main() {
           }
           await tester.pump();
         }
-        expect(defautsDeTexte(tester), isEmpty);
-        await capturer(tester, nom);
-      });
-    }
-
-    // (6) Reglages de l'enfant, Interface guidee 320 texte x2, feuille
-    // « demander un changement » ouverte : « Pourquoi ce changement ? »
-    // entier, le « ? » avec son mot.
-    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
-      final String nom = 'reglages_enfant_feuille_320x2_${langue.name}_guidee';
-      testWidgets(nom, (WidgetTester tester) async {
-        await monterEcranBalayage(tester, reglagesEnfant(), (
-          gabarit: (nom: nom, taille: const Size(320, 568), echelle: 2),
-          langue: langue,
-          interface: InterfaceMode.enfant,
-        ));
-        await ouvrirDemande(tester, t.tuteur.reglages.demandeDuree);
-        // Le titre du motif, amene dans la vue de la feuille.
-        await tester.ensureVisible(
-          find.text(t.tuteur.reglages.demandeMotif).last,
-        );
-        await stabiliser(tester);
         expect(defautsDeTexte(tester), isEmpty);
         await capturer(tester, nom);
       });

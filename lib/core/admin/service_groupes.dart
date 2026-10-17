@@ -265,6 +265,11 @@ class ServiceGroupesSupabase implements ServiceGroupes {
       'p_weekday': creneau.jour,
       'p_hour_local': creneau.heure,
       'p_seuil_max': seuilMax,
+      // L3-06 : signature gardee (8 arguments). Fuseau et couleur ne sont pas
+      // saisis dans cet ecran : null, le serveur retient Europe/Paris et
+      // aucune couleur.
+      'p_timezone_iana': null,
+      'p_couleur_jeton': null,
     },
   );
 
@@ -282,6 +287,10 @@ class ServiceGroupesSupabase implements ServiceGroupes {
       'p_seuil_max': seuilMax,
       'p_weekday': creneau.jour,
       'p_hour_local': creneau.heure,
+      // L3-06 : signature gardee (7 arguments). null laisse fuseau et couleur
+      // inchanges cote serveur.
+      'p_timezone_iana': null,
+      'p_couleur_jeton': null,
     },
   );
 

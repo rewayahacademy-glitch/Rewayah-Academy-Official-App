@@ -1129,9 +1129,6 @@ void main() {
     // LISTE BLANCHE, cle par cle, chacune justifiee. Ce ne sont pas des
     // succes de sauvegarde des notes ou du tableau :
     const Map<String, String> listeBlanche = <String, String>{
-      // « Cours enregistre » : l'enregistrement AUDIO du cours (point de
-      // contrat, arbitrage ouvert, 06), pas les notes.
-      'salle.seance.coursEnregistreCourt': 'enregistrement audio du cours',
       // ar « محفوظة في هذه الحصة فقط » : la conservation limitee a la
       // seance, dite honnetement (fr « conservees ... uniquement »).
       'salle.seance.rangement.notesConservees': 'conservation dans la seance',
@@ -1151,8 +1148,6 @@ void main() {
       'ficheEleve.informations.succes': 'photo de la fiche eleve enregistree',
       'parcours.finTitre': 'preference du parcours enregistree',
       'consentement.compte.merci': 'consentement du compte enregistre',
-      // Futur : la sortie sera inscrite au journal.
-      'tc.classe.commandes.quitterConsequence': 'sortie journalisee',
     };
 
     final Map<String, Map<String, String>> valeurs =
@@ -1230,8 +1225,6 @@ void main() {
         'ERR-03 فشل الحفظ',
         'حفظ',
         'للحفظ',
-        // Liste blanche : l'enregistrement audio du cours.
-        t.salle.seance.coursEnregistreCourt,
       ]) {
         expect(annonceUnSucces(passe, motifs: salle), isFalse, reason: passe);
       }

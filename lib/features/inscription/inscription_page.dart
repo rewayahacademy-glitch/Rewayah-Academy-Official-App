@@ -8,6 +8,7 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/auth/service_auth.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -108,7 +109,13 @@ class CoquilleEtape extends ConsumerWidget {
     this.enCours = false,
     this.souscription,
     this.complement,
+    this.choix = false,
   });
+
+  /// Vrai quand l'etape est un choix entre des cartes (usage, genre) : la
+  /// colonne large de [PageEtape.colonneLarge], ou les cartes passent en
+  /// bento sur grand ecran.
+  final bool choix;
 
   /// La route de l'etape (sert au rang).
   final String route;
@@ -141,7 +148,7 @@ class CoquilleEtape extends ConsumerWidget {
   /// Une ligne sous le CTA (erreur, precision).
   final Widget? souscription;
 
-  /// Un lien discret sous le CTA (par exemple « Je suis enseignant »).
+  /// Un lien discret sous le CTA (par exemple « J'ai un code d'invitation »).
   final Widget? complement;
 
   @override
@@ -155,8 +162,11 @@ class CoquilleEtape extends ConsumerWidget {
       numero: rangEtape(route),
       total: etapesInscription.length,
       onRetour: onRetour,
+      colonneLarge: choix,
       action: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: AppGabarit.de(context) == Gabarit.mobile
+            ? CrossAxisAlignment.stretch
+            : CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (souscription != null) ...<Widget>[souscription!, Ecart.vMd],

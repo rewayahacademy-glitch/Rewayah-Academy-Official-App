@@ -464,8 +464,8 @@ class _PleinCadre extends StatelessWidget {
     // Bord a bord (revue P2-08, majeur 1) : la camera prend tout l'ecran,
     // barre d'etat comprise ; seules les barres posees dessus respectent la
     // zone sure. Plus de carte arrondie ni de gouttiere autour du viseur.
-    return Scaffold(
-      body: Stack(
+    return Material(
+      child: Stack(
         key: cadreKey,
         fit: StackFit.expand,
         children: <Widget>[

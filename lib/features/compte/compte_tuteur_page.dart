@@ -14,6 +14,7 @@ import '../../core/mouvement/apparition_douce.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -28,6 +29,7 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
+import 'ligne_matricule.dart';
 
 /// « Mon compte » du tuteur, quatrieme destination de sa coquille
 /// (`/tuteur/compte`, mandat Tuteur V1 sections 4 et 5, maquettes V3).
@@ -93,8 +95,13 @@ class _Hub extends ConsumerWidget {
       valeur: identite,
       squelette: const Skeleton(hauteur: AppSpacing.respiration * 2),
       onReessayer: () => ref.invalidate(identiteTitulaireProvider),
-      construire: (IdentiteTitulaire valeur) =>
-          CarteIdentiteCompte(identite: valeur, large: large),
+      construire: (IdentiteTitulaire valeur) => CarteIdentiteCompte(
+        identite: valeur,
+        large: large,
+        profileId: ref.watch(
+          sessionProvider.select((SessionState e) => e.profileId),
+        ),
+      ),
     );
 
     final Widget acces = CarteRubriques(
@@ -295,8 +302,12 @@ class CarteIdentiteCompte extends StatelessWidget {
     this.role,
     this.photo,
     this.pastilleEtatNormal = true,
+    this.profileId,
     super.key,
   });
+
+  /// Le profil dont le matricule se lit sous le nom ; `null` : aucune ligne.
+  final String? profileId;
 
   /// Vrai (defaut, Compte du tuteur) : la pastille dit aussi l'etat normal
   /// (« Compte valide »). Faux (Mon espace de l'eleve adulte, E12) : la
@@ -351,6 +362,8 @@ class CarteIdentiteCompte extends StatelessWidget {
                 ),
               ),
             ),
+            // IMM-FRONT-1 : le matricule sous le nom (le Compte le passe).
+            if (profileId case final String id) LigneMatricule(profileId: id),
             if (statut != null) ...<Widget>[
               Ecart.vSm,
               Align(

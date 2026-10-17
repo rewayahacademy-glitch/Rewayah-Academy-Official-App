@@ -22,6 +22,7 @@ import '../../router/support_routeur.dart';
 import '../../support/aucun_mot_coupe.dart' as mc;
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
+import '../../support/rangee_plus.dart';
 
 /// Les libelles du rail replie de la coque admin a 768 et 1024 : poses hors du
 /// perimetre de cet ecran (la coque est a RECH-D5), tronques par conception
@@ -141,13 +142,14 @@ void main() {
       expect(find.widgetWithText(FilterPill, 'Élèves'), findsOneWidget);
       await _chercher(tester, 'fatiha');
       expect(find.widgetWithText(SectionHeader, 'Supports'), findsOneWidget);
-      await tester.tap(find.widgetWithText(FilterPill, 'Classes'));
+      // L4-07 : trois puces au plus dans la rangee, les autres sous « Plus ».
+      await toucherFiltre(tester, find.widgetWithText(FilterPill, 'Classes'));
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(milliseconds: 100));
       expect(find.widgetWithText(SectionHeader, 'Supports'), findsNothing);
       expect(find.byType(SettingRow), findsNWidgets(20));
       // « Tout » rend la fenetre commune.
-      await tester.tap(find.widgetWithText(FilterPill, 'Tout'));
+      await toucherFiltre(tester, find.widgetWithText(FilterPill, 'Tout'));
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(milliseconds: 100));
       expect(find.widgetWithText(SectionHeader, 'Supports'), findsOneWidget);
@@ -158,8 +160,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, role: AppRole.teacher);
-      await tester.tap(find.widgetWithText(FilterPill, 'Supports'));
-      await tester.pump();
+      await toucherFiltre(tester, find.widgetWithText(FilterPill, 'Supports'));
       await _chercher(tester, 'fatiha');
       expect(find.widgetWithText(SectionHeader, 'Classes'), findsNothing);
       expect(find.byType(SettingRow), findsNWidgets(20));
@@ -169,7 +170,19 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester);
-      expect(find.byType(FilterPill), findsNWidgets(3));
+      // Les trois puces de la famille, sans « Plus » (la variante masquee de
+      // la puce « Plus » n'est pas une puce de domaine).
+      expect(
+        find.byWidgetPredicate(
+          (Widget w) =>
+              w is FilterPill &&
+              !(w.key is ValueKey<String> &&
+                  (w.key! as ValueKey<String>).value.startsWith(
+                    'rangee-filtres-plus-',
+                  )),
+        ),
+        findsNWidgets(3),
+      );
       expect(find.widgetWithText(FilterPill, 'Élèves'), findsNothing);
     });
   });

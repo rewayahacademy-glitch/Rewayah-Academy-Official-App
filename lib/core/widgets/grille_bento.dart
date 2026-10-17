@@ -261,8 +261,21 @@ class GrilleBento extends StatelessWidget {
   const GrilleBento({
     required this.tuiles,
     this.hauteurContenu = false,
+    this.hauteurMinimale = false,
+    this.hauteurDeLigne,
     super.key,
   });
+
+  /// Vrai (choix en bento, lot E2) : comme [hauteurContenu], chaque tuile
+  /// prend la hauteur de son contenu, mais jamais moins que ses lignes
+  /// (`lignes x ligne + ecarts`), et les tuiles d'une meme bande prennent la
+  /// meme hauteur. La forme dessinee (carre, large, haute) reste donc lisible
+  /// et le contenu ne deborde jamais. Les tuiles doivent savoir donner leur
+  /// hauteur intrinseque (aucun `LayoutBuilder` dans le contenu).
+  final bool hauteurMinimale;
+
+  /// La hauteur d'une ligne a texte 100 %, a la place de [hauteurLigne].
+  final double? hauteurDeLigne;
 
   /// Les tuiles, dans l'ordre d'importance.
   final List<TuileBento> tuiles;
@@ -334,7 +347,8 @@ class GrilleBento extends StatelessWidget {
         ],
       );
     }
-    final double hauteur = hauteurLignePour(echelle);
+    final double hauteur =
+        (hauteurDeLigne ?? hauteurLigne) * math.max(1, echelle);
     final double cellule = (largeur - ecart * (colonnes - 1)) / colonnes;
     // Les etendues se replient sur le nombre de colonnes retenu : celle de
     // quatre colonnes ne vaut qu'a quatre, et `placerBento` ramene une tuile
@@ -342,11 +356,12 @@ class GrilleBento extends StatelessWidget {
     final List<PlacementBento> places = placerBento(<EtendueBento>[
       for (final TuileBento t in tuiles) t.pour(colonnes),
     ], colonnes);
-    if (hauteurContenu) {
+    if (hauteurContenu || hauteurMinimale) {
       return _bloc(
         <int>[for (int i = 0; i < tuiles.length; i++) i],
         places,
         cellule,
+        hauteur,
       );
     }
     int lignes = 0;
@@ -379,8 +394,22 @@ class GrilleBento extends StatelessWidget {
   /// lecture, puis fin) ; chaque part a la largeur exacte de ses colonnes.
   /// Une disposition en moulinet, qui n'admet aucune coupe, se lit en une
   /// colonne dans l'ordre declare : rien n'est perdu.
-  Widget _bloc(List<int> ids, List<PlacementBento> places, double cellule) {
-    if (ids.length == 1) return tuiles[ids.single].child;
+  Widget _bloc(
+    List<int> ids,
+    List<PlacementBento> places,
+    double cellule,
+    double ligne,
+  ) {
+    if (ids.length == 1) {
+      if (!hauteurMinimale) return tuiles[ids.single].child;
+      final int lignes = places[ids.single].lignes;
+      return ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: lignes * ligne + (lignes - 1) * ecart,
+        ),
+        child: tuiles[ids.single].child,
+      );
+    }
     int haut = 1 << 30, bas = 0, debut = 1 << 30, fin = 0;
     for (final int i in ids) {
       final PlacementBento p = places[i];
@@ -404,9 +433,9 @@ class GrilleBento extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            _bloc(dessus, places, cellule),
+            _bloc(dessus, places, cellule, ligne),
             const SizedBox(height: ecart),
-            _bloc(dessous, places, cellule),
+            _bloc(dessous, places, cellule, ligne),
           ],
         );
       }
@@ -421,20 +450,24 @@ class GrilleBento extends StatelessWidget {
           if (places[i].colonne >= x) i,
       ];
       if (avant.length + apres.length == ids.length) {
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        final Widget rangee = Row(
+          // [hauteurMinimale] : les deux parts prennent la meme hauteur.
+          crossAxisAlignment: hauteurMinimale
+              ? CrossAxisAlignment.stretch
+              : CrossAxisAlignment.start,
           children: <Widget>[
             SizedBox(
               width: largeur(x - debut),
-              child: _bloc(avant, places, cellule),
+              child: _bloc(avant, places, cellule, ligne),
             ),
             const SizedBox(width: ecart),
             SizedBox(
               width: largeur(fin - x),
-              child: _bloc(apres, places, cellule),
+              child: _bloc(apres, places, cellule, ligne),
             ),
           ],
         );
+        return hauteurMinimale ? IntrinsicHeight(child: rangee) : rangee;
       }
     }
     return Column(
