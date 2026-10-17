@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
+import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
@@ -58,7 +59,7 @@ class ActionPrincipale extends StatelessWidget {
     super.key,
     this.niveau = NiveauAction.principale,
     this.enCours = false,
-    this.pleineLargeur = true,
+    this.pleineLargeur,
     this.prefixe,
     this.fleche = false,
     this.pilule = false,
@@ -124,8 +125,12 @@ class ActionPrincipale extends StatelessWidget {
   /// Remplace le libelle par un indicateur d'activite, et bloque la pression.
   final bool enCours;
 
-  /// Faux pour que le bouton ne prenne que la largeur de son libelle.
-  final bool pleineLargeur;
+  /// Vrai pour que le bouton prenne toute la largeur offerte, faux pour qu'il
+  /// ne prenne que celle de son libelle. **Nul par defaut** (L4-07) : pleine
+  /// largeur sur telephone seulement, ou le pouce vise une bande ; sur
+  /// tablette et bureau, la largeur de son contenu et de ses marges, au lieu
+  /// d'un bandeau de 1000 points pour un verbe.
+  final bool? pleineLargeur;
 
   /// Un element pose avant le libelle, dans le meme alignement.
   ///
@@ -210,6 +215,8 @@ class ActionPrincipale extends StatelessWidget {
     required bool actif,
     bool reduit = false,
   }) {
+    final bool pleine =
+        pleineLargeur ?? AppGabarit.de(context) == Gabarit.mobile;
     final _Peinture peinture = _peinturePour(
       palette,
       actif: actif,
@@ -224,7 +231,7 @@ class ActionPrincipale extends StatelessWidget {
     // bureau. `Center(widthFactor: 1)` lui rend la largeur de son contenu, et
     // `heightFactor: 1` le centre dans la hauteur minimale sans l'etirer.
     return SizedBox(
-      width: pleineLargeur ? double.infinity : null,
+      width: pleine ? double.infinity : null,
       child: ConstrainedBox(
         constraints: BoxConstraints(
           minHeight: reduit
@@ -252,7 +259,7 @@ class ActionPrincipale extends StatelessWidget {
                     vertical: AppSpacing.md,
                   ),
             child: Center(
-              widthFactor: pleineLargeur ? null : 1,
+              widthFactor: pleine ? null : 1,
               heightFactor: 1,
               child: Semantics(
                 liveRegion: enCours,

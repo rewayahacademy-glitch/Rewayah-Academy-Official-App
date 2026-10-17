@@ -99,6 +99,12 @@ ScrollableState? _defilementDe(WidgetTester tester, Finder puce) {
   return trouve;
 }
 
+/// Les puces posees dans la rangee : celles qu'on peut toucher. Depuis
+/// L4-07, la rangee en montre trois au plus, puis « Plus » ; les autres
+/// restent dans l'arbre, ni peintes ni touchables, et se lisent dans la
+/// feuille de « Plus ».
+final Finder pucesPosees1 = pucesFiltres1.hitTestable();
+
 /// La mesure commune a tous les ecrans.
 Future<void> _verifierRangeeUnique(
   WidgetTester tester,
@@ -106,13 +112,21 @@ Future<void> _verifierRangeeUnique(
   int auMoins = 2,
 }) async {
   expect(tester.takeException(), isNull, reason: 'debordement au rendu');
-  final int n = pucesFiltres1.evaluate().length;
-  expect(n, greaterThanOrEqualTo(auMoins), reason: 'puces de filtre');
+  // Les puces du jeu de donnees, plus les variantes de « Plus ».
+  expect(
+    pucesFiltres1.evaluate().length,
+    greaterThanOrEqualTo(auMoins),
+    reason: 'puces de filtre',
+  );
+  final int n = pucesPosees1.evaluate().length;
+  // L4-07 : trois puces au plus et « Plus » ; au moins une, meme a 320 px
+  // texte x2 (« Plus » peut alors se trouver au bout de la rangee qui defile).
+  expect(n, inInclusiveRange(1, 4), reason: 'puces posees');
 
   // 1. Une seule rangee : toutes les puces ont le meme haut et la meme
   //    hauteur (contenu de meme hauteur, K-54).
   final List<Rect> boites = <Rect>[
-    for (int i = 0; i < n; i++) tester.getRect(pucesFiltres1.at(i)),
+    for (int i = 0; i < n; i++) tester.getRect(pucesPosees1.at(i)),
   ];
   for (final Rect b in boites) {
     expect(
@@ -134,7 +148,7 @@ Future<void> _verifierRangeeUnique(
   for (int i = 0; i < n; i++) {
     final Rect bloc = find
         .descendant(
-          of: pucesFiltres1.at(i),
+          of: pucesPosees1.at(i),
           matching: find.byWidgetPredicate(
             (Widget w) => w is Text || w is Icon,
           ),
@@ -147,7 +161,7 @@ Future<void> _verifierRangeeUnique(
       moreOrLessEquals(boites[i].center.dy, epsilon: 1),
       reason: 'contenu non centre en hauteur dans sa puce',
     );
-    if (pucesFiltres1.at(i).evaluate().single.widget is FilterPill) {
+    if (pucesPosees1.at(i).evaluate().single.widget is FilterPill) {
       expect(
         bloc.center.dx,
         moreOrLessEquals(boites[i].center.dx, epsilon: 1),
@@ -159,7 +173,7 @@ Future<void> _verifierRangeeUnique(
   // 3. Toutes dans le MEME defilement horizontal, borne a l'ecran.
   final Set<ScrollableState> defilements = <ScrollableState>{
     for (int i = 0; i < n; i++)
-      if (_defilementDe(tester, pucesFiltres1.at(i))
+      if (_defilementDe(tester, pucesPosees1.at(i))
           case final ScrollableState s)
         s,
   };
@@ -171,7 +185,7 @@ Future<void> _verifierRangeeUnique(
 
   // 3 bis. Le filtre retenu se voit entier des l'ouverture.
   for (int i = 0; i < n; i++) {
-    final Widget w = pucesFiltres1.at(i).evaluate().single.widget;
+    final Widget w = pucesPosees1.at(i).evaluate().single.widget;
     if (w is FilterPill && w.retenue) {
       expect(boites[i].left, greaterThanOrEqualTo(vue.left - 0.5));
       expect(boites[i].right, lessThanOrEqualTo(vue.right + 0.5));
@@ -179,21 +193,21 @@ Future<void> _verifierRangeeUnique(
   }
 
   // 4. Aucun mot coupe ni tronque dans les puces.
-  verifierAucunMotCoupe(tester, pucesFiltres1);
+  verifierAucunMotCoupe(tester, pucesPosees1);
 
   // 5. Le debut de la rangee est au debut du sens de lecture ; la derniere
   //    puce s'atteint en defilant.
   rangee.position.jumpTo(rangee.position.minScrollExtent);
   await tester.pump();
-  final Rect premiere = tester.getRect(pucesFiltres1.first);
+  final Rect premiere = tester.getRect(pucesPosees1.first);
   if (sens == TextDirection.ltr) {
     expect(premiere.left, moreOrLessEquals(vue.left, epsilon: 0.5));
   } else {
     expect(premiere.right, moreOrLessEquals(vue.right, epsilon: 0.5));
   }
-  await tester.ensureVisible(pucesFiltres1.last);
+  await tester.ensureVisible(pucesPosees1.last);
   await tester.pumpAndSettle();
-  final Rect derniere = tester.getRect(pucesFiltres1.last);
+  final Rect derniere = tester.getRect(pucesPosees1.last);
   expect(derniere.left, greaterThanOrEqualTo(vue.left - 0.5));
   expect(derniere.right, lessThanOrEqualTo(vue.right + 0.5));
   expect(tester.takeException(), isNull);

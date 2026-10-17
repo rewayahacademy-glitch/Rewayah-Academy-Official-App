@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/widgets/montant_sensible.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/demo/comptable/contractuels_demo.dart';
 
+import '../../../support/rangee_plus.dart';
 import 'support_contractuels.dart';
 
 final String _masque = MontantSensible.masquePour('USD');
@@ -22,13 +23,10 @@ final String _masque = MontantSensible.masquePour('USD');
 Finder _pilule(String parametre) =>
     find.byKey(ValueKey<String>('onglet-$parametre'));
 
-/// Touche l'onglet [parametre] apres l'avoir amene a l'ecran : la rangee
-/// des zones defile (RangeeFiltres, FILTRES-1, JONCTION-LIGNES-1).
-Future<void> _toucherOnglet(WidgetTester tester, String parametre) async {
-  await tester.ensureVisible(_pilule(parametre));
-  await tester.pumpAndSettle();
-  await tester.tap(_pilule(parametre));
-}
+/// Touche l'onglet [parametre] : dans la rangee des zones, ou sous « Plus »
+/// quand elle n'en montre que trois (RangeeFiltres, L4-07).
+Future<void> _toucherOnglet(WidgetTester tester, String parametre) =>
+    toucherFiltre(tester, _pilule(parametre));
 
 int _compteur(WidgetTester tester, String parametre) =>
     tester.widget<FilterPill>(_pilule(parametre)).compteur!;
@@ -41,7 +39,16 @@ void main() {
       WidgetTester tester,
     ) async {
       await monterContractuels(tester);
-      expect(find.byType(FilterPill), findsNWidgets(4));
+      // Les quatre zones ; « Plus » en porte une (Historique), L4-07.
+      expect(
+        find.byWidgetPredicate(
+          (Widget w) =>
+              w is FilterPill &&
+              w.key is ValueKey<String> &&
+              (w.key! as ValueKey<String>).value.startsWith('onglet-'),
+        ),
+        findsNWidgets(4),
+      );
       // Demo : 5 en cours (025, 026, 027, 028 et 024), 2 a approuver,
       // 2 a payer, 3 dans l'historique.
       expect(_compteur(tester, 'obligations'), 5);

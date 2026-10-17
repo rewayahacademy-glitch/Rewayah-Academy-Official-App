@@ -74,6 +74,16 @@ class EntetePage extends StatelessWidget {
         (mobile ? textes.headlineSmall : textes.headlineMedium) ??
         const TextStyle();
     final bool compact = EnteteCompact.actif(context);
+    // La mise en page compacte (le sous-titre sous la rangee du titre et de
+    // ses actions) sert le texte agrandi et le telephone. Sur une vue basse
+    // seulement (un portable : 1366 x 650), elle posait le sous-titre sous
+    // des actions de 52 : 8 points de plus que titre et sous-titre en
+    // colonne (L4-07, mesure du Foyer). La, seules les tailles descendent.
+    final bool miseEnPageCompacte =
+        compact &&
+        (MediaQuery.textScalerOf(context).scale(1) >
+                EnteteCompact.echelleSeuil ||
+            mobile);
     final TextScaler echelleTitre = compact
         ? EnteteCompact.echelleTitre(context, styleTitre)
         : MediaQuery.textScalerOf(context);
@@ -117,7 +127,7 @@ class EntetePage extends StatelessWidget {
         ? null
         : DisqueRetour(onPress: onRetour!);
 
-    if (!compact) {
+    if (!miseEnPageCompacte) {
       // CPT-RC (revue CPT-R M3, ligne ui/comptable-v1), repris par
       // JONCTION-LIGNES-1 : quand retour et actions laissent au titre moins
       // de [partMinTitre] de la largeur (six actions de la coquille admin a
@@ -278,7 +288,7 @@ abstract final class EnteteCompact {
   static const double echelleSeuil = 1.3;
 
   /// La hauteur de vue sous laquelle l'en-tete est compact.
-  static const double hauteurSeuil = 600;
+  static const double hauteurSeuil = 800;
 
   /// L'ecart minimal entre deux niveaux de l'echelle HIER-1 (titre de carte
   /// 18, titre de carte secondaire 16).

@@ -24,6 +24,7 @@ import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
 
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
+import '../../support/rangee_plus.dart';
 
 GroupeAdmin _g(
   String id,
@@ -151,21 +152,19 @@ void main() {
     expect(find.text(t.admin.groupes.filtreCloturees), findsOneWidget);
     verifierUnSeulBoutonPlein(tester);
 
-    await tester.tap(find.text(t.admin.groupes.filtreCloturees));
-    await tester.pumpAndSettle();
+    // L4-07 : « Clôturées » est la quatrieme puce, rangee sous « Plus ».
+    await toucherFiltre(tester, find.text(t.admin.groupes.filtreCloturees));
     expect(find.text('Classe As-Sabr'), findsOneWidget);
     expect(find.text('Classe An-Nour'), findsNothing);
   });
 
   testWidgets('filtre Public : Adultes', (WidgetTester tester) async {
     await _monter(tester, const Size(1440, 900));
-    // Le menu est dans la rangee de filtres qui defile (FILTRES-1).
-    await tester.ensureVisible(find.byType(MenuFiltre<TypePublicGroupe>));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byType(MenuFiltre<TypePublicGroupe>));
-    await tester.pumpAndSettle();
+    // Le menu est range sous « Plus » (L4-07).
+    await ouvrirMenuFiltre(tester, find.byType(MenuFiltre<TypePublicGroupe>));
     await tester.tap(find.text(t.admin.groupes.typeAdulte).last);
     await tester.pumpAndSettle();
+    await fermerPlus(tester);
     expect(find.text('Classe Al-Furqan'), findsOneWidget);
     expect(find.text('Classe An-Nour'), findsNothing);
   });

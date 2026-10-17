@@ -26,6 +26,7 @@ import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 import '../../fixtures/tuteur/faux_observation.dart';
 import '../../fixtures/tuteur/foyers.dart';
 import '../../router/support_routeur.dart';
+import '../../support/rangee_plus.dart';
 import 'support_historique.dart';
 
 Finder _ligne(String seanceId, {String eleve = 'foyer-a-eleve-1'}) =>
@@ -51,9 +52,11 @@ Finder _profil(String prenom) => find.descendant(
 );
 
 Future<void> _filtrer(WidgetTester tester, String axe, String entree) async {
-  await toucher(tester, _menu(axe));
+  // L4-07 : le menu est dans la rangee, ou rangé sous « Plus ».
+  await ouvrirMenuFiltre(tester, _menu(axe));
   await tester.tap(find.text(entree).last);
   await stabiliser(tester);
+  await fermerPlus(tester);
 }
 
 int _indexActif(WidgetTester tester) =>

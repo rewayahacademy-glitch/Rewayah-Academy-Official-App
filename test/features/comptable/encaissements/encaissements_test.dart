@@ -33,6 +33,7 @@ import 'package:rewayah_academy/features/comptable/encaissements/donnees_encaiss
 import 'package:rewayah_academy/features/comptable/encaissements/encaissements_page.dart';
 import 'package:rewayah_academy/features/demo/comptable/encaissements_demo.dart';
 
+import '../../../support/rangee_plus.dart';
 import 'support_encaissements.dart';
 
 List<Override> _demo() => <Override>[
@@ -149,12 +150,13 @@ void main() {
       expect(_compteur(tester, FiltreListeEncaissements.contestes), 1);
       expect(_compteur(tester, FiltreListeEncaissements.aRapprocher), 1);
 
-      await tester.tap(
+      // L4-07 : « Echoues » est rangee sous « Plus ».
+      await toucherFiltre(
+        tester,
         find.byKey(
           EncaissementsPage.filtreKey(FiltreListeEncaissements.echoues),
         ),
       );
-      await tester.pumpAndSettle();
       expect(find.text('Famille Camara'), findsOneWidget);
       expect(find.text('Famille Bah'), findsNothing);
     });

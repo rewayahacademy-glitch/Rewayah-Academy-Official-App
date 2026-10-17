@@ -31,6 +31,7 @@ import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
+import '../../support/rangee_plus.dart';
 
 List<ClasseListee> _tout() => <ClasseListee>[...familleDemo(), ...volumeDemo()];
 
@@ -272,8 +273,9 @@ void main() {
       }
 
       // « En attente d'enseignant » : les classes sans enseignant.
-      await tester.tap(_cle('classes-filtre-attente'));
-      await tester.pumpAndSettle();
+      // L4-07 : selon la place, « En attente » est dans la rangee ou sous
+      // « Plus ».
+      await toucherFiltre(tester, _cle('classes-filtre-attente'));
       expect(
         find.text(
           t.admin.groupes.liste.resume(debut: '1', fin: '3', total: '3'),

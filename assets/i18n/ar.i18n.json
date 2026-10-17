@@ -227,6 +227,11 @@
       "code": "⁨{libelle}⁩ · ⁨{code}⁩",
       "enseignant": "⁨{libelle}⁩ · مع ⁨{enseignant}⁩"
     },
+    "filtres": {
+      "plus": "المزيد",
+      "plusAvec": "المزيد، ⁨{n}⁩",
+      "titreFeuille": "مرشحات أخرى"
+    },
     "recherche": {
       "effacer": "مسح البحث",
       "fermer": "إغلاق البحث"

@@ -182,6 +182,14 @@ List<String> rangeesSansFondu(WidgetTester tester) {
     // Les puces : chaque enfant de la rangee.
     final List<Rect> puces = <Rect>[];
     void chercher(RenderObject o) {
+      // L4-07 : la rangee pose les puces qui tiennent et « Plus » ; les
+      // autres, rangees sous « Plus », ne sont ni peintes ni a l'ecran.
+      if (o is RenduRangeeFiltres) {
+        for (final RenderBox c in o.montres) {
+          if (c.hasSize) puces.add(_global(c));
+        }
+        return;
+      }
       if (o is RenderFlex && o.direction == Axis.horizontal) {
         o.visitChildren((RenderObject c) {
           if (c is RenderBox && c.hasSize) puces.add(_global(c));

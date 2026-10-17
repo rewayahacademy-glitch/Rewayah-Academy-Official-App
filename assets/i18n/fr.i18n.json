@@ -181,6 +181,11 @@
     "sections": {
       "page": "Sections de la page"
     },
+    "filtres": {
+      "plus": "Plus",
+      "plusAvec": "Plus, {n}",
+      "titreFeuille": "Autres filtres"
+    },
     "recherche": {
       "effacer": "Effacer la recherche",
       "fermer": "Fermer la recherche"

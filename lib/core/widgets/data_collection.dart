@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
@@ -143,20 +145,29 @@ class DataCollection<T> extends StatelessWidget {
   final bool defileSeule;
 
   /// La hauteur sous laquelle une collection ne se lit plus : un titre et
-  /// deux lignes de texte, a l'echelle du texte de [context]. C'est le
-  /// `minimumEtire` d'une `ColonneCorps` qui la porte (FILTRES-1b) : a 320 px
-  /// texte x2, l'intro et la rangee de filtres ne laissent plus de place a
-  /// la liste, et la page defile au lieu de deborder.
+  /// quatre lignes de liste, a l'echelle du texte de [context] (L4-07). Une
+  /// ligne de liste vaut au moins une cible tactile et ses deux marges
+  /// (72) ; deux lignes de texte plus leurs marges si le texte, agrandi, les
+  /// depasse. C'est le `minimumEtire` d'une `ColonneCorps` qui la porte
+  /// (FILTRES-1b) : quand l'intro, les filtres et la tete ne laissent plus
+  /// quatre lignes a la liste, la page defile au lieu de la reduire a une
+  /// ligne et demie (1366 x 650 : 120 px de liste sous 506 px de tete).
   static double minimumLisible(BuildContext context) {
     final TextScaler echelle = MediaQuery.textScalerOf(context);
     final TextTheme textes = Theme.of(context).textTheme;
     double ligne(TextStyle? style) =>
         echelle.scale(style?.fontSize ?? 14) * (style?.height ?? 1.2);
+    final double uneLigneDeListe = math.max(
+      AppTouchTarget.standard + AppSpacing.md * 2,
+      ligne(textes.bodySmall) * 2 + AppSpacing.md * 2,
+    );
     return ligne(textes.titleMedium) +
         AppSpacing.sm +
-        ligne(textes.bodyLarge) * 2 +
-        AppSpacing.lg * 2;
+        uneLigneDeListe * _lignesLisibles;
   }
+
+  /// Le nombre de lignes de liste visibles sous lequel la page defile.
+  static const int _lignesLisibles = 4;
 
   /// Les colonnes, dans l'ordre d'affichage.
   final List<ColonneDonnees<T>> colonnes;

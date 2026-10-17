@@ -35,6 +35,7 @@ import 'package:rewayah_academy/features/demo/regroupements_demo.dart';
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/rangee_plus.dart';
 
 class _SansEnseignants implements PortEnseignantsClasse {
   @override
@@ -317,8 +318,8 @@ void main() {
       await _laisser(tester);
 
       final Finder prets = _cle('regroupements-filtre-prets');
-      await tester.ensureVisible(prets);
-      await tester.tap(prets);
+      // L4-07 : selon la place, la puce est dans la rangee ou sous « Plus ».
+      await toucherFiltre(tester, prets);
       await _laisser(tester);
       final int nombrePrets = volume
           .where((RegroupementDemandes g) => g.pret)

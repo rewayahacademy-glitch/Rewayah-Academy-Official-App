@@ -32,6 +32,7 @@ import 'package:rewayah_academy/features/demo/tirage_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/rangee_plus.dart';
 
 Future<void> _monter(
   WidgetTester tester,
@@ -177,7 +178,8 @@ void main() {
     testWidgets('une mission non controlee : son rapport est parti a '
         'l administration (BR-CT-15)', (WidgetTester tester) async {
       await _monter(tester, TirageDemo());
-      await _toucher(tester, _cle('tirage-filtre-nonControlee'));
+      await toucherFiltre(tester, _cle('tirage-filtre-nonControlee'));
+      await _laisser(tester);
       final int attendues = historique
           .where((TirageAudite t) => t.statut == StatutTirage.nonControlee)
           .length;
