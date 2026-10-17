@@ -8,6 +8,7 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/auth/service_auth.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -156,7 +157,9 @@ class CoquilleEtape extends ConsumerWidget {
       total: etapesInscription.length,
       onRetour: onRetour,
       action: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: AppGabarit.de(context) == Gabarit.mobile
+            ? CrossAxisAlignment.stretch
+            : CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (souscription != null) ...<Widget>[souscription!, Ecart.vMd],
