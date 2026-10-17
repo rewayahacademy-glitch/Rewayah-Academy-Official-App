@@ -154,6 +154,7 @@ List<Override> _surcharges({
   required FauxServiceVideo video,
   required FauxServicePreVol preVol,
   bool guidee = false,
+  bool horsLigne = false,
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(
     FausseSourceSession(_session(role, guidee: guidee)),
@@ -166,7 +167,7 @@ List<Override> _surcharges({
     FauxAnnonceObservationEnfant(),
   ),
   portAnnonceObservationProvider.overrideWithValue(FauxAnnonceObservation()),
-  horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
+  horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(horsLigne)),
 ];
 
 Future<void> _monterSalle(
@@ -715,5 +716,52 @@ void main() {
         'PNG ${await capturer(tester, 'cl46_preparation_eleve_guidee_pret_390_light')}',
       );
     });
+  });
+
+  // L3-07-reprise (E-1) : la preparation porte son propre message hors ligne ;
+  // le bandeau generique de PageShell (« Pas de reseau... ») ne s'y ajoute pas.
+  for (final bool guidee in <bool>[false, true]) {
+    testWidgets(
+      'hors ligne, salle eleve ${guidee ? 'guidee' : 'standard'} : un seul message',
+      (WidgetTester tester) async {
+        await _monterSalle(
+          tester,
+          surcharges: _surcharges(
+            role: AppRole.student,
+            video: FauxServiceVideo(),
+            preVol: FauxServicePreVol(),
+            guidee: guidee,
+            horsLigne: true,
+          ),
+        );
+        expect(find.byType(PreparationEleve), findsOneWidget);
+        expect(find.text(t.reseau.horsLigne), findsNothing);
+        expect(
+          find.text(
+            guidee
+                ? t.salle.preparation.eleve.guidee.horsLigne
+                : t.salle.secours.horsLigne,
+          ),
+          findsOneWidget,
+        );
+      },
+    );
+  }
+
+  testWidgets('hors ligne, salle enseignant : un seul message', (
+    WidgetTester tester,
+  ) async {
+    await _monterSalle(
+      tester,
+      surcharges: _surcharges(
+        role: AppRole.teacher,
+        video: FauxServiceVideo(),
+        preVol: FauxServicePreVol(),
+        horsLigne: true,
+      ),
+    );
+    expect(find.byType(PreparationEnseignant), findsOneWidget);
+    expect(find.text(t.reseau.horsLigne), findsNothing);
+    expect(find.text(t.salle.secours.horsLigne), findsOneWidget);
   });
 }
