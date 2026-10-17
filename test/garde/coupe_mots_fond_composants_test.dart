@@ -274,8 +274,11 @@ void main() {
       testWidgets('${sens.name} 320 texte x2 : la puce precedente a moitie '
           'visible est sous un fondu', (WidgetTester tester) async {
         fixerVueCapture(tester, const Size(320, 600), 1);
+        // L4-07 : la rangee ne montre qu'une puce et « Plus » quand un mot
+        // long les empeche de tenir ; la puce retenue est rangee sous « Plus »,
+        // qui la dit (« Plus, 1 ») et se voit au bout de la rangee qui defile.
         const List<String> libelles = <String>[
-          'Tous',
+          'Anticonstitutionnellement',
           'En attente',
           'Actif',
           'Provisoire',

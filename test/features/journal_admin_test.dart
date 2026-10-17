@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_journal/journal_page.dart';
 
 import '../support/harnais.dart';
+import '../support/rangee_plus.dart';
 import '../support/selecteur_section.dart';
 
 /// Une fenetre haute, et large ou etroite selon ce qu'on mesure.
@@ -218,10 +219,11 @@ void main() {
       // 18 septembre 2026 : le vocabulaire vit en base et grandit a chaque
       // migration, donc une vingtaine de pastilles repoussaient le journal
       // sous le pli. On ouvre le menu, puis on choisit son entree.
-      await tester.tap(find.byType(MenuFiltre<String>).first);
-      await tester.pumpAndSettle();
+      // L4-07 : le menu est la quatrieme puce, rangee sous « Plus ».
+      await ouvrirMenuFiltre(tester, find.byType(MenuFiltre<String>));
       await tester.tap(find.text(t.admin.journal.evtProfilCree).last);
       await tester.pumpAndSettle();
+      await fermerPlus(tester);
 
       // Une seule lecture, sans curseur : garder les entrees deja lues
       // melangerait deux filtres dans une meme liste.

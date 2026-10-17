@@ -21,6 +21,7 @@ import 'package:rewayah_academy/features/suivi_foyer/composants_historique.dart'
 
 import '../../fixtures/tuteur/faux_observation.dart';
 import '../../router/support_routeur.dart';
+import '../../support/rangee_plus.dart';
 import '../../support/selecteur_section.dart';
 import 'support_admin_observations.dart';
 
@@ -231,7 +232,8 @@ void main() {
       );
       expect(pastille, findsOneWidget);
 
-      await tester.tap(pastille);
+      // L4-07 : la personne retenue est au bout de la rangee, sous « Plus ».
+      await toucherFiltre(tester, pastille);
       await stabiliser(tester);
       expect(port.recherches.last.$1.tuteurId, isNull);
       expect(pastille, findsNothing);

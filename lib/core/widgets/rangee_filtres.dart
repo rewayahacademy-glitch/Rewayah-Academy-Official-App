@@ -1,16 +1,32 @@
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../i18n/strings.g.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
+import 'app_bottom_sheet.dart';
 import 'filter_pill.dart';
 import 'menu_filtre.dart';
 
 /// La rangee de filtres d'un ecran : **une seule rangee** de puces
-/// (`FilterPill`, `MenuFiltre`) qui defile horizontalement quand elle ne tient
-/// pas (FILTRES-1, decide par delegation le 05/10/2026).
+/// (`FilterPill`, `MenuFiltre`) qui montre **trois puces au plus**, puis une
+/// puce « Plus » qui ouvre les autres dans une feuille (L4-07) ; ce qui ne
+/// tient pas defile horizontalement en dernier recours (FILTRES-1, decide par
+/// delegation le 05/10/2026).
+///
+/// **Trois puces, puis « Plus »** (L4-07, ERRATUM-2026-10-16 point 2) : onze
+/// puces sur une rangee en cachaient cinq a 1366 et dix a 390, avec une
+/// barre de defilement de 12 sous les puces. La rangee en montre trois au
+/// plus ; si trois puces ne tiennent pas dans la largeur (texte agrandi,
+/// telephone), elle en montre autant qu'il en tient, une au moins, et range
+/// le reste sous « Plus ». La puce « Plus » dit combien de filtres caches
+/// sont retenus (« Plus, 2 ») : rien n'est cache sans le dire. La feuille
+/// est celle du produit (`AppBottomSheet` : feuille sur telephone, boite
+/// bornee a `AppPage.largeurDialogue` au-dela). Une feuille n'est pas une
+/// seconde rangee : la regle « une rangee, jamais deux » tient.
 ///
 /// Ce que la rangee garantit, et que chaque ecran faisait jusque-la a sa
 /// facon avec un `Wrap` (deux, trois, quatre lignes de puces a 320 px texte
@@ -92,6 +108,42 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
   /// Une cle par puce, pour amener la puce retenue dans la vue.
   final List<GlobalKey> _cles = <GlobalKey>[];
 
+  /// Le nombre de puces posees dans la rangee a la derniere mise en page :
+  /// les autres sont rangees sous « Plus ». Annonce par le rendu
+  /// ([RenduRangeeFiltres]) ; la rangee se reconstruit a l'image suivante pour
+  /// retirer les puces cachees du parcours au clavier.
+  late int _visibles = widget.filtres.length;
+
+  /// Change a chaque nouvelle liste de filtres : la feuille « Plus » ouverte
+  /// se met a jour quand on y choisit une valeur.
+  final ValueNotifier<int> _version = ValueNotifier<int>(0);
+
+  bool _miseAJourPrevue = false;
+
+  /// Le nombre de puces posees a la derniere mise en page, lu tout de suite
+  /// (sans attendre la reconstruction de [_visibles]) pour placer la rangee.
+  late int _posees = widget.filtres.length;
+
+  /// La cle de la puce « Plus » du moment, pour l'amener dans la vue.
+  final GlobalKey _clePlus = GlobalKey(debugLabel: 'RangeeFiltres.plus');
+
+  void _annoncerVisibles(int n) {
+    _posees = n;
+    if (n == _visibles || _miseAJourPrevue) return;
+    _miseAJourPrevue = true;
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      _miseAJourPrevue = false;
+      if (mounted && n != _visibles) {
+        setState(() => _visibles = n);
+        // « Plus » vient d'apparaitre (la rangee ne montre plus toutes ses
+        // puces) : s'il porte le filtre retenu, il se voit.
+        WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+          if (mounted) _placerRetenu(widget.filtres.indexWhere(_retenu));
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -110,6 +162,9 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
     super.didUpdateWidget(ancien);
     // Un filtre qui vient d'etre retenu (une personne choisie par la
     // recherche, ajoutee en fin de rangee) se voit aussitot.
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted) _version.value++;
+    });
     final int i = _nouvellementRetenu(ancien.filtres, widget.filtres);
     if (i >= 0) {
       WidgetsBinding.instance.addPostFrameCallback((Duration _) {
@@ -137,24 +192,33 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
   /// La seule rangee defile : `Scrollable.ensureVisible` ferait aussi
   /// defiler la page, qui sauterait jusqu'aux filtres.
   void _placerRetenu(int i) {
-    if (i < 0 || i >= _cles.length || !_defilement.hasClients) return;
+    if (i < 0 || !_defilement.hasClients) return;
+    final int n = math.min(widget.filtres.length, _cles.length);
+    // Une puce rangee sous « Plus » n'est pas dans la rangee : c'est
+    // « Plus », qui porte le compte, qui se voit alors.
+    final bool sousPlus = i >= _posees;
+    if (sousPlus && _posees >= n) return;
+    final int cible = sousPlus ? n : i;
     final ScrollPosition position = _defilement.position;
-    RenderObject? rendu(int k) => _cles[k].currentContext?.findRenderObject();
-    final RenderObject? cible = rendu(i);
-    if (cible == null) return;
-    final RenderAbstractViewport vue = RenderAbstractViewport.of(cible);
+    RenderObject? rendu(int k) =>
+        (k == n ? _clePlus : _cles[k]).currentContext?.findRenderObject();
+    final RenderObject? puceCible = rendu(cible);
+    if (puceCible == null) return;
+    final RenderAbstractViewport vue = RenderAbstractViewport.of(puceCible);
     double borne(double v) =>
         v.clamp(position.minScrollExtent, position.maxScrollExtent);
     // La puce retenue entiere, sa fin hors du fondu d'apres (sauf au bout).
     final double auMoins = borne(
-      vue.getOffsetToReveal(cible, 1).offset + _largeurFondu,
+      vue.getOffsetToReveal(puceCible, 1).offset + _largeurFondu,
     );
-    final double auPlus = borne(vue.getOffsetToReveal(cible, 0).offset);
+    final double auPlus = borne(vue.getOffsetToReveal(puceCible, 0).offset);
     if (position.pixels >= auMoins && position.pixels <= auPlus) return;
     // La premiere puce dont le debut, place juste apres le fondu d'avant,
     // laisse la puce retenue entiere : la vue s'arrete au debut d'une puce.
     double cibleDefilement = auPlus;
-    for (int k = 0; k <= i; k++) {
+    for (int k = 0; k <= cible; k++) {
+      // Les puces rangees sous « Plus » n'ont pas de place dans la rangee.
+      if (k >= _posees && k < n) continue;
       final RenderObject? puce = rendu(k);
       if (puce == null) continue;
       final double debut = borne(
@@ -166,6 +230,17 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
       }
     }
     position.jumpTo(cibleDefilement);
+  }
+
+  /// Les nombres de filtres retenus que la puce « Plus » peut annoncer, un
+  /// par valeur distincte, selon le nombre de puces montrees : si `k` puces
+  /// sont montrees, « Plus » compte les retenues parmi les autres.
+  static List<int> _comptesPlus(List<bool> retenues) {
+    final Set<int> comptes = <int>{};
+    for (int k = 1; k < retenues.length; k++) {
+      comptes.add(retenues.skip(k).where((bool r) => r).length);
+    }
+    return comptes.toList()..sort();
   }
 
   /// La largeur du fondu de bord ([FonduBordsRangee]).
@@ -185,6 +260,7 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
 
   @override
   void dispose() {
+    _version.dispose();
     _defilement.dispose();
     super.dispose();
   }
@@ -203,6 +279,52 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
         _apres = apres;
       });
     }
+  }
+
+  /// La puce « Plus » qui annonce [compte] filtres retenus parmi ceux qu'elle
+  /// range ; [exclue] quand ce n'est pas la variante du moment (elle reste
+  /// dans l'arbre, masquee, et ne prend pas le focus).
+  Widget _variantePlus(BuildContext context, int compte, bool exclue) {
+    return ExcludeFocus(
+      excluding: exclue,
+      // La variante du moment porte la cle qui sert a l'amener dans la vue.
+      child: KeyedSubtree(
+        key: exclue ? null : _clePlus,
+        child: FilterPill(
+          key: ValueKey<String>('rangee-filtres-plus-$compte'),
+          libelle: compte == 0
+              ? t.commun.filtres.plus
+              : t.commun.filtres.plusAvec(n: compte),
+          retenue: compte > 0,
+          onPress: () => _ouvrirFeuille(context),
+        ),
+      ),
+    );
+  }
+
+  /// Ouvre la feuille des filtres ranges sous « Plus ».
+  Future<void> _ouvrirFeuille(BuildContext context) {
+    final int depuis = _visibles;
+    return AppBottomSheet.ouvrir<void>(
+      context,
+      titre: t.commun.filtres.titreFeuille,
+      constructeur: (BuildContext _) => ListenableBuilder(
+        listenable: _version,
+        builder: (BuildContext _, Widget? _) => LayoutBuilder(
+          builder: (BuildContext _, BoxConstraints contraintes) => Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              for (int i = depuis; i < widget.filtres.length; i++)
+                _PuceBornee(
+                  largeurMax: contraintes.maxWidth,
+                  child: widget.filtres[i],
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   GlobalKey _cle(int i) {
@@ -227,6 +349,14 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints contraintes) {
         final double largeurMax = contraintes.maxWidth;
+        final List<bool> retenues = <bool>[
+          for (final Widget w in widget.filtres) _retenu(w),
+        ];
+        final List<int> comptes = _comptesPlus(retenues);
+        final int visibles = math.min(_visibles, retenues.length);
+        final int compteCache = visibles < retenues.length
+            ? retenues.skip(visibles).where((bool r) => r).length
+            : -1;
         final AppPalette palette = AppPalette.of(context);
         final Color opaque = palette.surfaceRaised.background;
         return NotificationListener<ScrollMetricsNotification>(
@@ -265,19 +395,27 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
                     bottom: _deborde ? AppSpacing.md : 0,
                   ),
                   // La hauteur de la plus haute puce, donnee a toutes.
-                  child: IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      spacing: AppSpacing.sm,
-                      children: <Widget>[
-                        for (int i = 0; i < widget.filtres.length; i++)
-                          _PuceBornee(
-                            key: _cle(i),
-                            largeurMax: largeurMax,
+                  child: _RangeeAdaptative(
+                    nbPuces: widget.filtres.length,
+                    retenues: retenues,
+                    comptes: comptes,
+                    largeurMax: largeurMax,
+                    surVisibles: _annoncerVisibles,
+                    children: <Widget>[
+                      for (int i = 0; i < widget.filtres.length; i++)
+                        _PuceBornee(
+                          key: _cle(i),
+                          largeurMax: largeurMax,
+                          // Une puce rangee sous « Plus » ne prend plus le
+                          // focus du clavier.
+                          child: ExcludeFocus(
+                            excluding: i >= visibles,
                             child: widget.filtres[i],
                           ),
-                      ],
-                    ),
+                        ),
+                      for (final int c in comptes)
+                        _variantePlus(context, c, c != compteCache),
+                    ],
                   ),
                 ),
               ),
@@ -405,6 +543,10 @@ class RenduFonduBordsRangee extends RenderProxyBox {
     // Les puces : les enfants de la premiere rangee horizontale.
     final List<RenderBox> puces = <RenderBox>[];
     void chercher(RenderObject o) {
+      if (o is RenduRangeeFiltres) {
+        puces.addAll(o.montres);
+        return;
+      }
       if (o is RenderFlex && o.direction == Axis.horizontal) {
         o.visitChildren((RenderObject c) {
           if (c is RenderBox) puces.add(c);
@@ -562,5 +704,291 @@ class _RenduPuceBornee extends RenderProxyBox {
     }
     enfant.layout(constraints.enforce(_borne), parentUsesSize: true);
     size = constraints.constrain(enfant.size);
+  }
+}
+
+/// La rangee elle-meme (L4-07) : les puces, puis les variantes de la puce
+/// « Plus » (une par nombre de filtres retenus qu'elle peut annoncer).
+///
+/// Le rendu choisit combien de puces tiennent (au plus
+/// [RenduRangeeFiltres.puces], et au moins une), pose la variante de « Plus » qui
+/// dit le bon compte, et **masque** le reste : ni peint, ni touche, ni lu par
+/// le lecteur d'ecran. La hauteur est celle de la plus
+/// haute puce montree, donnee a toutes (K-54).
+class _RangeeAdaptative extends MultiChildRenderObjectWidget {
+  const _RangeeAdaptative({
+    required this.nbPuces,
+    required this.retenues,
+    required this.comptes,
+    required this.largeurMax,
+    required this.surVisibles,
+    required super.children,
+  });
+
+  /// Le nombre de puces (les enfants suivants sont les variantes de « Plus »).
+  final int nbPuces;
+
+  /// Pour chaque puce, vrai si elle porte un filtre en cours.
+  final List<bool> retenues;
+
+  /// Le compte annonce par chaque variante de « Plus », dans l'ordre des
+  /// enfants qui suivent les puces.
+  final List<int> comptes;
+
+  /// La largeur de la rangee.
+  final double largeurMax;
+
+  /// Appele, a la mise en page, avec le nombre de puces montrees.
+  final ValueChanged<int> surVisibles;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) => RenduRangeeFiltres(
+    nbPuces,
+    retenues,
+    comptes,
+    largeurMax,
+    surVisibles,
+    Directionality.of(context),
+  );
+
+  @override
+  void updateRenderObject(BuildContext context, RenduRangeeFiltres rendu) {
+    rendu
+      ..nbPuces = nbPuces
+      ..retenues = retenues
+      ..comptes = comptes
+      ..largeurMax = largeurMax
+      ..surVisibles = surVisibles
+      ..sens = Directionality.of(context);
+  }
+}
+
+class _DonneesRangee extends ContainerBoxParentData<RenderBox> {
+  /// Vrai quand l'enfant est range sous « Plus » (ou n'est pas la variante
+  /// de « Plus » du moment).
+  bool masque = false;
+}
+
+/// Le rendu de la rangee de puces d'une [RangeeFiltres] (L4-07) : pose les
+/// puces qui tiennent (trois au plus) puis la puce « Plus », et masque le
+/// reste. Public pour que les gardes de rendu (`rangeesSansFondu`) lisent les
+/// puces POSEES, et non celles rangees sous « Plus ».
+class RenduRangeeFiltres extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _DonneesRangee>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _DonneesRangee> {
+  RenduRangeeFiltres(
+    this._nbPuces,
+    this._retenues,
+    this._comptes,
+    this._largeurMax,
+    this.surVisibles,
+    this._sens,
+  );
+
+  /// Le nombre de puces montrees au plus : trois, puis « Plus ».
+  static const int puces = 3;
+
+  ValueChanged<int> surVisibles;
+
+  int _nbPuces;
+  set nbPuces(int v) {
+    if (v == _nbPuces) return;
+    _nbPuces = v;
+    markNeedsLayout();
+  }
+
+  List<bool> _retenues;
+  set retenues(List<bool> v) {
+    if (listEquals(v, _retenues)) return;
+    _retenues = v;
+    markNeedsLayout();
+  }
+
+  List<int> _comptes;
+  set comptes(List<int> v) {
+    if (listEquals(v, _comptes)) return;
+    _comptes = v;
+    markNeedsLayout();
+  }
+
+  double _largeurMax;
+  set largeurMax(double v) {
+    if (v == _largeurMax) return;
+    _largeurMax = v;
+    markNeedsLayout();
+  }
+
+  TextDirection _sens;
+  set sens(TextDirection v) {
+    if (v == _sens) return;
+    _sens = v;
+    markNeedsLayout();
+  }
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _DonneesRangee) {
+      child.parentData = _DonneesRangee();
+    }
+  }
+
+  /// Les enfants montres (puces posees et « Plus »), dans l'ordre de lecture.
+  Iterable<RenderBox> get montres sync* {
+    RenderBox? enfant = firstChild;
+    while (enfant != null) {
+      final _DonneesRangee donnees = enfant.parentData! as _DonneesRangee;
+      if (!donnees.masque) yield enfant;
+      enfant = donnees.nextSibling;
+    }
+  }
+
+  /// Le choix : combien de puces, et quelle variante de « Plus » (-1 sans
+  /// « Plus »), d'apres la taille des enfants donnee par [taille].
+  ({int k, int variante}) _choisir(Size Function(RenderBox) taille) {
+    final List<RenderBox> enfants = getChildrenAsList();
+    final int n = math.min(_nbPuces, enfants.length);
+    if (n == 0) return (k: 0, variante: -1);
+    final List<double> largeurs = <double>[
+      for (int i = 0; i < n; i++) taille(enfants[i]).width,
+    ];
+    double largeurDe(int k) {
+      double somme = 0;
+      for (int i = 0; i < k; i++) {
+        somme += largeurs[i];
+      }
+      return somme + math.max(0, k - 1) * AppSpacing.sm;
+    }
+
+    ({int k, int variante}) dernierRecours = (k: 1, variante: -1);
+    for (int k = math.min(puces, n); k >= 1; k--) {
+      if (k == n) {
+        // Toutes les puces, sans « Plus » : il suffit qu'elles tiennent.
+        if (largeurDe(k) <= _largeurMax + 0.5) return (k: k, variante: -1);
+        dernierRecours = (k: k, variante: -1);
+        continue;
+      }
+      final int retenues = <bool>[for (int i = k; i < n; i++) _retenues[i]]
+          .where((bool r) => r)
+          .length;
+      final int v = _comptes.indexOf(retenues);
+      if (v < 0 || n + v >= enfants.length) continue;
+      final double plus = taille(enfants[n + v]).width;
+      dernierRecours = (k: k, variante: v);
+      if (largeurDe(k) + AppSpacing.sm + plus <= _largeurMax + 0.5) {
+        return (k: k, variante: v);
+      }
+    }
+    return dernierRecours;
+  }
+
+  static Size _sec(RenderBox b) => b.getDryLayout(const BoxConstraints());
+
+  @override
+  Size computeDryLayout(BoxConstraints constraints) {
+    final List<RenderBox> enfants = getChildrenAsList();
+    final ({int k, int variante}) choix = _choisir(_sec);
+    double largeur = 0;
+    double hauteur = 0;
+    int montres = 0;
+    for (int i = 0; i < enfants.length; i++) {
+      if (i >= choix.k && i != _nbPuces + choix.variante) continue;
+      if (choix.variante < 0 && i >= _nbPuces) continue;
+      final Size s = _sec(enfants[i]);
+      largeur += s.width + (montres > 0 ? AppSpacing.sm : 0);
+      hauteur = math.max(hauteur, s.height);
+      montres++;
+    }
+    return constraints.constrain(Size(largeur, hauteur));
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) =>
+      getDryLayout(const BoxConstraints()).width;
+
+  @override
+  double computeMaxIntrinsicWidth(double height) =>
+      getDryLayout(const BoxConstraints()).width;
+
+  @override
+  double computeMinIntrinsicHeight(double width) =>
+      getDryLayout(const BoxConstraints()).height;
+
+  @override
+  double computeMaxIntrinsicHeight(double width) =>
+      getDryLayout(const BoxConstraints()).height;
+
+  @override
+  void performLayout() {
+    final List<RenderBox> enfants = getChildrenAsList();
+    final ({int k, int variante}) choix = _choisir(_sec);
+    final int plus = choix.variante < 0 ? -1 : _nbPuces + choix.variante;
+    final List<RenderBox> posees = <RenderBox>[
+      for (int i = 0; i < enfants.length; i++)
+        if (i < choix.k || i == plus) enfants[i],
+    ];
+    double hauteur = 0;
+    for (final RenderBox e in posees) {
+      hauteur = math.max(hauteur, _sec(e).height);
+    }
+    // Les puces montrees ont la meme hauteur ; les autres sont masquees.
+    for (final RenderBox e in enfants) {
+      final _DonneesRangee donnees = e.parentData! as _DonneesRangee;
+      donnees.masque = !posees.contains(e);
+      if (donnees.masque) {
+        // Pose a sa taille naturelle, comme un `Offstage` : jamais un libelle
+        // ecrase a zero (un mot « coupe » pour qui mesure l'arbre). Ni peint,
+        // ni touche, ni lu par le lecteur d'ecran.
+        e.layout(const BoxConstraints());
+        donnees.offset = Offset.zero;
+      } else {
+        e.layout(
+          BoxConstraints(minHeight: hauteur, maxHeight: hauteur),
+          parentUsesSize: true,
+        );
+      }
+    }
+    double largeur = 0;
+    for (final RenderBox e in posees) {
+      largeur += e.size.width + (e == posees.first ? 0 : AppSpacing.sm);
+    }
+    size = constraints.constrain(Size(largeur, hauteur));
+    double x = 0;
+    for (final RenderBox e in posees) {
+      final _DonneesRangee donnees = e.parentData! as _DonneesRangee;
+      donnees.offset = Offset(
+        _sens == TextDirection.ltr ? x : largeur - x - e.size.width,
+        0,
+      );
+      x += e.size.width + AppSpacing.sm;
+    }
+    surVisibles(choix.k);
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    for (final RenderBox e in montres) {
+      final _DonneesRangee donnees = e.parentData! as _DonneesRangee;
+      context.paintChild(e, donnees.offset + offset);
+    }
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
+    for (final RenderBox e in montres.toList().reversed) {
+      final _DonneesRangee donnees = e.parentData! as _DonneesRangee;
+      final bool touche = result.addWithPaintOffset(
+        offset: donnees.offset,
+        position: position,
+        hitTest: (BoxHitTestResult r, Offset p) => e.hitTest(r, position: p),
+      );
+      if (touche) return true;
+    }
+    return false;
+  }
+
+  @override
+  void visitChildrenForSemantics(RenderObjectVisitor visitor) {
+    montres.forEach(visitor);
   }
 }

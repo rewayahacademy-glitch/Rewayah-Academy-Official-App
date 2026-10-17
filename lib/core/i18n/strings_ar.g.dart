@@ -171,6 +171,7 @@ class _Traductions$commun$ar extends Traductions$commun$fr {
 	// Translations
 	@override late final _Traductions$commun$roles$ar roles = _Traductions$commun$roles$ar._(_root);
 	@override late final _Traductions$commun$classeDistincte$ar classeDistincte = _Traductions$commun$classeDistincte$ar._(_root);
+	@override late final _Traductions$commun$filtres$ar filtres = _Traductions$commun$filtres$ar._(_root);
 	@override late final _Traductions$commun$recherche$ar recherche = _Traductions$commun$recherche$ar._(_root);
 	@override late final _Traductions$commun$sections$ar sections = _Traductions$commun$sections$ar._(_root);
 	@override late final _Traductions$commun$fuseaux$ar fuseaux = _Traductions$commun$fuseaux$ar._(_root);
@@ -1834,6 +1835,18 @@ class _Traductions$commun$classeDistincte$ar extends Traductions$commun$classeDi
 	@override String numero({required Object libelle, required Object numero}) => '⁨${libelle}⁩ · رقم ⁨${numero}⁩';
 	@override String code({required Object libelle, required Object code}) => '⁨${libelle}⁩ · ⁨${code}⁩';
 	@override String enseignant({required Object libelle, required Object enseignant}) => '⁨${libelle}⁩ · مع ⁨${enseignant}⁩';
+}
+
+// Path: commun.filtres
+class _Traductions$commun$filtres$ar extends Traductions$commun$filtres$fr {
+	_Traductions$commun$filtres$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get plus => 'المزيد';
+	@override String plusAvec({required Object n}) => 'المزيد، ⁨${n}⁩';
+	@override String get titreFeuille => 'مرشحات أخرى';
 }
 
 // Path: commun.recherche
@@ -14122,6 +14135,9 @@ extension on TraductionsAr {
 			'commun.classeDistincte.numero' => ({required Object libelle, required Object numero}) => '⁨${libelle}⁩ · رقم ⁨${numero}⁩',
 			'commun.classeDistincte.code' => ({required Object libelle, required Object code}) => '⁨${libelle}⁩ · ⁨${code}⁩',
 			'commun.classeDistincte.enseignant' => ({required Object libelle, required Object enseignant}) => '⁨${libelle}⁩ · مع ⁨${enseignant}⁩',
+			'commun.filtres.plus' => 'المزيد',
+			'commun.filtres.plusAvec' => ({required Object n}) => 'المزيد، ⁨${n}⁩',
+			'commun.filtres.titreFeuille' => 'مرشحات أخرى',
 			'commun.recherche.effacer' => 'مسح البحث',
 			'commun.recherche.fermer' => 'إغلاق البحث',
 			'commun.sections.page' => 'أقسام الصفحة',
@@ -14448,11 +14464,11 @@ extension on TraductionsAr {
 			'classe.pageCatalogue.confirmerTitre' => 'تأكيد الفصل',
 			'classe.pageCatalogue.confirmerPhrase' => ({required Object prenom}) => 'أنت تسجّل ⁨${prenom}⁩ في هذا الفصل.',
 			'classe.pageCatalogue.confirmerAttentePhrase' => ({required Object prenom}) => 'أنت تسجّل ⁨${prenom}⁩ في قائمة انتظار هذا الفصل.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.memeEnseignant' => ({required Object enseignant}) => 'الفصل نفسه والمعلم نفسه في كل حصص الأسبوع: ⁨${enseignant}⁩.',
 			'classe.pageCatalogue.confirmer' => 'تأكيد التسجيل',
 			'classe.pageCatalogue.confirmerAttente' => 'تأكيد قائمة الانتظار',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.envoiIncertain' => 'لم يصل رد الأكاديمية. إعادة المحاولة لا تنشئ تسجيلًا ثانيًا.',
 			'classe.pageCatalogue.envoiIndisponible' => 'التسجيل عبر الإنترنت غير مفتوح بعد: لم يُحجز أي مقعد.',
 			'classe.pageCatalogue.resultat.inscritTitre' => 'تم تأكيد التسجيل',
@@ -14962,11 +14978,11 @@ extension on TraductionsAr {
 			'eleve.suivi.nonTenu' => 'درس لم يُعقد',
 			'eleve.suivi.vide' => 'لا توجد دروس حتى الآن',
 			'eleve.suivi.videDetail' => 'ستظهر دروسك هنا من الأحدث إلى الأقدم مع حالة حضورك.',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.suivi.erreur' => 'تعذرت قراءة المتابعة. حاول مرة أخرى بعد قليل.',
 			'eleve.suivi.tronquee' => ({required Object nombre}) => 'تظهر أحدث الدروس، وعددها ⁨${nombre}⁩.',
 			'eleve.suivi.fin' => ({required Object nombre}) => 'عدد الدروس في المتابعة: ⁨${nombre}⁩.',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.suivi.finUn' => 'درس واحد في المتابعة.',
 			'eleve.accueil.rejoindre' => 'انضمام',
 			'eleve.accueil.coran' => 'القرآن',
@@ -15476,11 +15492,11 @@ extension on TraductionsAr {
 			'compte.appareilsDetail' => 'الأجهزة والملفات المرتبطة بأسرتك',
 			'compte.confidentialite' => 'الخصوصية',
 			'compte.confidentialiteDetail' => 'قريبًا',
+			_ => null,
+		} ?? switch (path) {
 			'compte.espaces' => 'المساحات',
 			'compte.espacesDetail' => 'المساحات التي يتيحها حسابك',
 			'compte.espacesMissionEnCours' => 'للعودة إلى مساحتك الرئيسية، غادر أولًا الزيارة الجارية.',
-			_ => null,
-		} ?? switch (path) {
 			'compte.habilitation' => 'مخوَّل',
 			'compte.deconnexion' => 'تسجيل الخروج',
 			'compte.deconnexionDetail' => 'إنهاء الجلسة على هذا الجهاز',
@@ -15990,11 +16006,11 @@ extension on TraductionsAr {
 			'tc.coran.focus.quitter' => 'الخروج من التركيز',
 			'tc.outils.dock.titre' => 'الأدوات',
 			'tc.outils.dock.deplacer' => 'نقل الأدوات',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.dock.position.bas' => 'في الأسفل',
 			'tc.outils.dock.position.gauche' => 'في جهة البداية',
 			'tc.outils.dock.position.droite' => 'في جهة النهاية',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.dock.bibliotheque' => 'المكتبة',
 			'tc.outils.dock.focus' => 'التركيز',
 			'tc.outils.dock.marquer' => 'وضع علامة',
@@ -16504,11 +16520,11 @@ extension on TraductionsAr {
 			'com.messages.entete.semantique' => ({required Object noms, required Object objets}) => 'محادثة مع ${noms}‏، بخصوص ${objets}',
 			'com.messages.entete.semantiqueSansNoms' => ({required Object objets}) => 'محادثة بخصوص ${objets}',
 			'com.messages.types.classe' => 'الفصل',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.types.eleve' => 'الطالب',
 			'com.messages.types.dossier' => 'الملف',
 			'com.messages.types.mission' => 'مهمة المراقبة',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.types.remplacement' => 'الاستبدال',
 			'com.messages.types.profilPaiement' => 'ملف الدفع',
 			'com.messages.types.autre' => 'موضوع آخر',
@@ -17018,11 +17034,11 @@ extension on TraductionsAr {
 			'com.annonces.publieur.champTexte' => 'نص الإعلان',
 			'com.annonces.publieur.nature.classe' => 'تستلمه أسر هذا الفصل وطلابه فقط.',
 			'com.annonces.publieur.nature.public' => 'يستلمه كل أفراد هذا الجمهور.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.publieur.nature.toutes' => 'تستلمه الأكاديمية كلها. خصصه لما يهم الجميع.',
 			'com.annonces.publieur.quand.maintenant' => 'فور التأكيد',
 			'com.annonces.publieur.quand.maintenantDetail' => 'يُرسل الإعلان فور تأكيد النشر.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.publieur.quand.creneau' => ({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}',
 			'com.annonces.publieur.quand.creneauDetail' => 'ينتظر الإعلان هذا التاريخ. ستجده في الإعلانات المجدولة.',
 			'com.annonces.publieur.apercu.a' => ({required Object cible}) => 'إلى: ${cible}',
@@ -17532,11 +17548,11 @@ extension on TraductionsAr {
 			'admin.qualite.groupeBlocageSansSuivi' => 'عوائق دون متابعة',
 			'admin.qualite.groupeEvaluationEnRetard' => 'تقييمات متأخرة',
 			'admin.qualite.colonnePersonne' => 'يخص',
+			_ => null,
+		} ?? switch (path) {
 			'admin.qualite.colonneDepuis' => 'منذ',
 			'admin.qualite.colonneStatut' => 'الحالة',
 			'admin.qualite.statutOuvert' => 'مفتوحة',
-			_ => null,
-		} ?? switch (path) {
 			'admin.qualite.statutTraite' => 'معالَجة',
 			'admin.qualite.depuisAujourdhui' => 'اليوم',
 			'admin.qualite.depuisUnJour' => 'يوم واحد',
@@ -18046,11 +18062,11 @@ extension on TraductionsAr {
 			'admin.planning.statutTerminee' => 'منتهية',
 			'admin.planning.statutIncident' => 'عطل تقني',
 			'admin.planning.statutEnseignantAbsent' => 'المعلم غائب',
+			_ => null,
+		} ?? switch (path) {
 			'admin.planning.statutEleveAbsent' => 'الطالب غائب',
 			'admin.incidents.titre' => 'حوادث آخر 24 ساعة',
 			'admin.incidents.sousTitre' => 'الحصص التي صارت عطلًا تقنيًا أو غياب معلم أو غياب طالب منذ 24 ساعة: هذا ما تعدّه بطاقة «حوادث (24 س)».',
-			_ => null,
-		} ?? switch (path) {
 			'admin.incidents.liste' => 'حصص بها حادث',
 			'admin.incidents.natureTechnique' => 'عطل تقني',
 			'admin.incidents.natureEnseignantAbsent' => 'المعلم غائب',
@@ -18560,11 +18576,11 @@ extension on TraductionsAr {
 			'comptable.graphiques.exportEchec' => 'تعذّر تحضير التصدير: ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة.',
 			'comptable.onglets.aEffectuer' => 'للتنفيذ',
 			'comptable.onglets.contractuels' => 'المتعاقدون',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.onglets.beneficiaires' => 'المستفيدون',
 			'comptable.onglets.coffres' => 'الصناديق',
 			'comptable.onglets.encaissements' => 'المقبوضات',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.onglets.rapprochement' => 'المطابقة',
 			'comptable.onglets.rapports' => 'التقارير',
 			'comptable.commun.montantMasque' => 'مبلغ مخفي',
@@ -19074,11 +19090,11 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.colonneDestination' => 'الوجهة',
 			'comptable.beneficiaires.colonneEtat' => 'حالة الملف',
 			'comptable.beneficiaires.colonneEnAttente' => 'مدفوعات قيد الانتظار',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.typeEnseignant' => 'معلم',
 			'comptable.beneficiaires.typeContractuel' => 'متعاقد',
 			'comptable.beneficiaires.enAttente' => ({required Object n}) => '${n} قيد الانتظار',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.aucunEnAttente' => 'لا شيء',
 			'comptable.beneficiaires.vide' => 'لا يوجد مستفيد حاليًا.',
 			'comptable.beneficiaires.videDetail' => 'يظهر المعلمون والمتعاقدون هنا بمجرد وجود دفعة تخصهم.',
@@ -19588,11 +19604,11 @@ extension on TraductionsAr {
 			'ficheEleve.interface.standard' => 'العرض العادي',
 			'ficheEleve.interface.standardDescription' => ({required Object prenom}) => 'حين يرتاح ⁨${prenom}⁩ لشاشات أكثف: معلومات أكثر في كل شاشة. الأقسام نفسها والصلاحيات نفسها.',
 			'ficheEleve.interface.politique' => 'أنت من يختار هذا الإعداد. لا يُطلب أي سبب، ولا يرى المعلم إلا اسم الوضع.',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.interface.application' => ({required Object dePrenom}) => 'يُطبَّق التغيير عند الفتح التالي لـRewayah على جهاز ⁨${dePrenom}⁩.',
 			'ficheEleve.interface.demandeEleve' => 'طلب التغيير من الطالب نفسه غير متاح بعد.',
 			'ficheEleve.interface.enCours' => 'جارٍ الحفظ',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.interface.echec' => ({required Object dePrenom}) => 'لم يُحفظ التغيير، غالبًا بسبب انقطاع الاتصال بـRewayah. تحقّق من اتصالك، ثم المس اختيارك من جديد. يبقى العرض الحالي لـ⁨${dePrenom}⁩ كما هو على جهازه.',
 			'ficheEleve.interface.horsLigne' => 'أنت غير متصل. يمكن تغيير العرض عند عودة الاتصال.',
 			'ficheEleve.camera.titre' => 'الكاميرا أثناء الدرس',
@@ -20102,11 +20118,11 @@ extension on TraductionsAr {
 			'adulte.monEspace.role' => 'طالب بالغ',
 			'adulte.monEspace.monCompte' => 'حسابي',
 			'adulte.monEspace.informations' => 'معلوماتي',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.monEspace.coursAcces' => 'الدروس والوصول',
 			'adulte.monEspace.coursAccesLegende' => 'الفصل والحصص والوصول',
 			'adulte.monEspace.paiements' => 'المدفوعات',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.monEspace.paiementsLegende' => 'السجل والإيصالات',
 			'adulte.monEspace.accords' => 'موافقاتي',
 			'adulte.monEspace.accordsLegende' => 'الموافقات الممنوحة للأكاديمية',
@@ -20616,11 +20632,11 @@ extension on TraductionsAr {
 			'controleur.historique.cleEnseignant' => 'المعلم',
 			'controleur.historique.cleDate' => 'التاريخ',
 			'controleur.historique.cleDuree' => 'مدة المتابعة',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.cleElevesPresents' => 'الحاضرون',
 			'controleur.historique.cleReponse' => 'الرد',
 			'controleur.historique.sansComplement' => 'لا تكملة.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.historique.faitsIndisponibles' => 'السجل التلقائي لهذه الزيارة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. سيظهر هنا بمجرد وصوله. باقي التقرير موثوق.',
 			'controleur.historique.motif' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
 			'controleur.historique.ajouterComplement' => 'إضافة تكملة',

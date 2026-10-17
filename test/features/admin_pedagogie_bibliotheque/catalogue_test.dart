@@ -22,6 +22,7 @@ import 'package:rewayah_academy/features/demo/bibliotheque_admin_demo.dart';
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/monter_admin_demo.dart';
+import '../../support/rangee_plus.dart';
 
 Future<void> _monter(
   WidgetTester tester,
@@ -84,7 +85,11 @@ void main() {
 
   testWidgets('un segment filtre : retires seulement', (tester) async {
     await _monter(tester, BibliothequeAdminDemo());
-    await tester.tap(find.byKey(const ValueKey<String>('segment-retires')));
+    // L4-07 : « Retires » est range sous « Plus » ou dans la rangee.
+    await toucherFiltre(
+      tester,
+      find.byKey(const ValueKey<String>('segment-retires')),
+    );
     await stabiliser(tester);
     expect(find.byKey(const ValueKey<String>('catalogue-liste')), findsOne);
     expect(
