@@ -19,7 +19,6 @@ accessibilite.coran.indisponibleDetailVous
 admin.agents.libelleAuto
 admin.agents.manqueLibelle
 admin.agents.manquePersonne
-admin.attribution.manqueHeure
 admin.comptes.etatSansDecision
 admin.comptes.roleIllisiblePlusieurs
 admin.comptes.roleIllisibleUn
@@ -1019,10 +1018,6 @@ motifs.annulationEvaluation.absenceEnseignant
 motifs.annulationEvaluation.parErreur
 motifs.annulationEvaluation.pasPret
 motifs.annulationEvaluation.report
-motifs.attribution.aucuneCommune
-motifs.attribution.confirmee
-motifs.attribution.continuite
-motifs.attribution.famille
 motifs.blocage.aRevoir
 motifs.blocage.absences
 motifs.blocage.prerequis
