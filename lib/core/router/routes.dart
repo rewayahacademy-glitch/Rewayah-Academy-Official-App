@@ -126,6 +126,14 @@ abstract final class Routes {
   static String eleveAdulteDemande(String demandeId) =>
       '$eleveAdulteDemandes/$demandeId';
 
+  /// Ses finances (FI-9b, guide Finance V4 section 4 « Eleve adulte » ; lot F1) :
+  /// le solde, la periode financee et la mensualite de son seul profil.
+  /// Ouverte au seul compte « eleve autonome » (C-24), jamais d'apres le role.
+  static const String eleveFinances = '/eleve/finances';
+
+  /// L'historique des mouvements de son seul profil.
+  static const String eleveFinancesMouvements = '$eleveFinances/mouvements';
+
   // --- fin du bloc DASH-EA-PROD ---------------------------------------------
 
   // --- Tuteur -------------------------------------------------------------
@@ -472,6 +480,16 @@ abstract final class Routes {
   /// Mes revenus (FI-10, guide Finance V4 §4 et §5.5) : l'estimation du mois,
   /// atteinte depuis le Profil (le Compte de l'enseignant), dans sa branche.
   static const String enseignantRevenus = '/enseignant/revenus';
+
+  /// La valeur de `?depuis=` des revenus ouverts depuis Aujourd'hui (lot F1).
+  static const String origineJournee = 'journee';
+
+  /// Les revenus ouverts depuis Aujourd'hui : le retour y ramene, pas au
+  /// Profil (lot F1).
+  static final String enseignantRevenusDepuisJournee = Uri(
+    path: enseignantRevenus,
+    queryParameters: <String, String>{'depuis': origineJournee},
+  ).toString();
 
   // Les quatre routes suivantes ne sont **pas** des destinations de premier
   // niveau : la barre de l'enseignant en tient quatre, Aujourd'hui, Classes,

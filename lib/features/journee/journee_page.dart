@@ -89,6 +89,7 @@ import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/timeline_row.dart';
 import '../com_communaute/entree_communaute.dart';
 import '../remplacements/remplacements_page.dart' show titreRemplacementUrgent;
+import '../revenus_enseignant/entree_revenus.dart';
 import '../tc_espace_groupe/carte_session.dart' show EmplacementEntreeVue;
 import 'absence_remplacement_vue.dart';
 
@@ -1028,6 +1029,9 @@ class _MaJournee extends StatelessWidget {
         // toujours rendu, jamais un cinquieme bloc (K-42). Vide tant que
         // COM-COMU-1 ne la remplit pas.
         const EntreeCommunaute(ecartAvant: Ecart.vMd),
+        // Lot F1 : ses revenus estimes, une ligne de ce meme bloc (K-42),
+        // toujours rendue ; la page d'arrivee dit l'etat honnete.
+        const EntreeRevenus(ecartAvant: Ecart.vMd),
       ],
     );
   }

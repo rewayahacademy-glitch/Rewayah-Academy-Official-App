@@ -1372,6 +1372,10 @@
     }
   },
   "enseignant": {
+    "revenus": {
+      "indisponibleTitre": "لم يُنشر أجرك بعد",
+      "indisponiblePhrase": "سيظهر تقدير هذا الشهر هنا فور نشره من الأكاديمية. لا يُحسب أي مبلغ على هذا الجهاز."
+    },
     "journee": {
       "derniereSeance": "آخر حصة",
       "rejoindreSalle": "الدخول إلى القاعة",
@@ -1430,6 +1434,8 @@
       "erreurPartielle": "تعذّر تحميل أوقات الصلاة واستراحاتك (اتصال غير مستقر أو خدمة غير متاحة مؤقتًا). الحصص المعروضة محدَّثة: يمكنك بدؤها بشكل عادي.",
       "absenceDetectee": "لم يدخل ⁨{eleve}⁩ القاعة.",
       "coupureDetectee": "انقطع اتصال ⁨{eleve}⁩.",
+      "revenusDetail": "أجرك التقديري لهذا الشهر، فصلًا بفصل.",
+      "revenusLecteur": "عرض أجرك التقديري لهذا الشهر",
       "coursAnnule": "أُلغي درس الساعة ⁨{heure}⁩.",
       "rapportsTitre": "تقارير بانتظار الإيداع",
       "rapportLigne": "درس ⁨{jour}⁩ الساعة ⁨{heure}⁩",
@@ -2172,6 +2178,8 @@
       "classeIllisible": "تعذّرت قراءة الفصل.",
       "sansClasseTitre": "لا فصل لـ⁨{prenom}⁩",
       "sansClassePhrase": "اختر فصلًا ليتمكن ⁨{quePrenom}⁩ من بدء الدروس.",
+      "financesTitre": "مالية ⁨{dePrenom}⁩",
+      "financesPhrase": "الرصيد والخصم القادم وما بقي تمويله.",
       "foyerVideTitre": "لا ملف طالب حتى الآن",
       "foyerVidePhrase": "أضف ملف طالب لاختيار فصل ومتابعة حصصه.",
       "ajouterProfil": "إضافة ملف طالب",
@@ -7684,6 +7692,7 @@
       "absence": "الغياب",
       "aucuneClasse": "لا فصل حتى الآن.",
       "aucuneClasseDetail": "ستظهر حصتك القادمة هنا بمجرد فتح فصلك.",
+      "financesPhrase": "رصيدك والفترة المموَّلة وقسطك الشهري.",
       "echec": "تعذّر تحميل حصتك القادمة وآخر حصصك: لم يستجب الخادم. أعد المحاولة بعد لحظة."
     },
     "historique": {

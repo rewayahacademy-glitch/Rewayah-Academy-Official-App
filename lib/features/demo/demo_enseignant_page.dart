@@ -51,6 +51,7 @@ import '../enseignant_classes/mes_classes_page.dart';
 import '../journee/journee_page.dart';
 import '../profil_enseignant/photo_publique.dart';
 import '../profil_enseignant/profil_enseignant_page.dart';
+import '../revenus_enseignant/entree_revenus.dart';
 import '../revenus_enseignant/revenus_enseignant_page.dart';
 import 'classe_demo.dart' show DonneesClasseDemo, EtatDemoClasse;
 import 'demo_classe_page.dart' show adresseDemoClasse;
@@ -154,6 +155,11 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
   );
   return <Override>[
     sessionProvider.overrideWith(_SessionEnseignantDemo.new),
+    // Lot F1 : la ligne « Revenus estimés » d'Aujourd'hui reste dans la
+    // demonstration.
+    destinationRevenusProvider.overrideWithValue(
+      adresseDemoEnseignant(EcranDemoEnseignant.revenus, etat: etat),
+    ),
     horsLigneProvider.overrideWith(
       (Ref _) => Stream<bool>.value(etat == EtatDemoEnseignant.horsLigne),
     ),

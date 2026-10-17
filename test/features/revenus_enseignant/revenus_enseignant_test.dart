@@ -33,6 +33,7 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/ligne_cle_valeur.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
@@ -42,6 +43,7 @@ import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
 import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_page.dart';
+import 'package:rewayah_academy/features/revenus_enseignant/entree_revenus.dart';
 import 'package:rewayah_academy/features/revenus_enseignant/revenus_enseignant_page.dart';
 
 import '../../capture/outil_capture.dart';
@@ -167,6 +169,30 @@ void main() {
       expect(etat.nature, NatureEtat.indisponible);
       expect(find.text(t.commun.reessayer), findsNothing);
       expect(find.text(t.enseignant.revenus.estimation), findsNothing);
+    });
+
+    testWidgets('lot F1 : Aujourd\'hui, « Revenus estimés » ouvre la page, '
+        'le retour ramene a Aujourd\'hui', (WidgetTester tester) async {
+      final GoRouter routeur = await monter(tester);
+      routeur.go(Routes.enseignantJournee);
+      await _attendre(tester);
+      final Finder lien = find.byKey(EntreeRevenus.cleLien);
+      expect(lien, findsOneWidget);
+      await tester.ensureVisible(lien);
+      await _attendre(tester);
+      await tester.tap(lien);
+      await _attendre(tester);
+
+      expect(
+        routeur.routerDelegate.currentConfiguration.uri.toString(),
+        Routes.enseignantRevenusDepuisJournee,
+      );
+      expect(find.byType(RevenusEnseignantPage), findsOneWidget);
+      expect(find.byKey(RevenusEnseignantPage.indisponibleKey), findsOneWidget);
+
+      await tester.tap(find.byType(DisqueRetour));
+      await _attendre(tester);
+      expect(chemin(routeur), Routes.enseignantJournee);
     });
 
     testWidgets('avec une source, le contenu ; le retour ramene au Profil', (
@@ -629,6 +655,14 @@ void main() {
           find.byType(EtatSysteme).evaluate().single.widget as EtatSysteme;
       expect(etat.nature, NatureEtat.indisponible);
       expect(find.text(t.commun.reessayer), findsNothing);
+      // Lot F1 : un etat propre aux revenus, « pas encore publies », jamais
+      // la phrase generique ni un chiffre.
+      expect(find.byKey(RevenusEnseignantPage.indisponibleKey), findsOneWidget);
+      expect(find.text(t.enseignant.revenus.indisponibleTitre), findsOneWidget);
+      expect(
+        find.text(t.enseignant.revenus.indisponiblePhrase),
+        findsOneWidget,
+      );
     });
 
     testWidgets('releve rendu : les mois arretes, sans statut « Paye »', (
