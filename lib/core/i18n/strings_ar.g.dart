@@ -2458,7 +2458,6 @@ class _Traductions$salle$seance$ar extends Traductions$salle$seance$fr {
 	@override late final _Traductions$salle$seance$pause$ar pause = _Traductions$salle$seance$pause$ar._(_root);
 	@override String get enLigne => 'متصل';
 	@override String get reconnexion => 'إعادة الاتصال';
-	@override String get coursEnregistreCourt => 'الدرس مسجَّل.';
 	@override String get votreParentObserve => 'وليّ أمرك يتابع الحصة.';
 	@override String get tonParentObserve => 'وليّ أمرك يتابع الحصة.';
 	@override String tuteurDeObserve({required Object dePrenom}) => 'وليّ أمر ⁨${dePrenom}⁩ يتابع.';
@@ -8156,7 +8155,6 @@ class _Traductions$salle$seance$capsule$ar extends Traductions$salle$seance$caps
 	@override String avatar({required Object deNom}) => 'عرض معلومات ⁨${deNom}⁩';
 	@override String get controlePossible => 'المراقبة ممكنة. عرض المعلومات';
 	@override String get controleActif => 'المراقبة جارية. عرض المعلومات';
-	@override String get enregistrementActif => 'التسجيل جارٍ';
 }
 
 // Path: salle.seance.contexte
@@ -8169,7 +8167,6 @@ class _Traductions$salle$seance$contexte$ar extends Traductions$salle$seance$con
 	@override String get titre => 'معلومات الحصة';
 	@override String get reseau => 'الشبكة';
 	@override String get detailReseau => 'تفاصيل الشبكة';
-	@override String get enregistrementActif => 'التسجيل جارٍ';
 	@override String get controle => 'المراقبة';
 	@override String get controlePossible => 'المراقبة ممكنة';
 	@override String get controleActif => 'المراقبة جارية';
@@ -14646,7 +14643,6 @@ extension on TraductionsAr {
 			'salle.seance.pause.recapNonPrise' => 'استراحة مقرّرة، لم تُؤخذ',
 			'salle.seance.enLigne' => 'متصل',
 			'salle.seance.reconnexion' => 'إعادة الاتصال',
-			'salle.seance.coursEnregistreCourt' => 'الدرس مسجَّل.',
 			'salle.seance.votreParentObserve' => 'وليّ أمرك يتابع الحصة.',
 			'salle.seance.tonParentObserve' => 'وليّ أمرك يتابع الحصة.',
 			'salle.seance.tuteurDeObserve' => ({required Object dePrenom}) => 'وليّ أمر ⁨${dePrenom}⁩ يتابع.',
@@ -14807,11 +14803,9 @@ extension on TraductionsAr {
 			'salle.seance.capsule.avatar' => ({required Object deNom}) => 'عرض معلومات ⁨${deNom}⁩',
 			'salle.seance.capsule.controlePossible' => 'المراقبة ممكنة. عرض المعلومات',
 			'salle.seance.capsule.controleActif' => 'المراقبة جارية. عرض المعلومات',
-			'salle.seance.capsule.enregistrementActif' => 'التسجيل جارٍ',
 			'salle.seance.contexte.titre' => 'معلومات الحصة',
 			'salle.seance.contexte.reseau' => 'الشبكة',
 			'salle.seance.contexte.detailReseau' => 'تفاصيل الشبكة',
-			'salle.seance.contexte.enregistrementActif' => 'التسجيل جارٍ',
 			'salle.seance.contexte.controle' => 'المراقبة',
 			'salle.seance.contexte.controlePossible' => 'المراقبة ممكنة',
 			'salle.seance.contexte.controleActif' => 'المراقبة جارية',
@@ -14975,11 +14969,11 @@ extension on TraductionsAr {
 			'eleve.suivi.hier' => ({required Object heure}) => 'أمس، ⁨${heure}⁩',
 			'eleve.suivi.date' => ({required Object date, required Object heure}) => '⁨${date}⁩، ⁨${heure}⁩',
 			'eleve.suivi.annule' => 'درس ملغى',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.suivi.nonTenu' => 'درس لم يُعقد',
 			'eleve.suivi.vide' => 'لا توجد دروس حتى الآن',
 			'eleve.suivi.videDetail' => 'ستظهر دروسك هنا من الأحدث إلى الأقدم مع حالة حضورك.',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.suivi.erreur' => 'تعذرت قراءة المتابعة. حاول مرة أخرى بعد قليل.',
 			'eleve.suivi.tronquee' => ({required Object nombre}) => 'تظهر أحدث الدروس، وعددها ⁨${nombre}⁩.',
 			'eleve.suivi.fin' => ({required Object nombre}) => 'عدد الدروس في المتابعة: ⁨${nombre}⁩.',
@@ -15489,11 +15483,11 @@ extension on TraductionsAr {
 			'compte.confidentialite' => 'الخصوصية',
 			'compte.confidentialiteDetail' => 'قريبًا',
 			'compte.espaces' => 'المساحات',
-			_ => null,
-		} ?? switch (path) {
 			'compte.espacesDetail' => 'المساحات التي يتيحها حسابك',
 			'compte.espacesMissionEnCours' => 'للعودة إلى مساحتك الرئيسية، غادر أولًا الزيارة الجارية.',
 			'compte.habilitation' => 'مخوَّل',
+			_ => null,
+		} ?? switch (path) {
 			'compte.deconnexion' => 'تسجيل الخروج',
 			'compte.deconnexionDetail' => 'إنهاء الجلسة على هذا الجهاز',
 			'compte.identifiant' => 'المعرّف',
@@ -16003,11 +15997,11 @@ extension on TraductionsAr {
 			'tc.outils.dock.position.bas' => 'في الأسفل',
 			'tc.outils.dock.position.gauche' => 'في جهة البداية',
 			'tc.outils.dock.position.droite' => 'في جهة النهاية',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.dock.bibliotheque' => 'المكتبة',
 			'tc.outils.dock.focus' => 'التركيز',
 			'tc.outils.dock.marquer' => 'وضع علامة',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.dock.masquer' => 'إخفاء',
 			'tc.outils.dock.stylet' => 'القلم',
 			'tc.outils.dock.pointeur' => 'المؤشر',
@@ -16517,11 +16511,11 @@ extension on TraductionsAr {
 			'com.messages.types.eleve' => 'الطالب',
 			'com.messages.types.dossier' => 'الملف',
 			'com.messages.types.mission' => 'مهمة المراقبة',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.types.remplacement' => 'الاستبدال',
 			'com.messages.types.profilPaiement' => 'ملف الدفع',
 			'com.messages.types.autre' => 'موضوع آخر',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.panneau.objets' => 'بخصوص',
 			'com.messages.panneau.participants' => 'المشاركون',
 			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
@@ -17031,11 +17025,11 @@ extension on TraductionsAr {
 			'com.annonces.publieur.nature.toutes' => 'تستلمه الأكاديمية كلها. خصصه لما يهم الجميع.',
 			'com.annonces.publieur.quand.maintenant' => 'فور التأكيد',
 			'com.annonces.publieur.quand.maintenantDetail' => 'يُرسل الإعلان فور تأكيد النشر.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.publieur.quand.creneau' => ({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}',
 			'com.annonces.publieur.quand.creneauDetail' => 'ينتظر الإعلان هذا التاريخ. ستجده في الإعلانات المجدولة.',
 			'com.annonces.publieur.apercu.a' => ({required Object cible}) => 'إلى: ${cible}',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.publieur.apercu.diffusionMaintenant' => 'النشر: فور التأكيد',
 			'com.annonces.publieur.apercu.diffusionLe' => ({required Object date, required Object heure}) => 'النشر المقرر يوم ${date} الساعة ${heure}',
 			'com.annonces.publieur.continuer' => 'متابعة',
@@ -17545,11 +17539,11 @@ extension on TraductionsAr {
 			'admin.qualite.colonneStatut' => 'الحالة',
 			'admin.qualite.statutOuvert' => 'مفتوحة',
 			'admin.qualite.statutTraite' => 'معالَجة',
-			_ => null,
-		} ?? switch (path) {
 			'admin.qualite.depuisAujourdhui' => 'اليوم',
 			'admin.qualite.depuisUnJour' => 'يوم واحد',
 			'admin.qualite.depuisJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'اليوم', one: 'يوم واحد', two: 'يومان', few: '⁨${jours}⁩ أيام', many: '⁨${jours}⁩ يومًا', other: '⁨${jours}⁩ يوم', ), 
+			_ => null,
+		} ?? switch (path) {
 			'admin.qualite.actionTraiter' => 'تعليم كمعالَج',
 			'admin.qualite.traiterTitre' => ({required Object personne}) => 'تعليم كمعالَج: ⁨${personne}⁩',
 			'admin.qualite.champNote' => 'ملاحظة (اختيارية)',
@@ -18059,11 +18053,11 @@ extension on TraductionsAr {
 			'admin.incidents.liste' => 'حصص بها حادث',
 			'admin.incidents.natureTechnique' => 'عطل تقني',
 			'admin.incidents.natureEnseignantAbsent' => 'المعلم غائب',
-			_ => null,
-		} ?? switch (path) {
 			'admin.incidents.natureEleveAbsent' => 'الطالب غائب',
 			'admin.incidents.survenu' => ({required Object date, required Object heure}) => '⁨${date}⁩، ⁨${heure}⁩',
 			'admin.incidents.vide' => 'لا حوادث منذ 24 ساعة',
+			_ => null,
+		} ?? switch (path) {
 			'admin.incidents.videDetail' => 'تظهر هنا كل حصة تتحول إلى عطل أو غياب معلم أو غياب طالب فور تغيّر حالتها.',
 			'admin.incidents.sansDonnees' => 'تعذّر تحميل الحوادث',
 			'admin.incidents.erreur' => 'تعذّرت قراءة الحوادث: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.',
@@ -18573,11 +18567,11 @@ extension on TraductionsAr {
 			'comptable.commun.montantsMasques' => 'المبالغ مخفية',
 			'comptable.commun.montantsAffiches' => 'المبالغ ظاهرة',
 			'comptable.commun.enPreparationTitre' => 'هذه الشاشة قيد الإعداد.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.commun.enPreparationPhrase' => 'لا يُعرض هنا أي رقم في الوقت الحالي. لا يمكن تنفيذ أي دفعة من هذه الشاشة.',
 			'comptable.commun.reserveStrategique' => 'الاحتياطي الاستراتيجي',
 			'comptable.commun.tresorerieLibre' => 'الخزينة الحرة',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.commun.tresorerieDetenue' => 'الخزينة المحتفَظ بها',
 			'comptable.commun.fondsProteges' => 'الأموال المحمية',
 			'comptable.commun.enTransit' => 'قيد التحويل',
@@ -19087,11 +19081,11 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.profil.carteTitre' => ({required Object nom}) => 'ملف الدفع الخاص بـ ${nom}',
 			'comptable.beneficiaires.profil.etat' => 'حالة الملف',
 			'comptable.beneficiaires.profil.derniereModification' => 'آخر تعديل',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.profil.capacite' => 'قدرة الدفع في هذا المسار',
 			'comptable.beneficiaires.profil.capaciteNonEvaluee' => 'لم تُقيَّم بعد',
 			'comptable.beneficiaires.profil.enAttente' => 'مدفوعات تنتظر هذا الملف',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.profil.proprietaire' => ({required Object nom}) => 'وحده ${nom} يمكنه إدخال بيانات الدفع الخاصة به أو تعديلها. أنت ترى نسخة مخفية منها.',
 			'comptable.beneficiaires.profil.historiqueTitre' => 'سجل المدفوعات',
 			'comptable.beneficiaires.profil.historiqueVide' => 'لم تُصرف أي دفعة لهذا المستفيد حتى الآن.',
@@ -19601,11 +19595,11 @@ extension on TraductionsAr {
 			'ficheEleve.camera.interdite' => ({required Object prenom}) => 'لن يظهر زر الكاميرا لـ⁨${prenom}⁩ أثناء الحصص.',
 			'ficheEleve.camera.application' => ({required Object dePrenom}) => 'يُحتسب التغيير عند الدخول التالي لـ⁨${dePrenom}⁩ إلى حصة.',
 			'ficheEleve.camera.distincte' => 'هذا الإعداد لا يغيّر إذن الكاميرا في الجهاز، الذي يطلبه الهاتف لقراءة رمز QR.',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.camera.echec' => 'لم يُحفظ التغيير. أعد المحاولة.',
 			'ficheEleve.camera.horsLigne' => 'أنت غير متصل. يمكن ضبط الكاميرا عند عودة الاتصال.',
 			'ficheEleve.acces.titre' => 'الوصول إلى Rewayah',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.acces.ligne' => ({required Object dePrenom}) => 'وصول ⁨${dePrenom}⁩',
 			'ficheEleve.acces.pastilleSansEcheance' => 'دون موعد انتهاء',
 			'ficheEleve.acces.pastilleEnCours' => 'ساري',
@@ -20115,11 +20109,11 @@ extension on TraductionsAr {
 			'adulte.monEspace.pageAccords.indisponiblePhrase' => 'قبول كل موافقة أو رفضها أو سحبها غير ممكن في التطبيق بعد. لا تُطلب منك أي موافقة هنا.',
 			'adulte.monEspace.pageCoursAcces.indisponibleTitre' => 'الدروس والوصول غير قابلة للاطلاع بعد',
 			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'تفاصيل دروسك وحصصك ووصولك غير متاحة في التطبيق بعد.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.coranDemo.titre' => 'متاح بعد تسجيل الدخول',
 			'adulte.coranDemo.phrase' => 'ليس هذا عطلًا: العرض التجريبي لا يحتوي على نص القرآن. بعد الدخول إلى مساحتك كطالب، يُفتح هنا.',
 			'adulte.recharge.titre' => 'شحن جديد',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.phrase' => 'اختر مستفيدًا أو أكثر، ثم اختر عرضًا لكل واحد.',
 			'adulte.recharge.verifier' => 'مراجعة الشحن',
 			'adulte.recharge.raisonAucun' => 'اختر مستفيدًا واحدًا على الأقل للمتابعة.',
@@ -20629,11 +20623,11 @@ extension on TraductionsAr {
 			'controleur.complement.contexteMotif' => 'اختياري: السبب يساعد الإدارة على قراءة التكملة. التقرير الأصلي لا يتغير.',
 			'controleur.complement.precision' => 'توضيح',
 			'controleur.complement.precisionAide' => 'حين تنقص تفصيلة · يكمّل التقرير دون أن يغيّر فيه شيئًا',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.complement.correction' => 'تصحيح',
 			'controleur.complement.correctionAide' => 'حين تكون معلومة في التقرير غير دقيقة · يبقى الأصل مقروءًا، ويظهر التصحيح تحته',
 			'controleur.complement.faitNouveau' => 'معلومة جديدة',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.complement.faitNouveauAide' => 'حين تعرفها بعد الزيارة · تحمل تاريخ يوم الإضافة',
 			'controleur.complement.questionTexte' => 'ماذا تضيف إلى التقرير؟',
 			'controleur.complement.texteObligatoire' => 'إلزامي: ما لاحظته، في جمل قليلة.',
