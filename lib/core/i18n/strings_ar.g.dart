@@ -74,6 +74,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$appareils$ar appareils = _Traductions$appareils$ar._(_root);
 	@override late final _Traductions$connexion$ar connexion = _Traductions$connexion$ar._(_root);
 	@override late final _Traductions$attente$ar attente = _Traductions$attente$ar._(_root);
+	@override late final _Traductions$accords$ar accords = _Traductions$accords$ar._(_root);
 	@override late final _Traductions$inscription$ar inscription = _Traductions$inscription$ar._(_root);
 	@override late final _Traductions$consentement$ar consentement = _Traductions$consentement$ar._(_root);
 	@override late final _Traductions$foyer$ar foyer = _Traductions$foyer$ar._(_root);
@@ -1022,6 +1023,9 @@ class _Traductions$attente$ar extends Traductions$attente$fr {
 	@override String get aucunDocument => 'ليس عليك إرسال أي وثيقة.';
 	@override String get accesContact => 'يمكن للأكاديمية فتحه لك: تواصل معها.';
 	@override String get actualiserCompte => 'تحديث';
+	@override String get lireEtAccepter => 'قراءة شروطنا وقبولها';
+	@override String get nosConditions => 'شروطنا، للقراءة والقبول';
+	@override String get etatAAccepter => 'للقبول';
 	@override String reste({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
 		zero: 'لم يبق أي عنصر للتقديم.',
 		one: 'بقي عنصر واحد للتقديم.',
@@ -1036,6 +1040,31 @@ class _Traductions$attente$ar extends Traductions$attente$fr {
 	@override String get refuseSansElement => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.';
 	@override String get illisible => 'حالة ملفك لا تظهر الآن.';
 	@override String get horsLigne => 'أنت غير متصل. ستظهر حالة ملفك بمجرد عودة الشبكة.';
+}
+
+// Path: accords
+class _Traductions$accords$ar extends Traductions$accords$fr {
+	_Traductions$accords$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'شروطنا';
+	@override String get intro => 'اقرأ كل نص، ثم حدّد المربع الذي يليه. يصبح زر «التالي» متاحًا عندما تُحدَّد كل المربعات.';
+	@override String get caseSavoir => 'قرأت وفهمت ما يجب أن أعرفه.';
+	@override String get sectionContrat => 'عقدك';
+	@override String get caseContrat => 'قرأت عقدي وأوافق عليه، بما في ذلك زيارات المراقبة.';
+	@override String reste({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لم تبق أي موافقة للتحديد.',
+		one: 'بقيت موافقة واحدة للتحديد.',
+		two: 'بقيت موافقتان للتحديد.',
+		few: 'بقيت ⁨${n}⁩ موافقات للتحديد.',
+		many: 'بقيت ⁨${n}⁩ موافقة للتحديد.',
+		other: 'بقيت ⁨${n}⁩ موافقة للتحديد.',
+	);
+	@override String get toutCoche => 'تم تحديد كل المربعات.';
+	@override String get suivant => 'التالي';
+	@override String get dejaAcceptes => 'موافقاتك محفوظة بالفعل.';
 }
 
 // Path: inscription
@@ -19882,6 +19911,9 @@ extension on TraductionsAr {
 			'attente.aucunDocument' => 'ليس عليك إرسال أي وثيقة.',
 			'attente.accesContact' => 'يمكن للأكاديمية فتحه لك: تواصل معها.',
 			'attente.actualiserCompte' => 'تحديث',
+			'attente.lireEtAccepter' => 'قراءة شروطنا وقبولها',
+			'attente.nosConditions' => 'شروطنا، للقراءة والقبول',
+			'attente.etatAAccepter' => 'للقبول',
 			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبق أي عنصر للتقديم.', one: 'بقي عنصر واحد للتقديم.', two: 'بقي عنصران للتقديم.', few: 'بقيت ⁨${n}⁩ عناصر للتقديم.', many: 'بقي ⁨${n}⁩ عنصرًا للتقديم.', other: 'بقي ⁨${n}⁩ عنصر للتقديم.', ), 
 			'attente.etatAFournir' => 'للتقديم',
 			'attente.prochaineEtape' => ({required Object etape}) => 'الخطوة التالية: ⁨${etape}⁩',
@@ -19889,6 +19921,15 @@ extension on TraductionsAr {
 			'attente.refuseSansElement' => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.',
 			'attente.illisible' => 'حالة ملفك لا تظهر الآن.',
 			'attente.horsLigne' => 'أنت غير متصل. ستظهر حالة ملفك بمجرد عودة الشبكة.',
+			'accords.titre' => 'شروطنا',
+			'accords.intro' => 'اقرأ كل نص، ثم حدّد المربع الذي يليه. يصبح زر «التالي» متاحًا عندما تُحدَّد كل المربعات.',
+			'accords.caseSavoir' => 'قرأت وفهمت ما يجب أن أعرفه.',
+			'accords.sectionContrat' => 'عقدك',
+			'accords.caseContrat' => 'قرأت عقدي وأوافق عليه، بما في ذلك زيارات المراقبة.',
+			'accords.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم تبق أي موافقة للتحديد.', one: 'بقيت موافقة واحدة للتحديد.', two: 'بقيت موافقتان للتحديد.', few: 'بقيت ⁨${n}⁩ موافقات للتحديد.', many: 'بقيت ⁨${n}⁩ موافقة للتحديد.', other: 'بقيت ⁨${n}⁩ موافقة للتحديد.', ), 
+			'accords.toutCoche' => 'تم تحديد كل المربعات.',
+			'accords.suivant' => 'التالي',
+			'accords.dejaAcceptes' => 'موافقاتك محفوظة بالفعل.',
 			'inscription.titre' => 'إنشاء حسابك',
 			'inscription.etapeSur' => ({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩',
 			'inscription.tempsRestant' => ({required Object minutes}) => 'نحو ⁨${minutes}⁩ د',
@@ -20077,6 +20118,8 @@ extension on TraductionsAr {
 			'adulte.recharge.verificationEchecPhrase' => 'اختياراتك محفوظة. يمكنك إعادة المحاولة.',
 			'adulte.recharge.recapitulatif' => 'الملخص حسب المستفيد',
 			'adulte.recharge.montantPaye' => 'المبلغ المدفوع',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.soldeAttribue' => 'الرصيد المخصص',
 			'adulte.recharge.statut' => 'حالة التخصيص',
 			'adulte.recharge.total' => 'المجموع المستحق',
@@ -20089,8 +20132,6 @@ extension on TraductionsAr {
 			'adulte.recharge.revenirPaiements' => 'العودة إلى مدفوعات الأسرة',
 			'adulte.paiements.beneficiaires' => 'المستفيدون',
 			'adulte.paiements.recharger' => 'شحن',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'ملخص الأسرة: ⁨${valeur}⁩. يبقى كل رصيد خاصًا بمستفيده.',
 			'adulte.paiements.bientotEpuise' => 'على وشك النفاد',
 			'adulte.paiements.inactif' => 'غير نشط',
@@ -20591,6 +20632,8 @@ extension on TraductionsAr {
 			'controleur.historique.cleReponse' => 'الرد',
 			'controleur.historique.sansComplement' => 'لا تكملة.',
 			'controleur.historique.faitsIndisponibles' => 'السجل التلقائي لهذه الزيارة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. سيظهر هنا بمجرد وصوله. باقي التقرير موثوق.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.motif' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
 			'controleur.historique.ajouterComplement' => 'إضافة تكملة',
 			'controleur.complement.bandeau' => 'ستُضاف هذه التكملة إلى التقرير الموجود.',
@@ -20603,8 +20646,6 @@ extension on TraductionsAr {
 			'controleur.complement.faitNouveau' => 'معلومة جديدة',
 			'controleur.complement.faitNouveauAide' => 'حين تعرفها بعد الزيارة · تحمل تاريخ يوم الإضافة',
 			'controleur.complement.questionTexte' => 'ماذا تضيف إلى التقرير؟',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.complement.texteObligatoire' => 'إلزامي: ما لاحظته، في جمل قليلة.',
 			'controleur.complement.libelleTexte' => 'التكملة',
 			'controleur.complement.aideTexte' => 'ما لاحظته أو عرفته منذ الزيارة.',

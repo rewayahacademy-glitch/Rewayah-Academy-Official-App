@@ -57,6 +57,8 @@ const Map<String, int> _domaines = <String, int>{
   'appareils': 75,
   'connexion': 40,
   'attente': 35,
+  // Lot E6 : la page unique des accords.
+  'accords': 8,
   'inscription': 30,
   'consentement': 30,
   'foyer': 50,

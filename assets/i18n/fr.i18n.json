@@ -805,6 +805,9 @@
     "aucunDocument": "Vous n'avez aucun document à envoyer.",
     "accesContact": "L'académie peut l'ouvrir pour vous\u00a0: joignez-la.",
     "actualiserCompte": "Actualiser",
+    "lireEtAccepter": "Lire et accepter nos conditions",
+    "nosConditions": "Nos conditions, à lire et à accepter",
+    "etatAAccepter": "À accepter",
     "reste": {
       "one": "Il reste un élément à fournir.",
       "other": "Il reste {n} éléments à fournir."
@@ -815,6 +818,20 @@
     "refuseSansElement": "Vous pouvez joindre l'académie pour connaître la marche à suivre.",
     "illisible": "L'état de votre compte ne s'affiche pas pour le moment.",
     "horsLigne": "L'état de votre compte s'affichera dès le retour du réseau."
+  },
+  "accords": {
+    "titre": "Nos conditions",
+    "intro": "Lisez chaque texte, puis cochez la case qui le suit. Le bouton «\u00a0Suivant\u00a0» s'active quand tout est coché.",
+    "caseSavoir": "J'ai lu et compris ce que je dois savoir.",
+    "sectionContrat": "Votre contrat",
+    "caseContrat": "J'ai lu et j'accepte mon contrat, visites de contrôle comprises.",
+    "reste": {
+      "one": "Il reste un accord à cocher.",
+      "other": "Il reste {n} accords à cocher."
+    },
+    "toutCoche": "Tout est coché.",
+    "suivant": "Suivant",
+    "dejaAcceptes": "Vos accords sont déjà enregistrés."
   },
   "connexion": {
     "titre": "Se connecter",

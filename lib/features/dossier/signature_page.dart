@@ -67,38 +67,6 @@ List<ParagrapheTexte> paragraphesE1() => <ParagrapheTexte>[
 AppRole _role(WidgetRef ref) =>
     ref.watch(etatDossierProvider).value?.role ?? AppRole.guardian;
 
-/// Vrai si le texte a signer est le contrat enseignant : c'est cette sorte,
-/// et non le role, qui porte E1, la clause des visites et la case art. 9.
-bool _contratEnseignant(WidgetRef ref) =>
-    SorteContrat.pour(_role(ref)) == SorteContrat.contratEnseignant;
-
-/// La carte a accuser une fois (ADR-011).
-///
-/// **Elle vient avant le contrat, pas apres.** Les deux dispositifs qu'elle
-/// nomme, l'enregistrement audio et la visite de controle, figurent aussi dans
-/// le contrat ; mais une clause signee au milieu d'un texte long n'informe
-/// personne, et « un enseignant qui decouvre le dispositif apres coup est un
-/// litige » (ADR-011). Cette carte est courte pour etre lue.
-///
-/// Depuis la version [VersionsContrat.textesJuridiques], elle porte le texte
-/// A3 valide (E1 pour l'enseignant).
-class AccusePage extends ConsumerWidget {
-  /// Cree la carte d'accuse.
-  const AccusePage({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final bool enseignant = _contratEnseignant(ref);
-    return _PageASigner(
-      titre: t.contrat.a3.titre,
-      libelleAction: t.contrat.a3.jaiLu,
-      sorte: SorteContrat.accuseEnregistrementControle,
-      version: VersionsContrat.pour(SorteContrat.accuseEnregistrementControle),
-      paragraphes: enseignant ? paragraphesE1() : paragraphesA3(),
-    );
-  }
-}
-
 /// Le contrat propre au role : conditions du tuteur, ou non-concurrence de
 /// l'enseignant.
 ///

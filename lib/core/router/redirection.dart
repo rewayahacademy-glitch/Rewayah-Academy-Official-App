@@ -135,7 +135,7 @@ String? deciderRedirection({
 
     // Un compte en portail d'attente n'atteint aucune route protegee, quelle
     // que soit l'URL tapee directement dans un navigateur. Le portail a ses
-    // propres pages, accusé, contrat et depot de piece : c'est le sous-arbre
+    // propres pages, accords et depot de piece : c'est le sous-arbre
     // entier qui est ouvert, pas la seule racine.
     case PorteAcces.attente:
     case PorteAcces.suspendu:
@@ -148,12 +148,13 @@ String? deciderRedirection({
         return Routes.attente;
       }
       // Q-2 = a : l'enseignant en attente qui a signe le contrat 2026-09
-      // signe d'abord la nouvelle version.
+      // signe d'abord la nouvelle version, sur la page unique des accords
+      // (lot E6, decision du directeur du 17/10/2026).
       if (_resignature(session, resignatureContrat) &&
           session.porte == PorteAcces.attente &&
           routeConnue &&
-          cheminDemande != Routes.attenteContrat) {
-        return Routes.attenteContrat;
+          cheminDemande != Routes.attenteAccords) {
+        return Routes.attenteAccords;
       }
       return _dansLeSousArbre(cheminDemande, Routes.attente) || !routeConnue
           ? null

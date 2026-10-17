@@ -30,6 +30,11 @@ import '../inscription/brouillon_inscription.dart';
 /// groupee, sans bouton par ligne, et la seule action pleine ouvre la premiere
 /// d'entre elles. La deconnexion reste toujours possible, en action discrete.
 ///
+/// Lot E6 (decision du directeur du 17/10/2026) : le portail ne fait plus
+/// que montrer l'etat. L'accuse et le contrat ne s'ouvrent plus un a un : une
+/// seule action, « Lire et accepter nos conditions », mene a la page unique
+/// des accords (`/attente/accords`).
+///
 /// Quatre etats, calcules en base par `etat_dossier()` et non ici : le portail
 /// doit dire exactement ce que l'administration voit, et deux calculs finissent
 /// toujours par diverger.
@@ -196,49 +201,74 @@ class _Prochaine {
   final VoidCallback? geste;
 }
 
+/// Ce qui reste a faire, tel que le portail le montre : les accords (accuse
+/// et contrat, une seule page depuis le lot E6), puis la piece d'identite.
+enum _Element {
+  /// Les accords a lire et a accepter, sur `/attente/accords`.
+  accords,
+
+  /// La piece d'identite a deposer (enseignant).
+  piece,
+}
+
+/// Les elements restants, dans l'ordre : l'accuse et le contrat se lisent et
+/// s'acceptent ensemble, sur une seule page (DECISION-ENTREE du 17/10/2026).
+List<_Element> _elements(EtatDossier etat) {
+  final List<PieceManquante> manquants = etat.manquants;
+  return <_Element>[
+    if (manquants.contains(PieceManquante.accuse) ||
+        manquants.contains(PieceManquante.contrat))
+      _Element.accords,
+    if (manquants.contains(PieceManquante.pieceIdentite)) _Element.piece,
+  ];
+}
+
 /// `adulte` : l'inscription vient de « Moi uniquement » (eleve adulte, son
-/// propre tuteur) ; le contrat s'ouvre alors en variante eleve adulte
+/// propre tuteur) ; les accords s'ouvrent alors en variante eleve adulte
 /// (`?pour=moi`). Sans brouillon (rechargement), variante responsable legal.
-_Prochaine? _prochaine(EtatDossier etat, {required bool adulte}) =>
-    switch (etat.etape) {
-      EtapeDossier.incomplet when etat.manquants.isNotEmpty => _Prochaine.vers(
-        _action(etat.manquants.first),
-        _chemin(etat.manquants.first, adulte: adulte),
+_Prochaine? _prochaine(EtatDossier etat, {required bool adulte}) {
+  final List<_Element> restants = _elements(etat);
+  return switch (etat.etape) {
+    EtapeDossier.incomplet when restants.isNotEmpty => _Prochaine.vers(
+      _action(restants.first),
+      _chemin(restants.first, adulte: adulte),
+    ),
+    // « Corriger » mene au premier element a corriger (P-ADM-09.2) : la piece
+    // refusee figure dans manquants, apres les accords.
+    EtapeDossier.refuse
+        when etat.correctionAutorisee != false && restants.isNotEmpty =>
+      _Prochaine.vers(
+        t.attente.corriger,
+        _chemin(restants.first, adulte: adulte),
       ),
-      // « Corriger » mene au premier element a corriger (P-ADM-09.2) : la piece
-      // refusee figure dans manquants, apres l'accuse et le contrat.
-      EtapeDossier.refuse
-          when etat.correctionAutorisee != false && etat.manquants.isNotEmpty =>
-        _Prochaine.vers(
-          t.attente.corriger,
-          _chemin(etat.manquants.first, adulte: adulte),
-        ),
-      _ => null,
-    };
+    _ => null,
+  };
+}
 
-String _libelle(PieceManquante piece) => switch (piece) {
-  PieceManquante.accuse => t.attente.carteAccuse,
-  PieceManquante.contrat => t.attente.signatureContrat,
-  PieceManquante.pieceIdentite => t.attente.pieceIdentite,
+String _libelle(_Element element) => switch (element) {
+  _Element.accords => t.attente.nosConditions,
+  _Element.piece => t.attente.pieceIdentite,
 };
 
-String _action(PieceManquante piece) => switch (piece) {
-  PieceManquante.accuse => t.attente.lireLaCarte,
-  PieceManquante.contrat => t.attente.signerLeContrat,
-  PieceManquante.pieceIdentite => t.attente.deposerLaPiece,
+String _action(_Element element) => switch (element) {
+  _Element.accords => t.attente.lireEtAccepter,
+  _Element.piece => t.attente.deposerLaPiece,
 };
 
-String _chemin(PieceManquante piece, {required bool adulte}) => switch (piece) {
-  PieceManquante.accuse => Routes.attenteAccuse,
-  PieceManquante.contrat =>
-    adulte ? '${Routes.attenteContrat}?pour=moi' : Routes.attenteContrat,
-  PieceManquante.pieceIdentite => Routes.attentePiece,
+String _chemin(_Element element, {required bool adulte}) => switch (element) {
+  _Element.accords =>
+    adulte ? '${Routes.attenteAccords}?pour=moi' : Routes.attenteAccords,
+  _Element.piece => Routes.attentePiece,
 };
 
-AppIcon _icone(PieceManquante piece) => switch (piece) {
-  PieceManquante.accuse => AppIcons.controleQualite,
-  PieceManquante.contrat => AppIcons.cahier,
-  PieceManquante.pieceIdentite => AppIcons.dossiers,
+AppIcon _icone(_Element element) => switch (element) {
+  _Element.accords => AppIcons.cahier,
+  _Element.piece => AppIcons.dossiers,
+};
+
+String _etat(_Element element) => switch (element) {
+  _Element.accords => t.attente.etatAAccepter,
+  _Element.piece => t.attente.etatAFournir,
 };
 
 class _Statut extends StatelessWidget {
@@ -250,6 +280,7 @@ class _Statut extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
 
+    final List<_Element> restants = _elements(etat);
     return switch (etat.etape) {
       EtapeDossier.incomplet => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -260,27 +291,28 @@ class _Statut extends StatelessWidget {
                 : t.attente.dossierIncomplet,
             style: textes.headlineSmall,
           ),
-          Ecart.vMd,
-          Text(
-            t.attente.reste(n: etat.manquants.length),
-            style: textes.bodyMedium,
-          ),
-          if (etat.manquants.isNotEmpty) ...<Widget>[
+          // E11 : « Il reste N elements a fournir » ne se dit qu'a qui doit
+          // fournir une piece ; le tuteur n'a que des accords a accepter.
+          if (!etat.estTuteur) ...<Widget>[
+            Ecart.vMd,
+            Text(t.attente.reste(n: restants.length), style: textes.bodyMedium),
+          ],
+          if (restants.isNotEmpty) ...<Widget>[
             Ecart.vXl,
             GroupeReglages(
-              titre: t.attente.aFournir,
+              titre: etat.estTuteur ? null : t.attente.aFournir,
               lignes: <LigneRubrique>[
-                for (final PieceManquante manquant in etat.manquants)
+                for (final _Element element in restants)
                   LigneRubrique(
-                    icone: _icone(manquant),
-                    libelle: _libelle(manquant),
-                    valeur: t.attente.etatAFournir,
+                    icone: _icone(element),
+                    libelle: _libelle(element),
+                    valeur: _etat(element),
                   ),
               ],
             ),
             Ecart.vXl,
             Text(
-              t.attente.prochaineEtape(etape: _libelle(etat.manquants.first)),
+              t.attente.prochaineEtape(etape: _libelle(restants.first)),
               style: textes.titleMedium,
             ),
           ],
@@ -324,11 +356,9 @@ class _Statut extends StatelessWidget {
           Text(
             etat.correctionAutorisee == false
                 ? t.attente.correctionImpossible
-                : etat.manquants.isEmpty
+                : restants.isEmpty
                 ? t.attente.refuseSansElement
-                : t.attente.refuseDetail(
-                    element: _libelle(etat.manquants.first),
-                  ),
+                : t.attente.refuseDetail(element: _libelle(restants.first)),
             style: textes.bodyMedium,
           ),
         ],

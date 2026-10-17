@@ -13,8 +13,8 @@ import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/marque_page.dart';
+import 'package:rewayah_academy/features/dossier/accords_page.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
-import 'package:rewayah_academy/features/dossier/signature_page.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
 
 import '../support/harnais.dart';
@@ -130,19 +130,22 @@ void main() {
       await _monter(tester, dossier);
 
       expect(find.text(t.attente.dossierIncomplet), findsOneWidget);
-      expect(find.text(t.attente.carteAccuse), findsOneWidget);
-      expect(find.text(t.attente.signatureContrat), findsOneWidget);
+      // Lot E6 : l'accuse et le contrat ne font plus qu'une ligne, la page
+      // unique des accords ; la piece reste une etape a part.
+      expect(find.text(t.attente.nosConditions), findsOneWidget);
+      expect(find.text(t.attente.carteAccuse), findsNothing);
+      expect(find.text(t.attente.signatureContrat), findsNothing);
       expect(find.text(t.attente.pieceIdentite), findsOneWidget);
+      expect(find.text(t.attente.reste(n: 2)), findsOneWidget);
 
-      // L'accuse precede le contrat : il dit en langage clair ce que le
-      // contrat formalisera ensuite (ADR-011).
-      final double yAccuse = tester
-          .getTopLeft(find.text(t.attente.carteAccuse))
+      // Les accords precedent la piece.
+      final double yAccords = tester
+          .getTopLeft(find.text(t.attente.nosConditions))
           .dy;
-      final double yContrat = tester
-          .getTopLeft(find.text(t.attente.signatureContrat))
+      final double yPiece = tester
+          .getTopLeft(find.text(t.attente.pieceIdentite))
           .dy;
-      expect(yAccuse, lessThan(yContrat));
+      expect(yAccords, lessThan(yPiece));
     });
 
     testWidgets('en verification : le statut, la date et le delai', (
@@ -258,8 +261,8 @@ void main() {
               builder: (BuildContext _, GoRouterState _) => const AttentePage(),
             ),
             GoRoute(
-              path: Routes.attenteContrat,
-              builder: (BuildContext _, GoRouterState _) => const ContratPage(),
+              path: Routes.attenteAccords,
+              builder: (BuildContext _, GoRouterState _) => const AccordsPage(),
             ),
           ],
           surcharges: surcharges,
@@ -268,9 +271,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // HL-A-5 : l'action est sous la carte d'etat, dans le corps defilant.
-      await tester.ensureVisible(find.text(t.attente.signerLeContrat));
+      // Lot E6 : une seule action, vers la page unique des accords.
+      expect(find.text(t.attente.signerLeContrat), findsNothing);
+      await tester.ensureVisible(find.text(t.attente.lireEtAccepter));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.attente.signerLeContrat));
+      await tester.tap(find.text(t.attente.lireEtAccepter));
       await tester.pumpAndSettle();
     }
 
@@ -366,8 +371,8 @@ void main() {
               builder: (BuildContext _, GoRouterState _) => const AttentePage(),
             ),
             GoRoute(
-              path: Routes.attenteContrat,
-              builder: (BuildContext _, GoRouterState _) => const ContratPage(),
+              path: Routes.attenteAccords,
+              builder: (BuildContext _, GoRouterState _) => const AccordsPage(),
             ),
             GoRoute(
               path: Routes.attentePiece,
@@ -428,14 +433,15 @@ void main() {
         ),
       );
 
-      // Le texte nomme l'element que « Corriger » ouvre, et non la piece.
+      // Le texte nomme l'element que « Corriger » ouvre, et non la piece :
+      // depuis le lot E6, la page unique des accords.
       expect(
-        find.text(t.attente.refuseDetail(element: t.attente.signatureContrat)),
+        find.text(t.attente.refuseDetail(element: t.attente.nosConditions)),
         findsOneWidget,
       );
       await tester.tap(find.text(t.attente.corriger));
       await tester.pumpAndSettle();
-      expect(find.byType(ContratPage), findsOneWidget);
+      expect(find.byType(AccordsPage), findsOneWidget);
       expect(find.text('route-piece'), findsNothing);
     });
 
@@ -513,14 +519,19 @@ void main() {
 
     // K-47 (HL-A-6) : le tuteur ne depose aucune piece et n'attend aucune
     // validation ; ses accords restent.
-    testWidgets('tuteur incomplet : l accuse et le contrat, jamais la piece', (
+    testWidgets('tuteur incomplet : ses accords, jamais la piece', (
       WidgetTester tester,
     ) async {
       await monter(tester, _etat(role: AppRole.guardian));
 
       expect(find.text(t.attente.accordsARelire), findsOneWidget);
-      expect(find.text(t.attente.carteAccuse), findsOneWidget);
-      expect(find.text(t.attente.signatureContrat), findsOneWidget);
+      // Lot E6 : une seule ligne pour les accords, et aucun « element a
+      // fournir » pour qui n'a rien a fournir (E11).
+      expect(find.text(t.attente.nosConditions), findsOneWidget);
+      expect(find.text(t.attente.etatAAccepter), findsOneWidget);
+      expect(find.text(t.attente.reste(n: 1)), findsNothing);
+      expect(find.text(t.attente.carteAccuse), findsNothing);
+      expect(find.text(t.attente.signatureContrat), findsNothing);
       expect(find.text(t.attente.pieceIdentite), findsNothing);
       expect(find.text(t.attente.deposerLaPiece), findsNothing);
       expect(find.text(t.attente.dossierIncomplet), findsNothing);

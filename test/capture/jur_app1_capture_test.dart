@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
+import 'package:rewayah_academy/features/dossier/accords_page.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
 import 'package:rewayah_academy/features/salle_seance/information_controle.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
@@ -51,7 +52,9 @@ Future<void> _monterDossier(
     routes: <RouteBase>[
       GoRoute(
         path: Routes.attenteAccuse,
-        builder: (BuildContext _, GoRouterState _) => const AccusePage(),
+        // Lot E6 : l'ancienne adresse de l'accuse montre la page unique des
+        // accords, qui porte le texte A3 (E1) avec sa case.
+        builder: (BuildContext _, GoRouterState _) => const AccordsPage(),
       ),
       GoRoute(
         path: Routes.attenteContrat,

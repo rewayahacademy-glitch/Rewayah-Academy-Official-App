@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/dossier/accords_page.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
@@ -61,18 +62,25 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  group('ADR-011 : la carte a accuser une fois', () {
-    testWidgets('elle nomme les deux dispositifs, en clair', (
+  // Lot E6 (decision du directeur du 17/10/2026) : la carte d'accuse vit sur
+  // la page unique des accords, avec sa case ; « J'ai lu » ne signe plus rien.
+  group('ADR-011 : ce que vous devez savoir, sur la page des accords', () {
+    testWidgets('le texte A3, une fois, avec sa case, puis l envoi', (
       WidgetTester tester,
     ) async {
-      final FauxServiceDossier dossier = FauxServiceDossier();
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = const EtatDossier(
+          profilExiste: true,
+          role: AppRole.guardian,
+          statutCompte: AccountStatus.pendingKyc,
+        );
       await tester.pumpWidget(
         hoteRoutant(
-          depart: Routes.attenteAccuse,
+          depart: Routes.attenteAccords,
           routes: <RouteBase>[
             GoRoute(
-              path: Routes.attenteAccuse,
-              builder: (BuildContext _, GoRouterState _) => const AccusePage(),
+              path: Routes.attenteAccords,
+              builder: (BuildContext _, GoRouterState _) => const AccordsPage(),
             ),
             _portail(),
           ],
@@ -85,26 +93,37 @@ void main() {
 
       // Le texte A3 valide le 02/10/2026, paragraphe par paragraphe ; les
       // anciens points (version 2026-09) ne sont plus affiches.
-      expect(find.text(t.contrat.a3.titre), findsWidgets);
       for (final ParagrapheTexte p in paragraphesA3()) {
         expect(find.text(p.titre), findsOneWidget);
         expect(find.text(p.corps!), findsOneWidget);
       }
       expect(find.text(t.contrat.pointEnregistrement), findsNothing);
       expect(find.text(t.contrat.pointControle), findsNothing);
+      expect(find.text(t.contrat.a3.jaiLu), findsNothing);
 
-      await tester.tap(find.text(t.contrat.a3.jaiLu));
+      for (final String c in <String>[
+        t.accords.caseSavoir,
+        t.consentement.texte.caseResponsable,
+      ]) {
+        await tester.ensureVisible(find.text(c));
+        await tester.tap(find.text(c));
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(find.text(t.accords.suivant));
       await tester.pumpAndSettle();
 
       expect(dossier.contratsAcceptes, <SorteContrat>[
         SorteContrat.accuseEnregistrementControle,
+        SorteContrat.conditionsTuteur,
       ]);
       expect(dossier.versionsAcceptees, <String>[
         VersionsContrat.textesJuridiques,
+        VersionsContrat.avecObservation,
       ]);
+      expect(find.text('portail'), findsOneWidget);
     });
 
-    testWidgets('un enseignant accuse le texte E1, pas le texte A3', (
+    testWidgets('un enseignant lit le texte E1, pas le texte A3', (
       WidgetTester tester,
     ) async {
       final FauxServiceDossier dossier = FauxServiceDossier()
@@ -115,16 +134,17 @@ void main() {
         );
       await tester.pumpWidget(
         hoteRoutant(
-          depart: Routes.attenteAccuse,
+          depart: Routes.attenteAccords,
           routes: <RouteBase>[
             GoRoute(
-              path: Routes.attenteAccuse,
-              builder: (BuildContext _, GoRouterState _) => const AccusePage(),
+              path: Routes.attenteAccords,
+              builder: (BuildContext _, GoRouterState _) => const AccordsPage(),
             ),
             _portail(),
           ],
           surcharges: <Override>[
             serviceDossierProvider.overrideWithValue(dossier),
+            resignatureContratEnseignantProvider.overrideWithValue(false),
           ],
         ),
       );

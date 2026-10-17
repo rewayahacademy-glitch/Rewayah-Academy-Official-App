@@ -108,6 +108,7 @@ import '../../features/demo/demo_controleur_page.dart';
 import '../../features/demo/demo_enseignant_page.dart';
 import '../../features/demo/demo_finance_page.dart';
 import '../../features/demo/demo_salle_page.dart';
+import '../../features/dossier/accords_page.dart';
 import '../../features/dossier/attente_page.dart';
 import '../../features/dossier/depot_piece_page.dart';
 import '../../features/dossier/signature_page.dart';
@@ -334,19 +335,28 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.agentEntree,
         builder: (BuildContext _, GoRouterState _) => const AgentEntreePage(),
       ),
-      // Le portail d'attente et ses trois pages. Le sous-arbre entier est
-      // ouvert a un compte en attente, la racine seule ne suffirait pas.
+      // Le portail d'attente et ses pages. Le sous-arbre entier est ouvert a
+      // un compte en attente, la racine seule ne suffirait pas.
       GoRoute(
         path: Routes.attente,
         builder: (BuildContext _, GoRouterState _) => const AttentePage(),
       ),
+      // Lot E6 (decision du directeur du 17/10/2026) : une seule page des
+      // accords. Les deux anciennes adresses, l'accuse et le contrat, y
+      // menent ; le parametre `pour` (eleve adulte) est garde.
+      GoRoute(
+        path: Routes.attenteAccords,
+        builder: (BuildContext _, GoRouterState _) => const AccordsPage(),
+      ),
       GoRoute(
         path: Routes.attenteAccuse,
-        builder: (BuildContext _, GoRouterState _) => const AccusePage(),
+        redirect: (BuildContext _, GoRouterState etat) =>
+            versLesAccords(etat.uri),
       ),
       GoRoute(
         path: Routes.attenteContrat,
-        builder: (BuildContext _, GoRouterState _) => const ContratPage(),
+        redirect: (BuildContext _, GoRouterState etat) =>
+            versLesAccords(etat.uri),
       ),
       GoRoute(
         path: Routes.attentePiece,

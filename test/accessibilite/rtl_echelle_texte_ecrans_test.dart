@@ -40,6 +40,7 @@ import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dar
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
+import 'package:rewayah_academy/features/dossier/accords_page.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
@@ -183,20 +184,28 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
       ],
     ),
   ),
+  // Lot E6 : la page unique des accords remplace la carte d'accuse.
   _EcranAVerifier(
-    'TUT-00c/a (accuse)',
+    'TUT-00c/a (accords)',
     (TextDirection d, double e) => hoteRoutant(
-      depart: Routes.attenteAccuse,
+      depart: Routes.attenteAccords,
       routes: <RouteBase>[
         GoRoute(
-          path: Routes.attenteAccuse,
+          path: Routes.attenteAccords,
           builder: (BuildContext _, GoRouterState _) =>
-              _enveloppe(const AccusePage(), direction: d, echelleTexte: e),
+              _enveloppe(const AccordsPage(), direction: d, echelleTexte: e),
         ),
         _portail(),
       ],
       surcharges: <Override>[
-        serviceDossierProvider.overrideWithValue(FauxServiceDossier()),
+        serviceDossierProvider.overrideWithValue(
+          FauxServiceDossier()
+            ..etatRendu = const EtatDossier(
+              profilExiste: true,
+              role: AppRole.guardian,
+              statutCompte: AccountStatus.pendingKyc,
+            ),
+        ),
       ],
     ),
   ),
