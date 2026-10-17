@@ -2443,23 +2443,23 @@ class _PreparationBranchee extends ConsumerWidget {
     final PreparationSeance? preparation = groupe == null
         ? null
         : ref.watch(preparationSeanceProvider(groupe));
-    return Scaffold(
-      body: SafeArea(
-        child: PreparationEnseignant(
-          resultat: ref.watch(preVolProvider).value,
-          reseau: switch (horsLigne.value) {
-            null => horsLigne.hasError ? ReseauPreparation.bonne : null,
-            true => ReseauPreparation.horsLigne,
-            false => ReseauPreparation.bonne,
-          },
-          contexte: ContextePreparation(
-            support: preparation?.supportPrevu,
-            reprise: preparation?.positionReprise,
-          ),
-          onEntrer: onEntrer,
-          onRetour: onRetour,
-          onReessayer: () => ref.invalidate(preVolProvider),
+    return PageShell(
+      defilante: false,
+      actionsCoquille: false,
+      child: PreparationEnseignant(
+        resultat: ref.watch(preVolProvider).value,
+        reseau: switch (horsLigne.value) {
+          null => horsLigne.hasError ? ReseauPreparation.bonne : null,
+          true => ReseauPreparation.horsLigne,
+          false => ReseauPreparation.bonne,
+        },
+        contexte: ContextePreparation(
+          support: preparation?.supportPrevu,
+          reprise: preparation?.positionReprise,
         ),
+        onEntrer: onEntrer,
+        onRetour: onRetour,
+        onReessayer: () => ref.invalidate(preVolProvider),
       ),
     );
   }
@@ -2482,23 +2482,23 @@ class _PreparationEleveBranchee extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<bool> horsLigne = ref.watch(horsLigneProvider);
-    return Scaffold(
-      body: SafeArea(
-        child: PreparationEleve(
-          guidee: guidee,
-          resultat: ref.watch(preVolProvider).value,
-          reseau: switch (horsLigne.value) {
-            null => horsLigne.hasError ? ReseauPreparation.bonne : null,
-            true => ReseauPreparation.horsLigne,
-            false => ReseauPreparation.bonne,
-          },
-          onEntrer: () => onEntrer(sansMicro: false),
-          onContinuerSansMicro: () => onEntrer(sansMicro: true),
-          onRetour: onRetour,
-          onReessayer: () => ref
-            ..invalidate(preVolProvider)
-            ..invalidate(horsLigneProvider),
-        ),
+    return PageShell(
+      defilante: false,
+      actionsCoquille: false,
+      child: PreparationEleve(
+        guidee: guidee,
+        resultat: ref.watch(preVolProvider).value,
+        reseau: switch (horsLigne.value) {
+          null => horsLigne.hasError ? ReseauPreparation.bonne : null,
+          true => ReseauPreparation.horsLigne,
+          false => ReseauPreparation.bonne,
+        },
+        onEntrer: () => onEntrer(sansMicro: false),
+        onContinuerSansMicro: () => onEntrer(sansMicro: true),
+        onRetour: onRetour,
+        onReessayer: () => ref
+          ..invalidate(preVolProvider)
+          ..invalidate(horsLigneProvider),
       ),
     );
   }
