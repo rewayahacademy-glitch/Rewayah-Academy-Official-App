@@ -39,3 +39,29 @@ Branche d'intégration : `claude/corrections-audit-2026-10-17` (PR brouillon rew
 ## Vérifier avant de dire que c'est fait
 
 `dart run slang`, `dart run build_runner build --delete-conflicting-outputs`, `dart analyze --fatal-infos`, `dart run tool/verifier_jetons.dart`, `dart run tool/verifier_revue.dart` (socle actuel : 1162, n'en ajouter aucune), `flutter test` sur les dossiers touchés. Côté base : Postgres nu, `supabase/tests/stub_auth.sql`, toutes les migrations, puis les scénarios.
+
+## Fait le 17/10 au soir (branche `claude/hopeful-mayer-m7p3hq`, PR brouillon rewayahacademy-glitch/Rewayah-Academy-Official-App#41)
+
+Chaque point : présent dans le code, testé localement ; les migrations sont en plus appliquées sur la base de test (`xldmmlrnxyabdtvxqbyy`) avec des empreintes identiques au rejeu local. Rien sur la production.
+
+1. Base de test : les 16 migrations restantes du 17/10 appliquées, puis FAC-A, FAC-B, FAC-C et L5-01.
+2. Facturation : prix versionnés en base et publiés par la direction (FAC-A) ; factures mensuelles, réduction famille, premier mois au prorata, état financier par profil (FAC-B) ; émission des factures du mois depuis l'onglet Paiements.
+3. Paiements : onglet « Paiements » de la direction et page « Paiements des familles » du comptable (Trésorerie et accès rapides) ; le paiement est attribué à un élève, l'issue est celle rendue par le serveur.
+4. L5 : l'inscription garde « Moi » ou « Famille » et la réponse « Suivez-vous aussi des cours ? » (migration `20261017180000`, `inscrire_titulaire`, `etat_dossier` rend `usage` et `suit_des_cours`) ; « Moi » ouvre la fiche d'élève du titulaire ; `/attente` lit l'usage du serveur.
+5. L4 : la connexion propose « J'ai déjà un compte » ou « Créer un compte » ; `/connexion?mode=creer` ouvre la création.
+6. L9 : l'invite d'accord des visites est posée sur l'accueil du tuteur, carte entière cliquable.
+7. Fiche de séance : portée dans `/salle` pour l'enseignant (compteur « 3/4 », liste des élèves, fiche pédagogique, rappel discret, faire réciter), selon le dossier maître section 10.
+8. Ménage : 59 textes orphelins retirés, 12 textes arabes du contrat traduits, `ENS-PAYS-1_BR.md` et `CLAUDE.md` corrigés.
+9. L11 : les 2 565 captures passent ; deux vrais défauts corrigés au passage (solde coupé à 320 px texte x2 dans la recharge, « hors ligne » dit deux fois sur le Foyer et les fiches finances).
+10. Champs à la main : seuils d'âge et réglages entiers, fréquence du tirage, ordre des niveaux passent au choix pas à pas (`ChoixNombre`).
+11. Scénarios SQL : 96 sur 96 verts sur base neuve (`tool/rejouer_scenarios.sh`).
+
+## Pour le directeur (trois phrases, aucune manipulation technique demandée)
+
+- La vérification automatique de GitHub ne rejoue que 15 contrôles de la base sur 96. Un script prêt (`tool/rejouer_scenarios.sh`) les rejoue tous : il suffit qu'une personne autorisée l'ajoute comme une étape de `.github/workflows/ci.yml` (les agents n'ont pas le droit de toucher ce dossier).
+- La base de test est à jour : la version de test peut être mise en ligne avec le bouton « Run workflow » de `flutter-deploy.yml`, depuis la branche d'intégration.
+- Une décision vous appartient : aujourd'hui la comptabilité enregistre un paiement directement ; un document de septembre prévoyait que le comptable prépare et que la direction valide. Sans réponse, la règle actuelle reste.
+
+## Reste connu, hors de ce lot
+
+- Écrans du comptable (paiements, trésorerie, contractuels, bénéficiaires, encaissements) et revenus de l'enseignant : leur bloc hors ligne dit encore « Vous êtes hors ligne » sous le bandeau, au lieu de dire ce qui manque (règle EA-HL-DOUBLE-1). Même correction que celle faite sur le Foyer, écran par écran.
