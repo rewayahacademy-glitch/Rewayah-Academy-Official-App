@@ -141,14 +141,15 @@ class CaseAccordTexte extends StatelessWidget {
     // un seul arret de tabulation.
     // Sans geste (envoi en cours, accord deja fige), la carte ne se presse
     // pas : meme regle qu'avant E1, quand `onChanged` nul figeait la case.
-    final VoidCallback? basculer = geste == null ? null : () => geste(!cochee);
+    // Case d'accord inactive voulue (DECISION-ENTREE-2026-10-17, accords et
+    // consentements), admise dans tool/revue_socle.txt.
     return Semantics(
       checked: cochee,
       child: AppCard(
         selectionnee: cochee,
         focusNode: focusNode,
         libelleSemantique: libelle,
-        onPress: basculer,
+        onPress: geste == null ? null : () => geste(!cochee),
         child: Row(
           children: <Widget>[
             ExcludeSemantics(

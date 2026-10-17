@@ -1,3 +1,4 @@
+# Admis par DECISION-ENTREE-2026-10-17 (accords et consentements : bouton Suivant inactif tant que tout n'est pas coche, regle qui remplace BOUTONS-GRISES-1 pour ces ecrans) : les trois lignes bouton-grise de accords_page.dart, depot_piece_page.dart et texte_observation.dart.
 affirmation-reseau|assets/i18n/fr.i18n.json|admin.groupes.observationErreur : Le réglage n'a pas pu être enregistré.
 affirmation-reseau|assets/i18n/fr.i18n.json|disponibilites.erreur : Ce créneau n'a pas pu être enregistré. Réessayez.
 affirmation-reseau|assets/i18n/fr.i18n.json|enseignant.cahier.echecEnvoi : Le cahier de transmission n'a pas pu être enregistré. Réessayez.
@@ -14,7 +15,10 @@ bouton-grise|lib/features/cahier/cahier_page.dart|onPress: lectureSeule ? null :
 bouton-grise|lib/features/compte/compte_page.dart|onPress: foyerDisponible ? () => context.push(Routes.tuteurFoyer) : null
 bouton-grise|lib/features/compte/compte_page.dart|onPress: projection.afficheFoyer ? () => context.push(Routes.tuteurFoyer) : null
 bouton-grise|lib/features/compte/espaces_compte.dart|onPress: espaces.peutRejoindre(espace) ? () => rejoindre(espace) : null
+bouton-grise|lib/features/consentements/texte_observation.dart|onPress: geste == null ? null : () => geste(!cochee)
 bouton-grise|lib/features/creneaux/creneaux_page.dart|onPress: ouvrable ? () => _ouvrir(offre) : null
+bouton-grise|lib/features/dossier/accords_page.dart|onPress: rienAFaire ? () => _suite(pieceAFournir: pieceAFournir) : pret && !_envoi ? () => unawaited( _envoyer( accuse: accuseAFaire, contrat: contratAFaire && !serveur, sorte: sorte, version: version, contratServeur: aSigner?.contrat, resignature: resignature, pieceAFournir: pieceAFournir, ), ) : null
+bouton-grise|lib/features/dossier/depot_piece_page.dart|onPress: piece == null ? null : () => unawaited(_envoyer(piece))
 bouton-grise|lib/features/fiche_groupe/fiche_groupe_page.dart|onPress: onOuvrirEleve == null ? null : () => onOuvrirEleve(membre.studentId)
 bouton-grise|lib/features/foyer/place_adulte.dart|onPress: placeActionnable(place) ? onPress : null
 bouton-grise|lib/features/mon_espace_adulte/mon_espace_adulte_page.dart|onPress: onFamille == null ? null : () => onFamille!(famille)
