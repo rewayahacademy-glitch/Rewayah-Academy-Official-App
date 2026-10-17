@@ -1098,7 +1098,7 @@ class _Traductions$inscription$ar extends Traductions$inscription$fr {
 	@override String get genreHommeExplication => 'إذا كنت تتابع دروسًا، تراعي الأكاديمية ذلك في تكوين الصفوف واختيار المعلّم.';
 	@override String get genreFemmeExplication => 'إذا كنتِ تتابعين دروسًا، تراعي الأكاديمية ذلك في تكوين الصفوف واختيار المعلّمة.';
 	@override String get genreHommeEnseignant => 'سيراجع وثيقة هويتك شخصٌ من الفريق.';
-	@override String get genreFemmeEnseignant => 'ستراجع وثيقة هويتك امرأةٌ من الفريق.';
+	@override String get genreFemmeEnseignant => 'سيراجع وثيقة هويتك شخصٌ من الفريق.';
 	@override String get recapitulatif => 'قبل المتابعة';
 	@override String get creer => 'إنشاء حسابي';
 	@override String get erreur => 'لم يكتمل إنشاء الحساب. أعد المحاولة بعد لحظة.';
@@ -19898,7 +19898,7 @@ extension on TraductionsAr {
 			'inscription.genreHommeExplication' => 'إذا كنت تتابع دروسًا، تراعي الأكاديمية ذلك في تكوين الصفوف واختيار المعلّم.',
 			'inscription.genreFemmeExplication' => 'إذا كنتِ تتابعين دروسًا، تراعي الأكاديمية ذلك في تكوين الصفوف واختيار المعلّمة.',
 			'inscription.genreHommeEnseignant' => 'سيراجع وثيقة هويتك شخصٌ من الفريق.',
-			'inscription.genreFemmeEnseignant' => 'ستراجع وثيقة هويتك امرأةٌ من الفريق.',
+			'inscription.genreFemmeEnseignant' => 'سيراجع وثيقة هويتك شخصٌ من الفريق.',
 			'inscription.recapitulatif' => 'قبل المتابعة',
 			'inscription.creer' => 'إنشاء حسابي',
 			'inscription.erreur' => 'لم يكتمل إنشاء الحساب. أعد المحاولة بعد لحظة.',
