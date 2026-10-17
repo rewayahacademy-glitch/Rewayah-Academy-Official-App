@@ -40,14 +40,14 @@
       "title": "Cours de Coran en ligne | Rewayah Academy",
       "description": "Découvrez l'apprentissage du Coran en ligne avec un enseignant, un espace familial et un suivi pour chaque élève.",
       "h1": "Des cours de Coran en ligne, un suivi pour toute la famille.",
-      "intro": "Rewayah Academy accompagne enfants et adultes dans l'apprentissage du Coran avec des enseignants et un espace pensé pour la famille.",
+      "intro": "Enfants et adultes apprennent avec un enseignant. Retrouvez les cours et le suivi de chacun dans votre espace familial.",
       "sections": [
         {
           "id": "foyer",
-          "title": "Un espace familial, un parcours pour chacun",
+          "title": "Un espace familial. Un parcours pour chacun.",
           "paragraphs": [
-            "Le tuteur retrouve les profils des élèves de son foyer et les informations de leur parcours. Chaque personne apprend selon ses objectifs et son niveau.",
-            "L'inscription d'un enfant relève d'un adulte autorisé. Les accès et responsabilités de chaque membre restent distincts."
+            "Retrouvez les profils, les classes et le suivi de vos enfants au même endroit. Chacun garde son parcours et son solde.",
+            "Vous pouvez aussi apprendre pour vous-même."
           ],
           "points": [
             "Un profil par élève",
@@ -62,10 +62,9 @@
         },
         {
           "id": "cours",
-          "title": "Des cours de Coran avec un enseignant",
+          "title": "Un enseignant, un support, le temps d’apprendre.",
           "paragraphs": [
-            "Les apprentissages portent sur la lecture de l'arabe, la récitation et la mémorisation du Coran, ainsi que les bases utiles à la prière. Les objectifs sont adaptés au parcours de l'élève.",
-            "Les cours sont organisés en groupes. Les modalités et les parcours ouverts doivent être confirmés à partir de la publication courante de l'Académie."
+            "Écouter, lire ou réciter à son tour, puis recevoir une correction. Le support de l’enseignant s’affiche automatiquement."
           ],
           "points": [
             "Enfants et adultes",
@@ -74,31 +73,31 @@
           ],
           "links": [
             {
-              "label": "Voir les cours",
+              "label": "Découvrir les cours",
               "href": "/fr/cours"
             }
           ]
         },
         {
           "id": "suivi",
-          "title": "Le suivi reste accessible à la famille",
+          "title": "Suivez son apprentissage, même à distance.",
           "paragraphs": [
-            "Depuis l'espace familial, le tuteur peut consulter les éléments de suivi rendus accessibles pour chaque profil. Le suivi accompagne les échanges avec l'enseignant et aide à retrouver ce qui est à reprendre.",
-            "Les modalités d'observation d'un cours dépendent des règles effectivement appliquées. Aucune surveillance permanente n'est promise."
+            "Retrouvez les séances et le travail à reprendre dans votre espace familial.",
+            "Deux visites de deux minutes par séance, lorsque l’observation est autorisée. Vous écoutez sans activer votre micro ni votre caméra. L’enfant et l’enseignant sont informés de votre présence."
           ],
           "links": [
             {
-              "label": "Comprendre l'espace familial",
+              "label": "Comprendre l’espace familial",
               "href": "/fr/familles"
             }
           ]
         },
         {
           "id": "fonctionnement",
-          "title": "Comment l'inscription se poursuit",
+          "title": "Un large choix d’horaires pour apprendre.",
           "paragraphs": [
-            "L'inscription commence dans l'application Rewayah. Les propositions de jours et d'horaires publiées peuvent être consultées à cette étape. L'équipe traite ensuite les intentions et propose une organisation de cours.",
-            "Choisir une proposition horaire exprime une préférence. Cela ne confirme pas une réservation et ne garantit ni une place ni un enseignant déterminé."
+            "Choisissez le créneau qui vous convient, pour votre enfant ou pour vous-même.",
+            "Trois séances par semaine pour apprendre avec régularité."
           ],
           "points": [
             "Ouvrir l'inscription dans l'application",
@@ -107,35 +106,37 @@
           ],
           "links": [
             {
-              "label": "Voir les étapes en détail",
+              "label": "Commencer mon inscription",
+              "href": "/connexion"
+            },
+            {
+              "label": "Voir les horaires",
               "href": "/fr/comment-ca-marche"
             }
           ]
         },
         {
           "id": "tarifs",
-          "title": "Comprendre le tarif avant de s'engager",
+          "title": "Un tarif clair, pour chaque membre.",
           "paragraphs": [
-            "Le montant applicable doit être présenté dans le parcours de commande à partir des paramètres commerciaux publiés par l'Académie. Les montants de référence conservés dans des documents internes ne constituent pas une offre actuelle.",
-            "Avant tout paiement, le récapitulatif applicable doit préciser le prix, la devise, les taxes et les conditions correspondantes."
+            "Les remises commencent au troisième membre de votre foyer. Les deux premiers membres gardent leur tarif. Le montant final et les taxes éventuelles sont indiqués avant paiement."
           ],
           "links": [
             {
-              "label": "Consulter les informations tarifaires",
+              "label": "Voir mon récapitulatif",
               "href": "/fr/tarifs"
             }
           ]
         },
         {
           "id": "confiance",
-          "title": "Une Académie dédiée à l'apprentissage du Coran",
+          "title": "Apprendre le Coran, accompagné à chaque étape.",
           "paragraphs": [
-            "Rewayah Academy a été lancée le 1er mai 2024. La société exploitante et les informations légales sont présentées séparément, après vérification des mentions requises.",
-            "Les questions générales peuvent être adressées à contact@rewayahacademy.com."
+            "Des cours à distance pour enfants et adultes, avec un enseignant attitré. Pour les enfants, les parents peuvent suivre leur apprentissage."
           ],
           "links": [
             {
-              "label": "Découvrir Rewayah Academy",
+              "label": "Découvrir l’académie",
               "href": "/fr/academie"
             },
             {
@@ -146,9 +147,9 @@
         },
         {
           "id": "faq-articles",
-          "title": "Vos questions, des réponses utiles",
+          "title": "Des réponses utiles aux familles.",
           "paragraphs": [
-            "Retrouvez les réponses pratiques dans l'aide et les articles publiés. Aucun article n'est affiché tant qu'un contenu éditorial n'a pas été validé et publié."
+            "Avant la première séance, trouvez les repères dont vous avez besoin."
           ],
           "links": [
             {
@@ -163,9 +164,9 @@
         },
         {
           "id": "footer",
-          "title": "Continuer avec Rewayah Academy",
+          "title": "Commencez votre inscription.",
           "paragraphs": [
-            "Pour commencer, ouvrez la connexion Rewayah. Si vous n'avez pas encore de compte, l'application vous guidera vers l'inscription."
+            "Pour votre enfant ou pour vous-même."
           ],
           "links": [
             {
@@ -401,12 +402,12 @@
     "/fr/tarifs": {
       "title": "Tarifs des cours | Rewayah Academy",
       "description": "Informations sur les tarifs, le récapitulatif de commande et les éléments à vérifier avant tout paiement.",
-      "h1": "Les tarifs doivent être confirmés avant tout paiement",
-      "intro": "Les montants de référence internes ne prouvent pas le prix actuellement proposé. Le tarif applicable doit provenir d'une publication commerciale active.",
+      "h1": "Un tarif clair, pour chaque membre.",
+      "intro": "Le prix de chaque élève et les remises applicables sont détaillés avant paiement. Le montant final et les taxes éventuelles y sont indiqués.",
       "sections": [
         {
           "id": "montant",
-          "title": "Le montant applicable",
+          "title": "Un prix détaillé avant de vous engager",
           "paragraphs": [
             "Aucun montant n'est affiché ici comme offre active tant que la projection commerciale publiée n'a pas été vérifiée.",
             "Avant tout paiement, consultez le récapitulatif présenté par le parcours existant. Il doit indiquer le montant, la devise et les taxes applicables à votre situation."
@@ -414,10 +415,10 @@
         },
         {
           "id": "famille",
-          "title": "Le calcul familial",
+          "title": "Une remise liée au rang de chaque membre",
           "paragraphs": [
-            "La composition du foyer et le nombre de profils actifs peuvent influencer le calcul si une règle familiale est publiée. Vérifiez le détail par profil dans le récapitulatif avant de confirmer.",
-            "N'utilisez pas d'ancien tarif ou d'exemple interne pour estimer un paiement actuel."
+            "Les deux premiers membres gardent leur tarif. Une remise peut s'appliquer à partir du troisième membre selon la politique en vigueur. Chaque prix et chaque remise se lisent dans le récapitulatif du foyer.",
+            "Le simulateur n'affiche un montant que lorsque la politique publiée peut être calculée par le service Finance de l'application."
           ]
         },
         {
@@ -481,7 +482,7 @@
           "id": "societe",
           "title": "L'Académie et la société exploitante",
           "paragraphs": [
-            "L'Académie a été lancée le 1er mai 2024. REWAYAH ACADEMY LTD a été immatriculée le 4 août 2025. Ces dates décrivent deux faits distincts.",
+            "Depuis le 1er mai 2024, Rewayah Academy accompagne l’apprentissage du Coran. REWAYAH ACADEMY LTD porte l’activité, sous le numéro 16624644.",
             "Les mentions légales définitives, notamment le territoire d'immatriculation et l'adresse du siège, restent soumises à vérification du registre officiel en vigueur."
           ]
         },
@@ -810,7 +811,7 @@
           "id": "identite",
           "title": "Informations à confirmer avant publication",
           "paragraphs": [
-            "Nom d'exploitation : Rewayah Academy. La société indiquée comme exploitante est REWAYAH ACADEMY LTD, numéro d'immatriculation 16624644. La société a été immatriculée le 4 août 2025; l'Académie a été lancée le 1er mai 2024.",
+            "Nom d'exploitation : Rewayah Academy. La société indiquée comme exploitante est REWAYAH ACADEMY LTD, numéro d'immatriculation 16624644. L'Académie enseigne depuis le 1er mai 2024.",
             "Le territoire d'immatriculation et les mentions de siège doivent être rapprochés de la fiche Companies House en vigueur. L'adresse du siège retrouvée dans les pièces ne sera publiée qu'après vérification du registre et du droit d'utilisation."
           ]
         },

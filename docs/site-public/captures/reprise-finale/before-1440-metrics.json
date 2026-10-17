@@ -1,0 +1,15 @@
+{
+  "width": 1440,
+  "scrollWidth": 1440,
+  "background": "rgb(26, 26, 37)",
+  "fonts": [
+    "DM Sans",
+    "Plus Jakarta Sans"
+  ],
+  "brokenImages": [
+    "http://127.0.0.1:8765/fr/assets/enseignant-portrait.png",
+    "http://127.0.0.1:8765/fr/assets/suivi-parent-tablette.png"
+  ],
+  "overflow": [],
+  "errors": []
+}
