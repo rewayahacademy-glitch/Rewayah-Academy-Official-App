@@ -22,6 +22,7 @@ import '../../core/enseignant/port_remplacements.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/matching/service_matching.dart';
+import '../../core/mouvement/mouvement.dart';
 import '../../core/offres/service_offres.dart' show languesCoursProvider;
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
@@ -316,7 +317,7 @@ class DeclarationAbsenceDemo implements DeclarationAbsence {
   @override
   Future<EtatAbsence?> declarer(String seanceId) =>
       Future<EtatAbsence?>.delayed(
-        const Duration(milliseconds: 600),
+        Mouvement.maximum,
         () => horsLigne ? null : DonneesEnseignantDemo.etatAbsenceDeclaree,
       );
 }
@@ -332,7 +333,7 @@ class ReponseRemplacementDemo implements ReponseRemplacement {
 
   @override
   Future<bool> assurer(OffreRemplacement offre) =>
-      Future<bool>.delayed(const Duration(milliseconds: 600), () => !horsLigne);
+      Future<bool>.delayed(Mouvement.maximum, () => !horsLigne);
 }
 
 /// L'envoi de la demonstration : rien ne part, la cle est fictive. Le succes
@@ -342,7 +343,7 @@ class _EnvoiPhotoDemo implements EnvoiPhotoPublique {
 
   @override
   Future<String> envoyer(PhotoChoisie photo) => Future<String>.delayed(
-    const Duration(milliseconds: 600),
+    Mouvement.maximum,
     () => 'demo/enseignant/${DonneesEnseignantDemo.enseignantId}.png',
   );
 }
@@ -548,7 +549,7 @@ class SoumissionCahierDemo implements SoumissionCahier {
   @override
   Future<SortCahier> soumettre(CahierARendre cahier) =>
       Future<SortCahier>.delayed(
-        const Duration(milliseconds: 600),
+        Mouvement.maximum,
         () => enFile ? SortCahier.enFile : SortCahier.envoye,
       );
 

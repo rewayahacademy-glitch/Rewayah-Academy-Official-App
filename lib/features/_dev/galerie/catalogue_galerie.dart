@@ -47,6 +47,7 @@ import '../../../core/widgets/carte_piece_jointe.dart';
 import '../../../core/widgets/champ_date.dart';
 import '../../../core/widgets/champ_etiquete.dart';
 import '../../../core/widgets/champ_recherche.dart';
+import '../../../core/widgets/chargement_avec_delais.dart';
 import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/commande_salle.dart';
@@ -631,6 +632,27 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'sous 200 ms : rien',
         (BuildContext _) => const Skeleton(hauteur: AppSpacing.section),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'ChargementAvecDelais',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'chargement normal : le squelette',
+        (BuildContext _) => const ChargementAvecDelais(
+          squelette: Skeleton.liste(lignes: 2, differe: false),
+          onReessayer: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'avec un titre d\'echec propre a l\'ecran',
+        (BuildContext _) => const ChargementAvecDelais(
+          squelette: Skeleton.texte(differe: false),
+          onReessayer: _rien,
+          titreEchec: 'Lecture impossible',
+        ),
       ),
     ],
   ),
