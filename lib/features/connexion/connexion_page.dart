@@ -355,8 +355,6 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                                 onGoogle: () => unawaited(_google()),
                                 onEleve: () => unawaited(_entreeEleve()),
                                 onProbleme: _versRecuperation,
-                                onDecouvrir: () =>
-                                    GoRouter.of(context).go(Routes.bienvenue),
                               ),
                       ),
                     ),
@@ -383,11 +381,9 @@ class _Saisie extends StatelessWidget {
     required this.onGoogle,
     required this.onEleve,
     required this.onProbleme,
-    required this.onDecouvrir,
   });
 
   final VoidCallback onProbleme;
-  final VoidCallback onDecouvrir;
   final TextEditingController courriel;
   final TextEditingController motDePasse;
   final bool demo;
@@ -509,28 +505,16 @@ class _Saisie extends StatelessWidget {
           Ecart.vLg,
           const Divider(),
           Ecart.vSm,
-          // Deux sorties discretes : la recuperation d'acces (lien expire ou
-          // jamais recu) et l'accueil public pour une premiere visite.
-          Wrap(
-            alignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: AppSpacing.sm,
-            children: <Widget>[
-              ActionPrincipale(
-                key: const ValueKey<String>('connexion-probleme'),
-                libelle: t.connexion.probleme,
-                onPress: onProbleme,
-                niveau: NiveauAction.tertiaire,
-                pleineLargeur: false,
-              ),
-              ActionPrincipale(
-                key: const ValueKey<String>('connexion-decouvrir'),
-                libelle: t.connexion.decouvrir,
-                onPress: onDecouvrir,
-                niveau: NiveauAction.tertiaire,
-                pleineLargeur: false,
-              ),
-            ],
+          // Une sortie discrete : la recuperation d'acces (lien expire ou
+          // jamais recu).
+          Center(
+            child: ActionPrincipale(
+              key: const ValueKey<String>('connexion-probleme'),
+              libelle: t.connexion.probleme,
+              onPress: onProbleme,
+              niveau: NiveauAction.tertiaire,
+              pleineLargeur: false,
+            ),
           ),
         ],
       ],

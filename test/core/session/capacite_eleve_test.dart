@@ -119,7 +119,7 @@ void main() {
       final SessionState s = _session(AppRole.guardian, autonome: true);
       expect(decider(s, Routes.eleve), Routes.eleveAdulte);
       expect(decider(s, Routes.eleveCoran), isNull);
-      expect(decider(s, Routes.tcClasse), Routes.accesRefuse);
+      expect(decider(s, '/tc/classe'), Routes.accesRefuse);
       expect(
         decider(_session(AppRole.guardian), Routes.eleve),
         Routes.accesRefuse,

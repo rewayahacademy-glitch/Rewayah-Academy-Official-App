@@ -1,4 +1,4 @@
-// Captures de recette du sous-paquet LA-1 : bienvenue, connexion,
+// Captures de recette du sous-paquet LA-1 : connexion,
 // recuperation d'acces (phase A, section A du 05_LOTS_PHASE1.md).
 //
 // Saute sans CAPTURE_DIR (voir test/capture/LISEZ-MOI.md).
@@ -75,13 +75,12 @@ Future<GoRouter> _monter(
 }
 
 void main() {
-  group('Capture LA-1 : bienvenue, connexion, recuperation', skip: sautSansCapture, () {
+  group('Capture LA-1 : connexion, recuperation', skip: sautSansCapture, () {
     setUpAll(() async {
       await chargerPolicesDuDepot();
     });
 
     for (final (String nom, String route) in <(String, String)>[
-      ('bienvenue', Routes.bienvenue),
       ('connexion', Routes.connexion),
       ('connexion_recuperation', Routes.connexionRecuperation),
     ]) {

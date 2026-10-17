@@ -1,6 +1,6 @@
 // Captures avant / apres de la revue du directeur (CARTES-ECART-1, HIER-1) :
 // reglages du compte (cartes collees), tableau de bord de la direction
-// (tuiles et lignes serrees), accueil public (marque et titre).
+// (tuiles et lignes serrees).
 //
 // Saute sans CAPTURE_DIR : la CI ne l'execute jamais et n'ecrit rien.
 // Meme fichier lance sur la base (avant) puis sur la branche (apres) : seul
@@ -14,7 +14,6 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
-import 'package:rewayah_academy/features/bienvenue/bienvenue_page.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 
 import '../support/harnais.dart';
@@ -74,7 +73,6 @@ void main() {
           _surchargesCompte,
         ),
         ('tableau_direction', _tableau, _surchargesTableau),
-        ('accueil_public', () => const BienvenuePage(), () => <Override>[]),
       ];
 
       for (final (String, Widget Function(), List<Override> Function()) e

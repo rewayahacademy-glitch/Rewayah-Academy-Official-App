@@ -488,7 +488,6 @@ void main() {
       Routes.tuteurAjouterEnfantAncien: Routes.tuteurAjouterEnfant,
       '${Routes.tuteurAjouterEnfantAncien}?pour=moi':
           Routes.tuteurAjouterPourMoi,
-      Routes.tuteurDisponibilites: Routes.tuteurFoyer,
       // Mapping C6, demande B-4 : les reglages par eleve sont dans la fiche.
       Routes.tuteurReglages: Routes.tuteurFoyer,
       '${Routes.ficheElevePour('e1')}/appareils/connexion': Routes.appairerPour(
