@@ -2446,6 +2446,8 @@ class _PreparationBranchee extends ConsumerWidget {
     return PageShell(
       defilante: false,
       actionsCoquille: false,
+      // La preparation porte son propre message hors ligne (L3-07-reprise).
+      bandeauHorsLigne: const SizedBox.shrink(),
       child: PreparationEnseignant(
         resultat: ref.watch(preVolProvider).value,
         reseau: switch (horsLigne.value) {
@@ -2485,6 +2487,8 @@ class _PreparationEleveBranchee extends ConsumerWidget {
     return PageShell(
       defilante: false,
       actionsCoquille: false,
+      // La preparation porte son propre message hors ligne (L3-07-reprise).
+      bandeauHorsLigne: const SizedBox.shrink(),
       child: PreparationEleve(
         guidee: guidee,
         resultat: ref.watch(preVolProvider).value,

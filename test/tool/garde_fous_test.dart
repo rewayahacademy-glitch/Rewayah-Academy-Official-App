@@ -50,11 +50,39 @@ const List<String> _reglesRevue = <String>[
 Future<ProcessResult> _lancer(List<String> arguments) =>
     Process.run('dart', <String>['run', ...arguments]);
 
+/// Un outil qui plante (code de retour autre que 0 ou 1, ou sortie sans bilan)
+/// ne compte ni pour propre ni pour en violation : la suite rougit (L3-07-reprise).
+/// Code 0 exige le bilan « aucune violation », code 1 exige « N violation(s) :».
+void _exigerBilan(ProcessResult r) {
+  final String sortie = '${r.stdout}';
+  expect(
+    r.exitCode == 0 || r.exitCode == 1,
+    isTrue,
+    reason: 'l outil a plante (code ${r.exitCode}) :\n$sortie\n${r.stderr}',
+  );
+  final bool propre = RegExp(
+    r'aucune violation\.\r?$',
+    multiLine: true,
+  ).hasMatch(sortie);
+  // Pas d'ancre en debut de ligne : flutter peut coller « Running build
+  // hooks... » devant le bilan sur la meme ligne.
+  final bool avecViolations = RegExp(
+    r'\d+ violation\(s\) :\r?$',
+    multiLine: true,
+  ).hasMatch(sortie);
+  expect(
+    r.exitCode == 0 ? propre : avecViolations,
+    isTrue,
+    reason: 'sortie sans bilan lisible (code ${r.exitCode}) :\n$sortie',
+  );
+}
+
 void main() {
   test('verifier_jetons : aucune violation hors les ecarts A-13', () async {
     final ProcessResult r = await _lancer(<String>[
       'tool/verifier_jetons.dart',
     ]);
+    _exigerBilan(r);
     final List<String> lignes = '${r.stdout}'
         .split('\n')
         .where((String l) => RegExp(r'^\s+\S+:\d+\s+\[').hasMatch(l))
