@@ -9828,6 +9828,10 @@
       "groupeComptable": "Coquille du Comptable",
       "groupeCompte": "Compte et bénéficiaire",
       "groupeDirection": "Direction"
+    },
+    "paiementsFamilles": {
+      "titre": "Paiements des familles",
+      "entree": "Paiements des familles"
     }
   },
   "presentationTuteur": {

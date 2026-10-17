@@ -915,6 +915,12 @@ abstract final class Routes {
   static const String comptableEncaissements =
       '/comptable/tresorerie/encaissements';
 
+  /// « Paiements des familles » (passation du 17/10/2026, point 3) : la
+  /// saisie d'un paiement recu hors de l'application, ouverte depuis
+  /// Encaissements. Meme corps que l'onglet Paiements de la direction.
+  static const String comptablePaiementsFamilles =
+      '/comptable/tresorerie/paiements-familles';
+
   /// Le detail d'un encaissement (panneau a 1440, page sous 1200).
   static String comptableEncaissementPour(String encaissementId) =>
       '$comptableEncaissements/$encaissementId';

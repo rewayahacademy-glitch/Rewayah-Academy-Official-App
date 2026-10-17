@@ -408,6 +408,13 @@ class ZoneAccesRapides extends StatelessWidget {
           a.accesEncaissements,
           Routes.comptableEncaissements,
         ),
+        // Passation du 17/10, point 3 : enregistrer un paiement recu d'une
+        // famille et emettre les factures du mois.
+        lien(
+          'paiements-familles',
+          t.comptable.paiementsFamilles.entree,
+          Routes.comptablePaiementsFamilles,
+        ),
         lien('tresorerie', a.accesTresorerie, Routes.comptableTresorerie),
         lien('rapports', a.accesRapports, Routes.comptableRapports),
         lien(

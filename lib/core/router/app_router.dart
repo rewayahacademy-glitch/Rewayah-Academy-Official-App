@@ -75,6 +75,7 @@ import '../../features/comptable/encaissements/rapprochement_page.dart';
 import '../../features/comptable/graphiques/rapports_page.dart';
 import '../../features/comptable/paiements/detail_paiement_page.dart';
 import '../../features/comptable/paiements/paiements_page.dart';
+import '../../features/comptable/paiements_familles/paiements_familles_page.dart';
 import '../../features/comptable/tresorerie/tresorerie_page.dart';
 import '../../features/compte/acces_page.dart';
 import '../../features/compte/aide_page.dart';
@@ -1916,6 +1917,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                             ),
                       ),
                     ],
+                  ),
+                  GoRoute(
+                    path: 'paiements-familles',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const PaiementsFamillesPage(),
                   ),
                   GoRoute(
                     path: 'rapprochement',

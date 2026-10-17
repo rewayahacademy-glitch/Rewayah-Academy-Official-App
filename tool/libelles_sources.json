@@ -4918,5 +4918,7 @@
   "adulte.demo.donnees.soldeAicha": "L11 du 17/10/2026 : libelles de la demonstration de la recharge raccourcis (un mot long se coupait a 320 px, texte x2) ; donnees de demonstration, jamais en production",
   "adulte.demo.donnees.soldeOumar": "L11 du 17/10/2026 : libelles de la demonstration de la recharge raccourcis (un mot long se coupait a 320 px, texte x2) ; donnees de demonstration, jamais en production",
   "adulte.demo.donnees.detailOffreA": "L11 du 17/10/2026 : libelles de la demonstration de la recharge raccourcis (un mot long se coupait a 320 px, texte x2) ; donnees de demonstration, jamais en production",
-  "adulte.demo.donnees.detailOffreB": "L11 du 17/10/2026 : libelles de la demonstration de la recharge raccourcis (un mot long se coupait a 320 px, texte x2) ; donnees de demonstration, jamais en production"
+  "adulte.demo.donnees.detailOffreB": "L11 du 17/10/2026 : libelles de la demonstration de la recharge raccourcis (un mot long se coupait a 320 px, texte x2) ; donnees de demonstration, jamais en production",
+  "comptable.paiementsFamilles.titre": "passation du 17/10/2026 point 3 : la direction ou le comptable enregistrent un paiement recu hors de l'application, attribue a un eleve (FAC-C-01)",
+  "comptable.paiementsFamilles.entree": "passation du 17/10/2026 point 3 : la direction ou le comptable enregistrent un paiement recu hors de l'application, attribue a un eleve (FAC-C-01)"
 }

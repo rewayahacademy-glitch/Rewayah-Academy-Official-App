@@ -6888,6 +6888,10 @@
       "groupeComptable": "واجهة المحاسب",
       "groupeCompte": "الحساب والمستفيد",
       "groupeDirection": "الإدارة"
+    },
+    "paiementsFamilles": {
+      "titre": "مدفوعات الأسر",
+      "entree": "مدفوعات الأسر"
     }
   },
   "vide": {

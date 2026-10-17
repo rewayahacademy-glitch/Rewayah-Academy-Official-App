@@ -655,6 +655,7 @@ class _Traductions$comptable$ar extends Traductions$comptable$fr {
 	@override late final _Traductions$comptable$validation$ar validation = _Traductions$comptable$validation$ar._(_root);
 	@override late final _Traductions$comptable$direction$ar direction = _Traductions$comptable$direction$ar._(_root);
 	@override late final _Traductions$comptable$demo$ar demo = _Traductions$comptable$demo$ar._(_root);
+	@override late final _Traductions$comptable$paiementsFamilles$ar paiementsFamilles = _Traductions$comptable$paiementsFamilles$ar._(_root);
 }
 
 // Path: vide
@@ -5701,6 +5702,17 @@ class _Traductions$comptable$demo$ar extends Traductions$comptable$demo$fr {
 	@override String get groupeComptable => 'واجهة المحاسب';
 	@override String get groupeCompte => 'الحساب والمستفيد';
 	@override String get groupeDirection => 'الإدارة';
+}
+
+// Path: comptable.paiementsFamilles
+class _Traductions$comptable$paiementsFamilles$ar extends Traductions$comptable$paiementsFamilles$fr {
+	_Traductions$comptable$paiementsFamilles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'مدفوعات الأسر';
+	@override String get entree => 'مدفوعات الأسر';
 }
 
 // Path: ficheEleve.mouvements
@@ -19524,6 +19536,8 @@ extension on TraductionsAr {
 			'comptable.demo.groupeComptable' => 'واجهة المحاسب',
 			'comptable.demo.groupeCompte' => 'الحساب والمستفيد',
 			'comptable.demo.groupeDirection' => 'الإدارة',
+			'comptable.paiementsFamilles.titre' => 'مدفوعات الأسر',
+			'comptable.paiementsFamilles.entree' => 'مدفوعات الأسر',
 			'vide.aucunCours' => 'لا دروس اليوم',
 			'vide.aucunCoursDetail' => 'سيظهر درسك القادم هنا.',
 			'vide.aucunCreneau' => 'لا موعد متاح الآن',
@@ -19650,10 +19664,10 @@ extension on TraductionsAr {
 			'parcours.commencer' => 'تخصيص المسار',
 			'parcours.modifier' => 'تعديل إجاباتي',
 			'parcours.erreur' => 'تعذّر حفظ هذه الإجابة. أعد المحاولة.',
-			'parcours.chargement' => 'نحضّر خياراتك.',
-			'parcours.pourPrenom' => ({required Object prenom}) => 'لـ⁨${prenom}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'parcours.chargement' => 'نحضّر خياراتك.',
+			'parcours.pourPrenom' => ({required Object prenom}) => 'لـ⁨${prenom}⁩',
 			'parcours.retourAccueil' => 'العودة إلى الرئيسية',
 			'parcours.retourFoyer' => 'العودة إلى الأسرة',
 			'parcours.reessayer' => 'إعادة المحاولة',
@@ -20164,10 +20178,10 @@ extension on TraductionsAr {
 			'adulte.historique.titre' => 'حصصي الماضية',
 			'adulte.historique.echec' => 'تعذّر تحميل حصصك الماضية: لم يستجب الخادم. أعد المحاولة بعد لحظة.',
 			'adulte.historique.vide' => 'لا حصة ماضية حتى الآن.',
-			'adulte.historique.videDetail' => 'ستظهر حصصك هنا بعد درسك الأول.',
-			'adulte.maClasse.aPropos' => 'عن هذا الفصل',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.historique.videDetail' => 'ستظهر حصصك هنا بعد درسك الأول.',
+			'adulte.maClasse.aPropos' => 'عن هذا الفصل',
 			'adulte.maClasse.participants' => 'المشاركون',
 			'adulte.maClasse.vous' => ({required Object prenom}) => '⁨${prenom}⁩ (أنت)',
 			'adulte.maClasse.progression' => 'تقدمي في هذا الفصل',
@@ -20678,10 +20692,10 @@ extension on TraductionsAr {
 			'controleur.mfa.seDeconnecter' => 'تسجيل الخروج',
 			'controleur.mfa.chargement' => 'جارٍ التحقق من حسابك',
 			'controleur.historique.titre' => 'السجل',
-			'controleur.historique.provisoire' => 'هذه الشاشة قيد التحضير.',
-			'controleur.historique.envoye' => 'أُرسل',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.historique.provisoire' => 'هذه الشاشة قيد التحضير.',
+			'controleur.historique.envoye' => 'أُرسل',
 			'controleur.historique.complementAjoute' => 'أُضيفت تكملة',
 			'controleur.historique.aTerminer' => 'للإنهاء',
 			'controleur.historique.filtreEtat' => 'الحالة',

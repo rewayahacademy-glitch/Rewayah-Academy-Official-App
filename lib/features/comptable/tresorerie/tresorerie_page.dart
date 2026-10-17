@@ -20,6 +20,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
+import 'package:go_router/go_router.dart';
 
 import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/permission_insuffisante.dart';
@@ -58,6 +59,11 @@ import 'tresorerie_donnees.dart';
 
 /// La tresorerie et ses sept coffres, onglet « Coffres » de Tresorerie.
 class TresoreriePage extends ConsumerWidget {
+  /// La cle du lien vers « Paiements des familles ».
+  static const Key clePaiementsFamilles = ValueKey<String>(
+    'tresorerie-paiements-familles',
+  );
+
   /// Cree la page. [action] vient de `?action=` : `alimenter` ouvre
   /// « Alimenter la Reserve strategique » a l'arrivee (depuis Aujourd'hui).
   const TresoreriePage({super.key, this.action});
@@ -95,15 +101,33 @@ class TresoreriePage extends ConsumerWidget {
         indexActif: 0,
       ),
       actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
-      child: sansSource
-          ? EmptyState(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          // Passation du 17/10, point 3 : les paiements recus des familles
+          // et les factures du mois, atteints aussi sur telephone.
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: LienFleche(
+              key: TresoreriePage.clePaiementsFamilles,
+              libelle: t.comptable.paiementsFamilles.entree,
+              onPress: () => context.go(Routes.comptablePaiementsFamilles),
+            ),
+          ),
+          Ecart.vLg,
+          if (sansSource)
+            EmptyState(
               message: t.comptable.commun.enPreparationTitre,
               invitation: t.comptable.commun.enPreparationPhrase,
               registre: RegistreVide.subi,
             )
-          : _Contenu(
+          else
+            _Contenu(
               ouvrirAlimentation: action == Routes.actionAlimenterReserve,
             ),
+        ],
+      ),
     );
   }
 }

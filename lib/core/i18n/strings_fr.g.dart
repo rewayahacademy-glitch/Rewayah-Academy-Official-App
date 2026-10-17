@@ -2906,6 +2906,7 @@ class Traductions$comptable$fr {
 	late final Traductions$comptable$validation$fr validation = Traductions$comptable$validation$fr.internal(_root);
 	late final Traductions$comptable$direction$fr direction = Traductions$comptable$direction$fr.internal(_root);
 	late final Traductions$comptable$demo$fr demo = Traductions$comptable$demo$fr.internal(_root);
+	late final Traductions$comptable$paiementsFamilles$fr paiementsFamilles = Traductions$comptable$paiementsFamilles$fr.internal(_root);
 }
 
 // Path: presentationTuteur
@@ -17845,6 +17846,21 @@ class Traductions$comptable$demo$fr {
 
 	/// fr: 'Direction'
 	String get groupeDirection => 'Direction';
+}
+
+// Path: comptable.paiementsFamilles
+class Traductions$comptable$paiementsFamilles$fr {
+	Traductions$comptable$paiementsFamilles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Paiements des familles'
+	String get titre => 'Paiements des familles';
+
+	/// fr: 'Paiements des familles'
+	String get entree => 'Paiements des familles';
 }
 
 // Path: presentationTuteur.accueil
@@ -40332,6 +40348,8 @@ extension on Traductions {
 			'comptable.demo.groupeComptable' => 'Coquille du Comptable',
 			'comptable.demo.groupeCompte' => 'Compte et bénéficiaire',
 			'comptable.demo.groupeDirection' => 'Direction',
+			'comptable.paiementsFamilles.titre' => 'Paiements des familles',
+			'comptable.paiementsFamilles.entree' => 'Paiements des familles',
 			'presentationTuteur.titre' => 'Demandes de présentation',
 			'presentationTuteur.contexte' => 'Un enfant de votre foyer demande la présentation standard. C\'est vous qui décidez.',
 			'presentationTuteur.ligne' => ({required Object prenom}) => '${prenom} demande la présentation standard.',
@@ -40364,10 +40382,10 @@ extension on Traductions {
 			'reprisesAdmin.refuserQuestion' => ({required Object prenom}) => 'Refuser la reprise du foyer par ${prenom} ?',
 			'reprisesAdmin.refuserConsequence' => 'Aucune permission n\'est transférée. La personne pourra déposer une nouvelle demande après le délai prévu.',
 			'reprisesAdmin.validee' => 'Reprise validée.',
-			'reprisesAdmin.refusee' => 'Reprise refusée.',
-			'reprisesAdmin.dejaTraitee' => 'Cette demande a déjà été traitée. La liste est à jour.',
 			_ => null,
 		} ?? switch (path) {
+			'reprisesAdmin.refusee' => 'Reprise refusée.',
+			'reprisesAdmin.dejaTraitee' => 'Cette demande a déjà été traitée. La liste est à jour.',
 			'reprisesAdmin.echecReseau' => 'La décision n\'a pas pu être confirmée. Vérifiez la liste avant de réessayer.',
 			'reprisesAdmin.vide' => 'Aucune demande de reprise à traiter.',
 			'reprisesAdmin.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',
