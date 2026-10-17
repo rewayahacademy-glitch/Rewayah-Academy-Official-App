@@ -114,6 +114,19 @@ tuteur, 20 classes, 10 enseignants et 4 personnes en administration.
   `tool/simulation/population_staging.json` (paiement, disponibilité, plaintes).
 - Chaque étape fait quelques kilo-octets au plus. Au-delà, l'outil MCP
   d'application dépasse son délai de 60 s sans que la requête n'atteigne la base.
+  Les étapes n'emploient pas de table temporaire : un `DROP` fait demander une
+  confirmation à l'outil.
+- Appliqué sur le STAGING le 17/10, puis vérifié par lecture : 100 élèves avec
+  leur fiche, 20 classes, 60 créneaux, 100 inscriptions, 240 séances générées.
+  Aucun enseignant ni élève dans une classe de l'autre sexe. Les accès de
+  25 élèves sont échus, ceux des familles en retard lourd ou défaillantes.
+
+**Défaut trouvé en passant.** Les 5 comptes de test `rewayahacademy+…` portent
+les matricules `RA-26-9001` à `9005`, qui ne sont pas réservés dans
+`private.person_registrations`. Le tirage au hasard d'un matricule peut donc
+retomber sur l'un d'eux, et l'inscription échoue alors sur
+`profiles_immutable_id_unique`. C'est arrivé une fois pendant ce chargement
+(`RA-26-9004`). Correctif à prévoir : réserver ces 5 matricules dans le registre.
 
 ## Ce que le modèle ne compte pas encore
 

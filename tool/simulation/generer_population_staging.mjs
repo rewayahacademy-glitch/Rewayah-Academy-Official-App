@@ -162,50 +162,47 @@ etapes.push(['personnel', [
 
 // Accès payé jusqu'à une date qui suit le profil de paiement de la famille.
 const ACCES_SQL = ['  case e.paiement', ...Object.entries(ACCES).map(([k, x]) => `    when '${k}' then ${x}`), '  end'];
-for (const lot of lots(eleves, 25)) {
+// Sans table temporaire : un DROP demande une confirmation à l'outil d'application.
+for (const lot of lots(eleves, 10)) {
   const premier = lot[0].id + 1;
   etapes.push([`eleves_${premier}`, [
     ...entete(`élèves ${premier} à ${premier + lot.length - 1}`),
-    'create temp table sim_lot (n int, sexe text, prenom text, nom text, famille int, cohorte text, niveau text, objectif text, langue text, paiement text);',
-    'insert into sim_lot values',
-    v(lot.map((e) => [e.id + 1, sql(e.sexe), sql(e.prenom), sql(e.nom), e.foyer + 1, sql(COHORTE[e.tranche]),
-      sql(e.niveau), sql(e.objectif), sql(e.famille.region.langue), sql(e.famille.paiement)])) + ';',
-    '',
     'insert into public.profiles (id, role, household_id, first_name, last_name, account_status, access_until, gender)',
     `select ${ID('e51', 'e.n')}, 'student', ${ID('e54', 'e.famille')}, e.prenom, e.nom, 'active',`,
     ...ACCES_SQL.map((x) => x + (x === '  end' ? ',' : '')),
     "  (case e.sexe when 'F' then 'female' else 'male' end)::public.gender",
-    'from sim_lot e;',
+    'from (values',
+    v(lot.map((e) => [e.id + 1, sql(e.sexe), sql(e.prenom), sql(e.nom), e.foyer + 1, sql(e.famille.paiement)])),
+    ') e(n, sexe, prenom, nom, famille, paiement);',
     '',
     'insert into public.student_profiles (profile_id, student_type, interface_mode, riwaya, camera_policy, langue_cours,',
     '  cohorte, niveau_declare, objectif, diagnostic_statut, onboarding_fait_le)',
     `select ${ID('e51', 'e.n')}, c.student_type, c.interface_mode, 'hafs',`,
     "  (case c.type_public when 'enfant' then 'forbidden' else 'allowed' end)::public.camera_policy,",
     "  e.langue, c.code, e.niveau, e.objectif, 'fait', now()",
-    'from sim_lot e join public.cohortes_age c on c.code = e.cohorte;',
-    '',
-    'drop table sim_lot;',
+    'from (values',
+    v(lot.map((e) => [e.id + 1, sql(COHORTE[e.tranche]), sql(e.niveau), sql(e.objectif), sql(e.famille.region.langue)])),
+    ') e(n, cohorte, niveau, objectif, langue)',
+    'join public.cohortes_age c on c.code = e.cohorte;',
     '',
   ]]);
 }
 
 etapes.push(['classes', [
   ...entete('classes actives et leurs trois créneaux par semaine'),
-  'create temp table sim_classes (n int, enseignant int, type text, genre text, jours int[], heure int, seuil int, libelle text);',
-  'insert into sim_classes values',
-  v(classes.map((g) => [g.id + 1, g.enseignant + 1, sql(g.type), sql(g.genre), `'{${g.jours.join(',')}}'`, g.heure, g.seuil, sql(g.libelle)])) + ';',
-  '',
   '-- Enseignant du même sexe quand la classe est séparée.',
   'insert into public.groupes (id, teacher_id, type_public, seuil_max, libelle, nom_cours, weekday, hour_local,',
   '  timezone_iana, etat, genre_public, langue_code)',
   `select ${ID('e55', 'n')}, ${ID('e52', 'enseignant')}, type, seuil, libelle, 'Lecture du Coran',`,
-  "  jours[1], heure, 'Europe/Paris', 'active', genre, 'francais'",
-  'from sim_classes;',
+  "  jour, heure, 'Europe/Paris', 'active', genre, 'francais'",
+  'from (values',
+  v(classes.map((g) => [g.id + 1, g.enseignant + 1, sql(g.type), sql(g.genre), g.jours[0], g.heure, g.seuil, sql(g.libelle)])),
+  ') c(n, enseignant, type, genre, jour, heure, seuil, libelle);',
   '',
   'insert into public.groupe_creneaux (groupe_id, weekday, hour_local)',
-  `select ${ID('e55', 'n')}, j, heure from sim_classes, unnest(jours[2:3]) j;`,
-  '',
-  'drop table sim_classes;',
+  `select ${ID('e55', 'n')}, jour, heure from (values`,
+  v(classes.flatMap((g) => g.jours.slice(1).map((j) => [g.id + 1, j, g.heure]))),
+  ') c(n, jour, heure);',
   '',
 ]]);
 
