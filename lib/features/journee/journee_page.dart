@@ -79,6 +79,7 @@ import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
+import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/point_rappel.dart';
@@ -126,6 +127,9 @@ class JourneePage extends ConsumerStatefulWidget {
 class _JourneePageEtat extends ConsumerState<JourneePage> {
   ProviderSubscription<AsyncValue<bool>>? _reseau;
 
+  /// Le retour local de la file rejouee (L2-03), `null` quand rien n'a ete envoye.
+  String? _retour;
+
   @override
   void initState() {
     super.initState();
@@ -155,9 +159,7 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
     try {
       final int n = await ref.read(soumissionCahierProvider).rejouer();
       if (n > 0 && mounted) {
-        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-          SnackBar(content: Text(t.enseignant.journee.cahiersEnvoyes(n: n))),
-        );
+        setState(() => _retour = t.enseignant.journee.cahiersEnvoyes(n: n));
       }
     } on Object catch (erreur) {
       // La file garde le cahier : rien ne s'affiche, l'ecran reste intact.
@@ -175,7 +177,13 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
       constructeur: (DateTime maintenant) => PageShell(
         titre: t.enseignant.journee.titre,
         sousTitre: dateLisible(maintenant),
-        child: _Corps(maintenant: maintenant),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            LocalFeedback(message: _retour),
+            _Corps(maintenant: maintenant),
+          ],
+        ),
       ),
     );
   }

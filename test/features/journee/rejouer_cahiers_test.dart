@@ -1,7 +1,8 @@
 // L2-03 : la file des cahiers hors ligne se rejoue vraiment.
 //
 // Trois preuves, sur la Journee montee seule :
-// - a l'ouverture, `rejouer` part une fois, et « 2 cahiers envoyes » s'affiche
+// - a l'ouverture, `rejouer` part une fois, et « 2 cahiers de transmission
+//   envoyes » s'affiche dans un `LocalFeedback`
 //   quand la file en contenait deux ; une file vide n'affiche rien ;
 // - un retour du reseau (hors ligne vers en ligne) rejoue la file une seconde
 //   fois ; le passage en ligne vers hors ligne, lui, ne rejoue rien ;
@@ -29,6 +30,7 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/local_feedback.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
 import '../../support/harnais.dart';
@@ -150,7 +152,8 @@ void main() {
       find.text(t.enseignant.journee.cahiersEnvoyes(n: 2)),
       findsOneWidget,
     );
-    expect(find.text('2 cahiers envoyés'), findsOneWidget);
+    expect(find.text('2 cahiers de transmission envoyés'), findsOneWidget);
+    expect(find.byType(LocalFeedback), findsOneWidget);
   });
 
   testWidgets('une file vide ne rend rien, ni a l ouverture ni au retour', (
@@ -194,7 +197,7 @@ void main() {
     }
 
     expect(soumission.appels, 2);
-    expect(find.text('1 cahier envoyé'), findsOneWidget);
+    expect(find.text('1 cahier de transmission envoyé'), findsOneWidget);
   });
 
   testWidgets('une reconstruction de la page ne rejoue pas une seconde fois', (

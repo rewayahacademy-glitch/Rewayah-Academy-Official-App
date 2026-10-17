@@ -2692,12 +2692,12 @@ class _Traductions$enseignant$journee$ar extends Traductions$enseignant$journee$
 	@override String get erreur => 'تعذّرت قراءة اليوم كاملًا. أعد المحاولة بعد لحظة.';
 	@override String get coursIndividuel => 'درس فردي';
 	@override String cahiersEnvoyes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
-		zero: 'لم يُرسَل أي دفتر',
-		one: 'تم إرسال دفتر واحد',
-		two: 'تم إرسال دفترين',
-		few: 'تم إرسال ⁨${n}⁩ دفاتر',
-		many: 'تم إرسال ⁨${n}⁩ دفترًا',
-		other: 'تم إرسال ⁨${n}⁩ دفتر',
+		zero: 'لم يُرسَل أي دفتر متابعة',
+		one: 'تم إرسال دفتر متابعة واحد',
+		two: 'تم إرسال دفتري متابعة',
+		few: 'تم إرسال ⁨${n}⁩ دفاتر متابعة',
+		many: 'تم إرسال ⁨${n}⁩ دفترًا متابعة',
+		other: 'تم إرسال ⁨${n}⁩ دفتر متابعة',
 	);
 	@override String effectif({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
 		zero: 'لا طالب',
@@ -15062,7 +15062,7 @@ extension on TraductionsAr {
 			'enseignant.journee.voirCreneaux' => 'عرض مواعيدي',
 			'enseignant.journee.erreur' => 'تعذّرت قراءة اليوم كاملًا. أعد المحاولة بعد لحظة.',
 			'enseignant.journee.coursIndividuel' => 'درس فردي',
-			'enseignant.journee.cahiersEnvoyes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يُرسَل أي دفتر', one: 'تم إرسال دفتر واحد', two: 'تم إرسال دفترين', few: 'تم إرسال ⁨${n}⁩ دفاتر', many: 'تم إرسال ⁨${n}⁩ دفترًا', other: 'تم إرسال ⁨${n}⁩ دفتر', ), 
+			'enseignant.journee.cahiersEnvoyes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يُرسَل أي دفتر متابعة', one: 'تم إرسال دفتر متابعة واحد', two: 'تم إرسال دفتري متابعة', few: 'تم إرسال ⁨${n}⁩ دفاتر متابعة', many: 'تم إرسال ⁨${n}⁩ دفترًا متابعة', other: 'تم إرسال ⁨${n}⁩ دفتر متابعة', ), 
 			'enseignant.journee.effectif' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${nombre}⁩ طلاب', many: '⁨${nombre}⁩ طالبًا', other: '⁨${nombre}⁩ طالب', ), 
 			'enseignant.journee.effectifUn' => 'طالب واحد',
 			'enseignant.journee.preflightOk' => 'الميكروفون جاهز',
