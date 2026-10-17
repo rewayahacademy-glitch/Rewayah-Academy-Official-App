@@ -48,7 +48,6 @@ import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_eleve_page.dart';
 import '../../features/appareils/appareils_page.dart';
-import '../../features/bienvenue/bienvenue_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
 import '../../features/classe_tuteur/catalogue_classes_page.dart';
@@ -170,7 +169,6 @@ import '../finance/montant.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../mouvement/transitions.dart';
-import '../preferences/presentation_vue.dart';
 import '../recherche/controleur_recherche.dart';
 import '../recherche/modeles_recherche.dart';
 import '../session/session_controleur.dart';
@@ -219,15 +217,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
     rafraichisseur.declencher();
   });
 
-  // PUB-1 : la racine d'un visiteur sans session depend de la presentation
-  // deja vue sur cet appareil, lue apres le demarrage.
-  ref.listen<EtatPresentation>(presentationProvider, (
-    EtatPresentation? _,
-    EtatPresentation _,
-  ) {
-    rafraichisseur.declencher();
-  });
-
   // Lu une fois, a la construction du routeur : un role ne change pas sans
   // reconnexion, qui recree ce provider. `routesTcA` n'en a besoin que pour
   // distinguer l'affichage eleve/tuteur au sein de l'Espace Groupe -- la
@@ -241,15 +230,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
     refreshListenable: rafraichisseur,
     redirect: (BuildContext _, GoRouterState etat) {
       final SessionState session = ref.read(sessionProvider);
-      // La preference n'est lue que pour la racine d'un visiteur sans
-      // session : un compte connecte ne touche jamais ce stockage.
-      if (session.porte == PorteAcces.deconnecte &&
-          etat.matchedLocation == Routes.racine) {
-        ref.read(presentationProvider.notifier).charger();
-      }
       return deciderRedirection(
         session: session,
-        presentation: ref.read(presentationProvider),
         cheminDemande: etat.matchedLocation,
         billet: etat.extra is BilletSalle ? etat.extra! as BilletSalle : null,
         maintenant: DateTime.now(),
@@ -308,12 +290,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           courrielInitial: etat.extra is String ? etat.extra! as String : null,
         ),
       ),
-      // L'accueil public : la racine d'un visiteur deconnecte y mene
-      // (`deciderRedirection`, demande A-1) ; une route protegee demandee
-      // sans session va toujours a la connexion, avec son retour.
+      // Plus de pages de presentation avant la connexion (directeur, 17/10 :
+      // la page d'accueil du site suffit). L'ancienne adresse, encore dans des
+      // signets et des PWA installees, mene a la connexion.
       GoRoute(
         path: Routes.bienvenue,
-        builder: (BuildContext _, GoRouterState _) => const BienvenuePage(),
+        redirect: (BuildContext _, GoRouterState _) => Routes.connexion,
       ),
       GoRoute(
         path: Routes.inscription,
@@ -534,12 +516,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               ? null
               : etat.uri.queryParameters,
         ).toString(),
-      ),
-      // Le matching par disponibilites est remplace (`docs/current/00`) : la
-      // page reste dans le code, sa route mene au Foyer.
-      GoRoute(
-        path: Routes.tuteurDisponibilites,
-        redirect: (BuildContext _, GoRouterState _) => Routes.tuteurFoyer,
       ),
       // Les reglages par eleve vivent dans la fiche (photo, camera, interface ;
       // lot B, LB-3) : l'ancienne page ferait un second endroit pour la meme
@@ -1922,18 +1898,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ],
       ),
 
-      // Teaching Core (plan d'integration, etape 7). Cinq lots, cinq
+      // Teaching Core (plan d'integration, etape 7). Quatre lots, quatre
       // fonctions qui RETOURNENT des routes sans jamais construire de
       // `GoRouter` (decision D-04) : `routesTcA`, `routesTcB`, `routesTcC`,
-      // `routesTcE`, `routesTcG`. Chaque chemin porte son autorisation de
+      // `routesTcG`. Chaque chemin porte son autorisation de
       // role dans `redirection.dart` (`_teachingCoreAutorise`), sans quoi
       // `/tc/` serait inatteignable pour tous les roles.
       ...routesTcA(role: sessionRole),
       ...routesTcB(),
       ...routesTcC(),
-      // routesTcE() (Classe Live, /tc/classe) n'est plus montee : une seule
-      // salle, /salle (arbitrage A-05, audit final 16/10/2026, lot L3-01).
-      // Les capacites D/F/H restent dans le code, non routees.
+      // Une seule salle, /salle (arbitrage A-05, audit final 16/10/2026) :
+      // l'ancienne classe /tc/classe n'a plus de route.
       ...routesTcG(),
 
       // Salle. Le billet passe par `extra`, jamais par l'URL (ADR-005).

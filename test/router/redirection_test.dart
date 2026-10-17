@@ -36,7 +36,6 @@ void main() {
       Routes.eleveSuivi,
       Routes.tuteurAccueil,
       Routes.tuteurFoyer,
-      Routes.tuteurDisponibilites,
       Routes.tuteurReglages,
       Routes.tuteurSuivi,
       Routes.tuteurCompte,
@@ -484,7 +483,7 @@ void main() {
     });
 
     test(
-      'la racine d un visiteur sans session mene a l accueil public (A-1)',
+      'la racine d un visiteur sans session mene a la connexion (17/10)',
       () {
         expect(
           deciderRedirection(
@@ -492,7 +491,7 @@ void main() {
             cheminDemande: Routes.racine,
             maintenant: maintenant,
           ),
-          Routes.bienvenue,
+          Routes.connexion,
         );
         // Une route protegee va toujours a la connexion, avec son retour.
         expect(
@@ -507,7 +506,7 @@ void main() {
     );
 
     test('la salle et la classe ne deviennent jamais un retour', () {
-      for (final String chemin in <String>[Routes.salle, Routes.tcClasse]) {
+      for (final String chemin in <String>[Routes.salle, '/tc/classe']) {
         expect(
           deciderRedirection(
             session: const SessionState.deconnecte(),
@@ -907,7 +906,8 @@ void main() {
         AppRole.guardian,
         AppRole.teacher,
       ],
-      '/tc/classe': <AppRole>[AppRole.teacher, AppRole.student],
+      // L'ancienne classe n'a plus de route : refusee a tous (A-05).
+      '/tc/classe': <AppRole>[],
       '/tc/mushaf': <AppRole>[AppRole.student],
       '/tc/observation/s1': <AppRole>[
         AppRole.guardian,

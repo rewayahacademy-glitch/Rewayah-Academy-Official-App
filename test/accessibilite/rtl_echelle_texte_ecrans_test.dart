@@ -274,10 +274,6 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
           path: Routes.tuteurReglages,
           builder: (BuildContext _, GoRouterState _) => const Text('TUT-05'),
         ),
-        GoRoute(
-          path: Routes.tuteurDisponibilites,
-          builder: (BuildContext _, GoRouterState _) => const Text('TUT-04'),
-        ),
       ],
       surcharges: <Override>[
         serviceAppairageProvider.overrideWithValue(FauxServiceAppairage()),

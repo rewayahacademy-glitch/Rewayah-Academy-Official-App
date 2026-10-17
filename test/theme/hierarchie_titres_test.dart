@@ -10,7 +10,6 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/marque_page.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 import 'package:rewayah_academy/core/widgets/section_header.dart';
-import 'package:rewayah_academy/features/bienvenue/bienvenue_page.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
 
@@ -128,22 +127,6 @@ void main() {
       const Size(320, 900),
       const Size(1440, 900),
     ]) {
-      testWidgets('accueil public : marque et titre (${vue.width} px)', (
-        WidgetTester tester,
-      ) async {
-        fixerVue(tester, vue);
-        await tester.pumpWidget(
-          hoteTheme(const BienvenuePage(), defilant: false),
-        );
-        await tester.pump();
-
-        verifierHierarchie(
-          tester,
-          titre: find.byKey(const ValueKey<String>('bienvenue-accroche')),
-          inferieurs: <String, Finder>{'la marque': find.text(t.commun.marque)},
-        );
-      });
-
       testWidgets('connexion : marque et titre (${vue.width} px)', (
         WidgetTester tester,
       ) async {

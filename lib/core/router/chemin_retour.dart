@@ -8,7 +8,9 @@ import 'routes.dart';
 /// retour ferait circuler ce jeton dans un second parametre.
 const Set<String> _destinationsInterdites = <String>{
   Routes.salle,
-  Routes.tcClasse,
+  // L'ancienne classe n'a plus de route ; son adresse reste refusee comme
+  // retour, par prudence.
+  '/tc/classe',
   Routes.agentEntree,
 };
 

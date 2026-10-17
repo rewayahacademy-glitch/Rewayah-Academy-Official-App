@@ -32,7 +32,8 @@ abstract final class Routes {
   /// La recuperation d'acces : un nouveau lien, jamais un mot de passe.
   static const String connexionRecuperation = '/connexion/recuperation';
 
-  /// L'accueil public avant connexion.
+  /// L'ancienne presentation avant connexion, supprimee le 17/10 : l'adresse
+  /// reste publique et mene a la connexion (signets, PWA installees).
   static const String bienvenue = '/bienvenue';
 
   /// Inscription : le compte existe, le profil reste a creer.
@@ -297,9 +298,6 @@ abstract final class Routes {
   /// L'identifiant est dans le chemin et non dans `extra` : cet ecran n'a rien
   /// d'ephemere et doit survivre a un rechargement, comme l'appairage.
   static String parcoursPour(String eleveId) => '$tuteurParcours/$eleveId';
-
-  /// Disponibilites du foyer.
-  static const String tuteurDisponibilites = '/tuteur/disponibilites';
 
   /// Reglages par enfant.
   static const String tuteurReglages = '/tuteur/reglages';
@@ -1138,11 +1136,6 @@ abstract final class Routes {
   /// Le moteur Coran hors classe (C). Route interne : la destination
   /// `/eleve/coran` pointe directement sur ce moteur, voir `app_router.dart`.
   static const String tcMushaf = '/tc/mushaf';
-
-  /// La Classe Live (E). Roles autorises : enseignant, eleve. Atteinte par le
-  /// bouton « Rejoindre » et la barre « Cours en cours », jamais par URL
-  /// tapee (ADR-005).
-  static const String tcClasse = '/tc/classe';
 
   /// La porte d'observation d'une seance (G). Roles autorises : tuteur,
   /// admin, controleur.

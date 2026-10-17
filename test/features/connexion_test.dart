@@ -226,12 +226,12 @@ void main() {
           .map((ActionPrincipale a) => a.niveau)
           .toList();
 
-      // Lien, Google, entree eleve, puis les deux sorties discretes (LA-1) :
-      // recuperation d'acces et accueil public, en texte seul.
+      // Lien, Google, entree eleve, puis la sortie discrete (LA-1) : la
+      // recuperation d'acces, en texte seul. Plus de lien vers une
+      // presentation (17/10).
       expect(rangs, <NiveauAction>[
         NiveauAction.principale,
         NiveauAction.secondaire,
-        NiveauAction.tertiaire,
         NiveauAction.tertiaire,
         NiveauAction.tertiaire,
       ]);
