@@ -1369,6 +1369,7 @@ class _Traductions$controleur$ar extends Traductions$controleur$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$controleur$mfa$ar mfa = _Traductions$controleur$mfa$ar._(_root);
 	@override late final _Traductions$controleur$historique$ar historique = _Traductions$controleur$historique$ar._(_root);
 	@override late final _Traductions$controleur$complement$ar complement = _Traductions$controleur$complement$ar._(_root);
 	@override late final _Traductions$controleur$compteRendu$ar compteRendu = _Traductions$controleur$compteRendu$ar._(_root);
@@ -6786,6 +6787,34 @@ class _Traductions$dossiers$decision$ar extends Traductions$dossiers$decision$fr
 	@override String get dejaTraite => 'عولج هذا الملف من قبل.';
 	@override String get conflit => 'عالج هذا الملف عضو آخر في الفريق.';
 	@override String nomComplet({required Object prenom, required Object nom}) => '⁨${prenom}⁩ ⁨${nom}⁩';
+}
+
+// Path: controleur.mfa
+class _Traductions$controleur$mfa$ar extends Traductions$controleur$mfa$fr {
+	_Traductions$controleur$mfa$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreEnrolement => 'احمِ حساب المراقب الخاص بك';
+	@override String get introEnrolement => 'يتيح هذا الحساب الدخول إلى حصص يحضرها أطفال. لا ينبغي أن تكفي كلمة مرور مسروقة: أضف خطوة ثانية بتطبيق للمصادقة.';
+	@override String get etapeScanner => 'في تطبيق المصادقة لديك، امسح هذا الرمز.';
+	@override String get libelleQr => 'رمز يُمسح لإضافة هذا الحساب إلى تطبيق المصادقة لديك';
+	@override String get cleManuelle => 'لا تستطيع المسح؟ أدخل هذا المفتاح في التطبيق.';
+	@override String get etapeCode => 'أدخل الرمز المكوّن من ستة أرقام الذي يعرضه التطبيق.';
+	@override String get champCode => 'رمز من ستة أرقام';
+	@override String get activer => 'تفعيل الحماية';
+	@override String get titreVerification => 'أكّد تسجيل دخولك';
+	@override String get introVerification => 'افتح تطبيق المصادقة لديك وأدخل الرمز المكوّن من ستة أرقام المعروض لهذا الحساب.';
+	@override String get confirmer => 'تأكيد';
+	@override String get codeIncomplet => 'أدخل أرقام الرمز الستة.';
+	@override String get codeRefuse => 'هذا الرمز غير صحيح. تحقّق من وقت هاتفك ثم أدخل الرمز المعروض الآن.';
+	@override String get sansApplication => 'ليس لدي تطبيق للمصادقة';
+	@override String get videTitre => 'تحتاج إلى تطبيق للمصادقة';
+	@override String get videPhrase => 'ثبّت على هاتفك أحد تطبيقات المصادقة المعروفة، ثم عد إلى هنا. للمساعدة، راسل إدارة الأكاديمية.';
+	@override String get videRetour => 'ثبّتُّ التطبيق';
+	@override String get seDeconnecter => 'تسجيل الخروج';
+	@override String get chargement => 'جارٍ التحقق من حسابك';
 }
 
 // Path: controleur.historique
@@ -20491,6 +20520,25 @@ extension on TraductionsAr {
 			'disponibilites.joursLongs.4' => 'الجمعة',
 			'disponibilites.joursLongs.5' => 'السبت',
 			'disponibilites.joursLongs.6' => 'الأحد',
+			'controleur.mfa.titreEnrolement' => 'احمِ حساب المراقب الخاص بك',
+			'controleur.mfa.introEnrolement' => 'يتيح هذا الحساب الدخول إلى حصص يحضرها أطفال. لا ينبغي أن تكفي كلمة مرور مسروقة: أضف خطوة ثانية بتطبيق للمصادقة.',
+			'controleur.mfa.etapeScanner' => 'في تطبيق المصادقة لديك، امسح هذا الرمز.',
+			'controleur.mfa.libelleQr' => 'رمز يُمسح لإضافة هذا الحساب إلى تطبيق المصادقة لديك',
+			'controleur.mfa.cleManuelle' => 'لا تستطيع المسح؟ أدخل هذا المفتاح في التطبيق.',
+			'controleur.mfa.etapeCode' => 'أدخل الرمز المكوّن من ستة أرقام الذي يعرضه التطبيق.',
+			'controleur.mfa.champCode' => 'رمز من ستة أرقام',
+			'controleur.mfa.activer' => 'تفعيل الحماية',
+			'controleur.mfa.titreVerification' => 'أكّد تسجيل دخولك',
+			'controleur.mfa.introVerification' => 'افتح تطبيق المصادقة لديك وأدخل الرمز المكوّن من ستة أرقام المعروض لهذا الحساب.',
+			'controleur.mfa.confirmer' => 'تأكيد',
+			'controleur.mfa.codeIncomplet' => 'أدخل أرقام الرمز الستة.',
+			'controleur.mfa.codeRefuse' => 'هذا الرمز غير صحيح. تحقّق من وقت هاتفك ثم أدخل الرمز المعروض الآن.',
+			'controleur.mfa.sansApplication' => 'ليس لدي تطبيق للمصادقة',
+			'controleur.mfa.videTitre' => 'تحتاج إلى تطبيق للمصادقة',
+			'controleur.mfa.videPhrase' => 'ثبّت على هاتفك أحد تطبيقات المصادقة المعروفة، ثم عد إلى هنا. للمساعدة، راسل إدارة الأكاديمية.',
+			'controleur.mfa.videRetour' => 'ثبّتُّ التطبيق',
+			'controleur.mfa.seDeconnecter' => 'تسجيل الخروج',
+			'controleur.mfa.chargement' => 'جارٍ التحقق من حسابك',
 			'controleur.historique.titre' => 'السجل',
 			'controleur.historique.provisoire' => 'هذه الشاشة قيد التحضير.',
 			'controleur.historique.envoye' => 'أُرسل',
@@ -20543,6 +20591,8 @@ extension on TraductionsAr {
 			'controleur.complement.cleTexte' => 'التكملة',
 			'controleur.complement.envoyer' => 'إرسال التكملة',
 			'controleur.complement.echec' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا، أعد المحاولة بعد لحظة. يبقى التقرير الأصلي سليمًا.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.complement.envoyeTitre' => 'أُضيفت التكملة',
 			'controleur.complement.envoyePhrase' => 'تظهر تحت التقرير الأصلي، الذي يبقى دون تغيير.',
 			'controleur.complement.revenir' => 'العودة إلى التقرير',
@@ -20562,8 +20612,6 @@ extension on TraductionsAr {
 			'controleur.compteRendu.debutALHeure' => ({required Object heure}) => '⁨${heure}⁩، في الموعد',
 			'controleur.compteRendu.cleFin' => 'النهاية',
 			'controleur.compteRendu.enCours' => 'جارية',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.clePresents' => 'الطلاب الحاضرون',
 			'controleur.compteRendu.presents' => ({required Object presents, required Object attendus}) => '⁨${presents}⁩ من ⁨${attendus}⁩',
 			'controleur.compteRendu.cleReconnexions' => 'إعادات الاتصال',

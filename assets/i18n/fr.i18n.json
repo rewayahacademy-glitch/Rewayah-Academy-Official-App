@@ -5829,6 +5829,27 @@
     }
   },
   "controleur": {
+    "mfa": {
+      "titreEnrolement": "Protégez votre compte de contrôleur",
+      "introEnrolement": "Ce compte donne accès à des séances où se trouvent des enfants. Un mot de passe volé ne doit pas suffire : ajoutez une seconde étape avec une application d'authentification.",
+      "etapeScanner": "Dans votre application d'authentification, scannez ce code.",
+      "libelleQr": "Code à scanner pour ajouter ce compte à votre application d'authentification",
+      "cleManuelle": "Vous ne pouvez pas scanner ? Saisissez cette clé dans l'application.",
+      "etapeCode": "Saisissez le code à six chiffres affiché par l'application.",
+      "champCode": "Code à six chiffres",
+      "activer": "Activer la protection",
+      "titreVerification": "Confirmez votre connexion",
+      "introVerification": "Ouvrez votre application d'authentification et saisissez le code à six chiffres affiché pour ce compte.",
+      "confirmer": "Confirmer",
+      "codeIncomplet": "Saisissez les six chiffres du code.",
+      "codeRefuse": "Ce code n'est pas bon. Vérifiez l'heure de votre téléphone, puis saisissez le code qui s'affiche maintenant.",
+      "sansApplication": "Je n'ai pas d'application d'authentification",
+      "videTitre": "Il vous faut une application d'authentification",
+      "videPhrase": "Installez-en une sur votre téléphone, par exemple Google Authenticator, Microsoft Authenticator ou Aegis, puis revenez ici. Pour être aidé, écrivez à l'administration de l'académie.",
+      "videRetour": "J'ai installé l'application",
+      "seDeconnecter": "Se déconnecter",
+      "chargement": "Vérification de votre compte en cours"
+    },
     "historique": {
       "titre": "Historique",
       "provisoire": "Cet écran est en préparation.",

@@ -64,10 +64,17 @@ class SourceSessionSupabase implements SourceSession {
     // `profiles_self_select`.
     final _ProfilLu profil = await _lireProfil(profileId);
 
+    final AppRole? role = AppRole.depuisSql(claims.role);
+
     return SessionState(
       resolue: true,
       profileId: profileId,
-      role: AppRole.depuisSql(claims.role),
+      role: role,
+      // Le serveur refuse (42501) tout appel du controleur en `aal1` : l'ecran
+      // d'enrolement ou de verification est la seule porte ouverte. Faux pour
+      // les autres comptes, et pour une session d'observation d'agent.
+      mfaRequise:
+          role == AppRole.controller && claims.niveauAssurance != 'aal2',
       householdId: claims.householdId,
       accountStatus: profil.statut,
       interfaceMode: profil.mode,

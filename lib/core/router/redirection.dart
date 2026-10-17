@@ -189,6 +189,19 @@ String? deciderRedirection({
         return racine;
       }
 
+      // L1-10 : la seconde etape de connexion du controleur passe avant toute
+      // navigation. On lit la capacite `mfaRequise`, jamais le role. Meme une
+      // adresse inconnue y renvoie : rien d'autre n'est ouvert. Une fois la
+      // seconde etape verifiee, la page n'a plus de raison d'etre.
+      if (session.mfaRequise) {
+        return _dansLeSousArbre(cheminDemande, Routes.mfaControleur)
+            ? null
+            : Routes.mfaControleur;
+      }
+      if (_dansLeSousArbre(cheminDemande, Routes.mfaControleur)) {
+        return racine;
+      }
+
       // Un compte actif n'a plus rien a faire sur la racine, la connexion,
       // l'inscription, le portail d'attente ou la page hors ligne,
       // sous-arbres compris. Une session d'agent resolue quitte `/agent`

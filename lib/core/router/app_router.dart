@@ -136,6 +136,7 @@ import '../../features/inscription/etapes/recapitulatif_etape.dart';
 import '../../features/inscription/etapes/usage_etape.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../../features/journee/journee_page.dart';
+import '../../features/mfa_controleur/mfa_controleur_page.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
@@ -1214,6 +1215,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: '${Routes.enseignantGroupe}/:groupeId/annonce',
         builder: (BuildContext _, GoRouterState etat) =>
             PublierAnnonceClassePage(groupeId: _parametre(etat, 'groupeId')),
+      ),
+
+      // Controleur : la seconde etape de connexion (TOTP, L1-10), hors de la
+      // coquille : le routeur n'ouvre rien d'autre tant qu'elle est requise.
+      GoRoute(
+        path: Routes.mfaControleur,
+        builder: (BuildContext _, GoRouterState _) => const MfaControleurPage(),
       ),
 
       // Controleur : quatre destinations, Controle, Historique, Echanges,
