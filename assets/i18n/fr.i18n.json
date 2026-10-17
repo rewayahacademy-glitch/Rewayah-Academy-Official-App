@@ -4185,6 +4185,8 @@
   "choix": {
     "autre": "Autre",
     "autreInvite": "Précisez",
+    "diminuer": "Diminuer de 1",
+    "augmenter": "Augmenter de 1",
     "selectionMultiple": "Plusieurs réponses possibles",
     "exemple": "Par exemple\u00a0: {texte}"
   },

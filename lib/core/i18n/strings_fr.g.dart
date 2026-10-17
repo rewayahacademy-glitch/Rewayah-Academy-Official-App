@@ -1626,6 +1626,12 @@ class Traductions$choix$fr {
 	/// fr: 'Précisez'
 	String get autreInvite => 'Précisez';
 
+	/// fr: 'Diminuer de 1'
+	String get diminuer => 'Diminuer de 1';
+
+	/// fr: 'Augmenter de 1'
+	String get augmenter => 'Augmenter de 1';
+
 	/// fr: 'Plusieurs réponses possibles'
 	String get selectionMultiple => 'Plusieurs réponses possibles';
 
@@ -35537,6 +35543,8 @@ extension on Traductions {
 			'pin.effacer' => 'Effacer',
 			'choix.autre' => 'Autre',
 			'choix.autreInvite' => 'Précisez',
+			'choix.diminuer' => 'Diminuer de 1',
+			'choix.augmenter' => 'Augmenter de 1',
 			'choix.selectionMultiple' => 'Plusieurs réponses possibles',
 			'choix.exemple' => ({required Object texte}) => 'Par exemple : ${texte}',
 			'parcours.titre' => ({required Object dePrenom}) => 'Le parcours ${dePrenom}',
@@ -35653,10 +35661,10 @@ extension on Traductions {
 			'nav.admin.tableauDeBord' => 'Tableau de bord',
 			'nav.admin.dossiers' => 'Dossiers',
 			'nav.admin.demandes' => 'Demandes',
-			'nav.admin.journal' => 'Journal',
-			'nav.admin.comptes' => 'Comptes',
 			_ => null,
 		} ?? switch (path) {
+			'nav.admin.journal' => 'Journal',
+			'nav.admin.comptes' => 'Comptes',
 			'nav.admin.accesAgents' => 'Accès des agents',
 			'nav.admin.accueil' => 'Accueil',
 			'nav.admin.operations' => 'Opérations',
@@ -36167,10 +36175,10 @@ extension on Traductions {
 			'tuteur.accueil.assister' => 'Assister',
 			'tuteur.accueil.assisterRefuse' => 'Le cours n\'a pas pu être rejoint. Il vient peut-être de se terminer.',
 			'tuteur.accueil.enCours' => ({required Object prenom}) => 'En cours avec ${prenom}',
-			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'Commencé il y a ${minutes} min',
-			'tuteur.accueil.depuisInstant' => 'Vient de commencer',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'Commencé il y a ${minutes} min',
+			'tuteur.accueil.depuisInstant' => 'Vient de commencer',
 			'tuteur.accueil.aujourdhui' => ({required Object heure, required Object prenom}) => 'Aujourd\'hui à ${heure}, avec ${prenom}',
 			'tuteur.accueil.unAutreJour' => ({required Object jour, required Object heure, required Object prenom}) => '${jour} à ${heure}, avec ${prenom}',
 			'tuteur.accueil.rienAujourdhui' => 'Rien aujourd\'hui',
@@ -36681,10 +36689,10 @@ extension on Traductions {
 			'enseignant.cahier.enFileDetailHorsLigne' => 'Sans réseau, le cahier de transmission reste sur cet appareil et part dès que le réseau revient. Vous pouvez enchaîner sur votre cours suivant.',
 			'enseignant.cahier.ajusterPour' => ({required Object eleve}) => 'Ajuster · ${eleve}',
 			'enseignant.cahier.ajusterValider' => 'Enregistrer pour cet élève',
-			'enseignant.cahier.exceptionConsignee' => 'Exception signalée',
-			'enseignant.cahier.pointPhonetique' => 'Point de prononciation',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.exceptionConsignee' => 'Exception signalée',
+			'enseignant.cahier.pointPhonetique' => 'Point de prononciation',
 			'enseignant.cahier.pointPhonetiqueDetail' => 'Une paire, pas un bilan. Laissez vide s\'il n\'y a rien à dire.',
 			'enseignant.cahier.pointPhonetiqueNote' => 'Point de prononciation noté',
 			'enseignant.cahier.objectif' => ({required Object deEleve}) => 'Objectif ${deEleve}',
@@ -37195,10 +37203,10 @@ extension on Traductions {
 			'controleur.demo.etatPasEncoreEnDirect' => 'Séance pas encore en direct',
 			'controleur.demo.etatEnDirect' => 'Séance en direct',
 			'controleur.demo.etatIndisponible' => 'Visite plus proposée',
-			'controleur.demo.etatDejaControlee' => 'Classe déjà contrôlée',
-			'controleur.demo.espaces' => 'Espaces et accès',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.demo.etatDejaControlee' => 'Classe déjà contrôlée',
+			'controleur.demo.espaces' => 'Espaces et accès',
 			'controleur.demo.espacesIntro' => 'Le même compte, plusieurs espaces : Enseignant ou Admin passent en Contrôle par Compte, puis Espaces.',
 			'controleur.demo.enseignantControle' => 'Enseignant-Contrôleur, espace Contrôle',
 			'controleur.demo.enseignantPrincipal' => 'Enseignant-Contrôleur, espace Enseignant',
@@ -37709,10 +37717,10 @@ extension on Traductions {
 			'tc.parcours.postCours.titre' => 'Après le cours',
 			'tc.parcours.postCours.duree' => ({required Object minutes}) => 'Durée réelle ${minutes} min',
 			'tc.parcours.postCours.exceptions' => 'À confirmer',
-			'tc.parcours.postCours.toutEstNominal' => 'Rien ne demande votre attention.',
-			'tc.parcours.postCours.reprise' => 'Reprise proposée',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.postCours.toutEstNominal' => 'Rien ne demande votre attention.',
+			'tc.parcours.postCours.reprise' => 'Reprise proposée',
 			'tc.parcours.postCours.repriseInconnue' => 'Aucune position de reprise connue pour cette séance.',
 			'tc.parcours.postCours.travail' => 'Travail proposé',
 			'tc.parcours.postCours.travailAucun' => 'Aucun travail proposé pour l\'instant.',
@@ -38223,10 +38231,10 @@ extension on Traductions {
 			'suiviFamille.motif.classesPleines' => 'Toutes les classes de ce créneau sont complètes. Vous serez prévenu dès qu\'une place se libère.',
 			'suiviFamille.motif.aucunEnseignantLibre' => 'Aucun enseignant n\'est libre sur ce créneau pour le moment. Vous serez prévenu dès que ce changera.',
 			'suiviFamille.motif.inconnu' => 'Votre demande est en attente. Vous serez prévenu dès qu\'elle avance.',
-			'suiviFamille.intervalle.moinsHeure' => 'Moins d\'une heure plus tard',
-			'suiviFamille.intervalle.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} heure plus tard', other: '${n} heures plus tard', ), 
 			_ => null,
 		} ?? switch (path) {
+			'suiviFamille.intervalle.moinsHeure' => 'Moins d\'une heure plus tard',
+			'suiviFamille.intervalle.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} heure plus tard', other: '${n} heures plus tard', ), 
 			'suiviFamille.intervalle.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} jour plus tard', other: '${n} jours plus tard', ), 
 			'suiviFamille.notification.enAttente' => ({required Object dePrenom}) => 'Demande ${dePrenom} : en liste d\'attente',
 			'suiviFamille.notification.eleveIntegre' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève intégré à la classe',
@@ -38737,10 +38745,10 @@ extension on Traductions {
 			'com.communaute.publication.revenir' => 'Revenir aux publications',
 			'com.communaute.reponses.titre' => ({required Object nombre}) => 'Réponses (${nombre})',
 			'com.communaute.reponses.vide' => 'Aucune réponse pour le moment.',
-			'com.communaute.reponses.erreurTitre' => 'Impossible de charger les réponses.',
-			'com.communaute.reponses.champ' => 'Votre réponse',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.reponses.erreurTitre' => 'Impossible de charger les réponses.',
+			'com.communaute.reponses.champ' => 'Votre réponse',
 			'com.communaute.reponses.aide' => 'Écrire une réponse',
 			'com.communaute.reponses.envoyer' => 'Envoyer la réponse',
 			'com.communaute.reponses.champVide' => 'Écrivez une réponse pour l\'envoyer.',
@@ -39251,10 +39259,10 @@ extension on Traductions {
 			'com.annonces.demo.f.controleurChangement' => 'Votre mission de jeudi est déplacée à 18 h',
 			'com.annonces.demo.f.controleurReponse' => 'Réponse de l\'Administration à votre rapport',
 			'com.annonces.titre' => 'Annonces',
-			'comptable.nav.aujourdhui' => 'Aujourd\'hui',
-			'comptable.nav.paiements' => 'Paiements',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.nav.aujourdhui' => 'Aujourd\'hui',
+			'comptable.nav.paiements' => 'Paiements',
 			'comptable.nav.tresorerie' => 'Trésorerie',
 			'comptable.nav.compte' => 'Compte',
 			'comptable.graphiques.masque' => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.',
@@ -39765,10 +39773,10 @@ extension on Traductions {
 			'comptable.encaissements.rap.rapprocherLecteur' => ({required Object libelle}) => 'Rapprocher avec ${libelle}',
 			'comptable.encaissements.rap.doublonTitre' => 'Doublon potentiel',
 			'comptable.encaissements.rap.doublonPhrase' => 'Cette transaction ressemble à une autre déjà reçue. Vérifiez avant de rapprocher : un doublon n\'est jamais validé en silence.',
-			'comptable.encaissements.rap.marquerDoublon' => 'Marquer comme doublon',
-			'comptable.encaissements.rap.resultat' => ({required Object etat}) => 'État rendu par la source : ${etat}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.rap.marquerDoublon' => 'Marquer comme doublon',
+			'comptable.encaissements.rap.resultat' => ({required Object etat}) => 'État rendu par la source : ${etat}',
 			'comptable.encaissements.rap.erreurEnvoi' => 'Nous ne savons pas si l\'opération a été prise en compte. Actualisez la liste avant de réessayer.',
 			'comptable.encaissements.rap.actualiser' => 'Actualiser',
 			'comptable.encaissements.rap.journal' => 'Journal de la transaction',
@@ -40279,10 +40287,10 @@ extension on Traductions {
 			'recherche.chargement' => 'Recherche en cours…',
 			'recherche.lent' => 'La recherche prend plus de temps que prévu. Les résultats déjà reçus restent affichés.',
 			'recherche.resultatsPour' => ({required Object requete}) => 'Résultats pour « ${requete} »',
-			'recherche.categoriesAffichees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} catégorie affichée', other: '${nombre} catégories affichées', ), 
-			'recherche.domaines.classes' => 'Classes',
 			_ => null,
 		} ?? switch (path) {
+			'recherche.categoriesAffichees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} catégorie affichée', other: '${nombre} catégories affichées', ), 
+			'recherche.domaines.classes' => 'Classes',
 			'recherche.domaines.supports' => 'Supports',
 			'recherche.domaines.personnes' => 'Personnes',
 			'recherche.domaines.enseignants' => 'Enseignants',

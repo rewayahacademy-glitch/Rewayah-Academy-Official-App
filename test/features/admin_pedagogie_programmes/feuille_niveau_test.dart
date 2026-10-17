@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_programme.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/champ_etiquete.dart';
+import 'package:rewayah_academy/core/widgets/choix_nombre.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_programmes/programmes_page.dart';
 
@@ -130,15 +131,9 @@ Future<void> _ouvrir(WidgetTester tester, _Faux service, Size cadre) async {
   await tester.pumpAndSettle();
 }
 
-String _ordre(WidgetTester tester) => tester
-    .widget<TextField>(
-      find.descendant(
-        of: find.widgetWithText(ChampEtiquete, t.admin.programmes.champOrdre),
-        matching: find.byType(TextField),
-      ),
-    )
-    .controller!
-    .text;
+/// L'ordre affiche par le choix pas a pas (jamais saisi au clavier, 17/10).
+String _ordre(WidgetTester tester) =>
+    '${tester.widget<ChoixNombre>(find.byType(ChoixNombre)).valeur}';
 
 /// Fait defiler la feuille jusqu'au bouton d'envoi : avec les etiquettes au
 /// dessus des champs (FORM-CORR-1), le formulaire depasse un ecran de 390 x 844.

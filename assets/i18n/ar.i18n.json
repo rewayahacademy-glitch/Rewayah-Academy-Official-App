@@ -4073,7 +4073,9 @@
     "autre": "أخرى",
     "autreInvite": "حدّد",
     "selectionMultiple": "يمكن اختيار عدة إجابات",
-    "exemple": "مثلًا: ⁨{texte}⁩"
+    "exemple": "مثلًا: ⁨{texte}⁩",
+    "diminuer": "إنقاص بواحد",
+    "augmenter": "زيادة بواحد"
   },
   "admin": {
     "finance": {
