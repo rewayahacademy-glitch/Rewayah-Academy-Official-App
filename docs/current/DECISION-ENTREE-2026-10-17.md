@@ -23,6 +23,7 @@ Le site public est rapatrié dans le dépôt pour être lisible par tous les age
 ## Questions de l'onboarding
 
 - Une même information n'est demandée qu'une fois et toujours de la même façon (l'âge : jamais une fois en tranche et une fois en chiffres).
+- Tout ce qui peut se choisir dans une liste (âge, créneaux, jours, heures) se choisit dans une liste déroulante ou une sélection simple. Jamais de saisie à la main.
 
 ## Accords et consentements
 
