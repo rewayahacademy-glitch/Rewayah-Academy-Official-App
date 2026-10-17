@@ -102,6 +102,7 @@ values
 select set_config('request.jwt.claim.sub', 'd1400000-0000-0000-0000-000000000003', true);
 select set_config('request.jwt.claims', jsonb_build_object(
   'sub', 'd1400000-0000-0000-0000-000000000003',
+  'aal', 'aal2',
   'app_metadata', jsonb_build_object('role', 'controller', 'authorization_version', 1)
 )::text, true);
 set local role authenticated;
@@ -134,6 +135,7 @@ begin
   end if;
   perform set_config('request.jwt.claims', jsonb_build_object(
     'sub', 'd1400000-0000-0000-0000-000000000003',
+    'aal', 'aal2',
     'app_metadata', jsonb_build_object('role', 'controller', 'authorization_version', 99)
   )::text, true);
   if public.ma_mission_controle() <> '{}'::jsonb then
@@ -148,9 +150,11 @@ select set_config('request.jwt.claim.sub', 'd1400000-0000-0000-0000-000000000004
 select set_config('test.uid', 'd1400000-0000-0000-0000-000000000004', true);
 select set_config('request.jwt.claims', jsonb_build_object(
   'sub', 'd1400000-0000-0000-0000-000000000004',
+  'aal', 'aal2',
   'app_metadata', jsonb_build_object('role', 'controller', 'authorization_version', 1)
 )::text, true);
 select set_config('test.jwt', jsonb_build_object(
+  'aal', 'aal2',
   'app_metadata', jsonb_build_object('role', 'controller', 'authorization_version', 1)
 )::text, true);
 do $disabled_controller$

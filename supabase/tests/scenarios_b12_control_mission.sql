@@ -142,7 +142,7 @@ $acl$;
 
 SET LOCAL ROLE authenticated;
 SELECT set_config('request.jwt.claim.sub','b1200000-0000-0000-0000-000000000002',true);
-SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"controller"}}',true);
+SELECT set_config('request.jwt.claims','{"aal":"aal2","app_metadata":{"role":"controller"}}',true);
 DO $nominal$
 DECLARE v_thread jsonb; v_reports jsonb; v_report_id uuid; v_before jsonb;
 BEGIN
@@ -208,7 +208,7 @@ $direction$;
 RESET ROLE;
 
 SELECT set_config('request.jwt.claim.sub','b1200000-0000-0000-0000-000000000003',true);
-SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"controller"}}',true);
+SELECT set_config('request.jwt.claims','{"aal":"aal2","app_metadata":{"role":"controller"}}',true);
 SET LOCAL ROLE authenticated;
 DO $wrong_controller$
 DECLARE v_fils jsonb; v_rapports jsonb;
@@ -307,7 +307,7 @@ RESET ROLE;
 UPDATE public.profiles SET account_status='disabled'
  WHERE id='b1200000-0000-0000-0000-000000000002';
 SELECT set_config('request.jwt.claim.sub','b1200000-0000-0000-0000-000000000002',true);
-SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"controller"}}',true);
+SELECT set_config('request.jwt.claims','{"aal":"aal2","app_metadata":{"role":"controller"}}',true);
 SET LOCAL ROLE authenticated;
 DO $disabled_controller$
 BEGIN
@@ -359,7 +359,7 @@ END;
 $admin_without_profile$;
 
 -- Le complément n'est accessible qu'au contrôleur; vérifier ce rôle sans profil.
-SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"controller"}}',true);
+SELECT set_config('request.jwt.claims','{"aal":"aal2","app_metadata":{"role":"controller"}}',true);
 DO $controller_without_profile$
 BEGIN
   BEGIN PERFORM public.controleur_lister_fils();

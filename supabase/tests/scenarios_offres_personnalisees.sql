@@ -337,7 +337,7 @@ BEGIN
 
   PERFORM set_config('request.jwt.claim.sub', 'f1490000-0000-0000-0000-000000000996', true);
   PERFORM set_config('request.jwt.claims',
-    jsonb_build_object('app_metadata', jsonb_build_object('role', 'controller'))::text, true);
+    jsonb_build_object('aal', 'aal2', 'app_metadata', jsonb_build_object('role', 'controller'))::text, true);
   v_ok := false;
   BEGIN
     PERFORM public.rejoindre_observation('c1200000-0000-0000-0000-000000000099');
