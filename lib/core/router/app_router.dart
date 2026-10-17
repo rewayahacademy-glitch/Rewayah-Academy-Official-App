@@ -267,7 +267,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.connexion,
-        builder: (BuildContext _, GoRouterState _) => const ConnexionPage(),
+        builder: (BuildContext _, GoRouterState etat) =>
+            ConnexionPage(mode: modeDepuisAdresse(etat.uri)),
       ),
       GoRoute(
         path: Routes.connexionEleve,

@@ -17,6 +17,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../connexion/recuperation_page.dart'
@@ -276,25 +277,29 @@ class InviteConsentementObservation extends ConsumerWidget {
     if (lues == null || acceptationObservation(lues) != null) {
       return const SizedBox.shrink();
     }
-    return AppCard(
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: Text(
-              t.consentement.compte.invite,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
-          Ecart.hMd,
-          ActionPrincipale(
+    void ouvrir() => GoRouter.of(context).go(Routes.tuteurCompteConsentements);
+    // L9 : posee sur l'accueil du tuteur ; toute la carte mene a l'accord
+    // (decision du 17/10, cartes entierement cliquables). L'ecart du bas
+    // n'existe que si la carte s'affiche.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        AppCard(
+          key: const ValueKey<String>('invite-consentement-observation'),
+          onPress: ouvrir,
+          actions: LienFleche(
             libelle: t.consentement.compte.inviteAction,
-            onPress: () =>
-                GoRouter.of(context).go(Routes.tuteurCompteConsentements),
-            niveau: NiveauAction.secondaire,
-            pleineLargeur: false,
+            alignerEnFin: true,
+            onPress: ouvrir,
           ),
-        ],
-      ),
+          child: Text(
+            t.consentement.compte.invite,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ),
+        Ecart.vXl,
+      ],
     );
   }
 }

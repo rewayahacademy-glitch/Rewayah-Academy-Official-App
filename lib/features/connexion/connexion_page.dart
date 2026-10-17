@@ -16,6 +16,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/marque_page.dart';
 import '../../core/widgets/page_shell.dart';
 import '../demo/mode_demonstration.dart';
@@ -61,6 +62,30 @@ CheminConnexion cheminConnexion({
   return CheminConnexion.lien;
 }
 
+/// L4 (audit d'entree du 17/10/2026, E1-E2) : deux chemins distincts.
+///
+/// Le meme lien par courriel cree le compte ou connecte : c'est le serveur
+/// qui decide. Mais le visiteur doit savoir lequel il prend. Le mode change
+/// le titre, la phrase et le bouton ; en creation, les sorties reservees aux
+/// comptes existants (appareil d'un eleve, lien expire) s'effacent.
+enum ModeConnexion {
+  /// « J'ai deja un compte ».
+  connexion,
+
+  /// « Creer un compte ».
+  creation,
+}
+
+/// Le parametre d'adresse qui ouvre la connexion en mode creation
+/// (`/connexion?mode=creer`), depuis le site public par exemple.
+const String parametreModeCreation = 'creer';
+
+/// Le mode lu dans l'adresse : creation pour `?mode=creer`, sinon connexion.
+ModeConnexion modeDepuisAdresse(Uri adresse) =>
+    adresse.queryParameters['mode'] == parametreModeCreation
+    ? ModeConnexion.creation
+    : ModeConnexion.connexion;
+
 /// Largeur de la carte d'entree.
 ///
 /// Une colonne unique aux trois gabarits : la fiche `TUT-00` le prescrit, et
@@ -98,7 +123,15 @@ const double _largeurCarte = 460;
 /// champ, au moment ou l'on appuie.
 class ConnexionPage extends ConsumerStatefulWidget {
   /// Cree l'ecran de connexion.
-  const ConnexionPage({super.key, this.demoAuth, this.urlRetour});
+  const ConnexionPage({
+    super.key,
+    this.demoAuth,
+    this.urlRetour,
+    this.mode = ModeConnexion.connexion,
+  });
+
+  /// Le chemin propose a l'ouverture ; le visiteur peut en changer.
+  final ModeConnexion mode;
 
   /// Force le mode demonstration, sans lire [demoAuthActiveProvider].
   ///
@@ -126,6 +159,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   bool _renvoi = false;
   bool _renvoye = false;
   String? _erreurRenvoi;
+  late ModeConnexion _mode = widget.mode;
 
   @override
   void initState() {
@@ -348,6 +382,11 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                                 courriel: _courriel,
                                 motDePasse: _motDePasse,
                                 demo: _demo,
+                                mode: _mode,
+                                onMode: (ModeConnexion m) => setState(() {
+                                  _mode = m;
+                                  _erreur = null;
+                                }),
                                 erreur: _erreur,
                                 envoi: _envoi,
                                 onChanged: () => setState(() {}),
@@ -374,6 +413,8 @@ class _Saisie extends StatelessWidget {
     required this.courriel,
     required this.motDePasse,
     required this.demo,
+    required this.mode,
+    required this.onMode,
     required this.erreur,
     required this.envoi,
     required this.onChanged,
@@ -387,6 +428,8 @@ class _Saisie extends StatelessWidget {
   final TextEditingController courriel;
   final TextEditingController motDePasse;
   final bool demo;
+  final ModeConnexion mode;
+  final ValueChanged<ModeConnexion> onMode;
   final String? erreur;
   final bool envoi;
   final VoidCallback onChanged;
@@ -405,14 +448,39 @@ class _Saisie extends StatelessWidget {
       motDePasse: motDePasse.text,
     );
     final bool versLien = chemin == CheminConnexion.lien;
+    final bool creation = mode == ModeConnexion.creation;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.connexion.titre, style: textes.headlineMedium),
+        // L4 : deux chemins distincts, choisis avant tout le reste.
+        ControleSegmente<ModeConnexion>(
+          key: const ValueKey<String>('connexion-mode'),
+          segments: <Segment<ModeConnexion>>[
+            Segment<ModeConnexion>(
+              valeur: ModeConnexion.connexion,
+              libelle: t.connexion.modeConnexion,
+            ),
+            Segment<ModeConnexion>(
+              valeur: ModeConnexion.creation,
+              libelle: t.connexion.modeCreation,
+            ),
+          ],
+          valeur: mode,
+          onChange: onMode,
+        ),
+        Ecart.vXl,
+        Text(
+          creation ? t.connexion.titreCreation : t.connexion.titre,
+          style: textes.headlineMedium,
+        ),
         Ecart.vMd,
         Text(
-          versLien ? t.connexion.intro : t.connexion.introDemo,
+          !versLien
+              ? t.connexion.introDemo
+              : creation
+              ? t.connexion.introCreation
+              : t.connexion.intro,
           style: palette.inkMuted.applyTo(
             textes.bodyMedium ?? const TextStyle(),
           ),
@@ -446,7 +514,11 @@ class _Saisie extends StatelessWidget {
         ],
         Ecart.vXl,
         ActionPrincipale(
-          libelle: versLien ? t.connexion.envoyerLien : t.connexion.entrerDemo,
+          libelle: !versLien
+              ? t.connexion.entrerDemo
+              : creation
+              ? t.connexion.envoyerLienCreation
+              : t.connexion.envoyerLien,
           onPress: onSoumettre,
           enCours: envoi,
         ),
@@ -480,42 +552,46 @@ class _Saisie extends StatelessWidget {
             prefixe: const LogoGoogle(),
           ),
 
-          // L'entree de l'eleve, en texte seul : c'est un parcours different,
-          // pas une autre facon de faire le meme. Elle etait au meme rang que
-          // Google, avec le meme filet, et son libelle -- « J'ai un code » --
-          // ne disait ni a qui elle s'adressait ni ou trouver ce code. La
-          // feuille qui s'ouvre au clic porte desormais cette explication.
-          Ecart.vSection,
-          Text(
-            t.connexion.appareilEleveAide,
-            textAlign: TextAlign.center,
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
+          // L4 : en creation, les sorties reservees aux comptes existants
+          // s'effacent (appareil d'un eleve, lien expire).
+          if (!creation) ...<Widget>[
+            // L'entree de l'eleve, en texte seul : c'est un parcours different,
+            // pas une autre facon de faire le meme. Elle etait au meme rang que
+            // Google, avec le meme filet, et son libelle -- « J'ai un code » --
+            // ne disait ni a qui elle s'adressait ni ou trouver ce code. La
+            // feuille qui s'ouvre au clic porte desormais cette explication.
+            Ecart.vSection,
+            Text(
+              t.connexion.appareilEleveAide,
+              textAlign: TextAlign.center,
+              style: palette.inkMuted.applyTo(
+                textes.bodySmall ?? const TextStyle(),
+              ),
             ),
-          ),
-          Ecart.vSm,
-          Align(
-            child: ActionPrincipale(
-              libelle: t.connexion.appareilEleve,
-              onPress: onEleve,
-              niveau: NiveauAction.tertiaire,
-              pleineLargeur: false,
+            Ecart.vSm,
+            Align(
+              child: ActionPrincipale(
+                libelle: t.connexion.appareilEleve,
+                onPress: onEleve,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+              ),
             ),
-          ),
-          Ecart.vLg,
-          const Divider(),
-          Ecart.vSm,
-          // Une sortie discrete : la recuperation d'acces (lien expire ou
-          // jamais recu).
-          Center(
-            child: ActionPrincipale(
-              key: const ValueKey<String>('connexion-probleme'),
-              libelle: t.connexion.probleme,
-              onPress: onProbleme,
-              niveau: NiveauAction.tertiaire,
-              pleineLargeur: false,
+            Ecart.vLg,
+            const Divider(),
+            Ecart.vSm,
+            // Une sortie discrete : la recuperation d'acces (lien expire ou
+            // jamais recu).
+            Center(
+              child: ActionPrincipale(
+                key: const ValueKey<String>('connexion-probleme'),
+                libelle: t.connexion.probleme,
+                onPress: onProbleme,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+              ),
             ),
-          ),
+          ],
         ],
       ],
     );
@@ -631,8 +707,9 @@ class _LienEnvoye extends StatelessWidget {
             child: Text(
               erreurRenvoi!,
               key: const ValueKey<String>('connexion-erreur-renvoi'),
-              style: textes.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.error,
+              // E2 : l'encre d'alerte du produit, pas celle de Material.
+              style: palette.inkAlert.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
               ),
             ),
           ),

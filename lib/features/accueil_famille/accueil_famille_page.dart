@@ -31,6 +31,7 @@ import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
 import '../acces_finance/carte_acces_finance.dart';
+import '../consentements/consentement_observation_page.dart';
 import '../parcours_offres/bloc_parcours.dart';
 import '../presentation_tuteur/demandes_presentation_page.dart'
     show CarteDemandePresentation;
@@ -222,6 +223,8 @@ class _Contenu extends ConsumerWidget {
           Ecart.vXl,
           const CarteSuiviDemandes(),
           const CarteDemandePresentation(),
+          // L9 : les comptes d'avant l'accord des visites y sont conduits.
+          const InviteConsentementObservation(),
           // Entree transitoire du questionnaire (revue C, M3 ; demande C-7) :
           // gardee tant que Fiche > Inscription (lot B) n'est pas integree.
           // Silencieuse quand aucun apprenant n'a de parcours a suivre.
@@ -334,6 +337,8 @@ class _Contenu extends ConsumerWidget {
         Ecart.vXl,
         const CarteSuiviDemandes(),
         const CarteDemandePresentation(),
+        // L9 : les comptes d'avant l'accord des visites y sont conduits.
+        const InviteConsentementObservation(),
         LayoutBuilder(
           builder: (BuildContext _, BoxConstraints contraintes) {
             final bool coteACote =

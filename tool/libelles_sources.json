@@ -4908,5 +4908,10 @@
   "admin.finance.pai.inconnuPhrase": "passation du 17/10/2026 point 3 (FAC-C-01, saisie des paiements attribues a un eleve par la direction) ; issue dite telle que rendue par le serveur (K-57, K-59, D5)",
   "inscription.recap.cours": "audit d'entree du 17/10/2026 E6 et passation du 17/10 point 4 (L5-01) : la reponse « Suivez-vous aussi des cours ? » est montree au recapitulatif et envoyee avec le profil",
   "inscription.recap.coursOui": "audit d'entree du 17/10/2026 E6 et passation du 17/10 point 4 (L5-01) : la reponse « Suivez-vous aussi des cours ? » est montree au recapitulatif et envoyee avec le profil",
-  "inscription.recap.coursNon": "audit d'entree du 17/10/2026 E6 et passation du 17/10 point 4 (L5-01) : la reponse « Suivez-vous aussi des cours ? » est montree au recapitulatif et envoyee avec le profil"
+  "inscription.recap.coursNon": "audit d'entree du 17/10/2026 E6 et passation du 17/10 point 4 (L5-01) : la reponse « Suivez-vous aussi des cours ? » est montree au recapitulatif et envoyee avec le profil",
+  "connexion.modeConnexion": "audit d'entree du 17/10/2026 E1-E2 et passation du 17/10 point 5 (L4) : deux chemins distincts a la connexion, creer un compte ou se connecter",
+  "connexion.modeCreation": "audit d'entree du 17/10/2026 E1-E2 et passation du 17/10 point 5 (L4) : deux chemins distincts a la connexion, creer un compte ou se connecter",
+  "connexion.titreCreation": "audit d'entree du 17/10/2026 E1-E2 et passation du 17/10 point 5 (L4) : deux chemins distincts a la connexion, creer un compte ou se connecter",
+  "connexion.introCreation": "audit d'entree du 17/10/2026 E1-E2 et passation du 17/10 point 5 (L4) : deux chemins distincts a la connexion, creer un compte ou se connecter",
+  "connexion.envoyerLienCreation": "audit d'entree du 17/10/2026 E1-E2 et passation du 17/10 point 5 (L4) : deux chemins distincts a la connexion, creer un compte ou se connecter"
 }

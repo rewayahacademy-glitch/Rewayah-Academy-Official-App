@@ -835,6 +835,11 @@
   },
   "connexion": {
     "titre": "Se connecter",
+    "modeConnexion": "J'ai déjà un compte",
+    "modeCreation": "Créer un compte",
+    "titreCreation": "Créer votre compte",
+    "introCreation": "Indiquez votre adresse : nous vous envoyons un lien qui crée votre compte. Aucun mot de passe à choisir.",
+    "envoyerLienCreation": "Recevoir le lien d'inscription",
     "intro": "Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.",
     "courriel": "Votre adresse électronique",
     "courrielIndice": "vous@exemple.com",

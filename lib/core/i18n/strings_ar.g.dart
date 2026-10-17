@@ -990,6 +990,11 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String get decouvrir => 'اكتشف Rewayah Academy';
 	@override late final _Traductions$connexion$recuperation$ar recuperation = _Traductions$connexion$recuperation$ar._(_root);
 	@override late final _Traductions$connexion$feuilleAppareil$ar feuilleAppareil = _Traductions$connexion$feuilleAppareil$ar._(_root);
+	@override String get modeConnexion => 'لدي حساب';
+	@override String get modeCreation => 'إنشاء حساب';
+	@override String get titreCreation => 'أنشئ حسابك';
+	@override String get introCreation => 'اكتب عنوانك: نرسل إليك رابطا ينشئ حسابك. لا كلمة مرور تختارها.';
+	@override String get envoyerLienCreation => 'استلام رابط التسجيل';
 }
 
 // Path: attente
@@ -19950,6 +19955,11 @@ extension on TraductionsAr {
 			'connexion.feuilleAppareil.plafond' => 'عدد الأجهزة لكل طالب محدود. إن بلغت الحد، أزل أحدها من «الأسرة»، «أجهزة الأسرة».',
 			'connexion.feuilleAppareil.saisir' => 'إدخال الرمز',
 			'connexion.feuilleAppareil.fermer' => 'إغلاق',
+			'connexion.modeConnexion' => 'لدي حساب',
+			'connexion.modeCreation' => 'إنشاء حساب',
+			'connexion.titreCreation' => 'أنشئ حسابك',
+			'connexion.introCreation' => 'اكتب عنوانك: نرسل إليك رابطا ينشئ حسابك. لا كلمة مرور تختارها.',
+			'connexion.envoyerLienCreation' => 'استلام رابط التسجيل',
 			'attente.titre' => 'ملفك قيد التحقق',
 			'attente.dossierIncomplet' => 'ما زالت تنقص ملفك بعض الوثائق.',
 			'attente.enVerification' => 'نتحقق من ملفك.',
@@ -20184,13 +20194,13 @@ extension on TraductionsAr {
 			'adulte.coranDemo.titre' => 'متاح بعد تسجيل الدخول',
 			'adulte.coranDemo.phrase' => 'ليس هذا عطلًا: العرض التجريبي لا يحتوي على نص القرآن. بعد الدخول إلى مساحتك كطالب، يُفتح هنا.',
 			'adulte.recharge.titre' => 'شحن جديد',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.phrase' => 'اختر مستفيدًا أو أكثر، ثم اختر عرضًا لكل واحد.',
 			'adulte.recharge.verifier' => 'مراجعة الشحن',
 			'adulte.recharge.raisonAucun' => 'اختر مستفيدًا واحدًا على الأقل للمتابعة.',
 			'adulte.recharge.indisponibleTitre' => 'الشحن غير متاح بعد',
 			'adulte.recharge.indisponiblePhrase' => 'عروض الشحن غير متاحة في التطبيق بعد. لا دفع ممكن هنا الآن.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.verificationEchecTitre' => 'لم تكتمل المراجعة.',
 			'adulte.recharge.verificationEchecPhrase' => 'اختياراتك محفوظة. يمكنك إعادة المحاولة.',
 			'adulte.recharge.recapitulatif' => 'الملخص حسب المستفيد',
@@ -20698,13 +20708,13 @@ extension on TraductionsAr {
 			'controleur.historique.tousEtats' => 'كل الحالات',
 			'controleur.historique.duree' => ({required Object minutes}) => '⁨${minutes}⁩ د من المتابعة',
 			'controleur.historique.meta' => ({required Object heure, required Object duree}) => '⁨${heure}⁩ · ⁨${duree}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.dateHeure' => ({required Object date, required Object heure}) => '⁨${date}⁩، ⁨${heure}⁩',
 			'controleur.historique.dateHeureAuteur' => ({required Object date, required Object heure, required Object auteur}) => '⁨${date}⁩، ⁨${heure}⁩ · ⁨${auteur}⁩',
 			'controleur.historique.ligne' => ({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '⁨${date}⁩، ⁨${classe}⁩، ⁨${enseignant}⁩، ⁨${duree}⁩، ⁨${statut}⁩',
 			'controleur.historique.vide' => 'لا مراقبة حتى الآن.',
 			'controleur.historique.videFiltres' => 'لا مراقبة تطابق هذه المعايير.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.historique.resultats' => ({required Object n}) => 'عمليات المراقبة المعروضة: ⁨${n}⁩',
 			'controleur.historique.titreDetail' => ({required Object classe, required Object date}) => '⁨${classe}⁩ · ⁨${date}⁩',
 			'controleur.historique.sectionMission' => 'الفصل المراقَب',

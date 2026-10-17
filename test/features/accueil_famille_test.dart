@@ -13,11 +13,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/classes_foyer_supabase.dart';
+import 'package:rewayah_academy/core/capacites/consentements_supabase.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
+import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -479,6 +481,32 @@ void main() {
         find.text(t.ficheEleve.finances.indisponibleTitre),
         findsOneWidget,
       );
+    });
+
+    testWidgets('L9 : un compte sans l accord des visites y est conduit '
+        'depuis l accueil, toute la carte menant a l accord', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        autres: <Override>[
+          consentementsLotAProvider.overrideWithValue(
+            FauxPortConsentements()..signeesRendues = <Acceptation>[],
+          ),
+        ],
+      );
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(find.text(t.consentement.compte.invite), findsOneWidget);
+      await _toucher(tester, find.text(t.consentement.compte.invite));
+      expect(_lieu(routeur), Routes.tuteurCompteConsentements);
+    });
+
+    testWidgets('L9 : lecture des accords absente, aucune invite', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(find.text(t.consentement.compte.invite), findsNothing);
     });
 
     testWidgets('travail branche : trois actions au plus, « Voir tout » ouvre '
