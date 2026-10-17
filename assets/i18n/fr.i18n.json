@@ -918,7 +918,7 @@
   "contrat": {
     "titre": "Ce que vous signez",
     "intro": "Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu'au milieu d'un texte long.",
-    "pointEnregistrement": "Chaque cours est enregistré en audio, conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.",
+    "pointEnregistrement": "Un cours peut être enregistré en audio. Dans ce cas, il est conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.",
     "pointControle": "Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.",
     "pointCoordonnees": "Vous ne voyez jamais les coordonnées d'une famille\u00a0: ni nom complet, ni courriel, ni téléphone.",
     "lireTexte": "Lire le texte complet",
@@ -929,9 +929,9 @@
     "horsLigne": "Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.",
     "caseRequise": "Cochez la case pour continuer.",
     "a3": {
-      "titre": "Les cours sont enregistrés (le son seulement)",
+      "titre": "Les cours peuvent être enregistrés (le son seulement)",
       "quoiTitre": "Ce que nous faisons.",
-      "quoi": "Chaque cours est enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct\u00a0: elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. La salle le rappelle en permanence.",
+      "quoi": "Un cours peut être enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct\u00a0: elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. La salle le rappelle en permanence.",
       "pourquoiTitre": "Pourquoi.",
       "pourquoi": "Pour protéger les enfants et les enseignants. Si quelqu'un signale un problème, nous pouvons vérifier ce qui s'est passé.",
       "quiTitre": "Qui peut écouter l'enregistrement.",
@@ -943,7 +943,7 @@
       "jaiLu": "J'ai lu"
     },
     "e1": {
-      "quoi": "Chaque cours est enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct\u00a0: elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. Elle envoie ensuite un compte rendu à l'académie. La salle le rappelle en permanence.",
+      "quoi": "Un cours peut être enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct\u00a0: elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. Elle envoie ensuite un compte rendu à l'académie. La salle le rappelle en permanence.",
       "pourquoi": "Pour protéger les enfants et les enseignants. Si quelqu'un signale un problème, nous pouvons vérifier ce qui s'est passé. C'est aussi une preuve pour vous si une famille se plaint à tort.",
       "refusTitre": "Si vous refusez.",
       "refus": "Nous ne pouvons pas vous confier d'élèves, car cette mesure protège les enfants. Nous vous le disons avant votre signature."

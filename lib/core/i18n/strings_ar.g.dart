@@ -1225,7 +1225,7 @@ class _Traductions$contrat$ar extends Traductions$contrat$fr {
 	// Translations
 	@override String get titre => 'ما توقّع عليه';
 	@override String get intro => 'نقطتان أهم من غيرهما. هما مكتوبتان هنا بوضوح بدل أن تكونا وسط نص طويل.';
-	@override String get pointEnregistrement => 'يُسجَّل كل درس صوتيًا، ويُحفظ ثلاثين يومًا، ثم يُحذف. كل استماع يُدوَّن في السجل، مع اسم المستمع.';
+	@override String get pointEnregistrement => 'قد يُسجَّل الدرس صوتيًا. وفي هذه الحالة يُحفظ ثلاثين يومًا، ثم يُحذف. كل استماع يُدوَّن في السجل، مع اسم المستمع.';
 	@override String get pointControle => 'يمكن لمراقب جودة أن يحضر درسًا دون أن يُرى. تذكّر القاعة بذلك باستمرار، سواء جرت الزيارة أم لا.';
 	@override String get pointCoordonnees => 'لا ترى أبدًا بيانات اتصال أسرة: لا الاسم الكامل، ولا البريد الإلكتروني، ولا الهاتف.';
 	@override String get lireTexte => 'قراءة النص كاملًا';
@@ -20453,7 +20453,7 @@ extension on TraductionsAr {
 			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
 			'contrat.titre' => 'ما توقّع عليه',
 			'contrat.intro' => 'نقطتان أهم من غيرهما. هما مكتوبتان هنا بوضوح بدل أن تكونا وسط نص طويل.',
-			'contrat.pointEnregistrement' => 'يُسجَّل كل درس صوتيًا، ويُحفظ ثلاثين يومًا، ثم يُحذف. كل استماع يُدوَّن في السجل، مع اسم المستمع.',
+			'contrat.pointEnregistrement' => 'قد يُسجَّل الدرس صوتيًا. وفي هذه الحالة يُحفظ ثلاثين يومًا، ثم يُحذف. كل استماع يُدوَّن في السجل، مع اسم المستمع.',
 			'contrat.pointControle' => 'يمكن لمراقب جودة أن يحضر درسًا دون أن يُرى. تذكّر القاعة بذلك باستمرار، سواء جرت الزيارة أم لا.',
 			'contrat.pointCoordonnees' => 'لا ترى أبدًا بيانات اتصال أسرة: لا الاسم الكامل، ولا البريد الإلكتروني، ولا الهاتف.',
 			'contrat.lireTexte' => 'قراءة النص كاملًا',

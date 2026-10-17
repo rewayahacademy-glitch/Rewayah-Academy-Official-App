@@ -868,8 +868,8 @@ class Traductions$contrat$fr {
 	/// fr: 'Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu'au milieu d'un texte long.'
 	String get intro => 'Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu\'au milieu d\'un texte long.';
 
-	/// fr: 'Chaque cours est enregistré en audio, conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.'
-	String get pointEnregistrement => 'Chaque cours est enregistré en audio, conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.';
+	/// fr: 'Un cours peut être enregistré en audio. Dans ce cas, il est conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.'
+	String get pointEnregistrement => 'Un cours peut être enregistré en audio. Dans ce cas, il est conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.';
 
 	/// fr: 'Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.'
 	String get pointControle => 'Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.';
@@ -4159,14 +4159,14 @@ class Traductions$contrat$a3$fr {
 
 	// Translations
 
-	/// fr: 'Les cours sont enregistrés (le son seulement)'
-	String get titre => 'Les cours sont enregistrés (le son seulement)';
+	/// fr: 'Les cours peuvent être enregistrés (le son seulement)'
+	String get titre => 'Les cours peuvent être enregistrés (le son seulement)';
 
 	/// fr: 'Ce que nous faisons.'
 	String get quoiTitre => 'Ce que nous faisons.';
 
-	/// fr: 'Chaque cours est enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. La salle le rappelle en permanence.'
-	String get quoi => 'Chaque cours est enregistré en audio. L\'image n\'est pas enregistrée. Une personne de l\'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n\'enregistre rien. La salle le rappelle en permanence.';
+	/// fr: 'Un cours peut être enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. La salle le rappelle en permanence.'
+	String get quoi => 'Un cours peut être enregistré en audio. L\'image n\'est pas enregistrée. Une personne de l\'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n\'enregistre rien. La salle le rappelle en permanence.';
 
 	/// fr: 'Pourquoi.'
 	String get pourquoiTitre => 'Pourquoi.';
@@ -4204,8 +4204,8 @@ class Traductions$contrat$e1$fr {
 
 	// Translations
 
-	/// fr: 'Chaque cours est enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. Elle envoie ensuite un compte rendu à l'académie. La salle le rappelle en permanence.'
-	String get quoi => 'Chaque cours est enregistré en audio. L\'image n\'est pas enregistrée. Une personne de l\'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n\'enregistre rien. Elle envoie ensuite un compte rendu à l\'académie. La salle le rappelle en permanence.';
+	/// fr: 'Un cours peut être enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. Elle envoie ensuite un compte rendu à l'académie. La salle le rappelle en permanence.'
+	String get quoi => 'Un cours peut être enregistré en audio. L\'image n\'est pas enregistrée. Une personne de l\'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n\'enregistre rien. Elle envoie ensuite un compte rendu à l\'académie. La salle le rappelle en permanence.';
 
 	/// fr: 'Pour protéger les enfants et les enseignants. Si quelqu'un signale un problème, nous pouvons vérifier ce qui s'est passé. C'est aussi une preuve pour vous si une famille se plaint à tort.'
 	String get pourquoi => 'Pour protéger les enfants et les enseignants. Si quelqu\'un signale un problème, nous pouvons vérifier ce qui s\'est passé. C\'est aussi une preuve pour vous si une famille se plaint à tort.';
@@ -32870,7 +32870,7 @@ extension on Traductions {
 			'inscription.recap.enseignant' => 'Enseignant',
 			'contrat.titre' => 'Ce que vous signez',
 			'contrat.intro' => 'Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu\'au milieu d\'un texte long.',
-			'contrat.pointEnregistrement' => 'Chaque cours est enregistré en audio, conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.',
+			'contrat.pointEnregistrement' => 'Un cours peut être enregistré en audio. Dans ce cas, il est conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.',
 			'contrat.pointControle' => 'Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.',
 			'contrat.pointCoordonnees' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
 			'contrat.lireTexte' => 'Lire le texte complet',
@@ -32880,9 +32880,9 @@ extension on Traductions {
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'contrat.horsLigne' => 'Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
 			'contrat.caseRequise' => 'Cochez la case pour continuer.',
-			'contrat.a3.titre' => 'Les cours sont enregistrés (le son seulement)',
+			'contrat.a3.titre' => 'Les cours peuvent être enregistrés (le son seulement)',
 			'contrat.a3.quoiTitre' => 'Ce que nous faisons.',
-			'contrat.a3.quoi' => 'Chaque cours est enregistré en audio. L\'image n\'est pas enregistrée. Une personne de l\'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n\'enregistre rien. La salle le rappelle en permanence.',
+			'contrat.a3.quoi' => 'Un cours peut être enregistré en audio. L\'image n\'est pas enregistrée. Une personne de l\'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n\'enregistre rien. La salle le rappelle en permanence.',
 			'contrat.a3.pourquoiTitre' => 'Pourquoi.',
 			'contrat.a3.pourquoi' => 'Pour protéger les enfants et les enseignants. Si quelqu\'un signale un problème, nous pouvons vérifier ce qui s\'est passé.',
 			'contrat.a3.quiTitre' => 'Qui peut écouter l\'enregistrement.',
@@ -32892,7 +32892,7 @@ extension on Traductions {
 			'contrat.a3.desaccordTitre' => 'Si vous n\'êtes pas d\'accord.',
 			'contrat.a3.desaccord' => 'Vous pouvez vous opposer : Compte, Mes accords, Je m\'oppose à l\'enregistrement. Nous vous répondons sous un mois. Nous chercherons une solution avec vous. Si aucune n\'est possible, vous pouvez arrêter sans frais pour les cours pas encore suivis.',
 			'contrat.a3.jaiLu' => 'J\'ai lu',
-			'contrat.e1.quoi' => 'Chaque cours est enregistré en audio. L\'image n\'est pas enregistrée. Une personne de l\'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n\'enregistre rien. Elle envoie ensuite un compte rendu à l\'académie. La salle le rappelle en permanence.',
+			'contrat.e1.quoi' => 'Un cours peut être enregistré en audio. L\'image n\'est pas enregistrée. Une personne de l\'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n\'enregistre rien. Elle envoie ensuite un compte rendu à l\'académie. La salle le rappelle en permanence.',
 			'contrat.e1.pourquoi' => 'Pour protéger les enfants et les enseignants. Si quelqu\'un signale un problème, nous pouvons vérifier ce qui s\'est passé. C\'est aussi une preuve pour vous si une famille se plaint à tort.',
 			'contrat.e1.refusTitre' => 'Si vous refusez.',
 			'contrat.e1.refus' => 'Nous ne pouvons pas vous confier d\'élèves, car cette mesure protège les enfants. Nous vous le disons avant votre signature.',

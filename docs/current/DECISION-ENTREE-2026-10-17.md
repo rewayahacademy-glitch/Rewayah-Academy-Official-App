@@ -30,3 +30,4 @@ Le site public est rapatrié dans le dépôt pour être lisible par tous les age
 - Une seule page qui défile. Chaque texte à accepter a sa case.
 - Un seul bouton « Suivant », inactif tant que toutes les cases ne sont pas cochées, comme dans les autres apps. Cette règle remplace BOUTONS-GRISES-1 pour les accords.
 - On ne peut pas entrer dans l'app sans avoir consenti, et l'app ne renvoie jamais en arrière pour cocher après coup.
+- Enregistrement audio : supprimé pour l'instant. Il reviendra dans une prochaine version, donc les contrats et accords le gardent sous la forme « un cours peut être enregistré ».
