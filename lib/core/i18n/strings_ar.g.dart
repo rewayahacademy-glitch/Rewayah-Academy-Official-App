@@ -1270,7 +1270,7 @@ class _Traductions$contrat$ar extends Traductions$contrat$fr {
 	// Translations
 	@override String get titre => 'ما توقّع عليه';
 	@override String get intro => 'نقطتان أهم من غيرهما. هما مكتوبتان هنا بوضوح بدل أن تكونا وسط نص طويل.';
-	@override String get pointEnregistrement => 'سوف يتم تسجيل صوتيات الدروس والاحتفاظ بها خلال 30 يوما قبل حذفها. ولا يستمع إليها أحد سوى الأشخاص المرخصين لهم لغرض التحقيق والمراقبة، ويتم تسجيل كل العمليات في سجل المنصة بما في ذلك اسم المستمع والتاريخ.';
+	@override String get pointEnregistrement => 'قد يتم تسجيل صوتيات الدروس والاحتفاظ بها خلال 30 يوما قبل حذفها. ولا يستمع إليها أحد سوى الأشخاص المرخصين لهم لغرض التحقيق والمراقبة، ويتم تسجيل كل العمليات في سجل المنصة بما في ذلك اسم المستمع والتاريخ.';
 	@override String get pointControle => 'يمكن لمراقب جودة أن يحضر درسًا دون أن يُرى. تذكّر القاعة بذلك باستمرار، سواء جرت الزيارة أم لا.';
 	@override String get pointCoordonnees => 'لا ترى أبدًا بيانات اتصال أسرة: لا الاسم الكامل، ولا البريد الإلكتروني، ولا الهاتف.';
 	@override String get lireTexte => 'قراءة النص كاملًا';
@@ -1279,6 +1279,8 @@ class _Traductions$contrat$ar extends Traductions$contrat$fr {
 	@override String get erreur => 'لم يكتمل التوقيع. أعد المحاولة بعد لحظة.';
 	@override String get horsLigne => 'أنت غير متصل. ستُحفظ موافقتك بمجرد عودة الشبكة، بالضغط من جديد.';
 	@override String get caseRequise => 'حدّد المربع للمتابعة.';
+	@override late final _Traductions$contrat$a3$ar a3 = _Traductions$contrat$a3$ar._(_root);
+	@override late final _Traductions$contrat$e1$ar e1 = _Traductions$contrat$e1$ar._(_root);
 }
 
 // Path: bienvenue
@@ -6871,6 +6873,28 @@ class _Traductions$dossiers$decision$ar extends Traductions$dossiers$decision$fr
 	@override String get dejaTraite => 'عولج هذا الملف من قبل.';
 	@override String get conflit => 'عالج هذا الملف عضو آخر في الفريق.';
 	@override String nomComplet({required Object prenom, required Object nom}) => '⁨${prenom}⁩ ⁨${nom}⁩';
+}
+
+// Path: contrat.a3
+class _Traductions$contrat$a3$ar extends Traductions$contrat$a3$fr {
+	_Traductions$contrat$a3$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'قد يتم تسجيل الدروس (الصوت فقط) لغرض الحماية';
+	@override String get quoiTitre => 'ما نقوم به.';
+	@override String get quoi => 'قد يتم تسجيل الدرس صوتيًا. لا تُسجَّل الصورة. ويمكن أيضًا لشخص من الأكاديمية مكلَّف بالمراقبة أن يتابع الدرس مباشرة: يرى الدرس ويسمعه دون أن يُرى أو يُسمع. ولا يسجّل شيئًا. وتذكّر القاعة بذلك باستمرار.';
+}
+
+// Path: contrat.e1
+class _Traductions$contrat$e1$ar extends Traductions$contrat$e1$fr {
+	_Traductions$contrat$e1$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get quoi => 'قد يتم تسجيل الدرس صوتيًا. لا تُسجَّل الصورة. ويمكن أيضًا لشخص من الأكاديمية مكلَّف بالمراقبة أن يتابع الدرس مباشرة: يرى الدرس ويسمعه دون أن يُرى أو يُسمع. ولا يسجّل شيئًا. ثم يرسل تقريرًا إلى الأكاديمية. وتذكّر القاعة بذلك باستمرار.';
 }
 
 // Path: controleur.mfa
@@ -20475,7 +20499,7 @@ extension on TraductionsAr {
 			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
 			'contrat.titre' => 'ما توقّع عليه',
 			'contrat.intro' => 'نقطتان أهم من غيرهما. هما مكتوبتان هنا بوضوح بدل أن تكونا وسط نص طويل.',
-			'contrat.pointEnregistrement' => 'سوف يتم تسجيل صوتيات الدروس والاحتفاظ بها خلال 30 يوما قبل حذفها. ولا يستمع إليها أحد سوى الأشخاص المرخصين لهم لغرض التحقيق والمراقبة، ويتم تسجيل كل العمليات في سجل المنصة بما في ذلك اسم المستمع والتاريخ.',
+			'contrat.pointEnregistrement' => 'قد يتم تسجيل صوتيات الدروس والاحتفاظ بها خلال 30 يوما قبل حذفها. ولا يستمع إليها أحد سوى الأشخاص المرخصين لهم لغرض التحقيق والمراقبة، ويتم تسجيل كل العمليات في سجل المنصة بما في ذلك اسم المستمع والتاريخ.',
 			'contrat.pointControle' => 'يمكن لمراقب جودة أن يحضر درسًا دون أن يُرى. تذكّر القاعة بذلك باستمرار، سواء جرت الزيارة أم لا.',
 			'contrat.pointCoordonnees' => 'لا ترى أبدًا بيانات اتصال أسرة: لا الاسم الكامل، ولا البريد الإلكتروني، ولا الهاتف.',
 			'contrat.lireTexte' => 'قراءة النص كاملًا',
@@ -20484,6 +20508,10 @@ extension on TraductionsAr {
 			'contrat.erreur' => 'لم يكتمل التوقيع. أعد المحاولة بعد لحظة.',
 			'contrat.horsLigne' => 'أنت غير متصل. ستُحفظ موافقتك بمجرد عودة الشبكة، بالضغط من جديد.',
 			'contrat.caseRequise' => 'حدّد المربع للمتابعة.',
+			'contrat.a3.titre' => 'قد يتم تسجيل الدروس (الصوت فقط) لغرض الحماية',
+			'contrat.a3.quoiTitre' => 'ما نقوم به.',
+			'contrat.a3.quoi' => 'قد يتم تسجيل الدرس صوتيًا. لا تُسجَّل الصورة. ويمكن أيضًا لشخص من الأكاديمية مكلَّف بالمراقبة أن يتابع الدرس مباشرة: يرى الدرس ويسمعه دون أن يُرى أو يُسمع. ولا يسجّل شيئًا. وتذكّر القاعة بذلك باستمرار.',
+			'contrat.e1.quoi' => 'قد يتم تسجيل الدرس صوتيًا. لا تُسجَّل الصورة. ويمكن أيضًا لشخص من الأكاديمية مكلَّف بالمراقبة أن يتابع الدرس مباشرة: يرى الدرس ويسمعه دون أن يُرى أو يُسمع. ولا يسجّل شيئًا. ثم يرسل تقريرًا إلى الأكاديمية. وتذكّر القاعة بذلك باستمرار.',
 			'bienvenue.titre' => 'مرحبًا',
 			'bienvenue.accroche' => 'تعلّم القرآن في فصل، مع معلم ثابت',
 			'bienvenue.phrase' => 'حصص عبر الفيديو، في موعد ثابت، لك أو لطلاب أسرتك.',
@@ -20616,12 +20644,12 @@ extension on TraductionsAr {
 			'controleur.complement.envoyer' => 'إرسال التكملة',
 			'controleur.complement.echec' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا، أعد المحاولة بعد لحظة. يبقى التقرير الأصلي سليمًا.',
 			'controleur.complement.envoyeTitre' => 'أُضيفت التكملة',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.complement.envoyePhrase' => 'تظهر تحت التقرير الأصلي، الذي يبقى دون تغيير.',
 			'controleur.complement.revenir' => 'العودة إلى التقرير',
 			'controleur.compteRendu.titre' => 'التقرير',
 			'controleur.compteRendu.provisoire' => 'هذه الشاشة قيد التحضير.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.revenir' => 'العودة إلى المراقبة',
 			'controleur.compteRendu.sousTitre' => ({required Object classe, required Object heure}) => '⁨${classe}⁩ · ⁨${heure}⁩',
 			'controleur.compteRendu.faits' => 'السجل التلقائي للحصة',

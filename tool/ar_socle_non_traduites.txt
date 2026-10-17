@@ -661,14 +661,10 @@ contrat.a3.pourquoi
 contrat.a3.pourquoiTitre
 contrat.a3.qui
 contrat.a3.quiTitre
-contrat.a3.quoi
-contrat.a3.quoiTitre
-contrat.a3.titre
 contrat.clauseControle.caseReligion
 contrat.clauseControle.texte
 contrat.clauseControle.titre
 contrat.e1.pourquoi
-contrat.e1.quoi
 contrat.e1.refus
 contrat.e1.refusTitre
 contrat.politique.lien
