@@ -22,7 +22,6 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_nom.dart';
-import '../../core/widgets/permanent_notice.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/status_pill.dart';
 import 'actions_seance.dart';
@@ -43,9 +42,6 @@ class CapsuleSeance extends StatelessWidget {
 
   /// La cle de l'avatar touchable.
   static const Key cleAvatar = ValueKey<String>('capsule-avatar');
-
-  /// La cle du temoin d'enregistrement.
-  static const Key clePoint = ValueKey<String>('capsule-enregistrement');
 
   /// La cle de l'oeil du controle.
   static const Key cleOeil = ValueKey<String>('capsule-oeil');
@@ -117,19 +113,6 @@ class CapsuleSeance extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           avatar,
-          // UX-12 : le point seulement si l'enregistrement est ACTIF ;
-          // inactif ou inconnu, rien (jamais un voyant qui pretend). Fixe :
-          // l'etat ne depend d'aucune animation, et le nom le dit.
-          if (vue.voitPointEnregistrement)
-            Semantics(
-              key: clePoint,
-              container: true,
-              label: t.salle.seance.capsule.enregistrementActif,
-              child: const SizedBox.square(
-                dimension: AppTouchTarget.standard,
-                child: Center(child: PointEnregistrement()),
-              ),
-            ),
           if (oeil != null)
             ouvrir == null
                 ? Semantics(
@@ -276,23 +259,6 @@ class _SectionContexteState extends State<SectionContexte> {
                     niveau: NiveauAction.tertiaire,
                     pleineLargeur: false,
                   ),
-                ),
-              ],
-              // L'enregistrement : seulement s'il est actif (§19.6).
-              if (vue.voitPointEnregistrement) ...<Widget>[
-                Ecart.vMd,
-                Row(
-                  key: const ValueKey<String>('contexte-enregistrement'),
-                  children: <Widget>[
-                    const PointEnregistrement(),
-                    Ecart.hSm,
-                    Expanded(
-                      child: TexteSansCoupure(
-                        t.salle.seance.contexte.enregistrementActif,
-                        style: corps,
-                      ),
-                    ),
-                  ],
                 ),
               ],
               // Le controle : l'etat lu, jamais fabrique ; un controle

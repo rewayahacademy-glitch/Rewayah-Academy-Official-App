@@ -915,7 +915,6 @@
       },
       "enLigne": "متصل",
       "reconnexion": "إعادة الاتصال",
-      "coursEnregistreCourt": "الدرس مسجَّل.",
       "votreParentObserve": "وليّ أمرك يتابع الحصة.",
       "tonParentObserve": "وليّ أمرك يتابع الحصة.",
       "tuteurDeObserve": "وليّ أمر ⁨{dePrenom}⁩ يتابع.",
@@ -1103,14 +1102,12 @@
       "capsule": {
         "avatar": "عرض معلومات ⁨{deNom}⁩",
         "controlePossible": "المراقبة ممكنة. عرض المعلومات",
-        "controleActif": "المراقبة جارية. عرض المعلومات",
-        "enregistrementActif": "التسجيل جارٍ"
+        "controleActif": "المراقبة جارية. عرض المعلومات"
       },
       "contexte": {
         "titre": "معلومات الحصة",
         "reseau": "الشبكة",
         "detailReseau": "تفاصيل الشبكة",
-        "enregistrementActif": "التسجيل جارٍ",
         "controle": "المراقبة",
         "controlePossible": "المراقبة ممكنة",
         "controleActif": "المراقبة جارية",

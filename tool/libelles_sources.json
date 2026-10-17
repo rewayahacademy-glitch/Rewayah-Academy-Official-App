@@ -3218,8 +3218,6 @@
   "salle.seance.capsule.avatar": "etape TB-3 (capsule et contexte, UI-01, CTX-01, CTX-02) : plan V2 §20 (avatar, oeil, enregistrement, Reduire) mot pour mot ; JONCTION-LIGNES-1 (09/10) : « de » passé dans le paramètre {deNom} (décision fi-elision, LIB-DIR-1)",
   "salle.seance.capsule.controlePossible": "etape TB-3 (capsule et contexte, UI-01, CTX-01, CTX-02) : plan V2 §20 (avatar, oeil, enregistrement, Reduire) mot pour mot",
   "salle.seance.capsule.controleActif": "etape TB-3 (capsule et contexte, UI-01, CTX-01, CTX-02) : plan V2 §20 (avatar, oeil, enregistrement, Reduire) mot pour mot",
-  "salle.seance.capsule.enregistrementActif": "etape TB-3 (capsule et contexte, UI-01, CTX-01, CTX-02) : plan V2 §20 (avatar, oeil, enregistrement, Reduire) mot pour mot",
-  "salle.seance.contexte.enregistrementActif": "etape TB-3 (capsule et contexte, UI-01, CTX-01, CTX-02) : plan V2 §20 (avatar, oeil, enregistrement, Reduire) mot pour mot",
   "salle.seance.contexte.reduire": "etape TB-3 (capsule et contexte, UI-01, CTX-01, CTX-02) : plan V2 §20 (avatar, oeil, enregistrement, Reduire) mot pour mot",
   "salle.seance.contexte.reduireParticipants": "etape TB-3 (capsule et contexte, UI-01, CTX-01, CTX-02) : plan V2 §20 (avatar, oeil, enregistrement, Reduire) mot pour mot",
   "salle.seance.contexte.controlePossible": "etape TB-3 (capsule et contexte, UI-01, CTX-01, CTX-02) : plan V2 §20 (avatar, oeil, enregistrement, Reduire) mot pour mot",

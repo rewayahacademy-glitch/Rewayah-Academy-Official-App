@@ -369,7 +369,6 @@
       },
       "enLigne": "En ligne",
       "reconnexion": "Reconnexion",
-      "coursEnregistreCourt": "Le cours est enregistré.",
       "votreParentObserve": "Votre parent observe la séance.",
       "tonParentObserve": "Ton parent observe la séance.",
       "tuteurDeObserve": "Tuteur {dePrenom} observe.",
@@ -553,14 +552,12 @@
       "capsule": {
         "avatar": "Afficher les informations {deNom}",
         "controlePossible": "Contrôle possible. Afficher les informations",
-        "controleActif": "Contrôle actif. Afficher les informations",
-        "enregistrementActif": "Enregistrement actif"
+        "controleActif": "Contrôle actif. Afficher les informations"
       },
       "contexte": {
         "titre": "Informations de la séance",
         "reseau": "Réseau",
         "detailReseau": "Détail du réseau",
-        "enregistrementActif": "Enregistrement actif",
         "controle": "Contrôle",
         "controlePossible": "Contrôle possible",
         "controleActif": "Contrôle actif",
