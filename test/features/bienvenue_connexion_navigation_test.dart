@@ -62,7 +62,6 @@ void main() {
           find.byKey(const ValueKey<String>('connexion-decouvrir')),
           findsNothing,
         );
-        expect(find.text(t.connexion.decouvrir), findsNothing);
       },
     );
 

@@ -40,7 +40,6 @@ const Map<String, int> _domaines = <String, int>{
   'avatar': 0,
   'pin': 2,
   'enfant': 2,
-  'reglagesEnfant': 3,
   'galerie': 8,
   // AR-ELEVE-1.
   'classe': 140,
@@ -52,7 +51,9 @@ const Map<String, int> _domaines = <String, int>{
   'priere': 10,
   // AR-FAMILLE-1.
   'compte': 180,
-  'tuteur': 110,
+  // Menage du 17/10 (passation point 8) : les libelles orphelins des
+  // anciens reglages de l'enfant et des disponibilites sont retires.
+  'tuteur': 100,
   'historique': 90,
   'appareils': 75,
   'connexion': 40,
@@ -67,9 +68,8 @@ const Map<String, int> _domaines = <String, int>{
   'dossiers': 110,
   'kyc': 12,
   'contrat': 10,
-  'bienvenue': 10,
   'creneaux': 20,
-  'disponibilites': 25,
+  'disponibilites': 10,
   // AR-CONTROLE-1.
   'controleur': 190,
   'agent': 12,

@@ -755,26 +755,6 @@
     "etatMicroOuvert": "son micro est ouvert",
     "etatMicroCoupe": "son micro est coupé"
   },
-  "bienvenue": {
-    "titre": "Bienvenue",
-    "accroche": "Apprendre le Coran en classe, en visio",
-    "phrase": "Rewayah Academy propose des cours de Coran en direct, en vidéo, pour vous ou pour les élèves de votre foyer.",
-    "pointClasseTitre": "Une classe stable, à horaire fixe",
-    "pointClasse": "Les mêmes camarades et le même horaire, chaque semaine. Vous choisissez une classe dont l'horaire vous convient.",
-    "pointEnseignantTitre": "Un enseignant attitré",
-    "pointEnseignant": "Un Sayyid ou une Sayyida qui suit chaque élève d'une séance à l'autre.",
-    "pointParcoursTitre": "Un parcours selon le niveau",
-    "pointParcours": "Le débutant commence par la lecture de l'arabe et du Coran. L'élève déjà avancé rejoint la classe la plus proche de son niveau.",
-    "pointFoyerTitre": "Le suivi de la famille",
-    "pointFoyer": "Un seul compte pour le foyer\u00a0: les séances de chaque élève se suivent depuis votre compte.",
-    "commencer": "Commencer",
-    "dejaCompte": "J'ai déjà un compte",
-    "passer": "Passer la présentation",
-    "position": "{numero} / {total}",
-    "positionLecteur": "Présentation, page {numero} sur {total}",
-    "precedente": "Page précédente de la présentation",
-    "suivante": "Page suivante de la présentation"
-  },
   "attente": {
     "titre": "Votre dossier est en cours de vérification",
     "dossierIncomplet": "Il manque encore des pièces à votre dossier.",
@@ -863,7 +843,6 @@
     "erreurTropTot": "Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.",
     "horsLigne": "Le lien ne peut pas partir pour l'instant. Réessayez quand la connexion sera revenue.",
     "probleme": "Lien expiré ou jamais reçu\u00a0?",
-    "decouvrir": "Découvrir Rewayah Academy",
     "recuperation": {
       "titre": "Retrouver mon accès",
       "intro": "Il n'y a pas de mot de passe à réinitialiser\u00a0: indiquez votre adresse, nous vous envoyons un nouveau lien de connexion.",
@@ -1352,12 +1331,6 @@
     "aucun": "Aucun profil élève dans le foyer",
     "aucunDetail": "Ajoutez d'abord un profil élève depuis le Foyer."
   },
-  "reglagesEnfant": {
-    "titre": "Réglages par profil élève",
-    "intro": "La photo, la caméra et l'interface de chaque élève se règlent dans sa fiche, depuis le Foyer. Les demandes à l'administration restent ici.",
-    "renvoi": "Photo, caméra et interface",
-    "renvoiLegende": "Dans la fiche {dePrenom}"
-  },
   "foyer": {
     "titre": "Foyer",
     "ajouterProfil": "Ajouter un profil élève",
@@ -1698,28 +1671,10 @@
     }
   },
   "disponibilites": {
-    "titre": "Quand vos enfants peuvent-ils suivre un cours\u00a0?",
     "titreEnseignant": "Quand pouvez-vous donner cours\u00a0?",
-    "consigne": "Touchez les heures possibles pour {prenom}.",
-    "consigneEnseignant": "Touchez les heures où vous êtes disponible.",
     "effet": "Un enseignant choisira parmi ces heures. Plus vous en proposez, plus vite le cours démarre.",
-    "effetEnseignant": "Vous ne verrez que les élèves dont les heures croisent les vôtres.",
     "fuseau": "Heures affichées en {fuseau}",
-    "aucune": "Aucune heure proposée pour {prenom}",
-    "aucuneDetail": "Sans créneau, aucun enseignant ne peut prendre {prenom} en charge.",
     "poseeUne": "1 heure proposée",
-    "cellulePosee": "{jour} {heure} heures, proposé. Toucher pour retirer",
-    "celluleLibre": "{jour} {heure} heures, libre. Toucher pour proposer",
-    "erreur": "Ce créneau n'a pas pu être enregistré. Réessayez.",
-    "joursCourts": [
-      "Lun",
-      "Mar",
-      "Mer",
-      "Jeu",
-      "Ven",
-      "Sam",
-      "Dim"
-    ],
     "joursLongs": [
       "lundi",
       "mardi",
@@ -5028,20 +4983,6 @@
       "modeStandard": "Affichage courant\u00a0: {prenom} lit son écran.",
       "modePasserEnfant": "Passer {prenom} au grand affichage",
       "modePasserStandard": "Passer {prenom} à l'affichage courant",
-      "demandes": "Demander un changement",
-      "demandeReaffectation": "Changer d'enseignant",
-      "demandeDuree": "Changer la durée des cours",
-      "demandeMinimum": "Changer la durée minimale payable",
-      "demandeSansEnseignant": "{prenom} n'a pas encore d'enseignant\u00a0: il n'y a rien à changer.",
-      "demandeTitreReaffectation": "Changer l'enseignant {dePrenom}",
-      "demandeTitreDuree": "La durée des cours {dePrenom}",
-      "demandeTitreMinimum": "La durée minimale payable pour {prenom}",
-      "demandeActuelle": "Aujourd'hui\u00a0: {minutes} min",
-      "demandeMotif": "Pourquoi ce changement\u00a0?",
-      "demandeMotifRequis": "Un motif est nécessaire\u00a0: c'est lui qui permet de trancher.",
-      "demandeManqueValeur": "Il manque la durée demandée\u00a0: choisissez-la dans la liste, ou touchez «\u00a0Autre\u00a0» et écrivez-la.",
-      "demandeEnvoyer": "Envoyer la demande",
-      "demandeEnvoyee": "Demande envoyée. L'administration la tranchera.",
       "aucunEnfant": "Aucun enfant dans le foyer",
       "aucunEnfantDetail": "Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.",
       "erreur": "L'enregistrement n'a pas abouti\u00a0: {message}"
@@ -7442,24 +7383,6 @@
       "reseau": "Coupure réseau signalée",
       "conge": "Jour férié ou congé",
       "familiale": "Raison familiale"
-    },
-    "reglageEnseignant": {
-      "horaire": "Horaire qui ne convient plus",
-      "niveau": "Niveau qui ne correspond plus",
-      "fuseau": "Changement de fuseau horaire",
-      "fratrie": "Réunir les enfants du foyer"
-    },
-    "reglageDuree": {
-      "tropLongue": "Durée trop longue pour l'âge",
-      "plusDeTemps": "Besoin de plus de temps",
-      "pause": "Pause nécessaire pendant le cours",
-      "horaire": "Contraintes d'horaire de la famille"
-    },
-    "reglageMinimum": {
-      "ecourtees": "Séances souvent écourtées",
-      "reseau": "Coupures réseau fréquentes",
-      "duree": "Durée des cours modifiée",
-      "horaire": "Contraintes d'horaire de la famille"
     },
     "signalement": {
       "pedagogique": {

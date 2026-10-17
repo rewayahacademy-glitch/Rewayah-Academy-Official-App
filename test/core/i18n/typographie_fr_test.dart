@@ -3,7 +3,8 @@
 // Avant « ? ! : ; », et a l'interieur des guillemets « », l'espace est
 // insecable (U+00A0, la regle du depot, comme les durees de
 // DUREE-INSECABLE-1) : une ponctuation haute ne part jamais seule a la
-// ligne (« Pourquoi ce changement / ? », feuille de reglages de l'enfant).
+// ligne (« Pourquoi ce changement / ? », ancienne feuille de reglages de
+// l'enfant, retiree avec ses libelles le 17/10).
 // Garde sur TOUT le fichier : un libelle ajoute avec une espace ordinaire
 // fait echouer ce test en le nommant.
 // Contre-epreuve : sur l'ancien fichier (5a52ff30), ce test echoue (275
@@ -67,12 +68,5 @@ void main() {
       for (final MapEntry<String, String> e in valeurs)
         if (_espaceFine.hasMatch(e.value)) '${e.key} : ${e.value}',
     ], isEmpty);
-  });
-
-  test('« Pourquoi ce changement ? » lie son point d interrogation', () {
-    final Map<String, dynamic> tuteur = fr['tuteur'] as Map<String, dynamic>;
-    final Map<String, dynamic> reglages =
-        tuteur['reglages'] as Map<String, dynamic>;
-    expect(reglages['demandeMotif'], 'Pourquoi ce changement ?');
   });
 }

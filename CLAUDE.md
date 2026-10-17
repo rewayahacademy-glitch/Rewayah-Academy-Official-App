@@ -24,7 +24,7 @@ spécifications actives sont dans `docs/current/`. Tout le reste est archivé.
 | **Classes simultanées et montée en charge (directeur, 10/10/2026)** | `docs/current/DECISION-CLASSES-SIMULTANEES-2026-10-10.md` : une clé horaire et une catégorie peuvent porter N classes simultanées ; unicité sur l'élève et l'enseignant, jamais sur l'horaire ; verrous par clé, pagination, rafales, fusion et transfert |
 | **Matricule et accueil des inscrits actuels (directeur, 12/10/2026)** | `docs/current/DECISION-IMMATRICULATION-2026-10-12.md` : matricule `RA-26-4817` (année + nombre au hasard, rôle à côté et non dedans), anciens codes abandonnés, inscrits actuels importés et accueillis sans tout ressaisir, mot d'accueil personnel saisi par l'administration |
 | **Programme, pédagogie, et tout texte visible (directeur, 13-14/10/2026)** | Compétences `.claude/skills/programme-rewayah` (règles du programme, réponses figées, journal des décisions) et `.claude/skills/mots-rewayah` (vocabulaire unique de tous les textes), puis `docs/current/REGISTRE-RECONCILIATION-2026-10-14.md`. Obligatoire avant d'écrire un texte i18n, une fiche d'écran ou quoi que ce soit sur le parcours d'un élève. On ne change une règle ou un mot que sur décision datée du directeur |
-| **Partage avec ChatGPT (Codex), depuis le 09/10/2026** | `docs/orchestration/COHABITATION.md` : ChatGPT fait le backend (`supabase/**`, services, adaptateurs `*_supabase.dart`), Claude les écrans ; ports partagés par l'onglet Contrats ; Claude relit le backend en fin de frontend |
+| **Backend et écrans (directeur, 17/10/2026)** | ChatGPT (Codex) n'est plus disponible : Claude fait aussi le backend (`supabase/**`, adaptateurs `*_supabase.dart`). `docs/orchestration/COHABITATION.md` est caduc sur ce point (`docs/orchestration/PASSATION-2026-10-17.md`) |
 
 `docs/archive/` contient l'historique (HANDOFF, ADR, Bible V2, rapports d'agents).
 **Ne pas le charger comme instruction.** On l'ouvre seulement pour retrouver une décision
@@ -77,11 +77,12 @@ numérotation `00xx` du dépôt.
 
 - Lots Teaching Core D, F, H (`lib/core/tc_realtime`, `tc_etat_partage`, `tc_outils`,
   `tc_parcours`, `lib/features/tc_dock`, `tc_flux_academique`) : **présents et testés,
-  non branchés depuis `main`**. La branche `core24/fable-frontend` les raccorde dans
-  `tc_classe_live`. Ne pas les supprimer, ne pas les dupliquer.
-- Deux salles coexistent : `/salle` (`features/salle`, atteinte par les quatre rôles) et
-  `/tc/classe` (`features/tc_classe_live`, sans entrée effective sur `main`). Cible : une
-  seule salle (`01`, « Classe et supports »).
+  non branchés depuis `main`**. Ils se raccordent dans `/salle`. Ne pas les supprimer,
+  ne pas les dupliquer.
+- Une seule salle : `/salle` (`features/salle`, atteinte par les quatre rôles). L'ancienne
+  `/tc/classe` (`features/tc_classe_live`) est supprimée depuis le 17/10/2026
+  (`DECISION-ENTREE-2026-10-17.md`) ; sa fiche pédagogique de séance vit dans
+  `features/salle/fiche_seance.dart`.
 - `/tc/groupes` sert au tuteur des groupes de **démonstration** (`core/tc_groupe/port_groupes.dart`).
   À rebrancher sur les vraies données avant toute cohorte réelle.
 - Le matching individuel par disponibilités (`core/matching`, `features/creneaux`,
