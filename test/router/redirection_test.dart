@@ -56,7 +56,6 @@ void main() {
       Routes.controleur,
       Routes.admin,
       Routes.adminPersonnesDossiers,
-      Routes.adminOperationsAttributions,
       Routes.adminOperationsRegroupements,
       Routes.adminOperationsOffres,
       Routes.adminOperationsPilotage,

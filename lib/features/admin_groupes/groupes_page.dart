@@ -866,7 +866,7 @@ String _creneau(GroupeAdmin groupe) =>
 
 /// Le message metier d'une exception, sans son type.
 ///
-/// Meme forme que `admin_attribution/attribution_page.dart` : les exceptions
+/// Les exceptions
 /// Postgrest portent le message metier en clair apres le premier « : ».
 String _message(Object erreur) {
   final String brut = erreur.toString();

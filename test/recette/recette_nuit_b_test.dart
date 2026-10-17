@@ -39,7 +39,6 @@ const Map<AppRole, List<String>> _routes = <AppRole, List<String>>{
     Routes.adminFinanceReserveDelegation,
     Routes.adminNotifications,
     Routes.adminOperations,
-    Routes.adminOperationsAttributions,
     Routes.adminOperationsCommunications,
     Routes.adminOperationsDemandes,
     Routes.adminOperationsGroupes,

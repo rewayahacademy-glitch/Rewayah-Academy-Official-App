@@ -72,9 +72,6 @@ class Graine {
   /// Les creneaux poses, par profil.
   Map<String, List<Creneau>> creneaux = const <String, List<Creneau>>{};
 
-  /// Le feed d'eleves sans enseignant.
-  List<EleveEnAttente> feed = const <EleveEnAttente>[];
-
   /// La file des demandes de l'administration.
   List<Demande> demandes = const <Demande>[];
 
@@ -148,8 +145,7 @@ Persona personne({
     ..seancesRendues = graine.seances
     ..affectationsRendues = graine.affectations
     ..creneaux.addAll(graine.creneaux);
-  final FauxServiceMatching matching = FauxServiceMatching()
-    ..feed = graine.feed;
+  final FauxServiceMatching matching = FauxServiceMatching();
   final FauxServiceAdmin admin = FauxServiceAdmin()
     ..indicateursRendus = graine.indicateurs
     ..file = graine.demandes;
@@ -440,20 +436,6 @@ Graine _graineEnseignant(DateTime maintenant) =>
           ),
         ],
       }
-      ..feed = <EleveEnAttente>[
-        EleveEnAttente(
-          eleveId: 'e-3',
-          prenom: 'Amina',
-          identifiantImmuable: 'imm-e-3',
-          creneau: Creneau(
-            jour: maintenant.weekday,
-            heure: 16,
-            fuseau: 'Europe/Paris',
-          ),
-          depuis: maintenant.subtract(const Duration(days: 5)),
-          mode: InterfaceMode.standard,
-        ),
-      ]
       ..regles = <String, List<RegleProfil>>{
         enseignant: <RegleProfil>[
           _regle(

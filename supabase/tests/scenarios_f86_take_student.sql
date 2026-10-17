@@ -1,4 +1,5 @@
--- F86 : un compte valide sans claim role ne peut pas prendre un eleve.
+-- F86, repris par L3-02 : prendre_eleve est fermee par revoke a tout compte
+-- connecte ; quel que soit l'appelant, le refus est SQLSTATE 42501.
 BEGIN;
 
 INSERT INTO auth.users (id, email) VALUES
@@ -24,8 +25,8 @@ BEGIN
   BEGIN
     PERFORM public.prendre_eleve(NULL::uuid, NULL::integer, NULL::integer);
     RAISE EXCEPTION 'F86: un compte actif sans role JWT a pu prendre un eleve';
-  EXCEPTION WHEN raise_exception THEN
-    IF SQLERRM <> 'seul un enseignant au compte valide prend un eleve' THEN RAISE; END IF;
+  EXCEPTION WHEN insufficient_privilege THEN
+    NULL;
   END;
 END
 $f86_null_role_denied$;
@@ -42,8 +43,8 @@ BEGIN
   BEGIN
     PERFORM public.prendre_eleve(NULL::uuid, NULL::integer, NULL::integer);
     RAISE EXCEPTION 'F86: un tuteur actif a pu prendre un eleve';
-  EXCEPTION WHEN raise_exception THEN
-    IF SQLERRM <> 'seul un enseignant au compte valide prend un eleve' THEN RAISE; END IF;
+  EXCEPTION WHEN insufficient_privilege THEN
+    NULL;
   END;
 END
 $f86_guardian_role_denied$;
@@ -62,8 +63,8 @@ BEGIN
   BEGIN
     PERFORM public.prendre_eleve(NULL::uuid, NULL::integer, NULL::integer);
     RAISE EXCEPTION 'F86: un compte enseignant desactive a pu prendre un eleve';
-  EXCEPTION WHEN raise_exception THEN
-    IF SQLERRM <> 'seul un enseignant au compte valide prend un eleve' THEN RAISE; END IF;
+  EXCEPTION WHEN insufficient_privilege THEN
+    NULL;
   END;
 END
 $f86_disabled_teacher_denied$;

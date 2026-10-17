@@ -8,12 +8,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rewayah_academy/core/admin/service_admin.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/matching/service_attribution.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
@@ -27,7 +25,6 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/pays_enseignant.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
-import 'package:rewayah_academy/features/admin_attribution/attribution_page.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart'
     as admin;
@@ -238,56 +235,6 @@ List<EcranPays> ecransPays() => <EcranPays>[
     construire: () =>
         const CoquilleControleurDemo(ecran: EcranDemoControleur.historique),
     pays: const <String>['France'],
-  ),
-  EcranPays(
-    role: 'admin',
-    nom: 'admin_attribution',
-    construire: () => const AttributionPage(),
-    toucher: 'Yacine',
-    surcharges: <Override>[
-      serviceAttributionProvider.overrideWithValue(
-        FauxServiceAttribution()
-          ..foyers = <FoyerEnAttente>[
-            FoyerEnAttente(
-              eleveId: 'e1',
-              prenom: 'Yacine',
-              identifiantImmuable: 'STUD-YA-000001',
-              foyerId: 'f1',
-              mode: InterfaceMode.enfant,
-              niveau: 'debutant',
-              depuis: maintenantPays.subtract(const Duration(days: 12)),
-              creneaux: const <Creneau>[
-                Creneau(jour: 2, heure: 17, fuseau: 'Europe/Paris'),
-              ],
-            ),
-          ]
-          ..enseignants['e1'] = <EnseignantCandidat>[
-            const EnseignantCandidat(
-              id: 't1',
-              prenom: 'Omar',
-              nom: 'Sow',
-              identifiantImmuable: 'TEACH-OS-000001',
-              elevesActifs: 1,
-              plafond: 5,
-              creneauxCommuns: <Creneau>[
-                Creneau(jour: 2, heure: 17, fuseau: 'Europe/Paris'),
-              ],
-              pays: 'Sénégal',
-            ),
-            const EnseignantCandidat(
-              id: 't2',
-              prenom: 'Awa',
-              nom: 'Bah',
-              identifiantImmuable: 'TEACH-AB-000002',
-              elevesActifs: 3,
-              plafond: 5,
-              creneauxCommuns: <Creneau>[],
-            ),
-          ],
-      ),
-      serviceAdminProvider.overrideWithValue(FauxServiceAdmin()),
-    ],
-    pays: const <String>['Sénégal'],
   ),
   EcranPays(
     role: 'admin',

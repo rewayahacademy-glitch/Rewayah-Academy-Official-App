@@ -510,7 +510,7 @@ end $$;
 do $$
 declare v_assignment uuid;
 begin
-  set local role authenticated;
+  reset role; -- L3-02 : prendre_eleve est fermee aux comptes connectes, la garde interne se rejoue sous postgres
   perform set_config('test.uid', 'cccccccc-0000-0000-0000-000000000001', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
 
@@ -525,7 +525,7 @@ end $$;
 do $$
 declare v_message text;
 begin
-  set local role authenticated;
+  reset role; -- L3-02 : prendre_eleve est fermee aux comptes connectes, la garde interne se rejoue sous postgres
   perform set_config('test.uid', 'cccccccc-0000-0000-0000-000000000002', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
   begin
@@ -574,7 +574,7 @@ declare
   v_message text;
   i int;
 begin
-  set local role authenticated;
+  reset role; -- L3-02 : prendre_eleve est fermee aux comptes connectes, la garde interne se rejoue sous postgres
   perform set_config('test.uid', 'cccccccc-0000-0000-0000-000000000001', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
 
@@ -609,7 +609,7 @@ end $$;
 
 do $$
 begin
-  set local role authenticated;
+  reset role; -- L3-02 : prendre_eleve est fermee aux comptes connectes, la garde interne se rejoue sous postgres
   perform set_config('test.uid', 'cccccccc-0000-0000-0000-000000000001', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
 
@@ -1586,6 +1586,7 @@ begin
   if v_common <> 1 then
     raise exception 'A793: 0014/0016 ne trouvent pas le créneau commun suivant';
   end if;
+  reset role; -- L3-02 : attribuer_eleve et prendre_eleve sont fermees aux comptes connectes, la garde interne se rejoue sous postgres
   v_assignment := public.attribuer_eleve(
     'aaaaaaaa-0000-0000-0000-000000000003',
     'cccccccc-0000-0000-0000-000000000002',v_weekday,v_hour,NULL

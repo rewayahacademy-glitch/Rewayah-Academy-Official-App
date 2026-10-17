@@ -34,14 +34,6 @@ abstract final class MotifsProposes {
     t.motifs.clotureClasse.parErreur,
   ];
 
-  /// Attribuer sur une heure que la famille n'a pas posee.
-  static List<String> attribution() => <String>[
-    t.motifs.attribution.confirmee,
-    t.motifs.attribution.aucuneCommune,
-    t.motifs.attribution.continuite,
-    t.motifs.attribution.famille,
-  ];
-
   /// Refuser une demande (la phrase part a la partie qui a demande).
   static List<String> refusDemande() => <String>[
     t.motifs.refusDemande.aucunEnseignant,

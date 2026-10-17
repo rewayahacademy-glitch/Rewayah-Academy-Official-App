@@ -22,7 +22,6 @@ import '../../core/auth/service_auth.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/controle/service_controle.dart';
 import '../../core/journal/service_journal.dart';
-import '../../core/matching/service_attribution.dart';
 import '../../core/matching/service_matching.dart';
 import '../../core/regles/service_regles.dart';
 import '../../core/tc_observation/port_politique_observation.dart';
@@ -91,12 +90,6 @@ class ServiceMatchingDemo with _IndisponibleDemo implements ServiceMatching {
   const ServiceMatchingDemo();
 }
 
-class ServiceAttributionDemo
-    with _IndisponibleDemo
-    implements ServiceAttribution {
-  const ServiceAttributionDemo();
-}
-
 class ServiceControleDemo with _IndisponibleDemo implements ServiceControle {
   const ServiceControleDemo();
 }
@@ -140,7 +133,6 @@ List<Override> surchargesServicesAdminIndisponibles() => <Override>[
   serviceDiagnosticsProvider.overrideWithValue(const ServiceDiagnosticsDemo()),
   serviceJournalProvider.overrideWithValue(const ServiceJournalDemo()),
   serviceMatchingProvider.overrideWithValue(const ServiceMatchingDemo()),
-  serviceAttributionProvider.overrideWithValue(const ServiceAttributionDemo()),
   serviceControleProvider.overrideWithValue(const ServiceControleDemo()),
   serviceReglesProvider.overrideWithValue(const ServiceReglesDemo()),
   serviceAuthProvider.overrideWithValue(const ServiceAuthDemo()),
@@ -166,7 +158,6 @@ final List<Provider<Object>> providersServicesAdmin = <Provider<Object>>[
   serviceDiagnosticsProvider,
   serviceJournalProvider,
   serviceMatchingProvider,
-  serviceAttributionProvider,
   serviceControleProvider,
   serviceReglesProvider,
   serviceAuthProvider,

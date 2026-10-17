@@ -3,64 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/enums.dart';
-import '../planning/service_planning.dart';
-
-/// Un eleve sans enseignant, tel que `eleves_en_attente_v` l'expose.
-///
-/// Une ligne par creneau compatible : le meme eleve peut apparaitre plusieurs
-/// fois, une fois par heure qu'il propose et que l'enseignant peut tenir.
-@immutable
-class EleveEnAttente {
-  /// Cree une ligne du feed.
-  const EleveEnAttente({
-    required this.eleveId,
-    required this.prenom,
-    required this.identifiantImmuable,
-    required this.creneau,
-    required this.depuis,
-    required this.mode,
-    this.niveau,
-  });
-
-  /// Lit une ligne de la vue.
-  factory EleveEnAttente.depuisJson(Map<String, dynamic> json) =>
-      EleveEnAttente(
-        eleveId: json['student_id'] as String,
-        prenom: json['first_name'] as String? ?? '',
-        identifiantImmuable: json['immutable_id'] as String? ?? '',
-        creneau: Creneau.depuisJson(json),
-        depuis:
-            DateTime.tryParse(json['depuis'] as String? ?? '')?.toLocal() ??
-            DateTime.now(),
-        mode: InterfaceMode.depuisSql(json['interface_mode'] as String?),
-        niveau: json['level'] as String?,
-      );
-
-  /// Identifiant du profil eleve.
-  final String eleveId;
-
-  /// Prenom.
-  final String prenom;
-
-  /// Identifiant immuable, seule autre donnee d'identite visible (ADR-008).
-  final String identifiantImmuable;
-
-  /// Le creneau propose, compatible avec ceux de l'enseignant qui regarde.
-  final Creneau creneau;
-
-  /// Depuis quand ce foyer attend. C'est la cle du tri, jamais le nom.
-  final DateTime depuis;
-
-  /// Mode d'interface de l'eleve.
-  final InterfaceMode mode;
-
-  /// Niveau declare, quand il existe.
-  final String? niveau;
-
-  /// Le nombre de jours d'attente a un instant donne.
-  int joursDAttente(DateTime maintenant) =>
-      maintenant.difference(depuis).inDays;
-}
 
 /// Une demande, telle que `matching_requests` la porte.
 @immutable
@@ -142,35 +84,12 @@ class Demande {
   final DateTime creeeLe;
 }
 
-/// Le feed, de la famille qui attend depuis le plus longtemps a la plus
-/// recente.
+/// Les demandes des quatre parties (file `ADM-06`).
 ///
-/// **L'ordre appartient a l'ecran, pas a la requete.** Il vivait dans le seul
-/// `.order()` de la lecture, dont le sens par defaut est l'inverse de celui
-/// qu'on voulait ; il se mesure maintenant la ou il se voit, et une lecture qui
-/// rendrait ses lignes dans n'importe quel ordre ne changerait plus rien a ce
-/// que `ENS-06` affiche.
-List<EleveEnAttente> parAnciennete(List<EleveEnAttente> feed) =>
-    List<EleveEnAttente>.of(feed)..sort(
-      (EleveEnAttente a, EleveEnAttente b) => a.depuis.compareTo(b.depuis),
-    );
-
-/// Le matching, cote enseignant, et les demandes des quatre parties.
+/// L3-02 (A-06) : le matching individuel (prendre un eleve, `eleves_en_attente_v`)
+/// est retire. Ce port ne porte plus que `demander`, le nom du fichier reste
+/// pour ne pas toucher cinquante imports ; le renommer est un lot a part.
 abstract interface class ServiceMatching {
-  /// Les eleves sans enseignant dont un creneau croise les miens.
-  ///
-  /// Le croisement se fait **par instant** et non par heure locale : la famille
-  /// pose en heure de Paris, l'enseignant lit en heure de Conakry.
-  Future<List<EleveEnAttente>> elevesEnAttente();
-
-  /// Prend un eleve. Ce qui se prend est un eleve, pas un creneau : la relation
-  /// dure, et ne se rompt que par une demande (ADR-017).
-  ///
-  /// Le plafond, l'unicite de l'enseignant et la concurrence sont tranches en
-  /// base : deux enseignants qui tapent au meme instant ne peuvent pas passer
-  /// tous les deux.
-  Future<void> prendre({required String eleveId, required Creneau creneau});
-
   /// Depose une demande. Elle atteint la file de `ADM-06`.
   Future<void> demander({
     required SorteDemande sorte,
@@ -187,35 +106,6 @@ class ServiceMatchingSupabase implements ServiceMatching {
   const ServiceMatchingSupabase(this._client);
 
   final SupabaseClient _client;
-
-  @override
-  Future<List<EleveEnAttente>> elevesEnAttente() async {
-    final List<Map<String, dynamic>> lignes = await _client
-        .from('eleves_en_attente_v')
-        .select()
-        // Anciennete d'abord : sans ce tri, un eleve peut rester invisible en
-        // bas de liste indefiniment, ce qui viderait le matching de son interet.
-        //
-        // **Le sens s'ecrit.** `order()` de postgrest trie en DESCENDANT quand
-        // on ne dit rien : ecrit `.order('depuis')`, ce feed rendait la famille
-        // qui attend depuis le moins longtemps en premier, et enfoncait au bas
-        // de la liste celle qui attend depuis le plus longtemps. Exactement le
-        // defaut que le commentaire ci-dessus dit prevenir, et la vue ne trie
-        // rien de son cote.
-        .order('depuis', ascending: true);
-    return lignes.map(EleveEnAttente.depuisJson).toList();
-  }
-
-  @override
-  Future<void> prendre({required String eleveId, required Creneau creneau}) =>
-      _client.rpc<void>(
-        'prendre_eleve',
-        params: <String, dynamic>{
-          'p_student_profile_id': eleveId,
-          'p_weekday': creneau.jour,
-          'p_hour': creneau.heure,
-        },
-      );
 
   @override
   Future<void> demander({
@@ -240,10 +130,4 @@ class ServiceMatchingSupabase implements ServiceMatching {
 final Provider<ServiceMatching> serviceMatchingProvider =
     Provider<ServiceMatching>(
       (Ref ref) => ServiceMatchingSupabase(Supabase.instance.client),
-    );
-
-/// Le feed de `ENS-06`.
-final FutureProvider<List<EleveEnAttente>> elevesEnAttenteProvider =
-    FutureProvider<List<EleveEnAttente>>(
-      (Ref ref) => ref.watch(serviceMatchingProvider).elevesEnAttente(),
     );
