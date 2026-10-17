@@ -206,7 +206,7 @@ void main() {
     testWidgets('aucune UI n ecrit « mode enfant »', (
       WidgetTester tester,
     ) async {
-      // Decision D-07, puis MA-9 : le nom visible est « Mode Accessibilité ». La valeur SQL
+      // Decision D-07, puis A-03 (17/10/2026) : le nom visible est « Interface guidée ». La valeur SQL
       // reste `'child'`, et ce n'est pas un renommage de donnee.
       const TeacherStudentProjection fiche = TeacherStudentProjection(
         firstName: 'Ilyas',
@@ -230,10 +230,10 @@ void main() {
 
       final String tout = motsRendus(tester).join(' | ').toLowerCase();
       expect(tout.contains('mode enfant'), isFalse);
-      // MA-9 (Q6, 27/09) : libelle neutre « Mode Accessibilité », sans
+      // A-03 (17/10/2026) : libelle neutre « Interface guidée », sans
       // raison ni diagnostic ni age.
-      expect(tout.contains('mode accessibilité'), isTrue);
-      expect(tout.contains('interface guidée'), isFalse);
+      expect(tout.contains('interface guidée'), isTrue);
+      expect(tout.contains('mode accessibilité'), isFalse);
       for (final String interdit in <String>[
         'handicap',
         'diagnostic',

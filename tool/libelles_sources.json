@@ -4804,5 +4804,14 @@
   "commun.formats.dateHeure": "lot L3-05 (17/10/2026), K-41 : une cle commune pour un format ou un etat dont le sens est le meme partout par construction, remplace admin.fusion.quand, admin.tirage.quand, suiviFamille.horodatage, suiviDemandes.jalon.date ; le texte et l'arabe etaient identiques sur chacune de ces cles",
   "commun.formats.minutes": "lot L3-05 (17/10/2026), K-41 : une cle commune pour un format ou un etat dont le sens est le meme partout par construction, remplace six cles de duree en minutes (tuteur, classe, enseignant, tc) ; le texte et l'arabe etaient identiques sur chacune de ces cles",
   "commun.formats.pageSur": "lot L3-05 (17/10/2026), K-41 : une cle commune pour un format ou un etat dont le sens est le meme partout par construction, remplace les positions de pagination admin et eleve.coran.page ; le texte et l'arabe etaient identiques sur chacune de ces cles",
-  "commun.etats.branchementServeur": "lot L3-05 (17/10/2026), K-41 : une cle commune pour un format ou un etat dont le sens est le meme partout par construction, remplace admin.planning.indisponibleTitre et admin.incidents.indisponibleTitre ; le texte et l'arabe etaient identiques sur chacune de ces cles"
+  "commun.etats.branchementServeur": "lot L3-05 (17/10/2026), K-41 : une cle commune pour un format ou un etat dont le sens est le meme partout par construction, remplace admin.planning.indisponibleTitre et admin.incidents.indisponibleTitre ; le texte et l'arabe etaient identiques sur chacune de ces cles",
+  "salle.preparation.eleve.demo.sectionGuidee": "réponse A-03 du directeur, 17/10/2026 (option 1, « Interface guidée » partout) ; clé modifiée dans assets/i18n/fr.i18n.json et ar.i18n.json",
+  "salle.seance.demo.roles.guidee": "réponse A-03 du directeur, 17/10/2026 (option 1, « Interface guidée » partout) ; clé modifiée dans assets/i18n/fr.i18n.json et ar.i18n.json",
+  "accessibilite.demo.titre": "réponse A-03 du directeur, 17/10/2026 (option 1, « Interface guidée » partout) ; clé modifiée dans assets/i18n/fr.i18n.json et ar.i18n.json",
+  "accessibilite.monEspace.mode": "réponse A-03 du directeur, 17/10/2026 (option 1, « Interface guidée » partout) ; clé modifiée dans assets/i18n/fr.i18n.json et ar.i18n.json",
+  "ficheEleve.interface.guidee": "réponse A-03 du directeur, 17/10/2026 (option 1, « Interface guidée » partout) ; clé modifiée dans assets/i18n/fr.i18n.json et ar.i18n.json",
+  "compte.modeEnfant": "réponse A-03 du directeur, 17/10/2026 (option 1, « Interface guidée » partout) ; clé modifiée dans assets/i18n/fr.i18n.json et ar.i18n.json",
+  "classe.entree.demo.roles.guidee": "réponse A-03 du directeur, 17/10/2026 (option 1, « Interface guidée » partout) ; clé modifiée dans assets/i18n/fr.i18n.json et ar.i18n.json",
+  "galerie.modeEnfant": "réponse A-03 du directeur, 17/10/2026 (option 1, « Interface guidée » partout) ; clé modifiée dans assets/i18n/fr.i18n.json et ar.i18n.json",
+  "tc.classe.fiche.interfaceGuidee": "réponse A-03 du directeur, 17/10/2026 (option 1, « Interface guidée » partout) ; clé modifiée dans assets/i18n/fr.i18n.json et ar.i18n.json"
 }
