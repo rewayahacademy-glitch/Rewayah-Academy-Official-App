@@ -1,0 +1,469 @@
+<title>Simulateur économique Rewayah</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Mise en page : réglages « Et si… ? » à gauche, la tirelire du mois et ses explications à droite ;
+   une seule colonne sur téléphone. Couleurs et polices reprises de docs/produit/design-tokens.md. */
+:root {
+  --canvas: #F8F4EE; --raised: #FFFFFF; --sunken: #F3EDE7;
+  --hairline: #DCD2C8; --resting: #C9BCB1; --strong: #8F8279;
+  --ink: #1C1D21; --muted: #5E564F; --faint: #756B63;
+  --accent: #8652E6; --on-accent: #FFFFFF; --wash-accent: #E9E0FC; --ink-accent: #5B36B0;
+  --wash-success: #C6F0D9; --ink-success: #0F5F35;
+  --wash-warning: #FCE7B8; --ink-warning: #6B4A00;
+  --wash-alert: #FBE3E9; --ink-alert: #B01B3C;
+  --s-in: #2E9E62; --s-teach: #8652E6; --s-fees: #B01B3C; --s-video: #D99400; --s-infra: #8F8279; --s-tax: #5E564F; --s-admin: #3E7CB1; --s-result: #2E9E62;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --canvas: #17161A; --raised: #222027; --sunken: #1C1B20;
+  --hairline: #34303A; --resting: #4A4550; --strong: #8A8290;
+  --ink: #F3EEE8; --muted: #BDB4AC; --faint: #9A918A;
+  --accent: #A57FF0; --on-accent: #17161A; --wash-accent: #2E2445; --ink-accent: #CDB8FB;
+  --wash-success: #173A27; --ink-success: #8FE8B5;
+  --wash-warning: #3A2E10; --ink-warning: #FFD37A;
+  --wash-alert: #3D1820; --ink-alert: #FF9AAE;
+  --s-in: #5FD493; --s-teach: #A57FF0; --s-fees: #E5587A; --s-video: #FFC53D; --s-infra: #9A918A; --s-tax: #8A8290; --s-admin: #6FA8DC; --s-result: #5FD493;
+  color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --canvas: #17161A; --raised: #222027; --sunken: #1C1B20;
+  --hairline: #34303A; --resting: #4A4550; --strong: #8A8290;
+  --ink: #F3EEE8; --muted: #BDB4AC; --faint: #9A918A;
+  --accent: #A57FF0; --on-accent: #17161A; --wash-accent: #2E2445; --ink-accent: #CDB8FB;
+  --wash-success: #173A27; --ink-success: #8FE8B5;
+  --wash-warning: #3A2E10; --ink-warning: #FFD37A;
+  --wash-alert: #3D1820; --ink-alert: #FF9AAE;
+  --s-in: #5FD493; --s-teach: #A57FF0; --s-fees: #E5587A; --s-video: #FFC53D; --s-infra: #9A918A; --s-tax: #8A8290; --s-admin: #6FA8DC; --s-result: #5FD493;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--canvas); color: var(--ink); font: 15px/1.55 var(--body); font-variant-numeric: tabular-nums; }
+.page { max-width: 1240px; margin: 0 auto; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 24px; }
+header { display: grid; gap: 8px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(26px, 4vw, 36px); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 20px; font-weight: 700; }
+h3 { font-size: 16px; font-weight: 700; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 68ch; font-size: 16px; }
+.mise-en-page { display: grid; grid-template-columns: 310px minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 880px) { .mise-en-page { grid-template-columns: minmax(0, 1fr); } }
+.reglages { background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r); padding: 18px; display: grid; gap: 20px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); max-height: calc(100vh - 24px); overflow-y: auto; }
+@media (max-width: 880px) { .reglages { position: static; max-height: none; } }
+.reglages > h2 { font-size: 18px; }
+fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; min-width: 0; }
+legend { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--faint); margin-bottom: 4px; }
+.champ { display: grid; gap: 4px; }
+.champ label { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; color: var(--muted); }
+.champ output { color: var(--ink); font-weight: 600; white-space: nowrap; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+input[type="number"], select { width: 100%; font: inherit; color: var(--ink); background: var(--sunken); border: 1px solid var(--resting); border-radius: 8px; padding: 6px 10px; }
+input:focus-visible, button:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.deux { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.bascule { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.bascule input { accent-color: var(--accent); width: 16px; height: 16px; flex: none; }
+.segments { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.segments button { font: inherit; font-size: 14px; padding: 7px 8px; border-radius: 8px; border: 1px solid var(--resting); background: var(--raised); color: var(--ink); cursor: pointer; }
+.segments button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
+.aide { font-size: 13px; color: var(--faint); }
+.resultats { display: grid; gap: 20px; min-width: 0; }
+.bloc { background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r); padding: 20px; display: grid; gap: 14px; min-width: 0; }
+.bloc > p, .explication { color: var(--muted); max-width: 72ch; }
+.verdict { display: grid; gap: 10px; padding: 20px; border-radius: var(--r); background: var(--wash-accent); }
+.verdict .grand { font-family: var(--display); font-size: clamp(30px, 5vw, 44px); font-weight: 700; line-height: 1.1; color: var(--ink-accent); }
+.verdict p { color: var(--ink); max-width: 70ch; }
+.pastilles { display: flex; flex-wrap: wrap; gap: 8px; }
+.pastille { display: inline-block; font-size: 13px; font-weight: 600; padding: 2px 10px; border-radius: 999px; }
+.pastille.ok { background: var(--wash-success); color: var(--ink-success); }
+.pastille.att { background: var(--wash-warning); color: var(--ink-warning); }
+.pastille.ko { background: var(--wash-alert); color: var(--ink-alert); }
+/* La tirelire : une marche par poste, à l'échelle de l'argent encaissé. */
+.tirelire { display: grid; gap: 10px; }
+.marche { display: grid; grid-template-columns: minmax(0, 1fr) 96px; gap: 4px 14px; align-items: center; }
+.marche .texte { display: grid; gap: 1px; min-width: 0; }
+.marche .nom { font-weight: 600; }
+.marche .pourquoi { font-size: 13px; color: var(--faint); }
+.marche .montant { text-align: right; font-weight: 600; white-space: nowrap; }
+.marche .piste { grid-column: 1 / -1; height: 14px; background: var(--sunken); border-radius: 4px; position: relative; overflow: hidden; }
+.marche .piste span { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
+.marche.total { border-top: 1px solid var(--strong); padding-top: 10px; }
+.marche.total .nom, .marche.total .montant { font-family: var(--display); font-size: 18px; }
+.cartes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.carte { border: 1px solid var(--hairline); border-radius: var(--r); padding: 16px; display: grid; gap: 8px; align-content: start; background: var(--canvas); }
+.carte .chiffre { font-family: var(--display); font-size: 26px; font-weight: 700; line-height: 1.15; }
+.carte ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; color: var(--muted); font-size: 14px; }
+.carte strong { color: var(--ink); }
+.table-defile { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 10px; background: var(--sunken); }
+td { padding: 8px 10px; border-top: 1px solid var(--hairline); }
+td.n, th.n { text-align: right; white-space: nowrap; }
+.colonnes { display: flex; align-items: flex-end; gap: 6px; height: 150px; padding-top: 18px; }
+.colonnes div { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; font-size: 11px; color: var(--faint); min-width: 0; }
+.colonnes b { display: block; width: 100%; background: var(--accent); border-radius: 4px 4px 0 0; opacity: 0.85; }
+.colonnes .m1 b { background: var(--resting); }
+details { border-top: 1px solid var(--hairline); padding-top: 12px; }
+summary { cursor: pointer; font-weight: 600; color: var(--ink-accent); }
+details[open] summary { margin-bottom: 12px; }
+.lexique { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px 24px; margin: 0; }
+.lexique div { display: grid; gap: 2px; }
+.lexique dt { font-weight: 600; }
+.lexique dd { margin: 0; color: var(--muted); font-size: 14px; }
+.notes { font-size: 14px; color: var(--muted); display: grid; gap: 6px; margin: 0; padding-left: 18px; }
+.calcul { font-size: 13px; color: var(--faint); }
+@media (prefers-reduced-motion: no-preference) { .marche .piste span, .colonnes b { transition: left 0.25s ease, width 0.25s ease, height 0.25s ease; } }
+</style>
+
+<div class="page">
+  <header>
+    <h1>Simulateur économique Rewayah</h1>
+    <p class="lede">Imaginez une tirelire. Chaque mois, les familles des 100 élèves y mettent leur mensualité. Puis l'académie en sort de l'argent pour payer tout ce qu'il faut : la banque, les services de l'application, l'équipe, les enseignants et l'impôt. Ce qui reste au fond, c'est le bénéfice. L'ordinateur a joué des centaines d'années d'école pour voir ce qui reste en vrai, avec des familles qui paient en retard, qui partent ou qui changent de classe. Bougez un réglage à gauche : tout se recalcule.</p>
+  </header>
+
+  <div class="mise-en-page">
+    <form class="reglages" id="reglages" autocomplete="off">
+      <h2>Et si… ?</h2>
+      <fieldset>
+        <legend>Les familles paient comment ?</legend>
+        <div class="segments" role="group" aria-label="Comportement des familles" id="scenarios"></div>
+        <p class="aide" id="scenario-aide"></p>
+        <div id="choix-paiement" hidden>
+          <div class="champ"><label for="nePaientPas">Ne paient pas du tout <output id="o-nePaientPas"></output></label><input type="range" id="nePaientPas" min="0" max="60" step="5" value="10"></div>
+          <div class="champ"><label for="enRetard">Paient avec un mois de retard <output id="o-enRetard"></output></label><input type="range" id="enRetard" min="0" max="60" step="5" value="20"></div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Prix par mois (hors taxes)</legend>
+        <div class="deux">
+          <div class="champ"><label for="tarifEnfant">Enfant ($)</label><input type="number" id="tarifEnfant" min="0" step="1" value="50"></div>
+          <div class="champ"><label for="tarifAdulte">Adulte ($)</label><input type="number" id="tarifAdulte" min="0" step="1" value="60"></div>
+        </div>
+        <p class="aide">Remise famille : 5 $ sur la 3e personne, 7 $ sur chaque personne à partir de la 4e.</p>
+      </fieldset>
+      <fieldset>
+        <legend>On perd des élèves</legend>
+        <div class="champ"><label for="perteEnfants">Enfants qui partent pour de bon <output id="o-perteEnfants"></output></label><input type="range" id="perteEnfants" min="0" max="40" step="1" value="0"></div>
+        <div class="champ"><label for="perteAdultes">Adultes qui partent pour de bon <output id="o-perteAdultes"></output></label><input type="range" id="perteAdultes" min="0" max="40" step="1" value="0"></div>
+        <label class="bascule"><input type="checkbox" id="regrouper"> Refaire les classes avec ceux qui restent</label>
+      </fieldset>
+      <fieldset>
+        <legend>Est-ce que ça bouge beaucoup ?</legend>
+        <div class="champ"><label for="stabilite">Départs et changements</label>
+          <select id="stabilite">
+            <option value="calme">Calme</option>
+            <option value="normal" selected>Normal</option>
+            <option value="agite">Agité</option>
+            <option value="tres-agite">Très agité</option>
+            <option value="sans-remplacement">Personne ne remplace les départs</option>
+          </select>
+        </div>
+        <p class="aide" id="stabilite-aide"></p>
+      </fieldset>
+      <fieldset>
+        <legend>Ce qu'on paie aux gens</legend>
+        <div class="champ"><label for="taux">Enseignants ($ par heure de cours)</label><input type="number" id="taux" min="0" step="0.5" value="4"></div>
+        <div class="deux">
+          <div class="champ"><label for="adminNombre">Administration (personnes)</label><input type="number" id="adminNombre" min="0" step="1" value="5"></div>
+          <div class="champ"><label for="adminSalaire">Chacune ($ / mois)</label><input type="number" id="adminSalaire" min="0" step="10" value="300"></div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Les classes</legend>
+        <div class="champ"><label for="partEnfants">Part d'enfants <output id="o-partEnfants"></output></label><input type="range" id="partEnfants" min="0" max="100" step="5" value="45"></div>
+        <div class="champ"><label for="mixiteAdultes">Classes d'adultes</label><select id="mixiteAdultes"><option value="separes" selected>Hommes et femmes séparés</option><option value="mixte">Mixtes</option></select></div>
+        <div class="champ"><label for="mixiteEnfants">Classes d'enfants</label><select id="mixiteEnfants"><option value="mixte" selected>Mixtes</option><option value="separes-des-10-ans">Séparées dès 10 ans</option><option value="separes">Séparées</option></select></div>
+        <div class="champ"><label for="horsEurope">Familles d'Amérique du Nord <output id="o-horsEurope"></output></label><input type="range" id="horsEurope" min="0" max="100" step="5" value="50"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Réglages techniques</legend>
+        <div class="champ"><label for="kbps">Débit de la visio par élève <output id="o-kbps"></output></label><input type="range" id="kbps" min="100" max="1500" step="50" value="700"></div>
+        <label class="bascule"><input type="checkbox" id="conversion" checked> Facturer en dollars, compte en livres (2 % de change)</label>
+      </fieldset>
+    </form>
+
+    <main class="resultats" aria-live="polite">
+      <section class="verdict" id="verdict"></section>
+
+      <section class="bloc">
+        <h2>La tirelire d'un mois normal</h2>
+        <p>La première barre verte, c'est tout l'argent que les familles ont vraiment payé ce mois-ci. Chaque barre en dessous montre ce qu'on en retire, à la même échelle. La dernière, c'est ce qui reste.</p>
+        <div class="tirelire" id="tirelire"></div>
+      </section>
+
+      <section class="bloc">
+        <h2>Ce qu'on peut se permettre</h2>
+        <p>Une bourse, une remise, un élève qui part ou une famille qui ne paie pas : pour la tirelire, c'est pareil, il rentre moins d'argent alors que l'enseignant est payé autant. Voici jusqu'où on peut aller. Les chiffres tiennent 9 mois sur 10.</p>
+        <div class="cartes" id="manoeuvre"></div>
+      </section>
+
+      <section class="bloc">
+        <h2>Combien payer les enseignants</h2>
+        <p>Plus on paie l'heure de cours, moins il reste au fond de la tirelire. Voici le taux le plus haut possible pour chaque objectif, 9 mois sur 10 (entre parenthèses : 1 mois sur 2).</p>
+        <div class="table-defile"><table id="taux-table"></table></div>
+      </section>
+
+      <section class="bloc">
+        <h2>Ce qui bouge chaque mois</h2>
+        <p id="mouvements-texte"></p>
+        <div class="table-defile"><table id="mouvements"></table></div>
+      </section>
+
+      <section class="bloc">
+        <h2>Mois par mois</h2>
+        <p>Argent payé par les familles, mois après mois. Le premier mois est plus bas : les familles en retard ne paient qu'au mois suivant.</p>
+        <div class="colonnes" id="trajectoire" role="img"></div>
+      </section>
+
+      <section class="bloc">
+        <h2>Les classes et les enseignants</h2>
+        <p id="groupes-resume"></p>
+        <details>
+          <summary>Voir les classes une par une</summary>
+          <div class="table-defile"><table id="groupes"></table></div>
+        </details>
+        <details>
+          <summary>Voir les enseignants</summary>
+          <div class="table-defile"><table id="enseignants"></table></div>
+        </details>
+      </section>
+
+      <section class="bloc">
+        <h2>Les mots compliqués</h2>
+        <dl class="lexique">
+          <div><dt>Encaissé</dt><dd>L'argent vraiment arrivé dans la tirelire, pas celui qu'on a demandé.</dd></div>
+          <div><dt>Net, ou ce qui reste</dt><dd>Ce qui reste quand tout est payé, impôt compris.</dd></div>
+          <div><dt>9 mois sur 10</dt><dd>Un chiffre prudent : seul un mois sur dix fait moins bien. Les mauvais mois existent, on s'y prépare.</dd></div>
+          <div><dt>Mois normal</dt><dd>Le mois du milieu : la moitié des mois font mieux, l'autre moitié moins bien (la médiane).</dd></div>
+          <div><dt>Bourse</dt><dd>Un élève qui suit les cours sans payer (bourse complète) ou en payant moins (demi-bourse).</dd></div>
+          <div><dt>Prix plancher</dt><dd>Le prix le plus bas possible. En dessous, l'académie perd de l'argent.</dd></div>
+          <div><dt>Impôt sur les sociétés</dt><dd>Au Royaume-Uni, l'État prend 19 % du bénéfice. S'il n'y a pas de bénéfice, il n'y a pas d'impôt.</dd></div>
+          <div><dt>Hors taxes</dt><dd>Le prix publié ne contient pas les taxes. Chaque famille ajoute celles de son pays.</dd></div>
+          <div><dt>Caisse</dt><dd>L'argent disponible à un moment donné. Une famille en retard finit par payer, mais la caisse est plus vide en attendant.</dd></div>
+        </dl>
+      </section>
+
+      <section class="bloc">
+        <h2>Ce qu'on a supposé</h2>
+        <ul class="notes">
+          <li>Académie enregistrée au Royaume-Uni. Impôt sur les sociétés 2026-27 : 19 % jusqu'à 50 000 £ de bénéfice par an, 25 % au-delà de 250 000 £, un taux entre les deux. 1 £ = 1,33 $.</li>
+          <li>Cartes : grille Stripe Royaume-Uni. 1,5 % pour une carte britannique, 2,5 % pour une carte européenne, 3,25 % pour une carte américaine ou canadienne, plus 20 p par paiement et 2 % de change.</li>
+          <li>Services : Supabase Pro 25 $, une base de test 10 $, Vercel Pro 20 $, LiveKit 50 $ (150 000 minutes incluses), domaine 1,25 $, compte bancaire 10 $. GitHub, Sentry et l'email restent gratuits.</li>
+          <li>Enseignants : virement de 2 % plus 1 $ par enseignant. Un enseignant pour deux classes, du même sexe que la classe quand elle est séparée.</li>
+          <li>Une place libérée est reprise un mois plus tard par une nouvelle famille, sauf réglage contraire. Une famille qui ne paie pas deux mois de suite est suspendue.</li>
+          <li>Pas compté : la TVA, qui s'ajoute au prix et ne change pas le bénéfice (à vérifier avec un comptable pour les familles de l'Union européenne), le comptable, la sauvegarde avancée de Supabase et les comptes Apple et Google Play.</li>
+        </ul>
+        <p class="calcul" id="calcul"></p>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script type="module">
+import { SCENARIOS, parametresScenario, simuler, seancesParMois, fusionner } from './modele_academie.mjs';
+
+const TIRAGES = 300;
+const CHOIX = { ...Object.fromEntries(Object.entries(SCENARIOS).map(([k, v]) => [k, { titre: v.titre, description: v.description }])),
+  libre: { titre: 'Je choisis', description: 'Choisissez vous-même la part des familles qui ne paient pas ou paient en retard chaque mois.' } };
+const STABILITE = {
+  calme: { aide: 'Moitié moins de départs, 1 élève sur 100 demande à changer de classe chaque mois.', c: { multiplicateurDeparts: 0.5, changementMensuel: 0.01 } },
+  normal: { aide: 'Quelques départs, 2 élèves sur 100 demandent à changer de classe chaque mois, une place vide est reprise en un mois.', c: {} },
+  agite: { aide: 'Deux fois plus de départs, 6 élèves sur 100 demandent à changer de classe chaque mois.', c: { multiplicateurDeparts: 2, changementMensuel: 0.06 } },
+  'tres-agite': { aide: 'Trois fois plus de départs, 10 élèves sur 100 demandent à changer chaque mois, une place vide met deux mois à être reprise.', c: { multiplicateurDeparts: 3, changementMensuel: 0.1, delaiRemplacementMois: 2 } },
+  'sans-remplacement': { aide: 'Les départs habituels, mais plus aucune nouvelle famille ne s’inscrit.', c: { delaiRemplacementMois: null } },
+};
+const etat = { scenario: 'realiste' };
+try { const s = localStorage.getItem('rewayah-simu-scenario'); if (s && CHOIX[s]) etat.scenario = s; } catch {}
+
+const $ = (id) => document.getElementById(id);
+const nombre = (id) => Math.max(0, Number($(id).value) || 0);
+const usd = (c) => `${(Math.round(c / 100) || 0).toLocaleString('fr-FR')} $`;
+const usd2 = (c) => `${(c / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} $`;
+const pct = (x) => `${Math.round(x * 100)} %`;
+const heures = (h) => h.toLocaleString('fr-FR', { maximumFractionDigits: 1 });
+const sur10 = (x) => `${Math.round(x * 10)} mois sur 10`;
+const pluriel = (n, un, plusieurs) => `${n.toLocaleString('fr-FR')} ${n > 1 ? plusieurs : un}`;
+
+for (const [code, sc] of Object.entries(CHOIX)) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.textContent = sc.titre; b.dataset.code = code;
+  b.addEventListener('click', () => {
+    etat.scenario = code;
+    try { localStorage.setItem('rewayah-simu-scenario', code); } catch {}
+    planifier();
+  });
+  $('scenarios').append(b);
+}
+
+function parametres() {
+  const h = nombre('horsEurope') / 100;
+  let p = parametresScenario(etat.scenario === 'libre' ? 'realiste' : etat.scenario, {
+    tirages: TIRAGES,
+    effectif: { partEnfants: nombre('partEnfants') / 100 },
+    tarifs: { enfantCentimes: Math.round(nombre('tarifEnfant') * 100), adulteCentimes: Math.round(nombre('tarifAdulte') * 100) },
+    groupes: { mixiteAdultes: $('mixiteAdultes').value, mixiteEnfants: $('mixiteEnfants').value },
+    livekit: { debitDescendantKbps: nombre('kbps') },
+    paiementEnLigne: { origineCartes: { eee: (1 - h) * 0.85, royaumeUni: (1 - h) * 0.15, international: h }, conversionBps: $('conversion').checked ? 200 : 0 },
+    administration: { effectif: nombre('adminNombre'), salaireMensuelCentimes: Math.round(nombre('adminSalaire') * 100) },
+    pertes: { enfants: nombre('perteEnfants'), adultes: nombre('perteAdultes'), regrouper: $('regrouper').checked },
+    comportements: STABILITE[$('stabilite').value].c,
+  });
+  if (etat.scenario === 'libre') {
+    // Même règle que le rapport : chaque mois, une part ne paie pas, une part paie le mois suivant, personne n'est suspendu.
+    const jamais = nombre('nePaientPas') / 100;
+    const retard = Math.min(nombre('enRetard') / 100, 1 - jamais);
+    p = fusionner(p, { comportements: {
+      paiement: {
+        avance: { poids: 0 }, ponctuel: { poids: 1, dansLeMois: 1 - jamais - retard, moisSuivant: retard, impaye: jamais },
+        retardLeger: { poids: 0 }, retardLourd: { poids: 0 }, defaillant: { poids: 0 },
+      },
+      moisImpayesAvantSuspension: 1000,
+    } });
+  }
+  return p;
+}
+
+let minuteur;
+function planifier() { clearTimeout(minuteur); minuteur = setTimeout(rendre, 150); }
+
+function rendre() {
+  const debut = performance.now();
+  const p = parametres();
+  const taux = Math.round(nombre('taux') * 100);
+  const r = simuler(p, { marges: [0.3], tauxEnseignantCentimes: taux });
+  const m = r.moisType;
+  const pop = r.population;
+  const objectif = p.objectifs.resultatNetCentimes;
+
+  for (const b of $('scenarios').children) b.setAttribute('aria-pressed', String(b.dataset.code === etat.scenario));
+  $('scenario-aide').textContent = CHOIX[etat.scenario].description;
+  $('choix-paiement').hidden = etat.scenario !== 'libre';
+  $('stabilite-aide').textContent = STABILITE[$('stabilite').value].aide;
+  for (const [id, f] of [['partEnfants', (v) => `${v} %`], ['kbps', (v) => `${v} kbps`], ['horsEurope', (v) => `${v} %`],
+    ['nePaientPas', (v) => `${v} %`], ['enRetard', (v) => `${v} %`], ['perteEnfants', (v) => v], ['perteAdultes', (v) => v]]) {
+    $(`o-${id}`).textContent = f(nombre(id));
+  }
+
+  // Verdict.
+  const net = m.resultat.p50;
+  const etatNet = m.objectifAtteint >= 0.9 ? 'ok' : m.rentable >= 0.9 ? 'att' : 'ko';
+  const phrase = net < 0
+    ? `Dans un mois normal, l'académie perd ${usd(-net)}. Elle dépense plus qu'elle ne reçoit.`
+    : net >= objectif
+      ? `Dans un mois normal, il reste ${usd(net)} au fond de la tirelire. C'est plus que l'objectif de ${usd(objectif)}.`
+      : `Dans un mois normal, il reste ${usd(net)} au fond de la tirelire. Il manque ${usd(objectif - net)} pour atteindre l'objectif de ${usd(objectif)}.`;
+  $('verdict').innerHTML = `
+    <span class="grand">${net < 0 ? '−' : ''}${usd(Math.abs(net))} par mois</span>
+    <p>${phrase} Un mauvais mois (1 sur 10), il reste ${usd(m.resultat.p10)}.</p>
+    <div class="pastilles">
+      <span class="pastille ${etatNet}">Objectif ${usd(objectif)} atteint ${sur10(m.objectifAtteint)}</span>
+      <span class="pastille ${m.rentable >= 0.9 ? 'ok' : m.rentable >= 0.5 ? 'att' : 'ko'}">Pas de perte ${sur10(m.rentable)}</span>
+    </div>`;
+
+  // Tirelire : moyennes, qui s'additionnent exactement.
+  const services = m.servicesFixes + m.r2.moyenne;
+  const marches = [
+    ['Les familles paient', m.encaisse.moyenne, '--s-in',
+      `${pop.eleves} élèves au prix de ${usd(p.tarifs.enfantCentimes)} ou ${usd(p.tarifs.adulteCentimes)}, moins ${usd(m.remises.moyenne)} de remises familiales et ${usd(m.impaye.moyenne)} jamais payés.`],
+    ['La banque et la carte', m.fraisCarte.moyenne, '--s-fees', 'À chaque paiement par carte, Stripe garde un petit morceau, comme un péage, plus 2 % pour changer les dollars en livres.'],
+    ['La visio des cours', m.livekit.moyenne, '--s-video', `LiveKit transporte le son et l'image : ${Math.round(m.minutesParticipant.moyenne).toLocaleString('fr-FR')} minutes par mois.`],
+    ['La maison de l’application', services, '--s-infra', 'Supabase range les données, Vercel héberge le site, plus le nom de domaine et le compte bancaire.'],
+    ['L’équipe d’administration', m.administration, '--s-admin', `${pluriel(p.administration.effectif, 'personne', 'personnes')} à ${usd(p.administration.salaireMensuelCentimes)} par mois.`],
+    ['Les enseignants', m.enseignants.moyenne, '--s-teach', `${Math.round(m.heuresEnseignees.moyenne)} heures de cours à ${usd2(taux)} de l'heure, plus les frais de virement.`],
+    ['L’impôt britannique', m.impot.moyenne, '--s-tax', 'L’État prend 19 % du bénéfice, seulement quand il y en a un.'],
+  ];
+  const echelle = Math.max(m.encaisse.moyenne, 1);
+  let curseur = m.encaisse.moyenne;
+  const piste = (gauche, largeur, couleur) =>
+    `<div class="piste"><span style="left:${(Math.max(0, gauche) / echelle) * 100}%;width:${(Math.max(0, largeur) / echelle) * 100}%;background:var(${couleur})"></span></div>`;
+  let html = '';
+  marches.forEach(([nom, montant, couleur, pourquoi], i) => {
+    if (i === 0) {
+      html += `<div class="marche"><div class="texte"><span class="nom">${nom}</span><span class="pourquoi">${pourquoi}</span></div><span class="montant">+${usd(montant)}</span>${piste(0, montant, couleur)}</div>`;
+      return;
+    }
+    curseur -= montant;
+    html += `<div class="marche"><div class="texte"><span class="nom">${nom}</span><span class="pourquoi">${pourquoi}</span></div><span class="montant">−${usd(montant)}</span>${piste(curseur, montant, couleur)}</div>`;
+  });
+  html += `<div class="marche total"><div class="texte"><span class="nom">Ce qui reste</span><span class="pourquoi">En moyenne sur tous les mois simulés.</span></div><span class="montant">${usd(m.resultat.moyenne)}</span>${piste(0, m.resultat.moyenne, '--s-result')}</div>`;
+  $('tirelire').innerHTML = html;
+  $('tirelire').setAttribute('aria-label', marches.map(([n, v]) => `${n} ${usd(v)}`).join(', '));
+
+  // Marge de manœuvre.
+  const carte = (titre, mm) => {
+    const perdable = mm.encaissementPerdable.prudent;
+    if (perdable < 0) {
+      return `<div class="carte"><h3>${titre}</h3><span class="chiffre">Il manque ${usd(-perdable)}</span>
+        <p class="explication">On n'y arrive pas déjà sans aucune bourse ni remise. Il faudrait gagner ${usd(-perdable)} de plus par mois, par exemple ${pluriel(Math.ceil(-perdable / p.tarifs.adulteCentimes), 'adulte', 'adultes')} de plus, ou des prix plus hauts.</p></div>`;
+    }
+    const remise = mm.remiseMaxBps.prudent / 10000;
+    const plancher = (c) => usd(Math.ceil((c * (1 - remise)) / 100) * 100);
+    return `<div class="carte"><h3>${titre}</h3><span class="chiffre">${usd(perdable)} par mois</span>
+      <p class="explication">C'est l'argent qu'on peut se permettre de ne pas recevoir. Au choix :</p>
+      <ul>
+        <li><strong>${pluriel(mm.enfants.prudent, 'enfant', 'enfants')}</strong> qui partent ou ont une bourse complète,</li>
+        <li>ou <strong>${pluriel(mm.adultes.prudent, 'adulte', 'adultes')}</strong> qui partent ou ont une bourse complète,</li>
+        <li>ou une <strong>remise de ${pct(remise)}</strong> pour tout le monde : prix plancher <strong>${plancher(p.tarifs.enfantCentimes)}</strong> par enfant et <strong>${plancher(p.tarifs.adulteCentimes)}</strong> par adulte.</li>
+      </ul>
+      <p class="aide">Deux demi-bourses comptent pour une bourse complète. On peut aussi mélanger : la moitié en bourses, la moitié en remise.</p></div>`;
+  };
+  $('manoeuvre').innerHTML = carte('Pour ne jamais perdre d’argent', r.margeDeManoeuvre.rentable) +
+    carte(`Pour garder ${usd(objectif)} chaque mois`, r.margeDeManoeuvre.objectif);
+
+  const t = r.tauxEnseignantMax;
+  const ligneTaux = (but, x) => `<tr><td>${but}</td><td class="n">${x.prudent ? `${usd2(x.prudent)} / h` : 'impossible'} <span class="aide">(${x.median ? usd2(x.median) : 'impossible'})</span></td></tr>`;
+  $('taux-table').innerHTML = `<thead><tr><th>Ce qu'on veut</th><th class="n">Taux maximal</th></tr></thead><tbody>
+    ${ligneTaux('Ne pas perdre d’argent', t.rentable)}
+    ${ligneTaux(`Garder ${usd(objectif)} par mois`, t.objectif)}
+    ${ligneTaux('Garder 30 % de ce que paient les familles', t.marges[0])}
+    <tr><td>Taux choisi à gauche</td><td class="n">${usd2(taux)} / h</td></tr></tbody>`;
+
+  // Mouvements.
+  $('mouvements-texte').textContent =
+    `Chaque départ laisse une place vide jusqu'à l'arrivée d'une nouvelle famille, et l'enseignant est payé pareil. ` +
+    `Chaque changement de classe libère aussi une place. Quand il n'y a pas de place libre dans une autre classe du même âge, la demande est refusée et 3 élèves sur 10 partent alors. ` +
+    `Tout cela donne du travail à l'équipe (estimation : relance 10 min, plainte 15 min, changement 30 min, départ 20 min, arrivée 45 min).`;
+  const lignesMvt = [
+    ['Élèves présents en moyenne', `${m.elevesActifs.p50} sur ${pop.eleves}`],
+    ['Départs', m.departs.p50], ['Nouvelles familles', m.arrivees.p50],
+    ['Demandes de changement de classe ou de créneau', m.changements.p50], ['dont refusées faute de place', m.changementsRefuses.p50],
+    ['Familles à relancer (retard ou impayé)', m.relances.p50], ['Plaintes', m.plaintes.p50], ['Familles suspendues', m.suspensions.p50],
+    ['Heures de travail de l’administration pour tout cela', `${Math.round(m.heuresAdministration.p50)} h`],
+    ['Argent qui manque en caisse en fin de mois (arrive le mois suivant)', usd(m.reporte.p50)],
+  ];
+  $('mouvements').innerHTML = `<thead><tr><th>Dans un mois normal</th><th class="n">Nombre</th></tr></thead><tbody>${
+    lignesMvt.map(([l, v]) => `<tr><td>${l}</td><td class="n">${v}</td></tr>`).join('')}</tbody>`;
+
+  const max = Math.max(...r.trajectoire.map((x) => x.encaisseP50), 1);
+  $('trajectoire').innerHTML = r.trajectoire.map((x) =>
+    `<div class="${x.mois === 1 ? 'm1' : ''}" title="Mois ${x.mois} : ${usd(x.encaisseP50)}, ${x.elevesActifsP50} élèves"><b style="height:${Math.round((x.encaisseP50 / max) * 110)}px"></b>${x.mois}</div>`).join('');
+  $('trajectoire').setAttribute('aria-label', r.trajectoire.map((x) => `mois ${x.mois} ${usd(x.encaisseP50)}`).join(', '));
+
+  const tarif = (g) => (g.type === 'enfant' ? p.tarifs.enfantCentimes : p.tarifs.adulteCentimes);
+  const plein = (g) => (g.type === 'enfant' ? p.groupes.maxEnfants : p.groupes.maxAdultes);
+  const sousRemplis = pop.groupes.filter((g) => g.taille < plein(g)).length;
+  $('groupes-resume').textContent =
+    `${pop.groupes.length} classes et ${pop.enseignants.length} enseignants pour ${pop.eleves} élèves (${pop.enfants} enfants, ${pop.adultes} adultes) de ${pop.foyers} familles. ` +
+    `Une classe pleine rapporte 20 à 25 % de plus par heure de cours qu'une classe à qui il manque un élève. ${sousRemplis} classes ne sont pas pleines. ` +
+    (pop.enAttente ? `Élèves sans classe de leur âge, qui attendent une place sans payer : ${pop.enAttente}.` : 'Tous les élèves ont une classe.');
+  $('groupes').innerHTML = `<thead><tr><th>Classe</th><th>Public</th><th class="n">Élèves</th><th class="n">Heures / mois</th><th class="n">Rapporte / mois</th><th class="n">Par heure</th><th class="n">Enseignant</th></tr></thead><tbody>${
+    pop.groupes.map((g) => {
+      const recette = g.taille * tarif(g);
+      const genre = g.public === 'F' ? (g.type === 'enfant' ? 'filles' : 'femmes') : g.public === 'M' ? (g.type === 'enfant' ? 'garçons' : 'hommes') : 'mixte';
+      const publicG = g.type === 'enfant' ? `Enfants ${g.tranche} ans, ${genre}` : `Adultes, ${genre}`;
+      return `<tr><td>G${g.id + 1}</td><td>${publicG}</td><td class="n"><span class="pastille ${g.taille >= plein(g) ? 'ok' : 'att'}">${g.taille} / ${plein(g)}</span></td><td class="n">${heures(g.heuresParMois)}</td><td class="n">${usd(recette)}</td><td class="n">${usd2(recette / g.heuresParMois)}</td><td class="n">E${g.enseignant + 1}</td></tr>`;
+    }).join('')}</tbody>`;
+  $('enseignants').innerHTML = `<thead><tr><th>Enseignant</th><th>Classes</th><th class="n">Heures / mois</th><th class="n">Paie à ${usd2(taux)} / h</th></tr></thead><tbody>${
+    pop.enseignants.map((e) => `<tr><td>E${e.id + 1} · ${e.sexe === 'F' ? 'enseignante' : 'enseignant'}</td><td>${e.groupes.map((id) => `G${id + 1}`).join(', ')}</td><td class="n">${heures(e.heuresParMois)}</td><td class="n">${usd(e.heuresParMois * taux)}</td></tr>`).join('')}</tbody>`;
+
+  $('calcul').textContent = `${TIRAGES} années de 12 mois simulées, ${seancesParMois(p.rythme)} séances par classe et par mois, graine ${p.graine}. Calculé en ${Math.round(performance.now() - debut)} ms.`;
+}
+
+$('reglages').addEventListener('input', planifier);
+$('reglages').addEventListener('submit', (e) => e.preventDefault());
+rendre();
+</script>
