@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+
 import '../theme/app_mouvement.dart';
 
 /// Constantes de mouvement partagees (P2-16). Ce fichier ne definit plus de
@@ -29,8 +30,7 @@ abstract final class Mouvement {
   static const Duration maximum = AppMouvement.plafond;
 
   /// Decalage entre deux elements d'une liste echelonnee.
-  /// Jeton a creer sur decision du directeur, question A-13.
-  static const Duration echelon = Duration(milliseconds: 35);
+  static const Duration echelon = AppMouvement.echelon;
 
   /// A partir de ce rang, un element de liste apparait sans animation.
   static const int maxEchelonnes = 8;
@@ -45,8 +45,7 @@ abstract final class Mouvement {
   static const Curve sortie = AppMouvement.sortie;
 
   /// Courbe « emphasized » de Material 3, pour les transitions de page.
-  /// Jeton a creer sur decision du directeur, question A-13.
-  static const Curve accentuee = Curves.easeInOutCubicEmphasized;
+  static const Curve accentuee = AppMouvement.accentuee;
 
   /// Vrai quand le systeme demande de reduire les animations.
   static bool reduit(BuildContext context) =>

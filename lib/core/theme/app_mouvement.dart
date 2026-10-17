@@ -34,6 +34,9 @@ abstract final class AppMouvement {
   /// l'entree**, d'environ un tiers.
   static const Duration feuilleFermeture = Duration(milliseconds: 120);
 
+  /// Decalage entre deux elements d'une liste echelonnee (A-13, 17/10/2026).
+  static const Duration echelon = Duration(milliseconds: 35);
+
   /// Plafond absolu. Une animation plus longue que ca n'explique plus, elle
   /// fait attendre.
   static const Duration plafond = Duration(milliseconds: 400);
@@ -91,6 +94,10 @@ abstract final class AppMouvement {
   /// Courbe du battement du point « En direct » : douce aux deux bouts, sans
   /// rebond (voir [pulsationDirect]).
   static const Curve pulsationCourbe = Curves.easeInOut;
+
+  /// Courbe « emphasized » de Material 3, pour les transitions de page
+  /// (A-13, 17/10/2026).
+  static const Curve accentuee = Curves.easeInOutCubicEmphasized;
 
   /// Tout ce qui sort.
   static const Curve sortie = Curves.easeInCubic;
