@@ -1,112 +1,155 @@
-// Rapport du modèle économique, en Markdown sur la sortie standard.
+// Rapport complet du modèle économique, en Markdown.
 //
-//   node tool/simulation/simuler.mjs                 # 1 000 tirages × 12 mois
-//   node tool/simulation/simuler.mjs --tirages 200   # plus rapide
-//   node tool/simulation/simuler.mjs --json          # résultats bruts
+//   node tool/simulation/simuler.mjs                     # 216 scénarios × 300 tirages × 12 mois
+//   node tool/simulation/simuler.mjs --tirages 100       # plus rapide
+//   node tool/simulation/simuler.mjs --sortie rapport.md # écrit dans un fichier
+//   node tool/simulation/simuler.mjs --json              # résultats bruts
 
-import { SCENARIOS, parametresScenario, simuler } from './modele_academie.mjs';
+import { writeFileSync } from 'node:fs';
+import { DIMENSIONS, PARAMETRES_DEFAUT, grilleScenarios, parametresScenario, simuler, fusionner } from './modele_academie.mjs';
 
 const args = process.argv.slice(2);
 const valeur = (nom) => {
   const i = args.indexOf(nom);
   return i === -1 ? undefined : args[i + 1];
 };
-const surcharges = {};
-if (valeur('--tirages')) surcharges.tirages = Number(valeur('--tirages'));
+const tirages = Number(valeur('--tirages') ?? 300);
+const surcharges = { tirages };
 if (valeur('--graine')) surcharges.graine = Number(valeur('--graine'));
 
-const resultats = Object.fromEntries(
-  Object.keys(SCENARIOS).map((code) => [code, simuler(parametresScenario(code, surcharges))]),
-);
+// --- Calculs ----------------------------------------------------------------
+
+const resume = (r) => ({
+  encaisse: r.moisType.encaisse.p50,
+  encaisseP10: r.moisType.encaisse.p10,
+  resultat: r.moisType.resultat.p50,
+  resultatP10: r.moisType.resultat.p10,
+  resultatPlafond: r.moisType.resultatAuPlafond.p50,
+  objectif: r.moisType.objectifAtteint,
+  taux30: r.tauxEnseignantMax.find((x) => x.marge === 0.3).prudent,
+  fraisCarte: r.moisType.fraisCarte.p50,
+  livekit: r.moisType.livekit.p50,
+  groupes: r.population.groupes.length,
+  enseignants: r.population.enseignants.length,
+  enAttente: r.population.enAttente,
+});
+
+const grille = grilleScenarios(surcharges).map(({ choix, parametres }) => ({ choix, ...resume(simuler(parametres)) }));
+
+const PRIX_ENFANT = [40, 45, 50, 55, 60];
+const PRIX_ADULTE = [50, 55, 60, 65, 70];
+const prix = PRIX_ENFANT.map((enfant) => PRIX_ADULTE.map((adulte) => resume(simuler(
+  fusionner(parametresScenario('realiste', surcharges), {
+    tarifs: { enfantCentimes: enfant * 100, adulteCentimes: adulte * 100 },
+  }),
+))));
 
 if (args.includes('--json')) {
-  console.log(JSON.stringify(resultats, null, 2));
+  console.log(JSON.stringify({ grille, prix: { PRIX_ENFANT, PRIX_ADULTE, prix } }, null, 2));
   process.exit(0);
 }
 
-const usd = (centimes) =>
-  `${(centimes / 100).toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} $`;
-const usd2 = (centimes) =>
-  `${(centimes / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} $`;
+// --- Mise en forme ------------------------------------------------------------
+
+const usd = (c) => `${(Math.round(c / 100) || 0).toLocaleString('fr-FR')} $`;
+const usd2 = (c) => `${(c / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} $`;
 const pct = (x) => `${Math.round(x * 100)} %`;
 const ligne = (cellules) => `| ${cellules.join(' | ')} |`;
-const codes = Object.keys(SCENARIOS);
-const titres = codes.map((c) => SCENARIOS[c].titre);
+const titre = (dimension, v) => (dimension === 'paiement' ? DIMENSIONS.paiement[v].titre : DIMENSIONS[dimension][v].titre);
+const libelle = (choix) => Object.entries(choix).map(([d, v]) => titre(d, v)).join(' · ');
+const moyenne = (xs) => xs.reduce((s, x) => s + x, 0) / Math.max(1, xs.length);
+const tri = (xs) => [...xs].sort((a, b) => a - b);
+const quantile = (xs, q) => tri(xs)[Math.round(q * (xs.length - 1))];
+const p = PARAMETRES_DEFAUT;
+const objectif = usd(p.objectifs.resultatNetCentimes);
+const taux = usd2(p.enseignants.tauxReferenceCentimes);
+const plafond = usd2(p.enseignants.plafondCentimes);
+
 const sortie = [];
 const ecrire = (...x) => sortie.push(...x);
 
-const ref = resultats.realiste;
-const pop = ref.population;
-const p = ref.parametres;
-
 ecrire(
-  `# Simulation économique — ${p.tirages} tirages × ${p.mois} mois, graine ${p.graine}`,
+  `# Simulation économique — ${grille.length} scénarios`,
   '',
-  '## Population',
+  `${grille.length} combinaisons × ${tirages} tirages × ${p.mois} mois, graine ${p.graine}. ` +
+    `Chiffres d'un mois type (mois ${p.premierMoisStable} à ${p.mois}, médiane). ` +
+    `Enseignants payés ${taux} / h (taux de référence) ; objectif ${objectif} net par mois.`,
   '',
-  `- ${pop.eleves} élèves : ${pop.enfants} enfants, ${pop.adultes} adultes, ${pop.feminin} filles ou femmes.`,
-  `- Tranches : ${Object.entries(pop.tranches).map(([k, v]) => `${k} ans ×${v}`).join(', ')}.`,
-  `- ${pop.foyers} foyers payeurs ; taille : ${Object.entries(pop.taillesFoyers).map(([k, v]) => `${k} pers. ×${v}`).join(', ')}.`,
-  `- ${pop.groupes.length} groupes, ${pop.enseignants.length} enseignants (${pop.enseignants.filter((x) => x.sexe === 'F').length} femmes), ${pop.administration} personnes en administration.`,
-  `- Facturation théorique pleine : ${usd(pop.factureTheoriqueCentimes)} / mois, dont ${usd(pop.remisesTheoriquesCentimes)} de remises familiales.`,
+  '## Vue d’ensemble',
   '',
-  ligne(['Groupe', 'Public', 'Taille', 'Heures / mois', 'Enseignant']),
-  ligne(['---', '---', '---:', '---:', '---:']),
-  ...pop.groupes.map((g) =>
-    ligne([`G${g.id + 1}`, `${g.type} ${g.tranche} ${g.public}`, `${g.taille}${g.sousMinimum ? ' ⚠' : ''}`, g.heuresParMois, `E${g.enseignant + 1}`]),
-  ),
-  '',
-  '## Mois type (médiane, entre parenthèses : 1 mois sur 10 en dessous / au-dessus)',
-  '',
-  ligne(['', ...titres]),
-  ligne(['---', ...codes.map(() => '---:')]),
+  ligne(['', 'Pire scénario', '1 sur 10', 'Médian', '9 sur 10', 'Meilleur']),
+  ligne(['---', '---:', '---:', '---:', '---:', '---:']),
 );
-
-const rangee = (libelle, f) => ecrire(ligne([libelle, ...codes.map((c) => f(resultats[c].moisType))]));
-const fourchette = (d) => `${usd(d.p50)} (${usd(d.p10)} – ${usd(d.p90)})`;
-rangee('Élèves actifs', (m) => `${m.elevesActifs.p50}`);
-rangee('Facturé', (m) => usd(m.facture.p50));
-rangee('**Encaissé**', (m) => `**${fourchette(m.encaisse)}**`);
-rangee('Reporté au mois suivant', (m) => usd(m.reporte.p50));
-rangee('Perdu (impayés)', (m) => usd(m.impaye.p50));
-rangee('Frais de carte', (m) => usd(m.fraisCarte.p50));
-rangee('LiveKit', (m) => usd(m.livekit.p50));
-rangee('Autres services', (m) => usd(m.servicesFixes));
-rangee('**Reste avant enseignants**', (m) => `**${fourchette(m.resultatAvantEnseignants)}**`);
-rangee('Heures enseignées', (m) => `${Math.round(m.heuresEnseignees.p50)} h`);
-rangee('Minutes visio (participant)', (m) => m.minutesParticipant.p50.toLocaleString('fr-FR'));
-rangee('Plaintes', (m) => `${m.plaintes.p50}`);
-rangee('Départs', (m) => `${m.departs.p50}`);
+const etendue = (libelleLigne, cle, f) => {
+  const xs = grille.map((x) => x[cle]);
+  ecrire(ligne([libelleLigne, ...[0, 0.1, 0.5, 0.9, 1].map((q) => f(quantile(xs, q)))]));
+};
+etendue('Encaissé par mois', 'encaisse', usd);
+etendue(`Résultat à ${taux} / h`, 'resultat', usd);
+etendue(`Résultat au plafond ${plafond} / h`, 'resultatPlafond', usd);
+etendue(`Mois où l'objectif ${objectif} est atteint`, 'objectif', pct);
+etendue('Taux max pour 30 % de marge (9 mois sur 10)', 'taux30', usd2);
+etendue('Élèves sans classe', 'enAttente', (x) => `${x}`);
+etendue('Classes', 'groupes', (x) => `${x}`);
+etendue('Enseignants', 'enseignants', (x) => `${x}`);
 
 ecrire(
   '',
-  '## Taux horaire enseignant maximal',
+  `L'objectif de ${objectif} est atteint dans au moins 9 mois sur 10 pour ` +
+    `${grille.filter((x) => x.objectif >= 0.9).length} scénarios sur ${grille.length}.`,
   '',
-  'Prudent : la marge est tenue 9 mois sur 10. Médian : 1 mois sur 2.',
+  '## Ce que change chaque choix',
   '',
-  ligne(['Marge visée', ...titres]),
-  ligne(['---', ...codes.map(() => '---:')]),
+  'Moyenne sur tous les scénarios qui partagent ce choix.',
+  '',
+  ligne(['Dimension', 'Choix', 'Encaissé', `Résultat à ${taux} / h`, 'Objectif atteint', 'Taux max 30 %', 'Sans classe', 'Classes']),
+  ligne(['---', '---', '---:', '---:', '---:', '---:', '---:', '---:']),
 );
-for (const [i, { marge }] of ref.tauxEnseignantMax.entries()) {
-  ecrire(ligne([pct(marge), ...codes.map((c) => {
-    const t = resultats[c].tauxEnseignantMax[i];
-    return `${usd2(t.prudent)} / h (méd. ${usd2(t.median)})`;
-  })]));
+for (const [dimension, valeurs] of Object.entries(DIMENSIONS)) {
+  for (const v of Object.keys(valeurs)) {
+    const xs = grille.filter((x) => x.choix[dimension] === v);
+    ecrire(ligne([
+      dimension, titre(dimension, v),
+      usd(moyenne(xs.map((x) => x.encaisse))), usd(moyenne(xs.map((x) => x.resultat))),
+      pct(moyenne(xs.map((x) => x.objectif))), usd2(moyenne(xs.map((x) => x.taux30))),
+      moyenne(xs.map((x) => x.enAttente)).toFixed(1), moyenne(xs.map((x) => x.groupes)).toFixed(1),
+    ]));
+  }
 }
 
-const tauxRef = ref.tauxEnseignantMax.find((x) => x.marge === 0.3)?.prudent ?? 0;
-const heuresEnseignant = pop.enseignants.map((x) => x.heuresParMois);
+const classement = [...grille].sort((a, b) => a.resultat - b.resultat);
+const tableau = (liste) => [
+  ligne(['Scénario', 'Encaissé', `Résultat à ${taux} / h`, '1 mois sur 10 sous', 'Objectif', 'Taux max 30 %', 'Sans classe']),
+  ligne(['---', '---:', '---:', '---:', '---:', '---:', '---:']),
+  ...liste.map((x) => ligne([
+    libelle(x.choix), usd(x.encaisse), usd(x.resultat), usd(x.resultatP10), pct(x.objectif), usd2(x.taux30), x.enAttente,
+  ])),
+];
+ecrire('', '## Les 10 pires scénarios', '', ...tableau(classement.slice(0, 10)));
+ecrire('', '## Les 10 meilleurs scénarios', '', ...tableau(classement.slice(-10).reverse()));
+
 ecrire(
   '',
-  `À ${usd2(tauxRef)} / h (marge 30 %, scénario réaliste prudent), un enseignant à deux groupes gagne entre ` +
-    `${usd(Math.min(...heuresEnseignant) * tauxRef)} et ${usd(Math.max(...heuresEnseignant) * tauxRef)} par mois.`,
+  '## Quel prix fixer',
   '',
-  '## Trajectoire réaliste sur 12 mois (médiane)',
+  `Comportement réaliste, adultes séparés, enfants mixtes, 50 % Europe / 50 % Amérique du Nord, 45 % d'enfants. ` +
+    `Chaque case : résultat médian à ${taux} / h, puis part des mois qui atteignent ${objectif}.`,
   '',
-  ligne(['Mois', ...ref.trajectoire.map((x) => x.mois)]),
-  ligne(['---', ...ref.trajectoire.map(() => '---:')]),
-  ligne(['Élèves', ...ref.trajectoire.map((x) => x.elevesActifsP50)]),
-  ligne(['Encaissé', ...ref.trajectoire.map((x) => usd(x.encaisseP50))]),
+  ligne(['Enfant ↓ / Adulte →', ...PRIX_ADULTE.map((a) => `${a} $`)]),
+  ligne(['---', ...PRIX_ADULTE.map(() => '---:')]),
+  ...PRIX_ENFANT.map((e, i) => ligne([`**${e} $**`, ...prix[i].map((x) => `${usd(x.resultat)} · ${pct(x.objectif)}`)])),
+  '',
+  'Taux enseignant maximal tenant 30 % de marge 9 mois sur 10, selon le prix :',
+  '',
+  ligne(['Enfant ↓ / Adulte →', ...PRIX_ADULTE.map((a) => `${a} $`)]),
+  ligne(['---', ...PRIX_ADULTE.map(() => '---:')]),
+  ...PRIX_ENFANT.map((e, i) => ligne([`**${e} $**`, ...prix[i].map((x) => usd2(x.taux30))])),
+  '',
+  `## Les ${grille.length} scénarios`,
+  '',
+  ...tableau([...grille].sort((a, b) => b.resultat - a.resultat)),
 );
 
-console.log(sortie.join('\n'));
+const texte = sortie.join('\n') + '\n';
+if (valeur('--sortie')) writeFileSync(valeur('--sortie'), texte);
+else process.stdout.write(texte);

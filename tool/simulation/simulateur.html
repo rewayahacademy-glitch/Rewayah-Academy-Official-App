@@ -59,7 +59,7 @@ legend { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-sp
 .champ label { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; color: var(--muted); }
 .champ output { color: var(--ink); font-weight: 600; }
 input[type="range"] { width: 100%; accent-color: var(--accent); }
-input[type="number"] { width: 100%; font: inherit; color: var(--ink); background: var(--sunken); border: 1px solid var(--resting); border-radius: 8px; padding: 6px 10px; }
+input[type="number"], select { width: 100%; font: inherit; color: var(--ink); background: var(--sunken); border: 1px solid var(--resting); border-radius: 8px; padding: 6px 10px; }
 input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .deux { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .bascule { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
@@ -106,7 +106,7 @@ tr.moins td:first-child { padding-left: 22px; color: var(--muted); }
 <div class="page">
   <header>
     <h1>Simulateur économique Rewayah</h1>
-    <p class="lede">100 élèves, leurs familles, leurs groupes et leurs enseignants, rejoués sur douze mois avec leurs comportements : paiement en avance, à l'heure, en retard ou jamais ; absences ; plaintes ; départs. Chaque chiffre est le résultat de centaines de mois simulés. Changez une hypothèse dans les réglages : tout se recalcule.</p>
+    <p class="lede">100 élèves, leurs familles, leurs classes et leurs enseignants, rejoués sur douze mois avec leurs comportements : paiement en avance, à l'heure, en retard ou jamais ; absences ; plaintes ; départs. Chaque chiffre est le résultat de centaines de mois simulés. Changez une hypothèse dans les réglages : tout se recalcule.</p>
   </header>
 
   <div class="mise-en-page">
@@ -127,17 +127,18 @@ tr.moins td:first-child { padding-left: 22px; color: var(--muted); }
       <fieldset>
         <legend>Effectif</legend>
         <div class="champ"><label for="partEnfants">Part d'enfants <output id="o-partEnfants"></output></label><input type="range" id="partEnfants" min="0" max="100" step="5" value="45"></div>
-        <label class="bascule"><input type="checkbox" id="separer" checked> Groupes d'adultes séparés hommes / femmes</label>
+        <div class="champ"><label for="mixiteAdultes">Classes d'adultes</label><select id="mixiteAdultes"><option value="separes" selected>Hommes et femmes séparés</option><option value="mixte">Mixtes</option></select></div>
+        <div class="champ"><label for="mixiteEnfants">Classes d'enfants</label><select id="mixiteEnfants"><option value="mixte" selected>Mixtes</option><option value="separes-des-10-ans">Séparées dès 10 ans</option><option value="separes">Séparées</option></select></div>
       </fieldset>
       <fieldset>
         <legend>Enseignants</legend>
         <div class="champ"><label for="marge">Marge visée pour l'académie <output id="o-marge"></output></label><input type="range" id="marge" min="0" max="60" step="5" value="30"></div>
-        <div class="champ"><label for="taux">Taux horaire appliqué ($/h)</label><input type="number" id="taux" min="0" step="0.5" value="8.5"></div>
+        <div class="champ"><label for="taux">Taux horaire appliqué ($/h)</label><input type="number" id="taux" min="0" step="0.5" value="4"></div>
       </fieldset>
       <fieldset>
         <legend>Coûts</legend>
         <div class="champ"><label for="kbps">Débit visio par participant <output id="o-kbps"></output></label><input type="range" id="kbps" min="100" max="1500" step="50" value="700"></div>
-        <div class="champ"><label for="horsEurope">Cartes hors Europe <output id="o-horsEurope"></output></label><input type="range" id="horsEurope" min="0" max="100" step="5" value="50"></div>
+        <div class="champ"><label for="horsEurope">Familles d'Amérique du Nord <output id="o-horsEurope"></output></label><input type="range" id="horsEurope" min="0" max="100" step="5" value="50"></div>
         <label class="bascule"><input type="checkbox" id="conversion" checked> Conversion USD → EUR (2 %)</label>
         <div class="champ"><label for="prelevements">Taxes et cotisations sur l'encaissé <output id="o-prelevements"></output></label><input type="range" id="prelevements" min="0" max="40" step="1" value="0"></div>
         <div class="champ"><label for="admin">Équipe d'administration ($/mois)</label><input type="number" id="admin" min="0" step="50" value="0"></div>
@@ -173,7 +174,7 @@ tr.moins td:first-child { padding-left: 22px; color: var(--muted); }
       </div>
 
       <section class="bloc">
-        <h2>Groupes</h2>
+        <h2>Classes</h2>
         <p id="groupes-resume"></p>
         <div class="table-defile"><table id="groupes"></table></div>
       </section>
@@ -188,7 +189,8 @@ tr.moins td:first-child { padding-left: 22px; color: var(--muted); }
         <ul class="notes">
           <li>Services : Supabase Pro 25 $, une base staging 10 $, Vercel Pro 20 $, LiveKit palier Ship 50 $ (150 000 minutes et 250 Go inclus, puis 0,0005 $ la minute et 0,12 $ le Go), domaine 1,25 $, compte bancaire 10 $. GitHub, Sentry et l'email restent dans leurs quotas gratuits. Grilles publiques relevées le 17 octobre 2026.</li>
           <li>Non inclus : sauvegarde PITR de Supabase (environ 100 $), comptes développeur Apple (99 $ par an) et Google Play (25 $), à ajouter quand l'application native sera publiée.</li>
-          <li>Cartes : grille Stripe France, 1,5 % en Europe, 2,5 % au Royaume-Uni, 3,25 % ailleurs, plus 0,25 € et 2 % de conversion si l'on facture en dollars sur un compte en euros.</li>
+          <li>Familles d'Europe et d'Amérique du Nord. Cartes : grille Stripe France, 1,5 % en Europe (85 % des familles européennes), 2,5 % au Royaume-Uni, 3,25 % pour les cartes américaines et canadiennes, plus 0,25 € et 2 % de conversion si l'on facture en dollars sur un compte en euros.</li>
+          <li>Enseignants : 4 $ / h, taux de référence configurable (plafond 7 $ / h). Objectif de l'académie : 2 000 $ net par mois.</li>
           <li>Virements aux enseignants en GNF ou XOF : 2 % plus 1 $ par virement.</li>
           <li>Taxes, TVA et cotisations : à zéro par défaut, faute de connaître la structure juridique. Si l'académie est une entreprise française, la TVA à 20 % s'applique au-delà du seuil de franchise, et un mois type le dépasse sur l'année.</li>
           <li>Une place libérée par un départ est reprise un mois plus tard par une nouvelle famille.</li>
@@ -231,9 +233,9 @@ function parametres() {
     tirages: TIRAGES,
     effectif: { partEnfants: nombre('partEnfants') / 100 },
     tarifs: { enfantCentimes: Math.round(nombre('tarifEnfant') * 100), adulteCentimes: Math.round(nombre('tarifAdulte') * 100) },
-    groupes: { separerAdultesParSexe: $('separer').checked },
+    groupes: { mixiteAdultes: $('mixiteAdultes').value, mixiteEnfants: $('mixiteEnfants').value },
     livekit: { debitDescendantKbps: nombre('kbps') },
-    paiementEnLigne: { origineCartes: { eee: 1 - h, royaumeUni: h * 0.2, international: h * 0.8 }, conversionBps: $('conversion').checked ? 200 : 0 },
+    paiementEnLigne: { origineCartes: { eee: (1 - h) * 0.85, royaumeUni: (1 - h) * 0.15, international: h }, conversionBps: $('conversion').checked ? 200 : 0 },
     fiscalite: { prelevementsBps: Math.round(nombre('prelevements') * 100) },
     administration: { coutMensuelCentimes: Math.round(nombre('admin') * 100) },
   });
@@ -247,7 +249,7 @@ function rendre() {
   const p = parametres();
   const marge = nombre('marge') / 100;
   const taux = Math.round(nombre('taux') * 100);
-  const r = simuler(p, { marges: [0.2, 0.3, 0.4, marge].filter((x, i, t) => t.indexOf(x) === i).sort(), tauxEnseignantCentimes: taux });
+  const r = simuler(p, { marges: [0.3, 0.35, 0.4, marge].filter((x, i, t) => t.indexOf(x) === i).sort(), tauxEnseignantCentimes: taux });
   const m = r.moisType;
   const pop = r.population;
 
@@ -267,7 +269,7 @@ function rendre() {
     tuile('Reste avant enseignants', usd(m.resultatAvantEnseignants.p50), `après frais, services, taxes, administration`),
     tuile(`Taux max pour ${pct(marge)} de marge`, `${usd2(vise.prudent)} / h`, `prudent ; ${usd2(vise.median)} un mois sur deux`, 'accent'),
     tuile(`Résultat à ${usd2(taux)} / h`, usd(m.resultat.p50),
-      `<span class="pastille ${etatMarge}">marge ${pct(margeObtenue)}</span> · 1 mois sur 10 sous ${usd(m.resultat.p10)}`),
+      `<span class="pastille ${etatMarge}">marge ${pct(margeObtenue)}</span> · objectif ${usd(p.objectifs.resultatNetCentimes)} atteint ${pct(m.objectifAtteint)} des mois`),
   ].join('');
 
   const parts = [
@@ -316,13 +318,15 @@ function rendre() {
   const plein = (g) => (g.type === 'enfant' ? p.groupes.maxEnfants : p.groupes.maxAdultes);
   const sousRemplis = pop.groupes.filter((g) => g.taille < plein(g)).length;
   $('groupes-resume').textContent =
-    `${pop.groupes.length} groupes pour ${pop.eleves} élèves (${pop.enfants} enfants, ${pop.adultes} adultes) répartis en ${pop.foyers} familles. ` +
-    `${sousRemplis} groupes ne sont pas pleins : chaque place vide coûte une mensualité sans réduire les heures payées.`;
-  $('groupes').innerHTML = `<thead><tr><th>Groupe</th><th>Public</th><th class="n">Élèves</th><th class="n">Heures / mois</th><th class="n">Recette / mois</th><th class="n">Recette / heure</th><th class="n">Enseignant</th></tr></thead><tbody>${
+    `${pop.groupes.length} classes pour ${pop.eleves} élèves (${pop.enfants} enfants, ${pop.adultes} adultes) répartis en ${pop.foyers} familles. ` +
+    `${sousRemplis} classes ne sont pas pleines : chaque place vide coûte une mensualité sans réduire les heures payées. ` +
+    (pop.enAttente ? `${pop.enAttente} élèves n'entrent dans aucune classe et attendent une place.` : 'Tous les élèves ont une classe.');
+  $('groupes').innerHTML = `<thead><tr><th>Classe</th><th>Public</th><th class="n">Élèves</th><th class="n">Heures / mois</th><th class="n">Recette / mois</th><th class="n">Recette / heure</th><th class="n">Enseignant</th></tr></thead><tbody>${
     pop.groupes.map((g) => {
       const recette = g.taille * tarif(g);
-      const etatG = g.taille >= plein(g) ? 'ok' : g.sousMinimum ? 'ko' : 'att';
-      const publicG = g.type === 'enfant' ? `Enfants ${g.tranche} ans` : `Adultes ${g.public === 'F' ? 'femmes' : g.public === 'M' ? 'hommes' : 'mixte'}`;
+      const etatG = g.taille >= plein(g) ? 'ok' : 'att';
+      const genre = g.public === 'F' ? (g.type === 'enfant' ? 'filles' : 'femmes') : g.public === 'M' ? (g.type === 'enfant' ? 'garçons' : 'hommes') : 'mixte';
+      const publicG = g.type === 'enfant' ? `Enfants ${g.tranche} ans, ${genre}` : `Adultes, ${genre}`;
       return `<tr><td>G${g.id + 1}</td><td>${publicG}</td><td class="n"><span class="pastille ${etatG}">${g.taille} / ${plein(g)}</span></td><td class="n">${heures(g.heuresParMois)}</td><td class="n">${usd(recette)}</td><td class="n">${usd2(recette / g.heuresParMois)}</td><td class="n">E${g.enseignant + 1}</td></tr>`;
     }).join('')
   }</tbody>`;

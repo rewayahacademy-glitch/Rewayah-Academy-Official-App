@@ -30,8 +30,8 @@ export const PARAMETRES_DEFAUT = Object.freeze({
     eleves: 100,
     partEnfants: 0.45,
     partFeminin: 0.5,
-    // Tranches d'âge de la migration 0043 ; ≤ 17 ans = public enfant.
-    tranchesEnfant: { '5-7': 0.25, '8-10': 0.3, '11-14': 0.3, '15-17': 0.15 },
+    // Tranches d'âge de af_l2_08 (âge minimal 6 ans) ; ≤ 17 ans = public enfant.
+    tranchesEnfant: { '6-9': 0.35, '10-13': 0.4, '14-17': 0.25 },
     // Nombre d'enfants inscrits par foyer.
     taillesFratrie: { 1: 0.3, 2: 0.35, 3: 0.2, 4: 0.1, 5: 0.05 },
     // Part des adultes inscrits dans le foyer de leurs enfants (la remise
@@ -58,13 +58,19 @@ export const PARAMETRES_DEFAUT = Object.freeze({
     probabiliteAnnulation: 0.02,
   },
 
+  // Directeur, 17/10/2026 : 5 enfants (parfois 4), 6 adultes (parfois 5), un
+  // enseignant pour deux classes. Un élève qui ne tient dans aucune classe
+  // attend une place et ne paie pas.
   groupes: {
     maxEnfants: 5,
+    minEnfants: 4,
     maxAdultes: 6,
-    minimumLancement: 3,
+    minAdultes: 5,
     groupesParEnseignant: 2,
-    separerAdultesParSexe: true,
-    separerEnfantsParSexe: false,
+    // 'separes' : classes d'hommes et de femmes (genre_public), enseignant du
+    // même sexe. 'separes-des-10-ans' : enfants mixtes jusqu'à 9 ans seulement.
+    mixiteAdultes: 'separes',
+    mixiteEnfants: 'mixte',
   },
 
   administration: { effectif: 4, coutMensuelCentimes: 0 },
@@ -95,14 +101,26 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   },
 
   // Encaissement par carte (grille Stripe France publique, octobre 2026).
+  // Les familles viennent d'Europe et d'Amérique du Nord ; une carte
+  // américaine ou canadienne est une carte internationale pour Stripe France.
   paiementEnLigne: {
-    origineCartes: { eee: 0.5, royaumeUni: 0.1, international: 0.4 },
+    origineCartes: { eee: 0.425, royaumeUni: 0.075, international: 0.5 },
     bps: { eee: 150, royaumeUni: 250, international: 325 },
     fixeCentimes: 29, // 0,25 € converti en dollars
     conversionBps: 200, // prix en USD, compte réglé en EUR
   },
 
-  enseignants: { fraisVirementBps: 200, fraisVirementFixeCentimes: 100 },
+  // Taux de référence 4 $/h, configurable et daté (docs/current/07 §26) ;
+  // plafond 7 $/h de la politique de démonstration.
+  enseignants: {
+    tauxReferenceCentimes: 400,
+    plafondCentimes: 700,
+    fraisVirementBps: 200,
+    fraisVirementFixeCentimes: 100,
+  },
+
+  // Objectif de l'académie : 2 000 $ net par mois (docs/current/07 §27).
+  objectifs: { resultatNetCentimes: 200000, marges: [0.3, 0.35, 0.4] },
 
   // Prélèvements assis sur l'encaissé (TVA, cotisations…). Zéro par défaut
   // tant que la structure juridique n'est pas connue : à renseigner.
@@ -186,6 +204,46 @@ export const SCENARIOS = Object.freeze({
   },
 });
 
+// Toutes les combinaisons testées : chaque dimension croisée avec toutes les
+// autres (4 × 2 × 3 × 3 × 3 = 216 scénarios).
+export const DIMENSIONS = Object.freeze({
+  paiement: Object.fromEntries(Object.entries(SCENARIOS).map(([code, x]) => [code, { titre: x.titre }])),
+  mixiteAdultes: {
+    separes: { titre: 'Adultes séparés', surcharges: { groupes: { mixiteAdultes: 'separes' } } },
+    mixte: { titre: 'Adultes mixtes', surcharges: { groupes: { mixiteAdultes: 'mixte' } } },
+  },
+  mixiteEnfants: {
+    mixte: { titre: 'Enfants mixtes', surcharges: { groupes: { mixiteEnfants: 'mixte' } } },
+    'separes-des-10-ans': { titre: 'Enfants séparés dès 10 ans', surcharges: { groupes: { mixiteEnfants: 'separes-des-10-ans' } } },
+    separes: { titre: 'Enfants séparés', surcharges: { groupes: { mixiteEnfants: 'separes' } } },
+  },
+  origine: {
+    europe: { titre: '70 % Europe', surcharges: { paiementEnLigne: { origineCartes: { eee: 0.595, royaumeUni: 0.105, international: 0.3 } } } },
+    equilibre: { titre: '50 / 50', surcharges: { paiementEnLigne: { origineCartes: { eee: 0.425, royaumeUni: 0.075, international: 0.5 } } } },
+    amerique: { titre: '70 % Amérique du Nord', surcharges: { paiementEnLigne: { origineCartes: { eee: 0.255, royaumeUni: 0.045, international: 0.7 } } } },
+  },
+  partEnfants: {
+    30: { titre: '30 % d’enfants', surcharges: { effectif: { partEnfants: 0.3 } } },
+    45: { titre: '45 % d’enfants', surcharges: { effectif: { partEnfants: 0.45 } } },
+    60: { titre: '60 % d’enfants', surcharges: { effectif: { partEnfants: 0.6 } } },
+  },
+});
+
+/** Produit cartésien des dimensions : [{ choix, parametres }]. */
+export function grilleScenarios(surcharges = {}) {
+  let combinaisons = [{}];
+  for (const [dimension, valeurs] of Object.entries(DIMENSIONS)) {
+    combinaisons = combinaisons.flatMap((c) => Object.keys(valeurs).map((v) => ({ ...c, [dimension]: v })));
+  }
+  return combinaisons.map((choix) => {
+    let p = parametresScenario(choix.paiement);
+    for (const [dimension, valeur] of Object.entries(choix)) {
+      if (dimension !== 'paiement') p = fusionner(p, DIMENSIONS[dimension][valeur].surcharges);
+    }
+    return { choix, parametres: fusionner(p, surcharges) };
+  });
+}
+
 export function fusionner(base, surcharges) {
   if (surcharges === undefined) return base;
   if (Array.isArray(base) || typeof base !== 'object' || base === null) return surcharges;
@@ -220,13 +278,22 @@ export function seancesParMois(rythme) {
   return Math.round((rythme.seancesParSemaine * 52) / 12);
 }
 
-/** Découpe `n` élèves en groupes équilibrés d'au plus `max`. */
-export function repartirEnGroupes(n, max) {
-  if (n <= 0) return [];
-  const k = Math.ceil(n / max);
-  const base = Math.floor(n / k);
-  const reste = n % k;
-  return Array.from({ length: k }, (_, i) => base + (i < reste ? 1 : 0));
+/**
+ * Découpe `n` élèves en classes de `min` à `max` places, en plaçant le plus
+ * d'élèves possible avec le moins de classes. Le reste attend une place.
+ */
+export function repartirEnGroupes(n, max, min = 1) {
+  for (let places = n; places > 0; places--) {
+    const k = Math.ceil(places / max);
+    if (places < k * min) continue;
+    const base = Math.floor(places / k);
+    const reste = places % k;
+    return {
+      tailles: Array.from({ length: k }, (_, i) => base + (i < reste ? 1 : 0)),
+      enAttente: n - places,
+    };
+  }
+  return { tailles: [], enAttente: n };
 }
 
 /** Frais d'un paiement par carte, en centimes. */
@@ -367,12 +434,17 @@ export function genererPopulation(p) {
   return { eleves, foyers, groupes, enseignants };
 }
 
+function separeParSexe(eleve, g) {
+  if (eleve.type === 'adulte') return g.mixiteAdultes === 'separes';
+  if (g.mixiteEnfants === 'separes') return true;
+  return g.mixiteEnfants === 'separes-des-10-ans' && eleve.tranche !== '6-9';
+}
+
 function formerGroupes(eleves, p) {
   const g = p.groupes;
   const viviers = new Map();
   for (const eleve of eleves) {
-    const parSexe = eleve.type === 'enfant' ? g.separerEnfantsParSexe : g.separerAdultesParSexe;
-    const cle = `${eleve.type}|${eleve.tranche}|${parSexe ? eleve.sexe : 'mixte'}`;
+    const cle = `${eleve.type}|${eleve.tranche}|${separeParSexe(eleve, g) ? eleve.sexe : 'mixte'}`;
     if (!viviers.has(cle)) viviers.set(cle, []);
     viviers.get(cle).push(eleve);
   }
@@ -380,13 +452,15 @@ function formerGroupes(eleves, p) {
   for (const [cle, membres] of [...viviers].sort(([a], [b]) => a.localeCompare(b))) {
     const [type, tranche, public_] = cle.split('|');
     const max = type === 'enfant' ? g.maxEnfants : g.maxAdultes;
+    const min = type === 'enfant' ? g.minEnfants : g.minAdultes;
+    const { tailles, enAttente } = repartirEnGroupes(membres.length, max, min);
+    for (const x of membres.slice(membres.length - enAttente)) x.enAttente = true;
     let curseur = 0;
-    for (const taille of repartirEnGroupes(membres.length, max)) {
+    for (const taille of tailles) {
       const groupe = {
         id: groupes.length, type, tranche, public: public_,
         minutes: type === 'enfant' ? p.rythme.minutesEnfant : p.rythme.minutesAdulte,
         membres: membres.slice(curseur, curseur + taille).map((x) => x.id),
-        sousMinimum: taille < g.minimumLancement,
       };
       for (const id of groupe.membres) eleves[id].groupe = groupe.id;
       groupes.push(groupe);
@@ -433,7 +507,7 @@ function affecterEnseignants(groupes, parEnseignant) {
 function simulerTirage(population, p, aleatoire) {
   const c = p.comportements;
   const nbSeances = seancesParMois(p.rythme);
-  const eleves = population.eleves.map((x) => ({ ...x, actif: true, retourAuMois: null }));
+  const eleves = population.eleves.map((x) => ({ ...x, actif: !x.enAttente, retourAuMois: null }));
   const foyers = population.foyers.map((x) => ({ ...x, membres: [...x.membres], impayes: 0, reporte: 0 }));
   const mois = [];
 
@@ -583,7 +657,10 @@ const moyenne = (valeurs) => valeurs.reduce((s, v) => s + v, 0) / Math.max(1, va
  * `marges` : marges cibles pour lesquelles calculer le taux enseignant max.
  * `tauxEnseignantCentimes` : taux horaire appliqué pour le résultat final.
  */
-export function simuler(p, { marges = [0.2, 0.3, 0.4], tauxEnseignantCentimes = 0 } = {}) {
+export function simuler(
+  p,
+  { marges = p.objectifs.marges, tauxEnseignantCentimes = p.enseignants.tauxReferenceCentimes } = {},
+) {
   const population = genererPopulation(p);
   const aleatoire = generateur((p.graine ^ 0x9e3779b9) >>> 0);
   const tirages = [];
@@ -623,6 +700,12 @@ export function simuler(p, { marges = [0.2, 0.3, 0.4], tauxEnseignantCentimes = 
       enseignants: distribution(stables.map((x) => coutEnseignants(x, tauxEnseignantCentimes, p).total)),
       resultat: distribution(stables.map(
         (x) => x.resultatAvantEnseignantsCentimes - coutEnseignants(x, tauxEnseignantCentimes, p).total)),
+      resultatAuPlafond: distribution(stables.map(
+        (x) => x.resultatAvantEnseignantsCentimes - coutEnseignants(x, p.enseignants.plafondCentimes, p).total)),
+      // Part des mois où le résultat atteint l'objectif net.
+      objectifAtteint: stables.filter(
+        (x) => x.resultatAvantEnseignantsCentimes - coutEnseignants(x, tauxEnseignantCentimes, p).total >=
+          p.objectifs.resultatNetCentimes).length / Math.max(1, stables.length),
       heuresEnseignees: distribution(stables.map((x) => x.heuresEnseigneesCentiemes / 100)),
       minutesParticipant: distribution(serie('minutesParticipant')),
       seancesTenues: distribution(serie('seancesTenues')),
@@ -652,6 +735,7 @@ function resumerPopulation(population, p) {
     enfants: eleves.filter((x) => x.type === 'enfant').length,
     adultes: eleves.filter((x) => x.type === 'adulte').length,
     feminin: eleves.filter((x) => x.sexe === 'F').length,
+    enAttente: eleves.filter((x) => x.enAttente).length,
     tranches: compter(eleves, 'tranche'),
     foyers: foyers.length,
     taillesFoyers,
@@ -664,7 +748,7 @@ function resumerPopulation(population, p) {
     remisesTheoriquesCentimes: foyers.reduce((s, f) => s + remiseFamiliale(f.membres.length, p.tarifs), 0),
     groupes: groupes.map((g) => ({
       id: g.id, type: g.type, tranche: g.tranche, public: g.public, taille: g.membres.length,
-      enseignant: g.enseignant, heuresParMois: heuresParGroupe(g), sousMinimum: g.sousMinimum,
+      enseignant: g.enseignant, heuresParMois: heuresParGroupe(g),
     })),
     enseignants: enseignants.map((x) => ({
       id: x.id, sexe: x.sexe, groupes: x.groupes,
