@@ -75,15 +75,16 @@ void main() {
   );
 
   group('K4 : interrupteur OBSERVATION_TUTEUR_REELLE', () {
-    test('faux par defaut, et faux partout hors developpement', () {
+    test('faux par defaut, et faux hors developpement et staging', () {
       expect(Env.observationTuteurReelle, isFalse);
       expect(Env.observationTuteurReelleActive, isFalse);
-      // Liste d'autorisation : production, apercu (`staging`, compile avec
-      // les cles de production) et toute valeur inattendue restent fermes.
+      // Liste d'autorisation : production et toute valeur inattendue restent
+      // fermees. `staging` ouvre depuis A-09 (apercu compile avec les cles de
+      // production, recette a quatre roles).
       for (final String environnement in <String>[
         'production',
-        'staging',
         'Production',
+        'Staging',
         '',
       ]) {
         expect(
@@ -104,8 +105,22 @@ void main() {
       );
       expect(
         Env.observationTuteurReelleSelon(
+          demandee: true,
+          environnement: 'staging',
+        ),
+        isTrue,
+      );
+      expect(
+        Env.observationTuteurReelleSelon(
           demandee: false,
           environnement: 'developpement',
+        ),
+        isFalse,
+      );
+      expect(
+        Env.observationTuteurReelleSelon(
+          demandee: false,
+          environnement: 'staging',
         ),
         isFalse,
       );
