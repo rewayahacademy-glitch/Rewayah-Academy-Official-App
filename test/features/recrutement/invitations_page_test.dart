@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/recrutement/port_invitations_comptable.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
 import 'package:rewayah_academy/core/reseau/etat_sans_donnees.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -25,11 +26,17 @@ import '../../support/garde_interface.dart';
 import '../../support/monter_recrutement.dart';
 
 class _Port implements PortInvitationsEnseignant {
-  _Port({this.lecture, this.echecInviter, this.echecRevoquer = false});
+  _Port({
+    this.lecture,
+    this.echecInviter,
+    this.echecRevoquer = false,
+    this.erreurRevoquer,
+  });
 
   final Future<List<Invitation>> Function()? lecture;
   final Object? echecInviter;
   final bool echecRevoquer;
+  final Object? erreurRevoquer;
   final InvitationsDemo interne = InvitationsDemo();
 
   @override
@@ -44,6 +51,8 @@ class _Port implements PortInvitationsEnseignant {
 
   @override
   Future<void> revoquer(String code) async {
+    final Object? e = erreurRevoquer;
+    if (e != null) Error.throwWithStackTrace(e, StackTrace.current);
     if (echecRevoquer) throw StateError('perdu');
     return interne.revoquer(code);
   }
@@ -52,6 +61,7 @@ class _Port implements PortInvitationsEnseignant {
 Future<void> _monter(
   WidgetTester tester, {
   PortInvitationsEnseignant? port,
+  PortInvitationsEnseignant? comptable,
   bool horsLigne = false,
   double largeur = 390,
   double echelle = 1,
@@ -62,6 +72,7 @@ Future<void> _monter(
   ecran: (_) => const InvitationsPage(),
   surcharges: <Override>[
     portInvitationsEnseignantProvider.overrideWithValue(port),
+    portInvitationsComptableProvider.overrideWithValue(comptable),
   ],
   horsLigne: horsLigne,
   largeur: largeur,
@@ -236,6 +247,138 @@ void main() {
       await laisser(tester);
       expect(find.text(r.revoquerEchec), findsOneWidget);
     });
+  });
+
+  // Lot F2 : inviter un enseignant ou un comptable.
+  group('comptable', () {
+    final c = r.comptable;
+    final Finder carteComptable = find.byKey(
+      const ValueKey<String>('invitations-role-comptable'),
+    );
+
+    Future<void> choisirComptable(WidgetTester tester) async {
+      await tester.ensureVisible(carteComptable);
+      await tester.tap(carteComptable);
+      await laisser(tester);
+    }
+
+    Future<void> inviter(WidgetTester tester) async {
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('invitations-email')),
+        'compta@exemple.test',
+      );
+      await tester.tap(
+        find.byKey(const ValueKey<String>('invitations-inviter')),
+      );
+      await laisser(tester);
+    }
+
+    testWidgets('sans port comptable : aucune carte, rien ne change', (
+      tester,
+    ) async {
+      await _monter(tester, port: _Port());
+      expect(
+        find.byKey(const ValueKey<String>('invitations-role')),
+        findsNothing,
+      );
+      expect(find.text(r.titre), findsWidgets);
+    });
+
+    testWidgets('deux ports : deux cartes differentes, expliquees', (
+      tester,
+    ) async {
+      await _monter(tester, port: _Port(), comptable: _Port());
+      expect(find.text(c.choixQuestion), findsOneWidget);
+      expect(find.text(c.enseignantTitre), findsOneWidget);
+      expect(find.text(c.enseignantExplication), findsOneWidget);
+      expect(find.text(c.comptableTitre), findsOneWidget);
+      expect(find.text(c.comptableExplication), findsOneWidget);
+      expect(find.text(c.champEmail), findsNothing);
+    });
+
+    testWidgets('la carte comptable cree une invitation de comptable', (
+      tester,
+    ) async {
+      final _Port enseignant = _Port();
+      final _Port comptable = _Port(lecture: () async => const <Invitation>[]);
+      await _monter(tester, port: enseignant, comptable: comptable);
+      await choisirComptable(tester);
+      expect(find.text(c.champEmail), findsOneWidget);
+      expect(find.text(c.vide), findsOneWidget);
+      await inviter(tester);
+      final String code = (await comptable.interne.lister())
+          .firstWhere((Invitation i) => i.email == 'compta@exemple.test')
+          .code;
+      expect(find.text(c.creee(code: code)), findsOneWidget);
+      // Le port enseignant n'a rien recu.
+      expect(
+        (await enseignant.interne.lister()).where(
+          (Invitation i) => i.email == 'compta@exemple.test',
+        ),
+        isEmpty,
+      );
+    });
+
+    testWidgets('refus du serveur : « double verification requise »', (
+      tester,
+    ) async {
+      await _monter(
+        tester,
+        port: _Port(),
+        comptable: _Port(echecInviter: const NonAutorise()),
+      );
+      await choisirComptable(tester);
+      await inviter(tester);
+      expect(find.text(c.doubleVerification), findsOneWidget);
+    });
+
+    testWidgets('revocation refusee : « double verification requise »', (
+      tester,
+    ) async {
+      await _monter(
+        tester,
+        port: _Port(),
+        comptable: _Port(erreurRevoquer: const NonAutorise()),
+      );
+      await choisirComptable(tester);
+      expect(find.text(c.liste), findsOneWidget);
+      await tester.tap(find.text(r.revoquer));
+      await laisser(tester);
+      await tester.tap(find.text(r.revoquer).last);
+      await laisser(tester);
+      expect(find.text(c.doubleVerification), findsOneWidget);
+    });
+
+    testWidgets(
+      'seul le port comptable : le formulaire comptable, sans carte',
+      (tester) async {
+        await _monter(tester, comptable: _Port());
+        expect(
+          find.byKey(const ValueKey<String>('invitations-role')),
+          findsNothing,
+        );
+        expect(find.text(c.champEmail), findsOneWidget);
+      },
+    );
+
+    for (final TextDirection direction in <TextDirection>[
+      TextDirection.ltr,
+      TextDirection.rtl,
+    ]) {
+      testWidgets('deux cartes, 320 px, texte x2, $direction', (tester) async {
+        await _monter(
+          tester,
+          port: _Port(),
+          comptable: _Port(),
+          largeur: 320,
+          echelle: 2,
+          direction: direction,
+        );
+        expect(tester.takeException(), isNull);
+        verifierUnSeulBoutonPlein(tester);
+        verifierEcranSansMotCoupe(tester);
+      });
+    }
   });
 
   group('gabarits', () {

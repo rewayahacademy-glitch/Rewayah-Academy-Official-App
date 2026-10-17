@@ -58,6 +58,11 @@ abstract final class Routes {
   /// verifie des l'ouverture.
   static const String inscriptionInvitation = '/inscription/invitation';
 
+  /// Lot F2 : le code d'invitation du candidat comptable (BF1-03), sous la
+  /// meme porte. Le parametre `code` d'un lien est verifie des l'ouverture.
+  static const String inscriptionInvitationComptable =
+      '/inscription/invitation-comptable';
+
   /// Recapitulatif, avant la creation du profil.
   static const String inscriptionRecapitulatif = '/inscription/recapitulatif';
 

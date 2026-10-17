@@ -1,4 +1,7 @@
 /// RECRUT-ECRANS (2/5) : le code d'invitation du candidat enseignant.
+/// Lot F2 : le meme ecran sert le candidat comptable (`comptable: true`),
+/// sur ses propres ports de verification et son propre code retenu
+/// (BF1-03) ; l'inscription appelle alors `inscrire_comptable_invite`.
 ///
 /// Le candidat saisit son code (ou arrive par un lien qui le porte) ; le
 /// serveur repond par l'une des quatre issues de [ResultatInvitation]
@@ -31,6 +34,7 @@ import '../../core/i18n/dates_appareil.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/recrutement/ouvreur_lien.dart';
+import '../../core/recrutement/port_invitations_comptable.dart';
 import '../../core/recrutement/port_invitations_enseignant.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
@@ -43,6 +47,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/zone_saisie.dart';
 import '../inscription/brouillon_inscription.dart';
+import '../inscription/code_comptable_retenu.dart';
 import '../salle_seance/information_controle.dart' show InformationControle;
 
 /// Ce que l'ecran montre apres la verification.
@@ -51,10 +56,18 @@ enum _Phase { saisie, verification, resultat, horsLigne, erreur }
 /// L'ecran du code d'invitation.
 class InvitationCandidatPage extends ConsumerStatefulWidget {
   /// Cree l'ecran ; [codeInitial] vient d'un lien d'invitation.
-  const InvitationCandidatPage({super.key, this.codeInitial});
+  const InvitationCandidatPage({
+    super.key,
+    this.codeInitial,
+    this.comptable = false,
+  });
 
   /// Le code porte par le lien, verifie des l'ouverture.
   final String? codeInitial;
+
+  /// Vrai pour le candidat comptable (lot F2) : ports, code retenu et textes
+  /// du comptable.
+  final bool comptable;
 
   @override
   ConsumerState<InvitationCandidatPage> createState() =>
@@ -84,10 +97,20 @@ class _InvitationCandidatPageState
     super.dispose();
   }
 
+  Provider<PortVerificationInvitation?> get _portVerification =>
+      widget.comptable
+      ? portVerificationInvitationComptableProvider
+      : portVerificationInvitationProvider;
+
+  CodeInvitationRetenu get _codeRetenu => ref.read(
+    (widget.comptable
+            ? codeComptableRetenuProvider
+            : codeInvitationRetenuProvider)
+        .notifier,
+  );
+
   Future<void> _verifier() async {
-    final PortVerificationInvitation? port = ref.read(
-      portVerificationInvitationProvider,
-    );
+    final PortVerificationInvitation? port = ref.read(_portVerification);
     final String saisi = _code.text.trim();
     if (saisi.isEmpty) {
       setState(() => _vide = true);
@@ -111,9 +134,9 @@ class _InvitationCandidatPageState
     }
     if (!mounted) return;
     if (resultat is InvitationValide) {
-      ref.read(codeInvitationRetenuProvider.notifier).retenir(saisi);
+      _codeRetenu.retenir(saisi);
     } else {
-      ref.read(codeInvitationRetenuProvider.notifier).oublier();
+      _codeRetenu.oublier();
     }
     setState(() {
       _phase = phase;
@@ -123,7 +146,7 @@ class _InvitationCandidatPageState
 
   void _ressaisir() {
     _code.clear();
-    ref.read(codeInvitationRetenuProvider.notifier).oublier();
+    _codeRetenu.oublier();
     setState(() {
       _phase = _Phase.saisie;
       _resultat = null;
@@ -134,7 +157,11 @@ class _InvitationCandidatPageState
   void _creerProfil() {
     ref
         .read(brouillonInscriptionProvider.notifier)
-        .choisirUsage(UsageInscription.enseignant);
+        .choisirUsage(
+          widget.comptable
+              ? UsageInscription.comptable
+              : UsageInscription.enseignant,
+        );
     GoRouter.of(context).go(Routes.inscriptionIdentite);
   }
 
@@ -150,11 +177,12 @@ class _InvitationCandidatPageState
   @override
   Widget build(BuildContext context) {
     final r = t.recrutement.candidat;
-    final bool capable = ref.watch(portVerificationInvitationProvider) != null;
+    final bool capable = ref.watch(_portVerification) != null;
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final String titre = widget.comptable ? r.comptable.titre : r.titre;
 
     return PageShell(
-      titre: r.titre,
+      titre: titre,
       onRetour: () => GoRouter.of(context).go(Routes.inscriptionUsage),
       child: Align(
         alignment: AlignmentDirectional.topStart,
@@ -164,9 +192,13 @@ class _InvitationCandidatPageState
               ? EtatSysteme(
                   key: const ValueKey<String>('candidat-indisponible'),
                   nature: NatureEtat.indisponible,
-                  titre: r.titre,
-                  phrase: r.indisponible,
-                  dependance: dependanceInvitations,
+                  titre: titre,
+                  phrase: widget.comptable
+                      ? r.comptable.indisponible
+                      : r.indisponible,
+                  dependance: widget.comptable
+                      ? dependanceInvitationsComptable
+                      : dependanceInvitations,
                 )
               : _corps(horsLigne),
         ),
@@ -190,7 +222,9 @@ class _InvitationCandidatPageState
         InvitationValide(:final DateTime expireLe) => EmptyState(
           key: const ValueKey<String>('candidat-valide'),
           message: r.valide(date: dateDeLAppareil(expireLe.toLocal())),
-          invitation: r.valideDetail,
+          invitation: widget.comptable
+              ? r.comptable.valideDetail
+              : r.valideDetail,
           icone: AppIcons.invitationAcceptee,
           libelleAction: r.creerProfil,
           onAction: _creerProfil,
@@ -254,7 +288,7 @@ class _InvitationCandidatPageState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(r.intro, style: doux),
+        Text(widget.comptable ? r.comptable.intro : r.intro, style: doux),
         Ecart.vLg,
         ZoneSaisie(
           controleur: _code,

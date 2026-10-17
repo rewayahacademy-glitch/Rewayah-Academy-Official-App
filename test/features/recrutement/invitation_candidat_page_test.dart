@@ -11,9 +11,12 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/recrutement/ouvreur_lien.dart';
+import 'package:rewayah_academy/core/recrutement/port_invitations_comptable.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/features/demo/recrutement_demo.dart';
+import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
+import 'package:rewayah_academy/features/inscription/code_comptable_retenu.dart';
 import 'package:rewayah_academy/features/recrutement/invitation_candidat_page.dart';
 
 import '../../support/aucun_mot_coupe.dart';
@@ -223,4 +226,59 @@ void main() {
       verifierEcranSansMotCoupe(tester);
     });
   }
+
+  // Lot F2 : le candidat comptable, sur ses propres ports et son code.
+  group('comptable', () {
+    Future<void> monterComptable(
+      WidgetTester tester, {
+      PortVerificationInvitation? port,
+      PortVerificationInvitation? enseignant,
+    }) => monterRecrutement(
+      tester,
+      chemin: Routes.inscriptionInvitationComptable,
+      autres: <String>[
+        Routes.inscriptionIdentite,
+        Routes.inscriptionUsage,
+        Routes.connexion,
+      ],
+      ecran: (state) => InvitationCandidatPage(
+        codeInitial: state.uri.queryParameters['code'],
+        comptable: true,
+      ),
+      surcharges: <Override>[
+        portVerificationInvitationProvider.overrideWithValue(enseignant),
+        portVerificationInvitationComptableProvider.overrideWithValue(port),
+      ],
+    );
+
+    testWidgets('port comptable absent : une phrase, aucun champ', (
+      tester,
+    ) async {
+      // Le port enseignant servi ne suffit pas : les portes sont etanches.
+      await monterComptable(tester, enseignant: InvitationsDemo());
+      expect(find.text(r.comptable.indisponible), findsOneWidget);
+      expect(find.byKey(const ValueKey<String>('candidat-code')), findsNothing);
+    });
+
+    testWidgets('valide : code comptable retenu, usage comptable, identite', (
+      tester,
+    ) async {
+      await monterComptable(tester, port: InvitationsDemo());
+      expect(find.text(r.comptable.intro), findsOneWidget);
+      await _saisir(tester, 'demo-valide');
+      expect(find.text(r.comptable.valideDetail), findsOneWidget);
+      final ProviderContainer conteneur = ProviderScope.containerOf(
+        tester.element(find.byKey(const ValueKey<String>('candidat-valide'))),
+      );
+      expect(conteneur.read(codeComptableRetenuProvider), 'demo-valide');
+      expect(conteneur.read(codeInvitationRetenuProvider), isNull);
+      await tester.tap(find.text(r.creerProfil));
+      await laisser(tester);
+      expect(
+        conteneur.read(brouillonInscriptionProvider).usage,
+        UsageInscription.comptable,
+      );
+      expect(find.text('temoin:${Routes.inscriptionIdentite}'), findsOneWidget);
+    });
+  });
 }

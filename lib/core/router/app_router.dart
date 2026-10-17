@@ -316,6 +316,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ),
       ),
       GoRoute(
+        path: Routes.inscriptionInvitationComptable,
+        builder: (BuildContext _, GoRouterState etat) => InvitationCandidatPage(
+          codeInitial: etat.uri.queryParameters['code'],
+          comptable: true,
+        ),
+      ),
+      GoRoute(
         path: Routes.inscriptionIdentite,
         builder: (BuildContext _, GoRouterState _) => const IdentiteEtape(),
       ),

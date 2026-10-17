@@ -11,11 +11,14 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/recrutement/port_invitations_comptable.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/features/demo/recrutement_demo.dart';
+import 'package:rewayah_academy/features/inscription/code_comptable_retenu.dart';
 import 'package:rewayah_academy/features/inscription/etapes/genre_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/recapitulatif_etape.dart';
@@ -71,6 +74,9 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
   FauxServiceDossier? dossierFourni,
   FauxServiceAuth? auth,
   String? codeRetenu,
+  PortVerificationInvitation? verificationComptable,
+  PortInscriptionComptable? inscriptionComptable,
+  String? codeComptable,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -114,6 +120,16 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
           builder: (BuildContext _, GoRouterState _) =>
               const Scaffold(body: Text('ATTENTE')),
         ),
+        GoRoute(
+          path: Routes.inscriptionInvitationComptable,
+          builder: (BuildContext _, GoRouterState _) =>
+              const Scaffold(body: Text('CODE-COMPTABLE')),
+        ),
+        GoRoute(
+          path: Routes.comptable,
+          builder: (BuildContext _, GoRouterState _) =>
+              const Scaffold(body: Text('ESPACE-COMPTABLE')),
+        ),
       ],
       surcharges: <Override>[
         serviceDossierProvider.overrideWithValue(dossier),
@@ -122,6 +138,16 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
         if (codeRetenu != null)
           codeInvitationRetenuProvider.overrideWith(
             () => _CodeDejaRetenu(codeRetenu),
+          ),
+        portVerificationInvitationComptableProvider.overrideWithValue(
+          verificationComptable,
+        ),
+        portInscriptionComptableProvider.overrideWithValue(
+          inscriptionComptable,
+        ),
+        if (codeComptable != null)
+          codeComptableRetenuProvider.overrideWith(
+            () => _CodeDejaRetenu(codeComptable),
           ),
       ],
     ),
@@ -136,6 +162,43 @@ class _CodeDejaRetenu extends CodeInvitationRetenu {
   final String _code;
   @override
   String? build() => _code;
+}
+
+/// Une inscription de comptable qui note ses appels (lot F2).
+class _InscriptionComptable implements PortInscriptionComptable {
+  _InscriptionComptable([
+    this.resultat = ResultatInscriptionComptable.consommee,
+  ]);
+  final ResultatInscriptionComptable resultat;
+  final List<Map<String, String?>> appels = <Map<String, String?>>[];
+
+  @override
+  Future<ResultatInscriptionComptable> inscrire({
+    required String code,
+    required String prenom,
+    required String nom,
+    String? genre,
+  }) async {
+    appels.add(<String, String?>{
+      'code': code,
+      'prenom': prenom,
+      'nom': nom,
+      'genre': genre,
+    });
+    return resultat;
+  }
+}
+
+/// Le parcours comptable jusqu'a la creation.
+Future<void> _comptableJusquALaCreation(WidgetTester tester) async {
+  await _taper(tester, find.byKey(const Key('inscription-lien-comptable')));
+  await tester.enterText(find.byKey(const Key('inscription-prenom')), 'Sara');
+  await tester.enterText(find.byKey(const Key('inscription-nom')), 'Kane');
+  await _continuer(tester);
+  await _taper(tester, find.text(t.inscription.genreFemme));
+  await _continuer(tester);
+  expect(find.text(t.inscription.recap.comptable), findsOneWidget);
+  await _taper(tester, find.text(t.inscription.creer));
 }
 
 /// Le parcours enseignant jusqu'au recapitulatif.
@@ -305,6 +368,74 @@ void main() {
       expect(find.text(t.inscription.erreurInvitation), findsOneWidget);
       expect(find.text('ATTENTE'), findsNothing);
       expect(find.text('4 sur 4'), findsOneWidget);
+    });
+
+    // Lot F2 : le comptable invite, par son propre code et sa propre RPC.
+    testWidgets('sans verification servie, aucun lien comptable', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      expect(find.byKey(const Key('inscription-lien-comptable')), findsNothing);
+    });
+
+    testWidgets('le lien comptable sans code ouvre le champ du code', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, verificationComptable: InvitationsDemo());
+      await _taper(tester, find.byKey(const Key('inscription-lien-comptable')));
+      expect(find.text('CODE-COMPTABLE'), findsOneWidget);
+    });
+
+    testWidgets(
+      'le code comptable retenu inscrit le comptable, puis /comptable',
+      (WidgetTester tester) async {
+        final _InscriptionComptable port = _InscriptionComptable();
+        final (
+          FauxServiceDossier dossier,
+          FausseSourceSession source,
+        ) = await _monter(
+          tester,
+          verificationComptable: InvitationsDemo(),
+          inscriptionComptable: port,
+          codeComptable: 'CPTA-0001',
+        );
+        await _comptableJusquALaCreation(tester);
+        expect(dossier.profilsCrees, isEmpty);
+        expect(port.appels.single, <String, String?>{
+          'code': 'CPTA-0001',
+          'prenom': 'Sara',
+          'nom': 'Kane',
+          'genre': 'female',
+        });
+        expect(source.rafraichissements, 1);
+        expect(find.text('ESPACE-COMPTABLE'), findsOneWidget);
+      },
+    );
+
+    testWidgets('code comptable refuse : message K-59, aucune avance', (
+      WidgetTester tester,
+    ) async {
+      final _InscriptionComptable port = _InscriptionComptable(
+        ResultatInscriptionComptable.expiree,
+      );
+      await _monter(
+        tester,
+        verificationComptable: InvitationsDemo(),
+        inscriptionComptable: port,
+        codeComptable: 'CPTA-0001',
+      );
+      await _comptableJusquALaCreation(tester);
+      expect(find.text(t.inscription.erreurInvitation), findsOneWidget);
+      expect(find.text('ESPACE-COMPTABLE'), findsNothing);
+      expect(find.text('4 sur 4'), findsOneWidget);
+    });
+
+    test('libelles du comptable en arabe', () async {
+      await LocaleSettings.setLocale(AppLocale.ar);
+      addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+      expect(t.inscription.usage.comptable, 'لدي رمز محاسب');
+      expect(t.inscription.recap.comptable, 'محاسب');
+      expect(t.ficheEleve.mouvements.nature.remboursement, 'استرداد');
     });
 
     testWidgets('« Moi et ma famille » pose « Suivez-vous aussi des cours ? » '

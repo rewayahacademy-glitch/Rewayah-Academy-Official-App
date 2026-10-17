@@ -4,12 +4,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
+import '../../../core/recrutement/port_invitations_comptable.dart';
 import '../../../core/recrutement/port_invitations_enseignant.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../brouillon_inscription.dart';
+import '../code_comptable_retenu.dart';
 import '../inscription_page.dart';
 
 /// `/inscription/usage` : deux cartes exactement, aucune preselection, aucune
@@ -38,9 +40,15 @@ class UsageEtape extends ConsumerWidget {
 
     // Une carte deja choisie reste retenue au retour ; l'enseignant n'est pas
     // une carte : on ne le montre pas comme une preselection.
-    final UsageInscription? retenu = usage == UsageInscription.enseignant
+    final UsageInscription? retenu =
+        usage == UsageInscription.enseignant ||
+            usage == UsageInscription.comptable
         ? null
         : usage;
+    // Lot F2 : le lien du comptable n'existe que si le serveur verifie ses
+    // codes (capacite servie, jamais un role).
+    final bool comptableInvitable =
+        ref.watch(portVerificationInvitationComptableProvider) != null;
 
     return CoquilleEtape(
       route: _route,
@@ -86,6 +94,34 @@ class UsageEtape extends ConsumerWidget {
               },
             ),
           ),
+          if (comptableInvitable) ...<Widget>[
+            Text(
+              t.inscription.usage.comptableInvite,
+              key: const Key('inscription-comptable-invite'),
+              textAlign: TextAlign.center,
+              style: AppPalette.of(context).inkMuted.applyTo(
+                Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+            Center(
+              child: ActionPrincipale(
+                key: const Key('inscription-lien-comptable'),
+                libelle: t.inscription.usage.comptable,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+                onPress: () {
+                  controleur.choisirUsage(UsageInscription.comptable);
+                  // Meme regle que l'enseignant : sans code de comptable
+                  // retenu, le champ du code s'ouvre.
+                  if (ref.read(codeComptableRetenuProvider) == null) {
+                    context.go(Routes.inscriptionInvitationComptable);
+                  } else {
+                    avancerDepuis(context, _route);
+                  }
+                },
+              ),
+            ),
+          ],
         ],
       ),
       // Le groupe partage (ADR-013), sans carte « Autre » : deux cartes
