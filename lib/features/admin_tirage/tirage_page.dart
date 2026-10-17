@@ -405,6 +405,8 @@ class _ReglesEtat extends ConsumerState<_Regles> {
                 TexteSansCoupure(r.frequenceDetail, style: textes.bodySmall),
                 Ecart.vMd,
                 RangeeFiltres(
+                  // Choix ferme de formulaire : chaque valeur reste visible.
+                  replier: false,
                   key: ValueKey<String>('tirage-frequence-$_version'),
                   filtres: <Widget>[
                     for (final int n in frequencesProposees)
@@ -446,7 +448,9 @@ class _ReglesEtat extends ConsumerState<_Regles> {
                         saisieLibre: texte,
                       ),
                     ),
-                    decoration: InputDecoration(labelText: r.frequenceAutreChamp),
+                    decoration: InputDecoration(
+                      labelText: r.frequenceAutreChamp,
+                    ),
                   ),
                 ],
                 if (_nombreInvalide) ...<Widget>[
