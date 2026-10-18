@@ -2113,6 +2113,125 @@
     }
   },
   "admin": {
+    "importInscriptions": {
+      "onglet": "Importer",
+      "titre": "Importer les inscriptions",
+      "sousTitre": "Les familles et les enseignants déjà inscrits sont accueillis sans tout ressaisir.",
+      "intro": "Déposez les deux fichiers CSV du classeur des formulaires, tels quels. Rien n'est écrit avant votre confirmation.",
+      "eleves": {
+        "titre": "Fichier des élèves",
+        "aide": "Onglet « Elèves (Réponses) » du classeur\u00a0: collez son contenu ou choisissez le fichier.",
+        "champ": "Contenu du fichier des élèves"
+      },
+      "enseignants": {
+        "titre": "Fichier des enseignants",
+        "aide": "Onglet « Enseignants (Réponses) » du classeur\u00a0: collez son contenu ou choisissez le fichier.",
+        "champ": "Contenu du fichier des enseignants"
+      },
+      "choisir": "Choisir un fichier CSV",
+      "fichierCharge": "Fichier chargé\u00a0: {nom}",
+      "fichierIllisible": "Ce fichier n'a pas pu être lu. Enregistrez-le en CSV (UTF-8) ou collez son contenu dans le champ.",
+      "voirApercu": "Voir l'aperçu",
+      "manqueFichier": "Collez ou choisissez au moins un fichier pour continuer.",
+      "apercu": {
+        "titre": "Aperçu avant l'import",
+        "intro": "Rien n'est encore écrit. Vérifiez les lignes refusées et celles à regarder, puis confirmez.",
+        "lignesEleves": "Lignes du fichier des élèves",
+        "lignesEnseignants": "Lignes du fichier des enseignants",
+        "foyers": "Foyers à créer",
+        "personnes": "Personnes à importer",
+        "refusees": "Lignes refusées",
+        "alertes": "Lignes à regarder",
+        "refusAide": "Ces lignes ne seront pas importées. Corrigez le fichier et recommencez, ou continuez sans elles.",
+        "alertesAide": "Ces lignes seront importées. Regardez-les avant de confirmer.",
+        "vide": "Aucune ligne ne peut être importée. Corrigez les fichiers, puis recommencez.",
+        "modifier": "Modifier les fichiers"
+      },
+      "serveur": {
+        "titre": "Vérifié par le serveur",
+        "foyers": "Foyers comptés par le serveur",
+        "personnes": "Personnes comptées par le serveur",
+        "refusees": "Lignes refusées par le serveur",
+        "indisponible": "Le serveur n'a pas pu confirmer cet aperçu. Vérifiez la connexion, puis revenez en arrière et recommencez."
+      },
+      "ligne": "{fichier}, ligne {ligne}\u00a0: {motif}",
+      "fichier": {
+        "eleves": "Élèves",
+        "enseignants": "Enseignants"
+      },
+      "autresLignes": "Autres lignes non affichées\u00a0: {n}",
+      "motif": {
+        "ligneVide": "La ligne est vide.",
+        "colonnesDifferentes": "Le nombre de colonnes ne correspond pas à l'en-tête.",
+        "ligneTest": "C'est une ligne d'essai\u00a0: elle est ignorée.",
+        "personneSansNom": "Aucune personne n'est nommée (nom et prénom).",
+        "emailManquant": "L'adresse e-mail manque.",
+        "emailInvalide": "L'adresse e-mail est mal écrite.",
+        "dateInvalide": "La date de naissance doit s'écrire jour/mois/année, par exemple 25/03/2012.",
+        "enteteEmailAbsent": "L'en-tête n'a pas de colonne Email\u00a0: ce fichier ne peut pas être importé.",
+        "guillemetNonFerme": "Un guillemet n'est jamais fermé\u00a0: corrigez le fichier.",
+        "doublonAdresse": "Même adresse que la ligne {autre}\u00a0: les deux lignes forment un seul foyer.",
+        "doublonPersonne": "Même personne que la ligne {autre}\u00a0: elle ne sera importée qu'une fois.",
+        "dateFuture": "La date de naissance est dans le futur.",
+        "ageTropJeune": "Cette personne est plus jeune que l'âge minimum des classes.",
+        "adulteTropJeune": "Cette personne, nommée comme adulte, est mineure.",
+        "foyerSansAdulte": "Aucun adulte n'est nommé pour ce foyer de mineurs.",
+        "serveur": "Le serveur refuse cette ligne."
+      },
+      "mots": {
+        "titre": "Mots d'accueil",
+        "intro": "Chaque foyer reçoit un mot de bienvenue rempli avec les prénoms connus. Vous pouvez joindre votre propre mot, pour tous les foyers ou pour un seul.",
+        "lotChamp": "Mot commun à tous les foyers (facultatif)",
+        "lotAide": "S'il est rempli, il remplace le mot automatique de chaque foyer qui n'a pas son propre mot.",
+        "lotPatience": "Toutes les familles ont patienté",
+        "lotPatienceAide": "Elles reçoivent le mot de patience, rempli avec leurs prénoms."
+      },
+      "foyer": {
+        "adresse": "Adresse\u00a0: {adresse}",
+        "eleves": "Élèves\u00a0: {eleves}",
+        "patiente": "A patienté",
+        "retoucher": "Retoucher le mot de {prenom}",
+        "champAccueil": "Mot d'accueil de {prenom}",
+        "champPatience": "Mot de patience de {prenom}",
+        "motAide": "Laissez vide pour garder le mot automatique.",
+        "fermer": "Fermer",
+        "nonAffiches": "Foyers non affichés, aux réglages communs\u00a0: {n}"
+      },
+      "confirmer": "Confirmer l'import",
+      "confirmation": {
+        "question": "Importer ces inscriptions\u00a0?",
+        "consequence": "Les foyers et les personnes sont créés dans l'application. Rejouer l'import ne crée aucun doublon. Les lignes refusées ne sont pas importées."
+      },
+      "horsLigne": "Vous êtes hors ligne. Reconnectez-vous pour confirmer l'import.",
+      "resultat": {
+        "titre": "Import terminé",
+        "personnesCreees": "Personnes créées",
+        "personnesPresentes": "Personnes déjà présentes",
+        "foyersCrees": "Foyers créés",
+        "foyersVus": "Foyers traités",
+        "refusees": "Lignes refusées",
+        "invitations": "Invitations à envoyer",
+        "invitationsAide": "Chaque nouveau foyer attend votre invitation. À sa première connexion, la famille prouve son adresse e-mail, puis lit son mot d'accueil.",
+        "rienDeNouveau": "Tout était déjà importé\u00a0: rien n'a été ajouté.",
+        "refusAide": "Ces lignes n'ont pas été importées. Corrigez le fichier, puis rejouez l'import\u00a0: les personnes déjà présentes ne sont pas recréées.",
+        "recommencer": "Importer d'autres fichiers"
+      },
+      "echec": {
+        "horsLigne": "L'import n'a pas pu être confirmé\u00a0: la connexion a coupé. Vérifiez la connexion, puis relancez la confirmation\u00a0: rien ne sera créé en double.",
+        "refuse": "Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.",
+        "invalide": "Le serveur ne peut pas lire ces fichiers. Vérifiez l'en-tête et les guillemets, puis réessayez.",
+        "serveur": "L'import n'a pas pu être confirmé. Réessayez\u00a0: rien ne sera créé en double.",
+        "apercu": "L'essai à blanc du serveur n'a pas abouti. Réessayez dans un instant."
+      },
+      "acces": {
+        "doubleTitre": "Double vérification requise",
+        "doublePhrase": "Connectez-vous avec votre second facteur, puis revenez ici pour importer les inscriptions."
+      },
+      "indisponibleTitre": "Import des inscriptions indisponible",
+      "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur.",
+      "erreur": "Les droits d'import n'ont pas pu être lus. Réessayez.",
+      "sansDonnees": "l'import des inscriptions"
+    },
     "tableau": {
       "titre": "Centre de commande",
       "dossiers": "Dossiers à valider",

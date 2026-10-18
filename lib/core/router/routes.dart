@@ -715,6 +715,10 @@ abstract final class Routes {
   /// BACK-FRONT-REPRISE-1 : la file des reprises de foyer, sous Personnes.
   static const String adminPersonnesReprises = '/admin/personnes/reprises';
 
+  /// IMM-ACCUEIL-FRONT : l'import des inscriptions actuelles (CSV des
+  /// formulaires), sous Personnes.
+  static const String adminPersonnesImport = '/admin/personnes/import';
+
   /// Domaine Personnes.
   static const String adminPersonnes = '/admin/personnes';
 

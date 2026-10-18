@@ -19,6 +19,7 @@ import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
 import '../../features/admin_finance/finance_page.dart';
 import '../../features/admin_groupes/groupes_page.dart';
+import '../../features/admin_import_inscriptions/import_inscriptions_page.dart';
 import '../../features/admin_invitations/invitations_page.dart';
 import '../../features/admin_journal/incidents_page.dart';
 import '../../features/admin_journal/journal_page.dart';
@@ -1496,6 +1497,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
           child: ReprisesPage(),
+        ),
+      ),
+      // IMM-ACCUEIL-FRONT : l'import des inscriptions actuelles.
+      GoRoute(
+        path: Routes.adminPersonnesImport,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: ImportInscriptionsPage(),
         ),
       ),
       GoRoute(

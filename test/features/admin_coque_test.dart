@@ -16,6 +16,8 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
+import '../support/selecteur_section.dart';
+
 Future<void> _stabiliser(WidgetTester tester) async {
   for (int i = 0; i < 8; i++) {
     await tester.pump(const Duration(milliseconds: 100));
@@ -246,7 +248,9 @@ void main() {
     );
     expect(find.text(t.dossiers.sousTitre), findsOneWidget);
 
-    await tester.tap(find.text(t.admin.comptes.titre).first);
+    // Cinq fonctions sous Personnes depuis IMM-ACCUEIL-FRONT : le selecteur
+    // devient un menu quand elles ne tiennent plus en ligne.
+    await choisirSection(tester, t.admin.comptes.titre);
     await _stabiliser(tester);
     expect(_chemin(routeur), Routes.adminPersonnesComptes);
     final List<AdminDomaine> domaines = domainesAdmin(voitDirection: false);

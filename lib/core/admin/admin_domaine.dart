@@ -275,6 +275,11 @@ List<({String libelle, String chemin})> ongletsPersonnes() =>
         libelle: t.reprisesAdmin.onglet,
         chemin: Routes.adminPersonnesReprises,
       ),
+      // IMM-ACCUEIL-FRONT : l'import des inscriptions actuelles.
+      (
+        libelle: t.admin.importInscriptions.onglet,
+        chemin: Routes.adminPersonnesImport,
+      ),
     ];
 
 /// Les deux fonctions pairs du domaine Securite et audit : le Journal et

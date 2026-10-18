@@ -1492,6 +1492,7 @@ class Traductions$admin$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$admin$importInscriptions$fr importInscriptions = Traductions$admin$importInscriptions$fr.internal(_root);
 	late final Traductions$admin$tableau$fr tableau = Traductions$admin$tableau$fr.internal(_root);
 	late final Traductions$admin$traitement$fr traitement = Traductions$admin$traitement$fr.internal(_root);
 	late final Traductions$admin$demandes$fr demandes = Traductions$admin$demandes$fr.internal(_root);
@@ -6690,6 +6691,84 @@ class Traductions$dossiers$accesKyc$fr {
 	String get reessayer => 'Réessayer';
 
 	late final Traductions$dossiers$accesKyc$refus$fr refus = Traductions$dossiers$accesKyc$refus$fr.internal(_root);
+}
+
+// Path: admin.importInscriptions
+class Traductions$admin$importInscriptions$fr {
+	Traductions$admin$importInscriptions$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Importer'
+	String get onglet => 'Importer';
+
+	/// fr: 'Importer les inscriptions'
+	String get titre => 'Importer les inscriptions';
+
+	/// fr: 'Les familles et les enseignants déjà inscrits sont accueillis sans tout ressaisir.'
+	String get sousTitre => 'Les familles et les enseignants déjà inscrits sont accueillis sans tout ressaisir.';
+
+	/// fr: 'Déposez les deux fichiers CSV du classeur des formulaires, tels quels. Rien n'est écrit avant votre confirmation.'
+	String get intro => 'Déposez les deux fichiers CSV du classeur des formulaires, tels quels. Rien n\'est écrit avant votre confirmation.';
+
+	late final Traductions$admin$importInscriptions$eleves$fr eleves = Traductions$admin$importInscriptions$eleves$fr.internal(_root);
+	late final Traductions$admin$importInscriptions$enseignants$fr enseignants = Traductions$admin$importInscriptions$enseignants$fr.internal(_root);
+
+	/// fr: 'Choisir un fichier CSV'
+	String get choisir => 'Choisir un fichier CSV';
+
+	/// fr: 'Fichier chargé : {nom}'
+	String fichierCharge({required Object nom}) => 'Fichier chargé : ${nom}';
+
+	/// fr: 'Ce fichier n'a pas pu être lu. Enregistrez-le en CSV (UTF-8) ou collez son contenu dans le champ.'
+	String get fichierIllisible => 'Ce fichier n\'a pas pu être lu. Enregistrez-le en CSV (UTF-8) ou collez son contenu dans le champ.';
+
+	/// fr: 'Voir l'aperçu'
+	String get voirApercu => 'Voir l\'aperçu';
+
+	/// fr: 'Collez ou choisissez au moins un fichier pour continuer.'
+	String get manqueFichier => 'Collez ou choisissez au moins un fichier pour continuer.';
+
+	late final Traductions$admin$importInscriptions$apercu$fr apercu = Traductions$admin$importInscriptions$apercu$fr.internal(_root);
+	late final Traductions$admin$importInscriptions$serveur$fr serveur = Traductions$admin$importInscriptions$serveur$fr.internal(_root);
+
+	/// fr: '{fichier}, ligne {ligne} : {motif}'
+	String ligne({required Object fichier, required Object ligne, required Object motif}) => '${fichier}, ligne ${ligne} : ${motif}';
+
+	late final Traductions$admin$importInscriptions$fichier$fr fichier = Traductions$admin$importInscriptions$fichier$fr.internal(_root);
+
+	/// fr: 'Autres lignes non affichées : {n}'
+	String autresLignes({required Object n}) => 'Autres lignes non affichées : ${n}';
+
+	late final Traductions$admin$importInscriptions$motif$fr motif = Traductions$admin$importInscriptions$motif$fr.internal(_root);
+	late final Traductions$admin$importInscriptions$mots$fr mots = Traductions$admin$importInscriptions$mots$fr.internal(_root);
+	late final Traductions$admin$importInscriptions$foyer$fr foyer = Traductions$admin$importInscriptions$foyer$fr.internal(_root);
+
+	/// fr: 'Confirmer l'import'
+	String get confirmer => 'Confirmer l\'import';
+
+	late final Traductions$admin$importInscriptions$confirmation$fr confirmation = Traductions$admin$importInscriptions$confirmation$fr.internal(_root);
+
+	/// fr: 'Vous êtes hors ligne. Reconnectez-vous pour confirmer l'import.'
+	String get horsLigne => 'Vous êtes hors ligne. Reconnectez-vous pour confirmer l\'import.';
+
+	late final Traductions$admin$importInscriptions$resultat$fr resultat = Traductions$admin$importInscriptions$resultat$fr.internal(_root);
+	late final Traductions$admin$importInscriptions$echec$fr echec = Traductions$admin$importInscriptions$echec$fr.internal(_root);
+	late final Traductions$admin$importInscriptions$acces$fr acces = Traductions$admin$importInscriptions$acces$fr.internal(_root);
+
+	/// fr: 'Import des inscriptions indisponible'
+	String get indisponibleTitre => 'Import des inscriptions indisponible';
+
+	/// fr: 'Cette fonction sera disponible au branchement serveur.'
+	String get indisponiblePhrase => 'Cette fonction sera disponible au branchement serveur.';
+
+	/// fr: 'Les droits d'import n'ont pas pu être lus. Réessayez.'
+	String get erreur => 'Les droits d\'import n\'ont pas pu être lus. Réessayez.';
+
+	/// fr: 'l'import des inscriptions'
+	String get sansDonnees => 'l\'import des inscriptions';
 }
 
 // Path: admin.tableau
@@ -20099,6 +20178,342 @@ class Traductions$dossiers$accesKyc$refus$fr {
 
 	/// fr: 'Votre profil ne peut pas consulter les pièces d'identité.'
 	String get profilNonAutorise => 'Votre profil ne peut pas consulter les pièces d\'identité.';
+}
+
+// Path: admin.importInscriptions.eleves
+class Traductions$admin$importInscriptions$eleves$fr {
+	Traductions$admin$importInscriptions$eleves$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Fichier des élèves'
+	String get titre => 'Fichier des élèves';
+
+	/// fr: 'Onglet « Elèves (Réponses) » du classeur : collez son contenu ou choisissez le fichier.'
+	String get aide => 'Onglet « Elèves (Réponses) » du classeur : collez son contenu ou choisissez le fichier.';
+
+	/// fr: 'Contenu du fichier des élèves'
+	String get champ => 'Contenu du fichier des élèves';
+}
+
+// Path: admin.importInscriptions.enseignants
+class Traductions$admin$importInscriptions$enseignants$fr {
+	Traductions$admin$importInscriptions$enseignants$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Fichier des enseignants'
+	String get titre => 'Fichier des enseignants';
+
+	/// fr: 'Onglet « Enseignants (Réponses) » du classeur : collez son contenu ou choisissez le fichier.'
+	String get aide => 'Onglet « Enseignants (Réponses) » du classeur : collez son contenu ou choisissez le fichier.';
+
+	/// fr: 'Contenu du fichier des enseignants'
+	String get champ => 'Contenu du fichier des enseignants';
+}
+
+// Path: admin.importInscriptions.apercu
+class Traductions$admin$importInscriptions$apercu$fr {
+	Traductions$admin$importInscriptions$apercu$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aperçu avant l'import'
+	String get titre => 'Aperçu avant l\'import';
+
+	/// fr: 'Rien n'est encore écrit. Vérifiez les lignes refusées et celles à regarder, puis confirmez.'
+	String get intro => 'Rien n\'est encore écrit. Vérifiez les lignes refusées et celles à regarder, puis confirmez.';
+
+	/// fr: 'Lignes du fichier des élèves'
+	String get lignesEleves => 'Lignes du fichier des élèves';
+
+	/// fr: 'Lignes du fichier des enseignants'
+	String get lignesEnseignants => 'Lignes du fichier des enseignants';
+
+	/// fr: 'Foyers à créer'
+	String get foyers => 'Foyers à créer';
+
+	/// fr: 'Personnes à importer'
+	String get personnes => 'Personnes à importer';
+
+	/// fr: 'Lignes refusées'
+	String get refusees => 'Lignes refusées';
+
+	/// fr: 'Lignes à regarder'
+	String get alertes => 'Lignes à regarder';
+
+	/// fr: 'Ces lignes ne seront pas importées. Corrigez le fichier et recommencez, ou continuez sans elles.'
+	String get refusAide => 'Ces lignes ne seront pas importées. Corrigez le fichier et recommencez, ou continuez sans elles.';
+
+	/// fr: 'Ces lignes seront importées. Regardez-les avant de confirmer.'
+	String get alertesAide => 'Ces lignes seront importées. Regardez-les avant de confirmer.';
+
+	/// fr: 'Aucune ligne ne peut être importée. Corrigez les fichiers, puis recommencez.'
+	String get vide => 'Aucune ligne ne peut être importée. Corrigez les fichiers, puis recommencez.';
+
+	/// fr: 'Modifier les fichiers'
+	String get modifier => 'Modifier les fichiers';
+}
+
+// Path: admin.importInscriptions.serveur
+class Traductions$admin$importInscriptions$serveur$fr {
+	Traductions$admin$importInscriptions$serveur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vérifié par le serveur'
+	String get titre => 'Vérifié par le serveur';
+
+	/// fr: 'Foyers comptés par le serveur'
+	String get foyers => 'Foyers comptés par le serveur';
+
+	/// fr: 'Personnes comptées par le serveur'
+	String get personnes => 'Personnes comptées par le serveur';
+
+	/// fr: 'Lignes refusées par le serveur'
+	String get refusees => 'Lignes refusées par le serveur';
+
+	/// fr: 'Le serveur n'a pas pu confirmer cet aperçu. Vérifiez la connexion, puis revenez en arrière et recommencez.'
+	String get indisponible => 'Le serveur n\'a pas pu confirmer cet aperçu. Vérifiez la connexion, puis revenez en arrière et recommencez.';
+}
+
+// Path: admin.importInscriptions.fichier
+class Traductions$admin$importInscriptions$fichier$fr {
+	Traductions$admin$importInscriptions$fichier$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Élèves'
+	String get eleves => 'Élèves';
+
+	/// fr: 'Enseignants'
+	String get enseignants => 'Enseignants';
+}
+
+// Path: admin.importInscriptions.motif
+class Traductions$admin$importInscriptions$motif$fr {
+	Traductions$admin$importInscriptions$motif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La ligne est vide.'
+	String get ligneVide => 'La ligne est vide.';
+
+	/// fr: 'Le nombre de colonnes ne correspond pas à l'en-tête.'
+	String get colonnesDifferentes => 'Le nombre de colonnes ne correspond pas à l\'en-tête.';
+
+	/// fr: 'C'est une ligne d'essai : elle est ignorée.'
+	String get ligneTest => 'C\'est une ligne d\'essai : elle est ignorée.';
+
+	/// fr: 'Aucune personne n'est nommée (nom et prénom).'
+	String get personneSansNom => 'Aucune personne n\'est nommée (nom et prénom).';
+
+	/// fr: 'L'adresse e-mail manque.'
+	String get emailManquant => 'L\'adresse e-mail manque.';
+
+	/// fr: 'L'adresse e-mail est mal écrite.'
+	String get emailInvalide => 'L\'adresse e-mail est mal écrite.';
+
+	/// fr: 'La date de naissance doit s'écrire jour/mois/année, par exemple 25/03/2012.'
+	String get dateInvalide => 'La date de naissance doit s\'écrire jour/mois/année, par exemple 25/03/2012.';
+
+	/// fr: 'L'en-tête n'a pas de colonne Email : ce fichier ne peut pas être importé.'
+	String get enteteEmailAbsent => 'L\'en-tête n\'a pas de colonne Email : ce fichier ne peut pas être importé.';
+
+	/// fr: 'Un guillemet n'est jamais fermé : corrigez le fichier.'
+	String get guillemetNonFerme => 'Un guillemet n\'est jamais fermé : corrigez le fichier.';
+
+	/// fr: 'Même adresse que la ligne {autre} : les deux lignes forment un seul foyer.'
+	String doublonAdresse({required Object autre}) => 'Même adresse que la ligne ${autre} : les deux lignes forment un seul foyer.';
+
+	/// fr: 'Même personne que la ligne {autre} : elle ne sera importée qu'une fois.'
+	String doublonPersonne({required Object autre}) => 'Même personne que la ligne ${autre} : elle ne sera importée qu\'une fois.';
+
+	/// fr: 'La date de naissance est dans le futur.'
+	String get dateFuture => 'La date de naissance est dans le futur.';
+
+	/// fr: 'Cette personne est plus jeune que l'âge minimum des classes.'
+	String get ageTropJeune => 'Cette personne est plus jeune que l\'âge minimum des classes.';
+
+	/// fr: 'Cette personne, nommée comme adulte, est mineure.'
+	String get adulteTropJeune => 'Cette personne, nommée comme adulte, est mineure.';
+
+	/// fr: 'Aucun adulte n'est nommé pour ce foyer de mineurs.'
+	String get foyerSansAdulte => 'Aucun adulte n\'est nommé pour ce foyer de mineurs.';
+
+	/// fr: 'Le serveur refuse cette ligne.'
+	String get serveur => 'Le serveur refuse cette ligne.';
+}
+
+// Path: admin.importInscriptions.mots
+class Traductions$admin$importInscriptions$mots$fr {
+	Traductions$admin$importInscriptions$mots$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mots d'accueil'
+	String get titre => 'Mots d\'accueil';
+
+	/// fr: 'Chaque foyer reçoit un mot de bienvenue rempli avec les prénoms connus. Vous pouvez joindre votre propre mot, pour tous les foyers ou pour un seul.'
+	String get intro => 'Chaque foyer reçoit un mot de bienvenue rempli avec les prénoms connus. Vous pouvez joindre votre propre mot, pour tous les foyers ou pour un seul.';
+
+	/// fr: 'Mot commun à tous les foyers (facultatif)'
+	String get lotChamp => 'Mot commun à tous les foyers (facultatif)';
+
+	/// fr: 'S'il est rempli, il remplace le mot automatique de chaque foyer qui n'a pas son propre mot.'
+	String get lotAide => 'S\'il est rempli, il remplace le mot automatique de chaque foyer qui n\'a pas son propre mot.';
+
+	/// fr: 'Toutes les familles ont patienté'
+	String get lotPatience => 'Toutes les familles ont patienté';
+
+	/// fr: 'Elles reçoivent le mot de patience, rempli avec leurs prénoms.'
+	String get lotPatienceAide => 'Elles reçoivent le mot de patience, rempli avec leurs prénoms.';
+}
+
+// Path: admin.importInscriptions.foyer
+class Traductions$admin$importInscriptions$foyer$fr {
+	Traductions$admin$importInscriptions$foyer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Adresse : {adresse}'
+	String adresse({required Object adresse}) => 'Adresse : ${adresse}';
+
+	/// fr: 'Élèves : {eleves}'
+	String eleves({required Object eleves}) => 'Élèves : ${eleves}';
+
+	/// fr: 'A patienté'
+	String get patiente => 'A patienté';
+
+	/// fr: 'Retoucher le mot de {prenom}'
+	String retoucher({required Object prenom}) => 'Retoucher le mot de ${prenom}';
+
+	/// fr: 'Mot d'accueil de {prenom}'
+	String champAccueil({required Object prenom}) => 'Mot d\'accueil de ${prenom}';
+
+	/// fr: 'Mot de patience de {prenom}'
+	String champPatience({required Object prenom}) => 'Mot de patience de ${prenom}';
+
+	/// fr: 'Laissez vide pour garder le mot automatique.'
+	String get motAide => 'Laissez vide pour garder le mot automatique.';
+
+	/// fr: 'Fermer'
+	String get fermer => 'Fermer';
+
+	/// fr: 'Foyers non affichés, aux réglages communs : {n}'
+	String nonAffiches({required Object n}) => 'Foyers non affichés, aux réglages communs : ${n}';
+}
+
+// Path: admin.importInscriptions.confirmation
+class Traductions$admin$importInscriptions$confirmation$fr {
+	Traductions$admin$importInscriptions$confirmation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Importer ces inscriptions ?'
+	String get question => 'Importer ces inscriptions ?';
+
+	/// fr: 'Les foyers et les personnes sont créés dans l'application. Rejouer l'import ne crée aucun doublon. Les lignes refusées ne sont pas importées.'
+	String get consequence => 'Les foyers et les personnes sont créés dans l\'application. Rejouer l\'import ne crée aucun doublon. Les lignes refusées ne sont pas importées.';
+}
+
+// Path: admin.importInscriptions.resultat
+class Traductions$admin$importInscriptions$resultat$fr {
+	Traductions$admin$importInscriptions$resultat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Import terminé'
+	String get titre => 'Import terminé';
+
+	/// fr: 'Personnes créées'
+	String get personnesCreees => 'Personnes créées';
+
+	/// fr: 'Personnes déjà présentes'
+	String get personnesPresentes => 'Personnes déjà présentes';
+
+	/// fr: 'Foyers créés'
+	String get foyersCrees => 'Foyers créés';
+
+	/// fr: 'Foyers traités'
+	String get foyersVus => 'Foyers traités';
+
+	/// fr: 'Lignes refusées'
+	String get refusees => 'Lignes refusées';
+
+	/// fr: 'Invitations à envoyer'
+	String get invitations => 'Invitations à envoyer';
+
+	/// fr: 'Chaque nouveau foyer attend votre invitation. À sa première connexion, la famille prouve son adresse e-mail, puis lit son mot d'accueil.'
+	String get invitationsAide => 'Chaque nouveau foyer attend votre invitation. À sa première connexion, la famille prouve son adresse e-mail, puis lit son mot d\'accueil.';
+
+	/// fr: 'Tout était déjà importé : rien n'a été ajouté.'
+	String get rienDeNouveau => 'Tout était déjà importé : rien n\'a été ajouté.';
+
+	/// fr: 'Ces lignes n'ont pas été importées. Corrigez le fichier, puis rejouez l'import : les personnes déjà présentes ne sont pas recréées.'
+	String get refusAide => 'Ces lignes n\'ont pas été importées. Corrigez le fichier, puis rejouez l\'import : les personnes déjà présentes ne sont pas recréées.';
+
+	/// fr: 'Importer d'autres fichiers'
+	String get recommencer => 'Importer d\'autres fichiers';
+}
+
+// Path: admin.importInscriptions.echec
+class Traductions$admin$importInscriptions$echec$fr {
+	Traductions$admin$importInscriptions$echec$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'L'import n'a pas pu être confirmé : la connexion a coupé. Vérifiez la connexion, puis relancez la confirmation : rien ne sera créé en double.'
+	String get horsLigne => 'L\'import n\'a pas pu être confirmé : la connexion a coupé. Vérifiez la connexion, puis relancez la confirmation : rien ne sera créé en double.';
+
+	/// fr: 'Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.'
+	String get refuse => 'Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.';
+
+	/// fr: 'Le serveur ne peut pas lire ces fichiers. Vérifiez l'en-tête et les guillemets, puis réessayez.'
+	String get invalide => 'Le serveur ne peut pas lire ces fichiers. Vérifiez l\'en-tête et les guillemets, puis réessayez.';
+
+	/// fr: 'L'import n'a pas pu être confirmé. Réessayez : rien ne sera créé en double.'
+	String get serveur => 'L\'import n\'a pas pu être confirmé. Réessayez : rien ne sera créé en double.';
+
+	/// fr: 'L'essai à blanc du serveur n'a pas abouti. Réessayez dans un instant.'
+	String get apercu => 'L\'essai à blanc du serveur n\'a pas abouti. Réessayez dans un instant.';
+}
+
+// Path: admin.importInscriptions.acces
+class Traductions$admin$importInscriptions$acces$fr {
+	Traductions$admin$importInscriptions$acces$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Double vérification requise'
+	String get doubleTitre => 'Double vérification requise';
+
+	/// fr: 'Connectez-vous avec votre second facteur, puis revenez ici pour importer les inscriptions.'
+	String get doublePhrase => 'Connectez-vous avec votre second facteur, puis revenez ici pour importer les inscriptions.';
 }
 
 // Path: admin.tableau.activite
@@ -35059,6 +35474,99 @@ extension on Traductions {
 			'dossiers.accesKyc.refus.genreDifferent' => 'Cette pièce est réservée à un administrateur du même genre que le candidat.',
 			'dossiers.accesKyc.refus.adminSansGenre' => 'Votre genre n\'est pas renseigné : aucune pièce ne peut s\'ouvrir. Demandez à la direction de le renseigner.',
 			'dossiers.accesKyc.refus.profilNonAutorise' => 'Votre profil ne peut pas consulter les pièces d\'identité.',
+			'admin.importInscriptions.onglet' => 'Importer',
+			'admin.importInscriptions.titre' => 'Importer les inscriptions',
+			'admin.importInscriptions.sousTitre' => 'Les familles et les enseignants déjà inscrits sont accueillis sans tout ressaisir.',
+			'admin.importInscriptions.intro' => 'Déposez les deux fichiers CSV du classeur des formulaires, tels quels. Rien n\'est écrit avant votre confirmation.',
+			'admin.importInscriptions.eleves.titre' => 'Fichier des élèves',
+			'admin.importInscriptions.eleves.aide' => 'Onglet « Elèves (Réponses) » du classeur : collez son contenu ou choisissez le fichier.',
+			'admin.importInscriptions.eleves.champ' => 'Contenu du fichier des élèves',
+			'admin.importInscriptions.enseignants.titre' => 'Fichier des enseignants',
+			'admin.importInscriptions.enseignants.aide' => 'Onglet « Enseignants (Réponses) » du classeur : collez son contenu ou choisissez le fichier.',
+			'admin.importInscriptions.enseignants.champ' => 'Contenu du fichier des enseignants',
+			'admin.importInscriptions.choisir' => 'Choisir un fichier CSV',
+			'admin.importInscriptions.fichierCharge' => ({required Object nom}) => 'Fichier chargé : ${nom}',
+			'admin.importInscriptions.fichierIllisible' => 'Ce fichier n\'a pas pu être lu. Enregistrez-le en CSV (UTF-8) ou collez son contenu dans le champ.',
+			'admin.importInscriptions.voirApercu' => 'Voir l\'aperçu',
+			'admin.importInscriptions.manqueFichier' => 'Collez ou choisissez au moins un fichier pour continuer.',
+			'admin.importInscriptions.apercu.titre' => 'Aperçu avant l\'import',
+			'admin.importInscriptions.apercu.intro' => 'Rien n\'est encore écrit. Vérifiez les lignes refusées et celles à regarder, puis confirmez.',
+			'admin.importInscriptions.apercu.lignesEleves' => 'Lignes du fichier des élèves',
+			'admin.importInscriptions.apercu.lignesEnseignants' => 'Lignes du fichier des enseignants',
+			'admin.importInscriptions.apercu.foyers' => 'Foyers à créer',
+			'admin.importInscriptions.apercu.personnes' => 'Personnes à importer',
+			'admin.importInscriptions.apercu.refusees' => 'Lignes refusées',
+			'admin.importInscriptions.apercu.alertes' => 'Lignes à regarder',
+			'admin.importInscriptions.apercu.refusAide' => 'Ces lignes ne seront pas importées. Corrigez le fichier et recommencez, ou continuez sans elles.',
+			'admin.importInscriptions.apercu.alertesAide' => 'Ces lignes seront importées. Regardez-les avant de confirmer.',
+			'admin.importInscriptions.apercu.vide' => 'Aucune ligne ne peut être importée. Corrigez les fichiers, puis recommencez.',
+			'admin.importInscriptions.apercu.modifier' => 'Modifier les fichiers',
+			'admin.importInscriptions.serveur.titre' => 'Vérifié par le serveur',
+			'admin.importInscriptions.serveur.foyers' => 'Foyers comptés par le serveur',
+			'admin.importInscriptions.serveur.personnes' => 'Personnes comptées par le serveur',
+			'admin.importInscriptions.serveur.refusees' => 'Lignes refusées par le serveur',
+			'admin.importInscriptions.serveur.indisponible' => 'Le serveur n\'a pas pu confirmer cet aperçu. Vérifiez la connexion, puis revenez en arrière et recommencez.',
+			'admin.importInscriptions.ligne' => ({required Object fichier, required Object ligne, required Object motif}) => '${fichier}, ligne ${ligne} : ${motif}',
+			'admin.importInscriptions.fichier.eleves' => 'Élèves',
+			'admin.importInscriptions.fichier.enseignants' => 'Enseignants',
+			'admin.importInscriptions.autresLignes' => ({required Object n}) => 'Autres lignes non affichées : ${n}',
+			'admin.importInscriptions.motif.ligneVide' => 'La ligne est vide.',
+			'admin.importInscriptions.motif.colonnesDifferentes' => 'Le nombre de colonnes ne correspond pas à l\'en-tête.',
+			'admin.importInscriptions.motif.ligneTest' => 'C\'est une ligne d\'essai : elle est ignorée.',
+			'admin.importInscriptions.motif.personneSansNom' => 'Aucune personne n\'est nommée (nom et prénom).',
+			'admin.importInscriptions.motif.emailManquant' => 'L\'adresse e-mail manque.',
+			'admin.importInscriptions.motif.emailInvalide' => 'L\'adresse e-mail est mal écrite.',
+			'admin.importInscriptions.motif.dateInvalide' => 'La date de naissance doit s\'écrire jour/mois/année, par exemple 25/03/2012.',
+			'admin.importInscriptions.motif.enteteEmailAbsent' => 'L\'en-tête n\'a pas de colonne Email : ce fichier ne peut pas être importé.',
+			'admin.importInscriptions.motif.guillemetNonFerme' => 'Un guillemet n\'est jamais fermé : corrigez le fichier.',
+			'admin.importInscriptions.motif.doublonAdresse' => ({required Object autre}) => 'Même adresse que la ligne ${autre} : les deux lignes forment un seul foyer.',
+			'admin.importInscriptions.motif.doublonPersonne' => ({required Object autre}) => 'Même personne que la ligne ${autre} : elle ne sera importée qu\'une fois.',
+			'admin.importInscriptions.motif.dateFuture' => 'La date de naissance est dans le futur.',
+			'admin.importInscriptions.motif.ageTropJeune' => 'Cette personne est plus jeune que l\'âge minimum des classes.',
+			'admin.importInscriptions.motif.adulteTropJeune' => 'Cette personne, nommée comme adulte, est mineure.',
+			'admin.importInscriptions.motif.foyerSansAdulte' => 'Aucun adulte n\'est nommé pour ce foyer de mineurs.',
+			'admin.importInscriptions.motif.serveur' => 'Le serveur refuse cette ligne.',
+			'admin.importInscriptions.mots.titre' => 'Mots d\'accueil',
+			'admin.importInscriptions.mots.intro' => 'Chaque foyer reçoit un mot de bienvenue rempli avec les prénoms connus. Vous pouvez joindre votre propre mot, pour tous les foyers ou pour un seul.',
+			'admin.importInscriptions.mots.lotChamp' => 'Mot commun à tous les foyers (facultatif)',
+			'admin.importInscriptions.mots.lotAide' => 'S\'il est rempli, il remplace le mot automatique de chaque foyer qui n\'a pas son propre mot.',
+			'admin.importInscriptions.mots.lotPatience' => 'Toutes les familles ont patienté',
+			'admin.importInscriptions.mots.lotPatienceAide' => 'Elles reçoivent le mot de patience, rempli avec leurs prénoms.',
+			'admin.importInscriptions.foyer.adresse' => ({required Object adresse}) => 'Adresse : ${adresse}',
+			'admin.importInscriptions.foyer.eleves' => ({required Object eleves}) => 'Élèves : ${eleves}',
+			'admin.importInscriptions.foyer.patiente' => 'A patienté',
+			'admin.importInscriptions.foyer.retoucher' => ({required Object prenom}) => 'Retoucher le mot de ${prenom}',
+			'admin.importInscriptions.foyer.champAccueil' => ({required Object prenom}) => 'Mot d\'accueil de ${prenom}',
+			'admin.importInscriptions.foyer.champPatience' => ({required Object prenom}) => 'Mot de patience de ${prenom}',
+			'admin.importInscriptions.foyer.motAide' => 'Laissez vide pour garder le mot automatique.',
+			'admin.importInscriptions.foyer.fermer' => 'Fermer',
+			'admin.importInscriptions.foyer.nonAffiches' => ({required Object n}) => 'Foyers non affichés, aux réglages communs : ${n}',
+			'admin.importInscriptions.confirmer' => 'Confirmer l\'import',
+			'admin.importInscriptions.confirmation.question' => 'Importer ces inscriptions ?',
+			'admin.importInscriptions.confirmation.consequence' => 'Les foyers et les personnes sont créés dans l\'application. Rejouer l\'import ne crée aucun doublon. Les lignes refusées ne sont pas importées.',
+			'admin.importInscriptions.horsLigne' => 'Vous êtes hors ligne. Reconnectez-vous pour confirmer l\'import.',
+			'admin.importInscriptions.resultat.titre' => 'Import terminé',
+			'admin.importInscriptions.resultat.personnesCreees' => 'Personnes créées',
+			'admin.importInscriptions.resultat.personnesPresentes' => 'Personnes déjà présentes',
+			'admin.importInscriptions.resultat.foyersCrees' => 'Foyers créés',
+			'admin.importInscriptions.resultat.foyersVus' => 'Foyers traités',
+			'admin.importInscriptions.resultat.refusees' => 'Lignes refusées',
+			'admin.importInscriptions.resultat.invitations' => 'Invitations à envoyer',
+			'admin.importInscriptions.resultat.invitationsAide' => 'Chaque nouveau foyer attend votre invitation. À sa première connexion, la famille prouve son adresse e-mail, puis lit son mot d\'accueil.',
+			'admin.importInscriptions.resultat.rienDeNouveau' => 'Tout était déjà importé : rien n\'a été ajouté.',
+			'admin.importInscriptions.resultat.refusAide' => 'Ces lignes n\'ont pas été importées. Corrigez le fichier, puis rejouez l\'import : les personnes déjà présentes ne sont pas recréées.',
+			'admin.importInscriptions.resultat.recommencer' => 'Importer d\'autres fichiers',
+			'admin.importInscriptions.echec.horsLigne' => 'L\'import n\'a pas pu être confirmé : la connexion a coupé. Vérifiez la connexion, puis relancez la confirmation : rien ne sera créé en double.',
+			'admin.importInscriptions.echec.refuse' => 'Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.',
+			'admin.importInscriptions.echec.invalide' => 'Le serveur ne peut pas lire ces fichiers. Vérifiez l\'en-tête et les guillemets, puis réessayez.',
+			'admin.importInscriptions.echec.serveur' => 'L\'import n\'a pas pu être confirmé. Réessayez : rien ne sera créé en double.',
+			'admin.importInscriptions.echec.apercu' => 'L\'essai à blanc du serveur n\'a pas abouti. Réessayez dans un instant.',
+			'admin.importInscriptions.acces.doubleTitre' => 'Double vérification requise',
+			'admin.importInscriptions.acces.doublePhrase' => 'Connectez-vous avec votre second facteur, puis revenez ici pour importer les inscriptions.',
+			'admin.importInscriptions.indisponibleTitre' => 'Import des inscriptions indisponible',
+			'admin.importInscriptions.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
+			'admin.importInscriptions.erreur' => 'Les droits d\'import n\'ont pas pu être lus. Réessayez.',
+			'admin.importInscriptions.sansDonnees' => 'l\'import des inscriptions',
 			'admin.tableau.titre' => 'Centre de commande',
 			'admin.tableau.dossiers' => 'Dossiers à valider',
 			'admin.tableau.dossiersDetail' => 'Ouvrir la file, le plus ancien en premier.',
@@ -35327,6 +35835,8 @@ extension on Traductions {
 			'admin.groupes.partage.etatInactif' => 'Désactivé pour la classe',
 			'admin.groupes.partage.confirmerActiver' => 'Activer le partage automatique pour cette classe ?',
 			'admin.groupes.partage.consequenceActiver' => 'Les comptes rendus déjà partagés redeviennent lisibles pour les familles. Ceux retenus pendant la désactivation ne sont pas publiés d\'un coup.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.partage.confirmerDesactiver' => 'Désactiver le partage automatique pour cette classe ?',
 			'admin.groupes.partage.consequenceDesactiver' => 'Les familles ne voient plus, tout de suite, les comptes rendus partagés automatiquement. Les cahiers, les séances validées et la paie ne changent pas.',
 			'admin.groupes.partage.actionActiver' => 'Activer le partage',
@@ -35420,8 +35930,6 @@ extension on Traductions {
 			'admin.groupes.formulaire.classesEnCours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} classe en cours', other: '${n} classes en cours', ), 
 			'admin.groupes.formulaire.aucuneClasse' => 'aucune classe en cours',
 			'admin.groupes.formulaire.creneauxLibres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} créneau libre', other: '${n} créneaux libres', ), 
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.formulaire.pasLibre' => 'Ce créneau n\'est pas dans ses disponibilités déclarées : vous pouvez quand même faire ce choix.',
 			'admin.groupes.formulaire.raisonHommes' => 'Classe d\'hommes : seul un enseignant homme peut la prendre.',
 			'admin.groupes.formulaire.raisonGarcons' => 'Classe de garçons : seul un enseignant homme peut la prendre.',
@@ -35841,6 +36349,8 @@ extension on Traductions {
 			'admin.journal.chaineIntacte' => 'Journal intact',
 			'admin.journal.chaineRompue' => 'Journal altéré',
 			'admin.journal.chaineRompueUne' => ({required Object entree}) => 'Une entrée ne correspond plus à son empreinte, la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.chaineInconnue' => 'Intégrité inconnue',
 			'admin.journal.chaineInconnueDetail' => 'La vérification n\'a pas abouti. Les entrées ci-dessous restent lisibles, mais rien ne garantit pour l\'instant qu\'elles sont complètes.',
 			'admin.journal.chaineEnCours' => 'Vérification',
@@ -35934,8 +36444,6 @@ extension on Traductions {
 			'admin.observations.classeInconnue' => 'Classe non disponible',
 			'admin.observations.plage' => ({required Object entree, required Object sortie}) => '${entree} - ${sortie}',
 			'admin.observations.ligne' => ({required Object rang, required Object date, required Object tuteur, required Object eleve, required Object classe, required Object entree, required Object sortie, required Object duree, required Object statut}) => 'Visite ${rang} du ${date}, ${tuteur} pour ${eleve}, ${classe}, entrée ${entree}, sortie ${sortie}, durée ${duree}, ${statut}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.observations.fuseau' => ({required Object decalage}) => 'Heures affichées à l\'heure de cet appareil (UTC${decalage}).',
 			'admin.observations.indisponibleTitre' => 'Historique des observations indisponible',
 			'admin.observations.indisponiblePhrase' => 'La lecture des visites d\'observation n\'est pas encore ouverte dans l\'application.',
@@ -36355,6 +36863,8 @@ extension on Traductions {
 			'admin.finance.pai.aJour' => 'À jour',
 			'admin.finance.pai.aJourValeur' => 'À jour',
 			'admin.finance.pai.videTitre' => 'Aucun élève pour l\'instant',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pai.videPhrase' => 'Les élèves inscrits apparaîtront ici avec ce qu\'il leur reste à payer.',
 			'admin.finance.pai.feuilleTitre' => ({required Object prenom}) => 'Paiement reçu pour ${prenom}',
 			'admin.finance.pai.eleve' => 'Élève',
@@ -36448,8 +36958,6 @@ extension on Traductions {
 			'admin.pilotage.aucunAvecCeFiltre' => 'Aucun horaire avec ce filtre',
 			'admin.pilotage.aucunAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres horaires.',
 			'admin.pilotage.vueEnsemble' => 'Vue d\'ensemble',
-			_ => null,
-		} ?? switch (path) {
 			'admin.pilotage.cleClasses' => 'Classes',
 			'admin.pilotage.cleAttente' => 'En attente d\'enseignant',
 			'admin.pilotage.cleSousMinimum' => 'Sous le minimum',
@@ -36869,6 +37377,8 @@ extension on Traductions {
 			'admin.bibliotheque.publication.versLaFiche' => 'Voir la fiche',
 			'admin.bibliotheque.publication.pasDeCapacite' => 'Vous pouvez consulter le contrôle, mais pas publier.',
 			'admin.bibliotheque.attribution.titre' => 'Attribuer à des classes',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.attribution.intro' => 'Choisissez les classes qui verront cette version publiée. Ce que vous attribuez ici est visible de leurs élèves et de leur enseignant.',
 			'admin.bibliotheque.attribution.classesTitre' => 'Classes',
 			'admin.bibliotheque.attribution.classeServie' => 'Déjà attribuée',
@@ -36962,8 +37472,6 @@ extension on Traductions {
 			'parcours.niveauLectureCourante' => 'Le Coran se lit déjà couramment',
 			'parcours.niveauMemorisationPartielle' => 'Une partie est déjà mémorisée',
 			'parcours.objectifQuestion' => 'Que souhaitez-vous d\'abord ?',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.objectifRaison' => 'Vous pourrez changer d\'objectif plus tard : il oriente le travail de l\'enseignant, il ne vous engage pas.',
 			'parcours.objectifApprendreALire' => 'Apprendre à lire',
 			'parcours.objectifDevenirFluide' => 'Lire plus couramment',
@@ -37383,6 +37891,8 @@ extension on Traductions {
 			'notifications.evenements.controleMissionNonControlee' => 'Une mission de contrôle est restée sans vérification.',
 			'notifications.evenements.classeChangee' => 'Un élève de la famille a rejoint une autre classe, au même horaire.',
 			'notifications.evenements.paiementRelance' => 'Un paiement arrive à échéance. Il se règle dans Paiements.',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.evenements.accesSuspenduPaiement' => 'Un accès est suspendu : le paiement du mois n\'est pas reçu.',
 			'notifications.evenements.accesRetabliPaiement' => 'L\'accès est rétabli : le paiement est reçu.',
 			'notifications.filtres.libelle' => 'Filtrer les notifications',
@@ -37476,8 +37986,6 @@ extension on Traductions {
 			'eleve.coran.fermerReglages' => 'Fermer les réglages',
 			'eleve.coran.taille' => 'Taille du texte',
 			'eleve.coran.agrandir' => 'Agrandir le texte',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.coran.reduire' => 'Réduire le texte',
 			'eleve.coran.source' => 'Texte du Coran : Tanzil Project',
 			'eleve.coran.sourceLien' => 'tanzil.net',
@@ -37897,6 +38405,8 @@ extension on Traductions {
 			'enseignant.photo.remplacer' => 'Remplacer la photo',
 			'enseignant.photo.autre' => 'Choisir une autre photo',
 			'enseignant.photo.changer' => 'Changer la photo',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.photo.alternatif' => 'Votre photo publique',
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
 			'enseignant.photo.echec' => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.',
@@ -37990,8 +38500,6 @@ extension on Traductions {
 			'enseignant.journee.absence.notice' => 'Votre affectation à la Classe reste inchangée.',
 			'enseignant.journee.absence.declarer' => 'Déclarer mon absence',
 			'enseignant.journee.absence.echec' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.absence.etats.enregistree' => 'Absence enregistrée',
 			'enseignant.journee.absence.etats.recherche' => 'Recherche d\'un remplaçant',
 			'enseignant.journee.absence.etats.remplacantConfirme' => 'Remplaçant confirmé',
@@ -38411,6 +38919,8 @@ extension on Traductions {
 			'controleur.historique.complementAjoute' => 'Complément ajouté',
 			'controleur.historique.aTerminer' => 'À terminer',
 			'controleur.historique.filtreEtat' => 'État',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.tousEtats' => 'Tous les états',
 			'controleur.historique.duree' => ({required Object minutes}) => '${minutes} min observées',
 			'controleur.historique.meta' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
@@ -38504,8 +39014,6 @@ extension on Traductions {
 			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. Le serveur transmet la visite et son relevé automatique dès la sortie de la salle ; cet écran ne peut pas le confirmer. Pour ajouter une remarque, écrivez à l\'administration.',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.contexteNature' => 'Votre observation rejoint le compte rendu de cette visite, transmis à l\'administration.',
 			'controleur.observation.pointPositif' => 'Point positif',
 			'controleur.observation.pointPositifAide' => 'Quand une pratique mérite d\'être relevée · elle figure au rapport comme point positif',
@@ -38925,6 +39433,8 @@ extension on Traductions {
 			'tc.observation.disponibilite.tempsEpuise' => 'Votre temps d\'observation pour cette séance est utilisé. Vous pourrez observer la prochaine séance.',
 			'tc.observation.disponibilite.seanceNonCommenceeTitre' => 'La séance n\'a pas encore commencé',
 			'tc.observation.disponibilite.seanceNonCommencee' => 'L\'observation s\'ouvre pendant la séance.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.disponibilite.seanceTermineeTitre' => 'La séance est terminée',
 			'tc.observation.disponibilite.seanceTerminee' => 'Vous pourrez observer la prochaine séance.',
 			'tc.observation.disponibilite.seanceNonTenueTitre' => 'Cette séance n\'a pas lieu',
@@ -39018,8 +39528,6 @@ extension on Traductions {
 			'tc.observation.annonce.tuteursObservent' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} tuteur observe', other: '${nombre} tuteurs observent', ), 
 			'tc.observation.reglages.titre' => 'Observation par les tuteurs',
 			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à cette classe.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.reglages.heriter' => 'Hériter de l\'Académie',
 			'tc.observation.reglages.personnaliser' => 'Personnaliser pour cette classe',
 			'tc.observation.reglages.desactiver' => 'Désactiver pour cette classe',
@@ -39439,6 +39947,8 @@ extension on Traductions {
 			'adulte.demo.situations' => 'Les situations du foyer',
 			'adulte.demo.variantes' => 'Les variantes',
 			'adulte.demo.titulaireFemme' => 'La titulaire est une femme, son conjoint est le second adulte.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.vueConjointe' => 'Mon espace vu par la conjointe, second adulte du foyer.',
 			'adulte.demo.vueConjoint' => 'Mon espace vu par le conjoint, second adulte du foyer.',
 			'adulte.demo.invitationRecueConjointe' => 'L\'invitation reçue par la conjointe, dans son propre compte.',
@@ -39532,8 +40042,6 @@ extension on Traductions {
 			'motifs.poserRegle.charge' => 'Charge de l\'enseignant',
 			'motifs.poserRegle.parErreur' => 'Correction d\'une erreur de saisie',
 			'motifs.cloreSurcharge.termine' => 'Besoin ponctuel terminé',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.cloreSurcharge.famille' => 'Demande de la famille',
 			'motifs.cloreSurcharge.changement' => 'Changement de classe ou d\'enseignant',
 			'motifs.cloreSurcharge.parErreur' => 'Règle posée par erreur',
@@ -39953,6 +40461,8 @@ extension on Traductions {
 			'com.messages.entete.avecAttention' => ({required Object entete, required Object attention}) => '${entete}. ${attention}',
 			'com.messages.entete.deuxObjets' => ({required Object premier, required Object second}) => '${premier} · ${second}',
 			'com.messages.entete.semantique' => ({required Object noms, required Object objets}) => 'Conversation avec ${noms}, à propos de ${objets}',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.entete.semantiqueSansNoms' => ({required Object objets}) => 'Conversation à propos de ${objets}',
 			'com.messages.types.classe' => 'Classe',
 			'com.messages.types.eleve' => 'Élève',
@@ -40046,8 +40556,6 @@ extension on Traductions {
 			'com.vocal.composer.confirmerPhrase' => 'Il sera effacé de cet appareil. Cette action est définitive.',
 			'com.vocal.composer.garder' => 'Garder',
 			'com.vocal.composer.envoi' => 'Envoi du message vocal en cours',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.nonConfirme' => 'Ce message vocal n\'a pas encore été confirmé.',
 			'com.vocal.composer.nonConfirmeAide' => 'Il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Le message vocal est gardé ici ; réessayez dans un instant.',
 			'com.vocal.composer.reessayer' => 'Réessayer',
@@ -40467,6 +40975,8 @@ extension on Traductions {
 			'com.annonces.publieur.contexte.publication' => 'Relisez les destinataires et la date, puis publiez. Rien n\'est publié avant la confirmation.',
 			'com.annonces.publieur.champTitre' => 'Titre de l\'annonce',
 			'com.annonces.publieur.champTexte' => 'Texte de l\'annonce',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.publieur.nature.classe' => 'Seules les familles et les élèves de cette Classe la reçoivent.',
 			'com.annonces.publieur.nature.public' => 'Toutes les personnes de ce public la reçoivent.',
 			'com.annonces.publieur.nature.toutes' => 'Toute l\'académie la reçoit. Réservez-la à ce qui concerne tout le monde.',
@@ -40560,8 +41070,6 @@ extension on Traductions {
 			'com.annonces.administration.moderation.regles.titre' => 'Partage pédagogique uniquement',
 			'com.annonces.administration.moderation.regles.corps' => 'La Communauté enseignants est réservée aux échanges professionnels entre enseignants.',
 			'com.annonces.administration.moderation.regles.reglesTitre' => 'Règles de publication',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.regles.pasPublicite' => 'Aucune publicité',
 			'com.annonces.administration.moderation.regles.pasAffilie' => 'Aucun lien affilié',
 			'com.annonces.administration.moderation.regles.pasVente' => 'Aucune vente de produit ou de service',
@@ -40981,6 +41489,8 @@ extension on Traductions {
 			'comptable.paiements.detail.version' => 'Version du calcul',
 			'comptable.paiements.detail.historique' => 'Historique',
 			'comptable.paiements.detail.historiqueVide' => 'Aucune opération enregistrée pour ce paiement.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.detail.encart' => 'Le Comptable ne peut modifier ni le montant ni les coordonnées de paiement du bénéficiaire.',
 			'comptable.paiements.detail.alerteMethodeRecente' => ({required Object date}) => 'Méthode de paiement modifiée le ${date} : une validation supplémentaire est requise avant tout paiement.',
 			'comptable.paiements.detail.alerteLieeOperateur' => 'Bénéficiaire lié à l\'opérateur : une validation supplémentaire est requise avant tout paiement.',
@@ -41074,8 +41584,6 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.confirmer' => 'Confirmer le mouvement',
 			'comptable.tresorerie.transfert.demanderValidation' => 'Demander la validation',
 			'comptable.tresorerie.transfert.modifier' => 'Modifier le mouvement',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.transfert.fermer' => 'Fermer',
 			'comptable.tresorerie.transfert.executeTitre' => 'Mouvement exécuté par la source',
 			'comptable.tresorerie.transfert.executePhrase' => 'Le journal l\'a enregistré. Les soldes affichés sont relus.',
@@ -41495,6 +42003,8 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.retraitSwitchDetail' => 'Sortir de l\'argent de la Réserve est une opération sensible : une autre personne que le demandeur la valide.',
 			'comptable.direction.delegationPanneau.intro' => 'Vous réglez une fois ce que le Comptable peut exécuter seul. Tout le reste vous revient.',
 			'comptable.direction.delegationPanneau.pouvoirsTitre' => 'Ce que le Comptable peut faire seul',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.paiementsStandards' => 'Payer les paiements standards',
 			'comptable.direction.delegationPanneau.paiementsStandardsDetail' => 'Un paiement au montant calculé, vers une méthode vérifiée, part sans validation quotidienne.',
 			'comptable.direction.delegationPanneau.remboursement' => 'Exécuter un remboursement standard',
@@ -41588,8 +42098,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.exceptionExclusAucun' => 'Aucun bénéficiaire exclu',
 			'comptable.direction.delegationPanneau.exceptionPlafond' => 'Plafond par transaction',
 			'comptable.direction.delegationPanneau.exceptionPlafondGeneral' => 'Celui de la politique générale',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.exceptionTitre' => 'Exception de la délégation',
 			'comptable.direction.delegationPanneau.exceptionCoffresDetail' => 'Seuls ces coffres peuvent être touchés par la délégation. Aucun coffre coché : aucun coffre autorisé.',
 			'comptable.direction.delegationPanneau.exceptionPlafondDetail' => 'Plus bas que le plafond de la politique générale, jamais plus haut. Vide : celui de la politique générale.',

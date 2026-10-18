@@ -194,6 +194,8 @@ const Set<String> _motsLatinsAdmis = <String>{
   'Rewayah',
   'Academy',
   'PDF',
+  // IMM-ACCUEIL-FRONT : le format de fichier de l'import des inscriptions.
+  'CSV',
   'QR',
   'UTC',
   'Google',

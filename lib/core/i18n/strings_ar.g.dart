@@ -607,6 +607,7 @@ class _Traductions$admin$ar extends Traductions$admin$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$admin$importInscriptions$ar importInscriptions = _Traductions$admin$importInscriptions$ar._(_root);
 	@override late final _Traductions$admin$finance$ar finance = _Traductions$admin$finance$ar._(_root);
 	@override late final _Traductions$admin$tableau$ar tableau = _Traductions$admin$tableau$ar._(_root);
 	@override late final _Traductions$admin$demandes$ar demandes = _Traductions$admin$demandes$ar._(_root);
@@ -3840,6 +3841,44 @@ class _Traductions$com$annonces$ar extends Traductions$com$annonces$fr {
 	@override String get introuvablePhrase => 'ربما سُحب من الفصل. عد إلى إشعاراتك.';
 	@override late final _Traductions$com$annonces$demo$ar demo = _Traductions$com$annonces$demo$ar._(_root);
 	@override String get titre => 'الإعلانات';
+}
+
+// Path: admin.importInscriptions
+class _Traductions$admin$importInscriptions$ar extends Traductions$admin$importInscriptions$fr {
+	_Traductions$admin$importInscriptions$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get onglet => 'استيراد';
+	@override String get titre => 'استيراد التسجيلات';
+	@override String get sousTitre => 'تُستقبل الأسر والمعلّمون المسجَّلون سابقًا دون إعادة إدخال كل شيء.';
+	@override String get intro => 'أضف ملفَّي CSV من مصنّف الاستمارات كما هما. لا يُكتب شيء قبل تأكيدك.';
+	@override late final _Traductions$admin$importInscriptions$eleves$ar eleves = _Traductions$admin$importInscriptions$eleves$ar._(_root);
+	@override late final _Traductions$admin$importInscriptions$enseignants$ar enseignants = _Traductions$admin$importInscriptions$enseignants$ar._(_root);
+	@override String get choisir => 'اختيار ملف CSV';
+	@override String fichierCharge({required Object nom}) => 'الملف المحمَّل: ⁨${nom}⁩';
+	@override String get fichierIllisible => 'تعذّرت قراءة هذا الملف. احفظه بصيغة CSV بترميز يونيكود أو الصق محتواه في الحقل.';
+	@override String get voirApercu => 'عرض المعاينة';
+	@override String get manqueFichier => 'الصق أو اختر ملفًا واحدًا على الأقل للمتابعة.';
+	@override late final _Traductions$admin$importInscriptions$apercu$ar apercu = _Traductions$admin$importInscriptions$apercu$ar._(_root);
+	@override late final _Traductions$admin$importInscriptions$serveur$ar serveur = _Traductions$admin$importInscriptions$serveur$ar._(_root);
+	@override String ligne({required Object fichier, required Object ligne, required Object motif}) => '⁨${fichier}⁩، السطر ⁨${ligne}⁩: ⁨${motif}⁩';
+	@override late final _Traductions$admin$importInscriptions$fichier$ar fichier = _Traductions$admin$importInscriptions$fichier$ar._(_root);
+	@override String autresLignes({required Object n}) => 'أسطر أخرى غير معروضة: ⁨${n}⁩';
+	@override late final _Traductions$admin$importInscriptions$motif$ar motif = _Traductions$admin$importInscriptions$motif$ar._(_root);
+	@override late final _Traductions$admin$importInscriptions$mots$ar mots = _Traductions$admin$importInscriptions$mots$ar._(_root);
+	@override late final _Traductions$admin$importInscriptions$foyer$ar foyer = _Traductions$admin$importInscriptions$foyer$ar._(_root);
+	@override String get confirmer => 'تأكيد الاستيراد';
+	@override late final _Traductions$admin$importInscriptions$confirmation$ar confirmation = _Traductions$admin$importInscriptions$confirmation$ar._(_root);
+	@override String get horsLigne => 'أنت غير متصل. أعد الاتصال لتأكيد الاستيراد.';
+	@override late final _Traductions$admin$importInscriptions$resultat$ar resultat = _Traductions$admin$importInscriptions$resultat$ar._(_root);
+	@override late final _Traductions$admin$importInscriptions$echec$ar echec = _Traductions$admin$importInscriptions$echec$ar._(_root);
+	@override late final _Traductions$admin$importInscriptions$acces$ar acces = _Traductions$admin$importInscriptions$acces$ar._(_root);
+	@override String get indisponibleTitre => 'استيراد التسجيلات غير متاح';
+	@override String get indisponiblePhrase => 'ستتوفر هذه الميزة عند ربط الخادم.';
+	@override String get erreur => 'تعذّرت قراءة صلاحيات الاستيراد. أعد المحاولة.';
+	@override String get sansDonnees => 'استيراد التسجيلات';
 }
 
 // Path: admin.finance
@@ -10863,6 +10902,190 @@ class _Traductions$com$annonces$demo$ar extends Traductions$com$annonces$demo$fr
 	@override String get classeFajr => 'فصل الفجر';
 	@override String get enseignante => 'معلمة الفصل';
 	@override late final _Traductions$com$annonces$demo$f$ar f = _Traductions$com$annonces$demo$f$ar._(_root);
+}
+
+// Path: admin.importInscriptions.eleves
+class _Traductions$admin$importInscriptions$eleves$ar extends Traductions$admin$importInscriptions$eleves$fr {
+	_Traductions$admin$importInscriptions$eleves$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ملف الطلاب';
+	@override String get aide => 'ورقة «الطلاب (الردود)» من المصنّف: الصق محتواها أو اختر الملف.';
+	@override String get champ => 'محتوى ملف الطلاب';
+}
+
+// Path: admin.importInscriptions.enseignants
+class _Traductions$admin$importInscriptions$enseignants$ar extends Traductions$admin$importInscriptions$enseignants$fr {
+	_Traductions$admin$importInscriptions$enseignants$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ملف المعلّمين';
+	@override String get aide => 'ورقة «المعلّمون (الردود)» من المصنّف: الصق محتواها أو اختر الملف.';
+	@override String get champ => 'محتوى ملف المعلّمين';
+}
+
+// Path: admin.importInscriptions.apercu
+class _Traductions$admin$importInscriptions$apercu$ar extends Traductions$admin$importInscriptions$apercu$fr {
+	_Traductions$admin$importInscriptions$apercu$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'معاينة قبل الاستيراد';
+	@override String get intro => 'لم يُكتب شيء بعد. راجع الأسطر المرفوضة والأسطر التي تستحق النظر ثم أكِّد.';
+	@override String get lignesEleves => 'أسطر ملف الطلاب';
+	@override String get lignesEnseignants => 'أسطر ملف المعلّمين';
+	@override String get foyers => 'الأسر التي ستُنشأ';
+	@override String get personnes => 'الأشخاص الذين سيُستوردون';
+	@override String get refusees => 'الأسطر المرفوضة';
+	@override String get alertes => 'أسطر تستحق النظر';
+	@override String get refusAide => 'لن تُستورد هذه الأسطر. صحّح الملف وأعد المحاولة أو تابع بدونها.';
+	@override String get alertesAide => 'ستُستورد هذه الأسطر. انظر فيها قبل التأكيد.';
+	@override String get vide => 'لا يمكن استيراد أي سطر. صحّح الملفات ثم أعد المحاولة.';
+	@override String get modifier => 'تعديل الملفات';
+}
+
+// Path: admin.importInscriptions.serveur
+class _Traductions$admin$importInscriptions$serveur$ar extends Traductions$admin$importInscriptions$serveur$fr {
+	_Traductions$admin$importInscriptions$serveur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'تحقّق الخادم';
+	@override String get foyers => 'الأسر التي عدّها الخادم';
+	@override String get personnes => 'الأشخاص الذين عدّهم الخادم';
+	@override String get refusees => 'الأسطر التي رفضها الخادم';
+	@override String get indisponible => 'تعذّر على الخادم تأكيد هذه المعاينة. تحقّق من الاتصال ثم ارجع وأعد المحاولة.';
+}
+
+// Path: admin.importInscriptions.fichier
+class _Traductions$admin$importInscriptions$fichier$ar extends Traductions$admin$importInscriptions$fichier$fr {
+	_Traductions$admin$importInscriptions$fichier$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get eleves => 'الطلاب';
+	@override String get enseignants => 'المعلّمون';
+}
+
+// Path: admin.importInscriptions.motif
+class _Traductions$admin$importInscriptions$motif$ar extends Traductions$admin$importInscriptions$motif$fr {
+	_Traductions$admin$importInscriptions$motif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ligneVide => 'السطر فارغ.';
+	@override String get colonnesDifferentes => 'عدد الأعمدة لا يطابق سطر العناوين.';
+	@override String get ligneTest => 'هذا سطر تجريبي: يُتجاهل.';
+	@override String get personneSansNom => 'لم يُذكر أي شخص (الاسم واللقب).';
+	@override String get emailManquant => 'عنوان البريد الإلكتروني مفقود.';
+	@override String get emailInvalide => 'عنوان البريد الإلكتروني مكتوب بشكل خاطئ.';
+	@override String get dateInvalide => 'يجب كتابة تاريخ الميلاد بصيغة يوم/شهر/سنة، مثل 25/03/2012.';
+	@override String get enteteEmailAbsent => 'سطر العناوين لا يحتوي عمود البريد الإلكتروني: لا يمكن استيراد هذا الملف.';
+	@override String get guillemetNonFerme => 'علامة اقتباس لم تُغلق: صحّح الملف.';
+	@override String doublonAdresse({required Object autre}) => 'العنوان نفسه في السطر ⁨${autre}⁩: يشكّل السطران أسرة واحدة.';
+	@override String doublonPersonne({required Object autre}) => 'الشخص نفسه في السطر ⁨${autre}⁩: سيُستورد مرة واحدة فقط.';
+	@override String get dateFuture => 'تاريخ الميلاد في المستقبل.';
+	@override String get ageTropJeune => 'هذا الشخص أصغر من الحد الأدنى لسنّ الصفوف.';
+	@override String get adulteTropJeune => 'هذا الشخص المذكور كبالغ قاصر.';
+	@override String get foyerSansAdulte => 'لم يُذكر أي بالغ لهذه الأسرة من القاصرين.';
+	@override String get serveur => 'الخادم يرفض هذا السطر.';
+}
+
+// Path: admin.importInscriptions.mots
+class _Traductions$admin$importInscriptions$mots$ar extends Traductions$admin$importInscriptions$mots$fr {
+	_Traductions$admin$importInscriptions$mots$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'كلمات الترحيب';
+	@override String get intro => 'تتلقى كل أسرة كلمة ترحيب مملوءة بالأسماء المعروفة. يمكنك إرفاق كلمتك الخاصة لجميع الأسر أو لأسرة واحدة.';
+	@override String get lotChamp => 'كلمة مشتركة لجميع الأسر (اختيارية)';
+	@override String get lotAide => 'إن مُلئت حلّت محلّ الكلمة التلقائية لكل أسرة ليست لها كلمتها الخاصة.';
+	@override String get lotPatience => 'جميع الأسر انتظرت';
+	@override String get lotPatienceAide => 'تتلقى كلمة الصبر مملوءة بأسمائها.';
+}
+
+// Path: admin.importInscriptions.foyer
+class _Traductions$admin$importInscriptions$foyer$ar extends Traductions$admin$importInscriptions$foyer$fr {
+	_Traductions$admin$importInscriptions$foyer$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String adresse({required Object adresse}) => 'العنوان: ⁨${adresse}⁩';
+	@override String eleves({required Object eleves}) => 'الطلاب: ⁨${eleves}⁩';
+	@override String get patiente => 'انتظرت الأسرة';
+	@override String retoucher({required Object prenom}) => 'تعديل كلمة ⁨${prenom}⁩';
+	@override String champAccueil({required Object prenom}) => 'كلمة ترحيب ⁨${prenom}⁩';
+	@override String champPatience({required Object prenom}) => 'كلمة الصبر لـ⁨${prenom}⁩';
+	@override String get motAide => 'اتركه فارغًا للإبقاء على الكلمة التلقائية.';
+	@override String get fermer => 'إغلاق';
+	@override String nonAffiches({required Object n}) => 'أسر غير معروضة بالإعدادات المشتركة: ⁨${n}⁩';
+}
+
+// Path: admin.importInscriptions.confirmation
+class _Traductions$admin$importInscriptions$confirmation$ar extends Traductions$admin$importInscriptions$confirmation$fr {
+	_Traductions$admin$importInscriptions$confirmation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'هل تستورد هذه التسجيلات؟';
+	@override String get consequence => 'تُنشأ الأسر والأشخاص في التطبيق. إعادة الاستيراد لا تُنشئ أي تكرار. الأسطر المرفوضة لا تُستورد.';
+}
+
+// Path: admin.importInscriptions.resultat
+class _Traductions$admin$importInscriptions$resultat$ar extends Traductions$admin$importInscriptions$resultat$fr {
+	_Traductions$admin$importInscriptions$resultat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'اكتمل الاستيراد';
+	@override String get personnesCreees => 'أشخاص أُنشئوا';
+	@override String get personnesPresentes => 'أشخاص موجودون مسبقًا';
+	@override String get foyersCrees => 'أسر أُنشئت';
+	@override String get foyersVus => 'أسر عولجت';
+	@override String get refusees => 'أسطر مرفوضة';
+	@override String get invitations => 'دعوات للإرسال';
+	@override String get invitationsAide => 'كل أسرة جديدة تنتظر دعوتك. عند أول دخول تُثبت الأسرة عنوان بريدها الإلكتروني ثم تقرأ كلمة ترحيبها.';
+	@override String get rienDeNouveau => 'كان كل شيء مستوردًا من قبل: لم يُضف شيء.';
+	@override String get refusAide => 'لم تُستورد هذه الأسطر. صحّح الملف ثم أعد الاستيراد: لا يُعاد إنشاء الأشخاص الموجودين.';
+	@override String get recommencer => 'استيراد ملفات أخرى';
+}
+
+// Path: admin.importInscriptions.echec
+class _Traductions$admin$importInscriptions$echec$ar extends Traductions$admin$importInscriptions$echec$fr {
+	_Traductions$admin$importInscriptions$echec$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get horsLigne => 'تعذّر تأكيد الاستيراد: انقطع الاتصال. تحقّق من الاتصال ثم أعد التأكيد: لن يُنشأ شيء مرتين.';
+	@override String get refuse => 'الخادم يرفض هذا الاستيراد. تحقّق من أنك متصل بالتحقق المزدوج ثم أعد المحاولة.';
+	@override String get invalide => 'لا يستطيع الخادم قراءة هذه الملفات. تحقّق من سطر العناوين وعلامات الاقتباس ثم أعد المحاولة.';
+	@override String get serveur => 'تعذّر تأكيد الاستيراد. أعد المحاولة: لن يُنشأ شيء مرتين.';
+	@override String get apercu => 'لم تنجح المعاينة التجريبية على الخادم. أعد المحاولة بعد لحظة.';
+}
+
+// Path: admin.importInscriptions.acces
+class _Traductions$admin$importInscriptions$acces$ar extends Traductions$admin$importInscriptions$acces$fr {
+	_Traductions$admin$importInscriptions$acces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get doubleTitre => 'التحقق المزدوج مطلوب';
+	@override String get doublePhrase => 'سجّل الدخول بعاملك الثاني ثم عُد إلى هنا لاستيراد التسجيلات.';
 }
 
 // Path: admin.finance.pol
@@ -18108,6 +18331,99 @@ extension on TraductionsAr {
 			'choix.exemple' => ({required Object texte}) => 'مثلًا: ⁨${texte}⁩',
 			'choix.diminuer' => 'إنقاص بواحد',
 			'choix.augmenter' => 'زيادة بواحد',
+			'admin.importInscriptions.onglet' => 'استيراد',
+			'admin.importInscriptions.titre' => 'استيراد التسجيلات',
+			'admin.importInscriptions.sousTitre' => 'تُستقبل الأسر والمعلّمون المسجَّلون سابقًا دون إعادة إدخال كل شيء.',
+			'admin.importInscriptions.intro' => 'أضف ملفَّي CSV من مصنّف الاستمارات كما هما. لا يُكتب شيء قبل تأكيدك.',
+			'admin.importInscriptions.eleves.titre' => 'ملف الطلاب',
+			'admin.importInscriptions.eleves.aide' => 'ورقة «الطلاب (الردود)» من المصنّف: الصق محتواها أو اختر الملف.',
+			'admin.importInscriptions.eleves.champ' => 'محتوى ملف الطلاب',
+			'admin.importInscriptions.enseignants.titre' => 'ملف المعلّمين',
+			'admin.importInscriptions.enseignants.aide' => 'ورقة «المعلّمون (الردود)» من المصنّف: الصق محتواها أو اختر الملف.',
+			'admin.importInscriptions.enseignants.champ' => 'محتوى ملف المعلّمين',
+			'admin.importInscriptions.choisir' => 'اختيار ملف CSV',
+			'admin.importInscriptions.fichierCharge' => ({required Object nom}) => 'الملف المحمَّل: ⁨${nom}⁩',
+			'admin.importInscriptions.fichierIllisible' => 'تعذّرت قراءة هذا الملف. احفظه بصيغة CSV بترميز يونيكود أو الصق محتواه في الحقل.',
+			'admin.importInscriptions.voirApercu' => 'عرض المعاينة',
+			'admin.importInscriptions.manqueFichier' => 'الصق أو اختر ملفًا واحدًا على الأقل للمتابعة.',
+			'admin.importInscriptions.apercu.titre' => 'معاينة قبل الاستيراد',
+			'admin.importInscriptions.apercu.intro' => 'لم يُكتب شيء بعد. راجع الأسطر المرفوضة والأسطر التي تستحق النظر ثم أكِّد.',
+			'admin.importInscriptions.apercu.lignesEleves' => 'أسطر ملف الطلاب',
+			'admin.importInscriptions.apercu.lignesEnseignants' => 'أسطر ملف المعلّمين',
+			'admin.importInscriptions.apercu.foyers' => 'الأسر التي ستُنشأ',
+			'admin.importInscriptions.apercu.personnes' => 'الأشخاص الذين سيُستوردون',
+			'admin.importInscriptions.apercu.refusees' => 'الأسطر المرفوضة',
+			'admin.importInscriptions.apercu.alertes' => 'أسطر تستحق النظر',
+			'admin.importInscriptions.apercu.refusAide' => 'لن تُستورد هذه الأسطر. صحّح الملف وأعد المحاولة أو تابع بدونها.',
+			'admin.importInscriptions.apercu.alertesAide' => 'ستُستورد هذه الأسطر. انظر فيها قبل التأكيد.',
+			'admin.importInscriptions.apercu.vide' => 'لا يمكن استيراد أي سطر. صحّح الملفات ثم أعد المحاولة.',
+			'admin.importInscriptions.apercu.modifier' => 'تعديل الملفات',
+			'admin.importInscriptions.serveur.titre' => 'تحقّق الخادم',
+			'admin.importInscriptions.serveur.foyers' => 'الأسر التي عدّها الخادم',
+			'admin.importInscriptions.serveur.personnes' => 'الأشخاص الذين عدّهم الخادم',
+			'admin.importInscriptions.serveur.refusees' => 'الأسطر التي رفضها الخادم',
+			'admin.importInscriptions.serveur.indisponible' => 'تعذّر على الخادم تأكيد هذه المعاينة. تحقّق من الاتصال ثم ارجع وأعد المحاولة.',
+			'admin.importInscriptions.ligne' => ({required Object fichier, required Object ligne, required Object motif}) => '⁨${fichier}⁩، السطر ⁨${ligne}⁩: ⁨${motif}⁩',
+			'admin.importInscriptions.fichier.eleves' => 'الطلاب',
+			'admin.importInscriptions.fichier.enseignants' => 'المعلّمون',
+			'admin.importInscriptions.autresLignes' => ({required Object n}) => 'أسطر أخرى غير معروضة: ⁨${n}⁩',
+			'admin.importInscriptions.motif.ligneVide' => 'السطر فارغ.',
+			'admin.importInscriptions.motif.colonnesDifferentes' => 'عدد الأعمدة لا يطابق سطر العناوين.',
+			'admin.importInscriptions.motif.ligneTest' => 'هذا سطر تجريبي: يُتجاهل.',
+			'admin.importInscriptions.motif.personneSansNom' => 'لم يُذكر أي شخص (الاسم واللقب).',
+			'admin.importInscriptions.motif.emailManquant' => 'عنوان البريد الإلكتروني مفقود.',
+			'admin.importInscriptions.motif.emailInvalide' => 'عنوان البريد الإلكتروني مكتوب بشكل خاطئ.',
+			'admin.importInscriptions.motif.dateInvalide' => 'يجب كتابة تاريخ الميلاد بصيغة يوم/شهر/سنة، مثل 25/03/2012.',
+			'admin.importInscriptions.motif.enteteEmailAbsent' => 'سطر العناوين لا يحتوي عمود البريد الإلكتروني: لا يمكن استيراد هذا الملف.',
+			'admin.importInscriptions.motif.guillemetNonFerme' => 'علامة اقتباس لم تُغلق: صحّح الملف.',
+			'admin.importInscriptions.motif.doublonAdresse' => ({required Object autre}) => 'العنوان نفسه في السطر ⁨${autre}⁩: يشكّل السطران أسرة واحدة.',
+			'admin.importInscriptions.motif.doublonPersonne' => ({required Object autre}) => 'الشخص نفسه في السطر ⁨${autre}⁩: سيُستورد مرة واحدة فقط.',
+			'admin.importInscriptions.motif.dateFuture' => 'تاريخ الميلاد في المستقبل.',
+			'admin.importInscriptions.motif.ageTropJeune' => 'هذا الشخص أصغر من الحد الأدنى لسنّ الصفوف.',
+			'admin.importInscriptions.motif.adulteTropJeune' => 'هذا الشخص المذكور كبالغ قاصر.',
+			'admin.importInscriptions.motif.foyerSansAdulte' => 'لم يُذكر أي بالغ لهذه الأسرة من القاصرين.',
+			'admin.importInscriptions.motif.serveur' => 'الخادم يرفض هذا السطر.',
+			'admin.importInscriptions.mots.titre' => 'كلمات الترحيب',
+			'admin.importInscriptions.mots.intro' => 'تتلقى كل أسرة كلمة ترحيب مملوءة بالأسماء المعروفة. يمكنك إرفاق كلمتك الخاصة لجميع الأسر أو لأسرة واحدة.',
+			'admin.importInscriptions.mots.lotChamp' => 'كلمة مشتركة لجميع الأسر (اختيارية)',
+			'admin.importInscriptions.mots.lotAide' => 'إن مُلئت حلّت محلّ الكلمة التلقائية لكل أسرة ليست لها كلمتها الخاصة.',
+			'admin.importInscriptions.mots.lotPatience' => 'جميع الأسر انتظرت',
+			'admin.importInscriptions.mots.lotPatienceAide' => 'تتلقى كلمة الصبر مملوءة بأسمائها.',
+			'admin.importInscriptions.foyer.adresse' => ({required Object adresse}) => 'العنوان: ⁨${adresse}⁩',
+			'admin.importInscriptions.foyer.eleves' => ({required Object eleves}) => 'الطلاب: ⁨${eleves}⁩',
+			'admin.importInscriptions.foyer.patiente' => 'انتظرت الأسرة',
+			'admin.importInscriptions.foyer.retoucher' => ({required Object prenom}) => 'تعديل كلمة ⁨${prenom}⁩',
+			'admin.importInscriptions.foyer.champAccueil' => ({required Object prenom}) => 'كلمة ترحيب ⁨${prenom}⁩',
+			'admin.importInscriptions.foyer.champPatience' => ({required Object prenom}) => 'كلمة الصبر لـ⁨${prenom}⁩',
+			'admin.importInscriptions.foyer.motAide' => 'اتركه فارغًا للإبقاء على الكلمة التلقائية.',
+			'admin.importInscriptions.foyer.fermer' => 'إغلاق',
+			'admin.importInscriptions.foyer.nonAffiches' => ({required Object n}) => 'أسر غير معروضة بالإعدادات المشتركة: ⁨${n}⁩',
+			'admin.importInscriptions.confirmer' => 'تأكيد الاستيراد',
+			'admin.importInscriptions.confirmation.question' => 'هل تستورد هذه التسجيلات؟',
+			'admin.importInscriptions.confirmation.consequence' => 'تُنشأ الأسر والأشخاص في التطبيق. إعادة الاستيراد لا تُنشئ أي تكرار. الأسطر المرفوضة لا تُستورد.',
+			'admin.importInscriptions.horsLigne' => 'أنت غير متصل. أعد الاتصال لتأكيد الاستيراد.',
+			'admin.importInscriptions.resultat.titre' => 'اكتمل الاستيراد',
+			'admin.importInscriptions.resultat.personnesCreees' => 'أشخاص أُنشئوا',
+			'admin.importInscriptions.resultat.personnesPresentes' => 'أشخاص موجودون مسبقًا',
+			'admin.importInscriptions.resultat.foyersCrees' => 'أسر أُنشئت',
+			'admin.importInscriptions.resultat.foyersVus' => 'أسر عولجت',
+			'admin.importInscriptions.resultat.refusees' => 'أسطر مرفوضة',
+			'admin.importInscriptions.resultat.invitations' => 'دعوات للإرسال',
+			'admin.importInscriptions.resultat.invitationsAide' => 'كل أسرة جديدة تنتظر دعوتك. عند أول دخول تُثبت الأسرة عنوان بريدها الإلكتروني ثم تقرأ كلمة ترحيبها.',
+			'admin.importInscriptions.resultat.rienDeNouveau' => 'كان كل شيء مستوردًا من قبل: لم يُضف شيء.',
+			'admin.importInscriptions.resultat.refusAide' => 'لم تُستورد هذه الأسطر. صحّح الملف ثم أعد الاستيراد: لا يُعاد إنشاء الأشخاص الموجودين.',
+			'admin.importInscriptions.resultat.recommencer' => 'استيراد ملفات أخرى',
+			'admin.importInscriptions.echec.horsLigne' => 'تعذّر تأكيد الاستيراد: انقطع الاتصال. تحقّق من الاتصال ثم أعد التأكيد: لن يُنشأ شيء مرتين.',
+			'admin.importInscriptions.echec.refuse' => 'الخادم يرفض هذا الاستيراد. تحقّق من أنك متصل بالتحقق المزدوج ثم أعد المحاولة.',
+			'admin.importInscriptions.echec.invalide' => 'لا يستطيع الخادم قراءة هذه الملفات. تحقّق من سطر العناوين وعلامات الاقتباس ثم أعد المحاولة.',
+			'admin.importInscriptions.echec.serveur' => 'تعذّر تأكيد الاستيراد. أعد المحاولة: لن يُنشأ شيء مرتين.',
+			'admin.importInscriptions.echec.apercu' => 'لم تنجح المعاينة التجريبية على الخادم. أعد المحاولة بعد لحظة.',
+			'admin.importInscriptions.acces.doubleTitre' => 'التحقق المزدوج مطلوب',
+			'admin.importInscriptions.acces.doublePhrase' => 'سجّل الدخول بعاملك الثاني ثم عُد إلى هنا لاستيراد التسجيلات.',
+			'admin.importInscriptions.indisponibleTitre' => 'استيراد التسجيلات غير متاح',
+			'admin.importInscriptions.indisponiblePhrase' => 'ستتوفر هذه الميزة عند ربط الخادم.',
+			'admin.importInscriptions.erreur' => 'تعذّرت قراءة صلاحيات الاستيراد. أعد المحاولة.',
+			'admin.importInscriptions.sansDonnees' => 'استيراد التسجيلات',
 			'admin.finance.aValider' => 'للمصادقة',
 			'admin.finance.paiements' => 'المدفوعات',
 			'admin.finance.pol.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ دقيقة', one: 'دقيقة واحدة', two: 'دقيقتان', few: '⁨${n}⁩ دقائق', many: '⁨${n}⁩ دقيقة', other: '⁨${n}⁩ دقيقة', ), 
@@ -18390,6 +18706,8 @@ extension on TraductionsAr {
 			'admin.groupes.partage.etatInactif' => 'معطّل للفصل',
 			'admin.groupes.partage.confirmerActiver' => 'تفعيل المشاركة التلقائية لهذا الفصل؟',
 			'admin.groupes.partage.consequenceActiver' => 'تعود التقارير التي شُورِكت سابقًا قابلة للقراءة لدى الأسر. أما التقارير المحجوزة أثناء التعطيل فلا تُنشر دفعة واحدة.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.partage.confirmerDesactiver' => 'تعطيل المشاركة التلقائية لهذا الفصل؟',
 			'admin.groupes.partage.consequenceDesactiver' => 'لن ترى الأسر فورًا التقارير المشاركة تلقائيًا. لا تتغير الدفاتر ولا الحصص المعتمدة ولا الأجور.',
 			'admin.groupes.partage.actionActiver' => 'تفعيل المشاركة',
@@ -18483,8 +18801,6 @@ extension on TraductionsAr {
 			'admin.groupes.liste.remplissagePlaces' => 'الفصول التي بها أماكن',
 			'admin.diagnostics.titre' => 'تحديد المستوى',
 			'admin.diagnostics.intro' => 'ينتظر كل طالب مسجَّل مستوى أول قبل الانضمام إلى فصل: هنا يُقرَّر هذا التوجيه.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.diagnostics.aucunProgramme' => 'لا منهج منشور',
 			'admin.diagnostics.aucunProgrammeDetail' => 'انشر إصدارًا أول من المنهج («التعليم» > «المناهج») قبل أن تتمكن من تقرير توجيه.',
 			'admin.diagnostics.erreur' => 'تعذّرت قراءة القائمة. أعد المحاولة بعد لحظة.',
@@ -18904,6 +19220,8 @@ extension on TraductionsAr {
 			'admin.agents.parcoursInconnu' => 'مسار غير معروف',
 			'admin.agents.etatActif' => 'نشط',
 			'admin.agents.etatRevoque' => 'ملغى',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.etatExpire' => 'منتهي الصلاحية',
 			'admin.agents.jamaisServi' => 'لم يُستخدم قط',
 			'admin.agents.usage' => ({required num nombre, required Object quand}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لم يُستخدم بعد', one: 'مرة واحدة، آخرها ⁨${quand}⁩', two: 'مرتان، آخرهما ⁨${quand}⁩', few: '⁨${nombre}⁩ مرات، آخرها ⁨${quand}⁩', many: '⁨${nombre}⁩ مرةً، آخرها ⁨${quand}⁩', other: '⁨${nombre}⁩ مرة، آخرها ⁨${quand}⁩', ), 
@@ -18997,8 +19315,6 @@ extension on TraductionsAr {
 			'admin.regroupements.liste.filtreIncompletes' => 'غير المكتملة',
 			'admin.regroupements.liste.filtrePublic' => 'الفئة',
 			'admin.regroupements.liste.filtreTousPublics' => 'كل الفئات',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regroupements.liste.aucunAvecCeFiltre' => 'لا طلبات بهذا المعيار',
 			'admin.regroupements.liste.aucunAvecCeFiltreDetail' => 'غيّروا المعيار لرؤية بقية الطلبات المجمّعة.',
 			'admin.regroupements.liste.positionSemantique' => ({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩ من قائمة الطلبات المجمّعة',
@@ -19418,6 +19734,8 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.poursuivreAide' => 'يجب أن يفحص الخادم الملف قبل المتابعة.',
 			'admin.bibliotheque.import.retour' => 'العودة إلى الفهرس',
 			'admin.bibliotheque.publication.titre' => 'التحقق والنشر',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.publication.intro' => 'يتحقق الخادم من كل نقطة. النشر يثبّت الإصدار.',
 			'admin.bibliotheque.publication.apercuTitre' => 'المصدر والملف',
 			'admin.bibliotheque.publication.apercuAucunFichier' => 'لا يوجد ملف مودَع: لا يمكن فحص العرض.',
@@ -19511,8 +19829,6 @@ extension on TraductionsAr {
 			'comptable.graphiques.legendeEntrees' => 'الوارد',
 			'comptable.graphiques.legendeSorties' => 'الصادر',
 			'comptable.graphiques.legendeEncaissements' => 'المقبوضات',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.graphiques.legendeDecaissements' => 'المدفوعات',
 			'comptable.graphiques.legendeDetenue' => 'الخزينة المحتفظ بها',
 			'comptable.graphiques.kpiTitre' => 'الوارد والصادر',
@@ -19932,6 +20248,8 @@ extension on TraductionsAr {
 			'comptable.tresorerie.transfert.erreurEnvoiTitre' => 'لم يصل الرد',
 			'comptable.tresorerie.transfert.erreurEnvoi' => 'لم يصل الرد. راجع السجل قبل إعادة المحاولة: لن تُحسب الحركة نفسها مرتين أبدًا.',
 			'comptable.tresorerie.transfert.indisponible' => 'الحركات بين الصناديق غير مربوطة بالخادم بعد. لم يُنقَل أي شيء.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.transfert.aucunCouple' => 'لا تسمح السياسة بأي حركة لحسابك.',
 			'comptable.tresorerie.titre' => 'الخزينة والصناديق',
 			'comptable.tresorerie.sousTitre' => 'الخزينة الحرة هي الرقم الوحيد القابل للإنفاق.',
@@ -20025,8 +20343,6 @@ extension on TraductionsAr {
 			'comptable.encaissements.rap.executer' => 'تنفيذ الاسترداد',
 			'comptable.encaissements.rap.executerLecteur' => ({required Object beneficiaire}) => 'تنفيذ استرداد ${beneficiaire}',
 			'comptable.encaissements.rap.executerTitre' => 'تنفيذ هذا الاسترداد؟',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.executerPhrase' => 'المبلغ والشروط مصدرها سياسة المالية. سيؤكد مزوّد الدفع التنفيذ.',
 			'comptable.encaissements.rap.remboursementsVideTitre' => 'لا يوجد استرداد ولا رصيد دائن جارٍ.',
 			'comptable.encaissements.rap.journalRemboursement' => 'سجل الاسترداد',
@@ -20446,6 +20762,8 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.exceptionGarder' => 'الإبقاء على الاستثناء',
 			'comptable.direction.delegationPanneau.exceptionRetirer' => 'إزالة هذا الاستثناء',
 			'comptable.direction.delegationPanneau.exceptionRetirerPhrase' => 'يعود التفويض إلى السياسة العامة. لا يُحفظ شيء قبل «حفظ».',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sensiblesTitre' => 'حساس دائمًا',
 			'comptable.direction.delegationPanneau.sensiblesDetail' => 'هذه الحالات الخمس تتطلب دائمًا تحققًا إضافيًا مهما كانت الإعدادات أعلاه. الدفعة الأولى والبيانات الحديثة تُضبط في الأعلى.',
 			'comptable.direction.delegationPanneau.sensibleHorsSeuil' => 'مبلغ فوق الحد',
@@ -20539,8 +20857,6 @@ extension on TraductionsAr {
 			'ficheEleve.informations.etapeEnregistrement' => 'الحفظ في الملف، الخطوة 2 من 2',
 			'ficheEleve.informations.succes' => 'حُفظت الصورة.',
 			'ficheEleve.informations.tropLourde' => ({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ م.ب. اختر صورة أخف.',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.informations.echecEnvoi' => 'تعذّر إرسال الصورة. لم يتغير شيء في الملف.',
 			'ficheEleve.informations.echecEnregistrement' => 'أُرسلت الصورة، لكن تعذّر حفظها في الملف.',
 			'ficheEleve.informations.reprendre' => 'إعادة المحاولة',
@@ -20960,6 +21276,8 @@ extension on TraductionsAr {
 			'inscription.identiteQuestion' => 'ما اسمك؟',
 			'inscription.identiteRaison' => 'يجب أن يكون هذا الاسم هو الاسم الموجود في وثيقة هويتك.',
 			'inscription.prenom' => 'الاسم',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.nom' => 'اللقب',
 			'inscription.genreQuestion' => 'أنت',
 			'inscription.genreHomme' => 'رجل',
@@ -21053,8 +21371,6 @@ extension on TraductionsAr {
 			'foyer.classesIndisponibles' => 'فصل كل طالب لا يظهر في هذه الصفحة بعد.',
 			'foyer.classesEchec' => 'تعذّرت قراءة فصل بعض الطلاب.',
 			'foyer.relireClasses' => 'إعادة قراءة الفصول',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.inscriptionIllisible' => 'التسجيل الجاري لكل طالب لا يظهر في هذه الصفحة بعد.',
 			'foyer.appareilsPartages' => 'الأجهزة المشتركة',
 			'foyer.appareilsFoyer' => 'أجهزة الأسرة',
@@ -21474,6 +21790,8 @@ extension on TraductionsAr {
 			'dossiers.revue.etats.accesPerdu' => 'لم يعد لديك وصول إلى هذا الملف.',
 			'dossiers.revue.etats.retourDossiers' => 'العودة إلى الملفات',
 			'dossiers.revue.etats.verificationsIncompletes' => 'أكمل عمليات التحقق المطلوبة.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.revue.etats.accordManquant' => 'تنقص هذا الملف موافقة مطلوبة.',
 			'dossiers.revue.etats.decisionIndisponible' => 'القرار غير متاح الآن.',
 			'dossiers.revue.etats.actualiserDossier' => 'تحديث الملف',
@@ -21567,8 +21885,6 @@ extension on TraductionsAr {
 			'contrat.caseRequise' => 'حدّد المربع للمتابعة.',
 			'contrat.a3.titre' => 'قد يتم تسجيل الدروس (الصوت فقط) لغرض الحماية',
 			'contrat.a3.quoiTitre' => 'ما نقوم به.',
-			_ => null,
-		} ?? switch (path) {
 			'contrat.a3.quoi' => 'قد يتم تسجيل الدرس صوتيًا. لا تُسجَّل الصورة. ويمكن أيضًا لشخص من الأكاديمية مكلَّف بالمراقبة أن يتابع الدرس مباشرة: يرى الدرس ويسمعه دون أن يُرى أو يُسمع. ولا يسجّل شيئًا. وتذكّر القاعة بذلك باستمرار.',
 			'contrat.a3.pourquoiTitre' => 'لماذا.',
 			'contrat.a3.pourquoi' => 'لحماية الأطفال والمعلمين. إذا أبلغ أحد عن مشكلة، يمكننا التحقق مما حدث.',
@@ -21988,6 +22304,8 @@ extension on TraductionsAr {
 			'recherche.espace.famille' => 'في مساحة ولي الأمر',
 			'recherche.espace.eleve' => 'في مساحة الطالب',
 			'recherche.espace.eleveGuide' => 'في مساحة الطالب',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.espace.enseignant' => 'في مساحة المعلّم',
 			'recherche.espace.controleur' => 'في مساحة المراقبة',
 			'recherche.espace.comptable' => 'في مساحة المحاسبة',
@@ -22081,8 +22399,6 @@ extension on TraductionsAr {
 			'sansDonnees.vueGlobale' => 'تعذّر تحميل النظرة العامة على المالية',
 			'sansDonnees.beneficiaires' => 'تعذّر تحميل المستفيدين',
 			'sansDonnees.profilPaiement' => 'تعذّر تحميل ملف الدفع هذا',
-			_ => null,
-		} ?? switch (path) {
 			'argent.acces.suspenduPaiementTuteur' => ({required Object prenom}) => 'لم تُستلم دفعة هذا الشهر. تعذّر انضمام ⁨${prenom}⁩ إلى الحصص. يبقى الحساب والمحتويات متاحة.',
 			'argent.acces.suspenduPaiementAdulte' => 'لم تُستلم دفعة هذا الشهر. لا يمكنك الانضمام إلى حصصك الآن. يبقى حسابك ومحتوياتك متاحة.',
 			'juridique.titre' => 'المعلومات القانونية',

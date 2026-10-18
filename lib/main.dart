@@ -75,6 +75,8 @@ import 'core/i18n/langue_demarrage.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/identite/matricule_supabase.dart';
 import 'core/identite/port_matricule.dart';
+import 'core/import_inscriptions/import_inscriptions_supabase.dart';
+import 'core/import_inscriptions/port_import_inscriptions.dart';
 import 'core/observabilite/supervision.dart';
 import 'core/offres/demandes_suivi_supabase.dart';
 import 'core/offres/frise_demandes_supabase.dart';
@@ -153,6 +155,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portReprisesAdminProvider.overrideWithValue(
     ReprisesAdminSupabase(Supabase.instance.client),
+  ),
+  // IMM-ACCUEIL-FRONT : l'import des inscriptions actuelles (RPC de la
+  // direction ; le serveur reste la barriere).
+  portImportInscriptionsProvider.overrideWithValue(
+    ImportInscriptionsSupabase(Supabase.instance.client),
   ),
   portRegroupementsAdminProvider.overrideWithValue(
     RegroupementsC11bisSupabase(Supabase.instance.client),

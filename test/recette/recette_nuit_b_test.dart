@@ -55,6 +55,7 @@ const Map<AppRole, List<String>> _routes = <AppRole, List<String>>{
     Routes.adminPersonnes,
     Routes.adminPersonnesComptes,
     Routes.adminPersonnesDossiers,
+    Routes.adminPersonnesImport,
     Routes.adminPersonnesInvitations,
     Routes.adminPersonnesReprises,
     Routes.adminSecuriteAudit,
