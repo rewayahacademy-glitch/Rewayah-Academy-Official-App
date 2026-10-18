@@ -10172,7 +10172,7 @@
         "titre": "4. Prix et paiement",
         "blocs": [
           "Les prix figurent sur la page Tarifs et dans l'application, au moment de choisir une formule. Ils sont en dollars américains et hors taxes. La taxe due selon votre pays est ajoutée au paiement.",
-          "L'abonnement se renouvelle le 1er de chaque mois. Les remises sont calculées par le système sur la facture du foyer.",
+          "L'abonnement se renouvelle chaque mois. Les remises sont calculées par le système sur la facture du foyer.",
           "Le paiement passe par un prestataire de paiement.",
           "Il n'y a pas d'essai gratuit. La première semaine est remboursée si le cours ne convient pas.",
           "Pour arrêter, être remboursé ou payer en retard, voir le texte Annulation et remboursement."
@@ -10205,8 +10205,8 @@
         "titre": "1. Première semaine remboursée",
         "blocs": [
           "Il n'y a pas d'essai gratuit. À la place, la première semaine est remboursée si le cours ne convient pas.",
-          "Vous pouvez arrêter dans les 7 jours qui suivent la première séance. Vous êtes alors remboursé en entier.",
-          "Après ces 7 jours, le mois commencé est dû."
+          "Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous êtes alors remboursé en entier.",
+          "Après ce délai, le mois commencé est dû."
         ]
       },
       "s2": {
@@ -10228,16 +10228,17 @@
       "s4": {
         "titre": "4. Paiement en retard",
         "blocs": [
-          "Avant le renouvellement, vous recevez trois rappels\u00a0: 7 jours, 3 jours et 1 jour avant.",
-          "Du 1er au 3 du mois, c'est un délai de grâce\u00a0: l'élève suit ses cours et l'impayé s'affiche chez le tuteur.",
-          "Le 4, l'accès aux séances est suspendu. La place est gardée 14 jours.",
-          "Le 18, la place est libérée pour la liste d'attente. Le retour reste possible sans frais, dans une nouvelle Classe."
+          "Avant le renouvellement, vous recevez des rappels automatiques.",
+          "Après la date de renouvellement, un court délai de grâce s'applique\u00a0: l'élève suit ses cours et l'impayé s'affiche chez le tuteur.",
+          "Si le paiement n'arrive toujours pas, l'accès aux séances est suspendu. La place est gardée quelque temps.",
+          "Ensuite, la place est libérée pour la liste d'attente. Le retour reste possible sans frais, dans une nouvelle Classe.",
+          "Les dates exactes sont celles de la politique tarifaire en vigueur (page Tarifs)."
         ]
       },
       "s5": {
         "titre": "5. Passage à la formule adulte",
         "blocs": [
-          "Un élève qui atteint 18 ans passe à la formule adulte au renouvellement suivant. Le parent est prévenu un mois avant."
+          "Un élève qui atteint 18 ans passe à la formule adulte au renouvellement suivant. Le parent est prévenu à l'avance."
         ]
       },
       "s6": {

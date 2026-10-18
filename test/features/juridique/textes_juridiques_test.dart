@@ -56,6 +56,33 @@ void main() {
       );
     }
 
+    test(
+      'annulation et conditions : aucun delai ni date de paiement en dur',
+      () {
+        for (final AppLocale langue in AppLocale.values) {
+          LocaleSettings.setLocaleSync(langue);
+          for (final TexteJuridique x in <TexteJuridique>[
+            TexteJuridique.annulation,
+            TexteJuridique.conditions,
+          ]) {
+            // Les ages des formules (programme) sont permis. Aucun autre
+            // chiffre dans les blocs : ni delai, ni jour du mois.
+            final String blocs = sectionsJuridiques(x)
+                .expand((SectionPolitique s) => s.blocs)
+                .join('\n')
+                .replaceAll(RegExp(r'[0-9٠-٩]+ à [0-9٠-٩]+ ans'), '')
+                .replaceAll(RegExp(r'من [0-9٠-٩]+ إلى [0-9٠-٩]+ سنة'), '')
+                .replaceAll(RegExp(r'[0-9٠-٩]+ (ans|سنة)'), '');
+            expect(
+              RegExp(r'[0-9٠-٩]').hasMatch(blocs),
+              isFalse,
+              reason: '${langue.languageCode} ${x.slug}',
+            );
+          }
+        }
+      },
+    );
+
     test('les manques sont des reperes, listes une fois', () {
       final String enfants = _tout(TexteJuridique.enfants);
       expect(enfants, contains('[à compléter par la direction'));
