@@ -121,6 +121,8 @@ declare
     'enseignants_pour(uuid)',
     'entrer_observation(uuid,text)',
     -- FAC-D-01 (18/10) : la direction decide les demandes de la comptabilite.
+    -- FAC-F-01 (18/10) : la direction (AAL2) lance a la main les relances et la suspension pour paiement.
+    'fac_traiter_relances_du_jour()',
     'finance_validation_decider(uuid,text,text,uuid)',
     'fusionner_classes(uuid,uuid,text)',
     'geler_archive_seance(uuid,text,boolean)',

@@ -105,7 +105,7 @@ class _Acces extends ConsumerWidget {
     // passe avant tout, elle dit ce qui a change ; la reactivation ne
     // masque ni un nouveau manque ni des seances de nouveau fermees.
     final BandeauPlace? place = BandeauPlace.pour(acces, prenom: profil.prenom);
-    final Widget? bandeau = acces?.place == EtatPlace.liberee
+    final Widget? bandeau = acces?.place.ferme ?? false
         ? place
         : causeRendue
         ? BandeauAttention(
@@ -197,7 +197,7 @@ class _Acces extends ConsumerWidget {
                     ),
                   ],
                 ),
-                if (acces?.place == EtatPlace.liberee)
+                if (acces?.place.ferme ?? false)
                   StatusPill(
                     key: AccesElevePage.pastilleSuspenduKey,
                     libelle: t.argent.acces.pastilleSuspendu,

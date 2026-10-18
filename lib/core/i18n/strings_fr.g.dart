@@ -10654,6 +10654,15 @@ class Traductions$notifications$evenements$fr {
 
 	/// fr: 'Un élève de la famille a rejoint une autre classe, au même horaire.'
 	String get classeChangee => 'Un élève de la famille a rejoint une autre classe, au même horaire.';
+
+	/// fr: 'Un paiement arrive à échéance. Il se règle dans Paiements.'
+	String get paiementRelance => 'Un paiement arrive à échéance. Il se règle dans Paiements.';
+
+	/// fr: 'Un accès est suspendu : le paiement du mois n'est pas reçu.'
+	String get accesSuspenduPaiement => 'Un accès est suspendu : le paiement du mois n\'est pas reçu.';
+
+	/// fr: 'L'accès est rétabli : le paiement est reçu.'
+	String get accesRetabliPaiement => 'L\'accès est rétabli : le paiement est reçu.';
 }
 
 // Path: notifications.filtres
@@ -16240,8 +16249,8 @@ class Traductions$argent$acces$fr {
 	/// fr: 'Accès à cette classe temporairement indisponible'
 	String get enfantTitre => 'Accès à cette classe temporairement indisponible';
 
-	/// fr: 'Votre tuteur peut gérer l'accès.'
-	String get enfantMessage => 'Votre tuteur peut gérer l\'accès.';
+	/// fr: 'Ton tuteur peut gérer l'accès.'
+	String get enfantMessage => 'Ton tuteur peut gérer l\'accès.';
 
 	/// fr: 'Accès à régulariser'
 	String get regulariserTitre => 'Accès à régulariser';
@@ -16296,6 +16305,12 @@ class Traductions$argent$acces$fr {
 
 	/// fr: 'Vous pouvez de nouveau rejoindre vos séances.'
 	String get reactiveAdulteSansDate => 'Vous pouvez de nouveau rejoindre vos séances.';
+
+	/// fr: 'Le paiement du mois n'est pas reçu. {prenom} ne peut plus rejoindre ses séances. Son compte et ses contenus restent accessibles.'
+	String suspenduPaiementTuteur({required Object prenom}) => 'Le paiement du mois n\'est pas reçu. ${prenom} ne peut plus rejoindre ses séances. Son compte et ses contenus restent accessibles.';
+
+	/// fr: 'Le paiement du mois n'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre compte et vos contenus restent accessibles.'
+	String get suspenduPaiementAdulte => 'Le paiement du mois n\'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre compte et vos contenus restent accessibles.';
 
 	/// fr: 'Suspendu'
 	String get pastilleSuspendu => 'Suspendu';
@@ -36470,6 +36485,9 @@ extension on Traductions {
 			'notifications.evenements.controleMissionAttribuee' => 'Une mission de contrôle vous a été attribuée.',
 			'notifications.evenements.controleMissionNonControlee' => 'Une mission de contrôle est restée sans vérification.',
 			'notifications.evenements.classeChangee' => 'Un élève de la famille a rejoint une autre classe, au même horaire.',
+			'notifications.evenements.paiementRelance' => 'Un paiement arrive à échéance. Il se règle dans Paiements.',
+			'notifications.evenements.accesSuspenduPaiement' => 'Un accès est suspendu : le paiement du mois n\'est pas reçu.',
+			'notifications.evenements.accesRetabliPaiement' => 'L\'accès est rétabli : le paiement est reçu.',
 			'notifications.filtres.libelle' => 'Filtrer les notifications',
 			'notifications.filtres.toutes' => 'Toutes',
 			'notifications.filtres.nonLues' => 'Non lues',
@@ -36560,11 +36578,11 @@ extension on Traductions {
 			'eleve.coran.reglages' => 'Réglages de lecture',
 			'eleve.coran.fermerReglages' => 'Fermer les réglages',
 			'eleve.coran.taille' => 'Taille du texte',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.coran.agrandir' => 'Agrandir le texte',
 			'eleve.coran.reduire' => 'Réduire le texte',
 			'eleve.coran.source' => 'Texte du Coran : Tanzil Project',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.coran.sourceLien' => 'tanzil.net',
 			'eleve.coran.edition' => 'Mushaf de Médine, riwaya Hafs',
 			'eleve.suivi.titre' => 'Suivi de mes cours',
@@ -37074,11 +37092,11 @@ extension on Traductions {
 			'enseignant.journee.absence.cleDate' => 'Date',
 			'enseignant.journee.absence.notice' => 'Votre affectation à la Classe reste inchangée.',
 			'enseignant.journee.absence.declarer' => 'Déclarer mon absence',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.absence.echec' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
 			'enseignant.journee.absence.etats.enregistree' => 'Absence enregistrée',
 			'enseignant.journee.absence.etats.recherche' => 'Recherche d\'un remplaçant',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.absence.etats.remplacantConfirme' => 'Remplaçant confirmé',
 			'enseignant.journee.absence.etats.aucunRemplacant' => 'Aucun remplaçant confirmé',
 			'enseignant.journee.absence.etats.seanceAnnulee' => 'Séance annulée',
@@ -37588,11 +37606,11 @@ extension on Traductions {
 			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
 			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. Le serveur transmet la visite et son relevé automatique dès la sortie de la salle ; cet écran ne peut pas le confirmer. Pour ajouter une remarque, écrivez à l\'administration.',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
 			'controleur.observation.contexteNature' => 'Votre observation rejoint le compte rendu de cette visite, transmis à l\'administration.',
 			'controleur.observation.pointPositif' => 'Point positif',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.pointPositifAide' => 'Quand une pratique mérite d\'être relevée · elle figure au rapport comme point positif',
 			'controleur.observation.aSuivre' => 'À suivre',
 			'controleur.observation.aSuivreAide' => 'Quand un point devra être revu lors d\'une prochaine visite · il figure au rapport comme point à suivre',
@@ -38102,11 +38120,11 @@ extension on Traductions {
 			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
 			'tc.observation.annonce.tuteursObservent' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} tuteur observe', other: '${nombre} tuteurs observent', ), 
 			'tc.observation.reglages.titre' => 'Observation par les tuteurs',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à cette classe.',
 			'tc.observation.reglages.heriter' => 'Hériter de l\'Académie',
 			'tc.observation.reglages.personnaliser' => 'Personnaliser pour cette classe',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.reglages.desactiver' => 'Désactiver pour cette classe',
 			'tc.observation.reglages.maxVisites' => 'Visites par séance',
 			'tc.observation.reglages.tempsTotal' => 'Temps total par séance',
@@ -38616,11 +38634,11 @@ extension on Traductions {
 			'motifs.poserRegle.age' => 'Durée adaptée à l\'âge',
 			'motifs.poserRegle.charge' => 'Charge de l\'enseignant',
 			'motifs.poserRegle.parErreur' => 'Correction d\'une erreur de saisie',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.cloreSurcharge.termine' => 'Besoin ponctuel terminé',
 			'motifs.cloreSurcharge.famille' => 'Demande de la famille',
 			'motifs.cloreSurcharge.changement' => 'Changement de classe ou d\'enseignant',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.cloreSurcharge.parErreur' => 'Règle posée par erreur',
 			'motifs.annulationEvaluation.absenceEleve' => 'Absence de l\'élève',
 			'motifs.annulationEvaluation.absenceEnseignant' => 'Absence de l\'enseignant',
@@ -38845,7 +38863,7 @@ extension on Traductions {
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'argent.soldes.paiements' => 'Paiements du mois',
 			'argent.acces.enfantTitre' => 'Accès à cette classe temporairement indisponible',
-			'argent.acces.enfantMessage' => 'Votre tuteur peut gérer l\'accès.',
+			'argent.acces.enfantMessage' => 'Ton tuteur peut gérer l\'accès.',
 			'argent.acces.regulariserTitre' => 'Accès à régulariser',
 			'argent.acces.regulariserManque' => ({required Object montant, required Object mois}) => 'Il manque ${montant} pour financer ${mois}.',
 			'argent.acces.regulariserManqueNouvellePeriode' => ({required Object montant}) => 'Il manque ${montant} pour financer la nouvelle période.',
@@ -38864,6 +38882,8 @@ extension on Traductions {
 			'argent.acces.reactiveTuteurSansDate' => ({required Object prenom}) => '${prenom} peut de nouveau rejoindre ses séances.',
 			'argent.acces.reactiveAdulte' => ({required Object date}) => 'Vous pouvez de nouveau rejoindre vos séances depuis le ${date}.',
 			'argent.acces.reactiveAdulteSansDate' => 'Vous pouvez de nouveau rejoindre vos séances.',
+			'argent.acces.suspenduPaiementTuteur' => ({required Object prenom}) => 'Le paiement du mois n\'est pas reçu. ${prenom} ne peut plus rejoindre ses séances. Son compte et ses contenus restent accessibles.',
+			'argent.acces.suspenduPaiementAdulte' => 'Le paiement du mois n\'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre compte et vos contenus restent accessibles.',
 			'argent.acces.pastilleSuspendu' => 'Suspendu',
 			'argent.acces.pastilleReactive' => 'Réactivé',
 			'identiteProfil.age' => ({required Object n}) => '${n} ans',
@@ -39128,13 +39148,13 @@ extension on Traductions {
 			'com.vocal.composer.confirmerTitre' => 'Supprimer ce message vocal ?',
 			'com.vocal.composer.confirmerPhrase' => 'Il sera effacé de cet appareil. Cette action est définitive.',
 			'com.vocal.composer.garder' => 'Garder',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.composer.envoi' => 'Envoi du message vocal en cours',
 			'com.vocal.composer.nonConfirme' => 'Ce message vocal n\'a pas encore été confirmé.',
 			'com.vocal.composer.nonConfirmeAide' => 'Il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Le message vocal est gardé ici ; réessayez dans un instant.',
 			'com.vocal.composer.reessayer' => 'Réessayer',
 			'com.vocal.composer.envoye' => 'Message vocal envoyé.',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.horsLigne' => 'Le message vocal est gardé ici : envoyez-le dès que l\'envoi est de nouveau possible.',
 			'com.vocal.lecteur.libelleAuteur' => ({required Object auteur, required Object duree}) => 'Message vocal de ${auteur}, ${duree}',
 			'com.vocal.lecteur.libelle' => ({required Object duree}) => 'Message vocal, ${duree}',
@@ -39642,13 +39662,13 @@ extension on Traductions {
 			'com.annonces.administration.moderation.regleMotif.sollicitation' => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.',
 			'com.annonces.administration.moderation.regles.titre' => 'Partage pédagogique uniquement',
 			'com.annonces.administration.moderation.regles.corps' => 'La Communauté enseignants est réservée aux échanges professionnels entre enseignants.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.regles.reglesTitre' => 'Règles de publication',
 			'com.annonces.administration.moderation.regles.pasPublicite' => 'Aucune publicité',
 			'com.annonces.administration.moderation.regles.pasAffilie' => 'Aucun lien affilié',
 			'com.annonces.administration.moderation.regles.pasVente' => 'Aucune vente de produit ou de service',
 			'com.annonces.administration.moderation.regles.pasSollicitation' => 'Aucune sollicitation commerciale',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.regles.pasDonnees' => 'Aucune donnée personnelle d\'un élève ou d\'une famille',
 			'com.annonces.demoPublication.lienAdministration' => 'Administration des communications (direction)',
 			'com.annonces.demoPublication.lienPublier' => 'Publier une annonce pour une Classe (enseignant)',
@@ -40156,13 +40176,13 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.vers' => 'Vers',
 			'comptable.tresorerie.transfert.confirmer' => 'Confirmer le mouvement',
 			'comptable.tresorerie.transfert.demanderValidation' => 'Demander la validation',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.transfert.modifier' => 'Modifier le mouvement',
 			'comptable.tresorerie.transfert.fermer' => 'Fermer',
 			'comptable.tresorerie.transfert.executeTitre' => 'Mouvement exécuté par la source',
 			'comptable.tresorerie.transfert.executePhrase' => 'Le journal l\'a enregistré. Les soldes affichés sont relus.',
 			'comptable.tresorerie.transfert.reference' => ({required Object reference}) => 'Référence : ${reference}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.transfert.validationTitre' => 'Validation demandée',
 			'comptable.tresorerie.transfert.validationPhrase' => 'Une autre personne doit décider. Le coffre d\'origine reste inchangé jusque-là.',
 			'comptable.tresorerie.transfert.refusTitre' => 'Mouvement refusé par la source',
@@ -40670,13 +40690,13 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.exceptionExclus' => 'Bénéficiaires exclus',
 			'comptable.direction.delegationPanneau.exceptionExclusAucun' => 'Aucun bénéficiaire exclu',
 			'comptable.direction.delegationPanneau.exceptionPlafond' => 'Plafond par transaction',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.exceptionPlafondGeneral' => 'Celui de la politique générale',
 			'comptable.direction.delegationPanneau.exceptionTitre' => 'Exception de la délégation',
 			'comptable.direction.delegationPanneau.exceptionCoffresDetail' => 'Seuls ces coffres peuvent être touchés par la délégation. Aucun coffre coché : aucun coffre autorisé.',
 			'comptable.direction.delegationPanneau.exceptionPlafondDetail' => 'Plus bas que le plafond de la politique générale, jamais plus haut. Vide : celui de la politique générale.',
 			'comptable.direction.delegationPanneau.exceptionPlafondTropHaut' => 'Ce plafond doit être plus bas que celui de la politique générale.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.exceptionPlafondSansGeneral' => 'Fixez d\'abord un plafond par transaction dans la politique générale : une exception ne peut qu\'être plus basse.',
 			'comptable.direction.delegationPanneau.exceptionExclure' => 'Exclure un bénéficiaire',
 			'comptable.direction.delegationPanneau.exceptionExclureAucun' => 'Aucun autre bénéficiaire à exclure.',

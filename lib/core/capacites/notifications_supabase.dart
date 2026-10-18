@@ -34,6 +34,11 @@ const Set<String> _evenementsPrisEnCharge = <String>{
   'controle_mission_non_controlee',
   // Fusion ou transfert de l'eleve vers une classe parallele (R9, R10).
   'classe_changee',
+  // Relance avant echeance, acces suspendu pour paiement, acces retabli
+  // (FAC-F-01, migration 20261018170000).
+  'paiement_relance',
+  'acces_suspendu_paiement',
+  'acces_retabli_paiement',
 };
 
 const Set<String> _destinationsAutorisees = <String>{
@@ -41,6 +46,8 @@ const Set<String> _destinationsAutorisees = <String>{
   '/enseignant/journee/remplacements',
   '/controleur',
   '/admin/securite-audit/tirages',
+  // La recharge du foyer : le bouton Payer des relances (FAC-F-01).
+  '/tuteur/foyer/recharge',
 };
 
 /// Adaptateur Supabase de la boîte privée de notifications.
@@ -225,5 +232,8 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'demande_presentation' => TypeNotification.messageMetier,
   'controle_mission_attribuee' => TypeNotification.mission,
   'controle_mission_non_controlee' => TypeNotification.evenementOperationnel,
+  'paiement_relance' ||
+  'acces_suspendu_paiement' ||
+  'acces_retabli_paiement' => TypeNotification.accesFinance,
   _ => TypeNotification.autre,
 };

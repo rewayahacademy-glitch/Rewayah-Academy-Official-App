@@ -23,6 +23,7 @@ import 'core/admin/port_pilotage.dart';
 import 'core/admin/port_planning_direction.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
+import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
 import 'core/capacites/enseignants_classe_supabase.dart';
 import 'core/capacites/identite_titulaire_supabase.dart';
@@ -31,6 +32,7 @@ import 'core/capacites/paiements_foyer_supabase.dart';
 import 'core/capacites/paiements_saisis_supabase.dart';
 import 'core/capacites/partage_pedagogique_supabase.dart';
 import 'core/capacites/politiques_commerciales_supabase.dart';
+import 'core/capacites/port_acces_foyer.dart';
 import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/port_enseignants_classe.dart';
 import 'core/capacites/port_identite_titulaire.dart';
@@ -263,6 +265,14 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portPaiementsFoyerProvider.overrideWithValue(
     PaiementsFoyerSupabase(Supabase.instance.client),
+  ),
+  // Acces des eleves (FAC-F-01, migration 20261018170000) : suspension pour
+  // paiement le jour fixe par la politique ; l'enfant n'en lit jamais la cause.
+  portAccesFoyerProvider.overrideWithValue(
+    AccesFoyerSupabase(Supabase.instance.client),
+  ),
+  portMonAccesProvider.overrideWithValue(
+    MonAccesSupabase(Supabase.instance.client),
   ),
   // Politique commerciale versionnee (FAC-A-01, migration 20261017170000) :
   // lecture par la direction et la comptabilite, publication par la

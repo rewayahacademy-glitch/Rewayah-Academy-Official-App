@@ -47,6 +47,20 @@ enum EtatPlace {
   /// Une periode est de nouveau financee apres une suspension : l'acces aux
   /// seances payantes est reactive.
   reactivee,
+
+  /// Le paiement du mois n'est pas recu au jour de suspension de la politique
+  /// (le 4, FAC-F-01) : les seances payantes sont fermees, **la place est
+  /// encore gardee** et le compte reste ouvert. Le paiement rend l'acces tout
+  /// de suite. Rendu au tuteur et a l'adulte autonome, **jamais a l'enfant**.
+  suspenduPaiement,
+}
+
+/// Vrai pour une place qui ferme les seances : liberee ou suspendue pour
+/// paiement. Ces deux etats passent avant un manque ou une reactivation.
+extension EtatPlaceFermeture on EtatPlace? {
+  /// Les seances sont fermees par la place.
+  bool get ferme =>
+      this == EtatPlace.liberee || this == EtatPlace.suspenduPaiement;
 }
 
 /// L'acces d'un eleve du foyer.

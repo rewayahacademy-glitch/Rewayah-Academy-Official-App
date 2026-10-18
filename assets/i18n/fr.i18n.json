@@ -4828,7 +4828,10 @@
       "remplacementPris": "Un remplacement de cours a été attribué.",
       "controleMissionAttribuee": "Une mission de contrôle vous a été attribuée.",
       "controleMissionNonControlee": "Une mission de contrôle est restée sans vérification.",
-      "classeChangee": "Un élève de la famille a rejoint une autre classe, au même horaire."
+      "classeChangee": "Un élève de la famille a rejoint une autre classe, au même horaire.",
+      "paiementRelance": "Un paiement arrive à échéance. Il se règle dans Paiements.",
+      "accesSuspenduPaiement": "Un accès est suspendu\u00a0: le paiement du mois n'est pas reçu.",
+      "accesRetabliPaiement": "L'accès est rétabli\u00a0: le paiement est reçu."
     },
     "filtres": {
       "libelle": "Filtrer les notifications",
@@ -7744,7 +7747,7 @@
     },
     "acces": {
       "enfantTitre": "Accès à cette classe temporairement indisponible",
-      "enfantMessage": "Votre tuteur peut gérer l'accès.",
+      "enfantMessage": "Ton tuteur peut gérer l'accès.",
       "regulariserTitre": "Accès à régulariser",
       "regulariserManque": "Il manque {montant} pour financer {mois}.",
       "regulariserManqueNouvellePeriode": "Il manque {montant} pour financer la nouvelle période.",
@@ -7763,6 +7766,8 @@
       "reactiveTuteurSansDate": "{prenom} peut de nouveau rejoindre ses séances.",
       "reactiveAdulte": "Vous pouvez de nouveau rejoindre vos séances depuis le {date}.",
       "reactiveAdulteSansDate": "Vous pouvez de nouveau rejoindre vos séances.",
+      "suspenduPaiementTuteur": "Le paiement du mois n'est pas reçu. {prenom} ne peut plus rejoindre ses séances. Son compte et ses contenus restent accessibles.",
+      "suspenduPaiementAdulte": "Le paiement du mois n'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre compte et vos contenus restent accessibles.",
       "pastilleSuspendu": "Suspendu",
       "pastilleReactive": "Réactivé"
     }

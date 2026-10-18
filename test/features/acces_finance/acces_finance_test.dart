@@ -524,7 +524,7 @@ void main() {
         t.argent.acces.enfantTitre,
         'Accès à cette classe temporairement indisponible',
       );
-      expect(t.argent.acces.enfantMessage, "Votre tuteur peut gérer l'accès.");
+      expect(t.argent.acces.enfantMessage, "Ton tuteur peut gérer l'accès.");
       expect(t.argent.acces.regulariserTitre, 'Accès à régulariser');
     });
   });
