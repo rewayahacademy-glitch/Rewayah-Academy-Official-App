@@ -205,6 +205,8 @@ declare
     'revoquer_invitation_enseignant(text)',
     'revoquer_jeton_agent(uuid)',
     'revoquer_resume_seance(uuid,uuid,text,text)',
+    -- SES-CLOTURE-AUTO (18/10) : la direction (aal2) declenche la cloture des seances echues.
+    'ses_cloturer_seances_echues_maintenant()',
     'signaler_horaire_insatisfait(uuid,jsonb)',
     'signer_contrat(text,text)',
     'sortir_observation(uuid)',
