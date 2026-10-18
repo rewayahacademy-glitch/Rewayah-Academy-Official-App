@@ -1665,14 +1665,18 @@ void main() {
     });
 
     testWidgets('11 bis. Rejoindre depuis la vraie coquille de l eleve : '
-        'Ibrahim a 0 et son mois finance, Rejoindre actif ; Ibrahim a 42 et '
-        'son mois non finance, Rejoindre ferme ; le solde n est jamais lu', (
-      WidgetTester tester,
-    ) async {
+        'Ibrahim a un solde nul et son mois finance, Rejoindre actif ; Ibrahim '
+        'a un solde presque entier et son mois non finance, Rejoindre ferme ; '
+        'le solde n est jamais lu', (WidgetTester tester) async {
+      // Solde nul quand le mois est finance ; sinon la mensualite moins ce qu'il
+      // manque.
+      final int soldeNonFinance =
+          DonneesFinanceDemo.mensualiteRang(2).mineur -
+          DonneesFinanceDemo.manqueDemo.mineur;
       for (final (JeuFoyerFinance jeu, int solde, bool ouvert)
           in <(JeuFoyerFinance, int, bool)>[
             (JeuFoyerFinance.tousFinances, 0, true),
-            (JeuFoyerFinance.unARegulariser, 4200, false),
+            (JeuFoyerFinance.unARegulariser, soldeNonFinance, false),
           ]) {
         final FinancesProfil ibrahim = DonneesFinanceDemo.profils(jeu)
             .firstWhere((FinancesProfil p) => p.profilId == _ibrahim);
@@ -1797,7 +1801,11 @@ void main() {
           // approuve 20 USD », total 212 USD), pas l'ancien bonus du guide.
           if (!f.path.contains('lib/features/demo/comptable/'))
             for (final (int n, String l) in _lignesDeCode(f))
-              if (_ancienMontant.hasMatch(l)) '${f.path}:$n',
+              // Exception ecrite : 20 $ est, depuis le 18/10/2026, le credit de
+              // parrainage de la politique (`parrainageCredit`), pas l'ancien
+              // bonus du guide.
+              if (_ancienMontant.hasMatch(l) && !l.contains('parrainageCredit'))
+                '${f.path}:$n',
         for (final File f in Directory(
           'assets/i18n',
         ).listSync().whereType<File>())

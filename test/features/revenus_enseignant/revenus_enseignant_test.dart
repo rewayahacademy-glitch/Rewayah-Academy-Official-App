@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
+import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
@@ -315,9 +316,12 @@ void main() {
         );
         expect(dans(formaterMontant(c.montantEstime)), findsOneWidget);
       }
+      // Classe pleine, classe pleine moins la place a regulariser, classe
+      // d'adultes au minimum d'ouverture.
+      final PolitiqueCommerciale pol = DonneesFinanceDemo.politiqueLancement;
       expect(
         r.classes.map((RevenusClasse c) => c.siegesEligibles).toList(),
-        <int>[5, 4, 4],
+        <int>[pol.capaciteEnfant, pol.capaciteEnfant - 1, pol.minimumOuverture],
       );
       expect(find.text(t.enseignant.revenus.base), findsOneWidget);
       expect(find.text(t.enseignant.revenus.occupation), findsOneWidget);
@@ -468,8 +472,12 @@ void main() {
         findsOneWidget,
       );
       expect(dans(total, formaterMontant(r.totalEstime)), findsOneWidget);
-      expect(r.total.capacite, 16);
-      expect(r.total.siegesEligibles, 13);
+      final PolitiqueCommerciale pol = DonneesFinanceDemo.politiqueLancement;
+      expect(r.total.capacite, 2 * pol.capaciteEnfant + pol.capaciteAdulte);
+      expect(
+        r.total.siegesEligibles,
+        pol.capaciteEnfant + (pol.capaciteEnfant - 1) + pol.minimumOuverture,
+      );
       expect(r.total.minutesAssurees, 1320);
       // La definition des sieges, une seule fois aussi sur bureau.
       expect(find.text(t.enseignant.revenus.siegesDetail), findsOneWidget);
@@ -943,9 +951,10 @@ void main() {
       );
       final RevenusClasse avant = classe(nominal, 'demo-fi-classe-huda');
       final RevenusClasse apres = classe(essai, 'demo-fi-classe-huda');
-      expect(avant.siegesEligibles, 4);
-      expect(apres.siegesEligibles, 5);
-      expect(apres.tauxHoraireEffectif.mineur, 700);
+      final PolitiqueCommerciale pol = DonneesFinanceDemo.politiqueLancement;
+      expect(avant.siegesEligibles, pol.capaciteEnfant - 1);
+      expect(apres.siegesEligibles, pol.capaciteEnfant);
+      expect(apres.tauxHoraireEffectif, pol.plafondHoraire);
       expect(
         apres.montantEstime.mineur,
         greaterThan(avant.montantEstime.mineur),
@@ -980,7 +989,11 @@ void main() {
         DonneesFinanceDemo.politiqueLancement.capaciteDebutant,
       );
       expect(fajr.minutesAssurees, 60);
-      expect(fajr.siegesEligibles, 3);
+      // Un siege reste vide dans la classe de debutants.
+      expect(
+        fajr.siegesEligibles,
+        DonneesFinanceDemo.politiqueLancement.capaciteDebutant - 1,
+      );
       expect(fajr.montantEstime.mineur, fajr.tauxHoraireEffectif.mineur);
       expect(
         r.classes.where((RevenusClasse c) => c.enRemplacement),
@@ -1009,7 +1022,10 @@ void main() {
           r.totalEstime.mineur * 60 ~/ r.total.minutesAssurees,
           reason: jeu.name,
         );
-        expect(r.total.tauxHoraireMoyen.mineur, lessThanOrEqualTo(700));
+        expect(
+          r.total.tauxHoraireMoyen.mineur,
+          lessThanOrEqualTo(r.plafondHoraire.mineur),
+        );
         expect(
           r.total.tauxHoraireMoyen.mineur,
           greaterThanOrEqualTo(r.baseHoraire.mineur),
@@ -1020,16 +1036,18 @@ void main() {
   });
 
   group('Taux plafonne (guide §1.4, §8 F6)', () {
-    test('chaque taux de la demonstration reste sous le plafond de 7 USD', () {
+    test('chaque taux de la demonstration reste sous le plafond horaire', () {
       final RevenusEnseignant r = DonneesFinanceDemo.revenus();
       expect(
         r.plafondHoraire,
         DonneesFinanceDemo.politiqueLancement.plafondHoraire,
       );
-      expect(r.plafondHoraire.mineur, 700);
       expect(r.classes, hasLength(3));
       for (final RevenusClasse c in r.classes) {
-        expect(c.tauxHoraireEffectif.mineur, lessThanOrEqualTo(700));
+        expect(
+          c.tauxHoraireEffectif.mineur,
+          lessThanOrEqualTo(r.plafondHoraire.mineur),
+        );
         expect(
           c.tauxHoraireEffectif.mineur,
           greaterThanOrEqualTo(r.baseHoraire.mineur),
@@ -1037,7 +1055,7 @@ void main() {
         expect(c.siegesEligibles, lessThanOrEqualTo(c.capacite));
       }
       // La classe pleine atteint le plafond, jamais au-dela.
-      expect(r.classes.first.tauxHoraireEffectif.mineur, 700);
+      expect(r.classes.first.tauxHoraireEffectif, r.plafondHoraire);
     });
 
     test('au-dela de la capacite, le taux reste au plafond', () {
@@ -1046,7 +1064,13 @@ void main() {
           siegesEligibles: sieges,
           capacite: 5,
         );
-        expect(taux.mineur, lessThanOrEqualTo(700), reason: '$sieges');
+        expect(
+          taux.mineur,
+          lessThanOrEqualTo(
+            DonneesFinanceDemo.politiqueLancement.plafondHoraire.mineur,
+          ),
+          reason: '$sieges',
+        );
       }
     });
   });

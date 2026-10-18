@@ -2,8 +2,11 @@
 // Finance V4 §1, §8 F1 « fixtures », F2 ; lecon 14).
 //
 // Ce fichier porte :
-// - la politique commerciale de lancement (guide §1), versionnee : aucune
-//   valeur commerciale n'existe ailleurs dans `lib/` (FI6) ;
+// - la politique commerciale de la demonstration (`politiqueLancement`,
+//   tarifs v2.0.0 du 18/10/2026), versionnee : la SEULE definition des
+//   valeurs commerciales de la demonstration. Tout le reste (mensualites,
+//   remises, manques, soldes, revenus, paie, dates) en est derive, jamais
+//   recopie ; aucune valeur commerciale n'existe ailleurs dans `lib/` (FI6) ;
 // - le foyer de demonstration (Mariam, Ibrahim, Aicha) et les six jeux du
 //   guide F2 (tous finances, un a regulariser, un en essai, aucun paiement,
 //   un profil, cinq profils) ;
@@ -113,7 +116,7 @@ typedef _ClasseDemo = ({
   int minutes,
   int capacite,
   int eligibles,
-  List<int> manques,
+  List<Montant> manques,
   bool adulte,
   TypeClasseRevenus type,
 });
@@ -155,42 +158,77 @@ abstract final class DonneesFinanceDemo {
   /// Le premier jour du mois suivant (prochain debit).
   static final DateTime moisSuivant = DateTime(2026, 11);
 
-  /// La politique commerciale de lancement (guide §1), publiee.
+  /// La politique commerciale de la demonstration : la SEULE source des
+  /// valeurs commerciales de la demonstration. Ce sont celles de la
+  /// politique `v2.0.0` des tarifs du 18/10/2026
+  /// (`docs/current/DECISION-TARIFS-2026-10-18.md`, migration
+  /// `20261018120000_fac_e_01_tarifs_v2.sql`) : tout le reste de ce fichier
+  /// (mensualites, remises, manques, soldes, paie, revenus, impayes, dates)
+  /// en est derive, jamais recopie. Pour changer une valeur de demonstration,
+  /// on change ICI.
+  ///
+  /// La date d'effet est celle du mois de reference de la demonstration
+  /// (octobre 2026) : la demonstration ne rend qu'un mois, celui ou la
+  /// politique s'applique (la production date la v2.0.0 du 1er novembre).
   static final PolitiqueCommerciale politiqueLancement = PolitiqueCommerciale(
     // Un numero de version comme la maquette 10 (« v2.0.0 »), jamais un
     // identifiant technique (revue FI-VAGUE-R R6-10).
-    version: 'v1.0.0',
+    version: 'v2.0.0',
     statut: StatutPolitique.publiee,
-    dateEffet: DateTime(2026, 10),
-    tarifEnfant: usd(50),
-    tarifAdulte: usd(60),
-    essaisMax: 2,
-    // L'essai existe au lancement (guide §1.2). Relances et budgets : le
-    // guide ne fixe aucune valeur, la demonstration n'en invente pas
-    // (`joursRelance` nul, `budgets` vide ; revue FI-VAGUE-R R6-06).
-    essaiActif: true,
-    remisesParRang: <RemiseRang>[
-      RemiseRang(aPartirDuRang: 3, remise: usd(-5)),
-      RemiseRang(aPartirDuRang: 4, remise: usd(-7)),
+    dateEffet: debutMois,
+    tarifEnfant: usd(55),
+    tarifAdulte: usd(65),
+    // Pas d'essai gratuit depuis le 18/10/2026.
+    essaisMax: 0,
+    essaiActif: false,
+    // Foyer, en pour mille du tarif de chaque membre payant : 8 % des le
+    // deuxieme, 17 % des le troisieme.
+    remisesParRang: const <RemiseRang>[
+      RemiseRang(aPartirDuRang: 2, pourMille: 80),
+      RemiseRang(aPartirDuRang: 3, pourMille: 170),
     ],
-    baseHoraire: usd(4),
-    plafondHoraire: usd(7),
+    // Anciens champs de base et de plafond horaires : la v2.0.0 les garde
+    // (6 $ et 9 $), la paie se lit dans les taux par eleve present.
+    baseHoraire: usd(6),
+    plafondHoraire: usd(9),
     capaciteEnfant: 5,
     capaciteAdulte: 6,
     capaciteDebutant: 4,
-    minimumOuverture: 4,
+    minimumOuverture: 3,
     classesObjectif: 3,
     classesMax: 4,
-    joursConservationPlace: 7,
-    margeReferencePourMille: (objectif: 300, forte: 350, stretch: 400),
+    joursConservationPlace: 14,
+    margeReferencePourMille: (objectif: 450, forte: 500, stretch: 520),
     railsActifs: const <RailPaiement>{RailPaiement.webStripe},
+    // Relances : 7, 3 et 1 jours avant le renouvellement. Aucun budget ni
+    // allocation Internet : le guide n'en fixe pas, la demonstration n'en
+    // invente pas.
+    joursRelance: const <int>[7, 3, 1],
+    // Paie de l'enseignant par eleve present et par heure (0,95 $ enfant,
+    // 1,00 $ adulte), plafonds 1,30 $ et 1,50 $, seance due des 45 et 70
+    // minutes.
+    tauxEleveHeureEnfant: const Montant(95, devise),
+    tauxEleveHeureAdulte: const Montant(100, devise),
+    plafondEleveHeureEnfant: const Montant(130, devise),
+    plafondEleveHeureAdulte: const Montant(150, devise),
+    dureeDueEnfantMinutes: 45,
+    dureeDueAdulteMinutes: 70,
+    prepaiementTrimestrielPourMille: 50,
+    prepaiementAnnuelPourMille: 100,
+    parrainageCredit: usd(20),
+    boursePourMille: 300,
+    boursePlacesPourMille: 50,
+    bourseDureeMois: 6,
+    cumulMaxPourMille: 250,
+    jourSuspension: 4,
   );
 
   /// Le brouillon de la version suivante (FI-11b) : les memes valeurs que la
-  /// politique de lancement, une date d'effet plus tardive. Aucune valeur
-  /// inventee ; la comparaison apparait des qu'un champ est modifie a l'ecran.
+  /// politique de la demonstration, une date d'effet plus tardive. Aucune
+  /// valeur inventee ; la comparaison apparait des qu'un champ est modifie a
+  /// l'ecran.
   static final PolitiqueCommerciale politiqueBrouillon = PolitiqueCommerciale(
-    version: 'v1.1.0',
+    version: 'v2.1.0',
     statut: StatutPolitique.brouillon,
     dateEffet: DateTime(2027),
     tarifEnfant: politiqueLancement.tarifEnfant,
@@ -212,7 +250,33 @@ abstract final class DonneesFinanceDemo {
     allocationInternet: politiqueLancement.allocationInternet,
     joursRelance: politiqueLancement.joursRelance,
     budgets: politiqueLancement.budgets,
+    tauxEleveHeureEnfant: politiqueLancement.tauxEleveHeureEnfant,
+    tauxEleveHeureAdulte: politiqueLancement.tauxEleveHeureAdulte,
+    plafondEleveHeureEnfant: politiqueLancement.plafondEleveHeureEnfant,
+    plafondEleveHeureAdulte: politiqueLancement.plafondEleveHeureAdulte,
+    dureeDueEnfantMinutes: politiqueLancement.dureeDueEnfantMinutes,
+    dureeDueAdulteMinutes: politiqueLancement.dureeDueAdulteMinutes,
+    prepaiementTrimestrielPourMille:
+        politiqueLancement.prepaiementTrimestrielPourMille,
+    prepaiementAnnuelPourMille: politiqueLancement.prepaiementAnnuelPourMille,
+    parrainageCredit: politiqueLancement.parrainageCredit,
+    boursePourMille: politiqueLancement.boursePourMille,
+    boursePlacesPourMille: politiqueLancement.boursePlacesPourMille,
+    bourseDureeMois: politiqueLancement.bourseDureeMois,
+    cumulMaxPourMille: politiqueLancement.cumulMaxPourMille,
+    jourSuspension: politiqueLancement.jourSuspension,
   );
+
+  /// Ce qu'il manque a un profil a regulariser pour financer son mois, dans
+  /// les jeux de la demonstration (l'exemple du guide §1.7 : « il manque
+  /// 8 $ »). Un parametre de scenario, pas une valeur commerciale : le solde
+  /// du profil en est derive (mensualite moins ce manque).
+  static final Montant manqueDemo = usd(8);
+
+  /// Le nombre d'essais du jeu `unEnEssai` : un etat herite de la v1, que la
+  /// politique v2.0.0 ne propose plus (`essaisMax` 0). Parametre de scenario,
+  /// pour que le compteur d'essai du jeu reste lisible.
+  static const int essaisMaxJeuEssai = 2;
 
   /// Mariam, premier profil du foyer.
   static const String mariamId = 'demo-fi-mariam';
@@ -251,7 +315,7 @@ abstract final class DonneesFinanceDemo {
     age: 7,
   );
   // Youssef (12 ans) et Khadija (13 ans) sont des enfants : ils suivent
-  // Al-Huda, classe enfants, jamais As-Salam, classe adultes a 60 USD
+  // Al-Huda, classe enfants, jamais As-Salam, classe adultes
   // (revue FI-1c-CORR-R m6).
   static const _ProfilDemo _youssef = _ProfilDemo(
     youssefId,
@@ -271,18 +335,25 @@ abstract final class DonneesFinanceDemo {
   /// La mensualite d'un membre payant de rang [rang] (1 = premier), lue dans
   /// [politique] : le tarif, puis la remise de rang quand elle existe. Le
   /// calcul vit ICI, dans le double de demonstration, jamais dans un widget.
+  /// Une remise en pour mille s'arrondit comme le serveur : a l'unite
+  /// mineure la plus proche, vers le haut a la moitie.
   static List<LigneMensualite> lignesPourRang(
     int rang, {
     PolitiqueCommerciale? politique,
     bool adulte = false,
   }) {
     final PolitiqueCommerciale p = politique ?? politiqueLancement;
-    final Montant? remise = p.remisePourRang(rang);
+    final Montant tarif = adulte ? p.tarifAdulte : p.tarifEnfant;
+    final RemiseRang? regle = p.remiseRangPour(rang);
+    final Montant? remise = regle == null
+        ? null
+        : regle.remise ??
+              Montant(
+                -((tarif.mineur * regle.pourMille! + 500) ~/ 1000),
+                tarif.devise,
+              );
     return <LigneMensualite>[
-      LigneMensualite(
-        nature: NatureLigneMensualite.tarif,
-        montant: adulte ? p.tarifAdulte : p.tarifEnfant,
-      ),
+      LigneMensualite(nature: NatureLigneMensualite.tarif, montant: tarif),
       if (remise != null)
         LigneMensualite(
           nature: NatureLigneMensualite.remiseRang,
@@ -291,6 +362,23 @@ abstract final class DonneesFinanceDemo {
         ),
     ];
   }
+
+  /// La mensualite d'un membre payant de rang [rang] : la somme de ses
+  /// lignes ([lignesPourRang]).
+  static Montant mensualiteRang(
+    int rang, {
+    PolitiqueCommerciale? politique,
+    bool adulte = false,
+  }) => _somme(
+    lignesPourRang(
+      rang,
+      politique: politique,
+      adulte: adulte,
+    ).map((LigneMensualite l) => l.montant),
+  );
+
+  static Montant _moins(Montant a, Montant b) =>
+      Montant(a.mineur - b.mineur, devise);
 
   static Montant _somme(Iterable<Montant> montants) => Montant(
     montants.fold<int>(0, (int s, Montant m) => s + m.mineur),
@@ -301,10 +389,10 @@ abstract final class DonneesFinanceDemo {
     _ProfilDemo p, {
     required int rang,
     required EtatFinancier etat,
-    required int solde,
+    required Montant solde,
     bool finance = true,
     int? essais,
-    int? manque,
+    Montant? manque,
     bool adulte = false,
   }) {
     final List<LigneMensualite> lignes = essais != null
@@ -321,11 +409,11 @@ abstract final class DonneesFinanceDemo {
       classe: p.classe,
       age: p.age,
       etat: etat,
-      solde: usd(solde),
+      solde: solde,
       periode: finance ? PeriodeFinancee(debut: debutMois, fin: finMois) : null,
       // Sans periode financee, le debit attendu est celui du mois de
       // reference, pas du suivant : c'est le mois que le manque doit
-      // financer (« Il manque 8 $ pour financer octobre », guide §1.7).
+      // financer (« Il manque X pour financer octobre », guide §1.7).
       prochainDebit: essais != null
           ? null
           : ProchainDebit(
@@ -335,7 +423,7 @@ abstract final class DonneesFinanceDemo {
       mensualite: mensualite,
       lignesMensualite: lignes,
       essaisUtilises: essais,
-      manque: manque == null ? null : usd(manque),
+      manque: manque,
       finConservation: etat == EtatFinancier.aRegulariser
           ? debutMois.add(
               Duration(days: politiqueLancement.joursConservationPlace),
@@ -347,34 +435,35 @@ abstract final class DonneesFinanceDemo {
   /// Les finances des profils du jeu [jeu], dans l'ordre du foyer.
   static List<FinancesProfil> profils(JeuFoyerFinance jeu) => switch (jeu) {
     JeuFoyerFinance.tousFinances => <FinancesProfil>[
-      _finance(_mariam, rang: 1, etat: EtatFinancier.finance, solde: 12),
+      _finance(_mariam, rang: 1, etat: EtatFinancier.finance, solde: usd(12)),
       // Ibrahim : solde nul, mois finance (FI2, FIN4-08).
-      _finance(_ibrahim, rang: 2, etat: EtatFinancier.finance, solde: 0),
-      _finance(_aicha, rang: 3, etat: EtatFinancier.finance, solde: 45),
+      _finance(_ibrahim, rang: 2, etat: EtatFinancier.finance, solde: usd(0)),
+      _finance(_aicha, rang: 3, etat: EtatFinancier.finance, solde: usd(45)),
     ],
     JeuFoyerFinance.unARegulariser => <FinancesProfil>[
-      _finance(_mariam, rang: 1, etat: EtatFinancier.finance, solde: 12),
-      // 42 sur 50 : aucun debit partiel, l'ecran dit le manque (FIN4-09).
+      _finance(_mariam, rang: 1, etat: EtatFinancier.finance, solde: usd(12)),
+      // Mensualite moins le manque : aucun debit partiel, l'ecran dit le
+      // manque (FIN4-09).
       _finance(
         _ibrahim,
         rang: 2,
         etat: EtatFinancier.aRegulariser,
-        solde: 42,
+        solde: _moins(mensualiteRang(2), manqueDemo),
         finance: false,
-        manque: 8,
+        manque: manqueDemo,
       ),
-      _finance(_aicha, rang: 3, etat: EtatFinancier.finance, solde: 45),
+      _finance(_aicha, rang: 3, etat: EtatFinancier.finance, solde: usd(45)),
     ],
     // Aicha en essai ne compte pas comme payante (FIN4-15) : Mariam et
     // Ibrahim restent aux rangs 1 et 2, sans remise.
     JeuFoyerFinance.unEnEssai => <FinancesProfil>[
-      _finance(_mariam, rang: 1, etat: EtatFinancier.finance, solde: 12),
-      _finance(_ibrahim, rang: 2, etat: EtatFinancier.finance, solde: 0),
+      _finance(_mariam, rang: 1, etat: EtatFinancier.finance, solde: usd(12)),
+      _finance(_ibrahim, rang: 2, etat: EtatFinancier.finance, solde: usd(0)),
       _finance(
         _aicha,
         rang: 0,
         etat: EtatFinancier.essai,
-        solde: 0,
+        solde: usd(0),
         finance: false,
         essais: 1,
       ),
@@ -384,28 +473,28 @@ abstract final class DonneesFinanceDemo {
         _mariam,
         rang: 1,
         etat: EtatFinancier.manque,
-        solde: 0,
+        solde: usd(0),
         finance: false,
-        manque: 50,
+        manque: mensualiteRang(1),
       ),
       _finance(
         _ibrahim,
         rang: 2,
         etat: EtatFinancier.manque,
-        solde: 0,
+        solde: usd(0),
         finance: false,
-        manque: 50,
+        manque: mensualiteRang(2),
       ),
     ],
     JeuFoyerFinance.unProfil => <FinancesProfil>[
-      _finance(_mariam, rang: 1, etat: EtatFinancier.finance, solde: 12),
+      _finance(_mariam, rang: 1, etat: EtatFinancier.finance, solde: usd(12)),
     ],
     JeuFoyerFinance.cinqProfils => <FinancesProfil>[
-      _finance(_mariam, rang: 1, etat: EtatFinancier.finance, solde: 12),
-      _finance(_ibrahim, rang: 2, etat: EtatFinancier.finance, solde: 0),
-      _finance(_aicha, rang: 3, etat: EtatFinancier.finance, solde: 45),
-      _finance(_youssef, rang: 4, etat: EtatFinancier.finance, solde: 20),
-      _finance(_khadija, rang: 5, etat: EtatFinancier.finance, solde: 3),
+      _finance(_mariam, rang: 1, etat: EtatFinancier.finance, solde: usd(12)),
+      _finance(_ibrahim, rang: 2, etat: EtatFinancier.finance, solde: usd(0)),
+      _finance(_aicha, rang: 3, etat: EtatFinancier.finance, solde: usd(45)),
+      _finance(_youssef, rang: 4, etat: EtatFinancier.finance, solde: usd(18)),
+      _finance(_khadija, rang: 5, etat: EtatFinancier.finance, solde: usd(3)),
     ],
   };
 
@@ -413,7 +502,7 @@ abstract final class DonneesFinanceDemo {
   /// profil, seul membre payant (rang 1, sans remise) au tarif adulte, le
   /// mois de reference finance. [classe] `null` : la demonstration n'a pas
   /// sa Classe (rien d'invente). [aRegulariser] : le mois de reference
-  /// n'est pas finance, 52 sur 60, il manque 8 (l'exemple du guide §1.7).
+  /// n'est pas finance, il manque [manqueDemo] (l'exemple du guide §1.7).
   static FinancesProfil financesAdulte({
     required String profilId,
     required String prenom,
@@ -423,9 +512,11 @@ abstract final class DonneesFinanceDemo {
     _ProfilDemo(profilId, prenom, 'accent-adulte', classe),
     rang: 1,
     etat: aRegulariser ? EtatFinancier.aRegulariser : EtatFinancier.finance,
-    solde: aRegulariser ? 52 : 15,
+    solde: aRegulariser
+        ? _moins(mensualiteRang(1, adulte: true), manqueDemo)
+        : usd(15),
     finance: !aRegulariser,
-    manque: aRegulariser ? 8 : null,
+    manque: aRegulariser ? manqueDemo : null,
     adulte: true,
   );
 
@@ -442,13 +533,13 @@ abstract final class DonneesFinanceDemo {
     List<({String id, String prenom})> enfants =
         const <({String id, String prenom})>[],
   }) {
-    final List<int> soldesEnfants = <int>[3, 20];
+    final List<int> soldesEnfants = <int>[3, 18];
     return <FinancesProfil>[
       _finance(
         _ProfilDemo(titulaire.id, titulaire.prenom, 'accent-titulaire', null),
         rang: 1,
         etat: EtatFinancier.finance,
-        solde: 15,
+        solde: usd(15),
         adulte: true,
       ),
       if (secondAdulte != null)
@@ -461,7 +552,7 @@ abstract final class DonneesFinanceDemo {
           ),
           rang: 2,
           etat: EtatFinancier.finance,
-          solde: 10,
+          solde: usd(10),
           adulte: true,
         ),
       for (final (int i, ({String id, String prenom}) e) in enfants.indexed)
@@ -469,7 +560,7 @@ abstract final class DonneesFinanceDemo {
           _ProfilDemo(e.id, e.prenom, 'accent-${e.id}', null),
           rang: (secondAdulte == null ? 2 : 3) + i,
           etat: EtatFinancier.finance,
-          solde: soldesEnfants[i % soldesEnfants.length],
+          solde: usd(soldesEnfants[i % soldesEnfants.length]),
         ),
     ];
   }
@@ -533,8 +624,11 @@ abstract final class DonneesFinanceDemo {
   ];
 
   /// Le jour de demonstration ou une place est liberee : le lendemain de la
-  /// fin de conservation (7 jours au lancement) du mois de reference.
-  static final DateTime jourPlaceLiberee = DateTime(2026, 10, 9);
+  /// fin de conservation (`joursConservationPlace` de la politique) du mois
+  /// de reference.
+  static final DateTime jourPlaceLiberee = debutMois.add(
+    Duration(days: politiqueLancement.joursConservationPlace + 1),
+  );
 
   /// Le jour de demonstration ou un acces suspendu est reactive.
   static final DateTime jourReactivation = DateTime(2026, 10, 3);
@@ -599,7 +693,7 @@ abstract final class DonneesFinanceDemo {
       ),
       seancesPayantesOuvertes: p.periode != null,
       essaisUtilises: p.essaisUtilises,
-      essaisMax: p.essaisUtilises == null ? null : politiqueLancement.essaisMax,
+      essaisMax: p.essaisUtilises == null ? null : essaisMaxJeuEssai,
     );
   }
 
@@ -754,35 +848,47 @@ abstract final class DonneesFinanceDemo {
   /// demonstration parcourt les huit etats (revue FI-1a E-10).
   static String commandeDemo(EtatPaiement etat) => 'demo-fi-cmd-${etat.name}';
 
-  /// Le suivi de la commande [commandeId] : Mariam +10, Ibrahim +40, total
-  /// 50 (guide §1.6). Les nouveaux soldes ne sont rendus qu'a `termine`.
+  /// Les montants du paiement de demonstration (guide §1.6) : Mariam +10,
+  /// Ibrahim +40. Des montants de scenario ; le total et les nouveaux
+  /// soldes en sont derives.
+  static List<({String profilId, Montant montant})> get _versementsSuivi =>
+      <({String profilId, Montant montant})>[
+        (profilId: mariamId, montant: usd(10)),
+        (profilId: ibrahimId, montant: usd(40)),
+      ];
+
+  /// Le suivi de la commande [commandeId] : les versements de
+  /// [_versementsSuivi] et leur total (guide §1.6). Les nouveaux soldes
+  /// (solde du jeu `tousFinances` plus le versement) ne sont rendus qu'a
+  /// `termine`.
   static SuiviPaiement suivi(String commandeId) {
     final EtatPaiement etat = EtatPaiement.values.firstWhere(
       (EtatPaiement e) => commandeDemo(e) == commandeId,
       orElse: () => throw const CapaciteIndisponible('FI-BR-06'),
     );
     final bool termine = etat == EtatPaiement.termine;
+    final List<FinancesProfil> foyer = profils(JeuFoyerFinance.tousFinances);
     return SuiviPaiement(
       commandeId: commandeId,
       etat: etat,
-      total: usd(50),
+      total: _somme(_versementsSuivi.map((v) => v.montant)),
       reference: 'RWY-123',
       date: aujourdhui,
       moyen: RailPaiement.webStripe,
       motif: etat == EtatPaiement.echec ? motifEchecDemo : null,
       allocations: <AllocationProfil>[
-        AllocationProfil(
-          profilId: mariamId,
-          prenom: _mariam.prenom,
-          montant: usd(10),
-          nouveauSolde: termine ? usd(22) : null,
-        ),
-        AllocationProfil(
-          profilId: ibrahimId,
-          prenom: _ibrahim.prenom,
-          montant: usd(40),
-          nouveauSolde: termine ? usd(40) : null,
-        ),
+        for (final v in _versementsSuivi)
+          AllocationProfil(
+            profilId: v.profilId,
+            prenom: foyer.firstWhere((p) => p.profilId == v.profilId).prenom,
+            montant: v.montant,
+            nouveauSolde: termine
+                ? _somme(<Montant>[
+                    foyer.firstWhere((p) => p.profilId == v.profilId).solde,
+                    v.montant,
+                  ])
+                : null,
+          ),
       ],
     );
   }
@@ -938,6 +1044,12 @@ abstract final class DonneesFinanceDemo {
   /// Le taux horaire effectif d'une classe (guide §1.4), en unites
   /// mineures : base + (plafond - base) x eligibles / capacite, plafonne.
   /// Calcul du double de demonstration, jamais dans un widget (FI-11c).
+  ///
+  /// Ce calcul est celui de l'ecran des revenus de l'enseignant, dont le
+  /// texte decrit encore la base garantie et le plafond. La paie par eleve
+  /// present de la v2.0.0 (`tauxEleveHeureEnfant`, `tauxEleveHeureAdulte`)
+  /// est portee par la politique, mais cet ecran ne la montre pas encore :
+  /// il demande un lot d'ecran dedie.
   static Montant tauxEffectif({
     required int siegesEligibles,
     required int capacite,
@@ -1085,19 +1197,19 @@ abstract final class DonneesFinanceDemo {
         minutes: 480,
         capacite: p.capaciteEnfant,
         eligibles: p.capaciteEnfant,
-        manques: const <int>[],
+        manques: const <Montant>[],
         adulte: false,
         type: TypeClasseRevenus.enfants,
       ),
       // Quatre sieges finances et Ibrahim, dont la periode n'est pas financee
-      // : 42 sur 50, il manque 8 (jeu `unARegulariser`, FIN4-09).
+      // : il manque [manqueDemo] (jeu `unARegulariser`, FIN4-09).
       (
         id: 'demo-fi-classe-huda',
         nom: 'Al-Huda',
         minutes: 480,
         capacite: p.capaciteEnfant,
         eligibles: 4,
-        manques: const <int>[8],
+        manques: <Montant>[manqueDemo],
         adulte: false,
         type: TypeClasseRevenus.enfants,
       ),
@@ -1107,7 +1219,7 @@ abstract final class DonneesFinanceDemo {
         minutes: 360,
         capacite: p.capaciteAdulte,
         eligibles: p.minimumOuverture,
-        manques: const <int>[],
+        manques: const <Montant>[],
         adulte: true,
         type: TypeClasseRevenus.adultes,
       ),
@@ -1233,7 +1345,7 @@ abstract final class DonneesFinanceDemo {
   /// population que [revenuDemo] et [revenus] (revue FI-1c-CORR-R m5).
   static Montant impayesDemo() => _somme(<Montant>[
     for (final _ClasseDemo c in _classesDemo())
-      for (final int manque in c.manques) usd(manque),
+      for (final Montant manque in c.manques) manque,
   ]);
 
   /// Les noms des classes d'adultes de la demonstration : aucun profil
@@ -1439,7 +1551,8 @@ class PaiementsFoyerFinanceDemo implements PortPaiementsFoyer {
     for (int i = 0; i < DonneesFinanceDemo.paiementsDuMois(jeu); i++)
       PaiementFoyer(
         id: 'demo-fi-paiement-$i',
-        montantMineur: DonneesFinanceDemo.usd(50).mineur,
+        // Un mois au tarif enfant de la politique.
+        montantMineur: DonneesFinanceDemo.politiqueLancement.tarifEnfant.mineur,
         devise: DonneesFinanceDemo.devise,
         statutServeur: 'completed',
         date: DonneesFinanceDemo.debutMois.add(Duration(days: i)),

@@ -21,7 +21,9 @@ import 'package:rewayah_academy/core/capacites/port_recus.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
+import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
+import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -97,9 +99,18 @@ class _PortFinances implements PortPaiementsFoyer {
       <MouvementFoyer>[];
 }
 
+/// La remise de rang rendue par la demonstration pour le membre payant de
+/// rang [rang], en unites mineures negatives : le tarif enfant moins la
+/// remise en pour mille de la politique (arrondi du serveur).
+int _remiseAttendue(int rang) {
+  final PolitiqueCommerciale p = DonneesFinanceDemo.politiqueLancement;
+  return -((p.tarifEnfant.mineur * p.remiseRangPour(rang)!.pourMille! + 500) ~/
+      1000);
+}
+
 /// Mariam avec des lignes injectees (prorata, avoir, taxe) : le total est
 /// ecrit par la « source », jamais calcule par l'ecran.
-FinancesFoyer _mariamAvec(List<LigneMensualite> lignes, int totalUsd) {
+FinancesFoyer _mariamAvec(List<LigneMensualite> lignes, Montant total) {
   final FinancesProfil base = DonneesFinanceDemo.profils(
     JeuFoyerFinance.unProfil,
   ).single;
@@ -115,9 +126,9 @@ FinancesFoyer _mariamAvec(List<LigneMensualite> lignes, int totalUsd) {
     periode: base.periode,
     prochainDebit: ProchainDebit(
       date: DonneesFinanceDemo.moisSuivant,
-      montant: DonneesFinanceDemo.usd(totalUsd),
+      montant: total,
     ),
-    mensualite: DonneesFinanceDemo.usd(totalUsd),
+    mensualite: total,
     lignesMensualite: lignes,
   );
   return FinancesFoyer(
@@ -131,7 +142,7 @@ FinancesFoyer _mariamAvec(List<LigneMensualite> lignes, int totalUsd) {
 FinancesFoyer _mariamEnEtat(
   EtatFinancier etat, {
   required bool periodeFinancee,
-  int? manqueUsd,
+  Montant? manque,
   DateTime? finConservation,
 }) {
   final FinancesProfil base = DonneesFinanceDemo.profils(
@@ -155,7 +166,7 @@ FinancesFoyer _mariamEnEtat(
     ),
     mensualite: base.mensualite,
     lignesMensualite: base.lignesMensualite,
-    manque: manqueUsd == null ? null : DonneesFinanceDemo.usd(manqueUsd),
+    manque: manque,
     finConservation: finConservation,
   );
   return FinancesFoyer(
@@ -558,7 +569,7 @@ void main() {
       expect(find.byKey(FinancesElevePage.bandeauKey), findsNothing);
     });
 
-    testWidgets('2. 3e membre : la remise rendue, -5', (
+    testWidgets('2. 3e membre : la remise rendue, en pour mille du tarif', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -573,7 +584,7 @@ void main() {
       final LigneMensualite remise = a.lignesMensualite.singleWhere(
         (LigneMensualite l) => l.nature == NatureLigneMensualite.remiseRang,
       );
-      expect(remise.montant.mineur, -500);
+      expect(remise.montant.mineur, _remiseAttendue(3));
       // R2-07 : le rang rendu par la source est dans le libelle.
       expect(remise.rang, 3);
       expect(find.text(t.ficheEleve.finances.remiseRang), findsNothing);
@@ -587,7 +598,7 @@ void main() {
       );
     });
 
-    testWidgets('3. 4e membre : la remise rendue, -7', (
+    testWidgets('3. 4e membre : la remise rendue, celle du 3e rang', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -602,7 +613,8 @@ void main() {
       final LigneMensualite remise = y.lignesMensualite.singleWhere(
         (LigneMensualite l) => l.nature == NatureLigneMensualite.remiseRang,
       );
-      expect(remise.montant.mineur, -700);
+      expect(remise.montant.mineur, _remiseAttendue(4));
+      expect(remise.montant.mineur, _remiseAttendue(3));
       expect(remise.rang, 4);
       _attendreLigne(
         t.ficheEleve.finances.remiseRangDe(rang: '4'),
@@ -643,12 +655,13 @@ void main() {
       testWidgets('$nom : la ligne rendue, dans l ordre, total ecrit', (
         WidgetTester tester,
       ) async {
-        final int total = 50 + usd;
+        final Montant tarif = DonneesFinanceDemo.politiqueLancement.tarifEnfant;
+        final Montant total = Montant(
+          tarif.mineur + DonneesFinanceDemo.usd(usd).mineur,
+          tarif.devise,
+        );
         final FinancesFoyer donnees = _mariamAvec(<LigneMensualite>[
-          LigneMensualite(
-            nature: NatureLigneMensualite.tarif,
-            montant: DonneesFinanceDemo.usd(50),
-          ),
+          LigneMensualite(nature: NatureLigneMensualite.tarif, montant: tarif),
           LigneMensualite(nature: nature, montant: DonneesFinanceDemo.usd(usd)),
         ], total);
         await _monter(
@@ -666,10 +679,7 @@ void main() {
           libelle,
           formaterMontant(DonneesFinanceDemo.usd(usd), signe: signe),
         );
-        _attendreLigne(
-          t.ficheEleve.finances.total,
-          formaterMontant(DonneesFinanceDemo.usd(total)),
-        );
+        _attendreLigne(t.ficheEleve.finances.total, formaterMontant(total));
         expect(find.text(t.ficheEleve.finances.remiseRang), findsNothing);
       });
     }
@@ -805,7 +815,7 @@ void main() {
           () async => _mariamEnEtat(
             EtatFinancier.manque,
             periodeFinancee: true,
-            manqueUsd: 8,
+            manque: DonneesFinanceDemo.manqueDemo,
           ),
         ),
         depart: _chemin(_mariam),
@@ -817,7 +827,7 @@ void main() {
       expect(
         bandeau.message,
         t.ficheEleve.finances.manquePourMois(
-          montant: formaterMontant(DonneesFinanceDemo.usd(8)),
+          montant: formaterMontant(DonneesFinanceDemo.manqueDemo),
           mois: t.commun.dates.mois[DonneesFinanceDemo.moisSuivant.month - 1],
         ),
       );

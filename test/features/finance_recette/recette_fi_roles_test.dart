@@ -31,7 +31,6 @@ import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
-import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
 import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
@@ -46,6 +45,8 @@ import 'package:rewayah_academy/core/widgets/resume_soldes.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/acces_finance/acces_finance.dart';
 import 'package:rewayah_academy/features/admin_finance/politiques_commerciales.dart';
+import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart'
+    show pourMilleEnTexte;
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/compte/soldes_foyer.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
@@ -105,7 +106,7 @@ void main() {
   // (a) Actions sans test ni citation jusqu'ici
   // -----------------------------------------------------------------------
   group('(a) Politiques commerciales, vraie application', () {
-    testWidgets('saisie : un plafond sous la base dit l erreur de coherence, '
+    testWidgets('saisie : une remise au-dela de 100 % dit l erreur, '
         '« Publier » demande de corriger ; corrige, l erreur part et la '
         'comparaison avec la version active apparait', (
       WidgetTester tester,
@@ -113,25 +114,23 @@ void main() {
       final GoRouter routeur = await monterAdminFi(tester);
       final pol = t.admin.finance.pol;
       final PolitiqueCommerciale active = DonneesFinanceDemo.politiqueLancement;
-      final PolitiqueCommerciale brouillon =
-          DonneesFinanceDemo.politiqueBrouillon;
+      // La remise du deuxieme rang, en pour mille du tarif (tarifs du
+      // 18/10/2026) : le champ se lit et s'ecrit en pourcentage entier.
+      final RemiseRang regle = active.remisesParRang.first;
+      final String id = 'remise-${regle.aPartirDuRang}';
+      final int pourcent = regle.pourMille! ~/ 10;
       // Avant toute saisie : aucune difference, aucune comparaison.
       expect(
-        find.byKey(
-          PolitiquesCommercialesContenu.comparaisonKey('plafondHoraire'),
-        ),
+        find.byKey(PolitiquesCommercialesContenu.comparaisonKey(id)),
         findsNothing,
       );
-      expect(_erreurDe(tester, 'plafondHoraire'), isNull);
+      expect(_erreurDe(tester, id), isNull);
 
-      // Sous la base : l'erreur de coherence, qui cite la base.
-      final int base = brouillon.baseHoraire.mineur ~/ 100;
-      await tester.ensureVisible(_saisie('plafondHoraire'));
-      await tester.enterText(_saisie('plafondHoraire'), '${base - 1}');
+      // Au-dela de 100 % : l'erreur de plafond.
+      await tester.ensureVisible(_saisie(id));
+      await tester.enterText(_saisie(id), '101');
       await stabiliser(tester);
-      final String? erreur = _erreurDe(tester, 'plafondHoraire');
-      expect(erreur, isNotNull);
-      expect(erreur, contains(formaterMontant(brouillon.baseHoraire)));
+      expect(_erreurDe(tester, id), pol.erreurPourcentMax);
       // « Publier » ne part pas : les champs a corriger, rien de publie.
       await toucherFi(tester, find.text(pol.publier));
       expect(find.text(pol.champsACorriger), findsOneWidget);
@@ -139,30 +138,31 @@ void main() {
       expect(cheminFi(routeur), Routes.adminFinancePolitiques);
 
       // Une forme invalide : l'erreur de champ.
-      await tester.enterText(_saisie('plafondHoraire'), '7,5');
+      await tester.enterText(_saisie(id), '7,5');
       await stabiliser(tester);
-      expect(_erreurDe(tester, 'plafondHoraire'), pol.erreurChamp);
+      expect(_erreurDe(tester, id), pol.erreurChamp);
 
-      // Corrige au-dessus de l'active : plus d'erreur, la comparaison dit
-      // la valeur active.
-      final int nouveau = active.plafondHoraire.mineur ~/ 100 + 1;
-      await tester.enterText(_saisie('plafondHoraire'), '$nouveau');
+      // Corrige a une autre valeur : plus d'erreur, la comparaison dit la
+      // valeur active.
+      await tester.enterText(_saisie(id), '${pourcent + 1}');
       await stabiliser(tester);
-      expect(_erreurDe(tester, 'plafondHoraire'), isNull);
+      expect(_erreurDe(tester, id), isNull);
       final Finder comparaison = find.byKey(
-        PolitiquesCommercialesContenu.comparaisonKey('plafondHoraire'),
+        PolitiquesCommercialesContenu.comparaisonKey(id),
       );
       expect(comparaison, findsOneWidget);
       final String texte = tester.widget<Text>(comparaison).data!;
       expect(texte, startsWith(pol.versionActiveValeur(valeur: '')));
-      expect(texte, contains(formaterMontant(active.plafondHoraire)));
+      expect(
+        texte,
+        contains(
+          pol.pourcentValeur(valeur: pourMilleEnTexte(regle.pourMille!)),
+        ),
+      );
       expect(find.text(pol.champsACorriger), findsNothing);
 
       // Revenu a la valeur active : la comparaison s'efface.
-      await tester.enterText(
-        _saisie('plafondHoraire'),
-        '${active.plafondHoraire.mineur ~/ 100}',
-      );
+      await tester.enterText(_saisie(id), '$pourcent');
       await stabiliser(tester);
       expect(comparaison, findsNothing);
       expect(tester.takeException(), isNull);
