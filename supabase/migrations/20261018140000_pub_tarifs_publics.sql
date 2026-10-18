@@ -19,6 +19,14 @@
 -- la lit au moment du build (voir ce fichier).
 BEGIN;
 
+-- Age a partir duquel s'applique la formule adulte (DECISION-TARIFS-2026-10-18 :
+-- 18 ans). Porte par la politique versionnee, pas par le code.
+ALTER TABLE public.politiques_commerciales
+  ADD COLUMN age_formule_adulte smallint NOT NULL DEFAULT 18
+  CHECK (age_formule_adulte BETWEEN 14 AND 25);
+COMMENT ON COLUMN public.politiques_commerciales.age_formule_adulte IS
+  'Age a partir duquel la formule adulte s''applique (18 au 18/10/2026).';
+
 -- Une politique, au format public (liste blanche).
 CREATE FUNCTION private.pub_tarifs_politique(p public.politiques_commerciales)
 RETURNS jsonb
@@ -33,9 +41,7 @@ AS $function$
     'devise', p.devise,
     -- Les prix publics s'entendent hors taxes (DECISION-TARIFS-2026-10-18).
     'horsTaxes', true,
-    -- Age de la formule adulte : 18 ans (DECISION-TARIFS-2026-10-18, contradiction
-    -- tranchee le 18/10). La table ne porte pas cette colonne.
-    'ageAdulte', 18,
+    'ageAdulte', p.age_formule_adulte,
     'tarifEnfantMineur', p.tarif_enfant_mineur,
     'tarifAdulteMineur', p.tarif_adulte_mineur,
     'essaiActif', p.essai_actif,
