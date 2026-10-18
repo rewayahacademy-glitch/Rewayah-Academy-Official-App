@@ -30,6 +30,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/zone_saisie.dart';
 import '../foyer/photo_eleve.dart';
+import '../protection_enfants/notice_securite_enfant.dart';
 import 'preparation_seance.dart';
 
 /// Ce que la fiche montre d'un eleve : sa projection pedagogique, et la Classe
@@ -284,6 +285,10 @@ enum CategorieBesoin {
   /// Changement.
   changement,
 
+  /// Securite d'un enfant (PE, 18/10/2026) : prioritaire, lu par la direction
+  /// seulement, sans message pour la famille.
+  securiteEnfant,
+
   /// Autre : un detail est alors demande.
   autre;
 
@@ -293,6 +298,7 @@ enum CategorieBesoin {
     presence => AppIcons.journee,
     technique => AppIcons.reseau,
     changement => AppIcons.reaffectation,
+    securiteEnfant => AppIcons.reserve,
     autre => AppIcons.autreChoix,
   };
 
@@ -302,6 +308,7 @@ enum CategorieBesoin {
     presence => t.enseignant.signalement.categories.presence,
     technique => t.enseignant.signalement.categories.technique,
     changement => t.enseignant.signalement.categories.changement,
+    securiteEnfant => t.protectionEnfants.categorie,
     autre => t.enseignant.signalement.categories.autre,
   };
 }
@@ -443,7 +450,10 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
             studentId: widget.eleve.membre.studentId,
             categorie: categorie,
             detailsInternes: _details.text.trim(),
-            resumePartageable: _resume.text.trim(),
+            // La securite d'un enfant n'a jamais de resume pour la famille.
+            resumePartageable: categorie == CategorieBesoin.securiteEnfant
+                ? ''
+                : _resume.text.trim(),
             classe: widget.eleve.classe,
             seanceId: widget.eleve.seanceId,
             horodatage: DateTime.now(),
@@ -586,26 +596,30 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
           },
         ),
         Ecart.vLg,
-        // L7 : une phrase-type par categorie, « Autre » pour l'ecrire.
-        Text(
-          t.enseignant.signalement.resume,
-          style: palette.inkStrong.applyTo(
-            textes.titleSmall ?? const TextStyle(),
+        if (_categorie == CategorieBesoin.securiteEnfant)
+          const NoticeSecuriteEnfant()
+        else ...<Widget>[
+          // L7 : une phrase-type par categorie, « Autre » pour l'ecrire.
+          Text(
+            t.enseignant.signalement.resume,
+            style: palette.inkStrong.applyTo(
+              textes.titleSmall ?? const TextStyle(),
+            ),
           ),
-        ),
-        Ecart.vXs,
-        Text(t.enseignant.signalement.resumeAide, style: doux),
-        Ecart.vSm,
-        SelecteurMotif(
-          motifs: _phrasesTypes(_categorie),
-          controleur: _resume,
-          libelleChamp: t.choix.autreInvite,
-          lignesMin: 2,
-          lignesMax: 4,
-          cleChampLibre: SignalerBesoin.resumeKey,
-        ),
-        Ecart.vLg,
-        Text(t.enseignant.signalement.notice, style: doux),
+          Ecart.vXs,
+          Text(t.enseignant.signalement.resumeAide, style: doux),
+          Ecart.vSm,
+          SelecteurMotif(
+            motifs: _phrasesTypes(_categorie),
+            controleur: _resume,
+            libelleChamp: t.choix.autreInvite,
+            lignesMin: 2,
+            lignesMax: 4,
+            cleChampLibre: SignalerBesoin.resumeKey,
+          ),
+          Ecart.vLg,
+          Text(t.enseignant.signalement.notice, style: doux),
+        ],
         if (_echec) ...<Widget>[
           Ecart.vLg,
           // Meme phrase que le signalement du parcours (tc.parcours).

@@ -93,6 +93,7 @@ String libelleAccord(SorteContrat sorte) => switch (sorte) {
   SorteContrat.contratEnseignant => t.compte.tuteur.pageLegal.contratEnseignant,
   SorteContrat.accuseEnregistrementControle =>
     t.compte.tuteur.pageLegal.accuseEnregistrement,
+  SorteContrat.codeConduiteEnseignant => t.codeConduite.titre,
 };
 
 /// Le type de dossier : toujours « Enseignant ». K-47 (HL-A-6) : la piece

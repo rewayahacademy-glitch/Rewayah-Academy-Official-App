@@ -14,6 +14,7 @@ import '../../features/admin_comptes/comptes_page.dart';
 import '../../features/admin_configuration_conservation_donnees/conservation_donnees_page.dart';
 import '../../features/admin_configuration_fonctionnalites/fonctionnalites_page.dart';
 import '../../features/admin_configuration_politique_kyc/politique_revue_kyc_page.dart';
+import '../../features/admin_configuration_protection_enfants/protection_enfants_page.dart';
 import '../../features/admin_configuration_regles/regles_page.dart';
 import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
@@ -1714,6 +1715,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.configuration,
           child: PolitiqueRevueKycPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminConfigurationProtectionEnfants,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.configuration,
+          child: ProtectionEnfantsPage(),
         ),
       ),
       GoRoute(

@@ -86,7 +86,10 @@ class SignalementMemoire implements PortSignalement {
     if (interne.isEmpty) {
       throw const EchecSignalement(MotifEchecSignalement.interneVide);
     }
-    final String? famille = familySummary?.trim();
+    // La securite d'un enfant n'a jamais de message pour la famille.
+    final String? famille = categorie.estSecuriteEnfant
+        ? null
+        : familySummary?.trim();
 
     final StudentConcern signalement = StudentConcern(
       id: _generateur.v4(),
@@ -110,7 +113,11 @@ class SignalementMemoire implements PortSignalement {
   Future<List<StudentConcern>> mesSignalements({String? groupeId}) async =>
       List<StudentConcern>.unmodifiable(
         _signalements.where(
-          (StudentConcern s) => groupeId == null || s.groupeId == groupeId,
+          // Comme le serveur : l'enseignant ne relit jamais un signalement de
+          // securite d'un enfant.
+          (StudentConcern s) =>
+              !s.categorie.estSecuriteEnfant &&
+              (groupeId == null || s.groupeId == groupeId),
         ),
       );
 
@@ -174,6 +181,4 @@ class SignalementIndisponible implements PortSignalement, PortIndisponible {
 /// fonction n'est pas encore disponible au lieu de lever. Agent Z le surcharge
 /// a l'integration (`SignalementMemoire` pour les tests et la demonstration).
 final Provider<PortSignalement> portSignalementProvider =
-    Provider<PortSignalement>(
-      (Ref ref) => const SignalementIndisponible(),
-    );
+    Provider<PortSignalement>((Ref ref) => const SignalementIndisponible());

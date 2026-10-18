@@ -51,6 +51,8 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$accords$fr accords = Traductions$accords$fr.internal(_root);
 	late final Traductions$connexion$fr connexion = Traductions$connexion$fr.internal(_root);
 	late final Traductions$inscription$fr inscription = Traductions$inscription$fr.internal(_root);
+	late final Traductions$protectionEnfants$fr protectionEnfants = Traductions$protectionEnfants$fr.internal(_root);
+	late final Traductions$codeConduite$fr codeConduite = Traductions$codeConduite$fr.internal(_root);
 	late final Traductions$contrat$fr contrat = Traductions$contrat$fr.internal(_root);
 	late final Traductions$accessibilite$fr accessibilite = Traductions$accessibilite$fr.internal(_root);
 	late final Traductions$accuse$fr accuse = Traductions$accuse$fr.internal(_root);
@@ -864,6 +866,83 @@ class Traductions$inscription$fr {
 	late final Traductions$inscription$recap$fr recap = Traductions$inscription$recap$fr.internal(_root);
 }
 
+// Path: protectionEnfants
+class Traductions$protectionEnfants$fr {
+	Traductions$protectionEnfants$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sécurité d'un enfant'
+	String get categorie => 'Sécurité d\'un enfant';
+
+	/// fr: 'Signalement prioritaire'
+	String get prioritaireTitre => 'Signalement prioritaire';
+
+	/// fr: 'La direction et le responsable de la protection des enfants le lisent tout de suite. L'enseignant concerné et les autres familles ne le voient jamais. Aucun message n'est envoyé à la famille.'
+	String get prioritaireDetail => 'La direction et le responsable de la protection des enfants le lisent tout de suite. L\'enseignant concerné et les autres familles ne le voient jamais. Aucun message n\'est envoyé à la famille.';
+
+	/// fr: 'En cas de danger immédiat, appelez d'abord les services d'urgence de votre pays.'
+	String get urgence => 'En cas de danger immédiat, appelez d\'abord les services d\'urgence de votre pays.';
+
+	/// fr: 'La direction reçoit votre signalement.'
+	String get direction => 'La direction reçoit votre signalement.';
+
+	/// fr: '{nom} et la direction reçoivent votre signalement.'
+	String recuPar({required Object nom}) => '${nom} et la direction reçoivent votre signalement.';
+
+	/// fr: 'Courriel de contact : {courriel}'
+	String contact({required Object courriel}) => 'Courriel de contact : ${courriel}';
+
+	/// fr: 'Le nom du responsable ne s'affiche pas pour l'instant. Réessayez dans un instant.'
+	String get erreurLecture => 'Le nom du responsable ne s\'affiche pas pour l\'instant. Réessayez dans un instant.';
+}
+
+// Path: codeConduite
+class Traductions$codeConduite$fr {
+	Traductions$codeConduite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Code de conduite de l'enseignant'
+	String get titre => 'Code de conduite de l\'enseignant';
+
+	/// fr: 'Lire le code de conduite'
+	String get lien => 'Lire le code de conduite';
+
+	/// fr: 'Ces règles protègent les élèves, et elles vous protègent. Lisez-les, puis acceptez.'
+	String get intro => 'Ces règles protègent les élèves, et elles vous protègent. Lisez-les, puis acceptez.';
+
+	List<String> get regles => [
+		'Vos cours se tiennent dans la salle de l\'académie. Un cours peut être enregistré en audio, et une personne chargée du contrôle peut le suivre en direct sans vous prévenir du moment. Vous acceptez ces mesures : elles protègent les enfants et elles vous protègent.',
+		'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
+		'Ce que vous savez d\'un enfant reste à l\'académie. Vous ne le rendez pas public et vous ne le montrez pas aux autres familles.',
+		'Si la sécurité d\'un enfant vous inquiète, signalez-le tout de suite avec « Signaler un besoin », catégorie « Sécurité d\'un enfant ». La direction le lit en priorité.',
+		'Si vous refusez ces règles, l\'académie ne peut pas vous confier d\'élèves, car elles protègent les enfants.',
+	];
+
+	/// fr: 'J'ai lu le code de conduite et je l'accepte.'
+	String get caseAccord => 'J\'ai lu le code de conduite et je l\'accepte.';
+
+	/// fr: 'J'accepte le code de conduite'
+	String get accepter => 'J\'accepte le code de conduite';
+
+	/// fr: 'Accepté le {date}. Version {version}.'
+	String accepteLe({required Object date, required Object version}) => 'Accepté le ${date}. Version ${version}.';
+
+	/// fr: 'Votre accord n'a pas été enregistré. Vérifiez votre connexion, puis réessayez.'
+	String get erreur => 'Votre accord n\'a pas été enregistré. Vérifiez votre connexion, puis réessayez.';
+
+	/// fr: 'Nous n'avons pas pu lire vos accords. Réessayez.'
+	String get erreurLecture => 'Nous n\'avons pas pu lire vos accords. Réessayez.';
+
+	/// fr: 'À accepter'
+	String get aAccepter => 'À accepter';
+}
+
 // Path: contrat
 class Traductions$contrat$fr {
 	Traductions$contrat$fr.internal(this._root);
@@ -1503,6 +1582,7 @@ class Traductions$admin$fr {
 	late final Traductions$admin$qualite$fr qualite = Traductions$admin$qualite$fr.internal(_root);
 	late final Traductions$admin$regles$fr regles = Traductions$admin$regles$fr.internal(_root);
 	late final Traductions$admin$fonctionnalites$fr fonctionnalites = Traductions$admin$fonctionnalites$fr.internal(_root);
+	late final Traductions$admin$protectionEnfants$fr protectionEnfants = Traductions$admin$protectionEnfants$fr.internal(_root);
 	late final Traductions$admin$conservationDonnees$fr conservationDonnees = Traductions$admin$conservationDonnees$fr.internal(_root);
 	late final Traductions$admin$politiqueRevueKyc$fr politiqueRevueKyc = Traductions$admin$politiqueRevueKyc$fr.internal(_root);
 	late final Traductions$admin$evaluations$fr evaluations = Traductions$admin$evaluations$fr.internal(_root);
@@ -8049,6 +8129,60 @@ class Traductions$admin$fonctionnalites$fr {
 	String uniteNombre({required Object n}) => '${n}';
 }
 
+// Path: admin.protectionEnfants
+class Traductions$admin$protectionEnfants$fr {
+	Traductions$admin$protectionEnfants$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Protection des enfants'
+	String get titre => 'Protection des enfants';
+
+	/// fr: 'Le responsable reçoit, avec la direction, les signalements de sécurité d'un enfant. Son nom et son courriel s'affichent aux enseignants qui signalent. Laissez les champs vides : l'écran dit alors que la direction reçoit le signalement.'
+	String get intro => 'Le responsable reçoit, avec la direction, les signalements de sécurité d\'un enfant. Son nom et son courriel s\'affichent aux enseignants qui signalent. Laissez les champs vides : l\'écran dit alors que la direction reçoit le signalement.';
+
+	/// fr: 'Nom affiché'
+	String get nom => 'Nom affiché';
+
+	/// fr: 'Le nom que voient les enseignants.'
+	String get nomDetail => 'Le nom que voient les enseignants.';
+
+	/// fr: 'Courriel de contact'
+	String get courriel => 'Courriel de contact';
+
+	/// fr: 'L'adresse où écrire au responsable.'
+	String get courrielDetail => 'L\'adresse où écrire au responsable.';
+
+	/// fr: 'Non renseigné'
+	String get nonRenseigne => 'Non renseigné';
+
+	/// fr: 'Nom du responsable'
+	String get champNom => 'Nom du responsable';
+
+	/// fr: 'Courriel du responsable'
+	String get champCourriel => 'Courriel du responsable';
+
+	/// fr: 'Enregistrer'
+	String get enregistrer => 'Enregistrer';
+
+	/// fr: 'Laissez vide pour retirer le responsable.'
+	String get videAide => 'Laissez vide pour retirer le responsable.';
+
+	/// fr: 'Ce nom est trop long. 120 signes au plus.'
+	String get nomTropLong => 'Ce nom est trop long. 120 signes au plus.';
+
+	/// fr: 'Cette adresse n'est pas valide. Un courriel contient un @ et un point.'
+	String get courrielInvalide => 'Cette adresse n\'est pas valide. Un courriel contient un @ et un point.';
+
+	/// fr: 'Le changement n'a pas été enregistré : {message}. Réessayez.'
+	String erreurEcriture({required Object message}) => 'Le changement n\'a pas été enregistré : ${message}. Réessayez.';
+
+	/// fr: 'Nous n'avons pas pu lire le responsable. Réessayez dans un instant.'
+	String get erreur => 'Nous n\'avons pas pu lire le responsable. Réessayez dans un instant.';
+}
+
 // Path: admin.conservationDonnees
 class Traductions$admin$conservationDonnees$fr {
 	Traductions$admin$conservationDonnees$fr.internal(this._root);
@@ -13020,6 +13154,9 @@ class Traductions$enseignant$profil$fr {
 
 	/// fr: 'Enregistrement audio et visite de contrôle'
 	String get contratAccuse => 'Enregistrement audio et visite de contrôle';
+
+	/// fr: 'Code de conduite de l'enseignant'
+	String get contratCodeConduite => 'Code de conduite de l\'enseignant';
 
 	/// fr: 'Version {version}, accepté le {date}'
 	String contratDetail({required Object version, required Object date}) => 'Version ${version}, accepté le ${date}';
@@ -32176,6 +32313,9 @@ class Traductions$tc$parcours$signalement$categorieValeur$fr {
 	/// fr: 'Changement'
 	String get changement => 'Changement';
 
+	/// fr: 'Sécurité d'un enfant'
+	String get securiteEnfant => 'Sécurité d\'un enfant';
+
 	/// fr: 'Autre'
 	String get autre => 'Autre';
 }
@@ -34544,6 +34684,28 @@ extension on Traductions {
 			'inscription.recap.cours' => 'Vos propres cours',
 			'inscription.recap.coursOui' => 'Vous suivez aussi des cours',
 			'inscription.recap.coursNon' => 'Pas de cours pour vous',
+			'protectionEnfants.categorie' => 'Sécurité d\'un enfant',
+			'protectionEnfants.prioritaireTitre' => 'Signalement prioritaire',
+			'protectionEnfants.prioritaireDetail' => 'La direction et le responsable de la protection des enfants le lisent tout de suite. L\'enseignant concerné et les autres familles ne le voient jamais. Aucun message n\'est envoyé à la famille.',
+			'protectionEnfants.urgence' => 'En cas de danger immédiat, appelez d\'abord les services d\'urgence de votre pays.',
+			'protectionEnfants.direction' => 'La direction reçoit votre signalement.',
+			'protectionEnfants.recuPar' => ({required Object nom}) => '${nom} et la direction reçoivent votre signalement.',
+			'protectionEnfants.contact' => ({required Object courriel}) => 'Courriel de contact : ${courriel}',
+			'protectionEnfants.erreurLecture' => 'Le nom du responsable ne s\'affiche pas pour l\'instant. Réessayez dans un instant.',
+			'codeConduite.titre' => 'Code de conduite de l\'enseignant',
+			'codeConduite.lien' => 'Lire le code de conduite',
+			'codeConduite.intro' => 'Ces règles protègent les élèves, et elles vous protègent. Lisez-les, puis acceptez.',
+			'codeConduite.regles.0' => 'Vos cours se tiennent dans la salle de l\'académie. Un cours peut être enregistré en audio, et une personne chargée du contrôle peut le suivre en direct sans vous prévenir du moment. Vous acceptez ces mesures : elles protègent les enfants et elles vous protègent.',
+			'codeConduite.regles.1' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
+			'codeConduite.regles.2' => 'Ce que vous savez d\'un enfant reste à l\'académie. Vous ne le rendez pas public et vous ne le montrez pas aux autres familles.',
+			'codeConduite.regles.3' => 'Si la sécurité d\'un enfant vous inquiète, signalez-le tout de suite avec « Signaler un besoin », catégorie « Sécurité d\'un enfant ». La direction le lit en priorité.',
+			'codeConduite.regles.4' => 'Si vous refusez ces règles, l\'académie ne peut pas vous confier d\'élèves, car elles protègent les enfants.',
+			'codeConduite.caseAccord' => 'J\'ai lu le code de conduite et je l\'accepte.',
+			'codeConduite.accepter' => 'J\'accepte le code de conduite',
+			'codeConduite.accepteLe' => ({required Object date, required Object version}) => 'Accepté le ${date}. Version ${version}.',
+			'codeConduite.erreur' => 'Votre accord n\'a pas été enregistré. Vérifiez votre connexion, puis réessayez.',
+			'codeConduite.erreurLecture' => 'Nous n\'avons pas pu lire vos accords. Réessayez.',
+			'codeConduite.aAccepter' => 'À accepter',
 			'contrat.titre' => 'Ce que vous signez',
 			'contrat.intro' => 'Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu\'au milieu d\'un texte long.',
 			'contrat.pointEnregistrement' => 'Un cours peut être enregistré en audio. Dans ce cas, il est conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.',
@@ -34785,6 +34947,8 @@ extension on Traductions {
 			'appareils.retrait.confirmer' => 'Retirer l\'appareil',
 			'appareils.retrait.enCours' => 'Retrait en cours',
 			'appareils.retrait.reussi' => 'Appareil retiré. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.retrait.echec' => 'Le retrait n\'a pas abouti. L\'appareil est toujours autorisé. Réessayez dans un instant.',
 			'appareils.retrait.horsLigne' => 'L\'appareil n\'a pas été retiré. Réessayez quand la connexion sera revenue.',
 			'appareils.emetteur.titre' => 'Connecter un appareil',
@@ -34807,8 +34971,6 @@ extension on Traductions {
 			'appareils.emetteur.confirme.action' => 'Terminé',
 			'appareils.emetteur.expire.titre' => 'Ce code a expiré',
 			'appareils.emetteur.expire.phrase' => 'Il ne peut plus servir. Générez-en un nouveau quand l\'autre appareil est prêt.',
-			_ => null,
-		} ?? switch (path) {
 			'appareils.emetteur.remplace.titre' => 'Ce code a été remplacé',
 			'appareils.emetteur.remplace.phrase' => 'Un nouveau code a été demandé pour cet élève, ici ou sur un autre appareil. Celui-ci ne marche plus.',
 			'appareils.emetteur.dejaActif.titre' => 'Un code est déjà valable',
@@ -35299,6 +35461,8 @@ extension on Traductions {
 			'recrutement.candidat.seConnecter' => 'Me connecter',
 			'recrutement.candidat.inconnue' => 'Code non reconnu.',
 			'recrutement.candidat.inconnueDetail' => 'Vérifiez le code, puis saisissez-le de nouveau.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.candidat.ressaisir' => 'Saisir un autre code',
 			'recrutement.candidat.horsLigne' => 'Le code n\'a pas été vérifié. Réessayez dans un instant.',
 			'recrutement.candidat.erreur' => 'Le code n\'a pas pu être vérifié. Réessayez dans un instant.',
@@ -35321,8 +35485,6 @@ extension on Traductions {
 			'recrutement.signature.signePar' => ({required Object nom}) => 'Signé par ${nom}',
 			'recrutement.signature.copie' => 'Télécharger ma copie',
 			'recrutement.signature.copieLien' => 'Le lien de votre copie est copié. Collez-le dans votre navigateur : il reste valable quelques minutes.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.signature.copieErreur' => 'Votre copie n\'a pas pu être préparée. Réessayez dans un instant.',
 			'recrutement.signature.nouvelleVersion' => ({required Object version}) => 'Le contrat a été mis à jour depuis votre dernière signature (version ${version}). Relisez-le, puis signez de nouveau.',
 			'recrutement.signature.versionPerimee' => 'Le contrat a été mis à jour pendant votre lecture. Le texte est rechargé : relisez-le, puis signez de nouveau.',
@@ -35813,6 +35975,8 @@ extension on Traductions {
 			'admin.groupes.cahiers.seanceDu' => ({required Object date}) => 'Séance du ${date}',
 			'admin.groupes.cahiers.rubriqueTravail' => 'Travail à préparer',
 			'admin.groupes.cahiers.rubriqueObjectif' => 'Objectif personnel',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.cahiers.rubriqueSuite' => 'Suite décidée',
 			'admin.groupes.cahiers.rubriqueMotif' => 'Motif de l\'exception',
 			'admin.groupes.partage.titre' => 'Partage des comptes rendus pédagogiques',
@@ -35835,8 +35999,6 @@ extension on Traductions {
 			'admin.groupes.partage.etatInactif' => 'Désactivé pour la classe',
 			'admin.groupes.partage.confirmerActiver' => 'Activer le partage automatique pour cette classe ?',
 			'admin.groupes.partage.consequenceActiver' => 'Les comptes rendus déjà partagés redeviennent lisibles pour les familles. Ceux retenus pendant la désactivation ne sont pas publiés d\'un coup.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.partage.confirmerDesactiver' => 'Désactiver le partage automatique pour cette classe ?',
 			'admin.groupes.partage.consequenceDesactiver' => 'Les familles ne voient plus, tout de suite, les comptes rendus partagés automatiquement. Les cahiers, les séances validées et la paie ne changent pas.',
 			'admin.groupes.partage.actionActiver' => 'Activer le partage',
@@ -36185,6 +36347,21 @@ extension on Traductions {
 			'admin.fonctionnalites.participantsMax' => 'Participants maximum',
 			'admin.fonctionnalites.participantsMaxDetail' => 'Le nombre de participants autorisés quand les séances multi-participants sont actives.',
 			'admin.fonctionnalites.uniteNombre' => ({required Object n}) => '${n}',
+			'admin.protectionEnfants.titre' => 'Protection des enfants',
+			'admin.protectionEnfants.intro' => 'Le responsable reçoit, avec la direction, les signalements de sécurité d\'un enfant. Son nom et son courriel s\'affichent aux enseignants qui signalent. Laissez les champs vides : l\'écran dit alors que la direction reçoit le signalement.',
+			'admin.protectionEnfants.nom' => 'Nom affiché',
+			'admin.protectionEnfants.nomDetail' => 'Le nom que voient les enseignants.',
+			'admin.protectionEnfants.courriel' => 'Courriel de contact',
+			'admin.protectionEnfants.courrielDetail' => 'L\'adresse où écrire au responsable.',
+			'admin.protectionEnfants.nonRenseigne' => 'Non renseigné',
+			'admin.protectionEnfants.champNom' => 'Nom du responsable',
+			'admin.protectionEnfants.champCourriel' => 'Courriel du responsable',
+			'admin.protectionEnfants.enregistrer' => 'Enregistrer',
+			'admin.protectionEnfants.videAide' => 'Laissez vide pour retirer le responsable.',
+			'admin.protectionEnfants.nomTropLong' => 'Ce nom est trop long. 120 signes au plus.',
+			'admin.protectionEnfants.courrielInvalide' => 'Cette adresse n\'est pas valide. Un courriel contient un @ et un point.',
+			'admin.protectionEnfants.erreurEcriture' => ({required Object message}) => 'Le changement n\'a pas été enregistré : ${message}. Réessayez.',
+			'admin.protectionEnfants.erreur' => 'Nous n\'avons pas pu lire le responsable. Réessayez dans un instant.',
 			'admin.conservationDonnees.titre' => 'Conservation des données',
 			'admin.conservationDonnees.intro' => 'Depuis combien de temps ces éléments restent accessibles avant leur suppression automatique.',
 			'admin.conservationDonnees.erreur' => 'Les délais de conservation n\'ont pas pu être lus. Réessayez dans un instant.',
@@ -36312,6 +36489,8 @@ extension on Traductions {
 			'admin.programmes.ajouterNiveauErreur' => ({required Object message}) => 'L\'ajout du niveau n\'a pas été confirmé : ${message}. Le code technique existe peut-être déjà dans cette version : modifiez-le, puis réessayez.',
 			'admin.programmes.modifierNiveau' => 'Modifier',
 			'admin.programmes.modifierNiveauTitre' => ({required Object nom}) => 'Modifier ${nom}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.programmes.modifierNiveauEnvoyer' => 'Enregistrer',
 			'admin.programmes.modifierNiveauErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
 			'admin.programmes.supprimerNiveau' => 'Supprimer',
@@ -36349,8 +36528,6 @@ extension on Traductions {
 			'admin.journal.chaineIntacte' => 'Journal intact',
 			'admin.journal.chaineRompue' => 'Journal altéré',
 			'admin.journal.chaineRompueUne' => ({required Object entree}) => 'Une entrée ne correspond plus à son empreinte, la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.chaineInconnue' => 'Intégrité inconnue',
 			'admin.journal.chaineInconnueDetail' => 'La vérification n\'a pas abouti. Les entrées ci-dessous restent lisibles, mais rien ne garantit pour l\'instant qu\'elles sont complètes.',
 			'admin.journal.chaineEnCours' => 'Vérification',
@@ -36826,6 +37003,8 @@ extension on Traductions {
 			'admin.finance.pol.apercuTypeClasse' => 'Type de classe',
 			'admin.finance.pol.apercuClasseEnfants' => 'Enfants',
 			'admin.finance.pol.apercuClasseAdultes' => 'Adultes',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.apercuClasseDebutants' => 'Débutants',
 			'admin.finance.pol.apercuEligiblesChoix' => 'Sièges éligibles',
 			'admin.finance.pol.apercuEligiblesDetail' => 'Un siège compte quand sa période est financée, même si l\'élève est absent.',
@@ -36863,8 +37042,6 @@ extension on Traductions {
 			'admin.finance.pai.aJour' => 'À jour',
 			'admin.finance.pai.aJourValeur' => 'À jour',
 			'admin.finance.pai.videTitre' => 'Aucun élève pour l\'instant',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pai.videPhrase' => 'Les élèves inscrits apparaîtront ici avec ce qu\'il leur reste à payer.',
 			'admin.finance.pai.feuilleTitre' => ({required Object prenom}) => 'Paiement reçu pour ${prenom}',
 			'admin.finance.pai.eleve' => 'Élève',
@@ -37340,6 +37517,8 @@ extension on Traductions {
 			'admin.bibliotheque.publication.droitsFiges' => 'Les droits d\'une version publiée ne se modifient plus : créez une nouvelle version.',
 			'admin.bibliotheque.publication.checklistTitre' => 'Contrôle de la version',
 			'admin.bibliotheque.publication.criteres.source' => 'Source confirmée',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.publication.criteres.titulaire' => 'Titulaire du droit connu',
 			'admin.bibliotheque.publication.criteres.preuve' => 'Preuve d\'autorisation vérifiée',
 			'admin.bibliotheque.publication.criteres.usageApplication' => 'Usage dans l\'application permis',
@@ -37377,8 +37556,6 @@ extension on Traductions {
 			'admin.bibliotheque.publication.versLaFiche' => 'Voir la fiche',
 			'admin.bibliotheque.publication.pasDeCapacite' => 'Vous pouvez consulter le contrôle, mais pas publier.',
 			'admin.bibliotheque.attribution.titre' => 'Attribuer à des classes',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.attribution.intro' => 'Choisissez les classes qui verront cette version publiée. Ce que vous attribuez ici est visible de leurs élèves et de leur enseignant.',
 			'admin.bibliotheque.attribution.classesTitre' => 'Classes',
 			'admin.bibliotheque.attribution.classeServie' => 'Déjà attribuée',
@@ -37854,6 +38031,8 @@ extension on Traductions {
 			'historique.observation.blocVisites' => 'Visites',
 			'historique.observation.observateur' => 'Observateur',
 			'historique.observation.vous' => 'Vous',
+			_ => null,
+		} ?? switch (path) {
 			'historique.observation.eleve' => 'Élève',
 			'historique.observation.enseignant' => 'Enseignant',
 			'historique.observation.dureeTotale' => 'Durée totale',
@@ -37891,8 +38070,6 @@ extension on Traductions {
 			'notifications.evenements.controleMissionNonControlee' => 'Une mission de contrôle est restée sans vérification.',
 			'notifications.evenements.classeChangee' => 'Un élève de la famille a rejoint une autre classe, au même horaire.',
 			'notifications.evenements.paiementRelance' => 'Un paiement arrive à échéance. Il se règle dans Paiements.',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.evenements.accesSuspenduPaiement' => 'Un accès est suspendu : le paiement du mois n\'est pas reçu.',
 			'notifications.evenements.accesRetabliPaiement' => 'L\'accès est rétabli : le paiement est reçu.',
 			'notifications.filtres.libelle' => 'Filtrer les notifications',
@@ -38368,6 +38545,8 @@ extension on Traductions {
 			'enseignant.signalement.fermer' => 'Fermer',
 			'enseignant.demo.titre' => 'Démonstration enseignant',
 			'enseignant.demo.mention' => 'Données fictives, aucun envoi.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.demo.intro' => 'Choisissez un écran de Sayyid Ibrahim.',
 			'enseignant.demo.ecrans' => 'Écrans',
 			'enseignant.demo.etats' => 'Situations',
@@ -38405,8 +38584,6 @@ extension on Traductions {
 			'enseignant.photo.remplacer' => 'Remplacer la photo',
 			'enseignant.photo.autre' => 'Choisir une autre photo',
 			'enseignant.photo.changer' => 'Changer la photo',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.photo.alternatif' => 'Votre photo publique',
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
 			'enseignant.photo.echec' => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.',
@@ -38689,6 +38866,7 @@ extension on Traductions {
 			'enseignant.profil.contratEnseignant' => 'Contrat enseignant',
 			'enseignant.profil.contratConditions' => 'Conditions d\'utilisation',
 			'enseignant.profil.contratAccuse' => 'Enregistrement audio et visite de contrôle',
+			'enseignant.profil.contratCodeConduite' => 'Code de conduite de l\'enseignant',
 			'enseignant.profil.contratDetail' => ({required Object version, required Object date}) => 'Version ${version}, accepté le ${date}',
 			'enseignant.profil.contratAucun' => 'Aucun contrat enregistré',
 			'enseignant.profil.contratAucunDetail' => 'Votre dossier n\'est pas encore passé par la signature.',
@@ -38881,6 +39059,8 @@ extension on Traductions {
 			'enseignant.revenus.plafond' => '3. Plafond horaire',
 			'enseignant.revenus.plafondDetail' => ({required Object plafond}) => 'Le taux ne dépasse jamais ${plafond} par heure, même au-delà de la capacité.',
 			'enseignant.revenus.internetSection' => 'Aide Internet',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.internet' => 'Aide Internet du mois',
 			'enseignant.revenus.internetDetail' => 'Une seule aide par mois, versée à part de la rémunération pédagogique.',
 			'enseignant.revenus.internetAucune' => 'Aucune aide Internet n\'est prévue ce mois-ci.',
@@ -38919,8 +39099,6 @@ extension on Traductions {
 			'controleur.historique.complementAjoute' => 'Complément ajouté',
 			'controleur.historique.aTerminer' => 'À terminer',
 			'controleur.historique.filtreEtat' => 'État',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.historique.tousEtats' => 'Tous les états',
 			'controleur.historique.duree' => ({required Object minutes}) => '${minutes} min observées',
 			'controleur.historique.meta' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
@@ -39395,6 +39573,8 @@ extension on Traductions {
 			'tc.classe.prevol.cameraAbsente' => 'Aucune caméra. Le cours reste possible.',
 			'tc.classe.prevol.permissionRefusee' => 'Accès au micro refusé. Autorisez-le pour ouvrir le cours.',
 			'tc.classe.prevol.reessayer' => 'Vérifier à nouveau',
+			_ => null,
+		} ?? switch (path) {
 			'tc.realtime.transport.partage_indisponible' => 'Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page.',
 			'tc.realtime.etat.restauration_impossible' => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.',
 			'tc.observation.entree.titre' => 'Observer la séance',
@@ -39433,8 +39613,6 @@ extension on Traductions {
 			'tc.observation.disponibilite.tempsEpuise' => 'Votre temps d\'observation pour cette séance est utilisé. Vous pourrez observer la prochaine séance.',
 			'tc.observation.disponibilite.seanceNonCommenceeTitre' => 'La séance n\'a pas encore commencé',
 			'tc.observation.disponibilite.seanceNonCommencee' => 'L\'observation s\'ouvre pendant la séance.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.disponibilite.seanceTermineeTitre' => 'La séance est terminée',
 			'tc.observation.disponibilite.seanceTerminee' => 'Vous pourrez observer la prochaine séance.',
 			'tc.observation.disponibilite.seanceNonTenueTitre' => 'Cette séance n\'a pas lieu',
@@ -39593,6 +39771,7 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
 			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
+			'tc.parcours.signalement.categorieValeur.securiteEnfant' => 'Sécurité d\'un enfant',
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
@@ -39908,6 +40087,8 @@ extension on Traductions {
 			'adulte.reprise.jamais.donnees' => 'Ses données privées sans rapport avec la gestion du foyer',
 			'adulte.reprise.succession' => 'Il s\'agit d\'une succession de titularité du foyer, pas d\'une prise de contrôle du compte personnel.',
 			'adulte.reprise.deposer' => 'Déposer la demande',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.deposerQuestion' => 'Déposer cette demande ?',
 			'adulte.reprise.deposerConsequence' => 'Le titulaire du foyer en sera informé et pourra la refuser. L\'administration examinera ensuite la demande et décidera.',
 			'adulte.reprise.horsLigne' => 'Rien n\'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.',
@@ -39947,8 +40128,6 @@ extension on Traductions {
 			'adulte.demo.situations' => 'Les situations du foyer',
 			'adulte.demo.variantes' => 'Les variantes',
 			'adulte.demo.titulaireFemme' => 'La titulaire est une femme, son conjoint est le second adulte.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.vueConjointe' => 'Mon espace vu par la conjointe, second adulte du foyer.',
 			'adulte.demo.vueConjoint' => 'Mon espace vu par le conjoint, second adulte du foyer.',
 			'adulte.demo.invitationRecueConjointe' => 'L\'invitation reçue par la conjointe, dans son propre compte.',
@@ -40422,6 +40601,8 @@ extension on Traductions {
 			'com.socle.navigation.provisoire.administrationDetail' => 'Les annonces, la modération et les messages se géreront bientôt ici.',
 			'com.socle.navigation.provisoire.publierAnnonceTitre' => 'Publier une annonce',
 			'com.socle.navigation.provisoire.publierAnnonceDetail' => 'La publication d\'une annonce pour une Classe arrivera bientôt ici.',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
@@ -40461,8 +40642,6 @@ extension on Traductions {
 			'com.messages.entete.avecAttention' => ({required Object entete, required Object attention}) => '${entete}. ${attention}',
 			'com.messages.entete.deuxObjets' => ({required Object premier, required Object second}) => '${premier} · ${second}',
 			'com.messages.entete.semantique' => ({required Object noms, required Object objets}) => 'Conversation avec ${noms}, à propos de ${objets}',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.entete.semantiqueSansNoms' => ({required Object objets}) => 'Conversation à propos de ${objets}',
 			'com.messages.types.classe' => 'Classe',
 			'com.messages.types.eleve' => 'Élève',
@@ -40936,6 +41115,8 @@ extension on Traductions {
 			'com.studio.demo.f.epinglePar' => ({required Object nom}) => 'Épinglé par ${nom}',
 			'com.studio.demo.f.partagePar' => ({required Object nom}) => 'Partagé par ${nom}',
 			'com.studio.demo.f.lienRemplacements' => 'Remplacements de la semaine',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.lienCharte' => 'Charte de l\'équipe',
 			'com.studio.demo.f.brouillon' => 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin',
 			'com.studio.demo.f.activitePaiement' => 'Paiement de septembre non confirmé pour la famille Haddad',
@@ -40975,8 +41156,6 @@ extension on Traductions {
 			'com.annonces.publieur.contexte.publication' => 'Relisez les destinataires et la date, puis publiez. Rien n\'est publié avant la confirmation.',
 			'com.annonces.publieur.champTitre' => 'Titre de l\'annonce',
 			'com.annonces.publieur.champTexte' => 'Texte de l\'annonce',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.publieur.nature.classe' => 'Seules les familles et les élèves de cette Classe la reçoivent.',
 			'com.annonces.publieur.nature.public' => 'Toutes les personnes de ce public la reçoivent.',
 			'com.annonces.publieur.nature.toutes' => 'Toute l\'académie la reçoit. Réservez-la à ce qui concerne tout le monde.',
@@ -41450,6 +41629,8 @@ extension on Traductions {
 			'comptable.paiements.colonnes.destination' => 'Destination',
 			'comptable.paiements.colonnes.echeance' => 'Échéance',
 			'comptable.paiements.colonnes.statut' => 'Statut',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.colonnes.action' => 'Action',
 			'comptable.paiements.types.enseignant' => 'Enseignant',
 			'comptable.paiements.types.contractuel' => 'Contractuel',
@@ -41489,8 +41670,6 @@ extension on Traductions {
 			'comptable.paiements.detail.version' => 'Version du calcul',
 			'comptable.paiements.detail.historique' => 'Historique',
 			'comptable.paiements.detail.historiqueVide' => 'Aucune opération enregistrée pour ce paiement.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.detail.encart' => 'Le Comptable ne peut modifier ni le montant ni les coordonnées de paiement du bénéficiaire.',
 			'comptable.paiements.detail.alerteMethodeRecente' => ({required Object date}) => 'Méthode de paiement modifiée le ${date} : une validation supplémentaire est requise avant tout paiement.',
 			'comptable.paiements.detail.alerteLieeOperateur' => 'Bénéficiaire lié à l\'opérateur : une validation supplémentaire est requise avant tout paiement.',
@@ -41964,6 +42143,8 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.objectifTitre' => 'Objectif de la Réserve',
 			'comptable.direction.reservePanneau.objectifDetail' => 'Ce que la Réserve stratégique doit atteindre.',
 			'comptable.direction.reservePanneau.modeFixe' => 'Montant fixe',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.modeFixeDetail' => 'Une somme précise que vous choisissez.',
 			'comptable.direction.reservePanneau.modeMois' => 'Couverture en mois',
 			'comptable.direction.reservePanneau.modeMoisDetail' => 'Un nombre de mois de charges essentielles.',
@@ -42003,8 +42184,6 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.retraitSwitchDetail' => 'Sortir de l\'argent de la Réserve est une opération sensible : une autre personne que le demandeur la valide.',
 			'comptable.direction.delegationPanneau.intro' => 'Vous réglez une fois ce que le Comptable peut exécuter seul. Tout le reste vous revient.',
 			'comptable.direction.delegationPanneau.pouvoirsTitre' => 'Ce que le Comptable peut faire seul',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.paiementsStandards' => 'Payer les paiements standards',
 			'comptable.direction.delegationPanneau.paiementsStandardsDetail' => 'Un paiement au montant calculé, vers une méthode vérifiée, part sans validation quotidienne.',
 			'comptable.direction.delegationPanneau.remboursement' => 'Exécuter un remboursement standard',

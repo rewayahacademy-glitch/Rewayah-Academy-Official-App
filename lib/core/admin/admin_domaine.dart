@@ -242,6 +242,11 @@ List<({String libelle, String chemin})> ongletsConfiguration({
       libelle: t.admin.politiqueRevueKyc.titre,
       chemin: Routes.adminConfigurationPolitiqueRevueKyc,
     ),
+  // PE : toujours le dernier onglet (apres la politique KYC quand elle existe).
+  (
+    libelle: t.admin.protectionEnfants.titre,
+    chemin: Routes.adminConfigurationProtectionEnfants,
+  ),
 ];
 
 /// Les deux fonctions pairs du domaine Operations (AD-X) : l'Espace de

@@ -808,6 +808,11 @@ abstract final class Routes {
   static const String adminConfigurationPolitiqueRevueKyc =
       '/admin/configuration/politique-revue-kyc';
 
+  /// Protection des enfants (PE, 18/10/2026), sous Configuration : le
+  /// responsable que l'administration nomme.
+  static const String adminConfigurationProtectionEnfants =
+      '/admin/configuration/protection-enfants';
+
   /// Domaine Securite et audit.
   static const String adminSecuriteAudit = '/admin/securite-audit';
 

@@ -932,6 +932,34 @@
       "coursNon": "Pas de cours pour vous"
     }
   },
+  "protectionEnfants": {
+    "categorie": "Sécurité d'un enfant",
+    "prioritaireTitre": "Signalement prioritaire",
+    "prioritaireDetail": "La direction et le responsable de la protection des enfants le lisent tout de suite. L'enseignant concerné et les autres familles ne le voient jamais. Aucun message n'est envoyé à la famille.",
+    "urgence": "En cas de danger immédiat, appelez d'abord les services d'urgence de votre pays.",
+    "direction": "La direction reçoit votre signalement.",
+    "recuPar": "{nom} et la direction reçoivent votre signalement.",
+    "contact": "Courriel de contact\u00a0: {courriel}",
+    "erreurLecture": "Le nom du responsable ne s'affiche pas pour l'instant. Réessayez dans un instant."
+  },
+  "codeConduite": {
+    "titre": "Code de conduite de l'enseignant",
+    "lien": "Lire le code de conduite",
+    "intro": "Ces règles protègent les élèves, et elles vous protègent. Lisez-les, puis acceptez.",
+    "regles": [
+      "Vos cours se tiennent dans la salle de l'académie. Un cours peut être enregistré en audio, et une personne chargée du contrôle peut le suivre en direct sans vous prévenir du moment. Vous acceptez ces mesures\u00a0: elles protègent les enfants et elles vous protègent.",
+      "Vous ne voyez jamais les coordonnées d'une famille\u00a0: ni nom complet, ni courriel, ni téléphone.",
+      "Ce que vous savez d'un enfant reste à l'académie. Vous ne le rendez pas public et vous ne le montrez pas aux autres familles.",
+      "Si la sécurité d'un enfant vous inquiète, signalez-le tout de suite avec «\u00a0Signaler un besoin\u00a0», catégorie «\u00a0Sécurité d'un enfant\u00a0». La direction le lit en priorité.",
+      "Si vous refusez ces règles, l'académie ne peut pas vous confier d'élèves, car elles protègent les enfants."
+    ],
+    "caseAccord": "J'ai lu le code de conduite et je l'accepte.",
+    "accepter": "J'accepte le code de conduite",
+    "accepteLe": "Accepté le {date}. Version {version}.",
+    "erreur": "Votre accord n'a pas été enregistré. Vérifiez votre connexion, puis réessayez.",
+    "erreurLecture": "Nous n'avons pas pu lire vos accords. Réessayez.",
+    "aAccepter": "À accepter"
+  },
   "contrat": {
     "titre": "Ce que vous signez",
     "intro": "Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu'au milieu d'un texte long.",
@@ -2941,6 +2969,23 @@
       "participantsMax": "Participants maximum",
       "participantsMaxDetail": "Le nombre de participants autorisés quand les séances multi-participants sont actives.",
       "uniteNombre": "{n}"
+    },
+    "protectionEnfants": {
+      "titre": "Protection des enfants",
+      "intro": "Le responsable reçoit, avec la direction, les signalements de sécurité d'un enfant. Son nom et son courriel s'affichent aux enseignants qui signalent. Laissez les champs vides\u00a0: l'écran dit alors que la direction reçoit le signalement.",
+      "nom": "Nom affiché",
+      "nomDetail": "Le nom que voient les enseignants.",
+      "courriel": "Courriel de contact",
+      "courrielDetail": "L'adresse où écrire au responsable.",
+      "nonRenseigne": "Non renseigné",
+      "champNom": "Nom du responsable",
+      "champCourriel": "Courriel du responsable",
+      "enregistrer": "Enregistrer",
+      "videAide": "Laissez vide pour retirer le responsable.",
+      "nomTropLong": "Ce nom est trop long. 120 signes au plus.",
+      "courrielInvalide": "Cette adresse n'est pas valide. Un courriel contient un @ et un point.",
+      "erreurEcriture": "Le changement n'a pas été enregistré\u00a0: {message}. Réessayez.",
+      "erreur": "Nous n'avons pas pu lire le responsable. Réessayez dans un instant."
     },
     "conservationDonnees": {
       "titre": "Conservation des données",
@@ -5871,6 +5916,7 @@
       "contratEnseignant": "Contrat enseignant",
       "contratConditions": "Conditions d'utilisation",
       "contratAccuse": "Enregistrement audio et visite de contrôle",
+      "contratCodeConduite": "Code de conduite de l'enseignant",
       "contratDetail": "Version {version}, accepté le {date}",
       "contratAucun": "Aucun contrat enregistré",
       "contratAucunDetail": "Votre dossier n'est pas encore passé par la signature.",
@@ -7007,6 +7053,7 @@
           "presence": "Présence",
           "technique": "Technique",
           "changement": "Changement",
+          "securiteEnfant": "Sécurité d'un enfant",
           "autre": "Autre"
         },
         "interne": "Note interne",

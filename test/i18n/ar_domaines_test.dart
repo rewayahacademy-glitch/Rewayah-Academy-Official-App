@@ -82,6 +82,9 @@ const Map<String, int> _domaines = <String, int>{
   'suiviFamille': 40,
   // EA-HL-DOUBLE-1 etendu (17/10) : ce qui manque, hors ligne, par ecran.
   'sansDonnees': 12,
+  // PE (18/10/2026) : protection des enfants, arabe des l'origine.
+  'protectionEnfants': 7,
+  'codeConduite': 8,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :

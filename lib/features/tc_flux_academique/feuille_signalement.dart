@@ -17,6 +17,7 @@ import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/zone_saisie.dart';
+import '../protection_enfants/notice_securite_enfant.dart';
 
 /// Le signalement structure, depuis la fiche d'un eleve (spec section 12.2).
 ///
@@ -157,24 +158,30 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
         ),
         Ecart.vLg,
 
-        // L7 : une phrase-type bienveillante par categorie, « Autre » pour
-        // l'ecrire ; facultatif, rien n'est retenu d'office.
-        Text(t.tc.parcours.signalement.famille, style: textes.titleSmall),
-        Ecart.vXs,
-        Text(
-          t.tc.parcours.signalement.familleAide,
-          style: palette.inkMuted.applyTo(
-            textes.bodySmall ?? const TextStyle(),
+        if (_categorie.estSecuriteEnfant) ...<Widget>[
+          // PE : la securite d'un enfant n'a pas de message pour la famille.
+          // L'ecran dit qui la lit, qui ne la voit pas, et qui la recoit.
+          const NoticeSecuriteEnfant(),
+        ] else ...<Widget>[
+          // L7 : une phrase-type bienveillante par categorie, « Autre » pour
+          // l'ecrire ; facultatif, rien n'est retenu d'office.
+          Text(t.tc.parcours.signalement.famille, style: textes.titleSmall),
+          Ecart.vXs,
+          Text(
+            t.tc.parcours.signalement.familleAide,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
           ),
-        ),
-        Ecart.vSm,
-        SelecteurMotif(
-          motifs: MotifsProposes.signalement(_categorie.valeurSql),
-          controleur: _famille,
-          libelleChamp: t.choix.autreInvite,
-          lignesMin: 2,
-          lignesMax: 3,
-        ),
+          Ecart.vSm,
+          SelecteurMotif(
+            motifs: MotifsProposes.signalement(_categorie.valeurSql),
+            controleur: _famille,
+            libelleChamp: t.choix.autreInvite,
+            lignesMin: 2,
+            lignesMax: 3,
+          ),
+        ],
         Ecart.vXl,
 
         // Un bouton qui ne peut pas aboutir n'est pas rendu : une phrase dit
@@ -249,8 +256,10 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
             academyId: widget.academyId,
             internalDetails: _interne.text,
             // Vide vaut absent : un message famille vide ouvrirait l'action
-            // « Transmettre » sur rien.
-            familySummary: famille.isEmpty ? null : famille,
+            // « Transmettre » sur rien. La securite d'un enfant n'en a jamais.
+            familySummary: famille.isEmpty || _categorie.estSecuriteEnfant
+                ? null
+                : famille,
           );
       if (mounted) {
         Navigator.of(context).pop(signalement);
