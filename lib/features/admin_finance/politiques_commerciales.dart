@@ -55,6 +55,7 @@ import '../../core/capacites/port_politiques_commerciales.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
 import '../../core/finance/politique_commerciale.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/jour_du_mois.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -483,7 +484,9 @@ class _PolitiquesCommercialesContenuState
             : 'tauxEleveAdulte';
         if (autre(idTaux) case final Montant taux
             when v is Montant && v.mineur < taux.mineur) {
-          return pol.erreurPlafondEleve(taux: _texteValeur(taux, c.nature));
+          return pol.erreurPlafondEleve(
+            taux: sansAncre(_texteValeur(taux, c.nature)),
+          );
         }
       case 'classesMax':
         if (autre('classesObjectif') case final int objectif

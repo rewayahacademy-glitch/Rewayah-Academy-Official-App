@@ -33,6 +33,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/admin/admin_domaine.dart';
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/import_inscriptions/analyse_inscriptions.dart';
@@ -944,10 +945,20 @@ class _ImportInscriptionsPageState
           key: ValueKey<String>('import-retoucher-${f.email}'),
           libelle: r.ouvert
               ? a.foyer.fermer
-              : a.foyer.retoucher(prenom: prenom),
+              : a.foyer.retoucher(
+                  dePrenom: deDevant(
+                    prenom,
+                    cle: 'admin.importInscriptions.foyer.retoucher',
+                  ),
+                ),
           libelleSemantique: r.ouvert
               ? a.foyer.fermer
-              : a.foyer.retoucher(prenom: prenom),
+              : a.foyer.retoucher(
+                  dePrenom: deDevant(
+                    prenom,
+                    cle: 'admin.importInscriptions.foyer.retoucher',
+                  ),
+                ),
           fleche: false,
           alignerEnDebut: true,
           onPress: () => setState(() => r.ouvert = !r.ouvert),
@@ -957,7 +968,12 @@ class _ImportInscriptionsPageState
           ZoneSaisie(
             controleur: r.accueil,
             cleChamp: ValueKey<String>('import-mot-${f.email}'),
-            libelle: a.foyer.champAccueil(prenom: prenom),
+            libelle: a.foyer.champAccueil(
+              dePrenom: deDevant(
+                prenom,
+                cle: 'admin.importInscriptions.foyer.champAccueil',
+              ),
+            ),
             aide: a.foyer.motAide,
             minLignes: 3,
             maxLignes: 6,
@@ -967,7 +983,12 @@ class _ImportInscriptionsPageState
             ZoneSaisie(
               controleur: r.patience,
               cleChamp: ValueKey<String>('import-patience-${f.email}'),
-              libelle: a.foyer.champPatience(prenom: prenom),
+              libelle: a.foyer.champPatience(
+                dePrenom: deDevant(
+                  prenom,
+                  cle: 'admin.importInscriptions.foyer.champPatience',
+                ),
+              ),
               aide: a.foyer.motAide,
               minLignes: 3,
               maxLignes: 6,

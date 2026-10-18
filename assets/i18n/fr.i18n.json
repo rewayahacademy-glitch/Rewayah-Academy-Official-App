@@ -956,7 +956,7 @@
     "caseAccord": "J'ai lu le code de conduite et je l'accepte.",
     "accepter": "J'accepte le code de conduite",
     "accepteLe": "Accepté le {date}. Version {version}.",
-    "erreur": "Votre accord n'a pas été enregistré. Vérifiez votre connexion, puis réessayez.",
+    "erreur": "Votre accord n'a pas été enregistré. Réessayez dans un instant.",
     "erreurLecture": "Nous n'avons pas pu lire vos accords. Réessayez.",
     "aAccepter": "À accepter"
   },
@@ -2148,12 +2148,12 @@
       "intro": "Déposez les deux fichiers CSV du classeur des formulaires, tels quels. Rien n'est écrit avant votre confirmation.",
       "eleves": {
         "titre": "Fichier des élèves",
-        "aide": "Onglet « Elèves (Réponses) » du classeur\u00a0: collez son contenu ou choisissez le fichier.",
+        "aide": "Onglet\u00a0«\u00a0Elèves (Réponses)\u00a0» du classeur\u00a0: collez son contenu ou choisissez le fichier.",
         "champ": "Contenu du fichier des élèves"
       },
       "enseignants": {
         "titre": "Fichier des enseignants",
-        "aide": "Onglet « Enseignants (Réponses) » du classeur\u00a0: collez son contenu ou choisissez le fichier.",
+        "aide": "Onglet\u00a0«\u00a0Enseignants (Réponses)\u00a0» du classeur\u00a0: collez son contenu ou choisissez le fichier.",
         "champ": "Contenu du fichier des enseignants"
       },
       "choisir": "Choisir un fichier CSV",
@@ -2180,7 +2180,7 @@
         "foyers": "Foyers comptés par le serveur",
         "personnes": "Personnes comptées par le serveur",
         "refusees": "Lignes refusées par le serveur",
-        "indisponible": "Le serveur n'a pas pu confirmer cet aperçu. Vérifiez la connexion, puis revenez en arrière et recommencez."
+        "indisponible": "Le serveur n'a pas pu confirmer cet aperçu. Revenez en arrière et recommencez."
       },
       "ligne": "{fichier}, ligne {ligne}\u00a0: {motif}",
       "fichier": {
@@ -2218,9 +2218,9 @@
         "adresse": "Adresse\u00a0: {adresse}",
         "eleves": "Élèves\u00a0: {eleves}",
         "patiente": "A patienté",
-        "retoucher": "Retoucher le mot de {prenom}",
-        "champAccueil": "Mot d'accueil de {prenom}",
-        "champPatience": "Mot de patience de {prenom}",
+        "retoucher": "Retoucher le mot de {dePrenom}",
+        "champAccueil": "Mot d'accueil de {dePrenom}",
+        "champPatience": "Mot de patience de {dePrenom}",
         "motAide": "Laissez vide pour garder le mot automatique.",
         "fermer": "Fermer",
         "nonAffiches": "Foyers non affichés, aux réglages communs\u00a0: {n}"
@@ -2230,7 +2230,7 @@
         "question": "Importer ces inscriptions\u00a0?",
         "consequence": "Les foyers et les personnes sont créés dans l'application. Rejouer l'import ne crée aucun doublon. Les lignes refusées ne sont pas importées."
       },
-      "horsLigne": "Vous êtes hors ligne. Reconnectez-vous pour confirmer l'import.",
+      "horsLigne": "L'import se confirmera dès le retour du réseau. Rien n'est créé d'ici là.",
       "resultat": {
         "titre": "Import terminé",
         "personnesCreees": "Personnes créées",
@@ -2245,7 +2245,7 @@
         "recommencer": "Importer d'autres fichiers"
       },
       "echec": {
-        "horsLigne": "L'import n'a pas pu être confirmé\u00a0: la connexion a coupé. Vérifiez la connexion, puis relancez la confirmation\u00a0: rien ne sera créé en double.",
+        "horsLigne": "L'import n'a pas pu être confirmé\u00a0: relancez la confirmation dès le retour du réseau. Rien ne sera créé en double.",
         "refuse": "Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.",
         "invalide": "Le serveur ne peut pas lire ces fichiers. Vérifiez l'en-tête et les guillemets, puis réessayez.",
         "serveur": "L'import n'a pas pu être confirmé. Réessayez\u00a0: rien ne sera créé en double.",
@@ -4611,7 +4611,7 @@
         "action": "Télécharger mes données",
         "reussi": "Votre copie est enregistrée.",
         "echec": "La copie n'a pas pu être préparée. Rien n'a été enregistré. Réessayez dans un instant.",
-        "horsLigne": "Vous êtes hors ligne. Reconnectez-vous, puis téléchargez vos données.",
+        "horsLigne": "Téléchargez vos données dès le retour du réseau.",
         "refuse": "Ce compte ne peut pas télécharger de copie."
       },
       "suppression": {
@@ -4646,7 +4646,7 @@
         "demandeEnvoyee": "Votre demande est enregistrée. Vous pouvez l'annuler jusqu'à son traitement.",
         "demandeAnnulee": "Votre demande est annulée. Votre compte reste ouvert.",
         "echec": "Votre demande n'a pas abouti. Votre compte n'a pas changé. Réessayez dans un instant.",
-        "horsLigne": "Vous êtes hors ligne. Reconnectez-vous, puis réessayez.",
+        "horsLigne": "Votre demande n'est pas partie. Refaites-la dès le retour du réseau.",
         "refuse": "Ce compte ne peut pas demander sa suppression ici."
       }
     },
@@ -10311,7 +10311,7 @@
   },
   "juridique": {
     "titre": "Informations légales",
-    "intro": "Les textes qui encadrent le service. Ils se lisent sans connexion.",
+    "intro": "Les textes qui encadrent le service. Ils se lisent sans compte.",
     "version": "Version {version}, texte du {date}",
     "contact": "Pour toute question, écrivez à {contact}.",
     "lire": "Lire",

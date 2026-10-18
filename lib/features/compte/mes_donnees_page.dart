@@ -9,6 +9,7 @@ import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/capacites/port_mes_donnees.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/i18n/dates_appareil.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -471,9 +472,10 @@ class _CarteSuppression extends StatelessWidget {
           BandeauAttention(
             titre: s.soldeTitre,
             message: s.soldeDetail(
-              montant: situation.montantsDus
-                  .map<String>(formaterMontant)
-                  .join(' · '),
+              montant: enchainer(
+                situation.montantsDus.map<String>(formaterMontant),
+                ' · ',
+              ),
             ),
           ),
         ],

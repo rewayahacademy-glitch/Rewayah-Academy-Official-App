@@ -1300,7 +1300,7 @@ class _Traductions$codeConduite$ar extends Traductions$codeConduite$fr {
 	@override String get caseAccord => 'قرأت مدونة السلوك وأوافق عليها.';
 	@override String get accepter => 'أوافق على مدونة السلوك';
 	@override String accepteLe({required Object date, required Object version}) => 'تمت الموافقة في ⁨${date}⁩. الإصدار ⁨${version}⁩.';
-	@override String get erreur => 'لم تُسجَّل موافقتك. تحقق من اتصالك ثم أعد المحاولة.';
+	@override String get erreur => 'لم تُسجَّل موافقتك. أعد المحاولة بعد قليل.';
 	@override String get erreurLecture => 'تعذّرت قراءة موافقاتك. أعد المحاولة.';
 	@override String get aAccepter => 'تنتظر موافقتك';
 }
@@ -3934,7 +3934,7 @@ class _Traductions$admin$importInscriptions$ar extends Traductions$admin$importI
 	@override late final _Traductions$admin$importInscriptions$foyer$ar foyer = _Traductions$admin$importInscriptions$foyer$ar._(_root);
 	@override String get confirmer => 'تأكيد الاستيراد';
 	@override late final _Traductions$admin$importInscriptions$confirmation$ar confirmation = _Traductions$admin$importInscriptions$confirmation$ar._(_root);
-	@override String get horsLigne => 'أنت غير متصل. أعد الاتصال لتأكيد الاستيراد.';
+	@override String get horsLigne => 'سيُؤكَّد الاستيراد عند عودة الشبكة. لا يُنشأ شيء قبل ذلك.';
 	@override late final _Traductions$admin$importInscriptions$resultat$ar resultat = _Traductions$admin$importInscriptions$resultat$ar._(_root);
 	@override late final _Traductions$admin$importInscriptions$echec$ar echec = _Traductions$admin$importInscriptions$echec$ar._(_root);
 	@override late final _Traductions$admin$importInscriptions$acces$ar acces = _Traductions$admin$importInscriptions$acces$ar._(_root);
@@ -8735,9 +8735,9 @@ class _Traductions$compte$donnees$copie$ar extends Traductions$compte$donnees$co
 	@override String get intro => 'ملف JSON يضم معلوماتك وفصولك وحصصك وفواتيرك. إذا كنت وليّ أمر، فهو يضم أيضًا بيانات الطلاب في أسرتك.';
 	@override String get exclus => 'لا يتضمن أي سرّ للدخول ولا أي ملاحظة داخلية للفريق.';
 	@override String get action => 'تنزيل بياناتي';
-	@override String get reussi => 'تم حفظ نسختك.';
+	@override String get reussi => 'تم تسجيل نسختك.';
 	@override String get echec => 'تعذّر إعداد النسخة ولم يُحفظ شيء. أعد المحاولة بعد لحظة.';
-	@override String get horsLigne => 'أنت غير متصل. أعد الاتصال ثم نزّل بياناتك.';
+	@override String get horsLigne => 'نزّل بياناتك عند عودة الشبكة.';
 	@override String get refuse => 'لا يمكن لهذا الحساب تنزيل نسخة.';
 }
 
@@ -8791,7 +8791,7 @@ class _Traductions$compte$donnees$suppression$ar extends Traductions$compte$donn
 	@override String get demandeEnvoyee => 'تم تسجيل طلبك. يمكنك إلغاؤه حتى تتم معالجته.';
 	@override String get demandeAnnulee => 'أُلغي طلبك. يبقى حسابك مفتوحًا.';
 	@override String get echec => 'لم يكتمل طلبك. لم يتغير حسابك. أعد المحاولة بعد لحظة.';
-	@override String get horsLigne => 'أنت غير متصل. أعد الاتصال ثم حاول مرة أخرى.';
+	@override String get horsLigne => 'لم يُرسَل طلبك. أعد إرساله عند عودة الشبكة.';
 	@override String get refuse => 'لا يمكن لهذا الحساب طلب حذفه من هنا.';
 }
 
@@ -11120,7 +11120,7 @@ class _Traductions$admin$importInscriptions$serveur$ar extends Traductions$admin
 	@override String get foyers => 'الأسر التي عدّها الخادم';
 	@override String get personnes => 'الأشخاص الذين عدّهم الخادم';
 	@override String get refusees => 'الأسطر التي رفضها الخادم';
-	@override String get indisponible => 'تعذّر على الخادم تأكيد هذه المعاينة. تحقّق من الاتصال ثم ارجع وأعد المحاولة.';
+	@override String get indisponible => 'تعذّر على الخادم تأكيد هذه المعاينة. ارجع وأعد المحاولة.';
 }
 
 // Path: admin.importInscriptions.fichier
@@ -11184,9 +11184,9 @@ class _Traductions$admin$importInscriptions$foyer$ar extends Traductions$admin$i
 	@override String adresse({required Object adresse}) => 'العنوان: ⁨${adresse}⁩';
 	@override String eleves({required Object eleves}) => 'الطلاب: ⁨${eleves}⁩';
 	@override String get patiente => 'انتظرت الأسرة';
-	@override String retoucher({required Object prenom}) => 'تعديل كلمة ⁨${prenom}⁩';
-	@override String champAccueil({required Object prenom}) => 'كلمة ترحيب ⁨${prenom}⁩';
-	@override String champPatience({required Object prenom}) => 'كلمة الصبر لـ⁨${prenom}⁩';
+	@override String retoucher({required Object dePrenom}) => 'تعديل كلمة ⁨${dePrenom}⁩';
+	@override String champAccueil({required Object dePrenom}) => 'كلمة ترحيب ⁨${dePrenom}⁩';
+	@override String champPatience({required Object dePrenom}) => 'كلمة الصبر لـ⁨${dePrenom}⁩';
 	@override String get motAide => 'اتركه فارغًا للإبقاء على الكلمة التلقائية.';
 	@override String get fermer => 'إغلاق';
 	@override String nonAffiches({required Object n}) => 'أسر غير معروضة بالإعدادات المشتركة: ⁨${n}⁩';
@@ -11230,7 +11230,7 @@ class _Traductions$admin$importInscriptions$echec$ar extends Traductions$admin$i
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get horsLigne => 'تعذّر تأكيد الاستيراد: انقطع الاتصال. تحقّق من الاتصال ثم أعد التأكيد: لن يُنشأ شيء مرتين.';
+	@override String get horsLigne => 'تعذّر تأكيد الاستيراد: أعد التأكيد عند عودة الشبكة. لن يُنشأ شيء مرتين.';
 	@override String get refuse => 'الخادم يرفض هذا الاستيراد. تحقّق من أنك متصل بالتحقق المزدوج ثم أعد المحاولة.';
 	@override String get invalide => 'لا يستطيع الخادم قراءة هذه الملفات. تحقّق من سطر العناوين وعلامات الاقتباس ثم أعد المحاولة.';
 	@override String get serveur => 'تعذّر تأكيد الاستيراد. أعد المحاولة: لن يُنشأ شيء مرتين.';
@@ -16805,9 +16805,9 @@ extension on TraductionsAr {
 			'compte.donnees.copie.intro' => 'ملف JSON يضم معلوماتك وفصولك وحصصك وفواتيرك. إذا كنت وليّ أمر، فهو يضم أيضًا بيانات الطلاب في أسرتك.',
 			'compte.donnees.copie.exclus' => 'لا يتضمن أي سرّ للدخول ولا أي ملاحظة داخلية للفريق.',
 			'compte.donnees.copie.action' => 'تنزيل بياناتي',
-			'compte.donnees.copie.reussi' => 'تم حفظ نسختك.',
+			'compte.donnees.copie.reussi' => 'تم تسجيل نسختك.',
 			'compte.donnees.copie.echec' => 'تعذّر إعداد النسخة ولم يُحفظ شيء. أعد المحاولة بعد لحظة.',
-			'compte.donnees.copie.horsLigne' => 'أنت غير متصل. أعد الاتصال ثم نزّل بياناتك.',
+			'compte.donnees.copie.horsLigne' => 'نزّل بياناتك عند عودة الشبكة.',
 			'compte.donnees.copie.refuse' => 'لا يمكن لهذا الحساب تنزيل نسخة.',
 			'compte.donnees.suppression.titre' => 'حذف حسابي',
 			'compte.donnees.suppression.intro' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها ⁨${n}⁩ يوم. يمكنك إلغاؤه خلال هذه المدة.', one: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها يوم واحد. يمكنك إلغاؤه خلال هذه المدة.', two: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها يومان. يمكنك إلغاؤه خلال هذه المدة.', few: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها ⁨${n}⁩ أيام. يمكنك إلغاؤه خلال هذه المدة.', many: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها ⁨${n}⁩ يومًا. يمكنك إلغاؤه خلال هذه المدة.', other: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها ⁨${n}⁩ يوم. يمكنك إلغاؤه خلال هذه المدة.', ), 
@@ -16833,7 +16833,7 @@ extension on TraductionsAr {
 			'compte.donnees.suppression.demandeEnvoyee' => 'تم تسجيل طلبك. يمكنك إلغاؤه حتى تتم معالجته.',
 			'compte.donnees.suppression.demandeAnnulee' => 'أُلغي طلبك. يبقى حسابك مفتوحًا.',
 			'compte.donnees.suppression.echec' => 'لم يكتمل طلبك. لم يتغير حسابك. أعد المحاولة بعد لحظة.',
-			'compte.donnees.suppression.horsLigne' => 'أنت غير متصل. أعد الاتصال ثم حاول مرة أخرى.',
+			'compte.donnees.suppression.horsLigne' => 'لم يُرسَل طلبك. أعد إرساله عند عودة الشبكة.',
 			'compte.donnees.suppression.refuse' => 'لا يمكن لهذا الحساب طلب حذفه من هنا.',
 			'compte.themeContexte' => 'اختر مظهر التطبيق. يتم التغيير فورًا ويبقى على هذا الجهاز، ويمكنك تعديله في أي وقت.',
 			'compte.themeSysteme' => 'النظام',
@@ -18561,7 +18561,7 @@ extension on TraductionsAr {
 			'admin.importInscriptions.serveur.foyers' => 'الأسر التي عدّها الخادم',
 			'admin.importInscriptions.serveur.personnes' => 'الأشخاص الذين عدّهم الخادم',
 			'admin.importInscriptions.serveur.refusees' => 'الأسطر التي رفضها الخادم',
-			'admin.importInscriptions.serveur.indisponible' => 'تعذّر على الخادم تأكيد هذه المعاينة. تحقّق من الاتصال ثم ارجع وأعد المحاولة.',
+			'admin.importInscriptions.serveur.indisponible' => 'تعذّر على الخادم تأكيد هذه المعاينة. ارجع وأعد المحاولة.',
 			'admin.importInscriptions.ligne' => ({required Object fichier, required Object ligne, required Object motif}) => '⁨${fichier}⁩، السطر ⁨${ligne}⁩: ⁨${motif}⁩',
 			'admin.importInscriptions.fichier.eleves' => 'الطلاب',
 			'admin.importInscriptions.fichier.enseignants' => 'المعلّمون',
@@ -18591,16 +18591,16 @@ extension on TraductionsAr {
 			'admin.importInscriptions.foyer.adresse' => ({required Object adresse}) => 'العنوان: ⁨${adresse}⁩',
 			'admin.importInscriptions.foyer.eleves' => ({required Object eleves}) => 'الطلاب: ⁨${eleves}⁩',
 			'admin.importInscriptions.foyer.patiente' => 'انتظرت الأسرة',
-			'admin.importInscriptions.foyer.retoucher' => ({required Object prenom}) => 'تعديل كلمة ⁨${prenom}⁩',
-			'admin.importInscriptions.foyer.champAccueil' => ({required Object prenom}) => 'كلمة ترحيب ⁨${prenom}⁩',
-			'admin.importInscriptions.foyer.champPatience' => ({required Object prenom}) => 'كلمة الصبر لـ⁨${prenom}⁩',
+			'admin.importInscriptions.foyer.retoucher' => ({required Object dePrenom}) => 'تعديل كلمة ⁨${dePrenom}⁩',
+			'admin.importInscriptions.foyer.champAccueil' => ({required Object dePrenom}) => 'كلمة ترحيب ⁨${dePrenom}⁩',
+			'admin.importInscriptions.foyer.champPatience' => ({required Object dePrenom}) => 'كلمة الصبر لـ⁨${dePrenom}⁩',
 			'admin.importInscriptions.foyer.motAide' => 'اتركه فارغًا للإبقاء على الكلمة التلقائية.',
 			'admin.importInscriptions.foyer.fermer' => 'إغلاق',
 			'admin.importInscriptions.foyer.nonAffiches' => ({required Object n}) => 'أسر غير معروضة بالإعدادات المشتركة: ⁨${n}⁩',
 			'admin.importInscriptions.confirmer' => 'تأكيد الاستيراد',
 			'admin.importInscriptions.confirmation.question' => 'هل تستورد هذه التسجيلات؟',
 			'admin.importInscriptions.confirmation.consequence' => 'تُنشأ الأسر والأشخاص في التطبيق. إعادة الاستيراد لا تُنشئ أي تكرار. الأسطر المرفوضة لا تُستورد.',
-			'admin.importInscriptions.horsLigne' => 'أنت غير متصل. أعد الاتصال لتأكيد الاستيراد.',
+			'admin.importInscriptions.horsLigne' => 'سيُؤكَّد الاستيراد عند عودة الشبكة. لا يُنشأ شيء قبل ذلك.',
 			'admin.importInscriptions.resultat.titre' => 'اكتمل الاستيراد',
 			'admin.importInscriptions.resultat.personnesCreees' => 'أشخاص أُنشئوا',
 			'admin.importInscriptions.resultat.personnesPresentes' => 'أشخاص موجودون مسبقًا',
@@ -18612,7 +18612,7 @@ extension on TraductionsAr {
 			'admin.importInscriptions.resultat.rienDeNouveau' => 'كان كل شيء مستوردًا من قبل: لم يُضف شيء.',
 			'admin.importInscriptions.resultat.refusAide' => 'لم تُستورد هذه الأسطر. صحّح الملف ثم أعد الاستيراد: لا يُعاد إنشاء الأشخاص الموجودين.',
 			'admin.importInscriptions.resultat.recommencer' => 'استيراد ملفات أخرى',
-			'admin.importInscriptions.echec.horsLigne' => 'تعذّر تأكيد الاستيراد: انقطع الاتصال. تحقّق من الاتصال ثم أعد التأكيد: لن يُنشأ شيء مرتين.',
+			'admin.importInscriptions.echec.horsLigne' => 'تعذّر تأكيد الاستيراد: أعد التأكيد عند عودة الشبكة. لن يُنشأ شيء مرتين.',
 			'admin.importInscriptions.echec.refuse' => 'الخادم يرفض هذا الاستيراد. تحقّق من أنك متصل بالتحقق المزدوج ثم أعد المحاولة.',
 			'admin.importInscriptions.echec.invalide' => 'لا يستطيع الخادم قراءة هذه الملفات. تحقّق من سطر العناوين وعلامات الاقتباس ثم أعد المحاولة.',
 			'admin.importInscriptions.echec.serveur' => 'تعذّر تأكيد الاستيراد. أعد المحاولة: لن يُنشأ شيء مرتين.',
@@ -22107,7 +22107,7 @@ extension on TraductionsAr {
 			'codeConduite.caseAccord' => 'قرأت مدونة السلوك وأوافق عليها.',
 			'codeConduite.accepter' => 'أوافق على مدونة السلوك',
 			'codeConduite.accepteLe' => ({required Object date, required Object version}) => 'تمت الموافقة في ⁨${date}⁩. الإصدار ⁨${version}⁩.',
-			'codeConduite.erreur' => 'لم تُسجَّل موافقتك. تحقق من اتصالك ثم أعد المحاولة.',
+			'codeConduite.erreur' => 'لم تُسجَّل موافقتك. أعد المحاولة بعد قليل.',
 			'codeConduite.erreurLecture' => 'تعذّرت قراءة موافقاتك. أعد المحاولة.',
 			'codeConduite.aAccepter' => 'تنتظر موافقتك',
 			'contrat.titre' => 'ما توقّع عليه',

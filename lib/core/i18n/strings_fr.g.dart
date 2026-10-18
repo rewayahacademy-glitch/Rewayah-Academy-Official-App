@@ -933,8 +933,8 @@ class Traductions$codeConduite$fr {
 	/// fr: 'Accepté le {date}. Version {version}.'
 	String accepteLe({required Object date, required Object version}) => 'Accepté le ${date}. Version ${version}.';
 
-	/// fr: 'Votre accord n'a pas été enregistré. Vérifiez votre connexion, puis réessayez.'
-	String get erreur => 'Votre accord n\'a pas été enregistré. Vérifiez votre connexion, puis réessayez.';
+	/// fr: 'Votre accord n'a pas été enregistré. Réessayez dans un instant.'
+	String get erreur => 'Votre accord n\'a pas été enregistré. Réessayez dans un instant.';
 
 	/// fr: 'Nous n'avons pas pu lire vos accords. Réessayez.'
 	String get erreurLecture => 'Nous n\'avons pas pu lire vos accords. Réessayez.';
@@ -3248,8 +3248,8 @@ class Traductions$juridique$fr {
 	/// fr: 'Informations légales'
 	String get titre => 'Informations légales';
 
-	/// fr: 'Les textes qui encadrent le service. Ils se lisent sans connexion.'
-	String get intro => 'Les textes qui encadrent le service. Ils se lisent sans connexion.';
+	/// fr: 'Les textes qui encadrent le service. Ils se lisent sans compte.'
+	String get intro => 'Les textes qui encadrent le service. Ils se lisent sans compte.';
 
 	/// fr: 'Version {version}, texte du {date}'
 	String version({required Object version, required Object date}) => 'Version ${version}, texte du ${date}';
@@ -6835,8 +6835,8 @@ class Traductions$admin$importInscriptions$fr {
 
 	late final Traductions$admin$importInscriptions$confirmation$fr confirmation = Traductions$admin$importInscriptions$confirmation$fr.internal(_root);
 
-	/// fr: 'Vous êtes hors ligne. Reconnectez-vous pour confirmer l'import.'
-	String get horsLigne => 'Vous êtes hors ligne. Reconnectez-vous pour confirmer l\'import.';
+	/// fr: 'L'import se confirmera dès le retour du réseau. Rien n'est créé d'ici là.'
+	String get horsLigne => 'L\'import se confirmera dès le retour du réseau. Rien n\'est créé d\'ici là.';
 
 	late final Traductions$admin$importInscriptions$resultat$fr resultat = Traductions$admin$importInscriptions$resultat$fr.internal(_root);
 	late final Traductions$admin$importInscriptions$echec$fr echec = Traductions$admin$importInscriptions$echec$fr.internal(_root);
@@ -20363,7 +20363,7 @@ class Traductions$admin$importInscriptions$eleves$fr {
 	String get titre => 'Fichier des élèves';
 
 	/// fr: 'Onglet « Elèves (Réponses) » du classeur : collez son contenu ou choisissez le fichier.'
-	String get aide => 'Onglet « Elèves (Réponses) » du classeur : collez son contenu ou choisissez le fichier.';
+	String get aide => 'Onglet « Elèves (Réponses) » du classeur : collez son contenu ou choisissez le fichier.';
 
 	/// fr: 'Contenu du fichier des élèves'
 	String get champ => 'Contenu du fichier des élèves';
@@ -20381,7 +20381,7 @@ class Traductions$admin$importInscriptions$enseignants$fr {
 	String get titre => 'Fichier des enseignants';
 
 	/// fr: 'Onglet « Enseignants (Réponses) » du classeur : collez son contenu ou choisissez le fichier.'
-	String get aide => 'Onglet « Enseignants (Réponses) » du classeur : collez son contenu ou choisissez le fichier.';
+	String get aide => 'Onglet « Enseignants (Réponses) » du classeur : collez son contenu ou choisissez le fichier.';
 
 	/// fr: 'Contenu du fichier des enseignants'
 	String get champ => 'Contenu du fichier des enseignants';
@@ -20452,8 +20452,8 @@ class Traductions$admin$importInscriptions$serveur$fr {
 	/// fr: 'Lignes refusées par le serveur'
 	String get refusees => 'Lignes refusées par le serveur';
 
-	/// fr: 'Le serveur n'a pas pu confirmer cet aperçu. Vérifiez la connexion, puis revenez en arrière et recommencez.'
-	String get indisponible => 'Le serveur n\'a pas pu confirmer cet aperçu. Vérifiez la connexion, puis revenez en arrière et recommencez.';
+	/// fr: 'Le serveur n'a pas pu confirmer cet aperçu. Revenez en arrière et recommencez.'
+	String get indisponible => 'Le serveur n\'a pas pu confirmer cet aperçu. Revenez en arrière et recommencez.';
 }
 
 // Path: admin.importInscriptions.fichier
@@ -20572,14 +20572,14 @@ class Traductions$admin$importInscriptions$foyer$fr {
 	/// fr: 'A patienté'
 	String get patiente => 'A patienté';
 
-	/// fr: 'Retoucher le mot de {prenom}'
-	String retoucher({required Object prenom}) => 'Retoucher le mot de ${prenom}';
+	/// fr: 'Retoucher le mot de {dePrenom}'
+	String retoucher({required Object dePrenom}) => 'Retoucher le mot de ${dePrenom}';
 
-	/// fr: 'Mot d'accueil de {prenom}'
-	String champAccueil({required Object prenom}) => 'Mot d\'accueil de ${prenom}';
+	/// fr: 'Mot d'accueil de {dePrenom}'
+	String champAccueil({required Object dePrenom}) => 'Mot d\'accueil de ${dePrenom}';
 
-	/// fr: 'Mot de patience de {prenom}'
-	String champPatience({required Object prenom}) => 'Mot de patience de ${prenom}';
+	/// fr: 'Mot de patience de {dePrenom}'
+	String champPatience({required Object dePrenom}) => 'Mot de patience de ${dePrenom}';
 
 	/// fr: 'Laissez vide pour garder le mot automatique.'
 	String get motAide => 'Laissez vide pour garder le mot automatique.';
@@ -20656,8 +20656,8 @@ class Traductions$admin$importInscriptions$echec$fr {
 
 	// Translations
 
-	/// fr: 'L'import n'a pas pu être confirmé : la connexion a coupé. Vérifiez la connexion, puis relancez la confirmation : rien ne sera créé en double.'
-	String get horsLigne => 'L\'import n\'a pas pu être confirmé : la connexion a coupé. Vérifiez la connexion, puis relancez la confirmation : rien ne sera créé en double.';
+	/// fr: 'L'import n'a pas pu être confirmé : relancez la confirmation dès le retour du réseau. Rien ne sera créé en double.'
+	String get horsLigne => 'L\'import n\'a pas pu être confirmé : relancez la confirmation dès le retour du réseau. Rien ne sera créé en double.';
 
 	/// fr: 'Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.'
 	String get refuse => 'Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.';
@@ -22993,8 +22993,8 @@ class Traductions$compte$donnees$copie$fr {
 	/// fr: 'La copie n'a pas pu être préparée. Rien n'a été enregistré. Réessayez dans un instant.'
 	String get echec => 'La copie n\'a pas pu être préparée. Rien n\'a été enregistré. Réessayez dans un instant.';
 
-	/// fr: 'Vous êtes hors ligne. Reconnectez-vous, puis téléchargez vos données.'
-	String get horsLigne => 'Vous êtes hors ligne. Reconnectez-vous, puis téléchargez vos données.';
+	/// fr: 'Téléchargez vos données dès le retour du réseau.'
+	String get horsLigne => 'Téléchargez vos données dès le retour du réseau.';
 
 	/// fr: 'Ce compte ne peut pas télécharger de copie.'
 	String get refuse => 'Ce compte ne peut pas télécharger de copie.';
@@ -23083,8 +23083,8 @@ class Traductions$compte$donnees$suppression$fr {
 	/// fr: 'Votre demande n'a pas abouti. Votre compte n'a pas changé. Réessayez dans un instant.'
 	String get echec => 'Votre demande n\'a pas abouti. Votre compte n\'a pas changé. Réessayez dans un instant.';
 
-	/// fr: 'Vous êtes hors ligne. Reconnectez-vous, puis réessayez.'
-	String get horsLigne => 'Vous êtes hors ligne. Reconnectez-vous, puis réessayez.';
+	/// fr: 'Votre demande n'est pas partie. Refaites-la dès le retour du réseau.'
+	String get horsLigne => 'Votre demande n\'est pas partie. Refaites-la dès le retour du réseau.';
 
 	/// fr: 'Ce compte ne peut pas demander sa suppression ici.'
 	String get refuse => 'Ce compte ne peut pas demander sa suppression ici.';
@@ -34860,7 +34860,7 @@ extension on Traductions {
 			'codeConduite.caseAccord' => 'J\'ai lu le code de conduite et je l\'accepte.',
 			'codeConduite.accepter' => 'J\'accepte le code de conduite',
 			'codeConduite.accepteLe' => ({required Object date, required Object version}) => 'Accepté le ${date}. Version ${version}.',
-			'codeConduite.erreur' => 'Votre accord n\'a pas été enregistré. Vérifiez votre connexion, puis réessayez.',
+			'codeConduite.erreur' => 'Votre accord n\'a pas été enregistré. Réessayez dans un instant.',
 			'codeConduite.erreurLecture' => 'Nous n\'avons pas pu lire vos accords. Réessayez.',
 			'codeConduite.aAccepter' => 'À accepter',
 			'contrat.titre' => 'Ce que vous signez',
@@ -35798,10 +35798,10 @@ extension on Traductions {
 			'admin.importInscriptions.sousTitre' => 'Les familles et les enseignants déjà inscrits sont accueillis sans tout ressaisir.',
 			'admin.importInscriptions.intro' => 'Déposez les deux fichiers CSV du classeur des formulaires, tels quels. Rien n\'est écrit avant votre confirmation.',
 			'admin.importInscriptions.eleves.titre' => 'Fichier des élèves',
-			'admin.importInscriptions.eleves.aide' => 'Onglet « Elèves (Réponses) » du classeur : collez son contenu ou choisissez le fichier.',
+			'admin.importInscriptions.eleves.aide' => 'Onglet « Elèves (Réponses) » du classeur : collez son contenu ou choisissez le fichier.',
 			'admin.importInscriptions.eleves.champ' => 'Contenu du fichier des élèves',
 			'admin.importInscriptions.enseignants.titre' => 'Fichier des enseignants',
-			'admin.importInscriptions.enseignants.aide' => 'Onglet « Enseignants (Réponses) » du classeur : collez son contenu ou choisissez le fichier.',
+			'admin.importInscriptions.enseignants.aide' => 'Onglet « Enseignants (Réponses) » du classeur : collez son contenu ou choisissez le fichier.',
 			'admin.importInscriptions.enseignants.champ' => 'Contenu du fichier des enseignants',
 			'admin.importInscriptions.choisir' => 'Choisir un fichier CSV',
 			'admin.importInscriptions.fichierCharge' => ({required Object nom}) => 'Fichier chargé : ${nom}',
@@ -35824,7 +35824,7 @@ extension on Traductions {
 			'admin.importInscriptions.serveur.foyers' => 'Foyers comptés par le serveur',
 			'admin.importInscriptions.serveur.personnes' => 'Personnes comptées par le serveur',
 			'admin.importInscriptions.serveur.refusees' => 'Lignes refusées par le serveur',
-			'admin.importInscriptions.serveur.indisponible' => 'Le serveur n\'a pas pu confirmer cet aperçu. Vérifiez la connexion, puis revenez en arrière et recommencez.',
+			'admin.importInscriptions.serveur.indisponible' => 'Le serveur n\'a pas pu confirmer cet aperçu. Revenez en arrière et recommencez.',
 			'admin.importInscriptions.ligne' => ({required Object fichier, required Object ligne, required Object motif}) => '${fichier}, ligne ${ligne} : ${motif}',
 			'admin.importInscriptions.fichier.eleves' => 'Élèves',
 			'admin.importInscriptions.fichier.enseignants' => 'Enseignants',
@@ -35854,16 +35854,16 @@ extension on Traductions {
 			'admin.importInscriptions.foyer.adresse' => ({required Object adresse}) => 'Adresse : ${adresse}',
 			'admin.importInscriptions.foyer.eleves' => ({required Object eleves}) => 'Élèves : ${eleves}',
 			'admin.importInscriptions.foyer.patiente' => 'A patienté',
-			'admin.importInscriptions.foyer.retoucher' => ({required Object prenom}) => 'Retoucher le mot de ${prenom}',
-			'admin.importInscriptions.foyer.champAccueil' => ({required Object prenom}) => 'Mot d\'accueil de ${prenom}',
-			'admin.importInscriptions.foyer.champPatience' => ({required Object prenom}) => 'Mot de patience de ${prenom}',
+			'admin.importInscriptions.foyer.retoucher' => ({required Object dePrenom}) => 'Retoucher le mot de ${dePrenom}',
+			'admin.importInscriptions.foyer.champAccueil' => ({required Object dePrenom}) => 'Mot d\'accueil de ${dePrenom}',
+			'admin.importInscriptions.foyer.champPatience' => ({required Object dePrenom}) => 'Mot de patience de ${dePrenom}',
 			'admin.importInscriptions.foyer.motAide' => 'Laissez vide pour garder le mot automatique.',
 			'admin.importInscriptions.foyer.fermer' => 'Fermer',
 			'admin.importInscriptions.foyer.nonAffiches' => ({required Object n}) => 'Foyers non affichés, aux réglages communs : ${n}',
 			'admin.importInscriptions.confirmer' => 'Confirmer l\'import',
 			'admin.importInscriptions.confirmation.question' => 'Importer ces inscriptions ?',
 			'admin.importInscriptions.confirmation.consequence' => 'Les foyers et les personnes sont créés dans l\'application. Rejouer l\'import ne crée aucun doublon. Les lignes refusées ne sont pas importées.',
-			'admin.importInscriptions.horsLigne' => 'Vous êtes hors ligne. Reconnectez-vous pour confirmer l\'import.',
+			'admin.importInscriptions.horsLigne' => 'L\'import se confirmera dès le retour du réseau. Rien n\'est créé d\'ici là.',
 			'admin.importInscriptions.resultat.titre' => 'Import terminé',
 			'admin.importInscriptions.resultat.personnesCreees' => 'Personnes créées',
 			'admin.importInscriptions.resultat.personnesPresentes' => 'Personnes déjà présentes',
@@ -35875,7 +35875,7 @@ extension on Traductions {
 			'admin.importInscriptions.resultat.rienDeNouveau' => 'Tout était déjà importé : rien n\'a été ajouté.',
 			'admin.importInscriptions.resultat.refusAide' => 'Ces lignes n\'ont pas été importées. Corrigez le fichier, puis rejouez l\'import : les personnes déjà présentes ne sont pas recréées.',
 			'admin.importInscriptions.resultat.recommencer' => 'Importer d\'autres fichiers',
-			'admin.importInscriptions.echec.horsLigne' => 'L\'import n\'a pas pu être confirmé : la connexion a coupé. Vérifiez la connexion, puis relancez la confirmation : rien ne sera créé en double.',
+			'admin.importInscriptions.echec.horsLigne' => 'L\'import n\'a pas pu être confirmé : relancez la confirmation dès le retour du réseau. Rien ne sera créé en double.',
 			'admin.importInscriptions.echec.refuse' => 'Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.',
 			'admin.importInscriptions.echec.invalide' => 'Le serveur ne peut pas lire ces fichiers. Vérifiez l\'en-tête et les guillemets, puis réessayez.',
 			'admin.importInscriptions.echec.serveur' => 'L\'import n\'a pas pu être confirmé. Réessayez : rien ne sera créé en double.',
@@ -37913,7 +37913,7 @@ extension on Traductions {
 			'compte.donnees.copie.action' => 'Télécharger mes données',
 			'compte.donnees.copie.reussi' => 'Votre copie est enregistrée.',
 			'compte.donnees.copie.echec' => 'La copie n\'a pas pu être préparée. Rien n\'a été enregistré. Réessayez dans un instant.',
-			'compte.donnees.copie.horsLigne' => 'Vous êtes hors ligne. Reconnectez-vous, puis téléchargez vos données.',
+			'compte.donnees.copie.horsLigne' => 'Téléchargez vos données dès le retour du réseau.',
 			'compte.donnees.copie.refuse' => 'Ce compte ne peut pas télécharger de copie.',
 			'compte.donnees.suppression.titre' => 'Supprimer mon compte',
 			'compte.donnees.suppression.intro' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'La direction étudie votre demande après un délai de réflexion de ${n} jour. Vous pouvez l\'annuler pendant ce temps.', other: 'La direction étudie votre demande après un délai de réflexion de ${n} jours. Vous pouvez l\'annuler pendant ce temps.', ), 
@@ -37937,7 +37937,7 @@ extension on Traductions {
 			'compte.donnees.suppression.demandeEnvoyee' => 'Votre demande est enregistrée. Vous pouvez l\'annuler jusqu\'à son traitement.',
 			'compte.donnees.suppression.demandeAnnulee' => 'Votre demande est annulée. Votre compte reste ouvert.',
 			'compte.donnees.suppression.echec' => 'Votre demande n\'a pas abouti. Votre compte n\'a pas changé. Réessayez dans un instant.',
-			'compte.donnees.suppression.horsLigne' => 'Vous êtes hors ligne. Reconnectez-vous, puis réessayez.',
+			'compte.donnees.suppression.horsLigne' => 'Votre demande n\'est pas partie. Refaites-la dès le retour du réseau.',
 			'compte.donnees.suppression.refuse' => 'Ce compte ne peut pas demander sa suppression ici.',
 			'compte.titre' => 'Mon compte',
 			'compte.intro' => 'Vos informations, vos préférences et vos accès, au même endroit.',
@@ -42634,7 +42634,7 @@ extension on Traductions {
 			'sansDonnees.beneficiaires' => 'Les bénéficiaires n\'ont pas pu être chargés',
 			'sansDonnees.profilPaiement' => 'Ce profil de paiement n\'a pas pu être chargé',
 			'juridique.titre' => 'Informations légales',
-			'juridique.intro' => 'Les textes qui encadrent le service. Ils se lisent sans connexion.',
+			'juridique.intro' => 'Les textes qui encadrent le service. Ils se lisent sans compte.',
 			'juridique.version' => ({required Object version, required Object date}) => 'Version ${version}, texte du ${date}',
 			'juridique.contact' => ({required Object contact}) => 'Pour toute question, écrivez à ${contact}.',
 			'juridique.lire' => 'Lire',
