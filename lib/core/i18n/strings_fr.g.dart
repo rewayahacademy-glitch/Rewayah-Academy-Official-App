@@ -99,6 +99,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$reprisesAdmin$fr reprisesAdmin = Traductions$reprisesAdmin$fr.internal(_root);
 	late final Traductions$recherche$fr recherche = Traductions$recherche$fr.internal(_root);
 	late final Traductions$sansDonnees$fr sansDonnees = Traductions$sansDonnees$fr.internal(_root);
+	late final Traductions$juridique$fr juridique = Traductions$juridique$fr.internal(_root);
 }
 
 // Path: commun
@@ -3149,6 +3150,46 @@ class Traductions$sansDonnees$fr {
 
 	/// fr: 'Ce profil de paiement n'a pas pu être chargé'
 	String get profilPaiement => 'Ce profil de paiement n\'a pas pu être chargé';
+}
+
+// Path: juridique
+class Traductions$juridique$fr {
+	Traductions$juridique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Informations légales'
+	String get titre => 'Informations légales';
+
+	/// fr: 'Les textes qui encadrent le service. Ils se lisent sans connexion.'
+	String get intro => 'Les textes qui encadrent le service. Ils se lisent sans connexion.';
+
+	/// fr: 'Version {version}, texte du {date}'
+	String version({required Object version, required Object date}) => 'Version ${version}, texte du ${date}';
+
+	/// fr: 'Pour toute question, écrivez à {contact}.'
+	String contact({required Object contact}) => 'Pour toute question, écrivez à ${contact}.';
+
+	/// fr: 'Lire'
+	String get lire => 'Lire';
+
+	late final Traductions$juridique$coord$fr coord = Traductions$juridique$coord$fr.internal(_root);
+
+	/// fr: '[à compléter par la direction : {quoi}]'
+	String aCompleter({required Object quoi}) => '[à compléter par la direction : ${quoi}]';
+
+	/// fr: '{etiquette} : {valeur}'
+	String champ({required Object etiquette, required Object valeur}) => '${etiquette} : ${valeur}';
+
+	late final Traductions$juridique$quoi$fr quoi = Traductions$juridique$quoi$fr.internal(_root);
+	late final Traductions$juridique$mentions$fr mentions = Traductions$juridique$mentions$fr.internal(_root);
+	late final Traductions$juridique$conditions$fr conditions = Traductions$juridique$conditions$fr.internal(_root);
+	late final Traductions$juridique$annulation$fr annulation = Traductions$juridique$annulation$fr.internal(_root);
+	late final Traductions$juridique$confidentialite$fr confidentialite = Traductions$juridique$confidentialite$fr.internal(_root);
+	late final Traductions$juridique$cookies$fr cookies = Traductions$juridique$cookies$fr.internal(_root);
+	late final Traductions$juridique$enfants$fr enfants = Traductions$juridique$enfants$fr.internal(_root);
 }
 
 // Path: commun.formats
@@ -18164,6 +18205,206 @@ class Traductions$recherche$contexte$fr {
 	String encaissement({required Object famille}) => 'Encaissement · ${famille}';
 }
 
+// Path: juridique.coord
+class Traductions$juridique$coord$fr {
+	Traductions$juridique$coord$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Société : Rewayah Academy Ltd'
+	String get societe => 'Société : Rewayah Academy Ltd';
+
+	/// fr: 'Numéro d'immatriculation : 16624644, Angleterre et pays de Galles'
+	String get numero => 'Numéro d\'immatriculation : 16624644, Angleterre et pays de Galles';
+
+	/// fr: 'Siège : 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni'
+	String get adresse => 'Siège : 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni';
+}
+
+// Path: juridique.quoi
+class Traductions$juridique$quoi$fr {
+	Traductions$juridique$quoi$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'hébergeur légal et ses coordonnées'
+	String get hebergeur => 'hébergeur légal et ses coordonnées';
+
+	/// fr: 'pays où sont hébergées les informations'
+	String get lieuxHebergement => 'pays où sont hébergées les informations';
+
+	/// fr: 'durée de conservation de chaque type d'information'
+	String get dureesConservation => 'durée de conservation de chaque type d\'information';
+
+	/// fr: 'droit applicable et juridiction compétente'
+	String get droitApplicable => 'droit applicable et juridiction compétente';
+
+	/// fr: 'relecture par un conseil juridique, droit de rétractation compris'
+	String get confirmationConseil => 'relecture par un conseil juridique, droit de rétractation compris';
+
+	/// fr: 'moyen et délai du remboursement'
+	String get remboursementModalites => 'moyen et délai du remboursement';
+
+	/// fr: 'responsable de la protection des enfants'
+	String get responsableEnfants => 'responsable de la protection des enfants';
+}
+
+// Path: juridique.mentions
+class Traductions$juridique$mentions$fr {
+	Traductions$juridique$mentions$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mentions légales'
+	String get titre => 'Mentions légales';
+
+	/// fr: 'Qui exploite Rewayah Academy et comment la joindre.'
+	String get resume => 'Qui exploite Rewayah Academy et comment la joindre.';
+
+	/// fr: 'Voici qui exploite Rewayah Academy et comment la joindre.'
+	String get intro => 'Voici qui exploite Rewayah Academy et comment la joindre.';
+
+	late final Traductions$juridique$mentions$s1$fr s1 = Traductions$juridique$mentions$s1$fr.internal(_root);
+	late final Traductions$juridique$mentions$s2$fr s2 = Traductions$juridique$mentions$s2$fr.internal(_root);
+	late final Traductions$juridique$mentions$s3$fr s3 = Traductions$juridique$mentions$s3$fr.internal(_root);
+	late final Traductions$juridique$mentions$s4$fr s4 = Traductions$juridique$mentions$s4$fr.internal(_root);
+}
+
+// Path: juridique.conditions
+class Traductions$juridique$conditions$fr {
+	Traductions$juridique$conditions$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Conditions d'utilisation et de vente'
+	String get titre => 'Conditions d\'utilisation et de vente';
+
+	/// fr: 'Les règles d'utilisation du service et de vente des abonnements.'
+	String get resume => 'Les règles d\'utilisation du service et de vente des abonnements.';
+
+	/// fr: 'Ces conditions s'appliquent dès que vous créez un compte ou que vous inscrivez un élève. Lisez-les en entier, elles sont courtes.'
+	String get intro => 'Ces conditions s\'appliquent dès que vous créez un compte ou que vous inscrivez un élève. Lisez-les en entier, elles sont courtes.';
+
+	late final Traductions$juridique$conditions$s1$fr s1 = Traductions$juridique$conditions$s1$fr.internal(_root);
+	late final Traductions$juridique$conditions$s2$fr s2 = Traductions$juridique$conditions$s2$fr.internal(_root);
+	late final Traductions$juridique$conditions$s3$fr s3 = Traductions$juridique$conditions$s3$fr.internal(_root);
+	late final Traductions$juridique$conditions$s4$fr s4 = Traductions$juridique$conditions$s4$fr.internal(_root);
+	late final Traductions$juridique$conditions$s5$fr s5 = Traductions$juridique$conditions$s5$fr.internal(_root);
+	late final Traductions$juridique$conditions$s6$fr s6 = Traductions$juridique$conditions$s6$fr.internal(_root);
+	late final Traductions$juridique$conditions$s7$fr s7 = Traductions$juridique$conditions$s7$fr.internal(_root);
+}
+
+// Path: juridique.annulation
+class Traductions$juridique$annulation$fr {
+	Traductions$juridique$annulation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Annulation et remboursement'
+	String get titre => 'Annulation et remboursement';
+
+	/// fr: 'Arrêter, être remboursé, et ce qui se passe si un paiement n'arrive pas.'
+	String get resume => 'Arrêter, être remboursé, et ce qui se passe si un paiement n\'arrive pas.';
+
+	/// fr: 'Vous pouvez arrêter quand vous voulez. Voici ce qui est remboursé, ce qui ne l'est pas, et ce qui se passe si un paiement n'arrive pas.'
+	String get intro => 'Vous pouvez arrêter quand vous voulez. Voici ce qui est remboursé, ce qui ne l\'est pas, et ce qui se passe si un paiement n\'arrive pas.';
+
+	late final Traductions$juridique$annulation$s1$fr s1 = Traductions$juridique$annulation$s1$fr.internal(_root);
+	late final Traductions$juridique$annulation$s2$fr s2 = Traductions$juridique$annulation$s2$fr.internal(_root);
+	late final Traductions$juridique$annulation$s3$fr s3 = Traductions$juridique$annulation$s3$fr.internal(_root);
+	late final Traductions$juridique$annulation$s4$fr s4 = Traductions$juridique$annulation$s4$fr.internal(_root);
+	late final Traductions$juridique$annulation$s5$fr s5 = Traductions$juridique$annulation$s5$fr.internal(_root);
+	late final Traductions$juridique$annulation$s6$fr s6 = Traductions$juridique$annulation$s6$fr.internal(_root);
+}
+
+// Path: juridique.confidentialite
+class Traductions$juridique$confidentialite$fr {
+	Traductions$juridique$confidentialite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Confidentialité'
+	String get titre => 'Confidentialité';
+
+	/// fr: 'Quelles informations nous gardons, pourquoi, et vos droits.'
+	String get resume => 'Quelles informations nous gardons, pourquoi, et vos droits.';
+
+	/// fr: 'Nous gardons seulement ce qui sert à faire les cours. Voici quelles informations, pourquoi, et comment les contrôler.'
+	String get intro => 'Nous gardons seulement ce qui sert à faire les cours. Voici quelles informations, pourquoi, et comment les contrôler.';
+
+	late final Traductions$juridique$confidentialite$s1$fr s1 = Traductions$juridique$confidentialite$s1$fr.internal(_root);
+	late final Traductions$juridique$confidentialite$s2$fr s2 = Traductions$juridique$confidentialite$s2$fr.internal(_root);
+	late final Traductions$juridique$confidentialite$s3$fr s3 = Traductions$juridique$confidentialite$s3$fr.internal(_root);
+	late final Traductions$juridique$confidentialite$s4$fr s4 = Traductions$juridique$confidentialite$s4$fr.internal(_root);
+	late final Traductions$juridique$confidentialite$s5$fr s5 = Traductions$juridique$confidentialite$s5$fr.internal(_root);
+	late final Traductions$juridique$confidentialite$s6$fr s6 = Traductions$juridique$confidentialite$s6$fr.internal(_root);
+	late final Traductions$juridique$confidentialite$s7$fr s7 = Traductions$juridique$confidentialite$s7$fr.internal(_root);
+	late final Traductions$juridique$confidentialite$s8$fr s8 = Traductions$juridique$confidentialite$s8$fr.internal(_root);
+	late final Traductions$juridique$confidentialite$s9$fr s9 = Traductions$juridique$confidentialite$s9$fr.internal(_root);
+	late final Traductions$juridique$confidentialite$s10$fr s10 = Traductions$juridique$confidentialite$s10$fr.internal(_root);
+}
+
+// Path: juridique.cookies
+class Traductions$juridique$cookies$fr {
+	Traductions$juridique$cookies$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cookies'
+	String get titre => 'Cookies';
+
+	/// fr: 'Ce que l'application et le site gardent sur votre appareil.'
+	String get resume => 'Ce que l\'application et le site gardent sur votre appareil.';
+
+	/// fr: 'L'application et le site gardent peu de choses sur votre appareil. Voici lesquelles.'
+	String get intro => 'L\'application et le site gardent peu de choses sur votre appareil. Voici lesquelles.';
+
+	late final Traductions$juridique$cookies$s1$fr s1 = Traductions$juridique$cookies$s1$fr.internal(_root);
+	late final Traductions$juridique$cookies$s2$fr s2 = Traductions$juridique$cookies$s2$fr.internal(_root);
+	late final Traductions$juridique$cookies$s3$fr s3 = Traductions$juridique$cookies$s3$fr.internal(_root);
+	late final Traductions$juridique$cookies$s4$fr s4 = Traductions$juridique$cookies$s4$fr.internal(_root);
+	late final Traductions$juridique$cookies$s5$fr s5 = Traductions$juridique$cookies$s5$fr.internal(_root);
+	late final Traductions$juridique$cookies$s6$fr s6 = Traductions$juridique$cookies$s6$fr.internal(_root);
+}
+
+// Path: juridique.enfants
+class Traductions$juridique$enfants$fr {
+	Traductions$juridique$enfants$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Protection des enfants'
+	String get titre => 'Protection des enfants';
+
+	/// fr: 'Comment nous protégeons les élèves mineurs.'
+	String get resume => 'Comment nous protégeons les élèves mineurs.';
+
+	/// fr: 'Les élèves mineurs suivent leurs cours sous la responsabilité d'un adulte. Voici les règles que nous appliquons et comment nous faire part d'une inquiétude.'
+	String get intro => 'Les élèves mineurs suivent leurs cours sous la responsabilité d\'un adulte. Voici les règles que nous appliquons et comment nous faire part d\'une inquiétude.';
+
+	late final Traductions$juridique$enfants$s1$fr s1 = Traductions$juridique$enfants$s1$fr.internal(_root);
+	late final Traductions$juridique$enfants$s2$fr s2 = Traductions$juridique$enfants$s2$fr.internal(_root);
+	late final Traductions$juridique$enfants$s3$fr s3 = Traductions$juridique$enfants$s3$fr.internal(_root);
+	late final Traductions$juridique$enfants$s4$fr s4 = Traductions$juridique$enfants$s4$fr.internal(_root);
+	late final Traductions$juridique$enfants$s5$fr s5 = Traductions$juridique$enfants$s5$fr.internal(_root);
+}
+
 // Path: commun.etats.chargementProlonge
 class Traductions$commun$etats$chargementProlonge$fr {
 	Traductions$commun$etats$chargementProlonge$fr.internal(this._root);
@@ -22570,9 +22811,6 @@ class Traductions$compte$tuteur$pageLegal$fr {
 
 	/// fr: 'Conditions et confidentialité'
 	String get textes => 'Conditions et confidentialité';
-
-	/// fr: 'Les conditions générales, la politique de confidentialité et les mentions légales ne sont pas encore consultables dans l'application.'
-	String get textesIndisponibles => 'Les conditions générales, la politique de confidentialité et les mentions légales ne sont pas encore consultables dans l\'application.';
 }
 
 // Path: tuteur.accueil.etatCourt
@@ -29556,6 +29794,666 @@ class Traductions$recherche$guide$initial$fr {
 	String get phrase => 'Écris un mot pour trouver un de tes supports.';
 }
 
+// Path: juridique.mentions.s1
+class Traductions$juridique$mentions$s1$fr {
+	Traductions$juridique$mentions$s1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '1. Qui exploite le service'
+	String get titre => '1. Qui exploite le service';
+
+	List<String> get blocs => [
+		'Rewayah Academy propose des cours de Coran en visio, en Classes stables : les mêmes élèves, un horaire qui revient chaque semaine et un enseignant attitré.',
+	];
+}
+
+// Path: juridique.mentions.s2
+class Traductions$juridique$mentions$s2$fr {
+	Traductions$juridique$mentions$s2$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '2. Nous joindre'
+	String get titre => '2. Nous joindre';
+
+	List<String> get blocs => [
+		'Une seule adresse pour vos questions sur le service, sur ces textes et sur vos informations.',
+	];
+}
+
+// Path: juridique.mentions.s3
+class Traductions$juridique$mentions$s3$fr {
+	Traductions$juridique$mentions$s3$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '3. Hébergement et services techniques'
+	String get titre => '3. Hébergement et services techniques';
+
+	List<String> get blocs => [
+		'Le service s\'appuie sur des prestataires techniques : l\'hébergement des pages web, la base de données et la connexion des comptes, la visio des séances, le stockage privé des fichiers et un prestataire de paiement.',
+	];
+}
+
+// Path: juridique.mentions.s4
+class Traductions$juridique$mentions$s4$fr {
+	Traductions$juridique$mentions$s4$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '4. Ces textes'
+	String get titre => '4. Ces textes';
+
+	List<String> get blocs => [
+		'Chaque texte juridique porte sa version et sa date, affichées en haut de la page. Quand un texte change, la nouvelle version remplace l\'ancienne à la date indiquée.',
+	];
+}
+
+// Path: juridique.conditions.s1
+class Traductions$juridique$conditions$s1$fr {
+	Traductions$juridique$conditions$s1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '1. Le service'
+	String get titre => '1. Le service';
+
+	List<String> get blocs => [
+		'Rewayah Academy propose des cours de Coran en visio. Chaque élève est placé dans une Classe : un petit nombre d\'élèves, un horaire récurrent et un enseignant attitré.',
+		'Il y a deux formules : la formule enfant, de 6 à 17 ans, et la formule adulte, à partir de 18 ans. Aucun mineur n\'est placé dans une Classe d\'adultes.',
+		'Une Classe ouvre quand assez d\'élèves sont inscrits. Avant, vous êtes en liste d\'attente et rien n\'est facturé.',
+	];
+}
+
+// Path: juridique.conditions.s2
+class Traductions$juridique$conditions$s2$fr {
+	Traductions$juridique$conditions$s2$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '2. Compte et accès'
+	String get titre => '2. Compte et accès';
+
+	List<String> get blocs => [
+		'Un enfant est inscrit et suivi par un tuteur adulte, qui décide pour lui. Voir le texte Protection des enfants.',
+		'Vous donnez des informations exactes et vous gardez vos accès pour vous. On entre dans une séance par son compte, jamais par un lien public.',
+	];
+}
+
+// Path: juridique.conditions.s3
+class Traductions$juridique$conditions$s3$fr {
+	Traductions$juridique$conditions$s3$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '3. Les séances'
+	String get titre => '3. Les séances';
+
+	List<String> get blocs => [
+		'Les séances ont lieu à heure fixe, avec le même enseignant. Être présent et à l\'heure fait partie de l\'engagement.',
+		'Une séance écourtée reste due si l\'élève a été présent assez longtemps. Une séance annulée par l\'académie ou par l\'enseignant est remplacée.',
+		'Un contrôleur qualité peut assister aux séances sans être vu, et un cours peut être enregistré. Si l\'enregistrement devient réel, nous vous le disons avant.',
+		'Le parent peut observer en silence la séance de son enfant.',
+	];
+}
+
+// Path: juridique.conditions.s4
+class Traductions$juridique$conditions$s4$fr {
+	Traductions$juridique$conditions$s4$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '4. Prix et paiement'
+	String get titre => '4. Prix et paiement';
+
+	List<String> get blocs => [
+		'Les prix figurent sur la page Tarifs et dans l\'application, au moment de choisir une formule. Ils sont en dollars américains et hors taxes. La taxe due selon votre pays est ajoutée au paiement.',
+		'L\'abonnement se renouvelle chaque mois. Les remises sont calculées par le système sur la facture du foyer.',
+		'Le paiement passe par un prestataire de paiement.',
+		'Il n\'y a pas d\'essai gratuit. La première semaine est remboursée si le cours ne convient pas.',
+		'Pour arrêter, être remboursé ou payer en retard, voir le texte Annulation et remboursement.',
+	];
+}
+
+// Path: juridique.conditions.s5
+class Traductions$juridique$conditions$s5$fr {
+	Traductions$juridique$conditions$s5$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '5. Respect en séance'
+	String get titre => '5. Respect en séance';
+
+	List<String> get blocs => [
+		'Chacun se comporte avec respect envers l\'enseignant et les autres élèves, par ses mots comme par ses gestes.',
+	];
+}
+
+// Path: juridique.conditions.s6
+class Traductions$juridique$conditions$s6$fr {
+	Traductions$juridique$conditions$s6$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '6. Vos informations'
+	String get titre => '6. Vos informations';
+
+	List<String> get blocs => [
+		'La façon dont nous utilisons vos informations est expliquée dans le texte Confidentialité.',
+	];
+}
+
+// Path: juridique.conditions.s7
+class Traductions$juridique$conditions$s7$fr {
+	Traductions$juridique$conditions$s7$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '7. Droit applicable'
+	String get titre => '7. Droit applicable';
+
+	List<String> get blocs => [
+		'Cette partie précise la loi qui s\'applique et le tribunal compétent.',
+	];
+}
+
+// Path: juridique.annulation.s1
+class Traductions$juridique$annulation$s1$fr {
+	Traductions$juridique$annulation$s1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '1. Première semaine remboursée'
+	String get titre => '1. Première semaine remboursée';
+
+	List<String> get blocs => [
+		'Il n\'y a pas d\'essai gratuit. À la place, la première semaine est remboursée si le cours ne convient pas.',
+		'Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous êtes alors remboursé en entier.',
+		'Après ce délai, le mois commencé est dû.',
+	];
+}
+
+// Path: juridique.annulation.s2
+class Traductions$juridique$annulation$s2$fr {
+	Traductions$juridique$annulation$s2$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '2. Arrêter l'abonnement'
+	String get titre => '2. Arrêter l\'abonnement';
+
+	List<String> get blocs => [
+		'L\'abonnement mensuel s\'arrête à tout moment, sans justification. Il prend fin à la fin du mois en cours.',
+		'Les formules payées d\'avance, au trimestre ou à l\'année, ne sont pas remboursées après la première semaine.',
+		'Une inscription en cours de mois paie seulement les séances restantes du mois.',
+	];
+}
+
+// Path: juridique.annulation.s3
+class Traductions$juridique$annulation$s3$fr {
+	Traductions$juridique$annulation$s3$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '3. Absences et séances annulées'
+	String get titre => '3. Absences et séances annulées';
+
+	List<String> get blocs => [
+		'Une place manquée n\'est pas remboursée : elle est réservée pour l\'élève dans une Classe fixe.',
+		'Une séance annulée par l\'académie ou par l\'enseignant est remplacée.',
+		'Si la Classe n\'ouvre pas faute d\'inscrits, rien n\'est facturé.',
+	];
+}
+
+// Path: juridique.annulation.s4
+class Traductions$juridique$annulation$s4$fr {
+	Traductions$juridique$annulation$s4$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '4. Paiement en retard'
+	String get titre => '4. Paiement en retard';
+
+	List<String> get blocs => [
+		'Avant le renouvellement, vous recevez des rappels automatiques.',
+		'Après la date de renouvellement, un court délai de grâce s\'applique : l\'élève suit ses cours et l\'impayé s\'affiche chez le tuteur.',
+		'Si le paiement n\'arrive toujours pas, l\'accès aux séances est suspendu. La place est gardée quelque temps.',
+		'Ensuite, la place est libérée pour la liste d\'attente. Le retour reste possible sans frais, dans une nouvelle Classe.',
+		'Les dates exactes sont celles de la politique tarifaire en vigueur (page Tarifs).',
+	];
+}
+
+// Path: juridique.annulation.s5
+class Traductions$juridique$annulation$s5$fr {
+	Traductions$juridique$annulation$s5$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '5. Passage à la formule adulte'
+	String get titre => '5. Passage à la formule adulte';
+
+	List<String> get blocs => [
+		'Un élève qui atteint 18 ans passe à la formule adulte au renouvellement suivant. Le parent est prévenu à l\'avance.',
+	];
+}
+
+// Path: juridique.annulation.s6
+class Traductions$juridique$annulation$s6$fr {
+	Traductions$juridique$annulation$s6$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '6. Faire une demande'
+	String get titre => '6. Faire une demande';
+
+	List<String> get blocs => [
+		'Pour arrêter ou demander un remboursement, écrivez-nous en donnant le nom du compte et la raison.',
+	];
+}
+
+// Path: juridique.confidentialite.s1
+class Traductions$juridique$confidentialite$s1$fr {
+	Traductions$juridique$confidentialite$s1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '1. Qui est responsable'
+	String get titre => '1. Qui est responsable';
+
+	List<String> get blocs => [
+		'Rewayah Academy Ltd décide pourquoi et comment vos informations sont utilisées. Ses coordonnées sont dans les Mentions légales.',
+		'Représentant dans l\'Union européenne : pas encore désigné. L\'application ne s\'ouvre pas aux familles de l\'Union européenne avant sa désignation.',
+	];
+}
+
+// Path: juridique.confidentialite.s2
+class Traductions$juridique$confidentialite$s2$fr {
+	Traductions$juridique$confidentialite$s2$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '2. Ce que nous recueillons'
+	String get titre => '2. Ce que nous recueillons';
+
+	List<String> get blocs => [
+		'- Pour créer un compte : le nom, l\'adresse de courriel, la langue de l\'interface, le pays de résidence et le fuseau horaire.',
+		'- Pour un élève : la date de naissance, qui sert à choisir la bonne formule et les règles propres aux mineurs.',
+		'- Facultatif : photo, téléphone, adresse, niveau, préférences d\'horaires.',
+		'- Pendant les cours : la présence, le cahier de transmission et la progression de l\'élève.',
+		'- Pour payer : l\'abonnement et les factures. Le paiement lui-même passe par un prestataire de paiement.',
+		'- Pour un enseignant : une pièce d\'identité, gardée à part dans un espace privé.',
+		'- Vos accords : la version de chaque texte accepté et la date.',
+		'- Des rapports d\'erreurs techniques, sans capture d\'écran, sans nom et sans identité.',
+	];
+}
+
+// Path: juridique.confidentialite.s3
+class Traductions$juridique$confidentialite$s3$fr {
+	Traductions$juridique$confidentialite$s3$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '3. Pourquoi nous les utilisons'
+	String get titre => '3. Pourquoi nous les utilisons';
+
+	List<String> get blocs => [
+		'- Former les Classes et assurer les cours.',
+		'- Suivre la présence et la progression.',
+		'- Facturer l\'abonnement.',
+		'- Protéger les élèves et contrôler la qualité des séances.',
+		'- Réparer les pannes.',
+	];
+}
+
+// Path: juridique.confidentialite.s4
+class Traductions$juridique$confidentialite$s4$fr {
+	Traductions$juridique$confidentialite$s4$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '4. Qui voit quoi'
+	String get titre => '4. Qui voit quoi';
+
+	List<String> get blocs => [
+		'Une famille ne voit que ses propres informations. Les informations d\'un enfant ne sont jamais publiques et ne sont jamais montrées aux autres familles.',
+		'L\'enseignant voit ses élèves et ses Classes. La direction voit ce qu\'il faut pour gérer les inscriptions, les Classes et les paiements. Ces accès sont réglés côté serveur.',
+		'Un contrôleur qualité peut assister aux séances. Les accès sensibles sont inscrits dans un journal.',
+	];
+}
+
+// Path: juridique.confidentialite.s5
+class Traductions$juridique$confidentialite$s5$fr {
+	Traductions$juridique$confidentialite$s5$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '5. Séances en direct et enregistrement'
+	String get titre => '5. Séances en direct et enregistrement';
+
+	List<String> get blocs => [
+		'La visio passe par un service spécialisé. L\'accès à une séance est donné par le serveur, pour cette séance seulement et pour peu de temps.',
+		'Aujourd\'hui, l\'application n\'enregistre pas les cours. Si l\'enregistrement revient, nous vous dirons avant pourquoi, combien de temps il est gardé et qui peut y accéder, et nous demanderons votre accord.',
+		'Une mention rappelle dans la salle qu\'une visite de contrôle est possible.',
+	];
+}
+
+// Path: juridique.confidentialite.s6
+class Traductions$juridique$confidentialite$s6$fr {
+	Traductions$juridique$confidentialite$s6$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '6. Où sont vos informations'
+	String get titre => '6. Où sont vos informations';
+
+	List<String> get blocs => [
+		'Nous utilisons un hébergeur de pages web, une base de données avec la connexion des comptes, un service de visio, un stockage privé pour les fichiers, un prestataire de paiement et un service de rapports d\'erreurs. Ils traitent vos informations pour nous, pour ces seules raisons.',
+	];
+}
+
+// Path: juridique.confidentialite.s7
+class Traductions$juridique$confidentialite$s7$fr {
+	Traductions$juridique$confidentialite$s7$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '7. Combien de temps'
+	String get titre => '7. Combien de temps';
+
+	List<String> get blocs => [
+		'Nous gardons chaque type d\'information le temps nécessaire, pas davantage. La pièce d\'identité d\'un enseignant est supprimée à la fin d\'un délai fixé. Une suppression peut être gelée en cas de litige.',
+	];
+}
+
+// Path: juridique.confidentialite.s8
+class Traductions$juridique$confidentialite$s8$fr {
+	Traductions$juridique$confidentialite$s8$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '8. Vos droits'
+	String get titre => '8. Vos droits';
+
+	List<String> get blocs => [
+		'- Voir les informations que nous avons sur vous.',
+		'- Les corriger.',
+		'- Demander leur suppression ou limiter leur usage.',
+		'Écrivez-nous. Nous vérifions d\'abord que c\'est bien vous, ou le tuteur de l\'élève. Vous pouvez aussi vous adresser à l\'autorité de protection des données de votre pays.',
+	];
+}
+
+// Path: juridique.confidentialite.s9
+class Traductions$juridique$confidentialite$s9$fr {
+	Traductions$juridique$confidentialite$s9$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '9. Sécurité'
+	String get titre => '9. Sécurité';
+
+	List<String> get blocs => [
+		'Les règles d\'accès sont appliquées par le serveur. Les pièces d\'identité sont dans un espace privé, séparé des photos. Aucune protection n\'est absolue : si vous voyez un problème, écrivez-nous.',
+	];
+}
+
+// Path: juridique.confidentialite.s10
+class Traductions$juridique$confidentialite$s10$fr {
+	Traductions$juridique$confidentialite$s10$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '10. Les enfants'
+	String get titre => '10. Les enfants';
+
+	List<String> get blocs => [
+		'Les informations d\'un enfant sont données et gérées par son tuteur. Voir le texte Protection des enfants.',
+	];
+}
+
+// Path: juridique.cookies.s1
+class Traductions$juridique$cookies$s1$fr {
+	Traductions$juridique$cookies$s1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '1. Ce que c'est'
+	String get titre => '1. Ce que c\'est';
+
+	List<String> get blocs => [
+		'Un cookie ou une donnée locale est un petit élément gardé par votre navigateur ou votre appareil. Il aide un service à vous reconnaître ou à retenir un réglage.',
+	];
+}
+
+// Path: juridique.cookies.s2
+class Traductions$juridique$cookies$s2$fr {
+	Traductions$juridique$cookies$s2$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '2. Ce que l'application garde'
+	String get titre => '2. Ce que l\'application garde';
+
+	List<String> get blocs => [
+		'- Votre session de connexion.',
+		'- Vos préférences d\'affichage, comme la langue et le thème.',
+		'- Un cache limité, que vous pouvez effacer.',
+		'- Sur l\'appareil d\'un élève, son code personnel, qui ne quitte jamais l\'appareil.',
+		'Ces éléments sont nécessaires au fonctionnement de l\'application.',
+	];
+}
+
+// Path: juridique.cookies.s3
+class Traductions$juridique$cookies$s3$fr {
+	Traductions$juridique$cookies$s3$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '3. Ce que nous n'utilisons pas'
+	String get titre => '3. Ce que nous n\'utilisons pas';
+
+	List<String> get blocs => [
+		'À la date de ce texte, ni l\'application ni le site n\'utilisent de cookies publicitaires ni de mesure d\'audience.',
+	];
+}
+
+// Path: juridique.cookies.s4
+class Traductions$juridique$cookies$s4$fr {
+	Traductions$juridique$cookies$s4$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '4. Rapports d'erreurs'
+	String get titre => '4. Rapports d\'erreurs';
+
+	List<String> get blocs => [
+		'Quand l\'application plante, un rapport technique peut être envoyé à un service de suivi des erreurs. Il ne contient ni capture d\'écran, ni nom, ni identité.',
+	];
+}
+
+// Path: juridique.cookies.s5
+class Traductions$juridique$cookies$s5$fr {
+	Traductions$juridique$cookies$s5$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '5. Les contrôler'
+	String get titre => '5. Les contrôler';
+
+	List<String> get blocs => [
+		'Vous pouvez effacer les données du site dans les réglages de votre navigateur, ou vous déconnecter depuis le Compte. Vous devrez alors vous reconnecter et refaire vos réglages d\'affichage.',
+	];
+}
+
+// Path: juridique.cookies.s6
+class Traductions$juridique$cookies$s6$fr {
+	Traductions$juridique$cookies$s6$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '6. Services tiers'
+	String get titre => '6. Services tiers';
+
+	List<String> get blocs => [
+		'Si vous quittez Rewayah Academy pour un autre service, par exemple le paiement, ce service applique ses propres règles.',
+	];
+}
+
+// Path: juridique.enfants.s1
+class Traductions$juridique$enfants$s1$fr {
+	Traductions$juridique$enfants$s1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '1. Un adulte responsable'
+	String get titre => '1. Un adulte responsable';
+
+	List<String> get blocs => [
+		'Un enfant n\'accède pas aux cours sans tuteur adulte autorisé. L\'inscription, les accords et les paiements relèvent du tuteur.',
+		'La formule enfant va de 6 à 17 ans. Aucun mineur n\'est placé dans une Classe d\'adultes.',
+		'De 6 à 9 ans, l\'Interface guidée est activée par défaut : des écrans plus simples, avec de grandes touches.',
+	];
+}
+
+// Path: juridique.enfants.s2
+class Traductions$juridique$enfants$s2$fr {
+	Traductions$juridique$enfants$s2$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '2. Pendant les séances'
+	String get titre => '2. Pendant les séances';
+
+	List<String> get blocs => [
+		'L\'enfant suit ses cours avec un petit nombre d\'élèves et le même enseignant attitré.',
+		'Il n\'y a pas de lien public vers une salle. On y entre par son compte, avec un accès donné par le serveur.',
+		'Le parent peut observer en silence le cours de son enfant. L\'enfant concerné en est informé.',
+		'Un contrôleur qualité peut assister aux séances. Une mention le rappelle dans la salle.',
+		'Un cours peut être enregistré. Aujourd\'hui, ce n\'est pas le cas, et le tuteur en serait informé avant.',
+	];
+}
+
+// Path: juridique.enfants.s3
+class Traductions$juridique$enfants$s3$fr {
+	Traductions$juridique$enfants$s3$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '3. Les enseignants'
+	String get titre => '3. Les enseignants';
+
+	List<String> get blocs => [
+		'Les enseignants signent un contrat et une politique de contrôle. Leur pièce d\'identité est gardée dans un espace privé, séparé des photos visibles en classe.',
+	];
+}
+
+// Path: juridique.enfants.s4
+class Traductions$juridique$enfants$s4$fr {
+	Traductions$juridique$enfants$s4$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '4. Les informations de l'enfant'
+	String get titre => '4. Les informations de l\'enfant';
+
+	List<String> get blocs => [
+		'Les informations d\'un enfant ne sont ni publiques ni visibles des autres familles.',
+		'Le code personnel de l\'élève reste sur son appareil.',
+		'Voir aussi le texte Confidentialité.',
+	];
+}
+
+// Path: juridique.enfants.s5
+class Traductions$juridique$enfants$s5$fr {
+	Traductions$juridique$enfants$s5$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '5. Faire part d'une inquiétude'
+	String get titre => '5. Faire part d\'une inquiétude';
+
+	List<String> get blocs => [
+		'Si une chose vous inquiète, écrivez-nous. Dites ce que vous avez vu, quand, et dans quelle Classe.',
+		'En cas de danger immédiat, contactez d\'abord les services d\'urgence de votre pays.',
+	];
+}
+
 // Path: salle.preparation.eleve.guidee
 class Traductions$salle$preparation$eleve$guidee$fr {
 	Traductions$salle$preparation$eleve$guidee$fr.internal(this._root);
@@ -36358,7 +37256,6 @@ extension on Traductions {
 			'compte.tuteur.pageLegal.aucun' => 'Aucun document accepté n\'est enregistré pour ce compte.',
 			'compte.tuteur.pageLegal.lectureSeule' => 'Un document accepté ne se modifie pas.',
 			'compte.tuteur.pageLegal.textes' => 'Conditions et confidentialité',
-			'compte.tuteur.pageLegal.textesIndisponibles' => 'Les conditions générales, la politique de confidentialité et les mentions légales ne sont pas encore consultables dans l\'application.',
 			'historique.titre' => 'Historique',
 			'historique.detailSeance' => 'Détail de la séance',
 			'historique.segments.seances' => 'Séances',
@@ -36578,9 +37475,9 @@ extension on Traductions {
 			'eleve.coran.reglages' => 'Réglages de lecture',
 			'eleve.coran.fermerReglages' => 'Fermer les réglages',
 			'eleve.coran.taille' => 'Taille du texte',
+			'eleve.coran.agrandir' => 'Agrandir le texte',
 			_ => null,
 		} ?? switch (path) {
-			'eleve.coran.agrandir' => 'Agrandir le texte',
 			'eleve.coran.reduire' => 'Réduire le texte',
 			'eleve.coran.source' => 'Texte du Coran : Tanzil Project',
 			'eleve.coran.sourceLien' => 'tanzil.net',
@@ -37092,9 +37989,9 @@ extension on Traductions {
 			'enseignant.journee.absence.cleDate' => 'Date',
 			'enseignant.journee.absence.notice' => 'Votre affectation à la Classe reste inchangée.',
 			'enseignant.journee.absence.declarer' => 'Déclarer mon absence',
+			'enseignant.journee.absence.echec' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
 			_ => null,
 		} ?? switch (path) {
-			'enseignant.journee.absence.echec' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
 			'enseignant.journee.absence.etats.enregistree' => 'Absence enregistrée',
 			'enseignant.journee.absence.etats.recherche' => 'Recherche d\'un remplaçant',
 			'enseignant.journee.absence.etats.remplacantConfirme' => 'Remplaçant confirmé',
@@ -37606,9 +38503,9 @@ extension on Traductions {
 			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
 			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. Le serveur transmet la visite et son relevé automatique dès la sortie de la salle ; cet écran ne peut pas le confirmer. Pour ajouter une remarque, écrivez à l\'administration.',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
+			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
 			_ => null,
 		} ?? switch (path) {
-			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
 			'controleur.observation.contexteNature' => 'Votre observation rejoint le compte rendu de cette visite, transmis à l\'administration.',
 			'controleur.observation.pointPositif' => 'Point positif',
 			'controleur.observation.pointPositifAide' => 'Quand une pratique mérite d\'être relevée · elle figure au rapport comme point positif',
@@ -38120,9 +39017,9 @@ extension on Traductions {
 			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
 			'tc.observation.annonce.tuteursObservent' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} tuteur observe', other: '${nombre} tuteurs observent', ), 
 			'tc.observation.reglages.titre' => 'Observation par les tuteurs',
+			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à cette classe.',
 			_ => null,
 		} ?? switch (path) {
-			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à cette classe.',
 			'tc.observation.reglages.heriter' => 'Hériter de l\'Académie',
 			'tc.observation.reglages.personnaliser' => 'Personnaliser pour cette classe',
 			'tc.observation.reglages.desactiver' => 'Désactiver pour cette classe',
@@ -38634,9 +39531,9 @@ extension on Traductions {
 			'motifs.poserRegle.age' => 'Durée adaptée à l\'âge',
 			'motifs.poserRegle.charge' => 'Charge de l\'enseignant',
 			'motifs.poserRegle.parErreur' => 'Correction d\'une erreur de saisie',
+			'motifs.cloreSurcharge.termine' => 'Besoin ponctuel terminé',
 			_ => null,
 		} ?? switch (path) {
-			'motifs.cloreSurcharge.termine' => 'Besoin ponctuel terminé',
 			'motifs.cloreSurcharge.famille' => 'Demande de la famille',
 			'motifs.cloreSurcharge.changement' => 'Changement de classe ou d\'enseignant',
 			'motifs.cloreSurcharge.parErreur' => 'Règle posée par erreur',
@@ -39148,9 +40045,9 @@ extension on Traductions {
 			'com.vocal.composer.confirmerTitre' => 'Supprimer ce message vocal ?',
 			'com.vocal.composer.confirmerPhrase' => 'Il sera effacé de cet appareil. Cette action est définitive.',
 			'com.vocal.composer.garder' => 'Garder',
+			'com.vocal.composer.envoi' => 'Envoi du message vocal en cours',
 			_ => null,
 		} ?? switch (path) {
-			'com.vocal.composer.envoi' => 'Envoi du message vocal en cours',
 			'com.vocal.composer.nonConfirme' => 'Ce message vocal n\'a pas encore été confirmé.',
 			'com.vocal.composer.nonConfirmeAide' => 'Il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Le message vocal est gardé ici ; réessayez dans un instant.',
 			'com.vocal.composer.reessayer' => 'Réessayer',
@@ -39662,9 +40559,9 @@ extension on Traductions {
 			'com.annonces.administration.moderation.regleMotif.sollicitation' => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.',
 			'com.annonces.administration.moderation.regles.titre' => 'Partage pédagogique uniquement',
 			'com.annonces.administration.moderation.regles.corps' => 'La Communauté enseignants est réservée aux échanges professionnels entre enseignants.',
+			'com.annonces.administration.moderation.regles.reglesTitre' => 'Règles de publication',
 			_ => null,
 		} ?? switch (path) {
-			'com.annonces.administration.moderation.regles.reglesTitre' => 'Règles de publication',
 			'com.annonces.administration.moderation.regles.pasPublicite' => 'Aucune publicité',
 			'com.annonces.administration.moderation.regles.pasAffilie' => 'Aucun lien affilié',
 			'com.annonces.administration.moderation.regles.pasVente' => 'Aucune vente de produit ou de service',
@@ -40176,9 +41073,9 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.vers' => 'Vers',
 			'comptable.tresorerie.transfert.confirmer' => 'Confirmer le mouvement',
 			'comptable.tresorerie.transfert.demanderValidation' => 'Demander la validation',
+			'comptable.tresorerie.transfert.modifier' => 'Modifier le mouvement',
 			_ => null,
 		} ?? switch (path) {
-			'comptable.tresorerie.transfert.modifier' => 'Modifier le mouvement',
 			'comptable.tresorerie.transfert.fermer' => 'Fermer',
 			'comptable.tresorerie.transfert.executeTitre' => 'Mouvement exécuté par la source',
 			'comptable.tresorerie.transfert.executePhrase' => 'Le journal l\'a enregistré. Les soldes affichés sont relus.',
@@ -40690,9 +41587,9 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.exceptionExclus' => 'Bénéficiaires exclus',
 			'comptable.direction.delegationPanneau.exceptionExclusAucun' => 'Aucun bénéficiaire exclu',
 			'comptable.direction.delegationPanneau.exceptionPlafond' => 'Plafond par transaction',
+			'comptable.direction.delegationPanneau.exceptionPlafondGeneral' => 'Celui de la politique générale',
 			_ => null,
 		} ?? switch (path) {
-			'comptable.direction.delegationPanneau.exceptionPlafondGeneral' => 'Celui de la politique générale',
 			'comptable.direction.delegationPanneau.exceptionTitre' => 'Exception de la délégation',
 			'comptable.direction.delegationPanneau.exceptionCoffresDetail' => 'Seuls ces coffres peuvent être touchés par la délégation. Aucun coffre coché : aucun coffre autorisé.',
 			'comptable.direction.delegationPanneau.exceptionPlafondDetail' => 'Plus bas que le plafond de la politique générale, jamais plus haut. Vide : celui de la politique générale.',
@@ -40853,6 +41750,169 @@ extension on Traductions {
 			'sansDonnees.vueGlobale' => 'La vue d\'ensemble des finances n\'a pas pu être chargée',
 			'sansDonnees.beneficiaires' => 'Les bénéficiaires n\'ont pas pu être chargés',
 			'sansDonnees.profilPaiement' => 'Ce profil de paiement n\'a pas pu être chargé',
+			'juridique.titre' => 'Informations légales',
+			'juridique.intro' => 'Les textes qui encadrent le service. Ils se lisent sans connexion.',
+			'juridique.version' => ({required Object version, required Object date}) => 'Version ${version}, texte du ${date}',
+			'juridique.contact' => ({required Object contact}) => 'Pour toute question, écrivez à ${contact}.',
+			'juridique.lire' => 'Lire',
+			'juridique.coord.societe' => 'Société : Rewayah Academy Ltd',
+			'juridique.coord.numero' => 'Numéro d\'immatriculation : 16624644, Angleterre et pays de Galles',
+			'juridique.coord.adresse' => 'Siège : 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni',
+			'juridique.aCompleter' => ({required Object quoi}) => '[à compléter par la direction : ${quoi}]',
+			'juridique.champ' => ({required Object etiquette, required Object valeur}) => '${etiquette} : ${valeur}',
+			'juridique.quoi.hebergeur' => 'hébergeur légal et ses coordonnées',
+			'juridique.quoi.lieuxHebergement' => 'pays où sont hébergées les informations',
+			'juridique.quoi.dureesConservation' => 'durée de conservation de chaque type d\'information',
+			'juridique.quoi.droitApplicable' => 'droit applicable et juridiction compétente',
+			'juridique.quoi.confirmationConseil' => 'relecture par un conseil juridique, droit de rétractation compris',
+			'juridique.quoi.remboursementModalites' => 'moyen et délai du remboursement',
+			'juridique.quoi.responsableEnfants' => 'responsable de la protection des enfants',
+			'juridique.mentions.titre' => 'Mentions légales',
+			'juridique.mentions.resume' => 'Qui exploite Rewayah Academy et comment la joindre.',
+			'juridique.mentions.intro' => 'Voici qui exploite Rewayah Academy et comment la joindre.',
+			'juridique.mentions.s1.titre' => '1. Qui exploite le service',
+			'juridique.mentions.s1.blocs.0' => 'Rewayah Academy propose des cours de Coran en visio, en Classes stables : les mêmes élèves, un horaire qui revient chaque semaine et un enseignant attitré.',
+			'juridique.mentions.s2.titre' => '2. Nous joindre',
+			'juridique.mentions.s2.blocs.0' => 'Une seule adresse pour vos questions sur le service, sur ces textes et sur vos informations.',
+			'juridique.mentions.s3.titre' => '3. Hébergement et services techniques',
+			'juridique.mentions.s3.blocs.0' => 'Le service s\'appuie sur des prestataires techniques : l\'hébergement des pages web, la base de données et la connexion des comptes, la visio des séances, le stockage privé des fichiers et un prestataire de paiement.',
+			'juridique.mentions.s4.titre' => '4. Ces textes',
+			'juridique.mentions.s4.blocs.0' => 'Chaque texte juridique porte sa version et sa date, affichées en haut de la page. Quand un texte change, la nouvelle version remplace l\'ancienne à la date indiquée.',
+			'juridique.conditions.titre' => 'Conditions d\'utilisation et de vente',
+			'juridique.conditions.resume' => 'Les règles d\'utilisation du service et de vente des abonnements.',
+			'juridique.conditions.intro' => 'Ces conditions s\'appliquent dès que vous créez un compte ou que vous inscrivez un élève. Lisez-les en entier, elles sont courtes.',
+			'juridique.conditions.s1.titre' => '1. Le service',
+			'juridique.conditions.s1.blocs.0' => 'Rewayah Academy propose des cours de Coran en visio. Chaque élève est placé dans une Classe : un petit nombre d\'élèves, un horaire récurrent et un enseignant attitré.',
+			'juridique.conditions.s1.blocs.1' => 'Il y a deux formules : la formule enfant, de 6 à 17 ans, et la formule adulte, à partir de 18 ans. Aucun mineur n\'est placé dans une Classe d\'adultes.',
+			'juridique.conditions.s1.blocs.2' => 'Une Classe ouvre quand assez d\'élèves sont inscrits. Avant, vous êtes en liste d\'attente et rien n\'est facturé.',
+			'juridique.conditions.s2.titre' => '2. Compte et accès',
+			'juridique.conditions.s2.blocs.0' => 'Un enfant est inscrit et suivi par un tuteur adulte, qui décide pour lui. Voir le texte Protection des enfants.',
+			'juridique.conditions.s2.blocs.1' => 'Vous donnez des informations exactes et vous gardez vos accès pour vous. On entre dans une séance par son compte, jamais par un lien public.',
+			'juridique.conditions.s3.titre' => '3. Les séances',
+			'juridique.conditions.s3.blocs.0' => 'Les séances ont lieu à heure fixe, avec le même enseignant. Être présent et à l\'heure fait partie de l\'engagement.',
+			'juridique.conditions.s3.blocs.1' => 'Une séance écourtée reste due si l\'élève a été présent assez longtemps. Une séance annulée par l\'académie ou par l\'enseignant est remplacée.',
+			'juridique.conditions.s3.blocs.2' => 'Un contrôleur qualité peut assister aux séances sans être vu, et un cours peut être enregistré. Si l\'enregistrement devient réel, nous vous le disons avant.',
+			'juridique.conditions.s3.blocs.3' => 'Le parent peut observer en silence la séance de son enfant.',
+			'juridique.conditions.s4.titre' => '4. Prix et paiement',
+			'juridique.conditions.s4.blocs.0' => 'Les prix figurent sur la page Tarifs et dans l\'application, au moment de choisir une formule. Ils sont en dollars américains et hors taxes. La taxe due selon votre pays est ajoutée au paiement.',
+			'juridique.conditions.s4.blocs.1' => 'L\'abonnement se renouvelle chaque mois. Les remises sont calculées par le système sur la facture du foyer.',
+			'juridique.conditions.s4.blocs.2' => 'Le paiement passe par un prestataire de paiement.',
+			'juridique.conditions.s4.blocs.3' => 'Il n\'y a pas d\'essai gratuit. La première semaine est remboursée si le cours ne convient pas.',
+			'juridique.conditions.s4.blocs.4' => 'Pour arrêter, être remboursé ou payer en retard, voir le texte Annulation et remboursement.',
+			'juridique.conditions.s5.titre' => '5. Respect en séance',
+			'juridique.conditions.s5.blocs.0' => 'Chacun se comporte avec respect envers l\'enseignant et les autres élèves, par ses mots comme par ses gestes.',
+			'juridique.conditions.s6.titre' => '6. Vos informations',
+			'juridique.conditions.s6.blocs.0' => 'La façon dont nous utilisons vos informations est expliquée dans le texte Confidentialité.',
+			'juridique.conditions.s7.titre' => '7. Droit applicable',
+			'juridique.conditions.s7.blocs.0' => 'Cette partie précise la loi qui s\'applique et le tribunal compétent.',
+			'juridique.annulation.titre' => 'Annulation et remboursement',
+			'juridique.annulation.resume' => 'Arrêter, être remboursé, et ce qui se passe si un paiement n\'arrive pas.',
+			'juridique.annulation.intro' => 'Vous pouvez arrêter quand vous voulez. Voici ce qui est remboursé, ce qui ne l\'est pas, et ce qui se passe si un paiement n\'arrive pas.',
+			'juridique.annulation.s1.titre' => '1. Première semaine remboursée',
+			'juridique.annulation.s1.blocs.0' => 'Il n\'y a pas d\'essai gratuit. À la place, la première semaine est remboursée si le cours ne convient pas.',
+			'juridique.annulation.s1.blocs.1' => 'Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous êtes alors remboursé en entier.',
+			'juridique.annulation.s1.blocs.2' => 'Après ce délai, le mois commencé est dû.',
+			'juridique.annulation.s2.titre' => '2. Arrêter l\'abonnement',
+			'juridique.annulation.s2.blocs.0' => 'L\'abonnement mensuel s\'arrête à tout moment, sans justification. Il prend fin à la fin du mois en cours.',
+			'juridique.annulation.s2.blocs.1' => 'Les formules payées d\'avance, au trimestre ou à l\'année, ne sont pas remboursées après la première semaine.',
+			'juridique.annulation.s2.blocs.2' => 'Une inscription en cours de mois paie seulement les séances restantes du mois.',
+			'juridique.annulation.s3.titre' => '3. Absences et séances annulées',
+			'juridique.annulation.s3.blocs.0' => 'Une place manquée n\'est pas remboursée : elle est réservée pour l\'élève dans une Classe fixe.',
+			'juridique.annulation.s3.blocs.1' => 'Une séance annulée par l\'académie ou par l\'enseignant est remplacée.',
+			'juridique.annulation.s3.blocs.2' => 'Si la Classe n\'ouvre pas faute d\'inscrits, rien n\'est facturé.',
+			'juridique.annulation.s4.titre' => '4. Paiement en retard',
+			'juridique.annulation.s4.blocs.0' => 'Avant le renouvellement, vous recevez des rappels automatiques.',
+			'juridique.annulation.s4.blocs.1' => 'Après la date de renouvellement, un court délai de grâce s\'applique : l\'élève suit ses cours et l\'impayé s\'affiche chez le tuteur.',
+			'juridique.annulation.s4.blocs.2' => 'Si le paiement n\'arrive toujours pas, l\'accès aux séances est suspendu. La place est gardée quelque temps.',
+			'juridique.annulation.s4.blocs.3' => 'Ensuite, la place est libérée pour la liste d\'attente. Le retour reste possible sans frais, dans une nouvelle Classe.',
+			'juridique.annulation.s4.blocs.4' => 'Les dates exactes sont celles de la politique tarifaire en vigueur (page Tarifs).',
+			'juridique.annulation.s5.titre' => '5. Passage à la formule adulte',
+			'juridique.annulation.s5.blocs.0' => 'Un élève qui atteint 18 ans passe à la formule adulte au renouvellement suivant. Le parent est prévenu à l\'avance.',
+			'juridique.annulation.s6.titre' => '6. Faire une demande',
+			'juridique.annulation.s6.blocs.0' => 'Pour arrêter ou demander un remboursement, écrivez-nous en donnant le nom du compte et la raison.',
+			'juridique.confidentialite.titre' => 'Confidentialité',
+			'juridique.confidentialite.resume' => 'Quelles informations nous gardons, pourquoi, et vos droits.',
+			'juridique.confidentialite.intro' => 'Nous gardons seulement ce qui sert à faire les cours. Voici quelles informations, pourquoi, et comment les contrôler.',
+			'juridique.confidentialite.s1.titre' => '1. Qui est responsable',
+			'juridique.confidentialite.s1.blocs.0' => 'Rewayah Academy Ltd décide pourquoi et comment vos informations sont utilisées. Ses coordonnées sont dans les Mentions légales.',
+			'juridique.confidentialite.s1.blocs.1' => 'Représentant dans l\'Union européenne : pas encore désigné. L\'application ne s\'ouvre pas aux familles de l\'Union européenne avant sa désignation.',
+			'juridique.confidentialite.s2.titre' => '2. Ce que nous recueillons',
+			'juridique.confidentialite.s2.blocs.0' => '- Pour créer un compte : le nom, l\'adresse de courriel, la langue de l\'interface, le pays de résidence et le fuseau horaire.',
+			'juridique.confidentialite.s2.blocs.1' => '- Pour un élève : la date de naissance, qui sert à choisir la bonne formule et les règles propres aux mineurs.',
+			'juridique.confidentialite.s2.blocs.2' => '- Facultatif : photo, téléphone, adresse, niveau, préférences d\'horaires.',
+			'juridique.confidentialite.s2.blocs.3' => '- Pendant les cours : la présence, le cahier de transmission et la progression de l\'élève.',
+			'juridique.confidentialite.s2.blocs.4' => '- Pour payer : l\'abonnement et les factures. Le paiement lui-même passe par un prestataire de paiement.',
+			'juridique.confidentialite.s2.blocs.5' => '- Pour un enseignant : une pièce d\'identité, gardée à part dans un espace privé.',
+			'juridique.confidentialite.s2.blocs.6' => '- Vos accords : la version de chaque texte accepté et la date.',
+			'juridique.confidentialite.s2.blocs.7' => '- Des rapports d\'erreurs techniques, sans capture d\'écran, sans nom et sans identité.',
+			'juridique.confidentialite.s3.titre' => '3. Pourquoi nous les utilisons',
+			'juridique.confidentialite.s3.blocs.0' => '- Former les Classes et assurer les cours.',
+			'juridique.confidentialite.s3.blocs.1' => '- Suivre la présence et la progression.',
+			'juridique.confidentialite.s3.blocs.2' => '- Facturer l\'abonnement.',
+			'juridique.confidentialite.s3.blocs.3' => '- Protéger les élèves et contrôler la qualité des séances.',
+			'juridique.confidentialite.s3.blocs.4' => '- Réparer les pannes.',
+			'juridique.confidentialite.s4.titre' => '4. Qui voit quoi',
+			'juridique.confidentialite.s4.blocs.0' => 'Une famille ne voit que ses propres informations. Les informations d\'un enfant ne sont jamais publiques et ne sont jamais montrées aux autres familles.',
+			'juridique.confidentialite.s4.blocs.1' => 'L\'enseignant voit ses élèves et ses Classes. La direction voit ce qu\'il faut pour gérer les inscriptions, les Classes et les paiements. Ces accès sont réglés côté serveur.',
+			'juridique.confidentialite.s4.blocs.2' => 'Un contrôleur qualité peut assister aux séances. Les accès sensibles sont inscrits dans un journal.',
+			'juridique.confidentialite.s5.titre' => '5. Séances en direct et enregistrement',
+			'juridique.confidentialite.s5.blocs.0' => 'La visio passe par un service spécialisé. L\'accès à une séance est donné par le serveur, pour cette séance seulement et pour peu de temps.',
+			'juridique.confidentialite.s5.blocs.1' => 'Aujourd\'hui, l\'application n\'enregistre pas les cours. Si l\'enregistrement revient, nous vous dirons avant pourquoi, combien de temps il est gardé et qui peut y accéder, et nous demanderons votre accord.',
+			'juridique.confidentialite.s5.blocs.2' => 'Une mention rappelle dans la salle qu\'une visite de contrôle est possible.',
+			'juridique.confidentialite.s6.titre' => '6. Où sont vos informations',
+			'juridique.confidentialite.s6.blocs.0' => 'Nous utilisons un hébergeur de pages web, une base de données avec la connexion des comptes, un service de visio, un stockage privé pour les fichiers, un prestataire de paiement et un service de rapports d\'erreurs. Ils traitent vos informations pour nous, pour ces seules raisons.',
+			'juridique.confidentialite.s7.titre' => '7. Combien de temps',
+			'juridique.confidentialite.s7.blocs.0' => 'Nous gardons chaque type d\'information le temps nécessaire, pas davantage. La pièce d\'identité d\'un enseignant est supprimée à la fin d\'un délai fixé. Une suppression peut être gelée en cas de litige.',
+			'juridique.confidentialite.s8.titre' => '8. Vos droits',
+			'juridique.confidentialite.s8.blocs.0' => '- Voir les informations que nous avons sur vous.',
+			'juridique.confidentialite.s8.blocs.1' => '- Les corriger.',
+			'juridique.confidentialite.s8.blocs.2' => '- Demander leur suppression ou limiter leur usage.',
+			'juridique.confidentialite.s8.blocs.3' => 'Écrivez-nous. Nous vérifions d\'abord que c\'est bien vous, ou le tuteur de l\'élève. Vous pouvez aussi vous adresser à l\'autorité de protection des données de votre pays.',
+			'juridique.confidentialite.s9.titre' => '9. Sécurité',
+			'juridique.confidentialite.s9.blocs.0' => 'Les règles d\'accès sont appliquées par le serveur. Les pièces d\'identité sont dans un espace privé, séparé des photos. Aucune protection n\'est absolue : si vous voyez un problème, écrivez-nous.',
+			'juridique.confidentialite.s10.titre' => '10. Les enfants',
+			'juridique.confidentialite.s10.blocs.0' => 'Les informations d\'un enfant sont données et gérées par son tuteur. Voir le texte Protection des enfants.',
+			'juridique.cookies.titre' => 'Cookies',
+			'juridique.cookies.resume' => 'Ce que l\'application et le site gardent sur votre appareil.',
+			'juridique.cookies.intro' => 'L\'application et le site gardent peu de choses sur votre appareil. Voici lesquelles.',
+			'juridique.cookies.s1.titre' => '1. Ce que c\'est',
+			'juridique.cookies.s1.blocs.0' => 'Un cookie ou une donnée locale est un petit élément gardé par votre navigateur ou votre appareil. Il aide un service à vous reconnaître ou à retenir un réglage.',
+			'juridique.cookies.s2.titre' => '2. Ce que l\'application garde',
+			'juridique.cookies.s2.blocs.0' => '- Votre session de connexion.',
+			'juridique.cookies.s2.blocs.1' => '- Vos préférences d\'affichage, comme la langue et le thème.',
+			'juridique.cookies.s2.blocs.2' => '- Un cache limité, que vous pouvez effacer.',
+			'juridique.cookies.s2.blocs.3' => '- Sur l\'appareil d\'un élève, son code personnel, qui ne quitte jamais l\'appareil.',
+			'juridique.cookies.s2.blocs.4' => 'Ces éléments sont nécessaires au fonctionnement de l\'application.',
+			'juridique.cookies.s3.titre' => '3. Ce que nous n\'utilisons pas',
+			'juridique.cookies.s3.blocs.0' => 'À la date de ce texte, ni l\'application ni le site n\'utilisent de cookies publicitaires ni de mesure d\'audience.',
+			'juridique.cookies.s4.titre' => '4. Rapports d\'erreurs',
+			'juridique.cookies.s4.blocs.0' => 'Quand l\'application plante, un rapport technique peut être envoyé à un service de suivi des erreurs. Il ne contient ni capture d\'écran, ni nom, ni identité.',
+			'juridique.cookies.s5.titre' => '5. Les contrôler',
+			'juridique.cookies.s5.blocs.0' => 'Vous pouvez effacer les données du site dans les réglages de votre navigateur, ou vous déconnecter depuis le Compte. Vous devrez alors vous reconnecter et refaire vos réglages d\'affichage.',
+			'juridique.cookies.s6.titre' => '6. Services tiers',
+			'juridique.cookies.s6.blocs.0' => 'Si vous quittez Rewayah Academy pour un autre service, par exemple le paiement, ce service applique ses propres règles.',
+			'juridique.enfants.titre' => 'Protection des enfants',
+			'juridique.enfants.resume' => 'Comment nous protégeons les élèves mineurs.',
+			'juridique.enfants.intro' => 'Les élèves mineurs suivent leurs cours sous la responsabilité d\'un adulte. Voici les règles que nous appliquons et comment nous faire part d\'une inquiétude.',
+			'juridique.enfants.s1.titre' => '1. Un adulte responsable',
+			'juridique.enfants.s1.blocs.0' => 'Un enfant n\'accède pas aux cours sans tuteur adulte autorisé. L\'inscription, les accords et les paiements relèvent du tuteur.',
+			'juridique.enfants.s1.blocs.1' => 'La formule enfant va de 6 à 17 ans. Aucun mineur n\'est placé dans une Classe d\'adultes.',
+			'juridique.enfants.s1.blocs.2' => 'De 6 à 9 ans, l\'Interface guidée est activée par défaut : des écrans plus simples, avec de grandes touches.',
+			'juridique.enfants.s2.titre' => '2. Pendant les séances',
+			'juridique.enfants.s2.blocs.0' => 'L\'enfant suit ses cours avec un petit nombre d\'élèves et le même enseignant attitré.',
+			'juridique.enfants.s2.blocs.1' => 'Il n\'y a pas de lien public vers une salle. On y entre par son compte, avec un accès donné par le serveur.',
+			'juridique.enfants.s2.blocs.2' => 'Le parent peut observer en silence le cours de son enfant. L\'enfant concerné en est informé.',
+			'juridique.enfants.s2.blocs.3' => 'Un contrôleur qualité peut assister aux séances. Une mention le rappelle dans la salle.',
+			'juridique.enfants.s2.blocs.4' => 'Un cours peut être enregistré. Aujourd\'hui, ce n\'est pas le cas, et le tuteur en serait informé avant.',
+			'juridique.enfants.s3.titre' => '3. Les enseignants',
+			'juridique.enfants.s3.blocs.0' => 'Les enseignants signent un contrat et une politique de contrôle. Leur pièce d\'identité est gardée dans un espace privé, séparé des photos visibles en classe.',
+			'juridique.enfants.s4.titre' => '4. Les informations de l\'enfant',
+			'juridique.enfants.s4.blocs.0' => 'Les informations d\'un enfant ne sont ni publiques ni visibles des autres familles.',
+			'juridique.enfants.s4.blocs.1' => 'Le code personnel de l\'élève reste sur son appareil.',
+			'juridique.enfants.s4.blocs.2' => 'Voir aussi le texte Confidentialité.',
+			'juridique.enfants.s5.titre' => '5. Faire part d\'une inquiétude',
+			'juridique.enfants.s5.blocs.0' => 'Si une chose vous inquiète, écrivez-nous. Dites ce que vous avez vu, quand, et dans quelle Classe.',
+			'juridique.enfants.s5.blocs.1' => 'En cas de danger immédiat, contactez d\'abord les services d\'urgence de votre pays.',
 			_ => null,
 		};
 	}

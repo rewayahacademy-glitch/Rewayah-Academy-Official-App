@@ -9058,12 +9058,12 @@
     "beneficiaires": "تعذّر تحميل المستفيدين",
     "profilPaiement": "تعذّر تحميل ملف الدفع هذا"
   },
-<<<<<<< HEAD
   "argent": {
     "acces": {
       "suspenduPaiementTuteur": "لم تُستلم دفعة هذا الشهر. تعذّر انضمام \u2068{prenom}\u2069 إلى الحصص. يبقى الحساب والمحتويات متاحة.",
       "suspenduPaiementAdulte": "لم تُستلم دفعة هذا الشهر. لا يمكنك الانضمام إلى حصصك الآن. يبقى حسابك ومحتوياتك متاحة."
-=======
+    }
+  },
   "juridique": {
     "titre": "المعلومات القانونية",
     "intro": "النصوص التي تنظّم الخدمة. يمكن قراءتها دون تسجيل الدخول.",
@@ -9395,7 +9395,6 @@
           "في حال خطر داهم، اتصلوا أولًا بخدمات الطوارئ في بلدكم."
         ]
       }
->>>>>>> 3305012a (Textes juridiques dans l'application (fr, ar) et pour le site : mentions, conditions, annulation et remboursement, confidentialite, cookies, protection des enfants)
     }
   }
 }
