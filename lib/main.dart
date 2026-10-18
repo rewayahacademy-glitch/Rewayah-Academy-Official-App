@@ -39,12 +39,14 @@ import 'core/capacites/port_paiements_saisis.dart';
 import 'core/capacites/port_politiques_commerciales.dart';
 import 'core/capacites/port_profil_eleve_titulaire.dart';
 import 'core/capacites/port_progression_famille.dart';
+import 'core/capacites/port_recharge_foyer.dart';
 import 'core/capacites/port_revenus_enseignant.dart';
 import 'core/capacites/port_series_tresorerie.dart';
 import 'core/capacites/port_support.dart';
 import 'core/capacites/port_validations_finance.dart';
 import 'core/capacites/profil_eleve_titulaire_supabase.dart';
 import 'core/capacites/progression_famille_supabase.dart';
+import 'core/capacites/recharge_foyer_supabase.dart';
 import 'core/capacites/revenus_enseignant_supabase.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
 import 'core/capacites/series_tresorerie_supabase.dart';
@@ -61,6 +63,7 @@ import 'core/dossier/port_acces_pieces_kyc_supabase.dart';
 import 'core/enseignant/absence_remplacement.dart';
 import 'core/enseignant/port_remplacements.dart';
 import 'core/enseignant/remplacements_supabase.dart';
+import 'core/finance/page_paiement.dart';
 import 'core/foyer/port_reprises_admin.dart';
 import 'core/foyer/reprises_admin_supabase.dart';
 import 'core/i18n/langue_demarrage.dart';
@@ -85,6 +88,7 @@ import 'core/recrutement/port_invitations_enseignant.dart';
 import 'core/recrutement/port_signature_contrat.dart';
 import 'core/recrutement/port_statuts_signature.dart';
 import 'core/recrutement/port_statuts_signature_supabase.dart';
+import 'core/router/routes.dart';
 import 'core/session/port_capacite_eleve.dart';
 import 'core/session/port_capacite_eleve_supabase.dart';
 import 'core/session/session_controleur.dart';
@@ -265,6 +269,18 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   // Saisie des paiements recus (FAC-C-01, migration 20261017172000) : la
   // direction et la comptabilite, attribues a un eleve.
+  // Recharge des familles payee chez Stripe (FI-BR-06, migration
+  // 20261018100000, fonctions `recharge-payer` et `stripe-webhook`) : le
+  // chemin par defaut ; la saisie a la main reste un recours.
+  portRechargeFoyerProvider.overrideWithValue(
+    RechargeFoyerSupabase(
+      Supabase.instance.client,
+      adresseRetour: () => adresseApplication(
+        Routes.resultatRechargePour(RechargeFoyerSupabase.marqueCommande),
+      ),
+      ouvrirPage: ouvrirPagePaiement,
+    ),
+  ),
   portPaiementsSaisisProvider.overrideWithValue(
     PaiementsSaisisSupabase(Supabase.instance.client),
   ),

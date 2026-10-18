@@ -7001,6 +7001,14 @@
         "indisponiblePhrase": "L'état des paiements n'est pas encore disponible dans l'application. Aucun paiement n'a été effectué ici.",
         "lectureEchecTitre": "L'état du paiement n'a pas pu être lu.",
         "lectureEchecPhrase": "Le paiement n'est pas annulé pour autant. Ne payez pas une seconde fois\u00a0: réessayez la lecture."
+      },
+      "source": {
+        "avantPaiement": "En attente du paiement",
+        "motifs": {
+          "paiementRefuse": "Le paiement a été refusé par la banque ou la carte. Rien n'a été prélevé.",
+          "montantIncoherent": "Le montant reçu ne correspond pas à la recharge. Rien n'a été crédité\u00a0: la direction vérifie avec le prestataire.",
+          "sessionExpiree": "La page de paiement a expiré avant le paiement. Rien n'a été prélevé."
+        }
       }
     },
     "paiements": {

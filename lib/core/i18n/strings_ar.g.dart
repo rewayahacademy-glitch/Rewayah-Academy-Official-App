@@ -6487,6 +6487,7 @@ class _Traductions$adulte$recharge$ar extends Traductions$adulte$recharge$fr {
 	@override String get paiementIndisponibleTitre => 'الدفع غير متاح بعد';
 	@override String get paiementIndisponiblePhrase => 'لم يُجرَ أي دفع. الدفع عبر الإنترنت غير مفتوح في التطبيق بعد.';
 	@override String get revenirPaiements => 'العودة إلى مدفوعات الأسرة';
+	@override late final _Traductions$adulte$recharge$source$ar source = _Traductions$adulte$recharge$source$ar._(_root);
 }
 
 // Path: adulte.paiements
@@ -12248,6 +12249,17 @@ class _Traductions$adulte$monEspace$pageCoursAcces$ar extends Traductions$adulte
 	@override String get indisponiblePhrase => 'تفاصيل دروسك وحصصك ووصولك غير متاحة في التطبيق بعد.';
 }
 
+// Path: adulte.recharge.source
+class _Traductions$adulte$recharge$source$ar extends Traductions$adulte$recharge$source$fr {
+	_Traductions$adulte$recharge$source$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get avantPaiement => 'بانتظار الدفع';
+	@override late final _Traductions$adulte$recharge$source$motifs$ar motifs = _Traductions$adulte$recharge$source$motifs$ar._(_root);
+}
+
 // Path: adulte.famille.place
 class _Traductions$adulte$famille$place$ar extends Traductions$adulte$famille$place$fr {
 	_Traductions$adulte$famille$place$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -14018,6 +14030,18 @@ class _Traductions$comptable$direction$reservePanneau$cadence$ar extends Traduct
 	@override String get mensuelle => 'كل شهر';
 	@override String get apresEncaissementConsolide => 'بعد كل مقبوض مُثبَّت';
 	@override String get manuelle => 'يدوية';
+}
+
+// Path: adulte.recharge.source.motifs
+class _Traductions$adulte$recharge$source$motifs$ar extends Traductions$adulte$recharge$source$motifs$fr {
+	_Traductions$adulte$recharge$source$motifs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get paiementRefuse => 'رفض البنك أو البطاقة الدفع. لم يُقتطع أي مبلغ.';
+	@override String get montantIncoherent => 'المبلغ المستلم لا يطابق الشحن. لم يُضف شيء إلى الرصيد: الإدارة تتحقق مع مزوّد الدفع.';
+	@override String get sessionExpiree => 'انتهت صلاحية صفحة الدفع قبل الدفع. لم يُقتطع أي مبلغ.';
 }
 
 // Path: com.annonces.administration.moderation.regleMotif
@@ -20281,6 +20305,10 @@ extension on TraductionsAr {
 			'adulte.recharge.paiementIndisponibleTitre' => 'الدفع غير متاح بعد',
 			'adulte.recharge.paiementIndisponiblePhrase' => 'لم يُجرَ أي دفع. الدفع عبر الإنترنت غير مفتوح في التطبيق بعد.',
 			'adulte.recharge.revenirPaiements' => 'العودة إلى مدفوعات الأسرة',
+			'adulte.recharge.source.avantPaiement' => 'بانتظار الدفع',
+			'adulte.recharge.source.motifs.paiementRefuse' => 'رفض البنك أو البطاقة الدفع. لم يُقتطع أي مبلغ.',
+			'adulte.recharge.source.motifs.montantIncoherent' => 'المبلغ المستلم لا يطابق الشحن. لم يُضف شيء إلى الرصيد: الإدارة تتحقق مع مزوّد الدفع.',
+			'adulte.recharge.source.motifs.sessionExpiree' => 'انتهت صلاحية صفحة الدفع قبل الدفع. لم يُقتطع أي مبلغ.',
 			'adulte.paiements.beneficiaires' => 'المستفيدون',
 			'adulte.paiements.recharger' => 'شحن',
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'ملخص الأسرة: ⁨${valeur}⁩. يبقى كل رصيد خاصًا بمستفيده.',
@@ -20734,12 +20762,12 @@ extension on TraductionsAr {
 			'controleur.mfa.titreEnrolement' => 'احمِ حساب المراقب الخاص بك',
 			'controleur.mfa.introEnrolement' => 'يتيح هذا الحساب الدخول إلى حصص يحضرها أطفال. لا ينبغي أن تكفي كلمة مرور مسروقة: أضف خطوة ثانية بتطبيق للمصادقة.',
 			'controleur.mfa.etapeScanner' => 'في تطبيق المصادقة لديك، امسح هذا الرمز.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.mfa.libelleQr' => 'رمز يُمسح لإضافة هذا الحساب إلى تطبيق المصادقة لديك',
 			'controleur.mfa.cleManuelle' => 'لا تستطيع المسح؟ أدخل هذا المفتاح في التطبيق.',
 			'controleur.mfa.etapeCode' => 'أدخل الرمز المكوّن من ستة أرقام الذي يعرضه التطبيق.',
 			'controleur.mfa.champCode' => 'رمز من ستة أرقام',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.mfa.activer' => 'تفعيل الحماية',
 			'controleur.mfa.titreVerification' => 'أكّد تسجيل دخولك',
 			'controleur.mfa.introVerification' => 'افتح تطبيق المصادقة لديك وأدخل الرمز المكوّن من ستة أرقام المعروض لهذا الحساب.',

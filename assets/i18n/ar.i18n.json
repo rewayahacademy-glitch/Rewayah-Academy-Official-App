@@ -7790,7 +7790,15 @@
       "paiementEchecPhrase": "تحقّق قبل إعادة المحاولة.",
       "paiementIndisponibleTitre": "الدفع غير متاح بعد",
       "paiementIndisponiblePhrase": "لم يُجرَ أي دفع. الدفع عبر الإنترنت غير مفتوح في التطبيق بعد.",
-      "revenirPaiements": "العودة إلى مدفوعات الأسرة"
+      "revenirPaiements": "العودة إلى مدفوعات الأسرة",
+      "source": {
+        "avantPaiement": "بانتظار الدفع",
+        "motifs": {
+          "paiementRefuse": "رفض البنك أو البطاقة الدفع. لم يُقتطع أي مبلغ.",
+          "montantIncoherent": "المبلغ المستلم لا يطابق الشحن. لم يُضف شيء إلى الرصيد: الإدارة تتحقق مع مزوّد الدفع.",
+          "sessionExpiree": "انتهت صلاحية صفحة الدفع قبل الدفع. لم يُقتطع أي مبلغ."
+        }
+      }
     },
     "paiements": {
       "beneficiaires": "المستفيدون",

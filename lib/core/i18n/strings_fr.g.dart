@@ -14699,6 +14699,7 @@ class Traductions$adulte$recharge$fr {
 	String get suivrePaiement => 'Suivre le paiement';
 
 	late final Traductions$adulte$recharge$resultat$fr resultat = Traductions$adulte$recharge$resultat$fr.internal(_root);
+	late final Traductions$adulte$recharge$source$fr source = Traductions$adulte$recharge$source$fr.internal(_root);
 }
 
 // Path: adulte.paiements
@@ -25032,6 +25033,20 @@ class Traductions$adulte$recharge$resultat$fr {
 	String get lectureEchecPhrase => 'Le paiement n\'est pas annulé pour autant. Ne payez pas une seconde fois : réessayez la lecture.';
 }
 
+// Path: adulte.recharge.source
+class Traductions$adulte$recharge$source$fr {
+	Traductions$adulte$recharge$source$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'En attente du paiement'
+	String get avantPaiement => 'En attente du paiement';
+
+	late final Traductions$adulte$recharge$source$motifs$fr motifs = Traductions$adulte$recharge$source$motifs$fr.internal(_root);
+}
+
 // Path: adulte.famille.place
 class Traductions$adulte$famille$place$fr {
 	Traductions$adulte$famille$place$fr.internal(this._root);
@@ -30674,6 +30689,24 @@ class Traductions$tc$parcours$signalement$categorieValeur$fr {
 
 	/// fr: 'Autre'
 	String get autre => 'Autre';
+}
+
+// Path: adulte.recharge.source.motifs
+class Traductions$adulte$recharge$source$motifs$fr {
+	Traductions$adulte$recharge$source$motifs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le paiement a été refusé par la banque ou la carte. Rien n'a été prélevé.'
+	String get paiementRefuse => 'Le paiement a été refusé par la banque ou la carte. Rien n\'a été prélevé.';
+
+	/// fr: 'Le montant reçu ne correspond pas à la recharge. Rien n'a été crédité : la direction vérifie avec le prestataire.'
+	String get montantIncoherent => 'Le montant reçu ne correspond pas à la recharge. Rien n\'a été crédité : la direction vérifie avec le prestataire.';
+
+	/// fr: 'La page de paiement a expiré avant le paiement. Rien n'a été prélevé.'
+	String get sessionExpiree => 'La page de paiement a expiré avant le paiement. Rien n\'a été prélevé.';
 }
 
 // Path: com.socle.composants.lecture
@@ -38072,6 +38105,10 @@ extension on Traductions {
 			'adulte.recharge.resultat.indisponiblePhrase' => 'L\'état des paiements n\'est pas encore disponible dans l\'application. Aucun paiement n\'a été effectué ici.',
 			'adulte.recharge.resultat.lectureEchecTitre' => 'L\'état du paiement n\'a pas pu être lu.',
 			'adulte.recharge.resultat.lectureEchecPhrase' => 'Le paiement n\'est pas annulé pour autant. Ne payez pas une seconde fois : réessayez la lecture.',
+			'adulte.recharge.source.avantPaiement' => 'En attente du paiement',
+			'adulte.recharge.source.motifs.paiementRefuse' => 'Le paiement a été refusé par la banque ou la carte. Rien n\'a été prélevé.',
+			'adulte.recharge.source.motifs.montantIncoherent' => 'Le montant reçu ne correspond pas à la recharge. Rien n\'a été crédité : la direction vérifie avec le prestataire.',
+			'adulte.recharge.source.motifs.sessionExpiree' => 'La page de paiement a expiré avant le paiement. Rien n\'a été prélevé.',
 			'adulte.paiements.beneficiaires' => 'Bénéficiaires',
 			'adulte.paiements.recharger' => 'Recharger',
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'Récapitulatif du foyer : ${valeur}. Chaque solde reste celui de son bénéficiaire.',
@@ -38421,12 +38458,12 @@ extension on Traductions {
 			'motifs.signalement.pedagogique.echange' => 'Un échange avec l\'académie est proposé.',
 			'motifs.signalement.presence.absences' => 'Plusieurs absences récentes : la régularité aide à progresser.',
 			'motifs.signalement.presence.retards' => 'Arrivées en retard lors des dernières séances.',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.signalement.presence.prevenir' => 'Merci de prévenir l\'académie en cas d\'absence.',
 			'motifs.signalement.technique.son' => 'Le son ou la connexion a gêné le cours.',
 			'motifs.signalement.technique.essai' => 'Un essai de l\'appareil avant le cours est conseillé.',
 			'motifs.signalement.technique.camera' => 'La caméra ou le micro n\'a pas fonctionné.',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.signalement.changement.classe' => 'Un changement de classe est à l\'étude.',
 			'motifs.signalement.changement.niveau' => 'Le niveau de la classe ne semble plus adapté.',
 			'motifs.signalement.changement.suite' => 'L\'académie reviendra vers vous pour en parler.',
@@ -38935,12 +38972,12 @@ extension on Traductions {
 			'com.communaute.lien.commercialInterdit' => 'Lien commercial interdit',
 			'com.communaute.lien.nonVerifie' => 'Lien non vérifié',
 			'com.communaute.lien.semantique' => ({required Object adresse, required Object etat}) => '${adresse}, ${etat}',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.sousTitre' => 'Échanges et entraide entre enseignants',
 			'com.communaute.sections' => 'Catégories de la Communauté enseignants',
 			'com.communaute.toutes' => 'Toutes',
 			'com.communaute.videTitre' => 'Aucune publication',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.rechercheVideTitre' => 'Aucun résultat',
 			'com.communaute.rechercheVide' => 'Aucune publication ne correspond à votre recherche. Essayez un autre mot.',
 			'com.communaute.videToutes' => 'Aucune publication pour le moment.',
@@ -39449,12 +39486,12 @@ extension on Traductions {
 			'com.annonces.demo.classeNour' => 'Classe An-Nour',
 			'com.annonces.demo.classeFajr' => 'Classe Al-Fajr',
 			'com.annonces.demo.enseignante' => 'Enseignante de la Classe',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demo.f.adminStudioMention' => 'Studio : une discussion du canal Programmes vous mentionne',
 			'com.annonces.demo.f.adminStudioReponse' => 'Studio : nouvelle réponse à votre message sur le programme de printemps',
 			'com.annonces.demo.f.adminStudioDecision' => 'Studio : une décision est demandée sur le support de la leçon 4',
 			'com.annonces.demo.f.adminStudioAssigne' => 'Studio : la relecture du support de Tajwid vous est assignée',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.adminStudioInterne' => 'Annonce interne de l\'équipe Studio : réunion d\'équipe jeudi à 18 h',
 			'com.annonces.demo.f.adminStudioContexte' => 'Studio : un support est prêt pour la Classe An-Nour',
 			'com.annonces.demo.f.annonceNourTitre' => 'Récitation de fin de trimestre devant les familles',
@@ -39963,12 +40000,12 @@ extension on Traductions {
 			'comptable.encaissements.foyer' => 'Foyer',
 			'comptable.encaissements.date' => 'Date',
 			'comptable.encaissements.etat' => 'État',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.devise' => 'Devise',
 			'comptable.encaissements.affectation' => 'Affectation par profil',
 			'comptable.encaissements.affectationAucune' => 'La source n\'a rendu aucune affectation pour cet encaissement.',
 			'comptable.encaissements.rapprochement' => 'Rapprochement',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rapprochementAucun' => 'Pas encore rapproché',
 			'comptable.encaissements.ouvrirRapprochement' => 'Ouvrir le rapprochement',
 			'comptable.encaissements.confirmeNote' => '« Confirmé » s\'affiche seulement après la confirmation du prestataire.',
@@ -40477,12 +40514,12 @@ extension on Traductions {
 			'presentationTuteur.accueil.titre' => 'Demande de présentation',
 			'presentationTuteur.accueil.voir' => 'Répondre',
 			'presentationTuteur.notification' => ({required Object prenom}) => '${prenom} demande la présentation standard',
+			_ => null,
+		} ?? switch (path) {
 			'reprisesAdmin.onglet' => 'Reprises',
 			'reprisesAdmin.titre' => 'Reprises de foyer',
 			'reprisesAdmin.sousTitre' => 'Demandes d\'un second adulte pour devenir titulaire du foyer. L\'administration décide.',
 			'reprisesAdmin.demandeur' => 'Demandeur',
-			_ => null,
-		} ?? switch (path) {
 			'reprisesAdmin.foyer' => 'Foyer',
 			'reprisesAdmin.deposeeLe' => 'Déposée le',
 			'reprisesAdmin.etat.aExaminer' => 'À examiner',

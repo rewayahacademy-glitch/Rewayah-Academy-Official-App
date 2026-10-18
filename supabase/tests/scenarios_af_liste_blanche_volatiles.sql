@@ -179,6 +179,9 @@ declare
     'rech_d1_curseur_lire(uuid,text,text,bigint)',
     'rech_d1_rechercher_classes(text,uuid,integer)',
     'rech_d1_rechercher_supports(text,uuid,integer)',
+    -- FI-BR-06 (18/10) : titulaire du foyer, compte valide (bf1_est_titulaire).
+    'recharge_payer(uuid,uuid)',
+    'recharge_verifier_montants(jsonb)',
     'rechercher_personne_par_matricule(text)',
     'reclamer_preinscription_apres_preuve()',
     'refuser_demande_horaire(uuid,text)',
