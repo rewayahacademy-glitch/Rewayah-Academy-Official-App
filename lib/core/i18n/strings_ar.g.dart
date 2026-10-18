@@ -10720,6 +10720,8 @@ class _Traductions$admin$finance$pol$ar extends Traductions$admin$finance$pol$fr
 	@override String get plafondEleveEnfant => 'الحد الأقصى لكل طالب، فصل الأطفال';
 	@override String get plafondEleveAdulte => 'الحد الأقصى لكل طالب، فصل البالغين';
 	@override String get plafondEleveDetail => 'الحد الأقصى لكل طالب حاضر ولكل ساعة، بما في ذلك مكافأة الوفاء.';
+	@override String get erreurMontantCentimes => 'أدخل مبلغًا أكبر من 0، بخانتين عشريتين على الأكثر (مثال: 0,95).';
+	@override String erreurPlafondEleve({required Object taux}) => 'الحد الأقصى أقل من المعدل (⁨${taux}⁩) : أدخل المعدل أو أكثر.';
 	@override String get dureeDueEnfant => 'تُحتسب حصة الأطفال ابتداءً من';
 	@override String get dureeDueAdulte => 'تُحتسب حصة البالغين ابتداءً من';
 	@override String get dureeDueDetail => 'الحد الأدنى من الحضور لتُحتسب الحصة في الأجر.';
@@ -17388,6 +17390,8 @@ extension on TraductionsAr {
 			'admin.finance.pol.plafondEleveEnfant' => 'الحد الأقصى لكل طالب، فصل الأطفال',
 			'admin.finance.pol.plafondEleveAdulte' => 'الحد الأقصى لكل طالب، فصل البالغين',
 			'admin.finance.pol.plafondEleveDetail' => 'الحد الأقصى لكل طالب حاضر ولكل ساعة، بما في ذلك مكافأة الوفاء.',
+			'admin.finance.pol.erreurMontantCentimes' => 'أدخل مبلغًا أكبر من 0، بخانتين عشريتين على الأكثر (مثال: 0,95).',
+			'admin.finance.pol.erreurPlafondEleve' => ({required Object taux}) => 'الحد الأقصى أقل من المعدل (⁨${taux}⁩) : أدخل المعدل أو أكثر.',
 			'admin.finance.pol.dureeDueEnfant' => 'تُحتسب حصة الأطفال ابتداءً من',
 			'admin.finance.pol.dureeDueAdulte' => 'تُحتسب حصة البالغين ابتداءً من',
 			'admin.finance.pol.dureeDueDetail' => 'الحد الأدنى من الحضور لتُحتسب الحصة في الأجر.',
@@ -17740,10 +17744,10 @@ extension on TraductionsAr {
 			'admin.diagnostics.inscritAujourdhui' => 'مسجَّل اليوم',
 			'admin.diagnostics.inscritDepuisUnJour' => 'مسجَّل منذ يوم',
 			'admin.diagnostics.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'مسجَّل منذ اليوم', one: 'مسجَّل منذ يوم واحد', two: 'مسجَّل منذ يومين', few: 'مسجَّل منذ ⁨${jours}⁩ أيام', many: 'مسجَّل منذ ⁨${jours}⁩ يومًا', other: 'مسجَّل منذ ⁨${jours}⁩ يوم', ), 
-			'admin.diagnostics.aucun' => 'لا طالب لتحديد مستواه',
-			'admin.diagnostics.aucunDetail' => 'لكل الطلاب المسجلين مستوى مقرر بالفعل.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.diagnostics.aucun' => 'لا طالب لتحديد مستواه',
+			'admin.diagnostics.aucunDetail' => 'لكل الطلاب المسجلين مستوى مقرر بالفعل.',
 			'admin.diagnostics.champNiveau' => 'مستوى التوجيه',
 			'admin.diagnostics.champMotif' => 'السبب',
 			'admin.diagnostics.motifRequis' => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.',
@@ -18254,10 +18258,10 @@ extension on TraductionsAr {
 			'admin.regroupements.liste.resume' => ({required Object debut, required Object fin, required Object total}) => 'الطلبات المجمّعة من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩',
 			'admin.planning.titre' => 'الجدول',
 			'admin.planning.sousTitre' => 'حصص الأسبوع في جميع الفصول، يومًا بيوم.',
-			'admin.planning.semaine' => ({required Object date}) => 'أسبوع ⁨${date}⁩',
-			'admin.planning.semaineSemantique' => ({required Object date}) => 'أسبوع ⁨${date}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'admin.planning.semaine' => ({required Object date}) => 'أسبوع ⁨${date}⁩',
+			'admin.planning.semaineSemantique' => ({required Object date}) => 'أسبوع ⁨${date}⁩',
 			'admin.planning.precedente' => 'الأسبوع السابق',
 			'admin.planning.suivante' => 'الأسبوع التالي',
 			'admin.planning.cetteSemaine' => 'العودة إلى هذا الأسبوع',
@@ -18768,10 +18772,10 @@ extension on TraductionsAr {
 			'comptable.graphiques.kpiPeriode' => 'آخر 30 يومًا',
 			'comptable.graphiques.variation' => ({required Object pourcent}) => '⁨${pourcent}⁩٪ مقارنة بالفترة السابقة',
 			'comptable.graphiques.rapportsTitre' => 'التقارير',
-			'comptable.graphiques.rapportsSousTitre' => 'الوارد والصادر والخزينة عبر الزمن.',
-			'comptable.graphiques.vide' => 'لا بيانات للرسم',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.graphiques.rapportsSousTitre' => 'الوارد والصادر والخزينة عبر الزمن.',
+			'comptable.graphiques.vide' => 'لا بيانات للرسم',
 			'comptable.graphiques.videDetail' => 'تظهر المخططات هنا بمجرد تسجيل مقبوضات أو مدفوعات.',
 			'comptable.graphiques.erreur' => 'تعذّرت قراءة المخططات: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.',
 			'comptable.graphiques.sansDonnees' => 'تعذّر تحميل المخططات',
@@ -19282,10 +19286,10 @@ extension on TraductionsAr {
 			'comptable.encaissements.rap.remboursementsVidePhrase' => 'ستظهر هنا طلبات الاسترداد مع سببها وحالتها.',
 			'comptable.encaissements.titre' => 'المقبوضات',
 			'comptable.encaissements.sousTitre' => 'لا تُؤكَّد الدفعة إلا بعد مزوّد الدفع.',
-			'comptable.encaissements.detailTitre' => 'تفاصيل المقبوض',
-			'comptable.encaissements.rapprochementTitre' => 'المطابقة',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.detailTitre' => 'تفاصيل المقبوض',
+			'comptable.encaissements.rapprochementTitre' => 'المطابقة',
 			'comptable.encaissements.rapprochementSousTitre' => 'ربط كل معاملة بما كان ينتظرها.',
 			'comptable.beneficiaires.intro' => 'ملف الدفع لكل معلم ولكل متعاقد. المستفيد وحده يُدخل بياناته أو يعدّلها: يمكنك تذكيره، أو طلب تحديث منه، أو إيقاف مدفوعاته.',
 			'comptable.beneficiaires.filtreTous' => 'الكل',
@@ -19796,10 +19800,10 @@ extension on TraductionsAr {
 			'ficheEleve.inscription.titre' => 'المسار والتسجيل',
 			'ficheEleve.inscription.intro' => ({required Object prenom}) => 'أين وصل ⁨${prenom}⁩: الاستبيان والفصل.',
 			'ficheEleve.inscription.questionnaire' => 'الاستبيان',
-			'ficheEleve.inscription.classe' => 'الفصل',
-			'ficheEleve.inscription.lecture' => 'جارٍ القراءة',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.inscription.classe' => 'الفصل',
+			'ficheEleve.inscription.lecture' => 'جارٍ القراءة',
 			'ficheEleve.inscription.etatInconnu' => 'حالة الاستبيان لا تظهر بعد.',
 			'ficheEleve.inscription.aRemplir' => 'للتعبئة',
 			'ficheEleve.inscription.horaireAChoisir' => 'مُعبّأ، الموعد للاختيار',
@@ -20310,10 +20314,10 @@ extension on TraductionsAr {
 			'foyer.monProfil.titre' => 'إنشاء ملفي كطالب',
 			'foyer.monProfil.indisponibleTitre' => 'غير ممكن بعد',
 			'foyer.monProfil.indisponiblePhrase' => 'متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا. يبقى حسابك كوليّ أمر كما هو.',
-			'foyer.monProfil.retour' => 'العودة إلى الأسرة',
-			'foyer.ajout.suivant' => 'التالي',
 			_ => null,
 		} ?? switch (path) {
+			'foyer.monProfil.retour' => 'العودة إلى الأسرة',
+			'foyer.ajout.suivant' => 'التالي',
 			'foyer.ajout.creer' => 'إنشاء الملف',
 			'foyer.ajout.porte.illisibleTitre' => 'تعذّرت قراءة حسابك',
 			'foyer.ajout.porte.illisiblePhrase' => 'لا نعرف بعد أي الملفات يمكنك إضافتها. أعد المحاولة بعد لحظة.',
@@ -20824,10 +20828,10 @@ extension on TraductionsAr {
 			'contrat.a3.dureeTitre' => 'إلى متى.',
 			'contrat.a3.duree' => ({required Object duree}) => 'مدة الحفظ بالأيام: ⁨${duree}⁩، ثم يُحذف. إذا وُجد بلاغ، يُحتفظ بالتسجيل حتى نهاية الفحص.',
 			'contrat.a3.desaccordTitre' => 'إذا لم تكن موافقًا.',
-			'contrat.a3.desaccord' => 'يمكنك الاعتراض: الحساب، موافقاتي، أعترض على التسجيل. نجيبك خلال شهر. سنبحث معك عن حل. وإذا تعذّر ذلك، يمكنك التوقف دون رسوم عن الدروس التي لم تُتابَع بعد.',
-			'contrat.a3.jaiLu' => 'قرأت',
 			_ => null,
 		} ?? switch (path) {
+			'contrat.a3.desaccord' => 'يمكنك الاعتراض: الحساب، موافقاتي، أعترض على التسجيل. نجيبك خلال شهر. سنبحث معك عن حل. وإذا تعذّر ذلك، يمكنك التوقف دون رسوم عن الدروس التي لم تُتابَع بعد.',
+			'contrat.a3.jaiLu' => 'قرأت',
 			'contrat.e1.quoi' => 'قد يتم تسجيل الدرس صوتيًا. لا تُسجَّل الصورة. ويمكن أيضًا لشخص من الأكاديمية مكلَّف بالمراقبة أن يتابع الدرس مباشرة: يرى الدرس ويسمعه دون أن يُرى أو يُسمع. ولا يسجّل شيئًا. ثم يرسل تقريرًا إلى الأكاديمية. وتذكّر القاعة بذلك باستمرار.',
 			'contrat.e1.pourquoi' => 'لحماية الأطفال والمعلمين. إذا أبلغ أحد عن مشكلة، يمكننا التحقق مما حدث. وهو أيضًا دليل لك إذا اشتكت أسرة دون حق.',
 			'contrat.e1.refusTitre' => 'إذا رفضت.',

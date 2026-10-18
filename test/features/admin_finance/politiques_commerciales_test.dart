@@ -2209,7 +2209,7 @@ void main() {
         tester.widget<TextField>(_champ(id)).decoration!.errorText;
 
     testWidgets('les valeurs se preremplissent en pourcentage, la paie se '
-        'lit au centime', (WidgetTester tester) async {
+        'saisit au centime', (WidgetTester tester) async {
       _taille(tester, const Size(1440, 3600));
       await tester.pumpWidget(
         _hote(surcharges: _avec(_avecCeBrouillon(brouillonV2()))),
@@ -2237,19 +2237,14 @@ void main() {
         tester.widget<Text>(_comparaison('remise-3')).data,
         pol.versionActiveValeur(valeur: formaterMontant(_usd(-5))),
       );
-      // 0,95 $ n'est pas une saisie entiere : la paie se lit, sans champ, et
-      // remplace la base et le plafond horaires.
-      expect(_champ('tauxEleveEnfant'), findsNothing);
+      // La paie se prerempli en dollars avec centimes, virgule francaise.
+      expect(_saisie(tester, 'tauxEleveEnfant'), '0,95');
+      expect(_saisie(tester, 'tauxEleveAdulte'), '1');
+      expect(_saisie(tester, 'plafondEleveEnfant'), '1,30');
+      expect(_saisie(tester, 'plafondEleveAdulte'), '1,50');
       expect(
-        find.descendant(
-          of: find.byKey(
-            PolitiquesCommercialesContenu.champKey('tauxEleveEnfant'),
-          ),
-          matching: find.text(
-            pol.parHeure(montant: formaterMontant(const Montant(95, 'USD'))),
-          ),
-        ),
-        findsOneWidget,
+        tester.widget<TextField>(_champ('tauxEleveEnfant')).keyboardType,
+        const TextInputType.numberWithOptions(decimal: true),
       );
       expect(
         find.byKey(PolitiquesCommercialesContenu.champKey('baseHoraire')),
@@ -2290,6 +2285,85 @@ void main() {
       expect(envoye.cumulMaxPourMille, 250);
     });
 
+    testWidgets('1,05 ou 1.05 est publie en 105 cents, le reste de la '
+        'paie est inchange', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3600));
+      final _Port port = _avecCeBrouillon(brouillonV2());
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      await tester.enterText(_champ('tauxEleveEnfant'), '1,05');
+      await tester.enterText(_champ('tauxEleveAdulte'), '1.10');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'tauxEleveEnfant'), isNull);
+      expect(erreur(tester, 'tauxEleveAdulte'), isNull);
+      await _publier(tester);
+      final PolitiqueCommerciale envoye = port.publies.single;
+      expect(envoye.tauxEleveHeureEnfant, const Montant(105, 'USD'));
+      expect(envoye.tauxEleveHeureAdulte, const Montant(110, 'USD'));
+      expect(envoye.plafondEleveHeureEnfant, const Montant(130, 'USD'));
+      expect(envoye.plafondEleveHeureAdulte, const Montant(150, 'USD'));
+    });
+
+    testWidgets('un plafond sous le taux est refuse et rien ne part', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 3600));
+      final _Port port = _avecCeBrouillon(brouillonV2());
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      await tester.enterText(_champ('plafondEleveEnfant'), '0,90');
+      await tester.pumpAndSettle();
+      expect(
+        erreur(tester, 'plafondEleveEnfant'),
+        pol.erreurPlafondEleve(
+          taux: pol.parHeure(
+            montant: formaterMontant(const Montant(95, 'USD')),
+          ),
+        ),
+      );
+      // Egal au taux : accepte.
+      await tester.enterText(_champ('plafondEleveEnfant'), '0,95');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'plafondEleveEnfant'), isNull);
+      // Monter le taux adulte au-dessus du plafond adulte est aussi refuse.
+      await tester.enterText(_champ('tauxEleveAdulte'), '1,60');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'plafondEleveAdulte'), isNotNull);
+      await tester.enterText(_champ('plafondEleveEnfant'), '0,90');
+      await tester.pumpAndSettle();
+      await _publier(tester);
+      expect(port.publies, isEmpty);
+    });
+
+    testWidgets('trois decimales, zero, vide et texte sont refuses', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 3600));
+      await tester.pumpWidget(
+        _hote(surcharges: _avec(_avecCeBrouillon(brouillonV2()))),
+      );
+      await tester.pumpAndSettle();
+      for (final String saisie in <String>[
+        '0,955',
+        '0.951',
+        '0',
+        '0,00',
+        '',
+        'abc',
+      ]) {
+        await tester.enterText(_champ('tauxEleveEnfant'), saisie);
+        await tester.pumpAndSettle();
+        expect(
+          erreur(tester, 'tauxEleveEnfant'),
+          pol.erreurMontantCentimes,
+          reason: 'saisie « $saisie »',
+        );
+      }
+      await tester.enterText(_champ('tauxEleveEnfant'), '0,95');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'tauxEleveEnfant'), isNull);
+    });
+
     testWidgets('320 px, texte x2 : rien ne deborde', (
       WidgetTester tester,
     ) async {
@@ -2300,6 +2374,11 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       verifierUnSeulBoutonPlein(tester);
+      // Une erreur de centimes (message long) ne deborde pas non plus.
+      await tester.enterText(_champ('tauxEleveEnfant'), '0,955');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'tauxEleveEnfant'), pol.erreurMontantCentimes);
+      expect(tester.takeException(), isNull);
     });
   });
 }

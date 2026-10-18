@@ -1071,6 +1071,8 @@
   "admin.finance.pol.erreurClassesMax": "revue FI-11b/FI-11c (REVUE2) : guide Finance V4 du directeur (02/10), §5.7 « Admin - Politiques commerciales » et §8 LOT F8 (test erreur de champ) ; K-59 ; etape FI-11b ; « Classes » au lieu de « Groupes » : UX_REVIEW_08_FINANCE ligne 13 f, ECARTS A6, CLASSE-FORM-1, revue FI-VAGUE-R R6-05",
   "admin.finance.pol.erreurMinimum": "revue FI-11b/FI-11c (REVUE2) : guide Finance V4 du directeur (02/10), §5.7 « Admin - Politiques commerciales » et §8 LOT F8 (test erreur de champ) ; K-59 ; etape FI-11b",
   "admin.finance.pol.erreurRemise": "revue FI-11b/FI-11c (REVUE2) : guide Finance V4 du directeur (02/10), §5.7 « Admin - Politiques commerciales » et §8 LOT F8 (test erreur de champ) ; K-59 ; etape FI-11b",
+  "admin.finance.pol.erreurMontantCentimes": "decision directeur 18/10/2026 (DECISION-TARIFS-2026-10-18) : paie par eleve present modifiable en dollars et centimes ; consigne du lot « levee des blocages » ; K-59",
+  "admin.finance.pol.erreurPlafondEleve": "decision directeur 18/10/2026 (DECISION-TARIFS-2026-10-18) : paie par eleve present modifiable en dollars et centimes ; consigne du lot « levee des blocages » ; K-59",
   "admin.finance.pol.parHeure": "guide Finance V4 du directeur (02/10), §5.7 « Admin - Politiques commerciales », §1 (valeurs) et §8 LOT F8 ; maquette 10 ; K-57, K-58, K-59 ; etape FI-11b",
   "admin.finance.pol.suffixeParHeure": "guide Finance V4 du directeur (02/10), §5.7 « Admin - Politiques commerciales », §1 (valeurs) et §8 LOT F8 ; maquette 10 ; K-57, K-58, K-59 ; etape FI-11b",
   "admin.finance.pol.suffixeRemise": "guide Finance V4 du directeur (02/10), §5.7 « Admin - Politiques commerciales », §1 (valeurs) et §8 LOT F8 ; maquette 10 ; K-57, K-58, K-59 ; etape FI-11b",

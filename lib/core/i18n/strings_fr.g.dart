@@ -21022,6 +21022,12 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Le maximum par élève présent et par heure, prime de fidélité comprise.'
 	String get plafondEleveDetail => 'Le maximum par élève présent et par heure, prime de fidélité comprise.';
 
+	/// fr: 'Saisissez un montant supérieur à 0, avec au plus deux décimales (par exemple 0,95).'
+	String get erreurMontantCentimes => 'Saisissez un montant supérieur à 0, avec au plus deux décimales (par exemple 0,95).';
+
+	/// fr: 'Le plafond est sous le taux ({taux}) : saisissez au moins le taux.'
+	String erreurPlafondEleve({required Object taux}) => 'Le plafond est sous le taux (${taux}) : saisissez au moins le taux.';
+
 	/// fr: 'Séance d'enfants due à partir de'
 	String get dureeDueEnfant => 'Séance d\'enfants due à partir de';
 
@@ -35239,6 +35245,8 @@ extension on Traductions {
 			'admin.finance.pol.plafondEleveEnfant' => 'Plafond par élève, classe d\'enfants',
 			'admin.finance.pol.plafondEleveAdulte' => 'Plafond par élève, classe d\'adultes',
 			'admin.finance.pol.plafondEleveDetail' => 'Le maximum par élève présent et par heure, prime de fidélité comprise.',
+			'admin.finance.pol.erreurMontantCentimes' => 'Saisissez un montant supérieur à 0, avec au plus deux décimales (par exemple 0,95).',
+			'admin.finance.pol.erreurPlafondEleve' => ({required Object taux}) => 'Le plafond est sous le taux (${taux}) : saisissez au moins le taux.',
 			'admin.finance.pol.dureeDueEnfant' => 'Séance d\'enfants due à partir de',
 			'admin.finance.pol.dureeDueAdulte' => 'Séance d\'adultes due à partir de',
 			'admin.finance.pol.dureeDueDetail' => 'La présence minimale pour qu\'une séance compte dans la paie.',
@@ -35509,10 +35517,10 @@ extension on Traductions {
 			'admin.pilotage.cleAttente' => 'En attente d\'enseignant',
 			'admin.pilotage.cleSousMinimum' => 'Sous le minimum',
 			'admin.pilotage.cleDemandes' => 'Demandes en attente',
-			'admin.pilotage.cleLibres' => 'Enseignants libres',
-			'admin.pilotage.cleManquants' => 'Enseignants manquants',
 			_ => null,
 		} ?? switch (path) {
+			'admin.pilotage.cleLibres' => 'Enseignants libres',
+			'admin.pilotage.cleManquants' => 'Enseignants manquants',
 			'admin.pilotage.attenteTitre' => 'Classes en attente d\'enseignant',
 			'admin.pilotage.attenteDetail' => 'Confirmez un enseignant pour chacune : la famille est prévenue dès que c\'est fait.',
 			'admin.pilotage.attenteHoraire' => ({required Object horaire}) => 'Horaire : ${horaire}',
@@ -36023,10 +36031,10 @@ extension on Traductions {
 			'parcours.objectifApprendreALire' => 'Apprendre à lire',
 			'parcours.objectifDevenirFluide' => 'Lire plus couramment',
 			'parcours.objectifMemoriser' => 'Mémoriser',
-			'parcours.objectifIndecis' => 'Je ne sais pas encore',
-			'parcours.momentsQuestion' => 'Quels moments de la journée vous conviennent le mieux ?',
 			_ => null,
 		} ?? switch (path) {
+			'parcours.objectifIndecis' => 'Je ne sais pas encore',
+			'parcours.momentsQuestion' => 'Quels moments de la journée vous conviennent le mieux ?',
 			'parcours.momentsRaison' => 'Cette réponse ne crée aucun horaire et ne réserve rien. Elle sert seulement à mettre en avant, parmi les horaires que l\'académie propose déjà, ceux qui tombent le mieux pour vous. Vous verrez tous les autres juste en dessous.',
 			'parcours.momentMatin' => 'Le matin',
 			'parcours.momentApresMidi' => 'L\'après-midi',
@@ -36537,10 +36545,10 @@ extension on Traductions {
 			'eleve.suivi.colonneDate' => 'Date',
 			'eleve.suivi.colonneCours' => 'Cours',
 			'eleve.suivi.colonneEnseignant' => 'Enseignant',
-			'eleve.suivi.colonneEtat' => 'Présence',
-			'eleve.suivi.cours' => 'Cours de Coran',
 			_ => null,
 		} ?? switch (path) {
+			'eleve.suivi.colonneEtat' => 'Présence',
+			'eleve.suivi.cours' => 'Cours de Coran',
 			'eleve.suivi.moi' => 'Ma présence',
 			'eleve.suivi.aujourdhui' => ({required Object heure}) => 'Aujourd\'hui, ${heure}',
 			'eleve.suivi.hier' => ({required Object heure}) => 'Hier, ${heure}',
@@ -37051,10 +37059,10 @@ extension on Traductions {
 			'enseignant.journee.absence.etats.demandeAnnulee' => 'Demande annulée',
 			'enseignant.journee.remplacement.titre' => 'Assurer ce remplacement ?',
 			'enseignant.journee.remplacement.assurer' => 'Assurer ce remplacement',
-			'enseignant.journee.remplacement.pasCetteFois' => 'Pas cette fois',
-			'enseignant.journee.erreurPartielleCahiers' => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.journee.remplacement.pasCetteFois' => 'Pas cette fois',
+			'enseignant.journee.erreurPartielleCahiers' => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
 			'enseignant.journee.cahiersEnvoyes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} cahier de transmission envoyé', other: '${n} cahiers de transmission envoyés', ), 
 			'enseignant.journee.effectif' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} élève', other: '${nombre} élèves', ), 
 			'enseignant.remplacements.titre' => 'Remplacements',
@@ -37565,10 +37573,10 @@ extension on Traductions {
 			'controleur.observation.interventionAdmin' => 'Intervention de l\'administration souhaitée',
 			'controleur.observation.interventionAdminAide' => 'Quand l\'administration doit agir · votre texte sera demandé, elle le reçoit avec le rapport',
 			'controleur.observation.questionDomaine' => 'Quel domaine concerne-t-elle ?',
-			'controleur.observation.contexteDomaine' => 'Le domaine aide l\'administration à lire votre observation.',
-			'controleur.observation.pedagogie' => 'Pédagogie',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.contexteDomaine' => 'Le domaine aide l\'administration à lire votre observation.',
+			'controleur.observation.pedagogie' => 'Pédagogie',
 			'controleur.observation.pedagogieAide' => 'Quand il s\'agit de l\'enseignement : explications, progression, supports',
 			'controleur.observation.interaction' => 'Interaction avec les élèves',
 			'controleur.observation.interactionAide' => 'Quand il s\'agit des échanges entre l\'enseignant et les élèves',
@@ -38079,10 +38087,10 @@ extension on Traductions {
 			'tc.observation.reglages.plafondVisite' => 'Durée maximale d\'une visite',
 			'tc.observation.reglages.diminuer' => 'Diminuer',
 			'tc.observation.reglages.augmenter' => 'Augmenter',
-			'tc.observation.reglages.enregistrer' => 'Enregistrer',
-			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.reglages.enregistrer' => 'Enregistrer',
+			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
 			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
 			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visite',
@@ -38593,10 +38601,10 @@ extension on Traductions {
 			'motifs.annulationEvaluation.pasPret' => 'Élève pas encore prêt',
 			'motifs.annulationEvaluation.report' => 'Report à une autre date',
 			'motifs.annulationEvaluation.parErreur' => 'Évaluation planifiée par erreur',
-			'motifs.changementNiveau.reussie' => 'Évaluation réussie',
-			'motifs.changementNiveau.stable' => 'Unité acquise et stable',
 			_ => null,
 		} ?? switch (path) {
+			'motifs.changementNiveau.reussie' => 'Évaluation réussie',
+			'motifs.changementNiveau.stable' => 'Unité acquise et stable',
 			'motifs.changementNiveau.enseignant' => 'Décision de l\'enseignant',
 			'motifs.changementNiveau.reevaluation' => 'Réévaluation demandée par la famille',
 			'motifs.changementNiveau.placement' => 'Correction du niveau de placement',
@@ -39107,10 +39115,10 @@ extension on Traductions {
 			'com.vocal.lecteur.ecouter' => 'Écouter',
 			'com.vocal.lecteur.pause' => 'Pause',
 			'com.vocal.lecteur.reprendre' => 'Reprendre',
-			'com.vocal.lecteur.reecouter' => 'Réécouter',
-			'com.vocal.lecteur.nonEcoute' => 'Pas encore écouté',
 			_ => null,
 		} ?? switch (path) {
+			'com.vocal.lecteur.reecouter' => 'Réécouter',
+			'com.vocal.lecteur.nonEcoute' => 'Pas encore écouté',
 			'com.vocal.lecteur.lecture' => 'Lecture en cours',
 			'com.vocal.lecteur.enPause' => 'Lecture en pause',
 			'com.vocal.lecteur.fin' => 'Écouté en entier',
@@ -39621,10 +39629,10 @@ extension on Traductions {
 			'com.annonces.demoPublication.toutes' => 'Toute l\'académie',
 			'com.annonces.demoPublication.familles' => 'Familles',
 			'com.annonces.demoPublication.enseignants' => 'Enseignants',
-			'com.annonces.demoPublication.eleves' => 'Élèves',
-			'com.annonces.demoPublication.controleurs' => 'Contrôleurs',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.demoPublication.eleves' => 'Élèves',
+			'com.annonces.demoPublication.controleurs' => 'Contrôleurs',
 			'com.annonces.demoPublication.direction' => 'Direction',
 			'com.annonces.demoPublication.audiencesDirection' => 'Toute l\'académie, un public ou une Classe',
 			'com.annonces.demoPublication.audiencesEnseignant' => 'Sa Classe seulement',
@@ -40135,10 +40143,10 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.refusPhrase' => ({required Object raison}) => 'Raison : ${raison}. Rien n\'a été déplacé.',
 			'comptable.tresorerie.transfert.erreurEnvoiTitre' => 'Réponse non reçue',
 			'comptable.tresorerie.transfert.erreurEnvoi' => 'La réponse n\'est pas arrivée. Consultez l\'historique avant de réessayer : le même mouvement ne sera jamais compté deux fois.',
-			'comptable.tresorerie.transfert.indisponible' => 'Les mouvements entre coffres ne sont pas encore reliés au serveur. Rien n\'a été déplacé.',
-			'comptable.tresorerie.transfert.aucunCouple' => 'Aucun mouvement n\'est permis par la politique pour votre compte.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.tresorerie.transfert.indisponible' => 'Les mouvements entre coffres ne sont pas encore reliés au serveur. Rien n\'a été déplacé.',
+			'comptable.tresorerie.transfert.aucunCouple' => 'Aucun mouvement n\'est permis par la politique pour votre compte.',
 			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
 			'comptable.tresorerie.sousTitre' => 'La Trésorerie libre est le seul chiffre dépensable.',
 			'comptable.tresorerie.alimenter' => 'Alimenter la Réserve stratégique',
@@ -40649,10 +40657,10 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.exceptionRetirerExclu' => ({required Object nom}) => 'Retirer ${nom} des exclus',
 			'comptable.direction.delegationPanneau.exceptionGarder' => 'Garder l\'exception',
 			'comptable.direction.delegationPanneau.exceptionRetirer' => 'Retirer cette exception',
-			'comptable.direction.delegationPanneau.exceptionRetirerPhrase' => 'La délégation retrouve la politique générale. Rien n\'est enregistré avant « Enregistrer ».',
-			'comptable.direction.delegationPanneau.sensiblesTitre' => 'Toujours sensible',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.delegationPanneau.exceptionRetirerPhrase' => 'La délégation retrouve la politique générale. Rien n\'est enregistré avant « Enregistrer ».',
+			'comptable.direction.delegationPanneau.sensiblesTitre' => 'Toujours sensible',
 			'comptable.direction.delegationPanneau.sensiblesDetail' => 'Ces cinq cas demandent toujours une validation supplémentaire, quels que soient les réglages ci-dessus. Le premier paiement et les coordonnées récentes se règlent plus haut.',
 			'comptable.direction.delegationPanneau.sensibleHorsSeuil' => 'Montant hors seuil',
 			'comptable.direction.delegationPanneau.sensibleHorsSeuilDetail' => 'Un paiement au-dessus des plafonds fixés plus haut.',

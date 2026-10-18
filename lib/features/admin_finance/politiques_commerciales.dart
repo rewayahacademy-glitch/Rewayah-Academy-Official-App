@@ -14,7 +14,8 @@
 // dit en texte. Le paiement web seul au lancement se lit dans Paiement, sans
 // champ non plus.
 //
-// Une saisie est refusee sur sa forme (un nombre entier) puis sur sa
+// Une saisie est refusee sur sa forme (un nombre entier, ou dollars et
+// centimes pour la paie par eleve present) puis sur sa
 // coherence (capacite d'au moins 1, tarif non nul, plafond pas sous la base,
 // maximum pas sous l'objectif, minimum pas au-dessus de la plus petite
 // classe, remise pas au-dessus du tarif) : une phrase par refus, sous le
@@ -44,6 +45,8 @@
 
 import 'package:flutter/foundation.dart' show listEquals, setEquals;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'
+    show FilteringTextInputFormatter, TextInputFormatter;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
@@ -76,6 +79,8 @@ import '../../core/widgets/ligne_finance.dart';
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import 'reserve_delegation/saisie_politique.dart'
+    show caracteresSaisie, deviseDeLancement, lireMontant, texteMontant;
 import 'vue_globale_finance.dart' show pourMilleEnTexte;
 
 /// La version active, le brouillon en cours s'il y en a un, et l'historique
@@ -218,6 +223,7 @@ class _Champ {
     required this.active,
     this.devise,
     this.facultatif = false,
+    this.centimes = false,
   });
 
   final String id;
@@ -240,6 +246,11 @@ class _Champ {
   /// (aide Internet, montant configurable, guide §1.4).
   final bool facultatif;
 
+  /// Vrai pour un montant saisi en dollars avec centimes (« 0,95 » ou
+  /// « 0.95 »), stocke en cents : la paie par eleve present. La saisie lue
+  /// est alors deja en unites mineures.
+  final bool centimes;
+
   /// Vrai quand la valeur se saisit en pourcentage entier (pour mille).
   bool get _enPourcent =>
       nature == _Nature.pourcent || nature == _Nature.remisePourMille;
@@ -260,6 +271,7 @@ class _Champ {
       return v % 10 == 0 ? '${v ~/ 10}' : null;
     }
     if (v is int) return '$v';
+    if (v is Montant && centimes) return texteMontant(v);
     if (v is Montant) {
       final int? unites = unitesEntieresDe(v);
       if (unites == null) return null;
@@ -277,6 +289,9 @@ class _Champ {
 
   /// La valeur d'une saisie [unites] (deja validee), dans la forme du port.
   Object depuisSaisie(int unites) {
+    if (centimes) {
+      return Montant(unites, deviseMontant ?? deviseDeLancement);
+    }
     if (_enPourcent) return unites * 10;
     final String? d = deviseMontant;
     if (estMontant && d != null) {
@@ -424,6 +439,15 @@ class _PolitiquesCommercialesContenuState
   /// une fois converti en unites mineures.
   int? _saisie(String id) {
     final String texte = _saisies[id]?.text.trim() ?? '';
+    if (_champ(id).centimes) {
+      // Dollars avec centimes : deux decimales au plus, strictement positif,
+      // rendu directement en cents (jamais un double).
+      final Montant? m = lireMontant(
+        texte,
+        _champ(id).deviseMontant ?? deviseDeLancement,
+      );
+      return m?.mineur;
+    }
     if (!RegExp(r'^\d{1,12}$').hasMatch(texte)) return null;
     return int.parse(texte);
   }
@@ -438,7 +462,9 @@ class _PolitiquesCommercialesContenuState
     if (!_saisies.containsKey(c.id) || _videPermis(c)) return null;
     final pol = t.admin.finance.pol;
     final int? s = _saisie(c.id);
-    if (s == null) return pol.erreurChamp;
+    if (s == null) {
+      return c.centimes ? pol.erreurMontantCentimes : pol.erreurChamp;
+    }
     final Object v = c.depuisSaisie(s);
     Object? autre(String id) => _courante(_champ(id));
     switch (c.id) {
@@ -450,6 +476,14 @@ class _PolitiquesCommercialesContenuState
         if (autre('baseHoraire') case final Montant base
             when v is Montant && v.mineur < base.mineur) {
           return pol.erreurPlafond(base: _texteValeur(base, c.nature));
+        }
+      case 'plafondEleveEnfant' || 'plafondEleveAdulte':
+        final String idTaux = c.id == 'plafondEleveEnfant'
+            ? 'tauxEleveEnfant'
+            : 'tauxEleveAdulte';
+        if (autre(idTaux) case final Montant taux
+            when v is Montant && v.mineur < taux.mineur) {
+          return pol.erreurPlafondEleve(taux: _texteValeur(taux, c.nature));
         }
       case 'classesMax':
         if (autre('classesObjectif') case final int objectif
@@ -679,8 +713,8 @@ class _PolitiquesCommercialesContenuState
 
   /// La paie par eleve present et par heure (18/10/2026) : seulement quand
   /// la version la porte. Elle remplace alors la base et le plafond horaires
-  /// a l'ecran ; le centime n'est pas une saisie entiere, ces montants se
-  /// lisent sans champ.
+  /// a l'ecran ; ces montants se saisissent en dollars avec centimes
+  /// (`centimes`) et partent au serveur en cents.
   bool get _paieParEleve => _lue.tauxEleveHeureEnfant != null;
 
   List<_Champ> _paieEleve() {
@@ -695,6 +729,7 @@ class _PolitiquesCommercialesContenuState
         nature: _Nature.montantHoraire,
         lue: _lue.tauxEleveHeureEnfant,
         active: a.tauxEleveHeureEnfant,
+        centimes: true,
       ),
       _Champ(
         id: 'tauxEleveAdulte',
@@ -703,6 +738,7 @@ class _PolitiquesCommercialesContenuState
         nature: _Nature.montantHoraire,
         lue: _lue.tauxEleveHeureAdulte,
         active: a.tauxEleveHeureAdulte,
+        centimes: true,
       ),
       _Champ(
         id: 'plafondEleveEnfant',
@@ -711,6 +747,7 @@ class _PolitiquesCommercialesContenuState
         nature: _Nature.montantHoraire,
         lue: _lue.plafondEleveHeureEnfant,
         active: a.plafondEleveHeureEnfant,
+        centimes: true,
       ),
       _Champ(
         id: 'plafondEleveAdulte',
@@ -719,6 +756,7 @@ class _PolitiquesCommercialesContenuState
         nature: _Nature.montantHoraire,
         lue: _lue.plafondEleveHeureAdulte,
         active: a.plafondEleveHeureAdulte,
+        centimes: true,
       ),
       if (_lue.dureeDueEnfantMinutes != null)
         _Champ(
@@ -944,10 +982,14 @@ class _PolitiquesCommercialesContenuState
       allocationInternet: v['internet'] as Montant?,
       joursRelance: b.joursRelance,
       budgets: b.budgets,
-      tauxEleveHeureEnfant: b.tauxEleveHeureEnfant,
-      tauxEleveHeureAdulte: b.tauxEleveHeureAdulte,
-      plafondEleveHeureEnfant: b.plafondEleveHeureEnfant,
-      plafondEleveHeureAdulte: b.plafondEleveHeureAdulte,
+      tauxEleveHeureEnfant:
+          v['tauxEleveEnfant'] as Montant? ?? b.tauxEleveHeureEnfant,
+      tauxEleveHeureAdulte:
+          v['tauxEleveAdulte'] as Montant? ?? b.tauxEleveHeureAdulte,
+      plafondEleveHeureEnfant:
+          v['plafondEleveEnfant'] as Montant? ?? b.plafondEleveHeureEnfant,
+      plafondEleveHeureAdulte:
+          v['plafondEleveAdulte'] as Montant? ?? b.plafondEleveHeureAdulte,
       dureeDueEnfantMinutes:
           v['dureeDueEnfant'] as int? ?? b.dureeDueEnfantMinutes,
       dureeDueAdulteMinutes:
@@ -1328,6 +1370,7 @@ class _PolitiquesCommercialesContenuState
       libelle: c.libelle,
       consequence: c.consequence,
       suffixe: _suffixe(c),
+      decimal: c.centimes,
       controleur: saisie,
       erreur: _erreurDe(c),
       indice: c.facultatif ? t.admin.finance.pol.internetNonFixee : null,
@@ -1880,6 +1923,7 @@ class _ChampPolitique extends StatelessWidget {
     required this.consequence,
     required this.suffixe,
     required this.controleur,
+    this.decimal = false,
     required this.erreur,
     required this.comparaison,
     super.key,
@@ -1890,6 +1934,9 @@ class _ChampPolitique extends StatelessWidget {
   final String consequence;
   final String suffixe;
   final TextEditingController controleur;
+
+  /// Vrai pour un montant a centimes : clavier decimal, virgule ou point.
+  final bool decimal;
   final String? erreur;
   final Widget? comparaison;
 
@@ -1917,7 +1964,14 @@ class _ChampPolitique extends StatelessWidget {
           label: libelle,
           child: TextField(
             controller: controleur,
-            keyboardType: TextInputType.number,
+            keyboardType: decimal
+                ? const TextInputType.numberWithOptions(decimal: true)
+                : TextInputType.number,
+            inputFormatters: decimal
+                ? <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(caracteresSaisie),
+                  ]
+                : null,
             style: AppTypography.tabulaire(
               textes.bodyLarge ?? const TextStyle(),
             ),
