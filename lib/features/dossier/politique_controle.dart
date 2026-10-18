@@ -109,7 +109,7 @@ class TextePolitiqueControle extends StatelessWidget {
           Ecart.vSm,
           for (int b = 0; b < sections[n].blocs.length; b++) ...<Widget>[
             if (b > 0) Ecart.vMd,
-            _Bloc(bloc: sections[n].blocs[b]),
+            BlocTexteLegal(bloc: sections[n].blocs[b]),
           ],
         ],
       ],
@@ -138,9 +138,14 @@ _BlocDecoupe _decouper(String bloc) {
   return (marque: null, puce: false, texte: bloc);
 }
 
-class _Bloc extends StatelessWidget {
-  const _Bloc({required this.bloc});
+/// Un bloc de texte legal : paragraphe, puce (`- `) ou point numerote
+/// (`1. `), avec les passages entre `**` en gras. Partage par les textes
+/// juridiques de `features/juridique`.
+class BlocTexteLegal extends StatelessWidget {
+  /// Cree le bloc.
+  const BlocTexteLegal({required this.bloc, super.key});
 
+  /// Le texte du bloc, avec ses marques.
   final String bloc;
 
   @override

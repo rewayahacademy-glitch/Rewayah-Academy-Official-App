@@ -14,6 +14,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../juridique/juridique_pages.dart';
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
 
@@ -22,9 +23,9 @@ import 'donnees_compte.dart';
 ///
 /// Ce qui existe reellement : les textes **acceptes** par ce compte
 /// (`contract_acceptances`, lecture de soi, `ServiceAcceptations`), avec leur
-/// version et leur date ; un texte accepte ne se reecrit jamais. Ce qui
-/// n'existe pas : conditions generales completes, politique de
-/// confidentialite, mentions legales (DB-CPT-08) ; l'ecran le dit.
+/// version et leur date ; un texte accepte ne se reecrit jamais. En dessous,
+/// les six textes juridiques (`features/juridique`, lisibles aussi sans
+/// connexion).
 ///
 /// Le consentement aux visites d'observation (`/tuteur/compte/consentements`)
 /// est l'ecran du lot A : il n'est pas repris ici.
@@ -94,12 +95,17 @@ class InformationsLegalesComptePage extends ConsumerWidget {
               ),
             ),
             Ecart.vXxl,
-            EtatSysteme(
-              nature: NatureEtat.indisponible,
-              titre: t.compte.tuteur.pageLegal.textes,
-              phrase: t.compte.tuteur.pageLegal.textesIndisponibles,
-              dependance: 'DB-CPT-08',
+            Semantics(
+              header: true,
+              child: Text(
+                t.compte.tuteur.pageLegal.textes,
+                style: palette.inkStrong.applyTo(
+                  textes.titleMedium ?? const TextStyle(),
+                ),
+              ),
             ),
+            Ecart.vSm,
+            const ListeTextesJuridiques(),
           ],
         ),
       ),

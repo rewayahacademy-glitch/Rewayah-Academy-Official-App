@@ -36,6 +36,7 @@ const Map<String, int> _domaines = <String, int>{
   'choix': 2,
   'accuse': 1,
   'aConstruire': 1,
+  'juridique': 90,
   'destructif': 0,
   'avatar': 0,
   'pin': 2,
@@ -147,6 +148,9 @@ const Set<String> _latins = <String>{
   'compte.tuteur.securite.methodeGoogle',
   'dossiers.file.zoneUtc',
   'agent.jetonExemple',
+  // Raison sociale et adresse du siege : noms propres, gardes en latin.
+  'juridique.coord.societe',
+  'juridique.coord.adresse',
   'admin.politiqueRevueKyc.echecEnregistrement',
   'adulte.invitation.courrielInvalide',
   // Le premier jour du mois s'ecrit en chiffre en arabe (« 1 أكتوبر »),

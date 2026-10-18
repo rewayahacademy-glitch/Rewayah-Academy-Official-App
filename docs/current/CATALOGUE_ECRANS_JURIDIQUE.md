@@ -13,6 +13,8 @@ conditions avant fusion : `JUR-APP-1_RESTES.md`.
 | Id | Écran | Contenu | Code |
 | :--- | :--- | :--- | :--- |
 | JUR-1 | Politique de contrôle des enseignants (feuille de lecture) | Les dix sections de la partie B, mot pour mot, listes et passages en gras gardés ; section 10 : coordonnées légales | `lib/features/dossier/politique_controle.dart` (`ouvrirPolitiqueControle`, `TextePolitiqueControle`) |
+| JUR-3 | Informations légales (liste des six textes) | Mentions légales, Conditions d'utilisation et de vente, Annulation et remboursement, Confidentialité, Cookies, Protection des enfants ; version et date en tête | `lib/features/juridique/juridique_pages.dart` (`JuridiquePage`, `ListeTextesJuridiques`), route `/juridique` |
+| JUR-4 | Un texte juridique | Sections du texte (`t.juridique.*`, fr et ar), lignes de coordonnées, repères « [à compléter par la direction : ...] » tant qu'une valeur manque | `JuridiquePage` : `TexteJuridiquePage`, route `/juridique/<texte>`, contenu `textes_juridiques.dart` |
 | JUR-2 | Information sur les visites de contrôle (E-1, E-2) | Lien « En savoir plus » du bandeau de la salle et textes d'information des élèves | `lib/features/salle_seance/information_controle.dart` |
 
 ## Place dans la navigation
@@ -25,6 +27,18 @@ conditions avant fusion : `JUR-APP-1_RESTES.md`.
   (la confirmation de réception est dans le contrat).
 - JUR-2 : le lien est refusable (`InformationControle.lienAccepte`) et masqué
   sous 388 de large ; la mention elle-même ouvre alors la même lecture.
+
+JUR-3 et JUR-4 : routes `/juridique` et `/juridique/<texte>`, **publiques**
+(`Routes.publiques`, lisibles aussi connecté, en attente ou suspendu).
+Entrées : lien « Informations légales » sous la carte de connexion, et la
+page « Informations légales » du Compte (sous les documents acceptés).
+Version `2026-10-v1`, texte du 18/10/2026 (`VersionsJuridiques`). Ce que seule
+la direction peut donner se remplit à un seul endroit,
+`CoordonneesJuridiques.renseignes` (hébergeur légal, pays d'hébergement,
+durées de conservation, droit applicable, relecture par un conseil,
+modalités de remboursement, responsable de la protection des enfants).
+Même sens sur le site : `docs/orchestration/site-public/juridique-2026-10-18.json`.
+Contrôle : `test/features/juridique/textes_juridiques_test.dart`.
 
 ## États
 

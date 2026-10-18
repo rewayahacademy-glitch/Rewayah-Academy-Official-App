@@ -1196,7 +1196,16 @@ abstract final class Routes {
     connexion,
     bienvenue,
     agentEntree,
+    juridique,
   };
+
+  /// Les textes juridiques (mentions legales, conditions, annulation et
+  /// remboursement, confidentialite, cookies, protection des enfants) :
+  /// lisibles sans connexion **et** a tout moment pour un compte connecte,
+  /// en attente ou suspendu (`/juridique/<texte>`, voir
+  /// `lib/features/juridique`). Le texte est compile dans l'application :
+  /// aucune donnee, aucune lecture.
+  static const String juridique = '/juridique';
 
   /// Ou mene la cloche des notifications de la coquille d'un role : la
   /// `NotificationsPage` existante, sous le prefixe du role. Nul pour un

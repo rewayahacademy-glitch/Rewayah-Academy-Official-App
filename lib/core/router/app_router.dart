@@ -137,6 +137,8 @@ import '../../features/inscription/etapes/recapitulatif_etape.dart';
 import '../../features/inscription/etapes/usage_etape.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../../features/journee/journee_page.dart';
+import '../../features/juridique/juridique_pages.dart';
+import '../../features/juridique/textes_juridiques.dart';
 import '../../features/mfa_controleur/mfa_controleur_page.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
@@ -343,6 +345,28 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.agentEntree,
         builder: (BuildContext _, GoRouterState _) => const AgentEntreePage(),
+      ),
+      // Les textes juridiques : lisibles sans connexion et connecte
+      // (`Routes.juridique`, `deciderRedirection`). Un texte inconnu ramene a
+      // la liste.
+      GoRoute(
+        path: Routes.juridique,
+        builder: (BuildContext _, GoRouterState _) => const JuridiquePage(),
+        routes: <RouteBase>[
+          GoRoute(
+            path: ':texte',
+            redirect: (BuildContext _, GoRouterState etat) =>
+                TexteJuridique.depuisSlug(etat.pathParameters['texte'] ?? '') ==
+                    null
+                ? Routes.juridique
+                : null,
+            builder: (BuildContext _, GoRouterState etat) => TexteJuridiquePage(
+              texte: TexteJuridique.depuisSlug(
+                etat.pathParameters['texte'] ?? '',
+              )!,
+            ),
+          ),
+        ],
       ),
       // Le portail d'attente et ses pages. Le sous-arbre entier est ouvert a
       // un compte en attente, la racine seule ne suffirait pas.

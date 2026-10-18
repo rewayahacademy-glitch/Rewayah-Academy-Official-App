@@ -528,6 +528,8 @@ void main() {
         Routes.connexionRecuperation,
         Routes.bienvenue,
         Routes.agentEntree,
+        Routes.juridique,
+        '${Routes.juridique}/confidentialite',
       ]) {
         expect(
           deciderRedirection(
@@ -543,7 +545,25 @@ void main() {
         Routes.connexion,
         Routes.bienvenue,
         Routes.agentEntree,
+        Routes.juridique,
       });
+    });
+
+    test('les textes juridiques se lisent aussi connecte', () {
+      for (final String chemin in <String>[
+        Routes.juridique,
+        '${Routes.juridique}/conditions',
+      ]) {
+        expect(
+          deciderRedirection(
+            session: _session(role: AppRole.guardian),
+            cheminDemande: chemin,
+            maintenant: maintenant,
+          ),
+          isNull,
+          reason: chemin,
+        );
+      }
     });
 
     test('un compte actif quitte l accueil public et la page hors ligne', () {

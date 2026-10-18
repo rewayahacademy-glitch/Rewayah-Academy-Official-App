@@ -17,6 +17,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/controle_segmente.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/marque_page.dart';
 import '../../core/widgets/page_shell.dart';
 import '../demo/mode_demonstration.dart';
@@ -396,6 +397,12 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                                 onProbleme: _versRecuperation,
                               ),
                       ),
+                    ),
+                    Ecart.vLg,
+                    LienFleche(
+                      libelle: t.juridique.titre,
+                      onPress: () =>
+                          GoRouter.of(context).push(Routes.juridique),
                     ),
                     // Hors production seulement : sans lanceur, rien.
                     const EntreeDemonstration(),

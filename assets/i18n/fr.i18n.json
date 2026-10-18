@@ -4666,8 +4666,7 @@
         "aucunTitre": "Aucun document accepté",
         "aucun": "Aucun document accepté n'est enregistré pour ce compte.",
         "lectureSeule": "Un document accepté ne se modifie pas.",
-        "textes": "Conditions et confidentialité",
-        "textesIndisponibles": "Les conditions générales, la politique de confidentialité et les mentions légales ne sont pas encore consultables dans l'application."
+        "textes": "Conditions et confidentialité"
       }
     }
   },
@@ -10089,5 +10088,337 @@
     "vueGlobale": "La vue d'ensemble des finances n'a pas pu être chargée",
     "beneficiaires": "Les bénéficiaires n'ont pas pu être chargés",
     "profilPaiement": "Ce profil de paiement n'a pas pu être chargé"
+  },
+  "juridique": {
+    "titre": "Informations légales",
+    "intro": "Les textes qui encadrent le service. Ils se lisent sans connexion.",
+    "version": "Version {version}, texte du {date}",
+    "contact": "Pour toute question, écrivez à {contact}.",
+    "lire": "Lire",
+    "coord": {
+      "societe": "Société\u00a0: Rewayah Academy Ltd",
+      "numero": "Numéro d'immatriculation\u00a0: 16624644, Angleterre et pays de Galles",
+      "adresse": "Siège\u00a0: 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni"
+    },
+    "aCompleter": "[à compléter par la direction\u00a0: {quoi}]",
+    "champ": "{etiquette}\u00a0: {valeur}",
+    "quoi": {
+      "hebergeur": "hébergeur légal et ses coordonnées",
+      "lieuxHebergement": "pays où sont hébergées les informations",
+      "dureesConservation": "durée de conservation de chaque type d'information",
+      "droitApplicable": "droit applicable et juridiction compétente",
+      "confirmationConseil": "relecture par un conseil juridique, droit de rétractation compris",
+      "remboursementModalites": "moyen et délai du remboursement",
+      "responsableEnfants": "responsable de la protection des enfants"
+    },
+    "mentions": {
+      "titre": "Mentions légales",
+      "resume": "Qui exploite Rewayah Academy et comment la joindre.",
+      "intro": "Voici qui exploite Rewayah Academy et comment la joindre.",
+      "s1": {
+        "titre": "1. Qui exploite le service",
+        "blocs": [
+          "Rewayah Academy propose des cours de Coran en visio, en Classes stables\u00a0: les mêmes élèves, un horaire qui revient chaque semaine et un enseignant attitré."
+        ]
+      },
+      "s2": {
+        "titre": "2. Nous joindre",
+        "blocs": [
+          "Une seule adresse pour vos questions sur le service, sur ces textes et sur vos informations."
+        ]
+      },
+      "s3": {
+        "titre": "3. Hébergement et services techniques",
+        "blocs": [
+          "Le service s'appuie sur des prestataires techniques\u00a0: l'hébergement des pages web, la base de données et la connexion des comptes, la visio des séances, le stockage privé des fichiers et un prestataire de paiement."
+        ]
+      },
+      "s4": {
+        "titre": "4. Ces textes",
+        "blocs": [
+          "Chaque texte juridique porte sa version et sa date, affichées en haut de la page. Quand un texte change, la nouvelle version remplace l'ancienne à la date indiquée."
+        ]
+      }
+    },
+    "conditions": {
+      "titre": "Conditions d'utilisation et de vente",
+      "resume": "Les règles d'utilisation du service et de vente des abonnements.",
+      "intro": "Ces conditions s'appliquent dès que vous créez un compte ou que vous inscrivez un élève. Lisez-les en entier, elles sont courtes.",
+      "s1": {
+        "titre": "1. Le service",
+        "blocs": [
+          "Rewayah Academy propose des cours de Coran en visio. Chaque élève est placé dans une Classe\u00a0: un petit nombre d'élèves, un horaire récurrent et un enseignant attitré.",
+          "Il y a deux formules\u00a0: la formule enfant, de 6 à 17 ans, et la formule adulte, à partir de 18 ans. Aucun mineur n'est placé dans une Classe d'adultes.",
+          "Une Classe ouvre quand assez d'élèves sont inscrits. Avant, vous êtes en liste d'attente et rien n'est facturé."
+        ]
+      },
+      "s2": {
+        "titre": "2. Compte et accès",
+        "blocs": [
+          "Un enfant est inscrit et suivi par un tuteur adulte, qui décide pour lui. Voir le texte Protection des enfants.",
+          "Vous donnez des informations exactes et vous gardez vos accès pour vous. On entre dans une séance par son compte, jamais par un lien public."
+        ]
+      },
+      "s3": {
+        "titre": "3. Les séances",
+        "blocs": [
+          "Les séances ont lieu à heure fixe, avec le même enseignant. Être présent et à l'heure fait partie de l'engagement.",
+          "Une séance écourtée reste due si l'élève a été présent assez longtemps. Une séance annulée par l'académie ou par l'enseignant est remplacée.",
+          "Un contrôleur qualité peut assister aux séances sans être vu, et un cours peut être enregistré. Si l'enregistrement devient réel, nous vous le disons avant.",
+          "Le parent peut observer en silence la séance de son enfant."
+        ]
+      },
+      "s4": {
+        "titre": "4. Prix et paiement",
+        "blocs": [
+          "Les prix figurent sur la page Tarifs et dans l'application, au moment de choisir une formule. Ils sont en dollars américains et hors taxes. La taxe due selon votre pays est ajoutée au paiement.",
+          "L'abonnement se renouvelle le 1er de chaque mois. Les remises sont calculées par le système sur la facture du foyer.",
+          "Le paiement passe par un prestataire de paiement.",
+          "Il n'y a pas d'essai gratuit. La première semaine est remboursée si le cours ne convient pas.",
+          "Pour arrêter, être remboursé ou payer en retard, voir le texte Annulation et remboursement."
+        ]
+      },
+      "s5": {
+        "titre": "5. Respect en séance",
+        "blocs": [
+          "Chacun se comporte avec respect envers l'enseignant et les autres élèves, par ses mots comme par ses gestes."
+        ]
+      },
+      "s6": {
+        "titre": "6. Vos informations",
+        "blocs": [
+          "La façon dont nous utilisons vos informations est expliquée dans le texte Confidentialité."
+        ]
+      },
+      "s7": {
+        "titre": "7. Droit applicable",
+        "blocs": [
+          "Cette partie précise la loi qui s'applique et le tribunal compétent."
+        ]
+      }
+    },
+    "annulation": {
+      "titre": "Annulation et remboursement",
+      "resume": "Arrêter, être remboursé, et ce qui se passe si un paiement n'arrive pas.",
+      "intro": "Vous pouvez arrêter quand vous voulez. Voici ce qui est remboursé, ce qui ne l'est pas, et ce qui se passe si un paiement n'arrive pas.",
+      "s1": {
+        "titre": "1. Première semaine remboursée",
+        "blocs": [
+          "Il n'y a pas d'essai gratuit. À la place, la première semaine est remboursée si le cours ne convient pas.",
+          "Vous pouvez arrêter dans les 7 jours qui suivent la première séance. Vous êtes alors remboursé en entier.",
+          "Après ces 7 jours, le mois commencé est dû."
+        ]
+      },
+      "s2": {
+        "titre": "2. Arrêter l'abonnement",
+        "blocs": [
+          "L'abonnement mensuel s'arrête à tout moment, sans justification. Il prend fin à la fin du mois en cours.",
+          "Les formules payées d'avance, au trimestre ou à l'année, ne sont pas remboursées après la première semaine.",
+          "Une inscription en cours de mois paie seulement les séances restantes du mois."
+        ]
+      },
+      "s3": {
+        "titre": "3. Absences et séances annulées",
+        "blocs": [
+          "Une place manquée n'est pas remboursée\u00a0: elle est réservée pour l'élève dans une Classe fixe.",
+          "Une séance annulée par l'académie ou par l'enseignant est remplacée.",
+          "Si la Classe n'ouvre pas faute d'inscrits, rien n'est facturé."
+        ]
+      },
+      "s4": {
+        "titre": "4. Paiement en retard",
+        "blocs": [
+          "Avant le renouvellement, vous recevez trois rappels\u00a0: 7 jours, 3 jours et 1 jour avant.",
+          "Du 1er au 3 du mois, c'est un délai de grâce\u00a0: l'élève suit ses cours et l'impayé s'affiche chez le tuteur.",
+          "Le 4, l'accès aux séances est suspendu. La place est gardée 14 jours.",
+          "Le 18, la place est libérée pour la liste d'attente. Le retour reste possible sans frais, dans une nouvelle Classe."
+        ]
+      },
+      "s5": {
+        "titre": "5. Passage à la formule adulte",
+        "blocs": [
+          "Un élève qui atteint 18 ans passe à la formule adulte au renouvellement suivant. Le parent est prévenu un mois avant."
+        ]
+      },
+      "s6": {
+        "titre": "6. Faire une demande",
+        "blocs": [
+          "Pour arrêter ou demander un remboursement, écrivez-nous en donnant le nom du compte et la raison."
+        ]
+      }
+    },
+    "confidentialite": {
+      "titre": "Confidentialité",
+      "resume": "Quelles informations nous gardons, pourquoi, et vos droits.",
+      "intro": "Nous gardons seulement ce qui sert à faire les cours. Voici quelles informations, pourquoi, et comment les contrôler.",
+      "s1": {
+        "titre": "1. Qui est responsable",
+        "blocs": [
+          "Rewayah Academy Ltd décide pourquoi et comment vos informations sont utilisées. Ses coordonnées sont dans les Mentions légales.",
+          "Représentant dans l'Union européenne\u00a0: pas encore désigné. L'application ne s'ouvre pas aux familles de l'Union européenne avant sa désignation."
+        ]
+      },
+      "s2": {
+        "titre": "2. Ce que nous recueillons",
+        "blocs": [
+          "- Pour créer un compte\u00a0: le nom, l'adresse de courriel, la langue de l'interface, le pays de résidence et le fuseau horaire.",
+          "- Pour un élève\u00a0: la date de naissance, qui sert à choisir la bonne formule et les règles propres aux mineurs.",
+          "- Facultatif\u00a0: photo, téléphone, adresse, niveau, préférences d'horaires.",
+          "- Pendant les cours\u00a0: la présence, le cahier de transmission et la progression de l'élève.",
+          "- Pour payer\u00a0: l'abonnement et les factures. Le paiement lui-même passe par un prestataire de paiement.",
+          "- Pour un enseignant\u00a0: une pièce d'identité, gardée à part dans un espace privé.",
+          "- Vos accords\u00a0: la version de chaque texte accepté et la date.",
+          "- Des rapports d'erreurs techniques, sans capture d'écran, sans nom et sans identité."
+        ]
+      },
+      "s3": {
+        "titre": "3. Pourquoi nous les utilisons",
+        "blocs": [
+          "- Former les Classes et assurer les cours.",
+          "- Suivre la présence et la progression.",
+          "- Facturer l'abonnement.",
+          "- Protéger les élèves et contrôler la qualité des séances.",
+          "- Réparer les pannes."
+        ]
+      },
+      "s4": {
+        "titre": "4. Qui voit quoi",
+        "blocs": [
+          "Une famille ne voit que ses propres informations. Les informations d'un enfant ne sont jamais publiques et ne sont jamais montrées aux autres familles.",
+          "L'enseignant voit ses élèves et ses Classes. La direction voit ce qu'il faut pour gérer les inscriptions, les Classes et les paiements. Ces accès sont réglés côté serveur.",
+          "Un contrôleur qualité peut assister aux séances. Les accès sensibles sont inscrits dans un journal."
+        ]
+      },
+      "s5": {
+        "titre": "5. Séances en direct et enregistrement",
+        "blocs": [
+          "La visio passe par un service spécialisé. L'accès à une séance est donné par le serveur, pour cette séance seulement et pour peu de temps.",
+          "Aujourd'hui, l'application n'enregistre pas les cours. Si l'enregistrement revient, nous vous dirons avant pourquoi, combien de temps il est gardé et qui peut y accéder, et nous demanderons votre accord.",
+          "Une mention rappelle dans la salle qu'une visite de contrôle est possible."
+        ]
+      },
+      "s6": {
+        "titre": "6. Où sont vos informations",
+        "blocs": [
+          "Nous utilisons un hébergeur de pages web, une base de données avec la connexion des comptes, un service de visio, un stockage privé pour les fichiers, un prestataire de paiement et un service de rapports d'erreurs. Ils traitent vos informations pour nous, pour ces seules raisons."
+        ]
+      },
+      "s7": {
+        "titre": "7. Combien de temps",
+        "blocs": [
+          "Nous gardons chaque type d'information le temps nécessaire, pas davantage. La pièce d'identité d'un enseignant est supprimée à la fin d'un délai fixé. Une suppression peut être gelée en cas de litige."
+        ]
+      },
+      "s8": {
+        "titre": "8. Vos droits",
+        "blocs": [
+          "- Voir les informations que nous avons sur vous.",
+          "- Les corriger.",
+          "- Demander leur suppression ou limiter leur usage.",
+          "Écrivez-nous. Nous vérifions d'abord que c'est bien vous, ou le tuteur de l'élève. Vous pouvez aussi vous adresser à l'autorité de protection des données de votre pays."
+        ]
+      },
+      "s9": {
+        "titre": "9. Sécurité",
+        "blocs": [
+          "Les règles d'accès sont appliquées par le serveur. Les pièces d'identité sont dans un espace privé, séparé des photos. Aucune protection n'est absolue\u00a0: si vous voyez un problème, écrivez-nous."
+        ]
+      },
+      "s10": {
+        "titre": "10. Les enfants",
+        "blocs": [
+          "Les informations d'un enfant sont données et gérées par son tuteur. Voir le texte Protection des enfants."
+        ]
+      }
+    },
+    "cookies": {
+      "titre": "Cookies",
+      "resume": "Ce que l'application et le site gardent sur votre appareil.",
+      "intro": "L'application et le site gardent peu de choses sur votre appareil. Voici lesquelles.",
+      "s1": {
+        "titre": "1. Ce que c'est",
+        "blocs": [
+          "Un cookie ou une donnée locale est un petit élément gardé par votre navigateur ou votre appareil. Il aide un service à vous reconnaître ou à retenir un réglage."
+        ]
+      },
+      "s2": {
+        "titre": "2. Ce que l'application garde",
+        "blocs": [
+          "- Votre session de connexion.",
+          "- Vos préférences d'affichage, comme la langue et le thème.",
+          "- Un cache limité, que vous pouvez effacer.",
+          "- Sur l'appareil d'un élève, son code personnel, qui ne quitte jamais l'appareil.",
+          "Ces éléments sont nécessaires au fonctionnement de l'application."
+        ]
+      },
+      "s3": {
+        "titre": "3. Ce que nous n'utilisons pas",
+        "blocs": [
+          "À la date de ce texte, ni l'application ni le site n'utilisent de cookies publicitaires ni de mesure d'audience."
+        ]
+      },
+      "s4": {
+        "titre": "4. Rapports d'erreurs",
+        "blocs": [
+          "Quand l'application plante, un rapport technique peut être envoyé à un service de suivi des erreurs. Il ne contient ni capture d'écran, ni nom, ni identité."
+        ]
+      },
+      "s5": {
+        "titre": "5. Les contrôler",
+        "blocs": [
+          "Vous pouvez effacer les données du site dans les réglages de votre navigateur, ou vous déconnecter depuis le Compte. Vous devrez alors vous reconnecter et refaire vos réglages d'affichage."
+        ]
+      },
+      "s6": {
+        "titre": "6. Services tiers",
+        "blocs": [
+          "Si vous quittez Rewayah Academy pour un autre service, par exemple le paiement, ce service applique ses propres règles."
+        ]
+      }
+    },
+    "enfants": {
+      "titre": "Protection des enfants",
+      "resume": "Comment nous protégeons les élèves mineurs.",
+      "intro": "Les élèves mineurs suivent leurs cours sous la responsabilité d'un adulte. Voici les règles que nous appliquons et comment nous faire part d'une inquiétude.",
+      "s1": {
+        "titre": "1. Un adulte responsable",
+        "blocs": [
+          "Un enfant n'accède pas aux cours sans tuteur adulte autorisé. L'inscription, les accords et les paiements relèvent du tuteur.",
+          "La formule enfant va de 6 à 17 ans. Aucun mineur n'est placé dans une Classe d'adultes.",
+          "De 6 à 9 ans, l'Interface guidée est activée par défaut\u00a0: des écrans plus simples, avec de grandes touches."
+        ]
+      },
+      "s2": {
+        "titre": "2. Pendant les séances",
+        "blocs": [
+          "L'enfant suit ses cours avec un petit nombre d'élèves et le même enseignant attitré.",
+          "Il n'y a pas de lien public vers une salle. On y entre par son compte, avec un accès donné par le serveur.",
+          "Le parent peut observer en silence le cours de son enfant. L'enfant concerné en est informé.",
+          "Un contrôleur qualité peut assister aux séances. Une mention le rappelle dans la salle.",
+          "Un cours peut être enregistré. Aujourd'hui, ce n'est pas le cas, et le tuteur en serait informé avant."
+        ]
+      },
+      "s3": {
+        "titre": "3. Les enseignants",
+        "blocs": [
+          "Les enseignants signent un contrat et une politique de contrôle. Leur pièce d'identité est gardée dans un espace privé, séparé des photos visibles en classe."
+        ]
+      },
+      "s4": {
+        "titre": "4. Les informations de l'enfant",
+        "blocs": [
+          "Les informations d'un enfant ne sont ni publiques ni visibles des autres familles.",
+          "Le code personnel de l'élève reste sur son appareil.",
+          "Voir aussi le texte Confidentialité."
+        ]
+      },
+      "s5": {
+        "titre": "5. Faire part d'une inquiétude",
+        "blocs": [
+          "Si une chose vous inquiète, écrivez-nous. Dites ce que vous avez vu, quand, et dans quelle Classe.",
+          "En cas de danger immédiat, contactez d'abord les services d'urgence de votre pays."
+        ]
+      }
+    }
   }
 }

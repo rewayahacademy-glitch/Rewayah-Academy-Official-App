@@ -79,6 +79,12 @@ String? deciderRedirection({
     return null;
   }
 
+  // Les textes juridiques se lisent dans tous les etats de la session : sans
+  // connexion, en attente, suspendu ou actif. Texte compile, rien a proteger.
+  if (_dansLeSousArbre(cheminDemande, Routes.juridique)) {
+    return null;
+  }
+
   switch (session.porte) {
     // Tant que la session n'est pas resolue, on ne decide rien : rediriger sur
     // un etat inconnu ferait clignoter l'ecran au demarrage.
