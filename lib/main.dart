@@ -27,6 +27,7 @@ import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
 import 'core/capacites/enseignants_classe_supabase.dart';
 import 'core/capacites/identite_titulaire_supabase.dart';
+import 'core/capacites/mes_donnees_supabase.dart';
 import 'core/capacites/mes_finances_supabase.dart';
 import 'core/capacites/paiements_foyer_supabase.dart';
 import 'core/capacites/paiements_saisis_supabase.dart';
@@ -36,6 +37,7 @@ import 'core/capacites/port_acces_foyer.dart';
 import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/port_enseignants_classe.dart';
 import 'core/capacites/port_identite_titulaire.dart';
+import 'core/capacites/port_mes_donnees.dart';
 import 'core/capacites/port_mes_finances.dart';
 import 'core/capacites/port_paiements_foyer.dart';
 import 'core/capacites/port_paiements_saisis.dart';
@@ -256,6 +258,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portMatriculeProvider.overrideWithValue(
     MatriculeSupabase(Supabase.instance.client),
+  ),
+  // Mes donnees : copie JSON et demande de suppression du compte
+  // (CPT-SUPPR-EXPORT, migration 20261018150000).
+  portMesDonneesProvider.overrideWithValue(
+    MesDonneesSupabase(Supabase.instance.client),
   ),
   portSeriesTresorerieProvider.overrideWithValue(
     SeriesTresorerieSupabase(Supabase.instance.client),

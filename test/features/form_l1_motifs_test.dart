@@ -430,8 +430,10 @@ void main() {
   });
 
   group('L13 : valeurs proposees des reglages entiers', () {
-    test('les treize cles ont une proposition coherente', () {
-      expect(reglagesEntiersProposes, hasLength(13));
+    test('les quatorze cles ont une proposition coherente', () {
+      // La quatorzieme : le delai de reflexion de la suppression de compte
+      // (CPT-SUPPR-EXPORT, `compte.suppression_delai_jours`).
+      expect(reglagesEntiersProposes, hasLength(14));
       for (final MapEntry<String, ReglageEntierPropose> e
           in reglagesEntiersProposes.entries) {
         // Aucune borne inventee (08/10) : seul le plafond a source ecrite

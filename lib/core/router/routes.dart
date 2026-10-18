@@ -379,7 +379,7 @@ abstract final class Routes {
 
   /// Une sous-page du compte : `informations`, `securite`, `acces`,
   /// `paiements`, `preferences`, `aide`, `informations-legales`,
-  /// `consentements`.
+  /// `consentements`, `mes-donnees`.
   static String compteTuteurSousPage(String segment) =>
       '$tuteurCompte/$segment';
 
@@ -393,6 +393,7 @@ abstract final class Routes {
     'aide',
     'informations-legales',
     'consentements',
+    'mes-donnees',
   ];
 
   /// Les preferences du titulaire.
@@ -1152,6 +1153,10 @@ abstract final class Routes {
 
   /// Preferences locales de l'application.
   static const String compteReglages = '/compte/reglages';
+
+  /// Mes donnees : la copie de ses donnees et la demande de suppression du
+  /// compte (CPT-SUPPR-EXPORT). Le tuteur la rejoint sous `/tuteur/compte`.
+  static const String compteMesDonnees = '/compte/mes-donnees';
 
   /// Profils d'enfants du foyer.
   static const String compteProfils = '/compte/profils';

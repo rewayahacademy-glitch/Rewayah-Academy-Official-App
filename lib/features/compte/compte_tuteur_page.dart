@@ -30,6 +30,7 @@ import '../../core/widgets/status_pill.dart';
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
 import 'ligne_matricule.dart';
+import 'mes_donnees_page.dart';
 
 /// « Mon compte » du tuteur, quatrieme destination de sa coquille
 /// (`/tuteur/compte`, mandat Tuteur V1 sections 4 et 5, maquettes V3).
@@ -147,6 +148,24 @@ class _Hub extends ConsumerWidget {
       ],
     );
 
+    // CPT-SUPPR-EXPORT : copie des donnees et suppression du compte. La
+    // carte n'existe que si le port repond (capacite, jamais le role).
+    final Widget? donnees = ref.watch(mesDonneesDisponiblesProvider)
+        ? CarteRubriques(
+            icone: AppIcons.dossiers,
+            titre: t.compte.donnees.titre,
+            lignes: <LigneRubrique>[
+              LigneRubrique(
+                icone: AppIcons.dossiers,
+                libelle: t.compte.donnees.ligne,
+                legende: t.compte.donnees.ligneDetail,
+                onPress: () =>
+                    aller(Routes.compteTuteurSousPage('mes-donnees')),
+              ),
+            ],
+          )
+        : null;
+
     // Le nom et l'adresse sont deja sur la carte d'identite : le resume ne
     // les repete pas (une information, une place ; V3 section 8, point 11).
     final Widget informations = CarteRubriques(
@@ -256,7 +275,10 @@ class _Hub extends ConsumerWidget {
                 children: <Widget>[
                   // Proportions de la maquette bureau : la colonne gauche est
                   // un peu plus large (658 contre 598 px).
-                  Expanded(flex: 11, child: pile(<Widget>[acces, securite])),
+                  Expanded(
+                    flex: 11,
+                    child: pile(<Widget>[acces, securite, ?donnees]),
+                  ),
                   SizedBox(width: ecart),
                   Expanded(
                     flex: 10,
@@ -273,6 +295,7 @@ class _Hub extends ConsumerWidget {
               pile(<Widget>[
                 acces,
                 securite,
+                ?donnees,
                 informations,
                 foyer,
                 bibliotheque,

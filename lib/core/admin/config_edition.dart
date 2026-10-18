@@ -88,6 +88,11 @@ reglagesEntiersProposes = <String, ReglageEntierPropose>{
   'recording_retention_days': ReglageEntierPropose(proposees: <int>[7, 15, 30]),
   // Defaut 90 (0004).
   'kyc_retention_days': ReglageEntierPropose(proposees: <int>[30, 60, 90]),
+  // Defaut 14 (20261018150000) : delai de reflexion avant qu'une demande de
+  // suppression de compte puisse etre traitee.
+  'compte.suppression_delai_jours': ReglageEntierPropose(
+    proposees: <int>[7, 14, 30],
+  ),
 };
 
 /// Une ligne Configuration qui edite un entier de `app_config` par une

@@ -87,6 +87,7 @@ import '../../features/compte/compte_tuteur_page.dart';
 import '../../features/compte/espaces_compte.dart';
 import '../../features/compte/informations_legales_page.dart';
 import '../../features/compte/informations_page.dart';
+import '../../features/compte/mes_donnees_page.dart';
 import '../../features/compte/paiements_page.dart';
 import '../../features/compte/preferences_page.dart';
 import '../../features/compte/securite_page.dart';
@@ -434,6 +435,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.compteReglages,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: ReglagesComptePage()),
+      ),
+      GoRoute(
+        path: Routes.compteMesDonnees,
+        builder: (BuildContext _, GoRouterState _) =>
+            const _CoquilleSecondaire(child: MesDonneesPage()),
       ),
       GoRoute(
         path: Routes.compteProfils,
@@ -1058,6 +1064,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     path: 'consentements',
                     pageBuilder: glissee(
                       (GoRouterState _) => const ConsentementObservationPage(),
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'mes-donnees',
+                    pageBuilder: glissee(
+                      (GoRouterState _) => Builder(
+                        builder: (BuildContext context) => MesDonneesPage(
+                          onRetour: () =>
+                              GoRouter.of(context).go(Routes.tuteurCompte),
+                        ),
+                      ),
                     ),
                   ),
                 ],

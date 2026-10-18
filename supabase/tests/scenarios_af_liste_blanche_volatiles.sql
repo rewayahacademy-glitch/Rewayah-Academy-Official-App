@@ -50,6 +50,8 @@ declare
     'ajouter_niveau_programme(uuid,text,text,text,integer,text)',
     'annuler_evaluation(uuid,text)',
     'annuler_invitation_conjoint()',
+    -- CPT-SUPPR-EXPORT (18/10) : la personne annule sa demande de suppression (compte valide).
+    'annuler_suppression_compte()',
     'annuler_upload_bibliotheque(uuid)',
     'autoriser_ecoute_archive(uuid)',
     'autoriser_lecture_piece_identite(uuid)',
@@ -100,6 +102,8 @@ declare
     'demander_creneau_personnalise(uuid,text,smallint[],smallint)',
     'demander_presentation_standard()',
     'demander(text,uuid,text,text,integer)',
+    -- CPT-SUPPR-EXPORT (18/10) : la personne demande la suppression de son compte (compte valide).
+    'demander_suppression_compte(text)',
     'demander_upload_bibliotheque(uuid,text,text,text,bigint,text)',
     'demandes_en_attente()',
     'demarrer_mission_controle(uuid)',
@@ -160,6 +164,8 @@ declare
     'ma_capacite_controle_active()',
     'maj_eleve_pedagogie(uuid,text,text)',
     'maj_profil_enseignant(text,text[],text)',
+    -- CPT-SUPPR-EXPORT (18/10) : la copie des donnees de la personne (journalisee).
+    'mes_donnees_export()',
     'modifier_groupe(uuid,text,smallint,smallint,smallint,text,smallint)',
     'modifier_niveau_programme(uuid,text,text,integer,text)',
     'mon_invitation_en_cours()',
@@ -221,6 +227,8 @@ declare
     'tc_groupes_observation_bump_revision()',
     'tc_poser_annotation_marqueur(uuid,uuid,jsonb,text,text)',
     'traiter_anomalie_qualite(text,uuid,text)',
+    -- CPT-SUPPR-EXPORT (18/10) : la direction anonymise un compte (double verification).
+    'traiter_demande_suppression(uuid)',
     'transferer_eleve(uuid,uuid,uuid,text)',
     'transmettre_student_concern(uuid,text)',
     'verifier_chaine_audit(integer)'

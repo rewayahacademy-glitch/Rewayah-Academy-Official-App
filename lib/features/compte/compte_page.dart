@@ -30,6 +30,7 @@ import '../paiements_recus/rubrique_recevoir_paiements.dart';
 import '../salle_seance/libelles_salle_b.dart';
 import 'espaces_compte.dart';
 import 'ligne_matricule.dart';
+import 'mes_donnees_page.dart';
 
 /// Le portail commun du compte, accessible depuis tous les roles actifs.
 ///
@@ -130,6 +131,11 @@ class ComptePage extends ConsumerWidget {
           ),
           // CPT-BEN-2 : « Recevoir mes paiements », selon la capacite du port.
           const RubriqueRecevoirPaiements(),
+          // CPT-SUPPR-EXPORT : copie des donnees et suppression du compte,
+          // selon la capacite du port.
+          RubriqueMesDonnees(
+            onOuvrir: () => context.push(Routes.compteMesDonnees),
+          ),
           Ecart.vSection,
           SectionHeader(titre: t.compte.espaces),
           Text(t.compte.espacesDetail),

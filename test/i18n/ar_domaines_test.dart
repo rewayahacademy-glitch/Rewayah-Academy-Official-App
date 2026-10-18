@@ -199,6 +199,8 @@ const Set<String> _motsLatinsAdmis = <String>{
   'PDF',
   // IMM-ACCUEIL-FRONT : le format de fichier de l'import des inscriptions.
   'CSV',
+  // CPT-SUPPR-EXPORT : le format de la copie des donnees (compte.donnees).
+  'JSON',
   'QR',
   'UTC',
   'Google',

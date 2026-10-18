@@ -2999,6 +2999,8 @@
       "enregistrementsDetail": "Le nombre de jours pendant lesquels un enregistrement de séance reste accessible.",
       "documentsIdentite": "Documents d'identité",
       "documentsIdentiteDetail": "Le nombre de jours pendant lesquels un document d'identité déposé reste accessible avant sa purge.",
+      "suppressionCompte": "Suppression d'un compte",
+      "suppressionCompteDetail": "Le nombre de jours de réflexion avant que la direction puisse traiter une demande de suppression de compte.",
       "uniteJours": {
         "one": "{n} j",
         "other": "{n} j"
@@ -4597,6 +4599,57 @@
     "deplier": "Déplier la navigation"
   },
   "compte": {
+    "donnees": {
+      "titre": "Mes données",
+      "sousTitre": "Une copie de vos données, ou la suppression de votre compte.",
+      "ligne": "Copie de mes données et suppression du compte",
+      "ligneDetail": "Téléchargez vos données ou demandez la suppression de votre compte.",
+      "copie": {
+        "titre": "Télécharger une copie",
+        "intro": "Un fichier JSON avec vos informations, vos classes, vos séances et vos factures. Si vous êtes tuteur, il contient aussi celles des élèves de votre foyer.",
+        "exclus": "Il ne contient aucun secret de connexion ni note interne de l'équipe.",
+        "action": "Télécharger mes données",
+        "reussi": "Votre copie est enregistrée.",
+        "echec": "La copie n'a pas pu être préparée. Rien n'a été enregistré. Réessayez dans un instant.",
+        "horsLigne": "Vous êtes hors ligne. Reconnectez-vous, puis téléchargez vos données.",
+        "refuse": "Ce compte ne peut pas télécharger de copie."
+      },
+      "suppression": {
+        "titre": "Supprimer mon compte",
+        "intro(param=n)": {
+          "one": "La direction étudie votre demande après un délai de réflexion de {n} jour. Vous pouvez l'annuler pendant ce temps.",
+          "other": "La direction étudie votre demande après un délai de réflexion de {n} jours. Vous pouvez l'annuler pendant ce temps."
+        },
+        "effacement": "Une fois la demande traitée, votre nom, vos coordonnées et votre photo sont effacés. Vous ne pouvez plus vous connecter.",
+        "conservation": "Les factures et les paiements sont conservés pour la comptabilité. Votre matricule n'est jamais réattribué.",
+        "aucuneDemande": "Aucune demande de suppression en cours.",
+        "soldeTitre": "Un solde reste à régler",
+        "soldeDetail": "Il reste {montant} à payer. Vous pouvez demander la suppression, mais ce solde reste dû.",
+        "seancesTitre": "Des séances sont encore prévues",
+        "seancesDetail(param=n)": {
+          "one": "{n} séance est prévue. La direction doit l'annuler ou la confier à une autre personne avant de supprimer votre compte.",
+          "other": "{n} séances sont prévues. La direction doit les annuler ou les confier à une autre personne avant de supprimer votre compte."
+        },
+        "motifLibelle": "Pourquoi partez-vous\u00a0? (facultatif)",
+        "motifAide": "La direction le lit. Il est effacé quand la demande est traitée.",
+        "demander": "Demander la suppression de mon compte",
+        "confirmerQuestion": "Demander la suppression de votre compte\u00a0?",
+        "confirmerConsequence(param=n)": {
+          "one": "Si vous ne l'annulez pas d'ici {n} jour, la direction pourra effacer votre nom, vos coordonnées et votre photo. Vous ne pourrez plus vous connecter. Les factures et les paiements sont conservés.",
+          "other": "Si vous ne l'annulez pas d'ici {n} jours, la direction pourra effacer votre nom, vos coordonnées et votre photo. Vous ne pourrez plus vous connecter. Les factures et les paiements sont conservés."
+        },
+        "confirmerAction": "Demander la suppression",
+        "confirmerRester": "Garder mon compte",
+        "enCoursTitre": "Demande de suppression en cours",
+        "enCoursDetail": "Demandée le {demandee}. La direction pourra la traiter à partir du {echeance}.",
+        "annuler": "Annuler ma demande",
+        "demandeEnvoyee": "Votre demande est enregistrée. Vous pouvez l'annuler jusqu'à son traitement.",
+        "demandeAnnulee": "Votre demande est annulée. Votre compte reste ouvert.",
+        "echec": "Votre demande n'a pas abouti. Votre compte n'a pas changé. Réessayez dans un instant.",
+        "horsLigne": "Vous êtes hors ligne. Reconnectez-vous, puis réessayez.",
+        "refuse": "Ce compte ne peut pas demander sa suppression ici."
+      }
+    },
     "titre": "Mon compte",
     "intro": "Vos informations, vos préférences et vos accès, au même endroit.",
     "informations": "Informations",
@@ -10241,6 +10294,7 @@
     }
   },
   "sansDonnees": {
+    "mesDonnees": "Vos informations de suppression n'ont pas pu être chargées",
     "paiementsRecus": "Vos paiements reçus n'ont pas pu être chargés",
     "revenus": "Vos revenus n'ont pas pu être chargés",
     "aujourdhui": "Le tableau du jour n'a pas pu être chargé",

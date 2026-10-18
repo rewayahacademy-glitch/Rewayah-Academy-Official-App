@@ -433,6 +433,7 @@ class _Traductions$compte$ar extends Traductions$compte$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$compte$donnees$ar donnees = _Traductions$compte$donnees$ar._(_root);
 	@override String get themeContexte => 'اختر مظهر التطبيق. يتم التغيير فورًا ويبقى على هذا الجهاز، ويمكنك تعديله في أي وقت.';
 	@override String get themeSysteme => 'النظام';
 	@override String get themeSystemeDetail => 'يتبع إعداد جهازك';
@@ -1589,6 +1590,7 @@ class _Traductions$sansDonnees$ar extends Traductions$sansDonnees$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get mesDonnees => 'تعذّر تحميل معلومات حذف الحساب';
 	@override String get paiementsRecus => 'تعذّر تحميل مدفوعاتك المستلمة';
 	@override String get revenus => 'تعذّر تحميل مداخيلك';
 	@override String get aujourdhui => 'تعذّر تحميل لوحة اليوم';
@@ -3352,6 +3354,21 @@ class _Traductions$enseignant$revue$ar extends Traductions$enseignant$revue$fr {
 	@override String get typeReorientation => 'اقتراح إعادة توجيه';
 }
 
+// Path: compte.donnees
+class _Traductions$compte$donnees$ar extends Traductions$compte$donnees$fr {
+	_Traductions$compte$donnees$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'بياناتي';
+	@override String get sousTitre => 'نسخة من بياناتك، أو حذف حسابك.';
+	@override String get ligne => 'نسخة من بياناتي وحذف الحساب';
+	@override String get ligneDetail => 'نزّل بياناتك أو اطلب حذف حسابك.';
+	@override late final _Traductions$compte$donnees$copie$ar copie = _Traductions$compte$donnees$copie$ar._(_root);
+	@override late final _Traductions$compte$donnees$suppression$ar suppression = _Traductions$compte$donnees$suppression$ar._(_root);
+}
+
 // Path: compte.roles
 class _Traductions$compte$roles$ar extends Traductions$compte$roles$fr {
 	_Traductions$compte$roles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -4327,6 +4344,8 @@ class _Traductions$admin$conservationDonnees$ar extends Traductions$admin$conser
 	@override String get enregistrementsDetail => 'عدد الأيام التي يبقى فيها تسجيل الحصة متاحًا.';
 	@override String get documentsIdentite => 'وثائق الهوية';
 	@override String get documentsIdentiteDetail => 'عدد الأيام التي تبقى فيها وثيقة الهوية المودعة متاحة قبل حذفها.';
+	@override String get suppressionCompte => 'حذف الحساب';
+	@override String get suppressionCompteDetail => 'عدد أيام التفكير قبل أن تتمكن الإدارة من معالجة طلب حذف حساب.';
 	@override String uniteJours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
 		zero: '⁨${n}⁩ يوم',
 		one: 'يوم واحد',
@@ -8703,6 +8722,77 @@ class _Traductions$enseignant$signalement$categories$ar extends Traductions$ense
 	@override String get technique => 'تقنية';
 	@override String get changement => 'تغيير';
 	@override String get autre => 'أخرى';
+}
+
+// Path: compte.donnees.copie
+class _Traductions$compte$donnees$copie$ar extends Traductions$compte$donnees$copie$fr {
+	_Traductions$compte$donnees$copie$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'تنزيل نسخة';
+	@override String get intro => 'ملف JSON يضم معلوماتك وفصولك وحصصك وفواتيرك. إذا كنت وليّ أمر، فهو يضم أيضًا بيانات الطلاب في أسرتك.';
+	@override String get exclus => 'لا يتضمن أي سرّ للدخول ولا أي ملاحظة داخلية للفريق.';
+	@override String get action => 'تنزيل بياناتي';
+	@override String get reussi => 'تم حفظ نسختك.';
+	@override String get echec => 'تعذّر إعداد النسخة ولم يُحفظ شيء. أعد المحاولة بعد لحظة.';
+	@override String get horsLigne => 'أنت غير متصل. أعد الاتصال ثم نزّل بياناتك.';
+	@override String get refuse => 'لا يمكن لهذا الحساب تنزيل نسخة.';
+}
+
+// Path: compte.donnees.suppression
+class _Traductions$compte$donnees$suppression$ar extends Traductions$compte$donnees$suppression$fr {
+	_Traductions$compte$donnees$suppression$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'حذف حسابي';
+	@override String intro({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها ⁨${n}⁩ يوم. يمكنك إلغاؤه خلال هذه المدة.',
+		one: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها يوم واحد. يمكنك إلغاؤه خلال هذه المدة.',
+		two: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها يومان. يمكنك إلغاؤه خلال هذه المدة.',
+		few: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها ⁨${n}⁩ أيام. يمكنك إلغاؤه خلال هذه المدة.',
+		many: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها ⁨${n}⁩ يومًا. يمكنك إلغاؤه خلال هذه المدة.',
+		other: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها ⁨${n}⁩ يوم. يمكنك إلغاؤه خلال هذه المدة.',
+	);
+	@override String get effacement => 'بعد معالجة الطلب يُمحى اسمك وبيانات الاتصال بك وصورتك، ولا يمكنك تسجيل الدخول بعد ذلك.';
+	@override String get conservation => 'تُحفظ الفواتير والمدفوعات لأغراض المحاسبة، ولا يُعاد منح رقم تسجيلك لأحد.';
+	@override String get aucuneDemande => 'لا يوجد طلب حذف جارٍ.';
+	@override String get soldeTitre => 'يوجد رصيد مستحق';
+	@override String soldeDetail({required Object montant}) => 'بقي ⁨${montant}⁩ للدفع. يمكنك طلب الحذف، لكن هذا الرصيد يبقى مستحقًا.';
+	@override String get seancesTitre => 'هناك حصص لا تزال مقررة';
+	@override String seancesDetail({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ حصة مقررة. على الإدارة إلغاؤها أو إسنادها إلى شخص آخر قبل حذف حسابك.',
+		one: 'حصة واحدة مقررة. على الإدارة إلغاؤها أو إسنادها إلى شخص آخر قبل حذف حسابك.',
+		two: 'حصتان مقررتان. على الإدارة إلغاؤهما أو إسنادهما إلى شخص آخر قبل حذف حسابك.',
+		few: '⁨${n}⁩ حصص مقررة. على الإدارة إلغاؤها أو إسنادها إلى شخص آخر قبل حذف حسابك.',
+		many: '⁨${n}⁩ حصة مقررة. على الإدارة إلغاؤها أو إسنادها إلى شخص آخر قبل حذف حسابك.',
+		other: '⁨${n}⁩ حصة مقررة. على الإدارة إلغاؤها أو إسنادها إلى شخص آخر قبل حذف حسابك.',
+	);
+	@override String get motifLibelle => 'لماذا ترحل؟ (اختياري)';
+	@override String get motifAide => 'تقرؤه الإدارة، ويُمحى عند معالجة الطلب.';
+	@override String get demander => 'طلب حذف حسابي';
+	@override String get confirmerQuestion => 'هل تطلب حذف حسابك؟';
+	@override String confirmerConsequence({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'إن لم تلغِ الطلب خلال ⁨${n}⁩ يوم، يمكن للإدارة أن تمحو اسمك وبيانات الاتصال بك وصورتك. ولن تتمكن من تسجيل الدخول. تُحفظ الفواتير والمدفوعات.',
+		one: 'إن لم تلغِ الطلب خلال يوم واحد، يمكن للإدارة أن تمحو اسمك وبيانات الاتصال بك وصورتك. ولن تتمكن من تسجيل الدخول. تُحفظ الفواتير والمدفوعات.',
+		two: 'إن لم تلغِ الطلب خلال يومين، يمكن للإدارة أن تمحو اسمك وبيانات الاتصال بك وصورتك. ولن تتمكن من تسجيل الدخول. تُحفظ الفواتير والمدفوعات.',
+		few: 'إن لم تلغِ الطلب خلال ⁨${n}⁩ أيام، يمكن للإدارة أن تمحو اسمك وبيانات الاتصال بك وصورتك. ولن تتمكن من تسجيل الدخول. تُحفظ الفواتير والمدفوعات.',
+		many: 'إن لم تلغِ الطلب خلال ⁨${n}⁩ يومًا، يمكن للإدارة أن تمحو اسمك وبيانات الاتصال بك وصورتك. ولن تتمكن من تسجيل الدخول. تُحفظ الفواتير والمدفوعات.',
+		other: 'إن لم تلغِ الطلب خلال ⁨${n}⁩ يوم، يمكن للإدارة أن تمحو اسمك وبيانات الاتصال بك وصورتك. ولن تتمكن من تسجيل الدخول. تُحفظ الفواتير والمدفوعات.',
+	);
+	@override String get confirmerAction => 'طلب الحذف';
+	@override String get confirmerRester => 'الإبقاء على حسابي';
+	@override String get enCoursTitre => 'طلب الحذف جارٍ';
+	@override String enCoursDetail({required Object demandee, required Object echeance}) => 'طُلب في ⁨${demandee}⁩. يمكن للإدارة معالجته ابتداءً من ⁨${echeance}⁩.';
+	@override String get annuler => 'إلغاء طلبي';
+	@override String get demandeEnvoyee => 'تم تسجيل طلبك. يمكنك إلغاؤه حتى تتم معالجته.';
+	@override String get demandeAnnulee => 'أُلغي طلبك. يبقى حسابك مفتوحًا.';
+	@override String get echec => 'لم يكتمل طلبك. لم يتغير حسابك. أعد المحاولة بعد لحظة.';
+	@override String get horsLigne => 'أنت غير متصل. أعد الاتصال ثم حاول مرة أخرى.';
+	@override String get refuse => 'لا يمكن لهذا الحساب طلب حذفه من هنا.';
 }
 
 // Path: compte.tuteur.identite
@@ -16707,6 +16797,44 @@ extension on TraductionsAr {
 			'enseignant.revue.typeCorridor' => 'طالب خارج المسار المتوقع',
 			'enseignant.revue.typeTransfert' => 'اقتراح نقل',
 			'enseignant.revue.typeReorientation' => 'اقتراح إعادة توجيه',
+			'compte.donnees.titre' => 'بياناتي',
+			'compte.donnees.sousTitre' => 'نسخة من بياناتك، أو حذف حسابك.',
+			'compte.donnees.ligne' => 'نسخة من بياناتي وحذف الحساب',
+			'compte.donnees.ligneDetail' => 'نزّل بياناتك أو اطلب حذف حسابك.',
+			'compte.donnees.copie.titre' => 'تنزيل نسخة',
+			'compte.donnees.copie.intro' => 'ملف JSON يضم معلوماتك وفصولك وحصصك وفواتيرك. إذا كنت وليّ أمر، فهو يضم أيضًا بيانات الطلاب في أسرتك.',
+			'compte.donnees.copie.exclus' => 'لا يتضمن أي سرّ للدخول ولا أي ملاحظة داخلية للفريق.',
+			'compte.donnees.copie.action' => 'تنزيل بياناتي',
+			'compte.donnees.copie.reussi' => 'تم حفظ نسختك.',
+			'compte.donnees.copie.echec' => 'تعذّر إعداد النسخة ولم يُحفظ شيء. أعد المحاولة بعد لحظة.',
+			'compte.donnees.copie.horsLigne' => 'أنت غير متصل. أعد الاتصال ثم نزّل بياناتك.',
+			'compte.donnees.copie.refuse' => 'لا يمكن لهذا الحساب تنزيل نسخة.',
+			'compte.donnees.suppression.titre' => 'حذف حسابي',
+			'compte.donnees.suppression.intro' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها ⁨${n}⁩ يوم. يمكنك إلغاؤه خلال هذه المدة.', one: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها يوم واحد. يمكنك إلغاؤه خلال هذه المدة.', two: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها يومان. يمكنك إلغاؤه خلال هذه المدة.', few: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها ⁨${n}⁩ أيام. يمكنك إلغاؤه خلال هذه المدة.', many: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها ⁨${n}⁩ يومًا. يمكنك إلغاؤه خلال هذه المدة.', other: 'تدرس الإدارة طلبك بعد مهلة تفكير مدتها ⁨${n}⁩ يوم. يمكنك إلغاؤه خلال هذه المدة.', ), 
+			_ => null,
+		} ?? switch (path) {
+			'compte.donnees.suppression.effacement' => 'بعد معالجة الطلب يُمحى اسمك وبيانات الاتصال بك وصورتك، ولا يمكنك تسجيل الدخول بعد ذلك.',
+			'compte.donnees.suppression.conservation' => 'تُحفظ الفواتير والمدفوعات لأغراض المحاسبة، ولا يُعاد منح رقم تسجيلك لأحد.',
+			'compte.donnees.suppression.aucuneDemande' => 'لا يوجد طلب حذف جارٍ.',
+			'compte.donnees.suppression.soldeTitre' => 'يوجد رصيد مستحق',
+			'compte.donnees.suppression.soldeDetail' => ({required Object montant}) => 'بقي ⁨${montant}⁩ للدفع. يمكنك طلب الحذف، لكن هذا الرصيد يبقى مستحقًا.',
+			'compte.donnees.suppression.seancesTitre' => 'هناك حصص لا تزال مقررة',
+			'compte.donnees.suppression.seancesDetail' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ حصة مقررة. على الإدارة إلغاؤها أو إسنادها إلى شخص آخر قبل حذف حسابك.', one: 'حصة واحدة مقررة. على الإدارة إلغاؤها أو إسنادها إلى شخص آخر قبل حذف حسابك.', two: 'حصتان مقررتان. على الإدارة إلغاؤهما أو إسنادهما إلى شخص آخر قبل حذف حسابك.', few: '⁨${n}⁩ حصص مقررة. على الإدارة إلغاؤها أو إسنادها إلى شخص آخر قبل حذف حسابك.', many: '⁨${n}⁩ حصة مقررة. على الإدارة إلغاؤها أو إسنادها إلى شخص آخر قبل حذف حسابك.', other: '⁨${n}⁩ حصة مقررة. على الإدارة إلغاؤها أو إسنادها إلى شخص آخر قبل حذف حسابك.', ), 
+			'compte.donnees.suppression.motifLibelle' => 'لماذا ترحل؟ (اختياري)',
+			'compte.donnees.suppression.motifAide' => 'تقرؤه الإدارة، ويُمحى عند معالجة الطلب.',
+			'compte.donnees.suppression.demander' => 'طلب حذف حسابي',
+			'compte.donnees.suppression.confirmerQuestion' => 'هل تطلب حذف حسابك؟',
+			'compte.donnees.suppression.confirmerConsequence' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'إن لم تلغِ الطلب خلال ⁨${n}⁩ يوم، يمكن للإدارة أن تمحو اسمك وبيانات الاتصال بك وصورتك. ولن تتمكن من تسجيل الدخول. تُحفظ الفواتير والمدفوعات.', one: 'إن لم تلغِ الطلب خلال يوم واحد، يمكن للإدارة أن تمحو اسمك وبيانات الاتصال بك وصورتك. ولن تتمكن من تسجيل الدخول. تُحفظ الفواتير والمدفوعات.', two: 'إن لم تلغِ الطلب خلال يومين، يمكن للإدارة أن تمحو اسمك وبيانات الاتصال بك وصورتك. ولن تتمكن من تسجيل الدخول. تُحفظ الفواتير والمدفوعات.', few: 'إن لم تلغِ الطلب خلال ⁨${n}⁩ أيام، يمكن للإدارة أن تمحو اسمك وبيانات الاتصال بك وصورتك. ولن تتمكن من تسجيل الدخول. تُحفظ الفواتير والمدفوعات.', many: 'إن لم تلغِ الطلب خلال ⁨${n}⁩ يومًا، يمكن للإدارة أن تمحو اسمك وبيانات الاتصال بك وصورتك. ولن تتمكن من تسجيل الدخول. تُحفظ الفواتير والمدفوعات.', other: 'إن لم تلغِ الطلب خلال ⁨${n}⁩ يوم، يمكن للإدارة أن تمحو اسمك وبيانات الاتصال بك وصورتك. ولن تتمكن من تسجيل الدخول. تُحفظ الفواتير والمدفوعات.', ), 
+			'compte.donnees.suppression.confirmerAction' => 'طلب الحذف',
+			'compte.donnees.suppression.confirmerRester' => 'الإبقاء على حسابي',
+			'compte.donnees.suppression.enCoursTitre' => 'طلب الحذف جارٍ',
+			'compte.donnees.suppression.enCoursDetail' => ({required Object demandee, required Object echeance}) => 'طُلب في ⁨${demandee}⁩. يمكن للإدارة معالجته ابتداءً من ⁨${echeance}⁩.',
+			'compte.donnees.suppression.annuler' => 'إلغاء طلبي',
+			'compte.donnees.suppression.demandeEnvoyee' => 'تم تسجيل طلبك. يمكنك إلغاؤه حتى تتم معالجته.',
+			'compte.donnees.suppression.demandeAnnulee' => 'أُلغي طلبك. يبقى حسابك مفتوحًا.',
+			'compte.donnees.suppression.echec' => 'لم يكتمل طلبك. لم يتغير حسابك. أعد المحاولة بعد لحظة.',
+			'compte.donnees.suppression.horsLigne' => 'أنت غير متصل. أعد الاتصال ثم حاول مرة أخرى.',
+			'compte.donnees.suppression.refuse' => 'لا يمكن لهذا الحساب طلب حذفه من هنا.',
 			'compte.themeContexte' => 'اختر مظهر التطبيق. يتم التغيير فورًا ويبقى على هذا الجهاز، ويمكنك تعديله في أي وقت.',
 			'compte.themeSysteme' => 'النظام',
 			'compte.themeSystemeDetail' => 'يتبع إعداد جهازك',
@@ -16721,8 +16849,6 @@ extension on TraductionsAr {
 			'compte.profilDetail' => 'عرض معلوماتك وإدارتها',
 			'compte.reglages' => 'الإعدادات',
 			'compte.reglagesDetail' => 'المظهر والإشعارات وإمكانية الوصول',
-			_ => null,
-		} ?? switch (path) {
 			'compte.profils' => 'إدارة أسرتي',
 			'compte.profilsDetail' => 'إدارة ملفات أطفالك',
 			'compte.appareils' => 'الأسرة',
@@ -17199,6 +17325,8 @@ extension on TraductionsAr {
 			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'الصفحتان المفتوحتان ⁨${droite}⁩ و⁨${gauche}⁩',
 			'tc.coran.mushaf.page15.creditMiseEnPage' => 'التنسيق: مجمع الملك فهد، quran.ws (CC BY 4.0)',
 			'tc.coran.mushaf.page15.aProposOuvrir' => 'حول هذه الطبعة',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.mushaf.page15.aProposTitre' => 'حول هذه الطبعة',
 			'tc.coran.mushaf.page15.aProposPolice' => 'الخط: خط حفص العثماني، مجمع الملك فهد',
 			'tc.coran.mushaf.page15.aProposLicences' => 'التراخيص: النص والخط ملك لمجمع الملك فهد؛ التنسيق منشور برخصة CC BY 4.0 (quran.ws)؛ أرباع الأحزاب من مصدر مفتوح.',
@@ -17235,8 +17363,6 @@ extension on TraductionsAr {
 			'tc.outils.dock.stylet' => 'القلم',
 			'tc.outils.dock.pointeur' => 'المؤشر',
 			'tc.outils.dock.revision' => 'المراجعة',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.intention.aApprendre' => 'للحفظ',
 			'tc.outils.intention.aRevoir' => 'للمراجعة',
 			'tc.outils.intention.aRenforcer' => 'للتثبيت',
@@ -17713,6 +17839,8 @@ extension on TraductionsAr {
 			'com.messages.types.autre' => 'موضوع آخر',
 			'com.messages.panneau.objets' => 'بخصوص',
 			'com.messages.panneau.participants' => 'المشاركون',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
 			'com.messages.panneau.ouvrir' => ({required Object objet}) => 'فتح ${objet}',
 			'com.messages.panneau.inaccessible' => 'لم يعد هذا الموضوع متاحًا لك. تبقى المحادثة متاحة للقراءة.',
@@ -17749,8 +17877,6 @@ extension on TraductionsAr {
 			'com.messages.demo.f.yusuf' => 'يوسف',
 			'com.messages.demo.f.dossierAdam' => 'ملف تسجيل آدم',
 			'com.messages.demo.f.missionNour' => 'زيارة مراقبة، فصل النور',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.demo.f.pieceDevoir' => 'واجب_الأسبوع_3.pdf',
 			'com.messages.demo.f.pieceAttestation' => 'الشهادة_القديمة.pdf',
 			'com.messages.demo.f.pieceVocal' => 'رسالة_صوتية.m4a',
@@ -18227,6 +18353,8 @@ extension on TraductionsAr {
 			'com.annonces.publieur.apercu.a' => ({required Object cible}) => 'إلى: ${cible}',
 			'com.annonces.publieur.apercu.diffusionMaintenant' => 'النشر: فور التأكيد',
 			'com.annonces.publieur.apercu.diffusionLe' => ({required Object date, required Object heure}) => 'النشر المقرر يوم ${date} الساعة ${heure}',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.publieur.continuer' => 'متابعة',
 			'com.annonces.publieur.publier' => 'نشر الإعلان',
 			'com.annonces.publieur.programmer' => 'جدولة الإعلان',
@@ -18263,8 +18391,6 @@ extension on TraductionsAr {
 			'com.annonces.administration.planifiees.titre' => 'الإعلانات المجدولة',
 			'com.annonces.administration.planifiees.vide' => 'لا توجد إعلانات مجدولة.',
 			'com.annonces.administration.planifiees.pastille' => 'مجدول',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.planifiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · مقرر يوم ${date} الساعة ${heure}',
 			'com.annonces.administration.matrice.titre' => 'صلاحيات نشر الإعلانات',
 			'com.annonces.administration.matrice.detail' => 'قاعدة الأكاديمية، تُطبَّق على كل عملية نشر.',
@@ -18741,6 +18867,8 @@ extension on TraductionsAr {
 			'admin.groupes.cahiers.aide' => 'للقراءة فقط. تُسجَّل كل مرة يُفتح فيها دفتر في سجل التدقيق مع اسمك.',
 			'admin.groupes.cahiers.filtre' => 'الحالة',
 			'admin.groupes.cahiers.filtreTous' => 'كل الحالات',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.cahiers.vide' => 'لا يوجد دفتر مطابق لهذا الفصل.',
 			'admin.groupes.cahiers.plus' => 'عرض مزيد من الدفاتر',
 			'admin.groupes.cahiers.titreCahier' => ({required Object dePrenom}) => 'دفتر ⁨${dePrenom}⁩',
@@ -18777,8 +18905,6 @@ extension on TraductionsAr {
 			'admin.groupes.partage.modifieLe' => ({required Object date}) => 'آخر تعديل: ⁨${date}⁩',
 			'admin.groupes.partage.etatActif' => 'مفعّل للفصل',
 			'admin.groupes.partage.etatInactif' => 'معطّل للفصل',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.partage.confirmerActiver' => 'تفعيل المشاركة التلقائية لهذا الفصل؟',
 			'admin.groupes.partage.consequenceActiver' => 'تعود التقارير التي شُورِكت سابقًا قابلة للقراءة لدى الأسر. أما التقارير المحجوزة أثناء التعطيل فلا تُنشر دفعة واحدة.',
 			'admin.groupes.partage.confirmerDesactiver' => 'تعطيل المشاركة التلقائية لهذا الفصل؟',
@@ -18982,6 +19108,8 @@ extension on TraductionsAr {
 			'admin.conservationDonnees.enregistrementsDetail' => 'عدد الأيام التي يبقى فيها تسجيل الحصة متاحًا.',
 			'admin.conservationDonnees.documentsIdentite' => 'وثائق الهوية',
 			'admin.conservationDonnees.documentsIdentiteDetail' => 'عدد الأيام التي تبقى فيها وثيقة الهوية المودعة متاحة قبل حذفها.',
+			'admin.conservationDonnees.suppressionCompte' => 'حذف الحساب',
+			'admin.conservationDonnees.suppressionCompteDetail' => 'عدد أيام التفكير قبل أن تتمكن الإدارة من معالجة طلب حذف حساب.',
 			'admin.conservationDonnees.uniteJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ يوم', one: 'يوم واحد', two: 'يومان', few: '⁨${n}⁩ أيام', many: '⁨${n}⁩ يومًا', other: '⁨${n}⁩ يوم', ), 
 			'admin.politiqueRevueKyc.titre' => 'اشتراط تطابق الجنس في مراجعة الهوية',
 			'admin.politiqueRevueKyc.libelle' => 'حصر مراجعة الهوية بموظف من الجنس نفسه',
@@ -19253,6 +19381,8 @@ extension on TraductionsAr {
 			'admin.comptes.roleEnseignant' => 'معلم',
 			'admin.comptes.roleTuteur' => 'وليّ أمر',
 			'admin.comptes.roleEleve' => 'طالب',
+			_ => null,
+		} ?? switch (path) {
 			'admin.comptes.roleInconnu' => 'دور غير معروف',
 			'admin.comptes.pieceAucune' => 'لا وثيقة مودَعة',
 			'admin.comptes.pieceAVerifier' => 'للتحقق',
@@ -19291,8 +19421,6 @@ extension on TraductionsAr {
 			'admin.agents.copier' => 'نسخ الرابط',
 			'admin.agents.copie' => 'نُسخ الرابط',
 			'admin.agents.termine' => 'نسخت الرابط',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.erreurEmission' => 'تعذّر إصدار الرمز. أعد المحاولة بعد لحظة.',
 			'admin.agents.colonneLibelle' => 'الرمز',
 			'admin.agents.colonneQui' => 'يتابع',
@@ -19767,6 +19895,8 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.droitsChamps.usages' => 'الاستخدامات المسموحة',
 			'admin.bibliotheque.fiche.droitsChamps.aucunUsage' => 'لا استخدام مسموح',
 			'admin.bibliotheque.fiche.droitsChamps.attribution' => 'الإسناد',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.fiche.droitsChamps.echeance' => 'تاريخ الانتهاء',
 			'admin.bibliotheque.fiche.classesServies' => ({required Object nombre}) => 'الفصول المخدومة: ⁨${nombre}⁩',
 			'admin.bibliotheque.fiche.historiqueVide' => 'لا توجد أحداث.',
@@ -19805,8 +19935,6 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.etats.annule' => 'أُلغي الإيداع.',
 			'admin.bibliotheque.import.erreurs.taille' => 'هذا الملف كبير جدًا. اختر ملفًا أخف.',
 			'admin.bibliotheque.import.erreurs.type' => 'نوع هذا الملف غير مدعوم لهذه المادة. اختر ملفًا آخر.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.erreurs.reseau' => 'انقطع الاتصال. لم يتأكد الإيداع: أعد المحاولة.',
 			'admin.bibliotheque.import.erreurs.refuse' => 'رفض الخادم هذا الإيداع. أعد المحاولة أو اختر ملفًا آخر.',
 			'admin.bibliotheque.import.erreurs.empreinte' => 'الملف المستلم لا يطابق الملف المرسل. أعد المحاولة.',
@@ -20281,6 +20409,8 @@ extension on TraductionsAr {
 			'comptable.tresorerie.regle.jusquAObjectif' => 'الإكمال حتى المبلغ المستهدف',
 			'comptable.tresorerie.regle.proposee' => 'اقتراح يتطلب تأكيدك',
 			'comptable.tresorerie.cadence' => 'الوتيرة',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.cadences.clotureCycle' => 'عند كل إقفال دورة',
 			'comptable.tresorerie.cadences.hebdomadaire' => 'كل أسبوع',
 			'comptable.tresorerie.cadences.mensuelle' => 'كل شهر',
@@ -20319,8 +20449,6 @@ extension on TraductionsAr {
 			'comptable.tresorerie.transfert.utiliserPropose' => 'استخدام المبلغ المقترح',
 			'comptable.tresorerie.transfert.erreurMontant' => 'أدخل مبلغًا صحيحًا أكبر من صفر.',
 			'comptable.tresorerie.transfert.verifier' => 'مراجعة الحركة',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.transfert.recapPhrase' => 'راجع المبلغ الدقيق قبل الإرسال.',
 			'comptable.tresorerie.transfert.de' => 'من',
 			'comptable.tresorerie.transfert.vers' => 'إلى',
@@ -20795,6 +20923,8 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.reactiverConfirmer' => 'إعادة التفعيل',
 			'comptable.direction.delegationPanneau.reactiverGarder' => 'إبقاؤها موقوفة',
 			'comptable.direction.delegationPanneau.reactiveeActive' => 'أُعيد تفعيل التفويضات.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.reactiveeExpiree' => 'أُعيد تفعيل التفويضات، لكن التفويض منتهي: جدّده لينطلق من جديد على مدّته.',
 			'comptable.direction.delegationPanneau.reactiverEchec' => 'لم تتأكد إعادة التفعيل: ربما لم يصل الطلب إلى رواية، أو يلزم إعادة التحقق بخطوتين. تحقق من حالة التفويض قبل إعادة المحاولة.',
 			'comptable.direction.delegationPanneau.suspendueTitre' => 'التفويضات موقوفة',
@@ -20833,8 +20963,6 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.exceptionAjouter' => 'إضافة استثناء',
 			'comptable.direction.delegationPanneau.exceptionModifier' => ({required Object libelle}) => 'تعديل استثناء ⁨${libelle}⁩',
 			'comptable.direction.delegationPanneau.exceptionLibelleDefaut' => 'تفويض المحاسب',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.exceptionCoffres' => 'الصناديق المسموحة',
 			'comptable.direction.delegationPanneau.exceptionCoffresAucun' => 'لا صندوق مسموح',
 			'comptable.direction.delegationPanneau.exceptionExclus' => 'المستفيدون المستبعدون',
@@ -21309,6 +21437,8 @@ extension on TraductionsAr {
 			'attente.dossierIncomplet' => 'ما زالت تنقص ملفك بعض الوثائق.',
 			'attente.enVerification' => 'نتحقق من ملفك.',
 			'attente.refuse' => 'رُفض الملف',
+			_ => null,
+		} ?? switch (path) {
 			'attente.suspendu' => 'حسابك موقوف.',
 			'attente.contacterAcademie' => 'التواصل مع الأكاديمية',
 			'attente.deposeLe' => ({required Object date}) => 'أُودع في ⁨${date}⁩',
@@ -21347,8 +21477,6 @@ extension on TraductionsAr {
 			'accords.titre' => 'شروطنا',
 			'accords.intro' => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.',
 			'accords.caseSavoir' => 'قرأت وفهمت ما يجب أن أعرفه.',
-			_ => null,
-		} ?? switch (path) {
 			'accords.sectionContrat' => 'عقدك',
 			'accords.caseContrat' => 'قرأت عقدي وأوافق عليه، بما في ذلك زيارات المراقبة.',
 			'accords.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم تبق أي موافقة للتحديد.', one: 'بقيت موافقة واحدة للتحديد.', two: 'بقيت موافقتان للتحديد.', few: 'بقيت ⁨${n}⁩ موافقات للتحديد.', many: 'بقيت ⁨${n}⁩ موافقة للتحديد.', other: 'بقيت ⁨${n}⁩ موافقة للتحديد.', ), 
@@ -21823,6 +21951,8 @@ extension on TraductionsAr {
 			'dossiers.sousTitre' => 'ادرس الملفات الجاهزة لاتخاذ قرار.',
 			'dossiers.aucun' => 'لا ملف ينتظر الاعتماد.',
 			'dossiers.aucunDetail' => 'ستظهر الملفات الجديدة هنا حين تصبح جاهزة.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.file.chargement' => 'جارٍ تحميل الملفات…',
 			'dossiers.file.erreur' => 'تعذّر تحميل الملفات.',
 			'dossiers.file.horsLigne' => 'أنت غير متصل. لا يمكن تحديث الملفات.',
@@ -21861,8 +21991,6 @@ extension on TraductionsAr {
 			'dossiers.visionneuse.reduire' => 'تصغير',
 			'dossiers.visionneuse.ajuster' => 'ملاءمة الشاشة',
 			'dossiers.visionneuse.infoBulle' => ({required Object action, required Object touche}) => '⁨${action}⁩ (المفتاح ⁨${touche}⁩)',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.visionneuse.documentFictif' => 'وثيقة وهمية',
 			'dossiers.revue.identite' => 'الهوية والملف',
 			'dossiers.revue.pieceNonTransmise' => 'لم تُرسل الوثيقة المطلوبة.',
@@ -22337,6 +22465,8 @@ extension on TraductionsAr {
 			'suiviDemandes.etapes.envoyee' => 'تم إرسال الطلب',
 			'suiviDemandes.etapes.listeAttente' => 'في قائمة الانتظار',
 			'suiviDemandes.etapes.classeValidee' => 'تم اعتماد الفصل',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.etapes.enseignantAffecte' => 'تم تعيين المعلم',
 			'suiviDemandes.etapes.eleveIntegre' => 'الطالب مندمج في الفصل',
 			'suiviDemandes.etapes.coursCommences' => 'بدء الدروس',
@@ -22375,8 +22505,6 @@ extension on TraductionsAr {
 			'suiviDemandes.changement.lien' => 'عرض الفصل الجديد',
 			'suiviDemandes.changement.lienPour' => ({required Object dePrenom}) => 'عرض فصل ⁨${dePrenom}⁩ الجديد',
 			'suiviDemandes.changement.retour' => 'العودة إلى متابعة الطلبات',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.changement.introuvable' => 'لم يعد هذا التغيير معروضًا',
 			'suiviDemandes.changement.introuvableDetail' => 'عودوا إلى المتابعة لمعرفة أين وصلت طلباتكم.',
 			'suiviDemandes.close.retiree' => 'تم سحب الطلب',
@@ -22496,6 +22624,7 @@ extension on TraductionsAr {
 			'recrutement.candidat.comptable.intro' => 'للتسجيل كمحاسب، أدخل رمز الدعوة الذي تلقيته من الإدارة.',
 			'recrutement.candidat.comptable.valideDetail' => 'يمكنك إنشاء ملفك كمحاسب.',
 			'recrutement.candidat.comptable.indisponible' => 'سيتوفر التحقق من رموز المحاسبين عند ربط الخادم.',
+			'sansDonnees.mesDonnees' => 'تعذّر تحميل معلومات حذف الحساب',
 			'sansDonnees.paiementsRecus' => 'تعذّر تحميل مدفوعاتك المستلمة',
 			'sansDonnees.revenus' => 'تعذّر تحميل مداخيلك',
 			'sansDonnees.aujourdhui' => 'تعذّر تحميل لوحة اليوم',
