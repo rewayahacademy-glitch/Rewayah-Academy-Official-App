@@ -1,5 +1,7 @@
 // Les paiements recus hors application, saisis par la direction (passation
 // du 17/10/2026, point 3 ; FAC-C-01, migration 20261017172000 ; FI-BR-14).
+// Saisis par la comptabilite, ils attendent la validation de la direction
+// (FAC-D-01, migration 20261018090000) : l'issue rendue le dit.
 //
 // La source rend la liste des eleves avec leur reste a payer, arrete par le
 // serveur ; l'ecran n'additionne rien (FI6). Enregistrer un paiement le
@@ -43,18 +45,39 @@ class ElevePourPaiement {
   final Montant resteAPayer;
 }
 
+/// Ce que la source a fait d'une saisie (FAC-D-01).
+enum IssuePaiement {
+  /// Credite a l'eleve : la direction a saisi, ou a valide la saisie.
+  enregistre,
+
+  /// Saisi par la comptabilite : rien n'est credite avant la validation de
+  /// la direction (dossier maitre, « Crediter apres paiement manuel »).
+  validationDemandee,
+
+  /// La direction a refuse la saisie, avec un motif : rien n'est credite.
+  refuse,
+}
+
 /// Un paiement enregistre, tel que la source le rend.
 @immutable
 class PaiementEnregistre {
   /// Cree le resultat.
   const PaiementEnregistre({
-    required this.paiementId,
     required this.nouveau,
+    this.issue = IssuePaiement.enregistre,
+    this.paiementId,
+    this.motifRefus,
     this.finance,
   });
 
-  /// L'identifiant de l'ecriture.
-  final String paiementId;
+  /// Ce que la source a fait de la saisie.
+  final IssuePaiement issue;
+
+  /// L'identifiant de l'ecriture, une fois creditee.
+  final String? paiementId;
+
+  /// Le motif du refus de la direction, quand elle a refuse.
+  final String? motifRefus;
 
   /// Faux quand la meme saisie avait deja ete enregistree.
   final bool nouveau;

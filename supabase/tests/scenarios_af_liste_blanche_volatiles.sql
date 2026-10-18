@@ -114,6 +114,8 @@ declare
     'enseignants_pour_classe(uuid)',
     'enseignants_pour(uuid)',
     'entrer_observation(uuid,text)',
+    -- FAC-D-01 (18/10) : la direction decide les demandes de la comptabilite.
+    'finance_validation_decider(uuid,text,text,uuid)',
     'fusionner_classes(uuid,uuid,text)',
     'geler_archive_seance(uuid,text,boolean)',
     'guard_app_config_history()',

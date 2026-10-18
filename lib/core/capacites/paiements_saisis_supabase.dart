@@ -1,5 +1,6 @@
 // Adaptateur FI-BR-14 : la saisie des paiements recus, servie par les RPC de
-// FAC-C-01 (migration 20261017172000).
+// FAC-C-01 (migration 20261017172000) ; l'issue (credite, validation
+// demandee, refuse) vient de FAC-D-01 (migration 20261018090000).
 //
 // **Aucun calcul** : le reste a payer et l'etat financier apres paiement
 // sont arretes par le serveur. Un refus de droits (42501) ou de valeurs
@@ -117,8 +118,20 @@ ElevePourPaiement elevePourPaiementJson(Object? brut) {
 PaiementEnregistre paiementEnregistreJson(Object? brut) {
   final Map<String, dynamic> j = objetJson(brut, 'paiement');
   final Object? finance = j['finance'];
+  final Object? etat = j['etat'];
+  final IssuePaiement issue = switch (etat) {
+    // Avant FAC-D-01, la source ne rendait pas d'etat : credite.
+    null || 'enregistre' => IssuePaiement.enregistre,
+    'validation_demandee' => IssuePaiement.validationDemandee,
+    'refusee' => IssuePaiement.refuse,
+    _ => throw FormatException('etat de paiement inconnu: $etat'),
+  };
   return PaiementEnregistre(
-    paiementId: texteJson(j, 'paiement'),
+    issue: issue,
+    paiementId: issue == IssuePaiement.enregistre
+        ? texteJson(j, 'paiement')
+        : texteNullableJson(j, 'paiement'),
+    motifRefus: texteNullableJson(j, 'motif'),
     nouveau: booleenJson(j, 'nouveau'),
     finance: finance == null ? null : financesProfilJson(finance),
   );

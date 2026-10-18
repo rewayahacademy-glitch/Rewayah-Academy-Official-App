@@ -42,12 +42,14 @@ import 'core/capacites/port_progression_famille.dart';
 import 'core/capacites/port_revenus_enseignant.dart';
 import 'core/capacites/port_series_tresorerie.dart';
 import 'core/capacites/port_support.dart';
+import 'core/capacites/port_validations_finance.dart';
 import 'core/capacites/profil_eleve_titulaire_supabase.dart';
 import 'core/capacites/progression_famille_supabase.dart';
 import 'core/capacites/revenus_enseignant_supabase.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
 import 'core/capacites/series_tresorerie_supabase.dart';
 import 'core/capacites/support_supabase.dart';
+import 'core/capacites/validations_finance_supabase.dart';
 import 'core/communications/communications_supabase.dart';
 import 'core/communications/libelles_communication_slang.dart';
 import 'core/config/ecran_configuration_absente.dart';
@@ -265,6 +267,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // direction et la comptabilite, attribues a un eleve.
   portPaiementsSaisisProvider.overrideWithValue(
     PaiementsSaisisSupabase(Supabase.instance.client),
+  ),
+  // Validations de la direction (FAC-D-01, migration 20261018090000) : un
+  // paiement saisi par la comptabilite est credite apres validation.
+  portValidationsFinanceProvider.overrideWithValue(
+    ValidationsFinanceSupabase(Supabase.instance.client),
   ),
   portHistoriqueObservationsProvider.overrideWithValue(
     HistoriqueObservationsSupabase(() => Supabase.instance.client),

@@ -15,6 +15,12 @@
 // regle », « Il manque encore », « deja enregistre », refus, ou issue
 // inconnue (D5) ; la cle d'idempotence est tiree une fois par fiche, donc
 // « Reessayer » ne compte jamais deux fois le meme paiement.
+//
+// FAC-D-01 (dossier maitre, « Crediter apres paiement manuel ») : la saisie
+// de la comptabilite n'est creditee qu'apres la validation de la direction.
+// L'issue rendue le dit (« Validation demandee », ou refus avec motif), et
+// les demandes en attente ou refusees recemment s'affichent au-dessus de la
+// liste ; la direction les decide dans l'onglet « A valider ».
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,6 +28,8 @@ import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 import 'package:uuid/uuid.dart';
 
 import '../../../core/capacites/port_paiements_saisis.dart';
+import '../../../core/capacites/port_validations_finance.dart';
+import '../../../core/comptable/statuts_comptable.dart';
 import '../../../core/finance/finances_profil.dart';
 import '../../../core/finance/format_montant.dart';
 import '../../../core/finance/montant.dart';
@@ -40,6 +48,9 @@ import '../../../core/widgets/ligne_cle_valeur.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/setting_row.dart';
 import '../../../core/widgets/status_pill.dart';
+import '../a_valider/a_valider_page.dart'
+    show CarteDemandeValidation, demandesValidationProvider;
+import '../a_valider/decision_validation.dart' show ouvrirDecisionValidation;
 import '../reserve_delegation/composants_politique.dart' show BlocPolitique;
 import 'factures_mois.dart';
 
@@ -50,6 +61,21 @@ final FutureProvider<List<ElevePourPaiement>> elevesPourPaiementProvider =
       // Pas de retentative silencieuse derriere « Reessayer ».
       retry: (int _, Object _) => null,
       dependencies: <ProviderOrFamily>[portPaiementsSaisisProvider],
+    );
+
+/// Les paiements saisis qui attendent la direction, ou qu'elle a refuses,
+/// rendus par la source (la comptabilite : les siens ; la direction : tous).
+final FutureProvider<List<DemandeValidation>> paiementsAValiderProvider =
+    FutureProvider<List<DemandeValidation>>(
+      (Ref ref) => ref
+          .watch(portValidationsFinanceProvider)
+          .demandes(
+            const FiltreDemandesValidation(
+              nature: NatureDemandeValidation.paiementRecu,
+            ),
+          ),
+      retry: (int _, Object _) => null,
+      dependencies: <ProviderOrFamily>[portValidationsFinanceProvider],
     );
 
 /// Le nom affiche d'un eleve : prenom et nom.
@@ -97,6 +123,9 @@ class PaiementsBloc extends ConsumerWidget {
   /// La cle de la ligne d'un eleve.
   static Key cleEleve(String id) => ValueKey<String>('paiements-$id');
 
+  /// La cle de la carte d'un paiement saisi a valider ou refuse.
+  static Key cleDemande(String id) => ValueKey<String>('paiements-demande-$id');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AppPalette palette = AppPalette.of(context);
@@ -120,6 +149,7 @@ class PaiementsBloc extends ConsumerWidget {
           onEmises: () => ref.invalidate(elevesPourPaiementProvider),
         ),
         Ecart.vSection,
+        const _PaiementsAValider(),
         BlocPolitique<List<ElevePourPaiement>>(
           fournisseur: elevesPourPaiementProvider,
           construire: (List<ElevePourPaiement> eleves) =>
@@ -141,7 +171,11 @@ class _Liste extends ConsumerWidget {
     ElevePourPaiement e,
   ) async {
     final bool change = await ouvrirSaisiePaiement(context, e);
-    if (change) ref.invalidate(elevesPourPaiementProvider);
+    if (change) {
+      ref
+        ..invalidate(elevesPourPaiementProvider)
+        ..invalidate(paiementsAValiderProvider);
+    }
   }
 
   @override
@@ -196,6 +230,77 @@ class _Liste extends ConsumerWidget {
   }
 }
 
+/// Le nombre de refus recents montres sous les demandes en attente.
+const int _refusMontres = 5;
+
+/// Les paiements en attente de validation, puis les refus recents. Rien tant
+/// qu'il n'y en a pas : la liste des eleves, juste dessous, dit deja le
+/// chargement, l'erreur et le hors ligne (EA-HL-DOUBLE-1).
+class _PaiementsAValider extends ConsumerWidget {
+  const _PaiementsAValider();
+
+  Future<void> _ouvrir(
+    BuildContext context,
+    WidgetRef ref,
+    DemandeValidation d,
+  ) async {
+    final bool change = await ouvrirDecisionValidation(context, d);
+    if (change) {
+      ref
+        ..invalidate(paiementsAValiderProvider)
+        ..invalidate(demandesValidationProvider)
+        ..invalidate(elevesPourPaiementProvider);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<DemandeValidation> demandes =
+        ref.watch(paiementsAValiderProvider).value ??
+        const <DemandeValidation>[];
+    final List<DemandeValidation> enAttente = <DemandeValidation>[
+      for (final DemandeValidation d in demandes)
+        if (d.etat == EtatDemandeValidation.enAttente) d,
+    ];
+    final List<DemandeValidation> refusees = <DemandeValidation>[
+      for (final DemandeValidation d in demandes)
+        if (d.etat == EtatDemandeValidation.refusee) d,
+    ].take(_refusMontres).toList();
+    if (enAttente.isEmpty && refusees.isEmpty) return const SizedBox.shrink();
+    final p = t.admin.finance.pai;
+    Widget cartes(List<DemandeValidation> liste) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        for (int i = 0; i < liste.length; i++) ...<Widget>[
+          if (i > 0) Ecart.vLg,
+          CarteDemandeValidation(
+            key: PaiementsBloc.cleDemande(liste[i].id),
+            demande: liste[i],
+            onOuvrir: () => _ouvrir(context, ref, liste[i]),
+          ),
+        ],
+      ],
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (enAttente.isNotEmpty) ...<Widget>[
+          SectionHeader(titre: p.enAttente, compteur: enAttente.length),
+          cartes(enAttente),
+          Ecart.vSection,
+        ],
+        if (refusees.isNotEmpty) ...<Widget>[
+          SectionHeader(titre: p.refusesRecemment, compteur: refusees.length),
+          cartes(refusees),
+          Ecart.vSection,
+        ],
+      ],
+    );
+  }
+}
+
 /// Ouvre la fiche de saisie pour [eleve] ; rend vrai si la liste est a
 /// relire.
 Future<bool> ouvrirSaisiePaiement(
@@ -239,6 +344,9 @@ class FeuillePaiement extends ConsumerStatefulWidget {
 
   /// La cle du bouton qui enregistre.
   static const Key cleEnregistrer = ValueKey<String>('paiement-enregistrer');
+
+  /// La cle du bandeau « Validation demandee ».
+  static const Key cleDemande = ValueKey<String>('paiement-demande');
 
   @override
   ConsumerState<FeuillePaiement> createState() => _FeuillePaiementState();
@@ -369,6 +477,29 @@ class _FeuillePaiementState extends ConsumerState<FeuillePaiement> {
     switch (_phase) {
       case _Phase.faite:
         final PaiementEnregistre r = _resultat!;
+        switch (r.issue) {
+          case IssuePaiement.validationDemandee:
+            return <Widget>[
+              BandeauAttention(
+                key: FeuillePaiement.cleDemande,
+                titre: p.demandeTitre,
+                message: r.nouveau
+                    ? p.demandePhrase(prenom: prenom)
+                    : p.demandeDejaFaite,
+                ton: TonEtat.avertissement,
+              ),
+            ];
+          case IssuePaiement.refuse:
+            return <Widget>[
+              BandeauAttention(
+                titre: p.refuseTitre,
+                message: p.refusePhrase(motif: r.motifRefus ?? ''),
+                ton: TonEtat.alerte,
+              ),
+            ];
+          case IssuePaiement.enregistre:
+            break;
+        }
         final FinancesProfil? f = r.finance;
         final Montant? manque = f?.manque;
         final String message = !r.nouveau

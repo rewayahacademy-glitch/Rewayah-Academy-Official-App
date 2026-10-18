@@ -9,7 +9,10 @@
 // - la liste se relit apres un paiement ;
 // - les etats : chargement, indisponible, erreur, vide ;
 // - 320 px texte x2 et 1440 px, clair et sombre, LTR et RTL ;
-// - la lecture d'une saisie de montant.
+// - la lecture d'une saisie de montant ;
+// - FAC-D-01 : la saisie de la comptabilite attend la direction
+//   (« Validation demandee », refus avec motif), et les demandes en attente
+//   ou refusees s'affichent au-dessus de la liste.
 
 import 'dart:async';
 import 'dart:convert';
@@ -20,7 +23,10 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_saisis.dart';
+import 'package:rewayah_academy/core/capacites/port_validations_finance.dart';
 import 'package:rewayah_academy/core/capacites/rpc_finance_supabase.dart';
+import 'package:rewayah_academy/core/comptable/modeles_comptable.dart';
+import 'package:rewayah_academy/core/comptable/statuts_comptable.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
@@ -131,8 +137,60 @@ PaiementEnregistre _fait({
   finance: financesProfilJson(_finance(etat: etat, manque: manque)),
 );
 
+/// Les demandes de validation rendues par la source.
+class _Validations implements PortValidationsFinance {
+  _Validations(this.liste);
+
+  final List<DemandeValidation> liste;
+  final List<FiltreDemandesValidation> filtres = <FiltreDemandesValidation>[];
+
+  @override
+  Future<List<DemandeValidation>> demandes(FiltreDemandesValidation filtre) {
+    filtres.add(filtre);
+    return Future<List<DemandeValidation>>.value(liste);
+  }
+
+  @override
+  Future<DemandeValidation> decider({
+    required String demandeId,
+    required DecisionValidation decision,
+    required String cleIdempotence,
+    String? motif,
+  }) => throw UnimplementedError();
+
+  @override
+  Future<List<EntreeJournal>> journal(String demandeId) =>
+      Future<List<EntreeJournal>>.value(const <EntreeJournal>[]);
+}
+
+DemandeValidation _demande(String id, EtatDemandeValidation etat) =>
+    DemandeValidation(
+      id: id,
+      nature: NatureDemandeValidation.paiementRecu,
+      date: DateTime(2026, 10, 18, 9),
+      demandeur: 'Compta FD',
+      objet: 'Bilal F1 (RA-26-4817)',
+      objetId: 'e2',
+      montant: const Montant(5000, 'USD'),
+      raison: RaisonBlocage.paiementHorsApplication,
+      etat: etat,
+      decideur: etat == EtatDemandeValidation.enAttente ? null : 'Direction',
+      dateDecision: etat == EtatDemandeValidation.enAttente
+          ? null
+          : DateTime(2026, 10, 18, 10),
+      motifDecision: etat == EtatDemandeValidation.refusee
+          ? 'Montant a verifier a la source'
+          : null,
+      permissions: const PermissionsFinance(
+        blocages: <ActionFinance, RaisonBlocage>{
+          ActionFinance.approuver: RaisonBlocage.autoPaiement,
+        },
+      ),
+    );
+
 Widget _hote(
   PortPaiementsSaisis port, {
+  PortValidationsFinance? validations,
   double echelle = 1,
   Brightness luminosite = Brightness.light,
   TextDirection sens = TextDirection.ltr,
@@ -143,6 +201,8 @@ Widget _hote(
     horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(horsLigne)),
     sansPersonneConnectee(),
     portPaiementsSaisisProvider.overrideWithValue(port),
+    if (validations != null)
+      portValidationsFinanceProvider.overrideWithValue(validations),
   ],
   child: TranslationProvider(
     child: MaterialApp(
@@ -539,6 +599,146 @@ void main() {
           findsOneWidget,
         );
         expect(find.byKey(PaiementsBloc.cleEleve('e2')), findsNothing);
+      });
+    }
+  });
+
+  group('validation de la direction (FAC-D-01)', () {
+    testWidgets('la comptabilite saisit : validation demandee, rien de '
+        'credite, la liste des demandes se relit', (WidgetTester tester) async {
+      final _Validations validations = _Validations(<DemandeValidation>[]);
+      await tester.pumpWidget(
+        _hote(
+          _Port(
+            reponses: <Object>[
+              const PaiementEnregistre(
+                issue: IssuePaiement.validationDemandee,
+                nouveau: true,
+              ),
+            ],
+          ),
+          validations: validations,
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        validations.filtres.single.nature,
+        NatureDemandeValidation.paiementRecu,
+      );
+      await _ouvrirBilal(tester);
+      await _enregistrer(tester);
+      expect(find.byKey(FeuillePaiement.cleDemande), findsOneWidget);
+      expect(find.text(p.demandeTitre), findsOneWidget);
+      expect(find.text(p.demandePhrase(prenom: 'Bilal')), findsOneWidget);
+      expect(find.text(p.faitTitre), findsNothing);
+      expect(find.byKey(FeuillePaiement.cleManque), findsNothing);
+      await _toucher(tester, find.text(p.fermer));
+      expect(validations.filtres, hasLength(2));
+    });
+
+    testWidgets('la meme saisie renvoyee : elle attend deja', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        _hote(
+          _Port(
+            reponses: <Object>[
+              const PaiementEnregistre(
+                issue: IssuePaiement.validationDemandee,
+                nouveau: false,
+              ),
+            ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await _ouvrirBilal(tester);
+      await _enregistrer(tester);
+      expect(find.text(p.demandeDejaFaite), findsOneWidget);
+    });
+
+    testWidgets('refusee par la direction : le motif, rien de credite', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        _hote(
+          _Port(
+            reponses: <Object>[
+              const PaiementEnregistre(
+                issue: IssuePaiement.refuse,
+                nouveau: false,
+                motifRefus: 'Justificatif manquant',
+              ),
+            ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await _ouvrirBilal(tester);
+      await _enregistrer(tester);
+      expect(find.text(p.refuseTitre), findsOneWidget);
+      expect(
+        find.text(p.refusePhrase(motif: 'Justificatif manquant')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('en attente puis refusees recemment, au-dessus de la liste', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        _hote(
+          _Port(),
+          validations: _Validations(<DemandeValidation>[
+            _demande('v1', EtatDemandeValidation.enAttente),
+            _demande('v2', EtatDemandeValidation.refusee),
+            _demande('v3', EtatDemandeValidation.validee),
+          ]),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(p.enAttente), findsOneWidget);
+      expect(find.text(p.refusesRecemment), findsOneWidget);
+      expect(find.byKey(PaiementsBloc.cleDemande('v1')), findsOneWidget);
+      expect(find.byKey(PaiementsBloc.cleDemande('v2')), findsOneWidget);
+      // Une demande validee est creditee : elle vit dans la liste des eleves.
+      expect(find.byKey(PaiementsBloc.cleDemande('v3')), findsNothing);
+      final double attente = tester
+          .getTopLeft(find.byKey(PaiementsBloc.cleDemande('v1')))
+          .dy;
+      final double eleve = tester
+          .getTopLeft(find.byKey(PaiementsBloc.cleEleve('e2')))
+          .dy;
+      expect(attente, lessThan(eleve));
+    });
+
+    testWidgets('aucune demande : aucune section', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        _hote(_Port(), validations: _Validations(<DemandeValidation>[])),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(p.enAttente), findsNothing);
+      expect(find.text(p.refusesRecemment), findsNothing);
+    });
+
+    for (final Brightness luminosite in Brightness.values) {
+      testWidgets('320 px, texte x2, ${luminosite.name} : demandes sans '
+          'debordement', (WidgetTester tester) async {
+        _taille(tester, const Size(320, 640));
+        await tester.pumpWidget(
+          _hote(
+            _Port(),
+            validations: _Validations(<DemandeValidation>[
+              _demande('v1', EtatDemandeValidation.enAttente),
+              _demande('v2', EtatDemandeValidation.refusee),
+            ]),
+            echelle: 2,
+            luminosite: luminosite,
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text(p.enAttente), findsOneWidget);
       });
     }
   });

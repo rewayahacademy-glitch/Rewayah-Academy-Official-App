@@ -60,8 +60,8 @@ Chaque point : présent dans le code, testé localement ; les migrations sont en
 
 - La vérification automatique de GitHub ne rejoue que 15 contrôles de la base sur 96. Un script prêt (`tool/rejouer_scenarios.sh`) les rejoue tous : il suffit qu'une personne autorisée l'ajoute comme une étape de `.github/workflows/ci.yml` (les agents n'ont pas le droit de toucher ce dossier).
 - La base de test est à jour : la version de test peut être mise en ligne avec le bouton « Run workflow » de `flutter-deploy.yml`, depuis la branche d'intégration.
-- Une décision vous appartient : aujourd'hui la comptabilité enregistre un paiement directement ; un document de septembre prévoyait que le comptable prépare et que la direction valide. Sans réponse, la règle actuelle reste.
 
 ## En plus de la liste
 
 - Le bloc hors ligne des écrans du comptable, de la finance de la direction et des revenus de l'enseignant dit ce qui manque au lieu de redire « hors ligne » (EA-HL-DOUBLE-1), comme sur le Foyer.
+- Paiement saisi par le comptable (18/10) : la question posée la veille était déjà tranchée par le dossier maître du 14/10 (« Permissions par rôle », ligne « Créditer après paiement manuel » : le comptable rapproche et soumet, la direction approuve). Appliqué : la saisie du comptable arrive dans « À valider » de la direction et n'est créditée qu'après sa validation ; un refus porte un motif que le comptable lit ; la direction qui saisit elle-même crédite tout de suite (lancement avec une seule personne, audit). Migration `20261018090000_fac_d_01_validation_paiements.sql`, appliquée sur la base de test avec empreintes identiques ; scénario `scenarios_fac_d_validation_paiements.sql` ; 97 scénarios sur 97 verts. Leçon : toute question au directeur se vérifie d'abord dans `docs/current/sources-directeur-2026-10/`.

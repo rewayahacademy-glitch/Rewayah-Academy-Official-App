@@ -163,8 +163,9 @@ SELECT pg_temp.vrai(current_setting('test.p2')::jsonb #>> '{finance,etat}' = 'fi
   'saisie : le complement de 20 USD finance le mois, solde 0');
 
 -- Yasmine, sans essai consomme : un premier paiement la rend payante et
--- facture son mois (rang 2 du foyer).
-SELECT pg_temp.qui('fc000000-0000-4000-8000-0000000000c1', 'accountant');
+-- facture son mois (rang 2 du foyer). Saisi par la direction : depuis
+-- FAC-D-01, la saisie de la comptabilite attend sa validation
+-- (`scenarios_fac_d_validation_paiements.sql`).
 SELECT set_config('test.p3', public.enregistrer_paiement('fc000000-0000-4000-8000-0000000000e1', 5000, 'USD', NULL,
   'fc000000-0000-4000-8000-00000000c003')::text, true);
 SELECT pg_temp.vrai(current_setting('test.p3')::jsonb #>> '{finance,etat}' = 'finance',

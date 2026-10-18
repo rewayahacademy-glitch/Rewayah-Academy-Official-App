@@ -3525,7 +3525,7 @@
       "aValider": "À valider",
       "paiements": "Paiements",
       "pai": {
-        "sousTitre": "Un paiement reçu hors de l'application (virement, espèces) s'enregistre ici, pour un élève. Son mois est alors facturé, puis réglé si le paiement le couvre.",
+        "sousTitre": "Un paiement reçu hors de l'application (virement, espèces) s'enregistre ici, pour un élève. Son mois est alors facturé, puis réglé si le paiement le couvre. Saisi par la comptabilité, il est crédité après la validation de la direction.",
         "aRegulariser": "À régulariser",
         "aJour": "À jour",
         "aJourValeur": "À jour",
@@ -3553,7 +3553,14 @@
         "refusDroits": "Seules la direction et la comptabilité peuvent enregistrer un paiement. Rien n'a été enregistré.",
         "refusInvalide": "Le montant, la devise ou l'élève n'a pas été accepté. Rien n'a été enregistré\u00a0: vérifiez le montant et réessayez depuis la liste.",
         "inconnuTitre": "Paiement non confirmé",
-        "inconnuPhrase": "La réponse n'est pas arrivée. Touchez «\u00a0Réessayer\u00a0»\u00a0: le même paiement ne sera jamais compté deux fois."
+        "inconnuPhrase": "La réponse n'est pas arrivée. Touchez «\u00a0Réessayer\u00a0»\u00a0: le même paiement ne sera jamais compté deux fois.",
+        "demandeTitre": "Validation demandée",
+        "demandePhrase": "Le paiement est transmis à la direction. Il sera crédité à {prenom} dès qu'elle l'aura validé.",
+        "demandeDejaFaite": "Ce paiement attend déjà la validation de la direction\u00a0: rien n'a été ajouté.",
+        "refuseTitre": "Paiement refusé par la direction",
+        "refusePhrase": "Rien n'a été crédité. Motif\u00a0: {motif}",
+        "enAttente": "En attente de validation",
+        "refusesRecemment": "Refusés récemment"
       },
       "fac": {
         "factures": "Factures du mois",
@@ -8942,7 +8949,8 @@
         "sortieEnAttenteDelai": "Sortie en attente du délai de sécurité",
         "coffreNonAutorise": "Coffre hors de la délégation",
         "beneficiaireExclu": "Bénéficiaire exclu de la délégation",
-        "plafondExceptionDepasse": "Au-dessus du plafond de cette délégation"
+        "plafondExceptionDepasse": "Au-dessus du plafond de cette délégation",
+        "paiementHorsApplication": "Paiement reçu hors de l'application\u00a0: la direction le valide avant qu'il soit crédité à l'élève"
       }
     },
     "alertes": {
@@ -9571,7 +9579,8 @@
         "retraitReserve": "Retrait de la Réserve stratégique",
         "obligationAApprouver": "Obligation ponctuelle",
         "payoutDuComptable": "Paie du Comptable",
-        "sortieCoffreProtege": "Sortie d'un coffre protégé"
+        "sortieCoffreProtege": "Sortie d'un coffre protégé",
+        "paiementRecu": "Paiement reçu d'une famille"
       },
       "demandePar": "Demandée par {demandeur} le {date}",
       "valideePar": "Validée par {decideur} le {date}",
@@ -9626,7 +9635,13 @@
       "suiviValidee": "Validée par {decideur} le {date}.",
       "suiviRefusee": "Refusée par {decideur} le {date}. Motif\u00a0: {motif}",
       "erreurSuivi": "Nous n'avons pas pu lire l'état de la demande de validation. Réessayez dans un instant.",
-      "reessayer": "Réessayer"
+      "reessayer": "Réessayer",
+      "reference": "Référence du paiement\u00a0: {reference}",
+      "journal": {
+        "demandee": "Validation demandée",
+        "validee": "Demande validée",
+        "refusee": "Demande refusée"
+      }
     },
     "direction": {
       "versionDepuis": "Version {version}, en vigueur depuis le {date}",
