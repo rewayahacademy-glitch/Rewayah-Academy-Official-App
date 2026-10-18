@@ -1748,9 +1748,15 @@ void main() {
           }
         }
       }
-      // Seule la demonstration rend un suivi ; aucun ecran n'en fabrique.
+      // Seules la demonstration et l'adaptateur de la source (FI-BR-06, qui
+      // decode la reponse du serveur) rendent un suivi ; aucun ecran n'en
+      // fabrique.
       expect(
-        suivis.where((String s) => !s.startsWith('lib/features/demo/')),
+        suivis.where(
+          (String s) =>
+              !s.startsWith('lib/features/demo/') &&
+              !s.startsWith('lib/core/capacites/recharge_foyer_supabase.dart:'),
+        ),
         isEmpty,
       );
       // La recharge ne conclut rien : elle ne lit ni n'ecrit un etat final.
