@@ -2298,17 +2298,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(_saisie(tester, 'tarifEnfant'), '${v2.tarifEnfant.mineur ~/ 100}');
       expect(_saisie(tester, 'tarifAdulte'), '${v2.tarifAdulte.mineur ~/ 100}');
-      expect(
-        find.descendant(
-          of: find.byKey(
-            PolitiquesCommercialesContenu.champKey('tauxEleveEnfant'),
-          ),
-          matching: find.text(
-            pol.parHeure(montant: formaterMontant(v2.tauxEleveHeureEnfant!)),
-          ),
-        ),
-        findsOneWidget,
-      );
+      // La paie de la demonstration se lit dans un champ modifiable.
+      expect(_saisie(tester, 'tauxEleveEnfant'), '0,95');
       expect(tester.takeException(), isNull);
     });
 
