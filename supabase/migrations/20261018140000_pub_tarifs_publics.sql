@@ -27,6 +27,29 @@ ALTER TABLE public.politiques_commerciales
 COMMENT ON COLUMN public.politiques_commerciales.age_formule_adulte IS
   'Age a partir duquel la formule adulte s''applique (18 au 18/10/2026).';
 
+-- Une nouvelle version publiee sans cet age herite de la version precedente.
+CREATE FUNCTION private.pub_age_formule_herite()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+BEGIN
+  IF NEW.age_formule_adulte IS NULL THEN
+    SELECT p.age_formule_adulte INTO NEW.age_formule_adulte
+      FROM public.politiques_commerciales p
+     WHERE p.date_effet <= NEW.date_effet
+     ORDER BY p.date_effet DESC
+     LIMIT 1;
+  END IF;
+  RETURN NEW;
+END;
+$function$;
+REVOKE ALL ON FUNCTION private.pub_age_formule_herite() FROM PUBLIC, anon, authenticated;
+CREATE TRIGGER politiques_age_formule_herite
+  BEFORE INSERT ON public.politiques_commerciales
+  FOR EACH ROW EXECUTE FUNCTION private.pub_age_formule_herite();
+
 -- Une politique, au format public (liste blanche).
 CREATE FUNCTION private.pub_tarifs_politique(p public.politiques_commerciales)
 RETURNS jsonb

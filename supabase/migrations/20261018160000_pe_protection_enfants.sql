@@ -367,7 +367,8 @@ CREATE POLICY contract_acceptances_code_conduite_enseignant
   WITH CHECK (
     contract_kind <> 'teacher_conduct_code'
     OR coalesce(
-      public.app_role() = 'teacher'::public.app_role
+      public.app_account_valid()
+      AND public.app_role() = 'teacher'::public.app_role
       AND version = public.code_conduite_version_requise(),
       false)
   );
