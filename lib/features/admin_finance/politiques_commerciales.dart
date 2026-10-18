@@ -191,6 +191,19 @@ enum _Nature {
 
   /// Un repere de marge : saisi en pourcentage entier, rendu en pour mille.
   pourcent,
+
+  /// Une remise de rang en pour mille du tarif : saisie en pourcentage
+  /// entier, « Prix normal » quand le rang n'en a aucune.
+  remisePourMille,
+
+  /// Une duree en minutes (seance due).
+  minutes,
+
+  /// Une duree en mois (bourse).
+  mois,
+
+  /// Un jour du mois (suspension).
+  jourDuMois,
 }
 
 /// Un parametre de la politique : son libelle, sa consequence (K-58), sa
@@ -227,6 +240,10 @@ class _Champ {
   /// (aide Internet, montant configurable, guide §1.4).
   final bool facultatif;
 
+  /// Vrai quand la valeur se saisit en pourcentage entier (pour mille).
+  bool get _enPourcent =>
+      nature == _Nature.pourcent || nature == _Nature.remisePourMille;
+
   bool get estMontant =>
       nature == _Nature.montant ||
       nature == _Nature.montantHoraire ||
@@ -238,7 +255,7 @@ class _Champ {
   /// reste alors en lecture.
   String? get saisieInitiale {
     final Object? v = lue;
-    if (v is int && nature == _Nature.pourcent) {
+    if (v is int && _enPourcent) {
       // Un pour mille qui n'est pas un pourcentage entier reste en lecture.
       return v % 10 == 0 ? '${v ~/ 10}' : null;
     }
@@ -260,7 +277,7 @@ class _Champ {
 
   /// La valeur d'une saisie [unites] (deja validee), dans la forme du port.
   Object depuisSaisie(int unites) {
-    if (nature == _Nature.pourcent) return unites * 10;
+    if (_enPourcent) return unites * 10;
     final String? d = deviseMontant;
     if (estMontant && d != null) {
       return montantDepuisUnites(
@@ -471,7 +488,16 @@ class _PolitiquesCommercialesContenuState
             return pol.erreurMargeStretch(forte: _texteValeur(forte, c.nature));
           }
         }
+      case 'dureeDueEnfant' || 'dureeDueAdulte':
+        if (s < 1 || s > 240) return pol.erreurDureeDue;
+      case 'bourseDuree':
+        if (s < 1 || s > 24) return pol.erreurBourseDuree;
+      case 'suspension':
+        if (s < 1 || s > 28) return pol.erreurSuspension;
       default:
+        if (c._enPourcent && s > 100) {
+          return pol.erreurPourcentMax;
+        }
         if (c.nature == _Nature.remise && v is Montant) {
           // La remise ne depasse aucun tarif auquel elle s'applique.
           for (final String id in <String>['tarifEnfant', 'tarifAdulte']) {
@@ -563,9 +589,154 @@ class _PolitiquesCommercialesContenuState
           consequence: i == rangs.length - 1
               ? pol.remiseRangSuivantsDetail
               : pol.remiseRangDetail,
-          nature: _Nature.remise,
-          lue: rangs[i].remise,
-          active: widget.active.remisePourRang(rangs[i].aPartirDuRang),
+          nature: rangs[i].pourMille != null
+              ? _Nature.remisePourMille
+              : _Nature.remise,
+          lue: rangs[i].pourMille ?? rangs[i].remise,
+          active: _remiseActive(rangs[i]),
+        ),
+    ];
+  }
+
+  /// La remise de la version active pour le rang de [r], telle qu'elle est
+  /// (montant ou pour mille), ou `null` quand l'active n'en a aucune.
+  Object? _remiseActive(RemiseRang r) {
+    final RemiseRang? a = widget.active.remiseRangPour(r.aPartirDuRang);
+    return a?.pourMille ?? a?.remise;
+  }
+
+  /// Les remises du 18/10/2026 au-dela du rang (prepaiement, parrainage,
+  /// bourse, plafond de cumul) : seulement quand la version les porte.
+  List<_Champ> _autresRemises() {
+    final pol = t.admin.finance.pol;
+    final PolitiqueCommerciale a = widget.active;
+    return <_Champ>[
+      if (_lue.prepaiementTrimestrielPourMille != null)
+        _Champ(
+          id: 'prepaiementTrimestriel',
+          libelle: pol.prepaiementTrimestriel,
+          consequence: pol.prepaiementTrimestrielDetail,
+          nature: _Nature.pourcent,
+          lue: _lue.prepaiementTrimestrielPourMille,
+          active: a.prepaiementTrimestrielPourMille,
+        ),
+      if (_lue.prepaiementAnnuelPourMille != null)
+        _Champ(
+          id: 'prepaiementAnnuel',
+          libelle: pol.prepaiementAnnuel,
+          consequence: pol.prepaiementAnnuelDetail,
+          nature: _Nature.pourcent,
+          lue: _lue.prepaiementAnnuelPourMille,
+          active: a.prepaiementAnnuelPourMille,
+        ),
+      if (_lue.cumulMaxPourMille != null)
+        _Champ(
+          id: 'cumulMax',
+          libelle: pol.cumulMax,
+          consequence: pol.cumulMaxDetail,
+          nature: _Nature.pourcent,
+          lue: _lue.cumulMaxPourMille,
+          active: a.cumulMaxPourMille,
+        ),
+      if (_lue.parrainageCredit != null)
+        _Champ(
+          id: 'parrainage',
+          libelle: pol.parrainage,
+          consequence: pol.parrainageDetail,
+          nature: _Nature.montant,
+          lue: _lue.parrainageCredit,
+          active: a.parrainageCredit,
+        ),
+      if (_lue.boursePourMille != null)
+        _Champ(
+          id: 'bourse',
+          libelle: pol.bourse,
+          consequence: pol.bourseDetail,
+          nature: _Nature.pourcent,
+          lue: _lue.boursePourMille,
+          active: a.boursePourMille,
+        ),
+      if (_lue.boursePlacesPourMille != null)
+        _Champ(
+          id: 'boursePlaces',
+          libelle: pol.boursePlaces,
+          consequence: pol.boursePlacesDetail,
+          nature: _Nature.pourcent,
+          lue: _lue.boursePlacesPourMille,
+          active: a.boursePlacesPourMille,
+        ),
+      if (_lue.bourseDureeMois != null)
+        _Champ(
+          id: 'bourseDuree',
+          libelle: pol.bourseDuree,
+          consequence: pol.bourseDureeDetail,
+          nature: _Nature.mois,
+          lue: _lue.bourseDureeMois,
+          active: a.bourseDureeMois,
+        ),
+    ];
+  }
+
+  /// La paie par eleve present et par heure (18/10/2026) : seulement quand
+  /// la version la porte. Elle remplace alors la base et le plafond horaires
+  /// a l'ecran ; le centime n'est pas une saisie entiere, ces montants se
+  /// lisent sans champ.
+  bool get _paieParEleve => _lue.tauxEleveHeureEnfant != null;
+
+  List<_Champ> _paieEleve() {
+    final pol = t.admin.finance.pol;
+    final PolitiqueCommerciale a = widget.active;
+    if (!_paieParEleve) return const <_Champ>[];
+    return <_Champ>[
+      _Champ(
+        id: 'tauxEleveEnfant',
+        libelle: pol.tauxEleveEnfant,
+        consequence: pol.tauxEleveEnfantDetail,
+        nature: _Nature.montantHoraire,
+        lue: _lue.tauxEleveHeureEnfant,
+        active: a.tauxEleveHeureEnfant,
+      ),
+      _Champ(
+        id: 'tauxEleveAdulte',
+        libelle: pol.tauxEleveAdulte,
+        consequence: pol.tauxEleveAdulteDetail,
+        nature: _Nature.montantHoraire,
+        lue: _lue.tauxEleveHeureAdulte,
+        active: a.tauxEleveHeureAdulte,
+      ),
+      _Champ(
+        id: 'plafondEleveEnfant',
+        libelle: pol.plafondEleveEnfant,
+        consequence: pol.plafondEleveDetail,
+        nature: _Nature.montantHoraire,
+        lue: _lue.plafondEleveHeureEnfant,
+        active: a.plafondEleveHeureEnfant,
+      ),
+      _Champ(
+        id: 'plafondEleveAdulte',
+        libelle: pol.plafondEleveAdulte,
+        consequence: pol.plafondEleveDetail,
+        nature: _Nature.montantHoraire,
+        lue: _lue.plafondEleveHeureAdulte,
+        active: a.plafondEleveHeureAdulte,
+      ),
+      if (_lue.dureeDueEnfantMinutes != null)
+        _Champ(
+          id: 'dureeDueEnfant',
+          libelle: pol.dureeDueEnfant,
+          consequence: pol.dureeDueDetail,
+          nature: _Nature.minutes,
+          lue: _lue.dureeDueEnfantMinutes,
+          active: a.dureeDueEnfantMinutes,
+        ),
+      if (_lue.dureeDueAdulteMinutes != null)
+        _Champ(
+          id: 'dureeDueAdulte',
+          libelle: pol.dureeDueAdulte,
+          consequence: pol.dureeDueDetail,
+          nature: _Nature.minutes,
+          lue: _lue.dureeDueAdulteMinutes,
+          active: a.dureeDueAdulteMinutes,
         ),
     ];
   }
@@ -669,6 +840,15 @@ class _PolitiquesCommercialesContenuState
         lue: _lue.joursConservationPlace,
         active: widget.active.joursConservationPlace,
       ),
+      if (_lue.jourSuspension != null)
+        _Champ(
+          id: 'suspension',
+          libelle: pol.suspension,
+          consequence: pol.suspensionDetail,
+          nature: _Nature.jourDuMois,
+          lue: _lue.jourSuspension,
+          active: widget.active.jourSuspension,
+        ),
     ];
   }
 
@@ -712,7 +892,9 @@ class _PolitiquesCommercialesContenuState
     ..._tarifs(),
     ..._essai(),
     ..._remises(),
+    ..._autresRemises(),
     ..._enseignants(),
+    ..._paieEleve(),
     ..._classes(),
     ..._paiement(),
     ..._marge(),
@@ -734,10 +916,15 @@ class _PolitiquesCommercialesContenuState
       essaiActif: _essaiActif,
       remisesParRang: <RemiseRang>[
         for (final RemiseRang r in b.remisesParRang)
-          RemiseRang(
-            aPartirDuRang: r.aPartirDuRang,
-            remise: v['remise-${r.aPartirDuRang}']! as Montant,
-          ),
+          r.pourMille != null
+              ? RemiseRang(
+                  aPartirDuRang: r.aPartirDuRang,
+                  pourMille: v['remise-${r.aPartirDuRang}']! as int,
+                )
+              : RemiseRang(
+                  aPartirDuRang: r.aPartirDuRang,
+                  remise: v['remise-${r.aPartirDuRang}']! as Montant,
+                ),
       ],
       baseHoraire: v['baseHoraire']! as Montant,
       plafondHoraire: v['plafondHoraire']! as Montant,
@@ -757,6 +944,26 @@ class _PolitiquesCommercialesContenuState
       allocationInternet: v['internet'] as Montant?,
       joursRelance: b.joursRelance,
       budgets: b.budgets,
+      tauxEleveHeureEnfant: b.tauxEleveHeureEnfant,
+      tauxEleveHeureAdulte: b.tauxEleveHeureAdulte,
+      plafondEleveHeureEnfant: b.plafondEleveHeureEnfant,
+      plafondEleveHeureAdulte: b.plafondEleveHeureAdulte,
+      dureeDueEnfantMinutes:
+          v['dureeDueEnfant'] as int? ?? b.dureeDueEnfantMinutes,
+      dureeDueAdulteMinutes:
+          v['dureeDueAdulte'] as int? ?? b.dureeDueAdulteMinutes,
+      prepaiementTrimestrielPourMille:
+          v['prepaiementTrimestriel'] as int? ??
+          b.prepaiementTrimestrielPourMille,
+      prepaiementAnnuelPourMille:
+          v['prepaiementAnnuel'] as int? ?? b.prepaiementAnnuelPourMille,
+      parrainageCredit: v['parrainage'] as Montant? ?? b.parrainageCredit,
+      boursePourMille: v['bourse'] as int? ?? b.boursePourMille,
+      boursePlacesPourMille:
+          v['boursePlaces'] as int? ?? b.boursePlacesPourMille,
+      bourseDureeMois: v['bourseDuree'] as int? ?? b.bourseDureeMois,
+      cumulMaxPourMille: v['cumulMax'] as int? ?? b.cumulMaxPourMille,
+      jourSuspension: v['suspension'] as int? ?? b.jourSuspension,
     );
   }
 
@@ -833,14 +1040,19 @@ class _PolitiquesCommercialesContenuState
             valeur: pol.remiseAucuneValeur,
           ),
         for (final _Champ c in _remises()) _ligne(c),
+        for (final _Champ c in _autresRemises()) _ligne(c),
       ]),
       _section(pol.enseignants, pol.enseignantsDetail, <Widget>[
-        for (final _Champ c in _enseignants().take(2)) _ligne(c),
-        LigneCleValeur(
-          cle: pol.occupation,
-          detailCle: pol.occupationDetail,
-          valeur: pol.occupationValeur,
-        ),
+        if (_paieParEleve)
+          for (final _Champ c in _paieEleve()) _ligne(c)
+        else ...<Widget>[
+          for (final _Champ c in _enseignants().take(2)) _ligne(c),
+          LigneCleValeur(
+            cle: pol.occupation,
+            detailCle: pol.occupationDetail,
+            valeur: pol.occupationValeur,
+          ),
+        ],
         for (final _Champ c in _enseignants().skip(2)) _ligne(c),
       ]),
       _section(pol.sectionClasses, pol.sectionClassesDetail, <Widget>[
@@ -1377,7 +1589,10 @@ class _PolitiquesCommercialesContenuState
       _Nature.seances => pol.uniteSeances,
       _Nature.classes => pol.uniteClasses,
       _Nature.jours => pol.uniteJours,
-      _Nature.pourcent => pol.unitePourcent,
+      _Nature.pourcent || _Nature.remisePourMille => pol.unitePourcent,
+      _Nature.minutes => pol.uniteMinutes,
+      _Nature.mois => pol.uniteMois,
+      _Nature.jourDuMois => pol.uniteJourDuMois,
     };
   }
 
@@ -1429,17 +1644,23 @@ bool _enColonne(BuildContext contexte, BoxConstraints contraintes) =>
 String _texteValeur(Object? valeur, _Nature nature) {
   final pol = t.admin.finance.pol;
   return switch (valeur) {
-    null when nature == _Nature.remise => pol.remiseAucuneValeur,
+    null when nature == _Nature.remise || nature == _Nature.remisePourMille =>
+      pol.remiseAucuneValeur,
     null => pol.internetNonFixee,
     final Montant m when nature == _Nature.montantHoraire => pol.parHeure(
       montant: formaterMontant(m),
     ),
     final Montant m => formaterMontant(m),
     final int n => switch (nature) {
-      _Nature.pourcent => pol.pourcentValeur(valeur: pourMilleEnTexte(n)),
+      _Nature.pourcent || _Nature.remisePourMille => pol.pourcentValeur(
+        valeur: pourMilleEnTexte(n),
+      ),
       _Nature.eleves => pol.eleves(n: n),
       _Nature.seances => pol.seances(n: n),
       _Nature.classes => pol.classes(n: n),
+      _Nature.minutes => LibellesGroupe.insecable(pol.minutes(n: n)),
+      _Nature.mois => LibellesGroupe.insecable(pol.mois(n: n)),
+      _Nature.jourDuMois => pol.jourDuMoisValeur(jour: jourDuMois(n)),
       _ => LibellesGroupe.insecable(pol.jours(n: n)),
     },
     _ => '$valeur',

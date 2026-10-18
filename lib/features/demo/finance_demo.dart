@@ -625,7 +625,9 @@ abstract final class DonneesFinanceDemo {
             NatureLigneMensualite.tarif => NatureMouvement.debitPeriode,
             NatureLigneMensualite.taxe => NatureMouvement.taxe,
             NatureLigneMensualite.remiseRang ||
-            NatureLigneMensualite.prorata => NatureMouvement.remise,
+            NatureLigneMensualite.prorata ||
+            NatureLigneMensualite.bourse ||
+            NatureLigneMensualite.remisePrepaiement => NatureMouvement.remise,
             NatureLigneMensualite.avoir => NatureMouvement.avoir,
           },
           montant: Montant(-l.montant.mineur, devise),

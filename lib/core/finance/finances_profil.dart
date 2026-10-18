@@ -53,6 +53,12 @@ enum NatureLigneMensualite {
   /// La reduction du calendrier (prorata du premier mois payant).
   prorata,
 
+  /// La bourse Rewayah (18/10/2026), jamais cumulee avec une autre remise.
+  bourse,
+
+  /// La part d'un trimestre ou d'une annee paye d'avance (18/10/2026).
+  remisePrepaiement,
+
   /// Un avoir.
   avoir,
 

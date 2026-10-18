@@ -5908,6 +5908,8 @@ class _Traductions$ficheEleve$finances$ar extends Traductions$ficheEleve$finance
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get bourse => 'منحة رواية';
+	@override String get remisePrepaiement => 'تخفيض الدفع المسبق';
 	@override String get sansDonnees => 'تعذّر تحميل مالية هذا الملف';
 }
 
@@ -6486,6 +6488,7 @@ class _Traductions$adulte$recharge$ar extends Traductions$adulte$recharge$fr {
 	@override String get paiementEchecPhrase => 'تحقّق قبل إعادة المحاولة.';
 	@override String get paiementIndisponibleTitre => 'الدفع غير متاح بعد';
 	@override String get paiementIndisponiblePhrase => 'لم يُجرَ أي دفع. الدفع عبر الإنترنت غير مفتوح في التطبيق بعد.';
+	@override late final _Traductions$adulte$recharge$formules$ar formules = _Traductions$adulte$recharge$formules$ar._(_root);
 	@override String get revenirPaiements => 'العودة إلى مدفوعات الأسرة';
 	@override late final _Traductions$adulte$recharge$source$ar source = _Traductions$adulte$recharge$source$ar._(_root);
 }
@@ -10680,6 +10683,56 @@ class _Traductions$admin$finance$pol$ar extends Traductions$admin$finance$pol$fr
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String minutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ دقيقة',
+		one: 'دقيقة واحدة',
+		two: 'دقيقتان',
+		few: '⁨${n}⁩ دقائق',
+		many: '⁨${n}⁩ دقيقة',
+		other: '⁨${n}⁩ دقيقة',
+	);
+	@override String mois({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ شهر',
+		one: 'شهر واحد',
+		two: 'شهران',
+		few: '⁨${n}⁩ أشهر',
+		many: '⁨${n}⁩ شهرًا',
+		other: '⁨${n}⁩ شهر',
+	);
+	@override String get prepaiementTrimestriel => 'ثلاثة أشهر تُدفع مقدّمًا';
+	@override String get prepaiementTrimestrielDetail => 'التخفيض على ثلاثة أشهر تُسدَّد دفعة واحدة؛ تراه الأسرة عند الدفع.';
+	@override String get prepaiementAnnuel => 'سنة تُدفع مقدّمًا';
+	@override String get prepaiementAnnuelDetail => 'التخفيض على اثني عشر شهرًا تُسدَّد دفعة واحدة.';
+	@override String get cumulMax => 'الحد الأقصى للتخفيضات المجتمعة';
+	@override String get cumulMaxDetail => 'تخفيض الأسرة والدفع المسبق معًا لا يتجاوزان أبدًا هذه النسبة من السعر.';
+	@override String get parrainage => 'رصيد الإحالة';
+	@override String get parrainageDetail => 'يُمنح لكل من الأسرتين بعد أول شهر تسدّده الأسرة المُحالة.';
+	@override String get bourse => 'منحة';
+	@override String get bourseDetail => 'تمنحها الإدارة بناءً على طلب مكتوب؛ ولا تُضاف إلى أي تخفيض آخر.';
+	@override String get boursePlaces => 'مقاعد المنح';
+	@override String get boursePlacesDetail => 'نسبة الطلاب الذين يمكنهم الحصول على منحة في الوقت نفسه.';
+	@override String get bourseDuree => 'مدة المنحة';
+	@override String get bourseDureeDetail => 'بعد هذه المدة، تُراجَع المنحة مع الأسرة.';
+	@override String get tauxEleveEnfant => 'لكل طالب حاضر، فصل الأطفال';
+	@override String get tauxEleveEnfantDetail => 'يُدفع للمعلّم عن كل طالب حاضر ولكل ساعة درس؛ ولا يُدفع عن الطالب الغائب.';
+	@override String get tauxEleveAdulte => 'لكل طالب حاضر، فصل البالغين';
+	@override String get tauxEleveAdulteDetail => 'يُدفع للمعلّم عن كل بالغ حاضر ولكل ساعة درس.';
+	@override String get plafondEleveEnfant => 'الحد الأقصى لكل طالب، فصل الأطفال';
+	@override String get plafondEleveAdulte => 'الحد الأقصى لكل طالب، فصل البالغين';
+	@override String get plafondEleveDetail => 'الحد الأقصى لكل طالب حاضر ولكل ساعة، بما في ذلك مكافأة الوفاء.';
+	@override String get dureeDueEnfant => 'تُحتسب حصة الأطفال ابتداءً من';
+	@override String get dureeDueAdulte => 'تُحتسب حصة البالغين ابتداءً من';
+	@override String get dureeDueDetail => 'الحد الأدنى من الحضور لتُحتسب الحصة في الأجر.';
+	@override String get suspension => 'يُعلَّق الوصول في';
+	@override String get suspensionDetail => 'الشهر غير المسدَّد في هذا التاريخ يعلّق الوصول إلى الدرس؛ ويبقى المقعد محجوزًا طوال مدة الحفظ.';
+	@override String get erreurPourcentMax => 'أدخل 100 % على الأكثر.';
+	@override String get erreurDureeDue => 'أدخل مدة من 1 إلى 240 دقيقة.';
+	@override String get erreurBourseDuree => 'أدخل مدة من 1 إلى 24 شهرًا.';
+	@override String get erreurSuspension => 'أدخل يومًا من 1 إلى 28 من الشهر.';
+	@override String get uniteMinutes => 'دقائق';
+	@override String get uniteMois => 'أشهر';
+	@override String get uniteJourDuMois => 'من الشهر';
+	@override String jourDuMoisValeur({required Object jour}) => 'يوم ⁨${jour}⁩ من الشهر';
 	@override String get publicationFaite => 'تم نشر النسخة';
 	@override String get publicationFaiteDetail => 'سجّلت رواية النسخة الجديدة. ستُطبَّق ابتداء من تاريخ سريانها، وإلى ذلك الحين تبقى النسخة الحالية سارية.';
 	@override String get publicationRefusee => 'رُفض النشر';
@@ -12247,6 +12300,17 @@ class _Traductions$adulte$monEspace$pageCoursAcces$ar extends Traductions$adulte
 	// Translations
 	@override String get indisponibleTitre => 'الدروس والوصول غير قابلة للاطلاع بعد';
 	@override String get indisponiblePhrase => 'تفاصيل دروسك وحصصك ووصولك غير متاحة في التطبيق بعد.';
+}
+
+// Path: adulte.recharge.formules
+class _Traductions$adulte$recharge$formules$ar extends Traductions$adulte$recharge$formules$fr {
+	_Traductions$adulte$recharge$formules$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String trimestriel({required Object montant}) => '⁨${montant}⁩ مقابل 3 أشهر، تُدفع مقدّمًا';
+	@override String annuel({required Object montant}) => '⁨${montant}⁩ مقابل 12 شهرًا، تُدفع مقدّمًا';
 }
 
 // Path: adulte.recharge.source
@@ -17301,6 +17365,42 @@ extension on TraductionsAr {
 			'choix.augmenter' => 'زيادة بواحد',
 			'admin.finance.aValider' => 'للمصادقة',
 			'admin.finance.paiements' => 'المدفوعات',
+			'admin.finance.pol.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ دقيقة', one: 'دقيقة واحدة', two: 'دقيقتان', few: '⁨${n}⁩ دقائق', many: '⁨${n}⁩ دقيقة', other: '⁨${n}⁩ دقيقة', ), 
+			'admin.finance.pol.mois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ شهر', one: 'شهر واحد', two: 'شهران', few: '⁨${n}⁩ أشهر', many: '⁨${n}⁩ شهرًا', other: '⁨${n}⁩ شهر', ), 
+			'admin.finance.pol.prepaiementTrimestriel' => 'ثلاثة أشهر تُدفع مقدّمًا',
+			'admin.finance.pol.prepaiementTrimestrielDetail' => 'التخفيض على ثلاثة أشهر تُسدَّد دفعة واحدة؛ تراه الأسرة عند الدفع.',
+			'admin.finance.pol.prepaiementAnnuel' => 'سنة تُدفع مقدّمًا',
+			'admin.finance.pol.prepaiementAnnuelDetail' => 'التخفيض على اثني عشر شهرًا تُسدَّد دفعة واحدة.',
+			'admin.finance.pol.cumulMax' => 'الحد الأقصى للتخفيضات المجتمعة',
+			'admin.finance.pol.cumulMaxDetail' => 'تخفيض الأسرة والدفع المسبق معًا لا يتجاوزان أبدًا هذه النسبة من السعر.',
+			'admin.finance.pol.parrainage' => 'رصيد الإحالة',
+			'admin.finance.pol.parrainageDetail' => 'يُمنح لكل من الأسرتين بعد أول شهر تسدّده الأسرة المُحالة.',
+			'admin.finance.pol.bourse' => 'منحة',
+			'admin.finance.pol.bourseDetail' => 'تمنحها الإدارة بناءً على طلب مكتوب؛ ولا تُضاف إلى أي تخفيض آخر.',
+			'admin.finance.pol.boursePlaces' => 'مقاعد المنح',
+			'admin.finance.pol.boursePlacesDetail' => 'نسبة الطلاب الذين يمكنهم الحصول على منحة في الوقت نفسه.',
+			'admin.finance.pol.bourseDuree' => 'مدة المنحة',
+			'admin.finance.pol.bourseDureeDetail' => 'بعد هذه المدة، تُراجَع المنحة مع الأسرة.',
+			'admin.finance.pol.tauxEleveEnfant' => 'لكل طالب حاضر، فصل الأطفال',
+			'admin.finance.pol.tauxEleveEnfantDetail' => 'يُدفع للمعلّم عن كل طالب حاضر ولكل ساعة درس؛ ولا يُدفع عن الطالب الغائب.',
+			'admin.finance.pol.tauxEleveAdulte' => 'لكل طالب حاضر، فصل البالغين',
+			'admin.finance.pol.tauxEleveAdulteDetail' => 'يُدفع للمعلّم عن كل بالغ حاضر ولكل ساعة درس.',
+			'admin.finance.pol.plafondEleveEnfant' => 'الحد الأقصى لكل طالب، فصل الأطفال',
+			'admin.finance.pol.plafondEleveAdulte' => 'الحد الأقصى لكل طالب، فصل البالغين',
+			'admin.finance.pol.plafondEleveDetail' => 'الحد الأقصى لكل طالب حاضر ولكل ساعة، بما في ذلك مكافأة الوفاء.',
+			'admin.finance.pol.dureeDueEnfant' => 'تُحتسب حصة الأطفال ابتداءً من',
+			'admin.finance.pol.dureeDueAdulte' => 'تُحتسب حصة البالغين ابتداءً من',
+			'admin.finance.pol.dureeDueDetail' => 'الحد الأدنى من الحضور لتُحتسب الحصة في الأجر.',
+			'admin.finance.pol.suspension' => 'يُعلَّق الوصول في',
+			'admin.finance.pol.suspensionDetail' => 'الشهر غير المسدَّد في هذا التاريخ يعلّق الوصول إلى الدرس؛ ويبقى المقعد محجوزًا طوال مدة الحفظ.',
+			'admin.finance.pol.erreurPourcentMax' => 'أدخل 100 % على الأكثر.',
+			'admin.finance.pol.erreurDureeDue' => 'أدخل مدة من 1 إلى 240 دقيقة.',
+			'admin.finance.pol.erreurBourseDuree' => 'أدخل مدة من 1 إلى 24 شهرًا.',
+			'admin.finance.pol.erreurSuspension' => 'أدخل يومًا من 1 إلى 28 من الشهر.',
+			'admin.finance.pol.uniteMinutes' => 'دقائق',
+			'admin.finance.pol.uniteMois' => 'أشهر',
+			'admin.finance.pol.uniteJourDuMois' => 'من الشهر',
+			'admin.finance.pol.jourDuMoisValeur' => ({required Object jour}) => 'يوم ⁨${jour}⁩ من الشهر',
 			'admin.finance.pol.publicationFaite' => 'تم نشر النسخة',
 			'admin.finance.pol.publicationFaiteDetail' => 'سجّلت رواية النسخة الجديدة. ستُطبَّق ابتداء من تاريخ سريانها، وإلى ذلك الحين تبقى النسخة الحالية سارية.',
 			'admin.finance.pol.publicationRefusee' => 'رُفض النشر',
@@ -17642,6 +17742,8 @@ extension on TraductionsAr {
 			'admin.diagnostics.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'مسجَّل منذ اليوم', one: 'مسجَّل منذ يوم واحد', two: 'مسجَّل منذ يومين', few: 'مسجَّل منذ ⁨${jours}⁩ أيام', many: 'مسجَّل منذ ⁨${jours}⁩ يومًا', other: 'مسجَّل منذ ⁨${jours}⁩ يوم', ), 
 			'admin.diagnostics.aucun' => 'لا طالب لتحديد مستواه',
 			'admin.diagnostics.aucunDetail' => 'لكل الطلاب المسجلين مستوى مقرر بالفعل.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.diagnostics.champNiveau' => 'مستوى التوجيه',
 			'admin.diagnostics.champMotif' => 'السبب',
 			'admin.diagnostics.motifRequis' => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.',
@@ -17678,8 +17780,6 @@ extension on TraductionsAr {
 			'admin.regles.erreurEcriture' => ({required Object message}) => 'لم يكتمل الحفظ: ⁨${message}⁩',
 			'admin.regles.valeurInvalide' => 'أدخل رقمًا صالحًا.',
 			'admin.regles.envoyer' => 'حفظ',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regles.champValeur' => 'القيمة',
 			'admin.regles.absenceSeuil' => 'حد الغياب',
 			'admin.regles.absenceSeuilDetail' => 'بعد هذا العدد من الدقائق دون الانضمام إلى الحصة، يُسجَّل الطالب غائبًا.',
@@ -18156,6 +18256,8 @@ extension on TraductionsAr {
 			'admin.planning.sousTitre' => 'حصص الأسبوع في جميع الفصول، يومًا بيوم.',
 			'admin.planning.semaine' => ({required Object date}) => 'أسبوع ⁨${date}⁩',
 			'admin.planning.semaineSemantique' => ({required Object date}) => 'أسبوع ⁨${date}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'admin.planning.precedente' => 'الأسبوع السابق',
 			'admin.planning.suivante' => 'الأسبوع التالي',
 			'admin.planning.cetteSemaine' => 'العودة إلى هذا الأسبوع',
@@ -18192,8 +18294,6 @@ extension on TraductionsAr {
 			'admin.pilotage.indisponibleTitre' => 'متاحة عند الربط بالخادم',
 			'admin.pilotage.indisponiblePhrase' => 'ستظهر متابعة المواعيد هنا فور الربط بالخادم. إلى ذلك الحين لا يُعرض شيء: لا أرقام مختلقة.',
 			'admin.pilotage.vide' => 'لا مواعيد للمتابعة',
-			_ => null,
-		} ?? switch (path) {
 			'admin.pilotage.videDetail' => 'ستظهر المواعيد هنا بمجرد وجود فصل أو طلب.',
 			'admin.pilotage.aucunAvecCeFiltre' => 'لا مواعيد بهذا المعيار',
 			'admin.pilotage.aucunAvecCeFiltreDetail' => 'غيّروا المعيار لرؤية بقية المواعيد.',
@@ -18670,6 +18770,8 @@ extension on TraductionsAr {
 			'comptable.graphiques.rapportsTitre' => 'التقارير',
 			'comptable.graphiques.rapportsSousTitre' => 'الوارد والصادر والخزينة عبر الزمن.',
 			'comptable.graphiques.vide' => 'لا بيانات للرسم',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.graphiques.videDetail' => 'تظهر المخططات هنا بمجرد تسجيل مقبوضات أو مدفوعات.',
 			'comptable.graphiques.erreur' => 'تعذّرت قراءة المخططات: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.',
 			'comptable.graphiques.sansDonnees' => 'تعذّر تحميل المخططات',
@@ -18706,8 +18808,6 @@ extension on TraductionsAr {
 			'comptable.commun.atteint' => ({required Object pourcent}) => 'تحقق ${pourcent} %',
 			'comptable.commun.modeCalcul' => 'طريقة الحساب',
 			'comptable.commun.modeMontantFixe' => 'مبلغ مستهدف ثابت',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.commun.modeCouvertureMois' => 'تغطية بعدد أشهر المصاريف الأساسية',
 			'comptable.commun.derniereAllocation' => ({required Object date}) => 'آخر تخصيص: ${date}',
 			'comptable.commun.prochaineAllocation' => ({required Object date}) => 'التخصيص القادم المقرر: ${date}',
@@ -19184,6 +19284,8 @@ extension on TraductionsAr {
 			'comptable.encaissements.sousTitre' => 'لا تُؤكَّد الدفعة إلا بعد مزوّد الدفع.',
 			'comptable.encaissements.detailTitre' => 'تفاصيل المقبوض',
 			'comptable.encaissements.rapprochementTitre' => 'المطابقة',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.rapprochementSousTitre' => 'ربط كل معاملة بما كان ينتظرها.',
 			'comptable.beneficiaires.intro' => 'ملف الدفع لكل معلم ولكل متعاقد. المستفيد وحده يُدخل بياناته أو يعدّلها: يمكنك تذكيره، أو طلب تحديث منه، أو إيقاف مدفوعاته.',
 			'comptable.beneficiaires.filtreTous' => 'الكل',
@@ -19220,8 +19322,6 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.profil.relancerDetail' => 'يفتح محادثة «ملف الدفع» برسالة معدّة مسبقًا، في رسائل العمل.',
 			'comptable.beneficiaires.profil.demanderMiseAJour' => ({required Object nom}) => 'طلب تحديث من ${nom}',
 			'comptable.beneficiaires.profil.suspendre' => ({required Object nom}) => 'إيقاف مدفوعات ${nom}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.profil.reprendre' => ({required Object nom}) => 'استئناف مدفوعات ${nom}',
 			'comptable.beneficiaires.profil.externe' => ({required Object nom}) => 'ليس لدى ${nom} حساب Rewayah: تتيح له دعوة آمنة إدخال وسيلته بنفسه. أعد إرسالها من التزامه، في المتعاقدين.',
 			'comptable.beneficiaires.profil.voirContractuels' => 'عرض التزامات المتعاقدين',
@@ -19698,6 +19798,8 @@ extension on TraductionsAr {
 			'ficheEleve.inscription.questionnaire' => 'الاستبيان',
 			'ficheEleve.inscription.classe' => 'الفصل',
 			'ficheEleve.inscription.lecture' => 'جارٍ القراءة',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.inscription.etatInconnu' => 'حالة الاستبيان لا تظهر بعد.',
 			'ficheEleve.inscription.aRemplir' => 'للتعبئة',
 			'ficheEleve.inscription.horaireAChoisir' => 'مُعبّأ، الموعد للاختيار',
@@ -19734,14 +19836,14 @@ extension on TraductionsAr {
 			'ficheEleve.acces.ligne' => ({required Object dePrenom}) => 'وصول ⁨${dePrenom}⁩',
 			'ficheEleve.acces.pastilleSansEcheance' => 'دون موعد انتهاء',
 			'ficheEleve.acces.pastilleEnCours' => 'ساري',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.acces.pastilleExpire' => 'منتهٍ',
 			'ficheEleve.acces.sansEcheance' => 'لا تاريخ انتهاء مسجَّل.',
 			'ficheEleve.acces.jusquau' => ({required Object date}) => 'حتى ⁨${date}⁩',
 			'ficheEleve.acces.expireDepuis' => ({required Object date}) => 'منتهٍ منذ ⁨${date}⁩',
 			'ficheEleve.acces.expirePhrase' => ({required Object prenom}) => 'منذ هذا التاريخ، لا يستطيع ⁨${prenom}⁩ الدخول إلى Rewayah.',
 			'ficheEleve.acces.detailIndisponible' => 'بداية الوصول وسببه لا يظهران بعد.',
+			'ficheEleve.finances.bourse' => 'منحة رواية',
+			'ficheEleve.finances.remisePrepaiement' => 'تخفيض الدفع المسبق',
 			'ficheEleve.finances.sansDonnees' => 'تعذّر تحميل مالية هذا الملف',
 			'parcours.titre' => ({required Object dePrenom}) => 'مسار ⁨${dePrenom}⁩',
 			'parcours.intro' => 'بعض الأسئلة لتخصيص مسارك. لن ترى بعدها إلا المواعيد والخيارات المناسبة لوضعك.',
@@ -20210,6 +20312,8 @@ extension on TraductionsAr {
 			'foyer.monProfil.indisponiblePhrase' => 'متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا. يبقى حسابك كوليّ أمر كما هو.',
 			'foyer.monProfil.retour' => 'العودة إلى الأسرة',
 			'foyer.ajout.suivant' => 'التالي',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.ajout.creer' => 'إنشاء الملف',
 			'foyer.ajout.porte.illisibleTitre' => 'تعذّرت قراءة حسابك',
 			'foyer.ajout.porte.illisiblePhrase' => 'لا نعرف بعد أي الملفات يمكنك إضافتها. أعد المحاولة بعد لحظة.',
@@ -20248,8 +20352,6 @@ extension on TraductionsAr {
 			'adulte.nav.maClasse' => 'فصلي',
 			'adulte.nav.coran' => 'القرآن',
 			'adulte.nav.monEspace' => 'مساحتي',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.accueil.salutation' => ({required Object prenom}) => 'مرحبًا ⁨${prenom}⁩',
 			'adulte.accueil.prochaineSeance' => 'الحصة القادمة',
 			'adulte.accueil.parcours' => 'مساري',
@@ -20304,6 +20406,8 @@ extension on TraductionsAr {
 			'adulte.recharge.paiementEchecPhrase' => 'تحقّق قبل إعادة المحاولة.',
 			'adulte.recharge.paiementIndisponibleTitre' => 'الدفع غير متاح بعد',
 			'adulte.recharge.paiementIndisponiblePhrase' => 'لم يُجرَ أي دفع. الدفع عبر الإنترنت غير مفتوح في التطبيق بعد.',
+			'adulte.recharge.formules.trimestriel' => ({required Object montant}) => '⁨${montant}⁩ مقابل 3 أشهر، تُدفع مقدّمًا',
+			'adulte.recharge.formules.annuel' => ({required Object montant}) => '⁨${montant}⁩ مقابل 12 شهرًا، تُدفع مقدّمًا',
 			'adulte.recharge.revenirPaiements' => 'العودة إلى مدفوعات الأسرة',
 			'adulte.recharge.source.avantPaiement' => 'بانتظار الدفع',
 			'adulte.recharge.source.motifs.paiementRefuse' => 'رفض البنك أو البطاقة الدفع. لم يُقتطع أي مبلغ.',
@@ -20722,6 +20826,8 @@ extension on TraductionsAr {
 			'contrat.a3.desaccordTitre' => 'إذا لم تكن موافقًا.',
 			'contrat.a3.desaccord' => 'يمكنك الاعتراض: الحساب، موافقاتي، أعترض على التسجيل. نجيبك خلال شهر. سنبحث معك عن حل. وإذا تعذّر ذلك، يمكنك التوقف دون رسوم عن الدروس التي لم تُتابَع بعد.',
 			'contrat.a3.jaiLu' => 'قرأت',
+			_ => null,
+		} ?? switch (path) {
 			'contrat.e1.quoi' => 'قد يتم تسجيل الدرس صوتيًا. لا تُسجَّل الصورة. ويمكن أيضًا لشخص من الأكاديمية مكلَّف بالمراقبة أن يتابع الدرس مباشرة: يرى الدرس ويسمعه دون أن يُرى أو يُسمع. ولا يسجّل شيئًا. ثم يرسل تقريرًا إلى الأكاديمية. وتذكّر القاعة بذلك باستمرار.',
 			'contrat.e1.pourquoi' => 'لحماية الأطفال والمعلمين. إذا أبلغ أحد عن مشكلة، يمكننا التحقق مما حدث. وهو أيضًا دليل لك إذا اشتكت أسرة دون حق.',
 			'contrat.e1.refusTitre' => 'إذا رفضت.',
@@ -20762,8 +20868,6 @@ extension on TraductionsAr {
 			'controleur.mfa.titreEnrolement' => 'احمِ حساب المراقب الخاص بك',
 			'controleur.mfa.introEnrolement' => 'يتيح هذا الحساب الدخول إلى حصص يحضرها أطفال. لا ينبغي أن تكفي كلمة مرور مسروقة: أضف خطوة ثانية بتطبيق للمصادقة.',
 			'controleur.mfa.etapeScanner' => 'في تطبيق المصادقة لديك، امسح هذا الرمز.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.mfa.libelleQr' => 'رمز يُمسح لإضافة هذا الحساب إلى تطبيق المصادقة لديك',
 			'controleur.mfa.cleManuelle' => 'لا تستطيع المسح؟ أدخل هذا المفتاح في التطبيق.',
 			'controleur.mfa.etapeCode' => 'أدخل الرمز المكوّن من ستة أرقام الذي يعرضه التطبيق.',

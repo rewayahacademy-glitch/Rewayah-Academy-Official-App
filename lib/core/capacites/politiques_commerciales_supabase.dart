@@ -155,10 +155,7 @@ PolitiqueCommerciale politiqueJson(Object? brut) {
     essaiActif: booleenJson(j, 'essaiActif'),
     remisesParRang: <RemiseRang>[
       for (final Object? r in listeJson(j['remisesParRang'], 'remisesParRang'))
-        RemiseRang(
-          aPartirDuRang: entierJson(objetJson(r, 'remise'), 'aPartirDuRang'),
-          remise: montantJson(objetJson(r, 'remise')['remise'], 'remise'),
-        ),
+        _remiseRang(objetJson(r, 'remise')),
     ],
     baseHoraire: montantJson(j['baseHoraire'], 'baseHoraire'),
     plafondHoraire: montantJson(j['plafondHoraire'], 'plafondHoraire'),
@@ -197,8 +194,64 @@ PolitiqueCommerciale politiqueJson(Object? brut) {
           pourMille: entierJson(objetJson(b, 'budget'), 'pourMille'),
         ),
     ],
+    tauxEleveHeureEnfant: montantNullableJson(
+      j['tauxEleveHeureEnfant'],
+      'tauxEleveHeureEnfant',
+    ),
+    tauxEleveHeureAdulte: montantNullableJson(
+      j['tauxEleveHeureAdulte'],
+      'tauxEleveHeureAdulte',
+    ),
+    plafondEleveHeureEnfant: montantNullableJson(
+      j['plafondEleveHeureEnfant'],
+      'plafondEleveHeureEnfant',
+    ),
+    plafondEleveHeureAdulte: montantNullableJson(
+      j['plafondEleveHeureAdulte'],
+      'plafondEleveHeureAdulte',
+    ),
+    dureeDueEnfantMinutes: _entierFacultatif(j, 'dureeDueEnfantMinutes'),
+    dureeDueAdulteMinutes: _entierFacultatif(j, 'dureeDueAdulteMinutes'),
+    prepaiementTrimestrielPourMille: _entierFacultatif(
+      j,
+      'prepaiementTrimestrielPourMille',
+    ),
+    prepaiementAnnuelPourMille: _entierFacultatif(
+      j,
+      'prepaiementAnnuelPourMille',
+    ),
+    parrainageCredit: montantNullableJson(
+      j['parrainageCredit'],
+      'parrainageCredit',
+    ),
+    boursePourMille: _entierFacultatif(j, 'boursePourMille'),
+    boursePlacesPourMille: _entierFacultatif(j, 'boursePlacesPourMille'),
+    bourseDureeMois: _entierFacultatif(j, 'bourseDureeMois'),
+    cumulMaxPourMille: _entierFacultatif(j, 'cumulMaxPourMille'),
+    jourSuspension: _entierFacultatif(j, 'jourSuspension'),
   );
 }
+
+/// Une remise de rang : en montant (`remise`) ou en pour mille du tarif
+/// (`pourMille`), jamais les deux.
+RemiseRang _remiseRang(Map<String, dynamic> r) {
+  final int rang = entierJson(r, 'aPartirDuRang');
+  final bool enMontant = r['remise'] != null;
+  final bool enPourMille = r['pourMille'] != null;
+  if (enMontant == enPourMille) {
+    throw const FormatException('remise de rang : montant ou pour mille');
+  }
+  return enPourMille
+      ? RemiseRang(aPartirDuRang: rang, pourMille: entierJson(r, 'pourMille'))
+      : RemiseRang(
+          aPartirDuRang: rang,
+          remise: montantJson(r['remise'], 'remise'),
+        );
+}
+
+/// Un entier que la version peut ne pas porter (absent ou nul : `null`).
+int? _entierFacultatif(Map<String, dynamic> j, String cle) =>
+    j[cle] == null ? null : entierJson(j, cle);
 
 Map<String, Object?> _montantVersJson(Montant m) => <String, Object?>{
   'mineur': m.mineur,
@@ -224,7 +277,8 @@ Map<String, Object?> politiqueVersJson(PolitiqueCommerciale p) =>
         for (final RemiseRang r in p.remisesParRang)
           <String, Object?>{
             'aPartirDuRang': r.aPartirDuRang,
-            'remise': _montantVersJson(r.remise),
+            if (r.remise case final Montant m) 'remise': _montantVersJson(m),
+            if (r.pourMille case final int pm) 'pourMille': pm,
           },
       ],
       'baseHoraire': _montantVersJson(p.baseHoraire),
@@ -258,4 +312,21 @@ Map<String, Object?> politiqueVersJson(PolitiqueCommerciale p) =>
             'pourMille': b.pourMille,
           },
       ],
+      'tauxEleveHeureEnfant': _montantFacultatif(p.tauxEleveHeureEnfant),
+      'tauxEleveHeureAdulte': _montantFacultatif(p.tauxEleveHeureAdulte),
+      'plafondEleveHeureEnfant': _montantFacultatif(p.plafondEleveHeureEnfant),
+      'plafondEleveHeureAdulte': _montantFacultatif(p.plafondEleveHeureAdulte),
+      'dureeDueEnfantMinutes': p.dureeDueEnfantMinutes,
+      'dureeDueAdulteMinutes': p.dureeDueAdulteMinutes,
+      'prepaiementTrimestrielPourMille': p.prepaiementTrimestrielPourMille,
+      'prepaiementAnnuelPourMille': p.prepaiementAnnuelPourMille,
+      'parrainageCredit': _montantFacultatif(p.parrainageCredit),
+      'boursePourMille': p.boursePourMille,
+      'boursePlacesPourMille': p.boursePlacesPourMille,
+      'bourseDureeMois': p.bourseDureeMois,
+      'cumulMaxPourMille': p.cumulMaxPourMille,
+      'jourSuspension': p.jourSuspension,
     };
+
+Map<String, Object?>? _montantFacultatif(Montant? m) =>
+    m == null ? null : _montantVersJson(m);

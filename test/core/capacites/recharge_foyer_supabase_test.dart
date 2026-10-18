@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
+import 'package:rewayah_academy/core/i18n/isolat_bidi.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 
 const String _beneficiaires =
@@ -21,6 +22,18 @@ const String _beneficiaires =
     '"montantSuggere": {"devise": "USD", "mineur": 2000}, "montantsProposes": '
     '[{"devise": "USD", "mineur": 2000}, {"devise": "USD", "mineur": 5000}, '
     '{"devise": "USD", "mineur": 10000}, {"devise": "USD", "mineur": 15000}]}]';
+
+// Tarifs du 18/10/2026 (FAC-E-01) : le mois regle, le trimestre et l'annee
+// payes d'avance sont proposes avec leur formule.
+const String _beneficiairesV2 =
+    '[{"id": "fe000000-0000-4000-8000-0000000000e4", "solde": {"devise": '
+    '"USD", "mineur": 0}, "prenom": "Aicha", "cleAvatar": null, '
+    '"formules": [{"montant": {"devise": "USD", "mineur": 6500}, "formule": '
+    '"mois"}, {"montant": {"devise": "USD", "mineur": 18500}, "formule": '
+    '"trimestriel"}, {"montant": {"devise": "USD", "mineur": 70200}, '
+    '"formule": "annuel"}], "montantSuggere": null, "montantsProposes": '
+    '[{"devise": "USD", "mineur": 6500}, {"devise": "USD", "mineur": 18500}, '
+    '{"devise": "USD", "mineur": 70200}]}]';
 
 const String _recap =
     '{"id": "ba7d2b69-d814-485e-88a0-448ac82f5977", "total": {"devise": '
@@ -87,6 +100,36 @@ void main() {
       expect(b.single.montantsProposes, hasLength(4));
     },
   );
+
+  test('beneficiaires : le trimestre et l annee se lisent avec leur '
+      'formule, le mois en montant', () async {
+    final List<BeneficiaireRecharge> b = await _port(
+      rpc: jsonDecode(_beneficiairesV2),
+    ).beneficiaires();
+    const Montant trimestre = Montant(18500, 'USD');
+    const Montant annee = Montant(70200, 'USD');
+    expect(b.single.montantsProposes, hasLength(3));
+    expect(b.single.montantsRediges.keys, <Montant>[trimestre, annee]);
+    expect(
+      b.single.montantsRediges[trimestre],
+      t.adulte.recharge.formules.trimestriel(
+        montant: sansAncre(formaterMontant(trimestre)),
+      ),
+    );
+    expect(
+      b.single.montantsRediges[annee],
+      t.adulte.recharge.formules.annuel(
+        montant: sansAncre(formaterMontant(annee)),
+      ),
+    );
+    final List<Object?> inconnue =
+        jsonDecode(_beneficiairesV2) as List<Object?>;
+    ((inconnue.single! as Map)['formules'] as List).add(<String, Object?>{
+      'montant': <String, Object?>{'devise': 'USD', 'mineur': 1},
+      'formule': 'semestriel',
+    });
+    expect(() => _port(rpc: inconnue).beneficiaires(), throwsFormatException);
+  });
 
   test('recapitulatif : un montant par profil, le total arrete par le '
       'serveur', () async {

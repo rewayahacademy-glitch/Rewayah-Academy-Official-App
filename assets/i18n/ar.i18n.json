@@ -4082,6 +4082,56 @@
       "aValider": "للمصادقة",
       "paiements": "المدفوعات",
       "pol": {
+        "minutes": {
+          "zero": "⁨{n}⁩ دقيقة",
+          "one": "دقيقة واحدة",
+          "two": "دقيقتان",
+          "few": "⁨{n}⁩ دقائق",
+          "many": "⁨{n}⁩ دقيقة",
+          "other": "⁨{n}⁩ دقيقة"
+        },
+        "mois": {
+          "zero": "⁨{n}⁩ شهر",
+          "one": "شهر واحد",
+          "two": "شهران",
+          "few": "⁨{n}⁩ أشهر",
+          "many": "⁨{n}⁩ شهرًا",
+          "other": "⁨{n}⁩ شهر"
+        },
+        "prepaiementTrimestriel": "ثلاثة أشهر تُدفع مقدّمًا",
+        "prepaiementTrimestrielDetail": "التخفيض على ثلاثة أشهر تُسدَّد دفعة واحدة؛ تراه الأسرة عند الدفع.",
+        "prepaiementAnnuel": "سنة تُدفع مقدّمًا",
+        "prepaiementAnnuelDetail": "التخفيض على اثني عشر شهرًا تُسدَّد دفعة واحدة.",
+        "cumulMax": "الحد الأقصى للتخفيضات المجتمعة",
+        "cumulMaxDetail": "تخفيض الأسرة والدفع المسبق معًا لا يتجاوزان أبدًا هذه النسبة من السعر.",
+        "parrainage": "رصيد الإحالة",
+        "parrainageDetail": "يُمنح لكل من الأسرتين بعد أول شهر تسدّده الأسرة المُحالة.",
+        "bourse": "منحة",
+        "bourseDetail": "تمنحها الإدارة بناءً على طلب مكتوب؛ ولا تُضاف إلى أي تخفيض آخر.",
+        "boursePlaces": "مقاعد المنح",
+        "boursePlacesDetail": "نسبة الطلاب الذين يمكنهم الحصول على منحة في الوقت نفسه.",
+        "bourseDuree": "مدة المنحة",
+        "bourseDureeDetail": "بعد هذه المدة، تُراجَع المنحة مع الأسرة.",
+        "tauxEleveEnfant": "لكل طالب حاضر، فصل الأطفال",
+        "tauxEleveEnfantDetail": "يُدفع للمعلّم عن كل طالب حاضر ولكل ساعة درس؛ ولا يُدفع عن الطالب الغائب.",
+        "tauxEleveAdulte": "لكل طالب حاضر، فصل البالغين",
+        "tauxEleveAdulteDetail": "يُدفع للمعلّم عن كل بالغ حاضر ولكل ساعة درس.",
+        "plafondEleveEnfant": "الحد الأقصى لكل طالب، فصل الأطفال",
+        "plafondEleveAdulte": "الحد الأقصى لكل طالب، فصل البالغين",
+        "plafondEleveDetail": "الحد الأقصى لكل طالب حاضر ولكل ساعة، بما في ذلك مكافأة الوفاء.",
+        "dureeDueEnfant": "تُحتسب حصة الأطفال ابتداءً من",
+        "dureeDueAdulte": "تُحتسب حصة البالغين ابتداءً من",
+        "dureeDueDetail": "الحد الأدنى من الحضور لتُحتسب الحصة في الأجر.",
+        "suspension": "يُعلَّق الوصول في",
+        "suspensionDetail": "الشهر غير المسدَّد في هذا التاريخ يعلّق الوصول إلى الدرس؛ ويبقى المقعد محجوزًا طوال مدة الحفظ.",
+        "erreurPourcentMax": "أدخل 100 % على الأكثر.",
+        "erreurDureeDue": "أدخل مدة من 1 إلى 240 دقيقة.",
+        "erreurBourseDuree": "أدخل مدة من 1 إلى 24 شهرًا.",
+        "erreurSuspension": "أدخل يومًا من 1 إلى 28 من الشهر.",
+        "uniteMinutes": "دقائق",
+        "uniteMois": "أشهر",
+        "uniteJourDuMois": "من الشهر",
+        "jourDuMoisValeur": "يوم ⁨{jour}⁩ من الشهر",
         "publicationFaite": "تم نشر النسخة",
         "publicationFaiteDetail": "سجّلت رواية النسخة الجديدة. ستُطبَّق ابتداء من تاريخ سريانها، وإلى ذلك الحين تبقى النسخة الحالية سارية.",
         "publicationRefusee": "رُفض النشر",
@@ -7062,6 +7112,8 @@
       "detailIndisponible": "بداية الوصول وسببه لا يظهران بعد."
     },
     "finances": {
+      "bourse": "منحة رواية",
+      "remisePrepaiement": "تخفيض الدفع المسبق",
       "sansDonnees": "تعذّر تحميل مالية هذا الملف"
     }
   },
@@ -7790,6 +7842,10 @@
       "paiementEchecPhrase": "تحقّق قبل إعادة المحاولة.",
       "paiementIndisponibleTitre": "الدفع غير متاح بعد",
       "paiementIndisponiblePhrase": "لم يُجرَ أي دفع. الدفع عبر الإنترنت غير مفتوح في التطبيق بعد.",
+      "formules": {
+        "trimestriel": "⁨{montant}⁩ مقابل 3 أشهر، تُدفع مقدّمًا",
+        "annuel": "⁨{montant}⁩ مقابل 12 شهرًا، تُدفع مقدّمًا"
+      },
       "revenirPaiements": "العودة إلى مدفوعات الأسرة",
       "source": {
         "avantPaiement": "بانتظار الدفع",

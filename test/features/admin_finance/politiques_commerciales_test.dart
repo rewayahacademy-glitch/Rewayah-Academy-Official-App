@@ -2158,4 +2158,148 @@ void main() {
       }
     }
   });
+
+  group('tarifs du 18/10/2026 (FAC-E-01)', () {
+    // Le brouillon d'une politique v2 : remises en pour mille, paie par
+    // eleve present, prepaiement, bourse, parrainage, suspension.
+    PolitiqueCommerciale brouillonV2() {
+      final PolitiqueCommerciale b = DonneesFinanceDemo.politiqueBrouillon;
+      return PolitiqueCommerciale(
+        version: b.version,
+        statut: b.statut,
+        dateEffet: b.dateEffet,
+        tarifEnfant: _usd(55),
+        tarifAdulte: _usd(65),
+        essaisMax: 0,
+        essaiActif: false,
+        remisesParRang: const <RemiseRang>[
+          RemiseRang(aPartirDuRang: 2, pourMille: 80),
+          RemiseRang(aPartirDuRang: 3, pourMille: 170),
+        ],
+        baseHoraire: b.baseHoraire,
+        plafondHoraire: b.plafondHoraire,
+        capaciteEnfant: 5,
+        capaciteAdulte: 6,
+        capaciteDebutant: 4,
+        minimumOuverture: 3,
+        classesObjectif: b.classesObjectif,
+        classesMax: b.classesMax,
+        joursConservationPlace: 14,
+        margeReferencePourMille: b.margeReferencePourMille,
+        railsActifs: b.railsActifs,
+        joursRelance: const <int>[7, 3, 1],
+        tauxEleveHeureEnfant: const Montant(95, 'USD'),
+        tauxEleveHeureAdulte: const Montant(100, 'USD'),
+        plafondEleveHeureEnfant: const Montant(130, 'USD'),
+        plafondEleveHeureAdulte: const Montant(150, 'USD'),
+        dureeDueEnfantMinutes: 45,
+        dureeDueAdulteMinutes: 70,
+        prepaiementTrimestrielPourMille: 50,
+        prepaiementAnnuelPourMille: 100,
+        parrainageCredit: _usd(20),
+        boursePourMille: 300,
+        boursePlacesPourMille: 50,
+        bourseDureeMois: 6,
+        cumulMaxPourMille: 250,
+        jourSuspension: 4,
+      );
+    }
+
+    String? erreur(WidgetTester tester, String id) =>
+        tester.widget<TextField>(_champ(id)).decoration!.errorText;
+
+    testWidgets('les valeurs se preremplissent en pourcentage, la paie se '
+        'lit au centime', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3600));
+      await tester.pumpWidget(
+        _hote(surcharges: _avec(_avecCeBrouillon(brouillonV2()))),
+      );
+      await tester.pumpAndSettle();
+      expect(_saisie(tester, 'remise-2'), '8');
+      expect(_saisie(tester, 'remise-3'), '17');
+      expect(_saisie(tester, 'prepaiementTrimestriel'), '5');
+      expect(_saisie(tester, 'prepaiementAnnuel'), '10');
+      expect(_saisie(tester, 'cumulMax'), '25');
+      expect(_saisie(tester, 'parrainage'), '20');
+      expect(_saisie(tester, 'bourse'), '30');
+      expect(_saisie(tester, 'boursePlaces'), '5');
+      expect(_saisie(tester, 'bourseDuree'), '6');
+      expect(_saisie(tester, 'suspension'), '4');
+      expect(_saisie(tester, 'dureeDueEnfant'), '45');
+      expect(_saisie(tester, 'dureeDueAdulte'), '70');
+      // La version active (v1) n'a pas de remise au 2e rang et une remise
+      // en montant au 3e : chacune est rappelee telle qu'elle est.
+      expect(
+        tester.widget<Text>(_comparaison('remise-2')).data,
+        pol.versionActiveValeur(valeur: pol.remiseAucuneValeur),
+      );
+      expect(
+        tester.widget<Text>(_comparaison('remise-3')).data,
+        pol.versionActiveValeur(valeur: formaterMontant(_usd(-5))),
+      );
+      // 0,95 $ n'est pas une saisie entiere : la paie se lit, sans champ, et
+      // remplace la base et le plafond horaires.
+      expect(_champ('tauxEleveEnfant'), findsNothing);
+      expect(
+        find.descendant(
+          of: find.byKey(
+            PolitiquesCommercialesContenu.champKey('tauxEleveEnfant'),
+          ),
+          matching: find.text(
+            pol.parHeure(montant: formaterMontant(const Montant(95, 'USD'))),
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(PolitiquesCommercialesContenu.champKey('baseHoraire')),
+        findsNothing,
+      );
+      expect(find.text(pol.occupation), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('plus de 100 % est refuse, une saisie valide part au serveur '
+        'en pour mille avec la paie', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3600));
+      final _Port port = _avecCeBrouillon(brouillonV2());
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      await tester.enterText(_champ('remise-2'), '120');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'remise-2'), pol.erreurPourcentMax);
+      await tester.enterText(_champ('suspension'), '30');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'suspension'), pol.erreurSuspension);
+      await tester.enterText(_champ('remise-2'), '9');
+      await tester.enterText(_champ('suspension'), '5');
+      await tester.enterText(_champ('bourse'), '25');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'remise-2'), isNull);
+      await _publier(tester);
+      final PolitiqueCommerciale envoye = port.publies.single;
+      expect(envoye.remisesParRang.first.pourMille, 90);
+      expect(envoye.remisesParRang.first.remise, isNull);
+      expect(envoye.remisesParRang.last.pourMille, 170);
+      expect(envoye.boursePourMille, 250);
+      expect(envoye.jourSuspension, 5);
+      expect(envoye.tauxEleveHeureEnfant, const Montant(95, 'USD'));
+      expect(envoye.plafondEleveHeureAdulte, const Montant(150, 'USD'));
+      expect(envoye.prepaiementAnnuelPourMille, 100);
+      expect(envoye.parrainageCredit, _usd(20));
+      expect(envoye.cumulMaxPourMille, 250);
+    });
+
+    testWidgets('320 px, texte x2 : rien ne deborde', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(320, 9000));
+      await tester.pumpWidget(
+        _hote(surcharges: _avec(_avecCeBrouillon(brouillonV2())), echelle: 2),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      verifierUnSeulBoutonPlein(tester);
+    });
+  });
 }

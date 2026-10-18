@@ -40,6 +40,8 @@ declare
   v_liste text[] := array[
     'abandonner_reprise_tresorerie(bigint,text)',
     'accepter_demande_presentation(uuid)',
+    -- FAC-E-01 (18/10) : la direction accorde et retire les bourses, note les parrainages.
+    'accorder_bourse(uuid,text)',
     'accorder_capacite_controle(uuid,timestamp with time zone,timestamp with time zone,boolean,uuid[],uuid[],uuid)',
     'admin_library_review_rights(uuid,uuid,jsonb,integer)',
     'affecter_enseignant_classe_c11bis(uuid,uuid)',
@@ -107,6 +109,7 @@ declare
     -- FAC-B-01, FAC-C-01 (17/10) : direction ou comptabilite, compte valide.
     'emettre_factures_mois(date)',
     'enregistrer_paiement(uuid,bigint,text,text,uuid)',
+    'enregistrer_parrainage(uuid,uuid)',
     'enregistrer_profil_apprentissage(uuid,text,text,text,text,text)',
     'enregistrer_regles_tirage(jsonb,uuid)',
     'enregistrer_resultat_evaluation(uuid,text,text)',
@@ -191,6 +194,7 @@ declare
     'renoncer_intention_horaire(uuid,text)',
     'repondre_invitation_conjoint(text,uuid)',
     'reprendre_alimentation_tresorerie()',
+    'retirer_bourse(uuid,text)',
     'retirer_capacite_controle(uuid,text,uuid)',
     'retirer_creneau_personnalise(uuid)',
     'retirer_demande_horaire(uuid,text)',

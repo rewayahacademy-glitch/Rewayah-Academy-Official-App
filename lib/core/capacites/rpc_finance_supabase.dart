@@ -187,6 +187,8 @@ LigneMensualite _ligneMensualite(Map<String, dynamic> l) {
       'tarif' => NatureLigneMensualite.tarif,
       'remise_rang' => NatureLigneMensualite.remiseRang,
       'prorata' => NatureLigneMensualite.prorata,
+      'bourse' => NatureLigneMensualite.bourse,
+      'remise_prepaiement' => NatureLigneMensualite.remisePrepaiement,
       'avoir' => NatureLigneMensualite.avoir,
       'taxe' => NatureLigneMensualite.taxe,
       final Object? n => throw FormatException('ligne inconnue: $n'),

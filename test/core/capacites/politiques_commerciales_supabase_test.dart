@@ -49,6 +49,50 @@ const String _apercuFamilleServeur =
     '"USD", "mineur": 5000}, "remise": {"devise": "USD", "mineur": -500}, '
     '"mensualite": {"devise": "USD", "mineur": 4500}}]}';
 
+// La version v2.0.0 (tarifs du 18/10/2026, migration 20261018120000), telle
+// que la rend `fac_politique_json` sur une base rejouee.
+const String _v2Serveur =
+    '{"statut": "publiee", "budgets": [], "version": "v2.0.0", '
+    '"dateEffet": "2026-11-01", "essaisMax": 0, "classesMax": 4, '
+    '"essaiActif": false, "baseHoraire": {"devise": "USD", "mineur": '
+    '600}, "railsActifs": ["webStripe"], "tarifAdulte": {"devise": '
+    '"USD", "mineur": 6500}, "tarifEnfant": {"devise": "USD", "mineur": '
+    '5500}, "joursRelance": [7, 3, 1], "capaciteAdulte": 6, '
+    '"capaciteEnfant": 5, "jourSuspension": 4, "plafondHoraire": '
+    '{"devise": "USD", "mineur": 900}, "remisesParRang": [{"pourMille": '
+    '80, "aPartirDuRang": 2}, {"pourMille": 170, "aPartirDuRang": 3}], '
+    '"bourseDureeMois": 6, "boursePourMille": 300, "classesObjectif": '
+    '3, "capaciteDebutant": 4, "minimumOuverture": 3, '
+    '"parrainageCredit": {"devise": "USD", "mineur": 2000}, '
+    '"cumulMaxPourMille": 250, "allocationInternet": null, '
+    '"tauxEleveHeureAdulte": {"devise": "USD", "mineur": 100}, '
+    '"tauxEleveHeureEnfant": {"devise": "USD", "mineur": 95}, '
+    '"boursePlacesPourMille": 50, "dureeDueAdulteMinutes": 70, '
+    '"dureeDueEnfantMinutes": 45, "joursConservationPlace": 14, '
+    '"margeReferencePourMille": {"forte": 500, "stretch": 520, '
+    '"objectif": 450}, "plafondEleveHeureAdulte": {"devise": "USD", '
+    '"mineur": 150}, "plafondEleveHeureEnfant": {"devise": "USD", '
+    '"mineur": 130}, "prepaiementAnnuelPourMille": 100, '
+    '"prepaiementTrimestrielPourMille": 50}';
+
+// Les cles de la v2, nulles dans une version qui ne les porte pas.
+const List<String> _clesV2 = <String>[
+  'tauxEleveHeureEnfant',
+  'tauxEleveHeureAdulte',
+  'plafondEleveHeureEnfant',
+  'plafondEleveHeureAdulte',
+  'dureeDueEnfantMinutes',
+  'dureeDueAdulteMinutes',
+  'prepaiementTrimestrielPourMille',
+  'prepaiementAnnuelPourMille',
+  'parrainageCredit',
+  'boursePourMille',
+  'boursePlacesPourMille',
+  'bourseDureeMois',
+  'cumulMaxPourMille',
+  'jourSuspension',
+];
+
 List<Object?> _versions() => jsonDecode(_versionsServeur) as List<Object?>;
 
 void main() {
@@ -102,14 +146,70 @@ void main() {
     });
   });
 
+  group('tarifs du 18/10/2026', () {
+    test('la v2 : remises en pour mille, paie par eleve present', () {
+      final PolitiqueCommerciale p = politiqueJson(jsonDecode(_v2Serveur));
+      expect(p.tarifEnfant, const Montant(5500, 'USD'));
+      expect(p.tarifAdulte, const Montant(6500, 'USD'));
+      expect(p.essaiActif, isFalse);
+      expect(p.remiseRangPour(1), isNull);
+      expect(p.remiseRangPour(2)!.pourMille, 80);
+      expect(p.remiseRangPour(5)!.pourMille, 170);
+      expect(p.remisePourRang(2), isNull, reason: 'pas un montant');
+      expect(p.tauxEleveHeureEnfant, const Montant(95, 'USD'));
+      expect(p.tauxEleveHeureAdulte, const Montant(100, 'USD'));
+      expect(p.plafondEleveHeureEnfant, const Montant(130, 'USD'));
+      expect(p.plafondEleveHeureAdulte, const Montant(150, 'USD'));
+      expect(p.dureeDueEnfantMinutes, 45);
+      expect(p.dureeDueAdulteMinutes, 70);
+      expect(p.prepaiementTrimestrielPourMille, 50);
+      expect(p.prepaiementAnnuelPourMille, 100);
+      expect(p.parrainageCredit, const Montant(2000, 'USD'));
+      expect(p.boursePourMille, 300);
+      expect(p.boursePlacesPourMille, 50);
+      expect(p.bourseDureeMois, 6);
+      expect(p.cumulMaxPourMille, 250);
+      expect(p.jourSuspension, 4);
+      expect(p.joursRelance, <int>[7, 3, 1]);
+    });
+
+    test('une remise a la fois en montant et en pour mille est refusee', () {
+      final Map<String, dynamic> j = Map<String, dynamic>.from(
+        jsonDecode(_v2Serveur) as Map,
+      );
+      j['remisesParRang'] = <Object?>[
+        <String, Object?>{
+          'aPartirDuRang': 2,
+          'pourMille': 80,
+          'remise': <String, Object?>{'mineur': -500, 'devise': 'USD'},
+        },
+      ];
+      expect(() => politiqueJson(j), throwsFormatException);
+      j['remisesParRang'] = <Object?>[
+        <String, Object?>{'aPartirDuRang': 2},
+      ];
+      expect(() => politiqueJson(j), throwsFormatException);
+    });
+  });
+
   group('aller-retour', () {
     test('le brouillon repart au serveur dans la forme qu il a rendue', () {
       for (final Object? brut in _versions()) {
+        // Une version v1 : le serveur rend les cles de la v2, nulles.
+        final Map<String, Object?> attendu = <String, Object?>{
+          ...(brut! as Map<String, Object?>),
+          for (final String cle in _clesV2) cle: null,
+        };
         expect(
           jsonDecode(jsonEncode(politiqueVersJson(politiqueJson(brut)))),
-          equals(brut),
+          equals(attendu),
         );
       }
+      final Object? v2 = jsonDecode(_v2Serveur);
+      expect(
+        jsonDecode(jsonEncode(politiqueVersJson(politiqueJson(v2)))),
+        equals(v2),
+      );
     });
 
     test('publier envoie le brouillon et relit la version inscrite', () async {

@@ -20,6 +20,7 @@ import '../finance/format_montant.dart';
 import '../finance/montant.dart';
 import '../finance/politique_commerciale.dart';
 import '../finance/suivi_paiement.dart';
+import '../i18n/isolat_bidi.dart';
 import '../i18n/strings.g.dart';
 import 'capacite_indisponible.dart';
 import 'port_recharge_foyer.dart';
@@ -165,7 +166,38 @@ BeneficiaireRecharge beneficiaireRechargeJson(Object? brut) {
         montantJson(m, 'montantPropose'),
     ],
     montantSuggere: montantNullableJson(j['montantSuggere'], 'suggere'),
+    montantsRediges: <Montant, String>{
+      for (final Object? f in listeJson(
+        j['formules'] ?? <Object?>[],
+        'formules',
+      ))
+        if (_formuleRedigee(objetJson(f, 'formule')) case (
+          final Montant m,
+          final String texte,
+        ))
+          m: texte,
+    },
   );
+}
+
+/// Le libelle d'un trimestre ou d'une annee payes d'avance (tarifs du
+/// 18/10/2026), ou `null` : un mois ou un reste a payer se lisent en montant.
+(Montant, String)? _formuleRedigee(Map<String, dynamic> f) {
+  final Montant m = montantJson(f['montant'], 'montant');
+  return switch (texteJson(f, 'formule')) {
+    'trimestriel' => (
+      m,
+      t.adulte.recharge.formules.trimestriel(
+        montant: sansAncre(formaterMontant(m)),
+      ),
+    ),
+    'annuel' => (
+      m,
+      t.adulte.recharge.formules.annuel(montant: sansAncre(formaterMontant(m))),
+    ),
+    'mois' || 'libre' => null,
+    final String autre => throw FormatException('formule inconnue: $autre'),
+  };
 }
 
 /// Le recapitulatif de `recharge_verifier_montants`.
