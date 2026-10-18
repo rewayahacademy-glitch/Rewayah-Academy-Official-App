@@ -29,6 +29,7 @@ import 'core/capacites/identite_titulaire_supabase.dart';
 import 'core/capacites/mes_finances_supabase.dart';
 import 'core/capacites/paiements_foyer_supabase.dart';
 import 'core/capacites/paiements_saisis_supabase.dart';
+import 'core/capacites/partage_pedagogique_supabase.dart';
 import 'core/capacites/politiques_commerciales_supabase.dart';
 import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/port_enseignants_classe.dart';
@@ -36,6 +37,8 @@ import 'core/capacites/port_identite_titulaire.dart';
 import 'core/capacites/port_mes_finances.dart';
 import 'core/capacites/port_paiements_foyer.dart';
 import 'core/capacites/port_paiements_saisis.dart';
+import 'core/capacites/port_partage_pedagogique.dart'
+    show portPartagePedagogiqueProvider;
 import 'core/capacites/port_politiques_commerciales.dart';
 import 'core/capacites/port_profil_eleve_titulaire.dart';
 import 'core/capacites/port_progression_famille.dart';
@@ -324,6 +327,13 @@ List<Override> _surchargesAppReelle() => <Override>[
   // titulaire, invitation du second adulte, capacite « eleve autonome ».
   portProgressionFamilleProvider.overrideWithValue(
     ProgressionFamilleSupabase(Supabase.instance.client),
+  ),
+  // Partage pedagogique (PED-APRES-BACK, migration 20261018190000) : la
+  // famille ne lit que ce que la direction a laisse partager pour sa classe ;
+  // la direction regle, publie et revoque. La demonstration reste derriere
+  // `PLAYGROUND` (`portPartagePedagogiqueSelon`), qui n'emploie pas cette liste.
+  portPartagePedagogiqueProvider.overrideWithValue(
+    PartagePedagogiqueSupabase(Supabase.instance.client),
   ),
   portProfilEleveTitulaireProvider.overrideWithValue(
     ProfilEleveTitulaireSupabase(Supabase.instance.client),

@@ -93,7 +93,10 @@ declare
     'decider_tresorerie_montant(bigint,bigint,text)',
     'declarer_absence_seance(uuid,uuid)',
     'declarer_conflit_mission(uuid,uuid)',
+    -- PED-APRES-BACK (18/10) : la direction regle le partage pedagogique d'une classe et d'un eleve.
+    'definir_partage_classe(uuid,boolean,text,text)',
     'definir_politique_observation_groupe(uuid,text,smallint,integer,integer)',
+    'definir_regle_partage_eleve(uuid,uuid,text,text,text)',
     'demander_creneau_personnalise(uuid,text,smallint[],smallint)',
     'demander_presentation_standard()',
     'demander(text,uuid,text,text,integer)',

@@ -4992,5 +4992,11 @@
   "ficheEleve.finances.bourse": "directeur, 18/10/2026 : document « Offre et tarifs Rewayah Academy », dernier passage sur les tarifs (docs/current/DECISION-TARIFS-2026-10-18.md, FAC-E-01)",
   "ficheEleve.finances.remisePrepaiement": "directeur, 18/10/2026 : document « Offre et tarifs Rewayah Academy », dernier passage sur les tarifs (docs/current/DECISION-TARIFS-2026-10-18.md, FAC-E-01)",
   "adulte.recharge.formules.trimestriel": "directeur, 18/10/2026 : document « Offre et tarifs Rewayah Academy », dernier passage sur les tarifs (docs/current/DECISION-TARIFS-2026-10-18.md, FAC-E-01)",
-  "adulte.recharge.formules.annuel": "directeur, 18/10/2026 : document « Offre et tarifs Rewayah Academy », dernier passage sur les tarifs (docs/current/DECISION-TARIFS-2026-10-18.md, FAC-E-01)"
+  "adulte.recharge.formules.annuel": "directeur, 18/10/2026 : document « Offre et tarifs Rewayah Academy », dernier passage sur les tarifs (docs/current/DECISION-TARIFS-2026-10-18.md, FAC-E-01)",
+  "historique.compteRendu.etatARenforcer": "registre de reconciliation 14/10/2026 (la famille voit deux etats, A renforcer et Acquis) et mots-rewayah section 4 ; lot PED-APRES-BACK du 18/10/2026",
+  "historique.compteRendu.etatAcquis": "registre de reconciliation 14/10/2026 (la famille voit deux etats, A renforcer et Acquis) et mots-rewayah section 4 ; lot PED-APRES-BACK du 18/10/2026",
+  "admin.groupes.cahiers.rubriqueTravail": "registre de reconciliation 14/10/2026 (la famille voit deux etats, A renforcer et Acquis) et mots-rewayah section 4 ; lot PED-APRES-BACK du 18/10/2026",
+  "admin.groupes.cahiers.rubriqueObjectif": "registre de reconciliation 14/10/2026 (la famille voit deux etats, A renforcer et Acquis) et mots-rewayah section 4 ; lot PED-APRES-BACK du 18/10/2026",
+  "admin.groupes.cahiers.rubriqueSuite": "registre de reconciliation 14/10/2026 (la famille voit deux etats, A renforcer et Acquis) et mots-rewayah section 4 ; lot PED-APRES-BACK du 18/10/2026",
+  "admin.groupes.cahiers.rubriqueMotif": "registre de reconciliation 14/10/2026 (la famille voit deux etats, A renforcer et Acquis) et mots-rewayah section 4 ; lot PED-APRES-BACK du 18/10/2026"
 }

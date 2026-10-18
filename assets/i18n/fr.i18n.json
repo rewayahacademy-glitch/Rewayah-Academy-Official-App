@@ -2380,7 +2380,11 @@
         "nonValide": "Le cahier n'est pas encore validé.",
         "corrigeLe": "Corrigé le {date}",
         "enseignant": "Enseignant",
-        "seanceDu": "Séance du {date}"
+        "seanceDu": "Séance du {date}",
+        "rubriqueTravail": "Travail à préparer",
+        "rubriqueObjectif": "Objectif personnel",
+        "rubriqueSuite": "Suite décidée",
+        "rubriqueMotif": "Motif de l'exception"
       },
       "partage": {
         "titre": "Partage des comptes rendus pédagogiques",
@@ -4807,7 +4811,9 @@
       "horsLignePhrase": "Connexion nécessaire pour consulter le compte rendu.",
       "aucunChampPhrase": "Aucun compte rendu pédagogique n'est disponible pour cette séance.",
       "voirTravail": "Voir le travail à préparer",
-      "voirProgression": "Voir la progression"
+      "voirProgression": "Voir la progression",
+      "etatARenforcer": "À renforcer",
+      "etatAcquis": "Acquis"
     },
     "dateCourteSansAnnee": "{jour} {mois}"
   },

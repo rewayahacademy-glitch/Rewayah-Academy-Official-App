@@ -1662,6 +1662,8 @@ class _Traductions$historique$compteRendu$ar extends Traductions$historique$comp
 	@override String get aucunChampPhrase => 'لا يوجد تقرير تربوي متاح لهذه الحصة.';
 	@override String get voirTravail => 'عرض ما يجب تحضيره';
 	@override String get voirProgression => 'عرض التقدم';
+	@override String get etatARenforcer => 'يحتاج إلى تقوية';
+	@override String get etatAcquis => 'مكتسَب';
 }
 
 // Path: historique.segments
@@ -10842,6 +10844,10 @@ class _Traductions$admin$groupes$cahiers$ar extends Traductions$admin$groupes$ca
 	@override String corrigeLe({required Object date}) => 'صُحِّح في ⁨${date}⁩';
 	@override String get enseignant => 'المعلم';
 	@override String seanceDu({required Object date}) => 'حصة ⁨${date}⁩';
+	@override String get rubriqueTravail => 'ما يجب تحضيره';
+	@override String get rubriqueObjectif => 'هدف شخصي';
+	@override String get rubriqueSuite => 'ما تقرر للمتابعة';
+	@override String get rubriqueMotif => 'سبب الاستثناء';
 }
 
 // Path: admin.groupes.partage
@@ -14237,6 +14243,8 @@ extension on TraductionsAr {
 			'historique.compteRendu.aucunChampPhrase' => 'لا يوجد تقرير تربوي متاح لهذه الحصة.',
 			'historique.compteRendu.voirTravail' => 'عرض ما يجب تحضيره',
 			'historique.compteRendu.voirProgression' => 'عرض التقدم',
+			'historique.compteRendu.etatARenforcer' => 'يحتاج إلى تقوية',
+			'historique.compteRendu.etatAcquis' => 'مكتسَب',
 			'historique.dateLongue' => ({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '⁨${jourSemaine}⁩ ⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩',
 			'historique.titre' => 'السجل',
 			'historique.detailSeance' => 'تفاصيل الحصة',
@@ -14658,10 +14666,10 @@ extension on TraductionsAr {
 			'classe.pageCatalogue.rejoindreAttente' => 'الانضمام إلى قائمة الانتظار',
 			'classe.pageCatalogue.precisionsTitre' => 'قبل الاختيار',
 			'classe.pageCatalogue.precisionEnseignant' => 'يحتفظ الفصل بالمعلم نفسه في كل حصصه.',
-			'classe.pageCatalogue.precisionPlaces' => 'المقاعد المعروضة هي مقاعد الأكاديمية لحظة القراءة.',
-			'classe.pageCatalogue.precisionReserve' => 'لا شيء محجوز قبل تأكيدك.',
 			_ => null,
 		} ?? switch (path) {
+			'classe.pageCatalogue.precisionPlaces' => 'المقاعد المعروضة هي مقاعد الأكاديمية لحظة القراءة.',
+			'classe.pageCatalogue.precisionReserve' => 'لا شيء محجوز قبل تأكيدك.',
 			'classe.pageCatalogue.confirmerTitre' => 'تأكيد الفصل',
 			'classe.pageCatalogue.confirmerPhrase' => ({required Object prenom}) => 'أنت تسجّل ⁨${prenom}⁩ في هذا الفصل.',
 			'classe.pageCatalogue.confirmerAttentePhrase' => ({required Object prenom}) => 'أنت تسجّل ⁨${prenom}⁩ في قائمة انتظار هذا الفصل.',
@@ -15172,10 +15180,10 @@ extension on TraductionsAr {
 			'eleve.suivi.date' => ({required Object date, required Object heure}) => '⁨${date}⁩، ⁨${heure}⁩',
 			'eleve.suivi.annule' => 'درس ملغى',
 			'eleve.suivi.nonTenu' => 'درس لم يُعقد',
-			'eleve.suivi.vide' => 'لا توجد دروس حتى الآن',
-			'eleve.suivi.videDetail' => 'ستظهر دروسك هنا من الأحدث إلى الأقدم مع حالة حضورك.',
 			_ => null,
 		} ?? switch (path) {
+			'eleve.suivi.vide' => 'لا توجد دروس حتى الآن',
+			'eleve.suivi.videDetail' => 'ستظهر دروسك هنا من الأحدث إلى الأقدم مع حالة حضورك.',
 			'eleve.suivi.erreur' => 'تعذرت قراءة المتابعة. حاول مرة أخرى بعد قليل.',
 			'eleve.suivi.tronquee' => ({required Object nombre}) => 'تظهر أحدث الدروس، وعددها ⁨${nombre}⁩.',
 			'eleve.suivi.fin' => ({required Object nombre}) => 'عدد الدروس في المتابعة: ⁨${nombre}⁩.',
@@ -15686,10 +15694,10 @@ extension on TraductionsAr {
 			'compte.profilsDetail' => 'إدارة ملفات أطفالك',
 			'compte.appareils' => 'الأسرة',
 			'compte.appareilsDetail' => 'الأجهزة والملفات المرتبطة بأسرتك',
-			'compte.confidentialite' => 'الخصوصية',
-			'compte.confidentialiteDetail' => 'قريبًا',
 			_ => null,
 		} ?? switch (path) {
+			'compte.confidentialite' => 'الخصوصية',
+			'compte.confidentialiteDetail' => 'قريبًا',
 			'compte.espaces' => 'المساحات',
 			'compte.espacesDetail' => 'المساحات التي يتيحها حسابك',
 			'compte.espacesMissionEnCours' => 'للعودة إلى مساحتك الرئيسية، غادر أولًا الزيارة الجارية.',
@@ -16200,10 +16208,10 @@ extension on TraductionsAr {
 			'tc.outils.intention.aApprendre' => 'للحفظ',
 			'tc.outils.intention.aRevoir' => 'للمراجعة',
 			'tc.outils.intention.aRenforcer' => 'للتثبيت',
-			'tc.outils.intention.aEntretenir' => 'للتعاهد',
-			'tc.outils.intention.pourEvaluation' => 'للتقييم',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.intention.aEntretenir' => 'للتعاهد',
+			'tc.outils.intention.pourEvaluation' => 'للتقييم',
 			'tc.outils.trait.stylet' => 'القلم',
 			'tc.outils.trait.surligneur' => 'تظليل',
 			'tc.outils.trait.gomme' => 'الممحاة',
@@ -16714,10 +16722,10 @@ extension on TraductionsAr {
 			'com.messages.demo.f.pieceAttestation' => 'الشهادة_القديمة.pdf',
 			'com.messages.demo.f.pieceVocal' => 'رسالة_صوتية.m4a',
 			'com.messages.demo.f.typeAudio' => 'صوت',
-			'com.messages.demo.f.adamQuestion' => 'السلام عليكم، أردت أن أعرف كيف مرّت حصة اليوم بالنسبة إلى آدم. شكرًا جزيلًا.',
-			'com.messages.demo.f.adamReponse' => 'وعليكم السلام، مرّت الحصة على أحسن وجه. كان آدم منتبهًا وشارك مشاركة جيدة.',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.demo.f.adamQuestion' => 'السلام عليكم، أردت أن أعرف كيف مرّت حصة اليوم بالنسبة إلى آدم. شكرًا جزيلًا.',
+			'com.messages.demo.f.adamReponse' => 'وعليكم السلام، مرّت الحصة على أحسن وجه. كان آدم منتبهًا وشارك مشاركة جيدة.',
 			'com.messages.demo.f.adamDevoir' => 'إليكم واجب الأسبوع القادم.',
 			'com.messages.demo.f.dossierManque' => 'تنقص شهادة مستوى آدم لإتمام تسجيله. هل يمكنكم إيداعها في ملفه؟',
 			'com.messages.demo.f.missionRetard' => 'بدأت الحصة متأخرة ثماني دقائق. أُودع التقرير.',
@@ -17228,10 +17236,10 @@ extension on TraductionsAr {
 			'com.annonces.administration.matrice.titre' => 'صلاحيات نشر الإعلانات',
 			'com.annonces.administration.matrice.detail' => 'قاعدة الأكاديمية، تُطبَّق على كل عملية نشر.',
 			'com.annonces.administration.matrice.auteurs' => 'من ينشر',
-			'com.annonces.administration.matrice.peutPublier' => 'يمكنه النشر',
-			'com.annonces.administration.matrice.audiences' => 'المستلمون',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.administration.matrice.peutPublier' => 'يمكنه النشر',
+			'com.annonces.administration.matrice.audiences' => 'المستلمون',
 			'com.annonces.administration.matrice.validation' => 'يتطلب موافقة',
 			'com.annonces.administration.matrice.oui' => 'نعم',
 			'com.annonces.administration.matrice.non' => 'لا',
@@ -17623,6 +17631,10 @@ extension on TraductionsAr {
 			'admin.groupes.cahiers.corrigeLe' => ({required Object date}) => 'صُحِّح في ⁨${date}⁩',
 			'admin.groupes.cahiers.enseignant' => 'المعلم',
 			'admin.groupes.cahiers.seanceDu' => ({required Object date}) => 'حصة ⁨${date}⁩',
+			'admin.groupes.cahiers.rubriqueTravail' => 'ما يجب تحضيره',
+			'admin.groupes.cahiers.rubriqueObjectif' => 'هدف شخصي',
+			'admin.groupes.cahiers.rubriqueSuite' => 'ما تقرر للمتابعة',
+			'admin.groupes.cahiers.rubriqueMotif' => 'سبب الاستثناء',
 			'admin.groupes.partage.titre' => 'مشاركة التقارير التربوية',
 			'admin.groupes.partage.interrupteur' => 'المشاركة التلقائية مع الأسر',
 			'admin.groupes.partage.aide' => 'ترى الأسر الملاحظات القابلة للمشاركة بعد اعتماد الدفتر. تبقى الملاحظات الداخلية خاصة.',
@@ -17738,14 +17750,14 @@ extension on TraductionsAr {
 			'admin.diagnostics.intro' => 'ينتظر كل طالب مسجَّل مستوى أول قبل الانضمام إلى فصل: هنا يُقرَّر هذا التوجيه.',
 			'admin.diagnostics.aucunProgramme' => 'لا منهج منشور',
 			'admin.diagnostics.aucunProgrammeDetail' => 'انشر إصدارًا أول من المنهج («التعليم» > «المناهج») قبل أن تتمكن من تقرير توجيه.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.diagnostics.erreur' => 'تعذّرت قراءة القائمة. أعد المحاولة بعد لحظة.',
 			'admin.diagnostics.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طالب متبقٍّ', one: 'طالب واحد متبقٍّ', two: 'طالبان متبقيان', few: '⁨${n}⁩ طلاب متبقون', many: '⁨${n}⁩ طالبًا متبقيًا', other: '⁨${n}⁩ طالب متبقٍّ', ), 
 			'admin.diagnostics.restantUn' => 'طالب واحد متبقٍ',
 			'admin.diagnostics.inscritAujourdhui' => 'مسجَّل اليوم',
 			'admin.diagnostics.inscritDepuisUnJour' => 'مسجَّل منذ يوم',
 			'admin.diagnostics.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'مسجَّل منذ اليوم', one: 'مسجَّل منذ يوم واحد', two: 'مسجَّل منذ يومين', few: 'مسجَّل منذ ⁨${jours}⁩ أيام', many: 'مسجَّل منذ ⁨${jours}⁩ يومًا', other: 'مسجَّل منذ ⁨${jours}⁩ يوم', ), 
-			_ => null,
-		} ?? switch (path) {
 			'admin.diagnostics.aucun' => 'لا طالب لتحديد مستواه',
 			'admin.diagnostics.aucunDetail' => 'لكل الطلاب المسجلين مستوى مقرر بالفعل.',
 			'admin.diagnostics.champNiveau' => 'مستوى التوجيه',
@@ -18252,14 +18264,14 @@ extension on TraductionsAr {
 			'admin.regroupements.liste.filtreTousPublics' => 'كل الفئات',
 			'admin.regroupements.liste.aucunAvecCeFiltre' => 'لا طلبات بهذا المعيار',
 			'admin.regroupements.liste.aucunAvecCeFiltreDetail' => 'غيّروا المعيار لرؤية بقية الطلبات المجمّعة.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regroupements.liste.positionSemantique' => ({required Object page, required Object total}) => 'الصفحة ⁨${page}⁩ من ⁨${total}⁩ من قائمة الطلبات المجمّعة',
 			'admin.regroupements.liste.precedente' => 'الصفحة السابقة من الطلبات المجمّعة',
 			'admin.regroupements.liste.suivante' => 'الصفحة التالية من الطلبات المجمّعة',
 			'admin.regroupements.liste.resume' => ({required Object debut, required Object fin, required Object total}) => 'الطلبات المجمّعة من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩',
 			'admin.planning.titre' => 'الجدول',
 			'admin.planning.sousTitre' => 'حصص الأسبوع في جميع الفصول، يومًا بيوم.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.planning.semaine' => ({required Object date}) => 'أسبوع ⁨${date}⁩',
 			'admin.planning.semaineSemantique' => ({required Object date}) => 'أسبوع ⁨${date}⁩',
 			'admin.planning.precedente' => 'الأسبوع السابق',
@@ -18766,14 +18778,14 @@ extension on TraductionsAr {
 			'comptable.graphiques.legendeEncaissements' => 'المقبوضات',
 			'comptable.graphiques.legendeDecaissements' => 'المدفوعات',
 			'comptable.graphiques.legendeDetenue' => 'الخزينة المحتفظ بها',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.graphiques.kpiTitre' => 'الوارد والصادر',
 			'comptable.graphiques.kpiEntrees' => 'الوارد',
 			'comptable.graphiques.kpiSorties' => 'الصادر',
 			'comptable.graphiques.kpiPeriode' => 'آخر 30 يومًا',
 			'comptable.graphiques.variation' => ({required Object pourcent}) => '⁨${pourcent}⁩٪ مقارنة بالفترة السابقة',
 			'comptable.graphiques.rapportsTitre' => 'التقارير',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.graphiques.rapportsSousTitre' => 'الوارد والصادر والخزينة عبر الزمن.',
 			'comptable.graphiques.vide' => 'لا بيانات للرسم',
 			'comptable.graphiques.videDetail' => 'تظهر المخططات هنا بمجرد تسجيل مقبوضات أو مدفوعات.',
@@ -19280,14 +19292,14 @@ extension on TraductionsAr {
 			'comptable.encaissements.rap.executerTitre' => 'تنفيذ هذا الاسترداد؟',
 			'comptable.encaissements.rap.executerPhrase' => 'المبلغ والشروط مصدرها سياسة المالية. سيؤكد مزوّد الدفع التنفيذ.',
 			'comptable.encaissements.rap.remboursementsVideTitre' => 'لا يوجد استرداد ولا رصيد دائن جارٍ.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.rap.journalRemboursement' => 'سجل الاسترداد',
 			'comptable.encaissements.rap.journalRemboursementVide' => 'لا توجد عملية مسجلة لهذا الاسترداد.',
 			'comptable.encaissements.rap.erreurEnvoiTitre' => 'عملية غير مؤكدة',
 			'comptable.encaissements.rap.remboursementsVidePhrase' => 'ستظهر هنا طلبات الاسترداد مع سببها وحالتها.',
 			'comptable.encaissements.titre' => 'المقبوضات',
 			'comptable.encaissements.sousTitre' => 'لا تُؤكَّد الدفعة إلا بعد مزوّد الدفع.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.detailTitre' => 'تفاصيل المقبوض',
 			'comptable.encaissements.rapprochementTitre' => 'المطابقة',
 			'comptable.encaissements.rapprochementSousTitre' => 'ربط كل معاملة بما كان ينتظرها.',
@@ -19794,14 +19806,14 @@ extension on TraductionsAr {
 			'ficheEleve.informations.tropLourde' => ({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ م.ب. اختر صورة أخف.',
 			'ficheEleve.informations.echecEnvoi' => 'تعذّر إرسال الصورة. لم يتغير شيء في الملف.',
 			'ficheEleve.informations.echecEnregistrement' => 'أُرسلت الصورة، لكن تعذّر حفظها في الملف.',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.informations.reprendre' => 'إعادة المحاولة',
 			'ficheEleve.informations.selectionEchec' => 'تعذّر فتح الصورة. تحقّق من إذن الوصول إلى صور الجهاز، ثم أعد المحاولة.',
 			'ficheEleve.informations.horsLigne' => 'أنت غير متصل. يمكن إرسال الصورة عند عودة الاتصال.',
 			'ficheEleve.inscription.titre' => 'المسار والتسجيل',
 			'ficheEleve.inscription.intro' => ({required Object prenom}) => 'أين وصل ⁨${prenom}⁩: الاستبيان والفصل.',
 			'ficheEleve.inscription.questionnaire' => 'الاستبيان',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.inscription.classe' => 'الفصل',
 			'ficheEleve.inscription.lecture' => 'جارٍ القراءة',
 			'ficheEleve.inscription.etatInconnu' => 'حالة الاستبيان لا تظهر بعد.',
@@ -20308,14 +20320,14 @@ extension on TraductionsAr {
 			'foyer.relireClasses' => 'إعادة قراءة الفصول',
 			'foyer.inscriptionIllisible' => 'التسجيل الجاري لكل طالب لا يظهر في هذه الصفحة بعد.',
 			'foyer.appareilsPartages' => 'الأجهزة المشتركة',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.appareilsFoyer' => 'أجهزة الأسرة',
 			'foyer.appareilsFoyerLegende' => 'ربط جهاز، عرض الأجهزة المربوطة، إزالة أحدها',
 			'foyer.creerMonProfil' => 'إنشاء ملفي كطالب',
 			'foyer.monProfil.titre' => 'إنشاء ملفي كطالب',
 			'foyer.monProfil.indisponibleTitre' => 'غير ممكن بعد',
 			'foyer.monProfil.indisponiblePhrase' => 'متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا. يبقى حسابك كوليّ أمر كما هو.',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.monProfil.retour' => 'العودة إلى الأسرة',
 			'foyer.ajout.suivant' => 'التالي',
 			'foyer.ajout.creer' => 'إنشاء الملف',
@@ -20822,14 +20834,14 @@ extension on TraductionsAr {
 			'contrat.a3.quoiTitre' => 'ما نقوم به.',
 			'contrat.a3.quoi' => 'قد يتم تسجيل الدرس صوتيًا. لا تُسجَّل الصورة. ويمكن أيضًا لشخص من الأكاديمية مكلَّف بالمراقبة أن يتابع الدرس مباشرة: يرى الدرس ويسمعه دون أن يُرى أو يُسمع. ولا يسجّل شيئًا. وتذكّر القاعة بذلك باستمرار.',
 			'contrat.a3.pourquoiTitre' => 'لماذا.',
+			_ => null,
+		} ?? switch (path) {
 			'contrat.a3.pourquoi' => 'لحماية الأطفال والمعلمين. إذا أبلغ أحد عن مشكلة، يمكننا التحقق مما حدث.',
 			'contrat.a3.quiTitre' => 'من يمكنه الاستماع إلى التسجيل.',
 			'contrat.a3.qui' => 'فقط الأشخاص في الأكاديمية المكلَّفون بالجودة والحماية، ولسبب محدد فقط، مثل بلاغ. يُسجَّل كل استماع في سجل. يمكنك أن تسأل هل استُمع إلى تسجيل، ولماذا.',
 			'contrat.a3.dureeTitre' => 'إلى متى.',
 			'contrat.a3.duree' => ({required Object duree}) => 'مدة الحفظ بالأيام: ⁨${duree}⁩، ثم يُحذف. إذا وُجد بلاغ، يُحتفظ بالتسجيل حتى نهاية الفحص.',
 			'contrat.a3.desaccordTitre' => 'إذا لم تكن موافقًا.',
-			_ => null,
-		} ?? switch (path) {
 			'contrat.a3.desaccord' => 'يمكنك الاعتراض: الحساب، موافقاتي، أعترض على التسجيل. نجيبك خلال شهر. سنبحث معك عن حل. وإذا تعذّر ذلك، يمكنك التوقف دون رسوم عن الدروس التي لم تُتابَع بعد.',
 			'contrat.a3.jaiLu' => 'قرأت',
 			'contrat.e1.quoi' => 'قد يتم تسجيل الدرس صوتيًا. لا تُسجَّل الصورة. ويمكن أيضًا لشخص من الأكاديمية مكلَّف بالمراقبة أن يتابع الدرس مباشرة: يرى الدرس ويسمعه دون أن يُرى أو يُسمع. ولا يسجّل شيئًا. ثم يرسل تقريرًا إلى الأكاديمية. وتذكّر القاعة بذلك باستمرار.',

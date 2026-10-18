@@ -101,7 +101,9 @@
       "horsLignePhrase": "يلزم الاتصال بالإنترنت للاطلاع على التقرير.",
       "aucunChampPhrase": "لا يوجد تقرير تربوي متاح لهذه الحصة.",
       "voirTravail": "عرض ما يجب تحضيره",
-      "voirProgression": "عرض التقدم"
+      "voirProgression": "عرض التقدم",
+      "etatARenforcer": "يحتاج إلى تقوية",
+      "etatAcquis": "مكتسَب"
     },
     "dateLongue": "⁨{jourSemaine}⁩ ⁨{jour}⁩ ⁨{mois}⁩ ⁨{annee}⁩",
     "titre": "السجل",
@@ -4391,7 +4393,11 @@
         "nonValide": "لم يُعتمد الدفتر بعد.",
         "corrigeLe": "صُحِّح في ⁨{date}⁩",
         "enseignant": "المعلم",
-        "seanceDu": "حصة ⁨{date}⁩"
+        "seanceDu": "حصة ⁨{date}⁩",
+        "rubriqueTravail": "ما يجب تحضيره",
+        "rubriqueObjectif": "هدف شخصي",
+        "rubriqueSuite": "ما تقرر للمتابعة",
+        "rubriqueMotif": "سبب الاستثناء"
       },
       "partage": {
         "titre": "مشاركة التقارير التربوية",
