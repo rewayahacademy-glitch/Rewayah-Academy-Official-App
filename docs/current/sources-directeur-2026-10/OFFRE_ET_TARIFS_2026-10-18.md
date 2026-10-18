@@ -6,7 +6,7 @@ Copie fidèle du document du directeur « Offre et tarifs Rewayah Academy » (ht
 
 Prix publics : **55 $ par mois pour un enfant** (3 séances de 60 min par semaine) et **65 $ par mois pour un adulte** (3 séances de 90 min par semaine), hors taxes. L'enseignant est payé **par élève présent et par heure de cours** : 0,95 $ pour un enfant, 1,00 $ pour un adulte. Il gagne donc moins à l'heure avec un groupe d'enfants (4,75 $ pour un groupe plein) qu'avec un groupe d'adultes (6,00 $). À 100 élèves, l'académie garde environ 2 520 $ par mois après enseignants, frais, administration et impôt, soit 45 % de l'encaissé.
 
-| Poste | Enfant (6 à 14 ans) | Adulte (15 ans et plus) |
+| Poste | Enfant (6 à 17 ans) | Adulte (18 ans et plus) |
 |---|---|---|
 | Prix public mensuel, hors taxes | 55 $ | 65 $ |
 | Rythme | 3 x 60 min par semaine | 3 x 90 min par semaine |
@@ -25,14 +25,14 @@ Une place dans un groupe stable, avec le même enseignant, trois fois par semain
 
 | Élément | Enfant | Adulte |
 |---|---|---|
-| Public | 6 à 14 ans, rattaché à un parent ou tuteur | 15 ans et plus, compte autonome |
-| Séance | 60 min, dont une pause centrale de 6 min | 90 min, dont une pause centrale de 10 min |
+| Public | 6 à 17 ans, rattaché à un parent ou tuteur | 18 ans et plus, compte autonome |
+| Séance | 60 min, dont une pause centrale de 5 min | 90 min, dont une pause centrale de 10 min |
 | Rythme | 3 séances par semaine, créneau fixe | 3 séances par semaine, créneau fixe |
 | Groupe | 3 à 5 élèves, un seul enseignant | 3 à 6 élèves, un seul enseignant |
 | Langue du cours | poular, français, anglais, arabe, ou autre langue selon la disponibilité des enseignants, choisie à l'inscription | identique |
 | Suivi | cahier de transmission en fin de semaine, lisible par le parent | cahier de transmission en fin de semaine |
 | Regard du parent | le parent peut entrer en observateur silencieux 2 minutes par séance | sans objet |
-| Interface | mode enfant simplifié jusqu'à 8 ans, caméra décidée par le parent | interface standard |
+| Interface | Interface guidée par défaut de 6 à 9 ans, caméra décidée par le parent | interface standard |
 | Contrôle qualité | un contrôleur peut assister à la séance sans être vu | identique |
 | Prières | interruptions calculées, annoncées à l'avance et consignées | identique |
 
@@ -109,7 +109,7 @@ Règles à publier dans les conditions de vente :
 
 - **Première semaine remboursée.** Toute famille peut arrêter dans les 7 jours suivant la première séance et être remboursée en entier. Au-delà, le mois entamé est dû. Ce droit est cohérent avec le délai de rétractation de 14 jours du droit britannique de la vente à distance, à faire confirmer par un conseil avant publication.
 - **Résiliation libre.** Le mensuel s'arrête à tout moment pour la fin du mois en cours, sans justification. Le trimestriel et l'annuel ne sont pas remboursés après la première semaine.
-- **Changement de formule.** Un enfant qui atteint 15 ans passe à la formule adulte (65 $) au renouvellement suivant, avec un préavis d'un mois au parent.
+- **Changement de formule.** Un élève qui atteint 18 ans passe à la formule adulte (65 $) au renouvellement suivant, avec un préavis d'un mois au parent.
 - **Élève en retard de paiement.** Pendant le délai de grâce, il suit ses cours et l'enseignant est payé pour ses présences. À la suspension, il n'entre plus en séance et ne compte plus dans la paie.
 - **Taxes.** Les prix affichés sont hors taxes. La taxe due selon le pays de la famille est calculée et ajoutée au moment du paiement.
 - **Moyens de paiement.** Carte bancaire par le prestataire de paiement (Stripe ou Lemon Squeezy, ce dernier gérant la TVA comme vendeur officiel), virement SEPA sur demande pour l'annuel. Mobile money n'est pas proposé aux familles : le marché visé est l'Europe et l'Amérique du Nord.
@@ -181,11 +181,11 @@ Cinq encarts, à coller tels quels sur le site public, dans systeme.io et dans l
 
 **Encart Enfant**
 
-Cours de Coran pour enfants, 6 à 14 ans. 55 $ par mois, hors taxes. Trois séances d'une heure par semaine, à heure fixe, dans un groupe de 3 à 5 élèves avec le même enseignant. Cours en poular, français, anglais, arabe ou autre langue selon la disponibilité des enseignants. Le parent peut entrer dans la séance en observateur silencieux, 2 minutes par séance, et reçoit chaque fin de semaine le compte rendu de l'enseignant dans l'application. Première semaine remboursée si le cours ne convient pas. Résiliable chaque mois.
+Cours de Coran pour enfants et adolescents, 6 à 17 ans. 55 $ par mois, hors taxes. Trois séances d'une heure par semaine, à heure fixe, dans un groupe de 3 à 5 élèves avec le même enseignant. Cours en poular, français, anglais, arabe ou autre langue selon la disponibilité des enseignants. Le parent peut entrer dans la séance en observateur silencieux, 2 minutes par séance, et reçoit chaque fin de semaine le compte rendu de l'enseignant dans l'application. Première semaine remboursée si le cours ne convient pas. Résiliable chaque mois.
 
 **Encart Adulte**
 
-Cours de Coran pour adultes, à partir de 15 ans. 65 $ par mois, hors taxes. Trois séances de 90 minutes par semaine, pause comprise, à heure fixe, dans un groupe de 3 à 6 personnes avec le même enseignant. Cours en poular, français, anglais, arabe ou autre langue selon la disponibilité des enseignants. Compte rendu de l'enseignant chaque fin de semaine. Première semaine remboursée si le cours ne convient pas. Résiliable chaque mois.
+Cours de Coran pour adultes, à partir de 18 ans. 65 $ par mois, hors taxes. Trois séances de 90 minutes par semaine, pause comprise, à heure fixe, dans un groupe de 3 à 6 personnes avec le même enseignant. Cours en poular, français, anglais, arabe ou autre langue selon la disponibilité des enseignants. Compte rendu de l'enseignant chaque fin de semaine. Première semaine remboursée si le cours ne convient pas. Résiliable chaque mois.
 
 **Encart Remises**
 

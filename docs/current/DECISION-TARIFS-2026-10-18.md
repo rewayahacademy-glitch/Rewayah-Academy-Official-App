@@ -12,11 +12,11 @@ Part de l'enseignant pour les **enfants portée de 21 % à 22,5 %** du prix ; **
 
 ## Les valeurs (résumé)
 
-| Règle | Enfant (6 à 14 ans) | Adulte (15 ans et plus) |
+| Règle | Enfant (6 à 17 ans) | Adulte (18 ans et plus) |
 |---|---|---|
 | Prix mensuel hors taxes | 55 $ | 65 $ |
 | Trimestriel (-5 %), annuel (-10 %) | 157 $, 594 $ | 185 $, 702 $ |
-| Séances | 3 x 60 min, pause 6 min | 3 x 90 min, pause 10 min |
+| Séances | 3 x 60 min, pause 5 min | 3 x 90 min, pause 10 min |
 | Groupe | 3 à 5 | 3 à 6 |
 | Séance due à partir de | 45 min de présence | 70 min |
 | Paie enseignant | 0,95 $ par élève présent et par heure | 1,00 $ |
@@ -41,7 +41,7 @@ Toute valeur ci-dessous est **caduque** ; ne pas la reprendre, même si elle fig
 
 ## Contradictions tranchées
 
-1. **Âge de la formule adulte.** Le document fixe l'adulte à 15 ans et plus ; l'application rangeait les 14 à 17 ans avec les enfants. Tranché : **la formule (prix, durée, taille de classe) suit le document** (6 à 14 ans enfant, 15 ans et plus adulte). **Le compte d'un élève de moins de 18 ans reste rattaché à son tuteur** (consentement, protection des mineurs) : « compte autonome » ne vaut qu'à partir de 18 ans. La classe d'un élève de 15 à 17 ans est une classe adulte de son public (hommes ou femmes).
+1. **Âge de la formule adulte.** Le document fixait l'adulte à 15 ans ; les règles du programme (29/09, confirmées le 12/10) le fixent à 18 ans. **Directeur, 18/10/2026 : 18 ans.** Enfant 6 à 17 ans (55 $, 3 x 60 min, classe enfant), adulte 18 ans et plus (65 $, 3 x 90 min, classe adulte). Cohortes du programme inchangées (6-9, 10-13, 14-17, 18+) ; aucun mineur dans une classe d'adultes. La pause enfant suit le programme (5 min) et « mode enfant » devient « Interface guidée par défaut de 6 à 9 ans » (vocabulaire et registre du 14/10). Le document du directeur est corrigé en conséquence.
 2. **Essai.** Le guide Finance V4 prévoyait 2 séances d'essai ; le document du 18/10 le remplace par la première semaine remboursée. La politique publiée porte `essai_actif = false`.
 3. **Cahier de transmission.** Le document le veut hebdomadaire ; l'application en tient un par séance. Ce n'est pas un tarif : la paie du mois est mise en attente tant que le cahier de la semaine manque, et le passage au cahier hebdomadaire est inscrit comme lot à part dans la passation.
 
@@ -58,7 +58,7 @@ Le document laisse cinq points au directeur, chacun avec une valeur par défaut.
 ## Consigne pour l'agent qui finira le site public
 
 1. Lire les valeurs dans `docs/current/tarifs-2026-10-18.json` (copier ce fichier en `site-public/content/tarifs.json` et le faire lire par `build_site.py`) : jamais un montant tapé dans une page.
-2. Page `/fr/tarifs` de `site-public/content/pages.json` : remplacer les sections actuelles (« Aucun montant n'est affiché… », « Les deux premiers membres gardent leur tarif… », caduques) par, dans cet ordre : la grille (deux formules, mensuel, trimestriel, annuel, prix par séance), `encart_remises`, le tableau « Ce que coûte une fratrie » du document (55 ; 105,60 ; 151,25 ; 196,90 $), `mentions_sous_la_grille`, puis les règles de paiement à publier (première semaine remboursée, résiliation libre, passage à la formule adulte à 15 ans, taxes, moyens de paiement).
+2. Page `/fr/tarifs` de `site-public/content/pages.json` : remplacer les sections actuelles (« Aucun montant n'est affiché… », « Les deux premiers membres gardent leur tarif… », caduques) par, dans cet ordre : la grille (deux formules, mensuel, trimestriel, annuel, prix par séance), `encart_remises`, le tableau « Ce que coûte une fratrie » du document (55 ; 105,60 ; 151,25 ; 196,90 $), `mentions_sous_la_grille`, puis les règles de paiement à publier (première semaine remboursée, résiliation libre, passage à la formule adulte à 18 ans, taxes, moyens de paiement).
 3. Pages `/fr/cours` et `/fr/familles` : `encart_enfant` et `encart_adulte` tels quels. Page `/fr/recrutement` : `encart_enseignant` tel quel.
 4. Simulateur (`site-public/styles/site.js`, « Le calcul est momentanément indisponible ») : calculer le total d'un mois complet à partir du fichier. Rang dans le foyer : le 1er inscrit paie le plein tarif, le 2e -8 %, le 3e et suivants -17 % (`remises.foyer`). Le rang suit l'ordre d'inscription : pour un foyer qui mêle enfants et adultes, afficher la fourchette entre l'ordre le plus favorable et le moins favorable. Vérifications : 2 enfants = 105,60 $ ; 3 enfants = 151,25 $ ; 2 adultes = 124,80 $. Toujours « hors taxes ».
 5. Le statut des pages (`status: "blocked"`) ne change que sur décision du directeur : les conditions de vente restent à faire confirmer par un conseil (document, section « Règles de paiement »).

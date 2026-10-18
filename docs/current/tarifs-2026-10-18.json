@@ -8,11 +8,11 @@
   "formules": {
     "enfant": {
       "age_min": 6,
-      "age_max_inclus": 14,
+      "age_max_inclus": 17,
       "prix_mensuel_mineur": 5500,
       "seances_par_semaine": 3,
       "duree_minutes": 60,
-      "pause_minutes": 6,
+      "pause_minutes": 5,
       "heures_par_mois": 13,
       "prix_seance_mineur": 423,
       "groupe_min": 3,
@@ -23,7 +23,7 @@
       "duo_mensuel_mineur": 16500
     },
     "adulte": {
-      "age_min": 15,
+      "age_min": 18,
       "age_max_inclus": null,
       "prix_mensuel_mineur": 6500,
       "seances_par_semaine": 3,
@@ -41,32 +41,74 @@
   },
   "remises": {
     "foyer": [
-      { "a_partir_du_rang": 2, "pour_mille": 80 },
-      { "a_partir_du_rang": 3, "pour_mille": 170 }
+      {
+        "a_partir_du_rang": 2,
+        "pour_mille": 80
+      },
+      {
+        "a_partir_du_rang": 3,
+        "pour_mille": 170
+      }
     ],
-    "prepaiement": { "trimestriel_pour_mille": 50, "annuel_pour_mille": 100 },
+    "prepaiement": {
+      "trimestriel_pour_mille": 50,
+      "annuel_pour_mille": 100
+    },
     "parrainage_credit_mineur": 2000,
-    "bourse": { "pour_mille": 300, "places_max_pour_mille_des_eleves": 50, "revue_mois": 6, "cumulable": false },
+    "bourse": {
+      "pour_mille": 300,
+      "places_max_pour_mille_des_eleves": 50,
+      "revue_mois": 6,
+      "cumulable": false
+    },
     "cumul_max_pour_mille": 250
   },
   "essai_gratuit": false,
   "premiere_semaine_remboursee_jours": 7,
   "calendrier_paiement": {
     "renouvellement_jour": 1,
-    "relances_jours_avant": [7, 3, 1],
-    "grace_jours": [1, 2, 3],
+    "relances_jours_avant": [
+      7,
+      3,
+      1
+    ],
+    "grace_jours": [
+      1,
+      2,
+      3
+    ],
     "suspension_jour": 4,
     "place_gardee_jours": 14,
     "place_liberee_jour": 18
   },
   "enseignant": {
-    "taux_par_eleve_present_heure_mineur": { "enfant": 95, "adulte": 100 },
-    "part_du_prix_pour_mille": { "enfant": 225, "adulte": 300 },
-    "groupe_plein_heure_mineur": { "enfant": 475, "adulte": 600 },
-    "palier_retention": { "enfant": 105, "adulte": 115, "retention_min_pour_mille": 800, "revue_mois": 6 },
-    "plafond": { "enfant": 130, "adulte": 150 },
+    "taux_par_eleve_present_heure_mineur": {
+      "enfant": 95,
+      "adulte": 100
+    },
+    "part_du_prix_pour_mille": {
+      "enfant": 225,
+      "adulte": 300
+    },
+    "groupe_plein_heure_mineur": {
+      "enfant": 475,
+      "adulte": 600
+    },
+    "palier_retention": {
+      "enfant": 105,
+      "adulte": 115,
+      "retention_min_pour_mille": 800,
+      "revue_mois": 6
+    },
+    "plafond": {
+      "enfant": 130,
+      "adulte": 150
+    },
     "duo_paye_comme_presents": 3,
-    "versement_jours_du_mois": [1, 5],
+    "versement_jours_du_mois": [
+      1,
+      5
+    ],
     "frais_de_transfert": "a la charge de l'academie",
     "verrou_coordonnees_heures": 48,
     "absence_eleve_payee": false,
@@ -80,10 +122,19 @@
     "observation_parent_minutes": 2,
     "enregistrement_audio": false,
     "cahier_transmission": "hebdomadaire",
-    "langues": ["poular", "francais", "anglais", "arabe", "autre selon les enseignants"]
+    "langues": [
+      "poular",
+      "francais",
+      "anglais",
+      "arabe",
+      "autre selon les enseignants"
+    ]
   },
   "economie_reference_100_eleves": {
-    "eleves": { "enfants": 55, "adultes": 45 },
+    "eleves": {
+      "enfants": 55,
+      "adultes": 45
+    },
     "presence_pour_mille": 900,
     "encaisse_mineur": 562700,
     "enseignants_mineur": 144000,
@@ -92,8 +143,8 @@
     "point_mort_eleves": 19
   },
   "site_public": {
-    "encart_enfant": "Cours de Coran pour enfants, 6 à 14 ans. 55 $ par mois, hors taxes. Trois séances d'une heure par semaine, à heure fixe, dans un groupe de 3 à 5 élèves avec le même enseignant. Cours en poular, français, anglais, arabe ou autre langue selon la disponibilité des enseignants. Le parent peut entrer dans la séance en observateur silencieux, 2 minutes par séance, et reçoit chaque fin de semaine le compte rendu de l'enseignant dans l'application. Première semaine remboursée si le cours ne convient pas. Résiliable chaque mois.",
-    "encart_adulte": "Cours de Coran pour adultes, à partir de 15 ans. 65 $ par mois, hors taxes. Trois séances de 90 minutes par semaine, pause comprise, à heure fixe, dans un groupe de 3 à 6 personnes avec le même enseignant. Cours en poular, français, anglais, arabe ou autre langue selon la disponibilité des enseignants. Compte rendu de l'enseignant chaque fin de semaine. Première semaine remboursée si le cours ne convient pas. Résiliable chaque mois.",
+    "encart_enfant": "Cours de Coran pour enfants et adolescents, 6 à 17 ans. 55 $ par mois, hors taxes. Trois séances d'une heure par semaine, à heure fixe, dans un groupe de 3 à 5 élèves avec le même enseignant. Cours en poular, français, anglais, arabe ou autre langue selon la disponibilité des enseignants. Le parent peut entrer dans la séance en observateur silencieux, 2 minutes par séance, et reçoit chaque fin de semaine le compte rendu de l'enseignant dans l'application. Première semaine remboursée si le cours ne convient pas. Résiliable chaque mois.",
+    "encart_adulte": "Cours de Coran pour adultes, à partir de 18 ans. 65 $ par mois, hors taxes. Trois séances de 90 minutes par semaine, pause comprise, à heure fixe, dans un groupe de 3 à 6 personnes avec le même enseignant. Cours en poular, français, anglais, arabe ou autre langue selon la disponibilité des enseignants. Compte rendu de l'enseignant chaque fin de semaine. Première semaine remboursée si le cours ne convient pas. Résiliable chaque mois.",
     "encart_remises": "Deuxième inscrit du foyer : 8 % de remise sur sa place. Troisième et suivants : 17 %. Paiement au trimestre : 5 % de remise. Paiement à l'année : 10 %. Parrainez une famille : 20 $ de crédit pour vous et pour elle après son premier mois. Une bourse de 30 % existe pour les familles en difficulté et pour les personnes récemment converties, sur simple demande écrite (places limitées).",
     "mentions_sous_la_grille": "Prix en dollars américains, hors taxes ; la taxe de votre pays et le montant en euros, livres ou dollars canadiens s'affichent au paiement. Un groupe ouvre dès 3 inscrits ; avant, vous êtes en liste d'attente et rien n'est facturé. Une inscription en cours de mois paie seulement les séances restantes. Une place manquée n'est pas remboursée : elle est réservée dans un groupe fixe. Une séance annulée par l'académie est remplacée. Un contrôleur qualité peut assister aux séances sans être vu.",
     "encart_enseignant": "Rewayah Academy recrute des enseignants de Coran pour des groupes de 3 à 6 élèves en visioconférence, trois fois par semaine, en poular, français, anglais, arabe ou autre langue. Vous êtes payé par élève présent et par heure : jusqu'à 6 $ de l'heure avec un groupe d'adultes, versés avant le 5 de chaque mois, frais de transfert à notre charge. Un enseignant à trois groupes d'adultes peut gagner jusqu'à 350 $ par mois pour 13 h 30 par semaine. Vous choisissez vos créneaux ; l'académie compose les groupes."
