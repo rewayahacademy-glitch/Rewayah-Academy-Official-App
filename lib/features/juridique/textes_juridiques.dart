@@ -7,7 +7,8 @@
 // `01`, `02`, `06` et `DECISION-ENTREE-2026-10-17.md`. Rien n'y est invente :
 // ce que seule la direction peut donner est un [ChampJuridique], rendu comme
 // un repere « [a completer par la direction : ...] » tant qu'il n'est pas
-// renseigne dans [CoordonneesJuridiques.renseignes].
+// renseigne. Depuis le 19/10/2026, les sept valeurs sont donnees par le
+// directeur et vivent dans `t.juridique.valeurs.*` (fr, ar).
 //
 // Aucun montant n'est ecrit : les textes renvoient aux Tarifs.
 //
@@ -16,6 +17,7 @@
 // `docs/current/CATALOGUE_ECRANS_JURIDIQUE.md` (JUR-3, JUR-4).
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/protection_enfants/responsable_protection.dart';
 import '../../core/router/routes.dart';
 import '../dossier/politique_controle.dart' show SectionPolitique;
 import '../salle_seance/information_controle.dart';
@@ -133,39 +135,72 @@ enum ChampJuridique {
   };
 }
 
-/// Les valeurs donnees par la direction. **Un seul endroit a remplir** :
-/// ajouter ici `ChampJuridique.hebergeur: '...'` fait disparaitre le repere
-/// correspondant dans tous les textes. Vide aujourd'hui : aucune valeur n'a
-/// ete donnee, rien n'est invente. (Pas de lecture en base : ces valeurs
-/// changent une fois, avec une nouvelle version des textes.)
+/// Les valeurs donnees par le directeur (19/10/2026), lues dans
+/// `t.juridique.valeurs.*` : le texte suit la langue choisie. Un champ absent
+/// de la table redevient un repere « a completer ». (Pas de lecture en base :
+/// ces valeurs changent une fois, avec une nouvelle version des textes.)
 abstract final class CoordonneesJuridiques {
-  /// Les champs renseignes.
-  static const Map<ChampJuridique, String> renseignes =
-      <ChampJuridique, String>{};
+  /// Les champs renseignes, dans la langue courante.
+  static Map<ChampJuridique, String> get renseignes => <ChampJuridique, String>{
+    ChampJuridique.hebergeur: t.juridique.valeurs.hebergeur,
+    ChampJuridique.lieuxHebergement: t.juridique.valeurs.lieuxHebergement,
+    ChampJuridique.dureesConservation: t.juridique.valeurs.dureesConservation,
+    ChampJuridique.droitApplicable: t.juridique.valeurs.droitApplicable,
+    ChampJuridique.confirmationConseil: t.juridique.valeurs.confirmationConseil,
+    ChampJuridique.remboursementModalites:
+        t.juridique.valeurs.remboursementModalites,
+    ChampJuridique.responsableEnfants: responsable(null),
+  };
+
+  /// La phrase du responsable de la protection des enfants. Le nom et le
+  /// courriel viennent du reglage de la direction ; sans reglage (vide, non
+  /// connecte, lecture en erreur, `null`), le nom est celui de l'academie et
+  /// l'adresse est le contact existant. Jamais de repere « a completer ».
+  static String responsable(ResponsableProtection? lu) =>
+      t.juridique.valeurs.responsableEnfants(
+        nom: lu != null && lu.estNomme
+            ? lu.nom
+            : t.juridique.valeurs.responsableDefaut,
+        contact: lu != null && lu.aUnCourriel
+            ? lu.courriel
+            : InformationControle.contactConfidentialite,
+      );
 
   /// Les champs encore a donner.
   static List<ChampJuridique> aCompleter([
-    Map<ChampJuridique, String> renseignes = CoordonneesJuridiques.renseignes,
-  ]) => <ChampJuridique>[
-    for (final ChampJuridique c in ChampJuridique.values)
-      if (!renseignes.containsKey(c)) c,
-  ];
+    Map<ChampJuridique, String>? renseignes,
+  ]) {
+    final Map<ChampJuridique, String> donnes =
+        renseignes ?? CoordonneesJuridiques.renseignes;
+    return <ChampJuridique>[
+      for (final ChampJuridique c in ChampJuridique.values)
+        if (!donnes.containsKey(c)) c,
+    ];
+  }
 }
 
-String _champ(ChampJuridique c, Map<ChampJuridique, String> renseignes) {
-  final String? valeur = renseignes[c];
-  return valeur == null
-      ? t.juridique.aCompleter(quoi: c.etiquette)
-      : t.juridique.champ(etiquette: c.etiquette, valeur: valeur);
-}
+/// Une valeur donnee se lit seule : ce sont des phrases entieres, qui
+/// portent deja leur sujet.
+String _champ(ChampJuridique c, Map<ChampJuridique, String> renseignes) =>
+    renseignes[c] ?? t.juridique.aCompleter(quoi: c.etiquette);
 
 /// Les sections d'un texte, dans l'ordre, avec les lignes de coordonnees et
-/// les reperes a completer a la place prevue.
+/// les reperes a completer a la place prevue. [responsable] est la lecture
+/// du reglage de la direction (`null` : le defaut).
 List<SectionPolitique> sectionsJuridiques(
   TexteJuridique texte, {
   String contact = InformationControle.contactConfidentialite,
-  Map<ChampJuridique, String> renseignes = CoordonneesJuridiques.renseignes,
+  Map<ChampJuridique, String>? renseignes,
+  ResponsableProtection? responsable,
 }) {
+  final Map<ChampJuridique, String> donnes =
+      renseignes ??
+      <ChampJuridique, String>{
+        ...CoordonneesJuridiques.renseignes,
+        ChampJuridique.responsableEnfants: CoordonneesJuridiques.responsable(
+          responsable,
+        ),
+      };
   final String ecrire = t.juridique.contact(contact: contact);
   List<String> plus(List<String> blocs, List<String> en) => <String>[
     ...blocs,
@@ -187,8 +222,8 @@ List<SectionPolitique> sectionsJuridiques(
         (
           titre: j.s3.titre,
           blocs: plus(j.s3.blocs, <String>[
-            _champ(ChampJuridique.hebergeur, renseignes),
-            _champ(ChampJuridique.lieuxHebergement, renseignes),
+            _champ(ChampJuridique.hebergeur, donnes),
+            _champ(ChampJuridique.lieuxHebergement, donnes),
           ]),
         ),
         (titre: j.s4.titre, blocs: j.s4.blocs),
@@ -205,8 +240,8 @@ List<SectionPolitique> sectionsJuridiques(
         (
           titre: j.s7.titre,
           blocs: plus(j.s7.blocs, <String>[
-            _champ(ChampJuridique.droitApplicable, renseignes),
-            _champ(ChampJuridique.confirmationConseil, renseignes),
+            _champ(ChampJuridique.droitApplicable, donnes),
+            _champ(ChampJuridique.confirmationConseil, donnes),
           ]),
         ),
       ];
@@ -222,8 +257,8 @@ List<SectionPolitique> sectionsJuridiques(
           titre: j.s6.titre,
           blocs: plus(j.s6.blocs, <String>[
             ecrire,
-            _champ(ChampJuridique.remboursementModalites, renseignes),
-            _champ(ChampJuridique.confirmationConseil, renseignes),
+            _champ(ChampJuridique.remboursementModalites, donnes),
+            _champ(ChampJuridique.confirmationConseil, donnes),
           ]),
         ),
       ];
@@ -238,13 +273,13 @@ List<SectionPolitique> sectionsJuridiques(
         (
           titre: j.s6.titre,
           blocs: plus(j.s6.blocs, <String>[
-            _champ(ChampJuridique.lieuxHebergement, renseignes),
+            _champ(ChampJuridique.lieuxHebergement, donnes),
           ]),
         ),
         (
           titre: j.s7.titre,
           blocs: plus(j.s7.blocs, <String>[
-            _champ(ChampJuridique.dureesConservation, renseignes),
+            _champ(ChampJuridique.dureesConservation, donnes),
           ]),
         ),
         (titre: j.s8.titre, blocs: j.s8.blocs),
@@ -272,7 +307,7 @@ List<SectionPolitique> sectionsJuridiques(
           titre: j.s5.titre,
           blocs: plus(j.s5.blocs, <String>[
             ecrire,
-            _champ(ChampJuridique.responsableEnfants, renseignes),
+            _champ(ChampJuridique.responsableEnfants, donnes),
           ]),
         ),
       ];

@@ -154,6 +154,8 @@ const Set<String> _latins = <String>{
   // Raison sociale et adresse du siege : noms propres, gardes en latin.
   'juridique.coord.societe',
   'juridique.coord.adresse',
+  // Hebergeurs (Supabase, Vercel, Cloudflare) : noms propres et domaines.
+  'juridique.valeurs.hebergeur',
   'admin.politiqueRevueKyc.echecEnregistrement',
   'adulte.invitation.courrielInvalide',
   // Le premier jour du mois s'ecrit en chiffre en arabe (« 1 أكتوبر »),

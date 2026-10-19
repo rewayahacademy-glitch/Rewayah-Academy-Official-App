@@ -3265,10 +3265,8 @@ class Traductions$juridique$fr {
 	/// fr: '[à compléter par la direction : {quoi}]'
 	String aCompleter({required Object quoi}) => '[à compléter par la direction : ${quoi}]';
 
-	/// fr: '{etiquette} : {valeur}'
-	String champ({required Object etiquette, required Object valeur}) => '${etiquette} : ${valeur}';
-
 	late final Traductions$juridique$quoi$fr quoi = Traductions$juridique$quoi$fr.internal(_root);
+	late final Traductions$juridique$valeurs$fr valeurs = Traductions$juridique$valeurs$fr.internal(_root);
 	late final Traductions$juridique$mentions$fr mentions = Traductions$juridique$mentions$fr.internal(_root);
 	late final Traductions$juridique$conditions$fr conditions = Traductions$juridique$conditions$fr.internal(_root);
 	late final Traductions$juridique$annulation$fr annulation = Traductions$juridique$annulation$fr.internal(_root);
@@ -18501,6 +18499,39 @@ class Traductions$juridique$quoi$fr {
 
 	/// fr: 'responsable de la protection des enfants'
 	String get responsableEnfants => 'responsable de la protection des enfants';
+}
+
+// Path: juridique.valeurs
+class Traductions$juridique$valeurs$fr {
+	Traductions$juridique$valeurs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Base de données et connexion des comptes : Supabase Inc. (supabase.com). Application et pages web : Vercel Inc. (vercel.com). Nom de domaine : Cloudflare, Inc. (cloudflare.com).'
+	String get hebergeur => 'Base de données et connexion des comptes : Supabase Inc. (supabase.com). Application et pages web : Vercel Inc. (vercel.com). Nom de domaine : Cloudflare, Inc. (cloudflare.com).';
+
+	/// fr: 'La base de données est hébergée en Irlande, dans l'Union européenne. D'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni : ces transferts respectent les règles de protection prévues par la loi.'
+	String get lieuxHebergement => 'La base de données est hébergée en Irlande, dans l\'Union européenne. D\'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni : ces transferts respectent les règles de protection prévues par la loi.';
+
+	/// fr: 'Compte et profil : tant que le compte existe. Après une demande de suppression et un délai de réflexion de 14 jours, le nom, l'adresse e-mail et les coordonnées sont effacés. Factures et paiements : 6 ans, comme l'exige la loi comptable du Royaume-Uni. Pièce d'identité d'un enseignant : 90 jours au plus après la vérification. Messages : tant que le compte existe ; après la suppression, leur auteur devient anonyme.'
+	String get dureesConservation => 'Compte et profil : tant que le compte existe. Après une demande de suppression et un délai de réflexion de 14 jours, le nom, l\'adresse e-mail et les coordonnées sont effacés. Factures et paiements : 6 ans, comme l\'exige la loi comptable du Royaume-Uni. Pièce d\'identité d\'un enseignant : 90 jours au plus après la vérification. Messages : tant que le compte existe ; après la suppression, leur auteur devient anonyme.';
+
+	/// fr: 'Droit d'Angleterre et du pays de Galles, tribunaux d'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.'
+	String get droitApplicable => 'Droit d\'Angleterre et du pays de Galles, tribunaux d\'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.';
+
+	/// fr: 'Droit de rétractation : vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.'
+	String get confirmationConseil => 'Droit de rétractation : vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.';
+
+	/// fr: 'Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.'
+	String get remboursementModalites => 'Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.';
+
+	/// fr: '{nom}, joignable à {contact}.'
+	String responsableEnfants({required Object nom, required Object contact}) => '${nom}, joignable à ${contact}.';
+
+	/// fr: 'Rewayah Academy'
+	String get responsableDefaut => 'Rewayah Academy';
 }
 
 // Path: juridique.mentions
@@ -42642,7 +42673,6 @@ extension on Traductions {
 			'juridique.coord.numero' => 'Numéro d\'immatriculation : 16624644, Angleterre et pays de Galles',
 			'juridique.coord.adresse' => 'Siège : 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni',
 			'juridique.aCompleter' => ({required Object quoi}) => '[à compléter par la direction : ${quoi}]',
-			'juridique.champ' => ({required Object etiquette, required Object valeur}) => '${etiquette} : ${valeur}',
 			'juridique.quoi.hebergeur' => 'hébergeur légal et ses coordonnées',
 			'juridique.quoi.lieuxHebergement' => 'pays où sont hébergées les informations',
 			'juridique.quoi.dureesConservation' => 'durée de conservation de chaque type d\'information',
@@ -42650,6 +42680,14 @@ extension on Traductions {
 			'juridique.quoi.confirmationConseil' => 'relecture par un conseil juridique, droit de rétractation compris',
 			'juridique.quoi.remboursementModalites' => 'moyen et délai du remboursement',
 			'juridique.quoi.responsableEnfants' => 'responsable de la protection des enfants',
+			'juridique.valeurs.hebergeur' => 'Base de données et connexion des comptes : Supabase Inc. (supabase.com). Application et pages web : Vercel Inc. (vercel.com). Nom de domaine : Cloudflare, Inc. (cloudflare.com).',
+			'juridique.valeurs.lieuxHebergement' => 'La base de données est hébergée en Irlande, dans l\'Union européenne. D\'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni : ces transferts respectent les règles de protection prévues par la loi.',
+			'juridique.valeurs.dureesConservation' => 'Compte et profil : tant que le compte existe. Après une demande de suppression et un délai de réflexion de 14 jours, le nom, l\'adresse e-mail et les coordonnées sont effacés. Factures et paiements : 6 ans, comme l\'exige la loi comptable du Royaume-Uni. Pièce d\'identité d\'un enseignant : 90 jours au plus après la vérification. Messages : tant que le compte existe ; après la suppression, leur auteur devient anonyme.',
+			'juridique.valeurs.droitApplicable' => 'Droit d\'Angleterre et du pays de Galles, tribunaux d\'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.',
+			'juridique.valeurs.confirmationConseil' => 'Droit de rétractation : vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.',
+			'juridique.valeurs.remboursementModalites' => 'Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.',
+			'juridique.valeurs.responsableEnfants' => ({required Object nom, required Object contact}) => '${nom}, joignable à ${contact}.',
+			'juridique.valeurs.responsableDefaut' => 'Rewayah Academy',
 			'juridique.mentions.titre' => 'Mentions légales',
 			'juridique.mentions.resume' => 'Qui exploite Rewayah Academy et comment la joindre.',
 			'juridique.mentions.intro' => 'Voici qui exploite Rewayah Academy et comment la joindre.',

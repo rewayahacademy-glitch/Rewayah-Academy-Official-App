@@ -10321,7 +10321,6 @@
       "adresse": "Siège\u00a0: 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni"
     },
     "aCompleter": "[à compléter par la direction\u00a0: {quoi}]",
-    "champ": "{etiquette}\u00a0: {valeur}",
     "quoi": {
       "hebergeur": "hébergeur légal et ses coordonnées",
       "lieuxHebergement": "pays où sont hébergées les informations",
@@ -10330,6 +10329,16 @@
       "confirmationConseil": "relecture par un conseil juridique, droit de rétractation compris",
       "remboursementModalites": "moyen et délai du remboursement",
       "responsableEnfants": "responsable de la protection des enfants"
+    },
+    "valeurs": {
+      "hebergeur": "Base de données et connexion des comptes\u00a0: Supabase Inc. (supabase.com). Application et pages web\u00a0: Vercel Inc. (vercel.com). Nom de domaine\u00a0: Cloudflare, Inc. (cloudflare.com).",
+      "lieuxHebergement": "La base de données est hébergée en Irlande, dans l'Union européenne. D'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni\u00a0: ces transferts respectent les règles de protection prévues par la loi.",
+      "dureesConservation": "Compte et profil\u00a0: tant que le compte existe. Après une demande de suppression et un délai de réflexion de 14 jours, le nom, l'adresse e-mail et les coordonnées sont effacés. Factures et paiements\u00a0: 6 ans, comme l'exige la loi comptable du Royaume-Uni. Pièce d'identité d'un enseignant\u00a0: 90 jours au plus après la vérification. Messages\u00a0: tant que le compte existe\u00a0; après la suppression, leur auteur devient anonyme.",
+      "droitApplicable": "Droit d'Angleterre et du pays de Galles, tribunaux d'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.",
+      "confirmationConseil": "Droit de rétractation\u00a0: vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.",
+      "remboursementModalites": "Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.",
+      "responsableEnfants": "{nom}, joignable à {contact}.",
+      "responsableDefaut": "Rewayah Academy"
     },
     "mentions": {
       "titre": "Mentions légales",

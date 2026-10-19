@@ -1,11 +1,13 @@
 // Textes juridiques (lot « levee des blocages », 18/10/2026) : les six textes
 // se lisent sans erreur a 320 et 1440, texte 100 et 200 %, en francais et en
 // arabe (sens droite a gauche), avec leur version et leur date ; rien n'est
-// invente (les manques sont des reperes), aucun montant, aucun mot interdit.
+// invente (un champ non donne reste un repere), aucun montant, aucun mot interdit.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/protection_enfants/responsable_protection.dart';
 import 'package:rewayah_academy/features/dossier/politique_controle.dart'
     show SectionPolitique, textePlatBloc;
 import 'package:rewayah_academy/features/juridique/juridique_pages.dart';
@@ -18,6 +20,19 @@ String _tout(TexteJuridique x) =>
     sectionsJuridiques(x)
         .expand((SectionPolitique s) => <String>[s.titre, ...s.blocs])
         .join('\n');
+
+class _PortResponsable implements PortResponsableProtection {
+  _PortResponsable(this.valeur, {this.erreur});
+
+  final ResponsableProtection valeur;
+  final Exception? erreur;
+
+  @override
+  Future<ResponsableProtection> lire() async {
+    if (erreur != null) throw erreur!;
+    return valeur;
+  }
+}
 
 void main() {
   setUpAll(() async {
@@ -56,38 +71,71 @@ void main() {
       );
     }
 
-    test(
-      'annulation et conditions : aucun delai ni date de paiement en dur',
-      () {
-        for (final AppLocale langue in AppLocale.values) {
-          LocaleSettings.setLocaleSync(langue);
-          for (final TexteJuridique x in <TexteJuridique>[
-            TexteJuridique.annulation,
-            TexteJuridique.conditions,
-          ]) {
-            // Les ages des formules (programme) sont permis. Aucun autre
-            // chiffre dans les blocs : ni delai, ni jour du mois.
-            final String blocs = sectionsJuridiques(x)
-                .expand((SectionPolitique s) => s.blocs)
-                .join('\n')
-                .replaceAll(RegExp(r'[0-9٠-٩]+ à [0-9٠-٩]+ ans'), '')
-                .replaceAll(RegExp(r'من [0-9٠-٩]+ إلى [0-9٠-٩]+ سنة'), '')
-                .replaceAll(RegExp(r'[0-9٠-٩]+ (ans|سنة)'), '');
-            expect(
-              RegExp(r'[0-9٠-٩]').hasMatch(blocs),
-              isFalse,
-              reason: '${langue.languageCode} ${x.slug}',
-            );
-          }
+    test('annulation et conditions : aucun delai ni date de paiement en dur', () {
+      for (final AppLocale langue in AppLocale.values) {
+        LocaleSettings.setLocaleSync(langue);
+        for (final TexteJuridique x in <TexteJuridique>[
+          TexteJuridique.annulation,
+          TexteJuridique.conditions,
+        ]) {
+          // Les ages des formules (programme) sont permis. Aucun autre
+          // chiffre dans les blocs : ni delai, ni jour du mois.
+          final String blocs =
+              sectionsJuridiques(
+                    x,
+                    // Sans les valeurs du directeur (qui portent des delais) :
+                    // seuls les textes de base sont controles.
+                    renseignes: const <ChampJuridique, String>{},
+                  )
+                  .expand((SectionPolitique s) => s.blocs)
+                  .join('\n')
+                  .replaceAll(RegExp(r'[0-9٠-٩]+ à [0-9٠-٩]+ ans'), '')
+                  .replaceAll(RegExp(r'من [0-9٠-٩]+ إلى [0-9٠-٩]+ سنة'), '')
+                  .replaceAll(RegExp(r'[0-9٠-٩]+ (ans|سنة)'), '');
+          expect(
+            RegExp(r'[0-9٠-٩]').hasMatch(blocs),
+            isFalse,
+            reason: '${langue.languageCode} ${x.slug}',
+          );
         }
-      },
-    );
+      }
+    });
 
-    test('les manques sont des reperes, listes une fois', () {
-      final String enfants = _tout(TexteJuridique.enfants);
+    test('un champ non donne reste un repere, liste une fois', () {
+      final String enfants = sectionsJuridiques(
+        TexteJuridique.enfants,
+        renseignes: const <ChampJuridique, String>{},
+      ).expand((SectionPolitique s) => s.blocs).map(textePlatBloc).join('\n');
       expect(enfants, contains('[à compléter par la direction'));
       expect(enfants, contains('responsable de la protection des enfants'));
-      expect(CoordonneesJuridiques.aCompleter(), ChampJuridique.values);
+      expect(
+        CoordonneesJuridiques.aCompleter(const <ChampJuridique, String>{}),
+        ChampJuridique.values,
+      );
+    });
+
+    test('les sept valeurs du directeur sont donnees, en fr et en ar', () {
+      for (final AppLocale langue in AppLocale.values) {
+        LocaleSettings.setLocaleSync(langue);
+        expect(CoordonneesJuridiques.aCompleter(), isEmpty);
+        for (final TexteJuridique x in TexteJuridique.values) {
+          final String texte = _tout(x);
+          expect(
+            texte,
+            isNot(contains('à compléter')),
+            reason: '${langue.languageCode} ${x.slug}',
+          );
+          expect(
+            texte,
+            isNot(contains('تستكمله')),
+            reason: '${langue.languageCode} ${x.slug}',
+          );
+        }
+        expect(
+          _tout(TexteJuridique.enfants),
+          contains('support@rewayahacademy.com'),
+        );
+      }
     });
 
     test('un champ renseigne remplace son repere', () {
@@ -116,6 +164,105 @@ void main() {
       );
       expect(ligneVersionJuridique(), contains(VersionsJuridiques.version));
       expect(ligneVersionJuridique(), contains('18 octobre 2026'));
+    });
+  });
+
+  group('Le responsable de la protection des enfants', () {
+    const String defaut =
+        'Rewayah Academy, joignable à support@rewayahacademy.com.';
+
+    // Les adresses portent des points de coupure invisibles : on les retire.
+    Finder phrase(String texte) => find.byWidgetPredicate(
+      (Widget w) =>
+          w is RichText &&
+          w.text
+              .toPlainText()
+              .replaceAll(RegExp('[\u200b\u2060\u00ad\u200c\u200d]'), '')
+              .contains(texte),
+    );
+
+    Future<void> ouvrir(
+      WidgetTester tester,
+      PortResponsableProtection port,
+    ) async {
+      LocaleSettings.setLocaleSync(AppLocale.fr);
+      fixerVueCapture(tester, const Size(390, 1600), 1);
+      await tester.pumpWidget(
+        hoteCapture(
+          const TexteJuridiquePage(texte: TexteJuridique.enfants),
+          surcharges: <Override>[
+            portResponsableProtectionProvider.overrideWithValue(port),
+          ],
+        ),
+      );
+      await stabiliser(tester);
+      await tester.drag(
+        find.byType(Scrollable).first,
+        const Offset(0, -100000),
+      );
+      await stabiliser(tester);
+      expect(tester.takeException(), isNull);
+      expect(find.textContaining('à compléter'), findsNothing);
+    }
+
+    testWidgets('reglage rempli : le nom et le courriel de la direction', (
+      WidgetTester tester,
+    ) async {
+      await ouvrir(
+        tester,
+        _PortResponsable(
+          const ResponsableProtection(
+            nom: 'Sayyida Amina',
+            courriel: 'amina@exemple.org',
+          ),
+        ),
+      );
+      expect(
+        phrase('Sayyida Amina, joignable à amina@exemple.org.'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('reglage vide : le nom de l\'academie et le contact existant', (
+      WidgetTester tester,
+    ) async {
+      await ouvrir(tester, _PortResponsable(ResponsableProtection.aucun));
+      expect(phrase(defaut), findsWidgets);
+    });
+
+    testWidgets('lecture en erreur : le defaut, sans ecran d\'erreur', (
+      WidgetTester tester,
+    ) async {
+      await ouvrir(
+        tester,
+        _PortResponsable(
+          ResponsableProtection.aucun,
+          erreur: Exception('hors ligne'),
+        ),
+      );
+      expect(phrase(defaut), findsWidgets);
+    });
+
+    testWidgets('non connecte (lecture refusee) : le defaut', (
+      WidgetTester tester,
+    ) async {
+      await ouvrir(
+        tester,
+        _PortResponsable(
+          ResponsableProtection.aucun,
+          erreur: Exception('JWT absent : compte non connecte'),
+        ),
+      );
+      expect(phrase(defaut), findsWidgets);
+    });
+
+    test('sans lecture : le defaut, en fr et en ar', () {
+      for (final AppLocale langue in AppLocale.values) {
+        LocaleSettings.setLocaleSync(langue);
+        final String texte = _tout(TexteJuridique.enfants);
+        expect(texte, contains('support@rewayahacademy.com'));
+        expect(texte, contains(t.juridique.valeurs.responsableDefaut));
+      }
     });
   });
 

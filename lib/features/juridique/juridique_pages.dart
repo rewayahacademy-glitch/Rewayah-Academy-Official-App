@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/jour_du_mois.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/protection_enfants/responsable_protection.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -99,30 +101,34 @@ class JuridiquePage extends StatelessWidget {
 }
 
 /// `/juridique/<texte>` : un texte, avec sa version et sa date.
-class TexteJuridiquePage extends StatelessWidget {
+class TexteJuridiquePage extends ConsumerWidget {
   /// Cree la page d'un [texte].
-  const TexteJuridiquePage({
-    required this.texte,
-    super.key,
-    this.renseignes = CoordonneesJuridiques.renseignes,
-  });
+  const TexteJuridiquePage({required this.texte, super.key, this.renseignes});
 
   /// Le texte a lire.
   final TexteJuridique texte;
 
   /// Les champs donnes par la direction (injectable pour les tests).
-  final Map<ChampJuridique, String> renseignes;
+  final Map<ChampJuridique, String>? renseignes;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final TextStyle attenue = palette.inkMuted.applyTo(
       textes.bodyMedium ?? const TextStyle(),
     );
+    // Le responsable regle par la direction. Le texte ne l'attend pas et ne
+    // montre aucune erreur : chargement, echec de lecture ou compte non
+    // connecte, le defaut s'affiche.
+    final ResponsableProtection? responsable = ref
+        .watch(responsableProtectionProvider)
+        .asData
+        ?.value;
     final List<SectionPolitique> sections = sectionsJuridiques(
       texte,
       renseignes: renseignes,
+      responsable: responsable,
     );
     return PageShell(
       titre: texte.titre,

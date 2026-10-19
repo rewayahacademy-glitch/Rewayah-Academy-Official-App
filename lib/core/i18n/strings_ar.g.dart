@@ -1630,8 +1630,8 @@ class _Traductions$juridique$ar extends Traductions$juridique$fr {
 	@override String get lire => 'قراءة';
 	@override late final _Traductions$juridique$coord$ar coord = _Traductions$juridique$coord$ar._(_root);
 	@override String aCompleter({required Object quoi}) => '[تستكمله الإدارة: ⁨${quoi}⁩]';
-	@override String champ({required Object etiquette, required Object valeur}) => '⁨${etiquette}⁩: ⁨${valeur}⁩';
 	@override late final _Traductions$juridique$quoi$ar quoi = _Traductions$juridique$quoi$ar._(_root);
+	@override late final _Traductions$juridique$valeurs$ar valeurs = _Traductions$juridique$valeurs$ar._(_root);
 	@override late final _Traductions$juridique$mentions$ar mentions = _Traductions$juridique$mentions$ar._(_root);
 	@override late final _Traductions$juridique$conditions$ar conditions = _Traductions$juridique$conditions$ar._(_root);
 	@override late final _Traductions$juridique$annulation$ar annulation = _Traductions$juridique$annulation$ar._(_root);
@@ -7831,6 +7831,23 @@ class _Traductions$juridique$quoi$ar extends Traductions$juridique$quoi$fr {
 	@override String get confirmationConseil => 'مراجعة مستشار قانوني، بما فيها حق العدول';
 	@override String get remboursementModalites => 'وسيلة الاسترداد ومدته';
 	@override String get responsableEnfants => 'المسؤول عن حماية الأطفال';
+}
+
+// Path: juridique.valeurs
+class _Traductions$juridique$valeurs$ar extends Traductions$juridique$valeurs$fr {
+	_Traductions$juridique$valeurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get hebergeur => 'قاعدة البيانات وتسجيل الدخول إلى الحسابات: Supabase Inc. (supabase.com). التطبيق والصفحات الإلكترونية: Vercel Inc. (vercel.com). اسم النطاق: Cloudflare, Inc. (cloudflare.com).';
+	@override String get lieuxHebergement => 'تُستضاف قاعدة البيانات في أيرلندا، داخل الاتحاد الأوروبي. وقد تعالج جهات أخرى بعض المعلومات خارج المملكة المتحدة، وتلتزم هذه العمليات بقواعد الحماية التي ينص عليها القانون.';
+	@override String get dureesConservation => 'الحساب والملف الشخصي: ما دام الحساب قائمًا. بعد طلب الحذف ومهلة تفكير مدتها 14 يومًا، يُمحى الاسم والبريد الإلكتروني وبيانات التواصل. الفواتير والمدفوعات: 6 سنوات، كما يفرض قانون المحاسبة في المملكة المتحدة. وثيقة هوية المعلم: 90 يومًا على الأكثر بعد التحقق منها. الرسائل: ما دام الحساب قائمًا، وبعد الحذف يصبح كاتبها مجهول الهوية.';
+	@override String get droitApplicable => 'قانون إنجلترا وويلز، ومحاكم إنجلترا وويلز. وإذا كنتم مستهلكين، فتبقى لكم حماية القواعد الآمرة في بلد إقامتكم.';
+	@override String get confirmationConseil => 'حق العدول: يمكنكم الإلغاء خلال 14 يومًا من تسجيلكم، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.';
+	@override String get remboursementModalites => 'يتم الاسترداد بوسيلة الدفع المستخدمة، خلال 14 يومًا من طلبكم.';
+	@override String responsableEnfants({required Object nom, required Object contact}) => '⁨${nom}⁩، ويمكن التواصل عبر ⁨${contact}⁩.';
+	@override String get responsableDefaut => 'أكاديمية رواية';
 }
 
 // Path: juridique.mentions
@@ -22649,7 +22666,6 @@ extension on TraductionsAr {
 			'juridique.coord.numero' => 'رقم التسجيل: 16624644، إنجلترا وويلز',
 			'juridique.coord.adresse' => 'المقر: 71-75 Shelton Street, Covent Garden, London WC2H 9JQ، المملكة المتحدة',
 			'juridique.aCompleter' => ({required Object quoi}) => '[تستكمله الإدارة: ⁨${quoi}⁩]',
-			'juridique.champ' => ({required Object etiquette, required Object valeur}) => '⁨${etiquette}⁩: ⁨${valeur}⁩',
 			'juridique.quoi.hebergeur' => 'المستضيف القانوني وبياناته',
 			'juridique.quoi.lieuxHebergement' => 'البلدان التي تُستضاف فيها المعلومات',
 			'juridique.quoi.dureesConservation' => 'مدة الاحتفاظ بكل نوع من المعلومات',
@@ -22657,6 +22673,14 @@ extension on TraductionsAr {
 			'juridique.quoi.confirmationConseil' => 'مراجعة مستشار قانوني، بما فيها حق العدول',
 			'juridique.quoi.remboursementModalites' => 'وسيلة الاسترداد ومدته',
 			'juridique.quoi.responsableEnfants' => 'المسؤول عن حماية الأطفال',
+			'juridique.valeurs.hebergeur' => 'قاعدة البيانات وتسجيل الدخول إلى الحسابات: Supabase Inc. (supabase.com). التطبيق والصفحات الإلكترونية: Vercel Inc. (vercel.com). اسم النطاق: Cloudflare, Inc. (cloudflare.com).',
+			'juridique.valeurs.lieuxHebergement' => 'تُستضاف قاعدة البيانات في أيرلندا، داخل الاتحاد الأوروبي. وقد تعالج جهات أخرى بعض المعلومات خارج المملكة المتحدة، وتلتزم هذه العمليات بقواعد الحماية التي ينص عليها القانون.',
+			'juridique.valeurs.dureesConservation' => 'الحساب والملف الشخصي: ما دام الحساب قائمًا. بعد طلب الحذف ومهلة تفكير مدتها 14 يومًا، يُمحى الاسم والبريد الإلكتروني وبيانات التواصل. الفواتير والمدفوعات: 6 سنوات، كما يفرض قانون المحاسبة في المملكة المتحدة. وثيقة هوية المعلم: 90 يومًا على الأكثر بعد التحقق منها. الرسائل: ما دام الحساب قائمًا، وبعد الحذف يصبح كاتبها مجهول الهوية.',
+			'juridique.valeurs.droitApplicable' => 'قانون إنجلترا وويلز، ومحاكم إنجلترا وويلز. وإذا كنتم مستهلكين، فتبقى لكم حماية القواعد الآمرة في بلد إقامتكم.',
+			'juridique.valeurs.confirmationConseil' => 'حق العدول: يمكنكم الإلغاء خلال 14 يومًا من تسجيلكم، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.',
+			'juridique.valeurs.remboursementModalites' => 'يتم الاسترداد بوسيلة الدفع المستخدمة، خلال 14 يومًا من طلبكم.',
+			'juridique.valeurs.responsableEnfants' => ({required Object nom, required Object contact}) => '⁨${nom}⁩، ويمكن التواصل عبر ⁨${contact}⁩.',
+			'juridique.valeurs.responsableDefaut' => 'أكاديمية رواية',
 			'juridique.mentions.titre' => 'الإشعارات القانونية',
 			'juridique.mentions.resume' => 'من يدير أكاديمية رواية وكيف تتواصلون معها.',
 			'juridique.mentions.intro' => 'هذه هي الجهة التي تدير أكاديمية رواية، وهذه طريقة التواصل معها.',
