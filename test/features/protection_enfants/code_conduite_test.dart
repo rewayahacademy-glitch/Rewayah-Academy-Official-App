@@ -79,7 +79,7 @@ void main() {
         SorteContrat.codeConduiteEnseignant.valeurSql,
         'teacher_conduct_code',
       );
-      expect(versionCode, '2026-10-cond');
+      expect(versionCode, '2026-10-19');
       expect(acceptationCodeConduite(<Acceptation>[]), isNull);
       // Une autre version signee ne vaut pas acceptation de la courante.
       expect(
@@ -94,6 +94,30 @@ void main() {
       );
     });
 
+    test('le texte definitif du 19/10/2026 : audio garde, parent, bouton exact', () {
+      final List<String> r = t.codeConduite.regles;
+      // La phrase sur l'audio est gardee (decision repetee du directeur).
+      expect(r[0], contains('enregistré en audio'));
+      expect(r[0], contains('Un parent peut aussi assister au cours'));
+      expect(r[1], contains('Vous voyez le prénom de vos élèves'));
+      expect(r[3], contains('hors de l\'application'));
+      expect(r[6], contains('prédicateurs'));
+      // Le libelle du bouton et de la categorie sont ceux de l'application.
+      expect(
+        r[7],
+        contains('\u00ab\u00a0${t.tc.parcours.signalement.titre}\u00a0\u00bb'),
+      );
+      expect(
+        r[7],
+        contains(
+          '\u00ab\u00a0${t.tc.parcours.signalement.categorieValeur.securiteEnfant}\u00a0\u00bb',
+        ),
+      );
+      for (final String regle in r) {
+        expect(regle, isNot(contains('\u2014')));
+      }
+    });
+
     testWidgets('le texte est lu en entier, la case n est pas precochee', (
       WidgetTester tester,
     ) async {
@@ -104,7 +128,7 @@ void main() {
       for (final String regle in t.codeConduite.regles) {
         expect(find.text(regle), findsOneWidget);
       }
-      expect(t.codeConduite.regles, hasLength(5));
+      expect(t.codeConduite.regles, hasLength(9));
       final Checkbox casee = tester.widget<Checkbox>(find.byType(Checkbox));
       expect(casee.value, isFalse);
       expect(find.byKey(ContenuCodeConduite.accepteKey), findsNothing);

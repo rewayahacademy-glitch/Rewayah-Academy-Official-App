@@ -2,9 +2,10 @@
 //
 // Le texte reprend le sens des clauses que l'enseignant a deja signees
 // (contrat `2026-10-jur` : enregistrement et visites de controle, coordonnees
-// des familles) et des principes de protection des enfants de l'academie ;
-// rien n'y est invente. Il est provisoire tant que le directeur ne l'a pas
-// valide (`VersionsContrat.codeConduite`).
+// des familles) et des principes de protection des enfants de l'academie,
+// avec les decisions du directeur. Version definitive, validee par le
+// directeur le 19/10/2026 (`VersionsContrat.codeConduite`, `2026-10-19`) :
+// il n'est plus provisoire.
 //
 // L'acceptation passe par le mecanisme des consentements existant
 // (`PortConsentements.accepter`, ligne immuable de `contract_acceptances`,

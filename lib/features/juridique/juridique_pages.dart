@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/conformite/representant_ue.dart';
 import '../../core/i18n/jour_du_mois.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -129,6 +130,7 @@ class TexteJuridiquePage extends ConsumerWidget {
       texte,
       renseignes: renseignes,
       responsable: responsable,
+      representantUe: ref.watch(representantUeProvider).asData?.value,
     );
     return PageShell(
       titre: texte.titre,

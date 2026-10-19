@@ -59,11 +59,27 @@ void main() {
         'Responsable : Rewayah Academy Ltd, société n° 16624644 immatriculée '
         'en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent '
         'Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité : '
-        'support@rewayahacademy.com. Représentant dans l\'UE : pas encore '
-        'désigné ; l\'application ne s\'ouvre pas aux familles de l\'Union '
-        'européenne avant sa désignation.',
+        'support@rewayahacademy.com. Représentant dans l\'Union européenne\u00a0: '
+        'Rewayah Academy.',
       );
       expect(contact, contains(InformationControle.contactConfidentialite));
+      // Le nom regle par la direction remplace le defaut ; vide, le defaut.
+      expect(
+        sectionsPolitiqueControle(representantUe: '  Cabinet Exemple  ')
+            .last
+            .blocs
+            .single,
+        endsWith(
+          'Représentant dans l\'Union européenne\u00a0: Cabinet Exemple.',
+        ),
+      );
+      expect(
+        sectionsPolitiqueControle(representantUe: '').last.blocs.single,
+        endsWith(
+          'Représentant dans l\'Union européenne\u00a0: Rewayah Academy.',
+        ),
+      );
+      expect(contact, isNot(contains('pas encore')));
       // Aucun champ du modele laisse vide.
       for (final SectionPolitique s in sectionsPolitiqueControle()) {
         for (final String b in s.blocs) {
@@ -135,7 +151,7 @@ void main() {
             // La derniere phrase (l'adresse y porte ses points de coupure
             // invisibles, `coupuresAdresse`).
             final Finder fin = find.textContaining(
-              'Union européenne avant sa désignation.',
+              'Union européenne\u00a0: Rewayah Academy.',
             );
             await tester.drag(
               find.byType(Scrollable).last,

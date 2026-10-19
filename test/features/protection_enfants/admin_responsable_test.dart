@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_configuration.dart';
 import 'package:rewayah_academy/core/capacites/port_politique_revue_kyc.dart';
+import 'package:rewayah_academy/core/conformite/representant_ue.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/protection_enfants/responsable_protection.dart';
 import 'package:rewayah_academy/features/admin_configuration_protection_enfants/protection_enfants_page.dart';
@@ -29,6 +30,21 @@ class _Lecture implements PortResponsableProtection {
   }
 }
 
+class _LectureRepresentant implements PortRepresentantUe {
+  _LectureRepresentant(this.nom, {this.panne = false});
+
+  String nom;
+  bool panne;
+
+  @override
+  Future<String> lire() async {
+    if (panne) {
+      throw Exception('reseau');
+    }
+    return nom;
+  }
+}
+
 class _Ecriture implements ServiceConfiguration {
   final List<({String cle, Object valeur})> ecrites =
       <({String cle, Object valeur})>[];
@@ -44,8 +60,9 @@ class _Ecriture implements ServiceConfiguration {
 Future<void> _monter(
   WidgetTester tester,
   _Lecture lecture,
-  _Ecriture ecriture,
-) async {
+  _Ecriture ecriture, {
+  _LectureRepresentant? representant,
+}) async {
   tester.view.physicalSize = const Size(900, 1400);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
@@ -54,6 +71,9 @@ Future<void> _monter(
       const ProtectionEnfantsPage(),
       surcharges: <Override>[
         portResponsableProtectionProvider.overrideWithValue(lecture),
+        portRepresentantUeProvider.overrideWithValue(
+          representant ?? _LectureRepresentant(''),
+        ),
         serviceConfigurationProvider.overrideWithValue(ecriture),
         peutReglerPolitiqueKycProvider.overrideWithValue(false),
       ],
@@ -63,14 +83,15 @@ Future<void> _monter(
 }
 
 void main() {
-  testWidgets('vide par defaut : deux lignes « Non renseigne »', (
+  testWidgets('vide par defaut : trois lignes « Non renseigne »', (
     WidgetTester tester,
   ) async {
     await _monter(tester, _Lecture(ResponsableProtection.aucun), _Ecriture());
 
     expect(find.byKey(ProtectionEnfantsPage.nomKey), findsOneWidget);
     expect(find.byKey(ProtectionEnfantsPage.courrielKey), findsOneWidget);
-    expect(find.text(t.admin.protectionEnfants.nonRenseigne), findsNWidgets(2));
+    expect(find.text(t.admin.protectionEnfants.nonRenseigne), findsNWidgets(3));
+    expect(find.byKey(ProtectionEnfantsPage.representantKey), findsOneWidget);
   });
 
   testWidgets('un nom valide part vers la cle du nom', (
@@ -147,5 +168,65 @@ void main() {
     expect(find.text(t.admin.protectionEnfants.erreur), findsOneWidget);
     expect(find.text(t.commun.reessayer), findsOneWidget);
     expect(find.byKey(ProtectionEnfantsPage.nomKey), findsNothing);
+  });
+
+  testWidgets('le representant dans l UE : sa valeur s affiche', (
+    WidgetTester tester,
+  ) async {
+    await _monter(
+      tester,
+      _Lecture(ResponsableProtection.aucun),
+      _Ecriture(),
+      representant: _LectureRepresentant('Cabinet Exemple'),
+    );
+
+    expect(find.text('Cabinet Exemple'), findsOneWidget);
+    expect(find.text(t.admin.protectionEnfants.nonRenseigne), findsNWidgets(2));
+  });
+
+  testWidgets('le representant dans l UE part vers sa cle', (
+    WidgetTester tester,
+  ) async {
+    final _Ecriture ecriture = _Ecriture();
+    await _monter(tester, _Lecture(ResponsableProtection.aucun), ecriture);
+
+    await tester.ensureVisible(
+      find.byKey(ProtectionEnfantsPage.representantKey),
+    );
+    await tester.tap(find.byKey(ProtectionEnfantsPage.representantKey));
+    await tester.pumpAndSettle();
+    expect(
+      find.text(t.admin.protectionEnfants.representantVideAide),
+      findsOneWidget,
+    );
+    await tester.enterText(
+      find.byKey(ProtectionEnfantsPage.champKey),
+      '  Cabinet Exemple ',
+    );
+    await tester.tap(find.byKey(ProtectionEnfantsPage.enregistrerKey));
+    await tester.pumpAndSettle();
+
+    expect(ecriture.ecrites, hasLength(1));
+    expect(ecriture.ecrites.single.cle, ClesConformite.representantUe);
+    expect(ecriture.ecrites.single.valeur, 'Cabinet Exemple');
+  });
+
+  testWidgets('le representant dans l UE : la panne se dit, le reste reste', (
+    WidgetTester tester,
+  ) async {
+    await _monter(
+      tester,
+      _Lecture(ResponsableProtection.aucun),
+      _Ecriture(),
+      representant: _LectureRepresentant('', panne: true),
+    );
+
+    expect(
+      find.text(t.admin.protectionEnfants.representantErreur),
+      findsOneWidget,
+    );
+    expect(find.text(t.commun.reessayer), findsOneWidget);
+    expect(find.byKey(ProtectionEnfantsPage.representantKey), findsNothing);
+    expect(find.byKey(ProtectionEnfantsPage.nomKey), findsOneWidget);
   });
 }

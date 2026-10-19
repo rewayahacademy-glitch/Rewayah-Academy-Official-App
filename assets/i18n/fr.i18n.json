@@ -947,9 +947,13 @@
     "lien": "Lire le code de conduite",
     "intro": "Ces règles protègent les élèves, et elles vous protègent. Lisez-les, puis acceptez.",
     "regles": [
-      "Vos cours se tiennent dans la salle de l'académie. Un cours peut être enregistré en audio, et une personne chargée du contrôle peut le suivre en direct sans vous prévenir du moment. Vous acceptez ces mesures\u00a0: elles protègent les enfants et elles vous protègent.",
-      "Vous ne voyez jamais les coordonnées d'une famille\u00a0: ni nom complet, ni courriel, ni téléphone.",
-      "Ce que vous savez d'un enfant reste à l'académie. Vous ne le rendez pas public et vous ne le montrez pas aux autres familles.",
+      "Vos cours se tiennent dans la salle de l'académie. Un cours peut être enregistré en audio, et une personne chargée du contrôle peut le suivre en direct sans vous prévenir du moment. Un parent peut aussi assister au cours pendant un temps limité, pour voir comment se passe la séance\u00a0: vous en êtes averti. Vous acceptez ces mesures\u00a0: elles protègent les enfants et elles vous protègent.",
+      "Vous voyez le prénom de vos élèves. Leur nom complet n'est pas affiché, pour garder l'écran court. Vous ne voyez jamais les coordonnées d'une famille\u00a0: ni courriel, ni téléphone.",
+      "Ce que vous savez d'un enfant reste à l'académie, pour protéger ses données personnelles. Vous ne le rendez pas public et vous ne le montrez pas aux autres familles.",
+      "Vous ne contactez jamais un élève ou sa famille en privé, hors de l'application.",
+      "Devant la caméra, votre tenue est correcte et le fond derrière vous est neutre et calme.",
+      "Vous êtes à l'heure. Vous ouvrez la salle avant le début du cours.",
+      "Vous êtes aussi des prédicateurs\u00a0: soyez exemplaires dans vos paroles et vos gestes, et patients avec chaque élève.",
       "Si la sécurité d'un enfant vous inquiète, signalez-le tout de suite avec «\u00a0Signaler un besoin\u00a0», catégorie «\u00a0Sécurité d'un enfant\u00a0». La direction le lit en priorité.",
       "Si vous refusez ces règles, l'académie ne peut pas vous confier d'élèves, car elles protègent les enfants."
     ],
@@ -1084,7 +1088,7 @@
       },
       "s10": {
         "titre": "10. Contact",
-        "texte": "Responsable\u00a0: Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité\u00a0: {contact}. Représentant dans l'UE\u00a0: pas encore désigné\u00a0; l'application ne s'ouvre pas aux familles de l'Union européenne avant sa désignation."
+        "texte": "Responsable\u00a0: Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité\u00a0: {contact}. Représentant dans l'Union européenne\u00a0: {nom}."
       }
     }
   },
@@ -2985,7 +2989,12 @@
       "nomTropLong": "Ce nom est trop long. 120 signes au plus.",
       "courrielInvalide": "Cette adresse n'est pas valide. Un courriel contient un @ et un point.",
       "erreurEcriture": "Le changement n'a pas été enregistré\u00a0: {message}. Réessayez.",
-      "erreur": "Nous n'avons pas pu lire le responsable. Réessayez dans un instant."
+      "erreur": "Nous n'avons pas pu lire le responsable. Réessayez dans un instant.",
+      "representantTitre": "Représentant dans l'Union européenne",
+      "representantDetail": "Le nom affiché dans les textes juridiques. Laissez vide\u00a0: ils affichent alors «\u00a0Rewayah Academy\u00a0».",
+      "representantChamp": "Nom du représentant",
+      "representantVideAide": "Laissez vide pour afficher «\u00a0Rewayah Academy\u00a0».",
+      "representantErreur": "Nous n'avons pas pu lire le représentant. Réessayez dans un instant."
     },
     "conservationDonnees": {
       "titre": "Conservation des données",
@@ -10338,7 +10347,8 @@
       "confirmationConseil": "Droit de rétractation\u00a0: vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.",
       "remboursementModalites": "Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.",
       "responsableEnfants": "{nom}, joignable à {contact}.",
-      "responsableDefaut": "Rewayah Academy"
+      "responsableDefaut": "Rewayah Academy",
+      "representantUeDefaut": "Rewayah Academy"
     },
     "mentions": {
       "titre": "Mentions légales",
@@ -10484,9 +10494,9 @@
       "s1": {
         "titre": "1. Qui est responsable",
         "blocs": [
-          "Rewayah Academy Ltd décide pourquoi et comment vos informations sont utilisées. Ses coordonnées sont dans les Mentions légales.",
-          "Représentant dans l'Union européenne\u00a0: pas encore désigné. L'application ne s'ouvre pas aux familles de l'Union européenne avant sa désignation."
-        ]
+          "Rewayah Academy Ltd décide pourquoi et comment vos informations sont utilisées. Ses coordonnées sont dans les Mentions légales."
+        ],
+        "representant": "Représentant dans l'Union européenne\u00a0: {nom}."
       },
       "s2": {
         "titre": "2. Ce que nous recueillons",

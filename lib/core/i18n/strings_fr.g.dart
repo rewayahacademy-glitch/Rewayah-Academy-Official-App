@@ -917,9 +917,13 @@ class Traductions$codeConduite$fr {
 	String get intro => 'Ces règles protègent les élèves, et elles vous protègent. Lisez-les, puis acceptez.';
 
 	List<String> get regles => [
-		'Vos cours se tiennent dans la salle de l\'académie. Un cours peut être enregistré en audio, et une personne chargée du contrôle peut le suivre en direct sans vous prévenir du moment. Vous acceptez ces mesures : elles protègent les enfants et elles vous protègent.',
-		'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
-		'Ce que vous savez d\'un enfant reste à l\'académie. Vous ne le rendez pas public et vous ne le montrez pas aux autres familles.',
+		'Vos cours se tiennent dans la salle de l\'académie. Un cours peut être enregistré en audio, et une personne chargée du contrôle peut le suivre en direct sans vous prévenir du moment. Un parent peut aussi assister au cours pendant un temps limité, pour voir comment se passe la séance : vous en êtes averti. Vous acceptez ces mesures : elles protègent les enfants et elles vous protègent.',
+		'Vous voyez le prénom de vos élèves. Leur nom complet n\'est pas affiché, pour garder l\'écran court. Vous ne voyez jamais les coordonnées d\'une famille : ni courriel, ni téléphone.',
+		'Ce que vous savez d\'un enfant reste à l\'académie, pour protéger ses données personnelles. Vous ne le rendez pas public et vous ne le montrez pas aux autres familles.',
+		'Vous ne contactez jamais un élève ou sa famille en privé, hors de l\'application.',
+		'Devant la caméra, votre tenue est correcte et le fond derrière vous est neutre et calme.',
+		'Vous êtes à l\'heure. Vous ouvrez la salle avant le début du cours.',
+		'Vous êtes aussi des prédicateurs : soyez exemplaires dans vos paroles et vos gestes, et patients avec chaque élève.',
 		'Si la sécurité d\'un enfant vous inquiète, signalez-le tout de suite avec « Signaler un besoin », catégorie « Sécurité d\'un enfant ». La direction le lit en priorité.',
 		'Si vous refusez ces règles, l\'académie ne peut pas vous confier d\'élèves, car elles protègent les enfants.',
 	];
@@ -8183,6 +8187,21 @@ class Traductions$admin$protectionEnfants$fr {
 
 	/// fr: 'Nous n'avons pas pu lire le responsable. Réessayez dans un instant.'
 	String get erreur => 'Nous n\'avons pas pu lire le responsable. Réessayez dans un instant.';
+
+	/// fr: 'Représentant dans l'Union européenne'
+	String get representantTitre => 'Représentant dans l\'Union européenne';
+
+	/// fr: 'Le nom affiché dans les textes juridiques. Laissez vide : ils affichent alors « Rewayah Academy ».'
+	String get representantDetail => 'Le nom affiché dans les textes juridiques. Laissez vide : ils affichent alors « Rewayah Academy ».';
+
+	/// fr: 'Nom du représentant'
+	String get representantChamp => 'Nom du représentant';
+
+	/// fr: 'Laissez vide pour afficher « Rewayah Academy ».'
+	String get representantVideAide => 'Laissez vide pour afficher « Rewayah Academy ».';
+
+	/// fr: 'Nous n'avons pas pu lire le représentant. Réessayez dans un instant.'
+	String get representantErreur => 'Nous n\'avons pas pu lire le représentant. Réessayez dans un instant.';
 }
 
 // Path: admin.conservationDonnees
@@ -18532,6 +18551,9 @@ class Traductions$juridique$valeurs$fr {
 
 	/// fr: 'Rewayah Academy'
 	String get responsableDefaut => 'Rewayah Academy';
+
+	/// fr: 'Rewayah Academy'
+	String get representantUeDefaut => 'Rewayah Academy';
 }
 
 // Path: juridique.mentions
@@ -19841,8 +19863,8 @@ class Traductions$contrat$politique$s10$fr {
 	/// fr: '10. Contact'
 	String get titre => '10. Contact';
 
-	/// fr: 'Responsable : Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité : {contact}. Représentant dans l'UE : pas encore désigné ; l'application ne s'ouvre pas aux familles de l'Union européenne avant sa désignation.'
-	String texte({required Object contact}) => 'Responsable : Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité : ${contact}. Représentant dans l\'UE : pas encore désigné ; l\'application ne s\'ouvre pas aux familles de l\'Union européenne avant sa désignation.';
+	/// fr: 'Responsable : Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité : {contact}. Représentant dans l'Union européenne : {nom}.'
+	String texte({required Object contact, required Object nom}) => 'Responsable : Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité : ${contact}. Représentant dans l\'Union européenne : ${nom}.';
 }
 
 // Path: appareils.emetteur.verification
@@ -30839,8 +30861,10 @@ class Traductions$juridique$confidentialite$s1$fr {
 
 	List<String> get blocs => [
 		'Rewayah Academy Ltd décide pourquoi et comment vos informations sont utilisées. Ses coordonnées sont dans les Mentions légales.',
-		'Représentant dans l\'Union européenne : pas encore désigné. L\'application ne s\'ouvre pas aux familles de l\'Union européenne avant sa désignation.',
 	];
+
+	/// fr: 'Représentant dans l'Union européenne : {nom}.'
+	String representant({required Object nom}) => 'Représentant dans l\'Union européenne : ${nom}.';
 }
 
 // Path: juridique.confidentialite.s2
@@ -34883,11 +34907,15 @@ extension on Traductions {
 			'codeConduite.titre' => 'Code de conduite de l\'enseignant',
 			'codeConduite.lien' => 'Lire le code de conduite',
 			'codeConduite.intro' => 'Ces règles protègent les élèves, et elles vous protègent. Lisez-les, puis acceptez.',
-			'codeConduite.regles.0' => 'Vos cours se tiennent dans la salle de l\'académie. Un cours peut être enregistré en audio, et une personne chargée du contrôle peut le suivre en direct sans vous prévenir du moment. Vous acceptez ces mesures : elles protègent les enfants et elles vous protègent.',
-			'codeConduite.regles.1' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
-			'codeConduite.regles.2' => 'Ce que vous savez d\'un enfant reste à l\'académie. Vous ne le rendez pas public et vous ne le montrez pas aux autres familles.',
-			'codeConduite.regles.3' => 'Si la sécurité d\'un enfant vous inquiète, signalez-le tout de suite avec « Signaler un besoin », catégorie « Sécurité d\'un enfant ». La direction le lit en priorité.',
-			'codeConduite.regles.4' => 'Si vous refusez ces règles, l\'académie ne peut pas vous confier d\'élèves, car elles protègent les enfants.',
+			'codeConduite.regles.0' => 'Vos cours se tiennent dans la salle de l\'académie. Un cours peut être enregistré en audio, et une personne chargée du contrôle peut le suivre en direct sans vous prévenir du moment. Un parent peut aussi assister au cours pendant un temps limité, pour voir comment se passe la séance : vous en êtes averti. Vous acceptez ces mesures : elles protègent les enfants et elles vous protègent.',
+			'codeConduite.regles.1' => 'Vous voyez le prénom de vos élèves. Leur nom complet n\'est pas affiché, pour garder l\'écran court. Vous ne voyez jamais les coordonnées d\'une famille : ni courriel, ni téléphone.',
+			'codeConduite.regles.2' => 'Ce que vous savez d\'un enfant reste à l\'académie, pour protéger ses données personnelles. Vous ne le rendez pas public et vous ne le montrez pas aux autres familles.',
+			'codeConduite.regles.3' => 'Vous ne contactez jamais un élève ou sa famille en privé, hors de l\'application.',
+			'codeConduite.regles.4' => 'Devant la caméra, votre tenue est correcte et le fond derrière vous est neutre et calme.',
+			'codeConduite.regles.5' => 'Vous êtes à l\'heure. Vous ouvrez la salle avant le début du cours.',
+			'codeConduite.regles.6' => 'Vous êtes aussi des prédicateurs : soyez exemplaires dans vos paroles et vos gestes, et patients avec chaque élève.',
+			'codeConduite.regles.7' => 'Si la sécurité d\'un enfant vous inquiète, signalez-le tout de suite avec « Signaler un besoin », catégorie « Sécurité d\'un enfant ». La direction le lit en priorité.',
+			'codeConduite.regles.8' => 'Si vous refusez ces règles, l\'académie ne peut pas vous confier d\'élèves, car elles protègent les enfants.',
 			'codeConduite.caseAccord' => 'J\'ai lu le code de conduite et je l\'accepte.',
 			'codeConduite.accepter' => 'J\'accepte le code de conduite',
 			'codeConduite.accepteLe' => ({required Object date, required Object version}) => 'Accepté le ${date}. Version ${version}.',
@@ -34973,7 +35001,7 @@ extension on Traductions {
 			'contrat.politique.s9.titre' => '9. Base légale',
 			'contrat.politique.s9.blocs.0' => 'Intérêt légitime de l\'académie et des élèves : protéger des enfants et garantir la qualité des cours (UK GDPR art. 6(1)(f)). Le test de mise en balance est écrit et signé. Nous ne vous demandons pas votre « consentement » au contrôle, car vous ne pourriez pas le refuser librement.',
 			'contrat.politique.s10.titre' => '10. Contact',
-			'contrat.politique.s10.texte' => ({required Object contact}) => 'Responsable : Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité : ${contact}. Représentant dans l\'UE : pas encore désigné ; l\'application ne s\'ouvre pas aux familles de l\'Union européenne avant sa désignation.',
+			'contrat.politique.s10.texte' => ({required Object contact, required Object nom}) => 'Responsable : Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité : ${contact}. Représentant dans l\'Union européenne : ${nom}.',
 			'accessibilite.demo.titre' => 'Démonstration de l\'Interface guidée',
 			'accessibilite.demo.mention' => 'Données fictives, aucun envoi.',
 			'accessibilite.demo.intro' => 'Choisissez un élève et un moment de la séance.',
@@ -35131,12 +35159,12 @@ extension on Traductions {
 			'appareils.plateforme.windows' => 'Ordinateur',
 			'appareils.plateforme.inconnue' => 'Appareil',
 			'appareils.retrait.question' => 'Retirer cet appareil ?',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.retrait.consequence' => ({required Object appareil, required Object dePrenom}) => '${appareil} ne pourra plus se connecter au profil ${dePrenom}. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
 			'appareils.retrait.confirmer' => 'Retirer l\'appareil',
 			'appareils.retrait.enCours' => 'Retrait en cours',
 			'appareils.retrait.reussi' => 'Appareil retiré. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
-			_ => null,
-		} ?? switch (path) {
 			'appareils.retrait.echec' => 'Le retrait n\'a pas abouti. L\'appareil est toujours autorisé. Réessayez dans un instant.',
 			'appareils.retrait.horsLigne' => 'L\'appareil n\'a pas été retiré. Réessayez quand la connexion sera revenue.',
 			'appareils.emetteur.titre' => 'Connecter un appareil',
@@ -35645,12 +35673,12 @@ extension on Traductions {
 			'recrutement.candidat.demanderNouvelle' => 'Demander une nouvelle invitation',
 			'recrutement.candidat.contactCopie' => 'Adresse de la direction copiée : écrivez-lui depuis votre messagerie.',
 			'recrutement.candidat.dejaUtilisee' => 'Cette invitation a déjà servi.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.candidat.dejaUtiliseeDetail' => 'Si c\'est vous, connectez-vous avec le compte créé.',
 			'recrutement.candidat.seConnecter' => 'Me connecter',
 			'recrutement.candidat.inconnue' => 'Code non reconnu.',
 			'recrutement.candidat.inconnueDetail' => 'Vérifiez le code, puis saisissez-le de nouveau.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.candidat.ressaisir' => 'Saisir un autre code',
 			'recrutement.candidat.horsLigne' => 'Le code n\'a pas été vérifié. Réessayez dans un instant.',
 			'recrutement.candidat.erreur' => 'Le code n\'a pas pu être vérifié. Réessayez dans un instant.',
@@ -36159,12 +36187,12 @@ extension on Traductions {
 			'admin.groupes.cahiers.apercu' => 'Voir l\'aperçu familial',
 			'admin.groupes.cahiers.nonValide' => 'Le cahier n\'est pas encore validé.',
 			'admin.groupes.cahiers.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.cahiers.enseignant' => 'Enseignant',
 			'admin.groupes.cahiers.seanceDu' => ({required Object date}) => 'Séance du ${date}',
 			'admin.groupes.cahiers.rubriqueTravail' => 'Travail à préparer',
 			'admin.groupes.cahiers.rubriqueObjectif' => 'Objectif personnel',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.cahiers.rubriqueSuite' => 'Suite décidée',
 			'admin.groupes.cahiers.rubriqueMotif' => 'Motif de l\'exception',
 			'admin.groupes.partage.titre' => 'Partage des comptes rendus pédagogiques',
@@ -36550,6 +36578,11 @@ extension on Traductions {
 			'admin.protectionEnfants.courrielInvalide' => 'Cette adresse n\'est pas valide. Un courriel contient un @ et un point.',
 			'admin.protectionEnfants.erreurEcriture' => ({required Object message}) => 'Le changement n\'a pas été enregistré : ${message}. Réessayez.',
 			'admin.protectionEnfants.erreur' => 'Nous n\'avons pas pu lire le responsable. Réessayez dans un instant.',
+			'admin.protectionEnfants.representantTitre' => 'Représentant dans l\'Union européenne',
+			'admin.protectionEnfants.representantDetail' => 'Le nom affiché dans les textes juridiques. Laissez vide : ils affichent alors « Rewayah Academy ».',
+			'admin.protectionEnfants.representantChamp' => 'Nom du représentant',
+			'admin.protectionEnfants.representantVideAide' => 'Laissez vide pour afficher « Rewayah Academy ».',
+			'admin.protectionEnfants.representantErreur' => 'Nous n\'avons pas pu lire le représentant. Réessayez dans un instant.',
 			'admin.conservationDonnees.titre' => 'Conservation des données',
 			'admin.conservationDonnees.intro' => 'Depuis combien de temps ces éléments restent accessibles avant leur suppression automatique.',
 			'admin.conservationDonnees.erreur' => 'Les délais de conservation n\'ont pas pu être lus. Réessayez dans un instant.',
@@ -36668,6 +36701,8 @@ extension on Traductions {
 			'admin.programmes.creerVersionVide' => 'Créer une version vide',
 			'admin.programmes.enregistrerVersion' => 'Enregistrer la version',
 			'admin.programmes.creerVersionDepuisPubliee' => 'Créer une nouvelle version à partir de celle-ci',
+			_ => null,
+		} ?? switch (path) {
 			'admin.programmes.creerVersionErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
 			'admin.programmes.niveauxTitre' => 'Niveaux',
 			'admin.programmes.niveauAucun' => 'Aucun niveau dans cette version',
@@ -36677,8 +36712,6 @@ extension on Traductions {
 			'admin.programmes.ajouterNiveauTitre' => ({required Object version}) => 'Ajouter un niveau à ${version}',
 			'admin.programmes.ajouterNiveauEnvoyer' => 'Ajouter',
 			'admin.programmes.ajouterNiveauErreur' => ({required Object message}) => 'L\'ajout du niveau n\'a pas été confirmé : ${message}. Le code technique existe peut-être déjà dans cette version : modifiez-le, puis réessayez.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.programmes.modifierNiveau' => 'Modifier',
 			'admin.programmes.modifierNiveauTitre' => ({required Object nom}) => 'Modifier ${nom}',
 			'admin.programmes.modifierNiveauEnvoyer' => 'Enregistrer',
@@ -37182,6 +37215,8 @@ extension on Traductions {
 			'admin.finance.pol.apercuDetail' => 'Ce que donnerait le brouillon à l\'écran, recalculé à chaque modification valide. Ce sont des exemples : rien n\'est facturé ni payé.',
 			'admin.finance.pol.apercuFamille' => 'Exemple de foyer',
 			'admin.finance.pol.apercuFamilleDetail' => 'La mensualité de chaque enfant payant, dans l\'ordre des rangs, puis le total du foyer.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.apercuEnfantsChoix' => 'Nombre d\'enfants payants',
 			'admin.finance.pol.apercuEnfants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} enfant', other: '${n} enfants', ), 
 			'admin.finance.pol.apercuEnfant' => ({required Object rang}) => 'Enfant ${rang}',
@@ -37191,8 +37226,6 @@ extension on Traductions {
 			'admin.finance.pol.apercuEnseignant' => 'Exemple d\'enseignant',
 			'admin.finance.pol.apercuEnseignantDetail' => 'Le taux horaire d\'une classe selon ses sièges éligibles : la base garantie, plus la part d\'occupation, jamais au-dessus du plafond.',
 			'admin.finance.pol.apercuTypeClasse' => 'Type de classe',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.apercuClasseEnfants' => 'Enfants',
 			'admin.finance.pol.apercuClasseAdultes' => 'Adultes',
 			'admin.finance.pol.apercuClasseDebutants' => 'Débutants',
@@ -37696,6 +37729,8 @@ extension on Traductions {
 			'admin.bibliotheque.publication.titre' => 'Vérifier et publier',
 			'admin.bibliotheque.publication.intro' => 'Chaque point est contrôlé par le serveur. La publication fige la version.',
 			'admin.bibliotheque.publication.apercuTitre' => 'Source et fichier',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.publication.apercuAucunFichier' => 'Aucun fichier n\'est déposé : le rendu ne peut pas être contrôlé.',
 			'admin.bibliotheque.publication.apercuFichier' => 'Fichier déposé. Son rendu se contrôle dans le lecteur de son type ; le serveur dit ci-dessous s\'il a été testé.',
 			'admin.bibliotheque.publication.empreinte' => ({required Object valeur}) => 'Empreinte ${valeur}',
@@ -37705,8 +37740,6 @@ extension on Traductions {
 			'admin.bibliotheque.publication.droitsEnregistres' => 'Revue des droits enregistrée.',
 			'admin.bibliotheque.publication.droitsEchec' => 'La revue des droits n\'a pas pu être confirmée. Réessayez.',
 			'admin.bibliotheque.publication.droitsFiges' => 'Les droits d\'une version publiée ne se modifient plus : créez une nouvelle version.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.publication.checklistTitre' => 'Contrôle de la version',
 			'admin.bibliotheque.publication.criteres.source' => 'Source confirmée',
 			'admin.bibliotheque.publication.criteres.titulaire' => 'Titulaire du droit connu',
@@ -38210,6 +38243,8 @@ extension on Traductions {
 			'historique.etat.presence' => 'Présence',
 			'historique.etat.retard' => ({required Object minutes}) => 'Retard ${minutes} min',
 			'historique.etat.retardSansDuree' => 'Retard',
+			_ => null,
+		} ?? switch (path) {
 			'historique.etat.verification' => 'En cours de vérification',
 			'historique.etat.annule' => 'Cours annulé',
 			'historique.etat.nonTenu' => 'Cours non tenu',
@@ -38219,8 +38254,6 @@ extension on Traductions {
 			'historique.seances.videPhraseFoyer' => 'Les séances passées des profils élèves s\'afficheront ici.',
 			'historique.seances.filtreVideTitre' => 'Aucune séance ne correspond',
 			'historique.seances.filtreVidePhrase' => 'Changez les filtres pour retrouver les autres séances.',
-			_ => null,
-		} ?? switch (path) {
 			'historique.seances.tronquee' => ({required Object nombre}) => 'Les ${nombre} séances les plus récentes sont affichées.',
 			'historique.seances.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'Séance du ${date}, ${classe}, ${etat}',
 			'historique.observations.indisponibleTitre' => 'Historique des observations indisponible',
@@ -38724,6 +38757,8 @@ extension on Traductions {
 			'classe.cartes.feuille.defauts.lienInvalide' => 'Ce lien n\'est pas une adresse complète. Collez une adresse qui commence par https://.',
 			'classe.cartes.feuille.defauts.echeanceManquante' => 'Un devoir a besoin d\'une échéance. Choisissez la date d\'échéance.',
 			'enseignant.pays.semantique' => ({required Object pays}) => 'Pays : ${pays}',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.classes.titre' => 'Classes',
 			'enseignant.classes.vide' => 'Aucune Classe attribuée',
 			'enseignant.classes.videDetail' => 'Les Classes confirmées apparaîtront ici.',
@@ -38733,8 +38768,6 @@ extension on Traductions {
 			'enseignant.classes.eleveUn' => '1 élève',
 			'enseignant.classes.prochaine' => ({required Object jour, required Object heure}) => 'Prochaine séance : ${jour} à ${heure}',
 			'enseignant.classes.sansProchaine' => 'Aucune séance prévue',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.classes.remplacement' => 'Remplacement',
 			'enseignant.classes.rappelCahier' => 'Un cahier de transmission reste à valider',
 			'enseignant.classes.cahierAValider' => 'Cahier de transmission à valider',
@@ -39238,6 +39271,8 @@ extension on Traductions {
 			'enseignant.ficheGroupe.pause.indisponiblePhrase' => 'Elle sera proposée ici dès que Rewayah la servira.',
 			'enseignant.ficheGroupe.pause.illisible' => 'Le réglage de la pause n\'a pas pu être lu.',
 			'enseignant.revue.titre' => 'Revue de la Classe',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revue.titreClasse' => ({required Object classe}) => 'Revue de la Classe ${classe}',
 			'enseignant.revue.aucuneAnomalie' => 'Rien ne demande votre attention.',
 			'enseignant.revue.erreur' => 'La revue n\'a pas pu être lue.',
@@ -39247,8 +39282,6 @@ extension on Traductions {
 			'enseignant.revue.typeCorridor' => 'Élève hors corridor',
 			'enseignant.revue.typeTransfert' => 'Proposition de transfert',
 			'enseignant.revue.typeReorientation' => 'Proposition de réorientation',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.titre' => 'Revenus estimés',
 			'enseignant.revenus.intro' => 'Une estimation de votre rémunération du mois choisi, Classe par Classe.',
 			'enseignant.revenus.introSansChoix' => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.',
@@ -39752,6 +39785,8 @@ extension on Traductions {
 			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
 			'tc.classe.roster.indisponible' => 'Roster indisponible',
 			'tc.classe.roster.indisponibleDetail' => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.roster.vide' => 'Aucun élève inscrit',
 			'tc.classe.roster.videDetail' => 'Cette séance n\'a aucun élève inscrit.',
 			'tc.classe.roster.ouvrirFiche' => ({required Object dePrenom}) => 'Ouvrir la fiche ${dePrenom}',
@@ -39761,8 +39796,6 @@ extension on Traductions {
 			'tc.classe.etat.enConnexion' => 'En connexion',
 			'tc.classe.etat.present' => 'Présent',
 			'tc.classe.etat.enRetard' => 'En retard',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.etat.deconnecte' => 'Déconnecté',
 			'tc.classe.etat.enReconnexion' => 'En reconnexion',
 			'tc.classe.etat.sorti' => 'Sorti',
@@ -40266,6 +40299,8 @@ extension on Traductions {
 			'adulte.acceptation.monEspace' => 'Aller à Mon espace',
 			'adulte.acceptation.recu' => ({required Object date}) => 'Réponse enregistrée le ${date}.',
 			'adulte.acceptation.titreNeutre' => 'Invitation au forfait famille',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.sansCompteTitre' => 'Invitation au forfait famille',
 			'adulte.acceptation.sansCompte' => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.',
 			'adulte.acceptation.sansCompteAction' => 'Me connecter ou créer mon compte',
@@ -40275,8 +40310,6 @@ extension on Traductions {
 			'adulte.sortie.retirerQuestionLui' => 'Retirer mon conjoint ?',
 			'adulte.sortie.retirerConsequence' => 'Son compte, ses cours, son historique et son solde ne seront pas supprimés.',
 			'adulte.sortie.placePhrase' => ({required Object prenom}) => '${prenom} fait partie de votre forfait famille, avec son propre compte.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.sortie.quitter' => 'Quitter le forfait famille',
 			'adulte.sortie.quitterQuestion' => 'Quitter le forfait famille ?',
 			'adulte.sortie.quitterConfirmer' => 'Quitter le forfait',
@@ -40780,6 +40813,8 @@ extension on Traductions {
 			'com.socle.lexique.signaler' => 'Signaler',
 			'com.socle.lexique.modeFocus' => 'Mode focus',
 			'com.socle.lexique.quitterFocus' => 'Quitter le focus',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.lexique.aTraiter' => 'À traiter',
 			'com.socle.lexique.actionRequise' => 'Action requise',
 			'com.socle.lexique.brouillon' => 'Brouillon',
@@ -40789,8 +40824,6 @@ extension on Traductions {
 			'com.socle.motifs.publicite' => 'Publicité',
 			'com.socle.motifs.lienAffilie' => 'Lien affilié',
 			'com.socle.motifs.venteNonAutorisee' => 'Vente non autorisée',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.motifs.sollicitationCommerciale' => 'Sollicitation commerciale',
 			'com.socle.motifs.horsSujet' => 'Contenu sans rapport avec la communauté',
 			'com.socle.motifs.harcelement' => 'Harcèlement ou langage inapproprié',
@@ -41294,6 +41327,8 @@ extension on Traductions {
 			'com.studio.demo.normale' => 'Le Studio et ses canaux',
 			'com.studio.demo.echec' => 'Envoi non confirmé',
 			'com.studio.demo.horsLigne' => 'Hors ligne',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.canalPrive' => 'Adresse d\'un canal privé qui ne vous est pas ouvert',
 			'com.studio.demo.sansCanaux' => 'Aucun canal ouvert',
 			'com.studio.demo.vue' => ({required Object situation}) => 'Situation : ${situation}',
@@ -41303,8 +41338,6 @@ extension on Traductions {
 			'com.studio.demo.f.fonctionCoordination' => 'Coordination générale',
 			'com.studio.demo.f.youssef' => 'Youssef',
 			'com.studio.demo.f.fonctionProduit' => 'Produit et technique',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.amina' => 'Amina',
 			'com.studio.demo.f.fonctionPedagogie' => 'Pédagogie',
 			'com.studio.demo.f.samira' => 'Samira',
@@ -41808,6 +41841,8 @@ extension on Traductions {
 			'comptable.paiements.confirmation.exclusTitre' => 'Exclus de ce lot : ils ne partiront pas',
 			'comptable.paiements.confirmation.aucunPretTitre' => 'Aucun paiement prêt',
 			'comptable.paiements.confirmation.aucunPret' => 'Rien ne partira. Ouvrez chaque paiement exclu pour lever sa raison, puis relancez le contrôle.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.erreursTitre' => 'Erreurs rendues par le contrôle',
 			'comptable.paiements.confirmation.confirmerUn' => ({required Object montant}) => 'Confirmer le paiement de ${montant}',
 			'comptable.paiements.confirmation.confirmerLot' => ({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Confirmer le paiement prêt de ${montants}', other: 'Confirmer les ${n} paiements prêts : ${montants}', ), 
@@ -41817,8 +41852,6 @@ extension on Traductions {
 			'comptable.paiements.confirmation.soumisTitre' => 'Envoyé au prestataire',
 			'comptable.paiements.confirmation.soumisPhrase' => 'Un paiement envoyé n\'est pas encore reçu : son état vient du suivi du prestataire. Actualisez le suivi pour le voir avancer.',
 			'comptable.paiements.confirmation.actualiser' => 'Actualiser le suivi',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.suiviEchoue' => 'Le suivi n\'a pas pu être lu. Le paiement reste envoyé : actualisez de nouveau dans un moment.',
 			'comptable.paiements.confirmation.referenceCle' => 'Référence du prestataire',
 			'comptable.paiements.confirmation.recalculeTitre' => 'Le montant a été recalculé',
@@ -42322,6 +42355,8 @@ extension on Traductions {
 			'comptable.validation.motifs.coordonnees' => 'Coordonnées du bénéficiaire à vérifier',
 			'comptable.validation.motifs.montant' => 'Montant à vérifier à la source',
 			'comptable.validation.motifs.justificatif' => 'Justificatif manquant ou illisible',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.motifs.reserve' => 'Hors de la politique de la Réserve',
 			'comptable.validation.motifs.reporter' => 'À reporter au prochain cycle',
 			'comptable.validation.motifs.autre' => 'Autre',
@@ -42331,8 +42366,6 @@ extension on Traductions {
 			'comptable.validation.decisionValidee' => 'Votre décision est enregistrée : la demande est validée.',
 			'comptable.validation.decisionRefusee' => 'Votre décision est enregistrée : la demande est refusée, avec son motif.',
 			'comptable.validation.refusTitre' => 'Décision non enregistrée',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.refusDemandeur' => 'Vous avez fait cette demande : une autre personne habilitée doit la décider. Rien n\'a changé.',
 			'comptable.validation.refusMotif' => 'Un refus demande un motif. Choisissez-en un, puis confirmez.',
 			'comptable.validation.refusDejaDecidee' => 'Cette demande a déjà été décidée. Relisez la liste.',
@@ -42688,6 +42721,7 @@ extension on Traductions {
 			'juridique.valeurs.remboursementModalites' => 'Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.',
 			'juridique.valeurs.responsableEnfants' => ({required Object nom, required Object contact}) => '${nom}, joignable à ${contact}.',
 			'juridique.valeurs.responsableDefaut' => 'Rewayah Academy',
+			'juridique.valeurs.representantUeDefaut' => 'Rewayah Academy',
 			'juridique.mentions.titre' => 'Mentions légales',
 			'juridique.mentions.resume' => 'Qui exploite Rewayah Academy et comment la joindre.',
 			'juridique.mentions.intro' => 'Voici qui exploite Rewayah Academy et comment la joindre.',
@@ -42756,7 +42790,7 @@ extension on Traductions {
 			'juridique.confidentialite.intro' => 'Nous gardons seulement ce qui sert à faire les cours. Voici quelles informations, pourquoi, et comment les contrôler.',
 			'juridique.confidentialite.s1.titre' => '1. Qui est responsable',
 			'juridique.confidentialite.s1.blocs.0' => 'Rewayah Academy Ltd décide pourquoi et comment vos informations sont utilisées. Ses coordonnées sont dans les Mentions légales.',
-			'juridique.confidentialite.s1.blocs.1' => 'Représentant dans l\'Union européenne : pas encore désigné. L\'application ne s\'ouvre pas aux familles de l\'Union européenne avant sa désignation.',
+			'juridique.confidentialite.s1.representant' => ({required Object nom}) => 'Représentant dans l\'Union européenne : ${nom}.',
 			'juridique.confidentialite.s2.titre' => '2. Ce que nous recueillons',
 			'juridique.confidentialite.s2.blocs.0' => '- Pour créer un compte : le nom, l\'adresse de courriel, la langue de l\'interface, le pays de résidence et le fuseau horaire.',
 			'juridique.confidentialite.s2.blocs.1' => '- Pour un élève : la date de naissance, qui sert à choisir la bonne formule et les règles propres aux mineurs.',

@@ -16,6 +16,7 @@
 // dans l'application, aucun reseau n'est en jeu. Fiche d'ecran :
 // `docs/current/CATALOGUE_ECRANS_JURIDIQUE.md` (JUR-3, JUR-4).
 
+import '../../core/conformite/representant_ue.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/protection_enfants/responsable_protection.dart';
 import '../../core/router/routes.dart';
@@ -186,12 +187,15 @@ String _champ(ChampJuridique c, Map<ChampJuridique, String> renseignes) =>
 
 /// Les sections d'un texte, dans l'ordre, avec les lignes de coordonnees et
 /// les reperes a completer a la place prevue. [responsable] est la lecture
-/// du reglage de la direction (`null` : le defaut).
+/// du reglage de la direction (`null` : le defaut). [representantUe] est celle
+/// du representant dans l'Union europeenne (vide ou `null` : « Rewayah
+/// Academy »).
 List<SectionPolitique> sectionsJuridiques(
   TexteJuridique texte, {
   String contact = InformationControle.contactConfidentialite,
   Map<ChampJuridique, String>? renseignes,
   ResponsableProtection? responsable,
+  String? representantUe,
 }) {
   final Map<ChampJuridique, String> donnes =
       renseignes ??
@@ -265,7 +269,13 @@ List<SectionPolitique> sectionsJuridiques(
     case TexteJuridique.confidentialite:
       final j = t.juridique.confidentialite;
       return <SectionPolitique>[
-        (titre: j.s1.titre, blocs: plus(j.s1.blocs, <String>[ecrire])),
+        (
+          titre: j.s1.titre,
+          blocs: plus(j.s1.blocs, <String>[
+            j.s1.representant(nom: representantUeAffiche(representantUe)),
+            ecrire,
+          ]),
+        ),
         (titre: j.s2.titre, blocs: j.s2.blocs),
         (titre: j.s3.titre, blocs: j.s3.blocs),
         (titre: j.s4.titre, blocs: j.s4.blocs),

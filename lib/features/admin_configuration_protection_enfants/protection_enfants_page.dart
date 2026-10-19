@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_configuration.dart';
 import '../../core/capacites/port_politique_revue_kyc.dart';
+import '../../core/conformite/representant_ue.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/protection_enfants/responsable_protection.dart';
@@ -31,9 +32,14 @@ import '../../core/widgets/zone_saisie.dart';
 /// verifie le format ; l'ecran ne fait que prevenir (courriel plausible, nom
 /// court).
 ///
-/// Etats : chargement (squelette), contenu (deux lignes), vide (« Non
-/// renseigne » sur chaque ligne, cas normal), erreur de lecture (avec
-/// « Reessayer »), hors ligne (meme rendu que l'erreur : la lecture et
+/// Le representant dans l'Union europeenne (19/10/2026) est regle ici aussi, en
+/// dessous : un reglage de `app_config` (`conformite.representant_ue`), vide
+/// par defaut ; vide, les textes juridiques affichent « Rewayah Academy ». Il
+/// a sa propre lecture, donc ses propres etats.
+///
+/// Etats : chargement (squelette), contenu (deux lignes, puis le representant),
+/// vide (« Non renseigne » sur chaque ligne, cas normal), erreur de lecture
+/// (avec « Reessayer »), hors ligne (meme rendu que l'erreur : la lecture et
 /// l'ecriture passent par le reseau).
 class ProtectionEnfantsPage extends ConsumerWidget {
   /// Cree l'ecran.
@@ -45,6 +51,11 @@ class ProtectionEnfantsPage extends ConsumerWidget {
   /// La cle de la ligne du courriel.
   static const Key courrielKey = ValueKey<String>(
     'protection-enfants-courriel',
+  );
+
+  /// La cle de la ligne du representant dans l'Union europeenne.
+  static const Key representantKey = ValueKey<String>(
+    'protection-enfants-representant',
   );
 
   /// La cle du champ de saisie de la feuille.
@@ -65,6 +76,7 @@ class ProtectionEnfantsPage extends ConsumerWidget {
     final AsyncValue<ResponsableProtection> lecture = ref.watch(
       responsableProtectionProvider,
     );
+    final AsyncValue<String> representant = ref.watch(representantUeProvider);
     final bool kyc = ref.watch(peutReglerPolitiqueKycProvider);
 
     return PageShell(
@@ -89,6 +101,27 @@ class ProtectionEnfantsPage extends ConsumerWidget {
               onAction: () => ref.invalidate(responsableProtectionProvider),
             ),
             _ => const Skeleton.liste(lignes: 2),
+          },
+          Ecart.vXl,
+          Semantics(
+            header: true,
+            child: Text(
+              t.admin.protectionEnfants.representantTitre,
+              style: textes.titleMedium,
+            ),
+          ),
+          Ecart.vSm,
+          switch (representant) {
+            AsyncValue<String>(hasValue: true) => _LigneRepresentant(
+              nom: representant.requireValue,
+            ),
+            AsyncValue<String>(hasError: true) => EmptyState(
+              message: t.admin.protectionEnfants.representantErreur,
+              icone: AppIcons.avertissement,
+              libelleAction: t.commun.reessayer,
+              onAction: () => ref.invalidate(representantUeProvider),
+            ),
+            _ => const Skeleton.liste(lignes: 1),
           },
         ],
       ),
@@ -169,7 +202,44 @@ class _Corps extends ConsumerWidget {
   }
 }
 
-/// La feuille de saisie d'un des deux reglages.
+class _LigneRepresentant extends ConsumerWidget {
+  const _LigneRepresentant({required this.nom});
+
+  final String nom;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = t.admin.protectionEnfants;
+    return CarteLignes(
+      lignes: <Widget>[
+        SettingRow(
+          key: ProtectionEnfantsPage.representantKey,
+          title: l.representantTitre,
+          description: l.representantDetail,
+          value: nom.isNotEmpty ? nom : l.nonRenseigne,
+          icon: AppIcons.profil,
+          onPress: () => unawaited(
+            AppBottomSheet.ouvrir<void>(
+              context,
+              titre: l.representantTitre,
+              constructeur: (BuildContext _) => FeuilleResponsable(
+                cle: ClesConformite.representantUe,
+                champ: l.representantChamp,
+                valeurInitiale: nom,
+                courriel: false,
+                aide: l.representantVideAide,
+                onEcrit: () => ref.invalidate(representantUeProvider),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// La feuille de saisie d'un des reglages (le responsable, son courriel, ou
+/// le representant dans l'Union europeenne).
 class FeuilleResponsable extends ConsumerStatefulWidget {
   /// Cree la feuille.
   const FeuilleResponsable({
@@ -178,6 +248,7 @@ class FeuilleResponsable extends ConsumerStatefulWidget {
     required this.valeurInitiale,
     required this.courriel,
     required this.onEcrit,
+    this.aide,
     super.key,
   });
 
@@ -195,6 +266,9 @@ class FeuilleResponsable extends ConsumerStatefulWidget {
 
   /// Appele apres une ecriture reussie.
   final VoidCallback onEcrit;
+
+  /// L'aide sous le champ ; par defaut celle du responsable.
+  final String? aide;
 
   @override
   ConsumerState<FeuilleResponsable> createState() => _FeuilleResponsableEtat();
@@ -265,7 +339,7 @@ class _FeuilleResponsableEtat extends ConsumerState<FeuilleResponsable> {
           cleChamp: ProtectionEnfantsPage.champKey,
           controleur: _champ,
           libelle: widget.champ,
-          explication: t.admin.protectionEnfants.videAide,
+          explication: widget.aide ?? t.admin.protectionEnfants.videAide,
           erreur: _erreur,
           onChanged: (String _) {
             if (_erreur != null) setState(() => _erreur = null);

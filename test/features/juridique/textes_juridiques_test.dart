@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/conformite/representant_ue.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/protection_enfants/responsable_protection.dart';
 import 'package:rewayah_academy/features/dossier/politique_controle.dart'
@@ -31,6 +32,19 @@ class _PortResponsable implements PortResponsableProtection {
   Future<ResponsableProtection> lire() async {
     if (erreur != null) throw erreur!;
     return valeur;
+  }
+}
+
+class _PortRepresentant implements PortRepresentantUe {
+  _PortRepresentant(this.nom, {this.erreur});
+
+  final String nom;
+  final Exception? erreur;
+
+  @override
+  Future<String> lire() async {
+    if (erreur != null) throw erreur!;
+    return nom;
   }
 }
 
@@ -263,6 +277,98 @@ void main() {
         expect(texte, contains('support@rewayahacademy.com'));
         expect(texte, contains(t.juridique.valeurs.responsableDefaut));
       }
+    });
+  });
+
+  group('Le representant dans l\'Union europeenne', () {
+    String confidentialite({String? nom}) => sectionsJuridiques(
+      TexteJuridique.confidentialite,
+      representantUe: nom,
+    ).first.blocs.join('\n');
+
+    test('vide ou absent : Rewayah Academy, en fr et en ar', () {
+      for (final AppLocale langue in AppLocale.values) {
+        LocaleSettings.setLocaleSync(langue);
+        for (final String? nom in <String?>[null, '', '   ']) {
+          final String texte = confidentialite(nom: nom);
+          expect(
+            texte,
+            contains(
+              t.juridique.confidentialite.s1.representant(
+                nom: t.juridique.valeurs.representantUeDefaut,
+              ),
+            ),
+          );
+          expect(texte, isNot(contains('pas encore')));
+          expect(texte, isNot(contains('{')));
+        }
+      }
+    });
+
+    test('un nom saisi remplace le defaut, en fr et en ar', () {
+      for (final AppLocale langue in AppLocale.values) {
+        LocaleSettings.setLocaleSync(langue);
+        final String texte = confidentialite(nom: '  Cabinet Exemple ');
+        expect(texte, contains('Cabinet Exemple'));
+        expect(
+          texte,
+          isNot(
+            contains(
+              t.juridique.confidentialite.s1.representant(
+                nom: t.juridique.valeurs.representantUeDefaut,
+              ),
+            ),
+          ),
+        );
+      }
+      LocaleSettings.setLocaleSync(AppLocale.fr);
+      expect(
+        confidentialite(nom: 'Cabinet Exemple'),
+        contains(
+          'Représentant dans l\'Union européenne\u00a0: Cabinet Exemple.',
+        ),
+      );
+    });
+
+    Future<void> ouvrir(WidgetTester tester, PortRepresentantUe port) async {
+      LocaleSettings.setLocaleSync(AppLocale.fr);
+      fixerVueCapture(tester, const Size(390, 1600), 1);
+      await tester.pumpWidget(
+        hoteCapture(
+          const TexteJuridiquePage(texte: TexteJuridique.confidentialite),
+          surcharges: <Override>[
+            portRepresentantUeProvider.overrideWithValue(port),
+            portResponsableProtectionProvider.overrideWithValue(
+              _PortResponsable(ResponsableProtection.aucun),
+            ),
+          ],
+        ),
+      );
+      await stabiliser(tester);
+      expect(tester.takeException(), isNull);
+    }
+
+    testWidgets('la page affiche le nom regle par la direction', (
+      WidgetTester tester,
+    ) async {
+      await ouvrir(tester, _PortRepresentant('Cabinet Exemple'));
+      expect(
+        find.textContaining('Union européenne\u00a0: Cabinet Exemple.'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('lecture en erreur : Rewayah Academy, sans ecran d\'erreur', (
+      WidgetTester tester,
+    ) async {
+      await ouvrir(
+        tester,
+        _PortRepresentant('', erreur: Exception('hors ligne')),
+      );
+      expect(
+        find.textContaining('Union européenne\u00a0: Rewayah Academy.'),
+        findsOneWidget,
+      );
     });
   });
 
