@@ -8,14 +8,31 @@ from __future__ import annotations
 
 import argparse
 import html
+import importlib.util
 import json
 import re
 import shutil
+import sys
+from datetime import date
 from pathlib import Path
 from urllib.parse import urlparse
 
 
 ROOT = Path(__file__).resolve().parent
+
+
+def _load_module(name: str):
+    spec = importlib.util.spec_from_file_location(name, ROOT / f"{name}.py")
+    if spec is None or spec.loader is None:
+        raise ImportError(name)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+# Prix lus dans la base au build (public.tarifs_publics), repli sur la decision.
+tarifs_mod = _load_module("bloc_tarifs")
 CONTENT = ROOT / "content" / "pages.json"
 REQUIRED = {
     "/fr/",
@@ -143,7 +160,7 @@ def anchor(label: str, href: str, css: str = "", current: bool = False) -> str:
     return f'<a{class_attr} href="{esc(href)}"{current_attr}>{esc(label)}</a>'
 
 
-def render_section(section: dict, number: int) -> str:
+def render_section(section: dict, number: int, tarifs: dict | None = None, today: date | None = None) -> str:
     sid = section.get("id") or f"section-{number}"
     if not re.fullmatch(r"[a-z][a-z0-9-]*", sid):
         raise ValueError(f"Invalid section id: {sid}")
@@ -151,15 +168,20 @@ def render_section(section: dict, number: int) -> str:
     points = section.get("points", [])
     bullets = "<ul class=\"fact-list\">" + "".join(f"<li><strong>{esc(p)}</strong></li>" for p in points) + "</ul>" if points else ""
     links = " ".join(anchor(item["label"], item["href"], "text-link") for item in section.get("links", []))
+    generated = ""
+    if section.get("generated"):
+        if tarifs is None:
+            raise ValueError(f"Section generated without tarifs: {sid}")
+        generated = tarifs_mod.rendre_tarifs_section(section["generated"], tarifs, today or date.today())
     return (
         f'<section class="section section--rule" id="{esc(sid)}" aria-labelledby="heading-{number}">'
         f'<div class="editorial-grid"><div class="section__intro"><p class="eyebrow">{number:02d} / Rewayah</p>'
         f'<h2 id="heading-{number}">{esc(section["title"])}</h2></div>'
-        f'<div class="section__body">{paragraphs}{bullets}<div class="section-links">{links}</div></div></div></section>'
+        f'<div class="section__body">{paragraphs}{generated}{bullets}<div class="section-links">{links}</div></div></div></section>'
     )
 
 
-def render_home_section(section: dict, number: int) -> str:
+def render_home_section(section: dict, number: int, tarifs: dict | None = None, today: date | None = None) -> str:
     sid = section["id"]
     paragraphs = "".join(f"<p>{esc(p)}</p>" for p in section.get("paragraphs", []))
     links = " ".join(anchor(item["label"], item["href"], "cta" if i == 0 else "cta cta--secondary") for i, item in enumerate(section.get("links", [])))
@@ -199,16 +221,24 @@ def render_home_section(section: dict, number: int) -> str:
                   '<li><span>02</span><div><h3>Votre créneau</h3><p>Explorez les jours et heures de cours.</p><small>Les horaires proposés s’affichent dans votre espace.</small></div></li>'
                   '<li><span>03</span><div><h3>Votre classe</h3><p>Recevez une proposition de classe avec un enseignant attitré.</p></div></li></ol>')
     elif sid == "tarifs":
+        politique = tarifs_mod.politique_affichee(tarifs)
+        rang_min = politique["remisesFoyer"][0]["aPartirDuRang"] if politique["remisesFoyer"] else None
+        intro_remise = (f"Les remises du foyer commencent au {tarifs_mod.fmt_rang(rang_min)} membre inscrit."
+                        if rang_min else "Le tarif est le même pour chaque membre du foyer.")
+        jour = today or date.today()
+        grille = tarifs_mod.rendre_tarifs_section("grille", tarifs, jour)
+        rangs = tarifs_mod._tableau("Par personne et par mois complet", ("Rang d’inscription", "Remise"),
+                                    tarifs_mod.lignes_remises_rang(politique))
+        famille = tarifs_mod.rendre_tarifs_section("famille", tarifs, jour)
         return f'''<section class="home-section home-section--tarifs" id="tarifs" aria-labelledby="home-heading-{number}">
-          <div class="wide-intro"><h2 id="home-heading-{number}">{esc(section['title'])}</h2><p>Les remises commencent au troisième membre de votre foyer.</p></div>
+          <div class="wide-intro"><h2 id="home-heading-{number}">{esc(section['title'])}</h2><p>{esc(intro_remise)}</p></div>
           <div class="pricing-layout"><div>
-          <table class="price-table"><caption>Par personne et par mois complet</caption><thead><tr><th scope="col">Rang d’inscription</th><th scope="col">Remise</th></tr></thead>
-          <tbody><tr><th scope="row">1er et 2e membres</th><td>Aucune</td></tr><tr><th scope="row">3e membre</th><td>Selon le tarif en vigueur</td></tr><tr><th scope="row">4e membre et suivants</th><td>Selon le tarif en vigueur</td></tr></tbody></table>
-          <p class="price-note">Les deux premiers membres gardent leur tarif.</p>
+          {grille}
+          {rangs}
           <div class="action-row">{anchor('Voir mon récapitulatif', '/connexion', 'cta')}<button class="cta cta--secondary" type="button" data-open-simulator>Simuler mon tarif</button></div>
           <p class="price-note">Le montant final et les taxes éventuelles sont indiqués avant paiement.</p>
           {anchor('Conditions des remises familiales', '/fr/tarifs', 'text-link')}</div>
-          <aside class="price-examples"><h3>Le tarif de votre foyer</h3><p>Les montants et les exemples sont momentanément indisponibles.</p><p>Retrouvez votre récapitulatif dans votre espace avant de confirmer votre inscription.</p></aside></div></section>'''
+          <aside class="price-examples"><h3>Le tarif de votre foyer</h3>{famille}</aside></div></section>'''
     elif sid == "confiance":
         return f'''<section class="home-section home-section--confiance" id="confiance" aria-labelledby="home-heading-{number}">
           <p class="since">Depuis le 1er mai 2024</p><h2 id="home-heading-{number}">{esc(section['title'])}</h2>{paragraphs}
@@ -241,7 +271,10 @@ def output_file(output: Path, route: str) -> Path:
     return output / f"{route.lstrip('/')}.html"
 
 
-def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing: bool) -> str:
+def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing: bool,
+                tarifs: dict | None = None, today: date | None = None) -> str:
+    if tarifs is None:
+        tarifs, _ = tarifs_mod.charger_tarifs(env={}, journal=lambda *_: None)
     canonical = origin.rstrip("/") + route
     indexed = allow_indexing and page.get("status") == "ready" and page.get("indexable", True)
     robots = "index,follow" if indexed else "noindex,nofollow"
@@ -255,25 +288,29 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     social_by_href = {item["href"]: item for item in site["social_links"]}
     academy_facebook = social_by_href["https://www.facebook.com/share/1CVee2teiN/"]
     author_facebook = social_by_href["https://www.facebook.com/share/1D6H2EYhci/"]
-    sections = "".join((render_home_section if route == "/fr/" else render_section)(section, i)
-                       for i, section in enumerate(page["sections"], 1))
+    renderer = render_home_section if route == "/fr/" else render_section
+    sections = "".join(renderer(section, i, tarifs, today) for i, section in enumerate(page["sections"], 1))
     intro = f'<p class="hero-intro">{esc(page["intro"])}</p>' if page.get("intro") else ""
     cta = anchor(page["cta"]["label"], page["cta"]["href"], "cta")
     if route == "/fr/":
         cta += anchor("Voir comment ça marche", "#fonctionnement", "cta cta--secondary")
     if route == "/fr/tarifs":
-        cta += '<button class="cta cta--secondary" type="button" data-open-simulator>Simuler mon tarif</button>'
-    simulator = '''<dialog class="simulator" id="tarif-simulator" aria-labelledby="simulator-title">
+        cta += ('<button class="cta cta--secondary" type="button" data-open-simulator>Simuler mon tarif</button>'
+                '<noscript><p class="price-note">Le simulateur demande JavaScript. Sans lui, les prix et les remises '
+                'de cette page suffisent pour calculer le tarif de votre foyer.</p></noscript>')
+    simulator = f'''<dialog class="simulator" id="tarif-simulator" aria-labelledby="simulator-title">
       <form method="dialog"><button class="simulator__close" aria-label="Fermer le simulateur">×</button></form>
       <h2 id="simulator-title">Estimez le tarif de votre foyer</h2>
-      <p>Indiquez combien d’enfants et d’adultes vous souhaitez inscrire.</p>
+      <p>Indiquez le nombre d’élèves, puis l’âge de chacun, dans l’ordre d’inscription.</p>
       <div class="simulator__fields">
-        <label>Nombre total d’élèves <input type="number" inputmode="numeric" min="1" step="1" value="1" id="sim-total"></label>
-        <label>Enfants <input type="number" inputmode="numeric" min="0" step="1" value="1" id="sim-children"></label>
-        <label>Adultes <input type="number" inputmode="numeric" min="0" step="1" value="0" id="sim-adults"></label>
+        <label>Nombre d’élèves <input type="number" inputmode="numeric" min="1" step="1" value="1" id="sim-total"></label>
+        <label>Paiement <select id="sim-paiement"></select></label>
+        <label>Parrainage <input type="checkbox" id="sim-parrainage"></label>
       </div>
-      <p class="simulator__result" role="status" aria-live="polite" id="sim-result">Le calcul est momentanément indisponible. Réessayez dans un instant.</p>
-      <p class="simulator__note">Pour un mois complet. Le montant final et les taxes éventuelles sont indiqués avant paiement.</p>
+      <div class="simulator__fields" id="sim-students"></div>
+      <div class="simulator__result" role="status" aria-live="polite" aria-atomic="true" id="sim-result"><p>Le simulateur demande JavaScript.</p></div>
+      <script type="application/json" id="tarifs-data">{tarifs_mod.donnees_simulateur(tarifs)}</script>
+      <p class="simulator__note">Prix hors taxes, pour un mois complet. Les taxes éventuelles sont indiquées avant paiement.</p>
       <a class="cta" href="/connexion">Commencer mon inscription</a>
     </dialog>''' if route in ("/fr/", "/fr/tarifs") else ""
     status = (
@@ -326,9 +363,15 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
 '''
 
 
-def build(output: Path, origin: str, allow_indexing: bool) -> None:
+def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None = None,
+          env: dict[str, str] | None = None, today: date | None = None) -> None:
     if allow_indexing:
         raise ValueError("This branch is preview-only; publication needs verified commercial and legal data")
+    if tarifs is None:
+        # Lecture a la construction seulement : le HTML produit ne contient ni adresse ni cle.
+        tarifs, _origine = tarifs_mod.charger_tarifs(env=env)
+    if tarifs_mod.politique_affichee(tarifs)["essaiActif"]:
+        raise ValueError("Les textes du site disent « pas d'essai » : la politique publiée porte un essai actif")
     parsed = urlparse(origin)
     if parsed.scheme != "https" or not parsed.netloc or parsed.path not in ("", "/"):
         raise ValueError("Canonical origin must be an HTTPS origin")
@@ -336,7 +379,7 @@ def build(output: Path, origin: str, allow_indexing: bool) -> None:
     for route, page in pages.items():
         destination = output_file(output, route)
         destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_text(render_page(route, page, site, origin, allow_indexing), encoding="utf-8")
+        destination.write_text(render_page(route, page, site, origin, allow_indexing, tarifs, today), encoding="utf-8")
     assets_out = output / "fr" / "assets"
     assets_out.mkdir(parents=True, exist_ok=True)
     for source_dir in (ROOT / "assets", ROOT / "styles"):

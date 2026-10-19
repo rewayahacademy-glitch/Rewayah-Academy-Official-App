@@ -1,0 +1,80 @@
+{
+  "rewrites": [
+    {
+      "source": "/fr",
+      "destination": "/fr/index.html"
+    },
+    {
+      "source": "/fr/academie",
+      "destination": "/fr/academie.html"
+    },
+    {
+      "source": "/fr/accessibilite",
+      "destination": "/fr/accessibilite.html"
+    },
+    {
+      "source": "/fr/aide",
+      "destination": "/fr/aide.html"
+    },
+    {
+      "source": "/fr/articles",
+      "destination": "/fr/articles.html"
+    },
+    {
+      "source": "/fr/comment-ca-marche",
+      "destination": "/fr/comment-ca-marche.html"
+    },
+    {
+      "source": "/fr/contact",
+      "destination": "/fr/contact.html"
+    },
+    {
+      "source": "/fr/cours",
+      "destination": "/fr/cours.html"
+    },
+    {
+      "source": "/fr/familles",
+      "destination": "/fr/familles.html"
+    },
+    {
+      "source": "/fr/legal/annulation-remboursement",
+      "destination": "/fr/legal/annulation-remboursement.html"
+    },
+    {
+      "source": "/fr/legal/conditions",
+      "destination": "/fr/legal/conditions.html"
+    },
+    {
+      "source": "/fr/legal/confidentialite",
+      "destination": "/fr/legal/confidentialite.html"
+    },
+    {
+      "source": "/fr/legal/cookies",
+      "destination": "/fr/legal/cookies.html"
+    },
+    {
+      "source": "/fr/legal/mentions",
+      "destination": "/fr/legal/mentions.html"
+    },
+    {
+      "source": "/fr/protection-des-enfants",
+      "destination": "/fr/protection-des-enfants.html"
+    },
+    {
+      "source": "/fr/recrutement",
+      "destination": "/fr/recrutement.html"
+    },
+    {
+      "source": "/fr/tarifs",
+      "destination": "/fr/tarifs.html"
+    },
+    {
+      "source": "/fr/",
+      "destination": "/fr/index.html"
+    },
+    {
+      "source": "/:path((?!fr(?:/|$)).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
