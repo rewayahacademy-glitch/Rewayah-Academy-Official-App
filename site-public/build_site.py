@@ -33,6 +33,8 @@ def _load_module(name: str):
 
 # Prix lus dans la base au build (public.tarifs_publics), repli sur la decision.
 tarifs_mod = _load_module("bloc_tarifs")
+# Avis publies lus dans la base au build (public.avis_publics), repli sur content/avis.json.
+avis_mod = _load_module("bloc_avis")
 CONTENT = ROOT / "content" / "pages.json"
 REQUIRED = {
     "/fr/",
@@ -43,6 +45,7 @@ REQUIRED = {
     "/fr/academie",
     "/fr/articles",
     "/fr/aide",
+    "/fr/avis",
     "/fr/recrutement",
     "/fr/contact",
     "/fr/protection-des-enfants",
@@ -160,7 +163,8 @@ def anchor(label: str, href: str, css: str = "", current: bool = False) -> str:
     return f'<a{class_attr} href="{esc(href)}"{current_attr}>{esc(label)}</a>'
 
 
-def render_section(section: dict, number: int, tarifs: dict | None = None, today: date | None = None) -> str:
+def render_section(section: dict, number: int, tarifs: dict | None = None, today: date | None = None,
+                   avis: dict | None = None) -> str:
     sid = section.get("id") or f"section-{number}"
     if not re.fullmatch(r"[a-z][a-z0-9-]*", sid):
         raise ValueError(f"Invalid section id: {sid}")
@@ -169,7 +173,11 @@ def render_section(section: dict, number: int, tarifs: dict | None = None, today
     bullets = "<ul class=\"fact-list\">" + "".join(f"<li><strong>{esc(p)}</strong></li>" for p in points) + "</ul>" if points else ""
     links = " ".join(anchor(item["label"], item["href"], "text-link") for item in section.get("links", []))
     generated = ""
-    if section.get("generated"):
+    if section.get("generated", "").startswith("avis-"):
+        if avis is None:
+            raise ValueError(f"Section generated without avis: {sid}")
+        generated = avis_mod.rendre_avis_section(section["generated"][len("avis-"):], avis)
+    elif section.get("generated"):
         if tarifs is None:
             raise ValueError(f"Section generated without tarifs: {sid}")
         generated = tarifs_mod.rendre_tarifs_section(section["generated"], tarifs, today or date.today())
@@ -181,7 +189,8 @@ def render_section(section: dict, number: int, tarifs: dict | None = None, today
     )
 
 
-def render_home_section(section: dict, number: int, tarifs: dict | None = None, today: date | None = None) -> str:
+def render_home_section(section: dict, number: int, tarifs: dict | None = None, today: date | None = None,
+                        avis: dict | None = None) -> str:
     sid = section["id"]
     paragraphs = "".join(f"<p>{esc(p)}</p>" for p in section.get("paragraphs", []))
     links = " ".join(anchor(item["label"], item["href"], "cta" if i == 0 else "cta cta--secondary") for i, item in enumerate(section.get("links", [])))
@@ -272,15 +281,17 @@ def output_file(output: Path, route: str) -> Path:
 
 
 def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing: bool,
-                tarifs: dict | None = None, today: date | None = None) -> str:
+                tarifs: dict | None = None, today: date | None = None, avis: dict | None = None) -> str:
     if tarifs is None:
         tarifs, _ = tarifs_mod.charger_tarifs(env={}, journal=lambda *_: None)
+    if avis is None:
+        avis, _ = avis_mod.charger_avis(env={}, journal=lambda *_: None)
     canonical = origin.rstrip("/") + route
     indexed = allow_indexing and page.get("status") == "ready" and page.get("indexable", True)
     robots = "index,follow" if indexed else "noindex,nofollow"
     nav_items = "".join(anchor(label, href, current=href == route) for label, href in NAV)
     footer_links = "".join(f"<li>{anchor(label, href, current=href == route)}</li>" for label, href in FOOTER if href.startswith('/fr/legal/') or href in ('/fr/protection-des-enfants', '/fr/accessibilite'))
-    discovery_links = "".join(f"<li>{anchor(label, href, current=href == route)}</li>" for label, href in (*NAV[:4], ('L’académie', '/fr/academie'), ('Aide', '/fr/aide'), ('Recrutement', '/fr/recrutement')))
+    discovery_links = "".join(f"<li>{anchor(label, href, current=href == route)}</li>" for label, href in (*NAV[:4], ('L’académie', '/fr/academie'), ('Avis', '/fr/avis'), ('Aide', '/fr/aide'), ('Recrutement', '/fr/recrutement')))
     contact_links = "".join(
         f"<li><strong>{esc(label)}</strong>{anchor(site['contacts'][key], 'mailto:' + site['contacts'][key])}</li>"
         for label, key in CONTACTS
@@ -289,7 +300,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     academy_facebook = social_by_href["https://www.facebook.com/share/1CVee2teiN/"]
     author_facebook = social_by_href["https://www.facebook.com/share/1D6H2EYhci/"]
     renderer = render_home_section if route == "/fr/" else render_section
-    sections = "".join(renderer(section, i, tarifs, today) for i, section in enumerate(page["sections"], 1))
+    sections = "".join(renderer(section, i, tarifs, today, avis) for i, section in enumerate(page["sections"], 1))
     intro = f'<p class="hero-intro">{esc(page["intro"])}</p>' if page.get("intro") else ""
     cta = anchor(page["cta"]["label"], page["cta"]["href"], "cta")
     if route == "/fr/":
@@ -364,12 +375,14 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
 
 
 def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None = None,
-          env: dict[str, str] | None = None, today: date | None = None) -> None:
+          env: dict[str, str] | None = None, today: date | None = None, avis: dict | None = None) -> None:
     if allow_indexing:
         raise ValueError("This branch is preview-only; publication needs verified commercial and legal data")
     if tarifs is None:
         # Lecture a la construction seulement : le HTML produit ne contient ni adresse ni cle.
         tarifs, _origine = tarifs_mod.charger_tarifs(env=env)
+    if avis is None:
+        avis, _origine_avis = avis_mod.charger_avis(env=env)
     if tarifs_mod.politique_affichee(tarifs)["essaiActif"]:
         raise ValueError("Les textes du site disent « pas d'essai » : la politique publiée porte un essai actif")
     parsed = urlparse(origin)
@@ -379,7 +392,7 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     for route, page in pages.items():
         destination = output_file(output, route)
         destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_text(render_page(route, page, site, origin, allow_indexing, tarifs, today), encoding="utf-8")
+        destination.write_text(render_page(route, page, site, origin, allow_indexing, tarifs, today, avis), encoding="utf-8")
     assets_out = output / "fr" / "assets"
     assets_out.mkdir(parents=True, exist_ok=True)
     for source_dir in (ROOT / "assets", ROOT / "styles"):

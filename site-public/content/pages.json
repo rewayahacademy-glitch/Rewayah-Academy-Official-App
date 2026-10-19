@@ -653,6 +653,41 @@
       "indexable": true,
       "status": "ready"
     },
+    "/fr/avis": {
+      "title": "Avis des familles et des élèves | Rewayah Academy",
+      "description": "Les avis des parents et des élèves adultes de Rewayah Academy, lus par la direction avant leur publication.",
+      "h1": "Avis des familles et des élèves",
+      "intro": "Les mots de celles et ceux qui apprennent avec nous, publiés tels qu’ils ont été écrits.",
+      "sections": [
+        {
+          "id": "avis",
+          "title": "Ce que disent les familles",
+          "generated": "avis-liste"
+        },
+        {
+          "id": "transparence",
+          "title": "Comment les avis sont recueillis",
+          "paragraphs": [
+            "Les avis sont recueillis par un lien personnel que la direction envoie aux familles inscrites et aux élèves adultes. Il ne demande ni compte ni connexion.",
+            "Chaque avis est lu par la direction avant sa publication. Le texte n’est jamais modifié : il est publié tel quel ou il n’est pas publié.",
+            "Un avis n’est refusé que pour l’une de ces raisons : insulte, données personnelles d’un tiers, publicité, hors sujet ou doublon. Les avis négatifs écrits avec respect sont publiés.",
+            "Pour faire retirer votre avis, écrivez à support@rewayahacademy.com."
+          ],
+          "links": [
+            {
+              "label": "Contacter l'assistance",
+              "href": "mailto:support@rewayahacademy.com"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Découvrir les cours",
+        "href": "/fr/cours"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
     "/fr/recrutement": {
       "title": "Recrutement | Rewayah Academy",
       "description": "Informations sur le recrutement et les candidatures auprès de Rewayah Academy.",
