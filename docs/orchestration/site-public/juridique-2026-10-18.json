@@ -1,5 +1,5 @@
 {
-  "_comment": "Textes juridiques du 18/10/2026 (version 2026-10-v1), de meme sens que ceux de l'application (assets/i18n/fr.i18n.json, cle juridique). A copier dans site-public/content/pages.json par l'agent qui peut ecrire dans site-public/. Les pages restent status blocked (les conditions de vente sont a faire confirmer par un conseil, DECISION-TARIFS-2026-10-18). Les reperes [a completer par la direction : ...] se remplacent par les vraies valeurs le meme jour dans l'application (CoordonneesJuridiques) et ici. Aucun montant : la page Tarifs fait foi.",
+  "_comment": "Textes juridiques du 18/10/2026 (version 2026-10-v1), de meme sens que ceux de l'application (assets/i18n/fr.i18n.json, cle juridique). Copies dans site-public/content/pages.json. Plus aucun repere a completer : les valeurs de la direction sont en place et les pages ont ete validees par la direction le 19/10/2026 (status ready, indexable true). Aucun montant : la page Tarifs fait foi.",
   "version": "2026-10-v1",
   "date_texte": "2026-10-18",
   "pages": {
@@ -32,8 +32,8 @@
           "title": "Hébergement et services techniques",
           "paragraphs": [
             "Le service s'appuie sur des prestataires techniques : l'hébergement des pages web, la base de données et la connexion des comptes, la visio des séances, le stockage privé des fichiers et un prestataire de paiement.",
-            "[à compléter par la direction : hébergeur légal et ses coordonnées]",
-            "[à compléter par la direction : pays où sont hébergées les informations]"
+            "Base de données et connexion des comptes : Supabase Inc. (supabase.com). Application et pages web : Vercel Inc. (vercel.com). Nom de domaine : Cloudflare, Inc. (cloudflare.com).",
+            "La base de données est hébergée en Irlande, dans l'Union européenne. D'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni : ces transferts suivent les garanties prévues par la loi."
           ]
         },
         {
@@ -48,8 +48,8 @@
         "label": "Contacter l'assistance",
         "href": "mailto:support@rewayahacademy.com"
       },
-      "indexable": false,
-      "status": "blocked"
+      "indexable": true,
+      "status": "ready"
     },
     "/fr/legal/conditions": {
       "title": "Conditions d'utilisation et de vente | Rewayah Academy",
@@ -136,8 +136,8 @@
           "title": "Droit applicable",
           "paragraphs": [
             "Cette partie précise la loi qui s'applique et le tribunal compétent.",
-            "[à compléter par la direction : droit applicable et juridiction compétente]",
-            "[à compléter par la direction : relecture par un conseil juridique, droit de rétractation compris]"
+            "Droit d'Angleterre et du pays de Galles, tribunaux d'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.",
+            "Droit de rétractation : vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due."
           ]
         }
       ],
@@ -145,8 +145,8 @@
         "label": "Contacter l'assistance",
         "href": "mailto:support@rewayahacademy.com"
       },
-      "indexable": false,
-      "status": "blocked"
+      "indexable": true,
+      "status": "ready"
     },
     "/fr/legal/annulation-remboursement": {
       "title": "Annulation et remboursement | Rewayah Academy",
@@ -205,8 +205,8 @@
           "paragraphs": [
             "Pour arrêter ou demander un remboursement, écrivez-nous en donnant le nom du compte et la raison.",
             "Pour toute question, écrivez à support@rewayahacademy.com.",
-            "[à compléter par la direction : moyen et délai du remboursement]",
-            "[à compléter par la direction : relecture par un conseil juridique, droit de rétractation compris]"
+            "Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.",
+            "Droit de rétractation : vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due."
           ],
           "links": [
             {
@@ -220,8 +220,8 @@
         "label": "Contacter l'assistance",
         "href": "mailto:support@rewayahacademy.com"
       },
-      "indexable": false,
-      "status": "blocked"
+      "indexable": true,
+      "status": "ready"
     },
     "/fr/legal/confidentialite": {
       "title": "Confidentialité | Rewayah Academy",
@@ -292,7 +292,7 @@
           "title": "Où sont vos informations",
           "paragraphs": [
             "Nous utilisons un hébergeur de pages web, une base de données avec la connexion des comptes, un service de visio, un stockage privé pour les fichiers, un prestataire de paiement et un service de rapports d'erreurs. Ils traitent vos informations pour nous, pour ces seules raisons.",
-            "[à compléter par la direction : pays où sont hébergées les informations]"
+            "La base de données est hébergée en Irlande, dans l'Union européenne. D'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni : ces transferts suivent les garanties prévues par la loi."
           ]
         },
         {
@@ -300,7 +300,7 @@
           "title": "Combien de temps",
           "paragraphs": [
             "Nous gardons chaque type d'information le temps nécessaire, pas davantage. La pièce d'identité d'un enseignant est supprimée à la fin d'un délai fixé. Une suppression peut être gelée en cas de litige.",
-            "[à compléter par la direction : durée de conservation de chaque type d'information]"
+            "Compte et profil : tant que le compte existe. Après une demande de suppression et un délai de réflexion de 14 jours, le nom, l'adresse e-mail et les coordonnées sont effacés. Factures et paiements : 6 ans, comme l'exige la loi comptable du Royaume-Uni. Pièce d'identité d'un enseignant : 90 jours au plus après la vérification. Messages : tant que le compte existe ; après la suppression, leur auteur devient anonyme."
           ]
         },
         {
@@ -338,8 +338,8 @@
         "label": "Contacter l'assistance",
         "href": "mailto:support@rewayahacademy.com"
       },
-      "indexable": false,
-      "status": "blocked"
+      "indexable": true,
+      "status": "ready"
     },
     "/fr/legal/cookies": {
       "title": "Cookies | Rewayah Academy",
@@ -398,8 +398,8 @@
         "label": "Contacter l'assistance",
         "href": "mailto:support@rewayahacademy.com"
       },
-      "indexable": false,
-      "status": "blocked"
+      "indexable": true,
+      "status": "ready"
     },
     "/fr/protection-des-enfants": {
       "title": "Protection des enfants | Rewayah Academy",
@@ -450,7 +450,7 @@
             "Si une chose vous inquiète, écrivez-nous. Dites ce que vous avez vu, quand, et dans quelle Classe.",
             "En cas de danger immédiat, contactez d'abord les services d'urgence de votre pays.",
             "Pour toute question, écrivez à support@rewayahacademy.com.",
-            "[à compléter par la direction : responsable de la protection des enfants]"
+            "La direction de Rewayah Academy, joignable à support@rewayahacademy.com."
           ],
           "links": [
             {
@@ -464,8 +464,8 @@
         "label": "Contacter l'assistance",
         "href": "mailto:support@rewayahacademy.com"
       },
-      "indexable": false,
-      "status": "blocked"
+      "indexable": true,
+      "status": "ready"
     }
   }
 }
