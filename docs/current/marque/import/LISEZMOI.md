@@ -35,3 +35,10 @@ dans les sessions cloud. Ajouter à l'index, sur le poste :
   PISI est un autre projet, sans interférence avec Rewayah. Le site public est un brouillon.
   Signatures : candidates, non adoptées.
 ```
+
+## 4. Projet claude.ai « Rewayah » (pilotage de Claude Design)
+
+`PROMPT-PROJET-CLAUDE.md` contient le prompt de démarrage du projet : rôle de chef de projet, contexte de
+la marque, plan des tâches CD-00 à CD-19, contrôle au retour et tenue du journal des décisions. Joindre
+aux connaissances du projet les fichiers listés en tête du prompt. Une décision prise dans le projet
+revient ici sous la forme d'une ligne du registre.
