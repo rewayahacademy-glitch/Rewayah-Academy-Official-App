@@ -41,13 +41,18 @@
   <style>
     /*
       Le fond du document porte la meme couleur que le fond de l'application,
-      le creme surfaceCanvas. Sans lui, le temps de chargement s'affiche en
-      blanc puis bascule : un clignotement qui se voit surtout au demarrage a
-      froid, celui-la meme que le scenario 7 cherche a mesurer.
-      Cette valeur suit surfaceCanvas de docs/produit/design-tokens.md, comme
-      background_color de web/manifest.json. Les trois changent ensemble.
+      surfaceCanvas. Sans lui, le temps de chargement s'affiche en blanc puis
+      bascule : un clignotement qui se voit surtout au demarrage a froid,
+      celui-la meme que le scenario 7 cherche a mesurer.
+      Ces valeurs suivent surfaceCanvas de lib/core/theme/app_palette.dart
+      (clair #F1EFF4, sombre #16161E), comme background_color de
+      web/manifest.json (clair). Les trois changent ensemble. L'ancien creme
+      #F8F4EE venait de l'archive design-tokens.md (CP-DSG-08).
     */
-    html, body { margin: 0; padding: 0; background-color: #F8F4EE; }
+    html, body { margin: 0; padding: 0; background-color: #F1EFF4; }
+    @media (prefers-color-scheme: dark) {
+      html, body { background-color: #16161E; }
+    }
   </style>
 </head>
 <body>

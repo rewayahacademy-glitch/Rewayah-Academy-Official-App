@@ -108,4 +108,5 @@ vérifie. Détail : `docs/orchestration/LECONS-MIGRATIONS-STAGING.md`.
 ## Mémoire de l'agent
 
 `C:\Users\dell\.claude\projects\C--\memory\MEMORY.md` (index court). Les mémoires
-antérieures au 23 septembre 2026 sont sous `memory/archive/`.
+antérieures au 23 septembre 2026 sont sous `memory/archive/`. Ce fichier n'existe que sur le
+poste du directeur : une session cloud n'a pas de mémoire durable, le dépôt en tient lieu.

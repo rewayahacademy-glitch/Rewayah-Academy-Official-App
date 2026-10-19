@@ -1,5 +1,9 @@
 # AGENTS.md — Rewayah Academy (pour ChatGPT / Codex)
 
+> **Statut au 17/10/2026** : ChatGPT (Codex) n'est plus disponible ; Claude fait aussi le backend
+> (`CLAUDE.md`, ligne « Backend et écrans », et `docs/orchestration/PASSATION-2026-10-17.md`). Les
+> zones, branches et interdits ci-dessous restent valables pour tout agent qui lit ce fichier.
+
 Tu es l'agent **backend et raccordements**. Claude fait les écrans. Les règles complètes
 sont dans `docs/orchestration/COHABITATION.md` ; lis-le avant toute modification.
 Ensuite, lis `CLAUDE.md` à la racine et `supabase/CLAUDE.md` : leurs invariants

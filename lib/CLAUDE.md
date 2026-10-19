@@ -16,10 +16,10 @@ dans `docs/archive/2026-09-pre-remise-a-plat/design/` (référence, pas une règ
 
 Les composants partagés (`Pressable`, `BentoTile`, `AvatarTile`, `AvatarNom`, `AudioLabel`,
 `PermanentNotice`, `PinPad`, `EmptyState`, `OfflineBanner`, `ChoiceCardGroup`,
-`ActionPrincipale`, `LienFleche`, `FilterPill`, `BoutonOutil`, `BoutonIcone`, `CommandeSalle`, `RaccourciTactile`) sont les seuls points d'entrée de leur fonction : on les améliore, on
-`ActionPrincipale`, `PileCartes`, `CarteGroupee`, `CarteLignes`) sont les seuls points d'entrée de leur fonction : on les améliore, on
-`ActionPrincipale`, `PastilleEtatSeance`) sont les seuls points d'entrée de leur fonction : on les améliore, on
-n'en recrée pas un qui ferait la même chose.
+`ActionPrincipale`, `LienFleche`, `FilterPill`, `BoutonOutil`, `BoutonIcone`, `CommandeSalle`,
+`RaccourciTactile`, `PileCartes`, `CarteGroupee`, `CarteLignes`, `PastilleEtatSeance`) sont les
+seuls points d'entrée de leur fonction : on les améliore, on n'en recrée pas un qui ferait la
+même chose.
 
 ## 🧊 Règles gelées du directeur, DESIGN-GOV-2026-09-26 (obligatoires avant tout nouveau lot visuel)
 

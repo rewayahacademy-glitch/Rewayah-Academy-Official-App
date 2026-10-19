@@ -85,14 +85,17 @@ Voir `REGISTRE-DECISIONS-MARQUE.md`, M-01 à M-20, chacune avec sa source et sa 
 | D-1 | **La compétence de compte `rewayah-academy-knowledge` (mai 2026) décrit un autre projet sous le nom de Rewayah Academy** : cours préenregistrés de Tawhid, Fiqh, Sira et EVI sur systeme.io, « contenu préenregistré », mission « formation islamique ». Elle se déclenche sur « Rewayah Academy » dans toute session du compte | Compétence du compte ↔ M-01, M-12, référentiel 13/10 | Remplacement préparé : `import/rewayah-academy-knowledge/SKILL.md` ; import manuel par le directeur (section 5) |
 | D-2 | « Diaspora africaine » | `site-public/PRODUCT.md` (09/10) ↔ `programme-rewayah` section 8 (14/10, « quelle que soit son origine ») | La décision la plus récente prévaut ; `PRODUCT.md` corrigé, avec renvoi |
 | D-3 | PISI décrit comme « programme autonome evergreen de Rewayah » | Guide finance V4 (02/10) ↔ message du directeur du 19/10 (« un autre projet ») | M-12 prévaut ; le guide reste une source historique |
-| D-4 | Fond sombre `#1A1A25` | Commentaire d'en-tête de `app_palette.dart`, `assets/brand/logo/README.md` (ligne « Thème sombre »), dossier maître (partie C « Système de design gelé », section 1.1, et section 17.1), site brouillon ↔ valeur du code `#16161E` depuis `4f0286fa` (17/10) | Le code fait foi ; commentaires et README à rafraîchir dans un lot de code (hors de ce lot) ; O-05 pour le site |
+| D-4 | Fond sombre `#1A1A25` | Commentaire d'en-tête de `app_palette.dart`, `assets/brand/logo/README.md` (ligne « Thème sombre »), dossier maître (partie C « Système de design gelé », section 1.1, et section 17.1), site brouillon ↔ valeur du code `#16161E` depuis `4f0286fa` (17/10) | **Corrigé** : README du logo (fond sombre, et fond clair `#F7F6FA` absent de la palette) et commentaire de `app_palette.dart` renvoient aux valeurs du code ; O-05 reste ouvert pour le site |
 | D-5 | « Les documents fournis ne fixent pas de valeurs HEX officielles » | `03_DESIGN_SYSTEM_ET_UX.md` (22/09) ↔ palette mesurée et figée (K-37, 24-26/09) | Antérieur ; la palette du code fait foi (M-16) |
-| D-6 | Flutter « utilise Instrument Sans et Bricolage Grotesque » | `docs/site-public/SITE_03` (08/10) ↔ `app_typography.dart` | Périmé ; DM Sans et Plus Jakarta Sans sont en place |
+| D-6 | Flutter « utilise Instrument Sans et Bricolage Grotesque » | `docs/site-public/SITE_03` (08/10) ↔ `app_typography.dart` | **Corrigé** : avertissement en tête de `SITE_03` (polices, fonds, `viewBox`) |
 | D-7 | Nom en arabe : latin obligatoire, ou « رواية » | `CPT-DIR-2.md` ↔ `assets/i18n/ar.i18n.json` | O-08 |
-| D-8 | `AGENTS.md` donne encore le backend à Codex | `AGENTS.md` ↔ `CLAUDE.md` et `PASSATION-2026-10-17` | Signalé, hors du périmètre de marque ; renvoi ajouté vers la marque seulement |
+| D-8 | `AGENTS.md` donne encore le backend à Codex | `AGENTS.md` ↔ `CLAUDE.md` et `PASSATION-2026-10-17` | **Corrigé** : bandeau de statut en tête d'`AGENTS.md` (Codex indisponible depuis le 17/10) ; zones et interdits inchangés |
 | D-9 | Anciennes identités (vert et or ; violet, rose, taupe, crème) | `docs/archive/` | Archivées ; listées comme interdites dans le cahier visuel, section 0 |
-| D-10 | Crème `#F8F4EE` en `background_color` PWA | `web/manifest.json` ↔ palette | Écart connu, sans effet de marque ; à revoir dans un lot web |
-| D-11 | Lignes 13 à 15 de `lib/CLAUDE.md` en double ou mêlées | `lib/CLAUDE.md` | Signalé, non corrigé (hors marque) |
+| D-10 | Crème `#F8F4EE` en `background_color` PWA | `web/manifest.json` ↔ palette | **Corrigé** : `web/index.html` et `web/manifest.json` suivent `surfaceCanvas` (clair `#F1EFF4`, sombre `#16161E` par `prefers-color-scheme`), comme leur commentaire l'exige (CP-DSG-08 de l'audit d'harmonisation) |
+| D-11 | Lignes 13 à 15 de `lib/CLAUDE.md` en double ou mêlées | `lib/CLAUDE.md` | **Corrigé** : liste des composants partagés fusionnée, sans doublon |
+| D-12 | Renvois « `lib/CLAUDE.md:96` » pointant une autre règle que « Classe, jamais groupe » | `tool/libelles_sources.json` (5 entrées), `tool/verifier_revue.dart` (commentaire) | **Corrigé** : renvoi par le nom de la règle, stable quand le fichier bouge |
+| D-13 | Mémoire citée sur un chemin Windows absent des sessions cloud | `CLAUDE.md` | **Corrigé** : `CLAUDE.md` le dit ; le dépôt tient lieu de mémoire |
+| D-14 | Les décisions datées depuis le 09/10 ne figuraient pas au journal de `08` (section 5 bis) | `08_DECISIONS_ET_FEUILLE_DE_ROUTE` | Ligne du 19/10 (marque) ajoutée ; les lignes antérieures ne sont pas rétablies ici |
 
 ## 3. Audit du manifeste et du brief ChatGPT (phase 2)
 
@@ -144,6 +147,18 @@ Voir `REGISTRE-DECISIONS-MARQUE.md`, M-01 à M-20, chacune avec sa source et sa 
 
 ## 6. Ce que ce lot ne fait pas
 
-Aucune migration, aucune modification backend, aucun code de l'application, aucun déploiement, aucune
-retouche du logo, aucune nouvelle valeur de jeton, aucun document supprimé, aucune décision prise à la
-place du directeur.
+Aucune migration, aucune modification backend, aucun déploiement, aucune retouche du logo, aucune
+nouvelle valeur de jeton, aucun document supprimé, aucune décision prise à la place du directeur. Seul
+changement visible de l'app : le fond affiché pendant le chargement web (D-10), aligné sur un jeton
+existant.
+
+## 7. Restent hors de portée d'un agent dans le dépôt
+
+- D-1 : la compétence de compte se remplace dans claude.ai (`import/LISEZMOI.md`).
+- La CI (`.github/workflows/ci.yml`) ne se déclenche pas sur une PR de la chaîne d'intégration ;
+  `.github/` est interdit aux agents par le garde-fou.
+- D-7 (nom en arabe), O-05 (fond du futur site) et les autres questions du registre : décision du
+  directeur.
+- Le message de `.claude/hooks/demarrage.sh` annonce encore `supabase/` et `site-public/` comme zones
+  refusées, alors que `garde.py` ne les refuse plus (Claude fait le backend depuis le 17/10, le site
+  est dans le dépôt). Le garde-fou ne se modifie que sur ordre du directeur.

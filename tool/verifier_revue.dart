@@ -87,9 +87,9 @@ const Set<String> _libellesAmbigus = <String>{
 
 /// Un mot interne qu'un client ne doit jamais voir (« admin » : on dit la
 /// direction, K-50 / decisions du 27/09 ; « groupe » : on dit la classe,
-/// lib/CLAUDE.md:96, CLASSE-FORM-1 D10). « foyer » chez la direction se
-/// controle a la revue : le mot est legitime cote famille. Un parametre
-/// (`{deGroupe}`) n'est pas du texte visible.
+/// lib/CLAUDE.md, regle Classe jamais groupe, CLASSE-FORM-1 D10). « foyer »
+/// chez la direction se controle a la revue : le mot est legitime cote
+/// famille. Un parametre (`{deGroupe}`) n'est pas du texte visible.
 final RegExp _motInterne = RegExp(
   r'\b(?:admin|groupes?)\b',
   caseSensitive: false,

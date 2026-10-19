@@ -24,8 +24,8 @@ Dossiers : `violet/` (#8652E6, couleur de marque), `blanc/` (#FFFFFF), `encre/` 
 
 | Fond | Variante |
 |---|---|
-| Thème sombre de l'app (#1A1A25), surfaces sombres | `violet/` (ou `blanc/` si le violet est déjà très présent à l'écran) |
-| Fond clair (#FFFFFF, #F7F6FA) | `violet/` ; `encre/` pour impression noir et blanc, tampon, fax |
+| Thème sombre de l'app (`surfaceCanvas` sombre, #16161E depuis le 17/10/2026), surfaces sombres | `violet/` (ou `blanc/` si le violet est déjà très présent à l'écran) |
+| Fond clair (#FFFFFF, `surfaceCanvas` clair #F1EFF4) | `violet/` ; `encre/` pour impression noir et blanc, tampon, fax |
 | Fond violet de marque, bandeau coloré, photo sombre unie | `blanc/` |
 | Photo chargée, dégradé, zone non uniforme | Interdit. Poser le logo sur une plaque unie, ou ne pas le mettre |
 
