@@ -1,7 +1,7 @@
 -- SES-CLOTURE-AUTO (18/10/2026) : cloture automatique des seances echues.
 -- Migration 20261018180000.
 --   1. seance en cours, enseignante arrivee, 2 eleves presents, fin depassee :
---      `ended`, paie due ecrite (0,95 x 2 x 1 h = 1,90 USD), journal automatique ;
+--      `ended`, paie due ecrite (1,99 x 2 x 1 h = 3,98 USD), journal automatique ;
 --   2. seance planifiee sans enseignante : `teacher_absent`, journal ;
 --   3. seance dans la marge : non touchee ; puis marge reduite : close ;
 --   4. seance planifiee dont l'enseignante est arrivee : `ended` en passant
@@ -118,7 +118,7 @@ CREATE TEMP TABLE bilan1 AS SELECT private.ses_cloturer_seances_echues(now()) AS
 GRANT SELECT ON bilan1 TO authenticated;
 
 SELECT pg_temp.vrai(pg_temp.statut('1') = 'ended', 'seance tenue : ended');
-SELECT pg_temp.vrai(pg_temp.paie('1') = 190, 'seance tenue : paie due 0,95 x 2 x 1 h = 1,90 USD');
+SELECT pg_temp.vrai(pg_temp.paie('1') = 398, 'seance tenue : paie due 1,99 x 2 x 1 h = 3,98 USD');
 SELECT pg_temp.vrai((pg_temp.journal('1') ->> 'automatique')::boolean
   AND pg_temp.journal('1') ->> 'statut_avant' = 'in_progress'
   AND pg_temp.journal('1') ->> 'statut_apres' = 'ended'
@@ -154,7 +154,7 @@ SELECT pg_temp.vrai(private.ses_cloturer_seances_echues(now())
   'second passage : rien a faire');
 SELECT pg_temp.vrai(pg_temp.nb_journal() = (SELECT j FROM avant)
   AND (SELECT count(*) FROM public.tresorerie_mouvements WHERE source_type = 'prestation') = (SELECT m FROM avant)
-  AND pg_temp.paie('1') = 190,
+  AND pg_temp.paie('1') = 398,
   'second passage : ni journal ni paie en double');
 
 -- ------------------------------------------------------------------
@@ -162,8 +162,8 @@ SELECT pg_temp.vrai(pg_temp.nb_journal() = (SELECT j FROM avant)
 -- ------------------------------------------------------------------
 UPDATE public.app_config SET value = '5'::jsonb WHERE key = 'seances.cloture_auto_marge_minutes';
 SELECT pg_temp.vrai((private.ses_cloturer_seances_echues(now()) ->> 'ended')::int = 1
-  AND pg_temp.statut('3') = 'ended' AND pg_temp.paie('3') = 95,
-  'marge reduite a 5 minutes : s3 close, paie 0,95 x 1 x 1 h');
+  AND pg_temp.statut('3') = 'ended' AND pg_temp.paie('3') = 199,
+  'marge reduite a 5 minutes : s3 close, paie 1,99 x 1 x 1 h');
 UPDATE public.app_config SET value = '"abc"'::jsonb WHERE key = 'seances.cloture_auto_marge_minutes';
 DO $$
 BEGIN

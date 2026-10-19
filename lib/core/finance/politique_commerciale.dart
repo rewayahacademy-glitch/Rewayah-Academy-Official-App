@@ -217,14 +217,15 @@ class PolitiqueCommerciale {
   // version qui ne les porte pas.
 
   /// La paie de l'enseignant par eleve present et par heure, classe
-  /// d'enfants (0,95 $ au 18/10/2026).
+  /// d'enfants (1,99 $ au 19/10/2026, 47 % du prix).
   final Montant? tauxEleveHeureEnfant;
 
   /// La paie de l'enseignant par eleve present et par heure, classe
-  /// d'adultes.
+  /// d'adultes (1,57 $ au 19/10/2026, 47 % du prix).
   final Montant? tauxEleveHeureAdulte;
 
-  /// Le plafond de ce taux, classe d'enfants (palier de fidelite compris).
+  /// Le plafond de ce taux, classe d'enfants (egal au taux depuis le
+  /// 19/10/2026).
   final Montant? plafondEleveHeureEnfant;
 
   /// Le plafond de ce taux, classe d'adultes.
