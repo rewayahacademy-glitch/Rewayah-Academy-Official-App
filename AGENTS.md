@@ -22,6 +22,14 @@ Avant tout réglage, toute valeur par défaut ou tout texte qui touche au progra
 `docs/current/REGISTRE-RECONCILIATION-2026-10-14.md`. Les valeurs y sont décidées par le
 directeur ; elles vivent en réglages (`app_config`), jamais en dur.
 
+## Marque (19/10/2026)
+
+Avant tout texte de présentation, e-mail, PDF, page publique ou visuel avec le logo, lis
+`docs/current/marque/00_LIRE_D_ABORD.md` et `.claude/skills/marque-rewayah/SKILL.md`. Le logo ne se
+redessine pas (`assets/brand/logo/README.md`), les couleurs et polices viennent de `lib/core/theme/`.
+PISI est un autre projet : rien de PISI dans Rewayah. Une signature ou une formule du manifeste reste une
+proposition tant que le registre ne la valide pas.
+
 ## L'essentiel
 
 - **Ta zone** : `supabase/**` (migrations à partir de 0044), `lib/core/**/service_*.dart`,

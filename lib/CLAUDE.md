@@ -3,6 +3,11 @@
 Tout texte visible suit la compétence `mots-rewayah`, et tout ce qui touche le programme
 suit `programme-rewayah` (`.claude/skills/`). Aucun mot inventé.
 
+Logo et ornement : uniquement par `BrandLogo` et `OrnementMarque` (`lib/core/widgets/`), selon
+`assets/brand/logo/README.md` et `docs/current/BRAND-ORN-1.md`. Identité de marque, signatures,
+images : `docs/current/marque/` (compétence `marque-rewayah`) ; un écran n'en tire aucune couleur ni
+police nouvelle.
+
 Charte active : `docs/current/03_DESIGN_SYSTEM_ET_UX.md` (Material Design 3, adaptation
 iOS, palette douce, un titre, une tâche, un CTA par écran). Avant d'ouvrir un écran,
 lire la ligne du MVP qui le concerne dans `docs/current/06_SPEC_FONCTIONNELLE_MVP.md`.
