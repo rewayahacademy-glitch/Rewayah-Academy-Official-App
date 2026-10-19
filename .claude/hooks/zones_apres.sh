@@ -17,8 +17,7 @@ cd "$dir" 2>/dev/null || exit 0
 top=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
 cd "$top" || exit 0
 
-zones=(.github vercel.json pubspec.yaml site-public lib/features/parcours_offres
-  ':(glob).claude/settings*.json' .claude/hooks)
+zones=(.github vercel.json pubspec.yaml lib/features/parcours_offres  ':(glob).claude/settings*.json' .claude/hooks)
 
 en_cours=""
 for r in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD REBASE_HEAD; do
