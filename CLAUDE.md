@@ -74,6 +74,12 @@ Côté base, sur un Postgres nu, ce que rejoue `.github/workflows/ci.yml` :
 (voir `deploy.yml`) ; la base distante enregistre des versions horodatées, pas la
 numérotation `00xx` du dépôt.
 
+**Migration sur staging annulée (`cancelled` ou délai de 60 s) alors que le directeur a
+accepté** : le serveur Supabase demande une seconde confirmation pour tout `DELETE`, `DROP`
+ou `TRUNCATE`, et l'app ne l'affiche pas. Compter ces mots avant d'appeler `apply_migration` ;
+au-dessus de 0, le directeur colle le fichier dans l'éditeur SQL de staging, puis Claude
+vérifie. Détail : `docs/orchestration/LECONS-MIGRATIONS-STAGING.md`.
+
 ## État du code à connaître
 
 - Lots Teaching Core D, F, H (`lib/core/tc_realtime`, `tc_etat_partage`, `tc_outils`,
