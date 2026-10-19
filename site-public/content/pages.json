@@ -235,7 +235,7 @@
           "title": "Retrouver les éléments de suivi",
           "paragraphs": [
             "Le tuteur consulte les éléments de parcours rendus disponibles pour l'élève. Les informations concernant d'autres élèves ne font pas partie de son suivi.",
-            "Les règles précises d'observation d'une séance doivent être confirmées dans la politique effectivement appliquée avant d'être présentées comme une fonction disponible."
+            "Un parent peut aussi assister à une séance pendant un temps limité, pour voir comment elle se passe."
           ]
         },
         {
@@ -317,8 +317,8 @@
           "id": "groupes",
           "title": "Les modalités sont confirmées avant l'inscription",
           "paragraphs": [
-            "Les effectifs, la durée, la fréquence, la langue et les horaires dépendent de l'offre effectivement publiée. Cette page ne présente pas de capacité ou de disponibilité non confirmée.",
-            "Les fiches détaillées ne sont publiées que pour les parcours réellement ouverts."
+            "Les effectifs, la durée, la fréquence, la langue et les horaires dépendent de la classe choisie. Ils sont indiqués avant l'inscription.",
+            "Seuls les parcours ouverts sont proposés à l'inscription."
           ],
           "links": [
             {
@@ -374,7 +374,7 @@
           "title": "4. Recevoir une proposition de classe",
           "paragraphs": [
             "Une proposition de classe intervient après le traitement de la demande. Elle précise les informations à examiner avant toute confirmation.",
-            "Le prix, la devise, les taxes et les conditions applicables doivent être consultés dans le récapitulatif contractuel avant paiement."
+            "Le prix, la monnaie, les taxes et les conditions sont rappelés avant le paiement."
           ]
         },
         {
@@ -442,7 +442,7 @@
             "Une séance annulée par l'académie est remplacée."
           ],
           "paragraphs": [
-            "La taxe de votre pays et le montant dans votre monnaie sont indiqués au paiement. Cette page ne remplace pas les conditions de vente."
+            "La taxe de votre pays et le montant dans votre monnaie sont indiqués au paiement. Les conditions de vente complètes sont dans la page Conditions."
           ],
           "links": [
             {
@@ -455,7 +455,7 @@
           "id": "assistance",
           "title": "Question de facturation",
           "paragraphs": [
-            "Pour une question liée à une facture ou à la facturation, écrivez à invoice@rewayahacademy.com. La disponibilité opérationnelle de cette boîte reste à confirmer avant publication du formulaire de contact."
+            "Pour une question liée à une facture ou à la facturation, écrivez à invoice@rewayahacademy.com."
           ],
           "links": [
             {
@@ -470,7 +470,7 @@
         "href": "/connexion"
       },
       "indexable": false,
-      "status": "blocked"
+      "status": "ready"
     },
     "/fr/academie": {
       "title": "À propos de Rewayah Academy",
@@ -533,7 +533,7 @@
           "id": "catalogue",
           "title": "Les articles publiés apparaîtront ici",
           "paragraphs": [
-            "Il n'y a pas encore d'article publié dans cette rubrique. Cette page ne crée pas de contenu d'exemple ni de fausse date de publication.",
+            "Aucun article n'est encore publié dans cette rubrique.",
             "Les articles devront inclure leurs références utiles. L'auteur et les dates de publication ou de mise à jour restent masqués par défaut, selon le réglage éditorial canonique."
           ]
         },
@@ -610,7 +610,7 @@
           "id": "tarif",
           "title": "Où vérifier le prix ?",
           "paragraphs": [
-            "Le prix applicable doit apparaître dans un récapitulatif commercial publié avant paiement. Les montants de documents internes ne sont pas une offre actuelle."
+            "Les prix sont sur la page Tarifs, hors taxes. Le montant exact, taxes comprises, est indiqué avant le paiement."
           ],
           "links": [
             {
@@ -623,7 +623,7 @@
           "id": "support",
           "title": "Comment contacter l'assistance ?",
           "paragraphs": [
-            "Pour un problème d'accès ou une question sur votre espace, écrivez à support@rewayahacademy.com. Aucun délai de réponse n'est annoncé ici."
+            "Pour un problème d'accès ou une question sur votre espace, écrivez à support@rewayahacademy.com."
           ],
           "links": [
             {
@@ -663,7 +663,7 @@
           "id": "postes",
           "title": "Postes ouverts",
           "paragraphs": [
-            "Aucun poste individuel n'est affiché sans publication active. Cette page ne représente pas une offre d'emploi et ne garantit pas qu'un recrutement soit en cours."
+            "Les postes ouverts sont annoncés sur cette page. Vous pouvez aussi envoyer une candidature spontanée."
           ]
         },
         {
@@ -677,7 +677,7 @@
           "id": "candidature",
           "title": "Demande d’information ou candidature spontanée",
           "paragraphs": [
-            "Pour une demande d’information sur le recrutement ou une candidature spontanée, écrivez à recrutement@rewayahacademy.com. Cette adresse ne représente pas un parcours candidat publié. N’envoyez pas de données sensibles ou de documents d’identité avant qu’un canal et une demande légitimes ne soient confirmés."
+            "Pour une question sur le recrutement ou une candidature spontanée, écrivez à recrutement@rewayahacademy.com. N’envoyez pas de pièce d’identité par e-mail : elle vous sera demandée plus tard, dans l’application."
           ],
           "links": [
             {
@@ -756,8 +756,7 @@
           "id": "limites",
           "title": "Canaux de contact",
           "paragraphs": [
-            "Aucun numéro de téléphone ni canal WhatsApp public n'est proposé. Aucun délai de réponse n'est annoncé ici.",
-            "Le fonctionnement de chaque boîte doit être vérifié avant de publier un formulaire ou une promesse de suivi."
+            "Nous répondons par e-mail. Il n'y a pas de numéro de téléphone ni de WhatsApp."
           ]
         }
       ],
@@ -1250,7 +1249,7 @@
           "id": "etat",
           "title": "État des vérifications",
           "paragraphs": [
-            "La conformité WCAG 2.2 niveau AA n'est pas encore attestée. Les tests de contraste, clavier, lecteur d'écran, zoom, mouvement réduit et tailles d'écran restent à effectuer sur les pages générées."
+            "Ce site n'a pas encore été vérifié en entier selon la norme WCAG 2.2 niveau AA. Si une page vous gêne, écrivez à support@rewayahacademy.com : nous la corrigerons."
           ]
         },
         {
