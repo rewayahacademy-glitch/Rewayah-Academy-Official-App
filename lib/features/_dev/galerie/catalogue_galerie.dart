@@ -76,6 +76,7 @@ import '../../../core/widgets/menu_actions.dart';
 import '../../../core/widgets/menu_filtre.dart';
 import '../../../core/widgets/montant_argent.dart';
 import '../../../core/widgets/nav_shell.dart';
+import '../../../core/widgets/note_etoiles.dart';
 import '../../../core/widgets/offline_banner.dart';
 import '../../../core/widgets/ornement_marque.dart';
 import '../../../core/widgets/page_etape.dart';
@@ -1951,6 +1952,20 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
   // COM-F, COM-F-b (02_DEC-13) : les quatre composants du socle des
   // Communications, a la racine de `lib/core/widgets/` pour que le test de la
   // galerie les voie.
+  EntreeGalerie(
+    nom: 'NoteEtoiles',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'lecture : quatre sur cinq',
+        (BuildContext _) => const NoteEtoiles(valeur: 4),
+      ),
+      EtatGalerie(
+        'choix : aucune etoile encore',
+        (BuildContext _) => NoteEtoiles(valeur: 0, onChange: (int _) {}),
+      ),
+    ],
+  ),
   EntreeGalerie(
     nom: 'BadgeNonLu',
     famille: FamilleComposant.composantEtat,
