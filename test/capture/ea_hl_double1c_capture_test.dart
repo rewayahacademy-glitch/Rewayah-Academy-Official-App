@@ -12,15 +12,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override, ProviderOrFamily;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/etat_sans_donnees.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
-import 'package:rewayah_academy/features/compte/donnees_compte.dart';
-import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 
@@ -129,25 +126,11 @@ void main() {
   group('Capture : EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
 
-    final SoldesFoyer soldes = DonneesAdulteDemo.soldes(
-      EtatDemoAdulte.conjointActif,
-      GenreTitulaireDemo.homme,
-    );
     final List<BeneficiaireRecharge> beneficiaires =
         DonneesAdulteDemo.beneficiairesRecharge(
           EtatDemoAdulte.conjointActif,
           GenreTitulaireDemo.homme,
         );
-    final List<PaiementFoyer> historique = <PaiementFoyer>[
-      PaiementFoyer(
-        id: 'p1',
-        montantMineur: 4500,
-        devise: 'EUR',
-        statutServeur: 'regle',
-        date: DateTime(2026, 9, 2),
-        justificatifDisponible: true,
-      ),
-    ];
 
     /// Une lecture qui rend [valeur] la premiere fois si [dabord], puis
     /// echoue.
@@ -162,26 +145,9 @@ void main() {
       for (final bool avec in <bool>[false, true]) {
         final String etat = avec ? 'avec_donnees' : 'sans_donnees';
 
-        testWidgets('soldes $etat ${cas.$1}', (WidgetTester tester) async {
-          final Future<SoldesFoyer> Function() lireSoldes = lecture(
-            soldes,
-            dabord: avec,
-          );
-          await _capturer(
-            tester,
-            'soldes_${etat}_${cas.$1}',
-            cas,
-            page: PaiementsComptePage(onRetour: () {}, onRecharger: () {}),
-            lectures: <Override>[
-              soldesFoyerProvider.overrideWith((Ref _) => lireSoldes()),
-              paiementsFoyerProvider.overrideWith((Ref _) async => historique),
-            ],
-            fournisseur: soldesFoyerProvider,
-            relire: avec,
-            quoi: t.adulte.paiements.soldesSansDonnees,
-          );
-        });
-
+        // L11 : les soldes ne sont plus sur Paiements du foyer (FI-VAGUE-R
+        // R1-06 : la synthese et les cartes de Ma famille les portent) ; la
+        // capture des soldes sur cette page n'a plus d'objet.
         testWidgets('recharge $etat ${cas.$1}', (WidgetTester tester) async {
           final Future<List<BeneficiaireRecharge>> Function() lire = lecture(
             beneficiaires,

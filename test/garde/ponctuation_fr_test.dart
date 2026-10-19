@@ -100,7 +100,8 @@ void main() {
     for (final String cle in <String>[
       'adulte.accueil.echec',
       'adulte.historique.echec',
-      'tuteur.reglages.demandeMotif',
+      // tuteur.reglages.demandeMotif : retiree avec les anciens reglages
+      // de l'enfant (menage du 17/10).
     ]) {
       expect(valeur(cle), isNot(contains(RegExp(r' [?!:;]'))), reason: cle);
     }

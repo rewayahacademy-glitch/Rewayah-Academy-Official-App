@@ -284,21 +284,22 @@ void main() {
       expect(find.byType(FilProfilPaiementPage), findsNothing);
     });
 
-    testWidgets('hors ligne : la phrase generique, le bandeau dit le reseau, aucun fil ouvert', (
-      WidgetTester tester,
-    ) async {
-      await _monter(
-        tester,
-        _surcharges(_Messages(mode: _Mode.echec), horsLigne: true),
-      );
-      await _relancer(tester);
-      expect(find.byType(FilProfilPaiementPage), findsNothing);
-      expect(
-        tester.widget<Text>(find.byKey(ProfilPaiementPage.retourKey)).data,
-        t.comptable.beneficiaires.profil.erreurAction,
-      );
-      expect(find.byKey(ProfilPaiementPage.relancerKey), findsOneWidget);
-    });
+    testWidgets(
+      'hors ligne : la phrase generique, le bandeau dit le reseau, aucun fil ouvert',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          _surcharges(_Messages(mode: _Mode.echec), horsLigne: true),
+        );
+        await _relancer(tester);
+        expect(find.byType(FilProfilPaiementPage), findsNothing);
+        expect(
+          tester.widget<Text>(find.byKey(ProfilPaiementPage.retourKey)).data,
+          t.comptable.beneficiaires.profil.erreurAction,
+        );
+        expect(find.byKey(ProfilPaiementPage.relancerKey), findsOneWidget);
+      },
+    );
 
     for (final (_Mode mode, String Function() phrase) cas
         in <(_Mode, String Function())>[

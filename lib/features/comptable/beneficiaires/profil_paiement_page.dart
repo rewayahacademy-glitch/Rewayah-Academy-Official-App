@@ -271,8 +271,8 @@ class _ProfilPaiementPageEtat extends ConsumerState<ProfilPaiementPage> {
             );
           }
           if (horsLigne) {
-            return EtatSysteme(
-              nature: NatureEtat.horsLigne,
+            return EtatSysteme.sansDonnees(
+              quoi: t.sansDonnees.profilPaiement,
               onAction: reessayer,
             );
           }

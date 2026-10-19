@@ -11,9 +11,9 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
-import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/chargement_avec_delais.dart';
+import '../../core/widgets/choix_nombre.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -669,9 +669,9 @@ class _FeuilleNiveauEtat extends State<_FeuilleNiveau> {
   late final TextEditingController _cycle = TextEditingController(
     text: widget.cycleInitial ?? '',
   );
-  late final TextEditingController _ordre = TextEditingController(
-    text: widget.ordreInitial == null ? '' : '${widget.ordreInitial}',
-  );
+
+  /// L'ordre, choisi au pas a pas (jamais au clavier, decision du 17/10).
+  late int _ordre = widget.ordreInitial ?? 1;
   late final TextEditingController _description = TextEditingController(
     text: widget.descriptionInitiale ?? '',
   );
@@ -708,7 +708,7 @@ class _FeuilleNiveauEtat extends State<_FeuilleNiveau> {
     }
     _nouveauCycle = _cycleChoisi == null;
     if (widget.ordreInitial == null) {
-      _ordre.text = '${_ordreDeduit()}';
+      _ordre = _ordreDeduit();
     }
   }
 
@@ -717,7 +717,6 @@ class _FeuilleNiveauEtat extends State<_FeuilleNiveau> {
     _codeTechnique.dispose();
     _nomHumain.dispose();
     _cycle.dispose();
-    _ordre.dispose();
     _description.dispose();
     super.dispose();
   }
@@ -744,21 +743,14 @@ class _FeuilleNiveauEtat extends State<_FeuilleNiveau> {
     setState(() {
       _cycleChoisi = cycle;
       _nouveauCycle = cycle == null;
-      _ordre.text = '${_ordreDeduit()}';
+      _ordre = _ordreDeduit();
     });
-  }
-
-  void _pas(int delta) {
-    final int courant = int.tryParse(_ordre.text.trim()) ?? 0;
-    setState(() => _ordre.text = '${courant + delta}');
   }
 
   /// Ce qui manque pour envoyer, en mots du directeur.
   List<String> get _manques => <String>[
     if (_nomHumain.text.trim().isEmpty) t.admin.programmes.manqueNom,
     if (_cycleRetenu.isEmpty) t.admin.programmes.manqueCycle,
-    if (int.tryParse(_ordre.text.trim()) == null)
-      t.admin.programmes.manqueOrdre,
     if (widget.avecCodeTechnique && _codeTechnique.text.trim().isEmpty)
       t.admin.programmes.manqueCode,
   ];
@@ -780,7 +772,7 @@ class _FeuilleNiveauEtat extends State<_FeuilleNiveau> {
         codeTechnique: _codeTechnique.text.trim(),
         nomHumain: _nomHumain.text.trim(),
         cycle: _cycleRetenu,
-        ordre: int.parse(_ordre.text.trim()),
+        ordre: _ordre,
         description: _description.text.trim().isEmpty
             ? null
             : _description.text.trim(),
@@ -864,31 +856,14 @@ class _FeuilleNiveauEtat extends State<_FeuilleNiveau> {
           ),
         ],
         Ecart.vMd,
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            BoutonIcone(
-              icone: AppIcons.moins,
-              libelle: t.admin.programmes.ordreMoins,
-              onPress: () => _pas(-1),
-            ),
-            Ecart.hSm,
-            Expanded(
-              child: ChampEtiquete(
-                libelle: t.admin.programmes.champOrdre,
-                controller: _ordre,
-                keyboardType: TextInputType.number,
-                textAlign: TextAlign.center,
-                onChanged: (String _) => setState(() {}),
-              ),
-            ),
-            Ecart.hSm,
-            BoutonIcone(
-              icone: AppIcons.ajouter,
-              libelle: t.admin.programmes.ordrePlus,
-              onPress: () => _pas(1),
-            ),
-          ],
+        ChoixNombre(
+          key: const ValueKey<String>('niveau-ordre'),
+          libelle: t.admin.programmes.champOrdre,
+          valeur: _ordre,
+          min: 1,
+          libelleMoins: t.admin.programmes.ordreMoins,
+          libellePlus: t.admin.programmes.ordrePlus,
+          onChange: (int v) => setState(() => _ordre = v),
         ),
         Ecart.vSm,
         Text(

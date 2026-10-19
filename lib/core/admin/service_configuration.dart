@@ -134,6 +134,7 @@ const List<String> clesObservation = <String>[
 const List<String> clesConservationDonnees = <String>[
   'recording_retention_days',
   'kyc_retention_days',
+  'compte.suppression_delai_jours',
 ];
 
 /// Les valeurs de Configuration > Regles.
@@ -152,7 +153,6 @@ final FutureProvider<List<ValeurConfig>> valeursFonctionnalitesProvider =
 /// Les valeurs de Configuration > Conservation des donnees.
 final FutureProvider<List<ValeurConfig>> valeursConservationDonneesProvider =
     FutureProvider<List<ValeurConfig>>(
-      (Ref ref) => ref
-          .watch(serviceConfigurationProvider)
-          .lire(clesConservationDonnees),
+      (Ref ref) =>
+          ref.watch(serviceConfigurationProvider).lire(clesConservationDonnees),
     );

@@ -499,7 +499,7 @@ void main() {
         port: _Port(erreur: StateError('reseau')),
         horsLigne: true,
       );
-      expect(find.text(t.commun.etats.horsLigne.titre), findsOneWidget);
+      expect(find.text(t.sansDonnees.aujourdhui), findsOneWidget);
       expect(find.byType(ResumeTresorerie), findsNothing);
     });
   });
@@ -511,10 +511,7 @@ void main() {
           .aujourdhui();
       // La donnee de demonstration distingue bien les deux nombres : sinon
       // ce test ne prouverait rien.
-      expect(
-        jour.aTraiterHorsPaiements.length,
-        isNot(jour.aTraiter.length),
-      );
+      expect(jour.aTraiterHorsPaiements.length, isNot(jour.aTraiter.length));
       final Map<String, Set<int?>> vus = <String, Set<int?>>{};
       Future<void> relever(Size taille, String depart) async {
         _taille(tester, taille);

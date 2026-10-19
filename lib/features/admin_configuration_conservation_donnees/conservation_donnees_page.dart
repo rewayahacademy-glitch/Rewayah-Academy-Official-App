@@ -22,8 +22,9 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 /// Deux delais aujourd'hui : les enregistrements de seance
 /// (`recording_retention_days`) et les documents d'identite deposes
 /// (`kyc_retention_days`, `kyc_documents.purge_at` s'en deduit a chaque
-/// depot, migration `0004`). Aucun autre delai de conservation n'existe
-/// encore en base.
+/// depot, migration `0004`), plus le delai de reflexion avant le traitement
+/// d'une demande de suppression de compte (`compte.suppression_delai_jours`,
+/// migration `20261018150000`).
 class ConservationDonneesPage extends ConsumerWidget {
   /// Cree l'ecran de conservation des donnees.
   const ConservationDonneesPage({super.key});
@@ -103,6 +104,20 @@ class _Corps extends StatelessWidget {
           description: t.admin.conservationDonnees.documentsIdentiteDetail,
           cle: 'kyc_retention_days',
           valeur: v['kyc_retention_days'] ?? 0,
+          affichage: (int n) => LibellesGroupe.valeurSeule(
+            t.admin.conservationDonnees.uniteJours(n: n),
+          ),
+          champValeur: t.admin.conservationDonnees.champValeur,
+          envoyer: t.admin.conservationDonnees.envoyer,
+          valeurInvalide: t.admin.conservationDonnees.valeurInvalide,
+          erreurEcriture: erreurEcriture,
+          onEcrit: onEcrit,
+        ),
+        ConfigLigneEntiere(
+          titre: t.admin.conservationDonnees.suppressionCompte,
+          description: t.admin.conservationDonnees.suppressionCompteDetail,
+          cle: 'compte.suppression_delai_jours',
+          valeur: v['compte.suppression_delai_jours'] ?? 0,
           affichage: (int n) => LibellesGroupe.valeurSeule(
             t.admin.conservationDonnees.uniteJours(n: n),
           ),

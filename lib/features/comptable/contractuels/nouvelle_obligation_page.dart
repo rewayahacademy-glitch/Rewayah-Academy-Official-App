@@ -196,7 +196,10 @@ class _NouvelleObligationPageState
             )
           : null,
       child: echecHorsLigne
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: _relire)
+          ? EtatSysteme.sansDonnees(
+              quoi: t.sansDonnees.contractuels,
+              onAction: _relire,
+            )
           : BlocAsynchrone<ContexteCreationObligation>(
               valeur: lecture,
               squelette: const Skeleton.liste(lignes: 6),

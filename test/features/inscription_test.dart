@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
@@ -54,6 +55,8 @@ class _DossierLent extends FauxServiceDossier {
     required String nom,
     Genre? genre,
     String? codeInvitation,
+    UsageTitulaire? usage,
+    bool suitDesCours = false,
   }) async {
     await _porte.future;
     await super.creerProfil(
@@ -62,6 +65,8 @@ class _DossierLent extends FauxServiceDossier {
       nom: nom,
       genre: genre,
       codeInvitation: codeInvitation,
+      usage: usage,
+      suitDesCours: suitDesCours,
     );
   }
 }
@@ -297,6 +302,9 @@ void main() {
       expect(dossier.profilsCrees, hasLength(1));
       expect(dossier.profilsCrees.single.role, AppRole.guardian);
       expect(dossier.profilsCrees.single.genre, Genre.femme);
+      // L5-01 : « Moi » part avec le profil, et ouvre la fiche d'eleve.
+      expect(dossier.usages.single.usage, UsageTitulaire.moi);
+      expect(dossier.usages.single.suitDesCours, isTrue);
       expect(source.rafraichissements, 1);
       expect(find.text('ATTENTE'), findsOneWidget);
     });
@@ -451,6 +459,38 @@ void main() {
       await _continuer(tester);
       expect(find.text('2 sur 4'), findsOneWidget);
     });
+
+    for (final (String reponse, bool suit) in <(String, bool)>[
+      (t.inscription.usage.coursOui, true),
+      (t.inscription.usage.coursNon, false),
+    ]) {
+      testWidgets('L5-01 : « Famille », cours $suit : la reponse est montree '
+          'au recapitulatif et part avec le profil', (
+        WidgetTester tester,
+      ) async {
+        final (FauxServiceDossier dossier, _) = await _monter(tester);
+        await _taper(tester, find.text(t.inscription.usage.familleTitre));
+        await _taper(tester, find.text(reponse));
+        await _continuer(tester);
+        await tester.enterText(
+          find.byKey(const Key('inscription-prenom')),
+          'Karim',
+        );
+        await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
+        await _continuer(tester);
+        await _taper(tester, find.text(t.inscription.genreHomme));
+        await _continuer(tester);
+        expect(
+          find.text(
+            suit ? t.inscription.recap.coursOui : t.inscription.recap.coursNon,
+          ),
+          findsOneWidget,
+        );
+        await _taper(tester, find.text(t.inscription.creer));
+        expect(dossier.usages.single.usage, UsageTitulaire.famille);
+        expect(dossier.usages.single.suitDesCours, suit);
+      });
+    }
 
     testWidgets('identite : les erreurs se disent sous les champs', (
       WidgetTester tester,

@@ -1,6 +1,5 @@
 # Admis par DECISION-ENTREE-2026-10-17 (accords et consentements : bouton Suivant inactif tant que tout n'est pas coche, regle qui remplace BOUTONS-GRISES-1 pour ces ecrans) : les trois lignes bouton-grise de accords_page.dart, depot_piece_page.dart et texte_observation.dart.
 affirmation-reseau|assets/i18n/fr.i18n.json|admin.groupes.observationErreur : Le réglage n'a pas pu être enregistré.
-affirmation-reseau|assets/i18n/fr.i18n.json|disponibilites.erreur : Ce créneau n'a pas pu être enregistré. Réessayez.
 affirmation-reseau|assets/i18n/fr.i18n.json|enseignant.cahier.echecEnvoi : Le cahier de transmission n'a pas pu être enregistré. Réessayez.
 affirmation-reseau|assets/i18n/fr.i18n.json|parcours.erreur : Cette réponse n'a pas pu être enregistrée. Réessayez.
 affirmation-reseau|assets/i18n/fr.i18n.json|tc.parcours.signalement.echec : Le signalement n'a pas pu être transmis. Réessayez.
@@ -477,18 +476,9 @@ libelle-sans-source|assets/i18n/fr.i18n.json|creneaux.ongletHeures : Mes heures
 libelle-sans-source|assets/i18n/fr.i18n.json|creneaux.plafondAtteint : Vous suivez déjà {nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation.
 libelle-sans-source|assets/i18n/fr.i18n.json|creneaux.plafondDemander : Demander à suivre plus d'élèves
 libelle-sans-source|assets/i18n/fr.i18n.json|destructif.irreversible : Cette action ne peut pas être annulée.
-libelle-sans-source|assets/i18n/fr.i18n.json|disponibilites.aucune : Aucune heure proposée pour {prenom}
-libelle-sans-source|assets/i18n/fr.i18n.json|disponibilites.aucuneDetail : Sans créneau, aucun enseignant ne peut prendre {prenom} en charge.
-libelle-sans-source|assets/i18n/fr.i18n.json|disponibilites.celluleLibre : {jour} {heure} heures, libre. Toucher pour proposer
-libelle-sans-source|assets/i18n/fr.i18n.json|disponibilites.cellulePosee : {jour} {heure} heures, proposé. Toucher pour retirer
-libelle-sans-source|assets/i18n/fr.i18n.json|disponibilites.consigne : Touchez les heures possibles pour {prenom}.
-libelle-sans-source|assets/i18n/fr.i18n.json|disponibilites.consigneEnseignant : Touchez les heures où vous êtes disponible.
 libelle-sans-source|assets/i18n/fr.i18n.json|disponibilites.effet : Un enseignant choisira parmi ces heures. Plus vous en proposez, plus vite le cours démarre.
-libelle-sans-source|assets/i18n/fr.i18n.json|disponibilites.effetEnseignant : Vous ne verrez que les élèves dont les heures croisent les vôtres.
-libelle-sans-source|assets/i18n/fr.i18n.json|disponibilites.erreur : Ce créneau n'a pas pu être enregistré. Réessayez.
 libelle-sans-source|assets/i18n/fr.i18n.json|disponibilites.poseeUne : 1 heure proposée
 libelle-sans-source|assets/i18n/fr.i18n.json|disponibilites.posees : {nombre} heures proposées
-libelle-sans-source|assets/i18n/fr.i18n.json|disponibilites.titre : Quand vos enfants peuvent-ils suivre un cours ?
 libelle-sans-source|assets/i18n/fr.i18n.json|disponibilites.titreEnseignant : Quand pouvez-vous donner cours ?
 libelle-sans-source|assets/i18n/fr.i18n.json|dossiers.apercu : La pièce déposée
 libelle-sans-source|assets/i18n/fr.i18n.json|dossiers.apercuIndisponible : Aperçu indisponible
@@ -1024,18 +1014,6 @@ libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.aucunEnfantDetail :
 libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.cameraAutorisee : {prenom} peut allumer sa caméra pendant le cours.
 libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.cameraAutoriser : Autoriser la caméra de {prenom}
 libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.cameraRetirer : Retirer la caméra de {prenom}
-libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.demandeDuree : Changer la durée des cours
-libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.demandeEnvoyee : Demande envoyée. L'administration la tranchera.
-libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.demandeEnvoyer : Envoyer la demande
-libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.demandeMinimum : Changer la durée minimale payable
-libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.demandeMotif : Pourquoi ce changement ?
-libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.demandeMotifRequis : Un motif est nécessaire : c'est lui qui permet de trancher.
-libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.demandeReaffectation : Changer d'enseignant
-libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.demandeSansEnseignant : {prenom} n'a pas encore d'enseignant : il n'y a rien à changer.
-libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.demandeTitreDuree : La durée des cours de {prenom}
-libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.demandeTitreMinimum : La durée minimale payable pour {prenom}
-libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.demandeTitreReaffectation : Changer l'enseignant de {prenom}
-libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.demandes : Demander un changement
 libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.erreur : L'enregistrement n'a pas abouti : {message}
 libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.modeEnfant : Grand affichage, sans lecture : {prenom} reconnaît des images et écoute.
 libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.modePasserEnfant : Passer {prenom} au grand affichage

@@ -96,7 +96,7 @@ class AccesComptePage extends ConsumerWidget {
     final bool regulariser = aRegulariser(finance);
     // La place rendue par la source (FI-BR-08) : liberee, elle passe avant
     // le manque ; reactivee, elle se dit tant qu'aucun manque n'est rendu.
-    final bool liberee = a.place == EtatPlace.liberee;
+    final bool liberee = a.place.ferme;
     final String? place = phrasePlace(a, prenom: a.prenom);
     return LigneRubrique(
       icone: AppIcons.profil,

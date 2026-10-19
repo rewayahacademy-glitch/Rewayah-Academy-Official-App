@@ -40,6 +40,8 @@ declare
   v_liste text[] := array[
     'abandonner_reprise_tresorerie(bigint,text)',
     'accepter_demande_presentation(uuid)',
+    -- FAC-E-01 (18/10) : la direction accorde et retire les bourses, note les parrainages.
+    'accorder_bourse(uuid,text)',
     'accorder_capacite_controle(uuid,timestamp with time zone,timestamp with time zone,boolean,uuid[],uuid[],uuid)',
     'admin_library_review_rights(uuid,uuid,jsonb,integer)',
     'affecter_enseignant_classe_c11bis(uuid,uuid)',
@@ -48,6 +50,8 @@ declare
     'ajouter_niveau_programme(uuid,text,text,text,integer,text)',
     'annuler_evaluation(uuid,text)',
     'annuler_invitation_conjoint()',
+    -- CPT-SUPPR-EXPORT (18/10) : la personne annule sa demande de suppression (compte valide).
+    'annuler_suppression_compte()',
     'annuler_upload_bibliotheque(uuid)',
     'autoriser_ecoute_archive(uuid)',
     'autoriser_lecture_piece_identite(uuid)',
@@ -91,10 +95,15 @@ declare
     'decider_tresorerie_montant(bigint,bigint,text)',
     'declarer_absence_seance(uuid,uuid)',
     'declarer_conflit_mission(uuid,uuid)',
+    -- PED-APRES-BACK (18/10) : la direction regle le partage pedagogique d'une classe et d'un eleve.
+    'definir_partage_classe(uuid,boolean,text,text)',
     'definir_politique_observation_groupe(uuid,text,smallint,integer,integer)',
+    'definir_regle_partage_eleve(uuid,uuid,text,text,text)',
     'demander_creneau_personnalise(uuid,text,smallint[],smallint)',
     'demander_presentation_standard()',
     'demander(text,uuid,text,text,integer)',
+    -- CPT-SUPPR-EXPORT (18/10) : la personne demande la suppression de son compte (compte valide).
+    'demander_suppression_compte(text)',
     'demander_upload_bibliotheque(uuid,text,text,text,bigint,text)',
     'demandes_en_attente()',
     'demarrer_mission_controle(uuid)',
@@ -104,6 +113,10 @@ declare
     'dossiers_en_attente()',
     'effacer_etat_partage(uuid)',
     'eleves_sans_enseignant()',
+    -- FAC-B-01, FAC-C-01 (17/10) : direction ou comptabilite, compte valide.
+    'emettre_factures_mois(date)',
+    'enregistrer_paiement(uuid,bigint,text,text,uuid)',
+    'enregistrer_parrainage(uuid,uuid)',
     'enregistrer_profil_apprentissage(uuid,text,text,text,text,text)',
     'enregistrer_regles_tirage(jsonb,uuid)',
     'enregistrer_resultat_evaluation(uuid,text,text)',
@@ -111,6 +124,10 @@ declare
     'enseignants_pour_classe(uuid)',
     'enseignants_pour(uuid)',
     'entrer_observation(uuid,text)',
+    -- FAC-D-01 (18/10) : la direction decide les demandes de la comptabilite.
+    -- FAC-F-01 (18/10) : la direction (AAL2) lance a la main les relances et la suspension pour paiement.
+    'fac_traiter_relances_du_jour()',
+    'finance_validation_decider(uuid,text,text,uuid)',
     'fusionner_classes(uuid,uuid,text)',
     'geler_archive_seance(uuid,text,boolean)',
     'guard_app_config_history()',
@@ -128,6 +145,7 @@ declare
     'guard_session_state_transition()',
     'indicateurs_admin()',
     'inscrire_comptable_invite(text,text,text,gender)',
+    'inscrire_titulaire(text,text,text,gender,text,boolean)',
     'inscrire_enseignant_invite(text,text,text,gender)',
     'inviter_conjoint(text,uuid)',
     'inviter_comptable(text)',
@@ -146,6 +164,8 @@ declare
     'ma_capacite_controle_active()',
     'maj_eleve_pedagogie(uuid,text,text)',
     'maj_profil_enseignant(text,text[],text)',
+    -- CPT-SUPPR-EXPORT (18/10) : la copie des donnees de la personne (journalisee).
+    'mes_donnees_export()',
     'modifier_groupe(uuid,text,smallint,smallint,smallint,text,smallint)',
     'modifier_niveau_programme(uuid,text,text,integer,text)',
     'mon_invitation_en_cours()',
@@ -163,6 +183,8 @@ declare
     'publier_etat_partage(uuid,uuid,uuid,jsonb,jsonb,text,jsonb,jsonb,jsonb,integer)',
     'publier_evaluation(uuid,text,text)',
     'publier_offre_horaire(uuid)',
+    -- FAC-A-01 (17/10) : direction, compte valide, double verification.
+    'publier_politique_commerciale(jsonb)',
     'publier_resume_seance(uuid,uuid,text,text)',
     'publier_version_programme(uuid,text)',
     'quitter_salle(uuid)',
@@ -171,6 +193,9 @@ declare
     'rech_d1_curseur_lire(uuid,text,text,bigint)',
     'rech_d1_rechercher_classes(text,uuid,integer)',
     'rech_d1_rechercher_supports(text,uuid,integer)',
+    -- FI-BR-06 (18/10) : titulaire du foyer, compte valide (bf1_est_titulaire).
+    'recharge_payer(uuid,uuid)',
+    'recharge_verifier_montants(jsonb)',
     'rechercher_personne_par_matricule(text)',
     'reclamer_preinscription_apres_preuve()',
     'refuser_demande_horaire(uuid,text)',
@@ -180,6 +205,7 @@ declare
     'renoncer_intention_horaire(uuid,text)',
     'repondre_invitation_conjoint(text,uuid)',
     'reprendre_alimentation_tresorerie()',
+    'retirer_bourse(uuid,text)',
     'retirer_capacite_controle(uuid,text,uuid)',
     'retirer_creneau_personnalise(uuid)',
     'retirer_demande_horaire(uuid,text)',
@@ -190,6 +216,8 @@ declare
     'revoquer_invitation_enseignant(text)',
     'revoquer_jeton_agent(uuid)',
     'revoquer_resume_seance(uuid,uuid,text,text)',
+    -- SES-CLOTURE-AUTO (18/10) : la direction (aal2) declenche la cloture des seances echues.
+    'ses_cloturer_seances_echues_maintenant()',
     'signaler_horaire_insatisfait(uuid,jsonb)',
     'signer_contrat(text,text)',
     'sortir_observation(uuid)',
@@ -199,6 +227,8 @@ declare
     'tc_groupes_observation_bump_revision()',
     'tc_poser_annotation_marqueur(uuid,uuid,jsonb,text,text)',
     'traiter_anomalie_qualite(text,uuid,text)',
+    -- CPT-SUPPR-EXPORT (18/10) : la direction anonymise un compte (double verification).
+    'traiter_demande_suppression(uuid)',
     'transferer_eleve(uuid,uuid,uuid,text)',
     'transmettre_student_concern(uuid,text)',
     'verifier_chaine_audit(integer)'

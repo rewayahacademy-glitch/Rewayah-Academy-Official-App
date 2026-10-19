@@ -36,18 +36,29 @@ enum StatutPolitique {
   publiee,
 }
 
-/// Une remise par rang de membre payant du foyer (guide §1.3) : a partir du
-/// rang [aPartirDuRang], chaque membre payant recoit [remise] (negative).
+/// Une remise par rang de membre payant du foyer (guide §1.3 ; tarifs du
+/// 18/10/2026) : a partir du rang [aPartirDuRang], chaque membre payant
+/// recoit [remise] (negative) ou [pourMille] de son tarif. L'un des deux,
+/// jamais les deux.
 @immutable
 class RemiseRang {
   /// Cree la remise.
-  const RemiseRang({required this.aPartirDuRang, required this.remise});
+  const RemiseRang({required this.aPartirDuRang, this.remise, this.pourMille})
+    : assert(
+        (remise == null) != (pourMille == null),
+        'une remise en montant ou en pour mille',
+      );
 
   /// Le premier rang concerne (3 = troisieme membre payant).
   final int aPartirDuRang;
 
-  /// La remise, en unites mineures negatives.
-  final Montant remise;
+  /// La remise, en unites mineures negatives, ou `null` quand elle est en
+  /// pour mille.
+  final Montant? remise;
+
+  /// La remise en pour mille du tarif (80 = 8 %), ou `null` quand elle est
+  /// en montant.
+  final int? pourMille;
 }
 
 /// La nature d'un budget de pilotage (guide §5.7 « budgets non
@@ -110,6 +121,20 @@ class PolitiqueCommerciale {
     this.allocationInternet,
     this.joursRelance,
     this.budgets = const <BudgetPilotage>[],
+    this.tauxEleveHeureEnfant,
+    this.tauxEleveHeureAdulte,
+    this.plafondEleveHeureEnfant,
+    this.plafondEleveHeureAdulte,
+    this.dureeDueEnfantMinutes,
+    this.dureeDueAdulteMinutes,
+    this.prepaiementTrimestrielPourMille,
+    this.prepaiementAnnuelPourMille,
+    this.parrainageCredit,
+    this.boursePourMille,
+    this.boursePlacesPourMille,
+    this.bourseDureeMois,
+    this.cumulMaxPourMille,
+    this.jourSuspension,
   });
 
   /// L'identifiant de la version, tel que rendu.
@@ -188,16 +213,69 @@ class PolitiqueCommerciale {
   /// Vide quand la politique n'en fixe aucun.
   final List<BudgetPilotage> budgets;
 
-  /// La remise du membre payant de rang [rang] (1 = premier), ou `null`
-  /// quand ce rang n'en a aucune. Lecture de la politique, jamais un calcul
-  /// de prix.
-  Montant? remisePourRang(int rang) {
+  // Les valeurs des tarifs du 18/10/2026 (version v2.0.0) : `null` dans une
+  // version qui ne les porte pas.
+
+  /// La paie de l'enseignant par eleve present et par heure, classe
+  /// d'enfants (0,95 $ au 18/10/2026).
+  final Montant? tauxEleveHeureEnfant;
+
+  /// La paie de l'enseignant par eleve present et par heure, classe
+  /// d'adultes.
+  final Montant? tauxEleveHeureAdulte;
+
+  /// Le plafond de ce taux, classe d'enfants (palier de fidelite compris).
+  final Montant? plafondEleveHeureEnfant;
+
+  /// Le plafond de ce taux, classe d'adultes.
+  final Montant? plafondEleveHeureAdulte;
+
+  /// La presence a partir de laquelle une seance d'enfants est due, en
+  /// minutes.
+  final int? dureeDueEnfantMinutes;
+
+  /// La presence a partir de laquelle une seance d'adultes est due.
+  final int? dureeDueAdulteMinutes;
+
+  /// La remise d'un trimestre paye d'avance, en pour mille.
+  final int? prepaiementTrimestrielPourMille;
+
+  /// La remise d'une annee payee d'avance, en pour mille.
+  final int? prepaiementAnnuelPourMille;
+
+  /// Le credit de parrainage, a chacun des deux foyers.
+  final Montant? parrainageCredit;
+
+  /// La remise d'une bourse, en pour mille (jamais cumulee).
+  final int? boursePourMille;
+
+  /// Les places de bourse, en pour mille des eleves.
+  final int? boursePlacesPourMille;
+
+  /// La duree d'une bourse avant sa revue, en mois.
+  final int? bourseDureeMois;
+
+  /// Le plafond des remises cumulees (foyer, prepaiement), en pour mille du
+  /// prix.
+  final int? cumulMaxPourMille;
+
+  /// Le jour du mois ou l'acces d'un mois non regle est suspendu.
+  final int? jourSuspension;
+
+  /// La remise de rang qui s'applique au membre payant de rang [rang]
+  /// (1 = premier), ou `null` quand ce rang n'en a aucune.
+  RemiseRang? remiseRangPour(int rang) {
     RemiseRang? retenue;
     for (final RemiseRang r in remisesParRang) {
       if (r.aPartirDuRang <= rang) retenue = r;
     }
-    return retenue?.remise;
+    return retenue;
   }
+
+  /// La remise en montant du membre payant de rang [rang] (1 = premier), ou
+  /// `null` quand ce rang n'en a aucune ou qu'elle est en pour mille.
+  /// Lecture de la politique, jamais un calcul de prix.
+  Montant? remisePourRang(int rang) => remiseRangPour(rang)?.remise;
 }
 
 /// La mensualite d'un enfant payant dans un apercu de foyer (FI-11c, guide

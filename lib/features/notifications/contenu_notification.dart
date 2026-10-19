@@ -19,6 +19,11 @@ NotificationContenu contenuNotificationPour(
     'controle_mission_non_controlee' =>
       t.notifications.evenements.controleMissionNonControlee,
     'classe_changee' => t.notifications.evenements.classeChangee,
+    'paiement_relance' => t.notifications.evenements.paiementRelance,
+    'acces_suspendu_paiement' =>
+      t.notifications.evenements.accesSuspenduPaiement,
+    'acces_retabli_paiement' =>
+      t.notifications.evenements.accesRetabliPaiement,
     _ => throw const FormatException('Événement de notification inconnu.'),
   };
   return NotificationContenu(titre: titre);

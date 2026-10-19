@@ -316,7 +316,10 @@ class _PaiementsAEffectuerPageState
       );
     }
     if (horsLigne) {
-      return EtatSysteme(nature: NatureEtat.horsLigne, onAction: _relire);
+      return EtatSysteme.sansDonnees(
+        quoi: t.sansDonnees.paiementsAEffectuer,
+        onAction: _relire,
+      );
     }
     return null;
   }

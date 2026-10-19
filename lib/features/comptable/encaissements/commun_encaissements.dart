@@ -95,7 +95,10 @@ class BlocEncaissements<T> extends ConsumerWidget {
           return const EnPreparationComptable();
         }
         if (horsLigne) {
-          return EtatSysteme(nature: NatureEtat.horsLigne, onAction: reessayer);
+          return EtatSysteme.sansDonnees(
+            quoi: t.sansDonnees.encaissements,
+            onAction: reessayer,
+          );
         }
         return null;
       },

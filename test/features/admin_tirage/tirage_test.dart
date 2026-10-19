@@ -25,6 +25,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/choix_nombre.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_tirage/tirage_libelles.dart';
 import 'package:rewayah_academy/features/admin_tirage/tirage_page.dart';
@@ -361,15 +362,30 @@ void main() {
   });
 
   group('TIRAGE-REGLES-1 : le nombre de 0 a 50, les versions', () {
-    Future<void> saisirAutre(WidgetTester tester, String texte) async {
+    /// « Autre », puis « plus » ou « moins » jusqu'a [cible].
+    Future<void> choisirAutre(WidgetTester tester, int cible) async {
       await _toucher(tester, find.text(t.choix.autre));
-      final Finder champ = find.descendant(
-        of: _cle('tirage-regles'),
-        matching: find.byType(TextField),
-      );
-      await tester.ensureVisible(champ.first);
-      await tester.enterText(champ.first, texte);
-      await _laisser(tester);
+      for (int i = 0; i < 60; i++) {
+        final int v = tester
+            .widget<ChoixNombre>(find.byType(ChoixNombre))
+            .valeur;
+        if (v == cible) return;
+        await _toucher(
+          tester,
+          find.byKey(v < cible ? ChoixNombre.clePlus : ChoixNombre.cleMoins),
+        );
+      }
+    }
+
+    /// « Autre », puis « plus » jusqu'a ce qu'il disparaisse (le plafond).
+    Future<int> monterAuPlafond(WidgetTester tester) async {
+      await _toucher(tester, find.text(t.choix.autre));
+      for (int i = 0; i < 60; i++) {
+        final Finder plus = find.byKey(ChoixNombre.clePlus);
+        if (plus.evaluate().isEmpty) break;
+        await _toucher(tester, plus);
+      }
+      return tester.widget<ChoixNombre>(find.byType(ChoixNombre)).valeur;
     }
 
     test(
@@ -385,23 +401,15 @@ void main() {
       },
     );
 
-    testWidgets('« ٣٧ » part comme 37', (WidgetTester tester) async {
+    testWidgets('en arabe, 37 choisi au pas a pas part tel quel', (
+      WidgetTester tester,
+    ) async {
       final TirageDemo port = TirageDemo();
       await _monter(tester, port, direction: TextDirection.rtl);
-      await saisirAutre(tester, '٣٧');
+      await choisirAutre(tester, 37);
       expect(_cle('tirage-nombre-invalide'), findsNothing);
       await _toucher(tester, _bouton('tirage-enregistrer'));
       expect(port.reglesCourantes.missionsParSemaine, 37);
-      await tester.pumpWidget(const SizedBox());
-    });
-
-    testWidgets('« ٥١ » refusé : rien ne part', (WidgetTester tester) async {
-      final TirageDemo port = TirageDemo();
-      await _monter(tester, port, direction: TextDirection.rtl);
-      await saisirAutre(tester, '٥١');
-      expect(_cle('tirage-nombre-invalide'), findsOneWidget);
-      await _toucher(tester, _bouton('tirage-enregistrer'));
-      expect(port.clesRecues, isEmpty);
       await tester.pumpWidget(const SizedBox());
     });
 
@@ -436,7 +444,7 @@ void main() {
     ) async {
       final TirageDemo port = TirageDemo();
       await _monter(tester, port);
-      await saisirAutre(tester, '37');
+      await choisirAutre(tester, 37);
       await _toucher(tester, _bouton('tirage-enregistrer'));
       expect(port.reglesCourantes.missionsParSemaine, 37);
       expect(port.reglesCourantes.version, 2);
@@ -452,23 +460,11 @@ void main() {
     ) async {
       final TirageDemo port = TirageDemo();
       await _monter(tester, port);
-      await saisirAutre(tester, '7');
+      await choisirAutre(tester, 7);
       expect(_cle('tirage-nombre-invalide'), findsNothing);
       await _toucher(tester, _bouton('tirage-enregistrer'));
       expect(port.reglesCourantes.missionsParSemaine, 7);
       expect(port.reglesCourantes.version, 2);
-      await tester.pumpWidget(const SizedBox());
-    });
-
-    testWidgets('L4-04 « Autre : 51 » est invalide, rien ne part', (
-      WidgetTester tester,
-    ) async {
-      final TirageDemo port = TirageDemo();
-      await _monter(tester, port);
-      await saisirAutre(tester, '51');
-      expect(_cle('tirage-nombre-invalide'), findsOneWidget);
-      await _toucher(tester, _bouton('tirage-enregistrer'));
-      expect(port.clesRecues, isEmpty, reason: 'rien ne part');
       await tester.pumpWidget(const SizedBox());
     });
 
@@ -479,7 +475,9 @@ void main() {
       for (final int n in frequencesProposees) {
         expect(
           find.bySemanticsLabel(
-            RegExp('^${RegExp.escape(t.admin.tirage.missionsParSemaine(n: n))}'),
+            RegExp(
+              '^${RegExp.escape(t.admin.tirage.missionsParSemaine(n: n))}',
+            ),
           ),
           findsOneWidget,
           reason: 'phrase complete de la puce $n',
@@ -488,20 +486,18 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     });
 
-    testWidgets('0 puis 50 sont acceptes, 51 et « abc » ne partent pas', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('« Autre » au pas a pas, jamais au clavier (17/10) : 50 au '
+        'plus, puis 0', (WidgetTester tester) async {
       final TirageDemo port = TirageDemo();
       await _monter(tester, port);
-      await saisirAutre(tester, '51');
-      expect(_cle('tirage-nombre-invalide'), findsOneWidget);
-      await _toucher(tester, _bouton('tirage-enregistrer'));
-      expect(port.clesRecues, isEmpty, reason: 'rien ne part');
-      expect(find.text(t.admin.tirage.nombreInvalide), findsWidgets);
-      await saisirAutre(tester, 'abc');
-      expect(_cle('tirage-nombre-invalide'), findsOneWidget);
-      await saisirAutre(tester, '50');
-      expect(_cle('tirage-nombre-invalide'), findsNothing);
+      expect(await monterAuPlafond(tester), 50);
+      expect(
+        find.descendant(
+          of: _cle('tirage-regles'),
+          matching: find.byType(TextField),
+        ),
+        findsNothing,
+      );
       await _toucher(tester, _bouton('tirage-enregistrer'));
       expect(port.reglesCourantes.missionsParSemaine, 50);
       await _toucher(tester, _cle('tirage-frequence-0'));
@@ -611,17 +607,8 @@ void main() {
           },
         );
         await _toucher(tester, find.text(t.choix.autre));
-        await tester.enterText(
-          find
-              .descendant(
-                of: _cle('tirage-regles'),
-                matching: find.byType(TextField),
-              )
-              .first,
-          '99',
-        );
         await _laisser(tester);
-        expect(_cle('tirage-nombre-invalide'), findsOneWidget);
+        expect(find.byType(ChoixNombre), findsOneWidget);
         verifierEcranSansMotCoupe(
           tester,
           exceptions: <String>{

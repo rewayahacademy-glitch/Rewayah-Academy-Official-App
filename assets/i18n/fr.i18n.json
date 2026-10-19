@@ -755,26 +755,6 @@
     "etatMicroOuvert": "son micro est ouvert",
     "etatMicroCoupe": "son micro est coupé"
   },
-  "bienvenue": {
-    "titre": "Bienvenue",
-    "accroche": "Apprendre le Coran en classe, en visio",
-    "phrase": "Rewayah Academy propose des cours de Coran en direct, en vidéo, pour vous ou pour les élèves de votre foyer.",
-    "pointClasseTitre": "Une classe stable, à horaire fixe",
-    "pointClasse": "Les mêmes camarades et le même horaire, chaque semaine. Vous choisissez une classe dont l'horaire vous convient.",
-    "pointEnseignantTitre": "Un enseignant attitré",
-    "pointEnseignant": "Un Sayyid ou une Sayyida qui suit chaque élève d'une séance à l'autre.",
-    "pointParcoursTitre": "Un parcours selon le niveau",
-    "pointParcours": "Le débutant commence par la lecture de l'arabe et du Coran. L'élève déjà avancé rejoint la classe la plus proche de son niveau.",
-    "pointFoyerTitre": "Le suivi de la famille",
-    "pointFoyer": "Un seul compte pour le foyer\u00a0: les séances de chaque élève se suivent depuis votre compte.",
-    "commencer": "Commencer",
-    "dejaCompte": "J'ai déjà un compte",
-    "passer": "Passer la présentation",
-    "position": "{numero} / {total}",
-    "positionLecteur": "Présentation, page {numero} sur {total}",
-    "precedente": "Page précédente de la présentation",
-    "suivante": "Page suivante de la présentation"
-  },
   "attente": {
     "titre": "Votre dossier est en cours de vérification",
     "dossierIncomplet": "Il manque encore des pièces à votre dossier.",
@@ -835,6 +815,11 @@
   },
   "connexion": {
     "titre": "Se connecter",
+    "modeConnexion": "J'ai déjà un compte",
+    "modeCreation": "Créer un compte",
+    "titreCreation": "Créer votre compte",
+    "introCreation": "Indiquez votre adresse : nous vous envoyons un lien qui crée votre compte. Aucun mot de passe à choisir.",
+    "envoyerLienCreation": "Recevoir le lien d'inscription",
     "intro": "Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.",
     "courriel": "Votre adresse électronique",
     "courrielIndice": "vous@exemple.com",
@@ -858,7 +843,6 @@
     "erreurTropTot": "Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.",
     "horsLigne": "Le lien ne peut pas partir pour l'instant. Réessayez quand la connexion sera revenue.",
     "probleme": "Lien expiré ou jamais reçu\u00a0?",
-    "decouvrir": "Découvrir Rewayah Academy",
     "recuperation": {
       "titre": "Retrouver mon accès",
       "intro": "Il n'y a pas de mot de passe à réinitialiser\u00a0: indiquez votre adresse, nous vous envoyons un nouveau lien de connexion.",
@@ -942,8 +926,43 @@
       "identite": "Nom",
       "genre": "Genre",
       "enseignant": "Enseignant",
-      "comptable": "Comptable"
+      "comptable": "Comptable",
+      "cours": "Vos propres cours",
+      "coursOui": "Vous suivez aussi des cours",
+      "coursNon": "Pas de cours pour vous"
     }
+  },
+  "protectionEnfants": {
+    "categorie": "Sécurité d'un enfant",
+    "prioritaireTitre": "Signalement prioritaire",
+    "prioritaireDetail": "La direction et le responsable de la protection des enfants le lisent tout de suite. L'enseignant concerné et les autres familles ne le voient jamais. Aucun message n'est envoyé à la famille.",
+    "urgence": "En cas de danger immédiat, appelez d'abord les services d'urgence de votre pays.",
+    "direction": "La direction reçoit votre signalement.",
+    "recuPar": "{nom} et la direction reçoivent votre signalement.",
+    "contact": "Courriel de contact\u00a0: {courriel}",
+    "erreurLecture": "Le nom du responsable ne s'affiche pas pour l'instant. Réessayez dans un instant."
+  },
+  "codeConduite": {
+    "titre": "Code de conduite de l'enseignant",
+    "lien": "Lire le code de conduite",
+    "intro": "Ces règles protègent les élèves, et elles vous protègent. Lisez-les, puis acceptez.",
+    "regles": [
+      "Vos cours se tiennent dans la salle de l'académie. Un cours peut être enregistré en audio, et une personne chargée du contrôle peut le suivre en direct sans vous prévenir du moment. Un parent peut aussi assister au cours pendant un temps limité, pour voir comment se passe la séance\u00a0: vous en êtes averti. Vous acceptez ces mesures\u00a0: elles protègent les enfants et elles vous protègent.",
+      "Vous voyez le prénom de vos élèves. Leur nom complet n'est pas affiché, pour garder l'écran court. Vous ne voyez jamais les coordonnées d'une famille\u00a0: ni courriel, ni téléphone.",
+      "Ce que vous savez d'un enfant reste à l'académie, pour protéger ses données personnelles. Vous ne le rendez pas public et vous ne le montrez pas aux autres familles.",
+      "Vous ne contactez jamais un élève ou sa famille en privé, hors de l'application.",
+      "Devant la caméra, votre tenue est correcte et le fond derrière vous est neutre et calme.",
+      "Vous êtes à l'heure. Vous ouvrez la salle avant le début du cours.",
+      "Vous êtes aussi des prédicateurs\u00a0: soyez exemplaires dans vos paroles et vos gestes, et patients avec chaque élève.",
+      "Si la sécurité d'un enfant vous inquiète, signalez-le tout de suite avec «\u00a0Signaler un besoin\u00a0», catégorie «\u00a0Sécurité d'un enfant\u00a0». La direction le lit en priorité.",
+      "Si vous refusez ces règles, l'académie ne peut pas vous confier d'élèves, car elles protègent les enfants."
+    ],
+    "caseAccord": "J'ai lu le code de conduite et je l'accepte.",
+    "accepter": "J'accepte le code de conduite",
+    "accepteLe": "Accepté le {date}. Version {version}.",
+    "erreur": "Votre accord n'a pas été enregistré. Réessayez dans un instant.",
+    "erreurLecture": "Nous n'avons pas pu lire vos accords. Réessayez.",
+    "aAccepter": "À accepter"
   },
   "contrat": {
     "titre": "Ce que vous signez",
@@ -1069,7 +1088,7 @@
       },
       "s10": {
         "titre": "10. Contact",
-        "texte": "Responsable\u00a0: Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité\u00a0: {contact}. Représentant dans l'UE\u00a0: pas encore désigné\u00a0; l'application ne s'ouvre pas aux familles de l'Union européenne avant sa désignation."
+        "texte": "Responsable\u00a0: Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité\u00a0: {contact}. Représentant dans l'Union européenne\u00a0: {nom}."
       }
     }
   },
@@ -1344,12 +1363,6 @@
     "aucun": "Aucun profil élève dans le foyer",
     "aucunDetail": "Ajoutez d'abord un profil élève depuis le Foyer."
   },
-  "reglagesEnfant": {
-    "titre": "Réglages par profil élève",
-    "intro": "La photo, la caméra et l'interface de chaque élève se règlent dans sa fiche, depuis le Foyer. Les demandes à l'administration restent ici.",
-    "renvoi": "Photo, caméra et interface",
-    "renvoiLegende": "Dans la fiche {dePrenom}"
-  },
   "foyer": {
     "titre": "Foyer",
     "ajouterProfil": "Ajouter un profil élève",
@@ -1448,7 +1461,8 @@
       "aucunDebit": "Aucun débit prévu",
       "essaiSansMax": "Essai\u00a0: {n} séance(s) utilisée(s)",
       "manque": "Il manque {montant} pour la prochaine période.",
-      "indisponibleTitre": "Les soldes ne peuvent pas être lus"
+      "indisponibleTitre": "Les soldes ne peuvent pas être lus",
+      "sansDonnees": "Les soldes de votre foyer n'ont pas pu être chargés"
     },
     "transactions": {
       "titre": "Dernières transactions",
@@ -1457,7 +1471,8 @@
       "voirToutSemantique": "Voir tout\u00a0: historique des paiements du foyer",
       "videTitre": "Aucune transaction pour l'instant",
       "videPhrase": "Les recharges et les mensualités des profils apparaîtront ici.",
-      "erreurTitre": "Les dernières transactions ne peuvent pas être lues"
+      "erreurTitre": "Les dernières transactions ne peuvent pas être lues",
+      "sansDonnees": "Les derniers mouvements du foyer n'ont pas pu être chargés"
     }
   },
   "ficheEleve": {
@@ -1609,6 +1624,8 @@
       "remiseRang": "Remise familiale",
       "remiseRangDe": "Remise familiale {rang}e membre",
       "prorata": "Réduction calendrier",
+      "bourse": "Bourse Rewayah",
+      "remisePrepaiement": "Remise du paiement d'avance",
       "avoir": "Avoir",
       "taxe": "Taxe applicable",
       "total": "Total à financer",
@@ -1641,7 +1658,8 @@
       "recuIndisponibleTitre": "Le reçu n'est pas encore disponible",
       "recuIndisponiblePhrase": "Le téléchargement des reçus arrive avec la mise en service des paiements. Chaque paiement reste visible dans les mouvements.",
       "recuEchecTitre": "Le reçu n'a pas pu être préparé",
-      "recuEchecPhrase": "Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+      "recuEchecPhrase": "Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "sansDonnees": "Les finances de ce profil n'ont pas pu être chargées"
     },
     "mouvements": {
       "titre": "Mouvements",
@@ -1686,32 +1704,15 @@
       "videPhrase": "Aucune recharge ni aucune mensualité n'est encore enregistrée pour {prenom}. Les mouvements apparaîtront ici après le premier paiement.",
       "erreurTitre": "Les mouvements {dePrenom} ne peuvent pas être lus",
       "indisponibleTitre": "Les mouvements ne sont pas encore disponibles",
-      "indisponiblePhrase": "Les recharges et mensualités {dePrenom} s'afficheront ici dès leur mise en service."
+      "indisponiblePhrase": "Les recharges et mensualités {dePrenom} s'afficheront ici dès leur mise en service.",
+      "sansDonnees": "Les mouvements de ce profil n'ont pas pu être chargés"
     }
   },
   "disponibilites": {
-    "titre": "Quand vos enfants peuvent-ils suivre un cours\u00a0?",
     "titreEnseignant": "Quand pouvez-vous donner cours\u00a0?",
-    "consigne": "Touchez les heures possibles pour {prenom}.",
-    "consigneEnseignant": "Touchez les heures où vous êtes disponible.",
     "effet": "Un enseignant choisira parmi ces heures. Plus vous en proposez, plus vite le cours démarre.",
-    "effetEnseignant": "Vous ne verrez que les élèves dont les heures croisent les vôtres.",
     "fuseau": "Heures affichées en {fuseau}",
-    "aucune": "Aucune heure proposée pour {prenom}",
-    "aucuneDetail": "Sans créneau, aucun enseignant ne peut prendre {prenom} en charge.",
     "poseeUne": "1 heure proposée",
-    "cellulePosee": "{jour} {heure} heures, proposé. Toucher pour retirer",
-    "celluleLibre": "{jour} {heure} heures, libre. Toucher pour proposer",
-    "erreur": "Ce créneau n'a pas pu être enregistré. Réessayez.",
-    "joursCourts": [
-      "Lun",
-      "Mar",
-      "Mer",
-      "Jeu",
-      "Ven",
-      "Sam",
-      "Dim"
-    ],
     "joursLongs": [
       "lundi",
       "mardi",
@@ -2144,6 +2145,125 @@
     }
   },
   "admin": {
+    "importInscriptions": {
+      "onglet": "Importer",
+      "titre": "Importer les inscriptions",
+      "sousTitre": "Les familles et les enseignants déjà inscrits sont accueillis sans tout ressaisir.",
+      "intro": "Déposez les deux fichiers CSV du classeur des formulaires, tels quels. Rien n'est écrit avant votre confirmation.",
+      "eleves": {
+        "titre": "Fichier des élèves",
+        "aide": "Onglet\u00a0«\u00a0Elèves (Réponses)\u00a0» du classeur\u00a0: collez son contenu ou choisissez le fichier.",
+        "champ": "Contenu du fichier des élèves"
+      },
+      "enseignants": {
+        "titre": "Fichier des enseignants",
+        "aide": "Onglet\u00a0«\u00a0Enseignants (Réponses)\u00a0» du classeur\u00a0: collez son contenu ou choisissez le fichier.",
+        "champ": "Contenu du fichier des enseignants"
+      },
+      "choisir": "Choisir un fichier CSV",
+      "fichierCharge": "Fichier chargé\u00a0: {nom}",
+      "fichierIllisible": "Ce fichier n'a pas pu être lu. Enregistrez-le en CSV (UTF-8) ou collez son contenu dans le champ.",
+      "voirApercu": "Voir l'aperçu",
+      "manqueFichier": "Collez ou choisissez au moins un fichier pour continuer.",
+      "apercu": {
+        "titre": "Aperçu avant l'import",
+        "intro": "Rien n'est encore écrit. Vérifiez les lignes refusées et celles à regarder, puis confirmez.",
+        "lignesEleves": "Lignes du fichier des élèves",
+        "lignesEnseignants": "Lignes du fichier des enseignants",
+        "foyers": "Foyers à créer",
+        "personnes": "Personnes à importer",
+        "refusees": "Lignes refusées",
+        "alertes": "Lignes à regarder",
+        "refusAide": "Ces lignes ne seront pas importées. Corrigez le fichier et recommencez, ou continuez sans elles.",
+        "alertesAide": "Ces lignes seront importées. Regardez-les avant de confirmer.",
+        "vide": "Aucune ligne ne peut être importée. Corrigez les fichiers, puis recommencez.",
+        "modifier": "Modifier les fichiers"
+      },
+      "serveur": {
+        "titre": "Vérifié par le serveur",
+        "foyers": "Foyers comptés par le serveur",
+        "personnes": "Personnes comptées par le serveur",
+        "refusees": "Lignes refusées par le serveur",
+        "indisponible": "Le serveur n'a pas pu confirmer cet aperçu. Revenez en arrière et recommencez."
+      },
+      "ligne": "{fichier}, ligne {ligne}\u00a0: {motif}",
+      "fichier": {
+        "eleves": "Élèves",
+        "enseignants": "Enseignants"
+      },
+      "autresLignes": "Autres lignes non affichées\u00a0: {n}",
+      "motif": {
+        "ligneVide": "La ligne est vide.",
+        "colonnesDifferentes": "Le nombre de colonnes ne correspond pas à l'en-tête.",
+        "ligneTest": "C'est une ligne d'essai\u00a0: elle est ignorée.",
+        "personneSansNom": "Aucune personne n'est nommée (nom et prénom).",
+        "emailManquant": "L'adresse e-mail manque.",
+        "emailInvalide": "L'adresse e-mail est mal écrite.",
+        "dateInvalide": "La date de naissance doit s'écrire jour/mois/année, par exemple 25/03/2012.",
+        "enteteEmailAbsent": "L'en-tête n'a pas de colonne Email\u00a0: ce fichier ne peut pas être importé.",
+        "guillemetNonFerme": "Un guillemet n'est jamais fermé\u00a0: corrigez le fichier.",
+        "doublonAdresse": "Même adresse que la ligne {autre}\u00a0: les deux lignes forment un seul foyer.",
+        "doublonPersonne": "Même personne que la ligne {autre}\u00a0: elle ne sera importée qu'une fois.",
+        "dateFuture": "La date de naissance est dans le futur.",
+        "ageTropJeune": "Cette personne est plus jeune que l'âge minimum des classes.",
+        "adulteTropJeune": "Cette personne, nommée comme adulte, est mineure.",
+        "foyerSansAdulte": "Aucun adulte n'est nommé pour ce foyer de mineurs.",
+        "serveur": "Le serveur refuse cette ligne."
+      },
+      "mots": {
+        "titre": "Mots d'accueil",
+        "intro": "Chaque foyer reçoit un mot de bienvenue rempli avec les prénoms connus. Vous pouvez joindre votre propre mot, pour tous les foyers ou pour un seul.",
+        "lotChamp": "Mot commun à tous les foyers (facultatif)",
+        "lotAide": "S'il est rempli, il remplace le mot automatique de chaque foyer qui n'a pas son propre mot.",
+        "lotPatience": "Toutes les familles ont patienté",
+        "lotPatienceAide": "Elles reçoivent le mot de patience, rempli avec leurs prénoms."
+      },
+      "foyer": {
+        "adresse": "Adresse\u00a0: {adresse}",
+        "eleves": "Élèves\u00a0: {eleves}",
+        "patiente": "A patienté",
+        "retoucher": "Retoucher le mot de {dePrenom}",
+        "champAccueil": "Mot d'accueil de {dePrenom}",
+        "champPatience": "Mot de patience de {dePrenom}",
+        "motAide": "Laissez vide pour garder le mot automatique.",
+        "fermer": "Fermer",
+        "nonAffiches": "Foyers non affichés, aux réglages communs\u00a0: {n}"
+      },
+      "confirmer": "Confirmer l'import",
+      "confirmation": {
+        "question": "Importer ces inscriptions\u00a0?",
+        "consequence": "Les foyers et les personnes sont créés dans l'application. Rejouer l'import ne crée aucun doublon. Les lignes refusées ne sont pas importées."
+      },
+      "horsLigne": "L'import se confirmera dès le retour du réseau. Rien n'est créé d'ici là.",
+      "resultat": {
+        "titre": "Import terminé",
+        "personnesCreees": "Personnes créées",
+        "personnesPresentes": "Personnes déjà présentes",
+        "foyersCrees": "Foyers créés",
+        "foyersVus": "Foyers traités",
+        "refusees": "Lignes refusées",
+        "invitations": "Invitations à envoyer",
+        "invitationsAide": "Chaque nouveau foyer attend votre invitation. À sa première connexion, la famille prouve son adresse e-mail, puis lit son mot d'accueil.",
+        "rienDeNouveau": "Tout était déjà importé\u00a0: rien n'a été ajouté.",
+        "refusAide": "Ces lignes n'ont pas été importées. Corrigez le fichier, puis rejouez l'import\u00a0: les personnes déjà présentes ne sont pas recréées.",
+        "recommencer": "Importer d'autres fichiers"
+      },
+      "echec": {
+        "horsLigne": "L'import n'a pas pu être confirmé\u00a0: relancez la confirmation dès le retour du réseau. Rien ne sera créé en double.",
+        "refuse": "Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.",
+        "invalide": "Le serveur ne peut pas lire ces fichiers. Vérifiez l'en-tête et les guillemets, puis réessayez.",
+        "serveur": "L'import n'a pas pu être confirmé. Réessayez\u00a0: rien ne sera créé en double.",
+        "apercu": "L'essai à blanc du serveur n'a pas abouti. Réessayez dans un instant."
+      },
+      "acces": {
+        "doubleTitre": "Double vérification requise",
+        "doublePhrase": "Connectez-vous avec votre second facteur, puis revenez ici pour importer les inscriptions."
+      },
+      "indisponibleTitre": "Import des inscriptions indisponible",
+      "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur.",
+      "erreur": "Les droits d'import n'ont pas pu être lus. Réessayez.",
+      "sansDonnees": "l'import des inscriptions"
+    },
     "tableau": {
       "titre": "Centre de commande",
       "dossiers": "Dossiers à valider",
@@ -2411,7 +2531,11 @@
         "nonValide": "Le cahier n'est pas encore validé.",
         "corrigeLe": "Corrigé le {date}",
         "enseignant": "Enseignant",
-        "seanceDu": "Séance du {date}"
+        "seanceDu": "Séance du {date}",
+        "rubriqueTravail": "Travail à préparer",
+        "rubriqueObjectif": "Objectif personnel",
+        "rubriqueSuite": "Suite décidée",
+        "rubriqueMotif": "Motif de l'exception"
       },
       "partage": {
         "titre": "Partage des comptes rendus pédagogiques",
@@ -2850,6 +2974,28 @@
       "participantsMaxDetail": "Le nombre de participants autorisés quand les séances multi-participants sont actives.",
       "uniteNombre": "{n}"
     },
+    "protectionEnfants": {
+      "titre": "Protection des enfants",
+      "intro": "Le responsable reçoit, avec la direction, les signalements de sécurité d'un enfant. Son nom et son courriel s'affichent aux enseignants qui signalent. Laissez les champs vides\u00a0: l'écran dit alors que la direction reçoit le signalement.",
+      "nom": "Nom affiché",
+      "nomDetail": "Le nom que voient les enseignants.",
+      "courriel": "Courriel de contact",
+      "courrielDetail": "L'adresse où écrire au responsable.",
+      "nonRenseigne": "Non renseigné",
+      "champNom": "Nom du responsable",
+      "champCourriel": "Courriel du responsable",
+      "enregistrer": "Enregistrer",
+      "videAide": "Laissez vide pour retirer le responsable.",
+      "nomTropLong": "Ce nom est trop long. 120 signes au plus.",
+      "courrielInvalide": "Cette adresse n'est pas valide. Un courriel contient un @ et un point.",
+      "erreurEcriture": "Le changement n'a pas été enregistré\u00a0: {message}. Réessayez.",
+      "erreur": "Nous n'avons pas pu lire le responsable. Réessayez dans un instant.",
+      "representantTitre": "Représentant dans l'Union européenne",
+      "representantDetail": "Le nom affiché dans les textes juridiques. Laissez vide\u00a0: ils affichent alors «\u00a0Rewayah Academy\u00a0».",
+      "representantChamp": "Nom du représentant",
+      "representantVideAide": "Laissez vide pour afficher «\u00a0Rewayah Academy\u00a0».",
+      "representantErreur": "Nous n'avons pas pu lire le représentant. Réessayez dans un instant."
+    },
     "conservationDonnees": {
       "titre": "Conservation des données",
       "intro": "Depuis combien de temps ces éléments restent accessibles avant leur suppression automatique.",
@@ -2862,6 +3008,8 @@
       "enregistrementsDetail": "Le nombre de jours pendant lesquels un enregistrement de séance reste accessible.",
       "documentsIdentite": "Documents d'identité",
       "documentsIdentiteDetail": "Le nombre de jours pendant lesquels un document d'identité déposé reste accessible avant sa purge.",
+      "suppressionCompte": "Suppression d'un compte",
+      "suppressionCompteDetail": "Le nombre de jours de réflexion avant que la direction puisse traiter une demande de suppression de compte.",
       "uniteJours": {
         "one": "{n} j",
         "other": "{n} j"
@@ -3149,6 +3297,59 @@
       "erreurSuite": "Les visites plus anciennes n'ont pas pu être lues.",
       "fin": "Toutes les visites sont affichées."
     },
+    "suppressions": {
+      "onglet": "Suppressions",
+      "titre": "Suppressions de compte",
+      "sousTitre": "Les demandes de suppression. La direction les traite une fois le délai de réflexion écoulé.",
+      "attente(param=n)": {
+        "one": "{n} demande attend une décision.",
+        "other": "{n} demandes attendent une décision."
+      },
+      "vide": "Aucune demande de suppression.",
+      "erreur": "Les demandes n'ont pas pu être chargées. Réessayez.",
+      "sansDonnees": "Les demandes de suppression n'ont pas pu être chargées",
+      "refuse": "Seule la direction connectée avec la double vérification traite ces demandes. Reconnectez-vous avec votre code de vérification, puis réessayez.",
+      "indisponibleTitre": "Suppressions de compte indisponibles",
+      "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur.",
+      "etat": {
+        "enAttente": "En attente",
+        "aTraiter": "À traiter",
+        "annulee": "Annulée",
+        "traitee": "Traitée"
+      },
+      "matricule": "Matricule",
+      "role": "Rôle",
+      "motif": "Motif",
+      "demandeeLe": "Demandée le",
+      "annuleeLe": "Annulée le",
+      "traiteeLe": "Traitée le",
+      "delaiEnCours": "Le délai de réflexion court jusqu'au {date}. La demande pourra être traitée à partir de ce jour.",
+      "soldeTitre": "Un solde reste à régler",
+      "soldeDetail": "Il reste {montant} à payer. Ce solde reste dû après la suppression.",
+      "seancesTitre": "Des séances sont encore prévues",
+      "seancesDetail(param=n)": {
+        "one": "{n} séance est prévue. Annulez-la ou confiez-la à une autre personne. La demande ne peut pas être traitée tant qu'elle existe.",
+        "other": "{n} séances sont prévues. Annulez-les ou confiez-les à une autre personne. La demande ne peut pas être traitée tant qu'elles existent."
+      },
+      "foyerTitre": "Des élèves dans ce foyer",
+      "foyerDetail(param=n)": {
+        "one": "{n} élève est dans le foyer de ce tuteur. Vérifiez sa situation avant de continuer.",
+        "other": "{n} élèves sont dans le foyer de ce tuteur. Vérifiez leur situation avant de continuer."
+      },
+      "traiter": "Traiter la demande",
+      "confirmerQuestion": "Anonymiser ce compte : {nom} ?",
+      "confirmerConsequence": "Le nom, les coordonnées et la photo sont effacés. La personne ne peut plus se connecter. Cette action ne peut pas être annulée. Les factures et les paiements sont conservés.",
+      "confirmerSolde": "Un solde de {montant} reste dû et le restera.",
+      "confirmerAction": "Anonymiser le compte",
+      "confirmerRester": "Ne rien changer",
+      "traitee": "Le compte est anonymisé. La demande est traitée.",
+      "dejaTraitee": "Cette demande n'est plus en attente. La liste est à jour.",
+      "delaiNonEcoule": "Le délai de réflexion court encore. Rien n'a été effacé.",
+      "seancesRefus": "Des séances sont encore prévues. Rien n'a été effacé.",
+      "introuvable": "Cette demande n'existe plus. La liste est à jour.",
+      "echec": "La décision n'a pas pu être confirmée. Vérifiez la liste avant de réessayer.",
+      "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour."
+    },
     "comptes": {
       "titre": "Comptes",
       "intro": "Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d'identité déposée reste visible ici\u00a0: c'est le seul endroit qui le montre.",
@@ -3394,6 +3595,52 @@
         "uniteSeances": "séances",
         "uniteClasses": "classes",
         "uniteJours": "jours",
+        "minutes": {
+          "one": "{n} minute",
+          "other": "{n} minutes"
+        },
+        "mois": {
+          "one": "{n} mois",
+          "other": "{n} mois"
+        },
+        "uniteMinutes": "minutes",
+        "uniteMois": "mois",
+        "uniteJourDuMois": "du mois",
+        "jourDuMoisValeur": "Le {jour} du mois",
+        "prepaiementTrimestriel": "Trimestre payé d'avance",
+        "prepaiementTrimestrielDetail": "La remise sur trois mois réglés en une fois\u00a0; la famille la voit au moment de payer.",
+        "prepaiementAnnuel": "Année payée d'avance",
+        "prepaiementAnnuelDetail": "La remise sur douze mois réglés en une fois.",
+        "cumulMax": "Plafond des remises cumulées",
+        "cumulMaxDetail": "Remise du foyer et paiement d'avance ensemble ne dépassent jamais cette part du prix.",
+        "parrainage": "Crédit de parrainage",
+        "parrainageDetail": "Versé à chacun des deux foyers après le premier mois réglé de la famille parrainée.",
+        "bourse": "Bourse",
+        "bourseDetail": "Accordée par la direction sur demande écrite\u00a0; elle ne s'ajoute à aucune autre remise.",
+        "boursePlaces": "Places de bourse",
+        "boursePlacesDetail": "La part des élèves qui peuvent recevoir une bourse en même temps.",
+        "bourseDuree": "Durée d'une bourse",
+        "bourseDureeDetail": "Après cette durée, la bourse est revue avec la famille.",
+        "tauxEleveEnfant": "Par élève présent, classe d'enfants",
+        "tauxEleveEnfantDetail": "Payé à l'enseignant pour chaque élève présent et par heure de cours\u00a0; un élève absent n'est pas payé.",
+        "tauxEleveAdulte": "Par élève présent, classe d'adultes",
+        "tauxEleveAdulteDetail": "Payé à l'enseignant pour chaque adulte présent et par heure de cours.",
+        "plafondEleveEnfant": "Plafond par élève, classe d'enfants",
+        "plafondEleveAdulte": "Plafond par élève, classe d'adultes",
+        "plafondEleveDetail": "Le maximum par élève présent et par heure, prime de fidélité comprise.",
+        "erreurMontantCentimes": "Saisissez un montant supérieur à 0, avec au plus deux décimales (par exemple 0,95).",
+        "erreurPlafondEleve": "Le plafond est sous le taux ({taux})\u00a0: saisissez au moins le taux.",
+        "tauxEnfantAuDessusTitre": "Le taux enfant dépasse le taux adulte",
+        "tauxEnfantAuDessusDetail": "Vérifiez que c'est voulu. Vous pouvez publier tel quel.",
+        "dureeDueEnfant": "Séance d'enfants due à partir de",
+        "dureeDueAdulte": "Séance d'adultes due à partir de",
+        "dureeDueDetail": "La présence minimale pour qu'une séance compte dans la paie.",
+        "suspension": "Accès suspendu le",
+        "suspensionDetail": "Un mois non réglé à cette date suspend l'accès au cours\u00a0; la place reste gardée le temps de la conservation.",
+        "erreurPourcentMax": "Saisissez 100 % au plus.",
+        "erreurDureeDue": "Saisissez une durée de 1 à 240 minutes.",
+        "erreurBourseDuree": "Saisissez une durée de 1 à 24 mois.",
+        "erreurSuspension": "Saisissez un jour du 1er au 28 du mois.",
         "tarifs": "Tarifs",
         "tarifsDetail": "Le prix mensuel d'accès à une classe, hors taxes.",
         "tarifEnfant": "Enfant",
@@ -3498,6 +3745,12 @@
         "publicationIndisponibleDetail": "Rien n'a été publié\u00a0: le service de publication n'est pas encore branché. La version active continue de s'appliquer. Gardez cet écran ouvert pour conserver vos modifications, ou revenez quand la publication sera ouverte.",
         "publicationNonConfirmee": "Publication non confirmée",
         "publicationNonConfirmeeDetail": "La réponse n'est pas arrivée\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vérifiez la version active avant de réessayer.",
+        "publicationFaite": "Version publiée",
+        "publicationFaiteDetail": "Rewayah a enregistré la nouvelle version. Elle s'appliquera à partir de sa date d'effet\u00a0; d'ici là, la version active continue de s'appliquer.",
+        "publicationRefusee": "Publication refusée",
+        "publicationRefuseeDetail": "Seule la direction, connectée avec la double vérification, publie les prix. Rien n'a été publié\u00a0: reconnectez-vous avec votre code de vérification, puis réessayez.",
+        "publicationInvalide": "Une valeur ne convient pas",
+        "publicationInvalideDetail": "Rewayah a refusé cette version\u00a0: la date d'effet doit être à venir et après la dernière version, et chaque remise doit rester inférieure au tarif. Rien n'a été publié\u00a0: corrigez puis réessayez.",
         "champsACorriger": "Corrigez d'abord les champs signalés",
         "champsACorrigerDetail": "Un champ vide, mal saisi ou incohérent empêche de préparer la publication\u00a0: corrigez chaque champ signalé comme sa phrase l'indique, puis publiez.",
         "apercu": "Aperçu avant publication",
@@ -3545,10 +3798,70 @@
         "historiqueDetail": "Toutes les versions, la plus récente d'abord. Rien ne s'y modifie\u00a0: une version publiée reste telle quelle.",
         "historiqueVersion": "Version {version}",
         "historiqueActive": "Version active",
-        "historiqueVide": "Aucune autre version pour l'instant\u00a0: seule la version active existe."
+        "historiqueVide": "Aucune autre version pour l'instant\u00a0: seule la version active existe.",
+        "sansDonnees": "Les prix publiés n'ont pas pu être chargés"
       },
       "reserveDelegation": "Réserve et délégation",
-      "aValider": "À valider"
+      "aValider": "À valider",
+      "paiements": "Paiements",
+      "pai": {
+        "sousTitre": "Un paiement reçu hors de l'application (virement, espèces) s'enregistre ici, pour un élève. Son mois est alors facturé, puis réglé si le paiement le couvre. Saisi par la comptabilité, il est crédité après la validation de la direction.",
+        "aRegulariser": "À régulariser",
+        "aJour": "À jour",
+        "aJourValeur": "À jour",
+        "videTitre": "Aucun élève pour l'instant",
+        "videPhrase": "Les élèves inscrits apparaîtront ici avec ce qu'il leur reste à payer.",
+        "feuilleTitre": "Paiement reçu pour {prenom}",
+        "eleve": "Élève",
+        "resteAPayer": "Reste à payer",
+        "montantRecu": "Montant reçu, en {devise}",
+        "montantAide": "Prérempli avec le reste à payer. Corrigez-le si la famille a payé une autre somme.",
+        "erreurMontant": "Ce montant n'est pas lisible. Écrivez un montant supérieur à zéro, par exemple 50 ou 50,50.",
+        "reference": "Référence du paiement (facultatif)",
+        "referenceAide": "Par exemple le numéro du virement\u00a0: il aide à retrouver ce paiement plus tard.",
+        "enregistrer": "Enregistrer le paiement {dePrenom}",
+        "annuler": "Annuler",
+        "fermer": "Fermer",
+        "reessayer": "Réessayer",
+        "horsLigne": "Rien ne peut être enregistré pour l'instant. Rouvrez cette fiche quand le réseau sera revenu.",
+        "faitTitre": "Paiement enregistré",
+        "moisRegle": "Le mois {dePrenom} est réglé.",
+        "ilManque": "Le mois {dePrenom} n'est pas encore réglé. Il le sera dès que le complément sera enregistré.",
+        "enregistreSansEtat": "Le paiement est crédité à {prenom}.",
+        "dejaEnregistre": "Ce paiement était déjà enregistré\u00a0: rien n'a été ajouté.",
+        "refusTitre": "Paiement refusé",
+        "refusDroits": "Seules la direction et la comptabilité peuvent enregistrer un paiement. Rien n'a été enregistré.",
+        "refusInvalide": "Le montant, la devise ou l'élève n'a pas été accepté. Rien n'a été enregistré\u00a0: vérifiez le montant et réessayez depuis la liste.",
+        "inconnuTitre": "Paiement non confirmé",
+        "inconnuPhrase": "La réponse n'est pas arrivée. Touchez «\u00a0Réessayer\u00a0»\u00a0: le même paiement ne sera jamais compté deux fois.",
+        "demandeTitre": "Validation demandée",
+        "demandePhrase": "Le paiement est transmis à la direction. Il sera crédité à {prenom} dès qu'elle l'aura validé.",
+        "demandeDejaFaite": "Ce paiement attend déjà la validation de la direction\u00a0: rien n'a été ajouté.",
+        "refuseTitre": "Paiement refusé par la direction",
+        "refusePhrase": "Rien n'a été crédité. Motif\u00a0: {motif}",
+        "enAttente": "En attente de validation",
+        "refusesRecemment": "Refusés récemment"
+      },
+      "fac": {
+        "factures": "Factures du mois",
+        "ligne": "Factures {deMois}",
+        "moisCourant": "Le mois en cours.",
+        "moisSuivant": "Le mois prochain, à émettre avant son début.",
+        "emettre": "Émettre",
+        "emettreMois": "Émettre les factures {deMois}",
+        "explication": "Chaque élève inscrit reçoit sa facture du mois, au prix publié en vigueur, avec la réduction famille. Les crédits déjà reçus règlent aussitôt les mois qu'ils couvrent. Une facture déjà émise ne l'est jamais une seconde fois.",
+        "faitTitre": "Émission terminée",
+        "faitPhrase": "Les familles voient leur facture et ce qu'il leur reste à payer.",
+        "dejaEmises": "Toutes les factures de ce mois étaient déjà émises : rien n'a été ajouté.",
+        "emises": "Factures émises",
+        "financees": "Mois réglés par les crédits reçus",
+        "refusTitre": "Émission refusée",
+        "refusDroits": "Seules la direction et la comptabilité émettent les factures. Rien n'a été émis.",
+        "refusMois": "Seuls le mois en cours et le suivant se facturent. Rien n'a été émis : fermez cette fiche et choisissez l'un des deux.",
+        "refusSansPrix": "Aucun prix publié ne s'applique à ce mois. Rien n'a été émis : publiez d'abord les prix dans l'onglet des prix, puis réessayez.",
+        "inconnuTitre": "Émission non confirmée",
+        "inconnuPhrase": "La réponse n'est pas arrivée. Touchez « Réessayer » : une facture déjà émise ne l'est jamais deux fois."
+      }
     },
     "planning": {
       "titre": "Planning",
@@ -4184,6 +4497,8 @@
   "choix": {
     "autre": "Autre",
     "autreInvite": "Précisez",
+    "diminuer": "Diminuer de 1",
+    "augmenter": "Augmenter de 1",
     "selectionMultiple": "Plusieurs réponses possibles",
     "exemple": "Par exemple\u00a0: {texte}"
   },
@@ -4348,6 +4663,57 @@
     "deplier": "Déplier la navigation"
   },
   "compte": {
+    "donnees": {
+      "titre": "Mes données",
+      "sousTitre": "Une copie de vos données, ou la suppression de votre compte.",
+      "ligne": "Copie de mes données et suppression du compte",
+      "ligneDetail": "Téléchargez vos données ou demandez la suppression de votre compte.",
+      "copie": {
+        "titre": "Télécharger une copie",
+        "intro": "Un fichier JSON avec vos informations, vos classes, vos séances et vos factures. Si vous êtes tuteur, il contient aussi celles des élèves de votre foyer.",
+        "exclus": "Il ne contient aucun secret de connexion ni note interne de l'équipe.",
+        "action": "Télécharger mes données",
+        "reussi": "Votre copie est enregistrée.",
+        "echec": "La copie n'a pas pu être préparée. Rien n'a été enregistré. Réessayez dans un instant.",
+        "horsLigne": "Téléchargez vos données dès le retour du réseau.",
+        "refuse": "Ce compte ne peut pas télécharger de copie."
+      },
+      "suppression": {
+        "titre": "Supprimer mon compte",
+        "intro(param=n)": {
+          "one": "La direction étudie votre demande après un délai de réflexion de {n} jour. Vous pouvez l'annuler pendant ce temps.",
+          "other": "La direction étudie votre demande après un délai de réflexion de {n} jours. Vous pouvez l'annuler pendant ce temps."
+        },
+        "effacement": "Une fois la demande traitée, votre nom, vos coordonnées et votre photo sont effacés. Vous ne pouvez plus vous connecter.",
+        "conservation": "Les factures et les paiements sont conservés pour la comptabilité. Votre matricule n'est jamais réattribué.",
+        "aucuneDemande": "Aucune demande de suppression en cours.",
+        "soldeTitre": "Un solde reste à régler",
+        "soldeDetail": "Il reste {montant} à payer. Vous pouvez demander la suppression, mais ce solde reste dû.",
+        "seancesTitre": "Des séances sont encore prévues",
+        "seancesDetail(param=n)": {
+          "one": "{n} séance est prévue. La direction doit l'annuler ou la confier à une autre personne avant de supprimer votre compte.",
+          "other": "{n} séances sont prévues. La direction doit les annuler ou les confier à une autre personne avant de supprimer votre compte."
+        },
+        "motifLibelle": "Pourquoi partez-vous\u00a0? (facultatif)",
+        "motifAide": "La direction le lit. Il est effacé quand la demande est traitée.",
+        "demander": "Demander la suppression de mon compte",
+        "confirmerQuestion": "Demander la suppression de votre compte\u00a0?",
+        "confirmerConsequence(param=n)": {
+          "one": "Si vous ne l'annulez pas d'ici {n} jour, la direction pourra effacer votre nom, vos coordonnées et votre photo. Vous ne pourrez plus vous connecter. Les factures et les paiements sont conservés.",
+          "other": "Si vous ne l'annulez pas d'ici {n} jours, la direction pourra effacer votre nom, vos coordonnées et votre photo. Vous ne pourrez plus vous connecter. Les factures et les paiements sont conservés."
+        },
+        "confirmerAction": "Demander la suppression",
+        "confirmerRester": "Garder mon compte",
+        "enCoursTitre": "Demande de suppression en cours",
+        "enCoursDetail": "Demandée le {demandee}. La direction pourra la traiter à partir du {echeance}.",
+        "annuler": "Annuler ma demande",
+        "demandeEnvoyee": "Votre demande est enregistrée. Vous pouvez l'annuler jusqu'à son traitement.",
+        "demandeAnnulee": "Votre demande est annulée. Votre compte reste ouvert.",
+        "echec": "Votre demande n'a pas abouti. Votre compte n'a pas changé. Réessayez dans un instant.",
+        "horsLigne": "Votre demande n'est pas partie. Refaites-la dès le retour du réseau.",
+        "refuse": "Ce compte ne peut pas demander sa suppression ici."
+      }
+    },
     "titre": "Mon compte",
     "intro": "Vos informations, vos préférences et vos accès, au même endroit.",
     "informations": "Informations",
@@ -4581,8 +4947,7 @@
         "aucunTitre": "Aucun document accepté",
         "aucun": "Aucun document accepté n'est enregistré pour ce compte.",
         "lectureSeule": "Un document accepté ne se modifie pas.",
-        "textes": "Conditions et confidentialité",
-        "textesIndisponibles": "Les conditions générales, la politique de confidentialité et les mentions légales ne sont pas encore consultables dans l'application."
+        "textes": "Conditions et confidentialité"
       }
     }
   },
@@ -4726,7 +5091,9 @@
       "horsLignePhrase": "Connexion nécessaire pour consulter le compte rendu.",
       "aucunChampPhrase": "Aucun compte rendu pédagogique n'est disponible pour cette séance.",
       "voirTravail": "Voir le travail à préparer",
-      "voirProgression": "Voir la progression"
+      "voirProgression": "Voir la progression",
+      "etatARenforcer": "À renforcer",
+      "etatAcquis": "Acquis"
     },
     "dateCourteSansAnnee": "{jour} {mois}"
   },
@@ -4741,7 +5108,10 @@
       "remplacementPris": "Un remplacement de cours a été attribué.",
       "controleMissionAttribuee": "Une mission de contrôle vous a été attribuée.",
       "controleMissionNonControlee": "Une mission de contrôle est restée sans vérification.",
-      "classeChangee": "Un élève de la famille a rejoint une autre classe, au même horaire."
+      "classeChangee": "Un élève de la famille a rejoint une autre classe, au même horaire.",
+      "paiementRelance": "Un paiement arrive à échéance. Il se règle dans Paiements.",
+      "accesSuspenduPaiement": "Un accès est suspendu\u00a0: le paiement du mois n'est pas reçu.",
+      "accesRetabliPaiement": "L'accès est rétabli\u00a0: le paiement est reçu."
     },
     "filtres": {
       "libelle": "Filtrer les notifications",
@@ -4982,20 +5352,6 @@
       "modeStandard": "Affichage courant\u00a0: {prenom} lit son écran.",
       "modePasserEnfant": "Passer {prenom} au grand affichage",
       "modePasserStandard": "Passer {prenom} à l'affichage courant",
-      "demandes": "Demander un changement",
-      "demandeReaffectation": "Changer d'enseignant",
-      "demandeDuree": "Changer la durée des cours",
-      "demandeMinimum": "Changer la durée minimale payable",
-      "demandeSansEnseignant": "{prenom} n'a pas encore d'enseignant\u00a0: il n'y a rien à changer.",
-      "demandeTitreReaffectation": "Changer l'enseignant {dePrenom}",
-      "demandeTitreDuree": "La durée des cours {dePrenom}",
-      "demandeTitreMinimum": "La durée minimale payable pour {prenom}",
-      "demandeActuelle": "Aujourd'hui\u00a0: {minutes} min",
-      "demandeMotif": "Pourquoi ce changement\u00a0?",
-      "demandeMotifRequis": "Un motif est nécessaire\u00a0: c'est lui qui permet de trancher.",
-      "demandeManqueValeur": "Il manque la durée demandée\u00a0: choisissez-la dans la liste, ou touchez «\u00a0Autre\u00a0» et écrivez-la.",
-      "demandeEnvoyer": "Envoyer la demande",
-      "demandeEnvoyee": "Demande envoyée. L'administration la tranchera.",
       "aucunEnfant": "Aucun enfant dans le foyer",
       "aucunEnfantDetail": "Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.",
       "erreur": "L'enregistrement n'a pas abouti\u00a0: {message}"
@@ -5677,6 +6033,7 @@
       "contratEnseignant": "Contrat enseignant",
       "contratConditions": "Conditions d'utilisation",
       "contratAccuse": "Enregistrement audio et visite de contrôle",
+      "contratCodeConduite": "Code de conduite de l'enseignant",
       "contratDetail": "Version {version}, accepté le {date}",
       "contratAucun": "Aucun contrat enregistré",
       "contratAucunDetail": "Votre dossier n'est pas encore passé par la signature.",
@@ -6504,19 +6861,34 @@
         "derniereSeance": "Dernière séance",
         "aReprendre": "À reprendre",
         "presenceRecente": "Présence récente",
-        "travailActuel": "Travail actuel"
+        "travailActuel": "Travail actuel",
+        "page": "Page {page}",
+        "travailEnCours": "{nombre} élément(s)",
+        "assiduite": "{presences} / {total} cours",
+        "interfaceGuidee": "Interface guidée",
+        "sansPedagogie": "Suivi pédagogique indisponible",
+        "sansPedagogieDetail": "Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l'enseignant."
       },
       "action": {
-        "noter": "Noter"
+        "noter": "Noter",
+        "rappel": "Rappel discret",
+        "reciter": "Choisir pour réciter",
+        "signaler": "Signaler un besoin",
+        "contexte": "Ouvrir le contexte"
       },
       "rappel": {
-        "recu": "Le professeur vous appelle"
+        "recu": "Le professeur vous appelle",
+        "echec": "Le rappel est resté sans réponse du réseau. Réessayez dans un instant.",
+        "echecDroit": "Votre accès à cette séance ne permet pas d'appeler un élève",
+        "cooldown": "Déjà appelé. À nouveau dans {secondes} s"
       },
       "recitation": {
         "titre": "Récitation",
         "actif": "{prenom} récite",
         "pastille": "Récite",
-        "personne": "Personne ne récite"
+        "personne": "Personne ne récite",
+        "suivants": "Ensuite",
+        "arreter": "Arrêter la récitation"
       },
       "prevol": {
         "titre": "Avant d'ouvrir le cours",
@@ -6798,6 +7170,7 @@
           "presence": "Présence",
           "technique": "Technique",
           "changement": "Changement",
+          "securiteEnfant": "Sécurité d'un enfant",
           "autre": "Autre"
         },
         "interne": "Note interne",
@@ -6909,6 +7282,10 @@
       "paiementEchecPhrase": "Vérifiez avant de réessayer.",
       "paiementIndisponibleTitre": "Paiement pas encore disponible",
       "paiementIndisponiblePhrase": "Aucun paiement n'a été effectué. Le paiement en ligne n'est pas encore ouvert dans l'application.",
+      "formules": {
+        "trimestriel": "{montant} pour 3 mois, payés d'avance",
+        "annuel": "{montant} pour 12 mois, payés d'avance"
+      },
       "revenirPaiements": "Revenir aux paiements du foyer",
       "phraseUnique": "Cochez le profil, puis choisissez le montant.",
       "profils": "Profils à recharger",
@@ -6965,6 +7342,14 @@
         "indisponiblePhrase": "L'état des paiements n'est pas encore disponible dans l'application. Aucun paiement n'a été effectué ici.",
         "lectureEchecTitre": "L'état du paiement n'a pas pu être lu.",
         "lectureEchecPhrase": "Le paiement n'est pas annulé pour autant. Ne payez pas une seconde fois\u00a0: réessayez la lecture."
+      },
+      "source": {
+        "avantPaiement": "En attente du paiement",
+        "motifs": {
+          "paiementRefuse": "Le paiement a été refusé par la banque ou la carte. Rien n'a été prélevé.",
+          "montantIncoherent": "Le montant reçu ne correspond pas à la recharge. Rien n'a été crédité\u00a0: la direction vérifie avec le prestataire.",
+          "sessionExpiree": "La page de paiement a expiré avant le paiement. Rien n'a été prélevé."
+        }
       }
     },
     "paiements": {
@@ -7382,24 +7767,6 @@
       "conge": "Jour férié ou congé",
       "familiale": "Raison familiale"
     },
-    "reglageEnseignant": {
-      "horaire": "Horaire qui ne convient plus",
-      "niveau": "Niveau qui ne correspond plus",
-      "fuseau": "Changement de fuseau horaire",
-      "fratrie": "Réunir les enfants du foyer"
-    },
-    "reglageDuree": {
-      "tropLongue": "Durée trop longue pour l'âge",
-      "plusDeTemps": "Besoin de plus de temps",
-      "pause": "Pause nécessaire pendant le cours",
-      "horaire": "Contraintes d'horaire de la famille"
-    },
-    "reglageMinimum": {
-      "ecourtees": "Séances souvent écourtées",
-      "reseau": "Coupures réseau fréquentes",
-      "duree": "Durée des cours modifiée",
-      "horaire": "Contraintes d'horaire de la famille"
-    },
     "signalement": {
       "pedagogique": {
         "renforcement": "Un renforcement est conseillé sur la leçon en cours.",
@@ -7662,7 +8029,7 @@
     },
     "acces": {
       "enfantTitre": "Accès à cette classe temporairement indisponible",
-      "enfantMessage": "Votre tuteur peut gérer l'accès.",
+      "enfantMessage": "Ton tuteur peut gérer l'accès.",
       "regulariserTitre": "Accès à régulariser",
       "regulariserManque": "Il manque {montant} pour financer {mois}.",
       "regulariserManqueNouvellePeriode": "Il manque {montant} pour financer la nouvelle période.",
@@ -7681,6 +8048,8 @@
       "reactiveTuteurSansDate": "{prenom} peut de nouveau rejoindre ses séances.",
       "reactiveAdulte": "Vous pouvez de nouveau rejoindre vos séances depuis le {date}.",
       "reactiveAdulteSansDate": "Vous pouvez de nouveau rejoindre vos séances.",
+      "suspenduPaiementTuteur": "Le paiement du mois n'est pas reçu. {prenom} ne peut plus rejoindre ses séances. Son compte et ses contenus restent accessibles.",
+      "suspenduPaiementAdulte": "Le paiement du mois n'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre compte et vos contenus restent accessibles.",
       "pastilleSuspendu": "Suspendu",
       "pastilleReactive": "Réactivé"
     }
@@ -8931,7 +9300,8 @@
         "sortieEnAttenteDelai": "Sortie en attente du délai de sécurité",
         "coffreNonAutorise": "Coffre hors de la délégation",
         "beneficiaireExclu": "Bénéficiaire exclu de la délégation",
-        "plafondExceptionDepasse": "Au-dessus du plafond de cette délégation"
+        "plafondExceptionDepasse": "Au-dessus du plafond de cette délégation",
+        "paiementHorsApplication": "Paiement reçu hors de l'application\u00a0: la direction le valide avant qu'il soit crédité à l'élève"
       }
     },
     "alertes": {
@@ -9560,7 +9930,8 @@
         "retraitReserve": "Retrait de la Réserve stratégique",
         "obligationAApprouver": "Obligation ponctuelle",
         "payoutDuComptable": "Paie du Comptable",
-        "sortieCoffreProtege": "Sortie d'un coffre protégé"
+        "sortieCoffreProtege": "Sortie d'un coffre protégé",
+        "paiementRecu": "Paiement reçu d'une famille"
       },
       "demandePar": "Demandée par {demandeur} le {date}",
       "valideePar": "Validée par {decideur} le {date}",
@@ -9615,7 +9986,13 @@
       "suiviValidee": "Validée par {decideur} le {date}.",
       "suiviRefusee": "Refusée par {decideur} le {date}. Motif\u00a0: {motif}",
       "erreurSuivi": "Nous n'avons pas pu lire l'état de la demande de validation. Réessayez dans un instant.",
-      "reessayer": "Réessayer"
+      "reessayer": "Réessayer",
+      "reference": "Référence du paiement\u00a0: {reference}",
+      "journal": {
+        "demandee": "Validation demandée",
+        "validee": "Demande validée",
+        "refusee": "Demande refusée"
+      }
     },
     "direction": {
       "versionDepuis": "Version {version}, en vigueur depuis le {date}",
@@ -9817,6 +10194,10 @@
       "groupeComptable": "Coquille du Comptable",
       "groupeCompte": "Compte et bénéficiaire",
       "groupeDirection": "Direction"
+    },
+    "paiementsFamilles": {
+      "titre": "Paiements des familles",
+      "entree": "Paiements des familles"
     }
   },
   "presentationTuteur": {
@@ -9974,6 +10355,575 @@
       "personneParIdentifiantClasse(param=classe)": "Trouvé par son identifiant · {classe}",
       "canalStudio": "Canal du Studio",
       "encaissement(param=famille)": "Encaissement · {famille}"
+    }
+  },
+  "sansDonnees": {
+    "mesDonnees": "Vos informations de suppression n'ont pas pu être chargées",
+    "paiementsRecus": "Vos paiements reçus n'ont pas pu être chargés",
+    "revenus": "Vos revenus n'ont pas pu être chargés",
+    "aujourdhui": "Le tableau du jour n'a pas pu être chargé",
+    "paiement": "Ce paiement n'a pas pu être chargé",
+    "paiementsAEffectuer": "Les paiements à effectuer n'ont pas pu être chargés",
+    "encaissements": "Les encaissements n'ont pas pu être chargés",
+    "tresorerie": "La trésorerie n'a pas pu être chargée",
+    "obligation": "Cette obligation n'a pas pu être chargée",
+    "contractuels": "Les contractuels n'ont pas pu être chargés",
+    "reserve": "La politique de réserve n'a pas pu être chargée",
+    "vueGlobale": "La vue d'ensemble des finances n'a pas pu être chargée",
+    "beneficiaires": "Les bénéficiaires n'ont pas pu être chargés",
+    "profilPaiement": "Ce profil de paiement n'a pas pu être chargé"
+  },
+  "juridique": {
+    "titre": "Informations légales",
+    "intro": "Les textes qui encadrent le service. Ils se lisent sans compte.",
+    "version": "Version {version}, texte du {date}",
+    "contact": "Pour toute question, écrivez à {contact}.",
+    "lire": "Lire",
+    "coord": {
+      "societe": "Société\u00a0: Rewayah Academy Ltd",
+      "numero": "Numéro d'immatriculation\u00a0: 16624644, Angleterre et pays de Galles",
+      "adresse": "Siège\u00a0: 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni"
+    },
+    "aCompleter": "[à compléter par la direction\u00a0: {quoi}]",
+    "quoi": {
+      "hebergeur": "hébergeur légal et ses coordonnées",
+      "lieuxHebergement": "pays où sont hébergées les informations",
+      "dureesConservation": "durée de conservation de chaque type d'information",
+      "droitApplicable": "droit applicable et juridiction compétente",
+      "confirmationConseil": "relecture par un conseil juridique, droit de rétractation compris",
+      "remboursementModalites": "moyen et délai du remboursement",
+      "responsableEnfants": "responsable de la protection des enfants"
+    },
+    "valeurs": {
+      "hebergeur": "Base de données et connexion des comptes\u00a0: Supabase Inc. (supabase.com). Application et pages web\u00a0: Vercel Inc. (vercel.com). Nom de domaine\u00a0: Cloudflare, Inc. (cloudflare.com).",
+      "lieuxHebergement": "La base de données est hébergée en Irlande, dans l'Union européenne. D'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni\u00a0: ces transferts respectent les règles de protection prévues par la loi.",
+      "dureesConservation": "Compte et profil\u00a0: tant que le compte existe. Après une demande de suppression et un délai de réflexion de 14 jours, le nom, l'adresse e-mail et les coordonnées sont effacés. Factures et paiements\u00a0: 6 ans, comme l'exige la loi comptable du Royaume-Uni. Pièce d'identité d'un enseignant\u00a0: 90 jours au plus après la vérification. Messages\u00a0: tant que le compte existe\u00a0; après la suppression, leur auteur devient anonyme.",
+      "droitApplicable": "Droit d'Angleterre et du pays de Galles, tribunaux d'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.",
+      "confirmationConseil": "Droit de rétractation\u00a0: vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.",
+      "remboursementModalites": "Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.",
+      "responsableEnfants": "{nom}, joignable à {contact}.",
+      "responsableDefaut": "Rewayah Academy",
+      "representantUeDefaut": "Rewayah Academy"
+    },
+    "mentions": {
+      "titre": "Mentions légales",
+      "resume": "Qui exploite Rewayah Academy et comment la joindre.",
+      "intro": "Voici qui exploite Rewayah Academy et comment la joindre.",
+      "s1": {
+        "titre": "1. Qui exploite le service",
+        "blocs": [
+          "Rewayah Academy propose des cours de Coran en visio, en Classes stables\u00a0: les mêmes élèves, un horaire qui revient chaque semaine et un enseignant attitré."
+        ]
+      },
+      "s2": {
+        "titre": "2. Nous joindre",
+        "blocs": [
+          "Une seule adresse pour vos questions sur le service, sur ces textes et sur vos informations."
+        ]
+      },
+      "s3": {
+        "titre": "3. Hébergement et services techniques",
+        "blocs": [
+          "Le service s'appuie sur des prestataires techniques\u00a0: l'hébergement des pages web, la base de données et la connexion des comptes, la visio des séances, le stockage privé des fichiers et un prestataire de paiement."
+        ]
+      },
+      "s4": {
+        "titre": "4. Ces textes",
+        "blocs": [
+          "Chaque texte juridique porte sa version et sa date, affichées en haut de la page. Quand un texte change, la nouvelle version remplace l'ancienne à la date indiquée."
+        ]
+      }
+    },
+    "conditions": {
+      "titre": "Conditions d'utilisation et de vente",
+      "resume": "Les règles d'utilisation du service et de vente des abonnements.",
+      "intro": "Ces conditions s'appliquent dès que vous créez un compte ou que vous inscrivez un élève. Lisez-les en entier, elles sont courtes.",
+      "s1": {
+        "titre": "1. Le service",
+        "blocs": [
+          "Rewayah Academy propose des cours de Coran en visio. Chaque élève est placé dans une Classe\u00a0: un petit nombre d'élèves, un horaire récurrent et un enseignant attitré.",
+          "Il y a deux formules\u00a0: la formule enfant, de 6 à 17 ans, et la formule adulte, à partir de 18 ans. Aucun mineur n'est placé dans une Classe d'adultes.",
+          "Une Classe ouvre quand assez d'élèves sont inscrits. Avant, vous êtes en liste d'attente et rien n'est facturé."
+        ]
+      },
+      "s2": {
+        "titre": "2. Compte et accès",
+        "blocs": [
+          "Un enfant est inscrit et suivi par un tuteur adulte, qui décide pour lui. Voir le texte Protection des enfants.",
+          "Vous donnez des informations exactes et vous gardez vos accès pour vous. On entre dans une séance par son compte, jamais par un lien public."
+        ]
+      },
+      "s3": {
+        "titre": "3. Les séances",
+        "blocs": [
+          "Les séances ont lieu à heure fixe, avec le même enseignant. Être présent et à l'heure fait partie de l'engagement.",
+          "Une séance écourtée reste due si l'élève a été présent assez longtemps. Une séance annulée par l'académie ou par l'enseignant est remplacée.",
+          "Un contrôleur qualité peut assister aux séances sans être vu, et un cours peut être enregistré. Si l'enregistrement devient réel, nous vous le disons avant.",
+          "Le parent peut observer en silence la séance de son enfant."
+        ]
+      },
+      "s4": {
+        "titre": "4. Prix et paiement",
+        "blocs": [
+          "Les prix figurent sur la page Tarifs et dans l'application, au moment de choisir une formule. Ils sont en dollars américains et hors taxes. La taxe due selon votre pays est ajoutée au paiement.",
+          "L'abonnement se renouvelle chaque mois. Les remises sont calculées par le système sur la facture du foyer.",
+          "Le paiement passe par un prestataire de paiement.",
+          "Il n'y a pas d'essai gratuit. La première semaine est remboursée si le cours ne convient pas.",
+          "Pour arrêter, être remboursé ou payer en retard, voir le texte Annulation et remboursement."
+        ]
+      },
+      "s5": {
+        "titre": "5. Respect en séance",
+        "blocs": [
+          "Chacun se comporte avec respect envers l'enseignant et les autres élèves, par ses mots comme par ses gestes."
+        ]
+      },
+      "s6": {
+        "titre": "6. Vos informations",
+        "blocs": [
+          "La façon dont nous utilisons vos informations est expliquée dans le texte Confidentialité."
+        ]
+      },
+      "s7": {
+        "titre": "7. Droit applicable",
+        "blocs": [
+          "Cette partie précise la loi qui s'applique et le tribunal compétent."
+        ]
+      }
+    },
+    "annulation": {
+      "titre": "Annulation et remboursement",
+      "resume": "Arrêter, être remboursé, et ce qui se passe si un paiement n'arrive pas.",
+      "intro": "Vous pouvez arrêter quand vous voulez. Voici ce qui est remboursé, ce qui ne l'est pas, et ce qui se passe si un paiement n'arrive pas.",
+      "s1": {
+        "titre": "1. Première semaine remboursée",
+        "blocs": [
+          "Il n'y a pas d'essai gratuit. À la place, la première semaine est remboursée si le cours ne convient pas.",
+          "Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous êtes alors remboursé en entier.",
+          "Après ce délai, le mois commencé est dû."
+        ]
+      },
+      "s2": {
+        "titre": "2. Arrêter l'abonnement",
+        "blocs": [
+          "L'abonnement mensuel s'arrête à tout moment, sans justification. Il prend fin à la fin du mois en cours.",
+          "Les formules payées d'avance, au trimestre ou à l'année, ne sont pas remboursées après la première semaine.",
+          "Une inscription en cours de mois paie seulement les séances restantes du mois."
+        ]
+      },
+      "s3": {
+        "titre": "3. Absences et séances annulées",
+        "blocs": [
+          "Une place manquée n'est pas remboursée\u00a0: elle est réservée pour l'élève dans une Classe fixe.",
+          "Une séance annulée par l'académie ou par l'enseignant est remplacée.",
+          "Si la Classe n'ouvre pas faute d'inscrits, rien n'est facturé."
+        ]
+      },
+      "s4": {
+        "titre": "4. Paiement en retard",
+        "blocs": [
+          "Avant le renouvellement, vous recevez des rappels automatiques.",
+          "Après la date de renouvellement, un court délai de grâce s'applique\u00a0: l'élève suit ses cours et l'impayé s'affiche chez le tuteur.",
+          "Si le paiement n'arrive toujours pas, l'accès aux séances est suspendu. La place est gardée quelque temps.",
+          "Ensuite, la place est libérée pour la liste d'attente. Le retour reste possible sans frais, dans une nouvelle Classe.",
+          "Les dates exactes sont celles de la politique tarifaire en vigueur (page Tarifs)."
+        ]
+      },
+      "s5": {
+        "titre": "5. Passage à la formule adulte",
+        "blocs": [
+          "Un élève qui atteint 18 ans passe à la formule adulte au renouvellement suivant. Le parent est prévenu à l'avance."
+        ]
+      },
+      "s6": {
+        "titre": "6. Faire une demande",
+        "blocs": [
+          "Pour arrêter ou demander un remboursement, écrivez-nous en donnant le nom du compte et la raison."
+        ]
+      }
+    },
+    "confidentialite": {
+      "titre": "Confidentialité",
+      "resume": "Quelles informations nous gardons, pourquoi, et vos droits.",
+      "intro": "Nous gardons seulement ce qui sert à faire les cours. Voici quelles informations, pourquoi, et comment les contrôler.",
+      "s1": {
+        "titre": "1. Qui est responsable",
+        "blocs": [
+          "Rewayah Academy Ltd décide pourquoi et comment vos informations sont utilisées. Ses coordonnées sont dans les Mentions légales."
+        ],
+        "representant": "Représentant dans l'Union européenne\u00a0: {nom}."
+      },
+      "s2": {
+        "titre": "2. Ce que nous recueillons",
+        "blocs": [
+          "- Pour créer un compte\u00a0: le nom, l'adresse de courriel, la langue de l'interface, le pays de résidence et le fuseau horaire.",
+          "- Pour un élève\u00a0: la date de naissance, qui sert à choisir la bonne formule et les règles propres aux mineurs.",
+          "- Facultatif\u00a0: photo, téléphone, adresse, niveau, préférences d'horaires.",
+          "- Pendant les cours\u00a0: la présence, le cahier de transmission et la progression de l'élève.",
+          "- Pour payer\u00a0: l'abonnement et les factures. Le paiement lui-même passe par un prestataire de paiement.",
+          "- Pour un enseignant\u00a0: une pièce d'identité, gardée à part dans un espace privé.",
+          "- Vos accords\u00a0: la version de chaque texte accepté et la date.",
+          "- Des rapports d'erreurs techniques, sans capture d'écran, sans nom et sans identité."
+        ]
+      },
+      "s3": {
+        "titre": "3. Pourquoi nous les utilisons",
+        "blocs": [
+          "- Former les Classes et assurer les cours.",
+          "- Suivre la présence et la progression.",
+          "- Facturer l'abonnement.",
+          "- Protéger les élèves et contrôler la qualité des séances.",
+          "- Réparer les pannes."
+        ]
+      },
+      "s4": {
+        "titre": "4. Qui voit quoi",
+        "blocs": [
+          "Une famille ne voit que ses propres informations. Les informations d'un enfant ne sont jamais publiques et ne sont jamais montrées aux autres familles.",
+          "L'enseignant voit ses élèves et ses Classes. La direction voit ce qu'il faut pour gérer les inscriptions, les Classes et les paiements. Ces accès sont réglés côté serveur.",
+          "Un contrôleur qualité peut assister aux séances. Les accès sensibles sont inscrits dans un journal."
+        ]
+      },
+      "s5": {
+        "titre": "5. Séances en direct et enregistrement",
+        "blocs": [
+          "La visio passe par un service spécialisé. L'accès à une séance est donné par le serveur, pour cette séance seulement et pour peu de temps.",
+          "Aujourd'hui, l'application n'enregistre pas les cours. Si l'enregistrement revient, nous vous dirons avant pourquoi, combien de temps il est gardé et qui peut y accéder, et nous demanderons votre accord.",
+          "Une mention rappelle dans la salle qu'une visite de contrôle est possible."
+        ]
+      },
+      "s6": {
+        "titre": "6. Où sont vos informations",
+        "blocs": [
+          "Nous utilisons un hébergeur de pages web, une base de données avec la connexion des comptes, un service de visio, un stockage privé pour les fichiers, un prestataire de paiement et un service de rapports d'erreurs. Ils traitent vos informations pour nous, pour ces seules raisons."
+        ]
+      },
+      "s7": {
+        "titre": "7. Combien de temps",
+        "blocs": [
+          "Nous gardons chaque type d'information le temps nécessaire, pas davantage. La pièce d'identité d'un enseignant est supprimée à la fin d'un délai fixé. Une suppression peut être gelée en cas de litige."
+        ]
+      },
+      "s8": {
+        "titre": "8. Vos droits",
+        "blocs": [
+          "- Voir les informations que nous avons sur vous.",
+          "- Les corriger.",
+          "- Demander leur suppression ou limiter leur usage.",
+          "Écrivez-nous. Nous vérifions d'abord que c'est bien vous, ou le tuteur de l'élève. Vous pouvez aussi vous adresser à l'autorité de protection des données de votre pays."
+        ]
+      },
+      "s9": {
+        "titre": "9. Sécurité",
+        "blocs": [
+          "Les règles d'accès sont appliquées par le serveur. Les pièces d'identité sont dans un espace privé, séparé des photos. Aucune protection n'est absolue\u00a0: si vous voyez un problème, écrivez-nous."
+        ]
+      },
+      "s10": {
+        "titre": "10. Les enfants",
+        "blocs": [
+          "Les informations d'un enfant sont données et gérées par son tuteur. Voir le texte Protection des enfants."
+        ]
+      }
+    },
+    "cookies": {
+      "titre": "Cookies",
+      "resume": "Ce que l'application et le site gardent sur votre appareil.",
+      "intro": "L'application et le site gardent peu de choses sur votre appareil. Voici lesquelles.",
+      "s1": {
+        "titre": "1. Ce que c'est",
+        "blocs": [
+          "Un cookie ou une donnée locale est un petit élément gardé par votre navigateur ou votre appareil. Il aide un service à vous reconnaître ou à retenir un réglage."
+        ]
+      },
+      "s2": {
+        "titre": "2. Ce que l'application garde",
+        "blocs": [
+          "- Votre session de connexion.",
+          "- Vos préférences d'affichage, comme la langue et le thème.",
+          "- Un cache limité, que vous pouvez effacer.",
+          "- Sur l'appareil d'un élève, son code personnel, qui ne quitte jamais l'appareil.",
+          "Ces éléments sont nécessaires au fonctionnement de l'application."
+        ]
+      },
+      "s3": {
+        "titre": "3. Ce que nous n'utilisons pas",
+        "blocs": [
+          "À la date de ce texte, ni l'application ni le site n'utilisent de cookies publicitaires ni de mesure d'audience."
+        ]
+      },
+      "s4": {
+        "titre": "4. Rapports d'erreurs",
+        "blocs": [
+          "Quand l'application plante, un rapport technique peut être envoyé à un service de suivi des erreurs. Il ne contient ni capture d'écran, ni nom, ni identité."
+        ]
+      },
+      "s5": {
+        "titre": "5. Les contrôler",
+        "blocs": [
+          "Vous pouvez effacer les données du site dans les réglages de votre navigateur, ou vous déconnecter depuis le Compte. Vous devrez alors vous reconnecter et refaire vos réglages d'affichage."
+        ]
+      },
+      "s6": {
+        "titre": "6. Services tiers",
+        "blocs": [
+          "Si vous quittez Rewayah Academy pour un autre service, par exemple le paiement, ce service applique ses propres règles."
+        ]
+      }
+    },
+    "enfants": {
+      "titre": "Protection des enfants",
+      "resume": "Comment nous protégeons les élèves mineurs.",
+      "intro": "Les élèves mineurs suivent leurs cours sous la responsabilité d'un adulte. Voici les règles que nous appliquons et comment nous faire part d'une inquiétude.",
+      "s1": {
+        "titre": "1. Un adulte responsable",
+        "blocs": [
+          "Un enfant n'accède pas aux cours sans tuteur adulte autorisé. L'inscription, les accords et les paiements relèvent du tuteur.",
+          "La formule enfant va de 6 à 17 ans. Aucun mineur n'est placé dans une Classe d'adultes.",
+          "De 6 à 9 ans, l'Interface guidée est activée par défaut\u00a0: des écrans plus simples, avec de grandes touches."
+        ]
+      },
+      "s2": {
+        "titre": "2. Pendant les séances",
+        "blocs": [
+          "L'enfant suit ses cours avec un petit nombre d'élèves et le même enseignant attitré.",
+          "Il n'y a pas de lien public vers une salle. On y entre par son compte, avec un accès donné par le serveur.",
+          "Le parent peut observer en silence le cours de son enfant. L'enfant concerné en est informé.",
+          "Un contrôleur qualité peut assister aux séances. Une mention le rappelle dans la salle.",
+          "Un cours peut être enregistré. Aujourd'hui, ce n'est pas le cas, et le tuteur en serait informé avant."
+        ]
+      },
+      "s3": {
+        "titre": "3. Les enseignants",
+        "blocs": [
+          "Les enseignants signent un contrat et une politique de contrôle. Leur pièce d'identité est gardée dans un espace privé, séparé des photos visibles en classe."
+        ]
+      },
+      "s4": {
+        "titre": "4. Les informations de l'enfant",
+        "blocs": [
+          "Les informations d'un enfant ne sont ni publiques ni visibles des autres familles.",
+          "Le code personnel de l'élève reste sur son appareil.",
+          "Voir aussi le texte Confidentialité."
+        ]
+      },
+      "s5": {
+        "titre": "5. Faire part d'une inquiétude",
+        "blocs": [
+          "Si une chose vous inquiète, écrivez-nous. Dites ce que vous avez vu, quand, et dans quelle Classe.",
+          "En cas de danger immédiat, contactez d'abord les services d'urgence de votre pays."
+        ]
+      }
+    }
+  },
+  "avis": {
+    "form": {
+      "titre": "Donnez votre avis",
+      "sousTitre": "Quelques lignes sur votre expérience à Rewayah Academy. Deux minutes suffisent.",
+      "nom": {
+        "libelle": "Nom affiché",
+        "aide": "Votre prénom et l'initiale de votre nom suffisent.",
+        "erreur": "Entrez un nom de 2 à 60 caractères."
+      },
+      "qualite": {
+        "libelle": "Vous êtes",
+        "parent": "Parent ou tuteur d'un élève",
+        "eleveAdulte": "Élève adulte",
+        "erreur": "Choisissez qui vous êtes."
+      },
+      "pays": {
+        "libelle": "Pays de résidence",
+        "choisir": "Choisir un pays",
+        "rechercheLibelle": "Rechercher un pays",
+        "rechercheAide": "Tapez le nom du pays",
+        "aucun": "Aucun pays ne correspond. Essayez une autre écriture.",
+        "erreur": "Choisissez votre pays de résidence."
+      },
+      "depuis": {
+        "libelle": "Avec nous depuis",
+        "aide": "Le mois et l'année où vous avez rejoint l'académie.",
+        "mois": "Mois",
+        "annee": "Année",
+        "erreur": "Choisissez un mois et une année, de 2015 jusqu'à ce mois-ci."
+      },
+      "note": {
+        "libelle": "Votre note",
+        "aide": "Touchez une étoile\u00a0: 1 est la note la plus basse, 5 la plus haute.",
+        "etoile": "Donner la note {n} sur 5",
+        "lue": "Note\u00a0: {n} sur 5",
+        "erreur": "Choisissez une note de 1 à 5 étoiles."
+      },
+      "titreAvis": {
+        "libelle": "Titre (facultatif)",
+        "aide": "Une phrase courte qui résume votre avis. 80 caractères au plus.",
+        "erreur": "Corrigez le titre\u00a0: 80 caractères au plus."
+      },
+      "texte": {
+        "libelle": "Votre avis",
+        "aide": "Ce qui vous a plu, ce que vous avez appris, ce qui pourrait être mieux. Au moins 20 caractères.",
+        "compteur": "Caractères\u00a0: {n} sur {max}",
+        "erreur": "Écrivez entre 20 et 1500 caractères."
+      },
+      "accord": {
+        "libelle": "J'accepte que cet avis, mon nom affiché, mon pays et la date soient publiés sur le site de Rewayah Academy.",
+        "erreur": "Acceptez la publication en cochant la case, sinon votre avis ne peut pas être envoyé."
+      },
+      "lecture": "Votre avis sera lu par la direction avant d'être publié. Pour le faire retirer plus tard, écrivez à {courriel}.",
+      "regles": {
+        "titre": "Ce que la direction publie",
+        "intro": "Un avis respectueux est publié, même quand il est critique. La direction ne modifie jamais votre texte. Elle refuse seulement un avis qui contient\u00a0:",
+        "insulte": "une insulte",
+        "tiers": "des données personnelles d'un tiers, comme le nom d'un enfant ou d'un enseignant",
+        "publicite": "de la publicité",
+        "horsSujet": "un propos hors sujet",
+        "doublon": "un doublon d'un avis déjà reçu",
+        "donnees": "Ne donnez ni le nom d'un enfant, ni courriel, ni téléphone."
+      },
+      "envoyer": "Envoyer mon avis",
+      "aCorriger": "Quelques champs sont à corriger avant l'envoi.",
+      "erreurChamp": "Un champ n'est pas accepté. Relisez le formulaire, puis envoyez de nouveau.",
+      "echec": "Votre avis n'a pas pu être confirmé. La connexion a peut-être été coupée. Vérifiez-la, puis touchez «\u00a0Envoyer mon avis\u00a0» de nouveau.",
+      "horsLigne": "Rien n'est parti, votre saisie reste sur cet écran. Envoyez votre avis dès le retour du réseau.",
+      "ferme": {
+        "titre": "Ce lien n'accepte plus d'avis",
+        "phrase": "Il est fermé, arrivé à échéance, ou le nombre d'avis prévu est atteint. Pour donner votre avis, demandez un nouveau lien à la direction\u00a0: {courriel}."
+      },
+      "envoye": {
+        "titre": "Merci pour votre avis",
+        "phrase": "La direction va le lire avant de le publier. S'il est accepté, il paraîtra sur le site de Rewayah Academy avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à {courriel}."
+      },
+      "erreurChargement": "Le formulaire n'a pas pu s'ouvrir. Réessayez dans un moment.",
+      "sansDonnees": "Le formulaire n'a pas pu s'ouvrir",
+      "indisponibleTitre": "Avis indisponibles",
+      "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur."
+    },
+    "admin": {
+      "titre": "Avis",
+      "sousTitre": "Les avis des familles et des élèves. La direction les lit, les publie ou les refuse. Elle ne modifie jamais un texte.",
+      "outil": "Avis des familles",
+      "outilDetail": "Créer un lien de collecte, lire les avis, les publier ou les refuser",
+      "sections": {
+        "libelle": "Sections des avis",
+        "avis": "Avis",
+        "liens": "Liens"
+      },
+      "statut": {
+        "tous": "Tous",
+        "enAttente": "En attente",
+        "publie": "Publié",
+        "refuse": "Refusé",
+        "retire": "Retiré"
+      },
+      "filtre": {
+        "tous": "Tous",
+        "enAttente": "En attente",
+        "publie": "Publiés",
+        "refuse": "Refusés",
+        "retire": "Retirés"
+      },
+      "attente": "Avis en attente\u00a0: {n}",
+      "vide": "Aucun avis dans cette liste.",
+      "erreur": "Les avis n'ont pas pu être chargés. Réessayez.",
+      "sansDonnees": "Les avis n'ont pas pu être chargés",
+      "refuse": "Seule la direction connectée lit et décide des avis. Reconnectez-vous avec le bon compte, puis réessayez.",
+      "indisponibleTitre": "Avis indisponibles",
+      "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur.",
+      "champs": {
+        "lien": "Lien",
+        "pays": "Pays",
+        "depuis": "Avec nous depuis",
+        "qualite": "Vous êtes",
+        "depose": "Déposé le",
+        "accord": "Accord de publication",
+        "motif": "Motif",
+        "modere": "Décision du",
+        "publie": "Publié le"
+      },
+      "actions": {
+        "publier": "Publier",
+        "refuser": "Refuser",
+        "retirer": "Retirer"
+      },
+      "publier": {
+        "question": "Publier l'avis {deNom}\u00a0?",
+        "consequence": "L'avis, le nom affiché, le pays et la date paraîtront sur le site de Rewayah Academy au prochain passage du site. Le texte n'est pas modifié.",
+        "action": "Publier l'avis",
+        "rester": "Ne rien changer"
+      },
+      "refuser": {
+        "titre": "Refuser l'avis {deNom}",
+        "intro": "Choisissez le motif du refus. Un avis critique mais respectueux se publie.",
+        "consequence": "L'avis ne sera pas publié. Le motif est gardé.",
+        "action": "Refuser l'avis",
+        "rester": "Ne rien changer"
+      },
+      "retirer": {
+        "titre": "Retirer l'avis {deNom}",
+        "intro": "Choisissez le motif du retrait.",
+        "consequence": "L'avis disparaîtra du site au prochain passage du site. Le motif est gardé.",
+        "action": "Retirer l'avis",
+        "rester": "Ne rien changer"
+      },
+      "motifs": {
+        "insulte": "Insulte",
+        "tiers": "Données personnelles d'un tiers",
+        "publicite": "Publicité",
+        "horsSujet": "Hors sujet",
+        "doublon": "Doublon",
+        "demande": "Demande de la personne"
+      },
+      "retour": {
+        "publie": "L'avis est publié.",
+        "refuse": "L'avis est refusé.",
+        "retire": "L'avis est retiré.",
+        "etatChange": "Cet avis n'est plus dans l'état attendu. La liste est mise à jour.",
+        "introuvable": "Cet avis n'existe plus. La liste est mise à jour.",
+        "motifManque": "Le motif manque. Choisissez-en un.",
+        "refus": "Seule la direction connectée peut décider d'un avis.",
+        "echec": "La décision n'a pas pu être confirmée. La liste est relue\u00a0: vérifiez l'état de l'avis avant de recommencer.",
+        "horsLigne": "Rien n'est parti\u00a0: le réseau est absent. Réessayez dès son retour."
+      },
+      "liens": {
+        "creerTitre": "Créer un lien",
+        "creerIntro": "Un lien ouvre le formulaire d'avis, sans compte ni connexion. Donnez-lui un nom pour le reconnaître.",
+        "libelle": "Nom du lien",
+        "libelleAide": "Par exemple\u00a0: Familles octobre 2026.",
+        "libelleErreur": "Donnez un nom au lien.",
+        "jours": "Durée en jours",
+        "joursAide": "90 par défaut, 365 au plus.",
+        "joursErreur": "Entrez un nombre de jours de 1 à 365.",
+        "max": "Nombre maximal d'avis",
+        "maxAide": "200 par défaut, 2000 au plus.",
+        "maxErreur": "Entrez un nombre d'avis de 1 à 2000.",
+        "creer": "Créer le lien",
+        "echecCreation": "La création du lien n'est pas confirmée. Regardez la liste des liens avant de recommencer.",
+        "creeTitre": "Lien créé",
+        "creePhrase": "Copiez ce lien maintenant. Il ne sera plus affiché une fois cet encadré fermé. Si vous le perdez, fermez ce lien et créez un nouveau lien.",
+        "creeAdresse": "Adresse du lien",
+        "creeValable": "Valable jusqu'au {date}.",
+        "copier": "Copier le lien",
+        "copie": "Lien copié.",
+        "creeFermer": "J'ai copié le lien",
+        "etat": {
+          "ouvert": "Ouvert",
+          "ferme": "Fermé",
+          "expire": "Expiré",
+          "plein": "Complet"
+        },
+        "recus": "Avis reçus\u00a0: {recus} sur {max}",
+        "fin": "Fin le {date}",
+        "cree": "Créé le {date}",
+        "fermer": "Fermer le lien",
+        "fermerQuestion": "Fermer le lien «\u00a0{nom}\u00a0»\u00a0?",
+        "fermerConsequence": "Les personnes qui ouvriront ce lien verront qu'il est fermé et ne pourront plus envoyer d'avis. Les avis déjà reçus restent. Un lien fermé ne se rouvre pas.",
+        "fermerAction": "Fermer le lien",
+        "fermerRester": "Ne rien changer",
+        "fermeOk": "Le lien est fermé.",
+        "fermeEchec": "La fermeture n'est pas confirmée. La liste est relue\u00a0: vérifiez l'état du lien.",
+        "vide": "Aucun lien pour le moment. Créez-en un pour recueillir des avis.",
+        "erreur": "Les liens n'ont pas pu être chargés. Réessayez.",
+        "sansDonnees": "Les liens n'ont pas pu être chargés"
+      }
     }
   }
 }

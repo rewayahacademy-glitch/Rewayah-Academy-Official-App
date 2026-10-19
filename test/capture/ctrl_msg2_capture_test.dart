@@ -149,8 +149,10 @@ void main() {
             tester,
             find.text(t.controleur.compteRendu.envoyer).last,
           );
+          // L11 : de droite a gauche, la phrase est isolee (U+2068 ...
+          // U+2069) ; on la cherche donc par son contenu.
           expect(
-            find.text(t.controleur.observation.echecSansTexte),
+            find.textContaining(t.controleur.observation.echecSansTexte),
             findsOneWidget,
           );
           expect(tester.takeException(), isNull);

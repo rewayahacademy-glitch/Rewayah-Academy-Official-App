@@ -62,9 +62,8 @@ Future<void> _monter(
                 supportedLocales: AppLocaleUtils.supportedLocales,
                 localizationsDelegates: GlobalMaterialLocalizations.delegates,
                 builder: (BuildContext contexte, Widget? app) => MediaQuery(
-                  data: MediaQuery.of(contexte).copyWith(
-                    textScaler: TextScaler.linear(echelle),
-                  ),
+                  data: MediaQuery.of(contexte)
+                      .copyWith(textScaler: TextScaler.linear(echelle)),
                   child: app!,
                 ),
               );

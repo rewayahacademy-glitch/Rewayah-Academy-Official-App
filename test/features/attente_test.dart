@@ -41,6 +41,7 @@ EtatDossier _etat({
   String? motif,
   DateTime? depose,
   bool? correction,
+  UsageTitulaire? usage,
 }) => EtatDossier(
   profilExiste: true,
   role: role,
@@ -52,6 +53,7 @@ EtatDossier _etat({
   motifRefus: motif,
   deposeLe: depose,
   correctionAutorisee: correction,
+  usage: usage,
 );
 
 void main() {
@@ -239,9 +241,14 @@ void main() {
     Future<void> monter(
       WidgetTester tester, {
       required UsageInscription? usage,
+      UsageTitulaire? usageServeur,
     }) async {
       final FauxServiceDossier dossier = FauxServiceDossier()
-        ..etatRendu = _etat(role: AppRole.guardian, accuse: true);
+        ..etatRendu = _etat(
+          role: AppRole.guardian,
+          accuse: true,
+          usage: usageServeur,
+        );
       final List<Override> surcharges = <Override>[
         serviceDossierProvider.overrideWithValue(dossier),
       ];
@@ -296,6 +303,27 @@ void main() {
       expect(find.text(t.consentement.texte.caseResponsable), findsOneWidget);
       expect(find.text(t.consentement.texte.caseAdulte), findsNothing);
     });
+
+    testWidgets('L5-01 : « Moi » garde par le serveur, sans brouillon '
+        '(rechargement) : variante eleve adulte', (WidgetTester tester) async {
+      await monter(tester, usage: null, usageServeur: UsageTitulaire.moi);
+
+      expect(find.text(t.consentement.texte.caseAdulte), findsOneWidget);
+      expect(find.text(t.consentement.texte.caseResponsable), findsNothing);
+    });
+
+    testWidgets('L5-01 : le serveur prime sur le brouillon', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        usage: UsageInscription.moi,
+        usageServeur: UsageTitulaire.famille,
+      );
+
+      expect(find.text(t.consentement.texte.caseResponsable), findsOneWidget);
+      expect(find.text(t.consentement.texte.caseAdulte), findsNothing);
+    });
   });
 
   group('EtatDossier : ce qui manque, et dans quel ordre', () {
@@ -328,6 +356,24 @@ void main() {
         'profil': false,
       });
       expect(lu.profilExiste, isFalse);
+    });
+
+    test('L5-01 : la lecture reprend usage et suit_des_cours', () {
+      final EtatDossier lu = EtatDossier.depuisJson(const <String, dynamic>{
+        'profil': true,
+        'role': 'guardian',
+        'statut': 'pending_kyc',
+        'usage': 'moi',
+        'suit_des_cours': true,
+      });
+      expect(lu.usage, UsageTitulaire.moi);
+      expect(lu.suitDesCours, isTrue);
+      final EtatDossier ancien = EtatDossier.depuisJson(const <String, dynamic>{
+        'profil': true,
+        'role': 'guardian',
+      });
+      expect(ancien.usage, isNull);
+      expect(ancien.suitDesCours, isFalse);
     });
 
     test(

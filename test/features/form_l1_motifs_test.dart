@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/admin/service_configuration.dart';
 import 'package:rewayah_academy/core/formulaires/motifs_proposes.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/choix_nombre.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
@@ -429,8 +430,10 @@ void main() {
   });
 
   group('L13 : valeurs proposees des reglages entiers', () {
-    test('les treize cles ont une proposition coherente', () {
-      expect(reglagesEntiersProposes, hasLength(13));
+    test('les quatorze cles ont une proposition coherente', () {
+      // La quatorzieme : le delai de reflexion de la suppression de compte
+      // (CPT-SUPPR-EXPORT, `compte.suppression_delai_jours`).
+      expect(reglagesEntiersProposes, hasLength(14));
       for (final MapEntry<String, ReglageEntierPropose> e
           in reglagesEntiersProposes.entries) {
         // Aucune borne inventee (08/10) : seul le plafond a source ecrite
@@ -505,22 +508,20 @@ void main() {
       ]);
     });
 
-    testWidgets('« Autre » accepte toute valeur >= 0, comme avant la branche', (
+    testWidgets('« Autre » se choisit au pas a pas, jamais au clavier '
+        '(17/10), sans plafond sans source ecrite', (
       WidgetTester tester,
     ) async {
       final _Configuration config = _Configuration();
       await monter(tester, config);
       await _presser(tester, find.byKey(SelecteurEntier.cleAutre));
-      // Negatif : refuse, comme avant FORM-L13.
-      await tester.enterText(find.byKey(SelecteurEntier.cleChamp), '-5');
-      await _presser(tester, find.text('Enregistrer').last);
-      expect(find.text('Entrez un nombre valide.'), findsOneWidget);
-      expect(config.ecrits, isEmpty);
-      // 200 min : hors des puces, sans borne ecrite, donc accepte.
-      await tester.enterText(find.byKey(SelecteurEntier.cleChamp), '200');
+      expect(find.byType(TextField), findsNothing);
+      // Le pas a pas part de la valeur courante (60) ; aucun plafond.
+      await _presser(tester, find.byKey(ChoixNombre.clePlus));
+      await _presser(tester, find.byKey(ChoixNombre.clePlus));
       await _presser(tester, find.text('Enregistrer').last);
       expect(config.ecrits, <(String, Object)>[
-        ('session_duration_minutes', 200),
+        ('session_duration_minutes', 62),
       ]);
     });
 
@@ -540,10 +541,9 @@ void main() {
         await monter(tester, config, cle: cle, valeur: valeur);
         expect(
           tester
-              .widget<TextField>(find.byKey(SelecteurEntier.cleChamp))
-              .controller!
-              .text,
-          '$valeur',
+              .widget<ChoixNombre>(find.byKey(SelecteurEntier.cleChamp))
+              .valeur,
+          valeur,
         );
         await _presser(tester, find.text('Enregistrer').last);
         expect(config.ecrits, <(String, Object)>[(cle, valeur)]);
@@ -556,14 +556,12 @@ void main() {
       final _Configuration config = _Configuration();
       await monter(tester, config, cle: 'max_devices_per_student', valeur: 2);
       await _presser(tester, find.byKey(SelecteurEntier.cleAutre));
-      await tester.enterText(find.byKey(SelecteurEntier.cleChamp), '3');
-      await _presser(tester, find.text('Enregistrer').last);
-      expect(
-        find.text(t.formulaire.entier.horsBornes(min: '0 min', max: '2 min')),
-        findsOneWidget,
-      );
-      expect(config.ecrits, isEmpty);
-      await tester.enterText(find.byKey(SelecteurEntier.cleChamp), '0');
+      // Au plafond (2), « plus » n'existe pas : on ne peut pas le depasser.
+      expect(find.byKey(ChoixNombre.clePlus), findsNothing);
+      await _presser(tester, find.byKey(ChoixNombre.cleMoins));
+      await _presser(tester, find.byKey(ChoixNombre.cleMoins));
+      // A zero, « moins » disparait a son tour.
+      expect(find.byKey(ChoixNombre.cleMoins), findsNothing);
       await _presser(tester, find.text('Enregistrer').last);
       expect(config.ecrits, <(String, Object)>[('max_devices_per_student', 0)]);
     });

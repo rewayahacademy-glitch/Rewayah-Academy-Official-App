@@ -94,6 +94,23 @@ class EtatSysteme extends StatelessWidget {
     this.icone,
   });
 
+  /// Hors ligne, sans rien de lu a montrer (EA-HL-DOUBLE-1) : le bloc dit
+  /// [quoi] manque, sans redire « hors ligne », que le bandeau dit deja.
+  /// Meme rendu que `EtatSansDonnees` (lib/core/reseau), pose ici pour les
+  /// ecrans qui ne peuvent pas l'importer.
+  const EtatSysteme.sansDonnees({
+    required String quoi,
+    Key? key,
+    VoidCallback? onAction,
+  }) : this(
+         key: key,
+         nature: NatureEtat.horsLigne,
+         titre: quoi,
+         phrase: '',
+         onAction: onAction,
+         icone: AppIcons.attente,
+       );
+
   /// La nature de l'etat.
   final NatureEtat nature;
 

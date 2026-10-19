@@ -14,7 +14,8 @@
 // dit en texte. Le paiement web seul au lancement se lit dans Paiement, sans
 // champ non plus.
 //
-// Une saisie est refusee sur sa forme (un nombre entier) puis sur sa
+// Une saisie est refusee sur sa forme (un nombre entier, ou dollars et
+// centimes pour la paie par eleve present) puis sur sa
 // coherence (capacite d'au moins 1, tarif non nul, plafond pas sous la base,
 // maximum pas sous l'objectif, minimum pas au-dessus de la plus petite
 // classe, remise pas au-dessus du tarif) : une phrase par refus, sous le
@@ -44,13 +45,17 @@
 
 import 'package:flutter/foundation.dart' show listEquals, setEquals;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'
+    show FilteringTextInputFormatter, TextInputFormatter;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_politiques_commerciales.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
 import '../../core/finance/politique_commerciale.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/jour_du_mois.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -75,6 +80,8 @@ import '../../core/widgets/ligne_finance.dart';
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import 'reserve_delegation/saisie_politique.dart'
+    show caracteresSaisie, deviseDeLancement, lireMontant, texteMontant;
 import 'vue_globale_finance.dart' show pourMilleEnTexte;
 
 /// La version active, le brouillon en cours s'il y en a un, et l'historique
@@ -108,6 +115,28 @@ final FutureProvider<PolitiquesLues> politiquesCommercialesProvider =
       return lirePolitiques(ref.watch(portPolitiquesCommercialesProvider));
     }, retry: (int retryCount, Object error) => null);
 
+/// Vrai quand le serveur vient de confirmer une publication : le message
+/// « Version publiee » survit a la relecture des versions, qui reconstruit le
+/// contenu sur le nouveau brouillon. Oublie a la premiere saisie et a la
+/// sortie de l'onglet.
+class PublicationPolitiqueControleur extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  /// Retient la publication confirmee.
+  void confirmer() => state = true;
+
+  /// Oublie la publication confirmee.
+  void oublier() => state = false;
+}
+
+/// La publication confirmee de l'onglet en cours.
+final NotifierProvider<PublicationPolitiqueControleur, bool>
+publicationPolitiqueProvider =
+    NotifierProvider.autoDispose<PublicationPolitiqueControleur, bool>(
+      PublicationPolitiqueControleur.new,
+    );
+
 /// L'onglet Politiques commerciales : chargement, contenu, sans brouillon
 /// (vide), erreur, hors ligne, et « Pas encore disponible » tant que le port
 /// rend `CapaciteIndisponible` (production, FI-BR-01).
@@ -120,6 +149,8 @@ class PolitiquesCommercialesBloc extends ConsumerWidget {
     final AsyncValue<PolitiquesLues> lues = ref.watch(
       politiquesCommercialesProvider,
     );
+    // Garde en vie la publication confirmee le temps de l'onglet.
+    ref.watch(publicationPolitiqueProvider);
     void relire() => ref.invalidate(politiquesCommercialesProvider);
     final Object? erreur = lues.hasError ? lues.error : null;
     final bool echecHorsLigne =
@@ -127,7 +158,17 @@ class PolitiquesCommercialesBloc extends ConsumerWidget {
         erreur is! CapaciteIndisponible &&
         (ref.watch(horsLigneProvider).value ?? false);
     if (echecHorsLigne) {
-      return EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire);
+      // Le bloc de `EtatSansDonnees` (EA-HL-DOUBLE-1 : ce qui manque, pas
+      // « hors ligne » une seconde fois), pose a la main : importer
+      // `etat_sans_donnees.dart` ici trompe la garde des ancres de sens
+      // (test/support/garde_ancres.dart), qui suit les noms de champs.
+      return EtatSysteme(
+        nature: NatureEtat.horsLigne,
+        titre: t.admin.finance.pol.sansDonnees,
+        phrase: '',
+        icone: AppIcons.attente,
+        onAction: relire,
+      );
     }
     return BlocAsynchrone<PolitiquesLues>(
       valeur: lues,
@@ -156,6 +197,19 @@ enum _Nature {
 
   /// Un repere de marge : saisi en pourcentage entier, rendu en pour mille.
   pourcent,
+
+  /// Une remise de rang en pour mille du tarif : saisie en pourcentage
+  /// entier, « Prix normal » quand le rang n'en a aucune.
+  remisePourMille,
+
+  /// Une duree en minutes (seance due).
+  minutes,
+
+  /// Une duree en mois (bourse).
+  mois,
+
+  /// Un jour du mois (suspension).
+  jourDuMois,
 }
 
 /// Un parametre de la politique : son libelle, sa consequence (K-58), sa
@@ -170,6 +224,7 @@ class _Champ {
     required this.active,
     this.devise,
     this.facultatif = false,
+    this.centimes = false,
   });
 
   final String id;
@@ -192,6 +247,15 @@ class _Champ {
   /// (aide Internet, montant configurable, guide §1.4).
   final bool facultatif;
 
+  /// Vrai pour un montant saisi en dollars avec centimes (« 0,95 » ou
+  /// « 0.95 »), stocke en cents : la paie par eleve present. La saisie lue
+  /// est alors deja en unites mineures.
+  final bool centimes;
+
+  /// Vrai quand la valeur se saisit en pourcentage entier (pour mille).
+  bool get _enPourcent =>
+      nature == _Nature.pourcent || nature == _Nature.remisePourMille;
+
   bool get estMontant =>
       nature == _Nature.montant ||
       nature == _Nature.montantHoraire ||
@@ -203,11 +267,12 @@ class _Champ {
   /// reste alors en lecture.
   String? get saisieInitiale {
     final Object? v = lue;
-    if (v is int && nature == _Nature.pourcent) {
+    if (v is int && _enPourcent) {
       // Un pour mille qui n'est pas un pourcentage entier reste en lecture.
       return v % 10 == 0 ? '${v ~/ 10}' : null;
     }
     if (v is int) return '$v';
+    if (v is Montant && centimes) return texteMontant(v);
     if (v is Montant) {
       final int? unites = unitesEntieresDe(v);
       if (unites == null) return null;
@@ -225,7 +290,10 @@ class _Champ {
 
   /// La valeur d'une saisie [unites] (deja validee), dans la forme du port.
   Object depuisSaisie(int unites) {
-    if (nature == _Nature.pourcent) return unites * 10;
+    if (centimes) {
+      return Montant(unites, deviseMontant ?? deviseDeLancement);
+    }
+    if (_enPourcent) return unites * 10;
     final String? d = deviseMontant;
     if (estMontant && d != null) {
       return montantDepuisUnites(
@@ -265,6 +333,15 @@ class PolitiquesCommercialesContenu extends ConsumerStatefulWidget {
 
   /// La cle du bandeau de publication.
   static const Key publicationKey = ValueKey<String>('fi-pol-publication');
+
+  /// La cle de l'avertissement « taux enfant au-dessus du taux adulte »,
+  /// sous les champs de paie.
+  static const Key tauxAvertissementKey = ValueKey<String>('fi-pol-taux-avert');
+
+  /// La cle du meme avertissement, rappele avant la publication.
+  static const Key tauxAvertissementPublicationKey = ValueKey<String>(
+    'fi-pol-taux-avert-publication',
+  );
 
   /// La cle du champ [id] (par exemple `tarifEnfant`, `remise-3`).
   static Key champKey(String id) => ValueKey<String>('fi-pol-champ-$id');
@@ -306,13 +383,23 @@ class PolitiquesCommercialesContenu extends ConsumerStatefulWidget {
 }
 
 /// Le resultat d'une tentative de publication.
-enum _Publication { aucune, champsACorriger, indisponible, nonConfirmee }
+enum _Publication {
+  aucune,
+  champsACorriger,
+  indisponible,
+  nonConfirmee,
+  faite,
+  refusee,
+  invalide,
+}
 
 class _PolitiquesCommercialesContenuState
     extends ConsumerState<PolitiquesCommercialesContenu> {
   final Map<String, TextEditingController> _saisies =
       <String, TextEditingController>{};
-  _Publication _publication = _Publication.aucune;
+  late _Publication _publication = ref.read(publicationPolitiqueProvider)
+      ? _Publication.faite
+      : _Publication.aucune;
   bool _enCours = false;
 
   /// L'activation de l'essai a l'ecran, dans un brouillon (guide §5.7,
@@ -341,8 +428,10 @@ class _PolitiquesCommercialesContenuState
   }
 
   void _rafraichir() => setState(() {
-    if (_publication == _Publication.champsACorriger) {
+    if (_publication == _Publication.champsACorriger ||
+        _publication == _Publication.faite) {
       _publication = _Publication.aucune;
+      ref.read(publicationPolitiqueProvider.notifier).oublier();
     }
   });
 
@@ -360,6 +449,15 @@ class _PolitiquesCommercialesContenuState
   /// une fois converti en unites mineures.
   int? _saisie(String id) {
     final String texte = _saisies[id]?.text.trim() ?? '';
+    if (_champ(id).centimes) {
+      // Dollars avec centimes : deux decimales au plus, strictement positif,
+      // rendu directement en cents (jamais un double).
+      final Montant? m = lireMontant(
+        texte,
+        _champ(id).deviseMontant ?? deviseDeLancement,
+      );
+      return m?.mineur;
+    }
     if (!RegExp(r'^\d{1,12}$').hasMatch(texte)) return null;
     return int.parse(texte);
   }
@@ -374,7 +472,9 @@ class _PolitiquesCommercialesContenuState
     if (!_saisies.containsKey(c.id) || _videPermis(c)) return null;
     final pol = t.admin.finance.pol;
     final int? s = _saisie(c.id);
-    if (s == null) return pol.erreurChamp;
+    if (s == null) {
+      return c.centimes ? pol.erreurMontantCentimes : pol.erreurChamp;
+    }
     final Object v = c.depuisSaisie(s);
     Object? autre(String id) => _courante(_champ(id));
     switch (c.id) {
@@ -386,6 +486,16 @@ class _PolitiquesCommercialesContenuState
         if (autre('baseHoraire') case final Montant base
             when v is Montant && v.mineur < base.mineur) {
           return pol.erreurPlafond(base: _texteValeur(base, c.nature));
+        }
+      case 'plafondEleveEnfant' || 'plafondEleveAdulte':
+        final String idTaux = c.id == 'plafondEleveEnfant'
+            ? 'tauxEleveEnfant'
+            : 'tauxEleveAdulte';
+        if (autre(idTaux) case final Montant taux
+            when v is Montant && v.mineur < taux.mineur) {
+          return pol.erreurPlafondEleve(
+            taux: sansAncre(_texteValeur(taux, c.nature)),
+          );
         }
       case 'classesMax':
         if (autre('classesObjectif') case final int objectif
@@ -424,7 +534,16 @@ class _PolitiquesCommercialesContenuState
             return pol.erreurMargeStretch(forte: _texteValeur(forte, c.nature));
           }
         }
+      case 'dureeDueEnfant' || 'dureeDueAdulte':
+        if (s < 1 || s > 240) return pol.erreurDureeDue;
+      case 'bourseDuree':
+        if (s < 1 || s > 24) return pol.erreurBourseDuree;
+      case 'suspension':
+        if (s < 1 || s > 28) return pol.erreurSuspension;
       default:
+        if (c._enPourcent && s > 100) {
+          return pol.erreurPourcentMax;
+        }
         if (c.nature == _Nature.remise && v is Montant) {
           // La remise ne depasse aucun tarif auquel elle s'applique.
           for (final String id in <String>['tarifEnfant', 'tarifAdulte']) {
@@ -436,6 +555,30 @@ class _PolitiquesCommercialesContenuState
         }
     }
     return null;
+  }
+
+  /// Vrai quand le taux enfant saisi depasse le taux adulte saisi. Un simple
+  /// avertissement : la direction peut le vouloir, rien n'est bloque.
+  bool get _tauxEnfantAuDessusAdulte {
+    if (!_paieParEleve) return false;
+    final Object? e = _courante(_champ('tauxEleveEnfant'));
+    final Object? a = _courante(_champ('tauxEleveAdulte'));
+    return e is Montant && a is Montant && e.mineur > a.mineur;
+  }
+
+  /// L'avertissement non bloquant du taux enfant au-dessus du taux adulte,
+  /// ou rien.
+  List<Widget> _avertissementTaux(Key cle) {
+    if (!_estBrouillon || !_tauxEnfantAuDessusAdulte) return const <Widget>[];
+    final pol = t.admin.finance.pol;
+    return <Widget>[
+      Ecart.vMd,
+      BandeauAttention(
+        key: cle,
+        titre: pol.tauxEnfantAuDessusTitre,
+        message: pol.tauxEnfantAuDessusDetail,
+      ),
+    ];
   }
 
   bool _enErreur(String id) => _erreurDe(_champ(id)) != null;
@@ -516,9 +659,158 @@ class _PolitiquesCommercialesContenuState
           consequence: i == rangs.length - 1
               ? pol.remiseRangSuivantsDetail
               : pol.remiseRangDetail,
-          nature: _Nature.remise,
-          lue: rangs[i].remise,
-          active: widget.active.remisePourRang(rangs[i].aPartirDuRang),
+          nature: rangs[i].pourMille != null
+              ? _Nature.remisePourMille
+              : _Nature.remise,
+          lue: rangs[i].pourMille ?? rangs[i].remise,
+          active: _remiseActive(rangs[i]),
+        ),
+    ];
+  }
+
+  /// La remise de la version active pour le rang de [r], telle qu'elle est
+  /// (montant ou pour mille), ou `null` quand l'active n'en a aucune.
+  Object? _remiseActive(RemiseRang r) {
+    final RemiseRang? a = widget.active.remiseRangPour(r.aPartirDuRang);
+    return a?.pourMille ?? a?.remise;
+  }
+
+  /// Les remises du 18/10/2026 au-dela du rang (prepaiement, parrainage,
+  /// bourse, plafond de cumul) : seulement quand la version les porte.
+  List<_Champ> _autresRemises() {
+    final pol = t.admin.finance.pol;
+    final PolitiqueCommerciale a = widget.active;
+    return <_Champ>[
+      if (_lue.prepaiementTrimestrielPourMille != null)
+        _Champ(
+          id: 'prepaiementTrimestriel',
+          libelle: pol.prepaiementTrimestriel,
+          consequence: pol.prepaiementTrimestrielDetail,
+          nature: _Nature.pourcent,
+          lue: _lue.prepaiementTrimestrielPourMille,
+          active: a.prepaiementTrimestrielPourMille,
+        ),
+      if (_lue.prepaiementAnnuelPourMille != null)
+        _Champ(
+          id: 'prepaiementAnnuel',
+          libelle: pol.prepaiementAnnuel,
+          consequence: pol.prepaiementAnnuelDetail,
+          nature: _Nature.pourcent,
+          lue: _lue.prepaiementAnnuelPourMille,
+          active: a.prepaiementAnnuelPourMille,
+        ),
+      if (_lue.cumulMaxPourMille != null)
+        _Champ(
+          id: 'cumulMax',
+          libelle: pol.cumulMax,
+          consequence: pol.cumulMaxDetail,
+          nature: _Nature.pourcent,
+          lue: _lue.cumulMaxPourMille,
+          active: a.cumulMaxPourMille,
+        ),
+      if (_lue.parrainageCredit != null)
+        _Champ(
+          id: 'parrainage',
+          libelle: pol.parrainage,
+          consequence: pol.parrainageDetail,
+          nature: _Nature.montant,
+          lue: _lue.parrainageCredit,
+          active: a.parrainageCredit,
+        ),
+      if (_lue.boursePourMille != null)
+        _Champ(
+          id: 'bourse',
+          libelle: pol.bourse,
+          consequence: pol.bourseDetail,
+          nature: _Nature.pourcent,
+          lue: _lue.boursePourMille,
+          active: a.boursePourMille,
+        ),
+      if (_lue.boursePlacesPourMille != null)
+        _Champ(
+          id: 'boursePlaces',
+          libelle: pol.boursePlaces,
+          consequence: pol.boursePlacesDetail,
+          nature: _Nature.pourcent,
+          lue: _lue.boursePlacesPourMille,
+          active: a.boursePlacesPourMille,
+        ),
+      if (_lue.bourseDureeMois != null)
+        _Champ(
+          id: 'bourseDuree',
+          libelle: pol.bourseDuree,
+          consequence: pol.bourseDureeDetail,
+          nature: _Nature.mois,
+          lue: _lue.bourseDureeMois,
+          active: a.bourseDureeMois,
+        ),
+    ];
+  }
+
+  /// La paie par eleve present et par heure (18/10/2026) : seulement quand
+  /// la version la porte. Elle remplace alors la base et le plafond horaires
+  /// a l'ecran ; ces montants se saisissent en dollars avec centimes
+  /// (`centimes`) et partent au serveur en cents.
+  bool get _paieParEleve => _lue.tauxEleveHeureEnfant != null;
+
+  List<_Champ> _paieEleve() {
+    final pol = t.admin.finance.pol;
+    final PolitiqueCommerciale a = widget.active;
+    if (!_paieParEleve) return const <_Champ>[];
+    return <_Champ>[
+      _Champ(
+        id: 'tauxEleveEnfant',
+        libelle: pol.tauxEleveEnfant,
+        consequence: pol.tauxEleveEnfantDetail,
+        nature: _Nature.montantHoraire,
+        lue: _lue.tauxEleveHeureEnfant,
+        active: a.tauxEleveHeureEnfant,
+        centimes: true,
+      ),
+      _Champ(
+        id: 'tauxEleveAdulte',
+        libelle: pol.tauxEleveAdulte,
+        consequence: pol.tauxEleveAdulteDetail,
+        nature: _Nature.montantHoraire,
+        lue: _lue.tauxEleveHeureAdulte,
+        active: a.tauxEleveHeureAdulte,
+        centimes: true,
+      ),
+      _Champ(
+        id: 'plafondEleveEnfant',
+        libelle: pol.plafondEleveEnfant,
+        consequence: pol.plafondEleveDetail,
+        nature: _Nature.montantHoraire,
+        lue: _lue.plafondEleveHeureEnfant,
+        active: a.plafondEleveHeureEnfant,
+        centimes: true,
+      ),
+      _Champ(
+        id: 'plafondEleveAdulte',
+        libelle: pol.plafondEleveAdulte,
+        consequence: pol.plafondEleveDetail,
+        nature: _Nature.montantHoraire,
+        lue: _lue.plafondEleveHeureAdulte,
+        active: a.plafondEleveHeureAdulte,
+        centimes: true,
+      ),
+      if (_lue.dureeDueEnfantMinutes != null)
+        _Champ(
+          id: 'dureeDueEnfant',
+          libelle: pol.dureeDueEnfant,
+          consequence: pol.dureeDueDetail,
+          nature: _Nature.minutes,
+          lue: _lue.dureeDueEnfantMinutes,
+          active: a.dureeDueEnfantMinutes,
+        ),
+      if (_lue.dureeDueAdulteMinutes != null)
+        _Champ(
+          id: 'dureeDueAdulte',
+          libelle: pol.dureeDueAdulte,
+          consequence: pol.dureeDueDetail,
+          nature: _Nature.minutes,
+          lue: _lue.dureeDueAdulteMinutes,
+          active: a.dureeDueAdulteMinutes,
         ),
     ];
   }
@@ -622,6 +914,15 @@ class _PolitiquesCommercialesContenuState
         lue: _lue.joursConservationPlace,
         active: widget.active.joursConservationPlace,
       ),
+      if (_lue.jourSuspension != null)
+        _Champ(
+          id: 'suspension',
+          libelle: pol.suspension,
+          consequence: pol.suspensionDetail,
+          nature: _Nature.jourDuMois,
+          lue: _lue.jourSuspension,
+          active: widget.active.jourSuspension,
+        ),
     ];
   }
 
@@ -665,7 +966,9 @@ class _PolitiquesCommercialesContenuState
     ..._tarifs(),
     ..._essai(),
     ..._remises(),
+    ..._autresRemises(),
     ..._enseignants(),
+    ..._paieEleve(),
     ..._classes(),
     ..._paiement(),
     ..._marge(),
@@ -687,10 +990,15 @@ class _PolitiquesCommercialesContenuState
       essaiActif: _essaiActif,
       remisesParRang: <RemiseRang>[
         for (final RemiseRang r in b.remisesParRang)
-          RemiseRang(
-            aPartirDuRang: r.aPartirDuRang,
-            remise: v['remise-${r.aPartirDuRang}']! as Montant,
-          ),
+          r.pourMille != null
+              ? RemiseRang(
+                  aPartirDuRang: r.aPartirDuRang,
+                  pourMille: v['remise-${r.aPartirDuRang}']! as int,
+                )
+              : RemiseRang(
+                  aPartirDuRang: r.aPartirDuRang,
+                  remise: v['remise-${r.aPartirDuRang}']! as Montant,
+                ),
       ],
       baseHoraire: v['baseHoraire']! as Montant,
       plafondHoraire: v['plafondHoraire']! as Montant,
@@ -710,6 +1018,30 @@ class _PolitiquesCommercialesContenuState
       allocationInternet: v['internet'] as Montant?,
       joursRelance: b.joursRelance,
       budgets: b.budgets,
+      tauxEleveHeureEnfant:
+          v['tauxEleveEnfant'] as Montant? ?? b.tauxEleveHeureEnfant,
+      tauxEleveHeureAdulte:
+          v['tauxEleveAdulte'] as Montant? ?? b.tauxEleveHeureAdulte,
+      plafondEleveHeureEnfant:
+          v['plafondEleveEnfant'] as Montant? ?? b.plafondEleveHeureEnfant,
+      plafondEleveHeureAdulte:
+          v['plafondEleveAdulte'] as Montant? ?? b.plafondEleveHeureAdulte,
+      dureeDueEnfantMinutes:
+          v['dureeDueEnfant'] as int? ?? b.dureeDueEnfantMinutes,
+      dureeDueAdulteMinutes:
+          v['dureeDueAdulte'] as int? ?? b.dureeDueAdulteMinutes,
+      prepaiementTrimestrielPourMille:
+          v['prepaiementTrimestriel'] as int? ??
+          b.prepaiementTrimestrielPourMille,
+      prepaiementAnnuelPourMille:
+          v['prepaiementAnnuel'] as int? ?? b.prepaiementAnnuelPourMille,
+      parrainageCredit: v['parrainage'] as Montant? ?? b.parrainageCredit,
+      boursePourMille: v['bourse'] as int? ?? b.boursePourMille,
+      boursePlacesPourMille:
+          v['boursePlaces'] as int? ?? b.boursePlacesPourMille,
+      bourseDureeMois: v['bourseDuree'] as int? ?? b.bourseDureeMois,
+      cumulMaxPourMille: v['cumulMax'] as int? ?? b.cumulMaxPourMille,
+      jourSuspension: v['suspension'] as int? ?? b.jourSuspension,
     );
   }
 
@@ -724,12 +1056,20 @@ class _PolitiquesCommercialesContenuState
       await ref
           .read(portPolitiquesCommercialesProvider)
           .publier(_brouillonAEcran());
-      // Aucune implementation ne publie a ce jour ; une reponse sans
-      // erreur reste non confirmee tant que la version active n'est pas
-      // relue (D5).
-      resultat = _Publication.nonConfirmee;
+      // Le serveur rend la version qu'il a inscrite (FAC-A-01) : la
+      // publication est faite. Les versions sont relues pour proposer le
+      // brouillon suivant.
+      resultat = _Publication.faite;
     } on CapaciteIndisponible {
       resultat = _Publication.indisponible;
+    } on PostgrestException catch (e) {
+      // 42501 : hors direction en double verification ; 22023 : une valeur
+      // refusee (date d'effet, numero, remise). Le reste n'est pas confirme.
+      resultat = switch (e.code) {
+        '42501' => _Publication.refusee,
+        '22023' => _Publication.invalide,
+        _ => _Publication.nonConfirmee,
+      };
     } on Object {
       resultat = _Publication.nonConfirmee;
     }
@@ -738,6 +1078,10 @@ class _PolitiquesCommercialesContenuState
       _enCours = false;
       _publication = resultat;
     });
+    if (resultat == _Publication.faite) {
+      ref.read(publicationPolitiqueProvider.notifier).confirmer();
+      ref.invalidate(politiquesCommercialesProvider);
+    }
   }
 
   @override
@@ -774,15 +1118,23 @@ class _PolitiquesCommercialesContenuState
             valeur: pol.remiseAucuneValeur,
           ),
         for (final _Champ c in _remises()) _ligne(c),
+        for (final _Champ c in _autresRemises()) _ligne(c),
       ]),
       _section(pol.enseignants, pol.enseignantsDetail, <Widget>[
-        for (final _Champ c in _enseignants().take(2)) _ligne(c),
-        LigneCleValeur(
-          cle: pol.occupation,
-          detailCle: pol.occupationDetail,
-          valeur: pol.occupationValeur,
-        ),
+        if (_paieParEleve)
+          for (final _Champ c in _paieEleve()) _ligne(c)
+        else ...<Widget>[
+          for (final _Champ c in _enseignants().take(2)) _ligne(c),
+          LigneCleValeur(
+            cle: pol.occupation,
+            detailCle: pol.occupationDetail,
+            valeur: pol.occupationValeur,
+          ),
+        ],
         for (final _Champ c in _enseignants().skip(2)) _ligne(c),
+        ..._avertissementTaux(
+          PolitiquesCommercialesContenu.tauxAvertissementKey,
+        ),
       ]),
       _section(pol.sectionClasses, pol.sectionClassesDetail, <Widget>[
         for (final _Champ c in _classes()) _ligne(c),
@@ -863,6 +1215,9 @@ class _PolitiquesCommercialesContenuState
           ),
           Ecart.vXxl,
           Text(pol.publierConsequence, style: textes.bodyLarge),
+          ..._avertissementTaux(
+            PolitiquesCommercialesContenu.tauxAvertissementPublicationKey,
+          ),
           ..._bandeauPublication(),
           Ecart.vLg,
           Align(
@@ -979,6 +1334,21 @@ class _PolitiquesCommercialesContenuState
         pol.publicationNonConfirmeeDetail,
         TonEtat.alerte,
       ),
+      _Publication.faite => (
+        pol.publicationFaite,
+        pol.publicationFaiteDetail,
+        TonEtat.succes,
+      ),
+      _Publication.refusee => (
+        pol.publicationRefusee,
+        pol.publicationRefuseeDetail,
+        TonEtat.alerte,
+      ),
+      _Publication.invalide => (
+        pol.publicationInvalide,
+        pol.publicationInvalideDetail,
+        TonEtat.alerte,
+      ),
     };
     if (contenu == null) return const <Widget>[];
     return <Widget>[
@@ -1042,6 +1412,7 @@ class _PolitiquesCommercialesContenuState
       libelle: c.libelle,
       consequence: c.consequence,
       suffixe: _suffixe(c),
+      decimal: c.centimes,
       controleur: saisie,
       erreur: _erreurDe(c),
       indice: c.facultatif ? t.admin.finance.pol.internetNonFixee : null,
@@ -1303,7 +1674,10 @@ class _PolitiquesCommercialesContenuState
       _Nature.seances => pol.uniteSeances,
       _Nature.classes => pol.uniteClasses,
       _Nature.jours => pol.uniteJours,
-      _Nature.pourcent => pol.unitePourcent,
+      _Nature.pourcent || _Nature.remisePourMille => pol.unitePourcent,
+      _Nature.minutes => pol.uniteMinutes,
+      _Nature.mois => pol.uniteMois,
+      _Nature.jourDuMois => pol.uniteJourDuMois,
     };
   }
 
@@ -1355,17 +1729,23 @@ bool _enColonne(BuildContext contexte, BoxConstraints contraintes) =>
 String _texteValeur(Object? valeur, _Nature nature) {
   final pol = t.admin.finance.pol;
   return switch (valeur) {
-    null when nature == _Nature.remise => pol.remiseAucuneValeur,
+    null when nature == _Nature.remise || nature == _Nature.remisePourMille =>
+      pol.remiseAucuneValeur,
     null => pol.internetNonFixee,
     final Montant m when nature == _Nature.montantHoraire => pol.parHeure(
       montant: formaterMontant(m),
     ),
     final Montant m => formaterMontant(m),
     final int n => switch (nature) {
-      _Nature.pourcent => pol.pourcentValeur(valeur: pourMilleEnTexte(n)),
+      _Nature.pourcent || _Nature.remisePourMille => pol.pourcentValeur(
+        valeur: pourMilleEnTexte(n),
+      ),
       _Nature.eleves => pol.eleves(n: n),
       _Nature.seances => pol.seances(n: n),
       _Nature.classes => pol.classes(n: n),
+      _Nature.minutes => LibellesGroupe.insecable(pol.minutes(n: n)),
+      _Nature.mois => LibellesGroupe.insecable(pol.mois(n: n)),
+      _Nature.jourDuMois => pol.jourDuMoisValeur(jour: jourDuMois(n)),
       _ => LibellesGroupe.insecable(pol.jours(n: n)),
     },
     _ => '$valeur',
@@ -1585,6 +1965,7 @@ class _ChampPolitique extends StatelessWidget {
     required this.consequence,
     required this.suffixe,
     required this.controleur,
+    this.decimal = false,
     required this.erreur,
     required this.comparaison,
     super.key,
@@ -1595,6 +1976,9 @@ class _ChampPolitique extends StatelessWidget {
   final String consequence;
   final String suffixe;
   final TextEditingController controleur;
+
+  /// Vrai pour un montant a centimes : clavier decimal, virgule ou point.
+  final bool decimal;
   final String? erreur;
   final Widget? comparaison;
 
@@ -1622,7 +2006,14 @@ class _ChampPolitique extends StatelessWidget {
           label: libelle,
           child: TextField(
             controller: controleur,
-            keyboardType: TextInputType.number,
+            keyboardType: decimal
+                ? const TextInputType.numberWithOptions(decimal: true)
+                : TextInputType.number,
+            inputFormatters: decimal
+                ? <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(caracteresSaisie),
+                  ]
+                : null,
             style: AppTypography.tabulaire(
               textes.bodyLarge ?? const TextStyle(),
             ),

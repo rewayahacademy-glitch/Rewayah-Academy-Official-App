@@ -416,6 +416,15 @@ enabled = false
 [functions.livekit-webhook]
 verify_jwt = false
 
+# FI-BR-06 : Stripe ne porte pas de jeton Supabase ; la signature
+# `Stripe-Signature` est verifiee dans la fonction (STRIPE_WEBHOOK_SECRET).
+[functions.stripe-webhook]
+verify_jwt = false
+
+# FI-BR-06 : seul le titulaire connecte ouvre la page de paiement.
+[functions.recharge-payer]
+verify_jwt = true
+
 [functions.bibliotheque-lecture]
 verify_jwt = true
 

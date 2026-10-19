@@ -8,6 +8,7 @@ import '../i18n/strings.g.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
+import 'choix_nombre.dart';
 import 'filter_pill.dart';
 import 'zone_saisie.dart';
 
@@ -320,8 +321,8 @@ class SelecteurEntier extends StatefulWidget {
   /// La valeur courante, retenue d'office.
   final int? valeurInitiale;
 
-  /// Appele a chaque changement : la valeur, ou nul quand la saisie libre est
-  /// vide ou n'est pas un entier.
+  /// Appele a chaque changement : la valeur retenue. « Autre » se choisit au
+  /// pas a pas, toujours dans les bornes (jamais au clavier, 17/10).
   final ValueChanged<int?> onChange;
 
   /// Le libelle du champ libre.
@@ -333,7 +334,7 @@ class SelecteurEntier extends StatefulWidget {
   /// La cle de la puce « Autre ».
   static const Key cleAutre = ValueKey<String>('selecteur-entier-autre');
 
-  /// La cle du champ libre.
+  /// La cle du choix pas a pas de « Autre ».
   static const Key cleChamp = ValueKey<String>('selecteur-entier-champ');
 
   /// La cle de la puce de la valeur [valeur].
@@ -356,8 +357,22 @@ class SelecteurEntier extends StatefulWidget {
 
 class _SelecteurEntierEtat extends State<SelecteurEntier> {
   int? _retenue;
-  late final TextEditingController _libre = TextEditingController();
-  final FocusNode _focus = FocusNode(debugLabel: 'entier');
+
+  /// La valeur de « Autre », choisie au pas a pas (decision du 17/10 :
+  /// jamais de saisie au clavier).
+  late int _libre = _departLibre();
+
+  /// « Autre » part de la valeur courante, sinon de la plus grande proposee,
+  /// toujours dans les bornes.
+  int _departLibre() {
+    final int depart =
+        widget.valeurInitiale ??
+        (widget.proposees.isEmpty ? widget.min : widget.proposees.last);
+    final int? max = widget.max;
+    if (depart < widget.min) return widget.min;
+    if (max != null && depart > max) return max;
+    return depart;
+  }
 
   @override
   void initState() {
@@ -369,25 +384,14 @@ class _SelecteurEntierEtat extends State<SelecteurEntier> {
         _retenue = i;
       } else if (!widget.toutPropose) {
         _retenue = widget.proposees.length;
-        _libre.text = '$v';
       }
     }
-  }
-
-  @override
-  void dispose() {
-    _libre.dispose();
-    _focus.dispose();
-    super.dispose();
   }
 
   void _choisir(int indice) {
     setState(() => _retenue = indice);
     if (indice == widget.proposees.length) {
-      widget.onChange(int.tryParse(_libre.text.trim()));
-      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
-        if (mounted) _focus.requestFocus();
-      });
+      widget.onChange(_libre);
     } else {
       widget.onChange(widget.proposees[indice]);
     }
@@ -417,24 +421,19 @@ class _SelecteurEntierEtat extends State<SelecteurEntier> {
         ),
         if (autre) ...<Widget>[
           Ecart.vMd,
-          TextField(
+          ChoixNombre(
             key: SelecteurEntier.cleChamp,
-            controller: _libre,
-            focusNode: _focus,
-            keyboardType: TextInputType.number,
-            onChanged: (String v) => widget.onChange(int.tryParse(v.trim())),
-            decoration: InputDecoration(
-              label: Text(widget.libelleChamp ?? t.choix.autreInvite),
-              // Le rappel des bornes, seulement quand il y a un plafond.
-              helperText: switch (widget.max) {
-                final int max => t.formulaire.entier.bornes(
-                  min: '${widget.min}',
-                  max: '$max',
-                ),
-                null => null,
-              },
-              helperMaxLines: 4,
-            ),
+            libelle: widget.libelleChamp ?? t.choix.autreInvite,
+            valeur: _libre,
+            min: widget.min,
+            max: widget.max,
+            affichage: widget.affichage,
+            libelleMoins: t.choix.diminuer,
+            libellePlus: t.choix.augmenter,
+            onChange: (int v) {
+              setState(() => _libre = v);
+              widget.onChange(v);
+            },
           ),
         ],
         if (erreur != null) ...<Widget>[

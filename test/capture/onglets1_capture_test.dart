@@ -52,9 +52,8 @@ Future<GoRouter> _monter(
                 localizationsDelegates: GlobalMaterialLocalizations.delegates,
                 routerConfig: routeur,
                 builder: (BuildContext contexte, Widget? child) => MediaQuery(
-                  data: MediaQuery.of(contexte).copyWith(
-                    textScaler: TextScaler.linear(echelle),
-                  ),
+                  data: MediaQuery.of(contexte)
+                      .copyWith(textScaler: TextScaler.linear(echelle)),
                   child: RepereDemonstration(child: child),
                 ),
               );
@@ -87,14 +86,11 @@ void main() {
             ThemeMode.light,
             ThemeMode.dark,
           ]) {
-            final String suffixe =
-                '${t.$1}_x${echelle.toInt()}_${mode.name}';
+            final String suffixe = '${t.$1}_x${echelle.toInt()}_${mode.name}';
             testWidgets('${d.$1} $suffixe', (WidgetTester tester) async {
               fixerVueCapture(tester, t.$2, 1);
               await _monter(tester, d.$2, mode, echelle);
-              debugPrint(
-                'PNG ${await capturer(tester, '${d.$1}_$suffixe')}',
-              );
+              debugPrint('PNG ${await capturer(tester, '${d.$1}_$suffixe')}');
             });
             if (t.$1 == '320') {
               testWidgets('${d.$1} menu ouvert $suffixe', (

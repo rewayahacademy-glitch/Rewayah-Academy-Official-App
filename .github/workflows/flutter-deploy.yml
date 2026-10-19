@@ -132,6 +132,24 @@ jobs:
             --dart-define=GALERIE=false \
             --dart-define=PLAYGROUND=false \
             --dart-define=AUTH_PAR_MOT_DE_PASSE=false
+                  # Site public (decision du directeur, 19/10/2026) : construit dans
+      # build/web a cote de l'application. Il lit les tarifs une seule fois,
+      # ici, par la fonction publique tarifs_publics() ; rien de la base
+      # n'arrive dans le navigateur. Base injoignable : repli sur la decision.
+      - name: Teste et construit le site public
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        shell: bash
+        run: |
+          (cd site-public && python3 -m unittest discover -s tests -p 'test_*.py')
+          python3 site-public/build_site.py --output build/web
+          for f in fr/index.html fr/tarifs.html fr/assets/site.css fr/assets/site.js \
+                   fr/assets/dm-sans-latin.woff2 fr/assets/dm-sans-latin-ext.woff2 \
+                   fr/assets/plus-jakarta-sans-latin.woff2 fr/assets/plus-jakarta-sans-latin-ext.woff2; do
+            [ -f "build/web/$f" ] || { echo "::error title=Site incomplet::$f absent de build/web"; exit 1; }
+          done
+          echo "Site public construit."
 
       # Le bundle doit porter les fichiers copies depuis `web/`. `sqlite3.wasm`
       # et `drift_worker.js` ont deja manque une fois : sans eux, la base locale

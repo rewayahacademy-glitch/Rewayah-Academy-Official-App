@@ -23,27 +23,46 @@ import 'core/admin/port_pilotage.dart';
 import 'core/admin/port_planning_direction.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
+import 'core/capacites/acces_supabase.dart';
+import 'core/capacites/avis_supabase.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
 import 'core/capacites/enseignants_classe_supabase.dart';
 import 'core/capacites/identite_titulaire_supabase.dart';
+import 'core/capacites/mes_donnees_supabase.dart';
 import 'core/capacites/mes_finances_supabase.dart';
 import 'core/capacites/paiements_foyer_supabase.dart';
+import 'core/capacites/paiements_saisis_supabase.dart';
+import 'core/capacites/partage_pedagogique_supabase.dart';
+import 'core/capacites/politiques_commerciales_supabase.dart';
+import 'core/capacites/port_acces_foyer.dart';
+import 'core/capacites/port_avis.dart';
 import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/port_enseignants_classe.dart';
 import 'core/capacites/port_identite_titulaire.dart';
+import 'core/capacites/port_mes_donnees.dart';
 import 'core/capacites/port_mes_finances.dart';
 import 'core/capacites/port_paiements_foyer.dart';
+import 'core/capacites/port_paiements_saisis.dart';
+import 'core/capacites/port_partage_pedagogique.dart'
+    show portPartagePedagogiqueProvider;
+import 'core/capacites/port_politiques_commerciales.dart';
 import 'core/capacites/port_profil_eleve_titulaire.dart';
 import 'core/capacites/port_progression_famille.dart';
+import 'core/capacites/port_recharge_foyer.dart';
 import 'core/capacites/port_revenus_enseignant.dart';
 import 'core/capacites/port_series_tresorerie.dart';
 import 'core/capacites/port_support.dart';
+import 'core/capacites/port_suppressions_admin.dart';
+import 'core/capacites/port_validations_finance.dart';
 import 'core/capacites/profil_eleve_titulaire_supabase.dart';
 import 'core/capacites/progression_famille_supabase.dart';
+import 'core/capacites/recharge_foyer_supabase.dart';
 import 'core/capacites/revenus_enseignant_supabase.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
 import 'core/capacites/series_tresorerie_supabase.dart';
 import 'core/capacites/support_supabase.dart';
+import 'core/capacites/suppressions_admin_supabase.dart';
+import 'core/capacites/validations_finance_supabase.dart';
 import 'core/communications/communications_supabase.dart';
 import 'core/communications/libelles_communication_slang.dart';
 import 'core/config/ecran_configuration_absente.dart';
@@ -55,12 +74,15 @@ import 'core/dossier/port_acces_pieces_kyc_supabase.dart';
 import 'core/enseignant/absence_remplacement.dart';
 import 'core/enseignant/port_remplacements.dart';
 import 'core/enseignant/remplacements_supabase.dart';
+import 'core/finance/page_paiement.dart';
 import 'core/foyer/port_reprises_admin.dart';
 import 'core/foyer/reprises_admin_supabase.dart';
 import 'core/i18n/langue_demarrage.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/identite/matricule_supabase.dart';
 import 'core/identite/port_matricule.dart';
+import 'core/import_inscriptions/import_inscriptions_supabase.dart';
+import 'core/import_inscriptions/port_import_inscriptions.dart';
 import 'core/observabilite/supervision.dart';
 import 'core/offres/demandes_suivi_supabase.dart';
 import 'core/offres/frise_demandes_supabase.dart';
@@ -79,6 +101,7 @@ import 'core/recrutement/port_invitations_enseignant.dart';
 import 'core/recrutement/port_signature_contrat.dart';
 import 'core/recrutement/port_statuts_signature.dart';
 import 'core/recrutement/port_statuts_signature_supabase.dart';
+import 'core/router/routes.dart';
 import 'core/session/port_capacite_eleve.dart';
 import 'core/session/port_capacite_eleve_supabase.dart';
 import 'core/session/session_controleur.dart';
@@ -138,6 +161,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portReprisesAdminProvider.overrideWithValue(
     ReprisesAdminSupabase(Supabase.instance.client),
+  ),
+  // IMM-ACCUEIL-FRONT : l'import des inscriptions actuelles (RPC de la
+  // direction ; le serveur reste la barriere).
+  portImportInscriptionsProvider.overrideWithValue(
+    ImportInscriptionsSupabase(Supabase.instance.client),
   ),
   portRegroupementsAdminProvider.overrideWithValue(
     RegroupementsC11bisSupabase(Supabase.instance.client),
@@ -235,6 +263,17 @@ List<Override> _surchargesAppReelle() => <Override>[
   portMatriculeProvider.overrideWithValue(
     MatriculeSupabase(Supabase.instance.client),
   ),
+  // Mes donnees : copie JSON et demande de suppression du compte
+  // (CPT-SUPPR-EXPORT, migration 20261018150000).
+  portMesDonneesProvider.overrideWithValue(
+    MesDonneesSupabase(Supabase.instance.client),
+  ),
+  // Les demandes de suppression de compte, cote direction (meme migration).
+  portSuppressionsAdminProvider.overrideWithValue(
+    SuppressionsAdminSupabase(Supabase.instance.client),
+  ),
+  // Les avis des familles : formulaire public et moderation de la direction.
+  portAvisProvider.overrideWithValue(AvisSupabase(Supabase.instance.client)),
   portSeriesTresorerieProvider.overrideWithValue(
     SeriesTresorerieSupabase(Supabase.instance.client),
   ),
@@ -250,6 +289,42 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portPaiementsFoyerProvider.overrideWithValue(
     PaiementsFoyerSupabase(Supabase.instance.client),
+  ),
+  // Acces des eleves (FAC-F-01, migration 20261018170000) : suspension pour
+  // paiement le jour fixe par la politique ; l'enfant n'en lit jamais la cause.
+  portAccesFoyerProvider.overrideWithValue(
+    AccesFoyerSupabase(Supabase.instance.client),
+  ),
+  portMonAccesProvider.overrideWithValue(
+    MonAccesSupabase(Supabase.instance.client),
+  ),
+  // Politique commerciale versionnee (FAC-A-01, migration 20261017170000) :
+  // lecture par la direction et la comptabilite, publication par la
+  // direction en double verification.
+  portPolitiquesCommercialesProvider.overrideWithValue(
+    PolitiquesCommercialesSupabase(Supabase.instance.client),
+  ),
+  // Saisie des paiements recus (FAC-C-01, migration 20261017172000) : la
+  // direction et la comptabilite, attribues a un eleve.
+  // Recharge des familles payee chez Stripe (FI-BR-06, migration
+  // 20261018100000, fonctions `recharge-payer` et `stripe-webhook`) : le
+  // chemin par defaut ; la saisie a la main reste un recours.
+  portRechargeFoyerProvider.overrideWithValue(
+    RechargeFoyerSupabase(
+      Supabase.instance.client,
+      adresseRetour: () => adresseApplication(
+        Routes.resultatRechargePour(RechargeFoyerSupabase.marqueCommande),
+      ),
+      ouvrirPage: ouvrirPagePaiement,
+    ),
+  ),
+  portPaiementsSaisisProvider.overrideWithValue(
+    PaiementsSaisisSupabase(Supabase.instance.client),
+  ),
+  // Validations de la direction (FAC-D-01, migration 20261018090000) : un
+  // paiement saisi par la comptabilite est credite apres validation.
+  portValidationsFinanceProvider.overrideWithValue(
+    ValidationsFinanceSupabase(Supabase.instance.client),
   ),
   portHistoriqueObservationsProvider.overrideWithValue(
     HistoriqueObservationsSupabase(() => Supabase.instance.client),
@@ -286,6 +361,13 @@ List<Override> _surchargesAppReelle() => <Override>[
   // titulaire, invitation du second adulte, capacite « eleve autonome ».
   portProgressionFamilleProvider.overrideWithValue(
     ProgressionFamilleSupabase(Supabase.instance.client),
+  ),
+  // Partage pedagogique (PED-APRES-BACK, migration 20261018190000) : la
+  // famille ne lit que ce que la direction a laisse partager pour sa classe ;
+  // la direction regle, publie et revoque. La demonstration reste derriere
+  // `PLAYGROUND` (`portPartagePedagogiqueSelon`), qui n'emploie pas cette liste.
+  portPartagePedagogiqueProvider.overrideWithValue(
+    PartagePedagogiqueSupabase(Supabase.instance.client),
   ),
   portProfilEleveTitulaireProvider.overrideWithValue(
     ProfilEleveTitulaireSupabase(Supabase.instance.client),

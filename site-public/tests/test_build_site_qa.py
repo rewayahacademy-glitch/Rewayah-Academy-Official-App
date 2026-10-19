@@ -114,9 +114,15 @@ class GeneratedSiteQA(unittest.TestCase):
             {
                 "site.css",
                 "symbole.svg",
+                "symbole-white.svg",
                 "symbole-contour.svg",
                 "logo-horizontal.svg",
+                "logo-horizontal-white.svg",
                 "logo-vertical.svg",
+                "hero-enfant-cours.png",
+                "enseignant-portrait.png",
+                "suivi-parent-tablette.png",
+                "site.js",
                 "dm-sans-latin-ext.woff2",
                 "dm-sans-latin.woff2",
                 "plus-jakarta-sans-latin-ext.woff2",
@@ -126,6 +132,14 @@ class GeneratedSiteQA(unittest.TestCase):
             },
         )
         self.assertFalse((self.output / "fr" / "assets" / "prototype.html").exists())
+
+    def test_approved_brand_placement_and_public_history(self) -> None:
+        home = self.page_file("/fr/").read_text(encoding="utf-8")
+        self.assertIn('site-header__brand" href="/fr/"', home)
+        self.assertIn('src="/fr/assets/symbole-white.svg"', home)
+        self.assertIn('src="/fr/assets/logo-horizontal-white.svg"', home)
+        self.assertIn('<p class="eyebrow">Rewayah Academy</p>', home)
+        self.assertNotIn('4 août 2025', "\n".join(path.read_text(encoding="utf-8") for path in self.output.rglob("*.html")))
 
     def test_bundle_gate_covers_every_local_font_requested_by_css(self) -> None:
         css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")

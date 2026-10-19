@@ -149,7 +149,10 @@ class VueGlobaleFinanceBloc extends ConsumerWidget {
         erreur is! CapaciteIndisponible &&
         (ref.watch(horsLigneProvider).value ?? false);
     if (echecHorsLigne) {
-      return EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire);
+      return EtatSysteme.sansDonnees(
+        quoi: t.sansDonnees.vueGlobale,
+        onAction: relire,
+      );
     }
     // Le choix du mois (maquette 09, en tete) : seulement quand la source
     // rend ses mois ; il reste en place pendant la lecture d'un autre mois.

@@ -21,7 +21,6 @@ library;
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
@@ -39,6 +38,7 @@ import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/choice_card_group.dart';
+import '../../core/widgets/choix_nombre.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -430,27 +430,20 @@ class _ReglesEtat extends ConsumerState<_Regles> {
                 ),
                 if (_autreRetenu(regles)) ...<Widget>[
                   Ecart.vSm,
-                  TextFormField(
+                  // Jamais au clavier (decision du 17/10) : la frequence
+                  // « Autre » se choisit au pas a pas, dans ses bornes.
+                  ChoixNombre(
                     key: ValueKey<String>(
                       'tirage-autre-$_version-$_ouvertureAutre',
                     ),
-                    initialValue: '${regles.missionsParSemaine}',
-                    keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[0-9\u0660-\u0669\u06F0-\u06F9]'),
-                      ),
-                    ],
-                    onChanged: (String texte) => _choisirFrequence(
-                      regles,
-                      ReponseChoix(
-                        valeurs: const <String>{ChoiceCardGroup.valeurAutre},
-                        saisieLibre: texte,
-                      ),
-                    ),
-                    decoration: InputDecoration(
-                      labelText: r.frequenceAutreChamp,
-                    ),
+                    libelle: r.frequenceAutreChamp,
+                    valeur: regles.missionsParSemaine,
+                    min: missionsMin,
+                    max: missionsMax,
+                    libelleMoins: t.choix.diminuer,
+                    libellePlus: t.choix.augmenter,
+                    onChange: (int n) =>
+                        _modifier(regles.avec(missionsParSemaine: n)),
                   ),
                 ],
                 if (_nombreInvalide) ...<Widget>[

@@ -49,6 +49,7 @@ import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_finance/politiques_commerciales.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
@@ -114,14 +115,17 @@ class _Port implements PortPolitiquesCommerciales {
 
   @override
   Future<PolitiqueCommerciale> active() => erreur == null
-      ? Future<PolitiqueCommerciale>.value(
-          DonneesFinanceDemo.politiqueLancement,
-        )
+      ? Future<PolitiqueCommerciale>.value(_v1Active)
       : Future<PolitiqueCommerciale>.error(erreur!);
 
+  /// Le nombre de lectures des versions (relecture apres publication).
+  int lectures = 0;
+
   @override
-  Future<List<PolitiqueCommerciale>> versions() async =>
-      versionsRendues ?? <PolitiqueCommerciale>[];
+  Future<List<PolitiqueCommerciale>> versions() async {
+    lectures++;
+    return versionsRendues ?? <PolitiqueCommerciale>[];
+  }
 
   @override
   Future<void> publier(PolitiqueCommerciale brouillon) {
@@ -131,20 +135,61 @@ class _Port implements PortPolitiquesCommerciales {
   }
 }
 
-/// La seule version active, sans brouillon.
-_Port _sansBrouillon() => _Port(
-  versionsRendues: <PolitiqueCommerciale>[
-    DonneesFinanceDemo.politiqueLancement,
+/// Une version de forme v1 (avant les tarifs du 18/10/2026) : remises en
+/// montant, base et plafond horaires, aucune paie par eleve present. L'ecran
+/// sait encore lire cette forme (versions anciennes de l'historique) ; ces
+/// deux versions sont des fixtures de test de cette forme, jamais des valeurs
+/// de la demonstration (`DonneesFinanceDemo.politiqueLancement`, v2).
+PolitiqueCommerciale _versionV1({
+  required String version,
+  required StatutPolitique statut,
+  required DateTime dateEffet,
+}) => PolitiqueCommerciale(
+  version: version,
+  statut: statut,
+  dateEffet: dateEffet,
+  tarifEnfant: DonneesFinanceDemo.usd(50),
+  tarifAdulte: DonneesFinanceDemo.usd(60),
+  essaisMax: 2,
+  essaiActif: true,
+  remisesParRang: <RemiseRang>[
+    RemiseRang(aPartirDuRang: 3, remise: DonneesFinanceDemo.usd(-5)),
+    RemiseRang(aPartirDuRang: 4, remise: DonneesFinanceDemo.usd(-7)),
   ],
+  baseHoraire: DonneesFinanceDemo.usd(4),
+  plafondHoraire: DonneesFinanceDemo.usd(7),
+  capaciteEnfant: 5,
+  capaciteAdulte: 6,
+  capaciteDebutant: 4,
+  minimumOuverture: 4,
+  classesObjectif: 3,
+  classesMax: 4,
+  joursConservationPlace: 7,
+  margeReferencePourMille: (objectif: 300, forte: 350, stretch: 400),
+  railsActifs: const <RailPaiement>{RailPaiement.webStripe},
 );
 
-/// Le brouillon de la demonstration et la version active.
-_Port _avecBrouillon() => _Port(
-  versionsRendues: <PolitiqueCommerciale>[
-    DonneesFinanceDemo.politiqueBrouillon,
-    DonneesFinanceDemo.politiqueLancement,
-  ],
+/// La version active de forme v1.
+final PolitiqueCommerciale _v1Active = _versionV1(
+  version: 'v1.0.0',
+  statut: StatutPolitique.publiee,
+  dateEffet: DateTime(2026, 10),
 );
+
+/// Le brouillon de forme v1.
+final PolitiqueCommerciale _v1Brouillon = _versionV1(
+  version: 'v1.1.0',
+  statut: StatutPolitique.brouillon,
+  dateEffet: DateTime(2027),
+);
+
+/// La seule version active, sans brouillon.
+_Port _sansBrouillon() =>
+    _Port(versionsRendues: <PolitiqueCommerciale>[_v1Active]);
+
+/// Le brouillon de la demonstration et la version active.
+_Port _avecBrouillon() =>
+    _Port(versionsRendues: <PolitiqueCommerciale>[_v1Brouillon, _v1Active]);
 
 Widget _hote({
   required List<Override> surcharges,
@@ -196,7 +241,7 @@ PolitiqueCommerciale _brouillon({
   List<int>? joursRelance,
   List<BudgetPilotage>? budgets,
 }) {
-  final PolitiqueCommerciale b = DonneesFinanceDemo.politiqueBrouillon;
+  final PolitiqueCommerciale b = _v1Brouillon;
   return PolitiqueCommerciale(
     version: b.version,
     statut: b.statut,
@@ -224,12 +269,8 @@ PolitiqueCommerciale _brouillon({
 }
 
 /// [brouillon] et la version active.
-_Port _avecCeBrouillon(PolitiqueCommerciale brouillon) => _Port(
-  versionsRendues: <PolitiqueCommerciale>[
-    brouillon,
-    DonneesFinanceDemo.politiqueLancement,
-  ],
-);
+_Port _avecCeBrouillon(PolitiqueCommerciale brouillon) =>
+    _Port(versionsRendues: <PolitiqueCommerciale>[brouillon, _v1Active]);
 
 List<Override> _avec(PortPolitiquesCommerciales port) => <Override>[
   portPolitiquesCommercialesProvider.overrideWithValue(port),
@@ -457,11 +498,7 @@ void main() {
       expect(_dansEntete(find.text(pol.statutBrouillon)), findsOneWidget);
       expect(_dansEntete(find.text(pol.statutPubliee)), findsOneWidget);
       expect(
-        find.text(
-          pol.versionBrouillon(
-            version: DonneesFinanceDemo.politiqueBrouillon.version,
-          ),
-        ),
+        find.text(pol.versionBrouillon(version: _v1Brouillon.version)),
         findsOneWidget,
       );
       expect(
@@ -840,11 +877,7 @@ void main() {
       expect(envoye.capaciteEnfant, 5);
       // La version active n'a pas change : l'en-tete la dit toujours.
       expect(
-        find.text(
-          pol.versionActive(
-            version: DonneesFinanceDemo.politiqueLancement.version,
-          ),
-        ),
+        find.text(pol.versionActive(version: _v1Active.version)),
         findsOneWidget,
       );
       verifierUnSeulBoutonPlein(tester);
@@ -852,8 +885,11 @@ void main() {
     });
 
     for (final (String nom, Object? rendu) in <(String, Object?)>[
-      ('une reponse sans erreur', null),
       ('une erreur reseau', const SocketException('coupure')),
+      (
+        'une erreur serveur inattendue',
+        const PostgrestException(message: 'x', code: '57014'),
+      ),
     ]) {
       testWidgets('$nom : « Publication non confirmee », jamais un succes ni '
           'le brouillon dit publie', (WidgetTester tester) async {
@@ -884,7 +920,7 @@ void main() {
           find.descendant(
             of: find.byKey(
               PolitiquesCommercialesContenu.historiqueLigneKey(
-                DonneesFinanceDemo.politiqueBrouillon.version,
+                _v1Brouillon.version,
               ),
             ),
             matching: find.text(pol.statutPubliee),
@@ -893,6 +929,65 @@ void main() {
         );
         expect(tester.takeException(), isNull);
       });
+    }
+
+    testWidgets('reponse du serveur : « Version publiee », versions relues, '
+        'le message survit a la relecture', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 2600));
+      final _Port port = _Port(
+        versionsRendues: _avecBrouillon().versionsRendues,
+        publication: null,
+      );
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      final int lecturesAvant = port.lectures;
+      await _publier(tester);
+
+      expect(port.publies, hasLength(1));
+      expect(port.lectures, greaterThan(lecturesAvant));
+      expect(
+        find.descendant(
+          of: find.byKey(PolitiquesCommercialesContenu.publicationKey),
+          matching: find.text(pol.publicationFaite),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(pol.publicationFaiteDetail), findsOneWidget);
+      expect(find.text(pol.publicationNonConfirmee), findsNothing);
+      verifierUnSeulBoutonPlein(tester);
+      expect(tester.takeException(), isNull);
+    });
+
+    for (final (String code, String titre, String detail)
+        in <(String, String, String)>[
+          ('42501', pol.publicationRefusee, pol.publicationRefuseeDetail),
+          ('22023', pol.publicationInvalide, pol.publicationInvalideDetail),
+        ]) {
+      testWidgets(
+        'refus $code du serveur : « $titre », rien n est dit publie',
+        (WidgetTester tester) async {
+          _taille(tester, const Size(1440, 2600));
+          final _Port port = _Port(
+            versionsRendues: _avecBrouillon().versionsRendues,
+            publication: PostgrestException(message: 'refus', code: code),
+          );
+          await tester.pumpWidget(_hote(surcharges: _avec(port)));
+          await tester.pumpAndSettle();
+          await _publier(tester);
+
+          expect(
+            find.descendant(
+              of: find.byKey(PolitiquesCommercialesContenu.publicationKey),
+              matching: find.text(titre),
+            ),
+            findsOneWidget,
+          );
+          expect(find.text(detail), findsOneWidget);
+          expect(find.text(pol.publicationFaite), findsNothing);
+          expect(_dansEntete(find.text(pol.statutBrouillon)), findsOneWidget);
+          expect(tester.takeException(), isNull);
+        },
+      );
     }
 
     testWidgets('demonstration : la publication reste indisponible', (
@@ -907,15 +1002,11 @@ void main() {
       await _publier(tester);
       expect(find.text(pol.publicationIndisponible), findsOneWidget);
       await expectLater(
-        const PolitiquesCommercialesDemo().publier(
-          DonneesFinanceDemo.politiqueBrouillon,
-        ),
+        const PolitiquesCommercialesDemo().publier(_v1Brouillon),
         throwsA(isA<CapaciteIndisponible>()),
       );
       await expectLater(
-        const PolitiquesCommercialesIndisponibles().publier(
-          DonneesFinanceDemo.politiqueBrouillon,
-        ),
+        const PolitiquesCommercialesIndisponibles().publier(_v1Brouillon),
         throwsA(isA<CapaciteIndisponible>()),
       );
     });
@@ -1004,8 +1095,7 @@ void main() {
 
   group('apercu : calcul du double de demonstration (lancement)', () {
     const PolitiquesCommercialesDemo demo = PolitiquesCommercialesDemo();
-    final PolitiqueCommerciale lancement =
-        DonneesFinanceDemo.politiqueLancement;
+    final PolitiqueCommerciale lancement = _v1Active;
 
     test('foyer : 3 profils = 145 USD, 5 profils = 231 USD', () async {
       final ApercuFamille trois = await demo.apercuFamille(lancement, 3);
@@ -1051,13 +1141,50 @@ void main() {
       // Le meme taux que les revenus de l'enseignant (une seule formule).
       expect(
         quatre.tauxHoraire,
-        DonneesFinanceDemo.tauxEffectif(siegesEligibles: 4, capacite: 5),
+        DonneesFinanceDemo.tauxEffectif(
+          siegesEligibles: 4,
+          capacite: 5,
+          politique: lancement,
+        ),
       );
       await expectLater(
         demo.apercuEnseignant(lancement, capacite: 0, eligibles: 0),
         throwsArgumentError,
       );
     });
+
+    test(
+      'politique de la demonstration (v2) : foyer par rang, en pour mille',
+      () async {
+        final PolitiqueCommerciale v2 = DonneesFinanceDemo.politiqueLancement;
+        final ApercuFamille trois = await demo.apercuFamille(v2, 3);
+        expect(
+          trois.enfants.map((MensualiteApercu m) => m.mensualite).toList(),
+          <Montant>[
+            for (int rang = 1; rang <= 3; rang++)
+              DonneesFinanceDemo.mensualiteRang(rang),
+          ],
+        );
+        expect(trois.enfants[0].remise, isNull);
+        expect(trois.enfants[1].remise, isNotNull);
+        expect(trois.enfants[2].remise!.mineur, lessThan(0));
+        expect(
+          trois.total.mineur,
+          trois.enfants.fold<int>(
+            0,
+            (int s, MensualiteApercu m) => s + m.mensualite.mineur,
+          ),
+        );
+        // Le taux d'une classe pleine atteint le plafond horaire de la version.
+        final ApercuEnseignant plein = await demo.apercuEnseignant(
+          v2,
+          capacite: v2.capaciteEnfant,
+          eligibles: v2.capaciteEnfant,
+        );
+        expect(plein.tauxHoraire, v2.plafondHoraire);
+        expect(plein.baseHoraire, v2.baseHoraire);
+      },
+    );
 
     test('incoherences refusees par le double : plafond sous la base, '
         'remise au-dessus du tarif (aucun montant negatif)', () {
@@ -1397,8 +1524,8 @@ void main() {
       await tester.pumpWidget(_hote(surcharges: _avec(_avecBrouillon())));
       await tester.pumpAndSettle();
 
-      final PolitiqueCommerciale b = DonneesFinanceDemo.politiqueBrouillon;
-      final PolitiqueCommerciale a = DonneesFinanceDemo.politiqueLancement;
+      final PolitiqueCommerciale b = _v1Brouillon;
+      final PolitiqueCommerciale a = _v1Active;
       final Finder ligneB = find.byKey(
         PolitiquesCommercialesContenu.historiqueLigneKey(b.version),
       );
@@ -1452,9 +1579,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         find.byKey(
-          PolitiquesCommercialesContenu.historiqueLigneKey(
-            DonneesFinanceDemo.politiqueLancement.version,
-          ),
+          PolitiquesCommercialesContenu.historiqueLigneKey(_v1Active.version),
         ),
         findsOneWidget,
       );
@@ -1818,8 +1943,7 @@ void main() {
         maintenant.month,
         maintenant.day + 1,
       );
-      final DateTime duBrouillon =
-          DonneesFinanceDemo.politiqueBrouillon.dateEffet;
+      final DateTime duBrouillon = _v1Brouillon.dateEffet;
       final DateTime ouverture = duBrouillon.isBefore(demain)
           ? demain
           : duBrouillon;
@@ -1887,7 +2011,7 @@ void main() {
     testWidgets('Q21.4 : une date d effet au-dela de la borne technique '
         'ouvre le calendrier sans assertion', (WidgetTester tester) async {
       _taille(tester, const Size(1440, 2600));
-      final PolitiqueCommerciale b = DonneesFinanceDemo.politiqueBrouillon;
+      final PolitiqueCommerciale b = _v1Brouillon;
       final DateTime lointaine = DateTime(DateTime.now().year + 9, 6, 15);
       final PolitiqueCommerciale loin = PolitiqueCommerciale(
         version: b.version,
@@ -1916,12 +2040,7 @@ void main() {
       await tester.pumpWidget(
         _hote(
           surcharges: _avec(
-            _Port(
-              versionsRendues: <PolitiqueCommerciale>[
-                loin,
-                DonneesFinanceDemo.politiqueLancement,
-              ],
-            ),
+            _Port(versionsRendues: <PolitiqueCommerciale>[loin, _v1Active]),
           ),
         ),
       );
@@ -2089,5 +2208,277 @@ void main() {
         });
       }
     }
+  });
+
+  group('tarifs du 18/10/2026 (FAC-E-01)', () {
+    // Le brouillon de la demonstration (v2) : remises en pour mille, paie par
+    // eleve present, prepaiement, bourse, parrainage, suspension. Toutes les
+    // valeurs attendues ci-dessous en sont lues.
+    final PolitiqueCommerciale v2 = DonneesFinanceDemo.politiqueBrouillon;
+    PolitiqueCommerciale brouillonV2() => v2;
+
+    /// Un pour mille a l'ecran : des pourcents entiers (80 -> « 8 »).
+    String pourcent(int? pourMille) => '${pourMille! ~/ 10}';
+
+    String? erreur(WidgetTester tester, String id) =>
+        tester.widget<TextField>(_champ(id)).decoration!.errorText;
+
+    testWidgets('les valeurs se preremplissent en pourcentage, la paie se '
+        'saisit au centime', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3600));
+      await tester.pumpWidget(
+        _hote(surcharges: _avec(_avecCeBrouillon(brouillonV2()))),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        _saisie(tester, 'remise-${v2.remisesParRang.first.aPartirDuRang}'),
+        pourcent(v2.remisesParRang.first.pourMille),
+      );
+      expect(
+        _saisie(tester, 'remise-${v2.remisesParRang.last.aPartirDuRang}'),
+        pourcent(v2.remisesParRang.last.pourMille),
+      );
+      expect(
+        _saisie(tester, 'prepaiementTrimestriel'),
+        pourcent(v2.prepaiementTrimestrielPourMille),
+      );
+      expect(
+        _saisie(tester, 'prepaiementAnnuel'),
+        pourcent(v2.prepaiementAnnuelPourMille),
+      );
+      expect(_saisie(tester, 'cumulMax'), pourcent(v2.cumulMaxPourMille));
+      expect(
+        _saisie(tester, 'parrainage'),
+        '${v2.parrainageCredit!.mineur ~/ 100}',
+      );
+      expect(_saisie(tester, 'bourse'), pourcent(v2.boursePourMille));
+      expect(
+        _saisie(tester, 'boursePlaces'),
+        pourcent(v2.boursePlacesPourMille),
+      );
+      expect(_saisie(tester, 'bourseDuree'), '${v2.bourseDureeMois}');
+      expect(_saisie(tester, 'suspension'), '${v2.jourSuspension}');
+      expect(_saisie(tester, 'dureeDueEnfant'), '${v2.dureeDueEnfantMinutes}');
+      expect(_saisie(tester, 'dureeDueAdulte'), '${v2.dureeDueAdulteMinutes}');
+      // La version active (v1) n'a pas de remise au 2e rang et une remise
+      // en montant au 3e : chacune est rappelee telle qu'elle est.
+      expect(
+        tester.widget<Text>(_comparaison('remise-2')).data,
+        pol.versionActiveValeur(valeur: pol.remiseAucuneValeur),
+      );
+      expect(
+        tester.widget<Text>(_comparaison('remise-3')).data,
+        pol.versionActiveValeur(
+          valeur: formaterMontant(_v1Active.remiseRangPour(3)!.remise!),
+        ),
+      );
+      // La paie se prerempli en dollars avec centimes, virgule francaise.
+      expect(_saisie(tester, 'tauxEleveEnfant'), '0,95');
+      expect(_saisie(tester, 'tauxEleveAdulte'), '1');
+      expect(_saisie(tester, 'plafondEleveEnfant'), '1,30');
+      expect(_saisie(tester, 'plafondEleveAdulte'), '1,50');
+      expect(
+        tester.widget<TextField>(_champ('tauxEleveEnfant')).keyboardType,
+        const TextInputType.numberWithOptions(decimal: true),
+      );
+      expect(
+        find.byKey(PolitiquesCommercialesContenu.champKey('baseHoraire')),
+        findsNothing,
+      );
+      expect(find.text(pol.occupation), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('la demonstration complete (active et brouillon v2) se lit : '
+        'tarifs et paie de la politique', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3600));
+      await tester.pumpWidget(
+        _hote(surcharges: _avec(const PolitiquesCommercialesDemo())),
+      );
+      await tester.pumpAndSettle();
+      expect(_saisie(tester, 'tarifEnfant'), '${v2.tarifEnfant.mineur ~/ 100}');
+      expect(_saisie(tester, 'tarifAdulte'), '${v2.tarifAdulte.mineur ~/ 100}');
+      // La paie de la demonstration se lit dans un champ modifiable.
+      expect(_saisie(tester, 'tauxEleveEnfant'), '0,95');
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('plus de 100 % est refuse, une saisie valide part au serveur '
+        'en pour mille avec la paie', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3600));
+      final _Port port = _avecCeBrouillon(brouillonV2());
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      await tester.enterText(_champ('remise-2'), '120');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'remise-2'), pol.erreurPourcentMax);
+      await tester.enterText(_champ('suspension'), '30');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'suspension'), pol.erreurSuspension);
+      // Une valeur voisine de celle du brouillon.
+      final int remiseSaisie = v2.remisesParRang.first.pourMille! ~/ 10 + 1;
+      final int jourSaisi = v2.jourSuspension! + 1;
+      final int bourseSaisie = v2.boursePourMille! ~/ 10 - 5;
+      await tester.enterText(_champ('remise-2'), '$remiseSaisie');
+      await tester.enterText(_champ('suspension'), '$jourSaisi');
+      await tester.enterText(_champ('bourse'), '$bourseSaisie');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'remise-2'), isNull);
+      await _publier(tester);
+      final PolitiqueCommerciale envoye = port.publies.single;
+      expect(envoye.remisesParRang.first.pourMille, remiseSaisie * 10);
+      expect(envoye.remisesParRang.first.remise, isNull);
+      expect(
+        envoye.remisesParRang.last.pourMille,
+        v2.remisesParRang.last.pourMille,
+      );
+      expect(envoye.boursePourMille, bourseSaisie * 10);
+      expect(envoye.jourSuspension, jourSaisi);
+      expect(envoye.tauxEleveHeureEnfant, v2.tauxEleveHeureEnfant);
+      expect(envoye.plafondEleveHeureAdulte, v2.plafondEleveHeureAdulte);
+      expect(envoye.prepaiementAnnuelPourMille, v2.prepaiementAnnuelPourMille);
+      expect(envoye.parrainageCredit, v2.parrainageCredit);
+      expect(envoye.cumulMaxPourMille, v2.cumulMaxPourMille);
+    });
+
+    testWidgets('1,05 ou 1.05 est publie en 105 cents, le reste de la '
+        'paie est inchange', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3600));
+      final _Port port = _avecCeBrouillon(brouillonV2());
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      await tester.enterText(_champ('tauxEleveEnfant'), '1,05');
+      await tester.enterText(_champ('tauxEleveAdulte'), '1.10');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'tauxEleveEnfant'), isNull);
+      expect(erreur(tester, 'tauxEleveAdulte'), isNull);
+      await _publier(tester);
+      final PolitiqueCommerciale envoye = port.publies.single;
+      expect(envoye.tauxEleveHeureEnfant, const Montant(105, 'USD'));
+      expect(envoye.tauxEleveHeureAdulte, const Montant(110, 'USD'));
+      expect(envoye.plafondEleveHeureEnfant, const Montant(130, 'USD'));
+      expect(envoye.plafondEleveHeureAdulte, const Montant(150, 'USD'));
+    });
+
+    testWidgets('un plafond sous le taux est refuse et rien ne part', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 3600));
+      final _Port port = _avecCeBrouillon(brouillonV2());
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      await tester.enterText(_champ('plafondEleveEnfant'), '0,90');
+      await tester.pumpAndSettle();
+      expect(
+        erreur(tester, 'plafondEleveEnfant'),
+        pol.erreurPlafondEleve(
+          taux: pol.parHeure(
+            montant: formaterMontant(const Montant(95, 'USD')),
+          ),
+        ),
+      );
+      // Egal au taux : accepte.
+      await tester.enterText(_champ('plafondEleveEnfant'), '0,95');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'plafondEleveEnfant'), isNull);
+      // Monter le taux adulte au-dessus du plafond adulte est aussi refuse.
+      await tester.enterText(_champ('tauxEleveAdulte'), '1,60');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'plafondEleveAdulte'), isNotNull);
+      await tester.enterText(_champ('plafondEleveEnfant'), '0,90');
+      await tester.pumpAndSettle();
+      await _publier(tester);
+      expect(port.publies, isEmpty);
+    });
+
+    testWidgets('taux enfant au-dessus du taux adulte : avertissement non '
+        'bloquant, en direct, publication possible', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 3600));
+      final _Port port = _avecCeBrouillon(brouillonV2());
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      final Finder titre = find.text(pol.tauxEnfantAuDessusTitre);
+      final Finder section = find.byKey(
+        PolitiquesCommercialesContenu.tauxAvertissementKey,
+      );
+      final Finder resume = find.byKey(
+        PolitiquesCommercialesContenu.tauxAvertissementPublicationKey,
+      );
+      // 0,95 enfant, 1,00 adulte : rien.
+      expect(titre, findsNothing);
+      // Enfant au-dessus : l'avertissement apparait sous la paie et avant
+      // la publication, sans erreur de champ.
+      await tester.enterText(_champ('tauxEleveEnfant'), '1,10');
+      await tester.pumpAndSettle();
+      expect(section, findsOneWidget);
+      expect(resume, findsOneWidget);
+      expect(titre, findsNWidgets(2));
+      expect(erreur(tester, 'tauxEleveEnfant'), isNull);
+      // Egal : rien.
+      await tester.enterText(_champ('tauxEleveEnfant'), '1');
+      await tester.pumpAndSettle();
+      expect(titre, findsNothing);
+      // De nouveau au-dessus, puis la publication reste possible.
+      await tester.enterText(_champ('tauxEleveEnfant'), '1,05');
+      await tester.pumpAndSettle();
+      expect(titre, findsNWidgets(2));
+      await _publier(tester);
+      expect(
+        port.publies.single.tauxEleveHeureEnfant,
+        const Montant(105, 'USD'),
+      );
+      // Repasser sous le taux adulte retire l'avertissement.
+      await tester.enterText(_champ('tauxEleveEnfant'), '0,95');
+      await tester.pumpAndSettle();
+      expect(titre, findsNothing);
+    });
+
+    testWidgets('trois decimales, zero, vide et texte sont refuses', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 3600));
+      await tester.pumpWidget(
+        _hote(surcharges: _avec(_avecCeBrouillon(brouillonV2()))),
+      );
+      await tester.pumpAndSettle();
+      for (final String saisie in <String>[
+        '0,955',
+        '0.951',
+        '0',
+        '0,00',
+        '',
+        'abc',
+      ]) {
+        await tester.enterText(_champ('tauxEleveEnfant'), saisie);
+        await tester.pumpAndSettle();
+        expect(
+          erreur(tester, 'tauxEleveEnfant'),
+          pol.erreurMontantCentimes,
+          reason: 'saisie « $saisie »',
+        );
+      }
+      await tester.enterText(_champ('tauxEleveEnfant'), '0,95');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'tauxEleveEnfant'), isNull);
+    });
+
+    testWidgets('320 px, texte x2 : rien ne deborde', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(320, 9000));
+      await tester.pumpWidget(
+        _hote(surcharges: _avec(_avecCeBrouillon(brouillonV2())), echelle: 2),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      verifierUnSeulBoutonPlein(tester);
+      // Une erreur de centimes (message long) ne deborde pas non plus.
+      await tester.enterText(_champ('tauxEleveEnfant'), '0,955');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'tauxEleveEnfant'), pol.erreurMontantCentimes);
+      expect(tester.takeException(), isNull);
+    });
   });
 }

@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/capacites/port_aujourdhui_comptable.dart';
+import 'package:rewayah_academy/core/capacites/port_paiements_saisis.dart';
 import 'package:rewayah_academy/core/comptable/navigation_comptable.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -21,6 +22,7 @@ import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/sous_navigation_domaine.dart';
 import 'package:rewayah_academy/features/admin_finance/finance_page.dart';
+import 'package:rewayah_academy/features/admin_finance/paiements/paiements_page.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation_page.dart';
 import 'package:rewayah_academy/features/comptable/aujourdhui/aujourdhui_page.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/beneficiaires_page.dart';
@@ -33,6 +35,7 @@ import 'package:rewayah_academy/features/comptable/encaissements/encaissements_p
 import 'package:rewayah_academy/features/comptable/encaissements/rapprochement_page.dart';
 import 'package:rewayah_academy/features/comptable/paiements/detail_paiement_page.dart';
 import 'package:rewayah_academy/features/comptable/paiements/paiements_page.dart';
+import 'package:rewayah_academy/features/comptable/paiements_familles/paiements_familles_page.dart';
 import 'package:rewayah_academy/features/comptable/tresorerie/tresorerie_page.dart';
 import 'package:rewayah_academy/features/demo/comptable/aujourdhui_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
@@ -342,6 +345,64 @@ void main() {
       expect(find.byType(PaiementsAEffectuerPage), findsNothing);
     });
 
+    testWidgets('passation point 3 : Aujourd hui mene aux Paiements des '
+        'familles, dans la coquille du Comptable', (WidgetTester tester) async {
+      final GoRouter routeur = await _comptable(
+        tester,
+        Routes.comptable,
+        taille: const Size(1440, 3000),
+        surcharges: <Override>[
+          ...surchargesDemoAujourdhui(),
+          portPaiementsSaisisProvider.overrideWithValue(
+            const PaiementsSaisisIndisponibles(),
+          ),
+        ],
+      );
+      final Finder acces = find.byKey(
+        const ValueKey<String>('acces-paiements-familles'),
+      );
+      await tester.ensureVisible(acces);
+      await tester.pumpAndSettle();
+      await tester.tap(acces);
+      await tester.pumpAndSettle();
+      expect(_chemin(routeur), Routes.comptablePaiementsFamilles);
+      expect(find.byType(PaiementsFamillesPage), findsOneWidget);
+      expect(find.byType(PaiementsBloc), findsOneWidget);
+    });
+
+    testWidgets(
+      'sur telephone, la Tresorerie mene aux Paiements des familles',
+      (WidgetTester tester) async {
+        final GoRouter routeur = await _comptable(
+          tester,
+          Routes.comptableTresorerie,
+          surcharges: <Override>[
+            portPaiementsSaisisProvider.overrideWithValue(
+              const PaiementsSaisisIndisponibles(),
+            ),
+          ],
+        );
+        final Finder lien = find.byKey(TresoreriePage.clePaiementsFamilles);
+        await tester.ensureVisible(lien);
+        await tester.pumpAndSettle();
+        await tester.tap(lien);
+        await tester.pumpAndSettle();
+        expect(_chemin(routeur), Routes.comptablePaiementsFamilles);
+        expect(find.byType(PaiementsFamillesPage), findsOneWidget);
+      },
+    );
+
+    testWidgets('un admin n ouvre pas les Paiements des familles du Comptable '
+        '(il a son onglet Paiements)', (WidgetTester tester) async {
+      final GoRouter routeur = await monterRouteur(
+        tester,
+        Routes.comptablePaiementsFamilles,
+        source: FausseSourceSession(sessionActive(AppRole.admin)),
+      );
+      expect(_chemin(routeur), Routes.admin);
+      expect(find.byType(PaiementsFamillesPage), findsNothing);
+    });
+
     testWidgets('a 1440, la barre laterale depliee porte les quatre '
         'destinations', (WidgetTester tester) async {
       await _comptable(tester, Routes.comptable, taille: const Size(1440, 900));
@@ -364,10 +425,12 @@ void main() {
       expect(find.byType(AdminShell), findsOneWidget);
       expect(find.byType(FinancePage), findsOneWidget);
       expect(find.byType(ReserveDelegationPage), findsOneWidget);
-      // Troisieme onglet ; « A valider » (CPT-VAL-1) vient en quatrieme.
-      expect(ongletsFinance(), hasLength(4));
+      // Troisieme onglet ; « A valider » (CPT-VAL-1) vient en quatrieme,
+      // « Paiements » (FAC-C-01) en cinquieme.
+      expect(ongletsFinance(), hasLength(5));
       expect(ongletsFinance()[2].chemin, Routes.adminFinanceReserveDelegation);
-      expect(ongletsFinance().last.chemin, Routes.adminFinanceAValider);
+      expect(ongletsFinance()[3].chemin, Routes.adminFinanceAValider);
+      expect(ongletsFinance().last.chemin, Routes.adminFinancePaiements);
       expect(find.text(t.admin.finance.reserveDelegation), findsWidgets);
     });
 

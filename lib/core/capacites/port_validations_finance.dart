@@ -13,8 +13,9 @@
 // lit jamais un role et ne compare jamais deux noms : il rend la capacite.
 // Aucune decision n'est annoncee avant la reponse de la source.
 //
-// RPC attendues au branchement (BR-1, `docs/current/CPT-VAL-1.md` ; rien
-// n'est branche, aucun fichier `supabase/` touche) :
+// RPC servies depuis FAC-D-01 (migration 20261018090000,
+// `validations_finance_supabase.dart`), pour la nature `paiementRecu` ; les
+// autres natures attendent leur propre lot :
 // - `finance_validations_lister(etat?, nature?, objet_id?)` : les demandes
 //   visibles par l'appelant (la direction : toutes ; le Comptable : les
 //   siennes), chacune avec `actions_permises` / `raison_blocage` calcules
@@ -50,6 +51,10 @@ enum NatureDemandeValidation {
 
   /// Un mouvement sortant d'un coffre protege (§10.3).
   sortieCoffreProtege,
+
+  /// Un paiement recu hors application, saisi par la comptabilite : il est
+  /// credite a l'eleve apres la validation de la direction (FAC-D-01).
+  paiementRecu,
 }
 
 /// Une demande de validation.
@@ -203,7 +208,7 @@ abstract interface class PortValidationsFinance {
   Future<List<EntreeJournal>> journal(String demandeId);
 }
 
-/// **Aucune source serveur a ce jour** (CPT-BR-09).
+/// Aucune source : l'ecran dit « Pas encore disponible » (CPT-BR-09).
 class ValidationsFinanceIndisponibles implements PortValidationsFinance {
   /// Cree l'implementation.
   const ValidationsFinanceIndisponibles();

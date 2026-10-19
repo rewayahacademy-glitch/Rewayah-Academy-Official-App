@@ -1,4 +1,6 @@
-__pycache__/
-*.pyc
 tests/.qa-build/
-styles/previews/
+tests/.audit-chrome/
+**/__pycache__/
+tests/.qa-tarifs/
+tests/.qa-base/
+tests/.qa-avis/

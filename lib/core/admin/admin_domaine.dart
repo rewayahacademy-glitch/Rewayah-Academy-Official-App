@@ -210,6 +210,8 @@ ongletsFinance() => <({String libelle, String chemin})>[
   ),
   // CPT-VAL-1 (decision Q-8 = (a) du 05/10) : les demandes du Comptable.
   (libelle: t.admin.finance.aValider, chemin: Routes.adminFinanceAValider),
+  // FAC-C-01 (passation du 17/10, point 3) : les paiements recus.
+  (libelle: t.admin.finance.paiements, chemin: Routes.adminFinancePaiements),
 ];
 
 /// Les fonctions livrees du domaine Configuration, dans l'ordre du contrat
@@ -240,6 +242,11 @@ List<({String libelle, String chemin})> ongletsConfiguration({
       libelle: t.admin.politiqueRevueKyc.titre,
       chemin: Routes.adminConfigurationPolitiqueRevueKyc,
     ),
+  // PE : toujours le dernier onglet (apres la politique KYC quand elle existe).
+  (
+    libelle: t.admin.protectionEnfants.titre,
+    chemin: Routes.adminConfigurationProtectionEnfants,
+  ),
 ];
 
 /// Les deux fonctions pairs du domaine Operations (AD-X) : l'Espace de
@@ -272,6 +279,16 @@ List<({String libelle, String chemin})> ongletsPersonnes() =>
       (
         libelle: t.reprisesAdmin.onglet,
         chemin: Routes.adminPersonnesReprises,
+      ),
+      // IMM-ACCUEIL-FRONT : l'import des inscriptions actuelles.
+      (
+        libelle: t.admin.importInscriptions.onglet,
+        chemin: Routes.adminPersonnesImport,
+      ),
+      // CPT-SUPPR-EXPORT : les demandes de suppression de compte.
+      (
+        libelle: t.admin.suppressions.onglet,
+        chemin: Routes.adminPersonnesSuppressions,
       ),
     ];
 

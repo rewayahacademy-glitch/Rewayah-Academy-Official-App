@@ -18,6 +18,10 @@ import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
+import '../../core/tc_classe/controleur_recitation.dart';
+import '../../core/tc_classe/roster_classe_vm.dart';
+import '../../core/tc_classe/roster_enseignant.dart';
+import '../../core/tc_classe/teacher_student_projection.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -53,8 +57,10 @@ import '../salle_seance/presentation_observee.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/vue_seance.dart';
 import '../salle_seance/zone_support.dart';
+import '../tc_espace_groupe/roster_classe.dart';
 import '../tc_mes_groupes/chemins_tc_a.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
+import 'fiche_seance.dart';
 import 'preparation_eleve.dart';
 import 'preparation_enseignant.dart';
 import 'vue_salle.dart';
@@ -471,6 +477,44 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   Future<void> _basculerCamera(bool ouverte) =>
       _moteur.reglerCamera(actif: !ouverte);
 
+  /// Point 7 de la passation du 17/10 (spec section 10) : les eleves de la
+  /// seance, pour l'enseignant, en feuille ; toucher un eleve ouvre sa fiche
+  /// pedagogique. La feuille du roster se referme avant d'ouvrir la fiche :
+  /// deux feuilles empilees sur un telephone ne laisseraient rien voir du
+  /// cours.
+  Future<void> _voirEleves() => AppBottomSheet.ouvrir<void>(
+    context,
+    titre: t.tc.classe.roster.titre,
+    constructeur: (BuildContext feuille) => Consumer(
+      builder: (BuildContext _, WidgetRef ref, Widget? _) => PanneauRoster(
+        roster: _roster(ref),
+        onOuvrirFiche: (String academyId) {
+          Navigator.of(feuille).pop();
+          unawaited(_voirFiche(academyId));
+        },
+      ),
+    ),
+  );
+
+  Future<void> _voirFiche(String academyId) {
+    final TeacherStudentProjection? eleve = _roster(ref)
+        .parAcademyId(academyId);
+    if (eleve == null) {
+      return Future<void>.value();
+    }
+    return AppBottomSheet.ouvrir<void>(
+      context,
+      titre: eleve.firstName,
+      constructeur: (BuildContext _) =>
+          FicheSeance(eleve: eleve, sessionId: widget.seanceId),
+    );
+  }
+
+  /// Le roster pedagogique de la seance, avec la file de recitation.
+  RosterClasseVM _roster(WidgetRef ref) => ref
+      .watch(rosterClasseProvider(widget.seanceId))
+      .avecFile(ref.watch(recitationProvider));
+
   /// Ouvre la presence en feuille, pour qui n'a pas la place de la garder
   /// ouverte a cote de la scene.
   Future<void> _voirPresence(List<_Presence> lignes) => AppBottomSheet.ouvrir(
@@ -707,6 +751,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             vue.voitLesParticipants && !_colonneDePresence(context, vue)
             ? () => unawaited(_voirPresence(lignes))
             : null,
+        // La fiche de seance n'est qu'a l'enseignant, et seulement quand le
+        // roster pedagogique se lit (jamais un compteur invente).
+        eleves: vue.role == RoleSalle.enseignant && !enImpasse
+            ? _roster(ref)
+            : null,
+        onVoirEleves: () => unawaited(_voirEleves()),
       ),
       // Le bandeau disparait dans la seule situation ou il serait faux : une
       // impasse n'est pas une salle, rien n'y est enregistre. Partout ailleurs
@@ -771,6 +821,8 @@ class _Entete extends StatelessWidget {
     this.monTuteurObserve = false,
     this.annonces = const <AnnonceObservation>[],
     this.onVoirPresence,
+    this.eleves,
+    this.onVoirEleves,
   });
 
   final VueSalle vue;
@@ -788,6 +840,29 @@ class _Entete extends StatelessWidget {
 
   /// Ouvre la liste de presence, quand elle ne tient pas en colonne.
   final VoidCallback? onVoirPresence;
+
+  /// Le roster pedagogique, pour l'enseignant seulement ; `null` ailleurs.
+  final RosterClasseVM? eleves;
+
+  /// Ouvre la feuille des eleves.
+  final VoidCallback? onVoirEleves;
+
+  /// Le bouton « 3/4 » des eleves, s'il a lieu d'etre.
+  Widget? _boutonEleves(BuildContext context) {
+    final RosterClasseVM? roster = eleves;
+    final VoidCallback? ouvrir = onVoirEleves;
+    if (roster == null || ouvrir == null || !roster.disponible) {
+      return null;
+    }
+    return BoutonRoster(
+      key: const ValueKey<String>('salle-eleves'),
+      compteur: roster.compteurCompact,
+      presents: roster.presents,
+      attendus: roster.attendus,
+      onOuvrir: ouvrir,
+      encre: AppPalette.of(context).surfaceInverse.applyTo,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -842,6 +917,7 @@ class _Entete extends StatelessWidget {
                   fleche: false,
                   encre: AppPalette.of(context).surfaceInverse.applyTo,
                 ),
+              ?_boutonEleves(context),
             ],
           ),
           if (monTuteurObserve) ...<Widget>[
@@ -895,6 +971,10 @@ class _Entete extends StatelessWidget {
                 fleche: false,
                 encre: AppPalette.of(context).surfaceInverse.applyTo,
               ),
+            ],
+            if (_boutonEleves(context) case final Widget bouton) ...<Widget>[
+              if (onVoirPresence == null) const Spacer() else Ecart.hMd,
+              bouton,
             ],
           ],
         ),

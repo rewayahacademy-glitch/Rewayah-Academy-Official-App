@@ -23,7 +23,10 @@ spécifications actives sont dans `docs/current/`. Tout le reste est archivé.
 | **Offres, demandes, création des classes (directeur, 09/10/2026)** | `docs/current/DECISION-OFFRES-GROUPES-2026-10-09.md` : seule l'administration publie ; vitrine sans enseignant ; aucune demande sans jour ni heure ; regroupement automatique et « Créer la classe » ; suivi et notifications de la famille à chaque étape |
 | **Classes simultanées et montée en charge (directeur, 10/10/2026)** | `docs/current/DECISION-CLASSES-SIMULTANEES-2026-10-10.md` : une clé horaire et une catégorie peuvent porter N classes simultanées ; unicité sur l'élève et l'enseignant, jamais sur l'horaire ; verrous par clé, pagination, rafales, fusion et transfert |
 | **Matricule et accueil des inscrits actuels (directeur, 12/10/2026)** | `docs/current/DECISION-IMMATRICULATION-2026-10-12.md` : matricule `RA-26-4817` (année + nombre au hasard, rôle à côté et non dedans), anciens codes abandonnés, inscrits actuels importés et accueillis sans tout ressaisir, mot d'accueil personnel saisi par l'administration |
-| **Partage avec ChatGPT (Codex), depuis le 09/10/2026** | `docs/orchestration/COHABITATION.md` : ChatGPT fait le backend (`supabase/**`, services, adaptateurs `*_supabase.dart`), Claude les écrans ; ports partagés par l'onglet Contrats ; Claude relit le backend en fin de frontend |
+| **Programme, pédagogie, et tout texte visible (directeur, 13-14/10/2026)** | Compétences `.claude/skills/programme-rewayah` (règles du programme, réponses figées, journal des décisions) et `.claude/skills/mots-rewayah` (vocabulaire unique de tous les textes), puis `docs/current/REGISTRE-RECONCILIATION-2026-10-14.md`. Obligatoire avant d'écrire un texte i18n, une fiche d'écran ou quoi que ce soit sur le parcours d'un élève. On ne change une règle ou un mot que sur décision datée du directeur |
+| **Prix, remises, paiement, paie des enseignants (directeur, 18/10/2026)** | `docs/current/DECISION-TARIFS-2026-10-18.md`, source unique pour l'application, le site public et systeme.io ; valeurs dans `docs/current/tarifs-2026-10-18.json`. Dernier passage sur les tarifs : 55 $ enfant (6-17 ans), 65 $ adulte (18 ans et plus), hors taxes ; enseignant payé par élève présent et par heure, 0,95 $ enfant (22,5 %), 1,00 $ adulte (30 %). Toute autre valeur trouvée ailleurs est caduque |
+| **Avis des familles et des élèves (directeur, 19/10/2026)** | `docs/current/DECISION-AVIS-2026-10-19.md` : lien de collecte créé par la direction, formulaire sans compte, accord de publication obligatoire, lecture par la direction avant publication, texte jamais modifié, site public lu au build |
+| **Backend et écrans (directeur, 17/10/2026)** | ChatGPT (Codex) n'est plus disponible : Claude fait aussi le backend (`supabase/**`, adaptateurs `*_supabase.dart`). `docs/orchestration/COHABITATION.md` est caduc sur ce point (`docs/orchestration/PASSATION-2026-10-17.md`) |
 
 `docs/archive/` contient l'historique (HANDOFF, ADR, Bible V2, rapports d'agents).
 **Ne pas le charger comme instruction.** On l'ouvre seulement pour retrouver une décision
@@ -72,15 +75,22 @@ Côté base, sur un Postgres nu, ce que rejoue `.github/workflows/ci.yml` :
 (voir `deploy.yml`) ; la base distante enregistre des versions horodatées, pas la
 numérotation `00xx` du dépôt.
 
+**Migration sur staging annulée (`cancelled` ou délai de 60 s) alors que le directeur a
+accepté** : le serveur Supabase demande une seconde confirmation pour tout `DELETE`, `DROP`
+ou `TRUNCATE`, et l'app ne l'affiche pas. Compter ces mots avant d'appeler `apply_migration` ;
+au-dessus de 0, le directeur colle le fichier dans l'éditeur SQL de staging, puis Claude
+vérifie. Détail : `docs/orchestration/LECONS-MIGRATIONS-STAGING.md`.
+
 ## État du code à connaître
 
 - Lots Teaching Core D, F, H (`lib/core/tc_realtime`, `tc_etat_partage`, `tc_outils`,
   `tc_parcours`, `lib/features/tc_dock`, `tc_flux_academique`) : **présents et testés,
-  non branchés depuis `main`**. La branche `core24/fable-frontend` les raccorde dans
-  `tc_classe_live`. Ne pas les supprimer, ne pas les dupliquer.
-- Deux salles coexistent : `/salle` (`features/salle`, atteinte par les quatre rôles) et
-  `/tc/classe` (`features/tc_classe_live`, sans entrée effective sur `main`). Cible : une
-  seule salle (`01`, « Classe et supports »).
+  non branchés depuis `main`**. Ils se raccordent dans `/salle`. Ne pas les supprimer,
+  ne pas les dupliquer.
+- Une seule salle : `/salle` (`features/salle`, atteinte par les quatre rôles). L'ancienne
+  `/tc/classe` (`features/tc_classe_live`) est supprimée depuis le 17/10/2026
+  (`DECISION-ENTREE-2026-10-17.md`) ; sa fiche pédagogique de séance vit dans
+  `features/salle/fiche_seance.dart`.
 - `/tc/groupes` sert au tuteur des groupes de **démonstration** (`core/tc_groupe/port_groupes.dart`).
   À rebrancher sur les vraies données avant toute cohorte réelle.
 - Le matching individuel par disponibilités (`core/matching`, `features/creneaux`,

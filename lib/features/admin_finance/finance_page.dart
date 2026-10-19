@@ -4,11 +4,12 @@ import '../../core/admin/admin_domaine.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import 'a_valider/a_valider_page.dart';
+import 'paiements/paiements_page.dart';
 import 'politiques_commerciales.dart';
 import 'reserve_delegation_page.dart';
 import 'vue_globale_finance.dart';
 
-/// Les trois onglets du domaine Finance, dans l'ordre de `ongletsFinance()`.
+/// Les onglets du domaine Finance, dans l'ordre de `ongletsFinance()`.
 enum OngletFinance {
   /// Vue globale (`/admin/finance`, guide Finance V4 §5.6, FI-11a).
   vueGlobale,
@@ -24,6 +25,10 @@ enum OngletFinance {
   /// A valider (`/admin/finance/a-valider`, decision Q-8 = (a) du 05/10,
   /// CPT-VAL-1) : les demandes du Comptable a valider ou refuser.
   aValider,
+
+  /// Paiements (`/admin/finance/paiements`, passation du 17/10/2026 point 3,
+  /// FAC-C-01) : un paiement recu hors de l'application, attribue a un eleve.
+  paiements,
 }
 
 /// Le domaine Finance de la direction (FI-1b) : quatre onglets, dans la vraie
@@ -73,6 +78,7 @@ class FinancePage extends StatelessWidget {
         OngletFinance.politiques => const PolitiquesCommercialesBloc(),
         OngletFinance.reserveDelegation => const ReserveDelegationPage(),
         OngletFinance.aValider => const AValiderBloc(),
+        OngletFinance.paiements => const PaiementsBloc(),
       },
     );
   }

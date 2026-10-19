@@ -58,6 +58,7 @@ String libelleNatureValidation(NatureDemandeValidation nature) {
     NatureDemandeValidation.obligationAApprouver => n.obligationAApprouver,
     NatureDemandeValidation.payoutDuComptable => n.payoutDuComptable,
     NatureDemandeValidation.sortieCoffreProtege => n.sortieCoffreProtege,
+    NatureDemandeValidation.paiementRecu => n.paiementRecu,
   };
 }
 

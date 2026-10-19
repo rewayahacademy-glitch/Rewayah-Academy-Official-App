@@ -255,6 +255,7 @@ String libelleRaisonBlocage(RaisonBlocage raison) {
     RaisonBlocage.coffreNonAutorise => r.coffreNonAutorise,
     RaisonBlocage.beneficiaireExclu => r.beneficiaireExclu,
     RaisonBlocage.plafondExceptionDepasse => r.plafondExceptionDepasse,
+    RaisonBlocage.paiementHorsApplication => r.paiementHorsApplication,
   };
 }
 

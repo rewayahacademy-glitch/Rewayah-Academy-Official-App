@@ -219,10 +219,7 @@ void main() {
           // HL-A-5 (§10.11) : la raison est dite une fois, dans la carte ;
           // l'emplacement de decision dit « pas pret » (meme attente que
           // `revue_dossier_test.dart`).
-          expect(
-            find.text(t.dossiers.revue.pieceNonTransmise),
-            findsOneWidget,
-          );
+          expect(find.text(t.dossiers.revue.pieceNonTransmise), findsOneWidget);
           expect(find.text(t.dossiers.revue.pasPret), findsOneWidget);
           debugPrint(
             'PNG ${await capturer(tester, fichier('2_piece_absente'))}',

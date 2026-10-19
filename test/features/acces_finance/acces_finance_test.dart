@@ -27,6 +27,7 @@ import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
+import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -183,21 +184,29 @@ FinancesProfil _finance(JeuFoyerFinance jeu, String id) =>
       return p.profilId == id;
     });
 
-/// L'eleve adulte autonome a regulariser : 52 $ sur 60, janvier a financer
-/// (l'exemple du guide §1.7).
+/// L'eleve adulte autonome a regulariser : il manque `manqueDemo` sur sa
+/// mensualite, janvier a financer (l'exemple du guide §1.7).
+final Montant _mensualiteAdulte = DonneesFinanceDemo.mensualiteRang(
+  1,
+  adulte: true,
+);
+
 final FinancesProfil _adulteARegulariser = FinancesProfil(
   profilId: 'adulte-autonome',
   prenom: 'Youssouf',
   cleAccent: 'accent-adulte',
   estAdulte: true,
   etat: EtatFinancier.aRegulariser,
-  solde: DonneesFinanceDemo.usd(52),
-  mensualite: DonneesFinanceDemo.usd(60),
+  solde: Montant(
+    _mensualiteAdulte.mineur - DonneesFinanceDemo.manqueDemo.mineur,
+    DonneesFinanceDemo.devise,
+  ),
+  mensualite: _mensualiteAdulte,
   prochainDebit: ProchainDebit(
     date: DateTime(2027),
-    montant: DonneesFinanceDemo.usd(60),
+    montant: _mensualiteAdulte,
   ),
-  manque: DonneesFinanceDemo.usd(8),
+  manque: DonneesFinanceDemo.manqueDemo,
   finConservation: DateTime(2027, 1, 8),
 );
 
@@ -489,17 +498,20 @@ void main() {
       expect(
         messageRegularisation(ibrahim),
         t.argent.acces.regulariserManque(
-          montant: formaterMontant(DonneesFinanceDemo.usd(8)),
+          montant: formaterMontant(DonneesFinanceDemo.manqueDemo),
           mois: 'octobre',
         ),
       );
       expect(
         messageRegularisation(_adulteARegulariser),
-        'Il manque 8 \$ pour financer janvier.',
+        'Il manque ${formaterMontant(DonneesFinanceDemo.manqueDemo)} pour '
+        'financer janvier.',
       );
       expect(
         phraseConservation(ibrahim),
-        t.argent.acces.placeConservee(date: '8 octobre 2026'),
+        t.argent.acces.placeConservee(
+          date: dateLongue(ibrahim.finConservation!),
+        ),
       );
       // R8-05 : le premier du mois s'ecrit « 1er ».
       expect(
@@ -524,7 +536,7 @@ void main() {
         t.argent.acces.enfantTitre,
         'Accès à cette classe temporairement indisponible',
       );
-      expect(t.argent.acces.enfantMessage, "Votre tuteur peut gérer l'accès.");
+      expect(t.argent.acces.enfantMessage, "Ton tuteur peut gérer l'accès.");
       expect(t.argent.acces.regulariserTitre, 'Accès à régulariser');
     });
   });
@@ -950,7 +962,7 @@ void main() {
       expect(
         find.text(
           t.argent.acces.regulariserManque(
-            montant: formaterMontant(DonneesFinanceDemo.usd(8)),
+            montant: formaterMontant(DonneesFinanceDemo.manqueDemo),
             mois: 'octobre',
           ),
         ),
@@ -1046,11 +1058,19 @@ void main() {
       expect(bandeau.titre, 'Accès à régulariser');
       expect(
         bandeau.message,
-        'Il manque ${formaterMontant(DonneesFinanceDemo.usd(8))} pour '
+        'Il manque ${formaterMontant(DonneesFinanceDemo.manqueDemo)} pour '
         'financer octobre.',
       );
       expect(
-        find.text(t.argent.acces.placeConservee(date: '8 octobre 2026')),
+        find.text(
+          t.argent.acces.placeConservee(
+            date: dateLongue(
+              DonneesFinanceDemo.profils(
+                JeuFoyerFinance.unARegulariser,
+              )[1].finConservation!,
+            ),
+          ),
+        ),
         findsOneWidget,
       );
       expect(find.byType(PastilleFinanciere), findsOneWidget);
@@ -1085,15 +1105,17 @@ void main() {
           estAdulte: false,
           etat: EtatFinancier.essai,
           solde: DonneesFinanceDemo.usd(0),
-          mensualite: DonneesFinanceDemo.usd(50),
+          mensualite: DonneesFinanceDemo.politiqueLancement.tarifEnfant,
           essaisUtilises: 2,
           prochainDebit: avecManque
               ? ProchainDebit(
                   date: DateTime(2026, 11),
-                  montant: DonneesFinanceDemo.usd(50),
+                  montant: DonneesFinanceDemo.politiqueLancement.tarifEnfant,
                 )
               : null,
-          manque: avecManque ? DonneesFinanceDemo.usd(50) : null,
+          manque: avecManque
+              ? DonneesFinanceDemo.politiqueLancement.tarifEnfant
+              : null,
         );
 
     testWidgets('essais epuises (2/2) avec manque rendu : la cause utile, '
@@ -1114,7 +1136,9 @@ void main() {
       expect(
         bandeau.message,
         t.argent.acces.regulariserManque(
-          montant: formaterMontant(DonneesFinanceDemo.usd(50)),
+          montant: formaterMontant(
+            DonneesFinanceDemo.politiqueLancement.tarifEnfant,
+          ),
           mois: 'novembre',
         ),
       );
@@ -1209,7 +1233,7 @@ void main() {
       ligne: ligne,
     );
 
-    testWidgets('a regulariser : « Accès à régulariser » et « Il manque 8 \$ '
+    testWidgets('a regulariser : « Accès à régulariser » et « Il manque X '
         'pour financer janvier. »', (WidgetTester tester) async {
       _taille(tester, const Size(390, 1400));
       await tester.pumpWidget(
@@ -1224,7 +1248,10 @@ void main() {
       expect(find.byKey(BandeauRegularisation.cle), findsOneWidget);
       expect(find.text('Accès à régulariser'), findsOneWidget);
       expect(
-        find.text('Il manque 8 \$ pour financer janvier.'),
+        find.text(
+          'Il manque ${formaterMontant(DonneesFinanceDemo.manqueDemo)} pour '
+          'financer janvier.',
+        ),
         findsOneWidget,
       );
       expect(
@@ -1414,7 +1441,7 @@ void main() {
         find.text(
           t.argent.acces.suspenduTuteur(
             prenom: 'Ibrahim',
-            date: '9 octobre 2026',
+            date: dateLongue(DonneesFinanceDemo.jourPlaceLiberee),
           ),
         ),
         findsOneWidget,
@@ -1451,7 +1478,7 @@ void main() {
         bandeau.message,
         t.argent.acces.suspenduTuteur(
           prenom: 'Ibrahim',
-          date: '9 octobre 2026',
+          date: dateLongue(DonneesFinanceDemo.jourPlaceLiberee),
         ),
       );
       expect(find.byKey(AccesElevePage.pastilleSuspenduKey), findsOneWidget);

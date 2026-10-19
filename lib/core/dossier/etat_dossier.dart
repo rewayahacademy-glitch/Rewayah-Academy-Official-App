@@ -2,6 +2,33 @@ import 'package:flutter/foundation.dart';
 
 import '../domain/enums.dart';
 
+/// Ce que le titulaire d'un foyer a choisi a l'inscription (L5-01).
+///
+/// Garde par le serveur (`households.usage_inscription`) : il choisit la
+/// variante du contrat, meme apres un rechargement ou sur un autre appareil.
+enum UsageTitulaire {
+  /// « Moi uniquement » : un eleve adulte, son propre tuteur.
+  moi('moi'),
+
+  /// « Moi et ma famille » : un tuteur de foyer.
+  famille('famille');
+
+  const UsageTitulaire(this.valeurSql);
+
+  /// La valeur ecrite en base.
+  final String valeurSql;
+
+  /// La valeur lue en base, ou `null`.
+  static UsageTitulaire? depuisSql(Object? valeur) {
+    for (final UsageTitulaire u in values) {
+      if (u.valeurSql == valeur) {
+        return u;
+      }
+    }
+    return null;
+  }
+}
+
 /// Ce qui manque au dossier, tel que le portail d'attente le lira.
 ///
 /// Miroir Dart de la fonction SQL `public.etat_dossier()`. Le calcul est en
@@ -22,6 +49,8 @@ class EtatDossier {
     this.accuseSigne = false,
     this.correctionAutorisee,
     this.pieceRequise = true,
+    this.usage,
+    this.suitDesCours = false,
   });
 
   /// L'etat d'un compte dont le profil reste a creer.
@@ -45,6 +74,8 @@ class EtatDossier {
       accuseSigne: json['accuse_signe'] == true,
       correctionAutorisee: json['correction_autorisee'] as bool?,
       pieceRequise: json['piece_requise'] as bool? ?? true,
+      usage: UsageTitulaire.depuisSql(json['usage']),
+      suitDesCours: json['suit_des_cours'] == true,
     );
   }
 
@@ -86,6 +117,13 @@ class EtatDossier {
   /// de dispense famille. Absent de la reponse actuelle d'`etat_dossier()`
   /// (AD-BR-29) : vrai, comme avant.
   final bool pieceRequise;
+
+  /// L5-01 : « Moi » ou « Famille », garde par le serveur pour le titulaire
+  /// d'un foyer ; `null` pour les autres roles et les comptes d'avant.
+  final UsageTitulaire? usage;
+
+  /// L5-01 : vrai quand le titulaire a sa propre fiche d'eleve.
+  final bool suitDesCours;
 
   /// Ce que le portail d'attente doit afficher.
   ///
@@ -153,7 +191,9 @@ class EtatDossier {
       other.contratSigne == contratSigne &&
       other.accuseSigne == accuseSigne &&
       other.correctionAutorisee == correctionAutorisee &&
-      other.pieceRequise == pieceRequise;
+      other.pieceRequise == pieceRequise &&
+      other.usage == usage &&
+      other.suitDesCours == suitDesCours;
 
   @override
   int get hashCode => Object.hash(
@@ -168,6 +208,8 @@ class EtatDossier {
     accuseSigne,
     correctionAutorisee,
     pieceRequise,
+    usage,
+    suitDesCours,
   );
 }
 

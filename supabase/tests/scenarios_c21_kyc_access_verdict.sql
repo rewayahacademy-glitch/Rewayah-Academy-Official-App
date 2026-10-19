@@ -4,7 +4,8 @@ INSERT INTO auth.users (id, email) VALUES
   ('c2100000-0000-0000-0000-000000000001', 'c21-admin-m@example.test'),
   ('c2100000-0000-0000-0000-000000000002', 'c21-admin-f@example.test'),
   ('c2100000-0000-0000-0000-000000000003', 'c21-target-m@example.test'),
-  ('c2100000-0000-0000-0000-000000000004', 'c21-target-f@example.test');
+  ('c2100000-0000-0000-0000-000000000004', 'c21-target-f@example.test'),
+  ('c2100000-0000-0000-0000-000000000005', 'c21-controller@example.test');
 
 INSERT INTO public.households (id, timezone)
 VALUES ('c2100000-0000-0000-0000-000000000101', 'Europe/Paris');
@@ -20,7 +21,9 @@ VALUES
   ('c2100000-0000-0000-0000-000000000003', 'C21-TARGET-M', 'teacher',
    'c2100000-0000-0000-0000-000000000101', 'Target', 'M', 'male', 'provisional_active'),
   ('c2100000-0000-0000-0000-000000000004', 'C21-TARGET-F', 'teacher',
-   'c2100000-0000-0000-0000-000000000101', 'Target', 'F', 'female', 'provisional_active');
+   'c2100000-0000-0000-0000-000000000101', 'Target', 'F', 'female', 'provisional_active'),
+  ('c2100000-0000-0000-0000-000000000005', 'C21-CONTROLLER', 'controller',
+   NULL, 'Controller', 'Test', 'male', 'active');
 
 -- Fixture contractuelle requise par 0089 : le scénario signe la version NDA courante.
 DO $fixture_teacher_nda$
@@ -99,5 +102,64 @@ BEGIN
   END IF;
 END
 $c21$;
+
+-- A controller has no access to this admin-only verdict RPC.
+SELECT set_config('request.jwt.claim.sub', 'c2100000-0000-0000-0000-000000000005', true);
+SELECT set_config('request.jwt.claims', '{"app_metadata":{"role":"controller"}}', true);
+SELECT set_config('test.uid', 'c2100000-0000-0000-0000-000000000005', true);
+SELECT set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
+DO $controller_denied$
+BEGIN
+  BEGIN
+    PERFORM public.verdict_acces_dossier_kyc(
+      'c2100000-0000-0000-0000-000000000003'
+    );
+    RAISE EXCEPTION 'C-21: controller obtained a KYC access verdict';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END
+$controller_denied$;
+
+-- A valid admin role does not survive account disablement.
+RESET ROLE;
+UPDATE public.profiles SET account_status = 'disabled'
+WHERE id = 'c2100000-0000-0000-0000-000000000001';
+SELECT set_config('request.jwt.claim.sub', 'c2100000-0000-0000-0000-000000000001', true);
+SELECT set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', true);
+SELECT set_config('test.uid', 'c2100000-0000-0000-0000-000000000001', true);
+SELECT set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+SET LOCAL ROLE authenticated;
+DO $disabled_admin_denied$
+BEGIN
+  BEGIN
+    PERFORM public.verdict_acces_dossier_kyc(
+      'c2100000-0000-0000-0000-000000000003'
+    );
+    RAISE EXCEPTION 'F86: disabled admin obtained a KYC access verdict';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END
+$disabled_admin_denied$;
+
+-- Verify both effective ACL and a direct invocation under anon.
+RESET ROLE;
+SELECT set_config('request.jwt.claim.sub', '', true);
+SELECT set_config('request.jwt.claims', '{}', true);
+SELECT set_config('test.uid', '', true);
+SELECT set_config('test.jwt', '{}', true);
+SET LOCAL ROLE anon;
+DO $anonymous_denied$
+BEGIN
+  IF pg_catalog.has_function_privilege(
+       'anon', 'public.verdict_acces_dossier_kyc(uuid)', 'EXECUTE'
+     ) THEN
+    RAISE EXCEPTION 'C-21: anon retains EXECUTE on the verdict RPC';
+  END IF;
+  BEGIN
+    PERFORM public.verdict_acces_dossier_kyc(
+      'c2100000-0000-0000-0000-000000000003'
+    );
+    RAISE EXCEPTION 'C-21: anon obtained a KYC access verdict';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END
+$anonymous_denied$;
 
 ROLLBACK;

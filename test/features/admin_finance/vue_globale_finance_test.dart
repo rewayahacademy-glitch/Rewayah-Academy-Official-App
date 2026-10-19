@@ -199,6 +199,9 @@ bool _estEtat(NatureEtat n) =>
         .length ==
     1;
 
+/// Un pour mille en pourcentage a une decimale, a la francaise (733 -> 73,3).
+String _pourcent(int pourMille) => '${pourMille ~/ 10},${pourMille % 10}';
+
 void main() {
   group('demonstration : chiffres exacts', () {
     final VueGlobaleFinance demo = DonneesFinanceDemo.vueGlobale();
@@ -229,23 +232,22 @@ void main() {
         of: find.byKey(VueGlobaleFinanceContenu.indicateursKey),
         matching: f,
       );
-      // 690 USD encaisses ET 690 USD de revenu : deux cartes, jamais une.
-      expect(formaterMontant(DonneesFinanceDemo.usd(690)), '690\u00a0\$');
+      // Meme montant encaisse ET en revenu : deux cartes, jamais une.
+      expect(demo.encaisse, demo.revenuAcademique);
       expect(
-        carte(find.text(formaterMontant(DonneesFinanceDemo.usd(690)))),
+        carte(find.text(formaterMontant(demo.revenuAcademique))),
         findsNWidgets(2),
       );
-      expect(formaterMontant(demo.paieEnseignants), '143,20\u00a0\$');
       expect(
         carte(find.text(formaterMontant(demo.paieEnseignants))),
         findsOneWidget,
       );
-      // La marge du port, 792 pour mille, jamais recalculee.
-      expect(demo.margeProjeteePourMille, 792);
-      expect(carte(find.text(vue.margeValeur(valeur: '79,2'))), findsOneWidget);
+      // La marge du port, en pour mille, jamais recalculee a l'ecran.
+      final String marge = _pourcent(demo.margeProjeteePourMille!);
+      expect(carte(find.text(vue.margeValeur(valeur: marge))), findsOneWidget);
       expect(find.text(vue.margeDetail), findsOneWidget);
       expect(carte(find.text(formaterMontant(demo.impayes))), findsOneWidget);
-      expect(formaterMontant(demo.impayes), '8\u00a0\$');
+      expect(demo.impayes, DonneesFinanceDemo.manqueDemo);
       // L'etat des paiements repete des nombres (« 1 » en essai) : la
       // carte des essais seule.
       expect(carte(find.text('${demo.essaisEnCours}')), findsOneWidget);
@@ -260,7 +262,7 @@ void main() {
       expect(
         graphique(
           VueGlobaleFinanceContenu.graphiqueEncaisseKey,
-          find.text(formaterMontant(DonneesFinanceDemo.usd(690))),
+          find.text(formaterMontant(demo.encaisse)),
         ),
         findsOneWidget,
       );
@@ -274,7 +276,9 @@ void main() {
       expect(
         graphique(
           VueGlobaleFinanceContenu.graphiqueMargeKey,
-          find.text(vue.margeValeur(valeur: '79,2')),
+          find.text(
+            vue.margeValeur(valeur: _pourcent(demo.margeProjeteePourMille!)),
+          ),
         ),
         findsOneWidget,
       );
@@ -296,7 +300,7 @@ void main() {
           findsOneWidget,
         );
       }
-      // L'alerte de la demonstration : Ibrahim, le meme manque de 8 USD.
+      // L'alerte de la demonstration : Ibrahim, le meme manque que les impayes.
       final AlerteFinance alerte = demo.alertes.single;
       expect(find.byType(BandeauAttention), findsOneWidget);
       expect(find.text(vue.alerte.aRegulariser), findsOneWidget);

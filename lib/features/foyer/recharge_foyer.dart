@@ -753,45 +753,63 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     };
     final TextStyle styleRole = AppPalette.of(context).inkMuted
         .applyTo(Theme.of(context).textTheme.bodyMedium ?? const TextStyle());
+    final List<Widget> details = <Widget>[
+      if (solde != null) Text(solde, style: styleRole),
+      if (suggere != null) Text(suggere, style: styleRole),
+    ];
+    final Widget? blocDetails = details.isEmpty
+        ? null
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: details,
+          );
     // La case et l'identite se lisent d'un bloc : « Mariam, Solde actuel :
     // 12 $, case cochee ». Le montant se lit a part, avec ses boutons.
+    // L11 : sur telephone, le solde et le montant suggere passent SOUS la
+    // ligne de la case et de la photo, sur toute la largeur. A cote d'elles,
+    // a 320 px et texte x2, il ne leur restait que quelques lettres et les
+    // mots se coupaient.
     final Widget identite = MergeSemantics(
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Checkbox(
-            key: RechargeFoyerPage.caseDe(b.id),
-            value: coche,
-            onChanged: _engage
-                ? null
-                : (bool? valeur) => _basculer(b.id, valeur ?? false),
+          Row(
+            children: <Widget>[
+              Checkbox(
+                key: RechargeFoyerPage.caseDe(b.id),
+                value: coche,
+                onChanged: _engage
+                    ? null
+                    : (bool? valeur) => _basculer(b.id, valeur ?? false),
+              ),
+              Ecart.hSm,
+              Expanded(
+                child: AvatarNom.enLigne(
+                  prenom: b.prenom,
+                  avatar: PhotoEleve(
+                    prenom: b.prenom,
+                    cleAvatar: b.cleAvatar,
+                    diametre: AppAvatar.moyen,
+                  ),
+                  enveloppeAvatar: BandeauProfil.enveloppe(
+                    diametre: AppAvatar.moyen,
+                    accent: _accent(b.id),
+                  ),
+                  texteEtire: true,
+                  styleNom: AppPalette.of(context).inkStrong.applyTo(
+                    Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+                  ),
+                  roleWidget: enLigne ? blocDetails : null,
+                ),
+              ),
+            ],
           ),
-          Ecart.hSm,
-          Expanded(
-            child: AvatarNom.enLigne(
-              prenom: b.prenom,
-              avatar: PhotoEleve(
-                prenom: b.prenom,
-                cleAvatar: b.cleAvatar,
-                diametre: AppAvatar.moyen,
-              ),
-              enveloppeAvatar: BandeauProfil.enveloppe(
-                diametre: AppAvatar.moyen,
-                accent: _accent(b.id),
-              ),
-              texteEtire: true,
-              styleNom: AppPalette.of(context).inkStrong.applyTo(
-                Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
-              ),
-              roleWidget: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  if (solde != null) Text(solde, style: styleRole),
-                  if (suggere != null) Text(suggere, style: styleRole),
-                ],
-              ),
-            ),
-          ),
+          if (!enLigne && blocDetails != null) ...<Widget>[
+            Ecart.vXs,
+            blocDetails,
+          ],
         ],
       ),
     );

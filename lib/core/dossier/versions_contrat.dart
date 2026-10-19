@@ -38,6 +38,15 @@ abstract final class VersionsContrat {
   /// des corrections A0/A3 autorise d'y faire entrer le texte A3 valide.
   static const String avecObservation = '2026-09-obs';
 
+  /// Le code de conduite de l'enseignant, version definitive : texte valide
+  /// par le directeur le 19/10/2026 (`t.codeConduite`). Il remplace la
+  /// version provisoire `2026-10-cond` du 18/10 ; un enseignant qui avait
+  /// accepte celle-ci doit accepter la nouvelle. La version requise est aussi
+  /// posee en base (`contract_required_versions`, migration
+  /// `20261019100000_pe_code_conduite_v2.sql`) ; la changer ici sans la
+  /// changer la-bas fait refuser l'acceptation par le serveur.
+  static const String codeConduite = '2026-10-19';
+
   /// La duree de conservation des enregistrements dite par le texte signe
   /// (`{duree_enreg}` de A3, 30 jours, `09_consentements/TEXTES_V2.md`). Elle
   /// fait partie du texte de la version : la changer demande une nouvelle
@@ -75,5 +84,6 @@ abstract final class VersionsContrat {
     SorteContrat.contratEnseignant =>
       politiquePubliee || demonstration ? textesJuridiques : courante,
     SorteContrat.accuseEnregistrementControle => textesJuridiques,
+    SorteContrat.codeConduiteEnseignant => codeConduite,
   };
 }

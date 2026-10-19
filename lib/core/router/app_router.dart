@@ -10,15 +10,18 @@ import '../../features/accueil_adulte/routes_accueil_adulte.dart';
 import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart';
+import '../../features/admin_avis/avis_page.dart';
 import '../../features/admin_comptes/comptes_page.dart';
 import '../../features/admin_configuration_conservation_donnees/conservation_donnees_page.dart';
 import '../../features/admin_configuration_fonctionnalites/fonctionnalites_page.dart';
 import '../../features/admin_configuration_politique_kyc/politique_revue_kyc_page.dart';
+import '../../features/admin_configuration_protection_enfants/protection_enfants_page.dart';
 import '../../features/admin_configuration_regles/regles_page.dart';
 import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
 import '../../features/admin_finance/finance_page.dart';
 import '../../features/admin_groupes/groupes_page.dart';
+import '../../features/admin_import_inscriptions/import_inscriptions_page.dart';
 import '../../features/admin_invitations/invitations_page.dart';
 import '../../features/admin_journal/incidents_page.dart';
 import '../../features/admin_journal/journal_page.dart';
@@ -38,6 +41,7 @@ import '../../features/admin_pilotage/pilotage_page.dart';
 import '../../features/admin_planning/planning_page.dart';
 import '../../features/admin_regroupements/regroupements_page.dart';
 import '../../features/admin_reprises/reprises_page.dart';
+import '../../features/admin_suppressions/suppressions_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
 import '../../features/admin_tirage/tirage_page.dart';
 import '../../features/admin_traitement/traitement_page.dart';
@@ -48,6 +52,7 @@ import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_eleve_page.dart';
 import '../../features/appareils/appareils_page.dart';
+import '../../features/avis_public/avis_public_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
 import '../../features/classe_tuteur/catalogue_classes_page.dart';
@@ -75,6 +80,7 @@ import '../../features/comptable/encaissements/rapprochement_page.dart';
 import '../../features/comptable/graphiques/rapports_page.dart';
 import '../../features/comptable/paiements/detail_paiement_page.dart';
 import '../../features/comptable/paiements/paiements_page.dart';
+import '../../features/comptable/paiements_familles/paiements_familles_page.dart';
 import '../../features/comptable/tresorerie/tresorerie_page.dart';
 import '../../features/compte/acces_page.dart';
 import '../../features/compte/aide_page.dart';
@@ -84,6 +90,7 @@ import '../../features/compte/compte_tuteur_page.dart';
 import '../../features/compte/espaces_compte.dart';
 import '../../features/compte/informations_legales_page.dart';
 import '../../features/compte/informations_page.dart';
+import '../../features/compte/mes_donnees_page.dart';
 import '../../features/compte/paiements_page.dart';
 import '../../features/compte/preferences_page.dart';
 import '../../features/compte/securite_page.dart';
@@ -136,6 +143,8 @@ import '../../features/inscription/etapes/recapitulatif_etape.dart';
 import '../../features/inscription/etapes/usage_etape.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../../features/journee/journee_page.dart';
+import '../../features/juridique/juridique_pages.dart';
+import '../../features/juridique/textes_juridiques.dart';
 import '../../features/mfa_controleur/mfa_controleur_page.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
@@ -267,7 +276,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.connexion,
-        builder: (BuildContext _, GoRouterState _) => const ConnexionPage(),
+        builder: (BuildContext _, GoRouterState etat) =>
+            ConnexionPage(mode: modeDepuisAdresse(etat.uri)),
       ),
       GoRoute(
         path: Routes.connexionEleve,
@@ -342,6 +352,35 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.agentEntree,
         builder: (BuildContext _, GoRouterState _) => const AgentEntreePage(),
       ),
+      // Les textes juridiques : lisibles sans connexion et connecte
+      // (`Routes.juridique`, `deciderRedirection`). Un texte inconnu ramene a
+      // la liste.
+      GoRoute(
+        path: Routes.juridique,
+        builder: (BuildContext _, GoRouterState _) => const JuridiquePage(),
+        routes: <RouteBase>[
+          GoRoute(
+            path: ':texte',
+            redirect: (BuildContext _, GoRouterState etat) =>
+                TexteJuridique.depuisSlug(etat.pathParameters['texte'] ?? '') ==
+                    null
+                ? Routes.juridique
+                : null,
+            builder: (BuildContext _, GoRouterState etat) => TexteJuridiquePage(
+              texte: TexteJuridique.depuisSlug(
+                etat.pathParameters['texte'] ?? '',
+              )!,
+            ),
+          ),
+        ],
+      ),
+      // AVIS-PUBLICS : le formulaire d'avis, atteint avec le lien que la
+      // direction remet (`Routes.avis`, `deciderRedirection`). Sans connexion.
+      GoRoute(
+        path: '${Routes.avis}/:jeton',
+        builder: (BuildContext _, GoRouterState etat) =>
+            AvisPublicPage(jeton: etat.pathParameters['jeton'] ?? ''),
+      ),
       // Le portail d'attente et ses pages. Le sous-arbre entier est ouvert a
       // un compte en attente, la racine seule ne suffirait pas.
       GoRoute(
@@ -406,6 +445,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.compteReglages,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: ReglagesComptePage()),
+      ),
+      GoRoute(
+        path: Routes.compteMesDonnees,
+        builder: (BuildContext _, GoRouterState _) =>
+            const _CoquilleSecondaire(child: MesDonneesPage()),
       ),
       GoRoute(
         path: Routes.compteProfils,
@@ -1032,6 +1076,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       (GoRouterState _) => const ConsentementObservationPage(),
                     ),
                   ),
+                  GoRoute(
+                    path: 'mes-donnees',
+                    pageBuilder: glissee(
+                      (GoRouterState _) => Builder(
+                        builder: (BuildContext context) => MesDonneesPage(
+                          onRetour: () =>
+                              GoRouter.of(context).go(Routes.tuteurCompte),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -1465,11 +1520,36 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           child: AdminOffresPage(),
         ),
       ),
+      // AVIS-PUBLICS : les liens de collecte et la moderation des avis,
+      // atteints depuis l'Accueil comme les offres.
+      GoRoute(
+        path: Routes.adminOperationsAvis,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: AvisAdminPage(),
+        ),
+      ),
+      // CPT-SUPPR-EXPORT : les demandes de suppression de compte.
+      GoRoute(
+        path: Routes.adminPersonnesSuppressions,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: SuppressionsPage(),
+        ),
+      ),
       GoRoute(
         path: Routes.adminPersonnesReprises,
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
           child: ReprisesPage(),
+        ),
+      ),
+      // IMM-ACCUEIL-FRONT : l'import des inscriptions actuelles.
+      GoRoute(
+        path: Routes.adminPersonnesImport,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: ImportInscriptionsPage(),
         ),
       ),
       GoRoute(
@@ -1633,6 +1713,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           child: FinancePage(onglet: OngletFinance.aValider),
         ),
       ),
+      // Paiements (FAC-C-01, passation du 17/10 point 3) : le cinquieme
+      // onglet du meme domaine.
+      GoRoute(
+        path: Routes.adminFinancePaiements,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.finance,
+          child: FinancePage(onglet: OngletFinance.paiements),
+        ),
+      ),
       // Domaine Configuration : la racine redirige vers Regles, sa fonction
       // primaire -- meme mecanique que Pedagogie plus haut. Academie, Classe
       // en ligne, Notifications et Localisation n'ont pas de route : aucune
@@ -1670,6 +1759,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.configuration,
           child: PolitiqueRevueKycPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminConfigurationProtectionEnfants,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.configuration,
+          child: ProtectionEnfantsPage(),
         ),
       ),
       GoRoute(
@@ -1906,6 +2002,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                             ),
                       ),
                     ],
+                  ),
+                  GoRoute(
+                    path: 'paiements-familles',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const PaiementsFamillesPage(),
                   ),
                   GoRoute(
                     path: 'rapprochement',

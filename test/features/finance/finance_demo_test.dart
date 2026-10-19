@@ -8,6 +8,7 @@
 // (`CapaciteIndisponible`) ; aucune valeur commerciale n'est ecrite ailleurs
 // dans `lib/`.
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,13 +21,12 @@ import 'package:rewayah_academy/core/capacites/port_politiques_commerciales.dart
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_revenus_enseignant.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
+import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
 import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
-
-Montant _usd(int unites) => Montant(unites * 100, 'USD');
 
 Matcher get _indisponible => throwsA(isA<CapaciteIndisponible>());
 
@@ -35,71 +35,146 @@ FinancesProfil _profil(JeuFoyerFinance jeu, String id) =>
         .firstWhere((FinancesProfil p) => p.profilId == id);
 
 void main() {
-  group('politique de lancement (guide §1), lue depuis la demonstration', () {
+  group('politique de la demonstration (v2.0.0, tarifs du 18/10/2026)', () {
     final PolitiqueCommerciale p = DonneesFinanceDemo.politiqueLancement;
 
-    test('tarifs : 50 USD enfant, 60 USD adulte, en unites mineures', () {
-      expect(p.tarifEnfant, _usd(50));
-      expect(p.tarifAdulte, _usd(60));
-      expect(p.tarifEnfant.mineur, 5000);
-      expect(p.tarifEnfant.devise, 'USD');
+    // La source de verite des valeurs : le fichier des tarifs du directeur.
+    // La demonstration doit lui etre egale, sans que le test recopie un seul
+    // nombre.
+    final Map<String, dynamic> tarifs = jsonDecode(
+      File('docs/current/tarifs-2026-10-18.json').readAsStringSync(),
+    ) as Map<String, dynamic>;
+    Montant mineur(Object? v) => Montant(v! as int, 'USD');
+    final Map<String, dynamic> enfant =
+        (tarifs['formules'] as Map<String, dynamic>)['enfant']
+            as Map<String, dynamic>;
+    final Map<String, dynamic> adulte =
+        (tarifs['formules'] as Map<String, dynamic>)['adulte']
+            as Map<String, dynamic>;
+    final Map<String, dynamic> remises =
+        tarifs['remises'] as Map<String, dynamic>;
+    final Map<String, dynamic> prof =
+        tarifs['enseignant'] as Map<String, dynamic>;
+    final Map<String, dynamic> calendrier =
+        tarifs['calendrier_paiement'] as Map<String, dynamic>;
+
+    test('tarifs : ceux du fichier du 18/10/2026, en unites mineures', () {
+      expect(p.tarifEnfant, mineur(enfant['prix_mensuel_mineur']));
+      expect(p.tarifAdulte, mineur(adulte['prix_mensuel_mineur']));
+      expect(p.tarifEnfant.devise, tarifs['devise']);
+      expect(p.tarifEnfant.mineur, DonneesFinanceDemo.usd(55).mineur);
     });
 
-    test('essai : 2 seances au plus', () {
-      expect(p.essaisMax, 2);
+    test('pas d essai gratuit', () {
+      expect(tarifs['essai_gratuit'], isFalse);
+      expect(p.essaiActif, isFalse);
+      expect(p.essaisMax, 0);
     });
 
-    test('remises : rangs 1 et 2 aucune, rang 3 = -5, rang 4 et plus = -7', () {
-      expect(p.remisePourRang(1), isNull);
-      expect(p.remisePourRang(2), isNull);
-      expect(p.remisePourRang(3), _usd(-5));
-      expect(p.remisePourRang(4), _usd(-7));
-      expect(p.remisePourRang(5), _usd(-7));
-      expect(p.remisePourRang(9), _usd(-7));
+    test('remises du foyer : en pour mille, des le rang 2 et le rang 3', () {
+      final List<dynamic> foyer = remises['foyer'] as List<dynamic>;
+      expect(p.remisesParRang, hasLength(foyer.length));
+      for (final (int i, dynamic r) in foyer.indexed) {
+        final Map<String, dynamic> regle = r as Map<String, dynamic>;
+        expect(p.remisesParRang[i].aPartirDuRang, regle['a_partir_du_rang']);
+        expect(p.remisesParRang[i].pourMille, regle['pour_mille']);
+        expect(p.remisesParRang[i].remise, isNull);
+      }
+      // Rang 1 : aucune remise ; au-dela du dernier palier, la meme.
+      expect(p.remiseRangPour(1), isNull);
+      expect(p.remiseRangPour(2)!.pourMille, p.remisesParRang.first.pourMille);
+      expect(p.remiseRangPour(3)!.pourMille, p.remisesParRang.last.pourMille);
+      expect(p.remiseRangPour(9)!.pourMille, p.remisesParRang.last.pourMille);
     });
 
-    test('exemples du guide §1.3 : 145 USD pour 3, 188 USD pour 4', () {
-      int total(int membres) {
-        int somme = 0;
-        for (int rang = 1; rang <= membres; rang++) {
-          for (final LigneMensualite l in DonneesFinanceDemo.lignesPourRang(
-            rang,
-          )) {
-            somme += l.montant.mineur;
-          }
-        }
-        return somme;
+    test('mensualites par rang : tarif moins la remise en pour mille', () {
+      int attendu(int rang) {
+        final int tarif = p.tarifEnfant.mineur;
+        final int pm = p.remiseRangPour(rang)?.pourMille ?? 0;
+        return tarif - (tarif * pm + 500) ~/ 1000;
       }
 
-      expect(total(3), 14500);
-      expect(total(4), 18800);
+      for (int rang = 1; rang <= 5; rang++) {
+        expect(
+          DonneesFinanceDemo.mensualiteRang(rang).mineur,
+          attendu(rang),
+          reason: 'rang $rang',
+        );
+      }
+      // Le total d'un foyer de 3 et de 4 enfants est la somme des rangs.
+      int total(int membres) => <int>[
+        for (int rang = 1; rang <= membres; rang++)
+          for (final LigneMensualite l in DonneesFinanceDemo.lignesPourRang(
+            rang,
+          ))
+            l.montant.mineur,
+      ].fold<int>(0, (int s, int m) => s + m);
+      expect(total(3), attendu(1) + attendu(2) + attendu(3));
+      expect(total(4), total(3) + attendu(3));
+      // Les adultes : meme regle sur leur tarif.
+      final int tarifAdulte = p.tarifAdulte.mineur;
+      final int pm2 = p.remiseRangPour(2)!.pourMille!;
+      expect(
+        DonneesFinanceDemo.mensualiteRang(2, adulte: true).mineur,
+        tarifAdulte - (tarifAdulte * pm2 + 500) ~/ 1000,
+      );
     });
 
-    test('enseignants : base 4/h, plafond 7/h', () {
-      expect(p.baseHoraire, _usd(4));
-      expect(p.plafondHoraire, _usd(7));
+    test('paie de l enseignant : par eleve present et par heure', () {
+      final Map<String, dynamic> taux =
+          prof['taux_par_eleve_present_heure_mineur'] as Map<String, dynamic>;
+      final Map<String, dynamic> plafond =
+          prof['plafond'] as Map<String, dynamic>;
+      expect(p.tauxEleveHeureEnfant, mineur(taux['enfant']));
+      expect(p.tauxEleveHeureAdulte, mineur(taux['adulte']));
+      expect(p.plafondEleveHeureEnfant, mineur(plafond['enfant']));
+      expect(p.plafondEleveHeureAdulte, mineur(plafond['adulte']));
+      expect(p.dureeDueEnfantMinutes, enfant['duree_minimale_due_minutes']);
+      expect(p.dureeDueAdulteMinutes, adulte['duree_minimale_due_minutes']);
+      expect(
+        p.tauxEleveHeureEnfant!.mineur,
+        lessThanOrEqualTo(p.plafondEleveHeureEnfant!.mineur),
+      );
     });
 
-    test('capacites 5 / 6 / 4, minimum d ouverture 4', () {
-      expect(p.capaciteEnfant, 5);
-      expect(p.capaciteAdulte, 6);
-      expect(p.capaciteDebutant, 4);
-      expect(p.minimumOuverture, 4);
+    test('prepaiement, bourse, parrainage, cumul et suspension', () {
+      final Map<String, dynamic> pre =
+          remises['prepaiement'] as Map<String, dynamic>;
+      final Map<String, dynamic> bourse =
+          remises['bourse'] as Map<String, dynamic>;
+      expect(p.prepaiementTrimestrielPourMille, pre['trimestriel_pour_mille']);
+      expect(p.prepaiementAnnuelPourMille, pre['annuel_pour_mille']);
+      expect(p.parrainageCredit, mineur(remises['parrainage_credit_mineur']));
+      expect(p.boursePourMille, bourse['pour_mille']);
+      expect(
+        p.boursePlacesPourMille,
+        bourse['places_max_pour_mille_des_eleves'],
+      );
+      expect(p.bourseDureeMois, bourse['revue_mois']);
+      expect(p.cumulMaxPourMille, remises['cumul_max_pour_mille']);
+      expect(p.jourSuspension, calendrier['suspension_jour']);
+      expect(p.joursRelance, calendrier['relances_jours_avant']);
     });
 
-    test('classes par enseignant : objectif 3, maximum 4', () {
-      expect(p.classesObjectif, 3);
-      expect(p.classesMax, 4);
+    test('groupes : le minimum d ouverture et les capacites du fichier', () {
+      expect(p.minimumOuverture, enfant['groupe_min']);
+      expect(p.capaciteEnfant, enfant['groupe_max']);
+      expect(p.capaciteAdulte, adulte['groupe_max']);
     });
 
-    test('place conservee 7 jours', () {
-      expect(p.joursConservationPlace, 7);
+    test('place conservee : la duree du calendrier de paiement', () {
+      expect(p.joursConservationPlace, calendrier['place_gardee_jours']);
     });
 
-    test('marge de reference 30 / 35 / 40 %', () {
-      expect(p.margeReferencePourMille.objectif, 300);
-      expect(p.margeReferencePourMille.forte, 350);
-      expect(p.margeReferencePourMille.stretch, 400);
+    test('marge de reference croissante, jamais une sanction', () {
+      expect(
+        p.margeReferencePourMille.objectif,
+        lessThan(p.margeReferencePourMille.forte),
+      );
+      expect(
+        p.margeReferencePourMille.forte,
+        lessThan(p.margeReferencePourMille.stretch),
+      );
     });
 
     test('rail WEB_STRIPE seul actif (FI10)', () {
@@ -110,6 +185,15 @@ void main() {
       expect(p.statut, StatutPolitique.publiee);
       expect(p.version, isNotEmpty);
       expect(p.dateEffet.year, isNot(2024));
+    });
+
+    test('le brouillon reprend la politique, sans valeur de plus', () {
+      final PolitiqueCommerciale b = DonneesFinanceDemo.politiqueBrouillon;
+      expect(b.statut, StatutPolitique.brouillon);
+      expect(b.tarifEnfant, p.tarifEnfant);
+      expect(b.remisesParRang, p.remisesParRang);
+      expect(b.tauxEleveHeureAdulte, p.tauxEleveHeureAdulte);
+      expect(b.cumulMaxPourMille, p.cumulMaxPourMille);
     });
   });
 
@@ -162,18 +246,19 @@ void main() {
       );
     });
 
-    test('Mariam au rang 1 : aucune remise, jamais « -5 » (guide §5.2)', () {
+    test('Mariam au rang 1 : aucune remise (guide §5.2)', () {
       for (final JeuFoyerFinance jeu in JeuFoyerFinance.values) {
         final FinancesProfil m = _profil(jeu, DonneesFinanceDemo.mariamId);
         expect(
           m.lignesMensualite.map((LigneMensualite l) => l.nature),
           isNot(contains(NatureLigneMensualite.remiseRang)),
         );
-        expect(m.mensualite, _usd(50));
+        expect(m.mensualite, DonneesFinanceDemo.politiqueLancement.tarifEnfant);
       }
     });
 
-    test('tous finances : rang 3 a sa remise ; un solde nul garde le mois', () {
+    test('tous finances : rangs 2 et 3 ont leur remise ; un solde nul garde '
+        'le mois', () {
       final FinancesFoyer f = DonneesFinanceDemo.finances(
         JeuFoyerFinance.tousFinances,
       );
@@ -184,49 +269,69 @@ void main() {
       expect(ibrahim.solde.estNul, isTrue);
       expect(ibrahim.etat, EtatFinancier.finance);
       expect(ibrahim.periode, isNotNull);
-      expect(f.profils[2].mensualite, _usd(45));
+      expect(f.profils[0].mensualite, DonneesFinanceDemo.mensualiteRang(1));
+      expect(f.profils[1].mensualite, DonneesFinanceDemo.mensualiteRang(2));
+      expect(f.profils[2].mensualite, DonneesFinanceDemo.mensualiteRang(3));
+      expect(
+        f.profils[2].mensualite.mineur,
+        lessThan(f.profils[1].mensualite.mineur),
+      );
     });
 
-    test('un a regulariser : le manque est dit, place conservee 7 jours', () {
+    test('un a regulariser : le manque est dit, place conservee selon la '
+        'politique', () {
       final FinancesProfil i = _profil(
         JeuFoyerFinance.unARegulariser,
         DonneesFinanceDemo.ibrahimId,
       );
       expect(i.etat, EtatFinancier.aRegulariser);
-      expect(i.manque, _usd(8));
-      // FIN4-09 : aucun débit partiel, le solde reste entier.
-      expect(i.solde, _usd(42));
+      expect(i.manque, DonneesFinanceDemo.manqueDemo);
+      // FIN4-09 : aucun débit partiel, le solde reste entier : la mensualite
+      // moins ce qu'il manque.
+      expect(
+        i.solde.mineur + i.manque!.mineur,
+        DonneesFinanceDemo.mensualiteRang(2).mineur,
+      );
       expect(i.periode, isNull);
       expect(
         i.finConservation!.difference(DonneesFinanceDemo.debutMois).inDays,
-        7,
+        DonneesFinanceDemo.politiqueLancement.joursConservationPlace,
       );
       expect(
         DonneesFinanceDemo.finances(JeuFoyerFinance.unARegulariser)
             .synthese
             .aPayerCeMois,
-        _usd(8),
+        DonneesFinanceDemo.manqueDemo,
       );
     });
 
-    test('un en essai : 1/2, sans mensualite ni debit, hors rangs payants', () {
-      final List<FinancesProfil> l = DonneesFinanceDemo.profils(
-        JeuFoyerFinance.unEnEssai,
-      );
-      final FinancesProfil aicha = l.last;
-      expect(aicha.etat, EtatFinancier.essai);
-      expect(aicha.essaisUtilises, 1);
-      expect(aicha.solde.estNul, isTrue);
-      expect(aicha.prochainDebit, isNull);
-      expect(aicha.lignesMensualite, isEmpty);
-      // FIN4-15 : l'essai ne fait pas passer un autre membre au rang 3.
-      for (final FinancesProfil p in l.take(2)) {
+    test(
+      'un en essai : 1 essai, sans mensualite ni debit, hors rangs payants',
+      () {
+        final List<FinancesProfil> l = DonneesFinanceDemo.profils(
+          JeuFoyerFinance.unEnEssai,
+        );
+        final FinancesProfil aicha = l.last;
+        expect(aicha.etat, EtatFinancier.essai);
+        expect(aicha.essaisUtilises, 1);
+        expect(aicha.solde.estNul, isTrue);
+        expect(aicha.prochainDebit, isNull);
+        expect(aicha.lignesMensualite, isEmpty);
+        // FIN4-15 : l'essai ne compte pas parmi les rangs payants. Les deux
+        // autres membres restent aux rangs 1 et 2 : pas de remise au
+        // premier, la remise du rang 2 au second, jamais celle du rang 3.
+        expect(l.first.mensualite, DonneesFinanceDemo.mensualiteRang(1));
+        expect(l[1].mensualite, DonneesFinanceDemo.mensualiteRang(2));
         expect(
-          p.lignesMensualite.map((LigneMensualite x) => x.nature),
+          l.first.lignesMensualite.map((LigneMensualite x) => x.nature),
           isNot(contains(NatureLigneMensualite.remiseRang)),
         );
-      }
-    });
+        expect(
+          l[1].mensualite.mineur,
+          greaterThan(DonneesFinanceDemo.mensualiteRang(3).mineur),
+        );
+      },
+    );
 
     test('aucun paiement : rien de finance, aucun paiement du mois', () {
       final FinancesFoyer f = DonneesFinanceDemo.finances(
@@ -241,17 +346,16 @@ void main() {
       }
     });
 
-    test('cinq profils : rang 4 et 5 a -7 chacun', () {
+    test('cinq profils : du rang 3 au rang 5, la meme remise', () {
       final List<FinancesProfil> l = DonneesFinanceDemo.profils(
         JeuFoyerFinance.cinqProfils,
       );
-      expect(l.map((FinancesProfil p) => p.mensualite.mineur).toList(), <int>[
-        5000,
-        5000,
-        4500,
-        4300,
-        4300,
+      expect(l.map((FinancesProfil p) => p.mensualite).toList(), <Montant>[
+        for (int rang = 1; rang <= 5; rang++)
+          DonneesFinanceDemo.mensualiteRang(rang),
       ]);
+      expect(l[2].mensualite, l[3].mensualite);
+      expect(l[3].mensualite, l[4].mensualite);
     });
 
     test('la synthese est une lecture : la somme des soldes individuels', () {
@@ -284,7 +388,7 @@ void main() {
         JeuFoyerFinance.unEnEssai,
       ).last;
       expect(essai.essaisUtilises, 1);
-      expect(essai.essaisMax, 2);
+      expect(essai.essaisMax, DonneesFinanceDemo.essaisMaxJeuEssai);
     });
 
     // Revue FI-1c-R M1 : `sansEcheance` est le cas ordinaire d'un compte
@@ -336,7 +440,13 @@ void main() {
           DonneesFinanceDemo.commandeDemo(e),
         );
         expect(s.etat, e);
-        expect(s.total, _usd(50));
+        expect(
+          s.total.mineur,
+          s.allocations.fold<int>(
+            0,
+            (int t, AllocationProfil a) => t + a.montant.mineur,
+          ),
+        );
         expect(
           s.allocations.fold<int>(
             0,
@@ -369,8 +479,8 @@ void main() {
         DonneesFinanceDemo.aichaId,
       ]);
       final BeneficiaireRecharge ibrahim = liste[1];
-      expect(ibrahim.montantSuggere, DonneesFinanceDemo.usd(8));
-      expect(ibrahim.montantsProposes.first, DonneesFinanceDemo.usd(8));
+      expect(ibrahim.montantSuggere, DonneesFinanceDemo.manqueDemo);
+      expect(ibrahim.montantsProposes.first, DonneesFinanceDemo.manqueDemo);
       expect(liste.first.montantSuggere, isNull);
       // Entiers en unites mineures, jamais un double.
       for (final BeneficiaireRecharge b in liste) {
@@ -381,27 +491,31 @@ void main() {
       }
     });
 
-    test('Mariam +10, Ibrahim +40 : total 50 arrete par la demonstration', () {
-      final RecapitulatifRecharge r = DonneesFinanceDemo.recapitulatifMontants(
-        JeuFoyerFinance.tousFinances,
-        <MontantRecharge>[
-          MontantRecharge(
-            beneficiaireId: DonneesFinanceDemo.ibrahimId,
-            montant: DonneesFinanceDemo.usd(40),
-          ),
-          MontantRecharge(
-            beneficiaireId: DonneesFinanceDemo.mariamId,
-            montant: DonneesFinanceDemo.usd(10),
-          ),
-        ],
-      );
-      // Dans l'ordre du foyer, une ligne par profil.
-      expect(r.lignes.map((LigneRecapitulatif l) => l.beneficiaireId), <String>[
-        DonneesFinanceDemo.mariamId,
-        DonneesFinanceDemo.ibrahimId,
-      ]);
-      expect(r.total, '50\u00a0\$');
-    });
+    test(
+      'deux montants choisis : le total est arrete par la demonstration',
+      () {
+        final RecapitulatifRecharge r =
+            DonneesFinanceDemo.recapitulatifMontants(
+              JeuFoyerFinance.tousFinances,
+              <MontantRecharge>[
+                MontantRecharge(
+                  beneficiaireId: DonneesFinanceDemo.ibrahimId,
+                  montant: DonneesFinanceDemo.usd(40),
+                ),
+                MontantRecharge(
+                  beneficiaireId: DonneesFinanceDemo.mariamId,
+                  montant: DonneesFinanceDemo.usd(10),
+                ),
+              ],
+            );
+        // Dans l'ordre du foyer, une ligne par profil.
+        expect(
+          r.lignes.map((LigneRecapitulatif l) => l.beneficiaireId),
+          <String>[DonneesFinanceDemo.mariamId, DonneesFinanceDemo.ibrahimId],
+        );
+        expect(r.total, formaterMontant(DonneesFinanceDemo.usd(40 + 10)));
+      },
+    );
 
     test('un montant non propose, nul ou un profil inconnu est refuse', () {
       for (final List<MontantRecharge> choix in <List<MontantRecharge>>[
@@ -431,22 +545,26 @@ void main() {
   });
 
   group('revenus de l enseignant (guide §1.4)', () {
-    test('taux plafonne, jamais au-dessus du plafond', () {
+    final PolitiqueCommerciale pol = DonneesFinanceDemo.politiqueLancement;
+
+    test('ancien taux (sans type de classe) : borne par la base et le '
+        'plafond', () {
       expect(
         DonneesFinanceDemo.tauxEffectif(siegesEligibles: 5, capacite: 5),
-        _usd(7),
+        pol.plafondHoraire,
       );
       expect(
         DonneesFinanceDemo.tauxEffectif(siegesEligibles: 9, capacite: 5),
-        _usd(7),
+        pol.plafondHoraire,
       );
       expect(
         DonneesFinanceDemo.tauxEffectif(siegesEligibles: 0, capacite: 5),
-        _usd(4),
+        pol.baseHoraire,
       );
       expect(
-        DonneesFinanceDemo.tauxEffectif(siegesEligibles: 4, capacite: 5),
-        const Montant(640, 'USD'),
+        DonneesFinanceDemo.tauxEffectif(siegesEligibles: 4, capacite: 5).mineur,
+        pol.baseHoraire.mineur +
+            (pol.plafondHoraire.mineur - pol.baseHoraire.mineur) * 4 ~/ 5,
       );
     });
 
@@ -454,29 +572,45 @@ void main() {
     // la paie de treize sieges (marge 12 pour mille). Revenu et paie portent
     // maintenant sur les memes sieges.
     test('vue globale : revenu et paie sur les memes sieges', () {
-      final PolitiqueCommerciale p = DonneesFinanceDemo.politiqueLancement;
       final RevenusEnseignant r = DonneesFinanceDemo.revenus();
       final VueGlobaleFinance v = DonneesFinanceDemo.vueGlobale();
       final int sieges = r.classes.fold<int>(
         0,
         (int s, RevenusClasse c) => s + c.siegesEligibles,
       );
-      expect(sieges, 13);
-      // 9 enfants a 50 et 4 adultes (As-Salam, capacite adulte) a 60.
+      // An-Nour pleine, Al-Huda moins la place a regulariser, As-Salam au
+      // minimum d'ouverture.
+      expect(
+        sieges,
+        pol.capaciteEnfant + (pol.capaciteEnfant - 1) + pol.minimumOuverture,
+      );
+      final int enfants = r.classes
+          .where((RevenusClasse c) => c.type == TypeClasseRevenus.enfants)
+          .fold<int>(0, (int s, RevenusClasse c) => s + c.siegesEligibles);
+      final int adultes = sieges - enfants;
       expect(
         v.revenuAcademique,
-        Montant(9 * p.tarifEnfant.mineur + 4 * p.tarifAdulte.mineur, 'USD'),
+        Montant(
+          enfants * pol.tarifEnfant.mineur + adultes * pol.tarifAdulte.mineur,
+          'USD',
+        ),
       );
-      expect(v.revenuAcademique, _usd(690));
       expect(v.paieEnseignants, r.totalEstime);
-      expect(v.paieEnseignants, const Montant(14320, 'USD'));
+      // La paie : minutes assurees x taux effectif de la classe / 60.
+      expect(
+        v.paieEnseignants.mineur,
+        r.classes.fold<int>(
+          0,
+          (int s, RevenusClasse c) =>
+              s + c.minutesAssurees * c.tauxHoraireEffectif.mineur ~/ 60,
+        ),
+      );
       expect(
         v.margeProjeteePourMille,
         (v.revenuAcademique.mineur - v.paieEnseignants.mineur) *
             1000 ~/
             v.revenuAcademique.mineur,
       );
-      expect(v.margeProjeteePourMille, 792);
       expect(v.paieEnseignants.mineur, lessThan(v.revenuAcademique.mineur));
     });
 
@@ -492,11 +626,10 @@ void main() {
       // memes sieges, au centime pres.
       expect(v.encaisse, DonneesFinanceDemo.revenuDemo());
       expect(v.encaisse, v.revenuAcademique);
-      expect(v.encaisse, _usd(690));
       // Les impayes sont les manques des sieges a regulariser des classes.
       expect(v.impayes, DonneesFinanceDemo.impayesDemo());
-      expect(v.impayes, _usd(8));
-      // Le meme siege que le foyer : Ibrahim, 42 sur 50 (FIN4-09).
+      expect(v.impayes, DonneesFinanceDemo.manqueDemo);
+      // Le meme siege que le foyer : Ibrahim, a regulariser (FIN4-09).
       final FinancesProfil ibrahim = _profil(
         JeuFoyerFinance.unARegulariser,
         DonneesFinanceDemo.ibrahimId,
@@ -526,7 +659,7 @@ void main() {
       expect(huda.siegesEligibles, lessThan(huda.capacite));
     });
 
-    // Revue FI-1c-CORR-R m6 : As-Salam est une classe d'adultes (60 USD) ;
+    // Revue FI-1c-CORR-R m6 : As-Salam est une classe d'adultes ;
     // Youssef (12 ans) et Khadija (13 ans) y etaient inscrits. Aucun total
     // ne change : les classes de l'enseignant ne lisent pas les profils du
     // foyer, seule l'inscription des deux enfants est corrigee.
@@ -787,7 +920,7 @@ void main() {
             )
             .length,
       );
-      expect(v.impayes, _usd(8));
+      expect(v.impayes, DonneesFinanceDemo.manqueDemo);
     });
 
     test('la classe de chaque personne nommee est dans Top classes', () {
@@ -815,23 +948,37 @@ void main() {
         DonneesFinanceDemo.etatPaiementsDemo();
     final List<EncaissementClasse> top = DonneesFinanceDemo.topClassesDemo();
 
+    // Les sieges eligibles des classes, et le siege a regulariser (Ibrahim).
+    final int finances = DonneesFinanceDemo.revenus().classes.fold<int>(
+      0,
+      (int s, RevenusClasse c) => s + c.siegesEligibles,
+    );
+    const int aRegulariser = 1;
+
     test('les quatre etats, dans l ordre, aux nombres des sieges', () {
       expect(
         etat.map((CompteEtatPaiements c) => c.etat).toList(),
         EtatPaiementsProfils.values,
       );
       expect(etat.map((CompteEtatPaiements c) => c.profils).toList(), <int>[
-        13,
-        1,
+        finances,
+        aRegulariser,
         0,
         0,
       ]);
     });
 
-    test('parts en pour mille : 929 et 71, somme exacte de 1000', () {
+    test('parts en pour mille : plus fort reste, somme exacte de 1000', () {
       expect(
         etat.map((CompteEtatPaiements c) => c.partPourMille).toList(),
-        <int?>[929, 71, 0, 0],
+        <int?>[
+          ...DonneesFinanceDemo.partsPourMille(<int>[
+            finances,
+            aRegulariser,
+            0,
+            0,
+          ])!,
+        ],
       );
       expect(
         etat.fold<int>(
@@ -890,19 +1037,52 @@ void main() {
           greaterThanOrEqualTo(top[i].encaisse.mineur),
         );
       }
-      // An-Nour 5 x 50, As-Salam 4 x 60, Al-Huda 4 x 50.
-      expect(top.map((EncaissementClasse c) => c.classe).toList(), <String>[
-        'An-Nour',
-        'As-Salam',
-        'Al-Huda',
-      ]);
-      expect(top.map((EncaissementClasse c) => c.encaisse).toList(), <Montant>[
-        _usd(250),
-        _usd(240),
-        _usd(200),
-      ]);
+      // Le tarif du public de la classe x ses sieges eligibles, la plus forte
+      // d'abord.
+      final PolitiqueCommerciale pol = DonneesFinanceDemo.politiqueLancement;
+      final List<RevenusClasse> classes = DonneesFinanceDemo.revenus().classes;
+      final Map<String, int> attendu = <String, int>{
+        for (final RevenusClasse c in classes)
+          c.classe:
+              (c.type == TypeClasseRevenus.adultes
+                      ? pol.tarifAdulte
+                      : pol.tarifEnfant)
+                  .mineur *
+              c.siegesEligibles,
+      };
+      expect(
+        top.map((EncaissementClasse c) => c.encaisse.mineur).toList(),
+        attendu.values.toList()..sort((int a, int b) => b.compareTo(a)),
+      );
+      for (final EncaissementClasse c in top) {
+        expect(c.encaisse.mineur, attendu[c.classe], reason: c.classe);
+      }
     });
   });
+}
+
+const List<int> _anciensMontants = <int>[
+  5000,
+  6000,
+  4500,
+  4300,
+  1450,
+  1880,
+  14500,
+  18800,
+];
+
+/// Les montants, en unites mineures, de la politique de la demonstration.
+List<int> _montantsDeLaPolitique() {
+  final PolitiqueCommerciale p = DonneesFinanceDemo.politiqueLancement;
+  return <int>[
+    p.tarifEnfant.mineur,
+    p.tarifAdulte.mineur,
+    for (int rang = 2; rang <= 4; rang++) ...<int>[
+      DonneesFinanceDemo.mensualiteRang(rang).mineur,
+      DonneesFinanceDemo.mensualiteRang(rang, adulte: true).mineur,
+    ],
+  ];
 }
 
 /// Un montant ecrit en dur : les montants de la politique en unites
@@ -910,7 +1090,10 @@ void main() {
 /// toute ecriture d'un montant en unites (revue FI-3-R m5) : `usd(50)`,
 /// `Montant(50 * 100, ...)`, « 50 USD », « 50 $ ».
 final RegExp _montantEnDur = RegExp(
-  r'\b(5000|6000|4500|4300|1450|1880|14500|18800)\b'
+  // Les anciens montants (v1), puis les montants de la politique de la
+  // demonstration, lus dans l'objet : tarifs, mensualites des quatre premiers
+  // rangs.
+  '\\b(${_anciensMontants.followedBy(_montantsDeLaPolitique()).toSet().join('|')})\\b'
   r'|\busd\(\s*-?\d'
   r'|Montant\(\s*-?\d+\s*\*'
   r'|\b\d+(\s|\\u00A0)?(USD|EUR|GBP|XOF|GNF)\b'

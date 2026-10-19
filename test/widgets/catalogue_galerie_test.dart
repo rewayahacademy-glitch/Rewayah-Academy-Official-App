@@ -170,6 +170,8 @@ const List<String> composantsDuCatalogue = <String>[
   'SelecteurPersonne',
   // FORM-L4 : le champ date a choisir dans un calendrier, jamais a taper.
   'ChampDate',
+  // Point 10 du 17/10 : un nombre choisi au pas a pas, jamais au clavier.
+  'ChoixNombre',
   // ENS-PAYS-1 : le pays de l'enseignant sur sa carte, pour tous les roles.
   'PaysEnseignant',
   // FORM-CORR-1 : l'etiquette d'un champ de texte passe a la ligne.
@@ -181,6 +183,8 @@ const List<String> composantsDuCatalogue = <String>[
   // socle, ramenes a la racine de lib/core/widgets par COM-F-b (02_DEC-13) ;
   // dans un sous-dossier, le test du disque ne les voyait pas.
   'BadgeNonLu',
+  // Avis des familles (19/10/2026) : la note de 1 a 5, lue ou choisie.
+  'NoteEtoiles',
   'CartePieceJointe',
   'EspaceTravailAdaptatif',
   'VueEtatCommunication',

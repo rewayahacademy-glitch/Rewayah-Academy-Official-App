@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/domain/enums.dart';
+import '../../../core/dossier/etat_dossier.dart';
 import '../../../core/dossier/service_dossier.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
@@ -81,6 +82,15 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
               nom: brouillon.nom,
               genre: brouillon.genre,
               codeInvitation: codeInvitation,
+              usage: switch (usage) {
+                UsageInscription.moi => UsageTitulaire.moi,
+                UsageInscription.famille => UsageTitulaire.famille,
+                UsageInscription.enseignant ||
+                UsageInscription.comptable => null,
+              },
+              suitDesCours:
+                  usage == UsageInscription.moi ||
+                  brouillon.parentSuitDesCours == true,
             );
         ref.read(brouillonInscriptionProvider.notifier).noterProfilCree();
         ref.read(codeInvitationRetenuProvider.notifier).oublier();
@@ -227,6 +237,21 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
               'inscription-modifier-usage',
             ),
           ),
+          // L5-01 : la reponse « Suivez-vous aussi des cours ? » est montree
+          // avant l'envoi, et part avec le profil.
+          if (brouillon.usage == UsageInscription.famille &&
+              brouillon.parentSuitDesCours != null)
+            LigneRubrique(
+              icone: AppIcons.livreOuvert,
+              libelle: t.inscription.recap.cours,
+              legende: brouillon.parentSuitDesCours!
+                  ? t.inscription.recap.coursOui
+                  : t.inscription.recap.coursNon,
+              controle: modifier(
+                Routes.inscriptionUsage,
+                'inscription-modifier-cours',
+              ),
+            ),
           LigneRubrique(
             icone: AppIcons.profil,
             libelle: t.inscription.recap.identite,

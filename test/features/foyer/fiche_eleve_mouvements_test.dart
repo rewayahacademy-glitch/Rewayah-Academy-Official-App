@@ -352,8 +352,13 @@ void main() {
         depart: _chemin(DonneesFinanceDemo.aichaId),
       );
       expect(find.text(t.ficheEleve.mouvements.nature.remise), findsOneWidget);
+      final MouvementProfil remise = DonneesFinanceDemo.mouvements(
+        JeuFoyerFinance.tousFinances,
+        DonneesFinanceDemo.aichaId,
+      ).singleWhere((MouvementProfil m) => m.nature == NatureMouvement.remise);
+      expect(remise.montant.mineur, greaterThan(0));
       expect(
-        find.text(formaterMontant(DonneesFinanceDemo.usd(5), signe: true)),
+        find.text(formaterMontant(remise.montant, signe: true)),
         findsOneWidget,
       );
     });

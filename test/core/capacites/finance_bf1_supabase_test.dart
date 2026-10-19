@@ -14,6 +14,8 @@ import 'package:rewayah_academy/core/capacites/rpc_finance_supabase.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/features/foyer/fiche/finances_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Map<String, Object?> _m(int mineur, [String devise = 'USD']) =>
@@ -211,6 +213,47 @@ void main() {
       await expectLater(
         RevenusEnseignantSupabase.avecAppel(_horsLigne).moisDisponibles(),
         throwsA(isA<SocketException>()),
+      );
+    });
+  });
+
+  group('lignes de la mensualite (FAC-E-01)', () {
+    test('bourse et part de paiement d avance se lisent, chacune nommee', () {
+      final FinancesProfil f = financesProfilJson(<String, Object?>{
+        ..._finance(),
+        'lignesMensualite': <Object?>[
+          <String, Object?>{
+            'nature': 'tarif',
+            'montant': _m(6500),
+            'rang': null,
+          },
+          <String, Object?>{
+            'nature': 'remise_prepaiement',
+            'montant': _m(-334),
+            'rang': null,
+          },
+          <String, Object?>{
+            'nature': 'bourse',
+            'montant': _m(-1650),
+            'rang': null,
+          },
+        ],
+      });
+      expect(
+        f.lignesMensualite.map((LigneMensualite l) => l.nature),
+        <NatureLigneMensualite>[
+          NatureLigneMensualite.tarif,
+          NatureLigneMensualite.remisePrepaiement,
+          NatureLigneMensualite.bourse,
+        ],
+      );
+      expect(
+        libelleLigneMensualite(f.lignesMensualite[1], adulte: true),
+        t.ficheEleve.finances.remisePrepaiement,
+      );
+      expect(
+        libelleLigneMensualite(f.lignesMensualite[2], adulte: false),
+        t.ficheEleve.finances.bourse,
       );
     });
   });

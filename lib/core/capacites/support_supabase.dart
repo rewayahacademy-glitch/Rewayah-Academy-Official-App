@@ -10,7 +10,9 @@ class SupportSupabase implements PortSupport {
 
   @override
   Future<CanalSupport?> canal() async {
-    final List<dynamic> rows = await _client.rpc<List<dynamic>>('canal_support');
+    final List<dynamic> rows = await _client.rpc<List<dynamic>>(
+      'canal_support',
+    );
     if (rows.isEmpty) {
       return null;
     }

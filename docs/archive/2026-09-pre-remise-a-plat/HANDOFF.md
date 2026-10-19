@@ -1,5 +1,26 @@
 # HANDOFF — à lire en premier, avant toute action
 
+> 🚀 **16 octobre 2026 - audit d'harmonisation (lecture seule), synthèse :
+> [docs/AUDIT-HARMONISATION-2026-10-14.md](AUDIT-HARMONISATION-2026-10-14.md)**, registres détaillés
+> dans [docs/audit-harmonisation/](audit-harmonisation/). Rien n'a été modifié dans le code.
+> ⚠️ **Décision préalable à toute implémentation** : `main` (audité, 4a7aa2b) n'est pas la branche de
+> travail active ; `ccr-1b1bfa0b-m1kvkk` et 17 PR draft portent 0039 à 0048 et une partie des écrans.
+> Le directeur doit désigner la branche de référence (CP-SRC-01).
+> ✅ **Mesuré sur HEAD** (copie, Flutter 3.47.7) : `dart analyze --fatal-infos` propre, **1762 tests,
+> 0 échec**, jetons 0 violation (20 en incluant `features/_dev/`). Les chiffres 729, 684/691 et
+> 11 violations des entrées plus anciennes sont périmés.
+> ❌ **CI** : aucun runner attribué (jobs morts en 1 s, cause côté abonnement Actions) ; et, même avec
+> runner, le rejeu s'arrête à 0030 (stub sans schéma `storage`) ; scénarios `etape3`, `ctr01`, `agt01`
+> en échec sur base neuve.
+> ❌ **P0 sécurité confirmés** : escalade par jeton sans claim de rôle (AUD-IDS-019, critique),
+> `record_session_event` exécutable par tout compte, KYC lisible par le contrôleur (sous-tâche de
+> ADM-02), double décision sur `decider_dossier` (sous-tâche de ADM-02), cahier brut lisible par les
+> familles. Faux succès : « Mes groupes » sur données de démonstration, bandeau « Cours enregistré »
+> sans captation, porte d'observation du tuteur sans quota.
+> ✅ **Tâches existantes confirmées par le code** : R3 routé et testé (`app_router.dart:222-224`),
+> ENS-05 construit. N2 reste bloqué par le compte LiveKit.
+> Prochaine action : section F de la synthèse (décision de branche, runners, puis vague 1 socle CI).
+
 > 🚀 **19 septembre 2026, soir (session suivante) — audit final de placement
 > UX du panneau Admin, un écart trouvé et corrigé.** Mission reçue : contrôle
 > final UX, classification de chaque élément visible de l'espace Admin selon

@@ -19,14 +19,18 @@
 //
 // Pourquoi cette feuille n'a ni etat de chargement, ni d'erreur, ni de hors
 // ligne : le texte est compile dans l'application (`t.contrat.politique`),
-// aucune lecture ne l'alimente, aucun reseau n'est en jeu. Elle s'affiche
-// donc toujours en entier, appareil connecte ou non ; seul le contact de la
-// section 10 est un parametre, jamais une lecture. Si le texte venait un jour
-// du serveur, les cinq etats deviendraient necessaires. Fiche d'ecran :
+// aucune lecture n'alimente le texte. Elle s'affiche donc toujours en entier,
+// appareil connecte ou non. Seul le nom du representant dans l'UE (section 10)
+// est lu, en arriere-plan, depuis le reglage de la direction (19/10/2026) :
+// tant qu'il n'est pas lu, ou s'il est vide, « Rewayah Academy » s'affiche.
+// Si le texte venait un jour du serveur, les cinq etats deviendraient
+// necessaires. Fiche d'ecran :
 // `docs/current/CATALOGUE_ECRANS_JURIDIQUE.md`.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/conformite/representant_ue.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
@@ -45,8 +49,11 @@ typedef SectionPolitique = ({String titre, List<String> blocs});
 ///
 /// [contact] : le contact confidentialite de la section 10, la meme constante
 /// que le texte E-2 de l'eleve ([InformationControle.contactConfidentialite]).
+/// [representantUe] : le nom regle par la direction ; vide ou `null`, « Rewayah
+/// Academy » ([representantUeAffiche]).
 List<SectionPolitique> sectionsPolitiqueControle({
   String contact = InformationControle.contactConfidentialite,
+  String? representantUe,
 }) {
   final Traductions$contrat$politique$fr p = t.contrat.politique;
   return <SectionPolitique>[
@@ -59,7 +66,15 @@ List<SectionPolitique> sectionsPolitiqueControle({
     (titre: p.s7.titre, blocs: p.s7.blocs),
     (titre: p.s8.titre, blocs: p.s8.blocs),
     (titre: p.s9.titre, blocs: p.s9.blocs),
-    (titre: p.s10.titre, blocs: <String>[p.s10.texte(contact: contact)]),
+    (
+      titre: p.s10.titre,
+      blocs: <String>[
+        p.s10.texte(
+          contact: contact,
+          nom: representantUeAffiche(representantUe),
+        ),
+      ],
+    ),
   ];
 }
 
@@ -80,7 +95,7 @@ Future<void> ouvrirPolitiqueControle(BuildContext context) =>
     );
 
 /// Les dix sections de la politique, rendues.
-class TextePolitiqueControle extends StatelessWidget {
+class TextePolitiqueControle extends ConsumerWidget {
   /// Cree le texte.
   const TextePolitiqueControle({
     super.key,
@@ -91,10 +106,14 @@ class TextePolitiqueControle extends StatelessWidget {
   final String contact;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
+    // Le representant regle par la direction. Le texte ne l'attend pas et ne
+    // montre aucune erreur : chargement, echec de lecture ou compte non
+    // connecte, le defaut s'affiche.
     final List<SectionPolitique> sections = sectionsPolitiqueControle(
       contact: contact,
+      representantUe: ref.watch(representantUeProvider).asData?.value,
     );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -109,7 +128,7 @@ class TextePolitiqueControle extends StatelessWidget {
           Ecart.vSm,
           for (int b = 0; b < sections[n].blocs.length; b++) ...<Widget>[
             if (b > 0) Ecart.vMd,
-            _Bloc(bloc: sections[n].blocs[b]),
+            BlocTexteLegal(bloc: sections[n].blocs[b]),
           ],
         ],
       ],
@@ -138,9 +157,14 @@ _BlocDecoupe _decouper(String bloc) {
   return (marque: null, puce: false, texte: bloc);
 }
 
-class _Bloc extends StatelessWidget {
-  const _Bloc({required this.bloc});
+/// Un bloc de texte legal : paragraphe, puce (`- `) ou point numerote
+/// (`1. `), avec les passages entre `**` en gras. Partage par les textes
+/// juridiques de `features/juridique`.
+class BlocTexteLegal extends StatelessWidget {
+  /// Cree le bloc.
+  const BlocTexteLegal({required this.bloc, super.key});
 
+  /// Le texte du bloc, avec ses marques.
   final String bloc;
 
   @override

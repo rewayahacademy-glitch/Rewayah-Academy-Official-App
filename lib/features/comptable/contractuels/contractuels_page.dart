@@ -109,7 +109,10 @@ class _ContractuelsPageState extends ConsumerState<ContractuelsPage> {
           _boutonNouvelle(context),
       ],
       child: echecHorsLigne
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: _relire)
+          ? EtatSysteme.sansDonnees(
+              quoi: t.sansDonnees.contractuels,
+              onAction: _relire,
+            )
           : BlocAsynchrone<List<ObligationContractuel>>(
               valeur: liste,
               squelette: const Skeleton.liste(lignes: 5),

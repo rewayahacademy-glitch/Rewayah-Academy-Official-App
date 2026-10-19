@@ -132,4 +132,69 @@ BEGIN
 END;
 $test$;
 
+-- Quota versionne : la derniere version de controle_regles fixe le plafond
+-- hebdomadaire de missions par controleur (0 desactive, 1 a 50).
+DO $quota$
+BEGIN
+  INSERT INTO public.controle_regles
+    (version, missions_par_semaine, ponderations, payload, cree_par, cle)
+  VALUES
+    (2, 1,
+     '{"enseignants_recents":"normal","classes_signalees":"fort","heures_de_pointe":"aucun"}',
+     '{"scenario":"C29 versioned cap one"}',
+     'c2900000-0000-0000-0000-000000000001',
+     'c2900000-0000-0000-0000-000000000303');
+  UPDATE public.sessions SET status='in_progress'
+   WHERE id='c2900000-0000-0000-0000-000000000301';
+  UPDATE public.sessions SET status='in_progress'
+   WHERE id='c2900000-0000-0000-0000-000000000302';
+  IF (SELECT count(*) FROM private.controle_missions WHERE version_regles=2) <> 1 THEN
+    RAISE EXCEPTION 'C29: versioned weekly cap 1 was not enforced';
+  END IF;
+
+  -- Liberer le controleur (sa mission passe au cycle precedent) : sans cela,
+  -- le plafond 1 deja atteint suffirait a expliquer l'absence de mission, et
+  -- le quota 0 ne serait pas prouve.
+  UPDATE private.controle_missions SET cycle_debut = cycle_debut - 7
+   WHERE version_regles=2;
+  IF EXISTS (SELECT 1 FROM private.controle_missions
+              WHERE controleur_id='c2900000-0000-0000-0000-000000000002'
+                AND cycle_debut=(pg_catalog.date_trunc('week',pg_catalog.clock_timestamp() AT TIME ZONE 'UTC'))::date) THEN
+    RAISE EXCEPTION 'C29: controller still has a mission in the current cycle';
+  END IF;
+
+  INSERT INTO public.controle_regles
+    (version, missions_par_semaine, ponderations, payload, cree_par, cle)
+  VALUES
+    (3, 0,
+     '{"enseignants_recents":"normal","classes_signalees":"fort","heures_de_pointe":"aucun"}',
+     '{"scenario":"C29 versioned cap zero"}',
+     'c2900000-0000-0000-0000-000000000001',
+     'c2900000-0000-0000-0000-000000000304');
+  UPDATE public.sessions SET status='in_progress'
+   WHERE id='c2900000-0000-0000-0000-000000000303';
+  IF EXISTS (SELECT 1 FROM private.controle_missions WHERE version_regles=3) THEN
+    RAISE EXCEPTION 'C29: versioned cap zero still assigned a mission';
+  END IF;
+
+  -- Hors bornes : 51 et -1 sont refuses.
+  BEGIN
+    INSERT INTO public.controle_regles
+      (version, missions_par_semaine, ponderations, payload, cree_par, cle)
+    VALUES (4, 51, '{}', '{}', 'c2900000-0000-0000-0000-000000000001',
+            'c2900000-0000-0000-0000-000000000305');
+    RAISE EXCEPTION 'C29: quota 51 accepted';
+  EXCEPTION WHEN check_violation THEN NULL;
+  END;
+  BEGIN
+    INSERT INTO public.controle_regles
+      (version, missions_par_semaine, ponderations, payload, cree_par, cle)
+    VALUES (4, -1, '{}', '{}', 'c2900000-0000-0000-0000-000000000001',
+            'c2900000-0000-0000-0000-000000000306');
+    RAISE EXCEPTION 'C29: quota -1 accepted';
+  EXCEPTION WHEN check_violation THEN NULL;
+  END;
+END;
+$quota$;
+
 ROLLBACK;

@@ -206,7 +206,10 @@ class _RecevoirPaiementsPageEtat extends ConsumerState<RecevoirPaiementsPage> {
         onReessayer: relire,
         erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
             horsLigne && erreur is! CapaciteIndisponible
-            ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: reessayer)
+            ? EtatSysteme.sansDonnees(
+                quoi: t.sansDonnees.paiementsRecus,
+                onAction: reessayer,
+              )
             : null,
         construire: (EtatMesMoyensPaiement e) => _Corps(
           etat: e,

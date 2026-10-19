@@ -14,6 +14,14 @@ meilleur des deux et réécris cet onglet ; il t'appartient. Écris la raison de
 retirée, ajoutée ou réordonnée. Commence ensuite par B-00 : l'inventaire du projet distant,
 dans l'onglet Journal distant.
 
+## Programme et vocabulaire : mêmes règles que Claude
+
+Avant tout réglage, toute valeur par défaut ou tout texte qui touche au programme pédagogique
+(tranches d'âge, durées, dates limites, fermetures, évaluations, absences, pauses), lis
+`.claude/skills/programme-rewayah/SKILL.md`, `.claude/skills/mots-rewayah/SKILL.md` et
+`docs/current/REGISTRE-RECONCILIATION-2026-10-14.md`. Les valeurs y sont décidées par le
+directeur ; elles vivent en réglages (`app_config`), jamais en dur.
+
 ## L'essentiel
 
 - **Ta zone** : `supabase/**` (migrations à partir de 0044), `lib/core/**/service_*.dart`,

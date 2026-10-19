@@ -5,6 +5,12 @@
 
 ## DÉMARRER ICI — prochaine session (ne rien chercher d'autre)
 
+**16/10/2026 - audit d'harmonisation terminé (lecture seule).** Lire d'abord
+`docs/AUDIT-HARMONISATION-2026-10-14.md` section F : aucune implémentation avant la
+décision de branche de référence (CP-SRC-01). Le paragraphe ci-dessous date du
+14/09 ; R3 et ENS-05 sont depuis construits et routés (preuves dans l'audit), et les
+chiffres de tests cités plus bas sont périmés (1762 tests, 0 échec, mesurés le 15/10).
+
 **Lire `docs/HANDOFF.md` en premier, avant toute action.** Il dit quel est le
 dépôt actif, où le travail s'est arrêté, quel lot reprendre, et avec quelles
 commandes. Le reste de ce fichier est le tableau d'avancement, pas la consigne

@@ -379,7 +379,7 @@ abstract final class Routes {
 
   /// Une sous-page du compte : `informations`, `securite`, `acces`,
   /// `paiements`, `preferences`, `aide`, `informations-legales`,
-  /// `consentements`.
+  /// `consentements`, `mes-donnees`.
   static String compteTuteurSousPage(String segment) =>
       '$tuteurCompte/$segment';
 
@@ -393,6 +393,7 @@ abstract final class Routes {
     'aide',
     'informations-legales',
     'consentements',
+    'mes-donnees',
   ];
 
   /// Les preferences du titulaire.
@@ -698,6 +699,10 @@ abstract final class Routes {
   /// sous Operations.
   static const String adminOperationsOffres = '/admin/operations/offres';
 
+  /// AVIS-PUBLICS : les liens de collecte des avis et leur moderation (publier,
+  /// refuser, retirer), sous Operations. Atteint depuis l'Accueil.
+  static const String adminOperationsAvis = '/admin/operations/avis';
+
   /// ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire (classes,
   /// remplissage, demandes, enseignants libres et manquants), sous
   /// Operations.
@@ -714,6 +719,15 @@ abstract final class Routes {
 
   /// BACK-FRONT-REPRISE-1 : la file des reprises de foyer, sous Personnes.
   static const String adminPersonnesReprises = '/admin/personnes/reprises';
+
+  /// IMM-ACCUEIL-FRONT : l'import des inscriptions actuelles (CSV des
+  /// formulaires), sous Personnes.
+  static const String adminPersonnesImport = '/admin/personnes/import';
+
+  /// CPT-SUPPR-EXPORT : les demandes de suppression de compte, que la
+  /// direction traite apres le delai de reflexion, sous Personnes.
+  static const String adminPersonnesSuppressions =
+      '/admin/personnes/suppressions';
 
   /// Domaine Personnes.
   static const String adminPersonnes = '/admin/personnes';
@@ -803,6 +817,11 @@ abstract final class Routes {
   /// Onglet et contenu reserves a la capacite Super Admin lue par le port.
   static const String adminConfigurationPolitiqueRevueKyc =
       '/admin/configuration/politique-revue-kyc';
+
+  /// Protection des enfants (PE, 18/10/2026), sous Configuration : le
+  /// responsable que l'administration nomme.
+  static const String adminConfigurationProtectionEnfants =
+      '/admin/configuration/protection-enfants';
 
   /// Domaine Securite et audit.
   static const String adminSecuriteAudit = '/admin/securite-audit';
@@ -915,6 +934,12 @@ abstract final class Routes {
   static const String comptableEncaissements =
       '/comptable/tresorerie/encaissements';
 
+  /// « Paiements des familles » (passation du 17/10/2026, point 3) : la
+  /// saisie d'un paiement recu hors de l'application, ouverte depuis
+  /// Encaissements. Meme corps que l'onglet Paiements de la direction.
+  static const String comptablePaiementsFamilles =
+      '/comptable/tresorerie/paiements-familles';
+
   /// Le detail d'un encaissement (panneau a 1440, page sous 1200).
   static String comptableEncaissementPour(String encaissementId) =>
       '$comptableEncaissements/$encaissementId';
@@ -941,6 +966,11 @@ abstract final class Routes {
   /// (decision Q-8 = (a) du 05/10, CPT-VAL-1) : les demandes du Comptable
   /// qu'une autre personne habilitee valide ou refuse.
   static const String adminFinanceAValider = '/admin/finance/a-valider';
+
+  /// Le cinquieme onglet du domaine Finance de la direction : « Paiements »
+  /// (passation du 17/10/2026 point 3, FAC-C-01) : un paiement recu hors de
+  /// l'application, attribue a un eleve.
+  static const String adminFinancePaiements = '/admin/finance/paiements';
 
   /// La coquille du Comptable en demonstration : `?ecran=...&montants=...`.
   /// Enregistree seulement hors production (`environnementAutoriseDemo`).
@@ -1133,6 +1163,10 @@ abstract final class Routes {
   /// Preferences locales de l'application.
   static const String compteReglages = '/compte/reglages';
 
+  /// Mes donnees : la copie de ses donnees et la demande de suppression du
+  /// compte (CPT-SUPPR-EXPORT). Le tuteur la rejoint sous `/tuteur/compte`.
+  static const String compteMesDonnees = '/compte/mes-donnees';
+
   /// Profils d'enfants du foyer.
   static const String compteProfils = '/compte/profils';
 
@@ -1185,7 +1219,28 @@ abstract final class Routes {
     connexion,
     bienvenue,
     agentEntree,
+    juridique,
   };
+
+  /// Les textes juridiques (mentions legales, conditions, annulation et
+  /// remboursement, confidentialite, cookies, protection des enfants) :
+  /// lisibles sans connexion **et** a tout moment pour un compte connecte,
+  /// en attente ou suspendu (`/juridique/<texte>`, voir
+  /// `lib/features/juridique`). Le texte est compile dans l'application :
+  /// aucune donnee, aucune lecture.
+  static const String juridique = '/juridique';
+
+  /// AVIS-PUBLICS (directeur, 19/10/2026) : le formulaire d'avis des familles
+  /// et des eleves, `/avis/<jeton>`. **Ouvert sans connexion et a tout moment**
+  /// (comme `/juridique`, `deciderRedirection`) : la personne arrive avec le
+  /// lien que la direction lui a remis, jamais avec un compte. Le jeton voyage
+  /// dans l'adresse et n'est jamais range ; ce que la page ouvre, c'est un
+  /// formulaire (le serveur dit seulement si le lien est ouvert).
+  static const String avis = '/avis';
+
+  /// L'adresse du formulaire d'avis pour [jeton].
+  static String avisPour(String jeton) =>
+      '$avis/${Uri.encodeComponent(jeton)}';
 
   /// Ou mene la cloche des notifications de la coquille d'un role : la
   /// `NotificationsPage` existante, sous le prefixe du role. Nul pour un

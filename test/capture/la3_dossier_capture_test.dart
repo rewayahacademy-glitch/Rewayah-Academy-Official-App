@@ -91,6 +91,16 @@ List<RouteBase> _routesAttente() => <RouteBase>[
   ),
 ];
 
+/// Le dossier d'un tuteur au contrat non signe, et des accords lus vides.
+List<Override> _surchargesContrat() => <Override>[
+  serviceDossierProvider.overrideWithValue(
+    FauxServiceDossier()..etatRendu = _etatIncomplet(),
+  ),
+  consentementsLotAProvider.overrideWithValue(
+    FauxPortConsentements()..signeesRendues = <Acceptation>[],
+  ),
+];
+
 List<RouteBase> _routesConsentements() => <RouteBase>[
   GoRoute(
     path: Routes.tuteurCompteConsentements,
@@ -119,10 +129,14 @@ void main() {
             serviceDossierProvider.overrideWithValue(dossier),
           ],
         );
-        debugPrint('PNG ${await capturer(tester, 'la3_attente_390x844_${mode.name}')}');
+        debugPrint(
+          'PNG ${await capturer(tester, 'la3_attente_390x844_${mode.name}')}',
+        );
       });
 
-      testWidgets('attente 1440x900, ${mode.name}', (WidgetTester tester) async {
+      testWidgets('attente 1440x900, ${mode.name}', (
+        WidgetTester tester,
+      ) async {
         final FauxServiceDossier dossier = FauxServiceDossier()
           ..etatRendu = _etatIncomplet();
         await _monter(
@@ -135,7 +149,9 @@ void main() {
             serviceDossierProvider.overrideWithValue(dossier),
           ],
         );
-        debugPrint('PNG ${await capturer(tester, 'la3_attente_1440x900_${mode.name}')}');
+        debugPrint(
+          'PNG ${await capturer(tester, 'la3_attente_1440x900_${mode.name}')}',
+        );
       });
     }
 
@@ -147,19 +163,29 @@ void main() {
           routes: _routesAttente(),
           depart: Routes.attenteContrat,
           mode: mode,
+          // L11 : le contrat lit l'etat du dossier ; sans surcharge, il
+          // allait chercher le vrai client Supabase et l'ecran tombait.
+          surcharges: _surchargesContrat(),
         );
-        debugPrint('PNG ${await capturer(tester, 'la3_contrat_390x844_${mode.name}')}');
+        debugPrint(
+          'PNG ${await capturer(tester, 'la3_contrat_390x844_${mode.name}')}',
+        );
       });
 
-      testWidgets('contrat 1440x900, ${mode.name}', (WidgetTester tester) async {
+      testWidgets('contrat 1440x900, ${mode.name}', (
+        WidgetTester tester,
+      ) async {
         await _monter(
           tester,
           routes: _routesAttente(),
           depart: Routes.attenteContrat,
           mode: mode,
           taille: const Size(1440, 900),
+          surcharges: _surchargesContrat(),
         );
-        debugPrint('PNG ${await capturer(tester, 'la3_contrat_1440x900_${mode.name}')}');
+        debugPrint(
+          'PNG ${await capturer(tester, 'la3_contrat_1440x900_${mode.name}')}',
+        );
       });
     }
 
@@ -179,7 +205,9 @@ void main() {
             consentementsLotAProvider.overrideWithValue(port),
           ],
         );
-        debugPrint('PNG ${await capturer(tester, 'la3_consentements_390x844_${mode.name}')}');
+        debugPrint(
+          'PNG ${await capturer(tester, 'la3_consentements_390x844_${mode.name}')}',
+        );
       });
 
       testWidgets('consentements 1440x900, ${mode.name}', (
@@ -197,7 +225,9 @@ void main() {
             consentementsLotAProvider.overrideWithValue(port),
           ],
         );
-        debugPrint('PNG ${await capturer(tester, 'la3_consentements_1440x900_${mode.name}')}');
+        debugPrint(
+          'PNG ${await capturer(tester, 'la3_consentements_1440x900_${mode.name}')}',
+        );
       });
     }
 
@@ -221,7 +251,9 @@ void main() {
           consentementsLotAProvider.overrideWithValue(port),
         ],
       );
-      debugPrint('PNG ${await capturer(tester, 'la3_consentements_signe_390x844_light')}');
+      debugPrint(
+        'PNG ${await capturer(tester, 'la3_consentements_signe_390x844_light')}',
+      );
     });
 
     // Planche maquette | capture (M6, observation).
@@ -248,7 +280,10 @@ void main() {
           tester,
           routes: _routesConsentements(),
           depart: Routes.tuteurCompteConsentements,
-          taille: Size(_largeurLogique, _largeurLogique * hauteurPx / largeurPx),
+          taille: Size(
+            _largeurLogique,
+            _largeurLogique * hauteurPx / largeurPx,
+          ),
           surcharges: <Override>[
             consentementsLotAProvider.overrideWithValue(port),
           ],

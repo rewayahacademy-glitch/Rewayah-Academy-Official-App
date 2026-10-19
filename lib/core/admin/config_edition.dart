@@ -7,6 +7,7 @@ import '../icons/app_icons.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/action_principale.dart';
 import '../widgets/app_bottom_sheet.dart';
+import '../widgets/choix_nombre.dart';
 import '../widgets/selecteur_motif.dart';
 import '../widgets/setting_row.dart';
 import 'service_configuration.dart';
@@ -87,6 +88,11 @@ reglagesEntiersProposes = <String, ReglageEntierPropose>{
   'recording_retention_days': ReglageEntierPropose(proposees: <int>[7, 15, 30]),
   // Defaut 90 (0004).
   'kyc_retention_days': ReglageEntierPropose(proposees: <int>[30, 60, 90]),
+  // Defaut 14 (20261018150000) : delai de reflexion avant qu'une demande de
+  // suppression de compte puisse etre traitee.
+  'compte.suppression_delai_jours': ReglageEntierPropose(
+    proposees: <int>[7, 14, 30],
+  ),
 };
 
 /// Une ligne Configuration qui edite un entier de `app_config` par une
@@ -206,22 +212,13 @@ class _FeuilleEntiere extends StatefulWidget {
 }
 
 class _FeuilleEntiereEtat extends State<_FeuilleEntiere> {
-  late final TextEditingController _champ = TextEditingController(
-    text: '${widget.valeurInitiale}',
-  );
   late int? _choisie = widget.valeurInitiale;
   bool _envoi = false;
   String? _erreur;
 
-  @override
-  void dispose() {
-    _champ.dispose();
-    super.dispose();
-  }
-
   Future<void> _envoyer() async {
     final ReglageEntierPropose? p = widget.proposition;
-    final int? v = p == null ? int.tryParse(_champ.text.trim()) : _choisie;
+    final int? v = _choisie;
     if (v == null || v < 0) {
       setState(() => _erreur = widget.valeurInvalide);
       return;
@@ -272,11 +269,18 @@ class _FeuilleEntiereEtat extends State<_FeuilleEntiere> {
             }),
           )
         else
-          TextField(
-            controller: _champ,
-            keyboardType: TextInputType.number,
-            autofocus: true,
-            decoration: InputDecoration(labelText: widget.champValeur),
+          // Sans proposition, la valeur se choisit au pas a pas, jamais au
+          // clavier (decision du 17/10).
+          ChoixNombre(
+            libelle: widget.champValeur,
+            valeur: _choisie ?? widget.valeurInitiale,
+            affichage: widget.affichage,
+            libelleMoins: t.choix.diminuer,
+            libellePlus: t.choix.augmenter,
+            onChange: (int v) => setState(() {
+              _choisie = v;
+              _erreur = null;
+            }),
           ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,

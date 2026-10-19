@@ -212,7 +212,7 @@ void main() {
         port: _EnEchec(),
         horsLigne: true,
       );
-      expect(find.text(t.commun.etats.horsLigne.titre), findsOneWidget);
+      expect(find.text(t.sansDonnees.obligation), findsOneWidget);
     });
 
     testWidgets('chargement : squelette', (WidgetTester tester) async {

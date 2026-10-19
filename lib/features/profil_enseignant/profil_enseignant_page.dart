@@ -32,6 +32,7 @@ import '../../core/widgets/raccourci_tactile.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../code_conduite/code_conduite.dart';
 import '../dossier/politique_controle.dart';
 import '../paiements_recus/rubrique_recevoir_paiements.dart';
 import 'declaration_choix.dart';
@@ -626,6 +627,18 @@ class _Contrat extends ConsumerWidget {
           libelle: t.contrat.politique.lien,
           onPress: () => unawaited(ouvrirPolitiqueControle(context)),
         ),
+        // PE : le code de conduite se lit et s'accepte ici ; tant qu'il n'est
+        // pas accepte, la ligne le dit.
+        Ecart.vSm,
+        if (acceptations.hasValue &&
+            acceptationCodeConduite(acceptations.requireValue) ==
+                null) ...<Widget>[
+          Text(t.codeConduite.aAccepter, style: textes.bodySmall),
+        ],
+        LienFleche(
+          libelle: t.codeConduite.lien,
+          onPress: () => unawaited(ouvrirCodeConduite(context)),
+        ),
       ],
     );
   }
@@ -635,6 +648,8 @@ class _Contrat extends ConsumerWidget {
     SorteContrat.conditionsTuteur => t.enseignant.profil.contratConditions,
     SorteContrat.accuseEnregistrementControle =>
       t.enseignant.profil.contratAccuse,
+    SorteContrat.codeConduiteEnseignant =>
+      t.enseignant.profil.contratCodeConduite,
   };
 
   String _date(DateTime quand) =>

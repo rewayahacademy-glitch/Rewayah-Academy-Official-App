@@ -36,11 +36,11 @@ const Map<String, int> _domaines = <String, int>{
   'choix': 2,
   'accuse': 1,
   'aConstruire': 1,
+  'juridique': 90,
   'destructif': 0,
   'avatar': 0,
   'pin': 2,
   'enfant': 2,
-  'reglagesEnfant': 3,
   'galerie': 8,
   // AR-ELEVE-1.
   'classe': 140,
@@ -52,7 +52,9 @@ const Map<String, int> _domaines = <String, int>{
   'priere': 10,
   // AR-FAMILLE-1.
   'compte': 180,
-  'tuteur': 110,
+  // Menage du 17/10 (passation point 8) : les libelles orphelins des
+  // anciens reglages de l'enfant et des disponibilites sont retires.
+  'tuteur': 100,
   'historique': 90,
   'appareils': 75,
   'connexion': 40,
@@ -67,9 +69,8 @@ const Map<String, int> _domaines = <String, int>{
   'dossiers': 110,
   'kyc': 12,
   'contrat': 10,
-  'bienvenue': 10,
   'creneaux': 20,
-  'disponibilites': 25,
+  'disponibilites': 10,
   // AR-CONTROLE-1.
   'controleur': 190,
   'agent': 12,
@@ -79,6 +80,13 @@ const Map<String, int> _domaines = <String, int>{
   'recherche': 55,
   // AR-SUIVI-FAMILLE.
   'suiviFamille': 40,
+  // EA-HL-DOUBLE-1 etendu (17/10) : ce qui manque, hors ligne, par ecran.
+  'sansDonnees': 12,
+  // PE (18/10/2026) : protection des enfants, arabe des l'origine.
+  'protectionEnfants': 7,
+  'codeConduite': 8,
+  // AVIS-PUBLICS (19/10/2026) : formulaire public d'avis et moderation.
+  'avis': 100,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :
@@ -145,6 +153,11 @@ const Set<String> _latins = <String>{
   'compte.tuteur.securite.methodeGoogle',
   'dossiers.file.zoneUtc',
   'agent.jetonExemple',
+  // Raison sociale et adresse du siege : noms propres, gardes en latin.
+  'juridique.coord.societe',
+  'juridique.coord.adresse',
+  // Hebergeurs (Supabase, Vercel, Cloudflare) : noms propres et domaines.
+  'juridique.valeurs.hebergeur',
   'admin.politiqueRevueKyc.echecEnregistrement',
   'adulte.invitation.courrielInvalide',
   // Le premier jour du mois s'ecrit en chiffre en arabe (« 1 أكتوبر »),
@@ -188,6 +201,10 @@ const Set<String> _motsLatinsAdmis = <String>{
   'Rewayah',
   'Academy',
   'PDF',
+  // IMM-ACCUEIL-FRONT : le format de fichier de l'import des inscriptions.
+  'CSV',
+  // CPT-SUPPR-EXPORT : le format de la copie des donnees (compte.donnees).
+  'JSON',
   'QR',
   'UTC',
   'Google',

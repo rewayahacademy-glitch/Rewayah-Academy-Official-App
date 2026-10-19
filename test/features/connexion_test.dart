@@ -14,11 +14,14 @@ import 'package:rewayah_academy/features/connexion/connexion_page.dart';
 
 import '../support/harnais.dart';
 
-Future<FauxServiceAuth> _monter(WidgetTester tester) async {
+Future<FauxServiceAuth> _monter(
+  WidgetTester tester, {
+  ModeConnexion mode = ModeConnexion.connexion,
+}) async {
   final FauxServiceAuth auth = FauxServiceAuth();
   await tester.pumpWidget(
     hote(
-      const ConnexionPage(),
+      ConnexionPage(mode: mode),
       surcharges: <Override>[serviceAuthProvider.overrideWithValue(auth)],
     ),
   );
@@ -167,6 +170,51 @@ void main() {
 
       expect(auth.liensEnvoyes, <String>['fatou@example.test']);
       expect(find.text(t.connexion.lienEnvoye), findsOneWidget);
+    });
+
+    testWidgets('L4 : deux chemins distincts, choisis en tete de carte', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceAuth auth = await _monter(tester);
+      expect(find.text(t.connexion.modeConnexion), findsOneWidget);
+      expect(find.text(t.connexion.modeCreation), findsOneWidget);
+      expect(find.text(t.connexion.titre), findsOneWidget);
+      expect(find.text(t.connexion.appareilEleve), findsOneWidget);
+
+      await tester.tap(find.text(t.connexion.modeCreation));
+      await tester.pumpAndSettle();
+      expect(find.text(t.connexion.titreCreation), findsOneWidget);
+      expect(find.text(t.connexion.introCreation), findsOneWidget);
+      // En creation, les sorties des comptes existants s'effacent.
+      expect(find.text(t.connexion.appareilEleve), findsNothing);
+      expect(find.text(t.connexion.probleme), findsNothing);
+      expect(find.text(t.connexion.avecGoogle), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), 'nour@example.test');
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(t.connexion.envoyerLienCreation));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.connexion.envoyerLienCreation));
+      await tester.pumpAndSettle();
+      // Le meme lien cree le compte : c'est le serveur qui decide.
+      expect(auth.liensEnvoyes, <String>['nour@example.test']);
+      expect(find.text(t.connexion.lienEnvoye), findsOneWidget);
+    });
+
+    testWidgets('L4 : ?mode=creer ouvre directement la creation', (
+      WidgetTester tester,
+    ) async {
+      expect(
+        modeDepuisAdresse(Uri.parse('/connexion?mode=creer')),
+        ModeConnexion.creation,
+      );
+      expect(
+        modeDepuisAdresse(Uri.parse('/connexion')),
+        ModeConnexion.connexion,
+      );
+      await _monter(tester, mode: ModeConnexion.creation);
+      expect(find.text(t.connexion.titreCreation), findsOneWidget);
+      expect(find.text(t.connexion.envoyerLienCreation), findsOneWidget);
     });
 
     testWidgets('l ecran de confirmation ne se ferme pas tout seul', (

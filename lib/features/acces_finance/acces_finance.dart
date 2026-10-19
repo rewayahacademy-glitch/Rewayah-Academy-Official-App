@@ -26,6 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart'
     show FutureProviderFamily, ProviderFamily;
+import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_acces_foyer.dart';
@@ -34,11 +35,13 @@ import '../../core/finance/finances_profil.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bandeau_attention.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/pastille_financiere.dart';
 import '../../core/widgets/status_pill.dart';
 import '../compte/donnees_compte.dart' show accesFoyerProvider, dateLongue;
@@ -247,6 +250,10 @@ String? phrasePlace(AccesBeneficiaire? acces, {String? prenom}) {
       date: d,
     ),
     (EtatPlace.liberee, null, null) => t.argent.acces.suspenduAdulteSansDate,
+    (EtatPlace.suspenduPaiement, final String p, _) =>
+      t.argent.acces.suspenduPaiementTuteur(prenom: p),
+    (EtatPlace.suspenduPaiement, null, _) =>
+      t.argent.acces.suspenduPaiementAdulte,
     (EtatPlace.reactivee, final String p, final String d) =>
       t.argent.acces.reactiveTuteur(prenom: p, date: d),
     (EtatPlace.reactivee, final String p, null) =>
@@ -276,20 +283,39 @@ class BandeauPlace extends StatelessWidget {
   /// La cle du bandeau « Accès réactivé ».
   static const Key reactiveKey = Key('acces.place.reactive');
 
+  /// La cle du lien « Payer » d'un acces suspendu pour paiement (FAC-F-01).
+  static const Key payerKey = Key('acces.place.payer');
+
   /// Le bandeau de [acces], `null` sans etat de place rendu.
   static BandeauPlace? pour(AccesBeneficiaire? acces, {String? prenom}) =>
       acces?.place == null ? null : BandeauPlace(acces: acces!, prenom: prenom);
 
   @override
   Widget build(BuildContext context) {
-    final bool liberee = acces.place == EtatPlace.liberee;
+    final bool suspendu = acces.place.ferme;
+    // Le paiement du mois manque : le tuteur (ou l'adulte autonome) peut le
+    // regler d'ici, vers la recharge existante. Jamais montre a l'enfant.
+    final Widget? payer = acces.place == EtatPlace.suspenduPaiement
+        ? LienFleche(
+            key: payerKey,
+            libelle: t.adulte.recharge.payerSeul,
+            libelleSemantique: prenom == null
+                ? null
+                : t.foyer.finances.rechargerPour(prenom: prenom!),
+            alignerEnDebut: true,
+            onPress: () => GoRouter.of(
+              context,
+            ).go(Routes.rechargePour(<String>[acces.eleveId])),
+          )
+        : null;
     return BandeauAttention(
-      key: liberee ? suspenduKey : reactiveKey,
-      titre: liberee
+      key: suspendu ? suspenduKey : reactiveKey,
+      titre: suspendu
           ? t.argent.acces.suspenduTitre
           : t.argent.acces.reactiveTitre,
       message: phrasePlace(acces, prenom: prenom) ?? '',
-      ton: liberee ? TonEtat.avertissement : TonEtat.succes,
+      ton: suspendu ? TonEtat.avertissement : TonEtat.succes,
+      action: payer,
     );
   }
 }
@@ -431,7 +457,7 @@ class AccesAdulte extends ConsumerWidget {
     // (FI-BR-08, guide §8 F5) ; la reactivation ne masque pas un nouveau
     // manque.
     final BandeauPlace? place = BandeauPlace.pour(acces);
-    final Widget? contenu = acces?.place == EtatPlace.liberee
+    final Widget? contenu = acces?.place.ferme ?? false
         ? place
         : aRegulariser(finances)
         ? BandeauRegularisation(finances: finances!)

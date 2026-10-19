@@ -50,6 +50,7 @@ import '../../../core/widgets/champ_recherche.dart';
 import '../../../core/widgets/chargement_avec_delais.dart';
 import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
+import '../../../core/widgets/choix_nombre.dart';
 import '../../../core/widgets/commande_salle.dart';
 import '../../../core/widgets/confirm_destructive.dart';
 import '../../../core/widgets/controle_segmente.dart';
@@ -75,6 +76,7 @@ import '../../../core/widgets/menu_actions.dart';
 import '../../../core/widgets/menu_filtre.dart';
 import '../../../core/widgets/montant_argent.dart';
 import '../../../core/widgets/nav_shell.dart';
+import '../../../core/widgets/note_etoiles.dart';
 import '../../../core/widgets/offline_banner.dart';
 import '../../../core/widgets/ornement_marque.dart';
 import '../../../core/widgets/page_etape.dart';
@@ -1951,6 +1953,20 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
   // Communications, a la racine de `lib/core/widgets/` pour que le test de la
   // galerie les voie.
   EntreeGalerie(
+    nom: 'NoteEtoiles',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'lecture : quatre sur cinq',
+        (BuildContext _) => const NoteEtoiles(valeur: 4),
+      ),
+      EtatGalerie(
+        'choix : aucune etoile encore',
+        (BuildContext _) => NoteEtoiles(valeur: 0, onChange: (int _) {}),
+      ),
+    ],
+  ),
+  EntreeGalerie(
     nom: 'BadgeNonLu',
     famille: FamilleComposant.composantEtat,
     etats: <EtatGalerie>[
@@ -3019,6 +3035,40 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
     ],
   ),
+  // Point 10 du 17/10 : un nombre choisi au pas a pas, jamais au clavier ;
+  // aux bornes, le bouton qui en sortirait n'existe pas.
+  EntreeGalerie(
+    nom: 'ChoixNombre',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'au milieu',
+        (BuildContext _) => _surfaceMaterielle(
+          const ChoixNombre(
+            libelle: 'Ordre',
+            valeur: 3,
+            min: 1,
+            libelleMoins: 'Diminuer l ordre de 1',
+            libellePlus: 'Augmenter l ordre de 1',
+            onChange: _nombreIgnore,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'au plafond',
+        (BuildContext _) => _surfaceMaterielle(
+          const ChoixNombre(
+            libelle: 'Appareils par eleve',
+            valeur: 2,
+            max: 2,
+            libelleMoins: 'Diminuer de 1',
+            libellePlus: 'Augmenter de 1',
+            onChange: _nombreIgnore,
+          ),
+        ),
+      ),
+    ],
+  ),
   // FORM-L4 : un champ date a choisir dans un calendrier, jamais a taper.
   EntreeGalerie(
     nom: 'ChampDate',
@@ -3879,6 +3929,8 @@ void _acteurIgnore(String? acteur) {}
 void _niveauIgnore(String niveauId) {}
 
 void _personneIgnoree(PersonneProposee personne) {}
+
+void _nombreIgnore(int _) {}
 
 void _dateIgnoree(DateTime jour) {}
 

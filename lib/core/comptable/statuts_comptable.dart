@@ -250,6 +250,10 @@ enum RaisonBlocage {
   /// DELEG-FIN-1 : au-dessus du plafond propre a cette delegation (exception
   /// plus basse que la politique generale).
   plafondExceptionDepasse,
+
+  /// FAC-D-01 : paiement recu hors application, saisi par la comptabilite ;
+  /// la direction le valide avant qu'il soit credite.
+  paiementHorsApplication,
 }
 
 /// Les deux listes d'Aujourd'hui (DR-10) : une ligne n'appartient qu'a une

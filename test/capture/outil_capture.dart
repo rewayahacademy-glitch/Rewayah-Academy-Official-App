@@ -11,6 +11,7 @@
 // capture sont sautes (`sautSansCapture`), donc la CI ne les lance pas et
 // n'ecrit rien sur le disque. Mode d'emploi : `test/capture/LISEZ-MOI.md`.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -50,6 +51,7 @@ const Key cadreCapture = ValueKey<String>('capture-cadre');
 ///
 /// A appeler dans `setUpAll`, hors du `FakeAsync` de `testWidgets`.
 Future<List<String>> chargerPolicesDuDepot() async {
+  neutraliserStockageAppareil();
   final String brut = await rootBundle.loadString('FontManifest.json');
   final List<Object?> familles = jsonDecode(brut) as List<Object?>;
   final List<String> chargees = <String>[];
@@ -65,6 +67,21 @@ Future<List<String>> chargerPolicesDuDepot() async {
     chargees.add(nom);
   }
   return chargees;
+}
+
+/// L11 : la base locale de l'appareil (drift, `path_provider`) n'a pas de
+/// greffon sous `flutter test`. Plusieurs ecrans l'ouvrent en passant
+/// (profils locaux, cahiers, preferences) ; sans reponse du greffon, la
+/// lecture echouait APRES la capture et faisait tomber le test. Le canal
+/// repond desormais par une attente qui ne se termine pas : la base reste
+/// « en ouverture », exactement comme sur un appareil lent, et la capture
+/// montre l'ecran tel qu'il est rendu sans elle.
+void neutraliserStockageAppareil() {
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(
+        const MethodChannel('plugins.flutter.io/path_provider'),
+        (MethodCall _) => Completer<Object?>().future,
+      );
 }
 
 /// Largeur de dix « i » a 20 px dans [famille] : environ 200 avec la police
