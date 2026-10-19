@@ -3577,6 +3577,8 @@
         "plafondEleveDetail": "Le maximum par élève présent et par heure, prime de fidélité comprise.",
         "erreurMontantCentimes": "Saisissez un montant supérieur à 0, avec au plus deux décimales (par exemple 0,95).",
         "erreurPlafondEleve": "Le plafond est sous le taux ({taux})\u00a0: saisissez au moins le taux.",
+        "tauxEnfantAuDessusTitre": "Le taux enfant dépasse le taux adulte",
+        "tauxEnfantAuDessusDetail": "Vérifiez que c'est voulu. Vous pouvez publier tel quel.",
         "dureeDueEnfant": "Séance d'enfants due à partir de",
         "dureeDueAdulte": "Séance d'adultes due à partir de",
         "dureeDueDetail": "La présence minimale pour qu'une séance compte dans la paie.",

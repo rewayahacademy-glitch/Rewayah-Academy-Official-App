@@ -2391,6 +2391,50 @@ void main() {
       expect(port.publies, isEmpty);
     });
 
+    testWidgets('taux enfant au-dessus du taux adulte : avertissement non '
+        'bloquant, en direct, publication possible', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 3600));
+      final _Port port = _avecCeBrouillon(brouillonV2());
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      final Finder titre = find.text(pol.tauxEnfantAuDessusTitre);
+      final Finder section = find.byKey(
+        PolitiquesCommercialesContenu.tauxAvertissementKey,
+      );
+      final Finder resume = find.byKey(
+        PolitiquesCommercialesContenu.tauxAvertissementPublicationKey,
+      );
+      // 0,95 enfant, 1,00 adulte : rien.
+      expect(titre, findsNothing);
+      // Enfant au-dessus : l'avertissement apparait sous la paie et avant
+      // la publication, sans erreur de champ.
+      await tester.enterText(_champ('tauxEleveEnfant'), '1,10');
+      await tester.pumpAndSettle();
+      expect(section, findsOneWidget);
+      expect(resume, findsOneWidget);
+      expect(titre, findsNWidgets(2));
+      expect(erreur(tester, 'tauxEleveEnfant'), isNull);
+      // Egal : rien.
+      await tester.enterText(_champ('tauxEleveEnfant'), '1');
+      await tester.pumpAndSettle();
+      expect(titre, findsNothing);
+      // De nouveau au-dessus, puis la publication reste possible.
+      await tester.enterText(_champ('tauxEleveEnfant'), '1,05');
+      await tester.pumpAndSettle();
+      expect(titre, findsNWidgets(2));
+      await _publier(tester);
+      expect(
+        port.publies.single.tauxEleveHeureEnfant,
+        const Montant(105, 'USD'),
+      );
+      // Repasser sous le taux adulte retire l'avertissement.
+      await tester.enterText(_champ('tauxEleveEnfant'), '0,95');
+      await tester.pumpAndSettle();
+      expect(titre, findsNothing);
+    });
+
     testWidgets('trois decimales, zero, vide et texte sont refuses', (
       WidgetTester tester,
     ) async {

@@ -334,6 +334,15 @@ class PolitiquesCommercialesContenu extends ConsumerStatefulWidget {
   /// La cle du bandeau de publication.
   static const Key publicationKey = ValueKey<String>('fi-pol-publication');
 
+  /// La cle de l'avertissement « taux enfant au-dessus du taux adulte »,
+  /// sous les champs de paie.
+  static const Key tauxAvertissementKey = ValueKey<String>('fi-pol-taux-avert');
+
+  /// La cle du meme avertissement, rappele avant la publication.
+  static const Key tauxAvertissementPublicationKey = ValueKey<String>(
+    'fi-pol-taux-avert-publication',
+  );
+
   /// La cle du champ [id] (par exemple `tarifEnfant`, `remise-3`).
   static Key champKey(String id) => ValueKey<String>('fi-pol-champ-$id');
 
@@ -546,6 +555,30 @@ class _PolitiquesCommercialesContenuState
         }
     }
     return null;
+  }
+
+  /// Vrai quand le taux enfant saisi depasse le taux adulte saisi. Un simple
+  /// avertissement : la direction peut le vouloir, rien n'est bloque.
+  bool get _tauxEnfantAuDessusAdulte {
+    if (!_paieParEleve) return false;
+    final Object? e = _courante(_champ('tauxEleveEnfant'));
+    final Object? a = _courante(_champ('tauxEleveAdulte'));
+    return e is Montant && a is Montant && e.mineur > a.mineur;
+  }
+
+  /// L'avertissement non bloquant du taux enfant au-dessus du taux adulte,
+  /// ou rien.
+  List<Widget> _avertissementTaux(Key cle) {
+    if (!_estBrouillon || !_tauxEnfantAuDessusAdulte) return const <Widget>[];
+    final pol = t.admin.finance.pol;
+    return <Widget>[
+      Ecart.vMd,
+      BandeauAttention(
+        key: cle,
+        titre: pol.tauxEnfantAuDessusTitre,
+        message: pol.tauxEnfantAuDessusDetail,
+      ),
+    ];
   }
 
   bool _enErreur(String id) => _erreurDe(_champ(id)) != null;
@@ -1099,6 +1132,9 @@ class _PolitiquesCommercialesContenuState
           ),
         ],
         for (final _Champ c in _enseignants().skip(2)) _ligne(c),
+        ..._avertissementTaux(
+          PolitiquesCommercialesContenu.tauxAvertissementKey,
+        ),
       ]),
       _section(pol.sectionClasses, pol.sectionClassesDetail, <Widget>[
         for (final _Champ c in _classes()) _ligne(c),
@@ -1179,6 +1215,9 @@ class _PolitiquesCommercialesContenuState
           ),
           Ecart.vXxl,
           Text(pol.publierConsequence, style: textes.bodyLarge),
+          ..._avertissementTaux(
+            PolitiquesCommercialesContenu.tauxAvertissementPublicationKey,
+          ),
           ..._bandeauPublication(),
           Ecart.vLg,
           Align(

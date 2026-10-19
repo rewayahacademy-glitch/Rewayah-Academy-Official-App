@@ -11321,6 +11321,8 @@ class _Traductions$admin$finance$pol$ar extends Traductions$admin$finance$pol$fr
 	@override String get plafondEleveDetail => 'الحد الأقصى لكل طالب حاضر ولكل ساعة، بما في ذلك مكافأة الوفاء.';
 	@override String get erreurMontantCentimes => 'أدخل مبلغًا أكبر من 0، بخانتين عشريتين على الأكثر (مثال: 0,95).';
 	@override String erreurPlafondEleve({required Object taux}) => 'الحد الأقصى أقل من المعدل (⁨${taux}⁩) : أدخل المعدل أو أكثر.';
+	@override String get tauxEnfantAuDessusTitre => 'معدل الأطفال أعلى من معدل البالغين';
+	@override String get tauxEnfantAuDessusDetail => 'تأكد من أن هذا مقصود. يمكنك النشر كما هو.';
 	@override String get dureeDueEnfant => 'تُحتسب حصة الأطفال ابتداءً من';
 	@override String get dureeDueAdulte => 'تُحتسب حصة البالغين ابتداءً من';
 	@override String get dureeDueDetail => 'الحد الأدنى من الحضور لتُحتسب الحصة في الأجر.';
@@ -18677,6 +18679,8 @@ extension on TraductionsAr {
 			'admin.finance.pol.plafondEleveDetail' => 'الحد الأقصى لكل طالب حاضر ولكل ساعة، بما في ذلك مكافأة الوفاء.',
 			'admin.finance.pol.erreurMontantCentimes' => 'أدخل مبلغًا أكبر من 0، بخانتين عشريتين على الأكثر (مثال: 0,95).',
 			'admin.finance.pol.erreurPlafondEleve' => ({required Object taux}) => 'الحد الأقصى أقل من المعدل (⁨${taux}⁩) : أدخل المعدل أو أكثر.',
+			'admin.finance.pol.tauxEnfantAuDessusTitre' => 'معدل الأطفال أعلى من معدل البالغين',
+			'admin.finance.pol.tauxEnfantAuDessusDetail' => 'تأكد من أن هذا مقصود. يمكنك النشر كما هو.',
 			'admin.finance.pol.dureeDueEnfant' => 'تُحتسب حصة الأطفال ابتداءً من',
 			'admin.finance.pol.dureeDueAdulte' => 'تُحتسب حصة البالغين ابتداءً من',
 			'admin.finance.pol.dureeDueDetail' => 'الحد الأدنى من الحضور لتُحتسب الحصة في الأجر.',
@@ -18892,10 +18896,10 @@ extension on TraductionsAr {
 			'admin.groupes.cahiers.lien' => 'عرض دفاتر الفصل',
 			'admin.groupes.cahiers.titre' => 'دفاتر الفصل',
 			'admin.groupes.cahiers.aide' => 'للقراءة فقط. تُسجَّل كل مرة يُفتح فيها دفتر في سجل التدقيق مع اسمك.',
-			'admin.groupes.cahiers.filtre' => 'الحالة',
-			'admin.groupes.cahiers.filtreTous' => 'كل الحالات',
 			_ => null,
 		} ?? switch (path) {
+			'admin.groupes.cahiers.filtre' => 'الحالة',
+			'admin.groupes.cahiers.filtreTous' => 'كل الحالات',
 			'admin.groupes.cahiers.vide' => 'لا يوجد دفتر مطابق لهذا الفصل.',
 			'admin.groupes.cahiers.plus' => 'عرض مزيد من الدفاتر',
 			'admin.groupes.cahiers.titreCahier' => ({required Object dePrenom}) => 'دفتر ⁨${dePrenom}⁩',
@@ -19406,10 +19410,10 @@ extension on TraductionsAr {
 			'admin.comptes.etatActif' => 'نشط',
 			'admin.comptes.etatProvisoire' => 'مؤقت',
 			'admin.comptes.etatSuspendu' => 'موقوف',
-			'admin.comptes.etatInconnu' => 'حالة غير معروفة',
-			'admin.comptes.roleAdmin' => 'الإدارة',
 			_ => null,
 		} ?? switch (path) {
+			'admin.comptes.etatInconnu' => 'حالة غير معروفة',
+			'admin.comptes.roleAdmin' => 'الإدارة',
 			'admin.comptes.roleComptable' => 'محاسب',
 			'admin.comptes.roleControleur' => 'مراقب',
 			'admin.comptes.roleEnseignant' => 'معلم',
@@ -19920,10 +19924,10 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.version.sansFichier' => 'بلا ملف',
 			'admin.bibliotheque.fiche.droitsChamps.revue' => 'مراجعة الحقوق',
 			'admin.bibliotheque.fiche.droitsChamps.source' => 'المصدر',
-			'admin.bibliotheque.fiche.droitsChamps.titulaire' => 'صاحب الحق',
-			'admin.bibliotheque.fiche.droitsChamps.preuve' => 'إثبات الإذن',
 			_ => null,
 		} ?? switch (path) {
+			'admin.bibliotheque.fiche.droitsChamps.titulaire' => 'صاحب الحق',
+			'admin.bibliotheque.fiche.droitsChamps.preuve' => 'إثبات الإذن',
 			'admin.bibliotheque.fiche.droitsChamps.preuveOui' => 'مودَع',
 			'admin.bibliotheque.fiche.droitsChamps.preuveNon' => 'ناقص',
 			'admin.bibliotheque.fiche.droitsChamps.usages' => 'الاستخدامات المسموحة',
@@ -20434,10 +20438,10 @@ extension on TraductionsAr {
 			'comptable.tresorerie.descriptions.tresorerieLibre' => 'ما يبقى متاحًا فعلًا بعد التخصيصات المحمية.',
 			'comptable.tresorerie.politiqueTitre' => 'سياسة الاحتياطي الاستراتيجي',
 			'comptable.tresorerie.politiquePhrase' => 'تحددها الإدارة. أنت تطبّقها ولا تعدّلها.',
-			'comptable.tresorerie.alimentationAuto' => 'التغذية التلقائية',
-			'comptable.tresorerie.regle.desactivee' => 'معطّلة',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.tresorerie.alimentationAuto' => 'التغذية التلقائية',
+			'comptable.tresorerie.regle.desactivee' => 'معطّلة',
 			'comptable.tresorerie.regle.montantFixe' => 'مبلغ ثابت في كل موعد',
 			'comptable.tresorerie.regle.pourcentage' => ({required Object pourcent}) => '${pourcent} % من كل مقبوض مُثبَّت',
 			'comptable.tresorerie.regle.jusquAObjectif' => 'الإكمال حتى المبلغ المستهدف',
@@ -20948,10 +20952,10 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.reactiverTitre' => 'إعادة تفعيل التفويضات',
 			'comptable.direction.delegationPanneau.reactiverDetail' => 'التفويضات موقوفة. رفع الإيقاف قرار من الإدارة مع سبب مكتوب.',
 			'comptable.direction.delegationPanneau.reactiverAction' => 'إعادة تفعيل التفويضات',
-			'comptable.direction.delegationPanneau.reactiverPhrase' => 'سيتمكن المحاسب من العمل مجددًا ضمن حدود السياسة. لا يُستعاد أبدًا تفويض منتهي: يجب تجديده. تبقى المخرجات الملغاة ملغاة. تُسجَّل إعادة التفعيل في السجل.',
-			'comptable.direction.delegationPanneau.reactiverRaison' => 'سبب إعادة التفعيل',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.delegationPanneau.reactiverPhrase' => 'سيتمكن المحاسب من العمل مجددًا ضمن حدود السياسة. لا يُستعاد أبدًا تفويض منتهي: يجب تجديده. تبقى المخرجات الملغاة ملغاة. تُسجَّل إعادة التفعيل في السجل.',
+			'comptable.direction.delegationPanneau.reactiverRaison' => 'سبب إعادة التفعيل',
 			'comptable.direction.delegationPanneau.reactiverRaisonAide' => 'يُحفظ في السجل مع اسمك.',
 			'comptable.direction.delegationPanneau.reactiverRaisonVide' => 'اكتب السبب لإعادة تفعيل التفويضات.',
 			'comptable.direction.delegationPanneau.reactiverConfirmer' => 'إعادة التفعيل',
@@ -21462,10 +21466,10 @@ extension on TraductionsAr {
 			'connexion.feuilleAppareil.fermer' => 'إغلاق',
 			'connexion.modeConnexion' => 'لدي حساب',
 			'connexion.modeCreation' => 'إنشاء حساب',
-			'connexion.titreCreation' => 'أنشئ حسابك',
-			'connexion.introCreation' => 'اكتب عنوانك: نرسل إليك رابطا ينشئ حسابك. لا كلمة مرور تختارها.',
 			_ => null,
 		} ?? switch (path) {
+			'connexion.titreCreation' => 'أنشئ حسابك',
+			'connexion.introCreation' => 'اكتب عنوانك: نرسل إليك رابطا ينشئ حسابك. لا كلمة مرور تختارها.',
 			'connexion.envoyerLienCreation' => 'استلام رابط التسجيل',
 			'attente.titre' => 'ملفك قيد التحقق',
 			'attente.dossierIncomplet' => 'ما زالت تنقص ملفك بعض الوثائق.',
@@ -21976,10 +21980,10 @@ extension on TraductionsAr {
 			'adulte.demo.etats.repriseRefusee' => 'رُفض استلام الأسرة.',
 			'adulte.demo.etats.dejaDansUnAutreFoyer' => 'البالغ المدعو جزء من أسرة أخرى بالفعل.',
 			'adulte.demo.etats.erreurReseau' => 'انقطعت الشبكة أثناء إجراء.',
-			'adulte.demo.etats.doubleSoumission' => 'أُرسل الإجراء نفسه مرتين.',
-			'adulte.demo.etats.notificationDansLApplication' => 'تعذّر إرسال الإشعار إلى الهاتف، ويبقى ظاهرًا في التطبيق.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.etats.doubleSoumission' => 'أُرسل الإجراء نفسه مرتين.',
+			'adulte.demo.etats.notificationDansLApplication' => 'تعذّر إرسال الإشعار إلى الهاتف، ويبقى ظاهرًا في التطبيق.',
 			'adulte.demo.etats.emancipation' => 'استقلال طالب بلغ سن الرشد: غير مبني في هذه المرحلة.',
 			'dossiers.titre' => 'ملفات للاعتماد',
 			'dossiers.sousTitre' => 'ادرس الملفات الجاهزة لاتخاذ قرار.',
@@ -22490,10 +22494,10 @@ extension on TraductionsAr {
 			'suiviDemandes.titre' => 'متابعة طلبات المواعيد',
 			'suiviDemandes.contexte' => 'يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.',
 			'suiviDemandes.carteTitre' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩',
-			'suiviDemandes.joursChoisis' => 'الأيام المختارة',
-			'suiviDemandes.heureChoisie' => 'الساعة المختارة',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.joursChoisis' => 'الأيام المختارة',
+			'suiviDemandes.heureChoisie' => 'الساعة المختارة',
 			'suiviDemandes.joursEt' => ({required Object debut, required Object dernier}) => '⁨${debut}⁩ و⁨${dernier}⁩',
 			'suiviDemandes.heureFuseau' => ({required Object heure, required Object deVille}) => '⁨${heure}⁩، بتوقيت ⁨${deVille}⁩',
 			'suiviDemandes.creneauxChoisis' => 'الأيام والساعات المختارة',
