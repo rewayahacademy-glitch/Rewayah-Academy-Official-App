@@ -3297,6 +3297,59 @@
       "erreurSuite": "Les visites plus anciennes n'ont pas pu être lues.",
       "fin": "Toutes les visites sont affichées."
     },
+    "suppressions": {
+      "onglet": "Suppressions",
+      "titre": "Suppressions de compte",
+      "sousTitre": "Les demandes de suppression. La direction les traite une fois le délai de réflexion écoulé.",
+      "attente(param=n)": {
+        "one": "{n} demande attend une décision.",
+        "other": "{n} demandes attendent une décision."
+      },
+      "vide": "Aucune demande de suppression.",
+      "erreur": "Les demandes n'ont pas pu être chargées. Réessayez.",
+      "sansDonnees": "Les demandes de suppression n'ont pas pu être chargées",
+      "refuse": "Seule la direction connectée avec la double vérification traite ces demandes. Reconnectez-vous avec votre code de vérification, puis réessayez.",
+      "indisponibleTitre": "Suppressions de compte indisponibles",
+      "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur.",
+      "etat": {
+        "enAttente": "En attente",
+        "aTraiter": "À traiter",
+        "annulee": "Annulée",
+        "traitee": "Traitée"
+      },
+      "matricule": "Matricule",
+      "role": "Rôle",
+      "motif": "Motif",
+      "demandeeLe": "Demandée le",
+      "annuleeLe": "Annulée le",
+      "traiteeLe": "Traitée le",
+      "delaiEnCours": "Le délai de réflexion court jusqu'au {date}. La demande pourra être traitée à partir de ce jour.",
+      "soldeTitre": "Un solde reste à régler",
+      "soldeDetail": "Il reste {montant} à payer. Ce solde reste dû après la suppression.",
+      "seancesTitre": "Des séances sont encore prévues",
+      "seancesDetail(param=n)": {
+        "one": "{n} séance est prévue. Annulez-la ou confiez-la à une autre personne. La demande ne peut pas être traitée tant qu'elle existe.",
+        "other": "{n} séances sont prévues. Annulez-les ou confiez-les à une autre personne. La demande ne peut pas être traitée tant qu'elles existent."
+      },
+      "foyerTitre": "Des élèves dans ce foyer",
+      "foyerDetail(param=n)": {
+        "one": "{n} élève est dans le foyer de ce tuteur. Vérifiez sa situation avant de continuer.",
+        "other": "{n} élèves sont dans le foyer de ce tuteur. Vérifiez leur situation avant de continuer."
+      },
+      "traiter": "Traiter la demande",
+      "confirmerQuestion": "Anonymiser ce compte : {nom} ?",
+      "confirmerConsequence": "Le nom, les coordonnées et la photo sont effacés. La personne ne peut plus se connecter. Cette action ne peut pas être annulée. Les factures et les paiements sont conservés.",
+      "confirmerSolde": "Un solde de {montant} reste dû et le restera.",
+      "confirmerAction": "Anonymiser le compte",
+      "confirmerRester": "Ne rien changer",
+      "traitee": "Le compte est anonymisé. La demande est traitée.",
+      "dejaTraitee": "Cette demande n'est plus en attente. La liste est à jour.",
+      "delaiNonEcoule": "Le délai de réflexion court encore. Rien n'a été effacé.",
+      "seancesRefus": "Des séances sont encore prévues. Rien n'a été effacé.",
+      "introuvable": "Cette demande n'existe plus. La liste est à jour.",
+      "echec": "La décision n'a pas pu être confirmée. Vérifiez la liste avant de réessayer.",
+      "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour."
+    },
     "comptes": {
       "titre": "Comptes",
       "intro": "Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d'identité déposée reste visible ici\u00a0: c'est le seul endroit qui le montre.",
@@ -10660,6 +10713,216 @@
           "Si une chose vous inquiète, écrivez-nous. Dites ce que vous avez vu, quand, et dans quelle Classe.",
           "En cas de danger immédiat, contactez d'abord les services d'urgence de votre pays."
         ]
+      }
+    }
+  },
+  "avis": {
+    "form": {
+      "titre": "Donnez votre avis",
+      "sousTitre": "Quelques lignes sur votre expérience à Rewayah Academy. Deux minutes suffisent.",
+      "nom": {
+        "libelle": "Nom affiché",
+        "aide": "Votre prénom et l'initiale de votre nom suffisent.",
+        "erreur": "Entrez un nom de 2 à 60 caractères."
+      },
+      "qualite": {
+        "libelle": "Vous êtes",
+        "parent": "Parent ou tuteur d'un élève",
+        "eleveAdulte": "Élève adulte",
+        "erreur": "Choisissez qui vous êtes."
+      },
+      "pays": {
+        "libelle": "Pays de résidence",
+        "choisir": "Choisir un pays",
+        "rechercheLibelle": "Rechercher un pays",
+        "rechercheAide": "Tapez le nom du pays",
+        "aucun": "Aucun pays ne correspond. Essayez une autre écriture.",
+        "erreur": "Choisissez votre pays de résidence."
+      },
+      "depuis": {
+        "libelle": "Avec nous depuis",
+        "aide": "Le mois et l'année où vous avez rejoint l'académie.",
+        "mois": "Mois",
+        "annee": "Année",
+        "erreur": "Choisissez un mois et une année, de 2015 jusqu'à ce mois-ci."
+      },
+      "note": {
+        "libelle": "Votre note",
+        "aide": "Touchez une étoile\u00a0: 1 est la note la plus basse, 5 la plus haute.",
+        "etoile": "Donner la note {n} sur 5",
+        "lue": "Note\u00a0: {n} sur 5",
+        "erreur": "Choisissez une note de 1 à 5 étoiles."
+      },
+      "titreAvis": {
+        "libelle": "Titre (facultatif)",
+        "aide": "Une phrase courte qui résume votre avis. 80 caractères au plus.",
+        "erreur": "Corrigez le titre\u00a0: 80 caractères au plus."
+      },
+      "texte": {
+        "libelle": "Votre avis",
+        "aide": "Ce qui vous a plu, ce que vous avez appris, ce qui pourrait être mieux. Au moins 20 caractères.",
+        "compteur": "Caractères\u00a0: {n} sur {max}",
+        "erreur": "Écrivez entre 20 et 1500 caractères."
+      },
+      "accord": {
+        "libelle": "J'accepte que cet avis, mon nom affiché, mon pays et la date soient publiés sur le site de Rewayah Academy.",
+        "erreur": "Acceptez la publication en cochant la case, sinon votre avis ne peut pas être envoyé."
+      },
+      "lecture": "Votre avis sera lu par la direction avant d'être publié. Pour le faire retirer plus tard, écrivez à {courriel}.",
+      "regles": {
+        "titre": "Ce que la direction publie",
+        "intro": "Un avis respectueux est publié, même quand il est critique. La direction ne modifie jamais votre texte. Elle refuse seulement un avis qui contient\u00a0:",
+        "insulte": "une insulte",
+        "tiers": "des données personnelles d'un tiers, comme le nom d'un enfant ou d'un enseignant",
+        "publicite": "de la publicité",
+        "horsSujet": "un propos hors sujet",
+        "doublon": "un doublon d'un avis déjà reçu",
+        "donnees": "Ne donnez ni le nom d'un enfant, ni courriel, ni téléphone."
+      },
+      "envoyer": "Envoyer mon avis",
+      "aCorriger": "Quelques champs sont à corriger avant l'envoi.",
+      "erreurChamp": "Un champ n'est pas accepté. Relisez le formulaire, puis envoyez de nouveau.",
+      "echec": "Votre avis n'a pas pu être confirmé. La connexion a peut-être été coupée. Vérifiez-la, puis touchez «\u00a0Envoyer mon avis\u00a0» de nouveau.",
+      "horsLigne": "Rien n'est parti, votre saisie reste sur cet écran. Envoyez votre avis dès le retour du réseau.",
+      "ferme": {
+        "titre": "Ce lien n'accepte plus d'avis",
+        "phrase": "Il est fermé, arrivé à échéance, ou le nombre d'avis prévu est atteint. Pour donner votre avis, demandez un nouveau lien à la direction\u00a0: {courriel}."
+      },
+      "envoye": {
+        "titre": "Merci pour votre avis",
+        "phrase": "La direction va le lire avant de le publier. S'il est accepté, il paraîtra sur le site de Rewayah Academy avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à {courriel}."
+      },
+      "erreurChargement": "Le formulaire n'a pas pu s'ouvrir. Réessayez dans un moment.",
+      "sansDonnees": "Le formulaire n'a pas pu s'ouvrir",
+      "indisponibleTitre": "Avis indisponibles",
+      "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur."
+    },
+    "admin": {
+      "titre": "Avis",
+      "sousTitre": "Les avis des familles et des élèves. La direction les lit, les publie ou les refuse. Elle ne modifie jamais un texte.",
+      "outil": "Avis des familles",
+      "outilDetail": "Créer un lien de collecte, lire les avis, les publier ou les refuser",
+      "sections": {
+        "libelle": "Sections des avis",
+        "avis": "Avis",
+        "liens": "Liens"
+      },
+      "statut": {
+        "tous": "Tous",
+        "enAttente": "En attente",
+        "publie": "Publié",
+        "refuse": "Refusé",
+        "retire": "Retiré"
+      },
+      "filtre": {
+        "tous": "Tous",
+        "enAttente": "En attente",
+        "publie": "Publiés",
+        "refuse": "Refusés",
+        "retire": "Retirés"
+      },
+      "attente": "Avis en attente\u00a0: {n}",
+      "vide": "Aucun avis dans cette liste.",
+      "erreur": "Les avis n'ont pas pu être chargés. Réessayez.",
+      "sansDonnees": "Les avis n'ont pas pu être chargés",
+      "refuse": "Seule la direction connectée lit et décide des avis. Reconnectez-vous avec le bon compte, puis réessayez.",
+      "indisponibleTitre": "Avis indisponibles",
+      "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur.",
+      "champs": {
+        "lien": "Lien",
+        "pays": "Pays",
+        "depuis": "Avec nous depuis",
+        "qualite": "Vous êtes",
+        "depose": "Déposé le",
+        "accord": "Accord de publication",
+        "motif": "Motif",
+        "modere": "Décision du",
+        "publie": "Publié le"
+      },
+      "actions": {
+        "publier": "Publier",
+        "refuser": "Refuser",
+        "retirer": "Retirer"
+      },
+      "publier": {
+        "question": "Publier l'avis {deNom}\u00a0?",
+        "consequence": "L'avis, le nom affiché, le pays et la date paraîtront sur le site de Rewayah Academy au prochain passage du site. Le texte n'est pas modifié.",
+        "action": "Publier l'avis",
+        "rester": "Ne rien changer"
+      },
+      "refuser": {
+        "titre": "Refuser l'avis {deNom}",
+        "intro": "Choisissez le motif du refus. Un avis critique mais respectueux se publie.",
+        "consequence": "L'avis ne sera pas publié. Le motif est gardé.",
+        "action": "Refuser l'avis",
+        "rester": "Ne rien changer"
+      },
+      "retirer": {
+        "titre": "Retirer l'avis {deNom}",
+        "intro": "Choisissez le motif du retrait.",
+        "consequence": "L'avis disparaîtra du site au prochain passage du site. Le motif est gardé.",
+        "action": "Retirer l'avis",
+        "rester": "Ne rien changer"
+      },
+      "motifs": {
+        "insulte": "Insulte",
+        "tiers": "Données personnelles d'un tiers",
+        "publicite": "Publicité",
+        "horsSujet": "Hors sujet",
+        "doublon": "Doublon",
+        "demande": "Demande de la personne"
+      },
+      "retour": {
+        "publie": "L'avis est publié.",
+        "refuse": "L'avis est refusé.",
+        "retire": "L'avis est retiré.",
+        "etatChange": "Cet avis n'est plus dans l'état attendu. La liste est mise à jour.",
+        "introuvable": "Cet avis n'existe plus. La liste est mise à jour.",
+        "motifManque": "Le motif manque. Choisissez-en un.",
+        "refus": "Seule la direction connectée peut décider d'un avis.",
+        "echec": "La décision n'a pas pu être confirmée. La liste est relue\u00a0: vérifiez l'état de l'avis avant de recommencer.",
+        "horsLigne": "Rien n'est parti\u00a0: le réseau est absent. Réessayez dès son retour."
+      },
+      "liens": {
+        "creerTitre": "Créer un lien",
+        "creerIntro": "Un lien ouvre le formulaire d'avis, sans compte ni connexion. Donnez-lui un nom pour le reconnaître.",
+        "libelle": "Nom du lien",
+        "libelleAide": "Par exemple\u00a0: Familles octobre 2026.",
+        "libelleErreur": "Donnez un nom au lien.",
+        "jours": "Durée en jours",
+        "joursAide": "90 par défaut, 365 au plus.",
+        "joursErreur": "Entrez un nombre de jours de 1 à 365.",
+        "max": "Nombre maximal d'avis",
+        "maxAide": "200 par défaut, 2000 au plus.",
+        "maxErreur": "Entrez un nombre d'avis de 1 à 2000.",
+        "creer": "Créer le lien",
+        "echecCreation": "La création du lien n'est pas confirmée. Regardez la liste des liens avant de recommencer.",
+        "creeTitre": "Lien créé",
+        "creePhrase": "Copiez ce lien maintenant. Il ne sera plus affiché une fois cet encadré fermé. Si vous le perdez, fermez ce lien et créez un nouveau lien.",
+        "creeAdresse": "Adresse du lien",
+        "creeValable": "Valable jusqu'au {date}.",
+        "copier": "Copier le lien",
+        "copie": "Lien copié.",
+        "creeFermer": "J'ai copié le lien",
+        "etat": {
+          "ouvert": "Ouvert",
+          "ferme": "Fermé",
+          "expire": "Expiré",
+          "plein": "Complet"
+        },
+        "recus": "Avis reçus\u00a0: {recus} sur {max}",
+        "fin": "Fin le {date}",
+        "cree": "Créé le {date}",
+        "fermer": "Fermer le lien",
+        "fermerQuestion": "Fermer le lien «\u00a0{nom}\u00a0»\u00a0?",
+        "fermerConsequence": "Les personnes qui ouvriront ce lien verront qu'il est fermé et ne pourront plus envoyer d'avis. Les avis déjà reçus restent. Un lien fermé ne se rouvre pas.",
+        "fermerAction": "Fermer le lien",
+        "fermerRester": "Ne rien changer",
+        "fermeOk": "Le lien est fermé.",
+        "fermeEchec": "La fermeture n'est pas confirmée. La liste est relue\u00a0: vérifiez l'état du lien.",
+        "vide": "Aucun lien pour le moment. Créez-en un pour recueillir des avis.",
+        "erreur": "Les liens n'ont pas pu être chargés. Réessayez.",
+        "sansDonnees": "Les liens n'ont pas pu être chargés"
       }
     }
   }

@@ -95,6 +95,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$sansDonnees$ar sansDonnees = _Traductions$sansDonnees$ar._(_root);
 	@override late final _Traductions$argent$ar argent = _Traductions$argent$ar._(_root);
 	@override late final _Traductions$juridique$ar juridique = _Traductions$juridique$ar._(_root);
+	@override late final _Traductions$avis$ar avis = _Traductions$avis$ar._(_root);
 }
 
 // Path: notifications
@@ -627,6 +628,7 @@ class _Traductions$admin$ar extends Traductions$admin$fr {
 	@override late final _Traductions$admin$programmes$ar programmes = _Traductions$admin$programmes$ar._(_root);
 	@override late final _Traductions$admin$journal$ar journal = _Traductions$admin$journal$ar._(_root);
 	@override late final _Traductions$admin$observations$ar observations = _Traductions$admin$observations$ar._(_root);
+	@override late final _Traductions$admin$suppressions$ar suppressions = _Traductions$admin$suppressions$ar._(_root);
 	@override late final _Traductions$admin$comptes$ar comptes = _Traductions$admin$comptes$ar._(_root);
 	@override late final _Traductions$admin$agents$ar agents = _Traductions$admin$agents$ar._(_root);
 	@override late final _Traductions$admin$notifications$ar notifications = _Traductions$admin$notifications$ar._(_root);
@@ -1642,6 +1644,17 @@ class _Traductions$juridique$ar extends Traductions$juridique$fr {
 	@override late final _Traductions$juridique$confidentialite$ar confidentialite = _Traductions$juridique$confidentialite$ar._(_root);
 	@override late final _Traductions$juridique$cookies$ar cookies = _Traductions$juridique$cookies$ar._(_root);
 	@override late final _Traductions$juridique$enfants$ar enfants = _Traductions$juridique$enfants$ar._(_root);
+}
+
+// Path: avis
+class _Traductions$avis$ar extends Traductions$avis$fr {
+	_Traductions$avis$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$avis$form$ar form = _Traductions$avis$form$ar._(_root);
+	@override late final _Traductions$avis$admin$ar admin = _Traductions$avis$admin$ar._(_root);
 }
 
 // Path: notifications.evenements
@@ -4683,6 +4696,73 @@ class _Traductions$admin$observations$ar extends Traductions$admin$observations$
 	@override String get chargerSuite => 'تحميل الزيارات الأقدم';
 	@override String get erreurSuite => 'تعذّرت قراءة الزيارات الأقدم.';
 	@override String get fin => 'كل الزيارات معروضة.';
+}
+
+// Path: admin.suppressions
+class _Traductions$admin$suppressions$ar extends Traductions$admin$suppressions$fr {
+	_Traductions$admin$suppressions$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get onglet => 'الحذف';
+	@override String get titre => 'حذف الحسابات';
+	@override String get sousTitre => 'طلبات حذف الحسابات. تعالجها الإدارة بعد انقضاء مهلة التفكير.';
+	@override String attente({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ طلب ينتظر قرارًا.',
+		one: 'طلب واحد ينتظر قرارًا.',
+		two: 'طلبان ينتظران قرارًا.',
+		few: '⁨${n}⁩ طلبات تنتظر قرارًا.',
+		many: '⁨${n}⁩ طلبًا ينتظر قرارًا.',
+		other: '⁨${n}⁩ طلب ينتظر قرارًا.',
+	);
+	@override String get vide => 'لا توجد طلبات حذف.';
+	@override String get erreur => 'تعذّر تحميل الطلبات. أعد المحاولة.';
+	@override String get sansDonnees => 'تعذّر تحميل طلبات الحذف';
+	@override String get refuse => 'لا تعالج هذه الطلبات إلا الإدارة المتصلة بالتحقق المزدوج. أعد تسجيل الدخول برمز التحقق ثم أعد المحاولة.';
+	@override String get indisponibleTitre => 'حذف الحسابات غير متاح';
+	@override String get indisponiblePhrase => 'ستتوفر هذه الميزة عند ربط الخادم.';
+	@override late final _Traductions$admin$suppressions$etat$ar etat = _Traductions$admin$suppressions$etat$ar._(_root);
+	@override String get matricule => 'رقم التسجيل';
+	@override String get role => 'الدور';
+	@override String get motif => 'السبب';
+	@override String get demandeeLe => 'طُلب في';
+	@override String get annuleeLe => 'أُلغي في';
+	@override String get traiteeLe => 'عولج في';
+	@override String delaiEnCours({required Object date}) => 'مهلة التفكير جارية حتى ⁨${date}⁩. يمكن معالجة الطلب ابتداءً من ذلك اليوم.';
+	@override String get soldeTitre => 'يوجد رصيد مستحق';
+	@override String soldeDetail({required Object montant}) => 'بقي ⁨${montant}⁩ للدفع. يبقى هذا الرصيد مستحقًا بعد الحذف.';
+	@override String get seancesTitre => 'هناك حصص لا تزال مقررة';
+	@override String seancesDetail({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ حصة مقررة. ألغها أو أسندها إلى شخص آخر. لا يمكن معالجة الطلب ما دامت قائمة.',
+		one: 'حصة واحدة مقررة. ألغها أو أسندها إلى شخص آخر. لا يمكن معالجة الطلب ما دامت قائمة.',
+		two: 'حصتان مقررتان. ألغهما أو أسندهما إلى شخص آخر. لا يمكن معالجة الطلب ما دامتا قائمتين.',
+		few: '⁨${n}⁩ حصص مقررة. ألغها أو أسندها إلى شخص آخر. لا يمكن معالجة الطلب ما دامت قائمة.',
+		many: '⁨${n}⁩ حصة مقررة. ألغها أو أسندها إلى شخص آخر. لا يمكن معالجة الطلب ما دامت قائمة.',
+		other: '⁨${n}⁩ حصة مقررة. ألغها أو أسندها إلى شخص آخر. لا يمكن معالجة الطلب ما دامت قائمة.',
+	);
+	@override String get foyerTitre => 'طلاب في هذه الأسرة';
+	@override String foyerDetail({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ طالب في أسرة هذا الولي. تحقق من وضعهم قبل المتابعة.',
+		one: 'طالب واحد في أسرة هذا الولي. تحقق من وضعه قبل المتابعة.',
+		two: 'طالبان في أسرة هذا الولي. تحقق من وضعهما قبل المتابعة.',
+		few: '⁨${n}⁩ طلاب في أسرة هذا الولي. تحقق من وضعهم قبل المتابعة.',
+		many: '⁨${n}⁩ طالبًا في أسرة هذا الولي. تحقق من وضعهم قبل المتابعة.',
+		other: '⁨${n}⁩ طالب في أسرة هذا الولي. تحقق من وضعهم قبل المتابعة.',
+	);
+	@override String get traiter => 'معالجة الطلب';
+	@override String confirmerQuestion({required Object nom}) => 'هل تجعل حساب ⁨${nom}⁩ مجهول الهوية؟';
+	@override String get confirmerConsequence => 'يُمحى الاسم وبيانات الاتصال والصورة، ولا يستطيع صاحب الحساب تسجيل الدخول بعد ذلك. لا يمكن التراجع عن هذا الإجراء. تُحفظ الفواتير والمدفوعات.';
+	@override String confirmerSolde({required Object montant}) => 'يبقى رصيد قدره ⁨${montant}⁩ مستحقًا وسيبقى كذلك.';
+	@override String get confirmerAction => 'إخفاء هوية الحساب';
+	@override String get confirmerRester => 'عدم تغيير شيء';
+	@override String get traitee => 'أُخفيت هوية الحساب. تمت معالجة الطلب.';
+	@override String get dejaTraitee => 'لم يعد هذا الطلب قيد الانتظار. القائمة محدّثة.';
+	@override String get delaiNonEcoule => 'مهلة التفكير لا تزال جارية. لم يُمحَ شيء.';
+	@override String get seancesRefus => 'لا تزال هناك حصص مقررة. لم يُمحَ شيء.';
+	@override String get introuvable => 'لم يعد هذا الطلب موجودًا. القائمة محدّثة.';
+	@override String get echec => 'تعذّر تأكيد القرار. تحقق من القائمة قبل إعادة المحاولة.';
+	@override String get horsLigne => 'لم يُرسَل شيء لأن الشبكة غائبة. أعد المحاولة عند عودتها.';
 }
 
 // Path: admin.comptes
@@ -7968,6 +8048,69 @@ class _Traductions$juridique$enfants$ar extends Traductions$juridique$enfants$fr
 	@override late final _Traductions$juridique$enfants$s3$ar s3 = _Traductions$juridique$enfants$s3$ar._(_root);
 	@override late final _Traductions$juridique$enfants$s4$ar s4 = _Traductions$juridique$enfants$s4$ar._(_root);
 	@override late final _Traductions$juridique$enfants$s5$ar s5 = _Traductions$juridique$enfants$s5$ar._(_root);
+}
+
+// Path: avis.form
+class _Traductions$avis$form$ar extends Traductions$avis$form$fr {
+	_Traductions$avis$form$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'شاركنا رأيك';
+	@override String get sousTitre => 'بضعة أسطر عن تجربتك في Rewayah Academy. دقيقتان تكفيان.';
+	@override late final _Traductions$avis$form$nom$ar nom = _Traductions$avis$form$nom$ar._(_root);
+	@override late final _Traductions$avis$form$qualite$ar qualite = _Traductions$avis$form$qualite$ar._(_root);
+	@override late final _Traductions$avis$form$pays$ar pays = _Traductions$avis$form$pays$ar._(_root);
+	@override late final _Traductions$avis$form$depuis$ar depuis = _Traductions$avis$form$depuis$ar._(_root);
+	@override late final _Traductions$avis$form$note$ar note = _Traductions$avis$form$note$ar._(_root);
+	@override late final _Traductions$avis$form$titreAvis$ar titreAvis = _Traductions$avis$form$titreAvis$ar._(_root);
+	@override late final _Traductions$avis$form$texte$ar texte = _Traductions$avis$form$texte$ar._(_root);
+	@override late final _Traductions$avis$form$accord$ar accord = _Traductions$avis$form$accord$ar._(_root);
+	@override String lecture({required Object courriel}) => 'ستقرأ الإدارة رأيك قبل نشره. لطلب سحبه لاحقًا، اكتب إلى ⁨${courriel}⁩.';
+	@override late final _Traductions$avis$form$regles$ar regles = _Traductions$avis$form$regles$ar._(_root);
+	@override String get envoyer => 'إرسال رأيي';
+	@override String get aCorriger => 'بعض الحقول تحتاج إلى تصحيح قبل الإرسال.';
+	@override String get erreurChamp => 'هناك حقل غير مقبول. راجع النموذج ثم أرسل من جديد.';
+	@override String get echec => 'تعذّر تأكيد وصول رأيك. ربما انقطع الاتصال. تحقق منه ثم المس «إرسال رأيي» من جديد.';
+	@override String get horsLigne => 'لم يُرسل شيء وما كتبته باقٍ على هذه الشاشة. أرسل رأيك عند عودة الشبكة.';
+	@override late final _Traductions$avis$form$ferme$ar ferme = _Traductions$avis$form$ferme$ar._(_root);
+	@override late final _Traductions$avis$form$envoye$ar envoye = _Traductions$avis$form$envoye$ar._(_root);
+	@override String get erreurChargement => 'تعذّر فتح النموذج. أعد المحاولة بعد قليل.';
+	@override String get sansDonnees => 'تعذّر فتح النموذج';
+	@override String get indisponibleTitre => 'الآراء غير متاحة';
+	@override String get indisponiblePhrase => 'ستتوفر هذه الخاصية عند ربط الخادم.';
+}
+
+// Path: avis.admin
+class _Traductions$avis$admin$ar extends Traductions$avis$admin$fr {
+	_Traductions$avis$admin$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الآراء';
+	@override String get sousTitre => 'آراء الأسر والطلاب. تقرؤها الإدارة وتنشرها أو ترفضها. ولا تعدّل أي نص أبدًا.';
+	@override String get outil => 'آراء الأسر';
+	@override String get outilDetail => 'إنشاء رابط لجمع الآراء، وقراءتها، ونشرها أو رفضها';
+	@override late final _Traductions$avis$admin$sections$ar sections = _Traductions$avis$admin$sections$ar._(_root);
+	@override late final _Traductions$avis$admin$statut$ar statut = _Traductions$avis$admin$statut$ar._(_root);
+	@override late final _Traductions$avis$admin$filtre$ar filtre = _Traductions$avis$admin$filtre$ar._(_root);
+	@override String attente({required Object n}) => 'آراء قيد الانتظار: ⁨${n}⁩';
+	@override String get vide => 'لا توجد آراء في هذه القائمة.';
+	@override String get erreur => 'تعذّر تحميل الآراء. أعد المحاولة.';
+	@override String get sansDonnees => 'تعذّر تحميل الآراء';
+	@override String get refuse => 'الإدارة المتصلة وحدها تقرأ الآراء وتقرر بشأنها. أعد الاتصال بالحساب المناسب ثم أعد المحاولة.';
+	@override String get indisponibleTitre => 'الآراء غير متاحة';
+	@override String get indisponiblePhrase => 'ستتوفر هذه الخاصية عند ربط الخادم.';
+	@override late final _Traductions$avis$admin$champs$ar champs = _Traductions$avis$admin$champs$ar._(_root);
+	@override late final _Traductions$avis$admin$actions$ar actions = _Traductions$avis$admin$actions$ar._(_root);
+	@override late final _Traductions$avis$admin$publier$ar publier = _Traductions$avis$admin$publier$ar._(_root);
+	@override late final _Traductions$avis$admin$refuser$ar refuser = _Traductions$avis$admin$refuser$ar._(_root);
+	@override late final _Traductions$avis$admin$retirer$ar retirer = _Traductions$avis$admin$retirer$ar._(_root);
+	@override late final _Traductions$avis$admin$motifs$ar motifs = _Traductions$avis$admin$motifs$ar._(_root);
+	@override late final _Traductions$avis$admin$retour$ar retour = _Traductions$avis$admin$retour$ar._(_root);
+	@override late final _Traductions$avis$admin$liens$ar liens = _Traductions$avis$admin$liens$ar._(_root);
 }
 
 // Path: commun.etats.chargementProlonge
@@ -11590,6 +11733,19 @@ class _Traductions$admin$journal$evenements$ar extends Traductions$admin$journal
 	@override String get observationPolitiqueGroupeModifiee => 'عُدِّلت قواعد متابعة الفصل';
 }
 
+// Path: admin.suppressions.etat
+class _Traductions$admin$suppressions$etat$ar extends Traductions$admin$suppressions$etat$fr {
+	_Traductions$admin$suppressions$etat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get enAttente => 'قيد الانتظار';
+	@override String get aTraiter => 'للمعالجة';
+	@override String get annulee => 'ملغاة';
+	@override String get traitee => 'تمت معالجتها';
+}
+
 // Path: admin.offres.serveur
 class _Traductions$admin$offres$serveur$ar extends Traductions$admin$offres$serveur$fr {
 	_Traductions$admin$offres$serveur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -13834,6 +13990,336 @@ class _Traductions$juridique$enfants$s5$ar extends Traductions$juridique$enfants
 	];
 }
 
+// Path: avis.form.nom
+class _Traductions$avis$form$nom$ar extends Traductions$avis$form$nom$fr {
+	_Traductions$avis$form$nom$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'الاسم الظاهر';
+	@override String get aide => 'يكفي اسمك الأول والحرف الأول من اسم عائلتك.';
+	@override String get erreur => 'اكتب اسمًا من حرفين إلى 60 حرفًا.';
+}
+
+// Path: avis.form.qualite
+class _Traductions$avis$form$qualite$ar extends Traductions$avis$form$qualite$fr {
+	_Traductions$avis$form$qualite$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أنت';
+	@override String get parent => 'ولي أمر أو وصي على طالب';
+	@override String get eleveAdulte => 'طالب بالغ';
+	@override String get erreur => 'اختر صفتك.';
+}
+
+// Path: avis.form.pays
+class _Traductions$avis$form$pays$ar extends Traductions$avis$form$pays$fr {
+	_Traductions$avis$form$pays$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'بلد الإقامة';
+	@override String get choisir => 'اختيار بلد';
+	@override String get rechercheLibelle => 'البحث عن بلد';
+	@override String get rechercheAide => 'اكتب اسم البلد';
+	@override String get aucun => 'لا يوجد بلد مطابق. جرّب كتابة أخرى.';
+	@override String get erreur => 'اختر بلد إقامتك.';
+}
+
+// Path: avis.form.depuis
+class _Traductions$avis$form$depuis$ar extends Traductions$avis$form$depuis$fr {
+	_Traductions$avis$form$depuis$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'معنا منذ';
+	@override String get aide => 'الشهر والسنة اللذان التحقت فيهما بالأكاديمية.';
+	@override String get mois => 'الشهر';
+	@override String get annee => 'السنة';
+	@override String get erreur => 'اختر شهرًا وسنة، من 2015 إلى هذا الشهر.';
+}
+
+// Path: avis.form.note
+class _Traductions$avis$form$note$ar extends Traductions$avis$form$note$fr {
+	_Traductions$avis$form$note$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'تقييمك';
+	@override String get aide => 'المس نجمة: 1 أدنى تقييم و5 أعلاه.';
+	@override String etoile({required Object n}) => 'إعطاء التقييم ⁨${n}⁩ من 5';
+	@override String lue({required Object n}) => 'التقييم: ⁨${n}⁩ من 5';
+	@override String get erreur => 'اختر تقييمًا من نجمة إلى 5 نجوم.';
+}
+
+// Path: avis.form.titreAvis
+class _Traductions$avis$form$titreAvis$ar extends Traductions$avis$form$titreAvis$fr {
+	_Traductions$avis$form$titreAvis$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'العنوان (اختياري)';
+	@override String get aide => 'جملة قصيرة تلخّص رأيك. 80 حرفًا على الأكثر.';
+	@override String get erreur => 'صحّح العنوان: 80 حرفًا على الأكثر.';
+}
+
+// Path: avis.form.texte
+class _Traductions$avis$form$texte$ar extends Traductions$avis$form$texte$fr {
+	_Traductions$avis$form$texte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'رأيك';
+	@override String get aide => 'ما أعجبك، وما تعلمته، وما يمكن أن يكون أفضل. 20 حرفًا على الأقل.';
+	@override String compteur({required Object n, required Object max}) => 'عدد الأحرف: ⁨${n}⁩ من ⁨${max}⁩';
+	@override String get erreur => 'اكتب بين 20 و1500 حرف.';
+}
+
+// Path: avis.form.accord
+class _Traductions$avis$form$accord$ar extends Traductions$avis$form$accord$fr {
+	_Traductions$avis$form$accord$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أوافق على نشر هذا الرأي واسمي الظاهر وبلدي والتاريخ على موقع Rewayah Academy.';
+	@override String get erreur => 'اقبل النشر بوضع علامة في الخانة، وإلا تعذّر إرسال رأيك.';
+}
+
+// Path: avis.form.regles
+class _Traductions$avis$form$regles$ar extends Traductions$avis$form$regles$fr {
+	_Traductions$avis$form$regles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ما تنشره الإدارة';
+	@override String get intro => 'يُنشر الرأي المحترم حتى لو كان ناقدًا. لا تعدّل الإدارة نصك أبدًا. وهي ترفض فقط الرأي الذي يتضمن:';
+	@override String get insulte => 'إهانة';
+	@override String get tiers => 'بيانات شخصية لطرف ثالث، مثل اسم طفل أو معلم';
+	@override String get publicite => 'إعلانًا';
+	@override String get horsSujet => 'كلامًا خارج الموضوع';
+	@override String get doublon => 'تكرارًا لرأي وصل من قبل';
+	@override String get donnees => 'لا تكتب اسم طفل ولا بريدًا إلكترونيًا ولا رقم هاتف.';
+}
+
+// Path: avis.form.ferme
+class _Traductions$avis$form$ferme$ar extends Traductions$avis$form$ferme$fr {
+	_Traductions$avis$form$ferme$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'هذا الرابط لم يعد يقبل آراء';
+	@override String phrase({required Object courriel}) => 'إما أنه أُغلق، أو انتهت مدته، أو بلغ عدد الآراء المقرر. لتشاركنا رأيك اطلب رابطًا جديدًا من الإدارة: ⁨${courriel}⁩.';
+}
+
+// Path: avis.form.envoye
+class _Traductions$avis$form$envoye$ar extends Traductions$avis$form$envoye$fr {
+	_Traductions$avis$form$envoye$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'شكرًا على رأيك';
+	@override String phrase({required Object courriel}) => 'ستقرأ الإدارة رأيك قبل نشره. إن قُبل فسيظهر على موقع Rewayah Academy مع اسمك الظاهر وبلدك والتاريخ. لطلب سحبه، اكتب إلى ⁨${courriel}⁩.';
+}
+
+// Path: avis.admin.sections
+class _Traductions$avis$admin$sections$ar extends Traductions$avis$admin$sections$fr {
+	_Traductions$avis$admin$sections$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أقسام الآراء';
+	@override String get avis => 'الآراء';
+	@override String get liens => 'الروابط';
+}
+
+// Path: avis.admin.statut
+class _Traductions$avis$admin$statut$ar extends Traductions$avis$admin$statut$fr {
+	_Traductions$avis$admin$statut$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get tous => 'الكل';
+	@override String get enAttente => 'قيد الانتظار';
+	@override String get publie => 'منشور';
+	@override String get refuse => 'مرفوض';
+	@override String get retire => 'مسحوب';
+}
+
+// Path: avis.admin.filtre
+class _Traductions$avis$admin$filtre$ar extends Traductions$avis$admin$filtre$fr {
+	_Traductions$avis$admin$filtre$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get tous => 'الكل';
+	@override String get enAttente => 'قيد الانتظار';
+	@override String get publie => 'المنشورة';
+	@override String get refuse => 'المرفوضة';
+	@override String get retire => 'المسحوبة';
+}
+
+// Path: avis.admin.champs
+class _Traductions$avis$admin$champs$ar extends Traductions$avis$admin$champs$fr {
+	_Traductions$avis$admin$champs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get lien => 'الرابط';
+	@override String get pays => 'البلد';
+	@override String get depuis => 'معنا منذ';
+	@override String get qualite => 'الصفة';
+	@override String get depose => 'تاريخ الإرسال';
+	@override String get accord => 'الموافقة على النشر';
+	@override String get motif => 'السبب';
+	@override String get modere => 'تاريخ القرار';
+	@override String get publie => 'تاريخ النشر';
+}
+
+// Path: avis.admin.actions
+class _Traductions$avis$admin$actions$ar extends Traductions$avis$admin$actions$fr {
+	_Traductions$avis$admin$actions$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get publier => 'نشر';
+	@override String get refuser => 'رفض';
+	@override String get retirer => 'سحب';
+}
+
+// Path: avis.admin.publier
+class _Traductions$avis$admin$publier$ar extends Traductions$avis$admin$publier$fr {
+	_Traductions$avis$admin$publier$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String question({required Object deNom}) => 'هل تنشر رأي ⁨${deNom}⁩؟';
+	@override String get consequence => 'سيظهر الرأي والاسم الظاهر والبلد والتاريخ على موقع Rewayah Academy عند التحديث التالي للموقع. لا يتغير النص.';
+	@override String get action => 'نشر الرأي';
+	@override String get rester => 'عدم تغيير شيء';
+}
+
+// Path: avis.admin.refuser
+class _Traductions$avis$admin$refuser$ar extends Traductions$avis$admin$refuser$fr {
+	_Traductions$avis$admin$refuser$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object deNom}) => 'رفض رأي ⁨${deNom}⁩';
+	@override String get intro => 'اختر سبب الرفض. الرأي الناقد المحترم يُنشر.';
+	@override String get consequence => 'لن يُنشر الرأي. يُحفظ السبب.';
+	@override String get action => 'رفض الرأي';
+	@override String get rester => 'عدم تغيير شيء';
+}
+
+// Path: avis.admin.retirer
+class _Traductions$avis$admin$retirer$ar extends Traductions$avis$admin$retirer$fr {
+	_Traductions$avis$admin$retirer$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object deNom}) => 'سحب رأي ⁨${deNom}⁩';
+	@override String get intro => 'اختر سبب السحب.';
+	@override String get consequence => 'سيختفي الرأي من الموقع عند التحديث التالي للموقع. يُحفظ السبب.';
+	@override String get action => 'سحب الرأي';
+	@override String get rester => 'عدم تغيير شيء';
+}
+
+// Path: avis.admin.motifs
+class _Traductions$avis$admin$motifs$ar extends Traductions$avis$admin$motifs$fr {
+	_Traductions$avis$admin$motifs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get insulte => 'إهانة';
+	@override String get tiers => 'بيانات شخصية لطرف ثالث';
+	@override String get publicite => 'إعلان';
+	@override String get horsSujet => 'خارج الموضوع';
+	@override String get doublon => 'تكرار';
+	@override String get demande => 'طلب من صاحب الرأي';
+}
+
+// Path: avis.admin.retour
+class _Traductions$avis$admin$retour$ar extends Traductions$avis$admin$retour$fr {
+	_Traductions$avis$admin$retour$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get publie => 'نُشر الرأي.';
+	@override String get refuse => 'رُفض الرأي.';
+	@override String get retire => 'سُحب الرأي.';
+	@override String get etatChange => 'لم يعد هذا الرأي في الحالة المتوقعة. تم تحديث القائمة.';
+	@override String get introuvable => 'هذا الرأي لم يعد موجودًا. تم تحديث القائمة.';
+	@override String get motifManque => 'السبب ناقص. اختر سببًا.';
+	@override String get refus => 'الإدارة المتصلة وحدها تستطيع البت في رأي.';
+	@override String get echec => 'تعذّر تأكيد القرار. أُعيدت قراءة القائمة: تحقق من حالة الرأي قبل أن تحاول من جديد.';
+	@override String get horsLigne => 'لم يُرسل شيء: الشبكة غير متوفرة. أعد المحاولة عند عودتها.';
+}
+
+// Path: avis.admin.liens
+class _Traductions$avis$admin$liens$ar extends Traductions$avis$admin$liens$fr {
+	_Traductions$avis$admin$liens$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get creerTitre => 'إنشاء رابط';
+	@override String get creerIntro => 'يفتح الرابط نموذج الرأي دون حساب ودون تسجيل دخول. أعطه اسمًا لتميّزه.';
+	@override String get libelle => 'اسم الرابط';
+	@override String get libelleAide => 'مثال: أسر أكتوبر 2026.';
+	@override String get libelleErreur => 'أعطِ الرابط اسمًا.';
+	@override String get jours => 'المدة بالأيام';
+	@override String get joursAide => '90 افتراضيًا و365 على الأكثر.';
+	@override String get joursErreur => 'اكتب عدد أيام من 1 إلى 365.';
+	@override String get max => 'الحد الأقصى للآراء';
+	@override String get maxAide => '200 افتراضيًا و2000 على الأكثر.';
+	@override String get maxErreur => 'اكتب عددًا من الآراء من 1 إلى 2000.';
+	@override String get creer => 'إنشاء الرابط';
+	@override String get echecCreation => 'لم يتأكد إنشاء الرابط. انظر قائمة الروابط قبل أن تحاول من جديد.';
+	@override String get creeTitre => 'تم إنشاء الرابط';
+	@override String get creePhrase => 'انسخ هذا الرابط الآن. لن يظهر مرة أخرى بعد إغلاق هذا الإطار. إذا فقدته فأغلق هذا الرابط وأنشئ رابطًا آخر.';
+	@override String get creeAdresse => 'عنوان الرابط';
+	@override String creeValable({required Object date}) => 'صالح حتى ⁨${date}⁩.';
+	@override String get copier => 'نسخ الرابط';
+	@override String get copie => 'تم نسخ الرابط.';
+	@override String get creeFermer => 'لقد نسخت الرابط';
+	@override late final _Traductions$avis$admin$liens$etat$ar etat = _Traductions$avis$admin$liens$etat$ar._(_root);
+	@override String recus({required Object recus, required Object max}) => 'الآراء الواردة: ⁨${recus}⁩ من ⁨${max}⁩';
+	@override String fin({required Object date}) => 'ينتهي في ⁨${date}⁩';
+	@override String cree({required Object date}) => 'أُنشئ في ⁨${date}⁩';
+	@override String get fermer => 'إغلاق الرابط';
+	@override String fermerQuestion({required Object nom}) => 'هل تغلق الرابط «⁨${nom}⁩»؟';
+	@override String get fermerConsequence => 'من يفتح هذا الرابط سيرى أنه مغلق ولن يستطيع إرسال رأي. تبقى الآراء التي وصلت. الرابط المغلق لا يُعاد فتحه.';
+	@override String get fermerAction => 'إغلاق الرابط';
+	@override String get fermerRester => 'عدم تغيير شيء';
+	@override String get fermeOk => 'تم إغلاق الرابط.';
+	@override String get fermeEchec => 'لم يتأكد الإغلاق. أُعيدت قراءة القائمة: تحقق من حالة الرابط.';
+	@override String get vide => 'لا توجد روابط حتى الآن. أنشئ رابطًا لجمع الآراء.';
+	@override String get erreur => 'تعذّر تحميل الروابط. أعد المحاولة.';
+	@override String get sansDonnees => 'تعذّر تحميل الروابط';
+}
+
 // Path: classe.entree.demo.roles
 class _Traductions$classe$entree$demo$roles$ar extends Traductions$classe$entree$demo$roles$fr {
 	_Traductions$classe$entree$demo$roles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -15260,6 +15746,19 @@ class _Traductions$adulte$recharge$source$motifs$ar extends Traductions$adulte$r
 	@override String get paiementRefuse => 'رفض البنك أو البطاقة الدفع. لم يُقتطع أي مبلغ.';
 	@override String get montantIncoherent => 'المبلغ المستلم لا يطابق الشحن. لم يُضف شيء إلى الرصيد: الإدارة تتحقق مع مزوّد الدفع.';
 	@override String get sessionExpiree => 'انتهت صلاحية صفحة الدفع قبل الدفع. لم يُقتطع أي مبلغ.';
+}
+
+// Path: avis.admin.liens.etat
+class _Traductions$avis$admin$liens$etat$ar extends Traductions$avis$admin$liens$etat$fr {
+	_Traductions$avis$admin$liens$etat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ouvert => 'مفتوح';
+	@override String get ferme => 'مغلق';
+	@override String get expire => 'منتهي';
+	@override String get plein => 'مكتمل';
 }
 
 // Path: com.annonces.administration.moderation.regleMotif
@@ -19387,6 +19886,48 @@ extension on TraductionsAr {
 			'admin.observations.chargerSuite' => 'تحميل الزيارات الأقدم',
 			'admin.observations.erreurSuite' => 'تعذّرت قراءة الزيارات الأقدم.',
 			'admin.observations.fin' => 'كل الزيارات معروضة.',
+			'admin.suppressions.onglet' => 'الحذف',
+			'admin.suppressions.titre' => 'حذف الحسابات',
+			'admin.suppressions.sousTitre' => 'طلبات حذف الحسابات. تعالجها الإدارة بعد انقضاء مهلة التفكير.',
+			'admin.suppressions.attente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ طلب ينتظر قرارًا.', one: 'طلب واحد ينتظر قرارًا.', two: 'طلبان ينتظران قرارًا.', few: '⁨${n}⁩ طلبات تنتظر قرارًا.', many: '⁨${n}⁩ طلبًا ينتظر قرارًا.', other: '⁨${n}⁩ طلب ينتظر قرارًا.', ), 
+			'admin.suppressions.vide' => 'لا توجد طلبات حذف.',
+			'admin.suppressions.erreur' => 'تعذّر تحميل الطلبات. أعد المحاولة.',
+			'admin.suppressions.sansDonnees' => 'تعذّر تحميل طلبات الحذف',
+			'admin.suppressions.refuse' => 'لا تعالج هذه الطلبات إلا الإدارة المتصلة بالتحقق المزدوج. أعد تسجيل الدخول برمز التحقق ثم أعد المحاولة.',
+			'admin.suppressions.indisponibleTitre' => 'حذف الحسابات غير متاح',
+			'admin.suppressions.indisponiblePhrase' => 'ستتوفر هذه الميزة عند ربط الخادم.',
+			'admin.suppressions.etat.enAttente' => 'قيد الانتظار',
+			'admin.suppressions.etat.aTraiter' => 'للمعالجة',
+			'admin.suppressions.etat.annulee' => 'ملغاة',
+			'admin.suppressions.etat.traitee' => 'تمت معالجتها',
+			'admin.suppressions.matricule' => 'رقم التسجيل',
+			'admin.suppressions.role' => 'الدور',
+			'admin.suppressions.motif' => 'السبب',
+			'admin.suppressions.demandeeLe' => 'طُلب في',
+			'admin.suppressions.annuleeLe' => 'أُلغي في',
+			'admin.suppressions.traiteeLe' => 'عولج في',
+			'admin.suppressions.delaiEnCours' => ({required Object date}) => 'مهلة التفكير جارية حتى ⁨${date}⁩. يمكن معالجة الطلب ابتداءً من ذلك اليوم.',
+			'admin.suppressions.soldeTitre' => 'يوجد رصيد مستحق',
+			'admin.suppressions.soldeDetail' => ({required Object montant}) => 'بقي ⁨${montant}⁩ للدفع. يبقى هذا الرصيد مستحقًا بعد الحذف.',
+			_ => null,
+		} ?? switch (path) {
+			'admin.suppressions.seancesTitre' => 'هناك حصص لا تزال مقررة',
+			'admin.suppressions.seancesDetail' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ حصة مقررة. ألغها أو أسندها إلى شخص آخر. لا يمكن معالجة الطلب ما دامت قائمة.', one: 'حصة واحدة مقررة. ألغها أو أسندها إلى شخص آخر. لا يمكن معالجة الطلب ما دامت قائمة.', two: 'حصتان مقررتان. ألغهما أو أسندهما إلى شخص آخر. لا يمكن معالجة الطلب ما دامتا قائمتين.', few: '⁨${n}⁩ حصص مقررة. ألغها أو أسندها إلى شخص آخر. لا يمكن معالجة الطلب ما دامت قائمة.', many: '⁨${n}⁩ حصة مقررة. ألغها أو أسندها إلى شخص آخر. لا يمكن معالجة الطلب ما دامت قائمة.', other: '⁨${n}⁩ حصة مقررة. ألغها أو أسندها إلى شخص آخر. لا يمكن معالجة الطلب ما دامت قائمة.', ), 
+			'admin.suppressions.foyerTitre' => 'طلاب في هذه الأسرة',
+			'admin.suppressions.foyerDetail' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ طالب في أسرة هذا الولي. تحقق من وضعهم قبل المتابعة.', one: 'طالب واحد في أسرة هذا الولي. تحقق من وضعه قبل المتابعة.', two: 'طالبان في أسرة هذا الولي. تحقق من وضعهما قبل المتابعة.', few: '⁨${n}⁩ طلاب في أسرة هذا الولي. تحقق من وضعهم قبل المتابعة.', many: '⁨${n}⁩ طالبًا في أسرة هذا الولي. تحقق من وضعهم قبل المتابعة.', other: '⁨${n}⁩ طالب في أسرة هذا الولي. تحقق من وضعهم قبل المتابعة.', ), 
+			'admin.suppressions.traiter' => 'معالجة الطلب',
+			'admin.suppressions.confirmerQuestion' => ({required Object nom}) => 'هل تجعل حساب ⁨${nom}⁩ مجهول الهوية؟',
+			'admin.suppressions.confirmerConsequence' => 'يُمحى الاسم وبيانات الاتصال والصورة، ولا يستطيع صاحب الحساب تسجيل الدخول بعد ذلك. لا يمكن التراجع عن هذا الإجراء. تُحفظ الفواتير والمدفوعات.',
+			'admin.suppressions.confirmerSolde' => ({required Object montant}) => 'يبقى رصيد قدره ⁨${montant}⁩ مستحقًا وسيبقى كذلك.',
+			'admin.suppressions.confirmerAction' => 'إخفاء هوية الحساب',
+			'admin.suppressions.confirmerRester' => 'عدم تغيير شيء',
+			'admin.suppressions.traitee' => 'أُخفيت هوية الحساب. تمت معالجة الطلب.',
+			'admin.suppressions.dejaTraitee' => 'لم يعد هذا الطلب قيد الانتظار. القائمة محدّثة.',
+			'admin.suppressions.delaiNonEcoule' => 'مهلة التفكير لا تزال جارية. لم يُمحَ شيء.',
+			'admin.suppressions.seancesRefus' => 'لا تزال هناك حصص مقررة. لم يُمحَ شيء.',
+			'admin.suppressions.introuvable' => 'لم يعد هذا الطلب موجودًا. القائمة محدّثة.',
+			'admin.suppressions.echec' => 'تعذّر تأكيد القرار. تحقق من القائمة قبل إعادة المحاولة.',
+			'admin.suppressions.horsLigne' => 'لم يُرسَل شيء لأن الشبكة غائبة. أعد المحاولة عند عودتها.',
 			'admin.comptes.titre' => 'الحسابات',
 			'admin.comptes.intro' => 'كل الأشخاص المسجلين، والذين ينتظرون قرارًا أولًا. المعلم الذي لم يودع وثيقة هويته يبقى ظاهرًا هنا: إنه المكان الوحيد الذي يُظهره.',
 			'admin.comptes.attenteUneAujourdhui' => 'شخص واحد ينتظر قرارًا، مسجَّل اليوم.',
@@ -19410,8 +19951,6 @@ extension on TraductionsAr {
 			'admin.comptes.etatActif' => 'نشط',
 			'admin.comptes.etatProvisoire' => 'مؤقت',
 			'admin.comptes.etatSuspendu' => 'موقوف',
-			_ => null,
-		} ?? switch (path) {
 			'admin.comptes.etatInconnu' => 'حالة غير معروفة',
 			'admin.comptes.roleAdmin' => 'الإدارة',
 			'admin.comptes.roleComptable' => 'محاسب',
@@ -19884,6 +20423,8 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.afficherSection' => ({required Object nom}) => 'إظهار قسم ⁨${nom}⁩',
 			'admin.bibliotheque.fiche.masquerSection' => ({required Object nom}) => 'إخفاء قسم ⁨${nom}⁩',
 			'admin.bibliotheque.fiche.apercuAucunFichier' => 'لا يوجد ملف مودَع لهذا الإصدار.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.fiche.apercuFichier' => 'يوجد ملف مودَع. يُفحص عرضه في خطوة «التحقق والنشر».',
 			'admin.bibliotheque.fiche.apercuPublie' => 'إصدار منشور: المحتوى مثبّت.',
 			'admin.bibliotheque.fiche.deposer' => 'إيداع ملف',
@@ -19924,8 +20465,6 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.version.sansFichier' => 'بلا ملف',
 			'admin.bibliotheque.fiche.droitsChamps.revue' => 'مراجعة الحقوق',
 			'admin.bibliotheque.fiche.droitsChamps.source' => 'المصدر',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.fiche.droitsChamps.titulaire' => 'صاحب الحق',
 			'admin.bibliotheque.fiche.droitsChamps.preuve' => 'إثبات الإذن',
 			'admin.bibliotheque.fiche.droitsChamps.preuveOui' => 'مودَع',
@@ -20398,6 +20937,8 @@ extension on TraductionsAr {
 			'comptable.paiements.detail.historiqueVide' => 'لا توجد عملية مسجلة لهذه الدفعة.',
 			'comptable.paiements.detail.encart' => 'لا يستطيع المحاسب تعديل المبلغ ولا بيانات الدفع الخاصة بالمستفيد.',
 			'comptable.paiements.detail.alerteMethodeRecente' => ({required Object date}) => 'عُدّلت وسيلة الدفع في ${date}: تلزم مصادقة إضافية قبل أي دفع.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.detail.alerteLieeOperateur' => 'المستفيد مرتبط بالمنفِّذ: تلزم مصادقة إضافية قبل أي دفع.',
 			'comptable.paiements.detail.alerteEchec' => 'فشل آخر إرسال لدى مزوّد الدفع. تحقق من وسيلة الدفع قبل محاولة جديدة.',
 			'comptable.paiements.detail.alerteInfos' => 'ليست لدى المستفيد بعد وسيلة دفع مكتملة. ذكّره من ملف الدفع الخاص به.',
@@ -20438,8 +20979,6 @@ extension on TraductionsAr {
 			'comptable.tresorerie.descriptions.tresorerieLibre' => 'ما يبقى متاحًا فعلًا بعد التخصيصات المحمية.',
 			'comptable.tresorerie.politiqueTitre' => 'سياسة الاحتياطي الاستراتيجي',
 			'comptable.tresorerie.politiquePhrase' => 'تحددها الإدارة. أنت تطبّقها ولا تعدّلها.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.alimentationAuto' => 'التغذية التلقائية',
 			'comptable.tresorerie.regle.desactivee' => 'معطّلة',
 			'comptable.tresorerie.regle.montantFixe' => 'مبلغ ثابت في كل موعد',
@@ -20912,6 +21451,8 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.pouvoirsTitre' => 'ما يستطيع المحاسب فعله وحده',
 			'comptable.direction.delegationPanneau.paiementsStandards' => 'دفع المدفوعات العادية',
 			'comptable.direction.delegationPanneau.paiementsStandardsDetail' => 'الدفعة بالمبلغ المحسوب، نحو وسيلة متحقَّق منها، تُرسَل دون مصادقة يومية.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.remboursement' => 'تنفيذ استرداد عادي',
 			'comptable.direction.delegationPanneau.remboursementDetail' => 'الاسترداد المطابق للقاعدة يُنفَّذ دون مصادقة.',
 			'comptable.direction.delegationPanneau.alimentationReserve' => 'تغذية الاحتياطي الاستراتيجي',
@@ -20952,8 +21493,6 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.reactiverTitre' => 'إعادة تفعيل التفويضات',
 			'comptable.direction.delegationPanneau.reactiverDetail' => 'التفويضات موقوفة. رفع الإيقاف قرار من الإدارة مع سبب مكتوب.',
 			'comptable.direction.delegationPanneau.reactiverAction' => 'إعادة تفعيل التفويضات',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.reactiverPhrase' => 'سيتمكن المحاسب من العمل مجددًا ضمن حدود السياسة. لا يُستعاد أبدًا تفويض منتهي: يجب تجديده. تبقى المخرجات الملغاة ملغاة. تُسجَّل إعادة التفعيل في السجل.',
 			'comptable.direction.delegationPanneau.reactiverRaison' => 'سبب إعادة التفعيل',
 			'comptable.direction.delegationPanneau.reactiverRaisonAide' => 'يُحفظ في السجل مع اسمك.',
@@ -21426,6 +21965,8 @@ extension on TraductionsAr {
 			'connexion.motDePasseDemo' => 'كلمة مرور العرض التجريبي',
 			'connexion.envoyerLien' => 'استلام الرابط',
 			'connexion.entrerDemo' => 'الدخول إلى العرض التجريبي',
+			_ => null,
+		} ?? switch (path) {
 			'connexion.introDemo' => 'وضع العرض التجريبي: لن يُرسل أي رابط. ستدخل مباشرة دون بريد إلكتروني.',
 			'connexion.essayerDemo' => 'تجربة العرض التجريبي',
 			'connexion.avecGoogle' => 'المتابعة بحساب Google',
@@ -21466,8 +22007,6 @@ extension on TraductionsAr {
 			'connexion.feuilleAppareil.fermer' => 'إغلاق',
 			'connexion.modeConnexion' => 'لدي حساب',
 			'connexion.modeCreation' => 'إنشاء حساب',
-			_ => null,
-		} ?? switch (path) {
 			'connexion.titreCreation' => 'أنشئ حسابك',
 			'connexion.introCreation' => 'اكتب عنوانك: نرسل إليك رابطا ينشئ حسابك. لا كلمة مرور تختارها.',
 			'connexion.envoyerLienCreation' => 'استلام رابط التسجيل',
@@ -21940,6 +22479,8 @@ extension on TraductionsAr {
 			'adulte.demo.invitationRecueConjoint' => 'الدعوة كما يستلمها الزوج، في حسابه الخاص.',
 			'adulte.demo.invitationSansCompte' => 'الدعوة مفتوحة دون حساب.',
 			'adulte.demo.reseauCoupe' => 'الشبكة مقطوعة: الرئيسية و«فصلي» دون اتصال.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.donnees.soldeTitulaire' => 'رصيد تجريبي 1',
 			'adulte.demo.donnees.soldeSecondAdulte' => 'رصيد تجريبي 2',
 			'adulte.demo.donnees.soldeAicha' => 'رصيد تجريبي 3',
@@ -21980,8 +22521,6 @@ extension on TraductionsAr {
 			'adulte.demo.etats.repriseRefusee' => 'رُفض استلام الأسرة.',
 			'adulte.demo.etats.dejaDansUnAutreFoyer' => 'البالغ المدعو جزء من أسرة أخرى بالفعل.',
 			'adulte.demo.etats.erreurReseau' => 'انقطعت الشبكة أثناء إجراء.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.etats.doubleSoumission' => 'أُرسل الإجراء نفسه مرتين.',
 			'adulte.demo.etats.notificationDansLApplication' => 'تعذّر إرسال الإشعار إلى الهاتف، ويبقى ظاهرًا في التطبيق.',
 			'adulte.demo.etats.emancipation' => 'استقلال طالب بلغ سن الرشد: غير مبني في هذه المرحلة.',
@@ -22454,6 +22993,8 @@ extension on TraductionsAr {
 			'suiviFamille.voirSuivi' => 'عرض المتابعة',
 			'suiviFamille.vide' => 'لا طلبات في الوقت الحالي.',
 			'suiviFamille.faireDemande' => 'تقديم طلب',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.erreur' => 'تعذّر تحميل المتابعة. أعيدوا المحاولة.',
 			'suiviFamille.sansDonnees' => 'طلباتكم',
 			'suiviFamille.introuvable' => 'هذا الطلب لم يعد موجودًا أو ليس من طلباتكم.',
@@ -22494,8 +23035,6 @@ extension on TraductionsAr {
 			'suiviDemandes.titre' => 'متابعة طلبات المواعيد',
 			'suiviDemandes.contexte' => 'يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.',
 			'suiviDemandes.carteTitre' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.joursChoisis' => 'الأيام المختارة',
 			'suiviDemandes.heureChoisie' => 'الساعة المختارة',
 			'suiviDemandes.joursEt' => ({required Object debut, required Object dernier}) => '⁨${debut}⁩ و⁨${dernier}⁩',
@@ -22851,6 +23390,166 @@ extension on TraductionsAr {
 			'juridique.enfants.s5.titre' => '٥. إخبارنا بقلق',
 			'juridique.enfants.s5.blocs.0' => 'إذا أقلقكم أمر فاكتبوا لنا. قولوا ما رأيتم ومتى وفي أي فصل.',
 			'juridique.enfants.s5.blocs.1' => 'في حال خطر داهم، اتصلوا أولًا بخدمات الطوارئ في بلدكم.',
+			'avis.form.titre' => 'شاركنا رأيك',
+			'avis.form.sousTitre' => 'بضعة أسطر عن تجربتك في Rewayah Academy. دقيقتان تكفيان.',
+			'avis.form.nom.libelle' => 'الاسم الظاهر',
+			'avis.form.nom.aide' => 'يكفي اسمك الأول والحرف الأول من اسم عائلتك.',
+			'avis.form.nom.erreur' => 'اكتب اسمًا من حرفين إلى 60 حرفًا.',
+			'avis.form.qualite.libelle' => 'أنت',
+			'avis.form.qualite.parent' => 'ولي أمر أو وصي على طالب',
+			'avis.form.qualite.eleveAdulte' => 'طالب بالغ',
+			'avis.form.qualite.erreur' => 'اختر صفتك.',
+			'avis.form.pays.libelle' => 'بلد الإقامة',
+			'avis.form.pays.choisir' => 'اختيار بلد',
+			'avis.form.pays.rechercheLibelle' => 'البحث عن بلد',
+			'avis.form.pays.rechercheAide' => 'اكتب اسم البلد',
+			'avis.form.pays.aucun' => 'لا يوجد بلد مطابق. جرّب كتابة أخرى.',
+			'avis.form.pays.erreur' => 'اختر بلد إقامتك.',
+			'avis.form.depuis.libelle' => 'معنا منذ',
+			'avis.form.depuis.aide' => 'الشهر والسنة اللذان التحقت فيهما بالأكاديمية.',
+			'avis.form.depuis.mois' => 'الشهر',
+			'avis.form.depuis.annee' => 'السنة',
+			'avis.form.depuis.erreur' => 'اختر شهرًا وسنة، من 2015 إلى هذا الشهر.',
+			'avis.form.note.libelle' => 'تقييمك',
+			'avis.form.note.aide' => 'المس نجمة: 1 أدنى تقييم و5 أعلاه.',
+			'avis.form.note.etoile' => ({required Object n}) => 'إعطاء التقييم ⁨${n}⁩ من 5',
+			'avis.form.note.lue' => ({required Object n}) => 'التقييم: ⁨${n}⁩ من 5',
+			'avis.form.note.erreur' => 'اختر تقييمًا من نجمة إلى 5 نجوم.',
+			'avis.form.titreAvis.libelle' => 'العنوان (اختياري)',
+			'avis.form.titreAvis.aide' => 'جملة قصيرة تلخّص رأيك. 80 حرفًا على الأكثر.',
+			'avis.form.titreAvis.erreur' => 'صحّح العنوان: 80 حرفًا على الأكثر.',
+			'avis.form.texte.libelle' => 'رأيك',
+			'avis.form.texte.aide' => 'ما أعجبك، وما تعلمته، وما يمكن أن يكون أفضل. 20 حرفًا على الأقل.',
+			'avis.form.texte.compteur' => ({required Object n, required Object max}) => 'عدد الأحرف: ⁨${n}⁩ من ⁨${max}⁩',
+			'avis.form.texte.erreur' => 'اكتب بين 20 و1500 حرف.',
+			'avis.form.accord.libelle' => 'أوافق على نشر هذا الرأي واسمي الظاهر وبلدي والتاريخ على موقع Rewayah Academy.',
+			'avis.form.accord.erreur' => 'اقبل النشر بوضع علامة في الخانة، وإلا تعذّر إرسال رأيك.',
+			'avis.form.lecture' => ({required Object courriel}) => 'ستقرأ الإدارة رأيك قبل نشره. لطلب سحبه لاحقًا، اكتب إلى ⁨${courriel}⁩.',
+			'avis.form.regles.titre' => 'ما تنشره الإدارة',
+			'avis.form.regles.intro' => 'يُنشر الرأي المحترم حتى لو كان ناقدًا. لا تعدّل الإدارة نصك أبدًا. وهي ترفض فقط الرأي الذي يتضمن:',
+			'avis.form.regles.insulte' => 'إهانة',
+			'avis.form.regles.tiers' => 'بيانات شخصية لطرف ثالث، مثل اسم طفل أو معلم',
+			'avis.form.regles.publicite' => 'إعلانًا',
+			'avis.form.regles.horsSujet' => 'كلامًا خارج الموضوع',
+			'avis.form.regles.doublon' => 'تكرارًا لرأي وصل من قبل',
+			'avis.form.regles.donnees' => 'لا تكتب اسم طفل ولا بريدًا إلكترونيًا ولا رقم هاتف.',
+			'avis.form.envoyer' => 'إرسال رأيي',
+			'avis.form.aCorriger' => 'بعض الحقول تحتاج إلى تصحيح قبل الإرسال.',
+			'avis.form.erreurChamp' => 'هناك حقل غير مقبول. راجع النموذج ثم أرسل من جديد.',
+			'avis.form.echec' => 'تعذّر تأكيد وصول رأيك. ربما انقطع الاتصال. تحقق منه ثم المس «إرسال رأيي» من جديد.',
+			'avis.form.horsLigne' => 'لم يُرسل شيء وما كتبته باقٍ على هذه الشاشة. أرسل رأيك عند عودة الشبكة.',
+			'avis.form.ferme.titre' => 'هذا الرابط لم يعد يقبل آراء',
+			'avis.form.ferme.phrase' => ({required Object courriel}) => 'إما أنه أُغلق، أو انتهت مدته، أو بلغ عدد الآراء المقرر. لتشاركنا رأيك اطلب رابطًا جديدًا من الإدارة: ⁨${courriel}⁩.',
+			'avis.form.envoye.titre' => 'شكرًا على رأيك',
+			'avis.form.envoye.phrase' => ({required Object courriel}) => 'ستقرأ الإدارة رأيك قبل نشره. إن قُبل فسيظهر على موقع Rewayah Academy مع اسمك الظاهر وبلدك والتاريخ. لطلب سحبه، اكتب إلى ⁨${courriel}⁩.',
+			'avis.form.erreurChargement' => 'تعذّر فتح النموذج. أعد المحاولة بعد قليل.',
+			'avis.form.sansDonnees' => 'تعذّر فتح النموذج',
+			'avis.form.indisponibleTitre' => 'الآراء غير متاحة',
+			'avis.form.indisponiblePhrase' => 'ستتوفر هذه الخاصية عند ربط الخادم.',
+			'avis.admin.titre' => 'الآراء',
+			'avis.admin.sousTitre' => 'آراء الأسر والطلاب. تقرؤها الإدارة وتنشرها أو ترفضها. ولا تعدّل أي نص أبدًا.',
+			'avis.admin.outil' => 'آراء الأسر',
+			'avis.admin.outilDetail' => 'إنشاء رابط لجمع الآراء، وقراءتها، ونشرها أو رفضها',
+			'avis.admin.sections.libelle' => 'أقسام الآراء',
+			'avis.admin.sections.avis' => 'الآراء',
+			'avis.admin.sections.liens' => 'الروابط',
+			'avis.admin.statut.tous' => 'الكل',
+			'avis.admin.statut.enAttente' => 'قيد الانتظار',
+			'avis.admin.statut.publie' => 'منشور',
+			'avis.admin.statut.refuse' => 'مرفوض',
+			'avis.admin.statut.retire' => 'مسحوب',
+			'avis.admin.filtre.tous' => 'الكل',
+			'avis.admin.filtre.enAttente' => 'قيد الانتظار',
+			'avis.admin.filtre.publie' => 'المنشورة',
+			'avis.admin.filtre.refuse' => 'المرفوضة',
+			'avis.admin.filtre.retire' => 'المسحوبة',
+			'avis.admin.attente' => ({required Object n}) => 'آراء قيد الانتظار: ⁨${n}⁩',
+			'avis.admin.vide' => 'لا توجد آراء في هذه القائمة.',
+			'avis.admin.erreur' => 'تعذّر تحميل الآراء. أعد المحاولة.',
+			'avis.admin.sansDonnees' => 'تعذّر تحميل الآراء',
+			'avis.admin.refuse' => 'الإدارة المتصلة وحدها تقرأ الآراء وتقرر بشأنها. أعد الاتصال بالحساب المناسب ثم أعد المحاولة.',
+			'avis.admin.indisponibleTitre' => 'الآراء غير متاحة',
+			'avis.admin.indisponiblePhrase' => 'ستتوفر هذه الخاصية عند ربط الخادم.',
+			'avis.admin.champs.lien' => 'الرابط',
+			'avis.admin.champs.pays' => 'البلد',
+			'avis.admin.champs.depuis' => 'معنا منذ',
+			'avis.admin.champs.qualite' => 'الصفة',
+			'avis.admin.champs.depose' => 'تاريخ الإرسال',
+			'avis.admin.champs.accord' => 'الموافقة على النشر',
+			'avis.admin.champs.motif' => 'السبب',
+			'avis.admin.champs.modere' => 'تاريخ القرار',
+			'avis.admin.champs.publie' => 'تاريخ النشر',
+			'avis.admin.actions.publier' => 'نشر',
+			'avis.admin.actions.refuser' => 'رفض',
+			'avis.admin.actions.retirer' => 'سحب',
+			'avis.admin.publier.question' => ({required Object deNom}) => 'هل تنشر رأي ⁨${deNom}⁩؟',
+			'avis.admin.publier.consequence' => 'سيظهر الرأي والاسم الظاهر والبلد والتاريخ على موقع Rewayah Academy عند التحديث التالي للموقع. لا يتغير النص.',
+			'avis.admin.publier.action' => 'نشر الرأي',
+			'avis.admin.publier.rester' => 'عدم تغيير شيء',
+			'avis.admin.refuser.titre' => ({required Object deNom}) => 'رفض رأي ⁨${deNom}⁩',
+			'avis.admin.refuser.intro' => 'اختر سبب الرفض. الرأي الناقد المحترم يُنشر.',
+			'avis.admin.refuser.consequence' => 'لن يُنشر الرأي. يُحفظ السبب.',
+			'avis.admin.refuser.action' => 'رفض الرأي',
+			'avis.admin.refuser.rester' => 'عدم تغيير شيء',
+			'avis.admin.retirer.titre' => ({required Object deNom}) => 'سحب رأي ⁨${deNom}⁩',
+			'avis.admin.retirer.intro' => 'اختر سبب السحب.',
+			'avis.admin.retirer.consequence' => 'سيختفي الرأي من الموقع عند التحديث التالي للموقع. يُحفظ السبب.',
+			'avis.admin.retirer.action' => 'سحب الرأي',
+			'avis.admin.retirer.rester' => 'عدم تغيير شيء',
+			'avis.admin.motifs.insulte' => 'إهانة',
+			'avis.admin.motifs.tiers' => 'بيانات شخصية لطرف ثالث',
+			'avis.admin.motifs.publicite' => 'إعلان',
+			'avis.admin.motifs.horsSujet' => 'خارج الموضوع',
+			'avis.admin.motifs.doublon' => 'تكرار',
+			'avis.admin.motifs.demande' => 'طلب من صاحب الرأي',
+			'avis.admin.retour.publie' => 'نُشر الرأي.',
+			'avis.admin.retour.refuse' => 'رُفض الرأي.',
+			'avis.admin.retour.retire' => 'سُحب الرأي.',
+			'avis.admin.retour.etatChange' => 'لم يعد هذا الرأي في الحالة المتوقعة. تم تحديث القائمة.',
+			'avis.admin.retour.introuvable' => 'هذا الرأي لم يعد موجودًا. تم تحديث القائمة.',
+			_ => null,
+		} ?? switch (path) {
+			'avis.admin.retour.motifManque' => 'السبب ناقص. اختر سببًا.',
+			'avis.admin.retour.refus' => 'الإدارة المتصلة وحدها تستطيع البت في رأي.',
+			'avis.admin.retour.echec' => 'تعذّر تأكيد القرار. أُعيدت قراءة القائمة: تحقق من حالة الرأي قبل أن تحاول من جديد.',
+			'avis.admin.retour.horsLigne' => 'لم يُرسل شيء: الشبكة غير متوفرة. أعد المحاولة عند عودتها.',
+			'avis.admin.liens.creerTitre' => 'إنشاء رابط',
+			'avis.admin.liens.creerIntro' => 'يفتح الرابط نموذج الرأي دون حساب ودون تسجيل دخول. أعطه اسمًا لتميّزه.',
+			'avis.admin.liens.libelle' => 'اسم الرابط',
+			'avis.admin.liens.libelleAide' => 'مثال: أسر أكتوبر 2026.',
+			'avis.admin.liens.libelleErreur' => 'أعطِ الرابط اسمًا.',
+			'avis.admin.liens.jours' => 'المدة بالأيام',
+			'avis.admin.liens.joursAide' => '90 افتراضيًا و365 على الأكثر.',
+			'avis.admin.liens.joursErreur' => 'اكتب عدد أيام من 1 إلى 365.',
+			'avis.admin.liens.max' => 'الحد الأقصى للآراء',
+			'avis.admin.liens.maxAide' => '200 افتراضيًا و2000 على الأكثر.',
+			'avis.admin.liens.maxErreur' => 'اكتب عددًا من الآراء من 1 إلى 2000.',
+			'avis.admin.liens.creer' => 'إنشاء الرابط',
+			'avis.admin.liens.echecCreation' => 'لم يتأكد إنشاء الرابط. انظر قائمة الروابط قبل أن تحاول من جديد.',
+			'avis.admin.liens.creeTitre' => 'تم إنشاء الرابط',
+			'avis.admin.liens.creePhrase' => 'انسخ هذا الرابط الآن. لن يظهر مرة أخرى بعد إغلاق هذا الإطار. إذا فقدته فأغلق هذا الرابط وأنشئ رابطًا آخر.',
+			'avis.admin.liens.creeAdresse' => 'عنوان الرابط',
+			'avis.admin.liens.creeValable' => ({required Object date}) => 'صالح حتى ⁨${date}⁩.',
+			'avis.admin.liens.copier' => 'نسخ الرابط',
+			'avis.admin.liens.copie' => 'تم نسخ الرابط.',
+			'avis.admin.liens.creeFermer' => 'لقد نسخت الرابط',
+			'avis.admin.liens.etat.ouvert' => 'مفتوح',
+			'avis.admin.liens.etat.ferme' => 'مغلق',
+			'avis.admin.liens.etat.expire' => 'منتهي',
+			'avis.admin.liens.etat.plein' => 'مكتمل',
+			'avis.admin.liens.recus' => ({required Object recus, required Object max}) => 'الآراء الواردة: ⁨${recus}⁩ من ⁨${max}⁩',
+			'avis.admin.liens.fin' => ({required Object date}) => 'ينتهي في ⁨${date}⁩',
+			'avis.admin.liens.cree' => ({required Object date}) => 'أُنشئ في ⁨${date}⁩',
+			'avis.admin.liens.fermer' => 'إغلاق الرابط',
+			'avis.admin.liens.fermerQuestion' => ({required Object nom}) => 'هل تغلق الرابط «⁨${nom}⁩»؟',
+			'avis.admin.liens.fermerConsequence' => 'من يفتح هذا الرابط سيرى أنه مغلق ولن يستطيع إرسال رأي. تبقى الآراء التي وصلت. الرابط المغلق لا يُعاد فتحه.',
+			'avis.admin.liens.fermerAction' => 'إغلاق الرابط',
+			'avis.admin.liens.fermerRester' => 'عدم تغيير شيء',
+			'avis.admin.liens.fermeOk' => 'تم إغلاق الرابط.',
+			'avis.admin.liens.fermeEchec' => 'لم يتأكد الإغلاق. أُعيدت قراءة القائمة: تحقق من حالة الرابط.',
+			'avis.admin.liens.vide' => 'لا توجد روابط حتى الآن. أنشئ رابطًا لجمع الآراء.',
+			'avis.admin.liens.erreur' => 'تعذّر تحميل الروابط. أعد المحاولة.',
+			'avis.admin.liens.sansDonnees' => 'تعذّر تحميل الروابط',
 			_ => null,
 		};
 	}

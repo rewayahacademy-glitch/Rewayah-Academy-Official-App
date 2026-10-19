@@ -85,6 +85,13 @@ String? deciderRedirection({
     return null;
   }
 
+  // Le formulaire d'avis (AVIS-PUBLICS) s'ouvre avec un lien, jamais avec un
+  // compte : sans connexion, comme connecte, en attente ou suspendu. Il ne
+  // montre qu'un formulaire ; le serveur dit si le lien est ouvert.
+  if (_dansLeSousArbre(cheminDemande, Routes.avis)) {
+    return null;
+  }
+
   switch (session.porte) {
     // Tant que la session n'est pas resolue, on ne decide rien : rediriger sur
     // un etat inconnu ferait clignoter l'ecran au demarrage.

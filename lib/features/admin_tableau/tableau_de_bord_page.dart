@@ -196,6 +196,15 @@ class TableauDeBordPage extends ConsumerWidget {
           icon: AppIcons.creneaux,
           onPress: () => GoRouter.of(context).go(Routes.adminOperationsOffres),
         ),
+        // AVIS-PUBLICS : les liens de collecte des avis des familles, et leur
+        // moderation (publier, refuser, retirer).
+        SettingRow(
+          key: const ValueKey<String>('tableau-avis'),
+          title: t.avis.admin.outil,
+          description: t.avis.admin.outilDetail,
+          icon: AppIcons.etoile,
+          onPress: () => GoRouter.of(context).go(Routes.adminOperationsAvis),
+        ),
         // ECHELLE-ADM-PILOTAGE-1 : la demande et l'offre d'enseignants par
         // horaire, R7 et R19.
         SettingRow(

@@ -285,6 +285,11 @@ List<({String libelle, String chemin})> ongletsPersonnes() =>
         libelle: t.admin.importInscriptions.onglet,
         chemin: Routes.adminPersonnesImport,
       ),
+      // CPT-SUPPR-EXPORT : les demandes de suppression de compte.
+      (
+        libelle: t.admin.suppressions.onglet,
+        chemin: Routes.adminPersonnesSuppressions,
+      ),
     ];
 
 /// Les deux fonctions pairs du domaine Securite et audit : le Journal et

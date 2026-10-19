@@ -85,6 +85,8 @@ const Map<String, int> _domaines = <String, int>{
   // PE (18/10/2026) : protection des enfants, arabe des l'origine.
   'protectionEnfants': 7,
   'codeConduite': 8,
+  // AVIS-PUBLICS (19/10/2026) : formulaire public d'avis et moderation.
+  'avis': 100,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :

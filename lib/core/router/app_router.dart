@@ -10,6 +10,7 @@ import '../../features/accueil_adulte/routes_accueil_adulte.dart';
 import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart';
+import '../../features/admin_avis/avis_page.dart';
 import '../../features/admin_comptes/comptes_page.dart';
 import '../../features/admin_configuration_conservation_donnees/conservation_donnees_page.dart';
 import '../../features/admin_configuration_fonctionnalites/fonctionnalites_page.dart';
@@ -40,6 +41,7 @@ import '../../features/admin_pilotage/pilotage_page.dart';
 import '../../features/admin_planning/planning_page.dart';
 import '../../features/admin_regroupements/regroupements_page.dart';
 import '../../features/admin_reprises/reprises_page.dart';
+import '../../features/admin_suppressions/suppressions_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
 import '../../features/admin_tirage/tirage_page.dart';
 import '../../features/admin_traitement/traitement_page.dart';
@@ -50,6 +52,7 @@ import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_eleve_page.dart';
 import '../../features/appareils/appareils_page.dart';
+import '../../features/avis_public/avis_public_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
 import '../../features/classe_tuteur/catalogue_classes_page.dart';
@@ -370,6 +373,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             ),
           ),
         ],
+      ),
+      // AVIS-PUBLICS : le formulaire d'avis, atteint avec le lien que la
+      // direction remet (`Routes.avis`, `deciderRedirection`). Sans connexion.
+      GoRoute(
+        path: '${Routes.avis}/:jeton',
+        builder: (BuildContext _, GoRouterState etat) =>
+            AvisPublicPage(jeton: etat.pathParameters['jeton'] ?? ''),
       ),
       // Le portail d'attente et ses pages. Le sous-arbre entier est ouvert a
       // un compte en attente, la racine seule ne suffirait pas.
@@ -1508,6 +1518,23 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.operations,
           child: AdminOffresPage(),
+        ),
+      ),
+      // AVIS-PUBLICS : les liens de collecte et la moderation des avis,
+      // atteints depuis l'Accueil comme les offres.
+      GoRoute(
+        path: Routes.adminOperationsAvis,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: AvisAdminPage(),
+        ),
+      ),
+      // CPT-SUPPR-EXPORT : les demandes de suppression de compte.
+      GoRoute(
+        path: Routes.adminPersonnesSuppressions,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: SuppressionsPage(),
         ),
       ),
       GoRoute(

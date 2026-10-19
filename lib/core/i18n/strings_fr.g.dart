@@ -102,6 +102,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$recherche$fr recherche = Traductions$recherche$fr.internal(_root);
 	late final Traductions$sansDonnees$fr sansDonnees = Traductions$sansDonnees$fr.internal(_root);
 	late final Traductions$juridique$fr juridique = Traductions$juridique$fr.internal(_root);
+	late final Traductions$avis$fr avis = Traductions$avis$fr.internal(_root);
 }
 
 // Path: commun
@@ -1594,6 +1595,7 @@ class Traductions$admin$fr {
 	late final Traductions$admin$programmes$fr programmes = Traductions$admin$programmes$fr.internal(_root);
 	late final Traductions$admin$journal$fr journal = Traductions$admin$journal$fr.internal(_root);
 	late final Traductions$admin$observations$fr observations = Traductions$admin$observations$fr.internal(_root);
+	late final Traductions$admin$suppressions$fr suppressions = Traductions$admin$suppressions$fr.internal(_root);
 	late final Traductions$admin$comptes$fr comptes = Traductions$admin$comptes$fr.internal(_root);
 	late final Traductions$admin$agents$fr agents = Traductions$admin$agents$fr.internal(_root);
 	late final Traductions$admin$notifications$fr notifications = Traductions$admin$notifications$fr.internal(_root);
@@ -3277,6 +3279,17 @@ class Traductions$juridique$fr {
 	late final Traductions$juridique$confidentialite$fr confidentialite = Traductions$juridique$confidentialite$fr.internal(_root);
 	late final Traductions$juridique$cookies$fr cookies = Traductions$juridique$cookies$fr.internal(_root);
 	late final Traductions$juridique$enfants$fr enfants = Traductions$juridique$enfants$fr.internal(_root);
+}
+
+// Path: avis
+class Traductions$avis$fr {
+	Traductions$avis$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$avis$form$fr form = Traductions$avis$form$fr.internal(_root);
+	late final Traductions$avis$admin$fr admin = Traductions$avis$admin$fr.internal(_root);
 }
 
 // Path: commun.formats
@@ -9083,6 +9096,134 @@ class Traductions$admin$observations$fr {
 
 	/// fr: 'Toutes les visites sont affichées.'
 	String get fin => 'Toutes les visites sont affichées.';
+}
+
+// Path: admin.suppressions
+class Traductions$admin$suppressions$fr {
+	Traductions$admin$suppressions$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Suppressions'
+	String get onglet => 'Suppressions';
+
+	/// fr: 'Suppressions de compte'
+	String get titre => 'Suppressions de compte';
+
+	/// fr: 'Les demandes de suppression. La direction les traite une fois le délai de réflexion écoulé.'
+	String get sousTitre => 'Les demandes de suppression. La direction les traite une fois le délai de réflexion écoulé.';
+
+	/// fr: '(one) {{n} demande attend une décision.} (other) {{n} demandes attendent une décision.}'
+	String attente({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} demande attend une décision.',
+		other: '${n} demandes attendent une décision.',
+	);
+
+	/// fr: 'Aucune demande de suppression.'
+	String get vide => 'Aucune demande de suppression.';
+
+	/// fr: 'Les demandes n'ont pas pu être chargées. Réessayez.'
+	String get erreur => 'Les demandes n\'ont pas pu être chargées. Réessayez.';
+
+	/// fr: 'Les demandes de suppression n'ont pas pu être chargées'
+	String get sansDonnees => 'Les demandes de suppression n\'ont pas pu être chargées';
+
+	/// fr: 'Seule la direction connectée avec la double vérification traite ces demandes. Reconnectez-vous avec votre code de vérification, puis réessayez.'
+	String get refuse => 'Seule la direction connectée avec la double vérification traite ces demandes. Reconnectez-vous avec votre code de vérification, puis réessayez.';
+
+	/// fr: 'Suppressions de compte indisponibles'
+	String get indisponibleTitre => 'Suppressions de compte indisponibles';
+
+	/// fr: 'Cette fonction sera disponible au branchement serveur.'
+	String get indisponiblePhrase => 'Cette fonction sera disponible au branchement serveur.';
+
+	late final Traductions$admin$suppressions$etat$fr etat = Traductions$admin$suppressions$etat$fr.internal(_root);
+
+	/// fr: 'Matricule'
+	String get matricule => 'Matricule';
+
+	/// fr: 'Rôle'
+	String get role => 'Rôle';
+
+	/// fr: 'Motif'
+	String get motif => 'Motif';
+
+	/// fr: 'Demandée le'
+	String get demandeeLe => 'Demandée le';
+
+	/// fr: 'Annulée le'
+	String get annuleeLe => 'Annulée le';
+
+	/// fr: 'Traitée le'
+	String get traiteeLe => 'Traitée le';
+
+	/// fr: 'Le délai de réflexion court jusqu'au {date}. La demande pourra être traitée à partir de ce jour.'
+	String delaiEnCours({required Object date}) => 'Le délai de réflexion court jusqu\'au ${date}. La demande pourra être traitée à partir de ce jour.';
+
+	/// fr: 'Un solde reste à régler'
+	String get soldeTitre => 'Un solde reste à régler';
+
+	/// fr: 'Il reste {montant} à payer. Ce solde reste dû après la suppression.'
+	String soldeDetail({required Object montant}) => 'Il reste ${montant} à payer. Ce solde reste dû après la suppression.';
+
+	/// fr: 'Des séances sont encore prévues'
+	String get seancesTitre => 'Des séances sont encore prévues';
+
+	/// fr: '(one) {{n} séance est prévue. Annulez-la ou confiez-la à une autre personne. La demande ne peut pas être traitée tant qu'elle existe.} (other) {{n} séances sont prévues. Annulez-les ou confiez-les à une autre personne. La demande ne peut pas être traitée tant qu'elles existent.}'
+	String seancesDetail({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} séance est prévue. Annulez-la ou confiez-la à une autre personne. La demande ne peut pas être traitée tant qu\'elle existe.',
+		other: '${n} séances sont prévues. Annulez-les ou confiez-les à une autre personne. La demande ne peut pas être traitée tant qu\'elles existent.',
+	);
+
+	/// fr: 'Des élèves dans ce foyer'
+	String get foyerTitre => 'Des élèves dans ce foyer';
+
+	/// fr: '(one) {{n} élève est dans le foyer de ce tuteur. Vérifiez sa situation avant de continuer.} (other) {{n} élèves sont dans le foyer de ce tuteur. Vérifiez leur situation avant de continuer.}'
+	String foyerDetail({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} élève est dans le foyer de ce tuteur. Vérifiez sa situation avant de continuer.',
+		other: '${n} élèves sont dans le foyer de ce tuteur. Vérifiez leur situation avant de continuer.',
+	);
+
+	/// fr: 'Traiter la demande'
+	String get traiter => 'Traiter la demande';
+
+	/// fr: 'Anonymiser ce compte : {nom} ?'
+	String confirmerQuestion({required Object nom}) => 'Anonymiser ce compte : ${nom} ?';
+
+	/// fr: 'Le nom, les coordonnées et la photo sont effacés. La personne ne peut plus se connecter. Cette action ne peut pas être annulée. Les factures et les paiements sont conservés.'
+	String get confirmerConsequence => 'Le nom, les coordonnées et la photo sont effacés. La personne ne peut plus se connecter. Cette action ne peut pas être annulée. Les factures et les paiements sont conservés.';
+
+	/// fr: 'Un solde de {montant} reste dû et le restera.'
+	String confirmerSolde({required Object montant}) => 'Un solde de ${montant} reste dû et le restera.';
+
+	/// fr: 'Anonymiser le compte'
+	String get confirmerAction => 'Anonymiser le compte';
+
+	/// fr: 'Ne rien changer'
+	String get confirmerRester => 'Ne rien changer';
+
+	/// fr: 'Le compte est anonymisé. La demande est traitée.'
+	String get traitee => 'Le compte est anonymisé. La demande est traitée.';
+
+	/// fr: 'Cette demande n'est plus en attente. La liste est à jour.'
+	String get dejaTraitee => 'Cette demande n\'est plus en attente. La liste est à jour.';
+
+	/// fr: 'Le délai de réflexion court encore. Rien n'a été effacé.'
+	String get delaiNonEcoule => 'Le délai de réflexion court encore. Rien n\'a été effacé.';
+
+	/// fr: 'Des séances sont encore prévues. Rien n'a été effacé.'
+	String get seancesRefus => 'Des séances sont encore prévues. Rien n\'a été effacé.';
+
+	/// fr: 'Cette demande n'existe plus. La liste est à jour.'
+	String get introuvable => 'Cette demande n\'existe plus. La liste est à jour.';
+
+	/// fr: 'La décision n'a pas pu être confirmée. Vérifiez la liste avant de réessayer.'
+	String get echec => 'La décision n\'a pas pu être confirmée. Vérifiez la liste avant de réessayer.';
+
+	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
+	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
 }
 
 // Path: admin.comptes
@@ -18708,6 +18849,120 @@ class Traductions$juridique$enfants$fr {
 	late final Traductions$juridique$enfants$s5$fr s5 = Traductions$juridique$enfants$s5$fr.internal(_root);
 }
 
+// Path: avis.form
+class Traductions$avis$form$fr {
+	Traductions$avis$form$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Donnez votre avis'
+	String get titre => 'Donnez votre avis';
+
+	/// fr: 'Quelques lignes sur votre expérience à Rewayah Academy. Deux minutes suffisent.'
+	String get sousTitre => 'Quelques lignes sur votre expérience à Rewayah Academy. Deux minutes suffisent.';
+
+	late final Traductions$avis$form$nom$fr nom = Traductions$avis$form$nom$fr.internal(_root);
+	late final Traductions$avis$form$qualite$fr qualite = Traductions$avis$form$qualite$fr.internal(_root);
+	late final Traductions$avis$form$pays$fr pays = Traductions$avis$form$pays$fr.internal(_root);
+	late final Traductions$avis$form$depuis$fr depuis = Traductions$avis$form$depuis$fr.internal(_root);
+	late final Traductions$avis$form$note$fr note = Traductions$avis$form$note$fr.internal(_root);
+	late final Traductions$avis$form$titreAvis$fr titreAvis = Traductions$avis$form$titreAvis$fr.internal(_root);
+	late final Traductions$avis$form$texte$fr texte = Traductions$avis$form$texte$fr.internal(_root);
+	late final Traductions$avis$form$accord$fr accord = Traductions$avis$form$accord$fr.internal(_root);
+
+	/// fr: 'Votre avis sera lu par la direction avant d'être publié. Pour le faire retirer plus tard, écrivez à {courriel}.'
+	String lecture({required Object courriel}) => 'Votre avis sera lu par la direction avant d\'être publié. Pour le faire retirer plus tard, écrivez à ${courriel}.';
+
+	late final Traductions$avis$form$regles$fr regles = Traductions$avis$form$regles$fr.internal(_root);
+
+	/// fr: 'Envoyer mon avis'
+	String get envoyer => 'Envoyer mon avis';
+
+	/// fr: 'Quelques champs sont à corriger avant l'envoi.'
+	String get aCorriger => 'Quelques champs sont à corriger avant l\'envoi.';
+
+	/// fr: 'Un champ n'est pas accepté. Relisez le formulaire, puis envoyez de nouveau.'
+	String get erreurChamp => 'Un champ n\'est pas accepté. Relisez le formulaire, puis envoyez de nouveau.';
+
+	/// fr: 'Votre avis n'a pas pu être confirmé. La connexion a peut-être été coupée. Vérifiez-la, puis touchez « Envoyer mon avis » de nouveau.'
+	String get echec => 'Votre avis n\'a pas pu être confirmé. La connexion a peut-être été coupée. Vérifiez-la, puis touchez « Envoyer mon avis » de nouveau.';
+
+	/// fr: 'Rien n'est parti, votre saisie reste sur cet écran. Envoyez votre avis dès le retour du réseau.'
+	String get horsLigne => 'Rien n\'est parti, votre saisie reste sur cet écran. Envoyez votre avis dès le retour du réseau.';
+
+	late final Traductions$avis$form$ferme$fr ferme = Traductions$avis$form$ferme$fr.internal(_root);
+	late final Traductions$avis$form$envoye$fr envoye = Traductions$avis$form$envoye$fr.internal(_root);
+
+	/// fr: 'Le formulaire n'a pas pu s'ouvrir. Réessayez dans un moment.'
+	String get erreurChargement => 'Le formulaire n\'a pas pu s\'ouvrir. Réessayez dans un moment.';
+
+	/// fr: 'Le formulaire n'a pas pu s'ouvrir'
+	String get sansDonnees => 'Le formulaire n\'a pas pu s\'ouvrir';
+
+	/// fr: 'Avis indisponibles'
+	String get indisponibleTitre => 'Avis indisponibles';
+
+	/// fr: 'Cette fonction sera disponible au branchement serveur.'
+	String get indisponiblePhrase => 'Cette fonction sera disponible au branchement serveur.';
+}
+
+// Path: avis.admin
+class Traductions$avis$admin$fr {
+	Traductions$avis$admin$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Avis'
+	String get titre => 'Avis';
+
+	/// fr: 'Les avis des familles et des élèves. La direction les lit, les publie ou les refuse. Elle ne modifie jamais un texte.'
+	String get sousTitre => 'Les avis des familles et des élèves. La direction les lit, les publie ou les refuse. Elle ne modifie jamais un texte.';
+
+	/// fr: 'Avis des familles'
+	String get outil => 'Avis des familles';
+
+	/// fr: 'Créer un lien de collecte, lire les avis, les publier ou les refuser'
+	String get outilDetail => 'Créer un lien de collecte, lire les avis, les publier ou les refuser';
+
+	late final Traductions$avis$admin$sections$fr sections = Traductions$avis$admin$sections$fr.internal(_root);
+	late final Traductions$avis$admin$statut$fr statut = Traductions$avis$admin$statut$fr.internal(_root);
+	late final Traductions$avis$admin$filtre$fr filtre = Traductions$avis$admin$filtre$fr.internal(_root);
+
+	/// fr: 'Avis en attente : {n}'
+	String attente({required Object n}) => 'Avis en attente : ${n}';
+
+	/// fr: 'Aucun avis dans cette liste.'
+	String get vide => 'Aucun avis dans cette liste.';
+
+	/// fr: 'Les avis n'ont pas pu être chargés. Réessayez.'
+	String get erreur => 'Les avis n\'ont pas pu être chargés. Réessayez.';
+
+	/// fr: 'Les avis n'ont pas pu être chargés'
+	String get sansDonnees => 'Les avis n\'ont pas pu être chargés';
+
+	/// fr: 'Seule la direction connectée lit et décide des avis. Reconnectez-vous avec le bon compte, puis réessayez.'
+	String get refuse => 'Seule la direction connectée lit et décide des avis. Reconnectez-vous avec le bon compte, puis réessayez.';
+
+	/// fr: 'Avis indisponibles'
+	String get indisponibleTitre => 'Avis indisponibles';
+
+	/// fr: 'Cette fonction sera disponible au branchement serveur.'
+	String get indisponiblePhrase => 'Cette fonction sera disponible au branchement serveur.';
+
+	late final Traductions$avis$admin$champs$fr champs = Traductions$avis$admin$champs$fr.internal(_root);
+	late final Traductions$avis$admin$actions$fr actions = Traductions$avis$admin$actions$fr.internal(_root);
+	late final Traductions$avis$admin$publier$fr publier = Traductions$avis$admin$publier$fr.internal(_root);
+	late final Traductions$avis$admin$refuser$fr refuser = Traductions$avis$admin$refuser$fr.internal(_root);
+	late final Traductions$avis$admin$retirer$fr retirer = Traductions$avis$admin$retirer$fr.internal(_root);
+	late final Traductions$avis$admin$motifs$fr motifs = Traductions$avis$admin$motifs$fr.internal(_root);
+	late final Traductions$avis$admin$retour$fr retour = Traductions$avis$admin$retour$fr.internal(_root);
+	late final Traductions$avis$admin$liens$fr liens = Traductions$avis$admin$liens$fr.internal(_root);
+}
+
 // Path: commun.etats.chargementProlonge
 class Traductions$commun$etats$chargementProlonge$fr {
 	Traductions$commun$etats$chargementProlonge$fr.internal(this._root);
@@ -21560,6 +21815,27 @@ class Traductions$admin$journal$evenements$fr {
 
 	/// fr: 'Règles d'observation de la classe modifiées'
 	String get observationPolitiqueGroupeModifiee => 'Règles d\'observation de la classe modifiées';
+}
+
+// Path: admin.suppressions.etat
+class Traductions$admin$suppressions$etat$fr {
+	Traductions$admin$suppressions$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'En attente'
+	String get enAttente => 'En attente';
+
+	/// fr: 'À traiter'
+	String get aTraiter => 'À traiter';
+
+	/// fr: 'Annulée'
+	String get annulee => 'Annulée';
+
+	/// fr: 'Traitée'
+	String get traitee => 'Traitée';
 }
 
 // Path: admin.finance.vue
@@ -31224,6 +31500,599 @@ class Traductions$juridique$enfants$s5$fr {
 	];
 }
 
+// Path: avis.form.nom
+class Traductions$avis$form$nom$fr {
+	Traductions$avis$form$nom$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nom affiché'
+	String get libelle => 'Nom affiché';
+
+	/// fr: 'Votre prénom et l'initiale de votre nom suffisent.'
+	String get aide => 'Votre prénom et l\'initiale de votre nom suffisent.';
+
+	/// fr: 'Entrez un nom de 2 à 60 caractères.'
+	String get erreur => 'Entrez un nom de 2 à 60 caractères.';
+}
+
+// Path: avis.form.qualite
+class Traductions$avis$form$qualite$fr {
+	Traductions$avis$form$qualite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous êtes'
+	String get libelle => 'Vous êtes';
+
+	/// fr: 'Parent ou tuteur d'un élève'
+	String get parent => 'Parent ou tuteur d\'un élève';
+
+	/// fr: 'Élève adulte'
+	String get eleveAdulte => 'Élève adulte';
+
+	/// fr: 'Choisissez qui vous êtes.'
+	String get erreur => 'Choisissez qui vous êtes.';
+}
+
+// Path: avis.form.pays
+class Traductions$avis$form$pays$fr {
+	Traductions$avis$form$pays$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pays de résidence'
+	String get libelle => 'Pays de résidence';
+
+	/// fr: 'Choisir un pays'
+	String get choisir => 'Choisir un pays';
+
+	/// fr: 'Rechercher un pays'
+	String get rechercheLibelle => 'Rechercher un pays';
+
+	/// fr: 'Tapez le nom du pays'
+	String get rechercheAide => 'Tapez le nom du pays';
+
+	/// fr: 'Aucun pays ne correspond. Essayez une autre écriture.'
+	String get aucun => 'Aucun pays ne correspond. Essayez une autre écriture.';
+
+	/// fr: 'Choisissez votre pays de résidence.'
+	String get erreur => 'Choisissez votre pays de résidence.';
+}
+
+// Path: avis.form.depuis
+class Traductions$avis$form$depuis$fr {
+	Traductions$avis$form$depuis$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Avec nous depuis'
+	String get libelle => 'Avec nous depuis';
+
+	/// fr: 'Le mois et l'année où vous avez rejoint l'académie.'
+	String get aide => 'Le mois et l\'année où vous avez rejoint l\'académie.';
+
+	/// fr: 'Mois'
+	String get mois => 'Mois';
+
+	/// fr: 'Année'
+	String get annee => 'Année';
+
+	/// fr: 'Choisissez un mois et une année, de 2015 jusqu'à ce mois-ci.'
+	String get erreur => 'Choisissez un mois et une année, de 2015 jusqu\'à ce mois-ci.';
+}
+
+// Path: avis.form.note
+class Traductions$avis$form$note$fr {
+	Traductions$avis$form$note$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre note'
+	String get libelle => 'Votre note';
+
+	/// fr: 'Touchez une étoile : 1 est la note la plus basse, 5 la plus haute.'
+	String get aide => 'Touchez une étoile : 1 est la note la plus basse, 5 la plus haute.';
+
+	/// fr: 'Donner la note {n} sur 5'
+	String etoile({required Object n}) => 'Donner la note ${n} sur 5';
+
+	/// fr: 'Note : {n} sur 5'
+	String lue({required Object n}) => 'Note : ${n} sur 5';
+
+	/// fr: 'Choisissez une note de 1 à 5 étoiles.'
+	String get erreur => 'Choisissez une note de 1 à 5 étoiles.';
+}
+
+// Path: avis.form.titreAvis
+class Traductions$avis$form$titreAvis$fr {
+	Traductions$avis$form$titreAvis$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Titre (facultatif)'
+	String get libelle => 'Titre (facultatif)';
+
+	/// fr: 'Une phrase courte qui résume votre avis. 80 caractères au plus.'
+	String get aide => 'Une phrase courte qui résume votre avis. 80 caractères au plus.';
+
+	/// fr: 'Corrigez le titre : 80 caractères au plus.'
+	String get erreur => 'Corrigez le titre : 80 caractères au plus.';
+}
+
+// Path: avis.form.texte
+class Traductions$avis$form$texte$fr {
+	Traductions$avis$form$texte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre avis'
+	String get libelle => 'Votre avis';
+
+	/// fr: 'Ce qui vous a plu, ce que vous avez appris, ce qui pourrait être mieux. Au moins 20 caractères.'
+	String get aide => 'Ce qui vous a plu, ce que vous avez appris, ce qui pourrait être mieux. Au moins 20 caractères.';
+
+	/// fr: 'Caractères : {n} sur {max}'
+	String compteur({required Object n, required Object max}) => 'Caractères : ${n} sur ${max}';
+
+	/// fr: 'Écrivez entre 20 et 1500 caractères.'
+	String get erreur => 'Écrivez entre 20 et 1500 caractères.';
+}
+
+// Path: avis.form.accord
+class Traductions$avis$form$accord$fr {
+	Traductions$avis$form$accord$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'J'accepte que cet avis, mon nom affiché, mon pays et la date soient publiés sur le site de Rewayah Academy.'
+	String get libelle => 'J\'accepte que cet avis, mon nom affiché, mon pays et la date soient publiés sur le site de Rewayah Academy.';
+
+	/// fr: 'Acceptez la publication en cochant la case, sinon votre avis ne peut pas être envoyé.'
+	String get erreur => 'Acceptez la publication en cochant la case, sinon votre avis ne peut pas être envoyé.';
+}
+
+// Path: avis.form.regles
+class Traductions$avis$form$regles$fr {
+	Traductions$avis$form$regles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce que la direction publie'
+	String get titre => 'Ce que la direction publie';
+
+	/// fr: 'Un avis respectueux est publié, même quand il est critique. La direction ne modifie jamais votre texte. Elle refuse seulement un avis qui contient :'
+	String get intro => 'Un avis respectueux est publié, même quand il est critique. La direction ne modifie jamais votre texte. Elle refuse seulement un avis qui contient :';
+
+	/// fr: 'une insulte'
+	String get insulte => 'une insulte';
+
+	/// fr: 'des données personnelles d'un tiers, comme le nom d'un enfant ou d'un enseignant'
+	String get tiers => 'des données personnelles d\'un tiers, comme le nom d\'un enfant ou d\'un enseignant';
+
+	/// fr: 'de la publicité'
+	String get publicite => 'de la publicité';
+
+	/// fr: 'un propos hors sujet'
+	String get horsSujet => 'un propos hors sujet';
+
+	/// fr: 'un doublon d'un avis déjà reçu'
+	String get doublon => 'un doublon d\'un avis déjà reçu';
+
+	/// fr: 'Ne donnez ni le nom d'un enfant, ni courriel, ni téléphone.'
+	String get donnees => 'Ne donnez ni le nom d\'un enfant, ni courriel, ni téléphone.';
+}
+
+// Path: avis.form.ferme
+class Traductions$avis$form$ferme$fr {
+	Traductions$avis$form$ferme$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce lien n'accepte plus d'avis'
+	String get titre => 'Ce lien n\'accepte plus d\'avis';
+
+	/// fr: 'Il est fermé, arrivé à échéance, ou le nombre d'avis prévu est atteint. Pour donner votre avis, demandez un nouveau lien à la direction : {courriel}.'
+	String phrase({required Object courriel}) => 'Il est fermé, arrivé à échéance, ou le nombre d\'avis prévu est atteint. Pour donner votre avis, demandez un nouveau lien à la direction : ${courriel}.';
+}
+
+// Path: avis.form.envoye
+class Traductions$avis$form$envoye$fr {
+	Traductions$avis$form$envoye$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Merci pour votre avis'
+	String get titre => 'Merci pour votre avis';
+
+	/// fr: 'La direction va le lire avant de le publier. S'il est accepté, il paraîtra sur le site de Rewayah Academy avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à {courriel}.'
+	String phrase({required Object courriel}) => 'La direction va le lire avant de le publier. S\'il est accepté, il paraîtra sur le site de Rewayah Academy avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.';
+}
+
+// Path: avis.admin.sections
+class Traductions$avis$admin$sections$fr {
+	Traductions$avis$admin$sections$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sections des avis'
+	String get libelle => 'Sections des avis';
+
+	/// fr: 'Avis'
+	String get avis => 'Avis';
+
+	/// fr: 'Liens'
+	String get liens => 'Liens';
+}
+
+// Path: avis.admin.statut
+class Traductions$avis$admin$statut$fr {
+	Traductions$avis$admin$statut$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tous'
+	String get tous => 'Tous';
+
+	/// fr: 'En attente'
+	String get enAttente => 'En attente';
+
+	/// fr: 'Publié'
+	String get publie => 'Publié';
+
+	/// fr: 'Refusé'
+	String get refuse => 'Refusé';
+
+	/// fr: 'Retiré'
+	String get retire => 'Retiré';
+}
+
+// Path: avis.admin.filtre
+class Traductions$avis$admin$filtre$fr {
+	Traductions$avis$admin$filtre$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tous'
+	String get tous => 'Tous';
+
+	/// fr: 'En attente'
+	String get enAttente => 'En attente';
+
+	/// fr: 'Publiés'
+	String get publie => 'Publiés';
+
+	/// fr: 'Refusés'
+	String get refuse => 'Refusés';
+
+	/// fr: 'Retirés'
+	String get retire => 'Retirés';
+}
+
+// Path: avis.admin.champs
+class Traductions$avis$admin$champs$fr {
+	Traductions$avis$admin$champs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Lien'
+	String get lien => 'Lien';
+
+	/// fr: 'Pays'
+	String get pays => 'Pays';
+
+	/// fr: 'Avec nous depuis'
+	String get depuis => 'Avec nous depuis';
+
+	/// fr: 'Vous êtes'
+	String get qualite => 'Vous êtes';
+
+	/// fr: 'Déposé le'
+	String get depose => 'Déposé le';
+
+	/// fr: 'Accord de publication'
+	String get accord => 'Accord de publication';
+
+	/// fr: 'Motif'
+	String get motif => 'Motif';
+
+	/// fr: 'Décision du'
+	String get modere => 'Décision du';
+
+	/// fr: 'Publié le'
+	String get publie => 'Publié le';
+}
+
+// Path: avis.admin.actions
+class Traductions$avis$admin$actions$fr {
+	Traductions$avis$admin$actions$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Publier'
+	String get publier => 'Publier';
+
+	/// fr: 'Refuser'
+	String get refuser => 'Refuser';
+
+	/// fr: 'Retirer'
+	String get retirer => 'Retirer';
+}
+
+// Path: avis.admin.publier
+class Traductions$avis$admin$publier$fr {
+	Traductions$avis$admin$publier$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Publier l'avis {deNom} ?'
+	String question({required Object deNom}) => 'Publier l\'avis ${deNom} ?';
+
+	/// fr: 'L'avis, le nom affiché, le pays et la date paraîtront sur le site de Rewayah Academy au prochain passage du site. Le texte n'est pas modifié.'
+	String get consequence => 'L\'avis, le nom affiché, le pays et la date paraîtront sur le site de Rewayah Academy au prochain passage du site. Le texte n\'est pas modifié.';
+
+	/// fr: 'Publier l'avis'
+	String get action => 'Publier l\'avis';
+
+	/// fr: 'Ne rien changer'
+	String get rester => 'Ne rien changer';
+}
+
+// Path: avis.admin.refuser
+class Traductions$avis$admin$refuser$fr {
+	Traductions$avis$admin$refuser$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Refuser l'avis {deNom}'
+	String titre({required Object deNom}) => 'Refuser l\'avis ${deNom}';
+
+	/// fr: 'Choisissez le motif du refus. Un avis critique mais respectueux se publie.'
+	String get intro => 'Choisissez le motif du refus. Un avis critique mais respectueux se publie.';
+
+	/// fr: 'L'avis ne sera pas publié. Le motif est gardé.'
+	String get consequence => 'L\'avis ne sera pas publié. Le motif est gardé.';
+
+	/// fr: 'Refuser l'avis'
+	String get action => 'Refuser l\'avis';
+
+	/// fr: 'Ne rien changer'
+	String get rester => 'Ne rien changer';
+}
+
+// Path: avis.admin.retirer
+class Traductions$avis$admin$retirer$fr {
+	Traductions$avis$admin$retirer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Retirer l'avis {deNom}'
+	String titre({required Object deNom}) => 'Retirer l\'avis ${deNom}';
+
+	/// fr: 'Choisissez le motif du retrait.'
+	String get intro => 'Choisissez le motif du retrait.';
+
+	/// fr: 'L'avis disparaîtra du site au prochain passage du site. Le motif est gardé.'
+	String get consequence => 'L\'avis disparaîtra du site au prochain passage du site. Le motif est gardé.';
+
+	/// fr: 'Retirer l'avis'
+	String get action => 'Retirer l\'avis';
+
+	/// fr: 'Ne rien changer'
+	String get rester => 'Ne rien changer';
+}
+
+// Path: avis.admin.motifs
+class Traductions$avis$admin$motifs$fr {
+	Traductions$avis$admin$motifs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Insulte'
+	String get insulte => 'Insulte';
+
+	/// fr: 'Données personnelles d'un tiers'
+	String get tiers => 'Données personnelles d\'un tiers';
+
+	/// fr: 'Publicité'
+	String get publicite => 'Publicité';
+
+	/// fr: 'Hors sujet'
+	String get horsSujet => 'Hors sujet';
+
+	/// fr: 'Doublon'
+	String get doublon => 'Doublon';
+
+	/// fr: 'Demande de la personne'
+	String get demande => 'Demande de la personne';
+}
+
+// Path: avis.admin.retour
+class Traductions$avis$admin$retour$fr {
+	Traductions$avis$admin$retour$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'L'avis est publié.'
+	String get publie => 'L\'avis est publié.';
+
+	/// fr: 'L'avis est refusé.'
+	String get refuse => 'L\'avis est refusé.';
+
+	/// fr: 'L'avis est retiré.'
+	String get retire => 'L\'avis est retiré.';
+
+	/// fr: 'Cet avis n'est plus dans l'état attendu. La liste est mise à jour.'
+	String get etatChange => 'Cet avis n\'est plus dans l\'état attendu. La liste est mise à jour.';
+
+	/// fr: 'Cet avis n'existe plus. La liste est mise à jour.'
+	String get introuvable => 'Cet avis n\'existe plus. La liste est mise à jour.';
+
+	/// fr: 'Le motif manque. Choisissez-en un.'
+	String get motifManque => 'Le motif manque. Choisissez-en un.';
+
+	/// fr: 'Seule la direction connectée peut décider d'un avis.'
+	String get refus => 'Seule la direction connectée peut décider d\'un avis.';
+
+	/// fr: 'La décision n'a pas pu être confirmée. La liste est relue : vérifiez l'état de l'avis avant de recommencer.'
+	String get echec => 'La décision n\'a pas pu être confirmée. La liste est relue : vérifiez l\'état de l\'avis avant de recommencer.';
+
+	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
+	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
+}
+
+// Path: avis.admin.liens
+class Traductions$avis$admin$liens$fr {
+	Traductions$avis$admin$liens$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Créer un lien'
+	String get creerTitre => 'Créer un lien';
+
+	/// fr: 'Un lien ouvre le formulaire d'avis, sans compte ni connexion. Donnez-lui un nom pour le reconnaître.'
+	String get creerIntro => 'Un lien ouvre le formulaire d\'avis, sans compte ni connexion. Donnez-lui un nom pour le reconnaître.';
+
+	/// fr: 'Nom du lien'
+	String get libelle => 'Nom du lien';
+
+	/// fr: 'Par exemple : Familles octobre 2026.'
+	String get libelleAide => 'Par exemple : Familles octobre 2026.';
+
+	/// fr: 'Donnez un nom au lien.'
+	String get libelleErreur => 'Donnez un nom au lien.';
+
+	/// fr: 'Durée en jours'
+	String get jours => 'Durée en jours';
+
+	/// fr: '90 par défaut, 365 au plus.'
+	String get joursAide => '90 par défaut, 365 au plus.';
+
+	/// fr: 'Entrez un nombre de jours de 1 à 365.'
+	String get joursErreur => 'Entrez un nombre de jours de 1 à 365.';
+
+	/// fr: 'Nombre maximal d'avis'
+	String get max => 'Nombre maximal d\'avis';
+
+	/// fr: '200 par défaut, 2000 au plus.'
+	String get maxAide => '200 par défaut, 2000 au plus.';
+
+	/// fr: 'Entrez un nombre d'avis de 1 à 2000.'
+	String get maxErreur => 'Entrez un nombre d\'avis de 1 à 2000.';
+
+	/// fr: 'Créer le lien'
+	String get creer => 'Créer le lien';
+
+	/// fr: 'La création du lien n'est pas confirmée. Regardez la liste des liens avant de recommencer.'
+	String get echecCreation => 'La création du lien n\'est pas confirmée. Regardez la liste des liens avant de recommencer.';
+
+	/// fr: 'Lien créé'
+	String get creeTitre => 'Lien créé';
+
+	/// fr: 'Copiez ce lien maintenant. Il ne sera plus affiché une fois cet encadré fermé. Si vous le perdez, fermez ce lien et créez un nouveau lien.'
+	String get creePhrase => 'Copiez ce lien maintenant. Il ne sera plus affiché une fois cet encadré fermé. Si vous le perdez, fermez ce lien et créez un nouveau lien.';
+
+	/// fr: 'Adresse du lien'
+	String get creeAdresse => 'Adresse du lien';
+
+	/// fr: 'Valable jusqu'au {date}.'
+	String creeValable({required Object date}) => 'Valable jusqu\'au ${date}.';
+
+	/// fr: 'Copier le lien'
+	String get copier => 'Copier le lien';
+
+	/// fr: 'Lien copié.'
+	String get copie => 'Lien copié.';
+
+	/// fr: 'J'ai copié le lien'
+	String get creeFermer => 'J\'ai copié le lien';
+
+	late final Traductions$avis$admin$liens$etat$fr etat = Traductions$avis$admin$liens$etat$fr.internal(_root);
+
+	/// fr: 'Avis reçus : {recus} sur {max}'
+	String recus({required Object recus, required Object max}) => 'Avis reçus : ${recus} sur ${max}';
+
+	/// fr: 'Fin le {date}'
+	String fin({required Object date}) => 'Fin le ${date}';
+
+	/// fr: 'Créé le {date}'
+	String cree({required Object date}) => 'Créé le ${date}';
+
+	/// fr: 'Fermer le lien'
+	String get fermer => 'Fermer le lien';
+
+	/// fr: 'Fermer le lien « {nom} » ?'
+	String fermerQuestion({required Object nom}) => 'Fermer le lien « ${nom} » ?';
+
+	/// fr: 'Les personnes qui ouvriront ce lien verront qu'il est fermé et ne pourront plus envoyer d'avis. Les avis déjà reçus restent. Un lien fermé ne se rouvre pas.'
+	String get fermerConsequence => 'Les personnes qui ouvriront ce lien verront qu\'il est fermé et ne pourront plus envoyer d\'avis. Les avis déjà reçus restent. Un lien fermé ne se rouvre pas.';
+
+	/// fr: 'Fermer le lien'
+	String get fermerAction => 'Fermer le lien';
+
+	/// fr: 'Ne rien changer'
+	String get fermerRester => 'Ne rien changer';
+
+	/// fr: 'Le lien est fermé.'
+	String get fermeOk => 'Le lien est fermé.';
+
+	/// fr: 'La fermeture n'est pas confirmée. La liste est relue : vérifiez l'état du lien.'
+	String get fermeEchec => 'La fermeture n\'est pas confirmée. La liste est relue : vérifiez l\'état du lien.';
+
+	/// fr: 'Aucun lien pour le moment. Créez-en un pour recueillir des avis.'
+	String get vide => 'Aucun lien pour le moment. Créez-en un pour recueillir des avis.';
+
+	/// fr: 'Les liens n'ont pas pu être chargés. Réessayez.'
+	String get erreur => 'Les liens n\'ont pas pu être chargés. Réessayez.';
+
+	/// fr: 'Les liens n'ont pas pu être chargés'
+	String get sansDonnees => 'Les liens n\'ont pas pu être chargés';
+}
+
 // Path: salle.preparation.eleve.guidee
 class Traductions$salle$preparation$eleve$guidee$fr {
 	Traductions$salle$preparation$eleve$guidee$fr.internal(this._root);
@@ -34077,6 +34946,27 @@ class Traductions$comptable$direction$reservePanneau$cadence$fr {
 	String get manuelle => 'Manuelle';
 }
 
+// Path: avis.admin.liens.etat
+class Traductions$avis$admin$liens$etat$fr {
+	Traductions$avis$admin$liens$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouvert'
+	String get ouvert => 'Ouvert';
+
+	/// fr: 'Fermé'
+	String get ferme => 'Fermé';
+
+	/// fr: 'Expiré'
+	String get expire => 'Expiré';
+
+	/// fr: 'Complet'
+	String get plein => 'Complet';
+}
+
 // Path: com.annonces.administration.moderation.regleMotif
 class Traductions$com$annonces$administration$moderation$regleMotif$fr {
 	Traductions$com$annonces$administration$moderation$regleMotif$fr.internal(this._root);
@@ -36861,6 +37751,46 @@ extension on Traductions {
 			'admin.observations.chargerSuite' => 'Charger les visites plus anciennes',
 			'admin.observations.erreurSuite' => 'Les visites plus anciennes n\'ont pas pu être lues.',
 			'admin.observations.fin' => 'Toutes les visites sont affichées.',
+			'admin.suppressions.onglet' => 'Suppressions',
+			'admin.suppressions.titre' => 'Suppressions de compte',
+			'admin.suppressions.sousTitre' => 'Les demandes de suppression. La direction les traite une fois le délai de réflexion écoulé.',
+			'admin.suppressions.attente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} demande attend une décision.', other: '${n} demandes attendent une décision.', ), 
+			'admin.suppressions.vide' => 'Aucune demande de suppression.',
+			'admin.suppressions.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',
+			'admin.suppressions.sansDonnees' => 'Les demandes de suppression n\'ont pas pu être chargées',
+			'admin.suppressions.refuse' => 'Seule la direction connectée avec la double vérification traite ces demandes. Reconnectez-vous avec votre code de vérification, puis réessayez.',
+			'admin.suppressions.indisponibleTitre' => 'Suppressions de compte indisponibles',
+			'admin.suppressions.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
+			'admin.suppressions.etat.enAttente' => 'En attente',
+			'admin.suppressions.etat.aTraiter' => 'À traiter',
+			'admin.suppressions.etat.annulee' => 'Annulée',
+			'admin.suppressions.etat.traitee' => 'Traitée',
+			'admin.suppressions.matricule' => 'Matricule',
+			'admin.suppressions.role' => 'Rôle',
+			'admin.suppressions.motif' => 'Motif',
+			'admin.suppressions.demandeeLe' => 'Demandée le',
+			'admin.suppressions.annuleeLe' => 'Annulée le',
+			'admin.suppressions.traiteeLe' => 'Traitée le',
+			'admin.suppressions.delaiEnCours' => ({required Object date}) => 'Le délai de réflexion court jusqu\'au ${date}. La demande pourra être traitée à partir de ce jour.',
+			'admin.suppressions.soldeTitre' => 'Un solde reste à régler',
+			'admin.suppressions.soldeDetail' => ({required Object montant}) => 'Il reste ${montant} à payer. Ce solde reste dû après la suppression.',
+			'admin.suppressions.seancesTitre' => 'Des séances sont encore prévues',
+			'admin.suppressions.seancesDetail' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance est prévue. Annulez-la ou confiez-la à une autre personne. La demande ne peut pas être traitée tant qu\'elle existe.', other: '${n} séances sont prévues. Annulez-les ou confiez-les à une autre personne. La demande ne peut pas être traitée tant qu\'elles existent.', ), 
+			'admin.suppressions.foyerTitre' => 'Des élèves dans ce foyer',
+			'admin.suppressions.foyerDetail' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève est dans le foyer de ce tuteur. Vérifiez sa situation avant de continuer.', other: '${n} élèves sont dans le foyer de ce tuteur. Vérifiez leur situation avant de continuer.', ), 
+			'admin.suppressions.traiter' => 'Traiter la demande',
+			'admin.suppressions.confirmerQuestion' => ({required Object nom}) => 'Anonymiser ce compte : ${nom} ?',
+			'admin.suppressions.confirmerConsequence' => 'Le nom, les coordonnées et la photo sont effacés. La personne ne peut plus se connecter. Cette action ne peut pas être annulée. Les factures et les paiements sont conservés.',
+			'admin.suppressions.confirmerSolde' => ({required Object montant}) => 'Un solde de ${montant} reste dû et le restera.',
+			'admin.suppressions.confirmerAction' => 'Anonymiser le compte',
+			'admin.suppressions.confirmerRester' => 'Ne rien changer',
+			'admin.suppressions.traitee' => 'Le compte est anonymisé. La demande est traitée.',
+			'admin.suppressions.dejaTraitee' => 'Cette demande n\'est plus en attente. La liste est à jour.',
+			'admin.suppressions.delaiNonEcoule' => 'Le délai de réflexion court encore. Rien n\'a été effacé.',
+			'admin.suppressions.seancesRefus' => 'Des séances sont encore prévues. Rien n\'a été effacé.',
+			'admin.suppressions.introuvable' => 'Cette demande n\'existe plus. La liste est à jour.',
+			'admin.suppressions.echec' => 'La décision n\'a pas pu être confirmée. Vérifiez la liste avant de réessayer.',
+			'admin.suppressions.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
 			'admin.comptes.titre' => 'Comptes',
 			'admin.comptes.intro' => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.',
 			'admin.comptes.attenteUneAujourdhui' => 'Une personne attend une décision, inscrite aujourd\'hui.',
@@ -37181,6 +38111,8 @@ extension on Traductions {
 			'admin.finance.pol.margeObjectif' => 'Marge objectif',
 			'admin.finance.pol.margeObjectifDetail' => 'Marge nette visée, toutes charges comprises : un repère de pilotage, jamais une sanction ni un blocage.',
 			'admin.finance.pol.margeForte' => 'Performance forte',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.margeForteDetail' => 'Le repère d\'un mois très bon ; il ne descend pas sous l\'objectif.',
 			'admin.finance.pol.margeStretch' => 'Scénario stretch',
 			'admin.finance.pol.margeStretchDetail' => 'Le repère ambitieux ; il ne descend pas sous la performance forte.',
@@ -37221,8 +38153,6 @@ extension on Traductions {
 			'admin.finance.pol.champsACorrigerDetail' => 'Un champ vide, mal saisi ou incohérent empêche de préparer la publication : corrigez chaque champ signalé comme sa phrase l\'indique, puis publiez.',
 			'admin.finance.pol.apercu' => 'Aperçu avant publication',
 			'admin.finance.pol.apercuDetail' => 'Ce que donnerait le brouillon à l\'écran, recalculé à chaque modification valide. Ce sont des exemples : rien n\'est facturé ni payé.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.apercuFamille' => 'Exemple de foyer',
 			'admin.finance.pol.apercuFamilleDetail' => 'La mensualité de chaque enfant payant, dans l\'ordre des rangs, puis le total du foyer.',
 			'admin.finance.pol.apercuEnfantsChoix' => 'Nombre d\'enfants payants',
@@ -37695,6 +38625,8 @@ extension on Traductions {
 			'admin.bibliotheque.import.completer' => 'Compléter le support',
 			'admin.bibliotheque.import.sections.ressource' => 'Ressource',
 			'admin.bibliotheque.import.sections.fichier' => 'Fichier',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.import.sections.droits' => 'Droits et accès',
 			'admin.bibliotheque.import.champs.titre' => 'Titre',
 			'admin.bibliotheque.import.champs.categorie' => 'Catégorie',
@@ -37735,8 +38667,6 @@ extension on Traductions {
 			'admin.bibliotheque.import.poursuivreAide' => 'Le fichier doit être vérifié par le serveur avant de poursuivre.',
 			'admin.bibliotheque.import.retour' => 'Retour au catalogue',
 			'admin.bibliotheque.publication.titre' => 'Vérifier et publier',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.publication.intro' => 'Chaque point est contrôlé par le serveur. La publication fige la version.',
 			'admin.bibliotheque.publication.apercuTitre' => 'Source et fichier',
 			'admin.bibliotheque.publication.apercuAucunFichier' => 'Aucun fichier n\'est déposé : le rendu ne peut pas être contrôlé.',
@@ -38209,6 +39139,8 @@ extension on Traductions {
 			'compte.tuteur.pageLegal.lectureSeule' => 'Un document accepté ne se modifie pas.',
 			'compte.tuteur.pageLegal.textes' => 'Conditions et confidentialité',
 			'historique.titre' => 'Historique',
+			_ => null,
+		} ?? switch (path) {
 			'historique.detailSeance' => 'Détail de la séance',
 			'historique.segments.seances' => 'Séances',
 			'historique.segments.observations' => 'Observations',
@@ -38249,8 +39181,6 @@ extension on Traductions {
 			'historique.filtres.tousStatuts' => 'Tous les statuts',
 			'historique.retour' => 'Retour à l\'historique',
 			'historique.etat.presence' => 'Présence',
-			_ => null,
-		} ?? switch (path) {
 			'historique.etat.retard' => ({required Object minutes}) => 'Retard ${minutes} min',
 			'historique.etat.retardSansDuree' => 'Retard',
 			'historique.etat.verification' => 'En cours de vérification',
@@ -38723,6 +39653,8 @@ extension on Traductions {
 			'classe.cartes.copierLienCourt' => 'Copier le lien',
 			'classe.cartes.lienCopie' => 'Lien copié. Collez-le dans votre navigateur pour l\'ouvrir.',
 			'classe.cartes.indisponibleTitre' => 'Les cartes de la classe ne sont pas encore ouvertes',
+			_ => null,
+		} ?? switch (path) {
 			'classe.cartes.indisponiblePhrase' => 'Elles apparaîtront ici dès leur ouverture. Rien à faire de votre côté.',
 			'classe.cartes.erreurLecture' => 'Les cartes de la classe n\'ont pas pu être lues. Réessayez dans un instant.',
 			'classe.cartes.sansDonnees' => 'Les cartes de la classe n\'ont pas pu être chargées',
@@ -38763,8 +39695,6 @@ extension on Traductions {
 			'classe.cartes.feuille.defauts.titreLong' => ({required Object max}) => 'Le titre dépasse ${max} caractères. Raccourcissez-le.',
 			'classe.cartes.feuille.defauts.texteLong' => ({required Object max}) => 'Le texte dépasse ${max} caractères. Raccourcissez-le ou partagez un lien.',
 			'classe.cartes.feuille.defauts.lienInvalide' => 'Ce lien n\'est pas une adresse complète. Collez une adresse qui commence par https://.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.feuille.defauts.echeanceManquante' => 'Un devoir a besoin d\'une échéance. Choisissez la date d\'échéance.',
 			'enseignant.pays.semantique' => ({required Object pays}) => 'Pays : ${pays}',
 			'enseignant.classes.titre' => 'Classes',
@@ -39237,6 +40167,8 @@ extension on Traductions {
 			'enseignant.creneaux.confirmerRetraitAction' => 'Retirer ces heures',
 			'enseignant.creneaux.ajoutNonConfirme' => ({required Object heures}) => 'Ajout non confirmé : ${heures}.',
 			'enseignant.creneaux.retraitNonConfirme' => ({required Object heures}) => 'Retrait non confirmé : ${heures}.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.echecCause' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah.',
 			'enseignant.creneaux.echecQuoiFaire' => ({required Object action}) => 'Touchez « ${action} » pour réessayer : seules ces heures seront renvoyées, après relecture de vos plages.',
 			'enseignant.creneaux.engagementsNonConfirmes' => 'Vos Classes déjà engagées ne sont pas confirmées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Un conflit avec une plage ne peut donc pas être signalé ; touchez « Réessayer ».',
@@ -39277,8 +40209,6 @@ extension on Traductions {
 			'enseignant.ficheGroupe.pause.refuse' => 'Seul l\'enseignant de la Classe règle la pause.',
 			'enseignant.ficheGroupe.pause.indisponibleTitre' => 'La pause programmée n\'est pas encore disponible',
 			'enseignant.ficheGroupe.pause.indisponiblePhrase' => 'Elle sera proposée ici dès que Rewayah la servira.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.ficheGroupe.pause.illisible' => 'Le réglage de la pause n\'a pas pu être lu.',
 			'enseignant.revue.titre' => 'Revue de la Classe',
 			'enseignant.revue.titreClasse' => ({required Object classe}) => 'Revue de la Classe ${classe}',
@@ -39751,6 +40681,8 @@ extension on Traductions {
 			'tc.outils.dock.bibliotheque' => 'Bibliothèque',
 			'tc.outils.dock.focus' => 'Focus',
 			'tc.outils.dock.marquer' => 'Marquer',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.dock.masquer' => 'Masquer',
 			'tc.outils.dock.stylet' => 'Stylet',
 			'tc.outils.dock.pointeur' => 'Pointeur',
@@ -39791,8 +40723,6 @@ extension on Traductions {
 			'tc.classe.entete.titreEnseignant.sayyida' => 'Sayyida',
 			'tc.classe.roster.titre' => 'Élèves',
 			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.roster.indisponible' => 'Roster indisponible',
 			'tc.classe.roster.indisponibleDetail' => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.',
 			'tc.classe.roster.vide' => 'Aucun élève inscrit',
@@ -40265,6 +41195,8 @@ extension on Traductions {
 			'adulte.invitation.annulerQuestion' => ({required Object dePrenom}) => 'Annuler l\'invitation ${dePrenom} ?',
 			'adulte.invitation.annulerQuestionSansPrenom' => 'Annuler cette invitation ?',
 			'adulte.invitation.annulerHorsLigne' => 'Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.annulerConsequence' => 'L\'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.',
 			'adulte.invitation.garder' => 'Garder l\'invitation',
 			'adulte.invitation.annulationEchecTitre' => 'L\'annulation n\'a pas été confirmée.',
@@ -40305,8 +41237,6 @@ extension on Traductions {
 			'adulte.acceptation.impossible' => 'Ce compte ne peut pas rejoindre ce forfait actuellement.',
 			'adulte.acceptation.perimee' => 'Cette invitation n\'est plus valable.',
 			'adulte.acceptation.monEspace' => 'Aller à Mon espace',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.acceptation.recu' => ({required Object date}) => 'Réponse enregistrée le ${date}.',
 			'adulte.acceptation.titreNeutre' => 'Invitation au forfait famille',
 			'adulte.acceptation.sansCompteTitre' => 'Invitation au forfait famille',
@@ -40779,6 +41709,8 @@ extension on Traductions {
 			'com.socle.composants.pieceJointe.indisponibleDetail' => 'Ce fichier n\'est plus disponible. Demandez à la personne qui l\'a partagé de le renvoyer.',
 			'com.socle.composants.composer.message' => 'Message',
 			'com.socle.composants.composer.aide' => 'Écrire un message',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.composants.composer.envoyer' => 'Envoyer',
 			'com.socle.composants.composer.champVide' => 'Écrivez un message pour l\'envoyer.',
 			'com.socle.composants.composer.vocal' => 'Message vocal',
@@ -40819,8 +41751,6 @@ extension on Traductions {
 			'com.socle.lexique.reponse' => 'Réponse',
 			'com.socle.lexique.enregistrer' => 'Enregistrer',
 			'com.socle.lexique.signaler' => 'Signaler',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.lexique.modeFocus' => 'Mode focus',
 			'com.socle.lexique.quitterFocus' => 'Quitter le focus',
 			'com.socle.lexique.aTraiter' => 'À traiter',
@@ -41293,6 +42223,8 @@ extension on Traductions {
 			'com.studio.panneau.liens' => 'Liens utiles',
 			'com.studio.panneau.vous' => 'Vous',
 			'com.studio.panneau.parametres' => 'Paramètres du canal',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.panneau.parametresDetail' => 'La modification des paramètres arrivera avec le service du Studio.',
 			'com.studio.panneau.ouvrir' => ({required Object titre}) => 'Ouvrir ${titre}',
 			'com.studio.panneau.lienExterne' => ({required Object hote}) => 'Site externe : ${hote}',
@@ -41333,8 +42265,6 @@ extension on Traductions {
 			'com.studio.demo.horsDemo' => ({required Object module}) => 'Dans l\'application, cette ligne ouvre ${module}. La démonstration reste sur cette page.',
 			'com.studio.demo.choisir' => 'Choisissez une situation à essayer.',
 			'com.studio.demo.normale' => 'Le Studio et ses canaux',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.echec' => 'Envoi non confirmé',
 			'com.studio.demo.horsLigne' => 'Hors ligne',
 			'com.studio.demo.canalPrive' => 'Adresse d\'un canal privé qui ne vous est pas ouvert',
@@ -41807,6 +42737,8 @@ extension on Traductions {
 			'comptable.aujourdhui.sousTitre' => 'Que dois-je faire maintenant ?',
 			'comptable.aujourdhui.attention' => 'À traiter et alertes',
 			'comptable.aujourdhui.aTraiter' => 'À traiter aujourd\'hui',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.aTraiterHorsPaiements' => 'Autres tâches',
 			'comptable.aujourdhui.alertes' => 'Alertes',
 			'comptable.aujourdhui.echeances' => 'Échéances proches',
@@ -41847,8 +42779,6 @@ extension on Traductions {
 			'comptable.paiements.confirmation.prestataires' => 'Prestataires',
 			'comptable.paiements.confirmation.plafond' => 'Délégation restante',
 			'comptable.paiements.confirmation.exclusTitre' => 'Exclus de ce lot : ils ne partiront pas',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.aucunPretTitre' => 'Aucun paiement prêt',
 			'comptable.paiements.confirmation.aucunPret' => 'Rien ne partira. Ouvrez chaque paiement exclu pour lever sa raison, puis relancez le contrôle.',
 			'comptable.paiements.confirmation.erreursTitre' => 'Erreurs rendues par le contrôle',
@@ -42321,6 +43251,8 @@ extension on Traductions {
 			'comptable.contractuels.retourListe' => 'Retour aux contractuels',
 			'comptable.contractuels.titre' => 'Contractuels et obligations',
 			'comptable.contractuels.sousTitre' => 'Les montants sont définis à la création de l\'obligation, figés après approbation.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.nouvelle' => 'Nouvelle obligation',
 			'comptable.contractuels.detailTitre' => 'Obligation',
 			'comptable.validation.sousTitre' => 'Les demandes du Comptable qui attendent la décision d\'une autre personne habilitée. Celui qui demande ne valide jamais sa propre demande.',
@@ -42361,8 +43293,6 @@ extension on Traductions {
 			'comptable.validation.motifTitre' => 'Motif du refus',
 			'comptable.validation.motifPhrase' => 'Le Comptable lira ce motif avec la décision. Choisissez-en un, ou précisez le vôtre.',
 			'comptable.validation.motifs.coordonnees' => 'Coordonnées du bénéficiaire à vérifier',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.motifs.montant' => 'Montant à vérifier à la source',
 			'comptable.validation.motifs.justificatif' => 'Justificatif manquant ou illisible',
 			'comptable.validation.motifs.reserve' => 'Hors de la politique de la Réserve',
@@ -42835,6 +43765,8 @@ extension on Traductions {
 			'juridique.confidentialite.s9.blocs.0' => 'Les règles d\'accès sont appliquées par le serveur. Les pièces d\'identité sont dans un espace privé, séparé des photos. Aucune protection n\'est absolue : si vous voyez un problème, écrivez-nous.',
 			'juridique.confidentialite.s10.titre' => '10. Les enfants',
 			'juridique.confidentialite.s10.blocs.0' => 'Les informations d\'un enfant sont données et gérées par son tuteur. Voir le texte Protection des enfants.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.cookies.titre' => 'Cookies',
 			'juridique.cookies.resume' => 'Ce que l\'application et le site gardent sur votre appareil.',
 			'juridique.cookies.intro' => 'L\'application et le site gardent peu de choses sur votre appareil. Voici lesquelles.',
@@ -42875,9 +43807,165 @@ extension on Traductions {
 			'juridique.enfants.s4.blocs.2' => 'Voir aussi le texte Confidentialité.',
 			'juridique.enfants.s5.titre' => '5. Faire part d\'une inquiétude',
 			'juridique.enfants.s5.blocs.0' => 'Si une chose vous inquiète, écrivez-nous. Dites ce que vous avez vu, quand, et dans quelle Classe.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.enfants.s5.blocs.1' => 'En cas de danger immédiat, contactez d\'abord les services d\'urgence de votre pays.',
+			'avis.form.titre' => 'Donnez votre avis',
+			'avis.form.sousTitre' => 'Quelques lignes sur votre expérience à Rewayah Academy. Deux minutes suffisent.',
+			'avis.form.nom.libelle' => 'Nom affiché',
+			'avis.form.nom.aide' => 'Votre prénom et l\'initiale de votre nom suffisent.',
+			'avis.form.nom.erreur' => 'Entrez un nom de 2 à 60 caractères.',
+			'avis.form.qualite.libelle' => 'Vous êtes',
+			'avis.form.qualite.parent' => 'Parent ou tuteur d\'un élève',
+			'avis.form.qualite.eleveAdulte' => 'Élève adulte',
+			'avis.form.qualite.erreur' => 'Choisissez qui vous êtes.',
+			'avis.form.pays.libelle' => 'Pays de résidence',
+			'avis.form.pays.choisir' => 'Choisir un pays',
+			'avis.form.pays.rechercheLibelle' => 'Rechercher un pays',
+			'avis.form.pays.rechercheAide' => 'Tapez le nom du pays',
+			'avis.form.pays.aucun' => 'Aucun pays ne correspond. Essayez une autre écriture.',
+			'avis.form.pays.erreur' => 'Choisissez votre pays de résidence.',
+			'avis.form.depuis.libelle' => 'Avec nous depuis',
+			'avis.form.depuis.aide' => 'Le mois et l\'année où vous avez rejoint l\'académie.',
+			'avis.form.depuis.mois' => 'Mois',
+			'avis.form.depuis.annee' => 'Année',
+			'avis.form.depuis.erreur' => 'Choisissez un mois et une année, de 2015 jusqu\'à ce mois-ci.',
+			'avis.form.note.libelle' => 'Votre note',
+			'avis.form.note.aide' => 'Touchez une étoile : 1 est la note la plus basse, 5 la plus haute.',
+			'avis.form.note.etoile' => ({required Object n}) => 'Donner la note ${n} sur 5',
+			'avis.form.note.lue' => ({required Object n}) => 'Note : ${n} sur 5',
+			'avis.form.note.erreur' => 'Choisissez une note de 1 à 5 étoiles.',
+			'avis.form.titreAvis.libelle' => 'Titre (facultatif)',
+			'avis.form.titreAvis.aide' => 'Une phrase courte qui résume votre avis. 80 caractères au plus.',
+			'avis.form.titreAvis.erreur' => 'Corrigez le titre : 80 caractères au plus.',
+			'avis.form.texte.libelle' => 'Votre avis',
+			'avis.form.texte.aide' => 'Ce qui vous a plu, ce que vous avez appris, ce qui pourrait être mieux. Au moins 20 caractères.',
+			'avis.form.texte.compteur' => ({required Object n, required Object max}) => 'Caractères : ${n} sur ${max}',
+			'avis.form.texte.erreur' => 'Écrivez entre 20 et 1500 caractères.',
+			'avis.form.accord.libelle' => 'J\'accepte que cet avis, mon nom affiché, mon pays et la date soient publiés sur le site de Rewayah Academy.',
+			'avis.form.accord.erreur' => 'Acceptez la publication en cochant la case, sinon votre avis ne peut pas être envoyé.',
+			'avis.form.lecture' => ({required Object courriel}) => 'Votre avis sera lu par la direction avant d\'être publié. Pour le faire retirer plus tard, écrivez à ${courriel}.',
+			'avis.form.regles.titre' => 'Ce que la direction publie',
+			'avis.form.regles.intro' => 'Un avis respectueux est publié, même quand il est critique. La direction ne modifie jamais votre texte. Elle refuse seulement un avis qui contient :',
+			'avis.form.regles.insulte' => 'une insulte',
+			'avis.form.regles.tiers' => 'des données personnelles d\'un tiers, comme le nom d\'un enfant ou d\'un enseignant',
+			'avis.form.regles.publicite' => 'de la publicité',
+			'avis.form.regles.horsSujet' => 'un propos hors sujet',
+			'avis.form.regles.doublon' => 'un doublon d\'un avis déjà reçu',
+			'avis.form.regles.donnees' => 'Ne donnez ni le nom d\'un enfant, ni courriel, ni téléphone.',
+			'avis.form.envoyer' => 'Envoyer mon avis',
+			'avis.form.aCorriger' => 'Quelques champs sont à corriger avant l\'envoi.',
+			'avis.form.erreurChamp' => 'Un champ n\'est pas accepté. Relisez le formulaire, puis envoyez de nouveau.',
+			'avis.form.echec' => 'Votre avis n\'a pas pu être confirmé. La connexion a peut-être été coupée. Vérifiez-la, puis touchez « Envoyer mon avis » de nouveau.',
+			'avis.form.horsLigne' => 'Rien n\'est parti, votre saisie reste sur cet écran. Envoyez votre avis dès le retour du réseau.',
+			'avis.form.ferme.titre' => 'Ce lien n\'accepte plus d\'avis',
+			'avis.form.ferme.phrase' => ({required Object courriel}) => 'Il est fermé, arrivé à échéance, ou le nombre d\'avis prévu est atteint. Pour donner votre avis, demandez un nouveau lien à la direction : ${courriel}.',
+			'avis.form.envoye.titre' => 'Merci pour votre avis',
+			'avis.form.envoye.phrase' => ({required Object courriel}) => 'La direction va le lire avant de le publier. S\'il est accepté, il paraîtra sur le site de Rewayah Academy avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.',
+			'avis.form.erreurChargement' => 'Le formulaire n\'a pas pu s\'ouvrir. Réessayez dans un moment.',
+			'avis.form.sansDonnees' => 'Le formulaire n\'a pas pu s\'ouvrir',
+			'avis.form.indisponibleTitre' => 'Avis indisponibles',
+			'avis.form.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
+			'avis.admin.titre' => 'Avis',
+			'avis.admin.sousTitre' => 'Les avis des familles et des élèves. La direction les lit, les publie ou les refuse. Elle ne modifie jamais un texte.',
+			'avis.admin.outil' => 'Avis des familles',
+			'avis.admin.outilDetail' => 'Créer un lien de collecte, lire les avis, les publier ou les refuser',
+			'avis.admin.sections.libelle' => 'Sections des avis',
+			'avis.admin.sections.avis' => 'Avis',
+			'avis.admin.sections.liens' => 'Liens',
+			'avis.admin.statut.tous' => 'Tous',
+			'avis.admin.statut.enAttente' => 'En attente',
+			'avis.admin.statut.publie' => 'Publié',
+			'avis.admin.statut.refuse' => 'Refusé',
+			'avis.admin.statut.retire' => 'Retiré',
+			'avis.admin.filtre.tous' => 'Tous',
+			'avis.admin.filtre.enAttente' => 'En attente',
+			'avis.admin.filtre.publie' => 'Publiés',
+			'avis.admin.filtre.refuse' => 'Refusés',
+			'avis.admin.filtre.retire' => 'Retirés',
+			'avis.admin.attente' => ({required Object n}) => 'Avis en attente : ${n}',
+			'avis.admin.vide' => 'Aucun avis dans cette liste.',
+			'avis.admin.erreur' => 'Les avis n\'ont pas pu être chargés. Réessayez.',
+			'avis.admin.sansDonnees' => 'Les avis n\'ont pas pu être chargés',
+			'avis.admin.refuse' => 'Seule la direction connectée lit et décide des avis. Reconnectez-vous avec le bon compte, puis réessayez.',
+			'avis.admin.indisponibleTitre' => 'Avis indisponibles',
+			'avis.admin.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
+			'avis.admin.champs.lien' => 'Lien',
+			'avis.admin.champs.pays' => 'Pays',
+			'avis.admin.champs.depuis' => 'Avec nous depuis',
+			'avis.admin.champs.qualite' => 'Vous êtes',
+			'avis.admin.champs.depose' => 'Déposé le',
+			'avis.admin.champs.accord' => 'Accord de publication',
+			'avis.admin.champs.motif' => 'Motif',
+			'avis.admin.champs.modere' => 'Décision du',
+			'avis.admin.champs.publie' => 'Publié le',
+			'avis.admin.actions.publier' => 'Publier',
+			'avis.admin.actions.refuser' => 'Refuser',
+			'avis.admin.actions.retirer' => 'Retirer',
+			'avis.admin.publier.question' => ({required Object deNom}) => 'Publier l\'avis ${deNom} ?',
+			'avis.admin.publier.consequence' => 'L\'avis, le nom affiché, le pays et la date paraîtront sur le site de Rewayah Academy au prochain passage du site. Le texte n\'est pas modifié.',
+			'avis.admin.publier.action' => 'Publier l\'avis',
+			'avis.admin.publier.rester' => 'Ne rien changer',
+			'avis.admin.refuser.titre' => ({required Object deNom}) => 'Refuser l\'avis ${deNom}',
+			'avis.admin.refuser.intro' => 'Choisissez le motif du refus. Un avis critique mais respectueux se publie.',
+			'avis.admin.refuser.consequence' => 'L\'avis ne sera pas publié. Le motif est gardé.',
+			'avis.admin.refuser.action' => 'Refuser l\'avis',
+			'avis.admin.refuser.rester' => 'Ne rien changer',
+			'avis.admin.retirer.titre' => ({required Object deNom}) => 'Retirer l\'avis ${deNom}',
+			'avis.admin.retirer.intro' => 'Choisissez le motif du retrait.',
+			'avis.admin.retirer.consequence' => 'L\'avis disparaîtra du site au prochain passage du site. Le motif est gardé.',
+			'avis.admin.retirer.action' => 'Retirer l\'avis',
+			'avis.admin.retirer.rester' => 'Ne rien changer',
+			'avis.admin.motifs.insulte' => 'Insulte',
+			'avis.admin.motifs.tiers' => 'Données personnelles d\'un tiers',
+			'avis.admin.motifs.publicite' => 'Publicité',
+			'avis.admin.motifs.horsSujet' => 'Hors sujet',
+			'avis.admin.motifs.doublon' => 'Doublon',
+			'avis.admin.motifs.demande' => 'Demande de la personne',
+			'avis.admin.retour.publie' => 'L\'avis est publié.',
+			'avis.admin.retour.refuse' => 'L\'avis est refusé.',
+			'avis.admin.retour.retire' => 'L\'avis est retiré.',
+			'avis.admin.retour.etatChange' => 'Cet avis n\'est plus dans l\'état attendu. La liste est mise à jour.',
+			'avis.admin.retour.introuvable' => 'Cet avis n\'existe plus. La liste est mise à jour.',
+			'avis.admin.retour.motifManque' => 'Le motif manque. Choisissez-en un.',
+			'avis.admin.retour.refus' => 'Seule la direction connectée peut décider d\'un avis.',
+			'avis.admin.retour.echec' => 'La décision n\'a pas pu être confirmée. La liste est relue : vérifiez l\'état de l\'avis avant de recommencer.',
+			'avis.admin.retour.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
+			'avis.admin.liens.creerTitre' => 'Créer un lien',
+			'avis.admin.liens.creerIntro' => 'Un lien ouvre le formulaire d\'avis, sans compte ni connexion. Donnez-lui un nom pour le reconnaître.',
+			'avis.admin.liens.libelle' => 'Nom du lien',
+			'avis.admin.liens.libelleAide' => 'Par exemple : Familles octobre 2026.',
+			'avis.admin.liens.libelleErreur' => 'Donnez un nom au lien.',
+			'avis.admin.liens.jours' => 'Durée en jours',
+			'avis.admin.liens.joursAide' => '90 par défaut, 365 au plus.',
+			'avis.admin.liens.joursErreur' => 'Entrez un nombre de jours de 1 à 365.',
+			'avis.admin.liens.max' => 'Nombre maximal d\'avis',
+			'avis.admin.liens.maxAide' => '200 par défaut, 2000 au plus.',
+			'avis.admin.liens.maxErreur' => 'Entrez un nombre d\'avis de 1 à 2000.',
+			'avis.admin.liens.creer' => 'Créer le lien',
+			'avis.admin.liens.echecCreation' => 'La création du lien n\'est pas confirmée. Regardez la liste des liens avant de recommencer.',
+			'avis.admin.liens.creeTitre' => 'Lien créé',
+			'avis.admin.liens.creePhrase' => 'Copiez ce lien maintenant. Il ne sera plus affiché une fois cet encadré fermé. Si vous le perdez, fermez ce lien et créez un nouveau lien.',
+			'avis.admin.liens.creeAdresse' => 'Adresse du lien',
+			'avis.admin.liens.creeValable' => ({required Object date}) => 'Valable jusqu\'au ${date}.',
+			'avis.admin.liens.copier' => 'Copier le lien',
+			'avis.admin.liens.copie' => 'Lien copié.',
+			'avis.admin.liens.creeFermer' => 'J\'ai copié le lien',
+			'avis.admin.liens.etat.ouvert' => 'Ouvert',
+			'avis.admin.liens.etat.ferme' => 'Fermé',
+			'avis.admin.liens.etat.expire' => 'Expiré',
+			'avis.admin.liens.etat.plein' => 'Complet',
+			'avis.admin.liens.recus' => ({required Object recus, required Object max}) => 'Avis reçus : ${recus} sur ${max}',
+			'avis.admin.liens.fin' => ({required Object date}) => 'Fin le ${date}',
+			'avis.admin.liens.cree' => ({required Object date}) => 'Créé le ${date}',
+			'avis.admin.liens.fermer' => 'Fermer le lien',
+			'avis.admin.liens.fermerQuestion' => ({required Object nom}) => 'Fermer le lien « ${nom} » ?',
+			'avis.admin.liens.fermerConsequence' => 'Les personnes qui ouvriront ce lien verront qu\'il est fermé et ne pourront plus envoyer d\'avis. Les avis déjà reçus restent. Un lien fermé ne se rouvre pas.',
+			'avis.admin.liens.fermerAction' => 'Fermer le lien',
+			'avis.admin.liens.fermerRester' => 'Ne rien changer',
+			'avis.admin.liens.fermeOk' => 'Le lien est fermé.',
+			'avis.admin.liens.fermeEchec' => 'La fermeture n\'est pas confirmée. La liste est relue : vérifiez l\'état du lien.',
+			'avis.admin.liens.vide' => 'Aucun lien pour le moment. Créez-en un pour recueillir des avis.',
+			'avis.admin.liens.erreur' => 'Les liens n\'ont pas pu être chargés. Réessayez.',
+			'avis.admin.liens.sansDonnees' => 'Les liens n\'ont pas pu être chargés',
 			_ => null,
 		};
 	}

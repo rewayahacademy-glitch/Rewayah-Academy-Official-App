@@ -24,6 +24,7 @@ import 'core/admin/port_planning_direction.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
 import 'core/capacites/acces_supabase.dart';
+import 'core/capacites/avis_supabase.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
 import 'core/capacites/enseignants_classe_supabase.dart';
 import 'core/capacites/identite_titulaire_supabase.dart';
@@ -34,6 +35,7 @@ import 'core/capacites/paiements_saisis_supabase.dart';
 import 'core/capacites/partage_pedagogique_supabase.dart';
 import 'core/capacites/politiques_commerciales_supabase.dart';
 import 'core/capacites/port_acces_foyer.dart';
+import 'core/capacites/port_avis.dart';
 import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/port_enseignants_classe.dart';
 import 'core/capacites/port_identite_titulaire.dart';
@@ -50,6 +52,7 @@ import 'core/capacites/port_recharge_foyer.dart';
 import 'core/capacites/port_revenus_enseignant.dart';
 import 'core/capacites/port_series_tresorerie.dart';
 import 'core/capacites/port_support.dart';
+import 'core/capacites/port_suppressions_admin.dart';
 import 'core/capacites/port_validations_finance.dart';
 import 'core/capacites/profil_eleve_titulaire_supabase.dart';
 import 'core/capacites/progression_famille_supabase.dart';
@@ -58,6 +61,7 @@ import 'core/capacites/revenus_enseignant_supabase.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
 import 'core/capacites/series_tresorerie_supabase.dart';
 import 'core/capacites/support_supabase.dart';
+import 'core/capacites/suppressions_admin_supabase.dart';
 import 'core/capacites/validations_finance_supabase.dart';
 import 'core/communications/communications_supabase.dart';
 import 'core/communications/libelles_communication_slang.dart';
@@ -264,6 +268,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   portMesDonneesProvider.overrideWithValue(
     MesDonneesSupabase(Supabase.instance.client),
   ),
+  // Les demandes de suppression de compte, cote direction (meme migration).
+  portSuppressionsAdminProvider.overrideWithValue(
+    SuppressionsAdminSupabase(Supabase.instance.client),
+  ),
+  // Les avis des familles : formulaire public et moderation de la direction.
+  portAvisProvider.overrideWithValue(AvisSupabase(Supabase.instance.client)),
   portSeriesTresorerieProvider.overrideWithValue(
     SeriesTresorerieSupabase(Supabase.instance.client),
   ),

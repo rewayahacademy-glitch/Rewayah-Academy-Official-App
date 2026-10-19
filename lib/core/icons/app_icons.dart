@@ -1027,4 +1027,17 @@ abstract final class AppIcons {
     IconData(0xe3a0, fontFamily: _repos),
     IconData(0xe3a0, fontFamily: _actif),
   );
+
+  /// Une etoile de note (avis des familles) : Phosphor `star` (0xe46a), vide
+  /// au repos, pleine quand elle est comptee.
+  static const AppIcon etoile = AppIcon._(
+    IconData(0xe46a, fontFamily: _repos),
+    IconData(0xe46a, fontFamily: _actif),
+  );
+
+  /// Copier un lien dans le presse-papiers : Phosphor `copy` (0xe1ca).
+  static const AppIcon copier = AppIcon._(
+    IconData(0xe1ca, fontFamily: _repos),
+    IconData(0xe1ca, fontFamily: _actif),
+  );
 }
