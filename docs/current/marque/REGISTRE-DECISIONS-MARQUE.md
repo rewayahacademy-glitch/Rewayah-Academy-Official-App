@@ -37,6 +37,8 @@ Règle de mise à jour : on ne réécrit pas une ligne. Quand le directeur tranc
 | M-23 | Teintes d'identité de l'app | Les teintes d'identité des classes (D-18) et les accents de profil (K-62) restent des jetons de l'app, hors charte de marque ; le Brand Book les cite sans les présenter | DÉCIDÉ | 20/10/2026 | Projet claude.ai Rewayah, conversation du 20/10 |
 | M-24 | Ombres | Les trois niveaux d'ombre de `lib/core/theme/app_elevation.dart` (encre #211E28) sont repris tels quels dans le Brand Book ; la section A.5 du cahier est à compléter | DÉCIDÉ | 20/10/2026 | Projet claude.ai Rewayah, conversation du 20/10 |
 | M-25 | Logo sur fond sombre | Toujours le logo blanc (`blanc/`), jamais le violet, illisible sur fond sombre ; ni version découpée, ni crème. Remplace la ligne « thème sombre » du tableau des fonds de `assets/brand/logo/README.md`. Le composant `BrandLogo` de l'app est à aligner dans un lot de l'app | DÉCIDÉ | 20/10/2026 | Projet claude.ai Rewayah, conversation du 20/10 |
+| M-26 | Signature arabe | « بوّابتك نحو القرآن » est adoptée comme signature arabe : elle prolonge le sens du logo, la porte ouverte. La signature française et l'articulation des deux restent ouvertes (O-02) ; la relecture arabe (O-03) reste conseillée | DÉCIDÉ | 20/10/2026 | Projet claude.ai Rewayah, conversation du 20/10 |
+| M-27 | Nom en arabe | Le nom s'écrit « أكاديمية الرواية » en arabe. Tranche O-08 | DÉCIDÉ | 20/10/2026 | Projet claude.ai Rewayah, conversation du 20/10 |
 
 ## 2. Propositions (à valider)
 
@@ -46,7 +48,7 @@ Règle de mise à jour : on ne réécrit pas une ligne. Quand le directeur tranc
 | P-02 | Texte du manifeste présentiel / distanciel | Version révisée de la proposition ChatGPT | PROPOSITION | `MANIFESTE-MARQUE.md`, section 4 |
 | P-03 | Valeurs | Cinq valeurs : intégrité, rigueur, accompagnement humain, constance, simplicité utile. « Accessibilité » sort des valeurs et rejoint la raison d'être | PROPOSITION | `MANIFESTE-MARQUE.md`, section 11 ; audit, section 3 |
 | P-04 | Signature française | « Apprendre avec confiance. Progresser avec constance. » : candidate prioritaire, appréciée par le directeur | PROPOSITION (candidate prioritaire) | `MANIFESTE-MARQUE.md`, section 14 |
-| P-05 | Signature arabe | « بوّابتك نحو القرآن » : candidate du directeur, analysée | PROPOSITION (candidate du directeur) | `MANIFESTE-MARQUE.md`, section 14 |
+| P-05 | Signature arabe | « بوّابتك نحو القرآن » : candidate du directeur, analysée | ADOPTÉE par M-26 (20/10/2026) | `MANIFESTE-MARQUE.md`, section 14 |
 | P-06 | Articulation des signatures | Deux signatures, chacune principale dans son contexte de langue, jamais présentées comme traductions l'une de l'autre | PROPOSITION | `MANIFESTE-MARQUE.md`, section 14.4 |
 | P-07 | Règles visuelles nouvelles | Direction éditoriale, grilles de documents, photographie et illustration, placement des signatures | PROPOSITION | `CAHIER-DES-CHARGES-VISUEL.md`, partie C |
 
@@ -61,5 +63,5 @@ Règle de mise à jour : on ne réécrit pas une ligne. Quand le directeur tranc
 | O-05 | Teinte de fond sombre du futur site | `site-public/styles/site.css` (brouillon) garde `#1A1A25` / `#22222E` ; l'app est passée à `#16161E` / `#272734` le 17/10 (LT-THEME, commit `4f0286fa`) | À trancher quand le site sera repris : par défaut, le cahier visuel renvoie aux jetons de l'app |
 | O-06 | Publier ou non une phrase sur le présentiel sur le site public | Le site n'en contient aucune aujourd'hui (`site-public/content/pages.json`) ; M-07 le permet, la page et l'emplacement restent à choisir | Validation du texte P-02 et de sa page |
 | O-07 | Mentionner les ijazat du directeur et de ses associés comme preuve publique | Fait déclaré dans `docs/current/REGISTRE-RECONCILIATION-2026-10-14.md` (ligne Ijaza) et dans le dossier maître, annexe 16 (licence en sciences coraniques, ijazat) ; non publié | Accord du directeur sur la formulation et les noms |
-| O-08 | Écriture du nom en arabe | `docs/current/CPT-DIR-2.md` : « Le nom “Rewayah” reste en caractères latins (marque) ». Mais `assets/i18n/ar.i18n.json` écrit « رواية » et « أكاديمية رواية » dans plusieurs phrases | Une règle unique : nom latin partout, ou « أكاديمية رواية » admis dans les phrases arabes |
+| O-08 | Écriture du nom en arabe | `docs/current/CPT-DIR-2.md` : « Le nom “Rewayah” reste en caractères latins (marque) ». Mais `assets/i18n/ar.i18n.json` écrit « رواية » et « أكاديمية رواية » dans plusieurs phrases | Une règle unique : nom latin partout, ou « أكاديمية رواية » admis dans les phrases arabes Tranchée par M-27 (20/10/2026) |
 | O-09 | Récit des fondateurs | Le dossier maître (annexe 16, état au 29/09) décrit trois fondateurs, enseignants depuis plus de dix ans chacun. Aucune décision ne dit si ce récit est publiable, ni sous quelle forme | Accord du directeur sur ce qui se dit publiquement (sans pays ni continent, règle M-05) Tranchée par M-21 (20/10/2026) |
