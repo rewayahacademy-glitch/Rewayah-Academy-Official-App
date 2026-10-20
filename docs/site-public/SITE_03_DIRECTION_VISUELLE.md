@@ -2,6 +2,8 @@
 
 Date : 8 octobre 2026. Lot UX/UI isolé. Statut : **prototype de direction**, sans validation de publication ni capture réelle intégrée.
 
+> **Périmé en partie (19/10/2026).** Le site est un brouillon, pas une référence de marque. Trois constats ci-dessous ne sont plus vrais : l'app emploie désormais DM Sans et Plus Jakarta Sans (le « conflit typographique » est levé) ; ses fonds viennent de `lib/core/theme/app_palette.dart` (clair `#F1EFF4`, sombre `#16161E`), pas `#F8F7FA` ni `#111014` ; le `viewBox` du logo horizontal de `assets/brand/logo/` est `0 0 1027 287`. Règles de marque : `docs/current/marque/`.
+
 ## Intention et composition
 
 Une famille découvre l'offre sur un écran de téléphone en pleine journée, puis revient vérifier le fonctionnement et le prix sur un ordinateur. La première lecture doit être directe et calme. La marque sert à guider l'action ; la preuve vient des écrans réels du produit et du texte HTML, jamais d'un décor religieux ou d'une métrique inventée.

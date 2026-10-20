@@ -1,10 +1,10 @@
 # Offre et tarifs Rewayah Academy
 
-Copie fidèle du document du directeur « Offre et tarifs Rewayah Academy » (https://claude.ai/code/artifact/bb43bdab-2d75-41c7-ad65-768eba22d5a2), version du 18/10/2026 après sa dernière consigne : part de l'enseignant enfant portée à 22,5 % (0,95 $ par élève présent et par heure), adultes inchangés à 30 % (1,00 $). Les valeurs lisibles par l'application et le site sont dans `docs/current/tarifs-2026-10-18.json` ; leur autorité est fixée par `docs/current/DECISION-TARIFS-2026-10-18.md`.
+Copie fidèle du document du directeur « Offre et tarifs Rewayah Academy » (https://claude.ai/code/artifact/bb43bdab-2d75-41c7-ad65-768eba22d5a2), version du 19/10/2026 : l'enseignant reçoit 47 % du prix, enfants et adultes (1,99 $ et 1,57 $ par élève présent et par heure) ; systeme.io retiré, sans lien avec ce projet. Les valeurs lisibles par l'application et le site sont dans `docs/current/tarifs-2026-10-18.json` ; leur autorité est fixée par `docs/current/DECISION-TARIFS-2026-10-18.md`.
 
 ## En une page
 
-Prix publics : **55 $ par mois pour un enfant** (3 séances de 60 min par semaine) et **65 $ par mois pour un adulte** (3 séances de 90 min par semaine), hors taxes. L'enseignant est payé **par élève présent et par heure de cours** : 0,95 $ pour un enfant, 1,00 $ pour un adulte. Il gagne donc moins à l'heure avec un groupe d'enfants (4,75 $ pour un groupe plein) qu'avec un groupe d'adultes (6,00 $). À 100 élèves, l'académie garde environ 2 520 $ par mois après enseignants, frais, administration et impôt, soit 45 % de l'encaissé.
+Prix publics : **55 $ par mois pour un enfant** (3 séances de 60 min par semaine) et **65 $ par mois pour un adulte** (3 séances de 90 min par semaine), hors taxes. L'enseignant reçoit **47 % du prix pour chaque élève présent** : 1,99 $ par enfant et 1,57 $ par adulte, par heure de cours, soit 25,87 $ et 30,62 $ par mois pour un élève présent à toutes les séances. Un groupe plein lui rapporte 9,95 $ de l'heure avec des enfants et 9,42 $ avec des adultes. À 100 élèves, l'académie garde environ 920 $ par mois après enseignants, charges et impôt, soit 16 % de l'encaissé.
 
 | Poste | Enfant (6 à 17 ans) | Adulte (18 ans et plus) |
 |---|---|---|
@@ -13,11 +13,12 @@ Prix publics : **55 $ par mois pour un enfant** (3 séances de 60 min par semain
 | Heures par mois | 13 h | 19,5 h |
 | Prix par séance | 4,23 $ | 5,00 $ |
 | Taille du groupe | 3 à 5 élèves | 3 à 6 élèves |
-| Paie enseignant | 0,95 $ par élève présent et par heure | 1,00 $ par élève présent et par heure |
-| Paie enseignant, groupe plein | 4,75 $ par heure | 6,00 $ par heure |
-| Part de l'enseignant dans le prix | 22,5 % | 30 % |
+| Part de l'enseignant dans le prix | 47 % | 47 % |
+| Paie enseignant | 1,99 $ par élève présent et par heure | 1,57 $ par élève présent et par heure |
+| Paie pour un élève présent à toutes les séances | 25,87 $ par mois | 30,62 $ par mois |
+| Paie enseignant, groupe plein | 9,95 $ par heure | 9,42 $ par heure |
 
-Ce qui change par rapport à la version précédente : paie enfant de 1,20 à 0,95 $ (part de l'enseignant portée de 21 à 22,5 % par le directeur le 18/10, adultes inchangés à 30 %), paie à l'élève présent et non plus à l'élève inscrit, remise foyer à 8 % puis 17 %, bourse unique à 30 % ouverte aux nouveaux convertis, enregistrement audio supprimé, cahier de transmission hebdomadaire, prix hors taxes, langues élargies à l'arabe et à d'autres langues, pause pour les adultes, observation des parents pendant 2 minutes. Les prix publics restent à 55 et 65 $.
+Ce qui change le 19/10/2026 (directeur) : la part de l'enseignant passe à 47 % du prix pour les enfants comme pour les adultes, soit 1,99 $ et 1,57 $ par élève présent et par heure au lieu de 0,95 $ et 1,00 $. La paie reste à l'élève présent. Les prix publics restent à 55 et 65 $. Ce qui avait changé le 18/10 : paie à l'élève présent et non plus à l'élève inscrit, remise foyer à 8 % puis 17 %, bourse unique à 30 % ouverte aux nouveaux convertis, enregistrement audio supprimé, cahier de transmission hebdomadaire, prix hors taxes, langues élargies à l'arabe et à d'autres langues, pause pour les adultes, observation des parents pendant 2 minutes.
 
 ## Ce que la famille achète
 
@@ -88,7 +89,7 @@ Ce que coûte une fratrie :
 
 Un couple d'adultes paie 124,80 $ au lieu de 130 $.
 
-La remise foyer ne touche pas la paie de l'enseignant, qui reste de 0,95 ou 1,00 $ par élève présent quelle que soit la facture du foyer. Elle est portée entièrement par la marge de l'académie : sur un 3e enfant facturé 45,65 $, il reste environ 32 $ de marge brute après paie et frais de carte, au lieu de 41 $.
+La remise foyer ne touche pas la paie de l'enseignant, qui reste de 1,99 ou 1,57 $ par élève présent et par heure quelle que soit la facture du foyer. Elle est portée entièrement par la marge de l'académie : sur un 3e enfant facturé 45,65 $, il reste environ 17,50 $ de marge brute après paie et frais de carte, au lieu de 26 $.
 
 La bourse est la seule remise qui existe déjà dans l'architecture (Finance > Bourses, route /admin/finance/bourses, reportée en V1). En attendant le module finance, elle s'applique par une surcharge manuelle du montant facturé, consignée avec son motif comme toute surcharge de règle.
 
@@ -118,25 +119,25 @@ Les tables wallets, wallet_entries et fx_rates existent déjà en base sans inte
 
 ## Rémunération des enseignants
 
-L'enseignant est payé chaque mois : taux x élèves présents x heures de cours données. Un groupe plein d'adultes vaut 6,00 $ de l'heure, un groupe plein d'enfants 4,75 $. Deux décisions de l'opérateur du 18 octobre 2026 fondent cette règle : l'académie ne paie ni les places vides ni les absents, et l'enseignant gagne moins à l'heure avec les enfants qu'avec les adultes, qui suivent plus d'heures.
+L'enseignant est payé chaque mois : taux x élèves présents x heures de cours données. Le taux vaut 47 % du prix public ramené à l'heure : 1,99 $ par enfant (55 $ pour 13 h) et 1,57 $ par adulte (65 $ pour 19,5 h). Décision du directeur du 19/10/2026 : la même part pour les enfants et pour les adultes. Décision du 18/10, maintenue : l'académie ne paie ni les places vides ni les absents.
 
 | Groupe, élèves présents | 3 | 4 | 5 | 6 |
 |---|---|---|---|---|
-| Enfants, 0,95 $ par élève-heure | 2,85 $ par h | 3,80 $ par h | 4,75 $ par h | - |
-| Adultes, 1,00 $ par élève-heure | 3,00 $ par h | 4,00 $ par h | 5,00 $ par h | 6,00 $ par h |
+| Enfants, 1,99 $ par élève-heure | 5,97 $ par h | 7,96 $ par h | 9,95 $ par h | - |
+| Adultes, 1,57 $ par élève-heure | 4,71 $ par h | 6,28 $ par h | 7,85 $ par h | 9,42 $ par h |
 
 Revenu mensuel selon les groupes, un groupe d'enfants faisant 13 h et un groupe d'adultes 19,5 h par mois :
 
 | Profil | Heures par mois | Groupes pleins, tous présents | Moyenne attendue | Groupes à 3 présents |
 |---|---|---|---|---|
-| 2 groupes d'enfants | 26 h | 124 $ | 96 $ | 74 $ |
-| 1 enfants + 1 adultes | 32,5 h | 179 $ | 139 $ | 96 $ |
-| 3 groupes d'enfants | 39 h | 185 $ | 143 $ | 111 $ |
-| 2 groupes d'adultes | 39 h | 234 $ | 183 $ | 117 $ |
-| 3 groupes d'adultes | 58,5 h | 351 $ | 274 $ | 176 $ |
-| 4 groupes d'adultes | 78 h | 468 $ | 365 $ | 234 $ |
+| 2 groupes d'enfants | 26 h | 259 $ | 200 $ | 155 $ |
+| 1 enfants + 1 adultes | 32,5 h | 313 $ | 243 $ | 169 $ |
+| 3 groupes d'enfants | 39 h | 388 $ | 300 $ | 233 $ |
+| 2 groupes d'adultes | 39 h | 367 $ | 287 $ | 184 $ |
+| 3 groupes d'adultes | 58,5 h | 551 $ | 430 $ | 276 $ |
+| 4 groupes d'adultes | 78 h | 735 $ | 573 $ | 367 $ |
 
-La moyenne attendue suppose 4,3 enfants et 5,2 adultes inscrits par groupe, dont 90 % présents à chaque séance. À heures égales (39 h par mois), deux groupes d'adultes rapportent 26 % de plus que trois groupes d'enfants. Le plafond d'heures du dépôt (15 à 25 h par semaine selon le score de performance) autorise jusqu'à 4 groupes d'adultes.
+La moyenne attendue suppose 4,3 enfants et 5,2 adultes inscrits par groupe, dont 90 % présents à chaque séance. À heures égales (39 h par mois), trois groupes d'enfants pleins rapportent un peu plus que deux groupes d'adultes pleins (388 $ contre 367 $). Le plafond d'heures du dépôt (15 à 25 h par semaine selon le score de performance) autorise jusqu'à 4 groupes d'adultes.
 
 Règles de calcul, à inscrire au contrat enseignant :
 
@@ -145,39 +146,41 @@ Règles de calcul, à inscrire au contrat enseignant :
 1. Une séance où l'enseignant est absent n'est pas payée et est remplacée pour les familles. Deux absences non prévenues dans le mois suspendent l'attribution de nouveaux groupes.
 1. Le cahier de transmission est hebdomadaire. La paie du mois est mise en attente, jamais annulée, tant qu'un cahier de la semaine manque (audit initial, point O7) ; elle est versée dès qu'il est déposé.
 1. Versement entre le 1er et le 5 du mois suivant, par virement international ou mobile money selon le pays. Les frais de transfert (environ 2 % + 1 $ par versement) sont à la charge de l'académie. Toute modification des coordonnées de versement est verrouillée 48 h.
-1. Le taux est revu tous les 6 mois. Il peut passer à 1,05 $ (enfants) et 1,15 $ (adultes), soit 5,25 et 6,90 $ par heure pour un groupe plein, pour un enseignant dont les groupes gardent 80 % de leurs élèves sur la période ; à 100 élèves, ce palier coûte environ 155 $ par mois à l'académie.
+1. Le taux est revu tous les 6 mois. Un palier de fidélité au-dessus de 47 % reste à décider ; d'ici là, le plafond est le taux lui-même.
 
-Ce que l'académie ne doit pas dépasser : 1,30 $ (enfants) et 1,50 $ (adultes), soit 6,50 et 9,00 $ par heure plein. Le résultat net à 100 élèves tombe alors à 2 000 $ (36 %), le niveau en dessous duquel un mauvais mois n'est plus couvert. Le taux enfant reste toujours inférieur au taux adulte.
+Ce que l'académie ne doit pas dépasser : 47 % du prix tant qu'aucune nouvelle décision n'est prise. Chaque point de plus coûte environ 50 $ par mois à 100 élèves, sur un résultat net d'environ 920 $.
 
 Le statut de prestataire indépendant des enseignants, relevé par l'audit, reste à sécuriser dans le contrat : pas d'horaires imposés hors des créneaux qu'ils proposent eux-mêmes, facturation mensuelle de leur part, liberté de travailler ailleurs.
 
 ## Économie de l'académie
 
-Le point mort est à 19 élèves, 1 000 $ de résultat net à 51 élèves, 2 000 $ à 84, 3 000 $ à 116, 5 000 $ à 181 et 10 000 $ à 342. L'objectif de résultat s'exprime donc en marge : 45 % de l'encaissé à 100 élèves, 50 % à 200, 52 % à 300, les charges fixes (administration, IA, services) pèsant de moins en moins.
+Le point mort est à 58 élèves. Le résultat net est d'environ 920 $ par mois à 100 élèves (16 % de l'encaissé) et 2 650 $ à 200 (24 %), les charges fixes (administration, développement, comptable, services) pesant de moins en moins. Chaque élève laisse environ 27 $ après l'enseignant, les frais de carte et la visio, face à 1 565 $ de charges fixes par mois.
 
 Où va chaque dollar encaissé, au scénario de référence de 100 élèves (55 enfants, 45 adultes, 11 enseignants, 90 % de présence) :
 
 | Poste | Par mois | Part de l'encaissé |
 |---|---|---|
 | Encaissé après remises (3 %) et impayés (2,5 %), hors taxes | 5 627 $ | 100 % |
-| Enseignants, 1 401 $ de paie et 39 $ de frais de virement | 1 440 $ | 26 % |
+| Enseignants, 2 458 $ de paie et 39 $ de frais de virement | 2 497 $ | 44 % |
 | Frais de carte et de change (5 %) | 281 $ | 5 % |
-| Visio LiveKit (0,80 $ par élève) | 80 $ | 1 % |
-| Services : Supabase, Vercel, domaine, banque | 66 $ | 1 % |
+| Visioconférence LiveKit | 150 $ | 3 % |
+| Application : IA, Supabase, Vercel, domaine, banque | 290 $ | 5 % |
+| Envoi des e-mails et stockage des fichiers | 25 $ | 0,4 % |
+| Développeur et maintenance | 600 $ | 11 % |
 | Administration, 1 personne | 500 $ | 9 % |
-| Abonnement IA | 150 $ | 3 % |
-| Impôt britannique sur les sociétés, 19 % | 591 $ | 11 % |
-| Résultat net | 2 519 $ | 45 % |
+| Comptable | 150 $ | 3 % |
+| Impôt britannique sur les sociétés, 19 % | 215 $ | 4 % |
+| Résultat net | 919 $ | 16 % |
 
-Si la présence moyenne était de 100 %, la paie monterait à 1 557 $ et le résultat descendrait à 2 390 $ ; la paie à l'élève présent économise donc environ 130 $ par mois.
+Si la présence moyenne était de 100 %, la paie monterait à 2 770 $ et le résultat descendrait à environ 700 $ ; la paie à l'élève présent économise donc environ 270 $ par mois.
 
-Les 500 $ de marketing sont une dépense unique, hors de ce tableau mensuel ; ils sont absorbés par le premier mois à plus de 75 élèves.
+Les 500 $ de marketing sont une dépense unique, hors de ce tableau mensuel ; ils sont absorbés par le premier mois à 100 élèves.
 
-Ce que le résultat ne couvre pas et qu'il faut provisionner : un mauvais mois (impayés doublés, deux groupes dissous) retire environ 500 à 800 $ au scénario de référence. Garder deux mois de charges fixes (1 300 $) en trésorerie suffit.
+Ce que le résultat ne couvre pas et qu'il faut provisionner : un mauvais mois (impayés doublés, deux groupes dissous) retire environ 500 à 800 $ au scénario de référence, soit presque tout le résultat du mois. Garder deux mois de charges fixes (environ 3 100 $) en trésorerie.
 
 ## Textes prêts pour le site public
 
-Cinq encarts, à coller tels quels sur le site public, dans systeme.io et dans l'application. Sans superlatif, sans promesse de résultat, sans mot que le produit ne tient pas.
+Cinq encarts, à coller tels quels sur le site public et dans l'application. Sans superlatif, sans promesse de résultat, sans mot que le produit ne tient pas.
 
 **Encart Enfant**
 
@@ -197,26 +200,11 @@ Prix en dollars américains, hors taxes ; la taxe de votre pays et le montant en
 
 **Encart Enseignant, pour la page de recrutement**
 
-Rewayah Academy recrute des enseignants de Coran pour des groupes de 3 à 6 élèves en visioconférence, trois fois par semaine, en poular, français, anglais, arabe ou autre langue. Vous êtes payé par élève présent et par heure : jusqu'à 6 $ de l'heure avec un groupe d'adultes, versés avant le 5 de chaque mois, frais de transfert à notre charge. Un enseignant à trois groupes d'adultes peut gagner jusqu'à 350 $ par mois pour 13 h 30 par semaine. Vous choisissez vos créneaux ; l'académie compose les groupes.
+Rewayah Academy recrute des enseignants de Coran pour des classes de 3 à 6 élèves en visioconférence, trois fois par semaine, en poular, français, anglais, arabe ou autre langue. Vous recevez 47 % de ce que paie chaque élève présent : jusqu'à 129 $ par mois pour une classe d'enfants pleine et 183 $ pour une classe d'adultes pleine, versés avant le 5 de chaque mois, frais de transfert à notre charge. Un enseignant à trois classes d'adultes peut gagner jusqu'à 550 $ par mois pour 13 h 30 par semaine. Vous choisissez vos créneaux ; l'académie compose les classes.
 
-## Une seule offre partout : site, systeme.io, application
+## Une seule offre partout : site et application
 
-Ce document est la seule source des prix et des règles. Le site public, systeme.io et l'application reprennent chaque valeur à l'identique ; une valeur qui change ici change aux trois endroits le même jour.
-
-Produits à créer dans systeme.io, prix saisis hors taxes :
-
-| Produit | Prix | Facturation |
-|---|---|---|
-| Rewayah Enfant, mensuel | 55 $ | Abonnement tous les mois |
-| Rewayah Enfant, trimestriel | 157 $ | Abonnement tous les 3 mois |
-| Rewayah Enfant, annuel | 594 $ | Abonnement tous les 12 mois |
-| Rewayah Adulte, mensuel | 65 $ | Abonnement tous les mois |
-| Rewayah Adulte, trimestriel | 185 $ | Abonnement tous les 3 mois |
-| Rewayah Adulte, annuel | 702 $ | Abonnement tous les 12 mois |
-| Duo enfant, sur demande (page non publique) | 165 $ | Abonnement tous les mois |
-| Duo adulte, sur demande (page non publique) | 195 $ | Abonnement tous les mois |
-
-Codes de remise : FOYER8 (-8 %, récurrent), FOYER17 (-17 %, récurrent), BOURSE30 (-30 %, récurrent, donné à la main), et 20 $ déduits une fois pour le parrainage. Le premier paiement d'une inscription en cours de mois (séances restantes à l'unité, puis abonnement au 1er) est à vérifier dans systeme.io ; à défaut, l'abonnement démarre au 1er et les séances restantes sont facturées à part.
+Ce document est la seule source des prix et des règles. Le site public et l'application reprennent chaque valeur à l'identique ; une valeur qui change ici change aux deux endroits le même jour. systeme.io n'a aucun lien avec ce projet (directeur, 19/10/2026) : ses produits et ses codes de remise sont retirés de ce document.
 
 Valeurs à poser dans l'application :
 
@@ -231,7 +219,7 @@ Valeurs à poser dans l'application :
 | Enregistrement audio | supprimé | désactiver l'enregistrement et sa conservation |
 | Observation du parent | 2 min par séance, en silence | rôle tuteur observateur existant ; durée à imposer côté serveur |
 | Prix et remises | sections 3 et 4 | Finance > Tarification et Bourses en V1 ; d'ici là profiles.access_until |
-| Paie enseignant | 0,95 $ (enfant) et 1,00 $ (adulte) par élève présent et par heure | Finance > Rémunération en V1 ; présence lue dans session_events |
+| Paie enseignant | 1,99 $ (enfant) et 1,57 $ (adulte) par élève présent et par heure, 47 % du prix | Finance > Rémunération en V1 ; présence lue dans session_events |
 
 Contradictions à corriger dans le dépôt :
 
@@ -249,9 +237,9 @@ Cinq décisions restent à l'opérateur. Chacune a une valeur par défaut dans c
 - [ ] Pause adulte de 10 min et durée minimale payée de 70 min sur 90 : valeurs proposées, à confirmer.
 - [ ] Observation du parent : une seule fois par séance ou plusieurs, et l'enseignant voit-il l'arrivée du parent.
 - [ ] Élève absent : jamais payé, ou payé quand l'absence est prévenue 24 h à l'avance, puisque l'enseignant ne peut pas l'éviter.
-- [ ] Taux de départ 0,95 et 1,00 $ par élève-heure (4,75 et 6,00 $ par heure plein), à confirmer auprès de 3 ou 4 candidats enseignants au Moyen-Orient avant publication de la page de recrutement.
+- [ ] Taux de 1,99 et 1,57 $ par élève-heure (47 % du prix, 9,95 et 9,42 $ par heure plein), à confirmer auprès de 3 ou 4 candidats enseignants au Moyen-Orient avant publication de la page de recrutement.
 - [ ] Groupes séparés hommes et femmes pour les adultes : règle non écrite dans les specs, à décider avant de l'afficher.
 
-Six règles de ce document n'existent pas encore dans le dépôt et sont à inscrire au registre des décisions (docs/architecture/decisions.md) : la paie par élève présent, un taux enseignant plus bas pour les enfants que pour les adultes, l'abandon des crédits expirants au profit de l'abonnement, le calendrier de relances et de suspension, la suppression de l'enregistrement audio, et le cahier de transmission hebdomadaire.
+Six règles de ce document n'existent pas encore dans le dépôt et sont à inscrire au registre des décisions (docs/architecture/decisions.md) : la paie par élève présent, la même part de 47 % du prix pour l'enseignant des enfants et celui des adultes, l'abandon des crédits expirants au profit de l'abonnement, le calendrier de relances et de suspension, la suppression de l'enregistrement audio, et le cahier de transmission hebdomadaire.
 
 Sources du dépôt : docs/architecture/audit-initial.md (points O4 à O7), docs/architecture/decisions.md (ADR-003, ADR-006, ADR-009, ADR-017, ADR-028), docs/parallel-reports/01-decisions.md (D08), docs/architecture/etape-4-dashboards.md (durée de séance, minimum payable, surcharges), docs/architecture/ADMIN_FINANCE_CONFIGURATION.md (routes Finance), docs/produit/onboarding-questions-expliquees.md (capacités et durées dans app_config). Hypothèses de coûts et comparables (Rabata, Edinburgh Central Mosque, Abeer Academy) : conversation « Tarification des cours en ligne » du 18 octobre 2026 et son simulateur.

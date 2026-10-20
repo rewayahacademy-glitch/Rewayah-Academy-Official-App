@@ -204,13 +204,13 @@ abstract final class DonneesFinanceDemo {
     // allocation Internet : le guide n'en fixe pas, la demonstration n'en
     // invente pas.
     joursRelance: const <int>[7, 3, 1],
-    // Paie de l'enseignant par eleve present et par heure (0,95 $ enfant,
-    // 1,00 $ adulte), plafonds 1,30 $ et 1,50 $, seance due des 45 et 70
-    // minutes.
-    tauxEleveHeureEnfant: const Montant(95, devise),
-    tauxEleveHeureAdulte: const Montant(100, devise),
-    plafondEleveHeureEnfant: const Montant(130, devise),
-    plafondEleveHeureAdulte: const Montant(150, devise),
+    // Paie de l'enseignant par eleve present et par heure : 47 % du prix
+    // (1,99 $ enfant, 1,57 $ adulte, decision du 19/10/2026), plafond egal au
+    // taux, seance due des 45 et 70 minutes.
+    tauxEleveHeureEnfant: const Montant(199, devise),
+    tauxEleveHeureAdulte: const Montant(157, devise),
+    plafondEleveHeureEnfant: const Montant(199, devise),
+    plafondEleveHeureAdulte: const Montant(157, devise),
     dureeDueEnfantMinutes: 45,
     dureeDueAdulteMinutes: 70,
     prepaiementTrimestrielPourMille: 50,

@@ -1,5 +1,9 @@
 # AGENTS.md — Rewayah Academy (pour ChatGPT / Codex)
 
+> **Statut au 17/10/2026** : ChatGPT (Codex) n'est plus disponible ; Claude fait aussi le backend
+> (`CLAUDE.md`, ligne « Backend et écrans », et `docs/orchestration/PASSATION-2026-10-17.md`). Les
+> zones, branches et interdits ci-dessous restent valables pour tout agent qui lit ce fichier.
+
 Tu es l'agent **backend et raccordements**. Claude fait les écrans. Les règles complètes
 sont dans `docs/orchestration/COHABITATION.md` ; lis-le avant toute modification.
 Ensuite, lis `CLAUDE.md` à la racine et `supabase/CLAUDE.md` : leurs invariants
@@ -21,6 +25,14 @@ Avant tout réglage, toute valeur par défaut ou tout texte qui touche au progra
 `.claude/skills/programme-rewayah/SKILL.md`, `.claude/skills/mots-rewayah/SKILL.md` et
 `docs/current/REGISTRE-RECONCILIATION-2026-10-14.md`. Les valeurs y sont décidées par le
 directeur ; elles vivent en réglages (`app_config`), jamais en dur.
+
+## Marque (19/10/2026)
+
+Avant tout texte de présentation, e-mail, PDF, page publique ou visuel avec le logo, lis
+`docs/current/marque/00_LIRE_D_ABORD.md` et `.claude/skills/marque-rewayah/SKILL.md`. Le logo ne se
+redessine pas (`assets/brand/logo/README.md`), les couleurs et polices viennent de `lib/core/theme/`.
+PISI est un autre projet : rien de PISI dans Rewayah. Une signature ou une formule du manifeste reste une
+proposition tant que le registre ne la valide pas.
 
 ## L'essentiel
 

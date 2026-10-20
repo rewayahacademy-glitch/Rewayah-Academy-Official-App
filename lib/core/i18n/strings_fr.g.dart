@@ -22217,12 +22217,6 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Le plafond est sous le taux ({taux}) : saisissez au moins le taux.'
 	String erreurPlafondEleve({required Object taux}) => 'Le plafond est sous le taux (${taux}) : saisissez au moins le taux.';
 
-	/// fr: 'Le taux enfant dépasse le taux adulte'
-	String get tauxEnfantAuDessusTitre => 'Le taux enfant dépasse le taux adulte';
-
-	/// fr: 'Vérifiez que c'est voulu. Vous pouvez publier tel quel.'
-	String get tauxEnfantAuDessusDetail => 'Vérifiez que c\'est voulu. Vous pouvez publier tel quel.';
-
 	/// fr: 'Séance d'enfants due à partir de'
 	String get dureeDueEnfant => 'Séance d\'enfants due à partir de';
 
@@ -38026,8 +38020,6 @@ extension on Traductions {
 			'admin.finance.pol.plafondEleveDetail' => 'Le maximum par élève présent et par heure, prime de fidélité comprise.',
 			'admin.finance.pol.erreurMontantCentimes' => 'Saisissez un montant supérieur à 0, avec au plus deux décimales (par exemple 0,95).',
 			'admin.finance.pol.erreurPlafondEleve' => ({required Object taux}) => 'Le plafond est sous le taux (${taux}) : saisissez au moins le taux.',
-			'admin.finance.pol.tauxEnfantAuDessusTitre' => 'Le taux enfant dépasse le taux adulte',
-			'admin.finance.pol.tauxEnfantAuDessusDetail' => 'Vérifiez que c\'est voulu. Vous pouvez publier tel quel.',
 			'admin.finance.pol.dureeDueEnfant' => 'Séance d\'enfants due à partir de',
 			'admin.finance.pol.dureeDueAdulte' => 'Séance d\'adultes due à partir de',
 			'admin.finance.pol.dureeDueDetail' => 'La présence minimale pour qu\'une séance compte dans la paie.',
@@ -38111,10 +38103,10 @@ extension on Traductions {
 			'admin.finance.pol.margeObjectif' => 'Marge objectif',
 			'admin.finance.pol.margeObjectifDetail' => 'Marge nette visée, toutes charges comprises : un repère de pilotage, jamais une sanction ni un blocage.',
 			'admin.finance.pol.margeForte' => 'Performance forte',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.margeForteDetail' => 'Le repère d\'un mois très bon ; il ne descend pas sous l\'objectif.',
 			'admin.finance.pol.margeStretch' => 'Scénario stretch',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.margeStretchDetail' => 'Le repère ambitieux ; il ne descend pas sous la performance forte.',
 			'admin.finance.pol.pourcentValeur' => ({required Object valeur}) => '${valeur} %',
 			'admin.finance.pol.unitePourcent' => '%',
@@ -38625,10 +38617,10 @@ extension on Traductions {
 			'admin.bibliotheque.import.completer' => 'Compléter le support',
 			'admin.bibliotheque.import.sections.ressource' => 'Ressource',
 			'admin.bibliotheque.import.sections.fichier' => 'Fichier',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.sections.droits' => 'Droits et accès',
 			'admin.bibliotheque.import.champs.titre' => 'Titre',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.import.champs.categorie' => 'Catégorie',
 			'admin.bibliotheque.import.champs.type' => 'Type',
 			'admin.bibliotheque.import.champs.langue' => 'Langue',
@@ -39139,10 +39131,10 @@ extension on Traductions {
 			'compte.tuteur.pageLegal.lectureSeule' => 'Un document accepté ne se modifie pas.',
 			'compte.tuteur.pageLegal.textes' => 'Conditions et confidentialité',
 			'historique.titre' => 'Historique',
-			_ => null,
-		} ?? switch (path) {
 			'historique.detailSeance' => 'Détail de la séance',
 			'historique.segments.seances' => 'Séances',
+			_ => null,
+		} ?? switch (path) {
 			'historique.segments.observations' => 'Observations',
 			'historique.moisCourts.0' => 'janv.',
 			'historique.moisCourts.1' => 'févr.',
@@ -39653,10 +39645,10 @@ extension on Traductions {
 			'classe.cartes.copierLienCourt' => 'Copier le lien',
 			'classe.cartes.lienCopie' => 'Lien copié. Collez-le dans votre navigateur pour l\'ouvrir.',
 			'classe.cartes.indisponibleTitre' => 'Les cartes de la classe ne sont pas encore ouvertes',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.indisponiblePhrase' => 'Elles apparaîtront ici dès leur ouverture. Rien à faire de votre côté.',
 			'classe.cartes.erreurLecture' => 'Les cartes de la classe n\'ont pas pu être lues. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.cartes.sansDonnees' => 'Les cartes de la classe n\'ont pas pu être chargées',
 			'classe.cartes.enregistree' => 'Carte enregistrée. La classe la voit maintenant.',
 			'classe.cartes.retiree' => 'Carte retirée. La classe ne la voit plus.',
@@ -40167,10 +40159,10 @@ extension on Traductions {
 			'enseignant.creneaux.confirmerRetraitAction' => 'Retirer ces heures',
 			'enseignant.creneaux.ajoutNonConfirme' => ({required Object heures}) => 'Ajout non confirmé : ${heures}.',
 			'enseignant.creneaux.retraitNonConfirme' => ({required Object heures}) => 'Retrait non confirmé : ${heures}.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.echecCause' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah.',
 			'enseignant.creneaux.echecQuoiFaire' => ({required Object action}) => 'Touchez « ${action} » pour réessayer : seules ces heures seront renvoyées, après relecture de vos plages.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.engagementsNonConfirmes' => 'Vos Classes déjà engagées ne sont pas confirmées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Un conflit avec une plage ne peut donc pas être signalé ; touchez « Réessayer ».',
 			'enseignant.creneaux.retraitSansEngagements' => ({required Object heures}) => 'Vos Classes déjà engagées ne sont pas confirmées. Si une Classe a lieu sur ${heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
 			'enseignant.creneaux.horsLigneFeuille' => 'Cette plage ne peut pas être enregistrée maintenant. Vos choix restent affichés : revenez l\'enregistrer quand l\'envoi sera de nouveau possible.',
@@ -40681,10 +40673,10 @@ extension on Traductions {
 			'tc.outils.dock.bibliotheque' => 'Bibliothèque',
 			'tc.outils.dock.focus' => 'Focus',
 			'tc.outils.dock.marquer' => 'Marquer',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.dock.masquer' => 'Masquer',
 			'tc.outils.dock.stylet' => 'Stylet',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.dock.pointeur' => 'Pointeur',
 			'tc.outils.dock.revision' => 'Révision',
 			'tc.outils.intention.aApprendre' => 'À apprendre',
@@ -41195,10 +41187,10 @@ extension on Traductions {
 			'adulte.invitation.annulerQuestion' => ({required Object dePrenom}) => 'Annuler l\'invitation ${dePrenom} ?',
 			'adulte.invitation.annulerQuestionSansPrenom' => 'Annuler cette invitation ?',
 			'adulte.invitation.annulerHorsLigne' => 'Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.annulerConsequence' => 'L\'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.',
 			'adulte.invitation.garder' => 'Garder l\'invitation',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.annulationEchecTitre' => 'L\'annulation n\'a pas été confirmée.',
 			'adulte.invitation.annulationEchecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.acceptation.notification' => ({required Object prenom}) => '${prenom} vous invite à rejoindre son forfait famille.',
@@ -41709,10 +41701,10 @@ extension on Traductions {
 			'com.socle.composants.pieceJointe.indisponibleDetail' => 'Ce fichier n\'est plus disponible. Demandez à la personne qui l\'a partagé de le renvoyer.',
 			'com.socle.composants.composer.message' => 'Message',
 			'com.socle.composants.composer.aide' => 'Écrire un message',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.composer.envoyer' => 'Envoyer',
 			'com.socle.composants.composer.champVide' => 'Écrivez un message pour l\'envoyer.',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.composants.composer.vocal' => 'Message vocal',
 			'com.socle.composants.composer.vocalAVenir' => 'Message vocal bientôt disponible',
 			'com.socle.composants.composer.enCours' => 'Envoi en cours',
@@ -42223,10 +42215,10 @@ extension on Traductions {
 			'com.studio.panneau.liens' => 'Liens utiles',
 			'com.studio.panneau.vous' => 'Vous',
 			'com.studio.panneau.parametres' => 'Paramètres du canal',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.panneau.parametresDetail' => 'La modification des paramètres arrivera avec le service du Studio.',
 			'com.studio.panneau.ouvrir' => ({required Object titre}) => 'Ouvrir ${titre}',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.panneau.lienExterne' => ({required Object hote}) => 'Site externe : ${hote}',
 			'com.studio.panneau.aucunPartageTitre' => 'Rien de partagé pour le moment',
 			'com.studio.panneau.aucunPartage' => 'Les éléments épinglés, les fichiers et les liens de ce canal apparaîtront ici.',
@@ -42737,10 +42729,10 @@ extension on Traductions {
 			'comptable.aujourdhui.sousTitre' => 'Que dois-je faire maintenant ?',
 			'comptable.aujourdhui.attention' => 'À traiter et alertes',
 			'comptable.aujourdhui.aTraiter' => 'À traiter aujourd\'hui',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.aTraiterHorsPaiements' => 'Autres tâches',
 			'comptable.aujourdhui.alertes' => 'Alertes',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.echeances' => 'Échéances proches',
 			'comptable.aujourdhui.prestataires' => 'Prestataires',
 			'comptable.aujourdhui.activiteRecente' => 'Activité récente',
@@ -43251,10 +43243,10 @@ extension on Traductions {
 			'comptable.contractuels.retourListe' => 'Retour aux contractuels',
 			'comptable.contractuels.titre' => 'Contractuels et obligations',
 			'comptable.contractuels.sousTitre' => 'Les montants sont définis à la création de l\'obligation, figés après approbation.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.nouvelle' => 'Nouvelle obligation',
 			'comptable.contractuels.detailTitre' => 'Obligation',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.sousTitre' => 'Les demandes du Comptable qui attendent la décision d\'une autre personne habilitée. Celui qui demande ne valide jamais sa propre demande.',
 			'comptable.validation.aDecider' => 'À décider',
 			'comptable.validation.decidees' => 'Décidées récemment',
@@ -43765,10 +43757,10 @@ extension on Traductions {
 			'juridique.confidentialite.s9.blocs.0' => 'Les règles d\'accès sont appliquées par le serveur. Les pièces d\'identité sont dans un espace privé, séparé des photos. Aucune protection n\'est absolue : si vous voyez un problème, écrivez-nous.',
 			'juridique.confidentialite.s10.titre' => '10. Les enfants',
 			'juridique.confidentialite.s10.blocs.0' => 'Les informations d\'un enfant sont données et gérées par son tuteur. Voir le texte Protection des enfants.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.cookies.titre' => 'Cookies',
 			'juridique.cookies.resume' => 'Ce que l\'application et le site gardent sur votre appareil.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.cookies.intro' => 'L\'application et le site gardent peu de choses sur votre appareil. Voici lesquelles.',
 			'juridique.cookies.s1.titre' => '1. Ce que c\'est',
 			'juridique.cookies.s1.blocs.0' => 'Un cookie ou une donnée locale est un petit élément gardé par votre navigateur ou votre appareil. Il aide un service à vous reconnaître ou à retenir un réglage.',

@@ -19,6 +19,8 @@ import 'app_color_pair.dart';
 ///   `#1A1A25`, carte `#22222E`, superposition `#2B2B39`, zone imbriquee
 ///   `#262534`, filet `#32323F`), encres secondaires froides, accent plein
 ///   `#BA98FB`, alerte en texte `#F4777D` ;
+///   (fond, carte et superposition sombres remplaces le 17/10/2026 par
+///   LT-THEME : les valeurs de [AppPalette.sombre] font foi) ;
 /// - ajouts : [surfaceMiseEnAvant] (carte de seance mise en avant),
 ///   [surfaceActionDouce] (CTA dominant) et [pointsStatut].
 ///

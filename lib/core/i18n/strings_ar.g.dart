@@ -11464,8 +11464,6 @@ class _Traductions$admin$finance$pol$ar extends Traductions$admin$finance$pol$fr
 	@override String get plafondEleveDetail => 'الحد الأقصى لكل طالب حاضر ولكل ساعة، بما في ذلك مكافأة الوفاء.';
 	@override String get erreurMontantCentimes => 'أدخل مبلغًا أكبر من 0، بخانتين عشريتين على الأكثر (مثال: 0,95).';
 	@override String erreurPlafondEleve({required Object taux}) => 'الحد الأقصى أقل من المعدل (⁨${taux}⁩) : أدخل المعدل أو أكثر.';
-	@override String get tauxEnfantAuDessusTitre => 'معدل الأطفال أعلى من معدل البالغين';
-	@override String get tauxEnfantAuDessusDetail => 'تأكد من أن هذا مقصود. يمكنك النشر كما هو.';
 	@override String get dureeDueEnfant => 'تُحتسب حصة الأطفال ابتداءً من';
 	@override String get dureeDueAdulte => 'تُحتسب حصة البالغين ابتداءً من';
 	@override String get dureeDueDetail => 'الحد الأدنى من الحضور لتُحتسب الحصة في الأجر.';
@@ -19178,8 +19176,6 @@ extension on TraductionsAr {
 			'admin.finance.pol.plafondEleveDetail' => 'الحد الأقصى لكل طالب حاضر ولكل ساعة، بما في ذلك مكافأة الوفاء.',
 			'admin.finance.pol.erreurMontantCentimes' => 'أدخل مبلغًا أكبر من 0، بخانتين عشريتين على الأكثر (مثال: 0,95).',
 			'admin.finance.pol.erreurPlafondEleve' => ({required Object taux}) => 'الحد الأقصى أقل من المعدل (⁨${taux}⁩) : أدخل المعدل أو أكثر.',
-			'admin.finance.pol.tauxEnfantAuDessusTitre' => 'معدل الأطفال أعلى من معدل البالغين',
-			'admin.finance.pol.tauxEnfantAuDessusDetail' => 'تأكد من أن هذا مقصود. يمكنك النشر كما هو.',
 			'admin.finance.pol.dureeDueEnfant' => 'تُحتسب حصة الأطفال ابتداءً من',
 			'admin.finance.pol.dureeDueAdulte' => 'تُحتسب حصة البالغين ابتداءً من',
 			'admin.finance.pol.dureeDueDetail' => 'الحد الأدنى من الحضور لتُحتسب الحصة في الأجر.',
@@ -19395,10 +19391,10 @@ extension on TraductionsAr {
 			'admin.groupes.cahiers.lien' => 'عرض دفاتر الفصل',
 			'admin.groupes.cahiers.titre' => 'دفاتر الفصل',
 			'admin.groupes.cahiers.aide' => 'للقراءة فقط. تُسجَّل كل مرة يُفتح فيها دفتر في سجل التدقيق مع اسمك.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.cahiers.filtre' => 'الحالة',
 			'admin.groupes.cahiers.filtreTous' => 'كل الحالات',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.cahiers.vide' => 'لا يوجد دفتر مطابق لهذا الفصل.',
 			'admin.groupes.cahiers.plus' => 'عرض مزيد من الدفاتر',
 			'admin.groupes.cahiers.titreCahier' => ({required Object dePrenom}) => 'دفتر ⁨${dePrenom}⁩',
@@ -19909,10 +19905,10 @@ extension on TraductionsAr {
 			'admin.suppressions.delaiEnCours' => ({required Object date}) => 'مهلة التفكير جارية حتى ⁨${date}⁩. يمكن معالجة الطلب ابتداءً من ذلك اليوم.',
 			'admin.suppressions.soldeTitre' => 'يوجد رصيد مستحق',
 			'admin.suppressions.soldeDetail' => ({required Object montant}) => 'بقي ⁨${montant}⁩ للدفع. يبقى هذا الرصيد مستحقًا بعد الحذف.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.suppressions.seancesTitre' => 'هناك حصص لا تزال مقررة',
 			'admin.suppressions.seancesDetail' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ حصة مقررة. ألغها أو أسندها إلى شخص آخر. لا يمكن معالجة الطلب ما دامت قائمة.', one: 'حصة واحدة مقررة. ألغها أو أسندها إلى شخص آخر. لا يمكن معالجة الطلب ما دامت قائمة.', two: 'حصتان مقررتان. ألغهما أو أسندهما إلى شخص آخر. لا يمكن معالجة الطلب ما دامتا قائمتين.', few: '⁨${n}⁩ حصص مقررة. ألغها أو أسندها إلى شخص آخر. لا يمكن معالجة الطلب ما دامت قائمة.', many: '⁨${n}⁩ حصة مقررة. ألغها أو أسندها إلى شخص آخر. لا يمكن معالجة الطلب ما دامت قائمة.', other: '⁨${n}⁩ حصة مقررة. ألغها أو أسندها إلى شخص آخر. لا يمكن معالجة الطلب ما دامت قائمة.', ), 
+			_ => null,
+		} ?? switch (path) {
 			'admin.suppressions.foyerTitre' => 'طلاب في هذه الأسرة',
 			'admin.suppressions.foyerDetail' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ طالب في أسرة هذا الولي. تحقق من وضعهم قبل المتابعة.', one: 'طالب واحد في أسرة هذا الولي. تحقق من وضعه قبل المتابعة.', two: 'طالبان في أسرة هذا الولي. تحقق من وضعهما قبل المتابعة.', few: '⁨${n}⁩ طلاب في أسرة هذا الولي. تحقق من وضعهم قبل المتابعة.', many: '⁨${n}⁩ طالبًا في أسرة هذا الولي. تحقق من وضعهم قبل المتابعة.', other: '⁨${n}⁩ طالب في أسرة هذا الولي. تحقق من وضعهم قبل المتابعة.', ), 
 			'admin.suppressions.traiter' => 'معالجة الطلب',
@@ -20423,10 +20419,10 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.afficherSection' => ({required Object nom}) => 'إظهار قسم ⁨${nom}⁩',
 			'admin.bibliotheque.fiche.masquerSection' => ({required Object nom}) => 'إخفاء قسم ⁨${nom}⁩',
 			'admin.bibliotheque.fiche.apercuAucunFichier' => 'لا يوجد ملف مودَع لهذا الإصدار.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.fiche.apercuFichier' => 'يوجد ملف مودَع. يُفحص عرضه في خطوة «التحقق والنشر».',
 			'admin.bibliotheque.fiche.apercuPublie' => 'إصدار منشور: المحتوى مثبّت.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.fiche.deposer' => 'إيداع ملف',
 			'admin.bibliotheque.fiche.remplacer' => 'استبدال الملف',
 			'admin.bibliotheque.fiche.champs.titre' => 'العنوان',
@@ -20937,10 +20933,10 @@ extension on TraductionsAr {
 			'comptable.paiements.detail.historiqueVide' => 'لا توجد عملية مسجلة لهذه الدفعة.',
 			'comptable.paiements.detail.encart' => 'لا يستطيع المحاسب تعديل المبلغ ولا بيانات الدفع الخاصة بالمستفيد.',
 			'comptable.paiements.detail.alerteMethodeRecente' => ({required Object date}) => 'عُدّلت وسيلة الدفع في ${date}: تلزم مصادقة إضافية قبل أي دفع.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.detail.alerteLieeOperateur' => 'المستفيد مرتبط بالمنفِّذ: تلزم مصادقة إضافية قبل أي دفع.',
 			'comptable.paiements.detail.alerteEchec' => 'فشل آخر إرسال لدى مزوّد الدفع. تحقق من وسيلة الدفع قبل محاولة جديدة.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.detail.alerteInfos' => 'ليست لدى المستفيد بعد وسيلة دفع مكتملة. ذكّره من ملف الدفع الخاص به.',
 			'comptable.paiements.detail.alerteTitre' => 'ما يجب معرفته قبل الدفع',
 			'comptable.paiements.detail.autoPaiementPhrase' => 'هذه الدفعة تخصك: سيعالجها شخص مخوَّل آخر. لا يمكن لأحد تنفيذ دفعته بنفسه.',
@@ -21451,10 +21447,10 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.pouvoirsTitre' => 'ما يستطيع المحاسب فعله وحده',
 			'comptable.direction.delegationPanneau.paiementsStandards' => 'دفع المدفوعات العادية',
 			'comptable.direction.delegationPanneau.paiementsStandardsDetail' => 'الدفعة بالمبلغ المحسوب، نحو وسيلة متحقَّق منها، تُرسَل دون مصادقة يومية.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.remboursement' => 'تنفيذ استرداد عادي',
 			'comptable.direction.delegationPanneau.remboursementDetail' => 'الاسترداد المطابق للقاعدة يُنفَّذ دون مصادقة.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.alimentationReserve' => 'تغذية الاحتياطي الاستراتيجي',
 			'comptable.direction.delegationPanneau.alimentationReserveDetail' => 'حركة نحو الاحتياطي، مطابقة لسياسته.',
 			'comptable.direction.delegationPanneau.plafondsTitre' => 'الحدود القصوى',
@@ -21965,10 +21961,10 @@ extension on TraductionsAr {
 			'connexion.motDePasseDemo' => 'كلمة مرور العرض التجريبي',
 			'connexion.envoyerLien' => 'استلام الرابط',
 			'connexion.entrerDemo' => 'الدخول إلى العرض التجريبي',
-			_ => null,
-		} ?? switch (path) {
 			'connexion.introDemo' => 'وضع العرض التجريبي: لن يُرسل أي رابط. ستدخل مباشرة دون بريد إلكتروني.',
 			'connexion.essayerDemo' => 'تجربة العرض التجريبي',
+			_ => null,
+		} ?? switch (path) {
 			'connexion.avecGoogle' => 'المتابعة بحساب Google',
 			'connexion.ou' => 'أو',
 			'connexion.lienEnvoye' => 'أُرسل الرابط',
@@ -22479,10 +22475,10 @@ extension on TraductionsAr {
 			'adulte.demo.invitationRecueConjoint' => 'الدعوة كما يستلمها الزوج، في حسابه الخاص.',
 			'adulte.demo.invitationSansCompte' => 'الدعوة مفتوحة دون حساب.',
 			'adulte.demo.reseauCoupe' => 'الشبكة مقطوعة: الرئيسية و«فصلي» دون اتصال.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.donnees.soldeTitulaire' => 'رصيد تجريبي 1',
 			'adulte.demo.donnees.soldeSecondAdulte' => 'رصيد تجريبي 2',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.donnees.soldeAicha' => 'رصيد تجريبي 3',
 			'adulte.demo.donnees.soldeOumar' => 'رصيد تجريبي 4',
 			'adulte.demo.donnees.totalAvecSecondAdulte' => 'مجموع تجريبي A',
@@ -22993,10 +22989,10 @@ extension on TraductionsAr {
 			'suiviFamille.voirSuivi' => 'عرض المتابعة',
 			'suiviFamille.vide' => 'لا طلبات في الوقت الحالي.',
 			'suiviFamille.faireDemande' => 'تقديم طلب',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.erreur' => 'تعذّر تحميل المتابعة. أعيدوا المحاولة.',
 			'suiviFamille.sansDonnees' => 'طلباتكم',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.introuvable' => 'هذا الطلب لم يعد موجودًا أو ليس من طلباتكم.',
 			'suiviFamille.retour' => 'العودة إلى الطلبات',
 			'suiviFamille.fuseau' => ({required Object deVille}) => 'الأوقات المعروضة بتوقيت ⁨${deVille}⁩.',
@@ -23507,10 +23503,10 @@ extension on TraductionsAr {
 			'avis.admin.retour.retire' => 'سُحب الرأي.',
 			'avis.admin.retour.etatChange' => 'لم يعد هذا الرأي في الحالة المتوقعة. تم تحديث القائمة.',
 			'avis.admin.retour.introuvable' => 'هذا الرأي لم يعد موجودًا. تم تحديث القائمة.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.retour.motifManque' => 'السبب ناقص. اختر سببًا.',
 			'avis.admin.retour.refus' => 'الإدارة المتصلة وحدها تستطيع البت في رأي.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.retour.echec' => 'تعذّر تأكيد القرار. أُعيدت قراءة القائمة: تحقق من حالة الرأي قبل أن تحاول من جديد.',
 			'avis.admin.retour.horsLigne' => 'لم يُرسل شيء: الشبكة غير متوفرة. أعد المحاولة عند عودتها.',
 			'avis.admin.liens.creerTitre' => 'إنشاء رابط',

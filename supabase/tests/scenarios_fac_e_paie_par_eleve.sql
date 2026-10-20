@@ -1,14 +1,14 @@
 -- FAC-E-02 (18/10/2026) : la paie de l'enseignant par eleve present et par
--- heure. Migration 20261018130000.
+-- heure. Migrations 20261018130000 et 20261019130000 (47 % du prix, 19/10).
 --   1. classe d'enfants, 60 min prevues, 50 tenues (>= 45) : 3 presents
 --      (deux arrivees mesurees, une presence corrigee par la direction ; une
---      absence excusee ne compte pas) : 0,95 x 3 x 1 h = 2,85 USD ;
+--      absence excusee ne compte pas) : 1,99 x 3 x 1 h = 5,97 USD ;
 --   2. classe d'adultes, 90 min prevues, 60 tenues (< 70) : 2 presents payes
---      sur les 60 minutes tenues : 1,00 x 2 x 1 h = 2,00 USD ;
+--      sur les 60 minutes tenues : 1,57 x 2 x 1 h = 3,14 USD ;
 --   3. seance sans eleve present : rien n'est ecrit ;
 --   4. panne technique sans decision : la seance part a la direction ;
---   5. mes_revenus_enseignant : total 4,85 USD, fourchette de paie horaire
---      d'une classe 2,85 a 6,00 USD ;
+--   5. mes_revenus_enseignant : total 9,11 USD, fourchette de paie horaire
+--      d'une classe 4,71 (3 adultes) a 9,95 USD (5 enfants) ;
 --   6. le calcul reste au serveur.
 -- Le scenario met la v2 en vigueur ce mois-ci ; tout est annule a la fin.
 \o /dev/null
@@ -127,11 +127,11 @@ ALTER TABLE public.sessions ENABLE TRIGGER sessions_tresorerie_timestamps;
 -- ------------------------------------------------------------------
 SELECT pg_temp.vrai(private.pai_eleves_presents('fe200000-0000-4000-8000-000000000501') = 3,
   'presents : deux arrivees + une presence corrigee, une absence excusee l''emporte');
-SELECT pg_temp.vrai(pg_temp.paie('1') = 285, 'enfants : 0,95 x 3 x 1 h = 2,85 USD (50 min tenues sur 60, seance due en entier)');
-SELECT pg_temp.vrai(pg_temp.paie('2') = 200, 'adultes : 60 min tenues sur 90 (< 70) : 1,00 x 2 x 1 h = 2,00 USD');
+SELECT pg_temp.vrai(pg_temp.paie('1') = 597, 'enfants : 1,99 x 3 x 1 h = 5,97 USD (50 min tenues sur 60, seance due en entier)');
+SELECT pg_temp.vrai(pg_temp.paie('2') = 314, 'adultes : 60 min tenues sur 90 (< 70) : 1,57 x 2 x 1 h = 3,14 USD');
 SELECT pg_temp.vrai((SELECT m.montant_minor FROM public.tresorerie_mouvements m
                       WHERE m.source_id = 'fe200000-0000-4000-8000-000000000501'
-                        AND m.coffre = 'fonds_clients_engages' AND m.sens = 'sortie') = 285,
+                        AND m.coffre = 'fonds_clients_engages' AND m.sens = 'sortie') = 597,
   'contrepartie ecrite dans fonds_clients_engages');
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.tresorerie_mouvements m
                                  WHERE m.source_id = 'fe200000-0000-4000-8000-000000000503'),
@@ -142,7 +142,7 @@ SELECT pg_temp.vrai(pg_temp.paie('4') IS NULL AND EXISTS (
   SELECT 1 FROM public.tresorerie_a_reprendre q
    WHERE q.source_id = 'fe200000-0000-4000-8000-000000000504' AND q.raison = 'duree_indeterminee'),
   'panne technique sans decision : la seance part a la direction');
-SELECT pg_temp.vrai(public.remuneration_due_seance('fe200000-0000-4000-8000-000000000501') = 285
+SELECT pg_temp.vrai(public.remuneration_due_seance('fe200000-0000-4000-8000-000000000501') = 597
   AND (SELECT count(*) FROM public.tresorerie_mouvements m
         WHERE m.source_id = 'fe200000-0000-4000-8000-000000000501') = 2,
   'rejouer la paie n''ecrit rien de plus');
@@ -152,15 +152,15 @@ SELECT pg_temp.vrai(public.remuneration_due_seance('fe200000-0000-4000-8000-0000
 -- ------------------------------------------------------------------
 SELECT pg_temp.qui('fe200000-0000-4000-8000-0000000000b1', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai(public.mes_revenus_enseignant(NULL) #>> '{totalEstime,mineur}' = '485',
-  'revenus : 2,85 + 2,00 = 4,85 USD');
-SELECT pg_temp.vrai(public.mes_revenus_enseignant(NULL) #>> '{regle,base,mineur}' = '285'
-  AND public.mes_revenus_enseignant(NULL) #>> '{regle,plafond,mineur}' = '600',
-  'revenus : paie horaire d''une classe de 2,85 (3 enfants) a 6,00 USD (6 adultes)');
+SELECT pg_temp.vrai(public.mes_revenus_enseignant(NULL) #>> '{totalEstime,mineur}' = '911',
+  'revenus : 5,97 + 3,14 = 9,11 USD');
+SELECT pg_temp.vrai(public.mes_revenus_enseignant(NULL) #>> '{regle,base,mineur}' = '471'
+  AND public.mes_revenus_enseignant(NULL) #>> '{regle,plafond,mineur}' = '995',
+  'revenus : paie horaire d''une classe de 4,71 (3 adultes) a 9,95 USD (5 enfants)');
 SELECT pg_temp.vrai((SELECT (c #>> '{tauxHoraireEffectif,mineur}')::bigint
                        FROM jsonb_array_elements(public.mes_revenus_enseignant(NULL) -> 'classes') c
-                      WHERE c ->> 'classe' = 'Al-Huda FE2') = 200,
-  'revenus : taux effectif de la classe d''adultes (2,00 USD de l''heure), sans borne de l''ancien taux');
+                      WHERE c ->> 'classe' = 'Al-Huda FE2') = 314,
+  'revenus : taux effectif de la classe d''adultes (3,14 USD de l''heure), sans borne de l''ancien taux');
 RESET ROLE;
 
 -- ------------------------------------------------------------------

@@ -1,5 +1,6 @@
 -- FAC-E-01 (18/10/2026) : les tarifs du 18/10 dans l'application.
--- Migration 20261018120000. Valeurs : docs/current/tarifs-2026-10-18.json.
+-- Migrations 20261018120000 et 20261019130000 (paie a 47 % du prix, 19/10).
+-- Valeurs : docs/current/tarifs-2026-10-18.json.
 --   1. politique v2.0.0 : 55 et 65 USD, sans essai, remises de rang en pour
 --      mille, paie par eleve present, prepaiement, bourse, parrainage ; elle
 --      se relit telle quelle (contrat) ;
@@ -158,13 +159,16 @@ SELECT pg_temp.vrai(current_setting('test.p')::jsonb ->> 'version' = 'v2.0.0'
 SELECT pg_temp.vrai(current_setting('test.p')::jsonb -> 'remisesParRang'
     = '[{"aPartirDuRang":2,"pourMille":80},{"aPartirDuRang":3,"pourMille":170}]'::jsonb,
   'politique : -8 % au 2e membre, -17 % au 3e et suivants');
-SELECT pg_temp.vrai(current_setting('test.p')::jsonb -> 'tauxEleveHeureEnfant' = '{"mineur":95,"devise":"USD"}'::jsonb
-  AND current_setting('test.p')::jsonb -> 'tauxEleveHeureAdulte' = '{"mineur":100,"devise":"USD"}'::jsonb
-  AND current_setting('test.p')::jsonb -> 'plafondEleveHeureEnfant' = '{"mineur":130,"devise":"USD"}'::jsonb
-  AND current_setting('test.p')::jsonb -> 'plafondEleveHeureAdulte' = '{"mineur":150,"devise":"USD"}'::jsonb
+SELECT pg_temp.vrai(current_setting('test.p')::jsonb -> 'tauxEleveHeureEnfant' = '{"mineur":199,"devise":"USD"}'::jsonb
+  AND current_setting('test.p')::jsonb -> 'tauxEleveHeureAdulte' = '{"mineur":157,"devise":"USD"}'::jsonb
+  AND current_setting('test.p')::jsonb -> 'plafondEleveHeureEnfant' = '{"mineur":199,"devise":"USD"}'::jsonb
+  AND current_setting('test.p')::jsonb -> 'plafondEleveHeureAdulte' = '{"mineur":157,"devise":"USD"}'::jsonb
   AND (current_setting('test.p')::jsonb ->> 'dureeDueEnfantMinutes')::int = 45
   AND (current_setting('test.p')::jsonb ->> 'dureeDueAdulteMinutes')::int = 70,
-  'politique : paie 0,95 et 1,00 USD par eleve present et par heure, plafonds, seance due a 45 et 70 min');
+  'politique : paie 1,99 et 1,57 USD par eleve present et par heure (47 % du prix), plafond egal au taux, seance due a 45 et 70 min');
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM pg_catalog.pg_constraint c
+                                 WHERE c.conname = 'politiques_commerciales_taux_enfant_sous_adulte'),
+  'politique : le taux enfant peut depasser le taux adulte (meme part du prix, 19/10)');
 SELECT pg_temp.vrai((current_setting('test.p')::jsonb ->> 'prepaiementTrimestrielPourMille')::int = 50
   AND (current_setting('test.p')::jsonb ->> 'prepaiementAnnuelPourMille')::int = 100
   AND current_setting('test.p')::jsonb -> 'parrainageCredit' = '{"mineur":2000,"devise":"USD"}'::jsonb

@@ -2273,10 +2273,10 @@ void main() {
         ),
       );
       // La paie se prerempli en dollars avec centimes, virgule francaise.
-      expect(_saisie(tester, 'tauxEleveEnfant'), '0,95');
-      expect(_saisie(tester, 'tauxEleveAdulte'), '1');
-      expect(_saisie(tester, 'plafondEleveEnfant'), '1,30');
-      expect(_saisie(tester, 'plafondEleveAdulte'), '1,50');
+      expect(_saisie(tester, 'tauxEleveEnfant'), '1,99');
+      expect(_saisie(tester, 'tauxEleveAdulte'), '1,57');
+      expect(_saisie(tester, 'plafondEleveEnfant'), '1,99');
+      expect(_saisie(tester, 'plafondEleveAdulte'), '1,57');
       expect(
         tester.widget<TextField>(_champ('tauxEleveEnfant')).keyboardType,
         const TextInputType.numberWithOptions(decimal: true),
@@ -2299,7 +2299,7 @@ void main() {
       expect(_saisie(tester, 'tarifEnfant'), '${v2.tarifEnfant.mineur ~/ 100}');
       expect(_saisie(tester, 'tarifAdulte'), '${v2.tarifAdulte.mineur ~/ 100}');
       // La paie de la demonstration se lit dans un champ modifiable.
-      expect(_saisie(tester, 'tauxEleveEnfant'), '0,95');
+      expect(_saisie(tester, 'tauxEleveEnfant'), '1,99');
       expect(tester.takeException(), isNull);
     });
 
@@ -2356,8 +2356,8 @@ void main() {
       final PolitiqueCommerciale envoye = port.publies.single;
       expect(envoye.tauxEleveHeureEnfant, const Montant(105, 'USD'));
       expect(envoye.tauxEleveHeureAdulte, const Montant(110, 'USD'));
-      expect(envoye.plafondEleveHeureEnfant, const Montant(130, 'USD'));
-      expect(envoye.plafondEleveHeureAdulte, const Montant(150, 'USD'));
+      expect(envoye.plafondEleveHeureEnfant, const Montant(199, 'USD'));
+      expect(envoye.plafondEleveHeureAdulte, const Montant(157, 'USD'));
     });
 
     testWidgets('un plafond sous le taux est refuse et rien ne part', (
@@ -2367,72 +2367,47 @@ void main() {
       final _Port port = _avecCeBrouillon(brouillonV2());
       await tester.pumpWidget(_hote(surcharges: _avec(port)));
       await tester.pumpAndSettle();
-      await tester.enterText(_champ('plafondEleveEnfant'), '0,90');
+      await tester.enterText(_champ('plafondEleveEnfant'), '1,90');
       await tester.pumpAndSettle();
       expect(
         erreur(tester, 'plafondEleveEnfant'),
         pol.erreurPlafondEleve(
           taux: pol.parHeure(
-            montant: formaterMontant(const Montant(95, 'USD')),
+            montant: formaterMontant(const Montant(199, 'USD')),
           ),
         ),
       );
       // Egal au taux : accepte.
-      await tester.enterText(_champ('plafondEleveEnfant'), '0,95');
+      await tester.enterText(_champ('plafondEleveEnfant'), '1,99');
       await tester.pumpAndSettle();
       expect(erreur(tester, 'plafondEleveEnfant'), isNull);
       // Monter le taux adulte au-dessus du plafond adulte est aussi refuse.
       await tester.enterText(_champ('tauxEleveAdulte'), '1,60');
       await tester.pumpAndSettle();
       expect(erreur(tester, 'plafondEleveAdulte'), isNotNull);
-      await tester.enterText(_champ('plafondEleveEnfant'), '0,90');
+      await tester.enterText(_champ('plafondEleveEnfant'), '1,90');
       await tester.pumpAndSettle();
       await _publier(tester);
       expect(port.publies, isEmpty);
     });
 
-    testWidgets('taux enfant au-dessus du taux adulte : avertissement non '
-        'bloquant, en direct, publication possible', (
+    testWidgets('taux enfant au-dessus du taux adulte : accepte sans '
+        'avertissement, publication possible (47 % du prix, 19/10/2026)', (
       WidgetTester tester,
     ) async {
       _taille(tester, const Size(1440, 3600));
       final _Port port = _avecCeBrouillon(brouillonV2());
       await tester.pumpWidget(_hote(surcharges: _avec(port)));
       await tester.pumpAndSettle();
-      final Finder titre = find.text(pol.tauxEnfantAuDessusTitre);
-      final Finder section = find.byKey(
-        PolitiquesCommercialesContenu.tauxAvertissementKey,
-      );
-      final Finder resume = find.byKey(
-        PolitiquesCommercialesContenu.tauxAvertissementPublicationKey,
-      );
-      // 0,95 enfant, 1,00 adulte : rien.
-      expect(titre, findsNothing);
-      // Enfant au-dessus : l'avertissement apparait sous la paie et avant
-      // la publication, sans erreur de champ.
-      await tester.enterText(_champ('tauxEleveEnfant'), '1,10');
-      await tester.pumpAndSettle();
-      expect(section, findsOneWidget);
-      expect(resume, findsOneWidget);
-      expect(titre, findsNWidgets(2));
+      // 1,99 enfant, 1,57 adulte : la meme part d'un prix plus bas sur moins
+      // d'heures ; aucun avertissement, aucune erreur de champ.
+      expect(find.byType(BandeauAttention), findsNothing);
       expect(erreur(tester, 'tauxEleveEnfant'), isNull);
-      // Egal : rien.
-      await tester.enterText(_champ('tauxEleveEnfant'), '1');
-      await tester.pumpAndSettle();
-      expect(titre, findsNothing);
-      // De nouveau au-dessus, puis la publication reste possible.
-      await tester.enterText(_champ('tauxEleveEnfant'), '1,05');
-      await tester.pumpAndSettle();
-      expect(titre, findsNWidgets(2));
       await _publier(tester);
       expect(
         port.publies.single.tauxEleveHeureEnfant,
-        const Montant(105, 'USD'),
+        const Montant(199, 'USD'),
       );
-      // Repasser sous le taux adulte retire l'avertissement.
-      await tester.enterText(_champ('tauxEleveEnfant'), '0,95');
-      await tester.pumpAndSettle();
-      expect(titre, findsNothing);
     });
 
     testWidgets('trois decimales, zero, vide et texte sont refuses', (
