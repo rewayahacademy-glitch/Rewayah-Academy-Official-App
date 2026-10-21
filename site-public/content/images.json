@@ -1,0 +1,92 @@
+{
+  "largeurs": [
+    640,
+    1024,
+    1600
+  ],
+  "note": "Illustrations fournies par le directeur (dossier Drive « images du site public », 21/10/2026), détourées et harmonisées : arches de 02 et 12 recolorées en lavande ; 04 et 09 remplacées par leur jumelle lavande 08. Toujours légendées « Illustration » (cahier visuel C.4).",
+  "images": {
+    "chemin": {
+      "source": "07",
+      "largeur": 2676,
+      "hauteur": 1388,
+      "alt": "Une mère et sa fille marchent sur un chemin violet vers une porte ouverte dans une arche en forme de livre, où une classe est assise avec son enseignante.",
+      "porte": [
+        0.682,
+        0.495
+      ]
+    },
+    "halqa": {
+      "source": "06",
+      "largeur": 1367,
+      "hauteur": 1289,
+      "alt": "Vue du dessus : un enseignant et quatre élèves assis en cercle, chacun devant son pupitre de lecture."
+    },
+    "eleve-enseignante": {
+      "source": "03",
+      "largeur": 1029,
+      "hauteur": 1151,
+      "alt": "Une élève assise devant son pupitre de lecture, face à son enseignante installée sous l’arche."
+    },
+    "eleve-enseignante-b": {
+      "source": "05",
+      "largeur": 1012,
+      "hauteur": 1152,
+      "alt": "Une jeune élève lit devant son pupitre ; son enseignante l’écoute, assise sous l’arche."
+    },
+    "transmission-lavande": {
+      "source": "08",
+      "largeur": 2080,
+      "hauteur": 1559,
+      "alt": "À travers la porte d’une arche en forme de livre, deux mains tendent un Coran à deux autres mains."
+    },
+    "boucle": {
+      "source": "02",
+      "largeur": 2550,
+      "hauteur": 1257,
+      "alt": "Un chemin violet en forme de boucle infinie relie des familles, un enseignant et son élève, jusqu’à une arche ouverte."
+    },
+    "pere-fils": {
+      "source": "12",
+      "largeur": 1121,
+      "hauteur": 1196,
+      "alt": "Un père accompagne son fils jusqu’à la porte ouverte, où l’enseignant attend avec son pupitre de lecture."
+    },
+    "mere-porte": {
+      "source": "01",
+      "largeur": 1164,
+      "hauteur": 1187,
+      "alt": "Une mère se tient à la porte ouverte et regarde sa fille lire avec son enseignante."
+    },
+    "adulte-femme": {
+      "source": "15",
+      "largeur": 1016,
+      "hauteur": 1165,
+      "alt": "Une femme assise sur un tabouret suit le cours de son enseignante, installée sous l’arche."
+    },
+    "adulte-homme": {
+      "source": "11",
+      "largeur": 1051,
+      "hauteur": 1161,
+      "alt": "Un homme assis sur un tabouret écoute son enseignant, installé sous l’arche avec son pupitre."
+    },
+    "adulte-femme-livre": {
+      "source": "10",
+      "largeur": 1150,
+      "hauteur": 1184,
+      "alt": "Une femme, un livre à la main, se tient devant une arche ouverte sur un paysage de dunes."
+    },
+    "adulte-homme-livre": {
+      "source": "13",
+      "largeur": 1093,
+      "hauteur": 1156,
+      "alt": "Un homme, un livre à la main, se tient sur le seuil d’une arche ouverte sur des dunes."
+    },
+    "place": {
+      "source": "14",
+      "largeur": 1005,
+      "hauteur": 1025,
+      "alt": "Un coussin et un pupitre de lecture attendent devant la porte, où un enseignant est déjà assis."
+    }
+  }
+}

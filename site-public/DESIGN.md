@@ -1,13 +1,37 @@
 # Direction visuelle du site public
 
-Source : plans du directeur du 7 et 8 octobre, actualisés le 9, et maquettes validées inspectées. Ces règles concernent le site HTML, pas le thème Flutter.
+Statut : brouillon (M-20), pas une référence de marque. Direction posée par le lot SITE-MOUV-1 du 21/10/2026 ; revue, mesures et dérogations dans `docs/current/UX_REVIEW_SITE-MOUV-1.md`. Règles de marque : `docs/current/marque/`.
 
-- Fond continu #1A1A25, surfaces #22222E, texte #F5F2FA, action #BA98FB, encre d'action #25113F. Aucun gradient de fond.
-- DM Sans pour titres, Plus Jakarta Sans pour corps/navigation/actions. Polices locales.
-- Hero centré, titre ample sur deux lignes sur grand écran, deux boutons, scène enfant sous le texte.
-- Foyer : texte gauche, fragment deux profils droite. Cours : texte gauche, support clair dominant droite avec portrait circulaire secondaire. Suivi : mère et historique gauche, texte droite.
-- Inscription : texte gauche, étapes numérotées droite. Tarifs : titre au-dessus, tableau et exemples côte à côte. Académie : composition centrée et deux arguments éditoriaux. FAQ : liens utiles gauche, accordéons droite.
-- Footer : CTA central puis logo/identité, découverte, contacts ; ligne légale séparée.
-- Mobile : texte puis preuve, proportions préservées, ni rotation gênant la lecture ni débordement. Aucun sticky nécessaire pour comprendre la page.
+## Le motif
 
-Statut (19/10/2026) : brouillon, pas une référence de marque. Les valeurs ci-dessus datent des maquettes du 9 octobre ; l'app est passée à un fond sombre `#16161E` et à des cartes `#272734` le 17/10 (`lib/core/theme/app_palette.dart`). Choix à faire à la reprise du site : question O-05 de `docs/current/marque/REGISTRE-DECISIONS-MARQUE.md`. Règles de marque : `docs/current/marque/CAHIER-DES-CHARGES-VISUEL.md`.
+Un seul motif : l'arche du symbole (M-21 : l'arche est le livre, la porte ouverte est l'accès, le cercle est la halqa). Les 13 illustrations fournies par le directeur le 21/10 portent déjà cette arche ; elles sont détourées, l'arche ramenée au lavande des jetons, et légendées « Illustration ». Aucune autre forme décorative, aucun gradient.
+
+## Valeurs
+
+- Couleurs, rayons, ombres, durées et courbes : les jetons de l'app (`lib/core/theme/`), recopiés dans `styles/site.css` avec leur nom d'origine en commentaire. Clair par défaut, sombre selon le système (jetons LT-THEME, O-05 ouverte).
+- Polices : DM Sans pour les titres, Plus Jakarta Sans pour le reste. Polices locales, quatre fichiers.
+- Seuils : 600, 840 et 1200 px, ceux de `app_gabarit.dart`.
+
+## Composition
+
+- La direction de chaque page tient dans `content/direction.json` : image du haut et son côté, champ, cadre (`libre` pour le panorama), gabarit, images de section, bande d'image, bande d'appel finale.
+- Le haut des pages alterne droite et gauche d'une page à l'autre ; dans une page, les images de section alternent d'une section à l'autre (`alternance()` dans `build_site.py`).
+- Trois hauts de page :
+  - **scène**, le texte sur 5 colonnes et l'illustration en grand sur 7 ;
+  - **panorama**, le titre et sa phrase sur une ligne, l'illustration sur toute la largeur ;
+  - **document**, pour les pages légales : le titre traverse la page.
+- Une section sans image garde son titre collé pendant la lecture ; une section avec image pose le texte et la scène côte à côte, dès la tablette.
+- Téléphone : le texte d'abord, l'image ensuite.
+
+## Mouvement
+
+`styles/motion.js`, sans bibliothèque. Le défilement reste natif ; les scènes lisent la position de la page et posent des variables CSS.
+
+- Accueil : la porte. On s'approche de la porte au défilement, puis le cercle de la halqa s'ouvre.
+- Accueil : les chapitres. La fenêtre reste, les illustrations changent.
+- Entrées des sections : 220 ms, échelon de 35 ms, au plus 400 ms. Les titres de haut de page montent ligne par ligne.
+- Images de section : construites par étages, de gauche à droite.
+- En-tête : il s'efface en descendant et revient en remontant.
+- Pied de page : en rideau.
+
+Sans JavaScript, en mouvement réduit et à l'impression, tout le contenu est là, immobile. Le logo ne change jamais.

@@ -1,0 +1,72 @@
+# SITE-MOUV-1 : direction visuelle, images et mouvement du site public (revue UX)
+
+Lot du 21/10/2026, branche `claude/youthful-davinci-raugwe`. Revue exigée par `DESIGN-GOV-2026-09-26.md` §4.2.
+
+**État :** présent dans le code, testé localement (63 tests du site au vert, inspection navigateur à 1440, 768 et 390 px, clair et sombre). Ni testé sur staging, ni déployé. Le site reste un brouillon (M-20) et reste fermé à l'indexation.
+
+## Demande du directeur
+
+- Un site public « moderne, aéré, structuré et bien animé, comme ceux des grandes agences ».
+- S'inspirer d'un pin enregistré (Flowty, objet 3D piloté par le défilement), du modèle Webflow Ostack et du pin favori (Shakuro, construction par étages), sans s'y limiter et sans ressembler à personne.
+- Détourer et harmoniser les images du dossier Drive « images du site public » ; l'arche doit être lavande, jamais sombre.
+- Ne pas poser toutes les scènes du même côté.
+- Un texte qui vend selon les usages du métier, pensé pour le référencement, sans jamais « vendre du vent ».
+
+## Ce qui a été fait
+
+1. **Images.** Les 13 illustrations du Drive sont détourées (BiRefNet), l'arche ramenée au lavande des jetons (Lab), l'intérieur rebouché, l'ombre de contact gardée. Elles sont publiées en WebP à 640, 1024 et 1600 px (`site-public/content/images.json`) et légendées « Illustration ».
+2. **Un seul motif : l'arche du symbole** (M-21 : l'arche est le livre, la porte ouverte est l'accès, le cercle est la halqa). La direction de chaque page tient dans `site-public/content/direction.json` : image du haut, côté, couleur du champ, cadre, gabarit, images de section, bande d'image, bande d'appel finale.
+3. **Composition.**
+   - Le haut des pages alterne droite et gauche d'une page à l'autre.
+   - Dans une page, les images de section alternent aussi d'une section à l'autre, en partant du côté opposé au haut de page.
+   - Deux pages à image panoramique (« Comment ça marche », « L'académie ») prennent un haut « panorama » : le titre et sa phrase sur une ligne, la scène sur toute la largeur.
+   - Les pages légales prennent un haut « document » : le titre traverse la page, la scène reste petite.
+4. **Mouvement.** Une couche unique, `site-public/styles/motion.js`, sans bibliothèque :
+   - le défilement reste natif ;
+   - les scènes lisent la position de la page et posent des variables CSS.
+5. **Texte.** Titres réécrits sur les faits publiés. Données structurées `EducationalOrganization` sur l'accueil seulement. Balises Open Graph sur chaque page. Indexation toujours fermée.
+6. **Académie.** Une section « Trois spécialistes du Coran » publie le récit des fondateurs, tel que M-21 l'autorise : noms, date, lieu de l'idée, sens du nom et du symbole.
+
+## Contrôle par proposition
+
+| # | Proposition contrôlée | Standard ou source consultée (21/10/2026) | Règle utile | Conclusion | Modification |
+|---|---|---|---|---|---|
+| D1 | Durées des entrées de section et des titres | Contrat E (`DESIGN-GOV` §E) ; `lib/core/theme/app_mouvement.dart` | Durées gelées ; écart d'échelon 35 ms ; plafond 400 ms ; pas de timing local | Ajustée | Entrées à 220 ms (`navigation`), échelon 35 ms, rang plafonné à 5. Mesuré au navigateur : 360 ms au plus sur l'accueil, 400 ms pour l'ouverture de l'arche du haut de page. Avant correction, la revue critique avait mesuré jusqu'à 890 ms |
+| D2 | Courbe accentuée | `app_mouvement.dart` (ThreePointCubic) | Courbes du jeton, pas d'approximation | Ajustée | `cubic-bezier(.2,0,0,1)` s'écartait de 0,166 à t = 0,24. Le site utilise maintenant une fonction `linear()` à 21 points, écart ≤ 0,004, avec repli cubic pour les moteurs qui ne la lisent pas |
+| D3 | Déplacements | `app_mouvement.dart` | Translations de 8, 12 ou 16 px seulement | Ajustée | 24 et 40 px ramenés à 16 et 12 px |
+| D4 | Mouvement réduit | WCAG 2.2, 2.3.3 ; contrat E | Durée 0, translation 0, contenu complet | Conforme | Aucune scène, aucun découpage de titre, aucune bande d'étages ; tout le contenu est visible et immobile |
+| D5 | Sans JavaScript | `SITE_07` ; dossier maître §17.5 | Contenu lisible sans script | Conforme | Les états cachés ne s'appliquent que sous la classe `js`, posée en tête et retirée après 2,5 s si `motion.js` ne s'exécute pas |
+| D6 | Défilement | Dossier maître §17.5 | Défilement natif, aucune interception de la souris | Conforme | Aucun Lenis, aucun écouteur de molette ; un seul écouteur `scroll` passif et une boucle `requestAnimationFrame` |
+| D7 | Titre découpé ligne à ligne | Revue critique du lot (titre déjà peint qui disparaît puis revient) | Un état caché se pose avant le premier rendu, jamais après | Ajustée | Le titre n'est découpé que si les polices sont prêtes dans les 100 ms ; sinon il reste immobile |
+| D8 | Impression | WCAG 2.2, 1.3.2 et usage | Tout le texte s'imprime | Ajustée | Règle `@media print`. Mesuré en mode impression : 0 bloc caché (avant : 44 blocs et 3 863 caractères manquants sur la page Confidentialité) |
+| D9 | En-tête qui s'efface en descendant | WCAG 2.2, 2.4.11 (focus non masqué) | Un élément qui a le focus n'est jamais caché | Conforme | L'en-tête revient dès qu'on remonte, dès que le focus clavier y entre (`:focus-within`) et quand le menu mobile est ouvert |
+| D10 | Un seul logo visible | `assets/brand/logo/README.md` (un logo par écran) | Jamais deux logos à l'écran | Ajustée | L'en-tête s'efface quand le pied de page se découvre. Mesuré : 1 logo visible au bas de 4 pages |
+| D11 | Pied de page en rideau | Ostack (modèle Webflow), adapté | Aucun mouvement ajouté | Conforme | Le pied est collé sous le contenu, qui glisse et le découvre. Réservé aux écrans d'au moins 840 × 820 px, où le pied tient en entier |
+| D12 | Images de section bâties par étages | Pin favori Shakuro (5 étages, 30 ms d'écart), adapté au plafond | Plafond 400 ms, échelon 35 ms | Conforme | 5 bandes du fond se retirent de gauche à droite : 220 ms + 4 × 35 ms = 360 ms. Absent en mouvement réduit, absent sans JavaScript, absent à l'impression |
+| D13 | Porte de l'accueil (agrandissement au défilement) | Pin Flowty (objet épinglé, piloté par le défilement), adapté sans 3D | Lecture possible pendant l'épinglage ; image nette | Ajustée | Agrandissement maximal ramené de 6× à 4,2×. Attribut `sizes` corrigé (58vw déclaré pour 112vw affiché), le navigateur charge le fichier de 1600 px. Sur les écrans bas, la scène descend pour que le ruban ne passe plus sous la phrase de réassurance |
+| D14 | Ordre sur téléphone | `site-public/DESIGN.md` (texte puis preuve) | Le titre d'abord | Ajustée | Le titre de l'accueil est à 146 px du haut à 390 px de large ; il était à environ 475 px, sous l'image |
+| D15 | Contrastes | WCAG 2.2, 1.4.3 et 1.4.11 | Texte 4,5:1, graphisme 3:1 | Conforme | Calcul WCAG sur les jetons. Clair : encre sur champ 15,65 ; encre douce sur champ 5,12 ; blanc sur violet 4,81 ; contour sur champ 3,39. Sombre : encre douce sur champ 6,66 ; bouton 7,29 ; contour sur champ 4,24 |
+| D16 | Seuils de mise en page | `lib/core/theme/app_gabarit.dart` | Seuils 600, 840, 1200 | Ajustée | Le seuil de 900 px, inventé, devient 840 px partout (CSS, `motion.js`, attributs `sizes`) |
+| D17 | Thème sombre | O-05 (ouverte) ; cahier visuel : par défaut, les jetons de l'app | Pas de teinte inventée | Conforme au défaut | Clair par défaut, sombre selon la préférence du système, avec les jetons `LT-THEME` (`#16161E`). O-05 reste ouverte |
+| D18 | Texte qui vend | Pratiques commerciales trompeuses (directive 2005/29/CE, annexe I, point 7 : fausse urgence) ; règles M-10 et `mots-rewayah` ; principe islamique de l'interdiction de la tromperie (« Celui qui nous trompe n'est pas des nôtres », Muslim) | Des faits vérifiables, une vraie réduction du risque, aucune urgence ni rareté inventée, aucun témoignage ni chiffre inventé | Conforme | Chaque promesse renvoie à une source publiée : 3 à 5 élèves (`DECISION-TARIFS-2026-10-18.md`), classe ouverte dès 3 inscrits et liste d'attente non facturée, première semaine remboursée (page Annulation), observation de 2 minutes, « à horaire fixe » (`UX_REVIEW_PUB-1.md`). Deux phrases trop fortes ont été corrigées (« l'horaire ne change plus » devient « à horaire fixe ») |
+| D19 | Référencement | Guide de démarrage SEO de Google Search Central ; schema.org | Un titre descriptif par page, une description, des données structurées exactes, aucun balisage d'avis sans avis réels | Conforme | Titres et descriptions par page ; `EducationalOrganization` sur l'accueil seulement ; aucun balisage d'avis (testé) ; indexation fermée tant que le site est un brouillon |
+| D20 | Images légendées | Cahier visuel C.4 ; manifeste (aucune image inventée présentée comme réelle) | « Illustration » sous chaque image | Conforme | Testé sur chaque page (`test_every_illustration_is_captioned_and_described`) |
+| D21 | Logo | `assets/brand/logo/README.md` ; M-25, M-28 | Fichiers officiels, jamais animé, blanc sur fond sombre | Conforme | Copies identiques à l'octet (testé). L'en-tête est exclu des transitions de page. Le logo glisse avec l'en-tête quand celui-ci s'efface, sans changer de forme, de taille ni de couleur : interprétation inscrite en O-15 |
+
+## Dérogations et exceptions défendues
+
+- **Bouton principal violet plein** au lieu de l'action douce de l'app. Raison : le site pose ses boutons sur des champs lavande où l'action douce (`#DCCAFD`) se confond avec le fond. Inscrit en O-11.
+- **Animations liées au défilement** : elles n'ont pas de durée. Elles suivent la position de la page, sans courbe de temps. Inscrit en O-12.
+- **Pages légales, aide, contact, protection des enfants et accessibilité.** Une seule image par page, alors que l'inspecteur du skill de direction demande quatre images par page. Ce sont des documents et des outils : des images entre les clauses gêneraient la lecture.
+- **Aucune vidéo.** Il n'existe aucune séquence authentique d'un cours ; une vidéo générée ou prise dans une banque montrerait ce que l'académie n'a pas filmé.
+- **Marges inégales à 768 px.** L'inspecteur mesure le bord des lignes de texte, alignées à gauche avec une mesure de 60 caractères. Le cadre (en-tête, images, tuiles) tient 24 px des deux côtés.
+- **Texte épinglé sur l'image de l'accueil.** C'est la scène de la porte, voulue. La phrase épinglée est `aria-hidden`, car elle est dite ailleurs dans la page.
+
+## Questions ouvertes inscrites au registre
+
+O-10 (arche dessinée en CSS), O-11 (couleur du bouton), O-12 (mouvement lié au défilement), O-13 (les illustrations comme banque d'images), O-14 (le mushaf dans une illustration), O-15 (l'en-tête qui s'efface emporte le logo). O-05 (teinte sombre) reste ouverte.
+
+## Hors de portée de l'agent
+
+- `.github/workflows/flutter-deploy.yml` vérifie la présence de 8 fichiers du site, mais pas de `motion.js`. Le garde du dépôt interdit à l'agent d'écrire dans `.github/`. Le test `test_only_approved_public_assets_are_copied` couvre ce fichier côté tests.
+- L'outil REA (Reverse Engineer Anything) n'est installé qu'en ligne de commande, dans l'espace de travail de la session. Son inscription comme serveur MCP et comme skill demande une règle de permission du directeur.

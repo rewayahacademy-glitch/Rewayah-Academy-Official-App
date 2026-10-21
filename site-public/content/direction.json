@@ -1,0 +1,223 @@
+{
+  "description": "Direction artistique par page. Un seul motif : l'arche du symbole (arche en forme de livre, porte ouverte ; décision M-21). image = illustration du haut de page, cote = côté de l'image (on alterne pour ne pas tout poser à droite), champ = couleur du fond du haut de page, cadre = libre pour une image panoramique qui sort par le bord de l'écran au lieu d'une fenêtre en arche, gabarit = composition du corps, figures = une illustration sous le titre d'une section (clé = id de la section), bande = grande image posée entre deux sections, fin = bande d'appel en bas de page. Les textes de fin ne disent que des faits publiés (liste d'attente non facturée, première semaine remboursée : content/tarifs.json et page Annulation).",
+  "pages": {
+    "/fr/familles": {
+      "image": "pere-fils",
+      "cote": "droite",
+      "champ": "lavande",
+      "bande": {
+        "image": "mere-porte",
+        "apres": "suivi",
+        "forme": "arche"
+      },
+      "fin": {
+        "titre": "Inscrivez votre enfant.",
+        "phrase": "L’inscription se fait dans l’application Rewayah. Rien n’est facturé avant l’ouverture de la classe.",
+        "mot": "Commencer",
+        "label": "Commencer mon inscription",
+        "href": "/connexion"
+      },
+      "figures": {
+        "profils": "eleve-enseignante",
+        "organisation": "chemin"
+      }
+    },
+    "/fr/cours": {
+      "image": "eleve-enseignante",
+      "cote": "gauche",
+      "champ": "lavande",
+      "bande": {
+        "image": "adulte-homme",
+        "apres": "adultes-enfants",
+        "forme": "arche"
+      },
+      "fin": {
+        "titre": "Commencez par les bases.",
+        "phrase": "L’inscription se fait dans l’application Rewayah. La première semaine est remboursée si le cours ne convient pas.",
+        "mot": "Commencer",
+        "label": "Commencer mon inscription",
+        "href": "/connexion"
+      },
+      "figures": {
+        "objectifs": "transmission-lavande",
+        "methode": "adulte-femme",
+        "groupes": "halqa"
+      }
+    },
+    "/fr/comment-ca-marche": {
+      "image": "chemin",
+      "cote": "droite",
+      "champ": "blanc",
+      "cadre": "libre",
+      "gabarit": "etapes",
+      "bande": {
+        "image": "halqa",
+        "forme": "cercle"
+      },
+      "fin": {
+        "titre": "Votre inscription commence ici.",
+        "phrase": "Vous suivez chaque étape dans l’application Rewayah. Rien n’est facturé avant l’ouverture de la classe.",
+        "mot": "Commencer",
+        "label": "Continuer dans Rewayah",
+        "href": "/connexion"
+      },
+      "figures": {
+        "mineur": "pere-fils",
+        "connexion": "place"
+      }
+    },
+    "/fr/tarifs": {
+      "image": "place",
+      "cote": "droite",
+      "champ": "lavande",
+      "fin": {
+        "titre": "Commencez votre inscription.",
+        "phrase": "Une classe ouvre dès trois inscrits. Avant cela, vous êtes en liste d’attente et rien n’est facturé.",
+        "mot": "Commencer",
+        "label": "Commencer mon inscription",
+        "href": "/connexion"
+      },
+      "figures": {
+        "grille": "eleve-enseignante-b",
+        "famille": "pere-fils",
+        "classes": "halqa"
+      }
+    },
+    "/fr/academie": {
+      "image": "transmission-lavande",
+      "cote": "gauche",
+      "champ": "lavande",
+      "cadre": "libre",
+      "bande": {
+        "image": "boucle",
+        "apres": "projet",
+        "forme": "large"
+      },
+      "fin": {
+        "titre": "Découvrez les cours.",
+        "phrase": "Enfants dès 6 ans et adultes, trois séances par semaine avec le même enseignant.",
+        "mot": "Découvrir",
+        "label": "Découvrir les cours",
+        "href": "/fr/cours"
+      },
+      "figures": {
+        "projet": "eleve-enseignante",
+        "famille": "mere-porte",
+        "societe": "adulte-homme-livre"
+      }
+    },
+    "/fr/articles": {
+      "image": "adulte-femme-livre",
+      "cote": "droite",
+      "champ": "blanc",
+      "figures": {
+        "catalogue": "adulte-homme-livre",
+        "orientation": "place"
+      },
+      "bande": {
+        "image": "boucle",
+        "apres": "catalogue",
+        "forme": "large"
+      }
+    },
+    "/fr/aide": {
+      "image": "adulte-homme",
+      "cote": "gauche",
+      "champ": "blanc",
+      "gabarit": "question",
+      "fin": {
+        "titre": "Une autre question ?",
+        "phrase": "L’assistance vous répond par écrit, à support@rewayahacademy.com.",
+        "mot": "Écrire",
+        "label": "Écrire à l’assistance",
+        "href": "mailto:support@rewayahacademy.com"
+      }
+    },
+    "/fr/avis": {
+      "image": "mere-porte",
+      "cote": "droite",
+      "champ": "lavande",
+      "fin": {
+        "titre": "Découvrez les cours.",
+        "phrase": "Enfants dès 6 ans et adultes, trois séances par semaine avec le même enseignant.",
+        "mot": "Découvrir",
+        "label": "Découvrir les cours",
+        "href": "/fr/cours"
+      },
+      "figures": {
+        "avis": "pere-fils",
+        "transparence": "adulte-femme-livre"
+      },
+      "bande": {
+        "image": "halqa",
+        "apres": "avis",
+        "forme": "cercle"
+      }
+    },
+    "/fr/recrutement": {
+      "image": "adulte-homme-livre",
+      "cote": "gauche",
+      "champ": "blanc",
+      "fin": {
+        "titre": "Enseigner avec nous.",
+        "phrase": "Écrivez à recrutement@rewayahacademy.com pour une demande d’information ou une candidature spontanée.",
+        "mot": "Écrire",
+        "label": "Écrire au recrutement",
+        "href": "mailto:recrutement@rewayahacademy.com"
+      },
+      "figures": {
+        "postes": "eleve-enseignante",
+        "enseignants": "transmission-lavande",
+        "candidature": "adulte-homme"
+      }
+    },
+    "/fr/contact": {
+      "image": "adulte-femme",
+      "cote": "droite",
+      "champ": "lavande",
+      "gabarit": "contact"
+    },
+    "/fr/protection-des-enfants": {
+      "image": "eleve-enseignante-b",
+      "cote": "droite",
+      "champ": "blanc",
+      "gabarit": "lecture"
+    },
+    "/fr/legal/mentions": {
+      "gabarit": "lecture",
+      "image": "adulte-homme-livre",
+      "cote": "droite",
+      "champ": "blanc"
+    },
+    "/fr/legal/conditions": {
+      "gabarit": "lecture",
+      "image": "transmission-lavande",
+      "cote": "droite",
+      "champ": "blanc"
+    },
+    "/fr/legal/annulation-remboursement": {
+      "gabarit": "lecture",
+      "image": "place",
+      "cote": "droite",
+      "champ": "blanc"
+    },
+    "/fr/legal/confidentialite": {
+      "gabarit": "lecture",
+      "image": "mere-porte",
+      "cote": "droite",
+      "champ": "blanc"
+    },
+    "/fr/legal/cookies": {
+      "gabarit": "lecture",
+      "image": "adulte-femme-livre",
+      "cote": "droite",
+      "champ": "blanc"
+    },
+    "/fr/accessibilite": {
+      "gabarit": "lecture",
+      "image": "adulte-homme",
+      "cote": "droite",
+      "champ": "blanc"
+    }
+  }
+}

@@ -109,37 +109,73 @@ class GeneratedSiteQA(unittest.TestCase):
 
     def test_only_approved_public_assets_are_copied(self) -> None:
         copied = {path.name for path in (self.output / "fr" / "assets").iterdir() if path.is_file()}
+        # Les illustrations approuvees sont celles du manifeste (content/images.json), a chaque largeur exportee.
+        images = json.loads((SITE / "content" / "images.json").read_text(encoding="utf-8"))
+        scenes = {
+            f"scene-{ident}-{largeur}.webp"
+            for ident in images["images"]
+            for largeur in BUILDER_MODULE.image_largeurs(images, ident)
+        }
         self.assertEqual(
             copied,
             {
                 "site.css",
+                "site.js",
+                "motion.js",
                 "symbole.svg",
                 "symbole-white.svg",
                 "symbole-contour.svg",
                 "logo-horizontal.svg",
                 "logo-horizontal-white.svg",
                 "logo-vertical.svg",
-                "hero-enfant-cours.png",
-                "enseignant-portrait.png",
-                "suivi-parent-tablette.png",
-                "site.js",
+                "ornement-contour.svg",
+                "ornement-contour-white.svg",
                 "dm-sans-latin-ext.woff2",
                 "dm-sans-latin.woff2",
                 "plus-jakarta-sans-latin-ext.woff2",
                 "plus-jakarta-sans-latin.woff2",
                 "dm-sans-OFL.txt",
                 "plus-jakarta-sans-OFL.txt",
-            },
+            } | scenes,
         )
         self.assertFalse((self.output / "fr" / "assets" / "prototype.html").exists())
 
+    def test_logo_files_are_the_official_ones(self) -> None:
+        officiels = SITE.parent / "assets" / "brand" / "logo"
+        for copie, source in (
+            ("symbole.svg", "violet/symbole-plein.svg"),
+            ("symbole-white.svg", "blanc/symbole-plein.svg"),
+            ("logo-horizontal.svg", "violet/logo-horizontal.svg"),
+            ("logo-horizontal-white.svg", "blanc/logo-horizontal.svg"),
+            ("ornement-contour.svg", "violet/ornement-contour.svg"),
+            ("ornement-contour-white.svg", "blanc/ornement-contour.svg"),
+        ):
+            with self.subTest(copie=copie):
+                self.assertEqual((SITE / "assets" / copie).read_bytes(), (officiels / source).read_bytes())
+
     def test_approved_brand_placement_and_public_history(self) -> None:
         home = self.page_file("/fr/").read_text(encoding="utf-8")
+        # En-tete web : logo horizontal (violet sur clair, blanc sur sombre), symbole seul sur telephone
+        # (assets/brand/logo/README.md, M-25). Pied de page sombre : logo horizontal blanc.
         self.assertIn('site-header__brand" href="/fr/"', home)
-        self.assertIn('src="/fr/assets/symbole-white.svg"', home)
+        self.assertIn('src="/fr/assets/logo-horizontal.svg"', home)
+        self.assertIn('srcset="/fr/assets/logo-horizontal-white.svg"', home)
+        self.assertIn('srcset="/fr/assets/symbole.svg"', home)
         self.assertIn('src="/fr/assets/logo-horizontal-white.svg"', home)
         self.assertIn('<p class="eyebrow">Rewayah Academy</p>', home)
         self.assertNotIn('4 août 2025', "\n".join(path.read_text(encoding="utf-8") for path in self.output.rglob("*.html")))
+
+    def test_every_illustration_is_captioned_and_described(self) -> None:
+        images = json.loads((SITE / "content" / "images.json").read_text(encoding="utf-8"))
+        for route in self.pages:
+            source = self.page_file(route).read_text(encoding="utf-8")
+            with self.subTest(route=route):
+                for figure in re.findall(r'<figure class="scene[^"]*"[^>]*>.*?</figure>', source, re.S):
+                    self.assertRegex(figure, r'alt="[^"]{20,}"')
+                self.assertEqual(source.count("<figcaption>Illustration</figcaption>") > 0,
+                                 '<figure class="scene' in source)
+        for ident, image in images["images"].items():
+            self.assertGreaterEqual(len(image["alt"]), 20, ident)
 
     def test_bundle_gate_covers_every_local_font_requested_by_css(self) -> None:
         css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")
