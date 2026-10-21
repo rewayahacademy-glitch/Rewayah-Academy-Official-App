@@ -201,6 +201,7 @@ Inspection après ces corrections :
 |---|---|---|---|---|
 | Recette 1 | 7,12 | 6,17 | 6,17 | « presque » |
 | Recette 2 | 7,1 | 6,27 | 6,33 | « presque » |
+| Recette 3 | 6,5 (7,1 à 7,5 sans plafond) | 6,5 | 6,5 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -226,6 +227,29 @@ Les références sont plafonnées par leur capture : un mur d'inscription pour H
 | M6 | Mains : dalle de sol sous la porte, manches dans une brume, ourlet fantôme | Reflet du sol retiré ; plus de fondu : la manche sort par le bord de l'écran (24 px au-delà) et son ourlet passe sous le bas de l'écran. Les conditions prennent une autre illustration, faute de bord où la manche puisse sortir |
 
 Inspection des 18 pages après ces corrections : 0 FAIL sur les 10 pages de l'offre ; un seul FAIL sur chacune des 8 pages documents (« few-pictures », défendu plus haut). Tous les titres de page tiennent en deux lignes de 840 à 1440 px.
+
+**Recette 3.** La note de Rewayah est plafonnée à 6,5 par une seule règle de la grille : l'ombre douce sous les détails ronds compte comme une ombre sur un élément au repos. Sans ce plafond, les trois jurés donnent 7,45, 7,5 et 7,1. Les points sur lesquels ils s'accordent : les mêmes scènes de page en page, un seul violet du haut en bas, « Les cours en bref » qui répète un tableau, le simulateur, les coupures de ligne, la hiérarchie au téléphone.
+
+**Corrections après la recette 3.**
+
+| # | Relevé | Correction |
+|---|---|---|
+| N1 | Ombre sous les détails ronds (plafond à 6,5) | Retirée sous tout détail cadré ; seule l'illustration détourée qui flotte garde son ombre au sol |
+| N2 | Les mêmes scènes sur deux à cinq pages | Chaque scène entière n'appartient qu'à une page (accueil : le chemin, la halqa, les mains ; Familles : le père et le fils, la mère à la porte ; Cours : l'élève et son enseignante, l'adulte et son enseignante ; Tarifs : l'enseignant qui attend, l'adulte sur son tabouret ; Comment ça marche : l'homme au seuil ; Académie : la boucle, la femme au livre). Ailleurs, des détails serrés, chaque fichier une seule fois. Dix nouveaux détails, chacun recadré par un agent puis relu par un second (personne coupée, aucun éclat d'une autre scène, résolution native) |
+| N3 | Toujours le même cercle | Deux cadres : le cercle (la halqa) et l'arche du symbole, pour les personnes en pied |
+| N4 | Un seul violet du haut en bas | Une section par page passe sur la lavande de la salle, une autre sur le prune profond ; une bande peut être une phrase seule, en grand, sur son fond |
+| N5 | Le mot géant de la bande d'appel sur chaque page | Gardé sur l'accueil ; les pages intérieures ferment sur une bande sobre |
+| N6 | « Les cours en bref » répète le tableau du dessus | Le tableau est retiré de Cours. Les encarts restent tels quels (consigne 3 du 18/10), posés sur le prune, une phrase par ligne |
+| N7 | Deux mises en page côte à côte d'affilée sur Cours | « Apprendre avec un enseignant » devient une bande pleine sur la lavande |
+| N8 | Simulateur : total en petit, tableau à quatre colonnes | Le total en grand, au corps du prix ; une ligne par élève, qui s'empile au téléphone ; l'âge aux boutons moins et plus |
+| N9 | Coupures après un petit mot, dernier mot seul | Texte courant : petits mots liés au mot suivant, fourchettes et unités insécables (« 3 à 5 élèves »), dernier mot jamais seul ; une adresse e-mail garde sa place à la ligne |
+| N10 | Hiérarchie plate au téléphone, petits textes à 12-14 px | Titres de section à 26 px au téléphone ; petits textes à 15 px au moins |
+| N11 | Cartes de prix : un rond décoratif réserve un tiers de la carte | Retiré ; les lignes prennent toute la largeur |
+| N12 | Académie au téléphone : panorama coupé, légende posée dessus | La boucle en haut de page, la légende passe dessous au téléphone |
+
+Contraintes que la recette ne pouvait pas lever : le directeur a fourni treize illustrations, presque toutes des portes (question O-20) ; les encarts du 18/10 se publient tels quels.
+
+Inspection des six pages de la recette après ces corrections : 0 FAIL. Tous les titres de page tiennent en deux lignes de 840 à 1440 px et à 390 px ; à 360 et 320 px, le titre de l'accueil prend quatre lignes, ceux de l'académie et des conditions trois (déjà le cas avant ce lot). Tests : 64, OK.
 
 ## Hors de portée de l'agent
 

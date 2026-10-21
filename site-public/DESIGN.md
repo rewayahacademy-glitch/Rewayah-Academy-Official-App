@@ -23,11 +23,14 @@ Un seul motif : l'arche du symbole (M-21 : l'arche est le livre, la porte ouvert
 - La direction de chaque page tient dans `content/direction.json` : image du haut et son côté, champ, cadre (`libre` pour le panorama), gabarit, images de section, bande d'image, bande d'appel finale.
 - Le haut des pages alterne droite et gauche d'une page à l'autre ; dans une page, les images de section alternent d'une section à l'autre (`alternance()` dans `build_site.py`).
 - Trois hauts de page :
-  - **scène**, le texte sur 5 colonnes et l'illustration en grand sur 7 ;
+  - **scène**, le texte sur 6 colonnes et l'illustration en grand sur 6 ;
   - **panorama**, le titre et sa phrase sur une ligne, l'illustration sur toute la largeur ;
   - **document**, pour les pages légales : le titre traverse la page.
 - Une section sans image garde son titre collé pendant la lecture ; deux sections sans image qui se suivent sont posées côte à côte, en deux champs ; une section avec image pose le texte et la scène côte à côte, dès la tablette.
-- Une illustration ne revient pas deux fois dans une page.
+- Une illustration ne revient pas deux fois dans une page. Une scène entière n'appartient qu'à une page ; ailleurs, un détail serré, dans un cercle (la halqa) ou dans l'arche du symbole (personnes en pied), chaque fichier une seule fois.
+- Fonds (`fonds` dans `direction.json`) : une section par page passe sur la lavande de la salle, une autre sur le prune profond, sur toute la largeur. Une bande sans image est une phrase seule, en grand, sur son fond.
+- Pas d'ombre sous un détail cadré : seule l'illustration détourée qui flotte garde son ombre au sol.
+- La bande d'appel finale porte un mot géant sur l'accueil seulement ; les pages intérieures ferment sur une bande sobre.
 - Téléphone : le texte d'abord, l'image ensuite.
 
 ## Mouvement
