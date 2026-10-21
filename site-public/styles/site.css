@@ -332,6 +332,12 @@ p, li, dd { overflow-wrap: break-word; }
   .chapitres { padding-bottom: var(--e-16); }
   .chapitre:last-child { min-height: 72svh; justify-content: flex-start; padding-top: 14svh; }
   .chapitre__image-mobile { display: none; }
+  /* Les mains sortent par le coin de l'ecran : la manche file hors du bord gauche et son ourlet sous le bas de
+     l'ecran, au lieu d'une petite image fondue au milieu du violet. La fenetre est collee pendant tout ce chapitre :
+     ces deux bords sont toujours ceux de l'ecran. */
+  [data-ambiance="violet"] .chapitres__pile { overflow: visible; }
+  [data-ambiance="violet"] .chapitres__image[data-anime="mains"] { inset: auto auto -4svh calc(-1 * max(var(--marge), (100vw - var(--contenu)) / 2) - 24px); display: block; width: min(calc((100% + max(var(--marge), (100vw - var(--contenu)) / 2) + 24px) * 1.2), 130svh); translate: -15% 13%; }
+  [data-ambiance="violet"] .chapitres__image[data-anime="mains"] .scene__cadre img { -webkit-mask: none; mask: none; }
 }
 
 /* --- Points : la puce est une petite arche ------------------------------------- */
