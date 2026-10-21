@@ -358,6 +358,7 @@ Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 | V3 | Académie : le cercle des dunes occupe tout l'écran du téléphone | 260 px au plus au téléphone, 450 px (sa taille réelle) ailleurs |
 | V4 | Téléphone : la légende « Illustration » colle au titre qui suit | Au moins 30 px entre une légende et le titre suivant, sur toutes les pages, aux trois largeurs |
 | V5 | Téléphone : le pied de page prend un écran et demi | Même contenu, resserré : 1 120 px au lieu de 1 307 |
+| V6 | Directeur (21/10) : « Tu commences à introduire subtilement les arrières plans derrière les objets alors que tout devait flotter » | Le panneau lavande posé derrière la classe vue du dessus (V2) est retiré. Les cadres en cercle et en arche ne peignent plus de fond : ils découpent seulement, et une figure détourée flotte sur la page. Les objets dessinés sont refaits sans disque |
 
 Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 

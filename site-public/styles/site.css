@@ -206,16 +206,15 @@ p { text-wrap: wrap; max-width: 60ch; }
 .scene[data-anime] .scene__cadre { overflow: clip; }
 .scene .scene__calque { position: absolute; inset: 0; width: 100%; height: 100%; }
 /* Gros plans : un cercle (la halqa du symbole), ouvert sur la lumiere de la salle. */
-.scene--cercle .scene__cadre { aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: #EEE6FA; }
+/* Tout flotte (directeur, 21/10) : aucun fond derriere une figure detouree ; le cadre ne fait que decouper. */
+.scene--cercle .scene__cadre { aspect-ratio: 1; border-radius: 50%; overflow: hidden; }
 /* Un detail cadre ne depasse jamais la largeur de son fichier (--natif, pose par le build) : agrandi, il deviendrait flou. */
 .section__figure .scene--cercle, .section__figure .scene--arche, .pleine__image .scene--cercle, .pleine__image .scene--arche, .panneau__arche .scene--cercle { max-width: var(--natif, none); margin-inline: auto; }
 .chapitres__image.scene--cercle > .scene__cadre { max-width: var(--natif, none); }
-.scene--panneau .scene__cadre { display: block; border-radius: var(--r-lg); background: #EEE6FA; padding: 5% 4% 3%; }
-.section__figure:has(.scene--panneau) { width: min(100%, 640px); }
 @media (max-width: 599px) { .pleine__image .scene--cercle { max-width: min(var(--natif, 260px), 260px); } }
 .section__figure:has(.scene--cercle) { background: none; padding: 0; border-radius: 0; }
 /* Details en pied : l'arche du symbole (le haut est un demi-cercle sur toute la largeur), ouverte sur la lumiere. */
-.scene--arche .scene__cadre { aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 40% 40% 0 0; overflow: hidden; background: #EEE6FA; }
+.scene--arche .scene__cadre { aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 40% 40% 0 0; overflow: hidden; }
 .section__figure:has(.scene--arche) { background: none; padding: 0; border-radius: 0; width: min(100%, 460px); }
 /* Un rendu d'un autre style (images.json, taille « detail ») reste a la taille d'un detail : 280 px au telephone, 420 px ailleurs. */
 .section__figure:has(.scene--detail) { width: min(100%, 280px); justify-self: center; margin-inline: auto; }
@@ -1182,7 +1181,6 @@ li, dd { text-wrap: wrap; }
   background: #25113F; color: #FFFFFF;
   --sous: #4E2983; --champ: #4E2983; --champ-fort: #8652E6;
 }
-[data-ambiance="violet"] .fond--lavande .scene--cercle .scene__cadre, [data-ambiance="violet"] .fond--lavande .scene--arche .scene__cadre { background: #FFFFFF; }
 [data-ambiance="violet"] .fond--lavande .section__figure::after, [data-ambiance="violet"] .fond--lavande .pleine__image::after { opacity: .5; }
 [data-ambiance="violet"] .fond--prune .fiche { background: #4E2983; }
 [data-ambiance="violet"] .fond--prune .fiche:nth-child(2) { background: #FFFFFF; color: #25113F; }
@@ -1227,7 +1225,7 @@ li, dd { text-wrap: wrap; }
 /* --- Familles : un gros plan dans une grande arche, qui deborde du bord droit ---------------- */
 .entete-page--haut-gros-plan { padding-bottom: 0; }
 .entete-page__panneau { margin-inline: calc(var(--marge) * -1); }
-.entete-page__panneau .scene__cadre { display: block; aspect-ratio: 1 / 1.08; overflow: hidden; border-radius: 50% 50% 0 0 / 28% 28% 0 0; background: #EEE6FA; }
+.entete-page__panneau .scene__cadre { display: block; aspect-ratio: 1 / 1.08; overflow: hidden; border-radius: 50% 50% 0 0 / 28% 28% 0 0; }
 .entete-page__panneau img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; }
 .entete-page__panneau figcaption { padding-inline-end: var(--marge); }
 @media (min-width: 840px) {

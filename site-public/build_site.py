@@ -298,9 +298,6 @@ def scene(images: dict, ident: str, tailles: str, css: str = "", prioritaire: bo
     # Un rendu d'un autre style (lot 2) se montre comme un detail, pas comme une scene.
     if image.get("taille") == "detail":
         css = f"{css} scene--detail".strip()
-    # Un detoure vu du dessus pose sur un panneau lavande : un sol, au lieu de figures qui flottent dans le violet.
-    if image.get("cadre") == "panneau":
-        css = f"{css} scene--panneau".strip()
 
     def img(nom: str, alt: str, extra: str = "", charge: str = chargement) -> str:
         srcset = ", ".join(f"{ASSETS}/scene-{nom}-{w}.webp {w}w" for w in largeurs)
