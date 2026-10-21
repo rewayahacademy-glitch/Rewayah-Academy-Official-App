@@ -64,6 +64,10 @@ Le référentiel `langues_cours` ne compte que `poular`, `francais` et `english`
 hors référentiel s'importe sous un code de langue neutre (ISO 639), marquée « hors
 référentiel » : elle nourrit la décision d'ouvrir une langue de cours, elle ne
 l'ouvre pas. Tout s'enregistre **par code**, jamais par nom (`CAND-Q15`).
+Quand la direction ajoute une langue à `langues_cours`, elle prend le code de ce
+tableau (l'arabe entre sous `ar`), pour que les valeurs importées et les saisies
+libres s'y rattachent ; un code hors référentiel ne s'affiche jamais tel quel
+(`CORRECTIFS_HORS_MODULE_PROPOSES.md`, section 3).
 
 | Libellé source | Langue | Code proposé | Dans `langues_cours` |
 | :--- | :--- | :--- | :-: |

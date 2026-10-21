@@ -38,6 +38,10 @@ lisible par Claude. Une réponse ne devient une décision qu'une fois versée da
 5. `MAPPAGE_IMPORT_FORMULAIRES.md` : comment chaque colonne et chaque option des
    formulaires Google devient un champ de la candidature (en-têtes et libellés
    seulement, aucune réponse de personne), normalisation des contacts, doublons.
+6. `CORRECTIFS_HORS_MODULE_PROPOSES.md` : les cinq défauts trouvés hors du module
+   (`CAND-Q15`), chacun avec son correctif proposé, sa recette, sa reprise des
+   données, l'ordre d'application et ce que le directeur doit trancher. Rien n'y
+   est appliqué ni rejoué.
 
 ## Règles qui tiennent déjà, quoi que décide le directeur
 

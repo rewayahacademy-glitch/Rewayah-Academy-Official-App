@@ -275,7 +275,9 @@ serveur (`:1-4`).
 ### 3.2 Défauts trouvés en passant, hors du périmètre de ce module
 
 Ils comptent parce que « prêt à être affecté » n'a pas aujourd'hui de chemin
-serveur fiable. Aucun n'est corrigé ici (`CAND-Q15`).
+serveur fiable. Aucun n'est corrigé ici (`CAND-Q15`). Le correctif proposé pour
+chacun, avec sa recette, sa reprise et ce que le directeur doit trancher, est dans
+`CORRECTIFS_HORS_MODULE_PROPOSES.md`.
 
 - **Langue de l'enseignant : nom contre code.** Le client enregistre le **nom**
   d'une langue (« Français »), jamais son code
@@ -934,7 +936,9 @@ propre ; `tool/verifier_jetons.dart` sans violation nouvelle.
    scénarios, puis les écrans.
 4. **Après `CAND-Q05`** : le référentiel de compatibilité de paiement.
 5. **Après `CAND-Q15`**, indépendamment du module : les correctifs courts, la
-   langue enregistrée par son code d'abord.
+   langue enregistrée par son code d'abord, puis l'affectation `c11bis`, puis
+   `creer_groupe` (ordre et raisons dans `CORRECTIFS_HORS_MODULE_PROPOSES.md`,
+   section 2).
 
 Rien d'autre ne commence, et aucun écran ne se branche sur des données fictives
 hors du mode démonstration.
