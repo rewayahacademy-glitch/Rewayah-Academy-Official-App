@@ -15,13 +15,25 @@ consolidée, maquettes et leur contrôle, puis implémentation. Les fiches au
 catalogue (`docs/current/CATALOGUE_ECRANS_RECRUTEMENT.md`, à créer) s'inscrivent
 avant tout fichier `.dart` (section 10 de la revue).
 
+**Réponses du 21/10** (`docs/current/DECISION-CANDIDATURES-2026-10-21.md`) :
+- `CAND-Q02` validée : le lot serveur borné est autorisé sur la base de test ;
+- `CAND-Q04` validée ;
+- principes posés pour `CAND-Q03` (lien public d'inscription), `CAND-Q05`
+  (inscription ouverte à tous les pays, salles 2 et 3 réservées aux personnes
+  que l'académie peut payer) et `CAND-Q06` (pas de WhatsApp, entretien et contact
+  dans l'app) ;
+- `CAND-Q01` reste en discussion ;
+- `CAND-Q07` à `CAND-Q22` attendent.
+
 ## Où le directeur répond
 
 Une page privée reprend les vingt-deux questions, chacune avec sa raison et la
 recommandation : <https://claude.ai/artifact/JVZ8QM5e1ZnEPaiQPHEoEE>. Chaque
 réponse enregistrée y est un document de la collection `reponses` (identifiant
 `CAND-Qnn`, champs `choix` : `valide`, `autre` ou `discuter`, `texte`, `maj`),
-lisible par Claude. Une réponse ne devient une décision qu'une fois versée dans
+lisible par Claude. Les réponses de Claude aux remarques du directeur sont dans la
+collection `retours` (même identifiant, champs `texte` et `maj`) et s'affichent sous
+la question. Une réponse ne devient une décision qu'une fois versée dans
 `docs/current/` avec sa date (règle de `docs/current/08` §1).
 
 ## Ordre de lecture

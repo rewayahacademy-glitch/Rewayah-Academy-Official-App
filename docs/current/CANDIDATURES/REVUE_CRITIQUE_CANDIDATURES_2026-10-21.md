@@ -724,6 +724,13 @@ critère changé après une décision.
 
 ## 9. Questions au directeur
 
+> **Réponses du 21/10** : voir `docs/current/DECISION-CANDIDATURES-2026-10-21.md`.
+> Après les remarques du directeur, les recommandations de `CAND-Q01`, `CAND-Q03`,
+> `CAND-Q05`, `CAND-Q06`, `CAND-Q10`, `CAND-Q17` et `CAND-Q21` ont été révisées
+> dans la page d'arbitrage : plus de WhatsApp, sauf pour envoyer le lien
+> d'inscription à qui n'a pas de courriel. Le tableau ci-dessous garde les
+> recommandations d'origine.
+
 Format du registre de marque (`C/marque/REGISTRE-DECISIONS-MARQUE.md:7-9`) : une
 question ouverte n'est tranchée par aucun agent ; quand le directeur tranche, une
 décision datée est versée dans `docs/current/` et, selon la règle de `C/08` §1,
