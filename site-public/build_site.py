@@ -213,6 +213,9 @@ def load_direction(pages: dict[str, dict]) -> tuple[dict, dict]:
         for ident in (reglage.get("figures") or {}).values():
             if ident not in connues:
                 raise ValueError(f"direction.json names an unknown picture: {ident}")
+        for ident in (reglage.get("portraits") or {}).values():
+            if ident not in connues or not (connues[ident].get("photo") or {}).get("legende"):
+                raise ValueError(f"direction.json: portrait {ident} must be a photo with its legende in images.json")
         for cle in ("image", "bande"):
             valeur = (reglage.get(cle) or {}).get("image") if isinstance(reglage.get(cle), dict) else reglage.get(cle)
             if valeur and valeur not in connues:
@@ -512,9 +515,11 @@ def accueil_chapitres(page: dict, images: dict) -> str:
     s = _sections_par_id(page)
     # Le pere et le fils, la mere a la porte : des details serres ici ; leurs scenes entieres sont a la page Familles.
     chapitres = (("foyer", "detail-main-epaule"), ("cours", "transmission-lavande"), ("suivi", "detail-mere-dos"))
+    # Les mains sont recadrees dans l'arche (object-fit et scale) : dessinees a environ 1 220 px, elles demandent le
+    # grand fichier, et non celui qui suffit a la largeur de la fenetre.
     figures = "".join(
-        scene(images, img, "(max-width: 839px) 92vw, 44vw", "chapitres__image",
-              legende=(i == 0), attributs=f' data-chapitre-image="{i}"')
+        scene(images, img, "(max-width: 839px) 92vw, 1220px" if (images["images"][img].get("calques") or {}).get("anime") == "mains"
+              else "(max-width: 839px) 92vw, 44vw", "chapitres__image", legende=(i == 0), attributs=f' data-chapitre-image="{i}"')
         for i, (_, img) in enumerate(chapitres))
     textes = []
     for i, (sid, _) in enumerate(chapitres):
@@ -861,6 +866,46 @@ def figure_pleine(reglage: dict, images: dict, sid: str) -> str:
             f'{scene(images, ident, "(max-width: 839px) 92vw, 1200px", "section__scene")}</div>')
 
 
+def portrait(images: dict, ident: str, tailles: str) -> str:
+    """Une vraie photo d'une personne, et non une illustration : elle n'est jamais legendee « Illustration »."""
+    image = images["images"][ident]
+    largeurs = image_largeurs(images, ident)
+    grande = largeurs[-1]
+    hauteur = round(image["hauteur"] * grande / image["largeur"])
+    srcset = ", ".join(f"{ASSETS}/scene-{ident}-{w}.webp {w}w" for w in largeurs)
+    return (f'<figure class="portrait"><span class="portrait__cadre"><img src="{ASSETS}/scene-{ident}-{grande}.webp" '
+            f'srcset="{srcset}" sizes="{esc(tailles)}" width="{grande}" height="{hauteur}" alt="{esc(image["alt"])}" '
+            f'decoding="async" loading="lazy"></span><figcaption class="sr-only">{esc(image["photo"]["legende"])}</figcaption></figure>')
+
+
+def section_mot(section: dict, number: int, images: dict, ident: str | None) -> str:
+    """Le mot du directeur : sa photo calee au bord gauche de l'ecran (elle est coupee a gauche), sa parole a cote."""
+    if not ident:
+        raise ValueError(f"Section {section['id']}: a citation needs its portrait in direction.json")
+    sig = section["signature"]
+    citation = "".join(f"<p>{texte_html(p)}</p>" for p in section["citation"])
+    return (f'<section class="mot" id="{esc(section["id"])}" aria-labelledby="heading-{number}">'
+            f'<div class="mot__photo" data-revele>{portrait(images, ident, "(max-width: 839px) 88vw, 42vw")}</div>'
+            f'<div class="mot__texte" data-revele-enfants><h2 id="heading-{number}">{titre_html(section["title"])}</h2>'
+            f'<blockquote class="mot__citation">{citation}</blockquote>'
+            f'<p class="mot__signature"><span class="mot__nom">{esc(sig["nom"])}</span>'
+            f'<span class="mot__role">{esc(sig["role"])}</span></p></div></section>')
+
+
+def section_fondateurs(section: dict, number: int) -> str:
+    """Les fondateurs : le texte de la section, puis un profil par personne (role et diplomes). L'arabe des noms et des
+    diplomes attend le site en arabe (registre de marque, M-29) : on ne melange pas les deux langues sur une page."""
+    profils = []
+    for p in section["profils"]:
+        parcours = "".join(f"<li>{texte_html(l)}</li>" for l in p["parcours"])
+        profils.append(f'<li class="profil"><h3>{titre_html(p["nom"])}</h3><p class="profil__role">{esc(p["role"])}</p>'
+                       f'<ul class="profil__parcours">{parcours}</ul></li>')
+    return (f'<section class="fondateurs" id="{esc(section["id"])}" aria-labelledby="heading-{number}">'
+            f'<div class="fondateurs__tete" data-revele><h2 id="heading-{number}">{titre_html(section["title"])}</h2>'
+            f'<div class="fondateurs__texte">{paragraphes(section)}{liens_section(section)}</div></div>'
+            f'<ul class="profils" data-revele-enfants>{"".join(profils)}</ul></section>')
+
+
 def alternance(reglage: dict):
     """Cote des images de section : la premiere repond au haut de page, les suivantes alternent."""
     cote = "gauche" if reglage.get("cote", "droite") == "droite" else "droite"
@@ -956,7 +1001,13 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
                       + render_section(voisine, i + 1, tarifs, today, avis, "duo", figure_section(reglage, images, voisine["id"])))
             morceaux.append(f'<div class="duo">{cartes}</div>')
             continue
-        if s["id"] in reglage.get("parcours", []) and reglage.get("haut") != "parcours":
+        if s.get("citation"):
+            vider()
+            morceaux.append(section_mot(s, i, images, (reglage.get("portraits") or {}).get(s["id"])))
+        elif s.get("profils"):
+            vider()
+            morceaux.append(section_fondateurs(s, i))
+        elif s["id"] in reglage.get("parcours", []) and reglage.get("haut") != "parcours":
             vider()
             morceaux.append(render_section(s, i, tarifs, today, avis, "parcours"))
         elif not figure and not s.get("generated") and not fond:

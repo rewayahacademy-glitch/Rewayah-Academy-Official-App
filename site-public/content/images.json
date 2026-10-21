@@ -188,7 +188,7 @@
       "source": "13",
       "largeur": 480,
       "hauteur": 600,
-      "alt": "Un homme en longue tunique, un livre à la main, regarde par la porte ouverte des dunes de sable pâle.",
+      "alt": "Un homme en longue tunique, un livre à la main, se tient près d’une porte ouverte et regarde des dunes de sable pâle.",
       "recadrage": [
         220,
         430,
@@ -214,7 +214,7 @@
       "source": "15",
       "largeur": 480,
       "hauteur": 600,
-      "alt": "Une enseignante en hijab sombre lit, assise en tailleur, le livre posé sur son pupitre de lecture.",
+      "alt": "Une enseignante en hijab sombre, assise en tailleur, regarde devant elle, un livre ouvert sur son pupitre de lecture.",
       "recadrage": [
         360,
         500,
@@ -383,7 +383,7 @@
       "source": "02",
       "largeur": 360,
       "hauteur": 450,
-      "alt": "Un parent et son enfant marchent main dans la main sur le chemin violet.",
+      "alt": "Deux enfants, un grand et un plus jeune, marchent main dans la main sur le chemin violet.",
       "recadrage": [
         590,
         760,
@@ -435,7 +435,7 @@
       "source": "01",
       "largeur": 480,
       "hauteur": 600,
-      "alt": "Derrière la porte ouverte, une fillette au voile blanc lit avec son enseignante, assises près d’un pupitre de lecture.",
+      "alt": "Derrière la porte ouverte, une fillette au voile blanc regarde son enseignante, qui pose la main sur le livre ouvert de leur pupitre de lecture.",
       "recadrage": [
         420,
         470,
@@ -667,7 +667,7 @@
       "source": "15",
       "largeur": 480,
       "hauteur": 600,
-      "alt": "Vue de dos, une femme en hijab violet, assise sur un tabouret en bois, un livre sur les genoux, suit le cours.",
+      "alt": "Vue de dos, une femme en hijab violet, assise sur un tabouret en bois, un livre sur les genoux, regarde vers une porte ouverte.",
       "recadrage": [
         0,
         540,
@@ -675,6 +675,15 @@
         1140
       ],
       "forme": "arche"
+    },
+    "portrait-directeur": {
+      "source": "photo fournie par le directeur le 21/10/2026, recadree en 4:5, desaturee vers le noir et blanc : ombres a l’encre de l’app (#110E20), clairs lavande (#F4EEFF), 15 % de gris neutre ; sans metadonnees",
+      "largeur": 1792,
+      "hauteur": 2240,
+      "alt": "Abdoulaye Mouhidine Sow, directeur et fondateur de Rewayah Academy, en calotte brodée et chemise sombre, le regard tourné vers la droite.",
+      "photo": {
+        "legende": "Abdoulaye Mouhidine Sow, directeur et fondateur"
+      }
     }
   }
 }

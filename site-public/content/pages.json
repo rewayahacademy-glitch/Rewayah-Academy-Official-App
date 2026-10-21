@@ -410,7 +410,7 @@
           "title": "Les remises",
           "generated": "remises",
           "paragraphs": [
-            "Les remises sont calculées par élève. La bourse ne se cumule avec aucune autre remise."
+            "La bourse ne se cumule avec aucune autre remise."
           ]
         },
         {
@@ -458,6 +458,19 @@
       "intro": "Rewayah Academy enseigne le Coran en ligne depuis le 1er mai 2024. Chaque élève y apprend en petite classe, avec un enseignant attitré.",
       "sections": [
         {
+          "id": "mot",
+          "title": "Le mot du directeur",
+          "citation": [
+            "Bienvenue chez Rewayah Academy. Je suis Abdoulaye Mouhidine Sow, directeur et fondateur de l’académie.",
+            "Notre objectif est que chacun puisse apprendre le Coran, où qu’il vive et quel que soit son niveau.",
+            "Si vous pouvez apprendre en présentiel, aux côtés d’un enseignant, nous vous y encourageons. Si ce n’est pas possible, des académies en ligne peuvent vous accompagner. La nôtre est l’une d’elles, et nous serions honorés de vous accueillir."
+          ],
+          "signature": {
+            "nom": "Abdoulaye Mouhidine Sow",
+            "role": "Directeur et fondateur"
+          }
+        },
+        {
           "id": "projet",
           "title": "Apprendre avec un enseignant",
           "paragraphs": [
@@ -469,9 +482,34 @@
           "id": "fondateurs",
           "title": "Trois spécialistes du Coran",
           "paragraphs": [
-            "Rewayah Academy a été fondée le 1er mai 2024 par trois spécialistes du Coran et des sciences islamiques : Abdoulaye Mouhidine Sow, son directeur, Mamadou Alimou Diallo et Ahmadou Diallo.",
+            "Rewayah Academy a été fondée le 1er mai 2024 par trois spécialistes du Coran et des sciences islamiques : Abdoulaye Mouhidine Sow, son directeur, Mamadou Alimou Diallo et Ahmad Diallo.",
             "L’idée a été discutée pour la première fois à La Mecque, à la Mosquée sacrée.",
             "Le nom dit le projet : transmettre le savoir tel qu’il a été reçu des anciens, sans l’altérer. Le symbole le montre aussi : le cercle est la halqa, où l’on apprend le Coran ensemble ; l’arche est le livre ; la porte ouverte donne accès à l’enseignement."
+          ],
+          "profils": [
+            {
+              "nom": "Abdoulaye Mouhidine Sow",
+              "role": "Directeur et fondateur",
+              "parcours": [
+                "Master en information et communication.",
+                "Licence en sciences coraniques et islamiques, Université islamique de Médine."
+              ]
+            },
+            {
+              "nom": "Mamadou Alimou Diallo",
+              "role": "Fondateur",
+              "parcours": [
+                "Licence en sciences juridiques, Université islamique de Médine."
+              ]
+            },
+            {
+              "nom": "Ahmad Diallo",
+              "role": "Fondateur",
+              "parcours": [
+                "Licence de l’Université du roi Abdelaziz, à Djeddah.",
+                "Spécialiste des sciences coraniques."
+              ]
+            }
           ]
         },
         {

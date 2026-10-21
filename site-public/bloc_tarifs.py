@@ -337,8 +337,12 @@ def lignes_remises_foyer(politique: dict) -> list[tuple[str, str]]:
             objet = f"Le {fmt_rang(rang)} membre inscrit du foyer, sur sa place."
         else:
             objet = f"Du {fmt_rang(rang)} au {fmt_rang(suivant - 1)} membre inscrit du foyer, sur leur place."
-        valeur = (fmt_pour_mille(r["pourMille"]) if "pourMille" in r
-                  else fmt_montant(-r["montantMineur"], politique["devise"]) + " en moins")
+        if "pourMille" in r:
+            valeur = fmt_pour_mille(r["pourMille"])
+        else:
+            # Le grand chiffre reste un montant ; « en moins » passe dans la phrase.
+            valeur = fmt_montant(-r["montantMineur"], politique["devise"])
+            objet = "En moins pour " + objet[0].lower() + objet[1:]
         lignes.append((objet, valeur))
     return lignes
 
@@ -392,7 +396,7 @@ def lie(phrase: str) -> str:
     phrase = re.sub(rf"(\d+){e}h{e}(\d+)", "\\1\u00a0h\u00a0\\2", phrase)
     phrase = re.sub(rf"(\d+(?:,\d+)?){e}(%|\$){e}(de|d’)(?:{e})?", lambda m: f"{m[1]}\u00a0{m[2]}\u00a0{m[3]}" + ("\u00a0" if m[3] == "de" else ""), phrase)
     phrase = re.sub(rf"(\d+(?:,\d+)?){e}(%|\$)", "\\1\u00a0\\2", phrase)
-    phrase = re.sub(rf"(\d+){e}(élèves|ans|personnes|séances|minutes|min|h|enfants|adultes)\b", "\\1\u00a0\\2", phrase)
+    phrase = re.sub(rf"(\d+){e}(élèves|ans|personnes|séances|minutes|min|h|enfants|adultes|mois|semaines)\b", "\\1\u00a0\\2", phrase)
     phrase = re.sub(rf"(?<![\w’'])(de|à|dès|par|sur){e}(?=\d)", "\\1\u00a0", phrase)
     phrase = re.sub(rf"(?<![\w’'])(le|la|de|du|à|au|en|et|ou|un|ne|ce|se|sa|y|a) (?=\S)", "\\1\u00a0", phrase)
     tete, espace, dernier = phrase.rpartition(" ")
@@ -440,10 +444,10 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
             remises.append((fmt_montant(p["parrainageCreditMineur"], devise),
                             "Parrainage : un crédit pour vous et pour la famille parrainée, après son premier mois."))
         if p["bourse"] and p["bourse"]["pourMille"]:
-            duree = f", revue tous les {p['bourse']['dureeMois']} mois" if p["bourse"]["dureeMois"] else ""
+            # Les mots de encart_remises ; le non-cumul est dit une fois, dans la phrase de la section.
             remises.append((fmt_pour_mille(p["bourse"]["pourMille"]),
                             "Bourse, pour les familles en difficulté et les personnes récemment converties, sur demande"
-                            f" écrite{duree}. Les places sont limitées et la bourse ne se cumule avec aucune autre remise."))
+                            " écrite. Les places sont limitées."))
         liste = ('<ul class="remises">' + "".join(
             f'<li class="remise"><span class="remise__valeur">{esc(v)}</span><span class="remise__objet">{esc(lie(o))}</span></li>'
             for v, o in remises) + "</ul>") if remises else ""

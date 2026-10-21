@@ -216,6 +216,7 @@ Inspection après ces corrections :
 | Recette 13 | 7,77 | 6,2 | 6,3 | « presque » |
 | Recette 14 | 7,72 | 6,2 | 6,17 | « presque » |
 | Recette 15 | 7,42 | 6,07 | 6,17 | « presque » |
+| Recette 16 | 7,7 | 6,33 | 6,33 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -453,6 +454,37 @@ Non repris :
 - La phrase seule proposée pour « Transmettre le savoir » (Académie) : la page tomberait à trois images ; les mains qui tendent le Coran disent cette phrase.
 
 Inspection des six pages après ces corrections : 0 FAIL hors Tarifs (ci-dessus). Avertissements déjà présents avant ce lot : texte blanc sur le violet à 6,5:1, aucune vidéo, marges inégales à 768 px sur Comment ça marche, et la phrase du zoom comptée « sur une image » (la classe vue d'en haut est détourée : son cadre est transparent autour des personnes). Aucune image agrandie, aucun texte coupé au bord de l'écran, aucun mot seul en fin de puce, de 390 à 1440 px. Tests : 64, OK.
+
+**Relecture du code et des textes, puis recette 16.** La relecture du lot de la recette 15 n'a trouvé aucun défaut bloquant (64 tests, 18 pages, toutes les images et tous les liens). Elle a confirmé six défauts, corrigés :
+- les deux prix du haut de Tarifs décalés de 10 à 20 px entre 840 et 1 060 px ;
+- les mains de l'accueil servies dans un fichier deux fois trop petit pour leur cadrage dans l'arche, donc floues ;
+- « 6 mois » coupé en fin de ligne ;
+- la ligne de la bourse, qui allait au-delà de l'encart des remises et redisait le non-cumul ;
+- la phrase « Les remises sont calculées par élève », fausse pour le parrainage (un crédit par famille) ;
+- cinq descriptions d'images qui disaient autre chose que l'image.
+
+Les trois jurés de la recette 16 jugent réglés : les recadrages sans personne, les cadres mêlés dans une rangée, la fenêtre des chapitres, « Les cours en bref ». Leurs relevés communs :
+
+| # | Relevé | Correction |
+|---|---|---|
+| BB1 | Comment ça marche : à côté de l'image, le texte des cartes n'a que 250 px (quatre mots par ligne) | L'image au-dessus du texte à toutes les largeurs ; le texte prend toute la carte (45 à 55 signes) |
+| BB2 | Accueil, tablette et téléphone : la phrase du zoom reste à gauche, en sous-titre | Centrée, à la taille du titre quand chaque vers tient sur une ligne (57 px à 768, 33 px à 390 au lieu de 24) |
+| BB3 | Académie : quatre sections sur le même gabarit ; les mains reprises de l'accueil ; deux cartes empilées en bas | « Transmettre le savoir tel qu'il a été reçu » devient une phrase seule sur la bande sombre ; la société et le contact sont posés sur le fond, sans carte ; le mot du directeur et les profils des fondateurs changent le rythme de la page |
+| BB4 | Tarifs : le simulateur dans une carte sombre, libellés à 15 px | Posé sur le violet, sans carte ; libellés et texte à 20 px |
+| BB5 | Encore huit à dix tailles de texte | L'énoncé de l'accueil passe à la taille du titre (une taille de moins) |
+
+Non repris : une fin de page à grand mot sur chaque page intérieure (le grand mot reste la signature de l'accueil). La répétition des personnages (O-20) demeure.
+
+**Le mot du directeur et les fondateurs (directeur, 21/10/2026).** Sur la page Académie :
+- **Mot de bienvenue.** Il est reformulé à la demande du directeur (doux, sérieux, simple, court) et relu par trois jurés. Il garde ses idées : l'apprentissage ouvert à chacun, le présentiel encouragé quand il est possible, l'académie en ligne comme une solution parmi d'autres.
+- **Photo du directeur.** Elle est calée au bord gauche de l'écran, où elle est coupée, et arrondie en demi-arche en haut à droite. Elle est désaturée vers le noir et blanc : ombres à l'encre de l'app (#110E20), clairs lavande (#F4EEFF), 15 % de gris neutre. Les trois jurés ont classé ce traitement premier parmi quatre. Ses métadonnées sont retirées.
+- **Profils.** Les trois fondateurs ont chacun leur profil, avec leur rôle et leurs diplômes. Le nom du troisième fondateur s'écrit Ahmad Diallo, et non plus Ahmadou.
+- **Arabe.** Les noms et diplômes en arabe sont inscrits au registre de marque (M-29) pour le futur site en arabe, sans être mêlés au français.
+- **Photos des deux autres fondateurs.** Elles sont annoncées mais ne sont pas encore arrivées dans la session.
+
+`site-public/police_arabe.py` refait la police arabe inscrite dans la feuille de style après tout ajout de texte arabe.
+
+Inspection des six pages après ces corrections : 0 FAIL hors Tarifs (une image, voulu). Aucun texte coupé, aucune image agrandie, aucun mot seul. Tests : 64, OK.
 
 ## Hors de portée de l'agent
 
