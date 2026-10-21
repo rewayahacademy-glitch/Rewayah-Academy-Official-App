@@ -317,8 +317,7 @@ def scene(images: dict, ident: str, tailles: str, css: str = "", prioritaire: bo
         couches = img(ident, image["alt"])
     figcaption = '<figcaption>Illustration</figcaption>' if legende else ""
     # La largeur du fichier le plus grand : un detail cadre ne s'affiche jamais plus grand (il deviendrait flou).
-    if image.get("forme") in ("cercle", "arche"):
-        style = (style[:-1] + ";" if style else ' style="') + f'--natif:{grande}px"'
+    style = (style[:-1] + ";" if style else ' style="') + f'--natif:{grande}px"'
     return (f'<figure class="scene {esc(css)}"{style}{anime}{attributs}><span class="scene__cadre">{couches}</span>'
             f'{figcaption}</figure>')
 
@@ -840,8 +839,9 @@ def figure_section(reglage: dict, images: dict, sid: str) -> str:
         return ""
     image = images["images"][ident]
     panorama = " section__figure--panorama" if image["largeur"] / image["hauteur"] > 1.2 else ""
+    tailles = "(max-width: 839px) 92vw, 720px" if panorama else "(max-width: 839px) 86vw, 600px"
     return (f'<div class="section__figure{panorama}" data-revele>'
-            f'{scene(images, ident, "(max-width: 839px) 86vw, 600px", "section__scene")}</div>')
+            f'{scene(images, ident, tailles, "section__scene")}</div>')
 
 
 def figure_pleine(reglage: dict, images: dict, sid: str) -> str:
@@ -1014,8 +1014,10 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     connexion = anchor(NAV[-1][0], NAV[-1][1], "site-header__connexion")
     footer_links = "".join(f"<li>{anchor(label, href, current=href == route)}</li>" for label, href in FOOTER if href.startswith('/fr/legal/') or href in ('/fr/protection-des-enfants', '/fr/accessibilite'))
     discovery_links = "".join(f"<li>{anchor(label, href, current=href == route)}</li>" for label, href in (*NAV[:4], ('Comment ça marche', '/fr/comment-ca-marche'), ('L’académie', '/fr/academie'), ('Avis', '/fr/avis'), ('Aide', '/fr/aide'), ('Recrutement', '/fr/recrutement')))
+    # Le libelle fait partie du lien : au telephone, l'adresse se masque et les quatre libelles tiennent sur deux colonnes.
     contact_links = "".join(
-        f"<li><strong>{esc(label)}</strong>{anchor(site['contacts'][key], 'mailto:' + site['contacts'][key])}</li>"
+        f'<li><a href="mailto:{esc(site["contacts"][key])}"><strong>{esc(label)}</strong>'
+        f'<span class="footer-contacts__adresse">{esc(site["contacts"][key])}</span></a></li>'
         for label, key in CONTACTS
     )
     social_by_href = {item["href"]: item for item in site["social_links"]}

@@ -211,6 +211,7 @@ Inspection après ces corrections :
 | Recette 8 | 7,67 | 6,12 | 6,17 | « presque » |
 | Recette 9 | 6,5 (7,5 sans plafond) | 6,45 | 6,5 | « presque » |
 | Recette 10 | 7,8 | 6,57 | 6,5 | « presque » |
+| Recette 11 | 7,77 | 6,37 | 6,33 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -361,6 +362,19 @@ Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 | V4 | Téléphone : la légende « Illustration » colle au titre qui suit | Au moins 30 px entre une légende et le titre suivant, sur toutes les pages, aux trois largeurs |
 | V5 | Téléphone : le pied de page prend un écran et demi | Même contenu, resserré : 1 120 px au lieu de 1 307 |
 | V6 | Directeur (21/10) : « Tu commences à introduire subtilement les arrières plans derrière les objets alors que tout devait flotter » | Le panneau lavande posé derrière la classe vue du dessus (V2) est retiré. Les cadres en cercle et en arche ne peignent plus de fond : ils découpent seulement, et une figure détourée flotte sur la page. Les objets dessinés sont refaits sans disque |
+
+Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
+
+**Corrections après la recette 11.** Les jurés placent l'accueil au-dessus des deux références ; ce qui retient leur « oui » reste la répétition des personnages (limite des rendus, O-20) et des pages intérieures plus sages que l'accueil.
+
+| # | Relevé | Correction |
+|---|---|---|
+| W1 | Tarifs : l'homme aux dunes coupé au cou dans « Le prix de chaque formule » | Gros plan voulu : les mains et le livre fermé contre la tunique, sans visage (260 px, sa taille réelle) ; sable ramené au lavande |
+| W2 | Académie : le cercle des dunes se lit comme un morceau de mur | Le haut de l'arche faite de pages, sans personne, qui s'efface vers le bas, posé en grand sans fond ajouté |
+| W3 | Académie : la bande « Transmettre le savoir tel qu'il a été reçu » est la section la plus maigre | La phrase passe en taille d'affiche (64 px, deux lignes) à côté du cercle à sa taille réelle |
+| W4 | Familles : la classe vue du dessus, petite ; minuscule à la tablette | 690 px à 1440 ; à la tablette, elle passe sous son texte, à toute la largeur |
+| W5 | Téléphone : le pied de page fait encore 1,3 écran | Les quatre contacts tiennent en deux colonnes (le libellé est le lien ; l'adresse reste visible à partir de 600 px) ; mentions et crédits à 13 px : 941 px au lieu de 1 307 au départ |
+| W6 | La légende « Illustration » change de place d'une image à l'autre | Une seule règle : 13 px, alignée sur le bord droit de son image, à 32 px au moins du titre suivant |
 
 Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 

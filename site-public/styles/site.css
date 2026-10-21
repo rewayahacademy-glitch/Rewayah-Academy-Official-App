@@ -237,7 +237,8 @@ p { text-wrap: wrap; max-width: 60ch; }
 .pause-anim svg { width: 18px; height: 18px; }
 .pause-anim .pause-anim__lecture, .pause-anim[aria-pressed="true"] .pause-anim__pause { display: none; }
 .pause-anim[aria-pressed="true"] .pause-anim__lecture { display: inline; }
-.scene figcaption { font-size: var(--t-petit); color: var(--encre-douce); }
+/* Une seule regle pour la legende « Illustration » : petite, alignee sur le bord droit de son image. */
+.scene figcaption { font-size: 13px; line-height: 1.3; text-align: end; color: var(--encre-douce); }
 
 /* --- Boutons et liens : une seule forme, la pilule ------------------------- */
 .action-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--e-2) var(--e-4); margin-top: var(--e-8); }
@@ -608,8 +609,13 @@ li, dd { text-wrap: wrap; }
   .section--large.section--figure-gauche .section__texte { grid-column: 6 / -1; }
   .section--large.section--figure-gauche .section__figure { grid-column: 1 / span 5; }
   .section--figure .section__figure--panorama { grid-column: 7 / -1; }
-  .section--figure-gauche .section__figure--panorama { grid-column: 1 / span 6; }
+  .section--figure-gauche .section__figure--panorama { grid-column: 1 / span 7; }
   .section--figure-gauche:has(.section__figure--panorama) .section__texte { grid-column: 8 / -1; }
+}
+/* Tablette : une scene en largeur (la classe vue du dessus) passe sous son texte, a toute la largeur de la colonne. */
+@media (min-width: 600px) and (max-width: 839px) {
+  .section--figure:has(.section__figure--panorama) .section__grille { display: block; }
+  .section--figure:has(.section__figure--panorama) .section__figure--panorama { width: 100%; margin-top: var(--e-10); }
 }
 /* Tablette : le texte et sa scene restent cote a cote, la scene ferme la marge. Les tableaux restent pleine largeur. */
 @media (min-width: 600px) and (max-width: 839px) {
@@ -624,7 +630,7 @@ li, dd { text-wrap: wrap; }
 /* Bande pleine : le titre, la grande illustration au centre, le texte en deux colonnes dessous */
 .section--pleine { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; display: grid; gap: var(--e-10); }
 .pleine__tete h2 { max-width: 20ch; }
-.pleine__image .scene { width: min(100%, calc(72svh * var(--ratio, 1))); margin-inline: auto; }
+.pleine__image .scene { width: min(100%, calc(72svh * var(--ratio, 1))); max-width: var(--natif, none); margin-inline: auto; }
 .pleine__image .scene { position: relative; }
 .pleine__image .scene figcaption { position: absolute; inset-inline-end: 0; bottom: calc(var(--e-6) * -1); }
 .pleine__corps { display: grid; gap: var(--e-8); }
@@ -880,7 +886,8 @@ li, dd { text-wrap: wrap; }
 .site-footer a:hover { text-decoration: underline; }
 .footer-contacts { gap: var(--e-3); }
 .footer-contacts strong { display: block; }
-.footer-contacts a { color: var(--sur-pied-doux); overflow-wrap: anywhere; min-height: 32px; }
+.footer-contacts a { display: grid; gap: 2px; align-content: center; color: var(--sur-pied-doux); overflow-wrap: anywhere; min-height: 32px; }
+.footer-contacts a strong { color: var(--sur-pied); }
 .footer-legal ul { display: flex; flex-wrap: wrap; gap: 0 var(--e-6); }
 .footer-bottom { display: grid; gap: var(--e-3); color: var(--sur-pied-doux); }
 .footer-bottom > div { display: grid; gap: var(--e-2); }
@@ -918,7 +925,7 @@ li, dd { text-wrap: wrap; }
   .porte__phrase { display: block; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(26px, 6vw, 40px); line-height: 1.08; letter-spacing: -0.02em; }
   .porte__arche { display: none; }
   .porte__scene { position: relative; width: 150vw; max-width: none; margin-inline-start: -50vw; margin-top: var(--e-6); bottom: 0; }
-  .porte__scene figcaption { inset-inline-end: 50vw; bottom: var(--e-2); }
+  .porte__scene figcaption { inset-inline-end: var(--marge); bottom: var(--e-2); }
 }
 @media (max-width: 599px) {
   .site-header__brand img { height: 36px; }
@@ -1146,8 +1153,10 @@ li, dd { text-wrap: wrap; }
   .site-footer .brand img { width: 176px; margin-bottom: var(--e-4); }
   .site-footer a { min-height: 34px; }
   .footer-title { margin-bottom: var(--e-2); }
-  .footer-contacts { gap: var(--e-2); }
-  .footer-contacts a { min-height: 26px; }
+  .footer-contacts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--e-4); }
+  .footer-contacts a { min-height: 34px; }
+  .footer-contacts__adresse { display: none; }
+  .footer-identity p, .footer-identity address, .footer-legal, .footer-bottom { font-size: 13px; }
   .footer-legal ul { gap: 0 var(--e-4); }
   .footer-bottom a { min-height: 28px; }
 }
@@ -1322,7 +1331,9 @@ li, dd { text-wrap: wrap; }
   .fond > .bande-image--detail { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: center; justify-items: stretch; text-align: start; }
   .bande-image--detail .bande-image__texte { grid-column: 1 / span 7; grid-row: 1; margin-top: 0; }
   .bande-image--detail .bande-phrase__phrase, .bande-image--detail .bande-image__sous { margin-inline: 0; }
-  .bande-image--detail .scene { grid-column: 9 / -1; grid-row: 1; width: 100%; max-width: 420px; justify-self: end; }
+  .bande-image--detail .scene { grid-column: 8 / -1; grid-row: 1; width: 100%; max-width: min(540px, var(--natif, 540px)); justify-self: end; }
+  /* La phrase de la bande porte l'idee de la page : elle passe en taille d'affiche. */
+  .bande-image--detail .bande-phrase__phrase { font-size: clamp(36px, 4.4vw, 64px); max-width: 15ch; }
 }
 .section__titre-plein h2 { max-width: 24ch; margin-bottom: var(--e-6); }
 @media (min-width: 600px) {

@@ -407,14 +407,14 @@
     },
     "detail-mains-livre": {
       "source": "13",
-      "largeur": 380,
-      "hauteur": 380,
-      "alt": "Un homme en longue tunique mauve tient un livre fermé serré contre lui, devant des dunes de sable clair.",
+      "largeur": 260,
+      "hauteur": 260,
+      "alt": "Gros plan : des mains tiennent un livre fermé contre une longue tunique mauve, devant des dunes.",
       "recadrage": [
-        292,
-        562,
-        672,
-        942
+        340,
+        575,
+        600,
+        835
       ],
       "forme": "cercle"
     },
@@ -558,6 +558,18 @@
         30,
         990,
         583
+      ]
+    },
+    "arche-haut": {
+      "source": "12, haut de l’arche sans personne, bas fondu",
+      "largeur": 890,
+      "hauteur": 425,
+      "alt": "Le haut d’une arche faite des pages d’un livre, qui s’efface vers le bas.",
+      "recadrage": [
+        170,
+        15,
+        1060,
+        440
       ]
     }
   }
