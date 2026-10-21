@@ -226,6 +226,13 @@ def formules_editoriales(chemin: Path = TARIFS_FALLBACK) -> dict:
             for nom in ("enfant", "adulte")}
 
 
+def encarts_publics(chemin: Path = TARIFS_FALLBACK) -> dict:
+    """Les textes que la décision du 18/10 (consigne 3) fait publier tels quels sur les cours, les familles et le recrutement.
+    Seule la typographie change : une espace insécable avant « $ » et « % », pour qu'un montant ne se coupe pas."""
+    f = json.loads(chemin.read_text(encoding="utf-8"), object_pairs_hook=_unique_object)
+    return {cle: re.sub(r"(\d) ([$%])", "\\1\u00a0\\2", texte) for cle, texte in f["site_public"].items()}
+
+
 def charger_tarifs(env: dict[str, str] | None = None, ouvrir=None, journal=print) -> tuple[dict, str]:
     """Base d'abord, fichier de la décision sinon. Rend (tarifs, origine)."""
     try:
@@ -361,8 +368,9 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
     if nom == "grille":
         hors_taxes = "hors taxes" if p["horsTaxes"] else "taxes comprises"
         html_ = _tableau(f"Par élève et par mois, {hors_taxes}", ("Formule", "Prix par mois"), lignes_grille(p))
+        # Les monnaies du paiement sont celles de la décision (mentions_sous_la_grille), pas « votre monnaie ».
         notes = [f"Prix en {NOMS_DEVISES.get(devise, devise)}, {hors_taxes}. La taxe de votre pays et le montant"
-                 " dans votre monnaie sont indiqués au paiement."]
+                 " en euros, livres ou dollars canadiens s’affichent au paiement."]
         date_note = note_date_effet(tarifs, aujourdhui)
         if date_note:
             notes.insert(0, date_note)
@@ -412,6 +420,13 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
         return (_tableau("Une classe, un enseignant attitré, une heure fixe", ("Public", "Organisation"), lignes)
                 + f'<p class="price-note">Une classe ouvre dès {c["ouvertureMinimum"]} inscrits. Avant cela, vous êtes'
                   ' en liste d’attente et rien n’est facturé.</p>')
+    if nom == "fiches-eleves":
+        e = encarts_publics()
+        return ('<div class="fiches">'
+                f'<article class="fiche"><h3>Enfants et adolescents</h3><p>{esc(e["encart_enfant"])}</p></article>'
+                f'<article class="fiche"><h3>Adultes</h3><p>{esc(e["encart_adulte"])}</p></article></div>')
+    if nom == "fiche-enseignant":
+        return f'<div class="fiches"><article class="fiche"><p>{esc(encarts_publics()["encart_enseignant"])}</p></article></div>'
     raise ValueError(f"Section générée inconnue : {nom}")
 
 

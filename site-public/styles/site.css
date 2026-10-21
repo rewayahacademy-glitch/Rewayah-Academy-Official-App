@@ -516,6 +516,9 @@ p { text-wrap: pretty; max-width: 60ch; }
   .section__corps { grid-column: 7 / span 6; }
   .section--large .section__titre { grid-column: 1 / span 5; }
   .section--large .section__corps { grid-column: 6 / span 7; }
+  /* Les fiches de la decision prennent toute la largeur, sous leur titre. */
+  .section:has(.fiche + .fiche) .section__titre { grid-column: 1 / -1; grid-row: 1; position: static; }
+  .section:has(.fiche + .fiche) .section__corps { grid-column: 1 / -1; grid-row: 2; max-width: none; }
   .section--figure .section__grille { align-items: center; }
   .section--figure .section__texte { grid-column: 1 / span 6; grid-row: 1; }
   .section--figure .section__figure { grid-column: 8 / -1; grid-row: 1; justify-self: end; margin-top: 0; }
@@ -560,6 +563,15 @@ p { text-wrap: pretty; max-width: 60ch; }
 }
 [data-ambiance="violet"] .carte { background: #4E2983; }
 [data-ambiance="violet"] .carte:nth-child(2) { background: #8652E6; }
+
+/* Fiches de la decision du 18/10 : les textes tels quels, en deux champs */
+.fiches { display: grid; gap: var(--e-4); margin-top: var(--e-6); }
+.fiche { border-radius: var(--r-lg); padding: var(--e-8) var(--e-6); background: var(--sous); }
+.fiche:nth-child(2) { background: var(--champ); }
+.fiche h3 { margin-bottom: var(--e-4); }
+@media (min-width: 840px) { .fiches:has(.fiche + .fiche) { grid-template-columns: repeat(2, minmax(0, 1fr)); } .fiche { padding: var(--e-10) var(--e-8); } }
+[data-ambiance="violet"] .fiche { background: #4E2983; }
+[data-ambiance="violet"] .fiche:nth-child(2) { background: #8652E6; }
 
 /* Bande d'image entre deux sections */
 .bande-image { position: relative; margin: var(--respire) auto 0; padding-inline: var(--marge); max-width: 1440px; }

@@ -480,9 +480,8 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
         pause = f", dont {f['pause_minutes']} min de pause" if f["pause_minutes"] else ""
         return f"Trois séances de {texte} par semaine{pause}"
 
-    def inclus(suivi: str) -> str:
-        lignes = ("Le support de cours affiché pendant la séance", suivi, "Une séance annulée par l’académie est remplacée",
-                  "La première semaine remboursée si le cours ne convient pas")
+    # Ce que le prix comprend : les phrases des encarts de la décision du 18/10 (tarifs.json, site_public).
+    def inclus(*lignes: str) -> str:
         return '<ul class="champ__inclus">' + "".join(f"<li>{esc(l)}</li>" for l in lignes) + "</ul>"
 
     enfant = tarifs_mod.fmt_montant(p["tarifEnfantMineur"], devise)
@@ -495,13 +494,15 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
       <h3>Enfants et adolescents</h3>
       <p class="champ__prix"><span class="champ__montant">{esc(enfant)}</span><span class="champ__periode">par mois, {hors_taxes}</span></p>
       <p class="champ__public">De {tarifs_mod.AGE_ENFANT_MIN} à {age - 1} ans. {esc(duree("enfant"))}, dans une classe de {c["ouvertureMinimum"]} à {c["tailleEnfant"]} élèves.</p>
-      {inclus("Le suivi dans votre espace familial")}
+      {inclus("Le compte rendu de l’enseignant chaque fin de semaine", "L’observation d’une séance, deux minutes, en silence",
+              "Une séance annulée par l’académie est remplacée", "La première semaine remboursée si le cours ne convient pas")}
     </article>
     <article class="champ champ--adulte" data-revele>
       <h3>Adultes</h3>
       <p class="champ__prix"><span class="champ__montant">{esc(adulte)}</span><span class="champ__periode">par mois, {hors_taxes}</span></p>
       <p class="champ__public">{age} ans et plus. {esc(duree("adulte"))}, dans une classe de {c["ouvertureMinimum"]} à {c["tailleAdulte"]} élèves.</p>
-      {inclus("Le suivi de votre parcours dans l’application")}
+      {inclus("Le compte rendu de l’enseignant chaque fin de semaine", "Une séance annulée par l’académie est remplacée",
+              "La première semaine remboursée si le cours ne convient pas", "Résiliable chaque mois")}
     </article>
   </div>
   <div class="deux-champs__pied" data-revele>
@@ -538,10 +539,11 @@ QUESTIONS_ACCUEIL = (
      "Vous choisissez un horaire parmi ceux que nous publions. La direction compose la classe, nomme l’enseignant"
      " et vous écrit à chaque étape. La classe a ensuite un horaire fixe."),
     ("Puis-je observer une séance ?",
-     "Oui, en silence, lorsque l’observation est autorisée : vous écoutez sans activer votre micro ni votre caméra."
+     "Oui, deux minutes par séance, en silence, lorsque l’observation est autorisée : vous écoutez sans activer votre"
+     " micro ni votre caméra."
      " L’enfant et l’enseignant sont informés de votre présence."),
     ("Puis-je m’inscrire pour moi-même ?",
-     "Oui. Vous pouvez vous inscrire à un parcours adulte depuis votre espace familial."),
+     "Oui. Dès 18 ans, la formule adulte vous est ouverte : vous vous inscrivez dans l’application."),
     ("Que se passe-t-il si le cours ne convient pas ?",
      "La première semaine est remboursée en entier si vous arrêtez pendant la semaine qui suit la première"
      " séance. Ensuite, l’abonnement mensuel s’arrête quand vous le souhaitez, à la fin du mois en cours."),
@@ -558,7 +560,7 @@ def accueil_faq(page: dict) -> str:
         for i, (q, r) in enumerate(QUESTIONS_ACCUEIL))
     return f'''<section class="faq-tuiles" id="faq-articles" aria-labelledby="faq-titre">
   <div class="faq-tuiles__tete" data-revele><h2 id="faq-titre">{titre_html(sec["title"])}</h2>{paragraphes(sec)}
-    <ul class="liste-liens"><li>{lien_fleche("Comprendre le déroulement des cours", "/fr/cours")}</li><li>{lien_fleche("Accompagner son enfant", "/fr/familles")}</li><li>{lien_fleche("Consulter l’aide", "/fr/aide")}</li><li>{lien_fleche("Lire les avis des familles", "/fr/avis")}</li></ul></div>
+    <ul class="liste-liens"><li>{lien_fleche("Comprendre le déroulement des cours", "/fr/cours")}</li><li>{lien_fleche("Accompagner son enfant", "/fr/familles")}</li><li>{lien_fleche("Consulter l’aide", "/fr/aide")}</li><li>{lien_fleche("Voir la page des avis", "/fr/avis")}</li></ul></div>
   <div class="faq-tuiles__liste">{tuiles}</div>
 </section>'''
 
