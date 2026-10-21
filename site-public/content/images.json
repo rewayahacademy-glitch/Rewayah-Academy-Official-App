@@ -186,42 +186,42 @@
     },
     "detail-livre-homme": {
       "source": "13",
-      "largeur": 420,
-      "hauteur": 420,
-      "alt": "Gros plan : un homme, un livre à la main, regarde par la porte ouverte sur des dunes.",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Un homme en longue tunique, un livre à la main, regarde par la porte ouverte des dunes de sable pâle.",
       "recadrage": [
-        280,
-        400,
+        220,
+        430,
         700,
-        820
+        1030
       ],
-      "forme": "cercle"
+      "forme": "arche"
     },
     "detail-livre-femme": {
       "source": "10",
-      "largeur": 430,
-      "hauteur": 430,
-      "alt": "Gros plan : une femme tient un livre contre elle, devant une porte ouverte.",
+      "largeur": 540,
+      "hauteur": 675,
+      "alt": "Une femme en hijab violet, un livre à la main, se tient devant une porte ouverte sur des dunes.",
       "recadrage": [
-        0,
-        330,
-        430,
-        760
+        10,
+        470,
+        550,
+        1145
       ],
-      "forme": "cercle"
+      "forme": "arche"
     },
     "detail-pupitre": {
       "source": "15",
-      "largeur": 404,
-      "hauteur": 404,
-      "alt": "Gros plan : une enseignante lit, le livre posé sur son pupitre de lecture.",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Une enseignante en hijab sombre lit, assise en tailleur, le livre posé sur son pupitre de lecture.",
       "recadrage": [
-        290,
-        600,
-        694,
-        1004
+        360,
+        500,
+        840,
+        1100
       ],
-      "forme": "cercle"
+      "forme": "arche"
     },
     "detail-place": {
       "source": "14",
@@ -237,17 +237,17 @@
       "forme": "cercle"
     },
     "detail-coran": {
-      "source": "08 (scène publiée, 1600 px)",
-      "largeur": 808,
-      "hauteur": 808,
-      "alt": "Deux mains aux manches noires tendent un Coran à la couverture violette ornée vers deux mains aux manches blanches qui le reçoivent.",
+      "source": "08",
+      "largeur": 680,
+      "hauteur": 850,
+      "alt": "Deux mains tendent un Coran à la couverture violette à deux autres mains, qui s’apprêtent à le recevoir.",
       "recadrage": [
-        328,
-        310,
-        1136,
-        1118
+        560,
+        420,
+        1240,
+        1270
       ],
-      "forme": "cercle"
+      "forme": "arche"
     },
     "detail-eleve-haut": {
       "source": "06 (scène publiée, 1014 px)",
@@ -355,42 +355,42 @@
     },
     "detail-pupitre-coran": {
       "source": "05",
-      "largeur": 450,
-      "hauteur": 450,
-      "alt": "Vue de dos : une élève en hijab blanc est à genoux devant un Coran ouvert, posé sur un pupitre de lecture en bois.",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Vue de dos, une élève en hijab blanc est à genoux devant un Coran ouvert sur son pupitre de lecture.",
       "recadrage": [
-        20,
-        700,
-        470,
-        1150
+        0,
+        540,
+        480,
+        1140
       ],
-      "forme": "cercle"
+      "forme": "arche"
     },
     "detail-main-epaule": {
       "source": "12",
-      "largeur": 380,
-      "hauteur": 475,
-      "alt": "Un père pose la main sur l’épaule de son fils, qui porte une calotte violette et tient un livre.",
+      "largeur": 540,
+      "hauteur": 675,
+      "alt": "Devant une porte ouverte, un père pose la main sur l’épaule de son fils, qui porte une calotte violette et tient un livre.",
       "recadrage": [
-        106,
-        540,
-        486,
-        1015
+        20,
+        430,
+        560,
+        1105
       ],
       "forme": "arche"
     },
     "detail-famille-chemin": {
       "source": "02",
-      "largeur": 380,
-      "hauteur": 380,
+      "largeur": 360,
+      "hauteur": 450,
       "alt": "Un parent et son enfant marchent main dans la main sur le chemin violet.",
       "recadrage": [
-        576,
-        812,
-        956,
-        1192
+        590,
+        760,
+        950,
+        1210
       ],
-      "forme": "cercle"
+      "forme": "arche"
     },
     "detail-desert": {
       "source": "10",
@@ -433,16 +433,16 @@
     },
     "detail-fille-enseignante": {
       "source": "01",
-      "largeur": 380,
-      "hauteur": 380,
-      "alt": "Dans une pièce claire, une fillette au voile blanc, assise au sol près de son enseignante, la regarde poser la main sur un Coran ouvert sur un pupitre en bois.",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Derrière la porte ouverte, une fillette au voile blanc lit avec son enseignante, assises près d’un pupitre de lecture.",
       "recadrage": [
-        483,
-        644,
-        863,
-        1024
+        420,
+        470,
+        900,
+        1070
       ],
-      "forme": "cercle"
+      "forme": "arche"
     },
     "plan-pere-fils": {
       "source": "12 (rendu d’origine avec son fond, arche harmonisée)",
@@ -636,6 +636,45 @@
         1536
       ],
       "forme": "cercle"
+    },
+    "detail-croisee": {
+      "source": "02",
+      "largeur": 400,
+      "hauteur": 500,
+      "alt": "Au croisement de deux chemins violets, un enseignant assis lit avec un jeune élève, le pupitre de lecture entre eux.",
+      "recadrage": [
+        990,
+        550,
+        1390,
+        1050
+      ],
+      "forme": "arche"
+    },
+    "detail-entree": {
+      "source": "02",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Un jeune garçon en tunique blanche suit le chemin violet et passe la porte d’une arche en forme de livre.",
+      "recadrage": [
+        1520,
+        120,
+        2000,
+        720
+      ],
+      "forme": "arche"
+    },
+    "detail-femme-tabouret": {
+      "source": "15",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Vue de dos, une femme en hijab violet, assise sur un tabouret en bois, un livre sur les genoux, suit le cours.",
+      "recadrage": [
+        0,
+        540,
+        480,
+        1140
+      ],
+      "forme": "arche"
     }
   }
 }

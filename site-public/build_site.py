@@ -533,10 +533,12 @@ def accueil_chapitres(page: dict, images: dict) -> str:
 def accueil_etapes(page: dict, images: dict) -> str:
     """Les tuiles qui grandissent : l'ordre se lit a la taille, sans numeros."""
     sec = _sections_par_id(page)["fonctionnement"]
+    # Trois details du meme chemin (la boucle de la page Academie) : on avance, les chemins se croisent autour d'un
+    # enseignant, puis on passe la porte.
     etapes = (
-        ("detail-place", "Vous choisissez un horaire", "Parmi les horaires publiés, pour votre enfant ou pour vous."),
-        ("detail-porte-lumiere", "La direction compose la classe", "Elle nomme l’enseignant et vous écrit à chaque étape."),
-        ("detail-livre-femme", "La classe commence", "Vous la rejoignez depuis l’application, à son horaire."),
+        ("detail-famille-chemin", "Vous choisissez un horaire", "Parmi les horaires publiés, pour votre enfant ou pour vous."),
+        ("detail-croisee", "La direction compose la classe", "Elle nomme l’enseignant et vous écrit à chaque étape."),
+        ("detail-entree", "La classe commence", "Vous la rejoignez depuis l’application, à son horaire."),
     )
     tuiles = "".join(
         f'<li class="pousse__etape pousse__etape--{i}" data-revele>'
@@ -599,21 +601,23 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
 </section>'''
 
 
-def accueil_confiance(page: dict, images: dict) -> str:
+def accueil_confiance(page: dict) -> str:
+    """Une bande sombre sur toute la largeur : la date en grand, puis les trois engagements cote a cote, sans carte."""
     sec = _sections_par_id(page)["confiance"]
     return f'''<section class="panneau" id="confiance" aria-labelledby="confiance-titre">
   <div class="panneau__in">
-    <div class="panneau__gauche">
-      <h2 id="confiance-titre" data-revele>{titre_html(sec["title"])}</h2>
-      <div class="panneau__arche" data-revele>{scene(images, "detail-famille-chemin", "(max-width: 839px) 86vw, 38vw", "panneau__image")}</div>
+    <div class="panneau__tete" data-revele>
+      <h2 id="confiance-titre">{titre_html(sec["title"])}</h2>
+      <p class="panneau__depuis">{titre_html("Rewayah Academy enseigne le Coran depuis le 1er mai 2024.")}</p>
     </div>
-    <div class="panneau__droite">
-      <p class="panneau__depuis" data-revele>{titre_html("Rewayah Academy enseigne le Coran depuis le 1er mai 2024.")}</p>
-      <div class="panneau__bloc" data-revele><h3>Un programme qui avance</h3><p>{texte_html("Chaque étape a son objectif et sa date limite.")}</p></div>
-      <div class="panneau__bloc" data-revele><h3>Un suivi pour les familles</h3><p>{texte_html("Retrouvez les séances et le travail à préparer dans votre espace familial.")}</p></div>
-      <div class="panneau__bloc" data-revele><h3>Un tuteur pour chaque enfant</h3>{paragraphes(sec)}</div>
-      <div class="action-row" data-revele>{bouton("Découvrir l’académie", "/fr/academie", "contour")}{lien_fleche("Protection des enfants", "/fr/protection-des-enfants")}</div>
-      <p class="panneau__societe">REWAYAH ACADEMY LTD · Société n° 16624644</p>
+    <ul class="panneau__promesses" data-revele-enfants>
+      <li><h3>{titre_html("Un programme qui avance")}</h3><p>{texte_html("Chaque étape a son objectif et sa date limite.")}</p></li>
+      <li><h3>{titre_html("Un suivi pour les familles")}</h3><p>{texte_html("Retrouvez les séances et le travail à préparer dans votre espace familial.")}</p></li>
+      <li><h3>{titre_html("Un tuteur pour chaque enfant")}</h3>{paragraphes(sec)}</li>
+    </ul>
+    <div class="panneau__pied" data-revele>
+      <div class="action-row">{bouton("Découvrir l’académie", "/fr/academie", "contour")}{lien_fleche("Protection des enfants", "/fr/protection-des-enfants")}</div>
+      <p class="panneau__societe">REWAYAH ACADEMY LTD · Société n° 16624644</p>
     </div>
   </div>
 </section>'''
@@ -640,16 +644,16 @@ QUESTIONS_ACCUEIL = (
 
 
 def accueil_faq(page: dict, tarifs: dict) -> str:
+    """Les questions ouvertes, sur deux colonnes : la question en titre, la reponse dessous, sans boite ni signe plus."""
     sec = _sections_par_id(page)["faq-articles"]
     age_adulte = str(tarifs_mod.politique_affichee(tarifs)["ageAdulte"])
-    tuiles = "".join(
-        f'<details class="tuile" name="faq"{" open" if i == 0 else ""}><summary><h3>{esc(q)}</h3>'
-        f'<span class="tuile__signe" aria-hidden="true"></span></summary><div class="tuile__corps"><p>{texte_html(r.replace("{age_adulte}", age_adulte))}</p></div></details>'
-        for i, (q, r) in enumerate(QUESTIONS_ACCUEIL))
-    return f'''<section class="faq-tuiles" id="faq-articles" aria-labelledby="faq-titre">
-  <div class="faq-tuiles__tete" data-revele><h2 id="faq-titre">{titre_html(sec["title"])}</h2>{paragraphes(sec)}
-    <ul class="liste-liens"><li>{lien_fleche("Comprendre le déroulement des cours", "/fr/cours")}</li><li>{lien_fleche("Accompagner son enfant", "/fr/familles")}</li><li>{lien_fleche("Consulter l’aide", "/fr/aide")}</li><li>{lien_fleche("Voir la page des avis", "/fr/avis")}</li></ul></div>
-  <div class="faq-tuiles__liste">{tuiles}</div>
+    questions = "".join(
+        f'<li class="faq-ouverte__question"><h3>{titre_html(q)}</h3><p>{texte_html(r.replace("{age_adulte}", age_adulte))}</p></li>'
+        for q, r in QUESTIONS_ACCUEIL)
+    return f'''<section class="faq-ouverte" id="faq-articles" aria-labelledby="faq-titre">
+  <div class="faq-ouverte__tete" data-revele><h2 id="faq-titre">{titre_html(sec["title"])}</h2><div class="faq-ouverte__intro">{paragraphes(sec)}
+    <ul class="liste-liens"><li>{lien_fleche("Comprendre le déroulement des cours", "/fr/cours")}</li><li>{lien_fleche("Accompagner son enfant", "/fr/familles")}</li><li>{lien_fleche("Consulter l’aide", "/fr/aide")}</li><li>{lien_fleche("Voir la page des avis", "/fr/avis")}</li></ul></div></div>
+  <ul class="faq-ouverte__liste" data-revele-enfants>{questions}</ul>
 </section>'''
 
 
@@ -680,7 +684,7 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str) -> str:
         accueil_chapitres(page, images),
         accueil_etapes(page, images),
         accueil_tarifs(page, tarifs),
-        accueil_confiance(page, images),
+        accueil_confiance(page),
         accueil_faq(page, tarifs),
         bande_finale(fin["title"], (fin.get("paragraphs") or [""])[0] + " Rien n’est facturé avant l’ouverture de la classe.",
                      page["cta"]["label"], page["cta"]["href"], "Commencer"),
@@ -733,7 +737,7 @@ def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str
         notes = "".join(f'<p class="entete-prix__note">{esc(n)}</p>'
                         for n in tarifs_mod.notes_prix(tarifs, today or date.today()))
         return (f'<section class="entete-page entete-page--haut-prix">{texte}'
-                f'<div class="entete-page__arche">{scene(images, reglage["image"], "(max-width: 839px) 60vw, 380px", "entete-page__image", prioritaire=True)}</div>'
+                f'<div class="entete-page__arche">{scene(images, reglage["image"], "(max-width: 839px) 72vw, 480px", "entete-page__image", prioritaire=True)}</div>'
                 f'<div class="entete-prix" data-revele-enfants>{blocs}{notes}</div></section>')
     if haut == "gros-plan":
         # Un gros plan dans une grande arche qui deborde du bord droit : les personnes, pas la porte entiere.

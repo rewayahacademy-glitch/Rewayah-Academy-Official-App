@@ -324,28 +324,22 @@ def prix_apres_remise(prix: int, rang: int, remises: list[dict]) -> int:
     return max(0, prix + applicable["montantMineur"])
 
 
-def lignes_remises_rang(politique: dict) -> list[tuple[str, str]]:
-    """Les lignes « membre du foyer / remise » : la première sans remise, puis une par palier."""
+def lignes_remises_foyer(politique: dict) -> list[tuple[str, str]]:
+    """Les remises du foyer dites en phrase (« Le 2e membre inscrit du foyer, sur sa place. », « 8 % »), une par rang de depart."""
     remises = politique["remisesFoyer"]
-    if not remises:
-        return [("Tous les membres", "Aucune")]
     lignes = []
-    premier = remises[0]["aPartirDuRang"]
-    lignes.append(("1er membre" if premier == 2 else f"1er au {fmt_rang(premier - 1)} membre", "Aucune"))
     for i, r in enumerate(remises):
-        suivant = remises[i + 1]["aPartirDuRang"] if i + 1 < len(remises) else None
         rang = r["aPartirDuRang"]
+        suivant = remises[i + 1]["aPartirDuRang"] if i + 1 < len(remises) else None
         if suivant is None:
-            etiquette = f"{fmt_rang(rang)} membre et suivants"
+            objet = f"Le {fmt_rang(rang)} membre inscrit du foyer et les suivants, sur leur place."
         elif suivant == rang + 1:
-            etiquette = f"{fmt_rang(rang)} membre"
+            objet = f"Le {fmt_rang(rang)} membre inscrit du foyer, sur sa place."
         else:
-            etiquette = f"{fmt_rang(rang)} au {fmt_rang(suivant - 1)} membre"
-        if "pourMille" in r:
-            valeur = fmt_pour_mille(r["pourMille"])
-        else:
-            valeur = fmt_montant(-r["montantMineur"], politique["devise"]) + " en moins"
-        lignes.append((etiquette, valeur))
+            objet = f"Du {fmt_rang(rang)} au {fmt_rang(suivant - 1)} membre inscrit du foyer, sur leur place."
+        valeur = (fmt_pour_mille(r["pourMille"]) if "pourMille" in r
+                  else fmt_montant(-r["montantMineur"], politique["devise"]) + " en moins")
+        lignes.append((objet, valeur))
     return lignes
 
 
@@ -435,51 +429,33 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
         html_ = _tableau(f"Par élève et par mois, {hors_taxes}", ("Formule", "Prix par mois"), lignes_grille(p))
         return html_ + "".join(f'<p class="price-note">{esc(n)}</p>' for n in notes_prix(tarifs, aujourdhui))
     if nom == "remises":
-        parties = [_tableau("Remise selon le rang dans le foyer", ("Rang d’inscription", "Remise"),
-                            lignes_remises_rang(p))]
-        points = []
+        # Chaque remise en grand chiffre, avec ce a quoi elle s'applique dessous : une liste ouverte, sans tableau ni cartes.
+        remises = [(valeur, objet) for objet, valeur in lignes_remises_foyer(p)]
         pre = p["prepaiement"]
         if pre and pre["trimestrielPourMille"]:
-            points.append(f"Paiement au trimestre : {fmt_pour_mille(pre['trimestrielPourMille'])} de remise.")
+            remises.append((fmt_pour_mille(pre["trimestrielPourMille"]), "Paiement au trimestre."))
         if pre and pre["annuelPourMille"]:
-            points.append(f"Paiement à l'année : {fmt_pour_mille(pre['annuelPourMille'])} de remise.")
+            remises.append((fmt_pour_mille(pre["annuelPourMille"]), "Paiement à l'année."))
         if p["parrainageCreditMineur"]:
-            credit = fmt_montant(p["parrainageCreditMineur"], devise)
-            points.append(f"Parrainage : {credit} de crédit pour vous et pour la famille parrainée,"
-                          " après son premier mois.")
+            remises.append((fmt_montant(p["parrainageCreditMineur"], devise),
+                            "Parrainage : un crédit pour vous et pour la famille parrainée, après son premier mois."))
         if p["bourse"] and p["bourse"]["pourMille"]:
             duree = f", revue tous les {p['bourse']['dureeMois']} mois" if p["bourse"]["dureeMois"] else ""
-            points.append(f"Bourse : {fmt_pour_mille(p['bourse']['pourMille'])} de remise pour les familles en difficulté"
-                          f" et les personnes récemment converties, sur demande écrite{duree}."
-                          " Les places sont limitées et la bourse ne se cumule avec aucune autre remise.")
-        if p["cumulMaxPourMille"]:
-            points.append(f"Les remises du foyer, du prépaiement et du parrainage ne dépassent jamais"
-                          f" {fmt_pour_mille(p['cumulMaxPourMille'])} du prix.")
-        liste = ('<ul class="fact-list">' + "".join(f"<li><strong>{esc(lie(t))}</strong></li>" for t in points) + "</ul>"
-                 if points else "")
-        return parties[0] + liste
+            remises.append((fmt_pour_mille(p["bourse"]["pourMille"]),
+                            "Bourse, pour les familles en difficulté et les personnes récemment converties, sur demande"
+                            f" écrite{duree}. Les places sont limitées et la bourse ne se cumule avec aucune autre remise."))
+        liste = ('<ul class="remises">' + "".join(
+            f'<li class="remise"><span class="remise__valeur">{esc(v)}</span><span class="remise__objet">{esc(lie(o))}</span></li>'
+            for v, o in remises) + "</ul>") if remises else ""
+        cumul = (f'<p class="price-note">{esc(lie("Les remises du foyer, du prépaiement et du parrainage ne dépassent jamais " + fmt_pour_mille(p["cumulMaxPourMille"]) + " du prix."))}</p>'
+                 if p["cumulMaxPourMille"] else "")
+        return liste + cumul
     if nom == "famille":
         lignes = [(f"{n} enfant{'s' if n > 1 else ''}", fmt_montant(total, devise))
                   for n, total in famille_enfants(p)]
-        return (_tableau("Total par mois pour une famille d’enfants", ("Inscrits", "Total par mois"), lignes)
+        # Le tableau de la decision du 18/10, pose sans cases ni bandes : le total en grand sur chaque ligne.
+        return (_tableau("Total par mois pour une famille d’enfants", ("Inscrits", "Total par mois"), lignes, "price-table--famille")
                 + '<p class="price-note">Le rang suit l’ordre d’inscription dans le foyer. Montants hors taxes.</p>')
-    if nom == "classes":
-        formules = formules_editoriales()
-        c = p["classes"]
-
-        def ligne(public: str, cle: str, taille: int) -> tuple[str, str]:
-            f = formules[cle]
-            pause = f" dont {f['pause_minutes']} min de pause" if f["pause_minutes"] else ""
-            duree = f["duree_minutes"]
-            heures = f"{duree // 60}\u00a0h" + (f"\u00a0{duree % 60}" if duree % 60 else "") if duree >= 60 else f"{duree}\u00a0min"
-            return public, (f"{f['seances_par_semaine']} séances par semaine, {heures}{pause}, "
-                            f"de {c['ouvertureMinimum']} à {taille} élèves")
-        lignes = [ligne("Enfants et adolescents", "enfant", c["tailleEnfant"]),
-                  ligne("Adultes", "adulte", c["tailleAdulte"])]
-        # Au telephone, le detail d'une classe passe sous son public, sur toute la largeur.
-        return (_tableau("Une classe, un enseignant attitré, une heure fixe", ("Public", "Organisation"), lignes, "price-table--long")
-                + f'<p class="price-note">Une classe ouvre dès {c["ouvertureMinimum"]} inscrits. Avant cela, vous êtes'
-                  ' en liste d’attente et rien n’est facturé.</p>')
     if nom == "fiches-eleves":
         e = encarts_suivis(p)
 

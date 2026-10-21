@@ -215,6 +215,7 @@ Inspection après ces corrections :
 | Recette 12 | 6,8 (7,35 à 7,5 sans plafond) | 6,07 | 6,17 | « presque » |
 | Recette 13 | 7,77 | 6,2 | 6,3 | « presque » |
 | Recette 14 | 7,72 | 6,2 | 6,17 | « presque » |
+| Recette 15 | 7,42 | 6,07 | 6,17 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -429,6 +430,29 @@ Inspection des six pages après ces corrections : 0 FAIL (un recouvrement introd
 Contraintes que la recette ne pouvait pas lever : le directeur a fourni treize illustrations, presque toutes des portes (question O-20) ; les encarts du 18/10 se publient tels quels.
 
 Inspection des six pages de la recette après ces corrections : 0 FAIL. Tous les titres de page tiennent en deux lignes de 840 à 1440 px et à 390 px ; à 360 et 320 px, le titre de l'accueil prend quatre lignes, ceux de l'académie et des conditions trois (déjà le cas avant ce lot). Tests : 64, OK.
+
+**Corrections après la recette 15, sans nouveau rendu.** Les trois jurés placent l'accueil au-dessus des deux références. Ils retiennent leur « oui » à cause des pages intérieures : blocs de kit (cartes, tableaux, pastilles, accordéon), recadrages sans personne lus comme du remplissage, cadres mêlés dans une même rangée, huit à dix tailles de texte.
+
+| # | Relevé | Correction |
+|---|---|---|
+| AA1 | Tarifs : sept écrans de blocs (simulateur, pastilles de remises, trois tableaux, bande des conditions) et trois recadrages sans personne | Une seule image : la scène entière de la place qui attend, à droite des deux prix. Les remises en grands chiffres, chacune avec ce à quoi elle s'applique, sans tableau ni cartes. Le tableau de la famille (décision du 18/10) sans cases ni bandes. Le tableau d'organisation, qui redisait « Les cours en bref », est retiré |
+| AA2 | Portes, coins d'arche et tapis sans personne lus comme du remplissage (accueil, Comment ça marche, Cours, Académie) | Recadrages avec des personnes, taillés dans les rendus du directeur à leur taille réelle. Tuiles de l'accueil : trois moments du chemin de la boucle (on avance, les chemins se croisent autour d'un enseignant, on passe la porte). Comment ça marche : la femme au tabouret, l'enseignant assis, la fillette et son enseignante. Cours : la femme et l'homme au livre, côte à côte, puis deux élèves vus d'en haut. Familles : l'élève à son pupitre, l'enseignante. Académie : les mains qui tendent le Coran, la mère et sa fille. Plus aucune porte ni aucun tapis seul |
+| AA3 | Cadres mêlés dans une même rangée | Un cadre par rôle : l'arche pour les personnes, le cercle pour la seule classe vue d'en haut (la halqa), la scène entière détourée sans cadre. Deux arches côte à côte ont la même taille |
+| AA4 | Accueil : la phrase du zoom plus petite que le titre, à gauche | À la taille du titre (78 px à 1440), centrée au-dessus de la classe vue d'en haut |
+| AA5 | Accueil : la fenêtre des chapitres change de cadre (arche de 380 px, mains détourées dans le coin, arche de 540 px) | Une seule arche pour les trois chapitres, de même taille (540 px à 1440 × 900, 435 px à 1280 × 720) ; le père et le fils sont recadrés plus large dans le même rendu, sans agrandissement ; les mains entrent dans la même arche, sur le sol lavande de leur rendu, et montent toujours vers le Coran |
+| AA6 | Accueil : la moitié basse en kit (carte sombre arrondie avec une image, accordéon en boîtes) | « Accompagné à chaque étape » devient une bande sombre sur toute la largeur, sans image : la date en grand, les trois engagements côte à côte. Les six questions sont ouvertes, sur deux colonnes, sans boîte ni signe plus |
+| AA7 | « Les cours en bref » : une carte violette à côté d'une carte blanche, puces à 15-16 px | Mot pour mot. Deux colonnes égales sur le même fond, sans carte ; les lignes de même rang se font face ; texte à 20 px, ligne du prix à 56 px |
+| AA8 | Huit à dix tailles de texte | Cinq tailles : affiche (96 px), section (56), sous-titre (28), texte (20), petit (15), plus les chiffres des prix. Puces, encarts, étapes, légendes et notes y sont ramenés ; au téléphone, six à huit tailles par page au lieu de dix ou onze |
+
+Chaque rendu ne paraît plus que sur deux des six pages, sauf la classe vue d'en haut (accueil, Familles, Cours), chaque fois sous un autre angle. L'enseignant barbu et l'enseignante aux lunettes violettes figurent dans presque tous les rendus : leur répétition ne se lèvera qu'avec de nouvelles scènes (O-20).
+
+Non repris :
+- Tarifs n'a qu'une image, comme le demandaient les trois jurés. L'inspecteur, qui veut quatre images par page, la signale (FAIL « few-pictures ») : c'est voulu.
+- Les six questions de l'accueil restent six (un juré en proposait trois) : chacune répond à une question des familles.
+- Le simulateur garde son panneau sombre : c'est l'outil de la page.
+- La phrase seule proposée pour « Transmettre le savoir » (Académie) : la page tomberait à trois images ; les mains qui tendent le Coran disent cette phrase.
+
+Inspection des six pages après ces corrections : 0 FAIL hors Tarifs (ci-dessus). Avertissements déjà présents avant ce lot : texte blanc sur le violet à 6,5:1, aucune vidéo, marges inégales à 768 px sur Comment ça marche, et la phrase du zoom comptée « sur une image » (la classe vue d'en haut est détourée : son cadre est transparent autour des personnes). Aucune image agrandie, aucun texte coupé au bord de l'écran, aucun mot seul en fin de puce, de 390 à 1440 px. Tests : 64, OK.
 
 ## Hors de portée de l'agent
 

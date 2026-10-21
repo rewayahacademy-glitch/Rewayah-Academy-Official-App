@@ -1,5 +1,5 @@
 {
-  "description": "Direction artistique par page. Un seul motif : l'arche du symbole (arche en forme de livre, porte ouverte ; décision M-21). image = illustration du haut de page, cote = côté de l'image (on alterne pour ne pas tout poser à droite), champ = couleur du fond du haut de page, cadre = libre pour une image panoramique qui sort par le bord de l'écran au lieu d'une fenêtre en arche, gabarit = composition du corps, figures = une illustration sous le titre d'une section (clé = id de la section), bande = grande image posée entre deux sections, fin = bande d'appel en bas de page (sobre ; le mot géant de la bande reste propre à l'accueil). Les textes de fin ne disent que des faits publiés (liste d'attente non facturée, première semaine remboursée : content/tarifs.json et page Annulation). haut = le haut de page ouvre sur le sujet de la page (texte : les étapes suivent tout de suite ; parcours : les arches du parcours ; prix : les deux prix en grand, avec un détail). duos = deux sections côte à côte, chacune avec son détail. ambiance = clair (fond blanc et lavande) ou violet (fond violet en dégradé léger, demande du directeur du 21/10/2026). pleine = sections posées en bande pleine (titre, grande illustration au centre, texte en deux colonnes dessous), une par page pour casser l'alternance image et texte. parcours = la liste des étapes posée en arches qui montent. fonds = sections posées sur un autre champ, sur toute la largeur (lavande ou prune), une ou deux par page, pour que la page ne soit pas un seul violet. Une bande sans image est une phrase seule, en grand, sur son fond. Chaque illustration entière n'appartient qu'à une page ; ailleurs, un détail serré (cercle ou arche), chaque fichier une seule fois. dessins = schémas dessinés en code (planche de style du 21/10, des points et des formes, jamais des personnes) : false tant que le directeur ne les a pas validés ; à false, aucun schéma n'est posé et la bande garde sa phrase seule.",
+  "description": "Direction artistique par page. Un seul motif : l'arche du symbole (arche en forme de livre, porte ouverte ; décision M-21). image = illustration du haut de page, cote = côté de l'image (on alterne pour ne pas tout poser à droite), champ = couleur du fond du haut de page, cadre = libre pour une image panoramique qui sort par le bord de l'écran au lieu d'une fenêtre en arche, gabarit = composition du corps, figures = une illustration sous le titre d'une section (clé = id de la section), bande = grande image posée entre deux sections, fin = bande d'appel en bas de page (sobre ; le mot géant de la bande reste propre à l'accueil). Les textes de fin ne disent que des faits publiés (liste d'attente non facturée, première semaine remboursée : content/tarifs.json et page Annulation). haut = le haut de page ouvre sur le sujet de la page (texte : les étapes suivent tout de suite ; parcours : les arches du parcours ; prix : les deux prix en grand, avec un détail). duos = deux sections côte à côte, chacune avec son détail. ambiance = clair (fond blanc et lavande) ou violet (fond violet en dégradé léger, demande du directeur du 21/10/2026). pleine = sections posées en bande pleine (titre, grande illustration au centre, texte en deux colonnes dessous), une par page pour casser l'alternance image et texte. parcours = la liste des étapes posée en arches qui montent. fonds = sections posées sur un autre champ, sur toute la largeur (lavande ou prune), une ou deux par page, pour que la page ne soit pas un seul violet. Une bande sans image est une phrase seule, en grand, sur son fond. Chaque illustration entière n'appartient qu'à une page ; ailleurs, un détail serré, chaque fichier une seule fois : l'arche pour les personnes, le cercle pour la seule classe vue d'en haut (la halqa), jamais une porte ou un tapis sans personne (recette 15). dessins = schémas dessinés en code (planche de style du 21/10, des points et des formes, jamais des personnes) : false tant que le directeur ne les a pas validés ; à false, aucun schéma n'est posé et la bande garde sa phrase seule.",
   "ambiance": "violet",
   "dessins": false,
   "pages": {
@@ -14,7 +14,7 @@
         "href": "/connexion"
       },
       "figures": {
-        "profils": "detail-mere-fille",
+        "profils": "detail-pupitre-coran",
         "suivi": "detail-pupitre",
         "organisation": "halqa-cercle"
       },
@@ -41,10 +41,10 @@
         "href": "/connexion"
       },
       "figures": {
-        "objectifs": "detail-desert",
+        "objectifs": "detail-livre-femme",
         "adultes-enfants": "detail-livre-homme",
         "methode": "eleve-enseignante",
-        "groupes": "decor-arche-dessus"
+        "groupes": "detail-deux-eleves"
       },
       "pleine": [
         "methode"
@@ -111,9 +111,9 @@
       },
       "figures": {
         "connexion": "detail-fille-lecture",
-        "propositions": "detail-poignee",
-        "traitement": "detail-boucle",
-        "classe": "detail-lumiere-sol"
+        "propositions": "detail-femme-tabouret",
+        "traitement": "detail-enseignant-place",
+        "classe": "detail-fille-enseignante"
       },
       "fonds": {
         "mineur": "prune"
@@ -121,7 +121,7 @@
       "haut": "texte"
     },
     "/fr/tarifs": {
-      "image": "decor-arche-sombre",
+      "image": "place",
       "cote": "droite",
       "champ": "lavande",
       "fin": {
@@ -130,14 +130,8 @@
         "label": "Commencer mon inscription",
         "href": "/connexion"
       },
-      "figures": {
-        "remises": "decor-tapis-vague",
-        "famille": "arche-haut",
-        "classes": "place"
-      },
-      "pleine": [
-        "classes"
-      ],
+      "figures": {},
+      "pleine": [],
       "fonds": {
         "famille": "lavande",
         "conditions": "prune"
@@ -153,7 +147,7 @@
         "phrase": "Transmettre le savoir tel qu’il a été reçu.",
         "sous": "Le nom Rewayah dit ce projet : transmettre, sans rien altérer.",
         "fond": "prune",
-        "image": "detail-arche-livre"
+        "image": "detail-coran"
       },
       "fin": {
         "titre": "Découvrez les cours.",
@@ -163,11 +157,9 @@
       },
       "figures": {
         "projet": "detail-tabouret",
-        "famille": "decor-tapis-boucle"
+        "famille": "detail-mere-fille"
       },
-      "pleine": [
-        "famille"
-      ],
+      "pleine": [],
       "fonds": {
         "famille": "lavande"
       },
