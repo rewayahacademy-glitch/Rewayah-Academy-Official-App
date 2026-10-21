@@ -206,6 +206,7 @@ Inspection après ces corrections :
 | Recette 5 | 7,28 | 6,4 | 6,33 | « presque » |
 | Recette 6 | 7,33 | 6,13 | 6,17 | « presque » |
 | Recette 7 | 7,72 | 6,27 | 6,33 | « presque » |
+| Recette 8 | 7,67 | 6,12 | 6,17 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -311,6 +312,19 @@ Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 | S7 | Tablette : cartes de prix empilées ; 280 px de vide avant « Commencer » | Cartes de prix côte à côte dès 600 px ; bande d'appel sans hauteur minimale sous 840 px |
 
 Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
+
+**Corrections après la recette 8.** Ce qui retient encore le « oui » des jurés : la répétition des personnages, limite connue des rendus fournis.
+
+| # | Relevé | Correction |
+|---|---|---|
+| T1 | Académie, tablette : le titre des fondateurs tombe sous les noms | Le titre passe au-dessus des deux colonnes dès 600 px |
+| T2 | Tablette : chapitres de l'accueil empilés ; images de Tarifs décalées | Chaque chapitre pose son image à gauche et son texte à droite ; les images des grandes sections de Tarifs sont centrées |
+| T3 | Bord droit du texte trop irrégulier | Seuls les mots d'une ou deux lettres se lient au mot suivant ; « Société n° 16624644 » et « ne convient pas » restent d'un seul tenant |
+| T4 | La mère et la fille sur l'accueil et sur Tarifs | « Ce que coûte une famille » montre la tranche d'un livre fermé, courbée en arche, sans personne (recadrage vérifié par un second agent) |
+
+Trois objets seuls étaient demandés pour Tarifs ; un seul existe dans les rendus. Le pupitre a toujours une personne derrière lui et un livre ouvert dont les lignes se lisent comme du texte. La couverture du livre est tenue par des mains aux quatre coins, et son médaillon porte une écriture. D'où la proposition du 21/10 : dessiner en code les objets et les schémas, et garder les rendus pour les personnes. Une planche de style est soumise au directeur ; rien ne passe sur le site avant son accord.
+
+Inspection de Tarifs après ces corrections : 0 FAIL. Tests : 64, OK.
 
 Contraintes que la recette ne pouvait pas lever : le directeur a fourni treize illustrations, presque toutes des portes (question O-20) ; les encarts du 18/10 se publient tels quels.
 

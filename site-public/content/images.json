@@ -533,6 +533,19 @@
         636
       ],
       "forme": "cercle"
+    },
+    "detail-pages-arche": {
+      "source": "12, sans personne",
+      "largeur": 450,
+      "hauteur": 562,
+      "alt": "La tranche des pages d’un livre fermé, courbée en arche, sous sa couverture violette ; à gauche, la lumière d’une porte ouverte.",
+      "recadrage": [
+        552,
+        118,
+        1002,
+        680
+      ],
+      "forme": "arche"
     }
   }
 }
