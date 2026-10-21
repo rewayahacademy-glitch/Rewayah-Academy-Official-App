@@ -32,7 +32,7 @@ lisible par Claude. Une réponse ne devient une décision qu'une fois versée da
    transitions, plan d'écrans, recette, et les questions au directeur (section 9).
 3. `REWAYAH_CANDIDATURES_SPEC_V1_2026-10-21.md` : la spécification.
 4. `CONTRAT_PORTS_CANDIDATURES.md` et `DEPENDANCES_BACKEND.md` : le contrat
-   attendu des ports et les besoins serveur `CAND-BR-01` à `CAND-BR-15`, préparés
+   attendu des ports et les besoins serveur `CAND-BR-01` à `CAND-BR-16`, préparés
    comme la spec §1.2 le permet, au statut de proposition. Chaque méthode et
    chaque besoin citent la question du directeur dont ils dépendent.
 

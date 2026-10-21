@@ -506,6 +506,7 @@ Un écran lit une capacité, jamais un rôle ; la capacité vient du serveur. Le
 | :--- | :--- | :--- | :--- |
 | `candidatures.lire` | direction, cloisonnée par genre (`CAND-Q07`) | réponses, contrôles, étape, historique | pièce hors ADM-02 |
 | `candidatures.contact` | direction nommée | courriel, téléphone, recherche par téléphone ; chaque lecture journalisée | - |
+| `candidatures.importer` | direction, en double vérification (aal2 exigée en base, sur le modèle de `capacites_import_inscriptions()`) | import, essai à blanc, rapport | réponses d'une candidature hors portée |
 | `candidatures.decider` | direction | transitions, refus, confirmation, lots | - |
 | `entretiens.mener` | intervieweur désigné (`CAND-Q19`) | réponses utiles à l'entretien, date, fuseaux | téléphone, pièce, autres candidatures |
 | `paiement.referentiel.ecrire` | direction, comptabilité | référentiel, compatibilité calculée | réponses de candidature, identité |
@@ -865,7 +866,7 @@ cartes.
 | Un candidat retire sa candidature pendant un entretien planifié | l'entretien est annulé, son issue reste, l'intervieweur le voit |
 | Le texte de l'engagement change de version | les candidats en cours la ré-acceptent avant `confirmee` ; les confirmés gardent la leur |
 | Le fuseau du candidat est inconnu | l'entretien ne se planifie pas ; aucune heure dans un fuseau deviné |
-| Les créneaux importés sont en heure de La Mecque | convertis à l'import, jamais recopiés dans `weekly_availability` |
+| Les créneaux importés sont en heure de La Mecque | conservés comme créneaux récurrents avec leur heure locale et leur fuseau IANA (`Asia/Riyadh` pour A, `UTC` pour B), selon la règle « Fuseaux IANA en stockage, UTC pour les instants » (`C/02_ARCHITECTURE_ET_SECURITE.md:23`) ; jamais convertis en heure absolue, jamais recopiés dans `weekly_availability` |
 
 ---
 
