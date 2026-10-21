@@ -255,9 +255,15 @@ def bouton(label: str, href: str, niveau: str = "plein") -> str:
 
 
 def lien_fleche(label: str, href: str) -> str:
-    return (f'<a class="lien-fleche" href="{esc(href)}"><span>{esc(label)}</span>'
-            '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" '
-            'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>')
+    # La fleche reste collee au dernier mot : un libelle coupe sur deux lignes ne la renvoie pas au bord droit.
+    # Une adresse e-mail garde le droit de se couper : sa fleche reste a cote du libelle.
+    fleche = ('<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" '
+              'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>')
+    tete, espace, dernier = label.rpartition(" ")
+    if "@" in dernier or len(dernier) > 18:
+        return f'<a class="lien-fleche" href="{esc(href)}"><span>{esc(label)}</span>{fleche}</a>'
+    return (f'<a class="lien-fleche" href="{esc(href)}"><span>{esc(tete)}{espace}'
+            f'<span class="lien-fleche__fin">{esc(dernier)}{fleche}</span></span></a>')
 
 
 # --- Images ------------------------------------------------------------------
@@ -320,7 +326,7 @@ def logo_entete(ambiance: str = "clair") -> str:
 
 # --- Sections generiques --------------------------------------------------------
 
-NOMS_A_TRAIT = re.compile(r"\b(A[lnrsz]-[A-ZÀ-Ý][\wÀ-ÿ’']*)")
+NOMS_A_TRAIT = re.compile(r"(?<![\w’'])((?:[dl][’'])?A[lnrsz]-[A-ZÀ-Ý][\wÀ-ÿ’']*)")
 
 
 _PETITS_TEXTE = _PETITS + r"|vous|nous|il|elle|on|ne|ce|ces|cette|leur|leurs|tout|toute|tous|toutes|est|y"
@@ -336,8 +342,20 @@ def texte_html(value: str) -> str:
     # Une adresse e-mail garde sa place a la ligne : elle ne se colle pas au mot qui la precede.
     fin = re.sub(r"\u00a0(?=\S*@)", " ", fin)
     tete, espace, dernier = fin.rpartition(" ")
-    if espace and len(dernier) <= 12 and "@" not in dernier and "@" not in tete.rsplit(None, 1)[-1] and len(tete.split()) >= 3:
+    precedent = tete.rsplit(" ", 1)[-1]
+    # Le dernier mot rejoint le bloc qui le precede si l'ensemble reste court : sinon toute la fin de phrase
+    # (« et son travail à préparer. ») deviendrait un seul bloc et laisserait une ligne courte au-dessus.
+    if (espace and len(dernier) <= 12 and "@" not in dernier and "@" not in precedent and len(tete.split()) >= 3
+            and len(precedent) + 1 + len(dernier) <= 20):
         fin = f"{tete}\u00a0{dernier}"
+    # Un bloc insecable de plus de 24 signes laisse une ligne courte avant lui : on rend ses premieres espaces.
+    blocs = []
+    for bloc in fin.split(" "):
+        while len(bloc) > 24 and "\u00a0" in bloc:
+            debut, bloc = bloc.split("\u00a0", 1)
+            blocs.append(debut)
+        blocs.append(bloc)
+    fin = " ".join(blocs)
     return NOMS_A_TRAIT.sub(r'<span class="insecable">\1</span>', esc(fin))
 
 
@@ -657,7 +675,15 @@ def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str
         return f'<section class="entete-page entete-page--haut-texte">{texte}</section>'
     if haut == "parcours":
         sec = _sections_par_id(page)[reglage["parcours"][0]]
-        arches = "".join(f'<li class="parcours__etape"><span>{texte_html(p)}</span></li>' for p in sec.get("points", []))
+        # Dans chaque arche, ce que l'eleve lit a cette etape, en arabe (decoratif : le libelle francais le dit).
+        arabe = reglage.get("parcours_arabe") or [""] * len(sec.get("points", []))
+        if len(arabe) != len(sec.get("points", [])):
+            raise ValueError(f"direction.json {route}: parcours_arabe needs one entry per step")
+        arches = "".join(
+            '<li class="parcours__etape">'
+            + (f'<span class="parcours__arabe" lang="ar" dir="rtl" aria-hidden="true">{esc(a)}</span>' if a else "")
+            + f'<span>{texte_html(p)}</span></li>'
+            for p, a in zip(sec.get("points", []), arabe))
         return (f'<section class="entete-page entete-page--haut-parcours">{texte}'
                 f'<ol class="parcours parcours--haut" aria-label="{esc(sec["title"])}" data-revele-enfants>{arches}</ol></section>')
     if haut == "prix":
@@ -671,6 +697,10 @@ def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str
         return (f'<section class="entete-page entete-page--haut-prix">{texte}'
                 f'<div class="entete-page__arche">{scene(images, reglage["image"], "(max-width: 839px) 60vw, 380px", "entete-page__image", prioritaire=True)}</div>'
                 f'<div class="entete-prix" data-revele-enfants>{blocs}</div></section>')
+    if haut == "gros-plan":
+        # Un gros plan dans une grande arche qui deborde du bord droit : les personnes, pas la porte entiere.
+        return (f'<section class="entete-page entete-page--haut-gros-plan">{texte}'
+                f'<div class="entete-page__panneau">{scene(images, reglage["image"], "(max-width: 839px) 100vw, 56vw", "entete-page__image", prioritaire=True)}</div></section>')
     image = reglage.get("image")
     cote = reglage.get("cote", "droite")
     champ = reglage.get("champ", "lavande")
@@ -790,6 +820,10 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
             raise ValueError(f"direction.json {route}: a duo names two neighbouring sections, in page order: {duo}")
         if any(d in fonds or d == apres for d in duo):
             raise ValueError(f"direction.json {route}: a duo section cannot carry a fond or a bande: {duo}")
+    if reglage.get("haut") not in (None, "texte", "parcours", "prix", "gros-plan"):
+        raise ValueError(f"direction.json {route}: unknown haut {reglage.get('haut')!r}")
+    if reglage.get("haut") in ("prix", "gros-plan") and not reglage.get("image"):
+        raise ValueError(f"direction.json {route}: haut = {reglage['haut']} needs an image")
     if reglage.get("haut") == "parcours" and len(reglage.get("parcours", [])) != 1:
         raise ValueError(f"direction.json {route}: haut = parcours shows exactly one parcours")
     premiers_duos = {d[0]: d for d in reglage.get("duos", [])}
@@ -1020,17 +1054,20 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
                                            direction, images), encoding="utf-8")
     assets_out = output / "fr" / "assets"
     assets_out.mkdir(parents=True, exist_ok=True)
-    # Un dossier de sortie reutilise ne garde pas une illustration retiree ou re-exportee a une autre largeur.
-    publiees = {source.name for source in (ROOT / "assets").glob("scene-*.webp")}
-    for ancienne in assets_out.glob("scene-*.webp"):
-        if ancienne.name not in publiees:
-            ancienne.unlink()
+    sources = []
     for source_dir in (ROOT / "assets", ROOT / "styles"):
         if source_dir.exists():
             for source in source_dir.iterdir():
                 allowed = COPIED_ASSETS if source_dir.name == "assets" else {".css", ".js"}
                 if source.is_file() and source.suffix.lower() in allowed:
-                    shutil.copy2(source, assets_out / source.name)
+                    sources.append(source)
+    # Un dossier de sortie reutilise ne garde pas un fichier retire (illustration re-exportee, police supprimee).
+    publies = {source.name for source in sources}
+    for ancien in assets_out.iterdir():
+        if ancien.is_file() and ancien.name not in publies:
+            ancien.unlink()
+    for source in sources:
+        shutil.copy2(source, assets_out / source.name)
     if not (assets_out / "site.css").exists():
         raise ValueError("Missing site-public/styles/site.css")
     for route in pages:

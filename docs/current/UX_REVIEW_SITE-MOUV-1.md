@@ -202,6 +202,8 @@ Inspection après ces corrections :
 | Recette 1 | 7,12 | 6,17 | 6,17 | « presque » |
 | Recette 2 | 7,1 | 6,27 | 6,33 | « presque » |
 | Recette 3 | 6,5 (7,1 à 7,5 sans plafond) | 6,5 | 6,5 | « presque » |
+| Recette 4 | 7,28 | 6,3 | 6,32 | « presque » |
+| Recette 5 | 7,28 | 6,4 | 6,33 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -246,6 +248,36 @@ Inspection des 18 pages après ces corrections : 0 FAIL sur les 10 pages de l'of
 | N10 | Hiérarchie plate au téléphone, petits textes à 12-14 px | Titres de section à 26 px au téléphone ; petits textes à 15 px au moins |
 | N11 | Cartes de prix : un rond décoratif réserve un tiers de la carte | Retiré ; les lignes prennent toute la largeur |
 | N12 | Académie au téléphone : panorama coupé, légende posée dessus | La boucle en haut de page, la légende passe dessous au téléphone |
+
+**Corrections après la recette 4.**
+
+| # | Relevé | Correction |
+|---|---|---|
+| P1 | Toutes les pages intérieures s'ouvrent sur la même composition (titre sur deux lignes à côté d'une porte entière) | Un haut de page par sujet : Cours sur les quatre arches du parcours, Tarifs sur ses deux prix, Comment ça marche sur le titre et les étapes juste dessous, Académie sur la boucle en panorama |
+| P2 | Des scènes entières qui reviennent (cercles des chapitres, carte « Accompagné », deux portes entières dans une page) | Sept nouveaux détails serrés, vérifiés par un second agent (main sur l'épaule, famille sur le chemin, désert, mains et livre, deux élèves vus du dessus, fillette et enseignante) |
+| P3 | « 1 h / 30 », puces coupées, lignes courtes forcées, quatrième arche sur quatre lignes | Durées et unités insécables ; libellé de la quatrième arche ramené à trois lignes |
+| P4 | Tableaux du téléphone sur quatre ou cinq lignes ; « Les cours en bref » en deux murs de puces | Tableaux empilés, une ligne de détail pleine largeur ; une carte à la fois derrière un choix Enfants ou Adultes |
+| P5 | Côte-à-côte en chaîne sur Familles et Académie ; colonne vide sous « Les remises » | Familles : deux sections en paire ; remises en deux colonnes sans vide ; phrase de bande centrée |
+| P6 | Titres de page à peine plus grands que les titres de section au téléphone ; petits textes à 13-14 px | Titres de page de 36 à 44 px ; petits textes à 15 px |
+| P7 | Panorama de l'académie coupé au bord du contenu ; cercle « Accompagné » aplati | Le panorama déborde du bord de l'écran ; le cercle est entier |
+
+**Corrections après la recette 5.** Les trois jurés s'accordent : l'accueil est au niveau des deux sites de référence, les pages intérieures pas encore.
+
+| # | Relevé | Correction |
+|---|---|---|
+| Q1 | Familles ouvre encore sur une porte entière et en montre une seconde plus bas | Nouveau haut « gros plan » : une grande arche qui déborde du bord droit, avec un recadrage serré du rendu d'origine 12, son fond et sa lumière au sol, arche harmonisée (`plan-pere-fils`, 865 px, résolution native). « Vous choisissez parmi nos horaires » prend un détail serré de la mère à la porte (`gros-plan-famille`). Familles ne montre plus de porte entière |
+| Q2 | Les mêmes personnages recadrés sur presque chaque page | Corrigé en partie : il n'y a que treize illustrations. Les dix prompts de scènes nouvelles (O-20) attendent la génération par le directeur |
+| Q3 | Lignes courtes forcées, puces coupées à mi-carte, unités séparées, « d'Al-Fatiha » seul | Le texte courant passe en coupure ordinaire : Chrome coupait trop tôt en mode `pretty` (sur l'accueil en grand écran, 38 coupures précoces relevées avant ; 5 après, toutes voulues : titres équilibrés et phrases posées sur deux lignes). Blocs insécables limités à 24 signes. « d'Al-Fatiha » garde son article. Les flèches restent contre leur dernier mot |
+| Q4 | Cartes de prix décalées, trou de 120 px dans la carte Adultes | Les deux cartes partagent leurs lignes (sous-grille) : titres, prix, public et listes commencent à la même hauteur |
+| Q5 | Titre de page 1,3 à 1,4 fois le titre de section au téléphone ; tablette sur une ligne à 30 px | Titres de section à 24 px au téléphone ; titres de page de 41 à 44 px à 390 px (rapport 1,6 à 1,8) ; Académie à 1,42, son titre de 34 signes devant tenir en deux lignes. Tablette : titre de page de 52 à 64 px |
+| Q6 | Toutes les pages intérieures sur la même pile ; côte-à-côte en chaîne sur Cours et Académie | Cours : objectifs et « Enfants et adultes » en paire. Académie : « La famille fait partie du parcours » devient une bande centrée, le cercle au-dessus. Tarifs : le tableau des classes à côté de la porte ; « Question de facturation » rejoint « À savoir », au lieu de deux bandes identiques |
+| Q7 | Arches du haut de Cours vides (environ 300 px de vide) | Chaque arche porte ce que l'élève lit à cette étape : ا ب ت ث, puis بَ بِ بُ, puis القُرْآن, puis الفَاتِحَة. Décoratif (`aria-hidden`), en Noto Sans Arabic, police arabe d'interface de la marque, sous licence OFL. Elle est réduite à ces caractères (4,6 Ko) et inscrite dans la feuille de style : le paquet déployé ne gagne aucun fichier, et le contrôle de `.github/` reste juste |
+| Q8 | Légendes posées sur l'image (haut de Tarifs, troisième arche des étapes) | Une seule règle : sous le cadre, à 8 px, alignée à droite. Vérifié sur six pages et trois largeurs. Seule la porte de l'accueil garde sa légende dans la partie transparente de sa scène détourée |
+| Q9 | Mot géant « Commencer » à 15 px du bouton | 64 px au moins entre le bouton et le mot |
+| Q10 | La tablette est un téléphone étiré | De 600 à 839 px : étapes et paires en deux colonnes, image plafonnée à 300 px ; corps de texte à 18 px. Tarifs : le cercle à côté des deux prix. Pas d'ombre sous un haut de page cadré |
+| Q11 | Tarifs au téléphone : cercle au bord, légende dessus, prix sous la ligne de flottaison | Les deux prix d'abord, le cercle centré ensuite, la légende dessous |
+
+Inspection des six pages après ces corrections, à 1440, 768 et 390 px : 0 FAIL. Restent des WARN : texte blanc sur violet à 6,5:1, aucune vidéo, texte fixe sur l'image de l'accueil (la porte), marges inégales à 768 px. Aucun texte sous 15 px. Tous les titres de page tiennent en deux lignes de 360 à 1440 px ; à 320 px, celui de l'académie en prend trois. Tests : 64, OK.
 
 Contraintes que la recette ne pouvait pas lever : le directeur a fourni treize illustrations, presque toutes des portes (question O-20) ; les encarts du 18/10 se publient tels quels.
 

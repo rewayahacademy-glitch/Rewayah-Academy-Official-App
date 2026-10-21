@@ -3,7 +3,7 @@
   "ambiance": "violet",
   "pages": {
     "/fr/familles": {
-      "image": "pere-fils",
+      "image": "plan-pere-fils",
       "cote": "droite",
       "champ": "lavande",
       "fin": {
@@ -15,7 +15,7 @@
       "figures": {
         "profils": "detail-eleve-haut",
         "suivi": "detail-pupitre",
-        "organisation": "mere-porte"
+        "organisation": "gros-plan-famille"
       },
       "pleine": [
         "organisation"
@@ -29,7 +29,8 @@
           "profils",
           "suivi"
         ]
-      ]
+      ],
+      "haut": "gros-plan"
     },
     "/fr/cours": {
       "image": "eleve-enseignante",
@@ -57,7 +58,19 @@
         "methode": "lavande",
         "en-bref": "prune"
       },
-      "haut": "parcours"
+      "haut": "parcours",
+      "duos": [
+        [
+          "objectifs",
+          "adultes-enfants"
+        ]
+      ],
+      "parcours_arabe": [
+        "ا ب ت ث",
+        "بَ بِ بُ",
+        "القُرْآن",
+        "الفَاتِحَة"
+      ]
     },
     "/fr/comment-ca-marche": {
       "image": "adulte-homme-livre",
@@ -101,9 +114,7 @@
         "famille": "detail-mere-fille",
         "classes": "place"
       },
-      "pleine": [
-        "classes"
-      ],
+      "pleine": [],
       "fonds": {
         "famille": "lavande",
         "conditions": "prune"
@@ -131,7 +142,9 @@
         "fondateurs": "detail-deux-eleves",
         "famille": "detail-fille-enseignante"
       },
-      "pleine": [],
+      "pleine": [
+        "famille"
+      ],
       "fonds": {
         "famille": "lavande"
       },
@@ -174,7 +187,7 @@
         "href": "/fr/cours"
       },
       "figures": {
-        "avis": "gros-plan-pere-fils",
+        "avis": "adulte-femme-livre",
         "transparence": "gros-plan-lecture"
       },
       "bande": {

@@ -22,8 +22,12 @@ Un seul motif : l'arche du symbole (M-21 : l'arche est le livre, la porte ouvert
 
 - La direction de chaque page tient dans `content/direction.json` : image du haut et son côté, champ, cadre (`libre` pour le panorama), gabarit, images de section, bande d'image, bande d'appel finale.
 - Le haut des pages alterne droite et gauche d'une page à l'autre ; dans une page, les images de section alternent d'une section à l'autre (`alternance()` dans `build_site.py`).
-- Trois hauts de page :
+- Hauts de page (`haut` dans `direction.json`) :
   - **scène**, le texte sur 6 colonnes et l'illustration en grand sur 6 ;
+  - **gros plan** (Familles), une grande arche qui déborde du bord droit, avec un recadrage serré du rendu d'origine et son propre fond ;
+  - **parcours** (Cours), les quatre arches qui montent ; dans chacune, ce que l'élève lit à cette étape, en arabe (`parcours_arabe`, décoratif) ;
+  - **prix** (Tarifs), les deux prix en grand ; au téléphone, ils passent avant l'image ;
+  - **texte** (Comment ça marche), le titre à gauche, la phrase et le bouton à droite, les étapes juste dessous ;
   - **panorama**, le titre et sa phrase sur une ligne, l'illustration sur toute la largeur ;
   - **document**, pour les pages légales : le titre traverse la page.
 - Une section sans image garde son titre collé pendant la lecture ; deux sections sans image qui se suivent sont posées côte à côte, en deux champs ; une section avec image pose le texte et la scène côte à côte, dès la tablette.
@@ -31,7 +35,15 @@ Un seul motif : l'arche du symbole (M-21 : l'arche est le livre, la porte ouvert
 - Fonds (`fonds` dans `direction.json`) : une section par page passe sur la lavande de la salle, une autre sur le prune profond, sur toute la largeur. Une bande sans image est une phrase seule, en grand, sur son fond.
 - Pas d'ombre sous un détail cadré : seule l'illustration détourée qui flotte garde son ombre au sol.
 - La bande d'appel finale porte un mot géant sur l'accueil seulement ; les pages intérieures ferment sur une bande sobre.
-- Téléphone : le texte d'abord, l'image ensuite.
+- Téléphone : le texte d'abord, l'image ensuite. Le titre de la page fait 1,6 à 1,8 fois un titre de section (24 px) et tient en deux lignes dès 360 px.
+- Tablette (600 à 839 px) : ce n'est pas un téléphone étiré. Étapes et paires de sections en deux colonnes, image plafonnée, titre de page de 52 à 64 px sur deux lignes.
+- Légende « Illustration » : sous le cadre, à 8 px, alignée à droite, jamais posée sur l'image.
+
+## Texte courant
+
+- Coupure ordinaire (`text-wrap: wrap`), qui remplit chaque ligne. Chrome coupait trop tôt en mode `pretty` : sur l'accueil en grand écran, 38 coupures précoces avant le changement ; 5 après, toutes voulues (titres équilibrés, phrases posées sur deux lignes). `balance` reste réservé aux titres et aux phrases de bande.
+- Espaces insécables posés au build (`texte_html`) : petits mots liés au mot suivant, nombres à leur unité, dernier mot jamais seul. Un bloc insécable ne dépasse pas 24 signes, et le dernier mot ne rejoint le bloc qui le précède que si l'ensemble fait 20 signes au plus.
+- Un lien fléché garde sa flèche contre son dernier mot ; une adresse e-mail garde le droit de se couper.
 
 ## Mouvement
 

@@ -442,22 +442,14 @@
             "Une séance annulée par l'académie est remplacée."
           ],
           "paragraphs": [
-            "La taxe de votre pays et le montant en euros, livres ou dollars canadiens s’affichent au paiement. Les conditions de vente complètes sont dans la page Conditions."
+            "La taxe de votre pays et le montant en euros, livres ou dollars canadiens s’affichent au paiement. Les conditions de vente complètes sont dans la page Conditions.",
+            "Pour une question liée à une facture ou à la facturation, écrivez à invoice@rewayahacademy.com."
           ],
           "links": [
             {
               "label": "Annulation et remboursement",
               "href": "/fr/legal/annulation-remboursement"
-            }
-          ]
-        },
-        {
-          "id": "assistance",
-          "title": "Question de facturation",
-          "paragraphs": [
-            "Pour une question liée à une facture ou à la facturation, écrivez à invoice@rewayahacademy.com."
-          ],
-          "links": [
+            },
             {
               "label": "Écrire au service de facturation",
               "href": "mailto:invoice@rewayahacademy.com"

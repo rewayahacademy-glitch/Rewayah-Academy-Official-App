@@ -443,6 +443,18 @@
         1024
       ],
       "forme": "cercle"
+    },
+    "plan-pere-fils": {
+      "source": "12 (rendu d’origine avec son fond, arche harmonisée)",
+      "largeur": 865,
+      "hauteur": 934,
+      "alt": "Un père, la main sur l’épaule de son fils qui tient un livre, s’arrête avec lui au seuil d’une porte ouverte ; à l’intérieur, l’enseignant lit, assis devant son pupitre.",
+      "recadrage": [
+        1337,
+        452,
+        2202,
+        1386
+      ]
     }
   }
 }

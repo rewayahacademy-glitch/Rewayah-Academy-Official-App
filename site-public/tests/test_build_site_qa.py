@@ -141,6 +141,7 @@ class GeneratedSiteQA(unittest.TestCase):
                 "plus-jakarta-sans-latin.woff2",
                 "dm-sans-OFL.txt",
                 "plus-jakarta-sans-OFL.txt",
+                "noto-sans-arabic-OFL.txt",
             } | scenes,
         )
         self.assertFalse((self.output / "fr" / "assets" / "prototype.html").exists())

@@ -1,3 +1,13 @@
+/* Noto Sans Arabic (OFL, licence dans assets/noto-sans-arabic-OFL.txt), graisse 500, reduite aux quatre
+   echantillons des arches de Cours (4,6 Ko) : inscrite ici, elle n'ajoute aucun fichier au paquet deploye. */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  src: url('data:font/woff2;base64,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') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  unicode-range: U+0600-06FF;
+}
 @font-face {
   font-family: 'DM Sans';
   src: url('../assets/dm-sans-latin-ext.woff2') format('woff2');
@@ -166,7 +176,9 @@ h1, h2, h3 {
 h1 { font-size: var(--t-affiche); line-height: .98; letter-spacing: -0.02em; }
 h2 { font-size: var(--t-titre); line-height: 1.04; letter-spacing: -0.02em; }
 h3 { font-size: var(--t-moyen); line-height: 1.2; letter-spacing: -0.015em; }
-p { text-wrap: pretty; max-width: 60ch; }
+/* Corps de texte : coupure ordinaire, qui remplit chaque ligne. Les espaces insécables
+   (texte_html) tiennent le dernier mot et les petits mots ; « pretty » coupait trop tôt. */
+p { text-wrap: wrap; max-width: 60ch; }
 ::selection { background: var(--champ-fort); color: var(--encre); }
 :focus-visible { outline: 2px solid var(--encre-accent); outline-offset: 3px; border-radius: 4px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
@@ -234,10 +246,12 @@ p { text-wrap: pretty; max-width: 60ch; }
 .cta--secondary { background: transparent; color: var(--encre); border-color: var(--contour); }
 .cta--secondary:hover { background: var(--champ); color: var(--encre); }
 .lien-fleche { display: inline-flex; align-items: center; gap: var(--e-2); min-height: 48px; font-weight: 600; text-decoration: none; color: var(--encre); }
-.lien-fleche span { position: relative; }
-.lien-fleche span::after { content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; border-radius: 2px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform var(--mv-apparition) var(--mv-entree); }
+.lien-fleche > span { position: relative; }
+.lien-fleche__fin { white-space: nowrap; }
+.lien-fleche__fin svg { display: inline-block; vertical-align: -4px; margin-inline-start: var(--e-2); }
+.lien-fleche > span::after { content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; border-radius: 2px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform var(--mv-apparition) var(--mv-entree); }
 .lien-fleche svg { transition: transform var(--mv-micro) var(--mv-entree); }
-.lien-fleche:hover span::after { transform: scaleX(1); }
+.lien-fleche:hover > span::after { transform: scaleX(1); }
 .lien-fleche:hover svg { transform: translateX(4px); }
 .section-links { display: flex; flex-wrap: wrap; gap: 0 var(--e-8); margin-top: var(--e-6); }
 .text-link { font-weight: 600; }
@@ -314,7 +328,7 @@ p { text-wrap: pretty; max-width: 60ch; }
 
 /* --- Chapitres : la porte reste, ceux qui viennent changent ------------------- */
 p, li, dd { overflow-wrap: break-word; }
-li, dd { text-wrap: pretty; }
+li, dd { text-wrap: wrap; }
 .appel__phrase { overflow-wrap: anywhere; }
 .section__grille > *, .contact-ligne > *, .entete-page > *, .groupe > *, .faq-tuiles > * { min-width: 0; }
 .chapitres { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); padding: 0 var(--marge) var(--respire); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
@@ -361,10 +375,12 @@ li, dd { text-wrap: pretty; }
 .pousse__etape--0 .pousse__tuile { background: var(--champ); height: 52vw; }
 .pousse__etape--1 .pousse__tuile { background: var(--champ-fort); height: 66vw; }
 .pousse__etape--2 .pousse__tuile { background: var(--marque); height: 82vw; }
-.pousse__image { width: 100%; }
-.pousse__tuile { position: relative; }
-.pousse__image figcaption { position: absolute; inset-inline-end: 0; top: 0; color: var(--sur-marque); }
-.pousse__etape h3 { margin-top: var(--e-5); }
+.pousse__image { width: min(100%, 60vw); }
+.pousse__tuile { position: relative; overflow: visible; }
+/* La legende sort de l'arche : 8 px sous la tuile, a droite, dans l'espace du titre de l'etape. */
+.pousse__image { position: static; }
+.pousse__image figcaption { position: absolute; inset-inline-end: 0; top: calc(100% + var(--e-2)); }
+.pousse__etape h3 { margin-top: var(--e-10); }
 .pousse__etape p { margin-top: var(--e-2); max-width: 32ch; }
 @media (min-width: 840px) {
   .pousse__entete { grid-column: 1 / -1; grid-row: 1; display: grid; grid-template-columns: subgrid; align-items: end; }
@@ -395,7 +411,7 @@ li, dd { text-wrap: pretty; }
 .deux-champs__grille { display: grid; gap: var(--e-4); padding-inline: var(--marge); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
 .champ { position: relative; display: flex; flex-direction: column; min-height: 0; padding: var(--e-10) var(--e-6); overflow: hidden; border-radius: var(--r-lg); }
 .champ h3 { font-size: var(--t-titre); line-height: 1.04; letter-spacing: -0.02em; }
-.champ__public { margin-top: var(--e-4); max-width: 32ch; }
+.champ__public { margin-top: var(--e-4); max-width: 44ch; }
 .champ__prix { margin-top: var(--e-8); display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--e-3); }
 .champ__inclus { margin-top: auto; padding-top: var(--e-10); display: grid; gap: var(--e-3); max-width: none; list-style: none; }
 .champ__inclus li { padding-inline-start: 1.4em; position: relative; }
@@ -407,8 +423,11 @@ li, dd { text-wrap: pretty; }
 .deux-champs__pied { padding: var(--e-10) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
 .deux-champs__pied p { max-width: 60ch; }
 @media (min-width: 840px) {
-  .deux-champs__grille { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-6); }
-  .champ { min-height: 64svh; padding: var(--e-12) var(--e-10); }
+  /* Les deux cartes partagent leurs lignes : titres, prix, public et listes commencent a la meme hauteur. */
+  .deux-champs__grille { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto auto 1fr; column-gap: var(--e-6); }
+  .champ { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; align-content: start; min-height: 64svh; padding: var(--e-12) var(--e-10); }
+  .champ h3 { align-self: end; }
+  .champ__inclus { margin-top: 0; align-self: start; }
 }
 
 /* --- Panneau sombre en retrait ---------------------------------------------- */
@@ -468,7 +487,7 @@ li, dd { text-wrap: pretty; }
 .appel__haut { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--e-2); max-width: calc(var(--contenu)); width: 100%; margin-inline: auto; padding-top: var(--e-10); text-align: center; justify-items: center; }
 .appel__haut h2 { font-size: var(--t-titre); color: inherit; max-width: 100%; text-wrap: balance; }
 .appel__phrase { font-size: var(--t-corps); max-width: 46ch; padding-inline: var(--e-2); }
-.appel__mot { align-self: end; justify-self: center; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: clamp(64px, 15vw, 232px); line-height: .82; letter-spacing: -0.04em; white-space: nowrap; transform: translateY(calc((1 - var(--v, 1)) * 16px)); }
+.appel__mot { align-self: end; justify-self: center; margin-top: var(--e-16); font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: clamp(64px, 15vw, 232px); line-height: .82; letter-spacing: -0.04em; white-space: nowrap; transform: translateY(calc((1 - var(--v, 1)) * 16px)); }
 .appel__bouton { display: inline-flex; align-items: center; gap: var(--e-2); margin-top: var(--e-6); min-height: 52px; padding-inline: var(--e-6); border-radius: var(--r-full); background: var(--sur-marque); color: var(--marque); font-weight: 600; font-size: var(--t-corps); transition: transform var(--mv-retour) var(--mv-entree); }
 .appel__lien:hover .appel__bouton svg { transform: translateX(4px); }
 .appel__bouton svg { transition: transform var(--mv-micro) var(--mv-entree); }
@@ -492,9 +511,8 @@ li, dd { text-wrap: pretty; }
 /* Tablette : l'illustration du haut prend toute la largeur du cadre (la regle vient apres la regle de base). */
 @media (min-width: 600px) and (max-width: 839px) { .entete-page__arche, .entete-page--document .entete-page__arche { width: 100%; } }
 .entete-page__image { transform: translateY(calc(var(--par, 0) * -1px)); }
-.entete-page__image figcaption { position: absolute; inset-inline-end: 0; bottom: var(--e-3); }
-/* Une image panoramique en haut de page : sa legende passe dessous, au lieu de se poser sur le chemin. */
-@media (max-width: 839px) { .entete-page--libre .entete-page__image figcaption { position: static; margin-top: var(--e-2); text-align: end; } }
+/* La legende passe sous le cadre, a 8 px, alignee a droite : jamais posee sur l'image. */
+.entete-page__image figcaption { position: static; margin-top: var(--e-2); text-align: end; }
 .entete-page--sobre { min-height: 0; padding-bottom: var(--e-12); background: var(--fond); }
 .entete-page--sobre h1 { max-width: 22ch; }
 .entete-page__ornement { position: absolute; inset-inline-end: 6vw; top: 50%; translate: 0 -46%; width: clamp(120px, 16vw, 240px); opacity: .14; pointer-events: none; }
@@ -723,7 +741,7 @@ li, dd { text-wrap: pretty; }
 .contact-ligne { display: grid; gap: var(--e-3); }
 .contact-ligne h2 { font-size: var(--t-moyen); line-height: 1.2; }
 .contact-ligne .section-links { margin-top: var(--e-2); }
-.contact-ligne .lien-fleche span { font-size: var(--t-moyen); font-family: 'DM Sans', sans-serif; font-weight: 600; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+.contact-ligne .lien-fleche > span { font-size: var(--t-moyen); font-family: 'DM Sans', sans-serif; font-weight: 600; letter-spacing: -0.02em; overflow-wrap: anywhere; }
 @media (min-width: 600px) {
   .contact-ligne { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: baseline; }
   .contact-ligne h2 { grid-column: 1 / span 4; }
@@ -982,7 +1000,7 @@ li, dd { text-wrap: pretty; }
 [data-ambiance="violet"] .section__figure { background: none; padding: 6% 0 0; }
 [data-ambiance="violet"] .section__figure::after,
 [data-ambiance="violet"] .entete-page__arche::after { content: ''; position: absolute; z-index: -1; left: 12%; right: 12%; bottom: -1%; height: 9%; border-radius: 50%; background: radial-gradient(closest-side, rgb(37 17 63 / .5), rgb(37 17 63 / 0)); }
-[data-ambiance="violet"] .entete-page--libre .entete-page__arche::after { display: none; }
+[data-ambiance="violet"] .entete-page--libre .entete-page__arche::after, [data-ambiance="violet"] .entete-page__arche:has(.scene--cercle, .scene--arche)::after { display: none; }
 [data-ambiance="violet"] .section__figure--panorama::after { display: none; }
 [data-ambiance="violet"] .section__figure:has(.scene--cercle, .scene--arche)::after { display: none; }
 /* Etapes, tuiles et prix : du plus profond au plus clair, comme une progression. */
@@ -992,7 +1010,7 @@ li, dd { text-wrap: pretty; }
 [data-ambiance="violet"] .pousse__etape--2 .pousse__tuile { background: #BA98FB; }
 [data-ambiance="violet"] .tuile[open] { background: #8652E6; }
 [data-ambiance="violet"] .panneau__in { background: #25113F; }
-[data-ambiance="violet"] .pousse__image figcaption { color: #25113F; }
+[data-ambiance="violet"] .pousse__image figcaption { color: inherit; }
 
 /* --- Hauts de page qui ouvrent sur le sujet de la page -------------------------------
    Familles garde sa porte ; Cours s'ouvre sur les quatre arches du parcours, Tarifs sur ses deux prix,
@@ -1004,7 +1022,7 @@ li, dd { text-wrap: pretty; }
 .entete-prix__bloc + .entete-prix__bloc { background: var(--marque); color: var(--sur-marque); }
 .entete-prix__montant { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .entete-prix__periode { font-weight: 600; }
-.entete-page--haut-prix .entete-page__arche { width: min(70%, 320px); justify-self: end; }
+.entete-page--haut-prix .entete-page__arche { width: min(80%, 320px); justify-self: center; }
 @media (min-width: 840px) {
   /* Le titre a gauche, sa phrase et son bouton a droite : le sujet de la page monte dans le premier ecran. */
   .entete-page--haut-texte .entete-page__texte, .entete-page--haut-parcours .entete-page__texte { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: end; row-gap: var(--e-6); }
@@ -1041,7 +1059,8 @@ li, dd { text-wrap: pretty; }
 .duo__carte h2 { font-size: clamp(26px, 2.6vw, 40px); margin-bottom: var(--e-6); max-width: 18ch; }
 .duo__carte p + p { margin-top: var(--e-4); }
 .duo__carte .points, .duo__carte .section-links { margin-top: var(--e-6); }
-@media (min-width: 840px) { .duo { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-12); align-items: start; } .duo__carte:nth-child(2) { margin-top: var(--e-16); } }
+@media (min-width: 600px) { .duo { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-8); align-items: start; } .duo__carte:nth-child(2) { margin-top: var(--e-16); } }
+@media (min-width: 840px) { .duo { column-gap: var(--e-12); } }
 
 /* --- Fiches du 18/10 au telephone : un choix Enfants / Adultes, une fiche a la fois -------- */
 .fiches__choix { display: none; }
@@ -1070,9 +1089,16 @@ li, dd { text-wrap: pretty; }
 
 /* --- Telephone : le titre de la page mene, la section suit ; le pied de page en deux colonnes --- */
 @media (max-width: 599px) {
-  .entete-page:not(.entete-page--document) h1 { font-size: clamp(36px, 10.2vw, 44px); }
-  .entete-page:not(.entete-page--document) .entete-page__texte--long h1 { font-size: clamp(32px, 9.6vw, 40px); }
-  .entete-page:not(.entete-page--document) .entete-page__texte--tres-long h1 { font-size: clamp(28px, 8.2vw, 34px); }
+  /* Le titre de la page fait 1,6 a 1,8 fois un titre de section, et tient en deux lignes des 360 px. */
+  :root { --t-titre: 24px; }
+  /* Tarifs : les deux prix d'abord, la question de la page ; le cercle ensuite. */
+  .entete-page--haut-prix .entete-prix { order: 2; }
+  .entete-page--haut-prix .entete-page__arche { order: 3; }
+  .chapitre h2 { font-size: 26px; }
+  .duo__carte h2 { font-size: var(--t-titre); }
+  .entete-page:not(.entete-page--document) h1 { font-size: clamp(36px, 11.6vw, 48px); }
+  .entete-page:not(.entete-page--document) .entete-page__texte--long h1 { font-size: clamp(32px, 10.6vw, 44px); }
+  .entete-page:not(.entete-page--document) .entete-page__texte--tres-long h1 { font-size: clamp(28px, 8.6vw, 34px); }
   .site-footer__inner > nav:not(.footer-legal) ul { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-4); }
 }
 
@@ -1080,7 +1106,7 @@ li, dd { text-wrap: pretty; }
 @media (min-width: 840px) {
   .entete-page--libre:has(.scene:not([data-anime])) .entete-page__arche { margin-inline-end: calc(-1 * max(var(--marge), (100vw - var(--contenu)) / 2) - 24px); width: calc(100% + max(var(--marge), (100vw - var(--contenu)) / 2) + 24px); }
   /* La legende reste dans la marge de la page, pas dans le debord. */
-  .entete-page--libre:has(.scene:not([data-anime])) .entete-page__image figcaption { inset-inline-end: calc(max(var(--marge), (100vw - var(--contenu)) / 2) + 24px); }
+  .entete-page--libre:has(.scene:not([data-anime])) .entete-page__image figcaption { padding-inline-end: calc(max(var(--marge), (100vw - var(--contenu)) / 2) + 24px); }
 }
 
 /* --- Phrase seule : centree, elle ne laisse pas une moitie d'ecran vide -------------------- */
@@ -1125,4 +1151,49 @@ li, dd { text-wrap: pretty; }
   .porte { height: auto !important; }
   .appel__lien { min-height: 0; border-radius: 0; }
   a[href^="http"]::after, a[href^="mailto:"]::after { content: " (" attr(href) ")"; font-size: .85em; }
+}
+
+/* --- Familles : un gros plan dans une grande arche, qui deborde du bord droit ---------------- */
+.entete-page--haut-gros-plan { padding-bottom: 0; }
+.entete-page__panneau { margin-inline: calc(var(--marge) * -1); }
+.entete-page__panneau .scene__cadre { display: block; aspect-ratio: 1 / 1.08; overflow: hidden; border-radius: 50% 50% 0 0 / 28% 28% 0 0; background: #EEE6FA; }
+.entete-page__panneau img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; }
+.entete-page__panneau figcaption { padding-inline-end: var(--marge); }
+@media (min-width: 840px) {
+  .entete-page--haut-gros-plan { min-height: min(100svh, 940px); align-items: stretch; }
+  .entete-page--haut-gros-plan .entete-page__texte { grid-column: 1 / span 6; align-self: center; padding-bottom: var(--e-12); }
+  .entete-page--haut-gros-plan .entete-page__panneau { grid-column: 7 / -1; grid-row: 1; display: flex; margin-inline: 0 calc(-1 * max(var(--marge), (100vw - var(--contenu)) / 2)); }
+  .entete-page__panneau .entete-page__image { flex: 1; display: flex; flex-direction: column; transform: none; }
+  .entete-page__panneau .scene__cadre { flex: 1; aspect-ratio: auto; min-height: 0; border-radius: min(26vw, 380px) 0 0 0 / min(22vw, 320px) 0 0 0; }
+  .entete-page__panneau figcaption { padding-inline-end: max(var(--marge), (100vw - var(--contenu)) / 2); padding-bottom: var(--e-2); }
+}
+
+/* --- Tablette : le titre de la page sur deux lignes, en grand, au lieu d'une ligne de telephone --- */
+@media (min-width: 600px) and (max-width: 839px) {
+  .entete-page:not(.entete-page--document) h1, .entete-page:not(.entete-page--document) .entete-page__texte--long h1 { font-size: clamp(52px, 7.6vw, 64px); }
+  .entete-page:not(.entete-page--document) .entete-page__texte--tres-long h1 { font-size: clamp(48px, 7vw, 56px); }
+  .porte__texte h1 { font-size: clamp(52px, 7.4vw, 62px); }
+  /* Les etapes : l'image a gauche, plafonnee, le texte a droite ; une tablette n'est pas un telephone etire. */
+  .etape { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: auto 1fr; column-gap: var(--e-8); align-items: start; }
+  .etape .section__figure { grid-column: 1; grid-row: 1 / span 2; width: min(100%, 300px); margin: 0; }
+  .etape h2, .etape .etape__corps { grid-column: 2; }
+  .etape h2 { align-self: end; }
+  :root { --t-corps: 18px; }
+  /* Tarifs : le cercle a gauche, les deux prix a droite, au lieu d'un cercle seul au bord. */
+  .entete-page--haut-prix { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--e-6); align-items: center; }
+  .entete-page--haut-prix .entete-page__texte { grid-column: 1 / -1; }
+  .entete-page--haut-prix .entete-page__arche { grid-column: 1; width: 100%; justify-self: start; }
+  .entete-page--haut-prix .entete-prix { grid-column: 2; }
+}
+
+/* --- Cours : dans chaque arche du parcours, ce que l'eleve lit a cette etape --------------------- */
+.parcours__arabe { font-family: 'Noto Sans Arabic', sans-serif; font-weight: 500; line-height: 1.6; letter-spacing: 0; }
+@media (max-width: 839px) {
+  .parcours--haut .parcours__etape { align-items: center; gap: var(--e-4); padding-block: var(--e-5); }
+  /* Marge physique : le libelle arabe est en rtl, sa marge « de debut » serait a droite. */
+  .parcours--haut .parcours__arabe { order: 2; margin-left: auto; font-size: 28px; line-height: 1.3; }
+}
+@media (min-width: 840px) {
+  .parcours--haut .parcours__etape { flex-direction: column; align-items: stretch; }
+  .parcours--haut .parcours__arabe { margin-block: var(--e-10) auto; text-align: center; font-size: clamp(34px, 3.3vw, 54px); }
 }
