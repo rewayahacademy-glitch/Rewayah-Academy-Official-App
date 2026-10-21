@@ -22,8 +22,10 @@ avant tout fichier `.dart` (section 10 de la revue).
   (inscription ouverte à tous les pays, salles 2 et 3 réservées aux personnes
   que l'académie peut payer) et `CAND-Q06` (pas de WhatsApp, entretien et contact
   dans l'app) ;
+- `CAND-Q07` (séparation en base, le super-admin voit les deux côtés) et
+  `CAND-Q08` validées ; `CAND-Q09` : aucune mention pendant l'entretien ;
 - `CAND-Q01` reste en discussion ;
-- `CAND-Q07` à `CAND-Q22` attendent.
+- `CAND-Q10` à `CAND-Q22` attendent.
 
 ## Où le directeur répond
 
