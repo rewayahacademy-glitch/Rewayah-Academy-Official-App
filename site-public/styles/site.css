@@ -201,7 +201,8 @@ p { text-wrap: pretty; max-width: 60ch; }
    Seule la fenetre des chapitres, sans bord visible, garde un fondu court. */
 .chapitres__image[data-anime="mains"] .scene__cadre img { -webkit-mask: linear-gradient(90deg, transparent 0, #000 5%), linear-gradient(0deg, transparent 0, #000 5%); -webkit-mask-composite: source-in; mask: linear-gradient(90deg, transparent 0, #000 5%), linear-gradient(0deg, transparent 0, #000 5%); mask-composite: intersect; }
 .chapitres__image[data-anime="mains"] { inset: 4% 4% 4% 0; }
-.entete-page:has(.scene[data-anime="mains"]) .entete-page__arche { justify-self: start; margin-inline-start: calc(var(--marge) * -1); width: calc(100% + var(--marge)); }
+/* La manche sort franchement par le bord (24 px au-dela) : un arret pile sur le bord se lirait comme une marge ratee. */
+.entete-page:has(.scene[data-anime="mains"]) .entete-page__arche { justify-self: start; margin-inline-start: calc(var(--marge) * -1 - 24px); width: calc(100% + var(--marge) + 24px); }
 .etape:has(.scene[data-anime="mains"]) { overflow: hidden; }
 .etape .section__figure:has(.scene[data-anime="mains"]) { margin-inline-start: calc(var(--e-6) * -1); width: calc(100% + var(--e-6)); }
 .scene__onde { position: absolute; left: calc(var(--zx) * 100%); top: calc(var(--zy) * 100%); width: calc(var(--zl) * 100%); height: calc(var(--zh) * 100%); pointer-events: none; }
@@ -468,7 +469,7 @@ p, li, dd { overflow-wrap: break-word; }
 .entete-page h1 { font-size: clamp(40px, 4.6vw, 68px); max-width: 19ch; }
 .entete-page__texte--long h1 { font-size: clamp(32px, 5.8vw, 44px); max-width: 22ch; }
 /* Les titres longs tiennent en deux lignes sans couper apres un article (mesure : « votre enfant, dès 6 ans » fait 10,5 em). */
-@media (min-width: 840px) { .entete-page__texte--long h1 { font-size: clamp(34px, 4.1vw, 60px); } }
+@media (min-width: 840px) { .entete-page__texte--long h1 { font-size: clamp(36px, 4.6vw, 66px); } }
 .entete-page .hero-intro { font-size: clamp(18px, 1.7vw, 24px); max-width: 36ch; }
 .entete-page__suite .hero-intro { margin-top: 0; }
 .entete-page--document { row-gap: var(--e-6); }
@@ -503,7 +504,7 @@ p, li, dd { overflow-wrap: break-word; }
   .entete-page--libre .hero-intro { font-size: clamp(18px, 1.5vw, 22px); margin-top: 0; }
   .entete-page--libre .action-row { margin-top: 0; }
   .entete-page--libre .entete-page__arche { grid-column: 1 / -1; grid-row: 2; width: 100%; }
-  .entete-page--libre:has(.scene[data-anime="mains"]) .entete-page__arche { margin-inline-start: calc(-1 * max(var(--marge), (100vw - var(--contenu)) / 2)); width: calc(100% + max(var(--marge), (100vw - var(--contenu)) / 2)); }
+  .entete-page--libre:has(.scene[data-anime="mains"]) .entete-page__arche { margin-inline-start: calc(-1 * max(var(--marge), (100vw - var(--contenu)) / 2) - 24px); width: calc(100% + max(var(--marge), (100vw - var(--contenu)) / 2) + 24px); }
   .entete-page--libre .entete-page__image img { max-height: 78svh; object-fit: contain; object-position: center bottom; }
   .entete-page--libre.entete-page--droite .entete-page__image img { object-position: center bottom; }
   .entete-page--libre.entete-page--gauche .entete-page__image img { object-position: left bottom; }
