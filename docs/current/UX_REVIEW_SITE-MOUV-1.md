@@ -95,7 +95,7 @@ O-10 (arche dessinée en CSS), O-11 (couleur du bouton), O-12 (mouvement lié au
 | V5 | Halo qui suit la souris | WCAG 2.2.2 (mouvement autonome) | Un mouvement déclenché par l'utilisateur n'est pas autonome | Conforme | Halo de 960 px, déplacé par `transform`. Souris seulement ; rien sur écran tactile ni en mouvement réduit |
 | V6 | Tapis en mouvement continu | WCAG 2.2.2 (pause, arrêt, masquage) | Un mouvement de plus de 5 s, lancé seul, doit pouvoir s'arrêter | Conforme | Onde douce qui court vers la porte : périodes de 7 s et 4,3 s, amplitude d'environ 6 px. Un bouton « Arrêter l'animation du tapis » s'affiche dès que le tapis est à l'écran, et le choix est gardé sur l'appareil. Rien en mouvement réduit ni sans JavaScript |
 | V7 | Mains et Coran au défilement | Contrat E ; O-12 | Le mouvement suit la position du défilement, sans durée | Conforme au principe d'O-12 | Les mains de l'élève montent jusqu'au Coran : en haut de page, sur le premier tiers d'écran défilé ; plus bas, sur la demi-hauteur d'écran qui suit l'entrée de l'image. Le livre et les mains de l'enseignant ne bougent pas, pour ne rien inventer derrière le livre |
-| V8 | Calques des illustrations | Cahier visuel C.4 (une illustration reste légendée comme telle) | L'image au repos est l'image fournie | Conforme | Le tapis est découpé par couleur. Les mains de l'élève sont séparées par GrabCut, et la zone découverte est bouchée par LaMa. Au repos, fond et calque redonnent l'image d'origine : écart moyen de 0,05 sur 255 pour les mains, 0 pour le tapis. L'image d'origine reste celle du partage (Open Graph) |
+| V8 | Calques des illustrations | Cahier visuel C.4 (une illustration reste légendée comme telle) | L'image au repos est l'image fournie | Conforme | Le tapis est découpé par couleur. Les mains de l'élève sont séparées par GrabCut, et la zone découverte est bouchée par LaMa. Au repos, fond et calque redonnent l'image publiée : écart moyen de 0,17 sur 255 pour les mains (après le retrait du faisceau, K2), 0 pour le tapis |
 | V9 | Pied de page en rideau | — | Le rideau demande un contenu opaque | Retiré en violet | Le dégradé doit rester visible sous le contenu |
 | V10 | Inspection | Skill de direction (`inspect.mjs`) | — | 0 FAIL sur l'académie et les tarifs ; « gradient » signalé sur l'accueil et la page familles | Le FAIL « gradient » est la demande du directeur (O-16). WARN « grey-body » : le texte est blanc sur violet à 6,48:1, au-dessus du seuil AA |
 
@@ -107,6 +107,7 @@ O-10 (arche dessinée en CSS), O-11 (couleur du bouton), O-12 (mouvement lié au
 |---|---|---|---|---|---|
 | Tour 1 | 6,07 | 6,33 | 5 | 7 | 6,33 |
 | Tour 2 | 6,12 | 6,43 | 5 | 7 | 6,33 |
+| Tour 3 | 7,02 | 6,5 | 7,33 | 7,33 | 7,5 |
 | Hallow, Endel, Waking Up, Seasats (références) | 6,0 chacun | | | | |
 
 **Plafond de structure.** Le site n'emploie que des illustrations : aucune photo d'élève réel (règle de marque). La grille plafonne alors le design à 6,5. La note la plus haute qu'on puisse viser est d'environ 7,5.
@@ -127,6 +128,38 @@ O-10 (arche dessinée en CSS), O-11 (couleur du bouton), O-12 (mouvement lié au
 | J10 | Fragment d'arche et anneau pâle autour de la halqa | Le fragment est retiré, l'anneau du sol aussi (l'ombre sous chaque personne est gardée), et l'image est recadrée sur le cercle |
 | J11 | Titres coupés après un article | Espace insécable après les petits mots des titres (`titre_html`). Le découpage des titres en lignes garde cet espace |
 | J12 | Énoncé sur quatre lignes au téléphone | Trois lignes à 24 px |
+
+**Tour 3 (dernier tour permis par la grille).** Les trois jurés répondent « presque » à la question du niveau d'une grande agence. Ce qu'ils retiennent : le premier écran et la traversée de la porte sont « de niveau agence ». Ce qui manque encore, selon eux : des pages intérieures qui reprennent trop le même gabarit image et texte. Ils ont corrigé, ou en partie, les douze points du tour 2.
+
+**Corrections après le tour 3.**
+
+| # | Relevé du jury | Correction |
+|---|---|---|
+| K1 | L'élève et son enseignante (sources 03 et 05) se lisent comme une seule image, vue deux fois dans une page | Cours, méthode : `place`. Comment ça marche, étape 4 : les mains et le Coran. Accueil, étape 3 : `adulte-homme-livre` |
+| K2 | Un éclat de lumière lavande sous le Coran, des manches dans une brume | Le faisceau est retiré du calque de fond, ainsi que la trace laissée sous les mains. Au repos, fond et mains redonnent l'image entière à 0,17 sur 255 près (mesuré sur le violet) |
+| K3 | Sous l'arrondi de la pièce lavande, la porte agrandie se voit encore | L'arrondi passe sur le disque ; sous lui, le fond de la page |
+| K4 | « Le même enseignant » dit cinq fois sur l'accueil | Gardé en haut et dans la pièce seulement. Les cartes de prix listent ce que comprend le prix (encarts du 18/10), le panneau dit « Un programme qui avance » |
+| K5 | Coupures « deux / minutes », « 3 à 5 / enfants », « Rewayah / Academy », « Accompagné à / » | Les petits mots se lient au mot suivant, les nombres à leur unité, et le nom de l'académie ne se coupe pas. L'énoncé met une phrase par ligne |
+| K6 | Texte courant encore petit et léger | Corps de 18 à 20 px, graisse 500 sur le violet, pied de page à 15 px |
+| K7 | Bords gauches dispersés sur l'accueil | Prix, panneau et questions sur les colonnes 1 et 7 ; étapes en trois tiers |
+| K8 | Simulateur des tarifs à l'air inachevé | Interrupteurs à la place des cases. Tant qu'un âge manque, le prix publié s'affiche en grand |
+| K9 | Accueil au téléphone : pas d'image au premier écran, et la halqa jamais vue | L'illustration passe sous les boutons. La pièce et la halqa forment une bande fixe sous le haut de page |
+| K10 | Phrases de bande sans texte dessous | Une ligne d'appui sous chaque phrase, tirée d'un fait publié |
+
+## Vérification des textes, phrase par phrase (21/10/2026)
+
+Chaque phrase visible réécrite a été vérifiée contre les décisions écrites, par des agents indépendants : 355 phrases en tout. Chaque phrase douteuse a ensuite été soumise à deux contre-vérificateurs chargés de lui trouver une source. Corrigé à la suite :
+
+- **Le parcours d'inscription.** La famille ne reçoit pas de « proposition de classe » à confirmer. La direction crée la classe et l'élève y est inscrit. L'application annonce ensuite l'enseignant, puis la date du premier cours (`DECISION-OFFRES-GROUPES-2026-10-09.md`, §3 et §4). Le regroupement se fait sur les jours, l'heure, le public et la langue.
+- **Des fonctions pas encore livrées.** Le support affiché pendant la séance et les exercices guidés sont retirés des promesses. Restent les engagements des encarts du 18/10 : compte rendu de l'enseignant chaque fin de semaine, observation de deux minutes par séance, séance annulée par l'académie remplacée.
+- **Les encarts du 18/10.** Ils sont publiés tels quels sur les cours, les familles et le recrutement (décision tarifaire, consigne 3), avec une espace insécable avant « $ » et « % ».
+- **Le programme.** « Le temps que cela prend dépend de chaque élève » contredisait la décision du 14/10 (une date limite par étape) : la phrase est remplacée.
+- **D'autres corrections.**
+  - Les monnaies du paiement : euros, livres ou dollars canadiens.
+  - « Travail à préparer » au lieu de « travail à reprendre ».
+  - « Un enfant ne rejoint jamais un cours sans tuteur » se lisait comme « un adulte assiste au cours » : la phrase dit maintenant qui inscrit l'enfant.
+  - Le lien « Lire les avis » renvoyait vers une page encore vide.
+- **Questions ouvertes.** Trois points vont au directeur : O-17 (« groupe » dans les encarts), O-18 (la phrase en grand de l'accueil) et O-19 (trois ou quatre inscrits pour ouvrir une classe).
 
 ## Hors de portée de l'agent
 
