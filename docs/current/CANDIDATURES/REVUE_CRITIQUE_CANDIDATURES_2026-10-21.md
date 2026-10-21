@@ -921,7 +921,11 @@ propre ; `tool/verifier_jetons.dart` sans violation nouvelle.
 
 ## 13. Ce qui peut avancer sans attendre
 
-1. **Fait par ce lot** : la spécification versionnée, cette revue, `LIRE_D_ABORD.md`.
+1. **Fait par ce lot** : la spécification versionnée, cette revue, `LIRE_D_ABORD.md`,
+   et le contrat attendu (`CONTRAT_PORTS_CANDIDATURES.md`,
+   `DEPENDANCES_BACKEND.md`), que la spec §1.2 autorise pendant la phase
+   « frontend seul » : une proposition, sans code, dont chaque méthode cite la
+   question qui la conditionne.
 2. **Après `CAND-Q01` à `CAND-Q03`** : la spécification verticale consolidée,
    puis `C/CATALOGUE_ECRANS_RECRUTEMENT.md` avec ses fiches, puis les maquettes
    (bureau, tablette, mobile, clair et sombre).
