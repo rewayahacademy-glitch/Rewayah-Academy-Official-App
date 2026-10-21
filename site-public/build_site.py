@@ -606,10 +606,12 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
 </section>'''
 
 
-def accueil_confiance(page: dict) -> str:
-    """Une bande sombre sur toute la largeur : la date en grand, puis les trois engagements cote a cote, sans carte."""
+def accueil_confiance(page: dict, images: dict) -> str:
+    """Une bande sombre sur toute la largeur : la photo du directeur calee au bord gauche (elle y est coupee), la date
+    en grand, puis les trois engagements, et le lien vers son mot sur la page Academie."""
     sec = _sections_par_id(page)["confiance"]
     return f'''<section class="panneau" id="confiance" aria-labelledby="confiance-titre">
+  <div class="panneau__photo" data-revele>{portrait(images, "portrait-directeur", "(max-width: 839px) 88vw, 46vw")}</div>
   <div class="panneau__in">
     <div class="panneau__tete" data-revele>
       <h2 id="confiance-titre">{titre_html(sec["title"])}</h2>
@@ -621,7 +623,7 @@ def accueil_confiance(page: dict) -> str:
       <li><h3>{titre_html("Un tuteur pour chaque enfant")}</h3>{paragraphes(sec)}</li>
     </ul>
     <div class="panneau__pied" data-revele>
-      <div class="action-row">{bouton("Découvrir l’académie", "/fr/academie", "contour")}{lien_fleche("Protection des enfants", "/fr/protection-des-enfants")}</div>
+      <div class="action-row">{bouton("Lire le mot du directeur", "/fr/academie#mot", "contour")}{lien_fleche("Protection des enfants", "/fr/protection-des-enfants")}</div>
       <p class="panneau__societe">REWAYAH ACADEMY LTD · Société n° 16624644</p>
     </div>
   </div>
@@ -689,9 +691,10 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str) -> str:
         accueil_chapitres(page, images),
         accueil_etapes(page, images),
         accueil_tarifs(page, tarifs),
-        accueil_confiance(page),
+        accueil_confiance(page, images),
         accueil_faq(page, tarifs),
-        bande_finale(fin["title"], (fin.get("paragraphs") or [""])[0] + " Rien n’est facturé avant l’ouverture de la classe.",
+        # Le grand mot « Commencer » est le bouton : le titre ne le redit pas, il dit pour qui.
+        bande_finale((fin.get("paragraphs") or [fin["title"]])[0], "Rien n’est facturé avant l’ouverture de la classe.",
                      page["cta"]["label"], page["cta"]["href"], "Commencer"),
     ))
 

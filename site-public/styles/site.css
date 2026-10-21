@@ -347,7 +347,7 @@ p { text-wrap: wrap; max-width: 60ch; }
    moins ; la fenetre des chapitres suit de pres. */
 @media (min-width: 840px) {
   .enonce { padding-bottom: 0; }
-  .enonce__texte { font-size: min(clamp(44px, 5.4vw, 88px), calc((min(100vw, var(--contenu) + 2 * var(--marge)) - 2 * var(--marge)) / 16.4)); text-align: center; }
+  .enonce__texte { font-size: var(--t-accueil); text-align: center; }
   .enonce__texte span { white-space: nowrap; }
 }
 /* Sous 840 px : une phrase par ligne, a la taille qui la fait tenir (la plus longue mesure 16,07 em), jamais un mot seul. */
@@ -501,11 +501,17 @@ li, dd { text-wrap: wrap; }
 .panneau .cta--secondary:hover { background: var(--sur-inverse); color: var(--inverse); }
 .panneau .lien-fleche { color: var(--sur-inverse); }
 .panneau__societe { margin-top: var(--e-8); font-size: var(--t-petit); color: var(--sur-inverse-doux); }
+/* La photo du directeur, calee au bord gauche et posee sur le bas de la bande ; le texte a droite, a partir de la
+   7e colonne de la page, comme le mot du directeur sur la page Academie. */
+.panneau { display: grid; row-gap: var(--e-10); padding: var(--respire) 0 0; }
+.panneau__photo { width: min(88vw, 520px); order: 2; }
+.panneau__in { padding-inline: var(--marge); }
+.panneau__pied { padding-bottom: var(--e-4); }
 @media (min-width: 840px) {
-  .panneau__tete { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: end; }
-  .panneau__tete h2 { grid-column: 1 / span 6; }
-  .panneau__depuis { grid-column: 7 / -1; margin-top: 0; }
-  .panneau__promesses { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--e-6); }
+  .panneau { grid-template-columns: minmax(0, calc(50vw + 12px - 120px)) minmax(0, 1fr); column-gap: 120px; align-items: end; padding-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); }
+  .panneau__photo { order: 0; width: 100%; align-self: end; }
+  .panneau__in { padding: 0 0 var(--e-16); max-width: none; margin: 0; gap: var(--e-10); }
+  .panneau__promesses { gap: var(--e-8); }
 }
 
 /* --- Tuiles de questions (FAQ, aide) ------------------------------------------- */
@@ -568,7 +574,7 @@ li, dd { text-wrap: wrap; }
 .entete-page__texte--long h1 { font-size: clamp(32px, 8.2vw, 44px); max-width: 22ch; }
 /* Les titres longs tiennent en deux lignes sans couper apres un article (mesure : « votre enfant, dès 6 ans » fait 10,5 em). */
 @media (min-width: 840px) { .entete-page__texte--long h1 { font-size: clamp(36px, 4.6vw, 66px); } }
-.entete-page .hero-intro { font-size: clamp(18px, 1.7vw, 24px); max-width: 36ch; }
+.entete-page .hero-intro { font-size: clamp(18px, 1.5vw, 22px); max-width: 36ch; }
 .entete-page__suite .hero-intro { margin-top: 0; }
 .entete-page--document { row-gap: var(--e-6); }
 .entete-page--document h1 { font-size: clamp(28px, 8vw, 40px); }
@@ -1166,7 +1172,7 @@ li, dd { text-wrap: wrap; }
 /* --- Telephone : le titre de la page mene, la section suit ; le pied de page en deux colonnes --- */
 @media (max-width: 599px) {
   /* Le titre de la page fait 1,6 a 1,8 fois un titre de section, et tient en deux lignes des 360 px. */
-  :root { --t-titre: 24px; }
+  :root { --t-titre: 28px; }
   /* Tarifs : les deux prix d'abord, la question de la page ; le cercle ensuite. */
   .entete-page--haut-prix .entete-prix { order: 2; }
   .entete-page--haut-prix .entete-page__arche { order: 3; }
@@ -1389,8 +1395,8 @@ li, dd { text-wrap: wrap; }
 @media (min-width: 840px) and (prefers-reduced-motion: no-preference) {
   /* La phrase du zoom, a la taille du titre de l'accueil, au-dessus de la classe vue d'en haut : une image, une phrase. */
   .js .porte__cercle { grid-template-rows: auto minmax(0, 1fr); align-content: start; row-gap: 2svh; padding: calc(var(--entete) + 3svh) var(--marge) 4svh; }
-  .js .porte__phrase { position: relative; inset: auto; top: auto; translate: none; grid-row: 1; text-align: center; font-size: clamp(44px, 5.4vw, 88px); line-height: 1.02; }
-  .js .porte__halqa { grid-row: 2; align-self: start; width: min(44vw, calc(100svh - var(--entete) - 2.2 * clamp(44px, 5.4vw, 88px) - 11svh)); margin-inline: auto; }
+  .js .porte__phrase { position: relative; inset: auto; top: auto; translate: none; grid-row: 1; text-align: center; font-size: var(--t-accueil); line-height: 1.02; }
+  .js .porte__halqa { grid-row: 2; align-self: start; width: min(44vw, calc(100svh - var(--entete) - 2.2 * var(--t-accueil) - 11svh)); margin-inline: auto; }
 }
 @media (min-width: 840px) {
   /* Une seule arche pour les trois chapitres, de la meme taille : 540 px au plus, jamais plus haute que la fenetre. */
@@ -1502,3 +1508,12 @@ li, dd { text-wrap: wrap; }
 .simulator--page > p, .simulator--page .simulator__fields label { font-size: var(--t-corps); }
 .simulator--page .simulator__eleves li { background: none; border-radius: 0; padding-inline: 0; }
 @media (min-width: 840px) { .simulator--page { padding: 0; } }
+
+/* Accueil, au bureau : le titre, l'enonce et la phrase du zoom partagent une seule taille d'affiche, celle qui laisse
+   tenir l'enonce sur sa mesure (16,4 em). */
+@media (min-width: 840px) {
+  :root { --t-accueil: min(clamp(44px, 5.4vw, 88px), calc((min(100vw, var(--contenu) + 2 * var(--marge)) - 2 * var(--marge)) / 16.4)); }
+  .porte__texte h1 { font-size: var(--t-accueil); }
+}
+/* Telephone : les titres de section passent a 28 px ; une phrase seule sur une bande reste a 24 px pour tenir en deux lignes. */
+@media (max-width: 599px) { .bande-phrase__phrase { font-size: 24px; } }
