@@ -294,7 +294,7 @@ p { text-wrap: pretty; max-width: 60ch; }
 
 /* --- Enonce : une phrase, des fenetres en arche dans la ligne ---------------- */
 .enonce { padding: var(--respire) var(--marge); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
-.enonce__texte { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(21px, 5vw, 76px); line-height: 1.08; letter-spacing: -0.03em; }
+.enonce__texte { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(21px, 4.2vw, 60px); line-height: 1.08; letter-spacing: -0.03em; }
 .enonce__texte span { display: block; }
 @media (min-width: 840px) { .enonce__texte span { white-space: nowrap; } .enonce__texte span + span { padding-inline-start: 1.6em; } }
 

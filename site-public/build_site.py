@@ -417,7 +417,7 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
 def accueil_enonce(images: dict, tarifs: dict) -> str:
     return f'''<section class="enonce" aria-labelledby="enonce-titre">
   <h2 id="enonce-titre" class="sr-only">En bref</h2>
-  <p class="enonce__texte" data-revele><span>Seul, on remet à demain.</span> <span>Une\u00a0classe commence à\u00a0l’heure.</span></p>
+  <p class="enonce__texte" data-revele><span>Votre\u00a0classe commence à\u00a0l’heure.</span> <span>Le\u00a0rythme ne\u00a0repose pas sur\u00a0vous seul.</span></p>
 </section>'''
 
 
