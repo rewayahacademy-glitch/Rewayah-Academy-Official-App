@@ -212,14 +212,14 @@
     },
     "detail-pupitre": {
       "source": "15",
-      "largeur": 400,
-      "hauteur": 400,
+      "largeur": 404,
+      "hauteur": 404,
       "alt": "Gros plan : une enseignante lit, le livre posé sur son pupitre de lecture.",
       "recadrage": [
-        470,
-        610,
-        870,
-        1010
+        290,
+        600,
+        694,
+        1004
       ],
       "forme": "cercle"
     },
@@ -355,14 +355,14 @@
     },
     "detail-pupitre-coran": {
       "source": "05",
-      "largeur": 380,
-      "hauteur": 380,
+      "largeur": 450,
+      "hauteur": 450,
       "alt": "Vue de dos : une élève en hijab blanc est à genoux devant un Coran ouvert, posé sur un pupitre de lecture en bois.",
       "recadrage": [
-        79,
-        800,
-        459,
-        1180
+        20,
+        700,
+        470,
+        1150
       ],
       "forme": "cercle"
     },

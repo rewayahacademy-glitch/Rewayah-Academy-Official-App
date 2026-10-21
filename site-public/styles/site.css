@@ -410,7 +410,7 @@ li, dd { text-wrap: wrap; }
 /* Au telephone, la legende « Illustration » d'une etape ne touche pas le titre qui suit. */
 @media (max-width: 599px) { .etapes .etape .section__figure { margin-bottom: calc(var(--e-12) + var(--e-2)); } }
 @media (min-width: 840px) {
-  .pousse__entete { grid-column: 1 / -1; grid-row: 1; display: grid; grid-template-columns: subgrid; align-items: end; }
+  .pousse__entete { grid-column: 1 / -1; grid-row: 1; display: grid; grid-template-columns: subgrid; align-items: start; }
   .pousse__entete h2 { grid-column: 1 / span 6; }
   .pousse__corps { grid-column: 7 / -1; }
   .pousse__corps > p:first-child { margin-top: 0; }
