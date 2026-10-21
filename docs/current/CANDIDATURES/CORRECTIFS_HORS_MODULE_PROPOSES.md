@@ -68,7 +68,8 @@ commits trouvés les ont créés ou les gardent volontairement fermés :
 
 **Les correctifs s'écrivent donc d'après ce document, avec ces ajustements :**
 - **langue** :
-  - la clé des cartes de langue reste `_BoutonEnregistrer` (K-42, `ca98da88`) ;
+  - le correctif client s'écrit sur la version de la pointe, qui garde le bouton
+    `_BoutonEnregistrer` (K-42, `ca98da88`) ;
   - le seed de staging de la PR #40 (`claude/sharp-goldberg-z10a13`,
     `03_personnel.sql`) écrit `array['fr','ar']`, une troisième forme. Il faut le
     corriger avant de fusionner cette PR.
