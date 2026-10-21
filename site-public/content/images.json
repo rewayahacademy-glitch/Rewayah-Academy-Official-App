@@ -4,7 +4,7 @@
     1024,
     1600
   ],
-  "note": "Illustrations fournies par le directeur (dossier Drive « images du site public », 21/10/2026), détourées et harmonisées : arches de 02 et 12 recolorées en lavande ; 04 et 09 remplacées par leur jumelle lavande 08. Toujours légendées « Illustration » (cahier visuel C.4).",
+  "note": "Illustrations fournies par le directeur (dossier Drive « images du site public », 21/10/2026), détourées et harmonisées : arches de 02 et 12 recolorées en lavande ; 04 et 09 remplacées par leur jumelle lavande 08. Toujours légendées « Illustration » (cahier visuel C.4). Calques animables : le tapis du chemin et les mains de l'élève dans la transmission, séparés de la scène (GrabCut) et bouchés derrière (LaMa) ; au repos, le fond et le calque redonnent l'image entière.",
   "images": {
     "chemin": {
       "source": "07",
@@ -14,7 +14,19 @@
       "porte": [
         0.682,
         0.495
-      ]
+      ],
+      "calques": {
+        "anime": "tapis",
+        "noms": [
+          "tapis"
+        ],
+        "zone": [
+          0,
+          0.7,
+          0.52,
+          0.3
+        ]
+      }
     },
     "halqa": {
       "source": "06",
@@ -38,7 +50,13 @@
       "source": "08",
       "largeur": 2080,
       "hauteur": 1559,
-      "alt": "À travers la porte d’une arche en forme de livre, deux mains tendent un Coran à deux autres mains."
+      "alt": "À travers la porte d’une arche en forme de livre, deux mains tendent un Coran à deux autres mains.",
+      "calques": {
+        "anime": "mains",
+        "noms": [
+          "mains"
+        ]
+      }
     },
     "boucle": {
       "source": "02",

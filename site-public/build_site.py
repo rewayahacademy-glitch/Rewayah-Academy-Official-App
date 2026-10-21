@@ -174,9 +174,14 @@ def load_direction(pages: dict[str, dict]) -> tuple[dict, dict]:
         for champ in ("largeur", "hauteur", "alt"):
             if not image.get(champ):
                 raise ValueError(f"Image {ident} needs {champ}")
-        for largeur in image_largeurs(images, ident):
-            if not (ROOT / "assets" / f"scene-{ident}-{largeur}.webp").is_file():
-                raise ValueError(f"Missing picture file: scene-{ident}-{largeur}.webp")
+        for fichier in fichiers_scene(images, ident):
+            if not (ROOT / "assets" / fichier).is_file():
+                raise ValueError(f"Missing picture file: {fichier}")
+        calques = image.get("calques")
+        if calques and calques.get("anime") not in ("tapis", "mains"):
+            raise ValueError(f"Image {ident}: unknown animation {calques.get('anime')}")
+    if direction.get("ambiance", "clair") not in ("clair", "violet"):
+        raise ValueError("direction.json: ambiance must be clair or violet")
     for route, reglage in direction["pages"].items():
         if route not in pages:
             raise ValueError(f"direction.json names an unknown route: {route}")
@@ -188,6 +193,13 @@ def load_direction(pages: dict[str, dict]) -> tuple[dict, dict]:
             if valeur and valeur not in connues:
                 raise ValueError(f"direction.json names an unknown picture: {valeur}")
     return direction, images
+
+
+def fichiers_scene(images: dict, ident: str) -> list[str]:
+    """Tous les fichiers publies d'une illustration : l'image entiere et ses calques animables, a chaque largeur."""
+    calques = images["images"][ident].get("calques", {}).get("noms", [])
+    noms = [ident] + ([f"{ident}-fond"] if calques else []) + [f"{ident}-{calque}" for calque in calques]
+    return [f"scene-{nom}-{largeur}.webp" for nom in noms for largeur in image_largeurs(images, ident)]
 
 
 def image_largeurs(images: dict, ident: str) -> list[int]:
@@ -229,19 +241,38 @@ def lien_fleche(label: str, href: str) -> str:
 
 def scene(images: dict, ident: str, tailles: str, css: str = "", prioritaire: bool = False,
           legende: bool = True, attributs: str = "") -> str:
-    """Une illustration detouree, en WebP a plusieurs largeurs, legendee comme telle (cahier C.4)."""
+    """Une illustration detouree, en WebP a plusieurs largeurs, legendee comme telle (cahier C.4).
+
+    Quand l'image a des calques (content/images.json), elle est posee en deux couches : le fond, puis la partie
+    qui bouge. Au repos, les deux couches redonnent exactement l'image entiere ; sans JavaScript ou en mouvement
+    reduit, rien ne bouge."""
     image = images["images"][ident]
     largeurs = image_largeurs(images, ident)
-    srcset = ", ".join(f"{ASSETS}/scene-{ident}-{w}.webp {w}w" for w in largeurs)
     grande = largeurs[-1]
     hauteur = round(image["hauteur"] * grande / image["largeur"])
     chargement = 'fetchpriority="high"' if prioritaire else 'loading="lazy"'
     porte = image.get("porte")
+    calques = image.get("calques")
     style = f' style="--fx:{porte[0]};--fy:{porte[1]}"' if porte else ""
+
+    def img(nom: str, alt: str, extra: str = "", charge: str = chargement) -> str:
+        srcset = ", ".join(f"{ASSETS}/scene-{nom}-{w}.webp {w}w" for w in largeurs)
+        return (f'<img{extra} src="{ASSETS}/scene-{nom}-{grande}.webp" srcset="{srcset}" sizes="{esc(tailles)}" '
+                f'width="{grande}" height="{hauteur}" alt="{esc(alt)}" decoding="async" {charge}>')
+
+    if calques:
+        anime = f' data-anime="{esc(calques["anime"])}"'
+        zone = calques.get("zone")
+        if zone:
+            style = (style[:-1] + ";" if style else ' style="') + "--zx:{};--zy:{};--zl:{};--zh:{}\"".format(*zone)
+        couches = img(f"{ident}-fond", image["alt"]) + "".join(
+            img(f"{ident}-{nom}", "", f' class="scene__calque scene__calque--{esc(nom)}" aria-hidden="true"')
+            for nom in calques["noms"])
+    else:
+        anime = ""
+        couches = img(ident, image["alt"])
     figcaption = '<figcaption>Illustration</figcaption>' if legende else ""
-    return (f'<figure class="scene {esc(css)}"{style}{attributs}>'
-            f'<img src="{ASSETS}/scene-{ident}-{grande}.webp" srcset="{srcset}" sizes="{esc(tailles)}" '
-            f'width="{grande}" height="{hauteur}" alt="{esc(image["alt"])}" decoding="async" {chargement}>'
+    return (f'<figure class="scene {esc(css)}"{style}{anime}{attributs}><span class="scene__cadre">{couches}</span>'
             f'{figcaption}</figure>')
 
 
@@ -253,12 +284,16 @@ def vignette(images: dict, ident: str) -> str:
             'loading="lazy" decoding="async"></span>')
 
 
-def logo_entete() -> str:
-    """En-tete : logo horizontal (violet sur clair, blanc sur sombre), symbole seul sur telephone."""
+def logo_entete(ambiance: str = "clair") -> str:
+    """En-tete : logo horizontal (violet sur clair, blanc sur sombre ou sur le violet), symbole seul sur telephone."""
     h, hw, hh = LOGO["horizontal"]
     hb = LOGO["horizontal-blanc"][0]
     s, sw, sh = LOGO["symbole"]
     sb = LOGO["symbole-blanc"][0]
+    if ambiance == "violet":
+        return ('<picture>'
+                f'<source media="(max-width: 599px)" srcset="{ASSETS}/{sb}" width="{sw}" height="{sh}">'
+                f'<img src="{ASSETS}/{hb}" width="{hw}" height="{hh}" alt=""></picture>')
     return ('<picture>'
             f'<source media="(max-width: 599px) and (prefers-color-scheme: dark)" srcset="{ASSETS}/{sb}" width="{sw}" height="{sh}">'
             f'<source media="(max-width: 599px)" srcset="{ASSETS}/{s}" width="{sw}" height="{sh}">'
@@ -573,15 +608,14 @@ def bande_image(reglage: dict, images: dict) -> str:
             f'{"<p class=bande-image__phrase>" + esc(bande["phrase"]) + "</p>" if bande.get("phrase") else ""}</div>')
 
 
-def figure_section(reglage: dict, images: dict, sid: str, etages: bool = True) -> str:
+def figure_section(reglage: dict, images: dict, sid: str) -> str:
     ident = (reglage.get("figures") or {}).get(sid)
     if not ident:
         return ""
     image = images["images"][ident]
     panorama = " section__figure--panorama" if image["largeur"] / image["hauteur"] > 1.2 else ""
-    bandes = '<span class="etages" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>' if etages else ""
     return (f'<div class="section__figure{panorama}" data-revele>'
-            f'{scene(images, ident, "(max-width: 839px) 86vw, 600px", "section__scene")}{bandes}</div>')
+            f'{scene(images, ident, "(max-width: 839px) 86vw, 600px", "section__scene")}</div>')
 
 
 def alternance(reglage: dict):
@@ -612,7 +646,7 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
     if gabarit == "etapes":
         etapes = [s for s in sections if re.match(r"^\d+\.", s["title"])]
         autres = [s for s in sections if s not in etapes]
-        liste = "".join(render_section(s, i, tarifs, today, avis, "etape", figure_section(reglage, images, s["id"], etages=False))
+        liste = "".join(render_section(s, i, tarifs, today, avis, "etape", figure_section(reglage, images, s["id"]))
                         for i, s in enumerate(etapes, 1))
         morceaux.append(f'<ol class="etapes">{liste}</ol>')
         morceaux.append(bande_image(reglage, images))
@@ -724,14 +758,22 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         '<meta name="twitter:card" content="summary_large_image">'
     )
     jsonld = donnees_structurees(origin) if route == "/fr/" else ""
+    ambiance = direction.get("ambiance", "clair")
+    if ambiance == "violet":
+        tete_couleurs = ('<meta name="color-scheme" content="dark">\n'
+                         '  <meta name="theme-color" content="#6538E4">')
+        halo = '<div class="halo" aria-hidden="true"></div>'
+    else:
+        tete_couleurs = ('<meta name="color-scheme" content="light dark">\n'
+                         '  <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">\n'
+                         '  <meta name="theme-color" content="#16161E" media="(prefers-color-scheme: dark)">')
+        halo = ""
     return f'''<!doctype html>
-<html lang="fr">
+<html lang="fr" data-ambiance="{esc(ambiance)}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#16161E" media="(prefers-color-scheme: dark)">
+  {tete_couleurs}
   <meta name="robots" content="{robots}">
   <meta name="description" content="{esc(page['description'])}">
   <link rel="canonical" href="{esc(canonical)}">
@@ -746,10 +788,11 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   {jsonld}
 </head>
 <body class="{esc(classe_page)}">
+  {halo}
   <a class="skip-link" href="#contenu">Aller au contenu</a>
   <header class="site-header" data-entete>
     <div class="site-header__inner">
-      <a class="brand site-header__brand" href="/fr/" aria-label="Rewayah Academy, accueil">{logo_entete()}</a>
+      <a class="brand site-header__brand" href="/fr/" aria-label="Rewayah Academy, accueil">{logo_entete(ambiance)}</a>
       <nav class="site-nav" aria-label="Navigation principale">{nav_items}</nav>
       {connexion}
       <details class="mobile-menu"><summary><span class="mobile-menu__libelle">Menu</span><span class="mobile-menu__icone" aria-hidden="true"></span></summary><nav aria-label="Navigation mobile">{nav_items}{anchor(NAV[-1][0], NAV[-1][1])}</nav></details>
@@ -824,7 +867,7 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     )
     largeurs_404 = image_largeurs(images, "place")
     (output / "404.html").write_text(
-        '<!doctype html><html lang="fr"><head><meta charset="utf-8">'
+        f'<!doctype html><html lang="fr" data-ambiance="{esc(direction.get("ambiance", "clair"))}"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         '<meta name="color-scheme" content="light dark">'
         '<meta name="robots" content="noindex,nofollow">'

@@ -117,6 +117,7 @@
   var parallaxes = document.querySelectorAll('[data-parallaxe]');
   var bandes = document.querySelectorAll('.bande-image--large');
   var appels = document.querySelectorAll('.appel__lien');
+  var mains = document.querySelectorAll('.scene[data-anime="mains"]');
   var demande = false;
 
   function scenePorte(h) {
@@ -181,6 +182,18 @@
     dernierY = y;
   }
 
+  /* Les mains de l'eleve montent jusqu'au Coran. En haut de page, le contact se fait sur le premier tiers
+     d'ecran defile ; plus bas, pendant la demi-hauteur d'ecran qui suit l'entree de l'image. */
+  function sceneMains(h) {
+    var y = window.scrollY;
+    mains.forEach(function (fig) {
+      var haut = fig.getBoundingClientRect().top + y;
+      var debut = haut < h ? 0 : haut - h;
+      var fin = debut + (haut < h ? h * 0.35 : h * 0.5);
+      fig.style.setProperty('--m', (1 - adoucie(borne((y - debut) / (fin - debut)))).toFixed(4));
+    });
+  }
+
   function image() {
     demande = false;
     var h = window.innerHeight;
@@ -189,6 +202,7 @@
     scenePorte(h);
     sceneChapitres(h);
     sceneParallaxes(h);
+    sceneMains(h);
   }
 
   function auDefilement() {
@@ -224,7 +238,132 @@
     });
   }
 
+  /* Le tapis du chemin ondule doucement, sans fin : une onde qui court vers la porte. Il est dessine dans une toile
+     posee sur sa zone ; le calque d'origine reste dans la page pour qui n'a pas de script. Un bouton l'arrete
+     (WCAG 2.2.2) et le choix est garde. */
+  function preparerTapis() {
+    var figures = Array.prototype.slice.call(document.querySelectorAll('.scene[data-anime="tapis"]'));
+    if (!figures.length || reduit.matches) return;
+    var arret = false;
+    try { arret = window.localStorage.getItem('rewayah-animation') === 'arret'; } catch (e) { arret = false; }
+    var bouton = document.createElement('button');
+    bouton.type = 'button';
+    bouton.className = 'pause-anim';
+    bouton.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="pause-anim__pause" d="M8 5v14M16 5v14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><path class="pause-anim__lecture" d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg><span class="sr-only"></span>';
+    document.body.appendChild(bouton);
+    function etiquette() {
+      bouton.setAttribute('aria-pressed', arret ? 'true' : 'false');
+      bouton.querySelector('.sr-only').textContent = arret ? 'Relancer l’animation du tapis' : 'Arrêter l’animation du tapis';
+      bouton.title = bouton.querySelector('.sr-only').textContent;
+    }
+    etiquette();
+    var scenes = [];
+    var visibles = new Set();
+    var boucle = false;
+    figures.forEach(function (fig) {
+      var calque = fig.querySelector('.scene__calque--tapis');
+      var cadre = fig.querySelector('.scene__cadre');
+      if (!calque || !cadre) return;
+      var cs = getComputedStyle(fig);
+      var zone = ['--zx', '--zy', '--zl', '--zh'].map(function (n) { return parseFloat(cs.getPropertyValue(n)) || 0; });
+      var toile = document.createElement('canvas');
+      toile.className = 'scene__onde';
+      toile.setAttribute('aria-hidden', 'true');
+      var ctx = toile.getContext('2d');
+      if (!ctx) return;
+      var sc = { fig: fig, img: null, cadre: cadre, toile: toile, ctx: ctx, zone: zone, pret: false, l: 0, h: 0 };
+      scenes.push(sc);
+      /* La toile lit les pixels reels du fichier : avec srcset, naturalWidth est corrige par la densite. */
+      var pret = function () {
+        if (!calque.naturalWidth || sc.img) return;
+        var source = new Image();
+        source.decoding = 'async';
+        source.onload = function () { sc.img = source; demarrer(); };
+        source.src = calque.currentSrc || calque.src;
+      };
+      var demarrer = function () {
+        cadre.appendChild(toile);
+        sc.pret = true;
+        dimensionner(sc);
+        fig.setAttribute('data-onde', '');
+        dessiner(sc, performance.now());
+        if (visibles.has(fig)) lancer();
+      };
+      if (calque.complete && calque.naturalWidth) pret(); else calque.addEventListener('load', pret, { once: true });
+    });
+    function dimensionner(sc) {
+      var r = Math.min(window.devicePixelRatio || 1, 2);
+      sc.l = sc.cadre.offsetWidth * sc.zone[2];
+      sc.h = sc.cadre.offsetHeight * sc.zone[3];
+      sc.toile.width = Math.max(1, Math.round(sc.l * r));
+      sc.toile.height = Math.max(1, Math.round(sc.h * r));
+    }
+    function pente(a, b, x) { var t = borne((x - a) / (b - a)); return t * t * (3 - 2 * t); }
+    function dessiner(sc, t) {
+      /* Colonnes de 2 pixels d'ecran, bord a bord : aucun recouvrement, donc aucune bande sombre aux bords. */
+      var ctx = sc.ctx, img = sc.img, z = sc.zone;
+      var nw = img.naturalWidth, nh = img.naturalHeight;
+      var sx0 = z[0] * nw, sy0 = z[1] * nh, sw = z[2] * nw, sh = z[3] * nh;
+      var lp = sc.toile.width, hp = sc.toile.height, r = lp / Math.max(sc.l, 1);
+      var amp = sc.cadre.offsetWidth * 0.0042 * r;
+      var s = t / 1000, col = 2;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, lp, hp);
+      for (var x = 0; x < lp; x += col) {
+        var u = z[0] + (x / lp) * z[2];
+        var force = 1 - pente(0.06, 0.46, u);
+        var onde = 0.5 + 0.37 * Math.sin(2 * Math.PI * (u / 0.2 - s / 7)) + 0.13 * Math.sin(2 * Math.PI * (u / 0.11 - s / 4.3) + 1.3);
+        ctx.drawImage(img, sx0 + (x / lp) * sw, sy0, (col / lp) * sw, sh, x, amp * force * onde, col, hp);
+      }
+    }
+    function tour(t) {
+      if (arret || !visibles.size) { boucle = false; return; }
+      scenes.forEach(function (sc) { if (sc.pret && visibles.has(sc.fig)) dessiner(sc, t); });
+      requestAnimationFrame(tour);
+    }
+    function lancer() { if (!boucle && !arret) { boucle = true; requestAnimationFrame(tour); } }
+    if ('IntersectionObserver' in window) {
+      var vue = new IntersectionObserver(function (entrees) {
+        entrees.forEach(function (e) { if (e.isIntersecting) visibles.add(e.target); else visibles.delete(e.target); });
+        if (visibles.size) bouton.setAttribute('data-visible', ''); else bouton.removeAttribute('data-visible');
+        lancer();
+      });
+      figures.forEach(function (fig) { vue.observe(fig); });
+    }
+    bouton.addEventListener('click', function () {
+      arret = !arret;
+      try { window.localStorage.setItem('rewayah-animation', arret ? 'arret' : 'marche'); } catch (e) { /* choix non garde */ }
+      etiquette();
+      lancer();
+    });
+    var attente = null;
+    window.addEventListener('resize', function () {
+      clearTimeout(attente);
+      attente = setTimeout(function () { scenes.forEach(function (sc) { if (sc.pret) { dimensionner(sc); dessiner(sc, performance.now()); } }); }, 150);
+    });
+  }
+
+  /* Halo : une lumiere douce suit la souris, avec un leger retard. Ambiance violette, souris seulement. */
+  function preparerHalo() {
+    var halo = document.querySelector('.halo');
+    if (!halo || reduit.matches || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    var cx = window.innerWidth * 0.72, cy = window.innerHeight * 0.28, tx = cx, ty = cy, actif = false;
+    function pas() {
+      cx += (tx - cx) * 0.12;
+      cy += (ty - cy) * 0.12;
+      halo.style.setProperty('--hx', cx.toFixed(1) + 'px');
+      halo.style.setProperty('--hy', cy.toFixed(1) + 'px');
+      if (Math.abs(tx - cx) > 0.5 || Math.abs(ty - cy) > 0.5) requestAnimationFrame(pas); else actif = false;
+    }
+    window.addEventListener('pointermove', function (e) {
+      tx = e.clientX; ty = e.clientY;
+      if (!actif) { actif = true; requestAnimationFrame(pas); }
+    }, { passive: true });
+  }
+
   preparerEntrees();
+  preparerTapis();
+  preparerHalo();
   preparerTitres();
   preparerSommaire();
   preparerTuiles();

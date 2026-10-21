@@ -2,9 +2,15 @@
 
 Statut : brouillon (M-20), pas une référence de marque. Direction posée par le lot SITE-MOUV-1 du 21/10/2026 ; revue, mesures et dérogations dans `docs/current/UX_REVIEW_SITE-MOUV-1.md`. Règles de marque : `docs/current/marque/`.
 
+## Deux ambiances
+
+`content/direction.json`, clé `ambiance` :
+- `clair` : fond blanc et lavande, clair ou sombre selon le système ;
+- `violet` : l'essai demandé par le directeur le 21/10/2026, en cours. Fond violet en dégradé léger (lumière en haut à gauche, ombre en bas à droite), illustrations qui flottent sans fenêtre, halo qui suit la souris, texte et logo blancs. La dérogation au « sans dégradé » est inscrite au registre (O-16).
+
 ## Le motif
 
-Un seul motif : l'arche du symbole (M-21 : l'arche est le livre, la porte ouverte est l'accès, le cercle est la halqa). Les 13 illustrations fournies par le directeur le 21/10 portent déjà cette arche ; elles sont détourées, l'arche ramenée au lavande des jetons, et légendées « Illustration ». Aucune autre forme décorative, aucun gradient.
+Un seul motif : l'arche du symbole (M-21 : l'arche est le livre, la porte ouverte est l'accès, le cercle est la halqa). Les 13 illustrations fournies par le directeur le 21/10 portent déjà cette arche ; elles sont détourées, l'arche ramenée au lavande des jetons, et légendées « Illustration ». Aucune autre forme décorative ; aucun dégradé dans la version claire.
 
 ## Valeurs
 
@@ -32,6 +38,9 @@ Un seul motif : l'arche du symbole (M-21 : l'arche est le livre, la porte ouvert
 - Entrées des sections : 220 ms, échelon de 35 ms, au plus 400 ms. Les titres de haut de page montent ligne par ligne.
 - Images de section : construites par étages, de gauche à droite.
 - En-tête : il s'efface en descendant et revient en remontant.
-- Pied de page : en rideau.
+- Illustrations animées, posées en deux calques (`content/images.json`, clé `calques`) :
+  - le tapis du chemin ondule sans fin, avec un bouton pour l'arrêter ;
+  - les mains de l'élève montent jusqu'au Coran au défilement.
+- Pied de page : en rideau (version claire seulement).
 
 Sans JavaScript, en mouvement réduit et à l'impression, tout le contenu est là, immobile. Le logo ne change jamais.

@@ -111,11 +111,7 @@ class GeneratedSiteQA(unittest.TestCase):
         copied = {path.name for path in (self.output / "fr" / "assets").iterdir() if path.is_file()}
         # Les illustrations approuvees sont celles du manifeste (content/images.json), a chaque largeur exportee.
         images = json.loads((SITE / "content" / "images.json").read_text(encoding="utf-8"))
-        scenes = {
-            f"scene-{ident}-{largeur}.webp"
-            for ident in images["images"]
-            for largeur in BUILDER_MODULE.image_largeurs(images, ident)
-        }
+        scenes = {fichier for ident in images["images"] for fichier in BUILDER_MODULE.fichiers_scene(images, ident)}
         self.assertEqual(
             copied,
             {
@@ -158,9 +154,18 @@ class GeneratedSiteQA(unittest.TestCase):
         # En-tete web : logo horizontal (violet sur clair, blanc sur sombre), symbole seul sur telephone
         # (assets/brand/logo/README.md, M-25). Pied de page sombre : logo horizontal blanc.
         self.assertIn('site-header__brand" href="/fr/"', home)
-        self.assertIn('src="/fr/assets/logo-horizontal.svg"', home)
-        self.assertIn('srcset="/fr/assets/logo-horizontal-white.svg"', home)
-        self.assertIn('srcset="/fr/assets/symbole.svg"', home)
+        ambiance = json.loads((SITE / "content" / "direction.json").read_text(encoding="utf-8")).get("ambiance", "clair")
+        self.assertIn(f'<html lang="fr" data-ambiance="{ambiance}">', home)
+        if ambiance == "violet":
+            # Sur le violet, le logo de l'en-tete est toujours le fichier blanc officiel (M-25).
+            entete = home.split('<header', 1)[1].split('</header>', 1)[0]
+            self.assertIn('src="/fr/assets/logo-horizontal-white.svg"', entete)
+            self.assertIn('srcset="/fr/assets/symbole-white.svg"', entete)
+            self.assertNotIn('logo-horizontal.svg"', entete)
+        else:
+            self.assertIn('src="/fr/assets/logo-horizontal.svg"', home)
+            self.assertIn('srcset="/fr/assets/logo-horizontal-white.svg"', home)
+            self.assertIn('srcset="/fr/assets/symbole.svg"', home)
         self.assertIn('src="/fr/assets/logo-horizontal-white.svg"', home)
         self.assertIn('<p class="eyebrow">Rewayah Academy</p>', home)
         self.assertNotIn('4 août 2025', "\n".join(path.read_text(encoding="utf-8") for path in self.output.rglob("*.html")))

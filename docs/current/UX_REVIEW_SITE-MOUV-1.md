@@ -74,7 +74,30 @@ Lot du 21/10/2026, branche `claude/youthful-davinci-raugwe`. Revue exigée par `
 
 ## Questions ouvertes inscrites au registre
 
-O-10 (arche dessinée en CSS), O-11 (couleur du bouton), O-12 (mouvement lié au défilement), O-13 (les illustrations comme banque d'images), O-14 (le mushaf dans une illustration), O-15 (l'en-tête qui s'efface emporte le logo). O-05 (teinte sombre) reste ouverte.
+O-10 (arche dessinée en CSS), O-11 (couleur du bouton), O-12 (mouvement lié au défilement), O-13 (les illustrations comme banque d'images), O-14 (le mushaf dans une illustration), O-15 (l'en-tête qui s'efface emporte le logo), O-16 (fond violet en dégradé). O-05 (teinte sombre) reste ouverte.
+
+## Version violette et illustrations animées (21/10/2026, demande du directeur)
+
+**Demande.** Le directeur trouve la version claire « trop féminine ». Il demande :
+- un fond violet en dégradé léger, qui crée de la lumière et de l'ombre ;
+- des illustrations qui flottent, comme dans les affiches qu'il a envoyées (la mise en page seulement, pas leurs couleurs) ;
+- un halo lumineux qui suit la souris ;
+- des textes et un logo blancs ;
+- un tapis qui bouge doucement et sans fin derrière la mère et la fille ;
+- des mains et un Coran qui se rejoignent au défilement.
+
+| # | Proposition contrôlée | Standard ou source | Règle utile | Conclusion | Modification |
+|---|---|---|---|---|---|
+| V1 | Ambiance violette | Jetons de `app_palette.dart` ; cahier visuel (pas de dégradé) | Aucune teinte inventée | Dérogation demandée par le directeur (O-16) | `direction.json` → `ambiance: violet`. Teintes : `#6538E4` fond, `#8652E6` lumière, `#4E2983` ombre, `#25113F` nuit (pied de page et panneau), `#BA98FB`, `#E8D8FF`, blanc. La version claire reste disponible avec `ambiance: clair` |
+| V2 | Contrastes sur le violet | WCAG 2.2, 1.4.3 | 4,5:1 pour le texte | Conforme | Blanc sur `#6538E4` 6,48 ; blanc sur la zone la plus claire (`#8652E6`) 4,81 ; `#4E2983` sur le bouton blanc 10,67 ; `#25113F` sur `#BA98FB` 7,29 (troisième marche des étapes) |
+| V3 | Logo | M-25 (logo blanc sur fond sombre) | Fichier officiel blanc | Conforme | L'en-tête utilise `logo-horizontal-white.svg`, et `symbole-white.svg` sur téléphone ; testé |
+| V4 | Illustrations flottantes | Affiches de référence du directeur | — | Appliquée | Plus de fenêtre en arche derrière les illustrations : un puits de lumière au-dessus, une ombre portée dessous |
+| V5 | Halo qui suit la souris | WCAG 2.2.2 (mouvement autonome) | Un mouvement déclenché par l'utilisateur n'est pas autonome | Conforme | Halo de 960 px, déplacé par `transform`. Souris seulement ; rien sur écran tactile ni en mouvement réduit |
+| V6 | Tapis en mouvement continu | WCAG 2.2.2 (pause, arrêt, masquage) | Un mouvement de plus de 5 s, lancé seul, doit pouvoir s'arrêter | Conforme | Onde douce qui court vers la porte : périodes de 7 s et 4,3 s, amplitude d'environ 6 px. Un bouton « Arrêter l'animation du tapis » s'affiche dès que le tapis est à l'écran, et le choix est gardé sur l'appareil. Rien en mouvement réduit ni sans JavaScript |
+| V7 | Mains et Coran au défilement | Contrat E ; O-12 | Le mouvement suit la position du défilement, sans durée | Conforme au principe d'O-12 | Les mains de l'élève montent jusqu'au Coran : en haut de page, sur le premier tiers d'écran défilé ; plus bas, sur la demi-hauteur d'écran qui suit l'entrée de l'image. Le livre et les mains de l'enseignant ne bougent pas, pour ne rien inventer derrière le livre |
+| V8 | Calques des illustrations | Cahier visuel C.4 (une illustration reste légendée comme telle) | L'image au repos est l'image fournie | Conforme | Le tapis est découpé par couleur. Les mains de l'élève sont séparées par GrabCut, et la zone découverte est bouchée par LaMa. Au repos, fond et calque redonnent l'image d'origine : écart moyen de 0,05 sur 255 pour les mains, 0 pour le tapis. L'image d'origine reste celle du partage (Open Graph) |
+| V9 | Pied de page en rideau | — | Le rideau demande un contenu opaque | Retiré en violet | Le dégradé doit rester visible sous le contenu |
+| V10 | Inspection | Skill de direction (`inspect.mjs`) | — | 0 FAIL sur l'académie et les tarifs ; « gradient » signalé sur l'accueil et la page familles | Le FAIL « gradient » est la demande du directeur (O-16). WARN « grey-body » : le texte est blanc sur violet à 6,48:1, au-dessus du seuil AA |
 
 ## Hors de portée de l'agent
 

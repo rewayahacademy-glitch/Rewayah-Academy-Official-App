@@ -187,6 +187,19 @@ p { text-wrap: pretty; max-width: 60ch; }
 /* --- Illustrations (regles de base, avant les compositions qui les placent) ------------------------------------------------------------ */
 .scene { position: relative; }
 .scene img { width: 100%; height: auto; }
+/* Le cadre d'une illustration ; quand elle a des calques, la partie qui bouge est posee exactement sur le fond. */
+.scene__cadre { position: relative; display: block; }
+.scene[data-anime] .scene__cadre { overflow: clip; }
+.scene .scene__calque { position: absolute; inset: 0; width: 100%; height: 100%; }
+.scene__onde { position: absolute; left: calc(var(--zx) * 100%); top: calc(var(--zy) * 100%); width: calc(var(--zl) * 100%); height: calc(var(--zh) * 100%); pointer-events: none; }
+.scene[data-onde] .scene__calque--tapis { visibility: hidden; }
+/* Arreter le mouvement continu du tapis (WCAG 2.2.2) : un bouton qui n'apparait que si le tapis est a l'ecran. */
+.pause-anim { position: fixed; z-index: 30; inset-inline-start: var(--marge); bottom: var(--marge); display: none; place-items: center; width: 48px; height: 48px; border: 2px solid var(--contour); border-radius: 50%; background: var(--fond); color: var(--encre); box-shadow: var(--ombre-1); transition: background-color var(--mv-micro) var(--mv-entree); }
+.pause-anim[data-visible] { display: grid; }
+.pause-anim:hover { background: var(--champ); }
+.pause-anim svg { width: 18px; height: 18px; }
+.pause-anim .pause-anim__lecture, .pause-anim[aria-pressed="true"] .pause-anim__pause { display: none; }
+.pause-anim[aria-pressed="true"] .pause-anim__lecture { display: inline; }
 .scene figcaption { font-size: var(--t-petit); color: var(--encre-douce); }
 
 /* --- Boutons et liens : une seule forme, la pilule ------------------------- */
@@ -470,7 +483,6 @@ p { text-wrap: pretty; max-width: 60ch; }
 .section__figure { position: relative; width: min(100%, 520px); border-radius: var(--arche); background: var(--champ); padding: 14% 5% 0; }
 .section__figure .scene figcaption { position: absolute; inset-inline-end: 0; top: calc(var(--e-6) * -1); }
 .section--figure .section__figure { margin-top: var(--e-6); }
-.etages { display: none; }
 .section__figure--panorama { width: 100%; background: none; padding: 0; border-radius: 0; }
 .section__figure--panorama .scene figcaption { top: auto; bottom: calc(var(--e-6) * -1); }
 .section__corps { max-width: var(--lecture); }
@@ -510,7 +522,7 @@ p { text-wrap: pretty; max-width: 60ch; }
 .bande-image--large { padding: 0; max-width: none; background: var(--champ); overflow: clip; }
 .bande-image--large .scene { width: min(1500px, 120vw); margin-inline: auto; padding-block: var(--e-16); translate: calc(var(--pan, 0) * 1px) 0; }
 .bande-image--cercle .scene { width: min(86vw, 720px); margin-inline: auto; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: var(--champ); padding: 6%; }
-.bande-image--cercle .scene img { width: 92%; }
+.bande-image--cercle .scene__cadre { width: 92%; }
 .bande-image .scene figcaption { position: absolute; inset-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); bottom: var(--e-3); }
 
 /* Etapes : l'ordre se lit a la taille, sans numeros */
@@ -666,6 +678,12 @@ p { text-wrap: pretty; max-width: 60ch; }
   .action-row .cta { flex: 1 1 100%; }
 }
 
+@property --et1 { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
+@property --et2 { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
+@property --et3 { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
+@property --et4 { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
+@property --et5 { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
+
 /* --- Mouvement : entrees des sections (JS seulement, et si le mouvement est accepte) --- */
 @media (prefers-reduced-motion: no-preference) {
   /* Entrees : 220 ms, echelon 35 ms, rang plafonne a 5 (motion.js) : 395 ms au plus, sous le plafond de 400. */
@@ -677,13 +695,16 @@ p { text-wrap: pretty; max-width: 60ch; }
   .js .scene.est-ouverte img, .js [data-revele] .scene img { clip-path: inset(0 0 0 0); }
   /* Images de section : batie par etages, de gauche a droite, en 360 ms au plus. */
   .js .section__figure[data-revele] { opacity: 1; transform: none; }
-  .js .etages { display: grid; grid-template-rows: repeat(5, 1fr); position: absolute; inset: 0; z-index: 2; border-radius: inherit; overflow: hidden; pointer-events: none; }
-  .js .etages i { background: var(--fond); transform-origin: right center; transition: transform var(--mv-navigation) var(--mv-accentuee); transition-delay: calc(var(--n, 0) * var(--mv-echelon)); }
-  .js .etages i:nth-child(2) { --n: 1; }
-  .js .etages i:nth-child(3) { --n: 2; }
-  .js .etages i:nth-child(4) { --n: 3; }
-  .js .etages i:nth-child(5) { --n: 4; }
-  .js .est-visible .etages i { transform: scaleX(0); }
+  /* Par etages : cinq bandes du masque s'ouvrent de gauche a droite, 220 ms + 4 x 35 ms = 360 ms. */
+  .js .section__figure[data-revele] .scene__cadre {
+    --et1: 0%; --et2: 0%; --et3: 0%; --et4: 0%; --et5: 0%;
+    -webkit-mask: linear-gradient(#000 0 0) 0 0 / var(--et1) 20.4% no-repeat, linear-gradient(#000 0 0) 0 25% / var(--et2) 20.4% no-repeat, linear-gradient(#000 0 0) 0 50% / var(--et3) 20.4% no-repeat, linear-gradient(#000 0 0) 0 75% / var(--et4) 20.4% no-repeat, linear-gradient(#000 0 0) 0 100% / var(--et5) 20.4% no-repeat;
+    mask: linear-gradient(#000 0 0) 0 0 / var(--et1) 20.4% no-repeat, linear-gradient(#000 0 0) 0 25% / var(--et2) 20.4% no-repeat, linear-gradient(#000 0 0) 0 50% / var(--et3) 20.4% no-repeat, linear-gradient(#000 0 0) 0 75% / var(--et4) 20.4% no-repeat, linear-gradient(#000 0 0) 0 100% / var(--et5) 20.4% no-repeat;
+    transition: --et1 var(--mv-navigation) var(--mv-accentuee), --et2 var(--mv-navigation) var(--mv-accentuee) var(--mv-echelon), --et3 var(--mv-navigation) var(--mv-accentuee) calc(2 * var(--mv-echelon)), --et4 var(--mv-navigation) var(--mv-accentuee) calc(3 * var(--mv-echelon)), --et5 var(--mv-navigation) var(--mv-accentuee) calc(4 * var(--mv-echelon));
+  }
+  .js .section__figure.est-visible .scene__cadre { --et1: 100%; --et2: 100%; --et3: 100%; --et4: 100%; --et5: 100%; }
+  /* Les mains de l'eleve montent jusqu'au Coran au fil du defilement (--m : 1 ecartees, 0 au contact). */
+  .js .scene[data-anime="mains"] .scene__calque--mains { transform: translate(calc(var(--m, 0) * -4.5%), calc(var(--m, 0) * 3.7%)); }
   .js .ligne { display: block; overflow: clip; padding-bottom: .08em; margin-bottom: -.08em; }
   .js .ligne__in { display: block; transform: translateY(105%); transition: transform var(--mv-navigation) var(--mv-accentuee); transition-delay: calc(var(--rang, 0) * var(--mv-echelon)); }
   .js .est-dit .ligne__in { transform: none; }
@@ -702,10 +723,82 @@ p { text-wrap: pretty; max-width: 60ch; }
   .cta:active { transform: none; }
 }
 
+
+/* --- Ambiance violette ------------------------------------------------------------
+   Essai demande par le directeur le 21/10/2026 : le violet en fond, une lumiere et une ombre douces en degrade,
+   les illustrations qui flottent sans fenetre, un halo qui suit la souris, le texte et le logo en blanc.
+   Toutes les teintes sont des jetons de l'app : #8652E6 (surfacePrimary), #6538E4 (inkAccent),
+   #4E2983 (encre de surfacePrimary), #25113F (encre de surfacePrimary sombre), #BA98FB, #E8D8FF, blanc.
+   Le cahier visuel interdit le degrade : derogation demandee par le directeur, inscrite au registre (O-16). */
+:root[data-ambiance="violet"] {
+  color-scheme: dark;
+  background: #6538E4;
+  --fond: #6538E4; --toile: #6538E4; --sous: #4E2983; --avant: #8652E6;
+  --champ: #8652E6; --champ-encre: #E8D8FF; --champ-fort: #8652E6;
+  --marque: #FFFFFF; --sur-marque: #4E2983;
+  --inverse: #25113F; --sur-inverse: #F5F2FA; --sur-inverse-doux: #E8D8FF;
+  --encre: #FFFFFF; --encre-douce: #F5F2FA; --encre-accent: #FFFFFF;
+  --action: #FFFFFF; --sur-action: #4E2983; --action-survol: #E8D8FF; --sur-action-survol: #25113F;
+  --contour: #E8D8FF; --filet: #8652E6;
+  --pied: #25113F; --sur-pied: #F5F2FA; --sur-pied-doux: #E8D8FF;
+  --ombre-1: 0 8px 29px -4px rgb(37 17 63 / .35);
+  --ombre-2: 0 16px 47px -8px rgb(37 17 63 / .45);
+  --ombre-3: 0 12px 38px rgb(37 17 63 / .5);
+  --voile: rgb(37 17 63 / .6);
+  /* La lumiere vient d'en haut a gauche, l'ombre se pose en bas a droite. */
+  --degrade:
+    radial-gradient(110% 70% at 10% -10%, rgb(134 82 230 / .95) 0%, rgb(134 82 230 / 0) 62%),
+    radial-gradient(85% 65% at 95% 110%, rgb(78 41 131 / .9) 0%, rgb(78 41 131 / 0) 66%),
+    radial-gradient(55% 45% at 100% 0%, rgb(37 17 63 / .32) 0%, rgb(37 17 63 / 0) 70%),
+    #6538E4;
+  /* Un puits de lumiere a la place des fenetres en arche. */
+  --puits: linear-gradient(180deg, rgb(134 82 230 / .9) 0%, rgb(134 82 230 / .35) 55%, rgb(134 82 230 / 0) 100%);
+}
+[data-ambiance="violet"] body { background: transparent; }
+[data-ambiance="violet"] body::before { content: ''; position: fixed; inset: 0; z-index: -2; pointer-events: none; background: var(--degrade); }
+.halo { display: none; }
+[data-ambiance="violet"] .halo { display: block; position: fixed; z-index: -1; left: -480px; top: -480px; width: 960px; height: 960px; border-radius: 50%; pointer-events: none; background: radial-gradient(closest-side, rgb(255 255 255 / .11), rgb(255 255 255 / .04) 55%, rgb(255 255 255 / 0)); transform: translate(var(--hx, 72vw), var(--hy, 28vh)); }
+/* Le contenu laisse voir la lumiere ; le rideau du pied de page est retire (il demande un contenu opaque). */
+[data-ambiance="violet"] .site-main { background: transparent; position: static; }
+[data-ambiance="violet"] .site-footer { position: relative; }
+[data-ambiance="violet"] .site-header[data-flotte] { background: var(--degrade); background-attachment: fixed; }
+[data-ambiance="violet"] .porte,
+[data-ambiance="violet"] .entete-page--lavande,
+[data-ambiance="violet"] .entete-page--blanc,
+[data-ambiance="violet"] .entete-page--sobre,
+[data-ambiance="violet"] .bande-image--large,
+[data-ambiance="violet"] .introuvable { background: transparent; }
+[data-ambiance="violet"] .porte .rassurance,
+[data-ambiance="violet"] .porte .cta--secondary { background: transparent; }
+[data-ambiance="violet"] .porte .cta--secondary:hover { background: #8652E6; }
+[data-ambiance="violet"].js .porte__disque { background: var(--degrade); }
+/* Les illustrations flottent : plus de fenetre, une lumiere au-dessus, une ombre portee dessous. */
+[data-ambiance="violet"] .porte__arche,
+[data-ambiance="violet"] .chapitres__pile,
+[data-ambiance="violet"] .chapitre__image-mobile .scene,
+[data-ambiance="violet"] .bande-image--arche .scene,
+[data-ambiance="violet"] .panneau__arche,
+[data-ambiance="violet"] .introuvable__scene { background: var(--puits); }
+[data-ambiance="violet"] .bande-image--cercle .scene,
+[data-ambiance="violet"].js .porte__halqa::before { background: radial-gradient(closest-side, rgb(134 82 230 / .9), rgb(134 82 230 / .4) 70%, rgb(134 82 230 / 0)); }
+[data-ambiance="violet"] .section__figure { background: none; padding: 6% 0 0; }
+[data-ambiance="violet"] .section__figure::after,
+[data-ambiance="violet"] .entete-page__arche::after { content: ''; position: absolute; z-index: -1; left: 12%; right: 12%; bottom: -1%; height: 9%; border-radius: 50%; background: radial-gradient(closest-side, rgb(37 17 63 / .5), rgb(37 17 63 / 0)); }
+[data-ambiance="violet"] .entete-page--libre .entete-page__arche::after { display: none; }
+[data-ambiance="violet"] .section__figure--panorama::after { display: none; }
+/* Etapes, tuiles et prix : du plus profond au plus clair, comme une progression. */
+[data-ambiance="violet"] .etape:nth-child(3),
+[data-ambiance="violet"] .pousse__etape--1 .pousse__tuile { background: #BA98FB; color: #25113F; }
+[data-ambiance="violet"] .tuile[open] { background: #8652E6; }
+[data-ambiance="violet"] .panneau__in { background: #25113F; }
+[data-ambiance="violet"] .pousse__image figcaption { color: #4E2983; }
+
 /* --- Impression : tout le contenu, immobile ------------------------------------- */
 @media print {
   [data-revele], [data-revele-enfants] > *, .ligne__in, .entete-page__arche, .porte__texte, .porte__scene, .entete-page__image { opacity: 1 !important; transform: none !important; clip-path: none !important; animation: none !important; transition: none !important; }
-  .etages, .mobile-menu, .skip-link, .porte__arche, .porte__phrase { display: none !important; }
+  .pause-anim, .scene__onde, .halo, .mobile-menu, .skip-link, .porte__arche, .porte__phrase { display: none !important; }
+  .scene__cadre { -webkit-mask: none !important; mask: none !important; }
+  .scene .scene__calque { transform: none !important; visibility: visible !important; }
   .site-header, .site-footer, .porte__collant, .lecture__sommaire, .section__titre { position: static !important; }
   .porte { height: auto !important; }
   .appel__lien { min-height: 0; border-radius: 0; }
