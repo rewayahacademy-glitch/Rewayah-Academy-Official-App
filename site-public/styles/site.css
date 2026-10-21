@@ -344,6 +344,8 @@ li, dd { text-wrap: wrap; }
 .chapitre p { max-width: 46ch; }
 .chapitre p + p { margin-top: var(--e-4); }
 .chapitre__image-mobile { margin-top: var(--e-8); }
+/* Les mains : la manche sort par le bord gauche de l'ecran, au lieu de finir coupee dans le vide. */
+.chapitre__image-mobile:has(.scene[data-anime="mains"]) { margin-inline-start: calc(var(--marge) * -1); }
 /* Sous 840 px, chaque image se pose juste au-dessus de son titre, alignee sur le texte ; les chapitres se suivent sans vide. */
 @media (max-width: 839px) {
   .chapitre { display: flex; flex-direction: column; padding-block: var(--e-10); }
@@ -1206,10 +1208,15 @@ li, dd { text-wrap: wrap; }
   /* Titres de section a 38 px ; images plafonnees ; pied de page en trois colonnes. */
   :root { --t-titre: 38px; }
   .chapitre h2 { font-size: 38px; }
-  .chapitre__image-mobile .scene { width: min(100%, 440px); margin-inline: 0; }
+
   .pleine__image .scene { width: min(100%, 440px); }
   .bande-image--cercle .scene { width: min(86vw, 480px); }
-  .section--large .section__figure { width: min(100%, 420px); }
+  .section--large .section__figure { width: min(100%, 420px); margin-inline: auto; }
+  /* Chapitres de l'accueil : l'image a gauche, le texte a droite, comme une page de livre ouverte. */
+  .chapitre { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--e-8); align-items: center; padding-block: var(--e-12); }
+  .chapitre__image-mobile { grid-column: 1; grid-row: 1 / span 8; margin: 0; }
+  .chapitre > :not(.chapitre__image-mobile) { grid-column: 2; }
+  .chapitre__image-mobile .scene { width: 100%; }
   .site-footer__inner { grid-template-columns: minmax(0, 1fr) minmax(0, .8fr) minmax(0, 1.5fr); column-gap: var(--e-6); }
   .panneau__arche { width: min(100%, 420px); justify-self: center; }
   /* Les trois etapes de l'accueil cote a cote, comme au bureau, en tuiles plus basses. */
@@ -1263,7 +1270,7 @@ li, dd { text-wrap: wrap; }
   .bande-image--detail .scene { grid-column: 9 / -1; grid-row: 1; width: 100%; max-width: 420px; justify-self: end; }
 }
 .section__titre-plein h2 { max-width: 24ch; margin-bottom: var(--e-6); }
-@media (min-width: 840px) {
+@media (min-width: 600px) {
   /* Le titre de la section mene, sur toute la largeur ; les noms dessous a gauche, le texte a droite. */
   .section--figure:has(.section__figure--noms) .section__grille { align-items: start; }
   .section__titre-plein { grid-column: 1 / -1; grid-row: 1; }

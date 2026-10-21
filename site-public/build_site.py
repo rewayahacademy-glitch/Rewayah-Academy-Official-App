@@ -333,7 +333,9 @@ NOMS_A_TRAIT = re.compile(r"(?<![\w’'])((?:[dl][’'])?A[lnrsz]-[A-ZÀ-Ý][\w�
 MEME = re.compile(r"(?<![\w’'])(\w+-mêmes?)\b")
 
 
-_PETITS_TEXTE = _PETITS + r"|vous|nous|il|elle|on|ne|ce|ces|cette|leur|leurs|tout|toute|tous|toutes|est|y"
+# Texte courant : seuls les mots d'une ou deux lettres se lient au mot suivant (avec les nombres a leur unite).
+# Lier davantage laisse des blocs trop longs et un bord droit tres irregulier dans les colonnes etroites.
+_PETITS_TEXTE = r"le|la|de|du|à|au|en|et|ou|un|ne|ce|se|sa|il|on|y|a"
 PETITS_MOTS_TEXTE = re.compile(rf"(?<![\w’'])((?i:{_PETITS_TEXTE})|\d+(?:,\d+)?) (?=\S)")
 
 
@@ -598,7 +600,7 @@ def accueil_confiance(page: dict, images: dict) -> str:
       <div class="panneau__bloc" data-revele><h3>Un suivi pour les familles</h3><p>{texte_html("Retrouvez les séances et le travail à préparer dans votre espace familial.")}</p></div>
       <div class="panneau__bloc" data-revele><h3>Un tuteur pour chaque enfant</h3>{paragraphes(sec)}</div>
       <div class="action-row" data-revele>{bouton("Découvrir l’académie", "/fr/academie", "contour")}{lien_fleche("Protection des enfants", "/fr/protection-des-enfants")}</div>
-      <p class="panneau__societe">REWAYAH ACADEMY LTD · Société n° 16624644</p>
+      <p class="panneau__societe">REWAYAH ACADEMY LTD · Société n° 16624644</p>
     </div>
   </div>
 </section>'''
@@ -1055,7 +1057,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   {simulator}
   <footer class="site-footer"><div class="site-footer__inner">
      <img class="site-footer__ornement" src="{ASSETS}/ornement-contour-white.svg" width="494" height="777" alt="">
-     <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a><p>REWAYAH ACADEMY LTD<br>Société n° 16624644</p>
+     <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a><p>REWAYAH ACADEMY LTD<br>Société n° 16624644</p>
       <address>71-75 Shelton Street<br>Covent Garden, London<br>WC2H 9JQ, Royaume-Uni</address>
     </div>
     <nav aria-label="Découvrir Rewayah"><p class="footer-title">Découvrir</p><ul>{discovery_links}</ul></nav>
