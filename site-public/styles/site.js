@@ -205,7 +205,7 @@ function initialiserSimulateur(simulator, d) {
       const brut = ages[i] ? ages[i].value : '';
       const age = Number(brut);
       if (brut === '' || !Number.isSafeInteger(age) || age < d.ageEnfantMin) {
-        return { erreur: 'Indiquez l’âge de l’élève ' + (i + 1) + ', à partir de ' + d.ageEnfantMin + ' ans.' };
+        return { erreur: 'Indiquez l’âge de l’élève ' + (i + 1) + ', à partir de ' + d.ageEnfantMin + ' ans.', ageVide: brut === '' };
       }
       eleves.push({ age, bourse: Boolean(bourses[i] && bourses[i].checked) });
     }
@@ -265,10 +265,20 @@ function initialiserSimulateur(simulator, d) {
     if (!d.essaiActif) ligneTexte(result, 'Il n’y a pas d’essai : la première semaine est remboursée si le cours ne convient pas.');
   }
 
+  // Tant qu'un age manque, le prix publie s'affiche en grand, avec la consigne dessous.
+  function afficherRepere(consigne) {
+    result.replaceChildren();
+    const prix = el('p', formaterMontant(d, d.enfant), { class: 'simulator__prix' });
+    prix.appendChild(el('small', 'par mois et par enfant, hors taxes'));
+    result.appendChild(prix);
+    ligneTexte(result, formaterMontant(d, d.adulte) + ' par mois pour un adulte, dès ' + d.ageAdulte + ' ans. ' + consigne);
+  }
+
   function calculerEtAfficher() {
     const lecture = lire();
     if (lecture.erreur) {
-      result.textContent = lecture.erreur;
+      if (lecture.ageVide) afficherRepere(lecture.erreur);
+      else result.textContent = lecture.erreur;
       return;
     }
     afficher(lecture.eleves);

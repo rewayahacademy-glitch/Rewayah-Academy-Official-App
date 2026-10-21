@@ -106,15 +106,17 @@ def esc(value: object) -> str:
 
 
 _PETITS = (r"le|la|les|un|une|des|de|du|à|au|aux|en|et|ou|par|pour|sans|son|sa|ses|votre|vos|notre|nos|chaque|dès|"
-           r"avec|sur|dans")
-# Un petit mot se lie au mot plein qui le suit, jamais a un autre petit mot : sinon la chaine devient trop longue
-# pour la ligne (« pour votre enfant » se coupe apres « pour », pas apres « votre »).
-PETITS_MOTS = re.compile(rf"(?<![\w’'])((?i:{_PETITS})) (?!(?i:{_PETITS}) )(?=\S)")
+           r"avec|sur|dans|deux|trois|quatre|cinq|six")
+# Un petit mot se lie au mot qui le suit (« pour votre enfant » ne se coupe qu'avant « pour »), un nombre a son unite,
+# et le nom de l'academie ne se coupe pas. Les titres longs sont dimensionnes pour que ces blocs tiennent.
+PETITS_MOTS = re.compile(rf"(?<![\w’'])((?i:{_PETITS})|\d+) (?=\S)")
 
 
 def titre_html(value: str) -> str:
-    """Un titre ne finit pas une ligne sur un article : espace insecable apres les petits mots."""
-    return esc(PETITS_MOTS.sub(lambda m: m.group(1) + "\u00a0", value))
+    """Un titre ne finit pas une ligne sur un article, une preposition ou un nombre : espaces insecables."""
+    lie = PETITS_MOTS.sub(lambda m: m.group(1) + "\u00a0", value)
+    lie = PETITS_MOTS.sub(lambda m: m.group(1) + "\u00a0", lie)
+    return esc(lie.replace("Rewayah Academy", "Rewayah\u00a0Academy"))
 
 
 def _unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
@@ -415,7 +417,7 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
 def accueil_enonce(images: dict, tarifs: dict) -> str:
     return f'''<section class="enonce" aria-labelledby="enonce-titre">
   <h2 id="enonce-titre" class="sr-only">En bref</h2>
-  <p class="enonce__texte" data-revele><span>Seul, on remet à demain.</span> <span>Une classe commence à l’heure.</span></p>
+  <p class="enonce__texte" data-revele><span>Seul, on remet à demain.</span> <span>Une\u00a0classe commence à\u00a0l’heure.</span></p>
 </section>'''
 
 
@@ -447,7 +449,7 @@ def accueil_etapes(page: dict, images: dict) -> str:
     etapes = (
         ("place", "Vous choisissez un horaire", "Parmi les horaires publiés, pour votre enfant ou pour vous."),
         ("eleve-enseignante-b", "La direction compose la classe", "Elle nomme l’enseignant et vous écrit à chaque étape."),
-        ("adulte-femme", "La classe commence", "Vous la rejoignez depuis l’application, à son horaire."),
+        ("adulte-homme-livre", "La classe commence", "Vous la rejoignez depuis l’application, à son horaire."),
     )
     tuiles = "".join(
         f'<li class="pousse__etape pousse__etape--{i}" data-revele>'
@@ -479,7 +481,7 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
         return f"Trois séances de {texte} par semaine{pause}"
 
     def inclus(suivi: str) -> str:
-        lignes = ("Le même enseignant à chaque séance", "Le support de cours affiché pendant la séance", suivi,
+        lignes = ("Le support de cours affiché pendant la séance", suivi, "Une séance annulée par l’académie est remplacée",
                   "La première semaine remboursée si le cours ne convient pas")
         return '<ul class="champ__inclus">' + "".join(f"<li>{esc(l)}</li>" for l in lignes) + "</ul>"
 
@@ -519,7 +521,7 @@ def accueil_confiance(page: dict, images: dict) -> str:
     </div>
     <div class="panneau__droite">
       <p class="panneau__depuis" data-revele>Rewayah Academy enseigne le Coran depuis le 1er mai 2024.</p>
-      <div class="panneau__bloc" data-revele><h3>Un enseignant attitré</h3><p>Le même enseignant accompagne la classe au fil des séances.</p></div>
+      <div class="panneau__bloc" data-revele><h3>Un programme qui avance</h3><p>Chaque étape a son objectif et sa date limite.</p></div>
       <div class="panneau__bloc" data-revele><h3>Un suivi pour les familles</h3><p>Retrouvez les séances et le travail à préparer dans votre espace familial.</p></div>
       <div class="panneau__bloc" data-revele><h3>Un tuteur pour chaque enfant</h3>{paragraphes(sec)}</div>
       <div class="action-row" data-revele>{bouton("Découvrir l’académie", "/fr/academie", "contour")}{lien_fleche("Protection des enfants", "/fr/protection-des-enfants")}</div>
@@ -543,7 +545,7 @@ QUESTIONS_ACCUEIL = (
     ("Que se passe-t-il si le cours ne convient pas ?",
      "La première semaine est remboursée en entier si vous arrêtez pendant la semaine qui suit la première"
      " séance. Ensuite, l’abonnement mensuel s’arrête quand vous le souhaitez, à la fin du mois en cours."),
-    ("Payons-nous avant que la classe commence ?",
+    ("Payons-nous avant l’ouverture de la classe ?",
      "Non. Une classe ouvre dès trois inscrits. Avant cela, vous êtes en liste d’attente et rien n’est facturé."),
 )
 
@@ -619,7 +621,9 @@ def bande_image(reglage: dict, images: dict) -> str:
         return ""
     return (f'<div class="bande-image bande-image--{esc(bande.get("forme", "large"))}" data-revele>'
             f'{scene(images, bande["image"], "100vw", "bande-image__scene")}'
-            f'{"<p class=bande-image__phrase>" + esc(bande["phrase"]) + "</p>" if bande.get("phrase") else ""}</div>')
+            + (f'<div class="bande-image__texte"><p class="bande-image__phrase">{titre_html(bande["phrase"])}</p>'
+               + (f'<p class="bande-image__sous">{esc(bande["sous"])}</p>' if bande.get("sous") else "") + '</div>'
+               if bande.get("phrase") else "") + '</div>')
 
 
 def figure_section(reglage: dict, images: dict, sid: str) -> str:
@@ -678,7 +682,10 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
     def vider() -> None:
         if len(groupe) > 1:
             cartes = "".join(render_section(s, i, tarifs, today, avis, "carte") for i, s in groupe)
-            morceaux.append(f'<div class="groupe groupe--{len(groupe)}">{cartes}</div>')
+            # Deux longueurs tres differentes laisseraient un trou a cote de la carte courte : on les empile.
+            longueurs = [len(" ".join(s.get("paragraphs", []) + s.get("points", []))) for _, s in groupe]
+            pile = " groupe--pile" if max(longueurs) > 2.5 * max(min(longueurs), 1) else ""
+            morceaux.append(f'<div class="groupe groupe--{len(groupe)}{pile}">{cartes}</div>')
         elif groupe:
             morceaux.append(render_section(groupe[0][1], groupe[0][0], tarifs, today, avis))
         groupe.clear()
