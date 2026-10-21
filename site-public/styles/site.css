@@ -427,7 +427,7 @@ li, dd { text-wrap: wrap; }
 /* Au telephone, les etapes s'empilent : la montee des hauteurs ne se lit plus, les trois tuiles prennent la meme taille. */
 @media (max-width: 599px) { .pousse__liste .pousse__etape .pousse__tuile { height: 64vw; } .pousse__liste .pousse__etape .pousse__image { width: min(100%, 46vw); } }
 /* Au telephone, la legende « Illustration » d'une etape ne touche pas le titre qui suit. */
-@media (max-width: 599px) { .etapes .etape .section__figure { margin-bottom: calc(var(--e-12) + var(--e-2)); } }
+@media (max-width: 599px) { .etapes .etape .section__figure { margin-bottom: var(--e-16); } }
 @media (min-width: 840px) {
   .pousse__entete { grid-column: 1 / -1; grid-row: 1; display: grid; grid-template-columns: subgrid; align-items: start; }
   .pousse__entete h2 { grid-column: 1 / span 6; }
@@ -790,6 +790,12 @@ li, dd { text-wrap: wrap; }
   .etape h2 { align-self: end; padding-top: var(--e-4); }
   /* Le texte d'une carte d'etape se lit a 18 px sur environ 40 signes : les lignes se remplissent. */
   .etape .etape__corps { font-size: 18px; }
+}
+/* De 840 a 1199 px, la moitie de carte laisserait au texte moins de 200 px : l'image passe au-dessus du texte. */
+@media (min-width: 840px) and (max-width: 1199px) {
+  .etape { display: flex; flex-direction: column; justify-content: flex-start; }
+  .etape .section__figure { width: min(100%, 260px); margin-bottom: var(--e-16); }
+  .etape h2 { align-self: stretch; padding-top: 0; }
 }
 
 /* Lecture longue : textes juridiques, protection des enfants, accessibilite */

@@ -406,6 +406,26 @@ Le texte courant est déjà en blanc plein sur le violet (contraste 6,5:1, le pl
 
 **Après la recette 14.** Les cinq groupes de personnages visés ne paraissent plus que sur deux pages au plus. Les jurés relèvent alors deux autres groupes sur quatre pages (le père et le garçon, l'enseignant barbu), et lisent les recadrages sans personne comme du remplissage. Le jeu de rendus ne permet pas mieux : chaque personnage retiré d'une page doit être remplacé par un décor, et les décors disponibles sont presque tous des arches et des portes. Seules de nouvelles scènes lèvent cette réserve (O-20). La génération à partir des rendus, acceptée par le directeur le 21/10, est bloquée par la sécurité de l'environnement : elle demande que la session passe en mode « Accept edits », ou que le modèle soit autorisé dans le connecteur Hugging Face.
 
+Le directeur a changé le mode de la session le 21/10. Le rendu part bien vers le modèle (FLUX.1 Kontext, Space Hugging Face), mais le calcul est refusé : le Space tourne sur des cartes graphiques partagées (ZeroGPU) qui demandent un compte, et la session n'a pas de jeton Hugging Face. Le connecteur Hugging Face consulte les modèles mais ne peut pas les lancer (`gradio=none`). Aucun Space d'édition d'images en service ne tourne sur une carte dédiée. Deux voies : un jeton Hugging Face en lecture ajouté aux réglages de l'environnement (variable `HF_TOKEN`, lue par une nouvelle session ; un compte gratuit donne 5 minutes de calcul par jour), ou des scènes générées par le directeur avec le fichier `marque/PROMPTS-ILLUSTRATIONS-2026-10-21.md`.
+
+**Corrections après la recette 14, sans nouveau rendu.**
+
+| # | Relevé | Correction |
+|---|---|---|
+| Z1 | Accueil : l'énoncé « Votre classe commence à l'heure… » petit, aligné à gauche, second vers en retrait, un tiers d'écran vide ensuite | Centré, sans retrait, à la taille qui remplit la mesure (64 px à 1440, 48 px à 840) ; la fenêtre des chapitres suit 160 px plus bas au lieu de 280 |
+| Z2 | Accueil : « Une petite classe. Un enseignant attitré. » trop petit à l'arrivée du zoom | 62 px au lieu de 49 ; la classe vue du dessus se décale (54vw) et passe de 46 à 41vw de large pour garder l'écart |
+| Z3 | Accueil : la dernière image des chapitres part pendant qu'on lit son texte | Le dernier chapitre a la hauteur de la fenêtre et se centre sur elle : texte et image quittent l'écran ensemble. L'image change quand le titre du chapitre suivant passe 60 % de l'écran (le titre, et non plus le haut de l'article) |
+| Z4 | Accueil : la fenêtre des chapitres change de cadre à chaque chapitre ; texte des chapitres sur une autre colonne que les autres paires | Une seule forme, l'arche : le père et le fils sont recadrés en arche dans le même rendu (380 × 475, taille réelle) ; seules les mains restent détourées. Le texte part de la colonne 7, comme les autres paires (732 px à 1440) |
+| Z5 | Accueil : la moitié basse en pièces de kit, dont deux cartes de prix à puces | Les deux prix se lisent en grand, sans carte (150 px à 1440, 64 px au téléphone) ; le public et ce que le prix comprend se posent dessous |
+| Z6 | Tarifs : les deux prix dits trois fois ; cinq écrans de tableaux et de cartes | La grille « Le prix de chaque formule » est retirée. Ses mentions (date d'effet, monnaies, taxes) passent sous les deux prix du haut, présentés sans boîte, et le simulateur les suit. Le libellé adulte reprend la décision : « 18 ans et plus » |
+| Z7 | Tarifs : un cercle de tapis en haut de page qui se lit comme un échantillon de tissu | L'arche sombre vue d'en haut passe en haut de page ; le tapis va aux remises. Quatre images, chacune une seule fois |
+| Z8 | Comment ça marche : petites images dans de grandes cartes, cartes décalées en escalier | Deux cartes par rangée, de même hauteur et alignées en haut ; l'image prend la moitié de la carte |
+| Z9 | « Les cours en bref » : des encarts en petits caractères, sans ligne qui mène | Mot pour mot. La ligne du prix se lit en grand, sans puce (46 px à 1440), et s'aligne d'un encart à l'autre ; les autres lignes respirent davantage |
+
+Non repris : la taille du texte courant. Il est à 19,6 px sur un écran de 1 440 px ; les captures des jurés réduisent quatre écrans à 800 px de large, ce qui le fait paraître à 11 px. Le voile au bout du disque blanc de la scène du haut est dans le rendu lui-même.
+
+Inspection des six pages après ces corrections : 0 FAIL (un recouvrement introduit par les grands prix, l'interligne de 0,9 du chiffre empiétant sur le titre au-dessus, a été corrigé avant l'envoi). Aucune image agrandie, aucun texte coupé au bord de l'écran, aucun mot seul en fin de puce. Tests : 64, OK.
+
 Contraintes que la recette ne pouvait pas lever : le directeur a fourni treize illustrations, presque toutes des portes (question O-20) ; les encarts du 18/10 se publient tels quels.
 
 Inspection des six pages de la recette après ces corrections : 0 FAIL. Tous les titres de page tiennent en deux lignes de 840 à 1440 px et à 390 px ; à 360 et 320 px, le titre de l'accueil prend quatre lignes, ceux de l'académie et des conditions trois (déjà le cas avant ce lot). Tests : 64, OK.
