@@ -547,6 +547,18 @@
         680
       ],
       "forme": "arche"
+    },
+    "halqa-haut": {
+      "source": "06 (scène publiée, 1014 px), haut de la scène : l’enseignant et les deux élèves des côtés",
+      "largeur": 960,
+      "hauteur": 553,
+      "alt": "Vue du dessus : l’enseignant et deux élèves, assis en cercle, chacun devant son pupitre de lecture.",
+      "recadrage": [
+        30,
+        30,
+        990,
+        583
+      ]
     }
   }
 }
