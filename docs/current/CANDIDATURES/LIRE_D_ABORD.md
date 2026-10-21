@@ -35,6 +35,9 @@ lisible par Claude. Une réponse ne devient une décision qu'une fois versée da
    attendu des ports et les besoins serveur `CAND-BR-01` à `CAND-BR-16`, préparés
    comme la spec §1.2 le permet, au statut de proposition. Chaque méthode et
    chaque besoin citent la question du directeur dont ils dépendent.
+5. `MAPPAGE_IMPORT_FORMULAIRES.md` : comment chaque colonne et chaque option des
+   formulaires Google devient un champ de la candidature (en-têtes et libellés
+   seulement, aucune réponse de personne), normalisation des contacts, doublons.
 
 ## Règles qui tiennent déjà, quoi que décide le directeur
 
