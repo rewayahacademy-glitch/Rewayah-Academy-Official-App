@@ -481,8 +481,9 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
   <div class="porte__collant">
     <div class="porte__vue">
       <div class="porte__arche" aria-hidden="true"></div>
-      {scene(images, "chemin", "(max-width: 839px) 150vw, 112vw", "porte__scene", prioritaire=True)}
+      {scene(images, "chemin", "(max-width: 839px) 150vw, 112vw", "porte__scene", prioritaire=True, legende=False)}
     </div>
+    <p class="porte__legende">Illustration</p>
     <div class="porte__texte" data-lignes>
       <h1>{titre_html(page['h1'])}</h1>
       <p class="hero-intro">{texte_html(page.get('intro', ''))}</p>

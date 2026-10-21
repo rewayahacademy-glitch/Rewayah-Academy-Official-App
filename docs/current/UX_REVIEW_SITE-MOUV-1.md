@@ -212,6 +212,7 @@ Inspection après ces corrections :
 | Recette 9 | 6,5 (7,5 sans plafond) | 6,45 | 6,5 | « presque » |
 | Recette 10 | 7,8 | 6,57 | 6,5 | « presque » |
 | Recette 11 | 7,77 | 6,37 | 6,33 | « presque » |
+| Recette 12 | 6,8 (7,35 à 7,5 sans plafond) | 6,07 | 6,17 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -375,6 +376,17 @@ Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 | W4 | Familles : la classe vue du dessus, petite ; minuscule à la tablette | 690 px à 1440 ; à la tablette, elle passe sous son texte, à toute la largeur |
 | W5 | Téléphone : le pied de page fait encore 1,3 écran | Les quatre contacts tiennent en deux colonnes (le libellé est le lien ; l'adresse reste visible à partir de 600 px) ; mentions et crédits à 13 px : 941 px au lieu de 1 307 au départ |
 | W6 | La légende « Illustration » change de place d'une image à l'autre | Une seule règle : 13 px, alignée sur le bord droit de son image, à 32 px au moins du titre suivant |
+
+Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
+
+**Corrections après la recette 12.** Les trois jurés plafonnent l'utilisabilité à 5 pour une régression : au téléphone, la légende du haut de l'accueil était coupée au bord de l'écran (« Illus »), après le changement de la règle des légendes (W6).
+
+| # | Relevé | Correction |
+|---|---|---|
+| X1 | Accueil : la légende du haut coupée au bord de l'écran du téléphone, illisible à la tablette, hors de la marge sur ordinateur | La légende sort de l'image qui déborde : elle est posée dans la colonne du contenu, sous la scène, alignée sur le bord droit (374 px à 390, 744 à 768, 1 320 à 1 440) ; elle s'efface quand on passe la porte. Nouveau contrôle : aucun texte visible coupé par le bord de l'écran, sur les six pages, à 390, 768 et 1 440 px |
+| X2 | Familles : la classe vue du dessus flotte, sans sol | La première image du directeur, telle quelle : la classe dans son cercle de lumière, sur son sol, recadrée en cercle (le rendu d'origine) |
+| X3 | Familles : l'élève au bonnet violet deux fois sur la page | « Un profil pour chaque élève » montre la mère et sa fille qui partent main dans la main |
+| X4 | Académie : la même arche dans deux sections de suite | « La famille fait partie du parcours » montre la mère à la porte qui regarde sa fille apprendre avec l'enseignante ; un cercle en bande pleine fait 520 px au plus |
 
 Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 

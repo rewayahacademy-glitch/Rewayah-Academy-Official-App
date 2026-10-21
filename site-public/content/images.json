@@ -571,6 +571,19 @@
         1060,
         440
       ]
+    },
+    "halqa-cercle": {
+      "source": "06, rendu d’origine avec son sol (le cercle de lumière)",
+      "largeur": 1200,
+      "hauteur": 1200,
+      "alt": "Vue du dessus : un enseignant et quatre élèves assis en cercle dans une flaque de lumière, chacun devant son pupitre de lecture.",
+      "recadrage": [
+        300,
+        170,
+        1500,
+        1370
+      ],
+      "forme": "cercle"
     }
   }
 }
