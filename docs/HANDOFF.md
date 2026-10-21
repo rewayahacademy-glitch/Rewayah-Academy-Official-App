@@ -1,36 +1,5 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> 🧭 **21 octobre 2026 — module candidatures : revue critique livrée, RIEN
-> n'est codé, et rien ne doit l'être avant l'arbitrage du directeur.**
-> Mission reçue : la spécification « Module de gestion des candidatures et
-> viviers de recrutement » (v1.0, 21/10/2026), versionnée telle quelle dans
-> **[docs/produit/candidatures-spec-v1.md](produit/candidatures-spec-v1.md)**.
-> Sa section 12 rend la revue critique **bloquante** avant tout code ; elle est
-> livrée dans
-> **[docs/architecture/CANDIDATURES_REVUE_CRITIQUE.md](architecture/CANDIDATURES_REVUE_CRITIQUE.md)**,
-> et ses treize arbitrages sont inscrits au registre de `decisions.md`
-> (questions 36 à 48).
-> ⚠️ **Le constat qui commande tout le reste** : `decider_dossier()` active le
-> compte dès l'approbation de la pièce d'identité, et `active` est le seul
-> critère d'affectabilité de `enseignants_pour`, `attribuer_eleve`,
-> `prendre_eleve` et `creer_groupe`. La « salle 3 » de la spec existe donc
-> déjà, sans entretien, sans engagement, sans paiement — et sans même vérifier
-> le contrat signé (question 48, défaut existant).
-> ⚠️ **Le portail candidat est `/attente`**, pas un second tunnel (fiche
-> `ENS-01`). Aucune table de candidature n'existe : « frontend only » ne livre
-> que fiches, maquettes et contrat (question 38).
-> 🔒 **Données Drive** : les formulaires de candidature (deux liens du même
-> questionnaire arabe, octobre 2026, et l'ancien formulaire français) ont été
-> lus pour leur structure et des comptes agrégés seulement — 451 lignes, 418
-> personnes distinctes, aucune question sur le pays de résidence, le paiement,
-> les publics ou l'engagement. **Aucune donnée personnelle n'est entrée dans le
-> dépôt.** Indicatifs dominants : Arabie saoudite puis Nigeria, ce qui déplace
-> la question de la matrice de paiement (question 40).
-> ⏭ **Prochaine session** : ne rien coder. Attendre les réponses aux questions
-> 36 à 48 ; puis, dans l'ordre de la spec §14, écrire les fiches au catalogue
-> (codes proposés `TUT-00c/d-f`, `ADM-20` à `ADM-24`), les maquettes, et le
-> lot backend s'il est autorisé.
-
 > 🚀 **19 septembre 2026, soir (session suivante) — audit final de placement
 > UX du panneau Admin, un écart trouvé et corrigé.** Mission reçue : contrôle
 > final UX, classification de chaque élément visible de l'espace Admin selon

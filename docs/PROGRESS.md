@@ -10,13 +10,6 @@ dépôt actif, où le travail s'est arrêté, quel lot reprendre, et avec quelle
 commandes. Le reste de ce fichier est le tableau d'avancement, pas la consigne
 de reprise.
 
-**21 octobre 2026 — module candidatures en revue, pas en code.** La
-spécification `docs/produit/candidatures-spec-v1.md` exige une revue critique
-avant toute implémentation ; elle est dans
-`docs/architecture/CANDIDATURES_REVUE_CRITIQUE.md`, et ses arbitrages sont les
-questions 36 à 48 du registre de `decisions.md`. Tant qu'elles sont ouvertes,
-aucun écran ni aucune migration de ce module ne s'écrit.
-
 **Les étapes 3 et 4 sont terminées, la refonte UX/UI aussi.** L0 à L10 sont
 faits (étape 4 close le 11 septembre 2026), et B0, T, C, R (R0 à R4), T2, T3,
 A1 sont tous codés et poussés sur `main` (ADR-019). N0 (documentaire) a
