@@ -47,7 +47,7 @@
           vue.unobserve(entree.target);
         }
       });
-    }, { rootMargin: '0px 0px -4% 0px', threshold: 0 });
+    }, { rootMargin: '0px', threshold: 0 });
     elements.forEach(function (el) { vue.observe(el); });
   }
 

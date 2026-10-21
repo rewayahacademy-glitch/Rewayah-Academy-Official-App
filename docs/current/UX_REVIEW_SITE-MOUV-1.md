@@ -207,6 +207,7 @@ Inspection après ces corrections :
 | Recette 6 | 7,33 | 6,13 | 6,17 | « presque » |
 | Recette 7 | 7,72 | 6,27 | 6,33 | « presque » |
 | Recette 8 | 7,67 | 6,12 | 6,17 | « presque » |
+| Recette 9 | 6,5 (7,5 sans plafond) | 6,45 | 6,5 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -330,6 +331,20 @@ Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 | T11 | Directeur (21/10, commentaire sur la planche) : « la première image était meilleure », ni la petite classe du lot 2, ni le schéma dessiné | Familles, « Vous choisissez parmi nos horaires » : le haut de la première scène vue du dessus (l’enseignant et les deux élèves des côtés), sans l’élève au bonnet violet déjà montré sur la page. Le schéma dessiné reste désactivé |
 
 Trois objets seuls étaient demandés pour Tarifs ; un seul existe dans les rendus. Le pupitre a toujours une personne derrière lui et un livre ouvert dont les lignes se lisent comme du texte. La couverture du livre est tenue par des mains aux quatre coins, et son médaillon porte une écriture. D'où la proposition du 21/10 : dessiner en code les objets et les schémas, et garder les rendus pour les personnes. Une planche de style est soumise au directeur ; rien ne passe sur le site avant son accord.
+
+Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
+
+**Corrections après la recette 9.** Les trois jurés plafonnent Rewayah à 6,5 pour une seule raison : au téléphone, l'énoncé de l'accueil prend quatre lignes et finit sur « seul. ». Sans ce plafond, la note pondérée est de 7,5.
+
+| # | Relevé | Correction |
+|---|---|---|
+| U1 | Accueil, téléphone : « Votre classe commence à l'heure. Vous ne tenez plus le rythme seul. » sur quatre lignes, « seul. » isolé | Sous 840 px, une phrase par ligne, à la taille qui la fait tenir (22 px à 390, 20 px à 360, 18 px à 320) : deux lignes partout, sans débordement |
+| U2 | Fiches et cartes de prix : « ne convient / pas. », « chaque fin / de semaine. » | Puces composées sans mot seul en fin de puce ; aucun mot isolé mesuré à 1440, 768 et 390 px |
+| U3 | Familles : « La petite classe » du lot 2 dans un autre style | Remplacée par la première scène vue du dessus, sur décision du directeur (T11) |
+| U4 | Familles, ordinateur : « Les cours en bref » absent des captures | Le titre est bien là au défilement réel ; la révélation part désormais dès qu'un pixel entre à l'écran, pour que les captures par écran entier le montrent aussi |
+| U5 | Accueil, téléphone : trois étapes de hauteurs différentes | Au téléphone, les trois tuiles et les trois cercles ont la même taille |
+| U6 | Cours : l'arche et le cercle côte à côte, titres décalés ; un bord de porte dans le cercle | Même boîte pour les deux images, posées en bas : les titres partagent une ligne. Le cercle est recadré sans le pilier de l'arche |
+| U7 | Téléphone : les détails sans personne prennent tout l'écran ; notes à 15 px | Au téléphone, une arche fait 260 px au plus et un cercle 300 px. Notes et légendes à 16 px |
 
 Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 

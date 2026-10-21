@@ -112,7 +112,7 @@
   --t-titre: clamp(26px, 3.5vw, 50px);
   --t-moyen: clamp(20px, 2.1vw, 30px);
   --t-corps: clamp(18px, 0.25vw + 16px, 20px);
-  --t-petit: 15px;
+  --t-petit: 16px;
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -328,10 +328,14 @@ p { text-wrap: wrap; max-width: 60ch; }
 .enonce__texte { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-titre); line-height: 1.08; letter-spacing: -0.03em; }
 .enonce__texte span { display: block; }
 @media (min-width: 840px) { .enonce__texte span { white-space: nowrap; } .enonce__texte span + span { padding-inline-start: 1.6em; } }
+/* Sous 840 px : une phrase par ligne, a la taille qui la fait tenir (la plus longue mesure 16,07 em), jamais un mot seul. */
+@media (max-width: 839px) { .enonce__texte { font-size: min(var(--t-titre), calc((100vw - 2 * var(--marge)) / 16.4)); } .enonce__texte span { white-space: nowrap; } }
 
 /* --- Chapitres : la porte reste, ceux qui viennent changent ------------------- */
 p, li, dd { overflow-wrap: break-word; }
 li, dd { text-wrap: wrap; }
+/* Puces des encarts et des cartes de prix : pas de mot seul en fin de puce (« ne convient / pas. »). Lignes courtes, propres a ces listes. */
+.fiche__lignes li, .champ__inclus li { text-wrap: pretty; }
 .appel__phrase { overflow-wrap: anywhere; }
 .section__grille > *, .contact-ligne > *, .entete-page > *, .groupe > *, .faq-tuiles > * { min-width: 0; }
 .chapitres { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); padding: 0 var(--marge) var(--respire); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
@@ -396,6 +400,8 @@ li, dd { text-wrap: wrap; }
 .pousse__image figcaption { position: absolute; inset-inline-end: 0; top: calc(100% + var(--e-2)); }
 .pousse__etape h3 { margin-top: var(--e-10); }
 .pousse__etape p { margin-top: var(--e-2); max-width: 32ch; }
+/* Au telephone, les etapes s'empilent : la montee des hauteurs ne se lit plus, les trois tuiles prennent la meme taille. */
+@media (max-width: 599px) { .pousse__liste .pousse__etape .pousse__tuile { height: 64vw; } .pousse__liste .pousse__etape .pousse__image { width: min(100%, 46vw); } }
 @media (min-width: 840px) {
   .pousse__entete { grid-column: 1 / -1; grid-row: 1; display: grid; grid-template-columns: subgrid; align-items: end; }
   .pousse__entete h2 { grid-column: 1 / span 6; }
@@ -1084,6 +1090,10 @@ li, dd { text-wrap: wrap; }
 .duo__carte .points, .duo__carte .section-links { margin-top: var(--e-6); }
 @media (min-width: 600px) { .duo { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-8); align-items: start; } }
 @media (min-width: 840px) { .duo { column-gap: var(--e-12); } }
+/* Une arche a cote d'un cercle : meme boite pour les deux images, posees en bas, pour que les titres partagent une ligne. */
+@media (min-width: 600px) { .duo:has(.scene--arche) .duo__carte .section__figure { aspect-ratio: 20 / 27; display: flex; flex-direction: column; justify-content: flex-end; } .duo:has(.scene--arche) .duo__carte .section__figure > .scene { width: 100%; } }
+/* Au telephone, un detail reste un detail : il ne prend pas tout l'ecran. */
+@media (max-width: 599px) { .section__figure:has(.scene--arche) { width: min(100%, 260px); } .section__figure:has(.scene--cercle) { width: min(100%, 300px); } }
 
 /* --- Fiches du 18/10 au telephone : un choix Enfants / Adultes, une fiche a la fois -------- */
 .fiches__choix { display: none; }
