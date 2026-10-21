@@ -108,6 +108,14 @@ class GeneratedSiteQA(unittest.TestCase):
         for marker in ("sb_secret_", "service_role", "SUPABASE_SERVICE_ROLE_KEY", "VERCEL_TOKEN"):
             self.assertNotIn(marker, rendered)
 
+    def test_titles_never_hold_an_unbreakable_chunk_wider_than_a_small_phone(self) -> None:
+        # Les espaces insécables des titres ne forment jamais un bloc de plus de 18 signes (320 px à 32 px).
+        for route, parser in self.parsed_pages().items():
+            for titre in parser.headings:
+                for bloc in titre.split(" "):
+                    with self.subTest(route=route, bloc=bloc):
+                        self.assertLessEqual(len(bloc), 18)
+
     def test_only_approved_public_assets_are_copied(self) -> None:
         copied = {path.name for path in (self.output / "fr" / "assets").iterdir() if path.is_file()}
         # Les illustrations approuvees sont celles du manifeste (content/images.json), a chaque largeur exportee.

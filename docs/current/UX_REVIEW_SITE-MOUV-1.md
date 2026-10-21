@@ -163,6 +163,36 @@ Chaque phrase visible réécrite a été vérifiée contre les décisions écrit
 - **Questions ouvertes.** Trois points vont au directeur : O-17 (« groupe » dans les encarts), O-18 (la phrase en grand de l'accueil) et O-19 (trois ou quatre inscrits pour ouvrir une classe).
 - **Bilan.** 355 phrases vérifiées, 37 doutes. 33 sont confirmés par les deux contre-vérificateurs, et les 33 sont corrigés. Les 4 doutes qu'un seul contre-vérificateur a retenus sont corrigés aussi.
 
+## Relecture du code (21/10/2026)
+
+Trois relecteurs indépendants ont relu le diff du site depuis le commit du simulateur :
+- le Python et la construction du site ;
+- le CSS et le JavaScript ;
+- l'accessibilité.
+
+Chaque défaut signalé a été soumis à deux contre-vérificateurs. Ils en ont confirmé 11 et partagé 1 ; les 12 sont corrigés :
+
+- **Prix.** Les encarts de la décision suivent la politique affichée. Si la base publie d'autres prix, d'autres âges ou d'autres tailles de classe, les mêmes phrases reprennent ses valeurs, paie comprise. Un test le vérifie.
+- **Âge adulte.** Dans la FAQ de l'accueil, il vient de la politique affichée, comme sur les cartes de prix.
+- **Blocs insécables des titres.**
+  - Ils tiennent en 18 signes au plus : à 320 px, le titre du recrutement débordait de l'écran (WCAG 1.4.10).
+  - Un test le vérifie.
+- **Débordements à 320 px.** Les adresses e-mail passent à la ligne ; le titre de la bande d'appel ne déborde plus.
+- **Mise en page.**
+  - Le cercle des chapitres reste rond sur un écran bas.
+  - En remontant, la porte agrandie ne réapparaît pas dans les coins arrondis.
+  - La bande de la halqa est cachée à l'impression.
+- **Accessibilité.**
+  - Les interrupteurs du simulateur restent lisibles en contraste élevé (`forced-colors`).
+  - Les légendes des étapes prennent la couleur du texte de leur carte : 2,11:1 avant, 4,5:1 au moins après.
+  - « 55 $ » est suivi d'une vraie espace dans la zone annoncée.
+  - La bande de la halqa n'est plus cachée aux lecteurs d'écran sur téléphone.
+
+Inspection après ces corrections :
+- **Les 10 pages qui présentent l'offre** : 0 FAIL.
+- **Les 8 pages documents** : un seul FAIL chacune, « few-pictures », défendu plus haut.
+- **Débordement horizontal** : aucun à 320, 360 et 1440 px. Tests : 64, OK.
+
 ## Hors de portée de l'agent
 
 - `.github/workflows/flutter-deploy.yml` vérifie la présence de 8 fichiers du site, mais pas de `motion.js`. Le garde du dépôt interdit à l'agent d'écrire dans `.github/`. Le test `test_only_approved_public_assets_are_copied` couvre ce fichier côté tests.

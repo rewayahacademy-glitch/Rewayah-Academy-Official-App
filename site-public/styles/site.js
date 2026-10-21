@@ -268,7 +268,7 @@ function initialiserSimulateur(simulator, d) {
   // Tant qu'un age manque, le prix publie s'affiche en grand, avec la consigne dessous.
   function afficherRepere(consigne) {
     result.replaceChildren();
-    const prix = el('p', formaterMontant(d, d.enfant), { class: 'simulator__prix' });
+    const prix = el('p', formaterMontant(d, d.enfant) + ' ', { class: 'simulator__prix' });
     prix.appendChild(el('small', 'par mois et par enfant, hors taxes'));
     result.appendChild(prix);
     ligneTexte(result, formaterMontant(d, d.adulte) + ' par mois pour un adulte, dès ' + d.ageAdulte + ' ans. ' + consigne);

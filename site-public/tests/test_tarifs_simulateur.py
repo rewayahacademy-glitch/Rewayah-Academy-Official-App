@@ -159,6 +159,13 @@ class LectureDeLaBase(unittest.TestCase):
         rendu = "\n".join(p.read_text(encoding="utf-8") for p in sortie.rglob("*.html"))
         self.assertIn(f"60{NBSP}$", rendu)
         self.assertIn("à partir du 1er janvier 2099", rendu)
+        # Les encarts de la décision suivent la politique affichée : jamais deux prix pour la même formule.
+        cours = (sortie / "fr" / "cours.html").read_text(encoding="utf-8")
+        fiches = cours[cours.index('class="fiches"'):]
+        self.assertIn(f"6 à 17 ans. 60{NBSP}$ par mois", fiches)
+        self.assertNotIn(f"55{NBSP}$ par mois", fiches)
+        recrutement = (sortie / "fr" / "recrutement.html").read_text(encoding="utf-8")
+        self.assertIn(f"141{NBSP}$ par mois pour une classe d", recrutement)
         for interdit in (faux.url, "127.0.0.1", "cle-secrete-de-test", "apikey", "rpc/tarifs_publics"):
             self.assertNotIn(interdit, rendu)
         self.assertIsNone(re.search(r"supabase\.co(?!m)", rendu))

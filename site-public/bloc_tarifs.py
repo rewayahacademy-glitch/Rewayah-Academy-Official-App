@@ -233,6 +233,41 @@ def encarts_publics(chemin: Path = TARIFS_FALLBACK) -> dict:
     return {cle: re.sub(r"(\d) ([$%])", "\\1\u00a0\\2", texte) for cle, texte in f["site_public"].items()}
 
 
+def encarts_suivis(politique: dict) -> dict:
+    """Les encarts tels quels quand la politique affichée est celle de la décision. Si la base publie d'autres
+    valeurs (prix, âge adulte, tailles de classe), les mêmes phrases reprennent celles de la base, paie comprise :
+    le site ne montre jamais deux prix pour la même formule."""
+    textes = encarts_publics()
+    fichier = politique_affichee(tarifs_depuis_fichier())
+    cles = ("tarifEnfantMineur", "tarifAdulteMineur", "ageAdulte", "devise")
+    if all(politique[k] == fichier[k] for k in cles) and politique["classes"] == fichier["classes"]:
+        return textes
+    part = json.loads(TARIFS_FALLBACK.read_text(encoding="utf-8"))["enseignant"]["part_du_prix_pour_mille"]
+
+    def valeurs(q: dict) -> list[str]:
+        c, age = q["classes"], q["ageAdulte"]
+        paie_enfant = round(q["tarifEnfantMineur"] * part["enfant"] * c["tailleEnfant"] / 100_000)
+        paie_adulte = round(q["tarifAdulteMineur"] * part["adulte"] * c["tailleAdulte"] / 100_000)
+        dollars = lambda n: fmt_montant(n * 100, q["devise"])
+        return [fmt_montant(q["tarifEnfantMineur"], q["devise"]), fmt_montant(q["tarifAdulteMineur"], q["devise"]),
+                f"{AGE_ENFANT_MIN} à {age - 1} ans", f"à partir de {age} ans",
+                f"de {c['ouvertureMinimum']} à {c['tailleEnfant']} élèves",
+                f"de {c['ouvertureMinimum']} à {c['tailleAdulte']} personnes",
+                f"classes de {c['ouvertureMinimum']} à {c['tailleAdulte']} élèves",
+                dollars(paie_enfant), dollars(paie_adulte), dollars(round(3 * paie_adulte))]
+
+    anciennes, nouvelles = valeurs(fichier), valeurs(politique)
+    suivis = {}
+    for cle, texte in textes.items():
+        # En deux temps, par des jetons, pour qu'une nouvelle valeur ne soit jamais remplacée à son tour.
+        for i, ancienne in enumerate(anciennes):
+            texte = re.sub(rf"(?<![\d,]){re.escape(ancienne)}", f"\x00{i}\x00", texte)
+        for i, nouvelle in enumerate(nouvelles):
+            texte = texte.replace(f"\x00{i}\x00", nouvelle)
+        suivis[cle] = texte
+    return suivis
+
+
 def charger_tarifs(env: dict[str, str] | None = None, ouvrir=None, journal=print) -> tuple[dict, str]:
     """Base d'abord, fichier de la décision sinon. Rend (tarifs, origine)."""
     try:
@@ -421,12 +456,12 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
                 + f'<p class="price-note">Une classe ouvre dès {c["ouvertureMinimum"]} inscrits. Avant cela, vous êtes'
                   ' en liste d’attente et rien n’est facturé.</p>')
     if nom == "fiches-eleves":
-        e = encarts_publics()
+        e = encarts_suivis(p)
         return ('<div class="fiches">'
                 f'<article class="fiche"><h3>Enfants et adolescents</h3><p>{esc(e["encart_enfant"])}</p></article>'
                 f'<article class="fiche"><h3>Adultes</h3><p>{esc(e["encart_adulte"])}</p></article></div>')
     if nom == "fiche-enseignant":
-        return f'<div class="fiches"><article class="fiche"><p>{esc(encarts_publics()["encart_enseignant"])}</p></article></div>'
+        return f'<div class="fiches"><article class="fiche"><p>{esc(encarts_suivis(p)["encart_enseignant"])}</p></article></div>'
     raise ValueError(f"Section générée inconnue : {nom}")
 
 

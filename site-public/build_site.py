@@ -116,7 +116,16 @@ def titre_html(value: str) -> str:
     """Un titre ne finit pas une ligne sur un article, une preposition ou un nombre : espaces insecables."""
     lie = PETITS_MOTS.sub(lambda m: m.group(1) + "\u00a0", value)
     lie = PETITS_MOTS.sub(lambda m: m.group(1) + "\u00a0", lie)
-    return esc(lie.replace("Rewayah Academy", "Rewayah\u00a0Academy"))
+    lie = lie.replace("Rewayah Academy", "Rewayah\u00a0Academy")
+    # Un bloc insecable plus long que 18 signes ne tiendrait pas sur un telephone de 320 px : on rend ses premieres
+    # espaces, en gardant les liens de la fin (« avec Rewayah Academy » se coupe apres « avec »).
+    blocs = []
+    for bloc in lie.split(" "):
+        while len(bloc) > 18 and "\u00a0" in bloc:
+            tete, bloc = bloc.split("\u00a0", 1)
+            blocs.append(tete)
+        blocs.append(bloc)
+    return esc(" ".join(blocs))
 
 
 def _unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
@@ -405,9 +414,9 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
       <p class="rassurance">Rien n’est facturé avant l’ouverture de la classe. La première semaine est remboursée si le cours ne convient pas.</p>
       <p class="preuve">Rewayah Academy a été fondée en 2024 par trois spécialistes du Coran et des sciences islamiques.</p>
     </div>
-    <div class="porte__cercle" aria-hidden="true">
-      <div class="porte__disque"></div>
-      <p class="porte__phrase"><span>Une petite classe.</span><br><span>Un enseignant attitré.</span></p>
+    <div class="porte__cercle">
+      <div class="porte__disque" aria-hidden="true"></div>
+      <p class="porte__phrase" aria-hidden="true"><span>Une petite classe.</span><br><span>Un enseignant attitré.</span></p>
       {scene(images, "halqa", "(max-width: 839px) 90vw, 50vw", "porte__halqa", legende=False)}
     </div>
   </div>
@@ -543,7 +552,7 @@ QUESTIONS_ACCUEIL = (
      " micro ni votre caméra."
      " L’enfant et l’enseignant sont informés de votre présence."),
     ("Puis-je m’inscrire pour moi-même ?",
-     "Oui. Dès 18 ans, la formule adulte vous est ouverte : vous vous inscrivez dans l’application."),
+     "Oui. Dès {age_adulte} ans, la formule adulte vous est ouverte : vous vous inscrivez dans l’application."),
     ("Que se passe-t-il si le cours ne convient pas ?",
      "La première semaine est remboursée en entier si vous arrêtez pendant la semaine qui suit la première"
      " séance. Ensuite, l’abonnement mensuel s’arrête quand vous le souhaitez, à la fin du mois en cours."),
@@ -552,11 +561,12 @@ QUESTIONS_ACCUEIL = (
 )
 
 
-def accueil_faq(page: dict) -> str:
+def accueil_faq(page: dict, tarifs: dict) -> str:
     sec = _sections_par_id(page)["faq-articles"]
+    age_adulte = str(tarifs_mod.politique_affichee(tarifs)["ageAdulte"])
     tuiles = "".join(
         f'<details class="tuile" name="faq"{" open" if i == 0 else ""}><summary><h3>{esc(q)}</h3>'
-        f'<span class="tuile__signe" aria-hidden="true"></span></summary><div class="tuile__corps"><p>{esc(r)}</p></div></details>'
+        f'<span class="tuile__signe" aria-hidden="true"></span></summary><div class="tuile__corps"><p>{esc(r.replace("{age_adulte}", age_adulte))}</p></div></details>'
         for i, (q, r) in enumerate(QUESTIONS_ACCUEIL))
     return f'''<section class="faq-tuiles" id="faq-articles" aria-labelledby="faq-titre">
   <div class="faq-tuiles__tete" data-revele><h2 id="faq-titre">{titre_html(sec["title"])}</h2>{paragraphes(sec)}
@@ -585,7 +595,7 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str) -> str:
         accueil_etapes(page, images),
         accueil_tarifs(page, tarifs),
         accueil_confiance(page, images),
-        accueil_faq(page),
+        accueil_faq(page, tarifs),
         bande_finale(fin["title"], (fin.get("paragraphs") or [""])[0] + " Rien n’est facturé avant l’ouverture de la classe.",
                      page["cta"]["label"], page["cta"]["href"], "Commencer"),
     ))
