@@ -105,6 +105,18 @@ def esc(value: object) -> str:
     return html.escape(str(value), quote=True)
 
 
+_PETITS = (r"le|la|les|un|une|des|de|du|à|au|aux|en|et|ou|par|pour|sans|son|sa|ses|votre|vos|notre|nos|chaque|dès|"
+           r"avec|sur|dans")
+# Un petit mot se lie au mot plein qui le suit, jamais a un autre petit mot : sinon la chaine devient trop longue
+# pour la ligne (« pour votre enfant » se coupe apres « pour », pas apres « votre »).
+PETITS_MOTS = re.compile(rf"(?<![\w’'])((?i:{_PETITS})) (?!(?i:{_PETITS}) )(?=\S)")
+
+
+def titre_html(value: str) -> str:
+    """Un titre ne finit pas une ligne sur un article : espace insecable apres les petits mots."""
+    return esc(PETITS_MOTS.sub(lambda m: m.group(1) + "\u00a0", value))
+
+
 def _unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
     result = {}
     for key, value in pairs:
@@ -345,25 +357,28 @@ def render_section(section: dict, number: int, tarifs: dict | None = None, today
     if gabarit == "question":
         ouvert = " open" if number == 1 else ""
         return (f'<details class="tuile" name="aide" id="{esc(sid)}"{ouvert}><summary><h2 id="heading-{number}">'
-                f'{esc(titre)}</h2><span class="tuile__signe" aria-hidden="true"></span></summary>'
+                f'{titre_html(titre)}</h2><span class="tuile__signe" aria-hidden="true"></span></summary>'
                 f'<div class="tuile__corps">{corps}</div></details>')
     if gabarit == "lecture":
         return (f'<section class="lecture__section" id="{esc(sid)}" aria-labelledby="heading-{number}" data-revele-enfants>'
-                f'<h2 id="heading-{number}">{esc(titre)}</h2>{corps}</section>')
+                f'<h2 id="heading-{number}">{titre_html(titre)}</h2>{corps}</section>')
     if gabarit == "contact":
         return (f'<section class="contact-ligne" id="{esc(sid)}" aria-labelledby="heading-{number}" data-revele-enfants>'
-                f'<h2 id="heading-{number}">{esc(titre)}</h2><div class="contact-ligne__corps">{corps}</div></section>')
+                f'<h2 id="heading-{number}">{titre_html(titre)}</h2><div class="contact-ligne__corps">{corps}</div></section>')
+    if gabarit == "carte":
+        return (f'<section class="carte" id="{esc(sid)}" aria-labelledby="heading-{number}" data-revele-enfants>'
+                f'<h2 id="heading-{number}">{titre_html(titre)}</h2>{corps}</section>')
     if gabarit == "etape":
-        return (f'<li class="etape" id="{esc(sid)}" data-revele>{figure}<h2 id="heading-{number}">{esc(titre)}</h2>'
+        return (f'<li class="etape" id="{esc(sid)}" data-revele>{figure}<h2 id="heading-{number}">{titre_html(titre)}</h2>'
                 f'<div class="etape__corps" data-revele-enfants>{corps}</div></li>')
     large = " section--large" if genere else ""
     if figure:
         return (f'<section class="section section--figure section--figure-{esc(cote_figure)}{large}" id="{esc(sid)}" '
                 f'aria-labelledby="heading-{number}"><div class="section__grille">'
-                f'<div class="section__texte" data-revele-enfants><h2 id="heading-{number}">{esc(titre)}</h2>{corps}</div>'
+                f'<div class="section__texte" data-revele-enfants><h2 id="heading-{number}">{titre_html(titre)}</h2>{corps}</div>'
                 f'{figure}</div></section>')
     return (f'<section class="section{large}" id="{esc(sid)}" aria-labelledby="heading-{number}">'
-            f'<div class="section__grille"><div class="section__titre" data-revele><h2 id="heading-{number}">{esc(titre)}</h2></div>'
+            f'<div class="section__grille"><div class="section__titre" data-revele><h2 id="heading-{number}">{titre_html(titre)}</h2></div>'
             f'<div class="section__corps" data-revele-enfants>{corps}</div></div></section>')
 
 
@@ -382,7 +397,7 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
       {scene(images, "chemin", "(max-width: 839px) 150vw, 112vw", "porte__scene", prioritaire=True)}
     </div>
     <div class="porte__texte" data-lignes>
-      <h1>{esc(page['h1'])}</h1>
+      <h1>{titre_html(page['h1'])}</h1>
       <p class="hero-intro">{esc(page.get('intro', ''))}</p>
       <div class="action-row">{cta}{bouton("Voir les tarifs", "/fr/tarifs", "contour")}</div>
       <p class="rassurance">Rien n’est facturé avant l’ouverture de la classe. La première semaine est remboursée si le cours ne convient pas.</p>
@@ -398,11 +413,9 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
 
 
 def accueil_enonce(images: dict, tarifs: dict) -> str:
-    p = tarifs_mod.politique_affichee(tarifs)
-    c = p["classes"]
     return f'''<section class="enonce" aria-labelledby="enonce-titre">
   <h2 id="enonce-titre" class="sr-only">En bref</h2>
-  <p class="enonce__texte" data-revele>Trois séances par semaine, avec le même enseignant, dans une classe de {c["tailleEnfant"]} enfants ou de {c["tailleAdulte"]} adultes au plus.</p>
+  <p class="enonce__texte" data-revele><span>Seul, on remet à demain.</span> <span>Une classe commence à l’heure.</span></p>
 </section>'''
 
 
@@ -419,7 +432,7 @@ def accueil_chapitres(page: dict, images: dict) -> str:
         sec = s[sid]
         textes.append(
             f'<article class="chapitre" id="{esc(sid)}" aria-labelledby="chapitre-{sid}" data-chapitre="{i}">'
-            f'<h2 id="chapitre-{sid}">{esc(sec["title"])}</h2>{paragraphes(sec)}{points_liste(sec)}{liens_section(sec)}'
+            f'<h2 id="chapitre-{sid}">{titre_html(sec["title"])}</h2>{paragraphes(sec)}{points_liste(sec)}{liens_section(sec)}'
             f'<div class="chapitre__image-mobile">{scene(images, chapitres[i][1], "92vw", "chapitres__image-mobile", legende=True)}</div>'
             '</article>')
     return f'''<section class="chapitres" aria-label="Pour vos enfants et pour vous">
@@ -433,8 +446,8 @@ def accueil_etapes(page: dict, images: dict) -> str:
     sec = _sections_par_id(page)["fonctionnement"]
     etapes = (
         ("place", "Vous choisissez un horaire", "Parmi les horaires publiés, pour votre enfant ou pour vous."),
-        ("chemin", "La direction compose la classe", "Elle nomme l’enseignant et vous écrit à chaque étape."),
-        ("halqa", "La classe commence", "Trois séances par semaine, à heure fixe, avec le même enseignant."),
+        ("eleve-enseignante-b", "La direction compose la classe", "Elle nomme l’enseignant et vous écrit à chaque étape."),
+        ("adulte-femme", "La classe commence", "Vous la rejoignez depuis l’application, à son horaire."),
     )
     tuiles = "".join(
         f'<li class="pousse__etape pousse__etape--{i}" data-revele>'
@@ -442,7 +455,7 @@ def accueil_etapes(page: dict, images: dict) -> str:
         f'<h3>{esc(titre)}</h3><p>{esc(texte)}</p></li>'
         for i, (img, titre, texte) in enumerate(etapes))
     return f'''<section class="pousse" id="fonctionnement" aria-labelledby="pousse-titre">
-  <div class="pousse__entete" data-revele><h2 id="pousse-titre">{esc(sec["title"])}</h2>{paragraphes(sec)}{liens_section(sec)}</div>
+  <div class="pousse__entete" data-revele><h2 id="pousse-titre">{titre_html(sec["title"])}</h2><div class="pousse__corps">{paragraphes(sec)}{liens_section(sec)}</div></div>
   <ol class="pousse__liste">{tuiles}</ol>
 </section>'''
 
@@ -465,21 +478,28 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
         pause = f", dont {f['pause_minutes']} min de pause" if f["pause_minutes"] else ""
         return f"Trois séances de {texte} par semaine{pause}"
 
+    def inclus(suivi: str) -> str:
+        lignes = ("Le même enseignant à chaque séance", "Le support de cours affiché pendant la séance", suivi,
+                  "La première semaine remboursée si le cours ne convient pas")
+        return '<ul class="champ__inclus">' + "".join(f"<li>{esc(l)}</li>" for l in lignes) + "</ul>"
+
     enfant = tarifs_mod.fmt_montant(p["tarifEnfantMineur"], devise)
     adulte = tarifs_mod.fmt_montant(p["tarifAdulteMineur"], devise)
     age = p["ageAdulte"]
     return f'''<section class="deux-champs" id="tarifs" aria-labelledby="tarifs-titre">
-  <h2 id="tarifs-titre" class="deux-champs__titre" data-revele>{esc(sec["title"])}</h2>
+  <h2 id="tarifs-titre" class="deux-champs__titre" data-revele>{titre_html(sec["title"])}</h2>
   <div class="deux-champs__grille">
     <article class="champ champ--enfant" data-revele>
       <h3>Enfants et adolescents</h3>
-      <p class="champ__public">De {tarifs_mod.AGE_ENFANT_MIN} à {age - 1} ans. {esc(duree("enfant"))}, dans une classe de {c["ouvertureMinimum"]} à {c["tailleEnfant"]} élèves.</p>
       <p class="champ__prix"><span class="champ__montant">{esc(enfant)}</span><span class="champ__periode">par mois, {hors_taxes}</span></p>
+      <p class="champ__public">De {tarifs_mod.AGE_ENFANT_MIN} à {age - 1} ans. {esc(duree("enfant"))}, dans une classe de {c["ouvertureMinimum"]} à {c["tailleEnfant"]} élèves.</p>
+      {inclus("Le suivi dans votre espace familial")}
     </article>
     <article class="champ champ--adulte" data-revele>
       <h3>Adultes</h3>
-      <p class="champ__public">{age} ans et plus. {esc(duree("adulte"))}, dans une classe de {c["ouvertureMinimum"]} à {c["tailleAdulte"]} élèves.</p>
       <p class="champ__prix"><span class="champ__montant">{esc(adulte)}</span><span class="champ__periode">par mois, {hors_taxes}</span></p>
+      <p class="champ__public">{age} ans et plus. {esc(duree("adulte"))}, dans une classe de {c["ouvertureMinimum"]} à {c["tailleAdulte"]} élèves.</p>
+      {inclus("Le suivi de votre parcours dans l’application")}
     </article>
   </div>
   <div class="deux-champs__pied" data-revele>
@@ -494,14 +514,14 @@ def accueil_confiance(page: dict, images: dict) -> str:
     return f'''<section class="panneau" id="confiance" aria-labelledby="confiance-titre">
   <div class="panneau__in">
     <div class="panneau__gauche">
-      <h2 id="confiance-titre" data-revele>{esc(sec["title"])}</h2>
-      <div class="panneau__arche" data-revele>{scene(images, "transmission-lavande", "(max-width: 839px) 86vw, 38vw", "panneau__image")}</div>
+      <h2 id="confiance-titre" data-revele>{titre_html(sec["title"])}</h2>
+      <div class="panneau__arche" data-revele>{scene(images, "gros-plan-enseignant", "(max-width: 839px) 86vw, 38vw", "panneau__image")}</div>
     </div>
     <div class="panneau__droite">
       <p class="panneau__depuis" data-revele>Rewayah Academy enseigne le Coran depuis le 1er mai 2024.</p>
       <div class="panneau__bloc" data-revele><h3>Un enseignant attitré</h3><p>Le même enseignant accompagne la classe au fil des séances.</p></div>
       <div class="panneau__bloc" data-revele><h3>Un suivi pour les familles</h3><p>Retrouvez les séances et le travail à préparer dans votre espace familial.</p></div>
-      <div class="panneau__bloc" data-revele>{paragraphes(sec)}</div>
+      <div class="panneau__bloc" data-revele><h3>Un tuteur pour chaque enfant</h3>{paragraphes(sec)}</div>
       <div class="action-row" data-revele>{bouton("Découvrir l’académie", "/fr/academie", "contour")}{lien_fleche("Protection des enfants", "/fr/protection-des-enfants")}</div>
       <p class="panneau__societe">REWAYAH ACADEMY LTD · Société n° 16624644</p>
     </div>
@@ -535,7 +555,7 @@ def accueil_faq(page: dict) -> str:
         f'<span class="tuile__signe" aria-hidden="true"></span></summary><div class="tuile__corps"><p>{esc(r)}</p></div></details>'
         for i, (q, r) in enumerate(QUESTIONS_ACCUEIL))
     return f'''<section class="faq-tuiles" id="faq-articles" aria-labelledby="faq-titre">
-  <div class="faq-tuiles__tete" data-revele><h2 id="faq-titre">{esc(sec["title"])}</h2>{paragraphes(sec)}
+  <div class="faq-tuiles__tete" data-revele><h2 id="faq-titre">{titre_html(sec["title"])}</h2>{paragraphes(sec)}
     <ul class="liste-liens"><li>{lien_fleche("Comprendre le déroulement des cours", "/fr/cours")}</li><li>{lien_fleche("Accompagner son enfant", "/fr/familles")}</li><li>{lien_fleche("Consulter l’aide", "/fr/aide")}</li><li>{lien_fleche("Lire les avis des familles", "/fr/avis")}</li></ul></div>
   <div class="faq-tuiles__liste">{tuiles}</div>
 </section>'''
@@ -546,7 +566,7 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, mot: str, ident
     externe = href.startswith("mailto:")
     return f'''<section class="appel" id="{esc(identifiant)}" aria-labelledby="appel-titre">
   <a class="appel__lien" href="{esc(href)}">
-    <span class="appel__haut"><h2 id="appel-titre">{esc(titre)}</h2><span class="appel__phrase">{esc(phrase)}</span><span class="appel__bouton">{esc(label)}{'<span class="sr-only"> (ouvre votre messagerie)</span>' if externe else ""}<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+    <span class="appel__haut"><h2 id="appel-titre">{titre_html(titre)}</h2><span class="appel__phrase">{esc(phrase)}</span><span class="appel__bouton">{esc(label)}{'<span class="sr-only"> (ouvre votre messagerie)</span>' if externe else ""}<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
     <span class="appel__mot" aria-hidden="true">{esc(mot)}</span>
   </a>
 </section>'''
@@ -579,16 +599,16 @@ def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str
     tailles = "(max-width: 839px) 92vw, min(1200px, 92vw)" if cadre else "(max-width: 839px) 92vw, 52vw"
     if not image:
         return (f'<section class="entete-page entete-page--sobre"><div class="entete-page__texte" data-lignes>'
-                f'<h1>{esc(page["h1"])}</h1>{intro}{status}'
+                f'<h1>{titre_html(page["h1"])}</h1>{intro}{status}'
                 f'<div class="action-row">{cta}</div></div>'
                 f'<img class="entete-page__ornement" src="{ASSETS}/ornement-contour.svg" width="494" height="777" alt=""></section>')
     if reglage.get("gabarit") == "lecture":
         return (f'<section class="entete-page entete-page--document entete-page--{esc(champ)}">'
-                f'<div class="entete-page__texte" data-lignes><h1>{esc(page["h1"])}</h1></div>'
+                f'<div class="entete-page__texte" data-lignes><h1>{titre_html(page["h1"])}</h1></div>'
                 f'<div class="entete-page__suite">{intro}{status}<div class="action-row">{cta}</div></div>'
                 f'<div class="entete-page__arche" data-parallaxe>{scene(images, image, "(max-width: 839px) 92vw, 40vw", "entete-page__image", prioritaire=True)}</div></section>')
     return (f'<section class="entete-page entete-page--{esc(cote)} entete-page--{esc(champ)}{cadre}">'
-            f'<div class="entete-page__texte{titre_long}" data-lignes><h1>{esc(page["h1"])}</h1>'
+            f'<div class="entete-page__texte{titre_long}" data-lignes><h1>{titre_html(page["h1"])}</h1>'
             f'{intro}{status}<div class="action-row">{cta}</div></div>'
             f'<div class="entete-page__arche" data-parallaxe>{scene(images, image, tailles, "entete-page__image", prioritaire=True)}</div></section>')
 
@@ -651,11 +671,29 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
                                            cote_figure=next(cotes) if figure else "droite"))
         return "".join(morceaux)
     cotes = alternance(reglage)
+    # Deux sections de texte qui se suivent, sans image : on les pose cote a cote plutot que d'en faire deux
+    # ecrans presque vides.
+    groupe: list[tuple[int, dict]] = []
+
+    def vider() -> None:
+        if len(groupe) > 1:
+            cartes = "".join(render_section(s, i, tarifs, today, avis, "carte") for i, s in groupe)
+            morceaux.append(f'<div class="groupe groupe--{len(groupe)}">{cartes}</div>')
+        elif groupe:
+            morceaux.append(render_section(groupe[0][1], groupe[0][0], tarifs, today, avis))
+        groupe.clear()
+
     for i, s in enumerate(sections, 1):
         figure = figure_section(reglage, images, s["id"])
-        morceaux.append(render_section(s, i, tarifs, today, avis, figure=figure, cote_figure=next(cotes) if figure else "droite"))
+        if not figure and not s.get("generated"):
+            groupe.append((i, s))
+        else:
+            vider()
+            morceaux.append(render_section(s, i, tarifs, today, avis, figure=figure, cote_figure=next(cotes) if figure else "droite"))
         if apres and s.get("id") == apres:
+            vider()
             morceaux.append(bande_image(reglage, images))
+    vider()
     return "".join(morceaux)
 
 
@@ -846,6 +884,11 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
                                            direction, images), encoding="utf-8")
     assets_out = output / "fr" / "assets"
     assets_out.mkdir(parents=True, exist_ok=True)
+    # Un dossier de sortie reutilise ne garde pas une illustration retiree ou re-exportee a une autre largeur.
+    publiees = {source.name for source in (ROOT / "assets").glob("scene-*.webp")}
+    for ancienne in assets_out.glob("scene-*.webp"):
+        if ancienne.name not in publiees:
+            ancienne.unlink()
     for source_dir in (ROOT / "assets", ROOT / "styles"):
         if source_dir.exists():
             for source in source_dir.iterdir():

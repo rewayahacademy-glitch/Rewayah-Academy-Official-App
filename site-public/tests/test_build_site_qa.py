@@ -82,7 +82,8 @@ class GeneratedSiteQA(unittest.TestCase):
         origin = "https://rewayah-academy.vercel.app"
         for route, parser in self.parsed_pages().items():
             with self.subTest(route=route):
-                self.assertEqual(parser.headings, [self.pages[route]["h1"]])
+                # Les titres portent des espaces insecables apres les petits mots ; le texte reste le meme.
+                self.assertEqual([h.replace("\u00a0", " ") for h in parser.headings], [self.pages[route]["h1"]])
                 self.assertEqual(parser.canonicals, [origin + route])
 
     def test_rendered_internal_links_resolve_to_emitted_pages_or_app_entry(self) -> None:

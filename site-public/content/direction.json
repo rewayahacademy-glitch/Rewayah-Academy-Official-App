@@ -20,7 +20,7 @@
         "href": "/connexion"
       },
       "figures": {
-        "profils": "gros-plan-famille",
+        "profils": "eleve-enseignante-b",
         "organisation": "chemin"
       }
     },
@@ -43,7 +43,7 @@
       },
       "figures": {
         "objectifs": "transmission-lavande",
-        "methode": "gros-plan-lecture",
+        "methode": "eleve-enseignante-b",
         "groupes": "halqa"
       }
     },
@@ -66,8 +66,11 @@
         "href": "/connexion"
       },
       "figures": {
-        "mineur": "gros-plan-pere-fils",
-        "connexion": "place"
+        "connexion": "adulte-homme-livre",
+        "propositions": "place",
+        "traitement": "eleve-enseignante-b",
+        "classe": "eleve-enseignante",
+        "mineur": "gros-plan-pere-fils"
       }
     },
     "/fr/tarifs": {

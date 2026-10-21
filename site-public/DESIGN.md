@@ -26,15 +26,16 @@ Un seul motif : l'arche du symbole (M-21 : l'arche est le livre, la porte ouvert
   - **scène**, le texte sur 5 colonnes et l'illustration en grand sur 7 ;
   - **panorama**, le titre et sa phrase sur une ligne, l'illustration sur toute la largeur ;
   - **document**, pour les pages légales : le titre traverse la page.
-- Une section sans image garde son titre collé pendant la lecture ; une section avec image pose le texte et la scène côte à côte, dès la tablette.
+- Une section sans image garde son titre collé pendant la lecture ; deux sections sans image qui se suivent sont posées côte à côte, en deux champs ; une section avec image pose le texte et la scène côte à côte, dès la tablette.
+- Une illustration ne revient pas deux fois dans une page.
 - Téléphone : le texte d'abord, l'image ensuite.
 
 ## Mouvement
 
 `styles/motion.js`, sans bibliothèque. Le défilement reste natif ; les scènes lisent la position de la page et posent des variables CSS.
 
-- Accueil : la porte. On s'approche de la porte au défilement, puis le cercle de la halqa s'ouvre.
-- Accueil : les chapitres. La fenêtre reste, les illustrations changent.
+- Accueil : la porte. On s'approche de la porte au défilement, puis le cercle de la halqa s'ouvre. La pièce éclairée finit par un bas arrondi, en miroir de la bande d'appel.
+- Accueil : les chapitres. La fenêtre reste, les illustrations changent, une seule à la fois.
 - Entrées des sections : 220 ms, échelon de 35 ms, au plus 400 ms. Les titres de haut de page montent ligne par ligne.
 - Images de section : construites par étages, de gauche à droite.
 - En-tête : il s'efface en descendant et revient en remontant.

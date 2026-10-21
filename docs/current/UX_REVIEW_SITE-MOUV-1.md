@@ -91,13 +91,42 @@ O-10 (arche dessinée en CSS), O-11 (couleur du bouton), O-12 (mouvement lié au
 | V1 | Ambiance violette | Jetons de `app_palette.dart` ; cahier visuel (pas de dégradé) | Aucune teinte inventée | Dérogation demandée par le directeur (O-16) | `direction.json` → `ambiance: violet`. Teintes : `#6538E4` fond, `#8652E6` lumière, `#4E2983` ombre, `#25113F` nuit (pied de page et panneau), `#BA98FB`, `#E8D8FF`, blanc. La version claire reste disponible avec `ambiance: clair` |
 | V2 | Contrastes sur le violet | WCAG 2.2, 1.4.3 | 4,5:1 pour le texte | Conforme | Blanc sur `#6538E4` 6,48 ; blanc sur la zone la plus claire (`#8652E6`) 4,81 ; `#4E2983` sur le bouton blanc 10,67 ; `#25113F` sur `#BA98FB` 7,29 (troisième marche des étapes) |
 | V3 | Logo | M-25 (logo blanc sur fond sombre) | Fichier officiel blanc | Conforme | L'en-tête utilise `logo-horizontal-white.svg`, et `symbole-white.svg` sur téléphone ; testé |
-| V4 | Illustrations flottantes | Affiches de référence du directeur | — | Appliquée | Plus de fenêtre en arche derrière les illustrations : un puits de lumière au-dessus, une ombre portée dessous |
+| V4 | Illustrations flottantes | Affiches de référence du directeur | — | Appliquée | Plus de fenêtre en arche derrière les illustrations : le fond éclairé seul, et une ombre portée dessous. Les puits de lumière du premier essai ont été retirés (l'inspecteur les lisait comme un dégradé décoratif) |
 | V5 | Halo qui suit la souris | WCAG 2.2.2 (mouvement autonome) | Un mouvement déclenché par l'utilisateur n'est pas autonome | Conforme | Halo de 960 px, déplacé par `transform`. Souris seulement ; rien sur écran tactile ni en mouvement réduit |
 | V6 | Tapis en mouvement continu | WCAG 2.2.2 (pause, arrêt, masquage) | Un mouvement de plus de 5 s, lancé seul, doit pouvoir s'arrêter | Conforme | Onde douce qui court vers la porte : périodes de 7 s et 4,3 s, amplitude d'environ 6 px. Un bouton « Arrêter l'animation du tapis » s'affiche dès que le tapis est à l'écran, et le choix est gardé sur l'appareil. Rien en mouvement réduit ni sans JavaScript |
 | V7 | Mains et Coran au défilement | Contrat E ; O-12 | Le mouvement suit la position du défilement, sans durée | Conforme au principe d'O-12 | Les mains de l'élève montent jusqu'au Coran : en haut de page, sur le premier tiers d'écran défilé ; plus bas, sur la demi-hauteur d'écran qui suit l'entrée de l'image. Le livre et les mains de l'enseignant ne bougent pas, pour ne rien inventer derrière le livre |
 | V8 | Calques des illustrations | Cahier visuel C.4 (une illustration reste légendée comme telle) | L'image au repos est l'image fournie | Conforme | Le tapis est découpé par couleur. Les mains de l'élève sont séparées par GrabCut, et la zone découverte est bouchée par LaMa. Au repos, fond et calque redonnent l'image d'origine : écart moyen de 0,05 sur 255 pour les mains, 0 pour le tapis. L'image d'origine reste celle du partage (Open Graph) |
 | V9 | Pied de page en rideau | — | Le rideau demande un contenu opaque | Retiré en violet | Le dégradé doit rester visible sous le contenu |
 | V10 | Inspection | Skill de direction (`inspect.mjs`) | — | 0 FAIL sur l'académie et les tarifs ; « gradient » signalé sur l'accueil et la page familles | Le FAIL « gradient » est la demande du directeur (O-16). WARN « grey-body » : le texte est blanc sur violet à 6,48:1, au-dessus du seuil AA |
+
+## Jury à l'aveugle et comparaison (21/10/2026)
+
+**Méthode.** La grille du skill de direction (`references/critique.md`) : design 40 %, utilisabilité 30 %, créativité 20 %, contenu 10 %, avec ses plafonds. Trois jurés indépendants par tour, sur des captures à 1440, 768 et 390 px. Quatre sites primés, notés avec la même grille, servent de référence.
+
+| | Note | Design | Utilisabilité | Créativité | Contenu |
+|---|---|---|---|---|---|
+| Tour 1 | 6,07 | 6,33 | 5 | 7 | 6,33 |
+| Tour 2 | 6,12 | 6,43 | 5 | 7 | 6,33 |
+| Hallow, Endel, Waking Up, Seasats (références) | 6,0 chacun | | | | |
+
+**Plafond de structure.** Le site n'emploie que des illustrations : aucune photo d'élève réel (règle de marque). La grille plafonne alors le design à 6,5. La note la plus haute qu'on puisse viser est d'environ 7,5.
+
+**Corrections après le tour 2.**
+
+| # | Relevé du jury | Correction |
+|---|---|---|
+| J1 | Légende coupée en « Illustrati » sur l'académie, au téléphone | Le décalage au défilement passe de la scène à son cadre. La légende se place dans la bande, et la grande bande tient dans l'écran sous 840 px |
+| J2 | Les liens de l'introduction posés sur la première tuile des étapes (accueil) | L'en-tête des étapes prend sa propre ligne : le titre à gauche, le texte et les liens à droite. Les tuiles suivent dessous |
+| J3 | La même illustration deux fois dans une page | Une source par page. Accueil : étapes (`place`, `eleve-enseignante-b`, `adulte-femme`) et panneau (`gros-plan-enseignant`). Cours : méthode (`eleve-enseignante-b`). Familles : profils (`eleve-enseignante-b`) |
+| J4 | Écrans presque vides | L'énoncé devient une phrase en grand sur deux lignes : la promesse de rigueur (programme §0). Deux sections de texte qui se suivent sont posées côte à côte en deux champs. Les cartes de prix montent le prix et listent ce qu'il comprend. La pièce lavande de la porte finit par un bas arrondi |
+| J5 | Un texte qui sonne comme une spécification | Pages familles, cours, comment ça marche, académie, tarifs, articles et recrutement réécrites à la deuxième personne, sans fait nouveau. Le mot interdit qui restait sur la page Cours est retiré (`mots-rewayah`) |
+| J6 | Texte courant petit et léger | Corps à 17 px au téléphone, 18 px vers 1280 px, 19 px en grand |
+| J7 | La même promesse répétée six fois sur l'accueil | La promesse « trois séances, le même enseignant » reste en haut de page et dans les prix. Ailleurs, chaque bloc dit autre chose (le tuteur, l'horaire, l'application) |
+| J8 | Cartes des étapes (comment ça marche) de hauteurs irrégulières, une seule image | Une image par étape. Les bas s'alignent et les hauts montent d'une marche à chaque étape |
+| J9 | Illustrations superposées dans la fenêtre des chapitres | Une seule illustration à la fois : elle change au milieu du passage, avec un fondu de 220 ms |
+| J10 | Fragment d'arche et anneau pâle autour de la halqa | Le fragment est retiré, l'anneau du sol aussi (l'ombre sous chaque personne est gardée), et l'image est recadrée sur le cercle |
+| J11 | Titres coupés après un article | Espace insécable après les petits mots des titres (`titre_html`). Le découpage des titres en lignes garde cet espace |
+| J12 | Énoncé sur quatre lignes au téléphone | Trois lignes à 24 px |
 
 ## Hors de portée de l'agent
 

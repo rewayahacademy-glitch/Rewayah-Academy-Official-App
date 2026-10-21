@@ -96,8 +96,7 @@
           "id": "fonctionnement",
           "title": "Un horaire fixe, une classe stable.",
           "paragraphs": [
-            "Choisissez un horaire parmi ceux que nous publions, pour votre enfant ou pour vous-même. La direction compose ensuite la classe, à horaire fixe.",
-            "Trois séances par semaine pour apprendre avec régularité."
+            "Choisissez un horaire parmi ceux que nous publions, pour votre enfant ou pour vous-même. La direction compose ensuite la classe, qui garde cet horaire."
           ],
           "points": [
             "Ouvrir l'inscription dans l'application",
@@ -132,7 +131,7 @@
           "id": "confiance",
           "title": "Accompagné à chaque étape.",
           "paragraphs": [
-            "Des cours à distance pour enfants et adultes, avec un enseignant attitré. Pour les enfants, les parents peuvent suivre leur apprentissage."
+            "Un enfant ne rejoint jamais un cours sans un tuteur adulte autorisé."
           ],
           "links": [
             {
@@ -203,24 +202,24 @@
       "title": "Cours de Coran en ligne pour enfants, dès 6 ans | Rewayah",
       "description": "Votre enfant suit trois séances par semaine avec le même enseignant, dans une classe de 3 à 5 élèves. Vous suivez son parcours dans votre espace familial.",
       "h1": "Le Coran pour votre enfant, dès 6 ans",
-      "intro": "L'espace familial aide le tuteur à retrouver les profils et le suivi de chaque personne inscrite dans le foyer.",
+      "intro": "Dans votre espace familial, vous retrouvez chaque élève inscrit dans votre foyer, ses séances et son travail à préparer.",
       "sections": [
         {
           "id": "profils",
-          "title": "Un profil correspond à un élève",
+          "title": "Un profil pour chaque élève",
           "paragraphs": [
-            "Chaque élève suit son propre parcours. Les informations visibles dépendent de son profil et des accès autorisés."
+            "Chaque enfant a son profil et suit son propre parcours. Vous voyez ce qui concerne ce profil, selon les accès autorisés."
           ],
           "points": [
-            "Parcours individuel",
-            "Informations rattachées au profil concerné"
+            "Un parcours par élève",
+            "Des informations propres à chaque profil"
           ]
         },
         {
           "id": "tuteur",
-          "title": "Le tuteur reste responsable",
+          "title": "Vous restez responsable",
           "paragraphs": [
-            "Un enfant ne rejoint pas les cours sans tuteur adulte autorisé. Le choix du parcours d'inscription ne donne pas de droits supplémentaires à un compte."
+            "Un enfant ne rejoint jamais un cours sans un tuteur adulte autorisé. C’est vous qui l’inscrivez et qui gérez son accès."
           ],
           "links": [
             {
@@ -231,18 +230,18 @@
         },
         {
           "id": "suivi",
-          "title": "Retrouver les éléments de suivi",
+          "title": "Suivre le parcours de votre enfant",
           "paragraphs": [
-            "Le tuteur consulte les éléments de parcours rendus disponibles pour l'élève. Les informations concernant d'autres élèves ne font pas partie de son suivi.",
-            "Un parent peut aussi assister à une séance pendant un temps limité, pour voir comment elle se passe."
+            "Vous voyez ce que l’enseignant rend disponible sur le parcours de votre enfant. Les informations des autres élèves de la classe ne vous sont jamais montrées.",
+            "Vous pouvez aussi assister à une séance pendant un temps limité, pour voir comment elle se passe."
           ]
         },
         {
           "id": "organisation",
-          "title": "Des horaires publiés par l'Académie",
+          "title": "Vous choisissez parmi nos horaires",
           "paragraphs": [
-            "Lorsqu'une proposition est publiée, le tuteur peut l'examiner dans le parcours d'inscription. L'administration traite les intentions et organise les classes.",
-            "Une préférence d'horaire ne constitue pas une réservation ni une confirmation immédiate de classe."
+            "Vous choisissez un jour et une heure parmi les horaires que nous publions. La direction compose ensuite la classe et vous écrit à chaque étape.",
+            "Votre choix n’est pas encore une réservation : la classe vous est proposée une fois composée, et vous confirmez à ce moment-là."
           ],
           "links": [
             {
@@ -280,36 +279,36 @@
       "title": "Apprendre à lire le Coran en ligne : le programme | Rewayah",
       "description": "Les bases de la lecture arabe, la lecture et la récitation du Coran, puis la mémorisation selon le parcours. Pour les enfants dès 6 ans et pour les adultes.",
       "h1": "Lire le Coran, étape par étape",
-      "intro": "Les objectifs d'apprentissage peuvent inclure la lecture de l'arabe, la récitation, la mémorisation et les bases utiles à la prière.",
+      "intro": "Chaque élève commence par les bases : les lettres, la lecture avec les voyelles, puis la lecture dans le Coran et les sourates courtes.",
       "sections": [
         {
           "id": "objectifs",
-          "title": "Des objectifs compréhensibles",
+          "title": "Ce que l’élève apprend",
           "paragraphs": [
-            "Apprendre à lire l'arabe vocalisé, progresser dans la lecture du Coran, travailler la récitation et développer une mémorisation adaptée à son parcours.",
-            "Les apprentissages peuvent aussi porter sur les récitations nécessaires à la prière et les invocations essentielles."
+            "Lire l’arabe avec les voyelles, puis lire le Coran et réciter les sourates courtes, d’Al-Fatiha à Az-Zalzalah.",
+            "Les paroles de la prière et les invocations s’apprennent en matière secondaire, au fil des étapes."
           ],
           "points": [
-            "Les bases de la lecture arabe",
-            "Lecture et récitation du Coran",
-            "Mémorisation selon le parcours",
-            "Bases utiles à la prière"
+            "Les lettres",
+            "Lire avec les voyelles",
+            "Lire dans le Coran",
+            "Les sourates courtes, d’Al-Fatiha à Az-Zalzalah"
           ]
         },
         {
           "id": "adultes-enfants",
           "title": "Enfants et adultes",
           "paragraphs": [
-            "Les besoins d'un débutant et ceux d'une personne qui lit déjà ne sont pas les mêmes. Le parcours doit tenir compte des acquis et des objectifs de l'élève.",
-            "Les classes, langues, horaires et parcours effectivement ouverts sont ceux publiés par l'Académie au moment de l'inscription."
+            "Un débutant et un élève qui lit déjà ne commencent pas au même endroit : le parcours part de ce que l’élève sait.",
+            "Vous voyez les classes, les langues et les horaires ouverts au moment de votre inscription."
           ]
         },
         {
           "id": "methode",
           "title": "Apprendre avec un enseignant",
           "paragraphs": [
-            "L'élève écoute, lit ou récite, reçoit une correction et travaille les exercices guidés. Le support de cours accompagne la séance.",
-            "Après les bases, l'élève peut mémoriser le Coran ou le lire en entier. Le temps que cela prend dépend de chaque élève."
+            "L’élève écoute, lit ou récite à son tour, et l’enseignant le corrige. Le support de cours et les exercices guidés accompagnent chaque séance.",
+            "Après les bases, l’élève peut mémoriser le Coran ou le lire en entier. Le temps que cela prend dépend de chaque élève."
           ]
         },
         {
@@ -317,7 +316,7 @@
           "title": "Trois séances par semaine",
           "generated": "classes",
           "paragraphs": [
-            "La langue et l'horaire sont ceux publiés par l'Académie au moment de l'inscription. La classe a ensuite un horaire fixe."
+            "Vous choisissez la langue et l’horaire à l’inscription, parmi ceux que nous publions. Ensuite, la classe garde le même horaire."
           ],
           "links": [
             {
@@ -342,46 +341,46 @@
       "title": "Comment se passe l’inscription aux cours de Coran | Rewayah",
       "description": "Vous choisissez un horaire publié, la direction compose la classe et nomme l’enseignant. Rien n’est facturé avant l’ouverture de la classe.",
       "h1": "De l’inscription au premier cours",
-      "intro": "L'inscription et le suivi de votre demande s'effectuent dans l'application Rewayah.",
+      "intro": "Vous vous inscrivez et suivez votre demande dans l’application Rewayah, en quatre étapes.",
       "sections": [
         {
           "id": "connexion",
           "title": "1. Ouvrir l’application",
           "paragraphs": [
-            "Le bouton d'inscription ouvre la connexion de l'application. Si aucun compte n'existe, l'application reprend le parcours vers l'inscription.",
-            "Tout se passe dans l'application Rewayah : le site ne vous demande aucun compte."
+            "Le bouton « Commencer mon inscription » ouvre l’application. Si vous n’avez pas encore de compte, elle vous guide pour en créer un.",
+            "Tout se passe dans l’application Rewayah : le site ne vous demande aucun compte."
           ]
         },
         {
           "id": "propositions",
           "title": "2. Choisir un horaire publié",
           "paragraphs": [
-            "Les jours et horaires présentés sont des propositions publiées par l'administration. Vous pouvez consulter les options qui apparaissent dans le parcours.",
-            "Votre choix n'est pas encore une réservation : la direction compose ensuite la classe et nomme son enseignant."
+            "Vous choisissez un jour et une heure parmi les horaires que la direction publie.",
+            "Votre choix n’est pas encore une réservation : la direction compose ensuite la classe et nomme son enseignant."
           ]
         },
         {
           "id": "traitement",
           "title": "3. La direction compose la classe",
           "paragraphs": [
-            "L'administration examine les intentions reçues et organise les classes selon l'offre et les possibilités disponibles.",
-            "Vous êtes prévenu dans l'application à chaque étape."
+            "La direction regroupe les élèves qui ont choisi le même horaire et forme la classe.",
+            "Vous êtes prévenu dans l’application à chaque étape."
           ]
         },
         {
           "id": "classe",
           "title": "4. Recevoir votre classe",
           "paragraphs": [
-            "Une proposition de classe intervient après le traitement de la demande. Elle précise les informations à examiner avant toute confirmation.",
-            "Le prix, la monnaie, les taxes et les conditions sont rappelés avant le paiement."
+            "Vous recevez ensuite la proposition de classe. Vous la lisez, puis vous confirmez.",
+            "Le prix, les taxes et les conditions vous sont rappelés avant le paiement."
           ]
         },
         {
           "id": "mineur",
           "title": "Pour inscrire un enfant",
           "paragraphs": [
-            "L'inscription d'un mineur est effectuée sous la responsabilité d'un tuteur adulte autorisé. Un enfant ne rejoint pas un cours seul.",
-            "Pour une question sur l'accès, contactez support@rewayahacademy.com."
+            "Vous inscrivez votre enfant en tant que tuteur adulte autorisé, et vous en restez responsable. Un enfant ne rejoint jamais un cours seul.",
+            "Pour une question sur l’accès, écrivez à support@rewayahacademy.com."
           ],
           "links": [
             {
@@ -402,7 +401,7 @@
       "title": "Tarifs des cours de Coran en ligne | Rewayah Academy",
       "description": "Les prix par mois, les remises du foyer, le paiement d'avance et un simulateur pour calculer le tarif de votre famille, hors taxes.",
       "h1": "Tarifs des cours de Coran",
-      "intro": "Le prix de chaque élève et les remises applicables sont détaillés ici, hors taxes. Le montant final et les taxes éventuelles sont indiqués avant paiement.",
+      "intro": "Le prix par élève et par mois, hors taxes, et toutes les remises. Le montant final et les taxes vous sont indiqués avant le paiement.",
       "sections": [
         {
           "id": "grille",
@@ -475,14 +474,14 @@
       "title": "À propos de Rewayah Academy",
       "description": "Découvrez le projet pédagogique de Rewayah Academy et son approche des cours de Coran en ligne.",
       "h1": "Une académie du Coran, depuis 2024",
-      "intro": "Rewayah Academy a été lancée le 1er mai 2024. L'enseignement associe un parcours d'apprentissage et un espace familial.",
+      "intro": "Rewayah Academy enseigne le Coran en ligne depuis le 1er mai 2024, en petites classes et avec un enseignant attitré.",
       "sections": [
         {
           "id": "projet",
-          "title": "Apprendre avec accompagnement",
+          "title": "Apprendre avec un enseignant",
           "paragraphs": [
-            "L'Académie propose un apprentissage du Coran en ligne avec des enseignants. Les parcours visent la lecture de l'arabe, la récitation, la mémorisation et les bases utiles à la prière.",
-            "Les objectifs et modalités détaillés sont confirmés par les parcours publiés."
+            "Nous enseignons en ligne la lecture de l’arabe, la lecture et la récitation du Coran, la mémorisation et les bases utiles à la prière.",
+            "Chaque étape a son objectif et sa date limite : le programme avance, il ne s’étire pas sans fin."
           ]
         },
         {
@@ -498,8 +497,8 @@
           "id": "famille",
           "title": "La famille fait partie du parcours",
           "paragraphs": [
-            "Un espace familial aide le tuteur à retrouver les profils des élèves et les informations de suivi qui leur sont destinées.",
-            "L'inscription d'un enfant reste sous la responsabilité d'un adulte autorisé."
+            "Dans votre espace familial, vous retrouvez le profil de chaque élève et ce que l’enseignant rend disponible sur son parcours.",
+            "Un enfant est toujours inscrit par un adulte autorisé, qui en reste responsable."
           ]
         },
         {
@@ -520,7 +519,7 @@
           "id": "contact",
           "title": "Écrire à Rewayah Academy",
           "paragraphs": [
-            "Pour une question institutionnelle, contactez contact@rewayahacademy.com."
+            "Pour toute question sur l’académie, écrivez à contact@rewayahacademy.com."
           ],
           "links": [
             {
@@ -541,21 +540,21 @@
       "title": "Conseils et articles | Rewayah Academy",
       "description": "Articles pédagogiques et réponses pratiques publiés par Rewayah Academy.",
       "h1": "Articles et repères pour apprendre",
-      "intro": "Cette rubrique accueillera des contenus relus et publiés par Rewayah Academy. Aucun article n'est affiché avant validation éditoriale.",
+      "intro": "Les articles de Rewayah Academy paraîtront ici, une fois relus par l’académie.",
       "sections": [
         {
           "id": "catalogue",
           "title": "Les articles à venir",
           "paragraphs": [
-            "Aucun article n'est encore publié dans cette rubrique.",
-            "Les articles devront inclure leurs références utiles. L'auteur et les dates de publication ou de mise à jour restent masqués par défaut, selon le réglage éditorial canonique."
+            "Aucun article n’est encore publié.",
+            "Chaque article citera ses références."
           ]
         },
         {
           "id": "orientation",
           "title": "Trouver une réponse maintenant",
           "paragraphs": [
-            "Pour une question sur les cours, l'inscription ou le foyer, consultez les pages de référence ou l'aide."
+            "Pour une question sur les cours, l’inscription ou votre foyer, les pages de l’académie et l’aide vous répondent dès maintenant."
           ],
           "links": [
             {
@@ -706,7 +705,7 @@
       "title": "Recrutement | Rewayah Academy",
       "description": "Informations sur le recrutement et les candidatures auprès de Rewayah Academy.",
       "h1": "Travailler avec Rewayah Academy",
-      "intro": "Les candidatures et les postes ouverts sont gérés selon les besoins publiés par l'Académie.",
+      "intro": "Rewayah Academy recrute selon ses besoins. Les postes ouverts sont publiés sur cette page.",
       "sections": [
         {
           "id": "postes",
@@ -719,7 +718,7 @@
           "id": "enseignants",
           "title": "Enseignement",
           "paragraphs": [
-            "Les candidatures liées à l'enseignement doivent permettre d'évaluer les compétences et les langues utiles au poste concerné. Les critères, la disponibilité demandée, le statut et les conditions ne sont communiqués que dans une offre effectivement publiée."
+            "Votre candidature doit nous permettre d’évaluer vos compétences et les langues utiles au poste. Les critères, les horaires demandés, le statut et les conditions sont précisés dans chaque offre publiée."
           ]
         },
         {

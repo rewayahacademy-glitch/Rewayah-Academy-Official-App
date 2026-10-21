@@ -101,7 +101,7 @@
   --t-affiche: clamp(44px, 6.6vw, 104px);
   --t-titre: clamp(30px, 3.6vw, 54px);
   --t-moyen: clamp(20px, 2.1vw, 30px);
-  --t-corps: clamp(16px, 1.25vw, 19px);
+  --t-corps: clamp(17px, 0.3vw + 14px, 19px);
   --t-petit: 14px;
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   font-synthesis: none;
@@ -280,7 +280,9 @@ p { text-wrap: pretty; max-width: 60ch; }
   .js .porte__scene { transform: scale(calc(1 + var(--z2, 0) * 1.7)); will-change: transform; }
   .js .porte__texte { transform: translateY(calc(var(--z, 0) * -14svh)); opacity: calc(1 - var(--z, 0) * 3.6); }
   .js .porte[data-passee] .porte__texte, .js .porte:not([data-cercle]) .porte__phrase { visibility: hidden; }
-  .js .porte__cercle { display: grid; place-items: center; position: absolute; inset: 0; z-index: 4; pointer-events: none; clip-path: circle(calc(var(--c, 0) * 150vmax) at 68% 56%); }
+  .js .porte__cercle { display: grid; place-items: center; position: absolute; inset: 0; z-index: 4; pointer-events: none; clip-path: circle(calc(var(--c, 0) * 150vmax) at 68% 56%); overflow: hidden; border-radius: 0 0 50% 50% / 0 0 120px 120px; }
+  /* Piece pleine : la porte agrandie derriere ne se voit plus dans les coins de l'arrondi. */
+  .js .porte[data-plein] .porte__vue { visibility: hidden; }
   .js .porte__vue { display: block; position: absolute; inset: 0; }
   .js .porte__disque { position: absolute; inset: 0; background: var(--fond); }
   .js .porte__halqa { position: relative; width: min(46vw, 76svh); margin-inline-start: 44vw; transform: scale(calc(1.18 - var(--c, 0) * .18)); }
@@ -290,13 +292,14 @@ p { text-wrap: pretty; max-width: 60ch; }
 
 /* --- Enonce : une phrase, des fenetres en arche dans la ligne ---------------- */
 .enonce { padding: var(--respire) var(--marge); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
-.enonce__texte { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(22px, 2.5vw, 36px); line-height: 1.18; letter-spacing: -0.015em; max-width: 34em; text-wrap: balance; }
+.enonce__texte { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(24px, 5vw, 76px); line-height: 1.04; letter-spacing: -0.03em; }
+@media (min-width: 840px) { .enonce__texte span { display: block; white-space: nowrap; } .enonce__texte span + span { padding-inline-start: 1.6em; } }
 
 /* --- Chapitres : la porte reste, ceux qui viennent changent ------------------- */
 .chapitres { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); padding: 0 var(--marge) var(--respire); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
 .chapitres__fenetre { grid-column: 1 / span 6; position: sticky; top: calc(var(--entete) + 4svh); height: calc(100svh - var(--entete) - 8svh); display: none; }
 .chapitres__pile { position: relative; height: 100%; border-radius: var(--arche); background: var(--champ); overflow: hidden; }
-.chapitres__image { position: absolute; inset: auto 4% 4% 4%; opacity: var(--o, 0); transform: translateY(calc((1 - var(--o, 0)) * 16px)); }
+.chapitres__image { position: absolute; inset: auto 4% 4% 4%; opacity: var(--o, 0); transform: translateY(calc((1 - var(--o, 0)) * 16px)); transition: opacity var(--mv-navigation) var(--mv-entree), transform var(--mv-navigation) var(--mv-entree); }
 .chapitres__image:first-child { --o: 1; }
 .chapitres__image figcaption { display: none; }
 .chapitres__textes { grid-column: 1 / -1; }
@@ -334,8 +337,11 @@ p { text-wrap: pretty; max-width: 60ch; }
 .pousse__etape h3 { margin-top: var(--e-5); }
 .pousse__etape p { margin-top: var(--e-2); max-width: 32ch; }
 @media (min-width: 840px) {
-  .pousse__entete { grid-column: 1 / span 5; grid-row: 1; align-self: start; }
-  .pousse__liste { grid-row: 1 / span 2; grid-column: 1 / -1; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: end; column-gap: var(--e-3); }
+  .pousse__entete { grid-column: 1 / -1; grid-row: 1; display: grid; grid-template-columns: subgrid; align-items: end; }
+  .pousse__entete h2 { grid-column: 1 / span 6; }
+  .pousse__corps { grid-column: 7 / -1; }
+  .pousse__corps > p:first-child { margin-top: 0; }
+  .pousse__liste { grid-row: 2; grid-column: 1 / -1; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: end; column-gap: var(--e-3); }
   .pousse__etape--0 { grid-column: 1 / span 3; }
   .pousse__etape--1 { grid-column: 4 / span 4; }
   .pousse__etape--2 { grid-column: 8 / span 5; }
@@ -358,7 +364,10 @@ p { text-wrap: pretty; max-width: 60ch; }
 .champ { position: relative; display: flex; flex-direction: column; min-height: 0; padding: var(--e-10) var(--marge); overflow: hidden; }
 .champ h3 { font-size: var(--t-titre); line-height: 1.04; letter-spacing: -0.02em; }
 .champ__public { margin-top: var(--e-4); max-width: 32ch; }
-.champ__prix { margin-top: auto; padding-top: var(--e-12); display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--e-3); }
+.champ__prix { margin-top: var(--e-8); display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--e-3); }
+.champ__inclus { margin-top: auto; padding-top: var(--e-10); display: grid; gap: var(--e-3); max-width: 40ch; list-style: none; }
+.champ__inclus li { padding-inline-start: 1.4em; position: relative; }
+.champ__inclus li::before { content: ''; position: absolute; inset-inline-start: 0; top: .5em; width: .6em; height: .75em; border-radius: var(--arche); background: currentColor; opacity: .55; }
 .champ__montant { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .champ__periode { font-weight: 600; }
 .champ--enfant { background: var(--champ-fort); color: var(--encre); }
@@ -368,7 +377,7 @@ p { text-wrap: pretty; max-width: 60ch; }
 .deux-champs__pied p { max-width: 60ch; }
 @media (min-width: 840px) {
   .deux-champs__grille { grid-template-columns: 7fr 5fr; }
-  .champ { min-height: 78svh; padding: var(--e-16) max(var(--marge), calc((100vw - var(--contenu)) / 2)); }
+  .champ { min-height: 70svh; padding: var(--e-16) max(var(--marge), calc((100vw - var(--contenu)) / 2)); }
   .champ--adulte { padding-inline-start: var(--e-12); }
   .champ--enfant { padding-inline-end: var(--e-12); }
 }
@@ -525,11 +534,30 @@ p { text-wrap: pretty; max-width: 60ch; }
 }
 .site-main > .section:last-of-type, .site-main > .contacts:last-child, .site-main > .lecture:last-child, .site-main > .questions:last-child { padding-bottom: var(--respire); }
 
+/* Deux sections de texte cote a cote : deux champs, du plus profond au plus clair */
+.groupe { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; display: grid; gap: var(--e-4); }
+.carte { border-radius: var(--r-lg); padding: var(--e-10) var(--e-6); background: var(--sous); }
+.carte:nth-child(2) { background: var(--champ); }
+.carte:nth-child(3) { background: var(--champ-fort); }
+.carte h2 { font-size: var(--t-moyen); line-height: 1.12; max-width: 20ch; margin-bottom: var(--e-6); }
+.carte p + p { margin-top: var(--e-3); }
+.carte .points, .carte .liste-liens { margin-top: var(--e-6); }
+@media (min-width: 840px) {
+  .groupe { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: start; }
+  .carte { grid-column: span 6; padding: var(--e-12) var(--e-10); }
+  .carte h2 { font-size: clamp(28px, 2.6vw, 40px); margin-bottom: var(--e-8); }
+  .groupe--3 .carte { grid-column: span 4; }
+}
+[data-ambiance="violet"] .carte { background: #4E2983; }
+[data-ambiance="violet"] .carte:nth-child(2) { background: #8652E6; }
+
 /* Bande d'image entre deux sections */
 .bande-image { position: relative; margin: var(--respire) auto 0; padding-inline: var(--marge); max-width: 1440px; }
 .bande-image--arche .scene { width: min(100%, 720px); margin-inline: auto; border-radius: var(--arche); background: var(--champ); padding: 16% 5% 0; }
 .bande-image--large { padding: 0; max-width: none; background: var(--champ); overflow: clip; }
-.bande-image--large .scene { width: min(1500px, 120vw); margin-inline: auto; padding-block: var(--e-16); translate: calc(var(--pan, 0) * 1px) 0; }
+.bande-image--large .scene { width: min(1500px, 120vw); margin-inline: auto; padding-block: var(--e-16); }
+.bande-image--large .scene__cadre { translate: calc(var(--pan, 0) * 1px) 0; }
+@media (max-width: 839px) { .bande-image--large .scene { width: 100%; padding-block: var(--e-10) var(--e-12); } .bande-image--large .scene__cadre { translate: none; } }
 .bande-image--cercle .scene { width: min(86vw, 720px); margin-inline: auto; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: var(--champ); padding: 6%; }
 .bande-image--cercle .scene__cadre { width: 92%; }
 .bande-image .scene figcaption { position: absolute; inset-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); bottom: var(--e-3); }
@@ -554,12 +582,14 @@ p { text-wrap: pretty; max-width: 60ch; }
 .etape:nth-child(3) { background: var(--champ-fort); }
 .etape:nth-child(4) { background: var(--marque); color: var(--sur-marque); }
 @media (min-width: 840px) {
-  .etapes { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; }
-  .etape:nth-child(1) { min-height: 360px; }
-  .etape:nth-child(2) { min-height: 440px; }
-  .etape:nth-child(3) { min-height: 520px; }
-  .etape:nth-child(4) { min-height: 600px; }
-  .etape { border-radius: var(--arche); padding-top: 40%; }
+  /* Meme contenu dans chaque carte : les bas s'alignent, les hauts montent d'une marche a chaque etape. */
+  .etapes { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; column-gap: var(--e-4); }
+  .etape { border-radius: var(--arche); padding: 18% var(--e-6) var(--e-8); justify-content: flex-start; }
+  .etape:nth-child(1) { margin-top: calc(var(--e-16) * 1.5); }
+  .etape:nth-child(2) { margin-top: var(--e-16); }
+  .etape:nth-child(3) { margin-top: calc(var(--e-16) * .5); }
+  .etape .section__figure { aspect-ratio: 1; display: grid; place-items: end center; }
+  .etape .section__figure .scene { width: 100%; }
 }
 
 /* Lecture longue : textes juridiques, protection des enfants, accessibilite */

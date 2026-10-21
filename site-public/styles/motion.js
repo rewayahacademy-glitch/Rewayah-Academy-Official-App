@@ -56,7 +56,7 @@
     var texte = titre.getAttribute('data-texte') || titre.textContent;
     titre.setAttribute('data-texte', texte);
     titre.textContent = '';
-    var mots = texte.split(/\s+/).filter(Boolean);
+    var mots = texte.split(/[ \t\n\r]+/).filter(Boolean); // l'espace insecable reste dans le mot
     var spans = mots.map(function (mot, i) {
       var s = document.createElement('span');
       s.textContent = mot + (i < mots.length - 1 ? ' ' : '');
@@ -133,6 +133,7 @@
     porte.style.setProperty('--c', c.toFixed(4));
     if (z > 0.28) porte.setAttribute('data-passee', ''); else porte.removeAttribute('data-passee');
     if (c > 0.3) porte.setAttribute('data-cercle', ''); else porte.removeAttribute('data-cercle');
+    if (c > 0.98) porte.setAttribute('data-plein', ''); else porte.removeAttribute('data-plein');
   }
 
   function sceneChapitres(h) {
@@ -146,8 +147,10 @@
     for (var i = 0; i < centres.length - 1; i++) {
       if (milieu >= centres[i]) position = i + borne((milieu - centres[i]) / (centres[i + 1] - centres[i]));
     }
+    // Une seule illustration a la fois : on change au milieu du passage, le fondu est porte par le CSS.
+    var courante = Math.round(position);
     imagesChapitres.forEach(function (img, j) {
-      img.style.setProperty('--o', borne(1 - Math.abs(position - j) * 1.8 + 0.4).toFixed(3));
+      img.style.setProperty('--o', j === courante ? '1' : '0');
     });
   }
 
