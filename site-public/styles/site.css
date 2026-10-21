@@ -631,6 +631,11 @@ p { text-wrap: pretty; max-width: 60ch; }
 .simulator__result { margin-top: var(--e-6); }
 .simulator__note { margin-top: var(--e-4); font-size: var(--t-petit); color: var(--encre-douce); }
 .simulator > .cta { margin-top: var(--e-6); }
+/* Le simulateur dans la page des tarifs : un outil pose sur la page, pas une feuille. */
+.simulator--page { width: auto; max-width: calc(var(--contenu) + 2 * var(--marge)); max-height: none; overflow: visible; margin: var(--respire) auto 0; padding: var(--e-10) max(var(--marge), var(--e-8)); border-radius: var(--r-lg); background: var(--sous); color: var(--encre); box-shadow: none; }
+.simulator--page h2 { font-size: var(--t-titre); }
+.simulator--page .simulator__fields input:not([type="checkbox"]), .simulator--page .simulator__fields select { background: var(--fond); border-color: var(--contour); }
+@media (min-width: 840px) { .simulator--page { margin-inline: max(var(--marge), calc((100vw - var(--contenu)) / 2)); padding: var(--e-12) var(--e-12); } }
 @keyframes entree-feuille { from { opacity: 0; transform: translateY(16px); } }
 
 /* --- Pied de page --------------------------------------------------------------- */

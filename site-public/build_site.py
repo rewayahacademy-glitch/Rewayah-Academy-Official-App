@@ -708,7 +708,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     author_facebook = social_by_href["https://www.facebook.com/share/1D6H2EYhci/"]
     cta = bouton(page["cta"]["label"], page["cta"]["href"])
     if route == "/fr/tarifs":
-        cta += ('<button class="cta cta--secondary" type="button" data-open-simulator>Simuler mon tarif</button>'
+        cta += ('<a class="cta cta--secondary" href="#tarif-simulator">Simuler mon tarif</a>'
                 '<noscript><p class="price-note">Le simulateur demande JavaScript. Sans lui, les prix et les remises '
                 'de cette page suffisent pour calculer le tarif de votre foyer.</p></noscript>')
     status = (
@@ -726,8 +726,12 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
             main += bande_finale(fin["titre"], fin["phrase"], fin.get("label", page["cta"]["label"]),
                                  fin.get("href", page["cta"]["href"]), fin["mot"])
         classe_page = "page-" + (route.strip("/").split("/", 1)[1].replace("/", "-") if "/" in route.strip("/") else "accueil")
-    simulator = f'''<dialog class="simulator" id="tarif-simulator" aria-labelledby="simulator-title">
-      <form method="dialog"><button class="simulator__close" aria-label="Fermer le simulateur"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></form>
+    # Sur la page des tarifs, le simulateur est dans la page, sous la grille ; sur l'accueil, une feuille qui s'ouvre.
+    en_page = route == "/fr/tarifs"
+    ouverture = ('<section class="simulator simulator--page" id="tarif-simulator" aria-labelledby="simulator-title">' if en_page else
+                 '<dialog class="simulator" id="tarif-simulator" aria-labelledby="simulator-title">\n'
+                 '      <form method="dialog"><button class="simulator__close" aria-label="Fermer le simulateur"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></form>')
+    simulator = f'''{ouverture}
       <h2 id="simulator-title">Estimez le tarif de votre foyer</h2>
       <p>Indiquez le nombre d’élèves, puis l’âge de chacun, dans l’ordre d’inscription.</p>
       <div class="simulator__fields">
@@ -740,7 +744,11 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
       <script type="application/json" id="tarifs-data">{tarifs_mod.donnees_simulateur(tarifs)}</script>
       <p class="simulator__note">Prix hors taxes, pour un mois complet. Les taxes éventuelles sont indiquées avant paiement.</p>
       <a class="cta" href="/connexion">Commencer mon inscription</a>
-    </dialog>''' if route in ("/fr/", "/fr/tarifs") else ""
+    {"</section>" if en_page else "</dialog>"}''' if route in ("/fr/", "/fr/tarifs") else ""
+    if en_page:
+        fin_grille = main.index("</section>", main.index('id="grille"')) + len("</section>")
+        main = main[:fin_grille] + simulator + main[fin_grille:]
+        simulator = ""
     image_partage = reglage.get("image") or "chemin"
     largeur_partage = image_largeurs(images, image_partage)[-1]
     meta_partage = (

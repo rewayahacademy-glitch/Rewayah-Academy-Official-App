@@ -134,6 +134,8 @@ function initialiserSimulateur(simulator, d) {
   const result = simulator.querySelector('#sim-result');
 
   function ouvrir() {
+    // Sur la page des tarifs, le simulateur est pose dans la page : rien a ouvrir.
+    if (simulator.tagName !== 'DIALOG') return;
     document.querySelectorAll('[data-open-simulator]').forEach((button) => {
       button.addEventListener('click', () => {
         opener = button;
