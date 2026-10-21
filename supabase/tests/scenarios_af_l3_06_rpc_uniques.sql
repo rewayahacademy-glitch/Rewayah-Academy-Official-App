@@ -24,8 +24,10 @@ VALUES
   ('a3060000-0000-0000-0000-000000000002', 'L306-ENS-M', 'teacher',
    'a3060000-0000-0000-0000-000000000101', 'Enseignant', 'L306', 'male', 'provisional_active');
 
-INSERT INTO public.teacher_profiles (profile_id)
-VALUES ('a3060000-0000-0000-0000-000000000002');
+-- CAND-Q15 (lot creer_groupe, 21/10) : creer_groupe passe par le predicat
+-- d'affectation ; l'enseignant doit avoir sa piece d'identite validee.
+INSERT INTO public.teacher_profiles (profile_id, kyc_status)
+VALUES ('a3060000-0000-0000-0000-000000000002', 'approved');
 
 -- Controle catalogue (postgres) : privileges effectifs des quatre fonctions
 -- retirees et des quatre signatures gardees.

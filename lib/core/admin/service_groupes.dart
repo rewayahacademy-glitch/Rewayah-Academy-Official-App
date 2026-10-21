@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../planning/service_planning.dart';
+import 'creation_classe_refusee.dart';
 
 /// Le public d'un groupe : fixe le seuil par defaut (5 enfants, 6 adultes).
 enum TypePublicGroupe {
@@ -249,6 +250,9 @@ class ServiceGroupesSupabase implements ServiceGroupes {
         .toList(growable: false);
   }
 
+  /// Un refus du serveur (CAND-Q15 : piece d'identite, acces, genre,
+  /// plafond, collisions) arrive en [CreationClasseRefusee], jamais avec le
+  /// texte SQL.
   @override
   Future<String> creer({
     required String teacherId,
@@ -256,21 +260,23 @@ class ServiceGroupesSupabase implements ServiceGroupes {
     required String libelle,
     required Creneau creneau,
     int? seuilMax,
-  }) => _client.rpc<String>(
-    'creer_groupe',
-    params: <String, dynamic>{
-      'p_teacher_profile_id': teacherId,
-      'p_type_public': type.valeurSql,
-      'p_libelle': libelle,
-      'p_weekday': creneau.jour,
-      'p_hour_local': creneau.heure,
-      'p_seuil_max': seuilMax,
-      // L3-06 : signature gardee (8 arguments). Fuseau et couleur ne sont pas
-      // saisis dans cet ecran : null, le serveur retient Europe/Paris et
-      // aucune couleur.
-      'p_timezone_iana': null,
-      'p_couleur_jeton': null,
-    },
+  }) => traduireRefusCreationClasse<String>(
+    () => _client.rpc<String>(
+      'creer_groupe',
+      params: <String, dynamic>{
+        'p_teacher_profile_id': teacherId,
+        'p_type_public': type.valeurSql,
+        'p_libelle': libelle,
+        'p_weekday': creneau.jour,
+        'p_hour_local': creneau.heure,
+        'p_seuil_max': seuilMax,
+        // L3-06 : signature gardee (8 arguments). Fuseau et couleur ne sont
+        // pas saisis dans cet ecran : null, le serveur retient Europe/Paris
+        // et aucune couleur.
+        'p_timezone_iana': null,
+        'p_couleur_jeton': null,
+      },
+    ),
   );
 
   @override

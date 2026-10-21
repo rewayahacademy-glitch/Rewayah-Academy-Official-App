@@ -27,6 +27,16 @@
 /// serveur `p_cle_idempotence` est de type `uuid`. Creation concurrente
 /// par deux membres de la direction : le serveur rend [CreationDejaFaite], la
 /// feuille le dit et ne cree rien.
+///
+/// Refus du serveur a la confirmation (C11BIS-AFFECTATION, 21/10/2026) :
+/// chevauchement, disponibilites, plafond, genre, piece d'identite ou
+/// langue. Le serveur a repondu : une phrase par motif
+/// ([libelleRefusAffectation]), jamais son texte SQL, et jamais « la reponse
+/// n'est pas arrivee ». Une erreur sans verdict (reponse perdue, passerelle,
+/// delai, interblocage : l'adaptateur la laisse passer) reste « non
+/// confirme, pressez de nouveau » ; rejouer le meme enseignant rend
+/// `affecte` sans rien reecrire, et la feuille dit que les familles sont
+/// prevenues.
 library;
 
 import 'dart:async';
@@ -44,6 +54,7 @@ import '../../core/admin/service_groupes.dart'
     show TypePublicGroupe, groupesProvider;
 import '../../core/capacites/port_enseignants_classe.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/offres/affectation_refusee.dart';
 import '../../core/offres/port_regroupements_admin.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -209,19 +220,27 @@ class _FeuilleClasseRegroupementEtat
       _message = null;
     });
     ResultatAffectation? resultat;
+    MotifRefusAffectation? refus;
     try {
       resultat = await port.affecterEnseignant(
         classeId: classe.classeId,
         enseignantId: choisi.enseignant.id,
       );
+    } on AffectationRefusee catch (e) {
+      // Le serveur a repondu non (C11BIS-AFFECTATION) : une phrase par motif,
+      // jamais son texte, et pas « la reponse n'est pas arrivee ».
+      refus = e.motif;
     } on Object {
       // Sans reponse, rien n'est suppose (D5) : « non confirme ».
       resultat = null;
     }
     if (!mounted) return;
+    final MotifRefusAffectation? motif = refus;
     setState(() {
       _envoi = false;
-      if (resultat == null) {
+      if (motif != null) {
+        _message = libelleRefusAffectation(motif);
+      } else if (resultat == null) {
         _message = t.admin.regroupements.affectationNonConfirmee;
       } else {
         _dejaAffecte = resultat == ResultatAffectation.dejaAffecte;
@@ -229,6 +248,8 @@ class _FeuilleClasseRegroupementEtat
         _etape = EtapeFeuilleRegroupement.termine;
       }
     });
+    // La classe n'attend plus : la liste se relit, comme apres un succes.
+    if (motif == MotifRefusAffectation.classeIndisponible) _relireListe();
     if (resultat != null) {
       _relireListe();
       // La charge et les creneaux pris de l'enseignant changent avec cette

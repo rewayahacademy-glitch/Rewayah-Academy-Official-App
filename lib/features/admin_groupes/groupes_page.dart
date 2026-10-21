@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/admin_domaine.dart';
+import '../../core/admin/creation_classe_refusee.dart';
 import '../../core/admin/enseignants_classe.dart';
 import '../../core/admin/personnes_proposables.dart';
 import '../../core/admin/port_classes_admin.dart';
@@ -52,6 +53,7 @@ import 'bas_de_feuille.dart';
 import 'cahiers_classe.dart';
 import 'feuille_observation_groupe.dart';
 import 'genre_classe_libelles.dart';
+import 'refus_creation_classe_libelles.dart';
 import 'reglage_partage.dart';
 
 /// Operations > Groupes : le noyau du produit depuis le pivot du 19
@@ -1192,6 +1194,12 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
           );
       widget.onCree();
       if (mounted) Navigator.of(context).pop();
+    } on CreationClasseRefusee catch (refus) {
+      // CAND-Q15 : le serveur a refuse l'enseignant ou le creneau. Une phrase
+      // par motif, jamais le texte SQL ; la feuille garde les choix.
+      if (mounted) {
+        setState(() => _erreur = phraseRefusCreationClasse(refus.motif));
+      }
     } catch (erreur) {
       if (mounted) {
         setState(

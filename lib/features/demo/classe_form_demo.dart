@@ -3,7 +3,8 @@
 // Donnees fictives, jamais envoyees au serveur (`surchargesDemoAdmin`, garde
 // compilee `environnementAutoriseDemo`). Les enseignants sont ceux des classes
 // de `groupesDemo()` (memes identifiants), plus un enseignant dont le genre
-// n'est pas connu, pour que la regle D3 se voie. Les disponibilites reprennent
+// n'est pas connu, pour que la regle D3 se voie (CAND-Q15, 21/10 : visible,
+// non choisissable, avec sa raison). Les disponibilites reprennent
 // celles de `DonneesEnseignantDemo` (une seule source de demonstration).
 
 import '../../core/admin/service_groupes.dart';
@@ -81,7 +82,8 @@ const List<_EnseignantDemo> _enseignants = <_EnseignantDemo>[
     prenom: 'Nour',
     nom: 'Démo',
     identifiant: 'TEACHER-ND-000004',
-    // Genre non dit par la source (D3) : aucune mention de genre.
+    // Genre non renseigne (D3 revue, CAND-Q15) : visible, non choisissable,
+    // avec sa raison.
     genre: null,
     disponibilites: <Creneau>[
       Creneau(jour: 2, heure: 17, fuseau: _fuseau),

@@ -40,6 +40,9 @@ begin
     insert into public.contract_acceptances(profile_id, contract_kind, version)
     values (v_teacher.id, 'recording_and_control_notice', v_notice_version)
     on conflict (profile_id, contract_kind, version) do nothing;
+    insert into public.contract_acceptances (profile_id, contract_kind, version)
+    values (v_teacher.id, 'teacher_conduct_code', public.code_conduite_version_requise())
+    on conflict (profile_id, contract_kind, version) do nothing;
     perform set_config('request.jwt.claim.sub', 'd1200000-0000-0000-0000-000000000003', true);
     perform set_config('test.uid', 'd1200000-0000-0000-0000-000000000003', true);
     perform set_config('request.jwt.claims', '{"app_metadata":{"role":"admin"}}', true);

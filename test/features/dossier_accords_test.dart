@@ -8,8 +8,11 @@
 // n'apparait qu'une fois ; l'accuse a sa case ; un echec d'envoi laisse la
 // page en place, cases gardees, et la reprise ne renvoie pas ce qui est deja
 // enregistre ; l'enseignant y trouve son contrat (application ou serveur) ;
-// les anciennes adresses menent a la page. Captures 390x844 et 1440x900 avec
-// CAPTURE_DIR.
+// les anciennes adresses menent a la page. CAND-Q15 conduite : l'enseignant
+// dont le serveur dit le code de conduite a accepter y trouve le texte et sa
+// case ; le code part apres le contrat, a sa version requise ; seul, il ne
+// montre que sa section ; un tuteur ne le voit jamais. Captures 390x844 et
+// 1440x900 avec CAPTURE_DIR.
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,6 +29,7 @@ import 'package:rewayah_academy/core/recrutement/port_signature_contrat.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/features/code_conduite/code_conduite.dart';
 import 'package:rewayah_academy/features/consentements/texte_observation.dart';
 import 'package:rewayah_academy/features/demo/recrutement_demo.dart';
 import 'package:rewayah_academy/features/dossier/accords_page.dart';
@@ -52,14 +56,22 @@ class _ServiceEchecUneFois extends FauxServiceDossier {
   }
 }
 
-EtatDossier _etat(AppRole role, {bool accuse = false, bool contrat = false}) =>
-    EtatDossier(
-      profilExiste: true,
-      role: role,
-      statutCompte: AccountStatus.pendingKyc,
-      accuseSigne: accuse,
-      contratSigne: contrat,
-    );
+EtatDossier _etat(
+  AppRole role, {
+  bool accuse = false,
+  bool contrat = false,
+  bool code = true,
+  bool piece = false,
+}) => EtatDossier(
+  profilExiste: true,
+  role: role,
+  statutCompte: AccountStatus.pendingKyc,
+  accuseSigne: accuse,
+  contratSigne: contrat,
+  codeConduiteSigne: code,
+  pieceDeposee: piece,
+  statutPiece: piece ? StatutPiece.enAttente : null,
+);
 
 List<RouteBase> _routes() => <RouteBase>[
   GoRoute(
@@ -399,6 +411,179 @@ void main() {
     });
   });
 
+  // CAND-Q15 conduite : le code de conduite se signe sur cette page, avant
+  // l'activation que la garde serveur lui subordonne.
+  group('Enseignant : le code de conduite avant l activation', () {
+    testWidgets('sans port serveur : sa section et sa case apres le contrat ; '
+        'Suivant inactif tant qu elle manque ; envoi accuse, contrat, code', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..demonstration = true
+        ..etatRendu = _etat(AppRole.teacher, code: false);
+      await _monter(tester, dossier);
+
+      expect(find.text(t.codeConduite.titre), findsOneWidget);
+      expect(find.byType(TexteCodeConduite), findsOneWidget);
+      expect(find.text(t.codeConduite.intro), findsOneWidget);
+      for (final String regle in t.codeConduite.regles) {
+        expect(find.text(regle), findsOneWidget);
+      }
+      expect(find.byType(CaseAccordTexte), findsNWidgets(4));
+      expect(find.text(t.accords.reste(n: 4)), findsOneWidget);
+      // La section du code suit celle du contrat.
+      expect(
+        tester.getTopLeft(find.text(t.codeConduite.titre)).dy,
+        greaterThan(tester.getTopLeft(find.text(t.accords.caseContrat)).dy),
+      );
+
+      await _cocher(tester, t.accords.caseSavoir);
+      await _cocher(tester, t.accords.caseContrat);
+      await _cocher(tester, t.contrat.clauseControle.caseReligion);
+      // Tout est coche sauf le code : inactif, et la ligne le dit.
+      expect(_actif(tester), isFalse);
+      expect(find.text(t.accords.reste(n: 1)), findsOneWidget);
+      await _appuyerSuivant(tester);
+      expect(dossier.contratsAcceptes, isEmpty);
+
+      await _cocher(tester, t.codeConduite.caseAccord);
+      expect(_actif(tester), isTrue);
+      await _appuyerSuivant(tester);
+      expect(dossier.contratsAcceptes, <SorteContrat>[
+        SorteContrat.accuseEnregistrementControle,
+        SorteContrat.contratEnseignant,
+        SorteContrat.codeConduiteEnseignant,
+      ]);
+      expect(dossier.versionsAcceptees, <String>[
+        VersionsContrat.textesJuridiques,
+        VersionsContrat.textesJuridiques,
+        VersionsContrat.codeConduite,
+      ]);
+      expect(VersionsContrat.codeConduite, '2026-10-19');
+      expect(find.text('route-piece'), findsOneWidget);
+    });
+
+    testWidgets('seul le code manque : sa seule section a cocher, puis le '
+        'portail', (WidgetTester tester) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = _etat(
+          AppRole.teacher,
+          accuse: true,
+          contrat: true,
+          code: false,
+          piece: true,
+        );
+      await _monter(tester, dossier);
+
+      expect(find.text(t.accords.dejaAcceptes), findsNothing);
+      expect(find.text(t.codeConduite.titre), findsOneWidget);
+      expect(find.text(t.accords.sectionContrat), findsNothing);
+      // La case de l'accuse reste affichee, cochee et figee ; seule celle du
+      // code est a cocher.
+      expect(find.byType(CaseAccordTexte), findsNWidgets(2));
+      final CaseAccordTexte savoir = tester.widget<CaseAccordTexte>(
+        find.widgetWithText(CaseAccordTexte, t.accords.caseSavoir),
+      );
+      expect(savoir.cochee, isTrue);
+      expect(savoir.onChanged, isNull);
+      expect(find.text(t.accords.reste(n: 1)), findsOneWidget);
+      expect(_actif(tester), isFalse);
+
+      await _cocher(tester, t.codeConduite.caseAccord);
+      expect(_actif(tester), isTrue);
+      await _appuyerSuivant(tester);
+      expect(dossier.contratsAcceptes, <SorteContrat>[
+        SorteContrat.codeConduiteEnseignant,
+      ]);
+      expect(dossier.versionsAcceptees, <String>[VersionsContrat.codeConduite]);
+      expect(find.text('portail'), findsOneWidget);
+    });
+
+    testWidgets('port serveur branche : l accuse, la signature probante, '
+        'puis le code', (WidgetTester tester) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = _etat(AppRole.teacher, code: false);
+      final SignatureContratDemo port = SignatureContratDemo();
+      await _monter(tester, dossier, port: port);
+
+      expect(find.byType(CaseAccordTexte), findsNWidgets(3));
+      await _cocher(tester, t.accords.caseSavoir);
+      await _cocher(tester, t.recrutement.signature.accuse);
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('accords-nom')),
+        'Yasmine Haddad',
+      );
+      await tester.pumpAndSettle();
+      expect(_actif(tester), isFalse);
+      await _cocher(tester, t.codeConduite.caseAccord);
+      expect(_actif(tester), isTrue);
+
+      await _appuyerSuivant(tester);
+      expect(dossier.contratsAcceptes, <SorteContrat>[
+        SorteContrat.accuseEnregistrementControle,
+        SorteContrat.codeConduiteEnseignant,
+      ]);
+      final Signature? signee = await port.maSignature(
+        SorteContrat.contratEnseignant,
+      );
+      expect(signee?.nomSaisi, 'Yasmine Haddad');
+      expect(find.text('route-piece'), findsOneWidget);
+    });
+
+    testWidgets('un echec a l envoi du code garde la page ; la reprise '
+        'n envoie que le code', (WidgetTester tester) async {
+      final _ServiceEchecUneFois dossier = _ServiceEchecUneFois(3)
+        ..demonstration = true
+        ..etatRendu = _etat(AppRole.teacher, code: false);
+      await _monter(tester, dossier);
+
+      await _cocher(tester, t.accords.caseSavoir);
+      await _cocher(tester, t.accords.caseContrat);
+      await _cocher(tester, t.contrat.clauseControle.caseReligion);
+      await _cocher(tester, t.codeConduite.caseAccord);
+      await _appuyerSuivant(tester);
+
+      expect(dossier.contratsAcceptes, <SorteContrat>[
+        SorteContrat.accuseEnregistrementControle,
+        SorteContrat.contratEnseignant,
+      ]);
+      expect(find.byType(AccordsPage), findsOneWidget);
+      expect(find.text(t.contrat.erreur), findsOneWidget);
+      expect(_actif(tester), isTrue);
+
+      await _appuyerSuivant(tester);
+      expect(dossier.contratsAcceptes, <SorteContrat>[
+        SorteContrat.accuseEnregistrementControle,
+        SorteContrat.contratEnseignant,
+        SorteContrat.codeConduiteEnseignant,
+      ]);
+      expect(find.text('route-piece'), findsOneWidget);
+    });
+
+    testWidgets('code deja accepte (ou serveur d avant) : aucune section du '
+        'code', (WidgetTester tester) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..demonstration = true
+        ..etatRendu = _etat(AppRole.teacher);
+      await _monter(tester, dossier);
+
+      expect(find.text(t.codeConduite.titre), findsNothing);
+      expect(find.byType(TexteCodeConduite), findsNothing);
+      expect(find.byType(CaseAccordTexte), findsNWidgets(3));
+    });
+
+    testWidgets('un tuteur ne voit jamais le code de conduite', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = _etat(AppRole.guardian);
+      await _monter(tester, dossier);
+
+      expect(find.text(t.codeConduite.titre), findsNothing);
+      expect(find.text(t.codeConduite.caseAccord), findsNothing);
+    });
+  });
+
   group('Capture E6', skip: sautSansCapture, () {
     setUpAll(() async {
       await chargerPolicesDuDepot();
@@ -409,11 +594,12 @@ void main() {
       Size taille, {
       required AppRole role,
       String depart = Routes.attenteAccords,
+      bool code = true,
     }) async {
       fixerVueCapture(tester, taille, 1);
       final FauxServiceDossier dossier = FauxServiceDossier()
         ..demonstration = true
-        ..etatRendu = _etat(role);
+        ..etatRendu = _etat(role, code: code);
       final GoRouter routeur = GoRouter(
         initialLocation: depart,
         routes: _routes(),
@@ -470,6 +656,36 @@ void main() {
           );
         });
       }
+    }
+
+    // CAND-Q15 conduite : la section du code de conduite, a l'ecran puis
+    // cochee.
+    for (final (String, Size) format in <(String, Size)>[
+      ('390x844', const Size(390, 844)),
+      ('1440x900', const Size(1440, 900)),
+    ]) {
+      testWidgets('accords enseignant, code de conduite ${format.$1}', (
+        WidgetTester tester,
+      ) async {
+        await monterCapture(
+          tester,
+          format.$2,
+          role: AppRole.teacher,
+          code: false,
+        );
+        await tester.ensureVisible(find.text(t.codeConduite.titre));
+        await stabiliser(tester);
+        debugPrint(
+          'PNG ${await capturer(tester, 'pe_conduite_accords_${format.$1}_section')}',
+        );
+        await tester.ensureVisible(find.text(t.codeConduite.caseAccord));
+        await stabiliser(tester);
+        await tester.tap(find.text(t.codeConduite.caseAccord));
+        await stabiliser(tester);
+        debugPrint(
+          'PNG ${await capturer(tester, 'pe_conduite_accords_${format.$1}_case')}',
+        );
+      });
     }
 
     testWidgets('accords tuteur 390x2600 (page entiere)', (

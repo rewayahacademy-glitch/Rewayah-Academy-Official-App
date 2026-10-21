@@ -47,6 +47,7 @@ class EtatDossier {
     this.deposeLe,
     this.contratSigne = false,
     this.accuseSigne = false,
+    this.codeConduiteSigne = true,
     this.correctionAutorisee,
     this.pieceRequise = true,
     this.usage,
@@ -72,6 +73,7 @@ class EtatDossier {
       deposeLe: depose is String ? DateTime.tryParse(depose)?.toLocal() : null,
       contratSigne: json['contrat_signe'] == true,
       accuseSigne: json['accuse_signe'] == true,
+      codeConduiteSigne: json['code_conduite_signe'] as bool? ?? true,
       correctionAutorisee: json['correction_autorisee'] as bool?,
       pieceRequise: json['piece_requise'] as bool? ?? true,
       usage: UsageTitulaire.depuisSql(json['usage']),
@@ -106,6 +108,12 @@ class EtatDossier {
 
   /// Vrai quand la carte d'accuse de l'ADR-011 a ete accusee.
   final bool accuseSigne;
+
+  /// CAND-Q15 conduite : faux quand le code de conduite reste a accepter a sa
+  /// version requise. Le serveur rend vrai pour tout compte qui n'est pas
+  /// enseignant : l'ecran ne lit aucun role pour le savoir. Absent d'un
+  /// serveur d'avant ce lot, qui ne l'exigeait pas : vrai.
+  final bool codeConduiteSigne;
 
   /// Faux quand l'administration interdit la correction d'un dossier refuse.
   /// Absent de la reponse actuelle d'`etat_dossier()` (AD-BR-28) : nul, et la
@@ -170,10 +178,12 @@ class EtatDossier {
   /// L'accuse vient **avant** le contrat, et non l'inverse : il dit en langage
   /// clair ce que le contrat formalisera ensuite. Une clause signee au milieu
   /// d'un texte long n'informe personne, et c'est exactement le litige que
-  /// l'ADR-011 cherche a eviter.
+  /// l'ADR-011 cherche a eviter. Le code de conduite suit le contrat, sur la
+  /// meme page des accords, et precede la piece.
   List<PieceManquante> get manquants => <PieceManquante>[
     if (!accuseSigne) PieceManquante.accuse,
     if (!contratSigne) PieceManquante.contrat,
+    if (!codeConduiteSigne) PieceManquante.codeConduite,
     if (pieceExigee && (!pieceDeposee || statutPiece == StatutPiece.refusee))
       PieceManquante.pieceIdentite,
   ];
@@ -190,6 +200,7 @@ class EtatDossier {
       other.deposeLe == deposeLe &&
       other.contratSigne == contratSigne &&
       other.accuseSigne == accuseSigne &&
+      other.codeConduiteSigne == codeConduiteSigne &&
       other.correctionAutorisee == correctionAutorisee &&
       other.pieceRequise == pieceRequise &&
       other.usage == usage &&
@@ -206,6 +217,7 @@ class EtatDossier {
     deposeLe,
     contratSigne,
     accuseSigne,
+    codeConduiteSigne,
     correctionAutorisee,
     pieceRequise,
     usage,
@@ -239,6 +251,10 @@ enum PieceManquante {
 
   /// La signature du contrat ou des conditions.
   contrat,
+
+  /// Le code de conduite de l'enseignant, a accepter avant l'activation
+  /// (CAND-Q15 conduite). Il se lit et s'accepte sur la page des accords.
+  codeConduite,
 
   /// La piece d'identite.
   pieceIdentite,

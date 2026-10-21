@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../capacites/port_enseignants_classe.dart' show GenreClasse;
+import 'affectation_refusee.dart';
 import 'offre_horaire.dart' show NiveauDeclare, PublicOffre;
 import 'port_regroupements_admin.dart';
 
@@ -9,6 +10,13 @@ import 'port_regroupements_admin.dart';
 /// Les clés, le public de genre, le niveau et l'éligibilité sont fournis ou
 /// validés par PostgreSQL. Le paramètre `genre` historique du port est ignoré
 /// à l'appel RPC : le client ne peut donc pas choisir le genre de la classe.
+///
+/// C11BIS-AFFECTATION (21/10/2026) : la capacité de confirmer l'enseignant
+/// vient toujours du serveur, y compris juste après une création (la classe
+/// créée est relue). Un refus de la fonction à la confirmation (P0001, 42501,
+/// [estRefusAffectation]) est levé en [AffectationRefusee], avec un motif
+/// fermé ; une réponse perdue, une passerelle en échec, un délai ou un
+/// interblocage restent l'exception d'origine.
 class RegroupementsC11bisSupabase implements PortRegroupementsAdmin {
   const RegroupementsC11bisSupabase(this._client);
 
@@ -52,11 +60,13 @@ class RegroupementsC11bisSupabase implements PortRegroupementsAdmin {
     if (cible?.classe?.classeId == groupeId) {
       return const CreationDejaFaite();
     }
+    final ClasseSansEnseignant? relue = await _classeRelue(groupeId);
     return ClasseCreee(
       classe: ClasseSansEnseignant(
         classeId: groupeId,
-        libelle: libelle,
-        genre: cible?.genrePublic,
+        libelle: relue?.libelle ?? libelle,
+        genre: relue?.genre ?? cible?.genrePublic,
+        peutAffecterEnseignant: relue?.peutAffecterEnseignant ?? false,
       ),
       elevesIntegres: cible == null
           ? 0
@@ -71,16 +81,58 @@ class RegroupementsC11bisSupabase implements PortRegroupementsAdmin {
     required String classeId,
     required String enseignantId,
   }) async {
-    final String resultat = await _client.rpc<String>(
-      'affecter_enseignant_classe_c11bis',
-      params: <String, dynamic>{
-        'p_groupe_id': classeId,
-        'p_teacher_profile_id': enseignantId,
-      },
-    );
+    final String resultat;
+    try {
+      resultat = await _client.rpc<String>(
+        'affecter_enseignant_classe_c11bis',
+        params: <String, dynamic>{
+          'p_groupe_id': classeId,
+          'p_teacher_profile_id': enseignantId,
+        },
+      );
+    } on PostgrestException catch (e) {
+      // Seul un verdict de la fonction (P0001, 42501) est un refus : un motif
+      // ferme, jamais son texte. Passerelle, jeton, delai ou interblocage :
+      // pas de verdict, l'erreur passe telle quelle (« non confirme », D5).
+      if (!estRefusAffectation(e.code)) rethrow;
+      throw AffectationRefusee(
+        motifRefusAffectation(code: e.code, message: e.message),
+      );
+    }
     return resultat == 'deja_affecte'
         ? ResultatAffectation.dejaAffecte
         : ResultatAffectation.affecte;
+  }
+
+  /// La classe [classeId] telle que le serveur la rend apres sa creation :
+  /// son nom, son genre et sa capacite `peut_affecter_enseignant`. Nul quand
+  /// la relecture n'aboutit pas : la classe est creee quand meme, et la
+  /// capacite reste fermee jusqu'a la prochaine lecture de la liste.
+  Future<ClasseSansEnseignant?> _classeRelue(String classeId) async {
+    final List<RegroupementDemandes> apres;
+    try {
+      apres = await regroupements();
+    } on Object {
+      return null;
+    }
+    final List<ClasseSansEnseignant> lignes = <ClasseSansEnseignant>[
+      for (final RegroupementDemandes r in apres)
+        if (r.classe case final ClasseSansEnseignant c
+            when c.classeId == classeId)
+          c,
+    ];
+    if (lignes.isEmpty) return null;
+    // La classe peut figurer deux fois (regroupement ouvert et classe en
+    // attente) : la capacite n'est ouverte que si toutes les lignes le disent.
+    final ClasseSansEnseignant premiere = lignes.first;
+    return ClasseSansEnseignant(
+      classeId: premiere.classeId,
+      libelle: premiere.libelle,
+      genre: premiere.genre,
+      peutAffecterEnseignant: lignes.every(
+        (ClasseSansEnseignant c) => c.peutAffecterEnseignant,
+      ),
+    );
   }
 
   RegroupementDemandes _depuisJson(Map<String, dynamic> json) {

@@ -76,6 +76,9 @@ String manqueEnseignantClasse(
   final f = t.admin.groupes.formulaire;
   final String nom = choisi.enseignant.libelle;
   final bool enfants = type == TypePublicGroupe.enfant;
+  // D3 revue (CAND-Q15, 21/10) : un genre non renseigne ferme toute classe,
+  // quel que soit son public.
+  if (choisi.genreInconnu) return f.manqueEnseignantGenreInconnu(nom: nom);
   if (choisi.genreCompatible == false) {
     return switch (genre) {
       GenreClasse.hommes =>
@@ -105,6 +108,7 @@ String? raisonEnseignant(
   GenreClasse? genre,
   TypePublicGroupe type,
 ) {
+  if (l.genreInconnu) return t.admin.groupes.formulaire.raisonGenreInconnu;
   if (l.genreCompatible == false && genre != null) {
     return raisonGenreClasse(genre, type);
   }

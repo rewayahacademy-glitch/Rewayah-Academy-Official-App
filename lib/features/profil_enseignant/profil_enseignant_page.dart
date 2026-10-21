@@ -8,6 +8,8 @@ import '../../core/auth/service_auth.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/offres/offre_horaire.dart';
+import '../../core/offres/service_offres.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/profil/service_acceptations.dart';
 import '../../core/profil/service_declaration.dart';
@@ -400,11 +402,13 @@ class _Statut extends StatelessWidget {
 
 /// Ce que l'enseignant declare, et qu'il peut corriger.
 ///
-/// Deux lignes editables, pas trois. `country` et `languages` sont du texte
-/// libre en base, mais l'ecran les fait **choisir** (K-57, FORM-L8) : le pays
-/// dans une liste preselectionnee d'apres le fuseau, les langues parmi celles
-/// que l'academie publie (`languesCoursProvider`), le clavier seulement en
-/// dernier recours (« Autre »). `timezone_iana`, lui, demande un libelle IANA valide -- la fonction SQL le
+/// Deux lignes editables, pas trois. `country` est du texte libre en base et
+/// `languages` porte des codes de `langues_cours` (CAND-Q15, lot langue), mais
+/// l'ecran les fait **choisir** (K-57, FORM-L8) : le pays dans une liste
+/// preselectionnee d'apres le fuseau, les langues parmi celles que l'academie
+/// propose (`referentielLanguesProvider`), le clavier seulement en dernier
+/// recours (« Autre »). Les langues s'affichent par leur nom, jamais par leur
+/// code. `timezone_iana`, lui, demande un libelle IANA valide -- la fonction SQL le
 /// verifie et refuse le reste -- et aucun inventaire de fuseaux n'est tranche
 /// dans le produit : il reste donc en lecture, et la demande est ecrite dans
 /// `CONTRACT_REQUEST_E.md`. Un champ qui refuserait une saisie que l'enseignant
@@ -471,7 +475,10 @@ class _DeclarationState extends ConsumerState<_Declaration> {
     final TextTheme textes = Theme.of(context).textTheme;
     final ProfilEnseignant profil = widget.profil;
     final AsyncValue<String> fuseau = ref.watch(monFuseauProvider);
-    final String langues = profil.langues.join(', ');
+    final _LanguesLues langues = _LanguesLues.depuis(
+      profil.langues,
+      ref.watch(referentielLanguesProvider),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -508,9 +515,15 @@ class _DeclarationState extends ConsumerState<_Declaration> {
             ),
             LigneRubrique(
               libelle: t.enseignant.profil.langues,
-              valeur: langues.isEmpty
-                  ? t.enseignant.profil.nonRenseigne
-                  : langues,
+              valeur: langues.valeur,
+              // Le referentiel n'est pas encore lu : la ligne montre sa forme
+              // de chargement, jamais les codes bruts.
+              marque: langues.enChargement
+                  ? const SizedBox(
+                      width: AppSpacing.respiration * 2,
+                      child: Skeleton(hauteur: AppSpacing.md),
+                    )
+                  : null,
               icone: AppIcons.cours,
               onPress: widget.horsLigne
                   ? null
@@ -550,6 +563,57 @@ class _DeclarationState extends ConsumerState<_Declaration> {
       ],
     );
   }
+}
+
+/// Ce que la ligne « Langues » affiche, d'apres le profil et le referentiel.
+///
+/// Le profil porte des codes (`francais`) ; seul le referentiel des langues,
+/// retirees comprises, les nomme (`nomLangueCours`). Tant qu'il n'est pas lu,
+/// la ligne montre sa forme de chargement ; s'il est illisible (panne, hors
+/// ligne sans lecture precedente), elle le dit. Dans aucun cas elle n'affiche
+/// un code. Une lecture precedente reste affichee pendant qu'une nouvelle
+/// echoue ou se fait.
+@immutable
+class _LanguesLues {
+  const _LanguesLues({required this.valeur, required this.enChargement});
+
+  factory _LanguesLues.depuis(
+    List<String> declarees,
+    AsyncValue<List<LangueCours>> referentiel,
+  ) {
+    final List<String> valeurs = <String>[
+      for (final String v in declarees)
+        if (v.trim().isNotEmpty) v,
+    ];
+    if (valeurs.isEmpty) {
+      return _LanguesLues(
+        valeur: t.enseignant.profil.nonRenseigne,
+        enChargement: false,
+      );
+    }
+    final List<LangueCours>? lues = referentiel.value;
+    if (lues != null) {
+      return _LanguesLues(
+        valeur: <String>{
+          for (final String v in valeurs) nomLangueCours(v, lues),
+        }.join(', '),
+        enChargement: false,
+      );
+    }
+    if (referentiel.hasError) {
+      return _LanguesLues(
+        valeur: t.enseignant.profil.languesErreur,
+        enChargement: false,
+      );
+    }
+    return const _LanguesLues(valeur: null, enChargement: true);
+  }
+
+  /// Le texte de fin de ligne, ou `null` pendant le chargement.
+  final String? valeur;
+
+  /// Vrai tant que le referentiel n'est pas lu.
+  final bool enChargement;
 }
 
 /// Le contrat et les accuses, en lecture seule et pour toujours, puis le

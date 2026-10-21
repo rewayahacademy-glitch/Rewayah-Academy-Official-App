@@ -16,7 +16,7 @@ import 'versions_contrat.dart';
 /// n'existe en version [VersionsContrat.textesJuridiques]. Un enseignant qui
 /// n'a encore rien signe passe par le portail d'attente comme avant.
 ///
-/// `etat_dossier()` ne filtre pas la version (voir l'en-tete de
+/// `etat_dossier()` ne filtre pas la version du contrat (voir l'en-tete de
 /// [VersionsContrat]) : la lecture se fait ici, sur les acceptations de la
 /// personne connectee (`contract_acceptances`, lecture de soi). Ce n'est pas
 /// une barriere de securite : le serveur n'exige pas encore la version

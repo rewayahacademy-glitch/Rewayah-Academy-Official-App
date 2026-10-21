@@ -771,11 +771,6 @@ enseignant.journee.alertesSansDonnees
 enseignant.journee.erreurPartielleCahiers
 enseignant.journee.erreurPartielleTout
 enseignant.pays.semantique
-enseignant.profil.langueDejaDeclaree
-enseignant.profil.languesConsigne
-enseignant.profil.languesErreur
-enseignant.profil.languesErreurDetail
-enseignant.profil.languesRequises
 enseignant.profil.paysConsigne
 enseignant.profil.paysDuFuseau
 enseignant.profil.paysRequis

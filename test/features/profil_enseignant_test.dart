@@ -54,7 +54,9 @@ ProfilEnseignant _profilDeTest({
   String prenom = 'Aicha',
   String identifiant = 'RA-ENS-0007',
   String? pays = 'GN',
-  List<String> langues = const <String>['Français', 'Arabe'],
+  // Des codes de `langues_cours` et une saisie libre, comme la base les
+  // porte (CAND-Q15, lot langue).
+  List<String> langues = const <String>['francais', 'Arabe'],
   int? plafondHeures = 20,
   AccountStatus? statutCompte = AccountStatus.active,
   VerificationEnseignant? verification = VerificationEnseignant.validee,
@@ -95,6 +97,7 @@ Future<_Monte> _monter(
   List<Acceptation> acceptations = const <Acceptation>[],
   bool echecAcceptations = false,
   bool horsLigne = false,
+  Future<List<LangueCours>> Function()? referentiel,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -117,12 +120,15 @@ Future<_Monte> _monter(
         ),
         serviceAuthProvider.overrideWithValue(auth),
         serviceDeclarationProvider.overrideWithValue(declaration),
-        // FORM-L8 : les langues se cochent parmi celles que l'academie publie.
-        languesCoursProvider.overrideWith(
-          (_) async => const <LangueCours>[
-            LangueCours(code: 'poular', nom: 'Poular'),
-            LangueCours(code: 'francais', nom: 'Français'),
-          ],
+        // FORM-L8 : les langues se cochent parmi celles que l'academie publie,
+        // et le profil les nomme par ce referentiel.
+        referentielLanguesProvider.overrideWith(
+          (_) =>
+              referentiel?.call() ??
+              Future<List<LangueCours>>.value(const <LangueCours>[
+                LangueCours(code: 'poular', nom: 'Poular'),
+                LangueCours(code: 'francais', nom: 'Français'),
+              ]),
         ),
         servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
         serviceReseauProvider.overrideWithValue(
@@ -493,7 +499,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // FORM-L8 : les langues se cochent, la langue hors liste (« Arabe »)
-      // reste cochee ; on decoche « Français » et on coche « Poular ».
+      // reste cochee ; on decoche « Français » et on coche « Poular ». Les
+      // cartes portent des noms, l'ecriture des codes (CAND-Q15).
       await _taperLigne(tester, t.enseignant.profil.langues);
       expect(find.byType(TextField), findsNothing);
       await tester.tap(find.byKey(FeuilleLangues.carteKey('Français')));
@@ -507,9 +514,34 @@ void main() {
       expect(monte.declaration.ecritures.single.pays, isNull);
       expect(monte.declaration.ecritures.single.langues, <String>[
         'Arabe',
-        'Poular',
+        'poular',
       ]);
       expect(find.text(t.enseignant.profil.enregistre), findsOneWidget);
+    });
+
+    testWidgets('un nom enregistre par un ancien client repart en code', (
+      WidgetTester tester,
+    ) async {
+      // Avant la correction, le profil portait le nom. La feuille coche la
+      // carte de sa langue, une seule fois, et l'enregistrement envoie le
+      // code.
+      final _Monte monte = await _monter(
+        tester,
+        profil: _profilDeTest(langues: const <String>['Français', 'Arabe']),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Français, Arabe'), findsOneWidget);
+
+      await _taperLigne(tester, t.enseignant.profil.langues);
+      expect(find.byKey(FeuilleLangues.carteKey('Français')), findsOneWidget);
+      await tester.tap(find.byKey(FeuilleLangues.enregistrerKey));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(monte.declaration.ecritures.single.langues, <String>[
+        'francais',
+        'Arabe',
+      ]);
     });
 
     testWidgets('un echec d ecriture se dit, et ne ment pas sur la valeur', (
@@ -549,6 +581,90 @@ void main() {
       await _taperLigne(tester, t.enseignant.profil.plafond);
 
       expect(find.text(t.enseignant.profil.enregistrer), findsNothing);
+    });
+  });
+
+  group('ENS-05 : la ligne des langues ne montre jamais un code', () {
+    testWidgets('referentiel en chargement : sa forme, pas les codes', (
+      WidgetTester tester,
+    ) async {
+      final Completer<List<LangueCours>> jamais =
+          Completer<List<LangueCours>>();
+      await _monter(
+        tester,
+        profil: _profilDeTest(),
+        referentiel: () => jamais.future,
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text(t.enseignant.profil.langues), findsOneWidget);
+      expect(find.textContaining('francais'), findsNothing);
+      expect(find.textContaining('Arabe'), findsNothing);
+      expect(find.byType(Skeleton), findsOneWidget);
+    });
+
+    testWidgets('referentiel illisible : la ligne le dit, sans code', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        profil: _profilDeTest(),
+        referentiel: () =>
+            Future<List<LangueCours>>.error(StateError('panne reseau')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.enseignant.profil.languesErreur), findsOneWidget);
+      expect(find.textContaining('francais'), findsNothing);
+      // Le reste du profil reste lisible.
+      expect(find.text('RA-ENS-0007'), findsOneWidget);
+    });
+
+    testWidgets('referentiel illisible, en arabe : la ligne le dit en arabe', (
+      WidgetTester tester,
+    ) async {
+      // Revue CAND-Q15 (lot langue) : la cle n'avait pas de traduction
+      // arabe, et slang retombait sur la phrase francaise. Sans traduction,
+      // `t` rend la meme chaine dans les deux langues : le `findsNothing`
+      // sur le francais echoue.
+      final String francais = AppLocale.fr
+          .buildSync()
+          .enseignant
+          .profil
+          .languesErreur;
+      // L'arabe est une bibliotheque differee : il se charge hors du temps
+      // simule du test.
+      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+      addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+      await _monter(
+        tester,
+        profil: _profilDeTest(),
+        referentiel: () =>
+            Future<List<LangueCours>>.error(StateError('panne reseau')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.enseignant.profil.languesErreur), findsOneWidget);
+      expect(find.text(francais), findsNothing);
+      expect(find.textContaining('francais'), findsNothing);
+    });
+
+    testWidgets('une langue retiree de l onboarding reste nommee', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        profil: _profilDeTest(langues: const <String>['poular', 'Wolof']),
+        referentiel: () async => const <LangueCours>[
+          LangueCours(code: 'poular', nom: 'Poular', actif: false),
+          LangueCours(code: 'francais', nom: 'Français'),
+        ],
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Poular, Wolof'), findsOneWidget);
+      expect(find.textContaining('poular'), findsNothing);
     });
   });
 

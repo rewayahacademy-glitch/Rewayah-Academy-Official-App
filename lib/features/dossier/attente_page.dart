@@ -207,8 +207,9 @@ class _Prochaine {
   final VoidCallback? geste;
 }
 
-/// Ce qui reste a faire, tel que le portail le montre : les accords (accuse
-/// et contrat, une seule page depuis le lot E6), puis la piece d'identite.
+/// Ce qui reste a faire, tel que le portail le montre : les accords (accuse,
+/// contrat et, pour l'enseignant, code de conduite : une seule page depuis le
+/// lot E6), puis la piece d'identite.
 enum _Element {
   /// Les accords a lire et a accepter, sur `/attente/accords`.
   accords,
@@ -217,13 +218,15 @@ enum _Element {
   piece,
 }
 
-/// Les elements restants, dans l'ordre : l'accuse et le contrat se lisent et
-/// s'acceptent ensemble, sur une seule page (DECISION-ENTREE du 17/10/2026).
+/// Les elements restants, dans l'ordre : l'accuse, le contrat et le code de
+/// conduite se lisent et s'acceptent ensemble, sur une seule page
+/// (DECISION-ENTREE du 17/10/2026 ; CAND-Q15 pour le code de conduite).
 List<_Element> _elements(EtatDossier etat) {
   final List<PieceManquante> manquants = etat.manquants;
   return <_Element>[
     if (manquants.contains(PieceManquante.accuse) ||
-        manquants.contains(PieceManquante.contrat))
+        manquants.contains(PieceManquante.contrat) ||
+        manquants.contains(PieceManquante.codeConduite))
       _Element.accords,
     if (manquants.contains(PieceManquante.pieceIdentite)) _Element.piece,
   ];

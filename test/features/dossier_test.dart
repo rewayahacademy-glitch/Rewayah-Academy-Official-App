@@ -694,4 +694,82 @@ void main() {
       }
     });
   });
+
+  // CAND-Q15 conduite : etat_dossier() dit si le code de conduite reste a
+  // accepter ; le client ne lit aucun role pour le deviner.
+  group('EtatDossier : le code de conduite', () {
+    Map<String, dynamic> json({Object? code = _absent}) => <String, dynamic>{
+      'profil': true,
+      'role': 'teacher',
+      'statut': 'pending_kyc',
+      'piece_deposee': true,
+      'piece_statut': 'pending',
+      'contrat_signe': true,
+      'accuse_signe': true,
+      if (!identical(code, _absent)) 'code_conduite_signe': code,
+    };
+
+    test('la lecture reprend code_conduite_signe', () {
+      final EtatDossier manque = EtatDossier.depuisJson(json(code: false));
+      expect(manque.codeConduiteSigne, isFalse);
+      expect(manque.manquants, <PieceManquante>[PieceManquante.codeConduite]);
+      expect(manque.etape, EtapeDossier.incomplet);
+
+      final EtatDossier fait = EtatDossier.depuisJson(json(code: true));
+      expect(fait.codeConduiteSigne, isTrue);
+      expect(fait.manquants, isEmpty);
+      expect(fait.etape, EtapeDossier.enVerification);
+    });
+
+    test('cle absente (serveur d avant ce lot) : vrai, rien ne manque', () {
+      final EtatDossier ancien = EtatDossier.depuisJson(json());
+      expect(ancien.codeConduiteSigne, isTrue);
+      expect(ancien.manquants, isEmpty);
+      // Valeur illisible : traitee comme absente, jamais comme « signe faux ».
+      expect(
+        EtatDossier.depuisJson(json(code: null)).codeConduiteSigne,
+        isTrue,
+      );
+      expect(const EtatDossier(profilExiste: true).codeConduiteSigne, isTrue);
+    });
+
+    test('manquants : accuse, contrat, code, puis la piece', () {
+      const EtatDossier tout = EtatDossier(
+        profilExiste: true,
+        role: AppRole.teacher,
+        statutCompte: AccountStatus.pendingKyc,
+        codeConduiteSigne: false,
+      );
+      expect(tout.manquants, <PieceManquante>[
+        PieceManquante.accuse,
+        PieceManquante.contrat,
+        PieceManquante.codeConduite,
+        PieceManquante.pieceIdentite,
+      ]);
+    });
+
+    test('== et hashCode tiennent compte du code', () {
+      const EtatDossier a = EtatDossier(
+        profilExiste: true,
+        role: AppRole.teacher,
+        codeConduiteSigne: false,
+      );
+      const EtatDossier b = EtatDossier(
+        profilExiste: true,
+        role: AppRole.teacher,
+        codeConduiteSigne: false,
+      );
+      const EtatDossier c = EtatDossier(
+        profilExiste: true,
+        role: AppRole.teacher,
+      );
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a, isNot(c));
+      expect(a.hashCode, isNot(c.hashCode));
+    });
+  });
 }
+
+/// Marque une cle absente du JSON (distincte d'une valeur nulle).
+const Object _absent = Object();

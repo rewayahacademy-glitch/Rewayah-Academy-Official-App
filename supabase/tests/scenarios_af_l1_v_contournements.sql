@@ -562,7 +562,8 @@ begin
 end $$;
 reset role;
 
--- D8. Les huit policies laissees sans app_account_valid(), liste exacte.
+-- D8. Les neuf policies laissees sans app_account_valid(), liste exacte (la
+-- neuvieme, le code de conduite de l'enseignant, vient de CAND-Q15).
 do $$
 declare v_liste text;
 begin
@@ -572,10 +573,10 @@ begin
    where schemaname = 'public'
      and (coalesce(qual,'') || coalesce(with_check,'')) like '%app_role()%'
      and (coalesce(qual,'') || coalesce(with_check,'')) not like '%app_account_valid%';
-  if v_liste is distinct from 'contract_acceptances.contract_acceptances_self_insert, households.households_guardian_select, intentions_horaire.intentions_horaire_parties, kyc_documents.kyc_guardian_insert, kyc_documents.kyc_staff_self_insert, offres_horaires.offres_horaires_vitrine, profiles.profiles_family_select, student_reading_position.srp_foyer_lecture' then
+  if v_liste is distinct from 'contract_acceptances.contract_acceptances_code_conduite_enseignant, contract_acceptances.contract_acceptances_self_insert, households.households_guardian_select, intentions_horaire.intentions_horaire_parties, kyc_documents.kyc_guardian_insert, kyc_documents.kyc_staff_self_insert, offres_horaires.offres_horaires_vitrine, profiles.profiles_family_select, student_reading_position.srp_foyer_lecture' then
     raise exception 'L1-V D8: liste des policies laissees differente : %', v_liste;
   end if;
-  raise notice 'L1-V OK D8 : huit policies laissees, liste exacte : %', v_liste;
+  raise notice 'L1-V OK D8 : neuf policies laissees, liste exacte : %', v_liste;
 end $$;
 
 rollback;

@@ -7422,6 +7422,8 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'La création n'a pas abouti : {message}'
 	String creerErreur({required Object message}) => 'La création n\'a pas abouti : ${message}';
 
+	late final Traductions$admin$groupes$refusCreation$fr refusCreation = Traductions$admin$groupes$refusCreation$fr.internal(_root);
+
 	/// fr: 'Classe {libelle}'
 	String detailTitre({required Object libelle}) => 'Classe ${libelle}';
 
@@ -7799,6 +7801,8 @@ class Traductions$admin$regroupements$fr {
 
 	/// fr: 'L'enseignant n'est pas confirmé : la réponse du serveur n'est pas arrivée. Pressez de nouveau.'
 	String get affectationNonConfirmee => 'L\'enseignant n\'est pas confirmé : la réponse du serveur n\'est pas arrivée. Pressez de nouveau.';
+
+	late final Traductions$admin$regroupements$refusAffectation$fr refusAffectation = Traductions$admin$regroupements$refusAffectation$fr.internal(_root);
 
 	/// fr: 'Un autre membre de la direction a déjà confirmé l'enseignant de cette classe : votre choix ne remplace pas le sien.'
 	String get dejaAffecte => 'Un autre membre de la direction a déjà confirmé l\'enseignant de cette classe : votre choix ne remplace pas le sien.';
@@ -21103,6 +21107,39 @@ class Traductions$admin$groupes$liste$fr {
 	String get remplissagePlaces => 'Classes avec des places';
 }
 
+// Path: admin.groupes.refusCreation
+class Traductions$admin$groupes$refusCreation$fr {
+	Traductions$admin$groupes$refusCreation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La classe n'est pas créée : votre compte n'a pas le droit de créer une classe.'
+	String get reservee => 'La classe n\'est pas créée : votre compte n\'a pas le droit de créer une classe.';
+
+	/// fr: 'La classe n'est pas créée : le compte de cette personne n'existe plus ou n'est pas actif. Choisissez une autre personne dans la liste.'
+	String get compteEnseignant => 'La classe n\'est pas créée : le compte de cette personne n\'existe plus ou n\'est pas actif. Choisissez une autre personne dans la liste.';
+
+	/// fr: 'La classe n'est pas créée : cette personne ne peut pas encore recevoir de classe (pièce d'identité non validée, accès terminé, profil d'enseignant incomplet ou genre non renseigné). Choisissez une autre personne dans la liste.'
+	String get enseignantNonEligible => 'La classe n\'est pas créée : cette personne ne peut pas encore recevoir de classe (pièce d\'identité non validée, accès terminé, profil d\'enseignant incomplet ou genre non renseigné). Choisissez une autre personne dans la liste.';
+
+	/// fr: 'La classe n'est pas créée : le genre de cette personne ne correspond pas au public de la classe. Choisissez une autre personne dans la liste.'
+	String get genreIncompatible => 'La classe n\'est pas créée : le genre de cette personne ne correspond pas au public de la classe. Choisissez une autre personne dans la liste.';
+
+	/// fr: 'La classe n'est pas créée : elle dépasserait le plafond d'heures par semaine de cette personne. Choisissez une autre personne dans la liste.'
+	String get plafond => 'La classe n\'est pas créée : elle dépasserait le plafond d\'heures par semaine de cette personne. Choisissez une autre personne dans la liste.';
+
+	/// fr: 'La classe n'est pas créée : cette personne a déjà une classe ou un élève à la même heure. Changez de créneau ou choisissez une autre personne dans la liste.'
+	String get chevauchementClasse => 'La classe n\'est pas créée : cette personne a déjà une classe ou un élève à la même heure. Changez de créneau ou choisissez une autre personne dans la liste.';
+
+	/// fr: 'La classe n'est pas créée : cette personne a déjà une séance prévue à la même heure. Changez de créneau ou choisissez une autre personne dans la liste.'
+	String get chevauchementSeance => 'La classe n\'est pas créée : cette personne a déjà une séance prévue à la même heure. Changez de créneau ou choisissez une autre personne dans la liste.';
+
+	/// fr: 'La classe n'est pas créée : le serveur a refusé ces choix. Vérifiez l'enseignant et le créneau, puis pressez de nouveau.'
+	String get inconnu => 'La classe n\'est pas créée : le serveur a refusé ces choix. Vérifiez l\'enseignant et le créneau, puis pressez de nouveau.';
+}
+
 // Path: admin.groupes.cahiers
 class Traductions$admin$groupes$cahiers$fr {
 	Traductions$admin$groupes$cahiers$fr.internal(this._root);
@@ -21498,8 +21535,8 @@ class Traductions$admin$groupes$formulaire$fr {
 	/// fr: 'À choisir pour une classe de filles : seules les enseignantes pourront la prendre.'
 	String get genreFillesDetail => 'À choisir pour une classe de filles : seules les enseignantes pourront la prendre.';
 
-	/// fr: 'À choisir quand le genre n'est pas encore connu : tous les enseignants pourront la prendre.'
-	String get genreIndetermineDetail => 'À choisir quand le genre n\'est pas encore connu : tous les enseignants pourront la prendre.';
+	/// fr: 'À choisir quand le genre n'est pas encore connu : tout enseignant dont le genre est renseigné pourra la prendre.'
+	String get genreIndetermineDetail => 'À choisir quand le genre n\'est pas encore connu : tout enseignant dont le genre est renseigné pourra la prendre.';
 
 	/// fr: 'À choisir pour une classe d'hommes. Le genre des enseignants n'est pas encore lisible ici : vérifiez vous-même que l'enseignant choisi est un homme.'
 	String get genreHommesDetailSansSource => 'À choisir pour une classe d\'hommes. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que l\'enseignant choisi est un homme.';
@@ -21560,6 +21597,9 @@ class Traductions$admin$groupes$formulaire$fr {
 
 	/// fr: 'Déjà en classe à ce créneau : changez de créneau pour le choisir.'
 	String get raisonPris => 'Déjà en classe à ce créneau : changez de créneau pour le choisir.';
+
+	/// fr: 'Genre non renseigné dans son profil : aucune classe ne peut lui être confiée tant qu'il manque.'
+	String get raisonGenreInconnu => 'Genre non renseigné dans son profil : aucune classe ne peut lui être confiée tant qu\'il manque.';
 
 	/// fr: 'Créneau'
 	String get titreCreneau => 'Créneau';
@@ -21641,6 +21681,9 @@ class Traductions$admin$groupes$formulaire$fr {
 
 	/// fr: '{nom} est déjà en classe à ce créneau : changez de créneau ou choisissez une autre personne dans la liste.'
 	String manqueEnseignantPris({required Object nom}) => '${nom} est déjà en classe à ce créneau : changez de créneau ou choisissez une autre personne dans la liste.';
+
+	/// fr: '{nom} n'a pas de genre renseigné dans son profil : aucune classe ne peut lui être confiée. Choisissez une autre personne dans la liste.'
+	String manqueEnseignantGenreInconnu({required Object nom}) => '${nom} n\'a pas de genre renseigné dans son profil : aucune classe ne peut lui être confiée. Choisissez une autre personne dans la liste.';
 
 	/// fr: 'La liste des enseignants n'est pas encore à jour, donc l'enseignant choisi n'a pas pu être vérifié : attendez qu'elle s'affiche, puis pressez de nouveau.'
 	String get manqueListeEnseignants => 'La liste des enseignants n\'est pas encore à jour, donc l\'enseignant choisi n\'a pas pu être vérifié : attendez qu\'elle s\'affiche, puis pressez de nouveau.';
@@ -21746,6 +21789,42 @@ class Traductions$admin$offres$formulaire$fr {
 
 	/// fr: 'Les règles de l'académie n'ont pas pu être lues : le nombre de jours sera vérifié à l'envoi.'
 	String get regles => 'Les règles de l\'académie n\'ont pas pu être lues : le nombre de jours sera vérifié à l\'envoi.';
+}
+
+// Path: admin.regroupements.refusAffectation
+class Traductions$admin$regroupements$refusAffectation$fr {
+	Traductions$admin$regroupements$refusAffectation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'L'enseignant n'est pas confirmé : votre compte n'a pas le droit de confirmer un enseignant.'
+	String get reservee => 'L\'enseignant n\'est pas confirmé : votre compte n\'a pas le droit de confirmer un enseignant.';
+
+	/// fr: 'L'enseignant n'est pas confirmé : cette classe n'attend plus d'enseignant. Fermez cette feuille pour retrouver la liste à jour.'
+	String get classeIndisponible => 'L\'enseignant n\'est pas confirmé : cette classe n\'attend plus d\'enseignant. Fermez cette feuille pour retrouver la liste à jour.';
+
+	/// fr: 'L'enseignant n'est pas confirmé : son compte, sa pièce d'identité, la langue du cours ou son genre renseigné ne permettent pas encore cette classe. Choisissez une autre personne.'
+	String get enseignantIndisponible => 'L\'enseignant n\'est pas confirmé : son compte, sa pièce d\'identité, la langue du cours ou son genre renseigné ne permettent pas encore cette classe. Choisissez une autre personne.';
+
+	/// fr: 'L'enseignant n'est pas confirmé : son genre ne correspond pas au public de la classe. Choisissez une autre personne.'
+	String get genreIncompatible => 'L\'enseignant n\'est pas confirmé : son genre ne correspond pas au public de la classe. Choisissez une autre personne.';
+
+	/// fr: 'L'enseignant n'est pas confirmé : cette classe dépasserait son plafond d'heures par semaine. Choisissez une autre personne.'
+	String get plafond => 'L\'enseignant n\'est pas confirmé : cette classe dépasserait son plafond d\'heures par semaine. Choisissez une autre personne.';
+
+	/// fr: 'L'enseignant n'est pas confirmé : ses disponibilités ne couvrent pas tous les créneaux de la classe. Choisissez une autre personne.'
+	String get nonDisponible => 'L\'enseignant n\'est pas confirmé : ses disponibilités ne couvrent pas tous les créneaux de la classe. Choisissez une autre personne.';
+
+	/// fr: 'L'enseignant n'est pas confirmé : cette personne a déjà une classe ou un élève à la même heure. Choisissez une autre personne.'
+	String get chevauchementClasse => 'L\'enseignant n\'est pas confirmé : cette personne a déjà une classe ou un élève à la même heure. Choisissez une autre personne.';
+
+	/// fr: 'L'enseignant n'est pas confirmé : cette personne a déjà une séance prévue à la même heure. Choisissez une autre personne.'
+	String get chevauchementSeance => 'L\'enseignant n\'est pas confirmé : cette personne a déjà une séance prévue à la même heure. Choisissez une autre personne.';
+
+	/// fr: 'L'enseignant n'est pas confirmé. Choisissez-en un autre.'
+	String get inconnu => 'L\'enseignant n\'est pas confirmé. Choisissez-en un autre.';
 }
 
 // Path: admin.regroupements.liste
@@ -37032,6 +37111,14 @@ extension on Traductions {
 			'admin.groupes.champSeuil' => 'Seuil maximal',
 			'admin.groupes.creerEnvoyer' => 'Créer la classe',
 			'admin.groupes.creerErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
+			'admin.groupes.refusCreation.reservee' => 'La classe n\'est pas créée : votre compte n\'a pas le droit de créer une classe.',
+			'admin.groupes.refusCreation.compteEnseignant' => 'La classe n\'est pas créée : le compte de cette personne n\'existe plus ou n\'est pas actif. Choisissez une autre personne dans la liste.',
+			'admin.groupes.refusCreation.enseignantNonEligible' => 'La classe n\'est pas créée : cette personne ne peut pas encore recevoir de classe (pièce d\'identité non validée, accès terminé, profil d\'enseignant incomplet ou genre non renseigné). Choisissez une autre personne dans la liste.',
+			'admin.groupes.refusCreation.genreIncompatible' => 'La classe n\'est pas créée : le genre de cette personne ne correspond pas au public de la classe. Choisissez une autre personne dans la liste.',
+			'admin.groupes.refusCreation.plafond' => 'La classe n\'est pas créée : elle dépasserait le plafond d\'heures par semaine de cette personne. Choisissez une autre personne dans la liste.',
+			'admin.groupes.refusCreation.chevauchementClasse' => 'La classe n\'est pas créée : cette personne a déjà une classe ou un élève à la même heure. Changez de créneau ou choisissez une autre personne dans la liste.',
+			'admin.groupes.refusCreation.chevauchementSeance' => 'La classe n\'est pas créée : cette personne a déjà une séance prévue à la même heure. Changez de créneau ou choisissez une autre personne dans la liste.',
+			'admin.groupes.refusCreation.inconnu' => 'La classe n\'est pas créée : le serveur a refusé ces choix. Vérifiez l\'enseignant et le créneau, puis pressez de nouveau.',
 			'admin.groupes.detailTitre' => ({required Object libelle}) => 'Classe ${libelle}',
 			'admin.groupes.detailMembres' => 'Membres',
 			'admin.groupes.detailAucunMembre' => 'Aucun élève dans cette classe pour l\'instant.',
@@ -37069,6 +37156,8 @@ extension on Traductions {
 			'admin.groupes.cahiers.plus' => 'Afficher plus de cahiers',
 			'admin.groupes.cahiers.titreCahier' => ({required Object dePrenom}) => 'Cahier de séance ${dePrenom}',
 			'admin.groupes.cahiers.lectureSeule' => 'Lecture seule',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.cahiers.evaluation' => 'Évaluation de l\'enseignant pour cet élève',
 			'admin.groupes.cahiers.aucuneEvaluation' => 'Aucune évaluation n\'a été enregistrée pour cet élève.',
 			'admin.groupes.cahiers.detailsInternes' => 'Détails internes',
@@ -37077,8 +37166,6 @@ extension on Traductions {
 			'admin.groupes.cahiers.apercu' => 'Voir l\'aperçu familial',
 			'admin.groupes.cahiers.nonValide' => 'Le cahier n\'est pas encore validé.',
 			'admin.groupes.cahiers.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.cahiers.enseignant' => 'Enseignant',
 			'admin.groupes.cahiers.seanceDu' => ({required Object date}) => 'Séance du ${date}',
 			'admin.groupes.cahiers.rubriqueTravail' => 'Travail à préparer',
@@ -37185,7 +37272,7 @@ extension on Traductions {
 			'admin.groupes.formulaire.genreFemmesDetail' => 'À choisir pour une classe de femmes : seules les enseignantes pourront la prendre.',
 			'admin.groupes.formulaire.genreGarconsDetail' => 'À choisir pour une classe de garçons : seuls les enseignants hommes pourront la prendre.',
 			'admin.groupes.formulaire.genreFillesDetail' => 'À choisir pour une classe de filles : seules les enseignantes pourront la prendre.',
-			'admin.groupes.formulaire.genreIndetermineDetail' => 'À choisir quand le genre n\'est pas encore connu : tous les enseignants pourront la prendre.',
+			'admin.groupes.formulaire.genreIndetermineDetail' => 'À choisir quand le genre n\'est pas encore connu : tout enseignant dont le genre est renseigné pourra la prendre.',
 			'admin.groupes.formulaire.genreHommesDetailSansSource' => 'À choisir pour une classe d\'hommes. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que l\'enseignant choisi est un homme.',
 			'admin.groupes.formulaire.genreFemmesDetailSansSource' => 'À choisir pour une classe de femmes. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.',
 			'admin.groupes.formulaire.genreGarconsDetailSansSource' => 'À choisir pour une classe de garçons. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que l\'enseignant choisi est un homme.',
@@ -37204,6 +37291,7 @@ extension on Traductions {
 			'admin.groupes.formulaire.raisonFemmes' => 'Classe de femmes : seule une enseignante peut la prendre.',
 			'admin.groupes.formulaire.raisonFilles' => 'Classe de filles : seule une enseignante peut la prendre.',
 			'admin.groupes.formulaire.raisonPris' => 'Déjà en classe à ce créneau : changez de créneau pour le choisir.',
+			'admin.groupes.formulaire.raisonGenreInconnu' => 'Genre non renseigné dans son profil : aucune classe ne peut lui être confiée tant qu\'il manque.',
 			'admin.groupes.formulaire.titreCreneau' => 'Créneau',
 			'admin.groupes.formulaire.creneauContexte' => 'Le jour et l\'heure de la classe, chaque semaine.',
 			'admin.groupes.formulaire.creneauxLibresDe' => ({required Object deNom}) => 'Créneaux libres ${deNom} : toucher un créneau règle le jour et l\'heure.',
@@ -37230,6 +37318,7 @@ extension on Traductions {
 			'admin.groupes.formulaire.manqueEnseignantFemmes' => ({required Object nom}) => '${nom} ne peut pas prendre une classe de femmes : choisissez une enseignante dans la liste.',
 			'admin.groupes.formulaire.manqueEnseignantFilles' => ({required Object nom}) => '${nom} ne peut pas prendre une classe de filles : choisissez une enseignante dans la liste.',
 			'admin.groupes.formulaire.manqueEnseignantPris' => ({required Object nom}) => '${nom} est déjà en classe à ce créneau : changez de créneau ou choisissez une autre personne dans la liste.',
+			'admin.groupes.formulaire.manqueEnseignantGenreInconnu' => ({required Object nom}) => '${nom} n\'a pas de genre renseigné dans son profil : aucune classe ne peut lui être confiée. Choisissez une autre personne dans la liste.',
 			'admin.groupes.formulaire.manqueListeEnseignants' => 'La liste des enseignants n\'est pas encore à jour, donc l\'enseignant choisi n\'a pas pu être vérifié : attendez qu\'elle s\'affiche, puis pressez de nouveau.',
 			'admin.groupes.formulaire.horsLigne' => 'La classe pourra être créée quand la connexion sera revenue. Vos choix restent affichés.',
 			'admin.groupes.formulaire.seuilHorsLigne' => 'Le seuil pourra être enregistré quand la connexion sera revenue. Votre choix reste affiché.',
@@ -37343,6 +37432,15 @@ extension on Traductions {
 			'admin.regroupements.confirmerEnseignant' => 'Confirmer l\'enseignant',
 			'admin.regroupements.enseignantHorsLigne' => 'L\'enseignant pourra être confirmé quand la connexion sera revenue. Votre choix reste affiché.',
 			'admin.regroupements.affectationNonConfirmee' => 'L\'enseignant n\'est pas confirmé : la réponse du serveur n\'est pas arrivée. Pressez de nouveau.',
+			'admin.regroupements.refusAffectation.reservee' => 'L\'enseignant n\'est pas confirmé : votre compte n\'a pas le droit de confirmer un enseignant.',
+			'admin.regroupements.refusAffectation.classeIndisponible' => 'L\'enseignant n\'est pas confirmé : cette classe n\'attend plus d\'enseignant. Fermez cette feuille pour retrouver la liste à jour.',
+			'admin.regroupements.refusAffectation.enseignantIndisponible' => 'L\'enseignant n\'est pas confirmé : son compte, sa pièce d\'identité, la langue du cours ou son genre renseigné ne permettent pas encore cette classe. Choisissez une autre personne.',
+			'admin.regroupements.refusAffectation.genreIncompatible' => 'L\'enseignant n\'est pas confirmé : son genre ne correspond pas au public de la classe. Choisissez une autre personne.',
+			'admin.regroupements.refusAffectation.plafond' => 'L\'enseignant n\'est pas confirmé : cette classe dépasserait son plafond d\'heures par semaine. Choisissez une autre personne.',
+			'admin.regroupements.refusAffectation.nonDisponible' => 'L\'enseignant n\'est pas confirmé : ses disponibilités ne couvrent pas tous les créneaux de la classe. Choisissez une autre personne.',
+			'admin.regroupements.refusAffectation.chevauchementClasse' => 'L\'enseignant n\'est pas confirmé : cette personne a déjà une classe ou un élève à la même heure. Choisissez une autre personne.',
+			'admin.regroupements.refusAffectation.chevauchementSeance' => 'L\'enseignant n\'est pas confirmé : cette personne a déjà une séance prévue à la même heure. Choisissez une autre personne.',
+			'admin.regroupements.refusAffectation.inconnu' => 'L\'enseignant n\'est pas confirmé. Choisissez-en un autre.',
 			'admin.regroupements.dejaAffecte' => 'Un autre membre de la direction a déjà confirmé l\'enseignant de cette classe : votre choix ne remplace pas le sien.',
 			'admin.regroupements.famillesPrevenues' => 'Les familles ont été prévenues.',
 			'admin.regroupements.famillesClasseValidee' => 'Les familles ont été prévenues que leur classe est validée.',
@@ -37572,6 +37670,8 @@ extension on Traductions {
 			'admin.progression.promouvoirTitre' => ({required Object deEleve}) => 'Changer le niveau ${deEleve}',
 			'admin.progression.promouvoirChampNiveau' => 'Nouveau niveau',
 			'admin.progression.manqueNiveau' => 'Il manque le nouveau niveau : choisissez-le dans la liste des niveaux.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.progression.promouvoirEnvoyer' => 'Enregistrer',
 			'admin.progression.promouvoirErreur' => ({required Object message}) => 'Le changement n\'a pas abouti : ${message}',
 			'admin.progression.champMotif' => 'Motif',
@@ -37591,8 +37691,6 @@ extension on Traductions {
 			'admin.programmes.creerVersionVide' => 'Créer une version vide',
 			'admin.programmes.enregistrerVersion' => 'Enregistrer la version',
 			'admin.programmes.creerVersionDepuisPubliee' => 'Créer une nouvelle version à partir de celle-ci',
-			_ => null,
-		} ?? switch (path) {
 			'admin.programmes.creerVersionErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
 			'admin.programmes.niveauxTitre' => 'Niveaux',
 			'admin.programmes.niveauAucun' => 'Aucun niveau dans cette version',
@@ -38086,6 +38184,8 @@ extension on Traductions {
 			'admin.finance.pol.railWebDetail' => 'Le seul moyen de paiement proposé aux familles au lancement.',
 			'admin.finance.pol.railIos' => 'Achat intégré iOS',
 			'admin.finance.pol.railAndroid' => 'Facturation Google Play',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.railPrepare' => 'Préparé (inactif)',
 			'admin.finance.pol.railMobileDetail' => 'Prévu pour plus tard : aucun bouton de paiement mobile n\'est montré aux familles au lancement.',
 			'admin.finance.pol.conservation' => 'Conservation de la place',
@@ -38105,8 +38205,6 @@ extension on Traductions {
 			'admin.finance.pol.margeForte' => 'Performance forte',
 			'admin.finance.pol.margeForteDetail' => 'Le repère d\'un mois très bon ; il ne descend pas sous l\'objectif.',
 			'admin.finance.pol.margeStretch' => 'Scénario stretch',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.margeStretchDetail' => 'Le repère ambitieux ; il ne descend pas sous la performance forte.',
 			'admin.finance.pol.pourcentValeur' => ({required Object valeur}) => '${valeur} %',
 			'admin.finance.pol.unitePourcent' => '%',
@@ -38600,6 +38698,8 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.droitsChamps.preuveOui' => 'Déposée',
 			'admin.bibliotheque.fiche.droitsChamps.preuveNon' => 'Manquante',
 			'admin.bibliotheque.fiche.droitsChamps.usages' => 'Usages autorisés',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.fiche.droitsChamps.aucunUsage' => 'Aucun usage autorisé',
 			'admin.bibliotheque.fiche.droitsChamps.attribution' => 'Attribution',
 			'admin.bibliotheque.fiche.droitsChamps.echeance' => 'Échéance',
@@ -38619,8 +38719,6 @@ extension on Traductions {
 			'admin.bibliotheque.import.sections.fichier' => 'Fichier',
 			'admin.bibliotheque.import.sections.droits' => 'Droits et accès',
 			'admin.bibliotheque.import.champs.titre' => 'Titre',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.champs.categorie' => 'Catégorie',
 			'admin.bibliotheque.import.champs.type' => 'Type',
 			'admin.bibliotheque.import.champs.langue' => 'Langue',
@@ -39114,6 +39212,8 @@ extension on Traductions {
 			'compte.tuteur.pageApparence.animationsDetail' => 'Réduites quand votre appareil le demande',
 			'compte.tuteur.pageApparence.texte' => 'Taille du texte',
 			'compte.tuteur.pageApparence.texteDetail' => 'Suit la taille du système',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageAide.titre' => 'Aide et support',
 			'compte.tuteur.pageAide.indisponibleTitre' => 'Aide pas encore disponible',
 			'compte.tuteur.pageAide.indisponiblePhrase' => 'Les questions fréquentes et le contact de l\'académie ne sont pas encore ouverts dans l\'application.',
@@ -39133,8 +39233,6 @@ extension on Traductions {
 			'historique.titre' => 'Historique',
 			'historique.detailSeance' => 'Détail de la séance',
 			'historique.segments.seances' => 'Séances',
-			_ => null,
-		} ?? switch (path) {
 			'historique.segments.observations' => 'Observations',
 			'historique.moisCourts.0' => 'janv.',
 			'historique.moisCourts.1' => 'févr.',
@@ -39628,6 +39726,8 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.listeAttentePhrase' => ({required Object prenom, required Object deClasse}) => '${prenom} est sur la liste d\'attente ${deClasse}. Aucune place n\'est réservée pour l\'instant.',
 			'classe.pageCatalogue.resultat.refuseTitre' => 'Inscription non acceptée',
 			'classe.pageCatalogue.resultat.refusePhrase' => ({required Object prenom}) => 'Aucune place n\'a été réservée pour ${prenom}. Vous pouvez choisir une autre classe.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.resultat.autresClasses' => 'Voir les autres classes',
 			'classe.pageCatalogue.resultat.retourAccueil' => 'Retour à l\'accueil',
 			'classe.pageCatalogue.places' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} place restante', other: '${nombre} places restantes', ), 
@@ -39647,8 +39747,6 @@ extension on Traductions {
 			'classe.cartes.indisponibleTitre' => 'Les cartes de la classe ne sont pas encore ouvertes',
 			'classe.cartes.indisponiblePhrase' => 'Elles apparaîtront ici dès leur ouverture. Rien à faire de votre côté.',
 			'classe.cartes.erreurLecture' => 'Les cartes de la classe n\'ont pas pu être lues. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.sansDonnees' => 'Les cartes de la classe n\'ont pas pu être chargées',
 			'classe.cartes.enregistree' => 'Carte enregistrée. La classe la voit maintenant.',
 			'classe.cartes.retiree' => 'Carte retirée. La classe ne la voit plus.',
@@ -40142,6 +40240,8 @@ extension on Traductions {
 			'enseignant.creneaux.raccourciWeekEnd' => 'Week-end',
 			'enseignant.creneaux.raccourcisDetail' => 'Soirée et Matinée règlent les heures. Week-end choisit samedi et dimanche.',
 			'enseignant.creneaux.jours' => 'Jours',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.heures' => 'Heures',
 			'enseignant.creneaux.menuDe' => 'Heure de début',
 			'enseignant.creneaux.menuA' => 'Heure de fin',
@@ -40161,8 +40261,6 @@ extension on Traductions {
 			'enseignant.creneaux.retraitNonConfirme' => ({required Object heures}) => 'Retrait non confirmé : ${heures}.',
 			'enseignant.creneaux.echecCause' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah.',
 			'enseignant.creneaux.echecQuoiFaire' => ({required Object action}) => 'Touchez « ${action} » pour réessayer : seules ces heures seront renvoyées, après relecture de vos plages.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.engagementsNonConfirmes' => 'Vos Classes déjà engagées ne sont pas confirmées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Un conflit avec une plage ne peut donc pas être signalé ; touchez « Réessayer ».',
 			'enseignant.creneaux.retraitSansEngagements' => ({required Object heures}) => 'Vos Classes déjà engagées ne sont pas confirmées. Si une Classe a lieu sur ${heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
 			'enseignant.creneaux.horsLigneFeuille' => 'Cette plage ne peut pas être enregistrée maintenant. Vos choix restent affichés : revenez l\'enregistrer quand l\'envoi sera de nouveau possible.',
@@ -40656,6 +40754,8 @@ extension on Traductions {
 			'tc.coran.navigation.ouvrir' => 'Aller à une page',
 			'tc.coran.navigation.champ' => 'Page, sourate, juz ou référence',
 			'tc.coran.navigation.indice' => 'Par exemple 18, Al-Kahf, juz 15, 2:255',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.navigation.limite' => 'La recherche porte sur les numéros de page, les références et les noms de sourate. La recherche dans le texte du Coran n\'est pas encore disponible.',
 			'tc.coran.navigation.aucunResultat' => 'Aucune référence trouvée',
 			'tc.coran.navigation.aucunResultatDetail' => 'Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.',
@@ -40675,8 +40775,6 @@ extension on Traductions {
 			'tc.outils.dock.marquer' => 'Marquer',
 			'tc.outils.dock.masquer' => 'Masquer',
 			'tc.outils.dock.stylet' => 'Stylet',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.dock.pointeur' => 'Pointeur',
 			'tc.outils.dock.revision' => 'Révision',
 			'tc.outils.intention.aApprendre' => 'À apprendre',
@@ -41170,6 +41268,8 @@ extension on Traductions {
 			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e‑mail : elle doit ressembler à nom@exemple.com.',
 			'adulte.invitation.verifier' => 'Continuer',
 			'adulte.invitation.verifierTitre' => 'Vérifier et envoyer',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.verifierPhrase' => 'Relisez ces informations. L\'invitation partira à cette adresse.',
 			'adulte.invitation.nonRenseigne' => 'Non renseigné',
 			'adulte.invitation.modifier' => 'Modifier',
@@ -41189,8 +41289,6 @@ extension on Traductions {
 			'adulte.invitation.annulerHorsLigne' => 'Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.',
 			'adulte.invitation.annulerConsequence' => 'L\'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.',
 			'adulte.invitation.garder' => 'Garder l\'invitation',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.annulationEchecTitre' => 'L\'annulation n\'a pas été confirmée.',
 			'adulte.invitation.annulationEchecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.acceptation.notification' => ({required Object prenom}) => '${prenom} vous invite à rejoindre son forfait famille.',
@@ -41684,6 +41782,8 @@ extension on Traductions {
 			'com.socle.composants.pieceJointe.ouvrir' => 'Ouvrir',
 			'com.socle.composants.pieceJointe.ouvrirLecteur' => ({required Object nom}) => 'Ouvrir ${nom}',
 			'com.socle.composants.pieceJointe.retirer' => 'Retirer',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.composants.pieceJointe.retirerLecteur' => ({required Object nom}) => 'Retirer ${nom}',
 			'com.socle.composants.pieceJointe.tailleOctets' => ({required Object taille}) => '${taille} octets',
 			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} Ko',
@@ -41703,8 +41803,6 @@ extension on Traductions {
 			'com.socle.composants.composer.aide' => 'Écrire un message',
 			'com.socle.composants.composer.envoyer' => 'Envoyer',
 			'com.socle.composants.composer.champVide' => 'Écrivez un message pour l\'envoyer.',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.composer.vocal' => 'Message vocal',
 			'com.socle.composants.composer.vocalAVenir' => 'Message vocal bientôt disponible',
 			'com.socle.composants.composer.enCours' => 'Envoi en cours',
@@ -42198,6 +42296,8 @@ extension on Traductions {
 			'com.studio.visibilite.visibleDetail' => 'Ouvert à toute l\'équipe.',
 			'com.studio.visibilite.restreintDetail' => 'Ouvert à une partie de l\'équipe, dont vous faites partie.',
 			'com.studio.visibilite.priveDetail' => 'Canal privé, ouvert à ses seuls membres. Vous en faites partie.',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.canal.membresUn' => '1 membre',
 			'com.studio.canal.membres' => ({required Object nombre}) => '${nombre} membres',
 			'com.studio.canal.aide' => ({required Object nom}) => 'Écrire dans ${nom}',
@@ -42217,8 +42317,6 @@ extension on Traductions {
 			'com.studio.panneau.parametres' => 'Paramètres du canal',
 			'com.studio.panneau.parametresDetail' => 'La modification des paramètres arrivera avec le service du Studio.',
 			'com.studio.panneau.ouvrir' => ({required Object titre}) => 'Ouvrir ${titre}',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.panneau.lienExterne' => ({required Object hote}) => 'Site externe : ${hote}',
 			'com.studio.panneau.aucunPartageTitre' => 'Rien de partagé pour le moment',
 			'com.studio.panneau.aucunPartage' => 'Les éléments épinglés, les fichiers et les liens de ce canal apparaîtront ici.',
@@ -42712,6 +42810,8 @@ extension on Traductions {
 			'comptable.aujourdhui.alertesVide' => 'Aucune alerte en ce moment.',
 			'comptable.aujourdhui.alertesResume' => ({required Object n}) => 'Alertes à surveiller : ${n}',
 			'comptable.aujourdhui.paiementsAEffectuer' => 'Paiements à effectuer',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.paiementsAEffectuerDetail' => 'Chaque paiement se vérifie dans sa liste avant d\'être payé.',
 			'comptable.aujourdhui.paiementsVide' => 'Aucun paiement à effectuer.',
 			'comptable.aujourdhui.echeancesVide' => 'Aucune échéance proche.',
@@ -42731,8 +42831,6 @@ extension on Traductions {
 			'comptable.aujourdhui.aTraiter' => 'À traiter aujourd\'hui',
 			'comptable.aujourdhui.aTraiterHorsPaiements' => 'Autres tâches',
 			'comptable.aujourdhui.alertes' => 'Alertes',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.echeances' => 'Échéances proches',
 			'comptable.aujourdhui.prestataires' => 'Prestataires',
 			'comptable.aujourdhui.activiteRecente' => 'Activité récente',
@@ -43226,6 +43324,8 @@ extension on Traductions {
 			'comptable.contractuels.beneficiaireExterne' => 'Nouveau bénéficiaire externe',
 			'comptable.contractuels.beneficiaireExterneAide' => 'Il reçoit une invitation sécurisée pour saisir lui-même sa méthode de paiement.',
 			'comptable.contractuels.champNomExterne' => 'Nom du bénéficiaire externe',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.changerEcheance' => 'Changer l\'échéance',
 			'comptable.contractuels.deviseDe' => ({required Object devise}) => 'Devise : ${devise}',
 			'comptable.contractuels.champObjet' => 'Objet de l\'obligation',
@@ -43245,8 +43345,6 @@ extension on Traductions {
 			'comptable.contractuels.sousTitre' => 'Les montants sont définis à la création de l\'obligation, figés après approbation.',
 			'comptable.contractuels.nouvelle' => 'Nouvelle obligation',
 			'comptable.contractuels.detailTitre' => 'Obligation',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.sousTitre' => 'Les demandes du Comptable qui attendent la décision d\'une autre personne habilitée. Celui qui demande ne valide jamais sa propre demande.',
 			'comptable.validation.aDecider' => 'À décider',
 			'comptable.validation.decidees' => 'Décidées récemment',
@@ -43740,6 +43838,8 @@ extension on Traductions {
 			'juridique.confidentialite.s4.blocs.0' => 'Une famille ne voit que ses propres informations. Les informations d\'un enfant ne sont jamais publiques et ne sont jamais montrées aux autres familles.',
 			'juridique.confidentialite.s4.blocs.1' => 'L\'enseignant voit ses élèves et ses Classes. La direction voit ce qu\'il faut pour gérer les inscriptions, les Classes et les paiements. Ces accès sont réglés côté serveur.',
 			'juridique.confidentialite.s4.blocs.2' => 'Un contrôleur qualité peut assister aux séances. Les accès sensibles sont inscrits dans un journal.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s5.titre' => '5. Séances en direct et enregistrement',
 			'juridique.confidentialite.s5.blocs.0' => 'La visio passe par un service spécialisé. L\'accès à une séance est donné par le serveur, pour cette séance seulement et pour peu de temps.',
 			'juridique.confidentialite.s5.blocs.1' => 'Aujourd\'hui, l\'application n\'enregistre pas les cours. Si l\'enregistrement revient, nous vous dirons avant pourquoi, combien de temps il est gardé et qui peut y accéder, et nous demanderons votre accord.',
@@ -43759,8 +43859,6 @@ extension on Traductions {
 			'juridique.confidentialite.s10.blocs.0' => 'Les informations d\'un enfant sont données et gérées par son tuteur. Voir le texte Protection des enfants.',
 			'juridique.cookies.titre' => 'Cookies',
 			'juridique.cookies.resume' => 'Ce que l\'application et le site gardent sur votre appareil.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.cookies.intro' => 'L\'application et le site gardent peu de choses sur votre appareil. Voici lesquelles.',
 			'juridique.cookies.s1.titre' => '1. Ce que c\'est',
 			'juridique.cookies.s1.blocs.0' => 'Un cookie ou une donnée locale est un petit élément gardé par votre navigateur ou votre appareil. Il aide un service à vous reconnaître ou à retenir un réglage.',
