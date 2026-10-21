@@ -1,7 +1,10 @@
 # CANDIDATURES · Correctifs hors module proposés (`CAND-Q15`)
 
-Statut : **proposition, rien n'est appliqué**. Aucun fichier de `supabase/`, de
-`lib/` ou de `test/` n'a été modifié pour ce document.
+Statut au 21/10/2026 au soir : **les cinq correctifs sont écrits et testés
+localement** sur la branche `claude/lucid-mccarthy-qpk6yq` (commit `5fd08c31`),
+après la réponse du directeur à `CAND-Q15`. Ils ne sont ni testés sur la base de
+test, ni déployés. Détail en section 0 quater. Les sections suivantes gardent la
+proposition telle qu'elle a été soumise au directeur.
 
 Ce document détaille les cinq défauts que la revue a trouvés en dehors du module
 (`REVUE_CRITIQUE_CANDIDATURES_2026-10-21.md`, section 3.2). Il les expose pour
@@ -124,6 +127,51 @@ contact de l'autre côté, retour au genre d'origine. Rien n'en garde trace.
 
 **À faire avant toute mise en production du module.** Ce défaut ne figurait pas
 parmi les cinq de `CAND-Q15` : son correctif attend l'accord du directeur.
+
+## 0 quater. Écrits et testés localement (21/10, soir)
+
+Chaque lot a été écrit dans son propre arbre, relu de façon critique par un agent
+indépendant, puis repris sur les défauts confirmés ; les cinq ont ensuite été
+assemblés et vérifiés ensemble.
+
+| Lot | Migration (`supabase/migrations/`) | Scénario (`supabase/tests/`) | Relecture |
+| :--- | :--- | :--- | :--- |
+| langue | `20261021210000_ens_l8_langues_par_code.sql` | `scenarios_ens_l8_langues_par_code.sql` | 1 défaut corrigé (traduction arabe de l'état d'erreur), 1 renvoyé : d'autres textes du profil enseignant n'ont pas d'arabe (pays, rémunération, revenus), déjà listés dans `tool/ar_socle_non_traduites.txt` |
+| c11bis | `20261021210100_c11bis_affectation_verifiee.sql` | `scenarios_c11bis_affectation.sql` | 3 défauts corrigés : une panne réseau ne se lit plus comme un refus ; une réponse perdue puis rejouée ne se lit plus comme « un autre membre l'a pris » ; une classe qui a son enseignant ne se rattache plus aux demandes |
+| creer_groupe | `20261021210200_creer_groupe_predicat_affectation.sql` | `scenarios_creer_groupe_predicat.sql` | 2 défauts corrigés (test du chemin de production, en-tête de test inexact) |
+| gnf | `20261021210300_fi_devises_decimales_iso4217.sql` | `scenarios_fi_devises_decimales.sql` | 2 défauts corrigés (contrôle du retrait des droits, phrase inexacte de `CONTRAT-CPT-BR-18-19.md`) |
+| conduite | `20261021210400_pe_code_conduite_avant_activation.sql` | `scenarios_pe_code_conduite_activation.sql` | 1 défaut corrigé (commentaire de `versions_contrat.dart`) |
+
+**Preuves, sur l'assemblage.**
+- Scénarios rejoués sur Postgres nu : 114 verts sur 115. Le seul rouge,
+  `scenarios_af_liste_blanche_volatiles.sql`, l'était déjà avant ces lots : il nomme
+  les quatre fonctions `avis_*`, et aucune fonction de ces lots.
+- `dart analyze --fatal-infos` : aucune remarque.
+- `dart run tool/verifier_jetons.dart` : aucune violation.
+- `flutter test` : 15 487 verts, 2 rouges, tous deux réglés ensuite :
+  - une ligne de `tool/revue_socle.txt` à remettre au texte du bouton des accords ;
+  - le contrôle « aucun fichier `supabase/` en cours », qui passe une fois le
+    travail enregistré.
+
+**Fixtures.** Trente-deux scénarios existants sont ajustés, sans qu'aucun
+contrôle ne soit retiré :
+- la plupart signent le code de conduite, ou valident la pièce et le genre,
+  avant d'activer ou d'affecter un enseignant ;
+- deux (`scenarios_af_l1_08_compte_suspendu.sql`,
+  `scenarios_af_l1_v_contournements.sql`) comptent neuf policies sans
+  `app_account_valid()` au lieu de huit : la neuvième permet à un enseignant en
+  attente de signer son code de conduite.
+
+**Ce que le directeur doit encore confirmer.**
+- creer_groupe : le lot applique la recommandation de la section 5, le prédicat
+  strict sauf la couverture des disponibilités. D3, D4 et les textes de l'écran
+  sont réécrits dans `UX_REVIEW_CLASSE-FORM-1.md`. Un enseignant de genre inconnu
+  est visible, non choisissable, avec sa raison.
+- conduite : le code se signe sur `/attente/accords`, avant l'activation
+  (`UX_REVIEW_PE-CONDUITE-ACTIVATION.md`, captures à 390 et 1440 px).
+- Le sixième défaut (section 0 ter) n'est pas dans ces lots : il attend son accord.
+- Application à la base de test : sur une liste précise et son feu vert, comme
+  toute migration distante. Production : jamais sans son feu vert.
 
 ## 1. Ce que chaque lot attend avant d'exister
 
