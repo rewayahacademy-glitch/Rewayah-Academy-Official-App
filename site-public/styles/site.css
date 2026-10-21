@@ -109,12 +109,13 @@
   --lecture: 68ch;
   --entete: 72px;
   /* Echelle d'affiche du site : cinq tailles */
-  /* Cinq tailles (recette 15) : affiche, section, sous-titre, texte, petit ; les chiffres des prix a part. */
+  /* Cinq tailles (recettes 15 et 17) : affiche, section, sous-titre, texte, petit (17 px, notes et legendes comprises) ;
+     les chiffres des prix a part. */
   --t-affiche: clamp(44px, 6.6vw, 96px);
   --t-titre: clamp(28px, 3.9vw, 56px);
   --t-moyen: clamp(20px, 1.95vw, 28px);
   --t-corps: clamp(18px, 0.25vw + 16px, 20px);
-  --t-petit: 15px;
+  --t-petit: 17px;
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -505,7 +506,7 @@ li, dd { text-wrap: wrap; }
    7e colonne de la page, comme le mot du directeur sur la page Academie. */
 .panneau { display: grid; row-gap: var(--e-10); padding: var(--respire) 0 0; }
 .panneau__photo { width: min(88vw, 520px); order: 2; }
-.panneau__in { padding-inline: var(--marge); }
+.panneau__in { padding-inline: var(--marge); margin-inline: 0; }
 .panneau__pied { padding-bottom: var(--e-4); }
 @media (min-width: 840px) {
   .panneau { grid-template-columns: minmax(0, calc(50vw + 12px - 120px)) minmax(0, 1fr); column-gap: 120px; align-items: end; padding-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); }
@@ -805,9 +806,10 @@ li, dd { text-wrap: wrap; }
 }
 /* L'image au-dessus du texte, a toutes les largeurs : a cote de l'image, le texte n'avait que 250 px (quatre mots
    par ligne) ; dessous, il prend toute la carte (45 a 55 signes). Les images ont la meme taille : les titres s'alignent. */
-@media (min-width: 840px) {
+@media (min-width: 600px) {
   .etape { display: flex; flex-direction: column; justify-content: flex-start; }
-  .etape .section__figure { width: min(100%, 300px); margin-bottom: var(--e-16); }
+  /* L'arche au centre de la carte, a la taille du plus petit fichier (380 px) : pas de vide a cote d'elle. */
+  .etape .section__figure { width: min(100%, 380px); margin: 0 auto var(--e-16); }
   .etape h2 { align-self: stretch; padding-top: 0; }
   .etape .etape__corps { max-width: 56ch; }
 }
@@ -925,7 +927,7 @@ li, dd { text-wrap: wrap; }
   .site-main { position: relative; z-index: 1; background: var(--fond); }
   .site-footer { position: sticky; bottom: 0; z-index: 0; }
 }
-.site-footer__inner { position: relative; max-width: var(--contenu); margin-inline: auto; display: grid; gap: var(--e-10); font-size: 15px; }
+.site-footer__inner { position: relative; max-width: var(--contenu); margin-inline: auto; display: grid; gap: var(--e-10); font-size: var(--t-petit); }
 .site-footer__ornement { display: none; }
 .site-footer .brand img { width: 220px; margin-bottom: var(--e-6); }
 .footer-identity p, .footer-identity address { font-style: normal; color: var(--sur-pied-doux); }
@@ -1435,8 +1437,8 @@ li, dd { text-wrap: wrap; }
 /* --- Tarifs : une seule image, les remises en grands chiffres, le tableau de la famille sans cases --- */
 .remises { list-style: none; display: grid; gap: var(--e-10) var(--e-6); margin-top: var(--e-10); }
 .remise { display: grid; gap: var(--e-2); align-content: start; }
-/* Au moins 44 px : le chiffre mene, sa ligne se lit dessous comme un texte (et non comme la fin d'un titre). */
-.remise__valeur { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: max(44px, var(--t-titre)); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+/* A la taille des titres de section (28 px au telephone) : le chiffre mene, sa ligne se lit dessous comme un texte. */
+.remise__valeur { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-titre); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
 .remise__objet { max-width: 32ch; }
 @media (min-width: 600px) { .remises { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 840px) {
@@ -1501,7 +1503,7 @@ li, dd { text-wrap: wrap; }
   .profils { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--e-6); }
 }
 /* Les deux dernieres sections de l'Academie (la societe, le contact) : du texte pose sur le fond, sans carte. */
-.carte, .carte:nth-child(2), .carte:nth-child(3) { border-radius: 0; padding: 0; background: none; }
+.carte, .carte:nth-child(n), [data-ambiance="violet"] .carte, [data-ambiance="violet"] .carte:nth-child(n) { border-radius: 0; padding: 0; background: none; }
 .groupe { row-gap: var(--e-12); }
 /* Tarifs : le simulateur pose sur le violet, sans carte ; ses libelles a la taille du texte, le total en grand. */
 .simulator--page { background: none; border-radius: 0; padding: 0 var(--marge); }
@@ -1517,3 +1519,30 @@ li, dd { text-wrap: wrap; }
 }
 /* Telephone : les titres de section passent a 28 px ; une phrase seule sur une bande reste a 24 px pour tenir en deux lignes. */
 @media (max-width: 599px) { .bande-phrase__phrase { font-size: 24px; } }
+
+/* Tarifs : le focus du clavier se voit dans les champs du simulateur pose sur le violet. */
+.simulator--page .simulator__fields input:not([type="checkbox"]):focus-visible, .simulator--page .simulator__fields select:focus-visible { outline: 3px solid var(--encre-accent); outline-offset: 2px; }
+/* Accueil : la phrase du directeur, signee, a cote de sa photo. */
+.panneau__citation { margin: 0; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: var(--t-moyen); line-height: 1.35; max-width: 30ch; }
+.panneau__signature { display: grid; gap: var(--e-1); margin-top: var(--e-4); font-family: 'Plus Jakarta Sans', sans-serif; font-size: var(--t-corps); }
+/* Accueil, sous 840 px : l'enonce centre, une phrase par ligne, a la plus grande taille qui la fait tenir (16,4 em). */
+@media (max-width: 839px) {
+  .enonce__texte { text-align: center; font-size: min(48px, calc((100vw - 2 * var(--marge)) / 16.4)); }
+  /* Les mains dans leur arche, comme au bureau, au lieu de deborder par le bord de l'ecran. */
+  .chapitre__image-mobile:has(.scene[data-anime="mains"]) { margin-inline-start: 0; }
+  .chapitre__image-mobile:has(.scene[data-anime="mains"]) figcaption { margin-inline-start: 0; }
+  .chapitre__image-mobile .scene[data-anime="mains"] { padding: 0; background: none; }
+  .chapitre__image-mobile .scene[data-anime="mains"] > .scene__cadre { width: min(100%, 380px); aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 40% 40% 0 0; overflow: hidden; background: #EEE6FA; }
+  .chapitre__image-mobile .scene[data-anime="mains"] > .scene__cadre img { width: 100%; height: 100%; object-fit: cover; object-position: 40% 50%; scale: 1.35; transform-origin: 46% 57%; -webkit-mask: none; mask: none; }
+}
+/* Tarifs : la scene de la place qui attend, plus grande, sur la hauteur du haut de page. */
+@media (min-width: 840px) {
+  .entete-page--haut-prix .entete-page__arche { grid-column: 8 / -1; width: min(100%, 560px); }
+  .entete-prix { grid-column: 1 / span 7; }
+}
+/* Tablette (600-839 px) : les cartes de Comment ca marche gardent l'image au-dessus du texte, comme au bureau. */
+@media (min-width: 600px) and (max-width: 839px) {
+  .etape { display: flex; flex-direction: column; }
+  .etape .section__figure { width: min(100%, 380px); margin: 0 auto var(--e-16); }
+  .etape h2 { align-self: stretch; }
+}

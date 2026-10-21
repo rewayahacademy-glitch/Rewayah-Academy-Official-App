@@ -217,6 +217,7 @@ Inspection après ces corrections :
 | Recette 14 | 7,72 | 6,2 | 6,17 | « presque » |
 | Recette 15 | 7,42 | 6,07 | 6,17 | « presque » |
 | Recette 16 | 7,7 | 6,33 | 6,33 | « presque » |
+| Recette 17 | 7,4 | 6,5 | 6,5 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -485,6 +486,25 @@ Non repris : une fin de page à grand mot sur chaque page intérieure (le grand 
 `site-public/police_arabe.py` refait la police arabe inscrite dans la feuille de style après tout ajout de texte arabe.
 
 Inspection des six pages après ces corrections : 0 FAIL hors Tarifs (une image, voulu). Aucun texte coupé, aucune image agrandie, aucun mot seul. Tests : 64, OK.
+
+**Après la recette 17.** La relecture du code et les trois jurés relèvent la même faute : sur l'Académie, les blocs « La société exploitante » et « Écrire à Rewayah Academy » avaient perdu leur marge intérieure mais gardé leur fond (une règle de l'ambiance violette l'emportait). C'est la cause de la baisse de la note. Corrections :
+
+| # | Relevé | Correction |
+|---|---|---|
+| CC1 | Académie : deux rectangles de couleur, texte collé aux bords | Plus de fond, même dans l'ambiance violette : deux rangées titre à gauche, texte à droite |
+| CC2 | Les cinq pages intérieures finissent sur la même petite bande | Chaque page principale finit sur un grand mot qui est le lien, comme l'accueil : « S'inscrire », « Continuer », « Découvrir » |
+| CC3 | Comment ça marche : un vide à côté de l'image de chaque carte ; sur tablette, le texte de nouveau étroit | L'arche au centre de la carte, à 380 px ; l'image au-dessus du texte dès 600 px |
+| CC4 | Accueil : la photo du directeur sans nom ; la même photo que sur l'Académie | Une phrase de son mot, signée de son nom et de son rôle ; un cadrage plus serré que sur l'Académie |
+| CC5 | Accueil, tablette : le texte de la bande « Accompagné » décalé de 54 à 174 px | Aligné sur la marge de la page |
+| CC6 | Accueil, tablette : les mains débordent d'une petite arche jusqu'au bord de l'écran | Les mains dans une arche, comme au bureau, et servies dans le grand fichier |
+| CC7 | Accueil, tablette et téléphone : l'énoncé à gauche, en sous-titre | Centré, une phrase par ligne, à la plus grande taille qui tient (44 px à 768) |
+| CC8 | Notes, légendes et pied de page à 13-16 px | Tous au petit pas de l'échelle : 17 px |
+| CC9 | Tarifs : focus du clavier invisible dans les champs du simulateur | Contour de 3 px |
+| CC10 | Tarifs : la scène du haut petite, entourée de vide | Agrandie (560 px au plus), sur la hauteur du haut de page |
+
+La relecture note aussi : un doublon pour les lecteurs d'écran (la légende cachée de la photo redisait son texte alternatif ; retirée), une image sans usage (les mains de l'Académie ; retirée), aucun test des nouveaux chemins (trois tests ajoutés : la photo n'est jamais légendée « Illustration » et a son texte alternatif ; les profils sont les trois fondateurs et aucune ligne arabe n'est sur une page française ; un mot sans photo ou un extrait qui n'en vient pas est refusé).
+
+Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte coupé, aucune image agrandie, aucun mot seul. Tests : 67, OK.
 
 ## Hors de portée de l'agent
 

@@ -236,19 +236,6 @@
       ],
       "forme": "cercle"
     },
-    "detail-coran": {
-      "source": "08",
-      "largeur": 680,
-      "hauteur": 850,
-      "alt": "Deux mains tendent un Coran à la couverture violette à deux autres mains, qui s’apprêtent à le recevoir.",
-      "recadrage": [
-        560,
-        420,
-        1240,
-        1270
-      ],
-      "forme": "arche"
-    },
     "detail-eleve-haut": {
       "source": "06 (scène publiée, 1014 px)",
       "largeur": 380,
@@ -681,6 +668,15 @@
       "largeur": 1792,
       "hauteur": 2240,
       "alt": "Abdoulaye Mouhidine Sow, directeur et fondateur de Rewayah Academy, en calotte brodée et chemise sombre, le regard tourné vers la droite.",
+      "photo": {
+        "legende": "Abdoulaye Mouhidine Sow, directeur et fondateur"
+      }
+    },
+    "portrait-directeur-serre": {
+      "source": "meme photo et meme traitement que portrait-directeur, cadree plus serre (visage et epaules) pour l’accueil ; sans metadonnees",
+      "largeur": 1360,
+      "hauteur": 1700,
+      "alt": "Abdoulaye Mouhidine Sow, directeur et fondateur de Rewayah Academy, en calotte brodée, le regard tourné vers la droite.",
       "photo": {
         "legende": "Abdoulaye Mouhidine Sow, directeur et fondateur"
       }

@@ -527,7 +527,7 @@ def accueil_chapitres(page: dict, images: dict) -> str:
         textes.append(
             f'<article class="chapitre" id="{esc(sid)}" aria-labelledby="chapitre-{sid}" data-chapitre="{i}">'
             f'<h2 id="chapitre-{sid}">{titre_html(sec["title"])}</h2>{paragraphes(sec)}{points_liste(sec)}{liens_section(sec)}'
-            f'<div class="chapitre__image-mobile">{scene(images, chapitres[i][1], "92vw", "chapitres__image-mobile", legende=True)}</div>'
+            f'<div class="chapitre__image-mobile">{scene(images, chapitres[i][1], "860px" if (images["images"][chapitres[i][1]].get("calques") or {}).get("anime") == "mains" else "92vw", "chapitres__image-mobile", legende=True)}</div>'
             '</article>')
     return f'''<section class="chapitres" aria-label="Pour vos enfants et pour vous">
   <div class="chapitres__fenetre" aria-hidden="true"><div class="chapitres__pile">{figures}</div></div>
@@ -606,17 +606,17 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
 </section>'''
 
 
-def accueil_confiance(page: dict, images: dict) -> str:
+def accueil_confiance(page: dict, images: dict, mot: dict | None = None) -> str:
     """Une bande sombre sur toute la largeur : la photo du directeur calee au bord gauche (elle y est coupee), la date
     en grand, puis les trois engagements, et le lien vers son mot sur la page Academie."""
     sec = _sections_par_id(page)["confiance"]
     return f'''<section class="panneau" id="confiance" aria-labelledby="confiance-titre">
-  <div class="panneau__photo" data-revele>{portrait(images, "portrait-directeur", "(max-width: 839px) 88vw, 46vw")}</div>
+  <div class="panneau__photo" data-revele>{portrait(images, "portrait-directeur-serre", TAILLES_PORTRAIT)}</div>
   <div class="panneau__in">
     <div class="panneau__tete" data-revele>
       <h2 id="confiance-titre">{titre_html(sec["title"])}</h2>
       <p class="panneau__depuis">{titre_html("Rewayah Academy enseigne le Coran depuis le 1er mai 2024.")}</p>
-    </div>
+    </div>{citation_accueil(mot)}
     <ul class="panneau__promesses" data-revele-enfants>
       <li><h3>{titre_html("Un programme qui avance")}</h3><p>{texte_html("Chaque étape a son objectif et sa date limite.")}</p></li>
       <li><h3>{titre_html("Un suivi pour les familles")}</h3><p>{texte_html("Retrouvez les séances et le travail à préparer dans votre espace familial.")}</p></li>
@@ -628,6 +628,16 @@ def accueil_confiance(page: dict, images: dict) -> str:
     </div>
   </div>
 </section>'''
+
+
+def citation_accueil(mot: dict | None) -> str:
+    """Une phrase du mot du directeur (page Academie), signee : sur l'accueil, la photo n'est pas anonyme."""
+    if not mot or not mot.get("extrait"):
+        return ""
+    sig = mot["signature"]
+    return (f'\n    <blockquote class="panneau__citation" data-revele><p>« {texte_html(mot["extrait"])} »</p>'
+            f'<p class="panneau__signature"><span class="mot__nom">{esc(sig["nom"])}</span>'
+            f'<span class="mot__role">{esc(sig["role"])}</span></p></blockquote>')
 
 
 QUESTIONS_ACCUEIL = (
@@ -665,8 +675,8 @@ def accueil_faq(page: dict, tarifs: dict) -> str:
 
 
 def bande_finale(titre: str, phrase: str, label: str, href: str, mot: str | None, identifiant: str = "inscription") -> str:
-    """La bande d'appel : toute la bande est le lien. Sur l'accueil, un seul mot honnete la porte, en tres grand ;
-    les pages interieures gardent une bande sobre, pour que ce mot reste une signature et non un gabarit."""
+    """La bande d'appel : toute la bande est le lien. Sur l'accueil et les pages principales, un seul mot honnete la
+    porte, en tres grand (direction.json, fin.mot) ; les autres pages gardent une bande sobre."""
     externe = href.startswith("mailto:")
     sobre = "" if mot else " appel--sobre"
     fleche = ('<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" '
@@ -683,7 +693,7 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, mot: str | None
 </section>'''
 
 
-def render_home(page: dict, images: dict, tarifs: dict, cta: str) -> str:
+def render_home(page: dict, images: dict, tarifs: dict, cta: str, mot: dict | None = None) -> str:
     fin = _sections_par_id(page)["footer"]
     return "".join((
         accueil_porte(page, images, cta),
@@ -691,7 +701,7 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str) -> str:
         accueil_chapitres(page, images),
         accueil_etapes(page, images),
         accueil_tarifs(page, tarifs),
-        accueil_confiance(page, images),
+        accueil_confiance(page, images, mot),
         accueil_faq(page, tarifs),
         # Le grand mot « Commencer » est le bouton : le titre ne le redit pas, il dit pour qui.
         bande_finale((fin.get("paragraphs") or [fin["title"]])[0], "Rien n’est facturé avant l’ouverture de la classe.",
@@ -870,7 +880,8 @@ def figure_pleine(reglage: dict, images: dict, sid: str) -> str:
 
 
 def portrait(images: dict, ident: str, tailles: str) -> str:
-    """Une vraie photo d'une personne, et non une illustration : elle n'est jamais legendee « Illustration »."""
+    """Une vraie photo d'une personne, et non une illustration : jamais legendee « Illustration » ; son texte
+    alternatif la nomme, et le texte qui l'entoure le redit (signature, citation)."""
     image = images["images"][ident]
     largeurs = image_largeurs(images, ident)
     grande = largeurs[-1]
@@ -878,17 +889,23 @@ def portrait(images: dict, ident: str, tailles: str) -> str:
     srcset = ", ".join(f"{ASSETS}/scene-{ident}-{w}.webp {w}w" for w in largeurs)
     return (f'<figure class="portrait"><span class="portrait__cadre"><img src="{ASSETS}/scene-{ident}-{grande}.webp" '
             f'srcset="{srcset}" sizes="{esc(tailles)}" width="{grande}" height="{hauteur}" alt="{esc(image["alt"])}" '
-            f'decoding="async" loading="lazy"></span><figcaption class="sr-only">{esc(image["photo"]["legende"])}</figcaption></figure>')
+            f'decoding="async" loading="lazy"></span></figure>')
+
+
+# La photo calee au bord gauche occupe la colonne de gauche : 50vw + 12px - 120px au bureau, 88vw (520 px au plus) dessous.
+TAILLES_PORTRAIT = "(max-width: 839px) min(88vw, 520px), calc(50vw - 108px)"
 
 
 def section_mot(section: dict, number: int, images: dict, ident: str | None) -> str:
     """Le mot du directeur : sa photo calee au bord gauche de l'ecran (elle est coupee a gauche), sa parole a cote."""
     if not ident:
         raise ValueError(f"Section {section['id']}: a citation needs its portrait in direction.json")
+    if section.get("extrait") and section["extrait"] not in section["citation"]:
+        raise ValueError(f"Section {section['id']}: extrait must be one of its citation paragraphs")
     sig = section["signature"]
     citation = "".join(f"<p>{texte_html(p)}</p>" for p in section["citation"])
     return (f'<section class="mot" id="{esc(section["id"])}" aria-labelledby="heading-{number}">'
-            f'<div class="mot__photo" data-revele>{portrait(images, ident, "(max-width: 839px) 88vw, 42vw")}</div>'
+            f'<div class="mot__photo" data-revele>{portrait(images, ident, TAILLES_PORTRAIT)}</div>'
             f'<div class="mot__texte" data-revele-enfants><h2 id="heading-{number}">{titre_html(section["title"])}</h2>'
             f'<blockquote class="mot__citation">{citation}</blockquote>'
             f'<p class="mot__signature"><span class="mot__nom">{esc(sig["nom"])}</span>'
@@ -1061,7 +1078,7 @@ def donnees_structurees(origin: str) -> str:
 
 def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing: bool,
                 tarifs: dict | None = None, today: date | None = None, avis: dict | None = None,
-                direction: dict | None = None, images: dict | None = None) -> str:
+                direction: dict | None = None, images: dict | None = None, mot: dict | None = None) -> str:
     if tarifs is None:
         tarifs, _ = tarifs_mod.charger_tarifs(env={}, journal=lambda *_: None)
     if avis is None:
@@ -1096,14 +1113,14 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         if page.get("status") == "blocked" else ""
     )
     if route == "/fr/":
-        main = render_home(page, images, tarifs, cta)
+        main = render_home(page, images, tarifs, cta, mot)
         classe_page = "page-accueil"
     else:
         main = hero_interieur(route, page, reglage, images, cta, status, tarifs, today) + render_inner(route, page, reglage, images, tarifs, today, avis)
         fin = reglage.get("fin")
         if fin:
             main += bande_finale(fin["titre"], fin["phrase"], fin.get("label", page["cta"]["label"]),
-                                 fin.get("href", page["cta"]["href"]), None)
+                                 fin.get("href", page["cta"]["href"]), fin.get("mot"))
         classe_page = "page-" + (route.strip("/").split("/", 1)[1].replace("/", "-") if "/" in route.strip("/") else "accueil")
     # Sur la page des tarifs, le simulateur est dans la page, sous la grille ; sur l'accueil, une feuille qui s'ouvre.
     en_page = route == "/fr/tarifs"
@@ -1219,11 +1236,13 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
         raise ValueError("Canonical origin must be an HTTPS origin")
     pages, site = load_content()
     direction, images = load_direction(pages)
+    # Le mot du directeur (page Academie) : l'accueil en reprend une phrase, signee, a cote de sa photo.
+    mot = next((s for p in pages.values() for s in p["sections"] if s.get("citation")), None)
     for route, page in pages.items():
         destination = output_file(output, route)
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(render_page(route, page, site, origin, allow_indexing, tarifs, today, avis,
-                                           direction, images), encoding="utf-8")
+                                           direction, images, mot), encoding="utf-8")
     assets_out = output / "fr" / "assets"
     assets_out.mkdir(parents=True, exist_ok=True)
     sources = []

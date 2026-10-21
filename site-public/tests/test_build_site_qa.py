@@ -193,6 +193,46 @@ class GeneratedSiteQA(unittest.TestCase):
         for ident, image in images["images"].items():
             self.assertGreaterEqual(len(image["alt"]), 20, ident)
 
+    def test_portraits_are_named_photos_never_captioned_illustration(self) -> None:
+        # Une vraie photo (le directeur) n'est pas une illustration : ni « Illustration » ni texte alternatif vide.
+        images = json.loads((SITE / "content" / "images.json").read_text(encoding="utf-8"))
+        for route in ("/fr/", "/fr/academie"):
+            source = self.page_file(route).read_text(encoding="utf-8")
+            portraits = re.findall(r'<figure class="portrait">.*?</figure>', source, re.S)
+            with self.subTest(route=route):
+                self.assertEqual(len(portraits), 1)
+                self.assertNotIn("Illustration", portraits[0])
+                ident = re.search(r'src="/fr/assets/scene-([a-z-]+)-\d+\.webp"', portraits[0]).group(1)
+                self.assertIn("legende", images["images"][ident]["photo"])
+                self.assertIn(f'alt="{images["images"][ident]["alt"]}"', portraits[0])
+
+    def test_director_message_and_founders_render_in_french_only(self) -> None:
+        academie = self.page_file("/fr/academie").read_text(encoding="utf-8")
+        sections = {s["id"]: s for s in self.pages["/fr/academie"]["sections"]}
+        fondateurs = academie.split('id="fondateurs"', 1)[1].split("</section>", 1)[0]
+        noms = [re.sub(r"<[^>]+>", "", h).replace(" ", " ") for h in re.findall(r"<h3>(.*?)</h3>", fondateurs)]
+        self.assertEqual(noms, [p["nom"] for p in sections["fondateurs"]["profils"]])
+        self.assertIn('<blockquote class="mot__citation">', academie)
+        # L'accueil reprend une phrase du mot, signee ; le build refuse un extrait qui n'en vient pas.
+        accueil = self.page_file("/fr/").read_text(encoding="utf-8").replace(" ", " ")
+        self.assertIn(sections["mot"]["extrait"].replace(" ", " "), accueil)
+        # L'arabe attend le site en arabe (registre M-29) : sur les pages francaises, seules les lettres des arches de Cours
+        # (et le nom arabe de l'academie dans les donnees structurees, M-27, qui ne s'affiche pas).
+        for route in self.pages:
+            source = re.sub(r'<span class="parcours__arabe"[^>]*>.*?</span>|<script[^>]*>.*?</script>', "",
+                            self.page_file(route).read_text(encoding="utf-8"), flags=re.S)
+            with self.subTest(route=route):
+                self.assertIsNone(re.search(r"[؀-ۿ]", re.sub(r'(?:alt|content|title)="[^"]*"', "", source)))
+
+    def test_a_citation_needs_its_portrait_and_a_true_excerpt(self) -> None:
+        mot = dict(next(s for s in self.pages["/fr/academie"]["sections"] if s.get("citation")))
+        images = json.loads((SITE / "content" / "images.json").read_text(encoding="utf-8"))
+        with self.assertRaisesRegex(ValueError, "portrait"):
+            BUILDER_MODULE.section_mot(mot, 1, images, None)
+        mot["extrait"] = "Une phrase que le directeur n'a pas dite."
+        with self.assertRaisesRegex(ValueError, "extrait"):
+            BUILDER_MODULE.section_mot(mot, 1, images, "portrait-directeur")
+
     def test_bundle_gate_covers_every_local_font_requested_by_css(self) -> None:
         css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")
         fonts = set(re.findall(r"\.\./assets/([a-z0-9-]+\.woff2)", css))
