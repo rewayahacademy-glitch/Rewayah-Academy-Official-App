@@ -699,7 +699,7 @@ def libelle_arche(point: str) -> str:
 
 
 def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str, status: str,
-                   tarifs: dict | None = None) -> str:
+                   tarifs: dict | None = None, today: date | None = None) -> str:
     intro = f'<p class="hero-intro">{texte_html(page["intro"])}</p>' if page.get("intro") else ""
     haut = reglage.get("haut")
     titre_long = (" entete-page__texte--long" if len(page["h1"]) > 22 else "") + (" entete-page__texte--tres-long" if len(page["h1"]) > 33 else "")
@@ -728,10 +728,13 @@ def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str
             f'<p class="entete-prix__bloc"><span class="entete-prix__montant">{esc(tarifs_mod.fmt_montant(montant, p["devise"]))}</span>'
             f'<span class="entete-prix__periode">par mois, {hors_taxes}</span><span class="entete-prix__public">{texte_html(public)}</span></p>'
             for montant, public in ((p["tarifEnfantMineur"], f"Enfants et adolescents, de {tarifs_mod.AGE_ENFANT_MIN} à {p['ageAdulte'] - 1} ans"),
-                                    (p["tarifAdulteMineur"], f"Adultes, dès {p['ageAdulte']} ans")))
+                                    (p["tarifAdulteMineur"], f"Adultes, {p['ageAdulte']} ans et plus")))
+        # Les deux prix ne sont dits qu'ici : leurs mentions (date d'effet, monnaies, taxes) se posent dessous.
+        notes = "".join(f'<p class="entete-prix__note">{esc(n)}</p>'
+                        for n in tarifs_mod.notes_prix(tarifs, today or date.today()))
         return (f'<section class="entete-page entete-page--haut-prix">{texte}'
                 f'<div class="entete-page__arche">{scene(images, reglage["image"], "(max-width: 839px) 60vw, 380px", "entete-page__image", prioritaire=True)}</div>'
-                f'<div class="entete-prix" data-revele-enfants>{blocs}</div></section>')
+                f'<div class="entete-prix" data-revele-enfants>{blocs}{notes}</div></section>')
     if haut == "gros-plan":
         # Un gros plan dans une grande arche qui deborde du bord droit : les personnes, pas la porte entiere.
         return (f'<section class="entete-page entete-page--haut-gros-plan">{texte}'
@@ -1038,7 +1041,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         main = render_home(page, images, tarifs, cta)
         classe_page = "page-accueil"
     else:
-        main = hero_interieur(route, page, reglage, images, cta, status, tarifs) + render_inner(route, page, reglage, images, tarifs, today, avis)
+        main = hero_interieur(route, page, reglage, images, cta, status, tarifs, today) + render_inner(route, page, reglage, images, tarifs, today, avis)
         fin = reglage.get("fin")
         if fin:
             main += bande_finale(fin["titre"], fin["phrase"], fin.get("label", page["cta"]["label"]),
@@ -1064,8 +1067,9 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
       <a class="cta" href="/connexion">Commencer mon inscription</a>
     {"</section>" if en_page else "</dialog>"}''' if route in ("/fr/", "/fr/tarifs") else ""
     if en_page:
-        fin_grille = main.index("</section>", main.index('id="grille"')) + len("</section>")
-        main = main[:fin_grille] + simulator + main[fin_grille:]
+        # Le simulateur suit les deux prix du haut : on estime son foyer juste apres avoir lu le prix.
+        fin_haut = main.index("</section>", main.index("entete-page--haut-prix")) + len("</section>")
+        main = main[:fin_haut] + simulator + main[fin_haut:]
         simulator = ""
     image_partage = reglage.get("image") or "chemin"
     largeur_partage = image_largeurs(images, image_partage)[-1]

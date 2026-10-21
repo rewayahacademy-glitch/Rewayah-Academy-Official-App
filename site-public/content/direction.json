@@ -121,7 +121,7 @@
       "haut": "texte"
     },
     "/fr/tarifs": {
-      "image": "decor-tapis-vague",
+      "image": "decor-arche-sombre",
       "cote": "droite",
       "champ": "lavande",
       "fin": {
@@ -131,7 +131,7 @@
         "href": "/connexion"
       },
       "figures": {
-        "grille": "decor-arche-sombre",
+        "remises": "decor-tapis-vague",
         "famille": "arche-haut",
         "classes": "place"
       },

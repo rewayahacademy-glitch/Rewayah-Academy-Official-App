@@ -406,14 +406,6 @@
       "intro": "Le prix par élève et par mois, hors taxes, et toutes les remises. Le montant final et les taxes vous sont indiqués avant le paiement.",
       "sections": [
         {
-          "id": "grille",
-          "title": "Le prix de chaque formule",
-          "generated": "grille",
-          "paragraphs": [
-            "Le prix dépend de l'âge de l'élève. La formule adulte commence à l'âge indiqué dans le tableau."
-          ]
-        },
-        {
           "id": "remises",
           "title": "Les remises",
           "generated": "remises",

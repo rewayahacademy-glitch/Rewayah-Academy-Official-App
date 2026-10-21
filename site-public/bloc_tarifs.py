@@ -365,6 +365,17 @@ def politique_affichee(tarifs: dict) -> dict:
     return tarifs["suivante"] or tarifs["courante"]
 
 
+def notes_prix(tarifs: dict, aujourdhui: date) -> list[str]:
+    """Les mentions qui accompagnent les prix : date d'effet s'il y a lieu, puis monnaies et taxes du paiement.
+    Les monnaies sont celles de la décision (mentions_sous_la_grille), pas « votre monnaie »."""
+    p = politique_affichee(tarifs)
+    hors_taxes = "hors taxes" if p["horsTaxes"] else "taxes comprises"
+    notes = [f"Prix en {NOMS_DEVISES.get(p['devise'], p['devise'])}, {hors_taxes}. La taxe de votre pays et le montant"
+             " en euros, livres ou dollars canadiens s’affichent au paiement."]
+    date_note = note_date_effet(tarifs, aujourdhui)
+    return [date_note] + notes if date_note else notes
+
+
 def note_date_effet(tarifs: dict, aujourdhui: date) -> str:
     """Phrase sur la date d'effet quand la politique affichée n'est pas encore en vigueur."""
     p = politique_affichee(tarifs)
@@ -422,13 +433,7 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
     if nom == "grille":
         hors_taxes = "hors taxes" if p["horsTaxes"] else "taxes comprises"
         html_ = _tableau(f"Par élève et par mois, {hors_taxes}", ("Formule", "Prix par mois"), lignes_grille(p))
-        # Les monnaies du paiement sont celles de la décision (mentions_sous_la_grille), pas « votre monnaie ».
-        notes = [f"Prix en {NOMS_DEVISES.get(devise, devise)}, {hors_taxes}. La taxe de votre pays et le montant"
-                 " en euros, livres ou dollars canadiens s’affichent au paiement."]
-        date_note = note_date_effet(tarifs, aujourdhui)
-        if date_note:
-            notes.insert(0, date_note)
-        return html_ + "".join(f'<p class="price-note">{esc(n)}</p>' for n in notes)
+        return html_ + "".join(f'<p class="price-note">{esc(n)}</p>' for n in notes_prix(tarifs, aujourdhui))
     if nom == "remises":
         parties = [_tableau("Remise selon le rang dans le foyer", ("Rang d’inscription", "Remise"),
                             lignes_remises_rang(p))]

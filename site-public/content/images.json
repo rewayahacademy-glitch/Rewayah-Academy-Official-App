@@ -369,15 +369,15 @@
     "detail-main-epaule": {
       "source": "12",
       "largeur": 380,
-      "hauteur": 380,
+      "hauteur": 475,
       "alt": "Un père pose la main sur l’épaule de son fils, qui porte une calotte violette et tient un livre.",
       "recadrage": [
         106,
-        580,
+        540,
         486,
-        960
+        1015
       ],
-      "forme": "cercle"
+      "forme": "arche"
     },
     "detail-famille-chemin": {
       "source": "02",
