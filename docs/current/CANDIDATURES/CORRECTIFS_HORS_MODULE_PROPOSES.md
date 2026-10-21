@@ -40,6 +40,61 @@ fiable qu'avec **langue** et **c11bis**. **conduite** fait partie des contrôles
 `accords_signes` du modèle (revue, section 6). La sorte d'accord de l'engagement
 religieux (`CAND-BR-11`) étend la même garde après ce lot.
 
+## 0 bis. Recherche dans les branches (21/10, après `CAND-Q15`)
+
+Le directeur a confié les cinq correctifs à des agents. Il a aussi prévenu : « la
+plupart des erreurs ont été corrigées mais dans des branches isolées sur git ».
+
+Avant d'écrire quoi que ce soit, un agent par défaut a donc fait une recherche, en
+lecture seule :
+- sur les 584 branches distantes et les 34 PR ouvertes ;
+- avec `git log -S` et `-G` sur les fonctions et fichiers en cause, et `git grep`
+  sur la pointe de chaque branche ;
+- en vérifiant pour chaque commit trouvé s'il est déjà dans la pile.
+
+**Résultat : aucun des cinq défauts n'est corrigé, sur aucune branche.** Les
+commits trouvés les ont créés ou les gardent volontairement fermés :
+- **langue** : FORM-L8 `1d079326` crée le défaut. F86 `d5dad75d` redéfinit
+  `maj_profil_enseignant`, mais sans toucher aux langues.
+- **c11bis** : `adb1c857` et F86 `2a8215f6` gardent la fonction fermée. L3-06
+  `a36fc9b2` ferme ensuite l'autre voie.
+- **creer_groupe** : `affa5756` posait une garde, mais son auteur l'a annulée neuf
+  minutes plus tard par `4bb32056` ; c'est cet état annulé que porte la pile. La
+  demande CF1-B6 n'a jamais été écrite côté serveur.
+- **gnf** : `232daeff` corrige seulement le client, sur une lignée abandonnée dont
+  l'API est incompatible. Il sert de source pour la table ISO.
+- **conduite** : les trois migrations PE posent le texte et sa version, sans la
+  garde.
+
+**Les correctifs s'écrivent donc d'après ce document, avec ces ajustements :**
+- **langue** :
+  - la clé des cartes de langue reste `_BoutonEnregistrer` (K-42, `ca98da88`) ;
+  - le seed de staging de la PR #40 (`claude/sharp-goldberg-z10a13`,
+    `03_personnel.sql`) écrit `array['fr','ar']`, une troisième forme. Il faut le
+    corriger avant de fusionner cette PR.
+- **c11bis** :
+  - la branche `:299` demande d'ajouter `teacher_id` et `etat` à la sous-requête
+    `existing` ;
+  - la capacité vaut `existing.teacher_id IS NULL AND existing.etat =
+    'en_attente_enseignant'` ;
+  - le commentaire F86 de `_c11bis` est réécrit.
+- **creer_groupe** : variante retenue, le corps du prédicat va dans
+  `app_private.verifier_affectation_enseignant(uuid, uuid, boolean)`.
+  - `public.tc_verifier_affectation_enseignant(uuid, uuid)` reste et l'appelle avec
+    `true`.
+  - Sa signature ne change donc pas, et le piège d'ordre avec `c11bis` disparaît.
+- **gnf** : table ISO 4217 reprise de `232daeff`, identique au serveur et au
+  client :
+  - 0 décimale : BIF, CLP, DJF, GNF, ISK, JPY, KMF, KRW, PYG, RWF, UGX, UYI, VND,
+    VUV, XAF, XOF, XPF ;
+  - 3 décimales : BHD, IQD, JOD, KWD, LYD, OMR, TND ;
+  - 4 décimales : CLF, UYW.
+- **conduite** : la policy restrictive garde explicitement
+  `profile_id = auth.uid()`.
+
+Rapports complets de la recherche : hors dépôt, dans le dossier de travail de la
+session.
+
 ## 1. Ce que chaque lot attend avant d'exister
 
 1. **`CAND-Q15`** : le feu vert du directeur sur ce découpage.
