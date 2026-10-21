@@ -9,10 +9,10 @@
 enum MotifEchecObservation {
   /// La capacite serveur n'est pas en place sur ce deploiement.
   ///
-  /// Etat attendu tant que la migration demandee dans
-  /// `docs/teaching-core/TC_CONTRACT_REQUEST_G.md` n'est pas appliquee : les
-  /// fonctions `politique_observation_effective`, `budget_observation`,
-  /// `entrer_observation` et `sortir_observation` n'existent pas encore.
+  /// Une fonction inconnue (`42883`, `PGRST202`) : `politique_observation_effective`,
+  /// `budget_observation`, `entrer_observation` ou `sortir_observation`
+  /// absente de la base interrogee. Elles sont posees par `0033` a `0039` et
+  /// dites presentes en production depuis le 21/09/2026.
   capaciteAbsente,
 
   /// Le reseau ou le backend n'a pas repondu.
@@ -20,6 +20,14 @@ enum MotifEchecObservation {
 
   /// La reponse est arrivee mais ne porte rien d'exploitable.
   reponseIllisible,
+
+  /// Une visite de cet observateur est deja ouverte sur cette seance.
+  ///
+  /// L'index unique `guardian_visit_ouvert_uidx` refuse un second intervalle
+  /// ouvert (erreur `23505`), typiquement apres un rechargement de page
+  /// pendant une visite. Ce n'est pas une panne : reessayer echouerait a
+  /// l'identique, et le temps continue de courir cote serveur (DB-OBS-06).
+  visiteDejaOuverte,
 }
 
 /// L'echec d'une operation d'observation.

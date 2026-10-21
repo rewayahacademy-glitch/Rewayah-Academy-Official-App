@@ -1,7 +1,7 @@
 -- 0011 : N4, l'affichage de la presence. Ce que la vue derivee doit porter
 -- pour qu'un ecran puisse la lire, et ce qu'elle doit refuser de montrer.
 --
--- Perimetre fixe par docs/architecture/etape-5-salle-coran-presence.md
+-- Perimetre fixe par docs/archive/2026-09-pre-remise-a-plat/architecture/etape-5-salle-coran-presence.md
 -- sections 6.5 et 6.6, et par les invariants J3 et J7 de sa section 8.
 --
 -- Le calcul, lui, ne bouge pas. `etat_presence()` derive les quatorze etats

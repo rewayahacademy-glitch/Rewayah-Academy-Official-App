@@ -1,0 +1,683 @@
+# Revue du directeur des 01 et 02/10/2026 : table des règles et des preuves
+
+Remplace la table §4 BIS de `docs/design/README.md`, absent de la branche `integration/essai-fusion` (déplacé dans `docs/archive/2026-09-pre-remise-a-plat/design/README.md` à la remise à plat). Les règles écrites sont dans `lib/CLAUDE.md`, section « Interdits d'interface (revue directeur 01-02/10) ». Source : consignes K-54 à K-59 du tableau « Suivi Rewayah ».
+
+Principe : corriger la cause (composant partagé de `lib/core`), recenser tous les écrans au même défaut ou à un défaut équivalent, écrire la règle et son contrôle, noter le chiffre avant et après.
+
+| Règle | Consigne | Composant partagé | Contrôle automatique | Test de garde |
+|---|---|---|---|---|
+| Choix du thème : un rectangle, trois bascules (soleil, système, lune) | THEME-SW-1 | `SelecteurTheme` (sur `ControleSegmente`) | `selecteur-theme-recompose` | `test/widgets/selecteur_theme_test.dart` |
+| Contenu de bouton centré, sans débordement | K-54 | `ActionPrincipale`, `LienFleche`, `FilterPill`, `BoutonOutil`, `BoutonIcone`, `BoutonCommande`, `MenuActions` | `bouton-recompose` (4 formes) | `verifierBoutonCentre`, `verifierContenuCentre`, `verifierLibelleCentreLigneALigne` |
+| Jamais de cartes collées (cartes séparées, ou une carte à lignes fines) | K-55 | `AppCard`, `Ecart`, `GroupeReglages` | `cartes-collees` | `verifierEcartCartes` |
+| Un seul bouton plein par écran, secondaires en lien flèche | K-56 | `ActionPrincipale`, `LienFleche`, `RaccourciTactile` | `plein-multiple`, `bouton-grise` (alias `bouton-desactive`) | `verifierUnSeulBoutonPlein` |
+| Contenu de bouton centré, sans débordement | K-54 | `ActionPrincipale` | `bouton-recompose` | `verifierBoutonCentre` |
+| Jamais de cartes collées (cartes séparées de 16 au moins, ou une carte à lignes fines) | K-55 | `PileCartes`, `CarteGroupee`, `CarteLignes`, `GroupeReglages`, `AppCard`, `Ecart` | `cartes-collees` (`tool/revue_cartes.dart`, `test/tool/revue_cartes_test.dart`) | `verifierEcartCartes`, `verifierAucuneCarteCollee` (`test/core/cartes_collees_test.dart`) |
+| Un seul bouton plein par écran, secondaires en lien flèche | K-56 | `ActionPrincipale`, `LienFleche` | `bouton-grise` (alias `bouton-desactive`) | revue d'écran |
+| Formulaires déduit > choisi > saisi | K-57 | `ChoiceCardGroup` | revue de fiche (FORM-AUTO-1) | |
+| Tout choix : contexte, quand, conséquence, carte entière cliquable | K-58 | `ChoiceCardGroup` | revue de fiche | |
+| Message d'erreur : cause et action | K-59 | `EtatSysteme`, `BlocAsynchrone` | `erreur-sans-action`, `affirmation-reseau` | |
+| Bascule de la salle : trois signaux (disque plein ou contour, icône, mot d'état), actions lourdes confirmées | ETATS-BTN-1 (K-54, K-56) | `CommandeSalle` | `bascule-sans-etat` | `commande_salle_test.dart` |
+| Navigation précédent / suivant : flèche, position, flèche, la flèche disparaît aux bornes, miroir RTL | NAV-FLECHES-1 (K-54, K-56) | `BarrePrecedentSuivant` | `nav-a-libelle` | `barre_precedent_suivant_test.dart` |
+| Jamais de rangée de sections qui défile (segmenté jusqu'à 4 sur téléphone, menu au-delà, en ligne si ça tient) | ONGLETS-1 | `SelecteurSection` (`ControleSegmente`, `MenuFiltre`) | `onglets-defilants` | `selecteur_section_test.dart` |
+| Bouton principal d'une séance selon son moment, jamais grisé | CTA-FIN-1 | `ctaSeance`, `EmplacementEntree`, `LienFleche` | `bouton-grise` | `test/core/enseignant/cta_seance_test.dart`, `test/features/journee_test.dart` |
+| Aucun élément ne recouvre un contenu | déduite | | | `verifierSansChevauchement` |
+| Hiérarchie de titres stricte : titre d'écran > titre de section > nom / titre de carte > corps, marque sous le titre | déduite (HIER-1) | `AppTypography`, `EntetePage`, `PageShell`, `SectionHeader`, `MarquePage` | `test/theme/hierarchie_titres_test.dart` | `verifierHierarchie` |
+| État jamais par la couleur seule | déduite | `StatusPill` | revue d'écran | |
+| « En direct » et « Annulée » reconnaissables d'un coup d'œil, partout | ON-AIR-1, ANNUL-VIS-1 | `PastilleEtatSeance`, `TexteHeureSeance`, `LigneRaisonSeance`, `surfaceCarteSeance` | `etat-seance-pastille` | `test/core/widgets/pastille_etat_seance_test.dart` |
+| Alerte urgente en tête (tri gravité puis date, section en tête du Centre de commande, bandeau figé tout en haut de l'écran jusqu'au traitement, sans recouvrir la page, point sur la cloche) | déduite ; ALERTE-1 (01/10, décision du 05/10) ; ALERTE-1b (réserves, décidé par délégation le 05/10) | `trierAlertes`, `SectionAlertes`, `BandeauAlerteUrgente` (forme courte sur vue basse), `AdminShell.bandeau` (`_ZoneBandeau`), `ClocheNotifications` | revue d'écran ; captures `docs/current/captures/ALERTE-1b/` | `test/core/alertes/alertes_test.dart`, `test/features/alertes/alertes_ecrans_test.dart`, `test/features/alertes/alerte1b_test.dart` |
+| Présentation publique avant la connexion : 5 pages, une idée par page, défilement automatique (6 s, pause au toucher et au focus, jamais au survol de la souris (D10), aucun sous mouvement réduit ou lecteur d'écran ; arrêt au premier geste et à la dernière page, sans boucle), glissement, croix pour tout passer, vue une fois par appareil | PUB-1 (décision déléguée du 05/10, fiche `UX_REVIEW_PUB-1.md`) ; PUB-1b (réserves, décidé par délégation le 09/10) | `BienvenuePage`, `presentationProvider`, `BarrePrecedentSuivant`, `BoutonIcone`, `MarquePage` (sans coupure) | revue d'écran ; captures `docs/current/captures/PUB-1/`, `docs/current/captures/PUB-1b/` | `test/features/bienvenue/presentation_test.dart`, `test/core/preferences/stockage_cle_valeur_test.dart` |
+| Navigation du Mode Accessibilité : moins de destinations, libellé visible, cibles de 72, actif à trois signaux, mêmes routes | MA-NAV-1 | `NavShell` | `nav-recomposee` | `nav_shell_accessibilite_test.dart` |
+| Libellé sans ambiguïté (qui, quoi) | déduite | | `libelle-ambigu` | |
+| Aucun mot interne chez le client | déduite | | `mot-interne` | |
+| Avatar : petit cercle (jetons `AppAvatar`), centré avec son nom sur le même axe, jamais de carré derrière, une ligne de rôle au plus (AVATAR-1) | 01-02/10 | `AvatarNom`, `AvatarSansImage`, `AvatarTile` | `avatar-recompose`, `avatar-taille` | `verifierMemeAxe`, `verifierAlignes`, `verifierContenu` |
+| La mention « visite de contrôle possible » n'est pas rendue au contrôleur (CTRL-SALLE-1) | 02/10 | `_Bandeaux` (salle) | | `test/features/controleur/salle_controleur_test.dart` |
+
+## Chiffres au 02/10/2026 (branche `corrections/revue-directeur-2026-10`, base `integration/essai-fusion` 55a5235)
+
+Avant correction, par contrôle (`dart run tool/verifier_revue.dart --regle=<nom> --detail`) :
+
+| Contrôle | Occurrences avant | Après |
+|---|---|---|
+| `cartes-collees` | 5 | |
+| `bouton-recompose` | 2 (19 avec les quatre formes que le contrôle voit désormais) | 0 |
+| `cartes-collees` | 5 (ancienne règle) ; 46 (règle étendue, même base) | 0 |
+| `bouton-recompose` | 2 | |
+| `libelle-ambigu` | 5 | |
+| `mot-interne` | 4 | |
+| `erreur-sans-action` | 27 | |
+| `bouton-grise` | 73 (53 dans le socle hérité de `main`) | |
+| `affirmation-reseau` | 10 (6 dans le socle hérité de `main`) | |
+| `libelle-sans-source` | 1377 (1023 dans le socle hérité de `main`) | |
+| `verifier_jetons` | 36 | 35 |
+| `selecteur-theme-recompose` (THEME-SW-1) | 2 écrans recomposaient le thème (Apparence : 3 cartes `ChoiceCardGroup` ; Réglages : 3 lignes `Radio`) | 0 (les deux utilisent `SelecteurTheme`) |
+| `verifier_jetons` | 36 | |
+| `avatar-recompose` (AVATAR-1, nouveau) | 21 | 0 |
+| `avatar-taille` (AVATAR-1, nouveau) | 16 | 0 |
+
+AVATAR-1 : 31 couples avatar + nom recensés dans `lib/` hors `_dev` (26 passés par `AvatarNom` ou `AvatarSansImage`, 5 lignes de rubrique `GroupeReglages` dont l'avatar de tête passe aux jetons) ; 0 restant. Le contrôle `avatar-recompose` ne détecte que les couples posés dans une `Row`, une `Column` ou un `Wrap` (21 avant) ; les autres (cercle d'initiales recomposé dans `chrome_seance.dart`, avatar dans un `Stack` de `selecteur_profils.dart` et `panneau_eleves.dart`) ont été recensés à la main. Tailles d'avatar : 10 valeurs distinctes avant (32, 40, 44, 48, 56, 64, 72, 80, 96, et 144 en mode enfant pour la taille par défaut) ; 3 après (`AppAvatar` : 32, 48, 64). Preuve de géométrie : `test/core/widgets/avatar_nom_test.dart` (31 tests : axe commun en vertical, nom centré sur le cercle en ligne, cercle contenu dans un cadre de 96x128 et 176x126, 320 et 1440 px, texte x1 et x2, clair et sombre) et `avatar_ligne_rubrique_test.dart` (8 tests).
+
+Limites connues des contrôles (heuristiques de texte) : `cartes-collees` ne voit que des appels voisins dans une liste `children` sans `spacing:` (pas les `ListView.builder` sans séparateur) ; `bouton-recompose` ne voit que les boutons Material, `InkWell`, `GestureDetector` et un `Pressable` qui peint lui-même fond arrondi et `Text`. Ce que ces contrôles ne voient pas se mesure par les tests de géométrie et par les captures à 320 px et 1440 px.
+
+## Lot l1-boutons (BTN-CENTRE-1, BTN-TESTER-1, PHOTO-LIEN-1), 02/10/2026
+
+Branche `corrections/l1-boutons`. Cause corrigée dans le core, jamais écran par écran.
+
+### K-54 : contenu des boutons centré
+
+Audit mesuré (test de géométrie, 320 et 1440 px, texte ×1 et ×2, clair et sombre, parent qui étire ou non) :
+
+| Composant | Défaut mesuré avant | Correction |
+|---|---|---|
+| `FilterPill` | libellé collé en haut de la pilule de 48 (écart vertical de 6 px) ; libellé collé au début quand le parent étire la pilule | `Center(widthFactor: 1, heightFactor: 1)`, `Wrap` centré, `TextAlign.center` |
+| `MenuFiltre` | libellé et chevron au début quand le parent étire le bouton (jusqu'à 640 px de décalage à 1440) | même centrage |
+| `StatusPill` | contenu au début quand la pastille est étirée | `mainAxisAlignment: center`, texte centré |
+| `ActionPrincipale` | `pleineLargeur: false` ignoré dans un parent `Align` ou `Column` : le bouton « compact » prenait 1408 px sur bureau (le `Container` à `alignment` s'étirait) ; libellé lu deux fois par le lecteur d'écran | `SizedBox` + `Center(widthFactor: 1)` : largeur du contenu ; texte exclu de la sémantique (le `Pressable` porte le nom) ; option `doux` (pilule d'alerte douce de la sortie de salle) |
+| `LienFleche` | contenu au début sous la cible de 48 | `mainAxisAlignment: center`, `libelleSemantique`, `encre` |
+| `MenuActions` | — | option `points` (déclencheur « … » du panneau de la salle) |
+
+Composants ajoutés au core (aucun n'existait pour ces boutons) : `BoutonOutil` (icône et mot, `nue` ou `tuile`, déplacé de `features/tc_dock`), `BoutonIcone` (disque ou carré), `BoutonCommande` (disque et mot : micro, caméra, quitter), `RaccourciTactile`. Entrées de galerie et du catalogue ajoutées.
+
+Boutons recomposés dans les écrans, remplacés par un composant du core : **16** (19 repérés par le contrôle élargi, dont 3 lignes de navigation ou de bandeau qui ne sont pas des boutons et sortent du contrôle une fois la règle précisée) :
+
+| Écran | Avant | Après |
+|---|---|---|
+| `tc_dock` (`BoutonOutil`) | `Pressable` à fond peint | `core/widgets/bouton_outil.dart` |
+| `salle_seance/outils_enseignement` | tuile peinte | `BoutonOutil` tuile |
+| `salle_seance/panneau_eleves` | tuile peinte | `BoutonOutil` tuile |
+| `salle_seance/dock_seance` (`BoutonAppel`) | disque peint | `BoutonCommande` |
+| `salle/salle_page` (commandes) | disque peint | `BoutonCommande` |
+| `salle/salle_page` (lien Présence) | `Pressable` à `Text` nu | `LienFleche` (encre du registre de la salle) |
+| `salle_seance/salle_seance` (`BoutonPanneau`) | tuile peinte | `AppCard(onPress:)` |
+| `salle_seance/selecteur_ressources` | `ChoiceChip` ; lignes peintes | `FilterPill` ; `AppCard(onPress:)` |
+| `salle_seance/panneau_seance` | `PopupMenuButton` | `MenuActions(points: true)` |
+| `tc_observation_ui/barre_commandes` (Quitter) | pilule peinte | `ActionPrincipale(destructive, doux)` |
+| `tc_classe_live/roster_classe` (compteur) | `Pressable` à `Text` nu | `LienFleche` |
+| `admin_dossiers/visionneuse_piece` | disque peint | `BoutonIcone` |
+| `compte/carte_rubriques` | carré peint | `BoutonIcone` |
+| `compte/compte_tuteur_page` (Se déconnecter) | bande peinte | `ActionPrincipale(destructive)` |
+| `demo/demo_salle_page` | pilule peinte | `ActionPrincipale(secondaire, fleche)` |
+
+Le contrôle `bouton-recompose` voit désormais quatre formes (bouton ou puce Material, `InkWell` ou `GestureDetector` qui réagit au toucher, `Pressable` à surface peinte autour d'un `Text` ou d'une `Icon`, `Pressable` à `Text` nu) ; un détecteur de glissement (`couche_annotation`, un dessin) n'est plus pris pour un bouton. Socle : 2 lignes avant, **0** après. Limite : une décoration passée par une variable à un `Pressable` échappe au contrôle de texte ; le test de géométrie la voit.
+
+### BTN-TESTER-1
+
+« Tester la caméra » (`preparation_enseignant.dart`) : `ActionPrincipale` secondaire pleine largeur, dernier enfant de la colonne de la carte (plus d'`Align` ni d'`IntrinsicWidth`). Test `test/features/classe_enseignant/btn_tester_camera_test.dart` : marges début, fin et bas égales, bouton sur toute la carte, libellé centré, 320 et 1440 px, ×1 et ×2, clair et sombre. Aucun bouton de test du micro ni du haut-parleur n'existe sur cette page ni sur la préparation de l'élève (vérifié) : rien d'autre à traiter.
+
+### PHOTO-LIEN-1 et K-56
+
+« Choisir une photo » devient une ligne `LienFleche` (texte et flèche, centrée verticalement, cible de 48) ; toucher la photo ouvre aussi le choix (`RaccourciTactile`, exclu du focus et de la sémantique : le lien reste le seul contrôle). Écrans : fiche élève (`foyer/photo_eleve.dart` : choisir, changer, choisir une autre ; « Envoyer cette photo » devient l'unique bouton plein de l'aperçu), photo professionnelle de l'enseignant (`photo_publique.dart` : choisir, remplacer, choisir une autre), profil enseignant (`profil_enseignant_page.dart`). Mêmes lignes de lien pour « Choisir un fichier » (`depot_piece_page.dart`) et « Scanner le QR code » (`saisie_code_page.dart`). Test : `test/features/profil_enseignant/photo_lien_test.dart`.
+
+Inventaire (`ActionPrincipale` lus dans `lib/features`, commentaires exclus) :
+
+| | Avant | Après |
+|---|---|---|
+| Fichiers avec au moins un `ActionPrincipale` | 84 | 87 |
+| Boutons pleins (`principale`, explicite ou par défaut) | 85 | 85 |
+| Fichiers avec plus d'un bouton plein (`plein-multiple`) | 15 | 14 |
+| Actions secondaires en bouton secondaire pleine largeur | 36 (23 fichiers) | 33 (21 fichiers) |
+| Boutons de photo ou de fichier en bouton plein ou secondaire pleine largeur | 7 | 0 (lignes de lien) |
+
+Les 14 fichiers restants (dont `feuille_micro_bloque`, dont le niveau dépend d'une condition) ont été relus un à un : leurs boutons pleins sont dans des branches exclusives (`if / else`, `switch`, états successifs d'un parcours) ou dans des feuilles distinctes de la page qui les ouvre ; aucun n'est visible avec un autre. Ils sont figés dans le socle de `plein-multiple` avec leur nombre.
+
+Contrôles ajoutés : `plein-multiple` (`tool/verifier_revue.dart`) et `verifierUnSeulBoutonPlein` (`test/support/garde_interface.dart`). Limite : le contrôle de source lit le texte, il ne sépare pas des branches exclusives de boutons simultanés ; seul le test de rendu voit ce que l'écran montre ensemble, d'où la garde à poser dans le test de chaque écran nouveau ou modifié.
+
+### Preuves visuelles
+
+`docs/current/captures/l1-boutons/` : `avant_*` (base `ad0e2c6`) et `apres_*` (cette branche), mêmes écrans, 320 et 1440 px, produits par `test/capture/l1_boutons_capture_test.dart` (`CAPTURE_DIR`, `CAPTURE_PREFIXE`) : préparation de l'enseignant (« Tester la caméra »), photo professionnelle (« Choisir une photo »), boutons du core (pilule étirée, bouton compact, lien, bouton secondaire). Les écrans de la salle (dock, outils, tuiles) ne sont pas capturés : leur preuve est la mesure de géométrie de `test/core/garde_interface_test.dart` (335 cas).
+## ETATS-BTN-1 et NAV-FLECHES-1 : avant et après (branche `corrections/l1-salle`)
+
+| Mesure | Avant | Après |
+|---|---|---|
+| Composants qui dessinent le disque d'une commande de salle (dock `BoutonAppel`, `_Commande` de `salle_page`) | 2, deux dessins différents | 1 (`CommandeSalle`, `BoutonAppel` et `_Commande` le délèguent) |
+| Signaux d'état d'une bascule micro ou caméra du dock | 1 (l'icône) ; mot fixe « Micro », « Caméra », « Parler » | 3 (disque plein ou contour 2 points, icône barrée ou non, mot « Micro ouvert » / « Micro coupé », « Caméra allumée » / « Caméra éteinte ») |
+| Signaux d'état d'une bascule de `salle_page` (micro, caméra, son reçu, agrandir) | 2 (remplissage, icône), sans mot d'état | 3 |
+| Sites de bascule qui déclarent leur état (`bascule:`) | 0 | 8 (dock : 3 ; barre du support : 1 ; `salle_page` : 4) |
+| Navigations précédent / suivant faites de deux boutons à libellé ou de chevrons grisés | 3 (lecteur de Coran, présentation de l'enseignant, pagination de la salle) | 0 : les 3 passent par `BarrePrecedentSuivant`. Exception depuis INTEG-RC-1 (03/10/2026) : le lecteur de Coran du Mode Accessibilité (`LecteurCoranAccessibilite`, MA-CMD-1) a ses propres flèches en icônes seules ; elles suivent la même règle (la flèche disparaît aux bornes, sa place reste réservée), test `coran_ma7_test.dart` « NAV-FLECHES-1 » |
+| Flèche grisée au début ou à la fin | 3 sites | 0 : la flèche disparaît, sa place reste réservée |
+| `bouton-grise` (`onPress: null` rendu grisé) | 73 | 69 |
+| `verifier_jetons` | 36 | 36 |
+| `cartes-collees`, `bouton-recompose`, `libelle-ambigu`, `mot-interne`, `erreur-sans-action` | 0 hors socle | 0 hors socle |
+
+Limites : aucune action « couper le micro de toute la classe » n'existe dans l'application ; « Quitter » (dock, rail, en-tête guidé, `salle_page`) passe déjà par `ConfirmDestructive` (`confirmerQuitterSeance`) et le contrôle `bascule-sans-etat` ne vérifie que la présence de `bascule:`. Dans une rangée compacte et au-delà de 130 % d'échelle de texte, le mot d'état passe en infobulle et dans la voix du lecteur d'écran : à 200 % sur 390 px, deux lignes de mot par commande ne tiennent plus dans la hauteur du téléphone (test `salle_secours_test`, aucun débordement exigé). Les captures avant/après ne sont pas produites : les mesures de géométrie des tests (320 et 1440 px, texte ×1 et ×2) tiennent lieu de preuve.
+
+## ETATS-BTN-1 et NAV-FLECHES-1 : corrections de la relecture (02/10/2026)
+
+| Écart relevé | Correction |
+|---|---|
+| Agrandir / Réduire traité en bascule dans `salle_page` mais pas dans le dock de la séance ni dans la barre du support | `dock_seance.dart` passe `bascule: agrandi` ; `barre_support.dart` (`ZoomLocal`) remplace son bouton recomposé par `CommandeSalle(bascule: agrandi)`. Les deux sites, comme `salle_page`, ont le même rendu à trois signaux (disque plein ou contour, icône réduire / agrandir, mot « Réduire » / « Agrandir »). Test : `test/features/salle_seance/etats_agrandir_test.dart` (deux sites, deux états, clair et sombre). |
+| Contrôle `bascule-sans-etat` trop faible (micro et caméra seulement) | Étendu à `_Commande`, aux icônes agrandir, réduire, son, et à **toute commande dont l'icône change avec l'état** (`x ? AppIcons.a : AppIcons.b`) : c'est le caractère à deux états qui compte. Sans la correction du dock, la règle signale bien 1 violation (vérifié en retirant la ligne). |
+| Outil inactif du Teaching Dock sans contour | `BoutonOutil` inactif a le même contour fort de 2 points que la bascule de salle ; plein contrasté seulement quand l'outil est armé. Test : `test/teaching_core/d/bouton_outil_etat_test.dart`. |
+| Valeurs littérales 2 et 1,3 dans `commande_salle.dart` | Jeton `AppContour.fort` (2 points, source : anneau de focus `Pressable.epaisseurFocus`, WCAG 2.4.11) et `AppContour.seuilTexteAgrandi` (1,3, source : `nav_shell` et Teaching Dock, doc 04 §28 et §33 n. 13), dans `lib/core/theme/app_contour.dart`. Référencés par `CommandeSalle` et `BoutonOutil`. |
+| Désactivation : la bascule perdait son état visuel | Une bascule inerte garde sa forme : plein neutre quand elle est active, contour seul quand elle est inactive ; seule l'encre s'atténue (`inkMuted`). Le mot d'état reste. Test : `commande_salle_test.dart`, groupe « bascule inerte ». |
+| Navigation du panneau enseignant : flèches disparues pendant une reconnexion | `BarrePrecedentSuivant` reçoit `actives` : **borne atteinte** = rappel nul = la flèche disparaît ; **commande momentanément inactive** = la flèche reste, inerte et atténuée. Le panneau passe `actives` au lieu d'annuler les rappels. Tests : `barre_precedent_suivant_test.dart` (cas `actives == false`, et borne maintenue) et `salle_enseignant_test.dart` (reconnexion). |
+| Exhaustivité de la navigation (règle `nav-a-libelle` trop étroite) | La règle voit maintenant toute clé de libellé nommée précédent ou suivant hors des arguments de `BarrePrecedentSuivant`, et tout `AppIcons.suivant` hors du composant. Sites vérifiés à la main et admis (liste dans `tool/verifier_revue.dart`) : `t.foyer.ajout.suivant` (étape de formulaire), `t.dossiers.file.suivants`, `suivantAnnonce`, `suivantsErreur` (pagination de liste « Charger les dossiers suivants »), `t.enseignant.cahier.devoirPrecedent` (devoir de la séance d'avant). Sites migrés : `mushaf_page`, `panneau_enseignant`, `barre_support`. Les chevrons de ligne (`AppIcons.chevron`) et « Retour » ne sont pas des navigations de pages. |
+| Action lourde « couper le micro de toute la classe » : preuve manquante | Commande : `git grep -niE "muteAll\|mute_all\|couperTous\|micro.*(tous\|toute la classe)\|(tous\|toute la classe).*micro\|setMicrophoneEnabled.*all\|muteParticipant\|mutePublished" -- lib test` (hors fichiers générés). Résultat : aucune occurrence dans `lib` ; une seule dans `test`, un commentaire sans rapport (`politique_observation_test.dart` : « micro, camera, publication data et admission : tous fermes »). L'action n'existe pas, donc aucune confirmation à poser ; si elle est créée, elle passera par `ConfirmDestructive`. |
+
+### Décidé par délégation le 09/10 : mot d'état au-delà de 130 % de texte
+
+Dans une rangée compacte et au-delà de 130 % d'échelle de texte, le mot d'état d'une bascule passe en infobulle et dans la voix du lecteur d'écran. Il ne reste alors que deux signaux visibles (disque plein ou contour, icône), plus le mot parlé : « jamais la couleur seule » reste vrai, mais les trois signaux cumulés visibles ne tiennent pas. Cause mesurée : à 200 % sur 390 px, deux lignes de mot par commande ne tiennent plus dans la hauteur du téléphone (`salle_secours_test`, aucun débordement exigé). Choix consigné, sans blocage : dégradation acceptée sur ce seul palier, mot toujours lu à voix haute et en infobulle. Alternative écartée : une rangée de commandes sur deux lignes à ce palier, au prix d'un dock plus haut. Décidé par délégation le 09/10 (DIR-REP-1, aucune question au directeur) : le choix provisoire devient la règle de ce seul palier (mot parlé et en infobulle, disque plein ou contour, icône) ; la rangée sur deux lignes est écartée, parce qu'elle déborde aux mesures du paragraphe suivant.
+
+**Contradiction levée, décidé par délégation le 09/10 (DIR-REP-1 ; relevée à INTEG-RC-1, 03/10/2026).** La décision déléguée du 02/10/2026 (`DECISIONS_DELEGUEES_2026-10-02.md`) dit « le mot d'état reste » au-delà de 130 % (WCAG 1.4.1). Le code ne l'applique pas encore : `CommandeSalle` masque le mot d'une bascule dans une rangée compacte au-delà de 130 %, et avec MA-CMD-1 (demande du directeur, « des flèches et sans texte, compacte en bas ») toutes les commandes du dock sont compactes en Mode Accessibilité. `salle_ma5_test.dart` (×2) vérifie aujourd'hui ce comportement provisoire, pas la décision. Essai mesuré en gardant le mot visible dans la rangée compacte : en Mode Accessibilité à 390 px et ×2, en-tête 152 + commandes 140 = 292, au-delà de la limite de 30 % de MA-CMD-1 (253) ; salle de l'enseignant à 390 px et ×2 (`salle_secours_test`, `salle_secours_bandeau_test`), débordement de 34 à 51 px ; panneau Élèves à 320 px et ×2, 22 px. L'essai n'est donc pas livré. Options : (a) le mot reste et le dock passe sur deux rangées ou le support cède de la hauteur (MA-CMD-1 à relâcher) ; (b) MA-CMD-1 prime en Mode Accessibilité et la décision du 02/10 est reprise par une décision datée. Décidé par délégation le 09/10 : (b), option la plus prudente, la seule qui ne déborde sur aucun écran mesuré ; le mot reste lu à voix haute et en infobulle, et cette ligne est la décision datée qui reprend celle du 02/10 sur ce seul palier. `salle_ma5_test.dart` (×2) vérifie donc la règle.
+Limites connues des contrôles (heuristiques de texte) : `cartes-collees` lit le code (`tool/revue_cartes.dart`, qui reconnaît aussi `ElementEchelonne`, les `itemBuilder` à plusieurs `return`, les `child` ternaires, les séparateurs conditionnels, les éléments `if` facultatifs et les boîtes peintes par `.decoration(` nommées `Carte...`, et ne baisse plus à 8 le minimum d'une liste `separated`) : cartes voisines, boucles `for` et `.map`, variables et méthodes qui rendent une carte, widgets dérivés, listes nommées posées dans `children:`, `ListView.builder` et `.separated`, boîtes peintes à la main ; il ne voit pas une carte construite par un appel dynamique ni un `GridView` de widgets variables (les cadres vidéo de la salle, à 8, en font partie : flux média plein cadre, sans marge ni action, donc pas des cartes ; le panneau d'élèves de la salle, lui, passe à 16) ; `bouton-recompose` ne voit que les boutons Material, `InkWell`, `GestureDetector` et un `Pressable` qui peint lui-même fond arrondi et `Text`. Ce que ces contrôles ne voient pas se mesure par les tests de géométrie et par les captures à 320 px et 1440 px.
+
+## Lot l1-cartes : CARTES-ECART-1 (K-55) et HIER-1
+
+Branche `corrections/l1-cartes`, base `corrections/revue-directeur-2026-10` ad0e2c6. Cause commune : le contrôle d'origine ne voyait que 5 appels `StatTile` (tous dans une liste posée dans un `Wrap` à 12) ; les cartes collées du directeur étaient ailleurs, dans des piles de `SettingRow` sans écart et des listes à 4, 8 ou 12.
+
+**CARTES-ECART-1 (K-55).** Écart minimal fixé à 16 (`Ecart.vLg`, celui des écrans du tuteur), 8 pour des pastilles de choix, jamais 0, 4, 8 ou 12 entre deux cartes de contenu.
+
+| Mesure | Avant | Après |
+|---|---|---|
+| Cas vus par le détecteur étendu (`cartes-collees`) | 46 | 0 |
+| dont cartes collées (écart 0) | 31 | 0 |
+| dont cartes à écart insuffisant (4, 8, 12) | 15 | 0 |
+| Fichiers concernés | 16 (15 écrans, 1 composant du core : `ChoiceCardGroup`) | 0 ; `SettingRow` gagne le rendu à plat |
+| Tests de géométrie sur écrans réels (320 et 1440 px, texte ×1 et ×2, clair et sombre) | 5 échecs sur 5 (tableau de bord, réglages, compte, profil, `ChoiceCardGroup`) | 0 échec |
+| Socle `cartes-collees` | 5 lignes | 0 |
+
+Composants créés : `PileCartes` (cartes indépendantes, 16 au moins, assertion), `CarteGroupee` (une carte, sections à filet `FiletCarte`), `CarteLignes` (une carte de lignes `SettingRow` et `ConfigLigne...`, rendues à plat via `LigneDansCarte`). `GroupeReglages` reste le composant des rubriques à icône. Écrans convertis : réglages et portail du compte, profil personnel, profil enfant, hub Compte tuteur (`espaces_compte`), réglages de l'enfant, réglages d'observation, trois pages de configuration de la direction, tableau de bord de la direction, attribution, demandes, offres de parcours, avant et après cours, navigation du Coran. `ChoiceCardGroup` passe de 12 à 16.
+
+**Relecture CARTES-ECART-1 (exhaustivité).** Le détecteur laissait passer des piles à moins de 16 : `ElementEchelonne` n'était pas une enveloppe reconnue, les listes `separated` abaissaient le minimum à 8, un `build` à variables avant le `return` n'était pas dérivé, un `child` ternaire, un `itemBuilder` à plusieurs `return`, un séparateur conditionnel, une carte suivie d'un `if` et une boîte peinte par `.decoration(` n'étaient pas vus. Détecteur corrigé, un test par angle mort (`test/tool/revue_cartes_test.dart`), dépôt relevé de nouveau : 5 cas avant correction, 0 après.
+
+| Écran | Avant | Après | Garde de géométrie |
+|---|---|---|---|
+| Bibliothèque de ressources (`surface_bibliotheque.dart`) | 12 | 16 | `bibliotheque_page_test.dart`, 320 et 1440 px |
+| Attribution, enseignants proposés (`attribution_page.dart`) | 8 | 16 | `attribution_admin_test.dart`, 700 et 1400 px |
+| Catalogue de classes (`catalogue_classes_page.dart`) | 12 | 16 | `catalogue_classes_test.dart`, 320 et 1440 px |
+| Profils de connexion élève (`eleve_connexion_page.dart`) | 12 en colonnes et en rangées | 16 | `eleve_connexion_test.dart`, 320 et 1440 px |
+| Panneau d'élèves de la salle (`panneau_eleves.dart`) | 4 ou 8 | 16 | `panneau_eleves_test.dart`, trois gabarits |
+| Galerie vidéo de la salle | 8 | 8 (non carte : flux média plein cadre, sans marge ni titre ni action) | |
+
+**HIER-1.** Un niveau de texte par rôle, chaque niveau strictement plus grand que le suivant (`lib/core/theme/app_typography.dart`).
+
+| Défaut | Avant | Après |
+|---|---|---|
+| Accueil public, 320 px : marque / titre | 36 / 32 (la marque dépassait le titre) | 22 / 32 |
+| Accueil public, 1440 px : marque / titre | 36 / 36 (même taille) | 22 / 36 |
+| Connexion, récupération, attente, dépôt de pièce, démarrage (`MarquePage`, 6 emplacements) | marque 36 | marque 22 |
+| `SectionHeader` (49 emplacements hors galerie) / titre d'`EntetePage` sur téléphone | 28 / 28 | 22 / 28 |
+| Échelle enfant : `headlineSmall` / `titleLarge` | 32 / 32 | 32 / 28 |
+| Échelle enfant : `headlineMedium` / `headlineSmall` | 32 / 32 | 34 / 32 |
+| Échelle enfant : `titleMedium` / corps | 18 / 20 (titre sous le corps) | 22 / 20 |
+| Titres de section et de ressource posés en `headlineSmall` sous un titre d'écran de même rang | 2 (Journée « À terminer », détail de ressource) | 0 |
+| `test/theme/hierarchie_titres_test.dart` sur la base | 8 échecs sur 14 | 0 échec |
+
+Règle écrite : `lib/CLAUDE.md`, « Hiérarchie de titres stricte » ; garde : `verifierHierarchie` (`test/support/garde_interface.dart`).
+
+Captures avant et après, 320 px et 1440 px : `docs/current/captures/l1-cartes/avant` et `apres` (réglages du compte, tableau de bord de la direction, accueil public).
+| `onglets-defilants` (nouveau, ONGLETS-1) | 4 détections de composant, soit 14 écrans (13 pages) servis par la barre défilante `SousNavigationDomaine`, 2 rangées de pastilles qui défilent (`surface_bibliotheque.dart`, `mushaf_page.dart`), 1 groupe de puces de section (`selecteur_ressources.dart`, non défilant, converti aussi) | 0 |
+| `verifier_jetons` | 36 | 36 (aucune nouvelle) |
+
+Limites connues des contrôles (heuristiques de texte) : `cartes-collees` ne voit que des appels voisins dans une liste `children` sans `spacing:` (pas les `ListView.builder` sans séparateur) ; `bouton-recompose` ne voit que les boutons Material, `InkWell`, `GestureDetector` et un `Pressable` qui peint lui-même fond arrondi et `Text`. Ce que ces contrôles ne voient pas se mesure par les tests de géométrie et par les captures à 320 px et 1440 px.
+
+## ONGLETS-1 : sections, onglets et pilules qui défilent (01/10/2026)
+
+Constat du directeur : une rangée d'onglets qui défile ressemble à des diapositives, on ne devine pas qu'elle cache des sections et il faut défiler de gauche à droite pour les atteindre.
+
+Règle (composant unique `SelecteurSection`, `lib/core/widgets/selecteur_section.dart`, bascule automatique selon le nombre de sections, la largeur disponible et l'échelle de texte) :
+
+| Cas | Rendu |
+|---|---|
+| 2 à 4 sections sur téléphone (moins de 600 px) et chaque mot tient dans sa part de largeur | contrôle segmenté pleine largeur (`ControleSegmente`), un libellé trop long passe à la ligne |
+| 5 sections et plus sur téléphone, ou un mot qui ne tient pas dans sa part (texte ×2, 320 px) | menu déroulant (`MenuFiltre` en mode `selecteurDeSection`) : section courante visible, liste complète au toucher avec coche sur la courante |
+| Tablette et ordinateur, 7 sections au plus | contrôle segmenté en ligne, largeur naturelle, aligné au début (droite en arabe), si tout tient en une ligne |
+| Plus de 7 sections | menu ; la page est à signaler (la découper), pas à découper dans le composant. Pages concernées au 02/10/2026 : aucune (maximum 5, Pédagogie) |
+
+Sources UX (consultées le 02/10/2026) :
+
+- Material Design 3, « Tabs » et « Segmented buttons » (m3.material.io) : des onglets fixes pour un petit nombre de destinations de même niveau, tous visibles ; des onglets défilants seulement quand il y a beaucoup de catégories, et jamais en remplacement d'un choix exclusif de peu d'options ; le bouton segmenté sert aux choix exclusifs de 2 à 5 options.
+- Apple Human Interface Guidelines, « Tab bars » et « Segmented controls » (developer.apple.com/design/human-interface-guidelines) : une barre d'onglets pour 5 destinations au plus sur téléphone ; un contrôle segmenté pour un petit nombre de vues d'un même contenu ; au-delà, un menu (pull-down) qui nomme la sélection.
+- Nielsen Norman Group, « Hidden navigation » et reconnaissance plutôt que rappel (nngroup.com) : ce qui est caché hors de la vue n'est pas découvert ; garder visible ce qui permet de se repérer.
+- WCAG 2.2 AA, critère 1.4.10 (Reflow) : aucun défilement à deux dimensions à 320 px ; critère 2.5.8 (taille de cible) : cible de 24 px au moins, 48 ici.
+
+Consigne du directeur appliquée : jusqu'à 4 sections sur téléphone, tout visible sans défilement ; au-delà, menu déroulant qui affiche la section courante et la liste au toucher ; sur grand écran, en ligne si ça tient.
+
+Écrans convertis (avant / après) :
+
+| Écran ou composant | Avant | Après |
+|---|---|---|
+| `SousNavigationDomaine` : Pédagogie (5 pages), Configuration (3 pages, 4 avec la politique KYC), Personnes (2), Sécurité et audit (2) : 14 emplacements | `TabBar` défilant | `SelecteurSection` (menu à 5 sur téléphone, segmenté à 2 ou 3 si les mots tiennent, en ligne sur grand écran) |
+| Mode de lecture du Coran (`mushaf_page.dart`) | 3 pastilles dans une rangée qui défile | `SelecteurSection` (3 sections) |
+| Supports de la salle enseignant (`selecteur_ressources.dart`) | 3 puces de section qui passent à la ligne, sans état annoncé comme groupe exclusif | `SelecteurSection` (3 sections) |
+| Filtres de type de la bibliothèque (`surface_bibliotheque.dart`) | 5 pastilles de filtre multiples dans une rangée qui défile, filtres cachés | pastilles qui passent à la ligne (`Wrap`), aucun filtre caché (ce sont des filtres cumulables, pas des sections) |
+
+Hors règle, signalés : `SelecteurProfils` (avatars des profils élèves en rangée qui défile, choix d'une personne et non d'une section) ; `TeachingDock` (barre d'outils de la salle, défilante quand la place manque, pas des sections).
+
+Effet sur le banc d'accessibilité AD-11 : les quatre cas de la politique KYC (320 px, 390 px à 200 %, 1280 px à 400 %, Tab à 320 px), marqués « restes bloqués » parce que le libellé long de l'onglet était coupé, passent maintenant ; `_restes` est vide et l'exemption « hors barre d'onglets » du contrôle de reflux est retirée.
+## Pastille d'état de séance (ON-AIR-1, ANNUL-VIS-1)
+
+Demande du directeur (01 et 02/10/2026) : une séance en cours et une séance annulée se reconnaissent au premier coup d'œil, partout où une séance apparaît avec un statut, tous rôles. Partie interface seulement : l'état « en direct » reste calculé côté serveur, les notifications temps réel (« Votre classe est ouverte : rejoignez-la ») et leur délai mesuré sont hors de cette étape.
+
+Cause : chaque écran posait à la main une `StatusPill` (disque et mot) ou un point de couleur, sans battement pour « En direct », et la carte annulée du tuteur prenait tout le fond `washAlert`. Correction : un composant partagé unique, `lib/core/widgets/pastille_etat_seance.dart`.
+
+| Élément | Règle | Source des valeurs |
+|---|---|---|
+| `PastilleEtatSeance(enDirect)` | pilule douce `washSuccess`, point de statut qui bat doucement, puis reste fixe | `AppMouvement.pulsationDirect` (1500 ms), `pulsationCourbe` (`easeInOut`), `battementsDirect` (3) |
+| Réduire les animations | point fixe d'emblée, aucun halo, le mot « En direct » reste | `AppMouvement.mouvementReduit` |
+| `PastilleEtatSeance(annulee)` | pilule `washAlert` (le ton d'alerte des jetons, aucun rouge inventé), icône d'annulation (`AppIcons.interdit`), mot « Annulée » | `palette.washAlert`, `pointsStatut` |
+| `TexteHeureSeance` | heure barrée et atténuée (`inkMuted`), annoncée « Annulée : {valeur} » au lecteur d'écran (formule neutre : heure, plage ou date), une seule annonce par carte (`annoncer`) | `palette.inkMuted` |
+| `surfaceCarteSeance` | carte annulée sur `surfaceSunken`, jamais une opacité (le texte garde son contraste) | `palette.surfaceSunken` |
+| `LigneRaisonSeance` | une ligne : pourquoi et, quand la donnée existe, la suite (« Aucun remplaçant trouvé · séance non facturée ») ; rien n'est inventé ; sans motif connu, « Motif non communiqué » | clés `etat.raisonEtSuite`, `etat.motifNonCommunique` |
+
+Nouveaux jetons de mouvement (aucun jeton existant ne convenait : `pulsation` vaut 1,2 s et est réservée à l'imminence ELV-02) : `AppMouvement.pulsationDirect`, `AppMouvement.battementsDirect`, `AppMouvement.pulsationCourbe`, `AppMouvement.ampleurHaloDirect` (1,2, multiple du diamètre) et `AppMouvement.opaciteHaloDirect` (0,45). Les deux derniers étaient des littéraux dans le widget : ils sont dans les jetons de mouvement, documentés ici (`docs/current` n'a pas de fichier `design-tokens.md` ; celui de `docs/archive/` est un historique qu'on ne modifie pas).
+
+Choix à connaître : le battement s'arrête après trois cycles (4,5 s), sous les 5 s au-delà desquelles WCAG 2.2.2 exige une commande d'arrêt, comme le `PointRappel` de K-45. Pour un battement sans fin, il suffit de remplacer `battementsDirect` ; le test `dit le mot et bat doucement, puis reste fixe` est alors à adapter.
+
+Emplacements recensés (une séance apparaît avec un statut) et convertis au composant :
+
+| # | Emplacement | Rôle | « En direct » | « Annulée » |
+|---|---|---|---|---|
+| 1 | `ChildCard` (accueil du tuteur) | tuteur | converti | converti, carte atténuée |
+| 2 | Accueil élève (`accueil_eleve_page`) | élève | converti | converti |
+| 3 | Ma journée, carte « Séance en direct » (`journee_page`) | enseignant | converti | |
+| 4 | Ma journée, cours annulé du jour (`_CarteCoursAnnule`, avant les autres alertes) | enseignant | | converti : pastille, horaire barré, surface enfoncée, ligne « Motif non communiqué » |
+| 5 | Ma journée, carte de séance avec absence « Séance annulée » (`PastilleAbsence`) | enseignant | | converti : horaire barré, surface enfoncée, « Aucun remplaçant trouvé · séance non facturée » |
+| 6 | Carte de séance de la Classe (`carte_seance_classe`) | tuteur | converti | converti, heures barrées, carte atténuée |
+| 7 | Planning de la classe (`planning_classe_page`) | tuteur | converti | converti, heures barrées |
+| 8 | Dernière séance (`ligne_derniere_seance`) | tuteur | converti | converti, date barrée |
+| 9 | Carte de séance de l'Espace Classe (`carte_session`, `EmplacementEntreeVue`) | élève, tuteur, enseignant, adulte | converti | converti, heures barrées, carte atténuée |
+| 10 | Mes groupes (`carte_groupe`) | élève, enseignant, adulte | converti | |
+| 11 | Barre « Cours en cours » (`barre_cours_en_cours`) | enseignant, élève | converti | |
+| 12 | Salle d'observation (`panneau_observation_tuteur`) | tuteur | converti | |
+| 13 | Entête de la salle du contrôleur (`salle_page`, 2 appels) | contrôleur | converti | |
+| 14 | Mission du contrôleur (`controle_page`) | contrôleur | converti | |
+| 15 | Sélecteur de profils (`selecteur_profils`, point) | tuteur | converti (point qui bat) | converti : `PointAnnulation` (icône d'annulation à la place du point) et mot |
+| 16 | Suivi de l'élève (`suivi_eleve_page`) | élève | | converti |
+| 17 | Historique, liste (`composants_historique`) | tuteur | | converti, horaire barré |
+| 18 | Historique, détail d'une séance (`detail_seance_page`) | tuteur | | converti : pastille, horaire barré (`LigneCleValeur(annulee)`), carte enfoncée |
+
+Non convertis, et pourquoi : la pastille de connexion de la salle (`chrome_seance`, « En ligne » est l'état du lien, pas celui de la séance) ; les statuts d'évaluation de la direction (`evaluations_page`, l'évaluation annulée n'est pas une séance) ; les écrans de démonstration (`features/demo`) rendent les vrais composants.
+
+Contrôle automatique : `etat-seance-pastille` (`tool/verifier_revue.dart`) échoue sur toute `StatusPill` qui porte le mot « En direct » ou « Annulée » hors de `pastille_etat_seance.dart`.
+
+Chiffres :
+
+| Mesure | Avant | Après |
+|---|---|---|
+| `StatusPill` posées à la main avec le mot « En direct » ou « Annulée » (contrôle `etat-seance-pastille`) | 6 | 0 |
+| Emplacements recensés, tous états | 18 | 18 convertis |
+| Pastilles « En direct » qui battent | 0 | 14 appels (13 emplacements) |
+| Emplacements « Annulée » au composant (icône d'annulation, heure barrée là où une heure s'affiche, carte atténuée là où il y a une carte) | 0 | 11 emplacements |
+| `verifier_jetons` | 36 | 36 |
+| `cartes-collees`, `bouton-recompose`, `libelle-ambigu`, `mot-interne`, `erreur-sans-action` | 0 nouvelle | 0 nouvelle |
+
+### Correction après relecture (ON-AIR-1, ANNUL-VIS-1)
+
+| Point relevé | Correction |
+|---|---|
+| Annonce « Prévue à … » posée sur des dates et des métas | clé `etat.annuleeValeur` (« Annulée : {valeur} »), paramètre `annoncer` : une seule annonce par carte (planning, carte de séance de l'Espace Classe) ; test sur une date |
+| « En direct » détecté en comparant des mots traduits (`salle_page`) | `_etatDuLien` rend un type (`EtatPastilleSeance?`) ; le composant se choisit sur ce type |
+| Annulée : emplacements à la pastille seule | journée enseignant (carte de séance et cours annulé du jour), détail d'historique, sélecteur de profils, `ChildCard` (pourquoi et suite) : convertis |
+| `LigneRaisonSeance` presque inutilisée | branchée dans `ChildCard`, la carte de séance de l'Espace Classe, la journée enseignant ; la suite est passée là où la donnée existe |
+| Halo en littéraux dans le widget | `AppMouvement.ampleurHaloDirect`, `AppMouvement.opaciteHaloDirect` |
+| Tests | rendus testés : journée enseignant, carte famille, carte de séance de l'Espace Classe, sélecteur de profils, `LigneCleValeur` |
+
+**Dépendances de donnée (BR-1), consignées plutôt que contournées** :
+
+- Le serveur ne rend ni le motif d'une annulation ni sa suite (remplaçant cherché, facturation) pour une séance annulée par l'administration. Les écrans disent « Motif non communiqué » ; ils n'inventent rien. Seul le cas « absence de l'enseignant sans remplaçant » a sa phrase complète, parce que l'état `aucunRemplacant` puis `seanceAnnulee` existe déjà côté absence. Quand le contrat exposera motif et suite, ils se branchent sur `LigneRaisonSeance(raison, suite)` sans autre changement.
+- `ChildCard` : `EnfantSeanceAnnulee(motif, propose)` n'est construit aujourd'hui que par la galerie ; l'accueil du tuteur passe par `carte_seance_classe`, dont la ligne d'état est la raison.
+
+**Exceptions justifiées, décidé par délégation le 09/10 (DIR-REP-1)** : la carte « Prochaine séance » de la journée enseignant ne montre jamais une séance annulée (`prochainCours` l'écarte) : le cas est porté par la carte du cours annulé du jour. L'horaire du détail de séance du suivi du foyer est barré mais la carte n'a pas de ligne « pourquoi » (la phrase « La séance a été annulée. » reste, sans motif en donnée).
+
+**ON-AIR-1 reste partiellement faite.** Livré : la pastille « En direct » partout, avec son battement borné. Non livré : la notification « Votre classe est ouverte : rejoignez-la » (une par séance, délai mesuré), le bandeau si l'application est ouverte, le lien profond vers la salle, et la mise à jour en temps réel. Tout cela dépend de BR-1 (serveur, notifications, canal temps réel) ; l'étape ne doit pas passer en « fait » avant.
+| `nav-recomposee` (MA-NAV-1, barres hors des coquilles du core) | 0 | 0 |
+
+### MA-NAV-1 : barre de navigation du Mode Accessibilité
+
+| Mesure | Avant | Après |
+|---|---|---|
+| Destinations de l'élève dans la barre (Mode Accessibilité) | 4 | 4 (Accueil, Ma classe, Coran, Mon espace) : le retrait du Coran (3 destinations) est annulé par la décision déléguée du 02/10/2026 (`DECISIONS_DELEGUEES_2026-10-02.md`), appliquée à INTEG-RC-1 |
+| Présentations de la barre basse | 1 (standard dans les deux modes) | 2 (standard, guide) |
+| Hauteur d'un onglet (guide) | environ 64 | 72 au moins |
+| Icône (guide) | 24 | 32 |
+| Libellé du rail replié (guide) | infobulle ou 12 pt borné | toujours visible, 14 pt, trois lignes |
+| Signaux de l'onglet actif | 3 (encre d'accent, icône pleine, soulignement de 3) | 3 dont un fond plein (fond, icône pleine, gras) |
+| Barres de navigation recomposées hors du core | 0 | 0 (contrôle `nav-recomposee`) |
+
+Barres vérifiées : barre basse, rail, barre latérale de `NavShell` (tous rôles) ; `AdminShell` (rôle adulte, hors Mode Accessibilité, déjà lié à `AppMetriques.cibleTactile`).
+
+Limites connues des contrôles (heuristiques de texte) : `cartes-collees` ne voit que des appels voisins dans une liste `children` sans `spacing:` (pas les `ListView.builder` sans séparateur) ; `bouton-recompose` ne voit que les boutons Material, `InkWell`, `GestureDetector` et un `Pressable` qui peint lui-même fond arrondi et `Text`. Ce que ces contrôles ne voient pas se mesure par les tests de géométrie et par les captures à 320 px et 1440 px.
+
+## MA-NAV-1, corrections de relecture
+
+- Contrôle `nav-recomposee` : le motif lit maintenant les blancs (`\s*`) ; test `test/tool/verifier_revue_nav_test.dart`.
+- Contour du guide : constante nommée `NavShell.epaisseurContourGuide`.
+- Texte agrandi : plafond du guide relevé de 1,0 à 1,3 (`echelleTexteMaxGuide`), libellés sans ellipse ; test arabe à 320, ×2, RTL.
+- Preuve visuelle : `docs/current/captures/MA-NAV-1/` (`avant` = ad0e2c6, `apres` ; élève, clair/sombre, 320, 320 ×2, tablette, bureau ; harnais `test/capture/ma_nav1_capture_test.dart`).
+- Coran dans la barre de l'élève en Mode Accessibilité : la demande MA-NAV-1 de le retirer est annulée par la décision déléguée du 02/10/2026 (« le Coran reste », 4 destinations : Accueil, Ma classe, Coran, Mon espace ; une destination essentielle dans une académie de Coran). Appliqué à INTEG-RC-1 (03/10/2026). **Accord écrit du directeur à obtenir** : c'est l'annulation d'une demande qu'il avait faite lui-même ; il peut la reprendre par une décision datée. Le plafond 1,3 est un choix de conception.
+## CTA-FIN-1 : le bouton principal d'une séance selon son moment (02/10/2026)
+
+Demande du directeur (commentaire du 01/10) : le bouton d'une séance n'est jamais désactivé, il change de sens.
+
+| Moment | Bouton | Avant la correction |
+|---|---|---|
+| Avant l'ouverture de la salle | « Préparer la séance » | idem |
+| Salle ouverte, jusqu'à la fin et au-delà tant que la salle est ouverte | « Rejoindre la salle » (+ pastille « En direct » dès l'heure de début) | « Préparer l'entrée » |
+| Temps écoulé, cahier non déposé | « Remplir le cahier de transmission » + rappel « Obligatoire » | carte absente (« Aucune séance à venir »), cahier seulement dans « À terminer » |
+| Cahier déposé | « Voir le cahier » en lien discret | carte absente |
+| Séance annulée ou absence déclarée | « Voir la Classe » | idem |
+
+Cause corrigée dans le composant partagé : `lib/core/enseignant/cta_seance.dart` (fonctions pures `ctaSeance` et `seanceDeLaCarte`, fenêtre d'accès et grâce lues de la base, jamais redéclarées), `EmplacementEntree` (libellé enseignant unique pour la Journée et la fiche de la Classe), `EmplacementEntreeVue` (un bouton de bureau ne déborde plus de sa carte en texte agrandi).
+
+Chiffres (avant, après) : états du bouton de la carte « Prochaine séance » de l'enseignant, 4 libellés dont 1 hors des moments demandés, puis 5 états tous nommés ; libellés différents pour la même action « entrer en salle » côté enseignant, 2 (« Préparer l'entrée » en Classe, rien en Journée pendant le cours) puis 1 (« Rejoindre la salle ») ; débordements mesurés à 320 px en texte ×2 sur la carte de séance, 1 (en-tête nom et pastille) puis 0 ; débordements mesurés à 1440 px en texte ×2 (bouton « Remplir le cahier de transmission »), 1 puis 0 ; tests de transitions, 0 puis 20 (unitaires) et 25 (widget).
+
+Recensé, non repris ici (autre lot) : le bouton « Rejoindre » de l'élève hors ligne reste présent et inerte (`accueil_eleve_page.dart`, décision documentée dans le code), compté par `bouton-grise`.
+
+## PAGESHELL-200-1d : réserves de PAGESHELL-200-1c (05/10/2026)
+
+Branche `corrections/c2-pageshell-d`, issue de `corrections/revue-directeur-2026-10` (6e2c91c4). Statut : **testé localement** seulement ; ni staging, ni déploiement.
+
+**Décision (décidé par délégation le 05/10, règle DIR-REP-1, consigne la plus récente du directeur).** Sur téléphone à 200 % de texte, la page défile pour le reste. L'ancienne règle « barre entière au premier affichage à 200 % » (PAGESHELL-200-1) est remplacée ; écrit aussi dans `03_DESIGN_SYSTEM_ET_UX.md` (« Coquille de page et texte agrandi »). À 100 %, la barre reste entière au premier affichage quand la salle tient (test « barre entière au premier affichage », 390x844 et 414x896).
+
+| Réserve | Ce qui est fait | Preuve |
+| :--- | :--- | :--- |
+| 1. Vignettes cachées dans le défileur imbriqué | Plus de repère : tout le contenu de la zone (en-tête, support, vignettes) est le minimum utile ; `DefileurCorps` perd le paramètre `repere`. Au bout de la page : support, vignettes, barre. | `salle_observation_test`, groupe « PAGESHELL-200-1d : les vignettes défilent avec la page » (7 vues x LTR/RTL, 320 à 414 px, 100 et 200 %, standard et Interface guidée) : 14 échecs sur la base 6e2c91c4. `page_shell_hauteur_corps_test` : zone de 650 sans rien de caché. |
+| 2. `_hauteurMinSupport` non gardé | Pas redondant : avec « Agrandir », le support est seul dans la zone, sans défileur qui garantit sa hauteur. Gardé. | `salle_support_agrandi_test` (support réel, 320x568 et 360x640 à 200 %) : 3 échecs si le `minimumEtire` du téléphone revient à `AppTouchTarget.standard` ; groupe « support agrandi à sa hauteur lisible » : 2 échecs si celui de la carte large y revient. |
+| 3. Captures 1440 et 390x844 à 100 %, 320x568 à 100 % | `docs/current/captures/PAGESHELL-200-1d/` (16 PNG, haut et bout, clair, sombre, RTL, Interface guidée ; plus 390x844 et 320x568 à 200 % au bout), script archivé. | PNG ouverts : 1440 inchangé, barre au premier affichage ; 390x844 à 100 % tient sans défiler ; au bout, vignettes entières au-dessus de la barre. |
+| 4. Ligne du décompte qui débordait (6 px à 320x568 100 %, 1,3 px à 390x844 130 % guidée) | Déjà corrigé par PAGESHELL-200-1c (4a879cbd, `Wrap`). Groupe étendu au RTL et à 320x568 à 200 %, sans mot coupé. | Groupe « bandeau du décompte sans débordement » : 5 échecs avec le `compteur_visite.dart` de 397ef11d (6 ; 1,3 ; 31 ; 71 px). |
+| 5. `_vueForcee` jamais réévaluée à vue égale | Un corps forcé qui tient de nouveau sous la tête fixe fait reprendre la tête fixe à la fin de l'image, après revérification des sources et une fois les animations en cours finies (boîte de dialogue qui se referme). | `page_shell_hauteur_corps_test` : « un corps qui rapetisse… » et « sous une boîte de dialogue… » échouent sur la base. Sans l'attente des animations, `fin_visite_test` 844x390 casse l'arbre sémantique (2 échecs) ; sans la revérification, 1024x900 à 300 % oscille (`pumpAndSettle` expiré). |
+
+Contrôles : `dart analyze --fatal-infos` 0 ; `verifier_revue` 1550 (base 1550) ; `verifier_jetons` 39 (base 39). Aucun libellé touché. Champ serveur : aucun besoin.
+## SUPERPOS-1 : superpositions et zone de saisie (05/10/2026, branche `corrections/c2-superpos`)
+
+**Décisions prises par délégation le 05/10** (règle DIR-REP-1, aucune question au directeur) :
+
+- Écran non identifié par le commentaire : **audit de tous les écrans** de la branche commune où un bandeau, une pastille ou un élément flottant peut recouvrir un contenu à lire, et de tous les champs multilignes. Décidé par délégation le 05/10.
+- Un bandeau prend sa place dans le flux et pousse, ou se ferme ; jamais peint par-dessus. Le repère « Démonstration » devient une bande en tête, dans le flux ; **clavier ouvert, elle se ferme** (la place va au contenu), et revient clavier fermé. Décidé par délégation le 05/10.
+- Une seule zone de saisie multiligne dans le produit : `ZoneSaisie` (`lib/core/widgets/zone_saisie.dart`). Rayon, fond, filet et marges du thème ; étiquette au-dessus du champ (jamais flottante sur le filet) ; aide et erreur jamais coupées ; hauteur qui grandit avec le texte, bornée aux deux cinquièmes de la vue visible ; bouton d'envoi **intégré au champ et centré** en hauteur ; jamais grisé (absent tant que le champ est vide, sa place gardée, la raison écrite sous le champ). Décidé par délégation le 05/10.
+- Cartes côte à côte : quand un mot d'un libellé ne tient pas dans une carte (320 en texte double), les cartes s'empilent, pleine largeur, même anatomie. Décidé par délégation le 05/10.
+- **En-tête compact selon l'échelle HIER-1** (`EnteteCompact`, `lib/core/widgets/entete_page.dart`) : au-delà de 130 % de texte ou sous 600 de haut, le titre d'écran grandit avec le texte mais seulement jusqu'à un palier (2) au-dessus d'un titre de section (`titleLarge`) lui aussi agrandi, jamais sous la taille du thème ; le sous-titre descend d'un rang du corps (`bodyMedium`, toujours agrandi) et prend toute la largeur sous la rangée du titre ; quand le mot le plus long du titre ne tient pas à côté du disque retour et des actions, ceux-ci passent sur une rangée au-dessus ; un nom composé du titre (« Al-Badr ») ne se coupe plus après son trait d'union (en mode compact seulement : ailleurs la coupure au trait d'union de la typographie française, « es- / tu », est gardée et le texte rendu reste le texte donné). Le clavier ne compte pas (la structure ne bascule pas à son ouverture, même règle que `PageShell`). Décidé par délégation le 05/10.
+- Fil de discussion : le contexte compact ne redit plus la Classe et la date déjà écrites au titre (« Contexte joint à vos messages : séance de 17:00 ») ; quand la page entière défile (texte double, vue basse), l'arrivée montre la saisie et le dernier message, l'en-tête passant au-dessus (comme toute messagerie) ; la liste garde au moins la hauteur d'une bulle de deux lignes à l'échelle du texte (220 à 320 ×2, au lieu d'un minimum fixe de 96). Décidé par délégation le 05/10.
+- Lecteur du Coran du Mode Accessibilité (`CommandesMasquables`, arbitrage face à MA-CMD-1 du 02/10) : au toucher, MA-CMD-1 reste tel quel (les commandes passent par-dessus le bas du Mushaf quelques secondes, puis se ferment : « ou se ferme ») ; avec lecteur d'écran ou au clavier, elles ne se ferment jamais, donc elles passent **sous** le Mushaf, dans le flux (`placeReservee`). Le rendu du Coran n'est pas touché : seul son cadre raccourcit. Décidé par délégation le 05/10 (choix le plus prudent : la demande du 05/10 est la plus récente, MA-CMD-1 est gardé là où il ne recouvre rien en permanence).
+- Un seul point d'attention : un écran n'a qu'une zone pleine (l'action principale) ; les bandeaux (« Démonstration », hors ligne, alerte urgente) sont au registre doux et dans le flux. Décidé par délégation le 05/10 (règle existante du bandeau hors ligne, étendue au repère).
+
+**Méthode.** Test de non-chevauchement par rectangles (`verifierSansChevauchement`) à 320 ×2 en LTR et RTL, 390 et 1440, clavier ouvert (inset de 300) là où il y a une saisie ; mots entiers vérifiés par les boîtes de sélection de chaque mot ; garde de source : aucun `TextField` multiligne hors de `ZoneSaisie` (`test/core/widgets/zone_saisie_unique_test.dart`, 18 fichiers en défaut sur la base, 0 après).
+
+### Écrans et composants audités, verdict
+
+| Écran ou composant | Élément | Constat (avant) | Verdict après |
+|---|---|---|---|
+| Toutes les pages de l'aperçu (`RepereDemonstration`) | ruban « Démonstration » | ruban d'angle peint par-dessus : couvrait le bouton du compte (coque admin) à 320 ×2 et le début du titre en arabe | **corrigé** : bande en tête, dans le flux ; fermée clavier ouvert (sinon 14 px de débordement sous la feuille de refus à 320 × 640, clavier de 300) |
+| Échanges du contrôleur (`FilDiscussion`) | champ et bouton « Envoyer » | 134 px de débordement à 320 ×2 clavier ouvert ; bouton à côté du champ, grisé à vide ; étiquette flottante coupée | **corrigé** : `ZoneSaisie` avec envoi intégré et centré, `ColonneCorps` ; en-tête de contexte compact (une phrase) à texte agrandi ou vue basse |
+| Refus de dossier (admin, 02D) | motif | étiquette flottante en ellipse à 390 et 200 % | **corrigé** : `ZoneSaisie` |
+| Cahier de séance (enseignant) | position de reprise, objectif, devoir | reprise : texte qui défilait de côté sur une ligne, aide coupée « d'un rempla… » à 320 ×2 | **corrigé** : `ZoneSaisie` (touche « terminé », le texte passe à la ligne), aide entière |
+| Complément et observation du contrôleur | texte du document | étiquette flottante | **corrigé** : `ZoneSaisie` |
+| Signalement de besoin (fiche élève), signalement du Teaching Core, correction de présence, panneau d'après cours | champs multilignes | étiquettes flottantes, aides bornées à 2 lignes | **corrigé** : `ZoneSaisie` |
+| Administration : programmes, attribution, demandes, classes, progression, évaluations, qualité, diagnostics ; réglages de l'enfant | motifs et notes | champs de 2 lignes fixes, étiquette flottante | **corrigé** : `ZoneSaisie` |
+| Inscription, étape Genre (`ChoiceCardGroup` côte à côte) | radio en haut de carte | radio dans un `Stack`, par-dessus le disque de l'icône à 320 ; « hom / me » coupé à 320 ×2 | **corrigé** : radio sur sa ligne ; cartes empilées quand un mot ne tient pas |
+| En-tête de page (`EntetePage`), toutes les pages à en-tête riche | titre, sous-titre, disque retour | à 320 ×2, titre de 56 (« Dossiers à valider ») et sous-titre de 32 à côté du disque : l'en-tête prenait plus de la moitié de l'écran ; un titre long réduit à 43,5 (sous un titre de section agrandi, 44) et coupé « Al- / Badr » | **corrigé** : en-tête compact HIER-1 ; « Dossiers à valider » : titre 46, en-tête de 242 (38 % de 640) |
+| Fil des échanges à l'arrivée (320 ×2) | titre, contexte, liste, saisie | titre sur 4 lignes, contexte qui redisait Classe et date, une tranche de bulle, saisie sous la pliure | **corrigé** : contexte sans redite, saisie entière et dernier message lisible (200 au moins) à l'arrivée |
+| Lecteur du Coran, Mode Accessibilité (`CommandesMasquables`, `coran_accessibilite.dart`) | rangée de commandes en bas | posée par-dessus le bas du Mushaf ; toujours visible avec lecteur d'écran ou clavier, donc recouvrement permanent (390 ×2 : 80 px du Mushaf sous les commandes) | **corrigé** : dans le flux, sous le Mushaf, quand elle est toujours visible ; au toucher, MA-CMD-1 garde (par-dessus puis fermée) |
+| Feuille de demande des réglages de l'enfant (Interface guidée, 320 ×2) | colonne de la feuille | débordement de 256 (standard) à 710 px (guidée) : bouton d'envoi hors d'atteinte | **corrigé** : la feuille défile |
+| Aide du champ vide de `ZoneSaisie` | aide | « administratio / n… » à 320 ×2 (aide du fil du contrôleur) | **corrigé** : aide rendue sans coupure de mot |
+| Champs d'une ligne : invitation du conjoint, identité d'un profil élève, saisie du code | aides et erreurs bornées à 2 ou 3 lignes | à 320 ×2 : aide du courriel (« … rejoindre Rewayah. ») et aide de l'âge à l'ellipse ; « e- / mail » coupé dans l'erreur du courriel ; saisie du code : déjà entière | **corrigé** : bornes portées à `ZoneSaisie.lignesAideMax` (8), « e‑mail » insécable |
+| Bandeau hors ligne, bandeau d'observation, bandeau d'alerte urgente | bandeaux | déjà dans le flux (`PageShell`, `RewayahApp`) | conforme, non modifié |
+| Un seul point d'attention (repère, bandeaux, fil, zone de saisie) | zones pleines | repère « Démonstration » en `washAccent` (doux), bandeaux hors ligne et alerte au registre doux, alerte absente sous l'Accueil (D7) ; dans le fil, le seul élément d'accent est l'icône d'envoi, rendue seulement quand il y a un texte | conforme (lu dans le code et sur les captures, pas de test dédié) |
+| Cloche (point de notifications), sélecteur de profils (point d'état), tuiles vidéo d'observation (nom, micro), résultat de visite (badge) | pastilles | posées sur une icône, un avatar ou une image, jamais sur un texte | conforme |
+| Pastille « En direct », point de rappel | halo animé | halo translucide et bref, coupé en mouvement réduit | conforme (décoratif) |
+| Vignette de ressource (catalogue) | icône de type sur le monogramme | couverture décorative (exclue de la sémantique) | conforme |
+| Lecteur de QR (`scanner_page`) | barres sur le viseur | le viseur n'est pas un contenu à lire | conforme |
+| Anneau de focus (`Pressable`), grille bento | `PositionedDirectional` | hors de la cible, ou disposition sans recouvrement | conforme |
+
+Exception justifiée : le bandeau « Démonstration » disparaît clavier ouvert ; une capture prise clavier ouvert dans l'aperçu ne porte donc pas le repère.
+
+### Chiffres (base `6e2c91c4` → branche)
+
+| Mesure | Avant | Après |
+|---|---|---|
+| Fichiers avec un champ multiligne hors de `ZoneSaisie` (hors voies exclues) | 18 | 0 |
+| Débordement du fil à 320 ×2, clavier ouvert | 134 px | 0 |
+| Recouvrements mesurés (repère sur le bouton du compte ; radio sur l'icône à 320) | 2 | 0 |
+| Mots coupés mesurés (« hom / me », « rempla… ») | 2 | 0 |
+| En-tête « Dossiers à valider » à 320 ×2 (reprise) | titre 56, en-tête ≈ 340 (lu sur la capture) | titre 46, en-tête 242 (mesuré par test) |
+| Commandes du Coran sur le Mushaf, lecteur d'écran, 390 ×2 (reprise) | 80 px | 0 |
+| Feuille de demande des réglages de l'enfant, 320 ×2 (reprise) | 256 px (standard), 710 px (guidée) de débordement | 0 |
+| Textes tronqués ou mots coupés mesurés (reprise : aide du courriel, aide de l'âge, « e- / mail », « administratio / n… », « Al- / Badr ») | 5 | 0 |
+| `verifier_revue` | 1550 | 1550 ; reprise : 1548 avant, 1546 après |
+| `verifier_jetons` | 39 | 37 (les deux littéraux du ruban supprimé) |
+
+Tests ajoutés, tous en contre-épreuve réelle sur l'ancien code : `test/core/widgets/zone_saisie_test.dart`, `zone_saisie_unique_test.dart`, `choix_cote_a_cote_superpos_test.dart`, `test/features/demo/repere_demonstration_test.dart` (bande dans le flux, clavier ouvert), `test/features/controleur/echanges_controleur_test.dart` (contexte compact), `test/features/cahier/cahier_en7c_test.dart` (reprise à 320 ×2). Reprise du relecteur, chacun en contre-épreuve réelle sur la tête d'avant la reprise (`2b42d97d`) : `test/core/widgets/entete_compact_test.dart`, `test/features/controleur/echanges_compact_superpos_test.dart`, `test/core/accessibilite/coran_commandes_flux_superpos_test.dart` (3 cas sur 4 échouent avant ; le 4e garde MA-CMD-1 au toucher), `test/features/foyer/aides_champs_320_superpos_test.dart`, `test/features/reglages_enfant_test.dart` (feuille de demande, standard et guidée), `test/core/widgets/zone_saisie_test.dart` (aide du champ vide).
+
+Captures : `docs/current/captures/SUPERPOS-1/` (`avant` = base, `apres`), repère, fil (clavier fermé et ouvert), cahier, cartes Genre ; 320 ×2 clair, 320 ×2 sombre RTL, 390, 1440 ; script archivé `superpos1_capture_test.dart.txt`. Le clavier n'est pas peint par le moteur de test : sa zone apparaît vide. Reprise : `superpos1r_avant_*` (tête `2b42d97d`) et `superpos1r_apres_*` : en-tête « Dossiers à valider » 320 ×2 clair et sombre RTL ; fil à l'arrivée 320 ×2 clair, sombre RTL, 390, 1440 et **Interface guidée** 320 ×2 ; demande des réglages de l'enfant en Interface guidée 320 ×2 et 390 ; lecteur du Coran avec lecteur d'écran 390 ×2 et 320 ×2 ; invitation du conjoint 320 ×2 (erreurs) ; script archivé `superpos1_reprise_capture_test.dart.txt`. Les captures RTL posent le français en sens arabe : la ponctuation y passe en tête de ligne, c'est un effet du forçage, pas de l'écran. Limite assumée : à l'arrivée dans le fil à 320 ×2, le titre est passé au-dessus (on le voit en remontant) ; c'est le prix de la saisie visible.
+
+### Hors lot, relevé pour les autres voies (non touché)
+
+- **Messages, voie COM** (`origin/ui/com-msg`, `lib/features/com_messages`, `FilContextuel` sur `FilDiscussion`) : la branche garde l'ancienne rangée de saisie de `FilDiscussion` (champ à étiquette flottante + bouton « Envoyer » en toutes lettres à côté, aligné en haut, inerte à vide). C'est vraisemblablement l'écran que visait le directeur. Défaut : bouton hors du champ et non centré, bouton inerte (grisé) à vide, débordement à 320 ×2 clavier ouvert. Correction disponible dans le core de cette branche (`ZoneSaisie`, `FilDiscussion`) ; la fusion demandera de reporter l'enregistrement vocal ajouté par COM dans la nouvelle rangée.
+- **Finance** (`origin/ui/finance-v1`, lu sans rien toucher) : aucun élément flottant ni champ multiligne dans `admin_finance`, `compte/paiements_page.dart`, `ligne_finance`, `badge_periode_financee` ; les champs numériques des politiques commerciales (`politiques_commerciales.dart:1386`) portent leur libellé au-dessus, en texte : conforme.
+- **Comptable** (`origin/ui/comptable-v1`) : `contractuels/nouvelle_obligation_page.dart:462-482`, champ « objet » : `labelText` d'une seule ligne posé sur le filet (`FloatingLabelBehavior.always`), donc étiquette flottante par-dessus la bordure et en ellipse à 320 ×2 ; champ « justificatif » (`:483-490`) : étiquette composée qui descend dans le champ vide et remonte sur le filet au focus. Correction proposée : étiquette au-dessus du champ, comme `ZoneSaisie`. La barre de sélection des paiements (`paiements/barre_selection.dart`) est dans la zone d'action de `PageShell`, dans le flux, et masque « Payer la sélection » au lieu de la griser : conforme. Aucun `Stack` ni `Positioned` dans `lib/features/comptable`.
+- **Salle, voie TB** (relevé dans cette branche, non touché) : `salle/salle_page.dart:1475-1495`, la vignette de soi (`PositionedDirectional`, bas-fin, 16 de marge) est posée dans un `Stack` sur la galerie des tuiles distantes : elle recouvre le coin bas-fin de la dernière tuile, là où vivent le nom et l'état du micro de ce participant ; `tc_classe_live/scene_classe.dart:148-175`, étiquette nom et « micro coupé » posée sur l'image vidéo (usage admis pour une image), mais le nom y est en `TextOverflow.ellipsis` : un nom plus large que la tuile est tronqué (non mesuré ici) ; `salle_seance/salle_seance.dart:161`, `CommandesMasquables` sans `placeReservee` : avec lecteur d'écran ou clavier, le dock recouvre en permanence le bas du support et de la vidéo (même défaut que le Coran, correction disponible : passer `placeReservee: true`) ; `salle_seance/panneau_eleves.dart:290-298`, pastille d'état sur la photo de l'élève : sur une image, pas sur un texte, conforme.
+- **Coquille, barre du bas en Interface guidée** (relevé sur la capture `superpos1r_apres_fil_320x2_guidee.png`, non touché, hors du périmètre superpositions) : à 320 ×2 en Interface guidée, les libellés de la barre du bas du contrôleur se coupent dans le mot (« Contrôl / e », « Historiq / ue », « Échang / es »). À relayer à la voie COUPE-MOTS (`nav_shell.dart`).
+- **Champs d'une ligne à étiquette flottante** (thème, `InputDecorationTheme` : non touché, thème interdit à ce lot) : l'étiquette d'un champ rempli remonte sur le filet (« Adresse e-mail » de l'invitation, capture `superpos1r_apres_invitation_320x2.png`). Pour les champs multilignes, `ZoneSaisie` la pose au-dessus ; pour les champs d'une ligne, la règle reste à décider dans la voie du thème.
+- `PageShell` et rangée de filtres (FILTRES-1) : non touchés. Le titre simple de `PageShell` (sans retour, sans action, `headlineLarge`) n'est pas passé par `EntetePage` : il reste à 36 ×2 à 320 ×2 ; à relayer au porteur de `page_shell.dart` (appeler `EnteteCompact.echelleTitre`).
+
+Statut : **présent dans le code, testé localement**. Ni testé sur staging, ni déployé.
+## SUPERPOS-1b : réserves de la relecture SUPERPOS-1-R2 (09/10/2026, branche `corrections/c2-superpos-b`)
+
+Branche issue de `corrections/revue-directeur-2026-10` (tête commune `5a52ff30`). Réserves traitées : 1, 2 et les deux points relayés par l'ordre de l'étape (bouton grisé des réglages, aides des champs d'une ligne). Réserves 3 (« ? » orphelin du titre du motif, ponctuation de `fr.i18n.json`, voie COUPE-MOTS-4), 4 (barre du bas en guidée, `nav_shell.dart`) et 5 (titre passé au-dessus à l'arrivée dans le fil, limite assumée) : non touchées, hors périmètre.
+
+**Décisions prises par délégation le 09/10** (règle DIR-REP-1, aucune question au directeur) :
+
+- Demande des réglages de l'enfant (`lib/features/reglages_enfant/reglages_enfant_page.dart`) : le bouton « Envoyer la demande » n'est plus inerte quand le motif manque. Motif des formulaires du produit (cahier de séance, connexion, cartes de la classe) : le bouton reste actif ; tant que le motif est vide, la phrase calme « Un motif est nécessaire : c'est lui qui permet de trancher. » est l'explication sous le champ (`ZoneSaisie.explication`) ; un appui sans motif la passe en erreur (`ZoneSaisie.erreur`, encre d'alerte du thème, annoncée par le lecteur d'écran) et ramène le focus au champ ; un appui sans durée choisie (demande de durée ou de minimum payable) écrit sous les choix « Choisissez une durée, ou écrivez-en une autre en minutes. ». Rien ne part tant qu'il manque quelque chose. Décidé par délégation le 09/10.
+- Nouveau libellé `tuteur.reglages.demandeValeurRequise` (sans guillemets ni ponctuation à risque, pour ne rien laisser orphelin à 320 ×2), déclaré dans `tool/libelles_sources.json` : rédigé par l'agent, validé par délégation le 09/10 (DIR-REP-1). Les deux libellés de SUPERPOS-1 qui portaient encore « à faire valider par le directeur » sont passés à la même mention. Décidé par délégation le 09/10.
+- Erreur sous un champ d'une ligne (saisie du code de l'appareil élève) : un mot composé ne se coupe plus après son trait d'union (« Demandez- / lui » du refus « appareil retiré »). Le texte n'est retouché (un gluon invisible U+2060 après le trait) que si la ligne s'y couperait à la largeur réelle de l'erreur ; sinon c'est le texte donné, tel quel (même règle que le titre compact de SUPERPOS-1, `sansCoupureAuTrait`). Le fichier de traductions n'est pas touché (COUPE-MOTS-4). Décidé par délégation le 09/10.
+
+| Réserve | Constat | Fait | Preuve |
+|---|---|---|---|
+| 1. Hauteur minimale de la liste du fil | aucun test : remettre l'ancien minimum fixe (96) laissait la suite verte (mutation M3) | test ajouté | `test/core/widgets/fil_discussion_minimum_test.dart` : `FilDiscussion.minimumListe` couvre une bulle de deux lignes rendue (texte ×1 et ×2), suit l'échelle du texte (plus de 1,5 fois entre ×1 et ×2), et la liste montre la bulle entière à 320 ×2 clavier ouvert (300). Contre-épreuve : avec `return 96`, les 3 tests échouent (bulle de 206 à ×2, liste de 108) |
+| 2. Un seul point d'attention | règle « lue dans le code et sur les captures, pas de test dédié » | test ajouté | `test/core/widgets/point_attention_unique_test.dart` : zones pleines mesurées sur le rendu (surface d'au moins 24 × 24 peinte d'un aplat du thème : `surfacePrimary`, `surfaceActionDouce`, `surfaceSuccess`, `surfaceWarning`, `surfaceAlert`, `surfaceInverse`, couleurs vives du `ColorScheme`). Aperçu avec repère, bandeau hors ligne, bandeau d'observation, bandeau d'alerte urgente et action principale : une seule zone pleine, dans l'action principale ; fil de discussion texte saisi : aucune ; formulaire à `ZoneSaisie` : une seule, l'action. À 320 ×2 LTR clair standard, 320 ×2 RTL sombre guidée, 390 clair guidée, 1440 sombre standard (12 tests). Contre-épreuve : l'ancien repère (ruban `Banner` en `colorScheme.tertiary`, tête `6e2c91c4`) fait échouer les 12 tests ; le bandeau hors ligne ou celui d'observation repeint en `surfaceWarning`, ou l'alerte urgente en `surfaceAlert` : 4 échecs chacun |
+| Bouton grisé des réglages (ordre de l'étape) | « Envoyer la demande » inerte (`onPress` nul) tant que le motif est vide | **corrigé** (voir décision) | `test/features/reglages_enfant_test.dart` étendu : bouton actif champ vide, appui sans motif → rien n'est envoyé, l'erreur du champ dit ce qui manque, le focus est dans le champ ; demande de durée, appui sans durée → rien n'est envoyé, la phrase dit ce qui manque, puis disparaît quand une durée est choisie. Contre-épreuve : sur l'ancienne page, les 2 tests échouent (`onPress` nul ; phrase absente) |
+| Aides des champs d'une ligne (ordre de l'étape) | bornes déjà portées à 8 lignes par SUPERPOS-1 (`ZoneSaisie.lignesAideMax`) ; mesure manquante pour la saisie du code | mesuré à 320 ×2, français (LTR) et arabe (RTL) : invitation du conjoint et identité d'un profil élève entières (test existant `aides_champs_320_superpos_test.dart`, aides, erreurs, elle et lui) ; saisie du code : aucune ellipse, mais le refus « appareil retiré » se coupait après un trait d'union → **corrigé** | `test/features/eleve_connexion/saisie_code_320_superpos_test.dart` : l'aide et les 9 refus de `MotifRefusAppairage`, l'un après l'autre, sur le vrai routeur et avec les vraies polices, aucun mot coupé ni tronqué. Contre-épreuve : sur la tête d'avant (`5a52ff30`), les 2 tests échouent (« revoque ») |
+
+### Chiffres (base `5a52ff30` → branche)
+
+| Mesure | Avant | Après |
+|---|---|---|
+| Boutons inertes (grisés) dans la feuille de demande des réglages | 1 | 0 |
+| Mots coupés mesurés dans les refus de la saisie du code à 320 ×2 (fr, ar) | 1 (« Demandez- / lui ») | 0 |
+| Tests qui protègent `minimumListe` / le point d'attention unique | 0 / 0 | 3 / 12 |
+| `verifier_revue` | 1533 | 1532 (remesuré le 10/10, FINITIONS-CORR2-1 : `dart tool/verifier_revue.dart` sur `5a52ff30` puis sur la tête `dcc3cb0b` de `corrections/c2-superpos-b`, extraites par `git archive` ; `libelle-sans-source` 1474 → 1473 : le texte de `eleveConnexion.refus.revoqueTitre` (« Appareil retiré ») est désormais cité dans un document de `docs/`, ce qui lui donne une source (lu par `--regle=libelle-sans-source --detail`) ; la fiche disait 1533) |
+| `verifier_jetons` | 37 | 37 |
+
+Captures : `docs/current/captures/SUPERPOS-1b/` (`superpos1b_avant_*` = tête `5a52ff30`, `superpos1b_apres_*`) : demande des réglages, feuille vide puis appui sans motif, à 320 ×2 clair, 320 ×2 Interface guidée sombre RTL et 390 ; demande de durée, appui sans durée, 320 ×2 ; saisie du code, refus « appareil retiré », 320 ×2 en français et en arabe ; aperçu avec repère et bandeaux, 320 ×2 clair et sombre RTL. Script archivé `superpos1b_capture_test.dart.txt`. Avant : bouton à filet, inerte, champ vide ; « Demandez- / lui » coupé. Après : bouton plein actif, erreur sous le champ après l'appui ; « Demandez-lui » entier. Les captures RTL posent le français en sens arabe : la ponctuation passe en tête de ligne, effet du forçage.
+
+### Hors lot, relevé (non touché)
+
+- **Saisie du code de l'appareil élève** (`lib/features/eleve_connexion/saisie_code_page.dart`) : « Connecter l'appareil » est inerte (`onPress` nul) tant que le code n'a pas ses 6 caractères ou que l'appareil est hors ligne, et un test l'exige (`test/features/appareils/scanner_saisie_test.dart`, « vide : action inactive »). C'est un bouton grisé au sens de la règle. Non corrigé ici (l'ordre de l'étape ne portait que les aides de cet écran) : même motif de correction que les réglages (bouton actif, l'appui dit ce qui manque sous le champ). À relayer.
+- **Réserve 3** : le « ? » du titre du motif (« Pourquoi ce changement ? ») reste orphelin en Interface guidée à 320 ×2 (capture `superpos1b_apres_reglages_appui_320x2_guidee_sombre_rtl.png`) : espace insécable à poser dans `fr.i18n.json`, voie COUPE-MOTS-4.
+
+Statut : **présent dans le code, testé localement**. Ni testé sur staging, ni déployé.
+
+## CORAN-320-1 : la page Coran à 320 px et texte ×2 (08/10/2026)
+Constat (`docs/current/captures/PT-B`, route réelle) : à texte ×2, en-tête de sourate, mentions et pagination prenaient la page ; à 320 × 568 la zone des versets avait 0 px (débordement de 69 px), à 390 × 844 elle avait 37 % de l'écran. Décision du 05/10 (déléguée, choix a) : seuls l'en-tête, les mentions et la pagination autour du texte changent ; le texte des versets et son rendu ne sont pas touchés.
+Fait, seulement au-delà du seuil du texte agrandi (`AppContour.seuilTexteAgrandi`, 130 %), dans `lib/features/tc_mushaf/mushaf_page.dart` :
+- en-tête sur une ligne : nom de la sourate et bouton « Mode de lecture » (icône nommée, état déplié annoncé) qui déplie le choix du rendu et la mention « Pour grossir le texte… » ; la page et le juz ne sont plus redits en tête (position au centre de la pagination, juz au pied de chaque page du mushaf) ;
+- pagination sur une ligne : flèches et position (`BarrePrecedentSuivant`, inchangée), « Aller à une page » en icône nommée à côté ;
+- attribution Tanzil entière, deux lignes au plus, jamais sous la taille de base (`AttributionCoranCompacte`, reprise du lecteur accessible) ;
+- tailles de ces trois zones plafonnées à 130 %, la hiérarchie HIER-1 conservée (même plafond pour tous leurs styles), marges serrées ; les versets gardent l'échelle de l'usager.
+Chiffres (avant, après), zone des versets / hauteur de l'écran, barre de navigation comprise : 320 × 568 ×2, 0 % puis 53 % ; 390 × 844 ×2, 37 % puis 67 %. À texte normal et à 1440, rien ne change (captures 1440 identiques au pixel près).
+Preuves : `test/features/tc_mushaf/mushaf_texte_agrandi_test.dart` (géométrie ≥ 50 % à 320 × 568 et 390 × 844 ×2, LTR et RTL, aucun mot coupé ; contre-épreuve : les paramètres reçus par le rendu des versets, largeur du cadre, échelle de texte, sens, versets, taille, interligne, police, rosace, sont identiques à ceux relevés sur le code d'avant 6e2c91c4, à 320 ×2, 390 ×2 et 1440) ; captures `docs/current/captures/CORAN-320-1/` (`avant_` = 6e2c91c4, `apres_` ; 320 × 568 ×2 clair, sombre, RTL, options dépliées ; 390 × 844 ×2 clair, sombre RTL ; 1440 clair et sombre ; script `coran_320_1_capture_test.dart.txt`). Statut : présent dans le code, testé localement ; ni staging ni déploiement.
+Choix tranchés (règle DIR-REP-1, aucune question au directeur ; aucun accord écrit n'est plus demandé) :
+- plafond de 130 % pour l'en-tête, les mentions et la pagination : **décidé par délégation le 05/10** ;
+- mention « Pour grossir le texte… » repliée derrière le bouton « Mode de lecture » à texte agrandi : **décidé par délégation le 05/10** ;
+- choix du rendu replié lui aussi (le garder visible rendait la majorité inatteignable à 320 × 568) : **décidé par délégation le 05/10**.
+
+Aucun libellé nouveau (« Mode de lecture » et « Aller à une page » existaient déjà). Mise à jour JONCTION-4 (09/10) : statut de ces trois choix réécrit selon DIR-REP-1, sans changement de code.
+Recensé, non repris ici (hors du périmètre de l'étape) : en sens RTL, la position « 1 / 604 » s'affiche « 604 / 1 » (composant partagé `BarrePrecedentSuivant`, aussi en salle) ; les bandes de reprise (« Reprendre ») restent à leur taille quand elles s'affichent.
+
+## JONCTION-4 : provenance des libellés (DIR-REP-1) et preuves des jonctions du lot 4 (09/10/2026)
+
+Libellés (`tool/libelles_sources.json`) : les 176 entrées qui demandaient encore une validation du directeur (« à faire valider », « a valider ») disent « rédigé par l'agent, validé par délégation le 09/10 (DIR-REP-1) », dont `classe.cartes.feuille.envoiNonConfirme`, `classe.cartes.feuille.retraitNonConfirme`, `alertes.bandeauCourtUne`, `alertes.bandeauCourtPlusieurs`. Laissées telles quelles, voie LIB-DIR-1 / DASH-LIB (portées par `corrections/lib-dir-1`, non fusionnée) : `compte.themeContexte`, `admin.tableau.dossiersDetail`, `admin.tableau.demandesDetail`, `admin.tableau.calme`, `admin.tableau.apercuErreur`, `admin.tableau.incidentsEtAcces`, `admin.tableau.outilsGroupesDetail`, `eleve.accueil.erreurCours`, `eleve.accueil.erreurCoursHorsLigneTitre`, `enseignant.cahier.travailMaisonSaisi`, `enseignant.journee.aTerminerVide`, `enseignant.journee.aTerminerErreur`, `enseignant.journee.aTerminerSansDonnees`, `enseignant.journee.erreurPartielleTout`, `controleur.observation.contextePersonne`, `controleur.observation.elevePrecisAide`, `ficheEleve.interface.echec`. Aucune entrée de noms réels ou d'assets (ASSETS-DIR-1) n'était en attente.
+
+Jonctions relues (aucun code de production modifié) :
+- `282bc950` (feuille des cartes par `ZoneSaisie`, paramètre `sens`) : captures `docs/current/captures/JONCTION-4/` à 320 × 568 ×2, arabe RTL clair et sombre (erreurs ; titre arabe et texte français), français LTR (saisie mixte) ; `avant_` = parent `5396485b`, `apres_` = cette branche : **identiques au pixel près** (comparaison automatique, aucune différence). Contre-épreuves : sans `textDirection: sens` dans `ZoneSaisie`, `cartes_classe_test` « modification, rtl » échoue (sens `null`) ; la feuille d'avant (deux `TextField`) fait échouer `zone_saisie_unique_test` ; les anciens libellés (« Vérifiez la connexion ») font échouer `etat_sans_donnees_test` (catalogue).
+- `5a52ff30` (exception de `coupe_mots_3_test`) : sans l'exception, les quatre cas « Espace Classe enseignant : aucun mot coupé » échouent sur la seule adresse `https://rewayah.academy/demo/recitation`, aucun autre texte ; l'exception compare le paragraphe entier (`test/support/aucun_mot_coupe.dart`, ligne 40), elle n'en couvre aucun autre.
+
+Relevé, hors jonction (déjà présent avant `282bc950`) : les champs titre et texte de la feuille n'ont pas de nom pour le lecteur d'écran (le libellé visible `_Libelle` est un texte à part ; `ZoneSaisie` accepte `libelle`). Statut : présent dans le code, testé localement ; ni staging ni déploiement.
+
+## PAGESHELL-200-1e : réserves de PAGESHELL-200-1d et d'ALERTE-1b (09/10/2026)
+
+Branche `corrections/c2-pageshell-e`, issue de `corrections/revue-directeur-2026-10` (5a52ff30). Statut : **testé localement** seulement ; ni staging, ni déploiement.
+
+**Décisions prises par délégation le 09/10** (règle DIR-REP-1, aucune question au directeur ; écrites aussi dans `03_DESIGN_SYSTEM_ET_UX.md`, « Coquille de page sous le bandeau d'alerte figé ») :
+
+- (Reprise après refus, remplace la règle « moitié de la place restante ».) La tête de page admin (titre, onglets et, dès 600 px, Recherche, thème, cloche, compte) reste fixe sous le bandeau d'alerte figé tant qu'elle laisse au corps une cible tactile, sur tous les gabarits. Sinon son complément (`PageShell.enteteSecondaire` ; sur le Journal, la chaîne et les filtres) défile avec le corps, le titre, les actions et les onglets restant fixes. Toute la tête ne défile que si ce noyau ne laisse lui-même plus de cible tactile au corps : seul cas mesuré, les Dossiers en Interface guidée à 320x640 (tête de 316 pour 294 de place). C'est l'option la plus prudente : la lettre de la réserve (tête fixe) partout où c'est physiquement possible, aucun débordement ailleurs.
+- À 200 % de texte sur téléphone, la règle « la page défile pour le reste » de PAGESHELL-200-1d s'applique (exception déléguée par le directeur) : la tête défile, le bandeau non. La règle MA-RC B1 (au-delà de 130 % sur une page défilante, la tête défile) reste celle de la page sans alerte ; l'alerte ne la déclenche pas. Le seuil de vue très basse (360, AD-11) se lit sous le bandeau sur la fenêtre entière : 1440x500 garde sa tête fixe.
+- Barre mobile admin (Interface guidée, 320 px, cloche présente) : les écarts de 8 entre les cibles de 72 tombent quand ils ne tiennent plus ; 24 px de débordement supprimés.
+- En Interface guidée, sous un bandeau figé, l'espacement est celui de l'interface standard (8 + 24). La respiration de 64 donnait environ 70 px de vide ; elle est gardée sans bandeau.
+- Le retour à la tête fixe attend les animations, mais au plus `AppMouvement.plafond` (400 ms).
+- Bandeau de la chaîne du Journal : quand la pastille et le mot le plus long de la phrase ne tiennent pas côte à côte, la pastille passe au-dessus de la phrase, au début de la ligne. La pastille est mesurée par sa largeur intrinsèque réelle (style de `StatusPill` compris), et la phrase garde « ci-dessous » entier (`nomsComposesEntiers`).
+
+| Réserve | Ce qui est fait | Preuve |
+| :--- | :--- | :--- |
+| 1. (Moyen) Tête de page admin qui défilait sous une alerte ouverte | `ActionsEnteteCoquille.sousBandeau` remplace le bandeau vide. `PageShell` mesure sa tête (`_MesureTete`) et la garde fixe sous le bandeau tant qu'elle laisse une cible tactile au corps (première livraison : la moitié de la place restante, règle retirée à la reprise). La tête fixe est posée par `_TeteFixe`, sans débordement à l'image de bascule. | `test/widgets/page_shell_200_1e_test.dart`, groupe (1) : 20 cas (compact 390x844, rail 800x600 et 1024x768, large 1440x700 et 1440x900 ; LTR et RTL ; standard et Interface guidée). Titre, onglets, actions et bandeau ne bougent pas après défilement, et le bas de la liste est atteint. Les 20 cas échouent sur la base. |
+| 2. Écart d'environ 70 px en Interface guidée | Sous bandeau, rythme standard. | Groupe (2) : 4 cas (390x844 et 1440x900, LTR et RTL), écart bandeau-ligne de tête égal à 32. Ils échouent sur la base (72). |
+| 3. Report sans fin de `_revenirTeteFixe` | Report borné à `AppMouvement.plafond`. | Groupe (3) : une tête qui porte un indicateur infini. Le test échoue sur la base et quand la borne est retirée. |
+| 4. Titre simple hors HIER-1 | Le titre simple passe par `EnteteCompact.echelleTitre` et garde les noms composés entiers. | Groupe (4) : 8 cas (390x844, 320x640 et 1440x900 à x2, 390x844 à x1,5 ; LTR et RTL). Ils échouent sur la base (72 au lieu de 46 à x2). |
+| 5. Journal : `Row` de la chaîne (+17 px à 320 x2) ; Interface guidée à 390x684 (+22 px en bas, mesuré sur la vraie coque sans alerte) | `BandeauChaineJournal` empile la pastille au-dessus de la phrase, qui passe par `TexteSansCoupure`. La tête trop haute défile (réserve 1). | Groupe (5) : 320 px x2 LTR et RTL, sans débordement ni mot coupé. Sur la coque réelle à 390x684 en Interface guidée : défilement jusqu'au bout, « Réessayer » touchable, aucun mot coupé. Tous ces cas échouent sur la base. |
+| 6. Régression large | Suites rejouées par dossier (`--concurrency=2`), 0 échec : test/features 3037 réussis (2166 ignorés, captures et cas marqués), test/core 736, test/router 300 (7 ignorés), test/widgets 337, test/accessibilite 362, autres dossiers hors capture, fixtures, support 1881 (192 ignorés). | `dart analyze --fatal-infos` : 0 ; `verifier_revue` : 1533, égal à la base 5a52ff30 ; `verifier_jetons` : 37, égal à la base ; `dart format` : 0 fichier modifié. Aucun libellé nouveau ni modifié, donc rien à déclarer dans `tool/libelles_sources.json`. |
+
+Contre-épreuves :
+- Les 38 cas du fichier ont été rejoués sur le code de la base (5a52ff30), avec seulement les deux symboles de test ajoutés en bouchon : les 38 échouent.
+- Mutations sur le nouveau code :
+  - sous bandeau, la tête défile toujours : 20 échecs ;
+  - respiration rétablie : 4 échecs ;
+  - borne retirée : 1 échec ;
+  - échelle compacte retirée : 8 échecs ;
+  - mesure de la tête neutralisée : 3 échecs dans le fichier (dont la coque réelle à 390x684) ;
+  - `Row` de la chaîne rétablie : 2 échecs.
+- Les cas qui passaient déjà sur la base ont été retirés du fichier : tête trop haute sous le bandeau, téléphone à 200 %. Ils restent couverts par `alerte1b_test.dart`.
+
+Captures : `docs/current/captures/PAGESHELL-200-1e/`, 16 PNG `avant` (base) et 16 PNG `apres`, script archivé `pageshell200_1e_capture_test.dart.txt`. Elles couvrent 390x844, 800x600 (rail) et 1440x500 défilés, en clair et en sombre, en LTR et en RTL. S'y ajoutent l'Interface guidée à 390x844, 1440x900 et 390x684 (avec et sans alerte), le Journal à 320x640 x2 et l'Accueil à 390x844 et 320x640 x2.
+
+(Remplacé par la reprise ci-dessous.) Première livraison : à 1440x500 avec alerte, la tête défilait, le seuil de 360 étant calculé sur la place restante. Depuis la reprise, ce seuil se lit sur la fenêtre entière sous le bandeau, et la tête reste fixe à 1440x500.
+
+### Reprise après refus de la relecture adverse (09/10/2026)
+
+| Objection | Ce qui est fait | Preuve |
+| :--- | :--- | :--- |
+| MAJEUR : Journal, tête qui défile sous l'alerte à taille normale (800x600, 1024x768, 1440x700, 1440x500, 1440x900 guidée), et Règles, Dossiers à 800x600 guidée | Règle « moitié » retirée ; tête fixe tant qu'elle laisse une cible tactile ; trois modes dans `_Bascule` (tête fixe, noyau fixe, défilement global) ; Journal : onglets en `entete`, chaîne et filtres en `enteteSecondaire` ; vue très basse lue sur la fenêtre sous bandeau. | `page_shell_200_1e_test.dart`, groupe (1 bis), sur la vraie coque (démonstration, alerte ouverte) : Journal, Règles, Dossiers ; 390x844, 320x640, 800x600, 1024x768, 1440x700, 1440x500, 1440x900 ; standard et guidée ; LTR et RTL (82 cas). Bandeau, `EntetePage`, onglets et `BasculeTheme` identiques avant et après défilement jusqu'au bout. Contre-épreuve sur le code refusé (6f9a9616) : 44 échecs. |
+| MOYEN : barre mobile admin, 24 px de débordement à 320x640 x2 guidée avec cloche | Écarts supprimés quand les cibles ne tiennent plus. | Groupe (1 ter) : Journal, Règles, Dossiers, LTR et RTL ; 6 échecs sur le code refusé. |
+| MINEUR : « ci-dessous » coupé au trait d'union | `nomsComposesEntiers: true` sur la phrase. | Groupe (5 bis) : `verifierEcranSansMotCoupe` sur le Journal entier, 390x844, 390x684, 320x640 à x1, 390x844 et 320x640 à x2, LTR et RTL ; 8 échecs sur le code refusé. |
+| MINEUR : `_largeurPastille` recopiait la géométrie de `StatusPill` | Rendu `_PastilleEtPhrase` : la pastille est mesurée par `getMaxIntrinsicWidth`, plus de copie. | Groupe (5) : pile à 320 x2, LTR et RTL, pastille au début de la ligne. |
+
+Le test du Journal à 390x684 guidée sans alerte vérifie aussi que les onglets restent fixes pendant qu'on atteint « Réessayer » (noyau fixe).
+
+Captures ajoutées (`avant` = base 5a52ff30, `apres`) : Journal 1440x700 clair, 1024x768 sombre RTL, 800x600 clair et sombre RTL guidée, 1440x500, 1440x900 guidée, 390x844, défilés ; Règles et Dossiers 800x600 guidée défilés ; Journal 320x640 x2 guidée (barre mobile). Toutes ouvertes et relues. Les captures RTL gardent la locale française : la ponctuation y suit l'algorithme bidirectionnel (« .instant »), artefact de capture et non du produit.
+
+
+Régression après reprise (`--concurrency=2`, 0 échec) : test/features 3037 réussis (2166 ignorés) ; test/core 736 ; test/router 300 (7 ignorés) ; test/widgets 435 ; test/accessibilite 362 ; autres dossiers hors capture, fixtures, support 1881 (192 ignorés). `dart analyze --fatal-infos` : 0 ; `verifier_revue` : 1533 (égal à la base) ; `verifier_jetons` : 37 (égal à la base) ; `dart format` : 0 fichier modifié. Aucun libellé nouveau ni modifié. Aucun besoin serveur. Statut : testé localement ; ni staging, ni déploiement.
+
+## CORAN-320-1b : réserves de la relecture CORAN-320-1 (09/10/2026)
+Source : `docs/revues/REVUE_CORAN-320-1-R.md` (branche `revues/2026-10-04-b061fd81`), verdict « acceptée avec réserves ». Exception déléguée du 05/10 élargie à l'habillage seul : en-tête, mentions, pagination, commandes de taille, état vide du focus. Le texte des versets et leur rendu (police, glyphes, mise en page des lignes, `VuePageMushaf`, `ColonneVersetsReflow`, `BlocVerset`) ne sont pas touchés.
+Fait :
+- **Lecture agrandie et focus, commandes sur une rangée** (`mushaf_page.dart`) : à texte agrandi, le réglage de taille (« Réduire le texte », valeur, « Agrandir le texte ») quitte la pagination, où il prenait deux rangées à 320 points, et se déplie avec le choix du rendu sous le bouton « Mode de lecture » de l'en-tête. La pagination tient sur une rangée dans les trois rendus (flèches, position, « Aller à une page » en icône nommée). Un seul composant `_ReglageTaille` pour ses deux places ; à texte de base il reste sous les versets, comme avant.
+- **État vide du focus** (`vue_focus_classe.dart`, `_SansPlage`) : le mot « Aucun passage mis en avant… » est plafonné à 130 % comme le reste de l'habillage et ne prend jamais plus d'un tiers de la zone (au-delà, il défile dans sa bande) ; il ne déborde plus sous l'attribution. En arabe, la phrase française est isolée (`isolerSiAutreSens`) : son point final ne passe plus en tête.
+- **Seuil à 130 % exactement** : `MushafPage.texteAgrandi` passe de `>` à `>=`. À 130 %, le chrome est déjà compact.
+- **Juz** : en lecture agrandie et en focus, qui n'ont pas de pied de page, l'en-tête compact dit « Al-Faatiha . Juz 1 » (le juz dans le style de la ligne de contexte de l'en-tête large). En page du mushaf, il reste au pied de chaque page.
+- **Position en arabe** (`lib/core/widgets/barre_precedent_suivant.dart`) : la position prend le sens de son propre texte (`sensDuTexte`, gauche à droite sans lettre). « 1 / 604 » ne s'affiche plus « 604 / 1 » en RTL. Une position rédigée en lettres arabes garde le sens de l'arabe. Les flèches gardent leur miroir. Appelants vérifiés, sans modifier leurs fichiers : salle (`salle_seance/barre_support.dart`, position « page / pages »), présentation de l'enseignant (`salle_enseignant/panneau_enseignant.dart`, idem), bienvenue (déjà isolée par `isolerSens`, rendu inchangé), galerie. Leurs suites passent. La valeur « 100 % » du réglage de taille est isolée de même : elle s'affichait « % 100 » en arabe.
+Chiffres (avant, après), zone des versets / hauteur de l'écran, barre de navigation comprise, 320 × 568 : lecture agrandie ×2, 32 % puis 53 % ; focus ×2, 32 % avec débordement de 29 px puis 53 % sans débordement ; focus ×1,3, 0 % avec débordement de 98 px puis 54 % ; à 130 % exactement, mushaf 9 % puis 54 %, lecture agrandie 0 % puis 54 % ; focus ×1, débordement de 29 px puis aucun. 390 × 844 ×2 : lecture agrandie et focus, 53 % puis 67 %. Page du mushaf ×2 inchangée (53 % et 67 %).
+Preuves : `test/features/tc_mushaf/mushaf_habillage_modes_test.dart` (route réelle ; lecture agrandie et focus à 320 × 568 et 390 × 844 ×2, LTR et RTL : zone ≥ 50 %, pagination ≤ 48, en-tête ≤ 56, juz dans l'en-tête, aucun mot coupé, aucun débordement ; panneau déplié avec le réglage de taille qui agit ; état vide du focus à ×1, ×1,3 et ×2 sans débordement ni recouvrement ; les trois rendus à ×1,3 exactement ; isolements RTL ; contre-épreuve : les paramètres reçus par `ColonneVersetsReflow` et `BlocVerset`, versets, zoom, échelle, sens, largeur de colonne, taille, interligne, rosace, sont identiques à ceux relevés sur le code d'avant 5a52ff30 à 320 ×2, 390 ×2 et 1440, dans les deux rendus) et `test/core/widgets/barre_precedent_suivant_test.dart` (groupe « position en arabe »). Les tests de CORAN-320-1 passent sans changement. Contre-épreuves réellement faites : 20 des 27 nouveaux tests échouent sur le code d'avant (`lib/` de 5a52ff30) ; les 7 autres sont des gardes qui passent sur l'ancien et le nouveau code : les 6 tests d'invariance échouent dès qu'on plafonne les versets (mutation, 4 échecs à ×2) et le test « lettres arabes » échoue si la position est forcée de gauche à droite (mutation). Captures `docs/current/captures/CORAN-320-1b/` (`avant_` = 5a52ff30, `apres_` ; lecture agrandie et focus à 320 × 568 ×2 clair, sombre, RTL, ×1,3 ; 390 × 844 ×2 clair, sombre RTL ; 1440 clair et sombre ; mushaf 320 × 568 ×1,3 et ×2 RTL ; panneau déplié ; script `coran_320_1b_capture_test.dart.txt`). À 1440, seule la rangée du réglage de taille diffère de quelques pixels (isolement de « 100 % ») ; les versets sont identiques au pixel près.
+Décidé par délégation le 09/10 (DIR-REP-1) : le réglage de taille replié derrière « Mode de lecture » à texte agrandi, seconde option de la relecture, parce que la première (même rangée que la pagination, en icônes) ne tient pas à 320 points sans couper la position « 604 / 604 » ; le bouton garde son nom « Mode de lecture » ; le mot du focus plafonné à 130 % et borné au tiers de la zone ; le passage par `>=` au seuil plutôt qu'un compactage progressif ; le juz sur la ligne du nom de la sourate plutôt que sur une seconde ligne. Aucun libellé nouveau ni modifié.
+Recensé, non repris ici : à texte de base (×1) sur 320 × 568, la lecture agrandie et le focus ne laissent que 6 % de la hauteur aux versets (en-tête et commandes larges) et la page du mushaf 20 % ; la barre resserrée de `BarrePrecedentSuivant` déborde de 24 px quand on la monte seule à 320 ×2 (hors de sa pastille de salle), défaut antérieur à cette étape.
+Statut : **présent dans le code, testé localement**. Ni testé sur staging, ni déployé.
+
+## RTL-ISOL-1 : valeurs et phrases françaises dans l'interface arabe (09/10/2026, branche `corrections/c2-rtl-isol`)
+
+Relevé des relectures du lot 4 : en interface arabe (RTL), une valeur ou une phrase française encore sans traduction se réordonnait (« h 28 3 », « .l'enseignant », « .règles de tajwid »). Chaque valeur ou phrase écrite dans l'autre sens que l'interface est désormais isolée (FSI…PDI, `lib/core/i18n/isolat_bidi.dart` : `isolerSiAutreSens`, `phraseAvecValeur`), ou posée dans son propre sens (`EmptyState`).
+
+**Décisions (décidé par délégation le 09/10, règle DIR-REP-1, aucune question au directeur) :**
+
+- Ligne des élèves de l'Espace Classe enseignant (`fiche_groupe_page.dart`, `_ligneMembre`) : les segments suivent l'ordre de l'interface, **niveau d'abord**, puis la page de reprise (« Niveau 1 · الاستئناف: Page 24 » se lit de droite à gauche en arabe, chaque segment français isolé). Option la plus prudente : l'ordre logique reste celui du français et des autres langues, seul le sens visuel suit l'interface. Décidé par délégation le 09/10.
+- `EmptyState` partagé : le constat et l'invitation ne reçoivent **aucun caractère d'isolat** ; chacun est posé dans le sens de son premier caractère fort (`Directionality` autour du texte, `sensDuTexte`). Le texte reste celui que l'appelant donne (lecteurs d'écran, recherches par texte des tests), le centrage ne change pas. Choix le plus prudent après la relecture adverse : la première version (isolat dans la chaîne) faisait échouer six tests existants (`empty_state_sans_coupure_test`, ELV-02 d'`accueil_eleve_test`). Décidé par délégation le 09/10.
+- Phrase française sans traduction arabe (tutoiement de l'attente) : la durée française s'y lit sans isolat ; aucune traduction n'est inventée. Décidé par délégation le 09/10.
+
+**Preuves.** Tests `test/features/rtl_isol_1_test.dart` (position des glyphes en fr et en ar à 320 px ×2 ; durée de « Cours dans », « Salle ouverte », « Attente » vouvoyée et tutoyée ; ligne des élèves ; conseil d'appareil ; `EmptyState` (constat, invitation, texte nu) ; « À propos » et ligne de progression de Ma classe ; introduction de Comptes ; Observation du Contrôleur : valeurs Nature et Domaine, explication, message d'échec). Contre-épreuve : sur `5a52ff30`, les cas arabes échouent. Captures avant/après : `docs/current/captures/RTL-ISOL-1/`. Statut : présent dans le code, testé localement ; ni staging ni déploiement.
+
+## COUPE-MOTS-4 : mots coupés à 320 px texte ×2 relevés par les relectures du lot 4 (09/10/2026)
+Branche `corrections/c2-coupe-mots-4`, base `5a52ff30`. Toutes les décisions ci-dessous sont **décidées par délégation le 09/10** (règle DIR-REP-1, option la plus prudente, aucune question au directeur).
+- **(1) `ChoiceCardGroup`** (`lib/core/widgets/choice_card_group.dart`) : « nor / malement », « obser / vation », « administ / ration », « Acc / essibilité », « Présentat / ion », « Moi- / même », « Royaume- / Uni ». En liste, l'icône et le radio passent sur une rangée au-dessus des textes quand un mot ne tient pas à côté d'eux (à l'échelle de l'appareil) ; chaque texte passe par `TexteSansCoupure` ; le titre garde un nom composé entier ; côte à côte, la description et la raison comptent dans la mesure. À 390 et 1440, la carte garde sa rangée (captures identiques en disposition). Tests d'écran chez tous les appelants (`test/features/coupe_mots_4/`, 320 ×2, fr et ar, standard et guidée) : compte rendu, observation et complément du Contrôleur, fiche élève (Interface), profil élève, recharge, parcours (six questions), dépôt de pièce, feuille d'une règle, réglages de l'enfant, inscription (usage, genre), cahier, carte de classe, entrée et réglages de l'observation, feuille du dock, micro-feedback, signalement. La galerie de développement (forcée à `false` en production) est couverte par le test du composant.
+- **(2) Barre basse de l'Interface guidée** (`nav_shell.dart`) : « Contrôl / e », « Historiq / ue », « Échang / es », et aussi « Aujourd'hui », « Disponibilités » (enseignant, même à 390 ×2). Réduction bornée jusqu'à 85 %, puis **deux rangées de deux onglets** ; pas de défilement, qui cacherait une destination à l'utilisateur guidé.
+- **(3) Comptes** : « TEACHER-AS- / 000001 ». Identifiant affiché avec des traits d'union insécables (`lib/core/i18n/identifiant_insecable.dart`) ; les cellules et cartes de `DataCollection` passent par `TexteSansCoupure` (sans quoi un identifiant plus large que sa colonne se coupait par lettre, y compris dans le tableau à 1440).
+- **(4) Typographie française** : espace insécable U+00A0 (règle du dépôt, comme DUREE-INSECABLE-1) avant « ? ! : ; » et dans « », 275 libellés de `fr.i18n.json`, espaces seules, aucun mot changé ; déclarés dans `tool/libelles_sources.json` (« validé par délégation le 09/10 »). Garde sur tout le fichier : `test/core/i18n/typographie_fr_test.dart`. Le libellé de `ZoneSaisie` passe par `TexteSansCoupure` : en Interface guidée, « changement ? » ne tenait pas sur la ligne et le « ? » partait seul même avec l'espace insécable.
+Contre-épreuve réelle : les nouveaux tests rejoués sur `5a52ff30` (worktree jetable) : 85 échecs, chacun nommant le mot coupé ou la ponctuation seule. Les variantes qui passent aussi sur l'ancien code sont des cas de non-régression déclarés (390 ×1 du composant, élève dans la barre guidée, quelques appelants en présentation standard dont les mots tenaient déjà).
+Mesures : `verifier_revue` 1533 → 1414 (les libellés déclarés sortent de `libelle-sans-source`) ; `verifier_jetons` 37 → 37 ; `dart analyze --fatal-infos` 0.
+Captures : `docs/current/captures/COUPE-MOTS-4/` (`avant_*` sur `5a52ff30`, `apres_*`) : compte rendu 320 ×2, 390, 1440 ; fiche Interface ; barre guidée Contrôleur et enseignant ; Comptes ; feuille « Pourquoi ce changement ? » en guidée ; fr et ar ; script archivé `coupe_mots_4_capture_test.dart.txt`.
+Non touchés (consigne) : `page_shell.dart`, `admin_shell.dart`, `rangee_filtres.dart`. Relevé, hors étape : dans les captures de Comptes à 320 ×2, la rangée de filtres coupe « En attent » à son bord (défilement horizontal de `rangee_filtres.dart`).
+- **Reprise après relecture adverse (refus du 09/10)**, décidée par délégation le 09/10 (DIR-REP-1, option la plus prudente) :
+  - Les tests d'écran du lot mesurent désormais l'**écran entier** (`verifierEcranEntierCoupeMots4` : chaque `Scaffold` et chaque feuille du bas ouverte, mots coupés et ponctuation haute seule à la ligne), plus seulement l'intérieur de `ChoiceCardGroup`. `verifierCartesDeChoixEntieres` l'appelle ; la feuille des règles est aussi mesurée avant toute feuille ouverte ; les réglages de l'enfant et Comptes aussi.
+  - Feuille des règles d'un élève (`admin_demandes/demandes_page.dart`) : « Plateforme / : 60 min » et « Appliquée » coupés en demi-colonne. Les deux valeurs passent en `Wrap` : côte à côte quand elles tiennent, l'une sous l'autre sinon (320 ×2), chacune en `TexteSansCoupure`.
+  - `TexteSansCoupure` (réduction bornée à 85 %, jamais de mot coupé) sur : « Relevé automatique de la séance » et le message de transmission du compte rendu (Contrôleur, guidée) ; titre, intro, confidentialité (« d'identité », « réglementation ») et question du dépôt de pièce ; question et explication de `CoquilleEtape` (« souhaitez-vous ») ; aide de la note interne du signalement (« l'administration. ») ; textes des réglages de l'enfant (« Demander un changement »).
+  - Contre-épreuve réelle : le code `lib/` retiré (tests nouveaux gardés) : 16 échecs, chacun nommant le mot coupé ou le « : » seul ; avec la correction, 84 tests du dossier passent.
+  - Captures ajoutées (`avant_*` = tête précédente du lot `2ae14169`, `apres_*`) : feuille des règles 320 ×2 fr/ar en **clair et sombre**, dépôt de pièce guidée fr/ar clair et sombre, compte rendu guidée fr/ar, inscription (usage) guidée fr/ar.
+  - Relevé, hors étape (non corrigé, consigné) : `ar.i18n.json` ne traduit qu'une petite partie des clés ; les écrans « ar » affichent du français en RTL, d'où un point ou un « ? » placé en tête par l'algorithme bidirectionnel (« .la plateforme », « ? créer »). C'est une absence de traduction, pas une coupure ; à traiter par un lot de traduction arabe.
+  - Aucun libellé modifié dans cette reprise. Mesures : `verifier_revue` 1414 → 1414 ; `verifier_jetons` 37 ; `dart analyze --fatal-infos` 0.
+Statut : **présent dans le code, testé localement**. Ni testé sur staging, ni déployé.
+
+## DUREE-INSECABLE-5 : ancres de sens au milieu d'un libellé, derniers cas (09/10/2026, branche `corrections/c2-duree-5`)
+Suite de DUREE-INSECABLE-4 (`corrections/c2-duree-4` @ ad992d25, refusée trois fois, reprise telle quelle ; relecture `REVUE_DUREE-INSECABLE-4-R3.md`). Deux points, et seulement eux.
+- **Libellé parlé des cellules en mode tableau** (`lib/core/widgets/data_collection.dart`, `_Cellule`) : « {titre} : {valeur} » retire l'ancre de sens (U+200E) de la valeur (`sansAncre`) ; le texte affiché, seul dans sa cellule, la garde. Corrigé dans le composant partagé, donc pour tous les appelants en mode tableau (Comptes « Inscrit depuis », Progression et Qualité « Depuis », et tout tableau à venir).
+- **Garde de source** (`test/support/garde_ancres.dart`) : elle suit désormais une valeur ancrée passée à un constructeur (argument nommé ou positionnel `this.x`, arguments de type compris, comme `ColonneDonnees<CompteAdmin>(texte: …)`), à un `copyWith`, à une fonction ou une méthode (paramètre suivi dans le corps, fonction locale limitée à sa portée), rangée dans une table, un record ou une liste (puis jointe), ajoutée par `add`, écrite dans un `StringBuffer`, insérée par `replaceAll`, et le champ de type fonction relu en interpolation (`colonne.texte(ligne)`).
+Preuves : `test/accessibilite/duree_insecable_5_test.dart` : arbre sémantique à 1600 px, LTR et RTL, sur les pages réelles Comptes, Progression et Qualité (aucune ancre ailleurs qu'en tête de libellé, cellule « … : 12 jours » lue) ; contre-épreuve : le défaut de `data_collection.dart` réintroduit dans une copie fait échouer la garde sur `lib/` entier et pour chacun des trois écrans seul avec le composant ; fixtures pour chaque motif (11 fautes trouvées, aucun faux positif sur les cas permis). Mutations faites : libellé fautif remis (8 tests échouent) ; garde de DUREE-INSECABLE-4 remise (2 échecs : contre-épreuve et fixtures) ; composant sans le correctif de hauteur (3 échecs, Qualité). Captures `docs/current/captures/DUREE-INSECABLE-5/` (Comptes, Progression, Qualité en tableau 1440 clair LTR et sombre RTL ; Qualité en cartes 390 clair LTR et 320 texte ×2 sombre RTL ; script `duree_insecable5_capture_test.dart.txt`). Statut : présent dans le code, testé localement ; ni staging ni déploiement.
+Décidé par délégation le 09/10 (DIR-REP-1) :
+- l'ancre est retirée du libellé parlé (option la plus prudente : la valeur y suit toujours le titre), et gardée à l'affichage où la valeur est seule ;
+- la page Qualité ne pouvait rien montrer dès qu'une anomalie ouverte existait (« Vertical viewport was given unbounded height », à toute largeur, défaut consigné par FILTRES-1) ; sans correctif, la preuve demandée sur Qualité était impossible. `DataCollection` prend sa hauteur naturelle quand la page qui la porte défile elle-même (hauteur non bornée) ; dans une page à hauteur bornée, rien ne change ;
+- la garde, prudente, signale toute valeur ancrée ajoutée à une collection ou écrite dans un tampon, même si elle en serait la première ;
+- aucun libellé nouveau ni modifié.
+Recensé, non repris ici (hors du périmètre de l'étape) : le zoom « 150 % » de `tc_mushaf` reste sécable (zone interdite, déjà consigné par DUREE-INSECABLE-4) ; dans les tableaux d'administration en RTL avec des données françaises, le point final d'un nom (« Sofia B. ») et des descriptions se place au début (« .Sofia B »), comme ailleurs avant COUPE-MOTS-3b (relevé sur les captures sombres RTL).
+
+### DUREE-INSECABLE-5, reprise (09/10/2026) : relecture adverse refusée, quatre points levés
+- **Garde indépendante du nom et du type écrit** (`test/support/garde_ancres.dart`, `_suivreChamp`, `_peutEtre`) : un champ (`ColonneDonnees.texte`, `Seance.duree`) est suivi à toutes ses lectures `objet.champ`, quel que soit le nom de l'objet. Le type de l'objet est lu s'il est écrit, sinon déduit de ce qui le donne : variable inférée (`final col = colonne;`, `final c = colonnes().first;`), boucle `for-in` non typée, paramètre de lambda non typé (type du récepteur du `.map(`), type rendu d'une fonction d'un autre fichier, champ d'un autre objet. Un type écrit d'une autre classe écarte la lecture (pas de faux positif sur un autre champ du même nom) ; un type introuvable la garde quand le fichier nomme la classe.
+- **Valeur rangée par affectation** : `s.duree = valeurSeule(…)`, `this.duree = …`, `duree = …` dans la classe qui déclare le champ, puis relue en interpolation : relevée. La classe de `s` est lue sur son type (paramètre typé, `final s = Seance()`), sinon le champ est suivi dans le fichier.
+- **Identifiant coupé à 1440 px RTL** (`TEACHER- / AS-000001`, défaut antérieur au lot) : la colonne Identifiant de Comptes prend deux parts, et `ColonneDonnees.insecable` empêche la coupure aux traits d'union tant que la valeur tient dans sa cellule (gluon U+2060 à l'affichage seulement ; libellé parlé intact). En la vérifiant à texte ×2, un autre défaut est apparu : à 1440 px texte ×2, le tableau coupait ses mots (« Enseigna / nt ») et tronquait ses en-têtes. `DataCollection` se replie désormais en cartes dès 150 % de texte (seuil existant `AppGabarit.seuilTexteColonne`), comme sous le seuil desktop. **Non valable sur la ligne réunie** : ni ce repli ni la colonne `insecable` ne sont repris par DUREE-FOND-1 (voir cette section, plus bas) ; sur la ligne réunie, `DataCollection` reste en tableau à 1440 px texte ×2, et l'identifiant est tenu par COUPE-MOTS-4.
+- **Suite complète par dossier** : passée par le rédacteur sur 80f6c79d, `--concurrency=2`, 0 échec : `test/features` +3038 (2166 sautés) ; `test/core` +736 ; `test/router` +300 (7 sautés) ; `test/widgets` +299 ; tous les autres dossiers sauf `capture`, `fixtures`, `support` (accessibilite, agent, appairage, cache, capacites, config, coran, foyer, i18n, icons, mouvement, observabilite, parcours, planning, presence, priere, seance_famille, suivi, tc_observation, teaching_core, theme, tool, video) +2281 (192 sautés). `dart analyze --fatal-infos` : 0 ; `verifier_revue` 1530 (base 1530) ; `verifier_jetons` 37.
+Preuves : `test/accessibilite/duree_insecable_5_test.dart`, groupe 3 : sur une copie de `data_collection.dart`, les défauts V3b (variable inférée), V5 (`for-in`) et V4b (lambda jointe par « · ») font échouer la garde sur `lib/` entier, chacun avec deux noms jamais déclarés ailleurs (`col`, `qz7`) ; fixtures R, R2, E, L1, L2 et un second fichier qui ne nomme pas la classe (6 fautes attendues, trouvées) ; `Autre.texte` au type écrit n'est pas suivi. Les 7 tests échouent sur la garde précédente (contre-épreuve faite). Comptes à 1440 px LTR et RTL : l'identifiant a la hauteur d'une ligne et le libellé parlé « Identifiant : TEACHER-AS-000001 » (échoue sur l'ancien code : 32 px au lieu de 16). Comptes à 1440 px texte ×2 : plus d'en-tête de tableau (échoue sur l'ancien code). Mutations hors test, toutes relevées par la garde : V3b, V5, V4b, V4c (`StringBuffer` dans une boucle sur les colonnes). Captures régénérées : `comptes_tableau_1440x1_*` (identifiant sur une ligne), nouvelle `comptes_texte_agrandi_1440x2_dark_rtl.png` (cartes). Ces trois captures de Comptes, faites sur le code de `corrections/c2-duree-5`, sont retirées de `docs/current/captures/` par DUREE-FOND-1 (elles ne correspondent pas à la ligne réunie ; elles restent dans l'historique de cette branche). Statut : présent dans le code, testé localement ; ni staging ni déploiement.
+Décidé par délégation le 09/10 (DIR-REP-1) :
+- une lecture dont l'objet a un type introuvable est suivie quand le fichier nomme la classe (option prudente) ; une lecture dont le type écrit est une autre classe ne l'est pas (sans quoi la garde relevait des centaines de faux positifs sur `lib/` et ne servait plus) ;
+- l'identifiant prend deux parts de largeur, et ne se coupe à ses traits d'union que s'il ne tient pas entier (jamais au milieu d'un mot) ;
+- au-delà de 150 % de texte, toute collection `DataCollection` se lit en cartes ; (non repris par DUREE-FOND-1 : décision laissée à COUPE-MOTS-FOND-1)
+- aucun libellé nouveau ni modifié.
+Recensé, non repris : le zoom « 150 % » de `tc_mushaf` (zone interdite) ; le point final des phrases françaises placé en tête en RTL sur les captures (« .montre »), artefact d'un texte français rendu en sens RTL, déjà consigné.
+
+### DUREE-INSECABLE-5, reprise 2 (09/10/2026) : seconde relecture adverse refusée, deux points levés
+- **Littéraux adjacents** (`test/support/garde_ancres.dart`, `_classer`, `_debutLitteral`) : une valeur ancrée interpolée en tête d'un littéral collé derrière un autre littéral (`'Durée : ' '${valeur}'`, sur une ligne, ou sur deux comme le produit `dart format` pour une ligne longue : `label: '${colonne.titre} : '` puis `'${colonne.texte(ligne)}',`) est relevée : Dart concatène les deux littéraux, la valeur n'est donc pas en tête. Couvre aussi un littéral brut avant (`r'…' '${…}'`), deux littéraux sans espace (`'…''${…}'`), un littéral long (`'…' '''${…}'''`) et une variable (`'…' '$x'`). Une valeur en tête suivie d'un littéral adjacent (`'${valeur}' ' de cours'`) reste permise.
+- **Lectures `this.`** (`_suivreChamp`, `_parametreDeclare`) : `this.champ` lu dans une classe qui porte le champ (`'Durée : ${this.duree}'`) et `this.objet.champ` (`'${this.colonne.titre} : ${this.colonne.texte(ligne)}'`) sont suivis comme `champ` et `objet.champ` ; un paramètre `this.champ` de constructeur n'est pas une lecture ; un `this.duree` d'une autre classe qui porte un champ du même nom n'est pas suivi.
+Preuves : `test/accessibilite/duree_insecable_5_test.dart`, groupe 4 : six mutations d'une copie de `data_collection.dart` (deux littéraux sur deux lignes ; sur une ligne ; titre fixe puis littéral adjacent ; littéral brut puis adjacent ; `this.colonne` ; `this.colonne` et littéraux adjacents) font chacune échouer la garde lancée sur `lib/` entier (une faute, raison `ColonneDonnees.texte`) ; une fixture directe (8 fautes attendues : `'Duree : ' '${LibellesGroupe.dureeSeule(d)}'` sur une ligne, sur deux lignes, sans espace, en littéral long, par variable, `${this.duree}`, `this.duree` sur deux littéraux, `$duree` ; trois cas en tête permis ; `Autre.duree` non suivi) trouvée exactement. Contre-épreuve faite : les 7 tests échouent sur la garde précédente (6 mutations : 0 faute ; fixture : 1 faute sur 8). `lib/` reste à 0 faute (aucun faux positif nouveau). Aucun changement d'écran : captures de `docs/current/captures/DUREE-INSECABLE-5/` toujours valables, non régénérées. (Sur la ligne réunie, voir DUREE-FOND-1 : les captures de Comptes sont retirées.) `dart analyze --fatal-infos` : 0 ; `verifier_revue` 1530 (base 1530) ; `verifier_jetons` 37. Suite complète par dossier sur cedd169e, `--concurrency=2`, 0 échec : `test/features` +3038 (2166 sautés) ; `test/core` +736 ; `test/router` +300 (7 sautés) ; `test/widgets` +299 ; tous les autres dossiers sauf `capture`, `fixtures`, `support` +2288 (192 sautés). Statut : présent dans le code, testé localement ; ni staging ni déploiement.
+Décidé par délégation le 09/10 (DIR-REP-1) :
+- tout littéral collé derrière un autre littéral est traité comme un milieu de libellé, même quand le premier est vide (option la plus prudente) ;
+- aucun libellé nouveau ni modifié.
+Recensé, non repris : le zoom « 150 % » de `tc_mushaf` peut encore se couper sur deux lignes (zone interdite, consigné).
+
+## DUREE-FOND-1 : durées et unités insécables, fiche de fond (10/10/2026, branche `wip/duree-fond-1`, chaîne DUREE-INSECABLE-1 à 5 fermée)
+
+**Décision de méthode (décidée par délégation le 09/10, appliquée le 10/10).** Trois relectures adverses de DUREE-INSECABLE-5 (REVUE_DUREE-INSECABLE-5-R, -R2, -R3) ont accepté la correction de `lib/` et refusé la garde statique : chaque relecture trouvait une forme de Dart qu'une lecture du source ne suit pas (littéraux collés, `this.`, record en liste puis destructuration, champ statique, constructeur à liste d'initialisation). Une garde qui lit le source ne peut pas, par nature, suivre toutes les formes. La demande « un test qui trouve tous ces cas » est désormais remplie par une **garde à l'exécution** :
+- `test/flutter_test_config.dart` installe pour toute la suite `test/` un binding de test (`BindingGardeAncres`, `test/support/garde_ancres_execution.dart`) ;
+- à la fin du corps de chaque `testWidgets`, écran encore monté, elle parcourt les textes rendus (`RenderParagraph` et ses `TextSpan`, libellés sémantiques des spans compris ; `RenderEditable`) et la configuration sémantique propre de chaque objet rendu (label, value, hint, tooltip, increasedValue, decreasedValue) ;
+- elle échoue si une ancre U+200E ou U+200F se trouve ailleurs qu'en tête d'une chaîne (en tête : précédée seulement de contrôles de sens, comme un isolat qui commence par la valeur).
+Toute forme de code est ainsi couverte, sur tous les écrans que la suite exerce.
+
+Décidé par délégation le 10/10 :
+- une marque U+200F collée devant une ponctuation (« Samira[U+200F]، 0:12 ») est permise : c'est l'usage voulu des traductions arabes (`ar.i18n.json`, huit clés, COM-RC tour 7 lot L), qui garde la virgule arabe à gauche d'un nom latin ; elle n'ancre aucune valeur ;
+- la garde statique `test/support/garde_ancres.dart` reste comme filet complémentaire (elle voit le code qu'aucun test n'exerce). Sur la ligne réunie, elle relève 37 chaînes qui n'en sont pas (suivi d'un champ par son nom : `ConfigLigneEntiere.affichage` puis `.value` d'un autre objet, `FilterPill.libelle` puis `.libelle` d'un autre objet) ; elles sont figées dans `test/support/garde_ancres_socle.txt`, socle qui ne peut que diminuer (le test échoue sur une faute nouvelle et sur une entrée qui n'est plus trouvée) ;
+- le faux client HTTP du binding n'est posé qu'au premier `testWidgets`, comme avant (sans cela, deux fichiers de purs `test` qui parlent à un faux serveur local échouaient).
+
+Reprise de `corrections/c2-duree-5` (a134118b, non fusionnée) sur la ligne réunie d986c1de : correction de `lib/` de DUREE-INSECABLE-4 et -5 (ancre seulement en tête, `sansAncre`, `enchainer`, durée en phrase du planning, isolats RTL, carte de séance bornée, « 150 % » valeur seule). `data_collection.dart`, réservé à COUPE-MOTS-FOND-1 pendant ce lot, ne reçoit que la correction des ancres (libellé parlé de la cellule par `sansAncre`, résumé de carte par `enchainer`) ; le repli en cartes à texte agrandi et la colonne `insecable` de la branche ne sont pas repris (la base a `TexteSansCoupure` et `identifiantInsecable` de COUPE-MOTS-4). Vrai cas trouvé et corrigé à la source : `lib/core/admin/config_edition.dart`, phrase « horsBornes » qui insérait deux valeurs ancrées (conservation des données) au milieu de la phrase.
+Unités insécables (garde des unités de DUREE-INSECABLE-4, étendue à %, ans, Ko, Mo) : sur la ligne réunie, 15 appels nus venus des écrans de finance, de trésorerie, de pièce jointe et d'identité ; corrigés dans le texte même (onze clés fr, quatre ar, espace insécable U+00A0 entre le nombre et son unité, aucun mot changé, `tool/libelles_sources.json` complété), décidé par délégation le 10/10. Deux tests de la base alignés (`identite_profil_test`, `politiques_commerciales_test`).
+Tests de la branche sautés, pour la réunion : « Comptes, 1440 px, texte x2 : repliée en cartes » et « Comptes, 1440 px : l'identifiant tient sur une ligne » (LTR et RTL), qui portent sur la disposition de `DataCollection` réservée à COUPE-MOTS-FOND-1 ; l'identifiant reste tenu par COUPE-MOTS-4 (`test/features/coupe_mots_4/comptes_identifiant_test.dart`).
+
+Preuves :
+- `test/accessibilite/garde_ancres_execution_test.dart` : les mutations H1, H2, F15, G5, G2, F12, F18, F16, D2, D3 et M_this du relecteur, réécrites en écrans, font chacune échouer la garde d'exécution ; chaque canal est lu (Text, span qui suit un texte, `TextSpan.semanticsLabel`, `Text.semanticsLabel`, Semantics value, hint, tooltip, `EditableText`) ; les formes corrigées passent (valeur seule, isolat, `sansAncre`, `enchainer`, fusion sémantique de deux chaînes ancrées en tête). D2 et D3 nomment les deux formes de littéraux collés de la R2.
+- Contre-épreuves sur 702191ce : garde neutralisée, 20 échecs dans ce fichier ; défaut de `data_collection.dart` remis (libellé sans `sansAncre`), 7 échecs dans des tests d'écran existants de la base (`qualite_liste_test` 4, `comptes_test` 1, `coupe_mots_4/comptes_identifiant_test` 2 : « Depuis : 20 jours ») ; résumé de carte remis en `.join`, 27 échecs dans les mêmes fichiers ; un écran fautif laissé monté à la fin d'un `testWidgets` fait échouer le test par le seul crochet de fin.
+- Garde lancée par dossier, `--concurrency=2` : `test/core` +1139, 0 échec ; `test/features` +6260 (3270 sautés), dont les seuls échecs (18) étaient les traductions arabes à U+200F devant « ، » (exception ci-dessus), deux fichiers de purs `test` privés de leur client HTTP (corrigé) et un test de la base qui attendait l'erreur d'âge sans espace insécable (aligné) ; fichiers relancés après correction : 0 échec.
+- Coût, mesuré sur `test/core` seul (décidé par délégation : un dossier représentatif, pas la suite) : 118 s sans la garde, 117 s avec (une première mesure froide à 174 s, machine partagée) ; aucun surcoût mesurable, sous la limite de +15 %.
+
+Statut : présent dans le code, testé localement ; ni staging ni déploiement. Recensé, hors périmètre : le zoom « 150 % » de `tc_mushaf` (rendu du Coran, zone interdite).
+
+### DUREE-FOND-1, tour de correction (10/10/2026) : relecture acceptée, six mineurs levés
+- **Unité arabe de la pièce jointe** : `com.socle.composants.pieceJointe.tailleKo` et `tailleMo` reçoivent l'espace insécable U+00A0 en arabe aussi (« {taille} كيلوبايت », « {taille} ميغابايت » : nombre lié à son unité ; aucun mot changé). La garde des unités ne lisait que le français : une unité arabe lui échappait. Nouvelle garde de parité (`unitesSecablesEnArabe`, `test/support/garde_durees.dart`, testée dans `duree_insecable_3_test.dart`) : tout paramètre lié par U+00A0 en français doit l'être en arabe. Inventaire : 68 liaisons françaises comparées, 2 fautes trouvées (les deux clés ci-dessus), 2 corrigées. Contre-épreuve : 2 fautes relevées avant la correction de `ar.i18n.json` ; fixture qui relève l'espace ordinaire et accepte U+00A0.
+- **Captures qui ne correspondent pas à la ligne réunie, retirées** : `DUREE-INSECABLE-5/comptes_tableau_1440x1_dark_rtl.png`, `comptes_tableau_1440x1_light_ltr.png`, `comptes_texte_agrandi_1440x2_dark_rtl.png` (colonne `insecable` et repli en cartes de `c2-duree-5`, non repris) et `DUREE-INSECABLE-4/comptes_cartes_320x2_dark_rtl.png`, `comptes_cartes_800x1_light_ltr.png` (Comptes de `c2-duree-5`, sans `identifiantInsecable` de la base). Les autres captures de ces deux dossiers ne dépendent ni de `comptes_page.dart` ni de la disposition de `DataCollection` ; les scripts archivés (`.dart.txt`) restent. Renvois ajoutés dans les sections DUREE-INSECABLE-5 ci-dessus.
+- **Preuve permanente du crochet de fin** : `BindingGardeAncres.verificationDeFin` (par défaut `verifierAncresRendues`) est ce que `runTest` appelle après le corps de chaque `testWidgets`. `garde_ancres_execution_test.dart`, groupe « crochet de fin de testWidgets » : un `testWidgets` laisse monté « Duree : [U+200E]45 min », le crochet est remplacé le temps de ce seul test par un témoin, qui note qu'il est appelé après le corps, écran encore monté, et que la vraie garde lève alors une `TestFailure` ; le test suivant le vérifie. Contre-épreuves : appel du crochet retiré de `runTest`, 1 échec ; crochet appelé avant le corps au lieu d'après, 1 échec.
+- **Coût sur un dossier d'écrans** (mesure du vérificateur, sur 47afba78, `test/widgets`, 470 tests, `--concurrency=2`) : avec la garde 98 s et 89 s (horloge du lanceur ; 121 s et 100 s au mur), sans la garde 92 s (103 s au mur). Aucun surcoût mesurable, sous la limite de +15 %, comme sur `test/core` (118 s sans, 117 s avec).
+- **Appelants nommés par rôle** des composants touchés (`ligne_presence`, `local_feedback`, `pastille_etat_seance`), garde active : famille `test/features/accueil_famille_test.dart`, enseignant `test/features/classe_enseignant/espace_classe_enseignant_test.dart`, salle `test/features/salle_seance/salle_secours_bandeau_test.dart`, journée de l'enseignant `test/features/journee_test.dart` ; administration (`DataCollection`) : `comptes_test`, `qualite_liste_test`, `coupe_mots_4/comptes_identifiant_test`.
+- **À confirmer par la voie TB avant la réunion** : `lib/features/salle_seance/barre_support.dart` et `vue_seance.dart` (« 150 % » en valeur seule, ancre seulement en tête) et un test ajouté dans `test/teaching_core/e/classe_live_page_test.dart`. L'interdit du lot nomme « salle, tc_classe_live, tc_dock » ; lu à la lettre il vise `features/salle/` et non `features/salle_seance/`, mais `vue_seance` se décrit comme la salle de séance unique : la modification, minimale, est signalée pour que la voie TB la confirme ou la reprenne.
+
+Statut du tour : présent dans le code, testé localement ; ni staging ni déploiement.

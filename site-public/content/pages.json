@@ -1,0 +1,1318 @@
+{
+  "schema": {
+    "name": "RewayahPublicPages",
+    "version": 1,
+    "locale": "fr-FR",
+    "description": "Données éditoriales françaises pour le générateur HTML public. Les clés de pages sont les URL canoniques. Ce statut décrit la préparation du contenu, jamais une autorisation de publier la branche. En aperçu, les pages peuvent être servies avec un indicateur de préparation et doivent toutes porter noindex. Les entrées blocked restent visibles seulement dans l'aperçu de préparation; elles sont exclues de tout artefact de production. Les pages conditionnelles (articles, parcours et postes individuels) ne sont pas des entrées ici.",
+    "page_fields": {
+      "title": "Titre HTML unique, idéalement inférieur à 60 caractères.",
+      "description": "Description HTML unique, rédigée pour décrire la page sans promesse non prouvée.",
+      "h1": "Titre visible unique de la page.",
+      "intro": "Texte d'introduction facultatif, avant les sections.",
+      "sections": "Liste ordonnée d'objets {id,title,paragraphs,points,links}; points et links peuvent être omis.",
+      "cta": "Action principale {label,href}; liens internes absolus depuis la racine du site.",
+      "indexable": "Booléen d'éligibilité SEO cible après validation. En aperçu, le générateur impose noindex quelle que soit cette valeur. Cette valeur n'autorise pas une publication ni une indexation en production.",
+      "status": "ready signifie texte préparé pour revue/intégration, sans feu vert de production; blocked signifie dépendances non fermées. Les deux statuts peuvent être servis uniquement en aperçu marqué comme préparation et noindex. blocked doit être exclu de tout artefact de production."
+    }
+  },
+  "site": {
+    "locale": "fr-FR",
+    "author_credit": "Site conçu par Abdoulaye Mouhidine Sow.",
+    "social_links": [
+      {
+        "label": "Facebook officiel de Rewayah Academy",
+        "href": "https://www.facebook.com/share/1CVee2teiN/"
+      },
+      {
+        "label": "Facebook de l'auteur du site, Abdoulaye Mouhidine Sow",
+        "href": "https://www.facebook.com/share/1D6H2EYhci/"
+      }
+    ],
+    "contacts": {
+      "general": "contact@rewayahacademy.com",
+      "support": "support@rewayahacademy.com",
+      "recruitment": "recrutement@rewayahacademy.com",
+      "billing": "invoice@rewayahacademy.com"
+    }
+  },
+  "pages": {
+    "/fr/": {
+      "title": "Cours de Coran en ligne en petite classe | Rewayah Academy",
+      "description": "Trois séances de Coran par semaine en visio, toujours avec le même enseignant, dans une petite classe. Pour les enfants dès 6 ans et pour les adultes.",
+      "h1": "Le Coran en ligne, en petite classe.",
+      "intro": "Trois séances par semaine, avec le même enseignant. Pour les enfants dès 6 ans et pour les adultes.",
+      "sections": [
+        {
+          "id": "foyer",
+          "title": "Un espace pour toute la famille.",
+          "paragraphs": [
+            "Retrouvez les profils, les classes et le suivi de vos enfants au même endroit. Chacun garde son parcours.",
+            "Vous pouvez aussi apprendre pour vous-même."
+          ],
+          "points": [
+            "Un profil par élève",
+            "Un espace familial pour suivre les parcours"
+          ],
+          "links": [
+            {
+              "label": "Découvrir l'espace familial",
+              "href": "/fr/familles"
+            }
+          ]
+        },
+        {
+          "id": "cours",
+          "title": "Un enseignant qui écoute et corrige.",
+          "paragraphs": [
+            "Écouter, lire ou réciter à son tour, puis recevoir une correction. Avant le prochain cours, chacun a son travail à préparer."
+          ],
+          "points": [
+            "Enfants et adultes",
+            "Lecture, récitation et mémorisation",
+            "Apprentissage guidé par un enseignant"
+          ],
+          "links": [
+            {
+              "label": "Découvrir les cours",
+              "href": "/fr/cours"
+            }
+          ]
+        },
+        {
+          "id": "suivi",
+          "title": "Suivre son parcours, même à distance.",
+          "paragraphs": [
+            "Retrouvez les séances et le travail à préparer dans votre espace familial, et chaque fin de semaine le compte rendu de l’enseignant.",
+            "Lorsque l’observation est autorisée, vous pouvez écouter une séance deux minutes, sans activer votre micro ni votre caméra. L’enfant et l’enseignant sont informés de votre présence."
+          ],
+          "links": [
+            {
+              "label": "Comprendre l’espace familial",
+              "href": "/fr/familles"
+            }
+          ]
+        },
+        {
+          "id": "fonctionnement",
+          "title": "Un horaire fixe, une classe stable.",
+          "paragraphs": [
+            "Choisissez un horaire parmi ceux que nous publions, pour votre enfant ou pour vous-même. La direction compose ensuite la classe, qui garde cet horaire."
+          ],
+          "points": [
+            "Ouvrir l'inscription dans l'application",
+            "Consulter les propositions publiées",
+            "Être prévenu à chaque étape, jusqu’au premier cours"
+          ],
+          "links": [
+            {
+              "label": "Commencer mon inscription",
+              "href": "/connexion"
+            },
+            {
+              "label": "Comprendre l’inscription",
+              "href": "/fr/comment-ca-marche"
+            }
+          ]
+        },
+        {
+          "id": "tarifs",
+          "title": "Le prix, par élève et par mois.",
+          "paragraphs": [
+            "Le prix dépend de l'âge de l'élève. Les remises du foyer, du paiement d'avance, du parrainage et de la bourse sont détaillées sur la page des tarifs. Le montant final et les taxes éventuelles sont indiqués avant paiement."
+          ],
+          "links": [
+            {
+              "label": "Voir les tarifs et les remises",
+              "href": "/fr/tarifs"
+            }
+          ]
+        },
+        {
+          "id": "confiance",
+          "title": "Accompagné à chaque étape.",
+          "paragraphs": [
+            "Chaque enfant est inscrit par un tuteur adulte autorisé, qui gère son accès aux cours."
+          ],
+          "links": [
+            {
+              "label": "Découvrir l’académie",
+              "href": "/fr/academie"
+            },
+            {
+              "label": "Nous contacter",
+              "href": "/fr/contact"
+            }
+          ]
+        },
+        {
+          "id": "faq-articles",
+          "title": "Questions des familles.",
+          "paragraphs": [
+            "Avant la première séance, trouvez les repères dont vous avez besoin."
+          ],
+          "links": [
+            {
+              "label": "Consulter l'aide",
+              "href": "/fr/aide"
+            },
+            {
+              "label": "Voir les articles disponibles",
+              "href": "/fr/articles"
+            }
+          ]
+        },
+        {
+          "id": "footer",
+          "title": "Commencez votre inscription.",
+          "paragraphs": [
+            "Pour votre enfant ou pour vous-même."
+          ],
+          "links": [
+            {
+              "label": "Contact général",
+              "href": "mailto:contact@rewayahacademy.com"
+            },
+            {
+              "label": "Assistance",
+              "href": "mailto:support@rewayahacademy.com"
+            },
+            {
+              "label": "Recrutement",
+              "href": "/fr/recrutement"
+            },
+            {
+              "label": "Protection des enfants",
+              "href": "/fr/protection-des-enfants"
+            },
+            {
+              "label": "Accessibilité",
+              "href": "/fr/accessibilite"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Commencer mon inscription",
+        "href": "/connexion"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/familles": {
+      "title": "Cours de Coran en ligne pour enfants, dès 6 ans | Rewayah",
+      "description": "Votre enfant suit trois séances par semaine avec le même enseignant, dans une classe de 3 à 5 élèves. Vous suivez son parcours dans votre espace familial.",
+      "h1": "Le Coran pour votre enfant",
+      "intro": "Dès 6 ans, en petite classe. Dans votre espace familial, vous retrouvez chaque élève inscrit dans votre foyer, ses séances et son travail à préparer.",
+      "sections": [
+        {
+          "id": "profils",
+          "title": "Un profil pour chaque élève",
+          "paragraphs": [
+            "Chaque enfant a son profil et suit son propre parcours. Vous voyez ce qui concerne ce profil, selon les accès autorisés.",
+            "Chaque enfant est inscrit par un tuteur adulte autorisé : c’est vous qui l’inscrivez et qui gérez son accès aux cours."
+          ],
+          "points": [
+            "Un parcours par élève",
+            "Des informations propres à chaque profil"
+          ],
+          "links": [
+            {
+              "label": "Lire les informations sur la protection des enfants",
+              "href": "/fr/protection-des-enfants"
+            }
+          ]
+        },
+        {
+          "id": "suivi",
+          "title": "Suivre le parcours de votre enfant",
+          "paragraphs": [
+            "Chaque fin de semaine, vous recevez dans l’application le compte rendu de l’enseignant. Les informations des autres élèves de la classe ne vous sont jamais montrées."
+          ]
+        },
+        {
+          "id": "organisation",
+          "title": "Vous choisissez parmi nos horaires",
+          "paragraphs": [
+            "Vous choisissez un horaire parmi ceux que nous publions : les jours et l’heure des trois séances de la semaine. La direction crée ensuite la classe et vous écrit à chaque étape.",
+            "Votre choix n’est pas encore une réservation : quand la classe est créée, votre enfant y est inscrit, et l’application vous annonce son enseignant puis la date du premier cours."
+          ],
+          "links": [
+            {
+              "label": "Comprendre le parcours d'inscription",
+              "href": "/fr/comment-ca-marche"
+            }
+          ]
+        },
+        {
+          "id": "en-bref",
+          "title": "Les cours en bref",
+          "generated": "fiches-eleves"
+        },
+        {
+          "id": "aide",
+          "title": "Besoin d'aide pour votre foyer ?",
+          "paragraphs": [
+            "Pour une question sur l'accès ou un profil, écrivez à support@rewayahacademy.com."
+          ],
+          "links": [
+            {
+              "label": "Consulter l'aide",
+              "href": "/fr/aide"
+            },
+            {
+              "label": "Écrire à l'assistance",
+              "href": "mailto:support@rewayahacademy.com"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Commencer mon inscription",
+        "href": "/connexion"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/cours": {
+      "title": "Apprendre à lire le Coran en ligne : le programme | Rewayah",
+      "description": "Les bases de la lecture arabe, la lecture et la récitation du Coran, puis la mémorisation selon le parcours. Pour les enfants dès 6 ans et pour les adultes.",
+      "h1": "Lire le Coran, étape par étape",
+      "intro": "Un débutant commence par les bases : les lettres, la lecture avec les voyelles, puis la lecture dans le Coran et les sourates courtes.",
+      "sections": [
+        {
+          "id": "objectifs",
+          "title": "Ce que l’élève apprend",
+          "paragraphs": [
+            "Lire l’arabe avec les voyelles, puis lire le Coran et réciter les sourates courtes, d’Al-Fatiha à Az-Zalzalah.",
+            "Les paroles de la prière et les invocations s’apprennent en matière secondaire, au fil des étapes."
+          ],
+          "points": [
+            "Les lettres",
+            "Lire avec les voyelles",
+            "Lire dans le Coran",
+            "Les sourates courtes, d’Al-Fatiha à Az-Zalzalah"
+          ]
+        },
+        {
+          "id": "adultes-enfants",
+          "title": "Enfants et adultes",
+          "paragraphs": [
+            "Un débutant et un élève qui lit déjà ne commencent pas au même endroit : le parcours part de ce que l’élève sait.",
+            "À l’inscription, vous voyez les horaires ouverts, avec leur langue et leur public, enfant ou adulte."
+          ]
+        },
+        {
+          "id": "methode",
+          "title": "Apprendre avec un enseignant",
+          "paragraphs": [
+            "L’élève écoute, lit ou récite à son tour, et l’enseignant le corrige. Avant le prochain cours, il a son travail à préparer.",
+            "Après les bases, l’élève peut mémoriser le Coran ou le lire en entier. Chaque étape a une durée prévue et une date limite : le programme avance, il ne s’étire pas sans fin."
+          ]
+        },
+        {
+          "id": "groupes",
+          "title": "Trois séances par semaine",
+          "paragraphs": [
+            "Vous choisissez la langue et l’horaire à l’inscription, parmi ceux que nous publions. Ensuite, la classe garde le même horaire."
+          ],
+          "links": [
+            {
+              "label": "Voir le fonctionnement de l'inscription",
+              "href": "/fr/comment-ca-marche"
+            },
+            {
+              "label": "Lire les informations tarifaires",
+              "href": "/fr/tarifs"
+            }
+          ]
+        },
+        {
+          "id": "en-bref",
+          "title": "Les cours en bref",
+          "generated": "fiches-eleves"
+        }
+      ],
+      "cta": {
+        "label": "Commencer mon inscription",
+        "href": "/connexion"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/comment-ca-marche": {
+      "title": "Comment se passe l’inscription aux cours de Coran | Rewayah",
+      "description": "Vous choisissez un horaire publié, la direction compose la classe et nomme l’enseignant. Rien n’est facturé avant l’ouverture de la classe.",
+      "h1": "De l’inscription au premier cours",
+      "intro": "Vous vous inscrivez et suivez votre demande dans l’application Rewayah, en quatre étapes.",
+      "sections": [
+        {
+          "id": "connexion",
+          "title": "1. Ouvrir l’application",
+          "paragraphs": [
+            "Le bouton « Commencer mon inscription » ouvre l’application. Si vous n’avez pas encore de compte, elle vous guide pour en créer un.",
+            "Tout se passe dans l’application Rewayah : le site ne vous demande aucun compte."
+          ]
+        },
+        {
+          "id": "propositions",
+          "title": "2. Choisir un horaire publié",
+          "paragraphs": [
+            "Vous choisissez un horaire parmi ceux que la direction publie : les jours et l’heure de vos trois séances de la semaine.",
+            "Votre choix n’est pas encore une réservation : la direction compose ensuite la classe et nomme son enseignant."
+          ]
+        },
+        {
+          "id": "traitement",
+          "title": "3. La direction compose la classe",
+          "paragraphs": [
+            "La direction réunit les demandes qui ont les mêmes jours, la même heure, le même public et la même langue, puis crée la classe.",
+            "Vous êtes prévenu dans l’application à chaque étape."
+          ]
+        },
+        {
+          "id": "classe",
+          "title": "4. Recevoir votre classe",
+          "paragraphs": [
+            "Quand la classe est créée, votre élève y est inscrit. L’application vous annonce ensuite son enseignant, puis la date et l’heure du premier cours.",
+            "Le prix, la taxe de votre pays et le montant en euros, livres ou dollars canadiens s’affichent au moment du paiement."
+          ]
+        },
+        {
+          "id": "mineur",
+          "title": "Pour inscrire un enfant",
+          "paragraphs": [
+            "Vous inscrivez votre enfant en tant que tuteur adulte autorisé : vous gérez son accès aux cours et vous en restez responsable.",
+            "Pour une question sur l’accès, écrivez à support@rewayahacademy.com."
+          ],
+          "links": [
+            {
+              "label": "Protection des enfants",
+              "href": "/fr/protection-des-enfants"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Commencer mon inscription",
+        "href": "/connexion"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/tarifs": {
+      "title": "Tarifs des cours de Coran en ligne | Rewayah Academy",
+      "description": "Les prix par mois, les remises du foyer, le paiement d'avance et un simulateur pour calculer le tarif de votre famille, hors taxes.",
+      "h1": "Tarifs des cours de Coran",
+      "intro": "Le prix par élève et par mois, hors taxes, et toutes les remises. Le montant final et les taxes vous sont indiqués avant le paiement.",
+      "sections": [
+        {
+          "id": "grille",
+          "title": "Le prix de chaque formule",
+          "generated": "grille",
+          "paragraphs": [
+            "Le prix dépend de l'âge de l'élève. La formule adulte commence à l'âge indiqué dans le tableau."
+          ]
+        },
+        {
+          "id": "remises",
+          "title": "Les remises",
+          "generated": "remises",
+          "paragraphs": [
+            "Les remises sont calculées par élève. La bourse ne se cumule avec aucune autre remise."
+          ]
+        },
+        {
+          "id": "famille",
+          "title": "Ce que coûte une famille",
+          "generated": "famille"
+        },
+        {
+          "id": "classes",
+          "title": "Une classe, un enseignant attitré",
+          "generated": "classes"
+        },
+        {
+          "id": "conditions",
+          "title": "À savoir avant de commander",
+          "points": [
+            "Il n'y a pas d'essai : la première semaine est remboursée si le cours ne convient pas.",
+            "L'abonnement se renouvelle chaque mois et se résilie chaque mois.",
+            "Une inscription en cours de mois paie seulement les séances restantes.",
+            "Une place manquée n'est pas remboursée : elle est réservée dans une classe fixe.",
+            "Une séance annulée par l'académie est remplacée."
+          ],
+          "paragraphs": [
+            "La taxe de votre pays et le montant en euros, livres ou dollars canadiens s’affichent au paiement. Les conditions de vente complètes sont dans la page Conditions.",
+            "Pour une question liée à une facture ou à la facturation, écrivez à invoice@rewayahacademy.com."
+          ],
+          "links": [
+            {
+              "label": "Annulation et remboursement",
+              "href": "/fr/legal/annulation-remboursement"
+            },
+            {
+              "label": "Écrire au service de facturation",
+              "href": "mailto:invoice@rewayahacademy.com"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Commencer mon inscription",
+        "href": "/connexion"
+      },
+      "indexable": false,
+      "status": "ready"
+    },
+    "/fr/academie": {
+      "title": "À propos de Rewayah Academy",
+      "description": "Découvrez le projet pédagogique de Rewayah Academy et son approche des cours de Coran en ligne.",
+      "h1": "Une académie du Coran",
+      "intro": "Rewayah Academy enseigne le Coran en ligne depuis le 1er mai 2024. Chaque élève y apprend en petite classe, avec un enseignant attitré.",
+      "sections": [
+        {
+          "id": "projet",
+          "title": "Apprendre avec un enseignant",
+          "paragraphs": [
+            "Nous enseignons en ligne la lecture de l’arabe, la lecture et la récitation du Coran, la mémorisation et les bases utiles à la prière.",
+            "Chaque étape a son objectif et sa date limite : le programme avance, il ne s’étire pas sans fin."
+          ]
+        },
+        {
+          "id": "fondateurs",
+          "title": "Trois spécialistes du Coran",
+          "paragraphs": [
+            "Rewayah Academy a été fondée le 1er mai 2024 par trois spécialistes du Coran et des sciences islamiques : Abdoulaye Mouhidine Sow, son directeur, Mamadou Alimou Diallo et Ahmadou Diallo.",
+            "L’idée a été discutée pour la première fois à La Mecque, à la Mosquée sacrée.",
+            "Le nom dit le projet : transmettre le savoir tel qu’il a été reçu des anciens, sans l’altérer. Le symbole le montre aussi : le cercle est la halqa, où l’on apprend le Coran ensemble ; l’arche est le livre ; la porte ouverte donne accès à l’enseignement."
+          ]
+        },
+        {
+          "id": "famille",
+          "title": "La famille fait partie du parcours",
+          "paragraphs": [
+            "Dans votre espace familial, vous retrouvez le profil de chaque élève, son étape, sa date limite, son travail à préparer et, chaque fin de semaine, le compte rendu de l’enseignant.",
+            "Un enfant est toujours inscrit par un adulte autorisé, qui en reste responsable."
+          ]
+        },
+        {
+          "id": "societe",
+          "title": "La société exploitante",
+          "paragraphs": [
+            "Depuis le 1er mai 2024, Rewayah Academy accompagne l’apprentissage du Coran. REWAYAH ACADEMY LTD porte l’activité, sous le numéro 16624644.",
+            "Les mentions légales sont publiées sur leur page."
+          ],
+          "links": [
+            {
+              "label": "Lire les mentions légales",
+              "href": "/fr/legal/mentions"
+            }
+          ]
+        },
+        {
+          "id": "contact",
+          "title": "Écrire à Rewayah Academy",
+          "paragraphs": [
+            "Pour toute question sur l’académie, écrivez à contact@rewayahacademy.com."
+          ],
+          "links": [
+            {
+              "label": "Nous contacter",
+              "href": "/fr/contact"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Découvrir les cours",
+        "href": "/fr/cours"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/articles": {
+      "title": "Conseils et articles | Rewayah Academy",
+      "description": "Articles pédagogiques et réponses pratiques publiés par Rewayah Academy.",
+      "h1": "Articles et repères pour apprendre",
+      "intro": "Un article ne paraît ici qu’après sa relecture par l’académie.",
+      "sections": [
+        {
+          "id": "catalogue",
+          "title": "Les articles à venir",
+          "paragraphs": [
+            "Aucun article n’est encore publié.",
+            "Un article publié ici cite ses références."
+          ]
+        },
+        {
+          "id": "orientation",
+          "title": "Trouver une réponse maintenant",
+          "paragraphs": [
+            "Pour une question sur les cours, l’inscription ou votre foyer, les pages de l’académie et l’aide vous répondent dès maintenant."
+          ],
+          "links": [
+            {
+              "label": "Aide et questions fréquentes",
+              "href": "/fr/aide"
+            },
+            {
+              "label": "Cours",
+              "href": "/fr/cours"
+            },
+            {
+              "label": "Comment ça marche",
+              "href": "/fr/comment-ca-marche"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Consulter l'aide",
+        "href": "/fr/aide"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/aide": {
+      "title": "Aide et questions fréquentes | Rewayah Academy",
+      "description": "Réponses aux questions sur les cours, l'inscription, les familles et l'assistance Rewayah Academy.",
+      "h1": "Aide et questions fréquentes",
+      "intro": "Des réponses pratiques sur l'apprentissage, le foyer et les prochaines étapes.",
+      "sections": [
+        {
+          "id": "inscription",
+          "title": "Comment commencer une inscription ?",
+          "paragraphs": [
+            "Ouvrez la connexion Rewayah. Si vous n'avez pas encore de compte, l'application vous guidera vers l'inscription.",
+            "Voir les étapes détaillées dans la page Comment ça marche."
+          ],
+          "links": [
+            {
+              "label": "Comment ça marche",
+              "href": "/fr/comment-ca-marche"
+            }
+          ]
+        },
+        {
+          "id": "horaire",
+          "title": "Le choix d'un horaire confirme-t-il une place ?",
+          "paragraphs": [
+            "Non. Une proposition horaire publiée exprime une préférence. L'administration traite les intentions et propose ensuite une classe. Aucun enseignant ni nombre de places restantes n'est affiché au choix des propositions."
+          ]
+        },
+        {
+          "id": "mineur",
+          "title": "Un enfant peut-il s'inscrire seul ?",
+          "paragraphs": [
+            "Non. Un mineur ne rejoint pas les cours sans tuteur adulte autorisé. Le tuteur porte les décisions d'inscription."
+          ],
+          "links": [
+            {
+              "label": "Protection des enfants",
+              "href": "/fr/protection-des-enfants"
+            }
+          ]
+        },
+        {
+          "id": "tarif",
+          "title": "Où vérifier le prix ?",
+          "paragraphs": [
+            "Les prix sont sur la page Tarifs, hors taxes. Le montant exact, taxes comprises, est indiqué avant le paiement."
+          ],
+          "links": [
+            {
+              "label": "Informations tarifaires",
+              "href": "/fr/tarifs"
+            }
+          ]
+        },
+        {
+          "id": "support",
+          "title": "Comment contacter l'assistance ?",
+          "paragraphs": [
+            "Pour un problème d'accès ou une question sur votre espace, écrivez à support@rewayahacademy.com."
+          ],
+          "links": [
+            {
+              "label": "Écrire à l'assistance",
+              "href": "mailto:support@rewayahacademy.com"
+            }
+          ]
+        },
+        {
+          "id": "facturation",
+          "title": "À qui adresser une question de facture ?",
+          "paragraphs": [
+            "Pour une question de facturation, écrivez à invoice@rewayahacademy.com."
+          ],
+          "links": [
+            {
+              "label": "Contacter la facturation",
+              "href": "mailto:invoice@rewayahacademy.com"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Contacter l'assistance",
+        "href": "mailto:support@rewayahacademy.com"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/avis": {
+      "title": "Avis des familles et des élèves | Rewayah Academy",
+      "description": "Les avis des parents et des élèves adultes de Rewayah Academy, lus par la direction avant leur publication.",
+      "h1": "Avis des familles et des élèves",
+      "intro": "Les mots de celles et ceux qui apprennent avec nous, publiés tels qu’ils ont été écrits.",
+      "sections": [
+        {
+          "id": "avis",
+          "title": "Ce que disent les familles",
+          "generated": "avis-liste"
+        },
+        {
+          "id": "transparence",
+          "title": "Comment les avis sont recueillis",
+          "paragraphs": [
+            "Les avis sont recueillis par un lien personnel que la direction envoie aux familles inscrites et aux élèves adultes. Il ne demande ni compte ni connexion.",
+            "Chaque avis est lu par la direction avant sa publication. Le texte n’est jamais modifié : il est publié tel quel ou il n’est pas publié.",
+            "Un avis n’est refusé que pour l’une de ces raisons : insulte, données personnelles d’un tiers, publicité, hors sujet ou doublon. Les avis négatifs écrits avec respect sont publiés.",
+            "Pour faire retirer votre avis, écrivez à support@rewayahacademy.com."
+          ],
+          "links": [
+            {
+              "label": "Contacter l'assistance",
+              "href": "mailto:support@rewayahacademy.com"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Découvrir les cours",
+        "href": "/fr/cours"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/recrutement": {
+      "title": "Recrutement | Rewayah Academy",
+      "description": "Informations sur le recrutement et les candidatures auprès de Rewayah Academy.",
+      "h1": "Travailler avec Rewayah Academy",
+      "intro": "Rewayah Academy recrute des enseignants de Coran. Les conditions sont publiées ci-dessous.",
+      "sections": [
+        {
+          "id": "postes",
+          "title": "Enseigner avec nous",
+          "paragraphs": [],
+          "generated": "fiche-enseignant"
+        },
+        {
+          "id": "enseignants",
+          "title": "Enseignement",
+          "paragraphs": [
+            "Votre candidature doit nous permettre d’évaluer vos compétences et les langues dans lesquelles vous enseignez."
+          ]
+        },
+        {
+          "id": "candidature",
+          "title": "Information ou candidature",
+          "paragraphs": [
+            "Pour une question sur le recrutement ou une candidature spontanée, écrivez à recrutement@rewayahacademy.com. N’envoyez pas de pièce d’identité par e-mail : elle vous sera demandée plus tard, dans l’application."
+          ],
+          "links": [
+            {
+              "label": "Écrire au recrutement pour une demande d’information",
+              "href": "mailto:recrutement@rewayahacademy.com"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Demander une information sur le recrutement",
+        "href": "mailto:recrutement@rewayahacademy.com"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/contact": {
+      "title": "Contacter Rewayah Academy",
+      "description": "Les coordonnées de Rewayah Academy pour les questions générales, l'assistance, le recrutement et la facturation.",
+      "h1": "Contacter Rewayah Academy",
+      "intro": "Choisissez l'adresse correspondant à votre demande.",
+      "sections": [
+        {
+          "id": "general",
+          "title": "Question générale ou institutionnelle",
+          "paragraphs": [
+            "Pour une question générale ou institutionnelle : contact@rewayahacademy.com."
+          ],
+          "links": [
+            {
+              "label": "Écrire à contact@rewayahacademy.com",
+              "href": "mailto:contact@rewayahacademy.com"
+            }
+          ]
+        },
+        {
+          "id": "support",
+          "title": "Accès et assistance aux familles",
+          "paragraphs": [
+            "Pour une difficulté d'accès ou une question sur votre espace : support@rewayahacademy.com."
+          ],
+          "links": [
+            {
+              "label": "Écrire à support@rewayahacademy.com",
+              "href": "mailto:support@rewayahacademy.com"
+            }
+          ]
+        },
+        {
+          "id": "recrutement",
+          "title": "Candidatures",
+          "paragraphs": [
+            "Pour le recrutement : recrutement@rewayahacademy.com."
+          ],
+          "links": [
+            {
+              "label": "Écrire à recrutement@rewayahacademy.com",
+              "href": "mailto:recrutement@rewayahacademy.com"
+            }
+          ]
+        },
+        {
+          "id": "facturation",
+          "title": "Facturation",
+          "paragraphs": [
+            "Pour les factures et questions de facturation : invoice@rewayahacademy.com."
+          ],
+          "links": [
+            {
+              "label": "Écrire à invoice@rewayahacademy.com",
+              "href": "mailto:invoice@rewayahacademy.com"
+            }
+          ]
+        },
+        {
+          "id": "limites",
+          "title": "Canaux de contact",
+          "paragraphs": [
+            "Nous répondons par e-mail. Il n'y a pas de numéro de téléphone ni de WhatsApp."
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Écrire pour une question générale",
+        "href": "mailto:contact@rewayahacademy.com"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/protection-des-enfants": {
+      "title": "Protection des enfants | Rewayah Academy",
+      "description": "Comment Rewayah Academy protège les élèves mineurs et comment signaler une inquiétude.",
+      "h1": "Protection des enfants",
+      "intro": "Version 2026-10-v1, texte du 18 octobre 2026. Les élèves mineurs suivent leurs cours sous la responsabilité d'un adulte. Voici les règles que nous appliquons et comment nous faire part d'une inquiétude.",
+      "sections": [
+        {
+          "id": "s1",
+          "title": "Un adulte responsable",
+          "paragraphs": [
+            "Un enfant n'accède pas aux cours sans tuteur adulte autorisé. L'inscription, les accords et les paiements relèvent du tuteur.",
+            "La formule enfant va de 6 à 17 ans. Aucun mineur n'est placé dans une Classe d'adultes.",
+            "De 6 à 9 ans, l'Interface guidée est activée par défaut : des écrans plus simples, avec de grandes touches."
+          ]
+        },
+        {
+          "id": "s2",
+          "title": "Pendant les séances",
+          "paragraphs": [
+            "L'enfant suit ses cours avec un petit nombre d'élèves et le même enseignant attitré.",
+            "Il n'y a pas de lien public vers une salle. On y entre par son compte, avec un accès donné par le serveur.",
+            "Le parent peut observer en silence le cours de son enfant. L'enfant concerné en est informé.",
+            "Un contrôleur qualité peut assister aux séances. Une mention le rappelle dans la salle.",
+            "Un cours peut être enregistré. Aujourd'hui, ce n'est pas le cas, et le tuteur en serait informé avant."
+          ]
+        },
+        {
+          "id": "s3",
+          "title": "Les enseignants",
+          "paragraphs": [
+            "Les enseignants signent un contrat et une politique de contrôle. Leur pièce d'identité est gardée dans un espace privé, séparé des photos visibles en classe."
+          ]
+        },
+        {
+          "id": "s4",
+          "title": "Les informations de l'enfant",
+          "paragraphs": [
+            "Les informations d'un enfant ne sont ni publiques ni visibles des autres familles.",
+            "Le code personnel de l'élève reste sur son appareil.",
+            "Voir aussi le texte Confidentialité."
+          ]
+        },
+        {
+          "id": "s5",
+          "title": "Faire part d'une inquiétude",
+          "paragraphs": [
+            "Si une chose vous inquiète, écrivez-nous. Dites ce que vous avez vu, quand, et dans quelle Classe.",
+            "En cas de danger immédiat, contactez d'abord les services d'urgence de votre pays.",
+            "Pour toute question, écrivez à support@rewayahacademy.com.",
+            "Rewayah Academy, joignable à support@rewayahacademy.com."
+          ],
+          "links": [
+            {
+              "label": "Écrire à l'assistance",
+              "href": "mailto:support@rewayahacademy.com"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Contacter l'assistance",
+        "href": "mailto:support@rewayahacademy.com"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/legal/mentions": {
+      "title": "Mentions légales | Rewayah Academy",
+      "description": "Qui exploite Rewayah Academy et comment la joindre.",
+      "h1": "Mentions légales",
+      "intro": "Version 2026-10-v1, texte du 18 octobre 2026. Voici qui exploite Rewayah Academy et comment la joindre.",
+      "sections": [
+        {
+          "id": "s1",
+          "title": "Qui exploite le service",
+          "paragraphs": [
+            "Rewayah Academy propose des cours de Coran en visio, en Classes stables : les mêmes élèves, un horaire qui revient chaque semaine et un enseignant attitré.",
+            "Société : Rewayah Academy Ltd",
+            "Numéro d'immatriculation : 16624644, Angleterre et pays de Galles",
+            "Siège : 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni"
+          ]
+        },
+        {
+          "id": "s2",
+          "title": "Nous joindre",
+          "paragraphs": [
+            "Une seule adresse pour vos questions sur le service, sur ces textes et sur vos informations.",
+            "Pour toute question, écrivez à support@rewayahacademy.com."
+          ]
+        },
+        {
+          "id": "s3",
+          "title": "Hébergement et services techniques",
+          "paragraphs": [
+            "Le service s'appuie sur des prestataires techniques : l'hébergement des pages web, la base de données et la connexion des comptes, la visio des séances, le stockage privé des fichiers et un prestataire de paiement.",
+            "Base de données et connexion des comptes : Supabase Inc. (supabase.com). Application et pages web : Vercel Inc. (vercel.com). Nom de domaine : Cloudflare, Inc. (cloudflare.com).",
+            "La base de données est hébergée en Irlande, dans l'Union européenne. D'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni : ces transferts suivent les garanties prévues par la loi."
+          ]
+        },
+        {
+          "id": "s4",
+          "title": "Ces textes",
+          "paragraphs": [
+            "Chaque texte juridique porte sa version et sa date, affichées en haut de la page. Quand un texte change, la nouvelle version remplace l'ancienne à la date indiquée."
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Contacter l'assistance",
+        "href": "mailto:support@rewayahacademy.com"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/legal/conditions": {
+      "title": "Conditions d'utilisation et de vente | Rewayah Academy",
+      "description": "Les règles d'utilisation du service et de vente des abonnements Rewayah Academy.",
+      "h1": "Conditions d'utilisation et de vente",
+      "intro": "Version 2026-10-v1, texte du 18 octobre 2026. Ces conditions s'appliquent dès que vous créez un compte ou que vous inscrivez un élève. Lisez-les en entier, elles sont courtes.",
+      "sections": [
+        {
+          "id": "s1",
+          "title": "Le service",
+          "paragraphs": [
+            "Rewayah Academy propose des cours de Coran en visio. Chaque élève est placé dans une Classe : un petit nombre d'élèves, un horaire récurrent et un enseignant attitré.",
+            "Il y a deux formules : la formule enfant, de 6 à 17 ans, et la formule adulte, à partir de 18 ans. Aucun mineur n'est placé dans une Classe d'adultes.",
+            "Une Classe ouvre quand assez d'élèves sont inscrits. Avant, vous êtes en liste d'attente et rien n'est facturé."
+          ]
+        },
+        {
+          "id": "s2",
+          "title": "Compte et accès",
+          "paragraphs": [
+            "Un enfant est inscrit et suivi par un tuteur adulte, qui décide pour lui. Voir le texte Protection des enfants.",
+            "Vous donnez des informations exactes et vous gardez vos accès pour vous. On entre dans une séance par son compte, jamais par un lien public."
+          ],
+          "links": [
+            {
+              "label": "Protection des enfants",
+              "href": "/fr/protection-des-enfants"
+            }
+          ]
+        },
+        {
+          "id": "s3",
+          "title": "Les séances",
+          "paragraphs": [
+            "Les séances ont lieu à heure fixe, avec le même enseignant. Être présent et à l'heure fait partie de l'engagement.",
+            "Une séance écourtée reste due si l'élève a été présent assez longtemps. Une séance annulée par l'académie ou par l'enseignant est remplacée.",
+            "Un contrôleur qualité peut assister aux séances sans être vu, et un cours peut être enregistré. Si l'enregistrement devient réel, nous vous le disons avant.",
+            "Le parent peut observer en silence la séance de son enfant."
+          ]
+        },
+        {
+          "id": "s4",
+          "title": "Prix et paiement",
+          "paragraphs": [
+            "Les prix figurent sur la page Tarifs et dans l'application, au moment de choisir une formule. Ils sont en dollars américains et hors taxes. La taxe due selon votre pays est ajoutée au paiement.",
+            "L'abonnement se renouvelle chaque mois. Les remises sont calculées par le système sur la facture du foyer.",
+            "Le paiement passe par un prestataire de paiement.",
+            "Il n'y a pas d'essai gratuit. La première semaine est remboursée si le cours ne convient pas.",
+            "Pour arrêter, être remboursé ou payer en retard, voir le texte Annulation et remboursement."
+          ],
+          "links": [
+            {
+              "label": "Voir les tarifs",
+              "href": "/fr/tarifs"
+            },
+            {
+              "label": "Annulation et remboursement",
+              "href": "/fr/legal/annulation-remboursement"
+            }
+          ]
+        },
+        {
+          "id": "s5",
+          "title": "Respect en séance",
+          "paragraphs": [
+            "Chacun se comporte avec respect envers l'enseignant et les autres élèves, par ses mots comme par ses gestes."
+          ]
+        },
+        {
+          "id": "s6",
+          "title": "Vos informations",
+          "paragraphs": [
+            "La façon dont nous utilisons vos informations est expliquée dans le texte Confidentialité."
+          ],
+          "links": [
+            {
+              "label": "Confidentialité",
+              "href": "/fr/legal/confidentialite"
+            }
+          ]
+        },
+        {
+          "id": "s7",
+          "title": "Droit applicable",
+          "paragraphs": [
+            "Cette partie précise la loi qui s'applique et le tribunal compétent.",
+            "Droit d'Angleterre et du pays de Galles, tribunaux d'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.",
+            "Droit de rétractation : vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due."
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Contacter l'assistance",
+        "href": "mailto:support@rewayahacademy.com"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/legal/annulation-remboursement": {
+      "title": "Annulation et remboursement | Rewayah Academy",
+      "description": "Arrêter, être remboursé, et ce qui se passe si un paiement n'arrive pas.",
+      "h1": "Annulation et remboursement",
+      "intro": "Version 2026-10-v1, texte du 18 octobre 2026. Vous pouvez arrêter quand vous voulez. Voici ce qui est remboursé, ce qui ne l'est pas, et ce qui se passe si un paiement n'arrive pas.",
+      "sections": [
+        {
+          "id": "s1",
+          "title": "Première semaine remboursée",
+          "paragraphs": [
+            "Il n'y a pas d'essai gratuit. À la place, la première semaine est remboursée si le cours ne convient pas.",
+            "Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous êtes alors remboursé en entier.",
+            "Après ce délai, le mois commencé est dû."
+          ]
+        },
+        {
+          "id": "s2",
+          "title": "Arrêter l'abonnement",
+          "paragraphs": [
+            "L'abonnement mensuel s'arrête à tout moment, sans justification. Il prend fin à la fin du mois en cours.",
+            "Les formules payées d'avance, au trimestre ou à l'année, ne sont pas remboursées après la première semaine.",
+            "Une inscription en cours de mois paie seulement les séances restantes du mois."
+          ]
+        },
+        {
+          "id": "s3",
+          "title": "Absences et séances annulées",
+          "paragraphs": [
+            "Une place manquée n'est pas remboursée : elle est réservée pour l'élève dans une Classe fixe.",
+            "Une séance annulée par l'académie ou par l'enseignant est remplacée.",
+            "Si la Classe n'ouvre pas faute d'inscrits, rien n'est facturé."
+          ]
+        },
+        {
+          "id": "s4",
+          "title": "Paiement en retard",
+          "paragraphs": [
+            "Avant le renouvellement, vous recevez des rappels automatiques.",
+            "Après la date de renouvellement, un court délai de grâce s'applique : l'élève suit ses cours et l'impayé s'affiche chez le tuteur.",
+            "Si le paiement n'arrive toujours pas, l'accès aux séances est suspendu. La place est gardée quelque temps.",
+            "Ensuite, la place est libérée pour la liste d'attente. Le retour reste possible sans frais, dans une nouvelle Classe.",
+            "Les dates exactes sont celles de la politique tarifaire en vigueur (page Tarifs)."
+          ]
+        },
+        {
+          "id": "s5",
+          "title": "Passage à la formule adulte",
+          "paragraphs": [
+            "Un élève qui atteint 18 ans passe à la formule adulte au renouvellement suivant. Le parent est prévenu à l'avance."
+          ]
+        },
+        {
+          "id": "s6",
+          "title": "Faire une demande",
+          "paragraphs": [
+            "Pour arrêter ou demander un remboursement, écrivez-nous en donnant le nom du compte et la raison.",
+            "Pour toute question, écrivez à support@rewayahacademy.com.",
+            "Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.",
+            "Droit de rétractation : vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due."
+          ],
+          "links": [
+            {
+              "label": "Écrire à l'assistance",
+              "href": "mailto:support@rewayahacademy.com"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Contacter l'assistance",
+        "href": "mailto:support@rewayahacademy.com"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/legal/confidentialite": {
+      "title": "Confidentialité | Rewayah Academy",
+      "description": "Quelles informations Rewayah Academy garde, pourquoi, et vos droits.",
+      "h1": "Confidentialité",
+      "intro": "Version 2026-10-v1, texte du 18 octobre 2026. Nous gardons seulement ce qui sert à faire les cours. Voici quelles informations, pourquoi, et comment les contrôler.",
+      "sections": [
+        {
+          "id": "s1",
+          "title": "Qui est responsable",
+          "paragraphs": [
+            "Rewayah Academy Ltd décide pourquoi et comment vos informations sont utilisées. Ses coordonnées sont dans les Mentions légales.",
+            "Représentant dans l'Union européenne : Rewayah Academy.",
+            "Pour toute question, écrivez à support@rewayahacademy.com."
+          ],
+          "links": [
+            {
+              "label": "Mentions légales",
+              "href": "/fr/legal/mentions"
+            }
+          ]
+        },
+        {
+          "id": "s2",
+          "title": "Ce que nous recueillons",
+          "paragraphs": [
+            "Pour créer un compte : le nom, l'adresse de courriel, la langue de l'interface, le pays de résidence et le fuseau horaire.",
+            "Pour un élève : la date de naissance, qui sert à choisir la bonne formule et les règles propres aux mineurs.",
+            "Facultatif : photo, téléphone, adresse, niveau, préférences d'horaires.",
+            "Pendant les cours : la présence, le cahier de transmission et la progression de l'élève.",
+            "Pour payer : l'abonnement et les factures. Le paiement lui-même passe par un prestataire de paiement.",
+            "Pour un enseignant : une pièce d'identité, gardée à part dans un espace privé.",
+            "Vos accords : la version de chaque texte accepté et la date.",
+            "Des rapports d'erreurs techniques, sans capture d'écran, sans nom et sans identité."
+          ]
+        },
+        {
+          "id": "s3",
+          "title": "Pourquoi nous les utilisons",
+          "paragraphs": [
+            "Former les Classes et assurer les cours.",
+            "Suivre la présence et la progression.",
+            "Facturer l'abonnement.",
+            "Protéger les élèves et contrôler la qualité des séances.",
+            "Réparer les pannes."
+          ]
+        },
+        {
+          "id": "s4",
+          "title": "Qui voit quoi",
+          "paragraphs": [
+            "Une famille ne voit que ses propres informations. Les informations d'un enfant ne sont jamais publiques et ne sont jamais montrées aux autres familles.",
+            "L'enseignant voit ses élèves et ses Classes. La direction voit ce qu'il faut pour gérer les inscriptions, les Classes et les paiements. Ces accès sont réglés côté serveur.",
+            "Un contrôleur qualité peut assister aux séances. Les accès sensibles sont inscrits dans un journal."
+          ]
+        },
+        {
+          "id": "s5",
+          "title": "Séances en direct et enregistrement",
+          "paragraphs": [
+            "La visio passe par un service spécialisé. L'accès à une séance est donné par le serveur, pour cette séance seulement et pour peu de temps.",
+            "Aujourd'hui, l'application n'enregistre pas les cours. Si l'enregistrement revient, nous vous dirons avant pourquoi, combien de temps il est gardé et qui peut y accéder, et nous demanderons votre accord.",
+            "Une mention rappelle dans la salle qu'une visite de contrôle est possible."
+          ]
+        },
+        {
+          "id": "s6",
+          "title": "Où sont vos informations",
+          "paragraphs": [
+            "Nous utilisons un hébergeur de pages web, une base de données avec la connexion des comptes, un service de visio, un stockage privé pour les fichiers, un prestataire de paiement et un service de rapports d'erreurs. Ils traitent vos informations pour nous, pour ces seules raisons.",
+            "La base de données est hébergée en Irlande, dans l'Union européenne. D'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni : ces transferts suivent les garanties prévues par la loi."
+          ]
+        },
+        {
+          "id": "s7",
+          "title": "Combien de temps",
+          "paragraphs": [
+            "Nous gardons chaque type d'information le temps nécessaire, pas davantage. La pièce d'identité d'un enseignant est supprimée à la fin d'un délai fixé. Une suppression peut être gelée en cas de litige.",
+            "Compte et profil : tant que le compte existe. Après une demande de suppression et un délai de réflexion de 14 jours, le nom, l'adresse e-mail et les coordonnées sont effacés. Factures et paiements : 6 ans, comme l'exige la loi comptable du Royaume-Uni. Pièce d'identité d'un enseignant : 90 jours au plus après la vérification. Messages : tant que le compte existe ; après la suppression, leur auteur devient anonyme."
+          ]
+        },
+        {
+          "id": "s8",
+          "title": "Vos droits",
+          "paragraphs": [
+            "Voir les informations que nous avons sur vous.",
+            "Les corriger.",
+            "Demander leur suppression ou limiter leur usage.",
+            "Écrivez-nous. Nous vérifions d'abord que c'est bien vous, ou le tuteur de l'élève. Vous pouvez aussi vous adresser à l'autorité de protection des données de votre pays."
+          ]
+        },
+        {
+          "id": "s9",
+          "title": "Sécurité",
+          "paragraphs": [
+            "Les règles d'accès sont appliquées par le serveur. Les pièces d'identité sont dans un espace privé, séparé des photos. Aucune protection n'est absolue : si vous voyez un problème, écrivez-nous."
+          ]
+        },
+        {
+          "id": "s10",
+          "title": "Les enfants",
+          "paragraphs": [
+            "Les informations d'un enfant sont données et gérées par son tuteur. Voir le texte Protection des enfants."
+          ],
+          "links": [
+            {
+              "label": "Protection des enfants",
+              "href": "/fr/protection-des-enfants"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Contacter l'assistance",
+        "href": "mailto:support@rewayahacademy.com"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/legal/cookies": {
+      "title": "Cookies | Rewayah Academy",
+      "description": "Ce que l'application et le site Rewayah Academy gardent sur votre appareil.",
+      "h1": "Cookies",
+      "intro": "Version 2026-10-v1, texte du 18 octobre 2026. L'application et le site gardent peu de choses sur votre appareil. Voici lesquelles.",
+      "sections": [
+        {
+          "id": "s1",
+          "title": "Ce que c'est",
+          "paragraphs": [
+            "Un cookie ou une donnée locale est un petit élément gardé par votre navigateur ou votre appareil. Il aide un service à vous reconnaître ou à retenir un réglage."
+          ]
+        },
+        {
+          "id": "s2",
+          "title": "Ce que l'application garde",
+          "paragraphs": [
+            "Votre session de connexion.",
+            "Vos préférences d'affichage, comme la langue et le thème.",
+            "Un cache limité, que vous pouvez effacer.",
+            "Sur l'appareil d'un élève, son code personnel, qui ne quitte jamais l'appareil.",
+            "Ces éléments sont nécessaires au fonctionnement de l'application."
+          ]
+        },
+        {
+          "id": "s3",
+          "title": "Ce que nous n'utilisons pas",
+          "paragraphs": [
+            "À la date de ce texte, ni l'application ni le site n'utilisent de cookies publicitaires ni de mesure d'audience."
+          ]
+        },
+        {
+          "id": "s4",
+          "title": "Rapports d'erreurs",
+          "paragraphs": [
+            "Quand l'application plante, un rapport technique peut être envoyé à un service de suivi des erreurs. Il ne contient ni capture d'écran, ni nom, ni identité."
+          ]
+        },
+        {
+          "id": "s5",
+          "title": "Les contrôler",
+          "paragraphs": [
+            "Vous pouvez effacer les données du site dans les réglages de votre navigateur, ou vous déconnecter depuis le Compte. Vous devrez alors vous reconnecter et refaire vos réglages d'affichage."
+          ]
+        },
+        {
+          "id": "s6",
+          "title": "Services tiers",
+          "paragraphs": [
+            "Si vous quittez Rewayah Academy pour un autre service, par exemple le paiement, ce service applique ses propres règles."
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Contacter l'assistance",
+        "href": "mailto:support@rewayahacademy.com"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/accessibilite": {
+      "title": "Accessibilité | Rewayah Academy",
+      "description": "État des vérifications d'accessibilité du site Rewayah Academy et moyen de signaler une difficulté.",
+      "h1": "Accessibilité du site Rewayah Academy",
+      "intro": "Les contenus doivent rester lisibles et utilisables au clavier, au zoom et avec les technologies d'assistance.",
+      "sections": [
+        {
+          "id": "engagement",
+          "title": "Un site utilisable par davantage de personnes",
+          "paragraphs": [
+            "Le contenu textuel ne doit pas dépendre d'une animation ou d'une image. Les pages doivent proposer une structure de titres claire, des liens explicites et des commandes utilisables au clavier.",
+            "Les mouvements doivent pouvoir être réduits et le texte doit se réorganiser sur les petits écrans et lors du zoom."
+          ]
+        },
+        {
+          "id": "etat",
+          "title": "État des vérifications",
+          "paragraphs": [
+            "Ce site n'a pas encore été vérifié en entier selon la norme WCAG 2.2 niveau AA. Si une page vous gêne, écrivez à support@rewayahacademy.com : nous la corrigerons."
+          ]
+        },
+        {
+          "id": "contact",
+          "title": "Signaler une difficulté",
+          "paragraphs": [
+            "Décrivez la page et la difficulté à support@rewayahacademy.com. N'envoyez pas d'informations personnelles d'enfant dans votre signalement."
+          ],
+          "links": [
+            {
+              "label": "Écrire à l'assistance",
+              "href": "mailto:support@rewayahacademy.com"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Signaler une difficulté",
+        "href": "mailto:support@rewayahacademy.com"
+      },
+      "indexable": true,
+      "status": "ready"
+    }
+  }
+}

@@ -64,9 +64,8 @@ class JetonAgent {
     identiteMasquee: json['identite_masquee'] as bool? ?? true,
     expireLe: DateTime.parse(json['expire_le'] as String).toLocal(),
     creeLe: DateTime.parse(json['cree_le'] as String).toLocal(),
-    revoqueLe: DateTime.tryParse(
-      json['revoque_le'] as String? ?? '',
-    )?.toLocal(),
+    revoqueLe: DateTime.tryParse(json['revoque_le'] as String? ?? '')
+        ?.toLocal(),
     derniereRemiseLe: DateTime.tryParse(
       json['derniere_remise_le'] as String? ?? '',
     )?.toLocal(),
@@ -173,6 +172,13 @@ class PersonneObservable {
     final String complet = '$prenom $nom'.trim();
     return complet.isEmpty ? identifiant : '$complet ($identifiant)';
   }
+
+  /// Le nom seul, ou l'identifiant quand l'identite est masquee : le
+  /// selecteur de personne affiche l'identifiant sur sa propre ligne.
+  String get libelleNom {
+    final String complet = '$prenom $nom'.trim();
+    return complet.isEmpty ? identifiant : complet;
+  }
 }
 
 /// Ce que l'emission rend, une seule fois.
@@ -269,8 +275,9 @@ class ServiceAgentSupabase implements ServiceAgent {
       },
     );
 
-    final Map<String, dynamic> ligne =
-        lignes.whereType<Map<String, dynamic>>().first;
+    final Map<String, dynamic> ligne = lignes
+        .whereType<Map<String, dynamic>>()
+        .first;
 
     return JetonEmis(
       secret: ligne['jeton'] as String? ?? '',

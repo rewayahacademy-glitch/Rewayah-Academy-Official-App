@@ -23,9 +23,8 @@ enum TypePublicGroupe {
   /// Lit un type depuis sa valeur SQL. Se replie sur `enfant`, le seuil le
   /// plus bas : un type mal lu ne doit jamais laisser passer plus de monde
   /// que prevu.
-  static TypePublicGroupe depuisSql(String? valeur) => valeur == 'adulte'
-      ? TypePublicGroupe.adulte
-      : TypePublicGroupe.enfant;
+  static TypePublicGroupe depuisSql(String? valeur) =>
+      valeur == 'adulte' ? TypePublicGroupe.adulte : TypePublicGroupe.enfant;
 }
 
 /// Un groupe pedagogique, vu par l'administration.
@@ -48,6 +47,7 @@ class GroupeAdmin {
     required this.creneau,
     required this.nombreMembres,
     required this.actif,
+    this.teacherPays,
   });
 
   /// Lit une ligne rendue par `groupes_admin()`.
@@ -70,6 +70,8 @@ class GroupeAdmin {
       ),
       nombreMembres: entier('nombre_membres'),
       actif: json['actif'] as bool? ?? false,
+      // ENS-PAYS-1 : lu des que `groupes_admin()` le rend (BR-1), nul avant.
+      teacherPays: json['teacher_country'] as String?,
     );
   }
 
@@ -96,6 +98,10 @@ class GroupeAdmin {
 
   /// Le nom de l'enseignant. Nul dans les memes conditions.
   final String? teacherNom;
+
+  /// Le pays declare par l'enseignant (ENS-PAYS-1). Nul quand il ne l'est pas,
+  /// quand l'identite est masquee, ou tant que le serveur ne le rend pas.
+  final String? teacherPays;
 
   /// Le creneau hebdomadaire partage par tous les membres.
   final Creneau creneau;
@@ -135,9 +141,7 @@ class MembreGroupe {
     prenom: json['student_prenom'] as String?,
     nom: json['student_nom'] as String?,
     rejointLe:
-        DateTime.tryParse(
-          json['joined_at'] as String? ?? '',
-        )?.toLocal() ??
+        DateTime.tryParse(json['joined_at'] as String? ?? '')?.toLocal() ??
         DateTime.now(),
   );
 
@@ -261,6 +265,11 @@ class ServiceGroupesSupabase implements ServiceGroupes {
       'p_weekday': creneau.jour,
       'p_hour_local': creneau.heure,
       'p_seuil_max': seuilMax,
+      // L3-06 : signature gardee (8 arguments). Fuseau et couleur ne sont pas
+      // saisis dans cet ecran : null, le serveur retient Europe/Paris et
+      // aucune couleur.
+      'p_timezone_iana': null,
+      'p_couleur_jeton': null,
     },
   );
 
@@ -278,6 +287,10 @@ class ServiceGroupesSupabase implements ServiceGroupes {
       'p_seuil_max': seuilMax,
       'p_weekday': creneau.jour,
       'p_hour_local': creneau.heure,
+      // L3-06 : signature gardee (7 arguments). null laisse fuseau et couleur
+      // inchanges cote serveur.
+      'p_timezone_iana': null,
+      'p_couleur_jeton': null,
     },
   );
 

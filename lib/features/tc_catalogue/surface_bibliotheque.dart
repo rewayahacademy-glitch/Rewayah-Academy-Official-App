@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -15,6 +16,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_filtre.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import 'carte_ressource.dart';
@@ -25,8 +27,31 @@ import 'libelles_bibliotheque.dart';
 /// [position] est non nulle quand la recherche portait un repere -- « 2:255 »,
 /// « 40 » -- et que la ressource l'accepte : on ouvre alors directement au bon
 /// endroit plutot qu'au debut.
-typedef ChoixRessource =
-    void Function(LibraryResource ressource, ContentPosition? position);
+typedef ChoixRessource = void Function(
+  LibraryResource ressource,
+  ContentPosition? position,
+);
+
+/// TB-9 (plan V2 §3 « Ranger reellement ») : un support range pendant la
+/// seance, sa position de reprise et la phrase qui la dit sur sa carte.
+@immutable
+class RepriseEnSeance {
+  /// Cree une reprise.
+  const RepriseEnSeance({
+    required this.resourceId,
+    required this.position,
+    required this.libelle,
+  });
+
+  /// La ressource rangee.
+  final String resourceId;
+
+  /// Ou la reprendre (sa page au moment du rangement).
+  final ContentPosition position;
+
+  /// Le point de reprise ecrit sur la carte.
+  final String libelle;
+}
 
 /// La Bibliotheque, **la seule**.
 ///
@@ -55,7 +80,18 @@ class SurfaceBibliotheque extends ConsumerStatefulWidget {
     super.key,
     this.groupeId,
     this.enTete,
+    this.reprises = const <RepriseEnSeance>[],
+    this.titreReprises,
   });
+
+  /// TB-9 : les supports ranges pendant la seance. Leur section vient en
+  /// tete (titre [titreReprises]) ; chacune de leurs cartes, dans toutes les
+  /// sections, porte le point de reprise et s'ouvre a sa position. Vide hors
+  /// seance.
+  final List<RepriseEnSeance> reprises;
+
+  /// Le titre de la section des supports ranges.
+  final String? titreReprises;
 
   /// Ou la Bibliotheque est ouverte.
   final ContexteDecouverte contexte;
@@ -124,7 +160,7 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
             ),
           ),
         SliverToBoxAdapter(child: _barre(context, vue)),
-        ..._corps(context, vue),
+        ..._corps(context, vue, valeur?.tous ?? const <LibraryResource>[]),
         const SliverToBoxAdapter(child: Ecart.vSection),
       ],
     );
@@ -150,53 +186,61 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
             textInputAction: TextInputAction.search,
             decoration: InputDecoration(
               isDense: true,
-              hintText: t.tc.bibliotheque.rechercheIndication,
+              // EA-HL-DOUBLE-1f : l'indication passe a la ligne au lieu d'etre
+              // tronquee (K-54) ; COUPE-MOTS-FOND-1 : sans limite de lignes,
+              // et un mot trop large se reduit, borne (Interface guidee).
+              hint: texteAideSansCoupure(
+                context,
+                t.tc.bibliotheque.rechercheIndication,
+              ),
               prefixIcon: Icon(AppIcons.recherche.repos),
             ),
           ),
         ),
         Ecart.vMd,
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: <Widget>[
-              for (final TypeRessource type in TypeRessource.values) ...<Widget>[
-                FilterPill(
-                  libelle: libelleTypeRessource(type),
-                  retenue: _filtre.types?.contains(type) ?? false,
-                  onPress: () => _basculerType(type),
-                ),
-                Ecart.hSm,
-              ],
-              MenuFiltre<EtatOffline>(
-                libelle: t.tc.bibliotheque.filtre.disponibilite,
-                valeur: _filtre.etatOffline,
-                entrees: <EntreeFiltre<EtatOffline>>[
-                  EntreeFiltre<EtatOffline>(
-                    valeur: null,
-                    libelle: t.tc.bibliotheque.effacerRecherche,
-                  ),
-                  for (final EtatOffline e in EtatOffline.values)
-                    EntreeFiltre<EtatOffline>(
-                      valeur: e,
-                      libelle: libelleOffline(e),
-                    ),
-                ],
-                onChoix: (EtatOffline? valeur) => setState(() {
-                  _filtre = valeur == null
-                      ? _filtre.avec(relacher: const <String>{'etatOffline'})
-                      : _filtre.avec(etatOffline: valeur);
-                }),
+        // FILTRES-1 (05/10/2026) : une seule rangee de filtres, qui defile
+        // quand elle ne tient pas ; sa barre de defilement dit qu'il y en a
+        // d'autres (`RangeeFiltres`). Remplace le passage a la ligne d'ONGLETS-1.
+        RangeeFiltres(
+          filtres: <Widget>[
+            for (final TypeRessource type in TypeRessource.values)
+              FilterPill(
+                libelle: libelleTypeRessource(type),
+                retenue: _filtre.types?.contains(type) ?? false,
+                onPress: () => _basculerType(type),
               ),
-            ],
-          ),
+            MenuFiltre<EtatOffline>(
+              libelle: t.tc.bibliotheque.filtre.disponibilite,
+              valeur: _filtre.etatOffline,
+              entrees: <EntreeFiltre<EtatOffline>>[
+                EntreeFiltre<EtatOffline>(
+                  valeur: null,
+                  libelle: t.tc.bibliotheque.effacerRecherche,
+                ),
+                for (final EtatOffline e in EtatOffline.values)
+                  EntreeFiltre<EtatOffline>(
+                    valeur: e,
+                    libelle: libelleOffline(e),
+                  ),
+              ],
+              onChoix: (EtatOffline? valeur) => setState(() {
+                _filtre = valeur == null
+                    ? _filtre.avec(relacher: const <String>{'etatOffline'})
+                    : _filtre.avec(etatOffline: valeur);
+              }),
+            ),
+          ],
         ),
         Ecart.vLg,
       ],
     );
   }
 
-  List<Widget> _corps(BuildContext context, VueCatalogue vue) {
+  List<Widget> _corps(
+    BuildContext context,
+    VueCatalogue vue,
+    List<LibraryResource> tous,
+  ) {
     switch (vue.etat) {
       case EtatCatalogue.chargement:
         return const <Widget>[
@@ -207,6 +251,7 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
           SliverToBoxAdapter(
             child: EmptyState(
               message: t.tc.bibliotheque.indisponible.message,
+              invitation: t.tc.bibliotheque.indisponible.invitation,
               icone: AppIcons.avertissement,
               libelleAction: t.tc.bibliotheque.indisponible.action,
               onAction: () =>
@@ -241,6 +286,7 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
       case EtatCatalogue.contenu:
         return <Widget>[
           if (vue.reprise != null) ..._sectionReprise(context, vue),
+          ..._sectionRanges(context, vue, tous),
           for (final SectionCatalogue section in vue.sections)
             ..._section(context, vue, section),
         ];
@@ -269,6 +315,47 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
     ];
   }
 
+  /// TB-9 : les supports ranges pendant la seance, avec leur point de
+  /// reprise ; seulement ceux que le catalogue connait (une carte sans
+  /// ressource n'aurait rien a presenter). Absente pendant une recherche.
+  List<Widget> _sectionRanges(
+    BuildContext context,
+    VueCatalogue vue,
+    List<LibraryResource> tous,
+  ) {
+    final List<LibraryResource> ranges = <LibraryResource>[
+      for (final RepriseEnSeance reprise in widget.reprises)
+        ...tous.where((LibraryResource r) => r.id == reprise.resourceId),
+    ];
+    final String? titre = widget.titreReprises;
+    if (ranges.isEmpty || titre == null || vue.rechercheActive) {
+      return const <Widget>[];
+    }
+    return <Widget>[
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.md),
+          child: SectionHeader(titre: titre, compteur: ranges.length),
+        ),
+      ),
+      SliverList.separated(
+        itemCount: ranges.length,
+        separatorBuilder: (BuildContext _, int _) => Ecart.vLg,
+        itemBuilder: (BuildContext contexte, int index) =>
+            _carte(contexte, vue, ranges[index], null),
+      ),
+      const SliverToBoxAdapter(child: Ecart.vSection),
+    ];
+  }
+
+  /// TB-9 : la reprise d'une ressource rangee pendant la seance, ou `null`.
+  RepriseEnSeance? _repriseDe(LibraryResource r) {
+    for (final RepriseEnSeance reprise in widget.reprises) {
+      if (reprise.resourceId == r.id) return reprise;
+    }
+    return null;
+  }
+
   List<Widget> _section(
     BuildContext context,
     VueCatalogue vue,
@@ -285,7 +372,7 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
     ),
     SliverList.separated(
       itemCount: section.ressources.length,
-      separatorBuilder: (BuildContext _, int _) => Ecart.vMd,
+      separatorBuilder: (BuildContext _, int _) => Ecart.vLg,
       itemBuilder: (BuildContext contexte, int index) {
         final LibraryResource r = section.ressources[index];
         return _carte(
@@ -303,12 +390,17 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
     BuildContext context,
     VueCatalogue vue,
     LibraryResource r,
-    ContentPosition? position,
+    ContentPosition? positionDemandee,
   ) {
     final bool ouvrable = vue.ouvrable(r);
+    // TB-9 : un support range s'ouvre a son point de reprise, sauf si la
+    // recherche demande un autre endroit.
+    final RepriseEnSeance? reprise = _repriseDe(r);
+    final ContentPosition? position = positionDemandee ?? reprise?.position;
     return CarteRessource(
       ressource: r,
       etatOffline: vue.etatOffline(r.id),
+      pointDeReprise: reprise?.libelle,
       onPress: ouvrable ? () => widget.onChoisir(r, position) : null,
       raisonIndisponible: ouvrable
           ? null

@@ -1,0 +1,1772 @@
+== ma_page_1440_x1
+-- paragraphe 0
+texte: texte 1:1 ￼ texte 1:2 ￼ texte 1:3 ￼ texte 1:4 ￼ texte 1:5 ￼ texte 1:6 ￼ texte 1:7 ￼ 
+police: UthmanTahaNaskh [NotoSansArabic] taille: 34.000 interligne: 2.087 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 502.00 x 1001.00 lignes: 29
+boites: [-0.1,-0.7,79.1,71.2] [79.1,7.9,508.3,65.2] [-0.1,94.4,501.9,120.6] [501.9,78.9,508.3,136.2] [-0.1,142.3,79.1,214.2] [79.1,150.9,508.3,208.2] [-0.1,237.4,501.9,263.6] [501.9,221.9,508.3,279.2] [-0.1,285.3,79.1,357.2] [79.1,293.9,508.3,351.2] [-0.1,380.4,501.9,406.6] [501.9,364.9,508.3,422.2] [-0.1,428.3,79.1,500.2] [79.1,436.9,508.3,494.2] [-0.1,523.4,501.9,549.6] [501.9,507.9,508.3,565.2] [-0.1,571.3,79.1,643.2] [79.1,579.9,508.3,637.2] [-0.1,666.4,501.9,692.6] [501.9,650.9,508.3,708.2] [-0.1,714.3,79.1,786.2] [79.1,722.9,508.3,780.2] [-0.1,809.4,501.9,835.6] [501.9,793.9,508.3,851.2] [-6.5,865.9,-0.1,923.2] [-0.1,857.3,79.1,929.2] [79.1,865.9,501.9,923.2] [-6.5,936.9,-0.1,994.2] [-0.1,952.4,501.9,978.6]
+-- paragraphe 1
+texte: ١
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 4.90 x 17.00 lignes: 1
+boites: [0.0,-4.8,4.9,21.6]
+-- paragraphe 2
+texte: ٢
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 5.62 x 17.00 lignes: 1
+boites: [0.0,-4.8,5.6,21.6]
+-- paragraphe 3
+texte: ٣
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 6.71 x 17.00 lignes: 1
+boites: [0.0,-4.8,6.7,21.6]
+-- paragraphe 4
+texte: ٤
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 6.17 x 17.00 lignes: 1
+boites: [0.0,-4.8,6.2,21.6]
+-- paragraphe 5
+texte: ٥
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 6.22 x 17.00 lignes: 1
+boites: [0.0,-4.8,6.2,21.6]
+-- paragraphe 6
+texte: ٦
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 7.23 x 17.00 lignes: 1
+boites: [0.0,-4.8,7.2,21.6]
+-- paragraphe 7
+texte: ٧
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 7.21 x 17.00 lignes: 1
+boites: [0.0,-4.8,7.2,21.6]
+-- paragraphe 8
+texte: texte 2:1 ￼ texte 2:2 ￼ texte 2:3 ￼ texte 2:4 ￼ texte 2:5 ￼ 
+police: UthmanTahaNaskh [NotoSansArabic] taille: 34.000 interligne: 2.087 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 502.00 x 715.00 lignes: 21
+boites: [-0.1,-0.7,79.1,71.2] [79.1,7.9,508.3,65.2] [-0.1,94.4,501.9,120.6] [501.9,78.9,508.3,136.2] [-0.1,142.3,79.1,214.2] [79.1,150.9,508.3,208.2] [-0.1,237.4,501.9,263.6] [501.9,221.9,508.3,279.2] [-0.1,285.3,79.1,357.2] [79.1,293.9,508.3,351.2] [-0.1,380.4,501.9,406.6] [501.9,364.9,508.3,422.2] [-0.1,428.3,79.1,500.2] [79.1,436.9,508.3,494.2] [-0.1,523.4,501.9,549.6] [501.9,507.9,508.3,565.2] [-6.5,579.9,-0.1,637.2] [-0.1,571.3,79.1,643.2] [79.1,579.9,501.9,637.2] [-6.5,650.9,-0.1,708.2] [-0.1,666.4,501.9,692.6]
+-- paragraphe 9
+texte: ١
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 4.90 x 17.00 lignes: 1
+boites: [0.0,-4.8,4.9,21.6]
+-- paragraphe 10
+texte: ٢
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 5.62 x 17.00 lignes: 1
+boites: [0.0,-4.8,5.6,21.6]
+-- paragraphe 11
+texte: ٣
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 6.71 x 17.00 lignes: 1
+boites: [0.0,-4.8,6.7,21.6]
+-- paragraphe 12
+texte: ٤
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 6.17 x 17.00 lignes: 1
+boites: [0.0,-4.8,6.2,21.6]
+-- paragraphe 13
+texte: ٥
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 6.22 x 17.00 lignes: 1
+boites: [0.0,-4.8,6.2,21.6]
+-- arbre ParagrapheVersets
+ParagrapheVersets
+  Text
+    MouseRegion
+      _SelectableTextContainer
+        SelectionContainer
+          SelectionRegistrarScope
+            _RichText
+              RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+-- arbre ParagrapheVersets
+ParagrapheVersets
+  Text
+    MouseRegion
+      _SelectableTextContainer
+        SelectionContainer
+          SelectionRegistrarScope
+            _RichText
+              RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+== ma_page_320_x2
+-- paragraphe 0
+texte: texte 2:1 ￼ texte 2:2 ￼ texte 2:3 ￼ texte 2:4 ￼ texte 2:5 ￼ 
+police: UthmanTahaNaskh [NotoSansArabic] taille: 20.945 interligne: 2.169 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 246.00 x 915.00 lignes: 21
+boites: [-0.1,0.8,97.7,89.2] [97.7,11.3,253.9,81.9] [-0.1,114.6,245.9,160.6] [245.9,102.3,253.9,172.9] [-0.1,183.8,97.7,272.2] [97.7,194.3,253.9,264.9] [-0.1,297.6,245.9,343.6] [245.9,285.3,253.9,355.9] [-0.1,366.8,97.7,455.2] [97.7,377.3,253.9,447.9] [-0.1,480.6,245.9,526.6] [245.9,468.3,253.9,538.9] [-0.1,549.8,97.7,638.2] [97.7,560.3,253.9,630.9] [-0.1,663.6,245.9,709.6] [245.9,651.3,253.9,721.9] [-8.1,743.3,-0.1,813.9] [-0.1,732.8,97.7,821.2] [97.7,743.3,245.9,813.9] [-8.1,834.3,-0.1,904.9] [-0.1,846.6,245.9,892.6]
+-- paragraphe 1
+texte: ١
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 6.04 x 21.00 lignes: 1
+boites: [0.0,-5.9,6.0,26.7]
+-- paragraphe 2
+texte: ٢
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 6.93 x 21.00 lignes: 1
+boites: [0.0,-5.9,6.9,26.7]
+-- paragraphe 3
+texte: ٣
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 8.27 x 21.00 lignes: 1
+boites: [0.0,-5.9,8.3,26.7]
+-- paragraphe 4
+texte: ٤
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 7.61 x 21.00 lignes: 1
+boites: [0.0,-5.9,7.6,26.7]
+-- paragraphe 5
+texte: ٥
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 7.66 x 21.00 lignes: 1
+boites: [0.0,-5.9,7.7,26.7]
+-- arbre ParagrapheVersets
+ParagrapheVersets
+  Text
+    MouseRegion
+      _SelectableTextContainer
+        SelectionContainer
+          SelectionRegistrarScope
+            _RichText
+              RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+== ma_page_390_x1
+-- paragraphe 0
+texte: texte 2:1 ￼ texte 2:2 ￼ texte 2:3 ￼ texte 2:4 ￼ texte 2:5 ￼ 
+police: UthmanTahaNaskh [NotoSansArabic] taille: 26.036 interligne: 2.137 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 316.00 x 565.00 lignes: 21
+boites: [-0.1,0.7,60.3,55.7] [60.3,7.2,320.8,51.1] [-0.1,75.2,315.9,95.2] [315.9,63.2,320.8,107.1] [-0.1,113.7,60.3,168.7] [60.3,120.2,320.8,164.1] [-0.1,188.2,315.9,208.2] [315.9,176.2,320.8,220.1] [-0.1,226.7,60.3,281.7] [60.3,233.2,320.8,277.1] [-0.1,301.2,315.9,321.2] [315.9,289.2,320.8,333.1] [-0.1,339.7,60.3,394.7] [60.3,346.2,320.8,390.1] [-0.1,414.2,315.9,434.2] [315.9,402.2,320.8,446.1] [-5.0,459.2,-0.1,503.1] [-0.1,452.7,60.3,507.7] [60.3,459.2,315.9,503.1] [-5.0,515.2,-0.1,559.1] [-0.1,527.2,315.9,547.2]
+-- paragraphe 1
+texte: ١
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 3.75 x 13.00 lignes: 1
+boites: [0.0,-3.7,3.8,16.5]
+-- paragraphe 2
+texte: ٢
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 4.31 x 13.00 lignes: 1
+boites: [-0.0,-3.7,4.3,16.5]
+-- paragraphe 3
+texte: ٣
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 5.14 x 13.00 lignes: 1
+boites: [0.0,-3.7,5.1,16.5]
+-- paragraphe 4
+texte: ٤
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 4.73 x 13.00 lignes: 1
+boites: [-0.0,-3.7,4.7,16.5]
+-- paragraphe 5
+texte: ٥
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 4.76 x 13.00 lignes: 1
+boites: [0.0,-3.7,4.8,16.5]
+-- arbre ParagrapheVersets
+ParagrapheVersets
+  Text
+    MouseRegion
+      _SelectableTextContainer
+        SelectionContainer
+          SelectionRegistrarScope
+            _RichText
+              RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+== ma_verset_agrandi_320_x2
+-- paragraphe 0
+texte: 2:1
+police: PlusJakartaSans [NotoSansArabic] taille: 12.000 interligne: 1.333 graisse: FontWeight.w500
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.ltr echelle: linear (2.0x)
+taille: 288.00 x 32.00 lignes: 1
+boites: [125.6,0.9,162.4,31.1]
+-- paragraphe 1
+texte: texte 2:1 ￼
+police: UthmanTahaNaskh [NotoSansArabic] taille: 20.945 interligne: 2.169 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 288.00 x 182.00 lignes: 4
+boites: [-8.1,11.3,-0.1,81.9] [-0.1,0.8,97.7,89.2] [97.7,11.3,287.9,81.9] [0.0,117.1,288.0,163.1]
+-- paragraphe 2
+texte: ١
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 6.04 x 21.00 lignes: 1
+boites: [0.0,-5.9,6.0,26.7]
+-- paragraphe 3
+texte: 2:2
+police: PlusJakartaSans [NotoSansArabic] taille: 12.000 interligne: 1.333 graisse: FontWeight.w500
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.ltr echelle: linear (2.0x)
+taille: 288.00 x 32.00 lignes: 1
+boites: [125.6,0.9,162.4,31.1]
+-- paragraphe 4
+texte: texte 2:2 ￼
+police: UthmanTahaNaskh [NotoSansArabic] taille: 20.945 interligne: 2.169 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 288.00 x 182.00 lignes: 4
+boites: [-8.1,11.3,-0.1,81.9] [-0.1,0.8,97.7,89.2] [97.7,11.3,287.9,81.9] [0.0,117.1,288.0,163.1]
+-- paragraphe 5
+texte: ٢
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 6.93 x 21.00 lignes: 1
+boites: [0.0,-5.9,6.9,26.7]
+-- paragraphe 6
+texte: 2:3
+police: PlusJakartaSans [NotoSansArabic] taille: 12.000 interligne: 1.333 graisse: FontWeight.w500
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.ltr echelle: linear (2.0x)
+taille: 288.00 x 32.00 lignes: 1
+boites: [125.6,0.9,162.4,31.1]
+-- paragraphe 7
+texte: texte 2:3 ￼
+police: UthmanTahaNaskh [NotoSansArabic] taille: 20.945 interligne: 2.169 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 288.00 x 182.00 lignes: 4
+boites: [-8.1,11.3,-0.1,81.9] [-0.1,0.8,97.7,89.2] [97.7,11.3,287.9,81.9] [0.0,117.1,288.0,163.1]
+-- paragraphe 8
+texte: ٣
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 8.27 x 21.00 lignes: 1
+boites: [0.0,-5.9,8.3,26.7]
+-- paragraphe 9
+texte: 2:4
+police: PlusJakartaSans [NotoSansArabic] taille: 12.000 interligne: 1.333 graisse: FontWeight.w500
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.ltr echelle: linear (2.0x)
+taille: 288.00 x 32.00 lignes: 1
+boites: [125.6,0.9,162.4,31.1]
+-- paragraphe 10
+texte: texte 2:4 ￼
+police: UthmanTahaNaskh [NotoSansArabic] taille: 20.945 interligne: 2.169 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 288.00 x 182.00 lignes: 4
+boites: [-8.1,11.3,-0.1,81.9] [-0.1,0.8,97.7,89.2] [97.7,11.3,287.9,81.9] [0.0,117.1,288.0,163.1]
+-- paragraphe 11
+texte: ٤
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 7.61 x 21.00 lignes: 1
+boites: [0.0,-5.9,7.6,26.7]
+-- paragraphe 12
+texte: 2:5
+police: PlusJakartaSans [NotoSansArabic] taille: 12.000 interligne: 1.333 graisse: FontWeight.w500
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.ltr echelle: linear (2.0x)
+taille: 288.00 x 32.00 lignes: 1
+boites: [125.6,0.9,162.4,31.1]
+-- paragraphe 13
+texte: texte 2:5 ￼
+police: UthmanTahaNaskh [NotoSansArabic] taille: 20.945 interligne: 2.169 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 288.00 x 182.00 lignes: 4
+boites: [-8.1,11.3,-0.1,81.9] [-0.1,0.8,97.7,89.2] [97.7,11.3,287.9,81.9] [0.0,117.1,288.0,163.1]
+-- paragraphe 14
+texte: ٥
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 7.66 x 21.00 lignes: 1
+boites: [0.0,-5.9,7.7,26.7]
+-- arbre BlocVerset
+BlocVerset
+  Column
+    Text
+      MouseRegion
+        _SelectableTextContainer
+          SelectionContainer
+            SelectionRegistrarScope
+              _RichText
+                RichText
+    SizedBox
+    Directionality
+      Text
+        MouseRegion
+          _SelectableTextContainer
+            SelectionContainer
+              SelectionRegistrarScope
+                _RichText
+                  RichText
+                    _WidgetSpanParentData
+                      Semantics
+                        _AutoScaleInlineWidget
+                          ExcludeSemantics
+                            RosaceVerset
+                              Container
+                                ConstrainedBox
+                                  DecoratedBox
+                                    Padding
+                                      Align
+                                        Text
+                                          MouseRegion
+                                            _SelectableTextContainer
+                                              SelectionContainer
+                                                SelectionRegistrarScope
+                                                  _RichText
+                                                    RichText
+-- arbre BlocVerset
+BlocVerset
+  Column
+    Text
+      MouseRegion
+        _SelectableTextContainer
+          SelectionContainer
+            SelectionRegistrarScope
+              _RichText
+                RichText
+    SizedBox
+    Directionality
+      Text
+        MouseRegion
+          _SelectableTextContainer
+            SelectionContainer
+              SelectionRegistrarScope
+                _RichText
+                  RichText
+                    _WidgetSpanParentData
+                      Semantics
+                        _AutoScaleInlineWidget
+                          ExcludeSemantics
+                            RosaceVerset
+                              Container
+                                ConstrainedBox
+                                  DecoratedBox
+                                    Padding
+                                      Align
+                                        Text
+                                          MouseRegion
+                                            _SelectableTextContainer
+                                              SelectionContainer
+                                                SelectionRegistrarScope
+                                                  _RichText
+                                                    RichText
+-- arbre BlocVerset
+BlocVerset
+  Column
+    Text
+      MouseRegion
+        _SelectableTextContainer
+          SelectionContainer
+            SelectionRegistrarScope
+              _RichText
+                RichText
+    SizedBox
+    Directionality
+      Text
+        MouseRegion
+          _SelectableTextContainer
+            SelectionContainer
+              SelectionRegistrarScope
+                _RichText
+                  RichText
+                    _WidgetSpanParentData
+                      Semantics
+                        _AutoScaleInlineWidget
+                          ExcludeSemantics
+                            RosaceVerset
+                              Container
+                                ConstrainedBox
+                                  DecoratedBox
+                                    Padding
+                                      Align
+                                        Text
+                                          MouseRegion
+                                            _SelectableTextContainer
+                                              SelectionContainer
+                                                SelectionRegistrarScope
+                                                  _RichText
+                                                    RichText
+-- arbre BlocVerset
+BlocVerset
+  Column
+    Text
+      MouseRegion
+        _SelectableTextContainer
+          SelectionContainer
+            SelectionRegistrarScope
+              _RichText
+                RichText
+    SizedBox
+    Directionality
+      Text
+        MouseRegion
+          _SelectableTextContainer
+            SelectionContainer
+              SelectionRegistrarScope
+                _RichText
+                  RichText
+                    _WidgetSpanParentData
+                      Semantics
+                        _AutoScaleInlineWidget
+                          ExcludeSemantics
+                            RosaceVerset
+                              Container
+                                ConstrainedBox
+                                  DecoratedBox
+                                    Padding
+                                      Align
+                                        Text
+                                          MouseRegion
+                                            _SelectableTextContainer
+                                              SelectionContainer
+                                                SelectionRegistrarScope
+                                                  _RichText
+                                                    RichText
+-- arbre BlocVerset
+BlocVerset
+  Column
+    Text
+      MouseRegion
+        _SelectableTextContainer
+          SelectionContainer
+            SelectionRegistrarScope
+              _RichText
+                RichText
+    SizedBox
+    Directionality
+      Text
+        MouseRegion
+          _SelectableTextContainer
+            SelectionContainer
+              SelectionRegistrarScope
+                _RichText
+                  RichText
+                    _WidgetSpanParentData
+                      Semantics
+                        _AutoScaleInlineWidget
+                          ExcludeSemantics
+                            RosaceVerset
+                              Container
+                                ConstrainedBox
+                                  DecoratedBox
+                                    Padding
+                                      Align
+                                        Text
+                                          MouseRegion
+                                            _SelectableTextContainer
+                                              SelectionContainer
+                                                SelectionRegistrarScope
+                                                  _RichText
+                                                    RichText
+== ma_verset_agrandi_390_x2
+-- paragraphe 0
+texte: 2:1
+police: PlusJakartaSans [NotoSansArabic] taille: 12.000 interligne: 1.333 graisse: FontWeight.w500
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.ltr echelle: linear (2.0x)
+taille: 358.00 x 32.00 lignes: 1
+boites: [160.6,0.9,197.4,31.1]
+-- paragraphe 1
+texte: texte 2:1 ￼
+police: UthmanTahaNaskh [NotoSansArabic] taille: 26.036 interligne: 2.137 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 358.00 x 224.00 lignes: 4
+boites: [-10.1,13.5,-0.1,101.2] [-0.1,0.4,121.7,110.4] [121.7,13.5,357.9,101.2] [0.0,144.4,358.0,200.4]
+-- paragraphe 2
+texte: ١
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 7.51 x 26.00 lignes: 1
+boites: [0.0,-7.5,7.5,33.0]
+-- paragraphe 3
+texte: 2:2
+police: PlusJakartaSans [NotoSansArabic] taille: 12.000 interligne: 1.333 graisse: FontWeight.w500
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.ltr echelle: linear (2.0x)
+taille: 358.00 x 32.00 lignes: 1
+boites: [160.6,0.9,197.4,31.1]
+-- paragraphe 4
+texte: texte 2:2 ￼
+police: UthmanTahaNaskh [NotoSansArabic] taille: 26.036 interligne: 2.137 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 358.00 x 224.00 lignes: 4
+boites: [-10.1,13.5,-0.1,101.2] [-0.1,0.4,121.7,110.4] [121.7,13.5,357.9,101.2] [0.0,144.4,358.0,200.4]
+-- paragraphe 5
+texte: ٢
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 8.61 x 26.00 lignes: 1
+boites: [0.0,-7.5,8.6,33.0]
+-- paragraphe 6
+texte: 2:3
+police: PlusJakartaSans [NotoSansArabic] taille: 12.000 interligne: 1.333 graisse: FontWeight.w500
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.ltr echelle: linear (2.0x)
+taille: 358.00 x 32.00 lignes: 1
+boites: [160.6,0.9,197.4,31.1]
+-- paragraphe 7
+texte: texte 2:3 ￼
+police: UthmanTahaNaskh [NotoSansArabic] taille: 26.036 interligne: 2.137 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 358.00 x 224.00 lignes: 4
+boites: [-10.1,13.5,-0.1,101.2] [-0.1,0.4,121.7,110.4] [121.7,13.5,357.9,101.2] [0.0,144.4,358.0,200.4]
+-- paragraphe 8
+texte: ٣
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 10.28 x 26.00 lignes: 1
+boites: [0.0,-7.5,10.3,33.0]
+-- paragraphe 9
+texte: 2:4
+police: PlusJakartaSans [NotoSansArabic] taille: 12.000 interligne: 1.333 graisse: FontWeight.w500
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.ltr echelle: linear (2.0x)
+taille: 358.00 x 32.00 lignes: 1
+boites: [160.6,0.9,197.4,31.1]
+-- paragraphe 10
+texte: texte 2:4 ￼
+police: UthmanTahaNaskh [NotoSansArabic] taille: 26.036 interligne: 2.137 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 358.00 x 224.00 lignes: 4
+boites: [-10.1,13.5,-0.1,101.2] [-0.1,0.4,121.7,110.4] [121.7,13.5,357.9,101.2] [0.0,144.4,358.0,200.4]
+-- paragraphe 11
+texte: ٤
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 9.46 x 26.00 lignes: 1
+boites: [0.0,-7.5,9.5,33.0]
+-- paragraphe 12
+texte: 2:5
+police: PlusJakartaSans [NotoSansArabic] taille: 12.000 interligne: 1.333 graisse: FontWeight.w500
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.ltr echelle: linear (2.0x)
+taille: 358.00 x 32.00 lignes: 1
+boites: [160.6,0.9,197.4,31.1]
+-- paragraphe 13
+texte: texte 2:5 ￼
+police: UthmanTahaNaskh [NotoSansArabic] taille: 26.036 interligne: 2.137 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 358.00 x 224.00 lignes: 4
+boites: [-10.1,13.5,-0.1,101.2] [-0.1,0.4,121.7,110.4] [121.7,13.5,357.9,101.2] [0.0,144.4,358.0,200.4]
+-- paragraphe 14
+texte: ٥
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 9.53 x 26.00 lignes: 1
+boites: [0.0,-7.5,9.5,33.0]
+-- arbre BlocVerset
+BlocVerset
+  Column
+    Text
+      MouseRegion
+        _SelectableTextContainer
+          SelectionContainer
+            SelectionRegistrarScope
+              _RichText
+                RichText
+    SizedBox
+    Directionality
+      Text
+        MouseRegion
+          _SelectableTextContainer
+            SelectionContainer
+              SelectionRegistrarScope
+                _RichText
+                  RichText
+                    _WidgetSpanParentData
+                      Semantics
+                        _AutoScaleInlineWidget
+                          ExcludeSemantics
+                            RosaceVerset
+                              Container
+                                ConstrainedBox
+                                  DecoratedBox
+                                    Padding
+                                      Align
+                                        Text
+                                          MouseRegion
+                                            _SelectableTextContainer
+                                              SelectionContainer
+                                                SelectionRegistrarScope
+                                                  _RichText
+                                                    RichText
+-- arbre BlocVerset
+BlocVerset
+  Column
+    Text
+      MouseRegion
+        _SelectableTextContainer
+          SelectionContainer
+            SelectionRegistrarScope
+              _RichText
+                RichText
+    SizedBox
+    Directionality
+      Text
+        MouseRegion
+          _SelectableTextContainer
+            SelectionContainer
+              SelectionRegistrarScope
+                _RichText
+                  RichText
+                    _WidgetSpanParentData
+                      Semantics
+                        _AutoScaleInlineWidget
+                          ExcludeSemantics
+                            RosaceVerset
+                              Container
+                                ConstrainedBox
+                                  DecoratedBox
+                                    Padding
+                                      Align
+                                        Text
+                                          MouseRegion
+                                            _SelectableTextContainer
+                                              SelectionContainer
+                                                SelectionRegistrarScope
+                                                  _RichText
+                                                    RichText
+-- arbre BlocVerset
+BlocVerset
+  Column
+    Text
+      MouseRegion
+        _SelectableTextContainer
+          SelectionContainer
+            SelectionRegistrarScope
+              _RichText
+                RichText
+    SizedBox
+    Directionality
+      Text
+        MouseRegion
+          _SelectableTextContainer
+            SelectionContainer
+              SelectionRegistrarScope
+                _RichText
+                  RichText
+                    _WidgetSpanParentData
+                      Semantics
+                        _AutoScaleInlineWidget
+                          ExcludeSemantics
+                            RosaceVerset
+                              Container
+                                ConstrainedBox
+                                  DecoratedBox
+                                    Padding
+                                      Align
+                                        Text
+                                          MouseRegion
+                                            _SelectableTextContainer
+                                              SelectionContainer
+                                                SelectionRegistrarScope
+                                                  _RichText
+                                                    RichText
+-- arbre BlocVerset
+BlocVerset
+  Column
+    Text
+      MouseRegion
+        _SelectableTextContainer
+          SelectionContainer
+            SelectionRegistrarScope
+              _RichText
+                RichText
+    SizedBox
+    Directionality
+      Text
+        MouseRegion
+          _SelectableTextContainer
+            SelectionContainer
+              SelectionRegistrarScope
+                _RichText
+                  RichText
+                    _WidgetSpanParentData
+                      Semantics
+                        _AutoScaleInlineWidget
+                          ExcludeSemantics
+                            RosaceVerset
+                              Container
+                                ConstrainedBox
+                                  DecoratedBox
+                                    Padding
+                                      Align
+                                        Text
+                                          MouseRegion
+                                            _SelectableTextContainer
+                                              SelectionContainer
+                                                SelectionRegistrarScope
+                                                  _RichText
+                                                    RichText
+-- arbre BlocVerset
+BlocVerset
+  Column
+    Text
+      MouseRegion
+        _SelectableTextContainer
+          SelectionContainer
+            SelectionRegistrarScope
+              _RichText
+                RichText
+    SizedBox
+    Directionality
+      Text
+        MouseRegion
+          _SelectableTextContainer
+            SelectionContainer
+              SelectionRegistrarScope
+                _RichText
+                  RichText
+                    _WidgetSpanParentData
+                      Semantics
+                        _AutoScaleInlineWidget
+                          ExcludeSemantics
+                            RosaceVerset
+                              Container
+                                ConstrainedBox
+                                  DecoratedBox
+                                    Padding
+                                      Align
+                                        Text
+                                          MouseRegion
+                                            _SelectableTextContainer
+                                              SelectionContainer
+                                                SelectionRegistrarScope
+                                                  _RichText
+                                                    RichText
+== standard_1440_x1
+-- paragraphe 0
+texte: texte 1:1 ￼ texte 1:2 ￼ texte 1:3 ￼ texte 1:4 ￼ texte 1:5 ￼ texte 1:6 ￼ texte 1:7 ￼ 
+police: UthmanTahaNaskh [NotoSansArabic] taille: 34.000 interligne: 2.087 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 630.00 x 1001.00 lignes: 29
+boites: [-0.1,-0.7,79.1,71.2] [79.1,7.9,636.3,65.2] [-0.1,94.4,629.9,120.6] [629.9,78.9,636.3,136.2] [-0.1,142.3,79.1,214.2] [79.1,150.9,636.3,208.2] [-0.1,237.4,629.9,263.6] [629.9,221.9,636.3,279.2] [-0.1,285.3,79.1,357.2] [79.1,293.9,636.3,351.2] [-0.1,380.4,629.9,406.6] [629.9,364.9,636.3,422.2] [-0.1,428.3,79.1,500.2] [79.1,436.9,636.3,494.2] [-0.1,523.4,629.9,549.6] [629.9,507.9,636.3,565.2] [-0.1,571.3,79.1,643.2] [79.1,579.9,636.3,637.2] [-0.1,666.4,629.9,692.6] [629.9,650.9,636.3,708.2] [-0.1,714.3,79.1,786.2] [79.1,722.9,636.3,780.2] [-0.1,809.4,629.9,835.6] [629.9,793.9,636.3,851.2] [-6.5,865.9,-0.1,923.2] [-0.1,857.3,79.1,929.2] [79.1,865.9,629.9,923.2] [-6.5,936.9,-0.1,994.2] [-0.1,952.4,629.9,978.6]
+-- paragraphe 1
+texte: ١
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 4.90 x 17.00 lignes: 1
+boites: [0.0,-4.8,4.9,21.6]
+-- paragraphe 2
+texte: ٢
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 5.62 x 17.00 lignes: 1
+boites: [0.0,-4.8,5.6,21.6]
+-- paragraphe 3
+texte: ٣
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 6.71 x 17.00 lignes: 1
+boites: [0.0,-4.8,6.7,21.6]
+-- paragraphe 4
+texte: ٤
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 6.17 x 17.00 lignes: 1
+boites: [0.0,-4.8,6.2,21.6]
+-- paragraphe 5
+texte: ٥
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 6.22 x 17.00 lignes: 1
+boites: [0.0,-4.8,6.2,21.6]
+-- paragraphe 6
+texte: ٦
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 7.23 x 17.00 lignes: 1
+boites: [0.0,-4.8,7.2,21.6]
+-- paragraphe 7
+texte: ٧
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 7.21 x 17.00 lignes: 1
+boites: [-0.0,-4.8,7.2,21.6]
+-- paragraphe 8
+texte: texte 2:1 ￼ texte 2:2 ￼ texte 2:3 ￼ texte 2:4 ￼ texte 2:5 ￼ 
+police: UthmanTahaNaskh [NotoSansArabic] taille: 34.000 interligne: 2.087 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 630.00 x 715.00 lignes: 21
+boites: [-0.1,-0.7,79.1,71.2] [79.1,7.9,636.3,65.2] [-0.1,94.4,629.9,120.6] [629.9,78.9,636.3,136.2] [-0.1,142.3,79.1,214.2] [79.1,150.9,636.3,208.2] [-0.1,237.4,629.9,263.6] [629.9,221.9,636.3,279.2] [-0.1,285.3,79.1,357.2] [79.1,293.9,636.3,351.2] [-0.1,380.4,629.9,406.6] [629.9,364.9,636.3,422.2] [-0.1,428.3,79.1,500.2] [79.1,436.9,636.3,494.2] [-0.1,523.4,629.9,549.6] [629.9,507.9,636.3,565.2] [-6.5,579.9,-0.1,637.2] [-0.1,571.3,79.1,643.2] [79.1,579.9,629.9,637.2] [-6.5,650.9,-0.1,708.2] [-0.1,666.4,629.9,692.6]
+-- paragraphe 9
+texte: ١
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 4.90 x 17.00 lignes: 1
+boites: [0.0,-4.8,4.9,21.6]
+-- paragraphe 10
+texte: ٢
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 5.62 x 17.00 lignes: 1
+boites: [0.0,-4.8,5.6,21.6]
+-- paragraphe 11
+texte: ٣
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 6.71 x 17.00 lignes: 1
+boites: [0.0,-4.8,6.7,21.6]
+-- paragraphe 12
+texte: ٤
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 6.17 x 17.00 lignes: 1
+boites: [0.0,-4.8,6.2,21.6]
+-- paragraphe 13
+texte: ٥
+police: UthmanTahaNaskh [NotoSansArabic] taille: 15.692 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 6.22 x 17.00 lignes: 1
+boites: [0.0,-4.8,6.2,21.6]
+-- arbre ParagrapheVersets
+ParagrapheVersets
+  Text
+    MouseRegion
+      _SelectableTextContainer
+        SelectionContainer
+          SelectionRegistrarScope
+            _RichText
+              RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+-- arbre ParagrapheVersets
+ParagrapheVersets
+  Text
+    MouseRegion
+      _SelectableTextContainer
+        SelectionContainer
+          SelectionRegistrarScope
+            _RichText
+              RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+== standard_320_x2
+-- paragraphe 0
+texte: texte 1:1 ￼ texte 1:2 ￼ texte 1:3 ￼ texte 1:4 ￼ texte 1:5 ￼ texte 1:6 ￼ texte 1:7 ￼ 
+police: UthmanTahaNaskh [NotoSansArabic] taille: 20.945 interligne: 2.169 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 246.00 x 1281.00 lignes: 29
+boites: [-0.1,0.8,97.7,89.2] [97.7,11.3,253.9,81.9] [-0.1,114.6,245.9,160.6] [245.9,102.3,253.9,172.9] [-0.1,183.8,97.7,272.2] [97.7,194.3,253.9,264.9] [-0.1,297.6,245.9,343.6] [245.9,285.3,253.9,355.9] [-0.1,366.8,97.7,455.2] [97.7,377.3,253.9,447.9] [-0.1,480.6,245.9,526.6] [245.9,468.3,253.9,538.9] [-0.1,549.8,97.7,638.2] [97.7,560.3,253.9,630.9] [-0.1,663.6,245.9,709.6] [245.9,651.3,253.9,721.9] [-0.1,732.8,97.7,821.2] [97.7,743.3,253.9,813.9] [-0.1,846.6,245.9,892.6] [245.9,834.3,253.9,904.9] [-0.1,915.8,97.7,1004.2] [97.7,926.3,253.9,996.9] [-0.1,1029.6,245.9,1075.6] [245.9,1017.3,253.9,1087.9] [-8.1,1109.3,-0.1,1179.9] [-0.1,1098.8,97.7,1187.2] [97.7,1109.3,245.9,1179.9] [-8.1,1200.3,-0.1,1270.9] [-0.1,1212.6,245.9,1258.6]
+-- paragraphe 1
+texte: ١
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 6.04 x 21.00 lignes: 1
+boites: [0.0,-5.9,6.0,26.7]
+-- paragraphe 2
+texte: ٢
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 6.93 x 21.00 lignes: 1
+boites: [0.0,-5.9,6.9,26.7]
+-- paragraphe 3
+texte: ٣
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 8.27 x 21.00 lignes: 1
+boites: [0.0,-5.9,8.3,26.7]
+-- paragraphe 4
+texte: ٤
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 7.61 x 21.00 lignes: 1
+boites: [0.0,-5.9,7.6,26.7]
+-- paragraphe 5
+texte: ٥
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 7.66 x 21.00 lignes: 1
+boites: [0.0,-5.9,7.7,26.7]
+-- paragraphe 6
+texte: ٦
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 8.91 x 21.00 lignes: 1
+boites: [0.0,-5.9,8.9,26.7]
+-- paragraphe 7
+texte: ٧
+police: UthmanTahaNaskh [NotoSansArabic] taille: 9.667 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: linear (2.0x)
+taille: 8.88 x 21.00 lignes: 1
+boites: [0.0,-5.9,8.9,26.7]
+-- arbre ParagrapheVersets
+ParagrapheVersets
+  Text
+    MouseRegion
+      _SelectableTextContainer
+        SelectionContainer
+          SelectionRegistrarScope
+            _RichText
+              RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+== standard_390_x1
+-- paragraphe 0
+texte: texte 1:1 ￼ texte 1:2 ￼ texte 1:3 ￼ texte 1:4 ￼ texte 1:5 ￼ texte 1:6 ￼ texte 1:7 ￼ 
+police: UthmanTahaNaskh [NotoSansArabic] taille: 26.036 interligne: 2.137 graisse: FontWeight.w400
+alignement: TextAlign.justify sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 316.00 x 791.00 lignes: 29
+boites: [-0.1,0.7,60.3,55.7] [60.3,7.2,320.8,51.1] [-0.1,75.2,315.9,95.2] [315.9,63.2,320.8,107.1] [-0.1,113.7,60.3,168.7] [60.3,120.2,320.8,164.1] [-0.1,188.2,315.9,208.2] [315.9,176.2,320.8,220.1] [-0.1,226.7,60.3,281.7] [60.3,233.2,320.8,277.1] [-0.1,301.2,315.9,321.2] [315.9,289.2,320.8,333.1] [-0.1,339.7,60.3,394.7] [60.3,346.2,320.8,390.1] [-0.1,414.2,315.9,434.2] [315.9,402.2,320.8,446.1] [-0.1,452.7,60.3,507.7] [60.3,459.2,320.8,503.1] [-0.1,527.2,315.9,547.2] [315.9,515.2,320.8,559.1] [-0.1,565.7,60.3,620.7] [60.3,572.2,320.8,616.1] [-0.1,640.2,315.9,660.2] [315.9,628.2,320.8,672.1] [-5.0,685.2,-0.1,729.1] [-0.1,678.7,60.3,733.7] [60.3,685.2,315.9,729.1] [-5.0,741.2,-0.1,785.1] [-0.1,753.2,315.9,773.2]
+-- paragraphe 1
+texte: ١
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 3.75 x 13.00 lignes: 1
+boites: [0.0,-3.7,3.8,16.5]
+-- paragraphe 2
+texte: ٢
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 4.31 x 13.00 lignes: 1
+boites: [-0.0,-3.7,4.3,16.5]
+-- paragraphe 3
+texte: ٣
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 5.14 x 13.00 lignes: 1
+boites: [0.0,-3.7,5.1,16.5]
+-- paragraphe 4
+texte: ٤
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 4.73 x 13.00 lignes: 1
+boites: [-0.0,-3.7,4.7,16.5]
+-- paragraphe 5
+texte: ٥
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 4.76 x 13.00 lignes: 1
+boites: [0.0,-3.7,4.8,16.5]
+-- paragraphe 6
+texte: ٦
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 5.54 x 13.00 lignes: 1
+boites: [0.0,-3.7,5.5,16.5]
+-- paragraphe 7
+texte: ٧
+police: UthmanTahaNaskh [NotoSansArabic] taille: 12.017 interligne: 1.100 graisse: FontWeight.w400
+alignement: TextAlign.center sens: null rendu-sens: TextDirection.rtl echelle: no scaling
+taille: 5.52 x 13.00 lignes: 1
+boites: [-0.0,-3.7,5.5,16.5]
+-- arbre ParagrapheVersets
+ParagrapheVersets
+  Text
+    MouseRegion
+      _SelectableTextContainer
+        SelectionContainer
+          SelectionRegistrarScope
+            _RichText
+              RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText
+                _WidgetSpanParentData
+                  Semantics
+                    _AutoScaleInlineWidget
+                      ExcludeSemantics
+                        RosaceVerset
+                          Container
+                            ConstrainedBox
+                              DecoratedBox
+                                Padding
+                                  Align
+                                    Text
+                                      MouseRegion
+                                        _SelectableTextContainer
+                                          SelectionContainer
+                                            SelectionRegistrarScope
+                                              _RichText
+                                                RichText

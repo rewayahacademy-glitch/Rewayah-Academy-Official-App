@@ -19,6 +19,7 @@
 -- fonction que l'ADR-011 confirme pour le MVP-0.
 
 -- Droits facon Supabase (alter default privileges du projet).
+\ir _acl_photo.sql
 grant usage on schema public to anon, authenticated, service_role;
 grant all on all tables in schema public to authenticated, service_role;
 grant all on all sequences in schema public to authenticated, service_role;
@@ -76,7 +77,7 @@ insert into public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 values
   ('c1000000-0000-0000-0000-000000000001', 'TEACH-C1-00001', 'teacher',
-   'c1ffffff-0000-0000-0000-00000000000c', 'Rachid', 'Benali', 'active', 'male'),
+   'c1ffffff-0000-0000-0000-00000000000c', 'Rachid', 'Benali', 'provisional_active', 'male'),
   ('c1000000-0000-0000-0000-000000000002', 'STUD-C1-000001', 'student',
    'c1ffffff-0000-0000-0000-00000000000a', 'Sofia', 'Haddad', 'active', 'female'),
   ('c1000000-0000-0000-0000-000000000003', 'CTRL-C1-000001', 'controller',
@@ -86,13 +87,13 @@ values
   ('c1000000-0000-0000-0000-000000000005', 'GUAR-C1-000001', 'guardian',
    'c1ffffff-0000-0000-0000-00000000000a', 'Latifa', 'Haddad', 'active', 'female'),
   ('c1000000-0000-0000-0000-000000000006', 'TEACH-C1-00002', 'teacher',
-   'c1ffffff-0000-0000-0000-00000000000c', 'Youssef', 'Amrani', 'active', 'male'),
+   'c1ffffff-0000-0000-0000-00000000000c', 'Youssef', 'Amrani', 'provisional_active', 'male'),
   ('c1000000-0000-0000-0000-000000000007', 'STUD-C1-000002', 'student',
    'c1ffffff-0000-0000-0000-00000000000b', 'Ines', 'Zerhouni', 'active', 'female'),
   ('c1000000-0000-0000-0000-000000000008', 'ADMIN-C1-00001', 'admin',
    'c1ffffff-0000-0000-0000-00000000000c', 'Amira', 'Sellami', 'active', 'female'),
   ('c1000000-0000-0000-0000-000000000009', 'TEACH-C1-00003', 'teacher',
-   'c1ffffff-0000-0000-0000-00000000000c', 'Kenza', 'Berkani', 'active', 'female'),
+   'c1ffffff-0000-0000-0000-00000000000c', 'Kenza', 'Berkani', 'provisional_active', 'female'),
   ('c1000000-0000-0000-0000-00000000000a', 'STUD-C1-000003', 'student',
    'c1ffffff-0000-0000-0000-00000000000b', 'Adam', 'Zerhouni', 'active', 'male'),
   ('c1000000-0000-0000-0000-00000000000b', 'STUD-C1-000004', 'student',
@@ -101,7 +102,25 @@ values
   -- (0005) interdit a un enseignant deux seances qui se recoupent, et les
   -- quatre autres en donnent deja une sur ce creneau.
   ('c1000000-0000-0000-0000-00000000000c', 'TEACH-C1-00004', 'teacher',
-   'c1ffffff-0000-0000-0000-00000000000c', 'Mounir', 'Talbi', 'active', 'male');
+   'c1ffffff-0000-0000-0000-00000000000c', 'Mounir', 'Talbi', 'provisional_active', 'male');
+-- Fixture contractuel requis par 0089 : aucune garde d'activation n'est assouplie.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+    PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true);
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+      ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+END
+$fixture_teacher_contracts$;
 
 insert into public.student_profiles (profile_id, student_type, interface_mode, camera_policy)
 values
@@ -167,7 +186,7 @@ declare
 begin
   set local role authenticated;
   perform set_config('test.uid', 'c1000000-0000-0000-0000-000000000003', true);
-  perform set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
+  perform set_config('test.jwt', '{"aal":"aal2","app_metadata":{"role":"controller"}}', true);
 
   v_retour := public.rejoindre_observation('c1aaaaaa-0000-0000-0000-00000000000a');
 
@@ -191,22 +210,52 @@ end $$;
 -- 1-to-1 (ADR-004), il dit seulement ce que le plafond compte. Un troisieme
 -- ELEVE reste refuse, y compris apres une visite de controle.
 
+create temporary table ctr01_config_snapshot as
+select key, value
+from public.app_config
+where key in ('allow_multi_participant_sessions', 'max_participants_per_session');
+
+-- C2 mesure bien le contrat 1-to-1, quelles que soient les mutations des
+-- scénarios précédents sur la base partagée.
+begin;
+insert into public.app_config (key, value)
+values ('allow_multi_participant_sessions', 'false'::jsonb),
+       ('max_participants_per_session', '2'::jsonb)
+on conflict (key) do update set value = excluded.value;
+
 do $$
 declare
   v_refuse boolean := false;
+  v_message text;
 begin
   begin
     insert into public.session_participants (session_id, profile_id, role)
     values ('c1aaaaaa-0000-0000-0000-00000000000a',
             'c1000000-0000-0000-0000-00000000000b', 'student');
   exception when others then
-    v_refuse := (sqlerrm like '%plafond de participants%');
+    v_message := sqlerrm;
+    v_refuse := (v_message like '%plafond de participants%');
   end;
 
   if not v_refuse then
-    raise exception 'C2 : un troisieme eleve a ete accepte dans un cours 1-to-1';
+    raise exception 'C2 : le troisieme eleve n''a pas ete refuse par le plafond attendu (erreur: %)', v_message;
   end if;
 end $$;
+
+-- Restaurer exactement les deux valeurs, et retirer toute cle ajoutée.
+update public.app_config current_config
+   set value = snapshot.value
+  from pg_temp.ctr01_config_snapshot snapshot
+ where current_config.key = snapshot.key;
+
+delete from public.app_config current_config
+ where current_config.key in ('allow_multi_participant_sessions', 'max_participants_per_session')
+   and not exists (
+     select 1 from pg_temp.ctr01_config_snapshot snapshot
+     where snapshot.key = current_config.key
+   );
+drop table pg_temp.ctr01_config_snapshot;
+commit;
 
 -- ============================================================
 -- C3 : deux visites qui se recoupent sont permises, un double
@@ -225,7 +274,7 @@ declare
 begin
   set local role authenticated;
   perform set_config('test.uid', 'c1000000-0000-0000-0000-000000000003', true);
-  perform set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
+  perform set_config('test.jwt', '{"aal":"aal2","app_metadata":{"role":"controller"}}', true);
 
   perform public.rejoindre_observation('c1aaaaaa-0000-0000-0000-00000000000d');
 
@@ -349,7 +398,7 @@ declare
 begin
   set local role authenticated;
   perform set_config('test.uid', 'c1000000-0000-0000-0000-000000000004', true);
-  perform set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
+  perform set_config('test.jwt', '{"aal":"aal2","app_metadata":{"role":"controller"}}', true);
   perform public.rejoindre_observation('c1aaaaaa-0000-0000-0000-00000000000a');
 
   select count(*) into v_par_bilal from public.session_participants
@@ -430,7 +479,7 @@ begin
   end;
 
   perform set_config('test.uid', 'c1000000-0000-0000-0000-000000000003', true);
-  perform set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
+  perform set_config('test.jwt', '{"aal":"aal2","app_metadata":{"role":"controller"}}', true);
 
   begin
     perform public.rejoindre_observation('c1aaaaaa-0000-0000-0000-00000000000b');
@@ -472,7 +521,7 @@ declare
 begin
   set local role authenticated;
   perform set_config('test.uid', 'c1000000-0000-0000-0000-000000000003', true);
-  perform set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
+  perform set_config('test.jwt', '{"aal":"aal2","app_metadata":{"role":"controller"}}', true);
 
   perform public.rejoindre_observation('c1aaaaaa-0000-0000-0000-00000000000a');
 
@@ -492,21 +541,19 @@ begin
 end $$;
 
 -- ============================================================
--- C10 : le tuteur peut enfin assister, et seulement chez lui
+-- C10 : l'ancienne porte tuteur est fermee, le flux courant verifie le lien
 -- ============================================================
 --
--- Le bouton « Assister » de `TUT-01` est en production depuis l'etape 4 et
--- echouait silencieusement : sans inscription, `autoriser_jeton_video()` rendait
--- « non inscrit a cette seance », et le plafond aurait de toute facon refuse la
--- ligne. Il entre **visible**, contrairement au controleur : sa ligne se lit,
--- et c'est normal -- l'enseignant doit savoir qu'un parent regarde.
+-- Depuis 0041, assister_seance est retiree car elle contourne quota et trace.
+-- Le flux courant entrer_observation exige un groupe et un enfant du foyer :
+-- cette seance legacy sans groupe doit donc etre refusee sans inscription.
 
 do $$
 declare
-  v_role      public.participant_role;
-  v_hors      boolean := false;
-  v_enseignant boolean := false;
-  v_vue_par_ens int;
+  v_result jsonb;
+  v_refus_ancienne_porte boolean := false;
+  v_refus_enseignant boolean := false;
+  v_role public.participant_role;
 begin
   set local role authenticated;
   perform set_config('test.uid', 'c1000000-0000-0000-0000-000000000005', true);
@@ -514,39 +561,42 @@ begin
     '{"app_metadata":{"role":"guardian","household_id":"c1ffffff-0000-0000-0000-00000000000a"}}',
     true);
 
-  perform public.assister_seance('c1aaaaaa-0000-0000-0000-00000000000a');
-
-  -- La seance D n'est pas celle d'un enfant de ce foyer.
   begin
-    perform public.assister_seance('c1aaaaaa-0000-0000-0000-00000000000d');
-  exception when others then
-    v_hors := (sqlerrm like '%enfant du foyer%');
+    perform public.assister_seance('c1aaaaaa-0000-0000-0000-00000000000a');
+  exception when insufficient_privilege then
+    v_refus_ancienne_porte := true;
   end;
+
+  v_result := public.entrer_observation(
+    'c1aaaaaa-0000-0000-0000-00000000000a', 'guardian_observer');
+  if (v_result->>'autorise')::boolean is distinct from false
+     or v_result->>'motif_refus' is distinct from 'lien_tuteur_absent' then
+    raise exception 'C10 : une seance sans groupe/enfant lie n''a pas ete refusee, retour %', v_result;
+  end if;
 
   perform set_config('test.uid', 'c1000000-0000-0000-0000-000000000001', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
   begin
-    perform public.assister_seance('c1aaaaaa-0000-0000-0000-00000000000a');
-  exception when others then
-    v_enseignant := (sqlerrm like '%tuteur du foyer%');
+    perform public.entrer_observation(
+      'c1aaaaaa-0000-0000-0000-00000000000a', 'guardian_observer');
+  exception when insufficient_privilege then
+    v_refus_enseignant := (sqlerrm like '%observation reservee aux tuteurs et a l''administration%');
   end;
-
-  select count(*) into v_vue_par_ens from public.session_participants
-   where session_id = 'c1aaaaaa-0000-0000-0000-00000000000a'
-     and role = 'guardian_observer';
 
   reset role;
   select sp.role into v_role from public.session_participants sp
    where sp.session_id = 'c1aaaaaa-0000-0000-0000-00000000000a'
      and sp.profile_id = 'c1000000-0000-0000-0000-000000000005';
 
-  if v_role is distinct from 'guardian_observer' then
-    raise exception 'C10 : le tuteur est inscrit comme %, attendu guardian_observer', v_role;
+  if not v_refus_ancienne_porte then
+    raise exception 'C10 : l''ancienne porte assister_seance reste appelable';
   end if;
-  if not (v_hors and v_enseignant) then
-    raise exception 'C10 : refus manquants -- hors foyer %, enseignant %', v_hors, v_enseignant;
+  if not v_refus_enseignant then
+    raise exception 'F86 ECHEC : l''enseignant valide a pu entrer dans entrer_observation';
   end if;
-  if v_vue_par_ens <> 1 then
-    raise exception 'C10 : l''enseignant lit % tuteur(s) observateur(s), attendu 1', v_vue_par_ens;
+  if v_role is not null then
+    raise exception 'C10 : refus attendu, mais le tuteur a ete inscrit comme %', v_role;
   end if;
 end $$;
+
+\ir _acl_retablir.sql

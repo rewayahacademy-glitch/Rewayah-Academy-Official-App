@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/admin/service_groupes.dart'
+    show TypePublicGroupe;
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/planning/service_planning.dart'
+    show Creneau;
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/empty_state.dart';
+import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/features/revue_groupe/anomalies_revue.dart';
 import 'package:rewayah_academy/features/revue_groupe/revue_groupe_page.dart';
 
@@ -27,6 +33,17 @@ FauxServiceEnseignant _service({
           membreDeTest(studentId: 'e2', identifiant: 'RA-e2', prenom: 'Bilal'),
         ],
   }
+  ..groupesRendus = <GroupeEnseignant>[
+    GroupeEnseignant(
+      id: _groupe,
+      libelle: 'Perles du Coran',
+      type: TypePublicGroupe.enfant,
+      seuilMax: 5,
+      creneau: const Creneau(jour: 3, heure: 17, fuseau: 'Europe/Paris'),
+      nbMembres: 2,
+      creeLe: DateTime(2026, 10, 1),
+    ),
+  ]
   ..erreurLecture = erreur
   ..delai = delai;
 
@@ -62,6 +79,21 @@ Future<void> _monter(
 }
 
 void main() {
+  group('Une Classe qui n est pas la sienne', () {
+    testWidgets('on le dit, au lieu de « rien ne demande votre attention »', (
+      WidgetTester tester,
+    ) async {
+      // La liste des Classes de l'enseignant est lue et ne contient pas g1.
+      final FauxServiceEnseignant service = _service()
+        ..groupesRendus = const <GroupeEnseignant>[];
+      await _monter(tester, service: service);
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.enseignant.ficheGroupe.introuvable), findsOneWidget);
+      expect(find.text(t.enseignant.revue.aucuneAnomalie), findsNothing);
+    });
+  });
+
   group('ENS-08 : le vide est l etat normal', () {
     testWidgets('rien ne demande votre attention, et aucun bouton ne le dit', (
       WidgetTester tester,
@@ -70,15 +102,19 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(t.enseignant.revue.aucuneAnomalie), findsOneWidget);
-      // La verite du depot, dite a l'ecran : le calcul des anomalies n'est pas
-      // ouvert aux enseignants, et la page reste vide jusque-la.
+      // Une seule phrase calme (UX_REVIEW_04 ligne 10) : aucun detail.
       expect(
-        find.text(t.enseignant.revue.aucuneAnomalieDetail),
-        findsOneWidget,
+        tester.widget<EmptyState>(find.byType(EmptyState)).invitation,
+        isNull,
       );
       // Rien a faire, donc aucun bouton : proposer une action serait inviter a
       // inventer un probleme.
-      expect(find.byType(ActionPrincipale), findsNothing);
+      // Seul le retour de l'Espace Classe (decision EN-RC).
+      expect(find.byType(ActionPrincipale), findsOneWidget);
+      expect(
+        find.widgetWithText(ActionPrincipale, t.commun.retour),
+        findsOneWidget,
+      );
       expect(find.text(t.commun.reessayer), findsNothing);
       // Et surtout : aucune carte, aucune colonne, aucun tiret en attendant.
       expect(find.byType(AppCard), findsNothing);
@@ -86,54 +122,61 @@ void main() {
       expect(find.text('-'), findsNothing);
     });
 
-    testWidgets('elle ne resume pas le groupe : ce travail est celui d ENS-07', (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester, service: _service());
-      await tester.pumpAndSettle();
+    testWidgets(
+      'elle ne resume pas le groupe : ce travail est celui d ENS-07',
+      (WidgetTester tester) async {
+        await _monter(tester, service: _service());
+        await tester.pumpAndSettle();
 
-      // Aucun prenom de membre n'apparait : la revue parle d'anomalies, pas
-      // d'effectif.
-      expect(find.text('Khadija'), findsNothing);
-      expect(find.text('Bilal'), findsNothing);
-    });
+        // Aucun prenom de membre n'apparait : la revue parle d'anomalies, pas
+        // d'effectif.
+        expect(find.text('Khadija'), findsNothing);
+        expect(find.text('Bilal'), findsNothing);
+      },
+    );
   });
 
   group('ENS-08 : les anomalies, quand la source en rendra', () {
-    testWidgets('une carte par anomalie, son type dit par un mot', (
-      WidgetTester tester,
-    ) async {
-      await _monter(
-        tester,
-        service: _service(),
-        anomalies: const <AnomalieRevue>[
-          AnomalieRevue(
-            type: TypeAnomalieRevue.transfertPropose,
-            studentId: 'e2',
-            eleve: 'Bilal',
-          ),
-          AnomalieRevue(
-            type: TypeAnomalieRevue.gateAVenir,
-            studentId: 'e1',
-            eleve: 'Khadija',
-            detail: 'Palier de fin de cycle dans deux semaines.',
-          ),
-        ],
-      );
-      await tester.pumpAndSettle();
+    testWidgets(
+      'une ligne par anomalie dans un seul groupe, son type dit par un mot',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          service: _service(),
+          anomalies: const <AnomalieRevue>[
+            AnomalieRevue(
+              type: TypeAnomalieRevue.transfertPropose,
+              studentId: 'e2',
+              eleve: 'Bilal',
+            ),
+            AnomalieRevue(
+              type: TypeAnomalieRevue.gateAVenir,
+              studentId: 'e1',
+              eleve: 'Khadija',
+              detail: 'Palier de fin de cycle dans deux semaines.',
+            ),
+          ],
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.byType(AppCard), findsNWidgets(2));
-      expect(find.text(t.enseignant.revue.typeGate), findsOneWidget);
-      expect(find.text(t.enseignant.revue.typeTransfert), findsOneWidget);
-      expect(
-        find.text('Palier de fin de cycle dans deux semaines.'),
-        findsOneWidget,
-      );
-      // L'enseignant signale, l'academie tranche : aucune action de decision
-      // n'est rendue, meme pas grisee.
-      expect(find.byType(ActionPrincipale), findsNothing);
-      expect(find.text(t.enseignant.revue.pasDeDecision), findsOneWidget);
-    });
+        expect(find.byType(GroupeReglages), findsOneWidget);
+        expect(find.text(t.enseignant.revue.typeGate), findsOneWidget);
+        expect(find.text(t.enseignant.revue.typeTransfert), findsOneWidget);
+        expect(
+          find.textContaining('Palier de fin de cycle dans deux semaines.'),
+          findsOneWidget,
+        );
+        // L'enseignant signale, l'academie tranche : aucune action de decision
+        // n'est rendue, meme pas grisee.
+        // Seul le retour de l'Espace Classe (decision EN-RC).
+        expect(find.byType(ActionPrincipale), findsOneWidget);
+        expect(
+          find.widgetWithText(ActionPrincipale, t.commun.retour),
+          findsOneWidget,
+        );
+        expect(find.text(t.enseignant.revue.pasDeDecision), findsOneWidget);
+      },
+    );
 
     test('une anomalie qui vise un ancien membre ne s affiche pas', () {
       final List<AnomalieRevue> retenues = anomaliesDuGroupe(
@@ -187,10 +230,11 @@ void main() {
       // Ce qui a une echeance passe devant ce qui attend une decision, et a
       // egalite l'ordre est alphabetique : il ne depend jamais de l'ordre dans
       // lequel la source a rendu ses lignes.
-      expect(
-        retenues.map((AnomalieRevue a) => a.eleve),
-        <String>['Aisha', 'Zayd', 'Bilal'],
-      );
+      expect(retenues.map((AnomalieRevue a) => a.eleve), <String>[
+        'Aisha',
+        'Zayd',
+        'Bilal',
+      ]);
     });
   });
 

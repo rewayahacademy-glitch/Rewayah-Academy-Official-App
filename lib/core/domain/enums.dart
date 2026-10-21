@@ -146,7 +146,8 @@ enum TypePiece {
   /// Titre de sejour.
   titreSejour('residence_permit'),
 
-  /// Autre piece, decrite en saisie libre.
+  /// Autre piece officielle : une carte a part entiere du depot, choisie
+  /// explicitement (`other` en base). Aucun champ libre ne l'accompagne.
   autre('other');
 
   const TypePiece(this.valeurSql);
@@ -204,7 +205,11 @@ enum SorteContrat {
   /// La carte a accuser une fois : enregistrement audio et visite de controle
   /// (ADR-011). Elle n'est pas un contrat, mais elle suit la meme regle : elle
   /// se signe une fois et ne se modifie jamais.
-  accuseEnregistrementControle('recording_and_control_notice');
+  accuseEnregistrementControle('recording_and_control_notice'),
+
+  /// Le code de conduite de l'enseignant (PE, 18/10/2026). Meme regle que
+  /// l'accuse : il se signe une fois par version et ne se modifie jamais.
+  codeConduiteEnseignant('teacher_conduct_code');
 
   const SorteContrat(this.valeurSql);
 

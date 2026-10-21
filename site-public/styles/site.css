@@ -1,0 +1,1365 @@
+/* Noto Sans Arabic (OFL, licence dans assets/noto-sans-arabic-OFL.txt), graisse 500, reduite aux quatre
+   echantillons des arches de Cours (4,6 Ko) : inscrite ici, elle n'ajoute aucun fichier au paquet deploye. */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  src: url('data:font/woff2;base64,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') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  unicode-range: U+0600-06FF;
+}
+@font-face {
+  font-family: 'DM Sans';
+  src: url('../assets/dm-sans-latin-ext.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'DM Sans';
+  src: url('../assets/dm-sans-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('../assets/plus-jakarta-sans-latin-ext.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('../assets/plus-jakarta-sans-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/*
+ * Jetons. Toutes les couleurs viennent de lib/core/theme/app_palette.dart (M-16),
+ * les rayons de app_radius.dart, les ombres de app_elevation.dart (M-24), les
+ * durees et les courbes de app_mouvement.dart (gelees, DESIGN-GOV contrat E).
+ * Propre au site, et seulement cela : l'echelle d'affiche (5 tailles) et les grands
+ * espacements entre sections, multiples du jeton « respiration » (64).
+ */
+:root {
+  color-scheme: light dark;
+  /* Surfaces et encres, theme clair */
+  --fond: #FFFFFF;            /* surfaceRaised */
+  --toile: #F1EFF4;           /* surfaceCanvas */
+  --sous: #F0EDF4;            /* surfaceSunken */
+  --avant: #F7F5FE;           /* surfaceMiseEnAvant */
+  --champ: #EEE6FA;           /* washAccent */
+  --champ-encre: #4E2983;     /* washAccent, encre */
+  --champ-fort: #DCCAFD;      /* surfaceActionDouce */
+  --marque: #8652E6;          /* surfacePrimary, violet du logo */
+  --sur-marque: #FFFFFF;
+  --inverse: #211E28;         /* surfaceInverse */
+  --sur-inverse: #F5F2FA;
+  --sur-inverse-doux: #AEB1CE;/* inkMuted du theme sombre, pose sur l'inverse */
+  --encre: #110E20;           /* inkStrong */
+  --encre-douce: #655E70;     /* inkMuted */
+  --encre-accent: #6538E4;    /* inkAccent */
+  /* Bouton principal : la paire surfacePrimary (blanc sur violet, 4,81:1 au calcul WCAG), lisible sur tous les fonds lavande du site. */
+  --action: #8652E6;
+  --sur-action: #FFFFFF;
+  --action-survol: #6538E4;   /* inkAccent */
+  --sur-action-survol: #FFFFFF;
+  --contour: #84798F;         /* borderStrong */
+  --filet: #E3DEE9;           /* borderHairline (tableaux et champs seulement) */
+  --pied: #211E28;
+  --sur-pied: #F5F2FA;
+  --sur-pied-doux: #AEB1CE;
+  --ombre-1: 0 2px 10px rgb(33 30 40 / .04), 0 8px 29px -4px rgb(33 30 40 / .06);
+  --ombre-2: 0 4px 15px rgb(33 30 40 / .08), 0 16px 47px -8px rgb(33 30 40 / .10);
+  --ombre-3: 0 12px 38px rgb(33 30 40 / .22);
+  --voile: rgb(0 0 0 / .32);
+  /* Rayons (app_radius) */
+  --r-xs: 8px; --r-sm: 12px; --r-md: 16px; --r-lg: 24px; --r-full: 999px;
+  /* L'arche, le seul motif : un demi-cercle en haut (les rayons trop grands sont ramenes a la moitie de la largeur) */
+  --arche: 9999px 9999px 0 0;
+  /* Mouvement (app_mouvement) */
+  --mv-retour: 100ms;
+  --mv-micro: 120ms;
+  --mv-apparition: 180ms;
+  --mv-navigation: 220ms;
+  --mv-echelon: 35ms;
+  --mv-plafond: 400ms;
+  --mv-entree: cubic-bezier(.215, .61, .355, 1);
+  --mv-sortie: cubic-bezier(.55, .055, .675, .19);
+  --mv-accentuee: cubic-bezier(.2, 0, 0, 1);
+}
+/* La courbe accentuee de l'app (ThreePointCubic) n'a pas d'equivalent cubic exact : linear() la suit a 0,004 pres. */
+@supports (transition-timing-function: linear(0, 1)) {
+  :root { --mv-accentuee: linear(0 0%, .0069 2.93%, .0287 5.85%, .0693 8.78%, .1106 10.73%, .1685 12.68%, .2208 13.98%, .2904 15.28%, .3526 16.15%, .4746 17.45%, .5429 18.32%, .6182 19.62%, .6716 20.92%, .7286 22.87%, .7863 25.80%, .8424 30.19%, .8945 36.77%, .9401 46.65%, .9756 61.46%, .9967 83.68%, 1 100%); }
+}
+:root {
+  /* Espacement (app_spacing) et page */
+  --e-1: 4px; --e-2: 8px; --e-3: 12px; --e-4: 16px; --e-5: 20px; --e-6: 24px; --e-8: 32px; --e-10: 40px; --e-12: 48px; --e-16: 64px;
+  --respire: clamp(56px, 8vw, 136px);
+  --marge: 16px;
+  --contenu: 1200px;
+  --lecture: 68ch;
+  --entete: 72px;
+  /* Echelle d'affiche du site : cinq tailles */
+  --t-affiche: clamp(44px, 6.6vw, 104px);
+  --t-titre: clamp(26px, 3.5vw, 50px);
+  --t-moyen: clamp(20px, 2.1vw, 30px);
+  --t-corps: clamp(18px, 0.25vw + 16px, 20px);
+  --t-petit: 16px;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+}
+@media (min-width: 600px) { :root { --marge: 24px; } }
+@media (min-width: 1200px) { :root { --marge: 32px; } }
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fond: #16161E;          /* surfaceCanvas sombre (LT-THEME) */
+    --toile: #16161E;
+    --sous: #262534;          /* surfaceSunken sombre */
+    --avant: #272734;         /* surfaceRaised sombre */
+    --champ: #332643;         /* washAccent sombre */
+    --champ-encre: #E8D8FF;
+    --champ-fort: #2D2D3B;    /* surfaceMiseEnAvant sombre */
+    --marque: #BA98FB;        /* surfacePrimary sombre */
+    --sur-marque: #25113F;
+    --inverse: #272734;
+    --sur-inverse: #F5F2FA;
+    --sur-inverse-doux: #AEB1CE;
+    --encre: #F5F2FA;
+    --encre-douce: #AEB1CE;
+    --encre-accent: #C9AEFF;
+    --action: #BA98FB;
+    --sur-action: #25113F;
+    --action-survol: #C9AEFF;
+    --sur-action-survol: #25113F;
+    --contour: #95899F;
+    --filet: #32323F;
+    --pied: #272734;
+    --ombre-1: none;
+    --ombre-2: 0 16px 47px -8px rgb(0 0 0 / .5);
+    --ombre-3: none;
+    --voile: rgb(0 0 0 / .56);
+  }
+}
+
+* { box-sizing: border-box; }
+html { scroll-padding-top: calc(var(--entete) + 16px); }
+body {
+  margin: 0;
+  background: var(--fond);
+  color: var(--encre);
+  font-size: var(--t-corps);
+  line-height: 1.6;
+  overflow-x: clip;
+}
+img, svg { display: block; max-width: 100%; height: auto; }
+figure, p, h1, h2, h3, ul, ol { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+a { color: inherit; text-underline-offset: .22em; text-decoration-thickness: 1px; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+h1, h2, h3 {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-weight: 600;
+  text-wrap: balance;
+  font-variation-settings: 'opsz' 40;
+}
+h1 { font-size: var(--t-affiche); line-height: .98; letter-spacing: -0.02em; }
+h2 { font-size: var(--t-titre); line-height: 1.04; letter-spacing: -0.02em; }
+h3 { font-size: var(--t-moyen); line-height: 1.2; letter-spacing: -0.015em; }
+/* Corps de texte : coupure ordinaire, qui remplit chaque ligne. Les espaces insécables
+   (texte_html) tiennent le dernier mot et les petits mots ; « pretty » coupait trop tôt. */
+p { text-wrap: wrap; max-width: 60ch; }
+::selection { background: var(--champ-fort); color: var(--encre); }
+:focus-visible { outline: 2px solid var(--encre-accent); outline-offset: 3px; border-radius: 4px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.skip-link { position: absolute; left: var(--marge); top: -100px; z-index: 50; padding: var(--e-3) var(--e-5); border-radius: var(--r-full); background: var(--encre); color: var(--fond); }
+.skip-link:focus { top: var(--e-3); }
+
+/* Le nom discret au-dessus du titre : le nom de la marque, en casse normale (PRODUCT.md). */
+/* Le nom de la marque au-dessus du titre, seulement quand l'en-tete n'affiche que le symbole (telephone). */
+.eyebrow { font-weight: 600; color: var(--champ-encre); margin-bottom: var(--e-4); font-size: var(--t-corps); }
+@media (min-width: 600px) { .eyebrow { display: none; } }
+.hero-intro { font-size: var(--t-moyen); line-height: 1.4; max-width: 32ch; margin-top: var(--e-6); }
+.rassurance { margin-top: var(--e-5); font-size: var(--t-petit); color: var(--encre-douce); max-width: 46ch; }
+.preuve { margin-top: var(--e-3); font-size: var(--t-petit); color: var(--encre-douce); max-width: 46ch; }
+.porte__phrase span { white-space: nowrap; }
+/* Sur les ecrans bas, le ruban de la scene passe sous la phrase et le bouton contour : ils gardent le fond du champ. */
+.porte .rassurance, .porte .preuve { width: fit-content; padding: var(--e-1) var(--e-2); margin-inline-start: calc(var(--e-2) * -1); border-radius: var(--r-xs); background: var(--champ); }
+.porte .cta--secondary { background: var(--champ); }
+.porte .cta--secondary:hover { background: var(--champ-fort); }
+
+/* --- Illustrations (regles de base, avant les compositions qui les placent) ------------------------------------------------------------ */
+.scene { position: relative; }
+.scene img { width: 100%; height: auto; }
+/* Le cadre d'une illustration ; quand elle a des calques, la partie qui bouge est posee exactement sur le fond. */
+.scene__cadre { position: relative; display: block; }
+.scene[data-anime] .scene__cadre { overflow: clip; }
+.scene .scene__calque { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* Gros plans : un cercle (la halqa du symbole), ouvert sur la lumiere de la salle. */
+/* Le sol lavande d'un detail cadre est la depuis le debut : ce n'est pas un fond ajoute (directeur, 21/10). */
+.scene--cercle .scene__cadre { aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: #EEE6FA; }
+/* Un detail cadre ne depasse jamais la largeur de son fichier (--natif, pose par le build) : agrandi, il deviendrait flou. */
+.section__figure .scene--cercle, .section__figure .scene--arche, .pleine__image .scene--cercle, .pleine__image .scene--arche, .panneau__arche .scene--cercle { max-width: var(--natif, none); margin-inline: auto; }
+.chapitres__image.scene--cercle > .scene__cadre { max-width: var(--natif, none); }
+/* Un cercle en bande pleine reste un detail : 520 px au plus, 260 px au telephone. */
+.pleine__image .scene--cercle { max-width: min(var(--natif, 520px), 520px); }
+@media (max-width: 599px) { .pleine__image .scene--cercle { max-width: min(var(--natif, 260px), 260px); } }
+.section__figure:has(.scene--cercle) { background: none; padding: 0; border-radius: 0; }
+/* Details en pied : l'arche du symbole (le haut est un demi-cercle sur toute la largeur), ouverte sur la lumiere. */
+.scene--arche .scene__cadre { aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 40% 40% 0 0; overflow: hidden; background: #EEE6FA; }
+.section__figure:has(.scene--arche) { background: none; padding: 0; border-radius: 0; width: min(100%, 460px); }
+/* Un rendu d'un autre style (images.json, taille « detail ») reste a la taille d'un detail : 280 px au telephone, 420 px ailleurs. */
+.section__figure:has(.scene--detail) { width: min(100%, 280px); justify-self: center; margin-inline: auto; }
+@media (min-width: 600px) { .section__figure:has(.scene--detail) { width: min(100%, 420px); } }
+/* La manche de l'eleve ne s'arrete pas net : l'image s'efface sur ses bords gauche et bas. */
+/* Les manches sortent par un vrai bord : le bord de l'ecran (haut de page) ou celui de la carte (etapes).
+   Seule la fenetre des chapitres, sans bord visible, garde un fondu court. */
+.chapitres__image[data-anime="mains"] .scene__cadre img { -webkit-mask: linear-gradient(90deg, transparent 0, #000 5%), linear-gradient(0deg, transparent 0, #000 5%); -webkit-mask-composite: source-in; mask: linear-gradient(90deg, transparent 0, #000 5%), linear-gradient(0deg, transparent 0, #000 5%); mask-composite: intersect; }
+.chapitres__image[data-anime="mains"] { inset: 4% 4% 4% 0; }
+/* La manche sort franchement par le bord (24 px au-dela) : un arret pile sur le bord se lirait comme une marge ratee. */
+.entete-page:has(.scene[data-anime="mains"]) .entete-page__arche { justify-self: start; margin-inline-start: calc(var(--marge) * -1 - 24px); width: calc(100% + var(--marge) + 24px); }
+.etape:has(.scene[data-anime="mains"]) { overflow: hidden; }
+.etape .section__figure:has(.scene[data-anime="mains"]) { margin-inline-start: calc(var(--e-6) * -1); width: calc(100% + var(--e-6)); }
+.scene__onde { position: absolute; left: calc(var(--zx) * 100%); top: calc(var(--zy) * 100%); width: calc(var(--zl) * 100%); height: calc(var(--zh) * 100%); pointer-events: none; }
+.scene[data-onde] .scene__calque--tapis { visibility: hidden; }
+/* Arreter le mouvement continu du tapis (WCAG 2.2.2) : un bouton dans l'illustration qu'il commande. */
+.pause-anim { position: absolute; z-index: 3; inset-inline-start: var(--e-3); bottom: var(--e-3); display: grid; place-items: center; width: 44px; height: 44px; border: 2px solid var(--contour); border-radius: 50%; background: var(--fond); color: var(--encre); transition: background-color var(--mv-micro) var(--mv-entree); }
+.porte__texte .pause-anim { position: static; margin-top: var(--e-6); }
+.pause-anim:hover { background: var(--champ); }
+.pause-anim svg { width: 18px; height: 18px; }
+.pause-anim .pause-anim__lecture, .pause-anim[aria-pressed="true"] .pause-anim__pause { display: none; }
+.pause-anim[aria-pressed="true"] .pause-anim__lecture { display: inline; }
+/* Une seule regle pour la legende « Illustration » : petite, alignee sur le bord droit de son image. */
+.scene figcaption { font-size: 13px; line-height: 1.3; text-align: end; color: var(--encre-douce); }
+
+/* --- Boutons et liens : une seule forme, la pilule ------------------------- */
+.action-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--e-2) var(--e-4); margin-top: var(--e-8); }
+.cta {
+  display: inline-flex; align-items: center; justify-content: center; text-align: center;
+  min-height: 52px; padding: var(--e-3) var(--e-6);
+  border: 2px solid transparent; border-radius: var(--r-full);
+  background: var(--action); color: var(--sur-action);
+  font-weight: 600; text-decoration: none; line-height: 1.2;
+  transition: background-color var(--mv-micro) var(--mv-entree), color var(--mv-micro) var(--mv-entree), transform var(--mv-retour) var(--mv-entree);
+}
+.cta:hover { background: var(--action-survol); color: var(--sur-action-survol); }
+.cta:active { transform: scale(.98); }
+.cta--secondary { background: transparent; color: var(--encre); border-color: var(--contour); }
+.cta--secondary:hover { background: var(--champ); color: var(--encre); }
+.lien-fleche { display: inline-flex; align-items: center; gap: var(--e-2); min-height: 48px; font-weight: 600; text-decoration: none; color: var(--encre); }
+.lien-fleche > span { position: relative; }
+.lien-fleche__fin { white-space: nowrap; }
+.lien-fleche__fin svg { display: inline-block; vertical-align: -4px; margin-inline-start: var(--e-2); }
+.lien-fleche > span::after { content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; border-radius: 2px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform var(--mv-apparition) var(--mv-entree); }
+.lien-fleche svg { transition: transform var(--mv-micro) var(--mv-entree); }
+.lien-fleche:hover > span::after { transform: scaleX(1); }
+.lien-fleche:hover svg { transform: translateX(4px); }
+.section-links { display: flex; flex-wrap: wrap; gap: 0 var(--e-8); margin-top: var(--e-6); }
+.text-link { font-weight: 600; }
+
+/* --- En-tete ------------------------------------------------------------------ */
+.site-header { position: sticky; top: 0; z-index: 40; view-transition-name: entete; background: color-mix(in srgb, var(--fond) 0%, transparent); transition: background-color var(--mv-apparition) var(--mv-entree), box-shadow var(--mv-apparition) var(--mv-entree), transform var(--mv-navigation) var(--mv-entree); }
+.site-header[data-flotte] { background: var(--fond); box-shadow: var(--ombre-1); }
+/* En descendant, l'en-tete s'efface ; il revient des qu'on remonte, ou des que le clavier y entre. */
+.site-header[data-cache]:not(:focus-within) { transform: translateY(-100%); box-shadow: none; }
+.site-header__inner { max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; min-height: var(--entete); padding-inline: var(--marge); display: flex; align-items: center; gap: var(--e-8); }
+.site-header__brand { display: block; flex: 0 0 auto; }
+.site-header__brand img { height: 44px; width: auto; }
+.site-nav { display: flex; gap: var(--e-6); margin-inline-start: auto; }
+.site-nav a { text-decoration: none; font-weight: 500; min-height: 48px; display: inline-flex; align-items: center; position: relative; }
+.site-nav a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 10px; height: 2px; border-radius: 2px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform var(--mv-apparition) var(--mv-entree); }
+.site-nav a:hover::after, .site-nav a[aria-current="page"]::after { transform: scaleX(1); }
+.site-header__connexion { display: inline-flex; align-items: center; min-height: 48px; padding-inline: var(--e-5); border: 2px solid var(--contour); border-radius: var(--r-full); font-weight: 600; text-decoration: none; transition: background-color var(--mv-micro) var(--mv-entree); }
+.site-header__connexion:hover { background: var(--champ); }
+.mobile-menu { display: none; margin-inline-start: auto; }
+.mobile-menu summary { list-style: none; display: inline-flex; align-items: center; gap: var(--e-3); min-height: 48px; padding-inline: var(--e-4); border-radius: var(--r-full); border: 2px solid var(--contour); font-weight: 600; cursor: pointer; }
+.mobile-menu summary::-webkit-details-marker { display: none; }
+.mobile-menu__icone { position: relative; width: 18px; height: 12px; }
+.mobile-menu__icone::before, .mobile-menu__icone::after { content: ''; position: absolute; left: 0; right: 0; height: 2px; border-radius: 2px; background: currentColor; transition: transform var(--mv-apparition) var(--mv-entree); }
+.mobile-menu__icone::before { top: 1px; }
+.mobile-menu__icone::after { bottom: 1px; }
+.mobile-menu[open] .mobile-menu__icone::before { transform: translateY(4px) rotate(45deg); }
+.mobile-menu[open] .mobile-menu__icone::after { transform: translateY(-5px) rotate(-45deg); }
+.mobile-menu:not([open]) nav { display: none; }
+.mobile-menu nav { position: absolute; left: var(--marge); right: var(--marge); top: calc(var(--entete) - 4px); display: grid; padding: var(--e-4); border-radius: var(--r-lg); background: var(--fond); box-shadow: var(--ombre-2); }
+.mobile-menu nav a { display: flex; align-items: center; min-height: 56px; padding-inline: var(--e-4); border-radius: var(--r-md); text-decoration: none; font-family: 'DM Sans', sans-serif; font-size: var(--t-moyen); font-weight: 600; }
+.mobile-menu nav a:hover { background: var(--champ); }
+
+/* --- Accueil : la porte (premier ecran et scene signature) ------------------- */
+.porte { position: relative; background: var(--champ); margin-top: calc(var(--entete) * -1); }
+.porte__collant { position: relative; overflow: clip; min-height: 100svh; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: center; column-gap: var(--e-6); padding: calc(var(--entete) + var(--e-10)) var(--marge) var(--e-16); max-width: none; }
+.porte__texte { position: relative; z-index: 3; grid-column: 1 / span 7; align-self: center; padding-inline-start: max(0px, calc((100vw - var(--contenu)) / 2 - var(--marge))); }
+.porte__texte h1 { font-size: clamp(44px, 5.4vw, 88px); max-width: 12ch; }
+/* Petits telephones : le titre de l'accueil garde trois lignes au plus. */
+@media (max-width: 380px) { .porte__texte h1 { font-size: 10.6vw; max-width: none; } }
+.porte__arche { position: absolute; z-index: 0; inset-inline-end: 3vw; bottom: -14svh; width: min(44vw, 760px); aspect-ratio: .82; border-radius: var(--arche); background: var(--champ-fort); transform-origin: 50% 100%; }
+.porte__scene { position: absolute; z-index: 1; inset-inline-end: -12vw; bottom: 3svh; width: 112vw; max-width: none; transform-origin: calc(var(--fx, .7) * 100%) calc(var(--fy, .5) * 100%); }
+/* La legende du haut de l'accueil est posee dans la colonne du contenu, pas sur l'image qui deborde de l'ecran :
+   alignee sur le bord droit du contenu, sous la scene ; elle s'efface quand on passe la porte. */
+/* Le bas de la scene du haut s'efface au lieu de finir sur une coupe nette : le tapis et le sol se fondent dans la page. */
+.porte__scene .scene__cadre { -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent); mask-image: linear-gradient(to bottom, #000 82%, transparent); }
+.porte__legende { position: absolute; z-index: 2; inset-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); bottom: max(2px, calc(3svh - 22px)); margin: 0; font-size: 13px; line-height: 1.3; color: var(--encre-douce); }
+.js .porte__legende { opacity: calc(1 - var(--z2, 0) * 6); }
+.porte__cercle, .porte__phrase { display: none; }
+.porte__vue { display: contents; }
+@media (min-width: 840px) and (max-height: 760px) { .porte__scene { bottom: -11svh; } }
+
+/* La scene animee n'existe que si JavaScript tourne, que l'ecran est large et que le mouvement est accepte. */
+@media (min-width: 840px) and (prefers-reduced-motion: no-preference) {
+  .js .porte { height: 250svh; }
+  .js .porte__collant { position: sticky; top: 0; height: 100svh; min-height: 0; }
+  .js .porte__arche { transform: scale(calc(1 + var(--z, 0) * 2.6)); }
+  .js .porte__scene { transform: scale(calc(1 + var(--z2, 0) * 1.7)); will-change: transform; }
+  .js .porte__texte { transform: translateY(calc(var(--z, 0) * -14svh)); opacity: calc(1 - var(--z, 0) * 3.6); }
+  .js .porte[data-passee] .porte__texte, .js .porte:not([data-cercle]) .porte__phrase { visibility: hidden; }
+  .js .porte__cercle { display: grid; place-items: center; position: absolute; inset: 0; z-index: 4; pointer-events: none; clip-path: circle(calc(var(--c, 0) * 150vmax) at 68% 56%); }
+  .js .porte__disque { transition: border-radius var(--mv-navigation) var(--mv-entree); }
+  [data-ambiance="violet"].js .porte[data-plein] .porte__disque { border-radius: 0 0 50% 50% / 0 0 120px 120px; }
+  .js .porte__vue { transition: visibility 0s linear var(--mv-navigation); }
+  .js .porte[data-plein] .porte__vue { transition-delay: 0s; }
+  /* Piece pleine : la porte agrandie derriere ne se voit plus dans les coins de l'arrondi. */
+  .js .porte[data-plein] .porte__vue { visibility: hidden; }
+  .js .porte__vue { display: block; position: absolute; inset: 0; }
+  .js .porte__disque { position: absolute; inset: 0; background: var(--fond); }
+  .js .porte__halqa { position: relative; width: min(46vw, 76svh); margin-inline-start: 44vw; transform: scale(calc(1.18 - var(--c, 0) * .18)); }
+  .js .porte__phrase { display: block; position: absolute; inset-inline-start: max(var(--marge), calc((100vw - var(--contenu)) / 2)); top: 50%; translate: 0 -50%; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(34px, 3.4vw, 56px); line-height: 1.04; letter-spacing: -0.025em; color: var(--encre); opacity: var(--c, 0); transform: translateY(calc((1 - var(--c, 0)) * 16px)); }
+  .js .porte__halqa::before { content: ''; position: absolute; inset: 4% 8% 2% 6%; border-radius: 50%; background: var(--champ); z-index: -1; }
+}
+
+/* --- Enonce : une phrase, des fenetres en arche dans la ligne ---------------- */
+.enonce { padding: var(--respire) var(--marge); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
+.enonce__texte { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-titre); line-height: 1.08; letter-spacing: -0.03em; }
+.enonce__texte span { display: block; }
+@media (min-width: 840px) { .enonce__texte span { white-space: nowrap; } .enonce__texte span + span { padding-inline-start: 1.6em; } }
+/* Sous 840 px : une phrase par ligne, a la taille qui la fait tenir (la plus longue mesure 16,07 em), jamais un mot seul. */
+@media (max-width: 839px) { .enonce__texte { font-size: min(var(--t-titre), calc((100vw - 2 * var(--marge)) / 16.4)); } .enonce__texte span { white-space: nowrap; } }
+
+/* --- Chapitres : la porte reste, ceux qui viennent changent ------------------- */
+p, li, dd { overflow-wrap: break-word; }
+li, dd { text-wrap: wrap; }
+/* Puces des encarts et des cartes de prix : pas de mot seul en fin de puce (« ne convient / pas. »). Lignes courtes, propres a ces listes. */
+.fiche__lignes li, .champ__inclus li { text-wrap: pretty; }
+.appel__phrase { overflow-wrap: anywhere; }
+.section__grille > *, .contact-ligne > *, .entete-page > *, .groupe > *, .faq-tuiles > * { min-width: 0; }
+.chapitres { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); padding: 0 var(--marge) var(--respire); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
+.chapitres__fenetre { grid-column: 1 / span 7; position: sticky; top: calc(var(--entete) + 4svh); height: calc(100svh - var(--entete) - 8svh); display: none; }
+.chapitres__pile { position: relative; height: 100%; border-radius: var(--arche); background: var(--champ); overflow: hidden; }
+.chapitres__image { position: absolute; inset: 4%; display: flex; flex-direction: column; justify-content: center; opacity: var(--o, 0); transform: translateY(calc((1 - var(--o, 0)) * 16px)); transition: opacity var(--mv-navigation) var(--mv-entree), transform var(--mv-navigation) var(--mv-entree); }
+.chapitres__image:first-child { --o: 1; }
+.chapitres__image.scene--cercle > .scene__cadre { flex: none; align-self: center; width: min(100%, calc((100svh - var(--entete) - 8svh) * .92)); }
+.chapitres__image figcaption { display: none; }
+.chapitres__textes { grid-column: 1 / -1; }
+.chapitre { padding-block: var(--e-16); }
+.chapitre h2 { max-width: 20ch; margin-bottom: var(--e-6); font-size: min(var(--t-titre), 48px); }
+.chapitre p { max-width: 46ch; }
+.chapitre p + p { margin-top: var(--e-4); }
+.chapitre__image-mobile { margin-top: var(--e-8); }
+/* Les mains : la manche sort par le bord gauche de l'ecran, au lieu de finir coupee dans le vide. */
+.chapitre__image-mobile:has(.scene[data-anime="mains"]) { margin-inline-start: calc(var(--marge) * -1); }
+.chapitre__image-mobile:has(.scene[data-anime="mains"]) figcaption { margin-inline-start: var(--marge); }
+/* Sous 840 px, chaque image se pose juste au-dessus de son titre, alignee sur le texte ; les chapitres se suivent sans vide. */
+@media (max-width: 839px) {
+  .chapitre { display: flex; flex-direction: column; padding-block: var(--e-10); }
+  .chapitre__image-mobile { order: -1; margin: 0 0 var(--e-6); }
+}
+.chapitre__image-mobile .scene { border-radius: var(--arche); background: var(--champ); padding: 12% 4% 4%; }
+@media (min-width: 840px) {
+  .chapitres__fenetre { display: block; }
+  .chapitres__textes { grid-column: 8 / span 5; }
+  .chapitre { min-height: 88svh; display: flex; flex-direction: column; justify-content: center; }
+  .chapitres { padding-bottom: var(--e-16); }
+  .chapitre:last-child { min-height: 72svh; justify-content: flex-start; padding-top: 14svh; }
+  .chapitre__image-mobile { display: none; }
+  /* Les mains sortent par le coin de l'ecran : la manche file hors du bord gauche et son ourlet sous le bas de
+     l'ecran, au lieu d'une petite image fondue au milieu du violet. La fenetre est collee pendant tout ce chapitre :
+     ces deux bords sont toujours ceux de l'ecran. */
+  [data-ambiance="violet"] .chapitres__pile { overflow: visible; }
+  [data-ambiance="violet"] .chapitres__image[data-anime="mains"] { inset: auto auto -4svh calc(-1 * max(var(--marge), (100vw - var(--contenu)) / 2) - 24px); display: block; width: min(calc((100% + max(var(--marge), (100vw - var(--contenu)) / 2) + 24px) * 1.2), 130svh); translate: -15% 13%; }
+  [data-ambiance="violet"] .chapitres__image[data-anime="mains"] .scene__cadre img { -webkit-mask: none; mask: none; }
+}
+
+/* --- Points : la puce est une petite arche ------------------------------------- */
+.points { display: grid; gap: var(--e-3); margin-top: var(--e-6); }
+.points li { display: flex; gap: var(--e-3); align-items: baseline; font-weight: 600; }
+.puce { flex: 0 0 auto; width: .62em; height: .75em; border-radius: var(--arche); background: var(--marque); transform: translateY(.05em); }
+
+/* --- Les tuiles qui grandissent --------------------------------------------- */
+.pousse { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); row-gap: var(--e-10); }
+.pousse__entete { grid-column: 1 / -1; }
+.pousse__entete h2 { max-width: 16ch; }
+.pousse__entete p { max-width: 52ch; margin-top: var(--e-4); }
+.pousse__liste { grid-column: 1 / -1; display: grid; gap: var(--e-8); }
+.pousse__tuile { border-radius: var(--arche); overflow: hidden; display: flex; align-items: flex-end; justify-content: center; padding: 0 6% 6%; }
+.pousse__etape--0 .pousse__tuile { background: var(--champ); height: 52vw; }
+.pousse__etape--1 .pousse__tuile { background: var(--champ-fort); height: 66vw; }
+.pousse__etape--2 .pousse__tuile { background: var(--marque); height: 82vw; }
+/* Le cercle tient dans sa tuile, sous l'arrondi : il ne remonte jamais sur les liens au-dessus. */
+.pousse__image { width: min(100%, 60vw); }
+.pousse__etape--0 .pousse__image { width: min(100%, 36vw); }
+.pousse__etape--1 .pousse__image { width: min(100%, 48vw); }
+.pousse__tuile { position: relative; overflow: visible; }
+/* La legende sort de l'arche : 8 px sous la tuile, a droite, dans l'espace du titre de l'etape. */
+.pousse__image { position: static; }
+.pousse__image figcaption { position: absolute; inset-inline-end: 0; top: calc(100% + var(--e-2)); }
+.pousse__etape h3 { margin-top: var(--e-16); }
+.pousse__etape p { margin-top: var(--e-2); max-width: 32ch; }
+/* Au telephone, les etapes s'empilent : la montee des hauteurs ne se lit plus, les trois tuiles prennent la meme taille. */
+@media (max-width: 599px) { .pousse__liste .pousse__etape .pousse__tuile { height: 64vw; } .pousse__liste .pousse__etape .pousse__image { width: min(100%, 46vw); } }
+/* Au telephone, la legende « Illustration » d'une etape ne touche pas le titre qui suit. */
+@media (max-width: 599px) { .etapes .etape .section__figure { margin-bottom: calc(var(--e-12) + var(--e-2)); } }
+@media (min-width: 840px) {
+  .pousse__entete { grid-column: 1 / -1; grid-row: 1; display: grid; grid-template-columns: subgrid; align-items: start; }
+  .pousse__entete h2 { grid-column: 1 / span 6; }
+  .pousse__corps { grid-column: 7 / -1; }
+  .pousse__corps > p:first-child { margin-top: 0; }
+  .pousse__liste { grid-row: 2; grid-column: 1 / -1; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: end; column-gap: var(--e-6); }
+  .pousse__etape--0 { grid-column: 1 / span 4; }
+  .pousse__etape--1 { grid-column: 5 / span 4; }
+  .pousse__etape--2 { grid-column: 9 / span 4; }
+  .pousse__etape--0 .pousse__tuile { height: 42svh; }
+  .pousse__etape--1 .pousse__tuile { height: 53svh; }
+  .pousse__etape--2 .pousse__tuile { height: 64svh; }
+  /* Le detail tient dans sa tuile : il ne depasse jamais l'arche, meme dans la plus basse. */
+  .pousse__image, .pousse__etape--0 .pousse__image, .pousse__etape--1 .pousse__image { width: min(100%, 34svh); }
+  .pousse__liste { padding-top: 0; }
+  .pousse__entete { position: relative; z-index: 1; }
+  .pousse { grid-template-rows: auto auto; }
+  .pousse__liste { margin-top: 0; }
+  .pousse__liste { grid-template-rows: auto auto auto; row-gap: 0; }
+  .pousse__etape { grid-row: span 3; display: grid; grid-template-rows: subgrid; }
+  .pousse__etape .pousse__tuile { align-self: end; }
+}
+
+/* --- Deux champs : enfants, adultes --------------------------------------- */
+.deux-champs { padding-top: var(--e-16); }
+.deux-champs__titre { padding-inline: var(--marge); max-width: calc(var(--contenu) + 2 * var(--marge)); margin: 0 auto var(--e-10); }
+.deux-champs__grille { display: grid; gap: var(--e-4); padding-inline: var(--marge); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
+.champ { position: relative; display: flex; flex-direction: column; min-height: 0; padding: var(--e-10) var(--e-6); overflow: hidden; border-radius: var(--r-lg); }
+.champ h3 { font-size: var(--t-titre); line-height: 1.04; letter-spacing: -0.02em; }
+.champ__public { margin-top: var(--e-4); max-width: 44ch; }
+.champ__prix { margin-top: var(--e-8); display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--e-3); }
+.champ__inclus { margin-top: auto; padding-top: var(--e-10); display: grid; gap: var(--e-3); max-width: none; list-style: none; }
+.champ__inclus li { padding-inline-start: 1.4em; position: relative; }
+.champ__inclus li::before { content: ''; position: absolute; inset-inline-start: 0; top: .5em; width: .6em; height: .75em; border-radius: var(--arche); background: currentColor; opacity: .55; }
+.champ__montant { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.champ__periode { font-weight: 600; }
+.champ--enfant { background: var(--champ-fort); color: var(--encre); }
+.champ--adulte { background: var(--marque); color: var(--sur-marque); }
+.deux-champs__pied { padding: var(--e-10) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
+.deux-champs__pied p { max-width: 60ch; }
+@media (min-width: 600px) {
+  /* Les deux cartes partagent leurs lignes : titres, prix, public et listes commencent a la meme hauteur. */
+  .deux-champs__grille { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto auto 1fr; column-gap: var(--e-6); }
+  .champ { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; align-content: start; min-height: 64svh; padding: var(--e-12) var(--e-10); }
+  .champ h3 { align-self: end; }
+  .champ__inclus { margin-top: 0; align-self: start; font-size: 18px; }
+}
+
+/* --- Panneau sombre en retrait ---------------------------------------------- */
+.panneau { padding: var(--respire) var(--marge); }
+.panneau__in { position: relative; overflow: hidden; border-radius: var(--r-lg); background: var(--inverse); color: var(--sur-inverse); display: grid; padding: var(--e-12) var(--e-6) 0; gap: var(--e-10); max-width: 1440px; margin-inline: auto; }
+.panneau h2 { color: var(--sur-inverse); max-width: 13ch; }
+.panneau__arche { margin-top: var(--e-10); width: min(86%, 560px); border-radius: var(--arche); background: var(--champ-fort); padding: 14% 6% 0; }
+.panneau__arche figcaption { color: var(--encre); }
+.panneau__depuis { font-family: 'DM Sans', sans-serif; font-size: var(--t-moyen); line-height: 1.25; font-weight: 500; max-width: 22ch; }
+.panneau__bloc { margin-top: var(--e-8); max-width: 40ch; }
+.panneau__bloc h3 { color: var(--sur-inverse); font-size: var(--t-corps); font-weight: 700; letter-spacing: 0; margin-bottom: var(--e-2); }
+.panneau__bloc p { color: var(--sur-inverse-doux); }
+.panneau .cta--secondary { color: var(--sur-inverse); border-color: var(--sur-inverse-doux); }
+.panneau .cta--secondary:hover { background: var(--sur-inverse); color: var(--inverse); }
+.panneau .lien-fleche { color: var(--sur-inverse); }
+.panneau__societe { margin-block: var(--e-10) var(--e-12); font-size: var(--t-petit); color: var(--sur-inverse-doux); }
+@media (min-width: 840px) {
+  .panneau__in { grid-template-columns: repeat(12, minmax(0, 1fr)); padding: var(--e-16) max(var(--e-16), calc((100vw - var(--contenu)) / 2 - var(--marge))) 0; column-gap: var(--e-6); }
+  .panneau__gauche { grid-column: 1 / span 6; display: flex; flex-direction: column; }
+  .panneau__droite { grid-column: 7 / -1; padding-top: var(--e-2); }
+  .panneau__arche { margin-top: auto; padding-top: 18%; margin-bottom: -12%; }
+}
+
+/* --- Tuiles de questions (FAQ, aide) ------------------------------------------- */
+.faq-tuiles { padding: 0 var(--marge) var(--respire); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; display: grid; gap: var(--e-10); }
+.faq-tuiles__tete p { margin-top: var(--e-4); max-width: 40ch; }
+.liste-liens { margin-top: var(--e-6); display: grid; }
+.faq-tuiles__liste, .questions { display: grid; gap: var(--e-2); }
+.tuile { border-radius: var(--r-md); background: var(--sous); transition: background-color var(--mv-apparition) var(--mv-entree); }
+.tuile summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: var(--e-4); min-height: 72px; padding: var(--e-4) var(--e-6); cursor: pointer; }
+.tuile summary::-webkit-details-marker { display: none; }
+.tuile summary h2, .tuile summary h3 { font-size: var(--t-corps); font-weight: 600; letter-spacing: 0; line-height: 1.35; font-family: 'Plus Jakarta Sans', sans-serif; }
+.tuile__signe { position: relative; flex: 0 0 16px; height: 16px; }
+.tuile__signe::before, .tuile__signe::after { content: ''; position: absolute; left: 0; top: 6.5px; width: 16px; height: 3px; border-radius: 2px; background: currentColor; transition: transform var(--mv-apparition) var(--mv-entree); }
+.tuile__signe::after { transform: rotate(90deg); }
+.tuile[open] { background: var(--champ-fort); color: var(--encre); }
+.tuile[open] .tuile__signe::after { transform: rotate(0); }
+.tuile__corps { padding: 0 var(--e-6) var(--e-6); max-width: 64ch; }
+.tuile__corps p + p { margin-top: var(--e-3); }
+.tuile::details-content { block-size: 0; overflow: clip; transition: block-size var(--mv-plafond) var(--mv-accentuee), content-visibility var(--mv-plafond) allow-discrete; }
+.tuile[open]::details-content { block-size: auto; }
+@supports (interpolate-size: allow-keywords) { :root { interpolate-size: allow-keywords; } }
+@media (min-width: 840px) {
+  .faq-tuiles { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); }
+  .faq-tuiles__tete { grid-column: 1 / span 5; position: sticky; top: calc(var(--entete) + var(--e-6)); align-self: start; }
+  .faq-tuiles__liste { grid-column: 7 / -1; }
+}
+.questions { max-width: calc(960px + 2 * var(--marge)); margin: 0 auto var(--respire); padding: var(--respire) var(--marge) 0; }
+.questions .section-links { margin-top: var(--e-3); }
+
+/* --- Bande d'appel : toute la bande est le lien ------------------------------ */
+.appel { padding-top: var(--respire); }
+.appel__lien { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; min-height: 56svh; padding: var(--e-12) var(--marge) var(--e-6); background: var(--marque); color: var(--sur-marque); text-decoration: none; border-radius: 50% 50% 0 0 / 120px 120px 0 0; overflow: hidden; transition: background-color var(--mv-micro) var(--mv-entree), color var(--mv-micro) var(--mv-entree); }
+.appel__lien:hover, .appel__lien:focus-visible { background: var(--champ-fort); color: var(--encre); }
+.appel__lien:focus-visible { outline-offset: -6px; }
+.appel--sobre .appel__lien { min-height: 0; grid-template-rows: auto; padding-bottom: var(--e-16); }
+.appel__haut { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--e-2); max-width: calc(var(--contenu)); width: 100%; margin-inline: auto; padding-top: var(--e-10); text-align: center; justify-items: center; }
+.appel__haut h2 { font-size: var(--t-titre); color: inherit; max-width: 100%; text-wrap: balance; }
+.appel__phrase { font-size: var(--t-corps); max-width: 46ch; padding-inline: var(--e-2); }
+.appel__mot { align-self: end; justify-self: center; margin-top: var(--e-16); font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: clamp(52px, 12.6vw, 200px); line-height: .82; letter-spacing: -0.04em; white-space: nowrap; transform: translateY(calc((1 - var(--v, 1)) * 16px)); }
+.appel__bouton { display: inline-flex; align-items: center; gap: var(--e-2); margin-top: var(--e-6); min-height: 52px; padding-inline: var(--e-6); border-radius: var(--r-full); background: var(--sur-marque); color: var(--marque); font-weight: 600; font-size: var(--t-corps); transition: transform var(--mv-retour) var(--mv-entree); }
+.appel__lien:hover .appel__bouton svg { transform: translateX(4px); }
+.appel__mot svg { display: inline-block; width: .56em; height: .56em; margin-inline-start: .1em; vertical-align: 0; transition: transform var(--mv-micro) var(--mv-entree); }
+.appel__mot svg path { stroke-width: 2.6; }
+.appel__lien:hover .appel__mot svg, .appel__lien:focus-visible .appel__mot svg { transform: translateX(.08em); }
+.appel__bouton svg { transition: transform var(--mv-micro) var(--mv-entree); }
+
+/* --- Pages interieures : haut de page --------------------------------------- */
+/* La scene porte deja l'arche du symbole (le livre, la porte ouverte) : on ne l'enferme pas dans une
+   seconde fenetre. Elle se pose en grand sur le bas du champ, a droite ou a gauche selon la page. */
+.entete-page { position: relative; overflow: clip; margin-top: calc(var(--entete) * -1); padding: calc(var(--entete) + var(--e-10)) var(--marge) 0; display: grid; gap: var(--e-10); align-items: center; }
+.entete-page--lavande { background: var(--champ); }
+.entete-page--blanc { background: var(--fond); }
+.entete-page__texte { position: relative; z-index: 2; }
+.entete-page h1 { font-size: clamp(40px, 4.6vw, 68px); max-width: 19ch; }
+.entete-page__texte--long h1 { font-size: clamp(32px, 8.2vw, 44px); max-width: 22ch; }
+/* Les titres longs tiennent en deux lignes sans couper apres un article (mesure : « votre enfant, dès 6 ans » fait 10,5 em). */
+@media (min-width: 840px) { .entete-page__texte--long h1 { font-size: clamp(36px, 4.6vw, 66px); } }
+.entete-page .hero-intro { font-size: clamp(18px, 1.7vw, 24px); max-width: 36ch; }
+.entete-page__suite .hero-intro { margin-top: 0; }
+.entete-page--document { row-gap: var(--e-6); }
+.entete-page--document h1 { font-size: clamp(28px, 8vw, 40px); }
+.entete-page__arche { position: relative; z-index: 1; width: min(100%, 560px); justify-self: center; }
+/* Tablette : l'illustration du haut prend toute la largeur du cadre (la regle vient apres la regle de base). */
+@media (min-width: 600px) and (max-width: 839px) { .entete-page__arche, .entete-page--document .entete-page__arche { width: 100%; } }
+.entete-page__image { transform: translateY(calc(var(--par, 0) * -1px)); }
+/* La legende passe sous le cadre, a 8 px, alignee a droite : jamais posee sur l'image. */
+.entete-page__image figcaption { position: static; margin-top: var(--e-2); text-align: end; }
+.entete-page--sobre { min-height: 0; padding-bottom: var(--e-12); background: var(--fond); }
+.entete-page--sobre h1 { max-width: 22ch; }
+.entete-page__ornement { position: absolute; inset-inline-end: 6vw; top: 50%; translate: 0 -46%; width: clamp(120px, 16vw, 240px); opacity: .14; pointer-events: none; }
+@media (min-width: 840px) {
+  .entete-page { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); padding-inline: max(var(--marge), calc((100vw - var(--contenu)) / 2)); min-height: min(100svh, 940px); align-items: end; }
+  .entete-page__texte { grid-column: 1 / span 6; grid-row: 1; align-self: center; }
+  .entete-page__arche { grid-column: 7 / -1; grid-row: 1; justify-self: end; width: min(100%, calc((100svh - var(--entete) - var(--e-10)) * .86)); }
+  .entete-page--gauche .entete-page__texte { grid-column: 7 / -1; }
+  .entete-page--gauche .entete-page__arche { grid-column: 1 / span 6; justify-self: start; }
+  .entete-page--sobre { min-height: 0; align-items: center; padding-bottom: var(--e-16); }
+  .entete-page--sobre .entete-page__texte { grid-column: 1 / span 8; }
+  /* Document : le titre traverse la page, la phrase et l'action dessous, la scene en bas du cote oppose. */
+  .entete-page--document { min-height: 0; row-gap: var(--e-8); }
+  .entete-page--document .entete-page__texte { grid-column: 1 / -1; grid-row: 1; align-self: end; }
+  .entete-page--document .entete-page__texte h1 { font-size: clamp(40px, 5vw, 76px); max-width: 24ch; }
+  .entete-page--document .entete-page__suite { grid-column: 1 / span 6; grid-row: 2; align-self: start; }
+  .entete-page--document .entete-page__arche { grid-column: 8 / -1; grid-row: 2; width: 100%; }
+  /* Panorama : le titre et sa phrase sur une ligne, la scene sur toute la largeur du contenu dessous. */
+  .entete-page--libre { min-height: 0; row-gap: var(--e-12); }
+  .entete-page--libre .entete-page__texte { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: end; row-gap: var(--e-6); }
+  .entete-page--libre .entete-page__texte > * { grid-column: 9 / -1; }
+  .entete-page--libre .entete-page__texte > h1 { grid-column: 1 / span 8; grid-row: 1 / span 3; max-width: none; font-size: clamp(40px, 5vw, 76px); }
+  .entete-page--libre .hero-intro { font-size: clamp(18px, 1.5vw, 22px); margin-top: 0; }
+  .entete-page--libre .action-row { margin-top: 0; }
+  .entete-page--libre .entete-page__arche { grid-column: 1 / -1; grid-row: 2; width: 100%; }
+  .entete-page--libre:has(.scene[data-anime="mains"]) .entete-page__arche { margin-inline-start: calc(-1 * max(var(--marge), (100vw - var(--contenu)) / 2) - 24px); width: calc(100% + max(var(--marge), (100vw - var(--contenu)) / 2) + 24px); }
+  .entete-page--libre .entete-page__image img { max-height: 78svh; object-fit: contain; object-position: center bottom; }
+  .entete-page--libre.entete-page--droite .entete-page__image img { object-position: center bottom; }
+  .entete-page--libre.entete-page--gauche .entete-page__image img { object-position: left bottom; }
+}
+
+/* --- Sections editoriales --------------------------------------------------- */
+/* Sans image : le titre tient sa colonne pendant la lecture. Avec image : le texte et la scene
+   alternent de cote d'une section a l'autre, pour que la page ne penche jamais d'un seul cote. */
+.section { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
+.section__grille { display: grid; gap: var(--e-6); }
+.section__titre h2, .section__texte h2 { max-width: 18ch; }
+.section__texte h2 { margin-bottom: var(--e-6); }
+.section__texte > p + p { margin-top: var(--e-4); }
+.section__figure { position: relative; width: min(100%, 600px); border-radius: var(--arche); background: var(--champ); padding: 14% 5% 0; }
+.section__figure .scene figcaption { position: absolute; inset-inline-end: 0; bottom: calc(var(--e-6) * -1); }
+.section--figure .section__figure { margin-top: var(--e-6); }
+.section__figure--panorama { width: 100%; background: none; padding: 0; border-radius: 0; }
+.section__figure--panorama .scene figcaption { top: auto; bottom: calc(var(--e-6) * -1); }
+.section__corps { max-width: var(--lecture); }
+.section__corps > p + p { margin-top: var(--e-4); }
+@media (min-width: 840px) {
+  .section__grille { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); }
+  .section__titre { grid-column: 1 / span 6; position: sticky; top: calc(var(--entete) + var(--e-6)); align-self: start; }
+  .section__corps { grid-column: 7 / span 6; }
+  .section--large .section__titre { grid-column: 1 / span 5; }
+  .section--large .section__corps { grid-column: 6 / span 7; }
+  /* Les fiches de la decision prennent toute la largeur, sous leur titre. */
+  .section:has(.fiche + .fiche) .section__titre { grid-column: 1 / -1; grid-row: 1; position: static; }
+  .section:has(.fiche + .fiche) .section__corps { grid-column: 1 / -1; grid-row: 2; max-width: none; }
+  .section--figure .section__grille { align-items: center; }
+  .section--figure .section__texte { grid-column: 1 / span 6; grid-row: 1; }
+  .section--figure .section__figure { grid-column: 7 / -1; grid-row: 1; justify-self: end; margin-top: 0; }
+  .section--figure-gauche .section__texte { grid-column: 7 / -1; }
+  .section--figure-gauche .section__figure { grid-column: 1 / span 6; justify-self: start; }
+  .section--large.section--figure .section__texte { grid-column: 1 / span 7; }
+  .section--large.section--figure .section__figure { grid-column: 8 / -1; }
+  .section--large.section--figure-gauche .section__texte { grid-column: 6 / -1; }
+  .section--large.section--figure-gauche .section__figure { grid-column: 1 / span 5; }
+  .section--figure .section__figure--panorama { grid-column: 7 / -1; }
+  .section--figure-gauche .section__figure--panorama { grid-column: 1 / span 7; }
+  .section--figure-gauche:has(.section__figure--panorama) .section__texte { grid-column: 8 / -1; }
+}
+/* Tablette : une scene en largeur (la classe vue du dessus) passe sous son texte, a toute la largeur de la colonne. */
+@media (min-width: 600px) and (max-width: 839px) {
+  .section--figure:has(.section__figure--panorama) .section__grille { display: block; }
+  .section--figure:has(.section__figure--panorama) .section__figure--panorama { width: 100%; margin-top: var(--e-10); }
+}
+/* Tablette : le texte et sa scene restent cote a cote, la scene ferme la marge. Les tableaux restent pleine largeur. */
+@media (min-width: 600px) and (max-width: 839px) {
+  .section--figure:not(.section--large) .section__grille { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: center; }
+  .section--figure:not(.section--large) .section__texte { grid-column: 1 / span 7; grid-row: 1; }
+  .section--figure:not(.section--large) .section__figure { grid-column: 8 / -1; grid-row: 1; margin-top: 0; justify-self: end; }
+  .section--figure-gauche:not(.section--large) .section__texte { grid-column: 6 / -1; }
+  .section--figure-gauche:not(.section--large) .section__figure { grid-column: 1 / span 5; justify-self: start; }
+}
+.site-main > .section:last-of-type, .site-main > .contacts:last-child, .site-main > .lecture:last-child, .site-main > .questions:last-child { padding-bottom: var(--respire); }
+
+/* Bande pleine : le titre, la grande illustration au centre, le texte en deux colonnes dessous */
+.section--pleine { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; display: grid; gap: var(--e-10); }
+.pleine__tete h2 { max-width: 20ch; }
+.pleine__image .scene { width: min(100%, calc(72svh * var(--ratio, 1))); max-width: var(--natif, none); margin-inline: auto; }
+.pleine__image .scene { position: relative; }
+.pleine__image .scene figcaption { position: absolute; inset-inline-end: 0; bottom: calc(var(--e-6) * -1); }
+.pleine__corps { display: grid; gap: var(--e-8); }
+.pleine__texte > p + p { margin-top: var(--e-4); }
+.pleine__texte p { max-width: 58ch; }
+@media (min-width: 840px) {
+  .section--pleine { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); row-gap: var(--e-12); }
+  .pleine__tete { grid-column: 1 / span 8; }
+  .pleine__image { grid-column: 1 / -1; }
+  .pleine__corps { grid-column: 1 / -1; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); }
+  .pleine__texte { grid-column: 1 / -1; columns: 2; column-gap: var(--e-12); }
+  .pleine__texte > * { break-inside: avoid; }
+  .pleine__corps--deux .pleine__texte { columns: auto; }
+  .pleine__corps--deux .pleine__texte { grid-column: 1 / span 5; }
+  .pleine__plus { grid-column: 1 / span 8; }
+  .pleine__corps--deux .pleine__plus { grid-column: 7 / -1; }
+  /* Bande sans texte courant (Tarifs, « Une classe, un enseignant attitre ») : titre, image et tableau sur un meme axe. */
+  .section--pleine:not(:has(.pleine__texte)) .pleine__tete { grid-column: 3 / span 8; text-align: center; }
+  .section--pleine:not(:has(.pleine__texte)) .pleine__tete h2 { margin-inline: auto; }
+  .section--pleine:not(:has(.pleine__texte)) .pleine__plus { grid-column: 3 / span 8; }
+}
+[data-ambiance="violet"] .pleine__image { position: relative; }
+
+/* Parcours des bases : quatre arches qui montent, l'ordre se lit a la hauteur */
+.section--parcours { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; display: grid; gap: var(--e-10); }
+.parcours__tete h2 { max-width: 18ch; margin-bottom: var(--e-6); }
+.parcours__tete p { max-width: 58ch; }
+.parcours__tete p + p { margin-top: var(--e-4); }
+.parcours { list-style: none; display: grid; gap: var(--e-3); }
+.parcours__etape { display: flex; align-items: flex-end; border-radius: var(--r-lg); padding: var(--e-8) var(--e-5); background: var(--sous); font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(19px, 1.55vw, 24px); line-height: 1.15; }
+.parcours__etape:nth-child(2) { background: var(--champ); }
+.parcours__etape:nth-child(3) { background: var(--champ-fort); }
+.parcours__etape:nth-child(4) { background: var(--marque); color: var(--sur-marque); }
+@media (min-width: 840px) {
+  .section--parcours { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); }
+  .parcours__tete { grid-column: 1 / span 7; }
+  .parcours { grid-column: 1 / -1; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; column-gap: var(--e-4); }
+  .parcours__etape { border-radius: var(--arche); padding: 0 var(--e-6) var(--e-8); }
+  .parcours__etape:nth-child(1) { min-height: 220px; }
+  .parcours__etape:nth-child(2) { min-height: 290px; }
+  .parcours__etape:nth-child(3) { min-height: 360px; }
+  .parcours__etape:nth-child(4) { min-height: 430px; }
+}
+[data-ambiance="violet"] .parcours__etape:nth-child(1) { background: #4E2983; }
+[data-ambiance="violet"] .parcours__etape:nth-child(2) { background: #8652E6; }
+[data-ambiance="violet"] .parcours__etape:nth-child(3) { background: #BA98FB; color: #25113F; }
+
+/* Deux sections de texte cote a cote : deux champs, du plus profond au plus clair */
+.groupe { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; display: grid; gap: var(--e-4); }
+.carte { border-radius: var(--r-lg); padding: var(--e-10) var(--e-6); background: var(--sous); }
+.carte:nth-child(2) { background: var(--champ); }
+.carte:nth-child(3) { background: var(--champ-fort); }
+.carte h2 { font-size: var(--t-moyen); line-height: 1.12; max-width: 20ch; margin-bottom: var(--e-6); }
+.carte p + p { margin-top: var(--e-3); }
+.carte .points, .carte .liste-liens { margin-top: var(--e-6); }
+@media (min-width: 840px) {
+  .groupe { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: start; }
+  .carte { grid-column: span 6; padding: var(--e-12) var(--e-10); }
+  .carte h2 { font-size: max(26px, var(--t-moyen)); margin-bottom: var(--e-8); }
+  .groupe--3 .carte { grid-column: span 4; }
+}
+@media (min-width: 840px) {
+  .groupe--pile .carte { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); }
+  .groupe--pile .carte > * { grid-column: 7 / -1; }
+  .groupe--pile .carte > h2 { grid-column: 1 / span 5; grid-row: 1 / span 6; margin-bottom: 0; }
+}
+[data-ambiance="violet"] .carte { background: #4E2983; }
+[data-ambiance="violet"] .carte:nth-child(2) { background: #8652E6; }
+
+/* Fiches de la decision du 18/10 : les textes tels quels, en deux champs */
+.fiches { display: grid; gap: var(--e-4); margin-top: var(--e-6); align-items: stretch; }
+.fiche { border-radius: var(--r-lg); padding: var(--e-8) var(--e-6); background: var(--sous); }
+.fiche:nth-child(2) { background: var(--champ); }
+.fiche h3 { margin-bottom: var(--e-4); }
+.fiche__lignes { list-style: none; display: grid; gap: var(--e-3); }
+.fiche__lignes li { padding-inline-start: 1.4em; position: relative; }
+.fiche__lignes li::before { content: ''; position: absolute; inset-inline-start: 0; top: .5em; width: .6em; height: .75em; border-radius: var(--arche); background: currentColor; opacity: .55; }
+@media (min-width: 840px) { .fiches:has(.fiche + .fiche) { grid-template-columns: repeat(2, minmax(0, 1fr)); } .fiche { padding: var(--e-10) var(--e-8); } }
+[data-ambiance="violet"] .fiche { background: #4E2983; }
+[data-ambiance="violet"] .fiche:nth-child(2) { background: #8652E6; }
+
+/* Bande d'image entre deux sections */
+.bande-image { position: relative; margin: var(--respire) auto 0; padding-inline: var(--marge); max-width: 1440px; }
+.bande-image--arche .scene { width: min(100%, 720px); margin-inline: auto; border-radius: var(--arche); background: var(--champ); padding: 16% 5% 0; }
+.bande-image--large { padding: 0; max-width: none; background: var(--champ); overflow: clip; }
+.bande-image--large .scene { width: min(1500px, 120vw); margin-inline: auto; padding-block: var(--e-16); }
+.bande-image--large .scene__cadre { translate: calc(var(--pan, 0) * 1px) 0; }
+@media (max-width: 839px) { .bande-image--large .scene { width: 100%; padding-block: var(--e-10) var(--e-12); } .bande-image--large .scene__cadre { translate: none; } }
+.bande-image--cercle .scene { width: min(86vw, 720px); margin-inline: auto; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: var(--champ); padding: 6%; }
+.bande-image--cercle .scene__cadre { width: 92%; }
+.bande-image .scene figcaption { position: absolute; inset-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); bottom: var(--e-3); }
+.bande-image--large .scene { position: static; }
+.bande-image__texte { margin-top: var(--e-8); }
+.bande-image__phrase { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: max(22px, var(--t-moyen)); line-height: 1.1; letter-spacing: -0.02em; max-width: 30ch; text-wrap: balance; }
+.bande-image__sous { margin-top: var(--e-4); max-width: 44ch; }
+.bande-image--large .bande-image__texte { padding-inline: var(--marge); }
+@media (min-width: 840px) {
+  .bande-image:has(.bande-image__phrase):not(.bande-image--large) { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: center; max-width: calc(var(--contenu) + 2 * var(--marge)); }
+  .bande-image:has(.bande-image__phrase):not(.bande-image--large) .bande-image__texte { grid-column: 1 / span 6; grid-row: 1; margin-top: 0; }
+  .bande-image:has(.bande-image__phrase):not(.bande-image--large) .scene { grid-column: 7 / -1; grid-row: 1; width: min(100%, 720px); }
+  .bande-image--large .bande-image__texte { position: absolute; z-index: 1; top: var(--e-16); inset-inline-start: max(var(--marge), calc((100vw - var(--contenu)) / 2)); margin: 0; padding: 0; }
+}
+
+/* Etapes : l'ordre se lit a la taille, sans numeros */
+.etapes { display: grid; gap: var(--e-3); padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; counter-reset: etape; }
+.etape { border-radius: var(--r-lg) var(--r-lg) var(--r-md) var(--r-md); padding: var(--e-8) var(--e-6); display: flex; flex-direction: column; justify-content: flex-end; }
+.etape h2 { font-size: clamp(20px, 1.7vw, 24px); line-height: 1.2; margin-bottom: var(--e-4); }
+.etape .section__figure { width: 100%; margin: 0 0 var(--e-6); background: none; padding: 0; border-radius: 0; }
+.etape p + p { margin-top: var(--e-3); }
+.etape:nth-child(1) { background: var(--sous); }
+.etape:nth-child(2) { background: var(--champ); }
+.etape:nth-child(3) { background: var(--champ-fort); }
+.etape:nth-child(4) { background: var(--marque); color: var(--sur-marque); }
+.etape .scene figcaption { color: inherit; }
+@media (min-width: 840px) {
+  /* Meme contenu dans chaque carte : les bas s'alignent, les hauts montent d'une marche a chaque etape. */
+  .etapes { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: var(--e-4); }
+  .etape { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 13fr); grid-template-rows: auto 1fr; column-gap: var(--e-6); align-content: start; border-radius: 200px var(--r-lg) var(--r-lg) var(--r-lg); padding: var(--e-8); }
+  .etape .section__figure { grid-column: 1; grid-row: 1 / span 2; margin: 0; aspect-ratio: auto; }
+  .etape .section__figure .scene { width: 100%; }
+  .etape h2, .etape .etape__corps { grid-column: 2; }
+  .etape h2 { align-self: end; padding-top: var(--e-4); }
+  /* Les deux etapes de droite descendent d'une marche : l'ordre se lit en escalier. */
+  .etape:nth-child(even) { margin-top: var(--e-12); }
+  /* Le texte d'une carte d'etape se lit a 18 px sur environ 40 signes : les lignes se remplissent. */
+  .etape .etape__corps { font-size: 18px; }
+}
+
+/* Lecture longue : textes juridiques, protection des enfants, accessibilite */
+.lecture { display: grid; gap: var(--e-10); padding: var(--e-12) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
+.lecture__sommaire { font-size: var(--t-petit); padding: var(--e-5); border-radius: var(--r-md); background: var(--sous); }
+@media (min-width: 600px) and (max-width: 839px) { .lecture__sommaire ol { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-4); } }
+.lecture__sommaire p { font-weight: 700; margin-bottom: var(--e-3); }
+.lecture__sommaire ol { display: grid; gap: var(--e-1); }
+.lecture__sommaire a { display: block; padding: var(--e-2) var(--e-3); border-radius: var(--r-sm); text-decoration: none; color: var(--encre-douce); transition: background-color var(--mv-micro) var(--mv-entree), color var(--mv-micro) var(--mv-entree); }
+.lecture__sommaire a:hover { background: var(--sous); color: var(--encre); }
+.lecture__sommaire a[aria-current="true"] { background: var(--champ); color: var(--encre); font-weight: 600; }
+.lecture__texte { max-width: var(--lecture); }
+.lecture__section + .lecture__section { margin-top: var(--e-16); }
+.lecture__section h2 { font-size: var(--t-moyen); line-height: 1.2; margin-bottom: var(--e-4); }
+.lecture__section p + p { margin-top: var(--e-3); }
+@media (min-width: 840px) {
+  .lecture { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); }
+  .lecture__sommaire { grid-column: 10 / -1; grid-row: 1; position: sticky; top: calc(var(--entete) + var(--e-6)); align-self: start; padding: 0; background: none; }
+  .lecture__texte { grid-column: 1 / span 8; grid-row: 1; }
+}
+
+/* Contacts : un sommaire d'adresses, sans cartes. Le service a gauche, l'adresse en grand a droite. */
+.contacts { display: grid; gap: var(--e-12); padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
+.contact-ligne { display: grid; gap: var(--e-3); }
+.contact-ligne h2 { font-size: var(--t-moyen); line-height: 1.2; }
+.contact-ligne .section-links { margin-top: var(--e-2); }
+.contact-ligne .lien-fleche > span { font-size: var(--t-moyen); font-family: 'DM Sans', sans-serif; font-weight: 600; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+@media (min-width: 600px) {
+  .contact-ligne { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: baseline; }
+  .contact-ligne h2 { grid-column: 1 / span 4; }
+  .contact-ligne__corps { grid-column: 5 / -1; }
+}
+@media (min-width: 840px) {
+  .contacts { gap: var(--e-16); }
+  .contact-ligne { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: baseline; }
+  .contact-ligne h2 { grid-column: 1 / span 4; }
+  .contact-ligne__corps { grid-column: 5 / -1; }
+}
+
+/* --- Tableaux de prix, avis, notes ------------------------------------------ */
+.price-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: var(--e-6); border-radius: var(--r-md); overflow: hidden; background: var(--sous); font-variant-numeric: tabular-nums; font-size: var(--t-corps); }
+.price-table caption { text-align: start; font-weight: 700; padding-bottom: var(--e-3); }
+.price-table th, .price-table td { padding: var(--e-4) var(--e-5); text-align: start; vertical-align: top; }
+.price-table thead th { font-size: 16px; color: var(--encre-douce); font-weight: 600; background: var(--sous); }
+.price-table tbody tr:nth-child(odd) { background: var(--avant); }
+.price-table tbody th { font-weight: 500; }
+.price-table td { font-weight: 700; }
+.price-note { margin-top: var(--e-3); font-size: 16px; color: var(--encre-douce); }
+.fact-list { display: grid; gap: var(--e-2); margin-top: var(--e-6); }
+.fact-list li { padding: var(--e-4) var(--e-5); border-radius: var(--r-md); background: var(--sous); }
+.fact-list strong { font-weight: 500; }
+.observation { margin-top: var(--e-4); padding: var(--e-6); border-radius: var(--r-md); background: var(--sous); }
+.avis-note { color: var(--marque); letter-spacing: .1em; font-size: var(--t-moyen); }
+.preview-note { margin-top: var(--e-6); font-size: var(--t-petit); color: var(--encre-douce); }
+
+/* --- Simulateur ------------------------------------------------------------- */
+.simulator { width: min(560px, calc(100% - 2 * var(--marge))); max-height: calc(100dvh - 2 * var(--marge)); overflow: auto; padding: var(--e-8); border: 0; border-radius: var(--r-lg); background: var(--fond); color: var(--encre); box-shadow: var(--ombre-3); }
+.simulator::backdrop { background: var(--voile); }
+.simulator[open] { animation: entree-feuille var(--mv-apparition) var(--mv-entree); }
+.simulator h2 { font-size: var(--t-moyen); margin-block: var(--e-2) var(--e-4); }
+.simulator > p { color: var(--encre-douce); font-size: var(--t-petit); }
+.simulator__close { display: grid; place-items: center; margin-inline-start: auto; width: 48px; height: 48px; border: 2px solid var(--contour); border-radius: 50%; background: transparent; }
+.simulator__fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--e-3); margin-top: var(--e-6); }
+.simulator__fields label { display: grid; gap: var(--e-2); font-size: 16px; font-weight: 600; }
+.simulator__fields input, .simulator__fields select { width: 100%; min-height: 52px; padding: var(--e-3) var(--e-4); border: 2px solid transparent; border-radius: var(--r-sm); background-color: var(--sous); }
+.simulator__fields input:focus, .simulator__fields select:focus { outline: none; border-color: var(--encre-accent); }
+.pas { display: grid; grid-template-columns: 52px 1fr 52px; gap: var(--e-2); }
+.pas input { text-align: center; }
+.pas button { min-height: 52px; border: 2px solid var(--contour); border-radius: var(--r-sm); background: transparent; color: inherit; font-size: 22px; font-weight: 600; cursor: pointer; }
+.pas button:focus-visible { outline: 3px solid var(--encre-accent); outline-offset: 2px; }
+.simulator__fields label:has(input[type="checkbox"]) { display: flex; flex-direction: row-reverse; justify-content: flex-end; align-items: center; gap: var(--e-3); align-self: end; min-height: 52px; cursor: pointer; }
+.simulator__fields input[type="checkbox"] { appearance: none; position: relative; flex: none; width: 52px; height: 30px; min-height: 0; padding: 0; border: 2px solid var(--contour); border-radius: 999px; background: var(--fond); cursor: pointer; transition: background-color var(--mv-micro) var(--mv-entree); }
+.simulator__fields input[type="checkbox"]::before { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--encre); transition: transform var(--mv-micro) var(--mv-entree); }
+.simulator__fields input[type="checkbox"]:checked { background: var(--action); border-color: var(--action); }
+.simulator__fields input[type="checkbox"]:checked::before { transform: translateX(22px); background: var(--sur-action); }
+.simulator__fields input[type="checkbox"]:focus-visible { outline: 3px solid var(--encre-accent); outline-offset: 2px; }
+@media (forced-colors: active) {
+  .simulator__fields input[type="checkbox"]::before { background: CanvasText; }
+  .simulator__fields input[type="checkbox"]:checked { background: Highlight; border-color: Highlight; }
+  .simulator__fields input[type="checkbox"]:checked::before { background: HighlightText; }
+}
+.simulator__result > p + p { margin-top: var(--e-3); }
+.simulator__legende { margin-top: var(--e-8) !important; font-weight: 600; }
+.simulator__eleves { list-style: none; display: grid; gap: var(--e-2); margin-top: var(--e-3); }
+.simulator__eleves li { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--e-4); row-gap: 2px; align-items: center; padding: var(--e-3) var(--e-4); border-radius: var(--r-sm); background: var(--fond); }
+.simulator__eleve { font-weight: 600; }
+.simulator__calcul { grid-column: 1; font-size: var(--t-petit); color: var(--encre-douce); }
+.simulator__eleves strong { grid-column: 2; grid-row: 1 / span 2; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-moyen); white-space: nowrap; }
+.simulator__prix { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.02em; }
+.simulator__prix small { display: block; margin-top: var(--e-3); font-size: var(--t-corps); font-weight: 600; letter-spacing: 0; }
+.simulator__result { margin-top: var(--e-6); }
+.simulator__note { margin-top: var(--e-4); font-size: var(--t-petit); color: var(--encre-douce); }
+.simulator > .cta { margin-top: var(--e-6); }
+/* Le simulateur dans la page des tarifs : un outil pose sur la page, pas une feuille. */
+.simulator--page { width: auto; max-width: calc(var(--contenu) + 2 * var(--marge)); max-height: none; overflow: visible; margin: var(--respire) auto 0; padding: var(--e-10) max(var(--marge), var(--e-8)); border-radius: var(--r-lg); background: var(--sous); color: var(--encre); box-shadow: none; }
+.simulator--page h2 { font-size: var(--t-titre); }
+.simulator--page .simulator__fields input:not([type="checkbox"]), .simulator--page .simulator__fields select { background-color: var(--fond); border-color: var(--contour); }
+@media (min-width: 840px) {
+  .simulator--page { margin-inline: max(var(--marge), calc((100vw - var(--contenu)) / 2)); padding: var(--e-12) var(--e-12); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-content: start; }
+  /* Les champs a gauche, le resultat a droite : on voit le prix changer en remplissant. */
+  .simulator--page > * { grid-column: 1 / span 6; }
+  .simulator--page > .simulator__result { grid-column: 8 / -1; grid-row: 1 / span 4; margin-top: 0; align-self: start; }
+  .simulator--page > .simulator__note, .simulator--page > .cta { grid-column: 8 / -1; justify-self: start; }
+  .simulator--page .simulator__fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.simulator__fields select { appearance: none; padding-inline-end: var(--e-12); background-repeat: no-repeat; background-position: right var(--e-4) center; background-size: 14px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%2325113F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+[data-ambiance="violet"] .simulator__fields select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.insecable { white-space: nowrap; }
+@keyframes entree-feuille { from { opacity: 0; transform: translateY(16px); } }
+
+/* --- Pied de page --------------------------------------------------------------- */
+.site-footer { background: var(--pied); color: var(--sur-pied); padding: var(--e-16) var(--marge) var(--e-8); position: relative; overflow: hidden; }
+/* Rideau : la page glisse et decouvre le pied de page, deja en place dessous. Aucun mouvement ajoute,
+   seulement l'ordre des couches ; reserve aux ecrans ou le pied tient en entier. */
+@media (min-width: 840px) and (min-height: 820px) {
+  .site-main { position: relative; z-index: 1; background: var(--fond); }
+  .site-footer { position: sticky; bottom: 0; z-index: 0; }
+}
+.site-footer__inner { position: relative; max-width: var(--contenu); margin-inline: auto; display: grid; gap: var(--e-10); font-size: 15px; }
+.site-footer__ornement { display: none; }
+.site-footer .brand img { width: 220px; margin-bottom: var(--e-6); }
+.footer-identity p, .footer-identity address { font-style: normal; color: var(--sur-pied-doux); }
+.footer-identity address { margin-top: var(--e-3); }
+.footer-title { font-weight: 700; margin-bottom: var(--e-3); font-size: var(--t-corps); }
+.site-footer ul { display: grid; }
+.site-footer a { display: inline-flex; align-items: center; min-height: 40px; text-decoration: none; }
+.site-footer a:hover { text-decoration: underline; }
+.footer-contacts { gap: var(--e-3); }
+.footer-contacts strong { display: block; }
+.footer-contacts a { display: grid; gap: 2px; align-content: center; color: var(--sur-pied-doux); overflow-wrap: anywhere; min-height: 32px; }
+.footer-contacts a strong { color: var(--sur-pied); }
+.footer-legal ul { display: flex; flex-wrap: wrap; gap: 0 var(--e-6); }
+.footer-bottom { display: grid; gap: var(--e-3); color: var(--sur-pied-doux); }
+.footer-bottom > div { display: grid; gap: var(--e-2); }
+.footer-bottom a { text-decoration: underline; min-height: 32px; }
+@media (min-width: 840px) {
+  .site-footer__inner { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); }
+  .footer-identity { grid-column: 1 / span 4; }
+  .site-footer__inner > nav:not(.footer-legal) { grid-column: 5 / span 3; }
+  .site-footer__inner > div:nth-of-type(2) { grid-column: 8 / span 3; }
+  .site-footer__ornement { display: block; grid-column: 11 / span 2; grid-row: 1; width: 100%; max-width: 180px; justify-self: end; opacity: .16; pointer-events: none; }
+  .footer-legal { grid-column: 1 / -1; }
+  .footer-bottom { grid-column: 1 / -1; grid-template-columns: auto 1fr; }
+  .footer-bottom > div { justify-content: end; display: flex; gap: var(--e-6); }
+}
+
+/* --- Page introuvable --------------------------------------------------------- */
+.introuvable { min-height: 100svh; display: grid; gap: var(--e-10); align-items: center; padding: var(--e-16) var(--marge); background: var(--champ); }
+.introuvable h1 { font-size: var(--t-titre); }
+.introuvable p { margin-top: var(--e-4); }
+.introuvable__scene { max-width: 560px; border-radius: var(--arche); background: var(--champ-fort); padding: 16% 5% 0; }
+@media (min-width: 840px) { .introuvable { grid-template-columns: 1fr 1fr; padding-inline: max(var(--marge), calc((100vw - var(--contenu)) / 2)); } }
+
+/* --- Responsive : en-tete ------------------------------------------------------- */
+@media (max-width: 839px) {
+  :root { --entete: 64px; }
+  .site-nav, .site-header__connexion { display: none; }
+  .mobile-menu { display: block; }
+  .site-header__brand img { height: 32px; }
+  .porte__collant { display: flex; flex-direction: column; align-items: stretch; padding-bottom: 0; }
+  .porte__texte { display: contents; }
+  .porte__scene { order: 1; }
+  .porte .rassurance, .porte .preuve, .porte__texte .pause-anim { order: 2; }
+  .porte .rassurance { margin-top: var(--e-6); }
+  .porte__cercle { order: 3; display: grid; gap: var(--e-6); margin: var(--e-10) calc(var(--marge) * -1) 0; padding: var(--e-12) var(--marge) var(--e-16); border-radius: 0 0 50% 50% / 0 0 64px 64px; background: var(--champ); }
+  .porte__phrase { display: block; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(26px, 6vw, 40px); line-height: 1.08; letter-spacing: -0.02em; }
+  .porte__arche { display: none; }
+  .porte__scene { position: relative; width: 150vw; max-width: none; margin-inline-start: -50vw; margin-top: var(--e-6); bottom: 0; }
+  .porte__legende { order: 1; position: static; align-self: flex-end; margin-top: var(--e-1); }
+}
+@media (max-width: 599px) {
+  .site-header__brand img { height: 36px; }
+  .champ h3 { font-size: var(--t-titre); }
+  .simulator__fields { grid-template-columns: 1fr; }
+  .simulator { padding: var(--e-5); }
+  .action-row .cta { flex: 1 1 100%; }
+}
+
+@property --et1 { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
+@property --et2 { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
+@property --et3 { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
+@property --et4 { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
+@property --et5 { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
+
+/* --- Mouvement : entrees des sections (JS seulement, et si le mouvement est accepte) --- */
+@media (prefers-reduced-motion: no-preference) {
+  /* Entrees : 220 ms, echelon 35 ms, rang plafonne a 5 (motion.js) : 395 ms au plus, sous le plafond de 400. */
+  .js [data-revele] { opacity: 0; transform: translateY(16px); transition: opacity var(--mv-navigation) var(--mv-entree), transform var(--mv-navigation) var(--mv-entree); transition-delay: calc(var(--rang, 0) * var(--mv-echelon)); }
+  .js [data-revele].est-visible { opacity: 1; transform: none; }
+  .js [data-revele-enfants] > * { opacity: 0; transform: translateY(12px); transition: opacity var(--mv-navigation) var(--mv-entree), transform var(--mv-navigation) var(--mv-entree); transition-delay: calc(var(--rang, 0) * var(--mv-echelon)); }
+  .js [data-revele-enfants].est-visible > * { opacity: 1; transform: none; }
+  .js .entete-page__arche { clip-path: inset(100% -30% 0 -30% round 9999px 9999px 0 0); animation: porte-ouvre 1 both var(--mv-plafond) var(--mv-accentuee); }
+  .js .scene.est-ouverte img, .js [data-revele] .scene img { clip-path: inset(0 0 0 0); }
+  /* Images de section : batie par etages, de gauche a droite, en 360 ms au plus. */
+  .js .section__figure[data-revele] { opacity: 1; transform: none; }
+  /* Par etages : cinq bandes du masque s'ouvrent de gauche a droite, 220 ms + 4 x 35 ms = 360 ms. */
+  .js .section__figure[data-revele] .scene__cadre {
+    --et1: 0%; --et2: 0%; --et3: 0%; --et4: 0%; --et5: 0%;
+    -webkit-mask: linear-gradient(#000 0 0) 0 0 / var(--et1) 20.4% no-repeat, linear-gradient(#000 0 0) 0 25% / var(--et2) 20.4% no-repeat, linear-gradient(#000 0 0) 0 50% / var(--et3) 20.4% no-repeat, linear-gradient(#000 0 0) 0 75% / var(--et4) 20.4% no-repeat, linear-gradient(#000 0 0) 0 100% / var(--et5) 20.4% no-repeat;
+    mask: linear-gradient(#000 0 0) 0 0 / var(--et1) 20.4% no-repeat, linear-gradient(#000 0 0) 0 25% / var(--et2) 20.4% no-repeat, linear-gradient(#000 0 0) 0 50% / var(--et3) 20.4% no-repeat, linear-gradient(#000 0 0) 0 75% / var(--et4) 20.4% no-repeat, linear-gradient(#000 0 0) 0 100% / var(--et5) 20.4% no-repeat;
+    transition: --et1 var(--mv-navigation) var(--mv-accentuee), --et2 var(--mv-navigation) var(--mv-accentuee) var(--mv-echelon), --et3 var(--mv-navigation) var(--mv-accentuee) calc(2 * var(--mv-echelon)), --et4 var(--mv-navigation) var(--mv-accentuee) calc(3 * var(--mv-echelon)), --et5 var(--mv-navigation) var(--mv-accentuee) calc(4 * var(--mv-echelon));
+  }
+  .js .section__figure.est-visible .scene__cadre { --et1: 100%; --et2: 100%; --et3: 100%; --et4: 100%; --et5: 100%; }
+  /* Les mains de l'eleve montent jusqu'au Coran au fil du defilement (--m : 1 ecartees, 0 au contact). */
+  .js .scene[data-anime="mains"] .scene__calque--mains { transform: translate(calc(var(--m, 0) * -4.5%), calc(var(--m, 0) * 3.7%)); }
+  .js .ligne { display: block; overflow: clip; padding-bottom: .08em; margin-bottom: -.08em; }
+  .js .ligne__in { display: block; transform: translateY(105%); transition: transform var(--mv-navigation) var(--mv-accentuee); transition-delay: calc(var(--rang, 0) * var(--mv-echelon)); }
+  .js .est-dit .ligne__in { transform: none; }
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root) { animation: var(--mv-micro) var(--mv-sortie) both sortie-page; }
+  ::view-transition-new(root) { animation: var(--mv-navigation) var(--mv-entree) both entree-page; }
+  ::view-transition-group(entete), ::view-transition-old(entete), ::view-transition-new(entete) { animation: none; }
+}
+@keyframes sortie-page { to { opacity: 0; } }
+@keyframes porte-ouvre { to { clip-path: inset(-30% -30% 0 -30% round 9999px 9999px 0 0); } }
+@keyframes entree-page { from { opacity: 0; transform: translateY(16px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .cta:active { transform: none; }
+}
+
+
+/* --- Ambiance violette ------------------------------------------------------------
+   Essai demande par le directeur le 21/10/2026 : le violet en fond, une lumiere et une ombre douces en degrade,
+   les illustrations qui flottent sans fenetre, un halo qui suit la souris, le texte et le logo en blanc.
+   Toutes les teintes sont des jetons de l'app : #8652E6 (surfacePrimary), #6538E4 (inkAccent),
+   #4E2983 (encre de surfacePrimary), #25113F (encre de surfacePrimary sombre), #BA98FB, #E8D8FF, blanc.
+   Le cahier visuel interdit le degrade : derogation demandee par le directeur, inscrite au registre (O-16). */
+:root[data-ambiance="violet"] {
+  color-scheme: dark;
+  background: #6538E4;
+  --fond: #6538E4; --toile: #6538E4; --sous: #4E2983; --avant: #8652E6;
+  --champ: #8652E6; --champ-encre: #E8D8FF; --champ-fort: #8652E6;
+  --marque: #FFFFFF; --sur-marque: #4E2983;
+  --inverse: #25113F; --sur-inverse: #F5F2FA; --sur-inverse-doux: #E8D8FF;
+  --encre: #FFFFFF; --encre-douce: #F5F2FA; --encre-accent: #FFFFFF;
+  --action: #FFFFFF; --sur-action: #4E2983; --action-survol: #E8D8FF; --sur-action-survol: #25113F;
+  --contour: #E8D8FF; --filet: #8652E6;
+  --pied: #25113F; --sur-pied: #F5F2FA; --sur-pied-doux: #E8D8FF;
+  --ombre-1: 0 8px 29px -4px rgb(37 17 63 / .35);
+  --ombre-2: 0 16px 47px -8px rgb(37 17 63 / .45);
+  --ombre-3: 0 12px 38px rgb(37 17 63 / .5);
+  --voile: rgb(37 17 63 / .6);
+  /* La lumiere vient d'en haut a gauche, l'ombre se pose en bas a droite. */
+  --degrade:
+    radial-gradient(110% 70% at 10% -10%, rgb(134 82 230 / .95) 0%, rgb(134 82 230 / 0) 62%),
+    radial-gradient(85% 65% at 95% 110%, rgb(78 41 131 / .9) 0%, rgb(78 41 131 / 0) 66%),
+    radial-gradient(55% 45% at 100% 0%, rgb(37 17 63 / .32) 0%, rgb(37 17 63 / 0) 70%),
+    #6538E4;
+}
+[data-ambiance="violet"] body { background: transparent; font-weight: 500; }
+[data-ambiance="violet"] body::before { content: ''; position: fixed; inset: 0; z-index: -2; pointer-events: none; background: var(--degrade); }
+.halo { display: none; }
+[data-ambiance="violet"] .halo { display: block; position: fixed; z-index: -1; left: -480px; top: -480px; width: 960px; height: 960px; border-radius: 50%; pointer-events: none; background: radial-gradient(closest-side, rgb(255 255 255 / .11), rgb(255 255 255 / .04) 55%, rgb(255 255 255 / 0)); transform: translate(var(--hx, 72vw), var(--hy, 28vh)); }
+/* Le contenu laisse voir la lumiere ; le rideau du pied de page est retire (il demande un contenu opaque). */
+[data-ambiance="violet"] .site-main { background: transparent; position: static; }
+[data-ambiance="violet"] .site-footer { position: relative; }
+[data-ambiance="violet"] .site-header[data-flotte] { background: var(--degrade); background-attachment: fixed; }
+[data-ambiance="violet"] .porte,
+[data-ambiance="violet"] .entete-page--lavande,
+[data-ambiance="violet"] .entete-page--blanc,
+[data-ambiance="violet"] .entete-page--sobre,
+[data-ambiance="violet"] .bande-image--large,
+[data-ambiance="violet"] .introuvable { background: transparent; }
+[data-ambiance="violet"] .porte .rassurance, [data-ambiance="violet"] .porte .preuve,
+[data-ambiance="violet"] .porte .cta--secondary { background: transparent; }
+[data-ambiance="violet"] .porte .cta--secondary:hover { background: #8652E6; }
+/* On passe la porte et on arrive dans la piece eclairee : le cercle s'ouvre sur la lumiere de la salle. */
+[data-ambiance="violet"].js .porte__disque { background: #EEE6FA; }
+[data-ambiance="violet"].js .porte__phrase { color: #25113F; }
+@media (max-width: 839px) { [data-ambiance="violet"] .porte__cercle { background: #EEE6FA; color: #25113F; } }
+/* Les illustrations flottent, comme dans les affiches de reference : ni fenetre ni puits de lumiere derriere elles,
+   seulement le fond eclaire et une ombre portee dessous. */
+[data-ambiance="violet"] .porte__arche,
+[data-ambiance="violet"] .chapitres__pile,
+[data-ambiance="violet"] .chapitre__image-mobile .scene,
+[data-ambiance="violet"] .bande-image--arche .scene,
+[data-ambiance="violet"] .panneau__arche,
+[data-ambiance="violet"] .introuvable__scene,
+[data-ambiance="violet"] .bande-image--cercle .scene,
+[data-ambiance="violet"].js .porte__halqa::before { background: none; }
+[data-ambiance="violet"] .section__figure { background: none; padding: 6% 0 0; }
+[data-ambiance="violet"] .section__figure::after,
+[data-ambiance="violet"] .entete-page__arche::after { content: ''; position: absolute; z-index: -1; left: 12%; right: 12%; bottom: -1%; height: 9%; border-radius: 50%; background: radial-gradient(closest-side, rgb(37 17 63 / .5), rgb(37 17 63 / 0)); }
+[data-ambiance="violet"] .entete-page--libre .entete-page__arche::after, [data-ambiance="violet"] .entete-page__arche:has(.scene--cercle, .scene--arche)::after { display: none; }
+[data-ambiance="violet"] .section__figure--panorama::after { display: none; }
+[data-ambiance="violet"] .section__figure:has(.scene--cercle, .scene--arche)::after, [data-ambiance="violet"] .section__figure--noms::after { display: none; }
+/* Etapes, tuiles et prix : du plus profond au plus clair, comme une progression. */
+[data-ambiance="violet"] .etape:nth-child(3) { background: #BA98FB; color: #25113F; }
+[data-ambiance="violet"] .pousse__etape--0 .pousse__tuile { background: #4E2983; }
+[data-ambiance="violet"] .pousse__etape--1 .pousse__tuile { background: #8652E6; }
+[data-ambiance="violet"] .pousse__etape--2 .pousse__tuile { background: #BA98FB; }
+[data-ambiance="violet"] .tuile[open] { background: #8652E6; }
+[data-ambiance="violet"] .panneau__in { background: #25113F; }
+[data-ambiance="violet"] .pousse__image figcaption { color: inherit; }
+
+/* --- Hauts de page qui ouvrent sur le sujet de la page -------------------------------
+   Familles garde sa porte ; Cours s'ouvre sur les quatre arches du parcours, Tarifs sur ses deux prix,
+   Comment ca marche sur ses etapes, l'Academie sur la boucle. */
+.entete-page--haut-texte, .entete-page--haut-parcours, .entete-page--haut-prix { min-height: 0; padding-bottom: 0; }
+.entete-page--haut-parcours .parcours--haut { margin-top: var(--e-6); }
+.entete-prix { display: grid; gap: var(--e-3); }
+.entete-prix__bloc { display: grid; gap: var(--e-1); padding: var(--e-6); border-radius: var(--r-lg); background: var(--sous); max-width: none; }
+.entete-prix__bloc + .entete-prix__bloc { background: var(--marque); color: var(--sur-marque); }
+.entete-prix__montant { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.entete-prix__periode { font-weight: 600; }
+.entete-page--haut-prix .entete-page__arche { width: min(80%, 320px); justify-self: center; }
+@media (min-width: 840px) {
+  /* Le titre a gauche, sa phrase et son bouton a droite : le sujet de la page monte dans le premier ecran. */
+  .entete-page--haut-texte .entete-page__texte, .entete-page--haut-parcours .entete-page__texte { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: end; row-gap: var(--e-6); }
+  .entete-page--haut-texte .entete-page__texte > *, .entete-page--haut-parcours .entete-page__texte > * { grid-column: 8 / -1; }
+  .entete-page--haut-texte .entete-page__texte > h1, .entete-page--haut-parcours .entete-page__texte > h1 { grid-column: 1 / span 7; grid-row: 1 / span 3; max-width: none; }
+  .entete-page--haut-texte .hero-intro, .entete-page--haut-parcours .hero-intro { margin-top: 0; font-size: clamp(18px, 1.5vw, 22px); }
+  .entete-page--haut-texte .action-row, .entete-page--haut-parcours .action-row { margin-top: 0; }
+  .entete-page--haut-parcours { align-items: start; }
+  .entete-page--haut-parcours .parcours--haut { grid-column: 1 / -1; margin-top: 0; }
+  .entete-page--haut-prix { align-items: end; }
+  .entete-page--haut-prix .entete-page__texte { grid-column: 1 / span 7; grid-row: 1; }
+  .entete-page--haut-prix .entete-page__arche { grid-column: 9 / -1; grid-row: 1; width: min(100%, 360px); }
+  .entete-prix { grid-column: 1 / -1; grid-row: 2; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-6); }
+  .entete-prix__bloc { grid-template-columns: auto 1fr; column-gap: var(--e-6); align-items: end; padding: var(--e-8) var(--e-10); }
+  .entete-prix__montant { grid-row: 1 / span 2; }
+}
+
+/* --- Les remises : le titre au-dessus, le tableau et les conditions cote a cote, sans colonne vide --- */
+@media (min-width: 840px) {
+  .section--large:not(.section--figure):has(.fact-list) .section__titre { grid-column: 1 / -1; position: static; margin-bottom: var(--e-6); }
+  .section--large:not(.section--figure):has(.fact-list) .section__corps { grid-column: 1 / -1; max-width: none; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: start; }
+  .section--large:not(.section--figure):has(.fact-list) .section__corps > p { grid-column: 1 / span 6; }
+  .section--large:not(.section--figure):has(.fact-list) .section__corps > .price-table { grid-column: 1 / span 6; }
+  .section--large:not(.section--figure):has(.fact-list) .section__corps > .fact-list { grid-column: 7 / -1; grid-row: 1 / span 3; margin-top: 0; }
+  .section--large:not(.section--figure):has(.fact-list) .section__corps { grid-template-rows: auto auto 1fr; }
+}
+
+/* --- Panneau de l'accueil : un detail rond reste entier dans sa carte ---------------------- */
+@media (min-width: 840px) { .panneau__arche:has(.scene--cercle) { margin-bottom: var(--e-12); padding-top: 0; } }
+
+/* --- Duo : deux sections cote a cote, chacune avec son detail au-dessus de son texte --- */
+.duo { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; display: grid; gap: var(--e-12); }
+.duo__carte .section__figure { width: min(100%, 360px); margin: 0 0 var(--e-16); }
+.duo__carte h2 { font-size: max(26px, var(--t-moyen)); margin-bottom: var(--e-6); max-width: 18ch; }
+.duo__carte p + p { margin-top: var(--e-4); }
+.duo__carte .points, .duo__carte .section-links { margin-top: var(--e-6); }
+@media (min-width: 600px) { .duo { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-8); align-items: start; } }
+@media (min-width: 840px) { .duo { column-gap: var(--e-12); } }
+/* Une arche a cote d'un cercle : meme boite pour les deux images, posees en bas, pour que les titres partagent une ligne. */
+@media (min-width: 600px) { .duo:has(.scene--arche) .duo__carte .section__figure { aspect-ratio: 20 / 27; display: flex; flex-direction: column; justify-content: flex-end; } .duo:has(.scene--arche) .duo__carte .section__figure > .scene { width: 100%; } }
+/* Au telephone, un detail reste un detail : il ne prend pas tout l'ecran. */
+@media (max-width: 599px) { .section__figure:has(.scene--arche) { width: min(100%, 260px); } .section__figure:has(.scene--cercle) { width: min(100%, 300px); } }
+
+/* --- Fiches du 18/10 au telephone : un choix Enfants / Adultes, une fiche a la fois -------- */
+.fiches__choix { display: none; }
+@media (max-width: 599px) {
+  .fiches__choix { display: inline-grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: var(--e-6); padding: 4px; border-radius: var(--r-full); background: var(--sous); }
+  .fiches__choix input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .fiches__choix label { display: grid; place-items: center; min-height: 44px; padding-inline: var(--e-6); border-radius: var(--r-full); font-weight: 600; cursor: pointer; }
+  .fiches__choix input:checked + label { background: #FFFFFF; color: #25113F; }
+  .fiches__choix input:focus-visible + label { outline: 2px solid #FFFFFF; outline-offset: 2px; }
+  .fiches-bloc:has(#fiche-enfants:checked) .fiche:nth-child(2), .fiches-bloc:has(#fiche-adultes:checked) .fiche:nth-child(1) { display: none; }
+  .fiches-bloc .fiches { margin-top: var(--e-4); }
+}
+
+/* --- Tableaux au telephone : une rangee par ligne, l'intitule au-dessus du detail --------- */
+.price-table thead th { white-space: nowrap; }
+@media (max-width: 599px) {
+  .price-table tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+  .price-table tbody th { grid-column: 1; font-weight: 700; }
+  .price-table tbody td { grid-column: 2; }
+  .price-table tbody td:only-of-type { text-align: end; }
+  .price-table thead { display: none; }
+  .price-table--long tbody tr { grid-template-columns: minmax(0, 1fr); }
+  .price-table--long tbody th { padding-bottom: 0; }
+  .price-table--long tbody td, .price-table--long tbody td:only-of-type { grid-column: 1; padding-top: var(--e-2); font-weight: 500; text-align: start; }
+}
+
+/* --- Telephone : le titre de la page mene, la section suit ; le pied de page en deux colonnes --- */
+@media (max-width: 599px) {
+  /* Le titre de la page fait 1,6 a 1,8 fois un titre de section, et tient en deux lignes des 360 px. */
+  :root { --t-titre: 24px; }
+  /* Tarifs : les deux prix d'abord, la question de la page ; le cercle ensuite. */
+  .entete-page--haut-prix .entete-prix { order: 2; }
+  .entete-page--haut-prix .entete-page__arche { order: 3; }
+  .chapitre h2 { font-size: 26px; }
+  .duo__carte h2 { font-size: var(--t-titre); }
+  .entete-page:not(.entete-page--document) h1 { font-size: clamp(36px, 11.6vw, 48px); }
+  .entete-page:not(.entete-page--document) .entete-page__texte--long h1 { font-size: clamp(32px, 10.6vw, 44px); }
+  .entete-page:not(.entete-page--document) .entete-page__texte--tres-long h1 { font-size: clamp(28px, 8.6vw, 34px); }
+  .site-footer__inner > nav:not(.footer-legal) ul { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-4); }
+  /* Pied de page au telephone : le meme contenu, plus serre (il prenait un ecran et demi). */
+  .site-footer { padding-top: var(--e-12); }
+  .site-footer__inner { gap: var(--e-8); font-size: 14px; }
+  .site-footer .brand img { width: 176px; margin-bottom: var(--e-4); }
+  .site-footer a { min-height: 34px; }
+  .footer-title { margin-bottom: var(--e-2); }
+  .footer-contacts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--e-4); }
+  .footer-contacts a { min-height: 34px; }
+  .footer-contacts__adresse { display: none; }
+  .footer-identity p, .footer-identity address, .footer-legal, .footer-bottom { font-size: 13px; }
+  .footer-legal ul { gap: 0 var(--e-4); }
+  .footer-bottom a { min-height: 28px; }
+}
+
+/* --- Academie : la boucle file hors du bord droit, au lieu d'y etre coupee net ---------- */
+@media (min-width: 840px) {
+  .entete-page--libre:has(.scene:not([data-anime])) .entete-page__arche { margin-inline-end: calc(-1 * max(var(--marge), (100vw - var(--contenu)) / 2) - 24px); width: calc(100% + max(var(--marge), (100vw - var(--contenu)) / 2) + 24px); }
+  /* La legende reste dans la marge de la page, pas dans le debord. */
+  .entete-page--libre:has(.scene:not([data-anime])) .entete-page__image figcaption { padding-inline-end: calc(max(var(--marge), (100vw - var(--contenu)) / 2) + 24px); }
+}
+
+/* --- Phrase seule : centree, elle ne laisse pas une moitie d'ecran vide -------------------- */
+.bande-phrase { text-align: center; }
+.bande-phrase__phrase, .bande-phrase .bande-image__sous { margin-inline: auto; }
+
+/* --- Fonds : une section par page sur un autre champ --------------------------------
+   Le violet porte la page ; une section passe sur la lavande de la salle (encre prune), une autre sur le prune
+   profond du panneau. Les teintes sont celles de l'ambiance violette (#EEE6FA, #25113F, #4E2983, #BA98FB). */
+.fond { margin-top: var(--respire); padding-bottom: var(--respire); }
+.fond > .section, .fond > .section--pleine, .fond > .section--parcours, .fond > .groupe { padding-top: var(--respire); }
+.site-main > .fond:last-child { margin-bottom: 0; }
+/* Deux champs qui se suivent se touchent : pas de filet de violet entre eux. */
+.fond + .fond { margin-top: 0; }
+[data-ambiance="violet"] .fond--lavande {
+  background: #EEE6FA; color: #25113F;
+  --encre: #25113F; --encre-douce: #4E2983; --encre-accent: #4E2983; --contour: #4E2983; --filet: #BA98FB;
+  --action: #4E2983; --sur-action: #FFFFFF; --action-survol: #25113F; --sur-action-survol: #FFFFFF;
+  --sous: #E8D8FF; --champ: #E8D8FF; --champ-fort: #BA98FB; --marque: #4E2983; --sur-marque: #FFFFFF; --avant: #FFFFFF;
+}
+[data-ambiance="violet"] .fond--prune {
+  background: #25113F; color: #FFFFFF;
+  --sous: #4E2983; --champ: #4E2983; --champ-fort: #8652E6;
+}
+[data-ambiance="violet"] .fond--lavande .scene--cercle .scene__cadre, [data-ambiance="violet"] .fond--lavande .scene--arche .scene__cadre { background: #FFFFFF; }
+[data-ambiance="violet"] .fond--lavande .section__figure::after, [data-ambiance="violet"] .fond--lavande .pleine__image::after { opacity: .5; }
+[data-ambiance="violet"] .fond--prune .fiche { background: #4E2983; }
+[data-ambiance="violet"] .fond--prune .fiche:nth-child(2) { background: #FFFFFF; color: #25113F; }
+.fond--lavande .scene figcaption, .fond--lavande .lien-fleche { color: inherit; }
+/* Phrase seule sur un champ : un ecran d'un seul element, en grand. */
+.bande-phrase { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
+.bande-phrase__phrase { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-titre); line-height: 1.06; letter-spacing: -0.03em; max-width: 26ch; text-wrap: balance; }
+.bande-phrase__phrase + .bande-image__sous { margin-top: var(--e-6); font-size: var(--t-corps); line-height: 1.5; max-width: 52ch; }
+/* Schema « la classe se forme » (dessins en code, direction.json « dessins ») : sur la nuit, comme sur la planche du 21/10. */
+.bande-phrase--schema { text-align: start; }
+.bande-phrase--schema .bande-phrase__phrase, .bande-phrase--schema .bande-image__sous { margin-inline: 0; }
+.schema-classe { display: grid; gap: var(--e-6); margin-top: var(--e-10); border-radius: var(--r-lg); padding: var(--e-6); background: #25113F; color: #FFFFFF; }
+.schema-classe__figure { margin: 0; }
+.schema-classe__figure svg { display: block; width: 100%; height: auto; font-family: 'Plus Jakarta Sans', sans-serif; }
+.schema-classe__figure figcaption { margin-top: var(--e-2); font-size: var(--t-petit); color: #DCCAFD; }
+.schema-classe__anneau { transition: opacity .22s; }
+.schema-classe__etapes { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--e-2); }
+.schema-classe__etapes li { border-radius: var(--r-md, 16px); padding: var(--e-3) var(--e-4); background: rgb(255 255 255 / .06); color: #DCCAFD; transition: background-color .22s, color .22s; }
+.schema-classe__etapes li.est-active { background: #8652E6; color: #FFFFFF; }
+.schema-classe__etapes strong { display: block; font-family: 'DM Sans', sans-serif; font-weight: 600; color: #FFFFFF; }
+.schema-classe__etat { margin-top: var(--e-4); font-weight: 600; min-height: 1.5em; }
+.schema-classe__choix { display: none; flex-wrap: wrap; gap: var(--e-2); margin-top: var(--e-4); }
+.js .schema-classe__choix { display: flex; }
+.schema-classe__choix button { min-height: 44px; padding-inline: var(--e-5); border: 2px solid #FFFFFF; border-radius: 999px; background: transparent; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer; }
+.schema-classe__choix button[aria-pressed="true"] { background: #FFFFFF; color: #25113F; }
+.schema-classe__choix button:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 3px; }
+@media (min-width: 840px) { .schema-classe { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: center; gap: var(--e-10); padding: var(--e-8); } }
+@media (prefers-reduced-motion: reduce) { .schema-classe__etapes li, .schema-classe__anneau { transition: none; } }
+
+/* --- Impression : tout le contenu, immobile ------------------------------------- */
+@media print {
+  [data-revele], [data-revele-enfants] > *, .ligne__in, .entete-page__arche, .porte__texte, .porte__scene, .entete-page__image { opacity: 1 !important; transform: none !important; clip-path: none !important; animation: none !important; transition: none !important; }
+  .pause-anim, .scene__onde, .halo, .mobile-menu, .skip-link, .porte__arche, .porte__phrase, .porte__cercle { display: none !important; }
+  .scene__cadre { -webkit-mask: none !important; mask: none !important; }
+  .scene .scene__calque { transform: none !important; visibility: visible !important; }
+  .site-header, .site-footer, .porte__collant, .lecture__sommaire, .section__titre { position: static !important; }
+  .porte { height: auto !important; }
+  .appel__lien { min-height: 0; border-radius: 0; }
+  a[href^="http"]::after, a[href^="mailto:"]::after { content: " (" attr(href) ")"; font-size: .85em; }
+}
+
+/* --- Familles : un gros plan dans une grande arche, qui deborde du bord droit ---------------- */
+.entete-page--haut-gros-plan { padding-bottom: 0; }
+.entete-page__panneau { margin-inline: calc(var(--marge) * -1); }
+.entete-page__panneau .scene__cadre { display: block; aspect-ratio: 1 / 1.08; overflow: hidden; border-radius: 50% 50% 0 0 / 28% 28% 0 0; background: #EEE6FA; }
+.entete-page__panneau img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; }
+.entete-page__panneau figcaption { padding-inline-end: var(--marge); }
+@media (min-width: 840px) {
+  .entete-page--haut-gros-plan { min-height: min(100svh, 940px); align-items: stretch; }
+  .entete-page--haut-gros-plan .entete-page__texte { grid-column: 1 / span 6; align-self: center; padding-bottom: var(--e-12); }
+  .entete-page--haut-gros-plan .entete-page__panneau { grid-column: 7 / -1; grid-row: 1; display: flex; margin-inline: 0 calc(-1 * max(var(--marge), (100vw - var(--contenu)) / 2)); }
+  .entete-page__panneau .entete-page__image { flex: 1; display: flex; flex-direction: column; transform: none; }
+  .entete-page__panneau .scene__cadre { flex: 1; aspect-ratio: auto; min-height: 0; border-radius: min(26vw, 380px) 0 0 0 / min(22vw, 320px) 0 0 0; }
+  .entete-page__panneau figcaption { padding-inline-end: max(var(--marge), (100vw - var(--contenu)) / 2); padding-bottom: var(--e-2); }
+}
+
+/* --- Tablette : le titre de la page sur deux lignes, en grand, au lieu d'une ligne de telephone --- */
+@media (min-width: 600px) and (max-width: 839px) {
+  .entete-page:not(.entete-page--document) h1, .entete-page:not(.entete-page--document) .entete-page__texte--long h1 { font-size: clamp(52px, 7.6vw, 64px); }
+  .entete-page:not(.entete-page--document) .entete-page__texte--tres-long h1 { font-size: clamp(48px, 7vw, 56px); }
+  .porte__texte h1 { font-size: clamp(52px, 7.4vw, 62px); }
+  /* Les etapes : l'image a gauche, plafonnee, le texte a droite ; une tablette n'est pas un telephone etire. */
+  .etape { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: auto 1fr; column-gap: var(--e-8); align-items: start; }
+  .etape .section__figure { grid-column: 1; grid-row: 1 / span 2; width: min(100%, 300px); margin: 0; }
+  .etape h2, .etape .etape__corps { grid-column: 2; }
+  .etape h2 { align-self: end; }
+  :root { --t-corps: 18px; }
+  /* Tarifs : le cercle a gauche, les deux prix a droite, au lieu d'un cercle seul au bord. */
+  .entete-page--haut-prix { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--e-6); align-items: center; }
+  .entete-page--haut-prix .entete-page__texte { grid-column: 1 / -1; }
+  .entete-page--haut-prix .entete-page__arche { grid-column: 1; width: 100%; justify-self: start; }
+  .entete-page--haut-prix .entete-prix { grid-column: 2; }
+  /* Cartes de prix cote a cote, plus compactes qu'au bureau. */
+  .champ { min-height: 0; padding: var(--e-8) var(--e-6); }
+  .champ__inclus { font-size: 16px; }
+  /* La bande d'appel ne garde pas un ecran de vide entre la phrase et le grand mot. */
+  .appel__lien { min-height: 0; }
+  .appel__mot { margin-top: var(--e-10); }
+  /* Titres de section a 38 px ; images plafonnees ; pied de page en trois colonnes. */
+  :root { --t-titre: 38px; }
+  .chapitre h2 { font-size: 38px; }
+
+  .pleine__image .scene { width: min(100%, 440px); }
+  .bande-image--cercle .scene { width: min(86vw, 480px); }
+  .section--large .section__figure { width: min(100%, 420px); margin-inline: auto; }
+  /* Chapitres de l'accueil : l'image a gauche, le texte a droite, comme une page de livre ouverte. */
+  .chapitre { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--e-8); align-items: center; padding-block: var(--e-12); }
+  .chapitre__image-mobile { grid-column: 1; grid-row: 1 / span 8; margin: 0; }
+  .chapitre > :not(.chapitre__image-mobile) { grid-column: 2; }
+  .chapitre__image-mobile .scene { width: 100%; }
+  .site-footer__inner { grid-template-columns: minmax(0, 1fr) minmax(0, .8fr) minmax(0, 1.5fr); column-gap: var(--e-6); }
+  .panneau__arche { width: min(100%, 420px); justify-self: center; }
+  /* Les trois etapes de l'accueil cote a cote, comme au bureau, en tuiles plus basses. */
+  .pousse__liste { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto auto; column-gap: var(--e-4); row-gap: 0; }
+  .pousse__etape { grid-row: span 3; display: grid; grid-template-rows: subgrid; }
+  .pousse__etape .pousse__tuile { align-self: end; }
+  .pousse__etape--0 .pousse__tuile { height: 30vw; }
+  .pousse__etape--1 .pousse__tuile { height: 38vw; }
+  .pousse__etape--2 .pousse__tuile { height: 46vw; }
+  .pousse__etape--0 .pousse__image { width: min(100%, 21vw); }
+  .pousse__etape--1 .pousse__image, .pousse__etape--2 .pousse__image { width: min(100%, 26vw); }
+  .pousse__etape h3 { font-size: 22px; }
+  .footer-identity { grid-column: 1; }
+  .footer-legal, .footer-bottom { grid-column: 1 / -1; }
+}
+
+/* --- Cours : dans chaque arche du parcours, ce que l'eleve lit a cette etape --------------------- */
+.parcours__arabe { font-family: 'Noto Sans Arabic', sans-serif; font-weight: 500; line-height: 1.6; letter-spacing: 0; }
+@media (max-width: 839px) {
+  .parcours--haut .parcours__etape { align-items: center; gap: var(--e-4); padding-block: var(--e-5); }
+  /* Marge physique : le libelle arabe est en rtl, sa marge « de debut » serait a droite. */
+  .parcours--haut .parcours__arabe { order: 2; margin-left: auto; font-size: 28px; line-height: 1.3; }
+}
+@media (min-width: 840px) {
+  .parcours--haut .parcours__etape { flex-direction: column; align-items: stretch; }
+  /* Marches de 50 px : l'arabe se pose juste au-dessus du libelle, sans champ vide entre les deux. */
+  .parcours--haut .parcours__etape:nth-child(1) { min-height: 220px; }
+  .parcours--haut .parcours__etape:nth-child(2) { min-height: 270px; }
+  .parcours--haut .parcours__etape:nth-child(3) { min-height: 320px; }
+  .parcours--haut .parcours__etape:nth-child(4) { min-height: 370px; }
+  .parcours--haut .parcours__arabe { margin-block: auto var(--e-6); text-align: center; font-size: clamp(38px, 3.6vw, 60px); }
+}
+.parcours__precision { display: block; margin-top: var(--e-1); font-size: 15px; font-weight: 500; }
+
+/* --- Academie : les fondateurs, leurs noms en grand a la place d'une image ------------------------- */
+.section__figure--noms { width: 100%; background: none; padding: 0; border-radius: 0; }
+.noms { list-style: none; display: grid; gap: var(--e-8); padding: 0; margin: 0; max-width: none; }
+.noms__nom { display: block; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(21px, 2.4vw, 36px); line-height: 1.02; letter-spacing: -0.025em; text-wrap: balance; }
+.noms__role { display: block; margin-top: var(--e-2); font-family: 'Plus Jakarta Sans', sans-serif; font-size: var(--t-petit); font-weight: 600; letter-spacing: 0; opacity: .8; }
+
+/* --- Bande : une phrase en grand et un detail cadre, sur son fond ------------------------------- */
+.fond > .bande-image--detail { margin-top: 0; padding-top: var(--respire); display: grid; gap: var(--e-8); justify-items: center; text-align: center; max-width: calc(var(--contenu) + 2 * var(--marge)); }
+.bande-image--detail .scene { width: min(72vw, 420px); }
+.bande-image--detail .bande-phrase__phrase { margin-inline: auto; }
+.bande-image--detail .bande-image__sous { margin-inline: auto; }
+.bande-image--detail .scene figcaption { position: static; margin-top: var(--e-2); text-align: end; }
+@media (min-width: 840px) {
+  .fond > .bande-image--detail { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: center; justify-items: stretch; text-align: start; }
+  .bande-image--detail .bande-image__texte { grid-column: 1 / span 7; grid-row: 1; margin-top: 0; }
+  .bande-image--detail .bande-phrase__phrase, .bande-image--detail .bande-image__sous { margin-inline: 0; }
+  .bande-image--detail .scene { grid-column: 8 / -1; grid-row: 1; width: 100%; max-width: min(540px, var(--natif, 540px)); justify-self: end; }
+  /* La phrase de la bande porte l'idee de la page : elle passe en taille d'affiche. */
+  .bande-image--detail .bande-phrase__phrase { font-size: clamp(36px, 4.4vw, 64px); max-width: 15ch; }
+}
+.section__titre-plein h2 { max-width: 24ch; margin-bottom: var(--e-6); }
+@media (min-width: 600px) {
+  /* Le titre de la section mene, sur toute la largeur ; les noms dessous a gauche, le texte a droite. */
+  .section--figure:has(.section__figure--noms) .section__grille { align-items: start; }
+  .section__titre-plein { grid-column: 1 / -1; grid-row: 1; }
+  .section--figure:has(.section__figure--noms) .section__texte { grid-row: 2; }
+  .section--figure:has(.section__figure--noms) .section__figure--noms { grid-row: 2; align-self: start; margin-top: var(--e-1); }
+}
+
+/* Tablette : regles placees apres celles du telephone, qu'elles remplacent entre 600 et 839 px. */
+@media (min-width: 600px) and (max-width: 839px) {
+  /* Cours : les quatre arches restent des arches, deux par rangee, pour que chaque libelle ait la place d'une ligne ou deux. */
+  .parcours--haut { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: var(--e-4); }
+  .parcours--haut .parcours__etape { flex-direction: column; align-items: stretch; border-radius: var(--arche); padding: 0 var(--e-5) var(--e-5); }
+  .parcours--haut .parcours__etape:nth-child(1) { min-height: 190px; }
+  .parcours--haut .parcours__etape:nth-child(2) { min-height: 230px; }
+  .parcours--haut .parcours__etape:nth-child(3) { min-height: 250px; }
+  .parcours--haut .parcours__etape:nth-child(4) { min-height: 290px; }
+  .parcours--haut .parcours__arabe { order: 0; margin: auto 0 var(--e-4); text-align: center; font-size: 36px; line-height: 1.5; }
+  .parcours--haut .parcours__etape > span:not(.parcours__arabe) { font-size: 18px; }
+}

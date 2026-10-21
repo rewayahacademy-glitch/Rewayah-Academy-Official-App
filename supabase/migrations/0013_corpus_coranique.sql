@@ -1,7 +1,7 @@
 -- 0013 : lot N5 de l'etape 5 — le corpus coranique du Mushaf de Medine.
 --
 -- Ce fichier repond a la question `a` du paragraphe 10 de
--- docs/architecture/etape-5-salle-coran-presence.md, restee ouverte depuis
+-- docs/archive/2026-09-pre-remise-a-plat/architecture/etape-5-salle-coran-presence.md, restee ouverte depuis
 -- N0 : la riwaya etait tranchee (Hafs, ADR-020), la SOURCE technique ne
 -- l'etait pas. Elle l'est par l'ADR-024, et c'est un import, pas une API.
 --

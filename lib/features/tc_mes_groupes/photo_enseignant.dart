@@ -4,7 +4,6 @@ import '../../core/icons/app_icons.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_color_pair.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
@@ -34,7 +33,15 @@ class PhotoEnseignant extends StatelessWidget {
     super.key,
     this.urlSignee,
     this.diametre,
+    this.repliInitiales = false,
   });
+
+  /// Vrai sur un ecran de l'eleve (Accueil du Mode Accessibilite, MA-3) :
+  /// une photo manquante y montre les initiales, comme `PhotoEleve` cote
+  /// famille. Le manque est une donnee pour l'enseignant et l'administration,
+  /// jamais un avertissement pour un enfant. Faux partout ailleurs : l'etat
+  /// « photo manquante » reste explicite (D-01).
+  final bool repliInitiales;
 
   /// L'enseignant concerne.
   final EnseignantVM enseignant;
@@ -47,18 +54,17 @@ class PhotoEnseignant extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!enseignant.photoManquante) {
+    if (!enseignant.photoManquante || repliInitiales) {
       return AvatarTile(
         prenom: enseignant.nomAffichage,
-        urlSignee: urlSignee,
+        urlSignee: enseignant.photoManquante ? null : urlSignee,
         diametre: diametre,
       );
     }
 
     final AppPalette palette = AppPalette.of(context);
-    final AppMetriques metriques = AppMetriques.of(context);
     final AppColorPair paire = palette.washWarning;
-    final double taille = diametre ?? metriques.cibleTactile * 2;
+    final double taille = diametre ?? AppAvatar.moyen;
 
     // Un etat, donc un libelle : une pastille de couleur seule serait un defaut
     // d'accessibilite (invariant J7). Le libelle complet est porte par la

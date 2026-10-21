@@ -1,0 +1,11 @@
+{
+  "name": "rewayah-outils",
+  "owner": { "name": "Rewayah Academy" },
+  "plugins": [
+    {
+      "name": "agents-actifs",
+      "source": "./outils/mods/agents-actifs",
+      "description": "Panneau des agents actifs : avancement, activité et tokens consommés"
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../i18n/isolat_bidi.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
@@ -12,7 +13,7 @@ import 'action_principale.dart';
 /// Le retour local d'une action : court, pose pres de ce qui a change.
 ///
 /// **Jamais une boite de dialogue de succes** : une boite demande un geste pour
-/// dire qu'un geste a reussi (`docs/design/02-regles-ux.md` section 7). Et
+/// dire qu'un geste a reussi (`docs/archive/2026-09-pre-remise-a-plat/design/02-regles-ux.md` section 7). Et
 /// jamais au centre de l'ecran : il se pose sous la zone qui vient de changer,
 /// et il n'empeche jamais de continuer.
 ///
@@ -180,8 +181,12 @@ class _Bandeau extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Expanded(
+              // DUREE-INSECABLE-4 : le message du rappel discret (« Deja
+              // appele. A nouveau dans 30 s ») garde son point a sa place
+              // dans une interface de droite a gauche : isolat partage
+              // FSI ... PDI ([isolerDansInterface]).
               child: Text(
-                message,
+                isolerDansInterface(message, Directionality.of(context)),
                 style: palette.washAccent.applyTo(
                   Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
                 ),

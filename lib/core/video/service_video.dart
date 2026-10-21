@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../observabilite/journal_dev.dart';
 import 'video_session_provider.dart';
 
 /// Pourquoi une salle refuse d'ouvrir.
@@ -56,13 +56,6 @@ abstract interface class ServiceVideo {
   /// horodatage (ADR-011). La base refuse une seance close, une seance pas
   /// encore commencee, et une seance dont l'appelant est deja partie prenante.
   Future<void> observerEnControle(String seanceId);
-
-  /// Inscrit l'appelant comme **temoin visible** du cours de son enfant.
-  ///
-  /// L'inverse exact de la precedente : le tuteur entre muet mais visible, et
-  /// sa presence n'a rien d'une visite de controle -- l'enseignant doit savoir
-  /// qu'un parent regarde.
-  Future<void> assisterEnTuteur(String seanceId);
 
   /// Annonce un depart **volontaire**, avant de se deconnecter.
   ///
@@ -128,12 +121,6 @@ class ServiceVideoSupabase implements ServiceVideo {
   );
 
   @override
-  Future<void> assisterEnTuteur(String seanceId) => _client.rpc<void>(
-    'assister_seance',
-    params: <String, dynamic>{'p_session_id': seanceId},
-  );
-
-  @override
   Future<void> annoncerSortie(String seanceId) async {
     // Un echec ici ne doit jamais empecher de quitter la salle : au pire la
     // sortie sera lue comme une deconnexion, ce qui est desagreable mais pas
@@ -145,7 +132,7 @@ class ServiceVideoSupabase implements ServiceVideo {
         params: <String, dynamic>{'p_session_id': seanceId},
       );
     } catch (e) {
-      debugPrint('annonce de sortie impossible : $e');
+      journalDev('annonce de sortie impossible : $e');
     }
   }
 }

@@ -17,7 +17,7 @@ import 'detail_ressource_page.dart';
 /// seront inatteignables. Et une route sans entree de navigation n'existe pas,
 /// or `nav_shell.dart` est plafonne a quatre destinations par assertion. Les
 /// deux points sont formules dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_B.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_B.md`.
 abstract final class RoutesTcB {
   /// La Bibliotheque.
   static const String bibliotheque = '/tc/bibliotheque';
@@ -35,8 +35,7 @@ abstract final class RoutesTcB {
   static const String parametreGroupe = 'groupe';
 
   /// Le chemin de la fiche d'une ressource donnee.
-  static String versRessource(String resourceId) =>
-      '$bibliotheque/$resourceId';
+  static String versRessource(String resourceId) => '$bibliotheque/$resourceId';
 
   /// L'adresse de la Bibliotheque vue depuis l'Espace d'un groupe.
   ///

@@ -1,8 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_etat_partage/shared_content_state.dart'
     show ModeAffichagePartage;
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
@@ -33,14 +36,19 @@ void main() {
       );
     });
 
-    test('le stylet ecrit meme sans avoir arme l outil', () {
-      expect(
-        PolitiqueSaisie.appareilsDeDessin(
-          styletDetecte: true,
-          styletArme: false,
-        ),
-        contains(PointerDeviceKind.stylus),
-      );
+    // TB-STYLET-1 (plan V2 §7, ligne 164 ; TB21) : « stylet pour l'encre
+    // lorsque Ecrire est actif ». Avant TB-7a, le stylet ecrivait toujours.
+    test('le stylet n ecrit pas tant que l outil n est pas arme', () {
+      for (final bool detecte in <bool>[true, false]) {
+        expect(
+          PolitiqueSaisie.appareilsDeDessin(
+            styletDetecte: detecte,
+            styletArme: false,
+          ),
+          isEmpty,
+          reason: 'stylet detecte : $detecte',
+        );
+      }
     });
 
     test('sans stylet, le doigt ecrit seulement si l outil est arme', () {
@@ -60,17 +68,15 @@ void main() {
       );
     });
 
-    test('le stylet est le seul appareil admis dans tous les cas', () {
+    test('outil arme : le stylet ecrit, qu il ait ete detecte ou non', () {
       for (final bool detecte in <bool>[true, false]) {
-        for (final bool arme in <bool>[true, false]) {
-          expect(
-            PolitiqueSaisie.appareilsDeDessin(
-              styletDetecte: detecte,
-              styletArme: arme,
-            ),
-            contains(PointerDeviceKind.stylus),
-          );
-        }
+        expect(
+          PolitiqueSaisie.appareilsDeDessin(
+            styletDetecte: detecte,
+            styletArme: true,
+          ),
+          contains(PointerDeviceKind.stylus),
+        );
       }
     });
   });
@@ -111,6 +117,22 @@ void main() {
       portAnnotationsProvider.overrideWithValue(annotations),
     ];
 
+    /// L'hote avec l'outil d'ecriture arme (TB-STYLET-1 : rien n'ecrit
+    /// sans lui).
+    Widget hoteArme(Widget enfant) {
+      final ProviderContainer conteneur = ProviderContainer(
+        overrides: surcharges(),
+      );
+      addTearDown(conteneur.dispose);
+      conteneur
+          .read(etatOutilsProvider.notifier)
+          .choisirOutil(OutilDock.stylet);
+      return UncontrolledProviderScope(
+        container: conteneur,
+        child: hoteSansScope(enfant),
+      );
+    }
+
     /// Trace un geste avec l'appareil demande.
     Future<void> tracer(
       WidgetTester tester,
@@ -129,10 +151,20 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('un trait de stylet s ancre au verset touche', (
+    testWidgets('le stylet ne pose rien tant que l outil n est pas arme', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(hoteD(couche(), surcharges: surcharges()));
+      await tracer(tester, PointerDeviceKind.stylus);
+
+      expect(annotations.couches, isEmpty);
+      expect(emis, isEmpty);
+    });
+
+    testWidgets('un trait de stylet s ancre au verset touche', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(hoteArme(couche()));
       await tracer(tester, PointerDeviceKind.stylus);
 
       final AnnotationLayer posee = annotations.couches.single;
@@ -165,36 +197,34 @@ void main() {
       expect(emis, isEmpty);
     });
 
-    testWidgets('le doigt pose un trait quand le stylet est arme, faute de stylet', (
-      WidgetTester tester,
-    ) async {
-      final ProviderContainer conteneur = ProviderContainer(
-        overrides: surcharges(),
-      );
-      addTearDown(conteneur.dispose);
-      conteneur
-          .read(etatOutilsProvider.notifier)
-          .choisirOutil(OutilDock.stylet);
+    testWidgets(
+      'le doigt pose un trait quand le stylet est arme, faute de stylet',
+      (WidgetTester tester) async {
+        final ProviderContainer conteneur = ProviderContainer(
+          overrides: surcharges(),
+        );
+        addTearDown(conteneur.dispose);
+        conteneur
+            .read(etatOutilsProvider.notifier)
+            .choisirOutil(OutilDock.stylet);
 
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: conteneur,
-          child: hoteSansScope(couche()),
-        ),
-      );
-      await tracer(tester, PointerDeviceKind.touch);
+        await tester.pumpWidget(
+          UncontrolledProviderScope(
+            container: conteneur,
+            child: hoteSansScope(couche()),
+          ),
+        );
+        await tracer(tester, PointerDeviceKind.touch);
 
-      expect(annotations.couches.single.traits, hasLength(1));
-    });
+        expect(annotations.couches.single.traits, hasLength(1));
+      },
+    );
 
     testWidgets('sur page figee, un trait hors bloc s ancre a la page', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
-        hoteD(
-          couche(mode: ModeAffichagePartage.page),
-          surcharges: surcharges(),
-        ),
+        hoteArme(couche(mode: ModeAffichagePartage.page)),
       );
       // Sous les deux versets : aucun bloc de texte a cet endroit.
       await tracer(
@@ -214,7 +244,7 @@ void main() {
     testWidgets('sur rendu reflowable, un trait hors bloc est signale', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(hoteD(couche(), surcharges: surcharges()));
+      await tester.pumpWidget(hoteArme(couche()));
       await tracer(
         tester,
         PointerDeviceKind.stylus,
@@ -225,7 +255,8 @@ void main() {
       expect(
         ancragesDegrades,
         1,
-        reason: "l'annotation suivra la page et pas les mots : l'hote doit "
+        reason:
+            "l'annotation suivra la page et pas les mots : l'hote doit "
             'pouvoir le dire',
       );
     });
@@ -254,16 +285,14 @@ void main() {
         overrides: surcharges(),
       );
       addTearDown(conteneur.dispose);
-      conteneur
-          .read(etatOutilsProvider.notifier)
-          .choisirOutilTrait(OutilTrait.gomme);
+      conteneur.read(etatOutilsProvider.notifier)
+        ..choisirOutil(OutilDock.stylet)
+        ..choisirOutilTrait(OutilTrait.gomme);
 
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: conteneur,
-          child: hoteSansScope(
-            couche(traits: <TraitVectoriel>[existant]),
-          ),
+          child: hoteSansScope(couche(traits: <TraitVectoriel>[existant])),
         ),
       );
       // Le trait existant passe a y = 10 (0.25 de 40 points) : la gomme le
@@ -277,6 +306,141 @@ void main() {
       expect(annotations.couches.single.traits, isEmpty);
       expect(emis.whereType<EvenementTraitRetire>(), hasLength(1));
       expect(emis.last.canal, CanalFiabilite.fiable);
+    });
+
+    // TB-7a, revue du tour 2 : le trait que la couche vient de poser reste
+    // peint (et effacable) apres le lever du doigt, avant que l'hote ne le
+    // rende ; des que l'hote le rend, l'hote fait foi : une annulation
+    // venue d'ailleurs le retire bien de l'ecran.
+    testWidgets('le trait pose reste a l ecran, puis l hote fait foi', (
+      WidgetTester tester,
+    ) async {
+      final ProviderContainer conteneur = ProviderContainer(
+        overrides: surcharges(),
+      );
+      addTearDown(conteneur.dispose);
+      conteneur
+          .read(etatOutilsProvider.notifier)
+          .choisirOutil(OutilDock.stylet);
+      Future<void> monter(List<TraitVectoriel> traits) => tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: conteneur,
+          child: hoteSansScope(couche(traits: traits)),
+        ),
+      );
+      final int effacer = CustomSemanticsAction.getIdentifier(
+        CustomSemanticsAction(label: t.tc.outils.trait.effacerDernier),
+      );
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      bool effacable() => tester
+          .getSemantics(find.bySemanticsLabel(t.tc.outils.trait.ardoise))
+          .getSemanticsData()
+          .customSemanticsActionIds!
+          .contains(effacer);
+
+      await monter(const <TraitVectoriel>[]);
+      await tracer(tester, PointerDeviceKind.stylus);
+      final TraitVectoriel pose = annotations.couches.single.traits.single;
+      expect(effacable(), isTrue, reason: 'peint avant que l hote le rende');
+
+      await monter(<TraitVectoriel>[pose]);
+      expect(effacable(), isTrue);
+
+      // Annule ailleurs (dock) : l'hote ne le rend plus.
+      await monter(const <TraitVectoriel>[]);
+      expect(effacable(), isFalse, reason: 'l hote fait foi');
+      semantique.dispose();
+    });
+
+    // TB-7b (UX_REVIEW_TB n. 21, plan V2 §7) : « Effacer mon dernier
+    // trait » defait la derniere operation PERSONNELLE ; les traits d'un
+    // autre (deja la quand la couche s'ouvre) ne sont jamais touches.
+    testWidgets('sans geste : Suppr et l action semantique defont mon dernier '
+        'trait, jamais celui d un autre', (WidgetTester tester) async {
+      final TraitVectoriel autre = TraitVectoriel(
+        id: 't-autre',
+        ancrage: ayah1,
+        outil: OutilTrait.stylet,
+        intention: IntentionPedagogique.aRevoir,
+        points: const <PointNormalise>[
+          PointNormalise(0, 0.25),
+          PointNormalise(1, 0.25),
+        ],
+      );
+      final AnnotationLayer couchePosee = (await annotations.couche(
+        resourceId: ressourceTest,
+        sessionId: 'seance-1',
+        portee: PorteeAnnotation.temporaire,
+      ))!;
+      await annotations.ajouterTrait(couchePosee.id, autre);
+
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      final ProviderContainer conteneur = ProviderContainer(
+        overrides: surcharges(),
+      );
+      addTearDown(conteneur.dispose);
+      conteneur
+          .read(etatOutilsProvider.notifier)
+          .choisirOutil(OutilDock.stylet);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: conteneur,
+          child: hoteSansScope(couche(traits: <TraitVectoriel>[autre])),
+        ),
+      );
+      List<String> ids() => <String>[
+        for (final TraitVectoriel x in annotations.couches.single.traits) x.id,
+      ];
+
+      // L'ardoise se nomme et se dit facultative ; rien de personnel : rien
+      // a effacer.
+      final Finder ardoise = find.bySemanticsLabel(t.tc.outils.trait.ardoise);
+      expect(ardoise, findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.delete);
+      await tester.pumpAndSettle();
+      expect(ids(), <String>['t-autre'], reason: 'le trait d un autre reste');
+
+      // Clavier : mon trait, puis Suppr le retire, lui seul.
+      await tracer(tester, PointerDeviceKind.stylus);
+      expect(ids(), hasLength(2));
+      await tester.sendKeyEvent(LogicalKeyboardKey.delete);
+      await tester.pumpAndSettle();
+      expect(ids(), <String>['t-autre']);
+
+      // Lecteur d'ecran : l'action « Effacer mon dernier trait ».
+      await tracer(tester, PointerDeviceKind.stylus);
+      expect(ids(), hasLength(2));
+      final SemanticsNode noeud = tester.getSemantics(ardoise);
+      tester.binding.performSemanticsAction(
+        SemanticsActionEvent(
+          type: SemanticsAction.customAction,
+          viewId: tester.view.viewId,
+          nodeId: noeud.id,
+          arguments: CustomSemanticsAction.getIdentifier(
+            CustomSemanticsAction(label: t.tc.outils.trait.effacerDernier),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(ids(), <String>['t-autre']);
+      expect(emis.whereType<EvenementTraitRetire>(), hasLength(2));
+      // Plus rien de personnel : l'action n'est plus offerte.
+      expect(
+        tester
+            .getSemantics(ardoise)
+            .getSemanticsData()
+            .customSemanticsActionIds,
+        isNot(
+          contains(
+            CustomSemanticsAction.getIdentifier(
+              CustomSemanticsAction(label: t.tc.outils.trait.effacerDernier),
+            ),
+          ),
+        ),
+      );
+      semantique.dispose();
     });
   });
 }

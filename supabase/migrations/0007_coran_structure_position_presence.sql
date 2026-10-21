@@ -1,7 +1,7 @@
 -- 0007 : lot N1 de l'etape 5 — le Coran comme contenu structure, la position
 -- de lecture personnelle, et la presence derivee par participant.
 --
--- Perimetre fixe par docs/architecture/etape-5-salle-coran-presence.md
+-- Perimetre fixe par docs/archive/2026-09-pre-remise-a-plat/architecture/etape-5-salle-coran-presence.md
 -- section 12 (« N1 | Migration : mushaf/sourate/page_mushaf/verset,
 -- student_reading_position, vue ou fonction de presence derivee ») et par
 -- l'ADR-020. Ce fichier ne code aucun ecran : il pose ce dont N2 a N5 ont

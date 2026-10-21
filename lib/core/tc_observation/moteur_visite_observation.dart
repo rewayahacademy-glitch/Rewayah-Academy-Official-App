@@ -246,11 +246,18 @@ class MoteurVisiteObservation {
   /// Sortie volontaire.
   Future<void> sortir() => _terminer(FinDeVisite.sortieVolontaire);
 
+  /// Fin subie, quand la salle video est perdue pour de bon (reconnexion
+  /// echouee) : l'intervalle est referme aupres du serveur comme pour une
+  /// sortie, mais la fin dit ce qui s'est passe. Sans effet hors visite.
+  Future<void> interrompre() => _terminer(FinDeVisite.deconnexion);
+
   /// Ferme le moteur. A appeler quand l'ecran disparait.
   ///
   /// **Ne ferme pas l'intervalle cote serveur** : une page demontee n'est pas
-  /// une sortie. Le serveur referme l'intervalle a l'expiration du jeton, et
-  /// c'est bien lui qui doit le faire (contrat 14, invariant 2).
+  /// une sortie. Et **aucun code serveur ne le referme a l'expiration du
+  /// jeton** (cartographie C07, fait 8) : un intervalle laisse ouvert compte
+  /// comme une visite et bloque la suivante jusqu'a `temps_epuise`
+  /// (dependances DB-OBS-03 et DB-OBS-06).
   Future<void> dispose() async {
     await _arreterEcoutes();
     await _sortie.close();
@@ -276,10 +283,30 @@ class MoteurVisiteObservation {
     // **La borne serveur, appliquee sans egard pour l'horloge locale.** Que le
     // battement ait tourne ou non, qu'il reste une heure au chronometre de la
     // machine ou non : le serveur dit qu'il ne reste rien, la visite s'arrete.
-    if (budget.epuise) {
+    final FinDeVisite? finServeur = _finAnnoncee(budget.motifRefus);
+    if (finServeur != null) {
+      unawaited(_terminer(finServeur));
+    } else if (budget.epuise) {
       unawaited(_terminer(FinDeVisite.quotaAtteint));
     }
   }
+
+  /// La fin qu'un motif de refus annonce PENDANT une visite, quand il en
+  /// annonce une : la seance n'est plus active, ou l'acces n'est plus
+  /// accorde (observation desactivee, lien tuteur retire). Les motifs de
+  /// quota ne ferment rien ici : pendant une visite, c'est le temps restant
+  /// ([BudgetObservation.epuise]) qui decide, et le serveur peut refuser une
+  /// NOUVELLE entree (quota de visites) sans que la visite en cours cesse.
+  static FinDeVisite? _finAnnoncee(MotifRefusObservation? motif) =>
+      switch (motif) {
+        MotifRefusObservation.seanceNonActive ||
+        MotifRefusObservation.horsFenetre => FinDeVisite.seanceTerminee,
+        MotifRefusObservation.policyDesactivee ||
+        MotifRefusObservation.lienTuteurAbsent => FinDeVisite.revocationServeur,
+        MotifRefusObservation.quotaVisitesAtteint ||
+        MotifRefusObservation.tempsEpuise ||
+        null => null,
+      };
 
   void _budgetIllisible(Object erreur, StackTrace trace) {
     if (_etat.phase != PhaseVisite.enVisite) {

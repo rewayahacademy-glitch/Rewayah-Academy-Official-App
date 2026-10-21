@@ -1,0 +1,217 @@
+import 'package:flutter/material.dart';
+
+import '../accessibilite/texte_sans_coupure.dart';
+import '../icons/app_icons.dart';
+import '../theme/app_palette.dart';
+import '../theme/app_radius.dart';
+import '../theme/app_spacing.dart';
+import 'pressable.dart';
+
+/// Un segment de [ControleSegmente].
+@immutable
+class Segment<T> {
+  /// Cree un segment.
+  const Segment({
+    required this.valeur,
+    required this.libelle,
+    this.icone,
+    this.apercu,
+  });
+
+  /// Une icone posee au-dessus du libelle (soleil, lune) : elle ne remplace
+  /// jamais le libelle, l'etat ne repose pas sur le seul pictogramme.
+  final AppIcon? icone;
+
+  /// TB-7b : un apercu peint de la valeur, a la place de l'icone (pastille
+  /// d'une couleur d'encre, trait d'une epaisseur). Comme l'icone, il ne
+  /// remplace jamais le libelle ; il est muet pour le lecteur d'ecran.
+  final Widget? apercu;
+
+  /// La valeur que le segment selectionne.
+  final T valeur;
+
+  /// Le libelle visible, deux mots au plus : « Seances », « Observations ».
+  final String libelle;
+}
+
+/// Un controle segmente : deux a quatre vues exclusives d'une meme liste,
+/// « Seances / Observations » dans l'Historique du tuteur et de
+/// l'administration (maquette V8 D2, manifeste visuel Tuteur V1 section 3.4).
+///
+/// Piste `surfaceSunken` en pilule, segment actif sur `washAccent`, **renforce
+/// d'un filet d'accent** : la selection ne repose jamais sur la seule couleur
+/// de fond. (Pas de graisse ajoutee : Plus Jakarta Sans se pilote par l'axe
+/// `wght`, et un `fontWeight` seul synthetiserait un faux gras.) Chaque segment est un bouton de 48 de haut au moins,
+/// annonce « selectionne » au lecteur d'ecran, et partage la largeur a egalite
+/// ; a 200 %, un libelle passe a la ligne au lieu d'etre coupe.
+///
+/// Ce n'est pas une navigation : le controle rend la main par [onChange], et
+/// c'est l'ecran qui decide si le choix change une route (Historique :
+/// `/tuteur/suivi` et `/tuteur/suivi/observations`).
+class ControleSegmente<T> extends StatelessWidget {
+  /// Cree un controle.
+  const ControleSegmente({
+    required this.segments,
+    required this.valeur,
+    required this.onChange,
+    super.key,
+    this.rectangle = false,
+  });
+
+  /// Vrai : un petit rectangle a coins arrondis (`AppRadius.md`) au lieu de la
+  /// pilule, pour les segments qui portent une icone au-dessus du libelle
+  /// (choix du theme, THEME-SW-1). Le segment actif prend le rayon `sm`, plus
+  /// petit que celui de la piste.
+  final bool rectangle;
+
+  /// Les segments, dans l'ordre de lecture : deux a quatre. Un seul segment
+  /// n'est pas un choix, et au-dela de quatre les libelles ne tiennent plus
+  /// cote a cote sur un telephone.
+  final List<Segment<T>> segments;
+
+  /// La valeur selectionnee.
+  final T valeur;
+
+  /// Rappele avec la valeur d'un segment non selectionne qu'on presse.
+  final ValueChanged<T> onChange;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+
+    return DecoratedBox(
+      decoration: palette.surfaceSunken.decoration(
+        borderRadius: rectangle ? AppRadius.arrondiMd : AppRadius.arrondiFull,
+      ),
+      // Hauteur intrinseque : les segments prennent tous la hauteur du plus
+      // haut (un libelle qui passe a la ligne a 200 %), sans exiger du parent
+      // une hauteur bornee. Deux a quatre segments : le cout est negligeable.
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            for (final Segment<T> segment in segments)
+              Expanded(
+                child: _Segment<T>(
+                  segment: segment,
+                  voisins: <String>[
+                    for (final Segment<T> s in segments)
+                      if (!identical(s, segment)) s.libelle,
+                  ],
+                  selectionne: segment.valeur == valeur,
+                  onChange: onChange,
+                  arrondi: rectangle
+                      ? AppRadius.arrondiSm
+                      : AppRadius.arrondiFull,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Segment<T> extends StatelessWidget {
+  const _Segment({
+    required this.segment,
+    required this.voisins,
+    required this.selectionne,
+    required this.onChange,
+    required this.arrondi,
+  });
+
+  final Segment<T> segment;
+
+  /// Les libelles des autres segments.
+  final List<String> voisins;
+  final bool selectionne;
+  final ValueChanged<T> onChange;
+  final BorderRadius arrondi;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextStyle base =
+        Theme.of(context).textTheme.labelLarge ?? const TextStyle();
+
+    // Le segment deja choisi reste un bouton actif (sinon il serait annonce
+    // « desactive ») ; le presser ne fait rien.
+    return Semantics(
+      selected: selectionne,
+      inMutuallyExclusiveGroup: true,
+      child: Pressable.selon(
+        onPress: () {
+          if (!selectionne) {
+            onChange(segment.valeur);
+          }
+        },
+        arrondiFocus: arrondi,
+        constructeur: (BuildContext contexte, EtatPression etat) => Padding(
+          // La cible fait toute la hauteur de la piste ; la pastille active
+          // est posee dedans, a 4 du bord.
+          padding: const EdgeInsets.all(AppSpacing.xs),
+          child: DecoratedBox(
+            decoration: selectionne
+                ? palette.washAccent.decoration(
+                    borderRadius: arrondi,
+                    side: palette.inkAccent.asBorderSide(),
+                  )
+                : BoxDecoration(
+                    borderRadius: arrondi,
+                    color: etat.survole || etat.presse
+                        ? palette.calqueInteraction(presse: etat.presse)
+                        : null,
+                  ),
+            child: Center(
+              child: Padding(
+                // THEME-SW-1 : marge laterale de 8 (et non 12) ; le libelle
+                // reduit au besoin son echelle (jamais sous 0,85) au lieu
+                // d'etre coupe, sans toucher le contour de la pastille
+                // (relecture COUPE-MOTS-1 : a 4, « Systeme » le touchait).
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.sm,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    if (segment.apercu case final Widget apercu) ...<Widget>[
+                      ExcludeSemantics(child: apercu),
+                      Ecart.vXs,
+                    ] else if (segment.icone != null) ...<Widget>[
+                      ExcludeSemantics(
+                        child: Icon(
+                          selectionne
+                              ? segment.icone!.actif
+                              : segment.icone!.repos,
+                          size: AppSpacing.xl,
+                          color: selectionne
+                              ? palette.washAccent.applyTo(base).color
+                              : palette.inkMuted.applyTo(base).color,
+                        ),
+                      ),
+                      Ecart.vXs,
+                    ],
+                    // COUPE-MOTS-1 point 6 : les segments ont la meme
+                    // largeur ; l'echelle est bornee par le mot le plus long
+                    // de TOUS, pour que les voisins gardent la meme taille.
+                    TexteSansCoupure(
+                      segment.libelle,
+                      voisins: voisins,
+                      textAlign: TextAlign.center,
+                      style: selectionne
+                          ? palette.washAccent.applyTo(base)
+                          : palette.inkMuted.applyTo(base),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

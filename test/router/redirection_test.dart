@@ -18,23 +18,30 @@ SessionState _session({
   lectureProfil: LectureProfil.presente,
 );
 
+/// L'adresse de connexion qui garde [chemin] en destination de retour.
+String _connexionAvecRetour(String chemin) => Uri(
+  path: Routes.connexion,
+  queryParameters: <String, String>{'retour': chemin},
+).toString();
+
 void main() {
   final DateTime maintenant = DateTime.utc(2026, 9, 6, 10);
 
   group('Scenario 3 : un compte en portail d attente ne passe nulle part', () {
     // Toutes les routes protegees de l'application, y compris celles d'autres
     // roles : le test vaut aussi pour une URL tapee directement sur le Web.
-    // Non `const` : les cinq poses de l'enseignant se construisent par
-    // fonction, un identifiant faisant partie du chemin.
     final List<String> protegees = <String>[
       Routes.eleve,
       Routes.eleveCoran,
       Routes.eleveSuivi,
       Routes.tuteurAccueil,
       Routes.tuteurFoyer,
-      Routes.tuteurDisponibilites,
       Routes.tuteurReglages,
       Routes.tuteurSuivi,
+      Routes.tuteurCompte,
+      Routes.ficheElevePour('e1'),
+      Routes.classePour('g1'),
+      Routes.seancePour('s1'),
       Routes.enseignantJournee,
       Routes.enseignantCreneaux,
       Routes.enseignantProfil,
@@ -48,14 +55,19 @@ void main() {
       Routes.controleur,
       Routes.admin,
       Routes.adminPersonnesDossiers,
-      Routes.adminOperationsAttributions,
+      Routes.adminOperationsRegroupements,
+      Routes.adminOperationsOffres,
+      Routes.adminOperationsPilotage,
       Routes.adminSecuriteAuditJournal,
+      Routes.adminSecuriteAuditObservations,
+      Routes.adminSecuriteAuditTirages,
       Routes.comptable,
       Routes.compte,
       Routes.compteProfil,
       Routes.compteReglages,
       Routes.compteProfils,
       Routes.salle,
+      Routes.accesRefuse,
     ];
 
     for (final AccountStatus statut in <AccountStatus>[
@@ -110,9 +122,43 @@ void main() {
         isNull,
       );
     });
+
+    // K-47 (HL-A-6) : la piece d'identite ne concerne que l'enseignant.
+    test('le depot de piece : ouvert a l enseignant, ferme au tuteur', () {
+      String? pour(AppRole role) => deciderRedirection(
+        session: _session(role: role, statut: AccountStatus.pendingKyc),
+        cheminDemande: Routes.attentePiece,
+        maintenant: maintenant,
+      );
+      expect(pour(AppRole.teacher), isNull);
+      expect(pour(AppRole.guardian), Routes.attente);
+      // AD-NETTOYAGE (m3) : la regle est positive, tout autre role est ferme.
+      expect(pour(AppRole.student), Routes.attente);
+      expect(pour(AppRole.admin), Routes.attente);
+    });
+
+    test('le depot de piece est ferme a un role illisible', () {
+      expect(
+        deciderRedirection(
+          session: const SessionState(
+            resolue: true,
+            profileId: 'p1',
+            householdId: 'h1',
+            accountStatus: AccountStatus.pendingKyc,
+            lectureProfil: LectureProfil.presente,
+          ),
+          cheminDemande: Routes.attentePiece,
+          maintenant: maintenant,
+        ),
+        Routes.attente,
+      );
+    });
   });
 
   group('Chaque role reste dans son espace', () {
+    // Les autres roles gardent le renvoi a leur racine d'avant le chantier
+    // Tuteur V1 : la page « acces refuse » est reservee au tuteur tant que le
+    // directeur n'a pas decide de l'etendre (revue phase 0, routes D3).
     test('un eleve qui demande une route admin repart chez lui', () {
       expect(
         deciderRedirection(
@@ -133,6 +179,31 @@ void main() {
         ),
         Routes.enseignantJournee,
       );
+    });
+
+    test('un tuteur qui demande une route admin voit l acces refuse', () {
+      expect(
+        deciderRedirection(
+          session: _session(role: AppRole.guardian),
+          cheminDemande: Routes.adminSecuriteAuditJournal,
+          maintenant: maintenant,
+        ),
+        Routes.accesRefuse,
+      );
+    });
+
+    test('la page d acces refuse est ouverte a chaque role actif', () {
+      for (final AppRole role in AppRole.values) {
+        expect(
+          deciderRedirection(
+            session: _session(role: role),
+            cheminDemande: Routes.accesRefuse,
+            maintenant: maintenant,
+          ),
+          isNull,
+          reason: role.valeurSql,
+        );
+      }
     });
 
     test('chaque role atteint bien sa propre racine', () {
@@ -163,8 +234,11 @@ void main() {
       );
     });
 
-    test('un compte actif atteint le portail commun depuis chaque role', () {
+    test('les roles autres que le tuteur gardent le portail commun', () {
       for (final AppRole role in AppRole.values) {
+        if (role == AppRole.guardian) {
+          continue;
+        }
         expect(
           deciderRedirection(
             session: _session(role: role),
@@ -178,12 +252,110 @@ void main() {
     });
   });
 
+  group('AD-11 : la file des dossiers est gardee pour chaque role', () {
+    // Routes.adminPersonnesDossiers porte des pieces d'identite : seul
+    // l'administrateur y entre ; le tuteur voit l'acces refuse, les autres
+    // roles repartent a leur racine.
+    for (final AppRole role in AppRole.values) {
+      test('${Routes.adminPersonnesDossiers} et ${role.valeurSql}', () {
+        final String? decision = deciderRedirection(
+          session: _session(role: role),
+          cheminDemande: Routes.adminPersonnesDossiers,
+          maintenant: maintenant,
+        );
+        if (role == AppRole.admin) {
+          expect(decision, isNull);
+        } else if (role == AppRole.guardian) {
+          expect(decision, Routes.accesRefuse);
+        } else {
+          expect(decision, Routes.racinePour(role));
+          expect(decision, isNot(Routes.adminPersonnesDossiers));
+        }
+      });
+    }
+  });
+
+  group('Le tuteur : ses anciennes adresses communes le rejoignent', () {
+    final Map<String, String> alias = <String, String>{
+      Routes.compte: Routes.tuteurCompte,
+      Routes.compteProfil: Routes.compteTuteurSousPage('informations'),
+      Routes.compteReglages: Routes.tuteurComptePreferences,
+      Routes.compteProfils: Routes.tuteurFoyer,
+      Routes.compteProfilEnfantPour('e1'): Routes.ficheElevePour('e1'),
+      '${Routes.compte}/inconnue': '${Routes.tuteurCompte}/inconnue',
+      Routes.tcGroupes: Routes.tuteurAccueil,
+      Routes.tcEspaceGroupe('g1'): Routes.classePour('g1'),
+      '${Routes.tcEspaceGroupe('g1')}/x': Routes.classePour('g1'),
+    };
+    for (final MapEntry<String, String> a in alias.entries) {
+      test('${a.key} -> ${a.value}', () {
+        expect(
+          deciderRedirection(
+            session: _session(role: AppRole.guardian),
+            cheminDemande: a.key,
+            maintenant: maintenant,
+          ),
+          a.value,
+        );
+      });
+    }
+
+    test('toutes ses nouvelles routes restent sous /tuteur (R1, R2)', () {
+      for (final String chemin in <String>[
+        Routes.tuteurAccueilAlias,
+        Routes.tuteurNotifications,
+        Routes.tuteurClassesCatalogue,
+        Routes.classePour('g1'),
+        Routes.classeSousPage('g1', 'observer'),
+        Routes.tuteurAjouterEnfant,
+        Routes.tuteurAjouterEnfantAncien,
+        Routes.tuteurFoyerAppareils,
+        Routes.ficheEleveSousPage('e1', 'camera'),
+        Routes.tuteurSuiviObservations,
+        Routes.tuteurHistoriqueAlias,
+        Routes.seancePour('s1'),
+        Routes.tuteurCompteApparence,
+        Routes.tuteurCompteConsentements,
+      ]) {
+        expect(
+          chemin.startsWith('${Routes.prefixePour(AppRole.guardian)}/'),
+          isTrue,
+          reason: chemin,
+        );
+        expect(
+          deciderRedirection(
+            session: _session(role: AppRole.guardian),
+            cheminDemande: chemin,
+            maintenant: maintenant,
+          ),
+          isNull,
+          reason: chemin,
+        );
+      }
+      expect(Routes.prefixePour(AppRole.guardian), Routes.tuteurAccueil);
+    });
+
+    test('un autre role ne passe pas par les alias du tuteur', () {
+      expect(
+        deciderRedirection(
+          session: _session(role: AppRole.student),
+          cheminDemande: Routes.tcEspaceGroupe('g1'),
+          maintenant: maintenant,
+        ),
+        isNull,
+      );
+      expect(
+        deciderRedirection(
+          session: _session(role: AppRole.teacher),
+          cheminDemande: Routes.tuteurAccueilAlias,
+          maintenant: maintenant,
+        ),
+        Routes.enseignantJournee,
+      );
+    });
+  });
+
   group('Les ecrans hors barre de l enseignant vivent sous son prefixe', () {
-    // Ces cinq ecrans ne sont pas des destinations : ce sont des poses, ouvertes
-    // depuis un ecran puis quittees. Ils n'en sont pas moins gouvernes par la
-    // garde de prefixe, et c'est la raison pour laquelle ils portent tous
-    // `/enseignant`. Ce groupe gele ce choix : un cahier pose a `/cahier`
-    // passerait ces tests a l'envers.
     final List<String> poses = <String>[
       Routes.enseignantBienvenue,
       Routes.cahierPour('seance-1'),
@@ -204,14 +376,14 @@ void main() {
         );
       });
 
-      test('un tuteur qui demande $chemin repart chez lui', () {
+      test('un tuteur qui demande $chemin voit l acces refuse', () {
         expect(
           deciderRedirection(
             session: _session(role: AppRole.guardian),
             cheminDemande: chemin,
             maintenant: maintenant,
           ),
-          Routes.tuteurAccueil,
+          Routes.accesRefuse,
         );
       });
     }
@@ -289,14 +461,270 @@ void main() {
       );
     });
 
-    test('un visiteur sans session part se connecter', () {
+    test('un visiteur sans session part se connecter, destination gardee', () {
       expect(
         deciderRedirection(
           session: const SessionState.deconnecte(),
           cheminDemande: Routes.eleve,
           maintenant: maintenant,
         ),
+        _connexionAvecRetour(Routes.eleve),
+      );
+      // La requete fait partie de la destination.
+      expect(
+        deciderRedirection(
+          session: const SessionState.deconnecte(),
+          cheminDemande: Routes.tuteurClassesCatalogue,
+          cheminComplet: '${Routes.tuteurClassesCatalogue}?eleve=e1',
+          maintenant: maintenant,
+        ),
+        _connexionAvecRetour('${Routes.tuteurClassesCatalogue}?eleve=e1'),
+      );
+    });
+
+    test(
+      'la racine d un visiteur sans session mene a la connexion (17/10)',
+      () {
+        expect(
+          deciderRedirection(
+            session: const SessionState.deconnecte(),
+            cheminDemande: Routes.racine,
+            maintenant: maintenant,
+          ),
+          Routes.connexion,
+        );
+        // Une route protegee va toujours a la connexion, avec son retour.
+        expect(
+          deciderRedirection(
+            session: const SessionState.deconnecte(),
+            cheminDemande: Routes.tuteurCompte,
+            maintenant: maintenant,
+          ),
+          _connexionAvecRetour(Routes.tuteurCompte),
+        );
+      },
+    );
+
+    test('la salle et la classe ne deviennent jamais un retour', () {
+      for (final String chemin in <String>[Routes.salle, '/tc/classe']) {
+        expect(
+          deciderRedirection(
+            session: const SessionState.deconnecte(),
+            cheminDemande: chemin,
+            maintenant: maintenant,
+          ),
+          Routes.connexion,
+          reason: chemin,
+        );
+      }
+    });
+
+    test('les sous-arbres publics restent ouverts sans session', () {
+      for (final String chemin in <String>[
         Routes.connexion,
+        Routes.connexionEleve,
+        Routes.connexionEleveScanner,
+        Routes.connexionEleveCode,
+        Routes.connexionRecuperation,
+        Routes.bienvenue,
+        Routes.agentEntree,
+        Routes.juridique,
+        '${Routes.juridique}/confidentialite',
+      ]) {
+        expect(
+          deciderRedirection(
+            session: const SessionState.deconnecte(),
+            cheminDemande: chemin,
+            maintenant: maintenant,
+          ),
+          isNull,
+          reason: chemin,
+        );
+      }
+      expect(Routes.publiques, <String>{
+        Routes.connexion,
+        Routes.bienvenue,
+        Routes.agentEntree,
+        Routes.juridique,
+      });
+    });
+
+    test('les textes juridiques se lisent aussi connecte', () {
+      for (final String chemin in <String>[
+        Routes.juridique,
+        '${Routes.juridique}/conditions',
+      ]) {
+        expect(
+          deciderRedirection(
+            session: _session(role: AppRole.guardian),
+            cheminDemande: chemin,
+            maintenant: maintenant,
+          ),
+          isNull,
+          reason: chemin,
+        );
+      }
+    });
+
+    test('un compte actif quitte l accueil public et la page hors ligne', () {
+      for (final String chemin in <String>[
+        Routes.bienvenue,
+        Routes.horsLigne,
+      ]) {
+        expect(
+          deciderRedirection(
+            session: _session(role: AppRole.guardian),
+            cheminDemande: chemin,
+            maintenant: maintenant,
+          ),
+          Routes.tuteurAccueil,
+          reason: chemin,
+        );
+      }
+    });
+  });
+
+  group('Retour apres connexion : un chemin interne valide et ouvert', () {
+    String? apresConnexion(AppRole role, String retour) => deciderRedirection(
+      session: _session(role: role),
+      cheminDemande: Routes.connexion,
+      retour: retour,
+      maintenant: maintenant,
+    );
+
+    test('la destination gardee est reprise, requete comprise', () {
+      expect(
+        apresConnexion(AppRole.guardian, Routes.ficheElevePour('e1')),
+        Routes.ficheElevePour('e1'),
+      );
+      expect(
+        apresConnexion(
+          AppRole.guardian,
+          '${Routes.tuteurClassesCatalogue}?eleve=e1',
+        ),
+        '${Routes.tuteurClassesCatalogue}?eleve=e1',
+      );
+    });
+
+    test('une destination d un autre role ramene a la racine', () {
+      expect(
+        apresConnexion(AppRole.guardian, Routes.enseignantJournee),
+        Routes.tuteurAccueil,
+      );
+    });
+
+    test('une adresse externe, la salle ou l agent ne sont jamais repris', () {
+      for (final String retour in <String>[
+        'https://exemple.test/piege',
+        '//exemple.test',
+        '/salle',
+        '/tc/classe',
+        '/agent?jeton=x',
+        '/tuteur/../admin',
+        Routes.connexion,
+        Routes.racine,
+      ]) {
+        expect(
+          apresConnexion(AppRole.guardian, retour),
+          Routes.tuteurAccueil,
+          reason: retour,
+        );
+      }
+    });
+
+    test('une page d etat n est pas une destination a reprendre', () {
+      // Revue phase 0 (routes D6) : `retour=/acces-refuse` faisait atterrir
+      // sur « Acces refuse » juste apres la connexion.
+      for (final AppRole role in <AppRole>[
+        AppRole.guardian,
+        AppRole.teacher,
+        AppRole.student,
+      ]) {
+        for (final String retour in <String>[
+          Routes.accesRefuse,
+          Routes.horsLigne,
+        ]) {
+          expect(
+            apresConnexion(role, retour),
+            Routes.racinePour(role),
+            reason: '${role.valeurSql} $retour',
+          );
+        }
+      }
+    });
+  });
+
+  group('Page introuvable : aucune route ne correspond', () {
+    test('le routeur rend la page introuvable, quelle que soit la porte', () {
+      final List<SessionState> sessions = <SessionState>[
+        const SessionState.deconnecte(),
+        const SessionState(
+          resolue: true,
+          profileId: 'p1',
+          lectureProfil: LectureProfil.absente,
+        ),
+        _session(role: AppRole.guardian, statut: AccountStatus.pendingKyc),
+        for (final AppRole role in AppRole.values) _session(role: role),
+      ];
+      for (final SessionState session in sessions) {
+        for (final String chemin in <String>[
+          '/tuteur/inconnue',
+          '/nimporte/quoi',
+          '/tuteur/foyer/e1/inconnue',
+        ]) {
+          expect(
+            deciderRedirection(
+              session: session,
+              cheminDemande: chemin,
+              routeConnue: false,
+              maintenant: maintenant,
+            ),
+            isNull,
+            reason: '$chemin (${session.porte.name})',
+          );
+        }
+      }
+    });
+  });
+
+  group('Hors ligne au demarrage : rien ne s ouvre', () {
+    const SessionState injoignable = SessionState(
+      resolue: true,
+      profileId: 'p1',
+      role: AppRole.guardian,
+      lectureProfil: LectureProfil.injoignable,
+    );
+
+    test('la porte est hors ligne, ni attente ni acces', () {
+      expect(injoignable.porte, PorteAcces.horsLigne);
+    });
+
+    test('toute adresse mene a la page hors ligne', () {
+      for (final String chemin in <String>[
+        Routes.racine,
+        Routes.tuteurAccueil,
+        Routes.attente,
+        Routes.inscription,
+        Routes.connexion,
+        '/nimporte/quoi',
+      ]) {
+        expect(
+          deciderRedirection(
+            session: injoignable,
+            cheminDemande: chemin,
+            maintenant: maintenant,
+          ),
+          Routes.horsLigne,
+          reason: chemin,
+        );
+      }
+      expect(
+        deciderRedirection(
+          session: injoignable,
+          cheminDemande: Routes.horsLigne,
+          maintenant: maintenant,
+        ),
+        isNull,
       );
     });
   });
@@ -337,15 +765,24 @@ void main() {
       });
     }
 
-    test('l inscription elle-meme reste atteignable', () {
-      expect(
-        deciderRedirection(
-          session: sansProfil,
-          cheminDemande: Routes.inscription,
-          maintenant: maintenant,
-        ),
-        isNull,
-      );
+    test('l inscription et ses etapes restent atteignables', () {
+      for (final String chemin in <String>[
+        Routes.inscription,
+        Routes.inscriptionUsage,
+        Routes.inscriptionIdentite,
+        Routes.inscriptionGenre,
+        Routes.inscriptionRecapitulatif,
+      ]) {
+        expect(
+          deciderRedirection(
+            session: sansProfil,
+            cheminDemande: chemin,
+            maintenant: maintenant,
+          ),
+          isNull,
+          reason: chemin,
+        );
+      }
     });
 
     test('un compte deja profile ne peut pas revenir a l inscription', () {
@@ -476,59 +913,63 @@ void main() {
     });
   });
 
-  group(
-    'Scenario 7 : le Teaching Core sous /tc/, autorisation par sous-arbre',
-    () {
-      // Plan d'integration Teaching Core, section 8.2 point 4 : chaque
-      // sous-arbre `/tc/` porte ses propres roles, contrairement au prefixe
-      // unique de `Routes.prefixePour`. Sans cette autorisation, les sept
-      // chemins sont inatteignables pour tous les roles : `/tc/` n'appartient
-      // a aucun.
-      const Map<String, List<AppRole>> autorises = <String, List<AppRole>>{
-        '/tc/groupes': <AppRole>[AppRole.student, AppRole.guardian],
-        '/tc/groupes/g1': <AppRole>[AppRole.student, AppRole.guardian],
-        '/tc/bibliotheque': <AppRole>[AppRole.student, AppRole.guardian],
-        '/tc/classe': <AppRole>[AppRole.teacher, AppRole.student],
-        '/tc/mushaf': <AppRole>[AppRole.student],
-        '/tc/observation/s1': <AppRole>[
-          AppRole.guardian,
-          AppRole.admin,
-          AppRole.controller,
-        ],
-      };
+  group('Scenario 7 : le Teaching Core sous /tc/, autorisation par sous-arbre', () {
+    // Plan d'integration Teaching Core, section 8.2 point 4 : chaque
+    // sous-arbre `/tc/` porte ses propres roles. Le tuteur rejoint ses
+    // classes sous `/tuteur/classes` (alias ci-dessus) : `/tc/groupes` ne
+    // lui est plus servi.
+    const Map<String, List<AppRole>> autorises = <String, List<AppRole>>{
+      '/tc/groupes': <AppRole>[AppRole.student],
+      '/tc/groupes/g1': <AppRole>[AppRole.student],
+      '/tc/bibliotheque': <AppRole>[
+        AppRole.student,
+        AppRole.guardian,
+        AppRole.teacher,
+      ],
+      // L'ancienne classe n'a plus de route : refusee a tous (A-05).
+      '/tc/classe': <AppRole>[],
+      '/tc/mushaf': <AppRole>[AppRole.student],
+      '/tc/observation/s1': <AppRole>[
+        AppRole.guardian,
+        AppRole.admin,
+        AppRole.controller,
+      ],
+    };
 
-      test('les deux constantes de la Bibliotheque designent la meme adresse', () {
-        // `/tc/bibliotheque` est ecrit en dur DEUX fois : `Routes.tcBibliotheque`,
-        // que lit le garde d'autorisation ci-dessus, et `RoutesTcB.bibliotheque`,
-        // que lisent la route et le compositeur `RoutesTcB.avecGroupe`. Rien
-        // dans `lib/` ne les relie, et rien ne peut le faire :
-        // `core/router/routes.dart` importerait alors `features/`, ce qui
-        // inverse le sens des dependances du depot. L'egalite se tient donc
-        // ici. Sans elle, le jour ou l'une bouge, l'adresse serait composee
-        // correctement puis rejetee par la redirection, sans rien de rouge.
-        expect(RoutesTcB.bibliotheque, Routes.tcBibliotheque);
-      });
+    test('les deux constantes de la Bibliotheque designent la meme adresse', () {
+      // `/tc/bibliotheque` est ecrit en dur DEUX fois : `Routes.tcBibliotheque`,
+      // que lit le garde d'autorisation ci-dessus, et `RoutesTcB.bibliotheque`,
+      // que lisent la route et le compositeur `RoutesTcB.avecGroupe`. L'egalite
+      // se tient donc ici.
+      expect(RoutesTcB.bibliotheque, Routes.tcBibliotheque);
+    });
 
-      for (final MapEntry<String, List<AppRole>> entree in autorises.entries) {
-        for (final AppRole role in AppRole.values) {
-          final bool doitPasser = entree.value.contains(role);
-          test(
-            '${entree.key} ${doitPasser ? "s ouvre" : "se refuse"} a ${role.valeurSql}',
-            () {
-              final String? decision = deciderRedirection(
-                session: _session(role: role),
-                cheminDemande: entree.key,
-                maintenant: maintenant,
-              );
-              if (doitPasser) {
-                expect(decision, isNull);
-              } else {
-                expect(decision, Routes.racinePour(role));
-              }
-            },
-          );
-        }
+    for (final MapEntry<String, List<AppRole>> entree in autorises.entries) {
+      for (final AppRole role in AppRole.values) {
+        final bool doitPasser = entree.value.contains(role);
+        test(
+          '${entree.key} ${doitPasser ? "s ouvre" : "se refuse"} a ${role.valeurSql}',
+          () {
+            final String? decision = deciderRedirection(
+              session: _session(role: role),
+              cheminDemande: entree.key,
+              maintenant: maintenant,
+            );
+            if (doitPasser) {
+              expect(decision, isNull);
+            } else if (role == AppRole.guardian &&
+                entree.key.startsWith(Routes.tcGroupes)) {
+              // Le tuteur n'est pas refuse : il est conduit a sa classe.
+              expect(decision, startsWith(Routes.tuteurAccueil));
+            } else if (role == AppRole.guardian) {
+              expect(decision, Routes.accesRefuse);
+            } else {
+              // Les autres roles repartent chez eux, comme avant le chantier.
+              expect(decision, Routes.racinePour(role));
+            }
+          },
+        );
       }
-    },
-  );
+    }
+  });
 }

@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../i18n/strings.g.dart';
+import 'controle_segmente.dart';
+import 'selecteur_section.dart';
+
 /// La sous-navigation d'un domaine admin qui a plusieurs fonctions pairs.
 ///
 /// **Premier domaine a en avoir besoin : Pedagogie**, avec ses cinq
 /// fonctions (Diagnostics, Progression, Evaluations, Programmes, Qualite).
-/// Operations, Personnes et Securite et audit n'en ont que deux ou trois,
-/// atteintes depuis l'Accueil sans chrome de sous-navigation -- voir
-/// `docs/architecture/ADMIN_IA_AUDIT.md`. Ce composant reste generique pour
-/// qu'un futur domaine avec plusieurs fonctions pairs le reutilise sans en
-/// ecrire un second.
+/// Configuration en a trois ou quatre, Personnes et Securite et audit deux.
 ///
 /// Se pose dans `PageShell.entete` -- « ce qui suit immediatement le titre
-/// et ne defile pas » -- meme emplacement que le `TabBar` de
-/// `features/creneaux/creneaux_page.dart`. A la difference de cet ecran,
-/// chaque onglet ici est une **route distincte**, pas un panneau local : le
-/// `TabController` ne sert qu'a l'indicateur visuel, la navigation passe par
-/// `GoRouter`, meme mecanique que `_CoquilleAdmin.aller()`
-/// (`core/router/app_router.dart`).
-class SousNavigationDomaine extends StatefulWidget {
+/// et ne defile pas ». Chaque section est une **route distincte**, pas un
+/// panneau local : le choix passe par `GoRouter`, meme mecanique que
+/// `_CoquilleAdmin.aller()` (`core/router/app_router.dart`).
+///
+/// **Ce n'est plus une rangee d'onglets qui defile** (revue du directeur,
+/// 01/10/2026, ONGLETS-1) : le rendu est celui de [SelecteurSection], qui
+/// choisit selon le nombre de sections et la largeur entre un controle
+/// segmente (quatre au plus sur telephone, ou en ligne sur grand ecran) et un
+/// menu deroulant qui affiche la section courante. Aucun defilement
+/// horizontal, aucun onglet cache hors de la vue.
+class SousNavigationDomaine extends StatelessWidget {
   /// Cree la sous-navigation.
   const SousNavigationDomaine({
     required this.onglets,
@@ -33,36 +37,17 @@ class SousNavigationDomaine extends StatefulWidget {
   final int indexActif;
 
   @override
-  State<SousNavigationDomaine> createState() => _SousNavigationDomaineEtat();
-}
-
-class _SousNavigationDomaineEtat extends State<SousNavigationDomaine>
-    with SingleTickerProviderStateMixin {
-  late final TabController _controleur = TabController(
-    length: widget.onglets.length,
-    initialIndex: widget.indexActif,
-    vsync: this,
-  );
-
-  @override
-  void dispose() {
-    _controleur.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return TabBar(
-      controller: _controleur,
-      isScrollable: true,
-      tabAlignment: TabAlignment.start,
-      tabs: <Widget>[
-        for (final ({String libelle, String chemin}) onglet in widget.onglets)
-          Tab(text: onglet.libelle),
+    return SelecteurSection<int>(
+      libelle: t.commun.sections.page,
+      valeur: indexActif,
+      sections: <Segment<int>>[
+        for (int i = 0; i < onglets.length; i++)
+          Segment<int>(valeur: i, libelle: onglets[i].libelle),
       ],
-      onTap: (int index) {
-        if (index == widget.indexActif) return;
-        GoRouter.of(context).go(widget.onglets[index].chemin);
+      onChange: (int index) {
+        if (index == indexActif) return;
+        GoRouter.of(context).go(onglets[index].chemin);
       },
     );
   }

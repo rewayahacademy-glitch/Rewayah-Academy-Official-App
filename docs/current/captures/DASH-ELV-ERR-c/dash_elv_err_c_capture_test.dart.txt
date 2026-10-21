@@ -1,0 +1,127 @@
+// DASH-ELV-ERR-c : captures RTL de l'etat d'erreur de l'accueil eleve
+// (reserve de la revue DASH-ELV-ERR-b-R : aucune capture RTL). Une vraie
+// panne (Exception) empeche de lire les cours ; en ligne, puis hors ligne.
+// 320 px texte x2, 390 px et 1440 px, clair et sombre, sens RTL.
+//
+// Les libelles ne changent pas (DASH-LIB : a valider par le directeur).
+// Saute sans CAPTURE_DIR : la CI ne l'execute jamais et n'ecrit rien.
+// Chaque capture verifie aussi que le sens est bien RTL, que le libelle
+// d'echec est affiche, qu'aucune exception n'est levee et qu'aucun mot de
+// l'ecran n'est coupe ni tronque.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/planning/service_planning.dart';
+import 'package:rewayah_academy/core/priere/service_priere.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
+
+import '../support/aucun_mot_coupe.dart';
+import '../support/harnais.dart';
+import 'outil_capture.dart';
+
+List<Override> _surcharges({required bool horsLigne}) => <Override>[
+  servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
+  servicePriereProvider.overrideWithValue(FauxServicePriere()),
+  serviceReseauProvider.overrideWithValue(
+    FauxServiceReseau(horsLigneRendu: horsLigne),
+  ),
+  seancesProvider.overrideWith(
+    (_) => Future<List<Seance>>.error(Exception('reseau')),
+  ),
+];
+
+/// L'hote de `outil_capture.dart`, avec le sens d'ecriture force a RTL.
+Widget _hoteRtl(
+  Widget ecran, {
+  required List<Override> surcharges,
+  required ThemeMode mode,
+  required double echelle,
+}) => ProviderScope(
+  overrides: surcharges,
+  child: TranslationProvider(
+    child: RepaintBoundary(
+      key: cadreCapture,
+      child: Builder(
+        builder: (BuildContext context) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+          darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+          themeMode: mode,
+          locale: TranslationProvider.of(context).flutterLocale,
+          supportedLocales: AppLocaleUtils.supportedLocales,
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          builder: (BuildContext contexte, Widget? app) => Directionality(
+            textDirection: TextDirection.rtl,
+            child: MediaQuery(
+              data: MediaQuery.of(contexte)
+                  .copyWith(textScaler: TextScaler.linear(echelle)),
+              child: app!,
+            ),
+          ),
+          home: ecran,
+        ),
+      ),
+    ),
+  ),
+);
+
+void main() {
+  group('Capture : DASH-ELV-ERR-c (RTL)', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (Size, ThemeMode, String, double, bool) cas
+        in <(Size, ThemeMode, String, double, bool)>[
+          for (final bool horsLigne in <bool>[false, true])
+            for (final (Size, double, String) vue in <(Size, double, String)>[
+              (const Size(320, 1400), 2, '320x2'),
+              (const Size(390, 900), 1, '390'),
+              (const Size(1440, 900), 1, '1440'),
+            ])
+              for (final ThemeMode mode in <ThemeMode>[
+                ThemeMode.light,
+                ThemeMode.dark,
+              ])
+                (
+                  vue.$1,
+                  mode,
+                  'elv_err_${horsLigne ? 'hors_ligne_' : ''}${vue.$3}_rtl_'
+                      '${mode == ThemeMode.light ? 'clair' : 'sombre'}',
+                  vue.$2,
+                  horsLigne,
+                ),
+        ]) {
+      testWidgets(cas.$3, (WidgetTester tester) async {
+        fixerVueCapture(tester, cas.$1, 1);
+        await tester.pumpWidget(
+          _hoteRtl(
+            AccueilElevePage(horloge: () => DateTime(2026, 9, 8, 17)),
+            surcharges: _surcharges(horsLigne: cas.$5),
+            mode: cas.$2,
+            echelle: cas.$4,
+          ),
+        );
+        await stabiliser(tester);
+        expect(tester.takeException(), isNull);
+        expect(
+          Directionality.of(tester.element(find.byType(AccueilElevePage))),
+          TextDirection.rtl,
+        );
+        expect(find.text(t.eleve.accueil.erreurCours), findsOneWidget);
+        if (cas.$5) {
+          expect(
+            find.text(t.eleve.accueil.erreurCoursHorsLigneTitre),
+            findsOneWidget,
+          );
+        }
+        verifierEcranSansMotCoupe(tester);
+        debugPrint('PNG ${await capturer(tester, cas.$3)}');
+      });
+    }
+  });
+}

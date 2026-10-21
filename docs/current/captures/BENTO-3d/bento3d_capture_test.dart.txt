@@ -1,0 +1,59 @@
+// BENTO-3d : preuves de la bascule du squelette de chargement de l'accueil
+// adulte (remarque hors demande de BENTO-3c-R). Le squelette seul, dans une
+// place de largeur donnee : 735 px texte x1, deux premieres grandes tuiles
+// empilees ; 736 px texte x1, cote a cote (moities de 360) ; 1120 px texte
+// x2 (moitie 552 < 720), empilees ; 1456 px texte x2 (moitie 720), cote a
+// cote. Clair et sombre. Saute sans CAPTURE_DIR. A copier dans test/capture/.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
+import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
+
+import 'outil_capture.dart';
+
+void main() {
+  group('Capture : BENTO-3d', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    for (final (double, double) cas in const <(double, double)>[
+      (735, 1),
+      (736, 1),
+      (1120, 2),
+      (1456, 2),
+    ]) {
+      for (final ThemeMode m in const <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String nom =
+            'squelette_${cas.$1.toInt()}x${cas.$2.toInt()}_'
+            '${m == ThemeMode.light ? 'clair' : 'sombre'}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, Size(cas.$1 + 2 * AppSpacing.lg, 1400), 1);
+          await tester.pumpWidget(
+            hoteCapture(
+              Scaffold(
+                body: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  child: Align(
+                    alignment: AlignmentDirectional.topStart,
+                    child: SizedBox(
+                      width: cas.$1,
+                      child: const SqueletteAccueilAdulte(),
+                    ),
+                  ),
+                ),
+              ),
+              themeMode: m,
+              echelleTexte: cas.$2,
+            ),
+          );
+          await stabiliser(tester);
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
+  });
+}

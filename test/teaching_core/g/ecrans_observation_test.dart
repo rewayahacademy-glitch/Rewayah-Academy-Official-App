@@ -3,10 +3,13 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_observation/guardian_observation_policy.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/vue_budget_observation.dart';
+import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/choix_entree_observation.dart';
@@ -18,11 +21,16 @@ import 'package:rewayah_academy/features/tc_observation_ui/panneau_observation_t
 import 'package:rewayah_academy/features/tc_observation_ui/routes_tc_g.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/vue_observation_tuteur.dart';
 
+import '../../support/annonces.dart';
 import '../e/faux/faux_classe.dart';
 import 'faux/faux_observation.dart';
 import 'support/hote_tc_g.dart';
 
 final DateTime _instant = DateTime.utc(2026, 9, 20, 10);
+
+/// La salle remplit la hauteur qu'on lui donne (support dominant) : l'hote de
+/// test defile, il faut donc la borner.
+const double _hauteurSalle = 560;
 
 /// Amene la cible dans le cadre avant de la presser.
 ///
@@ -59,7 +67,9 @@ void main() {
       await tester.pumpWidget(
         hoteTcG(
           ChoixEntreeObservation(
-            options: OptionsEntreeObservation.pour(AppRole.controller),
+            options: OptionsEntreeObservation.depuis(
+              const SessionState(resolue: true, role: AppRole.controller),
+            ),
             onMode: (_) {},
             onEntrer: () {},
           ),
@@ -70,7 +80,10 @@ void main() {
       expect(find.text(t.tc.observation.entree.modeVisible), findsNothing);
       // Ce qu'il voit en revanche, et en permanence : sa visite est
       // journalisee.
-      expect(find.text(t.tc.observation.entree.visiteJournalisee), findsOneWidget);
+      expect(
+        find.text(t.tc.observation.entree.visiteJournalisee),
+        findsOneWidget,
+      );
       expect(find.text(t.tc.observation.entree.entrer), findsOneWidget);
     });
 
@@ -80,7 +93,9 @@ void main() {
       await tester.pumpWidget(
         hoteTcG(
           ChoixEntreeObservation(
-            options: OptionsEntreeObservation.pour(AppRole.admin),
+            options: OptionsEntreeObservation.depuis(
+              const SessionState(resolue: true, role: AppRole.admin),
+            ),
             onMode: (_) {},
             onEntrer: () {},
           ),
@@ -97,7 +112,9 @@ void main() {
       await tester.pumpWidget(
         hoteTcG(
           ChoixEntreeObservation(
-            options: OptionsEntreeObservation.pour(AppRole.guardian),
+            options: OptionsEntreeObservation.depuis(
+              const SessionState(resolue: true, role: AppRole.guardian),
+            ),
             onMode: (_) {},
             onEntrer: () {},
           ),
@@ -107,7 +124,10 @@ void main() {
       expect(find.text(t.tc.observation.entree.modeDiscret), findsNothing);
       expect(find.text(t.tc.observation.entree.tuteurIntro), findsOneWidget);
       // Le tuteur est visible : l'enseignant doit savoir qu'un parent regarde.
-      expect(find.text(t.tc.observation.entree.visiteJournalisee), findsNothing);
+      expect(
+        find.text(t.tc.observation.entree.visiteJournalisee),
+        findsNothing,
+      );
     });
 
     testWidgets('un compte qui n\'observe pas n\'a pas d\'action active', (
@@ -117,16 +137,22 @@ void main() {
       await tester.pumpWidget(
         hoteTcG(
           ChoixEntreeObservation(
-            options: OptionsEntreeObservation.pour(AppRole.student),
+            options: OptionsEntreeObservation.depuis(
+              const SessionState(resolue: true, role: AppRole.student),
+            ),
             onMode: (_) {},
             onEntrer: () => entre = true,
           ),
         ),
       );
 
-      expect(find.text(t.tc.observation.entree.roleSansObservation), findsOneWidget);
-      await tester.tap(find.text(t.tc.observation.entree.entrer));
-      await tester.pump();
+      expect(
+        find.text(t.tc.observation.entree.roleSansObservation),
+        findsOneWidget,
+      );
+      // BOUTONS-GRISES-1 : l'entree qui ne peut pas aboutir n'est pas
+      // rendue (jamais grisee) ; l'intro dit pourquoi.
+      expect(find.text(t.tc.observation.entree.entrer), findsNothing);
       expect(entre, isFalse);
     });
   });
@@ -151,20 +177,24 @@ void main() {
       );
 
       await tester.pumpWidget(
-        hoteTcG(PanneauObservationTuteur(vue: vue, onQuitter: () {})),
+        hoteTcG(
+          SizedBox(
+            height: _hauteurSalle,
+            child: PanneauObservationTuteur(vue: vue, onQuitter: () {}),
+          ),
+        ),
       );
 
-      expect(
-        find.text(t.tc.observation.visite.restant(secondes: 120)),
-        findsOneWidget,
-      );
+      expect(find.text('02:00'), findsOneWidget);
       expect(find.text('prof-1'), findsOneWidget);
       expect(find.text('enfant-1'), findsOneWidget);
       // Les camarades ne sont nulle part : aucun roster, aucune fiche.
       expect(find.text('enfant-2'), findsNothing);
       expect(find.text('enfant-3'), findsNothing);
-      // Le rappel des interdictions est permanent.
-      expect(find.text(t.tc.observation.visite.mediaFerme), findsOneWidget);
+      // Aucune commande de media : ni micro, ni camera (trois commandes).
+      expect(find.text(t.tc.observation.visite.quitter), findsOneWidget);
+      expect(find.text(t.tc.observation.visite.agrandir), findsOneWidget);
+      expect(find.text(t.tc.observation.visite.sonRecu), findsOneWidget);
     });
 
     testWidgets('un temps restant non confirme se dit', (
@@ -182,15 +212,21 @@ void main() {
 
       await tester.pumpWidget(
         hoteTcG(
-          PanneauObservationTuteur(
-            vue: vue,
-            onQuitter: () {},
-            budgetIncertain: true,
+          SizedBox(
+            height: _hauteurSalle,
+            child: PanneauObservationTuteur(
+              vue: vue,
+              onQuitter: () {},
+              budgetIncertain: true,
+            ),
           ),
         ),
       );
 
-      expect(find.text(t.tc.observation.visite.budgetIncertain), findsOneWidget);
+      expect(
+        find.text(t.tc.observation.visite.budgetIncertain),
+        findsOneWidget,
+      );
     });
   });
 
@@ -199,9 +235,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
-        hoteTcG(
-          const IndicateurObservation(annonces: <AnnonceObservation>[]),
-        ),
+        hoteTcG(const IndicateurObservation(annonces: <AnnonceObservation>[])),
       );
 
       expect(find.byType(IndicateurObservation), findsOneWidget);
@@ -217,7 +251,7 @@ void main() {
             annonces: <AnnonceObservation>[
               AnnonceObservation(
                 libelle: t.tc.observation.annonce.tuteurObserve(
-                  prenomEnfant: 'Amina',
+                  dePrenomEnfant: deDevant('Amina'),
                 ),
                 tempsRestant: const Duration(seconds: 80),
                 enfantConcerneId: 'enfant-1',
@@ -227,11 +261,160 @@ void main() {
         ),
       );
 
-      expect(find.text('Tuteur de Amina observe'), findsOneWidget);
-      expect(
-        find.text(t.tc.observation.annonce.restant(secondes: 80)),
-        findsOneWidget,
-      );
+      expect(find.text("Tuteur d'Amina observe"), findsOneWidget);
+      expect(find.text('\u200E80\u00A0s'), findsOneWidget);
+      // Un seul observateur ne se replie pas : une ligne ne merite pas une
+      // animation, et il n'y a rien a compter.
+      expect(find.byKey(IndicateurObservation.cleBandePrenoms), findsNothing);
+    });
+
+    group('Plusieurs tuteurs : l\'oeil, les prenoms, et leur nombre', () {
+      /// Deux observateurs de deux foyers differents, comme dans un groupe.
+      List<AnnonceObservation> deuxTuteurs() => <AnnonceObservation>[
+        AnnonceObservation(
+          libelle: t.tc.observation.annonce.tuteurObserve(
+            dePrenomEnfant: deDevant('Amina'),
+          ),
+          prenomEnfant: 'Amina',
+          enfantConcerneId: 'enfant-1',
+        ),
+        AnnonceObservation(
+          libelle: t.tc.observation.annonce.tuteurObserve(
+            dePrenomEnfant: deDevant('Youssef'),
+          ),
+          prenomEnfant: 'Youssef',
+          enfantConcerneId: 'enfant-2',
+        ),
+      ];
+
+      /// Le facteur de largeur de la bande : 1 deployee, 0 repliee derriere
+      /// l'oeil. MESURE plutot que devinee -- les prenoms restent dans l'arbre
+      /// une fois replies, donc `find.text` les trouverait encore.
+      double replisement(WidgetTester tester) => tester
+          .widget<Align>(find.byKey(IndicateurObservation.cleBandePrenoms))
+          .widthFactor!;
+
+      testWidgets('les prenoms se montrent, puis glissent derriere l\'oeil', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(
+          hoteTcG(IndicateurObservation(annonces: deuxTuteurs())),
+        );
+        await tester.pumpAndSettle();
+
+        // A l'arrivee : les deux prenoms sont sortis, et leur nombre est la.
+        expect(replisement(tester), 1);
+        expect(find.text('Amina'), findsOneWidget);
+        expect(find.text('Youssef'), findsOneWidget);
+        expect(find.text('2'), findsOneWidget);
+        // Jamais deux phrases empilees : c'est ce que ce repli evite.
+        expect(find.textContaining('observe'), findsNothing);
+
+        // Quelques secondes plus tard, ils sont rentres.
+        await tester.pump(AppMouvement.retourLocalMaintien);
+        await tester.pumpAndSettle();
+        expect(replisement(tester), 0);
+        // Le nombre, lui, reste lisible : c'est tout ce qui subsiste.
+        expect(find.text('2'), findsOneWidget);
+      });
+
+      testWidgets('une pression les fait ressortir, le relachement les rend', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(
+          hoteTcG(IndicateurObservation(annonces: deuxTuteurs())),
+        );
+        await tester.pump(AppMouvement.retourLocalMaintien);
+        await tester.pumpAndSettle();
+        expect(replisement(tester), 0);
+
+        final TestGesture doigt = await tester.startGesture(
+          tester.getCenter(find.byType(IndicateurObservation)),
+        );
+        await tester.pumpAndSettle();
+        expect(replisement(tester), 1);
+
+        // Le relachement rouvre la fenetre d'affichage plutot que de replier
+        // sur-le-champ : au doigt, un appui bref ne laisserait rien lire.
+        await doigt.up();
+        await tester.pumpAndSettle();
+        expect(replisement(tester), 1);
+
+        await tester.pump(AppMouvement.retourLocalMaintien);
+        await tester.pumpAndSettle();
+        expect(replisement(tester), 0);
+      });
+
+      testWidgets('un tuteur de plus rouvre la fenetre d\'affichage', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(
+          hoteTcG(IndicateurObservation(annonces: deuxTuteurs())),
+        );
+        await tester.pump(AppMouvement.retourLocalMaintien);
+        await tester.pumpAndSettle();
+        expect(replisement(tester), 0);
+
+        await tester.pumpWidget(
+          hoteTcG(
+            IndicateurObservation(
+              annonces: <AnnonceObservation>[
+                ...deuxTuteurs(),
+                AnnonceObservation(
+                  libelle: t.tc.observation.annonce.tuteurObserve(
+                    dePrenomEnfant: deDevant('Bilal'),
+                  ),
+                  prenomEnfant: 'Bilal',
+                  enfantConcerneId: 'enfant-3',
+                ),
+              ],
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Sans cela, le troisieme observateur arriverait deja replie et
+        // l'enseignant ne saurait jamais qu'il est entre.
+        expect(replisement(tester), 1);
+        expect(find.text('3'), findsOneWidget);
+      });
+
+      testWidgets('le lecteur d\'ecran atteint les PRENOMS, pas que le compte', (
+        WidgetTester tester,
+      ) async {
+        // Liberee a la MAIN en fin de corps, jamais par `addTearDown` : la
+        // verification de flutter_test s'execute avant les tear-downs et
+        // echouerait sur une poignee encore active.
+        final SemanticsHandle poignee = tester.ensureSemantics();
+
+        await tester.pumpWidget(
+          hoteTcG(IndicateurObservation(annonces: deuxTuteurs())),
+        );
+        // On se place dans l'etat de REPOS, celui ou les prenoms sont replies :
+        // c'est la que le defaut se voit. Ni le survol de la souris ni le focus
+        // clavier n'existent pour un lecteur d'ecran tactile, et un `Opacity` a
+        // zero retire son sous-arbre de l'arbre semantique.
+        await tester.pump(AppMouvement.retourLocalMaintien);
+        await tester.pumpAndSettle();
+        expect(replisement(tester), 0);
+
+        expect(
+          find.bySemanticsLabel(
+            RegExp(
+              RegExp.escape(
+                t.tc.observation.annonce.tuteursObservent(nombre: 2),
+              ),
+            ),
+          ),
+          findsOneWidget,
+        );
+        // Savoir DE QUI le parent regarde est ce qui sert a l'enseignant : le
+        // repli est une economie de place, jamais une reserve d'information.
+        expect(find.bySemanticsLabel(RegExp('Amina')), findsOneWidget);
+        expect(find.bySemanticsLabel(RegExp('Youssef')), findsOneWidget);
+
+        poignee.dispose();
+      });
     });
 
     test('seul l\'enfant concerne recoit l\'indicateur discret', () {
@@ -244,10 +427,7 @@ void main() {
       expect(enfantConcerneParObservation(annonces, 'enfant-2'), isFalse);
       expect(enfantConcerneParObservation(annonces, null), isFalse);
       expect(
-        enfantConcerneParObservation(
-          const <AnnonceObservation>[],
-          'enfant-1',
-        ),
+        enfantConcerneParObservation(const <AnnonceObservation>[], 'enfant-1'),
         isFalse,
       );
     });
@@ -259,7 +439,10 @@ void main() {
         hoteTcG(const IndicateurObservationEnfant(visible: false)),
       );
 
-      expect(find.text(t.tc.observation.annonce.enfantIndicateur), findsNothing);
+      expect(
+        find.text(t.tc.observation.annonce.enfantIndicateur),
+        findsNothing,
+      );
     });
 
     testWidgets('l\'enfant concerne le lit, y compris en mode enfant', (
@@ -301,7 +484,10 @@ void main() {
       );
 
       expect(find.text(t.tc.observation.reglages.heriter), findsOneWidget);
-      expect(find.text(t.tc.observation.reglages.personnaliser), findsOneWidget);
+      expect(
+        find.text(t.tc.observation.reglages.personnaliser),
+        findsOneWidget,
+      );
       expect(find.text(t.tc.observation.reglages.desactiver), findsOneWidget);
       expect(find.text(t.tc.observation.reglages.maxVisites), findsNothing);
     });
@@ -320,16 +506,67 @@ void main() {
         ),
       );
 
-      await _presser(tester, find.text(t.tc.observation.reglages.personnaliser));
+      await _presser(
+        tester,
+        find.text(t.tc.observation.reglages.personnaliser),
+      );
       expect(find.text(t.tc.observation.reglages.maxVisites), findsOneWidget);
       expect(find.text(t.tc.observation.reglages.tempsTotal), findsOneWidget);
 
-      await _presser(tester, find.text(t.tc.observation.reglages.augmenter).first);
+      await _presser(
+        tester,
+        find.text(t.tc.observation.reglages.augmenter).first,
+      );
       await _presser(tester, find.text(t.tc.observation.reglages.enregistrer));
 
       expect(recue?.source, SourcePolitique.groupe);
-      expect(recue?.maxVisitsPerSession, 2);
+      // Ecrit RELATIVEMENT a ce dont le groupe herite, et non en dur : ce que
+      // ce cas mesure est « augmenter ajoute une visite a la valeur heritee ».
+      // Fige a 2, il redevenait faux le jour ou l'Academie est passee de 1 a 2
+      // visites (migration `0036`), sans rien mesurer de plus.
+      expect(recue?.maxVisitsPerSession, academie.maxVisitsPerSession + 1);
       expect(recue?.observationActivee, isTrue);
+    });
+
+    // BOUTONS-GRISES-1 : « Enregistrer » n'est jamais grise ; des quotas trop
+    // bas se disent a l'appui (annonce) et le focus va a « Augmenter ».
+    testWidgets('quotas trop bas : rien ne part, annonce et focus', (
+      WidgetTester tester,
+    ) async {
+      final List<String> annonces = ecouterAnnonces(tester);
+      GuardianObservationPolicy? recue;
+      // Un groupe personnalise dont la politique lue est sous le plancher.
+      final GuardianObservationPolicy groupe = GuardianObservationPolicy(
+        policyVersion: 'g1',
+        source: SourcePolitique.groupe,
+        observationActivee: true,
+        maxVisitsPerSession: 0,
+        maxTotalObservationTime: academie.maxTotalObservationTime,
+      );
+      await tester.pumpWidget(
+        hoteTcG(
+          ModuleReglagesObservation(
+            politiqueAcademie: academie,
+            politiqueGroupe: groupe,
+            onEnregistrer: (GuardianObservationPolicy p) => recue = p,
+          ),
+        ),
+      );
+      expect(
+        find.text(t.tc.observation.reglages.invalideVisites),
+        findsOneWidget,
+      );
+      await _presser(tester, find.text(t.tc.observation.reglages.enregistrer));
+
+      expect(recue, isNull);
+      expect(
+        annonces.single,
+        contains(t.tc.observation.reglages.invalideVisites),
+      );
+      expect(
+        FocusManager.instance.primaryFocus?.debugLabel,
+        'augmenter-visites',
+      );
     });
 
     testWidgets('desactiver ferme la porte sans toucher aux quotas', (
@@ -381,46 +618,49 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await _presser(tester, find.text(t.tc.observation.entree.entrer));
+      // Le tuteur passe par le vestibule (lot O, sous-paquet 1) : premiere
+      // utilisation, l'explication, puis « Observer maintenant ».
+      await _presser(tester, find.text(t.tc.observation.explication.observer));
     }
 
-    testWidgets('l\'enseignant et son enfant, avec leur image, et personne d\'autre', (
-      WidgetTester tester,
-    ) async {
-      final FauxMoteurClasse moteur = FauxMoteurClasse();
-      moteur.videos['enfant-1'] = const Text('image de l\'enfant');
-      moteur.videos['enfant-2'] = const Text('image d\'un camarade');
-      final FauxServiceVideoClasse video = FauxServiceVideoClasse(
-        acces0: accesDe('guardian_observer'),
-      );
+    testWidgets(
+      'l\'enseignant et son enfant, avec leur image, et personne d\'autre',
+      (WidgetTester tester) async {
+        final FauxMoteurClasse moteur = FauxMoteurClasse();
+        moteur.videos['enfant-1'] = const Text('image de l\'enfant');
+        moteur.videos['enfant-2'] = const Text('image d\'un camarade');
+        final FauxServiceVideoClasse video = FauxServiceVideoClasse(
+          acces0: accesDe('guardian_observer'),
+        );
 
-      await entrerEnVisite(tester, moteur: moteur, video: video);
+        await entrerEnVisite(tester, moteur: moteur, video: video);
 
-      // La salle est rejointe avec le jeton du role d'observation, et une
-      // seule fois.
-      expect(video.demandes, <String>['s1']);
-      expect(moteur.entrees.single.role, 'guardian_observer');
-      // Aucune capacite de publication n'est ouverte : ni micro, ni camera.
-      expect(moteur.microDemande, isEmpty);
-      expect(moteur.cameraDemandee, isEmpty);
+        // La salle est rejointe avec le jeton du role d'observation, et une
+        // seule fois.
+        expect(video.demandes, <String>['s1']);
+        expect(moteur.entrees.single.role, 'guardian_observer');
+        // Aucune capacite de publication n'est ouverte : ni micro, ni camera.
+        expect(moteur.microDemande, isEmpty);
+        expect(moteur.cameraDemandee, isEmpty);
 
-      moteur.publier(<ParticipantSalle>[
-        participantDe(identite: 'prof-1', role: 'teacher', camera: true),
-        participantDe(identite: 'enfant-1', role: 'student', camera: true),
-        participantDe(identite: 'enfant-2', role: 'student', camera: true),
-        participantDe(identite: 'enfant-3', role: 'student'),
-      ]);
-      await tester.pumpAndSettle();
+        moteur.publier(<ParticipantSalle>[
+          participantDe(identite: 'prof-1', role: 'teacher', camera: true),
+          participantDe(identite: 'enfant-1', role: 'student', camera: true),
+          participantDe(identite: 'enfant-2', role: 'student', camera: true),
+          participantDe(identite: 'enfant-3', role: 'student'),
+        ]);
+        await tester.pumpAndSettle();
 
-      expect(find.text('prof-1'), findsOneWidget);
-      expect(find.text('enfant-1'), findsOneWidget);
-      expect(find.text('image de l\'enfant'), findsOneWidget);
-      // Les camarades ne sortent pas de `VueObservationTuteur` : ni leur nom,
-      // ni -- surtout -- leur image.
-      expect(find.text('enfant-2'), findsNothing);
-      expect(find.text('image d\'un camarade'), findsNothing);
-      expect(find.text('enfant-3'), findsNothing);
-    });
+        expect(find.text('prof-1'), findsOneWidget);
+        expect(find.text('enfant-1'), findsOneWidget);
+        expect(find.text('image de l\'enfant'), findsOneWidget);
+        // Les camarades ne sortent pas de `VueObservationTuteur` : ni leur nom,
+        // ni -- surtout -- leur image.
+        expect(find.text('enfant-2'), findsNothing);
+        expect(find.text('image d\'un camarade'), findsNothing);
+        expect(find.text('enfant-3'), findsNothing);
+      },
+    );
 
     testWidgets('un jeton d\'un autre role n\'ouvre aucune salle', (
       WidgetTester tester,
@@ -486,52 +726,56 @@ void main() {
 
       expect(moteur.departs, 1);
       expect(
-        find.text(t.tc.observation.fin.quotaAtteint),
+        find.text(t.tc.observation.resultat.dureeAtteinte),
         findsOneWidget,
       );
     });
 
-    testWidgets('le budget epuise PENDANT la connexion ne laisse pas la salle jointe', (
-      WidgetTester tester,
-    ) async {
-      // **Le defaut que ce test tient fermee** : entre la demande de jeton et
-      // l'entree effective, il y a deux attentes. Si le serveur epuise le
-      // budget pendant ce temps, l'ecran affiche « visite terminee » alors que
-      // la salle finit tout de meme par etre jointe -- le parent continue de
-      // voir et d'entendre la classe apres la fin de son quota, sans que ni
-      // l'enseignant ni les enfants ne le sachent.
-      final Completer<void> connexion = Completer<void>();
-      final FauxMoteurClasse moteur = FauxMoteurClasse()
-        ..entreeSuspendue = connexion;
-      final FauxServiceVideoClasse video = FauxServiceVideoClasse(
-        acces0: accesDe('guardian_observer'),
-      );
-      final FauxPortPolitique politique = FauxPortPolitique();
-      addTearDown(politique.fermer);
+    testWidgets(
+      'le budget epuise PENDANT la connexion ne laisse pas la salle jointe',
+      (WidgetTester tester) async {
+        // **Le defaut que ce test tient fermee** : entre la demande de jeton et
+        // l'entree effective, il y a deux attentes. Si le serveur epuise le
+        // budget pendant ce temps, l'ecran affiche « visite terminee » alors que
+        // la salle finit tout de meme par etre jointe -- le parent continue de
+        // voir et d'entendre la classe apres la fin de son quota, sans que ni
+        // l'enseignant ni les enfants ne le sachent.
+        final Completer<void> connexion = Completer<void>();
+        final FauxMoteurClasse moteur = FauxMoteurClasse()
+          ..entreeSuspendue = connexion;
+        final FauxServiceVideoClasse video = FauxServiceVideoClasse(
+          acces0: accesDe('guardian_observer'),
+        );
+        final FauxPortPolitique politique = FauxPortPolitique();
+        addTearDown(politique.fermer);
 
-      await entrerEnVisite(
-        tester,
-        moteur: moteur,
-        video: video,
-        politique: politique,
-      );
-      // La connexion court encore : rien n'est joint a cet instant.
-      expect(moteur.entrees, isEmpty);
+        await entrerEnVisite(
+          tester,
+          moteur: moteur,
+          video: video,
+          politique: politique,
+        );
+        // La connexion court encore : rien n'est joint a cet instant.
+        expect(moteur.entrees, isEmpty);
 
-      // Le serveur, et lui seul, epuise le budget -- pendant la connexion.
-      politique.flux.add(unBudget(restant: Duration.zero, peutEntrer: false));
-      await tester.pumpAndSettle();
-      expect(find.text(t.tc.observation.fin.quotaAtteint), findsOneWidget);
+        // Le serveur, et lui seul, epuise le budget -- pendant la connexion.
+        politique.flux.add(unBudget(restant: Duration.zero, peutEntrer: false));
+        await tester.pumpAndSettle();
+        expect(
+          find.text(t.tc.observation.resultat.dureeAtteinte),
+          findsOneWidget,
+        );
 
-      // La connexion aboutit APRES la fin de la visite.
-      connexion.complete();
-      await tester.pumpAndSettle();
+        // La connexion aboutit APRES la fin de la visite.
+        connexion.complete();
+        await tester.pumpAndSettle();
 
-      expect(moteur.entrees, hasLength(1));
-      // La salle est refermee aussitot : la visite terminee a l'ecran est une
-      // visite terminee dans la salle.
-      expect(moteur.departs, 1);
-    });
+        expect(moteur.entrees, hasLength(1));
+        // La salle est refermee aussitot : la visite terminee a l'ecran est une
+        // visite terminee dans la salle.
+        expect(moteur.departs, 1);
+      },
+    );
   });
 
   group('La route se monte sans toucher au routeur global', () {
@@ -545,10 +789,61 @@ void main() {
           surcharges: surchargesTcG(role: AppRole.guardian),
         ),
       );
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(find.byType(EntreeObservationPage), findsOneWidget);
-      expect(find.text(t.tc.observation.entree.tuteurIntro), findsOneWidget);
+      // Le tuteur arrive sur le vestibule : l'explication de premiere
+      // utilisation, pas l'ancienne phrase d'introduction.
+      expect(find.text(t.tc.observation.explication.titre), findsOneWidget);
+      expect(find.text(t.tc.observation.entree.tuteurIntro), findsNothing);
+    });
+
+    testWidgets(
+      'interrupteur P3 ferme : le tuteur lit « pas encore disponible », sans appel',
+      (WidgetTester tester) async {
+        final FauxPortVisite visites = FauxPortVisite();
+        await tester.pumpWidget(
+          hoteRoutantTcG(
+            depart: RoutesTcG.versObservation('s1'),
+            routes: routesTcG(),
+            surcharges: surchargesTcG(
+              role: AppRole.guardian,
+              visites: visites,
+              observationReelle: false,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byType(EntreeObservationPage), findsOneWidget);
+        expect(
+          find.text(t.tc.observation.disponibilite.fermeeTitre),
+          findsOneWidget,
+        );
+        expect(find.text(t.tc.observation.entree.tuteurIntro), findsNothing);
+        expect(find.text(t.tc.observation.entree.entrer), findsNothing);
+        expect(find.text(t.tc.observation.explication.observer), findsNothing);
+        expect(visites.rolesDemandes, isEmpty);
+      },
+    );
+
+    testWidgets('interrupteur P3 ferme : l administration garde sa porte', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        hoteRoutantTcG(
+          depart: RoutesTcG.versObservation('s1'),
+          routes: routesTcG(),
+          surcharges: surchargesTcG(
+            role: AppRole.admin,
+            observationReelle: false,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.tc.observation.entree.adminIntro), findsOneWidget);
+      expect(find.text(t.commun.etats.indisponible.titre), findsNothing);
     });
   });
 }

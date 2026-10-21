@@ -11,7 +11,7 @@ import 'modeles_enseignant.dart';
 ///
 /// **Le contrat partage du lot « role Enseignant ».** Ecrit par l'Agent Z,
 /// consomme par les agents A a E, modifie par personne d'autre
-/// (`docs/architecture/TEACHER_FILE_OWNERSHIP.md`).
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/TEACHER_FILE_OWNERSHIP.md`).
 ///
 /// Il ne remplace pas `ServicePlanning`, qui suffit deja pour les
 /// disponibilites, le fuseau et les affectations, ni `ServicePresence`, ni

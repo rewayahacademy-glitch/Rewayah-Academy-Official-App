@@ -1,0 +1,77 @@
+// GALERIE-BENTO-2 : fichier temporaire, jamais commite. Galerie GrilleBento
+// face au vrai Centre de commande, 390/1440, clair/sombre.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/admin/service_admin.dart';
+import 'package:rewayah_academy/core/dossier/service_validation.dart';
+import 'package:rewayah_academy/features/_dev/galerie/catalogue_galerie.dart';
+import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
+
+import '../support/harnais.dart';
+import 'outil_capture.dart';
+
+void main() {
+  group('GALERIE-BENTO-2', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    final EntreeGalerie entree = catalogueGalerie().firstWhere(
+      (EntreeGalerie e) => e.nom == 'GrilleBento',
+    );
+    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+      final String m = mode == ThemeMode.light ? 'clair' : 'sombre';
+      for (final double largeur in <double>[390, 1440]) {
+        for (final EtatGalerie etat in entree.etats.take(2)) {
+          final String nom =
+              'galerie_${etat.nom.replaceAll(RegExp('[^a-z]+'), '_')}_${largeur.round()}_$m';
+          testWidgets(nom, (WidgetTester tester) async {
+            fixerVueCapture(tester, Size(largeur, 1100), 1);
+            await tester.pumpWidget(
+              hoteCapture(
+                Scaffold(
+                  body: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Builder(builder: etat.construire),
+                  ),
+                ),
+                themeMode: mode,
+              ),
+            );
+            await stabiliser(tester);
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+        final String nom = 'vrai_centre_commande_${largeur.round()}_$m';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, Size(largeur, 1100), 1);
+          await tester.pumpWidget(
+            hoteCapture(
+              TableauDeBordPage(horloge: () => DateTime(2026, 9, 8, 17)),
+              themeMode: mode,
+              surcharges: <Override>[
+                serviceAdminProvider.overrideWithValue(
+                  FauxServiceAdmin()
+                    ..indicateursRendus = const IndicateursAdmin(
+                      dossiersEnAttente: 5,
+                      foyersSansEnseignant: 17,
+                      rapportsManquants: 0,
+                      incidents24h: 0,
+                      comptesEchus: 0,
+                      demandesEnAttente: 3,
+                    ),
+                ),
+                serviceValidationProvider.overrideWithValue(
+                  FauxServiceValidation(),
+                ),
+              ],
+            ),
+          );
+          await stabiliser(tester);
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
+  });
+}

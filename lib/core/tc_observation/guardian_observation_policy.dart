@@ -71,13 +71,28 @@ class GuardianObservationPolicy {
   /// et pour aucun autre : servir de reference ecrite a la specification, et
   /// alimenter les doubles de test. Aucun ecran ne l'appelle -- un ecran qui
   /// l'appellerait afficherait 120 secondes a un groupe qui en a 300.
+  ///
+  /// **Realignees sur le serveur le 21/09/2026.** Elles disaient 1 visite et
+  /// 120 secondes ; la migration `0036`, APPLIQUEE en production ce jour-la,
+  /// pose desormais dans `app_config` : `max_visits_per_session = 2`,
+  /// `max_seconds_per_visit = 120`, `max_total_seconds = 240`,
+  /// `policy_version = "a2"`. Mesure faite sur la base avant et apres.
+  ///
+  /// La raison du chiffre compte autant que le chiffre : le tuteur vient voir
+  /// si son enfant PARTICIPE, et dans un groupe de cinq il peut tomber a un
+  /// moment ou ce n'est pas le tour de son enfant. Il ressort et revient. D'ou
+  /// DEUX visites de deux minutes -- et donc un total de 240 secondes, pas 120 :
+  /// deux minutes PAR VISITE, jamais deux minutes partagees.
+  ///
+  /// Une reference ecrite qui contredit le serveur est pire qu'une reference
+  /// absente : c'est elle que la prochaine session aurait recopiee.
   const GuardianObservationPolicy.defautsNormatifs({
     required this.policyVersion,
     this.source = SourcePolitique.academie,
   }) : observationActivee = true,
-       maxVisitsPerSession = 1,
-       maxTotalObservationTime = const Duration(seconds: 120),
-       maxParVisite = null,
+       maxVisitsPerSession = 2,
+       maxTotalObservationTime = const Duration(seconds: 240),
+       maxParVisite = const Duration(seconds: 120),
        microAutorise = false,
        cameraAutorisee = false,
        publicationDataAutorisee = false,

@@ -108,23 +108,28 @@ class TravailAVenir implements PortTravailAVenir {
     return List<SlotAction>.unmodifiable(actions);
   }
 
-  /// Ce que l'action dit : l'intention, puis l'endroit.
-  ///
-  /// L'intention d'abord parce que c'est elle qui fait agir -- « A revoir » dit
-  /// quoi faire, « Sourate 2, versets 255 a 257 » dit seulement ou. Une consigne
-  /// courte de l'enseignant, quand elle existe, remplace l'endroit : il a ecrit
-  /// quelque chose de plus precis que ce que nous saurions formuler.
-  String _libelle(LearningAssignment travail) {
-    final String intention = libelleIntentionParcours(travail.purpose);
-    final String? consigne = travail.instructions?.trim();
-    if (consigne != null && consigne.isNotEmpty) {
-      return '$intention : $consigne';
-    }
-    final String ou = travail.contentRange == null
-        ? t.tc.parcours.plage.ressource
-        : plageLisible(travail.contentRange!);
-    return '$intention : $ou';
+  String _libelle(LearningAssignment travail) => libelleTravail(travail);
+}
+
+/// Ce qu'un travail dit : l'intention, puis l'endroit.
+///
+/// L'intention d'abord parce que c'est elle qui fait agir -- « A revoir » dit
+/// quoi faire, « Sourate 2, versets 255 a 257 » dit seulement ou. Une consigne
+/// courte de l'enseignant, quand elle existe, remplace l'endroit : il a ecrit
+/// quelque chose de plus precis que ce que nous saurions formuler.
+///
+/// Partage par le bloc « Avant le prochain cours » et la page « Travail a
+/// preparer » de la classe : une seule formulation du meme travail.
+String libelleTravail(LearningAssignment travail) {
+  final String intention = libelleIntentionParcours(travail.purpose);
+  final String? consigne = travail.instructions?.trim();
+  if (consigne != null && consigne.isNotEmpty) {
+    return '$intention : $consigne';
   }
+  final String ou = travail.contentRange == null
+      ? t.tc.parcours.plage.ressource
+      : plageLisible(travail.contentRange!);
+  return '$intention : $ou';
 }
 
 /// Le travail a venir employe par l'application.
@@ -153,6 +158,19 @@ class TravailAVenir implements PortTravailAVenir {
 /// SourceContenuSeance)` ; jusque-la il vaut `null`, et l'ecran le dit.
 final Provider<PortTravailAVenir?> portTravailAVenirProvider =
     Provider<PortTravailAVenir?>((Ref ref) => null);
+
+/// La lecture du travail d'une classe par la famille (page « Travail a
+/// preparer » du tuteur).
+///
+/// **`null` = non branche**, comme [portTravailAVenirProvider] : l'ecran dit
+/// que le travail n'est pas encore relie, jamais « rien a preparer ». Distinct
+/// de `portAssignationsProvider`, qui sert l'ecriture enseignante (dock) et
+/// leve tant qu'il n'a pas d'implementation : la famille ne fait que lire
+/// (`learning_assignment`, policy `learning_assignment_membres`, `0032`).
+/// L'adaptateur de lecture `lib/core/tc_outils/assignations_supabase.dart`
+/// reste a ecrire par le lot C ; marquer un travail fait attend DB-CRS-10.
+final Provider<PortAssignations?> assignationsFamilleProvider =
+    Provider<PortAssignations?>((Ref ref) => null);
 
 /// Le groupe, et eventuellement l'eleve, dont on lit le travail a venir.
 ///

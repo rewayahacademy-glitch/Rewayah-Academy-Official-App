@@ -1,0 +1,249 @@
+// Captures de MA-2COL-1 : l'Accueil du Mode Accessibilite sur la VRAIE
+// route de l'eleve (`/eleve`), deux colonnes retablies a partir de 840 /
+// facteur de texte (fiche ELV-02-MA) : contenu en une et deux colonnes, LTR
+// et RTL, clair et sombre ; chargement, hors ligne, vide et erreur en
+// largeur de bureau.
+//
+// Saute sans CAPTURE_DIR : la CI ne l'execute jamais et n'ecrit rien.
+
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/accessibilite/port_accueil_accessibilite.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
+
+import '../router/support_routeur.dart' show sessionActive, surchargesRouteur;
+import '../support/harnais.dart' show FausseSourceSession;
+import 'outil_capture.dart';
+
+/// Un port dont la reponse n'arrive jamais : le squelette reste.
+class _PortEnAttente implements PortAccueilAccessibilite {
+  @override
+  Future<DonneesAccueilAccessibilite> lire() =>
+      Completer<DonneesAccueilAccessibilite>().future;
+}
+
+Future<void> _monter(
+  WidgetTester tester, {
+  required ThemeMode theme,
+  required double echelle,
+  required TextDirection sens,
+  required PortAccueilAccessibilite port,
+  bool horsLigne = false,
+}) async {
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: <Override>[
+        ...surchargesRouteur(
+          FausseSourceSession(
+            sessionActive(AppRole.student, mode: InterfaceMode.enfant),
+          ),
+        ),
+        portAccueilAccessibiliteProvider.overrideWithValue(port),
+        if (horsLigne)
+          horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+      ],
+      child: TranslationProvider(
+        child: RepaintBoundary(
+          key: cadreCapture,
+          child: Consumer(
+            builder: (BuildContext _, WidgetRef ref, Widget? _) =>
+                MaterialApp.router(
+                  debugShowCheckedModeBanner: false,
+                  theme: AppTheme.pour(InterfaceMode.enfant, Brightness.light),
+                  darkTheme: AppTheme.pour(
+                    InterfaceMode.enfant,
+                    Brightness.dark,
+                  ),
+                  themeMode: theme,
+                  routerConfig: ref.read(routeurProvider),
+                  locale: AppLocale.fr.flutterLocale,
+                  supportedLocales: AppLocaleUtils.supportedLocales,
+                  localizationsDelegates: GlobalMaterialLocalizations.delegates,
+                  builder: (BuildContext contexte, Widget? app) => MediaQuery(
+                    data: MediaQuery.of(contexte)
+                        .copyWith(textScaler: TextScaler.linear(echelle)),
+                    child: Directionality(textDirection: sens, child: app!),
+                  ),
+                ),
+          ),
+        ),
+      ),
+    ),
+  );
+  // Le squelette a son delai d'apparition (`Skeleton`) : il est passe.
+  await stabiliser(tester);
+}
+
+void main() {
+  group('Capture : MA-2COL-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    const PortAccueilAccessibilite contenu = PortAccueilAccessibiliteDemo(
+      eleve: EleveDemoAccessibilite.mariam,
+    );
+    const TextDirection ltr = TextDirection.ltr;
+    const TextDirection rtl = TextDirection.rtl;
+    final List<
+      (
+        String,
+        PortAccueilAccessibilite,
+        bool,
+        Size,
+        ThemeMode,
+        double,
+        TextDirection,
+      )
+    >
+    cas =
+        <
+          (
+            String,
+            PortAccueilAccessibilite,
+            bool,
+            Size,
+            ThemeMode,
+            double,
+            TextDirection,
+          )
+        >[
+          (
+            'contenu_320x2_ltr_clair',
+            contenu,
+            false,
+            const Size(320, 3400),
+            ThemeMode.light,
+            2,
+            ltr,
+          ),
+          (
+            'contenu_320x2_rtl_sombre',
+            contenu,
+            false,
+            const Size(320, 3400),
+            ThemeMode.dark,
+            2,
+            rtl,
+          ),
+          (
+            'contenu_390_ltr_clair',
+            contenu,
+            false,
+            const Size(390, 1500),
+            ThemeMode.light,
+            1,
+            ltr,
+          ),
+          (
+            'contenu_1440_ltr_clair',
+            contenu,
+            false,
+            const Size(1440, 1100),
+            ThemeMode.light,
+            1,
+            ltr,
+          ),
+          (
+            'contenu_1440_rtl_clair',
+            contenu,
+            false,
+            const Size(1440, 1100),
+            ThemeMode.light,
+            1,
+            rtl,
+          ),
+          (
+            'contenu_1440_ltr_sombre',
+            contenu,
+            false,
+            const Size(1440, 1100),
+            ThemeMode.dark,
+            1,
+            ltr,
+          ),
+          (
+            'contenu_1440x2_ltr_clair',
+            contenu,
+            false,
+            const Size(1440, 2200),
+            ThemeMode.light,
+            2,
+            ltr,
+          ),
+          (
+            'horsligne_1440_ltr_clair',
+            contenu,
+            true,
+            const Size(1440, 1100),
+            ThemeMode.light,
+            1,
+            ltr,
+          ),
+          (
+            'vide_1440_ltr_clair',
+            const PortAccueilAccessibiliteDemo(
+              eleve: EleveDemoAccessibilite.idriss,
+              situation: SituationAccueilDemo.vide,
+            ),
+            false,
+            const Size(1440, 1100),
+            ThemeMode.light,
+            1,
+            ltr,
+          ),
+          (
+            'erreur_1440_ltr_clair',
+            const PortAccueilAccessibiliteDemo(
+              eleve: EleveDemoAccessibilite.mariam,
+              situation: SituationAccueilDemo.erreur,
+            ),
+            false,
+            const Size(1440, 1100),
+            ThemeMode.light,
+            1,
+            ltr,
+          ),
+          (
+            'chargement_1440_ltr_clair',
+            _PortEnAttente(),
+            false,
+            const Size(1440, 1100),
+            ThemeMode.light,
+            1,
+            ltr,
+          ),
+        ];
+    for (final (
+          String nom,
+          PortAccueilAccessibilite port,
+          bool horsLigne,
+          Size taille,
+          ThemeMode theme,
+          double echelle,
+          TextDirection sens,
+        )
+        in cas) {
+      testWidgets(nom, (WidgetTester tester) async {
+        fixerVueCapture(tester, taille, 1);
+        await _monter(
+          tester,
+          theme: theme,
+          echelle: echelle,
+          sens: sens,
+          port: port,
+          horsLigne: horsLigne,
+        );
+        debugPrint('PNG ${await capturer(tester, 'ma_2col_$nom')}');
+      });
+    }
+  });
+}

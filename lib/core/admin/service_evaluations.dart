@@ -175,11 +175,6 @@ class EvaluationAdmin {
     ].whereType<String>().join(' ').trim();
     return complet.isEmpty ? identifiant : complet;
   }
-
-  /// Vrai pour une certification reussie.
-  bool get estCertificationReussie =>
-      type == TypeEvaluation.certification &&
-      resultat == ResultatEvaluation.reussi;
 }
 
 /// La gestion des evaluations par l'administration.

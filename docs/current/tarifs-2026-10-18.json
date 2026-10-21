@@ -1,0 +1,153 @@
+{
+  "source": "docs/current/sources-directeur-2026-10/OFFRE_ET_TARIFS_2026-10-18.md",
+  "autorite": "docs/current/DECISION-TARIFS-2026-10-18.md",
+  "version": "2026-10-18",
+  "devise": "USD",
+  "prix_hors_taxes": true,
+  "montants": "entiers en centimes de dollar (unites mineures)",
+  "formules": {
+    "enfant": {
+      "age_min": 6,
+      "age_max_inclus": 17,
+      "prix_mensuel_mineur": 5500,
+      "seances_par_semaine": 3,
+      "duree_minutes": 60,
+      "pause_minutes": 5,
+      "heures_par_mois": 13,
+      "prix_seance_mineur": 423,
+      "groupe_min": 3,
+      "groupe_max": 5,
+      "duree_minimale_due_minutes": 45,
+      "trimestriel_mineur": 15700,
+      "annuel_mineur": 59400,
+      "duo_mensuel_mineur": 16500
+    },
+    "adulte": {
+      "age_min": 18,
+      "age_max_inclus": null,
+      "prix_mensuel_mineur": 6500,
+      "seances_par_semaine": 3,
+      "duree_minutes": 90,
+      "pause_minutes": 10,
+      "heures_par_mois": 19.5,
+      "prix_seance_mineur": 500,
+      "groupe_min": 3,
+      "groupe_max": 6,
+      "duree_minimale_due_minutes": 70,
+      "trimestriel_mineur": 18500,
+      "annuel_mineur": 70200,
+      "duo_mensuel_mineur": 19500
+    }
+  },
+  "remises": {
+    "foyer": [
+      {
+        "a_partir_du_rang": 2,
+        "pour_mille": 80
+      },
+      {
+        "a_partir_du_rang": 3,
+        "pour_mille": 170
+      }
+    ],
+    "prepaiement": {
+      "trimestriel_pour_mille": 50,
+      "annuel_pour_mille": 100
+    },
+    "parrainage_credit_mineur": 2000,
+    "bourse": {
+      "pour_mille": 300,
+      "places_max_pour_mille_des_eleves": 50,
+      "revue_mois": 6,
+      "cumulable": false
+    },
+    "cumul_max_pour_mille": 250
+  },
+  "essai_gratuit": false,
+  "premiere_semaine_remboursee_jours": 7,
+  "calendrier_paiement": {
+    "renouvellement_jour": 1,
+    "relances_jours_avant": [
+      7,
+      3,
+      1
+    ],
+    "grace_jours": [
+      1,
+      2,
+      3
+    ],
+    "suspension_jour": 4,
+    "place_gardee_jours": 14,
+    "place_liberee_jour": 18
+  },
+  "enseignant": {
+    "taux_par_eleve_present_heure_mineur": {
+      "enfant": 199,
+      "adulte": 157
+    },
+    "part_du_prix_pour_mille": {
+      "enfant": 470,
+      "adulte": 470
+    },
+    "paie_mois_eleve_present_toutes_seances_mineur": {
+      "enfant": 2587,
+      "adulte": 3062
+    },
+    "decision_part": "2026-10-19",
+    "groupe_plein_heure_mineur": {
+      "enfant": 995,
+      "adulte": 942
+    },
+    "palier_retention": null,
+    "plafond": {
+      "enfant": 199,
+      "adulte": 157
+    },
+    "duo_paye_comme_presents": 3,
+    "versement_jours_du_mois": [
+      1,
+      5
+    ],
+    "frais_de_transfert": "a la charge de l'academie",
+    "verrou_coordonnees_heures": 48,
+    "absence_eleve_payee": false,
+    "paie_en_attente_si_cahier_hebdomadaire_manque": true
+  },
+  "regles_publiques": {
+    "groupe_ouvre_a_partir_de": 3,
+    "liste_attente_non_facturee": true,
+    "absence_eleve_remboursee": false,
+    "seance_annulee_par_academie": "remplacee",
+    "observation_parent_minutes": 2,
+    "enregistrement_audio": false,
+    "cahier_transmission": "hebdomadaire",
+    "langues": [
+      "poular",
+      "francais",
+      "anglais",
+      "arabe",
+      "autre selon les enseignants"
+    ]
+  },
+  "economie_reference_100_eleves": {
+    "eleves": {
+      "enfants": 55,
+      "adultes": 45
+    },
+    "presence_pour_mille": 900,
+    "encaisse_mineur": 562700,
+    "enseignants_mineur": 249700,
+    "resultat_net_mineur": 91900,
+    "marge_nette_pour_mille": 163,
+    "point_mort_eleves": 58,
+    "autres_charges_mineur": 199600
+  },
+  "site_public": {
+    "encart_enfant": "Cours de Coran pour enfants et adolescents, 6 à 17 ans. 55 $ par mois, hors taxes. Trois séances d'une heure par semaine, à heure fixe, dans un groupe de 3 à 5 élèves avec le même enseignant. Cours en poular, français, anglais, arabe ou autre langue selon la disponibilité des enseignants. Le parent peut entrer dans la séance en observateur silencieux, 2 minutes par séance, et reçoit chaque fin de semaine le compte rendu de l'enseignant dans l'application. Première semaine remboursée si le cours ne convient pas. Résiliable chaque mois.",
+    "encart_adulte": "Cours de Coran pour adultes, à partir de 18 ans. 65 $ par mois, hors taxes. Trois séances de 90 minutes par semaine, pause comprise, à heure fixe, dans un groupe de 3 à 6 personnes avec le même enseignant. Cours en poular, français, anglais, arabe ou autre langue selon la disponibilité des enseignants. Compte rendu de l'enseignant chaque fin de semaine. Première semaine remboursée si le cours ne convient pas. Résiliable chaque mois.",
+    "encart_remises": "Deuxième inscrit du foyer : 8 % de remise sur sa place. Troisième et suivants : 17 %. Paiement au trimestre : 5 % de remise. Paiement à l'année : 10 %. Parrainez une famille : 20 $ de crédit pour vous et pour elle après son premier mois. Une bourse de 30 % existe pour les familles en difficulté et pour les personnes récemment converties, sur simple demande écrite (places limitées).",
+    "mentions_sous_la_grille": "Prix en dollars américains, hors taxes ; la taxe de votre pays et le montant en euros, livres ou dollars canadiens s'affichent au paiement. Un groupe ouvre dès 3 inscrits ; avant, vous êtes en liste d'attente et rien n'est facturé. Une inscription en cours de mois paie seulement les séances restantes. Une place manquée n'est pas remboursée : elle est réservée dans un groupe fixe. Une séance annulée par l'académie est remplacée. Un contrôleur qualité peut assister aux séances sans être vu.",
+    "encart_enseignant": "Rewayah Academy recrute des enseignants de Coran pour des classes de 3 à 6 élèves en visioconférence, trois fois par semaine, en poular, français, anglais, arabe ou autre langue. Vous recevez 47 % de ce que paie chaque élève présent : jusqu'à 129 $ par mois pour une classe d'enfants pleine et 183 $ pour une classe d'adultes pleine, versés avant le 5 de chaque mois, frais de transfert à notre charge. Un enseignant à trois classes d'adultes peut gagner jusqu'à 550 $ par mois pour 13 h 30 par semaine. Vous choisissez vos créneaux ; l'académie compose les classes."
+  }
+}

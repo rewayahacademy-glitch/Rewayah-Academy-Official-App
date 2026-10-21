@@ -64,3 +64,20 @@ export async function appelant(requete: Request): Promise<{ id: string } | null>
   }
   return { id: data.user.id }
 }
+
+/// Client qui conserve le JWT de l'appelant pour les RPC autorisees aux comptes.
+export function clientAuthentifie(requete: Request): SupabaseClient | null {
+  const entete = requete.headers.get('Authorization')
+  if (!entete?.startsWith('Bearer ')) {
+    return null
+  }
+  const url = Deno.env.get('SUPABASE_URL')
+  const cle = Deno.env.get('SUPABASE_ANON_KEY')
+  if (!url || !cle) {
+    throw new Error('configuration absente : SUPABASE_URL ou SUPABASE_ANON_KEY')
+  }
+  return createClient(url, cle, {
+    global: { headers: { Authorization: entete } },
+    auth: { persistSession: false },
+  })
+}

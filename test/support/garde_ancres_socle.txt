@@ -1,0 +1,54 @@
+# DUREE-FOND-1 (10/10) : socle de la garde de SOURCE des ancres de sens
+# (test/support/garde_ancres.dart), filet complementaire de la garde a
+# l'execution (test/support/garde_ancres_execution.dart, toute la suite).
+#
+# Chaque ligne : fichier | dernier maillon de la chaine relevee. Ces releves
+# sont des faux positifs de la lecture du source : la garde suit un champ par
+# son nom, et deux chaines l'egarent :
+# - ConfigLigneEntiere.affichage (valeur seule dans SettingRow.value), puis
+#   une lecture `.value` d'un autre objet (AsyncValue, ValueNotifier) prise
+#   pour SettingRow.value, menent aux formatages de montant et de date des
+#   ecrans de finance (aucun n'appelle valeurSeule, dureeSeule, ancreSens) ;
+# - FilterPill.libelle (acces_agents) puis une lecture `.libelle` d'un autre
+#   objet prise pour StatusPill.libelle (file de moderation).
+# Le seul vrai cas trouve sur la ligne reunie (config_edition.dart,
+# horsBornes) est corrige a la source. Le socle ne peut que diminuer :
+# test/accessibilite/duree_insecable_5_test.dart (groupe 2) echoue sur une entree
+# que la garde ne trouve plus.
+lib/core/finance/format_montant.dart | chiffres : ecrite dans un tampon, derriere son contenu
+lib/core/finance/format_montant.dart | reste : interpolee au milieu d'une chaine
+lib/core/finance/format_montant.dart | symboleDe : interpolee au milieu d'une chaine
+lib/core/widgets/comptable/carte_reserve_strategique.dart | i : argument du libelle c.atteint
+lib/core/widgets/comptable/carte_reserve_strategique.dart | mois : argument du libelle c.objectifMois
+lib/core/widgets/comptable/ligne_activite.dart | locale : argument du libelle t.comptable.commun.date
+lib/core/widgets/montant_sensible.dart | symboleDe : interpolee au milieu d'une chaine
+lib/features/acces_finance/acces_finance.dart | montant : argument du libelle t.argent.acces.regulariserManque
+lib/features/acces_finance/acces_finance.dart | montant : argument du libelle t.argent.acces.regulariserManqueNouvellePeriode
+lib/features/admin_finance/politiques_commerciales.dart | EtatSysteme.nature : interpolee au milieu d'une chaine
+lib/features/admin_finance/politiques_commerciales.dart | _texteValeur : argument du libelle pol.erreurMargeForte
+lib/features/admin_finance/politiques_commerciales.dart | _texteValeur : argument du libelle pol.erreurMargeStretch
+lib/features/admin_finance/politiques_commerciales.dart | _texteValeur : argument du libelle pol.erreurPlafond
+lib/features/admin_finance/politiques_commerciales.dart | _texteValeur : argument du libelle pol.erreurRemise
+lib/features/admin_finance/politiques_commerciales.dart | formaterMontant : argument du libelle pol.apercuRemise
+lib/features/admin_finance/politiques_commerciales.dart | formaterMontant : argument du libelle pol.parHeure
+lib/features/admin_finance/politiques_commerciales.dart | valeur : argument du libelle t.admin.finance.pol.versionActiveValeur
+lib/features/admin_finance/vue_globale_finance.dart | montant : argument du libelle alerteT.aRegulariserMontant
+lib/features/admin_finance/vue_globale_finance.dart | montant : argument du libelle alerteT.confirmationMontant
+lib/features/com_annonces/file_moderation.dart | StatusPill.libelle : argument du libelle m.motif
+lib/features/com_annonces/file_moderation.dart | StatusPill.libelle : argument du libelle m.ouvrirSemantique
+lib/features/comptable/paiements/confirmation/confirmation_payout.dart | formaterMontant : element d'une collection jointe
+lib/features/foyer/fiche/finances_page.dart | formaterMontant : argument du libelle t.ficheEleve.finances.mensualiteValeur
+lib/features/foyer/fiche/finances_page.dart | formaterMontant : argument du libelle t.ficheEleve.finances.periodeAFinancerValeur
+lib/features/foyer/fiche/finances_page.dart | formaterMontant : argument du libelle t.foyer.finances.prochainDebitValeur
+lib/features/foyer/finances_foyer.dart | formaterMontant : argument du libelle t.ficheEleve.finances.periodeAFinancerValeur
+lib/features/foyer/finances_foyer.dart | formaterMontant : argument du libelle t.foyer.finances.prochainDebitValeur
+lib/features/foyer/finances_foyer.dart | manque : argument du libelle t.ficheEleve.finances.manquePourMois
+lib/features/foyer/finances_foyer.dart | manque : argument du libelle t.foyer.finances.manque
+lib/features/foyer/recharge_foyer.dart | RecapitulatifRecharge.total : argument du libelle t.adulte.recharge.payer
+lib/features/foyer/recharge_foyer.dart | formaterMontant : argument du libelle t.adulte.recharge.soldeActuel
+lib/features/foyer/resultat_recharge.dart | formaterMontant : argument du libelle r.nouveauSolde
+lib/features/foyer/resultat_recharge.dart | formaterMontant : argument du libelle r.terminePhrase
+lib/features/revenus_enseignant/revenus_enseignant_page.dart | _Cellule.texte : interpolee au milieu
+lib/features/revenus_enseignant/revenus_enseignant_page.dart | base : argument du libelle t.enseignant.revenus.baseDetail
+lib/features/revenus_enseignant/revenus_enseignant_page.dart | formaterMontant : argument du libelle t.enseignant.revenus.tauxValeur
+lib/features/revenus_enseignant/revenus_enseignant_page.dart | plafond : argument du libelle t.enseignant.revenus.plafondDetail

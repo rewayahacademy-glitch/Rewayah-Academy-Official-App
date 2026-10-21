@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:livekit_client/livekit_client.dart' as lk;
 
+import '../observabilite/journal_dev.dart';
 import 'video_session_provider.dart';
 
 /// La seule implementation du contrat, et le seul endroit ou le SDK est
@@ -148,7 +149,7 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     try {
       await salle.connect(acces.urlServeur, acces.jeton);
     } catch (e) {
-      debugPrint('connexion a la salle impossible : $e');
+      journalDev('connexion a la salle impossible : $e');
       _poser(EtatSalle.echec);
       await quitter();
       rethrow;
@@ -289,7 +290,7 @@ class LiveKitSessionProvider implements VideoSessionProvider {
         _contenus.add(contenu);
       }
     } catch (e) {
-      debugPrint('contenu presente illisible : $e');
+      journalDev('contenu presente illisible : $e');
     }
   }
 
@@ -340,7 +341,7 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     } catch (e) {
       // Un paquet perdu n'interrompt pas un cours : l'enseignant tournera la
       // page a nouveau, et la reconnexion republie de toute facon.
-      debugPrint('contenu presente non publie : $e');
+      journalDev('contenu presente non publie : $e');
     }
   }
 
@@ -389,7 +390,8 @@ class LiveKitSessionProvider implements VideoSessionProvider {
       return;
     }
 
-    final bool mauvais = lien == QualiteLien.mediocre || lien == QualiteLien.perdue;
+    final bool mauvais =
+        lien == QualiteLien.mediocre || lien == QualiteLien.perdue;
 
     if (mauvais && !_degradee) {
       _cameraAvantDegradation = local.isCameraEnabled();
@@ -513,7 +515,8 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     // Cesser de RECEVOIR la video, et pas seulement d'en emettre : c'est la
     // moitie du gain. Une salle de six coute autant en reception qu'en
     // emission, et c'est la reception qui vide un forfait mobile.
-    for (final lk.RemoteParticipant distant in salle.remoteParticipants.values) {
+    for (final lk.RemoteParticipant distant
+        in salle.remoteParticipants.values) {
       for (final lk.RemoteTrackPublication<lk.RemoteVideoTrack> piste
           in distant.videoTrackPublications) {
         if (actif) {
@@ -582,7 +585,7 @@ class LiveKitSessionProvider implements VideoSessionProvider {
       try {
         await salle.disconnect();
       } catch (e) {
-        debugPrint('deconnexion imparfaite : $e');
+        journalDev('deconnexion imparfaite : $e');
       }
       await salle.dispose();
     }

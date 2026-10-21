@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../tc_outils/fonction_indisponible.dart';
 import 'student_concern.dart';
 
 /// Le signalement structure (`TEACHING_CORE_CONTRACTS.md` section 16).
@@ -49,7 +50,7 @@ abstract class PortSignalement {
 ///
 /// **DOUBLE LOCAL ASSUME.** Aucune table `student_concern` n'existe en base :
 /// la demande SQL est en section 2 de
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_H.md`. La forme a reprendre est celle
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_H.md`. La forme a reprendre est celle
 /// de `matching_requests` (demande -> decision admin -> audit), **pas la table
 /// elle-meme** : `0022_progression_suivi.sql` interdit explicitement de
 /// l'etendre avec des clefs pedagogiques.
@@ -85,7 +86,10 @@ class SignalementMemoire implements PortSignalement {
     if (interne.isEmpty) {
       throw const EchecSignalement(MotifEchecSignalement.interneVide);
     }
-    final String? famille = familySummary?.trim();
+    // La securite d'un enfant n'a jamais de message pour la famille.
+    final String? famille = categorie.estSecuriteEnfant
+        ? null
+        : familySummary?.trim();
 
     final StudentConcern signalement = StudentConcern(
       id: _generateur.v4(),
@@ -109,7 +113,11 @@ class SignalementMemoire implements PortSignalement {
   Future<List<StudentConcern>> mesSignalements({String? groupeId}) async =>
       List<StudentConcern>.unmodifiable(
         _signalements.where(
-          (StudentConcern s) => groupeId == null || s.groupeId == groupeId,
+          // Comme le serveur : l'enseignant ne relit jamais un signalement de
+          // securite d'un enfant.
+          (StudentConcern s) =>
+              !s.categorie.estSecuriteEnfant &&
+              (groupeId == null || s.groupeId == groupeId),
         ),
       );
 
@@ -133,15 +141,44 @@ class SignalementMemoire implements PortSignalement {
   }
 }
 
+/// Le signalement quand aucun serveur n'est branche.
+///
+/// SALLE-ROBUSTE : aucun signalement n'est connu, et signaler ou transmettre
+/// leve [FonctionIndisponible]. Il n'avale jamais un signalement : un
+/// enseignant ne doit pas croire que l'administration a ete prevenue.
+class SignalementIndisponible implements PortSignalement, PortIndisponible {
+  /// Cree le signalement indisponible.
+  const SignalementIndisponible();
+
+  static const FonctionIndisponible _echec = FonctionIndisponible(
+    'signalement',
+  );
+
+  @override
+  Future<StudentConcern> signaler({
+    required CategorieSignalement categorie,
+    required String groupeId,
+    String? sessionId,
+    required String academyId,
+    required String internalDetails,
+    String? familySummary,
+  }) => Future<StudentConcern>.error(_echec);
+
+  @override
+  Future<List<StudentConcern>> mesSignalements({String? groupeId}) async =>
+      const <StudentConcern>[];
+
+  @override
+  Future<void> transmettre({
+    required String concernId,
+    required CibleTransmission cible,
+  }) => Future<void>.error(_echec);
+}
+
 /// Le signalement employe par l'application.
 ///
-/// **Aucune implementation serveur n'existe.** Le provider echoue plutot que de
-/// rendre un double : un signalement avale en memoire laisserait un enseignant
-/// croire que l'administration a ete prevenue.
+/// Sans serveur, il rend [SignalementIndisponible] : l'ecran dit que la
+/// fonction n'est pas encore disponible au lieu de lever. Agent Z le surcharge
+/// a l'integration (`SignalementMemoire` pour les tests et la demonstration).
 final Provider<PortSignalement> portSignalementProvider =
-    Provider<PortSignalement>(
-      (Ref ref) => throw UnimplementedError(
-        'PortSignalement : aucune implementation serveur. '
-        'Surcharger ce provider (SignalementMemoire en attendant la table).',
-      ),
-    );
+    Provider<PortSignalement>((Ref ref) => const SignalementIndisponible());

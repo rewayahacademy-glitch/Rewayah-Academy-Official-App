@@ -1,13 +1,11 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/tc_classe/roster_classe_vm.dart';
 import 'package:rewayah_academy/core/tc_classe/roster_enseignant.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
-import 'package:rewayah_academy/features/tc_classe_live/fiche_seance.dart';
-import 'package:rewayah_academy/features/tc_classe_live/roster_classe.dart';
+import 'package:rewayah_academy/features/tc_espace_groupe/roster_classe.dart';
 
-import 'faux/faux_classe.dart';
 import 'support/hote_classe.dart';
 
 /// **Le test de non-regression le plus important du lot.**
@@ -69,11 +67,10 @@ void main() {
       if (t.data case final String texte) texte,
     for (final Semantics s in tester.widgetList<Semantics>(
       find.byType(Semantics),
-    ))
-      ...<String>[
-        if (s.properties.label case final String etiquette) etiquette,
-        if (s.properties.value case final String valeur) valeur,
-      ],
+    )) ...<String>[
+      if (s.properties.label case final String etiquette) etiquette,
+      if (s.properties.value case final String valeur) valeur,
+    ],
   ];
 
   void aucunInterdit(List<String> mots) {
@@ -177,61 +174,6 @@ void main() {
       expect(find.text('Amina'), findsOneWidget);
       expect(find.text('RA-AB0012'), findsOneWidget);
       aucunInterdit(motsRendus(tester));
-    });
-
-    testWidgets('la fiche pedagogique ne rend aucune PII', (
-      WidgetTester tester,
-    ) async {
-      final TeacherStudentProjection fiche = ficheDepuisRosterV(
-        ligneRosterPolluee(),
-      );
-      await tester.pumpWidget(
-        hoteClasse(
-          FicheSeance(eleve: fiche, sessionId: 's1'),
-          surcharges: surchargesClasse(
-            moteur: FauxMoteurClasse(),
-            video: FauxServiceVideoClasse(),
-            preVol: FauxPreVolClasse(),
-            rappel: FauxRappelDiscret(),
-          ),
-        ),
-      );
-      await tester.pump();
-
-      expect(find.text('Amina'), findsOneWidget);
-      expect(find.text('RA-AB0012'), findsOneWidget);
-      expect(find.text('Decodage consolide'), findsOneWidget);
-      aucunInterdit(motsRendus(tester));
-    });
-
-    testWidgets('aucune UI n ecrit « mode enfant »', (
-      WidgetTester tester,
-    ) async {
-      // Decision D-07 : le nom visible est « Interface guidée ». La valeur SQL
-      // reste `'child'`, et ce n'est pas un renommage de donnee.
-      const TeacherStudentProjection fiche = TeacherStudentProjection(
-        firstName: 'Ilyas',
-        academyId: 'RA-CD0044',
-        liveStatus: EtatPresenceProjete.present,
-        interfaceGuidee: true,
-        level: 'Debutant',
-      );
-      await tester.pumpWidget(
-        hoteClasse(
-          const FicheSeance(eleve: fiche, sessionId: 's1'),
-          surcharges: surchargesClasse(
-            moteur: FauxMoteurClasse(),
-            video: FauxServiceVideoClasse(),
-            preVol: FauxPreVolClasse(),
-            rappel: FauxRappelDiscret(),
-          ),
-        ),
-      );
-      await tester.pump();
-
-      final String tout = motsRendus(tester).join(' | ').toLowerCase();
-      expect(tout.contains('mode enfant'), isFalse);
-      expect(tout.contains('interface guidée'), isTrue);
     });
   });
 }

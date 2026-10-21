@@ -92,12 +92,16 @@ class ChoixEntreeObservation extends StatelessWidget {
           // l'accepte chaque jour.
           Text(t.tc.observation.entree.visiteJournalisee, style: discret),
         ],
-        Ecart.vXl,
-        ActionPrincipale(
-          libelle: t.tc.observation.entree.entrer,
-          onPress: options.observationPossible ? onEntrer : null,
-          enCours: enCours,
-        ),
+        // Un compte qui n'observe pas n'a pas d'entree : le bouton n'est pas
+        // rendu (jamais grise, BOUTONS-GRISES-1) ; l'intro le dit.
+        if (options.observationPossible) ...<Widget>[
+          Ecart.vXl,
+          ActionPrincipale(
+            libelle: t.tc.observation.entree.entrer,
+            onPress: onEntrer,
+            enCours: enCours,
+          ),
+        ],
       ],
     );
   }

@@ -24,8 +24,11 @@ void main() {
 
       expect(produite.source, SourcePolitique.academie);
       expect(produite.observationActivee, isTrue);
-      expect(produite.maxVisitsPerSession, 1);
-      expect(produite.maxTotalObservationTime, const Duration(seconds: 120));
+      // Les valeurs de l'Academie, pas celles saisies : heriter, c'est
+      // precisement ne pas les remplacer. Elles valent 2 visites et 240 s
+      // depuis la migration `0036`, appliquee le 21/09/2026.
+      expect(produite.maxVisitsPerSession, 2);
+      expect(produite.maxTotalObservationTime, const Duration(seconds: 240));
     });
 
     test('desactiver ferme la porte, et se journalise comme tel', () {
@@ -58,9 +61,9 @@ void main() {
           EtatReglagesObservation.depuis(_academie);
 
       expect(depuisHeritage.source, SourcePolitique.academie);
-      expect(depuisHeritage.maxVisites, 1);
-      expect(depuisHeritage.tempsTotal, const Duration(seconds: 120));
-      expect(depuisHeritage.avecSource(SourcePolitique.groupe).maxVisites, 1);
+      expect(depuisHeritage.maxVisites, 2);
+      expect(depuisHeritage.tempsTotal, const Duration(seconds: 240));
+      expect(depuisHeritage.avecSource(SourcePolitique.groupe).maxVisites, 2);
     });
   });
 
@@ -94,7 +97,10 @@ void main() {
     test('une valeur heritee hors bornes n\'est pas reprochee au groupe', () {
       // Les bornes sont celles de la saisie : une politique Academie
       // surprenante est la responsabilite de l'Academie.
-      final EtatReglagesObservation herite = _etat(visites: 0, temps: Duration.zero);
+      final EtatReglagesObservation herite = _etat(
+        visites: 0,
+        temps: Duration.zero,
+      );
 
       expect(herite.valide, isTrue);
     });
@@ -104,10 +110,22 @@ void main() {
         source: SourcePolitique.groupe,
       );
 
-      expect(depart.deplacerVisites(-5).maxVisites, EtatReglagesObservation.visitesMin);
-      expect(depart.deplacerVisites(99).maxVisites, EtatReglagesObservation.visitesMax);
-      expect(depart.deplacerTemps(-99).tempsTotal, EtatReglagesObservation.tempsMin);
-      expect(depart.deplacerTemps(999).tempsTotal, EtatReglagesObservation.tempsMax);
+      expect(
+        depart.deplacerVisites(-5).maxVisites,
+        EtatReglagesObservation.visitesMin,
+      );
+      expect(
+        depart.deplacerVisites(99).maxVisites,
+        EtatReglagesObservation.visitesMax,
+      );
+      expect(
+        depart.deplacerTemps(-99).tempsTotal,
+        EtatReglagesObservation.tempsMin,
+      );
+      expect(
+        depart.deplacerTemps(999).tempsTotal,
+        EtatReglagesObservation.tempsMax,
+      );
     });
 
     test('un pas de temps vaut trente secondes', () {
@@ -150,7 +168,10 @@ void main() {
         plafond: const Duration(seconds: 120),
       );
 
-      expect(depart.deplacerPlafond(1).plafondEffectif, const Duration(seconds: 150));
+      expect(
+        depart.deplacerPlafond(1).plafondEffectif,
+        const Duration(seconds: 150),
+      );
       expect(
         depart.deplacerPlafond(99).plafondEffectif,
         const Duration(seconds: 240),
@@ -170,7 +191,10 @@ void main() {
         temps: const Duration(seconds: 30),
       );
 
-      expect(serre.deplacerPlafond(-1).plafondEffectif, const Duration(seconds: 30));
+      expect(
+        serre.deplacerPlafond(-1).plafondEffectif,
+        const Duration(seconds: 30),
+      );
     });
 
     test('personnaliser envoie toujours un plafond, jamais nul', () {

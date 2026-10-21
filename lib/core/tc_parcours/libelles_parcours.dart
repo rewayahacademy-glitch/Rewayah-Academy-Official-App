@@ -12,8 +12,7 @@ String libelleIntentionParcours(IntentionPedagogique intention) =>
       IntentionPedagogique.aRevoir => t.tc.parcours.intention.revoir,
       IntentionPedagogique.aRenforcer => t.tc.parcours.intention.renforcer,
       IntentionPedagogique.aEntretenir => t.tc.parcours.intention.entretenir,
-      IntentionPedagogique.pourEvaluation =>
-        t.tc.parcours.intention.evaluation,
+      IntentionPedagogique.pourEvaluation => t.tc.parcours.intention.evaluation,
     };
 
 /// Le libelle d'une categorie de signalement.
@@ -27,6 +26,8 @@ String libelleCategorieSignalement(CategorieSignalement categorie) =>
         t.tc.parcours.signalement.categorieValeur.technique,
       CategorieSignalement.changement =>
         t.tc.parcours.signalement.categorieValeur.changement,
+      CategorieSignalement.securiteEnfant =>
+        t.tc.parcours.signalement.categorieValeur.securiteEnfant,
       CategorieSignalement.autre =>
         t.tc.parcours.signalement.categorieValeur.autre,
     };

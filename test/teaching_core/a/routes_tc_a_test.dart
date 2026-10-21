@@ -1,8 +1,13 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/billet_salle.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_horloge/demonstration_horloge.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/roster_enseignant_slot.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/carte_groupe.dart';
@@ -45,7 +50,7 @@ void main() {
       await tester.pump();
 
       expect(find.byType(MesGroupesPage), findsOneWidget);
-      await tester.tap(find.text('Groupe Al-Fatiha'));
+      await tester.tap(find.text('Classe Al-Fatiha'));
       await tester.pumpAndSettle();
 
       expect(find.byType(EspaceGroupePage), findsOneWidget);
@@ -81,6 +86,57 @@ void main() {
       });
     },
   );
+
+  // A-05 (L3-01) : « Rejoindre » mene a /salle pour tout role ; il n'existe
+  // plus aucune route /tc/classe a laquelle il pourrait mener.
+  for (final RoleEspaceGroupe role in <RoleEspaceGroupe>[
+    RoleEspaceGroupe.eleve,
+    RoleEspaceGroupe.enseignant,
+  ]) {
+    testWidgets('${role.name} : « Rejoindre » mene a /salle avec sa '
+        'preparation', (WidgetTester tester) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        BilletSalle? billet;
+        await tester.pumpWidget(
+          hoteRoutantTcA(
+            depart: CheminsTcA.espaceGroupe(GroupesDemonstration.anNour),
+            routes: <RouteBase>[
+              ...routesTcA(role: role),
+              GoRoute(
+                path: Routes.salle,
+                builder: (BuildContext _, GoRouterState e) {
+                  billet = e.extra as BilletSalle?;
+                  return const Text('salle');
+                },
+              ),
+            ],
+            surcharges: surchargesDemonstration(),
+          ),
+        );
+        await tester.pump();
+        await tester.pump();
+
+        // L'eleve lit « Rejoindre » ; l'enseignant lit son libelle de salle.
+        final String libelleEntree = role == RoleEspaceGroupe.eleve
+            ? t.classe.entree.rejoindre
+            : t.enseignant.journee.rejoindreSalle;
+        final Finder rejoindre = find.widgetWithText(
+          ActionPrincipale,
+          libelleEntree,
+        );
+        expect(rejoindre, findsOneWidget);
+        await tester.ensureVisible(rejoindre);
+        await tester.tap(rejoindre);
+        await tester.pumpAndSettle();
+
+        expect(find.text('salle'), findsOneWidget);
+        expect(billet, isNotNull);
+        expect(billet!.sessionId, 'demo-seance-an-nour');
+        expect(billet!.preparation, isTrue);
+        expect(billet!.groupeId, GroupesDemonstration.anNour);
+      });
+    });
+  }
 
   testWidgets('l Espace Groupe porte son propre chemin de sortie', (
     WidgetTester tester,

@@ -12,6 +12,7 @@ import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/selecteur_motif.dart';
 import 'presence_correction.dart';
 
 /// Surface propriétaire de la correction, prête à être raccordée au serveur.
@@ -99,11 +100,11 @@ class _PresenceCorrectionPanneauState
             ],
           ),
         ),
-        const SizedBox(height: AppSpacing.lg),
-        Text(
-          widget.libelles.journalisation,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
+        if (widget.libelles.journalisation
+            case final String rappel) ...<Widget>[
+          const SizedBox(height: AppSpacing.lg),
+          Text(rappel, style: Theme.of(context).textTheme.bodyMedium),
+        ],
         if (etat != _EtatMutation.repos) ...<Widget>[
           const SizedBox(height: AppSpacing.lg),
           _EtatMutationVue(etat: etat, libelles: widget.libelles),
@@ -273,6 +274,7 @@ class _ConfirmationPresenceSheet extends StatefulWidget {
 class _ConfirmationPresenceSheetState
     extends State<_ConfirmationPresenceSheet> {
   final TextEditingController _motif = TextEditingController();
+  bool _motifManquant = false;
 
   @override
   void dispose() {
@@ -286,6 +288,11 @@ class _ConfirmationPresenceSheetState
       PresenceCorrectionDecision.corrigeeManuel => widget.libelles.corriger,
       PresenceCorrectionDecision.excusee => widget.libelles.excuser,
     };
+    final List<String> motifs = switch (widget.decision) {
+      PresenceCorrectionDecision.corrigeeManuel =>
+        widget.libelles.motifsCorrection,
+      PresenceCorrectionDecision.excusee => widget.libelles.motifsExcuse,
+    };
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -294,23 +301,24 @@ class _ConfirmationPresenceSheetState
         Text(widget.cible.ligne.prenom),
         Text(decision),
         const SizedBox(height: AppSpacing.lg),
-        TextField(
-          controller: _motif,
-          autofocus: true,
-          maxLines: 3,
-          textInputAction: TextInputAction.newline,
-          decoration: InputDecoration(
-            labelText: widget.libelles.motif,
-            helperText: widget.libelles.motifRequis,
-          ),
-          onChanged: (_) => setState(() {}),
+        SelecteurMotif(
+          motifs: motifs,
+          controleur: _motif,
+          libelleChamp: widget.libelles.motif,
+          aide: widget.libelles.motifRequis,
+          lignesMax: 3,
+          erreur: _motifManquant
+              ? widget.libelles.motifManquant ?? widget.libelles.motifRequis
+              : null,
+          onChange: (String _) => setState(() => _motifManquant = false),
         ),
         const SizedBox(height: AppSpacing.lg),
+        // Bouton jamais grise (K-56) : sans motif, il dit ce qui manque.
         ActionPrincipale(
           libelle: widget.libelles.confirmer,
-          onPress: _motif.text.trim().isEmpty
-              ? null
-              : () => Navigator.of(context).pop(_motif.text.trim()),
+          onPress: () => _motif.text.trim().isEmpty
+              ? setState(() => _motifManquant = true)
+              : Navigator.of(context).pop(_motif.text.trim()),
         ),
         const SizedBox(height: AppSpacing.sm),
         ActionPrincipale(

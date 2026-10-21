@@ -1,7 +1,7 @@
 -- 0012 : `CTR-01`, l'entree d'un controleur -- et les quatre surfaces ou son
 -- invisibilite n'existait pas.
 --
--- Perimetre fixe par docs/produit/parcours-utilisateurs.md section 4 (« Vue de
+-- Perimetre fixe par docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md section 4 (« Vue de
 -- toutes les seances en cours et a venir [...] Chaque ligne en cours porte un
 -- bouton d'entree invisible ») et par l'ADR-011, qui confirme la fonction pour
 -- le MVP-0 et ecrit ce que le controleur peut et ne peut pas.

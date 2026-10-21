@@ -20,6 +20,7 @@
 -- passe apres lui, y compris lui-meme au prochain tour.
 
 -- Droits facon Supabase (alter default privileges du projet).
+\ir _acl_photo.sql
 grant usage on schema public to anon, authenticated, service_role;
 grant all on all tables in schema public to authenticated, service_role;
 grant all on all sequences in schema public to authenticated, service_role;
@@ -55,11 +56,29 @@ values
   ('a4000000-0000-0000-0000-000000000001', 'ADMIN-A4-000001', 'admin',
    'a4ffffff-0000-0000-0000-00000000000a', 'Khadija', 'Ndiaye', 'active', 'female'),
   ('a4000000-0000-0000-0000-000000000002', 'TEACH-A4-000001', 'teacher',
-   'a4ffffff-0000-0000-0000-00000000000a', 'Moussa', 'Kane', 'active', 'male'),
+   'a4ffffff-0000-0000-0000-00000000000a', 'Moussa', 'Kane', 'provisional_active', 'male'),
   ('a4000000-0000-0000-0000-000000000003', 'GUARD-A4-000001', 'guardian',
    'a4ffffff-0000-0000-0000-00000000000a', 'Bintou', 'Kane', 'active', 'female'),
   ('a4000000-0000-0000-0000-000000000004', 'CTRL-A4-000001', 'controller',
    'a4ffffff-0000-0000-0000-00000000000a', 'Salif', 'Toure', 'active', 'male');
+-- Fixture contractuel requis par 0089 : aucune garde d'activation n'est assouplie.
+DO $fixture_teacher_contracts$
+DECLARE v_teacher record; v_teacher_version text; v_notice_version text;
+BEGIN
+  SELECT version INTO v_teacher_version FROM public.contract_texts WHERE contract_kind='teacher_nda' AND locale='fr' AND is_current;
+  SELECT version INTO v_notice_version FROM public.contract_required_versions WHERE contract_kind='recording_and_control_notice';
+  FOR v_teacher IN SELECT id FROM public.profiles WHERE role='teacher' AND account_status='provisional_active' LOOP
+    PERFORM set_config('request.jwt.claim.sub',v_teacher.id::text,true);
+    PERFORM set_config('test.uid',v_teacher.id::text,true);
+    PERFORM set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
+    PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES(v_teacher.id,'recording_and_control_notice',v_notice_version)
+      ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
+    UPDATE public.profiles SET account_status='active' WHERE id=v_teacher.id;
+  END LOOP;
+END
+$fixture_teacher_contracts$;
 
 insert into public.teacher_profiles (profile_id, country) values
   ('a4000000-0000-0000-0000-000000000002', 'SN');
@@ -146,9 +165,9 @@ begin
     reset role;
   end loop;
 
-  -- Et ce que le controleur garde : la lecture de la table elle-meme, telle
-  -- que 0001 la lui a donnee. Si ce bloc echouait, la migration 0009 aurait
-  -- retire un droit existant au lieu d'en ajouter un.
+  -- Le controleur ne lit plus la table : depuis L1-08 (audit final 16/10/2026, P2-1),
+  -- audit_logs_read est reservee a l'administrateur valide (le journal contient des
+  -- payloads KYC et des jetons video). Avant L1-08, il gardait sa lecture (6 lignes).
   set local role authenticated;
   perform set_config('test.uid', 'a4000000-0000-0000-0000-000000000004', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"controller"}}', true);
@@ -156,11 +175,11 @@ begin
    where table_name = 'adm04_fixture';
   reset role;
 
-  if v_lignes <> 6 then
-    raise exception 'J1 ECHEC : le controleur devait garder sa lecture de table, lu % lignes', v_lignes;
+  if v_lignes <> 0 then
+    raise exception 'J1 ECHEC : le controleur ne doit plus lire le journal (L1-08, P2-1), lu % lignes', v_lignes;
   end if;
 
-  raise notice 'J1 ok : les trois fonctions sont reservees a l''administration, et la policy du controleur est intacte';
+  raise notice 'J1 ok : les trois fonctions sont reservees a l''administration, et le controleur ne lit plus la table (L1-08)';
 end $$;
 
 -- ============================================================
@@ -592,3 +611,5 @@ begin
 
   raise notice 'J9 ok : les filtres ne proposent que ce que le journal contient';
 end $$;
+
+\ir _acl_retablir.sql

@@ -10,7 +10,7 @@ import 'session_feedback.dart';
 /// Trois faits, et aucun n'est calculable cote client : a quel groupe la seance
 /// appartient, quel est son **rang** pour la personne qui repond, et si elle a
 /// deja repondu. La demande SQL correspondante est en section 3 de
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_H.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_H.md`.
 @immutable
 class ContexteSeanceFeedback {
   /// Cree un contexte de seance.
@@ -30,7 +30,7 @@ class ContexteSeanceFeedback {
 ///
 /// **DOUBLE LOCAL ASSUME.** Aucune table `session_feedback` n'existe en base, et
 /// aucun mecanisme d'echantillonnage n'existe cote serveur : la demande SQL est
-/// ecrite dans `docs/teaching-core/TC_CONTRACT_REQUEST_H.md` section 3. Ce
+/// ecrite dans `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_H.md` section 3. Ce
 /// double rend la regle testable aujourd'hui et servira de reference au jour ou
 /// l'implementation Supabase sera ecrite.
 ///

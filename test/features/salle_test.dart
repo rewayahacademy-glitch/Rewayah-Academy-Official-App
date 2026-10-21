@@ -1,33 +1,48 @@
-﻿import 'package:flutter/material.dart';
+import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_classe/port_rappel_discret.dart';
+import 'package:rewayah_academy/core/tc_classe/rappel_discret.dart';
+import 'package:rewayah_academy/core/tc_classe/roster_enseignant.dart';
+import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
+import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
+import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
+import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observation.dart';
 
+import '../capture/outil_capture.dart';
+import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
+import '../support/hors_ligne_une_fois.dart';
+import '../teaching_core/e/faux/faux_classe.dart';
 
 const String _seance = 's1';
 
 /// L'acces tel que `create-room-token` le rend pour chacun des quatre roles.
-AccesSalle _acces(String role, {bool camera = false}) => AccesSalle(
+AccesSalle _acces(String role, {bool camera = false, bool? voix}) => AccesSalle(
   urlServeur: 'wss://exemple.invalid',
   jeton: 'jeton.signe',
   nomSalle: 'r_0123456789abcdef0123456789abcdef',
   fournisseur: FournisseurVideo.cloud,
   role: role,
   capacites: CapacitesSalle(
-    peutPublier: role == 'teacher' || role == 'student',
+    peutPublier: voix ?? (role == 'teacher' || role == 'student'),
     peutPublierVideo: role == 'teacher' || (role == 'student' && camera),
     peutPublierDonnees: role == 'teacher',
     peutRecevoir: true,
@@ -68,6 +83,8 @@ List<Override> _surcharges({
   required FauxServicePreVol preVol,
   AppRole role = AppRole.student,
   FauxServicePresence? presence,
+  bool monTuteurObserve = false,
+  List<AnnonceObservation> annonces = const <AnnonceObservation>[],
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(FausseSourceSession(_session(role))),
   servicePreVolProvider.overrideWithValue(preVol),
@@ -76,8 +93,17 @@ List<Override> _surcharges({
   // **Indisponible par defaut, et c'est le bon defaut** : un test qui ne parle
   // pas de presence doit exercer le repli de l'invariant J3, pas un tableau
   // rempli par commodite.
-  servicePresenceProvider.overrideWithValue(
-    presence ?? FauxServicePresence(),
+  servicePresenceProvider.overrideWithValue(presence ?? FauxServicePresence()),
+  // **Personne n'observe par defaut**, et surtout : sans cette surcharge, les
+  // quinze cas de ce fichier qui montent la salle en role eleve iraient
+  // chercher le VRAI port, c'est-a-dire `Supabase.instance.client`.
+  portAnnonceObservationEnfantProvider.overrideWithValue(
+    FauxAnnonceObservationEnfant(observe: monTuteurObserve),
+  ),
+  // Meme raison : sans surcharge, un enseignant monte ici irait chercher le
+  // vrai port, donc Supabase.
+  portAnnonceObservationProvider.overrideWithValue(
+    FauxAnnonceObservation(lignes: annonces),
   ),
 ];
 
@@ -124,12 +150,18 @@ Future<void> _monterSalle(
   WidgetTester tester, {
   required List<Override> surcharges,
   InterfaceMode mode = InterfaceMode.standard,
+  ThemeMode themeMode = ThemeMode.light,
+  TextDirection? direction,
+  double echelle = 1,
 }) async {
   await tester.pumpWidget(
     hoteRoutant(
       depart: Routes.salle,
       surcharges: surcharges,
       mode: mode,
+      themeMode: themeMode,
+      direction: direction,
+      echelle: echelle,
       routes: <RouteBase>[
         GoRoute(
           path: Routes.salle,
@@ -140,6 +172,11 @@ Future<void> _monterSalle(
           path: Routes.eleve,
           builder: (BuildContext _, GoRouterState _) =>
               const Text('accueil eleve'),
+        ),
+        GoRoute(
+          path: Routes.tcGroupes,
+          builder: (BuildContext _, GoRouterState _) =>
+              const Text('classes eleve'),
         ),
         GoRoute(
           path: Routes.enseignantJournee,
@@ -196,6 +233,85 @@ void main() {
       expect(find.text(t.salle.refusMateriel), findsOneWidget);
     });
 
+    // CTRL-PREVOL-1 (releve VERIF-CT-1 ; P-CTR-03 point 4, R8, R13) : le micro
+    // n'est exige que de qui parle.
+    testWidgets('un controleur sans micro entre, et lit sa zone de controle', (
+      WidgetTester tester,
+    ) async {
+      final FauxServicePreVol preVol = FauxServicePreVol(
+        microDisponible: false,
+      );
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('masked_controller')),
+          moteur: moteur,
+          preVol: preVol,
+          role: AppRole.controller,
+        ),
+      );
+
+      expect(find.text(t.salle.refusMateriel), findsNothing);
+      expect(moteur.entrees.length, 1);
+      // Aucune demande de permission injustifiee : il n'ouvrira aucun micro.
+      expect(preVol.verifications, 0);
+      expect(find.text(t.salle.bandeauControle), findsOneWidget);
+      expect(find.text(t.salle.quitter), findsOneWidget);
+    });
+
+    testWidgets(
+      'tuteur temoin et administration en observation entrent muets',
+      (WidgetTester tester) async {
+        for (final (AppRole compte, String jeton) in <(AppRole, String)>[
+          (AppRole.guardian, 'guardian_observer'),
+          (AppRole.admin, 'admin_masked'),
+        ]) {
+          final FauxMoteurSalle moteur = FauxMoteurSalle();
+          await _monterSalle(
+            tester,
+            surcharges: _surcharges(
+              video: FauxServiceVideo(acces0: _acces(jeton)),
+              moteur: moteur,
+              preVol: FauxServicePreVol(microDisponible: false),
+              role: compte,
+            ),
+          );
+          expect(find.text(t.salle.refusMateriel), findsNothing, reason: jeton);
+          expect(moteur.entrees.length, 1, reason: jeton);
+        }
+      },
+    );
+
+    testWidgets(
+      'enseignant, eleve et administration qui parle restent bloques',
+      (WidgetTester tester) async {
+        for (final (AppRole compte, AccesSalle acces)
+            in <(AppRole, AccesSalle)>[
+              (AppRole.teacher, _acces('teacher')),
+              (AppRole.student, _acces('student')),
+              (AppRole.admin, _acces('admin_visible', voix: true)),
+            ]) {
+          final FauxMoteurSalle moteur = FauxMoteurSalle();
+          await _monterSalle(
+            tester,
+            surcharges: _surcharges(
+              video: FauxServiceVideo(acces0: acces),
+              moteur: moteur,
+              preVol: FauxServicePreVol(microDisponible: false),
+              role: compte,
+            ),
+          );
+          expect(
+            find.text(t.salle.refusMateriel),
+            findsOneWidget,
+            reason: acces.role,
+          );
+          expect(moteur.entrees, isEmpty, reason: acces.role);
+        }
+      },
+    );
+
     testWidgets('rien ne publie a l entree, pour aucun role', (
       WidgetTester tester,
     ) async {
@@ -225,32 +341,34 @@ void main() {
       }
     });
 
-    testWidgets('le bandeau permanent est la pour les quatre roles', (
-      WidgetTester tester,
-    ) async {
-      // ADR-011 : la meme ligne, inchangee, quel que soit le role et que la
-      // visite de controle ait lieu ou non.
-      for (final String role in <String>[
-        'teacher',
-        'student',
-        'guardian_observer',
-        'masked_controller',
-      ]) {
-        await _monterSalle(
-          tester,
-          surcharges: _surcharges(
-            video: FauxServiceVideo(acces0: _acces(role)),
-            moteur: FauxMoteurSalle(),
-            preVol: FauxServicePreVol(),
-          ),
-        );
-        expect(
-          find.text(t.salle.bandeauPermanent),
-          findsOneWidget,
-          reason: role,
-        );
-      }
-    });
+    testWidgets(
+      'le bandeau permanent est la pour les trois roles participants',
+      (WidgetTester tester) async {
+        // ADR-011 : la meme ligne, inchangee, quel que soit le role et que la
+        // visite de controle ait lieu ou non. CTRL-SALLE-1 : elle s'adresse aux
+        // participants ; le controleur, qui EST la visite, ne la voit pas
+        // (teste dans le groupe de l'invisibilite du controleur).
+        for (final String role in <String>[
+          'teacher',
+          'student',
+          'guardian_observer',
+        ]) {
+          await _monterSalle(
+            tester,
+            surcharges: _surcharges(
+              video: FauxServiceVideo(acces0: _acces(role)),
+              moteur: FauxMoteurSalle(),
+              preVol: FauxServicePreVol(),
+            ),
+          );
+          expect(
+            find.text(t.salle.bandeauPermanent),
+            findsOneWidget,
+            reason: role,
+          );
+        }
+      },
+    );
   });
 
   group('Les commandes suivent le jeton, jamais le mode d interface', () {
@@ -293,7 +411,7 @@ void main() {
       expect(_commande(t.salle.ouvrirCamera), findsOneWidget);
     });
 
-    testWidgets('un observateur et un controleur n ont que la sortie', (
+    testWidgets('observateur et controleur : ni micro ni camera', (
       WidgetTester tester,
     ) async {
       for (final String role in <String>[
@@ -308,18 +426,13 @@ void main() {
             preVol: FauxServicePreVol(),
           ),
         );
+        expect(_commande(t.salle.ouvrirMicro), findsNothing, reason: role);
+        expect(_commande(t.salle.ouvrirCamera), findsNothing, reason: role);
+        // CTR-02 (CT-3) : le controleur sort par « Quitter » de sa zone haute.
         expect(
-          _commande(t.salle.ouvrirMicro),
-          findsNothing,
-          reason: role,
-        );
-        expect(
-          _commande(t.salle.ouvrirCamera),
-          findsNothing,
-          reason: role,
-        );
-        expect(
-          _commande(t.salle.quitterLeCours),
+          role == 'masked_controller'
+              ? find.text(t.salle.quitter)
+              : _commande(t.salle.quitterLeCours),
           findsOneWidget,
           reason: role,
         );
@@ -365,10 +478,12 @@ void main() {
         ),
       );
 
-      // Deux bandeaux distincts : celui de l'ADR-011, identique pour tous, et
-      // le rappel d'invisibilite, qui ne vit que sur cet ecran-la.
+      // CTRL-SALLE-1 : le rappel d'invisibilite, qui ne vit que sur cet
+      // ecran-la ; la mention de l'ADR-011 s'adresse aux participants, jamais
+      // au controleur lui-meme.
       expect(find.text(t.salle.bandeauControle), findsOneWidget);
-      expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
+      expect(find.text(t.salle.bandeauPermanent), findsNothing);
+      expect(find.byType(PermanentNotice), findsNothing);
     });
 
     testWidgets('il lit deux personnes, et ne s y trouve pas', (
@@ -596,14 +711,14 @@ void main() {
           camera: true,
         ),
         for (int i = 1; i <= 5; i++)
-          _personne(identite: 'e$i', role: 'student', nom: 'Eleve $i'),
+          _personne(identite: 'e$i', role: 'student', nom: 'Élève $i'),
       ]);
       await tester.pumpAndSettle();
 
       // Aucune exception de rendu : `pumpAndSettle` les leve, un debordement
       // compris. Et les cinq eleves sont tous a l'ecran, aucun rogne.
       for (int i = 1; i <= 5; i++) {
-        expect(find.text('Eleve $i'), findsWidgets, reason: 'Eleve $i');
+        expect(find.text('Élève $i'), findsWidgets, reason: 'Élève $i');
       }
       final Size ecran = tester.view.physicalSize;
       for (final Element cadre in find.byType(AvatarTile).evaluate()) {
@@ -784,6 +899,10 @@ void main() {
 
       expect(find.text(t.salle.refusReseau), findsOneWidget);
       expect(preVol.verifications, 1);
+      // EA-HL-DOUBLE-1f (K-59) : « La salle n'a pas repondu » affirmait une
+      // cause ; la cause probable est dite sans l'affirmer.
+      expect(causesAffirmees(), findsNothing);
+      expect(find.textContaining(formulationCauseProbable), findsOneWidget);
 
       moteur.erreurEntree = null;
       await tester.tap(find.text(t.commun.reessayer));
@@ -829,7 +948,11 @@ void main() {
 
       await _monterSalle(
         tester,
-        surcharges: _surcharges(video: video, moteur: moteur, preVol: FauxServicePreVol()),
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
       );
 
       await tester.tap(_commande(t.salle.quitterLeCours));
@@ -845,7 +968,19 @@ void main() {
 
       expect(video.sorties, <String>[_seance]);
       expect(moteur.departs, greaterThanOrEqualTo(1));
-      expect(find.text('accueil eleve'), findsOneWidget);
+      // CLV-09 d'abord : la sortie se dit, sans recapitulatif ni presence.
+      expect(find.text(t.salle.fin.quitteTitre), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('fin-recapitulatif')),
+        findsNothing,
+      );
+      expect(find.text(t.salle.bandeauPermanent), findsNothing);
+      // « Retour a la Classe » mene a la Classe (l'espace des Classes de
+      // l'eleve), pas a l'accueil : libelle et destination concordent.
+      await tester.tap(find.text(t.salle.fin.retourClasse));
+      await tester.pumpAndSettle();
+      expect(find.text('classes eleve'), findsOneWidget);
+      expect(find.text('accueil eleve'), findsNothing);
     });
 
     testWidgets('renoncer laisse dans la salle', (WidgetTester tester) async {
@@ -903,6 +1038,21 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(video.sorties, <String>[_seance]);
+      // CLV-10 d'abord : « Seance terminee », le recapitulatif, aucune mention
+      // d'enregistrement ; puis « Ouvrir le cahier » mene a SON cahier.
+      expect(find.text(t.salle.fin.enseignant.phrase), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('fin-recapitulatif')),
+        findsOneWidget,
+      );
+      expect(find.text(t.salle.bandeauPermanent), findsNothing);
+      expect(find.text('cahier de $_seance'), findsNothing);
+      await tester.ensureVisible(
+        find.text(t.salle.fin.enseignant.ouvrirCahier),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.fin.enseignant.ouvrirCahier));
+      await tester.pumpAndSettle();
       expect(find.text('cahier de $_seance'), findsOneWidget);
       expect(find.text('journee enseignant'), findsNothing);
     });
@@ -1124,10 +1274,394 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(t.presence.excusee), findsOneWidget);
+      expect(find.textContaining(t.presence.consolide), findsOneWidget);
+    });
+  });
+
+  group('L enfant apprend que son tuteur regarde', () {
+    testWidgets('l eleve observe lit la mention discrete, sans action', (
+      WidgetTester tester,
+    ) async {
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: FauxMoteurSalle(),
+          preVol: FauxServicePreVol(),
+          monTuteurObserve: true,
+        ),
+      );
+
       expect(
-        find.textContaining(t.presence.consolide),
+        find.text(t.tc.observation.annonce.enfantIndicateur),
         findsOneWidget,
       );
+      // Sans bouton : un enfant de sept ans n'a rien a decider ici.
+      expect(
+        find.descendant(
+          of: find.byType(IndicateurObservationEnfant),
+          matching: find.byType(ActionPrincipale),
+        ),
+        findsNothing,
+      );
+    });
+
+    testWidgets('l eleve non observe ne lit rien du tout', (
+      WidgetTester tester,
+    ) async {
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: FauxMoteurSalle(),
+          preVol: FauxServicePreVol(),
+        ),
+      );
+
+      // C'est le cas des quatre autres enfants du groupe : le serveur leur
+      // rend `observe: false`, et ils n'apprennent rien d'un autre foyer.
+      expect(
+        find.text(t.tc.observation.annonce.enfantIndicateur),
+        findsNothing,
+      );
+    });
+
+    testWidgets('le controleur masque ne lit jamais la mention de l enfant', (
+      WidgetTester tester,
+    ) async {
+      // Le jeton dit `masked_controller` : la mention appartient a l'eleve, et
+      // elle parle de SON foyer. Meme surcharge « observe » que le premier cas,
+      // pour que le test mesure la condition de role et pas la donnee.
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('masked_controller')),
+          moteur: FauxMoteurSalle(),
+          preVol: FauxServicePreVol(),
+          role: AppRole.controller,
+          monTuteurObserve: true,
+        ),
+      );
+
+      expect(
+        find.text(t.tc.observation.annonce.enfantIndicateur),
+        findsNothing,
+      );
+    });
+
+    testWidgets(
+      'l enseignant lance son cours ICI et apprend qu un parent regarde',
+      (WidgetTester tester) async {
+        // **Le chemin reel de l'enseignant.** Le bouton « Lancer » de sa journee
+        // (`ENS-02`) mene a cette salle, pas a `/tc/classe`. L'annonce n'etait
+        // montee que sur l'autre : il enseignait deux minutes devant un parent
+        // sans le savoir.
+        await _monterSalle(
+          tester,
+          surcharges: _surcharges(
+            video: FauxServiceVideo(acces0: _acces('teacher')),
+            moteur: FauxMoteurSalle(),
+            preVol: FauxServicePreVol(),
+            role: AppRole.teacher,
+            annonces: <AnnonceObservation>[
+              AnnonceObservation(
+                libelle: t.tc.observation.annonce.tuteurObserve(
+                  dePrenomEnfant: deDevant('Amina'),
+                ),
+                prenomEnfant: 'Amina',
+                enfantConcerneId: 'enfant-1',
+              ),
+            ],
+          ),
+        );
+
+        expect(find.byType(IndicateurObservation), findsOneWidget);
+        expect(find.text("Tuteur d'Amina observe"), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'l eleve de cette meme salle ne lit pas l annonce enseignante',
+      (WidgetTester tester) async {
+        await _monterSalle(
+          tester,
+          surcharges: _surcharges(
+            video: FauxServiceVideo(acces0: _acces('student')),
+            moteur: FauxMoteurSalle(),
+            preVol: FauxServicePreVol(),
+            annonces: <AnnonceObservation>[
+              AnnonceObservation(
+                libelle: t.tc.observation.annonce.tuteurObserve(
+                  dePrenomEnfant: deDevant('Amina'),
+                ),
+                prenomEnfant: 'Amina',
+                enfantConcerneId: 'enfant-1',
+              ),
+            ],
+          ),
+        );
+
+        // Elle porte le prenom d'un enfant qui n'est pas forcement le sien.
+        expect(find.byType(IndicateurObservation), findsNothing);
+        expect(find.text("Tuteur d'Amina observe"), findsNothing);
+      },
+    );
+  });
+
+  // EA-HL-DOUBLE-1f : le titre et le detail de l'impasse prenaient l'encre
+  // du fond creme (style du theme), illisible sur le fond de la salle.
+  for (final ThemeMode theme in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+    testWidgets('l impasse ecrit avec l encre du fond de la salle, $theme', (
+      WidgetTester tester,
+    ) async {
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: FauxMoteurSalle()..erreurEntree = StateError('lien coupe'),
+          preVol: FauxServicePreVol(),
+        ),
+        themeMode: theme,
+      );
+      for (final String texte in <String>[
+        t.salle.refusReseau,
+        t.salle.refusReseauDetail,
+      ]) {
+        final Finder f = find.text(texte);
+        expect(f, findsOneWidget);
+        final Color? encreFond = DefaultTextStyle.of(tester.element(f))
+            .style
+            .color;
+        expect(encreFond, isNotNull);
+        expect(tester.widget<Text>(f).style?.color, encreFond, reason: texte);
+      }
+    });
+  }
+
+  // EA-HL-DOUBLE-1f (reprise) : « Votre presence », pose sur le fond de la
+  // salle, prenait l'encre du fond creme (captures 1440 : sombre sur sombre
+  // en clair, clair sur clair en sombre).
+  for (final ThemeMode theme in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+    testWidgets('votre presence ecrit avec l encre du fond de la salle, '
+        '$theme', (WidgetTester tester) async {
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: FauxMoteurSalle()..erreurEntree = StateError('lien coupe'),
+          preVol: FauxServicePreVol(),
+        ),
+        themeMode: theme,
+      );
+      final Finder f = find.text(t.presence.mienne);
+      expect(f, findsOneWidget);
+      // JONCTION-LIGNES-1 : la ligne ccr (SALLE-ENCRE-1, SALLE-CORR-4) pose
+      // « Votre presence » sur la surface des vignettes (`surfaceSunken`)
+      // pour tous les roles, au lieu de l'ecrire sur le fond de la salle.
+      // Ce qui compte reste le defaut de 1f : jamais sombre sur sombre ni
+      // clair sur clair. Le texte se lit sur la surface qui le porte.
+      final Color? encre = tester.widget<Text>(f).style?.color;
+      expect(encre, isNotNull);
+      final BoxDecoration surface =
+          tester
+                  .widget<DecoratedBox>(
+                    find
+                        .ancestor(of: f, matching: find.byType(DecoratedBox))
+                        .first,
+                  )
+                  .decoration
+              as BoxDecoration;
+      final double l1 = encre!.computeLuminance();
+      final double l2 = surface.color!.computeLuminance();
+      final double contraste =
+          (math.max(l1, l2) + 0.05) / (math.min(l1, l2) + 0.05);
+      expect(contraste, greaterThanOrEqualTo(4.5));
+    });
+  }
+
+  // EA-HL-DOUBLE-1f : captures de preuve de l'impasse « reseau » de la salle
+  // (sans bandeau, `PageImmersive`), 390 clair et sombre, 320 texte x2 en
+  // LTR et RTL. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1f', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, ThemeMode, double, TextDirection) cas
+        in <(String, Size, ThemeMode, double, TextDirection)>[
+          (
+            '390_clair',
+            const Size(390, 844),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+          ),
+          (
+            '390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            1,
+            TextDirection.ltr,
+          ),
+          (
+            '320x2_clair',
+            const Size(320, 1000),
+            ThemeMode.light,
+            2,
+            TextDirection.ltr,
+          ),
+          (
+            '320x2_rtl_clair',
+            const Size(320, 1000),
+            ThemeMode.light,
+            2,
+            TextDirection.rtl,
+          ),
+          (
+            '320x2_rtl_sombre',
+            const Size(320, 1000),
+            ThemeMode.dark,
+            2,
+            TextDirection.rtl,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            1,
+            TextDirection.ltr,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        fixerVueCapture(tester, cas.$2, 1);
+        await _monterSalle(
+          tester,
+          surcharges: _surcharges(
+            video: FauxServiceVideo(acces0: _acces('student')),
+            moteur: FauxMoteurSalle()..erreurEntree = StateError('lien coupe'),
+            preVol: FauxServicePreVol(),
+          ),
+          themeMode: cas.$3,
+          direction: cas.$5,
+          echelle: cas.$4,
+        );
+        expect(tester.takeException(), isNull);
+        expect(find.text(t.salle.refusReseau), findsOneWidget);
+        expect(causesAffirmees(), findsNothing);
+        verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1f_salle_refus_reseau_${cas.$1}')}',
+        );
+      });
+    }
+  });
+
+  // Point 7 de la passation du 17/10 (spec section 10) : la fiche
+  // pedagogique de seance, portee de l'ancienne classe dans `/salle`.
+  group('La fiche de seance de l enseignant', () {
+    Future<FauxRappelDiscret> monter(
+      WidgetTester tester, {
+      AppRole role = AppRole.teacher,
+      String acces = 'teacher',
+      EchecRappel? echec,
+    }) async {
+      final FauxRappelDiscret rappel = FauxRappelDiscret(echec: echec);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: <Override>[
+          ..._surcharges(
+            video: FauxServiceVideo(acces0: _acces(acces)),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+            role: role,
+            presence: FauxServicePresence(
+              lignes: <PresenceParticipant>[
+                _presence(
+                  EtatPresence.presente,
+                  profilId: 'e1',
+                  prenom: 'Amina',
+                ),
+                _presence(
+                  EtatPresence.enAttente,
+                  profilId: 'e2',
+                  prenom: 'Ilyas',
+                ),
+                _presence(
+                  EtatPresence.presente,
+                  profilId: 'p1',
+                  prenom: 'Omar',
+                  role: 'teacher',
+                ),
+              ],
+            ),
+          ),
+          portRosterEnseignantProvider.overrideWithValue(
+            FauxRosterEnseignant(
+              fiches: const <TeacherStudentProjection>[
+                TeacherStudentProjection(
+                  firstName: 'Amina',
+                  academyId: 'ID-e1',
+                  level: 'Decodage consolide',
+                  liveStatus: EtatPresenceProjete.inconnu,
+                  interfaceGuidee: false,
+                ),
+              ],
+            ),
+          ),
+          portRappelDiscretProvider.overrideWithValue(rappel),
+        ],
+      );
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 'p1', role: 'teacher', nom: 'Omar', local: true),
+        _personne(identite: 'e1', role: 'student', nom: 'Amina'),
+      ]);
+      await tester.pumpAndSettle();
+      return rappel;
+    }
+
+    testWidgets('le compteur des eleves ouvre la liste, puis la fiche ; '
+        'un rappel qui part ne dit rien', (WidgetTester tester) async {
+      final FauxRappelDiscret rappel = await monter(tester);
+      final Finder bouton = find.byKey(const ValueKey<String>('salle-eleves'));
+      expect(bouton, findsOneWidget);
+      await tester.tap(bouton);
+      await tester.pumpAndSettle();
+      expect(find.text(t.tc.classe.roster.titre), findsWidgets);
+
+      await tester.tap(find.text('Amina').last);
+      await tester.pumpAndSettle();
+      expect(find.text('Decodage consolide'), findsOneWidget);
+      await tester.ensureVisible(find.text(t.tc.classe.action.rappel));
+      await tester.tap(find.text(t.tc.classe.action.rappel));
+      await tester.pump();
+      await tester.pump();
+      expect(rappel.appels, <(String, String)>[(_seance, 'ID-e1')]);
+      expect(find.text(t.tc.classe.rappel.echec), findsNothing);
+    });
+
+    testWidgets('un rappel qui echoue est le seul a dire quelque chose', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        echec: const EchecRappel(MotifEchecRappel.transport),
+      );
+      await tester.tap(find.byKey(const ValueKey<String>('salle-eleves')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Amina').last);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(t.tc.classe.action.rappel));
+      await tester.tap(find.text(t.tc.classe.action.rappel));
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(t.tc.classe.rappel.echec), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('l eleve n a ni compteur ni fiche de ses camarades', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, role: AppRole.student, acces: 'student');
+      expect(find.byKey(const ValueKey<String>('salle-eleves')), findsNothing);
     });
   });
 }
