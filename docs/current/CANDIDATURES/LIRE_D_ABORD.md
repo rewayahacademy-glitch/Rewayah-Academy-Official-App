@@ -45,6 +45,9 @@ la question. Une réponse ne devient une décision qu'une fois versée dans
 ## Ordre de lecture
 
 1. Ce fichier.
+1 bis. `SPEC_CONSOLIDEE_CANDIDATURES_2026-10-21.md` : **la référence pour construire**
+   (spec v1 plus les 22 décisions du directeur). Les documents suivants en sont
+   les sources.
 2. `REVUE_CRITIQUE_CANDIDATURES_2026-10-21.md` : cartographie de l'existant à la
    pointe de la pile du 21/10, écarts, risques, permissions, modèle proposé,
    transitions, plan d'écrans, recette, et les questions au directeur (section 9).
