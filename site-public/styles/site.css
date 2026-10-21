@@ -771,7 +771,7 @@ p { text-wrap: pretty; max-width: 60ch; }
 [data-ambiance="violet"] .porte .rassurance,
 [data-ambiance="violet"] .porte .cta--secondary { background: transparent; }
 [data-ambiance="violet"] .porte .cta--secondary:hover { background: #8652E6; }
-[data-ambiance="violet"].js .porte__disque { background: var(--degrade); }
+[data-ambiance="violet"].js .porte__disque { background: var(--degrade); background-attachment: fixed; }
 /* Les illustrations flottent : plus de fenetre, une lumiere au-dessus, une ombre portee dessous. */
 [data-ambiance="violet"] .porte__arche,
 [data-ambiance="violet"] .chapitres__pile,
