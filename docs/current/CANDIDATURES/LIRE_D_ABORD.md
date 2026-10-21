@@ -15,6 +15,15 @@ consolidée, maquettes et leur contrôle, puis implémentation. Les fiches au
 catalogue (`docs/current/CATALOGUE_ECRANS_RECRUTEMENT.md`, à créer) s'inscrivent
 avant tout fichier `.dart` (section 10 de la revue).
 
+## Où le directeur répond
+
+Une page privée reprend les vingt-deux questions, chacune avec sa raison et la
+recommandation : <https://claude.ai/artifact/JVZ8QM5e1ZnEPaiQPHEoEE>. Chaque
+réponse enregistrée y est un document de la collection `reponses` (identifiant
+`CAND-Qnn`, champs `choix` : `valide`, `autre` ou `discuter`, `texte`, `maj`),
+lisible par Claude. Une réponse ne devient une décision qu'une fois versée dans
+`docs/current/` avec sa date (règle de `docs/current/08` §1).
+
 ## Ordre de lecture
 
 1. Ce fichier.
