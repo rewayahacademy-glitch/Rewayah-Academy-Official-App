@@ -96,6 +96,35 @@ commits trouvés les ont créés ou les gardent volontairement fermés :
 Rapports complets de la recherche : hors dépôt, dans le dossier de travail de la
 session.
 
+## 0 ter. Sixième défaut, trouvé par la relecture du lot CAND-L1 (21/10)
+
+**Un membre actif de la direction peut changer son propre genre**, puis lire
+l'autre côté : les candidatures du module, mais aussi **les pièces d'identité**.
+`read_kyc_documents()` lit en effet le genre du lecteur dans `profiles.gender`
+(`0090_a81_f69_review_fixes.sql:49-92`).
+
+**Pourquoi.**
+- La garde `guard_profile_privileged_columns`
+  (`20261017100700_af_l1_07_genre_colonne_privilegiee.sql:17-31`) protège bien
+  la colonne `gender`.
+- Mais elle laisse passer **tout** compte de la direction actif, sur n'importe
+  quel profil, le sien compris.
+- La policy `profiles_self_update` (`0001_fondations.sql:713`) lui ouvre son
+  propre profil.
+
+Le relecteur l'a reproduit sur une base neuve : changement de genre, lecture du
+contact de l'autre côté, retour au genre d'origine. Rien n'en garde trace.
+
+**Correctif proposé (non écrit, hors du lot CAND-L1).**
+- Refuser à un membre de la direction de changer **son propre** genre.
+- Ne le permettre que par `service_role`, ou par le super-admin de l'exception
+  `0088`.
+- Journaliser chaque changement de genre (`log_sensitive_access`).
+- Ajouter un scénario qui reproduit la faille, puis la ferme.
+
+**À faire avant toute mise en production du module.** Ce défaut ne figurait pas
+parmi les cinq de `CAND-Q15` : son correctif attend l'accord du directeur.
+
 ## 1. Ce que chaque lot attend avant d'exister
 
 1. **`CAND-Q15`** : le feu vert du directeur sur ce découpage.
