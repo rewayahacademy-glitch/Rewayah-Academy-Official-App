@@ -111,7 +111,7 @@
         "famille": "detail-pages-arche",
         "classes": "place"
       },
-      "pleine": [],
+      "pleine": ["classes"],
       "fonds": {
         "famille": "lavande",
         "conditions": "prune"

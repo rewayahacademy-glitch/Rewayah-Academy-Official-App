@@ -288,6 +288,9 @@ def scene(images: dict, ident: str, tailles: str, css: str = "", prioritaire: bo
     style = f' style="--fx:{porte[0]};--fy:{porte[1]}"' if porte else ""
     if image.get("forme") in ("cercle", "arche"):
         css = f"{css} scene--{image['forme']}".strip()
+    # Un rendu d'un autre style (lot 2) se montre comme un detail, pas comme une scene.
+    if image.get("taille") == "detail":
+        css = f"{css} scene--detail".strip()
 
     def img(nom: str, alt: str, extra: str = "", charge: str = chargement) -> str:
         srcset = ", ".join(f"{ASSETS}/scene-{nom}-{w}.webp {w}w" for w in largeurs)
@@ -349,10 +352,10 @@ def texte_html(value: str) -> str:
     fin = re.sub(r"\u00a0(?=\S*@)", " ", fin)
     tete, espace, dernier = fin.rpartition(" ")
     precedent = tete.rsplit(" ", 1)[-1]
-    # Le dernier mot rejoint le bloc qui le precede si l'ensemble reste court : sinon toute la fin de phrase
-    # (« et son travail à préparer. ») deviendrait un seul bloc et laisserait une ligne courte au-dessus.
+    # Le dernier mot rejoint le mot qui le precede si l'ensemble reste tres court (« ne convient pas. ») : au-dela,
+    # le bloc laisse une ligne courte au-dessus (mesure du 21/10 : 14 signes au plus, lignes courtes 6 a 15 %).
     if (espace and len(dernier) <= 12 and "@" not in dernier and "@" not in precedent and len(tete.split()) >= 3
-            and len(precedent) + 1 + len(dernier) <= 20):
+            and len(precedent) + 1 + len(dernier) <= 14):
         fin = f"{tete}\u00a0{dernier}"
     # Un bloc insecable de plus de 24 signes laisse une ligne courte avant lui : on rend ses premieres espaces.
     blocs = []

@@ -109,7 +109,7 @@
   --entete: 72px;
   /* Echelle d'affiche du site : cinq tailles */
   --t-affiche: clamp(44px, 6.6vw, 104px);
-  --t-titre: clamp(26px, 3.8vw, 56px);
+  --t-titre: clamp(26px, 3.5vw, 50px);
   --t-moyen: clamp(20px, 2.1vw, 30px);
   --t-corps: clamp(18px, 0.25vw + 16px, 20px);
   --t-petit: 15px;
@@ -211,6 +211,9 @@ p { text-wrap: wrap; max-width: 60ch; }
 /* Details en pied : l'arche du symbole (le haut est un demi-cercle sur toute la largeur), ouverte sur la lumiere. */
 .scene--arche .scene__cadre { aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 40% 40% 0 0; overflow: hidden; background: #EEE6FA; }
 .section__figure:has(.scene--arche) { background: none; padding: 0; border-radius: 0; width: min(100%, 460px); }
+/* Un rendu d'un autre style (images.json, taille « detail ») reste a la taille d'un detail : 280 px au telephone, 420 px ailleurs. */
+.section__figure:has(.scene--detail) { width: min(100%, 280px); justify-self: center; margin-inline: auto; }
+@media (min-width: 600px) { .section__figure:has(.scene--detail) { width: min(100%, 420px); } }
 /* La manche de l'eleve ne s'arrete pas net : l'image s'efface sur ses bords gauche et bas. */
 /* Les manches sortent par un vrai bord : le bord de l'ecran (haut de page) ou celui de la carte (etapes).
    Seule la fenetre des chapitres, sans bord visible, garde un fondu court. */
@@ -322,7 +325,7 @@ p { text-wrap: wrap; max-width: 60ch; }
 
 /* --- Enonce : une phrase, des fenetres en arche dans la ligne ---------------- */
 .enonce { padding: var(--respire) var(--marge); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
-.enonce__texte { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(21px, 4.2vw, 60px); line-height: 1.08; letter-spacing: -0.03em; }
+.enonce__texte { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-titre); line-height: 1.08; letter-spacing: -0.03em; }
 .enonce__texte span { display: block; }
 @media (min-width: 840px) { .enonce__texte span { white-space: nowrap; } .enonce__texte span + span { padding-inline-start: 1.6em; } }
 
@@ -340,12 +343,13 @@ li, dd { text-wrap: wrap; }
 .chapitres__image figcaption { display: none; }
 .chapitres__textes { grid-column: 1 / -1; }
 .chapitre { padding-block: var(--e-16); }
-.chapitre h2 { max-width: 20ch; margin-bottom: var(--e-6); font-size: clamp(32px, 3.4vw, 50px); }
+.chapitre h2 { max-width: 20ch; margin-bottom: var(--e-6); font-size: min(var(--t-titre), 48px); }
 .chapitre p { max-width: 46ch; }
 .chapitre p + p { margin-top: var(--e-4); }
 .chapitre__image-mobile { margin-top: var(--e-8); }
 /* Les mains : la manche sort par le bord gauche de l'ecran, au lieu de finir coupee dans le vide. */
 .chapitre__image-mobile:has(.scene[data-anime="mains"]) { margin-inline-start: calc(var(--marge) * -1); }
+.chapitre__image-mobile:has(.scene[data-anime="mains"]) figcaption { margin-inline-start: var(--marge); }
 /* Sous 840 px, chaque image se pose juste au-dessus de son titre, alignee sur le texte ; les chapitres se suivent sans vide. */
 @media (max-width: 839px) {
   .chapitre { display: flex; flex-direction: column; padding-block: var(--e-10); }
@@ -624,6 +628,10 @@ li, dd { text-wrap: wrap; }
   .pleine__corps--deux .pleine__texte { grid-column: 1 / span 5; }
   .pleine__plus { grid-column: 1 / span 8; }
   .pleine__corps--deux .pleine__plus { grid-column: 7 / -1; }
+  /* Bande sans texte courant (Tarifs, « Une classe, un enseignant attitre ») : titre, image et tableau sur un meme axe. */
+  .section--pleine:not(:has(.pleine__texte)) .pleine__tete { grid-column: 3 / span 8; text-align: center; }
+  .section--pleine:not(:has(.pleine__texte)) .pleine__tete h2 { margin-inline: auto; }
+  .section--pleine:not(:has(.pleine__texte)) .pleine__plus { grid-column: 3 / span 8; }
 }
 [data-ambiance="violet"] .pleine__image { position: relative; }
 
@@ -662,7 +670,7 @@ li, dd { text-wrap: wrap; }
 @media (min-width: 840px) {
   .groupe { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: start; }
   .carte { grid-column: span 6; padding: var(--e-12) var(--e-10); }
-  .carte h2 { font-size: clamp(28px, 2.6vw, 40px); margin-bottom: var(--e-8); }
+  .carte h2 { font-size: max(26px, var(--t-moyen)); margin-bottom: var(--e-8); }
   .groupe--3 .carte { grid-column: span 4; }
 }
 @media (min-width: 840px) {
@@ -674,7 +682,7 @@ li, dd { text-wrap: wrap; }
 [data-ambiance="violet"] .carte:nth-child(2) { background: #8652E6; }
 
 /* Fiches de la decision du 18/10 : les textes tels quels, en deux champs */
-.fiches { display: grid; gap: var(--e-4); margin-top: var(--e-6); align-items: start; }
+.fiches { display: grid; gap: var(--e-4); margin-top: var(--e-6); align-items: stretch; }
 .fiche { border-radius: var(--r-lg); padding: var(--e-8) var(--e-6); background: var(--sous); }
 .fiche:nth-child(2) { background: var(--champ); }
 .fiche h3 { margin-bottom: var(--e-4); }
@@ -697,7 +705,7 @@ li, dd { text-wrap: wrap; }
 .bande-image .scene figcaption { position: absolute; inset-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); bottom: var(--e-3); }
 .bande-image--large .scene { position: static; }
 .bande-image__texte { margin-top: var(--e-8); }
-.bande-image__phrase { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(22px, 2.6vw, 36px); line-height: 1.1; letter-spacing: -0.02em; max-width: 30ch; text-wrap: balance; }
+.bande-image__phrase { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: max(22px, var(--t-moyen)); line-height: 1.1; letter-spacing: -0.02em; max-width: 30ch; text-wrap: balance; }
 .bande-image__sous { margin-top: var(--e-4); max-width: 44ch; }
 .bande-image--large .bande-image__texte { padding-inline: var(--marge); }
 @media (min-width: 840px) {
@@ -1071,10 +1079,10 @@ li, dd { text-wrap: wrap; }
 /* --- Duo : deux sections cote a cote, chacune avec son detail au-dessus de son texte --- */
 .duo { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; display: grid; gap: var(--e-12); }
 .duo__carte .section__figure { width: min(100%, 360px); margin: 0 0 var(--e-8); }
-.duo__carte h2 { font-size: clamp(26px, 2.6vw, 40px); margin-bottom: var(--e-6); max-width: 18ch; }
+.duo__carte h2 { font-size: max(26px, var(--t-moyen)); margin-bottom: var(--e-6); max-width: 18ch; }
 .duo__carte p + p { margin-top: var(--e-4); }
 .duo__carte .points, .duo__carte .section-links { margin-top: var(--e-6); }
-@media (min-width: 600px) { .duo { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-8); align-items: start; } .duo__carte:nth-child(2) { margin-top: var(--e-16); } }
+@media (min-width: 600px) { .duo { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-8); align-items: start; } }
 @media (min-width: 840px) { .duo { column-gap: var(--e-12); } }
 
 /* --- Fiches du 18/10 au telephone : un choix Enfants / Adultes, une fiche a la fois -------- */
@@ -1153,7 +1161,7 @@ li, dd { text-wrap: wrap; }
 .fond--lavande .scene figcaption, .fond--lavande .lien-fleche { color: inherit; }
 /* Phrase seule sur un champ : un ecran d'un seul element, en grand. */
 .bande-phrase { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
-.bande-phrase__phrase { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(24px, 4vw, 58px); line-height: 1.06; letter-spacing: -0.03em; max-width: 26ch; text-wrap: balance; }
+.bande-phrase__phrase { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-titre); line-height: 1.06; letter-spacing: -0.03em; max-width: 26ch; text-wrap: balance; }
 .bande-phrase__phrase + .bande-image__sous { margin-top: var(--e-6); font-size: var(--t-corps); line-height: 1.5; max-width: 52ch; }
 
 /* --- Impression : tout le contenu, immobile ------------------------------------- */

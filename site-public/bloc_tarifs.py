@@ -392,7 +392,7 @@ def lie(phrase: str) -> str:
     phrase = re.sub(rf"(?<![\w’'])(le|la|de|du|à|au|en|et|ou|un|ne|ce|se|sa|y|a) (?=\S)", "\\1\u00a0", phrase)
     tete, espace, dernier = phrase.rpartition(" ")
     precedent = tete.rsplit(" ", 1)[-1]
-    if espace and len(dernier) <= 12 and len(precedent) + 1 + len(dernier) <= 20 and len(tete.split()) >= 3:
+    if espace and len(dernier) <= 12 and len(precedent) + 1 + len(dernier) <= 14 and len(tete.split()) >= 3:
         phrase = f"{tete}\u00a0{dernier}"
     return phrase
 

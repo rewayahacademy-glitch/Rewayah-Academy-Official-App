@@ -467,7 +467,8 @@
         1022,
         657
       ],
-      "forme": "cercle"
+      "forme": "cercle",
+      "taille": "detail"
     },
     "detail-arche-livre": {
       "source": "14 (scène publiée, 1005 px), sans personne",

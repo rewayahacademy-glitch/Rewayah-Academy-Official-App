@@ -321,10 +321,16 @@ Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 | T2 | Tablette : chapitres de l'accueil empilés ; images de Tarifs décalées | Chaque chapitre pose son image à gauche et son texte à droite ; les images des grandes sections de Tarifs sont centrées |
 | T3 | Bord droit du texte trop irrégulier | Seuls les mots d'une ou deux lettres se lient au mot suivant ; « Société n° 16624644 » et « ne convient pas » restent d'un seul tenant |
 | T4 | La mère et la fille sur l'accueil et sur Tarifs | « Ce que coûte une famille » montre la tranche d'un livre fermé, courbée en arche, sans personne (recadrage vérifié par un second agent) |
+| T5 | Une dizaine de tailles de texte ; le milieu de l'échelle se brouille (49, 55, 60 px) | Titres de section, énoncés et phrases de bande sur une seule taille (50 px à 1440 ; 48 px pour les chapitres de l'accueil, dont la colonne est plus étroite) ; titres des cartes à la taille moyenne. Un titre de page vaut 1,32 fois un titre de section (1,2 avant) |
+| T6 | Bord droit irrégulier : la liaison du dernier mot laisse des lignes courtes | Le dernier mot ne se lie plus que si l'ensemble fait 14 signes au plus. Lignes remplies à moins de 75 % : 6 % à 1440, 14 % à 768, 15 % à 390 (9, 17 et 18 % avant) |
+| T7 | « Les cours en bref » : les deux fiches finissent à des hauteurs différentes | Fiches de même hauteur, texte tel quel |
+| T8 | Familles : deux cercles décalés en hauteur ; « La petite classe » en style figurine, trop grande | Les deux cercles sur la même ligne ; « La petite classe » à la taille d'un détail (420 px, 280 px au téléphone), réglée dans `images.json` (`taille : detail`) |
+| T9 | Le sable pêche des dunes rompt le lavande des autres images | Sable et ciel ramenés au lavande des jetons sur les six images aux dunes ; la peau, la barbe et le livre restent intacts (zones saturées protégées) |
+| T10 | Tarifs : cinq blocs image et texte à la suite | « Une classe, un enseignant attitré » devient une bande pleine : titre, image et tableau sur un même axe |
 
 Trois objets seuls étaient demandés pour Tarifs ; un seul existe dans les rendus. Le pupitre a toujours une personne derrière lui et un livre ouvert dont les lignes se lisent comme du texte. La couverture du livre est tenue par des mains aux quatre coins, et son médaillon porte une écriture. D'où la proposition du 21/10 : dessiner en code les objets et les schémas, et garder les rendus pour les personnes. Une planche de style est soumise au directeur ; rien ne passe sur le site avant son accord.
 
-Inspection de Tarifs après ces corrections : 0 FAIL. Tests : 64, OK.
+Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 
 Contraintes que la recette ne pouvait pas lever : le directeur a fourni treize illustrations, presque toutes des portes (question O-20) ; les encarts du 18/10 se publient tels quels.
 
