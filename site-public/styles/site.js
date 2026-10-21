@@ -180,6 +180,8 @@ function initialiserSimulateur(simulator, d) {
     for (let i = students.children.length / (d.bourse ? 2 : 1); i < voulu; i += 1) {
       const age = el('label', 'Âge de l’élève ' + (i + 1) + ' ');
       const champ = el('input', undefined, { type: 'number', inputmode: 'numeric', min: String(d.ageEnfantMin), step: '1', placeholder: 'Par exemple ' + (d.ageEnfantMin + 2), 'data-age': '' });
+      // Le premier eleve part d'un exemple, pour que le calcul se lise tout de suite ; on le change en un geste.
+      if (i === 0) champ.value = String(d.ageEnfantMin + 2);
       champ.addEventListener('input', calculerEtAfficher);
       age.appendChild(champ);
       students.appendChild(age);
@@ -285,6 +287,12 @@ function initialiserSimulateur(simulator, d) {
   }
 
   total.addEventListener('input', () => { synchroniserLignes(); calculerEtAfficher(); });
+  simulator.querySelectorAll('[data-pas]').forEach((bouton) => bouton.addEventListener('click', (evenement) => {
+    evenement.preventDefault();
+    const actuel = parseInt(total.value, 10) || 0;
+    total.value = String(Math.min(Math.max(actuel + Number(bouton.dataset.pas), 1), d.elevesMax));
+    total.dispatchEvent(new Event('input'));
+  }));
   paiement.addEventListener('change', calculerEtAfficher);
   parrainage.addEventListener('change', calculerEtAfficher);
   synchroniserLignes();

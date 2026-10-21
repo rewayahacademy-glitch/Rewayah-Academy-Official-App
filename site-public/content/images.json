@@ -4,7 +4,7 @@
     1024,
     1600
   ],
-  "note": "Illustrations fournies par le directeur (dossier Drive « images du site public », 21/10/2026), détourées et harmonisées : arches de 02 et 12 recolorées en lavande ; 04 et 09 remplacées par leur jumelle lavande 08. Toujours légendées « Illustration » (cahier visuel C.4). Calques animables : le tapis du chemin et les mains de l'élève dans la transmission, séparés de la scène (GrabCut) et bouchés derrière (LaMa) ; au repos, le fond et le calque redonnent l'image entière. Gros plans : recadrages carrés de quatre scènes (forme « cercle », la halqa du symbole), pour ne pas répéter l’arche entière d’une section à l’autre.",
+  "note": "Illustrations fournies par le directeur (dossier Drive « images du site public », 21/10/2026), détourées et harmonisées : arches de 02 et 12 recolorées en lavande ; 04 et 09 remplacées par leur jumelle lavande 08. Toujours légendées « Illustration » (cahier visuel C.4). Calques animables : le tapis du chemin et les mains de l'élève dans la transmission, séparés de la scène (GrabCut) et bouchés derrière (LaMa) ; au repos, le fond et le calque redonnent l'image entière. Gros plans : recadrages carrés de quatre scènes (forme « cercle », la halqa du symbole), pour ne pas répéter l’arche entière d’une section à l’autre. Détails : six recadrages serrés, sans l’arche (forme « cercle »), pour garder l’arche entière aux hauts de page et aux grandes scènes.",
   "images": {
     "chemin": {
       "source": "07",
@@ -157,6 +157,84 @@
         800,
         1110
       ]
+    },
+    "detail-enseignante": {
+      "source": "03",
+      "largeur": 420,
+      "hauteur": 420,
+      "alt": "Gros plan : une enseignante lit, assise, le livre ouvert sur les genoux.",
+      "recadrage": [
+        350,
+        500,
+        770,
+        920
+      ],
+      "forme": "cercle"
+    },
+    "detail-halqa": {
+      "source": "06",
+      "largeur": 520,
+      "hauteur": 520,
+      "alt": "Vue du dessus : deux élèves lisent, chacun devant son pupitre de lecture.",
+      "recadrage": [
+        170,
+        470,
+        690,
+        990
+      ],
+      "forme": "cercle"
+    },
+    "detail-livre-homme": {
+      "source": "13",
+      "largeur": 420,
+      "hauteur": 420,
+      "alt": "Gros plan : un homme, un livre à la main, regarde par la porte ouverte sur des dunes.",
+      "recadrage": [
+        300,
+        400,
+        720,
+        820
+      ],
+      "forme": "cercle"
+    },
+    "detail-livre-femme": {
+      "source": "10",
+      "largeur": 430,
+      "hauteur": 430,
+      "alt": "Gros plan : une femme tient un livre contre elle, devant une porte ouverte.",
+      "recadrage": [
+        0,
+        330,
+        430,
+        760
+      ],
+      "forme": "cercle"
+    },
+    "detail-pupitre": {
+      "source": "15",
+      "largeur": 400,
+      "hauteur": 400,
+      "alt": "Gros plan : une enseignante lit, le livre posé sur son pupitre de lecture.",
+      "recadrage": [
+        470,
+        610,
+        870,
+        1010
+      ],
+      "forme": "cercle"
+    },
+    "detail-place": {
+      "source": "14",
+      "largeur": 410,
+      "hauteur": 410,
+      "alt": "Un coussin et un pupitre de lecture attendent l’élève.",
+      "recadrage": [
+        0,
+        615,
+        410,
+        1025
+      ],
+      "forme": "cercle"
     }
   }
 }

@@ -480,9 +480,9 @@ def accueil_etapes(page: dict, images: dict) -> str:
     """Les tuiles qui grandissent : l'ordre se lit a la taille, sans numeros."""
     sec = _sections_par_id(page)["fonctionnement"]
     etapes = (
-        ("place", "Vous choisissez un horaire", "Parmi les horaires publiés, pour votre enfant ou pour vous."),
-        ("eleve-enseignante-b", "La direction compose la classe", "Elle nomme l’enseignant et vous écrit à chaque étape."),
-        ("adulte-homme-livre", "La classe commence", "Vous la rejoignez depuis l’application, à son horaire."),
+        ("detail-place", "Vous choisissez un horaire", "Parmi les horaires publiés, pour votre enfant ou pour vous."),
+        ("detail-enseignante", "La direction compose la classe", "Elle nomme l’enseignant et vous écrit à chaque étape."),
+        ("detail-pupitre", "La classe commence", "Vous la rejoignez depuis l’application, à son horaire."),
     )
     tuiles = "".join(
         f'<li class="pousse__etape pousse__etape--{i}" data-revele>'
@@ -831,7 +831,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
       <h2 id="simulator-title">Estimez le tarif de votre foyer</h2>
       <p>Indiquez le nombre d’élèves, puis l’âge de chacun, dans l’ordre d’inscription.</p>
       <div class="simulator__fields">
-        <label>Nombre d’élèves <input type="number" inputmode="numeric" min="1" step="1" value="1" id="sim-total"></label>
+        <label>Nombre d’élèves <span class="pas"><button type="button" data-pas="-1" aria-label="Un élève de moins">−</button><input type="number" inputmode="numeric" min="1" step="1" value="1" id="sim-total"><button type="button" data-pas="1" aria-label="Un élève de plus">+</button></span></label>
         <label>Paiement <select id="sim-paiement"></select></label>
         <label>Parrainage <input type="checkbox" id="sim-parrainage"></label>
       </div>

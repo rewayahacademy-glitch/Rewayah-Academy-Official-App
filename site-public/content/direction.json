@@ -7,7 +7,7 @@
       "cote": "droite",
       "champ": "lavande",
       "bande": {
-        "image": "mere-porte",
+        "image": "gros-plan-famille",
         "apres": "suivi",
         "forme": "arche",
         "phrase": "Écouter une séance deux minutes, sans micro ni caméra.",
@@ -21,7 +21,7 @@
         "href": "/connexion"
       },
       "figures": {
-        "profils": "eleve-enseignante-b",
+        "profils": "detail-halqa",
         "organisation": "chemin"
       },
       "pleine": [
@@ -33,7 +33,7 @@
       "cote": "gauche",
       "champ": "lavande",
       "bande": {
-        "image": "adulte-homme",
+        "image": "detail-livre-homme",
         "apres": "adultes-enfants",
         "forme": "arche",
         "phrase": "Les adultes apprennent dans des classes d’adultes.",
@@ -47,7 +47,7 @@
         "href": "/connexion"
       },
       "figures": {
-        "methode": "place",
+        "methode": "detail-pupitre",
         "groupes": "halqa"
       },
       "pleine": [
@@ -77,9 +77,9 @@
         "href": "/connexion"
       },
       "figures": {
-        "connexion": "adulte-homme-livre",
-        "propositions": "place",
-        "traitement": "eleve-enseignante-b",
+        "connexion": "detail-livre-homme",
+        "propositions": "detail-place",
+        "traitement": "detail-enseignante",
         "classe": "transmission-lavande",
         "mineur": "gros-plan-pere-fils"
       }
@@ -97,7 +97,7 @@
       },
       "figures": {
         "grille": "gros-plan-enseignant",
-        "famille": "pere-fils",
+        "famille": "gros-plan-famille",
         "classes": "halqa"
       },
       "pleine": [
@@ -126,7 +126,7 @@
       "figures": {
         "projet": "gros-plan-lecture",
         "famille": "gros-plan-famille",
-        "societe": "adulte-homme-livre"
+        "societe": "detail-livre-femme"
       },
       "pleine": [
         "famille"
@@ -137,8 +137,8 @@
       "cote": "droite",
       "champ": "blanc",
       "figures": {
-        "catalogue": "adulte-homme-livre",
-        "orientation": "place"
+        "catalogue": "detail-livre-homme",
+        "orientation": "detail-place"
       },
       "bande": {
         "image": "boucle",
@@ -172,7 +172,7 @@
       },
       "figures": {
         "avis": "gros-plan-pere-fils",
-        "transparence": "adulte-femme-livre"
+        "transparence": "detail-livre-femme"
       },
       "bande": {
         "image": "halqa",
@@ -195,8 +195,8 @@
       },
       "figures": {
         "postes": "gros-plan-enseignant",
-        "enseignants": "transmission-lavande",
-        "candidature": "adulte-homme"
+        "enseignants": "boucle",
+        "candidature": "detail-pupitre"
       },
       "pleine": [
         "enseignants"

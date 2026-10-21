@@ -457,9 +457,14 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
                   ' en liste d’attente et rien n’est facturé.</p>')
     if nom == "fiches-eleves":
         e = encarts_suivis(p)
+
+        # Les phrases de l'encart, sans en changer un mot, posees une par ligne pour se lire d'un coup d'oeil.
+        def lignes(texte: str) -> str:
+            phrases = re.split(r"(?<=\.) (?=[A-ZÀ-Ý0-9])", texte)
+            return '<ul class="fiche__lignes">' + "".join(f"<li>{esc(ph)}</li>" for ph in phrases) + "</ul>"
         return ('<div class="fiches">'
-                f'<article class="fiche"><h3>Enfants et\u00a0adolescents</h3><p>{esc(e["encart_enfant"])}</p></article>'
-                f'<article class="fiche"><h3>Adultes</h3><p>{esc(e["encart_adulte"])}</p></article></div>')
+                f'<article class="fiche"><h3>Enfants et\u00a0adolescents</h3>{lignes(e["encart_enfant"])}</article>'
+                f'<article class="fiche"><h3>Adultes</h3>{lignes(e["encart_adulte"])}</article></div>')
     if nom == "fiche-enseignant":
         return f'<div class="fiches"><article class="fiche"><p>{esc(encarts_suivis(p)["encart_enseignant"])}</p></article></div>'
     raise ValueError(f"Section générée inconnue : {nom}")
