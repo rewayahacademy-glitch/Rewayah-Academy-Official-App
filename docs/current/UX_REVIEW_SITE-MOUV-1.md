@@ -213,6 +213,7 @@ Inspection après ces corrections :
 | Recette 10 | 7,8 | 6,57 | 6,5 | « presque » |
 | Recette 11 | 7,77 | 6,37 | 6,33 | « presque » |
 | Recette 12 | 6,8 (7,35 à 7,5 sans plafond) | 6,07 | 6,17 | « presque » |
+| Recette 13 | 7,77 | 6,2 | 6,3 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -389,6 +390,17 @@ Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 | X4 | Académie : la même arche dans deux sections de suite | « La famille fait partie du parcours » montre la mère à la porte qui regarde sa fille apprendre avec l'enseignante ; un cercle en bande pleine fait 520 px au plus |
 
 Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
+
+**Corrections après la recette 13.** Plus aucun plafond. Les trois jurés répètent que ce qui retient leur « oui » est la répétition des mêmes personnages d'une page à l'autre et le petit nombre de rendus : c'est la question O-20 (nouvelles scènes), que le site ne peut pas régler seul.
+
+| # | Relevé | Correction |
+|---|---|---|
+| Y1 | Tarifs : le détail en arche à côté de « Ce que coûte une famille » se lit comme un panneau vide | Le haut de l'arche faite de pages, sans personne, qui s'efface dans la bande lavande |
+| Y2 | Accueil : la scène du haut finit sur une coupe nette, le tapis coupé | Le bas de la scène s'efface dans la page |
+| Y3 | Cours, tablette : les quatre arches serrées, libellés sur quatre lignes | Deux arches par rangée ; chaque libellé tient sur une ligne, deux pour les sourates avec leur précision |
+| Y4 | Accueil : la fenêtre des chapitres change d'image trop tard | L'image change quand le titre du chapitre suivant passe 60 % de la hauteur de l'écran |
+
+Le texte courant est déjà en blanc plein sur le violet (contraste 6,5:1, le plus haut possible sur ce violet). Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 
 Contraintes que la recette ne pouvait pas lever : le directeur a fourni treize illustrations, presque toutes des portes (question O-20) ; les encarts du 18/10 se publient tels quels.
 

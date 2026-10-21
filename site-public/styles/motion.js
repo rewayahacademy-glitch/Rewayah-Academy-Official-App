@@ -138,17 +138,12 @@
 
   function sceneChapitres(h) {
     if (!chapitres || !large.matches || !textesChapitres.length) return;
-    var milieu = h / 2;
-    var centres = Array.prototype.map.call(textesChapitres, function (t) {
-      var r = t.getBoundingClientRect();
-      return r.top + r.height / 2;
+    // Une seule illustration a la fois : elle change des que le titre du chapitre suivant passe 60 % de la hauteur
+    // de l'ecran, pour que le texte et son image arrivent ensemble ; le fondu est porte par le CSS.
+    var courante = 0;
+    Array.prototype.forEach.call(textesChapitres, function (t, i) {
+      if (t.getBoundingClientRect().top < h * 0.6) courante = i;
     });
-    var position = 0;
-    for (var i = 0; i < centres.length - 1; i++) {
-      if (milieu >= centres[i]) position = i + borne((milieu - centres[i]) / (centres[i + 1] - centres[i]));
-    }
-    // Une seule illustration a la fois : on change au milieu du passage, le fondu est porte par le CSS.
-    var courante = Math.round(position);
     imagesChapitres.forEach(function (img, j) {
       img.style.setProperty('--o', j === courante ? '1' : '0');
     });
