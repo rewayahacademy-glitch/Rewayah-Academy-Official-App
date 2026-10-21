@@ -557,6 +557,11 @@ p { text-wrap: pretty; max-width: 60ch; }
 .contact-ligne h2 { font-size: var(--t-moyen); line-height: 1.2; }
 .contact-ligne .section-links { margin-top: var(--e-2); }
 .contact-ligne .lien-fleche span { font-size: var(--t-moyen); font-family: 'DM Sans', sans-serif; font-weight: 600; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+@media (min-width: 600px) {
+  .contact-ligne { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: baseline; }
+  .contact-ligne h2 { grid-column: 1 / span 4; }
+  .contact-ligne__corps { grid-column: 5 / -1; }
+}
 @media (min-width: 840px) {
   .contacts { gap: var(--e-16); }
   .contact-ligne { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: baseline; }

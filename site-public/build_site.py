@@ -600,7 +600,7 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
     morceaux = []
     if gabarit == "question":
         tuiles = "".join(render_section(s, i, tarifs, today, avis, "question") for i, s in enumerate(sections, 1))
-        return f'<div class="questions">{tuiles}</div>'
+        return f'<div class="questions" data-revele-enfants>{tuiles}</div>'
     if gabarit == "lecture":
         sommaire = "".join(f'<li><a href="#{esc(s["id"])}">{esc(sans_numero(s["title"]))}</a></li>' for s in sections)
         corps = "".join(render_section(s, i, tarifs, today, avis, "lecture") for i, s in enumerate(sections, 1))

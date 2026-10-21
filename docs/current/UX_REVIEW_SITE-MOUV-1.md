@@ -53,6 +53,16 @@ Lot du 21/10/2026, branche `claude/youthful-davinci-raugwe`. Revue exigée par `
 | D20 | Images légendées | Cahier visuel C.4 ; manifeste (aucune image inventée présentée comme réelle) | « Illustration » sous chaque image | Conforme | Testé sur chaque page (`test_every_illustration_is_captioned_and_described`) |
 | D21 | Logo | `assets/brand/logo/README.md` ; M-25, M-28 | Fichiers officiels, jamais animé, blanc sur fond sombre | Conforme | Copies identiques à l'octet (testé). L'en-tête est exclu des transitions de page. Le logo glisse avec l'en-tête quand celui-ci s'efface, sans changer de forme, de taille ni de couleur : interprétation inscrite en O-15 |
 
+## Inspection finale (skill de direction `design-taste-frontend`, `inspect.mjs`, 1440, 768 et 390 px)
+
+- **0 FAIL sur les 9 pages qui présentent l'offre** : accueil, familles, cours, comment ça marche, tarifs, académie, articles, avis, recrutement.
+- **Pages documents et outils** : aide, contact, protection des enfants, les 5 pages légales et accessibilité. Un seul FAIL chacune, « few-pictures » (une image par page), défendu ci-dessous.
+- **WARN restants, tous défendus ci-dessous** :
+  - aucune vidéo ;
+  - marges à 768 px ;
+  - texte épinglé sur l'image de l'accueil ;
+  - peu de mouvement sur les pages documents.
+
 ## Dérogations et exceptions défendues
 
 - **Bouton principal violet plein** au lieu de l'action douce de l'app. Raison : le site pose ses boutons sur des champs lavande où l'action douce (`#DCCAFD`) se confond avec le fond. Inscrit en O-11.
