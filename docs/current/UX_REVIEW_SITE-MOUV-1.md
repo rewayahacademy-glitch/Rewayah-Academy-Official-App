@@ -193,6 +193,40 @@ Inspection après ces corrections :
 - **Les 8 pages documents** : un seul FAIL chacune, « few-pictures », défendu plus haut.
 - **Débordement horizontal** : aucun à 320, 360 et 1440 px. Tests : 64, OK.
 
+## Recettes face à deux sites faits par des agences (21/10/2026)
+
+**Méthode.** Trois jurés indépendants notent, avec la même grille et ses plafonds, Rewayah et deux sites de référence faits par des agences : Hallow (application de prière) et Waking Up (application de méditation). Chacun répond aussi à la question du directeur : Rewayah se lit-il comme le travail d'une grande agence, au niveau de ces deux sites ?
+
+| | Rewayah | Hallow | Waking Up | Réponse des trois jurés |
+|---|---|---|---|---|
+| Recette 1 | 7,12 | 6,17 | 6,17 | « presque » |
+| Recette 2 | 7,1 | 6,27 | 6,33 | « presque » |
+
+Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
+
+**Corrections après la recette 1.**
+
+| # | Relevé | Correction |
+|---|---|---|
+| L1 | Pages intérieures sur un seul gabarit image et texte | Une bande pleine par page intérieure (titre, grande illustration au centre, texte et tableau en deux colonnes dessous) : cours, familles, tarifs, académie, recrutement |
+| L2 | Taches lavande dans la main, éclats sous le Coran (académie) | Les mains tiennent déjà le livre au premier écran ; la tache est retirée du calque des mains |
+| L3 | Coupures après les petits mots, deux-points en début de ligne, « Az-Zalzalah » coupé | Espace insécable avant « : ; ? ! » ; noms à trait d'union insécables ; « qui » et « que » liés au mot suivant |
+| L4 | Les quatre étapes des bases en cartes de texte | Quatre arches qui montent, de la plus sombre à la plus claire |
+| L5 | Simulateur à l'air de formulaire | Champs à gauche, prix à droite, chevron dessiné, exemple d'âge |
+
+**Corrections après la recette 2.**
+
+| # | Relevé | Correction |
+|---|---|---|
+| M1 | La même arche entière dans presque chaque section | Six recadrages serrés, en cercle, des illustrations (pupitre et coussin, enseignante qui lit, deux élèves vus du dessus, homme et femme au livre, enseignante au pupitre). L'arche entière reste aux hauts de page et aux grandes scènes |
+| M2 | Titre de page plus petit que les titres de section | Titres de page de 66 px en grand écran, titres longs compris ; colonne de titre élargie à six colonnes |
+| M3 | Illustrations au tiers de l'écran dans de grands champs violets | Images de section sur six colonnes ; espace entre sections réduit d'un tiers. Dans le chapitre « Un enseignant qui écoute et corrige », les mains sont ancrées dans le coin bas gauche de l'écran, 1,6 fois plus grandes |
+| M4 | « Les cours en bref » : deux paragraphes denses | Les encarts de la décision du 18/10 sont posés une phrase par ligne, sans changer un mot |
+| M5 | Simulateur : âge vide, champ nu, vide dans la colonne du prix | Boutons moins et plus ; un exemple d'âge rempli pour lire le calcul tout de suite |
+| M6 | Mains : dalle de sol sous la porte, manches dans une brume, ourlet fantôme | Reflet du sol retiré ; plus de fondu : la manche sort par le bord de l'écran (24 px au-delà) et son ourlet passe sous le bas de l'écran. Les conditions prennent une autre illustration, faute de bord où la manche puisse sortir |
+
+Inspection des 18 pages après ces corrections : 0 FAIL sur les 10 pages de l'offre ; un seul FAIL sur chacune des 8 pages documents (« few-pictures », défendu plus haut). Tous les titres de page tiennent en deux lignes de 840 à 1440 px.
+
 ## Hors de portée de l'agent
 
 - `.github/workflows/flutter-deploy.yml` vérifie la présence de 8 fichiers du site, mais pas de `motion.js`. Le garde du dépôt interdit à l'agent d'écrire dans `.github/`. Le test `test_only_approved_public_assets_are_copied` couvre ce fichier côté tests.
