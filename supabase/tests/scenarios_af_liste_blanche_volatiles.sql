@@ -143,6 +143,11 @@ declare
     'guard_rule_override_coherente()',
     'guard_rule_override_immutable()',
     'guard_session_state_transition()',
+    -- CAND-L1 (21/10) : candidatures, lectures journalisees par la direction.
+    'historique_candidature(uuid,bigint,integer)',
+    'lire_candidature(uuid)',
+    'lire_contact_candidature(uuid)',
+    'lister_candidatures(jsonb,text,integer)',
     'indicateurs_admin()',
     'inscrire_comptable_invite(text,text,text,gender)',
     'inscrire_titulaire(text,text,text,gender,text,boolean)',
