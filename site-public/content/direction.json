@@ -1,6 +1,7 @@
 {
-  "description": "Direction artistique par page. Un seul motif : l'arche du symbole (arche en forme de livre, porte ouverte ; décision M-21). image = illustration du haut de page, cote = côté de l'image (on alterne pour ne pas tout poser à droite), champ = couleur du fond du haut de page, cadre = libre pour une image panoramique qui sort par le bord de l'écran au lieu d'une fenêtre en arche, gabarit = composition du corps, figures = une illustration sous le titre d'une section (clé = id de la section), bande = grande image posée entre deux sections, fin = bande d'appel en bas de page (sobre ; le mot géant de la bande reste propre à l'accueil). Les textes de fin ne disent que des faits publiés (liste d'attente non facturée, première semaine remboursée : content/tarifs.json et page Annulation). haut = le haut de page ouvre sur le sujet de la page (texte : les étapes suivent tout de suite ; parcours : les arches du parcours ; prix : les deux prix en grand, avec un détail). duos = deux sections côte à côte, chacune avec son détail. ambiance = clair (fond blanc et lavande) ou violet (fond violet en dégradé léger, demande du directeur du 21/10/2026). pleine = sections posées en bande pleine (titre, grande illustration au centre, texte en deux colonnes dessous), une par page pour casser l'alternance image et texte. parcours = la liste des étapes posée en arches qui montent. fonds = sections posées sur un autre champ, sur toute la largeur (lavande ou prune), une ou deux par page, pour que la page ne soit pas un seul violet. Une bande sans image est une phrase seule, en grand, sur son fond. Chaque illustration entière n'appartient qu'à une page ; ailleurs, un détail serré (cercle ou arche), chaque fichier une seule fois.",
+  "description": "Direction artistique par page. Un seul motif : l'arche du symbole (arche en forme de livre, porte ouverte ; décision M-21). image = illustration du haut de page, cote = côté de l'image (on alterne pour ne pas tout poser à droite), champ = couleur du fond du haut de page, cadre = libre pour une image panoramique qui sort par le bord de l'écran au lieu d'une fenêtre en arche, gabarit = composition du corps, figures = une illustration sous le titre d'une section (clé = id de la section), bande = grande image posée entre deux sections, fin = bande d'appel en bas de page (sobre ; le mot géant de la bande reste propre à l'accueil). Les textes de fin ne disent que des faits publiés (liste d'attente non facturée, première semaine remboursée : content/tarifs.json et page Annulation). haut = le haut de page ouvre sur le sujet de la page (texte : les étapes suivent tout de suite ; parcours : les arches du parcours ; prix : les deux prix en grand, avec un détail). duos = deux sections côte à côte, chacune avec son détail. ambiance = clair (fond blanc et lavande) ou violet (fond violet en dégradé léger, demande du directeur du 21/10/2026). pleine = sections posées en bande pleine (titre, grande illustration au centre, texte en deux colonnes dessous), une par page pour casser l'alternance image et texte. parcours = la liste des étapes posée en arches qui montent. fonds = sections posées sur un autre champ, sur toute la largeur (lavande ou prune), une ou deux par page, pour que la page ne soit pas un seul violet. Une bande sans image est une phrase seule, en grand, sur son fond. Chaque illustration entière n'appartient qu'à une page ; ailleurs, un détail serré (cercle ou arche), chaque fichier une seule fois. dessins = schémas dessinés en code (planche de style du 21/10, des points et des formes, jamais des personnes) : false tant que le directeur ne les a pas validés ; à false, aucun schéma n'est posé et la bande garde sa phrase seule.",
   "ambiance": "violet",
+  "dessins": false,
   "pages": {
     "/fr/familles": {
       "image": "plan-pere-fils",
@@ -77,7 +78,30 @@
       "bande": {
         "phrase": "Des classes de 3 à 5 enfants, ou de 3 à 6 adultes.",
         "sous": "Une classe ouvre dès trois inscrits. Avant cela, vous êtes en liste d’attente et rien n’est facturé.",
-        "fond": "lavande"
+        "fond": "lavande",
+        "schema": {
+          "description": "Schéma : des élèves inscrits au même horaire se regroupent autour d’un enseignant ; la direction crée la classe dès le nombre d’inscrits requis, jusqu’à la taille de la classe.",
+          "centre": "L’enseignant",
+          "choix": "Taille de classe à montrer",
+          "etapes": [
+            {
+              "titre": "Vous choisissez un horaire publié",
+              "texte": "Votre demande attend sur cet horaire."
+            },
+            {
+              "titre": "Les demandes se regroupent",
+              "texte": "Mêmes jours, même heure, même public, même langue."
+            },
+            {
+              "titre": "La direction crée la classe",
+              "texte": "Dès {ouverture} inscrits. Avant cela, rien n’est facturé."
+            },
+            {
+              "titre": "La classe est complète",
+              "texte": "Chaque élève retrouve le même enseignant à chaque séance."
+            }
+          ]
+        }
       },
       "fin": {
         "titre": "Votre inscription commence ici.",
@@ -111,7 +135,9 @@
         "famille": "detail-pages-arche",
         "classes": "place"
       },
-      "pleine": ["classes"],
+      "pleine": [
+        "classes"
+      ],
       "fonds": {
         "famille": "lavande",
         "conditions": "prune"

@@ -376,12 +376,85 @@
     }, { passive: true });
   }
 
+  /* Schema « la classe se forme » : les eleves (des points) rejoignent leur place autour de l'enseignant ; la classe
+     ouvre au nombre d'inscrits requis. Joue une fois quand le schema entre a l'ecran, puis a la demande. Les chiffres
+     viennent du build (tarifs) ; sans JavaScript ou en mouvement reduit, la classe complete reste affichee. */
+  function preparerSchemas() {
+    document.querySelectorAll('[data-schema="classe"]').forEach(function (bloc) {
+      var NS = 'http://www.w3.org/2000/svg';
+      var ouverture = +bloc.dataset.ouverture, tailles = { enfants: +bloc.dataset.enfants, adultes: +bloc.dataset.adultes };
+      var places = bloc.querySelector('.schema-classe__places'), eleves = bloc.querySelector('.schema-classe__eleves');
+      var anneau = bloc.querySelector('.schema-classe__anneau'), etat = bloc.querySelector('.schema-classe__etat');
+      var etapes = bloc.querySelectorAll('.schema-classe__etapes li');
+      var boutons = bloc.querySelectorAll('[data-public]');
+      var departs = [[40, 60], [560, 50], [580, 400], [30, 410], [300, 20], [20, 230], [580, 230]];
+      var publicChoisi = 'enfants', minuteurs = [];
+      function point(i, n) { var a = -Math.PI / 2 + i * 2 * Math.PI / n; return [300 + 150 * Math.cos(a), 220 + 150 * Math.sin(a)]; }
+      function etape(k) { etapes.forEach(function (li, i) { li.classList.toggle('est-active', i === k); }); }
+      function plus(ms, f) { minuteurs.push(setTimeout(f, ms)); }
+      function ouvrir(oui) { anneau.setAttribute('stroke-dasharray', oui ? '0' : '10 14'); anneau.style.opacity = oui ? '1' : '.6'; }
+      function nom(k) { return k + ' ' + (publicChoisi === 'enfants' ? 'enfants' : 'adultes'); }
+      function dessiner(final) {
+        minuteurs.forEach(clearTimeout); minuteurs = [];
+        places.replaceChildren(); eleves.replaceChildren();
+        var n = tailles[publicChoisi];
+        for (var i = 0; i < n; i++) {
+          var p = point(i, n), c = document.createElementNS(NS, 'circle');
+          c.setAttribute('cx', p[0]); c.setAttribute('cy', p[1]); c.setAttribute('r', 22);
+          c.setAttribute('fill', 'none'); c.setAttribute('stroke', '#BA98FB'); c.setAttribute('stroke-width', 2); c.setAttribute('stroke-dasharray', '4 6');
+          places.appendChild(c);
+        }
+        for (var j = 0; j < n; j++) {
+          (function (j) {
+            var p = point(j, n), d = departs[j], c = document.createElementNS(NS, 'circle');
+            c.setAttribute('r', 16); c.setAttribute('fill', '#FFFFFF');
+            c.style.transition = final ? 'none' : 'transform .9s cubic-bezier(.2, 0, 0, 1)';
+            c.style.transform = 'translate(' + (final ? p[0] : d[0]) + 'px,' + (final ? p[1] : d[1]) + 'px)';
+            eleves.appendChild(c);
+            if (!final) plus(1200 + j * 1000, function () { c.style.transform = 'translate(' + p[0] + 'px,' + p[1] + 'px)'; });
+          })(j);
+        }
+        if (final) { ouvrir(true); etape(3); etat.textContent = 'Classe complète : ' + nom(n); return; }
+        ouvrir(false); etape(0); etat.textContent = 'En attente sur l’horaire choisi';
+        plus(900, function () { etape(1); etat.textContent = 'Les demandes se regroupent'; });
+        for (var k = 1; k <= n; k++) {
+          (function (k) {
+            plus(1200 + k * 1000, function () {
+              if (k < ouverture) etat.textContent = k + (k > 1 ? ' inscrits' : ' inscrit');
+              else if (k === ouverture) { ouvrir(true); etape(2); etat.textContent = k + ' inscrits : la direction crée la classe'; }
+              else if (k < n) etat.textContent = k + ' inscrits';
+              else { etape(3); etat.textContent = 'Classe complète : ' + nom(n); }
+            });
+          })(k);
+        }
+      }
+      function jouer() { dessiner(reduit.matches); }
+      boutons.forEach(function (b) {
+        b.addEventListener('click', function () {
+          publicChoisi = b.dataset.public;
+          boutons.forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+          jouer();
+        });
+      });
+      bloc.querySelector('[data-rejouer]').addEventListener('click', jouer);
+      dessiner(true);
+      if (reduit.matches || !('IntersectionObserver' in window)) return;
+      var vu = new IntersectionObserver(function (entrees) {
+        if (!entrees[0].isIntersecting) return;
+        vu.disconnect();
+        dessiner(false);
+      }, { threshold: 0.5 });
+      vu.observe(bloc);
+    });
+  }
+
   preparerEntrees();
   preparerTapis();
   preparerHalo();
   preparerTitres();
   preparerSommaire();
   preparerTuiles();
+  preparerSchemas();
   window.addEventListener('scroll', auDefilement, { passive: true });
   window.addEventListener('resize', auDefilement, { passive: true });
   reduit.addEventListener('change', auDefilement);

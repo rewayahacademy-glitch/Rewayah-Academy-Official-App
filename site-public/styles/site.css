@@ -1163,6 +1163,26 @@ li, dd { text-wrap: wrap; }
 .bande-phrase { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
 .bande-phrase__phrase { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-titre); line-height: 1.06; letter-spacing: -0.03em; max-width: 26ch; text-wrap: balance; }
 .bande-phrase__phrase + .bande-image__sous { margin-top: var(--e-6); font-size: var(--t-corps); line-height: 1.5; max-width: 52ch; }
+/* Schema « la classe se forme » (dessins en code, direction.json « dessins ») : sur la nuit, comme sur la planche du 21/10. */
+.bande-phrase--schema { text-align: start; }
+.bande-phrase--schema .bande-phrase__phrase, .bande-phrase--schema .bande-image__sous { margin-inline: 0; }
+.schema-classe { display: grid; gap: var(--e-6); margin-top: var(--e-10); border-radius: var(--r-lg); padding: var(--e-6); background: #25113F; color: #FFFFFF; }
+.schema-classe__figure { margin: 0; }
+.schema-classe__figure svg { display: block; width: 100%; height: auto; font-family: 'Plus Jakarta Sans', sans-serif; }
+.schema-classe__figure figcaption { margin-top: var(--e-2); font-size: var(--t-petit); color: #DCCAFD; }
+.schema-classe__anneau { transition: opacity .22s; }
+.schema-classe__etapes { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--e-2); }
+.schema-classe__etapes li { border-radius: var(--r-md, 16px); padding: var(--e-3) var(--e-4); background: rgb(255 255 255 / .06); color: #DCCAFD; transition: background-color .22s, color .22s; }
+.schema-classe__etapes li.est-active { background: #8652E6; color: #FFFFFF; }
+.schema-classe__etapes strong { display: block; font-family: 'DM Sans', sans-serif; font-weight: 600; color: #FFFFFF; }
+.schema-classe__etat { margin-top: var(--e-4); font-weight: 600; min-height: 1.5em; }
+.schema-classe__choix { display: none; flex-wrap: wrap; gap: var(--e-2); margin-top: var(--e-4); }
+.js .schema-classe__choix { display: flex; }
+.schema-classe__choix button { min-height: 44px; padding-inline: var(--e-5); border: 2px solid #FFFFFF; border-radius: 999px; background: transparent; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer; }
+.schema-classe__choix button[aria-pressed="true"] { background: #FFFFFF; color: #25113F; }
+.schema-classe__choix button:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 3px; }
+@media (min-width: 840px) { .schema-classe { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: center; gap: var(--e-10); padding: var(--e-8); } }
+@media (prefers-reduced-motion: reduce) { .schema-classe__etapes li, .schema-classe__anneau { transition: none; } }
 
 /* --- Impression : tout le contenu, immobile ------------------------------------- */
 @media print {

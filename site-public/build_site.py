@@ -205,6 +205,8 @@ def load_direction(pages: dict[str, dict]) -> tuple[dict, dict]:
             raise ValueError(f"Image {ident}: unknown animation {calques.get('anime')}")
     if direction.get("ambiance", "clair") not in ("clair", "violet"):
         raise ValueError("direction.json: ambiance must be clair or violet")
+    if not isinstance(direction.get("dessins", False), bool):
+        raise ValueError("direction.json: dessins must be true or false")
     for route, reglage in direction["pages"].items():
         if route not in pages:
             raise ValueError(f"direction.json names an unknown route: {route}")
@@ -215,6 +217,11 @@ def load_direction(pages: dict[str, dict]) -> tuple[dict, dict]:
             valeur = (reglage.get(cle) or {}).get("image") if isinstance(reglage.get(cle), dict) else reglage.get(cle)
             if valeur and valeur not in connues:
                 raise ValueError(f"direction.json names an unknown picture: {valeur}")
+        schema = (reglage.get("bande") or {}).get("schema")
+        if schema is not None:
+            if set(schema) != {"description", "centre", "choix", "etapes"} or len(schema["etapes"]) != 4 or any(
+                    set(e) != {"titre", "texte"} for e in schema["etapes"]):
+                raise ValueError(f"direction.json: {route} band schema needs description, centre, choix and four etapes")
     return direction, images
 
 
@@ -747,11 +754,62 @@ def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str
             f'<div class="entete-page__arche" data-parallaxe>{scene(images, image, tailles, "entete-page__image", prioritaire=True)}</div></section>')
 
 
-def bande_image(reglage: dict, images: dict) -> str:
+# Schema « la classe se forme » (planche de style du 21/10) : des points, jamais des personnes dessinees. Les chiffres
+# viennent de la politique tarifaire (ouverture, tailles de classe) ; sans JavaScript, la classe complete reste affichee.
+SCHEMA_CENTRE, SCHEMA_RAYON = (300, 220), 150
+
+
+def _places_classe(n: int) -> list[tuple[float, float]]:
+    import math
+    return [(round(SCHEMA_CENTRE[0] + SCHEMA_RAYON * math.cos(-math.pi / 2 + i * 2 * math.pi / n), 1),
+             round(SCHEMA_CENTRE[1] + SCHEMA_RAYON * math.sin(-math.pi / 2 + i * 2 * math.pi / n), 1)) for i in range(n)]
+
+
+def sans_dessins(reglage: dict, direction: dict) -> dict:
+    """Les dessins en code ne passent sur le site qu'apres l'accord du directeur (direction.json, « dessins »)."""
+    bande = reglage.get("bande") or {}
+    if direction.get("dessins") or "schema" not in bande:
+        return reglage
+    return {**reglage, "bande": {k: v for k, v in bande.items() if k != "schema"}}
+
+
+def schema_classe(schema: dict, tarifs: dict) -> str:
+    classes = tarifs_mod.politique_affichee(tarifs)["classes"]
+    ouverture, enfants, adultes = classes["ouvertureMinimum"], classes["tailleEnfant"], classes["tailleAdulte"]
+    places = "".join(f'<circle cx="{x}" cy="{y}" r="22" fill="none" stroke="#BA98FB" stroke-width="2" stroke-dasharray="4 6"/>'
+                     for x, y in _places_classe(enfants))
+    eleves = "".join(f'<circle r="16" fill="#FFFFFF" style="transform:translate({x}px,{y}px)"/>' for x, y in _places_classe(enfants))
+    etapes = "".join(f'<li data-etape="{i}"><strong>{titre_html(e["titre"])}</strong> '
+                     f'<span>{texte_html(e["texte"].format(ouverture=ouverture))}</span></li>'
+                     for i, e in enumerate(schema["etapes"]))
+    return (f'<div class="schema-classe" data-schema="classe" data-ouverture="{ouverture}" data-enfants="{enfants}" '
+            f'data-adultes="{adultes}">'
+            f'<figure class="schema-classe__figure"><svg viewBox="0 0 600 440" role="img" aria-labelledby="schema-classe-titre">'
+            f'<title id="schema-classe-titre">{esc(schema["description"])}</title>'
+            f'<circle class="schema-classe__anneau" cx="300" cy="220" r="150" fill="none" stroke="#BA98FB" stroke-width="6" '
+            f'stroke-linecap="round"/>'
+            f'<g class="schema-classe__places">{places}</g>'
+            f'<path d="M262 268V214a38 38 0 0 1 76 0v54z" fill="#EEE6FA"/><circle cx="300" cy="212" r="15" fill="#8652E6"/>'
+            f'<text x="300" y="304" text-anchor="middle" fill="#FFFFFF" font-size="20">{esc(schema["centre"])}</text>'
+            f'<g class="schema-classe__eleves">{eleves}</g></svg><figcaption>Schéma</figcaption></figure>'
+            f'<div class="schema-classe__texte"><ol class="schema-classe__etapes">{etapes}</ol>'
+            f'<p class="schema-classe__etat" aria-live="polite">Classe complète : {enfants} enfants</p>'
+            f'<div class="schema-classe__choix" role="group" aria-label="{esc(schema["choix"])}">'
+            f'<button type="button" data-public="enfants" aria-pressed="true">Enfants</button>'
+            f'<button type="button" data-public="adultes" aria-pressed="false">Adultes</button>'
+            f'<button type="button" data-rejouer>Rejouer</button></div></div></div>')
+
+
+def bande_image(reglage: dict, images: dict, tarifs: dict | None = None) -> str:
     bande = reglage.get("bande")
     if not bande:
         return ""
     sous = f'<p class="bande-image__sous">{texte_html(bande["sous"])}</p>' if bande.get("sous") else ""
+    if bande.get("schema") and tarifs is not None:
+        # La phrase en grand, puis le schema qui la montre : la classe se forme sous les yeux.
+        return (f'<div class="fond fond--{esc(bande.get("fond", "lavande"))}"><div class="bande-phrase bande-phrase--schema" data-revele>'
+                f'<p class="bande-phrase__phrase">{titre_html(bande["phrase"])}</p>{sous}'
+                f'{schema_classe(bande["schema"], tarifs)}</div></div>')
     if not bande.get("image"):
         # Une phrase seule, en grand, sur un champ de couleur : un changement de fond dans la page.
         return (f'<div class="fond fond--{esc(bande.get("fond", "lavande"))}"><div class="bande-phrase" data-revele>'
@@ -823,7 +881,7 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
         liste = "".join(render_section(s, i, tarifs, today, avis, "etape", figure_section(reglage, images, s["id"]))
                         for i, s in enumerate(etapes, 1))
         morceaux.append(f'<ol class="etapes">{liste}</ol>')
-        morceaux.append(bande_image(reglage, images))
+        morceaux.append(bande_image(reglage, images, tarifs))
         cotes = alternance(reglage)
         for i, s in enumerate(autres, 1):
             figure = figure_section(reglage, images, s["id"])
@@ -908,7 +966,7 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
             assert len(morceaux) > avant
         if apres and s.get("id") == apres:
             vider()
-            morceaux.append(bande_image(reglage, images))
+            morceaux.append(bande_image(reglage, images, tarifs))
     vider()
     return "".join(morceaux)
 
@@ -945,7 +1003,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         avis, _ = avis_mod.charger_avis(env={}, journal=lambda *_: None)
     if direction is None or images is None:
         direction, images = load_direction(load_content()[0])
-    reglage = direction["pages"].get(route, {})
+    reglage = sans_dessins(direction["pages"].get(route, {}), direction)
     canonical = origin.rstrip("/") + route
     indexed = allow_indexing and page.get("status") == "ready" and page.get("indexable", True)
     robots = "index,follow" if indexed else "noindex,nofollow"
