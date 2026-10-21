@@ -376,6 +376,15 @@ def render_section(section: dict, number: int, tarifs: dict | None = None, today
     if gabarit == "contact":
         return (f'<section class="contact-ligne" id="{esc(sid)}" aria-labelledby="heading-{number}" data-revele-enfants>'
                 f'<h2 id="heading-{number}">{titre_html(titre)}</h2><div class="contact-ligne__corps">{corps}</div></section>')
+    if gabarit == "pleine":
+        # Bande pleine : le titre, la grande illustration au centre, puis le texte et ce qui l'accompagne cote a cote.
+        plus = f'{genere}{points_liste(section)}'
+        ecrit = f'{paragraphes(section)}{liens_section(section)}'
+        texte = f'<div class="pleine__texte">{ecrit}</div>' if ecrit else ""
+        cote = f'<div class="pleine__plus">{plus}</div>' if plus else ""
+        return (f'<section class="section section--pleine" id="{esc(sid)}" aria-labelledby="heading-{number}">'
+                f'<div class="pleine__tete" data-revele><h2 id="heading-{number}">{titre_html(titre)}</h2></div>'
+                f'{figure}<div class="pleine__corps{" pleine__corps--deux" if plus and ecrit else ""}" data-revele-enfants>{texte}{cote}</div></section>')
     if gabarit == "carte":
         return (f'<section class="carte" id="{esc(sid)}" aria-labelledby="heading-{number}" data-revele-enfants>'
                 f'<h2 id="heading-{number}">{titre_html(titre)}</h2>{corps}</section>')
@@ -648,6 +657,15 @@ def figure_section(reglage: dict, images: dict, sid: str) -> str:
             f'{scene(images, ident, "(max-width: 839px) 86vw, 600px", "section__scene")}</div>')
 
 
+def figure_pleine(reglage: dict, images: dict, sid: str) -> str:
+    """La grande illustration d'une bande pleine, bornee en hauteur pour que tout l'ecran reste lisible."""
+    ident = (reglage.get("figures") or {}).get(sid)
+    image = images["images"][ident]
+    ratio = round(image["largeur"] / image["hauteur"], 4)
+    return (f'<div class="pleine__image" style="--ratio:{ratio}" data-revele>'
+            f'{scene(images, ident, "(max-width: 839px) 92vw, 1200px", "section__scene")}</div>')
+
+
 def alternance(reglage: dict):
     """Cote des images de section : la premiere repond au haut de page, les suivantes alternent."""
     cote = "gauche" if reglage.get("cote", "droite") == "droite" else "droite"
@@ -706,6 +724,9 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
         figure = figure_section(reglage, images, s["id"])
         if not figure and not s.get("generated"):
             groupe.append((i, s))
+        elif figure and s["id"] in reglage.get("pleine", []):
+            vider()
+            morceaux.append(render_section(s, i, tarifs, today, avis, "pleine", figure_pleine(reglage, images, s["id"])))
         else:
             vider()
             morceaux.append(render_section(s, i, tarifs, today, avis, figure=figure, cote_figure=next(cotes) if figure else "droite"))

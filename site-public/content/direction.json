@@ -1,5 +1,5 @@
 {
-  "description": "Direction artistique par page. Un seul motif : l'arche du symbole (arche en forme de livre, porte ouverte ; décision M-21). image = illustration du haut de page, cote = côté de l'image (on alterne pour ne pas tout poser à droite), champ = couleur du fond du haut de page, cadre = libre pour une image panoramique qui sort par le bord de l'écran au lieu d'une fenêtre en arche, gabarit = composition du corps, figures = une illustration sous le titre d'une section (clé = id de la section), bande = grande image posée entre deux sections, fin = bande d'appel en bas de page. Les textes de fin ne disent que des faits publiés (liste d'attente non facturée, première semaine remboursée : content/tarifs.json et page Annulation). ambiance = clair (fond blanc et lavande) ou violet (fond violet en dégradé léger, demande du directeur du 21/10/2026).",
+  "description": "Direction artistique par page. Un seul motif : l'arche du symbole (arche en forme de livre, porte ouverte ; décision M-21). image = illustration du haut de page, cote = côté de l'image (on alterne pour ne pas tout poser à droite), champ = couleur du fond du haut de page, cadre = libre pour une image panoramique qui sort par le bord de l'écran au lieu d'une fenêtre en arche, gabarit = composition du corps, figures = une illustration sous le titre d'une section (clé = id de la section), bande = grande image posée entre deux sections, fin = bande d'appel en bas de page. Les textes de fin ne disent que des faits publiés (liste d'attente non facturée, première semaine remboursée : content/tarifs.json et page Annulation). ambiance = clair (fond blanc et lavande) ou violet (fond violet en dégradé léger, demande du directeur du 21/10/2026). pleine = sections posées en bande pleine (titre, grande illustration au centre, texte en deux colonnes dessous), une par page pour casser l'alternance image et texte.",
   "ambiance": "violet",
   "pages": {
     "/fr/familles": {
@@ -23,7 +23,10 @@
       "figures": {
         "profils": "eleve-enseignante-b",
         "organisation": "chemin"
-      }
+      },
+      "pleine": [
+        "organisation"
+      ]
     },
     "/fr/cours": {
       "image": "eleve-enseignante",
@@ -47,7 +50,10 @@
         "objectifs": "transmission-lavande",
         "methode": "place",
         "groupes": "halqa"
-      }
+      },
+      "pleine": [
+        "groupes"
+      ]
     },
     "/fr/comment-ca-marche": {
       "image": "chemin",
@@ -91,7 +97,10 @@
         "grille": "gros-plan-enseignant",
         "famille": "pere-fils",
         "classes": "halqa"
-      }
+      },
+      "pleine": [
+        "classes"
+      ]
     },
     "/fr/academie": {
       "image": "transmission-lavande",
@@ -116,7 +125,10 @@
         "projet": "gros-plan-lecture",
         "famille": "gros-plan-famille",
         "societe": "adulte-homme-livre"
-      }
+      },
+      "pleine": [
+        "famille"
+      ]
     },
     "/fr/articles": {
       "image": "adulte-femme-livre",
@@ -183,7 +195,10 @@
         "postes": "gros-plan-enseignant",
         "enseignants": "transmission-lavande",
         "candidature": "adulte-homme"
-      }
+      },
+      "pleine": [
+        "enseignants"
+      ]
     },
     "/fr/contact": {
       "image": "adulte-femme",
