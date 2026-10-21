@@ -190,6 +190,8 @@
   function sceneMains(h) {
     var y = window.scrollY;
     mains.forEach(function (fig) {
+      // En haut de page, l'illustration se montre telle qu'elle est faite : les mains tiennent deja le livre.
+      if (fig.closest('.entete-page')) { fig.style.setProperty('--m', '0'); return; }
       var haut = fig.getBoundingClientRect().top + y;
       var debut = haut < h ? 0 : haut - h;
       var fin = debut + (haut < h ? h * 0.35 : h * 0.5);

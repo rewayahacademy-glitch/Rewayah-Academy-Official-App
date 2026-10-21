@@ -1,5 +1,5 @@
 {
-  "description": "Direction artistique par page. Un seul motif : l'arche du symbole (arche en forme de livre, porte ouverte ; décision M-21). image = illustration du haut de page, cote = côté de l'image (on alterne pour ne pas tout poser à droite), champ = couleur du fond du haut de page, cadre = libre pour une image panoramique qui sort par le bord de l'écran au lieu d'une fenêtre en arche, gabarit = composition du corps, figures = une illustration sous le titre d'une section (clé = id de la section), bande = grande image posée entre deux sections, fin = bande d'appel en bas de page. Les textes de fin ne disent que des faits publiés (liste d'attente non facturée, première semaine remboursée : content/tarifs.json et page Annulation). ambiance = clair (fond blanc et lavande) ou violet (fond violet en dégradé léger, demande du directeur du 21/10/2026). pleine = sections posées en bande pleine (titre, grande illustration au centre, texte en deux colonnes dessous), une par page pour casser l'alternance image et texte.",
+  "description": "Direction artistique par page. Un seul motif : l'arche du symbole (arche en forme de livre, porte ouverte ; décision M-21). image = illustration du haut de page, cote = côté de l'image (on alterne pour ne pas tout poser à droite), champ = couleur du fond du haut de page, cadre = libre pour une image panoramique qui sort par le bord de l'écran au lieu d'une fenêtre en arche, gabarit = composition du corps, figures = une illustration sous le titre d'une section (clé = id de la section), bande = grande image posée entre deux sections, fin = bande d'appel en bas de page. Les textes de fin ne disent que des faits publiés (liste d'attente non facturée, première semaine remboursée : content/tarifs.json et page Annulation). ambiance = clair (fond blanc et lavande) ou violet (fond violet en dégradé léger, demande du directeur du 21/10/2026). pleine = sections posées en bande pleine (titre, grande illustration au centre, texte en deux colonnes dessous), une par page pour casser l'alternance image et texte. parcours = la liste des étapes posée en arches qui montent.",
   "ambiance": "violet",
   "pages": {
     "/fr/familles": {
@@ -47,12 +47,14 @@
         "href": "/connexion"
       },
       "figures": {
-        "objectifs": "transmission-lavande",
         "methode": "place",
         "groupes": "halqa"
       },
       "pleine": [
         "groupes"
+      ],
+      "parcours": [
+        "objectifs"
       ]
     },
     "/fr/comment-ca-marche": {

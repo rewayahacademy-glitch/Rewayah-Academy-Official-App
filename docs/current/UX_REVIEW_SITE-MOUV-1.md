@@ -159,7 +159,7 @@ Chaque phrase visible réécrite a été vérifiée contre les décisions écrit
   - « Travail à préparer » au lieu de « travail à reprendre ».
   - « Un enfant ne rejoint jamais un cours sans tuteur » se lisait comme « un adulte assiste au cours » : la phrase dit maintenant qui inscrit l'enfant.
   - Le lien « Lire les avis » renvoyait vers une page encore vide.
-- **La phrase en grand de l'accueil.** Les deux contre-vérificateurs ont lu « Seul, on remet à demain » comme un reproche (manifeste §16.6). Elle devient « Votre classe commence à l'heure. Le rythme ne repose pas sur vous seul. », formulation proposée (O-18).
+- **La phrase en grand de l'accueil.** Les deux contre-vérificateurs ont lu « Seul, on remet à demain » comme un reproche (manifeste §16.6). Elle devient « Votre classe commence à l'heure. Vous ne tenez plus le rythme seul. », formulation proposée (O-18), assez courte pour tenir sur une ligne au téléphone.
 - **Questions ouvertes.** Trois points vont au directeur : O-17 (« groupe » dans les encarts), O-18 (la phrase en grand de l'accueil) et O-19 (trois ou quatre inscrits pour ouvrir une classe).
 - **Bilan.** 355 phrases vérifiées, 37 doutes. 33 sont confirmés par les deux contre-vérificateurs, et les 33 sont corrigés. Les 4 doutes qu'un seul contre-vérificateur a retenus sont corrigés aussi.
 

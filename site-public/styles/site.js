@@ -179,7 +179,7 @@ function initialiserSimulateur(simulator, d) {
     while (students.children.length > voulu * (d.bourse ? 2 : 1)) students.removeChild(students.lastChild);
     for (let i = students.children.length / (d.bourse ? 2 : 1); i < voulu; i += 1) {
       const age = el('label', 'Âge de l’élève ' + (i + 1) + ' ');
-      const champ = el('input', undefined, { type: 'number', inputmode: 'numeric', min: String(d.ageEnfantMin), step: '1', 'data-age': '' });
+      const champ = el('input', undefined, { type: 'number', inputmode: 'numeric', min: String(d.ageEnfantMin), step: '1', placeholder: 'Par exemple ' + (d.ageEnfantMin + 2), 'data-age': '' });
       champ.addEventListener('input', calculerEtAfficher);
       age.appendChild(champ);
       students.appendChild(age);

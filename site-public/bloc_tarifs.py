@@ -458,7 +458,7 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
     if nom == "fiches-eleves":
         e = encarts_suivis(p)
         return ('<div class="fiches">'
-                f'<article class="fiche"><h3>Enfants et adolescents</h3><p>{esc(e["encart_enfant"])}</p></article>'
+                f'<article class="fiche"><h3>Enfants et\u00a0adolescents</h3><p>{esc(e["encart_enfant"])}</p></article>'
                 f'<article class="fiche"><h3>Adultes</h3><p>{esc(e["encart_adulte"])}</p></article></div>')
     if nom == "fiche-enseignant":
         return f'<div class="fiches"><article class="fiche"><p>{esc(encarts_suivis(p)["encart_enseignant"])}</p></article></div>'

@@ -106,7 +106,7 @@ def esc(value: object) -> str:
 
 
 _PETITS = (r"le|la|les|un|une|des|de|du|à|au|aux|en|et|ou|par|pour|sans|son|sa|ses|votre|vos|notre|nos|chaque|dès|"
-           r"avec|sur|dans|deux|trois|quatre|cinq|six")
+           r"avec|sur|dans|deux|trois|quatre|cinq|six|qui|que")
 # Un petit mot se lie au mot qui le suit (« pour votre enfant » ne se coupe qu'avant « pour »), un nombre a son unite,
 # et le nom de l'academie ne se coupe pas. Les titres longs sont dimensionnes pour que ces blocs tiennent.
 PETITS_MOTS = re.compile(rf"(?<![\w’'])((?i:{_PETITS})|\d+) (?=\S)")
@@ -114,7 +114,7 @@ PETITS_MOTS = re.compile(rf"(?<![\w’'])((?i:{_PETITS})|\d+) (?=\S)")
 
 def titre_html(value: str) -> str:
     """Un titre ne finit pas une ligne sur un article, une preposition ou un nombre : espaces insecables."""
-    lie = PETITS_MOTS.sub(lambda m: m.group(1) + "\u00a0", value)
+    lie = PETITS_MOTS.sub(lambda m: m.group(1) + "\u00a0", re.sub(r" ([:;?!])", "\u00a0\\1", value))
     lie = PETITS_MOTS.sub(lambda m: m.group(1) + "\u00a0", lie)
     lie = lie.replace("Rewayah Academy", "Rewayah\u00a0Academy")
     # Un bloc insecable plus long que 18 signes ne tiendrait pas sur un telephone de 320 px : on rend ses premieres
@@ -320,8 +320,18 @@ def logo_entete(ambiance: str = "clair") -> str:
 
 # --- Sections generiques --------------------------------------------------------
 
+NOMS_A_TRAIT = re.compile(r"\b(A[lnrsz]-[A-ZÀ-Ý][\wÀ-ÿ’']*)")
+
+
+def texte_html(value: str) -> str:
+    """Texte courant : espace insecable avant les deux-points, le point-virgule et les points d'interrogation et
+    d'exclamation, et un nom comme Az-Zalzalah ne se coupe pas a son trait d'union."""
+    fin = re.sub(r" ([:;?!])", "\u00a0\\1", value)
+    return NOMS_A_TRAIT.sub(r'<span class="insecable">\1</span>', esc(fin))
+
+
 def paragraphes(section: dict) -> str:
-    return "".join(f"<p>{esc(p)}</p>" for p in section.get("paragraphs", []))
+    return "".join(f"<p>{texte_html(p)}</p>" for p in section.get("paragraphs", []))
 
 
 def points_liste(section: dict) -> str:
@@ -329,7 +339,7 @@ def points_liste(section: dict) -> str:
     if not points:
         return ""
     return ('<ul class="points">' + "".join(
-        f'<li><span class="puce" aria-hidden="true"></span><span>{esc(p)}</span></li>' for p in points) + "</ul>")
+        f'<li><span class="puce" aria-hidden="true"></span><span>{texte_html(p)}</span></li>' for p in points) + "</ul>")
 
 
 def liens_section(section: dict) -> str:
@@ -376,6 +386,11 @@ def render_section(section: dict, number: int, tarifs: dict | None = None, today
     if gabarit == "contact":
         return (f'<section class="contact-ligne" id="{esc(sid)}" aria-labelledby="heading-{number}" data-revele-enfants>'
                 f'<h2 id="heading-{number}">{titre_html(titre)}</h2><div class="contact-ligne__corps">{corps}</div></section>')
+    if gabarit == "parcours":
+        etapes = "".join(f'<li class="parcours__etape"><span>{texte_html(p)}</span></li>' for p in section.get("points", []))
+        return (f'<section class="section section--parcours" id="{esc(sid)}" aria-labelledby="heading-{number}">'
+                f'<div class="parcours__tete" data-revele-enfants><h2 id="heading-{number}">{titre_html(titre)}</h2>'
+                f'{paragraphes(section)}{liens_section(section)}</div><ol class="parcours" data-revele-enfants>{etapes}</ol></section>')
     if gabarit == "pleine":
         # Bande pleine : le titre, la grande illustration au centre, puis le texte et ce qui l'accompagne cote a cote.
         plus = f'{genere}{points_liste(section)}'
@@ -418,7 +433,7 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
     </div>
     <div class="porte__texte" data-lignes>
       <h1>{titre_html(page['h1'])}</h1>
-      <p class="hero-intro">{esc(page.get('intro', ''))}</p>
+      <p class="hero-intro">{texte_html(page.get('intro', ''))}</p>
       <div class="action-row">{cta}{bouton("Voir les tarifs", "/fr/tarifs", "contour")}</div>
       <p class="rassurance">Rien n’est facturé avant l’ouverture de la classe. La première semaine est remboursée si le cours ne convient pas.</p>
       <p class="preuve">Rewayah Academy a été fondée en 2024 par trois spécialistes du Coran et des sciences islamiques.</p>
@@ -435,7 +450,7 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
 def accueil_enonce(images: dict, tarifs: dict) -> str:
     return f'''<section class="enonce" aria-labelledby="enonce-titre">
   <h2 id="enonce-titre" class="sr-only">En bref</h2>
-  <p class="enonce__texte" data-revele><span>Votre\u00a0classe commence à\u00a0l’heure.</span> <span>Le\u00a0rythme ne\u00a0repose pas sur\u00a0vous seul.</span></p>
+  <p class="enonce__texte" data-revele><span>Votre\u00a0classe commence à\u00a0l’heure.</span> <span>Vous ne\u00a0tenez plus le\u00a0rythme seul.</span></p>
 </section>'''
 
 
@@ -509,7 +524,7 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
   <h2 id="tarifs-titre" class="deux-champs__titre" data-revele>{titre_html(sec["title"])}</h2>
   <div class="deux-champs__grille">
     <article class="champ champ--enfant" data-revele>
-      <h3>Enfants et adolescents</h3>
+      <h3>{titre_html("Enfants et adolescents")}</h3>
       <p class="champ__prix"><span class="champ__montant">{esc(enfant)}</span><span class="champ__periode">par mois, {hors_taxes}</span></p>
       <p class="champ__public">De {tarifs_mod.AGE_ENFANT_MIN} à {age - 1} ans. {esc(duree("enfant"))}, dans une classe de {c["ouvertureMinimum"]} à {c["tailleEnfant"]} élèves.</p>
       {inclus("Le compte rendu de l’enseignant chaque fin de semaine", "L’observation d’une séance, deux minutes, en silence",
@@ -539,7 +554,7 @@ def accueil_confiance(page: dict, images: dict) -> str:
       <div class="panneau__arche" data-revele>{scene(images, "gros-plan-enseignant", "(max-width: 839px) 86vw, 38vw", "panneau__image")}</div>
     </div>
     <div class="panneau__droite">
-      <p class="panneau__depuis" data-revele>Rewayah Academy enseigne le Coran depuis le 1er mai 2024.</p>
+      <p class="panneau__depuis" data-revele>{titre_html("Rewayah Academy enseigne le Coran depuis le 1er mai 2024.")}</p>
       <div class="panneau__bloc" data-revele><h3>Un programme qui avance</h3><p>Chaque étape a son objectif et sa date limite.</p></div>
       <div class="panneau__bloc" data-revele><h3>Un suivi pour les familles</h3><p>Retrouvez les séances et le travail à préparer dans votre espace familial.</p></div>
       <div class="panneau__bloc" data-revele><h3>Un tuteur pour chaque enfant</h3>{paragraphes(sec)}</div>
@@ -575,7 +590,7 @@ def accueil_faq(page: dict, tarifs: dict) -> str:
     age_adulte = str(tarifs_mod.politique_affichee(tarifs)["ageAdulte"])
     tuiles = "".join(
         f'<details class="tuile" name="faq"{" open" if i == 0 else ""}><summary><h3>{esc(q)}</h3>'
-        f'<span class="tuile__signe" aria-hidden="true"></span></summary><div class="tuile__corps"><p>{esc(r.replace("{age_adulte}", age_adulte))}</p></div></details>'
+        f'<span class="tuile__signe" aria-hidden="true"></span></summary><div class="tuile__corps"><p>{texte_html(r.replace("{age_adulte}", age_adulte))}</p></div></details>'
         for i, (q, r) in enumerate(QUESTIONS_ACCUEIL))
     return f'''<section class="faq-tuiles" id="faq-articles" aria-labelledby="faq-titre">
   <div class="faq-tuiles__tete" data-revele><h2 id="faq-titre">{titre_html(sec["title"])}</h2>{paragraphes(sec)}
@@ -613,7 +628,7 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str) -> str:
 # --- Pages interieures -------------------------------------------------------------
 
 def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str, status: str) -> str:
-    intro = f'<p class="hero-intro">{esc(page["intro"])}</p>' if page.get("intro") else ""
+    intro = f'<p class="hero-intro">{texte_html(page["intro"])}</p>' if page.get("intro") else ""
     image = reglage.get("image")
     cote = reglage.get("cote", "droite")
     champ = reglage.get("champ", "lavande")
@@ -722,7 +737,10 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
 
     for i, s in enumerate(sections, 1):
         figure = figure_section(reglage, images, s["id"])
-        if not figure and not s.get("generated"):
+        if s["id"] in reglage.get("parcours", []):
+            vider()
+            morceaux.append(render_section(s, i, tarifs, today, avis, "parcours"))
+        elif not figure and not s.get("generated"):
             groupe.append((i, s))
         elif figure and s["id"] in reglage.get("pleine", []):
             vider()
