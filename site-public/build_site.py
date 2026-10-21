@@ -262,6 +262,9 @@ def lien_fleche(label: str, href: str) -> str:
     tete, espace, dernier = label.rpartition(" ")
     if "@" in dernier or len(dernier) > 18:
         return f'<a class="lien-fleche" href="{esc(href)}"><span>{esc(label)}</span>{fleche}</a>'
+    # Un petit mot avant la fin reste avec elle (« des cours », « des enfants »).
+    if espace and re.fullmatch(rf"(?i:{_PETITS_TEXTE})", tete.rsplit(" ", 1)[-1]):
+        espace = "\u00a0"
     return (f'<a class="lien-fleche" href="{esc(href)}"><span>{esc(tete)}{espace}'
             f'<span class="lien-fleche__fin">{esc(dernier)}{fleche}</span></span></a>')
 
@@ -327,6 +330,7 @@ def logo_entete(ambiance: str = "clair") -> str:
 # --- Sections generiques --------------------------------------------------------
 
 NOMS_A_TRAIT = re.compile(r"(?<![\w’'])((?:[dl][’'])?A[lnrsz]-[A-ZÀ-Ý][\wÀ-ÿ’']*)")
+MEME = re.compile(r"(?<![\w’'])(\w+-mêmes?)\b")
 
 
 _PETITS_TEXTE = _PETITS + r"|vous|nous|il|elle|on|ne|ce|ces|cette|leur|leurs|tout|toute|tous|toutes|est|y"
@@ -356,7 +360,9 @@ def texte_html(value: str) -> str:
             blocs.append(debut)
         blocs.append(bloc)
     fin = " ".join(blocs)
-    return NOMS_A_TRAIT.sub(r'<span class="insecable">\1</span>', esc(fin))
+    fin = NOMS_A_TRAIT.sub(r'<span class="insecable">\1</span>', esc(fin))
+    # « vous-même » ne se coupe pas a son trait d'union.
+    return MEME.sub(r'<span class="insecable">\1</span>', fin)
 
 
 def paragraphes(section: dict) -> str:
@@ -514,7 +520,7 @@ def accueil_etapes(page: dict, images: dict) -> str:
     sec = _sections_par_id(page)["fonctionnement"]
     etapes = (
         ("detail-place", "Vous choisissez un horaire", "Parmi les horaires publiés, pour votre enfant ou pour vous."),
-        ("detail-enseignante", "La direction compose la classe", "Elle nomme l’enseignant et vous écrit à chaque étape."),
+        ("detail-porte-lumiere", "La direction compose la classe", "Elle nomme l’enseignant et vous écrit à chaque étape."),
         ("detail-livre-femme", "La classe commence", "Vous la rejoignez depuis l’application, à son horaire."),
     )
     tuiles = "".join(
@@ -592,7 +598,7 @@ def accueil_confiance(page: dict, images: dict) -> str:
       <div class="panneau__bloc" data-revele><h3>Un suivi pour les familles</h3><p>{texte_html("Retrouvez les séances et le travail à préparer dans votre espace familial.")}</p></div>
       <div class="panneau__bloc" data-revele><h3>Un tuteur pour chaque enfant</h3>{paragraphes(sec)}</div>
       <div class="action-row" data-revele>{bouton("Découvrir l’académie", "/fr/academie", "contour")}{lien_fleche("Protection des enfants", "/fr/protection-des-enfants")}</div>
-      <p class="panneau__societe">REWAYAH ACADEMY LTD · Société n° 16624644</p>
+      <p class="panneau__societe">REWAYAH ACADEMY LTD · Société n° 16624644</p>
     </div>
   </div>
 </section>'''
@@ -645,7 +651,7 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, mot: str | None
     grand_mot = f'<span class="appel__mot" aria-hidden="true">{esc(mot)}{fleche}</span>' if mot else ""
     return f'''<section class="appel{sobre}" id="{esc(identifiant)}" aria-labelledby="appel-titre">
   <a class="appel__lien" href="{esc(href)}">
-    <span class="appel__haut"><h2 id="appel-titre">{titre_html(titre)}</h2><span class="appel__phrase">{esc(phrase)}</span><span class="{bouton}">{esc(label)}{'<span class="sr-only"> (ouvre votre messagerie)</span>' if externe else ""}{"" if mot else fleche}</span></span>
+    <span class="appel__haut"><h2 id="appel-titre">{titre_html(titre)}</h2><span class="appel__phrase">{texte_html(phrase)}</span><span class="{bouton}">{esc(label)}{'<span class="sr-only"> (ouvre votre messagerie)</span>' if externe else ""}{"" if mot else fleche}</span></span>
     {grand_mot}
   </a>
 </section>'''
@@ -670,11 +676,11 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str) -> str:
 
 def libelle_arche(point: str) -> str:
     """Libelle d'une arche du parcours : la precision apres la virgule passe dessous, plus petite et d'un seul tenant
-    (« Les sourates courtes, » puis « d'Al-Fatiha à Az-Zalzalah »)."""
+    (« Les sourates courtes, » puis « d'Al-Fatiha à Az-Zalzalah », chaque nom d'un seul tenant)."""
     tete, virgule, precision = point.partition(", ")
     if not virgule:
         return f'<span>{texte_html(point)}</span>'
-    return (f'<span>{texte_html(tete)},<span class="parcours__precision"> {esc(precision).replace(" ", chr(0xa0))}</span></span>')
+    return f'<span>{texte_html(tete)},<span class="parcours__precision"> {texte_html(precision)}</span></span>'
 
 
 def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str, status: str,
@@ -886,7 +892,12 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
             morceaux.append(render_section(s, i, tarifs, today, avis, "pleine", figure_pleine(reglage, images, s["id"])))
         else:
             vider()
-            morceaux.append(render_section(s, i, tarifs, today, avis, figure=figure, cote_figure=next(cotes) if figure else "droite"))
+            rendu = render_section(s, i, tarifs, today, avis, figure=figure, cote_figure=next(cotes) if figure else "droite")
+            if "section__figure--noms" in figure:
+                # Avec des noms en grand, le titre de la section passe au-dessus des deux colonnes : il mene.
+                rendu = re.sub(r'(<div class="section__texte"[^>]*>)(<h2[^>]*>.*?</h2>)',
+                               r'<div class="section__titre-plein" data-revele>\2</div>\1', rendu, count=1, flags=re.S)
+            morceaux.append(rendu)
         if fond:
             morceaux[-1] = f'<div class="fond fond--{fond}">{morceaux[-1]}</div>'
             assert len(morceaux) > avant
@@ -1044,7 +1055,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   {simulator}
   <footer class="site-footer"><div class="site-footer__inner">
      <img class="site-footer__ornement" src="{ASSETS}/ornement-contour-white.svg" width="494" height="777" alt="">
-     <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a><p>REWAYAH ACADEMY LTD<br>Société n° 16624644</p>
+     <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a><p>REWAYAH ACADEMY LTD<br>Société n° 16624644</p>
       <address>71-75 Shelton Street<br>Covent Garden, London<br>WC2H 9JQ, Royaume-Uni</address>
     </div>
     <nav aria-label="Découvrir Rewayah"><p class="footer-title">Découvrir</p><ul>{discovery_links}</ul></nav>

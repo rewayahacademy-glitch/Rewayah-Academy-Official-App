@@ -270,7 +270,7 @@ function initialiserSimulateur(simulator, d) {
       if (f.min !== f.max) ligneTexte(result, 'Le rang suit l’ordre d’inscription. Selon cet ordre, le premier paiement est compris entre ' + m(f.min) + ' et ' + m(f.max) + '.');
     }
     if (d.bourse) ligneTexte(result, 'La bourse est accordée par la direction, sur demande écrite, et ne se cumule avec aucune autre remise.');
-    if (!d.essaiActif) ligneTexte(result, 'Il n’y a pas d’essai : la première semaine est remboursée si le cours ne convient pas.');
+    if (!d.essaiActif) ligneTexte(result, 'Il n’y a pas d’essai\u00a0: la première semaine est remboursée si le cours ne convient\u00a0pas.');
   }
 
   // Tant qu'un age manque, le prix publie s'affiche en grand, avec la consigne dessous.

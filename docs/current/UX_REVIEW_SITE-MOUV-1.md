@@ -205,6 +205,7 @@ Inspection après ces corrections :
 | Recette 4 | 7,28 | 6,3 | 6,32 | « presque » |
 | Recette 5 | 7,28 | 6,4 | 6,33 | « presque » |
 | Recette 6 | 7,33 | 6,13 | 6,17 | « presque » |
+| Recette 7 | 7,72 | 6,27 | 6,33 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -294,6 +295,20 @@ Inspection des six pages après ces corrections, à 1440, 768 et 390 px : 0 FAIL
 | R8 | Familles : seconde porte et enseignante aux lunettes deux fois | « Vous choisissez parmi nos horaires » montre « La petite classe » (lot 2, scène 5 : la classe vue du dessus, chacun chez soi), à côté du texte |
 | R9 | Académie : les deux élèves vus du dessus, déjà sur l'accueil et Familles | Les trois fondateurs, leurs noms en grand, repris du texte (le build vérifie qu'ils y figurent). La bande « Transmettre le savoir tel qu'il a été reçu » prend un détail sans personne : le haut de l'arche faite de pages et la porte ouverte, ce que le texte des fondateurs décrit |
 | R10 | Titre de l'Académie à 1,3 fois un titre de section au téléphone | Titre ramené à « Une académie du Coran » : la date est dans la phrase juste dessous. 1,88 fois à 390 px, deux lignes dès 320 px |
+
+Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
+
+**Corrections après la recette 7.** Les jurés placent l'accueil au-dessus des deux références ; ce qui retient encore leur « oui » : les mêmes personnages d'une page à l'autre, le rendu en style figurine sur Familles, quelques coupures, la tablette.
+
+| # | Relevé | Correction |
+|---|---|---|
+| S1 | Les mêmes personnes sur plusieurs pages (l'enseignante aux lunettes, l'homme assis à la porte, les mains, la mère et la fille) | Quatre détails sans personne, chacun recadré par un agent et vérifié par un second (aucune personne, aucune écriture, résolution native) : le haut d'une porte dans la lumière (accueil, étape 2), la poignée d'une porte entrouverte et la porte ouverte sur la pièce (Comment ça marche, étapes 2 et 4), les dunes au-delà du seuil (Académie). L'enseignante aux lunettes ne reste que sur Cours et Familles, l'homme assis que sur Tarifs, les mains que sur l'accueil. Un cinquième détail, une courbe du chemin, est écarté : seul, il se lisait comme une lettre. La mère et la fille restent sur Tarifs en attendant les nouveaux rendus |
+| S2 | « La petite classe » (lot 2) en style figurine, en grand sur la bande pâle | Posée dans un cercle comme les autres détails, plus petite, sur le violet, étalonnée un peu plus chaud |
+| S3 | Coupures : « 5 % de / remise », « ne convient / pas. », « vous- / même », « n° / 16624644 », « des / cours », « de / 3 à 5 élèves » | Liaison des unités devenue indifférente aux espaces déjà insécables ; préposition liée au nombre qui suit ; dernier mot lié dans les tableaux, les remises et les encarts ; « vous-même » insécable ; petit mot lié à la flèche d'un lien |
+| S4 | Chapitres de l'accueil, au téléphone et à la tablette : l'image flotte entre deux chapitres | L'image se pose juste au-dessus de son titre, alignée sur le texte ; 80 px entre deux chapitres |
+| S5 | Cours, tablette : les arches deviennent des barres | Les quatre arches restent des arches, sur une rangée, avec l'arabe et le libellé ; la précision passe sur deux lignes entre les deux noms |
+| S6 | Académie : les noms plus grands que le titre de section, qui ne mène pas | Le titre passe au-dessus des deux colonnes ; les noms, un cran plus petits que lui, à gauche ; le texte à droite |
+| S7 | Tablette : cartes de prix empilées ; 280 px de vide avant « Commencer » | Cartes de prix côte à côte dès 600 px ; bande d'appel sans hauteur minimale sous 840 px |
 
 Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 

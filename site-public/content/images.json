@@ -457,16 +457,17 @@
       ]
     },
     "petite-classe": {
-      "source": "lot 2, image_911ed81e (21/10), scène 5 « la petite classe », détourée",
-      "largeur": 619,
-      "hauteur": 542,
+      "source": "lot 2, image_911ed81e (21/10), scène 5 « la petite classe », détourée, étalonnée plus chaud, posée dans un cercle",
+      "largeur": 693,
+      "hauteur": 693,
       "alt": "Vue du dessus : quatre élèves, chacun chez soi sur son îlot, devant un pupitre ou un ordinateur, entourent leur enseignante assise au centre ; un anneau violet relie les îlots.",
       "recadrage": [
         403,
         115,
         1022,
         657
-      ]
+      ],
+      "forme": "cercle"
     },
     "detail-arche-livre": {
       "source": "14 (scène publiée, 1005 px), sans personne",
@@ -478,6 +479,58 @@
         0,
         620,
         540
+      ],
+      "forme": "cercle"
+    },
+    "detail-porte-lumiere": {
+      "source": "05, sans personne",
+      "largeur": 452,
+      "hauteur": 452,
+      "alt": "Le haut d’une porte ouverte sous une arche en forme de livre, avec sa charnière et la lumière douce de la pièce derrière.",
+      "recadrage": [
+        138,
+        184,
+        590,
+        636
+      ],
+      "forme": "cercle"
+    },
+    "detail-seuil-desert": {
+      "source": "13, sans personne",
+      "largeur": 450,
+      "hauteur": 450,
+      "alt": "Derrière le bord de la porte, des dunes de sable pâle s’étendent au-delà du seuil.",
+      "recadrage": [
+        513,
+        610,
+        963,
+        1060
+      ],
+      "forme": "cercle"
+    },
+    "detail-poignee": {
+      "source": "15, sans personne",
+      "largeur": 380,
+      "hauteur": 475,
+      "alt": "La lumière douce de la pièce éclaire une porte entrouverte et sa poignée.",
+      "recadrage": [
+        202,
+        293,
+        582,
+        768
+      ],
+      "forme": "arche"
+    },
+    "detail-lumiere-sol": {
+      "source": "12, sans personne",
+      "largeur": 450,
+      "hauteur": 450,
+      "alt": "Une porte violette ouverte, vue de côté sous une arche en pages de livre, laisse voir la lumière douce de la pièce.",
+      "recadrage": [
+        266,
+        186,
+        716,
+        636
       ],
       "forme": "cercle"
     }

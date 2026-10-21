@@ -380,12 +380,20 @@ def note_date_effet(tarifs: dict, aujourdhui: date) -> str:
 
 
 def lie(phrase: str) -> str:
-    """Fourchettes, durees, pourcentages et nombres restent avec leur unite (« 6 à 17 ans », « 5 min », « 5 % de remise »)."""
-    phrase = re.sub(r"(\d+) à (\d+)", "\\1\u00a0à\u00a0\\2", phrase)
-    phrase = re.sub(r"(\d+) h (\d+)", "\\1\u00a0h\u00a0\\2", phrase)
-    phrase = re.sub(r"(\d+(?:,\d+)?) (%|\$) (de|d’) ?", lambda m: f"{m[1]}\u00a0{m[2]}\u00a0{m[3]}" + ("\u00a0" if m[3] == "de" else ""), phrase)
-    phrase = re.sub(r"(\d+(?:,\d+)?) (%|\$)", "\\1\u00a0\\2", phrase)
-    return re.sub(r"(\d+) (élèves|ans|personnes|séances|min|h|enfants|adultes)\b", "\\1\u00a0\\2", phrase)
+    """Fourchettes, durees, pourcentages et nombres restent avec leur unite (« 6 à 17 ans », « 5 min », « 5 % de remise ») ;
+    une preposition reste avec le nombre qui la suit (« de 3 à 5 élèves ») et le dernier mot ne reste pas seul."""
+    e = "[ \u00a0]"
+    phrase = re.sub(rf"(\d+){e}à{e}(\d+)", "\\1\u00a0à\u00a0\\2", phrase)
+    phrase = re.sub(rf"(\d+){e}h{e}(\d+)", "\\1\u00a0h\u00a0\\2", phrase)
+    phrase = re.sub(rf"(\d+(?:,\d+)?){e}(%|\$){e}(de|d’)(?:{e})?", lambda m: f"{m[1]}\u00a0{m[2]}\u00a0{m[3]}" + ("\u00a0" if m[3] == "de" else ""), phrase)
+    phrase = re.sub(rf"(\d+(?:,\d+)?){e}(%|\$)", "\\1\u00a0\\2", phrase)
+    phrase = re.sub(rf"(\d+){e}(élèves|ans|personnes|séances|minutes|min|h|enfants|adultes)\b", "\\1\u00a0\\2", phrase)
+    phrase = re.sub(rf"(?<![\w’'])(de|à|dès|par|sur){e}(?=\d)", "\\1\u00a0", phrase)
+    tete, espace, dernier = phrase.rpartition(" ")
+    precedent = tete.rsplit(" ", 1)[-1]
+    if espace and len(dernier) <= 12 and len(precedent) + 1 + len(dernier) <= 20 and len(tete.split()) >= 3:
+        phrase = f"{tete}\u00a0{dernier}"
+    return phrase
 
 
 def _tableau(legende: str, colonnes: tuple[str, str], lignes: list[tuple[str, str]], css: str = "") -> str:

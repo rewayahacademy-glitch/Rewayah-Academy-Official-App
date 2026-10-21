@@ -344,6 +344,11 @@ li, dd { text-wrap: wrap; }
 .chapitre p { max-width: 46ch; }
 .chapitre p + p { margin-top: var(--e-4); }
 .chapitre__image-mobile { margin-top: var(--e-8); }
+/* Sous 840 px, chaque image se pose juste au-dessus de son titre, alignee sur le texte ; les chapitres se suivent sans vide. */
+@media (max-width: 839px) {
+  .chapitre { display: flex; flex-direction: column; padding-block: var(--e-10); }
+  .chapitre__image-mobile { order: -1; margin: 0 0 var(--e-6); }
+}
 .chapitre__image-mobile .scene { border-radius: var(--arche); background: var(--champ); padding: 12% 4% 4%; }
 @media (min-width: 840px) {
   .chapitres__fenetre { display: block; }
@@ -425,7 +430,7 @@ li, dd { text-wrap: wrap; }
 .champ--adulte { background: var(--marque); color: var(--sur-marque); }
 .deux-champs__pied { padding: var(--e-10) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
 .deux-champs__pied p { max-width: 60ch; }
-@media (min-width: 840px) {
+@media (min-width: 600px) {
   /* Les deux cartes partagent leurs lignes : titres, prix, public et listes commencent a la meme hauteur. */
   .deux-champs__grille { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto auto 1fr; column-gap: var(--e-6); }
   .champ { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; align-content: start; min-height: 64svh; padding: var(--e-12) var(--e-10); }
@@ -667,7 +672,7 @@ li, dd { text-wrap: wrap; }
 [data-ambiance="violet"] .carte:nth-child(2) { background: #8652E6; }
 
 /* Fiches de la decision du 18/10 : les textes tels quels, en deux champs */
-.fiches { display: grid; gap: var(--e-4); margin-top: var(--e-6); }
+.fiches { display: grid; gap: var(--e-4); margin-top: var(--e-6); align-items: start; }
 .fiche { border-radius: var(--r-lg); padding: var(--e-8) var(--e-6); background: var(--sous); }
 .fiche:nth-child(2) { background: var(--champ); }
 .fiche h3 { margin-bottom: var(--e-4); }
@@ -1192,10 +1197,16 @@ li, dd { text-wrap: wrap; }
   .entete-page--haut-prix .entete-page__texte { grid-column: 1 / -1; }
   .entete-page--haut-prix .entete-page__arche { grid-column: 1; width: 100%; justify-self: start; }
   .entete-page--haut-prix .entete-prix { grid-column: 2; }
+  /* Cartes de prix cote a cote, plus compactes qu'au bureau. */
+  .champ { min-height: 0; padding: var(--e-8) var(--e-6); }
+  .champ__inclus { font-size: 16px; }
+  /* La bande d'appel ne garde pas un ecran de vide entre la phrase et le grand mot. */
+  .appel__lien { min-height: 0; }
+  .appel__mot { margin-top: var(--e-10); }
   /* Titres de section a 38 px ; images plafonnees ; pied de page en trois colonnes. */
   :root { --t-titre: 38px; }
   .chapitre h2 { font-size: 38px; }
-  .chapitre__image-mobile .scene { width: min(100%, 440px); margin-inline: auto; }
+  .chapitre__image-mobile .scene { width: min(100%, 440px); margin-inline: 0; }
   .pleine__image .scene { width: min(100%, 440px); }
   .bande-image--cercle .scene { width: min(86vw, 480px); }
   .section--large .section__figure { width: min(100%, 420px); }
@@ -1231,12 +1242,12 @@ li, dd { text-wrap: wrap; }
   .parcours--haut .parcours__etape:nth-child(4) { min-height: 370px; }
   .parcours--haut .parcours__arabe { margin-block: auto var(--e-6); text-align: center; font-size: clamp(38px, 3.6vw, 60px); }
 }
-.parcours__precision { display: block; margin-top: var(--e-1); font-size: 15px; font-weight: 500; white-space: nowrap; }
+.parcours__precision { display: block; margin-top: var(--e-1); font-size: 15px; font-weight: 500; }
 
 /* --- Academie : les fondateurs, leurs noms en grand a la place d'une image ------------------------- */
 .section__figure--noms { width: 100%; background: none; padding: 0; border-radius: 0; }
 .noms { list-style: none; display: grid; gap: var(--e-8); padding: 0; margin: 0; max-width: none; }
-.noms__nom { display: block; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(30px, 3.4vw, 54px); line-height: 1.02; letter-spacing: -0.025em; text-wrap: balance; }
+.noms__nom { display: block; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(21px, 2.4vw, 36px); line-height: 1.02; letter-spacing: -0.025em; text-wrap: balance; }
 .noms__role { display: block; margin-top: var(--e-2); font-family: 'Plus Jakarta Sans', sans-serif; font-size: var(--t-petit); font-weight: 600; letter-spacing: 0; opacity: .8; }
 
 /* --- Bande : une phrase en grand et un detail cadre, sur son fond ------------------------------- */
@@ -1250,4 +1261,25 @@ li, dd { text-wrap: wrap; }
   .bande-image--detail .bande-image__texte { grid-column: 1 / span 7; grid-row: 1; margin-top: 0; }
   .bande-image--detail .bande-phrase__phrase, .bande-image--detail .bande-image__sous { margin-inline: 0; }
   .bande-image--detail .scene { grid-column: 9 / -1; grid-row: 1; width: 100%; max-width: 420px; justify-self: end; }
+}
+.section__titre-plein h2 { max-width: 24ch; margin-bottom: var(--e-6); }
+@media (min-width: 840px) {
+  /* Le titre de la section mene, sur toute la largeur ; les noms dessous a gauche, le texte a droite. */
+  .section--figure:has(.section__figure--noms) .section__grille { align-items: start; }
+  .section__titre-plein { grid-column: 1 / -1; grid-row: 1; }
+  .section--figure:has(.section__figure--noms) .section__texte { grid-row: 2; }
+  .section--figure:has(.section__figure--noms) .section__figure--noms { grid-row: 2; align-self: start; margin-top: var(--e-1); }
+}
+
+/* Tablette : regles placees apres celles du telephone, qu'elles remplacent entre 600 et 839 px. */
+@media (min-width: 600px) and (max-width: 839px) {
+  /* Cours : les quatre arches restent des arches, sur une rangee, plus basses. */
+  .parcours--haut { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; column-gap: var(--e-3); }
+  .parcours--haut .parcours__etape { flex-direction: column; align-items: stretch; border-radius: var(--arche); padding: 0 var(--e-3) var(--e-5); }
+  .parcours--haut .parcours__etape:nth-child(1) { min-height: 170px; }
+  .parcours--haut .parcours__etape:nth-child(2) { min-height: 210px; }
+  .parcours--haut .parcours__etape:nth-child(3) { min-height: 250px; }
+  .parcours--haut .parcours__etape:nth-child(4) { min-height: 290px; }
+  .parcours--haut .parcours__arabe { order: 0; margin: auto 0 var(--e-4); text-align: center; font-size: 30px; line-height: 1.5; }
+  .parcours--haut .parcours__etape > span:not(.parcours__arabe) { font-size: 15px; }
 }

@@ -19,7 +19,6 @@
       },
       "pleine": [],
       "fonds": {
-        "organisation": "lavande",
         "en-bref": "prune"
       },
       "duos": [
@@ -88,9 +87,9 @@
       },
       "figures": {
         "connexion": "detail-fille-lecture",
-        "propositions": "detail-enseignant-place",
+        "propositions": "detail-poignee",
         "traitement": "detail-boucle",
-        "classe": "detail-coran"
+        "classe": "detail-lumiere-sol"
       },
       "fonds": {
         "mineur": "prune"
@@ -138,7 +137,7 @@
       },
       "figures": {
         "projet": "detail-tabouret",
-        "famille": "detail-fille-enseignante"
+        "famille": "detail-seuil-desert"
       },
       "pleine": [
         "famille"
