@@ -214,6 +214,7 @@ Inspection après ces corrections :
 | Recette 11 | 7,77 | 6,37 | 6,33 | « presque » |
 | Recette 12 | 6,8 (7,35 à 7,5 sans plafond) | 6,07 | 6,17 | « presque » |
 | Recette 13 | 7,77 | 6,2 | 6,3 | « presque » |
+| Recette 14 | 7,72 | 6,2 | 6,17 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -402,6 +403,8 @@ Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 | Y5 | Les mêmes personnages reviennent sur trois ou quatre pages (la fillette au pupitre, la mère, l'enseignante aux lunettes, la classe vue du dessus, l'homme au livre) | Quatre recadrages sans personne, cherchés dans les rendus d'origine avec leur décor et vérifiés par un second agent : la boucle du tapis (Académie, « La famille fait partie du parcours »), le tapis qui ondule (haut de Tarifs), l'arche vue d'en haut (Cours, « Trois séances par semaine »), l'arche sombre vue d'en haut (Tarifs, « Le prix de chaque formule »). Chaque groupe de personnages ne paraît plus que sur deux pages au plus ; chaque page garde quatre images |
 
 Le texte courant est déjà en blanc plein sur le violet (contraste 6,5:1, le plus haut possible sur ce violet). Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
+
+**Après la recette 14.** Les cinq groupes de personnages visés ne paraissent plus que sur deux pages au plus. Les jurés relèvent alors deux autres groupes sur quatre pages (le père et le garçon, l'enseignant barbu), et lisent les recadrages sans personne comme du remplissage. Le jeu de rendus ne permet pas mieux : chaque personnage retiré d'une page doit être remplacé par un décor, et les décors disponibles sont presque tous des arches et des portes. Seules de nouvelles scènes lèvent cette réserve (O-20). La génération à partir des rendus, acceptée par le directeur le 21/10, est bloquée par la sécurité de l'environnement : elle demande que la session passe en mode « Accept edits », ou que le modèle soit autorisé dans le connecteur Hugging Face.
 
 Contraintes que la recette ne pouvait pas lever : le directeur a fourni treize illustrations, presque toutes des portes (question O-20) ; les encarts du 18/10 se publient tels quels.
 
