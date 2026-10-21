@@ -15,18 +15,21 @@ consolidée, maquettes et leur contrôle, puis implémentation. Les fiches au
 catalogue (`docs/current/CATALOGUE_ECRANS_RECRUTEMENT.md`, à créer) s'inscrivent
 avant tout fichier `.dart` (section 10 de la revue).
 
-**Réponses du 21/10** (`docs/current/DECISION-CANDIDATURES-2026-10-21.md`) :
-- `CAND-Q02` validée : le lot serveur borné est autorisé sur la base de test ;
-- `CAND-Q04` validée ;
-- principes posés pour `CAND-Q03` (lien public d'inscription), `CAND-Q05`
-  (inscription ouverte à tous les pays, salles 2 et 3 réservées aux personnes
-  que l'académie peut payer) et `CAND-Q06` (pas de WhatsApp, entretien et contact
-  dans l'app) ;
-- `CAND-Q07` (séparation en base, le super-admin voit les deux côtés) et
-  `CAND-Q08` validées ; `CAND-Q09` : aucune mention pendant l'entretien ;
-- `CAND-Q10` : prévenu dans l'app et par courriel ; `CAND-Q11` : doctrine écrite ;
-- `CAND-Q01` reste en discussion ;
-- `CAND-Q12` à `CAND-Q22` attendent.
+**Réponses du 21/10 : les 22 questions ont une réponse**
+(`docs/current/DECISION-CANDIDATURES-2026-10-21.md`, ligne datée au journal `08`).
+- Le lot serveur borné est autorisé sur la base de test (`CAND-Q02`).
+- Valider la pièce fait entrer en salle 3 (`CAND-Q01`).
+- Lien public d'inscription (`CAND-Q03`, `CAND-Q17`).
+- Pas de WhatsApp : entretien et contact dans l'app (`CAND-Q06`).
+- Séparation femmes/hommes en base, le super-admin voit les deux côtés (`CAND-Q07`).
+- Restent ouverts :
+  - les pays et moyens de paiement en Afrique (`CAND-Q05`) ;
+  - les noms des trois salles (`CAND-Q12`) ;
+  - la durée de conservation (`CAND-Q21`, avis du juriste).
+
+La suite suit la section 14 de la spécification : spécification verticale
+consolidée, fiches au catalogue et maquettes pour les écrans. Le lot serveur
+avance en parallèle, puisqu'il est autorisé.
 
 ## Où le directeur répond
 

@@ -724,7 +724,7 @@ critère changé après une décision.
 
 ## 9. Questions au directeur
 
-> **Réponses du 21/10** : voir `docs/current/DECISION-CANDIDATURES-2026-10-21.md`.
+> **Réponses du 21/10, les 22 questions** : voir `docs/current/DECISION-CANDIDATURES-2026-10-21.md`.
 > Après les remarques du directeur, les recommandations de `CAND-Q01`, `CAND-Q03`,
 > `CAND-Q05`, `CAND-Q06`, `CAND-Q10`, `CAND-Q17` et `CAND-Q21` ont été révisées
 > dans la page d'arbitrage : plus de WhatsApp, sauf pour envoyer le lien
