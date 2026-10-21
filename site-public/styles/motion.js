@@ -142,7 +142,8 @@
     // de l'ecran, pour que le texte et son image arrivent ensemble ; le fondu est porte par le CSS.
     var courante = 0;
     Array.prototype.forEach.call(textesChapitres, function (t, i) {
-      if (t.getBoundingClientRect().top < h * 0.6) courante = i;
+      var titre = t.querySelector('h2') || t;
+      if (titre.getBoundingClientRect().top < h * 0.6) courante = i;
     });
     imagesChapitres.forEach(function (img, j) {
       img.style.setProperty('--o', j === courante ? '1' : '0');
