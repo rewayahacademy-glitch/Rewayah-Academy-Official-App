@@ -336,7 +336,7 @@ def texte_html(value: str) -> str:
     # Une adresse e-mail garde sa place a la ligne : elle ne se colle pas au mot qui la precede.
     fin = re.sub(r"\u00a0(?=\S*@)", " ", fin)
     tete, espace, dernier = fin.rpartition(" ")
-    if espace and len(dernier) <= 12 and "@" not in dernier and len(tete.split()) >= 3:
+    if espace and len(dernier) <= 12 and "@" not in dernier and "@" not in tete.rsplit(None, 1)[-1] and len(tete.split()) >= 3:
         fin = f"{tete}\u00a0{dernier}"
     return NOMS_A_TRAIT.sub(r'<span class="insecable">\1</span>', esc(fin))
 
@@ -783,6 +783,17 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
         groupe.clear()
 
     fonds = reglage.get("fonds", {})
+    ids = [s["id"] for s in sections]
+    # Un duo : deux sections voisines de la page, dans l'ordre. Une cle mal saisie ferait disparaitre du texte publie.
+    for duo in reglage.get("duos", []):
+        if len(duo) != 2 or any(d not in ids for d in duo) or ids.index(duo[1]) != ids.index(duo[0]) + 1:
+            raise ValueError(f"direction.json {route}: a duo names two neighbouring sections, in page order: {duo}")
+        if any(d in fonds or d == apres for d in duo):
+            raise ValueError(f"direction.json {route}: a duo section cannot carry a fond or a bande: {duo}")
+    if reglage.get("haut") == "parcours" and len(reglage.get("parcours", [])) != 1:
+        raise ValueError(f"direction.json {route}: haut = parcours shows exactly one parcours")
+    premiers_duos = {d[0]: d for d in reglage.get("duos", [])}
+    seconds_duos = {d[1] for d in reglage.get("duos", [])}
     for i, s in enumerate(sections, 1):
         figure = figure_section(reglage, images, s["id"])
         fond = fonds.get(s["id"])
@@ -792,14 +803,14 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
         if reglage.get("haut") == "parcours" and s["id"] in reglage.get("parcours", []):
             # Les arches du parcours sont en haut de page : la section garde son titre et son texte.
             s = {k: v for k, v in s.items() if k != "points"}
-        duo = next((d for d in reglage.get("duos", []) if s["id"] in d), None)
-        if duo:
-            if s["id"] == duo[0]:
-                vider()
-                cartes = "".join(
-                    render_section(t, i + k, tarifs, today, avis, "duo", figure_section(reglage, images, t["id"]))
-                    for k, t in enumerate(x for x in sections if x["id"] in duo))
-                morceaux.append(f'<div class="duo">{cartes}</div>')
+        if s["id"] in seconds_duos:
+            continue
+        if s["id"] in premiers_duos:
+            vider()
+            voisine = sections[i]
+            cartes = (render_section(s, i, tarifs, today, avis, "duo", figure)
+                      + render_section(voisine, i + 1, tarifs, today, avis, "duo", figure_section(reglage, images, voisine["id"])))
+            morceaux.append(f'<div class="duo">{cartes}</div>')
             continue
         if s["id"] in reglage.get("parcours", []) and reglage.get("haut") != "parcours":
             vider()
@@ -898,7 +909,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
       <h2 id="simulator-title">Estimez le tarif de votre foyer</h2>
       <p>Indiquez le nombre d’élèves, puis l’âge de chacun, dans l’ordre d’inscription.</p>
       <div class="simulator__fields">
-        <label>Nombre d’élèves <span class="pas"><button type="button" data-pas="-1" aria-label="Un élève de moins">−</button><input type="number" inputmode="numeric" min="1" step="1" value="1" id="sim-total"><button type="button" data-pas="1" aria-label="Un élève de plus">+</button></span></label>
+        <label for="sim-total">Nombre d’élèves <span class="pas"><button type="button" data-pas="-1" aria-label="Un élève de moins">−</button><input type="number" inputmode="numeric" min="1" step="1" value="1" id="sim-total"><button type="button" data-pas="1" aria-label="Un élève de plus">+</button></span></label>
         <label>Paiement <select id="sim-paiement"></select></label>
         <label>Parrainage <input type="checkbox" id="sim-parrainage"></label>
       </div>

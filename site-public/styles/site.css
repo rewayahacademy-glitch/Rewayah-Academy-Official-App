@@ -1050,7 +1050,7 @@ li, dd { text-wrap: pretty; }
   .fiches__choix input { position: absolute; width: 1px; height: 1px; opacity: 0; }
   .fiches__choix label { display: grid; place-items: center; min-height: 44px; padding-inline: var(--e-6); border-radius: var(--r-full); font-weight: 600; cursor: pointer; }
   .fiches__choix input:checked + label { background: #FFFFFF; color: #25113F; }
-  .fiches__choix input:focus-visible + label { outline: 2px solid currentColor; outline-offset: 2px; }
+  .fiches__choix input:focus-visible + label { outline: 2px solid #FFFFFF; outline-offset: 2px; }
   .fiches-bloc:has(#fiche-enfants:checked) .fiche:nth-child(2), .fiches-bloc:has(#fiche-adultes:checked) .fiche:nth-child(1) { display: none; }
   .fiches-bloc .fiches { margin-top: var(--e-4); }
 }
@@ -1065,7 +1065,7 @@ li, dd { text-wrap: pretty; }
   .price-table thead { display: none; }
   .price-table--long tbody tr { grid-template-columns: minmax(0, 1fr); }
   .price-table--long tbody th { padding-bottom: 0; }
-  .price-table--long tbody td { grid-column: 1; padding-top: var(--e-2) !important; font-weight: 500; }
+  .price-table--long tbody td, .price-table--long tbody td:only-of-type { grid-column: 1; padding-top: var(--e-2); font-weight: 500; text-align: start; }
 }
 
 /* --- Telephone : le titre de la page mene, la section suit ; le pied de page en deux colonnes --- */
@@ -1079,6 +1079,8 @@ li, dd { text-wrap: pretty; }
 /* --- Academie : la boucle file hors du bord droit, au lieu d'y etre coupee net ---------- */
 @media (min-width: 840px) {
   .entete-page--libre:has(.scene:not([data-anime])) .entete-page__arche { margin-inline-end: calc(-1 * max(var(--marge), (100vw - var(--contenu)) / 2) - 24px); width: calc(100% + max(var(--marge), (100vw - var(--contenu)) / 2) + 24px); }
+  /* La legende reste dans la marge de la page, pas dans le debord. */
+  .entete-page--libre:has(.scene:not([data-anime])) .entete-page__image figcaption { inset-inline-end: calc(max(var(--marge), (100vw - var(--contenu)) / 2) + 24px); }
 }
 
 /* --- Phrase seule : centree, elle ne laisse pas une moitie d'ecran vide -------------------- */

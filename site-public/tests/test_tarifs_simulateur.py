@@ -262,7 +262,7 @@ class PageGeneree(unittest.TestCase):
         self.assertIn("Le simulateur demande JavaScript", self.tarifs_html)
         for identifiant in ("sim-total", "sim-paiement", "sim-parrainage", "sim-students", "sim-result"):
             self.assertIn(f'id="{identifiant}"', self.tarifs_html)
-        for libelle in ("<label>Nombre d’élèves", "<label>Paiement", "<label>Parrainage"):
+        for libelle in ('<label for="sim-total">Nombre d’élèves', "<label>Paiement", "<label>Parrainage"):
             self.assertIn(libelle, self.tarifs_html)
 
     def test_le_simulateur_n_a_aucun_nombre_de_tarif_en_dur(self) -> None:

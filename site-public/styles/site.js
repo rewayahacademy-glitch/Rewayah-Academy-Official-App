@@ -178,8 +178,9 @@ function initialiserSimulateur(simulator, d) {
     const voulu = Math.min(Math.max(parseInt(total.value, 10) || 0, 0), d.elevesMax);
     while (students.children.length > voulu * (d.bourse ? 2 : 1)) students.removeChild(students.lastChild);
     for (let i = students.children.length / (d.bourse ? 2 : 1); i < voulu; i += 1) {
-      const age = el('label', 'Âge de l’élève ' + (i + 1) + ' ');
-      const champ = el('input', undefined, { type: 'number', inputmode: 'numeric', min: String(d.ageEnfantMin), step: '1', placeholder: 'Par exemple ' + (d.ageEnfantMin + 2), 'data-age': '' });
+      // Le libelle vise le champ par son id : il le nomme, et un clic sur le texte n'actionne pas le bouton moins.
+      const age = el('label', 'Âge de l’élève ' + (i + 1) + ' ', { for: 'sim-age-' + (i + 1) });
+      const champ = el('input', undefined, { type: 'number', inputmode: 'numeric', min: String(d.ageEnfantMin), step: '1', placeholder: 'Par exemple ' + (d.ageEnfantMin + 2), 'data-age': '', id: 'sim-age-' + (i + 1) });
       // Le premier eleve part d'un exemple, pour que le calcul se lise tout de suite ; on le change en un geste.
       if (i === 0) champ.value = String(d.ageEnfantMin + 2);
       champ.addEventListener('input', calculerEtAfficher);
@@ -241,7 +242,7 @@ function initialiserSimulateur(simulator, d) {
     fort.appendChild(el('small', r.mois > 1 ? 'à payer d’avance pour ' + r.mois + ' mois' + pour + ', hors taxes' : 'par mois' + pour + ', hors taxes'));
     result.appendChild(fort);
     if (r.mois > 1) ligneTexte(result, 'Soit environ ' + m(r.parMois) + ' par mois (arrondi au centime).');
-    if (r.credit) ligneTexte(result, 'Premier paiement, crédit de parrainage déduit : ' + m(r.totalPeriode) + '. Ensuite ' + m(r.totalSansCredit) + ' par mois.');
+    if (r.credit && r.mois === 1) ligneTexte(result, 'Premier paiement, crédit de parrainage déduit : ' + m(r.totalPeriode) + '. Ensuite ' + m(r.totalSansCredit) + ' par mois.');
     result.appendChild(el('p', r.mois > 1 ? 'Détail par élève, pour ' + r.mois + ' mois' : 'Détail par élève, pour un mois', { class: 'simulator__legende' }));
     const liste = el('ul', undefined, { class: 'simulator__eleves' });
     r.lignes.forEach((l) => {
@@ -253,7 +254,9 @@ function initialiserSimulateur(simulator, d) {
       if (l.plafond) details.push('plafond : ' + m(l.plafond) + ' non appliqués');
       if (l.bourse) details.push('bourse ' + m(-l.bourse) + ' (ne se cumule pas)');
       li.appendChild(el('span', 'Prix ' + m(l.base) + ' · ' + (details.length ? details.join(', ') : 'aucune remise'), { class: 'simulator__calcul' }));
-      li.appendChild(el('strong', m(l.total)));
+      const du = el('strong');
+      du.append(el('span', 'À payer : ', { class: 'sr-only' }), m(l.total));
+      li.appendChild(du);
       liste.appendChild(li);
     });
     result.appendChild(liste);
