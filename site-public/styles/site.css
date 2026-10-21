@@ -207,6 +207,12 @@ p { text-wrap: wrap; max-width: 60ch; }
 .scene .scene__calque { position: absolute; inset: 0; width: 100%; height: 100%; }
 /* Gros plans : un cercle (la halqa du symbole), ouvert sur la lumiere de la salle. */
 .scene--cercle .scene__cadre { aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: #EEE6FA; }
+/* Un detail cadre ne depasse jamais la largeur de son fichier (--natif, pose par le build) : agrandi, il deviendrait flou. */
+.section__figure .scene--cercle, .section__figure .scene--arche, .pleine__image .scene--cercle, .pleine__image .scene--arche, .panneau__arche .scene--cercle { max-width: var(--natif, none); margin-inline: auto; }
+.chapitres__image.scene--cercle > .scene__cadre { max-width: var(--natif, none); }
+.scene--panneau .scene__cadre { display: block; border-radius: var(--r-lg); background: #EEE6FA; padding: 5% 4% 3%; }
+.section__figure:has(.scene--panneau) { width: min(100%, 640px); }
+@media (max-width: 599px) { .pleine__image .scene--cercle { max-width: min(var(--natif, 260px), 260px); } }
 .section__figure:has(.scene--cercle) { background: none; padding: 0; border-radius: 0; }
 /* Details en pied : l'arche du symbole (le haut est un demi-cercle sur toute la largeur), ouverte sur la lumiere. */
 .scene--arche .scene__cadre { aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 40% 40% 0 0; overflow: hidden; background: #EEE6FA; }
@@ -398,10 +404,12 @@ li, dd { text-wrap: wrap; }
 /* La legende sort de l'arche : 8 px sous la tuile, a droite, dans l'espace du titre de l'etape. */
 .pousse__image { position: static; }
 .pousse__image figcaption { position: absolute; inset-inline-end: 0; top: calc(100% + var(--e-2)); }
-.pousse__etape h3 { margin-top: var(--e-10); }
+.pousse__etape h3 { margin-top: var(--e-16); }
 .pousse__etape p { margin-top: var(--e-2); max-width: 32ch; }
 /* Au telephone, les etapes s'empilent : la montee des hauteurs ne se lit plus, les trois tuiles prennent la meme taille. */
 @media (max-width: 599px) { .pousse__liste .pousse__etape .pousse__tuile { height: 64vw; } .pousse__liste .pousse__etape .pousse__image { width: min(100%, 46vw); } }
+/* Au telephone, la legende « Illustration » d'une etape ne touche pas le titre qui suit. */
+@media (max-width: 599px) { .etapes .etape .section__figure { margin-bottom: calc(var(--e-12) + var(--e-2)); } }
 @media (min-width: 840px) {
   .pousse__entete { grid-column: 1 / -1; grid-row: 1; display: grid; grid-template-columns: subgrid; align-items: end; }
   .pousse__entete h2 { grid-column: 1 / span 6; }
@@ -1084,7 +1092,7 @@ li, dd { text-wrap: wrap; }
 
 /* --- Duo : deux sections cote a cote, chacune avec son detail au-dessus de son texte --- */
 .duo { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; display: grid; gap: var(--e-12); }
-.duo__carte .section__figure { width: min(100%, 360px); margin: 0 0 var(--e-8); }
+.duo__carte .section__figure { width: min(100%, 360px); margin: 0 0 var(--e-16); }
 .duo__carte h2 { font-size: max(26px, var(--t-moyen)); margin-bottom: var(--e-6); max-width: 18ch; }
 .duo__carte p + p { margin-top: var(--e-4); }
 .duo__carte .points, .duo__carte .section-links { margin-top: var(--e-6); }
@@ -1133,6 +1141,16 @@ li, dd { text-wrap: wrap; }
   .entete-page:not(.entete-page--document) .entete-page__texte--long h1 { font-size: clamp(32px, 10.6vw, 44px); }
   .entete-page:not(.entete-page--document) .entete-page__texte--tres-long h1 { font-size: clamp(28px, 8.6vw, 34px); }
   .site-footer__inner > nav:not(.footer-legal) ul { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-4); }
+  /* Pied de page au telephone : le meme contenu, plus serre (il prenait un ecran et demi). */
+  .site-footer { padding-top: var(--e-12); }
+  .site-footer__inner { gap: var(--e-8); font-size: 14px; }
+  .site-footer .brand img { width: 176px; margin-bottom: var(--e-4); }
+  .site-footer a { min-height: 34px; }
+  .footer-title { margin-bottom: var(--e-2); }
+  .footer-contacts { gap: var(--e-2); }
+  .footer-contacts a { min-height: 26px; }
+  .footer-legal ul { gap: 0 var(--e-4); }
+  .footer-bottom a { min-height: 28px; }
 }
 
 /* --- Academie : la boucle file hors du bord droit, au lieu d'y etre coupee net ---------- */

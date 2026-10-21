@@ -208,6 +208,7 @@ Inspection après ces corrections :
 | Recette 7 | 7,72 | 6,27 | 6,33 | « presque » |
 | Recette 8 | 7,67 | 6,12 | 6,17 | « presque » |
 | Recette 9 | 6,5 (7,5 sans plafond) | 6,45 | 6,5 | « presque » |
+| Recette 10 | 7,8 | 6,57 | 6,5 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -345,6 +346,18 @@ Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 | U5 | Accueil, téléphone : trois étapes de hauteurs différentes | Au téléphone, les trois tuiles et les trois cercles ont la même taille |
 | U6 | Cours : l'arche et le cercle côte à côte, titres décalés ; un bord de porte dans le cercle | Même boîte pour les deux images, posées en bas : les titres partagent une ligne. Le cercle est recadré sans le pilier de l'arche |
 | U7 | Téléphone : les détails sans personne prennent tout l'écran ; notes à 15 px | Au téléphone, une arche fait 260 px au plus et un cercle 300 px. Notes et légendes à 16 px |
+
+Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
+
+**Corrections après la recette 10.** Aucun plafond ne s'applique plus ; les trois jurés donnent 7,8 et placent l'accueil et le haut de Cours au-dessus des deux références. Ce qui retient leur « oui » : les mêmes personnes d'une page à l'autre (limite des rendus), et des détails agrandis ou trop grands.
+
+| # | Relevé | Correction |
+|---|---|---|
+| V1 | Des détails agrandis au-delà de leur fichier, donc flous (Cours, Tarifs, Académie, chapitres de l'accueil : jusqu'à 1,67 fois) | Le build pose la largeur du fichier sur chaque détail cadré ; il ne s'affiche jamais plus grand. Plus aucune image agrandie à 1440, 768 et 390 px |
+| V2 | Familles : la classe vue du dessus, petite, flotte sur le violet | Posée sur un panneau lavande, comme un sol, à la largeur de la colonne (540 px à 1440) |
+| V3 | Académie : le cercle des dunes occupe tout l'écran du téléphone | 260 px au plus au téléphone, 450 px (sa taille réelle) ailleurs |
+| V4 | Téléphone : la légende « Illustration » colle au titre qui suit | Au moins 30 px entre une légende et le titre suivant, sur toutes les pages, aux trois largeurs |
+| V5 | Téléphone : le pied de page prend un écran et demi | Même contenu, resserré : 1 120 px au lieu de 1 307 |
 
 Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 
