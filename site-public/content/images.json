@@ -4,7 +4,7 @@
     1024,
     1600
   ],
-  "note": "Illustrations fournies par le directeur (dossier Drive « images du site public », 21/10/2026), détourées et harmonisées : arches de 02 et 12 recolorées en lavande ; 04 et 09 remplacées par leur jumelle lavande 08. Toujours légendées « Illustration » (cahier visuel C.4). Calques animables : le tapis du chemin et les mains de l'élève dans la transmission, séparés de la scène (GrabCut) et bouchés derrière (LaMa) ; au repos, le fond et le calque redonnent l'image entière.",
+  "note": "Illustrations fournies par le directeur (dossier Drive « images du site public », 21/10/2026), détourées et harmonisées : arches de 02 et 12 recolorées en lavande ; 04 et 09 remplacées par leur jumelle lavande 08. Toujours légendées « Illustration » (cahier visuel C.4). Calques animables : le tapis du chemin et les mains de l'élève dans la transmission, séparés de la scène (GrabCut) et bouchés derrière (LaMa) ; au repos, le fond et le calque redonnent l'image entière. Gros plans : recadrages carrés de quatre scènes (forme « cercle », la halqa du symbole), pour ne pas répéter l’arche entière d’une section à l’autre.",
   "images": {
     "chemin": {
       "source": "07",
@@ -105,6 +105,58 @@
       "largeur": 1005,
       "hauteur": 1025,
       "alt": "Un coussin et un pupitre de lecture attendent devant la porte, où un enseignant est déjà assis."
+    },
+    "gros-plan-lecture": {
+      "source": "03",
+      "largeur": 710,
+      "hauteur": 710,
+      "alt": "Gros plan : une élève lit face à son enseignante, chacune devant son pupitre de lecture.",
+      "forme": "cercle",
+      "recadrage": [
+        20,
+        440,
+        730,
+        1150
+      ]
+    },
+    "gros-plan-enseignant": {
+      "source": "11",
+      "largeur": 710,
+      "hauteur": 710,
+      "alt": "Gros plan : un élève adulte, assis sur un tabouret, écoute un enseignant qui lit devant son pupitre.",
+      "forme": "cercle",
+      "recadrage": [
+        40,
+        400,
+        750,
+        1110
+      ]
+    },
+    "gros-plan-famille": {
+      "source": "01",
+      "largeur": 760,
+      "hauteur": 760,
+      "alt": "Gros plan : une mère regarde, depuis la porte, sa fille qui lit avec son enseignante.",
+      "forme": "cercle",
+      "recadrage": [
+        100,
+        350,
+        860,
+        1110
+      ]
+    },
+    "gros-plan-pere-fils": {
+      "source": "12",
+      "largeur": 740,
+      "hauteur": 740,
+      "alt": "Gros plan : un père accompagne son fils, un livre à la main, jusqu’à l’enseignant qui l’attend.",
+      "forme": "cercle",
+      "recadrage": [
+        60,
+        370,
+        800,
+        1110
+      ]
     }
   }
 }

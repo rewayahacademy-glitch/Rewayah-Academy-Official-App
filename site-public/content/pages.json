@@ -270,7 +270,7 @@
         }
       ],
       "cta": {
-        "label": "Ouvrir Rewayah",
+        "label": "Commencer mon inscription",
         "href": "/connexion"
       },
       "indexable": true,
@@ -309,7 +309,7 @@
           "title": "Apprendre avec un enseignant",
           "paragraphs": [
             "L'élève écoute, lit ou récite, reçoit une correction et travaille les exercices guidés. Le support de cours accompagne la séance.",
-            "Après les bases, l'élève peut mémoriser le Coran ou lire tout le Coran. Aucune durée de progression n'est promise."
+            "Après les bases, l'élève peut mémoriser le Coran ou le lire en entier. Le temps que cela prend dépend de chaque élève."
           ]
         },
         {
@@ -349,7 +349,7 @@
           "title": "1. Ouvrir l’application",
           "paragraphs": [
             "Le bouton d'inscription ouvre la connexion de l'application. Si aucun compte n'existe, l'application reprend le parcours vers l'inscription.",
-            "L'accès reste dans l'application existante; le site public ne crée pas de compte séparé."
+            "Tout se passe dans l'application Rewayah : le site ne vous demande aucun compte."
           ]
         },
         {
@@ -357,7 +357,7 @@
           "title": "2. Choisir un horaire publié",
           "paragraphs": [
             "Les jours et horaires présentés sont des propositions publiées par l'administration. Vous pouvez consulter les options qui apparaissent dans le parcours.",
-            "Une préférence exprimée ne réserve pas une place et ne confirme pas une classe. Aucun enseignant ni compteur de places n'est présenté à cette étape."
+            "Votre choix n'est pas encore une réservation : la direction compose ensuite la classe et nomme son enseignant."
           ]
         },
         {
@@ -365,7 +365,7 @@
           "title": "3. La direction compose la classe",
           "paragraphs": [
             "L'administration examine les intentions reçues et organise les classes selon l'offre et les possibilités disponibles.",
-            "Le site ne promet pas de délai de traitement non publié."
+            "Vous êtes prévenu dans l'application à chaque étape."
           ]
         },
         {
@@ -392,7 +392,7 @@
         }
       ],
       "cta": {
-        "label": "Continuer dans Rewayah",
+        "label": "Commencer mon inscription",
         "href": "/connexion"
       },
       "indexable": true,
@@ -465,7 +465,7 @@
         }
       ],
       "cta": {
-        "label": "Ouvrir le parcours Rewayah",
+        "label": "Commencer mon inscription",
         "href": "/connexion"
       },
       "indexable": false,
@@ -507,7 +507,13 @@
           "title": "La société exploitante",
           "paragraphs": [
             "Depuis le 1er mai 2024, Rewayah Academy accompagne l’apprentissage du Coran. REWAYAH ACADEMY LTD porte l’activité, sous le numéro 16624644.",
-            "Les mentions légales définitives, notamment le territoire d'immatriculation et l'adresse du siège, restent soumises à vérification du registre officiel en vigueur."
+            "Les mentions légales sont publiées sur leur page."
+          ],
+          "links": [
+            {
+              "label": "Lire les mentions légales",
+              "href": "/fr/legal/mentions"
+            }
           ]
         },
         {

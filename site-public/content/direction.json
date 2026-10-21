@@ -9,7 +9,8 @@
       "bande": {
         "image": "mere-porte",
         "apres": "suivi",
-        "forme": "arche"
+        "forme": "arche",
+        "phrase": "Écouter une séance deux minutes, sans micro ni caméra."
       },
       "fin": {
         "titre": "Inscrivez votre enfant.",
@@ -19,7 +20,7 @@
         "href": "/connexion"
       },
       "figures": {
-        "profils": "eleve-enseignante",
+        "profils": "gros-plan-famille",
         "organisation": "chemin"
       }
     },
@@ -30,7 +31,8 @@
       "bande": {
         "image": "adulte-homme",
         "apres": "adultes-enfants",
-        "forme": "arche"
+        "forme": "arche",
+        "phrase": "Les adultes apprennent dans des classes d’adultes."
       },
       "fin": {
         "titre": "Commencez par les bases.",
@@ -41,7 +43,7 @@
       },
       "figures": {
         "objectifs": "transmission-lavande",
-        "methode": "adulte-femme",
+        "methode": "gros-plan-lecture",
         "groupes": "halqa"
       }
     },
@@ -53,7 +55,8 @@
       "gabarit": "etapes",
       "bande": {
         "image": "halqa",
-        "forme": "cercle"
+        "forme": "cercle",
+        "phrase": "Des classes de 3 à 5 enfants, ou de 3 à 6 adultes."
       },
       "fin": {
         "titre": "Votre inscription commence ici.",
@@ -63,7 +66,7 @@
         "href": "/connexion"
       },
       "figures": {
-        "mineur": "pere-fils",
+        "mineur": "gros-plan-pere-fils",
         "connexion": "place"
       }
     },
@@ -79,7 +82,7 @@
         "href": "/connexion"
       },
       "figures": {
-        "grille": "eleve-enseignante-b",
+        "grille": "gros-plan-enseignant",
         "famille": "pere-fils",
         "classes": "halqa"
       }
@@ -92,7 +95,8 @@
       "bande": {
         "image": "boucle",
         "apres": "projet",
-        "forme": "large"
+        "forme": "large",
+        "phrase": "Transmettre le savoir tel qu’il a été reçu."
       },
       "fin": {
         "titre": "Découvrez les cours.",
@@ -102,8 +106,8 @@
         "href": "/fr/cours"
       },
       "figures": {
-        "projet": "eleve-enseignante",
-        "famille": "mere-porte",
+        "projet": "gros-plan-lecture",
+        "famille": "gros-plan-famille",
         "societe": "adulte-homme-livre"
       }
     },
@@ -146,13 +150,14 @@
         "href": "/fr/cours"
       },
       "figures": {
-        "avis": "pere-fils",
+        "avis": "gros-plan-pere-fils",
         "transparence": "adulte-femme-livre"
       },
       "bande": {
         "image": "halqa",
         "apres": "avis",
-        "forme": "cercle"
+        "forme": "cercle",
+        "phrase": "Chaque avis est lu par la direction avant d’être publié."
       }
     },
     "/fr/recrutement": {
@@ -167,7 +172,7 @@
         "href": "mailto:recrutement@rewayahacademy.com"
       },
       "figures": {
-        "postes": "eleve-enseignante",
+        "postes": "gros-plan-enseignant",
         "enseignants": "transmission-lavande",
         "candidature": "adulte-homme"
       }

@@ -101,7 +101,7 @@
   --t-affiche: clamp(44px, 6.6vw, 104px);
   --t-titre: clamp(30px, 3.6vw, 54px);
   --t-moyen: clamp(20px, 2.1vw, 30px);
-  --t-corps: clamp(16px, 1.2vw, 18px);
+  --t-corps: clamp(16px, 1.25vw, 19px);
   --t-petit: 14px;
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   font-synthesis: none;
@@ -179,8 +179,10 @@ p { text-wrap: pretty; max-width: 60ch; }
 @media (min-width: 600px) { .eyebrow { display: none; } }
 .hero-intro { font-size: var(--t-moyen); line-height: 1.4; max-width: 32ch; margin-top: var(--e-6); }
 .rassurance { margin-top: var(--e-5); font-size: var(--t-petit); color: var(--encre-douce); max-width: 46ch; }
+.preuve { margin-top: var(--e-3); font-size: var(--t-petit); color: var(--encre-douce); max-width: 46ch; }
+.porte__phrase span { white-space: nowrap; }
 /* Sur les ecrans bas, le ruban de la scene passe sous la phrase et le bouton contour : ils gardent le fond du champ. */
-.porte .rassurance { width: fit-content; padding: var(--e-1) var(--e-2); margin-inline-start: calc(var(--e-2) * -1); border-radius: var(--r-xs); background: var(--champ); }
+.porte .rassurance, .porte .preuve { width: fit-content; padding: var(--e-1) var(--e-2); margin-inline-start: calc(var(--e-2) * -1); border-radius: var(--r-xs); background: var(--champ); }
 .porte .cta--secondary { background: var(--champ); }
 .porte .cta--secondary:hover { background: var(--champ-fort); }
 
@@ -191,11 +193,16 @@ p { text-wrap: pretty; max-width: 60ch; }
 .scene__cadre { position: relative; display: block; }
 .scene[data-anime] .scene__cadre { overflow: clip; }
 .scene .scene__calque { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* Gros plans : un cercle (la halqa du symbole), ouvert sur la lumiere de la salle. */
+.scene--cercle .scene__cadre { aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: #EEE6FA; }
+.section__figure:has(.scene--cercle) { background: none; padding: 0; border-radius: 0; }
+/* La manche de l'eleve ne s'arrete pas net : l'image s'efface sur ses bords gauche et bas. */
+.scene[data-anime="mains"] .scene__cadre img { -webkit-mask: linear-gradient(90deg, transparent 0, #000 14%), linear-gradient(0deg, transparent 0, #000 12%); -webkit-mask-composite: source-in; mask: linear-gradient(90deg, transparent 0, #000 14%), linear-gradient(0deg, transparent 0, #000 12%); mask-composite: intersect; }
 .scene__onde { position: absolute; left: calc(var(--zx) * 100%); top: calc(var(--zy) * 100%); width: calc(var(--zl) * 100%); height: calc(var(--zh) * 100%); pointer-events: none; }
 .scene[data-onde] .scene__calque--tapis { visibility: hidden; }
-/* Arreter le mouvement continu du tapis (WCAG 2.2.2) : un bouton qui n'apparait que si le tapis est a l'ecran. */
-.pause-anim { position: fixed; z-index: 30; inset-inline-start: var(--marge); bottom: var(--marge); display: none; place-items: center; width: 48px; height: 48px; border: 2px solid var(--contour); border-radius: 50%; background: var(--fond); color: var(--encre); box-shadow: var(--ombre-1); transition: background-color var(--mv-micro) var(--mv-entree); }
-.pause-anim[data-visible] { display: grid; }
+/* Arreter le mouvement continu du tapis (WCAG 2.2.2) : un bouton dans l'illustration qu'il commande. */
+.pause-anim { position: absolute; z-index: 3; inset-inline-start: var(--e-3); bottom: var(--e-3); display: grid; place-items: center; width: 44px; height: 44px; border: 2px solid var(--contour); border-radius: 50%; background: var(--fond); color: var(--encre); transition: background-color var(--mv-micro) var(--mv-entree); }
+.porte__texte .pause-anim { position: static; margin-top: var(--e-6); }
 .pause-anim:hover { background: var(--champ); }
 .pause-anim svg { width: 18px; height: 18px; }
 .pause-anim .pause-anim__lecture, .pause-anim[aria-pressed="true"] .pause-anim__pause { display: none; }
@@ -270,23 +277,20 @@ p { text-wrap: pretty; max-width: 60ch; }
   .js .porte { height: 250svh; }
   .js .porte__collant { position: sticky; top: 0; height: 100svh; min-height: 0; }
   .js .porte__arche { transform: scale(calc(1 + var(--z, 0) * 2.6)); }
-  .js .porte__scene { transform: scale(calc(1 + var(--z2, 0) * 3.2)); will-change: transform; }
+  .js .porte__scene { transform: scale(calc(1 + var(--z2, 0) * 1.7)); will-change: transform; }
   .js .porte__texte { transform: translateY(calc(var(--z, 0) * -14svh)); opacity: calc(1 - var(--z, 0) * 3.6); }
   .js .porte[data-passee] .porte__texte, .js .porte:not([data-cercle]) .porte__phrase { visibility: hidden; }
   .js .porte__cercle { display: grid; place-items: center; position: absolute; inset: 0; z-index: 4; pointer-events: none; clip-path: circle(calc(var(--c, 0) * 150vmax) at 68% 56%); }
   .js .porte__vue { display: block; position: absolute; inset: 0; }
   .js .porte__disque { position: absolute; inset: 0; background: var(--fond); }
-  .js .porte__halqa { position: relative; width: min(46vw, 68svh); margin-inline-start: 22vw; transform: scale(calc(1.18 - var(--c, 0) * .18)); }
-  .js .porte__phrase { display: block; position: absolute; inset-inline-start: max(var(--marge), calc((100vw - var(--contenu)) / 2)); top: 50%; translate: 0 -50%; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(24px, 2.4vw, 36px); line-height: 1.15; letter-spacing: -0.02em; color: var(--encre); opacity: var(--c, 0); transform: translateY(calc((1 - var(--c, 0)) * 16px)); }
+  .js .porte__halqa { position: relative; width: min(46vw, 76svh); margin-inline-start: 44vw; transform: scale(calc(1.18 - var(--c, 0) * .18)); }
+  .js .porte__phrase { display: block; position: absolute; inset-inline-start: max(var(--marge), calc((100vw - var(--contenu)) / 2)); top: 50%; translate: 0 -50%; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(34px, 3.4vw, 56px); line-height: 1.04; letter-spacing: -0.025em; color: var(--encre); opacity: var(--c, 0); transform: translateY(calc((1 - var(--c, 0)) * 16px)); }
   .js .porte__halqa::before { content: ''; position: absolute; inset: 4% 8% 2% 6%; border-radius: 50%; background: var(--champ); z-index: -1; }
 }
 
 /* --- Enonce : une phrase, des fenetres en arche dans la ligne ---------------- */
 .enonce { padding: var(--respire) var(--marge); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
-.enonce__texte { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: var(--t-moyen); line-height: 1.3; letter-spacing: -0.01em; max-width: 30em; margin-inline: auto; text-align: center; text-wrap: balance; }
-.insec { white-space: nowrap; }
-.vignette { display: inline-block; width: 1.2em; height: .95em; vertical-align: -0.12em; margin-inline: .12em; border-radius: var(--arche); background: var(--champ); overflow: hidden; }
-.vignette img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; transform: scale(1.35); }
+.enonce__texte { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(22px, 2.5vw, 36px); line-height: 1.18; letter-spacing: -0.015em; max-width: 34em; text-wrap: balance; }
 
 /* --- Chapitres : la porte reste, ceux qui viennent changent ------------------- */
 .chapitres { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); padding: 0 var(--marge) var(--respire); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
@@ -342,7 +346,9 @@ p { text-wrap: pretty; max-width: 60ch; }
   .pousse__entete { position: relative; z-index: 1; }
   .pousse { grid-template-rows: auto auto; }
   .pousse__liste { margin-top: 0; }
-  .pousse__liste .pousse__etape--0, .pousse__liste .pousse__etape--1 { margin-top: 30svh; }
+  .pousse__liste { grid-template-rows: auto auto auto; row-gap: 0; }
+  .pousse__etape { grid-row: span 3; display: grid; grid-template-rows: subgrid; }
+  .pousse__etape .pousse__tuile { align-self: end; }
 }
 
 /* --- Deux champs : enfants, adultes --------------------------------------- */
@@ -371,7 +377,7 @@ p { text-wrap: pretty; max-width: 60ch; }
 .panneau { padding: var(--respire) var(--marge); }
 .panneau__in { position: relative; overflow: hidden; border-radius: var(--r-lg); background: var(--inverse); color: var(--sur-inverse); display: grid; padding: var(--e-12) var(--e-6) 0; gap: var(--e-10); max-width: 1440px; margin-inline: auto; }
 .panneau h2 { color: var(--sur-inverse); max-width: 13ch; }
-.panneau__arche { margin-top: var(--e-10); width: min(86%, 560px); border-radius: var(--arche); background: var(--champ-fort); padding: 14% 6% 0; margin-bottom: -12%; }
+.panneau__arche { margin-top: var(--e-10); width: min(86%, 560px); border-radius: var(--arche); background: var(--champ-fort); padding: 14% 6% 0; }
 .panneau__arche figcaption { color: var(--encre); }
 .panneau__depuis { font-family: 'DM Sans', sans-serif; font-size: var(--t-moyen); line-height: 1.25; font-weight: 500; max-width: 22ch; }
 .panneau__bloc { margin-top: var(--e-8); max-width: 40ch; }
@@ -385,7 +391,7 @@ p { text-wrap: pretty; max-width: 60ch; }
   .panneau__in { grid-template-columns: repeat(12, minmax(0, 1fr)); padding: var(--e-16) max(var(--e-16), calc((100vw - var(--contenu)) / 2 - var(--marge))) 0; column-gap: var(--e-6); }
   .panneau__gauche { grid-column: 1 / span 6; display: flex; flex-direction: column; }
   .panneau__droite { grid-column: 8 / span 5; padding-top: var(--e-2); }
-  .panneau__arche { margin-top: auto; padding-top: 18%; }
+  .panneau__arche { margin-top: auto; padding-top: 18%; margin-bottom: -12%; }
 }
 
 /* --- Tuiles de questions (FAQ, aide) ------------------------------------------- */
@@ -424,8 +430,9 @@ p { text-wrap: pretty; max-width: 60ch; }
 .appel__haut h2 { font-size: var(--t-titre); color: inherit; }
 .appel__phrase { font-size: var(--t-corps); max-width: 46ch; padding-inline: var(--e-2); }
 .appel__mot { align-self: end; justify-self: center; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: clamp(64px, 15vw, 232px); line-height: .82; letter-spacing: -0.04em; white-space: nowrap; transform: translateY(calc((1 - var(--v, 1)) * 16px)); }
-.appel__fleche { position: absolute; inset-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); top: calc(var(--e-12) + var(--e-10)); transition: transform var(--mv-micro) var(--mv-entree); }
-.appel__lien:hover .appel__fleche { transform: translate(4px, -4px); }
+.appel__bouton { display: inline-flex; align-items: center; gap: var(--e-2); margin-top: var(--e-6); min-height: 52px; padding-inline: var(--e-6); border-radius: var(--r-full); background: var(--sur-marque); color: var(--marque); font-weight: 600; font-size: var(--t-corps); transition: transform var(--mv-retour) var(--mv-entree); }
+.appel__lien:hover .appel__bouton svg { transform: translateX(4px); }
+.appel__bouton svg { transition: transform var(--mv-micro) var(--mv-entree); }
 
 /* --- Pages interieures : haut de page --------------------------------------- */
 /* La scene porte deja l'arche du symbole (le livre, la porte ouverte) : on ne l'enferme pas dans une
@@ -483,7 +490,7 @@ p { text-wrap: pretty; max-width: 60ch; }
 .section__texte h2 { margin-bottom: var(--e-6); }
 .section__texte > p + p { margin-top: var(--e-4); }
 .section__figure { position: relative; width: min(100%, 520px); border-radius: var(--arche); background: var(--champ); padding: 14% 5% 0; }
-.section__figure .scene figcaption { position: absolute; inset-inline-end: 0; top: calc(var(--e-6) * -1); }
+.section__figure .scene figcaption { position: absolute; inset-inline-end: 0; bottom: calc(var(--e-6) * -1); }
 .section--figure .section__figure { margin-top: var(--e-6); }
 .section__figure--panorama { width: 100%; background: none; padding: 0; border-radius: 0; }
 .section__figure--panorama .scene figcaption { top: auto; bottom: calc(var(--e-6) * -1); }
@@ -526,6 +533,15 @@ p { text-wrap: pretty; max-width: 60ch; }
 .bande-image--cercle .scene { width: min(86vw, 720px); margin-inline: auto; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: var(--champ); padding: 6%; }
 .bande-image--cercle .scene__cadre { width: 92%; }
 .bande-image .scene figcaption { position: absolute; inset-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); bottom: var(--e-3); }
+.bande-image--large .scene { position: static; }
+.bande-image__phrase { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(22px, 2.8vw, 40px); line-height: 1.1; letter-spacing: -0.02em; max-width: 30ch; text-wrap: balance; margin-top: var(--e-8); }
+.bande-image--large .bande-image__phrase { padding-inline: var(--marge); }
+@media (min-width: 840px) {
+  .bande-image:has(.bande-image__phrase):not(.bande-image--large) { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: center; max-width: calc(var(--contenu) + 2 * var(--marge)); }
+  .bande-image:has(.bande-image__phrase):not(.bande-image--large) .bande-image__phrase { grid-column: 1 / span 6; grid-row: 1; margin-top: 0; }
+  .bande-image:has(.bande-image__phrase):not(.bande-image--large) .scene { grid-column: 7 / -1; grid-row: 1; width: min(100%, 720px); }
+  .bande-image--large .bande-image__phrase { position: absolute; z-index: 1; top: var(--e-16); inset-inline-start: max(var(--marge), calc((100vw - var(--contenu)) / 2)); margin: 0; padding: 0; }
+}
 
 /* Etapes : l'ordre se lit a la taille, sans numeros */
 .etapes { display: grid; gap: var(--e-3); padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; counter-reset: etape; }
@@ -584,14 +600,14 @@ p { text-wrap: pretty; max-width: 60ch; }
 }
 
 /* --- Tableaux de prix, avis, notes ------------------------------------------ */
-.price-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: var(--e-6); border-radius: var(--r-md); overflow: hidden; background: var(--sous); font-variant-numeric: tabular-nums; }
+.price-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: var(--e-6); border-radius: var(--r-md); overflow: hidden; background: var(--sous); font-variant-numeric: tabular-nums; font-size: var(--t-corps); }
 .price-table caption { text-align: start; font-weight: 700; padding-bottom: var(--e-3); }
 .price-table th, .price-table td { padding: var(--e-4) var(--e-5); text-align: start; vertical-align: top; }
-.price-table thead th { font-size: var(--t-petit); color: var(--encre-douce); font-weight: 600; background: var(--sous); }
+.price-table thead th { font-size: 16px; color: var(--encre-douce); font-weight: 600; background: var(--sous); }
 .price-table tbody tr:nth-child(odd) { background: var(--avant); }
 .price-table tbody th { font-weight: 500; }
 .price-table td { font-weight: 700; }
-.price-note { margin-top: var(--e-3); font-size: var(--t-petit); color: var(--encre-douce); }
+.price-note { margin-top: var(--e-3); font-size: 16px; color: var(--encre-douce); }
 .fact-list { display: grid; gap: var(--e-2); margin-top: var(--e-6); }
 .fact-list li { padding: var(--e-4) var(--e-5); border-radius: var(--r-md); background: var(--sous); }
 .fact-list strong { font-weight: 500; }
@@ -673,7 +689,6 @@ p { text-wrap: pretty; max-width: 60ch; }
 }
 @media (max-width: 599px) {
   .site-header__brand img { height: 36px; }
-  .enonce__texte { text-align: start; }
   .champ h3 { font-size: var(--t-titre); }
   .simulator__fields { grid-template-columns: 1fr; }
   .simulator { padding: var(--e-5); }
@@ -754,7 +769,7 @@ p { text-wrap: pretty; max-width: 60ch; }
     radial-gradient(55% 45% at 100% 0%, rgb(37 17 63 / .32) 0%, rgb(37 17 63 / 0) 70%),
     #6538E4;
 }
-[data-ambiance="violet"] body { background: transparent; }
+[data-ambiance="violet"] body { background: transparent; font-weight: 450; }
 [data-ambiance="violet"] body::before { content: ''; position: fixed; inset: 0; z-index: -2; pointer-events: none; background: var(--degrade); }
 .halo { display: none; }
 [data-ambiance="violet"] .halo { display: block; position: fixed; z-index: -1; left: -480px; top: -480px; width: 960px; height: 960px; border-radius: 50%; pointer-events: none; background: radial-gradient(closest-side, rgb(255 255 255 / .11), rgb(255 255 255 / .04) 55%, rgb(255 255 255 / 0)); transform: translate(var(--hx, 72vw), var(--hy, 28vh)); }
@@ -768,17 +783,12 @@ p { text-wrap: pretty; max-width: 60ch; }
 [data-ambiance="violet"] .entete-page--sobre,
 [data-ambiance="violet"] .bande-image--large,
 [data-ambiance="violet"] .introuvable { background: transparent; }
-[data-ambiance="violet"] .porte .rassurance,
+[data-ambiance="violet"] .porte .rassurance, [data-ambiance="violet"] .porte .preuve,
 [data-ambiance="violet"] .porte .cta--secondary { background: transparent; }
 [data-ambiance="violet"] .porte .cta--secondary:hover { background: #8652E6; }
-/* Le cercle de la halqa s'ouvre sur le vrai fond : la scene de la porte est masquee a l'interieur du cercle. */
-[data-ambiance="violet"].js .porte__disque { display: none; }
-@media (min-width: 840px) and (prefers-reduced-motion: no-preference) {
-  [data-ambiance="violet"].js .porte__vue {
-    -webkit-mask: radial-gradient(circle at 68% 56%, transparent calc(var(--c, 0) * 150vmax), #000 calc(var(--c, 0) * 150vmax + 1px));
-    mask: radial-gradient(circle at 68% 56%, transparent calc(var(--c, 0) * 150vmax), #000 calc(var(--c, 0) * 150vmax + 1px));
-  }
-}
+/* On passe la porte et on arrive dans la piece eclairee : le cercle s'ouvre sur la lumiere de la salle. */
+[data-ambiance="violet"].js .porte__disque { background: #EEE6FA; }
+[data-ambiance="violet"].js .porte__phrase { color: #25113F; }
 /* Les illustrations flottent, comme dans les affiches de reference : ni fenetre ni puits de lumiere derriere elles,
    seulement le fond eclaire et une ombre portee dessous. */
 [data-ambiance="violet"] .porte__arche,
@@ -795,11 +805,13 @@ p { text-wrap: pretty; max-width: 60ch; }
 [data-ambiance="violet"] .entete-page--libre .entete-page__arche::after { display: none; }
 [data-ambiance="violet"] .section__figure--panorama::after { display: none; }
 /* Etapes, tuiles et prix : du plus profond au plus clair, comme une progression. */
-[data-ambiance="violet"] .etape:nth-child(3),
-[data-ambiance="violet"] .pousse__etape--1 .pousse__tuile { background: #BA98FB; color: #25113F; }
+[data-ambiance="violet"] .etape:nth-child(3) { background: #BA98FB; color: #25113F; }
+[data-ambiance="violet"] .pousse__etape--0 .pousse__tuile { background: #4E2983; }
+[data-ambiance="violet"] .pousse__etape--1 .pousse__tuile { background: #8652E6; }
+[data-ambiance="violet"] .pousse__etape--2 .pousse__tuile { background: #BA98FB; }
 [data-ambiance="violet"] .tuile[open] { background: #8652E6; }
 [data-ambiance="violet"] .panneau__in { background: #25113F; }
-[data-ambiance="violet"] .pousse__image figcaption { color: #4E2983; }
+[data-ambiance="violet"] .pousse__image figcaption { color: #25113F; }
 
 /* --- Impression : tout le contenu, immobile ------------------------------------- */
 @media print {

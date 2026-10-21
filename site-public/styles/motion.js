@@ -47,7 +47,7 @@
           vue.unobserve(entree.target);
         }
       });
-    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.01 });
+    }, { rootMargin: '0px 0px -4% 0px', threshold: 0 });
     elements.forEach(function (el) { vue.observe(el); });
   }
 
@@ -246,17 +246,29 @@
     if (!figures.length || reduit.matches) return;
     var arret = false;
     try { arret = window.localStorage.getItem('rewayah-animation') === 'arret'; } catch (e) { arret = false; }
-    var bouton = document.createElement('button');
-    bouton.type = 'button';
-    bouton.className = 'pause-anim';
-    bouton.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="pause-anim__pause" d="M8 5v14M16 5v14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><path class="pause-anim__lecture" d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg><span class="sr-only"></span>';
-    document.body.appendChild(bouton);
+    var boutons = [];
     function etiquette() {
-      bouton.setAttribute('aria-pressed', arret ? 'true' : 'false');
-      bouton.querySelector('.sr-only').textContent = arret ? 'Relancer l’animation du tapis' : 'Arrêter l’animation du tapis';
-      bouton.title = bouton.querySelector('.sr-only').textContent;
+      boutons.forEach(function (bouton) {
+        var texte = arret ? 'Relancer l’animation du tapis' : 'Arrêter l’animation du tapis';
+        bouton.setAttribute('aria-pressed', arret ? 'true' : 'false');
+        bouton.querySelector('.sr-only').textContent = texte;
+        bouton.title = texte;
+      });
     }
-    etiquette();
+    function creerBouton(hote) {
+      var bouton = document.createElement('button');
+      bouton.type = 'button';
+      bouton.className = 'pause-anim';
+      bouton.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="pause-anim__pause" d="M8 5v14M16 5v14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><path class="pause-anim__lecture" d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg><span class="sr-only"></span>';
+      bouton.addEventListener('click', function () {
+        arret = !arret;
+        try { window.localStorage.setItem('rewayah-animation', arret ? 'arret' : 'marche'); } catch (e) { /* choix non garde */ }
+        etiquette();
+        lancer();
+      });
+      hote.appendChild(bouton);
+      boutons.push(bouton);
+    }
     var scenes = [];
     var visibles = new Set();
     var boucle = false;
@@ -322,20 +334,18 @@
       requestAnimationFrame(tour);
     }
     function lancer() { if (!boucle && !arret) { boucle = true; requestAnimationFrame(tour); } }
+    figures.forEach(function (fig) {
+      var porte = fig.closest('.porte');
+      creerBouton(porte ? porte.querySelector('.porte__texte') || fig : fig);
+    });
+    etiquette();
     if ('IntersectionObserver' in window) {
       var vue = new IntersectionObserver(function (entrees) {
         entrees.forEach(function (e) { if (e.isIntersecting) visibles.add(e.target); else visibles.delete(e.target); });
-        if (visibles.size) bouton.setAttribute('data-visible', ''); else bouton.removeAttribute('data-visible');
         lancer();
       });
       figures.forEach(function (fig) { vue.observe(fig); });
     }
-    bouton.addEventListener('click', function () {
-      arret = !arret;
-      try { window.localStorage.setItem('rewayah-animation', arret ? 'arret' : 'marche'); } catch (e) { /* choix non garde */ }
-      etiquette();
-      lancer();
-    });
     var attente = null;
     window.addEventListener('resize', function () {
       clearTimeout(attente);

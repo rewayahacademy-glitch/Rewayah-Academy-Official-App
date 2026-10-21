@@ -254,6 +254,8 @@ def scene(images: dict, ident: str, tailles: str, css: str = "", prioritaire: bo
     porte = image.get("porte")
     calques = image.get("calques")
     style = f' style="--fx:{porte[0]};--fy:{porte[1]}"' if porte else ""
+    if image.get("forme") == "cercle":
+        css = f"{css} scene--cercle".strip()
 
     def img(nom: str, alt: str, extra: str = "", charge: str = chargement) -> str:
         srcset = ", ".join(f"{ASSETS}/scene-{nom}-{w}.webp {w}w" for w in largeurs)
@@ -274,14 +276,6 @@ def scene(images: dict, ident: str, tailles: str, css: str = "", prioritaire: bo
     figcaption = '<figcaption>Illustration</figcaption>' if legende else ""
     return (f'<figure class="scene {esc(css)}"{style}{anime}{attributs}><span class="scene__cadre">{couches}</span>'
             f'{figcaption}</figure>')
-
-
-def vignette(images: dict, ident: str) -> str:
-    """Une petite fenetre en arche dans une phrase : decorative, le mot voisin dit deja la chose."""
-    largeurs = image_largeurs(images, ident)
-    return (f'<span class="vignette" aria-hidden="true"><img src="{ASSETS}/scene-{ident}-{largeurs[0]}.webp" '
-            f'alt="" width="{largeurs[0]}" height="{round(images["images"][ident]["hauteur"] * largeurs[0] / images["images"][ident]["largeur"])}" '
-            'loading="lazy" decoding="async"></span>')
 
 
 def logo_entete(ambiance: str = "clair") -> str:
@@ -388,11 +382,11 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
       {scene(images, "chemin", "(max-width: 839px) 150vw, 112vw", "porte__scene", prioritaire=True)}
     </div>
     <div class="porte__texte" data-lignes>
-      <p class="eyebrow">Rewayah Academy</p>
       <h1>{esc(page['h1'])}</h1>
       <p class="hero-intro">{esc(page.get('intro', ''))}</p>
       <div class="action-row">{cta}{bouton("Voir les tarifs", "/fr/tarifs", "contour")}</div>
       <p class="rassurance">Rien n’est facturé avant l’ouverture de la classe. La première semaine est remboursée si le cours ne convient pas.</p>
+      <p class="preuve">Rewayah Academy a été fondée en 2024 par trois spécialistes du Coran et des sciences islamiques.</p>
     </div>
     <div class="porte__cercle" aria-hidden="true">
       <div class="porte__disque"></div>
@@ -408,14 +402,14 @@ def accueil_enonce(images: dict, tarifs: dict) -> str:
     c = p["classes"]
     return f'''<section class="enonce" aria-labelledby="enonce-titre">
   <h2 id="enonce-titre" class="sr-only">En bref</h2>
-  <p class="enonce__texte" data-revele>Trois séances par <span class="insec">semaine {vignette(images, "eleve-enseignante")},</span> avec le même <span class="insec">enseignant {vignette(images, "transmission-lavande")},</span> dans une classe de {c["tailleEnfant"]} <span class="insec">enfants {vignette(images, "halqa")}</span> ou de {c["tailleAdulte"]} adultes au <span class="insec">plus {vignette(images, "adulte-homme")}.</span></p>
+  <p class="enonce__texte" data-revele>Trois séances par semaine, avec le même enseignant, dans une classe de {c["tailleEnfant"]} enfants ou de {c["tailleAdulte"]} adultes au plus.</p>
 </section>'''
 
 
 def accueil_chapitres(page: dict, images: dict) -> str:
     """Le fondu lent : la porte reste, ceux qui viennent apprendre changent, au rythme du defilement."""
     s = _sections_par_id(page)
-    chapitres = (("foyer", "eleve-enseignante"), ("cours", "adulte-femme"), ("suivi", "mere-porte"))
+    chapitres = (("foyer", "pere-fils"), ("cours", "transmission-lavande"), ("suivi", "gros-plan-famille"))
     figures = "".join(
         scene(images, img, "(max-width: 839px) 92vw, 44vw", "chapitres__image",
               legende=(i == 0), attributs=f' data-chapitre-image="{i}"')
@@ -552,10 +546,8 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, mot: str, ident
     externe = href.startswith("mailto:")
     return f'''<section class="appel" id="{esc(identifiant)}" aria-labelledby="appel-titre">
   <a class="appel__lien" href="{esc(href)}">
-    <span class="appel__haut"><h2 id="appel-titre">{esc(titre)}</h2><span class="appel__phrase">{esc(phrase)}</span></span>
+    <span class="appel__haut"><h2 id="appel-titre">{esc(titre)}</h2><span class="appel__phrase">{esc(phrase)}</span><span class="appel__bouton">{esc(label)}{'<span class="sr-only"> (ouvre votre messagerie)</span>' if externe else ""}<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
     <span class="appel__mot" aria-hidden="true">{esc(mot)}</span>
-    <span class="sr-only">{esc(label)}{" (ouvre votre messagerie)" if externe else ""}</span>
-    <svg class="appel__fleche" aria-hidden="true" viewBox="0 0 48 48" width="48" height="48"><path d="M14 34 34 14M18 14h16v16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </a>
 </section>'''
 
@@ -587,16 +579,16 @@ def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str
     tailles = "(max-width: 839px) 92vw, min(1200px, 92vw)" if cadre else "(max-width: 839px) 92vw, 52vw"
     if not image:
         return (f'<section class="entete-page entete-page--sobre"><div class="entete-page__texte" data-lignes>'
-                f'<p class="eyebrow">Rewayah Academy</p><h1>{esc(page["h1"])}</h1>{intro}{status}'
+                f'<h1>{esc(page["h1"])}</h1>{intro}{status}'
                 f'<div class="action-row">{cta}</div></div>'
                 f'<img class="entete-page__ornement" src="{ASSETS}/ornement-contour.svg" width="494" height="777" alt=""></section>')
     if reglage.get("gabarit") == "lecture":
         return (f'<section class="entete-page entete-page--document entete-page--{esc(champ)}">'
-                f'<div class="entete-page__texte" data-lignes><p class="eyebrow">Rewayah Academy</p><h1>{esc(page["h1"])}</h1></div>'
+                f'<div class="entete-page__texte" data-lignes><h1>{esc(page["h1"])}</h1></div>'
                 f'<div class="entete-page__suite">{intro}{status}<div class="action-row">{cta}</div></div>'
                 f'<div class="entete-page__arche" data-parallaxe>{scene(images, image, "(max-width: 839px) 92vw, 40vw", "entete-page__image", prioritaire=True)}</div></section>')
     return (f'<section class="entete-page entete-page--{esc(cote)} entete-page--{esc(champ)}{cadre}">'
-            f'<div class="entete-page__texte{titre_long}" data-lignes><p class="eyebrow">Rewayah Academy</p><h1>{esc(page["h1"])}</h1>'
+            f'<div class="entete-page__texte{titre_long}" data-lignes><h1>{esc(page["h1"])}</h1>'
             f'{intro}{status}<div class="action-row">{cta}</div></div>'
             f'<div class="entete-page__arche" data-parallaxe>{scene(images, image, tailles, "entete-page__image", prioritaire=True)}</div></section>')
 
@@ -875,7 +867,7 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
         '<meta name="robots" content="noindex,nofollow">'
         f'<link rel="stylesheet" href="{ASSETS}/site.css">'
         '<title>Page introuvable | Rewayah Academy</title></head><body class="page-404">'
-        '<main class="introuvable"><div class="introuvable__texte"><p class="eyebrow">Rewayah Academy</p><h1>Cette page est introuvable.</h1>'
+        '<main class="introuvable"><div class="introuvable__texte"><h1>Cette page est introuvable.</h1>'
         '<p>Revenez à l’accueil ou consultez les cours et l’aide.</p>'
         '<div class="action-row"><a class="cta" href="/fr/">Retour à l’accueil</a>'
         '<a class="cta cta--secondary" href="/fr/aide">Consulter l’aide</a></div></div>'
