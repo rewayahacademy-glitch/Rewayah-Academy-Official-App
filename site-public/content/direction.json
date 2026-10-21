@@ -1,5 +1,5 @@
 {
-  "description": "Direction artistique par page. Un seul motif : l'arche du symbole (arche en forme de livre, porte ouverte ; décision M-21). image = illustration du haut de page, cote = côté de l'image (on alterne pour ne pas tout poser à droite), champ = couleur du fond du haut de page, cadre = libre pour une image panoramique qui sort par le bord de l'écran au lieu d'une fenêtre en arche, gabarit = composition du corps, figures = une illustration sous le titre d'une section (clé = id de la section), bande = grande image posée entre deux sections, fin = bande d'appel en bas de page (sobre ; le mot géant de la bande reste propre à l'accueil). Les textes de fin ne disent que des faits publiés (liste d'attente non facturée, première semaine remboursée : content/tarifs.json et page Annulation). ambiance = clair (fond blanc et lavande) ou violet (fond violet en dégradé léger, demande du directeur du 21/10/2026). pleine = sections posées en bande pleine (titre, grande illustration au centre, texte en deux colonnes dessous), une par page pour casser l'alternance image et texte. parcours = la liste des étapes posée en arches qui montent. fonds = sections posées sur un autre champ, sur toute la largeur (lavande ou prune), une ou deux par page, pour que la page ne soit pas un seul violet. Une bande sans image est une phrase seule, en grand, sur son fond. Chaque illustration entière n'appartient qu'à une page ; ailleurs, un détail serré (cercle ou arche), chaque fichier une seule fois.",
+  "description": "Direction artistique par page. Un seul motif : l'arche du symbole (arche en forme de livre, porte ouverte ; décision M-21). image = illustration du haut de page, cote = côté de l'image (on alterne pour ne pas tout poser à droite), champ = couleur du fond du haut de page, cadre = libre pour une image panoramique qui sort par le bord de l'écran au lieu d'une fenêtre en arche, gabarit = composition du corps, figures = une illustration sous le titre d'une section (clé = id de la section), bande = grande image posée entre deux sections, fin = bande d'appel en bas de page (sobre ; le mot géant de la bande reste propre à l'accueil). Les textes de fin ne disent que des faits publiés (liste d'attente non facturée, première semaine remboursée : content/tarifs.json et page Annulation). haut = le haut de page ouvre sur le sujet de la page (texte : les étapes suivent tout de suite ; parcours : les arches du parcours ; prix : les deux prix en grand, avec un détail). duos = deux sections côte à côte, chacune avec son détail. ambiance = clair (fond blanc et lavande) ou violet (fond violet en dégradé léger, demande du directeur du 21/10/2026). pleine = sections posées en bande pleine (titre, grande illustration au centre, texte en deux colonnes dessous), une par page pour casser l'alternance image et texte. parcours = la liste des étapes posée en arches qui montent. fonds = sections posées sur un autre champ, sur toute la largeur (lavande ou prune), une ou deux par page, pour que la page ne soit pas un seul violet. Une bande sans image est une phrase seule, en grand, sur son fond. Chaque illustration entière n'appartient qu'à une page ; ailleurs, un détail serré (cercle ou arche), chaque fichier une seule fois.",
   "ambiance": "violet",
   "pages": {
     "/fr/familles": {
@@ -23,7 +23,13 @@
       "fonds": {
         "organisation": "lavande",
         "en-bref": "prune"
-      }
+      },
+      "duos": [
+        [
+          "profils",
+          "suivi"
+        ]
+      ]
     },
     "/fr/cours": {
       "image": "eleve-enseignante",
@@ -36,8 +42,9 @@
         "href": "/connexion"
       },
       "figures": {
+        "objectifs": "detail-desert",
         "adultes-enfants": "detail-livre-homme",
-        "methode": "adulte-femme",
+        "methode": "eleve-enseignante",
         "groupes": "detail-enseignant-haut"
       },
       "pleine": [
@@ -49,7 +56,8 @@
       "fonds": {
         "methode": "lavande",
         "en-bref": "prune"
-      }
+      },
+      "haut": "parcours"
     },
     "/fr/comment-ca-marche": {
       "image": "adulte-homme-livre",
@@ -75,10 +83,11 @@
       },
       "fonds": {
         "mineur": "prune"
-      }
+      },
+      "haut": "texte"
     },
     "/fr/tarifs": {
-      "image": "place",
+      "image": "detail-enseignant-lecture",
       "cote": "droite",
       "champ": "lavande",
       "fin": {
@@ -88,9 +97,9 @@
         "href": "/connexion"
       },
       "figures": {
-        "grille": "detail-pupitre-coran",
+        "grille": "detail-mains-livre",
         "famille": "detail-mere-fille",
-        "classes": "adulte-homme"
+        "classes": "place"
       },
       "pleine": [
         "classes"
@@ -98,18 +107,18 @@
       "fonds": {
         "famille": "lavande",
         "conditions": "prune"
-      }
+      },
+      "haut": "prix"
     },
     "/fr/academie": {
       "image": "boucle",
       "cote": "gauche",
       "champ": "lavande",
       "bande": {
-        "image": "adulte-femme-livre",
         "apres": "projet",
-        "forme": "arche",
         "phrase": "Transmettre le savoir tel qu’il a été reçu.",
-        "sous": "Le nom Rewayah dit ce projet : transmettre, sans rien altérer."
+        "sous": "Le nom Rewayah dit ce projet : transmettre, sans rien altérer.",
+        "fond": "prune"
       },
       "fin": {
         "titre": "Découvrez les cours.",
@@ -119,12 +128,12 @@
       },
       "figures": {
         "projet": "detail-tabouret",
-        "famille": "detail-mere-dos"
+        "fondateurs": "detail-deux-eleves",
+        "famille": "detail-fille-enseignante"
       },
       "pleine": [],
       "fonds": {
-        "famille": "lavande",
-        "societe": "prune"
+        "famille": "lavande"
       },
       "cadre": "libre"
     },

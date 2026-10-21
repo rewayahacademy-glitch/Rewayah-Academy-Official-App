@@ -373,9 +373,11 @@ li, dd { text-wrap: pretty; }
   .pousse__etape--0 { grid-column: 1 / span 4; }
   .pousse__etape--1 { grid-column: 5 / span 4; }
   .pousse__etape--2 { grid-column: 9 / span 4; }
-  .pousse__etape--0 .pousse__tuile { height: 30svh; }
-  .pousse__etape--1 .pousse__tuile { height: 44svh; }
-  .pousse__etape--2 .pousse__tuile { height: 62svh; }
+  .pousse__etape--0 .pousse__tuile { height: 42svh; }
+  .pousse__etape--1 .pousse__tuile { height: 53svh; }
+  .pousse__etape--2 .pousse__tuile { height: 64svh; }
+  /* Le detail tient dans sa tuile : il ne depasse jamais l'arche, meme dans la plus basse. */
+  .pousse__image { width: min(100%, 34svh); }
   .pousse__liste { padding-top: 0; }
   .pousse__entete { position: relative; z-index: 1; }
   .pousse { grid-template-rows: auto auto; }
@@ -598,7 +600,7 @@ li, dd { text-wrap: pretty; }
 .parcours__tete p { max-width: 58ch; }
 .parcours__tete p + p { margin-top: var(--e-4); }
 .parcours { list-style: none; display: grid; gap: var(--e-3); }
-.parcours__etape { display: flex; align-items: flex-end; border-radius: var(--r-lg); padding: var(--e-8) var(--e-6); background: var(--sous); font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(20px, 1.8vw, 26px); line-height: 1.15; }
+.parcours__etape { display: flex; align-items: flex-end; border-radius: var(--r-lg); padding: var(--e-8) var(--e-5); background: var(--sous); font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(19px, 1.55vw, 24px); line-height: 1.15; }
 .parcours__etape:nth-child(2) { background: var(--champ); }
 .parcours__etape:nth-child(3) { background: var(--champ-fort); }
 .parcours__etape:nth-child(4) { background: var(--marque); color: var(--sur-marque); }
@@ -685,13 +687,14 @@ li, dd { text-wrap: pretty; }
 .etape .scene figcaption { color: inherit; }
 @media (min-width: 840px) {
   /* Meme contenu dans chaque carte : les bas s'alignent, les hauts montent d'une marche a chaque etape. */
-  .etapes { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; column-gap: var(--e-4); }
-  .etape { border-radius: var(--arche); padding: 18% var(--e-6) var(--e-8); justify-content: flex-start; }
-  .etape:nth-child(1) { margin-top: calc(var(--e-16) * 1.5); }
-  .etape:nth-child(2) { margin-top: var(--e-16); }
-  .etape:nth-child(3) { margin-top: calc(var(--e-16) * .5); }
-  .etape .section__figure { aspect-ratio: 1; display: grid; place-items: end center; }
+  .etapes { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: var(--e-4); }
+  .etape { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); grid-template-rows: auto 1fr; column-gap: var(--e-8); align-content: start; border-radius: 200px var(--r-lg) var(--r-lg) var(--r-lg); padding: var(--e-8); }
+  .etape .section__figure { grid-column: 1; grid-row: 1 / span 2; margin: 0; aspect-ratio: auto; }
   .etape .section__figure .scene { width: 100%; }
+  .etape h2, .etape .etape__corps { grid-column: 2; }
+  .etape h2 { align-self: end; padding-top: var(--e-4); }
+  /* Les deux etapes de droite descendent d'une marche : l'ordre se lit en escalier. */
+  .etape:nth-child(even) { margin-top: var(--e-12); }
 }
 
 /* Lecture longue : textes juridiques, protection des enfants, accessibilite */
@@ -988,6 +991,97 @@ li, dd { text-wrap: pretty; }
 [data-ambiance="violet"] .tuile[open] { background: #8652E6; }
 [data-ambiance="violet"] .panneau__in { background: #25113F; }
 [data-ambiance="violet"] .pousse__image figcaption { color: #25113F; }
+
+/* --- Hauts de page qui ouvrent sur le sujet de la page -------------------------------
+   Familles garde sa porte ; Cours s'ouvre sur les quatre arches du parcours, Tarifs sur ses deux prix,
+   Comment ca marche sur ses etapes, l'Academie sur la boucle. */
+.entete-page--haut-texte, .entete-page--haut-parcours, .entete-page--haut-prix { min-height: 0; padding-bottom: 0; }
+.entete-page--haut-parcours .parcours--haut { margin-top: var(--e-6); }
+.entete-prix { display: grid; gap: var(--e-3); }
+.entete-prix__bloc { display: grid; gap: var(--e-1); padding: var(--e-6); border-radius: var(--r-lg); background: var(--sous); max-width: none; }
+.entete-prix__bloc + .entete-prix__bloc { background: var(--marque); color: var(--sur-marque); }
+.entete-prix__montant { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.entete-prix__periode { font-weight: 600; }
+.entete-page--haut-prix .entete-page__arche { width: min(70%, 320px); justify-self: end; }
+@media (min-width: 840px) {
+  /* Le titre a gauche, sa phrase et son bouton a droite : le sujet de la page monte dans le premier ecran. */
+  .entete-page--haut-texte .entete-page__texte, .entete-page--haut-parcours .entete-page__texte { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: end; row-gap: var(--e-6); }
+  .entete-page--haut-texte .entete-page__texte > *, .entete-page--haut-parcours .entete-page__texte > * { grid-column: 8 / -1; }
+  .entete-page--haut-texte .entete-page__texte > h1, .entete-page--haut-parcours .entete-page__texte > h1 { grid-column: 1 / span 7; grid-row: 1 / span 3; max-width: none; }
+  .entete-page--haut-texte .hero-intro, .entete-page--haut-parcours .hero-intro { margin-top: 0; font-size: clamp(18px, 1.5vw, 22px); }
+  .entete-page--haut-texte .action-row, .entete-page--haut-parcours .action-row { margin-top: 0; }
+  .entete-page--haut-parcours { align-items: start; }
+  .entete-page--haut-parcours .parcours--haut { grid-column: 1 / -1; margin-top: 0; }
+  .entete-page--haut-prix { align-items: end; }
+  .entete-page--haut-prix .entete-page__texte { grid-column: 1 / span 7; grid-row: 1; }
+  .entete-page--haut-prix .entete-page__arche { grid-column: 9 / -1; grid-row: 1; width: min(100%, 360px); }
+  .entete-prix { grid-column: 1 / -1; grid-row: 2; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-6); }
+  .entete-prix__bloc { grid-template-columns: auto 1fr; column-gap: var(--e-6); align-items: end; padding: var(--e-8) var(--e-10); }
+  .entete-prix__montant { grid-row: 1 / span 2; }
+}
+
+/* --- Les remises : le titre au-dessus, le tableau et les conditions cote a cote, sans colonne vide --- */
+@media (min-width: 840px) {
+  .section--large:not(.section--figure):has(.fact-list) .section__titre { grid-column: 1 / -1; position: static; margin-bottom: var(--e-6); }
+  .section--large:not(.section--figure):has(.fact-list) .section__corps { grid-column: 1 / -1; max-width: none; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: start; }
+  .section--large:not(.section--figure):has(.fact-list) .section__corps > p { grid-column: 1 / span 6; }
+  .section--large:not(.section--figure):has(.fact-list) .section__corps > .price-table { grid-column: 1 / span 6; }
+  .section--large:not(.section--figure):has(.fact-list) .section__corps > .fact-list { grid-column: 7 / -1; grid-row: 1 / span 3; margin-top: 0; }
+  .section--large:not(.section--figure):has(.fact-list) .section__corps { grid-template-rows: auto auto 1fr; }
+}
+
+/* --- Panneau de l'accueil : un detail rond reste entier dans sa carte ---------------------- */
+@media (min-width: 840px) { .panneau__arche:has(.scene--cercle) { margin-bottom: var(--e-12); padding-top: 0; } }
+
+/* --- Duo : deux sections cote a cote, chacune avec son detail au-dessus de son texte --- */
+.duo { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; display: grid; gap: var(--e-12); }
+.duo__carte .section__figure { width: min(100%, 360px); margin: 0 0 var(--e-8); }
+.duo__carte h2 { font-size: clamp(26px, 2.6vw, 40px); margin-bottom: var(--e-6); max-width: 18ch; }
+.duo__carte p + p { margin-top: var(--e-4); }
+.duo__carte .points, .duo__carte .section-links { margin-top: var(--e-6); }
+@media (min-width: 840px) { .duo { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-12); align-items: start; } .duo__carte:nth-child(2) { margin-top: var(--e-16); } }
+
+/* --- Fiches du 18/10 au telephone : un choix Enfants / Adultes, une fiche a la fois -------- */
+.fiches__choix { display: none; }
+@media (max-width: 599px) {
+  .fiches__choix { display: inline-grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: var(--e-6); padding: 4px; border-radius: var(--r-full); background: var(--sous); }
+  .fiches__choix input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .fiches__choix label { display: grid; place-items: center; min-height: 44px; padding-inline: var(--e-6); border-radius: var(--r-full); font-weight: 600; cursor: pointer; }
+  .fiches__choix input:checked + label { background: #FFFFFF; color: #25113F; }
+  .fiches__choix input:focus-visible + label { outline: 2px solid currentColor; outline-offset: 2px; }
+  .fiches-bloc:has(#fiche-enfants:checked) .fiche:nth-child(2), .fiches-bloc:has(#fiche-adultes:checked) .fiche:nth-child(1) { display: none; }
+  .fiches-bloc .fiches { margin-top: var(--e-4); }
+}
+
+/* --- Tableaux au telephone : une rangee par ligne, l'intitule au-dessus du detail --------- */
+.price-table thead th { white-space: nowrap; }
+@media (max-width: 599px) {
+  .price-table tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+  .price-table tbody th { grid-column: 1; font-weight: 700; }
+  .price-table tbody td { grid-column: 2; }
+  .price-table tbody td:only-of-type { text-align: end; }
+  .price-table thead { display: none; }
+  .price-table--long tbody tr { grid-template-columns: minmax(0, 1fr); }
+  .price-table--long tbody th { padding-bottom: 0; }
+  .price-table--long tbody td { grid-column: 1; padding-top: var(--e-2) !important; font-weight: 500; }
+}
+
+/* --- Telephone : le titre de la page mene, la section suit ; le pied de page en deux colonnes --- */
+@media (max-width: 599px) {
+  .entete-page:not(.entete-page--document) h1 { font-size: clamp(36px, 10.2vw, 44px); }
+  .entete-page:not(.entete-page--document) .entete-page__texte--long h1 { font-size: clamp(32px, 9.6vw, 40px); }
+  .entete-page:not(.entete-page--document) .entete-page__texte--tres-long h1 { font-size: clamp(28px, 8.2vw, 34px); }
+  .site-footer__inner > nav:not(.footer-legal) ul { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-4); }
+}
+
+/* --- Academie : la boucle file hors du bord droit, au lieu d'y etre coupee net ---------- */
+@media (min-width: 840px) {
+  .entete-page--libre:has(.scene:not([data-anime])) .entete-page__arche { margin-inline-end: calc(-1 * max(var(--marge), (100vw - var(--contenu)) / 2) - 24px); width: calc(100% + max(var(--marge), (100vw - var(--contenu)) / 2) + 24px); }
+}
+
+/* --- Phrase seule : centree, elle ne laisse pas une moitie d'ecran vide -------------------- */
+.bande-phrase { text-align: center; }
+.bande-phrase__phrase, .bande-phrase .bande-image__sous { margin-inline: auto; }
 
 /* --- Fonds : une section par page sur un autre champ --------------------------------
    Le violet porte la page ; une section passe sur la lavande de la salle (encre prune), une autre sur le prune

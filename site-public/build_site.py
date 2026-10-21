@@ -411,6 +411,9 @@ def render_section(section: dict, number: int, tarifs: dict | None = None, today
         return (f'<section class="section section--pleine" id="{esc(sid)}" aria-labelledby="heading-{number}">'
                 f'<div class="pleine__tete" data-revele><h2 id="heading-{number}">{titre_html(titre)}</h2></div>'
                 f'{figure}<div class="pleine__corps{" pleine__corps--deux" if plus and ecrit else ""}" data-revele-enfants>{texte}{cote}</div></section>')
+    if gabarit == "duo":
+        return (f'<section class="duo__carte" id="{esc(sid)}" aria-labelledby="heading-{number}">{figure}'
+                f'<div class="duo__texte" data-revele-enfants><h2 id="heading-{number}">{titre_html(titre)}</h2>{corps}</div></section>')
     if gabarit == "carte":
         return (f'<section class="carte" id="{esc(sid)}" aria-labelledby="heading-{number}" data-revele-enfants>'
                 f'<h2 id="heading-{number}">{titre_html(titre)}</h2>{corps}</section>')
@@ -468,8 +471,8 @@ def accueil_enonce(images: dict, tarifs: dict) -> str:
 def accueil_chapitres(page: dict, images: dict) -> str:
     """Le fondu lent : la porte reste, ceux qui viennent apprendre changent, au rythme du defilement."""
     s = _sections_par_id(page)
-    # Le pere et le fils, la mere a la porte : des gros plans ici ; leurs scenes entieres sont a la page Familles.
-    chapitres = (("foyer", "gros-plan-pere-fils"), ("cours", "transmission-lavande"), ("suivi", "gros-plan-famille"))
+    # Le pere et le fils, la mere a la porte : des details serres ici ; leurs scenes entieres sont a la page Familles.
+    chapitres = (("foyer", "detail-main-epaule"), ("cours", "transmission-lavande"), ("suivi", "detail-mere-dos"))
     figures = "".join(
         scene(images, img, "(max-width: 839px) 92vw, 44vw", "chapitres__image",
               legende=(i == 0), attributs=f' data-chapitre-image="{i}"')
@@ -521,7 +524,7 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
     def duree(cle: str) -> str:
         f = formules[cle]
         d = f["duree_minutes"]
-        texte = f"{d // 60} h" + (f" {d % 60}" if d % 60 else "") if d >= 60 else f"{d} min"
+        texte = f"{d // 60}\u00a0h" + (f"\u00a0{d % 60}" if d % 60 else "") if d >= 60 else f"{d}\u00a0min"
         pause = f", dont {f['pause_minutes']} min de pause" if f["pause_minutes"] else ""
         return f"Trois séances de {texte} par semaine{pause}"
 
@@ -563,7 +566,7 @@ def accueil_confiance(page: dict, images: dict) -> str:
   <div class="panneau__in">
     <div class="panneau__gauche">
       <h2 id="confiance-titre" data-revele>{titre_html(sec["title"])}</h2>
-      <div class="panneau__arche" data-revele>{scene(images, "gros-plan-enseignant", "(max-width: 839px) 86vw, 38vw", "panneau__image")}</div>
+      <div class="panneau__arche" data-revele>{scene(images, "detail-famille-chemin", "(max-width: 839px) 86vw, 38vw", "panneau__image")}</div>
     </div>
     <div class="panneau__droite">
       <p class="panneau__depuis" data-revele>{titre_html("Rewayah Academy enseigne le Coran depuis le 1er mai 2024.")}</p>
@@ -642,13 +645,36 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str) -> str:
 
 # --- Pages interieures -------------------------------------------------------------
 
-def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str, status: str) -> str:
+def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str, status: str,
+                   tarifs: dict | None = None) -> str:
     intro = f'<p class="hero-intro">{texte_html(page["intro"])}</p>' if page.get("intro") else ""
+    haut = reglage.get("haut")
+    titre_long = (" entete-page__texte--long" if len(page["h1"]) > 22 else "") + (" entete-page__texte--tres-long" if len(page["h1"]) > 33 else "")
+    texte = (f'<div class="entete-page__texte{titre_long}" data-lignes><h1>{titre_html(page["h1"])}</h1>'
+             f'{intro}{status}<div class="action-row">{cta}</div></div>')
+    # Chaque page interieure s'ouvre sur son propre sujet : les etapes, le parcours, ou le prix.
+    if haut == "texte":
+        return f'<section class="entete-page entete-page--haut-texte">{texte}</section>'
+    if haut == "parcours":
+        sec = _sections_par_id(page)[reglage["parcours"][0]]
+        arches = "".join(f'<li class="parcours__etape"><span>{texte_html(p)}</span></li>' for p in sec.get("points", []))
+        return (f'<section class="entete-page entete-page--haut-parcours">{texte}'
+                f'<ol class="parcours parcours--haut" aria-label="{esc(sec["title"])}" data-revele-enfants>{arches}</ol></section>')
+    if haut == "prix":
+        p = tarifs_mod.politique_affichee(tarifs)
+        hors_taxes = "hors taxes" if p["horsTaxes"] else "taxes comprises"
+        blocs = "".join(
+            f'<p class="entete-prix__bloc"><span class="entete-prix__montant">{esc(tarifs_mod.fmt_montant(montant, p["devise"]))}</span>'
+            f'<span class="entete-prix__periode">par mois, {hors_taxes}</span><span class="entete-prix__public">{texte_html(public)}</span></p>'
+            for montant, public in ((p["tarifEnfantMineur"], f"Enfants et adolescents, de {tarifs_mod.AGE_ENFANT_MIN} à {p['ageAdulte'] - 1} ans"),
+                                    (p["tarifAdulteMineur"], f"Adultes, dès {p['ageAdulte']} ans")))
+        return (f'<section class="entete-page entete-page--haut-prix">{texte}'
+                f'<div class="entete-page__arche">{scene(images, reglage["image"], "(max-width: 839px) 60vw, 380px", "entete-page__image", prioritaire=True)}</div>'
+                f'<div class="entete-prix" data-revele-enfants>{blocs}</div></section>')
     image = reglage.get("image")
     cote = reglage.get("cote", "droite")
     champ = reglage.get("champ", "lavande")
     cadre = " entete-page--libre" if reglage.get("cadre") == "libre" else ""
-    titre_long = " entete-page__texte--long" if len(page["h1"]) > 22 else ""
     tailles = "(max-width: 839px) 92vw, min(1200px, 92vw)" if cadre else "(max-width: 839px) 92vw, 52vw"
     if not image:
         return (f'<section class="entete-page entete-page--sobre"><div class="entete-page__texte" data-lignes>'
@@ -763,7 +789,19 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
         if fond not in (None, "lavande", "prune"):
             raise ValueError(f"direction.json: unknown fond {fond}")
         avant = len(morceaux)
-        if s["id"] in reglage.get("parcours", []):
+        if reglage.get("haut") == "parcours" and s["id"] in reglage.get("parcours", []):
+            # Les arches du parcours sont en haut de page : la section garde son titre et son texte.
+            s = {k: v for k, v in s.items() if k != "points"}
+        duo = next((d for d in reglage.get("duos", []) if s["id"] in d), None)
+        if duo:
+            if s["id"] == duo[0]:
+                vider()
+                cartes = "".join(
+                    render_section(t, i + k, tarifs, today, avis, "duo", figure_section(reglage, images, t["id"]))
+                    for k, t in enumerate(x for x in sections if x["id"] in duo))
+                morceaux.append(f'<div class="duo">{cartes}</div>')
+            continue
+        if s["id"] in reglage.get("parcours", []) and reglage.get("haut") != "parcours":
             vider()
             morceaux.append(render_section(s, i, tarifs, today, avis, "parcours"))
         elif not figure and not s.get("generated") and not fond:
@@ -845,7 +883,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         main = render_home(page, images, tarifs, cta)
         classe_page = "page-accueil"
     else:
-        main = hero_interieur(route, page, reglage, images, cta, status) + render_inner(route, page, reglage, images, tarifs, today, avis)
+        main = hero_interieur(route, page, reglage, images, cta, status, tarifs) + render_inner(route, page, reglage, images, tarifs, today, avis)
         fin = reglage.get("fin")
         if fin:
             main += bande_finale(fin["titre"], fin["phrase"], fin.get("label", page["cta"]["label"]),

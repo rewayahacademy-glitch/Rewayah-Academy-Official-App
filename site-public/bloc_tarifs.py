@@ -379,9 +379,10 @@ def note_date_effet(tarifs: dict, aujourdhui: date) -> str:
     return texte
 
 
-def _tableau(legende: str, colonnes: tuple[str, str], lignes: list[tuple[str, str]]) -> str:
+def _tableau(legende: str, colonnes: tuple[str, str], lignes: list[tuple[str, str]], css: str = "") -> str:
     corps = "".join(f'<tr><th scope="row">{esc(a)}</th><td>{esc(b)}</td></tr>' for a, b in lignes)
-    return (f'<table class="price-table"><caption>{esc(legende)}</caption><thead><tr>'
+    classe = f"price-table {css}".strip()
+    return (f'<table class="{classe}"><caption>{esc(legende)}</caption><thead><tr>'
             f'<th scope="col">{esc(colonnes[0])}</th><th scope="col">{esc(colonnes[1])}</th></tr></thead>'
             f'<tbody>{corps}</tbody></table>')
 
@@ -447,12 +448,13 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
             f = formules[cle]
             pause = f" dont {f['pause_minutes']} min de pause" if f["pause_minutes"] else ""
             duree = f["duree_minutes"]
-            heures = f"{duree // 60} h" + (f" {duree % 60}" if duree % 60 else "") if duree >= 60 else f"{duree} min"
+            heures = f"{duree // 60}\u00a0h" + (f"\u00a0{duree % 60}" if duree % 60 else "") if duree >= 60 else f"{duree}\u00a0min"
             return public, (f"{f['seances_par_semaine']} séances par semaine, {heures}{pause}, "
                             f"de {c['ouvertureMinimum']} à {taille} élèves")
         lignes = [ligne("Enfants et adolescents", "enfant", c["tailleEnfant"]),
                   ligne("Adultes", "adulte", c["tailleAdulte"])]
-        return (_tableau("Une classe, un enseignant attitré, une heure fixe", ("Public", "Organisation"), lignes)
+        # Au telephone, le detail d'une classe passe sous son public, sur toute la largeur.
+        return (_tableau("Une classe, un enseignant attitré, une heure fixe", ("Public", "Organisation"), lignes, "price-table--long")
                 + f'<p class="price-note">Une classe ouvre dès {c["ouvertureMinimum"]} inscrits. Avant cela, vous êtes'
                   ' en liste d’attente et rien n’est facturé.</p>')
     if nom == "fiches-eleves":
@@ -462,14 +464,19 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
         # Une fourchette (« 3 à 5 ») et un nombre suivi de son unite ne se coupent pas.
         def lie(phrase: str) -> str:
             phrase = re.sub(r"(\d+) à (\d+)", "\\1\u00a0à\u00a0\\2", phrase)
+            phrase = re.sub(r"(\d+) h (\d+)", "\\1\u00a0h\u00a0\\2", phrase)
             return re.sub(r"(\d+) (élèves|ans|personnes|séances|min|h)\b", "\\1\u00a0\\2", phrase)
 
         def lignes(texte: str) -> str:
             phrases = re.split(r"(?<=\.) (?=[A-ZÀ-Ý0-9])", texte)
             return '<ul class="fiche__lignes">' + "".join(f"<li>{esc(lie(ph))}</li>" for ph in phrases) + "</ul>"
-        return ('<div class="fiches">'
+        # Au telephone, un choix Enfants / Adultes montre une fiche a la fois ; les deux restent publiees telles quelles.
+        return ('<div class="fiches-bloc"><div class="fiches__choix" role="group" aria-label="Afficher la fiche">'
+                '<input type="radio" name="fiche-public" id="fiche-enfants" checked><label for="fiche-enfants">Enfants</label>'
+                '<input type="radio" name="fiche-public" id="fiche-adultes"><label for="fiche-adultes">Adultes</label></div>'
+                '<div class="fiches">'
                 f'<article class="fiche"><h3>Enfants et\u00a0adolescents</h3>{lignes(e["encart_enfant"])}</article>'
-                f'<article class="fiche"><h3>Adultes</h3>{lignes(e["encart_adulte"])}</article></div>')
+                f'<article class="fiche"><h3>Adultes</h3>{lignes(e["encart_adulte"])}</article></div></div>')
     if nom == "fiche-enseignant":
         return f'<div class="fiches"><article class="fiche"><p>{esc(encarts_suivis(p)["encart_enseignant"])}</p></article></div>'
     raise ValueError(f"Section générée inconnue : {nom}")
