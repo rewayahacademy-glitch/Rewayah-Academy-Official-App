@@ -280,8 +280,9 @@ p { text-wrap: pretty; max-width: 60ch; }
   .js .porte__scene { transform: scale(calc(1 + var(--z2, 0) * 1.7)); will-change: transform; }
   .js .porte__texte { transform: translateY(calc(var(--z, 0) * -14svh)); opacity: calc(1 - var(--z, 0) * 3.6); }
   .js .porte[data-passee] .porte__texte, .js .porte:not([data-cercle]) .porte__phrase { visibility: hidden; }
-  .js .porte__cercle { display: grid; place-items: center; position: absolute; inset: 0; z-index: 4; pointer-events: none; clip-path: circle(calc(var(--c, 0) * 150vmax) at 68% 56%); background: var(--fond); }
-  .js .porte__disque { border-radius: 0 0 50% 50% / 0 0 120px 120px; }
+  .js .porte__cercle { display: grid; place-items: center; position: absolute; inset: 0; z-index: 4; pointer-events: none; clip-path: circle(calc(var(--c, 0) * 150vmax) at 68% 56%); }
+  .js .porte__disque { transition: border-radius var(--mv-navigation) var(--mv-entree); }
+  [data-ambiance="violet"].js .porte[data-plein] .porte__disque { border-radius: 0 0 50% 50% / 0 0 120px 120px; }
   /* Piece pleine : la porte agrandie derriere ne se voit plus dans les coins de l'arrondi. */
   .js .porte[data-plein] .porte__vue { visibility: hidden; }
   .js .porte__vue { display: block; position: absolute; inset: 0; }
@@ -585,7 +586,7 @@ p { text-wrap: pretty; max-width: 60ch; }
 .bande-image .scene figcaption { position: absolute; inset-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); bottom: var(--e-3); }
 .bande-image--large .scene { position: static; }
 .bande-image__texte { margin-top: var(--e-8); }
-.bande-image__phrase { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(22px, 2.8vw, 40px); line-height: 1.1; letter-spacing: -0.02em; max-width: 30ch; text-wrap: balance; }
+.bande-image__phrase { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(22px, 2.6vw, 36px); line-height: 1.1; letter-spacing: -0.02em; max-width: 30ch; text-wrap: balance; }
 .bande-image__sous { margin-top: var(--e-4); max-width: 44ch; }
 .bande-image--large .bande-image__texte { padding-inline: var(--marge); }
 @media (min-width: 840px) {
@@ -861,7 +862,6 @@ p { text-wrap: pretty; max-width: 60ch; }
 [data-ambiance="violet"] .porte .cta--secondary:hover { background: #8652E6; }
 /* On passe la porte et on arrive dans la piece eclairee : le cercle s'ouvre sur la lumiere de la salle. */
 [data-ambiance="violet"].js .porte__disque { background: #EEE6FA; }
-[data-ambiance="violet"].js .porte__cercle { background: var(--degrade); background-attachment: fixed; }
 [data-ambiance="violet"].js .porte__phrase { color: #25113F; }
 @media (max-width: 839px) { [data-ambiance="violet"] .porte__cercle { background: #EEE6FA; color: #25113F; } }
 /* Les illustrations flottent, comme dans les affiches de reference : ni fenetre ni puits de lumiere derriere elles,
