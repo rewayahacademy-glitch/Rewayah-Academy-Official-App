@@ -66,6 +66,9 @@ la question. Une réponse ne devient une décision qu'une fois versée dans
 7. `docs/current/CATALOGUE_ECRANS_RECRUTEMENT.md` : une fiche par écran du module
    (18 écrans, statut proposé), à valider par le directeur fiche par fiche avant
    toute maquette.
+8. `CONTRAT_FILE_COURRIELS.md` : ce que le module écrit dans la file des
+   courriels et ce que l'envoi, construit par la session du site public, en lit
+   (`CAND-Q10`). À lui remettre.
 
 ## Règles qui tiennent déjà, quoi que décide le directeur
 
