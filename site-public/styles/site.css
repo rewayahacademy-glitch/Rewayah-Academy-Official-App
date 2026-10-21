@@ -451,15 +451,16 @@ p { text-wrap: pretty; max-width: 60ch; }
 .entete-page--blanc { background: var(--fond); }
 .entete-page__texte { position: relative; z-index: 2; }
 .entete-page h1 { font-size: clamp(36px, 4vw, 58px); max-width: 19ch; }
-.entete-page__texte--long h1 { font-size: 32px; max-width: 22ch; }
+.entete-page__texte--long h1 { font-size: clamp(32px, 5.8vw, 44px); max-width: 22ch; }
 /* Les titres longs tiennent en deux lignes sans couper apres un article (mesure : « votre enfant, dès 6 ans » fait 10,5 em). */
 @media (min-width: 840px) { .entete-page__texte--long h1 { font-size: clamp(28px, 3.1vw, 44px); } }
 .entete-page .hero-intro { font-size: clamp(18px, 1.7vw, 24px); max-width: 36ch; }
 .entete-page__suite .hero-intro { margin-top: 0; }
 .entete-page--document { row-gap: var(--e-6); }
 .entete-page--document h1 { font-size: clamp(28px, 8vw, 40px); }
-@media (min-width: 600px) and (max-width: 839px) { .entete-page__arche, .entete-page--document .entete-page__arche { width: 100%; } }
 .entete-page__arche { position: relative; z-index: 1; width: min(100%, 560px); justify-self: center; }
+/* Tablette : l'illustration du haut prend toute la largeur du cadre (la regle vient apres la regle de base). */
+@media (min-width: 600px) and (max-width: 839px) { .entete-page__arche, .entete-page--document .entete-page__arche { width: 100%; } }
 .entete-page__image { transform: translateY(calc(var(--par, 0) * -1px)); }
 .entete-page__image figcaption { position: absolute; inset-inline-end: 0; bottom: var(--e-3); }
 .entete-page--sobre { min-height: 0; padding-bottom: var(--e-12); background: var(--fond); }
@@ -678,7 +679,7 @@ p { text-wrap: pretty; max-width: 60ch; }
   .site-main { position: relative; z-index: 1; background: var(--fond); }
   .site-footer { position: sticky; bottom: 0; z-index: 0; }
 }
-.site-footer__inner { position: relative; max-width: var(--contenu); margin-inline: auto; display: grid; gap: var(--e-10); font-size: var(--t-petit); }
+.site-footer__inner { position: relative; max-width: var(--contenu); margin-inline: auto; display: grid; gap: var(--e-10); font-size: 15px; }
 .site-footer__ornement { display: none; }
 .site-footer .brand img { width: 220px; margin-bottom: var(--e-6); }
 .footer-identity p, .footer-identity address { font-style: normal; color: var(--sur-pied-doux); }
