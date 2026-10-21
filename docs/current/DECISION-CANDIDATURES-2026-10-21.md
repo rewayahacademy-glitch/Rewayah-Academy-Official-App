@@ -2,8 +2,11 @@
 
 **Source.** Réponses du directeur dans la page d'arbitrage des questions de la revue
 (`docs/current/CANDIDATURES/LIRE_D_ABORD.md`, « Où le directeur répond »),
-enregistrées le 21/10/2026 entre 17:51 et 18:19 UTC. Elles portent sur `CAND-Q01`
-à `CAND-Q09`. Les questions `CAND-Q10` à `CAND-Q22` n'ont pas encore de réponse.
+enregistrées le 21/10/2026 entre 17:51 et 18:23 UTC. Elles portent sur `CAND-Q01`
+à `CAND-Q11`. Les questions `CAND-Q12` à `CAND-Q22` n'ont pas encore de réponse.
+À 18:22-18:23, le directeur a passé `CAND-Q05`, `CAND-Q06` et `CAND-Q09` de « à
+discuter » à « je réponds autrement », avec le même texte : ce texte est sa
+décision.
 
 Le texte des questions et des recommandations initiales est dans
 `CANDIDATURES/REVUE_CRITIQUE_CANDIDATURES_2026-10-21.md`, section 9. Les réponses
@@ -21,6 +24,8 @@ de Claude aux remarques du directeur sont dans la même page, sous chaque questi
 | `CAND-Q07` | **La séparation femmes/hommes s'applique en base** aux candidatures et aux entretiens, même règle que les pièces d'identité. Directeur : « le super admin doit voir les deux côtés ». | La RLS et chaque RPC du module bornent la direction à son côté ; le super-admin lit les deux. Un simple masquage à l'écran ne compte pas (spec, section 7). |
 | `CAND-Q08` | **L'évaluation d'un candidat est un constat d'entretien structuré** : niveau observé, riwaya, ijaza présentée. | Pas de référentiel neuf ; le contrôle `evaluation_validee` lit ce constat. |
 | `CAND-Q09` | **Aucune mention à l'écran pendant l'entretien** : « c'est éphémère », seuls restent le rapport et les données de la personne. | Ni « Entretien non enregistré », ni « Visite de contrôle possible » (qui serait faux) ; aucun enregistrement ; aucune visite de contrôle. Seuls le compte rendu et la candidature persistent. |
+| `CAND-Q10` | **Le candidat est prévenu dans l'app et par courriel.** « L'autre session va construire l'envoi d'e-mails après sa session sur le site public. » | Ce module n'envoie aucun courriel : il garde la liste des courriels à envoyer (destinataire, modèle, date), que l'envoi lira une fois branché. D'ici là, l'écran dit « courriel pas encore envoyé », jamais « envoyé ». Le contrat de cette liste est à remettre à la session du site public. |
+| `CAND-Q11`, doctrine | **Le texte de l'engagement reprend la doctrine écrite** : « voie d'Ahl as-Sunna » et « à la lumière des salafs », sans nommer les Compagnons. | Le reste de la recommandation (texte distinct du code de conduite, français et arabe, « Je confirme », accepté dès la salle 1) est gardé sauf avis contraire. Le texte lui-même sera soumis au directeur avant publication. |
 
 ## 2. Signalé au directeur, en attente de sa confirmation
 
@@ -81,4 +86,4 @@ L'écran du référentiel va dans Finance, sauf avis contraire.
 À reporter dans le journal quand cette branche rejoint la pile : la branche de ce
 lot ne modifie aucun fichier existant.
 
-| 2026-10-21 | **Décisions du directeur sur le module des candidatures** (`CAND-Q02` à `CAND-Q09`) : lot serveur borné autorisé sur la base de test ; Invitations devient Candidatures ; lien public d'inscription sur la page recrutement du site ; inscription ouverte à tous les pays, salles 2 et 3 réservées aux personnes que l'académie peut payer (virement bancaire hors d'Afrique) ; aucune intégration de paiement dans ce module ; **pas de WhatsApp** pour l'entretien ni le contact, un espace dédié dans l'app ; séparation femmes/hommes en base, le super-admin voyant les deux côtés ; évaluation par constat d'entretien ; aucune mention ni enregistrement pendant l'entretien. | Réponses dans la page d'arbitrage de la revue du 21/10. | `docs/current/DECISION-CANDIDATURES-2026-10-21.md`, `docs/current/CANDIDATURES/` | `CAND-Q01` et deux points de `CAND-Q05` en discussion ; `CAND-Q10` à `CAND-Q22` sans réponse. Rien n'est appliqué en production. |
+| 2026-10-21 | **Décisions du directeur sur le module des candidatures** (`CAND-Q02` à `CAND-Q11`) : lot serveur borné autorisé sur la base de test ; Invitations devient Candidatures ; lien public d'inscription sur la page recrutement du site ; inscription ouverte à tous les pays, salles 2 et 3 réservées aux personnes que l'académie peut payer (virement bancaire hors d'Afrique) ; aucune intégration de paiement dans ce module ; **pas de WhatsApp** pour l'entretien ni le contact, un espace dédié dans l'app ; séparation femmes/hommes en base, le super-admin voyant les deux côtés ; évaluation par constat d'entretien ; aucune mention ni enregistrement pendant l'entretien ; candidat prévenu dans l'app et par courriel (envoi construit par la session du site public) ; engagement rédigé selon la doctrine écrite. | Réponses dans la page d'arbitrage de la revue du 21/10. | `docs/current/DECISION-CANDIDATURES-2026-10-21.md`, `docs/current/CANDIDATURES/` | `CAND-Q01` et deux points de `CAND-Q05` en discussion ; `CAND-Q12` à `CAND-Q22` sans réponse. Rien n'est appliqué en production. |

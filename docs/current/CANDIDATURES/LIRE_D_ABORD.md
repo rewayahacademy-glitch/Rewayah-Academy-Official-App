@@ -24,8 +24,9 @@ avant tout fichier `.dart` (section 10 de la revue).
   dans l'app) ;
 - `CAND-Q07` (séparation en base, le super-admin voit les deux côtés) et
   `CAND-Q08` validées ; `CAND-Q09` : aucune mention pendant l'entretien ;
+- `CAND-Q10` : prévenu dans l'app et par courriel ; `CAND-Q11` : doctrine écrite ;
 - `CAND-Q01` reste en discussion ;
-- `CAND-Q10` à `CAND-Q22` attendent.
+- `CAND-Q12` à `CAND-Q22` attendent.
 
 ## Où le directeur répond
 
