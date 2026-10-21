@@ -399,6 +399,7 @@ Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 | Y2 | Accueil : la scène du haut finit sur une coupe nette, le tapis coupé | Le bas de la scène s'efface dans la page |
 | Y3 | Cours, tablette : les quatre arches serrées, libellés sur quatre lignes | Deux arches par rangée ; chaque libellé tient sur une ligne, deux pour les sourates avec leur précision |
 | Y4 | Accueil : la fenêtre des chapitres change d'image trop tard | L'image change quand le titre du chapitre suivant passe 60 % de la hauteur de l'écran |
+| Y5 | Les mêmes personnages reviennent sur trois ou quatre pages (la fillette au pupitre, la mère, l'enseignante aux lunettes, la classe vue du dessus, l'homme au livre) | Quatre recadrages sans personne, cherchés dans les rendus d'origine avec leur décor et vérifiés par un second agent : la boucle du tapis (Académie, « La famille fait partie du parcours »), le tapis qui ondule (haut de Tarifs), l'arche vue d'en haut (Cours, « Trois séances par semaine »), l'arche sombre vue d'en haut (Tarifs, « Le prix de chaque formule »). Chaque groupe de personnages ne paraît plus que sur deux pages au plus ; chaque page garde quatre images |
 
 Le texte courant est déjà en blanc plein sur le violet (contraste 6,5:1, le plus haut possible sur ce violet). Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 

@@ -584,6 +584,58 @@
         1370
       ],
       "forme": "cercle"
+    },
+    "decor-tapis-boucle": {
+      "source": "02, rendu d’origine, sans personne",
+      "largeur": 650,
+      "hauteur": 650,
+      "alt": "Un tapis violet dessine une large courbe sur un sol mauve clair.",
+      "recadrage": [
+        190,
+        743,
+        840,
+        1393
+      ],
+      "forme": "cercle"
+    },
+    "decor-arche-sombre": {
+      "source": "02, rendu d’origine, sans personne",
+      "largeur": 590,
+      "hauteur": 590,
+      "alt": "Le haut d'une arche en forme de livre fermé, violet sombre, vue d'en haut, avec une porte ouverte sur la lumière.",
+      "recadrage": [
+        1725,
+        0,
+        2315,
+        590
+      ],
+      "forme": "cercle"
+    },
+    "decor-arche-dessus": {
+      "source": "06, rendu d’origine, sans personne",
+      "largeur": 668,
+      "hauteur": 668,
+      "alt": "Vue plongeante sur l'arche en forme de livre fermé, dont la tranche des pages dessine une courbe, avec sa porte entrouverte sur un cercle de lumière.",
+      "recadrage": [
+        94,
+        0,
+        762,
+        668
+      ],
+      "forme": "cercle"
+    },
+    "decor-tapis-vague": {
+      "source": "07, rendu d’origine, sans personne",
+      "largeur": 520,
+      "hauteur": 520,
+      "alt": "Un tapis violet déroulé sur un sol clair ondule en deux vagues douces.",
+      "recadrage": [
+        630,
+        1016,
+        1150,
+        1536
+      ],
+      "forme": "cercle"
     }
   }
 }

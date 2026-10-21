@@ -44,7 +44,7 @@
         "objectifs": "detail-desert",
         "adultes-enfants": "detail-livre-homme",
         "methode": "eleve-enseignante",
-        "groupes": "detail-enseignant-haut"
+        "groupes": "decor-arche-dessus"
       },
       "pleine": [
         "methode"
@@ -121,7 +121,7 @@
       "haut": "texte"
     },
     "/fr/tarifs": {
-      "image": "detail-pupitre-coran",
+      "image": "decor-tapis-vague",
       "cote": "droite",
       "champ": "lavande",
       "fin": {
@@ -131,7 +131,7 @@
         "href": "/connexion"
       },
       "figures": {
-        "grille": "detail-mains-livre",
+        "grille": "decor-arche-sombre",
         "famille": "arche-haut",
         "classes": "place"
       },
@@ -163,7 +163,7 @@
       },
       "figures": {
         "projet": "detail-tabouret",
-        "famille": "gros-plan-famille"
+        "famille": "decor-tapis-boucle"
       },
       "pleine": [
         "famille"
