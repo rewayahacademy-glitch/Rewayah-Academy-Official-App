@@ -183,7 +183,19 @@ function initialiserSimulateur(simulator, d) {
       // Le premier eleve part d'un exemple, pour que le calcul se lise tout de suite ; on le change en un geste.
       if (i === 0) champ.value = String(d.ageEnfantMin + 2);
       champ.addEventListener('input', calculerEtAfficher);
-      age.appendChild(champ);
+      // L'age se regle aussi aux boutons moins et plus, comme le nombre d'eleves.
+      const pas = el('span', undefined, { class: 'pas' });
+      [['-1', 'Un an de moins'], ['1', 'Un an de plus']].forEach(([sens, libelle], j) => {
+        const bouton = el('button', j ? '+' : '−', { type: 'button', 'data-pas-age': sens, 'aria-label': libelle + ', élève ' + (i + 1) });
+        bouton.addEventListener('click', (evenement) => {
+          evenement.preventDefault();
+          const actuel = parseInt(champ.value, 10);
+          champ.value = String(Number.isNaN(actuel) ? d.ageEnfantMin : Math.max(actuel + Number(sens), d.ageEnfantMin));
+          champ.dispatchEvent(new Event('input'));
+        });
+        if (j) pas.append(champ, bouton); else pas.append(bouton);
+      });
+      age.appendChild(pas);
       students.appendChild(age);
       if (d.bourse) {
         const bourse = el('label', 'Bourse, élève ' + (i + 1) + ' ');
@@ -223,40 +235,31 @@ function initialiserSimulateur(simulator, d) {
     const r = calculer(d, eleves, options);
     const m = (x) => formaterMontant(d, x);
     result.replaceChildren();
-    const table = el('table', undefined, { class: 'price-table' });
-    table.appendChild(el('caption', r.mois > 1 ? 'Détail par élève, pour ' + r.mois + ' mois' : 'Détail par élève, pour un mois'));
-    const entete = el('tr');
-    ['Élève', 'Prix', 'Remises', 'À payer'].forEach((t) => entete.appendChild(el('th', t, { scope: 'col' })));
-    table.appendChild(el('thead')).appendChild(entete);
-    const corps = el('tbody');
+    // Le total d'abord, en grand : c'est la reponse. Le detail par eleve vient dessous, une ligne par eleve.
+    const pour = eleves.length > 1 ? ' pour ' + eleves.length + ' élèves' : '';
+    const fort = el('p', (r.mois > 1 ? m(r.totalPeriode) : m(r.totalSansCredit)) + ' ', { class: 'simulator__prix simulator__total' });
+    fort.appendChild(el('small', r.mois > 1 ? 'à payer d’avance pour ' + r.mois + ' mois' + pour + ', hors taxes' : 'par mois' + pour + ', hors taxes'));
+    result.appendChild(fort);
+    if (r.mois > 1) ligneTexte(result, 'Soit environ ' + m(r.parMois) + ' par mois (arrondi au centime).');
+    if (r.credit) ligneTexte(result, 'Premier paiement, crédit de parrainage déduit : ' + m(r.totalPeriode) + '. Ensuite ' + m(r.totalSansCredit) + ' par mois.');
+    result.appendChild(el('p', r.mois > 1 ? 'Détail par élève, pour ' + r.mois + ' mois' : 'Détail par élève, pour un mois', { class: 'simulator__legende' }));
+    const liste = el('ul', undefined, { class: 'simulator__eleves' });
     r.lignes.forEach((l) => {
-      const tr = el('tr');
-      tr.appendChild(el('th', 'Élève ' + l.rang + ', ' + l.age + ' ans, ' + (l.adulte ? 'adulte' : 'enfant'), { scope: 'row' }));
-      tr.appendChild(el('td', m(l.base)));
+      const li = el('li');
+      li.appendChild(el('span', 'Élève ' + l.rang + ' · ' + l.age + ' ans · ' + (l.adulte ? 'adulte' : 'enfant'), { class: 'simulator__eleve' }));
       const details = [];
-      if (l.foyer) details.push('foyer ' + m(-l.foyer));
+      if (l.foyer) details.push('remise foyer ' + m(-l.foyer));
       if (l.prepaiement) details.push('paiement d’avance ' + m(-l.prepaiement));
       if (l.plafond) details.push('plafond : ' + m(l.plafond) + ' non appliqués');
       if (l.bourse) details.push('bourse ' + m(-l.bourse) + ' (ne se cumule pas)');
-      tr.appendChild(el('td', details.length ? details.join(', ') : 'Aucune'));
-      tr.appendChild(el('td', m(l.total)));
-      corps.appendChild(tr);
+      li.appendChild(el('span', 'Prix ' + m(l.base) + ' · ' + (details.length ? details.join(', ') : 'aucune remise'), { class: 'simulator__calcul' }));
+      li.appendChild(el('strong', m(l.total)));
+      liste.appendChild(li);
     });
-    table.appendChild(corps);
-    result.appendChild(table);
+    result.appendChild(liste);
     if (r.credit || r.creditDemande) {
       const limite = r.credit < r.creditDemande ? ' Le plafond de cumul limite ce crédit à ' + m(r.credit) + '.' : '';
       ligneTexte(result, 'Crédit de parrainage : ' + m(-r.credit) + ' sur le premier paiement.' + limite);
-    }
-    const fort = el('p', undefined, { class: 'simulator__total' });
-    if (r.mois > 1) {
-      fort.appendChild(el('strong', 'À payer d’avance pour ' + r.mois + ' mois : ' + m(r.totalPeriode) + ', hors taxes.'));
-      result.appendChild(fort);
-      ligneTexte(result, 'Soit environ ' + m(r.parMois) + ' par mois (arrondi au centime).');
-    } else {
-      fort.appendChild(el('strong', 'Total par mois : ' + m(r.totalSansCredit) + ', hors taxes.'));
-      result.appendChild(fort);
-      if (r.credit) ligneTexte(result, 'Premier paiement, crédit de parrainage déduit : ' + m(r.totalPeriode) + '. Ensuite ' + m(r.totalSansCredit) + ' par mois.');
     }
     const prix = new Set(eleves.map((e) => tarifDe(d, e.age)));
     if (eleves.length > 1 && prix.size > 1) {

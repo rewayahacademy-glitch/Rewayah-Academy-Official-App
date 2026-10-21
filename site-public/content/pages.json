@@ -208,18 +208,12 @@
           "id": "profils",
           "title": "Un profil pour chaque élève",
           "paragraphs": [
-            "Chaque enfant a son profil et suit son propre parcours. Vous voyez ce qui concerne ce profil, selon les accès autorisés."
+            "Chaque enfant a son profil et suit son propre parcours. Vous voyez ce qui concerne ce profil, selon les accès autorisés.",
+            "Chaque enfant est inscrit par un tuteur adulte autorisé : c’est vous qui l’inscrivez et qui gérez son accès aux cours."
           ],
           "points": [
             "Un parcours par élève",
             "Des informations propres à chaque profil"
-          ]
-        },
-        {
-          "id": "tuteur",
-          "title": "Vous restez responsable",
-          "paragraphs": [
-            "Chaque enfant est inscrit par un tuteur adulte autorisé : c’est vous qui l’inscrivez et qui gérez son accès aux cours."
           ],
           "links": [
             {
@@ -318,7 +312,6 @@
         {
           "id": "groupes",
           "title": "Trois séances par semaine",
-          "generated": "classes",
           "paragraphs": [
             "Vous choisissez la langue et l’horaire à l’inscription, parmi ceux que nous publions. Ensuite, la classe garde le même horaire."
           ],

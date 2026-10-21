@@ -177,7 +177,7 @@ class GeneratedSiteQA(unittest.TestCase):
             self.assertIn('srcset="/fr/assets/symbole.svg"', home)
         self.assertIn('src="/fr/assets/logo-horizontal-white.svg"', home)
         # Le nom de l'academie est dit dans le premier ecran (sur telephone, l'en-tete ne montre que le symbole).
-        self.assertIn('<p class="preuve">Rewayah Academy a été fondée en 2024', home)
+        self.assertIn('<p class="preuve">Rewayah Academy a été fondée en 2024', home.replace("\u00a0", " "))
         self.assertNotIn('4 août 2025', "\n".join(path.read_text(encoding="utf-8") for path in self.output.rglob("*.html")))
 
     def test_every_illustration_is_captioned_and_described(self) -> None:

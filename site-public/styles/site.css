@@ -99,10 +99,10 @@
   --entete: 72px;
   /* Echelle d'affiche du site : cinq tailles */
   --t-affiche: clamp(44px, 6.6vw, 104px);
-  --t-titre: clamp(30px, 3.8vw, 56px);
+  --t-titre: clamp(26px, 3.8vw, 56px);
   --t-moyen: clamp(20px, 2.1vw, 30px);
   --t-corps: clamp(18px, 0.25vw + 16px, 20px);
-  --t-petit: 14px;
+  --t-petit: 15px;
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -196,6 +196,9 @@ p { text-wrap: pretty; max-width: 60ch; }
 /* Gros plans : un cercle (la halqa du symbole), ouvert sur la lumiere de la salle. */
 .scene--cercle .scene__cadre { aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: #EEE6FA; }
 .section__figure:has(.scene--cercle) { background: none; padding: 0; border-radius: 0; }
+/* Details en pied : l'arche du symbole (le haut est un demi-cercle sur toute la largeur), ouverte sur la lumiere. */
+.scene--arche .scene__cadre { aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 40% 40% 0 0; overflow: hidden; background: #EEE6FA; }
+.section__figure:has(.scene--arche) { background: none; padding: 0; border-radius: 0; width: min(100%, 460px); }
 /* La manche de l'eleve ne s'arrete pas net : l'image s'efface sur ses bords gauche et bas. */
 /* Les manches sortent par un vrai bord : le bord de l'ecran (haut de page) ou celui de la carte (etapes).
    Seule la fenetre des chapitres, sans bord visible, garde un fondu court. */
@@ -309,10 +312,11 @@ p { text-wrap: pretty; max-width: 60ch; }
 
 /* --- Chapitres : la porte reste, ceux qui viennent changent ------------------- */
 p, li, dd { overflow-wrap: break-word; }
+li, dd { text-wrap: pretty; }
 .appel__phrase { overflow-wrap: anywhere; }
 .section__grille > *, .contact-ligne > *, .entete-page > *, .groupe > *, .faq-tuiles > * { min-width: 0; }
 .chapitres { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); padding: 0 var(--marge) var(--respire); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
-.chapitres__fenetre { grid-column: 1 / span 6; position: sticky; top: calc(var(--entete) + 4svh); height: calc(100svh - var(--entete) - 8svh); display: none; }
+.chapitres__fenetre { grid-column: 1 / span 7; position: sticky; top: calc(var(--entete) + 4svh); height: calc(100svh - var(--entete) - 8svh); display: none; }
 .chapitres__pile { position: relative; height: 100%; border-radius: var(--arche); background: var(--champ); overflow: hidden; }
 .chapitres__image { position: absolute; inset: 4%; display: flex; flex-direction: column; justify-content: center; opacity: var(--o, 0); transform: translateY(calc((1 - var(--o, 0)) * 16px)); transition: opacity var(--mv-navigation) var(--mv-entree), transform var(--mv-navigation) var(--mv-entree); }
 .chapitres__image:first-child { --o: 1; }
@@ -327,7 +331,7 @@ p, li, dd { overflow-wrap: break-word; }
 .chapitre__image-mobile .scene { border-radius: var(--arche); background: var(--champ); padding: 12% 4% 4%; }
 @media (min-width: 840px) {
   .chapitres__fenetre { display: block; }
-  .chapitres__textes { grid-column: 7 / span 6; }
+  .chapitres__textes { grid-column: 8 / span 5; }
   .chapitre { min-height: 88svh; display: flex; flex-direction: column; justify-content: center; }
   .chapitres { padding-bottom: var(--e-16); }
   .chapitre:last-child { min-height: 72svh; justify-content: flex-start; padding-top: 14svh; }
@@ -389,14 +393,13 @@ p, li, dd { overflow-wrap: break-word; }
 .champ h3 { font-size: var(--t-titre); line-height: 1.04; letter-spacing: -0.02em; }
 .champ__public { margin-top: var(--e-4); max-width: 32ch; }
 .champ__prix { margin-top: var(--e-8); display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--e-3); }
-.champ__inclus { margin-top: auto; padding-top: var(--e-10); display: grid; gap: var(--e-3); max-width: 40ch; list-style: none; }
+.champ__inclus { margin-top: auto; padding-top: var(--e-10); display: grid; gap: var(--e-3); max-width: none; list-style: none; }
 .champ__inclus li { padding-inline-start: 1.4em; position: relative; }
 .champ__inclus li::before { content: ''; position: absolute; inset-inline-start: 0; top: .5em; width: .6em; height: .75em; border-radius: var(--arche); background: currentColor; opacity: .55; }
 .champ__montant { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .champ__periode { font-weight: 600; }
 .champ--enfant { background: var(--champ-fort); color: var(--encre); }
 .champ--adulte { background: var(--marque); color: var(--sur-marque); }
-.champ::after { content: ''; position: absolute; inset-inline-end: -6%; bottom: -30%; width: 46%; aspect-ratio: .8; border-radius: var(--arche); background: currentColor; opacity: .06; pointer-events: none; }
 .deux-champs__pied { padding: var(--e-10) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
 .deux-champs__pied p { max-width: 60ch; }
 @media (min-width: 840px) {
@@ -457,6 +460,7 @@ p, li, dd { overflow-wrap: break-word; }
 .appel__lien { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; min-height: 56svh; padding: var(--e-12) var(--marge) var(--e-6); background: var(--marque); color: var(--sur-marque); text-decoration: none; border-radius: 50% 50% 0 0 / 120px 120px 0 0; overflow: hidden; transition: background-color var(--mv-micro) var(--mv-entree), color var(--mv-micro) var(--mv-entree); }
 .appel__lien:hover, .appel__lien:focus-visible { background: var(--champ-fort); color: var(--encre); }
 .appel__lien:focus-visible { outline-offset: -6px; }
+.appel--sobre .appel__lien { min-height: 0; grid-template-rows: auto; padding-bottom: var(--e-16); }
 .appel__haut { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--e-2); max-width: calc(var(--contenu)); width: 100%; margin-inline: auto; padding-top: var(--e-10); text-align: center; justify-items: center; }
 .appel__haut h2 { font-size: var(--t-titre); color: inherit; max-width: 100%; text-wrap: balance; }
 .appel__phrase { font-size: var(--t-corps); max-width: 46ch; padding-inline: var(--e-2); }
@@ -473,7 +477,7 @@ p, li, dd { overflow-wrap: break-word; }
 .entete-page--blanc { background: var(--fond); }
 .entete-page__texte { position: relative; z-index: 2; }
 .entete-page h1 { font-size: clamp(40px, 4.6vw, 68px); max-width: 19ch; }
-.entete-page__texte--long h1 { font-size: clamp(32px, 5.8vw, 44px); max-width: 22ch; }
+.entete-page__texte--long h1 { font-size: clamp(32px, 8.2vw, 44px); max-width: 22ch; }
 /* Les titres longs tiennent en deux lignes sans couper apres un article (mesure : « votre enfant, dès 6 ans » fait 10,5 em). */
 @media (min-width: 840px) { .entete-page__texte--long h1 { font-size: clamp(36px, 4.6vw, 66px); } }
 .entete-page .hero-intro { font-size: clamp(18px, 1.7vw, 24px); max-width: 36ch; }
@@ -485,6 +489,8 @@ p, li, dd { overflow-wrap: break-word; }
 @media (min-width: 600px) and (max-width: 839px) { .entete-page__arche, .entete-page--document .entete-page__arche { width: 100%; } }
 .entete-page__image { transform: translateY(calc(var(--par, 0) * -1px)); }
 .entete-page__image figcaption { position: absolute; inset-inline-end: 0; bottom: var(--e-3); }
+/* Une image panoramique en haut de page : sa legende passe dessous, au lieu de se poser sur le chemin. */
+@media (max-width: 839px) { .entete-page--libre .entete-page__image figcaption { position: static; margin-top: var(--e-2); text-align: end; } }
 .entete-page--sobre { min-height: 0; padding-bottom: var(--e-12); background: var(--fond); }
 .entete-page--sobre h1 { max-width: 22ch; }
 .entete-page__ornement { position: absolute; inset-inline-end: 6vw; top: 50%; translate: 0 -46%; width: clamp(120px, 16vw, 240px); opacity: .14; pointer-events: none; }
@@ -767,8 +773,13 @@ p, li, dd { overflow-wrap: break-word; }
   .simulator__fields input[type="checkbox"]:checked { background: Highlight; border-color: Highlight; }
   .simulator__fields input[type="checkbox"]:checked::before { background: HighlightText; }
 }
-.simulator__total { margin-top: var(--e-6); }
-.simulator__total strong { display: block; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-moyen); line-height: 1.15; }
+.simulator__result > p + p { margin-top: var(--e-3); }
+.simulator__legende { margin-top: var(--e-8) !important; font-weight: 600; }
+.simulator__eleves { list-style: none; display: grid; gap: var(--e-2); margin-top: var(--e-3); }
+.simulator__eleves li { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--e-4); row-gap: 2px; align-items: center; padding: var(--e-3) var(--e-4); border-radius: var(--r-sm); background: var(--fond); }
+.simulator__eleve { font-weight: 600; }
+.simulator__calcul { grid-column: 1; font-size: var(--t-petit); color: var(--encre-douce); }
+.simulator__eleves strong { grid-column: 2; grid-row: 1 / span 2; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-moyen); white-space: nowrap; }
 .simulator__prix { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.02em; }
 .simulator__prix small { display: block; margin-top: var(--e-3); font-size: var(--t-corps); font-weight: 600; letter-spacing: 0; }
 .simulator__result { margin-top: var(--e-6); }
@@ -968,6 +979,7 @@ p, li, dd { overflow-wrap: break-word; }
 [data-ambiance="violet"] .entete-page__arche::after { content: ''; position: absolute; z-index: -1; left: 12%; right: 12%; bottom: -1%; height: 9%; border-radius: 50%; background: radial-gradient(closest-side, rgb(37 17 63 / .5), rgb(37 17 63 / 0)); }
 [data-ambiance="violet"] .entete-page--libre .entete-page__arche::after { display: none; }
 [data-ambiance="violet"] .section__figure--panorama::after { display: none; }
+[data-ambiance="violet"] .section__figure:has(.scene--cercle, .scene--arche)::after { display: none; }
 /* Etapes, tuiles et prix : du plus profond au plus clair, comme une progression. */
 [data-ambiance="violet"] .etape:nth-child(3) { background: #BA98FB; color: #25113F; }
 [data-ambiance="violet"] .pousse__etape--0 .pousse__tuile { background: #4E2983; }
@@ -976,6 +988,35 @@ p, li, dd { overflow-wrap: break-word; }
 [data-ambiance="violet"] .tuile[open] { background: #8652E6; }
 [data-ambiance="violet"] .panneau__in { background: #25113F; }
 [data-ambiance="violet"] .pousse__image figcaption { color: #25113F; }
+
+/* --- Fonds : une section par page sur un autre champ --------------------------------
+   Le violet porte la page ; une section passe sur la lavande de la salle (encre prune), une autre sur le prune
+   profond du panneau. Les teintes sont celles de l'ambiance violette (#EEE6FA, #25113F, #4E2983, #BA98FB). */
+.fond { margin-top: var(--respire); padding-bottom: var(--respire); }
+.fond > .section, .fond > .section--pleine, .fond > .section--parcours, .fond > .groupe { padding-top: var(--respire); }
+.site-main > .fond:last-child { margin-bottom: 0; }
+/* Deux champs qui se suivent se touchent : pas de filet de violet entre eux. */
+.fond + .fond { margin-top: 0; }
+[data-ambiance="violet"] .fond--lavande {
+  background: #EEE6FA; color: #25113F;
+  --encre: #25113F; --encre-douce: #4E2983; --encre-accent: #4E2983; --contour: #4E2983; --filet: #BA98FB;
+  --action: #4E2983; --sur-action: #FFFFFF; --action-survol: #25113F; --sur-action-survol: #FFFFFF;
+  --sous: #E8D8FF; --champ: #E8D8FF; --champ-fort: #BA98FB; --marque: #4E2983; --sur-marque: #FFFFFF;
+}
+[data-ambiance="violet"] .fond--prune {
+  background: #25113F; color: #FFFFFF;
+  --sous: #4E2983; --champ: #4E2983; --champ-fort: #8652E6;
+}
+[data-ambiance="violet"] .fond--lavande .scene--cercle .scene__cadre, [data-ambiance="violet"] .fond--lavande .scene--arche .scene__cadre { background: #FFFFFF; }
+[data-ambiance="violet"] .fond--lavande .section__figure::after, [data-ambiance="violet"] .fond--lavande .pleine__image::after { opacity: .5; }
+[data-ambiance="violet"] .fond--prune .fiche { background: #4E2983; }
+[data-ambiance="violet"] .fond--prune .fiche:nth-child(2) { background: #FFFFFF; color: #25113F; }
+.fond--lavande .scene figcaption, .fond--lavande .lien-fleche { color: inherit; }
+/* Phrase seule sur un champ : un ecran d'un seul element, en grand. */
+.bande-phrase { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
+.bande-phrase__phrase { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(30px, 4.4vw, 64px); line-height: 1.06; letter-spacing: -0.03em; max-width: 22ch; text-wrap: balance; }
+.bande-phrase__phrase + .bande-image__sous { margin-top: var(--e-6); font-size: var(--t-moyen); line-height: 1.35; max-width: 40ch; }
+@media (min-width: 840px) { .bande-phrase { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: end; } .bande-phrase__phrase { grid-column: 1 / span 8; } .bande-phrase .bande-image__sous { grid-column: 9 / -1; margin-top: 0; } }
 
 /* --- Impression : tout le contenu, immobile ------------------------------------- */
 @media print {

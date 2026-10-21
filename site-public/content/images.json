@@ -235,6 +235,136 @@
         1025
       ],
       "forme": "cercle"
+    },
+    "detail-coran": {
+      "source": "08 (scène publiée, 1600 px)",
+      "largeur": 844,
+      "hauteur": 844,
+      "alt": "Deux mains aux manches sombres tendent un Coran à couverture violette ornée vers deux mains claires qui le reçoivent.",
+      "recadrage": [
+        323,
+        313,
+        1167,
+        1157
+      ],
+      "forme": "cercle"
+    },
+    "detail-eleve-haut": {
+      "source": "06 (scène publiée, 1014 px)",
+      "largeur": 380,
+      "hauteur": 380,
+      "alt": "Vue du dessus : un élève coiffé d'un bonnet violet lit un livre ouvert posé sur un pupitre de lecture en bois.",
+      "recadrage": [
+        462,
+        567,
+        842,
+        947
+      ],
+      "forme": "cercle"
+    },
+    "detail-enseignant-haut": {
+      "source": "06",
+      "largeur": 360,
+      "hauteur": 360,
+      "alt": "Vue du dessus : l’enseignant lit son livre ouvert.",
+      "recadrage": [
+        330,
+        0,
+        690,
+        360
+      ],
+      "forme": "cercle"
+    },
+    "detail-tabouret": {
+      "source": "11",
+      "largeur": 520,
+      "hauteur": 650,
+      "alt": "Un homme en tunique mauve, assis sur un petit tabouret en bois, tient un livre sur ses genoux et regarde vers la porte ouverte.",
+      "recadrage": [
+        -22,
+        494,
+        498,
+        1144
+      ],
+      "forme": "arche"
+    },
+    "detail-mere-fille": {
+      "source": "07",
+      "largeur": 488,
+      "hauteur": 610,
+      "alt": "Vue de dos : une mère en abaya noire et hijab blanc marche main dans la main avec sa fille, qui porte un sac à dos, sur un tapis violet devant une porte ouverte.",
+      "recadrage": [
+        1282,
+        532,
+        1770,
+        1142
+      ],
+      "forme": "arche"
+    },
+    "detail-mere-dos": {
+      "source": "01",
+      "largeur": 400,
+      "hauteur": 500,
+      "alt": "Vue de dos : une mère en abaya noire se tient à la porte ouverte.",
+      "recadrage": [
+        200,
+        350,
+        600,
+        850
+      ],
+      "forme": "arche"
+    },
+    "detail-fille-lecture": {
+      "source": "03",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Une élève en hijab blanc lit, à genoux devant son pupitre de lecture.",
+      "recadrage": [
+        0,
+        500,
+        480,
+        1100
+      ],
+      "forme": "arche"
+    },
+    "detail-enseignant-place": {
+      "source": "14",
+      "largeur": 400,
+      "hauteur": 500,
+      "alt": "L’enseignant est assis dans la pièce éclairée, derrière la porte ouverte.",
+      "recadrage": [
+        400,
+        450,
+        800,
+        950
+      ],
+      "forme": "arche"
+    },
+    "detail-boucle": {
+      "source": "02",
+      "largeur": 800,
+      "hauteur": 800,
+      "alt": "Sur un chemin violet en forme de boucle, des familles marchent vers l’enseignant et son élève.",
+      "recadrage": [
+        700,
+        300,
+        1500,
+        1100
+      ],
+      "forme": "cercle"
+    },
+    "detail-pupitre-coran": {
+      "source": "05",
+      "largeur": 450,
+      "hauteur": 450,
+      "alt": "Un Coran ouvert sur un pupitre de lecture en bois.",
+      "recadrage": [
+        0,
+        700,
+        450,
+        1150
+      ],
+      "forme": "cercle"
     }
   }
 }

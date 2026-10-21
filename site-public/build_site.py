@@ -277,8 +277,8 @@ def scene(images: dict, ident: str, tailles: str, css: str = "", prioritaire: bo
     porte = image.get("porte")
     calques = image.get("calques")
     style = f' style="--fx:{porte[0]};--fy:{porte[1]}"' if porte else ""
-    if image.get("forme") == "cercle":
-        css = f"{css} scene--cercle".strip()
+    if image.get("forme") in ("cercle", "arche"):
+        css = f"{css} scene--{image['forme']}".strip()
 
     def img(nom: str, alt: str, extra: str = "", charge: str = chargement) -> str:
         srcset = ", ".join(f"{ASSETS}/scene-{nom}-{w}.webp {w}w" for w in largeurs)
@@ -323,10 +323,21 @@ def logo_entete(ambiance: str = "clair") -> str:
 NOMS_A_TRAIT = re.compile(r"\b(A[lnrsz]-[A-ZÀ-Ý][\wÀ-ÿ’']*)")
 
 
+_PETITS_TEXTE = _PETITS + r"|vous|nous|il|elle|on|ne|ce|ces|cette|leur|leurs|tout|toute|tous|toutes|est|y"
+PETITS_MOTS_TEXTE = re.compile(rf"(?<![\w’'])((?i:{_PETITS_TEXTE})|\d+(?:,\d+)?) (?=\S)")
+
+
 def texte_html(value: str) -> str:
     """Texte courant : espace insecable avant les deux-points, le point-virgule et les points d'interrogation et
-    d'exclamation, et un nom comme Az-Zalzalah ne se coupe pas a son trait d'union."""
+    d'exclamation ; un petit mot se lie au mot qui le suit et un nombre a son unite (« de 3 à 5 élèves ») ; le
+    dernier mot ne reste pas seul sur sa ligne ; un nom comme Az-Zalzalah ne se coupe pas a son trait d'union."""
     fin = re.sub(r" ([:;?!])", "\u00a0\\1", value)
+    fin = PETITS_MOTS_TEXTE.sub(lambda m: m.group(1) + "\u00a0", fin)
+    # Une adresse e-mail garde sa place a la ligne : elle ne se colle pas au mot qui la precede.
+    fin = re.sub(r"\u00a0(?=\S*@)", " ", fin)
+    tete, espace, dernier = fin.rpartition(" ")
+    if espace and len(dernier) <= 12 and "@" not in dernier and len(tete.split()) >= 3:
+        fin = f"{tete}\u00a0{dernier}"
     return NOMS_A_TRAIT.sub(r'<span class="insecable">\1</span>', esc(fin))
 
 
@@ -435,8 +446,8 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
       <h1>{titre_html(page['h1'])}</h1>
       <p class="hero-intro">{texte_html(page.get('intro', ''))}</p>
       <div class="action-row">{cta}{bouton("Voir les tarifs", "/fr/tarifs", "contour")}</div>
-      <p class="rassurance">Rien n’est facturé avant l’ouverture de la classe. La première semaine est remboursée si le cours ne convient pas.</p>
-      <p class="preuve">Rewayah Academy a été fondée en 2024 par trois spécialistes du Coran et des sciences islamiques.</p>
+      <p class="rassurance">{texte_html("Rien n’est facturé avant l’ouverture de la classe. La première semaine est remboursée si le cours ne convient pas.")}</p>
+      <p class="preuve">{texte_html("Rewayah Academy a été fondée en 2024 par trois spécialistes du Coran et des sciences islamiques.")}</p>
     </div>
     <div class="porte__cercle">
       <div class="porte__disque" aria-hidden="true"></div>
@@ -457,7 +468,8 @@ def accueil_enonce(images: dict, tarifs: dict) -> str:
 def accueil_chapitres(page: dict, images: dict) -> str:
     """Le fondu lent : la porte reste, ceux qui viennent apprendre changent, au rythme du defilement."""
     s = _sections_par_id(page)
-    chapitres = (("foyer", "pere-fils"), ("cours", "transmission-lavande"), ("suivi", "gros-plan-famille"))
+    # Le pere et le fils, la mere a la porte : des gros plans ici ; leurs scenes entieres sont a la page Familles.
+    chapitres = (("foyer", "gros-plan-pere-fils"), ("cours", "transmission-lavande"), ("suivi", "gros-plan-famille"))
     figures = "".join(
         scene(images, img, "(max-width: 839px) 92vw, 44vw", "chapitres__image",
               legende=(i == 0), attributs=f' data-chapitre-image="{i}"')
@@ -482,12 +494,12 @@ def accueil_etapes(page: dict, images: dict) -> str:
     etapes = (
         ("detail-place", "Vous choisissez un horaire", "Parmi les horaires publiés, pour votre enfant ou pour vous."),
         ("detail-enseignante", "La direction compose la classe", "Elle nomme l’enseignant et vous écrit à chaque étape."),
-        ("detail-pupitre", "La classe commence", "Vous la rejoignez depuis l’application, à son horaire."),
+        ("detail-livre-femme", "La classe commence", "Vous la rejoignez depuis l’application, à son horaire."),
     )
     tuiles = "".join(
         f'<li class="pousse__etape pousse__etape--{i}" data-revele>'
         f'<div class="pousse__tuile">{scene(images, img, "(max-width: 839px) 90vw, 40vw", "pousse__image", legende=(i == 2))}</div>'
-        f'<h3>{esc(titre)}</h3><p>{esc(texte)}</p></li>'
+        f'<h3>{titre_html(titre)}</h3><p>{texte_html(texte)}</p></li>'
         for i, (img, titre, texte) in enumerate(etapes))
     return f'''<section class="pousse" id="fonctionnement" aria-labelledby="pousse-titre">
   <div class="pousse__entete" data-revele><h2 id="pousse-titre">{titre_html(sec["title"])}</h2><div class="pousse__corps">{paragraphes(sec)}{liens_section(sec)}</div></div>
@@ -515,7 +527,7 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
 
     # Ce que le prix comprend : les phrases des encarts de la décision du 18/10 (tarifs.json, site_public).
     def inclus(*lignes: str) -> str:
-        return '<ul class="champ__inclus">' + "".join(f"<li>{esc(l)}</li>" for l in lignes) + "</ul>"
+        return '<ul class="champ__inclus">' + "".join(f"<li>{texte_html(l)}</li>" for l in lignes) + "</ul>"
 
     enfant = tarifs_mod.fmt_montant(p["tarifEnfantMineur"], devise)
     adulte = tarifs_mod.fmt_montant(p["tarifAdulteMineur"], devise)
@@ -526,20 +538,20 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
     <article class="champ champ--enfant" data-revele>
       <h3>{titre_html("Enfants et adolescents")}</h3>
       <p class="champ__prix"><span class="champ__montant">{esc(enfant)}</span><span class="champ__periode">par mois, {hors_taxes}</span></p>
-      <p class="champ__public">De {tarifs_mod.AGE_ENFANT_MIN} à {age - 1} ans. {esc(duree("enfant"))}, dans une classe de {c["ouvertureMinimum"]} à {c["tailleEnfant"]} élèves.</p>
+      <p class="champ__public">{texte_html(f"De {tarifs_mod.AGE_ENFANT_MIN} à {age - 1} ans. {duree('enfant')}, dans une classe de {c['ouvertureMinimum']} à {c['tailleEnfant']} élèves.")}</p>
       {inclus("Le compte rendu de l’enseignant chaque fin de semaine", "L’observation d’une séance, deux minutes, en silence",
               "Une séance annulée par l’académie est remplacée", "La première semaine remboursée si le cours ne convient pas")}
     </article>
     <article class="champ champ--adulte" data-revele>
       <h3>Adultes</h3>
       <p class="champ__prix"><span class="champ__montant">{esc(adulte)}</span><span class="champ__periode">par mois, {hors_taxes}</span></p>
-      <p class="champ__public">{age} ans et plus. {esc(duree("adulte"))}, dans une classe de {c["ouvertureMinimum"]} à {c["tailleAdulte"]} élèves.</p>
+      <p class="champ__public">{texte_html(f"{age} ans et plus. {duree('adulte')}, dans une classe de {c['ouvertureMinimum']} à {c['tailleAdulte']} élèves.")}</p>
       {inclus("Le compte rendu de l’enseignant chaque fin de semaine", "Une séance annulée par l’académie est remplacée",
               "La première semaine remboursée si le cours ne convient pas", "Résiliable chaque mois")}
     </article>
   </div>
   <div class="deux-champs__pied" data-revele>
-    <p>{esc(intro_remise)} {esc(sec["paragraphs"][0]) if sec.get("paragraphs") else ""}</p>
+    <p>{texte_html(intro_remise + (" " + sec["paragraphs"][0] if sec.get("paragraphs") else ""))}</p>
     <div class="action-row"><button class="cta cta--secondary" type="button" data-open-simulator>Simuler mon tarif</button>{lien_fleche("Voir les tarifs et les remises", "/fr/tarifs")}</div>
   </div>
 </section>'''
@@ -555,8 +567,8 @@ def accueil_confiance(page: dict, images: dict) -> str:
     </div>
     <div class="panneau__droite">
       <p class="panneau__depuis" data-revele>{titre_html("Rewayah Academy enseigne le Coran depuis le 1er mai 2024.")}</p>
-      <div class="panneau__bloc" data-revele><h3>Un programme qui avance</h3><p>Chaque étape a son objectif et sa date limite.</p></div>
-      <div class="panneau__bloc" data-revele><h3>Un suivi pour les familles</h3><p>Retrouvez les séances et le travail à préparer dans votre espace familial.</p></div>
+      <div class="panneau__bloc" data-revele><h3>Un programme qui avance</h3><p>{texte_html("Chaque étape a son objectif et sa date limite.")}</p></div>
+      <div class="panneau__bloc" data-revele><h3>Un suivi pour les familles</h3><p>{texte_html("Retrouvez les séances et le travail à préparer dans votre espace familial.")}</p></div>
       <div class="panneau__bloc" data-revele><h3>Un tuteur pour chaque enfant</h3>{paragraphes(sec)}</div>
       <div class="action-row" data-revele>{bouton("Découvrir l’académie", "/fr/academie", "contour")}{lien_fleche("Protection des enfants", "/fr/protection-des-enfants")}</div>
       <p class="panneau__societe">REWAYAH ACADEMY LTD · Société n° 16624644</p>
@@ -599,13 +611,16 @@ def accueil_faq(page: dict, tarifs: dict) -> str:
 </section>'''
 
 
-def bande_finale(titre: str, phrase: str, label: str, href: str, mot: str, identifiant: str = "inscription") -> str:
-    """La bande d'appel : toute la bande est le lien, un seul mot honnete la porte."""
+def bande_finale(titre: str, phrase: str, label: str, href: str, mot: str | None, identifiant: str = "inscription") -> str:
+    """La bande d'appel : toute la bande est le lien. Sur l'accueil, un seul mot honnete la porte, en tres grand ;
+    les pages interieures gardent une bande sobre, pour que ce mot reste une signature et non un gabarit."""
     externe = href.startswith("mailto:")
-    return f'''<section class="appel" id="{esc(identifiant)}" aria-labelledby="appel-titre">
+    sobre = "" if mot else " appel--sobre"
+    grand_mot = f'<span class="appel__mot" aria-hidden="true">{esc(mot)}</span>' if mot else ""
+    return f'''<section class="appel{sobre}" id="{esc(identifiant)}" aria-labelledby="appel-titre">
   <a class="appel__lien" href="{esc(href)}">
     <span class="appel__haut"><h2 id="appel-titre">{titre_html(titre)}</h2><span class="appel__phrase">{esc(phrase)}</span><span class="appel__bouton">{esc(label)}{'<span class="sr-only"> (ouvre votre messagerie)</span>' if externe else ""}<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
-    <span class="appel__mot" aria-hidden="true">{esc(mot)}</span>
+    {grand_mot}
   </a>
 </section>'''
 
@@ -655,10 +670,14 @@ def bande_image(reglage: dict, images: dict) -> str:
     bande = reglage.get("bande")
     if not bande:
         return ""
+    sous = f'<p class="bande-image__sous">{texte_html(bande["sous"])}</p>' if bande.get("sous") else ""
+    if not bande.get("image"):
+        # Une phrase seule, en grand, sur un champ de couleur : un changement de fond dans la page.
+        return (f'<div class="fond fond--{esc(bande.get("fond", "lavande"))}"><div class="bande-phrase" data-revele>'
+                f'<p class="bande-phrase__phrase">{titre_html(bande["phrase"])}</p>{sous}</div></div>')
     return (f'<div class="bande-image bande-image--{esc(bande.get("forme", "large"))}" data-revele>'
             f'{scene(images, bande["image"], "100vw", "bande-image__scene")}'
-            + (f'<div class="bande-image__texte"><p class="bande-image__phrase">{titre_html(bande["phrase"])}</p>'
-               + (f'<p class="bande-image__sous">{esc(bande["sous"])}</p>' if bande.get("sous") else "") + '</div>'
+            + (f'<div class="bande-image__texte"><p class="bande-image__phrase">{titre_html(bande["phrase"])}</p>{sous}</div>'
                if bande.get("phrase") else "") + '</div>')
 
 
@@ -716,8 +735,10 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
         cotes = alternance(reglage)
         for i, s in enumerate(autres, 1):
             figure = figure_section(reglage, images, s["id"])
-            morceaux.append(render_section(s, len(etapes) + i, tarifs, today, avis, figure=figure,
-                                           cote_figure=next(cotes) if figure else "droite"))
+            rendu = render_section(s, len(etapes) + i, tarifs, today, avis, figure=figure,
+                                   cote_figure=next(cotes) if figure else "droite")
+            fond = reglage.get("fonds", {}).get(s["id"])
+            morceaux.append(f'<div class="fond fond--{esc(fond)}">{rendu}</div>' if fond else rendu)
         return "".join(morceaux)
     cotes = alternance(reglage)
     # Deux sections de texte qui se suivent, sans image : on les pose cote a cote plutot que d'en faire deux
@@ -735,12 +756,17 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
             morceaux.append(render_section(groupe[0][1], groupe[0][0], tarifs, today, avis))
         groupe.clear()
 
+    fonds = reglage.get("fonds", {})
     for i, s in enumerate(sections, 1):
         figure = figure_section(reglage, images, s["id"])
+        fond = fonds.get(s["id"])
+        if fond not in (None, "lavande", "prune"):
+            raise ValueError(f"direction.json: unknown fond {fond}")
+        avant = len(morceaux)
         if s["id"] in reglage.get("parcours", []):
             vider()
             morceaux.append(render_section(s, i, tarifs, today, avis, "parcours"))
-        elif not figure and not s.get("generated"):
+        elif not figure and not s.get("generated") and not fond:
             groupe.append((i, s))
         elif figure and s["id"] in reglage.get("pleine", []):
             vider()
@@ -748,6 +774,9 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
         else:
             vider()
             morceaux.append(render_section(s, i, tarifs, today, avis, figure=figure, cote_figure=next(cotes) if figure else "droite"))
+        if fond:
+            morceaux[-1] = f'<div class="fond fond--{fond}">{morceaux[-1]}</div>'
+            assert len(morceaux) > avant
         if apres and s.get("id") == apres:
             vider()
             morceaux.append(bande_image(reglage, images))
@@ -820,7 +849,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         fin = reglage.get("fin")
         if fin:
             main += bande_finale(fin["titre"], fin["phrase"], fin.get("label", page["cta"]["label"]),
-                                 fin.get("href", page["cta"]["href"]), fin["mot"])
+                                 fin.get("href", page["cta"]["href"]), None)
         classe_page = "page-" + (route.strip("/").split("/", 1)[1].replace("/", "-") if "/" in route.strip("/") else "accueil")
     # Sur la page des tarifs, le simulateur est dans la page, sous la grille ; sur l'accueil, une feuille qui s'ouvre.
     en_page = route == "/fr/tarifs"

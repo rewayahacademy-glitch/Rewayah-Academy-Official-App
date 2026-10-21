@@ -226,11 +226,13 @@ class PageGeneree(unittest.TestCase):
 
     def test_la_page_tarifs_affiche_les_valeurs_en_vigueur(self) -> None:
         texte = re.sub(r"<[^>]+>", "|", self.tarifs_html)
+        # Le texte courant lie ses petits mots par des espaces insecables : les phrases se comparent sans elles.
+        plat = texte.replace(NBSP, " ")
         for attendu in (f"55{NBSP}$", f"65{NBSP}$", f"105,60{NBSP}$", f"151,25{NBSP}$", f"196,90{NBSP}$",
                         f"8{NBSP}%", f"17{NBSP}%", f"5{NBSP}%", f"10{NBSP}%", f"30{NBSP}%", f"25{NBSP}%",
                         f"20{NBSP}$", "6 à 17 ans", "18 ans et plus", "hors taxes",
                         "la première semaine est remboursée"):
-            self.assertIn(attendu, texte)
+            self.assertIn(attendu, texte if NBSP in attendu else plat)
         for caduc in ("Aucun montant n'est affiché", "Les deux premiers membres gardent leur tarif",
                       "momentanément indisponibles", "50 $", "60 $"):
             self.assertNotIn(caduc, self.tarifs_html)
@@ -238,7 +240,7 @@ class PageGeneree(unittest.TestCase):
 
     def test_l_accueil_lit_les_memes_donnees(self) -> None:
         self.assertIn(f"55{NBSP}$", self.accueil)
-        self.assertIn("commencent au 2e membre", self.accueil)
+        self.assertIn("commencent au 2e membre", self.accueil.replace(NBSP, " "))
         self.assertNotIn("Selon le tarif en vigueur", self.accueil)
 
     def test_les_donnees_injectees_sont_celles_du_calcul(self) -> None:

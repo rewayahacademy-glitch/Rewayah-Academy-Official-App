@@ -1,87 +1,80 @@
 {
-  "description": "Direction artistique par page. Un seul motif : l'arche du symbole (arche en forme de livre, porte ouverte ; décision M-21). image = illustration du haut de page, cote = côté de l'image (on alterne pour ne pas tout poser à droite), champ = couleur du fond du haut de page, cadre = libre pour une image panoramique qui sort par le bord de l'écran au lieu d'une fenêtre en arche, gabarit = composition du corps, figures = une illustration sous le titre d'une section (clé = id de la section), bande = grande image posée entre deux sections, fin = bande d'appel en bas de page. Les textes de fin ne disent que des faits publiés (liste d'attente non facturée, première semaine remboursée : content/tarifs.json et page Annulation). ambiance = clair (fond blanc et lavande) ou violet (fond violet en dégradé léger, demande du directeur du 21/10/2026). pleine = sections posées en bande pleine (titre, grande illustration au centre, texte en deux colonnes dessous), une par page pour casser l'alternance image et texte. parcours = la liste des étapes posée en arches qui montent.",
+  "description": "Direction artistique par page. Un seul motif : l'arche du symbole (arche en forme de livre, porte ouverte ; décision M-21). image = illustration du haut de page, cote = côté de l'image (on alterne pour ne pas tout poser à droite), champ = couleur du fond du haut de page, cadre = libre pour une image panoramique qui sort par le bord de l'écran au lieu d'une fenêtre en arche, gabarit = composition du corps, figures = une illustration sous le titre d'une section (clé = id de la section), bande = grande image posée entre deux sections, fin = bande d'appel en bas de page (sobre ; le mot géant de la bande reste propre à l'accueil). Les textes de fin ne disent que des faits publiés (liste d'attente non facturée, première semaine remboursée : content/tarifs.json et page Annulation). ambiance = clair (fond blanc et lavande) ou violet (fond violet en dégradé léger, demande du directeur du 21/10/2026). pleine = sections posées en bande pleine (titre, grande illustration au centre, texte en deux colonnes dessous), une par page pour casser l'alternance image et texte. parcours = la liste des étapes posée en arches qui montent. fonds = sections posées sur un autre champ, sur toute la largeur (lavande ou prune), une ou deux par page, pour que la page ne soit pas un seul violet. Une bande sans image est une phrase seule, en grand, sur son fond. Chaque illustration entière n'appartient qu'à une page ; ailleurs, un détail serré (cercle ou arche), chaque fichier une seule fois.",
   "ambiance": "violet",
   "pages": {
     "/fr/familles": {
       "image": "pere-fils",
       "cote": "droite",
       "champ": "lavande",
-      "bande": {
-        "image": "gros-plan-famille",
-        "apres": "suivi",
-        "forme": "arche",
-        "phrase": "Écouter une séance deux minutes, sans micro ni caméra.",
-        "sous": "Lorsque l’observation est autorisée, l’enfant et l’enseignant sont informés de votre présence."
-      },
       "fin": {
         "titre": "Inscrivez votre enfant.",
         "phrase": "L’inscription se fait dans l’application Rewayah. Rien n’est facturé avant l’ouverture de la classe.",
-        "mot": "Commencer",
         "label": "Commencer mon inscription",
         "href": "/connexion"
       },
       "figures": {
-        "profils": "detail-halqa",
-        "organisation": "chemin"
+        "profils": "detail-eleve-haut",
+        "suivi": "detail-pupitre",
+        "organisation": "mere-porte"
       },
       "pleine": [
         "organisation"
-      ]
+      ],
+      "fonds": {
+        "organisation": "lavande",
+        "en-bref": "prune"
+      }
     },
     "/fr/cours": {
       "image": "eleve-enseignante",
       "cote": "gauche",
       "champ": "lavande",
-      "bande": {
-        "image": "detail-livre-homme",
-        "apres": "adultes-enfants",
-        "forme": "arche",
-        "phrase": "Les adultes apprennent dans des classes d’adultes.",
-        "sous": "Une classe d’adultes réunit de 3 à 6 élèves, trois séances par semaine."
-      },
       "fin": {
         "titre": "Commencez par les bases.",
         "phrase": "L’inscription se fait dans l’application Rewayah. La première semaine est remboursée si le cours ne convient pas.",
-        "mot": "Commencer",
         "label": "Commencer mon inscription",
         "href": "/connexion"
       },
       "figures": {
-        "methode": "detail-pupitre",
-        "groupes": "halqa"
+        "adultes-enfants": "detail-livre-homme",
+        "methode": "adulte-femme",
+        "groupes": "detail-enseignant-haut"
       },
       "pleine": [
-        "groupes"
+        "methode"
       ],
       "parcours": [
         "objectifs"
-      ]
+      ],
+      "fonds": {
+        "methode": "lavande",
+        "en-bref": "prune"
+      }
     },
     "/fr/comment-ca-marche": {
-      "image": "chemin",
+      "image": "adulte-homme-livre",
       "cote": "droite",
       "champ": "blanc",
-      "cadre": "libre",
       "gabarit": "etapes",
       "bande": {
-        "image": "halqa",
-        "forme": "cercle",
         "phrase": "Des classes de 3 à 5 enfants, ou de 3 à 6 adultes.",
-        "sous": "Une classe ouvre dès trois inscrits. Avant cela, vous êtes en liste d’attente et rien n’est facturé."
+        "sous": "Une classe ouvre dès trois inscrits. Avant cela, vous êtes en liste d’attente et rien n’est facturé.",
+        "fond": "lavande"
       },
       "fin": {
         "titre": "Votre inscription commence ici.",
         "phrase": "Vous suivez chaque étape dans l’application Rewayah. Rien n’est facturé avant l’ouverture de la classe.",
-        "mot": "Commencer",
         "label": "Continuer dans Rewayah",
         "href": "/connexion"
       },
       "figures": {
-        "connexion": "detail-livre-homme",
-        "propositions": "detail-place",
-        "traitement": "detail-enseignante",
-        "classe": "transmission-lavande",
-        "mineur": "gros-plan-pere-fils"
+        "connexion": "detail-fille-lecture",
+        "propositions": "detail-enseignant-place",
+        "traitement": "detail-boucle",
+        "classe": "detail-coran"
+      },
+      "fonds": {
+        "mineur": "prune"
       }
     },
     "/fr/tarifs": {
@@ -91,46 +84,49 @@
       "fin": {
         "titre": "Commencez votre inscription.",
         "phrase": "Une classe ouvre dès trois inscrits. Avant cela, vous êtes en liste d’attente et rien n’est facturé.",
-        "mot": "Commencer",
         "label": "Commencer mon inscription",
         "href": "/connexion"
       },
       "figures": {
-        "grille": "gros-plan-enseignant",
-        "famille": "gros-plan-famille",
-        "classes": "halqa"
+        "grille": "detail-pupitre-coran",
+        "famille": "detail-mere-fille",
+        "classes": "adulte-homme"
       },
       "pleine": [
         "classes"
-      ]
+      ],
+      "fonds": {
+        "famille": "lavande",
+        "conditions": "prune"
+      }
     },
     "/fr/academie": {
-      "image": "transmission-lavande",
+      "image": "boucle",
       "cote": "gauche",
       "champ": "lavande",
-      "cadre": "libre",
       "bande": {
-        "image": "boucle",
+        "image": "adulte-femme-livre",
         "apres": "projet",
-        "forme": "large",
+        "forme": "arche",
         "phrase": "Transmettre le savoir tel qu’il a été reçu.",
         "sous": "Le nom Rewayah dit ce projet : transmettre, sans rien altérer."
       },
       "fin": {
         "titre": "Découvrez les cours.",
         "phrase": "Enfants dès 6 ans et adultes, trois séances par semaine avec le même enseignant.",
-        "mot": "Découvrir",
         "label": "Découvrir les cours",
         "href": "/fr/cours"
       },
       "figures": {
-        "projet": "gros-plan-lecture",
-        "famille": "gros-plan-famille",
-        "societe": "detail-livre-femme"
+        "projet": "detail-tabouret",
+        "famille": "detail-mere-dos"
       },
-      "pleine": [
-        "famille"
-      ]
+      "pleine": [],
+      "fonds": {
+        "famille": "lavande",
+        "societe": "prune"
+      },
+      "cadre": "libre"
     },
     "/fr/articles": {
       "image": "adulte-femme-livre",
@@ -154,7 +150,6 @@
       "fin": {
         "titre": "Une autre question ?",
         "phrase": "L’assistance vous répond par écrit, à support@rewayahacademy.com.",
-        "mot": "Écrire",
         "label": "Écrire à l’assistance",
         "href": "mailto:support@rewayahacademy.com"
       }
@@ -166,13 +161,12 @@
       "fin": {
         "titre": "Découvrez les cours.",
         "phrase": "Enfants dès 6 ans et adultes, trois séances par semaine avec le même enseignant.",
-        "mot": "Découvrir",
         "label": "Découvrir les cours",
         "href": "/fr/cours"
       },
       "figures": {
         "avis": "gros-plan-pere-fils",
-        "transparence": "detail-livre-femme"
+        "transparence": "gros-plan-lecture"
       },
       "bande": {
         "image": "halqa",
@@ -189,7 +183,6 @@
       "fin": {
         "titre": "Enseigner avec nous.",
         "phrase": "Écrivez à recrutement@rewayahacademy.com pour une demande d’information ou une candidature spontanée.",
-        "mot": "Écrire",
         "label": "Écrire au recrutement",
         "href": "mailto:recrutement@rewayahacademy.com"
       },

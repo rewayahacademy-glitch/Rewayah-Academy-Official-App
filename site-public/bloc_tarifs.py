@@ -459,9 +459,14 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
         e = encarts_suivis(p)
 
         # Les phrases de l'encart, sans en changer un mot, posees une par ligne pour se lire d'un coup d'oeil.
+        # Une fourchette (« 3 à 5 ») et un nombre suivi de son unite ne se coupent pas.
+        def lie(phrase: str) -> str:
+            phrase = re.sub(r"(\d+) à (\d+)", "\\1\u00a0à\u00a0\\2", phrase)
+            return re.sub(r"(\d+) (élèves|ans|personnes|séances|min|h)\b", "\\1\u00a0\\2", phrase)
+
         def lignes(texte: str) -> str:
             phrases = re.split(r"(?<=\.) (?=[A-ZÀ-Ý0-9])", texte)
-            return '<ul class="fiche__lignes">' + "".join(f"<li>{esc(ph)}</li>" for ph in phrases) + "</ul>"
+            return '<ul class="fiche__lignes">' + "".join(f"<li>{esc(lie(ph))}</li>" for ph in phrases) + "</ul>"
         return ('<div class="fiches">'
                 f'<article class="fiche"><h3>Enfants et\u00a0adolescents</h3>{lignes(e["encart_enfant"])}</article>'
                 f'<article class="fiche"><h3>Adultes</h3>{lignes(e["encart_adulte"])}</article></div>')
