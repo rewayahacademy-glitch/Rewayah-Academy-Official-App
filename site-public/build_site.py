@@ -383,8 +383,10 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
     """Le premier ecran, et la scene signature : on passe la porte, on entre dans le cercle."""
     return f'''<section class="porte" id="haut" data-porte>
   <div class="porte__collant">
-    <div class="porte__arche" aria-hidden="true"></div>
-    {scene(images, "chemin", "(max-width: 839px) 150vw, 112vw", "porte__scene", prioritaire=True)}
+    <div class="porte__vue">
+      <div class="porte__arche" aria-hidden="true"></div>
+      {scene(images, "chemin", "(max-width: 839px) 150vw, 112vw", "porte__scene", prioritaire=True)}
+    </div>
     <div class="porte__texte" data-lignes>
       <p class="eyebrow">Rewayah Academy</p>
       <h1>{esc(page['h1'])}</h1>

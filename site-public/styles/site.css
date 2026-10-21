@@ -262,6 +262,7 @@ p { text-wrap: pretty; max-width: 60ch; }
 .porte__scene { position: absolute; z-index: 1; inset-inline-end: -12vw; bottom: 3svh; width: 112vw; max-width: none; transform-origin: calc(var(--fx, .7) * 100%) calc(var(--fy, .5) * 100%); }
 .porte__scene figcaption { position: absolute; inset-inline-end: calc(12vw + var(--marge)); bottom: -2svh; }
 .porte__cercle, .porte__phrase { display: none; }
+.porte__vue { display: contents; }
 @media (min-width: 840px) and (max-height: 760px) { .porte__scene { bottom: -11svh; } }
 
 /* La scene animee n'existe que si JavaScript tourne, que l'ecran est large et que le mouvement est accepte. */
@@ -272,7 +273,8 @@ p { text-wrap: pretty; max-width: 60ch; }
   .js .porte__scene { transform: scale(calc(1 + var(--z2, 0) * 3.2)); will-change: transform; }
   .js .porte__texte { transform: translateY(calc(var(--z, 0) * -14svh)); opacity: calc(1 - var(--z, 0) * 3.6); }
   .js .porte[data-passee] .porte__texte, .js .porte:not([data-cercle]) .porte__phrase { visibility: hidden; }
-  .js .porte__cercle { display: grid; place-items: center; position: absolute; inset: 0; z-index: 4; pointer-events: none; clip-path: circle(calc(var(--c, 0) * 115%) at 68% 56%); }
+  .js .porte__cercle { display: grid; place-items: center; position: absolute; inset: 0; z-index: 4; pointer-events: none; clip-path: circle(calc(var(--c, 0) * 150vmax) at 68% 56%); }
+  .js .porte__vue { display: block; position: absolute; inset: 0; }
   .js .porte__disque { position: absolute; inset: 0; background: var(--fond); }
   .js .porte__halqa { position: relative; width: min(46vw, 68svh); margin-inline-start: 22vw; transform: scale(calc(1.18 - var(--c, 0) * .18)); }
   .js .porte__phrase { display: block; position: absolute; inset-inline-start: max(var(--marge), calc((100vw - var(--contenu)) / 2)); top: 50%; translate: 0 -50%; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(24px, 2.4vw, 36px); line-height: 1.15; letter-spacing: -0.02em; color: var(--encre); opacity: var(--c, 0); transform: translateY(calc((1 - var(--c, 0)) * 16px)); }
@@ -751,8 +753,6 @@ p { text-wrap: pretty; max-width: 60ch; }
     radial-gradient(85% 65% at 95% 110%, rgb(78 41 131 / .9) 0%, rgb(78 41 131 / 0) 66%),
     radial-gradient(55% 45% at 100% 0%, rgb(37 17 63 / .32) 0%, rgb(37 17 63 / 0) 70%),
     #6538E4;
-  /* Un puits de lumiere a la place des fenetres en arche. */
-  --puits: linear-gradient(180deg, rgb(134 82 230 / .9) 0%, rgb(134 82 230 / .35) 55%, rgb(134 82 230 / 0) 100%);
 }
 [data-ambiance="violet"] body { background: transparent; }
 [data-ambiance="violet"] body::before { content: ''; position: fixed; inset: 0; z-index: -2; pointer-events: none; background: var(--degrade); }
@@ -771,16 +771,24 @@ p { text-wrap: pretty; max-width: 60ch; }
 [data-ambiance="violet"] .porte .rassurance,
 [data-ambiance="violet"] .porte .cta--secondary { background: transparent; }
 [data-ambiance="violet"] .porte .cta--secondary:hover { background: #8652E6; }
-[data-ambiance="violet"].js .porte__disque { background: var(--degrade); background-attachment: fixed; }
-/* Les illustrations flottent : plus de fenetre, une lumiere au-dessus, une ombre portee dessous. */
+/* Le cercle de la halqa s'ouvre sur le vrai fond : la scene de la porte est masquee a l'interieur du cercle. */
+[data-ambiance="violet"].js .porte__disque { display: none; }
+@media (min-width: 840px) and (prefers-reduced-motion: no-preference) {
+  [data-ambiance="violet"].js .porte__vue {
+    -webkit-mask: radial-gradient(circle at 68% 56%, transparent calc(var(--c, 0) * 150vmax), #000 calc(var(--c, 0) * 150vmax + 1px));
+    mask: radial-gradient(circle at 68% 56%, transparent calc(var(--c, 0) * 150vmax), #000 calc(var(--c, 0) * 150vmax + 1px));
+  }
+}
+/* Les illustrations flottent, comme dans les affiches de reference : ni fenetre ni puits de lumiere derriere elles,
+   seulement le fond eclaire et une ombre portee dessous. */
 [data-ambiance="violet"] .porte__arche,
 [data-ambiance="violet"] .chapitres__pile,
 [data-ambiance="violet"] .chapitre__image-mobile .scene,
 [data-ambiance="violet"] .bande-image--arche .scene,
 [data-ambiance="violet"] .panneau__arche,
-[data-ambiance="violet"] .introuvable__scene { background: var(--puits); }
+[data-ambiance="violet"] .introuvable__scene,
 [data-ambiance="violet"] .bande-image--cercle .scene,
-[data-ambiance="violet"].js .porte__halqa::before { background: radial-gradient(closest-side, rgb(134 82 230 / .9), rgb(134 82 230 / .4) 70%, rgb(134 82 230 / 0)); }
+[data-ambiance="violet"].js .porte__halqa::before { background: none; }
 [data-ambiance="violet"] .section__figure { background: none; padding: 6% 0 0; }
 [data-ambiance="violet"] .section__figure::after,
 [data-ambiance="violet"] .entete-page__arche::after { content: ''; position: absolute; z-index: -1; left: 12%; right: 12%; bottom: -1%; height: 9%; border-radius: 50%; background: radial-gradient(closest-side, rgb(37 17 63 / .5), rgb(37 17 63 / 0)); }
