@@ -275,6 +275,8 @@ p { text-wrap: pretty; max-width: 60ch; }
 .porte__collant { position: relative; overflow: clip; min-height: 100svh; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: center; column-gap: var(--e-6); padding: calc(var(--entete) + var(--e-10)) var(--marge) var(--e-16); max-width: none; }
 .porte__texte { position: relative; z-index: 3; grid-column: 1 / span 7; align-self: center; padding-inline-start: max(0px, calc((100vw - var(--contenu)) / 2 - var(--marge))); }
 .porte__texte h1 { font-size: clamp(44px, 5.4vw, 88px); max-width: 12ch; }
+/* Petits telephones : le titre de l'accueil garde trois lignes au plus. */
+@media (max-width: 380px) { .porte__texte h1 { font-size: 10.6vw; max-width: none; } }
 .porte__arche { position: absolute; z-index: 0; inset-inline-end: 3vw; bottom: -14svh; width: min(44vw, 760px); aspect-ratio: .82; border-radius: var(--arche); background: var(--champ-fort); transform-origin: 50% 100%; }
 .porte__scene { position: absolute; z-index: 1; inset-inline-end: -12vw; bottom: 3svh; width: 112vw; max-width: none; transform-origin: calc(var(--fx, .7) * 100%) calc(var(--fy, .5) * 100%); }
 .porte__scene figcaption { position: absolute; inset-inline-end: calc(12vw + var(--marge)); bottom: -2svh; }

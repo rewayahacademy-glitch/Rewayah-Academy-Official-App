@@ -370,7 +370,7 @@
       "source": "12",
       "largeur": 380,
       "hauteur": 380,
-      "alt": "Vu de dos, un père pose la main sur l’épaule de son fils, coiffé d’une calotte violette, qui tient un livre devant une porte.",
+      "alt": "Un père pose la main sur l’épaule de son fils, qui porte une calotte violette et tient un livre.",
       "recadrage": [
         106,
         580,
@@ -383,12 +383,12 @@
       "source": "02",
       "largeur": 380,
       "hauteur": 380,
-      "alt": "Un grand en pull gris et un jeune enfant en tunique blanche marchent pieds nus sur le chemin violet en se tenant la main.",
+      "alt": "Un parent et son enfant marchent main dans la main sur le chemin violet.",
       "recadrage": [
-        556,
-        794,
-        976,
-        1214
+        576,
+        812,
+        956,
+        1192
       ],
       "forme": "cercle"
     },
@@ -396,7 +396,7 @@
       "source": "10",
       "largeur": 440,
       "hauteur": 550,
-      "alt": "Par une porte entrouverte, on voit des dunes de sable pâle sous un ciel clair, avec une flaque de lumière au sol.",
+      "alt": "Par la porte ouverte, on voit des dunes de sable pâle sous une lumière douce.",
       "recadrage": [
         392,
         472,
@@ -409,51 +409,38 @@
       "source": "13",
       "largeur": 380,
       "hauteur": 380,
-      "alt": "Gros plan sur les mains d’un homme en longue robe mauve, qui tient un livre fermé contre sa poitrine, devant des dunes de sable.",
+      "alt": "Un homme en longue tunique mauve tient un livre fermé serré contre lui, devant des dunes de sable clair.",
       "recadrage": [
-        285,
-        558,
-        665,
-        938
+        292,
+        562,
+        672,
+        942
       ],
       "forme": "cercle"
     },
-    "detail-enseignant-lecture": {
-      "source": "12",
-      "largeur": 380,
-      "hauteur": 475,
-      "alt": "Un enseignant en calotte blanche, assis en tailleur dans une pièce claire, lit le Coran posé sur son pupitre en bois.",
-      "recadrage": [
-        494,
-        520,
-        874,
-        995
-      ],
-      "forme": "arche"
-    },
     "detail-deux-eleves": {
-      "source": "06",
-      "largeur": 500,
-      "hauteur": 500,
-      "alt": "Vue du dessus : deux élèves lisent, chacun devant son pupitre.",
+      "source": "06 (scène publiée, 1014 px)",
+      "largeur": 524,
+      "hauteur": 524,
+      "alt": "Vus d’en haut, deux élèves, l’un en calotte blanche et l’autre en calotte violette, lisent chacun un livre ouvert posé sur un pupitre de lecture en bois.",
       "recadrage": [
-        100,
-        560,
-        600,
-        1060
+        490,
+        358,
+        1014,
+        882
       ],
       "forme": "cercle"
     },
     "detail-fille-enseignante": {
       "source": "01",
-      "largeur": 440,
-      "hauteur": 440,
-      "alt": "Une fillette en hijab blanc est assise à côté de son enseignante, qui pose la main sur un livre ouvert sur un pupitre de lecture en bois.",
+      "largeur": 380,
+      "hauteur": 380,
+      "alt": "Dans une pièce claire, une fillette au voile blanc, assise au sol près de son enseignante, la regarde poser la main sur un Coran ouvert sur un pupitre en bois.",
       "recadrage": [
-        445,
-        595,
-        885,
-        1035
+        483,
+        644,
+        863,
+        1024
       ],
       "forme": "cercle"
     }
