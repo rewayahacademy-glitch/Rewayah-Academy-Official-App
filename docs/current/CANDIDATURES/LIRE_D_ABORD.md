@@ -12,8 +12,8 @@ ait répondu aux questions ouvertes de la revue (`CAND-Q01` à `CAND-Q22`, dont 
 bloquantes). Le travail ne reprend que sur les points qu'il aura tranchés, dans
 l'ordre de la section 14 de la spécification : arbitrage, spécification verticale
 consolidée, maquettes et leur contrôle, puis implémentation. Les fiches au
-catalogue (`docs/current/CATALOGUE_ECRANS_RECRUTEMENT.md`, à créer) s'inscrivent
-avant tout fichier `.dart` (section 10 de la revue).
+catalogue (`docs/current/CATALOGUE_ECRANS_RECRUTEMENT.md`, inscrites le 21/10,
+statut proposé) s'inscrivent avant tout fichier `.dart` (section 10 de la revue).
 
 **Réponses du 21/10 : les 22 questions ont une réponse**
 (`docs/current/DECISION-CANDIDATURES-2026-10-21.md`, ligne datée au journal `08`).
@@ -63,6 +63,9 @@ la question. Une réponse ne devient une décision qu'une fois versée dans
    (`CAND-Q15`), chacun avec son correctif proposé, sa recette, sa reprise des
    données, l'ordre d'application et ce que le directeur doit trancher. Rien n'y
    est appliqué ni rejoué.
+7. `docs/current/CATALOGUE_ECRANS_RECRUTEMENT.md` : une fiche par écran du module
+   (18 écrans, statut proposé), à valider par le directeur fiche par fiche avant
+   toute maquette.
 
 ## Règles qui tiennent déjà, quoi que décide le directeur
 
