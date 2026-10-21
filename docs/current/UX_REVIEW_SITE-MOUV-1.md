@@ -204,6 +204,7 @@ Inspection après ces corrections :
 | Recette 3 | 6,5 (7,1 à 7,5 sans plafond) | 6,5 | 6,5 | « presque » |
 | Recette 4 | 7,28 | 6,3 | 6,32 | « presque » |
 | Recette 5 | 7,28 | 6,4 | 6,33 | « presque » |
+| Recette 6 | 7,33 | 6,13 | 6,17 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -278,6 +279,23 @@ Inspection des 18 pages après ces corrections : 0 FAIL sur les 10 pages de l'of
 | Q11 | Tarifs au téléphone : cercle au bord, légende dessus, prix sous la ligne de flottaison | Les deux prix d'abord, le cercle centré ensuite, la légende dessous |
 
 Inspection des six pages après ces corrections, à 1440, 768 et 390 px : 0 FAIL. Restent des WARN : texte blanc sur violet à 6,5:1, aucune vidéo, texte fixe sur l'image de l'accueil (la porte), marges inégales à 768 px. Aucun texte sous 15 px. Tous les titres de page tiennent en deux lignes de 360 à 1440 px ; à 320 px, celui de l'académie en prend trois. Tests : 64, OK.
+
+**Corrections après la recette 6.** Pour les trois jurés, l'accueil est au niveau des références ; les pages intérieures, pas encore.
+
+| # | Relevé | Correction |
+|---|---|---|
+| R1 | Tablette : le cercle de la première étape de l'accueil remonte sur les deux liens d'action (défaut introduit en recette 5, quand la tuile a cessé de couper ce qui dépasse) | Chaque cercle est plafonné à la hauteur de sa tuile. Un détecteur de recouvrement passe maintenant à chaque largeur : plus aucun lien ni titre sous une image, hors la porte de l'accueil, qui couvre le texte par conception pendant qu'on la traverse |
+| R2 | Unités coupées dans les tableaux de Tarifs (« 6 à / 17 ans », « 5 / min », « 3 / à 5 », « 5 % de / remise ») | Chaque cellule de tableau et chaque remise passe par la même liaison : fourchettes, durées, pourcentages et montants restent avec leur unité |
+| R3 | « d'Al-Fatiha » seul sur une ligne dans la quatrième arche | La précision après la virgule passe dessous, plus petite et d'un seul tenant |
+| R4 | Ligne courte forcée dans les cartes d'étapes ; puces de prix coupées | Texte des cartes d'étapes à 18 px sur une colonne plus large ; puces des cartes de prix à 18 px, la première tient sur une ligne |
+| R5 | Le mot géant « Commencer » répète le bouton juste au-dessus | Sur l'accueil, le mot géant devient lui-même le bouton, avec sa flèche ; le libellé reste pour les lecteurs d'écran |
+| R6 | Tablette : téléphone étiré (images de 650 à 750 px, titres de section à 30 px, pied de page sur une colonne) | Titres de section à 38 px ; images plafonnées à 420 ou 440 px ; les trois étapes de l'accueil côte à côte ; pied de page en trois colonnes |
+| R7 | Arches de Cours : 150 à 250 px de vide entre l'arabe et le libellé | Marches de 50 px au lieu de 70 ; l'arabe se pose juste au-dessus du libellé |
+| R8 | Familles : seconde porte et enseignante aux lunettes deux fois | « Vous choisissez parmi nos horaires » montre « La petite classe » (lot 2, scène 5 : la classe vue du dessus, chacun chez soi), à côté du texte |
+| R9 | Académie : les deux élèves vus du dessus, déjà sur l'accueil et Familles | Les trois fondateurs, leurs noms en grand, repris du texte (le build vérifie qu'ils y figurent). La bande « Transmettre le savoir tel qu'il a été reçu » prend un détail sans personne : le haut de l'arche faite de pages et la porte ouverte, ce que le texte des fondateurs décrit |
+| R10 | Titre de l'Académie à 1,3 fois un titre de section au téléphone | Titre ramené à « Une académie du Coran » : la date est dans la phrase juste dessous. 1,88 fois à 390 px, deux lignes dès 320 px |
+
+Inspection des six pages après ces corrections : 0 FAIL. Tests : 64, OK.
 
 Contraintes que la recette ne pouvait pas lever : le directeur a fourni treize illustrations, presque toutes des portes (question O-20) ; les encarts du 18/10 se publient tels quels.
 

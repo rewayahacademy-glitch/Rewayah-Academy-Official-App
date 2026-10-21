@@ -15,11 +15,9 @@
       "figures": {
         "profils": "detail-eleve-haut",
         "suivi": "detail-pupitre",
-        "organisation": "gros-plan-famille"
+        "organisation": "petite-classe"
       },
-      "pleine": [
-        "organisation"
-      ],
+      "pleine": [],
       "fonds": {
         "organisation": "lavande",
         "en-bref": "prune"
@@ -129,7 +127,8 @@
         "apres": "projet",
         "phrase": "Transmettre le savoir tel qu’il a été reçu.",
         "sous": "Le nom Rewayah dit ce projet : transmettre, sans rien altérer.",
-        "fond": "prune"
+        "fond": "prune",
+        "image": "detail-arche-livre"
       },
       "fin": {
         "titre": "Découvrez les cours.",
@@ -139,7 +138,6 @@
       },
       "figures": {
         "projet": "detail-tabouret",
-        "fondateurs": "detail-deux-eleves",
         "famille": "detail-fille-enseignante"
       },
       "pleine": [
@@ -148,7 +146,21 @@
       "fonds": {
         "famille": "lavande"
       },
-      "cadre": "libre"
+      "cadre": "libre",
+      "noms": {
+        "fondateurs": [
+          {
+            "nom": "Abdoulaye Mouhidine Sow",
+            "role": "directeur"
+          },
+          {
+            "nom": "Mamadou Alimou Diallo"
+          },
+          {
+            "nom": "Ahmadou Diallo"
+          }
+        ]
+      }
     },
     "/fr/articles": {
       "image": "adulte-femme-livre",

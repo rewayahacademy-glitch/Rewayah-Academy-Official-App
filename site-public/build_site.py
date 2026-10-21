@@ -637,10 +637,15 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, mot: str | None
     les pages interieures gardent une bande sobre, pour que ce mot reste une signature et non un gabarit."""
     externe = href.startswith("mailto:")
     sobre = "" if mot else " appel--sobre"
-    grand_mot = f'<span class="appel__mot" aria-hidden="true">{esc(mot)}</span>' if mot else ""
+    fleche = ('<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" '
+              'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>')
+    # Avec le grand mot, c'est lui le bouton : le libelle reste pour les lecteurs d'ecran, sans pilule a l'ecran,
+    # pour que le meme verbe ne s'affiche pas deux fois l'un sous l'autre.
+    bouton = "sr-only" if mot else "appel__bouton"
+    grand_mot = f'<span class="appel__mot" aria-hidden="true">{esc(mot)}{fleche}</span>' if mot else ""
     return f'''<section class="appel{sobre}" id="{esc(identifiant)}" aria-labelledby="appel-titre">
   <a class="appel__lien" href="{esc(href)}">
-    <span class="appel__haut"><h2 id="appel-titre">{titre_html(titre)}</h2><span class="appel__phrase">{esc(phrase)}</span><span class="appel__bouton">{esc(label)}{'<span class="sr-only"> (ouvre votre messagerie)</span>' if externe else ""}<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+    <span class="appel__haut"><h2 id="appel-titre">{titre_html(titre)}</h2><span class="appel__phrase">{esc(phrase)}</span><span class="{bouton}">{esc(label)}{'<span class="sr-only"> (ouvre votre messagerie)</span>' if externe else ""}{"" if mot else fleche}</span></span>
     {grand_mot}
   </a>
 </section>'''
@@ -663,6 +668,15 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str) -> str:
 
 # --- Pages interieures -------------------------------------------------------------
 
+def libelle_arche(point: str) -> str:
+    """Libelle d'une arche du parcours : la precision apres la virgule passe dessous, plus petite et d'un seul tenant
+    (« Les sourates courtes, » puis « d'Al-Fatiha à Az-Zalzalah »)."""
+    tete, virgule, precision = point.partition(", ")
+    if not virgule:
+        return f'<span>{texte_html(point)}</span>'
+    return (f'<span>{texte_html(tete)},<span class="parcours__precision"> {esc(precision).replace(" ", chr(0xa0))}</span></span>')
+
+
 def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str, status: str,
                    tarifs: dict | None = None) -> str:
     intro = f'<p class="hero-intro">{texte_html(page["intro"])}</p>' if page.get("intro") else ""
@@ -682,7 +696,7 @@ def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str
         arches = "".join(
             '<li class="parcours__etape">'
             + (f'<span class="parcours__arabe" lang="ar" dir="rtl" aria-hidden="true">{esc(a)}</span>' if a else "")
-            + f'<span>{texte_html(p)}</span></li>'
+            + libelle_arche(p) + '</li>'
             for p, a in zip(sec.get("points", []), arabe))
         return (f'<section class="entete-page entete-page--haut-parcours">{texte}'
                 f'<ol class="parcours parcours--haut" aria-label="{esc(sec["title"])}" data-revele-enfants>{arches}</ol></section>')
@@ -731,6 +745,11 @@ def bande_image(reglage: dict, images: dict) -> str:
         # Une phrase seule, en grand, sur un champ de couleur : un changement de fond dans la page.
         return (f'<div class="fond fond--{esc(bande.get("fond", "lavande"))}"><div class="bande-phrase" data-revele>'
                 f'<p class="bande-phrase__phrase">{titre_html(bande["phrase"])}</p>{sous}</div></div>')
+    if bande.get("fond"):
+        # Une phrase en grand et un detail cadre, sur un champ de couleur : la phrase a gauche, l'image a droite.
+        return (f'<div class="fond fond--{esc(bande["fond"])}"><div class="bande-image bande-image--detail" data-revele>'
+                f'{scene(images, bande["image"], "(max-width: 839px) 72vw, 420px", "bande-image__scene")}'
+                f'<div class="bande-image__texte"><p class="bande-phrase__phrase">{titre_html(bande["phrase"])}</p>{sous}</div></div></div>')
     return (f'<div class="bande-image bande-image--{esc(bande.get("forme", "large"))}" data-revele>'
             f'{scene(images, bande["image"], "100vw", "bande-image__scene")}'
             + (f'<div class="bande-image__texte"><p class="bande-image__phrase">{titre_html(bande["phrase"])}</p>{sous}</div>'
@@ -738,6 +757,12 @@ def bande_image(reglage: dict, images: dict) -> str:
 
 
 def figure_section(reglage: dict, images: dict, sid: str) -> str:
+    noms = (reglage.get("noms") or {}).get(sid)
+    if noms:
+        # Des noms en grand a la place d'une image : ils redisent le texte de la section, sans rien ajouter.
+        lignes = "".join(f'<li><span class="noms__nom">{esc(n["nom"])}</span>'
+                         + (f'<span class="noms__role">{esc(n["role"])}</span>' if n.get("role") else "") + "</li>" for n in noms)
+        return f'<div class="section__figure section__figure--noms" data-revele><ul class="noms" aria-hidden="true">{lignes}</ul></div>'
     ident = (reglage.get("figures") or {}).get(sid)
     if not ident:
         return ""
@@ -820,6 +845,11 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
             raise ValueError(f"direction.json {route}: a duo names two neighbouring sections, in page order: {duo}")
         if any(d in fonds or d == apres for d in duo):
             raise ValueError(f"direction.json {route}: a duo section cannot carry a fond or a bande: {duo}")
+    for sid, noms in (reglage.get("noms") or {}).items():
+        texte = " ".join(_sections_par_id(page)[sid].get("paragraphs", []))
+        for n in noms:
+            if n["nom"] not in texte or (n.get("role") and n["role"] not in texte):
+                raise ValueError(f"direction.json {route}: noms.{sid} must repeat the section text ({n['nom']})")
     if reglage.get("haut") not in (None, "texte", "parcours", "prix", "gros-plan"):
         raise ValueError(f"direction.json {route}: unknown haut {reglage.get('haut')!r}")
     if reglage.get("haut") in ("prix", "gros-plan") and not reglage.get("image"):

@@ -455,6 +455,31 @@
         2202,
         1386
       ]
+    },
+    "petite-classe": {
+      "source": "lot 2, image_911ed81e (21/10), scène 5 « la petite classe », détourée",
+      "largeur": 619,
+      "hauteur": 542,
+      "alt": "Vue du dessus : quatre élèves, chacun chez soi sur son îlot, devant un pupitre ou un ordinateur, entourent leur enseignante assise au centre ; un anneau violet relie les îlots.",
+      "recadrage": [
+        403,
+        115,
+        1022,
+        657
+      ]
+    },
+    "detail-arche-livre": {
+      "source": "14 (scène publiée, 1005 px), sans personne",
+      "largeur": 540,
+      "hauteur": 540,
+      "alt": "Le haut d’une arche faite des pages d’un livre ; dessous, une porte ouverte sur une pièce claire.",
+      "recadrage": [
+        80,
+        0,
+        620,
+        540
+      ],
+      "forme": "cercle"
     }
   }
 }

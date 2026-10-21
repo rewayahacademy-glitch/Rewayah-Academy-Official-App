@@ -27,7 +27,8 @@ Neuf scènes reçues sur dix ; manque la 4 (l'enseignante qui écoute et corrige
 - **Écriture** : le Coran ouvert de la scène 3 (l'adulte le soir) porte une fausse écriture. Le livre ouvert de la scène 1 montre des lignes. À refaire, livre fermé.
 - **Lunettes** : des lunettes lavande sur presque tous les adultes. Seule l'enseignante en porte.
 - **Scène 6** : l'ordinateur est posé sur le pupitre, contre le livre. Il doit être posé à côté, sur le sol.
-- **Utilisables tels quels** : la scène 5 (la petite classe vue du dessus), parce que les personnages y sont petits et vus d'en haut.
+- **Utilisables tels quels** : la scène 5 (la petite classe vue du dessus), parce que les personnages y sont petits et vus d'en haut. Elle est publiée sur Familles, dans « Vous choisissez parmi nos horaires ».
+- **Décision du directeur (21/10)** : le site garde le style réaliste actuel. Les neuf autres scènes sont à régénérer avec le bloc de style v2 et une illustration actuelle en référence.
 
 ## Les scènes
 

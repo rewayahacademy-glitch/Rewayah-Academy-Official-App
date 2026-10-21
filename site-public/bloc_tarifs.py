@@ -379,8 +379,17 @@ def note_date_effet(tarifs: dict, aujourdhui: date) -> str:
     return texte
 
 
+def lie(phrase: str) -> str:
+    """Fourchettes, durees, pourcentages et nombres restent avec leur unite (« 6 à 17 ans », « 5 min », « 5 % de remise »)."""
+    phrase = re.sub(r"(\d+) à (\d+)", "\\1\u00a0à\u00a0\\2", phrase)
+    phrase = re.sub(r"(\d+) h (\d+)", "\\1\u00a0h\u00a0\\2", phrase)
+    phrase = re.sub(r"(\d+(?:,\d+)?) (%|\$) (de|d’) ?", lambda m: f"{m[1]}\u00a0{m[2]}\u00a0{m[3]}" + ("\u00a0" if m[3] == "de" else ""), phrase)
+    phrase = re.sub(r"(\d+(?:,\d+)?) (%|\$)", "\\1\u00a0\\2", phrase)
+    return re.sub(r"(\d+) (élèves|ans|personnes|séances|min|h|enfants|adultes)\b", "\\1\u00a0\\2", phrase)
+
+
 def _tableau(legende: str, colonnes: tuple[str, str], lignes: list[tuple[str, str]], css: str = "") -> str:
-    corps = "".join(f'<tr><th scope="row">{esc(a)}</th><td>{esc(b)}</td></tr>' for a, b in lignes)
+    corps = "".join(f'<tr><th scope="row">{esc(lie(a))}</th><td>{esc(lie(b))}</td></tr>' for a, b in lignes)
     classe = f"price-table {css}".strip()
     return (f'<table class="{classe}"><caption>{esc(legende)}</caption><thead><tr>'
             f'<th scope="col">{esc(colonnes[0])}</th><th scope="col">{esc(colonnes[1])}</th></tr></thead>'
@@ -432,7 +441,7 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
         if p["cumulMaxPourMille"]:
             points.append(f"Les remises du foyer, du prépaiement et du parrainage ne dépassent jamais"
                           f" {fmt_pour_mille(p['cumulMaxPourMille'])} du prix.")
-        liste = ('<ul class="fact-list">' + "".join(f"<li><strong>{esc(t)}</strong></li>" for t in points) + "</ul>"
+        liste = ('<ul class="fact-list">' + "".join(f"<li><strong>{esc(lie(t))}</strong></li>" for t in points) + "</ul>"
                  if points else "")
         return parties[0] + liste
     if nom == "famille":
@@ -462,11 +471,6 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
 
         # Les phrases de l'encart, sans en changer un mot, posees une par ligne pour se lire d'un coup d'oeil.
         # Une fourchette (« 3 à 5 ») et un nombre suivi de son unite ne se coupent pas.
-        def lie(phrase: str) -> str:
-            phrase = re.sub(r"(\d+) à (\d+)", "\\1\u00a0à\u00a0\\2", phrase)
-            phrase = re.sub(r"(\d+) h (\d+)", "\\1\u00a0h\u00a0\\2", phrase)
-            return re.sub(r"(\d+) (élèves|ans|personnes|séances|min|h)\b", "\\1\u00a0\\2", phrase)
-
         def lignes(texte: str) -> str:
             phrases = re.split(r"(?<=\.) (?=[A-ZÀ-Ý0-9])", texte)
             return '<ul class="fiche__lignes">' + "".join(f"<li>{esc(lie(ph))}</li>" for ph in phrases) + "</ul>"
