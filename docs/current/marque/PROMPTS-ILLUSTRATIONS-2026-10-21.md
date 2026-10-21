@@ -13,9 +13,21 @@ Chaque image reste une illustration, légendée « Illustration » sur le site (
 
 ## Bloc de style commun (à coller en premier)
 
+Version 2, du 21/10 après le premier lot. La version 1 demandait un rendu « stylised » : le générateur a dessiné des personnages de figurine (grosses têtes, visages lisses), qui ne vont pas avec les rendus réalistes du site. Joindre **toujours** une illustration actuelle comme image de référence, par exemple « père et fils à la porte ».
+
 ```
-Soft stylised 3D render, not a photograph, same art direction as the reference images: calm, dignified, minimal set. Palette: lavender and violet (#8652E6, #BA98FB, #EEE6FA), white and warm cream highlights, a few natural wood tones. Soft diffused studio light from the upper left, gentle warm light, subtle contact shadows on the floor. Modest Islamic clothing: women and girls in hijab and long dresses or abaya, men and boys in thobe and kufi. Natural proportions, serene faces. Absolutely no text, letters, numbers, calligraphy, logos or watermarks anywhere; any Quran is closed, or open with its pages softly out of focus and unreadable; any screen shows only a soft blurred image, no interface. Plain uniform light lavender background (#EEE6FA), nothing else in the background. The whole scene sits inside the frame with a generous margin. High resolution, 2400 px minimum.
+Realistic 3D render with natural human proportions, in exactly the same art direction as the attached reference image: same lighting, same materials, same faces and body proportions. Not cartoon, not stylised, no big heads, no clay or toy look. Palette: lavender and violet (#8652E6, #BA98FB, #EEE6FA), white and warm cream, natural light wood. Soft diffused studio light from the upper left, subtle contact shadows on the floor. Modest Islamic clothing: women and girls in hijab and long dresses or abaya, men and boys in thobe and kufi. Serene faces. Nobody wears glasses unless the scene asks for it. Absolutely no text, letters, numbers, calligraphy, logos or watermarks anywhere; any Quran is closed; any screen shows only a soft blurred image, no interface. Plain uniform light lavender background (#EEE6FA), nothing else in the background. The whole scene sits inside the frame with a generous margin. High resolution, 2400 px minimum on the long side.
 ```
+
+## Retour sur le premier lot (21/10, dossier « images site public 2 »)
+
+Neuf scènes reçues sur dix ; manque la 4 (l'enseignante qui écoute et corrige).
+
+- **Style** : personnages de figurine, proportions différentes des rendus actuels. Couleurs, lumière et fond s'harmonisent ; le dessin des personnages, non.
+- **Écriture** : le Coran ouvert de la scène 3 (l'adulte le soir) porte une fausse écriture. Le livre ouvert de la scène 1 montre des lignes. À refaire, livre fermé.
+- **Lunettes** : des lunettes lavande sur presque tous les adultes. Seule l'enseignante en porte.
+- **Scène 6** : l'ordinateur est posé sur le pupitre, contre le livre. Il doit être posé à côté, sur le sol.
+- **Utilisables tels quels** : la scène 5 (la petite classe vue du dessus), parce que les personnages y sont petits et vus d'en haut.
 
 ## Les scènes
 
@@ -24,7 +36,7 @@ Soft stylised 3D render, not a photograph, same art direction as the reference i
 Format : paysage 3:2. Le sujet occupe les deux tiers droits ; le tiers gauche reste calme pour le titre.
 
 ```
-At home, a girl of about 9 in a white hijab sits on a low cushion at a small wooden book stand, following her online Quran lesson on an open laptop placed on a low table; the laptop screen shows a soft blurred image of a woman teacher. Her mother, in a black abaya and white hijab, sits a little behind her on a low sofa, listening quietly with a cup of tea, attentive but not intervening. A lavender rug, an arched window shape suggested in soft light. Three-quarter view from slightly above.
+At home, a girl of about 9 in a white hijab sits on a low cushion at a small wooden book stand holding a closed book, following her online Quran lesson on an open laptop placed on a low table; the laptop screen shows a soft blurred image of a woman teacher. Her mother, in a black abaya and white hijab, sits a little behind her on a low sofa, listening quietly with a cup of tea, attentive but not intervening. A lavender rug, an arched window shape suggested in soft light. Three-quarter view from slightly above.
 ```
 
 ### 2. Le garçon qui récite (Cours, enfants)
@@ -40,7 +52,7 @@ A boy of about 8 in a white thobe and purple kufi sits cross-legged on a lavende
 Format : paysage 3:2, sujet à droite.
 
 ```
-A woman of about 35 in a dark violet hijab studies in the evening at a simple wooden desk, wearing a light headset, a laptop open in front of her showing a soft blurred video image of her teacher; a closed Quran on a wooden stand and a small notebook beside it. Warm desk lamp light mixed with the soft lavender ambience. Three-quarter view.
+A woman of about 35 in a dark violet hijab, without glasses, studies in the evening at a simple wooden desk, wearing a light headset, a laptop open in front of her showing a soft blurred video image of her teacher; a closed Quran lying flat on a wooden stand and a small notebook beside it. Warm desk lamp light mixed with the soft lavender ambience. Three-quarter view.
 ```
 
 ### 4. L'enseignante qui écoute et corrige (Accueil, Recrutement)
@@ -64,7 +76,7 @@ Top-down view of a stylised diorama: four small round lavender platforms arrange
 Format : paysage 3:2, nature morte, aucune personne.
 
 ```
-A calm still life on a lavender floor: a wooden folding book stand holding a closed Quran with a plain violet cover, a closed laptop, a small notebook with a pencil, a lavender floor cushion, and a small plain card with three soft violet dots (no text). Soft light from the upper left, gentle shadows. Viewed from slightly above, three-quarter angle.
+A calm still life on a lavender floor: a wooden folding book stand holding only a closed Quran with a plain violet cover; on the floor beside the stand (never on it), a closed laptop, a small notebook with a pencil, a lavender floor cushion, and a small plain card with three soft violet dots (no text). Soft light from the upper left, gentle shadows. Viewed from slightly above, three-quarter angle.
 ```
 
 ### 7. Choisir un horaire (Comment ça marche, étape 2)
