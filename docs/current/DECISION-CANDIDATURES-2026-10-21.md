@@ -63,6 +63,7 @@ enseignants de côté et se concentrer seulement sur les élèves. »
 | Pour qui | **L'offre pour les élèves seulement.** Le recrutement des enseignants est laissé de côté pour l'instant. |
 | La carte | Simple, peu d'éléments, au style du site public ; **aucun prix** (ils restent sur le site public) ; **un seul hadith** : « الدال على الخير كفاعله », avec sa traduction ; une description courte ; le lien vers l'offre. |
 | Le ton | Encourager sans mentir et sans forcer. Facultatif, et sans aucun effet sur la candidature. |
+| L'angle (directeur, 22/10, après coup) | « Ce n'est pas bon en marketing, tu leur demandes de faire une action sans aucune contrepartie […] le hadith seul ne peut pas se faire […] Il faut penser aux élèves. Il faut leur parler de l'intérêt que l'élève va avoir. Pas Rewayah Academy. » **Aucun texte ne demande d'agir pour l'académie.** La tuile parle à celui qui partage de la personne qui apprendra (« Un proche veut apprendre le Coran ? ») ; la carte parle au futur élève de ce qu'il gagne ; le hadith reste, en motif personnel, pas seul. Les mots exacts sont soumis au directeur avec les captures. |
 | Source du hadith | La formulation « الدال على الخير كفاعله » est celle que rapporte at-Tirmidhi (n° 2670, d'après Anas) ; Muslim (n° 1893) rapporte le même sens sous la forme « من دل على خير فله مثل أجر فاعله ». La référence affichée et la traduction française sont à confirmer par le directeur avant toute mise en ligne. |
 
 ## 2. Conditions de mise en oeuvre signalées au directeur
