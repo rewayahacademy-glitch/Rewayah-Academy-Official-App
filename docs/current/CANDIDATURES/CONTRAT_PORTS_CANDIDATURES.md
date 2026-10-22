@@ -124,7 +124,11 @@ courriel, téléphone, genre ni pièce.
 questionnaire), les `controles` (nom, vrai ou faux, cause), l'état de la pièce
 (lu, jamais la pièce), les entretiens, la prochaine action, après confirmation
 `coordonneesFinancieres` (`absentes` ou `enregistrees`, lues dans CPT-13), et
-`version`.
+`version`. Depuis le 22/10, aussi `autresCompetences` (nul sans réponse) :
+`domaines` (objet domaine → niveau), `autreTexte` (nul sans le domaine `autre`),
+`disponibilite`, `accord`, `accordLe` (UTC, nul sans accord) et `majLe` (UTC), dans la
+même portée que le dossier (`HorsPortee` sans aucune donnée, exception du super-admin
+journalisée).
 
 **`FiltreCandidatures`** : type, étape, état, issue, pause, responsable, pays de
 résidence, langues d'explication, niveau de mémorisation déclaré, heures par
@@ -133,7 +137,20 @@ semaine, date de début, pièce (état lu dans `kyc_documents`), paiement (`inco
 des quatre), date de réception, dernière activité, `recherche?` (nom partiel
 normalisé arabe et latin, référence `CAND-` exacte, courriel exact ; téléphone
 exact réservé à `peutVoirContact` et journalisé). Une candidature en pause
-n'entre dans aucun des quatre compteurs d'alerte.
+n'entre dans aucun des quatre compteurs d'alerte. **Autres compétences** (lot
+`CAND-AUTRES` du 22/10, `CAND-BR-19`, sections 3 bis et 3 ter) : `competenceDomaine` (un
+**code du catalogue** des compétences, désactivé ou non, **ou une famille** : tous les codes de
+cette famille, désactivés compris), `competenceNiveauMin` (`debutant`, `experience` ou `metier` : ce niveau ou plus ;
+sans domaine, « au moins un domaine à ce niveau »), `competenceDisponibilite` (valeur
+exacte : `quelques_heures`, `mi_temps`, `plus` ou `pas_maintenant`) et `competenceAccord`
+(booléen : `true` seulement les personnes qui acceptent d'être contactées, `false` celles qui
+ont répondu sans accord). Une clé à `null` vaut une clé absente ; chaque clé de compétence
+exige qu'une réponse existe ; une valeur hors catalogue, hors familles ou hors liste fermée est
+refusée (`22023`). La recherche
+d'une personne pour une mission envoie toujours `competenceAccord: true` et lit l'`issue` de
+chaque ligne (une candidature retirée garde ses réponses et son accord : point à trancher,
+`PROPOSITION_AUTRES_COMPETENCES.md` section 7). Les lignes de la
+liste ne changent pas : aucune réponse de compétence n'y figure.
 
 **`EtatEntretien`** : `aPlanifier`, `planifie`, `sessionDisponible` (voie 2),
 `enCours`, `termine`, `annule`, `manque`, `lienIndisponible`.
@@ -206,6 +223,106 @@ d'accords existante, une sorte d'accord de plus et sa version requise
 d'IBAN, de numéro de portefeuille, d'identifiant ni de code ; le numéro WhatsApp
 de contact n'est jamais présenté ni réutilisé comme numéro de portefeuille.
 
+## 3 bis. Les autres compétences du candidat (`PortAutresCompetences`, `CAND-BR-19`, « Vos autres talents »)
+
+Décision du directeur du 22/10 (`DECISION-CANDIDATURES-2026-10-21.md`, section 1 quater) ;
+conception : `PROPOSITION_AUTRES_COMPETENCES.md` (section 7 pour le serveur). Parcours **facultatif**
+de la salle d'attente, **après l'envoi** de la Salle d'examen. **Ce n'est pas un état** : ni
+`etat_dossier()` ni la candidature n'en portent rien ; le port lit et écrit ses propres
+réponses. Lot serveur `présent dans le code`, `testé localement` le 22/10, ni staging ni
+production ; aucun adaptateur `*_supabase.dart` n'existe encore. **Les compétences proposées sont
+celles du catalogue** (section 3 ter) : précises, regroupées par famille, que la direction complète
+sans nouvelle version de l'app (décision du directeur du 22/10 : « il faut être spécifique dans ce
+que tu vas demander comme compétence »).
+
+| Méthode (RPC) | Entrée | Sortie | Erreurs propres | Dépend de |
+| :--- | :--- | :--- | :--- | :--- |
+| `lire` (`lire_autres_competences()`) | aucune | `AutresCompetences` : `ouvert` (booléen), `raison` (nulle si ouvert, sinon `questionnaire_non_envoye` ou `candidature_close`), `version` (0 sans réponse), `reponses?` (`domaines` objet domaine → niveau, `autreTexte`, `disponibilite`, `accord`, `accordLe`, `majLe`, instants en UTC), `referentiel` (`familles` : les six familles dans l'ordre d'affichage ; `competences` : les entrées du catalogue dans l'ordre famille, `ordre`, code, soit **les actives et, avec `actif = false`, celles de sa propre réponse** ; `niveaux`, `disponibilites` ; `autreTexteMax` = 200) | `PermissionInsuffisante` (`42501` : pas le titulaire d'une candidature d'enseignant, ou compte non valide) | `CAND-BR-19` |
+| `enregistrer` (`enregistrer_autres_competences(p_domaines jsonb, p_autre_texte text, p_disponibilite text, p_accord boolean, p_version_attendue integer, p_cle_idempotence text)`) | `domaines` (au moins 1 code du catalogue, chacun avec son niveau), `autreTexte?` (exigé avec `autre`, refusé sinon), `disponibilite`, `accord`, `versionAttendue` (0 sans réponse), `cleIdempotence` (8 à 200 signes) | `{version, inchange, rejoue}` ; **jamais une réponse** : l'écran relit par `lire` | `QuestionnaireNonEnvoye`, `CandidatureClose` (l'issue est rendue : `refusee` ou `retiree`), `ConflitAutresCompetences` (`versionCourante` rendue), `ReponsesInvalides` (champs parmi `domaines`, `autreTexte`, `disponibilite`, chacun avec son motif sous `motifs` : `domaines_requis`, `domaine_inconnu` (absent du catalogue), `domaine_desactive` (au catalogue, désactivé, et pas déjà dans sa réponse enregistrée), `niveau_invalide`, `texte_requis`, `texte_non_attendu`, `texte_trop_long`, `texte_invalide`, `disponibilite_inconnue`), `CleReutilisee` (`cle_idempotence_reutilisee` : une clé qui a servi à une autre candidature ou à un autre geste) | `CAND-BR-19` |
+| `retirer` (`retirer_autres_competences(p_version_attendue integer, p_cle_idempotence text)`) | `versionAttendue`, `cleIdempotence` | `{retire, version, rejoue}` ; `retire = false` quand rien n'était enregistré | `ConflitAutresCompetences`, `CleReutilisee` | `CAND-BR-19` |
+
+- **Les refus métier sont rendus, non levés** : un objet `{erreur: ...}`, sans aucune écriture
+  (comme `PortMaCandidature`). Seuls un appelant qui n'est pas le titulaire (`42501`) et un
+  argument absent ou mal formé (`22023`, par exemple une version négative ou une clé trop courte)
+  lèvent.
+- **Ordre des refus** de `enregistrer` : titulaire (`42501`, avant toute validation : un compte qui n'est pas
+  le titulaire n'apprend rien des arguments), arguments (`22023`), rejeu de la clé (le premier résultat,
+  `rejoue = true`, même si la version ou le contenu ont changé), candidature close ou envoi
+  manquant, version, forme des réponses. Seuls les succès gardent leur clé : un refus se rejoue
+  avec la même clé.
+- **`retirer` reste permis** à une candidature refusée ou retirée (la personne retire son accord
+  « à tout moment »), jamais à un compte non valide. **`enregistrer` exige** une candidature en
+  cours, après l'envoi, pause comprise.
+- **Une écriture identique à l'état courant** (même contenu, même accord) ne change rien :
+  `inchange = true`, version et date d'accord intactes.
+- **L'accord** est un booléen avec sa date : la date est celle de l'écriture qui l'a posé et
+  disparaît avec lui. Décocher n'efface pas les réponses (`retirer` le fait).
+- **Aucune dépendance de décision** : ces réponses ne sont lues par aucun contrôle de passage,
+  par aucun calcul du paiement ni par `etat_dossier()`.
+- **Aucun montant, aucune rémunération de mission** : « chaque mission aura ses conditions »
+  (proposition, section 3).
+
+## 3 ter. Le catalogue des compétences (`PortCatalogueCompetences`, `CAND-BR-19`)
+
+Décision du directeur du 22/10 : demander des compétences **précises** (réseaux sociaux, relations
+publiques, design graphique, montage vidéo, administration, pédagogie…), regroupées par famille
+pour se lire d'un coup d'oeil, et que la direction complète **sans nouvelle version de l'app**.
+La liste vit donc en base : `competences_catalogue`, fermée à tout compte, lue par le candidat et
+la direction par `lire_catalogue_competences()`, écrite par la direction seule par
+`enregistrer_competence_catalogue(...)`. État initial (migration) : **25 compétences en six
+familles** : `communication` (`reseaux_sociaux`, `relations_publiques`, `design_graphique`,
+`montage_video`, `photographie`, `redaction_contenus`, `publicite_en_ligne`, `traduction`),
+`administration` (`assistanat`, `coordination_groupe`, `accueil_familles`, `gestion_projet`,
+`ressources_humaines`), `finances_droit` (`comptabilite`, `gestion_financiere`,
+`juridique_donnees`), `pedagogie` (`conception_programmes`, `formation_enseignants`,
+`qualite_cours`, `tests_niveau`, `accompagnement_enfants`), `technique` (`developpement`,
+`assistance_technique`, `donnees_tableurs`) et `autre` (`autre`). Lot serveur `présent dans le
+code`, `testé localement` le 22/10, ni staging ni production.
+
+**`EntreeCatalogue`** : `code` (stable pour toujours : une réponse ancienne le cite), `famille`,
+`ordre` (rang dans la famille), `libelle` (1 à 80 caractères, une ligne), `exemple?` (1 à 200),
+`actif` ; pour la direction seulement, `version`. Les familles sont une **liste fermée de six**
+(un nom de famille se traduit dans l'app) ; un nom de famille n'est jamais un code, sauf `autre`,
+qui est à la fois la famille et le code du texte libre.
+
+| Méthode (RPC) | Entrée | Sortie | Erreurs propres | Dépend de |
+| :--- | :--- | :--- | :--- | :--- |
+| `lire` (`lire_catalogue_competences()`) | aucune | `CatalogueCompetences` : `familles`, `competences` (`EntreeCatalogue`, dans l'ordre famille, `ordre`, code), `peutModifier` (capacité : vrai pour la direction active seule). **Direction** : tout le catalogue, désactivés compris, avec les versions. **Titulaire d'une candidature d'enseignant** : les actives et, avec `actif = false`, celles de sa propre réponse ; sans version | `PermissionInsuffisante` (`42501` : ni la direction active ni le titulaire) | `CAND-BR-19` |
+| `enregistrer` (`enregistrer_competence_catalogue(p_code text, p_famille text, p_ordre integer, p_libelle text, p_exemple text, p_actif boolean, p_version_attendue integer, p_cle_idempotence text)`) | `code`, `famille`, `ordre?` (nul : à la fin de la famille pour un ajout, inchangé pour une modification), `libelle`, `exemple?`, `actif`, `versionAttendue?` (**nulle = ajout d'un code neuf** ; sinon la version lue : modification), `cleIdempotence` (8 à 200 signes) | `{competence, inchange, rejoue}` (`competence` : l'entrée relue, avec sa version) | `ConflitCatalogue` (`conflit_catalogue` : code déjà là à l'ajout, ou version périmée ; l'entrée relue est rendue), `CompetenceAbsente` (`absente`), `CataloguePlein` (`catalogue_plein`, 100 codes), `CleReutilisee` ; levées : `PermissionInsuffisante` (`42501` : pas la direction active, **y compris le candidat**) et `22023` (code mal formé ou nom de famille, famille inconnue, `autre` hors de la famille `autre`, ordre hors de 1 à 999, libelle vide, trop long ou sur plusieurs lignes, exemple trop long ou sur plusieurs lignes, famille changée, version attendue inférieure à 1, clé trop courte) | `CAND-BR-19` |
+
+- **Ajout seul ou désactivation, jamais de suppression.** Aucun `DELETE` ni `TRUNCATE`, par aucune
+  voie (déclencheur) ; le code et la famille d'une ligne ne changent jamais ; une compétence
+  ajoutée par erreur se **désactive**, et se réactive. Le catalogue est plafonné à 100 codes.
+- **Une compétence désactivée** : n'est plus offerte (absente de la liste d'un candidat qui ne l'a
+  pas déjà choisie), ne peut plus être choisie (`reponses_invalides`, motif `domaine_desactive`) **sauf
+  par qui l'a déjà dans sa réponse enregistrée** : elle la garde (avec son libelle, `actif = false`),
+  peut changer son niveau ou la retirer en enregistrant autre chose, et ne la reprend plus ensuite
+  tant qu'elle n'est pas réactivée ; reste lue dans le dossier par la direction ; reste cherchable
+  (`competenceDomaine`, par son code ou par sa famille) ; `retirer` ne dépend d'aucun état. Une
+  compétence **neuve** est offerte et choisissable aussitôt.
+- **Les textes.** `libelle` et `exemple` sont en français, ceux de la direction. Pour un code que
+  l'app connaît, l'écran affiche **son propre texte** (`fr`, `ar`) ; pour tout autre code, ceux du
+  catalogue. Les textes semés par la migration reprennent les mots de la proposition (section 3) et
+  passent par `mots-rewayah` avant d'être montrés. Une famille nouvelle demande une migration et
+  un libellé dans l'app.
+- **Droits.** Lire : la direction active (sans condition de genre : le catalogue ne porte aucune donnée
+  de personne) ou le titulaire. Écrire : la direction active seule. Ordre des refus : la direction (`42501`, avant toute
+  validation : un autre compte n'apprend rien des arguments), la forme de la clé (`22023`), le rejeu de la clé
+  (avant la validation des autres arguments, comme le référentiel de paiement de `ADM-24`), les arguments
+  (`22023`), puis, à l'ajout, le code déjà là (`conflit_catalogue`) et le plafond, à la modification, le code
+  absent, la famille changée (`22023`), la version, l'écriture identique.
+- **Idempotence.** Une clé rejouée avec la même demande par le même compte rend l'entrée relue
+  (`rejoue = true`) sans écriture ; la même clé pour une autre demande (version attendue comprise)
+  ou un autre compte est refusée ; une modification identique ne change rien (`inchange = true`) et
+  ne garde pas sa clé ; un refus rendu ne garde pas sa clé.
+- **Journal.** Chaque changement, par toute voie (la RPC, une migration, l'éditeur SQL), laisse une ligne
+  en ajout seul (`competences_catalogue_journal` : l'avant, l'après, l'auteur et la clé quand c'est un
+  compte) et une entrée d'`audit_logs` (`competences_catalogue_ecriture` : code, geste, famille, actif
+  avant et après, version, voie ; **jamais un libelle**). Ces entrées n'ont aucun côté : toute direction
+  active les lit (`journal_audit`).
+- **Aucune dépendance de décision** : ni un contrôle de passage, ni le paiement, ni `etat_dossier()` ne
+  lit le catalogue.
+
 ## 4. `PortReferentielPaiement` (`ADM-24`, et une des sources de `CPT-BR-10` : la compatibilité par corridor, ni l'activation des prestataires ni leur solde)
 
 | Méthode | Entrée | Sortie | Erreurs propres | Dépend de |
@@ -247,6 +364,9 @@ référentiel.
    `mes_donnees_export()` (motifs internes exclus) et voie d'effacement pour une
    personne sans compte, selon `CAND-Q21`, question ouverte qui attend l'avis du
    juriste ; rien n'est présumé avant la décision datée.
+   Depuis le 22/10, la table `candidature_autres_competences` (section 3 bis) suit la
+   candidature et entre dans le même lot : anonymisation, export et effacement, avec le
+   texte de « autre » et l'accord.
 7. **Journal** : chaque geste, chaque lecture du contact et chaque lecture hors
    portée laissent une entrée `audit_logs` ; la chaîne reste vérifiable.
 

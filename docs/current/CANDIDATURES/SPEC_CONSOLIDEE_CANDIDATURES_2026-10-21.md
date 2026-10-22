@@ -116,6 +116,7 @@ s'applique, et le lot qui écrit les ports met le contrat à jour.
 | Rouvrir (4.2, ligne 19 : « contrôles de l'étape revérifiés, questionnaire à la version courante ») | lecture stricte (`M/20261022000100_cand_l2a2_gestes_direction.sql:438-504`, `:1085-1128`) : compte conforme (règle de CAND-L1B, nommée au lieu d'être levée) ; pour un état qui suit un envoi (en examen, `paiement_non_disponible`, salle 2), dernier questionnaire envoyé complet à la version courante ; **en salle 2 seulement**, `paiement_compatible` et cadre religieux à la version requise (section 5 : le cadre est exigé pour la salle 2, et rouvrir une candidature de salle 2 est une rentrée en salle 2). Une candidature dont le questionnaire ou, en salle 2, le cadre a changé de version pendant qu'elle était refusée ou retirée ne se rouvre donc pas, et ce blocage ne se lève pas de lui-même : elle ne peut pas ré-accepter un texte avant d'être en cours (policy de `contract_acceptances`, `M/20261022000000_cand_l2a1_moteur_salle_examen.sql:872-906`, `:2006-2069`), et la direction ne peut pas la rouvrir. À l'inverse, une candidature en examen se rouvre sans le cadre ni les conditions de rémunération que la transition 6 exige : seul son questionnaire est contrôlé | la lecture stricte de « contrôles de l'étape revérifiés » (section 5) ; ce n'est pas la règle du candidat qui bloque la salle 2 (rouverte, il peut accepter la version neuve, 4.3), c'est le contrôle d'entrée. À trancher : garder la lecture stricte ; ou retirer le cadre des contrôles de la réouverture en salle 2, le candidat le ré-acceptant ensuite (4.3 : avant la salle 3 ; `etat_dossier()` le nomme déjà dans `aCompleter`), ce qui supprime le blocage ; ou rouvrir alors en `a_completer` |
 | Rouvrir une candidature refusée ou retirée en entretien planifié (4.2, lignes 12, 16, 17, 19) | le refus et le retrait notent `entretienPlanifie` dans l'événement (L4 annulera la séance, lignes 16 et 17) ; la réouverture rend l'étape et l'état d'origine, donc `entretien_planifie`, alors que la séance annulée n'existera plus ; la ligne 12 ramène l'état à `entretien_a_planifier` quand un entretien est annulé. Figé par le scénario de L2A2 pour que L4 le voie ; rien ne l'exerce avant L4, aucune séance n'étant planifiable | 4.2 ne dit pas si l'état d'origine après un entretien annulé est `entretien_planifie` ou `entretien_a_planifier`. À trancher avec L4 : rouvrir en `entretien_a_planifier` quand le refus ou le retrait a noté `entretienPlanifie` (une règle neuve de la table du moteur, `rouvrir` variante 2) |
 | Séparation femmes et hommes, journal compris (`DEC:30`, 8.2, 8.3) | une ligne d'`audit_logs` qui vise une candidature, ou dont l'auteur porte une candidature avant la salle 3, ne se lit que du côté de cette candidature (`journal_audit()`, `journal_audit_filtres()`, lecture directe) ; l'auteur porteur de candidature est rendu par la référence `CAND-` ; la trace d'une tentative hors portée vise l'autre côté : son auteur ne la relit pas ; la lecture directe d'`audit_logs` n'a pas l'exception du super-admin, qui lit les deux côtés par `journal_audit()`, journalisé ; une trace de l'exception qui ne vise aucune candidature n'est lue que sous l'exception (`M/20261022000000_cand_l2a1_moteur_salle_examen.sql:2346-2640`) | 8.2 range l'historique et les compteurs dans la portée ; 8.3 veut la référence, jamais le nom ; une lecture directe ne se journalise pas. À trancher : une direction relit-elle ses propres tentatives hors portée, et la direction de son côté relit-elle les traces de l'exception du super-admin ? |
+| Les autres compétences des candidats (décision du directeur du 22/10 : leur demander discrètement, sans les ennuyer, en disant pourquoi ; `PROPOSITION_AUTRES_COMPETENCES.md`) | **catalogue de compétences précises en base** (25 compétences en six familles ; ajout seul ou désactivation, jamais de suppression ; écrit par la direction seule, journalisé), table à une ligne par candidature et trois RPC du titulaire (`M/20261022000500_cand_autres_competences.sql`) ; ouvert **après l'envoi de la Salle d'examen** (un brouillon n'ouvre rien) et tant que la candidature est en cours, pause comprise ; **retirer ses réponses et son accord reste permis après un refus ou un retrait** de la candidature ; écrire ne change ni la version de la candidature, ni sa dernière activité, ni son journal d'événements ; la validation lit le catalogue actif (une compétence désactivée reste lisible dans une réponse ancienne et ne peut plus être choisie, sauf par qui l'a déjà) ; la direction les lit dans le dossier (`autresCompetences`) et filtre la liste par code ou famille de compétence, niveau minimum, disponibilité exacte et accord, dans la portée femmes et hommes ; **pas d'accord, pas de mission** (règle d'écran : la recherche d'une mission envoie `competenceAccord: true`) ; jamais lues par un contrôle, le paiement ni `etat_dossier()` | la proposition dit « à tout moment » et ne ferme rien ; le reste est la lecture la plus sûre. À trancher : le droit de retirer après un refus (sinon, une personne refusée n'enlève plus son accord), les langues de la compétence `traduction` (aucune n'est portée par le serveur), les libellés du catalogue en arabe (le catalogue ne porte que le français), les familles (liste fermée de six), si le juriste veut la version du texte de l'accord (une colonne de plus), et si une candidature retirée garde son accord d'être contactée (aujourd'hui oui, jusqu'à `retirer_autres_competences`) |
 
 ### 0.3 Ce qui reste ouvert
 
@@ -211,6 +212,7 @@ Mise à jour de `REVUE §6.2` par `DEC:28`, `:34`, `:45`, `:63-64`.
 | Inscription (lien public ou code) | courriel confirmé, nom affiché, genre (obligatoire en base, 3.4), téléphone avec indicatif (indicatif choisi dans une liste, normalisé selon `MAP §4`), langue de l'interface (`fr` ou `ar`), accord de confidentialité | - |
 | Salle d'examen | langues d'explication (codes, **autant que la personne veut**, sans l'arabe : « le programme est international », la langue de cours est celle que l'élève ou le parent choisit et pour laquelle l'académie affecte un enseignant qui la parle) et langue maternelle (**facultative**) ; niveau de mémorisation déclaré (aucune, moins de 10 juz', de 10 à 29, Coran entier) **et** ijaza présentable (oui, prêt à un test, non), deux questions ; niveau de lecture et de tajwid déclaré ; riwaya ; expérience avec les débutants ; disponibilités déclarées (**plages par jour ISO, en heures entières**, dans le fuseau IANA déclaré, 2.1 bis) ; **classes souhaitées** (1, 2 ou 3) ; date de début ; **publics enseignables par tranche d'âge** (6-9, 10-13, 14-17 ans, adultes, au moins une) ; pays de résidence ; pays de versement ; fuseau IANA ; compte bancaire oui ou non ; opérateurs accessibles ; **moyens accessibles** (facultatif, informatif, 5.1) ; accord de rémunération ; cadre religieux et pédagogique | - |
 | Salle de vérification et d'entretien | contrat `teacher_nda`, avis `recording_and_control_notice`, pièce d'identité ; à l'entretien : constat (niveau observé, riwaya, ijaza présentée), compte rendu, avis | salle d'examen terminée et paiement compatible |
+| Après l'envoi de la Salle d'examen, **facultatif** (décision du 22/10, `C/DECISION-CANDIDATURES-2026-10-21.md` section 1 quater ; `PROPOSITION_AUTRES_COMPETENCES.md`) | **autres compétences** : compétences précises du catalogue en base (25 au départ, six familles, que la direction complète), niveau de chacune (`debutant`, `experience`, `metier`), texte court de « autre », disponibilité pour une mission (`quelques_heures`, `mi_temps`, `plus`, `pas_maintenant`), accord d'être contactée ; la raison est dite en premier ; rien sur le salaire d'une mission | l'envoi de la Salle d'examen (jamais dans la salle elle-même : elle reste courte) ; jamais lues par un contrôle, le paiement ni l'état du dossier |
 | Après l'entrée en salle 3 | photo, titre, pays de la carte, `weekly_availability` ; code de conduite tant que le lot `conduite` n'est pas passé (section 13) | l'entrée en salle 3 |
 | Premier versement | coordonnées financières, par `CPT-13` | salle 3 et début des cours |
 
@@ -1202,14 +1204,16 @@ Mise à jour de `REVUE §5.4` par `DEC:30`, `:42`.
 
 | Capacité | Qui | Accède à | N'accède jamais à |
 | :--- | :--- | :--- | :--- |
-| `candidatures.lire` | direction, de son côté ; super-admin les deux côtés, journalisé | réponses, contrôles, étape, historique, réponses importées | pièce hors `ADM-02` |
+| `candidatures.lire` | direction, de son côté ; super-admin les deux côtés, journalisé | réponses, contrôles, étape, historique, réponses importées, **autres compétences** (dossier et filtre de la liste, par code ou par famille) | pièce hors `ADM-02` |
+| `competences.catalogue.lire` | direction active (sans condition de genre) ; le titulaire d'une candidature d'enseignant (les compétences actives et celles de sa propre réponse) | le catalogue des compétences : code, famille, ordre, libellé, exemple, actif (et la version, pour la direction) | rien d'autre |
+| `competences.catalogue.ecrire` | direction active seule, sans condition de genre | ajouter une compétence ou la modifier (libellé, exemple, ordre, actif) ; **jamais de suppression, ni de changement de code ou de famille** ; journalisé | le candidat, la comptabilité, le tuteur |
 | `candidatures.contact` | direction nommée, de son côté | courriel, téléphone, recherche par téléphone ; chaque lecture journalisée | - |
 | `candidatures.importer` | super-admin seul, aal2 exigée en base (3.2) | import, essai à blanc, rapport | - |
 | `candidatures.decider` | direction, de son côté | transitions, pièce dans `ADM-02`, lots | - |
 | `entretiens.mener` | direction (`DEC:42`), du même côté que le candidat, super-admin compris | réponses utiles à l'entretien, date, fuseaux, constat, compte rendu | téléphone, pièce, autres candidatures |
 | `candidatures.messages` | direction, de son côté | le fil `candidature` | les fils de l'autre côté |
 | `paiement.referentiel.ecrire` | direction, comptabilité | référentiel, impact d'un changement | réponses, identité |
-| candidat | le titulaire | sa candidature, son fil, son entretien, ses notifications | tout autre candidat ; listes ; compteurs ; motifs internes ; compte rendu ; constat |
+| candidat | le titulaire | sa candidature, son fil, son entretien, ses notifications, **ses autres compétences** (lire, enregistrer, retirer) | tout autre candidat ; listes ; compteurs ; motifs internes ; compte rendu ; constat |
 | contrôleur, enseignant, tuteur, élève | - | rien | tout |
 
 L'exception du super-admin (`DEC:30`) est une exception **de lecture** : listes,
@@ -1279,6 +1283,16 @@ nom (L2A1).
   `M/20261022000100_cand_l2a2_gestes_direction.sql:256-268`). Les décisions sur un moyen de paiement
   (`candidature_paiement_decisions`, L6) portent un motif interne quand elles
   infirment : le lot de conservation les nomme avec le journal des événements.
+- Une table de `CAND-AUTRES` (22/10) y entre aussi : `candidature_autres_competences`, une ligne par
+  candidature (domaines = codes du catalogue des compétences, niveaux, texte de « autre », disponibilité, accord d'être contactée),
+  effacée avec elle (`ON DELETE CASCADE`) ; la personne peut la retirer à tout moment, même après
+  un refus (`retirer_autres_competences`). **Écart connu, épinglé par le scénario** :
+  `cpt_anonymiser` et `mes_donnees_export` ne la couvrent pas encore, comme les autres tables du
+  module. Le lot de conservation l'ajoute avec elles, texte de « autre » et accord compris.
+- Le **catalogue des compétences** (`competences_catalogue`, `CAND-AUTRES`) ne porte aucune donnée de
+  candidat et ne s'efface jamais. Son journal (`competences_catalogue_journal`) garde en ajout seul
+  l'identifiant du compte de la direction qui a écrit : une donnée du personnel, à suivre par la
+  conservation des comptes (`CPT`), pas par celle des candidatures.
 - **À soumettre au juriste avec `CAND-Q21`** : la base des courriels envoyés aux
   personnes des formulaires avant leur inscription, et la conservation des
   réponses importées de qui ne s'inscrit pas. B n'a recueilli aucun consentement,
@@ -1470,6 +1484,7 @@ lots `langue` et `c11bis`.
 | **L5** conversation, notifications, file des courriels | objet `candidature` dans la messagerie ; compte en attente admis pour cet objet ; notifications ; file `a_envoyer` | `18`, `16` | `Q06`, `Q07`, `Q10` | à écrire | L1 ; contrat de la file remis à la session du site public |
 | **L6** référentiel de paiement | lignes (avec type de décaissement), droits, état initial déduit de `DEC:28`, liste des pays d'Afrique proposée avec sa source, déclencheur de restriction, transitions 8 et 9, alerte, part de `CPT-BR-10` | `13` | `Q05` | présent dans le code et testé localement le 21/10 (5.1), ni staging ni production ; lignes d'Afrique `en_verification` tant que `Q05` est ouvert ; gestes 24 et 25 en L2, notifications en L5 | L1 |
 | Hors module | **PLAFOND** nombre maximal de Classes par enseignant, réglable par la direction (décision du 22/10) | réglage `enseignant.classes_max` (3 par défaut, 1 à 80, journalisé), vérifié par le prédicat d'affectation (`plafond_classes_atteint`), `classesSouhaitees` qui le suit | - | présent dans le code et testé localement le 22/10 (`M/20261022000200` et `M/20261022000300`), ni staging ni production ; reste l'écran du réglage et les phrases de refus du client | L2A1, prédicat de `creer_groupe` |
+| Hors module | **AUTRES COMPÉTENCES** des candidats (« Vos autres talents », décision du 22/10) | `19` : catalogue `competences_catalogue` (25 compétences en six familles, journal en ajout seul, écrit par la direction seule) et table `candidature_autres_competences` (une ligne par candidature, RLS sans policy) ; `lire_autres_competences`, `enregistrer_autres_competences` (après l'envoi de la Salle d'examen, candidature en cours, version attendue, clé d'idempotence), `retirer_autres_competences` (à toute issue) ; `lire_catalogue_competences`, `enregistrer_competence_catalogue` ; `autresCompetences` dans `lire_candidature` et quatre filtres de `lister_candidatures` (domaine = code ou famille), dans la portée femmes et hommes | - (décision du 22/10) | présent dans le code et testé localement le 22/10 (`M/20261022000500_cand_autres_competences.sql`, `supabase/tests/scenarios_cand_autres_competences.sql`), ni staging ni production ; restent l'écran, les textes, le port Dart, la conservation (`Q21`) | L1, L2A1 (envoi, moteur d'idempotence), L2A2 (lectures redéfinies) |
 | Transverse | conservation et anonymisation | `14` | `Q21` | en attente du juriste | - |
 | Transverse | scénarios du module | `15` | - | un fichier par lot | ordre du directeur pour la CI |
 
@@ -1912,6 +1927,121 @@ réouverture) : chacun fait tomber le scénario. Ce qu'il mesure :
   (`af_liste_blanche_volatiles` rouge connu, antérieur : les quatre fonctions
   `avis_*` seulement ; les douze RPC de L2A2 y sont inscrites, `lire_candidature`
   l'était depuis L1).
+
+- **`CAND-AUTRES`** (autres compétences des candidats, 22/10, **passé en catalogue précis le 22/10** sur la
+  précision du directeur ; `supabase/tests/scenarios_cand_autres_competences.sql`, **302 contrôles verts sur
+  base neuve**, `testé localement`) :
+  - droits : les sept RPC (trois du candidat, deux du catalogue, deux lectures redéfinies) DEFINER à
+    `search_path` vide, empreinte F86 à jour, `authenticated` seul, garde positive (candidature du titulaire
+    pour le candidat, direction active pour l'écriture du catalogue, jamais un rôle négatif) ; quatorze aides
+    `competences_` fermées à tout compte, neuf aides `cand_` inchangées ; les trois tables (réponses,
+    catalogue, journal du catalogue) fermées à `anon`, `authenticated`, `service_role` et `agent_ro`
+    (ordres directs refusés), sans policy, séquence du journal fermée ; aucune RPC du lot ne contient
+    « candidature » ; **seules** six fonctions citent la table des réponses (les trois RPC du candidat, la
+    lecture du catalogue pour la propre réponse du titulaire, les deux lectures de la direction) et **seules**
+    trois citent le catalogue en dehors des aides (lecture, écriture, filtre de la liste), par balayage du texte
+    des fonctions de `public`, `private` et `app_private`, avec sa contre-épreuve ; refus (`42501`) du tuteur, de
+    la direction, de la comptabilité, d'un enseignant sans candidature, d'un compte désactivé, d'un accès
+    expiré, d'une candidature d'un autre type, de la session sans compte et d'`anon`, pour chacune des trois RPC
+    du candidat ; le titulaire d'abord (`42501`), les arguments ensuite (`22023`) ;
+  - avant l'envoi : « pas ouvert » avec sa raison, `enregistrer` refusé sans écriture ni clé
+    gardée, un brouillon complet n'ouvre rien, un document sans date d'envoi non plus, une
+    candidature refusée avant l'envoi dit `candidature_close` ; l'envoi **réel** (`envoyer_reponses_salle_examen`, cadre de test accepté)
+    ouvre, et la première écriture passe de bout en bout ;
+  - écritures : création (version 1, texte « autre » sans blancs, accord et date, instants en UTC), rejeu
+    de la clé (premier résultat, `rejoue = true`, même avec un autre contenu, 0 écriture), clé
+    réutilisée par une autre candidature, un autre geste, l'envoi ou le brouillon de la Salle d'examen,
+    version périmée par le bas et par le haut,
+    écriture identique sans effet, changement, accord retiré sans effacer les réponses, treize arguments
+    absents ou mal formés (`22023`), forme des réponses (domaines vides, inconnus, niveau inconnu, non
+    texte, nul ; disponibilité inconnue ou vide ; « autre » sans texte, texte seul, 201 caractères,
+    deux lignes, tabulation, NEL ; trois champs fautifs à la fois, nommés dans l'ordre), bornes qui passent (neuf domaines, 200
+    caractères) ; la ligne de la candidature (version, dernière activité), ses réponses et son journal
+    d'événements ne bougent pas, aucune réponse sous la clé ni dans l'audit, et rien d'autre que la ligne
+    du titulaire ne bouge (les autres lignes d'autres compétences, les autres candidatures et les clés des
+    autres, pour une écriture comme pour un retrait) ;
+  - étapes : en pause en Salle de vérification, confirmée (Salle des prêts à enseigner), une femme en
+    Salle d'examen ; refusée : la personne voit ses réponses, `enregistrer` refusé, `retirer` permis ;
+    retirée : `enregistrer` refusé, `retirer` sans objet ; le rejeu d'une clé réussie passe avant la
+    clôture (premier résultat rendu après un refus, clé neuve refusée) ; une confirmée écrit puis retire ;
+    `retirer` (version, rejeu, recréation à la version 1) ;
+  - direction : `autresCompetences` dans le dossier (six clés, nul sans réponse, lu avec `accord =
+    faux`) ; hors portée rendu et tracé sans aucune donnée dans les deux sens ; super-admin journalisé
+    seulement de l'autre côté ; genre inconnu, candidat et comptabilité refusés ; liste à dix-neuf
+    clés, sans réponse ; filtre : domaine (**un code du catalogue ou une famille**), niveau minimum (avec et
+    sans domaine), disponibilité exacte, accord vrai et faux, les quatre ensemble, combinaison vide, clés à
+    `null`, avec les filtres de la liste, compteurs hors filtre, valeurs ou types invalides (`22023`, dont un
+    code ou une famille inconnus), audit de la liste (`competences` vrai ou faux, jamais le domaine
+    cherché) ; l'assistante pour le groupe des sœurs ne se trouve que côté femmes ; **chaque candidature lue
+    par chaque direction** (les réponses ne sortent que du côté du lecteur, l'autre côté rend `hors_portee` et
+    rien d'autre) ; **le total d'une liste filtrée ne compte que le côté du lecteur** et aucune liste filtrée
+    n'a rendu de ligne de l'autre côté ; **le journal d'audit** (`journal_audit`, lecture directe
+    d'`audit_logs`, totaux de `journal_audit_filtres`) ne rend que les écritures des candidatures de son côté,
+    la direction au genre inconnu n'en lit aucune, le super-admin lit les deux et est journalisé, l'auteur y est
+    la référence `CAND-` avant la salle des prêts à enseigner, aucune réponse n'y figure ;
+  - **catalogue** : état initial (25 compétences en six familles de 8, 5, 3, 5, 3 et 1, toutes actives à la
+    version 1, ordre 1 à n par famille, les compétences nommées par le directeur dans la bonne famille, une
+    ligne de journal `etat_initial` par compétence, aucune entrée d'audit) ; lecture (la direction lit tout,
+    avec les versions et `peutModifier`, quel que soit son genre ; le candidat lit les actives sans version ;
+    refus `42501` du tuteur, de la comptabilité, d'un enseignant sans candidature, d'un compte désactivé,
+    d'un autre type de candidature, de la session sans compte et d'`anon`) ; écriture (refus `42501` de
+    chacun d'eux **et du candidat titulaire**, avant toute validation ; vingt-sept jeux d'arguments invalides
+    et les textes trop longs, sur plusieurs lignes ou à séparateur Unicode, `22023`, sans rien écrire) ;
+    ajout (à la fin de la famille, ordre explicite, ordre de fin plafonné à 999, ajout directement
+    désactivé, libellé sans blancs, journal avec auteur, clé et empreinte, audit sans libellé) ; rejeu,
+    clé réutilisée par une autre demande (libellé ou version attendue), par un autre compte ; ajout d'un code
+    déjà là (`conflit_catalogue`, clé non gardée) ; version périmée, code absent, famille changée ;
+    modification, modification identique (`inchange`, rien de gardé), désactivation et réactivation (audit
+    `actifAvant` et `actifApres`) ; **par toute voie** : ni `DELETE`, ni `TRUNCATE`, ni changement de code,
+    de famille ou de date de création (`55000`), journal en ajout seul, `UPDATE` sans changement ignoré,
+    version et date posées par le serveur quoi qu'on écrive, changement direct journalisé sans auteur
+    (`voie` directe), contraintes de la table (code, famille, code qui porte le nom d'une famille, `autre`
+    seul dans sa famille, ordre, libellé, exemple, doublon) ; **code désactivé** : lisible avec son libellé
+    dans la réponse ancienne (`actif = faux`), absent de la liste d'un autre candidat, non choisissable
+    (`domaine_desactive`, même parmi des codes actifs ; `domaine_inconnu` prime), gardé par qui l'avait déjà
+    (enregistrement identique, autre disponibilité, autre niveau), retiré puis non repris, lu dans le dossier
+    par la direction, cherchable par code et par famille, réactivé puis choisissable ; un code ajouté est offert
+    et choisissable aussitôt ; déclencheur de la table des réponses (domaine hors catalogue `23503` par toute
+    voie, ne lit pas l'état actif, forme du code et cent domaines au plus par la contrainte, aussi sans le
+    déclencheur) ; audit du catalogue lu par toute direction active, sans libellé ni exemple, sans trace
+    d'exception pour le super-admin ; plafond de 100 codes (le 100e passe, le 101e est refusé sans rien
+    écrire, modifier reste permis) ; `etat_dossier()` et paiement inchangés ;
+  - indépendance : `etat_dossier()`, paiement, contrôles d'admission, questionnaire envoyé et dossier
+    identiques avec et sans réponses, avec et sans accord ; contre-épreuve : la déclaration de paiement
+    les fait bouger ;
+  - table : insertions et mises à jour refusées (domaine hors catalogue `23503` par le déclencheur, code mal
+    formé et plus de cent domaines `23514` sans lui, niveau, tableau, texte, accord sans date, version 0,
+    doublon, candidature inconnue) et les bornes qui passent ; suppression avec la candidature ; l'écart
+    d'anonymisation et d'export épinglé (`CAND-Q21`).
+  - **Contre-épreuve** : 137 altérations de la migration, une à la fois (catalogue : garde de la direction,
+    ouverture au candidat, lecture ouverte à tous, tout ou actif seulement, version ou clé dans la lecture,
+    ordre d'affichage, réponse propre du candidat ; validation : code désactivé accepté ou toujours refusé,
+    code inconnu accepté, réponse enregistrée ignorée ; déclencheurs et journal : suppression, vidage,
+    changement de code ou de famille, `UPDATE` vide compté, version libre, audit retiré ou chargé du
+    libellé, auteur ou avant perdus, réglage non consommé, déclencheur de domaine retiré ou lisant l'état
+    actif ; écriture : rejeu retiré ou sans empreinte, sans auteur ou sans version, conflit, plafond trop
+    haut ou trop bas, absente, famille libre, version attendue, écriture identique, ordre, normalisation,
+    bornes de texte, nom de famille ou `autre` hors de sa famille, clé courte ; filtre : sans famille, famille
+    aux actifs seulement, code actif seulement, validation ouverte, niveau minimum devenu égalité, accord,
+    disponibilité, lien à la candidature, portée ; graines : code renommé, famille changée, journal initial
+    retiré ; tables, droits et contrôle final ; et, hérités du premier jet du lot, le contrôle d'envoi, le
+    document sans date d'envoi, l'issue, les gardes du titulaire de chaque RPC, la version attendue, le
+    rejeu et la clé réutilisée de chacune, la réponse dans la clé ou l'audit, l'écriture identique non
+    détectée, l'audit retiré ou posé hors du côté de la candidature, la dernière activité touchée, la
+    normalisation du texte, la date d'accord, `DELETE` ou `UPDATE` sans `WHERE`, le retrait fermé après une
+    clôture, les bornes et séparateurs du texte, la disponibilité et le niveau non vérifiés, le dossier sans
+    portée, le genre inconnu accepté, le filtre sans lien, sans disponibilité, inactif ou sans note d'audit,
+    le type de l'accord, une clé de filtre inconnue acceptée, la table ouverte à `authenticated`,
+    `ON DELETE CASCADE` retiré…) : **135 rendent le scénario ou la migration (son contrôle final) rouges** ;
+    les deux survivantes : le `NOT brouillon` de l'ouverture (garde redondante, déjà impliquée par `envoye_le` non nul) et le `REVOKE` des aides internes à `authenticated` (redondant ici : aucune aide de `private` n'y reçoit ce droit par défaut ; le contrôle final de la migration et le scénario vérifient `has_function_privilege`) ; le verrou de la ligne de la candidature, que seul un essai à deux sessions éprouve, a été refait à la main avec le catalogue (deux écritures simultanées à la version 0 : l'une passe, l'autre rend `conflit_autres_competences` sans erreur de clé ; la même clé en même temps rend `rejoue = true`)
+    La liste blanche des volatiles (`scenarios_af_liste_blanche_volatiles.sql`) reçoit les trois RPC
+    volatiles (contre-épreuve : sans elles, le scénario les nomme). Essai à la main à deux sessions réelles
+    (écritures simultanées du catalogue) : deux ajouts du même code avec des clés différentes, l'un passe,
+    l'autre rend `conflit_catalogue` sans erreur de clé unique ; la même clé en même temps, la seconde rend
+    `rejoue = true` ; deux modifications à la même version, la seconde rend `conflit_catalogue` avec la ligne
+    de la première.
+  - **Rejeu complet du 22/10 après ce lot** (`tool/rejouer_scenarios.sh`, base neuve, toutes les
+    migrations puis les 123 scénarios) : **122 verts sur 123** (`af_liste_blanche_volatiles` rouge connu et antérieur : les quatre fonctions `avis_*` seulement ; les trois RPC volatiles de `CAND-AUTRES` y sont inscrites) sur un serveur dont l'horloge est décalée à 01 h 30 heure de Paris ; à l'horloge réelle du poste (22 h 20 UTC, soit 00 h 20 à Paris), `etape4` (A793, qui pose ses créneaux à 00 h heure de Paris) est en plus rouge, **avec ou sans ce lot** (même base sans la migration) : 121 verts sur 123 entre 00 h et 01 h heure de Paris, défaut de l'horloge du scénario, pas de ce lot ; les scénarios de L1, L2A1 et L2A2, qui contrôlent les empreintes F86 de `lire_candidature` et de `lister_candidatures` redéfinies ici, restent verts.
 
 ### 12.2 Flutter
 

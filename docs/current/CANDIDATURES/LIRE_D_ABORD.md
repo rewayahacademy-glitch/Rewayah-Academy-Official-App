@@ -55,7 +55,7 @@ la question. Une réponse ne devient une décision qu'une fois versée dans
    transitions, plan d'écrans, recette, et les questions au directeur (section 9).
 3. `REWAYAH_CANDIDATURES_SPEC_V1_2026-10-21.md` : la spécification.
 4. `CONTRAT_PORTS_CANDIDATURES.md` et `DEPENDANCES_BACKEND.md` : le contrat
-   attendu des ports et les besoins serveur `CAND-BR-01` à `CAND-BR-18`, préparés
+   attendu des ports et les besoins serveur `CAND-BR-01` à `CAND-BR-19`, préparés
    comme la spec §1.2 le permet, au statut de proposition. Chaque méthode et
    chaque besoin citent la question du directeur dont ils dépendent.
 5. `MAPPAGE_IMPORT_FORMULAIRES.md` : comment chaque colonne et chaque option des
@@ -78,6 +78,13 @@ la question. Une réponse ne devient une décision qu'une fois versée dans
 10. `AUDIT_QUESTIONNAIRE_SALLE_EXAMEN_2026-10-22.md` : chaque question de la Salle
    d'examen confrontée à ce qui la lit, les besoins de l'académie sans question, les
    listes à compléter, ce qui passe en salle 2 ou 3 ; huit questions au directeur.
+11. `PROPOSITION_AUTRES_COMPETENCES.md` : demander aux candidats leurs autres
+   compétences pour de futures missions autres que l'enseignement, après l'envoi de la
+   Salle d'examen, avec la raison dite en premier ; des compétences **précises** (réseaux
+   sociaux, relations publiques, design graphique, montage vidéo, administration,
+   pédagogie…), dans un **catalogue en base** que la direction complète (décision du
+   directeur du 22/10) ; section 7 : le serveur écrit le 22/10 (`CAND-BR-19`) et sept
+   points à soumettre au directeur.
 
 ## Règles qui tiennent déjà, quoi que décide le directeur
 

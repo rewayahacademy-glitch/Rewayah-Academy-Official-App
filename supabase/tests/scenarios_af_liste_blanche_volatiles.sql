@@ -134,6 +134,10 @@ declare
     'enregistrer_resume_seance(uuid,uuid,text,uuid,boolean)',
     -- CAND-L6 (21/10) : referentiel de paiement, direction ou comptabilite, compte valide.
     'enregistrer_ligne_referentiel_paiement(uuid,text,text,text,text,text,text,text,date,text,integer,text)',
+    -- CAND-AUTRES (22/10) : les autres competences du candidat, titulaire d'une candidature enseignant au compte valide (apres l'envoi de la Salle d'examen, version attendue, cle d'idempotence ; aucune garde de role).
+    'enregistrer_autres_competences(jsonb,text,text,boolean,integer,text)',
+    -- CAND-AUTRES (22/10) : le catalogue des competences, ecriture reservee a la direction active (ajout ou modification par version attendue, cle d'idempotence, jamais de suppression ; journal en ajout seul).
+    'enregistrer_competence_catalogue(text,text,integer,text,text,boolean,integer,text)',
     -- CAND-L2A1 (22/10) : brouillon de la Salle d'examen, titulaire de la candidature (moteur, version du brouillon, cle).
     'enregistrer_reponses_salle_examen(text,jsonb,integer,text)',
     -- CAND-L2A1 (22/10) : envoi du questionnaire (transition 6), titulaire de la candidature (moteur, version des conditions).
@@ -244,6 +248,8 @@ declare
     'retrait_candidat(integer,text)',
     -- CAND-L2A2 (22/10) : reouverture d'une candidature refusee ou retiree (transition 19), direction active de son cote (moteur, controles nommes).
     'rouvrir_candidat(uuid,text,integer,text)',
+    -- CAND-AUTRES (22/10) : retrait des reponses et de l'accord, meme titulaire (a toute issue de la candidature ; version attendue, cle d'idempotence).
+    'retirer_autres_competences(integer,text)',
     'retirer_bourse(uuid,text)',
     'retirer_capacite_controle(uuid,text,uuid)',
     'retirer_creneau_personnalise(uuid)',
