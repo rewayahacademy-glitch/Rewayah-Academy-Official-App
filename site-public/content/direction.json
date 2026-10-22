@@ -145,7 +145,7 @@
       "pleine": [],
       "fonds": {
         "famille": "lavande",
-        "conditions": "prune"
+        "echeances": "prune"
       },
       "haut": "prix"
     },

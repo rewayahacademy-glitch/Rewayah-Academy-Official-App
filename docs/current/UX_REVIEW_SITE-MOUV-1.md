@@ -228,6 +228,7 @@ Inspection après ces corrections :
 | Recette 25 (jurés Sonnet) | 7,53 | 6,63 | 6,57 | « presque » |
 | Recette 26 (jurés Sonnet) | 7,59 | 7,22 | 7,22 | « presque » |
 | Recette 27 (jurés Sonnet) | 6,50 | 6,87 | 6,50 | « presque » (plafond : titres des chapitres sur trois lignes) |
+| Recette 28 (jurés Sonnet) | 7,73 | 7,00 | 6,50 | « presque », sans plafond |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -667,6 +668,17 @@ Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte co
 | KK5 | Texte secondaire à 18 px | 20 px au bureau, 18 px en dessous ; pied de page à 18 px |
 | KK6 | Bouton d'arrêt du tapis sans mot | Il dit « Arrêter l'animation du tapis » en toutes lettres |
 | KK7 | (relevé en vérifiant) Fin de Comment ça marche plus large que l'écran à 360 px | La colonne ne s'élargit plus à la mesure de l'adresse e-mail |
+
+**Après la recette 28.** Plus aucun plafond : titres sur deux lignes, bande des fondateurs et bouton du tapis tenus pour corrigés. Restent, en commun : le reste de sol au pied de l'arche du haut de l'accueil, le texte secondaire encore petit, le bas de Tarifs qui se lit comme un document, les tuiles inégales de « Les cours en bref », et (deux jurés) l'image seule entre deux vides de « Ce que nous enseignons » sur Académie.
+
+| # | Relevé | Correction |
+|---|---|---|
+| LL1 | Reste de sol à droite du pied de l'arche | Dans l'image, le sol s'arrête au ras de la face droite de l'arche, et sous l'arche son bord recule en biais et s'efface dans le violet |
+| LL2 | Texte secondaire petit | Texte courant à 21 px à 1440 (`--t-corps`), petit texte à 20 px |
+| LL3 | Tarifs : trois blocs de chiffres et de petites lignes à la suite | Les dates du paiement sur une rangée de cinq étapes, chacune marquée d'une petite arche, sur fond prune ; « À savoir avant de commander » repasse sur le violet de la page |
+| LL4 | « Les cours en bref » : tuiles à moitié vides | Chaque tuile est large à la mesure de son texte (douze colonnes réparties au build au prorata du nombre de lettres) : les longues sur une rangée, les courtes sur la suivante ; un test vérifie que chaque rangée remplit ses douze colonnes |
+| LL5 | Académie, « Ce que nous enseignons » : une image seule entre deux vides | Le titre centré, l'arche au milieu, un paragraphe de chaque côté (dès 1100 px) |
+| LL6 | Bouton d'arrêt du tapis aussi visible qu'un bouton d'action | Un texte avec son signe, sans bord, en 16 px |
 
 ## Hors de portée de l'agent
 

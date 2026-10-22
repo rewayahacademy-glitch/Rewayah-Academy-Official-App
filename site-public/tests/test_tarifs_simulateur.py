@@ -162,7 +162,8 @@ class LectureDeLaBase(unittest.TestCase):
         self.assertIn("à partir du 1er janvier 2099", rendu)
         # Les encarts de la décision suivent la politique affichée : jamais deux prix pour la même formule.
         cours = (sortie / "fr" / "cours.html").read_text(encoding="utf-8")
-        fiches = cours[cours.index('class="fiches"'):]
+        # La place de chaque tuile au bureau (style calculé au build) n'entre pas dans la comparaison des mots.
+        fiches = re.sub(r' style="--c: [^"]*"', "", cours[cours.index('class="fiches"'):])
         # Le montant se pose en grand dans sa propre balise ; la phrase de l'encart reste entiere une fois les balises otees.
         self.assertIn(f'<li class="fiche__prix"><span class="fiche__montant">60{NBSP}$</span> par mois, hors{NBSP}taxes.</li>', fiches)
         texte_fiches = re.sub(r"<[^>]+>", "", fiches)
@@ -266,6 +267,23 @@ class PageGeneree(unittest.TestCase):
                 TARIFS.calendrier_paiement(chemin)
         finally:
             chemin.unlink()
+
+    def test_les_tuiles_des_encarts_remplissent_leur_rangee(self) -> None:
+        # Au bureau, chaque rangée de tuiles occupe exactement les douze colonnes, sans tuile plus étroite que permis.
+        self.assertEqual(TARIFS.repartir([57, 23], mini=4), [8, 4])
+        self.assertIsNone(TARIFS.repartir([1, 1, 1, 1, 1], mini=3))
+        for cle in ("encart_enfant", "encart_adulte"):
+            phrases = re.split(r"(?<=\.) (?=[A-ZÀ-Ý0-9])", TARIFS.encarts_publics()[cle])
+            rangees: dict[int, list[tuple[int, int]]] = {}
+            for k, style in TARIFS.places_fiche(phrases).items():
+                m = re.fullmatch(r"--c: (\d+) / span (\d+); --r: (\d+)", style)
+                self.assertIsNotNone(m, style)
+                rangees.setdefault(int(m[3]), []).append((int(m[1]), int(m[2])))
+            for rang, cases in rangees.items():
+                cases.sort()
+                self.assertEqual(sum(s for _, s in cases), 12, (cle, rang))
+                self.assertEqual(cases[0][0], 1, (cle, rang))
+                self.assertTrue(all(a + s == b for (a, s), (b, _) in zip(cases, cases[1:])), (cle, rang))
 
     def test_l_accueil_lit_les_memes_donnees(self) -> None:
         self.assertIn(f"55{NBSP}$", self.accueil)

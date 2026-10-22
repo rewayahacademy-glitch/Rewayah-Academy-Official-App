@@ -226,6 +226,44 @@ def formules_editoriales(chemin: Path = TARIFS_FALLBACK) -> dict:
             for nom in ("enfant", "adulte")}
 
 
+def repartir(poids: list[int], total: int = 12, mini: int = 3) -> list[int] | None:
+    """Des largeurs entières proportionnelles aux poids, de somme `total`, chacune d'au moins `mini` (plus fort reste)."""
+    if not poids or len(poids) * mini > total:
+        return None
+    brut = [w * total / sum(poids) for w in poids]
+    parts = [max(mini, int(b)) for b in brut]
+    ordre = sorted(range(len(poids)), key=lambda i: brut[i] - int(brut[i]), reverse=True)
+    while sum(parts) < total:
+        for i in ordre:
+            if sum(parts) < total:
+                parts[i] += 1
+    while sum(parts) > total:
+        i = max((k for k in range(len(parts)) if parts[k] > mini), key=lambda k: parts[k] - brut[k])
+        parts[i] -= 1
+    return parts
+
+
+def places_fiche(phrases: list[str]) -> dict[int, str]:
+    """Au bureau, la place de chaque phrase d'un encart dans une grille de douze colonnes : le prix et sa phrase sur la
+    première rangée ; les phrases longues en tuiles sur la deuxième, les courtes sur la troisième, chacune large à la
+    mesure de son texte, pour que les tuiles d'une rangée aient à peu près le même nombre de lignes."""
+    places = {0: "--c: 4 / span 9; --r: 1", 1: "--c: 1 / span 3; --r: 1"}
+    autres = list(range(2, len(phrases)))
+    longues = [k for k in autres if len(phrases[k]) > 60]
+    courtes = [k for k in autres if len(phrases[k]) <= 60]
+    rang = 2
+    # Une phrase courte garde au moins un tiers de rangée : « Résiliable chaque mois. » tient sur une ligne.
+    for groupe, mini in ((longues, 3), (courtes, 4)):
+        parts = repartir([len(phrases[k]) for k in groupe], mini=mini)
+        if parts:
+            debut = 1
+            for k, s in zip(groupe, parts):
+                places[k] = f"--c: {debut} / span {s}; --r: {rang}"
+                debut += s
+            rang += 1
+    return places
+
+
 def calendrier_paiement(chemin: Path = TARIFS_FALLBACK) -> dict:
     """Le calendrier du paiement de la décision du 18/10 (renouvellement, rappels, délai de grâce, suspension, place
     gardée puis libérée) et la durée de la première semaine remboursée. La base les garde hors de tarifs_publics()."""
@@ -513,7 +551,10 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
 
         def lignes(texte: str) -> str:
             phrases = re.split(r"(?<=\.) (?=[A-ZÀ-Ý0-9])", texte)
-            return '<ul class="fiche__lignes">' + "".join(ligne(ph) for ph in phrases) + "</ul>"
+            places = places_fiche(phrases)
+            return '<ul class="fiche__lignes">' + "".join(
+                ligne(ph).replace(">", f' style="{places[k]}">', 1) if k in places else ligne(ph)
+                for k, ph in enumerate(phrases)) + "</ul>"
         # Un choix Enfants / Adultes montre une fiche a la fois ; les deux restent publiees telles quelles.
         return ('<div class="fiches-bloc"><div class="fiches__choix" role="group" aria-label="Afficher la fiche">'
                 '<input type="radio" name="fiche-public" id="fiche-enfants" checked><label for="fiche-enfants">Enfants</label>'

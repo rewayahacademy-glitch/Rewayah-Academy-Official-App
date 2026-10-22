@@ -1961,17 +1961,16 @@ li, dd { text-wrap: wrap; }
   .chapitres__textes { grid-column: 6 / span 7; }
 }
 
-/* Les cours en bref (Familles, Cours) : le prix et sa phrase sur une rangee, puis les tuiles sur toute la largeur, de
-   meme hauteur par rangee : trois tuiles, puis deux (mots inchanges, aucun vide sous le prix). */
+/* Les cours en bref (Familles, Cours) : le prix et sa phrase sur une rangee, puis les tuiles sur toute la largeur ;
+   chaque tuile est large a la mesure de son texte (places calculees au build, bloc_tarifs.places_fiche), les longues sur
+   une rangee, les courtes sur la suivante : les tuiles d'une rangee ont a peu pres le meme nombre de lignes. */
 @media (min-width: 840px) {
-  .fiches-bloc .fiche__lignes { grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: var(--e-4); row-gap: var(--e-4); align-items: stretch; }
-  .fiches-bloc .fiche__lignes li { grid-column: span 2; max-width: none; }
-  .fiches-bloc .fiche__lignes li:nth-child(1) { grid-column: 4 / span 3; grid-row: 1; align-self: end; min-height: 0; margin-bottom: var(--e-4); }
-  .fiches-bloc .fiche__lignes li:nth-child(2) { grid-column: 1 / span 3; grid-row: 1; align-self: end; margin: 0 0 var(--e-4); }
-  .fiches-bloc .fiche__lignes li:nth-child(n+3) { padding: var(--e-6); border-radius: var(--r-lg); background: #4E2983; }
+  .fiches-bloc .fiche__lignes { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-4); row-gap: var(--e-4); align-items: stretch; }
+  .fiches-bloc .fiche__lignes li { grid-column: var(--c, span 4); grid-row: var(--r, auto); max-width: none; }
+  .fiches-bloc .fiche__lignes li:nth-child(1) { grid-column: var(--c, 4 / span 9); grid-row: var(--r, 1); align-self: end; min-height: 0; margin-bottom: var(--e-4); }
+  .fiches-bloc .fiche__lignes li:nth-child(2) { grid-column: var(--c, 1 / span 3); grid-row: var(--r, 1); align-self: end; margin: 0 0 var(--e-4); }
+  .fiches-bloc .fiche__lignes li:nth-child(n+3) { padding: var(--e-5) var(--e-6); border-radius: var(--r-lg); background: #4E2983; }
   .fiches-bloc .fiche__lignes li:nth-child(n+3)::before { content: none; }
-  .fiches-bloc .fiche__lignes li:nth-child(6):nth-last-child(2), .fiches-bloc .fiche__lignes li:nth-child(7):last-child { grid-column: span 3; }
-  .fiches-bloc .fiche__lignes:has(> li:nth-child(6):last-child) > li:nth-child(n+3) { grid-column: span 3; }
 }
 
 /* Accueil, « Accompagné à chaque étape » : a gauche la photo du directeur, puis les trois engagements les uns sous les
@@ -1996,3 +1995,31 @@ li, dd { text-wrap: wrap; }
 /* Fins de page a une colonne (telephone) : la colonne ne s'elargit pas a la mesure d'une adresse e-mail (360 px). */
 @media (max-width: 839px) { .appel--prix, .appel--image, .appel--note { grid-template-columns: minmax(0, 1fr); } }
 .appel__note { overflow-wrap: anywhere; }
+
+/* --- Recette 28 (22/10/2026) ------------------------------------------------------------------------------------- */
+/* Texte courant un peu plus grand au bureau (21 px a 1440) ; le petit texte suit a 20 px. */
+@media (min-width: 840px) { :root { --t-corps: clamp(18px, 0.35vw + 16px, 21px); } }
+
+/* Tarifs, les dates du paiement : une rangee de cinq etapes au bureau, chacune marquee d'une petite arche, sur fond prune. */
+.remises--echeances .remise::before { content: ""; width: .6em; height: .75em; border-radius: var(--arche); background: currentColor; opacity: .55; }
+@media (min-width: 1100px) {
+  .remises--echeances { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: var(--e-6); }
+  .remises--echeances .remise__valeur { font-size: clamp(28px, 2.5vw, 36px); }
+  .remises--echeances .remise__objet { max-width: none; }
+}
+
+/* Academie, « Ce que nous enseignons » : le titre centre, l'arche au milieu, un paragraphe de chaque cote (une affiche,
+   et non une image seule entre deux vides). Seulement pour une bande pleine a deux paragraphes, sans colonne de cote. */
+@media (min-width: 1100px) {
+  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__tete { grid-column: 1 / -1; text-align: center; }
+  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__tete h2 { margin-inline: auto; }
+  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__image { grid-column: 4 / span 6; grid-row: 2; }
+  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) :is(.pleine__corps, .pleine__texte) { display: contents; }
+  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__texte > p { grid-row: 2; margin: 0; }
+  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__texte > p:first-child { grid-column: 1 / span 3; align-self: end; }
+  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__texte > p:last-child { grid-column: 10 / span 3; align-self: start; }
+}
+
+/* Accueil : le bouton d'arret du tapis, plus discret que les deux boutons d'action (un texte avec son signe, sans bord). */
+.porte__texte .pause-anim { height: 36px; padding: 0 var(--e-2) 0 0; border: 0; font-size: 16px; font-weight: 500; opacity: .85; }
+.porte__texte .pause-anim:hover { background: transparent; opacity: 1; text-decoration: underline; }
