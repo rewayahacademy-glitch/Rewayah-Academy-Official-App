@@ -225,8 +225,12 @@ def load_direction(pages: dict[str, dict]) -> tuple[dict, dict]:
         image_fin = (reglage.get("fin") or {}).get("image")
         if image_fin and image_fin not in connues:
             raise ValueError(f"direction.json names an unknown picture: {image_fin}")
-        if (reglage.get("fin") or {}).get("forme", "") not in ("", "centre", "sombre", "prix", "image"):
-            raise ValueError(f"direction.json: {route} fin.forme must be centre, sombre, prix or image")
+        if (reglage.get("fin") or {}).get("forme", "") not in ("", "centre", "sombre", "prix", "image", "note"):
+            raise ValueError(f"direction.json: {route} fin.forme must be centre, sombre, prix, image or note")
+        note = (reglage.get("fin") or {}).get("note")
+        if ((reglage.get("fin") or {}).get("forme") == "note") != bool(note) or (
+                note and note not in {s["id"] for s in pages[route]["sections"]}):
+            raise ValueError(f"direction.json: {route} fin.note names one section of the page, with fin.forme note")
         if (reglage.get("fin") or {}).get("forme") == "image" and not image_fin:
             raise ValueError(f"direction.json: {route} fin.forme image needs fin.image")
         schema = (reglage.get("bande") or {}).get("schema")
@@ -587,6 +591,10 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
     enfant = tarifs_mod.fmt_montant(p["tarifEnfantMineur"], devise)
     adulte = tarifs_mod.fmt_montant(p["tarifAdulteMineur"], devise)
     age = p["ageAdulte"]
+    # Ce qui vaut pour les enfants comme pour les adultes (les deux encarts du 18/10 le disent) n'est dit qu'une fois,
+    # sous les deux prix ; seule l'observation d'une seance reste propre aux enfants.
+    communs = ("Le compte rendu de l’enseignant chaque fin de semaine", "Une séance annulée par l’académie est remplacée",
+               "La première semaine remboursée si le cours ne convient pas", "Résiliable chaque mois")
     return f'''<section class="deux-champs" id="tarifs" aria-labelledby="tarifs-titre">
   <h2 id="tarifs-titre" class="deux-champs__titre" data-revele>{titre_html(sec["title"])}</h2>
   <div class="deux-champs__grille">
@@ -594,17 +602,15 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
       <h3>{titre_html("Enfants et adolescents")}</h3>
       <p class="champ__prix"><span class="champ__montant">{esc(enfant)}</span><span class="champ__periode">par mois, {hors_taxes}</span></p>
       <p class="champ__public">{texte_html(f"De {tarifs_mod.AGE_ENFANT_MIN} à {age - 1} ans. {duree('enfant')}, dans une classe de {c['ouvertureMinimum']} à {c['tailleEnfant']} élèves.")}</p>
-      {inclus("Le compte rendu de l’enseignant chaque fin de semaine", "L’observation d’une séance, deux minutes, en silence",
-              "Une séance annulée par l’académie est remplacée", "La première semaine remboursée si le cours ne convient pas")}
+      {inclus("L’observation d’une séance, deux minutes, en silence")}
     </article>
     <article class="champ champ--adulte" data-revele>
       <h3>Adultes</h3>
       <p class="champ__prix"><span class="champ__montant">{esc(adulte)}</span><span class="champ__periode">par mois, {hors_taxes}</span></p>
       <p class="champ__public">{texte_html(f"{age} ans et plus. {duree('adulte')}, dans une classe de {c['ouvertureMinimum']} à {c['tailleAdulte']} élèves.")}</p>
-      {inclus("Le compte rendu de l’enseignant chaque fin de semaine", "Une séance annulée par l’académie est remplacée",
-              "La première semaine remboursée si le cours ne convient pas", "Résiliable chaque mois")}
     </article>
   </div>
+  <ul class="deux-champs__communs" data-revele-enfants>{"".join(f"<li>{texte_html(l)}</li>" for l in communs)}</ul>
   <div class="deux-champs__pied" data-revele>
     <p>{texte_html(intro_remise + (" " + sec["paragraphs"][0] if sec.get("paragraphs") else ""))}</p>
     <div class="action-row"><button class="cta cta--secondary" type="button" data-open-simulator>Simuler mon tarif</button>{lien_fleche("Voir les tarifs et les remises", "/fr/tarifs")}</div>
@@ -684,6 +690,13 @@ FLECHE = ('<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><p
           'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>')
 
 
+def note_de_fin(section: dict) -> str:
+    """Une section reprise dans la fin de page, a cote du titre et de son bouton (Comment ca marche : l'inscription
+    d'un enfant)."""
+    return (f'<div class="appel__note"><h3>{titre_html(section["title"])}</h3>{paragraphes(section)}'
+            f'{liens_section(section)}</div>')
+
+
 def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: str = "inscription",
                  seuil: bool = False, arche: str = "", forme: str = "", extra: str = "") -> str:
     """La fin de page, sous deux formes.
@@ -693,7 +706,9 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: st
       sous le haut d'une arche, comme il s'ouvre sur une porte. Pour que les pages ne finissent pas toutes pareil
       (direction.json fin.forme) : « centre », un bandeau lavande, le titre et sa phrase au centre, un bouton ;
       « sombre », le titre lien sur une bande sombre ; « prix », le titre et son bouton a cote des deux prix (la page
-      des tarifs finit sur ce qu'elle annonce) ; « image », le titre et son bouton a cote d'une porte (extra).
+      des tarifs finit sur ce qu'elle annonce) ; « image », le titre et son bouton a cote d'une arche entiere (extra),
+      « image-gauche » l'arche a gauche ; « note », le titre et son bouton a cote d'une section de la page (fin.note),
+      qui n'est plus posee plus haut : une seule fin, et non deux bandes a la suite.
     - Autres pages : une bande sobre et son bouton."""
     externe = href.startswith("mailto:")
     messagerie = '<span class="sr-only"> (ouvre votre messagerie)</span>' if externe else ""
@@ -703,8 +718,9 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: st
   <p class="appel__phrase" data-revele>{texte_html(phrase)}</p>
   <div class="action-row" data-revele>{bouton(label, href)}</div>
 </section>'''
-    if forme in ("prix", "image"):
-        return f'''<section class="appel appel--{forme}" id="{esc(identifiant)}" aria-labelledby="appel-titre">
+    if forme in ("prix", "image", "note", "image-gauche"):
+        classes = f"appel--{forme}" + (" appel--image" if forme == "image-gauche" else "")
+        return f'''<section class="appel {classes}" id="{esc(identifiant)}" aria-labelledby="appel-titre">
   <div class="appel__texte">
     <h2 id="appel-titre" class="appel__titre" data-revele>{titre_html(titre)}</h2>
     <p class="appel__phrase" data-revele>{texte_html(phrase)}</p>
@@ -738,9 +754,9 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str, mot: dict | No
         accueil_confiance(page, images, mot),
         accueil_faq(page, tarifs),
         # Comme les pages principales, l'accueil se referme sur une phrase qui est le lien : elle dit pour qui.
-        bande_finale((fin.get("paragraphs") or [fin["title"]])[0], "Rien n’est facturé avant l’ouverture de la classe.",
+        bande_finale((fin.get("paragraphs") or [fin["title"]])[0], "L’inscription se fait dans l’application Rewayah.",
                      page["cta"]["label"], page["cta"]["href"], seuil=True,
-                     arche=scene(images, "detail-arche-livre", "(max-width: 839px) 72vw, 420px", "appel__arche")),
+                     arche=scene(images, "eleve-enseignante-b", "(max-width: 839px) 72vw, 420px", "appel__arche")),
     ))
 
 
@@ -988,7 +1004,7 @@ def section_mot(section: dict, number: int, images: dict, ident: str | None, pro
 
 
 # Un portrait de fondateur : une colonne de profil, 300 px au plus.
-TAILLES_PROFIL = "(max-width: 359px) calc(100vw - 32px), 300px"
+TAILLES_PROFIL = "(max-width: 367px) calc(100vw - 32px), 336px"
 
 
 def section_fondateurs(section: dict, number: int, images: dict | None = None, portraits: dict | None = None,
@@ -1024,7 +1040,9 @@ def alternance(reglage: dict):
 def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: dict, today: date | None,
                  avis: dict) -> str:
     gabarit = reglage.get("gabarit", "editorial")
-    sections = page["sections"]
+    # Une section que la fin de page reprend (fin.note) n'est dite qu'une fois : dans la fin.
+    note = (reglage.get("fin") or {}).get("note")
+    sections = [s for s in page["sections"] if s["id"] != note]
     apres = reglage.get("bande", {}).get("apres") if reglage.get("bande") else None
     morceaux = []
     if gabarit == "question":
@@ -1213,8 +1231,11 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         if fin:
             # Une page qui a deja une section « inscription » (l'aide) donne un autre identifiant a sa fin.
             forme = fin.get("forme", "")
+            if forme == "image" and fin.get("cote") == "gauche":
+                forme = "image-gauche"
             extra = (blocs_prix(tarifs) if forme == "prix" else
-                     scene(images, fin["image"], "(max-width: 839px) 72vw, 450px", "appel__image") if forme == "image" else "")
+                     scene(images, fin["image"], "(max-width: 839px) 72vw, 450px", "appel__image") if forme.startswith("image") else
+                     note_de_fin(_sections_par_id(page)[fin["note"]]) if forme == "note" else "")
             main += bande_finale(fin["titre"], fin["phrase"], fin.get("label", page["cta"]["label"]),
                                  fin.get("href", page["cta"]["href"]), seuil=bool(fin.get("seuil")), forme=forme, extra=extra,
                                  identifiant="fin-de-page" if 'id="inscription"' in main else "inscription")

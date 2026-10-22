@@ -268,10 +268,10 @@ class GeneratedSiteQA(unittest.TestCase):
         for route, fin in fins.items():
             source = self.page_file(route).read_text(encoding="utf-8")
             with self.subTest(route=route):
-                if fin.get("forme") in ("centre", "prix", "image"):
-                    # Bandeau centre, fin sur les prix ou sur une porte : le titre, sa phrase, puis un bouton qui porte le
-                    # libelle de l'action.
-                    fin_page = source.split(f'class="appel appel--{fin["forme"]}"', 1)[1].split("</section>", 1)[0]
+                if fin.get("forme") in ("centre", "prix", "image", "note"):
+                    # Bandeau centre, fin sur les prix, sur une arche ou sur une note : le titre, sa phrase, puis un bouton
+                    # qui porte le libelle de l'action.
+                    fin_page = re.split(rf'class="appel appel--{fin["forme"]}[^"]*"', source, maxsplit=1)[1].split("</section>", 1)[0]
                     titre = re.search(r'<h2 id="appel-titre" class="appel__titre"[^>]*>(.*?)</h2>', fin_page, re.S).group(1)
                     self.assertEqual(re.sub(r"<[^>]+>", "", titre).replace("\u00a0", " ").strip(), fin["titre"])
                     self.assertIn(f'href="{fin.get("href", self.pages[route]["cta"]["href"])}"', fin_page)

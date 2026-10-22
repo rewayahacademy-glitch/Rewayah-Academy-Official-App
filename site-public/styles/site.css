@@ -1,11 +1,11 @@
 /* Reem Kufi (OFL, licence dans assets/reem-kufi-OFL.txt), koufi d'ornement choisie par le directeur le 22/10/2026
-   (registre de marque M-31), graisse 500, reduite aux lettres arabes du contenu (les arches de Cours) : inscrite ici, elle n'ajoute aucun fichier au
+   (registre de marque M-31), graisse 600, reduite aux lettres arabes du contenu (les arches de Cours) : inscrite ici, elle n'ajoute aucun fichier au
    paquet deploye. Apres un ajout de texte arabe, relancer site-public/police_arabe.py. */
 @font-face {
   font-family: 'Reem Kufi';
-  src: url('data:font/woff2;base64,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') format('woff2');
+  src: url('data:font/woff2;base64,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') format('woff2');
   font-style: normal;
-  font-weight: 500;
+  font-weight: 600;
   font-display: swap;
   unicode-range: U+0600-06FF;
 }
@@ -1313,7 +1313,7 @@ li, dd { text-wrap: wrap; }
 }
 
 /* --- Cours : dans chaque arche du parcours, ce que l'eleve lit a cette etape --------------------- */
-.parcours__arabe { font-family: var(--police-arabe-ornement); font-weight: 500; line-height: 1.6; letter-spacing: 0; word-spacing: .15em; white-space: nowrap; }
+.parcours__arabe { font-family: var(--police-arabe-ornement); font-weight: 600; line-height: 1.6; letter-spacing: 0; word-spacing: .15em; white-space: nowrap; }
 @media (max-width: 839px) {
   .parcours--haut .parcours__etape { align-items: center; gap: var(--e-4); padding-block: var(--e-5); }
   /* Marge physique : le libelle arabe est en rtl, sa marge « de debut » serait a droite. */
@@ -1739,19 +1739,19 @@ li, dd { text-wrap: wrap; }
 /* --- Recette 22 (22/10/2026) : chaque page finit a sa facon, les hauts de page remplis ------------------------------ */
 /* Fins de page : les tarifs se referment sur leurs deux prix, Familles sur une porte ouverte ; le titre et son bouton
    a gauche, sur les six premieres colonnes, comme le texte des autres sections. */
-.appel--prix, .appel--image { display: grid; row-gap: var(--e-12); align-items: center; padding: var(--respire) max(var(--marge), calc((100vw - var(--contenu)) / 2)) calc(var(--respire) + var(--e-8)); }
-.appel--prix .appel__titre, .appel--image .appel__titre { max-width: 12em; }
-.appel--prix .appel__phrase, .appel--image .appel__phrase { margin-top: var(--e-6); max-width: 40ch; padding-inline: 0; }
-.appel--prix .action-row, .appel--image .action-row { margin-top: var(--e-10); }
+.appel--prix, .appel--image, .appel--note { display: grid; row-gap: var(--e-12); align-items: center; padding: var(--respire) max(var(--marge), calc((100vw - var(--contenu)) / 2)) calc(var(--respire) + var(--e-8)); }
+.appel--prix .appel__titre, .appel--image .appel__titre, .appel--note .appel__titre { max-width: 12em; }
+.appel--prix .appel__phrase, .appel--image .appel__phrase, .appel--note .appel__phrase { margin-top: var(--e-6); max-width: 40ch; padding-inline: 0; }
+.appel--prix .action-row, .appel--image .action-row, .appel--note .action-row { margin-top: var(--e-10); }
 .appel--prix .appel__extra { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-6); align-items: start; }
 .appel--prix .entete-prix__bloc { grid-template-columns: minmax(0, 1fr); row-gap: var(--e-2); align-content: start; }
 .appel--prix .entete-prix__montant { grid-row: auto; margin-bottom: var(--e-2); font-size: var(--t-affiche); }
 .appel--image .appel__image { width: min(100%, 450px); margin-inline: auto; }
 @media (min-width: 840px) {
-  .appel--prix, .appel--image { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); }
-  .appel--prix .appel__texte, .appel--image .appel__texte { grid-column: 1 / span 6; }
-  .appel--prix .appel__extra, .appel--image .appel__extra { grid-column: 7 / -1; }
-  .appel--prix .appel__titre, .appel--image .appel__titre { font-size: var(--t-entete); }
+  .appel--prix, .appel--image, .appel--note { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); }
+  .appel--prix .appel__texte, .appel--image .appel__texte, .appel--note .appel__texte { grid-column: 1 / span 6; }
+  .appel--prix .appel__extra, .appel--image .appel__extra, .appel--note .appel__extra { grid-column: 7 / -1; }
+  .appel--prix .appel__titre, .appel--image .appel__titre, .appel--note .appel__titre { font-size: var(--t-entete); }
 }
 
 /* Comment ca marche : la taille des classes en grands chiffres a cote du titre, la ou le haut de page restait vide. */
@@ -1763,6 +1763,11 @@ li, dd { text-wrap: wrap; }
 .entete-chiffres__sous { grid-column: 1 / -1; }
 @media (min-width: 840px) {
   .entete-page--haut-chiffres { min-height: 0; padding-bottom: 0; align-items: end; }
+  .entete-page--haut-chiffres .entete-page__texte { grid-column: 1 / span 9; }
+  .entete-page--haut-chiffres .entete-chiffres { grid-column: 1 / -1; grid-row: 2; }
+}
+/* Les chiffres a cote du titre seulement quand le titre tient en deux lignes sur six colonnes. */
+@media (min-width: 1100px) {
   .entete-page--haut-chiffres .entete-page__texte { grid-column: 1 / span 6; align-self: end; padding-bottom: var(--e-10); }
   .entete-page--haut-chiffres .entete-chiffres { grid-column: 7 / -1; grid-row: 1; }
 }
@@ -1804,7 +1809,7 @@ li, dd { text-wrap: wrap; }
 
 /* Academie : chaque fondateur sous son portrait, son nom sur une ligne ; les deux portraits a la meme echelle. */
 .profils .profil { display: block; }
-.profils .profil > .portrait--profil { width: min(100%, 280px); margin-bottom: var(--e-6); }
+.profils .profil > .portrait--profil { width: min(100%, 336px); margin-bottom: var(--e-6); }
 .profils .profil h3 { min-height: 0; }
 
 /* Accueil, « Un horaire fixe, une classe stable » : le titre a gauche, son texte et ses liens dans la colonne de droite. */
@@ -1819,9 +1824,9 @@ li, dd { text-wrap: wrap; }
   .entete-page--libre .entete-page__image { -webkit-mask-image: linear-gradient(to left, transparent 0, #000 14%); mask-image: linear-gradient(to left, transparent 0, #000 14%); }
 }
 
-/* Accueil : la porte grandit moins ; la classe apparait plus tot, avant que les visages ne soient a taille reelle. */
+/* Accueil : la scene grandit d'une fois et demie au plus ; la classe s'ouvre avant que les visages ne grandissent. */
 @media (min-width: 840px) and (prefers-reduced-motion: no-preference) {
-  .js .porte__scene { transform: scale(calc(1 + var(--z2, 0) * 1)); }
+  .js .porte__scene { transform: scale(calc(1 + var(--z2, 0) * .5)); }
 }
 
 /* Cours : les lettres arabes des arches s'ecrivent, arche apres arche (demande du directeur, 22/10/2026). Les lettres
@@ -1845,3 +1850,38 @@ li, dd { text-wrap: wrap; }
   .js .parcours.est-visible .rejoue-a .parcours__lettre { animation-name: lettre-ecrite-bis; }
   .js .parcours.est-visible .rejoue-a .parcours__mot { animation-name: mot-ecrit-bis; }
 }
+
+/* --- Recette 23 (22/10/2026) ------------------------------------------------------------------------------------- */
+/* Comment ca marche : une seule fin, le titre et son bouton a gauche, l'inscription d'un enfant a droite. */
+.appel__note { padding: var(--e-8); border-radius: var(--r-lg); background: #4E2983; color: #FFFFFF; }
+.appel__note h3 { font-size: var(--t-moyen); }
+.appel__note p { margin-top: var(--e-3); max-width: 46ch; }
+.appel__note .section-links { margin-top: var(--e-6); }
+/* Academie : l'arche a gauche, le titre a droite (Familles a l'inverse). */
+@media (min-width: 840px) {
+  .appel--image-gauche .appel__texte { grid-column: 7 / -1; grid-row: 1; }
+  .appel--image-gauche .appel__extra { grid-column: 1 / span 6; grid-row: 1; }
+}
+
+/* Cours : le mot arabe occupe les deux tiers de son arche, a la taille des grands chiffres du site. */
+@media (min-width: 1100px) {
+  .parcours--haut .parcours__etape:has(.parcours__mot) .parcours__arabe { font-size: var(--t-affiche); }
+}
+
+/* Les cours en bref : la premiere ligne de l'encart sert de sous-titre, le montant en tres grand ; a droite, les autres
+   lignes sans puce, plus grandes, espacees. Les mots ne changent pas. */
+.fiches-bloc .fiche__lignes li:nth-child(1) { padding-inline-start: 0; font-weight: 600; }
+.fiches-bloc .fiche__lignes li:nth-child(1)::before { content: none; }
+.fiche__montant { font-size: var(--t-affiche); }
+@media (min-width: 840px) {
+  .fiches-bloc .fiche__lignes { row-gap: var(--e-5); }
+  .fiches-bloc .fiche__lignes li:nth-child(n+3) { padding-inline-start: 0; }
+  .fiches-bloc .fiche__lignes li:nth-child(n+3)::before { content: none; }
+}
+
+/* Accueil, le prix : ce qui vaut pour les enfants comme pour les adultes, une seule fois, sous les deux prix. */
+.deux-champs__communs { list-style: none; display: grid; gap: var(--e-4) var(--e-6); max-width: calc(var(--contenu) + 2 * var(--marge)); margin: var(--e-10) auto 0; padding-inline: var(--marge); font-size: var(--t-corps); font-weight: 500; }
+.deux-champs__communs li { position: relative; padding-inline-start: 1.4em; max-width: none; text-wrap: pretty; }
+.deux-champs__communs li::before { content: ''; position: absolute; inset-inline-start: 0; top: .5em; width: .6em; height: .75em; border-radius: var(--arche); background: currentColor; opacity: .55; }
+@media (min-width: 600px) { .deux-champs__communs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .deux-champs__communs { grid-template-columns: repeat(4, minmax(0, 1fr)); } }

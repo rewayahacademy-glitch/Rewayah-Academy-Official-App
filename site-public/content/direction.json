@@ -14,7 +14,7 @@
         "href": "/connexion",
         "seuil": true,
         "forme": "image",
-        "image": "detail-lumiere-sol"
+        "image": "detail-entree"
       },
       "figures": {
         "profils": "detail-pupitre-coran",
@@ -53,7 +53,7 @@
         "objectifs": "detail-livre-femme",
         "adultes-enfants": "detail-livre-homme",
         "methode": "eleve-enseignante",
-        "groupes": "decor-arche-dessus"
+        "groupes": "place"
       },
       "pleine": [],
       "parcours": [
@@ -116,16 +116,14 @@
         "label": "Continuer dans Rewayah",
         "href": "/connexion",
         "seuil": true,
-        "forme": "centre"
+        "forme": "note",
+        "note": "mineur"
       },
       "figures": {
         "connexion": "detail-fille-lecture",
         "propositions": "detail-femme-tabouret",
         "traitement": "detail-enseignant-place",
         "classe": "detail-fille-enseignante"
-      },
-      "fonds": {
-        "mineur": "prune"
       },
       "haut": "chiffres"
     },
@@ -165,7 +163,9 @@
         "label": "Découvrir les cours",
         "href": "/fr/cours",
         "seuil": true,
-        "forme": "sombre"
+        "forme": "image",
+        "image": "adulte-homme-livre",
+        "cote": "gauche"
       },
       "figures": {
         "projet": "detail-tabouret",

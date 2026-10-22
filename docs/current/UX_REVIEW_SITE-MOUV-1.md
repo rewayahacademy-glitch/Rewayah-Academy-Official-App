@@ -223,6 +223,7 @@ Inspection après ces corrections :
 | Recette 20 (jurés Sonnet) | 7,53 | 7,07 | 7,23 | « presque » |
 | Recette 21 (jurés Sonnet) | 7,70 | 6,33 | 6,17 | « presque » |
 | Recette 22 (jurés Sonnet) | 7,67 | 6,73 | 6,33 | « presque » |
+| Recette 23 (jurés Sonnet) | 7,57 | 7,18 | 6,50 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -591,6 +592,18 @@ Ensuite : la porte du haut de l'accueil, un peu plus petite au bureau, ne touche
 - *Tuile « La classe commence » (accueil).* L'arche du livre de l'image était coupée par l'arche de la fenêtre. Le rendu 02 est recadré plus large (680 × 850, marge transparente au-dessus) : l'arche du livre tient entière dans la fenêtre, et les deux courbes s'emboîtent.
 - *Lettres arabes des arches (Cours).* Elles s'écrivent, arche après arche, en 3 s environ, une seule fois : les lettres séparées paraissent une à une de droite à gauche ; un mot lié s'écrit d'un trait de droite à gauche, sans être découpé (ses lettres restent liées). Au survol, l'arche s'écrit de nouveau. En mouvement réduit ou sans JavaScript, les lettres sont là, immobiles.
 - *Changer une police.* Le site ne nomme plus ses polices qu'une fois, dans `:root` (`--police-titre`, `--police-corps`, `--police-arabe-ornement`) ; un test refuse tout autre nom de police dans la feuille. Rendu vérifié identique, élément par élément, sur huit pages. L'application avait déjà ce principe : `lib/core/theme/app_typography.dart` porte les cinq familles.
+
+**Après la recette 23.** Les trois jurés tiennent pour corrigés les fins identiques, le haut vide de Cours et de Comment ça marche, la vue du dessus sur trois pages et le haut de l'accueil. Restent, en commun : le zoom de la porte (leur capture datait de la veille, refaite), l'arabe trop petit dans ses arches, la double fin de Comment ça marche, les disques de porte qui se lisent comme des tubes, les portraits des fondateurs petits à côté du directeur, et les puces de « Les cours en bref ».
+
+| # | Relevé | Correction |
+|---|---|---|
+| GG1 | Comment ça marche finit encore sur deux bandes à la suite | Une seule fin : le titre et son bouton à gauche, l'inscription d'un enfant à droite, dans un encart (`fin.forme` « note ») ; la section n'est plus posée plus haut |
+| GG2 | Disques de porte lus comme des tubes (fins de l'accueil et de Familles, Cours) | Des arches entières : la jeune élève au pupitre (fin de l'accueil), l'élève qui passe la porte (fin de Familles), la place qui attend, coussin et pupitre (Cours, « Trois séances par semaine ») |
+| GG3 | Académie : la fin sombre se confond avec le pied de page | Elle finit sur l'homme au seuil de l'arche ouverte sur les dunes, l'arche à gauche du titre |
+| GG4 | L'arabe des arches petit et ses voyelles trop fines | Mots liés à la taille des grands chiffres du site (environ 70 % de l'arche) ; police d'ornement en graisse 600 |
+| GG5 | Zoom de la porte sur des visages agrandis | La scène grandit d'une fois et demie au plus, la classe s'ouvre plus tôt ; captures du mouvement refaites |
+| GG6 | « Les cours en bref » : puces petites | La première ligne sert de sous-titre, le montant en très grand, les autres lignes sans puce ; sur l'accueil, ce qui vaut pour les enfants et les adultes n'est dit qu'une fois, sous les deux prix |
+| GG7 | Portraits des fondateurs à la moitié de celui du directeur | Affichés à 336 px, sans agrandir leurs fichiers (cadrage plus large, la tête à 60 %), netteté légèrement relevée. Une photo plus nette d'Ahmad Diallo permettrait d'aller plus loin |
 
 ## Hors de portée de l'agent
 
