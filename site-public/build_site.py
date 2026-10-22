@@ -611,10 +611,10 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
 def accueil_confiance(page: dict, images: dict, mot: dict | None = None) -> str:
     """Une bande sombre sur toute la largeur. En haut, le visage du directeur, cadre en largeur et cale au bord gauche
     de l'ecran (la photo y est coupee), a la hauteur du titre ; a cote, la date, une phrase de son mot signee et le lien
-    vers ce mot. Dessous, les trois engagements cote a cote. La page Academie montre la meme photo en buste."""
+    vers ce mot. Dessous, les trois engagements cote a cote. La page Academie montre la meme photo en buste. Le titre
+    vient avant la photo dans le document : un lecteur d'ecran l'entend d'abord ; la grille place la photo a gauche."""
     sec = _sections_par_id(page)["confiance"]
     return f'''<section class="panneau" id="confiance" aria-labelledby="confiance-titre">
-  <div class="panneau__photo" data-revele>{portrait(images, "portrait-directeur-visage", TAILLES_PORTRAIT, "portrait--visage")}</div>
   <div class="panneau__in">
     <div class="panneau__tete" data-revele>
       <h2 id="confiance-titre">{titre_html(sec["title"])}</h2>
@@ -622,6 +622,7 @@ def accueil_confiance(page: dict, images: dict, mot: dict | None = None) -> str:
     </div>{citation_accueil(mot)}
     <div class="action-row" data-revele>{bouton("Lire le mot du directeur", "/fr/academie#mot", "contour")}</div>
   </div>
+  <div class="panneau__photo" data-revele>{portrait(images, "portrait-directeur-visage", TAILLES_PORTRAIT, "portrait--visage")}</div>
   <ul class="panneau__promesses" data-revele-enfants>
     <li><h3>{titre_html("Un programme qui avance")}</h3><p>{texte_html("Chaque étape a son objectif et sa date limite.")}</p></li>
     <li><h3>{titre_html("Un suivi pour les familles")}</h3><p>{texte_html("Retrouvez les séances et le travail à préparer dans votre espace familial.")}</p></li>
@@ -679,38 +680,26 @@ FLECHE = ('<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><p
           'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>')
 
 
-def _comparable(texte: str) -> str:
-    return texte.replace("’", "'").casefold()
-
-
-def bande_finale(titre: str, phrase: str, label: str, href: str, mot: str | None = None, identifiant: str = "inscription",
+def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: str = "inscription",
                  seuil: bool = False) -> str:
-    """La fin de page, sous trois formes.
-    - Accueil (mot) : toute la bande blanche est le lien, et un seul mot tres grand la porte. Ce mot ouvre le libelle
-      du lien (« Commencer » pour « Commencer mon inscription »), pour qu'une commande vocale qui le dit trouve le lien.
-    - Pages principales (seuil, direction.json fin.seuil) : la page se referme sur un titre de la taille de son titre
-      d'ouverture, pose sur le fond de la page, et ce titre est le lien ; chaque page finit donc sur sa propre phrase.
+    """La fin de page, sous deux formes.
+    - Accueil et pages principales (seuil, direction.json fin.seuil) : la page se referme sur un titre de la taille de
+      son titre d'ouverture, pose sur le fond, et ce titre est le lien ; chaque page finit sur sa propre phrase. Quand le
+      libelle de l'action differe du titre, les lecteurs d'ecran l'entendent a la suite.
     - Autres pages : une bande sobre et son bouton."""
     externe = href.startswith("mailto:")
     messagerie = '<span class="sr-only"> (ouvre votre messagerie)</span>' if externe else ""
     if seuil:
         debut, _, dernier = titre.rpartition(" ")
         texte = (titre_html(debut) + " " if debut else "") + f'<span class="insecable">{titre_html(dernier)}{FLECHE}</span>'
+        action = "" if label.rstrip(".").casefold() == titre.rstrip(".").casefold() else f'<span class="sr-only"> ({esc(label)})</span>'
         return f'''<section class="appel appel--seuil" id="{esc(identifiant)}" aria-labelledby="appel-titre">
-  <h2 id="appel-titre" class="appel__titre" data-revele><a class="appel__titre-lien" href="{esc(href)}">{texte}{messagerie}</a></h2>
+  <h2 id="appel-titre" class="appel__titre" data-revele><a class="appel__titre-lien" href="{esc(href)}">{texte}{action}{messagerie}</a></h2>
   <p class="appel__phrase" data-revele>{texte_html(phrase)}</p>
 </section>'''
-    if mot:
-        if not _comparable(label).startswith(_comparable(mot)):
-            raise ValueError(f"Le grand mot « {mot} » doit ouvrir le libelle du lien « {label} »")
-        reste = label[len(mot):]
-        porteur = (f'<span class="appel__mot">{esc(mot)}<span class="sr-only">{esc(reste)}</span>{messagerie}{FLECHE}</span>')
-    else:
-        porteur = f'<span class="appel__bouton">{esc(label)}{messagerie}{FLECHE}</span>'
-    return f'''<section class="appel{"" if mot else " appel--sobre"}" id="{esc(identifiant)}" aria-labelledby="appel-titre">
+    return f'''<section class="appel appel--sobre" id="{esc(identifiant)}" aria-labelledby="appel-titre">
   <a class="appel__lien" href="{esc(href)}">
-    <div class="appel__haut"><h2 id="appel-titre">{titre_html(titre)}</h2><p class="appel__phrase">{texte_html(phrase)}</p>{"" if mot else porteur}</div>
-    {porteur if mot else ""}
+    <div class="appel__haut"><h2 id="appel-titre">{titre_html(titre)}</h2><p class="appel__phrase">{texte_html(phrase)}</p><span class="appel__bouton">{esc(label)}{messagerie}{FLECHE}</span></div>
   </a>
 </section>'''
 
@@ -725,9 +714,9 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str, mot: dict | No
         accueil_tarifs(page, tarifs),
         accueil_confiance(page, images, mot),
         accueil_faq(page, tarifs),
-        # Le grand mot « Commencer » est le bouton : le titre ne le redit pas, il dit pour qui.
+        # Comme les pages principales, l'accueil se referme sur une phrase qui est le lien : elle dit pour qui.
         bande_finale((fin.get("paragraphs") or [fin["title"]])[0], "Rien n’est facturé avant l’ouverture de la classe.",
-                     page["cta"]["label"], page["cta"]["href"], "Commencer"),
+                     page["cta"]["label"], page["cta"]["href"], seuil=True),
     ))
 
 
@@ -774,8 +763,9 @@ def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str
             for montant, public in ((p["tarifEnfantMineur"], f"Enfants et adolescents, de {tarifs_mod.AGE_ENFANT_MIN} à {p['ageAdulte'] - 1} ans"),
                                     (p["tarifAdulteMineur"], f"Adultes, {p['ageAdulte']} ans et plus")))
         # Les deux prix ne sont dits qu'ici : leurs mentions (date d'effet, monnaies, taxes) se posent dessous.
-        notes = "".join(f'<p class="entete-prix__note">{esc(n)}</p>'
-                        for n in tarifs_mod.notes_prix(tarifs, today or date.today()))
+        # La date d'effet, s'il y en a une, reste sous les prix ; la mention des monnaies et des taxes est sous le simulateur.
+        date_effet = tarifs_mod.note_date_effet(tarifs, today or date.today())
+        notes = f'<p class="entete-prix__note">{esc(date_effet)}</p>' if date_effet else ""
         return (f'<section class="entete-page entete-page--haut-prix">{texte}'
                 f'<div class="entete-page__arche">{scene(images, reglage["image"], "(max-width: 839px) 72vw, 480px", "entete-page__image", prioritaire=True)}</div>'
                 f'<div class="entete-prix" data-revele-enfants>{blocs}{notes}</div></section>')
@@ -918,36 +908,41 @@ def portrait(images: dict, ident: str, tailles: str, variante: str = "") -> str:
 TAILLES_PORTRAIT = "(max-width: 839px) min(88vw, 520px), calc(50vw - 108px)"
 
 
-def section_mot(section: dict, number: int, images: dict, ident: str | None) -> str:
-    """Le mot du directeur : sa photo calee au bord gauche de l'ecran (elle est coupee a gauche), sa parole a cote."""
+def section_mot(section: dict, number: int, images: dict, ident: str | None, profil: dict | None = None) -> str:
+    """Le mot du directeur : sa photo calee au bord gauche de l'ecran (elle est coupee a gauche), sa parole a cote, et
+    sous sa signature son parcours (son profil de fondateur : sa photo n'est montree qu'ici, une seule fois)."""
     if not ident:
         raise ValueError(f"Section {section['id']}: a citation needs its portrait in direction.json")
     if section.get("extrait") and section["extrait"] not in section["citation"]:
         raise ValueError(f"Section {section['id']}: extrait must be one of its citation paragraphs")
     sig = section["signature"]
     citation = "".join(f"<p>{texte_html(p)}</p>" for p in section["citation"])
+    parcours = ('<ul class="mot__parcours profil__parcours">' + "".join(f"<li>{texte_html(l)}</li>" for l in profil["parcours"])
+                + "</ul>") if profil else ""
     return (f'<section class="mot" id="{esc(section["id"])}" aria-labelledby="heading-{number}">'
             f'<div class="mot__photo" data-revele>{portrait(images, ident, TAILLES_PORTRAIT)}</div>'
             f'<div class="mot__texte" data-revele-enfants><h2 id="heading-{number}">{titre_html(section["title"])}</h2>'
             f'<blockquote class="mot__citation">{citation}</blockquote>'
             f'<p class="mot__signature"><span class="mot__nom">{esc(sig["nom"])}</span>'
-            f'<span class="mot__role">{esc(sig["role"])}</span></p></div></section>')
+            f'<span class="mot__role">{esc(sig["role"])}</span></p>{parcours}</div></section>')
 
 
 # Un portrait de fondateur : une colonne de profil, 300 px au plus.
 TAILLES_PROFIL = "(max-width: 359px) calc(100vw - 32px), 300px"
 
 
-def section_fondateurs(section: dict, number: int, images: dict | None = None, portraits: dict | None = None) -> str:
-    """Les fondateurs : le texte de la section, puis un profil par personne (portrait, role et diplomes). Les trois
-    portraits sont traites ensemble (meme fond, meme cadrage, meme etalonnage) : ils vont toujours a trois, ou pas du
-    tout. L'arabe des noms et des diplomes attend le site en arabe (registre de marque, M-29) : on ne melange pas les
-    deux langues sur une page."""
-    noms = [p["nom"] for p in section["profils"]]
+def section_fondateurs(section: dict, number: int, images: dict | None = None, portraits: dict | None = None,
+                       deja: str | None = None) -> str:
+    """Les fondateurs : le texte de la section, puis un profil par personne (portrait, role et diplomes). Les portraits
+    sont traites avec la photo du directeur (meme fond, meme cadrage, meme etalonnage). L'arabe des noms et des
+    diplomes attend le site en arabe (registre de marque, M-29) : on ne melange pas les deux langues sur une page."""
+    # Le directeur (deja) est presente par son mot, avec sa photo et son parcours : ici, les deux autres fondateurs.
+    profils_ici = [p for p in section["profils"] if p["nom"] != deja]
+    noms = [p["nom"] for p in profils_ici]
     if portraits and set(portraits) != set(noms):
         raise ValueError(f"direction.json: les portraits des fondateurs doivent nommer {noms}, pas {sorted(portraits)}")
     profils = []
-    for p in section["profils"]:
+    for p in profils_ici:
         parcours = "".join(f"<li>{texte_html(l)}</li>" for l in p["parcours"])
         photo = portrait(images, portraits[p["nom"]], TAILLES_PROFIL, "portrait--profil") if portraits else ""
         profils.append(f'<li class="profil">{photo}<h3>{titre_html(p["nom"])}</h3><p class="profil__role">{esc(p["role"])}</p>'
@@ -1055,10 +1050,14 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
             continue
         if s.get("citation"):
             vider()
-            morceaux.append(section_mot(s, i, images, (reglage.get("portraits") or {}).get(s["id"])))
+            nom = s["signature"]["nom"]
+            profil = next((p for x in page["sections"] for p in x.get("profils", []) if p["nom"] == nom), None)
+            morceaux.append(section_mot(s, i, images, (reglage.get("portraits") or {}).get(s["id"]), profil))
         elif s.get("profils"):
             vider()
-            morceaux.append(section_fondateurs(s, i, images, (reglage.get("portraits") or {}).get(s["id"])))
+            mot = next((x for x in page["sections"] if x.get("citation")), None)
+            morceaux.append(section_fondateurs(s, i, images, (reglage.get("portraits") or {}).get(s["id"]),
+                                               mot["signature"]["nom"] if mot else None))
         elif s["id"] in reglage.get("parcours", []) and reglage.get("haut") != "parcours":
             vider()
             morceaux.append(render_section(s, i, tarifs, today, avis, "parcours"))
@@ -1158,6 +1157,8 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         classe_page = "page-" + (route.strip("/").split("/", 1)[1].replace("/", "-") if "/" in route.strip("/") else "accueil")
     # Sur la page des tarifs, le simulateur est dans la page, sous la grille ; sur l'accueil, une feuille qui s'ouvre.
     en_page = route == "/fr/tarifs"
+    mentions_monnaies = "".join(f'<p class="simulator__note">{esc(n)}</p>' for n in tarifs_mod.notes_prix(tarifs, today or date.today())
+                                if n != tarifs_mod.note_date_effet(tarifs, today or date.today())) if en_page else ""
     ouverture = ('<section class="simulator simulator--page" id="tarif-simulator" aria-labelledby="simulator-title">' if en_page else
                  '<dialog class="simulator" id="tarif-simulator" aria-labelledby="simulator-title">\n'
                  '      <form method="dialog"><button class="simulator__close" aria-label="Fermer le simulateur"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></form>')
@@ -1172,7 +1173,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
       <div class="simulator__fields" id="sim-students"></div>
       <div class="simulator__result" role="status" aria-live="polite" aria-atomic="true" id="sim-result"><p>Le simulateur demande JavaScript.</p></div>
       <script type="application/json" id="tarifs-data">{tarifs_mod.donnees_simulateur(tarifs)}</script>
-      <p class="simulator__note">Prix hors taxes, pour un mois complet. Les taxes éventuelles sont indiquées avant paiement.</p>
+      <p class="simulator__note">Prix hors taxes, pour un mois complet. Les taxes éventuelles sont indiquées avant paiement.</p>{mentions_monnaies}
       <a class="cta" href="/connexion">Commencer mon inscription</a>
     {"</section>" if en_page else "</dialog>"}''' if route in ("/fr/", "/fr/tarifs") else ""
     if en_page:
@@ -1243,7 +1244,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     <div><p class="footer-title">Nous contacter</p><ul class="footer-contacts">{contact_links}</ul>
     </div>
     <nav class="footer-legal" aria-label="Navigation légale"><ul>{footer_links}</ul></nav>
-    <div class="footer-bottom"><span>Français · Les illustrations du site sont présentées comme telles.</span><div>{anchor(academy_facebook['label'], academy_facebook['href'])}<span>{esc(site['author_credit'])} {anchor(author_facebook['label'], author_facebook['href'])}</span></div></div>
+    <div class="footer-bottom"><span>Français</span><div>{anchor(academy_facebook['label'], academy_facebook['href'])}<span>{esc(site['author_credit'])} {anchor(author_facebook['label'], author_facebook['href'])}</span></div></div>
   </div></footer>
 </body>
 </html>

@@ -219,6 +219,7 @@ Inspection après ces corrections :
 | Recette 16 | 7,7 | 6,33 | 6,33 | « presque » |
 | Recette 17 | 7,4 | 6,5 | 6,5 | « presque » |
 | Recette 18 | 7,43 | 6,37 | 6,33 | « presque » |
+| Recette 19 (jurés Sonnet) | 7,72 | 6,95 | 6,93 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -534,6 +535,24 @@ Aucun visage n'est retouché. La photo d'Ahmad Diallo, en pied, ne donne que 338
 Non repris : la répétition des personnages d'une page à l'autre (O-20). Les jurés proposent des recadrages sans personne, mais la recette 15 les avait refusés (« jamais une porte ou un tapis sans personne »). La réponse reste les nouvelles scènes demandées au directeur.
 
 Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Comment ça marche garde un avertissement de marges (120 et 142 px) : l'inspecteur ne compte que l'étendue du texte, et l'ornement retiré du pied de page touchait la marge droite. Les cartes et la grille vont bien de 120 à 1320 px. Aucun texte coupé. Aucune image agrandie à 390, 1024 et 1440 px. À 1920 px, l'image du haut de Familles est agrandie de 10 %, comme avant ce lot. Aucun mot seul. Simulateur vérifié : 3 élèves de 8, 12 et 30 ans donnent 159,55 $, sans erreur dans la console. Tests : 68, OK.
+
+**Après la recette 19.** Pour ménager le quota hebdomadaire (demande du directeur, 22/10), les jurés et le relecteur tournent désormais sur Sonnet ; leurs notes ne se comparent pas point par point avec celles des recettes précédentes. Les trois jurés relèvent la fin blanche restée seule sur l'accueil, la photo du directeur montrée deux fois sur l'Académie, le premier écran de Tarifs encore chargé, le titre de l'Académie isolé à gauche et, à l'œil, trop de tailles de texte. Corrections :
+
+| # | Relevé | Correction |
+|---|---|---|
+| EE1 | L'accueil seul finit encore sur la bande blanche et son grand mot | L'accueil se referme comme les autres pages, sur une phrase qui est le lien : « Pour votre enfant ou pour vous-même. », à la taille de son titre. Le grand mot disparaît du site, et avec lui l'écart entre le nom du lien et le mot montré (relecture) |
+| EE2 | Le directeur montré deux fois sur l'Académie (grande photo et petit portrait) | Son parcours passe sous sa signature, à côté de sa photo ; la section des fondateurs présente les deux autres, portrait à gauche et texte à droite. Le portrait du directeur recadré pour la carte est retiré |
+| EE3 | Académie : le titre isolé en bas à gauche, la phrase et le bouton en haut à droite | Titre, phrase et bouton dans une seule colonne à gauche, la boucle dessous |
+| EE4 | Tarifs : la colonne de gauche encore chargée | La mention des monnaies et des taxes passe sous le simulateur ; seule une date d'effet, s'il y en a une, resterait sous les prix |
+| EE5 | Trop de tailles à l'œil ; prix de l'accueil à 150 px | Prix de l'accueil à la taille de son titre : 5 tailles mesurées sur l'accueil au bureau, 6 au téléphone (la phrase du zoom, l'énoncé et la fin partagent la même) |
+| EE6 | Titre d'ouverture et de fin : 64 px à 839 px, 40 px à 840 px (relecture) | L'affiche des pages part de 52 px dès 840 px |
+| EE7 | Simulateur de l'accueil (feuille) : champs de 37 px, chiffres invisibles (relecture, défaut ancien) | Champs d'au moins 220 px par colonne : 118 px pour le nombre d'élèves, 238 px pour le paiement |
+| EE8 | Accueil, bande « Accompagné » : la photo avant le titre pour un lecteur d'écran (relecture) | Le titre vient d'abord dans le document ; la grille place la photo à gauche |
+| EE9 | Le libellé de l'action absent du lien de fin (relecture) | Quand il diffère du titre, il suit pour les lecteurs d'écran ; test étendu à l'accueil |
+
+**Transitions entre les pages (demande du directeur, 22/10).** D'une page à l'autre, le contenu s'efface vers le haut et le suivant monte en place (transitions de vue entre documents) ; l'en-tête et le logo ne bougent pas. Rien ne bouge en mouvement réduit ; un navigateur qui ne connaît pas ces transitions change de page comme avant.
+
+**Textes internes retirés du site (directeur, 22/10).** Le paragraphe « Le nom dit le projet… Le symbole le montre aussi… » de l'Académie, la phrase « Le nom Rewayah dit ce projet » et la mention « Les illustrations du site sont présentées comme telles » du pied de page recopiaient le registre de marque. Ils sont réécrits pour les familles : « C'est le sens de notre nom : « Rewayah » veut dire transmission. Nous enseignons le Coran tel qu'il nous a été transmis, sans rien y changer. » et « Notre logo raconte la même chose : un cercle, comme celui que forment les élèves autour de leur enseignant ; un livre, le Coran, dessiné en arche ; et dans ce livre, une porte ouverte, parce que cet enseignement est ouvert à chacun. » La mention du pied de page est retirée (chaque illustration porte déjà sa légende).
 
 ## Hors de portée de l'agent
 

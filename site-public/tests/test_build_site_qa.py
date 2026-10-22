@@ -196,8 +196,8 @@ class GeneratedSiteQA(unittest.TestCase):
     def test_portraits_are_named_photos_never_captioned_illustration(self) -> None:
         # Une vraie photo (le directeur) n'est pas une illustration : ni « Illustration » ni texte alternatif vide.
         images = json.loads((SITE / "content" / "images.json").read_text(encoding="utf-8"))
-        # Accueil : le visage du directeur. Academie : son mot, puis les trois fondateurs, chacun avec son portrait.
-        for route, nombre in (("/fr/", 1), ("/fr/academie", 4)):
+        # Accueil : le visage du directeur. Academie : son mot, puis les deux autres fondateurs, chacun avec son portrait.
+        for route, nombre in (("/fr/", 1), ("/fr/academie", 3)):
             source = self.page_file(route).read_text(encoding="utf-8")
             portraits = re.findall(r'<figure class="portrait[^"]*">.*?</figure>', source, re.S)
             with self.subTest(route=route):
@@ -209,7 +209,9 @@ class GeneratedSiteQA(unittest.TestCase):
                     self.assertIn(f'alt="{images["images"][ident]["alt"]}"', figure)
         # Chaque profil de fondateur porte le portrait de la personne qu'il nomme.
         academie = self.page_file("/fr/academie").read_text(encoding="utf-8")
-        for profil in re.findall(r'<li class="profil">.*?</li>\s*(?=<li class="profil">|</ul></section>)', academie, re.S):
+        profils = re.findall(r'<li class="profil">.*?</li>\s*(?=<li class="profil">|</ul></section>)', academie, re.S)
+        self.assertEqual(len(profils), 2)
+        for profil in profils:
             nom = re.sub(r"<[^>]+>", "", re.search(r"<h3>(.*?)</h3>", profil).group(1)).replace("\u00a0", " ")
             with self.subTest(nom=nom):
                 self.assertIn(f'alt="{nom}', profil)
@@ -218,8 +220,13 @@ class GeneratedSiteQA(unittest.TestCase):
         academie = self.page_file("/fr/academie").read_text(encoding="utf-8")
         sections = {s["id"]: s for s in self.pages["/fr/academie"]["sections"]}
         fondateurs = academie.split('id="fondateurs"', 1)[1].split("</section>", 1)[0]
-        noms = [re.sub(r"<[^>]+>", "", h).replace(" ", " ") for h in re.findall(r"<h3>(.*?)</h3>", fondateurs)]
-        self.assertEqual(noms, [p["nom"] for p in sections["fondateurs"]["profils"]])
+        noms = [re.sub(r"<[^>]+>", "", h).replace("\u00a0", " ") for h in re.findall(r"<h3>(.*?)</h3>", fondateurs)]
+        # Le directeur est presente par son mot (photo, signature et parcours) ; les deux autres fondateurs ont leur profil.
+        directeur = sections["mot"]["signature"]["nom"]
+        self.assertEqual(noms, [p["nom"] for p in sections["fondateurs"]["profils"] if p["nom"] != directeur])
+        mot = academie.split('id="mot"', 1)[1].split("</section>", 1)[0].replace("\u00a0", " ")
+        for ligne in next(p for p in sections["fondateurs"]["profils"] if p["nom"] == directeur)["parcours"]:
+            self.assertIn(ligne.replace("\u00a0", " "), mot)
         self.assertIn('<blockquote class="mot__citation">', academie)
         # L'accueil reprend une phrase du mot, signee ; le build refuse un extrait qui n'en vient pas.
         accueil = self.page_file("/fr/").read_text(encoding="utf-8").replace(" ", " ")
@@ -244,25 +251,25 @@ class GeneratedSiteQA(unittest.TestCase):
             BUILDER_MODULE.section_mot(mot, 1, images, "portrait-directeur")
 
     def test_page_endings_name_their_link_by_what_they_show(self) -> None:
-        # Accueil : le grand mot visible ouvre le nom du lien (WCAG 2.5.3, une commande vocale le trouve) ; un mot qui
-        # n'ouvre pas le libelle est refuse. Pages principales : le titre de fin est lui-meme le lien.
-        accueil = self.page_file("/fr/").read_text(encoding="utf-8")
-        self.assertIn('<span class="appel__mot">Commencer<span class="sr-only"> mon inscription</span>', accueil)
-        with self.assertRaisesRegex(ValueError, "grand mot"):
-            BUILDER_MODULE.bande_finale("Titre", "Phrase.", "Commencer mon inscription", "/connexion", "S’inscrire")
+        # L'accueil et les pages principales se referment sur un titre qui est le lien : le texte visible est le titre,
+        # et le libelle de l'action suit pour les lecteurs d'ecran quand il en differe.
         direction = json.loads((SITE / "content" / "direction.json").read_text(encoding="utf-8"))["pages"]
-        seuils = [route for route, reglage in direction.items() if (reglage.get("fin") or {}).get("seuil")]
-        self.assertGreaterEqual(len(seuils), 5)
-        for route in seuils:
-            fin = direction[route]["fin"]
+        accueil = {s["id"]: s for s in self.pages["/fr/"]["sections"]}["footer"]
+        fins = {"/fr/": {"titre": accueil["paragraphs"][0], "label": self.pages["/fr/"]["cta"]["label"]}}
+        fins.update({route: reglage["fin"] for route, reglage in direction.items() if (reglage.get("fin") or {}).get("seuil")})
+        self.assertGreaterEqual(len(fins), 6)
+        for route, fin in fins.items():
             source = self.page_file(route).read_text(encoding="utf-8")
             with self.subTest(route=route):
-                self.assertNotIn("appel__mot", source)
                 titre = re.search(r'<h2 id="appel-titre" class="appel__titre"[^>]*><a class="appel__titre-lien" '
                                   r'href="([^"]+)">(.*?)</a></h2>', source, re.S)
                 self.assertIsNotNone(titre)
                 self.assertEqual(titre.group(1), fin.get("href", self.pages[route]["cta"]["href"]))
-                self.assertEqual(re.sub(r"<[^>]+>", "", titre.group(2)).replace(" ", " ").strip(), fin["titre"])
+                visible = re.sub(r'<span class="sr-only">.*?</span>', "", titre.group(2))
+                self.assertEqual(re.sub(r"<[^>]+>", "", visible).replace("\u00a0", " ").strip(), fin["titre"])
+                label = fin.get("label", self.pages[route]["cta"]["label"])
+                if label.rstrip(".").casefold() != fin["titre"].rstrip(".").casefold():
+                    self.assertIn(f'<span class="sr-only"> ({label})</span>', titre.group(2))
 
     def test_bundle_gate_covers_every_local_font_requested_by_css(self) -> None:
         css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")
