@@ -22,6 +22,8 @@ Ce qui est décidé :
 
 Ce qui reste une proposition, à soumettre au directeur : la salle exacte où la répartition entre dans le parcours de candidature, l'écran qui la porte pour chaque rôle, la base de calcul et la façon de dire qu'il s'agit d'une estimation, le « 2 % » (le document ne porte aucune ligne de 2 % : les frais de carte et de change valent environ 5 % de l'encaissé, et les frais de virement vers l'enseignant environ 2 % de sa paie plus 1 $ par versement), et le sort des montants que l'enseignant voit déjà de sa propre paie. Proposition : `docs/current/CANDIDATURES/PROPOSITION_REPARTITION_PAIEMENT.md`.
 
+**Langues de cours (directeur, 22/10/2026)** : l'arabe n'est pas une langue de cours ; poular, peul et fulfulde sont une seule langue. Les encarts et `regles_publiques.langues` de `tarifs-2026-10-18.json` sont corrigés le 22/10 ; la mention de l'arabe dans le document source (`OFFRE_ET_TARIFS_2026-10-18.md`, conservé tel quel) est caduque. Détail : `DECISION-CANDIDATURES-2026-10-21.md`, section 1 ter.
+
 ## Décision du directeur du 19/10/2026 : l'enseignant reçoit 47 % du prix
 
 Le directeur l'a dit : « je confirme le nouveau tarif, il faut juste ramener le prof adulte à 47 % comme l'enfant ; tu rends le nouveau le standard partout ». Elle remplace la part de 22,5 % (enfant) et de 30 % (adulte) du 18/10, qui venait d'une erreur : le « 22,5 » visé était un montant par élève et par mois, appliqué à tort comme un pourcentage du prix.

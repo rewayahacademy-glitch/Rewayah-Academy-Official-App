@@ -66,6 +66,23 @@ enseignants de côté et se concentrer seulement sur les élèves. »
 | L'angle (directeur, 22/10, après coup) | « Ce n'est pas bon en marketing, tu leur demandes de faire une action sans aucune contrepartie […] le hadith seul ne peut pas se faire […] Il faut penser aux élèves. Il faut leur parler de l'intérêt que l'élève va avoir. Pas Rewayah Academy. » **Aucun texte ne demande d'agir pour l'académie.** La tuile parle à celui qui partage de la personne qui apprendra (« Un proche veut apprendre le Coran ? ») ; la carte parle au futur élève de ce qu'il gagne ; le hadith reste, en motif personnel, pas seul. Les mots exacts sont soumis au directeur avec les captures. |
 | Source du hadith | La formulation « الدال على الخير كفاعله » est celle que rapporte at-Tirmidhi (n° 2670, d'après Anas) ; Muslim (n° 1893) rapporte le même sens sous la forme « من دل على خير فله مثل أجر فاعله ». La référence affichée et la traduction française sont à confirmer par le directeur avant toute mise en ligne. |
 
+## 1 ter. Décidé le 22/10/2026 : le questionnaire de la Salle d'examen
+
+Réponses du directeur aux huit questions de l'audit
+(`CANDIDATURES/AUDIT_QUESTIONNAIRE_SALLE_EXAMEN_2026-10-22.md`, section 5).
+
+| Point | Décision |
+| :--- | :--- |
+| Langues d'enseignement | **Autant de langues que la personne veut**, sans plafond : « le programme, il est international ». C'est la langue dans laquelle l'enseignant explique qui décide de sa Classe : l'élève ou le parent choisit sa langue parmi celles qui sont disponibles, et l'académie affecte un enseignant qui la parle. |
+| Poular | **Poular, peul et fulfulde sont une seule langue**, sous le code `poular`. |
+| Arabe | **L'arabe n'est pas une langue de cours.** « Notre public principal, c'est les Africains de la diaspora […] des Peuls, des Malinkés, des Soussous, des Swahili, des Haoussa. » La liste des langues d'enseignement doit proposer ces langues. Effet : l'arabe sort des langues de cours de l'offre (`tarifs-2026-10-18.json`, encarts et `regles_publiques.langues`, le 22/10) ; le site public, zone protégée, suit par sa propre session. |
+| Publics | **Les tranches d'âge, au choix** : 6-9, 10-13, 14-17 ans, adultes ; « beaucoup de gens ne sont pas à l'aise à enseigner certaines tranches d'âge ». |
+| Mémorisation et ijaza | **Deux questions** : « celui qui a une ijaza a mémorisé, mais toute personne qui a mémorisé n'a pas une ijaza ». |
+| Continuité | **Oui** : l'engagement à tenir sa Classe aux mêmes jours et heures. |
+| Paiement | **S'assurer que les personnes qui s'engagent pourront être payées** : le contrôle de paiement reste une condition d'entrée en salle 2. |
+| Charge maximale | **Trois Classes au plus par enseignant pour l'instant**, réglable par la direction dans les réglages. |
+| Disponibilités (grille ou blocs) | Pas tranché : la grille construite reste. |
+
 ## 2. Conditions de mise en oeuvre signalées au directeur
 
 **`CAND-Q03` : le lien public.**
