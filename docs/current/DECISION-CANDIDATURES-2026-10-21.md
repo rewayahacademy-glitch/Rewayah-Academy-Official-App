@@ -44,6 +44,27 @@ ses remarques sont dans la même page, sous chaque question.
 | `CAND-Q21` | **Durée de conservation réglable, anonymisation sur le modèle existant** ; demande d'effacement faite depuis l'app, ou reçue par courriel et notée par la direction pour une personne sans compte ; **avis du juriste**. | Recommandation révisée après `CAND-Q06` (plus de WhatsApp), validée. La durée elle-même attend l'avis du juriste. |
 | `CAND-Q22` | **Les pièces autres que l'identité (ijaza, diplôme) sont présentées et constatées à l'entretien** pour la première vague. | Aucun dépôt de ces pièces dans l'app pour l'instant ; un dépôt futur passerait par le coffre cloisonné par genre, jamais par un lien Drive. |
 
+## 1 bis. Décidé le 22/10/2026 : faire connaître l'offre aux élèves depuis la salle d'attente
+
+Le directeur, le 22/10 : profiter de la salle d'attente des candidats (près de 500
+personnes) pour qu'ils fassent connaître l'académie, en rappelant la valeur d'être
+la cause qu'une personne apprenne le Coran ; « un geste facile », une carte « très
+jolie, très partageable sur une story ». Puis, après l'étude : « il ne faut pas que
+les prix soient sur la carte. Il faut laisser ça sur le site public […] La carte doit
+être simple et avoir le design de site si nécessaire. Des éléments simples, pas
+beaucoup. Un hadith peut suffire […] En arabe, c'est الدال على الخير كفاعله.
+Maintenant, tu décris, bien, tu ajoutes une description. Tu peux pousser, mais sans
+mentir, sans forcer aussi les gens. Donc, pour l'instant, on peut laisser les
+enseignants de côté et se concentrer seulement sur les élèves. »
+
+| Point | Décision |
+| :--- | :--- |
+| Quoi | Une tuile « Faites connaître Rewayah » dans le portail de la salle d'attente : une carte au format story à partager (menu de partage du téléphone, enregistrer l'image, copier le lien). |
+| Pour qui | **L'offre pour les élèves seulement.** Le recrutement des enseignants est laissé de côté pour l'instant. |
+| La carte | Simple, peu d'éléments, au style du site public ; **aucun prix** (ils restent sur le site public) ; **un seul hadith** : « الدال على الخير كفاعله », avec sa traduction ; une description courte ; le lien vers l'offre. |
+| Le ton | Encourager sans mentir et sans forcer. Facultatif, et sans aucun effet sur la candidature. |
+| Source du hadith | La formulation « الدال على الخير كفاعله » est celle que rapporte at-Tirmidhi (n° 2670, d'après Anas) ; Muslim (n° 1893) rapporte le même sens sous la forme « من دل على خير فله مثل أجر فاعله ». La référence affichée et la traduction française sont à confirmer par le directeur avant toute mise en ligne. |
+
 ## 2. Conditions de mise en oeuvre signalées au directeur
 
 **`CAND-Q03` : le lien public.**
