@@ -2054,7 +2054,7 @@ li, dd { text-wrap: wrap; }
    paragraphes ont la meme taille. */
 @media (min-width: 840px) {
   .chapitre { min-height: 100svh; }
-  .chapitre h2 + p, .chapitre p + p { font-size: clamp(20px, 1.7vw, 24px); line-height: 1.4; }
+  .chapitre h2 + p, .chapitre p + p { font-size: var(--t-moyen); line-height: 1.35; }
 }
 
 /* Les cours en bref : les phrases courtes ne sont plus des tuiles, mais des lignes marquees de la petite arche, sous les
@@ -2062,8 +2062,7 @@ li, dd { text-wrap: wrap; }
 @media (min-width: 840px) {
   .fiches-bloc .fiches .fiche, .fiches-bloc .fiches .fiche:first-child { padding-inline: 0; }
   .fiches-bloc .fiche__lignes { width: 100%; margin-inline: 0; padding-inline: 0; }
-  .fiches-bloc .fiche__lignes li.fiche__court { padding: 0 0 0 1.4em; border-radius: 0; background: none; font-weight: 600; }
-  .fiches-bloc .fiche__lignes li.fiche__court::before { content: ""; }
+  .fiches-bloc .fiche__lignes li.fiche__court { justify-self: start; }
 }
 
 /* Tarifs, les remises : quatre colonnes ; les deux remises aux longues legendes prennent chacune deux colonnes, pour
@@ -2104,4 +2103,50 @@ li, dd { text-wrap: wrap; }
 }
 
 /* Accueil : le mot du bouton du tapis un peu plus grand. */
-.porte__texte .pause-anim { font-size: 17px; }
+.porte__texte .pause-anim { font-size: 18px; }
+
+/* --- Recette 31 (22/10/2026) ------------------------------------------------------------------------------------- */
+/* Les cours en bref, a toutes les largeurs : les phrases longues en tuiles, les courtes en pastilles calees a gauche,
+   marquees de la petite arche. */
+.fiches-bloc .fiche__lignes li:nth-child(n+3):not(.fiche__court) { padding: var(--e-5) var(--e-6); border-radius: var(--r-lg); background: #4E2983; }
+.fiches-bloc .fiche__lignes li:nth-child(n+3):not(.fiche__court)::before { content: none; }
+.fiches-bloc .fiche__lignes li.fiche__court { justify-self: start; padding: var(--e-3) var(--e-6) var(--e-3) calc(var(--e-5) + 1em); border-radius: var(--r-full); background: #4E2983; font-weight: 600; }
+.fiches-bloc .fiche__lignes li.fiche__court::before { content: ""; inset-inline-start: var(--e-4); top: calc(var(--e-3) + .35em); }
+@media (min-width: 840px) { .fiches-bloc .fiche__lignes li.fiche__court { margin-top: calc(-1 * var(--e-2)); } }
+
+/* Tarifs, a savoir avant de commander : le titre, puis les deux paragraphes cote a cote, puis les cinq points en tuiles
+   coiffees d'une arche, trois puis deux, comme les remises. */
+@media (min-width: 1100px) {
+  #conditions .section__titre { grid-column: 1 / -1; position: static; }
+  #conditions .section__corps { grid-column: 1 / -1; max-width: none; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: var(--e-4); align-items: start; }
+  #conditions .section__corps > p { grid-column: span 3; max-width: 52ch; margin: 0; }
+  #conditions .section__corps > .points, #conditions .section__corps > .section-links { grid-column: 1 / -1; }
+  #conditions .points { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--e-4); margin-top: var(--e-10); }
+  #conditions .points li { grid-column: span 2; padding: var(--e-10) var(--e-8) var(--e-8); border-radius: 50% 50% var(--r-lg) var(--r-lg) / 72px 72px var(--r-lg) var(--r-lg); background: #4E2983; }
+  #conditions .points li:nth-child(n+4) { grid-column: span 3; }
+  #conditions .points .puce { display: none; }
+}
+
+/* Tarifs : au telephone, les quatre remises courtes deux par rangee, les deux longues sur toute la largeur ; le cout
+   d'une famille en tuiles a toutes les largeurs. */
+@media (max-width: 1099px) {
+  .remises:not(.remises--echeances) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e-4); }
+  .remises:not(.remises--echeances):has(> li:nth-child(6):last-child) > li:nth-child(n+5) { grid-column: 1 / -1; }
+  .remises:not(.remises--echeances) .remise { padding: var(--e-8) var(--e-5) var(--e-6); }
+}
+@media (max-width: 839px) {
+  .price-table--famille thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .price-table--famille tbody { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e-3); }
+  .price-table--famille tbody tr, .price-table--famille tbody tr:nth-child(n) { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--e-1); padding: var(--e-10) var(--e-5) var(--e-5); border-radius: 50% 50% var(--r-lg) var(--r-lg) / 48px 48px var(--r-lg) var(--r-lg); background: #FFFFFF; }
+  .price-table--famille tbody th, .price-table--famille tbody td { padding: 0; text-align: start; }
+}
+
+/* Accueil, le prix : les deux montants plus grands ; les quatre points communs en tuiles coiffees d'une arche. */
+@media (min-width: 840px) { .champ__montant { font-size: clamp(72px, 8.4vw, 124px); } }
+.deux-champs__communs li { padding: var(--e-10) var(--e-6) var(--e-6); border-radius: 50% 50% var(--r-lg) var(--r-lg) / 64px 64px var(--r-lg) var(--r-lg); }
+
+/* Academie, « Ce que nous enseignons » : l'arche a droite, pour que les deux bandes voisines ne se repetent pas. */
+@media (min-width: 1100px) {
+  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__image { grid-column: 8 / -1; }
+  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) :is(.pleine__tete, .pleine__corps) { grid-column: 1 / span 6; }
+}

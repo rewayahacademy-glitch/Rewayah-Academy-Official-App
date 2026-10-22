@@ -231,6 +231,7 @@ Inspection après ces corrections :
 | Recette 28 (jurés Sonnet) | 7,73 | 7,00 | 6,50 | « presque », sans plafond |
 | Recette 29 (jurés Sonnet) | 7,70 | 7,00 | 7,20 | « presque », sans plafond |
 | Recette 30 (jurés Sonnet) | 7,57 | 6,93 | 6,73 | « presque », sans plafond |
+| Recette 31 (jurés Sonnet) | 7,57 | 6,97 | 6,77 | « presque » (un juré applique le plafond « moins de quatre vraies photos ») |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -706,6 +707,17 @@ Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte co
 | NN5 | « Les cours en bref » : bords de tuiles sur deux grilles | Les phrases courtes ne sont plus des tuiles mais des lignes marquées de la petite arche ; la grille occupe toute la largeur |
 | NN6 | Chapitres : second paragraphe plus petit, titre suivant visible | Les deux paragraphes à la même taille ; chaque chapitre occupe un écran entier |
 | NN7 | Voile sous le sol à droite de l'arche | Dans l'image, sous le bord du sol blanc, le flanc du disque s'efface vers la droite (bord du sol trouvé colonne par colonne) |
+
+**Après la recette 31.** Un juré compte les rendus comme des dessins et applique le plafond « moins de quatre vraies photos » : c'est la limite des images, que le directeur a close le 22/10. Restent, en commun : les deux phrases courtes de « Les cours en bref » sur une autre grille que les tuiles, le bas de Tarifs (« À savoir » en puces, le coût d'une famille en tableau au téléphone, les remises en colonne au téléphone), le bloc des prix de l'accueil.
+
+| # | Relevé | Correction |
+|---|---|---|
+| OO1 | « Les cours en bref » : deux phrases courtes sur une autre grille | Chacune en pastille calée sur le bord gauche des tuiles, une par rangée ; au téléphone, tuiles et pastilles aussi |
+| OO2 | Tarifs, « À savoir » en puces | Le titre, les deux paragraphes côte à côte, puis les cinq points en tuiles coiffées d'une arche, trois puis deux |
+| OO3 | Tarifs au téléphone : remises en colonne, famille en tableau | Les quatre remises courtes deux par rangée, les deux longues pleine largeur ; le coût d'une famille en tuiles à toutes les largeurs |
+| OO4 | Accueil, le prix : un bloc de fiche technique | Les deux montants plus grands ; les quatre points communs en tuiles coiffées d'une arche |
+| OO5 | Académie : trois bandes « image à gauche » de suite | « Ce que nous enseignons » passe l'arche à droite |
+| OO6 | (relevé par l'inspecteur) Dix tailles de texte sur l'accueil | Les paragraphes des chapitres à la taille des sous-titres, le mot du bouton du tapis à 18 px : huit tailles |
 
 ## Hors de portée de l'agent
 

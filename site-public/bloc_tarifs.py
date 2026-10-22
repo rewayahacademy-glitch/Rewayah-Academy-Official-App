@@ -228,18 +228,21 @@ def formules_editoriales(chemin: Path = TARIFS_FALLBACK) -> dict:
 
 def places_fiche(phrases: list[str]) -> dict[int, str]:
     """Au bureau, la place de chaque phrase d'un encart dans une grille de six colonnes : le prix, puis sa phrase juste
-    dessous ; les phrases longues en tuiles sur une rangée, les courtes sur la suivante, de même largeur dans une rangée
-    (trois tuiles de deux colonnes, deux de trois), pour que les bords des deux rangées tombent sur la même grille."""
+    dessous ; les phrases longues en tuiles de même largeur sur une rangée (trois de deux colonnes, deux de trois) ; les
+    courtes dessous, une par rangée, en pastilles calées sur le bord gauche des tuiles (aucun bord qui tombe ailleurs)."""
     places = {1: "--c: 1 / -1; --r: 1", 0: "--c: 1 / -1; --r: 2"}
     autres = list(range(2, len(phrases)))
+    longues = [k for k in autres if len(phrases[k]) > 60]
     rang = 3
-    for groupe in ([k for k in autres if len(phrases[k]) > 60], [k for k in autres if len(phrases[k]) <= 60]):
-        if not groupe:
-            continue
-        largeur = 6 // len(groupe) if len(groupe) <= 3 else 2
-        for i, k in enumerate(groupe):
+    if longues:
+        largeur = 6 // len(longues) if len(longues) <= 3 else 2
+        for i, k in enumerate(longues):
             places[k] = f"--c: {1 + (i * largeur) % 6} / span {largeur}; --r: {rang + (i * largeur) // 6}"
-        rang += (len(groupe) * largeur + 5) // 6
+        rang += (len(longues) * largeur + 5) // 6
+    for k in autres:
+        if k not in longues:
+            places[k] = f"--c: 1 / -1; --r: {rang}"
+            rang += 1
     return places
 
 
