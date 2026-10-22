@@ -255,7 +255,8 @@ class GeneratedSiteQA(unittest.TestCase):
 
     def test_page_endings_name_their_link_by_what_they_show(self) -> None:
         # L'accueil et les pages principales se referment sur un titre qui est le lien : le texte visible est le titre,
-        # et le libelle de l'action suit pour les lecteurs d'ecran quand il en differe.
+        # et le libelle de l'action suit pour les lecteurs d'ecran quand il en differe. Les fins en bandeau centre
+        # (fin.forme) portent un bouton.
         direction = json.loads((SITE / "content" / "direction.json").read_text(encoding="utf-8"))["pages"]
         accueil = {s["id"]: s for s in self.pages["/fr/"]["sections"]}["footer"]
         fins = {"/fr/": {"titre": accueil["paragraphs"][0], "label": self.pages["/fr/"]["cta"]["label"]}}
@@ -264,6 +265,14 @@ class GeneratedSiteQA(unittest.TestCase):
         for route, fin in fins.items():
             source = self.page_file(route).read_text(encoding="utf-8")
             with self.subTest(route=route):
+                if fin.get("forme") == "centre":
+                    # Bandeau centre : le titre, sa phrase, puis un bouton qui porte le libelle de l'action.
+                    fin_page = source.split('class="appel appel--centre"', 1)[1].split("</section>", 1)[0]
+                    titre = re.search(r'<h2 id="appel-titre" class="appel__titre"[^>]*>(.*?)</h2>', fin_page, re.S).group(1)
+                    self.assertEqual(re.sub(r"<[^>]+>", "", titre).replace("\u00a0", " ").strip(), fin["titre"])
+                    self.assertIn(f'href="{fin.get("href", self.pages[route]["cta"]["href"])}"', fin_page)
+                    self.assertIn(fin.get("label", self.pages[route]["cta"]["label"]), fin_page.replace("&#x27;", "'"))
+                    continue
                 titre = re.search(r'<h2 id="appel-titre" class="appel__titre"[^>]*><a class="appel__titre-lien" '
                                   r'href="([^"]+)">(.*?)</a></h2>', source, re.S)
                 self.assertIsNotNone(titre)

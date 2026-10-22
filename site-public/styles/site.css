@@ -1700,9 +1700,39 @@ li, dd { text-wrap: wrap; }
 
 /* Accueil : la page se referme sous le haut d'une arche, comme elle s'ouvre sur une porte ; tout est centre. */
 .appel--porte { display: block; text-align: center; }
-.appel--porte .appel__arche { width: min(86%, 640px); margin: 0 auto calc(-1 * var(--e-12)); }
+.appel--porte .appel__arche { width: min(86%, 640px); margin: 0 auto var(--e-8); }
 /* La legende dans le coin vide, en haut a droite de l'arche : le titre passe sous l'arche, pas sur la legende. */
 .appel--porte .appel__titre { position: relative; max-width: 11em; margin-inline: auto; }
 .appel--porte .appel__phrase { margin: var(--e-6) auto 0; max-width: 46ch; padding: 0; }
 @media (min-width: 840px) { .page-accueil .appel--porte { display: block; } .page-accueil .appel--porte .appel__phrase { grid-column: auto; } }
+
+/* --- Recette 21 : chaque page finit a sa facon ; les derniers ecarts de grille ------------------------------ */
+/* Bandeau lavande centre (Familles, Comment ca marche, Tarifs) : le titre, sa phrase et un bouton, en encre sombre. */
+.appel--centre { padding: var(--respire) var(--marge); text-align: center; background: #EEE6FA; color: #25113F; }
+.appel--centre .appel__titre { font-size: min(44px, calc((100vw - 2 * var(--marge)) / 8.8)); line-height: 1.04; max-width: 14em; margin-inline: auto; color: inherit; }
+.appel--centre .appel__phrase { margin: var(--e-6) auto 0; max-width: 46ch; color: inherit; }
+.appel--centre .action-row { justify-content: center; margin-top: var(--e-10); }
+.appel--centre .cta { background: #25113F; color: #FFFFFF; border-color: #25113F; }
+.appel--centre .cta:hover, .appel--centre .cta:focus-visible { background: #4E2983; border-color: #4E2983; }
+@media (min-width: 600px) and (max-width: 839px) { .appel--centre .appel__titre { font-size: clamp(52px, 7.6vw, 64px); } }
+@media (min-width: 840px) { .appel--centre .appel__titre { font-size: var(--t-entete); } }
+/* Bande sombre (Academie) : la meme fin que Cours, sur le fond de la bande du directeur, de bord a bord. */
+.appel--sombre { max-width: none; padding-inline: max(var(--marge), calc((100vw - var(--contenu)) / 2)); background: #25113F; }
+
+@media (min-width: 840px) {
+  /* Hauts de page en texte (Cours, Comment ca marche) : le titre, sa phrase et le bouton dans une colonne. */
+  .entete-page--haut-texte .entete-page__texte > *, .entete-page--haut-parcours .entete-page__texte > *,
+  .entete-page--haut-texte .entete-page__texte > h1, .entete-page--haut-parcours .entete-page__texte > h1 { grid-column: 1 / span 8; grid-row: auto; }
+  .entete-page--haut-texte .hero-intro, .entete-page--haut-parcours .hero-intro { max-width: 52ch; }
+  /* Tarifs : le resultat du simulateur part de la 7e colonne, comme le texte des autres sections. */
+  .simulator--page > .simulator__result, .simulator--page > .simulator__note, .simulator--page > .cta { grid-column: 7 / -1; }
+  /* Academie : les portraits des deux fondateurs plus grands ; leurs noms gardent deux lignes, roles et parcours alignes. */
+  .profil { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); }
+  .profil h3 { min-height: 2lh; align-self: start; }
+  /* Accueil : le bouton pause du tapis en bas a droite, au bout du tapis, et non sous le texte. */
+  .porte__texte .pause-anim { position: absolute; inset-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); bottom: var(--e-6); margin: 0; }
+}
+/* Accueil : le bout gauche du tapis s'efface au lieu de s'arreter net au bord de l'image. */
+.porte__scene { -webkit-mask-image: linear-gradient(to right, transparent 0, #000 9%); mask-image: linear-gradient(to right, transparent 0, #000 9%); }
+.portrait--profil { width: min(100%, 300px); }
 

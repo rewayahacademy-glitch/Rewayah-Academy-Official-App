@@ -679,20 +679,28 @@ FLECHE = ('<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><p
 
 
 def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: str = "inscription",
-                 seuil: bool = False, arche: str = "") -> str:
+                 seuil: bool = False, arche: str = "", forme: str = "") -> str:
     """La fin de page, sous deux formes.
     - Accueil et pages principales (seuil, direction.json fin.seuil) : la page se referme sur un titre de la taille de
       son titre d'ouverture, pose sur le fond, et ce titre est le lien ; chaque page finit sur sa propre phrase. Quand le
       libelle de l'action differe du titre, les lecteurs d'ecran l'entendent a la suite. L'accueil (arche) se referme
-      sous le haut d'une arche, comme il s'ouvre sur une porte.
+      sous le haut d'une arche, comme il s'ouvre sur une porte. Pour que les pages ne finissent pas toutes pareil
+      (direction.json fin.forme) : « centre », un bandeau lavande, le titre et sa phrase au centre, un bouton ;
+      « sombre », le titre lien sur une bande sombre.
     - Autres pages : une bande sobre et son bouton."""
     externe = href.startswith("mailto:")
     messagerie = '<span class="sr-only"> (ouvre votre messagerie)</span>' if externe else ""
+    if forme == "centre":
+        return f'''<section class="appel appel--centre" id="{esc(identifiant)}" aria-labelledby="appel-titre">
+  <h2 id="appel-titre" class="appel__titre" data-revele>{titre_html(titre)}</h2>
+  <p class="appel__phrase" data-revele>{texte_html(phrase)}</p>
+  <div class="action-row" data-revele>{bouton(label, href)}</div>
+</section>'''
     if seuil:
         debut, _, dernier = titre.rpartition(" ")
         texte = (titre_html(debut) + " " if debut else "") + f'<span class="insecable">{titre_html(dernier)}{FLECHE}</span>'
         action = "" if label.rstrip(".").casefold() == titre.rstrip(".").casefold() else f'<span class="sr-only"> ({esc(label)})</span>'
-        return f'''<section class="appel appel--seuil{" appel--porte" if arche else ""}" id="{esc(identifiant)}" aria-labelledby="appel-titre">{arche}
+        return f'''<section class="appel appel--seuil{" appel--porte" if arche else ""}{" appel--sombre" if forme == "sombre" else ""}" id="{esc(identifiant)}" aria-labelledby="appel-titre">{arche}
   <h2 id="appel-titre" class="appel__titre" data-revele><a class="appel__titre-lien" href="{esc(href)}">{texte}{action}{messagerie}</a></h2>
   <p class="appel__phrase" data-revele>{texte_html(phrase)}</p>
 </section>'''
@@ -1153,7 +1161,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         if fin:
             # Une page qui a deja une section « inscription » (l'aide) donne un autre identifiant a sa fin.
             main += bande_finale(fin["titre"], fin["phrase"], fin.get("label", page["cta"]["label"]),
-                                 fin.get("href", page["cta"]["href"]), seuil=bool(fin.get("seuil")),
+                                 fin.get("href", page["cta"]["href"]), seuil=bool(fin.get("seuil")), forme=fin.get("forme", ""),
                                  identifiant="fin-de-page" if 'id="inscription"' in main else "inscription")
         classe_page = "page-" + (route.strip("/").split("/", 1)[1].replace("/", "-") if "/" in route.strip("/") else "accueil")
     # Sur la page des tarifs, le simulateur est dans la page, sous la grille ; sur l'accueil, une feuille qui s'ouvre.

@@ -221,6 +221,7 @@ Inspection après ces corrections :
 | Recette 18 | 7,43 | 6,37 | 6,33 | « presque » |
 | Recette 19 (jurés Sonnet) | 7,72 | 6,95 | 6,93 | « presque » |
 | Recette 20 (jurés Sonnet) | 7,53 | 7,07 | 7,23 | « presque » |
+| Recette 21 (jurés Sonnet) | 7,70 | 6,33 | 6,17 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -564,6 +565,8 @@ Une relecture de tout le texte visible des 18 pages a suivi. Ont été réécrit
 Ensuite : la porte du haut de l'accueil, un peu plus petite au bureau, ne touche plus l'en-tête ; au téléphone, la porte et la famille sont cadrées en grand. L'accueil se referme sous le haut d'une arche (« arche-haut », jusqu'ici sans usage), centré, comme il s'ouvre sur une porte : sa fin ne ressemble plus à celle des autres pages.
 
 **Légende des illustrations (décision du directeur, 22/10/2026, registre M-30).** La légende « Illustration » sous chaque image est retirée de tout le site. Une seule mention la remplace, dans les mentions légales, section « Les images du site » : « Les images de ce site sont des illustrations, sauf les photos des fondateurs. » Chaque image garde son texte alternatif. Les règles de mise en page qui ne servaient qu'aux légendes sont retirées. Le test qui exigeait la légende vérifie maintenant son absence et la présence de la mention.
+
+**Après la recette 21.** Les trois jurés relèvent cinq pages qui finissent pareil, la fin de l'accueil posée sur le bas de son arche, et le haut de Cours et de Comment ça marche encore coupé en deux. Corrections : chaque page finit à sa façon (direction.json, fin.forme) — l'accueil sous son arche, l'arche dégagée au-dessus du titre ; Familles, Comment ça marche et Tarifs sur un bandeau lavande centré, le titre, la phrase et un bouton ; l'Académie sur une bande sombre de bord à bord ; Cours sur le violet, le titre étant le lien. Les hauts de Cours et de Comment ça marche posent titre, phrase et bouton dans une colonne. Sur Cours, « Apprendre avec un enseignant » n'est plus en bande pleine (le titre et son texte étaient séparés d'un écran). Tarifs : le résultat du simulateur part de la 7e colonne. Académie : portraits des deux fondateurs à 300 px, noms sur deux lignes réservées, rôles et parcours alignés. Accueil : le bout gauche du tapis s'efface au lieu de s'arrêter net ; le bouton pause passe en bas à droite du premier écran.
 
 ## Hors de portée de l'agent
 
