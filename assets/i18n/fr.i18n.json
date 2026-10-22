@@ -161,7 +161,11 @@
       "americaNewYork": "New York",
       "africaCasablanca": "Casablanca",
       "asiaTokyo": "Tokyo",
-      "americaArgentinaBuenosAires": "Buenos Aires"
+      "americaArgentinaBuenosAires": "Buenos Aires",
+      "africaDakar": "Dakar",
+      "africaBamako": "Bamako",
+      "africaNouakchott": "Nouakchott",
+      "europeBrussels": "Brussels"
     },
     "dates": {
       "moisAnnee": "{mois} {annee}",
@@ -811,7 +815,8 @@
     },
     "toutCoche": "Tout est coché.",
     "suivant": "Suivant",
-    "dejaAcceptes": "Vos accords sont déjà enregistrés."
+    "dejaAcceptes": "Vos accords sont déjà enregistrés.",
+    "cadreNonPublie": "L'envoi de votre candidature sera possible quand le cadre religieux et pédagogique sera publié."
   },
   "connexion": {
     "titre": "Se connecter",
@@ -1984,6 +1989,592 @@
       "manqueAccuse": "Manque : l'accusé.",
       "manqueLesDeux": "Manquent : le contrat et l'accusé.",
       "inviter": "Inviter un enseignant"
+    },
+    "salles": {
+      "examen": "Salle d'examen",
+      "verification": "Salle de vérification et d'entretien",
+      "prets": "Salle des prêts à enseigner"
+    },
+    "paiement": {
+      "inconnu": "Aucun moyen de versement déclaré",
+      "aVerifier": "Moyen de versement à vérifier par l'académie",
+      "compatible": "Moyen de versement confirmé",
+      "incompatible": "Aucun moyen de versement possible pour l'instant"
+    },
+    "portail": {
+      "vousEtesEn": "Vous êtes en {salle}",
+      "aCompleterTitre": "Votre candidature est à compléter",
+      "aCompleter": "À compléter",
+      "elementCadre": "Le cadre religieux et pédagogique",
+      "etatAEnvoyer": "À envoyer",
+      "completer": "Compléter ma candidature",
+      "enExamenTitre": "Votre candidature est en examen",
+      "enExamen": "L'académie lit vos réponses et vous préviendra ici.",
+      "versementImpossible": "Rewayah ne peut pas encore vous verser une rémunération par les moyens déclarés dans votre pays. Votre candidature est gardée en Salle d'examen. L'académie vous préviendra dès qu'un moyen sera possible.",
+      "libreDePartir": "Vous restez libre de retirer votre candidature.",
+      "enPauseTitre": "Votre candidature est en pause",
+      "repriseLe": "Reprise prévue le {date}.",
+      "refuseeTitre": "Votre candidature n'a pas été retenue",
+      "retireeTitre": "Candidature retirée",
+      "retiree": "Vous avez retiré votre candidature. Seule l'académie peut la rouvrir.",
+      "complementDemande": "L'académie vous demande un complément.",
+      "complementListe": "À compléter\u00a0: {elements}.",
+      "nonCharge": "L'état de votre candidature n'a pas pu être chargé.",
+      "elementPiece": "Votre pièce d'identité",
+      "elementContrat": "Le contrat d'enseignant",
+      "versementImpossibleTitre": "Versement pas encore possible",
+      "relire": "Relire ma candidature"
+    },
+    "retrait": {
+      "lien": "Retirer ma candidature",
+      "question": "Retirer votre candidature\u00a0?",
+      "consequence": "Seule l'académie pourra rouvrir votre candidature.",
+      "consequenceEntretien": "Votre entretien sera annulé. Seule l'académie pourra rouvrir votre candidature.",
+      "confirmer": "Retirer ma candidature",
+      "echec": "Le retrait n'a pas abouti. Réessayez dans un instant.",
+      "incertain": "Il est possible que votre retrait ne soit pas parvenu jusqu'à Rewayah. Réessayez\u00a0: il ne sera pas enregistré deux fois.",
+      "horsLigne": "Le retrait pourra être fait quand la connexion reviendra.",
+      "interdit": "Votre candidature ne peut plus être retirée depuis cette page.",
+      "conflit": "Votre candidature a changé depuis l'ouverture de cette page. Relisez-la, puis réessayez."
+    },
+    "questionnaire": {
+      "titre": "Votre candidature",
+      "conditionsTitre": "Conditions de rémunération",
+      "part": "Votre part\u00a0: {part} du prix public, pour chaque élève présent.",
+      "partPublic": "{public}\u00a0: {part} du prix public, pour chaque élève présent.",
+      "publicEnfant": "Enfants (6 à 17 ans)",
+      "publicAdulte": "Adultes (18 ans et plus)",
+      "coordonneesPlusTard": "Vos coordonnées financières ne vous seront demandées qu'avant votre premier versement.",
+      "montantsSurDemande": "Pour connaître les montants, demandez-les à l'administration.",
+      "conditionsDateEffet": "Ces conditions s'appliquent à partir du {date}.",
+      "accordRemuneration": "J'ai lu ces conditions et je les accepte.",
+      "accordManquant": "Cochez la case pour accepter ces conditions et envoyer votre candidature.",
+      "envoyer": "Envoyer ma candidature",
+      "cadreManquant": "Acceptez d'abord le cadre religieux et pédagogique.",
+      "cadreAccepte": "Vous avez accepté le cadre religieux et pédagogique.",
+      "langues": "Vos langues",
+      "recitation": "Votre récitation",
+      "disponibilites": "Vos disponibilités",
+      "publics": "Les publics que vous pouvez enseigner",
+      "versement": "Votre pays et votre versement",
+      "perime": "Le questionnaire a changé depuis votre dernière visite. Relisez vos réponses avant d'envoyer.",
+      "incomplet": "Il manque une réponse\u00a0: {question}.",
+      "reponseInvalide": "Une réponse n'est plus valable\u00a0: {question}.",
+      "conflit": "Votre candidature a changé depuis l'ouverture de cette page. Relisez-la, puis envoyez-la.",
+      "conditionsPerimees": "Les conditions de rémunération ont changé. Relisez-les, puis acceptez-les de nouveau.",
+      "interdit": "Votre candidature ne peut plus être envoyée depuis cette page.",
+      "echec": "Une de vos réponses est à revoir. Relisez-les, puis envoyez de nouveau votre candidature.",
+      "incertain": "Il est possible que votre candidature ne soit pas parvenue jusqu'à Rewayah. Réessayez\u00a0: elle ne sera pas enregistrée deux fois.",
+      "horsLigne": "Votre candidature pourra être envoyée quand la connexion reviendra.",
+      "nonOuverte": "Cette étape n'est pas encore ouverte. Votre compte est gardé.",
+      "nonCharge": "Le questionnaire n'a pas pu être chargé.",
+      "conditionsNonCharge": "Les conditions de rémunération n'ont pas pu être chargées.",
+      "envoyee": "Votre candidature est envoyée. L'académie vous préviendra ici s'il faut la compléter.",
+      "envoyeeLe": "Envoyée le {date}.",
+      "etatVersement": "Moyen de versement\u00a0: {etat}",
+      "retourDossier": "Retour à mon dossier",
+      "complementCarte": "L'académie vous demande de compléter cette partie."
+    },
+    "parcours": {
+      "choisir": "Choisissez une réponse pour continuer.",
+      "choisirPlusieurs": "Choisissez au moins une réponse pour continuer.",
+      "choisirPlage": "Choisissez au moins une plage pour continuer.",
+      "trop(param=max)": {
+        "one": "Choisissez une seule réponse.",
+        "other": "Choisissez {max} réponses au plus."
+      },
+      "aucune": "Aucune",
+      "oui": "Oui",
+      "non": "Non",
+      "modifier": "Modifier",
+      "sauvegardeEchec": "Vos dernières réponses n'ont pas pu être gardées. Elles restent à l'écran\u00a0: continuez, elles seront envoyées avec votre candidature.",
+      "presentation": {
+        "p1": {
+          "titre": "Qui est Rewayah Academy\u00a0?",
+          "intro": "Avant les questions, voici ce que vous devez savoir de nous.",
+          "academie": {
+            "titre": "Une académie du Coran en ligne",
+            "texte": "Rewayah Academy enseigne le Coran à distance, en classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024."
+          },
+          "liberte": {
+            "titre": "Vous restez libre",
+            "texte": "Tant que vous n'êtes pas enseignant, vous pouvez retirer votre candidature depuis votre dossier."
+          },
+          "donnees": {
+            "titre": "Vos données sont protégées",
+            "texte": "Vos réponses ne sont lues que par les personnes de l'académie qui examinent votre candidature."
+          },
+          "separation": {
+            "titre": "Femmes et hommes séparés",
+            "texte": "Une candidature de femme est suivie par la direction du côté des femmes, une candidature d'homme du côté des hommes."
+          }
+        },
+        "p2": {
+          "titre": "Ce que fait un enseignant",
+          "intro": "Vous enseignez en visio, dans une classe qui reste la même.",
+          "classe": {
+            "titre": "Une classe stable",
+            "texte": "Vous gardez la même classe dans la durée, avec les mêmes élèves."
+          },
+          "horaires": {
+            "titre": "Les mêmes horaires chaque semaine",
+            "texte": "Votre classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine."
+          },
+          "visio": {
+            "titre": "En visio, dans l'application",
+            "texte": "Les cours se donnent en visioconférence, dans l'application de Rewayah."
+          },
+          "remuneration": {
+            "titre": "Une rémunération expliquée",
+            "texte": "Votre rémunération est une part du prix que paie chaque élève présent. Elle vous est expliquée en pourcentage avant d'envoyer votre candidature."
+          }
+        },
+        "p3": {
+          "titre": "Comment se passe votre candidature",
+          "intro": "Trois étapes, dans l'application.",
+          "examen": {
+            "titre": "La Salle d'examen",
+            "texte": "Vous répondez aux questions de ce parcours, puis vous envoyez votre candidature. La direction lit vos réponses."
+          },
+          "entretien": {
+            "titre": "L'entretien en visio",
+            "texte": "Si votre candidature est retenue pour la suite, la direction vous reçoit en visio, dans l'application."
+          },
+          "verification": {
+            "titre": "La vérification",
+            "texte": "Vous déposez votre pièce d'identité et vous lisez nos accords. Quand tout est en ordre, vous entrez dans la Salle des prêts à enseigner."
+          }
+        }
+      },
+      "langues": {
+        "poular": "Poular",
+        "francais": "Français",
+        "english": "Anglais",
+        "ar": "Arabe",
+        "ff": "Peul (fulfulde)",
+        "ha": "Haoussa",
+        "wo": "Wolof",
+        "ps": "Pachto",
+        "ur": "Ourdou",
+        "snk": "Soninké",
+        "bm": "Bambara",
+        "sw": "Swahili",
+        "mnk": "Mandinka",
+        "om": "Oromo",
+        "am": "Amharique",
+        "yo": "Yoruba",
+        "bn": "Bengali",
+        "fa": "Persan",
+        "id": "Indonésien",
+        "so": "Somali",
+        "hi": "Hindi",
+        "uz": "Ouzbek",
+        "tr": "Turc",
+        "de": "Allemand",
+        "pt": "Portugais",
+        "ru": "Russe",
+        "dansReferentiel": "Une langue dans laquelle Rewayah donne des cours.",
+        "horsReferentiel": "Langue pas encore proposée par Rewayah",
+        "autre": "Une autre langue",
+        "recherche": "Rechercher une langue",
+        "rechercheAide": "Nom de la langue",
+        "aucune": "Aucune langue ne correspond.",
+        "retour": "Revenir aux langues proposées"
+      },
+      "pays": {
+        "autre": "Un autre pays",
+        "recherche": "Rechercher un pays",
+        "rechercheAide": "Nom du pays",
+        "aucun": "Aucun pays ne correspond.",
+        "retour": "Revenir aux pays proposés"
+      },
+      "riwayat": {
+        "autre": "Une autre riwaya",
+        "recherche": "Rechercher une riwaya",
+        "rechercheAide": "Nom de la riwaya",
+        "aucune": "Aucune riwaya ne correspond.",
+        "retour": "Revenir aux riwayat proposées"
+      },
+      "fuseau": {
+        "heureChezVous": "Chez vous, il est {heure}\u00a0?",
+        "lieuPropose": "Fuseau proposé\u00a0: {lieu}.",
+        "retenu": "Fuseau retenu\u00a0: {lieu}.",
+        "oui": "Oui, c'est l'heure chez moi",
+        "ouiDescription": "Votre fuseau horaire est confirmé.",
+        "changer": "Non, je veux le changer",
+        "changerDescription": "Vous choisissez la ville la plus proche de chez vous.",
+        "choisirTitre": "Quelle est la ville la plus proche de chez vous\u00a0?",
+        "choisirExplication": "Elle donne votre fuseau horaire. Les heures de votre entretien s'afficheront dans ce fuseau.",
+        "recherche": "Rechercher une ville",
+        "rechercheAide": "Nom de la ville",
+        "aucune": "Aucune ville ne correspond.",
+        "autre": "Une autre ville",
+        "retour": "Revenir à la proposition",
+        "regions": {
+          "Africa": "Afrique",
+          "America": "Amériques",
+          "Antarctica": "Antarctique",
+          "Arctic": "Arctique",
+          "Asia": "Asie",
+          "Atlantic": "Atlantique",
+          "Australia": "Australie",
+          "Europe": "Europe",
+          "Indian": "Océan Indien",
+          "Pacific": "Pacifique"
+        },
+        "ouiExplication": "Vos disponibilités et votre entretien seront à l'heure de chez vous.",
+        "changerExplication": "Utile si vous voyagez ou si l'heure de votre appareil n'est pas la bonne."
+      },
+      "creneaux": {
+        "plage0": "Nuit",
+        "plage1": "Aube",
+        "plage2": "Matin",
+        "plage3": "Midi",
+        "plage4": "Après-midi",
+        "plage5": "Soir",
+        "jourCellule": "{jour}, {plage}",
+        "choisies(param=n)": {
+          "zero": "Aucune plage choisie",
+          "one": "Une plage choisie",
+          "other": "{n} plages choisies"
+        },
+        "fuseauRappel": "Heures de {lieu}.",
+        "partielle": "En partie",
+        "choisie": "Choisie"
+      },
+      "versement": {
+        "virementSeul": "Dans votre pays, l'académie a confirmé le virement bancaire. Aucun moyen de paiement sur téléphone n'est proposé pour l'instant.",
+        "aucunMoyen": "Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature\u00a0: elle restera en Salle d'examen jusqu'à ce qu'un moyen soit possible.",
+        "operateurDescription": "Paiement sur téléphone",
+        "chargement": "Nous cherchons les moyens possibles dans votre pays.",
+        "nonCharge": "Les moyens de versement de votre pays n'ont pas pu être chargés.",
+        "operateurExplication": "Vous le déclarez maintenant. Vos coordonnées ne sont demandées qu'avant votre premier versement."
+      },
+      "recap": {
+        "titre": "Relisez votre candidature",
+        "explication": "Touchez une réponse pour la changer. Rien n'est envoyé avant le bouton «\u00a0Envoyer ma candidature\u00a0».",
+        "plages(param=n)": {
+          "one": "Une plage par semaine",
+          "other": "{n} plages par semaine"
+        }
+      },
+      "q": {
+        "langueMaternelle": {
+          "titre": "Quelle est votre langue maternelle\u00a0?",
+          "explication": "C'est la langue que vous parlez depuis l'enfance.",
+          "court": "Langue maternelle"
+        },
+        "languesExplication": {
+          "titre": "Dans quelles langues pouvez-vous expliquer et corriger\u00a0?",
+          "explication": "Choisissez toutes les langues dans lesquelles vous savez expliquer une règle à un élève et corriger ses erreurs. Un élève suit sa classe dans la langue choisie à l'inscription\u00a0: ces langues aident la direction à voir dans quelles classes vous pourriez enseigner.",
+          "court": "Langues d'explication"
+        },
+        "niveauMemorisationDeclare": {
+          "titre": "Quel est votre niveau de mémorisation\u00a0?",
+          "explication": "Vous le déclarez ici.",
+          "court": "Niveau de mémorisation",
+          "options": {
+            "coran_entier": {
+              "libelle": "J'ai mémorisé tout le Coran",
+              "description": "Les 114 sourates, de la première à la dernière, par cœur.",
+              "explication": "Ce niveau est constaté pendant l'entretien.",
+              "exemple": "vous récitez Al-Baqara, puis An-Nâs, sans ouvrir le livre."
+            },
+            "ijaza_lecture_enseignement": {
+              "libelle": "J'ai une ijaza de lecture et d'enseignement",
+              "description": "Une autorisation écrite, donnée par un maître, de lire et d'enseigner le Coran.",
+              "explication": "Elle se montre pendant l'entretien\u00a0: vous n'avez rien à envoyer maintenant.",
+              "exemple": "un document écrit, remis par votre maître, à votre nom."
+            },
+            "plus_de_10_juz": {
+              "libelle": "J'ai mémorisé plus de dix juz",
+              "description": "Plus du tiers du Coran, qui compte trente juz.",
+              "explication": "Ce niveau est constaté pendant l'entretien.",
+              "exemple": "vous avez mémorisé douze juz sur trente."
+            },
+            "moins_de_10_juz": {
+              "libelle": "J'ai mémorisé moins de dix juz",
+              "description": "Moins du tiers du Coran, qui compte trente juz.",
+              "explication": "Ce niveau est constaté pendant l'entretien.",
+              "exemple": "vous avez mémorisé cinq juz sur trente."
+            },
+            "bonne_lecture_sans_memorisation": {
+              "libelle": "Je n'ai pas mémorisé, mais je lis bien avec le tajwid",
+              "description": "Vous lisez le Coran correctement, en appliquant les règles du tajwid, sans le réciter de mémoire.",
+              "explication": "Votre lecture est constatée pendant l'entretien.",
+              "exemple": "vous lisez une page du Coran sans erreur, mais vous ne la récitez pas de mémoire."
+            }
+          }
+        },
+        "niveauLectureTajwid": {
+          "titre": "Comment lisez-vous le Coran\u00a0?",
+          "explication": "Le tajwid est l'ensemble des règles qui disent comment prononcer chaque lettre du Coran.",
+          "court": "Lecture et tajwid",
+          "options": {
+            "lecture_sans_regles_tajwid": {
+              "libelle": "Je lis sans appliquer les règles du tajwid",
+              "description": "Vous lisez couramment, sans suivre les règles de prononciation.",
+              "explication": "Votre lecture est constatée pendant l'entretien.",
+              "exemple": "vous lisez une page sans hésiter, mais vous n'appliquez pas les règles du tajwid."
+            },
+            "tajwid_applique": {
+              "libelle": "J'applique les règles du tajwid en lisant",
+              "description": "Vous respectez les règles de prononciation quand vous lisez.",
+              "explication": "Votre lecture est constatée pendant l'entretien.",
+              "exemple": "vous allongez et prononcez les lettres comme le demandent les règles du tajwid."
+            },
+            "tajwid_enseigne": {
+              "libelle": "J'applique le tajwid et je sais l'enseigner",
+              "description": "Vous respectez les règles et vous savez les expliquer à un élève.",
+              "explication": "Votre lecture est constatée pendant l'entretien.",
+              "exemple": "quand un élève se trompe sur une lettre, vous lui expliquez la règle et il la répète."
+            }
+          }
+        },
+        "riwayat": {
+          "titre": "Quelles riwayat récitez-vous\u00a0?",
+          "explication": "Une riwaya est une façon transmise de réciter le Coran. Choisissez toutes celles que vous récitez.",
+          "court": "Riwayat",
+          "options": {
+            "hafs": {
+              "libelle": "Hafs",
+              "description": "Transmise d'après Asim"
+            },
+            "shuba": {
+              "libelle": "Shuba",
+              "description": "Transmise d'après Asim"
+            },
+            "warsh": {
+              "libelle": "Warsh",
+              "description": "Transmise d'après Nafi"
+            },
+            "qalun": {
+              "libelle": "Qalun",
+              "description": "Transmise d'après Nafi"
+            },
+            "al_bazzi": {
+              "libelle": "Al-Bazzi",
+              "description": "Transmise d'après Ibn Kathir"
+            },
+            "qunbul": {
+              "libelle": "Qunbul",
+              "description": "Transmise d'après Ibn Kathir"
+            },
+            "ad_duri_abi_amr": {
+              "libelle": "Ad-Duri (Abu Amr)",
+              "description": "Transmise d'après Abu Amr"
+            },
+            "as_susi": {
+              "libelle": "As-Susi",
+              "description": "Transmise d'après Abu Amr"
+            },
+            "hisham": {
+              "libelle": "Hisham",
+              "description": "Transmise d'après Ibn Amir"
+            },
+            "ibn_dhakwan": {
+              "libelle": "Ibn Dhakwan",
+              "description": "Transmise d'après Ibn Amir"
+            },
+            "khalaf_an_hamza": {
+              "libelle": "Khalaf (Hamza)",
+              "description": "Transmise d'après Hamza"
+            },
+            "khallad": {
+              "libelle": "Khallad",
+              "description": "Transmise d'après Hamza"
+            },
+            "abu_al_harith": {
+              "libelle": "Abu al-Harith",
+              "description": "Transmise d'après Al-Kisai"
+            },
+            "ad_duri_al_kisai": {
+              "libelle": "Ad-Duri (Al-Kisai)",
+              "description": "Transmise d'après Al-Kisai"
+            },
+            "ibn_wardan": {
+              "libelle": "Ibn Wardan",
+              "description": "Transmise d'après Abu Jafar"
+            },
+            "ibn_jammaz": {
+              "libelle": "Ibn Jammaz",
+              "description": "Transmise d'après Abu Jafar"
+            },
+            "ruways": {
+              "libelle": "Ruways",
+              "description": "Transmise d'après Yaqub"
+            },
+            "rawh": {
+              "libelle": "Rawh",
+              "description": "Transmise d'après Yaqub"
+            },
+            "ishaq": {
+              "libelle": "Ishaq",
+              "description": "Transmise d'après Khalaf, le dixième lecteur"
+            },
+            "idris": {
+              "libelle": "Idris",
+              "description": "Transmise d'après Khalaf, le dixième lecteur"
+            }
+          }
+        },
+        "ijazaPresentable": {
+          "titre": "Avez-vous une ijaza à présenter\u00a0?",
+          "explication": "Une ijaza est une autorisation écrite, donnée par un maître, de transmettre le Coran.",
+          "court": "Ijaza",
+          "options": {
+            "oui": {
+              "libelle": "Oui, j'ai une ijaza à présenter",
+              "description": "Vous pouvez la montrer en visio.",
+              "explication": "Elle se montre pendant l'entretien\u00a0: vous n'avez rien à envoyer maintenant.",
+              "exemple": "un document signé par votre maître, que vous gardez chez vous."
+            },
+            "non": {
+              "libelle": "Non, je n'en ai pas à présenter",
+              "description": "Vous n'avez pas d'ijaza, ou pas de quoi la présenter.",
+              "explication": "Votre niveau est alors constaté pendant l'entretien.",
+              "exemple": "vous avez appris auprès d'un maître, sans recevoir de document écrit."
+            }
+          }
+        },
+        "experienceDebutants": {
+          "titre": "Avez-vous déjà enseigné à des débutants\u00a0?",
+          "explication": "Un débutant apprend encore à lire les lettres et à les relier.",
+          "court": "Expérience avec les débutants",
+          "options": {
+            "oui": {
+              "libelle": "Oui, j'ai déjà enseigné à des débutants",
+              "description": "Vous avez déjà accompagné des élèves qui commencent.",
+              "explication": "La direction le sait avant l'entretien.",
+              "exemple": "vous avez appris les lettres arabes à des enfants ou à des adultes."
+            },
+            "non": {
+              "libelle": "Non, pas encore",
+              "description": "Vous n'avez pas encore enseigné à des débutants.",
+              "explication": "Vous pouvez quand même envoyer votre candidature.",
+              "exemple": "vous avez enseigné seulement à des élèves qui savaient déjà lire."
+            }
+          }
+        },
+        "fuseauIana": {
+          "titre": "Votre fuseau horaire",
+          "explication": "Vos disponibilités sont à l'heure de chez vous. Il faut donc que l'heure soit la bonne.",
+          "court": "Fuseau horaire"
+        },
+        "disponibilitesDeclarees": {
+          "titre": "Quand êtes-vous disponible\u00a0?",
+          "explication": "Touchez les plages où vous pouvez enseigner, chaque semaine. Une plage dure quatre heures.",
+          "court": "Disponibilités"
+        },
+        "heuresParSemaine": {
+          "titre": "Combien d'heures par semaine pouvez-vous enseigner\u00a0?",
+          "explication": "Une classe d'enfants compte trois séances d'une heure par semaine, soit 3 heures. Une classe d'adultes compte trois séances d'une heure et demie, soit 4 heures et demie.",
+          "court": "Heures par semaine",
+          "options": {
+            "moins_de_3": {
+              "libelle": "Moins de 3 heures",
+              "description": "Moins que le temps d'une classe entière.",
+              "exemple": "deux séances d'une heure par semaine."
+            },
+            "de_3_a_5": {
+              "libelle": "De 3 à 5 heures",
+              "description": "Le temps d'une classe.",
+              "exemple": "une classe d'enfants, trois séances d'une heure, soit 3 heures par semaine."
+            },
+            "de_6_a_10": {
+              "libelle": "De 6 à 10 heures",
+              "description": "Le temps de deux classes.",
+              "exemple": "deux classes d'adultes, six séances d'une heure et demie, soit 9 heures par semaine."
+            },
+            "plus_de_10": {
+              "libelle": "Plus de 10 heures",
+              "description": "Le temps de plusieurs classes.",
+              "exemple": "trois classes d'adultes, neuf séances d'une heure et demie, soit 13 heures et demie par semaine."
+            }
+          }
+        },
+        "debutPossible": {
+          "titre": "Quand pouvez-vous commencer\u00a0?",
+          "explication": "Cette date aide la direction à savoir quand vous proposer une classe.",
+          "court": "Date de début",
+          "options": {
+            "immediat": {
+              "libelle": "Dès maintenant",
+              "description": "Vous pouvez commencer dès qu'une classe vous est confiée.",
+              "exemple": "aucun engagement ne vous retient ce mois-ci."
+            },
+            "mois_prochain": {
+              "libelle": "Le mois prochain",
+              "description": "Vous serez disponible à partir du mois prochain.",
+              "exemple": "vous terminez un autre travail à la fin de ce mois."
+            },
+            "sous_3_mois": {
+              "libelle": "Dans moins de trois mois",
+              "description": "Vous serez disponible dans les trois prochains mois.",
+              "exemple": "vous êtes en voyage ou en examens pendant quelques semaines."
+            },
+            "inconnu": {
+              "libelle": "Je ne sais pas encore",
+              "description": "Vous ne connaissez pas encore votre date de début.",
+              "explication": "Vous pourrez le préciser à la direction pendant l'entretien.",
+              "exemple": "votre emploi du temps dépend d'une réponse que vous attendez encore."
+            }
+          }
+        },
+        "publics": {
+          "titre": "Quels élèves pouvez-vous enseigner\u00a0?",
+          "explication": "Choisissez les élèves auxquels vous pouvez enseigner. Vous pouvez choisir les deux.",
+          "court": "Publics",
+          "options": {
+            "enfant": {
+              "libelle": "Des enfants (6 à 17 ans)",
+              "description": "Des classes de 3 à 5 enfants.",
+              "explication": "Trois séances d'une heure par semaine.",
+              "exemple": "une classe de quatre enfants de huit ans, trois fois par semaine."
+            },
+            "adulte": {
+              "libelle": "Des adultes (18 ans et plus)",
+              "description": "Des classes de 3 à 6 adultes.",
+              "explication": "Trois séances d'une heure et demie par semaine. Les classes d'adultes sont séparées\u00a0: des femmes avec des femmes, des hommes avec des hommes.",
+              "exemple": "une classe de cinq femmes, ou de cinq hommes, trois fois par semaine."
+            }
+          }
+        },
+        "paysResidence": {
+          "titre": "Dans quel pays vivez-vous\u00a0?",
+          "explication": "Choisissez le pays où vous vivez aujourd'hui.",
+          "court": "Pays de résidence"
+        },
+        "paysVersement": {
+          "titre": "Dans quel pays voulez-vous recevoir votre rémunération\u00a0?",
+          "explication": "L'académie vérifie, pays par pays, quel moyen de versement est possible. Nous avons repris votre pays de résidence\u00a0: changez-le si besoin.",
+          "court": "Pays de versement"
+        },
+        "compteBancaire": {
+          "titre": "Avez-vous un compte bancaire\u00a0?",
+          "explication": "La rémunération se verse par virement bancaire là où l'académie l'a confirmé. Vos coordonnées ne sont demandées qu'avant le premier versement.",
+          "court": "Compte bancaire",
+          "options": {
+            "oui": {
+              "libelle": "Oui, j'ai un compte bancaire",
+              "description": "Un compte à votre nom, dans une banque.",
+              "explication": "Le virement pourra être votre moyen de versement, si l'académie l'a confirmé dans votre pays.",
+              "exemple": "un compte ouvert à votre nom dans une banque de votre pays."
+            },
+            "non": {
+              "libelle": "Non, je n'en ai pas",
+              "description": "Vous n'avez pas de compte bancaire à votre nom.",
+              "explication": "Vous pourrez alors choisir un moyen de paiement sur téléphone, s'il en existe un dans votre pays.",
+              "exemple": "vous recevez et envoyez de l'argent seulement avec votre téléphone."
+            }
+          }
+        },
+        "operateurs": {
+          "titre": "Quels moyens de paiement sur téléphone utilisez-vous\u00a0?",
+          "explication": "Voici les moyens que l'académie a confirmés dans votre pays. Choisissez ceux que vous utilisez, s'il y en a.",
+          "court": "Moyens de paiement sur téléphone"
+        }
+      }
     }
   },
   "dossiers": {

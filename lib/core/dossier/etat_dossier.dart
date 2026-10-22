@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../candidature/modeles_candidature.dart';
 import '../domain/enums.dart';
 
 /// Ce que le titulaire d'un foyer a choisi a l'inscription (L5-01).
@@ -52,6 +53,7 @@ class EtatDossier {
     this.pieceRequise = true,
     this.usage,
     this.suitDesCours = false,
+    this.candidature = CandidatureDossier.aucune,
   });
 
   /// L'etat d'un compte dont le profil reste a creer.
@@ -78,6 +80,7 @@ class EtatDossier {
       pieceRequise: json['piece_requise'] as bool? ?? true,
       usage: UsageTitulaire.depuisSql(json['usage']),
       suitDesCours: json['suit_des_cours'] == true,
+      candidature: CandidatureDossier.depuisJson(json['candidature']),
     );
   }
 
@@ -132,6 +135,12 @@ class EtatDossier {
 
   /// L5-01 : vrai quand le titulaire a sa propre fiche d'eleve.
   final bool suitDesCours;
+
+  /// CAND-L2A1 (C12) : la candidature du compte, telle que le serveur la rend
+  /// (`etat_dossier().candidature`). [CandidatureDossier.aucune] pour un
+  /// compte sans candidature, et pour un serveur d'avant ce lot, qui ne rend
+  /// pas la cle : le portail garde alors ses cinq etats d'aujourd'hui.
+  final CandidatureDossier candidature;
 
   /// Ce que le portail d'attente doit afficher.
   ///
@@ -204,7 +213,8 @@ class EtatDossier {
       other.correctionAutorisee == correctionAutorisee &&
       other.pieceRequise == pieceRequise &&
       other.usage == usage &&
-      other.suitDesCours == suitDesCours;
+      other.suitDesCours == suitDesCours &&
+      other.candidature == candidature;
 
   @override
   int get hashCode => Object.hash(
@@ -222,6 +232,7 @@ class EtatDossier {
     pieceRequise,
     usage,
     suitDesCours,
+    candidature,
   );
 }
 

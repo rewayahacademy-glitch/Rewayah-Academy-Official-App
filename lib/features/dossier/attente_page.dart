@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/auth/service_auth.dart';
+import '../../core/candidature/modeles_candidature.dart';
 import '../../core/dossier/etat_dossier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/strings.g.dart';
@@ -17,8 +18,10 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../candidature/portail_candidature.dart';
 import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../inscription/brouillon_inscription.dart';
@@ -82,10 +85,26 @@ class _AttentePageState extends ConsumerState<AttentePage> {
         : null;
     final bool illisible = lu == null && (etat.hasError || etat.hasValue);
 
+    // TUT-00b etendu : une candidature dit ou elle en est. En Salle d'examen,
+    // ou apres un refus ou un retrait, le portail montre son etat a elle ; en
+    // Salle de verification et d'entretien, les accords, la piece et la
+    // verification gardent leurs ecrans sous l'en-tete de la salle.
+    final bool vueCand = lu != null && vueCandidature(lu);
+    final CandidatureDossier? candidature = lu != null && lu.candidature.existe
+        ? lu.candidature
+        : null;
+    final ({String libelle, String chemin})? actionCand = vueCand
+        ? prochaineCandidature(lu.candidature)
+        : null;
+
     // Les getters, jamais le type d'execution : Riverpod 3 relance un provider
     // en echec tout seul, et l'etat repasse alors par `AsyncLoading` en
     // conservant `hasError`.
-    final _Prochaine? prochaine = lu != null
+    final _Prochaine? prochaine = vueCand
+        ? (actionCand == null
+              ? null
+              : _Prochaine.vers(actionCand.libelle, actionCand.chemin))
+        : lu != null
         ? _prochaine(
             lu,
             // L5-01 : l'usage garde par le serveur d'abord ; le brouillon
@@ -105,6 +124,17 @@ class _AttentePageState extends ConsumerState<AttentePage> {
           )
         : null;
 
+    // « Actualiser » : une candidature qui attend la direction (examen, pause,
+    // versement pas encore possible), ou, hors candidature, les deux etats
+    // d'attente d'aujourd'hui. Un `case` pose apres un ternaire ne portait que
+    // sur son resultat entier : « Actualiser » ne se montrait jamais a un
+    // candidat.
+    final bool actualisable = vueCand
+        ? candidature!.issue == IssueCandidature.enCours &&
+              !candidature.questionnaireOuvert
+        : lu?.etape == EtapeDossier.enVerification ||
+              lu?.etape == EtapeDossier.accesEnPreparation;
+
     return PageShell(
       // K-47 : un tuteur n'a pas de dossier a faire verifier, seulement un
       // compte a ouvrir.
@@ -113,10 +143,21 @@ class _AttentePageState extends ConsumerState<AttentePage> {
           : t.attente.titreDossier,
       // HL-A-5 : le pied ne garde que Se deconnecter ; la prochaine action
       // se place 16 sous la carte d'etat qu'elle confirme.
-      actions: ActionPrincipale(
-        libelle: t.attente.seDeconnecter,
-        onPress: () => unawaited(ref.read(serviceAuthProvider).deconnexion()),
-        niveau: NiveauAction.tertiaire,
+      actions: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          // CAND-03 : le retrait est un lien discret, tant qu'il est permis.
+          if (candidature != null && candidature.peutRetirer) ...<Widget>[
+            LienRetraitCandidature(candidature: candidature),
+            Ecart.vXs,
+          ],
+          ActionPrincipale(
+            libelle: t.attente.seDeconnecter,
+            onPress: () =>
+                unawaited(ref.read(serviceAuthProvider).deconnexion()),
+            niveau: NiveauAction.tertiaire,
+          ),
+        ],
       ),
       // AD-NETTOYAGE-2 (m6, m8) : une seule tete (le titre de la page ; la
       // carte d'etat porte le sien) et une colonne bornee comme la politique
@@ -127,8 +168,17 @@ class _AttentePageState extends ConsumerState<AttentePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              // En-tete de la salle, pour les etats qui gardent leurs ecrans.
+              if (candidature != null &&
+                  !vueCand &&
+                  lu!.etape != EtapeDossier.suspendu) ...<Widget>[
+                EnteteSalle(candidature: candidature),
+                Ecart.vMd,
+              ],
               AppCard(
-                child: lu != null
+                child: vueCand
+                    ? StatutCandidature(candidature: lu.candidature)
+                    : lu != null
                     ? _Statut(etat: lu)
                     : illisible
                     ? _Illisible(erreur: etat.error ?? const FormatException())
@@ -156,9 +206,21 @@ class _AttentePageState extends ConsumerState<AttentePage> {
                   ),
                 ),
               ],
-              if (lu?.etape
-                  case EtapeDossier.enVerification ||
-                      EtapeDossier.accesEnPreparation) ...<Widget>[
+              // Apres l'envoi, les reponses se relisent (lecture seule de
+              // CAND-01) : sans ce lien, la page n'avait aucune entree.
+              if (vueCand && candidature!.reponsesRelisibles) ...<Widget>[
+                Ecart.vMd,
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: LienFleche(
+                    key: const ValueKey<String>('portail-relire'),
+                    libelle: t.recrutement.portail.relire,
+                    alignerEnDebut: true,
+                    onPress: () => routeur?.go(Routes.attenteCandidature),
+                  ),
+                ),
+              ],
+              if (actualisable) ...<Widget>[
                 Ecart.vLg,
                 Align(
                   alignment: AlignmentDirectional.centerEnd,

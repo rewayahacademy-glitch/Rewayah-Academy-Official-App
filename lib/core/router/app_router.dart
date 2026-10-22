@@ -55,6 +55,7 @@ import '../../features/appareils/appareils_page.dart';
 import '../../features/avis_public/avis_public_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
+import '../../features/candidature/candidature_page.dart';
 import '../../features/classe_tuteur/catalogue_classes_page.dart';
 import '../../features/classe_tuteur/classe_tuteur_page.dart';
 import '../../features/classe_tuteur/planning_classe_page.dart';
@@ -407,6 +408,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.attentePiece,
         builder: (BuildContext _, GoRouterState _) => const DepotPiecePage(),
+      ),
+      // CAND-01 : le questionnaire de la Salle d'examen. Declaree meme sans
+      // le lot serveur : une adresse tapee montre la phrase de capacite
+      // indisponible, jamais une page vide.
+      GoRoute(
+        path: Routes.attenteCandidature,
+        builder: (BuildContext _, GoRouterState _) => const CandidaturePage(),
       ),
 
       // Compte. Cet espace est partage par les roles actifs, mais ses

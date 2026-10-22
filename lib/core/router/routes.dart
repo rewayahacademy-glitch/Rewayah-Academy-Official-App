@@ -86,6 +86,12 @@ abstract final class Routes {
   /// Depot de la piece d'identite.
   static const String attentePiece = '/attente/piece';
 
+  /// CAND-01 : le questionnaire de la Salle d'examen, en parcours d'accueil
+  /// (presentation, une question par ecran, recapitulatif, envoi). Sous
+  /// `/attente`, ouvert au compte en attente ; sans candidature pour le
+  /// compte, la page revient au portail.
+  static const String attenteCandidature = '/attente/candidature';
+
   // --- Eleve, meme arborescence en mode enfant et en mode standard --------
 
   /// Accueil eleve.

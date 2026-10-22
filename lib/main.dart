@@ -23,6 +23,8 @@ import 'core/admin/port_pilotage.dart';
 import 'core/admin/port_planning_direction.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
+import 'core/candidature/ma_candidature_supabase.dart';
+import 'core/candidature/port_ma_candidature.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
@@ -250,6 +252,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portSignatureContratProvider.overrideWithValue(
     SignatureContratSupabase(Supabase.instance.client),
+  ),
+  // CAND-01 : le questionnaire de la Salle d'examen, son brouillon, l'envoi et
+  // le retrait de la candidature. Tant que le lot serveur n'est pas verse, les
+  // lectures rendent « capacite indisponible » et l'ecran le dit.
+  portMaCandidatureProvider.overrideWithValue(
+    MaCandidatureSupabase(Supabase.instance.client),
   ),
   // Ports a defaut « indisponible » (ou en memoire) dont l'adaptateur
   // serveur existe : compte, tresorerie, observations, controleur, support

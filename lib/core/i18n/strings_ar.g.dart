@@ -1072,6 +1072,7 @@ class _Traductions$accords$ar extends Traductions$accords$fr {
 	@override String get toutCoche => 'تم تحديد كل المربعات.';
 	@override String get suivant => 'التالي';
 	@override String get dejaAcceptes => 'موافقاتك محفوظة بالفعل.';
+	@override String get cadreNonPublie => 'سيصبح إرسال طلب ترشحك ممكنًا عند نشر الإطار الديني والتربوي.';
 }
 
 // Path: inscription
@@ -1587,6 +1588,12 @@ class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
 	// Translations
 	@override late final _Traductions$recrutement$invitations$ar invitations = _Traductions$recrutement$invitations$ar._(_root);
 	@override late final _Traductions$recrutement$candidat$ar candidat = _Traductions$recrutement$candidat$ar._(_root);
+	@override late final _Traductions$recrutement$salles$ar salles = _Traductions$recrutement$salles$ar._(_root);
+	@override late final _Traductions$recrutement$paiement$ar paiement = _Traductions$recrutement$paiement$ar._(_root);
+	@override late final _Traductions$recrutement$portail$ar portail = _Traductions$recrutement$portail$ar._(_root);
+	@override late final _Traductions$recrutement$retrait$ar retrait = _Traductions$recrutement$retrait$ar._(_root);
+	@override late final _Traductions$recrutement$questionnaire$ar questionnaire = _Traductions$recrutement$questionnaire$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$ar parcours = _Traductions$recrutement$parcours$ar._(_root);
 }
 
 // Path: sansDonnees
@@ -2032,6 +2039,10 @@ class _Traductions$commun$fuseaux$ar extends Traductions$commun$fuseaux$fr {
 	@override String get africaCasablanca => 'الدار البيضاء';
 	@override String get asiaTokyo => 'طوكيو';
 	@override String get americaArgentinaBuenosAires => 'بوينس آيرس';
+	@override String get africaDakar => 'داكار';
+	@override String get africaBamako => 'باماكو';
+	@override String get africaNouakchott => 'نواكشوط';
+	@override String get europeBrussels => 'بروكسل';
 }
 
 // Path: commun.dates
@@ -7891,6 +7902,160 @@ class _Traductions$recrutement$candidat$ar extends Traductions$recrutement$candi
 	@override late final _Traductions$recrutement$candidat$comptable$ar comptable = _Traductions$recrutement$candidat$comptable$ar._(_root);
 }
 
+// Path: recrutement.salles
+class _Traductions$recrutement$salles$ar extends Traductions$recrutement$salles$fr {
+	_Traductions$recrutement$salles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get examen => 'قاعة الامتحان';
+	@override String get verification => 'قاعة التحقق والمقابلة';
+	@override String get prets => 'قاعة الجاهزين للتدريس';
+}
+
+// Path: recrutement.paiement
+class _Traductions$recrutement$paiement$ar extends Traductions$recrutement$paiement$fr {
+	_Traductions$recrutement$paiement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get inconnu => 'لم تُصرَّح بأي وسيلة لصرف الأجر';
+	@override String get aVerifier => 'وسيلة صرف الأجر تنتظر تحقق الأكاديمية';
+	@override String get compatible => 'وسيلة صرف الأجر مؤكَّدة';
+	@override String get incompatible => 'لا توجد وسيلة ممكنة لصرف الأجر حاليًا';
+}
+
+// Path: recrutement.portail
+class _Traductions$recrutement$portail$ar extends Traductions$recrutement$portail$fr {
+	_Traductions$recrutement$portail$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String vousEtesEn({required Object salle}) => 'أنت في ⁨${salle}⁩';
+	@override String get aCompleterTitre => 'طلب ترشحك يحتاج إلى استكمال';
+	@override String get aCompleter => 'المطلوب استكماله';
+	@override String get elementCadre => 'الإطار الديني والتربوي';
+	@override String get etatAEnvoyer => 'للإرسال';
+	@override String get completer => 'استكمال طلب ترشحي';
+	@override String get enExamenTitre => 'طلب ترشحك قيد الدراسة';
+	@override String get enExamen => 'تقرأ الأكاديمية إجاباتك وستُعلمك هنا.';
+	@override String get versementImpossible => 'لا تستطيع أكاديمية الرواية حاليًا صرف أجرك بالوسائل التي صرّحت بها في بلدك. يبقى طلب ترشحك في قاعة الامتحان. ستُعلمك الأكاديمية فور توفّر وسيلة ممكنة.';
+	@override String get libreDePartir => 'يبقى لك الحق في سحب طلب ترشحك.';
+	@override String get enPauseTitre => 'طلب ترشحك متوقف مؤقتًا';
+	@override String repriseLe({required Object date}) => 'الاستئناف المتوقع في ⁨${date}⁩.';
+	@override String get refuseeTitre => 'لم يُقبل طلب ترشحك';
+	@override String get retireeTitre => 'سُحب طلب الترشح';
+	@override String get retiree => 'لقد سحبت طلب ترشحك. وحدها الأكاديمية تستطيع إعادة فتحه.';
+	@override String get complementDemande => 'تطلب منك الأكاديمية استكمالًا.';
+	@override String complementListe({required Object elements}) => 'المطلوب استكماله: ⁨${elements}⁩.';
+	@override String get nonCharge => 'تعذّر تحميل حالة طلب ترشحك.';
+	@override String get elementPiece => 'وثيقة هويتك';
+	@override String get elementContrat => 'عقد المعلم';
+	@override String get versementImpossibleTitre => 'صرف الأجر غير ممكن بعد';
+	@override String get relire => 'إعادة قراءة طلب ترشحي';
+}
+
+// Path: recrutement.retrait
+class _Traductions$recrutement$retrait$ar extends Traductions$recrutement$retrait$fr {
+	_Traductions$recrutement$retrait$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get lien => 'سحب طلب ترشحي';
+	@override String get question => 'هل تسحب طلب ترشحك؟';
+	@override String get consequence => 'وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك.';
+	@override String get consequenceEntretien => 'سيُلغى موعد مقابلتك. وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك.';
+	@override String get confirmer => 'سحب طلب ترشحي';
+	@override String get echec => 'لم يكتمل السحب. أعد المحاولة بعد لحظة.';
+	@override String get incertain => 'قد لا يكون طلب السحب قد وصل إلى أكاديمية الرواية. أعد المحاولة: لن يُسجَّل مرتين.';
+	@override String get horsLigne => 'سيمكن سحب الطلب عند عودة الاتصال.';
+	@override String get interdit => 'لم يعد سحب طلب ترشحك ممكنًا من هذه الصفحة.';
+	@override String get conflit => 'تغيّر طلب ترشحك منذ فتح هذه الصفحة. راجعه ثم أعد المحاولة.';
+}
+
+// Path: recrutement.questionnaire
+class _Traductions$recrutement$questionnaire$ar extends Traductions$recrutement$questionnaire$fr {
+	_Traductions$recrutement$questionnaire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'طلب ترشحك';
+	@override String get conditionsTitre => 'شروط الأجر';
+	@override String part({required Object part}) => 'حصتك: ⁨${part}⁩ من السعر المعلن، عن كل طالب حاضر.';
+	@override String partPublic({required Object public, required Object part}) => '⁨${public}⁩: ⁨${part}⁩ من السعر المعلن، عن كل طالب حاضر.';
+	@override String get publicEnfant => 'الأطفال (من 6 إلى 17 سنة)';
+	@override String get publicAdulte => 'الكبار (18 سنة فأكثر)';
+	@override String get coordonneesPlusTard => 'لن تُطلب منك بياناتك المالية إلا قبل أول دفعة تتلقاها.';
+	@override String get montantsSurDemande => 'لمعرفة المبالغ، اطلبها من الإدارة.';
+	@override String conditionsDateEffet({required Object date}) => 'تُطبَّق هذه الشروط ابتداءً من ⁨${date}⁩.';
+	@override String get accordRemuneration => 'قرأت شروط الأجر هذه وأوافق عليها.';
+	@override String get accordManquant => 'ضع علامة في المربع لقبول هذه الشروط وإرسال طلب ترشحك.';
+	@override String get envoyer => 'إرسال طلب ترشحي';
+	@override String get cadreManquant => 'اقبل أولًا الإطار الديني والتربوي.';
+	@override String get cadreAccepte => 'لقد قبلت الإطار الديني والتربوي.';
+	@override String get langues => 'لغاتك';
+	@override String get recitation => 'تلاوتك';
+	@override String get disponibilites => 'أوقات تفرّغك';
+	@override String get publics => 'الفئات التي تستطيع تعليمها';
+	@override String get versement => 'بلدك وصرف أجرك';
+	@override String get perime => 'تغيّر الاستبيان منذ زيارتك الأخيرة. راجع إجاباتك قبل الإرسال.';
+	@override String incomplet({required Object question}) => 'تنقص إجابة: ⁨${question}⁩.';
+	@override String reponseInvalide({required Object question}) => 'إجابة لم تعد صالحة: ⁨${question}⁩.';
+	@override String get conflit => 'تغيّر طلب ترشحك منذ فتح هذه الصفحة. راجعه ثم أرسله.';
+	@override String get conditionsPerimees => 'تغيّرت شروط الأجر. راجعها ثم وافق عليها من جديد.';
+	@override String get interdit => 'لم يعد إرسال طلب ترشحك ممكنًا من هذه الصفحة.';
+	@override String get echec => 'إحدى إجاباتك تحتاج إلى مراجعة. راجعها ثم أعد إرسال طلب ترشحك.';
+	@override String get incertain => 'قد لا يكون طلب ترشحك قد وصل إلى أكاديمية الرواية. أعد المحاولة: لن يُسجَّل مرتين.';
+	@override String get horsLigne => 'سيمكن إرسال طلب ترشحك عند عودة الاتصال.';
+	@override String get nonOuverte => 'هذه الخطوة غير مفتوحة بعد. حسابك محفوظ.';
+	@override String get nonCharge => 'تعذّر تحميل الاستبيان.';
+	@override String get conditionsNonCharge => 'تعذّر تحميل شروط الأجر.';
+	@override String get envoyee => 'أُرسل طلب ترشحك. ستُعلمك الأكاديمية هنا إن لزم استكماله.';
+	@override String envoyeeLe({required Object date}) => 'أُرسل في ⁨${date}⁩.';
+	@override String etatVersement({required Object etat}) => 'وسيلة صرف الأجر: ⁨${etat}⁩';
+	@override String get retourDossier => 'العودة إلى ملفي';
+	@override String get complementCarte => 'تطلب منك الأكاديمية استكمال هذا الجزء.';
+}
+
+// Path: recrutement.parcours
+class _Traductions$recrutement$parcours$ar extends Traductions$recrutement$parcours$fr {
+	_Traductions$recrutement$parcours$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get choisir => 'اختر إجابة للمتابعة.';
+	@override String get choisirPlusieurs => 'اختر إجابة واحدة على الأقل للمتابعة.';
+	@override String get choisirPlage => 'اختر فترة واحدة على الأقل للمتابعة.';
+	@override String trop({required num max}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(max,
+		zero: 'اختر ⁨${max}⁩ إجابات على الأكثر.',
+		one: 'اختر إجابة واحدة فقط.',
+		two: 'اختر إجابتين على الأكثر.',
+		few: 'اختر ⁨${max}⁩ إجابات على الأكثر.',
+		many: 'اختر ⁨${max}⁩ إجابة على الأكثر.',
+		other: 'اختر ⁨${max}⁩ إجابة على الأكثر.',
+	);
+	@override String get aucune => 'لا شيء';
+	@override String get oui => 'نعم';
+	@override String get non => 'لا';
+	@override String get modifier => 'تعديل';
+	@override String get sauvegardeEchec => 'تعذّر حفظ آخر إجاباتك. تبقى على الشاشة: تابع، وستُرسل مع طلب ترشحك.';
+	@override late final _Traductions$recrutement$parcours$presentation$ar presentation = _Traductions$recrutement$parcours$presentation$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$langues$ar langues = _Traductions$recrutement$parcours$langues$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$pays$ar pays = _Traductions$recrutement$parcours$pays$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$riwayat$ar riwayat = _Traductions$recrutement$parcours$riwayat$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$fuseau$ar fuseau = _Traductions$recrutement$parcours$fuseau$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$creneaux$ar creneaux = _Traductions$recrutement$parcours$creneaux$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$versement$ar versement = _Traductions$recrutement$parcours$versement$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$recap$ar recap = _Traductions$recrutement$parcours$recap$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$ar q = _Traductions$recrutement$parcours$q$ar._(_root);
+}
+
 // Path: argent.acces
 class _Traductions$argent$acces$ar extends Traductions$argent$acces$fr {
 	_Traductions$argent$acces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -13496,6 +13661,200 @@ class _Traductions$recrutement$candidat$comptable$ar extends Traductions$recrute
 	@override String get indisponible => 'سيتوفر التحقق من رموز المحاسبين عند ربط الخادم.';
 }
 
+// Path: recrutement.parcours.presentation
+class _Traductions$recrutement$parcours$presentation$ar extends Traductions$recrutement$parcours$presentation$fr {
+	_Traductions$recrutement$parcours$presentation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$parcours$presentation$p1$ar p1 = _Traductions$recrutement$parcours$presentation$p1$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$presentation$p2$ar p2 = _Traductions$recrutement$parcours$presentation$p2$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$presentation$p3$ar p3 = _Traductions$recrutement$parcours$presentation$p3$ar._(_root);
+}
+
+// Path: recrutement.parcours.langues
+class _Traductions$recrutement$parcours$langues$ar extends Traductions$recrutement$parcours$langues$fr {
+	_Traductions$recrutement$parcours$langues$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get poular => 'البولار';
+	@override String get francais => 'الفرنسية';
+	@override String get english => 'الإنجليزية';
+	@override String get ar => 'العربية';
+	@override String get ff => 'الفولاني (الفولفولدي)';
+	@override String get ha => 'الهوسا';
+	@override String get wo => 'الولوف';
+	@override String get ps => 'البشتو';
+	@override String get ur => 'الأردية';
+	@override String get snk => 'السونينكي';
+	@override String get bm => 'البامبارا';
+	@override String get sw => 'السواحيلية';
+	@override String get mnk => 'الماندينكا';
+	@override String get om => 'الأورومو';
+	@override String get am => 'الأمهرية';
+	@override String get yo => 'اليوروبا';
+	@override String get bn => 'البنغالية';
+	@override String get fa => 'الفارسية';
+	@override String get id => 'الإندونيسية';
+	@override String get so => 'الصومالية';
+	@override String get hi => 'الهندية';
+	@override String get uz => 'الأوزبكية';
+	@override String get tr => 'التركية';
+	@override String get de => 'الألمانية';
+	@override String get pt => 'البرتغالية';
+	@override String get ru => 'الروسية';
+	@override String get dansReferentiel => 'لغة تقدّم فيها أكاديمية الرواية دروسًا.';
+	@override String get horsReferentiel => 'لغة لا تقدّمها أكاديمية الرواية بعد';
+	@override String get autre => 'لغة أخرى';
+	@override String get recherche => 'البحث عن لغة';
+	@override String get rechercheAide => 'اسم اللغة';
+	@override String get aucune => 'لا توجد لغة مطابقة.';
+	@override String get retour => 'العودة إلى اللغات المقترحة';
+}
+
+// Path: recrutement.parcours.pays
+class _Traductions$recrutement$parcours$pays$ar extends Traductions$recrutement$parcours$pays$fr {
+	_Traductions$recrutement$parcours$pays$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get autre => 'بلد آخر';
+	@override String get recherche => 'البحث عن بلد';
+	@override String get rechercheAide => 'اسم البلد';
+	@override String get aucun => 'لا يوجد بلد مطابق.';
+	@override String get retour => 'العودة إلى البلدان المقترحة';
+}
+
+// Path: recrutement.parcours.riwayat
+class _Traductions$recrutement$parcours$riwayat$ar extends Traductions$recrutement$parcours$riwayat$fr {
+	_Traductions$recrutement$parcours$riwayat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get autre => 'رواية أخرى';
+	@override String get recherche => 'البحث عن رواية';
+	@override String get rechercheAide => 'اسم الرواية';
+	@override String get aucune => 'لا توجد رواية مطابقة.';
+	@override String get retour => 'العودة إلى الروايات المقترحة';
+}
+
+// Path: recrutement.parcours.fuseau
+class _Traductions$recrutement$parcours$fuseau$ar extends Traductions$recrutement$parcours$fuseau$fr {
+	_Traductions$recrutement$parcours$fuseau$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String heureChezVous({required Object heure}) => 'هل الساعة عندك الآن ⁨${heure}⁩؟';
+	@override String lieuPropose({required Object lieu}) => 'المنطقة الزمنية المقترحة: ⁨${lieu}⁩.';
+	@override String retenu({required Object lieu}) => 'المنطقة الزمنية المعتمدة: ⁨${lieu}⁩.';
+	@override String get oui => 'نعم، هذا هو الوقت عندي';
+	@override String get ouiDescription => 'تُؤكَّد منطقتك الزمنية.';
+	@override String get changer => 'لا، أريد تغييرها';
+	@override String get changerDescription => 'تختار أقرب مدينة إلى مكان إقامتك.';
+	@override String get choisirTitre => 'ما أقرب مدينة إلى مكان إقامتك؟';
+	@override String get choisirExplication => 'تحدّد منطقتك الزمنية. ستظهر ساعات مقابلتك بتوقيت هذه المنطقة.';
+	@override String get recherche => 'البحث عن مدينة';
+	@override String get rechercheAide => 'اسم المدينة';
+	@override String get aucune => 'لا توجد مدينة مطابقة.';
+	@override String get autre => 'مدينة أخرى';
+	@override String get retour => 'العودة إلى الاقتراح';
+	@override late final _Traductions$recrutement$parcours$fuseau$regions$ar regions = _Traductions$recrutement$parcours$fuseau$regions$ar._(_root);
+	@override String get ouiExplication => 'ستكون أوقات توفرك ومقابلتك بتوقيت بلدك.';
+	@override String get changerExplication => 'مفيد إن كنت مسافرًا أو إن كانت ساعة جهازك غير صحيحة.';
+}
+
+// Path: recrutement.parcours.creneaux
+class _Traductions$recrutement$parcours$creneaux$ar extends Traductions$recrutement$parcours$creneaux$fr {
+	_Traductions$recrutement$parcours$creneaux$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get plage0 => 'الليل';
+	@override String get plage1 => 'الفجر';
+	@override String get plage2 => 'الصباح';
+	@override String get plage3 => 'الظهيرة';
+	@override String get plage4 => 'بعد الظهر';
+	@override String get plage5 => 'المساء';
+	@override String jourCellule({required Object jour, required Object plage}) => '⁨${jour}⁩، ⁨${plage}⁩';
+	@override String choisies({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لم تُختر أي فترة',
+		one: 'فترة واحدة مختارة',
+		two: 'فترتان مختارتان',
+		few: '⁨${n}⁩ فترات مختارة',
+		many: '⁨${n}⁩ فترة مختارة',
+		other: '⁨${n}⁩ فترة مختارة',
+	);
+	@override String fuseauRappel({required Object lieu}) => 'الساعات بتوقيت ⁨${lieu}⁩.';
+	@override String get partielle => 'جزئيًا';
+	@override String get choisie => 'مختارة';
+}
+
+// Path: recrutement.parcours.versement
+class _Traductions$recrutement$parcours$versement$ar extends Traductions$recrutement$parcours$versement$fr {
+	_Traductions$recrutement$parcours$versement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get virementSeul => 'في بلدك، أكّدت الأكاديمية التحويل المصرفي. لا توجد حاليًا وسيلة دفع عبر الهاتف.';
+	@override String get aucunMoyen => 'لا تصرف أكاديمية الرواية أجورًا في هذا البلد بعد. يمكنك إرسال طلب ترشحك: سيبقى في قاعة الامتحان حتى تتوفر وسيلة ممكنة.';
+	@override String get operateurDescription => 'الدفع عبر الهاتف';
+	@override String get chargement => 'نبحث عن الوسائل الممكنة في بلدك.';
+	@override String get nonCharge => 'تعذّر تحميل وسائل صرف الأجر في بلدك.';
+	@override String get operateurExplication => 'تصرّح به الآن. لا تُطلب بياناتك المالية إلا قبل أول دفعة.';
+}
+
+// Path: recrutement.parcours.recap
+class _Traductions$recrutement$parcours$recap$ar extends Traductions$recrutement$parcours$recap$fr {
+	_Traductions$recrutement$parcours$recap$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'راجع طلب ترشحك';
+	@override String get explication => 'المس إجابة لتغييرها. لا يُرسل شيء قبل الضغط على «إرسال طلب ترشحي».';
+	@override String plages({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا فترات في الأسبوع',
+		one: 'فترة واحدة في الأسبوع',
+		two: 'فترتان في الأسبوع',
+		few: '⁨${n}⁩ فترات في الأسبوع',
+		many: '⁨${n}⁩ فترة في الأسبوع',
+		other: '⁨${n}⁩ فترة في الأسبوع',
+	);
+}
+
+// Path: recrutement.parcours.q
+class _Traductions$recrutement$parcours$q$ar extends Traductions$recrutement$parcours$q$fr {
+	_Traductions$recrutement$parcours$q$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$parcours$q$langueMaternelle$ar langueMaternelle = _Traductions$recrutement$parcours$q$langueMaternelle$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$languesExplication$ar languesExplication = _Traductions$recrutement$parcours$q$languesExplication$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$ar niveauMemorisationDeclare = _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$niveauLectureTajwid$ar niveauLectureTajwid = _Traductions$recrutement$parcours$q$niveauLectureTajwid$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$ar riwayat = _Traductions$recrutement$parcours$q$riwayat$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$ijazaPresentable$ar ijazaPresentable = _Traductions$recrutement$parcours$q$ijazaPresentable$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$experienceDebutants$ar experienceDebutants = _Traductions$recrutement$parcours$q$experienceDebutants$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$fuseauIana$ar fuseauIana = _Traductions$recrutement$parcours$q$fuseauIana$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$disponibilitesDeclarees$ar disponibilitesDeclarees = _Traductions$recrutement$parcours$q$disponibilitesDeclarees$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$heuresParSemaine$ar heuresParSemaine = _Traductions$recrutement$parcours$q$heuresParSemaine$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$debutPossible$ar debutPossible = _Traductions$recrutement$parcours$q$debutPossible$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$publics$ar publics = _Traductions$recrutement$parcours$q$publics$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$paysResidence$ar paysResidence = _Traductions$recrutement$parcours$q$paysResidence$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$paysVersement$ar paysVersement = _Traductions$recrutement$parcours$q$paysVersement$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$compteBancaire$ar compteBancaire = _Traductions$recrutement$parcours$q$compteBancaire$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$operateurs$ar operateurs = _Traductions$recrutement$parcours$q$operateurs$ar._(_root);
+}
+
 // Path: juridique.mentions.s1
 class _Traductions$juridique$mentions$s1$ar extends Traductions$juridique$mentions$s1$fr {
 	_Traductions$juridique$mentions$s1$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -15800,6 +16159,270 @@ class _Traductions$adulte$recharge$source$motifs$ar extends Traductions$adulte$r
 	@override String get sessionExpiree => 'انتهت صلاحية صفحة الدفع قبل الدفع. لم يُقتطع أي مبلغ.';
 }
 
+// Path: recrutement.parcours.presentation.p1
+class _Traductions$recrutement$parcours$presentation$p1$ar extends Traductions$recrutement$parcours$presentation$p1$fr {
+	_Traductions$recrutement$parcours$presentation$p1$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'من هي أكاديمية الرواية؟';
+	@override String get intro => 'قبل الأسئلة، إليك ما يجب أن تعرفه عنا.';
+	@override late final _Traductions$recrutement$parcours$presentation$p1$academie$ar academie = _Traductions$recrutement$parcours$presentation$p1$academie$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$presentation$p1$liberte$ar liberte = _Traductions$recrutement$parcours$presentation$p1$liberte$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$presentation$p1$donnees$ar donnees = _Traductions$recrutement$parcours$presentation$p1$donnees$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$presentation$p1$separation$ar separation = _Traductions$recrutement$parcours$presentation$p1$separation$ar._(_root);
+}
+
+// Path: recrutement.parcours.presentation.p2
+class _Traductions$recrutement$parcours$presentation$p2$ar extends Traductions$recrutement$parcours$presentation$p2$fr {
+	_Traductions$recrutement$parcours$presentation$p2$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ما الذي يفعله المعلم؟';
+	@override String get intro => 'تُدرّس عبر الفيديو، في فصل يبقى هو نفسه.';
+	@override late final _Traductions$recrutement$parcours$presentation$p2$classe$ar classe = _Traductions$recrutement$parcours$presentation$p2$classe$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$presentation$p2$horaires$ar horaires = _Traductions$recrutement$parcours$presentation$p2$horaires$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$presentation$p2$visio$ar visio = _Traductions$recrutement$parcours$presentation$p2$visio$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$presentation$p2$remuneration$ar remuneration = _Traductions$recrutement$parcours$presentation$p2$remuneration$ar._(_root);
+}
+
+// Path: recrutement.parcours.presentation.p3
+class _Traductions$recrutement$parcours$presentation$p3$ar extends Traductions$recrutement$parcours$presentation$p3$fr {
+	_Traductions$recrutement$parcours$presentation$p3$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'كيف يجري طلب ترشحك';
+	@override String get intro => 'ثلاث مراحل، داخل التطبيق.';
+	@override late final _Traductions$recrutement$parcours$presentation$p3$examen$ar examen = _Traductions$recrutement$parcours$presentation$p3$examen$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$presentation$p3$entretien$ar entretien = _Traductions$recrutement$parcours$presentation$p3$entretien$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$presentation$p3$verification$ar verification = _Traductions$recrutement$parcours$presentation$p3$verification$ar._(_root);
+}
+
+// Path: recrutement.parcours.fuseau.regions
+class _Traductions$recrutement$parcours$fuseau$regions$ar extends Traductions$recrutement$parcours$fuseau$regions$fr {
+	_Traductions$recrutement$parcours$fuseau$regions$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get Africa => 'أفريقيا';
+	@override String get America => 'الأمريكتان';
+	@override String get Antarctica => 'القارة القطبية الجنوبية';
+	@override String get Arctic => 'المنطقة القطبية الشمالية';
+	@override String get Asia => 'آسيا';
+	@override String get Atlantic => 'المحيط الأطلسي';
+	@override String get Australia => 'أستراليا';
+	@override String get Europe => 'أوروبا';
+	@override String get Indian => 'المحيط الهندي';
+	@override String get Pacific => 'المحيط الهادئ';
+}
+
+// Path: recrutement.parcours.q.langueMaternelle
+class _Traductions$recrutement$parcours$q$langueMaternelle$ar extends Traductions$recrutement$parcours$q$langueMaternelle$fr {
+	_Traductions$recrutement$parcours$q$langueMaternelle$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ما لغتك الأم؟';
+	@override String get explication => 'هي اللغة التي تتكلمها منذ طفولتك.';
+	@override String get court => 'اللغة الأم';
+}
+
+// Path: recrutement.parcours.q.languesExplication
+class _Traductions$recrutement$parcours$q$languesExplication$ar extends Traductions$recrutement$parcours$q$languesExplication$fr {
+	_Traductions$recrutement$parcours$q$languesExplication$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'بأي لغات تستطيع الشرح والتصحيح؟';
+	@override String get explication => 'اختر كل اللغات التي تستطيع بها شرح قاعدة لطالب وتصحيح أخطائه. يتابع الطالب فصله باللغة التي اختارها عند التسجيل: تساعد هذه اللغات الإدارة على معرفة الفصول التي قد تُدرّس فيها.';
+	@override String get court => 'لغات الشرح';
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare
+class _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$ar extends Traductions$recrutement$parcours$q$niveauMemorisationDeclare$fr {
+	_Traductions$recrutement$parcours$q$niveauMemorisationDeclare$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ما مستوى حفظك؟';
+	@override String get explication => 'تصرّح به هنا.';
+	@override String get court => 'مستوى الحفظ';
+	@override late final _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ar options = _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.niveauLectureTajwid
+class _Traductions$recrutement$parcours$q$niveauLectureTajwid$ar extends Traductions$recrutement$parcours$q$niveauLectureTajwid$fr {
+	_Traductions$recrutement$parcours$q$niveauLectureTajwid$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'كيف تقرأ القرآن؟';
+	@override String get explication => 'التجويد هو مجموعة الأحكام التي تبيّن كيف يُنطق كل حرف من القرآن.';
+	@override String get court => 'القراءة والتجويد';
+	@override late final _Traductions$recrutement$parcours$q$niveauLectureTajwid$options$ar options = _Traductions$recrutement$parcours$q$niveauLectureTajwid$options$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.riwayat
+class _Traductions$recrutement$parcours$q$riwayat$ar extends Traductions$recrutement$parcours$q$riwayat$fr {
+	_Traductions$recrutement$parcours$q$riwayat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'بأي روايات تقرأ؟';
+	@override String get explication => 'الرواية طريقة منقولة في قراءة القرآن. اختر كل ما تقرأ به.';
+	@override String get court => 'الروايات';
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$ar options = _Traductions$recrutement$parcours$q$riwayat$options$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.ijazaPresentable
+class _Traductions$recrutement$parcours$q$ijazaPresentable$ar extends Traductions$recrutement$parcours$q$ijazaPresentable$fr {
+	_Traductions$recrutement$parcours$q$ijazaPresentable$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'هل عندك إجازة تستطيع عرضها؟';
+	@override String get explication => 'الإجازة إذن مكتوب من شيخ بنقل القرآن.';
+	@override String get court => 'الإجازة';
+	@override late final _Traductions$recrutement$parcours$q$ijazaPresentable$options$ar options = _Traductions$recrutement$parcours$q$ijazaPresentable$options$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.experienceDebutants
+class _Traductions$recrutement$parcours$q$experienceDebutants$ar extends Traductions$recrutement$parcours$q$experienceDebutants$fr {
+	_Traductions$recrutement$parcours$q$experienceDebutants$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'هل سبق أن علّمت مبتدئين؟';
+	@override String get explication => 'المبتدئ ما زال يتعلم قراءة الحروف ووصلها.';
+	@override String get court => 'الخبرة مع المبتدئين';
+	@override late final _Traductions$recrutement$parcours$q$experienceDebutants$options$ar options = _Traductions$recrutement$parcours$q$experienceDebutants$options$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.fuseauIana
+class _Traductions$recrutement$parcours$q$fuseauIana$ar extends Traductions$recrutement$parcours$q$fuseauIana$fr {
+	_Traductions$recrutement$parcours$q$fuseauIana$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'منطقتك الزمنية';
+	@override String get explication => 'أوقات تفرّغك بتوقيت مكان إقامتك. لذلك يجب أن يكون الوقت صحيحًا.';
+	@override String get court => 'المنطقة الزمنية';
+}
+
+// Path: recrutement.parcours.q.disponibilitesDeclarees
+class _Traductions$recrutement$parcours$q$disponibilitesDeclarees$ar extends Traductions$recrutement$parcours$q$disponibilitesDeclarees$fr {
+	_Traductions$recrutement$parcours$q$disponibilitesDeclarees$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'متى تكون متفرّغًا؟';
+	@override String get explication => 'المس الفترات التي تستطيع فيها التدريس كل أسبوع. مدة الفترة أربع ساعات.';
+	@override String get court => 'أوقات التفرّغ';
+}
+
+// Path: recrutement.parcours.q.heuresParSemaine
+class _Traductions$recrutement$parcours$q$heuresParSemaine$ar extends Traductions$recrutement$parcours$q$heuresParSemaine$fr {
+	_Traductions$recrutement$parcours$q$heuresParSemaine$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'كم ساعة في الأسبوع تستطيع التدريس؟';
+	@override String get explication => 'فصل الأطفال ثلاث حصص في الأسبوع، مدة كل منها ساعة، أي 3 ساعات. وفصل الكبار ثلاث حصص، مدة كل منها ساعة ونصف، أي 4 ساعات ونصف.';
+	@override String get court => 'الساعات في الأسبوع';
+	@override late final _Traductions$recrutement$parcours$q$heuresParSemaine$options$ar options = _Traductions$recrutement$parcours$q$heuresParSemaine$options$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.debutPossible
+class _Traductions$recrutement$parcours$q$debutPossible$ar extends Traductions$recrutement$parcours$q$debutPossible$fr {
+	_Traductions$recrutement$parcours$q$debutPossible$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'متى تستطيع البدء؟';
+	@override String get explication => 'يساعد هذا التاريخ الإدارة على معرفة متى تقترح عليك فصلًا.';
+	@override String get court => 'تاريخ البدء';
+	@override late final _Traductions$recrutement$parcours$q$debutPossible$options$ar options = _Traductions$recrutement$parcours$q$debutPossible$options$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.publics
+class _Traductions$recrutement$parcours$q$publics$ar extends Traductions$recrutement$parcours$q$publics$fr {
+	_Traductions$recrutement$parcours$q$publics$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'أي طلاب تستطيع تعليمهم؟';
+	@override String get explication => 'اختر الطلاب الذين تستطيع تعليمهم. يمكنك اختيار الفئتين.';
+	@override String get court => 'الفئات';
+	@override late final _Traductions$recrutement$parcours$q$publics$options$ar options = _Traductions$recrutement$parcours$q$publics$options$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.paysResidence
+class _Traductions$recrutement$parcours$q$paysResidence$ar extends Traductions$recrutement$parcours$q$paysResidence$fr {
+	_Traductions$recrutement$parcours$q$paysResidence$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'في أي بلد تقيم؟';
+	@override String get explication => 'اختر البلد الذي تقيم فيه اليوم.';
+	@override String get court => 'بلد الإقامة';
+}
+
+// Path: recrutement.parcours.q.paysVersement
+class _Traductions$recrutement$parcours$q$paysVersement$ar extends Traductions$recrutement$parcours$q$paysVersement$fr {
+	_Traductions$recrutement$parcours$q$paysVersement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'في أي بلد تريد تلقي أجرك؟';
+	@override String get explication => 'تتحقق الأكاديمية، بلدًا بلدًا، من وسيلة الصرف الممكنة. اخترنا بلد إقامتك: غيّره إن لزم.';
+	@override String get court => 'بلد الصرف';
+}
+
+// Path: recrutement.parcours.q.compteBancaire
+class _Traductions$recrutement$parcours$q$compteBancaire$ar extends Traductions$recrutement$parcours$q$compteBancaire$fr {
+	_Traductions$recrutement$parcours$q$compteBancaire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'هل عندك حساب مصرفي؟';
+	@override String get explication => 'يُصرف الأجر بتحويل مصرفي حيث أكّدت الأكاديمية ذلك. لا تُطلب بياناتك إلا قبل أول دفعة.';
+	@override String get court => 'الحساب المصرفي';
+	@override late final _Traductions$recrutement$parcours$q$compteBancaire$options$ar options = _Traductions$recrutement$parcours$q$compteBancaire$options$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.operateurs
+class _Traductions$recrutement$parcours$q$operateurs$ar extends Traductions$recrutement$parcours$q$operateurs$fr {
+	_Traductions$recrutement$parcours$q$operateurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ما وسائل الدفع عبر الهاتف التي تستخدمها؟';
+	@override String get explication => 'هذه هي الوسائل التي أكّدتها الأكاديمية في بلدك. اختر ما تستخدمه، إن وُجد.';
+	@override String get court => 'وسائل الدفع عبر الهاتف';
+}
+
 // Path: avis.admin.liens.etat
 class _Traductions$avis$admin$liens$etat$ar extends Traductions$avis$admin$liens$etat$fr {
 	_Traductions$avis$admin$liens$etat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -15841,6 +16464,777 @@ class _Traductions$com$annonces$administration$moderation$regles$ar extends Trad
 	@override String get pasVente => 'لا بيع لمنتج أو خدمة';
 	@override String get pasSollicitation => 'لا التماس تجاري';
 	@override String get pasDonnees => 'لا بيانات شخصية لطالب أو عائلة';
+}
+
+// Path: recrutement.parcours.presentation.p1.academie
+class _Traductions$recrutement$parcours$presentation$p1$academie$ar extends Traductions$recrutement$parcours$presentation$p1$academie$fr {
+	_Traductions$recrutement$parcours$presentation$p1$academie$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'أكاديمية لتعليم القرآن عبر الإنترنت';
+	@override String get texte => 'تعلّم أكاديمية الرواية القرآن عن بُعد، في فصول ثابتة، مع معلم مخصّص لكل فصل. وهي تُدرّس منذ 1 مايو 2024.';
+}
+
+// Path: recrutement.parcours.presentation.p1.liberte
+class _Traductions$recrutement$parcours$presentation$p1$liberte$ar extends Traductions$recrutement$parcours$presentation$p1$liberte$fr {
+	_Traductions$recrutement$parcours$presentation$p1$liberte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'تبقى حرًّا';
+	@override String get texte => 'ما دمت لم تصبح معلّمًا، يمكنك سحب طلب ترشحك من ملفك.';
+}
+
+// Path: recrutement.parcours.presentation.p1.donnees
+class _Traductions$recrutement$parcours$presentation$p1$donnees$ar extends Traductions$recrutement$parcours$presentation$p1$donnees$fr {
+	_Traductions$recrutement$parcours$presentation$p1$donnees$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'بياناتك محميّة';
+	@override String get texte => 'لا يقرأ إجاباتك إلا من يدرس طلب ترشحك في الأكاديمية.';
+}
+
+// Path: recrutement.parcours.presentation.p1.separation
+class _Traductions$recrutement$parcours$presentation$p1$separation$ar extends Traductions$recrutement$parcours$presentation$p1$separation$fr {
+	_Traductions$recrutement$parcours$presentation$p1$separation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'فصل بين النساء والرجال';
+	@override String get texte => 'يتابع طلب ترشح المرأة موظفو الإدارة من جهة النساء، ويتابع طلب ترشح الرجل موظفو الإدارة من جهة الرجال.';
+}
+
+// Path: recrutement.parcours.presentation.p2.classe
+class _Traductions$recrutement$parcours$presentation$p2$classe$ar extends Traductions$recrutement$parcours$presentation$p2$classe$fr {
+	_Traductions$recrutement$parcours$presentation$p2$classe$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'فصل ثابت';
+	@override String get texte => 'تدرّس الفصل نفسه على المدى الطويل، مع الطلاب أنفسهم.';
+}
+
+// Path: recrutement.parcours.presentation.p2.horaires
+class _Traductions$recrutement$parcours$presentation$p2$horaires$ar extends Traductions$recrutement$parcours$presentation$p2$horaires$fr {
+	_Traductions$recrutement$parcours$presentation$p2$horaires$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المواعيد نفسها كل أسبوع';
+	@override String get texte => 'يجتمع فصلك في الأيام والساعات نفسها، ثلاث مرات في الأسبوع.';
+}
+
+// Path: recrutement.parcours.presentation.p2.visio
+class _Traductions$recrutement$parcours$presentation$p2$visio$ar extends Traductions$recrutement$parcours$presentation$p2$visio$fr {
+	_Traductions$recrutement$parcours$presentation$p2$visio$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'عبر الفيديو، داخل التطبيق';
+	@override String get texte => 'تُعطى الدروس عبر مكالمة فيديو، داخل تطبيق أكاديمية الرواية.';
+}
+
+// Path: recrutement.parcours.presentation.p2.remuneration
+class _Traductions$recrutement$parcours$presentation$p2$remuneration$ar extends Traductions$recrutement$parcours$presentation$p2$remuneration$fr {
+	_Traductions$recrutement$parcours$presentation$p2$remuneration$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'أجر موضَّح';
+	@override String get texte => 'أجرك جزء من السعر الذي يدفعه كل طالب حاضر. يُشرح لك بالنسبة المئوية قبل إرسال طلب ترشحك.';
+}
+
+// Path: recrutement.parcours.presentation.p3.examen
+class _Traductions$recrutement$parcours$presentation$p3$examen$ar extends Traductions$recrutement$parcours$presentation$p3$examen$fr {
+	_Traductions$recrutement$parcours$presentation$p3$examen$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'قاعة الامتحان';
+	@override String get texte => 'تجيب عن أسئلة هذا المسار ثم ترسل طلب ترشحك. تقرأ الإدارة إجاباتك.';
+}
+
+// Path: recrutement.parcours.presentation.p3.entretien
+class _Traductions$recrutement$parcours$presentation$p3$entretien$ar extends Traductions$recrutement$parcours$presentation$p3$entretien$fr {
+	_Traductions$recrutement$parcours$presentation$p3$entretien$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المقابلة عبر الفيديو';
+	@override String get texte => 'إذا اعتُمد طلب ترشحك للمرحلة التالية، تستقبلك الإدارة عبر الفيديو، داخل التطبيق.';
+}
+
+// Path: recrutement.parcours.presentation.p3.verification
+class _Traductions$recrutement$parcours$presentation$p3$verification$ar extends Traductions$recrutement$parcours$presentation$p3$verification$fr {
+	_Traductions$recrutement$parcours$presentation$p3$verification$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'التحقق';
+	@override String get texte => 'تودع وثيقة هويتك وتقرأ اتفاقاتنا. وحين يكتمل كل شيء تدخل قاعة الجاهزين للتدريس.';
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare.options
+class _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ar extends Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$fr {
+	_Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$coran_entier$ar coran_entier = _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$coran_entier$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ijaza_lecture_enseignement$ar ijaza_lecture_enseignement = _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ijaza_lecture_enseignement$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$plus_de_10_juz$ar plus_de_10_juz = _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$plus_de_10_juz$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_de_10_juz$ar moins_de_10_juz = _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_de_10_juz$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$bonne_lecture_sans_memorisation$ar bonne_lecture_sans_memorisation = _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$bonne_lecture_sans_memorisation$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.niveauLectureTajwid.options
+class _Traductions$recrutement$parcours$q$niveauLectureTajwid$options$ar extends Traductions$recrutement$parcours$q$niveauLectureTajwid$options$fr {
+	_Traductions$recrutement$parcours$q$niveauLectureTajwid$options$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$parcours$q$niveauLectureTajwid$options$lecture_sans_regles_tajwid$ar lecture_sans_regles_tajwid = _Traductions$recrutement$parcours$q$niveauLectureTajwid$options$lecture_sans_regles_tajwid$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_applique$ar tajwid_applique = _Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_applique$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_enseigne$ar tajwid_enseigne = _Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_enseigne$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.riwayat.options
+class _Traductions$recrutement$parcours$q$riwayat$options$ar extends Traductions$recrutement$parcours$q$riwayat$options$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$hafs$ar hafs = _Traductions$recrutement$parcours$q$riwayat$options$hafs$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$shuba$ar shuba = _Traductions$recrutement$parcours$q$riwayat$options$shuba$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$warsh$ar warsh = _Traductions$recrutement$parcours$q$riwayat$options$warsh$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$qalun$ar qalun = _Traductions$recrutement$parcours$q$riwayat$options$qalun$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$al_bazzi$ar al_bazzi = _Traductions$recrutement$parcours$q$riwayat$options$al_bazzi$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$qunbul$ar qunbul = _Traductions$recrutement$parcours$q$riwayat$options$qunbul$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$ad_duri_abi_amr$ar ad_duri_abi_amr = _Traductions$recrutement$parcours$q$riwayat$options$ad_duri_abi_amr$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$as_susi$ar as_susi = _Traductions$recrutement$parcours$q$riwayat$options$as_susi$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$hisham$ar hisham = _Traductions$recrutement$parcours$q$riwayat$options$hisham$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$ibn_dhakwan$ar ibn_dhakwan = _Traductions$recrutement$parcours$q$riwayat$options$ibn_dhakwan$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$khalaf_an_hamza$ar khalaf_an_hamza = _Traductions$recrutement$parcours$q$riwayat$options$khalaf_an_hamza$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$khallad$ar khallad = _Traductions$recrutement$parcours$q$riwayat$options$khallad$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$abu_al_harith$ar abu_al_harith = _Traductions$recrutement$parcours$q$riwayat$options$abu_al_harith$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$ad_duri_al_kisai$ar ad_duri_al_kisai = _Traductions$recrutement$parcours$q$riwayat$options$ad_duri_al_kisai$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$ibn_wardan$ar ibn_wardan = _Traductions$recrutement$parcours$q$riwayat$options$ibn_wardan$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$ibn_jammaz$ar ibn_jammaz = _Traductions$recrutement$parcours$q$riwayat$options$ibn_jammaz$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$ruways$ar ruways = _Traductions$recrutement$parcours$q$riwayat$options$ruways$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$rawh$ar rawh = _Traductions$recrutement$parcours$q$riwayat$options$rawh$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$ishaq$ar ishaq = _Traductions$recrutement$parcours$q$riwayat$options$ishaq$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$riwayat$options$idris$ar idris = _Traductions$recrutement$parcours$q$riwayat$options$idris$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.ijazaPresentable.options
+class _Traductions$recrutement$parcours$q$ijazaPresentable$options$ar extends Traductions$recrutement$parcours$q$ijazaPresentable$options$fr {
+	_Traductions$recrutement$parcours$q$ijazaPresentable$options$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$parcours$q$ijazaPresentable$options$oui$ar oui = _Traductions$recrutement$parcours$q$ijazaPresentable$options$oui$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$ijazaPresentable$options$non$ar non = _Traductions$recrutement$parcours$q$ijazaPresentable$options$non$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.experienceDebutants.options
+class _Traductions$recrutement$parcours$q$experienceDebutants$options$ar extends Traductions$recrutement$parcours$q$experienceDebutants$options$fr {
+	_Traductions$recrutement$parcours$q$experienceDebutants$options$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$parcours$q$experienceDebutants$options$oui$ar oui = _Traductions$recrutement$parcours$q$experienceDebutants$options$oui$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$experienceDebutants$options$non$ar non = _Traductions$recrutement$parcours$q$experienceDebutants$options$non$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.heuresParSemaine.options
+class _Traductions$recrutement$parcours$q$heuresParSemaine$options$ar extends Traductions$recrutement$parcours$q$heuresParSemaine$options$fr {
+	_Traductions$recrutement$parcours$q$heuresParSemaine$options$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$parcours$q$heuresParSemaine$options$moins_de_3$ar moins_de_3 = _Traductions$recrutement$parcours$q$heuresParSemaine$options$moins_de_3$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$heuresParSemaine$options$de_3_a_5$ar de_3_a_5 = _Traductions$recrutement$parcours$q$heuresParSemaine$options$de_3_a_5$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$heuresParSemaine$options$de_6_a_10$ar de_6_a_10 = _Traductions$recrutement$parcours$q$heuresParSemaine$options$de_6_a_10$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$heuresParSemaine$options$plus_de_10$ar plus_de_10 = _Traductions$recrutement$parcours$q$heuresParSemaine$options$plus_de_10$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.debutPossible.options
+class _Traductions$recrutement$parcours$q$debutPossible$options$ar extends Traductions$recrutement$parcours$q$debutPossible$options$fr {
+	_Traductions$recrutement$parcours$q$debutPossible$options$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$parcours$q$debutPossible$options$immediat$ar immediat = _Traductions$recrutement$parcours$q$debutPossible$options$immediat$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$debutPossible$options$mois_prochain$ar mois_prochain = _Traductions$recrutement$parcours$q$debutPossible$options$mois_prochain$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$debutPossible$options$sous_3_mois$ar sous_3_mois = _Traductions$recrutement$parcours$q$debutPossible$options$sous_3_mois$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$debutPossible$options$inconnu$ar inconnu = _Traductions$recrutement$parcours$q$debutPossible$options$inconnu$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.publics.options
+class _Traductions$recrutement$parcours$q$publics$options$ar extends Traductions$recrutement$parcours$q$publics$options$fr {
+	_Traductions$recrutement$parcours$q$publics$options$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$parcours$q$publics$options$enfant$ar enfant = _Traductions$recrutement$parcours$q$publics$options$enfant$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$publics$options$adulte$ar adulte = _Traductions$recrutement$parcours$q$publics$options$adulte$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.compteBancaire.options
+class _Traductions$recrutement$parcours$q$compteBancaire$options$ar extends Traductions$recrutement$parcours$q$compteBancaire$options$fr {
+	_Traductions$recrutement$parcours$q$compteBancaire$options$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$parcours$q$compteBancaire$options$oui$ar oui = _Traductions$recrutement$parcours$q$compteBancaire$options$oui$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$compteBancaire$options$non$ar non = _Traductions$recrutement$parcours$q$compteBancaire$options$non$ar._(_root);
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier
+class _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$coran_entier$ar extends Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$coran_entier$fr {
+	_Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$coran_entier$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'حفظت القرآن كله';
+	@override String get description => 'السور الـ 114 من الأولى إلى الأخيرة عن ظهر قلب.';
+	@override String get explication => 'يُتحقق من هذا المستوى أثناء المقابلة.';
+	@override String get exemple => 'تُسمّع سورة البقرة ثم سورة الناس دون فتح المصحف.';
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.ijaza_lecture_enseignement
+class _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ijaza_lecture_enseignement$ar extends Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ijaza_lecture_enseignement$fr {
+	_Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ijaza_lecture_enseignement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'عندي إجازة قراءة وإقراء';
+	@override String get description => 'إذن مكتوب من شيخ بقراءة القرآن وإقرائه.';
+	@override String get explication => 'تُعرض أثناء المقابلة: لا شيء تُرسله الآن.';
+	@override String get exemple => 'وثيقة مكتوبة سلّمها لك شيخك باسمك.';
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.plus_de_10_juz
+class _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$plus_de_10_juz$ar extends Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$plus_de_10_juz$fr {
+	_Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$plus_de_10_juz$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'حفظت أكثر من 10 أجزاء';
+	@override String get description => 'أكثر من ثلث القرآن، وهو ثلاثون جزءًا.';
+	@override String get explication => 'يُتحقق من هذا المستوى أثناء المقابلة.';
+	@override String get exemple => 'حفظت اثني عشر جزءًا من ثلاثين.';
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.moins_de_10_juz
+class _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_de_10_juz$ar extends Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_de_10_juz$fr {
+	_Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_de_10_juz$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'حفظت أقل من 10 أجزاء';
+	@override String get description => 'أقل من ثلث القرآن، وهو ثلاثون جزءًا.';
+	@override String get explication => 'يُتحقق من هذا المستوى أثناء المقابلة.';
+	@override String get exemple => 'حفظت خمسة أجزاء من ثلاثين.';
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.bonne_lecture_sans_memorisation
+class _Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$bonne_lecture_sans_memorisation$ar extends Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$bonne_lecture_sans_memorisation$fr {
+	_Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$bonne_lecture_sans_memorisation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'لم أحفظ، لكنني أقرأ قراءة جيدة بالتجويد';
+	@override String get description => 'تقرأ القرآن قراءة صحيحة مع تطبيق أحكام التجويد، دون أن تسمّعه عن ظهر قلب.';
+	@override String get explication => 'يُتحقق من قراءتك أثناء المقابلة.';
+	@override String get exemple => 'تقرأ صفحة من القرآن دون خطأ، لكنك لا تسمّعها عن ظهر قلب.';
+}
+
+// Path: recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid
+class _Traductions$recrutement$parcours$q$niveauLectureTajwid$options$lecture_sans_regles_tajwid$ar extends Traductions$recrutement$parcours$q$niveauLectureTajwid$options$lecture_sans_regles_tajwid$fr {
+	_Traductions$recrutement$parcours$q$niveauLectureTajwid$options$lecture_sans_regles_tajwid$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أقرأ دون تطبيق أحكام التجويد';
+	@override String get description => 'تقرأ بطلاقة دون اتباع أحكام النطق.';
+	@override String get explication => 'يُتحقق من قراءتك أثناء المقابلة.';
+	@override String get exemple => 'تقرأ صفحة دون تردد، لكنك لا تطبّق أحكام التجويد.';
+}
+
+// Path: recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique
+class _Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_applique$ar extends Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_applique$fr {
+	_Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_applique$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أطبّق أحكام التجويد أثناء القراءة';
+	@override String get description => 'تلتزم بأحكام النطق حين تقرأ.';
+	@override String get explication => 'يُتحقق من قراءتك أثناء المقابلة.';
+	@override String get exemple => 'تمدّ الحروف وتنطقها كما تقتضي أحكام التجويد.';
+}
+
+// Path: recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne
+class _Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_enseigne$ar extends Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_enseigne$fr {
+	_Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_enseigne$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أطبّق التجويد وأعرف كيف أعلّمه';
+	@override String get description => 'تلتزم بالأحكام وتعرف شرحها لطالب.';
+	@override String get explication => 'يُتحقق من قراءتك أثناء المقابلة.';
+	@override String get exemple => 'حين يخطئ طالب في حرف، تشرح له الحكم فيعيده.';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.hafs
+class _Traductions$recrutement$parcours$q$riwayat$options$hafs$ar extends Traductions$recrutement$parcours$q$riwayat$options$hafs$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$hafs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'حفص';
+	@override String get description => 'رواية عن عاصم';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.shuba
+class _Traductions$recrutement$parcours$q$riwayat$options$shuba$ar extends Traductions$recrutement$parcours$q$riwayat$options$shuba$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$shuba$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'شعبة';
+	@override String get description => 'رواية عن عاصم';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.warsh
+class _Traductions$recrutement$parcours$q$riwayat$options$warsh$ar extends Traductions$recrutement$parcours$q$riwayat$options$warsh$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$warsh$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'ورش';
+	@override String get description => 'رواية عن نافع';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.qalun
+class _Traductions$recrutement$parcours$q$riwayat$options$qalun$ar extends Traductions$recrutement$parcours$q$riwayat$options$qalun$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$qalun$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'قالون';
+	@override String get description => 'رواية عن نافع';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.al_bazzi
+class _Traductions$recrutement$parcours$q$riwayat$options$al_bazzi$ar extends Traductions$recrutement$parcours$q$riwayat$options$al_bazzi$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$al_bazzi$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'البزي';
+	@override String get description => 'رواية عن ابن كثير';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.qunbul
+class _Traductions$recrutement$parcours$q$riwayat$options$qunbul$ar extends Traductions$recrutement$parcours$q$riwayat$options$qunbul$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$qunbul$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'قنبل';
+	@override String get description => 'رواية عن ابن كثير';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.ad_duri_abi_amr
+class _Traductions$recrutement$parcours$q$riwayat$options$ad_duri_abi_amr$ar extends Traductions$recrutement$parcours$q$riwayat$options$ad_duri_abi_amr$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$ad_duri_abi_amr$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'الدوري (أبو عمرو)';
+	@override String get description => 'رواية عن أبي عمرو';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.as_susi
+class _Traductions$recrutement$parcours$q$riwayat$options$as_susi$ar extends Traductions$recrutement$parcours$q$riwayat$options$as_susi$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$as_susi$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'السوسي';
+	@override String get description => 'رواية عن أبي عمرو';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.hisham
+class _Traductions$recrutement$parcours$q$riwayat$options$hisham$ar extends Traductions$recrutement$parcours$q$riwayat$options$hisham$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$hisham$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'هشام';
+	@override String get description => 'رواية عن ابن عامر';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.ibn_dhakwan
+class _Traductions$recrutement$parcours$q$riwayat$options$ibn_dhakwan$ar extends Traductions$recrutement$parcours$q$riwayat$options$ibn_dhakwan$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$ibn_dhakwan$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'ابن ذكوان';
+	@override String get description => 'رواية عن ابن عامر';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.khalaf_an_hamza
+class _Traductions$recrutement$parcours$q$riwayat$options$khalaf_an_hamza$ar extends Traductions$recrutement$parcours$q$riwayat$options$khalaf_an_hamza$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$khalaf_an_hamza$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'خلف (حمزة)';
+	@override String get description => 'رواية عن حمزة';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.khallad
+class _Traductions$recrutement$parcours$q$riwayat$options$khallad$ar extends Traductions$recrutement$parcours$q$riwayat$options$khallad$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$khallad$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'خلاد';
+	@override String get description => 'رواية عن حمزة';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.abu_al_harith
+class _Traductions$recrutement$parcours$q$riwayat$options$abu_al_harith$ar extends Traductions$recrutement$parcours$q$riwayat$options$abu_al_harith$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$abu_al_harith$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أبو الحارث';
+	@override String get description => 'رواية عن الكسائي';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.ad_duri_al_kisai
+class _Traductions$recrutement$parcours$q$riwayat$options$ad_duri_al_kisai$ar extends Traductions$recrutement$parcours$q$riwayat$options$ad_duri_al_kisai$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$ad_duri_al_kisai$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'الدوري (الكسائي)';
+	@override String get description => 'رواية عن الكسائي';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.ibn_wardan
+class _Traductions$recrutement$parcours$q$riwayat$options$ibn_wardan$ar extends Traductions$recrutement$parcours$q$riwayat$options$ibn_wardan$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$ibn_wardan$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'ابن وردان';
+	@override String get description => 'رواية عن أبي جعفر';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.ibn_jammaz
+class _Traductions$recrutement$parcours$q$riwayat$options$ibn_jammaz$ar extends Traductions$recrutement$parcours$q$riwayat$options$ibn_jammaz$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$ibn_jammaz$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'ابن جماز';
+	@override String get description => 'رواية عن أبي جعفر';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.ruways
+class _Traductions$recrutement$parcours$q$riwayat$options$ruways$ar extends Traductions$recrutement$parcours$q$riwayat$options$ruways$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$ruways$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'رويس';
+	@override String get description => 'رواية عن يعقوب';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.rawh
+class _Traductions$recrutement$parcours$q$riwayat$options$rawh$ar extends Traductions$recrutement$parcours$q$riwayat$options$rawh$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$rawh$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'روح';
+	@override String get description => 'رواية عن يعقوب';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.ishaq
+class _Traductions$recrutement$parcours$q$riwayat$options$ishaq$ar extends Traductions$recrutement$parcours$q$riwayat$options$ishaq$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$ishaq$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'إسحاق';
+	@override String get description => 'رواية عن خلف، القارئ العاشر';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.idris
+class _Traductions$recrutement$parcours$q$riwayat$options$idris$ar extends Traductions$recrutement$parcours$q$riwayat$options$idris$fr {
+	_Traductions$recrutement$parcours$q$riwayat$options$idris$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'إدريس';
+	@override String get description => 'رواية عن خلف، القارئ العاشر';
+}
+
+// Path: recrutement.parcours.q.ijazaPresentable.options.oui
+class _Traductions$recrutement$parcours$q$ijazaPresentable$options$oui$ar extends Traductions$recrutement$parcours$q$ijazaPresentable$options$oui$fr {
+	_Traductions$recrutement$parcours$q$ijazaPresentable$options$oui$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'نعم، عندي إجازة أستطيع عرضها';
+	@override String get description => 'تستطيع أن تعرضها عبر الفيديو.';
+	@override String get explication => 'تُعرض أثناء المقابلة: لا شيء تُرسله الآن.';
+	@override String get exemple => 'وثيقة موقّعة من شيخك تحتفظ بها عندك.';
+}
+
+// Path: recrutement.parcours.q.ijazaPresentable.options.non
+class _Traductions$recrutement$parcours$q$ijazaPresentable$options$non$ar extends Traductions$recrutement$parcours$q$ijazaPresentable$options$non$fr {
+	_Traductions$recrutement$parcours$q$ijazaPresentable$options$non$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'لا، ليس عندي ما أعرضه';
+	@override String get description => 'ليس عندك إجازة، أو ليس عندك ما تعرضها به.';
+	@override String get explication => 'يُتحقق من مستواك حينئذ أثناء المقابلة.';
+	@override String get exemple => 'تعلّمت عند شيخ دون أن تتسلّم وثيقة مكتوبة.';
+}
+
+// Path: recrutement.parcours.q.experienceDebutants.options.oui
+class _Traductions$recrutement$parcours$q$experienceDebutants$options$oui$ar extends Traductions$recrutement$parcours$q$experienceDebutants$options$oui$fr {
+	_Traductions$recrutement$parcours$q$experienceDebutants$options$oui$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'نعم، سبق أن علّمت مبتدئين';
+	@override String get description => 'سبق أن رافقت طلابًا في بداياتهم.';
+	@override String get explication => 'تعرف الإدارة ذلك قبل المقابلة.';
+	@override String get exemple => 'علّمت الأطفال أو الكبار الحروف العربية.';
+}
+
+// Path: recrutement.parcours.q.experienceDebutants.options.non
+class _Traductions$recrutement$parcours$q$experienceDebutants$options$non$ar extends Traductions$recrutement$parcours$q$experienceDebutants$options$non$fr {
+	_Traductions$recrutement$parcours$q$experienceDebutants$options$non$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'لا، ليس بعد';
+	@override String get description => 'لم تعلّم مبتدئين من قبل.';
+	@override String get explication => 'يمكنك مع ذلك إرسال طلب ترشحك.';
+	@override String get exemple => 'علّمت فقط طلابًا يجيدون القراءة من قبل.';
+}
+
+// Path: recrutement.parcours.q.heuresParSemaine.options.moins_de_3
+class _Traductions$recrutement$parcours$q$heuresParSemaine$options$moins_de_3$ar extends Traductions$recrutement$parcours$q$heuresParSemaine$options$moins_de_3$fr {
+	_Traductions$recrutement$parcours$q$heuresParSemaine$options$moins_de_3$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أقل من 3 ساعات';
+	@override String get description => 'أقل من وقت فصل كامل.';
+	@override String get exemple => 'حصتان مدة كل منهما ساعة في الأسبوع.';
+}
+
+// Path: recrutement.parcours.q.heuresParSemaine.options.de_3_a_5
+class _Traductions$recrutement$parcours$q$heuresParSemaine$options$de_3_a_5$ar extends Traductions$recrutement$parcours$q$heuresParSemaine$options$de_3_a_5$fr {
+	_Traductions$recrutement$parcours$q$heuresParSemaine$options$de_3_a_5$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'من 3 إلى 5 ساعات';
+	@override String get description => 'وقت فصل واحد.';
+	@override String get exemple => 'فصل أطفال، ثلاث حصص مدة كل منها ساعة، أي 3 ساعات في الأسبوع.';
+}
+
+// Path: recrutement.parcours.q.heuresParSemaine.options.de_6_a_10
+class _Traductions$recrutement$parcours$q$heuresParSemaine$options$de_6_a_10$ar extends Traductions$recrutement$parcours$q$heuresParSemaine$options$de_6_a_10$fr {
+	_Traductions$recrutement$parcours$q$heuresParSemaine$options$de_6_a_10$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'من 6 إلى 10 ساعات';
+	@override String get description => 'وقت فصلين.';
+	@override String get exemple => 'فصلا كبار، ست حصص مدة كل منها ساعة ونصف، أي 9 ساعات في الأسبوع.';
+}
+
+// Path: recrutement.parcours.q.heuresParSemaine.options.plus_de_10
+class _Traductions$recrutement$parcours$q$heuresParSemaine$options$plus_de_10$ar extends Traductions$recrutement$parcours$q$heuresParSemaine$options$plus_de_10$fr {
+	_Traductions$recrutement$parcours$q$heuresParSemaine$options$plus_de_10$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أكثر من 10 ساعات';
+	@override String get description => 'وقت عدة فصول.';
+	@override String get exemple => 'ثلاثة فصول كبار، تسع حصص مدة كل منها ساعة ونصف، أي 13 ساعة ونصف في الأسبوع.';
+}
+
+// Path: recrutement.parcours.q.debutPossible.options.immediat
+class _Traductions$recrutement$parcours$q$debutPossible$options$immediat$ar extends Traductions$recrutement$parcours$q$debutPossible$options$immediat$fr {
+	_Traductions$recrutement$parcours$q$debutPossible$options$immediat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'من الآن';
+	@override String get description => 'تستطيع البدء فور إسناد فصل إليك.';
+	@override String get exemple => 'لا التزام يشغلك هذا الشهر.';
+}
+
+// Path: recrutement.parcours.q.debutPossible.options.mois_prochain
+class _Traductions$recrutement$parcours$q$debutPossible$options$mois_prochain$ar extends Traductions$recrutement$parcours$q$debutPossible$options$mois_prochain$fr {
+	_Traductions$recrutement$parcours$q$debutPossible$options$mois_prochain$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'الشهر القادم';
+	@override String get description => 'ستكون متفرغًا ابتداءً من الشهر القادم.';
+	@override String get exemple => 'تنهي عملًا آخر في نهاية هذا الشهر.';
+}
+
+// Path: recrutement.parcours.q.debutPossible.options.sous_3_mois
+class _Traductions$recrutement$parcours$q$debutPossible$options$sous_3_mois$ar extends Traductions$recrutement$parcours$q$debutPossible$options$sous_3_mois$fr {
+	_Traductions$recrutement$parcours$q$debutPossible$options$sous_3_mois$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'خلال أقل من ثلاثة أشهر';
+	@override String get description => 'ستكون متفرغًا خلال الأشهر الثلاثة القادمة.';
+	@override String get exemple => 'تكون مسافرًا أو في امتحانات لبضعة أسابيع.';
+}
+
+// Path: recrutement.parcours.q.debutPossible.options.inconnu
+class _Traductions$recrutement$parcours$q$debutPossible$options$inconnu$ar extends Traductions$recrutement$parcours$q$debutPossible$options$inconnu$fr {
+	_Traductions$recrutement$parcours$q$debutPossible$options$inconnu$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'لا أعرف بعد';
+	@override String get description => 'لا تعرف بعد تاريخ بدئك.';
+	@override String get explication => 'يمكنك توضيح ذلك للإدارة أثناء المقابلة.';
+	@override String get exemple => 'يتوقف جدولك على جواب ما زلت تنتظره.';
+}
+
+// Path: recrutement.parcours.q.publics.options.enfant
+class _Traductions$recrutement$parcours$q$publics$options$enfant$ar extends Traductions$recrutement$parcours$q$publics$options$enfant$fr {
+	_Traductions$recrutement$parcours$q$publics$options$enfant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أطفال (من 6 إلى 17 سنة)';
+	@override String get description => 'فصول من 3 إلى 5 أطفال.';
+	@override String get explication => 'ثلاث حصص في الأسبوع، مدة كل منها ساعة.';
+	@override String get exemple => 'فصل من أربعة أطفال في الثامنة من العمر، ثلاث مرات في الأسبوع.';
+}
+
+// Path: recrutement.parcours.q.publics.options.adulte
+class _Traductions$recrutement$parcours$q$publics$options$adulte$ar extends Traductions$recrutement$parcours$q$publics$options$adulte$fr {
+	_Traductions$recrutement$parcours$q$publics$options$adulte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'كبار (18 سنة فأكثر)';
+	@override String get description => 'فصول من 3 إلى 6 كبار.';
+	@override String get explication => 'ثلاث حصص في الأسبوع، مدة كل منها ساعة ونصف. فصول الكبار منفصلة: نساء مع نساء، ورجال مع رجال.';
+	@override String get exemple => 'فصل من خمس نساء، أو من خمسة رجال، ثلاث مرات في الأسبوع.';
+}
+
+// Path: recrutement.parcours.q.compteBancaire.options.oui
+class _Traductions$recrutement$parcours$q$compteBancaire$options$oui$ar extends Traductions$recrutement$parcours$q$compteBancaire$options$oui$fr {
+	_Traductions$recrutement$parcours$q$compteBancaire$options$oui$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'نعم، عندي حساب مصرفي';
+	@override String get description => 'حساب باسمك في أحد المصارف.';
+	@override String get explication => 'قد يكون التحويل وسيلة صرف أجرك إذا أكّدته الأكاديمية في بلدك.';
+	@override String get exemple => 'حساب مفتوح باسمك في أحد مصارف بلدك.';
+}
+
+// Path: recrutement.parcours.q.compteBancaire.options.non
+class _Traductions$recrutement$parcours$q$compteBancaire$options$non$ar extends Traductions$recrutement$parcours$q$compteBancaire$options$non$fr {
+	_Traductions$recrutement$parcours$q$compteBancaire$options$non$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'لا، ليس عندي';
+	@override String get description => 'ليس عندك حساب مصرفي باسمك.';
+	@override String get explication => 'يمكنك حينئذ اختيار وسيلة دفع عبر الهاتف إن وُجدت في بلدك.';
+	@override String get exemple => 'تستقبل المال وترسله بهاتفك فقط.';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -16060,6 +17454,10 @@ extension on TraductionsAr {
 			'commun.fuseaux.africaCasablanca' => 'الدار البيضاء',
 			'commun.fuseaux.asiaTokyo' => 'طوكيو',
 			'commun.fuseaux.americaArgentinaBuenosAires' => 'بوينس آيرس',
+			'commun.fuseaux.africaDakar' => 'داكار',
+			'commun.fuseaux.africaBamako' => 'باماكو',
+			'commun.fuseaux.africaNouakchott' => 'نواكشوط',
+			'commun.fuseaux.europeBrussels' => 'بروكسل',
 			'commun.dates.premierJour' => '1',
 			'commun.dates.jours.0' => 'الاثنين',
 			'commun.dates.jours.1' => 'الثلاثاء',
@@ -16359,12 +17757,12 @@ extension on TraductionsAr {
 			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩ · ⁨${duree}⁩ د',
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'توقيت الفصل (⁨${fuseau}⁩)',
 			'classe.pageCatalogue.placeUne' => 'مقعد واحد متبقٍّ',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.etat.ouverte' => 'مفتوح',
 			'classe.pageCatalogue.etat.complete' => 'مكتمل',
 			'classe.pageCatalogue.etat.listeAttente' => 'قائمة الانتظار',
 			'classe.pageCatalogue.choisir' => 'اختيار هذا الفصل',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.rejoindreAttente' => 'الانضمام إلى قائمة الانتظار',
 			'classe.pageCatalogue.precisionsTitre' => 'قبل الاختيار',
 			'classe.pageCatalogue.precisionEnseignant' => 'يحتفظ الفصل بالمعلم نفسه في كل حصصه.',
@@ -16873,12 +18271,12 @@ extension on TraductionsAr {
 			'eleve.suivi.colonneCours' => 'الدرس',
 			'eleve.suivi.colonneEnseignant' => 'المعلم',
 			'eleve.suivi.colonneEtat' => 'الحضور',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.suivi.cours' => 'درس القرآن',
 			'eleve.suivi.moi' => 'حضوري',
 			'eleve.suivi.aujourdhui' => ({required Object heure}) => 'اليوم، ⁨${heure}⁩',
 			'eleve.suivi.hier' => ({required Object heure}) => 'أمس، ⁨${heure}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.suivi.date' => ({required Object date, required Object heure}) => '⁨${date}⁩، ⁨${heure}⁩',
 			'eleve.suivi.annule' => 'درس ملغى',
 			'eleve.suivi.nonTenu' => 'درس لم يُعقد',
@@ -17387,12 +18785,12 @@ extension on TraductionsAr {
 			'compte.donnees.ligne' => 'نسخة من بياناتي وحذف الحساب',
 			'compte.donnees.ligneDetail' => 'نزّل بياناتك أو اطلب حذف حسابك.',
 			'compte.donnees.copie.titre' => 'تنزيل نسخة',
+			_ => null,
+		} ?? switch (path) {
 			'compte.donnees.copie.intro' => 'ملف JSON يضم معلوماتك وفصولك وحصصك وفواتيرك. إذا كنت وليّ أمر، فهو يضم أيضًا بيانات الطلاب في أسرتك.',
 			'compte.donnees.copie.exclus' => 'لا يتضمن أي سرّ للدخول ولا أي ملاحظة داخلية للفريق.',
 			'compte.donnees.copie.action' => 'تنزيل بياناتي',
 			'compte.donnees.copie.reussi' => 'تم تسجيل نسختك.',
-			_ => null,
-		} ?? switch (path) {
 			'compte.donnees.copie.echec' => 'تعذّر إعداد النسخة ولم يُحفظ شيء. أعد المحاولة بعد لحظة.',
 			'compte.donnees.copie.horsLigne' => 'نزّل بياناتك عند عودة الشبكة.',
 			'compte.donnees.copie.refuse' => 'لا يمكن لهذا الحساب تنزيل نسخة.',
@@ -17901,12 +19299,12 @@ extension on TraductionsAr {
 			'tc.bibliotheque.actif.retireDetail' => 'سحب معلمك هذه المادة من الحصة. لم تعد متاحة.',
 			'tc.coran.modes.mushaf' => 'صفحة المصحف',
 			'tc.coran.modes.verset' => 'قراءة مكبَّرة',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.modes.focus' => 'التركيز',
 			'tc.coran.modes.choisir' => 'طريقة القراءة',
 			'tc.coran.modes.versets' => ({required Object debut, required Object fin}) => 'الآيات ⁨${debut}⁩ إلى ⁨${fin}⁩',
 			'tc.coran.modes.versetsEntre' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.mushaf.coteDroite' => 'الصفحة اليمنى',
 			'tc.coran.mushaf.coteGauche' => 'الصفحة اليسرى',
 			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'الصفحتان المفتوحتان ⁨${droite}⁩ و⁨${gauche}⁩',
@@ -18415,12 +19813,12 @@ extension on TraductionsAr {
 			'com.messages.entete.deuxObjets' => ({required Object premier, required Object second}) => '${premier} · ${second}',
 			'com.messages.entete.semantique' => ({required Object noms, required Object objets}) => 'محادثة مع ${noms}‏، بخصوص ${objets}',
 			'com.messages.entete.semantiqueSansNoms' => ({required Object objets}) => 'محادثة بخصوص ${objets}',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.types.classe' => 'الفصل',
 			'com.messages.types.eleve' => 'الطالب',
 			'com.messages.types.dossier' => 'الملف',
 			'com.messages.types.mission' => 'مهمة المراقبة',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.types.remplacement' => 'الاستبدال',
 			'com.messages.types.profilPaiement' => 'ملف الدفع',
 			'com.messages.types.autre' => 'موضوع آخر',
@@ -18929,12 +20327,12 @@ extension on TraductionsAr {
 			'com.annonces.publieur.champTitre' => 'عنوان الإعلان',
 			'com.annonces.publieur.champTexte' => 'نص الإعلان',
 			'com.annonces.publieur.nature.classe' => 'تستلمه أسر هذا الفصل وطلابه فقط.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.publieur.nature.public' => 'يستلمه كل أفراد هذا الجمهور.',
 			'com.annonces.publieur.nature.toutes' => 'تستلمه الأكاديمية كلها. خصصه لما يهم الجميع.',
 			'com.annonces.publieur.quand.maintenant' => 'فور التأكيد',
 			'com.annonces.publieur.quand.maintenantDetail' => 'يُرسل الإعلان فور تأكيد النشر.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.publieur.quand.creneau' => ({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}',
 			'com.annonces.publieur.quand.creneauDetail' => 'ينتظر الإعلان هذا التاريخ. ستجده في الإعلانات المجدولة.',
 			'com.annonces.publieur.apercu.a' => ({required Object cible}) => 'إلى: ${cible}',
@@ -19443,12 +20841,12 @@ extension on TraductionsAr {
 			'admin.groupes.motifRequis' => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.',
 			'admin.groupes.ajouterEnvoyer' => 'إضافة',
 			'admin.groupes.ajouterErreur' => ({required Object message}) => 'لم تكتمل الإضافة: ⁨${message}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.retirerTitre' => ({required Object prenom, required Object deLibelle}) => 'إزالة ⁨${prenom}⁩ من ⁨${deLibelle}⁩',
 			'admin.groupes.retirerEnvoyer' => 'إزالة',
 			'admin.groupes.retirerErreur' => ({required Object message}) => 'لم تكتمل الإزالة: ⁨${message}⁩',
 			'admin.groupes.modifierSeuilTitre' => ({required Object deLibelle}) => 'الحد الأقصى لـ⁨${deLibelle}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.modifierSeuilEnvoyer' => 'حفظ',
 			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'لم يكتمل التعديل: ⁨${message}⁩',
 			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'إغلاق ⁨${libelle}⁩',
@@ -19957,12 +21355,12 @@ extension on TraductionsAr {
 			'admin.suppressions.attente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ طلب ينتظر قرارًا.', one: 'طلب واحد ينتظر قرارًا.', two: 'طلبان ينتظران قرارًا.', few: '⁨${n}⁩ طلبات تنتظر قرارًا.', many: '⁨${n}⁩ طلبًا ينتظر قرارًا.', other: '⁨${n}⁩ طلب ينتظر قرارًا.', ), 
 			'admin.suppressions.vide' => 'لا توجد طلبات حذف.',
 			'admin.suppressions.erreur' => 'تعذّر تحميل الطلبات. أعد المحاولة.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.suppressions.sansDonnees' => 'تعذّر تحميل طلبات الحذف',
 			'admin.suppressions.refuse' => 'لا تعالج هذه الطلبات إلا الإدارة المتصلة بالتحقق المزدوج. أعد تسجيل الدخول برمز التحقق ثم أعد المحاولة.',
 			'admin.suppressions.indisponibleTitre' => 'حذف الحسابات غير متاح',
 			'admin.suppressions.indisponiblePhrase' => 'ستتوفر هذه الميزة عند ربط الخادم.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.suppressions.etat.enAttente' => 'قيد الانتظار',
 			'admin.suppressions.etat.aTraiter' => 'للمعالجة',
 			'admin.suppressions.etat.annulee' => 'ملغاة',
@@ -20471,12 +21869,12 @@ extension on TraductionsAr {
 			'admin.bibliotheque.catalogue.colonnes.type' => 'النوع',
 			'admin.bibliotheque.catalogue.colonnes.langue' => 'اللغة',
 			'admin.bibliotheque.catalogue.colonnes.categorie' => 'التصنيف',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.catalogue.colonnes.version' => 'الإصدار',
 			'admin.bibliotheque.catalogue.colonnes.publication' => 'النشر',
 			'admin.bibliotheque.catalogue.colonnes.droits' => 'الحقوق',
 			'admin.bibliotheque.catalogue.colonnes.visibilite' => 'الظهور',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.catalogue.colonnes.modifie' => 'آخر تعديل',
 			'admin.bibliotheque.catalogue.modifieLe' => ({required Object date}) => 'عُدّلت في ⁨${date}⁩',
 			'admin.bibliotheque.catalogue.videRecherche' => 'لا توجد نتائج',
@@ -20985,12 +22383,12 @@ extension on TraductionsAr {
 			'comptable.paiements.actions.viderSelection' => 'إلغاء التحديد',
 			'comptable.paiements.actions.voirProfil' => 'عرض ملف الدفع',
 			'comptable.paiements.selection' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'دفعة واحدة محددة', two: 'دفعتان محددتان', few: '${n} دفعات محددة', other: '${n} دفعة محددة', ), 
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.selectionPhrase' => 'يُرجع الفحص الإجمالي والاستبعادات قبل أي إرسال.',
 			'comptable.paiements.horsLigneCourt' => 'غير متصل: الدفع غير ممكن',
 			'comptable.paiements.vide.message' => 'لا توجد مدفوعات للتنفيذ.',
 			'comptable.paiements.vide.invitation' => 'تظهر الالتزامات هنا بمجرد حسابها في المصدر.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.vide.filtreMessage' => 'لا توجد دفعة تطابق عوامل التصفية هذه.',
 			'comptable.paiements.vide.filtreInvitation' => 'امسح عوامل التصفية لرؤية كل المدفوعات مجددًا.',
 			'comptable.paiements.horsLigne' => 'غير متصل: لا تُرسَل أي دفعة دون شبكة. أعد الاتصال لتدفع.',
@@ -21499,12 +22897,12 @@ extension on TraductionsAr {
 			'comptable.direction.reservePanneau.regle.montantFixeDetail' => 'المبلغ نفسه في كل موعد.',
 			'comptable.direction.reservePanneau.regle.pourcentage' => 'نسبة مئوية',
 			'comptable.direction.reservePanneau.regle.pourcentageDetail' => 'حصة من المقبوض المُثبَّت.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.regle.jusquAObjectif' => 'حتى بلوغ الهدف',
 			'comptable.direction.reservePanneau.regle.jusquAObjectifDetail' => 'إكمال ما ينقص لبلوغ الهدف.',
 			'comptable.direction.reservePanneau.regle.proposee' => 'مقترحة',
 			'comptable.direction.reservePanneau.regle.proposeeDetail' => 'اقتراح يؤكده المحاسب.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.reservePanneau.montantAuto' => 'المبلغ المخصَّص',
 			'comptable.direction.reservePanneau.montantAutoDetail' => 'المبلغ المخصَّص للاحتياطي في كل موعد.',
 			'comptable.direction.reservePanneau.pourcentageAuto' => 'حصة المقبوض المُثبَّت',
@@ -22013,12 +23411,12 @@ extension on TraductionsAr {
 			'appareils.emetteur.confirme.phraseSansPrenom' => 'جهاز الطالب جاهز. لم يعد الرمز معروضًا ولا يمكن استخدامه.',
 			'appareils.emetteur.confirme.action' => 'تم',
 			'appareils.emetteur.expire.titre' => 'انتهت صلاحية هذا الرمز',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.emetteur.expire.phrase' => 'لم يعد صالحًا. أنشئ رمزًا جديدًا حين يكون الجهاز الآخر جاهزًا.',
 			'appareils.emetteur.remplace.titre' => 'استُبدل هذا الرمز',
 			'appareils.emetteur.remplace.phrase' => 'طُلب رمز جديد لهذا الطالب، هنا أو على جهاز آخر. هذا الرمز لم يعد يعمل.',
 			'appareils.emetteur.dejaActif.titre' => 'رمز صالح بالفعل',
-			_ => null,
-		} ?? switch (path) {
 			'appareils.emetteur.dejaActif.phrase' => ({required Object heure}) => 'رمز أُنشئ لهذا الطالب صالح حتى ⁨${heure}⁩. لا يمكن عرضه من جديد: إنشاء رمز جديد يُبطل القديم.',
 			'appareils.emetteur.horsLigne.phraseAvecCode' => ({required Object heure}) => 'الرمز مخفي حتى عودة الاتصال. يبقى صالحًا حتى ⁨${heure}⁩.',
 			'appareils.emetteur.horsLigne.phraseSansCode' => 'تعذّر تحضير الرمز. سيُحضَّر بمجرد عودة الاتصال.',
@@ -22132,6 +23530,7 @@ extension on TraductionsAr {
 			'accords.toutCoche' => 'تم تحديد كل المربعات.',
 			'accords.suivant' => 'التالي',
 			'accords.dejaAcceptes' => 'موافقاتك محفوظة بالفعل.',
+			'accords.cadreNonPublie' => 'سيصبح إرسال طلب ترشحك ممكنًا عند نشر الإطار الديني والتربوي.',
 			'inscription.titre' => 'إنشاء حسابك',
 			'inscription.etapeSur' => ({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩',
 			'inscription.tempsRestant' => ({required Object minutes}) => 'نحو ⁨${minutes}⁩ د',
@@ -22526,13 +23925,13 @@ extension on TraductionsAr {
 			'adulte.reprise.phrases.deposee' => 'أُبلغ صاحب حساب الأسرة. ستدرس الإدارة الطلب.',
 			'adulte.reprise.phrases.examenLe' => ({required Object date}) => 'دون رد من صاحب الحساب، يمكن للإدارة دراسته ابتداءً من ⁨${date}⁩.',
 			'adulte.reprise.phrases.refuseeParTitulaire' => 'رفض صاحب حساب الأسرة هذا الطلب. الإدارة على علم. لا تُنقل أي صلاحية من صلاحيات الأسرة.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.phrases.attenteAdministration' => 'لم يرد صاحب الحساب. لا يُنقل شيء تلقائيًا: ما زال على الإدارة دراسة الطلب.',
 			'adulte.reprise.phrases.validee' => 'اعتمدت الإدارة الطلب. أصبحت الآن صاحب حساب الأسرة.',
 			'adulte.reprise.phrases.refusee' => 'رفضت الإدارة الطلب. لا تُنقل أي صلاحية من صلاحيات الأسرة.',
 			'adulte.reprise.titulaire.notification' => 'قُدِّم طلب لاستلام أسرتك بدعوى وفاتك.',
 			'adulte.reprise.titulaire.consigne' => 'إن كان هذا الطلب خاطئًا، فارفضه.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.titulaire.refuser' => 'رفض الطلب',
 			'adulte.reprise.titulaire.ligne' => 'قُدِّم طلب لاستلام أسرتك.',
 			'adulte.reprise.titulaire.refusEchecTitre' => 'لم يُؤكَّد الرفض.',
@@ -23040,13 +24439,13 @@ extension on TraductionsAr {
 			'controleur.controle.dejaEnCoursAide' => 'مراقبة واحدة في كل مرة لكل فصل. اختر حصة أخرى، أو عد لاحقًا: يمكنك البدء حين تنتهي هذه المراقبة.',
 			'controleur.controle.incognito' => 'لا يُعلَن عن حضورك في الوقت الفعلي.',
 			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.controle.duree' => ({required Object minutes}) => '⁨${minutes}⁩ د مقررة',
 			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${n}⁩ طلاب', many: '⁨${n}⁩ طالبًا', other: '⁨${n}⁩ طالب', ), 
 			'controleur.controle.chargement' => 'جارٍ قراءة زيارتك القادمة.',
 			'controleur.controle.erreur' => 'تعذّرت قراءة زيارتك القادمة، غالبًا بسبب الاتصال أو خدمة غير متاحة مؤقتًا. أعد المحاولة بعد لحظة.',
 			'agent.titre' => 'دخول موظف',
-			_ => null,
-		} ?? switch (path) {
 			'agent.intro' => 'تفتح هذه الصفحة التطبيق للقراءة فقط، بالرمز الذي سلّمته الأكاديمية.',
 			'agent.jeton' => 'رمز المتابعة',
 			'agent.jetonExemple' => 'rag_...',
@@ -23277,6 +24676,386 @@ extension on TraductionsAr {
 			'recrutement.candidat.comptable.intro' => 'للتسجيل كمحاسب، أدخل رمز الدعوة الذي تلقيته من الإدارة.',
 			'recrutement.candidat.comptable.valideDetail' => 'يمكنك إنشاء ملفك كمحاسب.',
 			'recrutement.candidat.comptable.indisponible' => 'سيتوفر التحقق من رموز المحاسبين عند ربط الخادم.',
+			'recrutement.salles.examen' => 'قاعة الامتحان',
+			'recrutement.salles.verification' => 'قاعة التحقق والمقابلة',
+			'recrutement.salles.prets' => 'قاعة الجاهزين للتدريس',
+			'recrutement.paiement.inconnu' => 'لم تُصرَّح بأي وسيلة لصرف الأجر',
+			'recrutement.paiement.aVerifier' => 'وسيلة صرف الأجر تنتظر تحقق الأكاديمية',
+			'recrutement.paiement.compatible' => 'وسيلة صرف الأجر مؤكَّدة',
+			'recrutement.paiement.incompatible' => 'لا توجد وسيلة ممكنة لصرف الأجر حاليًا',
+			'recrutement.portail.vousEtesEn' => ({required Object salle}) => 'أنت في ⁨${salle}⁩',
+			'recrutement.portail.aCompleterTitre' => 'طلب ترشحك يحتاج إلى استكمال',
+			'recrutement.portail.aCompleter' => 'المطلوب استكماله',
+			'recrutement.portail.elementCadre' => 'الإطار الديني والتربوي',
+			'recrutement.portail.etatAEnvoyer' => 'للإرسال',
+			'recrutement.portail.completer' => 'استكمال طلب ترشحي',
+			'recrutement.portail.enExamenTitre' => 'طلب ترشحك قيد الدراسة',
+			'recrutement.portail.enExamen' => 'تقرأ الأكاديمية إجاباتك وستُعلمك هنا.',
+			'recrutement.portail.versementImpossible' => 'لا تستطيع أكاديمية الرواية حاليًا صرف أجرك بالوسائل التي صرّحت بها في بلدك. يبقى طلب ترشحك في قاعة الامتحان. ستُعلمك الأكاديمية فور توفّر وسيلة ممكنة.',
+			'recrutement.portail.libreDePartir' => 'يبقى لك الحق في سحب طلب ترشحك.',
+			'recrutement.portail.enPauseTitre' => 'طلب ترشحك متوقف مؤقتًا',
+			'recrutement.portail.repriseLe' => ({required Object date}) => 'الاستئناف المتوقع في ⁨${date}⁩.',
+			'recrutement.portail.refuseeTitre' => 'لم يُقبل طلب ترشحك',
+			'recrutement.portail.retireeTitre' => 'سُحب طلب الترشح',
+			'recrutement.portail.retiree' => 'لقد سحبت طلب ترشحك. وحدها الأكاديمية تستطيع إعادة فتحه.',
+			'recrutement.portail.complementDemande' => 'تطلب منك الأكاديمية استكمالًا.',
+			'recrutement.portail.complementListe' => ({required Object elements}) => 'المطلوب استكماله: ⁨${elements}⁩.',
+			'recrutement.portail.nonCharge' => 'تعذّر تحميل حالة طلب ترشحك.',
+			'recrutement.portail.elementPiece' => 'وثيقة هويتك',
+			'recrutement.portail.elementContrat' => 'عقد المعلم',
+			'recrutement.portail.versementImpossibleTitre' => 'صرف الأجر غير ممكن بعد',
+			'recrutement.portail.relire' => 'إعادة قراءة طلب ترشحي',
+			'recrutement.retrait.lien' => 'سحب طلب ترشحي',
+			'recrutement.retrait.question' => 'هل تسحب طلب ترشحك؟',
+			'recrutement.retrait.consequence' => 'وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك.',
+			'recrutement.retrait.consequenceEntretien' => 'سيُلغى موعد مقابلتك. وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك.',
+			'recrutement.retrait.confirmer' => 'سحب طلب ترشحي',
+			'recrutement.retrait.echec' => 'لم يكتمل السحب. أعد المحاولة بعد لحظة.',
+			'recrutement.retrait.incertain' => 'قد لا يكون طلب السحب قد وصل إلى أكاديمية الرواية. أعد المحاولة: لن يُسجَّل مرتين.',
+			'recrutement.retrait.horsLigne' => 'سيمكن سحب الطلب عند عودة الاتصال.',
+			'recrutement.retrait.interdit' => 'لم يعد سحب طلب ترشحك ممكنًا من هذه الصفحة.',
+			'recrutement.retrait.conflit' => 'تغيّر طلب ترشحك منذ فتح هذه الصفحة. راجعه ثم أعد المحاولة.',
+			'recrutement.questionnaire.titre' => 'طلب ترشحك',
+			'recrutement.questionnaire.conditionsTitre' => 'شروط الأجر',
+			'recrutement.questionnaire.part' => ({required Object part}) => 'حصتك: ⁨${part}⁩ من السعر المعلن، عن كل طالب حاضر.',
+			'recrutement.questionnaire.partPublic' => ({required Object public, required Object part}) => '⁨${public}⁩: ⁨${part}⁩ من السعر المعلن، عن كل طالب حاضر.',
+			'recrutement.questionnaire.publicEnfant' => 'الأطفال (من 6 إلى 17 سنة)',
+			'recrutement.questionnaire.publicAdulte' => 'الكبار (18 سنة فأكثر)',
+			'recrutement.questionnaire.coordonneesPlusTard' => 'لن تُطلب منك بياناتك المالية إلا قبل أول دفعة تتلقاها.',
+			'recrutement.questionnaire.montantsSurDemande' => 'لمعرفة المبالغ، اطلبها من الإدارة.',
+			'recrutement.questionnaire.conditionsDateEffet' => ({required Object date}) => 'تُطبَّق هذه الشروط ابتداءً من ⁨${date}⁩.',
+			'recrutement.questionnaire.accordRemuneration' => 'قرأت شروط الأجر هذه وأوافق عليها.',
+			'recrutement.questionnaire.accordManquant' => 'ضع علامة في المربع لقبول هذه الشروط وإرسال طلب ترشحك.',
+			'recrutement.questionnaire.envoyer' => 'إرسال طلب ترشحي',
+			'recrutement.questionnaire.cadreManquant' => 'اقبل أولًا الإطار الديني والتربوي.',
+			'recrutement.questionnaire.cadreAccepte' => 'لقد قبلت الإطار الديني والتربوي.',
+			'recrutement.questionnaire.langues' => 'لغاتك',
+			'recrutement.questionnaire.recitation' => 'تلاوتك',
+			'recrutement.questionnaire.disponibilites' => 'أوقات تفرّغك',
+			'recrutement.questionnaire.publics' => 'الفئات التي تستطيع تعليمها',
+			'recrutement.questionnaire.versement' => 'بلدك وصرف أجرك',
+			'recrutement.questionnaire.perime' => 'تغيّر الاستبيان منذ زيارتك الأخيرة. راجع إجاباتك قبل الإرسال.',
+			'recrutement.questionnaire.incomplet' => ({required Object question}) => 'تنقص إجابة: ⁨${question}⁩.',
+			'recrutement.questionnaire.reponseInvalide' => ({required Object question}) => 'إجابة لم تعد صالحة: ⁨${question}⁩.',
+			'recrutement.questionnaire.conflit' => 'تغيّر طلب ترشحك منذ فتح هذه الصفحة. راجعه ثم أرسله.',
+			'recrutement.questionnaire.conditionsPerimees' => 'تغيّرت شروط الأجر. راجعها ثم وافق عليها من جديد.',
+			'recrutement.questionnaire.interdit' => 'لم يعد إرسال طلب ترشحك ممكنًا من هذه الصفحة.',
+			'recrutement.questionnaire.echec' => 'إحدى إجاباتك تحتاج إلى مراجعة. راجعها ثم أعد إرسال طلب ترشحك.',
+			'recrutement.questionnaire.incertain' => 'قد لا يكون طلب ترشحك قد وصل إلى أكاديمية الرواية. أعد المحاولة: لن يُسجَّل مرتين.',
+			'recrutement.questionnaire.horsLigne' => 'سيمكن إرسال طلب ترشحك عند عودة الاتصال.',
+			'recrutement.questionnaire.nonOuverte' => 'هذه الخطوة غير مفتوحة بعد. حسابك محفوظ.',
+			'recrutement.questionnaire.nonCharge' => 'تعذّر تحميل الاستبيان.',
+			'recrutement.questionnaire.conditionsNonCharge' => 'تعذّر تحميل شروط الأجر.',
+			'recrutement.questionnaire.envoyee' => 'أُرسل طلب ترشحك. ستُعلمك الأكاديمية هنا إن لزم استكماله.',
+			'recrutement.questionnaire.envoyeeLe' => ({required Object date}) => 'أُرسل في ⁨${date}⁩.',
+			'recrutement.questionnaire.etatVersement' => ({required Object etat}) => 'وسيلة صرف الأجر: ⁨${etat}⁩',
+			'recrutement.questionnaire.retourDossier' => 'العودة إلى ملفي',
+			'recrutement.questionnaire.complementCarte' => 'تطلب منك الأكاديمية استكمال هذا الجزء.',
+			'recrutement.parcours.choisir' => 'اختر إجابة للمتابعة.',
+			'recrutement.parcours.choisirPlusieurs' => 'اختر إجابة واحدة على الأقل للمتابعة.',
+			'recrutement.parcours.choisirPlage' => 'اختر فترة واحدة على الأقل للمتابعة.',
+			'recrutement.parcours.trop' => ({required num max}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(max, zero: 'اختر ⁨${max}⁩ إجابات على الأكثر.', one: 'اختر إجابة واحدة فقط.', two: 'اختر إجابتين على الأكثر.', few: 'اختر ⁨${max}⁩ إجابات على الأكثر.', many: 'اختر ⁨${max}⁩ إجابة على الأكثر.', other: 'اختر ⁨${max}⁩ إجابة على الأكثر.', ), 
+			'recrutement.parcours.aucune' => 'لا شيء',
+			'recrutement.parcours.oui' => 'نعم',
+			'recrutement.parcours.non' => 'لا',
+			'recrutement.parcours.modifier' => 'تعديل',
+			'recrutement.parcours.sauvegardeEchec' => 'تعذّر حفظ آخر إجاباتك. تبقى على الشاشة: تابع، وستُرسل مع طلب ترشحك.',
+			'recrutement.parcours.presentation.p1.titre' => 'من هي أكاديمية الرواية؟',
+			'recrutement.parcours.presentation.p1.intro' => 'قبل الأسئلة، إليك ما يجب أن تعرفه عنا.',
+			'recrutement.parcours.presentation.p1.academie.titre' => 'أكاديمية لتعليم القرآن عبر الإنترنت',
+			'recrutement.parcours.presentation.p1.academie.texte' => 'تعلّم أكاديمية الرواية القرآن عن بُعد، في فصول ثابتة، مع معلم مخصّص لكل فصل. وهي تُدرّس منذ 1 مايو 2024.',
+			'recrutement.parcours.presentation.p1.liberte.titre' => 'تبقى حرًّا',
+			'recrutement.parcours.presentation.p1.liberte.texte' => 'ما دمت لم تصبح معلّمًا، يمكنك سحب طلب ترشحك من ملفك.',
+			'recrutement.parcours.presentation.p1.donnees.titre' => 'بياناتك محميّة',
+			'recrutement.parcours.presentation.p1.donnees.texte' => 'لا يقرأ إجاباتك إلا من يدرس طلب ترشحك في الأكاديمية.',
+			'recrutement.parcours.presentation.p1.separation.titre' => 'فصل بين النساء والرجال',
+			'recrutement.parcours.presentation.p1.separation.texte' => 'يتابع طلب ترشح المرأة موظفو الإدارة من جهة النساء، ويتابع طلب ترشح الرجل موظفو الإدارة من جهة الرجال.',
+			'recrutement.parcours.presentation.p2.titre' => 'ما الذي يفعله المعلم؟',
+			'recrutement.parcours.presentation.p2.intro' => 'تُدرّس عبر الفيديو، في فصل يبقى هو نفسه.',
+			'recrutement.parcours.presentation.p2.classe.titre' => 'فصل ثابت',
+			'recrutement.parcours.presentation.p2.classe.texte' => 'تدرّس الفصل نفسه على المدى الطويل، مع الطلاب أنفسهم.',
+			'recrutement.parcours.presentation.p2.horaires.titre' => 'المواعيد نفسها كل أسبوع',
+			'recrutement.parcours.presentation.p2.horaires.texte' => 'يجتمع فصلك في الأيام والساعات نفسها، ثلاث مرات في الأسبوع.',
+			'recrutement.parcours.presentation.p2.visio.titre' => 'عبر الفيديو، داخل التطبيق',
+			'recrutement.parcours.presentation.p2.visio.texte' => 'تُعطى الدروس عبر مكالمة فيديو، داخل تطبيق أكاديمية الرواية.',
+			'recrutement.parcours.presentation.p2.remuneration.titre' => 'أجر موضَّح',
+			'recrutement.parcours.presentation.p2.remuneration.texte' => 'أجرك جزء من السعر الذي يدفعه كل طالب حاضر. يُشرح لك بالنسبة المئوية قبل إرسال طلب ترشحك.',
+			'recrutement.parcours.presentation.p3.titre' => 'كيف يجري طلب ترشحك',
+			'recrutement.parcours.presentation.p3.intro' => 'ثلاث مراحل، داخل التطبيق.',
+			'recrutement.parcours.presentation.p3.examen.titre' => 'قاعة الامتحان',
+			'recrutement.parcours.presentation.p3.examen.texte' => 'تجيب عن أسئلة هذا المسار ثم ترسل طلب ترشحك. تقرأ الإدارة إجاباتك.',
+			'recrutement.parcours.presentation.p3.entretien.titre' => 'المقابلة عبر الفيديو',
+			'recrutement.parcours.presentation.p3.entretien.texte' => 'إذا اعتُمد طلب ترشحك للمرحلة التالية، تستقبلك الإدارة عبر الفيديو، داخل التطبيق.',
+			'recrutement.parcours.presentation.p3.verification.titre' => 'التحقق',
+			'recrutement.parcours.presentation.p3.verification.texte' => 'تودع وثيقة هويتك وتقرأ اتفاقاتنا. وحين يكتمل كل شيء تدخل قاعة الجاهزين للتدريس.',
+			'recrutement.parcours.langues.poular' => 'البولار',
+			'recrutement.parcours.langues.francais' => 'الفرنسية',
+			'recrutement.parcours.langues.english' => 'الإنجليزية',
+			'recrutement.parcours.langues.ar' => 'العربية',
+			'recrutement.parcours.langues.ff' => 'الفولاني (الفولفولدي)',
+			'recrutement.parcours.langues.ha' => 'الهوسا',
+			'recrutement.parcours.langues.wo' => 'الولوف',
+			'recrutement.parcours.langues.ps' => 'البشتو',
+			'recrutement.parcours.langues.ur' => 'الأردية',
+			'recrutement.parcours.langues.snk' => 'السونينكي',
+			'recrutement.parcours.langues.bm' => 'البامبارا',
+			'recrutement.parcours.langues.sw' => 'السواحيلية',
+			'recrutement.parcours.langues.mnk' => 'الماندينكا',
+			'recrutement.parcours.langues.om' => 'الأورومو',
+			'recrutement.parcours.langues.am' => 'الأمهرية',
+			'recrutement.parcours.langues.yo' => 'اليوروبا',
+			'recrutement.parcours.langues.bn' => 'البنغالية',
+			'recrutement.parcours.langues.fa' => 'الفارسية',
+			'recrutement.parcours.langues.id' => 'الإندونيسية',
+			'recrutement.parcours.langues.so' => 'الصومالية',
+			'recrutement.parcours.langues.hi' => 'الهندية',
+			'recrutement.parcours.langues.uz' => 'الأوزبكية',
+			'recrutement.parcours.langues.tr' => 'التركية',
+			'recrutement.parcours.langues.de' => 'الألمانية',
+			'recrutement.parcours.langues.pt' => 'البرتغالية',
+			'recrutement.parcours.langues.ru' => 'الروسية',
+			'recrutement.parcours.langues.dansReferentiel' => 'لغة تقدّم فيها أكاديمية الرواية دروسًا.',
+			'recrutement.parcours.langues.horsReferentiel' => 'لغة لا تقدّمها أكاديمية الرواية بعد',
+			'recrutement.parcours.langues.autre' => 'لغة أخرى',
+			'recrutement.parcours.langues.recherche' => 'البحث عن لغة',
+			'recrutement.parcours.langues.rechercheAide' => 'اسم اللغة',
+			'recrutement.parcours.langues.aucune' => 'لا توجد لغة مطابقة.',
+			'recrutement.parcours.langues.retour' => 'العودة إلى اللغات المقترحة',
+			'recrutement.parcours.pays.autre' => 'بلد آخر',
+			'recrutement.parcours.pays.recherche' => 'البحث عن بلد',
+			'recrutement.parcours.pays.rechercheAide' => 'اسم البلد',
+			'recrutement.parcours.pays.aucun' => 'لا يوجد بلد مطابق.',
+			'recrutement.parcours.pays.retour' => 'العودة إلى البلدان المقترحة',
+			'recrutement.parcours.riwayat.autre' => 'رواية أخرى',
+			'recrutement.parcours.riwayat.recherche' => 'البحث عن رواية',
+			'recrutement.parcours.riwayat.rechercheAide' => 'اسم الرواية',
+			'recrutement.parcours.riwayat.aucune' => 'لا توجد رواية مطابقة.',
+			'recrutement.parcours.riwayat.retour' => 'العودة إلى الروايات المقترحة',
+			'recrutement.parcours.fuseau.heureChezVous' => ({required Object heure}) => 'هل الساعة عندك الآن ⁨${heure}⁩؟',
+			'recrutement.parcours.fuseau.lieuPropose' => ({required Object lieu}) => 'المنطقة الزمنية المقترحة: ⁨${lieu}⁩.',
+			'recrutement.parcours.fuseau.retenu' => ({required Object lieu}) => 'المنطقة الزمنية المعتمدة: ⁨${lieu}⁩.',
+			'recrutement.parcours.fuseau.oui' => 'نعم، هذا هو الوقت عندي',
+			'recrutement.parcours.fuseau.ouiDescription' => 'تُؤكَّد منطقتك الزمنية.',
+			'recrutement.parcours.fuseau.changer' => 'لا، أريد تغييرها',
+			'recrutement.parcours.fuseau.changerDescription' => 'تختار أقرب مدينة إلى مكان إقامتك.',
+			'recrutement.parcours.fuseau.choisirTitre' => 'ما أقرب مدينة إلى مكان إقامتك؟',
+			'recrutement.parcours.fuseau.choisirExplication' => 'تحدّد منطقتك الزمنية. ستظهر ساعات مقابلتك بتوقيت هذه المنطقة.',
+			'recrutement.parcours.fuseau.recherche' => 'البحث عن مدينة',
+			'recrutement.parcours.fuseau.rechercheAide' => 'اسم المدينة',
+			'recrutement.parcours.fuseau.aucune' => 'لا توجد مدينة مطابقة.',
+			'recrutement.parcours.fuseau.autre' => 'مدينة أخرى',
+			'recrutement.parcours.fuseau.retour' => 'العودة إلى الاقتراح',
+			'recrutement.parcours.fuseau.regions.Africa' => 'أفريقيا',
+			'recrutement.parcours.fuseau.regions.America' => 'الأمريكتان',
+			'recrutement.parcours.fuseau.regions.Antarctica' => 'القارة القطبية الجنوبية',
+			'recrutement.parcours.fuseau.regions.Arctic' => 'المنطقة القطبية الشمالية',
+			'recrutement.parcours.fuseau.regions.Asia' => 'آسيا',
+			'recrutement.parcours.fuseau.regions.Atlantic' => 'المحيط الأطلسي',
+			'recrutement.parcours.fuseau.regions.Australia' => 'أستراليا',
+			'recrutement.parcours.fuseau.regions.Europe' => 'أوروبا',
+			'recrutement.parcours.fuseau.regions.Indian' => 'المحيط الهندي',
+			'recrutement.parcours.fuseau.regions.Pacific' => 'المحيط الهادئ',
+			'recrutement.parcours.fuseau.ouiExplication' => 'ستكون أوقات توفرك ومقابلتك بتوقيت بلدك.',
+			'recrutement.parcours.fuseau.changerExplication' => 'مفيد إن كنت مسافرًا أو إن كانت ساعة جهازك غير صحيحة.',
+			'recrutement.parcours.creneaux.plage0' => 'الليل',
+			'recrutement.parcours.creneaux.plage1' => 'الفجر',
+			'recrutement.parcours.creneaux.plage2' => 'الصباح',
+			'recrutement.parcours.creneaux.plage3' => 'الظهيرة',
+			'recrutement.parcours.creneaux.plage4' => 'بعد الظهر',
+			'recrutement.parcours.creneaux.plage5' => 'المساء',
+			'recrutement.parcours.creneaux.jourCellule' => ({required Object jour, required Object plage}) => '⁨${jour}⁩، ⁨${plage}⁩',
+			'recrutement.parcours.creneaux.choisies' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم تُختر أي فترة', one: 'فترة واحدة مختارة', two: 'فترتان مختارتان', few: '⁨${n}⁩ فترات مختارة', many: '⁨${n}⁩ فترة مختارة', other: '⁨${n}⁩ فترة مختارة', ), 
+			'recrutement.parcours.creneaux.fuseauRappel' => ({required Object lieu}) => 'الساعات بتوقيت ⁨${lieu}⁩.',
+			'recrutement.parcours.creneaux.partielle' => 'جزئيًا',
+			'recrutement.parcours.creneaux.choisie' => 'مختارة',
+			'recrutement.parcours.versement.virementSeul' => 'في بلدك، أكّدت الأكاديمية التحويل المصرفي. لا توجد حاليًا وسيلة دفع عبر الهاتف.',
+			'recrutement.parcours.versement.aucunMoyen' => 'لا تصرف أكاديمية الرواية أجورًا في هذا البلد بعد. يمكنك إرسال طلب ترشحك: سيبقى في قاعة الامتحان حتى تتوفر وسيلة ممكنة.',
+			'recrutement.parcours.versement.operateurDescription' => 'الدفع عبر الهاتف',
+			'recrutement.parcours.versement.chargement' => 'نبحث عن الوسائل الممكنة في بلدك.',
+			'recrutement.parcours.versement.nonCharge' => 'تعذّر تحميل وسائل صرف الأجر في بلدك.',
+			'recrutement.parcours.versement.operateurExplication' => 'تصرّح به الآن. لا تُطلب بياناتك المالية إلا قبل أول دفعة.',
+			'recrutement.parcours.recap.titre' => 'راجع طلب ترشحك',
+			'recrutement.parcours.recap.explication' => 'المس إجابة لتغييرها. لا يُرسل شيء قبل الضغط على «إرسال طلب ترشحي».',
+			'recrutement.parcours.recap.plages' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا فترات في الأسبوع', one: 'فترة واحدة في الأسبوع', two: 'فترتان في الأسبوع', few: '⁨${n}⁩ فترات في الأسبوع', many: '⁨${n}⁩ فترة في الأسبوع', other: '⁨${n}⁩ فترة في الأسبوع', ), 
+			'recrutement.parcours.q.langueMaternelle.titre' => 'ما لغتك الأم؟',
+			'recrutement.parcours.q.langueMaternelle.explication' => 'هي اللغة التي تتكلمها منذ طفولتك.',
+			'recrutement.parcours.q.langueMaternelle.court' => 'اللغة الأم',
+			'recrutement.parcours.q.languesExplication.titre' => 'بأي لغات تستطيع الشرح والتصحيح؟',
+			'recrutement.parcours.q.languesExplication.explication' => 'اختر كل اللغات التي تستطيع بها شرح قاعدة لطالب وتصحيح أخطائه. يتابع الطالب فصله باللغة التي اختارها عند التسجيل: تساعد هذه اللغات الإدارة على معرفة الفصول التي قد تُدرّس فيها.',
+			'recrutement.parcours.q.languesExplication.court' => 'لغات الشرح',
+			'recrutement.parcours.q.niveauMemorisationDeclare.titre' => 'ما مستوى حفظك؟',
+			'recrutement.parcours.q.niveauMemorisationDeclare.explication' => 'تصرّح به هنا.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.court' => 'مستوى الحفظ',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.libelle' => 'حفظت القرآن كله',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.description' => 'السور الـ 114 من الأولى إلى الأخيرة عن ظهر قلب.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.explication' => 'يُتحقق من هذا المستوى أثناء المقابلة.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.exemple' => 'تُسمّع سورة البقرة ثم سورة الناس دون فتح المصحف.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.ijaza_lecture_enseignement.libelle' => 'عندي إجازة قراءة وإقراء',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.ijaza_lecture_enseignement.description' => 'إذن مكتوب من شيخ بقراءة القرآن وإقرائه.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.ijaza_lecture_enseignement.explication' => 'تُعرض أثناء المقابلة: لا شيء تُرسله الآن.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.ijaza_lecture_enseignement.exemple' => 'وثيقة مكتوبة سلّمها لك شيخك باسمك.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.plus_de_10_juz.libelle' => 'حفظت أكثر من 10 أجزاء',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.plus_de_10_juz.description' => 'أكثر من ثلث القرآن، وهو ثلاثون جزءًا.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.plus_de_10_juz.explication' => 'يُتحقق من هذا المستوى أثناء المقابلة.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.plus_de_10_juz.exemple' => 'حفظت اثني عشر جزءًا من ثلاثين.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_de_10_juz.libelle' => 'حفظت أقل من 10 أجزاء',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_de_10_juz.description' => 'أقل من ثلث القرآن، وهو ثلاثون جزءًا.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_de_10_juz.explication' => 'يُتحقق من هذا المستوى أثناء المقابلة.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_de_10_juz.exemple' => 'حفظت خمسة أجزاء من ثلاثين.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.bonne_lecture_sans_memorisation.libelle' => 'لم أحفظ، لكنني أقرأ قراءة جيدة بالتجويد',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.bonne_lecture_sans_memorisation.description' => 'تقرأ القرآن قراءة صحيحة مع تطبيق أحكام التجويد، دون أن تسمّعه عن ظهر قلب.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.bonne_lecture_sans_memorisation.explication' => 'يُتحقق من قراءتك أثناء المقابلة.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.bonne_lecture_sans_memorisation.exemple' => 'تقرأ صفحة من القرآن دون خطأ، لكنك لا تسمّعها عن ظهر قلب.',
+			'recrutement.parcours.q.niveauLectureTajwid.titre' => 'كيف تقرأ القرآن؟',
+			'recrutement.parcours.q.niveauLectureTajwid.explication' => 'التجويد هو مجموعة الأحكام التي تبيّن كيف يُنطق كل حرف من القرآن.',
+			'recrutement.parcours.q.niveauLectureTajwid.court' => 'القراءة والتجويد',
+			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.libelle' => 'أقرأ دون تطبيق أحكام التجويد',
+			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.description' => 'تقرأ بطلاقة دون اتباع أحكام النطق.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.explication' => 'يُتحقق من قراءتك أثناء المقابلة.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.exemple' => 'تقرأ صفحة دون تردد، لكنك لا تطبّق أحكام التجويد.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.libelle' => 'أطبّق أحكام التجويد أثناء القراءة',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.description' => 'تلتزم بأحكام النطق حين تقرأ.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.explication' => 'يُتحقق من قراءتك أثناء المقابلة.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.exemple' => 'تمدّ الحروف وتنطقها كما تقتضي أحكام التجويد.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne.libelle' => 'أطبّق التجويد وأعرف كيف أعلّمه',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne.description' => 'تلتزم بالأحكام وتعرف شرحها لطالب.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne.explication' => 'يُتحقق من قراءتك أثناء المقابلة.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne.exemple' => 'حين يخطئ طالب في حرف، تشرح له الحكم فيعيده.',
+			'recrutement.parcours.q.riwayat.titre' => 'بأي روايات تقرأ؟',
+			'recrutement.parcours.q.riwayat.explication' => 'الرواية طريقة منقولة في قراءة القرآن. اختر كل ما تقرأ به.',
+			'recrutement.parcours.q.riwayat.court' => 'الروايات',
+			'recrutement.parcours.q.riwayat.options.hafs.libelle' => 'حفص',
+			'recrutement.parcours.q.riwayat.options.hafs.description' => 'رواية عن عاصم',
+			'recrutement.parcours.q.riwayat.options.shuba.libelle' => 'شعبة',
+			'recrutement.parcours.q.riwayat.options.shuba.description' => 'رواية عن عاصم',
+			'recrutement.parcours.q.riwayat.options.warsh.libelle' => 'ورش',
+			'recrutement.parcours.q.riwayat.options.warsh.description' => 'رواية عن نافع',
+			'recrutement.parcours.q.riwayat.options.qalun.libelle' => 'قالون',
+			'recrutement.parcours.q.riwayat.options.qalun.description' => 'رواية عن نافع',
+			'recrutement.parcours.q.riwayat.options.al_bazzi.libelle' => 'البزي',
+			'recrutement.parcours.q.riwayat.options.al_bazzi.description' => 'رواية عن ابن كثير',
+			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'قنبل',
+			'recrutement.parcours.q.riwayat.options.qunbul.description' => 'رواية عن ابن كثير',
+			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.libelle' => 'الدوري (أبو عمرو)',
+			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.description' => 'رواية عن أبي عمرو',
+			'recrutement.parcours.q.riwayat.options.as_susi.libelle' => 'السوسي',
+			'recrutement.parcours.q.riwayat.options.as_susi.description' => 'رواية عن أبي عمرو',
+			'recrutement.parcours.q.riwayat.options.hisham.libelle' => 'هشام',
+			'recrutement.parcours.q.riwayat.options.hisham.description' => 'رواية عن ابن عامر',
+			'recrutement.parcours.q.riwayat.options.ibn_dhakwan.libelle' => 'ابن ذكوان',
+			'recrutement.parcours.q.riwayat.options.ibn_dhakwan.description' => 'رواية عن ابن عامر',
+			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.libelle' => 'خلف (حمزة)',
+			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.description' => 'رواية عن حمزة',
+			'recrutement.parcours.q.riwayat.options.khallad.libelle' => 'خلاد',
+			'recrutement.parcours.q.riwayat.options.khallad.description' => 'رواية عن حمزة',
+			'recrutement.parcours.q.riwayat.options.abu_al_harith.libelle' => 'أبو الحارث',
+			'recrutement.parcours.q.riwayat.options.abu_al_harith.description' => 'رواية عن الكسائي',
+			'recrutement.parcours.q.riwayat.options.ad_duri_al_kisai.libelle' => 'الدوري (الكسائي)',
+			'recrutement.parcours.q.riwayat.options.ad_duri_al_kisai.description' => 'رواية عن الكسائي',
+			'recrutement.parcours.q.riwayat.options.ibn_wardan.libelle' => 'ابن وردان',
+			_ => null,
+		} ?? switch (path) {
+			'recrutement.parcours.q.riwayat.options.ibn_wardan.description' => 'رواية عن أبي جعفر',
+			'recrutement.parcours.q.riwayat.options.ibn_jammaz.libelle' => 'ابن جماز',
+			'recrutement.parcours.q.riwayat.options.ibn_jammaz.description' => 'رواية عن أبي جعفر',
+			'recrutement.parcours.q.riwayat.options.ruways.libelle' => 'رويس',
+			'recrutement.parcours.q.riwayat.options.ruways.description' => 'رواية عن يعقوب',
+			'recrutement.parcours.q.riwayat.options.rawh.libelle' => 'روح',
+			'recrutement.parcours.q.riwayat.options.rawh.description' => 'رواية عن يعقوب',
+			'recrutement.parcours.q.riwayat.options.ishaq.libelle' => 'إسحاق',
+			'recrutement.parcours.q.riwayat.options.ishaq.description' => 'رواية عن خلف، القارئ العاشر',
+			'recrutement.parcours.q.riwayat.options.idris.libelle' => 'إدريس',
+			'recrutement.parcours.q.riwayat.options.idris.description' => 'رواية عن خلف، القارئ العاشر',
+			'recrutement.parcours.q.ijazaPresentable.titre' => 'هل عندك إجازة تستطيع عرضها؟',
+			'recrutement.parcours.q.ijazaPresentable.explication' => 'الإجازة إذن مكتوب من شيخ بنقل القرآن.',
+			'recrutement.parcours.q.ijazaPresentable.court' => 'الإجازة',
+			'recrutement.parcours.q.ijazaPresentable.options.oui.libelle' => 'نعم، عندي إجازة أستطيع عرضها',
+			'recrutement.parcours.q.ijazaPresentable.options.oui.description' => 'تستطيع أن تعرضها عبر الفيديو.',
+			'recrutement.parcours.q.ijazaPresentable.options.oui.explication' => 'تُعرض أثناء المقابلة: لا شيء تُرسله الآن.',
+			'recrutement.parcours.q.ijazaPresentable.options.oui.exemple' => 'وثيقة موقّعة من شيخك تحتفظ بها عندك.',
+			'recrutement.parcours.q.ijazaPresentable.options.non.libelle' => 'لا، ليس عندي ما أعرضه',
+			'recrutement.parcours.q.ijazaPresentable.options.non.description' => 'ليس عندك إجازة، أو ليس عندك ما تعرضها به.',
+			'recrutement.parcours.q.ijazaPresentable.options.non.explication' => 'يُتحقق من مستواك حينئذ أثناء المقابلة.',
+			'recrutement.parcours.q.ijazaPresentable.options.non.exemple' => 'تعلّمت عند شيخ دون أن تتسلّم وثيقة مكتوبة.',
+			'recrutement.parcours.q.experienceDebutants.titre' => 'هل سبق أن علّمت مبتدئين؟',
+			'recrutement.parcours.q.experienceDebutants.explication' => 'المبتدئ ما زال يتعلم قراءة الحروف ووصلها.',
+			'recrutement.parcours.q.experienceDebutants.court' => 'الخبرة مع المبتدئين',
+			'recrutement.parcours.q.experienceDebutants.options.oui.libelle' => 'نعم، سبق أن علّمت مبتدئين',
+			'recrutement.parcours.q.experienceDebutants.options.oui.description' => 'سبق أن رافقت طلابًا في بداياتهم.',
+			'recrutement.parcours.q.experienceDebutants.options.oui.explication' => 'تعرف الإدارة ذلك قبل المقابلة.',
+			'recrutement.parcours.q.experienceDebutants.options.oui.exemple' => 'علّمت الأطفال أو الكبار الحروف العربية.',
+			'recrutement.parcours.q.experienceDebutants.options.non.libelle' => 'لا، ليس بعد',
+			'recrutement.parcours.q.experienceDebutants.options.non.description' => 'لم تعلّم مبتدئين من قبل.',
+			'recrutement.parcours.q.experienceDebutants.options.non.explication' => 'يمكنك مع ذلك إرسال طلب ترشحك.',
+			'recrutement.parcours.q.experienceDebutants.options.non.exemple' => 'علّمت فقط طلابًا يجيدون القراءة من قبل.',
+			'recrutement.parcours.q.fuseauIana.titre' => 'منطقتك الزمنية',
+			'recrutement.parcours.q.fuseauIana.explication' => 'أوقات تفرّغك بتوقيت مكان إقامتك. لذلك يجب أن يكون الوقت صحيحًا.',
+			'recrutement.parcours.q.fuseauIana.court' => 'المنطقة الزمنية',
+			'recrutement.parcours.q.disponibilitesDeclarees.titre' => 'متى تكون متفرّغًا؟',
+			'recrutement.parcours.q.disponibilitesDeclarees.explication' => 'المس الفترات التي تستطيع فيها التدريس كل أسبوع. مدة الفترة أربع ساعات.',
+			'recrutement.parcours.q.disponibilitesDeclarees.court' => 'أوقات التفرّغ',
+			'recrutement.parcours.q.heuresParSemaine.titre' => 'كم ساعة في الأسبوع تستطيع التدريس؟',
+			'recrutement.parcours.q.heuresParSemaine.explication' => 'فصل الأطفال ثلاث حصص في الأسبوع، مدة كل منها ساعة، أي 3 ساعات. وفصل الكبار ثلاث حصص، مدة كل منها ساعة ونصف، أي 4 ساعات ونصف.',
+			'recrutement.parcours.q.heuresParSemaine.court' => 'الساعات في الأسبوع',
+			'recrutement.parcours.q.heuresParSemaine.options.moins_de_3.libelle' => 'أقل من 3 ساعات',
+			'recrutement.parcours.q.heuresParSemaine.options.moins_de_3.description' => 'أقل من وقت فصل كامل.',
+			'recrutement.parcours.q.heuresParSemaine.options.moins_de_3.exemple' => 'حصتان مدة كل منهما ساعة في الأسبوع.',
+			'recrutement.parcours.q.heuresParSemaine.options.de_3_a_5.libelle' => 'من 3 إلى 5 ساعات',
+			'recrutement.parcours.q.heuresParSemaine.options.de_3_a_5.description' => 'وقت فصل واحد.',
+			'recrutement.parcours.q.heuresParSemaine.options.de_3_a_5.exemple' => 'فصل أطفال، ثلاث حصص مدة كل منها ساعة، أي 3 ساعات في الأسبوع.',
+			'recrutement.parcours.q.heuresParSemaine.options.de_6_a_10.libelle' => 'من 6 إلى 10 ساعات',
+			'recrutement.parcours.q.heuresParSemaine.options.de_6_a_10.description' => 'وقت فصلين.',
+			'recrutement.parcours.q.heuresParSemaine.options.de_6_a_10.exemple' => 'فصلا كبار، ست حصص مدة كل منها ساعة ونصف، أي 9 ساعات في الأسبوع.',
+			'recrutement.parcours.q.heuresParSemaine.options.plus_de_10.libelle' => 'أكثر من 10 ساعات',
+			'recrutement.parcours.q.heuresParSemaine.options.plus_de_10.description' => 'وقت عدة فصول.',
+			'recrutement.parcours.q.heuresParSemaine.options.plus_de_10.exemple' => 'ثلاثة فصول كبار، تسع حصص مدة كل منها ساعة ونصف، أي 13 ساعة ونصف في الأسبوع.',
+			'recrutement.parcours.q.debutPossible.titre' => 'متى تستطيع البدء؟',
+			'recrutement.parcours.q.debutPossible.explication' => 'يساعد هذا التاريخ الإدارة على معرفة متى تقترح عليك فصلًا.',
+			'recrutement.parcours.q.debutPossible.court' => 'تاريخ البدء',
+			'recrutement.parcours.q.debutPossible.options.immediat.libelle' => 'من الآن',
+			'recrutement.parcours.q.debutPossible.options.immediat.description' => 'تستطيع البدء فور إسناد فصل إليك.',
+			'recrutement.parcours.q.debutPossible.options.immediat.exemple' => 'لا التزام يشغلك هذا الشهر.',
+			'recrutement.parcours.q.debutPossible.options.mois_prochain.libelle' => 'الشهر القادم',
+			'recrutement.parcours.q.debutPossible.options.mois_prochain.description' => 'ستكون متفرغًا ابتداءً من الشهر القادم.',
+			'recrutement.parcours.q.debutPossible.options.mois_prochain.exemple' => 'تنهي عملًا آخر في نهاية هذا الشهر.',
+			'recrutement.parcours.q.debutPossible.options.sous_3_mois.libelle' => 'خلال أقل من ثلاثة أشهر',
+			'recrutement.parcours.q.debutPossible.options.sous_3_mois.description' => 'ستكون متفرغًا خلال الأشهر الثلاثة القادمة.',
+			'recrutement.parcours.q.debutPossible.options.sous_3_mois.exemple' => 'تكون مسافرًا أو في امتحانات لبضعة أسابيع.',
+			'recrutement.parcours.q.debutPossible.options.inconnu.libelle' => 'لا أعرف بعد',
+			'recrutement.parcours.q.debutPossible.options.inconnu.description' => 'لا تعرف بعد تاريخ بدئك.',
+			'recrutement.parcours.q.debutPossible.options.inconnu.explication' => 'يمكنك توضيح ذلك للإدارة أثناء المقابلة.',
+			'recrutement.parcours.q.debutPossible.options.inconnu.exemple' => 'يتوقف جدولك على جواب ما زلت تنتظره.',
+			'recrutement.parcours.q.publics.titre' => 'أي طلاب تستطيع تعليمهم؟',
+			'recrutement.parcours.q.publics.explication' => 'اختر الطلاب الذين تستطيع تعليمهم. يمكنك اختيار الفئتين.',
+			'recrutement.parcours.q.publics.court' => 'الفئات',
+			'recrutement.parcours.q.publics.options.enfant.libelle' => 'أطفال (من 6 إلى 17 سنة)',
+			'recrutement.parcours.q.publics.options.enfant.description' => 'فصول من 3 إلى 5 أطفال.',
+			'recrutement.parcours.q.publics.options.enfant.explication' => 'ثلاث حصص في الأسبوع، مدة كل منها ساعة.',
+			'recrutement.parcours.q.publics.options.enfant.exemple' => 'فصل من أربعة أطفال في الثامنة من العمر، ثلاث مرات في الأسبوع.',
+			'recrutement.parcours.q.publics.options.adulte.libelle' => 'كبار (18 سنة فأكثر)',
+			'recrutement.parcours.q.publics.options.adulte.description' => 'فصول من 3 إلى 6 كبار.',
+			'recrutement.parcours.q.publics.options.adulte.explication' => 'ثلاث حصص في الأسبوع، مدة كل منها ساعة ونصف. فصول الكبار منفصلة: نساء مع نساء، ورجال مع رجال.',
+			'recrutement.parcours.q.publics.options.adulte.exemple' => 'فصل من خمس نساء، أو من خمسة رجال، ثلاث مرات في الأسبوع.',
+			'recrutement.parcours.q.paysResidence.titre' => 'في أي بلد تقيم؟',
+			'recrutement.parcours.q.paysResidence.explication' => 'اختر البلد الذي تقيم فيه اليوم.',
+			'recrutement.parcours.q.paysResidence.court' => 'بلد الإقامة',
+			'recrutement.parcours.q.paysVersement.titre' => 'في أي بلد تريد تلقي أجرك؟',
+			'recrutement.parcours.q.paysVersement.explication' => 'تتحقق الأكاديمية، بلدًا بلدًا، من وسيلة الصرف الممكنة. اخترنا بلد إقامتك: غيّره إن لزم.',
+			'recrutement.parcours.q.paysVersement.court' => 'بلد الصرف',
+			'recrutement.parcours.q.compteBancaire.titre' => 'هل عندك حساب مصرفي؟',
+			'recrutement.parcours.q.compteBancaire.explication' => 'يُصرف الأجر بتحويل مصرفي حيث أكّدت الأكاديمية ذلك. لا تُطلب بياناتك إلا قبل أول دفعة.',
+			'recrutement.parcours.q.compteBancaire.court' => 'الحساب المصرفي',
+			'recrutement.parcours.q.compteBancaire.options.oui.libelle' => 'نعم، عندي حساب مصرفي',
+			'recrutement.parcours.q.compteBancaire.options.oui.description' => 'حساب باسمك في أحد المصارف.',
+			'recrutement.parcours.q.compteBancaire.options.oui.explication' => 'قد يكون التحويل وسيلة صرف أجرك إذا أكّدته الأكاديمية في بلدك.',
+			'recrutement.parcours.q.compteBancaire.options.oui.exemple' => 'حساب مفتوح باسمك في أحد مصارف بلدك.',
+			'recrutement.parcours.q.compteBancaire.options.non.libelle' => 'لا، ليس عندي',
+			'recrutement.parcours.q.compteBancaire.options.non.description' => 'ليس عندك حساب مصرفي باسمك.',
+			'recrutement.parcours.q.compteBancaire.options.non.explication' => 'يمكنك حينئذ اختيار وسيلة دفع عبر الهاتف إن وُجدت في بلدك.',
+			'recrutement.parcours.q.compteBancaire.options.non.exemple' => 'تستقبل المال وترسله بهاتفك فقط.',
+			'recrutement.parcours.q.operateurs.titre' => 'ما وسائل الدفع عبر الهاتف التي تستخدمها؟',
+			'recrutement.parcours.q.operateurs.explication' => 'هذه هي الوسائل التي أكّدتها الأكاديمية في بلدك. اختر ما تستخدمه، إن وُجد.',
+			'recrutement.parcours.q.operateurs.court' => 'وسائل الدفع عبر الهاتف',
 			'sansDonnees.mesDonnees' => 'تعذّر تحميل معلومات حذف الحساب',
 			'sansDonnees.paiementsRecus' => 'تعذّر تحميل مدفوعاتك المستلمة',
 			'sansDonnees.revenus' => 'تعذّر تحميل مداخيلك',
@@ -23559,8 +25338,6 @@ extension on TraductionsAr {
 			'avis.admin.publier.question' => ({required Object deNom}) => 'هل تنشر رأي ⁨${deNom}⁩؟',
 			'avis.admin.publier.consequence' => 'سيظهر الرأي والاسم الظاهر والبلد والتاريخ على موقع Rewayah Academy عند التحديث التالي للموقع. لا يتغير النص.',
 			'avis.admin.publier.action' => 'نشر الرأي',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.publier.rester' => 'عدم تغيير شيء',
 			'avis.admin.refuser.titre' => ({required Object deNom}) => 'رفض رأي ⁨${deNom}⁩',
 			'avis.admin.refuser.intro' => 'اختر سبب الرفض. الرأي الناقد المحترم يُنشر.',

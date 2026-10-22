@@ -661,6 +661,9 @@ class Traductions$accords$fr {
 
 	/// fr: 'Vos accords sont déjà enregistrés.'
 	String get dejaAcceptes => 'Vos accords sont déjà enregistrés.';
+
+	/// fr: 'L'envoi de votre candidature sera possible quand le cadre religieux et pédagogique sera publié.'
+	String get cadreNonPublie => 'L\'envoi de votre candidature sera possible quand le cadre religieux et pédagogique sera publié.';
 }
 
 // Path: connexion
@@ -1468,6 +1471,12 @@ class Traductions$recrutement$fr {
 	late final Traductions$recrutement$candidat$fr candidat = Traductions$recrutement$candidat$fr.internal(_root);
 	late final Traductions$recrutement$signature$fr signature = Traductions$recrutement$signature$fr.internal(_root);
 	late final Traductions$recrutement$statuts$fr statuts = Traductions$recrutement$statuts$fr.internal(_root);
+	late final Traductions$recrutement$salles$fr salles = Traductions$recrutement$salles$fr.internal(_root);
+	late final Traductions$recrutement$paiement$fr paiement = Traductions$recrutement$paiement$fr.internal(_root);
+	late final Traductions$recrutement$portail$fr portail = Traductions$recrutement$portail$fr.internal(_root);
+	late final Traductions$recrutement$retrait$fr retrait = Traductions$recrutement$retrait$fr.internal(_root);
+	late final Traductions$recrutement$questionnaire$fr questionnaire = Traductions$recrutement$questionnaire$fr.internal(_root);
+	late final Traductions$recrutement$parcours$fr parcours = Traductions$recrutement$parcours$fr.internal(_root);
 }
 
 // Path: dossiers
@@ -3641,6 +3650,18 @@ class Traductions$commun$fuseaux$fr {
 
 	/// fr: 'Buenos Aires'
 	String get americaArgentinaBuenosAires => 'Buenos Aires';
+
+	/// fr: 'Dakar'
+	String get africaDakar => 'Dakar';
+
+	/// fr: 'Bamako'
+	String get africaBamako => 'Bamako';
+
+	/// fr: 'Nouakchott'
+	String get africaNouakchott => 'Nouakchott';
+
+	/// fr: 'Brussels'
+	String get europeBrussels => 'Brussels';
 }
 
 // Path: commun.dates
@@ -6429,6 +6450,325 @@ class Traductions$recrutement$statuts$fr {
 
 	/// fr: 'Inviter un enseignant'
 	String get inviter => 'Inviter un enseignant';
+}
+
+// Path: recrutement.salles
+class Traductions$recrutement$salles$fr {
+	Traductions$recrutement$salles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Salle d'examen'
+	String get examen => 'Salle d\'examen';
+
+	/// fr: 'Salle de vérification et d'entretien'
+	String get verification => 'Salle de vérification et d\'entretien';
+
+	/// fr: 'Salle des prêts à enseigner'
+	String get prets => 'Salle des prêts à enseigner';
+}
+
+// Path: recrutement.paiement
+class Traductions$recrutement$paiement$fr {
+	Traductions$recrutement$paiement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun moyen de versement déclaré'
+	String get inconnu => 'Aucun moyen de versement déclaré';
+
+	/// fr: 'Moyen de versement à vérifier par l'académie'
+	String get aVerifier => 'Moyen de versement à vérifier par l\'académie';
+
+	/// fr: 'Moyen de versement confirmé'
+	String get compatible => 'Moyen de versement confirmé';
+
+	/// fr: 'Aucun moyen de versement possible pour l'instant'
+	String get incompatible => 'Aucun moyen de versement possible pour l\'instant';
+}
+
+// Path: recrutement.portail
+class Traductions$recrutement$portail$fr {
+	Traductions$recrutement$portail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous êtes en {salle}'
+	String vousEtesEn({required Object salle}) => 'Vous êtes en ${salle}';
+
+	/// fr: 'Votre candidature est à compléter'
+	String get aCompleterTitre => 'Votre candidature est à compléter';
+
+	/// fr: 'À compléter'
+	String get aCompleter => 'À compléter';
+
+	/// fr: 'Le cadre religieux et pédagogique'
+	String get elementCadre => 'Le cadre religieux et pédagogique';
+
+	/// fr: 'À envoyer'
+	String get etatAEnvoyer => 'À envoyer';
+
+	/// fr: 'Compléter ma candidature'
+	String get completer => 'Compléter ma candidature';
+
+	/// fr: 'Votre candidature est en examen'
+	String get enExamenTitre => 'Votre candidature est en examen';
+
+	/// fr: 'L'académie lit vos réponses et vous préviendra ici.'
+	String get enExamen => 'L\'académie lit vos réponses et vous préviendra ici.';
+
+	/// fr: 'Rewayah ne peut pas encore vous verser une rémunération par les moyens déclarés dans votre pays. Votre candidature est gardée en Salle d'examen. L'académie vous préviendra dès qu'un moyen sera possible.'
+	String get versementImpossible => 'Rewayah ne peut pas encore vous verser une rémunération par les moyens déclarés dans votre pays. Votre candidature est gardée en Salle d\'examen. L\'académie vous préviendra dès qu\'un moyen sera possible.';
+
+	/// fr: 'Vous restez libre de retirer votre candidature.'
+	String get libreDePartir => 'Vous restez libre de retirer votre candidature.';
+
+	/// fr: 'Votre candidature est en pause'
+	String get enPauseTitre => 'Votre candidature est en pause';
+
+	/// fr: 'Reprise prévue le {date}.'
+	String repriseLe({required Object date}) => 'Reprise prévue le ${date}.';
+
+	/// fr: 'Votre candidature n'a pas été retenue'
+	String get refuseeTitre => 'Votre candidature n\'a pas été retenue';
+
+	/// fr: 'Candidature retirée'
+	String get retireeTitre => 'Candidature retirée';
+
+	/// fr: 'Vous avez retiré votre candidature. Seule l'académie peut la rouvrir.'
+	String get retiree => 'Vous avez retiré votre candidature. Seule l\'académie peut la rouvrir.';
+
+	/// fr: 'L'académie vous demande un complément.'
+	String get complementDemande => 'L\'académie vous demande un complément.';
+
+	/// fr: 'À compléter : {elements}.'
+	String complementListe({required Object elements}) => 'À compléter : ${elements}.';
+
+	/// fr: 'L'état de votre candidature n'a pas pu être chargé.'
+	String get nonCharge => 'L\'état de votre candidature n\'a pas pu être chargé.';
+
+	/// fr: 'Votre pièce d'identité'
+	String get elementPiece => 'Votre pièce d\'identité';
+
+	/// fr: 'Le contrat d'enseignant'
+	String get elementContrat => 'Le contrat d\'enseignant';
+
+	/// fr: 'Versement pas encore possible'
+	String get versementImpossibleTitre => 'Versement pas encore possible';
+
+	/// fr: 'Relire ma candidature'
+	String get relire => 'Relire ma candidature';
+}
+
+// Path: recrutement.retrait
+class Traductions$recrutement$retrait$fr {
+	Traductions$recrutement$retrait$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Retirer ma candidature'
+	String get lien => 'Retirer ma candidature';
+
+	/// fr: 'Retirer votre candidature ?'
+	String get question => 'Retirer votre candidature ?';
+
+	/// fr: 'Seule l'académie pourra rouvrir votre candidature.'
+	String get consequence => 'Seule l\'académie pourra rouvrir votre candidature.';
+
+	/// fr: 'Votre entretien sera annulé. Seule l'académie pourra rouvrir votre candidature.'
+	String get consequenceEntretien => 'Votre entretien sera annulé. Seule l\'académie pourra rouvrir votre candidature.';
+
+	/// fr: 'Retirer ma candidature'
+	String get confirmer => 'Retirer ma candidature';
+
+	/// fr: 'Le retrait n'a pas abouti. Réessayez dans un instant.'
+	String get echec => 'Le retrait n\'a pas abouti. Réessayez dans un instant.';
+
+	/// fr: 'Il est possible que votre retrait ne soit pas parvenu jusqu'à Rewayah. Réessayez : il ne sera pas enregistré deux fois.'
+	String get incertain => 'Il est possible que votre retrait ne soit pas parvenu jusqu\'à Rewayah. Réessayez : il ne sera pas enregistré deux fois.';
+
+	/// fr: 'Le retrait pourra être fait quand la connexion reviendra.'
+	String get horsLigne => 'Le retrait pourra être fait quand la connexion reviendra.';
+
+	/// fr: 'Votre candidature ne peut plus être retirée depuis cette page.'
+	String get interdit => 'Votre candidature ne peut plus être retirée depuis cette page.';
+
+	/// fr: 'Votre candidature a changé depuis l'ouverture de cette page. Relisez-la, puis réessayez.'
+	String get conflit => 'Votre candidature a changé depuis l\'ouverture de cette page. Relisez-la, puis réessayez.';
+}
+
+// Path: recrutement.questionnaire
+class Traductions$recrutement$questionnaire$fr {
+	Traductions$recrutement$questionnaire$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre candidature'
+	String get titre => 'Votre candidature';
+
+	/// fr: 'Conditions de rémunération'
+	String get conditionsTitre => 'Conditions de rémunération';
+
+	/// fr: 'Votre part : {part} du prix public, pour chaque élève présent.'
+	String part({required Object part}) => 'Votre part : ${part} du prix public, pour chaque élève présent.';
+
+	/// fr: '{public} : {part} du prix public, pour chaque élève présent.'
+	String partPublic({required Object public, required Object part}) => '${public} : ${part} du prix public, pour chaque élève présent.';
+
+	/// fr: 'Enfants (6 à 17 ans)'
+	String get publicEnfant => 'Enfants (6 à 17 ans)';
+
+	/// fr: 'Adultes (18 ans et plus)'
+	String get publicAdulte => 'Adultes (18 ans et plus)';
+
+	/// fr: 'Vos coordonnées financières ne vous seront demandées qu'avant votre premier versement.'
+	String get coordonneesPlusTard => 'Vos coordonnées financières ne vous seront demandées qu\'avant votre premier versement.';
+
+	/// fr: 'Pour connaître les montants, demandez-les à l'administration.'
+	String get montantsSurDemande => 'Pour connaître les montants, demandez-les à l\'administration.';
+
+	/// fr: 'Ces conditions s'appliquent à partir du {date}.'
+	String conditionsDateEffet({required Object date}) => 'Ces conditions s\'appliquent à partir du ${date}.';
+
+	/// fr: 'J'ai lu ces conditions et je les accepte.'
+	String get accordRemuneration => 'J\'ai lu ces conditions et je les accepte.';
+
+	/// fr: 'Cochez la case pour accepter ces conditions et envoyer votre candidature.'
+	String get accordManquant => 'Cochez la case pour accepter ces conditions et envoyer votre candidature.';
+
+	/// fr: 'Envoyer ma candidature'
+	String get envoyer => 'Envoyer ma candidature';
+
+	/// fr: 'Acceptez d'abord le cadre religieux et pédagogique.'
+	String get cadreManquant => 'Acceptez d\'abord le cadre religieux et pédagogique.';
+
+	/// fr: 'Vous avez accepté le cadre religieux et pédagogique.'
+	String get cadreAccepte => 'Vous avez accepté le cadre religieux et pédagogique.';
+
+	/// fr: 'Vos langues'
+	String get langues => 'Vos langues';
+
+	/// fr: 'Votre récitation'
+	String get recitation => 'Votre récitation';
+
+	/// fr: 'Vos disponibilités'
+	String get disponibilites => 'Vos disponibilités';
+
+	/// fr: 'Les publics que vous pouvez enseigner'
+	String get publics => 'Les publics que vous pouvez enseigner';
+
+	/// fr: 'Votre pays et votre versement'
+	String get versement => 'Votre pays et votre versement';
+
+	/// fr: 'Le questionnaire a changé depuis votre dernière visite. Relisez vos réponses avant d'envoyer.'
+	String get perime => 'Le questionnaire a changé depuis votre dernière visite. Relisez vos réponses avant d\'envoyer.';
+
+	/// fr: 'Il manque une réponse : {question}.'
+	String incomplet({required Object question}) => 'Il manque une réponse : ${question}.';
+
+	/// fr: 'Une réponse n'est plus valable : {question}.'
+	String reponseInvalide({required Object question}) => 'Une réponse n\'est plus valable : ${question}.';
+
+	/// fr: 'Votre candidature a changé depuis l'ouverture de cette page. Relisez-la, puis envoyez-la.'
+	String get conflit => 'Votre candidature a changé depuis l\'ouverture de cette page. Relisez-la, puis envoyez-la.';
+
+	/// fr: 'Les conditions de rémunération ont changé. Relisez-les, puis acceptez-les de nouveau.'
+	String get conditionsPerimees => 'Les conditions de rémunération ont changé. Relisez-les, puis acceptez-les de nouveau.';
+
+	/// fr: 'Votre candidature ne peut plus être envoyée depuis cette page.'
+	String get interdit => 'Votre candidature ne peut plus être envoyée depuis cette page.';
+
+	/// fr: 'Une de vos réponses est à revoir. Relisez-les, puis envoyez de nouveau votre candidature.'
+	String get echec => 'Une de vos réponses est à revoir. Relisez-les, puis envoyez de nouveau votre candidature.';
+
+	/// fr: 'Il est possible que votre candidature ne soit pas parvenue jusqu'à Rewayah. Réessayez : elle ne sera pas enregistrée deux fois.'
+	String get incertain => 'Il est possible que votre candidature ne soit pas parvenue jusqu\'à Rewayah. Réessayez : elle ne sera pas enregistrée deux fois.';
+
+	/// fr: 'Votre candidature pourra être envoyée quand la connexion reviendra.'
+	String get horsLigne => 'Votre candidature pourra être envoyée quand la connexion reviendra.';
+
+	/// fr: 'Cette étape n'est pas encore ouverte. Votre compte est gardé.'
+	String get nonOuverte => 'Cette étape n\'est pas encore ouverte. Votre compte est gardé.';
+
+	/// fr: 'Le questionnaire n'a pas pu être chargé.'
+	String get nonCharge => 'Le questionnaire n\'a pas pu être chargé.';
+
+	/// fr: 'Les conditions de rémunération n'ont pas pu être chargées.'
+	String get conditionsNonCharge => 'Les conditions de rémunération n\'ont pas pu être chargées.';
+
+	/// fr: 'Votre candidature est envoyée. L'académie vous préviendra ici s'il faut la compléter.'
+	String get envoyee => 'Votre candidature est envoyée. L\'académie vous préviendra ici s\'il faut la compléter.';
+
+	/// fr: 'Envoyée le {date}.'
+	String envoyeeLe({required Object date}) => 'Envoyée le ${date}.';
+
+	/// fr: 'Moyen de versement : {etat}'
+	String etatVersement({required Object etat}) => 'Moyen de versement : ${etat}';
+
+	/// fr: 'Retour à mon dossier'
+	String get retourDossier => 'Retour à mon dossier';
+
+	/// fr: 'L'académie vous demande de compléter cette partie.'
+	String get complementCarte => 'L\'académie vous demande de compléter cette partie.';
+}
+
+// Path: recrutement.parcours
+class Traductions$recrutement$parcours$fr {
+	Traductions$recrutement$parcours$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisissez une réponse pour continuer.'
+	String get choisir => 'Choisissez une réponse pour continuer.';
+
+	/// fr: 'Choisissez au moins une réponse pour continuer.'
+	String get choisirPlusieurs => 'Choisissez au moins une réponse pour continuer.';
+
+	/// fr: 'Choisissez au moins une plage pour continuer.'
+	String get choisirPlage => 'Choisissez au moins une plage pour continuer.';
+
+	/// fr: '(one) {Choisissez une seule réponse.} (other) {Choisissez {max} réponses au plus.}'
+	String trop({required num max}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(max,
+		one: 'Choisissez une seule réponse.',
+		other: 'Choisissez ${max} réponses au plus.',
+	);
+
+	/// fr: 'Aucune'
+	String get aucune => 'Aucune';
+
+	/// fr: 'Oui'
+	String get oui => 'Oui';
+
+	/// fr: 'Non'
+	String get non => 'Non';
+
+	/// fr: 'Modifier'
+	String get modifier => 'Modifier';
+
+	/// fr: 'Vos dernières réponses n'ont pas pu être gardées. Elles restent à l'écran : continuez, elles seront envoyées avec votre candidature.'
+	String get sauvegardeEchec => 'Vos dernières réponses n\'ont pas pu être gardées. Elles restent à l\'écran : continuez, elles seront envoyées avec votre candidature.';
+
+	late final Traductions$recrutement$parcours$presentation$fr presentation = Traductions$recrutement$parcours$presentation$fr.internal(_root);
+	late final Traductions$recrutement$parcours$langues$fr langues = Traductions$recrutement$parcours$langues$fr.internal(_root);
+	late final Traductions$recrutement$parcours$pays$fr pays = Traductions$recrutement$parcours$pays$fr.internal(_root);
+	late final Traductions$recrutement$parcours$riwayat$fr riwayat = Traductions$recrutement$parcours$riwayat$fr.internal(_root);
+	late final Traductions$recrutement$parcours$fuseau$fr fuseau = Traductions$recrutement$parcours$fuseau$fr.internal(_root);
+	late final Traductions$recrutement$parcours$creneaux$fr creneaux = Traductions$recrutement$parcours$creneaux$fr.internal(_root);
+	late final Traductions$recrutement$parcours$versement$fr versement = Traductions$recrutement$parcours$versement$fr.internal(_root);
+	late final Traductions$recrutement$parcours$recap$fr recap = Traductions$recrutement$parcours$recap$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$fr q = Traductions$recrutement$parcours$q$fr.internal(_root);
 }
 
 // Path: dossiers.file
@@ -20609,6 +20949,352 @@ class Traductions$recrutement$candidat$comptable$fr {
 	String get indisponible => 'La vérification des codes de comptable sera disponible au branchement du serveur.';
 }
 
+// Path: recrutement.parcours.presentation
+class Traductions$recrutement$parcours$presentation$fr {
+	Traductions$recrutement$parcours$presentation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$recrutement$parcours$presentation$p1$fr p1 = Traductions$recrutement$parcours$presentation$p1$fr.internal(_root);
+	late final Traductions$recrutement$parcours$presentation$p2$fr p2 = Traductions$recrutement$parcours$presentation$p2$fr.internal(_root);
+	late final Traductions$recrutement$parcours$presentation$p3$fr p3 = Traductions$recrutement$parcours$presentation$p3$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.langues
+class Traductions$recrutement$parcours$langues$fr {
+	Traductions$recrutement$parcours$langues$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Poular'
+	String get poular => 'Poular';
+
+	/// fr: 'Français'
+	String get francais => 'Français';
+
+	/// fr: 'Anglais'
+	String get english => 'Anglais';
+
+	/// fr: 'Arabe'
+	String get ar => 'Arabe';
+
+	/// fr: 'Peul (fulfulde)'
+	String get ff => 'Peul (fulfulde)';
+
+	/// fr: 'Haoussa'
+	String get ha => 'Haoussa';
+
+	/// fr: 'Wolof'
+	String get wo => 'Wolof';
+
+	/// fr: 'Pachto'
+	String get ps => 'Pachto';
+
+	/// fr: 'Ourdou'
+	String get ur => 'Ourdou';
+
+	/// fr: 'Soninké'
+	String get snk => 'Soninké';
+
+	/// fr: 'Bambara'
+	String get bm => 'Bambara';
+
+	/// fr: 'Swahili'
+	String get sw => 'Swahili';
+
+	/// fr: 'Mandinka'
+	String get mnk => 'Mandinka';
+
+	/// fr: 'Oromo'
+	String get om => 'Oromo';
+
+	/// fr: 'Amharique'
+	String get am => 'Amharique';
+
+	/// fr: 'Yoruba'
+	String get yo => 'Yoruba';
+
+	/// fr: 'Bengali'
+	String get bn => 'Bengali';
+
+	/// fr: 'Persan'
+	String get fa => 'Persan';
+
+	/// fr: 'Indonésien'
+	String get id => 'Indonésien';
+
+	/// fr: 'Somali'
+	String get so => 'Somali';
+
+	/// fr: 'Hindi'
+	String get hi => 'Hindi';
+
+	/// fr: 'Ouzbek'
+	String get uz => 'Ouzbek';
+
+	/// fr: 'Turc'
+	String get tr => 'Turc';
+
+	/// fr: 'Allemand'
+	String get de => 'Allemand';
+
+	/// fr: 'Portugais'
+	String get pt => 'Portugais';
+
+	/// fr: 'Russe'
+	String get ru => 'Russe';
+
+	/// fr: 'Une langue dans laquelle Rewayah donne des cours.'
+	String get dansReferentiel => 'Une langue dans laquelle Rewayah donne des cours.';
+
+	/// fr: 'Langue pas encore proposée par Rewayah'
+	String get horsReferentiel => 'Langue pas encore proposée par Rewayah';
+
+	/// fr: 'Une autre langue'
+	String get autre => 'Une autre langue';
+
+	/// fr: 'Rechercher une langue'
+	String get recherche => 'Rechercher une langue';
+
+	/// fr: 'Nom de la langue'
+	String get rechercheAide => 'Nom de la langue';
+
+	/// fr: 'Aucune langue ne correspond.'
+	String get aucune => 'Aucune langue ne correspond.';
+
+	/// fr: 'Revenir aux langues proposées'
+	String get retour => 'Revenir aux langues proposées';
+}
+
+// Path: recrutement.parcours.pays
+class Traductions$recrutement$parcours$pays$fr {
+	Traductions$recrutement$parcours$pays$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Un autre pays'
+	String get autre => 'Un autre pays';
+
+	/// fr: 'Rechercher un pays'
+	String get recherche => 'Rechercher un pays';
+
+	/// fr: 'Nom du pays'
+	String get rechercheAide => 'Nom du pays';
+
+	/// fr: 'Aucun pays ne correspond.'
+	String get aucun => 'Aucun pays ne correspond.';
+
+	/// fr: 'Revenir aux pays proposés'
+	String get retour => 'Revenir aux pays proposés';
+}
+
+// Path: recrutement.parcours.riwayat
+class Traductions$recrutement$parcours$riwayat$fr {
+	Traductions$recrutement$parcours$riwayat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une autre riwaya'
+	String get autre => 'Une autre riwaya';
+
+	/// fr: 'Rechercher une riwaya'
+	String get recherche => 'Rechercher une riwaya';
+
+	/// fr: 'Nom de la riwaya'
+	String get rechercheAide => 'Nom de la riwaya';
+
+	/// fr: 'Aucune riwaya ne correspond.'
+	String get aucune => 'Aucune riwaya ne correspond.';
+
+	/// fr: 'Revenir aux riwayat proposées'
+	String get retour => 'Revenir aux riwayat proposées';
+}
+
+// Path: recrutement.parcours.fuseau
+class Traductions$recrutement$parcours$fuseau$fr {
+	Traductions$recrutement$parcours$fuseau$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Chez vous, il est {heure} ?'
+	String heureChezVous({required Object heure}) => 'Chez vous, il est ${heure} ?';
+
+	/// fr: 'Fuseau proposé : {lieu}.'
+	String lieuPropose({required Object lieu}) => 'Fuseau proposé : ${lieu}.';
+
+	/// fr: 'Fuseau retenu : {lieu}.'
+	String retenu({required Object lieu}) => 'Fuseau retenu : ${lieu}.';
+
+	/// fr: 'Oui, c'est l'heure chez moi'
+	String get oui => 'Oui, c\'est l\'heure chez moi';
+
+	/// fr: 'Votre fuseau horaire est confirmé.'
+	String get ouiDescription => 'Votre fuseau horaire est confirmé.';
+
+	/// fr: 'Non, je veux le changer'
+	String get changer => 'Non, je veux le changer';
+
+	/// fr: 'Vous choisissez la ville la plus proche de chez vous.'
+	String get changerDescription => 'Vous choisissez la ville la plus proche de chez vous.';
+
+	/// fr: 'Quelle est la ville la plus proche de chez vous ?'
+	String get choisirTitre => 'Quelle est la ville la plus proche de chez vous ?';
+
+	/// fr: 'Elle donne votre fuseau horaire. Les heures de votre entretien s'afficheront dans ce fuseau.'
+	String get choisirExplication => 'Elle donne votre fuseau horaire. Les heures de votre entretien s\'afficheront dans ce fuseau.';
+
+	/// fr: 'Rechercher une ville'
+	String get recherche => 'Rechercher une ville';
+
+	/// fr: 'Nom de la ville'
+	String get rechercheAide => 'Nom de la ville';
+
+	/// fr: 'Aucune ville ne correspond.'
+	String get aucune => 'Aucune ville ne correspond.';
+
+	/// fr: 'Une autre ville'
+	String get autre => 'Une autre ville';
+
+	/// fr: 'Revenir à la proposition'
+	String get retour => 'Revenir à la proposition';
+
+	late final Traductions$recrutement$parcours$fuseau$regions$fr regions = Traductions$recrutement$parcours$fuseau$regions$fr.internal(_root);
+
+	/// fr: 'Vos disponibilités et votre entretien seront à l'heure de chez vous.'
+	String get ouiExplication => 'Vos disponibilités et votre entretien seront à l\'heure de chez vous.';
+
+	/// fr: 'Utile si vous voyagez ou si l'heure de votre appareil n'est pas la bonne.'
+	String get changerExplication => 'Utile si vous voyagez ou si l\'heure de votre appareil n\'est pas la bonne.';
+}
+
+// Path: recrutement.parcours.creneaux
+class Traductions$recrutement$parcours$creneaux$fr {
+	Traductions$recrutement$parcours$creneaux$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nuit'
+	String get plage0 => 'Nuit';
+
+	/// fr: 'Aube'
+	String get plage1 => 'Aube';
+
+	/// fr: 'Matin'
+	String get plage2 => 'Matin';
+
+	/// fr: 'Midi'
+	String get plage3 => 'Midi';
+
+	/// fr: 'Après-midi'
+	String get plage4 => 'Après-midi';
+
+	/// fr: 'Soir'
+	String get plage5 => 'Soir';
+
+	/// fr: '{jour}, {plage}'
+	String jourCellule({required Object jour, required Object plage}) => '${jour}, ${plage}';
+
+	/// fr: '(zero) {Aucune plage choisie} (one) {Une plage choisie} (other) {{n} plages choisies}'
+	String choisies({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		zero: 'Aucune plage choisie',
+		one: 'Une plage choisie',
+		other: '${n} plages choisies',
+	);
+
+	/// fr: 'Heures de {lieu}.'
+	String fuseauRappel({required Object lieu}) => 'Heures de ${lieu}.';
+
+	/// fr: 'En partie'
+	String get partielle => 'En partie';
+
+	/// fr: 'Choisie'
+	String get choisie => 'Choisie';
+}
+
+// Path: recrutement.parcours.versement
+class Traductions$recrutement$parcours$versement$fr {
+	Traductions$recrutement$parcours$versement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dans votre pays, l'académie a confirmé le virement bancaire. Aucun moyen de paiement sur téléphone n'est proposé pour l'instant.'
+	String get virementSeul => 'Dans votre pays, l\'académie a confirmé le virement bancaire. Aucun moyen de paiement sur téléphone n\'est proposé pour l\'instant.';
+
+	/// fr: 'Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature : elle restera en Salle d'examen jusqu'à ce qu'un moyen soit possible.'
+	String get aucunMoyen => 'Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature : elle restera en Salle d\'examen jusqu\'à ce qu\'un moyen soit possible.';
+
+	/// fr: 'Paiement sur téléphone'
+	String get operateurDescription => 'Paiement sur téléphone';
+
+	/// fr: 'Nous cherchons les moyens possibles dans votre pays.'
+	String get chargement => 'Nous cherchons les moyens possibles dans votre pays.';
+
+	/// fr: 'Les moyens de versement de votre pays n'ont pas pu être chargés.'
+	String get nonCharge => 'Les moyens de versement de votre pays n\'ont pas pu être chargés.';
+
+	/// fr: 'Vous le déclarez maintenant. Vos coordonnées ne sont demandées qu'avant votre premier versement.'
+	String get operateurExplication => 'Vous le déclarez maintenant. Vos coordonnées ne sont demandées qu\'avant votre premier versement.';
+}
+
+// Path: recrutement.parcours.recap
+class Traductions$recrutement$parcours$recap$fr {
+	Traductions$recrutement$parcours$recap$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Relisez votre candidature'
+	String get titre => 'Relisez votre candidature';
+
+	/// fr: 'Touchez une réponse pour la changer. Rien n'est envoyé avant le bouton « Envoyer ma candidature ».'
+	String get explication => 'Touchez une réponse pour la changer. Rien n\'est envoyé avant le bouton « Envoyer ma candidature ».';
+
+	/// fr: '(one) {Une plage par semaine} (other) {{n} plages par semaine}'
+	String plages({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Une plage par semaine',
+		other: '${n} plages par semaine',
+	);
+}
+
+// Path: recrutement.parcours.q
+class Traductions$recrutement$parcours$q$fr {
+	Traductions$recrutement$parcours$q$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$recrutement$parcours$q$langueMaternelle$fr langueMaternelle = Traductions$recrutement$parcours$q$langueMaternelle$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$languesExplication$fr languesExplication = Traductions$recrutement$parcours$q$languesExplication$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$niveauMemorisationDeclare$fr niveauMemorisationDeclare = Traductions$recrutement$parcours$q$niveauMemorisationDeclare$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$niveauLectureTajwid$fr niveauLectureTajwid = Traductions$recrutement$parcours$q$niveauLectureTajwid$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$fr riwayat = Traductions$recrutement$parcours$q$riwayat$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$ijazaPresentable$fr ijazaPresentable = Traductions$recrutement$parcours$q$ijazaPresentable$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$experienceDebutants$fr experienceDebutants = Traductions$recrutement$parcours$q$experienceDebutants$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$fuseauIana$fr fuseauIana = Traductions$recrutement$parcours$q$fuseauIana$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$disponibilitesDeclarees$fr disponibilitesDeclarees = Traductions$recrutement$parcours$q$disponibilitesDeclarees$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$heuresParSemaine$fr heuresParSemaine = Traductions$recrutement$parcours$q$heuresParSemaine$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$debutPossible$fr debutPossible = Traductions$recrutement$parcours$q$debutPossible$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$publics$fr publics = Traductions$recrutement$parcours$q$publics$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$paysResidence$fr paysResidence = Traductions$recrutement$parcours$q$paysResidence$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$paysVersement$fr paysVersement = Traductions$recrutement$parcours$q$paysVersement$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$compteBancaire$fr compteBancaire = Traductions$recrutement$parcours$q$compteBancaire$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$operateurs$fr operateurs = Traductions$recrutement$parcours$q$operateurs$fr.internal(_root);
+}
+
 // Path: dossiers.revue.etats
 class Traductions$dossiers$revue$etats$fr {
 	Traductions$dossiers$revue$etats$fr.internal(this._root);
@@ -32415,6 +33101,410 @@ class Traductions$salle$seance$demo$tb$fr {
 	String get effacementTableau => 'Effacer les notes du tableau';
 }
 
+// Path: recrutement.parcours.presentation.p1
+class Traductions$recrutement$parcours$presentation$p1$fr {
+	Traductions$recrutement$parcours$presentation$p1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Qui est Rewayah Academy ?'
+	String get titre => 'Qui est Rewayah Academy ?';
+
+	/// fr: 'Avant les questions, voici ce que vous devez savoir de nous.'
+	String get intro => 'Avant les questions, voici ce que vous devez savoir de nous.';
+
+	late final Traductions$recrutement$parcours$presentation$p1$academie$fr academie = Traductions$recrutement$parcours$presentation$p1$academie$fr.internal(_root);
+	late final Traductions$recrutement$parcours$presentation$p1$liberte$fr liberte = Traductions$recrutement$parcours$presentation$p1$liberte$fr.internal(_root);
+	late final Traductions$recrutement$parcours$presentation$p1$donnees$fr donnees = Traductions$recrutement$parcours$presentation$p1$donnees$fr.internal(_root);
+	late final Traductions$recrutement$parcours$presentation$p1$separation$fr separation = Traductions$recrutement$parcours$presentation$p1$separation$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.presentation.p2
+class Traductions$recrutement$parcours$presentation$p2$fr {
+	Traductions$recrutement$parcours$presentation$p2$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce que fait un enseignant'
+	String get titre => 'Ce que fait un enseignant';
+
+	/// fr: 'Vous enseignez en visio, dans une classe qui reste la même.'
+	String get intro => 'Vous enseignez en visio, dans une classe qui reste la même.';
+
+	late final Traductions$recrutement$parcours$presentation$p2$classe$fr classe = Traductions$recrutement$parcours$presentation$p2$classe$fr.internal(_root);
+	late final Traductions$recrutement$parcours$presentation$p2$horaires$fr horaires = Traductions$recrutement$parcours$presentation$p2$horaires$fr.internal(_root);
+	late final Traductions$recrutement$parcours$presentation$p2$visio$fr visio = Traductions$recrutement$parcours$presentation$p2$visio$fr.internal(_root);
+	late final Traductions$recrutement$parcours$presentation$p2$remuneration$fr remuneration = Traductions$recrutement$parcours$presentation$p2$remuneration$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.presentation.p3
+class Traductions$recrutement$parcours$presentation$p3$fr {
+	Traductions$recrutement$parcours$presentation$p3$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Comment se passe votre candidature'
+	String get titre => 'Comment se passe votre candidature';
+
+	/// fr: 'Trois étapes, dans l'application.'
+	String get intro => 'Trois étapes, dans l\'application.';
+
+	late final Traductions$recrutement$parcours$presentation$p3$examen$fr examen = Traductions$recrutement$parcours$presentation$p3$examen$fr.internal(_root);
+	late final Traductions$recrutement$parcours$presentation$p3$entretien$fr entretien = Traductions$recrutement$parcours$presentation$p3$entretien$fr.internal(_root);
+	late final Traductions$recrutement$parcours$presentation$p3$verification$fr verification = Traductions$recrutement$parcours$presentation$p3$verification$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.fuseau.regions
+class Traductions$recrutement$parcours$fuseau$regions$fr {
+	Traductions$recrutement$parcours$fuseau$regions$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Afrique'
+	String get Africa => 'Afrique';
+
+	/// fr: 'Amériques'
+	String get America => 'Amériques';
+
+	/// fr: 'Antarctique'
+	String get Antarctica => 'Antarctique';
+
+	/// fr: 'Arctique'
+	String get Arctic => 'Arctique';
+
+	/// fr: 'Asie'
+	String get Asia => 'Asie';
+
+	/// fr: 'Atlantique'
+	String get Atlantic => 'Atlantique';
+
+	/// fr: 'Australie'
+	String get Australia => 'Australie';
+
+	/// fr: 'Europe'
+	String get Europe => 'Europe';
+
+	/// fr: 'Océan Indien'
+	String get Indian => 'Océan Indien';
+
+	/// fr: 'Pacifique'
+	String get Pacific => 'Pacifique';
+}
+
+// Path: recrutement.parcours.q.langueMaternelle
+class Traductions$recrutement$parcours$q$langueMaternelle$fr {
+	Traductions$recrutement$parcours$q$langueMaternelle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quelle est votre langue maternelle ?'
+	String get titre => 'Quelle est votre langue maternelle ?';
+
+	/// fr: 'C'est la langue que vous parlez depuis l'enfance.'
+	String get explication => 'C\'est la langue que vous parlez depuis l\'enfance.';
+
+	/// fr: 'Langue maternelle'
+	String get court => 'Langue maternelle';
+}
+
+// Path: recrutement.parcours.q.languesExplication
+class Traductions$recrutement$parcours$q$languesExplication$fr {
+	Traductions$recrutement$parcours$q$languesExplication$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dans quelles langues pouvez-vous expliquer et corriger ?'
+	String get titre => 'Dans quelles langues pouvez-vous expliquer et corriger ?';
+
+	/// fr: 'Choisissez toutes les langues dans lesquelles vous savez expliquer une règle à un élève et corriger ses erreurs. Un élève suit sa classe dans la langue choisie à l'inscription : ces langues aident la direction à voir dans quelles classes vous pourriez enseigner.'
+	String get explication => 'Choisissez toutes les langues dans lesquelles vous savez expliquer une règle à un élève et corriger ses erreurs. Un élève suit sa classe dans la langue choisie à l\'inscription : ces langues aident la direction à voir dans quelles classes vous pourriez enseigner.';
+
+	/// fr: 'Langues d'explication'
+	String get court => 'Langues d\'explication';
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare
+class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$fr {
+	Traductions$recrutement$parcours$q$niveauMemorisationDeclare$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quel est votre niveau de mémorisation ?'
+	String get titre => 'Quel est votre niveau de mémorisation ?';
+
+	/// fr: 'Vous le déclarez ici.'
+	String get explication => 'Vous le déclarez ici.';
+
+	/// fr: 'Niveau de mémorisation'
+	String get court => 'Niveau de mémorisation';
+
+	late final Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$fr options = Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.niveauLectureTajwid
+class Traductions$recrutement$parcours$q$niveauLectureTajwid$fr {
+	Traductions$recrutement$parcours$q$niveauLectureTajwid$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Comment lisez-vous le Coran ?'
+	String get titre => 'Comment lisez-vous le Coran ?';
+
+	/// fr: 'Le tajwid est l'ensemble des règles qui disent comment prononcer chaque lettre du Coran.'
+	String get explication => 'Le tajwid est l\'ensemble des règles qui disent comment prononcer chaque lettre du Coran.';
+
+	/// fr: 'Lecture et tajwid'
+	String get court => 'Lecture et tajwid';
+
+	late final Traductions$recrutement$parcours$q$niveauLectureTajwid$options$fr options = Traductions$recrutement$parcours$q$niveauLectureTajwid$options$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.riwayat
+class Traductions$recrutement$parcours$q$riwayat$fr {
+	Traductions$recrutement$parcours$q$riwayat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quelles riwayat récitez-vous ?'
+	String get titre => 'Quelles riwayat récitez-vous ?';
+
+	/// fr: 'Une riwaya est une façon transmise de réciter le Coran. Choisissez toutes celles que vous récitez.'
+	String get explication => 'Une riwaya est une façon transmise de réciter le Coran. Choisissez toutes celles que vous récitez.';
+
+	/// fr: 'Riwayat'
+	String get court => 'Riwayat';
+
+	late final Traductions$recrutement$parcours$q$riwayat$options$fr options = Traductions$recrutement$parcours$q$riwayat$options$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.ijazaPresentable
+class Traductions$recrutement$parcours$q$ijazaPresentable$fr {
+	Traductions$recrutement$parcours$q$ijazaPresentable$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Avez-vous une ijaza à présenter ?'
+	String get titre => 'Avez-vous une ijaza à présenter ?';
+
+	/// fr: 'Une ijaza est une autorisation écrite, donnée par un maître, de transmettre le Coran.'
+	String get explication => 'Une ijaza est une autorisation écrite, donnée par un maître, de transmettre le Coran.';
+
+	/// fr: 'Ijaza'
+	String get court => 'Ijaza';
+
+	late final Traductions$recrutement$parcours$q$ijazaPresentable$options$fr options = Traductions$recrutement$parcours$q$ijazaPresentable$options$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.experienceDebutants
+class Traductions$recrutement$parcours$q$experienceDebutants$fr {
+	Traductions$recrutement$parcours$q$experienceDebutants$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Avez-vous déjà enseigné à des débutants ?'
+	String get titre => 'Avez-vous déjà enseigné à des débutants ?';
+
+	/// fr: 'Un débutant apprend encore à lire les lettres et à les relier.'
+	String get explication => 'Un débutant apprend encore à lire les lettres et à les relier.';
+
+	/// fr: 'Expérience avec les débutants'
+	String get court => 'Expérience avec les débutants';
+
+	late final Traductions$recrutement$parcours$q$experienceDebutants$options$fr options = Traductions$recrutement$parcours$q$experienceDebutants$options$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.fuseauIana
+class Traductions$recrutement$parcours$q$fuseauIana$fr {
+	Traductions$recrutement$parcours$q$fuseauIana$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre fuseau horaire'
+	String get titre => 'Votre fuseau horaire';
+
+	/// fr: 'Vos disponibilités sont à l'heure de chez vous. Il faut donc que l'heure soit la bonne.'
+	String get explication => 'Vos disponibilités sont à l\'heure de chez vous. Il faut donc que l\'heure soit la bonne.';
+
+	/// fr: 'Fuseau horaire'
+	String get court => 'Fuseau horaire';
+}
+
+// Path: recrutement.parcours.q.disponibilitesDeclarees
+class Traductions$recrutement$parcours$q$disponibilitesDeclarees$fr {
+	Traductions$recrutement$parcours$q$disponibilitesDeclarees$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quand êtes-vous disponible ?'
+	String get titre => 'Quand êtes-vous disponible ?';
+
+	/// fr: 'Touchez les plages où vous pouvez enseigner, chaque semaine. Une plage dure quatre heures.'
+	String get explication => 'Touchez les plages où vous pouvez enseigner, chaque semaine. Une plage dure quatre heures.';
+
+	/// fr: 'Disponibilités'
+	String get court => 'Disponibilités';
+}
+
+// Path: recrutement.parcours.q.heuresParSemaine
+class Traductions$recrutement$parcours$q$heuresParSemaine$fr {
+	Traductions$recrutement$parcours$q$heuresParSemaine$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Combien d'heures par semaine pouvez-vous enseigner ?'
+	String get titre => 'Combien d\'heures par semaine pouvez-vous enseigner ?';
+
+	/// fr: 'Une classe d'enfants compte trois séances d'une heure par semaine, soit 3 heures. Une classe d'adultes compte trois séances d'une heure et demie, soit 4 heures et demie.'
+	String get explication => 'Une classe d\'enfants compte trois séances d\'une heure par semaine, soit 3 heures. Une classe d\'adultes compte trois séances d\'une heure et demie, soit 4 heures et demie.';
+
+	/// fr: 'Heures par semaine'
+	String get court => 'Heures par semaine';
+
+	late final Traductions$recrutement$parcours$q$heuresParSemaine$options$fr options = Traductions$recrutement$parcours$q$heuresParSemaine$options$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.debutPossible
+class Traductions$recrutement$parcours$q$debutPossible$fr {
+	Traductions$recrutement$parcours$q$debutPossible$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quand pouvez-vous commencer ?'
+	String get titre => 'Quand pouvez-vous commencer ?';
+
+	/// fr: 'Cette date aide la direction à savoir quand vous proposer une classe.'
+	String get explication => 'Cette date aide la direction à savoir quand vous proposer une classe.';
+
+	/// fr: 'Date de début'
+	String get court => 'Date de début';
+
+	late final Traductions$recrutement$parcours$q$debutPossible$options$fr options = Traductions$recrutement$parcours$q$debutPossible$options$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.publics
+class Traductions$recrutement$parcours$q$publics$fr {
+	Traductions$recrutement$parcours$q$publics$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quels élèves pouvez-vous enseigner ?'
+	String get titre => 'Quels élèves pouvez-vous enseigner ?';
+
+	/// fr: 'Choisissez les élèves auxquels vous pouvez enseigner. Vous pouvez choisir les deux.'
+	String get explication => 'Choisissez les élèves auxquels vous pouvez enseigner. Vous pouvez choisir les deux.';
+
+	/// fr: 'Publics'
+	String get court => 'Publics';
+
+	late final Traductions$recrutement$parcours$q$publics$options$fr options = Traductions$recrutement$parcours$q$publics$options$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.paysResidence
+class Traductions$recrutement$parcours$q$paysResidence$fr {
+	Traductions$recrutement$parcours$q$paysResidence$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dans quel pays vivez-vous ?'
+	String get titre => 'Dans quel pays vivez-vous ?';
+
+	/// fr: 'Choisissez le pays où vous vivez aujourd'hui.'
+	String get explication => 'Choisissez le pays où vous vivez aujourd\'hui.';
+
+	/// fr: 'Pays de résidence'
+	String get court => 'Pays de résidence';
+}
+
+// Path: recrutement.parcours.q.paysVersement
+class Traductions$recrutement$parcours$q$paysVersement$fr {
+	Traductions$recrutement$parcours$q$paysVersement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dans quel pays voulez-vous recevoir votre rémunération ?'
+	String get titre => 'Dans quel pays voulez-vous recevoir votre rémunération ?';
+
+	/// fr: 'L'académie vérifie, pays par pays, quel moyen de versement est possible. Nous avons repris votre pays de résidence : changez-le si besoin.'
+	String get explication => 'L\'académie vérifie, pays par pays, quel moyen de versement est possible. Nous avons repris votre pays de résidence : changez-le si besoin.';
+
+	/// fr: 'Pays de versement'
+	String get court => 'Pays de versement';
+}
+
+// Path: recrutement.parcours.q.compteBancaire
+class Traductions$recrutement$parcours$q$compteBancaire$fr {
+	Traductions$recrutement$parcours$q$compteBancaire$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Avez-vous un compte bancaire ?'
+	String get titre => 'Avez-vous un compte bancaire ?';
+
+	/// fr: 'La rémunération se verse par virement bancaire là où l'académie l'a confirmé. Vos coordonnées ne sont demandées qu'avant le premier versement.'
+	String get explication => 'La rémunération se verse par virement bancaire là où l\'académie l\'a confirmé. Vos coordonnées ne sont demandées qu\'avant le premier versement.';
+
+	/// fr: 'Compte bancaire'
+	String get court => 'Compte bancaire';
+
+	late final Traductions$recrutement$parcours$q$compteBancaire$options$fr options = Traductions$recrutement$parcours$q$compteBancaire$options$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.operateurs
+class Traductions$recrutement$parcours$q$operateurs$fr {
+	Traductions$recrutement$parcours$q$operateurs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quels moyens de paiement sur téléphone utilisez-vous ?'
+	String get titre => 'Quels moyens de paiement sur téléphone utilisez-vous ?';
+
+	/// fr: 'Voici les moyens que l'académie a confirmés dans votre pays. Choisissez ceux que vous utilisez, s'il y en a.'
+	String get explication => 'Voici les moyens que l\'académie a confirmés dans votre pays. Choisissez ceux que vous utilisez, s\'il y en a.';
+
+	/// fr: 'Moyens de paiement sur téléphone'
+	String get court => 'Moyens de paiement sur téléphone';
+}
+
 // Path: admin.finance.vue.alerte
 class Traductions$admin$finance$vue$alerte$fr {
 	Traductions$admin$finance$vue$alerte$fr.internal(this._root);
@@ -35040,6 +36130,296 @@ class Traductions$avis$admin$liens$etat$fr {
 	String get plein => 'Complet';
 }
 
+// Path: recrutement.parcours.presentation.p1.academie
+class Traductions$recrutement$parcours$presentation$p1$academie$fr {
+	Traductions$recrutement$parcours$presentation$p1$academie$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une académie du Coran en ligne'
+	String get titre => 'Une académie du Coran en ligne';
+
+	/// fr: 'Rewayah Academy enseigne le Coran à distance, en classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024.'
+	String get texte => 'Rewayah Academy enseigne le Coran à distance, en classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024.';
+}
+
+// Path: recrutement.parcours.presentation.p1.liberte
+class Traductions$recrutement$parcours$presentation$p1$liberte$fr {
+	Traductions$recrutement$parcours$presentation$p1$liberte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous restez libre'
+	String get titre => 'Vous restez libre';
+
+	/// fr: 'Tant que vous n'êtes pas enseignant, vous pouvez retirer votre candidature depuis votre dossier.'
+	String get texte => 'Tant que vous n\'êtes pas enseignant, vous pouvez retirer votre candidature depuis votre dossier.';
+}
+
+// Path: recrutement.parcours.presentation.p1.donnees
+class Traductions$recrutement$parcours$presentation$p1$donnees$fr {
+	Traductions$recrutement$parcours$presentation$p1$donnees$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vos données sont protégées'
+	String get titre => 'Vos données sont protégées';
+
+	/// fr: 'Vos réponses ne sont lues que par les personnes de l'académie qui examinent votre candidature.'
+	String get texte => 'Vos réponses ne sont lues que par les personnes de l\'académie qui examinent votre candidature.';
+}
+
+// Path: recrutement.parcours.presentation.p1.separation
+class Traductions$recrutement$parcours$presentation$p1$separation$fr {
+	Traductions$recrutement$parcours$presentation$p1$separation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Femmes et hommes séparés'
+	String get titre => 'Femmes et hommes séparés';
+
+	/// fr: 'Une candidature de femme est suivie par la direction du côté des femmes, une candidature d'homme du côté des hommes.'
+	String get texte => 'Une candidature de femme est suivie par la direction du côté des femmes, une candidature d\'homme du côté des hommes.';
+}
+
+// Path: recrutement.parcours.presentation.p2.classe
+class Traductions$recrutement$parcours$presentation$p2$classe$fr {
+	Traductions$recrutement$parcours$presentation$p2$classe$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une classe stable'
+	String get titre => 'Une classe stable';
+
+	/// fr: 'Vous gardez la même classe dans la durée, avec les mêmes élèves.'
+	String get texte => 'Vous gardez la même classe dans la durée, avec les mêmes élèves.';
+}
+
+// Path: recrutement.parcours.presentation.p2.horaires
+class Traductions$recrutement$parcours$presentation$p2$horaires$fr {
+	Traductions$recrutement$parcours$presentation$p2$horaires$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les mêmes horaires chaque semaine'
+	String get titre => 'Les mêmes horaires chaque semaine';
+
+	/// fr: 'Votre classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine.'
+	String get texte => 'Votre classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine.';
+}
+
+// Path: recrutement.parcours.presentation.p2.visio
+class Traductions$recrutement$parcours$presentation$p2$visio$fr {
+	Traductions$recrutement$parcours$presentation$p2$visio$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'En visio, dans l'application'
+	String get titre => 'En visio, dans l\'application';
+
+	/// fr: 'Les cours se donnent en visioconférence, dans l'application de Rewayah.'
+	String get texte => 'Les cours se donnent en visioconférence, dans l\'application de Rewayah.';
+}
+
+// Path: recrutement.parcours.presentation.p2.remuneration
+class Traductions$recrutement$parcours$presentation$p2$remuneration$fr {
+	Traductions$recrutement$parcours$presentation$p2$remuneration$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une rémunération expliquée'
+	String get titre => 'Une rémunération expliquée';
+
+	/// fr: 'Votre rémunération est une part du prix que paie chaque élève présent. Elle vous est expliquée en pourcentage avant d'envoyer votre candidature.'
+	String get texte => 'Votre rémunération est une part du prix que paie chaque élève présent. Elle vous est expliquée en pourcentage avant d\'envoyer votre candidature.';
+}
+
+// Path: recrutement.parcours.presentation.p3.examen
+class Traductions$recrutement$parcours$presentation$p3$examen$fr {
+	Traductions$recrutement$parcours$presentation$p3$examen$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La Salle d'examen'
+	String get titre => 'La Salle d\'examen';
+
+	/// fr: 'Vous répondez aux questions de ce parcours, puis vous envoyez votre candidature. La direction lit vos réponses.'
+	String get texte => 'Vous répondez aux questions de ce parcours, puis vous envoyez votre candidature. La direction lit vos réponses.';
+}
+
+// Path: recrutement.parcours.presentation.p3.entretien
+class Traductions$recrutement$parcours$presentation$p3$entretien$fr {
+	Traductions$recrutement$parcours$presentation$p3$entretien$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'L'entretien en visio'
+	String get titre => 'L\'entretien en visio';
+
+	/// fr: 'Si votre candidature est retenue pour la suite, la direction vous reçoit en visio, dans l'application.'
+	String get texte => 'Si votre candidature est retenue pour la suite, la direction vous reçoit en visio, dans l\'application.';
+}
+
+// Path: recrutement.parcours.presentation.p3.verification
+class Traductions$recrutement$parcours$presentation$p3$verification$fr {
+	Traductions$recrutement$parcours$presentation$p3$verification$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La vérification'
+	String get titre => 'La vérification';
+
+	/// fr: 'Vous déposez votre pièce d'identité et vous lisez nos accords. Quand tout est en ordre, vous entrez dans la Salle des prêts à enseigner.'
+	String get texte => 'Vous déposez votre pièce d\'identité et vous lisez nos accords. Quand tout est en ordre, vous entrez dans la Salle des prêts à enseigner.';
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare.options
+class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$fr {
+	Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$coran_entier$fr coran_entier = Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$coran_entier$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ijaza_lecture_enseignement$fr ijaza_lecture_enseignement = Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ijaza_lecture_enseignement$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$plus_de_10_juz$fr plus_de_10_juz = Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$plus_de_10_juz$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_de_10_juz$fr moins_de_10_juz = Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_de_10_juz$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$bonne_lecture_sans_memorisation$fr bonne_lecture_sans_memorisation = Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$bonne_lecture_sans_memorisation$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.niveauLectureTajwid.options
+class Traductions$recrutement$parcours$q$niveauLectureTajwid$options$fr {
+	Traductions$recrutement$parcours$q$niveauLectureTajwid$options$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$recrutement$parcours$q$niveauLectureTajwid$options$lecture_sans_regles_tajwid$fr lecture_sans_regles_tajwid = Traductions$recrutement$parcours$q$niveauLectureTajwid$options$lecture_sans_regles_tajwid$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_applique$fr tajwid_applique = Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_applique$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_enseigne$fr tajwid_enseigne = Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_enseigne$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.riwayat.options
+class Traductions$recrutement$parcours$q$riwayat$options$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$recrutement$parcours$q$riwayat$options$hafs$fr hafs = Traductions$recrutement$parcours$q$riwayat$options$hafs$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$shuba$fr shuba = Traductions$recrutement$parcours$q$riwayat$options$shuba$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$warsh$fr warsh = Traductions$recrutement$parcours$q$riwayat$options$warsh$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$qalun$fr qalun = Traductions$recrutement$parcours$q$riwayat$options$qalun$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$al_bazzi$fr al_bazzi = Traductions$recrutement$parcours$q$riwayat$options$al_bazzi$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$qunbul$fr qunbul = Traductions$recrutement$parcours$q$riwayat$options$qunbul$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$ad_duri_abi_amr$fr ad_duri_abi_amr = Traductions$recrutement$parcours$q$riwayat$options$ad_duri_abi_amr$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$as_susi$fr as_susi = Traductions$recrutement$parcours$q$riwayat$options$as_susi$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$hisham$fr hisham = Traductions$recrutement$parcours$q$riwayat$options$hisham$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$ibn_dhakwan$fr ibn_dhakwan = Traductions$recrutement$parcours$q$riwayat$options$ibn_dhakwan$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$khalaf_an_hamza$fr khalaf_an_hamza = Traductions$recrutement$parcours$q$riwayat$options$khalaf_an_hamza$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$khallad$fr khallad = Traductions$recrutement$parcours$q$riwayat$options$khallad$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$abu_al_harith$fr abu_al_harith = Traductions$recrutement$parcours$q$riwayat$options$abu_al_harith$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$ad_duri_al_kisai$fr ad_duri_al_kisai = Traductions$recrutement$parcours$q$riwayat$options$ad_duri_al_kisai$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$ibn_wardan$fr ibn_wardan = Traductions$recrutement$parcours$q$riwayat$options$ibn_wardan$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$ibn_jammaz$fr ibn_jammaz = Traductions$recrutement$parcours$q$riwayat$options$ibn_jammaz$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$ruways$fr ruways = Traductions$recrutement$parcours$q$riwayat$options$ruways$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$rawh$fr rawh = Traductions$recrutement$parcours$q$riwayat$options$rawh$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$ishaq$fr ishaq = Traductions$recrutement$parcours$q$riwayat$options$ishaq$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$riwayat$options$idris$fr idris = Traductions$recrutement$parcours$q$riwayat$options$idris$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.ijazaPresentable.options
+class Traductions$recrutement$parcours$q$ijazaPresentable$options$fr {
+	Traductions$recrutement$parcours$q$ijazaPresentable$options$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$recrutement$parcours$q$ijazaPresentable$options$oui$fr oui = Traductions$recrutement$parcours$q$ijazaPresentable$options$oui$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$ijazaPresentable$options$non$fr non = Traductions$recrutement$parcours$q$ijazaPresentable$options$non$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.experienceDebutants.options
+class Traductions$recrutement$parcours$q$experienceDebutants$options$fr {
+	Traductions$recrutement$parcours$q$experienceDebutants$options$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$recrutement$parcours$q$experienceDebutants$options$oui$fr oui = Traductions$recrutement$parcours$q$experienceDebutants$options$oui$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$experienceDebutants$options$non$fr non = Traductions$recrutement$parcours$q$experienceDebutants$options$non$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.heuresParSemaine.options
+class Traductions$recrutement$parcours$q$heuresParSemaine$options$fr {
+	Traductions$recrutement$parcours$q$heuresParSemaine$options$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$recrutement$parcours$q$heuresParSemaine$options$moins_de_3$fr moins_de_3 = Traductions$recrutement$parcours$q$heuresParSemaine$options$moins_de_3$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$heuresParSemaine$options$de_3_a_5$fr de_3_a_5 = Traductions$recrutement$parcours$q$heuresParSemaine$options$de_3_a_5$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$heuresParSemaine$options$de_6_a_10$fr de_6_a_10 = Traductions$recrutement$parcours$q$heuresParSemaine$options$de_6_a_10$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$heuresParSemaine$options$plus_de_10$fr plus_de_10 = Traductions$recrutement$parcours$q$heuresParSemaine$options$plus_de_10$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.debutPossible.options
+class Traductions$recrutement$parcours$q$debutPossible$options$fr {
+	Traductions$recrutement$parcours$q$debutPossible$options$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$recrutement$parcours$q$debutPossible$options$immediat$fr immediat = Traductions$recrutement$parcours$q$debutPossible$options$immediat$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$debutPossible$options$mois_prochain$fr mois_prochain = Traductions$recrutement$parcours$q$debutPossible$options$mois_prochain$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$debutPossible$options$sous_3_mois$fr sous_3_mois = Traductions$recrutement$parcours$q$debutPossible$options$sous_3_mois$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$debutPossible$options$inconnu$fr inconnu = Traductions$recrutement$parcours$q$debutPossible$options$inconnu$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.publics.options
+class Traductions$recrutement$parcours$q$publics$options$fr {
+	Traductions$recrutement$parcours$q$publics$options$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$recrutement$parcours$q$publics$options$enfant$fr enfant = Traductions$recrutement$parcours$q$publics$options$enfant$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$publics$options$adulte$fr adulte = Traductions$recrutement$parcours$q$publics$options$adulte$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.compteBancaire.options
+class Traductions$recrutement$parcours$q$compteBancaire$options$fr {
+	Traductions$recrutement$parcours$q$compteBancaire$options$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$recrutement$parcours$q$compteBancaire$options$oui$fr oui = Traductions$recrutement$parcours$q$compteBancaire$options$oui$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$compteBancaire$options$non$fr non = Traductions$recrutement$parcours$q$compteBancaire$options$non$fr.internal(_root);
+}
+
 // Path: com.annonces.administration.moderation.regleMotif
 class Traductions$com$annonces$administration$moderation$regleMotif$fr {
 	Traductions$com$annonces$administration$moderation$regleMotif$fr.internal(this._root);
@@ -35092,6 +36472,789 @@ class Traductions$com$annonces$administration$moderation$regles$fr {
 
 	/// fr: 'Aucune donnée personnelle d'un élève ou d'une famille'
 	String get pasDonnees => 'Aucune donnée personnelle d\'un élève ou d\'une famille';
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier
+class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$coran_entier$fr {
+	Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$coran_entier$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'J'ai mémorisé tout le Coran'
+	String get libelle => 'J\'ai mémorisé tout le Coran';
+
+	/// fr: 'Les 114 sourates, de la première à la dernière, par cœur.'
+	String get description => 'Les 114 sourates, de la première à la dernière, par cœur.';
+
+	/// fr: 'Ce niveau est constaté pendant l'entretien.'
+	String get explication => 'Ce niveau est constaté pendant l\'entretien.';
+
+	/// fr: 'vous récitez Al-Baqara, puis An-Nâs, sans ouvrir le livre.'
+	String get exemple => 'vous récitez Al-Baqara, puis An-Nâs, sans ouvrir le livre.';
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.ijaza_lecture_enseignement
+class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ijaza_lecture_enseignement$fr {
+	Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ijaza_lecture_enseignement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'J'ai une ijaza de lecture et d'enseignement'
+	String get libelle => 'J\'ai une ijaza de lecture et d\'enseignement';
+
+	/// fr: 'Une autorisation écrite, donnée par un maître, de lire et d'enseigner le Coran.'
+	String get description => 'Une autorisation écrite, donnée par un maître, de lire et d\'enseigner le Coran.';
+
+	/// fr: 'Elle se montre pendant l'entretien : vous n'avez rien à envoyer maintenant.'
+	String get explication => 'Elle se montre pendant l\'entretien : vous n\'avez rien à envoyer maintenant.';
+
+	/// fr: 'un document écrit, remis par votre maître, à votre nom.'
+	String get exemple => 'un document écrit, remis par votre maître, à votre nom.';
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.plus_de_10_juz
+class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$plus_de_10_juz$fr {
+	Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$plus_de_10_juz$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'J'ai mémorisé plus de dix juz'
+	String get libelle => 'J\'ai mémorisé plus de dix juz';
+
+	/// fr: 'Plus du tiers du Coran, qui compte trente juz.'
+	String get description => 'Plus du tiers du Coran, qui compte trente juz.';
+
+	/// fr: 'Ce niveau est constaté pendant l'entretien.'
+	String get explication => 'Ce niveau est constaté pendant l\'entretien.';
+
+	/// fr: 'vous avez mémorisé douze juz sur trente.'
+	String get exemple => 'vous avez mémorisé douze juz sur trente.';
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.moins_de_10_juz
+class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_de_10_juz$fr {
+	Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_de_10_juz$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'J'ai mémorisé moins de dix juz'
+	String get libelle => 'J\'ai mémorisé moins de dix juz';
+
+	/// fr: 'Moins du tiers du Coran, qui compte trente juz.'
+	String get description => 'Moins du tiers du Coran, qui compte trente juz.';
+
+	/// fr: 'Ce niveau est constaté pendant l'entretien.'
+	String get explication => 'Ce niveau est constaté pendant l\'entretien.';
+
+	/// fr: 'vous avez mémorisé cinq juz sur trente.'
+	String get exemple => 'vous avez mémorisé cinq juz sur trente.';
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.bonne_lecture_sans_memorisation
+class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$bonne_lecture_sans_memorisation$fr {
+	Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$bonne_lecture_sans_memorisation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Je n'ai pas mémorisé, mais je lis bien avec le tajwid'
+	String get libelle => 'Je n\'ai pas mémorisé, mais je lis bien avec le tajwid';
+
+	/// fr: 'Vous lisez le Coran correctement, en appliquant les règles du tajwid, sans le réciter de mémoire.'
+	String get description => 'Vous lisez le Coran correctement, en appliquant les règles du tajwid, sans le réciter de mémoire.';
+
+	/// fr: 'Votre lecture est constatée pendant l'entretien.'
+	String get explication => 'Votre lecture est constatée pendant l\'entretien.';
+
+	/// fr: 'vous lisez une page du Coran sans erreur, mais vous ne la récitez pas de mémoire.'
+	String get exemple => 'vous lisez une page du Coran sans erreur, mais vous ne la récitez pas de mémoire.';
+}
+
+// Path: recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid
+class Traductions$recrutement$parcours$q$niveauLectureTajwid$options$lecture_sans_regles_tajwid$fr {
+	Traductions$recrutement$parcours$q$niveauLectureTajwid$options$lecture_sans_regles_tajwid$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Je lis sans appliquer les règles du tajwid'
+	String get libelle => 'Je lis sans appliquer les règles du tajwid';
+
+	/// fr: 'Vous lisez couramment, sans suivre les règles de prononciation.'
+	String get description => 'Vous lisez couramment, sans suivre les règles de prononciation.';
+
+	/// fr: 'Votre lecture est constatée pendant l'entretien.'
+	String get explication => 'Votre lecture est constatée pendant l\'entretien.';
+
+	/// fr: 'vous lisez une page sans hésiter, mais vous n'appliquez pas les règles du tajwid.'
+	String get exemple => 'vous lisez une page sans hésiter, mais vous n\'appliquez pas les règles du tajwid.';
+}
+
+// Path: recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique
+class Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_applique$fr {
+	Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_applique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'J'applique les règles du tajwid en lisant'
+	String get libelle => 'J\'applique les règles du tajwid en lisant';
+
+	/// fr: 'Vous respectez les règles de prononciation quand vous lisez.'
+	String get description => 'Vous respectez les règles de prononciation quand vous lisez.';
+
+	/// fr: 'Votre lecture est constatée pendant l'entretien.'
+	String get explication => 'Votre lecture est constatée pendant l\'entretien.';
+
+	/// fr: 'vous allongez et prononcez les lettres comme le demandent les règles du tajwid.'
+	String get exemple => 'vous allongez et prononcez les lettres comme le demandent les règles du tajwid.';
+}
+
+// Path: recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne
+class Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_enseigne$fr {
+	Traductions$recrutement$parcours$q$niveauLectureTajwid$options$tajwid_enseigne$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'J'applique le tajwid et je sais l'enseigner'
+	String get libelle => 'J\'applique le tajwid et je sais l\'enseigner';
+
+	/// fr: 'Vous respectez les règles et vous savez les expliquer à un élève.'
+	String get description => 'Vous respectez les règles et vous savez les expliquer à un élève.';
+
+	/// fr: 'Votre lecture est constatée pendant l'entretien.'
+	String get explication => 'Votre lecture est constatée pendant l\'entretien.';
+
+	/// fr: 'quand un élève se trompe sur une lettre, vous lui expliquez la règle et il la répète.'
+	String get exemple => 'quand un élève se trompe sur une lettre, vous lui expliquez la règle et il la répète.';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.hafs
+class Traductions$recrutement$parcours$q$riwayat$options$hafs$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$hafs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Hafs'
+	String get libelle => 'Hafs';
+
+	/// fr: 'Transmise d'après Asim'
+	String get description => 'Transmise d\'après Asim';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.shuba
+class Traductions$recrutement$parcours$q$riwayat$options$shuba$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$shuba$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Shuba'
+	String get libelle => 'Shuba';
+
+	/// fr: 'Transmise d'après Asim'
+	String get description => 'Transmise d\'après Asim';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.warsh
+class Traductions$recrutement$parcours$q$riwayat$options$warsh$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$warsh$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Warsh'
+	String get libelle => 'Warsh';
+
+	/// fr: 'Transmise d'après Nafi'
+	String get description => 'Transmise d\'après Nafi';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.qalun
+class Traductions$recrutement$parcours$q$riwayat$options$qalun$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$qalun$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Qalun'
+	String get libelle => 'Qalun';
+
+	/// fr: 'Transmise d'après Nafi'
+	String get description => 'Transmise d\'après Nafi';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.al_bazzi
+class Traductions$recrutement$parcours$q$riwayat$options$al_bazzi$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$al_bazzi$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Al-Bazzi'
+	String get libelle => 'Al-Bazzi';
+
+	/// fr: 'Transmise d'après Ibn Kathir'
+	String get description => 'Transmise d\'après Ibn Kathir';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.qunbul
+class Traductions$recrutement$parcours$q$riwayat$options$qunbul$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$qunbul$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Qunbul'
+	String get libelle => 'Qunbul';
+
+	/// fr: 'Transmise d'après Ibn Kathir'
+	String get description => 'Transmise d\'après Ibn Kathir';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.ad_duri_abi_amr
+class Traductions$recrutement$parcours$q$riwayat$options$ad_duri_abi_amr$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$ad_duri_abi_amr$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ad-Duri (Abu Amr)'
+	String get libelle => 'Ad-Duri (Abu Amr)';
+
+	/// fr: 'Transmise d'après Abu Amr'
+	String get description => 'Transmise d\'après Abu Amr';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.as_susi
+class Traductions$recrutement$parcours$q$riwayat$options$as_susi$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$as_susi$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'As-Susi'
+	String get libelle => 'As-Susi';
+
+	/// fr: 'Transmise d'après Abu Amr'
+	String get description => 'Transmise d\'après Abu Amr';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.hisham
+class Traductions$recrutement$parcours$q$riwayat$options$hisham$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$hisham$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Hisham'
+	String get libelle => 'Hisham';
+
+	/// fr: 'Transmise d'après Ibn Amir'
+	String get description => 'Transmise d\'après Ibn Amir';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.ibn_dhakwan
+class Traductions$recrutement$parcours$q$riwayat$options$ibn_dhakwan$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$ibn_dhakwan$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ibn Dhakwan'
+	String get libelle => 'Ibn Dhakwan';
+
+	/// fr: 'Transmise d'après Ibn Amir'
+	String get description => 'Transmise d\'après Ibn Amir';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.khalaf_an_hamza
+class Traductions$recrutement$parcours$q$riwayat$options$khalaf_an_hamza$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$khalaf_an_hamza$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Khalaf (Hamza)'
+	String get libelle => 'Khalaf (Hamza)';
+
+	/// fr: 'Transmise d'après Hamza'
+	String get description => 'Transmise d\'après Hamza';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.khallad
+class Traductions$recrutement$parcours$q$riwayat$options$khallad$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$khallad$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Khallad'
+	String get libelle => 'Khallad';
+
+	/// fr: 'Transmise d'après Hamza'
+	String get description => 'Transmise d\'après Hamza';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.abu_al_harith
+class Traductions$recrutement$parcours$q$riwayat$options$abu_al_harith$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$abu_al_harith$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Abu al-Harith'
+	String get libelle => 'Abu al-Harith';
+
+	/// fr: 'Transmise d'après Al-Kisai'
+	String get description => 'Transmise d\'après Al-Kisai';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.ad_duri_al_kisai
+class Traductions$recrutement$parcours$q$riwayat$options$ad_duri_al_kisai$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$ad_duri_al_kisai$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ad-Duri (Al-Kisai)'
+	String get libelle => 'Ad-Duri (Al-Kisai)';
+
+	/// fr: 'Transmise d'après Al-Kisai'
+	String get description => 'Transmise d\'après Al-Kisai';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.ibn_wardan
+class Traductions$recrutement$parcours$q$riwayat$options$ibn_wardan$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$ibn_wardan$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ibn Wardan'
+	String get libelle => 'Ibn Wardan';
+
+	/// fr: 'Transmise d'après Abu Jafar'
+	String get description => 'Transmise d\'après Abu Jafar';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.ibn_jammaz
+class Traductions$recrutement$parcours$q$riwayat$options$ibn_jammaz$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$ibn_jammaz$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ibn Jammaz'
+	String get libelle => 'Ibn Jammaz';
+
+	/// fr: 'Transmise d'après Abu Jafar'
+	String get description => 'Transmise d\'après Abu Jafar';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.ruways
+class Traductions$recrutement$parcours$q$riwayat$options$ruways$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$ruways$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ruways'
+	String get libelle => 'Ruways';
+
+	/// fr: 'Transmise d'après Yaqub'
+	String get description => 'Transmise d\'après Yaqub';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.rawh
+class Traductions$recrutement$parcours$q$riwayat$options$rawh$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$rawh$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rawh'
+	String get libelle => 'Rawh';
+
+	/// fr: 'Transmise d'après Yaqub'
+	String get description => 'Transmise d\'après Yaqub';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.ishaq
+class Traductions$recrutement$parcours$q$riwayat$options$ishaq$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$ishaq$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ishaq'
+	String get libelle => 'Ishaq';
+
+	/// fr: 'Transmise d'après Khalaf, le dixième lecteur'
+	String get description => 'Transmise d\'après Khalaf, le dixième lecteur';
+}
+
+// Path: recrutement.parcours.q.riwayat.options.idris
+class Traductions$recrutement$parcours$q$riwayat$options$idris$fr {
+	Traductions$recrutement$parcours$q$riwayat$options$idris$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Idris'
+	String get libelle => 'Idris';
+
+	/// fr: 'Transmise d'après Khalaf, le dixième lecteur'
+	String get description => 'Transmise d\'après Khalaf, le dixième lecteur';
+}
+
+// Path: recrutement.parcours.q.ijazaPresentable.options.oui
+class Traductions$recrutement$parcours$q$ijazaPresentable$options$oui$fr {
+	Traductions$recrutement$parcours$q$ijazaPresentable$options$oui$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Oui, j'ai une ijaza à présenter'
+	String get libelle => 'Oui, j\'ai une ijaza à présenter';
+
+	/// fr: 'Vous pouvez la montrer en visio.'
+	String get description => 'Vous pouvez la montrer en visio.';
+
+	/// fr: 'Elle se montre pendant l'entretien : vous n'avez rien à envoyer maintenant.'
+	String get explication => 'Elle se montre pendant l\'entretien : vous n\'avez rien à envoyer maintenant.';
+
+	/// fr: 'un document signé par votre maître, que vous gardez chez vous.'
+	String get exemple => 'un document signé par votre maître, que vous gardez chez vous.';
+}
+
+// Path: recrutement.parcours.q.ijazaPresentable.options.non
+class Traductions$recrutement$parcours$q$ijazaPresentable$options$non$fr {
+	Traductions$recrutement$parcours$q$ijazaPresentable$options$non$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Non, je n'en ai pas à présenter'
+	String get libelle => 'Non, je n\'en ai pas à présenter';
+
+	/// fr: 'Vous n'avez pas d'ijaza, ou pas de quoi la présenter.'
+	String get description => 'Vous n\'avez pas d\'ijaza, ou pas de quoi la présenter.';
+
+	/// fr: 'Votre niveau est alors constaté pendant l'entretien.'
+	String get explication => 'Votre niveau est alors constaté pendant l\'entretien.';
+
+	/// fr: 'vous avez appris auprès d'un maître, sans recevoir de document écrit.'
+	String get exemple => 'vous avez appris auprès d\'un maître, sans recevoir de document écrit.';
+}
+
+// Path: recrutement.parcours.q.experienceDebutants.options.oui
+class Traductions$recrutement$parcours$q$experienceDebutants$options$oui$fr {
+	Traductions$recrutement$parcours$q$experienceDebutants$options$oui$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Oui, j'ai déjà enseigné à des débutants'
+	String get libelle => 'Oui, j\'ai déjà enseigné à des débutants';
+
+	/// fr: 'Vous avez déjà accompagné des élèves qui commencent.'
+	String get description => 'Vous avez déjà accompagné des élèves qui commencent.';
+
+	/// fr: 'La direction le sait avant l'entretien.'
+	String get explication => 'La direction le sait avant l\'entretien.';
+
+	/// fr: 'vous avez appris les lettres arabes à des enfants ou à des adultes.'
+	String get exemple => 'vous avez appris les lettres arabes à des enfants ou à des adultes.';
+}
+
+// Path: recrutement.parcours.q.experienceDebutants.options.non
+class Traductions$recrutement$parcours$q$experienceDebutants$options$non$fr {
+	Traductions$recrutement$parcours$q$experienceDebutants$options$non$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Non, pas encore'
+	String get libelle => 'Non, pas encore';
+
+	/// fr: 'Vous n'avez pas encore enseigné à des débutants.'
+	String get description => 'Vous n\'avez pas encore enseigné à des débutants.';
+
+	/// fr: 'Vous pouvez quand même envoyer votre candidature.'
+	String get explication => 'Vous pouvez quand même envoyer votre candidature.';
+
+	/// fr: 'vous avez enseigné seulement à des élèves qui savaient déjà lire.'
+	String get exemple => 'vous avez enseigné seulement à des élèves qui savaient déjà lire.';
+}
+
+// Path: recrutement.parcours.q.heuresParSemaine.options.moins_de_3
+class Traductions$recrutement$parcours$q$heuresParSemaine$options$moins_de_3$fr {
+	Traductions$recrutement$parcours$q$heuresParSemaine$options$moins_de_3$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Moins de 3 heures'
+	String get libelle => 'Moins de 3 heures';
+
+	/// fr: 'Moins que le temps d'une classe entière.'
+	String get description => 'Moins que le temps d\'une classe entière.';
+
+	/// fr: 'deux séances d'une heure par semaine.'
+	String get exemple => 'deux séances d\'une heure par semaine.';
+}
+
+// Path: recrutement.parcours.q.heuresParSemaine.options.de_3_a_5
+class Traductions$recrutement$parcours$q$heuresParSemaine$options$de_3_a_5$fr {
+	Traductions$recrutement$parcours$q$heuresParSemaine$options$de_3_a_5$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'De 3 à 5 heures'
+	String get libelle => 'De 3 à 5 heures';
+
+	/// fr: 'Le temps d'une classe.'
+	String get description => 'Le temps d\'une classe.';
+
+	/// fr: 'une classe d'enfants, trois séances d'une heure, soit 3 heures par semaine.'
+	String get exemple => 'une classe d\'enfants, trois séances d\'une heure, soit 3 heures par semaine.';
+}
+
+// Path: recrutement.parcours.q.heuresParSemaine.options.de_6_a_10
+class Traductions$recrutement$parcours$q$heuresParSemaine$options$de_6_a_10$fr {
+	Traductions$recrutement$parcours$q$heuresParSemaine$options$de_6_a_10$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'De 6 à 10 heures'
+	String get libelle => 'De 6 à 10 heures';
+
+	/// fr: 'Le temps de deux classes.'
+	String get description => 'Le temps de deux classes.';
+
+	/// fr: 'deux classes d'adultes, six séances d'une heure et demie, soit 9 heures par semaine.'
+	String get exemple => 'deux classes d\'adultes, six séances d\'une heure et demie, soit 9 heures par semaine.';
+}
+
+// Path: recrutement.parcours.q.heuresParSemaine.options.plus_de_10
+class Traductions$recrutement$parcours$q$heuresParSemaine$options$plus_de_10$fr {
+	Traductions$recrutement$parcours$q$heuresParSemaine$options$plus_de_10$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Plus de 10 heures'
+	String get libelle => 'Plus de 10 heures';
+
+	/// fr: 'Le temps de plusieurs classes.'
+	String get description => 'Le temps de plusieurs classes.';
+
+	/// fr: 'trois classes d'adultes, neuf séances d'une heure et demie, soit 13 heures et demie par semaine.'
+	String get exemple => 'trois classes d\'adultes, neuf séances d\'une heure et demie, soit 13 heures et demie par semaine.';
+}
+
+// Path: recrutement.parcours.q.debutPossible.options.immediat
+class Traductions$recrutement$parcours$q$debutPossible$options$immediat$fr {
+	Traductions$recrutement$parcours$q$debutPossible$options$immediat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dès maintenant'
+	String get libelle => 'Dès maintenant';
+
+	/// fr: 'Vous pouvez commencer dès qu'une classe vous est confiée.'
+	String get description => 'Vous pouvez commencer dès qu\'une classe vous est confiée.';
+
+	/// fr: 'aucun engagement ne vous retient ce mois-ci.'
+	String get exemple => 'aucun engagement ne vous retient ce mois-ci.';
+}
+
+// Path: recrutement.parcours.q.debutPossible.options.mois_prochain
+class Traductions$recrutement$parcours$q$debutPossible$options$mois_prochain$fr {
+	Traductions$recrutement$parcours$q$debutPossible$options$mois_prochain$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le mois prochain'
+	String get libelle => 'Le mois prochain';
+
+	/// fr: 'Vous serez disponible à partir du mois prochain.'
+	String get description => 'Vous serez disponible à partir du mois prochain.';
+
+	/// fr: 'vous terminez un autre travail à la fin de ce mois.'
+	String get exemple => 'vous terminez un autre travail à la fin de ce mois.';
+}
+
+// Path: recrutement.parcours.q.debutPossible.options.sous_3_mois
+class Traductions$recrutement$parcours$q$debutPossible$options$sous_3_mois$fr {
+	Traductions$recrutement$parcours$q$debutPossible$options$sous_3_mois$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dans moins de trois mois'
+	String get libelle => 'Dans moins de trois mois';
+
+	/// fr: 'Vous serez disponible dans les trois prochains mois.'
+	String get description => 'Vous serez disponible dans les trois prochains mois.';
+
+	/// fr: 'vous êtes en voyage ou en examens pendant quelques semaines.'
+	String get exemple => 'vous êtes en voyage ou en examens pendant quelques semaines.';
+}
+
+// Path: recrutement.parcours.q.debutPossible.options.inconnu
+class Traductions$recrutement$parcours$q$debutPossible$options$inconnu$fr {
+	Traductions$recrutement$parcours$q$debutPossible$options$inconnu$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Je ne sais pas encore'
+	String get libelle => 'Je ne sais pas encore';
+
+	/// fr: 'Vous ne connaissez pas encore votre date de début.'
+	String get description => 'Vous ne connaissez pas encore votre date de début.';
+
+	/// fr: 'Vous pourrez le préciser à la direction pendant l'entretien.'
+	String get explication => 'Vous pourrez le préciser à la direction pendant l\'entretien.';
+
+	/// fr: 'votre emploi du temps dépend d'une réponse que vous attendez encore.'
+	String get exemple => 'votre emploi du temps dépend d\'une réponse que vous attendez encore.';
+}
+
+// Path: recrutement.parcours.q.publics.options.enfant
+class Traductions$recrutement$parcours$q$publics$options$enfant$fr {
+	Traductions$recrutement$parcours$q$publics$options$enfant$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Des enfants (6 à 17 ans)'
+	String get libelle => 'Des enfants (6 à 17 ans)';
+
+	/// fr: 'Des classes de 3 à 5 enfants.'
+	String get description => 'Des classes de 3 à 5 enfants.';
+
+	/// fr: 'Trois séances d'une heure par semaine.'
+	String get explication => 'Trois séances d\'une heure par semaine.';
+
+	/// fr: 'une classe de quatre enfants de huit ans, trois fois par semaine.'
+	String get exemple => 'une classe de quatre enfants de huit ans, trois fois par semaine.';
+}
+
+// Path: recrutement.parcours.q.publics.options.adulte
+class Traductions$recrutement$parcours$q$publics$options$adulte$fr {
+	Traductions$recrutement$parcours$q$publics$options$adulte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Des adultes (18 ans et plus)'
+	String get libelle => 'Des adultes (18 ans et plus)';
+
+	/// fr: 'Des classes de 3 à 6 adultes.'
+	String get description => 'Des classes de 3 à 6 adultes.';
+
+	/// fr: 'Trois séances d'une heure et demie par semaine. Les classes d'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.'
+	String get explication => 'Trois séances d\'une heure et demie par semaine. Les classes d\'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.';
+
+	/// fr: 'une classe de cinq femmes, ou de cinq hommes, trois fois par semaine.'
+	String get exemple => 'une classe de cinq femmes, ou de cinq hommes, trois fois par semaine.';
+}
+
+// Path: recrutement.parcours.q.compteBancaire.options.oui
+class Traductions$recrutement$parcours$q$compteBancaire$options$oui$fr {
+	Traductions$recrutement$parcours$q$compteBancaire$options$oui$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Oui, j'ai un compte bancaire'
+	String get libelle => 'Oui, j\'ai un compte bancaire';
+
+	/// fr: 'Un compte à votre nom, dans une banque.'
+	String get description => 'Un compte à votre nom, dans une banque.';
+
+	/// fr: 'Le virement pourra être votre moyen de versement, si l'académie l'a confirmé dans votre pays.'
+	String get explication => 'Le virement pourra être votre moyen de versement, si l\'académie l\'a confirmé dans votre pays.';
+
+	/// fr: 'un compte ouvert à votre nom dans une banque de votre pays.'
+	String get exemple => 'un compte ouvert à votre nom dans une banque de votre pays.';
+}
+
+// Path: recrutement.parcours.q.compteBancaire.options.non
+class Traductions$recrutement$parcours$q$compteBancaire$options$non$fr {
+	Traductions$recrutement$parcours$q$compteBancaire$options$non$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Non, je n'en ai pas'
+	String get libelle => 'Non, je n\'en ai pas';
+
+	/// fr: 'Vous n'avez pas de compte bancaire à votre nom.'
+	String get description => 'Vous n\'avez pas de compte bancaire à votre nom.';
+
+	/// fr: 'Vous pourrez alors choisir un moyen de paiement sur téléphone, s'il en existe un dans votre pays.'
+	String get explication => 'Vous pourrez alors choisir un moyen de paiement sur téléphone, s\'il en existe un dans votre pays.';
+
+	/// fr: 'vous recevez et envoyez de l'argent seulement avec votre téléphone.'
+	String get exemple => 'vous recevez et envoyez de l\'argent seulement avec votre téléphone.';
 }
 
 /// The flat map containing all translations for locale <fr>.
@@ -35211,6 +37374,10 @@ extension on Traductions {
 			'commun.fuseaux.africaCasablanca' => 'Casablanca',
 			'commun.fuseaux.asiaTokyo' => 'Tokyo',
 			'commun.fuseaux.americaArgentinaBuenosAires' => 'Buenos Aires',
+			'commun.fuseaux.africaDakar' => 'Dakar',
+			'commun.fuseaux.africaBamako' => 'Bamako',
+			'commun.fuseaux.africaNouakchott' => 'Nouakchott',
+			'commun.fuseaux.europeBrussels' => 'Brussels',
 			'commun.dates.moisAnnee' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
 			'commun.dates.choixMois' => 'Mois',
 			'commun.dates.jours.0' => 'Lundi',
@@ -35610,12 +37777,12 @@ extension on Traductions {
 			'salle.fin.quittePhrase' => 'Vous pourrez revenir tant qu\'elle reste ouverte.',
 			'salle.fin.accesRetireTitre' => 'Votre accès à cette séance a pris fin.',
 			'salle.fin.titreGuidee' => 'La séance est terminée.',
+			_ => null,
+		} ?? switch (path) {
 			'salle.fin.retourAccueil' => 'Retour à l\'accueil',
 			'salle.fin.enseignant.terminee' => 'Terminée',
 			'salle.fin.enseignant.phrase' => 'Le cahier de transmission est prêt avec les informations de la séance.',
 			'salle.fin.enseignant.recapitulatif' => 'Récapitulatif de la séance',
-			_ => null,
-		} ?? switch (path) {
 			'salle.fin.enseignant.fin' => 'Fin',
 			'salle.fin.enseignant.connectes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève connecté', other: '${n} élèves connectés', ), 
 			'salle.fin.enseignant.unConnecte' => ({required Object n}) => '${n} élève connecté',
@@ -35758,6 +37925,7 @@ extension on Traductions {
 			'accords.toutCoche' => 'Tout est coché.',
 			'accords.suivant' => 'Suivant',
 			'accords.dejaAcceptes' => 'Vos accords sont déjà enregistrés.',
+			'accords.cadreNonPublie' => 'L\'envoi de votre candidature sera possible quand le cadre religieux et pédagogique sera publié.',
 			'connexion.titre' => 'Se connecter',
 			'connexion.modeConnexion' => 'J\'ai déjà un compte',
 			'connexion.modeCreation' => 'Créer un compte',
@@ -36123,13 +38291,13 @@ extension on Traductions {
 			'appareils.eleve.retraitTitre' => 'Retirer un appareil',
 			'appareils.eleve.retrait' => 'Un appareil retiré ne peut plus se reconnecter. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
 			'appareils.plateforme.android' => 'Téléphone ou tablette Android',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.plateforme.ios' => 'iPhone ou iPad',
 			'appareils.plateforme.web' => 'Navigateur web',
 			'appareils.plateforme.windows' => 'Ordinateur',
 			'appareils.plateforme.inconnue' => 'Appareil',
 			'appareils.retrait.question' => 'Retirer cet appareil ?',
-			_ => null,
-		} ?? switch (path) {
 			'appareils.retrait.consequence' => ({required Object appareil, required Object dePrenom}) => '${appareil} ne pourra plus se connecter au profil ${dePrenom}. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
 			'appareils.retrait.confirmer' => 'Retirer l\'appareil',
 			'appareils.retrait.enCours' => 'Retrait en cours',
@@ -36637,13 +38805,13 @@ extension on Traductions {
 			'recrutement.candidat.valide' => ({required Object date}) => 'Invitation valide jusqu\'au ${date}.',
 			'recrutement.candidat.valideDetail' => 'Vous pouvez créer votre profil d\'enseignant.',
 			'recrutement.candidat.creerProfil' => 'Créer mon profil',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.candidat.expiree' => 'Cette invitation a expiré.',
 			'recrutement.candidat.expireeDetail' => 'Demandez une nouvelle invitation à la direction de l\'académie.',
 			'recrutement.candidat.demanderNouvelle' => 'Demander une nouvelle invitation',
 			'recrutement.candidat.contactCopie' => 'Adresse de la direction copiée : écrivez-lui depuis votre messagerie.',
 			'recrutement.candidat.dejaUtilisee' => 'Cette invitation a déjà servi.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.candidat.dejaUtiliseeDetail' => 'Si c\'est vous, connectez-vous avec le compte créé.',
 			'recrutement.candidat.seConnecter' => 'Me connecter',
 			'recrutement.candidat.inconnue' => 'Code non reconnu.',
@@ -36693,6 +38861,384 @@ extension on Traductions {
 			'recrutement.statuts.manqueAccuse' => 'Manque : l\'accusé.',
 			'recrutement.statuts.manqueLesDeux' => 'Manquent : le contrat et l\'accusé.',
 			'recrutement.statuts.inviter' => 'Inviter un enseignant',
+			'recrutement.salles.examen' => 'Salle d\'examen',
+			'recrutement.salles.verification' => 'Salle de vérification et d\'entretien',
+			'recrutement.salles.prets' => 'Salle des prêts à enseigner',
+			'recrutement.paiement.inconnu' => 'Aucun moyen de versement déclaré',
+			'recrutement.paiement.aVerifier' => 'Moyen de versement à vérifier par l\'académie',
+			'recrutement.paiement.compatible' => 'Moyen de versement confirmé',
+			'recrutement.paiement.incompatible' => 'Aucun moyen de versement possible pour l\'instant',
+			'recrutement.portail.vousEtesEn' => ({required Object salle}) => 'Vous êtes en ${salle}',
+			'recrutement.portail.aCompleterTitre' => 'Votre candidature est à compléter',
+			'recrutement.portail.aCompleter' => 'À compléter',
+			'recrutement.portail.elementCadre' => 'Le cadre religieux et pédagogique',
+			'recrutement.portail.etatAEnvoyer' => 'À envoyer',
+			'recrutement.portail.completer' => 'Compléter ma candidature',
+			'recrutement.portail.enExamenTitre' => 'Votre candidature est en examen',
+			'recrutement.portail.enExamen' => 'L\'académie lit vos réponses et vous préviendra ici.',
+			'recrutement.portail.versementImpossible' => 'Rewayah ne peut pas encore vous verser une rémunération par les moyens déclarés dans votre pays. Votre candidature est gardée en Salle d\'examen. L\'académie vous préviendra dès qu\'un moyen sera possible.',
+			'recrutement.portail.libreDePartir' => 'Vous restez libre de retirer votre candidature.',
+			'recrutement.portail.enPauseTitre' => 'Votre candidature est en pause',
+			'recrutement.portail.repriseLe' => ({required Object date}) => 'Reprise prévue le ${date}.',
+			'recrutement.portail.refuseeTitre' => 'Votre candidature n\'a pas été retenue',
+			'recrutement.portail.retireeTitre' => 'Candidature retirée',
+			'recrutement.portail.retiree' => 'Vous avez retiré votre candidature. Seule l\'académie peut la rouvrir.',
+			'recrutement.portail.complementDemande' => 'L\'académie vous demande un complément.',
+			'recrutement.portail.complementListe' => ({required Object elements}) => 'À compléter : ${elements}.',
+			'recrutement.portail.nonCharge' => 'L\'état de votre candidature n\'a pas pu être chargé.',
+			'recrutement.portail.elementPiece' => 'Votre pièce d\'identité',
+			'recrutement.portail.elementContrat' => 'Le contrat d\'enseignant',
+			'recrutement.portail.versementImpossibleTitre' => 'Versement pas encore possible',
+			'recrutement.portail.relire' => 'Relire ma candidature',
+			'recrutement.retrait.lien' => 'Retirer ma candidature',
+			'recrutement.retrait.question' => 'Retirer votre candidature ?',
+			'recrutement.retrait.consequence' => 'Seule l\'académie pourra rouvrir votre candidature.',
+			'recrutement.retrait.consequenceEntretien' => 'Votre entretien sera annulé. Seule l\'académie pourra rouvrir votre candidature.',
+			'recrutement.retrait.confirmer' => 'Retirer ma candidature',
+			'recrutement.retrait.echec' => 'Le retrait n\'a pas abouti. Réessayez dans un instant.',
+			'recrutement.retrait.incertain' => 'Il est possible que votre retrait ne soit pas parvenu jusqu\'à Rewayah. Réessayez : il ne sera pas enregistré deux fois.',
+			'recrutement.retrait.horsLigne' => 'Le retrait pourra être fait quand la connexion reviendra.',
+			'recrutement.retrait.interdit' => 'Votre candidature ne peut plus être retirée depuis cette page.',
+			'recrutement.retrait.conflit' => 'Votre candidature a changé depuis l\'ouverture de cette page. Relisez-la, puis réessayez.',
+			'recrutement.questionnaire.titre' => 'Votre candidature',
+			'recrutement.questionnaire.conditionsTitre' => 'Conditions de rémunération',
+			'recrutement.questionnaire.part' => ({required Object part}) => 'Votre part : ${part} du prix public, pour chaque élève présent.',
+			'recrutement.questionnaire.partPublic' => ({required Object public, required Object part}) => '${public} : ${part} du prix public, pour chaque élève présent.',
+			'recrutement.questionnaire.publicEnfant' => 'Enfants (6 à 17 ans)',
+			'recrutement.questionnaire.publicAdulte' => 'Adultes (18 ans et plus)',
+			'recrutement.questionnaire.coordonneesPlusTard' => 'Vos coordonnées financières ne vous seront demandées qu\'avant votre premier versement.',
+			'recrutement.questionnaire.montantsSurDemande' => 'Pour connaître les montants, demandez-les à l\'administration.',
+			'recrutement.questionnaire.conditionsDateEffet' => ({required Object date}) => 'Ces conditions s\'appliquent à partir du ${date}.',
+			'recrutement.questionnaire.accordRemuneration' => 'J\'ai lu ces conditions et je les accepte.',
+			'recrutement.questionnaire.accordManquant' => 'Cochez la case pour accepter ces conditions et envoyer votre candidature.',
+			'recrutement.questionnaire.envoyer' => 'Envoyer ma candidature',
+			'recrutement.questionnaire.cadreManquant' => 'Acceptez d\'abord le cadre religieux et pédagogique.',
+			'recrutement.questionnaire.cadreAccepte' => 'Vous avez accepté le cadre religieux et pédagogique.',
+			'recrutement.questionnaire.langues' => 'Vos langues',
+			'recrutement.questionnaire.recitation' => 'Votre récitation',
+			'recrutement.questionnaire.disponibilites' => 'Vos disponibilités',
+			'recrutement.questionnaire.publics' => 'Les publics que vous pouvez enseigner',
+			'recrutement.questionnaire.versement' => 'Votre pays et votre versement',
+			'recrutement.questionnaire.perime' => 'Le questionnaire a changé depuis votre dernière visite. Relisez vos réponses avant d\'envoyer.',
+			'recrutement.questionnaire.incomplet' => ({required Object question}) => 'Il manque une réponse : ${question}.',
+			'recrutement.questionnaire.reponseInvalide' => ({required Object question}) => 'Une réponse n\'est plus valable : ${question}.',
+			'recrutement.questionnaire.conflit' => 'Votre candidature a changé depuis l\'ouverture de cette page. Relisez-la, puis envoyez-la.',
+			'recrutement.questionnaire.conditionsPerimees' => 'Les conditions de rémunération ont changé. Relisez-les, puis acceptez-les de nouveau.',
+			'recrutement.questionnaire.interdit' => 'Votre candidature ne peut plus être envoyée depuis cette page.',
+			'recrutement.questionnaire.echec' => 'Une de vos réponses est à revoir. Relisez-les, puis envoyez de nouveau votre candidature.',
+			'recrutement.questionnaire.incertain' => 'Il est possible que votre candidature ne soit pas parvenue jusqu\'à Rewayah. Réessayez : elle ne sera pas enregistrée deux fois.',
+			'recrutement.questionnaire.horsLigne' => 'Votre candidature pourra être envoyée quand la connexion reviendra.',
+			'recrutement.questionnaire.nonOuverte' => 'Cette étape n\'est pas encore ouverte. Votre compte est gardé.',
+			'recrutement.questionnaire.nonCharge' => 'Le questionnaire n\'a pas pu être chargé.',
+			'recrutement.questionnaire.conditionsNonCharge' => 'Les conditions de rémunération n\'ont pas pu être chargées.',
+			'recrutement.questionnaire.envoyee' => 'Votre candidature est envoyée. L\'académie vous préviendra ici s\'il faut la compléter.',
+			'recrutement.questionnaire.envoyeeLe' => ({required Object date}) => 'Envoyée le ${date}.',
+			'recrutement.questionnaire.etatVersement' => ({required Object etat}) => 'Moyen de versement : ${etat}',
+			'recrutement.questionnaire.retourDossier' => 'Retour à mon dossier',
+			'recrutement.questionnaire.complementCarte' => 'L\'académie vous demande de compléter cette partie.',
+			'recrutement.parcours.choisir' => 'Choisissez une réponse pour continuer.',
+			'recrutement.parcours.choisirPlusieurs' => 'Choisissez au moins une réponse pour continuer.',
+			'recrutement.parcours.choisirPlage' => 'Choisissez au moins une plage pour continuer.',
+			'recrutement.parcours.trop' => ({required num max}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(max, one: 'Choisissez une seule réponse.', other: 'Choisissez ${max} réponses au plus.', ), 
+			'recrutement.parcours.aucune' => 'Aucune',
+			'recrutement.parcours.oui' => 'Oui',
+			'recrutement.parcours.non' => 'Non',
+			'recrutement.parcours.modifier' => 'Modifier',
+			'recrutement.parcours.sauvegardeEchec' => 'Vos dernières réponses n\'ont pas pu être gardées. Elles restent à l\'écran : continuez, elles seront envoyées avec votre candidature.',
+			'recrutement.parcours.presentation.p1.titre' => 'Qui est Rewayah Academy ?',
+			'recrutement.parcours.presentation.p1.intro' => 'Avant les questions, voici ce que vous devez savoir de nous.',
+			'recrutement.parcours.presentation.p1.academie.titre' => 'Une académie du Coran en ligne',
+			'recrutement.parcours.presentation.p1.academie.texte' => 'Rewayah Academy enseigne le Coran à distance, en classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024.',
+			'recrutement.parcours.presentation.p1.liberte.titre' => 'Vous restez libre',
+			'recrutement.parcours.presentation.p1.liberte.texte' => 'Tant que vous n\'êtes pas enseignant, vous pouvez retirer votre candidature depuis votre dossier.',
+			'recrutement.parcours.presentation.p1.donnees.titre' => 'Vos données sont protégées',
+			'recrutement.parcours.presentation.p1.donnees.texte' => 'Vos réponses ne sont lues que par les personnes de l\'académie qui examinent votre candidature.',
+			'recrutement.parcours.presentation.p1.separation.titre' => 'Femmes et hommes séparés',
+			'recrutement.parcours.presentation.p1.separation.texte' => 'Une candidature de femme est suivie par la direction du côté des femmes, une candidature d\'homme du côté des hommes.',
+			'recrutement.parcours.presentation.p2.titre' => 'Ce que fait un enseignant',
+			'recrutement.parcours.presentation.p2.intro' => 'Vous enseignez en visio, dans une classe qui reste la même.',
+			'recrutement.parcours.presentation.p2.classe.titre' => 'Une classe stable',
+			'recrutement.parcours.presentation.p2.classe.texte' => 'Vous gardez la même classe dans la durée, avec les mêmes élèves.',
+			'recrutement.parcours.presentation.p2.horaires.titre' => 'Les mêmes horaires chaque semaine',
+			'recrutement.parcours.presentation.p2.horaires.texte' => 'Votre classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine.',
+			'recrutement.parcours.presentation.p2.visio.titre' => 'En visio, dans l\'application',
+			'recrutement.parcours.presentation.p2.visio.texte' => 'Les cours se donnent en visioconférence, dans l\'application de Rewayah.',
+			'recrutement.parcours.presentation.p2.remuneration.titre' => 'Une rémunération expliquée',
+			'recrutement.parcours.presentation.p2.remuneration.texte' => 'Votre rémunération est une part du prix que paie chaque élève présent. Elle vous est expliquée en pourcentage avant d\'envoyer votre candidature.',
+			'recrutement.parcours.presentation.p3.titre' => 'Comment se passe votre candidature',
+			'recrutement.parcours.presentation.p3.intro' => 'Trois étapes, dans l\'application.',
+			'recrutement.parcours.presentation.p3.examen.titre' => 'La Salle d\'examen',
+			'recrutement.parcours.presentation.p3.examen.texte' => 'Vous répondez aux questions de ce parcours, puis vous envoyez votre candidature. La direction lit vos réponses.',
+			'recrutement.parcours.presentation.p3.entretien.titre' => 'L\'entretien en visio',
+			'recrutement.parcours.presentation.p3.entretien.texte' => 'Si votre candidature est retenue pour la suite, la direction vous reçoit en visio, dans l\'application.',
+			'recrutement.parcours.presentation.p3.verification.titre' => 'La vérification',
+			'recrutement.parcours.presentation.p3.verification.texte' => 'Vous déposez votre pièce d\'identité et vous lisez nos accords. Quand tout est en ordre, vous entrez dans la Salle des prêts à enseigner.',
+			'recrutement.parcours.langues.poular' => 'Poular',
+			'recrutement.parcours.langues.francais' => 'Français',
+			'recrutement.parcours.langues.english' => 'Anglais',
+			'recrutement.parcours.langues.ar' => 'Arabe',
+			'recrutement.parcours.langues.ff' => 'Peul (fulfulde)',
+			'recrutement.parcours.langues.ha' => 'Haoussa',
+			'recrutement.parcours.langues.wo' => 'Wolof',
+			'recrutement.parcours.langues.ps' => 'Pachto',
+			'recrutement.parcours.langues.ur' => 'Ourdou',
+			'recrutement.parcours.langues.snk' => 'Soninké',
+			'recrutement.parcours.langues.bm' => 'Bambara',
+			'recrutement.parcours.langues.sw' => 'Swahili',
+			'recrutement.parcours.langues.mnk' => 'Mandinka',
+			'recrutement.parcours.langues.om' => 'Oromo',
+			'recrutement.parcours.langues.am' => 'Amharique',
+			'recrutement.parcours.langues.yo' => 'Yoruba',
+			'recrutement.parcours.langues.bn' => 'Bengali',
+			'recrutement.parcours.langues.fa' => 'Persan',
+			'recrutement.parcours.langues.id' => 'Indonésien',
+			'recrutement.parcours.langues.so' => 'Somali',
+			'recrutement.parcours.langues.hi' => 'Hindi',
+			'recrutement.parcours.langues.uz' => 'Ouzbek',
+			'recrutement.parcours.langues.tr' => 'Turc',
+			'recrutement.parcours.langues.de' => 'Allemand',
+			'recrutement.parcours.langues.pt' => 'Portugais',
+			'recrutement.parcours.langues.ru' => 'Russe',
+			'recrutement.parcours.langues.dansReferentiel' => 'Une langue dans laquelle Rewayah donne des cours.',
+			'recrutement.parcours.langues.horsReferentiel' => 'Langue pas encore proposée par Rewayah',
+			'recrutement.parcours.langues.autre' => 'Une autre langue',
+			'recrutement.parcours.langues.recherche' => 'Rechercher une langue',
+			'recrutement.parcours.langues.rechercheAide' => 'Nom de la langue',
+			'recrutement.parcours.langues.aucune' => 'Aucune langue ne correspond.',
+			'recrutement.parcours.langues.retour' => 'Revenir aux langues proposées',
+			'recrutement.parcours.pays.autre' => 'Un autre pays',
+			'recrutement.parcours.pays.recherche' => 'Rechercher un pays',
+			'recrutement.parcours.pays.rechercheAide' => 'Nom du pays',
+			'recrutement.parcours.pays.aucun' => 'Aucun pays ne correspond.',
+			'recrutement.parcours.pays.retour' => 'Revenir aux pays proposés',
+			'recrutement.parcours.riwayat.autre' => 'Une autre riwaya',
+			'recrutement.parcours.riwayat.recherche' => 'Rechercher une riwaya',
+			'recrutement.parcours.riwayat.rechercheAide' => 'Nom de la riwaya',
+			'recrutement.parcours.riwayat.aucune' => 'Aucune riwaya ne correspond.',
+			'recrutement.parcours.riwayat.retour' => 'Revenir aux riwayat proposées',
+			'recrutement.parcours.fuseau.heureChezVous' => ({required Object heure}) => 'Chez vous, il est ${heure} ?',
+			'recrutement.parcours.fuseau.lieuPropose' => ({required Object lieu}) => 'Fuseau proposé : ${lieu}.',
+			'recrutement.parcours.fuseau.retenu' => ({required Object lieu}) => 'Fuseau retenu : ${lieu}.',
+			'recrutement.parcours.fuseau.oui' => 'Oui, c\'est l\'heure chez moi',
+			'recrutement.parcours.fuseau.ouiDescription' => 'Votre fuseau horaire est confirmé.',
+			'recrutement.parcours.fuseau.changer' => 'Non, je veux le changer',
+			'recrutement.parcours.fuseau.changerDescription' => 'Vous choisissez la ville la plus proche de chez vous.',
+			'recrutement.parcours.fuseau.choisirTitre' => 'Quelle est la ville la plus proche de chez vous ?',
+			'recrutement.parcours.fuseau.choisirExplication' => 'Elle donne votre fuseau horaire. Les heures de votre entretien s\'afficheront dans ce fuseau.',
+			'recrutement.parcours.fuseau.recherche' => 'Rechercher une ville',
+			'recrutement.parcours.fuseau.rechercheAide' => 'Nom de la ville',
+			'recrutement.parcours.fuseau.aucune' => 'Aucune ville ne correspond.',
+			'recrutement.parcours.fuseau.autre' => 'Une autre ville',
+			'recrutement.parcours.fuseau.retour' => 'Revenir à la proposition',
+			'recrutement.parcours.fuseau.regions.Africa' => 'Afrique',
+			'recrutement.parcours.fuseau.regions.America' => 'Amériques',
+			'recrutement.parcours.fuseau.regions.Antarctica' => 'Antarctique',
+			'recrutement.parcours.fuseau.regions.Arctic' => 'Arctique',
+			'recrutement.parcours.fuseau.regions.Asia' => 'Asie',
+			'recrutement.parcours.fuseau.regions.Atlantic' => 'Atlantique',
+			'recrutement.parcours.fuseau.regions.Australia' => 'Australie',
+			'recrutement.parcours.fuseau.regions.Europe' => 'Europe',
+			'recrutement.parcours.fuseau.regions.Indian' => 'Océan Indien',
+			'recrutement.parcours.fuseau.regions.Pacific' => 'Pacifique',
+			'recrutement.parcours.fuseau.ouiExplication' => 'Vos disponibilités et votre entretien seront à l\'heure de chez vous.',
+			'recrutement.parcours.fuseau.changerExplication' => 'Utile si vous voyagez ou si l\'heure de votre appareil n\'est pas la bonne.',
+			'recrutement.parcours.creneaux.plage0' => 'Nuit',
+			'recrutement.parcours.creneaux.plage1' => 'Aube',
+			'recrutement.parcours.creneaux.plage2' => 'Matin',
+			'recrutement.parcours.creneaux.plage3' => 'Midi',
+			'recrutement.parcours.creneaux.plage4' => 'Après-midi',
+			'recrutement.parcours.creneaux.plage5' => 'Soir',
+			'recrutement.parcours.creneaux.jourCellule' => ({required Object jour, required Object plage}) => '${jour}, ${plage}',
+			'recrutement.parcours.creneaux.choisies' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Aucune plage choisie', one: 'Une plage choisie', other: '${n} plages choisies', ), 
+			'recrutement.parcours.creneaux.fuseauRappel' => ({required Object lieu}) => 'Heures de ${lieu}.',
+			'recrutement.parcours.creneaux.partielle' => 'En partie',
+			'recrutement.parcours.creneaux.choisie' => 'Choisie',
+			'recrutement.parcours.versement.virementSeul' => 'Dans votre pays, l\'académie a confirmé le virement bancaire. Aucun moyen de paiement sur téléphone n\'est proposé pour l\'instant.',
+			'recrutement.parcours.versement.aucunMoyen' => 'Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature : elle restera en Salle d\'examen jusqu\'à ce qu\'un moyen soit possible.',
+			'recrutement.parcours.versement.operateurDescription' => 'Paiement sur téléphone',
+			'recrutement.parcours.versement.chargement' => 'Nous cherchons les moyens possibles dans votre pays.',
+			'recrutement.parcours.versement.nonCharge' => 'Les moyens de versement de votre pays n\'ont pas pu être chargés.',
+			'recrutement.parcours.versement.operateurExplication' => 'Vous le déclarez maintenant. Vos coordonnées ne sont demandées qu\'avant votre premier versement.',
+			'recrutement.parcours.recap.titre' => 'Relisez votre candidature',
+			'recrutement.parcours.recap.explication' => 'Touchez une réponse pour la changer. Rien n\'est envoyé avant le bouton « Envoyer ma candidature ».',
+			'recrutement.parcours.recap.plages' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Une plage par semaine', other: '${n} plages par semaine', ), 
+			'recrutement.parcours.q.langueMaternelle.titre' => 'Quelle est votre langue maternelle ?',
+			'recrutement.parcours.q.langueMaternelle.explication' => 'C\'est la langue que vous parlez depuis l\'enfance.',
+			'recrutement.parcours.q.langueMaternelle.court' => 'Langue maternelle',
+			'recrutement.parcours.q.languesExplication.titre' => 'Dans quelles langues pouvez-vous expliquer et corriger ?',
+			'recrutement.parcours.q.languesExplication.explication' => 'Choisissez toutes les langues dans lesquelles vous savez expliquer une règle à un élève et corriger ses erreurs. Un élève suit sa classe dans la langue choisie à l\'inscription : ces langues aident la direction à voir dans quelles classes vous pourriez enseigner.',
+			'recrutement.parcours.q.languesExplication.court' => 'Langues d\'explication',
+			'recrutement.parcours.q.niveauMemorisationDeclare.titre' => 'Quel est votre niveau de mémorisation ?',
+			'recrutement.parcours.q.niveauMemorisationDeclare.explication' => 'Vous le déclarez ici.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.court' => 'Niveau de mémorisation',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.libelle' => 'J\'ai mémorisé tout le Coran',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.description' => 'Les 114 sourates, de la première à la dernière, par cœur.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.explication' => 'Ce niveau est constaté pendant l\'entretien.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.exemple' => 'vous récitez Al-Baqara, puis An-Nâs, sans ouvrir le livre.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.ijaza_lecture_enseignement.libelle' => 'J\'ai une ijaza de lecture et d\'enseignement',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.ijaza_lecture_enseignement.description' => 'Une autorisation écrite, donnée par un maître, de lire et d\'enseigner le Coran.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.ijaza_lecture_enseignement.explication' => 'Elle se montre pendant l\'entretien : vous n\'avez rien à envoyer maintenant.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.ijaza_lecture_enseignement.exemple' => 'un document écrit, remis par votre maître, à votre nom.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.plus_de_10_juz.libelle' => 'J\'ai mémorisé plus de dix juz',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.plus_de_10_juz.description' => 'Plus du tiers du Coran, qui compte trente juz.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.plus_de_10_juz.explication' => 'Ce niveau est constaté pendant l\'entretien.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.plus_de_10_juz.exemple' => 'vous avez mémorisé douze juz sur trente.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_de_10_juz.libelle' => 'J\'ai mémorisé moins de dix juz',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_de_10_juz.description' => 'Moins du tiers du Coran, qui compte trente juz.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_de_10_juz.explication' => 'Ce niveau est constaté pendant l\'entretien.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_de_10_juz.exemple' => 'vous avez mémorisé cinq juz sur trente.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.bonne_lecture_sans_memorisation.libelle' => 'Je n\'ai pas mémorisé, mais je lis bien avec le tajwid',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.bonne_lecture_sans_memorisation.description' => 'Vous lisez le Coran correctement, en appliquant les règles du tajwid, sans le réciter de mémoire.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.bonne_lecture_sans_memorisation.explication' => 'Votre lecture est constatée pendant l\'entretien.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.bonne_lecture_sans_memorisation.exemple' => 'vous lisez une page du Coran sans erreur, mais vous ne la récitez pas de mémoire.',
+			'recrutement.parcours.q.niveauLectureTajwid.titre' => 'Comment lisez-vous le Coran ?',
+			'recrutement.parcours.q.niveauLectureTajwid.explication' => 'Le tajwid est l\'ensemble des règles qui disent comment prononcer chaque lettre du Coran.',
+			'recrutement.parcours.q.niveauLectureTajwid.court' => 'Lecture et tajwid',
+			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.libelle' => 'Je lis sans appliquer les règles du tajwid',
+			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.description' => 'Vous lisez couramment, sans suivre les règles de prononciation.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.explication' => 'Votre lecture est constatée pendant l\'entretien.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.exemple' => 'vous lisez une page sans hésiter, mais vous n\'appliquez pas les règles du tajwid.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.libelle' => 'J\'applique les règles du tajwid en lisant',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.description' => 'Vous respectez les règles de prononciation quand vous lisez.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.explication' => 'Votre lecture est constatée pendant l\'entretien.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.exemple' => 'vous allongez et prononcez les lettres comme le demandent les règles du tajwid.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne.libelle' => 'J\'applique le tajwid et je sais l\'enseigner',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne.description' => 'Vous respectez les règles et vous savez les expliquer à un élève.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne.explication' => 'Votre lecture est constatée pendant l\'entretien.',
+			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne.exemple' => 'quand un élève se trompe sur une lettre, vous lui expliquez la règle et il la répète.',
+			'recrutement.parcours.q.riwayat.titre' => 'Quelles riwayat récitez-vous ?',
+			'recrutement.parcours.q.riwayat.explication' => 'Une riwaya est une façon transmise de réciter le Coran. Choisissez toutes celles que vous récitez.',
+			'recrutement.parcours.q.riwayat.court' => 'Riwayat',
+			'recrutement.parcours.q.riwayat.options.hafs.libelle' => 'Hafs',
+			'recrutement.parcours.q.riwayat.options.hafs.description' => 'Transmise d\'après Asim',
+			'recrutement.parcours.q.riwayat.options.shuba.libelle' => 'Shuba',
+			'recrutement.parcours.q.riwayat.options.shuba.description' => 'Transmise d\'après Asim',
+			'recrutement.parcours.q.riwayat.options.warsh.libelle' => 'Warsh',
+			'recrutement.parcours.q.riwayat.options.warsh.description' => 'Transmise d\'après Nafi',
+			'recrutement.parcours.q.riwayat.options.qalun.libelle' => 'Qalun',
+			'recrutement.parcours.q.riwayat.options.qalun.description' => 'Transmise d\'après Nafi',
+			'recrutement.parcours.q.riwayat.options.al_bazzi.libelle' => 'Al-Bazzi',
+			'recrutement.parcours.q.riwayat.options.al_bazzi.description' => 'Transmise d\'après Ibn Kathir',
+			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'Qunbul',
+			'recrutement.parcours.q.riwayat.options.qunbul.description' => 'Transmise d\'après Ibn Kathir',
+			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.libelle' => 'Ad-Duri (Abu Amr)',
+			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.description' => 'Transmise d\'après Abu Amr',
+			'recrutement.parcours.q.riwayat.options.as_susi.libelle' => 'As-Susi',
+			'recrutement.parcours.q.riwayat.options.as_susi.description' => 'Transmise d\'après Abu Amr',
+			'recrutement.parcours.q.riwayat.options.hisham.libelle' => 'Hisham',
+			'recrutement.parcours.q.riwayat.options.hisham.description' => 'Transmise d\'après Ibn Amir',
+			'recrutement.parcours.q.riwayat.options.ibn_dhakwan.libelle' => 'Ibn Dhakwan',
+			'recrutement.parcours.q.riwayat.options.ibn_dhakwan.description' => 'Transmise d\'après Ibn Amir',
+			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.libelle' => 'Khalaf (Hamza)',
+			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.description' => 'Transmise d\'après Hamza',
+			'recrutement.parcours.q.riwayat.options.khallad.libelle' => 'Khallad',
+			'recrutement.parcours.q.riwayat.options.khallad.description' => 'Transmise d\'après Hamza',
+			'recrutement.parcours.q.riwayat.options.abu_al_harith.libelle' => 'Abu al-Harith',
+			'recrutement.parcours.q.riwayat.options.abu_al_harith.description' => 'Transmise d\'après Al-Kisai',
+			'recrutement.parcours.q.riwayat.options.ad_duri_al_kisai.libelle' => 'Ad-Duri (Al-Kisai)',
+			'recrutement.parcours.q.riwayat.options.ad_duri_al_kisai.description' => 'Transmise d\'après Al-Kisai',
+			'recrutement.parcours.q.riwayat.options.ibn_wardan.libelle' => 'Ibn Wardan',
+			'recrutement.parcours.q.riwayat.options.ibn_wardan.description' => 'Transmise d\'après Abu Jafar',
+			'recrutement.parcours.q.riwayat.options.ibn_jammaz.libelle' => 'Ibn Jammaz',
+			'recrutement.parcours.q.riwayat.options.ibn_jammaz.description' => 'Transmise d\'après Abu Jafar',
+			'recrutement.parcours.q.riwayat.options.ruways.libelle' => 'Ruways',
+			'recrutement.parcours.q.riwayat.options.ruways.description' => 'Transmise d\'après Yaqub',
+			'recrutement.parcours.q.riwayat.options.rawh.libelle' => 'Rawh',
+			'recrutement.parcours.q.riwayat.options.rawh.description' => 'Transmise d\'après Yaqub',
+			'recrutement.parcours.q.riwayat.options.ishaq.libelle' => 'Ishaq',
+			'recrutement.parcours.q.riwayat.options.ishaq.description' => 'Transmise d\'après Khalaf, le dixième lecteur',
+			'recrutement.parcours.q.riwayat.options.idris.libelle' => 'Idris',
+			'recrutement.parcours.q.riwayat.options.idris.description' => 'Transmise d\'après Khalaf, le dixième lecteur',
+			'recrutement.parcours.q.ijazaPresentable.titre' => 'Avez-vous une ijaza à présenter ?',
+			'recrutement.parcours.q.ijazaPresentable.explication' => 'Une ijaza est une autorisation écrite, donnée par un maître, de transmettre le Coran.',
+			'recrutement.parcours.q.ijazaPresentable.court' => 'Ijaza',
+			'recrutement.parcours.q.ijazaPresentable.options.oui.libelle' => 'Oui, j\'ai une ijaza à présenter',
+			'recrutement.parcours.q.ijazaPresentable.options.oui.description' => 'Vous pouvez la montrer en visio.',
+			'recrutement.parcours.q.ijazaPresentable.options.oui.explication' => 'Elle se montre pendant l\'entretien : vous n\'avez rien à envoyer maintenant.',
+			'recrutement.parcours.q.ijazaPresentable.options.oui.exemple' => 'un document signé par votre maître, que vous gardez chez vous.',
+			'recrutement.parcours.q.ijazaPresentable.options.non.libelle' => 'Non, je n\'en ai pas à présenter',
+			'recrutement.parcours.q.ijazaPresentable.options.non.description' => 'Vous n\'avez pas d\'ijaza, ou pas de quoi la présenter.',
+			'recrutement.parcours.q.ijazaPresentable.options.non.explication' => 'Votre niveau est alors constaté pendant l\'entretien.',
+			'recrutement.parcours.q.ijazaPresentable.options.non.exemple' => 'vous avez appris auprès d\'un maître, sans recevoir de document écrit.',
+			'recrutement.parcours.q.experienceDebutants.titre' => 'Avez-vous déjà enseigné à des débutants ?',
+			'recrutement.parcours.q.experienceDebutants.explication' => 'Un débutant apprend encore à lire les lettres et à les relier.',
+			'recrutement.parcours.q.experienceDebutants.court' => 'Expérience avec les débutants',
+			'recrutement.parcours.q.experienceDebutants.options.oui.libelle' => 'Oui, j\'ai déjà enseigné à des débutants',
+			'recrutement.parcours.q.experienceDebutants.options.oui.description' => 'Vous avez déjà accompagné des élèves qui commencent.',
+			'recrutement.parcours.q.experienceDebutants.options.oui.explication' => 'La direction le sait avant l\'entretien.',
+			'recrutement.parcours.q.experienceDebutants.options.oui.exemple' => 'vous avez appris les lettres arabes à des enfants ou à des adultes.',
+			'recrutement.parcours.q.experienceDebutants.options.non.libelle' => 'Non, pas encore',
+			'recrutement.parcours.q.experienceDebutants.options.non.description' => 'Vous n\'avez pas encore enseigné à des débutants.',
+			'recrutement.parcours.q.experienceDebutants.options.non.explication' => 'Vous pouvez quand même envoyer votre candidature.',
+			'recrutement.parcours.q.experienceDebutants.options.non.exemple' => 'vous avez enseigné seulement à des élèves qui savaient déjà lire.',
+			'recrutement.parcours.q.fuseauIana.titre' => 'Votre fuseau horaire',
+			'recrutement.parcours.q.fuseauIana.explication' => 'Vos disponibilités sont à l\'heure de chez vous. Il faut donc que l\'heure soit la bonne.',
+			'recrutement.parcours.q.fuseauIana.court' => 'Fuseau horaire',
+			'recrutement.parcours.q.disponibilitesDeclarees.titre' => 'Quand êtes-vous disponible ?',
+			'recrutement.parcours.q.disponibilitesDeclarees.explication' => 'Touchez les plages où vous pouvez enseigner, chaque semaine. Une plage dure quatre heures.',
+			'recrutement.parcours.q.disponibilitesDeclarees.court' => 'Disponibilités',
+			'recrutement.parcours.q.heuresParSemaine.titre' => 'Combien d\'heures par semaine pouvez-vous enseigner ?',
+			'recrutement.parcours.q.heuresParSemaine.explication' => 'Une classe d\'enfants compte trois séances d\'une heure par semaine, soit 3 heures. Une classe d\'adultes compte trois séances d\'une heure et demie, soit 4 heures et demie.',
+			'recrutement.parcours.q.heuresParSemaine.court' => 'Heures par semaine',
+			'recrutement.parcours.q.heuresParSemaine.options.moins_de_3.libelle' => 'Moins de 3 heures',
+			'recrutement.parcours.q.heuresParSemaine.options.moins_de_3.description' => 'Moins que le temps d\'une classe entière.',
+			'recrutement.parcours.q.heuresParSemaine.options.moins_de_3.exemple' => 'deux séances d\'une heure par semaine.',
+			'recrutement.parcours.q.heuresParSemaine.options.de_3_a_5.libelle' => 'De 3 à 5 heures',
+			'recrutement.parcours.q.heuresParSemaine.options.de_3_a_5.description' => 'Le temps d\'une classe.',
+			'recrutement.parcours.q.heuresParSemaine.options.de_3_a_5.exemple' => 'une classe d\'enfants, trois séances d\'une heure, soit 3 heures par semaine.',
+			'recrutement.parcours.q.heuresParSemaine.options.de_6_a_10.libelle' => 'De 6 à 10 heures',
+			'recrutement.parcours.q.heuresParSemaine.options.de_6_a_10.description' => 'Le temps de deux classes.',
+			'recrutement.parcours.q.heuresParSemaine.options.de_6_a_10.exemple' => 'deux classes d\'adultes, six séances d\'une heure et demie, soit 9 heures par semaine.',
+			'recrutement.parcours.q.heuresParSemaine.options.plus_de_10.libelle' => 'Plus de 10 heures',
+			'recrutement.parcours.q.heuresParSemaine.options.plus_de_10.description' => 'Le temps de plusieurs classes.',
+			'recrutement.parcours.q.heuresParSemaine.options.plus_de_10.exemple' => 'trois classes d\'adultes, neuf séances d\'une heure et demie, soit 13 heures et demie par semaine.',
+			'recrutement.parcours.q.debutPossible.titre' => 'Quand pouvez-vous commencer ?',
+			'recrutement.parcours.q.debutPossible.explication' => 'Cette date aide la direction à savoir quand vous proposer une classe.',
+			'recrutement.parcours.q.debutPossible.court' => 'Date de début',
+			'recrutement.parcours.q.debutPossible.options.immediat.libelle' => 'Dès maintenant',
+			'recrutement.parcours.q.debutPossible.options.immediat.description' => 'Vous pouvez commencer dès qu\'une classe vous est confiée.',
+			'recrutement.parcours.q.debutPossible.options.immediat.exemple' => 'aucun engagement ne vous retient ce mois-ci.',
+			'recrutement.parcours.q.debutPossible.options.mois_prochain.libelle' => 'Le mois prochain',
+			'recrutement.parcours.q.debutPossible.options.mois_prochain.description' => 'Vous serez disponible à partir du mois prochain.',
+			'recrutement.parcours.q.debutPossible.options.mois_prochain.exemple' => 'vous terminez un autre travail à la fin de ce mois.',
+			'recrutement.parcours.q.debutPossible.options.sous_3_mois.libelle' => 'Dans moins de trois mois',
+			'recrutement.parcours.q.debutPossible.options.sous_3_mois.description' => 'Vous serez disponible dans les trois prochains mois.',
+			'recrutement.parcours.q.debutPossible.options.sous_3_mois.exemple' => 'vous êtes en voyage ou en examens pendant quelques semaines.',
+			'recrutement.parcours.q.debutPossible.options.inconnu.libelle' => 'Je ne sais pas encore',
+			'recrutement.parcours.q.debutPossible.options.inconnu.description' => 'Vous ne connaissez pas encore votre date de début.',
+			'recrutement.parcours.q.debutPossible.options.inconnu.explication' => 'Vous pourrez le préciser à la direction pendant l\'entretien.',
+			'recrutement.parcours.q.debutPossible.options.inconnu.exemple' => 'votre emploi du temps dépend d\'une réponse que vous attendez encore.',
+			'recrutement.parcours.q.publics.titre' => 'Quels élèves pouvez-vous enseigner ?',
+			'recrutement.parcours.q.publics.explication' => 'Choisissez les élèves auxquels vous pouvez enseigner. Vous pouvez choisir les deux.',
+			'recrutement.parcours.q.publics.court' => 'Publics',
+			'recrutement.parcours.q.publics.options.enfant.libelle' => 'Des enfants (6 à 17 ans)',
+			'recrutement.parcours.q.publics.options.enfant.description' => 'Des classes de 3 à 5 enfants.',
+			'recrutement.parcours.q.publics.options.enfant.explication' => 'Trois séances d\'une heure par semaine.',
+			'recrutement.parcours.q.publics.options.enfant.exemple' => 'une classe de quatre enfants de huit ans, trois fois par semaine.',
+			'recrutement.parcours.q.publics.options.adulte.libelle' => 'Des adultes (18 ans et plus)',
+			'recrutement.parcours.q.publics.options.adulte.description' => 'Des classes de 3 à 6 adultes.',
+			'recrutement.parcours.q.publics.options.adulte.explication' => 'Trois séances d\'une heure et demie par semaine. Les classes d\'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.',
+			'recrutement.parcours.q.publics.options.adulte.exemple' => 'une classe de cinq femmes, ou de cinq hommes, trois fois par semaine.',
+			'recrutement.parcours.q.paysResidence.titre' => 'Dans quel pays vivez-vous ?',
+			'recrutement.parcours.q.paysResidence.explication' => 'Choisissez le pays où vous vivez aujourd\'hui.',
+			'recrutement.parcours.q.paysResidence.court' => 'Pays de résidence',
+			'recrutement.parcours.q.paysVersement.titre' => 'Dans quel pays voulez-vous recevoir votre rémunération ?',
+			'recrutement.parcours.q.paysVersement.explication' => 'L\'académie vérifie, pays par pays, quel moyen de versement est possible. Nous avons repris votre pays de résidence : changez-le si besoin.',
+			'recrutement.parcours.q.paysVersement.court' => 'Pays de versement',
+			'recrutement.parcours.q.compteBancaire.titre' => 'Avez-vous un compte bancaire ?',
+			'recrutement.parcours.q.compteBancaire.explication' => 'La rémunération se verse par virement bancaire là où l\'académie l\'a confirmé. Vos coordonnées ne sont demandées qu\'avant le premier versement.',
+			'recrutement.parcours.q.compteBancaire.court' => 'Compte bancaire',
+			'recrutement.parcours.q.compteBancaire.options.oui.libelle' => 'Oui, j\'ai un compte bancaire',
+			'recrutement.parcours.q.compteBancaire.options.oui.description' => 'Un compte à votre nom, dans une banque.',
+			'recrutement.parcours.q.compteBancaire.options.oui.explication' => 'Le virement pourra être votre moyen de versement, si l\'académie l\'a confirmé dans votre pays.',
+			'recrutement.parcours.q.compteBancaire.options.oui.exemple' => 'un compte ouvert à votre nom dans une banque de votre pays.',
+			'recrutement.parcours.q.compteBancaire.options.non.libelle' => 'Non, je n\'en ai pas',
+			'recrutement.parcours.q.compteBancaire.options.non.description' => 'Vous n\'avez pas de compte bancaire à votre nom.',
+			'recrutement.parcours.q.compteBancaire.options.non.explication' => 'Vous pourrez alors choisir un moyen de paiement sur téléphone, s\'il en existe un dans votre pays.',
+			'recrutement.parcours.q.compteBancaire.options.non.exemple' => 'vous recevez et envoyez de l\'argent seulement avec votre téléphone.',
+			'recrutement.parcours.q.operateurs.titre' => 'Quels moyens de paiement sur téléphone utilisez-vous ?',
+			'recrutement.parcours.q.operateurs.explication' => 'Voici les moyens que l\'académie a confirmés dans votre pays. Choisissez ceux que vous utilisez, s\'il y en a.',
+			'recrutement.parcours.q.operateurs.court' => 'Moyens de paiement sur téléphone',
 			'dossiers.titre' => 'Dossiers à valider',
 			'dossiers.sousTitre' => 'Examinez les dossiers prêts pour une décision.',
 			'dossiers.aucun' => 'Aucun dossier n\'attend de validation.',
@@ -36773,6 +39319,8 @@ extension on Traductions {
 			'dossiers.pointNom' => 'Le nom correspond à celui du compte',
 			'dossiers.pointValidite' => 'La pièce n\'est pas expirée',
 			'dossiers.verdict' => 'Décision',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.approuver' => 'Valider le dossier',
 			'dossiers.refuser' => 'Refuser le dossier',
 			'dossiers.profilACompleter.titre' => 'Profil à compléter',
@@ -37156,8 +39704,6 @@ extension on Traductions {
 			'admin.groupes.cahiers.plus' => 'Afficher plus de cahiers',
 			'admin.groupes.cahiers.titreCahier' => ({required Object dePrenom}) => 'Cahier de séance ${dePrenom}',
 			'admin.groupes.cahiers.lectureSeule' => 'Lecture seule',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.cahiers.evaluation' => 'Évaluation de l\'enseignant pour cet élève',
 			'admin.groupes.cahiers.aucuneEvaluation' => 'Aucune évaluation n\'a été enregistrée pour cet élève.',
 			'admin.groupes.cahiers.detailsInternes' => 'Détails internes',
@@ -37287,6 +39833,8 @@ extension on Traductions {
 			'admin.groupes.formulaire.creneauxLibres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} créneau libre', other: '${n} créneaux libres', ), 
 			'admin.groupes.formulaire.pasLibre' => 'Ce créneau n\'est pas dans ses disponibilités déclarées : vous pouvez quand même faire ce choix.',
 			'admin.groupes.formulaire.raisonHommes' => 'Classe d\'hommes : seul un enseignant homme peut la prendre.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.formulaire.raisonGarcons' => 'Classe de garçons : seul un enseignant homme peut la prendre.',
 			'admin.groupes.formulaire.raisonFemmes' => 'Classe de femmes : seule une enseignante peut la prendre.',
 			'admin.groupes.formulaire.raisonFilles' => 'Classe de filles : seule une enseignante peut la prendre.',
@@ -37670,8 +40218,6 @@ extension on Traductions {
 			'admin.progression.promouvoirTitre' => ({required Object deEleve}) => 'Changer le niveau ${deEleve}',
 			'admin.progression.promouvoirChampNiveau' => 'Nouveau niveau',
 			'admin.progression.manqueNiveau' => 'Il manque le nouveau niveau : choisissez-le dans la liste des niveaux.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.progression.promouvoirEnvoyer' => 'Enregistrer',
 			'admin.progression.promouvoirErreur' => ({required Object message}) => 'Le changement n\'a pas abouti : ${message}',
 			'admin.progression.champMotif' => 'Motif',
@@ -37801,6 +40347,8 @@ extension on Traductions {
 			'admin.journal.chaineRompueDetail' => ({required num nombre, required Object entree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} entrée ne correspond plus à son empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.', other: '${nombre} entrées ne correspondent plus à leur empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.', ), 
 			'admin.observations.titre' => 'Observations',
 			'admin.observations.titrePage' => 'Historique des observations',
+			_ => null,
+		} ?? switch (path) {
 			'admin.observations.sousTitre' => 'Administration',
 			'admin.observations.recherche' => 'Rechercher un tuteur ou un élève',
 			'admin.observations.rechercheCourte' => 'Saisissez au moins deux lettres.',
@@ -38184,8 +40732,6 @@ extension on Traductions {
 			'admin.finance.pol.railWebDetail' => 'Le seul moyen de paiement proposé aux familles au lancement.',
 			'admin.finance.pol.railIos' => 'Achat intégré iOS',
 			'admin.finance.pol.railAndroid' => 'Facturation Google Play',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.railPrepare' => 'Préparé (inactif)',
 			'admin.finance.pol.railMobileDetail' => 'Prévu pour plus tard : aucun bouton de paiement mobile n\'est montré aux familles au lancement.',
 			'admin.finance.pol.conservation' => 'Conservation de la place',
@@ -38315,6 +40861,8 @@ extension on Traductions {
 			'admin.finance.pai.refusTitre' => 'Paiement refusé',
 			'admin.finance.pai.refusDroits' => 'Seules la direction et la comptabilité peuvent enregistrer un paiement. Rien n\'a été enregistré.',
 			'admin.finance.pai.refusInvalide' => 'Le montant, la devise ou l\'élève n\'a pas été accepté. Rien n\'a été enregistré : vérifiez le montant et réessayez depuis la liste.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pai.inconnuTitre' => 'Paiement non confirmé',
 			'admin.finance.pai.inconnuPhrase' => 'La réponse n\'est pas arrivée. Touchez « Réessayer » : le même paiement ne sera jamais compté deux fois.',
 			'admin.finance.pai.demandeTitre' => 'Validation demandée',
@@ -38698,8 +41246,6 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.droitsChamps.preuveOui' => 'Déposée',
 			'admin.bibliotheque.fiche.droitsChamps.preuveNon' => 'Manquante',
 			'admin.bibliotheque.fiche.droitsChamps.usages' => 'Usages autorisés',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.fiche.droitsChamps.aucunUsage' => 'Aucun usage autorisé',
 			'admin.bibliotheque.fiche.droitsChamps.attribution' => 'Attribution',
 			'admin.bibliotheque.fiche.droitsChamps.echeance' => 'Échéance',
@@ -38829,6 +41375,8 @@ extension on Traductions {
 			'admin.bibliotheque.attribution.retraitConfirmerTitre' => ({required Object titre}) => 'Retirer « ${titre} » du catalogue ?',
 			'admin.bibliotheque.attribution.retraitConfirmerEffet' => 'Les classes ne le verront plus, y compris celles qui l\'utilisent déjà. Le motif est conservé dans l\'historique.',
 			'admin.bibliotheque.attribution.retraitConfirmerBouton' => 'Retirer le support',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.attribution.retire' => 'Support retiré du catalogue.',
 			'admin.bibliotheque.attribution.retraitEchec' => 'Le retrait n\'a pas abouti. Réessayez dans un instant.',
 			'admin.bibliotheque.attribution.conflit' => 'Quelqu\'un a modifié ce support entre-temps. Rechargez avant de continuer.',
@@ -39212,8 +41760,6 @@ extension on Traductions {
 			'compte.tuteur.pageApparence.animationsDetail' => 'Réduites quand votre appareil le demande',
 			'compte.tuteur.pageApparence.texte' => 'Taille du texte',
 			'compte.tuteur.pageApparence.texteDetail' => 'Suit la taille du système',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageAide.titre' => 'Aide et support',
 			'compte.tuteur.pageAide.indisponibleTitre' => 'Aide pas encore disponible',
 			'compte.tuteur.pageAide.indisponiblePhrase' => 'Les questions fréquentes et le contact de l\'académie ne sont pas encore ouverts dans l\'application.',
@@ -39343,6 +41889,8 @@ extension on Traductions {
 			'historique.compteRendu.aucunChampPhrase' => 'Aucun compte rendu pédagogique n\'est disponible pour cette séance.',
 			'historique.compteRendu.voirTravail' => 'Voir le travail à préparer',
 			'historique.compteRendu.voirProgression' => 'Voir la progression',
+			_ => null,
+		} ?? switch (path) {
 			'historique.compteRendu.etatARenforcer' => 'À renforcer',
 			'historique.compteRendu.etatAcquis' => 'Acquis',
 			'historique.dateCourteSansAnnee' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
@@ -39726,8 +42274,6 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.listeAttentePhrase' => ({required Object prenom, required Object deClasse}) => '${prenom} est sur la liste d\'attente ${deClasse}. Aucune place n\'est réservée pour l\'instant.',
 			'classe.pageCatalogue.resultat.refuseTitre' => 'Inscription non acceptée',
 			'classe.pageCatalogue.resultat.refusePhrase' => ({required Object prenom}) => 'Aucune place n\'a été réservée pour ${prenom}. Vous pouvez choisir une autre classe.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.resultat.autresClasses' => 'Voir les autres classes',
 			'classe.pageCatalogue.resultat.retourAccueil' => 'Retour à l\'accueil',
 			'classe.pageCatalogue.places' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} place restante', other: '${nombre} places restantes', ), 
@@ -39857,6 +42403,8 @@ extension on Traductions {
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
 			'enseignant.bienvenue.versJournee' => 'Aller à ma journée',
 			'enseignant.bienvenue.horsLigne' => 'Vos créneaux pourront être enregistrés quand la connexion reviendra.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.bienvenue.dossierIncomplet' => 'Votre dossier n\'est pas encore validé.',
 			'enseignant.bienvenue.dossierIncompletDetail' => 'Le portail d\'attente vous dit ce qu\'il reste à fournir.',
 			'enseignant.bienvenue.versAttente' => 'Voir mon dossier',
@@ -40240,8 +42788,6 @@ extension on Traductions {
 			'enseignant.creneaux.raccourciWeekEnd' => 'Week-end',
 			'enseignant.creneaux.raccourcisDetail' => 'Soirée et Matinée règlent les heures. Week-end choisit samedi et dimanche.',
 			'enseignant.creneaux.jours' => 'Jours',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.heures' => 'Heures',
 			'enseignant.creneaux.menuDe' => 'Heure de début',
 			'enseignant.creneaux.menuA' => 'Heure de fin',
@@ -40371,6 +42917,8 @@ extension on Traductions {
 			'controleur.mfa.activer' => 'Activer la protection',
 			'controleur.mfa.titreVerification' => 'Confirmez votre connexion',
 			'controleur.mfa.introVerification' => 'Ouvrez votre application d\'authentification et saisissez le code à six chiffres affiché pour ce compte.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.mfa.confirmer' => 'Confirmer',
 			'controleur.mfa.codeIncomplet' => 'Saisissez les six chiffres du code.',
 			'controleur.mfa.codeRefuse' => 'Ce code n\'est pas bon. Vérifiez l\'heure de votre téléphone, puis saisissez le code qui s\'affiche maintenant.',
@@ -40754,8 +43302,6 @@ extension on Traductions {
 			'tc.coran.navigation.ouvrir' => 'Aller à une page',
 			'tc.coran.navigation.champ' => 'Page, sourate, juz ou référence',
 			'tc.coran.navigation.indice' => 'Par exemple 18, Al-Kahf, juz 15, 2:255',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.navigation.limite' => 'La recherche porte sur les numéros de page, les références et les noms de sourate. La recherche dans le texte du Coran n\'est pas encore disponible.',
 			'tc.coran.navigation.aucunResultat' => 'Aucune référence trouvée',
 			'tc.coran.navigation.aucunResultatDetail' => 'Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.',
@@ -40885,6 +43431,8 @@ extension on Traductions {
 			'tc.observation.explication.ecouteDetail' => 'Vous entendez l\'enseignant et les élèves qui prennent la parole, y compris votre enfant.',
 			'tc.observation.explication.sansMedia' => 'Sans micro ni caméra',
 			'tc.observation.explication.sansMediaDetail' => 'Votre micro et votre caméra restent désactivés pour ne pas interrompre la classe.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.explication.revenir' => 'Si un autre élève récite lors de votre première visite, vous pourrez revenir plus tard pour écouter votre enfant.',
 			'tc.observation.explication.ecourtee' => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
 			'tc.observation.explication.sansIntervenir' => 'Pour préserver la concentration, vous observez sans intervenir.',
@@ -41268,8 +43816,6 @@ extension on Traductions {
 			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e‑mail : elle doit ressembler à nom@exemple.com.',
 			'adulte.invitation.verifier' => 'Continuer',
 			'adulte.invitation.verifierTitre' => 'Vérifier et envoyer',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.verifierPhrase' => 'Relisez ces informations. L\'invitation partira à cette adresse.',
 			'adulte.invitation.nonRenseigne' => 'Non renseigné',
 			'adulte.invitation.modifier' => 'Modifier',
@@ -41399,6 +43945,8 @@ extension on Traductions {
 			'adulte.reprise.phrases.redepotLe' => ({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}.',
 			'adulte.reprise.titulaire.notification' => 'Une demande de reprise de votre foyer a été déposée en indiquant votre décès.',
 			'adulte.reprise.titulaire.consigne' => 'Si cette demande est erronée, refusez-la.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.titulaire.refuser' => 'Refuser la demande',
 			'adulte.reprise.titulaire.ligne' => 'Une demande de reprise de votre foyer a été déposée.',
 			'adulte.reprise.titulaire.refusEchecTitre' => 'Le refus n\'a pas été confirmé.',
@@ -41782,8 +44330,6 @@ extension on Traductions {
 			'com.socle.composants.pieceJointe.ouvrir' => 'Ouvrir',
 			'com.socle.composants.pieceJointe.ouvrirLecteur' => ({required Object nom}) => 'Ouvrir ${nom}',
 			'com.socle.composants.pieceJointe.retirer' => 'Retirer',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.pieceJointe.retirerLecteur' => ({required Object nom}) => 'Retirer ${nom}',
 			'com.socle.composants.pieceJointe.tailleOctets' => ({required Object taille}) => '${taille} octets',
 			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} Ko',
@@ -41913,6 +44459,8 @@ extension on Traductions {
 			'com.messages.choisirTitre' => 'Choisissez une conversation',
 			'com.messages.choisir' => 'Choisissez une conversation dans la liste pour la lire et y répondre.',
 			'com.messages.recherche.champ' => 'Rechercher une conversation',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.recherche.aide' => 'Nom, Classe ou dossier',
 			'com.messages.recherche.aucunTitre' => 'Aucune conversation trouvée',
 			'com.messages.recherche.aucun' => ({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre Classe.',
@@ -42296,8 +44844,6 @@ extension on Traductions {
 			'com.studio.visibilite.visibleDetail' => 'Ouvert à toute l\'équipe.',
 			'com.studio.visibilite.restreintDetail' => 'Ouvert à une partie de l\'équipe, dont vous faites partie.',
 			'com.studio.visibilite.priveDetail' => 'Canal privé, ouvert à ses seuls membres. Vous en faites partie.',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.canal.membresUn' => '1 membre',
 			'com.studio.canal.membres' => ({required Object nombre}) => '${nombre} membres',
 			'com.studio.canal.aide' => ({required Object nom}) => 'Écrire dans ${nom}',
@@ -42427,6 +44973,8 @@ extension on Traductions {
 			'com.studio.demo.f.activiteInscription' => 'Nouvelle demande d\'inscription reçue',
 			'com.studio.demo.f.objetDossierBenali' => 'Dossier de la famille Benali',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.vide' => 'Aucune activité à traiter ici.',
 			'com.annonces.toutesAcademie' => 'Toute l\'académie',
 			'com.annonces.publieur.titre' => 'Nouvelle annonce',
@@ -42810,8 +45358,6 @@ extension on Traductions {
 			'comptable.aujourdhui.alertesVide' => 'Aucune alerte en ce moment.',
 			'comptable.aujourdhui.alertesResume' => ({required Object n}) => 'Alertes à surveiller : ${n}',
 			'comptable.aujourdhui.paiementsAEffectuer' => 'Paiements à effectuer',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.paiementsAEffectuerDetail' => 'Chaque paiement se vérifie dans sa liste avant d\'être payé.',
 			'comptable.aujourdhui.paiementsVide' => 'Aucun paiement à effectuer.',
 			'comptable.aujourdhui.echeancesVide' => 'Aucune échéance proche.',
@@ -42941,6 +45487,8 @@ extension on Traductions {
 			'comptable.paiements.vide.filtreInvitation' => 'Effacez les filtres pour revoir tous les paiements.',
 			'comptable.paiements.horsLigne' => 'Aucun paiement ne part maintenant. Payez dès que l\'envoi est de nouveau possible.',
 			'comptable.paiements.detail.total' => 'Total à payer',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.detail.lignes' => 'Détail du calcul',
 			'comptable.paiements.detail.ligneTotal' => 'Total',
 			'comptable.paiements.detail.source' => ({required Object source}) => 'Source : ${source}',
@@ -43324,8 +45872,6 @@ extension on Traductions {
 			'comptable.contractuels.beneficiaireExterne' => 'Nouveau bénéficiaire externe',
 			'comptable.contractuels.beneficiaireExterneAide' => 'Il reçoit une invitation sécurisée pour saisir lui-même sa méthode de paiement.',
 			'comptable.contractuels.champNomExterne' => 'Nom du bénéficiaire externe',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.changerEcheance' => 'Changer l\'échéance',
 			'comptable.contractuels.deviseDe' => ({required Object devise}) => 'Devise : ${devise}',
 			'comptable.contractuels.champObjet' => 'Objet de l\'obligation',
@@ -43455,6 +46001,8 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.montantAutoDetail' => 'La somme affectée à la Réserve à chaque échéance.',
 			'comptable.direction.reservePanneau.pourcentageAuto' => 'Part de l\'encaissement consolidé',
 			'comptable.direction.reservePanneau.pourcentageAutoDetail' => 'La part affectée à la Réserve à chaque échéance.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.cadenceTitre' => 'Cadence',
 			'comptable.direction.reservePanneau.cadenceDetail' => 'Quand l\'alimentation a lieu.',
 			'comptable.direction.reservePanneau.cadence.clotureCycle' => 'À chaque clôture de cycle',
@@ -43838,8 +46386,6 @@ extension on Traductions {
 			'juridique.confidentialite.s4.blocs.0' => 'Une famille ne voit que ses propres informations. Les informations d\'un enfant ne sont jamais publiques et ne sont jamais montrées aux autres familles.',
 			'juridique.confidentialite.s4.blocs.1' => 'L\'enseignant voit ses élèves et ses Classes. La direction voit ce qu\'il faut pour gérer les inscriptions, les Classes et les paiements. Ces accès sont réglés côté serveur.',
 			'juridique.confidentialite.s4.blocs.2' => 'Un contrôleur qualité peut assister aux séances. Les accès sensibles sont inscrits dans un journal.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.confidentialite.s5.titre' => '5. Séances en direct et enregistrement',
 			'juridique.confidentialite.s5.blocs.0' => 'La visio passe par un service spécialisé. L\'accès à une séance est donné par le serveur, pour cette séance seulement et pour peu de temps.',
 			'juridique.confidentialite.s5.blocs.1' => 'Aujourd\'hui, l\'application n\'enregistre pas les cours. Si l\'enregistrement revient, nous vous dirons avant pourquoi, combien de temps il est gardé et qui peut y accéder, et nous demanderons votre accord.',
@@ -43969,6 +46515,8 @@ extension on Traductions {
 			'avis.admin.filtre.tous' => 'Tous',
 			'avis.admin.filtre.enAttente' => 'En attente',
 			'avis.admin.filtre.publie' => 'Publiés',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.filtre.refuse' => 'Refusés',
 			'avis.admin.filtre.retire' => 'Retirés',
 			'avis.admin.attente' => ({required Object n}) => 'Avis en attente : ${n}',

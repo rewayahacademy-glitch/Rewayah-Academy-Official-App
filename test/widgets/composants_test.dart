@@ -229,6 +229,53 @@ void main() {
       expect(libelle.style!.color, palette.surfacePrimary.onBackground);
     });
 
+    testWidgets('affirmee : l aplat plein en interface standard, pas la '
+        'lavande douce', (WidgetTester tester) async {
+      // Demande du directeur du 22/10/2026 : le « Continuer » d'un parcours
+      // ne doit pas paraitre desactive. Meme paire que l'Interface guidee ;
+      // le CTA par defaut ne change pas (test ci-dessus).
+      await tester.pumpWidget(
+        hoteComposant(
+          const ActionPrincipale(
+            libelle: 'Continuer',
+            onPress: _rien,
+            affirmee: true,
+          ),
+        ),
+      );
+      final BoxDecoration d = decorationSous(
+        tester,
+        find.byType(ActionPrincipale),
+      );
+      expect(d.color, palette.surfacePrimary.background);
+      expect(d.color, isNot(palette.surfaceActionDouce.background));
+      final Text libelle = tester.widget<Text>(find.text('Continuer'));
+      expect(libelle.style!.color, palette.surfacePrimary.onBackground);
+    });
+
+    testWidgets('affirmee et inerte : le bouton garde son aspect inactif', (
+      WidgetTester tester,
+    ) async {
+      // « Affirmee » ne repeint que le bouton actif : un bouton inerte reste
+      // sur la surface relevee, au filet fort, pour qu'un enfoncement en cours
+      // ou un envoi se distingue d'un bouton actif.
+      await tester.pumpWidget(
+        hoteComposant(
+          const ActionPrincipale(
+            libelle: 'Continuer',
+            onPress: null,
+            affirmee: true,
+          ),
+        ),
+      );
+      final BoxDecoration d = decorationSous(
+        tester,
+        find.byType(ActionPrincipale),
+      );
+      expect(d.color, palette.surfaceRaised.background);
+      expect(d.color, isNot(palette.surfacePrimary.background));
+    });
+
     testWidgets('fleche et pilule : l anatomie du CTA des maquettes', (
       WidgetTester tester,
     ) async {
