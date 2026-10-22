@@ -1684,3 +1684,31 @@ li, dd { text-wrap: wrap; }
 .simulator--page .simulator__fields input:not([type="checkbox"]), .simulator--page .simulator__fields select { border-radius: var(--r-full); }
 .simulator--page .pas button { border-radius: 50%; }
 
+/* --- Recette 20 (suite) : moins de coupes titre-texte, un seul bord a droite ----------------------------------- */
+@media (min-width: 840px) {
+  /* Hauts de page en texte : la phrase commence a la hauteur du titre, pas en dessous. */
+  .entete-page--haut-texte .entete-page__texte, .entete-page--haut-parcours .entete-page__texte { align-items: start; }
+  /* Accueil : « Un horaire fixe » et les questions des familles, titre au-dessus de leur texte, et non a cote. */
+  .pousse__entete { display: block; }
+  .pousse__entete h2 { max-width: 20ch; }
+  .pousse__entete .pousse__corps { margin-top: var(--e-6); max-width: 60ch; }
+  .faq-ouverte__tete { display: block; }
+  .faq-ouverte__tete h2 { max-width: 20ch; }
+  .faq-ouverte__intro { margin-top: var(--e-6); max-width: none; }
+  .faq-ouverte__intro .liste-liens { display: flex; flex-wrap: wrap; gap: 0 var(--e-8); }
+  /* Les deux prix de l'accueil et les deux fiches des cours : la seconde colonne a la 7e colonne de la grille. */
+  .deux-champs__grille { column-gap: var(--e-6); }
+  .deux-champs__grille > .champ:first-child { padding-inline-end: var(--e-10); }
+  .fiches:has(.fiche + .fiche) { column-gap: var(--e-6); }
+  .fiches .fiche { padding-inline: 0; }
+  .fiches .fiche:first-child { padding-inline-end: var(--e-10); }
+  /* Tarifs : « A savoir avant de commander » sur toute la largeur, son texte en deux colonnes sous le titre. */
+  .page-tarifs #conditions .section__titre { grid-column: 1 / -1; position: static; margin-bottom: var(--e-8); }
+  .page-tarifs #conditions .section__corps { grid-column: 1 / -1; max-width: none; columns: 2; column-gap: var(--e-6); }
+  .page-tarifs #conditions .section__corps > * { break-inside: avoid; }
+  /* Academie : la boucle remonte dans le premier ecran, sous et a cote du titre, et s'y arrete entiere. */
+  .entete-page--libre .entete-page__texte { position: relative; z-index: 2; grid-row: 1; }
+  .entete-page--libre .entete-page__arche { grid-row: 1 / span 2; align-self: end; }
+  .entete-page--libre .entete-page__image img { max-height: calc(100svh - var(--entete) - var(--e-12)); }
+}
+

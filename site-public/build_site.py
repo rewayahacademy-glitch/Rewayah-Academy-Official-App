@@ -763,7 +763,8 @@ def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str
             for montant, public in ((p["tarifEnfantMineur"], f"Enfants et adolescents, de {tarifs_mod.AGE_ENFANT_MIN} à {p['ageAdulte'] - 1} ans"),
                                     (p["tarifAdulteMineur"], f"Adultes, {p['ageAdulte']} ans et plus")))
         # Les deux prix ne sont dits qu'ici : leurs mentions (date d'effet, monnaies, taxes) se posent dessous.
-        # La date d'effet, s'il y en a une, reste sous les prix ; la mention des monnaies et des taxes est sous le simulateur.
+        # La date d'effet, s'il y en a une, reste sous les prix ; les monnaies et les taxes sont dites dans « À savoir avant
+        # de commander », plus bas sur la page.
         date_effet = tarifs_mod.note_date_effet(tarifs, today or date.today())
         notes = f'<p class="entete-prix__note">{esc(date_effet)}</p>' if date_effet else ""
         return (f'<section class="entete-page entete-page--haut-prix">{texte}'
@@ -1157,8 +1158,6 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         classe_page = "page-" + (route.strip("/").split("/", 1)[1].replace("/", "-") if "/" in route.strip("/") else "accueil")
     # Sur la page des tarifs, le simulateur est dans la page, sous la grille ; sur l'accueil, une feuille qui s'ouvre.
     en_page = route == "/fr/tarifs"
-    mentions_monnaies = "".join(f'<p class="simulator__note">{esc(n)}</p>' for n in tarifs_mod.notes_prix(tarifs, today or date.today())
-                                if n != tarifs_mod.note_date_effet(tarifs, today or date.today())) if en_page else ""
     ouverture = ('<section class="simulator simulator--page" id="tarif-simulator" aria-labelledby="simulator-title">' if en_page else
                  '<dialog class="simulator" id="tarif-simulator" aria-labelledby="simulator-title">\n'
                  '      <form method="dialog"><button class="simulator__close" aria-label="Fermer le simulateur"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></form>')
@@ -1173,7 +1172,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
       <div class="simulator__fields" id="sim-students"></div>
       <div class="simulator__result" role="status" aria-live="polite" aria-atomic="true" id="sim-result"><p>Le simulateur demande JavaScript.</p></div>
       <script type="application/json" id="tarifs-data">{tarifs_mod.donnees_simulateur(tarifs)}</script>
-      <p class="simulator__note">Prix hors taxes, pour un mois complet. Les taxes éventuelles sont indiquées avant paiement.</p>{mentions_monnaies}
+      <p class="simulator__note">Prix hors taxes, pour un mois complet. Les taxes éventuelles sont indiquées avant paiement.</p>
       <a class="cta" href="/connexion">Commencer mon inscription</a>
     {"</section>" if en_page else "</dialog>"}''' if route in ("/fr/", "/fr/tarifs") else ""
     if en_page:
