@@ -127,7 +127,8 @@
     if (course <= 0) return;
     var p = borne(-r.top / course);
     var z = borne(p / 0.62);
-    var c = adoucie(borne((p - 0.46) / 0.42));
+    /* La classe apparait avant que la porte ne soit tres agrandie : les visages restent petits. */
+    var c = adoucie(borne((p - 0.40) / 0.40));
     porte.style.setProperty('--z', z.toFixed(4));
     porte.style.setProperty('--z2', (z * z).toFixed(4));
     porte.style.setProperty('--c', c.toFixed(4));

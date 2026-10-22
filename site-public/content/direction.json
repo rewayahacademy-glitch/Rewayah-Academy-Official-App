@@ -13,12 +13,12 @@
         "label": "Commencer mon inscription",
         "href": "/connexion",
         "seuil": true,
-        "forme": "centre"
+        "forme": "image",
+        "image": "detail-lumiere-sol"
       },
       "figures": {
         "profils": "detail-pupitre-coran",
-        "suivi": "detail-pupitre",
-        "organisation": "halqa-cercle"
+        "suivi": "detail-pupitre"
       },
       "pleine": [],
       "fonds": {
@@ -30,7 +30,13 @@
           "suivi"
         ]
       ],
-      "haut": "gros-plan"
+      "haut": "gros-plan",
+      "tuiles": {
+        "organisation": {
+          "grand": "3",
+          "petit": "séances par semaine"
+        }
+      }
     },
     "/fr/cours": {
       "image": "eleve-enseignante",
@@ -47,7 +53,7 @@
         "objectifs": "detail-livre-femme",
         "adultes-enfants": "detail-livre-homme",
         "methode": "eleve-enseignante",
-        "groupes": "detail-deux-eleves"
+        "groupes": "decor-arche-dessus"
       },
       "pleine": [],
       "parcours": [
@@ -121,7 +127,7 @@
       "fonds": {
         "mineur": "prune"
       },
-      "haut": "texte"
+      "haut": "chiffres"
     },
     "/fr/tarifs": {
       "image": "place",
@@ -133,7 +139,7 @@
         "label": "Commencer mon inscription",
         "href": "/connexion",
         "seuil": true,
-        "forme": "centre"
+        "forme": "prix"
       },
       "figures": {},
       "pleine": [],

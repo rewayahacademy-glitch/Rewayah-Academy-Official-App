@@ -222,6 +222,7 @@ Inspection après ces corrections :
 | Recette 19 (jurés Sonnet) | 7,72 | 6,95 | 6,93 | « presque » |
 | Recette 20 (jurés Sonnet) | 7,53 | 7,07 | 7,23 | « presque » |
 | Recette 21 (jurés Sonnet) | 7,70 | 6,33 | 6,17 | « presque » |
+| Recette 22 (jurés Sonnet) | 7,67 | 6,73 | 6,33 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -567,6 +568,24 @@ Ensuite : la porte du haut de l'accueil, un peu plus petite au bureau, ne touche
 **Légende des illustrations (décision du directeur, 22/10/2026, registre M-30).** La légende « Illustration » sous chaque image est retirée de tout le site. Une seule mention la remplace, dans les mentions légales, section « Les images du site » : « Les images de ce site sont des illustrations, sauf les photos des fondateurs. » Chaque image garde son texte alternatif. Les règles de mise en page qui ne servaient qu'aux légendes sont retirées. Le test qui exigeait la légende vérifie maintenant son absence et la présence de la mention.
 
 **Après la recette 21.** Les trois jurés relèvent cinq pages qui finissent pareil, la fin de l'accueil posée sur le bas de son arche, et le haut de Cours et de Comment ça marche encore coupé en deux. Corrections : chaque page finit à sa façon (direction.json, fin.forme) — l'accueil sous son arche, l'arche dégagée au-dessus du titre ; Familles, Comment ça marche et Tarifs sur un bandeau lavande centré, le titre, la phrase et un bouton ; l'Académie sur une bande sombre de bord à bord ; Cours sur le violet, le titre étant le lien. Les hauts de Cours et de Comment ça marche posent titre, phrase et bouton dans une colonne. Sur Cours, « Apprendre avec un enseignant » n'est plus en bande pleine (le titre et son texte étaient séparés d'un écran). Tarifs : le résultat du simulateur part de la 7e colonne. Académie : portraits des deux fondateurs à 300 px, noms sur deux lignes réservées, rôles et parcours alignés. Accueil : le bout gauche du tapis s'efface au lieu de s'arrêter net ; le bouton pause passe en bas à droite du premier écran.
+
+**Après la recette 22.** Les trois jurés relèvent encore des fins de page de la même famille (trois bandeaux lavande centrés, et deux fins à la suite sur Comment ça marche), un quart vide en haut à droite de Cours et de Comment ça marche, la même vue du dessus sur trois pages, un haut d'accueil chargé (deux petites phrases, « 2024 » dit deux fois, le bouton pause hors de la marge) et l'encart « Les cours en bref » lu comme un mur de puces.
+
+| # | Relevé | Correction |
+|---|---|---|
+| FF1 | Trois pages finissent sur le même bandeau lavande centré | Tarifs se referme sur ses deux prix, en grand, à côté du titre et de son bouton ; Familles sur une porte ouverte (recadrage sans personne) ; Comment ça marche garde seule le bandeau centré |
+| FF2 | Comment ça marche : deux fins à la suite, et un haut de page vide à droite | « Des classes de 3 à 5 enfants, ou de 3 à 6 adultes » monte dans le haut de page, en grands chiffres tirés de la grille tarifaire, à côté du titre ; la bande plus bas disparaît |
+| FF3 | Cours : un quart vide au-dessus de l'escalier | Au bureau, l'escalier monte dans le haut de page : les deux premières arches sous le texte, les deux dernières à sa hauteur, à droite, le mot arabe au milieu de l'arche |
+| FF4 | La vue du dessus de la classe sur l'accueil, Familles et Cours | Elle ne reste qu'à l'accueil. Familles montre un « 3 » dans une arche (les trois séances de la semaine) ; Cours, l'arche vue d'en haut, sans personne |
+| FF5 | Haut de l'accueil : deux petites phrases, « 2024 » deux fois, bouton pause à 44 px du bord | Le nom de l'académie passe dans la phrase sous le titre (« Chez Rewayah Academy, chaque élève suit… ») ; la date et les fondateurs ne sont dits qu'une fois, dans le bandeau « Accompagné » ; le bouton pause se pose sous le texte, sur sa marge (120 px) |
+| FF6 | « Les cours en bref » : deux colonnes de puces, prix dans une phrase | Une fiche à la fois à toutes les largeurs (choix Enfants / Adultes) ; le montant en grand chiffre à gauche, les autres lignes à droite sur la 7e colonne. Les mots de l'encart du 18/10 ne changent pas |
+| FF7 | Portraits des fondateurs à une autre échelle que le directeur ; un nom sur deux lignes | Recadrés plus serré (la tête fait 68 % de la hauteur), mur légèrement dégradé comme le sien ; chaque nom sous son portrait, sur une ligne |
+| FF8 | La fin de l'accueil lue comme un tube | Le haut d'arche fondu est remplacé par une vraie porte sous son arche, dans un cercle |
+| FF9 | Zoom de la porte jusqu'aux visages | La scène grandit deux fois au plus (au lieu de 2,7) et la classe apparaît plus tôt |
+| FF10 | Académie : le bout du chemin coupé net (tablette, téléphone) | Il s'efface vers la droite |
+| FF11 | Accueil, « Un horaire fixe » : le titre et son texte à gauche, la moitié droite vide | À partir de 1 100 px, le texte et les liens passent dans la colonne de droite |
+
+**Lettres arabes des arches (directeur, 22/10/2026, registre M-31).** Le directeur trouve les inscriptions arabes de Cours peu jolies et demande une police d'ornement, koufi ou diwani, avec les voyelles. Comparaison faite sur les arches elles-mêmes : la seule diwani libre trouvée (Layla Diwani, OFL) est trop fine et place mal ses voyelles ; Reem Kufi (koufi, OFL) et Aref Ruqaa (roqaa, OFL) les placent bien. Reem Kufi est posée, réduite aux seize lettres du contenu et inscrite dans la feuille de style comme l'ancienne police (aucun fichier de plus à déployer) ; la roqaa reste au choix du directeur (O-20).
 
 ## Hors de portée de l'agent
 

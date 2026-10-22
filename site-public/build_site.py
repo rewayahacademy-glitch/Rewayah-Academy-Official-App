@@ -222,6 +222,13 @@ def load_direction(pages: dict[str, dict]) -> tuple[dict, dict]:
             valeur = (reglage.get(cle) or {}).get("image") if isinstance(reglage.get(cle), dict) else reglage.get(cle)
             if valeur and valeur not in connues:
                 raise ValueError(f"direction.json names an unknown picture: {valeur}")
+        image_fin = (reglage.get("fin") or {}).get("image")
+        if image_fin and image_fin not in connues:
+            raise ValueError(f"direction.json names an unknown picture: {image_fin}")
+        if (reglage.get("fin") or {}).get("forme", "") not in ("", "centre", "sombre", "prix", "image"):
+            raise ValueError(f"direction.json: {route} fin.forme must be centre, sombre, prix or image")
+        if (reglage.get("fin") or {}).get("forme") == "image" and not image_fin:
+            raise ValueError(f"direction.json: {route} fin.forme image needs fin.image")
         schema = (reglage.get("bande") or {}).get("schema")
         if schema is not None:
             if set(schema) != {"description", "centre", "choix", "etapes"} or len(schema["etapes"]) != 4 or any(
@@ -492,7 +499,6 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
       <p class="hero-intro">{texte_html(page.get('intro', ''))}</p>
       <div class="action-row">{cta}{bouton("Voir les tarifs", "/fr/tarifs", "contour")}</div>
       <p class="rassurance">{texte_html("Rien n’est facturé avant l’ouverture de la classe. La première semaine est remboursée si le cours ne convient pas.")}</p>
-      <p class="preuve">{texte_html("Rewayah Academy a été fondée en 2024 par trois spécialistes du Coran et des sciences islamiques.")}</p>
     </div>
     <div class="porte__cercle">
       <div class="porte__disque" aria-hidden="true"></div>
@@ -616,7 +622,7 @@ def accueil_confiance(page: dict, images: dict, mot: dict | None = None) -> str:
   <div class="panneau__in">
     <div class="panneau__tete" data-revele>
       <h2 id="confiance-titre">{titre_html(sec["title"])}</h2>
-      <p class="panneau__depuis">{titre_html("Rewayah Academy enseigne le Coran depuis le 1er mai 2024.")}</p>
+      <p class="panneau__depuis">{titre_html("Fondée le 1er mai 2024 par trois spécialistes du Coran.")}</p>
     </div>{citation_accueil(mot)}
     <div class="action-row" data-revele>{bouton("Lire le mot du directeur", "/fr/academie#mot", "contour")}</div>
   </div>
@@ -679,14 +685,15 @@ FLECHE = ('<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><p
 
 
 def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: str = "inscription",
-                 seuil: bool = False, arche: str = "", forme: str = "") -> str:
+                 seuil: bool = False, arche: str = "", forme: str = "", extra: str = "") -> str:
     """La fin de page, sous deux formes.
     - Accueil et pages principales (seuil, direction.json fin.seuil) : la page se referme sur un titre de la taille de
       son titre d'ouverture, pose sur le fond, et ce titre est le lien ; chaque page finit sur sa propre phrase. Quand le
       libelle de l'action differe du titre, les lecteurs d'ecran l'entendent a la suite. L'accueil (arche) se referme
       sous le haut d'une arche, comme il s'ouvre sur une porte. Pour que les pages ne finissent pas toutes pareil
       (direction.json fin.forme) : « centre », un bandeau lavande, le titre et sa phrase au centre, un bouton ;
-      « sombre », le titre lien sur une bande sombre.
+      « sombre », le titre lien sur une bande sombre ; « prix », le titre et son bouton a cote des deux prix (la page
+      des tarifs finit sur ce qu'elle annonce) ; « image », le titre et son bouton a cote d'une porte (extra).
     - Autres pages : une bande sobre et son bouton."""
     externe = href.startswith("mailto:")
     messagerie = '<span class="sr-only"> (ouvre votre messagerie)</span>' if externe else ""
@@ -695,6 +702,15 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: st
   <h2 id="appel-titre" class="appel__titre" data-revele>{titre_html(titre)}</h2>
   <p class="appel__phrase" data-revele>{texte_html(phrase)}</p>
   <div class="action-row" data-revele>{bouton(label, href)}</div>
+</section>'''
+    if forme in ("prix", "image"):
+        return f'''<section class="appel appel--{forme}" id="{esc(identifiant)}" aria-labelledby="appel-titre">
+  <div class="appel__texte">
+    <h2 id="appel-titre" class="appel__titre" data-revele>{titre_html(titre)}</h2>
+    <p class="appel__phrase" data-revele>{texte_html(phrase)}</p>
+    <div class="action-row" data-revele>{bouton(label, href)}</div>
+  </div>
+  <div class="appel__extra" data-revele-enfants>{extra}</div>
 </section>'''
     if seuil:
         debut, _, dernier = titre.rpartition(" ")
@@ -724,7 +740,7 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str, mot: dict | No
         # Comme les pages principales, l'accueil se referme sur une phrase qui est le lien : elle dit pour qui.
         bande_finale((fin.get("paragraphs") or [fin["title"]])[0], "Rien n’est facturé avant l’ouverture de la classe.",
                      page["cta"]["label"], page["cta"]["href"], seuil=True,
-                     arche=scene(images, "arche-haut", "(max-width: 839px) 86vw, 640px", "appel__arche")),
+                     arche=scene(images, "detail-arche-livre", "(max-width: 839px) 72vw, 420px", "appel__arche")),
     ))
 
 
@@ -737,6 +753,17 @@ def libelle_arche(point: str) -> str:
     if not virgule:
         return f'<span>{texte_html(point)}</span>'
     return f'<span>{texte_html(tete)},<span class="parcours__precision"> {texte_html(precision)}</span></span>'
+
+
+def blocs_prix(tarifs: dict) -> str:
+    """Les deux prix, enfant et adulte, tels que la grille tarifaire les donne (haut et fin de la page des tarifs)."""
+    p = tarifs_mod.politique_affichee(tarifs)
+    hors_taxes = "hors taxes" if p["horsTaxes"] else "taxes comprises"
+    return "".join(
+        f'<p class="entete-prix__bloc"><span class="entete-prix__montant">{esc(tarifs_mod.fmt_montant(montant, p["devise"]))}</span>'
+        f'<span class="entete-prix__periode">par mois, {hors_taxes}</span><span class="entete-prix__public">{texte_html(public)}</span></p>'
+        for montant, public in ((p["tarifEnfantMineur"], f"Enfants et adolescents, de {tarifs_mod.AGE_ENFANT_MIN} à {p['ageAdulte'] - 1} ans"),
+                                (p["tarifAdulteMineur"], f"Adultes, {p['ageAdulte']} ans et plus")))
 
 
 def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str, status: str,
@@ -762,17 +789,24 @@ def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str
             for p, a in zip(sec.get("points", []), arabe))
         return (f'<section class="entete-page entete-page--haut-parcours">{texte}'
                 f'<ol class="parcours parcours--haut" aria-label="{esc(sec["title"])}" data-revele-enfants>{arches}</ol></section>')
+    if haut == "chiffres":
+        # Comment ca marche s'ouvre aussi sur la taille des classes, en grands chiffres tires de la grille tarifaire :
+        # la phrase de sa bande (direction.json) est dite ici, et la bande n'est plus posee plus bas.
+        classes = tarifs_mod.politique_affichee(tarifs)["classes"]
+        ouverture = classes["ouvertureMinimum"]
+        lignes = "".join(f'<p class="entete-chiffres__bloc"><span class="entete-chiffres__nombre">{ouverture}\u00a0à\u00a0{taille}</span>'
+                         f'<span class="entete-chiffres__libelle">{libelle}</span></p>'
+                         for taille, libelle in ((classes["tailleEnfant"], "enfants par classe"),
+                                                 (classes["tailleAdulte"], "adultes par classe")))
+        bande = reglage.get("bande") or {}
+        sous = f'<p class="entete-chiffres__sous">{texte_html(bande["sous"])}</p>' if bande.get("sous") else ""
+        return (f'<section class="entete-page entete-page--haut-chiffres">{texte}'
+                f'<div class="entete-chiffres" data-revele-enfants>{lignes}{sous}</div></section>')
     if haut == "prix":
-        p = tarifs_mod.politique_affichee(tarifs)
-        hors_taxes = "hors taxes" if p["horsTaxes"] else "taxes comprises"
-        blocs = "".join(
-            f'<p class="entete-prix__bloc"><span class="entete-prix__montant">{esc(tarifs_mod.fmt_montant(montant, p["devise"]))}</span>'
-            f'<span class="entete-prix__periode">par mois, {hors_taxes}</span><span class="entete-prix__public">{texte_html(public)}</span></p>'
-            for montant, public in ((p["tarifEnfantMineur"], f"Enfants et adolescents, de {tarifs_mod.AGE_ENFANT_MIN} à {p['ageAdulte'] - 1} ans"),
-                                    (p["tarifAdulteMineur"], f"Adultes, {p['ageAdulte']} ans et plus")))
-        # Les deux prix ne sont dits qu'ici : leurs mentions (date d'effet, monnaies, taxes) se posent dessous.
-        # La date d'effet, s'il y en a une, reste sous les prix ; les monnaies et les taxes sont dites dans « À savoir avant
-        # de commander », plus bas sur la page.
+        blocs = blocs_prix(tarifs)
+        # Les deux prix ouvrent la page et la referment (fin.forme « prix ») ; leurs mentions ne sont dites qu'une fois :
+        # la date d'effet, s'il y en a une, sous les prix du haut ; les monnaies et les taxes dans « À savoir avant de
+        # commander », plus bas sur la page.
         date_effet = tarifs_mod.note_date_effet(tarifs, today or date.today())
         notes = f'<p class="entete-prix__note">{esc(date_effet)}</p>' if date_effet else ""
         return (f'<section class="entete-page entete-page--haut-prix">{texte}'
@@ -881,6 +915,13 @@ def figure_section(reglage: dict, images: dict, sid: str) -> str:
         lignes = "".join(f'<li><span class="noms__nom">{esc(n["nom"])}</span>'
                          + (f'<span class="noms__role">{esc(n["role"])}</span>' if n.get("role") else "") + "</li>" for n in noms)
         return f'<div class="section__figure section__figure--noms" data-revele><ul class="noms" aria-hidden="true">{lignes}</ul></div>'
+    tuile = (reglage.get("tuiles") or {}).get(sid)
+    if tuile:
+        # Un chiffre en grand dans une arche, a la place d'une image : il redit le texte de la section (les trois
+        # séances de la semaine), sans rien ajouter ; la vue du dessus de la classe reste ainsi a l'accueil seulement.
+        return (f'<div class="section__figure section__figure--tuile" data-revele><p class="tuile-chiffre" aria-hidden="true">'
+                f'<span class="tuile-chiffre__grand">{esc(tuile["grand"])}</span>'
+                f'<span class="tuile-chiffre__petit">{esc(tuile["petit"])}</span></p></div>')
     ident = (reglage.get("figures") or {}).get(sid)
     if not ident:
         return ""
@@ -993,7 +1034,8 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
         liste = "".join(render_section(s, i, tarifs, today, avis, "etape", figure_section(reglage, images, s["id"]))
                         for i, s in enumerate(etapes, 1))
         morceaux.append(f'<ol class="etapes">{liste}</ol>')
-        morceaux.append(bande_image(reglage, images, tarifs))
+        if reglage.get("haut") != "chiffres":
+            morceaux.append(bande_image(reglage, images, tarifs))
         cotes = alternance(reglage)
         for i, s in enumerate(autres, 1):
             figure = figure_section(reglage, images, s["id"])
@@ -1160,8 +1202,11 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         fin = reglage.get("fin")
         if fin:
             # Une page qui a deja une section « inscription » (l'aide) donne un autre identifiant a sa fin.
+            forme = fin.get("forme", "")
+            extra = (blocs_prix(tarifs) if forme == "prix" else
+                     scene(images, fin["image"], "(max-width: 839px) 72vw, 450px", "appel__image") if forme == "image" else "")
             main += bande_finale(fin["titre"], fin["phrase"], fin.get("label", page["cta"]["label"]),
-                                 fin.get("href", page["cta"]["href"]), seuil=bool(fin.get("seuil")), forme=fin.get("forme", ""),
+                                 fin.get("href", page["cta"]["href"]), seuil=bool(fin.get("seuil")), forme=forme, extra=extra,
                                  identifiant="fin-de-page" if 'id="inscription"' in main else "inscription")
         classe_page = "page-" + (route.strip("/").split("/", 1)[1].replace("/", "-") if "/" in route.strip("/") else "accueil")
     # Sur la page des tarifs, le simulateur est dans la page, sous la grille ; sur l'accueil, une feuille qui s'ouvre.

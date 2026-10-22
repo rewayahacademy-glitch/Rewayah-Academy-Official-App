@@ -141,7 +141,7 @@ class GeneratedSiteQA(unittest.TestCase):
                 "plus-jakarta-sans-latin.woff2",
                 "dm-sans-OFL.txt",
                 "plus-jakarta-sans-OFL.txt",
-                "noto-sans-arabic-OFL.txt",
+                "reem-kufi-OFL.txt",
             } | scenes,
         )
         self.assertFalse((self.output / "fr" / "assets" / "prototype.html").exists())
@@ -177,8 +177,11 @@ class GeneratedSiteQA(unittest.TestCase):
             self.assertIn('srcset="/fr/assets/logo-horizontal-white.svg"', home)
             self.assertIn('srcset="/fr/assets/symbole.svg"', home)
         self.assertIn('src="/fr/assets/logo-horizontal-white.svg"', home)
-        # Le nom de l'academie est dit dans le premier ecran (sur telephone, l'en-tete ne montre que le symbole).
-        self.assertIn('<p class="preuve">Rewayah Academy a été fondée en 2024', home.replace("\u00a0", " "))
+        # Le nom de l'academie est dit dans le premier ecran (sur telephone, l'en-tete ne montre que le symbole) : dans la
+        # phrase sous le titre ; la date et les fondateurs sont dits plus bas, dans le bandeau « Accompagné à chaque étape ».
+        intro = re.search(r'<p class="hero-intro">(.*?)</p>', home.split('class="porte"', 1)[1], re.S).group(1)
+        self.assertIn("Rewayah Academy", intro.replace("\u00a0", " "))
+        self.assertIn("Fondée le 1er mai 2024 par trois spécialistes", re.sub(r"<[^>]+>", "", home).replace("\u00a0", " "))
         self.assertNotIn('4 août 2025', "\n".join(path.read_text(encoding="utf-8") for path in self.output.rglob("*.html")))
 
     def test_every_illustration_is_described_and_declared_once(self) -> None:
@@ -265,9 +268,10 @@ class GeneratedSiteQA(unittest.TestCase):
         for route, fin in fins.items():
             source = self.page_file(route).read_text(encoding="utf-8")
             with self.subTest(route=route):
-                if fin.get("forme") == "centre":
-                    # Bandeau centre : le titre, sa phrase, puis un bouton qui porte le libelle de l'action.
-                    fin_page = source.split('class="appel appel--centre"', 1)[1].split("</section>", 1)[0]
+                if fin.get("forme") in ("centre", "prix", "image"):
+                    # Bandeau centre, fin sur les prix ou sur une porte : le titre, sa phrase, puis un bouton qui porte le
+                    # libelle de l'action.
+                    fin_page = source.split(f'class="appel appel--{fin["forme"]}"', 1)[1].split("</section>", 1)[0]
                     titre = re.search(r'<h2 id="appel-titre" class="appel__titre"[^>]*>(.*?)</h2>', fin_page, re.S).group(1)
                     self.assertEqual(re.sub(r"<[^>]+>", "", titre).replace("\u00a0", " ").strip(), fin["titre"])
                     self.assertIn(f'href="{fin.get("href", self.pages[route]["cta"]["href"])}"', fin_page)

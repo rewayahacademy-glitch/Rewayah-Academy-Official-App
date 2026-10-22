@@ -682,18 +682,18 @@
       }
     },
     "portrait-fondateur-alimou": {
-      "source": "photo fournie par le directeur le 22/10/2026 (Drive, dossier « Alim & Ahmad », fond blanc), détouré (BiRefNet), posé sur le mur clair de la photo du directeur, cadré tête et épaules en 4:5 (la tête fait 60 % de la hauteur), peau éclaircie à la luminosité de celle du directeur, étalonnage A3 de sa photo (ombres #110E20, clairs #EEE6FA, 8 % de gris) ; visage non retouché ; sans métadonnées",
-      "largeur": 554,
-      "hauteur": 693,
+      "source": "photo fournie par le directeur le 22/10/2026 (Drive, dossier « Alim & Ahmad », fond blanc), détouré (BiRefNet), posé sur le mur clair de la photo du directeur, cadré tête et épaules en 4:5 (la tête fait 68 % de la hauteur), peau éclaircie à la luminosité de celle du directeur, étalonnage A3 de sa photo (ombres #110E20, clairs #EEE6FA, 8 % de gris) ; visage non retouché ; sans métadonnées",
+      "largeur": 490,
+      "hauteur": 612,
       "alt": "Mamadou Alimou Diallo, fondateur de Rewayah Academy, en calotte brodée et tunique claire, de face.",
       "photo": {
         "legende": "Mamadou Alimou Diallo, fondateur"
       }
     },
     "portrait-fondateur-ahmad": {
-      "source": "photo fournie par le directeur le 22/10/2026 (Drive, dossier « Alim & Ahmad », de nuit sous des arches éclairées, en pied), détouré (BiRefNet), posé sur le mur clair de la photo du directeur, cadré tête et épaules en 4:5 (la tête fait 60 % de la hauteur), peau éclaircie à la luminosité de celle du directeur, étalonnage A3 de sa photo (ombres #110E20, clairs #EEE6FA, 8 % de gris) ; visage non retouché ; sans métadonnées",
-      "largeur": 338,
-      "hauteur": 422,
+      "source": "photo fournie par le directeur le 22/10/2026 (Drive, dossier « Alim & Ahmad », de nuit sous des arches éclairées, en pied), détouré (BiRefNet), posé sur le mur clair de la photo du directeur, cadré tête et épaules en 4:5 (la tête fait 68 % de la hauteur), peau éclaircie à la luminosité de celle du directeur, étalonnage A3 de sa photo (ombres #110E20, clairs #EEE6FA, 8 % de gris) ; visage non retouché ; sans métadonnées",
+      "largeur": 298,
+      "hauteur": 372,
       "alt": "Ahmad Diallo, fondateur de Rewayah Academy, en calotte brodée et tunique sombre, souriant, de face.",
       "photo": {
         "legende": "Ahmad Diallo, fondateur"

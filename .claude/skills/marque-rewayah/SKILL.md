@@ -34,6 +34,8 @@ des **candidates**. La vision, la mission, l'ambition, les valeurs et le texte d
    (`assets/brand/logo/README.md`). Jamais de logo dans une page du Coran.
 2. Une couleur, une police ou une valeur hors de `lib/core/theme/`. Polices : DM Sans (titres), Plus
    Jakarta Sans (reste et chiffres), Noto Sans Arabic, Uthman Taha Naskh, UthmanicHafs (Coran seulement).
+   Exception : l'arabe décoratif du site public prend une police d'ornement qui porte les voyelles (Reem Kufi,
+   M-31, 22/10/2026).
 3. Une identité périmée (vert et or, rose et taupe, crème) ou étrangère (PISI : fluor, crème, Syne).
 4. Un témoignage, un chiffre, un résultat, une photo d'enfant réel ou un écran inventés. Sur le site public,
    les illustrations sont déclarées une seule fois, dans les mentions légales, sans légende sous chaque image

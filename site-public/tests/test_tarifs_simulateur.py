@@ -162,8 +162,11 @@ class LectureDeLaBase(unittest.TestCase):
         # Les encarts de la décision suivent la politique affichée : jamais deux prix pour la même formule.
         cours = (sortie / "fr" / "cours.html").read_text(encoding="utf-8")
         fiches = cours[cours.index('class="fiches"'):]
-        self.assertIn(f"<li>60{NBSP}$ par mois, hors{NBSP}taxes.</li>", fiches)
-        self.assertNotIn(f"55{NBSP}$ par mois", fiches)
+        # Le montant se pose en grand dans sa propre balise ; la phrase de l'encart reste entiere une fois les balises otees.
+        self.assertIn(f'<li class="fiche__prix"><span class="fiche__montant">60{NBSP}$</span> par mois, hors{NBSP}taxes.</li>', fiches)
+        texte_fiches = re.sub(r"<[^>]+>", "", fiches)
+        self.assertIn(f"60{NBSP}$ par mois, hors{NBSP}taxes.", texte_fiches)
+        self.assertNotIn(f"55{NBSP}$ par mois", texte_fiches)
         recrutement = (sortie / "fr" / "recrutement.html").read_text(encoding="utf-8")
         self.assertIn(f"141{NBSP}$ par mois pour une classe d", recrutement)
         for interdit in (faux.url, "127.0.0.1", "cle-secrete-de-test", "apikey", "rpc/tarifs_publics"):

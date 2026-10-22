@@ -465,10 +465,17 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
 
         # Les phrases de l'encart, sans en changer un mot, posees une par ligne pour se lire d'un coup d'oeil.
         # Une fourchette (« 3 à 5 ») et un nombre suivi de son unite ne se coupent pas.
+        # Le prix (« 55 $ par mois, hors taxes. ») garde ses mots ; son montant seul se pose en grand.
+        def ligne(ph: str) -> str:
+            m = re.match(r"(\d+(?:,\d+)?[ \u00a0]\$) (.+)$", ph)
+            if not m:
+                return f"<li>{esc(lie(ph))}</li>"
+            return f'<li class="fiche__prix"><span class="fiche__montant">{esc(lie(m[1]))}</span> {esc(lie(m[2]))}</li>'
+
         def lignes(texte: str) -> str:
             phrases = re.split(r"(?<=\.) (?=[A-ZÀ-Ý0-9])", texte)
-            return '<ul class="fiche__lignes">' + "".join(f"<li>{esc(lie(ph))}</li>" for ph in phrases) + "</ul>"
-        # Au telephone, un choix Enfants / Adultes montre une fiche a la fois ; les deux restent publiees telles quelles.
+            return '<ul class="fiche__lignes">' + "".join(ligne(ph) for ph in phrases) + "</ul>"
+        # Un choix Enfants / Adultes montre une fiche a la fois ; les deux restent publiees telles quelles.
         return ('<div class="fiches-bloc"><div class="fiches__choix" role="group" aria-label="Afficher la fiche">'
                 '<input type="radio" name="fiche-public" id="fiche-enfants" checked><label for="fiche-enfants">Enfants</label>'
                 '<input type="radio" name="fiche-public" id="fiche-adultes"><label for="fiche-adultes">Adultes</label></div>'

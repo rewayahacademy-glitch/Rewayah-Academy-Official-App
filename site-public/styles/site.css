@@ -1,9 +1,9 @@
-/* Noto Sans Arabic (OFL, licence dans assets/noto-sans-arabic-OFL.txt), graisse 500, reduite aux lettres arabes du
-   contenu (les arches de Cours) : inscrite ici, elle n'ajoute aucun fichier au
+/* Reem Kufi (OFL, licence dans assets/reem-kufi-OFL.txt), koufi d'ornement choisie par le directeur le 22/10/2026
+   (registre de marque M-31), graisse 500, reduite aux lettres arabes du contenu (les arches de Cours) : inscrite ici, elle n'ajoute aucun fichier au
    paquet deploye. Apres un ajout de texte arabe, relancer site-public/police_arabe.py. */
 @font-face {
-  font-family: 'Noto Sans Arabic';
-  src: url('data:font/woff2;base64,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') format('woff2');
+  font-family: 'Reem Kufi';
+  src: url('data:font/woff2;base64,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') format('woff2');
   font-style: normal;
   font-weight: 500;
   font-display: swap;
@@ -194,10 +194,9 @@ p { text-wrap: wrap; max-width: 60ch; }
 @media (min-width: 600px) { .eyebrow { display: none; } }
 .hero-intro { font-size: var(--t-moyen); line-height: 1.4; max-width: 32ch; margin-top: var(--e-6); }
 .rassurance { margin-top: var(--e-5); font-size: var(--t-petit); color: var(--encre-douce); max-width: 46ch; }
-.preuve { margin-top: var(--e-3); font-size: var(--t-petit); color: var(--encre-douce); max-width: 46ch; }
 .porte__phrase span { white-space: nowrap; }
 /* Sur les ecrans bas, le ruban de la scene passe sous la phrase et le bouton contour : ils gardent le fond du champ. */
-.porte .rassurance, .porte .preuve { width: fit-content; padding: var(--e-1) var(--e-2); margin-inline-start: calc(var(--e-2) * -1); border-radius: var(--r-xs); background: var(--champ); }
+.porte .rassurance { width: fit-content; padding: var(--e-1) var(--e-2); margin-inline-start: calc(var(--e-2) * -1); border-radius: var(--r-xs); background: var(--champ); }
 .porte .cta--secondary { background: var(--champ); }
 .porte .cta--secondary:hover { background: var(--champ-fort); }
 
@@ -958,7 +957,7 @@ li, dd { text-wrap: wrap; }
   .porte__collant { display: flex; flex-direction: column; align-items: stretch; padding-bottom: 0; }
   .porte__texte { display: contents; }
   .porte__scene { order: 1; }
-  .porte .rassurance, .porte .preuve, .porte__texte .pause-anim { order: 2; }
+  .porte .rassurance, .porte__texte .pause-anim { order: 2; }
   .porte .rassurance { margin-top: var(--e-6); }
   .porte__cercle { order: 3; display: grid; gap: var(--e-6); margin: var(--e-10) calc(var(--marge) * -1) 0; padding: var(--e-12) var(--marge) var(--e-16); border-radius: 0 0 50% 50% / 0 0 64px 64px; background: var(--champ); }
   /* Centree comme au bureau, a la taille du titre quand elle tient : chaque vers reste sur une ligne (le plus long
@@ -1062,7 +1061,7 @@ li, dd { text-wrap: wrap; }
 [data-ambiance="violet"] .entete-page--sobre,
 [data-ambiance="violet"] .bande-image--large,
 [data-ambiance="violet"] .introuvable { background: transparent; }
-[data-ambiance="violet"] .porte .rassurance, [data-ambiance="violet"] .porte .preuve,
+[data-ambiance="violet"] .porte .rassurance,
 [data-ambiance="violet"] .porte .cta--secondary { background: transparent; }
 [data-ambiance="violet"] .porte .cta--secondary:hover { background: #8652E6; }
 /* On passe la porte et on arrive dans la piece eclairee : le cercle s'ouvre sur la lumiere de la salle. */
@@ -1134,9 +1133,9 @@ li, dd { text-wrap: wrap; }
 /* Au telephone, un detail reste un detail : il ne prend pas tout l'ecran. */
 @media (max-width: 599px) { .section__figure:has(.scene--arche) { width: min(100%, 260px); } .section__figure:has(.scene--cercle) { width: min(100%, 300px); } }
 
-/* --- Fiches du 18/10 au telephone : un choix Enfants / Adultes, une fiche a la fois -------- */
+/* --- Fiches du 18/10 : un choix Enfants / Adultes, une fiche a la fois (a toutes les largeurs depuis la recette 22) */
 .fiches__choix { display: none; }
-@media (max-width: 599px) {
+@media screen {
   .fiches__choix { display: inline-grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: var(--e-6); padding: 4px; border-radius: var(--r-full); background: var(--sous); }
   .fiches__choix input { position: absolute; width: 1px; height: 1px; opacity: 0; }
   .fiches__choix label { display: grid; place-items: center; min-height: 44px; padding-inline: var(--e-6); border-radius: var(--r-full); font-weight: 600; cursor: pointer; }
@@ -1309,7 +1308,7 @@ li, dd { text-wrap: wrap; }
 }
 
 /* --- Cours : dans chaque arche du parcours, ce que l'eleve lit a cette etape --------------------- */
-.parcours__arabe { font-family: 'Noto Sans Arabic', sans-serif; font-weight: 500; line-height: 1.6; letter-spacing: 0; }
+.parcours__arabe { font-family: 'Reem Kufi', sans-serif; font-weight: 500; line-height: 1.6; letter-spacing: 0; word-spacing: .15em; white-space: nowrap; }
 @media (max-width: 839px) {
   .parcours--haut .parcours__etape { align-items: center; gap: var(--e-4); padding-block: var(--e-5); }
   /* Marge physique : le libelle arabe est en rtl, sa marge « de debut » serait a droite. */
@@ -1700,7 +1699,7 @@ li, dd { text-wrap: wrap; }
 
 /* Accueil : la page se referme sous le haut d'une arche, comme elle s'ouvre sur une porte ; tout est centre. */
 .appel--porte { display: block; text-align: center; }
-.appel--porte .appel__arche { width: min(86%, 640px); margin: 0 auto var(--e-8); }
+.appel--porte .appel__arche { width: min(72%, 420px); margin: 0 auto var(--e-8); }
 /* La legende dans le coin vide, en haut a droite de l'arche : le titre passe sous l'arche, pas sur la legende. */
 .appel--porte .appel__titre { position: relative; max-width: 11em; margin-inline: auto; }
 .appel--porte .appel__phrase { margin: var(--e-6) auto 0; max-width: 46ch; padding: 0; }
@@ -1726,13 +1725,96 @@ li, dd { text-wrap: wrap; }
   .entete-page--haut-texte .hero-intro, .entete-page--haut-parcours .hero-intro { max-width: 52ch; }
   /* Tarifs : le resultat du simulateur part de la 7e colonne, comme le texte des autres sections. */
   .simulator--page > .simulator__result, .simulator--page > .simulator__note, .simulator--page > .cta { grid-column: 7 / -1; }
-  /* Academie : les portraits des deux fondateurs plus grands ; leurs noms gardent deux lignes, roles et parcours alignes. */
-  .profil { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); }
-  .profil h3 { min-height: 2lh; align-self: start; }
-  /* Accueil : le bouton pause du tapis en bas a droite, au bout du tapis, et non sous le texte. */
-  .porte__texte .pause-anim { position: absolute; inset-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); bottom: var(--e-6); margin: 0; }
 }
 /* Accueil : le bout gauche du tapis s'efface au lieu de s'arreter net au bord de l'image. */
 .porte__scene { -webkit-mask-image: linear-gradient(to right, transparent 0, #000 9%); mask-image: linear-gradient(to right, transparent 0, #000 9%); }
 .portrait--profil { width: min(100%, 300px); }
 
+
+/* --- Recette 22 (22/10/2026) : chaque page finit a sa facon, les hauts de page remplis ------------------------------ */
+/* Fins de page : les tarifs se referment sur leurs deux prix, Familles sur une porte ouverte ; le titre et son bouton
+   a gauche, sur les six premieres colonnes, comme le texte des autres sections. */
+.appel--prix, .appel--image { display: grid; row-gap: var(--e-12); align-items: center; padding: var(--respire) max(var(--marge), calc((100vw - var(--contenu)) / 2)) calc(var(--respire) + var(--e-8)); }
+.appel--prix .appel__titre, .appel--image .appel__titre { max-width: 12em; }
+.appel--prix .appel__phrase, .appel--image .appel__phrase { margin-top: var(--e-6); max-width: 40ch; padding-inline: 0; }
+.appel--prix .action-row, .appel--image .action-row { margin-top: var(--e-10); }
+.appel--prix .appel__extra { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-6); align-items: start; }
+.appel--prix .entete-prix__bloc { grid-template-columns: minmax(0, 1fr); row-gap: var(--e-2); align-content: start; }
+.appel--prix .entete-prix__montant { grid-row: auto; margin-bottom: var(--e-2); font-size: var(--t-affiche); }
+.appel--image .appel__image { width: min(100%, 450px); margin-inline: auto; }
+@media (min-width: 840px) {
+  .appel--prix, .appel--image { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); }
+  .appel--prix .appel__texte, .appel--image .appel__texte { grid-column: 1 / span 6; }
+  .appel--prix .appel__extra, .appel--image .appel__extra { grid-column: 7 / -1; }
+  .appel--prix .appel__titre, .appel--image .appel__titre { font-size: var(--t-entete); }
+}
+
+/* Comment ca marche : la taille des classes en grands chiffres a cote du titre, la ou le haut de page restait vide. */
+.entete-chiffres { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e-6) var(--e-8); padding-bottom: var(--e-10); }
+.entete-chiffres__bloc { display: grid; gap: var(--e-1); max-width: none; padding: 0; }
+.entete-chiffres__nombre { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.entete-chiffres__libelle { font-weight: 600; font-size: var(--t-corps); }
+.entete-chiffres__sous { max-width: 40ch; font-size: var(--t-corps); }
+.entete-chiffres__sous { grid-column: 1 / -1; }
+@media (min-width: 840px) {
+  .entete-page--haut-chiffres { min-height: 0; padding-bottom: 0; align-items: end; }
+  .entete-page--haut-chiffres .entete-page__texte { grid-column: 1 / span 6; align-self: end; padding-bottom: var(--e-10); }
+  .entete-page--haut-chiffres .entete-chiffres { grid-column: 7 / -1; grid-row: 1; }
+}
+
+/* Cours : l'escalier monte dans le haut de page ; les deux premieres marches sous le texte, les deux dernieres a sa
+   hauteur, a droite, la ou le haut de page restait vide. */
+@media (min-width: 1100px) {
+  .entete-page--haut-parcours { grid-template-rows: auto auto; row-gap: 0; align-items: end; }
+  .entete-page--haut-parcours .entete-page__texte { grid-column: 1 / span 6; grid-row: 1; display: block; align-self: start; padding-bottom: var(--e-10); }
+  .entete-page--haut-parcours .entete-page__texte > *, .entete-page--haut-parcours .entete-page__texte > h1 { grid-column: auto; grid-row: auto; }
+  .entete-page--haut-parcours .hero-intro { margin-top: var(--e-6); max-width: 46ch; }
+  .entete-page--haut-parcours .action-row { margin-top: var(--e-8); }
+  .entete-page--haut-parcours .parcours--haut { grid-column: 1 / -1; grid-row: 1 / span 2; display: grid; grid-template-columns: subgrid; grid-template-rows: subgrid; align-items: end; margin-top: 0; }
+  .parcours--haut .parcours__etape:nth-child(1) { grid-column: 1 / span 3; grid-row: 2; min-height: 270px; }
+  .parcours--haut .parcours__etape:nth-child(2) { grid-column: 4 / span 3; grid-row: 2; min-height: 360px; }
+  .parcours--haut .parcours__etape:nth-child(3) { grid-column: 7 / span 3; grid-row: 1 / span 2; align-self: stretch; min-height: 0; margin-top: clamp(96px, 9vw, 150px); }
+  .parcours--haut .parcours__etape:nth-child(4) { grid-column: 10 / span 3; grid-row: 1 / span 2; align-self: stretch; min-height: 0; }
+  /* Dans les deux hautes arches, le mot arabe au milieu de l'arche, et non tasse en bas. */
+  .parcours--haut .parcours__etape:nth-child(n+3) .parcours__arabe { margin-block: auto; }
+}
+
+/* Familles, les horaires : un chiffre dans une arche (les trois séances), et non une deuxieme vue du dessus. */
+.section__figure--tuile { display: grid; place-items: center; background: none; padding: 0; }
+.tuile-chiffre { display: grid; place-items: center; align-content: center; width: min(100%, 400px); aspect-ratio: 4 / 5; padding: var(--e-10) var(--e-6); border-radius: 50% 50% 0 0 / 40% 40% 0 0; background: #EEE6FA; color: #25113F; text-align: center; max-width: none; }
+.tuile-chiffre__grand { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(140px, 17vw, 240px); line-height: .9; letter-spacing: -0.05em; }
+.tuile-chiffre__petit { margin-top: var(--e-4); font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-moyen); }
+
+/* Les cours en bref (encarts du 18/10, mots inchanges) : une fiche a la fois ; le montant en grand chiffre, a gauche,
+   les autres lignes a droite, sur la ligne de la septieme colonne. */
+.fiches-bloc .fiches:has(.fiche + .fiche) { grid-template-columns: minmax(0, 1fr); }
+.fiche__lignes li.fiche__prix { padding-inline-start: 0; font-family: inherit; font-size: var(--t-corps); font-weight: 600; line-height: 1.4; letter-spacing: 0; }
+.fiche__montant { display: block; margin-bottom: var(--e-2); font-family: 'DM Sans', sans-serif; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+@media (min-width: 840px) {
+  .fiches-bloc .fiche__lignes { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-6); grid-auto-flow: row dense; align-items: start; }
+  .fiches-bloc .fiche__lignes li { grid-column: 2; max-width: 46ch; }
+  .fiches-bloc .fiche__lignes li:nth-child(1) { grid-column: 1; grid-row: 1; }
+  .fiches-bloc .fiche__lignes li:nth-child(2) { grid-column: 1; grid-row: 2 / span 9; }
+}
+
+/* Academie : chaque fondateur sous son portrait, son nom sur une ligne ; les deux portraits a la meme echelle. */
+.profils .profil { display: block; }
+.profils .profil > .portrait--profil { width: min(100%, 280px); margin-bottom: var(--e-6); }
+.profils .profil h3 { min-height: 0; }
+
+/* Accueil, « Un horaire fixe, une classe stable » : le titre a gauche, son texte et ses liens dans la colonne de droite. */
+@media (min-width: 1100px) {
+  .pousse .pousse__entete { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: end; }
+  .pousse .pousse__entete h2 { grid-column: 1 / span 6; }
+  .pousse .pousse__corps { grid-column: 7 / -1; max-width: none; }
+}
+
+/* Academie : le bout droit du chemin s'efface au lieu de s'arreter net au bord de l'image (tablette et telephone). */
+@media (max-width: 1099px) {
+  .entete-page--libre .entete-page__image { -webkit-mask-image: linear-gradient(to left, transparent 0, #000 14%); mask-image: linear-gradient(to left, transparent 0, #000 14%); }
+}
+
+/* Accueil : la porte grandit moins ; la classe apparait plus tot, avant que les visages ne soient a taille reelle. */
+@media (min-width: 840px) and (prefers-reduced-motion: no-preference) {
+  .js .porte__scene { transform: scale(calc(1 + var(--z2, 0) * 1)); }
+}
