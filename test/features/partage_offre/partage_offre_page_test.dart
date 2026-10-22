@@ -1,9 +1,12 @@
-// CAND-06 : la page « Un proche veut apprendre le Coran ? »
+// CAND-06 : la page « Aidez une personne a apprendre la parole d'Allah. »
 // (`/attente/partage`), qui parle de la personne qui apprendra et non de
-// l'academie (consigne du directeur du 22/10/2026). Le contenu, chaque geste (Partager, Enregistrer l'image, Copier le lien) avec son
-// retour, et chaque etat : lecture du dossier, pas de candidature en cours,
-// pas de lien, image en preparation, image non preparee, hors ligne, arabe de
-// droite a gauche, texte agrandi.
+// l'academie (consigne du directeur du 22/10/2026), avec tres peu de mots :
+// l'invitation en titre (« une soeur » pour une femme), la langue de la carte,
+// l'apercu, la mention « Facultatif » et les gestes (Je partage, Enregistrer
+// l'image, Copier le lien) avec leur retour. Chaque etat : lecture du dossier et
+// des reglages de la carte, pas de candidature en cours, pas de lien, image en
+// preparation, image non preparee, hors ligne, arabe de droite a gauche, texte
+// agrandi. La variante et la langue de la carte : lues, jamais devinees.
 
 import 'dart:async';
 import 'dart:typed_data';
@@ -12,13 +15,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/partage_offre/personnalisation_carte.dart';
 import 'package:rewayah_academy/core/partage_offre/port_partage_offre.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/partage_offre/carte_partage.dart';
 import 'package:rewayah_academy/features/partage_offre/rendu_carte.dart';
+import 'package:rewayah_academy/features/partage_offre/textes_carte.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../fixtures/partage_offre/faux_partage_offre.dart';
@@ -42,6 +49,26 @@ Future<void> _toucher(WidgetTester tester, String cle) async {
   await tester.pump();
 }
 
+/// Choisit la puce de langue [nom], apres l'avoir amenee a l'ecran.
+Future<void> _puce(WidgetTester tester, String nom) async {
+  final Finder f = find.text(nom);
+  expect(f, findsOneWidget, reason: 'puce absente : $nom');
+  await tester.ensureVisible(f);
+  await tester.pump();
+  await tester.tap(f);
+  await tester.pump();
+}
+
+/// Remonte la page depuis zero : un nouvel arbre, un nouvel etat.
+Future<MontagePartage> _remonter(
+  WidgetTester tester, {
+  List<String> langues = const <String>[],
+  TextDirection? direction,
+}) async {
+  await tester.pumpWidget(const SizedBox.shrink());
+  return monterPartage(tester, langues: langues, direction: direction);
+}
+
 /// Un service de dossier dont la lecture dure tant que le test ne la termine pas.
 class _DossierLent extends FauxServiceDossier {
   /// La lecture en cours.
@@ -50,6 +77,20 @@ class _DossierLent extends FauxServiceDossier {
   @override
   Future<EtatDossier> etat() => attente.future;
 }
+
+/// Un profil dont la lecture dure tant que le test ne la termine pas.
+class _GenreLent extends FauxGenrePartageur {
+  _GenreLent(this.attente);
+
+  /// La lecture en cours.
+  final Completer<Genre?> attente;
+
+  @override
+  Future<Genre?> genreDuTitulaire() => attente.future;
+}
+
+VarianteCarte varianteDeLaCarteSansExpect(WidgetTester tester) =>
+    tester.widget<CartePartage>(find.byType(CartePartage)).variante;
 
 const CandidatureDossier _enExamen = CandidatureDossier(
   existe: true,
@@ -65,75 +106,100 @@ void main() {
   tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
 
   group('le contenu', () {
-    testWidgets('le titre, la description, la carte, et un seul bouton plein', (
-      WidgetTester tester,
-    ) async {
-      await monterPartage(tester);
-      final c = t.recrutement.partage;
-      expect(find.text(c.titre), findsWidgets);
-      expect(find.text(c.introduction), findsOneWidget);
-      expect(find.text(c.introductionSuite), findsOneWidget);
-      expect(find.text(c.motif), findsOneWidget);
-      expect(find.text(c.facultatif), findsOneWidget);
-      expect(_cle('partage-apercu'), findsOneWidget);
-      expect(find.byType(CartePartage), findsOneWidget);
-      expect(find.text(c.partager), findsOneWidget);
-      expect(find.text(c.enregistrer), findsOneWidget);
-      expect(find.text(c.copier), findsOneWidget);
-      expect(tester.takeException(), isNull);
-      verifierUnSeulBoutonPlein(tester);
-      expect(
-        _bouton(tester, 'partage-partager').niveau,
-        NiveauAction.principale,
-      );
-      expect(
-        _bouton(tester, 'partage-enregistrer').niveau,
-        NiveauAction.secondaire,
-      );
-      expect(_bouton(tester, 'partage-copier').niveau, NiveauAction.secondaire);
-    });
-
-    testWidgets('la page dit « Facultatif » et « ne change rien a votre '
-        'candidature », apres le motif et avant les boutons', (
-      WidgetTester tester,
-    ) async {
-      await monterPartage(tester);
-      final c = t.recrutement.partage;
-      expect(c.facultatif, contains('Facultatif'));
-      expect(c.facultatif, contains('ne change rien à votre candidature'));
-      final double facultatif = tester
-          .getTopLeft(_cle('partage-facultatif'))
-          .dy;
-      final double motif = tester.getTopLeft(_cle('partage-motif')).dy;
-      final double introduction = tester
-          .getTopLeft(_cle('partage-introduction'))
-          .dy;
-      expect(introduction, lessThan(motif));
-      expect(motif, lessThan(facultatif));
-      for (final String bouton in <String>[
-        'partage-partager',
-        'partage-enregistrer',
-        'partage-copier',
-      ]) {
-        final double haut = tester.getTopLeft(_cle(bouton)).dy;
-        expect(facultatif, lessThan(haut), reason: 'avant $bouton');
-        expect(introduction, lessThan(haut), reason: 'avant $bouton');
-      }
-    });
-
     testWidgets(
-      'la page parle de la personne qui apprendra (consigne du directeur, '
-      '22/10) : la question, ce qu\'elle y gagne, puis le motif de celui qui '
-      'partage ; jamais « pour l\'academie »',
+      'le titre, la langue de la carte, la carte, « Facultatif », et un seul '
+      'bouton plein',
       (WidgetTester tester) async {
         await monterPartage(tester);
         final c = t.recrutement.partage;
-        expect(c.titre, 'Un proche veut apprendre le\u00a0Coran\u00a0?');
-        expect(c.introduction, startsWith('Envoyez-lui l\'offre en un geste'));
-        expect(c.introduction, contains('petite classe'));
-        expect(c.introduction, contains('même enseignant'));
-        // Le motif est celui du hadith, dit a celui qui partage.
-        expect(c.motif, startsWith('Pour vous aussi'));
+        expect(find.text(c.titre), findsWidgets);
+        expect(find.text(c.langueCarte), findsOneWidget);
+        expect(find.text(c.facultatif), findsOneWidget);
+        expect(_cle('partage-apercu'), findsOneWidget);
+        expect(find.byType(CartePartage), findsOneWidget);
+        expect(find.text(c.partager), findsOneWidget);
+        expect(find.text(c.enregistrer), findsOneWidget);
+        expect(find.text(c.copier), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        verifierUnSeulBoutonPlein(tester);
+        expect(
+          _bouton(tester, 'partage-partager').niveau,
+          NiveauAction.principale,
+        );
+        expect(
+          _bouton(tester, 'partage-enregistrer').niveau,
+          NiveauAction.secondaire,
+        );
+        expect(
+          _bouton(tester, 'partage-copier').niveau,
+          NiveauAction.secondaire,
+        );
+      },
+    );
+
+    testWidgets(
+      'peu de mots : le titre, la mention « Facultatif » et les boutons ; ni '
+      'introduction, ni explication, ni hadith dans la page',
+      (WidgetTester tester) async {
+        await monterPartage(tester);
+        final String tout = textesAffiches(tester).join('\n');
+        expect(tout, isNot(contains('Envoyez-lui')));
+        expect(tout, isNot(contains('Pour vous aussi')));
+        expect(tout, isNot(contains('hadith')));
+        expect(tout, isNot(contains('en quelques lignes')));
+        expect(_cle('partage-introduction'), findsNothing);
+        expect(_cle('partage-motif'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'le bouton plein est a la premiere personne : « Je partage », et un '
+      'lecteur d\'ecran entend ce qu\'il partage',
+      (WidgetTester tester) async {
+        await monterPartage(tester);
+        expect(t.recrutement.partage.partager, 'Je partage');
+        expect(
+          _bouton(tester, 'partage-partager').libelleSemantique,
+          t.recrutement.partage.partagerLaCarte,
+        );
+        await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+        expect(t.recrutement.partage.partager, 'أشارك');
+      },
+    );
+
+    testWidgets(
+      'la page dit « Facultatif » et « ne change rien a votre candidature », '
+      'apres la carte et avant les boutons',
+      (WidgetTester tester) async {
+        await monterPartage(tester);
+        final c = t.recrutement.partage;
+        expect(c.facultatif, contains('Facultatif'));
+        expect(c.facultatif, contains('ne change rien à votre candidature'));
+        final double facultatif = tester
+            .getTopLeft(_cle('partage-facultatif'))
+            .dy;
+        final double langues = tester.getTopLeft(_cle('partage-langues')).dy;
+        final double apercu = tester.getBottomLeft(_cle('partage-apercu')).dy;
+        expect(langues, lessThan(facultatif));
+        expect(apercu, lessThan(facultatif));
+        for (final String bouton in <String>[
+          'partage-partager',
+          'partage-enregistrer',
+          'partage-copier',
+        ]) {
+          final double haut = tester.getTopLeft(_cle(bouton)).dy;
+          expect(facultatif, lessThan(haut), reason: 'avant $bouton');
+        }
+      },
+    );
+
+    testWidgets(
+      'la page parle de la personne qui apprendra (consigne du directeur, '
+      '22/10) ; jamais « pour l\'academie »',
+      (WidgetTester tester) async {
+        await monterPartage(tester);
+        final c = t.recrutement.partage;
+        expect(c.titre, 'Aidez une personne à apprendre la parole d\'Allah.');
         final String tout = textesAffiches(tester).join('\n');
         for (final String mot in motsQuiNommentLAcademie) {
           // La ligne du lien porte le nom du site ; elle n'est pas un motif.
@@ -198,9 +264,10 @@ void main() {
         final AppelPartage appel = m.partage.appels.single;
         expect(appel.png, m.rendu.octets);
         expect(appel.nomFichier, nomFichierCarte);
-        // Le message lu par la personne qui recoit : ce qu'elle y gagne.
-        expect(appel.titre, t.recrutement.partage.carte.titre);
-        expect(appel.texte, t.recrutement.partage.carte.enseignant);
+        // Le message lu par la personne qui recoit, dans la langue de la carte :
+        // ce qu'elle y gagne.
+        expect(appel.titre, textesCarte[LangueCarte.francais]!.titre);
+        expect(appel.texte, textesCarte[LangueCarte.francais]!.sousTitre);
         expect(appel.lien, lienDeTest);
         // Le menu est ouvert : rien n'est encore dit, le bouton est en cours.
         expect(find.text(t.recrutement.partage.fait.partage), findsNothing);
@@ -446,7 +513,7 @@ void main() {
       (WidgetTester tester) async {
         await monterPartage(tester, candidature: const CandidatureDossier());
         expect(find.byType(CartePartage), findsNothing);
-        expect(find.text(t.recrutement.partage.introduction), findsNothing);
+        expect(find.text(t.recrutement.partage.facultatif), findsNothing);
         // Le portail s'affiche a la place.
         expect(find.text(t.attente.seDeconnecter), findsOneWidget);
       },
@@ -571,19 +638,21 @@ void main() {
         await monterPartage(tester, direction: TextDirection.rtl);
         final c = t.recrutement.partage;
         expect(find.text(c.titre), findsWidgets);
-        expect(find.text(c.introduction), findsOneWidget);
         expect(find.text(c.facultatif), findsOneWidget);
         expect(find.text(c.partager), findsOneWidget);
         expect(find.text(c.enregistrer), findsOneWidget);
         expect(find.text(c.copier), findsOneWidget);
         // La carte : le meme hadith, sa reference en arabe, aucune traduction.
         expect(_cle('carte-hadith'), findsOneWidget);
-        expect(tester.widget<Text>(_cle('carte-hadith')).data, c.carte.hadith);
+        expect(tester.widget<Text>(_cle('carte-hadith')).data, hadithArabe);
         expect(_cle('carte-traduction'), findsNothing);
-        expect(find.text(c.carte.reference), findsOneWidget);
+        expect(
+          find.text(textesCarte[LangueCarte.arabe]!.reference),
+          findsOneWidget,
+        );
         // Aucune phrase francaise ne reste dans la page.
         expect(find.textContaining('Facultatif'), findsNothing);
-        expect(find.textContaining('Un proche'), findsNothing);
+        expect(find.textContaining('Aidez'), findsNothing);
         expect(find.textContaining('Celui qui'), findsNothing);
         expect(tester.takeException(), isNull);
         verifierUnSeulBoutonPlein(tester);
@@ -609,7 +678,7 @@ void main() {
         expect(plein.center.dx, lessThan(enregistrer.center.dx));
         expect(carte.center.dx, lessThan(plein.center.dx));
         expect(
-          tester.getTopRight(_cle('partage-introduction')).dx,
+          tester.getTopRight(_cle('partage-langues')).dx,
           greaterThan(carte.right),
         );
       },
@@ -626,10 +695,318 @@ void main() {
       // La carte est a la fin de la ligne, a cote du texte et non dessous.
       expect(carte.left, greaterThan(plein.left));
       expect(
-        tester.getTopLeft(_cle('partage-introduction')).dy,
+        tester.getTopLeft(_cle('partage-langues')).dy,
         lessThan(carte.bottom),
       );
     });
+  });
+
+  group('la langue de la carte : quatre puces, la langue d\'enseignement par '
+      'defaut', () {
+    /// Les puces, dans l'ordre, avec ce qu'elles disent et si elles sont
+    /// retenues.
+    List<(String, bool)> puces(WidgetTester tester) => <(String, bool)>[
+      for (final FilterPill p in tester.widgetList<FilterPill>(
+        find.descendant(
+          of: _cle('partage-langues'),
+          matching: find.byType(FilterPill),
+        ),
+      ))
+        (p.libelle, p.retenue),
+    ];
+
+    LangueCarte langueDeLaCarte(WidgetTester tester) =>
+        LangueCarte.values.singleWhere(
+          (LangueCarte l) =>
+              textesCarte[l]!.titre ==
+              tester.widget<Text>(_cle('carte-titre')).data,
+        );
+
+    testWidgets(
+      'les quatre langues, chacune ecrite dans sa langue : Francais, English, '
+      'Portugues, l\'arabe',
+      (WidgetTester tester) async {
+        await monterPartage(tester);
+        expect(_cle('partage-langues'), findsOneWidget);
+        expect(puces(tester), <(String, bool)>[
+          ('Français', true),
+          ('English', false),
+          ('Português', false),
+          ('العربية', false),
+        ]);
+        for (final String nom in <String>[
+          'Français',
+          'English',
+          'Português',
+          'العربية',
+        ]) {
+          expect(find.text(nom), findsOneWidget, reason: nom);
+        }
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'sans langue d\'enseignement : la langue de l\'application, le francais',
+      (WidgetTester tester) async {
+        await monterPartage(tester);
+        expect(langueDeLaCarte(tester), LangueCarte.francais);
+        expect(
+          <String>[
+            for (final (String, bool) p in puces(tester))
+              if (p.$2) p.$1,
+          ],
+          <String>['Français'],
+        );
+      },
+    );
+
+    testWidgets(
+      'la premiere langue d\'enseignement qui est internationale : l\'anglais, '
+      'le portugais, le francais',
+      (WidgetTester tester) async {
+        for (final (List<String>, LangueCarte) cas
+            in <(List<String>, LangueCarte)>[
+              (<String>['poular', 'english', 'francais'], LangueCarte.anglais),
+              (<String>['portugais', 'poular'], LangueCarte.portugais),
+              (<String>['pt'], LangueCarte.portugais),
+              (<String>['wo', 'francais', 'english'], LangueCarte.francais),
+            ]) {
+          await _remonter(tester, langues: cas.$1);
+          expect(langueDeLaCarte(tester), cas.$2, reason: '${cas.$1}');
+          expect(
+            <String>[
+              for (final (String, bool) p in puces(tester))
+                if (p.$2) p.$1,
+            ],
+            <String>[textesCarte[cas.$2]!.nomPropre],
+          );
+        }
+      },
+    );
+
+    testWidgets(
+      'une langue vernaculaire ne donne pas de carte : la langue de '
+      'l\'application, le francais ; et l\'arabe, jamais une langue de cours',
+      (WidgetTester tester) async {
+        await monterPartage(tester, langues: <String>['poular', 'bm', 'ar']);
+        expect(langueDeLaCarte(tester), LangueCarte.francais);
+      },
+    );
+
+    testWidgets(
+      'application en arabe, sans langue d\'enseignement : la carte en arabe ; '
+      'avec l\'anglais : la carte en anglais, la page reste en arabe',
+      (WidgetTester tester) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+        await monterPartage(tester, direction: TextDirection.rtl);
+        expect(langueDeLaCarte(tester), LangueCarte.arabe);
+        await _remonter(
+          tester,
+          direction: TextDirection.rtl,
+          langues: <String>['english'],
+        );
+        expect(langueDeLaCarte(tester), LangueCarte.anglais);
+        expect(find.text(t.recrutement.partage.langueCarte), findsOneWidget);
+        expect(find.text(t.recrutement.partage.partager), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'choisir une puce change la langue de la carte et refait l\'image ; le '
+      'message de partage suit',
+      (WidgetTester tester) async {
+        final MontagePartage m = await monterPartage(tester);
+        expect(m.rendu.appels, 1);
+        await _puce(tester, 'Português');
+        await tester.pumpAndSettle();
+        expect(langueDeLaCarte(tester), LangueCarte.portugais);
+        // L'image se refait des que la carte est repeinte, avant tout toucher.
+        await tester.pumpAndSettle();
+        expect(m.rendu.appels, 2);
+        await _toucher(tester, 'partage-partager');
+        final AppelPartage appel = m.partage.appels.single;
+        expect(appel.titre, textesCarte[LangueCarte.portugais]!.titre);
+        expect(appel.texte, textesCarte[LangueCarte.portugais]!.sousTitre);
+        // Puis l'arabe, de droite a gauche, sur une page qui reste en francais.
+        await _puce(tester, 'العربية');
+        await tester.pumpAndSettle();
+        expect(langueDeLaCarte(tester), LangueCarte.arabe);
+        expect(m.rendu.appels, 3);
+        expect(find.text(t.recrutement.partage.partager), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'pendant que l\'image se refait, « Je partage » et « Enregistrer » sont '
+      'en cours ; la puce deja choisie ne refait rien',
+      (WidgetTester tester) async {
+        final FauxRenduCarte rendu = FauxRenduCarte();
+        final MontagePartage m = await monterPartage(tester, rendu: rendu);
+        // La puce deja choisie : aucun nouveau rendu.
+        await _puce(tester, 'Français');
+        await tester.pumpAndSettle();
+        expect(m.rendu.appels, 1);
+        // Une autre : le rendu est en cours tant que le test ne le finit pas.
+        rendu.enCours = Completer<Uint8List>();
+        await _puce(tester, 'English');
+        await tester.pumpAndSettle();
+        await tester.pump();
+        expect(rendu.appels, 2);
+        expect(_bouton(tester, 'partage-partager').enCours, isTrue);
+        expect(_bouton(tester, 'partage-enregistrer').enCours, isTrue);
+        await _toucher(tester, 'partage-partager');
+        expect(m.partage.appels, isEmpty);
+        rendu.enCours!.complete(rendu.octets);
+        await tester.pumpAndSettle();
+        expect(_bouton(tester, 'partage-partager').enCours, isFalse);
+        await _toucher(tester, 'partage-partager');
+        expect(m.partage.appels, hasLength(1));
+      },
+    );
+
+    testWidgets(
+      'changer de langue efface le dernier retour, et une image non preparee '
+      'se retente dans la nouvelle langue',
+      (WidgetTester tester) async {
+        final MontagePartage m = await monterPartage(tester);
+        PressePapiersDeTest(tester);
+        await _toucher(tester, 'partage-copier');
+        expect(_cle('partage-retour'), findsOneWidget);
+        await _puce(tester, 'English');
+        await tester.pumpAndSettle();
+        expect(_cle('partage-retour'), findsNothing);
+        // Un rendu qui echoue : « Reessayer », puis une autre langue refait.
+        m.rendu.erreur = StateError('pas peinte');
+        await _puce(tester, 'Português');
+        await tester.pumpAndSettle();
+        expect(_cle('partage-reessayer'), findsOneWidget);
+        m.rendu.erreur = null;
+        await _puce(tester, 'Français');
+        await tester.pumpAndSettle();
+        expect(_cle('partage-reessayer'), findsNothing);
+        expect(_cle('partage-partager'), findsOneWidget);
+      },
+    );
+  });
+
+  group('la variante : lue sur le profil, jamais devinee', () {
+    VarianteCarte varianteDeLaCarte(WidgetTester tester) =>
+        tester.widget<CartePartage>(find.byType(CartePartage)).variante;
+
+    testWidgets('une femme : le titre « une soeur » et la carte des femmes', (
+      WidgetTester tester,
+    ) async {
+      await monterPartage(tester, genre: Genre.femme);
+      expect(varianteDeLaCarte(tester), VarianteCarte.femmes);
+      expect(find.text(t.recrutement.partage.titreFemme), findsWidgets);
+      expect(find.text(t.recrutement.partage.titre), findsNothing);
+    });
+
+    testWidgets(
+      'un homme, ou un genre inconnu : le titre « une personne » et la carte '
+      'des hommes, la neutre',
+      (WidgetTester tester) async {
+        for (final Genre? genre in <Genre?>[Genre.homme, null]) {
+          await tester.pumpWidget(const SizedBox.shrink());
+          await monterPartage(tester, genre: genre);
+          expect(
+            varianteDeLaCarte(tester),
+            VarianteCarte.hommes,
+            reason: '$genre',
+          );
+          expect(find.text(t.recrutement.partage.titre), findsWidgets);
+          expect(find.text(t.recrutement.partage.titreFemme), findsNothing);
+        }
+      },
+    );
+
+    testWidgets(
+      'un profil illisible : la page reste, avec la variante neutre',
+      (WidgetTester tester) async {
+        await monterPartage(
+          tester,
+          lectureGenre: FauxGenrePartageur(genre: Genre.femme)
+            ..erreur = StateError('hors ligne'),
+        );
+        expect(varianteDeLaCarte(tester), VarianteCarte.hommes);
+        expect(find.byType(CartePartage), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets('en arabe, au feminin pour une femme, au masculin sinon', (
+      WidgetTester tester,
+    ) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+      await monterPartage(
+        tester,
+        genre: Genre.femme,
+        direction: TextDirection.rtl,
+      );
+      expect(find.text('ساعدي أختًا على تعلّم كلام الله'), findsWidgets);
+      await monterPartage(tester, direction: TextDirection.rtl);
+      expect(find.text('ساعد شخصًا على تعلّم كلام الله'), findsWidgets);
+    });
+
+    testWidgets(
+      'la lecture du genre est unique : l\'image n\'est rendue qu\'une fois '
+      'pour la bonne variante',
+      (WidgetTester tester) async {
+        final FauxGenrePartageur genre = FauxGenrePartageur(genre: Genre.femme);
+        final MontagePartage m = await monterPartage(
+          tester,
+          lectureGenre: genre,
+        );
+        expect(genre.lectures, 1);
+        expect(m.rendu.appels, 1);
+      },
+    );
+
+    testWidgets(
+      'la lecture des reglages est en cours : un squelette, pas de carte, '
+      'aucun rendu ; puis la carte de la bonne variante',
+      (WidgetTester tester) async {
+        final Completer<Genre?> attente = Completer<Genre?>();
+        final FauxRenduCarte rendu = FauxRenduCarte();
+        await monterPartage(
+          tester,
+          rendu: rendu,
+          lectureGenre: _GenreLent(attente),
+          attendre: false,
+        );
+        await tester.pump(const Duration(milliseconds: 300));
+        expect(find.byType(Skeleton), findsWidgets);
+        expect(find.byType(CartePartage), findsNothing);
+        expect(rendu.appels, 0);
+        attente.complete(Genre.femme);
+        await tester.pumpAndSettle();
+        expect(find.byType(Skeleton), findsNothing);
+        expect(
+          tester.widget<CartePartage>(find.byType(CartePartage)).variante,
+          VarianteCarte.femmes,
+        );
+        expect(rendu.appels, 1);
+      },
+    );
+
+    testWidgets(
+      'une lecture qui ne revient pas : au bout de cinq secondes la carte '
+      'des hommes, jamais une page bloquee',
+      (WidgetTester tester) async {
+        final Completer<Genre?> jamais = Completer<Genre?>();
+        await monterPartage(
+          tester,
+          lectureGenre: _GenreLent(jamais),
+          attendre: false,
+        );
+        await tester.pump(delaiReglagesCarte + const Duration(seconds: 1));
+        await tester.pumpAndSettle();
+        expect(find.byType(CartePartage), findsOneWidget);
+        expect(varianteDeLaCarteSansExpect(tester), VarianteCarte.hommes);
+      },
+    );
   });
 
   group('tailles et themes', () {

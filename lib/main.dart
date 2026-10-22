@@ -96,6 +96,8 @@ import 'core/offres/port_regroupements_admin.dart';
 import 'core/offres/port_suivi_demandes.dart';
 import 'core/offres/regroupements_c11bis_supabase.dart';
 import 'core/offres/regroupements_pages_supabase.dart';
+import 'core/partage_offre/genre_partageur_supabase.dart';
+import 'core/partage_offre/port_genre_partageur.dart';
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
 import 'core/recrutement/port_invitations_comptable.dart';
@@ -270,6 +272,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portMatriculeProvider.overrideWithValue(
     MatriculeSupabase(Supabase.instance.client),
+  ),
+  // CAND-06 : le genre du titulaire, lu sur son profil pour choisir la variante
+  // de la carte a partager (directeur, 22/10/2026). Jamais devine.
+  portGenrePartageurProvider.overrideWithValue(
+    GenrePartageurSupabase(Supabase.instance.client),
   ),
   // Mes donnees : copie JSON et demande de suppression du compte
   // (CPT-SUPPR-EXPORT, migration 20261018150000).

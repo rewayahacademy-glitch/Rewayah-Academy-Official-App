@@ -1,5 +1,5 @@
 // Le lien de l'offre aux eleves, celui que la carte a partager (CAND-06,
-// « Un proche veut apprendre le Coran ? ») donne a partager : l'adresse du site
+// « Aidez une personne a apprendre la parole d'Allah. ») donne a partager : l'adresse du site
 // public, page d'accueil francaise.
 //
 // **Jamais ecrit en dur.** L'adresse vient de la configuration de compilation

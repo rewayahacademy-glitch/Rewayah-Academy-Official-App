@@ -6575,26 +6575,23 @@ class Traductions$recrutement$partage$fr {
 
 	// Translations
 
-	/// fr: 'Un proche veut apprendre le Coran ?'
-	String get titre => 'Un proche veut apprendre le Coran ?';
+	/// fr: 'Aidez une personne à apprendre la parole d'Allah.'
+	String get titre => 'Aidez une personne à apprendre la parole d\'Allah.';
 
-	/// fr: 'Envoyez-lui l'offre en un geste : il apprendra en petite classe, en visio, avec le même enseignant chaque semaine.'
-	String get introduction => 'Envoyez-lui l\'offre en un geste : il apprendra en petite classe, en visio, avec le même enseignant chaque semaine.';
-
-	/// fr: 'La carte lui dit en quelques lignes comment se passent les cours, et lui donne le lien de l'offre.'
-	String get introductionSuite => 'La carte lui dit en quelques lignes comment se passent les cours, et lui donne le lien de l\'offre.';
-
-	/// fr: 'Pour vous aussi, c'est un bien : dans un hadith, celui qui indique le bien est comme celui qui l'accomplit.'
-	String get motif => 'Pour vous aussi, c\'est un bien : dans un hadith, celui qui indique le bien est comme celui qui l\'accomplit.';
+	/// fr: 'Aidez une sœur à apprendre la parole d'Allah.'
+	String get titreFemme => 'Aidez une sœur à apprendre la parole d\'Allah.';
 
 	/// fr: 'Facultatif : partager ne change rien à votre candidature.'
 	String get facultatif => 'Facultatif : partager ne change rien à votre candidature.';
 
+	/// fr: 'Langue de la carte'
+	String get langueCarte => 'Langue de la carte';
+
 	/// fr: 'Aperçu de la carte à partager'
 	String get apercu => 'Aperçu de la carte à partager';
 
-	/// fr: 'Partager'
-	String get partager => 'Partager';
+	/// fr: 'Je partage'
+	String get partager => 'Je partage';
 
 	/// fr: 'Partager la carte de l'offre'
 	String get partagerLaCarte => 'Partager la carte de l\'offre';
@@ -6619,8 +6616,6 @@ class Traductions$recrutement$partage$fr {
 
 	/// fr: 'La carte à partager n'est pas encore disponible. Revenez sur cette page plus tard.'
 	String get nonOuvert => 'La carte à partager n\'est pas encore disponible. Revenez sur cette page plus tard.';
-
-	late final Traductions$recrutement$partage$carte$fr carte = Traductions$recrutement$partage$carte$fr.internal(_root);
 }
 
 // Path: recrutement.retrait
@@ -21043,39 +21038,6 @@ class Traductions$recrutement$partage$echec$fr {
 
 	/// fr: 'La carte n'a pas pu être préparée. Réessayez dans un instant.'
 	String get carte => 'La carte n\'a pas pu être préparée. Réessayez dans un instant.';
-}
-
-// Path: recrutement.partage.carte
-class Traductions$recrutement$partage$carte$fr {
-	Traductions$recrutement$partage$carte$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Apprendre le Coran en ligne, en petite classe'
-	String get titre => 'Apprendre le Coran en ligne, en petite classe';
-
-	/// fr: 'Le même enseignant, trois séances par semaine, à heure fixe.'
-	String get enseignant => 'Le même enseignant, trois séances par semaine, à heure fixe.';
-
-	/// fr: 'Pour les enfants dès 6 ans et pour les adultes.'
-	String get publics => 'Pour les enfants dès 6 ans et pour les adultes.';
-
-	/// fr: 'En poular (peul), français ou anglais, selon les enseignants disponibles.'
-	String get langues => 'En poular (peul), français ou anglais, selon les enseignants disponibles.';
-
-	/// fr: 'Découvrir l'offre'
-	String get decouvrir => 'Découvrir l\'offre';
-
-	/// fr: 'الدال على الخير كفاعله'
-	String get hadith => 'الدال على الخير كفاعله';
-
-	/// fr: '« Celui qui indique le bien est comme celui qui l'accomplit. »'
-	String get traduction => '« Celui qui indique le bien est comme celui qui l\'accomplit. »';
-
-	/// fr: 'Rapporté par at-Tirmidhi'
-	String get reference => 'Rapporté par at-Tirmidhi';
 }
 
 // Path: recrutement.parcours.presentation
@@ -39019,13 +38981,12 @@ extension on Traductions {
 			'recrutement.portail.elementContrat' => 'Le contrat d\'enseignant',
 			'recrutement.portail.versementImpossibleTitre' => 'Versement pas encore possible',
 			'recrutement.portail.relire' => 'Relire ma candidature',
-			'recrutement.partage.titre' => 'Un proche veut apprendre le Coran ?',
-			'recrutement.partage.introduction' => 'Envoyez-lui l\'offre en un geste : il apprendra en petite classe, en visio, avec le même enseignant chaque semaine.',
-			'recrutement.partage.introductionSuite' => 'La carte lui dit en quelques lignes comment se passent les cours, et lui donne le lien de l\'offre.',
-			'recrutement.partage.motif' => 'Pour vous aussi, c\'est un bien : dans un hadith, celui qui indique le bien est comme celui qui l\'accomplit.',
+			'recrutement.partage.titre' => 'Aidez une personne à apprendre la parole d\'Allah.',
+			'recrutement.partage.titreFemme' => 'Aidez une sœur à apprendre la parole d\'Allah.',
 			'recrutement.partage.facultatif' => 'Facultatif : partager ne change rien à votre candidature.',
+			'recrutement.partage.langueCarte' => 'Langue de la carte',
 			'recrutement.partage.apercu' => 'Aperçu de la carte à partager',
-			'recrutement.partage.partager' => 'Partager',
+			'recrutement.partage.partager' => 'Je partage',
 			'recrutement.partage.partagerLaCarte' => 'Partager la carte de l\'offre',
 			'recrutement.partage.enregistrer' => 'Enregistrer l\'image',
 			'recrutement.partage.copier' => 'Copier le lien',
@@ -39040,14 +39001,6 @@ extension on Traductions {
 			'recrutement.partage.echec.copie' => 'Le lien n\'a pas pu être copié. Sélectionnez-le dans la page pour le copier à la main.',
 			'recrutement.partage.echec.carte' => 'La carte n\'a pas pu être préparée. Réessayez dans un instant.',
 			'recrutement.partage.nonOuvert' => 'La carte à partager n\'est pas encore disponible. Revenez sur cette page plus tard.',
-			'recrutement.partage.carte.titre' => 'Apprendre le Coran en ligne, en petite classe',
-			'recrutement.partage.carte.enseignant' => 'Le même enseignant, trois séances par semaine, à heure fixe.',
-			'recrutement.partage.carte.publics' => 'Pour les enfants dès 6 ans et pour les adultes.',
-			'recrutement.partage.carte.langues' => 'En poular (peul), français ou anglais, selon les enseignants disponibles.',
-			'recrutement.partage.carte.decouvrir' => 'Découvrir l\'offre',
-			'recrutement.partage.carte.hadith' => 'الدال على الخير كفاعله',
-			'recrutement.partage.carte.traduction' => '« Celui qui indique le bien est comme celui qui l\'accomplit. »',
-			'recrutement.partage.carte.reference' => 'Rapporté par at-Tirmidhi',
 			'recrutement.retrait.lien' => 'Retirer ma candidature',
 			'recrutement.retrait.question' => 'Retirer votre candidature ?',
 			'recrutement.retrait.consequence' => 'Seule l\'académie pourra rouvrir votre candidature.',
@@ -39448,8 +39401,6 @@ extension on Traductions {
 			'dossiers.revue.nom' => 'Nom',
 			'dossiers.revue.prenom' => 'Prénom',
 			'dossiers.revue.dateIndisponible' => 'Date de dépôt indisponible',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.revue.pasPret' => 'Ce dossier n\'est pas encore prêt à être validé.',
 			'dossiers.revue.erreurChargement' => 'Impossible de charger ce dossier.',
 			'dossiers.revue.pieceIndisponible' => 'La consultation de la pièce est indisponible pour le moment.',
@@ -39459,6 +39410,8 @@ extension on Traductions {
 			'dossiers.revue.etats.retourDossiers' => 'Retour aux dossiers',
 			'dossiers.revue.etats.verificationsIncompletes' => 'Terminez les vérifications requises.',
 			'dossiers.revue.etats.accordManquant' => 'Un accord requis manque à ce dossier.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.revue.etats.decisionIndisponible' => 'La décision est indisponible pour le moment.',
 			'dossiers.revue.etats.actualiserDossier' => 'Actualiser le dossier',
 			'dossiers.revue.etats.refusNonAutorise' => 'Ce dossier ne peut pas être refusé dans son état actuel.',
@@ -39962,8 +39915,6 @@ extension on Traductions {
 			'admin.groupes.partage.enseignant' => 'Enseignant',
 			'admin.groupes.partage.miseAJour' => ({required Object date}) => 'Mise à jour le ${date}',
 			'admin.groupes.partage.fermer' => 'Fermer',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.formulaire.contexte' => 'Une classe réunit un enseignant et ses élèves sur un même créneau chaque semaine. Choisissez le public et le genre : la liste des enseignants, le seuil et le nom de la classe en découlent.',
 			'admin.groupes.formulaire.titrePublic' => 'Public',
 			'admin.groupes.formulaire.publicEnfantDetail' => 'À choisir pour une classe d\'enfants. Seuil proposé : 5 élèves.',
@@ -39973,6 +39924,8 @@ extension on Traductions {
 			'admin.groupes.formulaire.genreFemmes' => 'Femmes',
 			'admin.groupes.formulaire.genreGarcons' => 'Garçons',
 			'admin.groupes.formulaire.genreFilles' => 'Filles',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.formulaire.genreIndetermine' => 'Non déterminé',
 			'admin.groupes.formulaire.genreHommesDetail' => 'À choisir pour une classe d\'hommes : seuls les enseignants hommes pourront la prendre.',
 			'admin.groupes.formulaire.genreFemmesDetail' => 'À choisir pour une classe de femmes : seules les enseignantes pourront la prendre.',
@@ -40476,8 +40429,6 @@ extension on Traductions {
 			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
 			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
 			'admin.journal.evtPedagogie' => 'Réglages pédagogiques modifiés',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.evtAffectationPrise' => 'Élève pris par un enseignant',
 			'admin.journal.evtAffectationAttribuee' => 'Élève attribué par l\'administration',
 			'admin.journal.evtDemandeCreee' => 'Demande déposée',
@@ -40487,6 +40438,8 @@ extension on Traductions {
 			'admin.journal.filtreEvenement' => 'Événement',
 			'admin.journal.filtreActeur' => 'Acteur',
 			'admin.journal.evtAgentJetonEmis' => 'Accès d\'agent IA émis',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.evtAgentJetonRevoque' => 'Accès d\'agent IA révoqué',
 			'admin.journal.evtAgentSessionOuverte' => 'Session d\'agent IA ouverte',
 			'admin.journal.evtObservationControleur' => 'Visite de contrôle commencée',
@@ -40990,8 +40943,6 @@ extension on Traductions {
 			'admin.finance.pol.historiqueVide' => 'Aucune autre version pour l\'instant : seule la version active existe.',
 			'admin.finance.pol.sansDonnees' => 'Les prix publiés n\'ont pas pu être chargés',
 			'admin.finance.reserveDelegation' => 'Réserve et délégation',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.aValider' => 'À valider',
 			'admin.finance.paiements' => 'Paiements',
 			'admin.finance.pai.sousTitre' => 'Un paiement reçu hors de l\'application (virement, espèces) s\'enregistre ici, pour un élève. Son mois est alors facturé, puis réglé si le paiement le couvre. Saisi par la comptabilité, il est crédité après la validation de la direction.',
@@ -41001,6 +40952,8 @@ extension on Traductions {
 			'admin.finance.pai.videTitre' => 'Aucun élève pour l\'instant',
 			'admin.finance.pai.videPhrase' => 'Les élèves inscrits apparaîtront ici avec ce qu\'il leur reste à payer.',
 			'admin.finance.pai.feuilleTitre' => ({required Object prenom}) => 'Paiement reçu pour ${prenom}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pai.eleve' => 'Élève',
 			'admin.finance.pai.resteAPayer' => 'Reste à payer',
 			'admin.finance.pai.montantRecu' => ({required Object devise}) => 'Montant reçu, en ${devise}',
@@ -41504,8 +41457,6 @@ extension on Traductions {
 			'admin.bibliotheque.publication.bloque' => 'Cette version ne peut pas être publiée tant que le serveur n\'a pas validé tous les points du contrôle.',
 			'admin.bibliotheque.publication.confirmerTitre' => ({required Object numero}) => 'Publier la version ${numero} ?',
 			'admin.bibliotheque.publication.confirmerEffet' => 'La version devient immuable et visible des classes auxquelles le support est attribué. Pour la modifier, vous créerez une nouvelle version.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.publication.confirmerBouton' => 'Publier',
 			'admin.bibliotheque.publication.publiee' => 'Version publiée.',
 			'admin.bibliotheque.publication.dejaPubliee' => 'Cette version est déjà publiée.',
@@ -41515,6 +41466,8 @@ extension on Traductions {
 			'admin.bibliotheque.attribution.titre' => 'Attribuer à des classes',
 			'admin.bibliotheque.attribution.intro' => 'Choisissez les classes qui verront cette version publiée. Ce que vous attribuez ici est visible de leurs élèves et de leur enseignant.',
 			'admin.bibliotheque.attribution.classesTitre' => 'Classes',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.attribution.classeServie' => 'Déjà attribuée',
 			'admin.bibliotheque.attribution.classeEpinglee' => 'Épinglée',
 			'admin.bibliotheque.attribution.epingler' => 'Épingler en tête de la bibliothèque de ces classes',
@@ -42018,8 +41971,6 @@ extension on Traductions {
 			'historique.seance.nonTenuPhrase' => 'La séance n\'a pas eu lieu : ce n\'est pas le fait de l\'élève.',
 			'historique.seance.annulePhrase' => 'La séance a été annulée.',
 			'historique.seance.introuvableTitre' => 'Séance introuvable',
-			_ => null,
-		} ?? switch (path) {
 			'historique.seance.introuvablePhrase' => 'Cette séance ne figure pas dans l\'historique de votre foyer.',
 			'historique.observation.titreSansClasse' => ({required Object date}) => 'Observations du ${date}',
 			'historique.observation.blocResume' => 'Résumé',
@@ -42029,6 +41980,8 @@ extension on Traductions {
 			'historique.observation.eleve' => 'Élève',
 			'historique.observation.enseignant' => 'Enseignant',
 			'historique.observation.dureeTotale' => 'Durée totale',
+			_ => null,
+		} ?? switch (path) {
 			'historique.observation.visite' => ({required Object n}) => 'Visite ${n}',
 			'historique.observation.plageOuverte' => ({required Object debut}) => 'Entrée à ${debut}',
 			'historique.observation.terminee' => 'Visite terminée',
@@ -42532,8 +42485,6 @@ extension on Traductions {
 			'enseignant.signalement.notice' => 'Les détails internes ne sont pas envoyés automatiquement à la famille.',
 			'enseignant.signalement.choisirCategorie' => 'Choisissez une catégorie pour continuer.',
 			'enseignant.signalement.detailsRequis' => 'Pour « Autre », dites en quelques mots de quoi il s\'agit.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.signalement.envoyer' => 'Envoyer le signalement',
 			'enseignant.signalement.demoSucces' => 'Démonstration : ce signalement est prêt, mais rien n\'a été envoyé.',
 			'enseignant.signalement.demoSuccesDetail' => 'Dans l\'application reliée, il partira vers l\'équipe de l\'académie.',
@@ -42543,6 +42494,8 @@ extension on Traductions {
 			'enseignant.demo.intro' => 'Choisissez un écran de Sayyid Ibrahim.',
 			'enseignant.demo.ecrans' => 'Écrans',
 			'enseignant.demo.etats' => 'Situations',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.demo.etatNominal' => 'Journée ordinaire',
 			'enseignant.demo.etatVide' => 'Aucune séance',
 			'enseignant.demo.etatHorsLigne' => 'Hors ligne',
@@ -43046,8 +42999,6 @@ extension on Traductions {
 			'enseignant.revenus.total' => 'Total',
 			'enseignant.revenus.calculSection' => 'Comment l\'estimation se calcule',
 			'enseignant.revenus.base' => '1. Base garantie',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.baseDetail' => ({required Object base}) => '${base} par heure assurée, quelle que soit l\'occupation de la Classe.',
 			'enseignant.revenus.occupation' => '2. Composante d\'occupation',
 			'enseignant.revenus.occupationDetail' => 'Chaque siège éligible ajoute une part au taux. Un élève financé absent compte : une absence ne vous fait rien perdre.',
@@ -43057,6 +43008,8 @@ extension on Traductions {
 			'enseignant.revenus.internet' => 'Aide Internet du mois',
 			'enseignant.revenus.internetDetail' => 'Une seule aide par mois, versée à part de la rémunération pédagogique.',
 			'enseignant.revenus.internetAucune' => 'Aucune aide Internet n\'est prévue ce mois-ci.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.releveSection' => 'Relevé',
 			'enseignant.revenus.releveIndisponibleTitre' => 'Le relevé n\'est pas encore disponible',
 			'enseignant.revenus.releveIndisponiblePhrase' => 'Les mois arrêtés par l\'académie s\'afficheront ici dès que le relevé sera en service. D\'ici là, seule l\'estimation du mois en cours est montrée.',
@@ -43560,8 +43513,6 @@ extension on Traductions {
 			'tc.classe.recitation.suivants' => 'Ensuite',
 			'tc.classe.recitation.arreter' => 'Arrêter la récitation',
 			'tc.classe.prevol.titre' => 'Avant d\'ouvrir le cours',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.prevol.microOk' => 'Micro détecté',
 			'tc.classe.prevol.microAbsent' => 'Aucun micro utilisable',
 			'tc.classe.prevol.cameraOk' => 'Caméra détectée',
@@ -43571,6 +43522,8 @@ extension on Traductions {
 			'tc.realtime.transport.partage_indisponible' => 'Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page.',
 			'tc.realtime.etat.restauration_impossible' => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.',
 			'tc.observation.entree.titre' => 'Observer la séance',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.entree.tuteurIntro' => 'Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.',
 			'tc.observation.entree.adminIntro' => 'Choisissez votre mode avant d\'entrer. Il ne change plus ensuite.',
 			'tc.observation.entree.controleurIntro' => 'Vous entrez en observation invisible. Aucun micro, aucune caméra.',
@@ -44074,8 +44027,6 @@ extension on Traductions {
 			'adulte.reprise.jamais.identifiants' => 'Les identifiants de connexion du titulaire',
 			'adulte.reprise.jamais.messages' => 'Ses messages privés',
 			'adulte.reprise.jamais.conversations' => 'Ses conversations',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.jamais.historique' => 'Son historique pédagogique personnel',
 			'adulte.reprise.jamais.moyensPaiement' => 'Ses moyens de paiement enregistrés',
 			'adulte.reprise.jamais.pieces' => 'Ses pièces d\'identité',
@@ -44085,6 +44036,8 @@ extension on Traductions {
 			'adulte.reprise.deposerQuestion' => 'Déposer cette demande ?',
 			'adulte.reprise.deposerConsequence' => 'Le titulaire du foyer en sera informé et pourra la refuser. L\'administration examinera ensuite la demande et décidera.',
 			'adulte.reprise.horsLigne' => 'Rien n\'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.depotEchecTitre' => 'La demande n\'a pas été confirmée.',
 			'adulte.reprise.echecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.reprise.motif' => 'Motif',
@@ -44588,8 +44541,6 @@ extension on Traductions {
 			'com.socle.navigation.provisoire.messagesDetail' => 'Les messages liés à vos Classes arriveront bientôt dans cet espace.',
 			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
 			'com.socle.navigation.provisoire.communauteDetail' => 'L\'espace d\'échange entre enseignants arrivera bientôt ici.',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.navigation.provisoire.studioTitre' => _root.com.socle.lexique.studio,
 			'com.socle.navigation.provisoire.studioDetail' => 'L\'espace de travail de l\'équipe arrivera bientôt ici.',
 			'com.socle.navigation.provisoire.administrationTitre' => 'Administration des communications',
@@ -44599,6 +44550,8 @@ extension on Traductions {
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.entree.titreClasse' => 'Échanger sur cette Classe',
 			'com.messages.entree.titreDossier' => 'Échanger sur ce dossier',
 			'com.messages.entree.titreObjet' => 'Échanger à ce sujet',
@@ -45102,8 +45055,6 @@ extension on Traductions {
 			'com.studio.demo.f.messageRemplacement' => 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.',
 			'com.studio.demo.f.messageJustificatifs' => 'Les justificatifs de septembre sont rassemblés.',
 			'com.studio.demo.f.messageBudget' => 'Budget confidentiel du trimestre.',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.activiteBudget' => 'Budget confidentiel du trimestre',
 			'com.studio.demo.f.partagePlanning' => 'Planning du trimestre',
 			'com.studio.demo.f.partageModeration' => 'Guide de modération',
@@ -45113,6 +45064,8 @@ extension on Traductions {
 			'com.studio.demo.f.lienCharte' => 'Charte de l\'équipe',
 			'com.studio.demo.f.brouillon' => 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin',
 			'com.studio.demo.f.activitePaiement' => 'Paiement de septembre non confirmé pour la famille Haddad',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.objetEcheancier' => 'Échéancier de la famille Haddad',
 			'com.studio.demo.f.activiteDossierKarim' => 'Dossier de la famille Karim prêt pour une décision',
 			'com.studio.demo.f.objetDossierKarim' => 'Dossier de la famille Karim',
@@ -45616,8 +45569,6 @@ extension on Traductions {
 			'comptable.paiements.filtres.toutesPeriodes' => 'Toutes les périodes',
 			'comptable.paiements.filtres.effacer' => 'Effacer les filtres',
 			'comptable.paiements.colonnes.beneficiaire' => 'Bénéficiaire',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.colonnes.type' => 'Type',
 			'comptable.paiements.colonnes.periode' => 'Période / objet',
 			'comptable.paiements.colonnes.montant' => 'Montant',
@@ -45627,6 +45578,8 @@ extension on Traductions {
 			'comptable.paiements.colonnes.action' => 'Action',
 			'comptable.paiements.types.enseignant' => 'Enseignant',
 			'comptable.paiements.types.contractuel' => 'Contractuel',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.compteur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un paiement', other: '${n} paiements', ), 
 			'comptable.paiements.actions.voir' => 'Voir',
 			'comptable.paiements.actions.payer' => 'Payer',
@@ -46130,8 +46083,6 @@ extension on Traductions {
 			'comptable.direction.suffixeJours' => 'jours',
 			'comptable.direction.suffixePourcent' => '%',
 			'comptable.direction.erreurNombre' => 'Saisissez un nombre entier supérieur à zéro.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.erreurPourcentage' => 'Saisissez un pourcentage supérieur à zéro et au plus égal à 100, avec une décimale au plus.',
 			'comptable.direction.erreurMontant' => 'Saisissez un montant supérieur à zéro.',
 			'comptable.direction.reservePanneau.intro' => 'Vous fixez la politique ; le Comptable la lit et l\'exécute. Chaque enregistrement crée une nouvelle version, conservée dans l\'historique.',
@@ -46141,6 +46092,8 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.modeFixeDetail' => 'Une somme précise que vous choisissez.',
 			'comptable.direction.reservePanneau.modeMois' => 'Couverture en mois',
 			'comptable.direction.reservePanneau.modeMoisDetail' => 'Un nombre de mois de charges essentielles.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.montantCible' => 'Montant cible',
 			'comptable.direction.reservePanneau.montantCibleDetail' => 'La somme que la Réserve stratégique doit atteindre.',
 			'comptable.direction.reservePanneau.nombreMois' => 'Nombre de mois de couverture',
@@ -46644,8 +46597,6 @@ extension on Traductions {
 			'avis.form.regles.publicite' => 'de la publicité',
 			'avis.form.regles.horsSujet' => 'un propos hors sujet',
 			'avis.form.regles.doublon' => 'un doublon d\'un avis déjà reçu',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.regles.donnees' => 'Ne donnez ni le nom d\'un enfant, ni courriel, ni téléphone.',
 			'avis.form.envoyer' => 'Envoyer mon avis',
 			'avis.form.aCorriger' => 'Quelques champs sont à corriger avant l\'envoi.',
@@ -46655,6 +46606,8 @@ extension on Traductions {
 			'avis.form.ferme.titre' => 'Ce lien n\'accepte plus d\'avis',
 			'avis.form.ferme.phrase' => ({required Object courriel}) => 'Il est fermé, arrivé à échéance, ou le nombre d\'avis prévu est atteint. Pour donner votre avis, demandez un nouveau lien à la direction : ${courriel}.',
 			'avis.form.envoye.titre' => 'Merci pour votre avis',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.envoye.phrase' => ({required Object courriel}) => 'La direction va le lire avant de le publier. S\'il est accepté, il paraîtra sur le site de Rewayah Academy avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.',
 			'avis.form.erreurChargement' => 'Le formulaire n\'a pas pu s\'ouvrir. Réessayez dans un moment.',
 			'avis.form.sansDonnees' => 'Le formulaire n\'a pas pu s\'ouvrir',

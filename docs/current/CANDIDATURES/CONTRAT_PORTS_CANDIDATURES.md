@@ -265,19 +265,31 @@ référentiel.
   sous `PLAYGROUND=true` par un sélecteur du type
   `portPartagePedagogiqueSelon(demo: ...)`.
 
-## 7. Hors serveur : `PortPartageOffre` (`CAND-06`, carte à partager « Un proche veut apprendre le Coran ? »)
+## 7. Quasi hors serveur : `PortPartageOffre` et `PortGenrePartageur` (`CAND-06`, carte à partager « Aidez une personne à apprendre la parole d'Allah. »)
 
 Décision du directeur du 22/10/2026 (`DECISION-CANDIDATURES-2026-10-21.md`, section 1 bis).
-**Aucune dépendance serveur** : ni RPC, ni migration, ni adaptateur `*_supabase.dart`, ni
-`CapaciteIndisponible('CAND-BR-nn')`. Le partage est facultatif et sans effet sur la
-candidature : aucun compteur, aucun évènement, aucune écriture.
+**Aucune écriture, aucune RPC, aucune migration** et pas de
+`CapaciteIndisponible('CAND-BR-nn')` : le partage est facultatif et sans effet sur la
+candidature (aucun compteur, aucun évènement). **Une seule lecture ajoutée** (refonte du
+22/10, soir) : le **genre** du titulaire, sur sa propre ligne `profiles.gender`
+(politique `profiles_self_select`), pour choisir la variante de la carte ; il ne pilote
+ni droit ni notification et rien n'en part. Inconnu (profil illisible, hors ligne, aucun port,
+plus de 5 secondes), il donne la variante neutre, jamais une erreur.
+
+| Élément | Rôle |
+| :--- | :--- |
+| `PortGenrePartageur.genreDuTitulaire()` (`core/partage_offre/port_genre_partageur.dart`) | `Genre?` du titulaire ; `null` s'il ne se lit pas ; **jamais deviné** d'un prénom ni d'une photo |
+| `GenrePartageurSupabase` (`genre_partageur_supabase.dart`) | un `SELECT gender FROM profiles WHERE id = auth.uid()`, délai `AppDelais.requeteMax` ; `genreDepuisLigne` rend `null` hors `male`/`female` |
+| `languesEnseignementCandidatProvider` (`personnalisation_carte.dart`) | la réponse `languesExplication` de la dernière candidature, par le port de la candidature déjà branché ; vide si elle ne se lit pas |
+| `reglagesCarteProvider` | les deux lectures ensemble, chacune bornée à 5 secondes (`delaiReglagesCarte`) ; ne lève jamais |
+| double de test (`FauxGenrePartageur`) | oracle des tests de widget ; importé par aucune ligne de production |
 
 Le seul point qui varie est l'appareil. `lib/core/partage_offre/port_partage_offre.dart` :
 
 | Élément | Rôle |
 | :--- | :--- |
-| `NiveauPartage` (`image`, `lien`, `aucun`) | ce que le menu de partage de l'appareil accepte ; `aucun` : le bouton « Partager » n'est pas rendu |
-| `partager(png, nomFichier, titre, texte, lien)` | ouvre le menu ; rend `IssuePartage.partage` ou `.annule` (la personne ferme le menu : aucun message) ; lève `PartageImpossible` si l'appareil refuse. `titre` et `texte` sont ceux que lit la personne qui reçoit : le titre de la carte (« Apprendre le Coran en ligne, en petite classe ») et sa première ligne, jamais le nom de l'académie (consigne du 22/10) |
+| `NiveauPartage` (`image`, `lien`, `aucun`) | ce que le menu de partage de l'appareil accepte ; `aucun` : le bouton « Je partage » n'est pas rendu |
+| `partager(png, nomFichier, titre, texte, lien)` | ouvre le menu ; rend `IssuePartage.partage` ou `.annule` (la personne ferme le menu : aucun message) ; lève `PartageImpossible` si l'appareil refuse. `titre` et `texte` sont ceux que lit la personne qui reçoit : le titre de la carte et sa ligne, **dans la langue de la carte** (« Apprendre le Coran, en petite classe. », « Avec le même enseignant. »), jamais le nom de l'académie (consigne du 22/10) |
 | web (`partage_appareil_web.dart`) | `navigator.share` et `navigator.canShare` par `dart:js_interop` ; aucun paquet |
 | autres plateformes (`partage_appareil_memoire.dart`) | `aucun` |
 | double de test (`test/fixtures/partage_offre/faux_partage_offre.dart`) | oracle des tests de widget ; importé par aucune ligne de production |

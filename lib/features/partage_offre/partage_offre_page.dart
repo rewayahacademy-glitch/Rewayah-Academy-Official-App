@@ -1,26 +1,35 @@
-/// `CAND-06` : la carte a partager (`/attente/partage`), « Un proche veut
-/// apprendre le Coran ? ».
+/// `CAND-06` : la carte a partager (`/attente/partage`), « Aidez une personne a
+/// apprendre la parole d'Allah. ».
 ///
-/// Une personne en Salle d'examen peut envoyer l'offre a un proche qui voudrait
-/// apprendre, par une carte au format story. **Elle parle de la personne qui
-/// apprendra et de ce qu'elle y gagne, jamais de l'academie** (consigne du
-/// directeur du 22/10/2026, apres coup : « il ne faut pas dire faites ca pour
-/// Rewayah Academy »). **Facultatif et sans aucun effet sur la candidature** :
-/// la page le dit avant les boutons, et rien ne s'ecrit en base (aucun compteur,
-/// aucun evenement). Pas de recrutement d'enseignants, pas de prix : decision du
-/// directeur du 22/10/2026 (`DECISION-CANDIDATURES-2026-10-21.md`, section 1 bis).
+/// Une personne en Salle d'examen peut envoyer l'offre a quelqu'un qui voudrait
+/// apprendre, par une carte au format story. **Tres peu de mots** (directeur,
+/// 22/10/2026 : « la fierte de participer a un geste noble et la simplicite ») :
+/// l'invitation en titre, la langue de la carte, l'apercu, la mention
+/// « Facultatif » et les gestes. **Facultatif et sans aucun effet sur la
+/// candidature** : la page le dit avant les boutons, et rien ne s'ecrit en base
+/// (aucun compteur, aucun evenement). Pas de recrutement d'enseignants, pas de
+/// prix : decision du directeur du 22/10/2026
+/// (`DECISION-CANDIDATURES-2026-10-21.md`, section 1 bis).
 ///
-/// Trois gestes : « Partager » (menu de partage de l'appareil, avec l'image,
+/// **La carte s'adapte a la personne qui partage** : sa variante (une femme, ou
+/// les hommes et le genre inconnu) vient de son profil, jamais devinee ; sa
+/// langue par defaut est la premiere langue d'enseignement de sa candidature
+/// (francais, anglais ou portugais), sinon la langue de l'application. Quatre
+/// puces (Francais, English, Portugues, l'arabe) changent la langue de la carte
+/// avant de partager.
+///
+/// Trois gestes : « Je partage » (menu de partage de l'appareil, avec l'image,
 /// seulement quand l'appareil le propose), « Enregistrer l'image » et « Copier
 /// le lien ». L'image est rendue des l'ouverture, avant le toucher : le menu de
 /// partage du navigateur doit s'ouvrir dans le geste de la personne.
 ///
-/// Etats : l'etat du dossier se lit (`Skeleton`, erreur avec « Reessayer »,
-/// hors ligne), pas de candidature en cours (retour au portail), pas de lien
-/// d'offre (capacite indisponible), image en preparation (boutons en cours),
-/// image non preparee (« Reessayer »), puis le contenu avec le retour de chaque
-/// geste. Le partage, l'enregistrement et la copie ne demandent pas de reseau :
-/// hors ligne, le bandeau de la page le dit une fois et rien d'autre change.
+/// Etats : l'etat du dossier et les reglages de la carte se lisent (`Skeleton`,
+/// erreur avec « Reessayer », hors ligne), pas de candidature en cours (retour
+/// au portail), pas de lien d'offre (capacite indisponible), image en
+/// preparation (boutons en cours), image non preparee (« Reessayer »), puis le
+/// contenu avec le retour de chaque geste. Le partage, l'enregistrement et la
+/// copie ne demandent pas de reseau : hors ligne, le bandeau de la page le dit
+/// une fois et rien d'autre change.
 library;
 
 import 'dart:async';
@@ -38,6 +47,7 @@ import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/partage_offre/lien_offre.dart';
+import '../../core/partage_offre/personnalisation_carte.dart';
 import '../../core/partage_offre/port_partage_offre.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_telechargement/port_enregistrement_fichier.dart';
@@ -48,11 +58,13 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../candidature/lecture_page.dart';
 import 'carte_partage.dart';
 import 'rendu_carte.dart';
+import 'textes_carte.dart';
 
 /// La page de partage de la carte.
 class PartageOffrePage extends ConsumerStatefulWidget {
@@ -64,6 +76,9 @@ class PartageOffrePage extends ConsumerStatefulWidget {
 
   /// La cle de la phrase « pas encore disponible ».
   static const Key nonOuvertKey = ValueKey<String>('partage-non-ouvert');
+
+  /// La cle de la lecture des reglages de la carte (genre, langues).
+  static const Key reglagesKey = ValueKey<String>('partage-reglages');
 
   @override
   ConsumerState<PartageOffrePage> createState() => _PartageOffrePageState();
@@ -118,7 +133,16 @@ class _PartageOffrePageState extends ConsumerState<PartageOffrePage> {
           ),
         );
       }
-      return _Partage(lien: lien);
+      // La variante et la langue de depart de la carte : lues une fois.
+      return lecturePage<ReglagesCarte>(
+        ref: ref,
+        key: PartageOffrePage.reglagesKey,
+        titre: t.recrutement.partage.titre,
+        valeur: ref.watch(reglagesCarteProvider),
+        titreEchec: t.recrutement.portail.nonCharge,
+        onReessayer: () => ref.invalidate(reglagesCarteProvider),
+        construire: (ReglagesCarte r) => _Partage(lien: lien, reglages: r),
+      );
     },
   );
 }
@@ -132,23 +156,24 @@ class _Retour {
   final bool echec;
 }
 
-/// Le contenu : l'apercu de la carte, la description, les trois gestes.
+/// Le contenu : la langue de la carte, l'apercu, la mention « Facultatif » et
+/// les trois gestes.
 class _Partage extends ConsumerStatefulWidget {
-  const _Partage({required this.lien});
+  const _Partage({required this.lien, required this.reglages});
 
   final Uri lien;
+
+  /// La variante et les langues d'enseignement de la personne.
+  final ReglagesCarte reglages;
 
   /// La cle de l'apercu de la carte.
   static const Key apercuKey = ValueKey<String>('partage-apercu');
 
-  /// La cle de la description.
-  static const Key introKey = ValueKey<String>('partage-introduction');
+  /// La cle du libelle du choix de la langue de la carte.
+  static const Key langueKey = ValueKey<String>('partage-langue');
 
-  /// La cle de la seconde phrase de la description (ce que fait la carte).
-  static const Key suiteKey = ValueKey<String>('partage-introduction-suite');
-
-  /// La cle du motif de celui qui partage (le hadith).
-  static const Key motifKey = ValueKey<String>('partage-motif');
+  /// La cle des quatre puces de la langue de la carte.
+  static const Key languesKey = ValueKey<String>('partage-langues');
 
   /// La cle de la phrase « facultatif, sans effet sur la candidature ».
   static const Key facultatifKey = ValueKey<String>('partage-facultatif');
@@ -197,8 +222,14 @@ class _PartageState extends ConsumerState<_Partage> {
   /// Une preparation plus recente rend caduque celle qui revient apres elle.
   int _ticket = 0;
 
-  /// La langue de l'image rendue : l'image est a refaire si elle change.
-  late AppLocale _langue = LocaleSettings.currentLocale;
+  /// La langue de la carte : celle de depart, puis celle que la personne choisit.
+  /// L'image est a refaire quand elle change.
+  late LangueCarte _langue = widget.reglages.langueParDefaut(
+    LangueCarte.depuisLocale(LocaleSettings.currentLocale),
+  );
+
+  /// La variante de la carte, lue sur le profil de la personne.
+  VarianteCarte get _variante => widget.reglages.variante;
 
   @override
   void initState() {
@@ -217,6 +248,24 @@ class _PartageState extends ConsumerState<_Partage> {
         unawaited(_preparer());
       });
     }
+  }
+
+  /// Change la langue de la carte : l'image se refait avec la nouvelle.
+  void _choisirLangue(LangueCarte langue) {
+    if (langue == _langue) {
+      return;
+    }
+    setState(() {
+      _langue = langue;
+      _png = null;
+      _preparation = true;
+      _carteEnEchec = false;
+      _retour = null;
+    });
+    // La carte se repeint dans la langue choisie, puis l'image est relue.
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      unawaited(_preparer());
+    });
   }
 
   Future<void> _preparer() async {
@@ -260,6 +309,7 @@ class _PartageState extends ConsumerState<_Partage> {
     }
     final PortPartageOffre port = ref.read(portPartageOffreProvider);
     final c = t.recrutement.partage;
+    final TextesCarte carte = textesCarte[_langue]!;
     setState(() {
       _partageEnCours = true;
       _retour = null;
@@ -269,9 +319,10 @@ class _PartageState extends ConsumerState<_Partage> {
       final IssuePartage issue = await port.partager(
         png: png,
         nomFichier: nomFichierCarte,
-        // Le message lu par la personne qui recoit : ce qu'elle y gagne.
-        titre: c.carte.titre,
-        texte: c.carte.enseignant,
+        // Le message lu par la personne qui recoit, dans la langue de la carte :
+        // ce qu'elle y gagne.
+        titre: carte.titre,
+        texte: carte.sousTitre,
         lien: widget.lien,
       );
       // Fermer le menu n'est pas une erreur : aucun message.
@@ -417,13 +468,6 @@ class _PartageState extends ConsumerState<_Partage> {
 
   @override
   Widget build(BuildContext context) {
-    // La carte change avec la langue : l'image est a refaire.
-    if (_langue != LocaleSettings.currentLocale) {
-      _langue = LocaleSettings.currentLocale;
-      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
-        unawaited(_preparer());
-      });
-    }
     final c = t.recrutement.partage;
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
@@ -431,27 +475,44 @@ class _PartageState extends ConsumerState<_Partage> {
     final NiveauPartage niveau = port.niveau;
     final bool large = AppGabarit.de(context) != Gabarit.mobile;
 
-    // Ce que la personne qui apprendra y gagne, puis ce que fait la carte pour
-    // elle : jamais une demande faite au nom de l'academie.
-    final Widget introduction = Column(
+    // La langue de la carte : quatre puces exclusives, avant l'apercu. Le nom de
+    // chaque langue est ecrit dans cette langue.
+    final Widget langues = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(c.introduction, key: _Partage.introKey, style: textes.bodyLarge),
-        Ecart.vMd,
         Text(
-          c.introductionSuite,
-          key: _Partage.suiteKey,
-          style: textes.bodyMedium,
+          c.langueCarte,
+          key: _Partage.langueKey,
+          style: palette.inkMuted.applyTo(
+            textes.labelMedium ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vSm,
+        Semantics(
+          container: true,
+          // Quatre puces, une retenue : a 320 points et texte agrandi elles
+          // passent a la ligne, jamais un mot coupe.
+          // Choix de formulaire, pas un filtre : la langue de la carte.
+          child: Wrap(
+            key: _Partage.languesKey,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              for (final LangueCarte l in LangueCarte.values)
+                Semantics(
+                  inMutuallyExclusiveGroup: true,
+                  child: FilterPill(
+                    libelle: textesCarte[l]!.nomPropre,
+                    retenue: l == _langue,
+                    onPress: () => _choisirLangue(l),
+                  ),
+                ),
+            ],
+          ),
         ),
       ],
     );
-    // Le motif de celui qui partage, puis la mention « Facultatif » avant les
-    // boutons.
-    final Widget motif = Text(
-      c.motif,
-      key: _Partage.motifKey,
-      style: textes.bodyMedium,
-    );
+    // La mention « Facultatif » avant les boutons : le seul texte de la page.
     final Widget facultatif = Text(
       c.facultatif,
       key: _Partage.facultatifKey,
@@ -528,11 +589,13 @@ class _PartageState extends ConsumerState<_Partage> {
     final Widget apercu = _Apercu(
       cle: _cle,
       lien: widget.lien,
+      langue: _langue,
+      variante: _variante,
       largeur: large ? _Apercu.largeurLarge : _Apercu.largeurMobile,
     );
 
     return PageShell(
-      titre: c.titre,
+      titre: invitationPartage(_variante),
       onRetour: () => GoRouter.of(context).go(Routes.attente),
       child: Align(
         alignment: AlignmentDirectional.topCenter,
@@ -546,10 +609,8 @@ class _PartageState extends ConsumerState<_Partage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          introduction,
+                          langues,
                           Ecart.vXl,
-                          motif,
-                          Ecart.vMd,
                           facultatif,
                           Ecart.vLg,
                           suite,
@@ -563,12 +624,10 @@ class _PartageState extends ConsumerState<_Partage> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    introduction,
-                    Ecart.vXl,
+                    langues,
+                    Ecart.vLg,
                     Center(child: apercu),
                     Ecart.vXl,
-                    motif,
-                    Ecart.vMd,
                     facultatif,
                     Ecart.vLg,
                     suite,
@@ -584,14 +643,22 @@ class _PartageState extends ConsumerState<_Partage> {
 /// `RepaintBoundary` est a l'interieur de la reduction : l'image exportee a la
 /// taille de la carte, jamais celle de l'apercu.
 class _Apercu extends StatelessWidget {
-  const _Apercu({required this.cle, required this.lien, required this.largeur});
+  const _Apercu({
+    required this.cle,
+    required this.lien,
+    required this.langue,
+    required this.variante,
+    required this.largeur,
+  });
 
   final GlobalKey cle;
   final Uri lien;
+  final LangueCarte langue;
+  final VarianteCarte variante;
   final double largeur;
 
   /// La largeur de l'apercu sur telephone.
-  static const double largeurMobile = 240;
+  static const double largeurMobile = 224;
 
   /// La largeur de l'apercu sur tablette et bureau.
   static const double largeurLarge = 288;
@@ -621,7 +688,11 @@ class _Apercu extends StatelessWidget {
               height: CartePartage.hauteur,
               child: RepaintBoundary(
                 key: cle,
-                child: CartePartage(lien: lien),
+                child: CartePartage(
+                  lien: lien,
+                  langue: langue,
+                  variante: variante,
+                ),
               ),
             ),
           ),

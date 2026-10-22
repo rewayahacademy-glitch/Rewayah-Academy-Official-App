@@ -1,15 +1,16 @@
-// La tuile « Un proche veut apprendre le Coran ? » du portail `/attente`
-// (CAND-06).
+// La tuile du portail `/attente` : « Aidez une personne a apprendre la parole
+// d'Allah. » (« une sœur » pour une femme), CAND-06.
 //
 // Une carte entiere qui se touche et mene a la page de partage. **Pas de
 // bouton plein** : le portail garde une seule action pleine, celle de l'etat de
 // la candidature.
 //
-// **Elle parle de la personne qui apprendra, jamais de l'academie** (consigne
-// du directeur du 22/10/2026, apres coup : « tu leur demandes de faire une
-// action sans aucune contrepartie […] Il faut leur parler de l'interet que
-// l'eleve va avoir »). Dans l'ordre : la question, ce que la personne y gagne,
-// le hadith en motif personnel de celui qui partage, puis « Facultatif ».
+// **Tres peu de mots** (directeur, 22/10/2026 : « la fierte de participer a un
+// geste noble et la simplicite ») : l'invitation, puis la mention
+// « Facultatif ». Ni explication, ni hadith, ni description de l'offre : la
+// page et la carte les portent. **Elle parle de la personne qui apprendra,
+// jamais de l'academie.** Le mot suit le genre du profil (« une sœur » pour une
+// femme, « une personne » sinon), lu comme la carte, jamais devine.
 //
 // Sans lien d'offre (aucune adresse de site connue), la tuile n'est pas rendue :
 // elle mene a une carte qui ne pourrait pas exister.
@@ -23,6 +24,8 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/partage_offre/lien_offre.dart';
+import '../../core/partage_offre/personnalisation_carte.dart';
+import '../../core/partage_offre/port_genre_partageur.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -36,14 +39,8 @@ class TuilePartageOffre extends ConsumerWidget {
   /// La cle de la tuile.
   static const Key tuileKey = ValueKey<String>('portail-partage');
 
-  /// La cle du titre (la question).
+  /// La cle de l'invitation.
   static const Key titreKey = ValueKey<String>('portail-partage-titre');
-
-  /// La cle du texte (ce que la personne y gagne).
-  static const Key texteKey = ValueKey<String>('portail-partage-texte');
-
-  /// La cle du motif (le hadith, pour celui qui partage).
-  static const Key motifKey = ValueKey<String>('portail-partage-motif');
 
   /// La cle de la mention « Facultatif ».
   static const Key facultatifKey = ValueKey<String>(
@@ -56,6 +53,11 @@ class TuilePartageOffre extends ConsumerWidget {
       return const SizedBox.shrink();
     }
     final c = t.recrutement.partage;
+    // Le genre se lit sur le profil ; tant qu'il ne l'est pas, ou s'il ne se lit
+    // pas, l'invitation est la neutre.
+    final String invitation = invitationPartage(
+      VarianteCarte.depuisGenre(ref.watch(genrePartageurProvider).value),
+    );
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final TextStyle muet = palette.inkMuted.applyTo(
@@ -66,7 +68,7 @@ class TuilePartageOffre extends ConsumerWidget {
       padding: const EdgeInsets.only(top: AppSpacing.xl),
       child: AppCard(
         lien: true,
-        libelleSemantique: '${c.titre} ${c.introduction}',
+        libelleSemantique: '$invitation ${c.facultatif}',
         onPress: () => GoRouter.maybeOf(context)?.go(Routes.attentePartage),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,22 +83,12 @@ class TuilePartageOffre extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   TexteSansCoupure(
-                    c.titre,
+                    invitation,
                     key: titreKey,
                     style: palette.inkStrong.applyTo(
                       textes.titleSmall ?? const TextStyle(),
                     ),
                   ),
-                  Ecart.vXs,
-                  TexteSansCoupure(
-                    c.introduction,
-                    key: texteKey,
-                    style: palette.inkStrong.applyTo(
-                      textes.bodyMedium ?? const TextStyle(),
-                    ),
-                  ),
-                  Ecart.vSm,
-                  TexteSansCoupure(c.motif, key: motifKey, style: muet),
                   Ecart.vSm,
                   TexteSansCoupure(
                     c.facultatif,

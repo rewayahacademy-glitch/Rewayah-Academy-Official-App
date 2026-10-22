@@ -2026,13 +2026,12 @@
       "relire": "Relire ma candidature"
     },
     "partage": {
-      "titre": "Un proche veut apprendre le\u00a0Coran\u00a0?",
-      "introduction": "Envoyez-lui l'offre en un geste\u00a0: il apprendra en petite classe, en visio, avec le même enseignant chaque semaine.",
-      "introductionSuite": "La carte lui dit en quelques lignes comment se passent les cours, et lui donne le lien de l'offre.",
-      "motif": "Pour vous aussi, c'est un bien\u00a0: dans un hadith, celui qui indique le bien est comme celui qui l'accomplit.",
+      "titre": "Aidez une personne à apprendre la parole d'Allah.",
+      "titreFemme": "Aidez une sœur à apprendre la parole d'Allah.",
       "facultatif": "Facultatif\u00a0: partager ne change rien à votre candidature.",
+      "langueCarte": "Langue de la carte",
       "apercu": "Aperçu de la carte à partager",
-      "partager": "Partager",
+      "partager": "Je partage",
       "partagerLaCarte": "Partager la carte de l'offre",
       "enregistrer": "Enregistrer l'image",
       "copier": "Copier le lien",
@@ -2050,17 +2049,7 @@
         "copie": "Le lien n'a pas pu être copié. Sélectionnez-le dans la page pour le copier à la main.",
         "carte": "La carte n'a pas pu être préparée. Réessayez dans un instant."
       },
-      "nonOuvert": "La carte à partager n'est pas encore disponible. Revenez sur cette page plus tard.",
-      "carte": {
-        "titre": "Apprendre le Coran en ligne, en petite\u00a0classe",
-        "enseignant": "Le même enseignant, trois séances par semaine, à heure fixe.",
-        "publics": "Pour les enfants dès 6\u00a0ans et pour les adultes.",
-        "langues": "En poular (peul), français ou anglais, selon les enseignants disponibles.",
-        "decouvrir": "Découvrir l'offre",
-        "hadith": "الدال على الخير كفاعله",
-        "traduction": "«\u00a0Celui qui indique le bien est comme celui qui l'accomplit.\u00a0»",
-        "reference": "Rapporté par at-Tirmidhi"
-      }
+      "nonOuvert": "La carte à partager n'est pas encore disponible. Revenez sur cette page plus tard."
     },
     "retrait": {
       "lien": "Retirer ma candidature",

@@ -92,7 +92,7 @@ abstract final class Routes {
   /// compte, la page revient au portail.
   static const String attenteCandidature = '/attente/candidature';
 
-  /// CAND-06 : la carte a partager, « Un proche veut apprendre le Coran ? »
+  /// CAND-06 : la carte a partager, « Aidez une personne a apprendre la parole d'Allah. »
   /// (envoyer l'offre a un proche, facultatif et sans effet sur la
   /// candidature). Sous `/attente`,
   /// ouvert au compte en attente ; sans candidature en cours pour le compte, la

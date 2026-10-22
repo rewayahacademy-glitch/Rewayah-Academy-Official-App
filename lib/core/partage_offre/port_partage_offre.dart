@@ -1,6 +1,6 @@
-// Le port du partage de la carte a partager (CAND-06, « Un proche veut apprendre
-// le Coran ? ») : ouvrir le menu de partage de l'appareil avec l'image de la
-// carte.
+// Le port du partage de la carte a partager (CAND-06, « Aidez une personne a
+// apprendre la parole d'Allah. ») : ouvrir le menu de partage de l'appareil avec
+// l'image de la carte.
 //
 // **Aucune dependance serveur.** Rien de ce qui se partage ne vient de la base
 // ni n'y retourne : la carte est rendue par Flutter, le lien vient de la

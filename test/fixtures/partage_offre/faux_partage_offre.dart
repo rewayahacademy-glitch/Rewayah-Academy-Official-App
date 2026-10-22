@@ -1,11 +1,14 @@
 // Les doubles de test du partage de la carte (CAND-06) : le menu de partage de
-// l'appareil, l'enregistrement de l'image et le rendu en PNG. Importes par les
+// l'appareil, l'enregistrement de l'image, le rendu en PNG et le genre du
+// profil. Importes par les
 // tests seulement, jamais par une ligne de production.
 
 import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/partage_offre/port_genre_partageur.dart';
 import 'package:rewayah_academy/core/partage_offre/port_partage_offre.dart';
 import 'package:rewayah_academy/core/tc_telechargement/port_enregistrement_fichier.dart';
 
@@ -144,5 +147,32 @@ class FauxRenduCarte {
       return Future<Uint8List>.error(panne);
     }
     return enCours?.future ?? Future<Uint8List>.value(octets);
+  }
+}
+
+/// La lecture du genre du profil, sans serveur.
+class FauxGenrePartageur implements PortGenrePartageur {
+  /// Cree le faux : [genre] est ce que le profil dit (`null` : inconnu).
+  FauxGenrePartageur({this.genre});
+
+  /// Ce que le profil dit.
+  Genre? genre;
+
+  /// Ce que la lecture doit jeter. `null` : rien.
+  Object? erreur;
+
+  /// Le nombre de lectures demandees.
+  int lectures = 0;
+
+  @override
+  Future<Genre?> genreDuTitulaire() async {
+    lectures++;
+    final Object? panne = erreur;
+    if (panne != null) {
+      // Volontairement un Object : un profil illisible jette n'importe quoi.
+      // ignore: only_throw_errors
+      throw panne;
+    }
+    return genre;
   }
 }

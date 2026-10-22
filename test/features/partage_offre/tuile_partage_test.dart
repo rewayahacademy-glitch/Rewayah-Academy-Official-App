@@ -1,18 +1,22 @@
-// CAND-06 : la tuile « Un proche veut apprendre le Coran ? » du portail
-// `/attente`. Elle parle de la personne qui apprendra, jamais de l'academie
-// (consigne du directeur du 22/10/2026). Facultative et sans bouton plein : le
-// portail garde une seule action pleine. Rendue pour qui candidate encore et
-// seulement quand un lien d'offre existe.
+// CAND-06 : la tuile du portail `/attente`, « Aidez une personne a apprendre la
+// parole d'Allah. » (« une soeur » pour une femme). Tres peu de mots : le
+// directeur, le 22/10/2026, veut « la fierte de participer a un geste noble et
+// la simplicite ». Elle parle de la personne qui apprendra, jamais de
+// l'academie. Facultative et sans bouton plein : le portail garde une seule
+// action pleine. Rendue pour qui candidate encore et seulement quand un lien
+// d'offre existe ; le mot suit le genre du profil, jamais devine.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/partage_offre/carte_partage.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../../fixtures/partage_offre/faux_partage_offre.dart';
 import '../../support/garde_interface.dart';
 import '../candidature/hote_candidature.dart';
 import 'hote_partage.dart';
@@ -33,6 +37,8 @@ Future<void> _portail(
   Size taille = const Size(390, 844),
   TextDirection? direction,
   double echelle = 1,
+  Genre? genre,
+  FauxGenrePartageur? lectureGenre,
 }) => monterPartage(
   tester,
   depart: Routes.attente,
@@ -41,97 +47,158 @@ Future<void> _portail(
   taille: taille,
   direction: direction,
   echelle: echelle,
+  genre: genre,
+  lectureGenre: lectureGenre,
 );
+
+String _texte(WidgetTester tester, String cle) => tester
+    .widget<Text>(find.descendant(of: _cle(cle), matching: find.byType(Text)))
+    .data!;
 
 void main() {
   setUpAll(chargerPolicesDuDepot);
   tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
 
   group('la tuile du portail', () {
+    testWidgets('a completer et en examen : la tuile, ses deux textes dans l\'ordre '
+        '(l\'invitation, puis « Facultatif »)', (WidgetTester tester) async {
+      for (final CandidatureDossier c in <CandidatureDossier>[
+        candidatureAFaire(),
+        _enExamen,
+      ]) {
+        await _portail(tester, c);
+        final c0 = t.recrutement.partage;
+        expect(_cle('portail-partage'), findsOneWidget, reason: '${c.etat}');
+        expect(find.text(c0.titre), findsOneWidget);
+        expect(find.text(c0.facultatif), findsOneWidget);
+        expect(
+          tester.getTopLeft(_cle('portail-partage-titre')).dy,
+          lessThan(tester.getTopLeft(_cle('portail-partage-facultatif')).dy),
+        );
+        // Rien d'autre : ni explication, ni hadith, ni description de l'offre.
+        final Iterable<Text> textes = tester.widgetList<Text>(
+          find.descendant(
+            of: _cle('portail-partage'),
+            matching: find.byType(Text),
+          ),
+        );
+        expect(textes, hasLength(2));
+        expect(tester.takeException(), isNull);
+      }
+    });
+
     testWidgets(
-      'a completer et en examen : la tuile, ses quatre textes dans l\'ordre '
-      '(la question, ce que la personne y gagne, le motif, facultatif)',
+      'les mots du directeur (22/10), tels quels : l\'invitation et la mention '
+      'facultative',
       (WidgetTester tester) async {
-        for (final CandidatureDossier c in <CandidatureDossier>[
-          candidatureAFaire(),
-          _enExamen,
-        ]) {
-          await _portail(tester, c);
-          final c0 = t.recrutement.partage;
-          expect(_cle('portail-partage'), findsOneWidget, reason: '${c.etat}');
-          expect(find.text(c0.titre), findsOneWidget);
-          expect(find.text(c0.introduction), findsOneWidget);
-          expect(find.text(c0.motif), findsOneWidget);
-          expect(find.text(c0.facultatif), findsOneWidget);
-          double haut(String cle) => tester.getTopLeft(_cle(cle)).dy;
-          expect(
-            haut('portail-partage-titre'),
-            lessThan(haut('portail-partage-texte')),
-          );
-          expect(
-            haut('portail-partage-texte'),
-            lessThan(haut('portail-partage-motif')),
-          );
-          expect(
-            haut('portail-partage-motif'),
-            lessThan(haut('portail-partage-facultatif')),
-          );
-          expect(tester.takeException(), isNull);
-        }
+        final c = t.recrutement.partage;
+        expect(c.titre, 'Aidez une personne à apprendre la parole d\'Allah.');
+        expect(c.titreFemme, 'Aidez une sœur à apprendre la parole d\'Allah.');
+        expect(
+          c.facultatif,
+          'Facultatif : partager ne change rien à votre candidature.',
+        );
+        await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+        final a = t.recrutement.partage;
+        expect(a.titre, 'ساعد شخصًا على تعلّم كلام الله');
+        expect(a.titreFemme, 'ساعدي أختًا على تعلّم كلام الله');
       },
     );
 
     testWidgets(
-      'les mots de la consigne du directeur (22/10) : la question, le texte, '
-      'le motif et la mention facultative',
+      'une femme : « une soeur » ; un homme ou un genre inconnu : « une '
+      'personne » ; jamais devine',
       (WidgetTester tester) async {
         final c = t.recrutement.partage;
-        expect(c.titre, 'Un proche veut apprendre le\u00a0Coran\u00a0?');
-        expect(
-          c.introduction,
-          'Envoyez-lui l\'offre en un geste\u00a0: il apprendra en petite '
-          'classe, en visio, avec le même enseignant chaque semaine.',
+        await _portail(tester, candidatureAFaire(), genre: Genre.femme);
+        expect(_texte(tester, 'portail-partage-titre'), c.titreFemme);
+        await _portail(tester, candidatureAFaire(), genre: Genre.homme);
+        expect(_texte(tester, 'portail-partage-titre'), c.titre);
+        // Genre inconnu : la neutre.
+        await _portail(tester, candidatureAFaire());
+        expect(_texte(tester, 'portail-partage-titre'), c.titre);
+        // Profil illisible : la neutre, la tuile reste.
+        await _portail(
+          tester,
+          candidatureAFaire(),
+          lectureGenre: FauxGenrePartageur(genre: Genre.femme)
+            ..erreur = StateError('hors ligne'),
+        );
+        expect(_texte(tester, 'portail-partage-titre'), c.titre);
+        expect(_cle('portail-partage'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'en arabe, au feminin pour une femme : « ساعدي أختًا على تعلّم كلام الله »',
+      (WidgetTester tester) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+        await _portail(
+          tester,
+          candidatureAFaire(),
+          genre: Genre.femme,
+          direction: TextDirection.rtl,
         );
         expect(
-          c.facultatif,
-          'Facultatif\u00a0: partager ne change rien à votre candidature.',
+          _texte(tester, 'portail-partage-titre'),
+          'ساعدي أختًا على تعلّم كلام الله',
         );
-        // Le hadith est le motif de celui qui partage, pas de l'academie.
-        expect(c.motif, contains('celui qui indique le bien'));
-        expect(c.motif, contains('Pour vous aussi'));
+        await _portail(
+          tester,
+          candidatureAFaire(),
+          genre: Genre.homme,
+          direction: TextDirection.rtl,
+        );
+        expect(
+          _texte(tester, 'portail-partage-titre'),
+          'ساعد شخصًا على تعلّم كلام الله',
+        );
       },
     );
 
     testWidgets(
       'aucun texte de la tuile ne demande d\'agir pour l\'academie : son nom '
-      'n\'est jamais le motif, en francais comme en arabe',
+      'n\'est jamais le motif, en francais comme en arabe, pour les deux genres',
       (WidgetTester tester) async {
         for (final AppLocale langue in <AppLocale>[
           AppLocale.fr,
           AppLocale.ar,
         ]) {
           await tester.runAsync(() => LocaleSettings.setLocale(langue));
-          await _portail(
-            tester,
-            candidatureAFaire(),
-            direction: langue == AppLocale.ar ? TextDirection.rtl : null,
-          );
-          final Iterable<String> textes = <String>[
-            for (final String cle in <String>[
-              'portail-partage-titre',
-              'portail-partage-texte',
-              'portail-partage-motif',
-              'portail-partage-facultatif',
-            ])
-              tester
-                  .widget<Text>(
-                    find.descendant(of: _cle(cle), matching: find.byType(Text)),
-                  )
-                  .data!,
-          ];
-          for (final String texte in textes) {
-            for (final String mot in motsQuiNommentLAcademie) {
-              expect(texte, isNot(contains(mot)), reason: '$langue : $texte');
+          for (final Genre? genre in <Genre?>[null, Genre.femme]) {
+            await _portail(
+              tester,
+              candidatureAFaire(),
+              genre: genre,
+              direction: langue == AppLocale.ar ? TextDirection.rtl : null,
+            );
+            final Iterable<String> textes = <String>[
+              for (final String cle in <String>[
+                'portail-partage-titre',
+                'portail-partage-facultatif',
+              ])
+                _texte(tester, cle),
+            ];
+            for (final String texte in textes) {
+              for (final String mot in motsQuiNommentLAcademie) {
+                expect(texte, isNot(contains(mot)), reason: '$langue : $texte');
+              }
+              for (final String demande in <String>[
+                'faites connaître',
+                'pour nous',
+                'nous aider',
+                'aidez-nous',
+                'عرّفوا',
+                'ساعدونا',
+                'ساعدنا',
+              ]) {
+                expect(
+                  texte.toLowerCase(),
+                  isNot(contains(demande)),
+                  reason: '$langue : $texte',
+                );
+              }
             }
           }
         }
@@ -171,9 +238,9 @@ void main() {
       WidgetTester tester,
     ) async {
       await _portail(tester, _enExamen);
-      await tester.ensureVisible(find.text(t.recrutement.partage.titre));
+      await tester.ensureVisible(_cle('portail-partage-titre'));
       await tester.pump();
-      await tester.tap(find.text(t.recrutement.partage.titre));
+      await tester.tap(_cle('portail-partage-titre'));
       await tester.pumpAndSettle();
       expect(find.byType(CartePartage), findsOneWidget);
       expect(find.text(t.recrutement.partage.facultatif), findsOneWidget);
@@ -254,6 +321,7 @@ void main() {
             candidatureAFaire(),
             taille: taille,
             echelle: 2,
+            genre: Genre.femme,
           );
           expect(tester.takeException(), isNull);
           expect(_cle('portail-partage'), findsOneWidget);
@@ -264,11 +332,12 @@ void main() {
             taille: taille,
             direction: TextDirection.rtl,
             echelle: 2,
+            genre: Genre.femme,
           );
           expect(tester.takeException(), isNull);
           expect(_cle('portail-partage'), findsOneWidget);
-          expect(find.text(t.recrutement.partage.titre), findsOneWidget);
-          expect(find.text(t.recrutement.partage.introduction), findsOneWidget);
+          expect(find.text(t.recrutement.partage.titreFemme), findsOneWidget);
+          expect(find.text(t.recrutement.partage.facultatif), findsOneWidget);
         },
       );
     }

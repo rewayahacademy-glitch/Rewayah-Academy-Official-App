@@ -1,12 +1,14 @@
-// CAND-06 : les textes de la tuile, de la page et de la carte, lus dans les
-// fichiers de traduction (francais et arabe), cle par cle.
+// CAND-06 : les textes de la tuile et de la page, lus dans les fichiers de
+// traduction (francais et arabe), cle par cle. La carte a ses propres textes, en
+// quatre langues (`textes_carte_test.dart`).
 //
 // Consigne du directeur du 22/10/2026, apres coup : « tu leur demandes de faire
 // une action sans aucune contrepartie […] Il faut leur parler de l'interet que
-// l'eleve va avoir. Pas Rewayah Academy. Il ne faut pas dire faites ca pour
-// Rewayah Academy. » Aucun texte ne demande d'agir pour l'academie ; son nom
-// n'est jamais le motif. Et les regles de `mots-rewayah` : « classe » et jamais
-// « groupe », aucune promesse, aucun prix, pas de tiret long.
+// l'eleve va avoir. Pas Rewayah Academy », puis : « la fierte de participer a un
+// geste noble et la simplicite », « peu de mots ». Aucun texte ne demande d'agir
+// pour l'academie ; son nom n'est jamais le motif. Et les regles de
+// `mots-rewayah` : « classe » et jamais « groupe », aucune promesse, aucun prix,
+// pas de tiret long.
 
 import 'dart:convert';
 import 'dart:io';
@@ -45,18 +47,36 @@ void main() {
     expect(fr, isNotEmpty);
   });
 
-  test('l\'arabe n\'a de texte vide que la traduction du hadith', () {
-    expect(
-      <String>[
-        for (final MapEntry<String, String> e in ar.entries)
-          if (e.value.isEmpty) e.key,
-      ],
-      <String>['recrutement.partage.carte.traduction'],
-    );
-    expect(<String>[
-      for (final MapEntry<String, String> e in fr.entries)
-        if (e.value.isEmpty) e.key,
-    ], isEmpty);
+  test('aucun texte vide, ni en francais ni en arabe', () {
+    for (final Map<String, String> textes in <Map<String, String>>[fr, ar]) {
+      expect(<String>[
+        for (final MapEntry<String, String> e in textes.entries)
+          if (e.value.trim().isEmpty) e.key,
+      ], isEmpty);
+    }
+  });
+
+  test('les textes de la carte ne sont plus dans les fichiers de traduction : '
+      'ils vivent dans le fichier de donnees de la carte', () {
+    for (final Map<String, String> textes in <Map<String, String>>[fr, ar]) {
+      expect(
+        textes.keys.where(
+          (String k) => k.startsWith('recrutement.partage.carte.'),
+        ),
+        isEmpty,
+      );
+      for (final String ancienne in <String>[
+        'introduction',
+        'introductionSuite',
+        'motif',
+      ]) {
+        expect(
+          textes.containsKey('recrutement.partage.$ancienne'),
+          isFalse,
+          reason: 'peu de mots : plus de $ancienne',
+        );
+      }
+    }
   });
 
   for (final String langue in <String>['fr', 'ar']) {
@@ -75,14 +95,14 @@ void main() {
       }
     });
 
-    test('$langue : aucune demande faite pour l\'academie ni pour la '
-        'faire connaitre', () {
+    test('$langue : aucune demande faite pour l\'academie ni pour la faire '
+        'connaitre ; l\'invitation vise la personne qui apprendra', () {
       final List<String> demandes = langue == 'fr'
           ? <String>[
               'faites connaître',
               'faites connaitre',
               'faire connaître',
-              'aidez',
+              'aidez-nous',
               'soutenez',
               'pour nous',
               'nous aider',
@@ -138,60 +158,70 @@ void main() {
     });
   }
 
-  test('le hadith est le meme dans les deux langues, et il est seul', () {
-    const String hadith = 'الدال على الخير كفاعله';
-    expect(fr['recrutement.partage.carte.hadith'], hadith);
-    expect(ar['recrutement.partage.carte.hadith'], hadith);
-    // Le hadith ne se repete dans aucun autre texte de l'arabe sous sa forme
-    // de la carte (le motif le cite, entre guillemets, une fois).
-    final int dansLeMotif = RegExp(hadith)
-        .allMatches(ar['recrutement.partage.motif']!)
-        .length;
-    expect(dansLeMotif, 1);
-    // En francais, le hadith n'est ecrit en arabe qu'une fois : sur la carte.
-    final RegExp arabe = RegExp('[؀-ۿ]');
-    expect(
-      <String>[
-        for (final MapEntry<String, String> e in fr.entries)
-          if (arabe.hasMatch(e.value)) e.key,
-      ],
-      <String>['recrutement.partage.carte.hadith'],
-    );
+  test('en francais, aucune lettre arabe dans la page ; en arabe, aucune '
+      'phrase francaise', () {
+    final RegExp arabe = RegExp('[\u0600-\u06FF]');
+    expect(<String>[
+      for (final MapEntry<String, String> e in fr.entries)
+        if (arabe.hasMatch(e.value)) e.key,
+    ], isEmpty);
+    // Les invitations arabes sont des phrases arabes seules.
+    for (final String cle in <String>[
+      'recrutement.partage.titre',
+      'recrutement.partage.titreFemme',
+      'recrutement.partage.partager',
+      'recrutement.partage.langueCarte',
+    ]) {
+      expect(RegExp('[A-Za-z]').hasMatch(ar[cle]!), isFalse, reason: cle);
+    }
   });
 
-  test('l\'arabe n\'est pas une langue de cours : la ligne des langues ne le '
-      'cite pas', () {
-    expect(
-      fr['recrutement.partage.carte.langues']!.toLowerCase(),
-      isNot(contains('arabe')),
-    );
-    expect(
-      ar['recrutement.partage.carte.langues'],
-      isNot(contains('بالعربية')),
-    );
-    expect(ar['recrutement.partage.carte.langues'], isNot(contains('العربية')));
-  });
-
-  test('la tuile et la page parlent de la personne qui apprendra', () {
-    // Le titre et la phrase du directeur (22/10/2026), tels quels.
+  test('l\'invitation : les mots du directeur (22/10), au masculin et au '
+      'feminin, en francais et en arabe', () {
     expect(
       fr['recrutement.partage.titre'],
-      'Un proche veut apprendre le\u00a0Coran\u00a0?',
+      'Aidez une personne à apprendre la parole d\'Allah.',
     );
     expect(
-      fr['recrutement.partage.introduction'],
-      'Envoyez-lui l\'offre en un geste\u00a0: il apprendra en petite classe, '
-      'en visio, avec le même enseignant chaque semaine.',
+      fr['recrutement.partage.titreFemme'],
+      'Aidez une sœur à apprendre la parole d\'Allah.',
     );
+    expect(ar['recrutement.partage.titre'], 'ساعد شخصًا على تعلّم كلام الله');
+    expect(
+      ar['recrutement.partage.titreFemme'],
+      'ساعدي أختًا على تعلّم كلام الله',
+    );
+  });
+
+  test('le bouton est a la premiere personne : « Je partage »', () {
+    expect(fr['recrutement.partage.partager'], 'Je partage');
+    expect(ar['recrutement.partage.partager'], 'أشارك');
+    // Le lecteur d'ecran entend ce que le bouton partage.
+    expect(
+      fr['recrutement.partage.partagerLaCarte'],
+      'Partager la carte de l\'offre',
+    );
+  });
+
+  test('la mention facultative : le seul texte qui reste, tel que le '
+      'directeur l\'a gardee', () {
     expect(
       fr['recrutement.partage.facultatif'],
       'Facultatif\u00a0: partager ne change rien à votre candidature.',
     );
-    // Le titre de la carte dit ce que l'eleve y gagne.
     expect(
-      fr['recrutement.partage.carte.titre'],
-      'Apprendre le Coran en ligne, en petite\u00a0classe',
+      ar['recrutement.partage.facultatif'],
+      'اختياري: المشاركة لا تغيّر شيئًا في طلب ترشحك.',
     );
-    expect(fr['recrutement.partage.carte.decouvrir'], 'Découvrir l\'offre');
+  });
+
+  test('peu de mots : l\'invitation tient en une phrase courte', () {
+    for (final String cle in <String>[
+      'recrutement.partage.titre',
+      'recrutement.partage.titreFemme',
+    ]) {
+      expect(fr[cle]!.split(' ').length, lessThanOrEqualTo(9), reason: cle);
+      expect(ar[cle]!.split(' ').length, lessThanOrEqualTo(7), reason: cle);
+    }
   });
 }

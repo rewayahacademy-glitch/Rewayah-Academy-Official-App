@@ -1,8 +1,10 @@
-// Captures de CAND-06 (la carte a partager) : la carte seule
-// (l'export de 1080 x 1920 puis sa reduction), la page de partage a 390x844 et
-// 1440x900, en clair et en sombre, en francais et en arabe de droite a gauche,
-// la tuile dans le portail, puis les etats (pas de lien, image non preparee,
-// appareil sans menu de partage).
+// Captures de CAND-06 (la carte a partager, redessinee le 22/10/2026) : la carte
+// seule (l'export de 1080 x 1920 puis sa reduction de 540 x 960) dans chaque
+// variante (hommes, femmes) et chaque langue (francais, anglais, portugais,
+// arabe) ; la page de partage a 390x844 et 1440x900, en francais et en arabe de
+// droite a gauche, pour chaque variante ; la tuile dans le portail ; puis les
+// etats (pas de lien, image non preparee, appareil sans menu de partage, texte
+// agrandi). Tout sort dans `PARTAGE-v2/`.
 //
 // Saute sans CAPTURE_DIR (voir test/capture/LISEZ-MOI.md).
 
@@ -17,6 +19,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/partage_offre/personnalisation_carte.dart';
 import 'package:rewayah_academy/core/partage_offre/port_partage_offre.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -43,6 +46,8 @@ Future<MontagePartage> _monter(
   FauxRenduCarte? rendu,
   CandidatureDossier? candidature,
   double echelle = 1,
+  Genre? genre,
+  List<String> langues = const <String>[],
 }) async {
   fixerVueCapture(tester, taille, 1);
   final FauxPartageOffre menu = FauxPartageOffre(niveau: niveau);
@@ -62,6 +67,8 @@ Future<MontagePartage> _monter(
         rendu: faux,
         dossier: dossier,
         lien: sansLien ? null : lienDeTest,
+        genre: FauxGenrePartageur(genre: genre),
+        langues: langues,
       ),
       child: TranslationProvider(
         child: RepaintBoundary(
@@ -122,12 +129,16 @@ Future<void> _enBas(WidgetTester tester) async {
 
 Future<void> _photo(WidgetTester tester, String nom) async {
   await _enHaut(tester);
-  await capturer(tester, 'PARTAGE/$nom');
+  await capturer(tester, 'PARTAGE-v2/$nom');
 }
 
 /// La carte seule, a l'echelle 1,5 (540 x 960), puis l'export reel de 1080 x
 /// 1920 pixels ecrit tel qu'il part au menu de partage.
-Future<void> _carte(WidgetTester tester, String langue) async {
+Future<void> _carte(
+  WidgetTester tester,
+  LangueCarte langue,
+  VarianteCarte variante,
+) async {
   final GlobalKey cle = GlobalKey();
   fixerVueCapture(tester, const Size(360, 640), 1.5);
   await tester.pumpWidget(
@@ -144,7 +155,11 @@ Future<void> _carte(WidgetTester tester, String langue) async {
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
               home: RepaintBoundary(
                 key: cle,
-                child: CartePartage(lien: lienDeTest),
+                child: CartePartage(
+                  lien: lienDeTest,
+                  langue: langue,
+                  variante: variante,
+                ),
               ),
             ),
           ),
@@ -153,11 +168,12 @@ Future<void> _carte(WidgetTester tester, String langue) async {
     ),
   );
   await tester.pumpAndSettle();
-  await capturer(tester, 'PARTAGE/carte_${langue}_540x960');
+  final String nom = '${variante.name}_${langue.code}';
+  await capturer(tester, 'PARTAGE-v2/carte_${nom}_540x960');
   final Uint8List png = (await tester.runAsync(() => rendreCarteEnPng(cle)))!;
   await tester.runAsync(
     () =>
-        File(cheminSortie('PARTAGE/carte_export_${langue}_1080x1920'))
+        File(cheminSortie('PARTAGE-v2/carte_export_${nom}_1080x1920'))
             .writeAsBytes(png),
   );
 }
@@ -167,86 +183,88 @@ void main() {
   tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
 
   group('CAND-06 : captures', skip: sautSansCapture, () {
-    testWidgets('la carte, en francais', (WidgetTester tester) async {
-      await _carte(tester, 'fr');
-    });
-
-    testWidgets('la carte, en arabe', (WidgetTester tester) async {
-      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
-      await _carte(tester, 'ar');
-    });
-
-    for (final (String, Size) taille in <(String, Size)>[
-      ('390', _telephone),
-      ('1440', _bureau),
-    ]) {
-      for (final (String, ThemeMode) theme in <(String, ThemeMode)>[
-        ('clair', ThemeMode.light),
-        ('sombre', ThemeMode.dark),
-      ]) {
-        testWidgets('page ${taille.$1} ${theme.$1} fr', (
+    for (final VarianteCarte v in VarianteCarte.values) {
+      for (final LangueCarte l in LangueCarte.values) {
+        testWidgets('la carte, ${v.name}, ${l.code}', (
           WidgetTester tester,
         ) async {
-          await _monter(tester, taille: taille.$2, mode: theme.$2);
-          await _photo(tester, 'page_${taille.$1}_${theme.$1}_fr');
-        });
-
-        testWidgets('page ${taille.$1} ${theme.$1} ar', (
-          WidgetTester tester,
-        ) async {
-          await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
-          await _monter(tester, taille: taille.$2, mode: theme.$2);
-          await _photo(tester, 'page_${taille.$1}_${theme.$1}_ar');
-        });
-
-        testWidgets('page ${taille.$1} ${theme.$1} fr, les gestes', (
-          WidgetTester tester,
-        ) async {
-          await _monter(tester, taille: taille.$2, mode: theme.$2);
-          await _enBas(tester);
-          await capturer(
-            tester,
-            'PARTAGE/page-gestes_${taille.$1}_${theme.$1}_fr',
-          );
-        });
-
-        testWidgets('page ${taille.$1} ${theme.$1} ar, les gestes', (
-          WidgetTester tester,
-        ) async {
-          await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
-          await _monter(tester, taille: taille.$2, mode: theme.$2);
-          await _enBas(tester);
-          await capturer(
-            tester,
-            'PARTAGE/page-gestes_${taille.$1}_${theme.$1}_ar',
-          );
-        });
-
-        testWidgets('portail ${taille.$1} ${theme.$1} fr', (
-          WidgetTester tester,
-        ) async {
-          await _monter(
-            tester,
-            depart: Routes.attente,
-            taille: taille.$2,
-            mode: theme.$2,
-          );
-          await _photo(tester, 'portail-tuile_${taille.$1}_${theme.$1}_fr');
-        });
-
-        testWidgets('portail ${taille.$1} ${theme.$1} ar', (
-          WidgetTester tester,
-        ) async {
-          await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
-          await _monter(
-            tester,
-            depart: Routes.attente,
-            taille: taille.$2,
-            mode: theme.$2,
-          );
-          await _photo(tester, 'portail-tuile_${taille.$1}_${theme.$1}_ar');
+          await _carte(tester, l, v);
         });
       }
+    }
+
+    for (final (VarianteCarte, Genre?) v in <(VarianteCarte, Genre?)>[
+      (VarianteCarte.hommes, Genre.homme),
+      (VarianteCarte.femmes, Genre.femme),
+    ]) {
+      final String nom = v.$1.name;
+      for (final (String, Size) taille in <(String, Size)>[
+        ('390', _telephone),
+        ('1440', _bureau),
+      ]) {
+        testWidgets('page $nom ${taille.$1} fr', (WidgetTester tester) async {
+          await _monter(tester, taille: taille.$2, genre: v.$2);
+          await _photo(tester, 'page_${nom}_${taille.$1}_fr');
+        });
+
+        testWidgets('page $nom ${taille.$1} ar', (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+          await _monter(tester, taille: taille.$2, genre: v.$2);
+          await _photo(tester, 'page_${nom}_${taille.$1}_ar');
+        });
+
+        testWidgets('portail $nom ${taille.$1} fr', (
+          WidgetTester tester,
+        ) async {
+          await _monter(
+            tester,
+            depart: Routes.attente,
+            taille: taille.$2,
+            genre: v.$2,
+          );
+          await _photo(tester, 'portail-tuile_${nom}_${taille.$1}_fr');
+        });
+
+        testWidgets('portail $nom ${taille.$1} ar', (
+          WidgetTester tester,
+        ) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+          await _monter(
+            tester,
+            depart: Routes.attente,
+            taille: taille.$2,
+            genre: v.$2,
+          );
+          await _photo(tester, 'portail-tuile_${nom}_${taille.$1}_ar');
+        });
+      }
+
+      testWidgets('page $nom 390 fr, les gestes', (WidgetTester tester) async {
+        await _monter(tester, genre: v.$2);
+        await _enBas(tester);
+        await capturer(tester, 'PARTAGE-v2/page-gestes_${nom}_390_fr');
+      });
+
+      testWidgets('page $nom 390 sombre fr', (WidgetTester tester) async {
+        await _monter(tester, mode: ThemeMode.dark, genre: v.$2);
+        await _photo(tester, 'page_${nom}_390_sombre_fr');
+      });
+
+      testWidgets('page $nom 390 fr, la carte en portugais', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester, genre: v.$2, langues: <String>['poular', 'pt']);
+        await _photo(tester, 'page_${nom}_390_fr_langue-par-defaut-pt');
+      });
+
+      testWidgets('page $nom 390 fr, apres le choix de English', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester, genre: v.$2);
+        await tester.tap(find.text('English'));
+        await tester.pumpAndSettle();
+        await _photo(tester, 'page_${nom}_390_fr_choix-en');
+      });
     }
 
     testWidgets('portail en examen, la tuile sous l\'etat', (
@@ -261,33 +279,34 @@ void main() {
           etat: EtatCandidature.enExamen,
           version: 4,
         ),
+        genre: Genre.femme,
       );
-      await _photo(tester, 'portail-tuile-en-examen_390_clair_fr');
+      await _photo(tester, 'portail-tuile-en-examen_femmes_390_fr');
     });
 
     testWidgets('etat : pas de lien d\'offre', (WidgetTester tester) async {
       await _monter(tester, sansLien: true);
-      await _photo(tester, 'etat-pas-de-lien_390_clair_fr');
+      await _photo(tester, 'etat-pas-de-lien_390_fr');
     });
 
     testWidgets('etat : image non preparee', (WidgetTester tester) async {
       final FauxRenduCarte casse = FauxRenduCarte()
         ..erreur = StateError('pas peinte');
-      await _monter(tester, rendu: casse);
+      await _monter(tester, rendu: casse, genre: Genre.femme);
       await _enBas(tester);
-      await capturer(tester, 'PARTAGE/etat-image-non-preparee_390_clair_fr');
+      await capturer(tester, 'PARTAGE-v2/etat-image-non-preparee_390_fr');
     });
 
     testWidgets('etat : appareil sans menu de partage', (
       WidgetTester tester,
     ) async {
-      await _monter(tester, niveau: NiveauPartage.aucun);
+      await _monter(tester, niveau: NiveauPartage.aucun, genre: Genre.femme);
       await _enBas(tester);
-      await capturer(tester, 'PARTAGE/etat-sans-menu_390_clair_fr');
+      await capturer(tester, 'PARTAGE-v2/etat-sans-menu_femmes_390_fr');
     });
 
     testWidgets('etat : apres « Copier le lien »', (WidgetTester tester) async {
-      await _monter(tester);
+      await _monter(tester, genre: Genre.femme);
       PressePapiersDeTest(tester);
       await tester.ensureVisible(
         find.byKey(const ValueKey<String>('partage-copier')),
@@ -296,12 +315,17 @@ void main() {
       await tester.tap(find.byKey(const ValueKey<String>('partage-copier')));
       await tester.pumpAndSettle();
       await _enBas(tester);
-      await capturer(tester, 'PARTAGE/etat-lien-copie_390_clair_fr');
+      await capturer(tester, 'PARTAGE-v2/etat-lien-copie_femmes_390_fr');
     });
 
     testWidgets('texte agrandi 320 x2', (WidgetTester tester) async {
-      await _monter(tester, taille: const Size(320, 640), echelle: 2);
-      await _photo(tester, 'page_320_x2_clair_fr');
+      await _monter(
+        tester,
+        taille: const Size(320, 640),
+        echelle: 2,
+        genre: Genre.femme,
+      );
+      await _photo(tester, 'page_femmes_320_x2_fr');
     });
   });
 }

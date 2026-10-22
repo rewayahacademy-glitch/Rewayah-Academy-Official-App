@@ -1,21 +1,30 @@
 // La carte a partager (CAND-06) : une image au format story (9:16), lue par la
 // personne qui voudrait apprendre le Coran, pas par celle qui la partage.
 //
-// **Elle parle de l'interet de l'eleve d'abord** (consigne du directeur du
-// 22/10/2026, apres coup : « il faut leur parler de l'interet que l'eleve va
-// avoir. Pas Rewayah Academy »). Dans l'ordre de lecture : le logo ; un titre
-// sur ce que l'eleve y gagne (apprendre le Coran en ligne, en petite classe) ;
-// trois lignes vraies tirees des encarts decides (le meme enseignant, trois
-// seances par semaine a heure fixe ; les enfants des 6 ans et les adultes ; les
-// langues) ; l'appel « Decouvrir l'offre » avec son QR et le lien ; enfin, en
-// petit, le hadith. **Aucun prix** (ils restent sur le site public), aucune
-// promesse en plus.
+// **Redessinee le 22/10/2026** sur la direction du directeur (la carte d'avant
+// etait « trop nulle et moche ») : un fond violet profond uni ; le symbole
+// contour officiel tres agrandi, coupe par les bords, en filigrane tamise ; et,
+// subtilement, le portail, pour dire l'eleve qui entre dans la lumiere du Coran
+// et du savoir. Typographie suisse : peu d'elements, beaucoup de vide, tout
+// aligne au debut de la ligne.
+//
+// Dans l'ordre de lecture : le logo blanc ; un titre court sur ce que l'eleve y
+// gagne et sa ligne ; la scene du portail avec la signature arabe de la marque
+// (M-26) ; l'appel « Decouvrir l'offre » avec son QR et le lien ; enfin, tout en
+// bas et discret, le hadith, sa traduction et sa source. **Aucun prix**, aucune
+// promesse, jamais l'academie comme motif.
+//
+// **Deux variantes** (`VarianteCarte`, lue sur le profil de la personne qui
+// partage, jamais devinee) : les hommes (et le genre inconnu), sans personnage ;
+// les femmes, une teinte plus douce et une silhouette sobre, sans visage, qui
+// marche dans la lumiere, avec quelques fleurs ton sur ton. **Quatre langues**
+// (`LangueCarte`) : francais, anglais, portugais, arabe ; en arabe le texte se
+// met en miroir, jamais le logo ni le symbole.
 //
 // Rendue par Flutter, puis exportee en PNG (`rendu_carte.dart`) : elle ne suit
 // donc ni le theme de l'ecran, ni la taille de texte de l'appareil, ni
-// l'interface guidee. Elle porte ses propres jetons (palette claire, echelle
-// standard) pour qu'elle soit la meme pour tous, en clair comme en sombre.
-// Seule la langue de l'interface change son texte.
+// l'interface guidee, ni la langue de l'application. Elle porte ses propres
+// couleurs (`AppPaletteCarte`) et ses textes (`textes_carte.dart`).
 library;
 
 import 'package:flutter/material.dart';
@@ -23,21 +32,36 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/partage_offre/lien_offre.dart';
+import '../../core/partage_offre/personnalisation_carte.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/brand_logo.dart';
+import 'decor_carte.dart';
+import 'textes_carte.dart';
 
 /// La carte, a sa taille d'export : 360 x 640 points logiques, soit
 /// 1080 x 1920 pixels a [echelleExport].
 class CartePartage extends StatelessWidget {
-  /// Cree la carte pour [lien].
-  const CartePartage({required this.lien, super.key});
+  /// Cree la carte pour [lien], dans [langue], pour la [variante] de la
+  /// personne qui partage.
+  const CartePartage({
+    required this.lien,
+    required this.langue,
+    this.variante = VarianteCarte.hommes,
+    super.key,
+  });
 
   /// Le lien de l'offre : imprime sous le QR et encode dedans.
   final Uri lien;
+
+  /// La langue de la carte.
+  final LangueCarte langue;
+
+  /// La variante : hommes (et genre inconnu) ou femmes.
+  final VarianteCarte variante;
 
   /// La largeur de la carte, en points logiques.
   static const double largeur = 360;
@@ -48,33 +72,54 @@ class CartePartage extends StatelessWidget {
   /// Les pixels par point de l'export : 360 x 3 = 1080, 640 x 3 = 1920.
   static const double echelleExport = 3;
 
-  /// Le cote du QR, sans sa marge blanche.
-  static const double coteQr = 76;
+  /// Le cote du QR, sans sa plaque blanche.
+  static const double coteQr = 68;
 
-  /// La largeur utile de l'arche : la carte moins ses marges et celles de
-  /// l'arche.
-  static const double largeurArche =
-      largeur - 2 * AppSpacing.xxl - 2 * AppSpacing.xl;
+  /// La hauteur de la zone du titre et de sa ligne.
+  static const double hauteurTitre = 112;
 
-  /// Le retrait du haut de l'arche : sous la courbe, la corde est assez large
-  /// pour la premiere ligne du titre (une ligne plus large que la corde
-  /// passerait de l'encre foncee sur le violet de la carte).
-  static const double retraitArche = 68;
+  /// La hauteur de la bande du portail : de la fin du titre au QR.
+  static const double hauteurScene = 228;
 
-  /// La taille du hadith, en points : un rappel, pas le message.
-  static const double tailleHadith = 24;
+  /// La hauteur de la ligne de la signature arabe (24 points d'interligne).
+  static const double hauteurLigneSignature = 24;
+
+  /// Le milieu de la porte dans la bande du portail : la signature s'y aligne.
+  static final double yPorte = GeometrieScene(const Size(largeur, hauteurScene))
+      .porte
+      .center
+      .dy;
+
+  /// La largeur utile : la carte moins ses deux marges.
+  static const double largeurUtile = largeur - 2 * AppSpacing.xxl;
+
+  /// La taille du hadith, en points : un rappel, pas le message (60 pixels a
+  /// l'export).
+  static const double tailleHadith = 20;
+
+  /// La marge du logo : sa zone de protection (25 pour cent de sa hauteur) est
+  /// comprise dans son composant, donc le dessin tombe sur la marge du texte.
+  static const double margeLogo =
+      AppSpacing.xxl - BrandLogo.minimumHorizontal * BrandLogo.zoneProtection;
+
+  /// Le haut du titre : la marge, le logo, sa zone de protection du bas, puis
+  /// une respiration.
+  static const double hautTitre =
+      AppSpacing.xxl +
+      BrandLogo.minimumHorizontal * (1 + BrandLogo.zoneProtection) +
+      AppSpacing.xl;
+
+  /// Le haut de la bande du portail : juste sous le titre.
+  static const double hautScene = hautTitre + hauteurTitre;
 
   /// La cle du titre (ce que l'eleve y gagne).
   static const Key titreKey = ValueKey<String>('carte-titre');
 
-  /// La cle de la ligne du meme enseignant et des trois seances.
-  static const Key enseignantKey = ValueKey<String>('carte-enseignant');
+  /// La cle de la ligne sous le titre.
+  static const Key sousTitreKey = ValueKey<String>('carte-sous-titre');
 
-  /// La cle de la ligne des enfants et des adultes.
-  static const Key publicsKey = ValueKey<String>('carte-publics');
-
-  /// La cle de la ligne des langues.
-  static const Key languesKey = ValueKey<String>('carte-langues');
+  /// La cle de la signature arabe de la marque.
+  static const Key signatureKey = ValueKey<String>('carte-signature');
 
   /// La cle de l'appel « Decouvrir l'offre ».
   static const Key decouvrirKey = ValueKey<String>('carte-decouvrir');
@@ -82,7 +127,7 @@ class CartePartage extends StatelessWidget {
   /// La cle du hadith.
   static const Key hadithKey = ValueKey<String>('carte-hadith');
 
-  /// La cle de la traduction du hadith (absente quand la langue n'en a pas).
+  /// La cle de la traduction du hadith (absente en arabe).
   static const Key traductionKey = ValueKey<String>('carte-traduction');
 
   /// La cle de la reference du hadith.
@@ -94,186 +139,225 @@ class CartePartage extends StatelessWidget {
   /// La cle du lien imprime.
   static const Key lienKey = ValueKey<String>('carte-lien');
 
+  /// La cle du filigrane.
+  static const Key filigraneKey = ValueKey<String>('carte-filigrane');
+
+  /// La cle de la scene du portail.
+  static const Key sceneKey = ValueKey<String>('carte-scene');
+
+  /// La cle du logo.
+  static const Key logoKey = ValueKey<String>('carte-logo');
+
+  /// La cle de la zone de protection du logo : un aplat du fond.
+  static const Key zoneLogoKey = ValueKey<String>('carte-zone-logo');
+
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.claire();
+    final AppPaletteCarte couleurs = variante == VarianteCarte.femmes
+        ? AppPaletteCarte.femmes
+        : AppPaletteCarte.hommes;
+    final TextesCarte c = textesCarte[langue]!;
     final TextTheme textes = AppTypography.standard;
-    final AppColorPair marque = palette.surfacePrimary;
-    final AppColorPair arche = palette.washAccent;
-    final c = t.recrutement.partage.carte;
-    final String traduction = c.traduction;
+    final bool rtl = langue.droiteAGauche;
+    final String? traduction = c.traduction;
 
-    final TextStyle styleTitre = arche.applyTo(textes.headlineSmall!);
-    final TextStyle styleLigne = arche.applyTo(textes.bodyLarge!);
-    final TextStyle styleDecouvrir = marque.applyTo(textes.titleMedium!);
-    final TextStyle styleLien = marque.applyTo(textes.bodyMedium!);
-    // Le hadith est en blanc sur le violet : la lavande (3,97:1) ne tient pas
-    // pour un texte de cette taille.
-    final TextStyle styleHadith = marque.applyTo(
-      AppTypography.document(taille: tailleHadith, interligne: 1.5),
+    final TextStyle styleTitre = couleurs.fond.applyTo(textes.headlineSmall!);
+    final TextStyle styleSousTitre = couleurs.encreDouce.applyTo(
+      textes.bodyLarge!,
     );
-    final TextStyle styleSource = marque.applyTo(textes.bodySmall!);
+    final TextStyle styleSignature = couleurs.fond.applyTo(textes.titleMedium!);
+    final TextStyle styleDecouvrir = couleurs.fond.applyTo(textes.titleMedium!);
+    final TextStyle styleLien = couleurs.encreDouce.applyTo(textes.bodyMedium!);
+    final TextStyle styleHadith = couleurs.encreDouce.applyTo(
+      AppTypography.document(taille: tailleHadith, interligne: 1.4),
+    );
+    final TextStyle styleSource = couleurs.encreDouce.applyTo(
+      textes.bodySmall!,
+    );
+    // Tout s'aligne au debut de la ligne (a gauche en francais et en anglais, a
+    // droite en arabe). Le hadith s'ecrit de droite a gauche dans toutes les
+    // langues, mais se place au debut de la ligne comme le reste.
+    final TextAlign debut = rtl ? TextAlign.right : TextAlign.left;
 
-    Widget ligne(Key cle, String texte) =>
-        Text(texte, key: cle, textAlign: TextAlign.center, style: styleLigne);
+    final String libelle = <String>[
+      t.recrutement.partage.apercu,
+      c.titre,
+      c.sousTitre,
+      signatureArabe,
+      c.decouvrir,
+      lienLisible(lien),
+      hadithArabe,
+      ?traduction,
+      c.reference,
+    ].join('. ');
 
-    // Ce que l'eleve y gagne, dans l'arche : un titre, puis trois lignes.
-    final Widget gain = Column(
+    final Widget titre = Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        Text(c.titre, key: titreKey, textAlign: debut, style: styleTitre),
+        Ecart.vSm,
         Text(
-          c.titre,
-          key: titreKey,
-          textAlign: TextAlign.center,
-          style: styleTitre,
+          c.sousTitre,
+          key: sousTitreKey,
+          textAlign: debut,
+          style: styleSousTitre,
         ),
-        Ecart.vMd,
-        ligne(enseignantKey, c.enseignant),
-        Ecart.vMd,
-        ligne(publicsKey, c.publics),
-        Ecart.vMd,
-        ligne(languesKey, c.langues),
       ],
     );
 
-    // Le hadith, en bas et en petit. Il s'ecrit de droite a gauche, quelle que
-    // soit la langue de l'interface.
     final Widget hadith = Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          c.hadith,
+          hadithArabe,
           key: hadithKey,
-          textAlign: TextAlign.center,
+          textAlign: debut,
           textDirection: TextDirection.rtl,
           style: styleHadith,
         ),
-        if (traduction.isNotEmpty)
+        if (traduction != null)
           Text(
             traduction,
             key: traductionKey,
-            textAlign: TextAlign.center,
+            textAlign: debut,
             style: styleSource,
           ),
         Text(
           c.reference,
           key: referenceKey,
-          textAlign: TextAlign.center,
+          textAlign: debut,
           style: styleSource,
         ),
       ],
     );
 
-    final String libelle = <String>[
-      t.recrutement.partage.apercu,
-      c.titre,
-      c.enseignant,
-      c.publics,
-      c.langues,
-      c.decouvrir,
-      lienLisible(lien),
-      c.hadith,
-      if (traduction.isNotEmpty) traduction,
-      c.reference,
-    ].join('. ');
-
     return MediaQuery(
       // Une image ne grossit pas avec le texte de l'appareil.
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
-      // Le style de texte par defaut est le sien : l'image ne herite de rien
-      // de la page qui la porte (ni souligne, ni famille de repli).
-      child: DefaultTextStyle(
-        style: textes.bodyMedium!,
-        child: Semantics(
-          image: true,
-          label: libelle,
-          child: ExcludeSemantics(
-            child: SizedBox(
-              width: largeur,
-              height: hauteur,
-              child: DecoratedBox(
-                decoration: marque.decoration(),
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.xxl),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      // Le logo blanc sur la bande violette, au debut de la
-                      // ligne (a droite en arabe, sans se retourner).
-                      const Align(
-                        alignment: AlignmentDirectional.centerStart,
-                        child: BrandLogo(
-                          variante: VarianteLogo.horizontal,
-                          hauteur: BrandLogo.minimumHorizontal,
-                          fond: FondLogo.violet,
-                        ),
-                      ),
-                      Ecart.vXs,
-                      // L'arche : un demi-cercle en haut, le seul motif du
-                      // symbole et du site. Elle porte ce que l'eleve y gagne.
-                      Expanded(
-                        child: DecoratedBox(
-                          decoration: arche.decoration(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(AppRadius.full),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                              AppSpacing.xl,
-                              retraitArche,
-                              AppSpacing.xl,
-                              AppSpacing.lg,
-                            ),
-                            // Si un texte plus long ne tenait pas, l'arche le
-                            // reduit au lieu de le couper : une image ne
-                            // deborde jamais.
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: SizedBox(width: largeurArche, child: gain),
-                            ),
+      // La carte a son propre sens de lecture, celui de sa langue : une carte
+      // arabe se met en miroir meme dans une application en francais.
+      child: Directionality(
+        textDirection: langue.sens,
+        // Le style de texte par defaut est le sien : l'image ne herite de rien
+        // de la page qui la porte (ni souligne, ni famille de repli).
+        child: DefaultTextStyle(
+          style: textes.bodyMedium!,
+          child: Semantics(
+            image: true,
+            label: libelle,
+            child: ExcludeSemantics(
+              child: SizedBox(
+                width: largeur,
+                height: hauteur,
+                child: ClipRect(
+                  child: DecoratedBox(
+                    decoration: couleurs.fond.decoration(),
+                    child: Stack(
+                      children: <Widget>[
+                        Positioned.fill(
+                          child: FiligraneCarte(
+                            key: filigraneKey,
+                            couleurs: couleurs,
                           ),
                         ),
-                      ),
-                      Ecart.vMd,
-                      Row(
-                        children: <Widget>[
-                          _Qr(lien: lien),
-                          Ecart.hLg,
-                          Expanded(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  c.decouvrir,
-                                  key: decouvrirKey,
-                                  style: styleDecouvrir,
-                                ),
-                                Ecart.vXs,
-                                // L'adresse se lit de gauche a droite, et se
-                                // reduit plutot que de se couper.
-                                FittedBox(
+                        PositionedDirectional(
+                          top: hautScene,
+                          start: 0,
+                          end: 0,
+                          height: hauteurScene,
+                          child: ScenePortail(
+                            key: sceneKey,
+                            couleurs: couleurs,
+                            variante: variante,
+                          ),
+                        ),
+                        // La signature arabe de la marque, pres de la porte : a la
+                        // hauteur de son milieu, au debut de la ligne.
+                        PositionedDirectional(
+                          top: hautScene + yPorte - hauteurLigneSignature / 2,
+                          start: AppSpacing.xxl,
+                          child: Text(
+                            signatureArabe,
+                            key: signatureKey,
+                            textDirection: TextDirection.rtl,
+                            style: styleSignature,
+                          ),
+                        ),
+                        // Le logo blanc sur le fond violet, au debut de la ligne
+                        // (a droite en arabe, sans se retourner). Sa zone de
+                        // protection (25 pour cent de sa hauteur, comprise dans le
+                        // composant) est un aplat du fond : le filigrane ne la
+                        // traverse jamais.
+                        PositionedDirectional(
+                          top: margeLogo,
+                          start: margeLogo,
+                          child: ColoredBox(
+                            key: zoneLogoKey,
+                            color: couleurs.fond.background,
+                            child: const BrandLogo(
+                              key: logoKey,
+                              variante: VarianteLogo.horizontal,
+                              hauteur: BrandLogo.minimumHorizontal,
+                              fond: FondLogo.violet,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                            AppSpacing.xxl,
+                            hautTitre,
+                            AppSpacing.xxl,
+                            AppSpacing.xxl,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              SizedBox(
+                                height: hauteurTitre,
+                                width: double.infinity,
+                                child: FittedBox(
                                   fit: BoxFit.scaleDown,
-                                  alignment: AlignmentDirectional.centerStart,
-                                  child: Directionality(
-                                    textDirection: TextDirection.ltr,
-                                    child: Text(
-                                      lienLisible(lien),
-                                      key: lienKey,
-                                      maxLines: 1,
-                                      style: styleLien,
+                                  alignment: AlignmentDirectional.topStart,
+                                  child: SizedBox(
+                                    width: largeurUtile,
+                                    child: titre,
+                                  ),
+                                ),
+                              ),
+                              // La bande du portail : vide, la scene la peint.
+                              const SizedBox(
+                                height: hauteurScene,
+                                width: double.infinity,
+                              ),
+                              Ecart.vSm,
+                              _Appel(
+                                lien: lien,
+                                texte: c.decouvrir,
+                                styleDecouvrir: styleDecouvrir,
+                                styleLien: styleLien,
+                              ),
+                              // Le hadith, tout en bas ; si un texte plus long ne
+                              // tenait pas, il se reduit au lieu de deborder.
+                              Expanded(
+                                child: Align(
+                                  alignment: AlignmentDirectional.bottomStart,
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: AlignmentDirectional.bottomStart,
+                                    child: SizedBox(
+                                      width: largeurUtile,
+                                      child: hadith,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      Ecart.vMd,
-                      FittedBox(fit: BoxFit.scaleDown, child: hadith),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -285,8 +369,56 @@ class CartePartage extends StatelessWidget {
   }
 }
 
+/// L'appel : le QR sur sa plaque blanche, « Decouvrir l'offre » et le lien.
+class _Appel extends StatelessWidget {
+  const _Appel({
+    required this.lien,
+    required this.texte,
+    required this.styleDecouvrir,
+    required this.styleLien,
+  });
+
+  final Uri lien;
+  final String texte;
+  final TextStyle styleDecouvrir;
+  final TextStyle styleLien;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: <Widget>[
+      _Qr(lien: lien),
+      Ecart.hLg,
+      Expanded(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(texte, key: CartePartage.decouvrirKey, style: styleDecouvrir),
+            Ecart.vXs,
+            // L'adresse se lit de gauche a droite, et se reduit plutot que de
+            // se couper.
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: AlignmentDirectional.centerStart,
+              child: Directionality(
+                textDirection: TextDirection.ltr,
+                child: Text(
+                  lienLisible(lien),
+                  key: CartePartage.lienKey,
+                  maxLines: 1,
+                  style: styleLien,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
+
 /// Le QR : noir sur blanc dans tous les cas (`AppPalette.contenuQr`), avec sa
-/// marge blanche, sur la bande violette.
+/// marge blanche, sur le fond violet.
 class _Qr extends StatelessWidget {
   const _Qr({required this.lien});
 
@@ -299,6 +431,8 @@ class _Qr extends StatelessWidget {
       key: CartePartage.qrKey,
       decoration: qr.decoration(borderRadius: AppRadius.arrondiSm),
       child: Padding(
+        // Sa marge blanche : 12 points, quatre modules et plus (la zone de
+        // silence que demande un lecteur de QR).
         padding: const EdgeInsets.all(AppSpacing.md),
         child: QrImageView(
           data: lien.toString(),

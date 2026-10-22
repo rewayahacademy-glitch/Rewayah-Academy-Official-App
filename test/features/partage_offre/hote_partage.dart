@@ -4,12 +4,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/partage_offre/lien_offre.dart';
+import 'package:rewayah_academy/core/partage_offre/personnalisation_carte.dart';
+import 'package:rewayah_academy/core/partage_offre/port_genre_partageur.dart';
 import 'package:rewayah_academy/core/partage_offre/port_partage_offre.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -26,7 +30,7 @@ import '../candidature/hote_candidature.dart';
 /// Les mots qui nomment l'academie. **Jamais le motif d'un texte de CAND-06**
 /// (consigne du directeur du 22/10/2026, apres coup : « il ne faut pas dire
 /// faites ca pour Rewayah Academy ») : les textes parlent de la personne qui
-/// apprendra et de ce qu'elle y gagne.
+/// apprendra, de ce qu'elle y gagne, et du geste de celui qui partage.
 const List<String> motsQuiNommentLAcademie = <String>[
   'Rewayah',
   'Académie',
@@ -81,6 +85,8 @@ List<Override> surchargesPartage({
   required FauxRenduCarte? rendu,
   required FauxServiceDossier dossier,
   required Uri? lien,
+  FauxGenrePartageur? genre,
+  List<String> langues = const <String>[],
   bool horsLigne = false,
 }) => <Override>[
   serviceDossierProvider.overrideWithValue(dossier),
@@ -89,6 +95,8 @@ List<Override> surchargesPartage({
     FauxServiceReseau(horsLigneRendu: horsLigne),
   ),
   lienOffreProvider.overrideWithValue(lien),
+  portGenrePartageurProvider.overrideWithValue(genre ?? FauxGenrePartageur()),
+  languesEnseignementCandidatProvider.overrideWith((Ref ref) async => langues),
   portPartageOffreProvider.overrideWithValue(partage),
   portEnregistrementFichierProvider.overrideWithValue(enregistrement),
   if (rendu != null) renduCarteProvider.overrideWithValue(rendu.rendre),
@@ -113,6 +121,9 @@ Future<MontagePartage> monterPartage(
   bool vraiRendu = false,
   FauxServiceDossier? dossier,
   FauxPartageOffre? partage,
+  Genre? genre,
+  FauxGenrePartageur? lectureGenre,
+  List<String> langues = const <String>[],
   bool attendre = true,
 }) async {
   tester.view.physicalSize = taille;
@@ -140,6 +151,8 @@ Future<MontagePartage> monterPartage(
         rendu: vraiRendu ? null : faux,
         dossier: service,
         lien: sansLien ? null : lien ?? lienDeTest,
+        genre: lectureGenre ?? FauxGenrePartageur(genre: genre),
+        langues: langues,
         horsLigne: horsLigne,
       ),
     ),

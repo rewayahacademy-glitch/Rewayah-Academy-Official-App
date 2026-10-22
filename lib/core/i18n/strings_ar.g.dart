@@ -7966,13 +7966,12 @@ class _Traductions$recrutement$partage$ar extends Traductions$recrutement$partag
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => 'هل يريد أحد المقرّبين منك تعلّم القرآن؟';
-	@override String get introduction => 'أرسل إليه العرض بلمسة واحدة: سيتعلّم في فصل صغير، عبر الفيديو، مع المعلم نفسه كل أسبوع.';
-	@override String get introductionSuite => 'تعرّفه البطاقة في أسطر قليلة بكيفية سير الدروس، وتمنحه رابط العرض.';
-	@override String get motif => 'وهو خير لك أيضًا، ففي الحديث: «الدال على الخير كفاعله».';
+	@override String get titre => 'ساعد شخصًا على تعلّم كلام الله';
+	@override String get titreFemme => 'ساعدي أختًا على تعلّم كلام الله';
 	@override String get facultatif => 'اختياري: المشاركة لا تغيّر شيئًا في طلب ترشحك.';
+	@override String get langueCarte => 'لغة البطاقة';
 	@override String get apercu => 'معاينة البطاقة المراد مشاركتها';
-	@override String get partager => 'مشاركة';
+	@override String get partager => 'أشارك';
 	@override String get partagerLaCarte => 'مشاركة بطاقة العرض';
 	@override String get enregistrer => 'حفظ الصورة';
 	@override String get copier => 'نسخ الرابط';
@@ -7982,7 +7981,6 @@ class _Traductions$recrutement$partage$ar extends Traductions$recrutement$partag
 	@override late final _Traductions$recrutement$partage$fait$ar fait = _Traductions$recrutement$partage$fait$ar._(_root);
 	@override late final _Traductions$recrutement$partage$echec$ar echec = _Traductions$recrutement$partage$echec$ar._(_root);
 	@override String get nonOuvert => 'البطاقة غير متاحة بعد. عد إلى هذه الصفحة لاحقًا.';
-	@override late final _Traductions$recrutement$partage$carte$ar carte = _Traductions$recrutement$partage$carte$ar._(_root);
 }
 
 // Path: recrutement.retrait
@@ -13711,23 +13709,6 @@ class _Traductions$recrutement$partage$echec$ar extends Traductions$recrutement$
 	@override String get enregistrement => 'لم يتأكد حفظ الصورة. حاول مرة أخرى، أو انسخ الرابط.';
 	@override String get copie => 'تعذّر نسخ الرابط. حدّده في الصفحة ثم انسخه يدويًا.';
 	@override String get carte => 'تعذّر إعداد البطاقة. أعد المحاولة بعد قليل.';
-}
-
-// Path: recrutement.partage.carte
-class _Traductions$recrutement$partage$carte$ar extends Traductions$recrutement$partage$carte$fr {
-	_Traductions$recrutement$partage$carte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
-
-	final TraductionsAr _root; // ignore: unused_field
-
-	// Translations
-	@override String get titre => 'تعلّم القرآن عبر الإنترنت، في فصل صغير';
-	@override String get enseignant => 'المعلم نفسه، وثلاث حصص في الأسبوع، في موعد ثابت.';
-	@override String get publics => 'للأطفال من سن السادسة وللكبار.';
-	@override String get langues => 'بالبولار (الفولاني) أو الفرنسية أو الإنجليزية، بحسب المعلمين المتاحين.';
-	@override String get decouvrir => 'اكتشفوا العرض';
-	@override String get hadith => 'الدال على الخير كفاعله';
-	@override String get traduction => '';
-	@override String get reference => 'رواه الترمذي';
 }
 
 // Path: recrutement.parcours.presentation
@@ -24774,13 +24755,12 @@ extension on TraductionsAr {
 			'recrutement.portail.elementContrat' => 'عقد المعلم',
 			'recrutement.portail.versementImpossibleTitre' => 'صرف الأجر غير ممكن بعد',
 			'recrutement.portail.relire' => 'إعادة قراءة طلب ترشحي',
-			'recrutement.partage.titre' => 'هل يريد أحد المقرّبين منك تعلّم القرآن؟',
-			'recrutement.partage.introduction' => 'أرسل إليه العرض بلمسة واحدة: سيتعلّم في فصل صغير، عبر الفيديو، مع المعلم نفسه كل أسبوع.',
-			'recrutement.partage.introductionSuite' => 'تعرّفه البطاقة في أسطر قليلة بكيفية سير الدروس، وتمنحه رابط العرض.',
-			'recrutement.partage.motif' => 'وهو خير لك أيضًا، ففي الحديث: «الدال على الخير كفاعله».',
+			'recrutement.partage.titre' => 'ساعد شخصًا على تعلّم كلام الله',
+			'recrutement.partage.titreFemme' => 'ساعدي أختًا على تعلّم كلام الله',
 			'recrutement.partage.facultatif' => 'اختياري: المشاركة لا تغيّر شيئًا في طلب ترشحك.',
+			'recrutement.partage.langueCarte' => 'لغة البطاقة',
 			'recrutement.partage.apercu' => 'معاينة البطاقة المراد مشاركتها',
-			'recrutement.partage.partager' => 'مشاركة',
+			'recrutement.partage.partager' => 'أشارك',
 			'recrutement.partage.partagerLaCarte' => 'مشاركة بطاقة العرض',
 			'recrutement.partage.enregistrer' => 'حفظ الصورة',
 			'recrutement.partage.copier' => 'نسخ الرابط',
@@ -24795,14 +24775,6 @@ extension on TraductionsAr {
 			'recrutement.partage.echec.copie' => 'تعذّر نسخ الرابط. حدّده في الصفحة ثم انسخه يدويًا.',
 			'recrutement.partage.echec.carte' => 'تعذّر إعداد البطاقة. أعد المحاولة بعد قليل.',
 			'recrutement.partage.nonOuvert' => 'البطاقة غير متاحة بعد. عد إلى هذه الصفحة لاحقًا.',
-			'recrutement.partage.carte.titre' => 'تعلّم القرآن عبر الإنترنت، في فصل صغير',
-			'recrutement.partage.carte.enseignant' => 'المعلم نفسه، وثلاث حصص في الأسبوع، في موعد ثابت.',
-			'recrutement.partage.carte.publics' => 'للأطفال من سن السادسة وللكبار.',
-			'recrutement.partage.carte.langues' => 'بالبولار (الفولاني) أو الفرنسية أو الإنجليزية، بحسب المعلمين المتاحين.',
-			'recrutement.partage.carte.decouvrir' => 'اكتشفوا العرض',
-			'recrutement.partage.carte.hadith' => 'الدال على الخير كفاعله',
-			'recrutement.partage.carte.traduction' => '',
-			'recrutement.partage.carte.reference' => 'رواه الترمذي',
 			'recrutement.retrait.lien' => 'سحب طلب ترشحي',
 			'recrutement.retrait.question' => 'هل تسحب طلب ترشحك؟',
 			'recrutement.retrait.consequence' => 'وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك.',
@@ -25022,8 +24994,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.titre' => 'بأي روايات تقرأ؟',
 			'recrutement.parcours.q.riwayat.explication' => 'الرواية طريقة منقولة في قراءة القرآن. اختر كل ما تقرأ به.',
 			'recrutement.parcours.q.riwayat.court' => 'الروايات',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.hafs.libelle' => 'حفص',
 			'recrutement.parcours.q.riwayat.options.hafs.description' => 'رواية عن عاصم',
 			'recrutement.parcours.q.riwayat.options.shuba.libelle' => 'شعبة',
@@ -25033,6 +25003,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.qalun.libelle' => 'قالون',
 			'recrutement.parcours.q.riwayat.options.qalun.description' => 'رواية عن نافع',
 			'recrutement.parcours.q.riwayat.options.al_bazzi.libelle' => 'البزي',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.al_bazzi.description' => 'رواية عن ابن كثير',
 			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'قنبل',
 			'recrutement.parcours.q.riwayat.options.qunbul.description' => 'رواية عن ابن كثير',

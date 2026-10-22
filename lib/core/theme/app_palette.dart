@@ -648,3 +648,118 @@ const List<AppColorPair> _accentsProfilSombres = <AppColorPair>[
   AppColorPair(background: Color(0xFFF7CDAF), onBackground: Color(0xFF5A2A0C)),
   AppColorPair(background: Color(0xFFE9D9B3), onBackground: Color(0xFF45360F)),
 ];
+
+/// Les couleurs de la carte de partage (CAND-06), une par variante.
+///
+/// **La carte est une image, pas un ecran** : elle ne suit ni le theme, ni la
+/// taille de texte, ni l'interface guidee, donc ces valeurs sont les memes en
+/// clair et en sombre et ne sont pas dans [AppPalette]. Elles sont posees ici
+/// parce que ce fichier est, avec `logo_google.dart`, le seul qui porte des
+/// couleurs litterales (`tool/verifier_jetons.dart`).
+///
+/// - [hommes] : le fond violet profond de la palette (`#4E2983`, l'encre du
+///   lavis d'accent), le violet de marque (`#8652E6`) et le violet d'accent du
+///   theme sombre (`#BA98FB`) pour le chemin de lumiere, le lavis d'accent
+///   (`#EEE6FA`) pour la porte. Rien de nouveau.
+/// - [femmes] : directeur, 22/10/2026, « une teinte plus douce et feminine,
+///   voisine de la marque » : un mauve prune, une porte lavande rosee, une
+///   silhouette prune sombre. **Valeurs proposees, hors charte de marque** (comme
+///   les teintes d'identite, M-23) : elles n'existent que sur cette carte, et
+///   le directeur les valide sur les captures.
+///
+/// Aucun degrade : chaque couleur est un aplat. Chaque texte est mesure a 4,5:1
+/// sur son fond, et chaque forme porteuse de sens (la porte, la plaque du QR, la
+/// silhouette) a 3:1, par `test/features/partage_offre/carte_partage_test.dart` ;
+/// le chemin de lumiere est un decor, que rien ne demande de lire.
+enum AppPaletteCarte {
+  /// Les hommes, et le genre inconnu.
+  hommes(
+    fond: AppColorPair(
+      background: Color(0xFF4E2983),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    encreDouce: AppInkColor(Color(0xFFDCCAFD)),
+    porte: AppColorPair(
+      background: Color(0xFFEEE6FA),
+      onBackground: Color(0xFF4E2983),
+    ),
+    chemin: AppColorPair(
+      background: Color(0xFF8652E6),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    coeur: AppColorPair(
+      background: Color(0xFFBA98FB),
+      onBackground: Color(0xFF25113F),
+    ),
+    silhouette: AppColorPair(
+      background: Color(0xFF25113F),
+      onBackground: Color(0xFFEEE6FA),
+    ),
+    filigrane: AppInkColor(Color(0xFFFFFFFF)),
+  ),
+
+  /// Les femmes.
+  femmes(
+    fond: AppColorPair(
+      background: Color(0xFF6B3A87),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    encreDouce: AppInkColor(Color(0xFFF6DDF0)),
+    porte: AppColorPair(
+      background: Color(0xFFFCEFF6),
+      onBackground: Color(0xFF6B3A87),
+    ),
+    chemin: AppColorPair(
+      background: Color(0xFF9B63B3),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    coeur: AppColorPair(
+      background: Color(0xFFC9A0D8),
+      onBackground: Color(0xFF3E1D52),
+    ),
+    silhouette: AppColorPair(
+      background: Color(0xFF3E1D52),
+      onBackground: Color(0xFFFCEFF6),
+    ),
+    filigrane: AppInkColor(Color(0xFFFFFFFF)),
+  );
+
+  const AppPaletteCarte({
+    required this.fond,
+    required this.encreDouce,
+    required this.porte,
+    required this.chemin,
+    required this.coeur,
+    required this.silhouette,
+    required this.filigrane,
+  });
+
+  /// Le fond uni de la carte, et le blanc des textes poses dessus.
+  final AppColorPair fond;
+
+  /// L'encre des textes secondaires (sous-titre, traduction, reference), posee
+  /// sur [fond] : un lavande tres clair, 4,5:1 au moins.
+  final AppInkColor encreDouce;
+
+  /// L'aplat clair de la porte : la lumiere qui en sort.
+  final AppColorPair porte;
+
+  /// L'aplat du chemin de lumiere, plus clair que le fond.
+  final AppColorPair chemin;
+
+  /// Le second aplat du chemin (le plus clair, pres de la porte). Au plus deux
+  /// aplats superposes : aucun degrade.
+  final AppColorPair coeur;
+
+  /// L'aplat de la silhouette (variante des femmes), plus sombre que le chemin.
+  final AppColorPair silhouette;
+
+  /// L'encre du trait du filigrane : du blanc, que le rendu pose a tres faible
+  /// opacite ([opaciteFiligrane]).
+  final AppInkColor filigrane;
+
+  /// L'opacite du filigrane (le symbole contour agrandi) : 7 pour cent, dans
+  /// les 6 a 12 pour cent du directeur. Un decor tamise, qui ne rivalise jamais
+  /// avec le texte.
+  static const double opaciteFiligrane = 0.07;
+}

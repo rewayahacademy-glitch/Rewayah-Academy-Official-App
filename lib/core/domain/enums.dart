@@ -110,8 +110,15 @@ enum InterfaceMode {
 ///
 /// **Un seul usage dans tout le produit** : confier un dossier d'identite a un
 /// membre du personnel du meme genre (audit 1.3). Il ne pilote aucun droit,
-/// aucun affichage, aucune notification. Quand il est inconnu, la lecture des
-/// dossiers est refusee, jamais filtree a moitie.
+/// aucune notification. Quand il est inconnu, la lecture des dossiers est
+/// refusee, jamais filtree a moitie.
+///
+/// **Une exception d'affichage, decidee par le directeur le 22/10/2026** : la
+/// carte que la personne partage depuis la salle d'attente prend la variante de
+/// son genre (teinte et silhouette) et l'invitation a partager dit « une sœur »
+/// ou « une personne » (`core/partage_offre/port_genre_partageur.dart`). Le
+/// genre y est lu sur le profil de la personne, jamais devine, et inconnu il
+/// donne la variante neutre.
 enum Genre {
   /// Homme.
   homme('male'),

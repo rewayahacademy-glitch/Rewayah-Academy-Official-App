@@ -71,7 +71,7 @@ opérateur ; `docs/archive/2026-09-pre-remise-a-plat/design/03-architecture-info
 | `CAND-02` | Mon entretien | titulaire convoqué | C | 1 | `/attente/entretien` (neuve) ; tuile du portail, sans bouton plein | Page | Page bornée | **proposée** |
 | `CAND-03` | Retirer ma candidature | titulaire | C | 1 | aucune : confirmation posée sur `/attente` | Feuille basse | Boîte de dialogue | **proposée** |
 | `CAND-05` | Écrire à l'académie | titulaire ; fil `candidature` | C | 1 | `/attente/messages` (neuve) | Fil seul | Fil seul, borné | **proposée** |
-| `CAND-06` | Un proche veut apprendre le Coran ? (carte à partager) | titulaire d'une candidature en cours ; aucune lecture ni écriture serveur | C | 1 | `/attente/partage` (neuve) ; tuile du portail, sans bouton plein | Page : description, aperçu de la carte, trois gestes | Deux colonnes : texte et gestes au début, carte à la fin | **construit (22/10/2026), repris le 22/10 sur la consigne du directeur (l'intérêt de l'élève, jamais l'académie)** |
+| `CAND-06` | Aidez une personne à apprendre la parole d'Allah. (carte à partager) | titulaire d'une candidature en cours ; lit son propre profil (genre) et ses langues d'enseignement, sans rien écrire | C | 1 | `/attente/partage` (neuve) ; tuile du portail, sans bouton plein | Page : langue de la carte, aperçu, trois gestes | Deux colonnes : langue, mention et gestes au début, carte à la fin | **construit (22/10/2026), redessiné le 22/10 (soir) sur la direction du directeur : symbole contour tamisé, portail, deux variantes (hommes, femmes), quatre langues** |
 | `ENS-03` et `ELV-03`, mode entretien | Salle de l'entretien | candidat convoqué ; `entretiens.mener`, intervieweur désigné | C, E | 2 | `/salle` (billet en `extra`) | Salle existante | Salle existante | **proposée** |
 | `ADM-20` | Candidatures | `candidatures.lire` | E | 1 | `/admin/personnes/candidatures` (neuve) | Cartes, barre de sélection basse | Tableau dense ; file et détail quand un dossier est ouvert, file seule en mode sélection | **proposée** |
 | `ADM-20E` | Entretiens | `candidatures.lire` ; rejoindre : intervieweur désigné | E | 1 | `/admin/personnes/candidatures?vue=entretiens` | Cartes par date | Tableau par date | **proposée** (code ajouté ici) |
@@ -562,7 +562,7 @@ avant l'état `envoye`.
   4. en Salle de vérification et d'entretien : la tuile « Mon entretien »
      (`CAND-02`), **sans bouton plein** : l'état, la date, et le lien `LienFleche`
      « Voir les détails » ;
-  4 bis. la tuile « Un proche veut apprendre le Coran ? » (`CAND-06`, décision du 22/10),
+  4 bis. la tuile « Aidez une personne à apprendre la parole d'Allah. » (`CAND-06`, décision du 22/10),
      sous l'état et sa prochaine action, **sans bouton plein**, tant que la candidature est
      en cours et qu'un lien d'offre existe ;
   5. le lien « Écrire à l'académie » (`CAND-05`) ; après un retrait ou un refus,
@@ -1070,7 +1070,7 @@ avant l'état `envoye`.
 - **Contrôles d'acceptation** : L5-1, L5-2 ; widget : 0 liste de conversations ; envoi
   dit seulement après la réponse ; 5.7.
 
-### CAND-06 : Un proche veut apprendre le Coran ? (carte à partager)
+### CAND-06 : Aidez une personne à apprendre la parole d'Allah. (carte à partager)
 
 - **Statut** : **construit le 22/10/2026**, sur ordre du directeur (décision du 22/10 :
   `DEC` section 1 bis), puis **repris le même jour sur sa consigne, après coup**. Pas encore
@@ -1089,6 +1089,18 @@ avant l'état `envoye`.
     partage, jamais seul ;
   - la **carte**, lue par le futur élève, parle de **son** intérêt d'abord ; le hadith reste, en
     petit, en bas.
+- **Refonte du 22/10 (soir, directeur ; `DEC` section 1 bis)** : la carte d'avant est rejetée
+  (« trop nulle et moche »). **Direction** : fond violet profond uni ; le symbole contour
+  officiel très agrandi, coupé par les bords, tamisé ; le portail, « subtilement, pour indiquer
+  la rentrée dans le bonheur du Coran et le savoir pour l'élève » ; typographie suisse
+  (références : une porte en arche et un chemin de lumière, une affiche aux grandes formes
+  coupées). **Seconde consigne, prioritaire** : personnaliser la carte des femmes
+  (couleur, illustrations féminines) et une phrase d'appel « qui allie la fierté de participer à
+  un geste noble et la simplicité », **peu de mots** ; la carte parle dans la **langue de la
+  personne qui partage**, les langues internationales seulement (français, anglais, portugais,
+  arabe), sans validation de traduction demandée. **Effet** : ce qui suit remplace les textes, la
+  carte et la page d'avant ; la consigne « l'intérêt de l'élève, jamais l'académie » reste
+  entière.
 - **Tâche** : envoyer l'offre à un proche qui voudrait apprendre le Coran, par une carte.
   **Facultatif, et sans aucun effet sur la candidature.**
 - **Pour qui** : l'offre **pour les élèves seulement** ; le recrutement des enseignants est
@@ -1096,56 +1108,102 @@ avant l'état `envoye`.
   public.
 - **Route** : `/attente/partage` (neuve), dans le sous-arbre ouvert au compte en attente.
   Sans candidature en cours (aucune, refusée, retirée), la page revient à `/attente`.
-- **Entrée** : la tuile « Un proche veut apprendre le Coran ? » du portail (`TUT-00b`), rendue
+- **Entrée** : la tuile « Aidez une personne à apprendre la parole d'Allah. » (« une sœur » pour une femme) du portail (`TUT-00b`), rendue
   pour qui candidate encore (en examen et en pause comprises) et seulement quand un lien
   d'offre existe. Elle est une carte entière qui se touche (`AppCard(onPress:, lien: true)`),
   **sans bouton plein**.
 - **Droits (capacité)** : le titulaire d'une candidature en cours, lue dans `etat_dossier()`
-  (`candidature.existe`, `issue`). **Aucune lecture ni écriture serveur** pour la carte
-  elle-même : pas de port Supabase, pas d'adaptateur `*_supabase.dart`, pas de migration.
-  Rien ne compte les partages ni ne dit qui partage.
-- **Textes (fr ; l'arabe suit le sens, clés `recrutement.partage.*`)**, dans l'ordre de lecture :
+  (`candidature.existe`, `issue`). **Aucune écriture, aucune RPC, aucune migration** : rien ne
+  compte les partages ni ne dit qui partage. Deux lectures **facultatives**, qui ne bloquent
+  jamais la carte (chacune vaut « inconnu » au bout de 5 secondes ou en cas d'échec) :
+  le **genre** du titulaire, lu sur **sa propre ligne** `profiles.gender` (politique
+  `profiles_self_select`, un `SELECT` ; `core/partage_offre/port_genre_partageur.dart` et son
+  adaptateur `genre_partageur_supabase.dart`) **pour choisir la variante, jamais deviné** (ni d'un
+  prénom, ni d'une photo) ; et ses **langues d'enseignement** (`languesExplication`, dernière
+  réponse du questionnaire, par le port de la candidature déjà branché). Le genre n'a qu'un
+  usage d'affichage ici (exception décidée le 22/10, `Genre` dans `core/domain/enums.dart`) :
+  il ne pilote aucun droit et rien n'en part au serveur.
+- **Textes** : ceux de la tuile, de la page et des boutons sont dans les clés
+  `recrutement.partage.*` (français et arabe, selon la langue de l'application) ; ceux de la
+  **carte** sont dans un **fichier de données** (`textes_carte.dart`), en **quatre langues**,
+  jamais dans le dessin de la carte ; un test vérifie que chaque langue a tous ses textes.
 
-  | Où | Texte |
-  | :--- | :--- |
-  | Tuile et page, titre | « Un proche veut apprendre le Coran ? » (mots du directeur) |
-  | Tuile et page, texte | « Envoyez-lui l'offre en un geste : il apprendra en petite classe, en visio, avec le même enseignant chaque semaine. » (mots du directeur ; « classe » en minuscule comme le reste de l'application) |
-  | Page seulement, suite | « La carte lui dit en quelques lignes comment se passent les cours, et lui donne le lien de l'offre. » |
-  | Tuile et page, motif | « Pour vous aussi, c'est un bien : dans un hadith, celui qui indique le bien est comme celui qui l'accomplit. » (le hadith en motif personnel ; « dans un hadith » n'attribue aucune parole avant la confirmation de la référence) |
-  | Tuile et page, mention | « Facultatif : partager ne change rien à votre candidature. » (mots du directeur ; dite **avant les boutons**) |
-  | Carte, titre | « Apprendre le Coran en ligne, en petite classe » (ce que l'élève y gagne) |
-  | Carte, trois lignes | « Le même enseignant, trois séances par semaine, à heure fixe. » · « Pour les enfants dès 6 ans et pour les adultes. » · « En poular (peul), français ou anglais, selon les enseignants disponibles. » |
-  | Carte, appel | « Découvrir l'offre », avec le QR et le lien |
-  | Carte, en bas, en petit | « الدال على الخير كفاعله », sa traduction française, « Rapporté par at-Tirmidhi » |
+  | Où | Français | Arabe |
+  | :--- | :--- | :--- |
+  | Tuile et titre de la page, hommes et genre inconnu | « Aidez une personne à apprendre la parole d'Allah. » | « ساعد شخصًا على تعلّم كلام الله » |
+  | Tuile et titre de la page, femmes | « Aidez une sœur à apprendre la parole d'Allah. » | « ساعدي أختًا على تعلّم كلام الله » |
+  | Mention, tuile et page (avant les boutons) | « Facultatif : partager ne change rien à votre candidature. » | « اختياري: المشاركة لا تغيّر شيئًا في طلب ترشحك. » |
+  | Bouton plein | « Je partage » | « أشارك » |
+  | Autres boutons | « Enregistrer l'image », « Copier le lien » | « حفظ الصورة », « نسخ الرابط » |
+  | Étiquette du choix de langue | « Langue de la carte » | « لغة البطاقة » |
 
-  Les trois lignes sont **vraies** : elles sont tirées des encarts décidés `encart_enfant` et
-  `encart_adulte` (`tarifs-2026-10-18.json`). La ligne des langues garde la condition des
-  encarts (« selon la disponibilité des enseignants ») : la carte ne promet pas une langue.
-  **L'arabe n'est pas une langue de cours** (décision du 22/10, `DEC` section 1 ter) : il n'y
-  figure pas. Aucun prix, aucune promesse en plus (ni remboursement, ni « gratuit »,
-  ni « garanti »). Le message de partage porte le titre et la première ligne de la carte : ce
-  que lit la personne qui reçoit.
-- **Contenu de la page, dans l'ordre** : le titre ; le texte et sa suite ; l'aperçu de la carte ;
-  le motif ; la mention « Facultatif » **avant les boutons** ; les trois gestes ; le retour du
-  geste ; la ligne « Lien de l'offre : … », sélectionnable.
+  Ces mots sont ceux du directeur (22/10) ; l'étiquette de la langue et les boutons
+  secondaires sont proposés. **Supprimés** : l'introduction, sa suite et le motif (le hadith ne
+  se lit plus que sur la carte).
+
+  | Carte, par langue | Titre | Ligne | Appel | Traduction du hadith | Référence |
+  | :--- | :--- | :--- | :--- | :--- | :--- |
+  | Français | « Apprendre le Coran, en petite classe. » | « Avec le même enseignant. » | « Découvrir l'offre » | « Celui qui indique le bien est comme celui qui l'accomplit. » | « Rapporté par at-Tirmidhi » |
+  | English | « Learn the Quran in a small class. » | « With the same teacher. » | « Discover the offer » | “The one who guides to good is like the one who does it.” | « Narrated by at-Tirmidhi » |
+  | Português | « Aprender o Alcorão, em turma pequena. » | « Com o mesmo professor. » | « Conheça a oferta » | “Quem indica o bem é como quem o pratica.” | « Narrado por at-Tirmidhi » |
+  | العربية | « تعلُّم القرآن في فصل صغير » | « مع المعلم نفسه. » | « اكتشاف العرض » | aucune (le hadith se lit tel quel) | « رواه الترمذي » |
+
+  Identiques dans les quatre langues : la signature « بوّابتك نحو القرآن » (M-26, près de la
+  porte) et le hadith « الدال على الخير كفاعله ». **Aucun prix, aucune promesse, jamais
+  l'académie comme motif** ; le portugais dit « turma » pour une Classe, le mot courant d'une
+  classe d'élèves. Les textes anglais et portugais sont écrits d'après le français et l'arabe,
+  **sans validation demandée** (directeur, 22/10). L'arabe n'est pas une langue de cours
+  (`DEC` section 1 ter) : la carte ne promet aucune langue de cours.
+- **Langue de la carte** : par défaut, la **première langue d'enseignement** du titulaire
+  (`languesExplication`) qui est le français (`francais`), l'anglais (`english`) ou le portugais
+  (`pt`, `portugais`, `portugues`, `portuguese` : le portugais n'est pas encore au référentiel
+  des langues de cours) ; une langue vernaculaire (poular, wolof, bambara…) est sautée ; sinon
+  la **langue de l'application** (français ou arabe). Quatre puces (« Français », « English »,
+  « Português », « العربية », chacune écrite dans sa langue) la changent avant de partager ;
+  choisir une puce refait l'image. La carte arabe est en miroir pour le texte (le QR, le logo
+  et la signature passent au début de la ligne, à droite), **jamais le logo ni le symbole**.
+- **Variante de la carte** : lue sur le profil, **jamais devinée**. **Hommes**, et **genre
+  inconnu** (profil illisible, hors ligne, aucun port) : la composition sans personnage, aux mots
+  neutres (« une personne ») ; c'est le choix fait pour l'inconnu. **Femmes** : mêmes règles de
+  marque, une teinte mauve prune plus douce (`#6B3A87`, porte rose lavande `#FCEFF6`), une
+  silhouette de femme voilée, de dos, sans visage, qui marche dans la lumière, et quelques
+  fleurs ton sur ton. **Les couleurs des femmes sont proposées, hors charte** (comme les teintes d'identité,
+  `M-23`) : le directeur les valide sur les captures.
+- **Contenu de la page, dans l'ordre** : le titre (l'invitation, au masculin ou au féminin) ;
+  « Langue de la carte » et ses quatre puces ; l'aperçu de la carte ; la mention « Facultatif »
+  **avant les boutons** ; les trois gestes ; le retour du geste ; la ligne « Lien de
+  l'offre : … », sélectionnable. **Rien d'autre** : ni introduction, ni explication, ni hadith
+  dans la page.
 - **La carte** : image 9:16 (360 x 640 points, 1080 x 1920 pixels à l'export), rendue par
-  Flutter, **identique pour tous** (palette claire, échelle standard : ni le thème, ni la
-  taille de texte, ni l'Interface guidée ne la changent, mesuré octet pour octet). Fond
-  violet de marque ; logo blanc (`BrandLogo`, `FondLogo.violet`) ; une arche lavande (le
-  motif du symbole, comme le site public) qui porte **ce que l'élève y gagne** (le titre et les
-  trois lignes) ; l'appel « Découvrir l'offre » avec le QR et le lien lisible ; **en bas et en
-  petit, un seul hadith** (UthmanTahaNaskh, de droite à gauche, en blanc sur le violet : la
-  lavande ne tient pas pour un texte de cette taille), sa traduction française et sa
-  référence. En arabe : le même hadith, sa référence arabe, **sans traduction** (la clé est
-  vide, la carte ne montre rien). Si un texte plus long ne tenait pas, l'arche le réduit au
-  lieu de le couper.
+  Flutter, **identique pour tous à variante et langue égales** (palette claire, échelle
+  standard : ni le thème, ni la taille de texte, ni l'Interface guidée ne la changent, mesuré
+  octet pour octet). **Fond violet profond uni** (`#4E2983` pour les hommes, un aplat de la
+  palette ; aucun dégradé). **Le symbole contour officiel** (`symbole-contour.svg`, tracé à
+  partir du fichier, jamais redessiné ; trait à l'épaisseur du fichier), à 1,85 fois la largeur
+  de la carte, **coupé par les bords**, en blanc à **7 %** : un décor tamisé (M-28), jamais
+  retourné, ni en arabe. **Le portail** : une petite porte en arche claire avec son cadre en
+  arche d'un trait fin (illustration dessinée, avec du vide autour, son cadre sur la marge du
+  texte), d'où sort un **chemin de lumière en deux aplats** qui s'élargit vers le bas et vers le
+  lecteur, en courbe, coupé par le bord (le second aplat, plus clair, est le chemin dans un
+  cercle centré sur le seuil : la lumière s'éteint en s'éloignant) ; en arabe la scène est en
+  miroir. **Le symbole et la porte sont sur le même axe** (l'arche intérieure du symbole est
+  centrée sur la porte : une porte dans la porte) ; en arabe le symbole suit la porte, qui passe
+  à gauche, **il se déplace sans jamais se retourner** (même dessin, décalé, pixel pour pixel).
+  La **zone de protection du logo** (25 % de sa hauteur) est un aplat du fond : le filigrane ne
+  la traverse jamais, dans les deux sens de lecture (mesuré dans les pixels). **Typographie suisse**, tout au début de la ligne : le logo blanc
+  (`BrandLogo`, `FondLogo.violet`, taille minimale, zone de protection) ; un titre court en DM
+  Sans 28 ; sa ligne ; la signature arabe près de la porte, à la hauteur de son milieu ;
+  l'appel « Découvrir l'offre » avec le QR sur sa **plaque blanche unie** (zone de silence de 12
+  points) et le lien lisible ; **tout en bas, très discret**, le hadith (UthmanTahaNaskh 20, de
+  droite à gauche, lavande très claire), sa traduction et sa référence. Si un texte plus long ne
+  tenait pas, il se réduit au lieu de se couper.
 - **Le lien** : l'origine du site public et `/fr/` (sa page d'accueil, seule langue du site).
   **Jamais écrit en dur** : `Env.siteUrl` (clé `SITE_URL`, vide par défaut) ; sinon, sur le
   web, l'origine de la page ouverte (l'application et le site public sont servis par la même
   origine, `flutter-deploy.yml` construit `fr/` à côté de l'application ; même principe que
   `lienAvisPour`) ; sinon aucun lien, donc ni tuile ni carte. Aucun paramètre dans le lien.
 - **Gestes** :
-  - « Partager » : le menu de partage de l'appareil, par l'API Web Share du navigateur
+  - « Je partage » : le menu de partage de l'appareil, par l'API Web Share du navigateur
     (`navigator.share`, `dart:js_interop`, **aucun nouveau paquet**), avec l'image, le titre de
     la carte, sa première ligne et le lien. Rendu seulement quand l'appareil le propose.
     L'image est rendue **dès l'ouverture**, avant le toucher : le navigateur n'ouvre son menu
@@ -1154,83 +1212,89 @@ avant l'état `envoye`.
   - « Copier le lien » : le presse-papiers de Flutter.
 - **Bouton plein** : un seul, **en aplat violet** (`ActionPrincipale.affirmee`, comme
   « Continuer » : la lavande douce le faisait paraître inerte, demande du directeur du
-  22/10). « Partager » ; sans menu de partage, « Enregistrer l'image » ; image non rendue,
-  « Réessayer ». Les autres sont des boutons secondaires.
-- **Disposition** : mobile, colonne : texte et suite, aperçu centré (240), motif, mention
-  « Facultatif », gestes pleine largeur (le plein d'abord), retour, lien. Tablette et bureau :
-  deux colonnes dans 800 : texte, motif, mention et gestes au début, aperçu (288) à la fin ;
-  gestes alignés à la fin, le plein en dernier ; miroir en arabe. Le retour d'un geste se lit
-  sous les boutons (ils ne bougent pas sous le doigt) ; celui d'une image non rendue se lit
-  avant « Réessayer ». La tuile du portail : l'icône, la question, le texte, le motif et la
-  mention, puis le chevron en fin de ligne.
+  22/10). « Je partage » (libellé lu « Partager la carte de l'offre » par un lecteur d'écran) ;
+  sans menu de partage, « Enregistrer l'image » ; image non rendue, « Réessayer ». Les autres
+  sont des boutons secondaires.
+- **Disposition** : mobile, colonne : le titre, « Langue de la carte » et ses puces (sur une
+  ou deux lignes, jamais un mot coupe, à 320 points et texte agrandi elles passent à la ligne),
+  l'aperçu centré (224), la mention « Facultatif », les gestes pleine largeur (le plein
+  d'abord), le retour, le lien. Tablette et bureau : deux colonnes dans 800 : puces, mention et
+  gestes au début, aperçu (288) à la fin ; gestes alignés à la fin, le plein en dernier ; miroir
+  en arabe. Le retour d'un geste se lit sous les boutons (ils ne bougent pas sous le doigt) ;
+  celui d'une image non rendue se lit avant « Réessayer ». La tuile du portail : l'icône,
+  l'invitation, la mention « Facultatif », puis le chevron en fin de ligne.
 - **États** :
-  - `loading` : l'état du dossier se lit (`Skeleton` après 180 ms) ; l'image se prépare
-    (« Partager » et « Enregistrer l'image » en cours, « Copier le lien » possible) ;
+  - `loading` : l'état du dossier, puis les réglages de la carte (genre et langues) se lisent
+    (`Skeleton` après 180 ms, jamais la carte tant que la variante n'est pas lue) ; l'image se
+    prépare (« Je partage » et « Enregistrer l'image » en cours, « Copier le lien » possible) ;
+    changer de langue refait l'image (mêmes boutons en cours) ;
   - `content` : les trois gestes ;
   - `empty` : sans objet ;
   - `error` : lecture du dossier (`recrutement.portail.nonCharge`, « Réessayer ») ; image non
     rendue (message, « Réessayer », le lien se copie encore) ; chaque geste dit son échec
     (K-59) : menu refusé par l'appareil, enregistrement non confirmé (D5), copie manquée ;
+    **un genre ou des langues illisibles ne sont pas une erreur** : variante des hommes et langue
+    de l'application ;
   - `offline` : le bandeau de la page le dit une fois ; **tout marche sans réseau** (rien ne
     part au serveur) ; sans dossier lu et hors ligne, `EtatSansDonnees` ;
   - **capacité indisponible** : aucun lien d'offre : « La carte à partager n'est pas encore
     disponible. » ; la tuile n'est pas rendue ; jamais le nom de la configuration ;
-  - **appareil sans menu de partage** : pas de « Partager », une phrase dit quoi faire ;
-  - **menu qui ne partage que du texte** : « Partager » et sa note (le lien part sans
+  - **appareil sans menu de partage** : pas de « Je partage », une phrase dit quoi faire ;
+  - **menu qui ne partage que du texte** : « Je partage » et sa note (le lien part sans
     l'image) ;
   - **menu fermé par la personne** : aucun message ; **succès** : dit seulement après la
-    réponse.
+    réponse. Le message de partage porte le titre et la ligne de la carte **dans sa langue**.
 - **Mots du module** : `mots-rewayah` : « classe », jamais « groupe » ; aucun prix, aucune
   promesse ; pas de « gratuit », « garanti » ; pas de tiret long. **Les mots du module entrent
   dans `.claude/skills/mots-rewayah` avec cet écran** (`DEC:35`) : non fait ici, ce dossier est
-  interdit aux agents de cette session ; à reporter : « Un proche veut apprendre le Coran ? »,
-  « Partager », « Enregistrer l'image », « Copier le lien », « Découvrir l'offre ». **Règle à
-  y inscrire** : aucun texte ne demande d'agir pour l'académie, son nom n'est jamais le motif
-  (consigne du 22/10).
+  interdit aux agents de cette session ; à reporter : « Aidez une personne à apprendre la
+  parole d'Allah. », « Aidez une sœur… », « Je partage », « Enregistrer l'image », « Copier le
+  lien », « Découvrir l'offre ». **Règle à y inscrire** : aucun texte ne demande d'agir pour
+  l'académie, son nom n'est jamais le motif (consigne du 22/10).
 - **À confirmer par le directeur avant toute mise en ligne** :
-  1. les **mots exacts** de la tuile, de la page et de la carte (ceux de la consigne sont repris
-     tels quels ; le motif, la suite de la page, le titre et les trois lignes de la carte sont
-     proposés) ;
-  2. la **référence affichée** (« Rapporté par at-Tirmidhi ») : la formulation est celle que
+  1. les **couleurs de la variante des femmes** (proposées, hors charte), la **silhouette** et
+     les fleurs ;
+  2. les **textes anglais et portugais** de la carte (écrits d'après le français et l'arabe, sans
+     validation demandée) et la relecture arabe de « تعلُّم القرآن في فصل صغير » ;
+  3. l'étiquette « Langue de la carte » et « Je partage » en arabe (« أشارك ») ;
+  4. la **référence affichée** (« Rapporté par at-Tirmidhi ») : la formulation est celle que
      rapporte at-Tirmidhi (n° 2670, d'après Anas) ; Muslim (n° 1893) rapporte le même sens
-     sous une autre forme (`DEC` section 1 bis) ;
-  3. la **traduction française** : « Celui qui indique le bien est comme celui qui
-     l'accomplit. » ;
-  4. la page visée : `/fr/` (accueil du site) ou `/fr/tarifs` ;
-  5. `SITE_URL` en production : sans elle, le lien prend l'origine de la page ouverte, donc
+     sous une autre forme (`DEC` section 1 bis) ; et la **traduction française** « Celui qui
+     indique le bien est comme celui qui l'accomplit. » ;
+  5. la page visée : `/fr/` (accueil du site) ou `/fr/tarifs` ;
+  6. `SITE_URL` en production : sans elle, le lien prend l'origine de la page ouverte, donc
      celle d'un aperçu de pull request quand la carte est partagée depuis un aperçu ;
-  6. la ligne des langues : poular (peul), français, anglais, selon les enseignants
-     disponibles ; **l'encart `tarifs-2026-10-18.json` de cette branche liste encore l'arabe**
-     (corrigé le 22/10 dans le dépôt principal, `DEC` section 1 ter) : la carte ne le cite pas.
+  7. **O-10 du registre de marque** : la porte et son cadre sont une arche **dessinée**
+     (illustration), pas un fichier officiel ; elle est admise sur cette carte tant que le
+     directeur n'en dit pas autrement ;
+  8. le commentaire de la colonne `profiles.gender` dit encore « Seul usage : le cloisonnement
+     de lecture des dossiers KYC » ; l'usage d'affichage décidé le 22/10 n'y est pas écrit
+     (`supabase/`, hors du périmètre de ce lot).
   La question de la **légende du QR** est tranchée par la consigne : « Découvrir l'offre ».
-- **Dépend du serveur** : rien pour la carte. La candidature en cours vient de
-  `etat_dossier()` étendu (`CAND-BR-10`).
-- **Contrôles d'acceptation** : un seul hadith, en petit, en bas ; 0 prix, 0 montant, 0
-  pourcentage, 0 mot de promesse (fr et ar) ; **0 texte qui nomme l'académie ou demande d'agir
-  pour elle** (fr et ar, lus clé par clé dans les fichiers de traduction) ; 0 effet sur la
-  candidature (aucun port serveur) ; les trois lignes de la carte contenues dans les encarts
-  décidés ; QR relu module par module dans le PNG exporté (0 module faux) ; PNG de 1080 x
-  1920 ; mêmes octets en clair, en sombre, à 200 % de texte et en Interface guidée ;
-  contrastes mesurés (blanc sur violet de marque 4,81:1, encre sur lavis d'accent 8,8:1, QR
-  noir sur blanc 19,0:1, arche lavande sur violet 3,97:1, plaque blanche du QR sur violet
-  4,81:1) ; un seul bouton plein dans chaque état ; 320, 390, 768 et 1440, texte à 100 % et
-  200 %, clair et sombre, `fr` et `ar` ; adaptateur web exercé dans Chromium avec les API de
-  partage simulées (niveaux image, lien, aucun ; fermeture par la personne ; refus ; erreur
-  synchrone). **Non prouvé** : le menu de partage réel d'un téléphone (iOS Safari, Chrome
-  Android).
-- **Preuves (22/10/2026, reprise)** : 98 tests (`test/features/partage_offre` : 89, dont la
-  page, la carte, le rendu réel de l'image, la tuile du portail et les textes fr et ar lus clé
-  par clé ; `test/core/partage_offre` : 9, le lien) ; la route `/attente/partage` ouverte au
-  compte en attente (`test/router/redirection_test.dart`, 176) ; 34 captures
-  (`test/capture/partage_capture_test.dart`, avec `CAPTURE_DIR`), dont la page défilée
-  jusqu'aux gestes et chaque état ; `dart analyze --fatal-infos` : 0 problème ;
-  `dart run tool/verifier_jetons.dart` : 1132 fichiers, 0 violation ; `test/tool` (dont
-  `verifier_revue`, zéro au-dessus du socle) et `test/i18n` passent. Dossiers touchés lancés en
-  entier (routeur, widgets, core, i18n, outils, accessibilité, candidatures, dossier) : 4201
-  tests passent, 19 sautés, **3 échecs préexistants** dans
-  `test/accessibilite/duree_insecable_4_test.dart` et `duree_insecable_5_test.dart` (garde sur
-  `lib/features/com_annonces/file_moderation.dart:510`, sans rapport avec cet écran). Spécifié,
-  présent dans le code, testé localement ; **ni testé sur staging, ni déployé**.
+- **Dépend du serveur** : rien d'écrit. Lectures : la candidature en cours (`etat_dossier()`
+  étendu, `CAND-BR-10`), la ligne `profiles` du titulaire (genre ; politique existante), les
+  langues du questionnaire (port de la candidature existant).
+- **Contrôles d'acceptation** : un seul hadith, discret, en bas ; 0 prix, 0 montant, 0
+  pourcentage, 0 mot de promesse (fr, en, pt, ar) ; **0 texte qui nomme l'académie ou demande
+  d'agir pour elle** (fr et ar de l'app lus clé par clé ; quatre langues de la carte) ; chaque
+  langue de la carte porte **tous** ses textes (`textes_carte_test.dart`) ; 0 effet sur la
+  candidature (aucune écriture) ; la langue par défaut suit la première langue d'enseignement
+  internationale, jamais une langue vernaculaire ni l'arabe ; la variante suit le genre lu,
+  l'inconnu donne les hommes ; le symbole : 1,6 à 2 fois la largeur, coupé par les bords, 6 à
+  12 % d'opacité, **le même dessin pixel pour pixel en français et en arabe, seulement déplacé
+  avec la porte**, axe commun avec la porte, zone de protection du logo libre ; **aucun dégradé**
+  (mesuré dans les pixels : que des aplats) ; la porte petite avec du vide, le chemin en
+  trapèze qui sort de son seuil et s'élargit ; la silhouette sur le chemin, absente chez les
+  hommes ; QR relu module par module dans le PNG exporté, dans chaque langue et chaque variante
+  (0 module faux) ; PNG de 1080 x 1920 ; mêmes octets en clair, en sombre, à 200 % de texte et
+  en Interface guidée ; contrastes mesurés pour chaque variante (texte 4,5:1, formes porteuses
+  de sens 3:1, y compris sous le trait du symbole) ; un seul bouton plein dans chaque état ;
+  320, 390, 768 et 1440, texte à 100 % et 200 %, clair et sombre, `fr` et `ar` ; adaptateur
+  web exercé dans Chromium avec les API de partage simulées (niveaux image, lien, aucun ;
+  fermeture par la personne ; refus ; erreur synchrone). **Non prouvé** : le menu de partage réel
+  d'un téléphone (iOS Safari, Chrome Android) ; la lecture réelle de `profiles.gender` sur
+  staging.
+- **Preuves (22/10/2026, refonte)** : 232 tests dans `test/features/partage_offre` (la carte dans ses quatre langues et ses deux variantes, le rendu réel en PNG, la page, la tuile du portail, les textes de l'app en français et en arabe, les textes de la carte) ; 29 dans `test/core/partage_offre` (le lien, les langues, la variante, les réglages) ; 48 dans `test/core/marque` (le symbole contour) ; routeur, outils et i18n relancés avec eux : 1173 tests passent ; 815 tests des écrans voisins (portail, dossier, recrutement, candidature, routeur, dossiers de l'administration) passent ; 46 captures (`test/capture/partage_capture_test.dart`, avec `CAPTURE_DIR`, dossier `PARTAGE-v2/`) : la carte en 1080 x 1920 et en 540 x 960 pour chaque variante et chaque langue, la page à 390 et 1440 (français, arabe, sombre, choix d'une langue), la tuile, et chaque état ; `dart analyze --fatal-infos` : 0 problème ; `dart run tool/verifier_jetons.dart` : 1139 fichiers, 0 violation ; `tool/verifier_revue.dart` : `wrap-filtres` à 0 (les puces sont déclarées « choix de formulaire »), `test/tool/garde_fous_test.dart` passe. Spécifié, présent dans le code, testé localement ; **ni testé sur staging, ni déployé**.
 
 ### ENS-03 et ELV-03, mode entretien : Salle (`/salle`)
 

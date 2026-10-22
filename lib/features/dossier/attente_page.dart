@@ -240,7 +240,8 @@ class _AttentePageState extends ConsumerState<AttentePage> {
                   ),
                 ),
               ],
-              // CAND-06 : « Un proche veut apprendre le Coran ? », facultatif.
+              // CAND-06 : « Aidez une personne a apprendre la parole d'Allah. »,
+              // facultatif.
               // Pour qui candidate encore (pas apres un refus ni un retrait),
               // sous l'etat et sa prochaine action, jamais avant.
               if (candidature != null &&
