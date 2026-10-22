@@ -232,6 +232,7 @@ Inspection après ces corrections :
 | Recette 29 (jurés Sonnet) | 7,70 | 7,00 | 7,20 | « presque », sans plafond |
 | Recette 30 (jurés Sonnet) | 7,57 | 6,93 | 6,73 | « presque », sans plafond |
 | Recette 31 (jurés Sonnet) | 7,57 | 6,97 | 6,77 | « presque » (un juré applique le plafond « moins de quatre vraies photos ») |
+| Recette 32 (jurés Sonnet) | 7,18 | 7,08 | 6,73 | « presque » (les trois jurés appliquent le plafond « moins de quatre vraies photos ») |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -718,6 +719,16 @@ Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte co
 | OO4 | Accueil, le prix : un bloc de fiche technique | Les deux montants plus grands ; les quatre points communs en tuiles coiffées d'une arche |
 | OO5 | Académie : trois bandes « image à gauche » de suite | « Ce que nous enseignons » passe l'arche à droite |
 | OO6 | (relevé par l'inspecteur) Dix tailles de texte sur l'accueil | Les paragraphes des chapitres à la taille des sous-titres, le mot du bouton du tapis à 18 px : huit tailles |
+
+**Après la recette 32.** Les trois jurés comptent désormais les rendus comme des illustrations et plafonnent le dessin à 6,5 : le site n'a que trois vraies photographies (les fondateurs). C'est la limite des images, close par le directeur le 22/10 ; seule une vraie photographie de plus (une séance, une famille, un écran réel de l'application) la lèverait. Ils relèvent aussi un vrai défaut, introduit au tour précédent : au téléphone, dans « Ce que coûte une famille », le nombre d'enfants et le montant se superposaient.
+
+| # | Relevé | Correction |
+|---|---|---|
+| PP1 | Téléphone : « 2 enfa105,60 $ » | Dans chaque tuile, le nombre d'enfants au-dessus du montant ; un contrôle de chevauchement des textes est ajouté à la vérification (360 à 1440 px) |
+| PP2 | « À savoir » en puces sur tablette et téléphone | Des tuiles à toutes les largeurs : une colonne au téléphone, deux sur tablette, trois puis deux au bureau |
+| PP3 | « Les cours en bref » : deux pastilles hors de la grille | Deux tuiles de même largeur sous les trois (une et demie chacune), même aspect |
+| PP4 | Quatre formes de tuiles | Deux seulement : l'arche pour les chiffres (remises, coût d'une famille), l'angle arrondi pour les notes |
+| PP5 | Accueil, questions des familles : colonne de gauche vide | Elle reste à l'écran le long des questions |
 
 ## Hors de portée de l'agent
 

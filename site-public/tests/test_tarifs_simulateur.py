@@ -277,10 +277,6 @@ class PageGeneree(unittest.TestCase):
             self.assertEqual((places[1], places[0]), ("--c: 1 / -1; --r: 1", "--c: 1 / -1; --r: 2"))
             rangees: dict[int, list[tuple[int, int]]] = {}
             for k in range(2, len(phrases)):
-                if len(phrases[k]) <= 60:
-                    # une phrase courte : une pastille seule sur sa rangée, calée à gauche
-                    self.assertRegex(places[k], r"^--c: 1 / -1; --r: \d+$")
-                    continue
                 m = re.fullmatch(r"--c: (\d+) / span (\d+); --r: (\d+)", places[k])
                 self.assertIsNotNone(m, places[k])
                 rangees.setdefault(int(m[3]), []).append((int(m[1]), int(m[2])))
