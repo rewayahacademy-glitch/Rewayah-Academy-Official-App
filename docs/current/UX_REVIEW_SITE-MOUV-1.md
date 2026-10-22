@@ -230,6 +230,7 @@ Inspection après ces corrections :
 | Recette 27 (jurés Sonnet) | 6,50 | 6,87 | 6,50 | « presque » (plafond : titres des chapitres sur trois lignes) |
 | Recette 28 (jurés Sonnet) | 7,73 | 7,00 | 6,50 | « presque », sans plafond |
 | Recette 29 (jurés Sonnet) | 7,70 | 7,00 | 7,20 | « presque », sans plafond |
+| Recette 30 (jurés Sonnet) | 7,57 | 6,93 | 6,73 | « presque », sans plafond |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -693,6 +694,18 @@ Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte co
 | MM6 | Bouton du tapis disjoint (tablette, téléphone) | Le signe et le mot ensemble, au bord du texte |
 | MM7 | Le titre du chapitre suivant entre dans l'image | Chaque chapitre a la hauteur de la fenêtre de l'arche ; le second paragraphe passe à 22 px |
 | MM8 | Familles, téléphone : la tuile du « 3 » à moitié vide | À la hauteur de son contenu |
+
+**Après la recette 30.** Restent, en commun : le bas de Tarifs (tuiles de remises de hauteurs inégales, dates en colonnes étroites, tableau et puces), « Les cours en bref » (bords de tuiles sur deux grilles), le second paragraphe des chapitres plus petit que le premier et le titre suivant visible à 1280 × 720, un dernier voile sous le sol à droite de l'arche (vu en double résolution).
+
+| # | Relevé | Correction |
+|---|---|---|
+| NN1 | Remises : rangées de hauteurs inégales, tuile du 10 % vide | Quatre colonnes ; les deux remises aux longues légendes prennent deux colonnes chacune ; chiffre et légende alignés à gauche |
+| NN2 | Dates du paiement en colonnes étroites | Au bureau, une frise verticale : la date à gauche, le texte à droite, les petites arches sur un même fil, la phrase d'introduction à côté |
+| NN3 | Ce que coûte une famille : des lignes de tableau | Les quatre totaux en tuiles blanches coiffées d'une arche, deux par rangée (rôles ARIA ajoutés pour garder la lecture en tableau) |
+| NN4 | À savoir avant de commander : une liste à puces | Les cinq points sur deux colonnes, chacun avec sa puce |
+| NN5 | « Les cours en bref » : bords de tuiles sur deux grilles | Les phrases courtes ne sont plus des tuiles mais des lignes marquées de la petite arche ; la grille occupe toute la largeur |
+| NN6 | Chapitres : second paragraphe plus petit, titre suivant visible | Les deux paragraphes à la même taille ; chaque chapitre occupe un écran entier |
+| NN7 | Voile sous le sol à droite de l'arche | Dans l'image, sous le bord du sol blanc, le flanc du disque s'efface vers la droite (bord du sol trouvé colonne par colonne) |
 
 ## Hors de portée de l'agent
 

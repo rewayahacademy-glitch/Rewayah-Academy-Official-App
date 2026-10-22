@@ -435,11 +435,13 @@ def lie(phrase: str) -> str:
 
 
 def _tableau(legende: str, colonnes: tuple[str, str], lignes: list[tuple[str, str]], css: str = "") -> str:
-    corps = "".join(f'<tr><th scope="row">{esc(lie(a))}</th><td>{esc(lie(b))}</td></tr>' for a, b in lignes)
+    # Les rôles ARIA gardent la lecture en tableau quand l'affichage change (le coût d'une famille posé en tuiles).
+    corps = "".join(f'<tr role="row"><th scope="row" role="rowheader">{esc(lie(a))}</th><td role="cell">{esc(lie(b))}</td></tr>'
+                    for a, b in lignes)
     classe = f"price-table {css}".strip()
-    return (f'<table class="{classe}"><caption>{esc(legende)}</caption><thead><tr>'
-            f'<th scope="col">{esc(colonnes[0])}</th><th scope="col">{esc(colonnes[1])}</th></tr></thead>'
-            f'<tbody>{corps}</tbody></table>')
+    return (f'<table class="{classe}" role="table"><caption>{esc(legende)}</caption><thead role="rowgroup"><tr role="row">'
+            f'<th scope="col" role="columnheader">{esc(colonnes[0])}</th><th scope="col" role="columnheader">{esc(colonnes[1])}</th></tr></thead>'
+            f'<tbody role="rowgroup">{corps}</tbody></table>')
 
 
 def lignes_grille(politique: dict) -> list[tuple[str, str]]:
@@ -531,7 +533,8 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
             phrases = re.split(r"(?<=\.) (?=[A-ZÀ-Ý0-9])", texte)
             places = places_fiche(phrases)
             return '<ul class="fiche__lignes">' + "".join(
-                ligne(ph).replace(">", f' style="{places[k]}">', 1) if k in places else ligne(ph)
+                (ligne(ph) if k < 2 or len(ph) > 60 else ligne(ph).replace("<li", '<li class="fiche__court"', 1))
+                .replace(">", f' style="{places[k]}">', 1) if k in places else ligne(ph)
                 for k, ph in enumerate(phrases)) + "</ul>"
         # Un choix Enfants / Adultes montre une fiche a la fois ; les deux restent publiees telles quelles.
         return ('<div class="fiches-bloc"><div class="fiches__choix" role="group" aria-label="Afficher la fiche">'

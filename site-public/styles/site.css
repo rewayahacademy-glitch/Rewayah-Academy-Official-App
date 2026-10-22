@@ -2048,3 +2048,60 @@ li, dd { text-wrap: wrap; }
 
 /* Familles, telephone : la tuile du « 3 » a la hauteur de son contenu. */
 @media (max-width: 839px) { .tuile-chiffre { aspect-ratio: auto; padding-block: var(--e-12) var(--e-10); } }
+
+/* --- Recette 30 (22/10/2026) ------------------------------------------------------------------------------------- */
+/* Accueil, chapitres : chacun occupe un ecran entier (le titre du suivant n'entre jamais dans l'image), et ses deux
+   paragraphes ont la meme taille. */
+@media (min-width: 840px) {
+  .chapitre { min-height: 100svh; }
+  .chapitre h2 + p, .chapitre p + p { font-size: clamp(20px, 1.7vw, 24px); line-height: 1.4; }
+}
+
+/* Les cours en bref : les phrases courtes ne sont plus des tuiles, mais des lignes marquees de la petite arche, sous les
+   tuiles ; la grille occupe toute la largeur de la fiche. */
+@media (min-width: 840px) {
+  .fiches-bloc .fiches .fiche, .fiches-bloc .fiches .fiche:first-child { padding-inline: 0; }
+  .fiches-bloc .fiche__lignes { width: 100%; margin-inline: 0; padding-inline: 0; }
+  .fiches-bloc .fiche__lignes li.fiche__court { padding: 0 0 0 1.4em; border-radius: 0; background: none; font-weight: 600; }
+  .fiches-bloc .fiche__lignes li.fiche__court::before { content: ""; }
+}
+
+/* Tarifs, les remises : quatre colonnes ; les deux remises aux longues legendes prennent chacune deux colonnes, pour
+   qu'aucune tuile ne reste vide sous sa ligne ; chiffre et legende alignes a gauche. */
+.remises:not(.remises--echeances) .remise { text-align: start; justify-items: start; padding: var(--e-10) var(--e-8) var(--e-8); }
+@media (min-width: 1100px) {
+  .remises:not(.remises--echeances) { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--e-4); }
+  .remises:not(.remises--echeances):has(> li:nth-child(6):last-child) > li:nth-child(n+5) { grid-column: span 2; }
+}
+
+/* Tarifs, les dates du paiement : au bureau, une frise verticale (la date a gauche, le texte a droite, les arches sur
+   un meme fil), et la phrase d'introduction a cote. */
+@media (min-width: 1100px) {
+  .section--large:has(.remises--echeances) .section__corps { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); column-gap: var(--e-16); align-items: start; }
+  .section--large:has(.remises--echeances) .section__corps > p { grid-column: 2; grid-row: 1; margin-top: var(--e-10); }
+  .section--large:has(.remises--echeances) .section__corps > .remises--echeances { grid-column: 1; grid-row: 1; }
+  .remises--echeances { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+  .remises--echeances::before { inset: .5em auto .5em calc(.3em - 1.5px); width: 3px; height: auto; top: .5em; }
+  .remises--echeances .remise { position: relative; grid-template-columns: 220px minmax(0, 1fr); column-gap: var(--e-6); align-items: baseline; padding: 0 0 var(--e-8) calc(.6em + var(--e-6)); }
+  .remises--echeances .remise::before { position: absolute; inset-inline-start: 0; top: .45em; }
+  .remises--echeances .remise__valeur { font-size: clamp(28px, 2.3vw, 34px); }
+}
+
+/* Tarifs, ce que coute une famille : les quatre totaux en tuiles coiffees d'une arche, sur la bande lavande. */
+@media (min-width: 840px) {
+  .price-table--famille thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .price-table--famille tbody { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e-4); }
+  .price-table--famille tbody tr { display: grid; grid-template-columns: minmax(0, 1fr); align-content: end; gap: var(--e-2); padding: var(--e-12) var(--e-6) var(--e-6); border-radius: 50% 50% var(--r-lg) var(--r-lg) / 64px 64px var(--r-lg) var(--r-lg); }
+  .price-table--famille tbody tr:nth-child(n) { background: #FFFFFF; }
+  .price-table--famille tbody th, .price-table--famille tbody td { padding: 0; text-align: start; }
+  .price-table--famille tbody td { font-size: clamp(28px, 2.6vw, 40px); }
+}
+
+/* Tarifs, a savoir avant de commander : les cinq points sur deux colonnes, chacun avec sa puce (pas de tuiles : la page
+   en a deja deux series). */
+@media (min-width: 840px) {
+  #conditions .points { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e-6) var(--e-10); }
+}
+
+/* Accueil : le mot du bouton du tapis un peu plus grand. */
+.porte__texte .pause-anim { font-size: 17px; }
