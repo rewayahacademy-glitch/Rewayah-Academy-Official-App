@@ -268,7 +268,7 @@ function initialiserSimulateur(simulator, d) {
     const prix = new Set(eleves.map((e) => tarifDe(d, e.age)));
     if (eleves.length > 1 && prix.size > 1) {
       const f = fourchette(d, eleves, options);
-      if (f.min !== f.max) ligneTexte(result, 'Le rang suit l’ordre d’inscription. Selon cet ordre, le premier paiement est compris entre ' + m(f.min) + ' et ' + m(f.max) + '.');
+      if (f.min !== f.max) ligneTexte(result, 'Les remises suivent l’ordre d’inscription dans le foyer. Selon cet ordre, le premier paiement est compris entre ' + m(f.min) + ' et ' + m(f.max) + '.');
     }
     if (d.bourse) ligneTexte(result, 'La bourse est accordée par la direction, sur demande écrite, et ne se cumule avec aucune autre remise.');
     if (!d.essaiActif) ligneTexte(result, 'Il n’y a pas d’essai\u00a0: la première semaine est remboursée si le cours ne\u00a0convient\u00a0pas.');
