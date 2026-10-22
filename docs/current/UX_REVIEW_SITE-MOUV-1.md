@@ -226,6 +226,7 @@ Inspection après ces corrections :
 | Recette 23 (jurés Sonnet) | 7,57 | 7,18 | 6,50 | « presque » |
 | Recette 24 (jurés Sonnet) | 7,63 | 6,87 | 6,50 | « presque » |
 | Recette 25 (jurés Sonnet) | 7,53 | 6,63 | 6,57 | « presque » |
+| Recette 26 (jurés Sonnet) | 7,59 | 7,22 | 7,22 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -588,7 +589,7 @@ Ensuite : la porte du haut de l'accueil, un peu plus petite au bureau, ne touche
 | FF10 | Académie : le bout du chemin coupé net (tablette, téléphone) | Il s'efface vers la droite |
 | FF11 | Accueil, « Un horaire fixe » : le titre et son texte à gauche, la moitié droite vide | À partir de 1 100 px, le texte et les liens passent dans la colonne de droite |
 
-**Lettres arabes des arches (directeur, 22/10/2026, registre M-31).** Le directeur trouve les inscriptions arabes de Cours peu jolies et demande une police d'ornement, koufi ou diwani, avec les voyelles. Comparaison faite sur les arches elles-mêmes : la seule diwani libre trouvée (Layla Diwani, OFL) est trop fine et place mal ses voyelles ; Reem Kufi (koufi, OFL) et Aref Ruqaa (roqaa, OFL) les placent bien. Reem Kufi est posée, réduite aux seize lettres du contenu et inscrite dans la feuille de style comme l'ancienne police (aucun fichier de plus à déployer) ; la roqaa reste au choix du directeur (O-20).
+**Lettres arabes des arches (directeur, 22/10/2026, registre M-31).** Le directeur trouve les inscriptions arabes de Cours peu jolies et demande une police d'ornement, koufi ou diwani, avec les voyelles. Comparaison faite sur les arches elles-mêmes : la seule diwani libre trouvée (Layla Diwani, OFL) est trop fine et place mal ses voyelles ; Reem Kufi (koufi, OFL) et Aref Ruqaa (roqaa, OFL) les placent bien. Reem Kufi est posée, réduite aux seize lettres du contenu et inscrite dans la feuille de style comme l'ancienne police (aucun fichier de plus à déployer) ; le directeur a laissé le choix le 22/10 : Reem Kufi reste (M-31).
 
 **Demandes du directeur du 22/10 (suite).**
 - *Tuile « La classe commence » (accueil).* L'arche du livre de l'image était coupée par l'arche de la fenêtre. Le rendu 02 est recadré plus large (680 × 850, marge transparente au-dessus) : l'arche du livre tient entière dans la fenêtre, et les deux courbes s'emboîtent.
@@ -635,6 +636,20 @@ Ensuite : la porte du haut de l'accueil, un peu plus petite au bureau, ne touche
 | II8 | « Un horaire fixe » : titre et texte décalés | Alignés par le haut |
 | II9 | L'accueil ne montre qu'une photo ; « trois spécialistes » pour un seul visage | Les deux autres fondateurs, en petit, dans la bande « Accompagné à chaque étape », sous le lien vers le mot du directeur |
 | II10 | « Une petite classe » : l'écran le plus vide | La classe vue du dessus un peu plus grande |
+
+**Après la recette 26 (dernier lot, 22/10/2026).** Les jurés tiennent pour corrigés les arches, la fin de l'accueil et le rythme des pages. Restent, en commun : un reste de socle au pied du haut de l'accueil, les chapitres (titre petit, pastilles qui redisent le texte), « Les cours en bref » (une tuile seule, le prix loin de sa phrase), les deux fondateurs trop petits sur l'accueil, le texte secondaire à 17 px. Le directeur demande de finir sans nouvelle image (« ne me demande plus de générer encore des images ») : la variété des rendus, que les trois jurés citent encore, ne bougera plus dans ce lot.
+
+| # | Relevé | Correction |
+|---|---|---|
+| JJ1 | Reste de socle à droite du haut de l'accueil | Nettoyé dans l'image elle-même (le bout du sol s'efface, les points isolés sont retirés) ; le masque CSS ne garde que le fondu de gauche |
+| JJ2 | Chapitres : titre petit, pastilles qui redisent le texte | Titre à la taille des en-têtes de section dès 840 px ; les pastilles ne sont plus posées (le texte reste) |
+| JJ3 | « Les cours en bref » : une tuile seule, le prix loin de sa phrase | La phrase sur toute la largeur, le prix juste dessous ; une dernière tuile seule prend la rangée entière (mots inchangés) |
+| JJ4 | Fondateurs trop petits sur l'accueil | Sous la photo du directeur, 200 px chacun, nom et rôle dessous ; au téléphone, après le lien |
+| JJ5 | Texte secondaire à 17 px | 18 px partout (`--t-petit`) |
+
+Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte coupé au bord, de 390 à 1440 px. Aucune image agrandie à 390, 1024 et 1440 px. Tests : 69, OK.
+
+**Représentant dans l'Union européenne.** Le réglage existe dans l'application (console d'administration, Protection des enfants, clé `conformite.representant_ue`), avec « Rewayah Academy » par défaut. Le site public, construit sans compte, ne peut pas le lire : le scénario `scenarios_pe_code_conduite_v2.sql` interdit la lecture anonyme. Il affiche donc la valeur par défaut. Quand l'administration aura saisi un autre nom, une ligne du contenu du site suffira à le reprendre.
 
 ## Hors de portée de l'agent
 

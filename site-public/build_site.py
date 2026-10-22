@@ -536,7 +536,7 @@ def accueil_chapitres(page: dict, images: dict) -> str:
         sec = s[sid]
         textes.append(
             f'<article class="chapitre" id="{esc(sid)}" aria-labelledby="chapitre-{sid}" data-chapitre="{i}">'
-            f'<h2 id="chapitre-{sid}">{titre_html(sec["title"])}</h2>{paragraphes(sec)}{points_liste(sec)}{liens_section(sec)}'
+            f'<h2 id="chapitre-{sid}">{titre_html(sec["title"])}</h2>{paragraphes(sec)}{liens_section(sec)}'
             f'<div class="chapitre__image-mobile">{scene(images, chapitres[i][1], "860px" if (images["images"][chapitres[i][1]].get("calques") or {}).get("anime") == "mains" else "92vw", "chapitres__image-mobile")}</div>'
             '</article>')
     return f'''<section class="chapitres" aria-label="Pour vos enfants et pour vous">
@@ -620,20 +620,20 @@ def accueil_confiance(page: dict, images: dict, mot: dict | None = None, fondate
     vers ce mot. Dessous, les trois engagements cote a cote. La page Academie montre la meme photo en buste. Le titre
     vient avant la photo dans le document : un lecteur d'ecran l'entend d'abord ; la grille place la photo a gauche."""
     sec = _sections_par_id(page)["confiance"]
-    # Les deux autres fondateurs, en petit, sous le lien : la phrase dit trois, la bande en montre trois.
+    # Les deux autres fondateurs sous la photo du directeur : la phrase dit trois, la bande en montre trois.
     rangee = "".join(
-        f'<li>{portrait(images, ident, "112px", "portrait--vignette")}<p><span class="mot__nom">{esc(nom)}</span>'
+        f'<li>{portrait(images, ident, "(max-width: 839px) 40vw, 200px", "portrait--vignette")}<p><span class="mot__nom">{esc(nom)}</span>'
         f'<span class="mot__role">{esc(role)}</span></p></li>' for nom, role, ident in (fondateurs or []))
-    rangee = f'\n    <ul class="panneau__fondateurs" data-revele-enfants>{rangee}</ul>' if rangee else ""
+    rangee = f'\n  <ul class="panneau__fondateurs" data-revele-enfants>{rangee}</ul>' if rangee else ""
     return f'''<section class="panneau" id="confiance" aria-labelledby="confiance-titre">
   <div class="panneau__in">
     <div class="panneau__tete" data-revele>
       <h2 id="confiance-titre">{titre_html(sec["title"])}</h2>
       <p class="panneau__depuis">{titre_html("Fondée le 1er mai 2024 par trois spécialistes du Coran.")}</p>
     </div>{citation_accueil(mot)}
-    <div class="action-row" data-revele>{bouton("Lire le mot du directeur", "/fr/academie#mot", "contour")}</div>{rangee}
+    <div class="action-row" data-revele>{bouton("Lire le mot du directeur", "/fr/academie#mot", "contour")}</div>
   </div>
-  <div class="panneau__photo" data-revele>{portrait(images, "portrait-directeur-visage", TAILLES_PORTRAIT, "portrait--visage")}</div>
+  <div class="panneau__photo" data-revele>{portrait(images, "portrait-directeur-visage", TAILLES_PORTRAIT, "portrait--visage")}</div>{rangee}
   <ul class="panneau__promesses" data-revele-enfants>
     <li><h3>{titre_html("Un programme qui avance")}</h3><p>{texte_html("Chaque étape a son objectif et sa date limite.")}</p></li>
     <li><h3>{titre_html("Un suivi pour les familles")}</h3><p>{texte_html("Retrouvez les séances et le travail à préparer dans votre espace familial.")}</p></li>
