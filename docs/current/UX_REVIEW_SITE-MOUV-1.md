@@ -633,6 +633,8 @@ Ensuite : la porte du haut de l'accueil, un peu plus petite au bureau, ne touche
 | II6 | Tache au pied du socle (haut de l'accueil) | Le bout droit du sol s'efface, comme le bout gauche du tapis |
 | II7 | « Les cours en bref » : bande calme | Les lignes de l'encart en tuiles, deux par rangée, de même hauteur (mots inchangés) |
 | II8 | « Un horaire fixe » : titre et texte décalés | Alignés par le haut |
+| II9 | L'accueil ne montre qu'une photo ; « trois spécialistes » pour un seul visage | Les deux autres fondateurs, en petit, dans la bande « Accompagné à chaque étape », sous le lien vers le mot du directeur |
+| II10 | « Une petite classe » : l'écran le plus vide | La classe vue du dessus un peu plus grande |
 
 ## Hors de portée de l'agent
 

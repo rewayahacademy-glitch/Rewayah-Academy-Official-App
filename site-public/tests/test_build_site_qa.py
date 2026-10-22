@@ -203,7 +203,7 @@ class GeneratedSiteQA(unittest.TestCase):
         # Une vraie photo (le directeur) n'est pas une illustration : ni « Illustration » ni texte alternatif vide.
         images = json.loads((SITE / "content" / "images.json").read_text(encoding="utf-8"))
         # Accueil : le visage du directeur. Academie : son mot, puis les deux autres fondateurs, chacun avec son portrait.
-        for route, nombre in (("/fr/", 1), ("/fr/academie", 3)):
+        for route, nombre in (("/fr/", 3), ("/fr/academie", 3)):
             source = self.page_file(route).read_text(encoding="utf-8")
             portraits = re.findall(r'<figure class="portrait[^"]*">.*?</figure>', source, re.S)
             with self.subTest(route=route):

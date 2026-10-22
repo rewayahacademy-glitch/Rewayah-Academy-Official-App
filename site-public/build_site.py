@@ -614,19 +614,24 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
 </section>'''
 
 
-def accueil_confiance(page: dict, images: dict, mot: dict | None = None) -> str:
+def accueil_confiance(page: dict, images: dict, mot: dict | None = None, fondateurs: list | None = None) -> str:
     """Une bande sombre sur toute la largeur. En haut, le visage du directeur, cadre en largeur et cale au bord gauche
     de l'ecran (la photo y est coupee), a la hauteur du titre ; a cote, la date, une phrase de son mot signee et le lien
     vers ce mot. Dessous, les trois engagements cote a cote. La page Academie montre la meme photo en buste. Le titre
     vient avant la photo dans le document : un lecteur d'ecran l'entend d'abord ; la grille place la photo a gauche."""
     sec = _sections_par_id(page)["confiance"]
+    # Les deux autres fondateurs, en petit, sous le lien : la phrase dit trois, la bande en montre trois.
+    rangee = "".join(
+        f'<li>{portrait(images, ident, "112px", "portrait--vignette")}<p><span class="mot__nom">{esc(nom)}</span>'
+        f'<span class="mot__role">{esc(role)}</span></p></li>' for nom, role, ident in (fondateurs or []))
+    rangee = f'\n    <ul class="panneau__fondateurs" data-revele-enfants>{rangee}</ul>' if rangee else ""
     return f'''<section class="panneau" id="confiance" aria-labelledby="confiance-titre">
   <div class="panneau__in">
     <div class="panneau__tete" data-revele>
       <h2 id="confiance-titre">{titre_html(sec["title"])}</h2>
       <p class="panneau__depuis">{titre_html("Fondée le 1er mai 2024 par trois spécialistes du Coran.")}</p>
     </div>{citation_accueil(mot)}
-    <div class="action-row" data-revele>{bouton("Lire le mot du directeur", "/fr/academie#mot", "contour")}</div>
+    <div class="action-row" data-revele>{bouton("Lire le mot du directeur", "/fr/academie#mot", "contour")}</div>{rangee}
   </div>
   <div class="panneau__photo" data-revele>{portrait(images, "portrait-directeur-visage", TAILLES_PORTRAIT, "portrait--visage")}</div>
   <ul class="panneau__promesses" data-revele-enfants>
@@ -748,7 +753,8 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: st
 </section>'''
 
 
-def render_home(page: dict, images: dict, tarifs: dict, cta: str, mot: dict | None = None) -> str:
+def render_home(page: dict, images: dict, tarifs: dict, cta: str, mot: dict | None = None,
+                fondateurs: list | None = None) -> str:
     fin = _sections_par_id(page)["footer"]
     return "".join((
         accueil_porte(page, images, cta),
@@ -756,7 +762,7 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str, mot: dict | No
         accueil_chapitres(page, images),
         accueil_etapes(page, images),
         accueil_tarifs(page, tarifs),
-        accueil_confiance(page, images, mot),
+        accueil_confiance(page, images, mot, fondateurs),
         accueil_faq(page, tarifs),
         # Comme les pages principales, l'accueil se referme sur une phrase qui est le lien : elle dit pour qui.
         bande_finale((fin.get("paragraphs") or [fin["title"]])[0], "L’inscription se fait dans l’application Rewayah.",
@@ -1194,7 +1200,8 @@ def donnees_structurees(origin: str) -> str:
 
 def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing: bool,
                 tarifs: dict | None = None, today: date | None = None, avis: dict | None = None,
-                direction: dict | None = None, images: dict | None = None, mot: dict | None = None) -> str:
+                direction: dict | None = None, images: dict | None = None, mot: dict | None = None,
+                fondateurs: list | None = None) -> str:
     if tarifs is None:
         tarifs, _ = tarifs_mod.charger_tarifs(env={}, journal=lambda *_: None)
     if avis is None:
@@ -1229,7 +1236,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         if page.get("status") == "blocked" else ""
     )
     if route == "/fr/":
-        main = render_home(page, images, tarifs, cta, mot)
+        main = render_home(page, images, tarifs, cta, mot, fondateurs)
         classe_page = "page-accueil"
     else:
         main = hero_interieur(route, page, reglage, images, cta, status, tarifs, today) + render_inner(route, page, reglage, images, tarifs, today, avis)
@@ -1361,11 +1368,16 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     direction, images = load_direction(pages)
     # Le mot du directeur (page Academie) : l'accueil en reprend une phrase, signee, a cote de sa photo.
     mot = next((s for p in pages.values() for s in p["sections"] if s.get("citation")), None)
+    # Les deux autres fondateurs (page Academie), avec leur portrait : l'accueil les montre a cote du directeur.
+    profils = next((s["profils"] for p in pages.values() for s in p["sections"] if s.get("profils")), [])
+    portraits_f = (direction["pages"].get("/fr/academie", {}).get("portraits") or {}).get("fondateurs") or {}
+    deja = mot["signature"]["nom"] if mot else None
+    fondateurs = [(f["nom"], f["role"], portraits_f[f["nom"]]) for f in profils if f["nom"] != deja and f["nom"] in portraits_f]
     for route, page in pages.items():
         destination = output_file(output, route)
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(render_page(route, page, site, origin, allow_indexing, tarifs, today, avis,
-                                           direction, images, mot), encoding="utf-8")
+                                           direction, images, mot, fondateurs), encoding="utf-8")
     assets_out = output / "fr" / "assets"
     assets_out.mkdir(parents=True, exist_ok=True)
     sources = []
