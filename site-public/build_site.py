@@ -681,11 +681,12 @@ FLECHE = ('<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><p
 
 
 def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: str = "inscription",
-                 seuil: bool = False) -> str:
+                 seuil: bool = False, arche: str = "") -> str:
     """La fin de page, sous deux formes.
     - Accueil et pages principales (seuil, direction.json fin.seuil) : la page se referme sur un titre de la taille de
       son titre d'ouverture, pose sur le fond, et ce titre est le lien ; chaque page finit sur sa propre phrase. Quand le
-      libelle de l'action differe du titre, les lecteurs d'ecran l'entendent a la suite.
+      libelle de l'action differe du titre, les lecteurs d'ecran l'entendent a la suite. L'accueil (arche) se referme
+      sous le haut d'une arche, comme il s'ouvre sur une porte.
     - Autres pages : une bande sobre et son bouton."""
     externe = href.startswith("mailto:")
     messagerie = '<span class="sr-only"> (ouvre votre messagerie)</span>' if externe else ""
@@ -693,7 +694,7 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: st
         debut, _, dernier = titre.rpartition(" ")
         texte = (titre_html(debut) + " " if debut else "") + f'<span class="insecable">{titre_html(dernier)}{FLECHE}</span>'
         action = "" if label.rstrip(".").casefold() == titre.rstrip(".").casefold() else f'<span class="sr-only"> ({esc(label)})</span>'
-        return f'''<section class="appel appel--seuil" id="{esc(identifiant)}" aria-labelledby="appel-titre">
+        return f'''<section class="appel appel--seuil{" appel--porte" if arche else ""}" id="{esc(identifiant)}" aria-labelledby="appel-titre">{arche}
   <h2 id="appel-titre" class="appel__titre" data-revele><a class="appel__titre-lien" href="{esc(href)}">{texte}{action}{messagerie}</a></h2>
   <p class="appel__phrase" data-revele>{texte_html(phrase)}</p>
 </section>'''
@@ -716,7 +717,8 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str, mot: dict | No
         accueil_faq(page, tarifs),
         # Comme les pages principales, l'accueil se referme sur une phrase qui est le lien : elle dit pour qui.
         bande_finale((fin.get("paragraphs") or [fin["title"]])[0], "Rien n’est facturé avant l’ouverture de la classe.",
-                     page["cta"]["label"], page["cta"]["href"], seuil=True),
+                     page["cta"]["label"], page["cta"]["href"], seuil=True,
+                     arche=scene(images, "arche-haut", "(max-width: 839px) 86vw, 640px", "appel__arche")),
     ))
 
 

@@ -1717,3 +1717,12 @@ li, dd { text-wrap: wrap; }
 @media (min-width: 840px) { .porte__scene { width: 104vw; inset-inline-end: -9vw; } }
 @media (max-width: 599px) { .porte__scene { width: 200vw; margin-inline-start: -100vw; } }
 
+/* Accueil : la page se referme sous le haut d'une arche, comme elle s'ouvre sur une porte ; tout est centre. */
+.appel--porte { display: block; text-align: center; }
+.appel--porte .appel__arche { width: min(86%, 640px); margin: 0 auto calc(-1 * var(--e-12)); }
+/* La legende dans le coin vide, en haut a droite de l'arche : le titre passe sous l'arche, pas sur la legende. */
+.appel--porte .appel__arche figcaption { position: absolute; top: 0; inset-inline-end: 0; }
+.appel--porte .appel__titre { position: relative; max-width: 11em; margin-inline: auto; }
+.appel--porte .appel__phrase { margin: var(--e-6) auto 0; max-width: 46ch; padding: 0; }
+@media (min-width: 840px) { .page-accueil .appel--porte { display: block; } .page-accueil .appel--porte .appel__phrase { grid-column: auto; } }
+
