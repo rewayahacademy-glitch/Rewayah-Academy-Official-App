@@ -1,5 +1,5 @@
 """Refait la police arabe inscrite dans styles/site.css : Reem Kufi (assets/fonts du depot), une koufi d'ornement qui
-place les voyelles (decision du directeur du 22/10/2026, registre de marque M-31), graisse 600 (des voyelles moins fines), reduite aux lettres
+place les voyelles (decision du directeur du 22/10/2026, registre de marque M-31), graisse 700 (des voyelles assez epaisses pour se voir), reduite aux lettres
 arabes du contenu (content/pages.json et content/direction.json).
 
 A relancer apres tout ajout de texte arabe, sinon ces lettres s'affichent dans une police du systeme.
@@ -22,7 +22,7 @@ ARABE = r"[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]"
 def main() -> None:
     contenu = "".join((SITE / "content" / f).read_text(encoding="utf-8") for f in ("pages.json", "direction.json"))
     lettres = "".join(sorted(set(re.findall(ARABE, contenu))))
-    police = instancer.instantiateVariableFont(TTFont(SOURCE), {"wght": 600})
+    police = instancer.instantiateVariableFont(TTFont(SOURCE), {"wght": 700})
     options = subset.Options()
     options.layout_features = ["*"]  # formes initiales, medianes, finales et ligatures de l'arabe
     options.flavor = "woff2"

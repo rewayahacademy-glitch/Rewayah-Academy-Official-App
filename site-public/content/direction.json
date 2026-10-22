@@ -137,7 +137,7 @@
         "label": "Commencer mon inscription",
         "href": "/connexion",
         "seuil": true,
-        "forme": "prix"
+        "forme": "centre"
       },
       "figures": {},
       "pleine": [],

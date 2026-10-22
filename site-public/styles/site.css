@@ -1,11 +1,11 @@
 /* Reem Kufi (OFL, licence dans assets/reem-kufi-OFL.txt), koufi d'ornement choisie par le directeur le 22/10/2026
-   (registre de marque M-31), graisse 600, reduite aux lettres arabes du contenu (les arches de Cours) : inscrite ici, elle n'ajoute aucun fichier au
+   (registre de marque M-31), graisse 700, reduite aux lettres arabes du contenu (les arches de Cours) : inscrite ici, elle n'ajoute aucun fichier au
    paquet deploye. Apres un ajout de texte arabe, relancer site-public/police_arabe.py. */
 @font-face {
   font-family: 'Reem Kufi';
-  src: url('data:font/woff2;base64,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') format('woff2');
+  src: url('data:font/woff2;base64,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') format('woff2');
   font-style: normal;
-  font-weight: 600;
+  font-weight: 700;
   font-display: swap;
   unicode-range: U+0600-06FF;
 }
@@ -359,7 +359,7 @@ p { text-wrap: wrap; max-width: 60ch; }
 p, li, dd { overflow-wrap: break-word; }
 li, dd { text-wrap: wrap; }
 /* Puces des encarts et des cartes de prix : pas de mot seul en fin de puce (« ne convient / pas. »). Lignes courtes, propres a ces listes. */
-.fiche__lignes li, .champ__inclus li { text-wrap: pretty; }
+.fiche__lignes li { text-wrap: pretty; }
 .appel__phrase { overflow-wrap: anywhere; }
 .section__grille > *, .contact-ligne > *, .entete-page > *, .groupe > *, .faq-ouverte > * { min-width: 0; }
 .chapitres { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); padding: 0 var(--marge) var(--respire); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
@@ -461,9 +461,6 @@ li, dd { text-wrap: wrap; }
 .champ h3 { font-size: var(--t-titre); line-height: 1.04; letter-spacing: -0.02em; }
 .champ__public { margin-top: var(--e-4); max-width: 44ch; }
 .champ__prix { margin-top: var(--e-8); display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--e-3); }
-.champ__inclus { margin-top: auto; padding-top: var(--e-10); display: grid; gap: var(--e-3); max-width: none; list-style: none; }
-.champ__inclus li { padding-inline-start: 1.4em; position: relative; }
-.champ__inclus li::before { content: ''; position: absolute; inset-inline-start: 0; top: .5em; width: .6em; height: .75em; border-radius: var(--arche); background: currentColor; opacity: .55; }
 .champ__montant { font-family: var(--police-titre); font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .champ__periode { font-weight: 600; }
 .champ--enfant { background: var(--champ-fort); color: var(--encre); }
@@ -476,7 +473,6 @@ li, dd { text-wrap: wrap; }
 .champ h3 { font-size: var(--t-moyen); line-height: 1.2; letter-spacing: -0.015em; }
 .champ__prix { margin-top: var(--e-6); column-gap: var(--e-4); }
 .champ__montant { font-size: clamp(64px, 10.4vw, 150px); line-height: 1; letter-spacing: -0.04em; }
-.champ__inclus { padding-top: var(--e-8); }
 /* Empiles au telephone, les deux prix gardent un vrai ecart entre eux. */
 @media (max-width: 599px) { .deux-champs__grille { row-gap: var(--e-16); } }
 @media (min-width: 600px) {
@@ -484,7 +480,6 @@ li, dd { text-wrap: wrap; }
   .deux-champs__grille { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto auto 1fr; column-gap: var(--e-6); }
   .champ { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; align-content: start; min-height: 0; padding: 0; }
   .champ h3 { align-self: end; }
-  .champ__inclus { margin-top: 0; align-self: start; font-size: var(--t-corps); }
   .deux-champs__grille { column-gap: var(--e-16); }
 }
 
@@ -1282,7 +1277,6 @@ li, dd { text-wrap: wrap; }
   .entete-page--haut-prix .entete-page__arche { grid-column: 1; width: 100%; justify-self: start; }
   .entete-page--haut-prix .entete-prix { grid-column: 2; }
   /* Cartes de prix cote a cote, plus compactes qu'au bureau. */
-  .champ__inclus { font-size: var(--t-corps); }
   /* La bande d'appel ne garde pas un ecran de vide entre la phrase et le grand mot. */
   .appel__lien { min-height: 0; }
   /* Titres de section a 38 px ; images plafonnees ; pied de page en trois colonnes. */
@@ -1313,7 +1307,7 @@ li, dd { text-wrap: wrap; }
 }
 
 /* --- Cours : dans chaque arche du parcours, ce que l'eleve lit a cette etape --------------------- */
-.parcours__arabe { font-family: var(--police-arabe-ornement); font-weight: 600; line-height: 1.6; letter-spacing: 0; word-spacing: .15em; white-space: nowrap; }
+.parcours__arabe { font-family: var(--police-arabe-ornement); font-weight: 700; line-height: 1.6; letter-spacing: 0; word-spacing: .15em; white-space: nowrap; }
 @media (max-width: 839px) {
   .parcours--haut .parcours__etape { align-items: center; gap: var(--e-4); padding-block: var(--e-5); }
   /* Marge physique : le libelle arabe est en rtl, sa marge « de debut » serait a droite. */
@@ -1831,21 +1825,22 @@ li, dd { text-wrap: wrap; }
 
 /* Cours : les lettres arabes des arches s'ecrivent, arche apres arche (demande du directeur, 22/10/2026). Les lettres
    separees paraissent une a une, de droite a gauche ; un mot lie s'ecrit d'un trait, de droite a gauche, sans que ses
-   lettres soient separees. Environ 3 s en tout, une seule fois ; au survol, l'arche s'ecrit de nouveau (motion.js).
+   lettres soient separees. Avant d'etre ecrit, chaque mot est deja la en filigrane (18 %) : aucune arche n'est vide,
+   meme sur une capture. 2 s en tout, une seule fois ; au survol, l'arche s'ecrit de nouveau (motion.js).
    Sans JavaScript ou en mouvement reduit, les lettres sont la, immobiles. */
-@keyframes lettre-ecrite { from { opacity: 0; transform: translateY(.35em); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
-@keyframes lettre-ecrite-bis { from { opacity: 0; transform: translateY(.35em); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes lettre-ecrite { from { opacity: .18; filter: blur(4px); } to { opacity: 1; filter: none; } }
+@keyframes lettre-ecrite-bis { from { opacity: .18; filter: blur(4px); } to { opacity: 1; filter: none; } }
 @keyframes mot-ecrit { from { -webkit-mask-position: 0 0; mask-position: 0 0; } to { -webkit-mask-position: 100% 0; mask-position: 100% 0; } }
 @keyframes mot-ecrit-bis { from { -webkit-mask-position: 0 0; mask-position: 0 0; } to { -webkit-mask-position: 100% 0; mask-position: 100% 0; } }
 @media (prefers-reduced-motion: no-preference) {
-  .parcours__etape:nth-child(1) { --base: 320ms; }
-  .parcours__etape:nth-child(2) { --base: 1080ms; }
-  .parcours__etape:nth-child(3) { --base: 1760ms; }
-  .parcours__etape:nth-child(4) { --base: 2480ms; }
+  .parcours__etape:nth-child(1) { --base: 200ms; }
+  .parcours__etape:nth-child(2) { --base: 620ms; }
+  .parcours__etape:nth-child(3) { --base: 1000ms; }
+  .parcours__etape:nth-child(4) { --base: 1400ms; }
   .js .parcours__lettre { display: inline-block; }
-  .js .parcours.est-visible .parcours__lettre { animation: lettre-ecrite 400ms var(--mv-accentuee) calc(var(--base, 0ms) + var(--l, 0) * 160ms) both; }
-  .js .parcours__mot { display: inline-block; padding: .25em .2em; margin: -.25em -.2em; -webkit-mask-image: linear-gradient(to left, #000 45%, transparent 55%); mask-image: linear-gradient(to left, #000 45%, transparent 55%); -webkit-mask-size: 250% 100%; mask-size: 250% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: 100% 0; mask-position: 100% 0; }
-  .js .parcours.est-visible .parcours__mot { animation: mot-ecrit 760ms cubic-bezier(.45, 0, .25, 1) var(--base, 0ms) both; }
+  .js .parcours.est-visible .parcours__lettre { animation: lettre-ecrite 360ms var(--mv-accentuee) calc(var(--base, 0ms) + var(--l, 0) * 110ms) both; }
+  .js .parcours__mot { display: inline-block; padding: .25em .2em; margin: -.25em -.2em; -webkit-mask-image: linear-gradient(to left, #000 45%, rgb(0 0 0 / .18) 55%); mask-image: linear-gradient(to left, #000 45%, rgb(0 0 0 / .18) 55%); -webkit-mask-size: 250% 100%; mask-size: 250% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+  .js .parcours.est-visible .parcours__mot { animation: mot-ecrit 600ms cubic-bezier(.45, 0, .25, 1) var(--base, 0ms) both; }
   .js .parcours__etape.rejoue-a, .js .parcours__etape.rejoue-b { --base: 0ms; }
   .js .parcours.est-visible .rejoue-a .parcours__lettre { animation-name: lettre-ecrite-bis; }
   .js .parcours.est-visible .rejoue-a .parcours__mot { animation-name: mot-ecrit-bis; }
@@ -1885,3 +1880,40 @@ li, dd { text-wrap: wrap; }
 .deux-champs__communs li::before { content: ''; position: absolute; inset-inline-start: 0; top: .5em; width: .6em; height: .75em; border-radius: var(--arche); background: currentColor; opacity: .55; }
 @media (min-width: 600px) { .deux-champs__communs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 1100px) { .deux-champs__communs { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* --- Recette 24 (22/10/2026) ------------------------------------------------------------------------------------- */
+/* Cours : la derniere arche en lavande, et non en blanc pur ; le mot arabe dans sa couleur. */
+[data-ambiance="violet"] .parcours--haut .parcours__etape:nth-child(4) { background: #EEE6FA; color: #25113F; }
+[data-ambiance="violet"] .parcours--haut .parcours__etape:nth-child(4) .parcours__arabe { color: #4E2983; }
+
+/* Accueil, les questions des familles : un accordeon sur une colonne, le titre et ses liens a gauche. */
+.faq-ouverte__liste { gap: var(--e-3); }
+.faq-ouverte__question details { padding: var(--e-6) var(--e-8); border-radius: var(--r-lg); background: #4E2983; }
+.faq-ouverte__question summary { display: flex; align-items: center; justify-content: space-between; gap: var(--e-6); list-style: none; cursor: pointer; }
+.faq-ouverte__question summary::-webkit-details-marker { display: none; }
+.faq-ouverte__question summary h3 { margin: 0; max-width: none; }
+.faq-ouverte__question summary::after { content: ''; flex: none; width: 12px; height: 12px; margin-top: -6px; border-right: 2.5px solid currentColor; border-bottom: 2.5px solid currentColor; transform: rotate(45deg); transition: transform var(--mv-micro) var(--mv-entree); }
+.faq-ouverte__question details[open] summary::after { margin-top: 6px; transform: rotate(-135deg); }
+.faq-ouverte__question summary:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 6px; border-radius: var(--r-xs); }
+.faq-ouverte__question details p { margin-top: var(--e-4); }
+@media (min-width: 840px) {
+  .faq-ouverte { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: start; }
+  .faq-ouverte .faq-ouverte__tete { grid-column: 1 / span 5; }
+  .faq-ouverte .faq-ouverte__liste { grid-column: 7 / -1; grid-template-columns: minmax(0, 1fr); row-gap: var(--e-3); }
+}
+
+/* Accueil, le prix : ce qui vaut pour tous, en tuiles, sans puce ; l'observation, une phrase sous le prix enfant. */
+.deux-champs__communs li { padding: var(--e-6); border-radius: var(--r-lg); background: #4E2983; font-weight: 600; }
+.deux-champs__communs li::before { content: none; }
+.champ__plus { margin-top: var(--e-3); max-width: 44ch; }
+
+/* Accueil, les chapitres : la premiere phrase plus grande, le texte au milieu de l'arche epinglee, moins de vide. */
+@media (min-width: 840px) {
+  .chapitre { min-height: 72svh; }
+  .chapitre h2 + p { font-size: var(--t-moyen); line-height: 1.35; }
+}
+
+/* Accueil : la porte grandit d'un quart au plus, autour de l'entree, et reste au centre de son cadre. */
+@media (min-width: 840px) and (prefers-reduced-motion: no-preference) {
+  .js .porte__scene { transform: scale(calc(1 + var(--z2, 0) * .25)); }
+}

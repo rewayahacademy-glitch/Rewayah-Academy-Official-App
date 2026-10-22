@@ -224,6 +224,7 @@ Inspection après ces corrections :
 | Recette 21 (jurés Sonnet) | 7,70 | 6,33 | 6,17 | « presque » |
 | Recette 22 (jurés Sonnet) | 7,67 | 6,73 | 6,33 | « presque » |
 | Recette 23 (jurés Sonnet) | 7,57 | 7,18 | 6,50 | « presque » |
+| Recette 24 (jurés Sonnet) | 7,63 | 6,87 | 6,50 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -604,6 +605,20 @@ Ensuite : la porte du haut de l'accueil, un peu plus petite au bureau, ne touche
 | GG5 | Zoom de la porte sur des visages agrandis | La scène grandit d'une fois et demie au plus, la classe s'ouvre plus tôt ; captures du mouvement refaites |
 | GG6 | « Les cours en bref » : puces petites | La première ligne sert de sous-titre, le montant en très grand, les autres lignes sans puce ; sur l'accueil, ce qui vaut pour les enfants et les adultes n'est dit qu'une fois, sous les deux prix |
 | GG7 | Portraits des fondateurs à la moitié de celui du directeur | Affichés à 336 px, sans agrandir leurs fichiers (cadrage plus large, la tête à 60 %), netteté légèrement relevée. Une photo plus nette d'Ahmad Diallo permettrait d'aller plus loin |
+
+**Photos et parcours des fondateurs (22/10, suite).** Ahmad Diallo a choisi une autre photo de lui, plus nette : elle remplace la première, traitée comme les deux autres (détourée, mur du directeur, tête et épaules, même étalonnage, visage non retouché). Les deux fondateurs s'affichent à 400 px sans agrandir leurs fichiers. Leurs parcours suivent leurs propres textes : « Institut des qiraat (lectures du Coran) » en République de Guinée pour les deux ; Université du roi Abdelaziz à Djeddah pour Ahmad Diallo ; Mamadou Alimou Diallo est étudiant à l'Université islamique de Médine (la « licence » publiée jusque-là est retirée). L'arabe est gardé au registre (M-29).
+
+**Après la recette 24.** Les trois jurés relèvent les arches de Cours vides sur les captures (prises pendant l'écriture), le bloc de prix de l'accueil encore en petites puces, les chapitres de l'accueil (texte petit et vide autour) et la fin de Tarifs qui redit les prix une troisième fois.
+
+| # | Relevé | Correction |
+|---|---|---|
+| HH1 | Arches 3 et 4 vides sur les captures | Chaque mot est là en filigrane (18 %) dès le premier affichage, l'écriture le remplit ; elle dure 2 s ; police en graisse 700 (voyelles plus épaisses) ; la dernière arche en lavande |
+| HH2 | Bloc de prix de l'accueil en petites puces | Ce qui vaut pour tous en quatre tuiles, sans puce ; l'observation d'une séance en phrase sous le prix des enfants |
+| HH3 | Questions des familles : six réponses en deux colonnes | Un accordéon sur une colonne (details et summary), la première question ouverte, le titre et ses liens à gauche |
+| HH4 | Chapitres de l'accueil : texte petit, beaucoup de vide | La première phrase de chaque chapitre plus grande ; chapitres moins hauts |
+| HH5 | Tarifs finit sur ses prix une troisième fois | Le bandeau centré, sans prix (le seul de ce type sur le site) |
+| HH6 | Académie redit le titre « Apprendre avec un enseignant » de Cours | « Ce que nous enseignons », comme le dit son texte |
+| HH7 | Fin du zoom de la porte décentrée | La scène grandit d'un quart au plus |
 
 ## Hors de portée de l'agent
 

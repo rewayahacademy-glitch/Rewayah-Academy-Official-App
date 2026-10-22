@@ -584,10 +584,6 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
         pause = f", dont {f['pause_minutes']} min de pause" if f["pause_minutes"] else ""
         return f"Trois séances de {texte} par semaine{pause}"
 
-    # Ce que le prix comprend : les phrases des encarts de la décision du 18/10 (tarifs.json, site_public).
-    def inclus(*lignes: str) -> str:
-        return '<ul class="champ__inclus">' + "".join(f"<li>{texte_html(l)}</li>" for l in lignes) + "</ul>"
-
     enfant = tarifs_mod.fmt_montant(p["tarifEnfantMineur"], devise)
     adulte = tarifs_mod.fmt_montant(p["tarifAdulteMineur"], devise)
     age = p["ageAdulte"]
@@ -602,7 +598,7 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
       <h3>{titre_html("Enfants et adolescents")}</h3>
       <p class="champ__prix"><span class="champ__montant">{esc(enfant)}</span><span class="champ__periode">par mois, {hors_taxes}</span></p>
       <p class="champ__public">{texte_html(f"De {tarifs_mod.AGE_ENFANT_MIN} à {age - 1} ans. {duree('enfant')}, dans une classe de {c['ouvertureMinimum']} à {c['tailleEnfant']} élèves.")}</p>
-      {inclus("L’observation d’une séance, deux minutes, en silence")}
+      <p class="champ__plus">{texte_html("L’observation d’une séance, deux minutes, en silence.")}</p>
     </article>
     <article class="champ champ--adulte" data-revele>
       <h3>Adultes</h3>
@@ -673,12 +669,14 @@ QUESTIONS_ACCUEIL = (
 
 
 def accueil_faq(page: dict, tarifs: dict) -> str:
-    """Les questions ouvertes, sur deux colonnes : la question en titre, la reponse dessous, sans boite ni signe plus."""
+    """Les questions des familles en accordeon, sur une colonne : la premiere ouverte, les autres se deplient
+    (details et summary : sans JavaScript, au clavier et au lecteur d'ecran)."""
     sec = _sections_par_id(page)["faq-articles"]
     age_adulte = str(tarifs_mod.politique_affichee(tarifs)["ageAdulte"])
     questions = "".join(
-        f'<li class="faq-ouverte__question"><h3>{titre_html(q)}</h3><p>{texte_html(r.replace("{age_adulte}", age_adulte))}</p></li>'
-        for q, r in QUESTIONS_ACCUEIL)
+        f'<li class="faq-ouverte__question"><details{" open" if i == 0 else ""}><summary><h3>{titre_html(q)}</h3></summary>'
+        f'<p>{texte_html(r.replace("{age_adulte}", age_adulte))}</p></details></li>'
+        for i, (q, r) in enumerate(QUESTIONS_ACCUEIL))
     return f'''<section class="faq-ouverte" id="faq-articles" aria-labelledby="faq-titre">
   <div class="faq-ouverte__tete" data-revele><h2 id="faq-titre">{titre_html(sec["title"])}</h2><div class="faq-ouverte__intro">{paragraphes(sec)}
     <ul class="liste-liens"><li>{lien_fleche("Comprendre le déroulement des cours", "/fr/cours")}</li><li>{lien_fleche("Accompagner son enfant", "/fr/familles")}</li><li>{lien_fleche("Consulter l’aide", "/fr/aide")}</li><li>{lien_fleche("Voir la page des avis", "/fr/avis")}</li></ul></div></div>
