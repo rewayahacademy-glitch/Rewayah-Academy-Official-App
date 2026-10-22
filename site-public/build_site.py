@@ -1004,7 +1004,7 @@ def section_mot(section: dict, number: int, images: dict, ident: str | None, pro
 
 
 # Un portrait de fondateur : une colonne de profil, 300 px au plus.
-TAILLES_PROFIL = "(max-width: 367px) calc(100vw - 32px), 336px"
+TAILLES_PROFIL = "(max-width: 431px) calc(100vw - 32px), 400px"
 
 
 def section_fondateurs(section: dict, number: int, images: dict | None = None, portraits: dict | None = None,

@@ -1809,7 +1809,7 @@ li, dd { text-wrap: wrap; }
 
 /* Academie : chaque fondateur sous son portrait, son nom sur une ligne ; les deux portraits a la meme echelle. */
 .profils .profil { display: block; }
-.profils .profil > .portrait--profil { width: min(100%, 336px); margin-bottom: var(--e-6); }
+.profils .profil > .portrait--profil { width: min(100%, 400px); margin-bottom: var(--e-6); }
 .profils .profil h3 { min-height: 0; }
 
 /* Accueil, « Un horaire fixe, une classe stable » : le titre a gauche, son texte et ses liens dans la colonne de droite. */

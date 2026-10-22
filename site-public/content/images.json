@@ -691,10 +691,10 @@
       }
     },
     "portrait-fondateur-ahmad": {
-      "source": "photo fournie par le directeur le 22/10/2026 (Drive, dossier « Alim & Ahmad », de nuit sous des arches éclairées, en pied), détouré (BiRefNet), posé sur le mur clair de la photo du directeur, cadré tête et épaules en 4:5 (la tête fait 60 % de la hauteur), netteté légèrement relevée, peau éclaircie à la luminosité de celle du directeur, étalonnage A3 de sa photo (ombres #110E20, clairs #EEE6FA, 8 % de gris) ; visage non retouché ; sans métadonnées",
-      "largeur": 338,
-      "hauteur": 422,
-      "alt": "Ahmad Diallo, fondateur de Rewayah Academy, en calotte brodée et tunique sombre, souriant, de face.",
+      "source": "photo choisie par Ahmad Diallo et transmise par le directeur le 22/10/2026 (assis devant une tenture brodée), détouré (BiRefNet), posé sur le mur clair de la photo du directeur, cadré tête et épaules en 4:5 (la tête fait 60 % de la hauteur), netteté légèrement relevée, peau éclaircie à la luminosité de celle du directeur, étalonnage A3 de sa photo (ombres #110E20, clairs #EEE6FA, 8 % de gris) ; visage non retouché ; sans métadonnées",
+      "largeur": 426,
+      "hauteur": 534,
+      "alt": "Ahmad Diallo, fondateur de Rewayah Academy, en calotte brodée et grand boubou, souriant, de face.",
       "photo": {
         "legende": "Ahmad Diallo, fondateur"
       }
