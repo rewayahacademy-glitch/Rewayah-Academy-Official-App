@@ -226,41 +226,20 @@ def formules_editoriales(chemin: Path = TARIFS_FALLBACK) -> dict:
             for nom in ("enfant", "adulte")}
 
 
-def repartir(poids: list[int], total: int = 12, mini: int = 3) -> list[int] | None:
-    """Des largeurs entières proportionnelles aux poids, de somme `total`, chacune d'au moins `mini` (plus fort reste)."""
-    if not poids or len(poids) * mini > total:
-        return None
-    brut = [w * total / sum(poids) for w in poids]
-    parts = [max(mini, int(b)) for b in brut]
-    ordre = sorted(range(len(poids)), key=lambda i: brut[i] - int(brut[i]), reverse=True)
-    while sum(parts) < total:
-        for i in ordre:
-            if sum(parts) < total:
-                parts[i] += 1
-    while sum(parts) > total:
-        i = max((k for k in range(len(parts)) if parts[k] > mini), key=lambda k: parts[k] - brut[k])
-        parts[i] -= 1
-    return parts
-
-
 def places_fiche(phrases: list[str]) -> dict[int, str]:
-    """Au bureau, la place de chaque phrase d'un encart dans une grille de douze colonnes : le prix et sa phrase sur la
-    première rangée ; les phrases longues en tuiles sur la deuxième, les courtes sur la troisième, chacune large à la
-    mesure de son texte, pour que les tuiles d'une rangée aient à peu près le même nombre de lignes."""
-    places = {0: "--c: 4 / span 9; --r: 1", 1: "--c: 1 / span 3; --r: 1"}
+    """Au bureau, la place de chaque phrase d'un encart dans une grille de six colonnes : le prix, puis sa phrase juste
+    dessous ; les phrases longues en tuiles sur une rangée, les courtes sur la suivante, de même largeur dans une rangée
+    (trois tuiles de deux colonnes, deux de trois), pour que les bords des deux rangées tombent sur la même grille."""
+    places = {1: "--c: 1 / -1; --r: 1", 0: "--c: 1 / -1; --r: 2"}
     autres = list(range(2, len(phrases)))
-    longues = [k for k in autres if len(phrases[k]) > 60]
-    courtes = [k for k in autres if len(phrases[k]) <= 60]
-    rang = 2
-    # Une phrase courte garde au moins un tiers de rangée : « Résiliable chaque mois. » tient sur une ligne.
-    for groupe, mini in ((longues, 3), (courtes, 4)):
-        parts = repartir([len(phrases[k]) for k in groupe], mini=mini)
-        if parts:
-            debut = 1
-            for k, s in zip(groupe, parts):
-                places[k] = f"--c: {debut} / span {s}; --r: {rang}"
-                debut += s
-            rang += 1
+    rang = 3
+    for groupe in ([k for k in autres if len(phrases[k]) > 60], [k for k in autres if len(phrases[k]) <= 60]):
+        if not groupe:
+            continue
+        largeur = 6 // len(groupe) if len(groupe) <= 3 else 2
+        for i, k in enumerate(groupe):
+            places[k] = f"--c: {1 + (i * largeur) % 6} / span {largeur}; --r: {rang + (i * largeur) // 6}"
+        rang += (len(groupe) * largeur + 5) // 6
     return places
 
 
@@ -513,16 +492,15 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
         grace = c["grace_jours"]
         etapes = [
             (f"{c['premiere_semaine_jours']} jours",
-             "Après la première séance : vous pouvez arrêter et être remboursé en entier si le cours ne convient pas."),
+             "Après la première séance, pour arrêter et être remboursé en entier si le cours ne convient pas."),
             (f"Le {jour(c['renouvellement_jour'])}",
-             f"Le renouvellement du mois. Si le paiement n’est pas encore passé, des rappels arrivent {rappels} avant."),
+             f"Le renouvellement du mois. Si le paiement n’est pas passé, des rappels {rappels} avant."),
             (f"Du {jour(grace[0])} au {jour(grace[-1])}",
-             "Si le paiement n’est pas arrivé, l’élève suit ses cours et l’impayé s’affiche chez le tuteur,"
-             " ou chez l’élève adulte."),
+             "Sans paiement, l’élève suit ses cours ; l’impayé s’affiche dans le compte."),
             (f"À partir du {jour(c['suspension_jour'])}",
              f"Sans paiement, l’accès aux séances est suspendu. La place est gardée {c['place_gardee_jours']} jours."),
             (f"Le {jour(c['place_liberee_jour'])}",
-             "La place est libérée pour la liste d’attente. Le retour reste possible sans frais, dans une nouvelle classe."),
+             "La place est libérée pour la liste d’attente. Le retour reste possible, sans frais."),
         ]
         # Les dates sont celles de la politique affichée : si elle n'est pas encore en vigueur, la page le dit.
         effet = politique_affichee(tarifs)["dateEffet"]

@@ -249,7 +249,7 @@ class PageGeneree(unittest.TestCase):
         # suspension le 4, place gardée 14 jours, libérée le 18 ; première semaine : 7 jours).
         plat = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", self.tarifs_html).replace(NBSP, " "))
         for attendu in ("Les dates du paiement", "7 jours Après la première séance", "Le 1er Le renouvellement du mois",
-                        "des rappels arrivent 7 jours, 3 jours et 1 jour avant", "Du 1er au 3", "À partir du 4 Sans paiement",
+                        "des rappels 7 jours, 3 jours et 1 jour avant", "Du 1er au 3", "À partir du 4 Sans paiement",
                         "La place est gardée 14 jours", "Le 18 La place est libérée"):
             self.assertIn(attendu, plat)
         # Un nombre ne se separe pas de son unite en fin de ligne.
@@ -269,20 +269,21 @@ class PageGeneree(unittest.TestCase):
             chemin.unlink()
 
     def test_les_tuiles_des_encarts_remplissent_leur_rangee(self) -> None:
-        # Au bureau, chaque rangée de tuiles occupe exactement les douze colonnes, sans tuile plus étroite que permis.
-        self.assertEqual(TARIFS.repartir([57, 23], mini=4), [8, 4])
-        self.assertIsNone(TARIFS.repartir([1, 1, 1, 1, 1], mini=3))
+        # Au bureau, le prix puis sa phrase sur toute la largeur ; chaque rangée de tuiles occupe exactement les six
+        # colonnes, avec des tuiles de même largeur, pour que les bords des rangées tombent sur la même grille.
         for cle in ("encart_enfant", "encart_adulte"):
             phrases = re.split(r"(?<=\.) (?=[A-ZÀ-Ý0-9])", TARIFS.encarts_publics()[cle])
+            places = TARIFS.places_fiche(phrases)
+            self.assertEqual((places[1], places[0]), ("--c: 1 / -1; --r: 1", "--c: 1 / -1; --r: 2"))
             rangees: dict[int, list[tuple[int, int]]] = {}
-            for k, style in TARIFS.places_fiche(phrases).items():
-                m = re.fullmatch(r"--c: (\d+) / span (\d+); --r: (\d+)", style)
-                self.assertIsNotNone(m, style)
+            for k in range(2, len(phrases)):
+                m = re.fullmatch(r"--c: (\d+) / span (\d+); --r: (\d+)", places[k])
+                self.assertIsNotNone(m, places[k])
                 rangees.setdefault(int(m[3]), []).append((int(m[1]), int(m[2])))
             for rang, cases in rangees.items():
                 cases.sort()
-                self.assertEqual(sum(s for _, s in cases), 12, (cle, rang))
-                self.assertEqual(cases[0][0], 1, (cle, rang))
+                self.assertEqual(sum(s for _, s in cases), 6, (cle, rang))
+                self.assertEqual(len({s for _, s in cases}), 1, (cle, rang))
                 self.assertTrue(all(a + s == b for (a, s), (b, _) in zip(cases, cases[1:])), (cle, rang))
 
     def test_l_accueil_lit_les_memes_donnees(self) -> None:

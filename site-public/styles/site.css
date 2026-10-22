@@ -1961,14 +1961,16 @@ li, dd { text-wrap: wrap; }
   .chapitres__textes { grid-column: 6 / span 7; }
 }
 
-/* Les cours en bref (Familles, Cours) : le prix et sa phrase sur une rangee, puis les tuiles sur toute la largeur ;
-   chaque tuile est large a la mesure de son texte (places calculees au build, bloc_tarifs.places_fiche), les longues sur
-   une rangee, les courtes sur la suivante : les tuiles d'une rangee ont a peu pres le meme nombre de lignes. */
+/* Les cours en bref (Familles, Cours) : le prix, sa phrase juste dessous, puis les tuiles sur une grille de six colonnes,
+   de meme largeur dans une rangee (places calculees au build, bloc_tarifs.places_fiche) ; le choix Enfants / Adultes en
+   haut a droite, a la hauteur du titre de la fiche. */
 @media (min-width: 840px) {
-  .fiches-bloc .fiche__lignes { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-4); row-gap: var(--e-4); align-items: stretch; }
-  .fiches-bloc .fiche__lignes li { grid-column: var(--c, span 4); grid-row: var(--r, auto); max-width: none; }
-  .fiches-bloc .fiche__lignes li:nth-child(1) { grid-column: var(--c, 4 / span 9); grid-row: var(--r, 1); align-self: end; min-height: 0; margin-bottom: var(--e-4); }
-  .fiches-bloc .fiche__lignes li:nth-child(2) { grid-column: var(--c, 1 / span 3); grid-row: var(--r, 1); align-self: end; margin: 0 0 var(--e-4); }
+  .fiches-bloc { position: relative; }
+  .fiches-bloc .fiches__choix { position: absolute; top: 0; right: 0; margin-top: 0; }
+  .fiches-bloc .fiche__lignes { grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: var(--e-4); row-gap: var(--e-4); align-items: stretch; }
+  .fiches-bloc .fiche__lignes li { grid-column: var(--c, span 2); grid-row: var(--r, auto); max-width: none; }
+  .fiches-bloc .fiche__lignes li:nth-child(1) { grid-column: var(--c, 1 / -1); grid-row: var(--r, 2); max-width: 46ch; min-height: 0; margin: 0 0 var(--e-6); }
+  .fiches-bloc .fiche__lignes li:nth-child(2) { grid-column: var(--c, 1 / -1); grid-row: var(--r, 1); margin: 0; }
   .fiches-bloc .fiche__lignes li:nth-child(n+3) { padding: var(--e-5) var(--e-6); border-radius: var(--r-lg); background: #4E2983; }
   .fiches-bloc .fiche__lignes li:nth-child(n+3)::before { content: none; }
 }
@@ -2008,18 +2010,41 @@ li, dd { text-wrap: wrap; }
   .remises--echeances .remise__objet { max-width: none; }
 }
 
-/* Academie, « Ce que nous enseignons » : le titre centre, l'arche au milieu, un paragraphe de chaque cote (une affiche,
-   et non une image seule entre deux vides). Seulement pour une bande pleine a deux paragraphes, sans colonne de cote. */
+/* Academie, « Ce que nous enseignons » : l'arche a gauche, le titre et les deux paragraphes a droite, alignes sur le haut
+   de l'arche (bande pleine a deux paragraphes, sans colonne de cote ; des 1100 px). */
 @media (min-width: 1100px) {
-  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__tete { grid-column: 1 / -1; text-align: center; }
-  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__tete h2 { margin-inline: auto; }
-  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__image { grid-column: 4 / span 6; grid-row: 2; }
-  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) :is(.pleine__corps, .pleine__texte) { display: contents; }
-  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__texte > p { grid-row: 2; margin: 0; }
-  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__texte > p:first-child { grid-column: 1 / span 3; align-self: end; }
-  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__texte > p:last-child { grid-column: 10 / span 3; align-self: start; }
+  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) { align-items: start; }
+  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__image { grid-column: 1 / span 5; grid-row: 1 / span 2; }
+  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__tete { grid-column: 7 / -1; grid-row: 1; align-self: end; }
+  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__corps { grid-column: 7 / -1; grid-row: 2; }
+  .section--pleine:has(.pleine__texte > p:nth-child(2):last-child):not(:has(.pleine__plus)) .pleine__texte { columns: auto; font-size: clamp(20px, 1.55vw, 23px); }
 }
 
 /* Accueil : le bouton d'arret du tapis, plus discret que les deux boutons d'action (un texte avec son signe, sans bord). */
 .porte__texte .pause-anim { height: 36px; padding: 0 var(--e-2) 0 0; border: 0; font-size: 16px; font-weight: 500; opacity: .85; }
 .porte__texte .pause-anim:hover { background: transparent; opacity: 1; text-decoration: underline; }
+
+/* --- Recette 29 (22/10/2026) ------------------------------------------------------------------------------------- */
+/* Accueil : chaque chapitre a la hauteur de la fenetre de l'arche ; le titre du suivant n'entre plus dans l'image. Le
+   second paragraphe, plus grand, ne se lit plus comme une note. */
+@media (min-width: 840px) {
+  .chapitre { min-height: calc(100svh - var(--entete) - 8svh); }
+  .chapitre p + p { font-size: clamp(19px, 1.45vw, 22px); }
+}
+
+/* Telephone et tablette : le bouton du tapis garde son signe et son mot ensemble, au bord du texte. */
+.porte__texte .pause-anim { display: inline-flex; align-items: center; justify-content: flex-start; align-self: flex-start; gap: var(--e-2); }
+
+/* Tarifs, les remises : chaque remise dans une tuile coiffee d'une arche, le chiffre au centre. */
+.remises:not(.remises--echeances) .remise { padding: var(--e-10) var(--e-6) var(--e-8); border-radius: 50% 50% var(--r-lg) var(--r-lg) / 72px 72px var(--r-lg) var(--r-lg); background: #4E2983; text-align: center; justify-items: center; }
+.remises:not(.remises--echeances) .remise__objet { max-width: 30ch; }
+
+/* Tarifs, les dates du paiement : au bureau, les cinq etapes sur un meme rail, chacune posee sur sa petite arche. */
+.remises--echeances .remise::before { opacity: 1; background: #DCCAFD; }
+@media (min-width: 1100px) {
+  .remises--echeances { position: relative; }
+  .remises--echeances::before { content: ""; position: absolute; inset-inline: 0; top: calc(.75em - 3px); height: 3px; border-radius: 3px; background: #DCCAFD; opacity: .35; }
+}
+
+/* Familles, telephone : la tuile du « 3 » a la hauteur de son contenu. */
+@media (max-width: 839px) { .tuile-chiffre { aspect-ratio: auto; padding-block: var(--e-12) var(--e-10); } }

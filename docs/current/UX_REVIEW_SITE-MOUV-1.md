@@ -229,6 +229,7 @@ Inspection après ces corrections :
 | Recette 26 (jurés Sonnet) | 7,59 | 7,22 | 7,22 | « presque » |
 | Recette 27 (jurés Sonnet) | 6,50 | 6,87 | 6,50 | « presque » (plafond : titres des chapitres sur trois lignes) |
 | Recette 28 (jurés Sonnet) | 7,73 | 7,00 | 6,50 | « presque », sans plafond |
+| Recette 29 (jurés Sonnet) | 7,70 | 7,00 | 7,20 | « presque », sans plafond |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -679,6 +680,19 @@ Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte co
 | LL4 | « Les cours en bref » : tuiles à moitié vides | Chaque tuile est large à la mesure de son texte (douze colonnes réparties au build au prorata du nombre de lettres) : les longues sur une rangée, les courtes sur la suivante ; un test vérifie que chaque rangée remplit ses douze colonnes |
 | LL5 | Académie, « Ce que nous enseignons » : une image seule entre deux vides | Le titre centré, l'arche au milieu, un paragraphe de chaque côté (dès 1100 px) |
 | LL6 | Bouton d'arrêt du tapis aussi visible qu'un bouton d'action | Un texte avec son signe, sans bord, en 16 px |
+
+**Après la recette 29.** Toujours sans plafond. Restent, en commun : le bas de Tarifs qui se lit comme un document, « Les cours en bref » (bords de tuiles qui ne tombent pas sur une même grille, phrase loin du prix), « Ce que nous enseignons » (deux paragraphes dans des coins opposés), le dernier reste de sol sous la face droite de l'arche, le bouton du tapis disjoint au téléphone, et, pour deux jurés, le titre du chapitre suivant qui entre dans l'image épinglée.
+
+| # | Relevé | Correction |
+|---|---|---|
+| MM1 | Tarifs, remises : six chiffres sur des légendes | Chaque remise dans une tuile coiffée d'une arche, le chiffre au centre |
+| MM2 | Tarifs, dates du paiement : cinq colonnes de texte | Les cinq étapes sur un même rail, chacune posée sur sa petite arche ; légendes raccourcies (les mots de la décision gardés : rappels 7, 3 et 1 jour avant, place gardée 14 jours) |
+| MM3 | « Les cours en bref » | Le prix, puis sa phrase juste dessous ; les tuiles sur six colonnes, de même largeur dans une rangée (trois puis deux) ; le choix Enfants / Adultes en haut à droite |
+| MM4 | « Ce que nous enseignons » | L'arche à gauche ; à droite, le titre et les deux paragraphes l'un sous l'autre, à 23 px |
+| MM5 | Reste de sol sous la face droite de l'arche | Le flanc du disque s'efface vers le bas et vers la droite dans l'image ; il ne reste que le sol devant la porte |
+| MM6 | Bouton du tapis disjoint (tablette, téléphone) | Le signe et le mot ensemble, au bord du texte |
+| MM7 | Le titre du chapitre suivant entre dans l'image | Chaque chapitre a la hauteur de la fenêtre de l'arche ; le second paragraphe passe à 22 px |
+| MM8 | Familles, téléphone : la tuile du « 3 » à moitié vide | À la hauteur de son contenu |
 
 ## Hors de portée de l'agent
 
