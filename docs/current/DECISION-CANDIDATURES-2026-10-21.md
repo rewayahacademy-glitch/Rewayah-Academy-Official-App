@@ -85,6 +85,13 @@ Réponses du directeur aux huit questions de l'audit
 | Paie, en arabe | **« الراتب » (« الراتب الشهري »), jamais « أجر »**, qui ferait penser à la récompense d'Allah. |
 | Formulaires pilotes | Les réponses des formulaires Google sont gardées (les personnes inscrites restent), mais **leurs questions ne sont pas une référence** pour concevoir le questionnaire. |
 
+## 1 quater. Décidé le 22/10/2026 : les autres compétences des candidats, et le portugais
+
+| Point | Décision |
+| :--- | :--- |
+| Autres compétences | Le directeur : « profiter de ce grand nombre pour faire d'autres recrutements […] il faut leur demander […] glisser discrètement ces demandes […] sans les ennuyer avec trop de questions […] être transparent » (exemples : une assistante pour le groupe des femmes, des comptables, des social media managers). Conception retenue (« à toi de faire ») : `CANDIDATURES/PROPOSITION_AUTRES_COMPETENCES.md` ; parcours facultatif de trois écrans dans la salle d'attente, après l'envoi, avec la raison dite en premier ; filtre côté direction, séparation femmes et hommes respectée. |
+| Langues de la carte de partage | Langues internationales seulement : français, anglais, portugais (« il va aussi avoir le portugais »), arabe ; par défaut la langue dans laquelle le candidat veut enseigner si c'est l'une d'elles, sinon la langue de l'app. Le directeur ne valide pas les traductions : Claude les fait. |
+
 ## 2. Conditions de mise en oeuvre signalées au directeur
 
 **`CAND-Q03` : le lien public.**
