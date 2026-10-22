@@ -1401,9 +1401,9 @@ li, dd { text-wrap: wrap; }
 @media (min-width: 840px) {
   .fiches:has(.fiche + .fiche) { column-gap: var(--e-16); }
   /* Sept phrases par encart (decision du 18/10) : une rangee par phrase. Au-dela, chaque colonne garde son propre rythme. */
-  .fiches:has(.fiche + .fiche):not(:has(.fiche__lignes li:nth-child(8))) { grid-template-rows: auto repeat(7, auto); row-gap: var(--e-4); }
-  .fiches:has(.fiche + .fiche):not(:has(.fiche__lignes li:nth-child(8))) .fiche { display: grid; grid-row: span 8; grid-template-rows: subgrid; }
-  .fiches:has(.fiche + .fiche):not(:has(.fiche__lignes li:nth-child(8))) .fiche__lignes { grid-row: span 7; grid-template-rows: subgrid; }
+  .fiches:has(.fiche + .fiche):not(:has(.fiche__lignes li:nth-child(8))):not(.fiches-bloc > .fiches) { grid-template-rows: auto repeat(7, auto); row-gap: var(--e-4); }
+  .fiches:has(.fiche + .fiche):not(:has(.fiche__lignes li:nth-child(8))):not(.fiches-bloc > .fiches) .fiche { display: grid; grid-row: span 8; grid-template-rows: subgrid; }
+  .fiches:has(.fiche + .fiche):not(:has(.fiche__lignes li:nth-child(8))):not(.fiches-bloc > .fiches) .fiche__lignes { grid-row: span 7; grid-template-rows: subgrid; }
   .fiches:has(.fiche + .fiche) .fiche__lignes li:first-child { min-height: 0; }
 }
 
@@ -1927,15 +1927,6 @@ li, dd { text-wrap: wrap; }
 .chapitre ul li { padding: var(--e-2) var(--e-4); border-radius: var(--r-full); background: #4E2983; font-size: var(--t-petit); font-weight: 600; }
 .chapitre .points .puce { display: none; }
 
-/* Les cours en bref : a droite, chaque ligne de l'encart dans une tuile, deux par rangee (mots inchanges). */
-@media (min-width: 840px) {
-  .fiches-bloc .fiche__lignes { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--e-4); row-gap: var(--e-4); align-items: stretch; }
-  .fiches-bloc .fiche__lignes li { grid-column: auto; max-width: none; }
-  .fiches-bloc .fiche__lignes li:nth-child(1) { grid-column: 1 / span 2; grid-row: 1; padding-inline-end: var(--e-10); }
-  .fiches-bloc .fiche__lignes li:nth-child(2) { grid-column: 1 / span 2; grid-row: 2 / span 9; }
-  .fiches-bloc .fiche__lignes li:nth-child(n+3) { padding: var(--e-5); border-radius: var(--r-lg); background: #4E2983; }
-}
-
 /* Cours, tablette et telephone : le mot arabe a la mesure de son arche (unites de conteneur). */
 @media (max-width: 1099px) {
   .parcours--haut .parcours__etape { container-type: inline-size; }
@@ -1956,26 +1947,52 @@ li, dd { text-wrap: wrap; }
 .panneau__fondateurs { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e-6); max-width: calc(424px + 2 * var(--marge)); padding: 0 var(--marge); }
 .panneau__fondateurs li { display: grid; justify-items: start; gap: var(--e-3); }
 .panneau__fondateurs p { display: grid; gap: var(--e-1); }
-.portrait--vignette { width: min(100%, 200px); margin: 0; flex: none; }
+.portrait--vignette { width: min(100%, 300px); margin: 0; flex: none; }
 .portrait--vignette .portrait__cadre { display: block; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 50% 50% 0 0 / 40% 40% 0 0; }
 .portrait--vignette img { width: 100%; height: 100%; object-fit: cover; }
 @media (max-width: 839px) { .panneau__fondateurs { order: 4; } }
 
-/* --- Recette 26 (22/10/2026) ------------------------------------------------------------------------------------- */
-/* Accueil, « Accompagné à chaque étape » : les deux autres fondateurs sous la photo du directeur, et non a cote du texte. */
+
+/* --- Recette 27 (22/10/2026) ------------------------------------------------------------------------------------- */
+/* Accueil, les chapitres : le titre plus grand tient sur deux lignes ; la fenetre de l'arche cede une colonne au texte. */
 @media (min-width: 840px) {
-  .panneau__in { grid-row: 1 / span 2; }
-  .panneau > .panneau__fondateurs { grid-column: 1; grid-row: 2; max-width: none; padding: 0 0 0 max(var(--marge), calc((100vw - var(--contenu)) / 2)); grid-template-columns: repeat(2, 200px); column-gap: var(--e-6); }
-  .panneau__promesses { grid-row: 3; }
+  .chapitre h2 { font-size: var(--t-entete); max-width: none; text-wrap: balance; }
+  .chapitres__fenetre { grid-column: 1 / span 5; }
+  .chapitres__textes { grid-column: 6 / span 7; }
 }
 
-/* Accueil, les chapitres : le titre plus grand ; les points, qui redisaient le texte, ne sont plus poses. */
-@media (min-width: 840px) { .chapitre h2 { font-size: var(--t-entete); } }
-
-/* Les cours en bref : la premiere ligne en sous-titre sur toute la largeur, le prix juste dessous a gauche, les tuiles a
-   droite ; la derniere tuile occupe la rangee entiere (pas de tuile seule). */
+/* Les cours en bref (Familles, Cours) : le prix et sa phrase sur une rangee, puis les tuiles sur toute la largeur, de
+   meme hauteur par rangee : trois tuiles, puis deux (mots inchanges, aucun vide sous le prix). */
 @media (min-width: 840px) {
-  .fiches-bloc .fiche__lignes li:nth-child(1) { grid-column: 1 / -1; grid-row: 1; padding-inline-end: 0; }
-  .fiches-bloc .fiche__lignes li:nth-child(2) { grid-column: 1 / span 2; grid-row: 2 / span 9; }
-  .fiches-bloc .fiche__lignes li:nth-child(n+3):last-child:nth-child(odd) { grid-column: 3 / span 2; }
+  .fiches-bloc .fiche__lignes { grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: var(--e-4); row-gap: var(--e-4); align-items: stretch; }
+  .fiches-bloc .fiche__lignes li { grid-column: span 2; max-width: none; }
+  .fiches-bloc .fiche__lignes li:nth-child(1) { grid-column: 4 / span 3; grid-row: 1; align-self: end; min-height: 0; margin-bottom: var(--e-4); }
+  .fiches-bloc .fiche__lignes li:nth-child(2) { grid-column: 1 / span 3; grid-row: 1; align-self: end; margin: 0 0 var(--e-4); }
+  .fiches-bloc .fiche__lignes li:nth-child(n+3) { padding: var(--e-6); border-radius: var(--r-lg); background: #4E2983; }
+  .fiches-bloc .fiche__lignes li:nth-child(n+3)::before { content: none; }
+  .fiches-bloc .fiche__lignes li:nth-child(6):nth-last-child(2), .fiches-bloc .fiche__lignes li:nth-child(7):last-child { grid-column: span 3; }
+  .fiches-bloc .fiche__lignes:has(> li:nth-child(6):last-child) > li:nth-child(n+3) { grid-column: span 3; }
 }
+
+/* Accueil, « Accompagné à chaque étape » : a gauche la photo du directeur, puis les trois engagements les uns sous les
+   autres ; a droite le texte et le lien, puis les deux autres fondateurs en grand. Les deux colonnes finissent ensemble. */
+.panneau__fondateurs { max-width: calc(624px + 2 * var(--marge)); }
+.panneau__fondateurs .mot__nom { font-size: var(--t-corps); }
+@media (max-width: 839px) { .panneau__fondateurs .mot__nom { min-height: 2lh; } }
+@media (min-width: 840px) {
+  .panneau__in, .panneau__photo { grid-row: 1; }
+  .panneau > .panneau__fondateurs { grid-column: 2; grid-row: 2; max-width: 624px; padding: 0; column-gap: var(--e-6); }
+  .panneau__promesses { grid-column: 1; grid-row: 2; grid-template-columns: none; row-gap: var(--e-8); align-content: start; }
+  .panneau__promesses h3 { max-width: none; }
+}
+
+/* Texte secondaire : 20 px au bureau, 18 px en dessous ; le pied de page reste a 18 px. */
+@media (min-width: 840px) { :root { --t-petit: 20px; } .site-footer__inner, .site-footer .footer-identity p, .site-footer .footer-identity address, .footer-legal, .footer-bottom { font-size: 18px; } }
+
+/* Accueil : le bouton qui arrete le tapis dit ce qu'il fait, en toutes lettres. */
+.porte__texte .pause-anim { width: auto; height: 44px; padding: 0 var(--e-5) 0 var(--e-4); grid-auto-flow: column; gap: var(--e-2); border-radius: var(--r-full); background: transparent; color: inherit; font-size: var(--t-petit); font-weight: 600; justify-self: start; }
+.porte__texte .pause-anim .sr-only { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; }
+
+/* Fins de page a une colonne (telephone) : la colonne ne s'elargit pas a la mesure d'une adresse e-mail (360 px). */
+@media (max-width: 839px) { .appel--prix, .appel--image, .appel--note { grid-template-columns: minmax(0, 1fr); } }
+.appel__note { overflow-wrap: anywhere; }

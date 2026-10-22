@@ -407,7 +407,7 @@ def lie(phrase: str) -> str:
     phrase = re.sub(rf"(\d+){e}h{e}(\d+)", "\\1\u00a0h\u00a0\\2", phrase)
     phrase = re.sub(rf"(\d+(?:,\d+)?){e}(%|\$){e}(de|d’)(?:{e})?", lambda m: f"{m[1]}\u00a0{m[2]}\u00a0{m[3]}" + ("\u00a0" if m[3] == "de" else ""), phrase)
     phrase = re.sub(rf"(\d+(?:,\d+)?){e}(%|\$)", "\\1\u00a0\\2", phrase)
-    phrase = re.sub(rf"(\d+){e}(élèves|ans|personnes|séances|minutes|min|h|enfants|adultes|mois|semaines)\b", "\\1\u00a0\\2", phrase)
+    phrase = re.sub(rf"(\d+){e}(élèves|ans|personnes|séances|minutes|min|h|enfants|adultes|mois|semaines|jours?)\b", "\\1\u00a0\\2", phrase)
     phrase = re.sub(rf"(?<![\w’'])(de|à|dès|par|sur){e}(?=\d)", "\\1\u00a0", phrase)
     phrase = re.sub(rf"(?<![\w’'])(le|la|de|du|à|au|en|et|ou|un|ne|ce|se|sa|y|a) (?=\S)", "\\1\u00a0", phrase)
     tete, espace, dernier = phrase.rpartition(" ")
@@ -475,19 +475,24 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
         grace = c["grace_jours"]
         etapes = [
             (f"{c['premiere_semaine_jours']} jours",
-             "Après la première séance, pour arrêter et être remboursé en entier si le cours ne convient pas."),
+             "Après la première séance : vous pouvez arrêter et être remboursé en entier si le cours ne convient pas."),
             (f"Le {jour(c['renouvellement_jour'])}",
-             f"Le renouvellement du mois. Un rappel arrive {rappels} avant."),
+             f"Le renouvellement du mois. Si le paiement n’est pas encore passé, des rappels arrivent {rappels} avant."),
             (f"Du {jour(grace[0])} au {jour(grace[-1])}",
-             "Si le paiement n'est pas arrivé, l'élève suit ses cours et l'impayé s'affiche chez le tuteur."),
-            (f"Le {jour(c['suspension_jour'])}",
-             f"Sans paiement, l'accès aux séances est suspendu. La place est gardée {c['place_gardee_jours']} jours."),
+             "Si le paiement n’est pas arrivé, l’élève suit ses cours et l’impayé s’affiche chez le tuteur,"
+             " ou chez l’élève adulte."),
+            (f"À partir du {jour(c['suspension_jour'])}",
+             f"Sans paiement, l’accès aux séances est suspendu. La place est gardée {c['place_gardee_jours']} jours."),
             (f"Le {jour(c['place_liberee_jour'])}",
-             "La place est libérée pour la liste d'attente. Le retour reste possible sans frais, dans une nouvelle classe."),
+             "La place est libérée pour la liste d’attente. Le retour reste possible sans frais, dans une nouvelle classe."),
         ]
+        # Les dates sont celles de la politique affichée : si elle n'est pas encore en vigueur, la page le dit.
+        effet = politique_affichee(tarifs)["dateEffet"]
+        note = (f'<p class="price-note">{esc(lie(f"Ces dates s’appliquent à partir du {fmt_date(effet)}."))}</p>'
+                if date.fromisoformat(effet) > aujourdhui else "")
         return ('<ul class="remises remises--echeances">' + "".join(
             f'<li class="remise"><span class="remise__valeur">{esc(lie(v))}</span><span class="remise__objet">{esc(lie(o))}</span></li>'
-            for v, o in etapes) + "</ul>")
+            for v, o in etapes) + "</ul>" + note)
     if nom == "famille":
         lignes = [(f"{n} enfant{'s' if n > 1 else ''}", fmt_montant(total, devise))
                   for n, total in famille_enfants(p)]

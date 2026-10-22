@@ -620,9 +620,9 @@ def accueil_confiance(page: dict, images: dict, mot: dict | None = None, fondate
     vers ce mot. Dessous, les trois engagements cote a cote. La page Academie montre la meme photo en buste. Le titre
     vient avant la photo dans le document : un lecteur d'ecran l'entend d'abord ; la grille place la photo a gauche."""
     sec = _sections_par_id(page)["confiance"]
-    # Les deux autres fondateurs sous la photo du directeur : la phrase dit trois, la bande en montre trois.
+    # Les deux autres fondateurs sous le lien vers le mot du directeur : la phrase dit trois, la bande en montre trois.
     rangee = "".join(
-        f'<li>{portrait(images, ident, "(max-width: 839px) 40vw, 200px", "portrait--vignette")}<p><span class="mot__nom">{esc(nom)}</span>'
+        f'<li>{portrait(images, ident, "(max-width: 839px) 40vw, 300px", "portrait--vignette")}<p><span class="mot__nom">{esc(nom)}</span>'
         f'<span class="mot__role">{esc(role)}</span></p></li>' for nom, role, ident in (fondateurs or []))
     rangee = f'\n  <ul class="panneau__fondateurs" data-revele-enfants>{rangee}</ul>' if rangee else ""
     return f'''<section class="panneau" id="confiance" aria-labelledby="confiance-titre">

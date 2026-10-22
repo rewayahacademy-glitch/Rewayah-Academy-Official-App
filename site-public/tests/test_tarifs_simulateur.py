@@ -248,9 +248,12 @@ class PageGeneree(unittest.TestCase):
         # suspension le 4, place gardée 14 jours, libérée le 18 ; première semaine : 7 jours).
         plat = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", self.tarifs_html).replace(NBSP, " "))
         for attendu in ("Les dates du paiement", "7 jours Après la première séance", "Le 1er Le renouvellement du mois",
-                        "7 jours, 3 jours et 1 jour avant", "Du 1er au 3", "Le 4 Sans paiement",
+                        "des rappels arrivent 7 jours, 3 jours et 1 jour avant", "Du 1er au 3", "À partir du 4 Sans paiement",
                         "La place est gardée 14 jours", "Le 18 La place est libérée"):
             self.assertIn(attendu, plat)
+        # Un nombre ne se separe pas de son unite en fin de ligne.
+        self.assertIn(f"1{NBSP}jour", self.tarifs_html)
+        self.assertIn(f"14{NBSP}jours", self.tarifs_html)
         annulation = (OUTPUT / "fr" / "legal" / "annulation-remboursement.html").read_text(encoding="utf-8")
         self.assertIn("politique tarifaire en vigueur (page Tarifs)", annulation.replace(NBSP, " "))
         c = json.loads(TARIFS_DECISION.read_text(encoding="utf-8"))["calendrier_paiement"]
