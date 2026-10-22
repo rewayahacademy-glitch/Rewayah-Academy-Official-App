@@ -419,6 +419,14 @@
           "generated": "famille"
         },
         {
+          "id": "echeances",
+          "title": "Les dates du paiement",
+          "generated": "echeances",
+          "paragraphs": [
+            "Chaque mois suit le même calendrier. Les règles complètes sont dans la page Annulation et remboursement."
+          ]
+        },
+        {
           "id": "conditions",
           "title": "À savoir avant de commander",
           "points": [

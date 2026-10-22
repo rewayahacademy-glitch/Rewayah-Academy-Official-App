@@ -226,6 +226,17 @@ def formules_editoriales(chemin: Path = TARIFS_FALLBACK) -> dict:
             for nom in ("enfant", "adulte")}
 
 
+def calendrier_paiement(chemin: Path = TARIFS_FALLBACK) -> dict:
+    """Le calendrier du paiement de la décision du 18/10 (renouvellement, rappels, délai de grâce, suspension, place
+    gardée puis libérée) et la durée de la première semaine remboursée. La base les garde hors de tarifs_publics()."""
+    f = json.loads(chemin.read_text(encoding="utf-8"), object_pairs_hook=_unique_object)
+    c = dict(f["calendrier_paiement"], premiere_semaine_jours=f["premiere_semaine_remboursee_jours"])
+    if c["grace_jours"] != list(range(c["renouvellement_jour"], c["suspension_jour"])) \
+            or c["place_liberee_jour"] != c["suspension_jour"] + c["place_gardee_jours"]:
+        raise ValueError("Calendrier du paiement incohérent dans la décision des tarifs")
+    return c
+
+
 def encarts_publics(chemin: Path = TARIFS_FALLBACK) -> dict:
     """Les textes que la décision du 18/10 (consigne 3) fait publier tels quels sur les cours, les familles et le recrutement.
     Seule la typographie change : une espace insécable avant « $ » et « % », pour qu'un montant ne se coupe pas."""
@@ -454,6 +465,29 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
         cumul = (f'<p class="price-note">{esc(lie("Les remises du foyer, du prépaiement et du parrainage ne dépassent jamais " + fmt_pour_mille(p["cumulMaxPourMille"]) + " du prix."))}</p>'
                  if p["cumulMaxPourMille"] else "")
         return liste + cumul
+    if nom == "echeances":
+        # Les dates que la page Annulation renvoie à cette page (« les dates exactes sont celles de la politique
+        # tarifaire en vigueur »), lues dans la décision du 18/10 : la base ne les publie pas (tarifs_publics).
+        c = calendrier_paiement()
+        jour = lambda n: "1er" if n == 1 else str(n)
+        rappels = [f"{n} jour{'s' if n > 1 else ''}" for n in c["relances_jours_avant"]]
+        rappels = ", ".join(rappels[:-1]) + " et " + rappels[-1] if len(rappels) > 1 else rappels[0]
+        grace = c["grace_jours"]
+        etapes = [
+            (f"{c['premiere_semaine_jours']} jours",
+             "Après la première séance, pour arrêter et être remboursé en entier si le cours ne convient pas."),
+            (f"Le {jour(c['renouvellement_jour'])}",
+             f"Le renouvellement du mois. Un rappel arrive {rappels} avant."),
+            (f"Du {jour(grace[0])} au {jour(grace[-1])}",
+             "Si le paiement n'est pas arrivé, l'élève suit ses cours et l'impayé s'affiche chez le tuteur."),
+            (f"Le {jour(c['suspension_jour'])}",
+             f"Sans paiement, l'accès aux séances est suspendu. La place est gardée {c['place_gardee_jours']} jours."),
+            (f"Le {jour(c['place_liberee_jour'])}",
+             "La place est libérée pour la liste d'attente. Le retour reste possible sans frais, dans une nouvelle classe."),
+        ]
+        return ('<ul class="remises remises--echeances">' + "".join(
+            f'<li class="remise"><span class="remise__valeur">{esc(lie(v))}</span><span class="remise__objet">{esc(lie(o))}</span></li>'
+            for v, o in etapes) + "</ul>")
     if nom == "famille":
         lignes = [(f"{n} enfant{'s' if n > 1 else ''}", fmt_montant(total, devise))
                   for n, total in famille_enfants(p)]

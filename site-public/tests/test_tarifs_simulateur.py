@@ -36,6 +36,7 @@ def _charger(nom: str):
 
 BUILDER = _charger("build_site")
 TARIFS = BUILDER.tarifs_mod
+TARIFS_DECISION = TARIFS.TARIFS_FALLBACK
 NODE = shutil.which("node")
 NBSP = " "
 
@@ -240,6 +241,28 @@ class PageGeneree(unittest.TestCase):
                       "momentanément indisponibles", "50 $", "60 $"):
             self.assertNotIn(caduc, self.tarifs_html)
         self.assertNotIn("—", self.tarifs_html)
+
+    def test_les_dates_du_paiement_sont_celles_de_la_decision(self) -> None:
+        # La page Annulation renvoie à la page Tarifs pour les dates exactes : elles doivent y être, et ce sont
+        # celles de la décision du 18/10 (renouvellement le 1er, rappels J-7, J-3, J-1, délai de grâce du 1er au 3,
+        # suspension le 4, place gardée 14 jours, libérée le 18 ; première semaine : 7 jours).
+        plat = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", self.tarifs_html).replace(NBSP, " "))
+        for attendu in ("Les dates du paiement", "7 jours Après la première séance", "Le 1er Le renouvellement du mois",
+                        "7 jours, 3 jours et 1 jour avant", "Du 1er au 3", "Le 4 Sans paiement",
+                        "La place est gardée 14 jours", "Le 18 La place est libérée"):
+            self.assertIn(attendu, plat)
+        annulation = (OUTPUT / "fr" / "legal" / "annulation-remboursement.html").read_text(encoding="utf-8")
+        self.assertIn("politique tarifaire en vigueur (page Tarifs)", annulation.replace(NBSP, " "))
+        c = json.loads(TARIFS_DECISION.read_text(encoding="utf-8"))["calendrier_paiement"]
+        mauvais = copy.deepcopy(json.loads(TARIFS_DECISION.read_text(encoding="utf-8")))
+        mauvais["calendrier_paiement"]["place_liberee_jour"] = c["suspension_jour"] + c["place_gardee_jours"] + 1
+        chemin = OUTPUT.parent / ".qa-calendrier.json"
+        chemin.write_text(json.dumps(mauvais), encoding="utf-8")
+        try:
+            with self.assertRaisesRegex(ValueError, "incohérent"):
+                TARIFS.calendrier_paiement(chemin)
+        finally:
+            chemin.unlink()
 
     def test_l_accueil_lit_les_memes_donnees(self) -> None:
         self.assertIn(f"55{NBSP}$", self.accueil)
