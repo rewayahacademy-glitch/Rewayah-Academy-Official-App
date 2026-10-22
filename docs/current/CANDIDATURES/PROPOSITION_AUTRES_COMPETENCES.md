@@ -34,18 +34,28 @@ fiche de la candidature, pour poser une question de vive voix si un besoin exist
 
 ## 3. Trois écrans, à cartes, presque sans clavier
 
-1. **Vos domaines** (plusieurs choix, chaque carte décrite avec un exemple) :
-   - Assistanat et organisation (agenda, suivi des dossiers, accueil des nouveaux) ;
-   - Accompagnement d'un groupe ou d'une communauté (par exemple le groupe des sœurs, ou
-     celui des parents) ;
-   - Comptabilité et finances ;
-   - Communication et réseaux sociaux (publications, montage vidéo, graphisme) ;
-   - Informatique et outils numériques ;
-   - Traduction et rédaction (langues à préciser dans l'écran suivant) ;
-   - Formation et accompagnement des enseignants ;
-   - Relation avec les familles ;
-   - Autre domaine (quelques mots, seul champ au clavier).
-2. **Votre niveau, domaine par domaine** : « Je débute », « J'ai de l'expérience »,
+1. **Vos compétences** (directeur, 22/10 : « il faut être spécifique dans ce que tu vas
+   demander comme compétence »). Des compétences précises, pas des domaines vagues,
+   regroupées par famille pour se lire d'un coup d'oeil ; plusieurs choix ; chaque carte
+   décrite avec un exemple. La liste vit dans un catalogue en base, que la direction
+   complète sans nouvelle version de l'app :
+   - **Communication et image** : gestion des réseaux sociaux ; relations publiques et
+     partenariats (mosquées, associations, médias) ; design graphique (visuels, affiches,
+     cartes) ; montage vidéo et animation ; photographie et prise de vue ; rédaction et
+     création de contenus ; publicité en ligne ; traduction (langues précisées ensuite).
+   - **Administration et organisation** : assistanat administratif ou de direction ;
+     coordination d'un groupe (par exemple le groupe des sœurs, ou celui des parents) ;
+     accueil et suivi des familles ; planification et gestion de projet ; ressources
+     humaines et recrutement.
+   - **Finances et droit** : comptabilité ; gestion financière ; juridique et protection
+     des données.
+   - **Pédagogie** : conception de programmes et de supports ; formation et
+     accompagnement des enseignants ; observation et qualité des cours ; tests de niveau ;
+     accompagnement des enfants (psychologie, besoins particuliers).
+   - **Technique** : développement web ou mobile ; assistance technique aux familles et
+     aux enseignants ; données et tableurs.
+   - **Autre compétence** (quelques mots, seul champ au clavier).
+2. **Votre niveau, compétence par compétence** : « Je débute », « J'ai de l'expérience »,
    « C'est mon métier ».
 3. **Votre disponibilité pour une telle mission** : « Quelques heures par semaine »,
    « Un mi-temps », « Plus », « Pas pour l'instant », puis la case : « J'accepte que
