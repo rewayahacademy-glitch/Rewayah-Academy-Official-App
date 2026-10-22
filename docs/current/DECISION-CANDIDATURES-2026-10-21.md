@@ -81,7 +81,9 @@ Réponses du directeur aux huit questions de l'audit
 | Continuité | **Oui** : l'engagement à tenir sa Classe aux mêmes jours et heures. |
 | Paiement | **S'assurer que les personnes qui s'engagent pourront être payées** : le contrôle de paiement reste une condition d'entrée en salle 2. |
 | Charge maximale | **Trois Classes au plus par enseignant pour l'instant**, réglable par la direction dans les réglages. |
-| Disponibilités (grille ou blocs) | Pas tranché : la grille construite reste. |
+| Disponibilités | Le directeur, le 22/10 : « les formulaires de base ne sont pas des références en termes d'architecture et de choix […] c'étaient des formulaires pilotes » ; la grille doit « couvrir tout ce que l'académie a besoin pour déterminer réellement les créneaux de l'enseignant et les faire matcher avec ceux de l'élève ». Constat : la grille de blocs de quatre heures ne le permet pas (une Classe commence à une heure entière, trois fois par semaine aux mêmes jours, pour 60 ou 90 minutes, et l'affectation lit les disponibilités heure par heure). Proposé et lancé : disponibilités heure par heure, dans l'heure locale du candidat, au format que lit l'affectation. |
+| Paie, en arabe | **« الراتب » (« الراتب الشهري »), jamais « أجر »**, qui ferait penser à la récompense d'Allah. |
+| Formulaires pilotes | Les réponses des formulaires Google sont gardées (les personnes inscrites restent), mais **leurs questions ne sont pas une référence** pour concevoir le questionnaire. |
 
 ## 2. Conditions de mise en oeuvre signalées au directeur
 
