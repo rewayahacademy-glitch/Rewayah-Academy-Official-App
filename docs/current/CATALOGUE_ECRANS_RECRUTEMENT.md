@@ -71,6 +71,7 @@ opérateur ; `docs/archive/2026-09-pre-remise-a-plat/design/03-architecture-info
 | `CAND-02` | Mon entretien | titulaire convoqué | C | 1 | `/attente/entretien` (neuve) ; tuile du portail, sans bouton plein | Page | Page bornée | **proposée** |
 | `CAND-03` | Retirer ma candidature | titulaire | C | 1 | aucune : confirmation posée sur `/attente` | Feuille basse | Boîte de dialogue | **proposée** |
 | `CAND-05` | Écrire à l'académie | titulaire ; fil `candidature` | C | 1 | `/attente/messages` (neuve) | Fil seul | Fil seul, borné | **proposée** |
+| `CAND-06` | Un proche veut apprendre le Coran ? (carte à partager) | titulaire d'une candidature en cours ; aucune lecture ni écriture serveur | C | 1 | `/attente/partage` (neuve) ; tuile du portail, sans bouton plein | Page : description, aperçu de la carte, trois gestes | Deux colonnes : texte et gestes au début, carte à la fin | **construit (22/10/2026), repris le 22/10 sur la consigne du directeur (l'intérêt de l'élève, jamais l'académie)** |
 | `ENS-03` et `ELV-03`, mode entretien | Salle de l'entretien | candidat convoqué ; `entretiens.mener`, intervieweur désigné | C, E | 2 | `/salle` (billet en `extra`) | Salle existante | Salle existante | **proposée** |
 | `ADM-20` | Candidatures | `candidatures.lire` | E | 1 | `/admin/personnes/candidatures` (neuve) | Cartes, barre de sélection basse | Tableau dense ; file et détail quand un dossier est ouvert, file seule en mode sélection | **proposée** |
 | `ADM-20E` | Entretiens | `candidatures.lire` ; rejoindre : intervieweur désigné | E | 1 | `/admin/personnes/candidatures?vue=entretiens` | Cartes par date | Tableau par date | **proposée** (code ajouté ici) |
@@ -81,6 +82,8 @@ opérateur ; `docs/archive/2026-09-pre-remise-a-plat/design/03-architecture-info
 | `ADM-23` | Import des formulaires | `candidatures.importer` | E | 2 | `/admin/personnes/candidatures/import` | Pas l'un sous l'autre | Rail des pas au début, contenu à la fin | **proposée** |
 | `ADM-24` | Compatibilité de paiement par pays (onglet « Versement par pays ») | `paiement.referentiel.ecrire` | E | 1 | `/admin/finance/paiement-pays` (neuve) | Cartes par pays | Tableau dense, fiche en boîte de dialogue | **proposée** |
 | `ADM-02` étendu | Dossiers à valider | décision : `candidatures.decider`, sur un dossier que le serveur rend porteur d'une candidature | E | 1 | `/admin/personnes/dossiers` (inchangée) | Inchangé | Inchangé (336, 24, 728) | **proposée** |
+
+**Code `CAND-06`.** Ajouté le 22/10/2026 par la décision du directeur (`DEC` section 1 bis, « faire connaître l'offre aux élèves depuis la salle d'attente »), hors `CONS`.
 
 **Codes.** Neufs, nommés par `CONS` section 10 : `CAND-01` à `CAND-05`, `ADM-20` à
 `ADM-24`, `ADM-21F`. Ajoutés par ce catalogue, à valider : `ADM-20E` (la vue
@@ -559,6 +562,9 @@ avant l'état `envoye`.
   4. en Salle de vérification et d'entretien : la tuile « Mon entretien »
      (`CAND-02`), **sans bouton plein** : l'état, la date, et le lien `LienFleche`
      « Voir les détails » ;
+  4 bis. la tuile « Un proche veut apprendre le Coran ? » (`CAND-06`, décision du 22/10),
+     sous l'état et sa prochaine action, **sans bouton plein**, tant que la candidature est
+     en cours et qu'un lien d'offre existe ;
   5. le lien « Écrire à l'académie » (`CAND-05`) ; après un retrait ou un refus,
      rendu seulement si le serveur ouvre le fil (`CAND-F14`) ;
   6. le lien discret « Retirer ma candidature » (`CAND-03`) ;
@@ -1063,6 +1069,168 @@ avant l'état `envoye`.
   portée de genre ; accès au fil après un retrait ou un refus (`CAND-F14`).
 - **Contrôles d'acceptation** : L5-1, L5-2 ; widget : 0 liste de conversations ; envoi
   dit seulement après la réponse ; 5.7.
+
+### CAND-06 : Un proche veut apprendre le Coran ? (carte à partager)
+
+- **Statut** : **construit le 22/10/2026**, sur ordre du directeur (décision du 22/10 :
+  `DEC` section 1 bis), puis **repris le même jour sur sa consigne, après coup**. Pas encore
+  validé par lui : les mots exacts de la tuile, de la page et de la carte lui sont soumis avec
+  les captures, et le hadith, sa traduction française et sa référence sont **à confirmer**
+  avant toute mise en ligne (voir « À confirmer »).
+- **La consigne du directeur (22/10, après coup, prioritaire)** : « La tuile Faites connaître
+  Rewayah, ce n'est pas bon en marketing, tu leur demandes de faire une action sans aucune
+  contrepartie. Ça veut dire qu'ils rendent service à Rewayah Academy. Donc le hadith seul ne
+  peut pas se faire. Il faut changer la phrase. Il faut penser aux élèves. Il faut leur parler
+  de l'intérêt que l'élève va avoir. Pas Rewayah Academy. Il ne faut pas dire faites ça pour
+  Rewayah Academy. » **Effet : aucun texte de cet écran ne demande d'agir pour l'académie, et
+  son nom n'est jamais le motif.** Trois lecteurs, trois angles :
+  - la **tuile** et la **page**, lues par la personne qui partage, parlent de **la personne qui
+    apprendra** et de ce qu'elle y gagne ; le hadith y est le **motif personnel** de celui qui
+    partage, jamais seul ;
+  - la **carte**, lue par le futur élève, parle de **son** intérêt d'abord ; le hadith reste, en
+    petit, en bas.
+- **Tâche** : envoyer l'offre à un proche qui voudrait apprendre le Coran, par une carte.
+  **Facultatif, et sans aucun effet sur la candidature.**
+- **Pour qui** : l'offre **pour les élèves seulement** ; le recrutement des enseignants est
+  laissé de côté (décision du 22/10). Aucun prix sur la carte : ils restent sur le site
+  public.
+- **Route** : `/attente/partage` (neuve), dans le sous-arbre ouvert au compte en attente.
+  Sans candidature en cours (aucune, refusée, retirée), la page revient à `/attente`.
+- **Entrée** : la tuile « Un proche veut apprendre le Coran ? » du portail (`TUT-00b`), rendue
+  pour qui candidate encore (en examen et en pause comprises) et seulement quand un lien
+  d'offre existe. Elle est une carte entière qui se touche (`AppCard(onPress:, lien: true)`),
+  **sans bouton plein**.
+- **Droits (capacité)** : le titulaire d'une candidature en cours, lue dans `etat_dossier()`
+  (`candidature.existe`, `issue`). **Aucune lecture ni écriture serveur** pour la carte
+  elle-même : pas de port Supabase, pas d'adaptateur `*_supabase.dart`, pas de migration.
+  Rien ne compte les partages ni ne dit qui partage.
+- **Textes (fr ; l'arabe suit le sens, clés `recrutement.partage.*`)**, dans l'ordre de lecture :
+
+  | Où | Texte |
+  | :--- | :--- |
+  | Tuile et page, titre | « Un proche veut apprendre le Coran ? » (mots du directeur) |
+  | Tuile et page, texte | « Envoyez-lui l'offre en un geste : il apprendra en petite classe, en visio, avec le même enseignant chaque semaine. » (mots du directeur ; « classe » en minuscule comme le reste de l'application) |
+  | Page seulement, suite | « La carte lui dit en quelques lignes comment se passent les cours, et lui donne le lien de l'offre. » |
+  | Tuile et page, motif | « Pour vous aussi, c'est un bien : dans un hadith, celui qui indique le bien est comme celui qui l'accomplit. » (le hadith en motif personnel ; « dans un hadith » n'attribue aucune parole avant la confirmation de la référence) |
+  | Tuile et page, mention | « Facultatif : partager ne change rien à votre candidature. » (mots du directeur ; dite **avant les boutons**) |
+  | Carte, titre | « Apprendre le Coran en ligne, en petite classe » (ce que l'élève y gagne) |
+  | Carte, trois lignes | « Le même enseignant, trois séances par semaine, à heure fixe. » · « Pour les enfants dès 6 ans et pour les adultes. » · « En poular (peul), français ou anglais, selon les enseignants disponibles. » |
+  | Carte, appel | « Découvrir l'offre », avec le QR et le lien |
+  | Carte, en bas, en petit | « الدال على الخير كفاعله », sa traduction française, « Rapporté par at-Tirmidhi » |
+
+  Les trois lignes sont **vraies** : elles sont tirées des encarts décidés `encart_enfant` et
+  `encart_adulte` (`tarifs-2026-10-18.json`). La ligne des langues garde la condition des
+  encarts (« selon la disponibilité des enseignants ») : la carte ne promet pas une langue.
+  **L'arabe n'est pas une langue de cours** (décision du 22/10, `DEC` section 1 ter) : il n'y
+  figure pas. Aucun prix, aucune promesse en plus (ni remboursement, ni « gratuit »,
+  ni « garanti »). Le message de partage porte le titre et la première ligne de la carte : ce
+  que lit la personne qui reçoit.
+- **Contenu de la page, dans l'ordre** : le titre ; le texte et sa suite ; l'aperçu de la carte ;
+  le motif ; la mention « Facultatif » **avant les boutons** ; les trois gestes ; le retour du
+  geste ; la ligne « Lien de l'offre : … », sélectionnable.
+- **La carte** : image 9:16 (360 x 640 points, 1080 x 1920 pixels à l'export), rendue par
+  Flutter, **identique pour tous** (palette claire, échelle standard : ni le thème, ni la
+  taille de texte, ni l'Interface guidée ne la changent, mesuré octet pour octet). Fond
+  violet de marque ; logo blanc (`BrandLogo`, `FondLogo.violet`) ; une arche lavande (le
+  motif du symbole, comme le site public) qui porte **ce que l'élève y gagne** (le titre et les
+  trois lignes) ; l'appel « Découvrir l'offre » avec le QR et le lien lisible ; **en bas et en
+  petit, un seul hadith** (UthmanTahaNaskh, de droite à gauche, en blanc sur le violet : la
+  lavande ne tient pas pour un texte de cette taille), sa traduction française et sa
+  référence. En arabe : le même hadith, sa référence arabe, **sans traduction** (la clé est
+  vide, la carte ne montre rien). Si un texte plus long ne tenait pas, l'arche le réduit au
+  lieu de le couper.
+- **Le lien** : l'origine du site public et `/fr/` (sa page d'accueil, seule langue du site).
+  **Jamais écrit en dur** : `Env.siteUrl` (clé `SITE_URL`, vide par défaut) ; sinon, sur le
+  web, l'origine de la page ouverte (l'application et le site public sont servis par la même
+  origine, `flutter-deploy.yml` construit `fr/` à côté de l'application ; même principe que
+  `lienAvisPour`) ; sinon aucun lien, donc ni tuile ni carte. Aucun paramètre dans le lien.
+- **Gestes** :
+  - « Partager » : le menu de partage de l'appareil, par l'API Web Share du navigateur
+    (`navigator.share`, `dart:js_interop`, **aucun nouveau paquet**), avec l'image, le titre de
+    la carte, sa première ligne et le lien. Rendu seulement quand l'appareil le propose.
+    L'image est rendue **dès l'ouverture**, avant le toucher : le navigateur n'ouvre son menu
+    que dans le geste de la personne (Safari refuse sinon) ;
+  - « Enregistrer l'image » : `PortEnregistrementFichier` existant (`file_picker`), PNG ;
+  - « Copier le lien » : le presse-papiers de Flutter.
+- **Bouton plein** : un seul, **en aplat violet** (`ActionPrincipale.affirmee`, comme
+  « Continuer » : la lavande douce le faisait paraître inerte, demande du directeur du
+  22/10). « Partager » ; sans menu de partage, « Enregistrer l'image » ; image non rendue,
+  « Réessayer ». Les autres sont des boutons secondaires.
+- **Disposition** : mobile, colonne : texte et suite, aperçu centré (240), motif, mention
+  « Facultatif », gestes pleine largeur (le plein d'abord), retour, lien. Tablette et bureau :
+  deux colonnes dans 800 : texte, motif, mention et gestes au début, aperçu (288) à la fin ;
+  gestes alignés à la fin, le plein en dernier ; miroir en arabe. Le retour d'un geste se lit
+  sous les boutons (ils ne bougent pas sous le doigt) ; celui d'une image non rendue se lit
+  avant « Réessayer ». La tuile du portail : l'icône, la question, le texte, le motif et la
+  mention, puis le chevron en fin de ligne.
+- **États** :
+  - `loading` : l'état du dossier se lit (`Skeleton` après 180 ms) ; l'image se prépare
+    (« Partager » et « Enregistrer l'image » en cours, « Copier le lien » possible) ;
+  - `content` : les trois gestes ;
+  - `empty` : sans objet ;
+  - `error` : lecture du dossier (`recrutement.portail.nonCharge`, « Réessayer ») ; image non
+    rendue (message, « Réessayer », le lien se copie encore) ; chaque geste dit son échec
+    (K-59) : menu refusé par l'appareil, enregistrement non confirmé (D5), copie manquée ;
+  - `offline` : le bandeau de la page le dit une fois ; **tout marche sans réseau** (rien ne
+    part au serveur) ; sans dossier lu et hors ligne, `EtatSansDonnees` ;
+  - **capacité indisponible** : aucun lien d'offre : « La carte à partager n'est pas encore
+    disponible. » ; la tuile n'est pas rendue ; jamais le nom de la configuration ;
+  - **appareil sans menu de partage** : pas de « Partager », une phrase dit quoi faire ;
+  - **menu qui ne partage que du texte** : « Partager » et sa note (le lien part sans
+    l'image) ;
+  - **menu fermé par la personne** : aucun message ; **succès** : dit seulement après la
+    réponse.
+- **Mots du module** : `mots-rewayah` : « classe », jamais « groupe » ; aucun prix, aucune
+  promesse ; pas de « gratuit », « garanti » ; pas de tiret long. **Les mots du module entrent
+  dans `.claude/skills/mots-rewayah` avec cet écran** (`DEC:35`) : non fait ici, ce dossier est
+  interdit aux agents de cette session ; à reporter : « Un proche veut apprendre le Coran ? »,
+  « Partager », « Enregistrer l'image », « Copier le lien », « Découvrir l'offre ». **Règle à
+  y inscrire** : aucun texte ne demande d'agir pour l'académie, son nom n'est jamais le motif
+  (consigne du 22/10).
+- **À confirmer par le directeur avant toute mise en ligne** :
+  1. les **mots exacts** de la tuile, de la page et de la carte (ceux de la consigne sont repris
+     tels quels ; le motif, la suite de la page, le titre et les trois lignes de la carte sont
+     proposés) ;
+  2. la **référence affichée** (« Rapporté par at-Tirmidhi ») : la formulation est celle que
+     rapporte at-Tirmidhi (n° 2670, d'après Anas) ; Muslim (n° 1893) rapporte le même sens
+     sous une autre forme (`DEC` section 1 bis) ;
+  3. la **traduction française** : « Celui qui indique le bien est comme celui qui
+     l'accomplit. » ;
+  4. la page visée : `/fr/` (accueil du site) ou `/fr/tarifs` ;
+  5. `SITE_URL` en production : sans elle, le lien prend l'origine de la page ouverte, donc
+     celle d'un aperçu de pull request quand la carte est partagée depuis un aperçu ;
+  6. la ligne des langues : poular (peul), français, anglais, selon les enseignants
+     disponibles ; **l'encart `tarifs-2026-10-18.json` de cette branche liste encore l'arabe**
+     (corrigé le 22/10 dans le dépôt principal, `DEC` section 1 ter) : la carte ne le cite pas.
+  La question de la **légende du QR** est tranchée par la consigne : « Découvrir l'offre ».
+- **Dépend du serveur** : rien pour la carte. La candidature en cours vient de
+  `etat_dossier()` étendu (`CAND-BR-10`).
+- **Contrôles d'acceptation** : un seul hadith, en petit, en bas ; 0 prix, 0 montant, 0
+  pourcentage, 0 mot de promesse (fr et ar) ; **0 texte qui nomme l'académie ou demande d'agir
+  pour elle** (fr et ar, lus clé par clé dans les fichiers de traduction) ; 0 effet sur la
+  candidature (aucun port serveur) ; les trois lignes de la carte contenues dans les encarts
+  décidés ; QR relu module par module dans le PNG exporté (0 module faux) ; PNG de 1080 x
+  1920 ; mêmes octets en clair, en sombre, à 200 % de texte et en Interface guidée ;
+  contrastes mesurés (blanc sur violet de marque 4,81:1, encre sur lavis d'accent 8,8:1, QR
+  noir sur blanc 19,0:1, arche lavande sur violet 3,97:1, plaque blanche du QR sur violet
+  4,81:1) ; un seul bouton plein dans chaque état ; 320, 390, 768 et 1440, texte à 100 % et
+  200 %, clair et sombre, `fr` et `ar` ; adaptateur web exercé dans Chromium avec les API de
+  partage simulées (niveaux image, lien, aucun ; fermeture par la personne ; refus ; erreur
+  synchrone). **Non prouvé** : le menu de partage réel d'un téléphone (iOS Safari, Chrome
+  Android).
+- **Preuves (22/10/2026, reprise)** : 98 tests (`test/features/partage_offre` : 89, dont la
+  page, la carte, le rendu réel de l'image, la tuile du portail et les textes fr et ar lus clé
+  par clé ; `test/core/partage_offre` : 9, le lien) ; la route `/attente/partage` ouverte au
+  compte en attente (`test/router/redirection_test.dart`, 176) ; 34 captures
+  (`test/capture/partage_capture_test.dart`, avec `CAPTURE_DIR`), dont la page défilée
+  jusqu'aux gestes et chaque état ; `dart analyze --fatal-infos` : 0 problème ;
+  `dart run tool/verifier_jetons.dart` : 1132 fichiers, 0 violation ; `test/tool` (dont
+  `verifier_revue`, zéro au-dessus du socle) et `test/i18n` passent. Dossiers touchés lancés en
+  entier (routeur, widgets, core, i18n, outils, accessibilité, candidatures, dossier) : 4201
+  tests passent, 19 sautés, **3 échecs préexistants** dans
+  `test/accessibilite/duree_insecable_4_test.dart` et `duree_insecable_5_test.dart` (garde sur
+  `lib/features/com_annonces/file_moderation.dart:510`, sans rapport avec cet écran). Spécifié,
+  présent dans le code, testé localement ; **ni testé sur staging, ni déployé**.
 
 ### ENS-03 et ELV-03, mode entretien : Salle (`/salle`)
 

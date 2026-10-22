@@ -104,6 +104,19 @@ abstract final class Env {
       demandee &&
       (environnement == 'developpement' || environnement == 'staging');
 
+  /// L'adresse du site public (`https://hote`), sans chemin : l'origine des
+  /// liens que l'application donne a partager (CAND-06, la carte « Faites
+  /// connaitre Rewayah »).
+  ///
+  /// **Vide par defaut, et c'est voulu.** Sur le web, l'application et le site
+  /// public sont servis par la meme origine (`flutter-deploy.yml` construit
+  /// `fr/` a cote de l'application) : sans valeur, le lien prend l'origine de
+  /// la page ouverte, comme `lienAvisPour`. Hors du web, sans valeur, aucun
+  /// lien n'existe et la carte ne se propose pas. Une adresse invalide (pas de
+  /// `https`, pas d'hote) est ignoree. Voir `lienOffre`
+  /// (`lib/core/partage_offre/lien_offre.dart`).
+  static const String siteUrl = String.fromEnvironment('SITE_URL');
+
   /// DSN Sentry du projet Flutter (onboarding etape F, critere 0.6).
   ///
   /// Vide par defaut, et c'est voulu : **sans DSN, la supervision ne demarre

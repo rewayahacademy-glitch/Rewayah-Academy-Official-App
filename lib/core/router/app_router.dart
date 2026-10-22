@@ -150,6 +150,7 @@ import '../../features/mfa_controleur/mfa_controleur_page.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
+import '../../features/partage_offre/partage_offre_page.dart';
 import '../../features/presentation_tuteur/demandes_presentation_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/recherche/entree_recherche.dart';
@@ -415,6 +416,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.attenteCandidature,
         builder: (BuildContext _, GoRouterState _) => const CandidaturePage(),
+      ),
+      // CAND-06 : la carte a partager. Declaree meme sans lien d'offre : une
+      // adresse tapee montre la phrase de capacite indisponible.
+      GoRoute(
+        path: Routes.attentePartage,
+        builder: (BuildContext _, GoRouterState _) =>
+            const PartageOffrePage(),
       ),
 
       // Compte. Cet espace est partage par les roles actifs, mais ses

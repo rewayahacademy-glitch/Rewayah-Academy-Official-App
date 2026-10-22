@@ -25,6 +25,7 @@ import '../candidature/portail_candidature.dart';
 import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../inscription/brouillon_inscription.dart';
+import '../partage_offre/tuile_partage.dart';
 
 /// `TUT-00b` : le portail d'attente, refondu (05 section A, sous-paquet 3).
 ///
@@ -239,6 +240,12 @@ class _AttentePageState extends ConsumerState<AttentePage> {
                   ),
                 ),
               ],
+              // CAND-06 : « Un proche veut apprendre le Coran ? », facultatif.
+              // Pour qui candidate encore (pas apres un refus ni un retrait),
+              // sous l'etat et sa prochaine action, jamais avant.
+              if (candidature != null &&
+                  candidature.issue == IssueCandidature.enCours)
+                const TuilePartageOffre(),
             ],
           ),
         ),

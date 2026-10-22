@@ -27,15 +27,18 @@ import '../../core/widgets/skeleton.dart';
 
 /// Une page simple : titre, retour au dossier, corps.
 class PageSimple extends StatelessWidget {
-  /// Cree la page.
-  const PageSimple({required this.corps, super.key});
+  /// Cree la page. [titre] vaut « Votre candidature » par defaut.
+  const PageSimple({required this.corps, this.titre, super.key});
 
   /// Le corps.
   final Widget corps;
 
+  /// Le titre de la page, quand ce n'est pas celui du questionnaire.
+  final String? titre;
+
   @override
   Widget build(BuildContext context) => PageShell(
-    titre: t.recrutement.questionnaire.titre,
+    titre: titre ?? t.recrutement.questionnaire.titre,
     onRetour: () => GoRouter.of(context).go(Routes.attente),
     child: Align(
       alignment: AlignmentDirectional.topCenter,
@@ -72,6 +75,7 @@ Widget lecturePage<T>({
   required Widget Function(T) construire,
   required String titreEchec,
   required VoidCallback onReessayer,
+  String? titre,
   Key? key,
 }) {
   if (valeur.hasValue) {
@@ -80,6 +84,7 @@ Widget lecturePage<T>({
   final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
   return PageSimple(
     key: key,
+    titre: titre,
     corps: BlocAsynchrone<T>(
       valeur: valeur,
       squelette: const Skeleton.liste(lignes: 3),

@@ -14,6 +14,8 @@ import 'package:rewayah_academy/core/candidature/port_ma_candidature.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/i18n/isolat_bidi.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/theme/app_palette.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/candidature/choix_avec_recherche.dart';
 import 'package:rewayah_academy/features/candidature/coquille_parcours.dart';
@@ -74,6 +76,40 @@ void main() {
         // « Retour » est en bas, avec « Continuer ».
         expect(find.byKey(CoquilleParcours.retourKey), findsOneWidget);
         expect(find.byKey(CoquilleParcours.actionKey), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      '« Continuer » ne parait jamais desactive : actif, en aplat violet plein '
+      '(demande du directeur du 22/10), avant comme apres un choix',
+      (WidgetTester tester) async {
+        await monterQuestionnaire(tester, port: FauxMaCandidature());
+        final Finder action = find.byKey(CoquilleParcours.actionKey);
+        final ActionPrincipale bouton = tester.widget<ActionPrincipale>(action);
+        expect(bouton.onPress, isNotNull);
+        expect(bouton.enCours, isFalse);
+        expect(bouton.affirmee, isTrue);
+        // Le fond peint est l'aplat de marque, pas la lavande douce qui se
+        // lisait comme un bouton inerte.
+        final AppPalette palette = AppPalette.of(tester.element(action));
+        final List<Color?> fonds = <Color?>[
+          for (final DecoratedBox boite in tester.widgetList<DecoratedBox>(
+            find.descendant(of: action, matching: find.byType(DecoratedBox)),
+          ))
+            if (boite.decoration is BoxDecoration)
+              (boite.decoration as BoxDecoration).color,
+        ];
+        expect(fonds, contains(palette.surfacePrimary.background));
+        expect(fonds, isNot(contains(palette.surfaceActionDouce.background)));
+        // Une question, un choix fait : le bouton est le meme.
+        await tester.tap(action);
+        await tester.pumpAndSettle();
+        await tester.tap(action);
+        await tester.pumpAndSettle();
+        final Finder suivante = find.byKey(CoquilleParcours.actionKey);
+        expect(suivante, findsOneWidget);
+        expect(tester.widget<ActionPrincipale>(suivante).affirmee, isTrue);
+        expect(tester.widget<ActionPrincipale>(suivante).onPress, isNotNull);
       },
     );
 

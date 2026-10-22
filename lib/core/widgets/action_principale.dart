@@ -86,9 +86,10 @@ class ActionPrincipale extends StatelessWidget {
   /// `surfacePrimary` (violet plein et encre claire en clair, accent plein en
   /// sombre) au lieu de la lavande douce, comme en Interface guidee. Reserve a
   /// l'action qui fait avancer un parcours (« Continuer », « Envoyer ma
-  /// candidature ») : demande du directeur du 22/10/2026, la lavande douce y
-  /// paraissait desactivee meme apres un choix. Un bouton inerte garde son
-  /// propre aspect. Ignore pour les autres niveaux.
+  /// candidature ») et a l'unique invitation d'un ecran de la Salle d'examen
+  /// (« Partager », CAND-06) : demande du directeur du 22/10/2026, la lavande
+  /// douce y paraissait desactivee meme apres un choix. Un bouton inerte garde
+  /// son propre aspect. Ignore pour les autres niveaux.
   final bool affirmee;
 
   /// Vrai pour poser le LIBELLE au bord de debut du contenu (lot K, point

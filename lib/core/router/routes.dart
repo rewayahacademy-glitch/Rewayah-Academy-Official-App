@@ -92,6 +92,13 @@ abstract final class Routes {
   /// compte, la page revient au portail.
   static const String attenteCandidature = '/attente/candidature';
 
+  /// CAND-06 : la carte a partager, « Un proche veut apprendre le Coran ? »
+  /// (envoyer l'offre a un proche, facultatif et sans effet sur la
+  /// candidature). Sous `/attente`,
+  /// ouvert au compte en attente ; sans candidature en cours pour le compte, la
+  /// page revient au portail.
+  static const String attentePartage = '/attente/partage';
+
   // --- Eleve, meme arborescence en mode enfant et en mode standard --------
 
   /// Accueil eleve.
@@ -1245,8 +1252,7 @@ abstract final class Routes {
   static const String avis = '/avis';
 
   /// L'adresse du formulaire d'avis pour [jeton].
-  static String avisPour(String jeton) =>
-      '$avis/${Uri.encodeComponent(jeton)}';
+  static String avisPour(String jeton) => '$avis/${Uri.encodeComponent(jeton)}';
 
   /// Ou mene la cloche des notifications de la coquille d'un role : la
   /// `NotificationsPage` existante, sous le prefixe du role. Nul pour un

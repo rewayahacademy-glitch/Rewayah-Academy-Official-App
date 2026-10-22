@@ -264,3 +264,24 @@ référentiel.
   `lib/core/capacites/partage_pedagogique_demonstration.dart`, branchée seulement
   sous `PLAYGROUND=true` par un sélecteur du type
   `portPartagePedagogiqueSelon(demo: ...)`.
+
+## 7. Hors serveur : `PortPartageOffre` (`CAND-06`, carte à partager « Un proche veut apprendre le Coran ? »)
+
+Décision du directeur du 22/10/2026 (`DECISION-CANDIDATURES-2026-10-21.md`, section 1 bis).
+**Aucune dépendance serveur** : ni RPC, ni migration, ni adaptateur `*_supabase.dart`, ni
+`CapaciteIndisponible('CAND-BR-nn')`. Le partage est facultatif et sans effet sur la
+candidature : aucun compteur, aucun évènement, aucune écriture.
+
+Le seul point qui varie est l'appareil. `lib/core/partage_offre/port_partage_offre.dart` :
+
+| Élément | Rôle |
+| :--- | :--- |
+| `NiveauPartage` (`image`, `lien`, `aucun`) | ce que le menu de partage de l'appareil accepte ; `aucun` : le bouton « Partager » n'est pas rendu |
+| `partager(png, nomFichier, titre, texte, lien)` | ouvre le menu ; rend `IssuePartage.partage` ou `.annule` (la personne ferme le menu : aucun message) ; lève `PartageImpossible` si l'appareil refuse. `titre` et `texte` sont ceux que lit la personne qui reçoit : le titre de la carte (« Apprendre le Coran en ligne, en petite classe ») et sa première ligne, jamais le nom de l'académie (consigne du 22/10) |
+| web (`partage_appareil_web.dart`) | `navigator.share` et `navigator.canShare` par `dart:js_interop` ; aucun paquet |
+| autres plateformes (`partage_appareil_memoire.dart`) | `aucun` |
+| double de test (`test/fixtures/partage_offre/faux_partage_offre.dart`) | oracle des tests de widget ; importé par aucune ligne de production |
+
+« Enregistrer l'image » passe par `PortEnregistrementFichier` (`tc_telechargement`) et « Copier
+le lien » par le presse-papiers de Flutter : ils existent déjà. Le lien vient de
+`lienOffre` (`Env.siteUrl`, sinon l'origine de la page ouverte sur le web, sinon rien).

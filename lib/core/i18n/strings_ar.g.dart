@@ -1591,6 +1591,7 @@ class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
 	@override late final _Traductions$recrutement$salles$ar salles = _Traductions$recrutement$salles$ar._(_root);
 	@override late final _Traductions$recrutement$paiement$ar paiement = _Traductions$recrutement$paiement$ar._(_root);
 	@override late final _Traductions$recrutement$portail$ar portail = _Traductions$recrutement$portail$ar._(_root);
+	@override late final _Traductions$recrutement$partage$ar partage = _Traductions$recrutement$partage$ar._(_root);
 	@override late final _Traductions$recrutement$retrait$ar retrait = _Traductions$recrutement$retrait$ar._(_root);
 	@override late final _Traductions$recrutement$questionnaire$ar questionnaire = _Traductions$recrutement$questionnaire$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$ar parcours = _Traductions$recrutement$parcours$ar._(_root);
@@ -7958,6 +7959,32 @@ class _Traductions$recrutement$portail$ar extends Traductions$recrutement$portai
 	@override String get relire => 'إعادة قراءة طلب ترشحي';
 }
 
+// Path: recrutement.partage
+class _Traductions$recrutement$partage$ar extends Traductions$recrutement$partage$fr {
+	_Traductions$recrutement$partage$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'هل يريد أحد المقرّبين منك تعلّم القرآن؟';
+	@override String get introduction => 'أرسل إليه العرض بلمسة واحدة: سيتعلّم في فصل صغير، عبر الفيديو، مع المعلم نفسه كل أسبوع.';
+	@override String get introductionSuite => 'تعرّفه البطاقة في أسطر قليلة بكيفية سير الدروس، وتمنحه رابط العرض.';
+	@override String get motif => 'وهو خير لك أيضًا، ففي الحديث: «الدال على الخير كفاعله».';
+	@override String get facultatif => 'اختياري: المشاركة لا تغيّر شيئًا في طلب ترشحك.';
+	@override String get apercu => 'معاينة البطاقة المراد مشاركتها';
+	@override String get partager => 'مشاركة';
+	@override String get partagerLaCarte => 'مشاركة بطاقة العرض';
+	@override String get enregistrer => 'حفظ الصورة';
+	@override String get copier => 'نسخ الرابط';
+	@override String lien({required Object lien}) => 'رابط العرض: ⁨${lien}⁩';
+	@override String get sansMenu => 'لا يتيح هذا الجهاز المشاركة المباشرة. احفظ الصورة لترسلها بنفسك، أو انسخ الرابط.';
+	@override String get lienSeul => 'يشارك هذا الجهاز الرابط دون الصورة. احفظ الصورة إن أردت إرسالها أيضًا.';
+	@override late final _Traductions$recrutement$partage$fait$ar fait = _Traductions$recrutement$partage$fait$ar._(_root);
+	@override late final _Traductions$recrutement$partage$echec$ar echec = _Traductions$recrutement$partage$echec$ar._(_root);
+	@override String get nonOuvert => 'البطاقة غير متاحة بعد. عد إلى هذه الصفحة لاحقًا.';
+	@override late final _Traductions$recrutement$partage$carte$ar carte = _Traductions$recrutement$partage$carte$ar._(_root);
+}
+
 // Path: recrutement.retrait
 class _Traductions$recrutement$retrait$ar extends Traductions$recrutement$retrait$fr {
 	_Traductions$recrutement$retrait$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -13659,6 +13686,48 @@ class _Traductions$recrutement$candidat$comptable$ar extends Traductions$recrute
 	@override String get intro => 'للتسجيل كمحاسب، أدخل رمز الدعوة الذي تلقيته من الإدارة.';
 	@override String get valideDetail => 'يمكنك إنشاء ملفك كمحاسب.';
 	@override String get indisponible => 'سيتوفر التحقق من رموز المحاسبين عند ربط الخادم.';
+}
+
+// Path: recrutement.partage.fait
+class _Traductions$recrutement$partage$fait$ar extends Traductions$recrutement$partage$fait$fr {
+	_Traductions$recrutement$partage$fait$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get partage => 'تمت مشاركة البطاقة.';
+	@override String get enregistre => 'تم حفظ الصورة.';
+	@override String get copie => 'تم نسخ الرابط.';
+}
+
+// Path: recrutement.partage.echec
+class _Traductions$recrutement$partage$echec$ar extends Traductions$recrutement$partage$echec$fr {
+	_Traductions$recrutement$partage$echec$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get partage => 'لم تُفتح قائمة المشاركة: رفضها جهازك هذه المرة. يمكنك حفظ الصورة أو نسخ الرابط.';
+	@override String get enregistrement => 'لم يتأكد حفظ الصورة. حاول مرة أخرى، أو انسخ الرابط.';
+	@override String get copie => 'تعذّر نسخ الرابط. حدّده في الصفحة ثم انسخه يدويًا.';
+	@override String get carte => 'تعذّر إعداد البطاقة. أعد المحاولة بعد قليل.';
+}
+
+// Path: recrutement.partage.carte
+class _Traductions$recrutement$partage$carte$ar extends Traductions$recrutement$partage$carte$fr {
+	_Traductions$recrutement$partage$carte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'تعلّم القرآن عبر الإنترنت، في فصل صغير';
+	@override String get enseignant => 'المعلم نفسه، وثلاث حصص في الأسبوع، في موعد ثابت.';
+	@override String get publics => 'للأطفال من سن السادسة وللكبار.';
+	@override String get langues => 'بالبولار (الفولاني) أو الفرنسية أو الإنجليزية، بحسب المعلمين المتاحين.';
+	@override String get decouvrir => 'اكتشفوا العرض';
+	@override String get hadith => 'الدال على الخير كفاعله';
+	@override String get traduction => '';
+	@override String get reference => 'رواه الترمذي';
 }
 
 // Path: recrutement.parcours.presentation
@@ -24705,6 +24774,35 @@ extension on TraductionsAr {
 			'recrutement.portail.elementContrat' => 'عقد المعلم',
 			'recrutement.portail.versementImpossibleTitre' => 'صرف الأجر غير ممكن بعد',
 			'recrutement.portail.relire' => 'إعادة قراءة طلب ترشحي',
+			'recrutement.partage.titre' => 'هل يريد أحد المقرّبين منك تعلّم القرآن؟',
+			'recrutement.partage.introduction' => 'أرسل إليه العرض بلمسة واحدة: سيتعلّم في فصل صغير، عبر الفيديو، مع المعلم نفسه كل أسبوع.',
+			'recrutement.partage.introductionSuite' => 'تعرّفه البطاقة في أسطر قليلة بكيفية سير الدروس، وتمنحه رابط العرض.',
+			'recrutement.partage.motif' => 'وهو خير لك أيضًا، ففي الحديث: «الدال على الخير كفاعله».',
+			'recrutement.partage.facultatif' => 'اختياري: المشاركة لا تغيّر شيئًا في طلب ترشحك.',
+			'recrutement.partage.apercu' => 'معاينة البطاقة المراد مشاركتها',
+			'recrutement.partage.partager' => 'مشاركة',
+			'recrutement.partage.partagerLaCarte' => 'مشاركة بطاقة العرض',
+			'recrutement.partage.enregistrer' => 'حفظ الصورة',
+			'recrutement.partage.copier' => 'نسخ الرابط',
+			'recrutement.partage.lien' => ({required Object lien}) => 'رابط العرض: ⁨${lien}⁩',
+			'recrutement.partage.sansMenu' => 'لا يتيح هذا الجهاز المشاركة المباشرة. احفظ الصورة لترسلها بنفسك، أو انسخ الرابط.',
+			'recrutement.partage.lienSeul' => 'يشارك هذا الجهاز الرابط دون الصورة. احفظ الصورة إن أردت إرسالها أيضًا.',
+			'recrutement.partage.fait.partage' => 'تمت مشاركة البطاقة.',
+			'recrutement.partage.fait.enregistre' => 'تم حفظ الصورة.',
+			'recrutement.partage.fait.copie' => 'تم نسخ الرابط.',
+			'recrutement.partage.echec.partage' => 'لم تُفتح قائمة المشاركة: رفضها جهازك هذه المرة. يمكنك حفظ الصورة أو نسخ الرابط.',
+			'recrutement.partage.echec.enregistrement' => 'لم يتأكد حفظ الصورة. حاول مرة أخرى، أو انسخ الرابط.',
+			'recrutement.partage.echec.copie' => 'تعذّر نسخ الرابط. حدّده في الصفحة ثم انسخه يدويًا.',
+			'recrutement.partage.echec.carte' => 'تعذّر إعداد البطاقة. أعد المحاولة بعد قليل.',
+			'recrutement.partage.nonOuvert' => 'البطاقة غير متاحة بعد. عد إلى هذه الصفحة لاحقًا.',
+			'recrutement.partage.carte.titre' => 'تعلّم القرآن عبر الإنترنت، في فصل صغير',
+			'recrutement.partage.carte.enseignant' => 'المعلم نفسه، وثلاث حصص في الأسبوع، في موعد ثابت.',
+			'recrutement.partage.carte.publics' => 'للأطفال من سن السادسة وللكبار.',
+			'recrutement.partage.carte.langues' => 'بالبولار (الفولاني) أو الفرنسية أو الإنجليزية، بحسب المعلمين المتاحين.',
+			'recrutement.partage.carte.decouvrir' => 'اكتشفوا العرض',
+			'recrutement.partage.carte.hadith' => 'الدال على الخير كفاعله',
+			'recrutement.partage.carte.traduction' => '',
+			'recrutement.partage.carte.reference' => 'رواه الترمذي',
 			'recrutement.retrait.lien' => 'سحب طلب ترشحي',
 			'recrutement.retrait.question' => 'هل تسحب طلب ترشحك؟',
 			'recrutement.retrait.consequence' => 'وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك.',
@@ -24924,6 +25022,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.titre' => 'بأي روايات تقرأ؟',
 			'recrutement.parcours.q.riwayat.explication' => 'الرواية طريقة منقولة في قراءة القرآن. اختر كل ما تقرأ به.',
 			'recrutement.parcours.q.riwayat.court' => 'الروايات',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.hafs.libelle' => 'حفص',
 			'recrutement.parcours.q.riwayat.options.hafs.description' => 'رواية عن عاصم',
 			'recrutement.parcours.q.riwayat.options.shuba.libelle' => 'شعبة',
@@ -24953,8 +25053,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.ad_duri_al_kisai.libelle' => 'الدوري (الكسائي)',
 			'recrutement.parcours.q.riwayat.options.ad_duri_al_kisai.description' => 'رواية عن الكسائي',
 			'recrutement.parcours.q.riwayat.options.ibn_wardan.libelle' => 'ابن وردان',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.ibn_wardan.description' => 'رواية عن أبي جعفر',
 			'recrutement.parcours.q.riwayat.options.ibn_jammaz.libelle' => 'ابن جماز',
 			'recrutement.parcours.q.riwayat.options.ibn_jammaz.description' => 'رواية عن أبي جعفر',
