@@ -6,6 +6,22 @@
 - Valeurs lisibles par un programme : `docs/current/tarifs-2026-10-18.json`. L'application lit ses prix en base (politique commerciale publiée) ; le site public lit ce fichier.
 - Le directeur l'a dit : **c'est le dernier passage sur les tarifs**. Aucun agent ne change une valeur sans nouvelle décision datée.
 
+## Décision du directeur du 22/10/2026 : la répartition du paiement, montrée en pourcentages
+
+Le directeur l'a dit, en deux messages du 22/10 :
+
+- « Il faudra penser à ajouter le salaire et comment il est déterminé […] il y a une grille qui montre tous les calculs. 47 % pour l'enseignant, 2 % pour les frais de transaction et les autres dépenses jusqu'au bénéfice de l'académie. Donc ça, il faut l'ajouter. […] je pense que ça ne doit pas être au début de la première salle […] Je pense sur la deuxième salle. […] cette grille-là et ce calcul doit être affiché sur le profil de l'enseignant. Je pense même à l'afficher sur le profil du tuteur et de l'élève adulte. C'est pour la transparence, parce que notre académie est une académie islamique. »
+- « Faut pas donner les petits détails là, 1,99 ou bien 1,57 ou bien 25$ pour Superbase et ainsi de suite. Tu donnes les pourcentages […] Celui qui voudra les détails exacts devra en demander à l'administration. Et ne néglige aucune dépense. Écris tout, mentionne tout. On veut la transparence totale, mais pas les prix. Les pourcentages. […] pour l'administration, il ne faut pas dire administration, une personne, tel pourcent. Non. Il faut juste dire ce que l'administration est payée […] du paiement de l'élève, c'est tel pourcent. »
+
+Ce qui est décidé :
+
+- **La répartition du paiement d'un élève est montrée**, pour la transparence : à l'enseignant (profil, et dans le parcours de candidature), au tuteur et à l'élève adulte.
+- **En pourcentages seulement.** Aucun montant dans cette répartition : ni taux par élève et par heure, ni charge en dollars. Qui veut les montants les demande à l'administration.
+- **Toutes les dépenses y figurent**, sans exception, jusqu'au bénéfice de l'académie, et la somme fait 100 %.
+- **Chaque poste se dit par sa part du paiement de l'élève** (« l'administration : tel pourcentage du paiement de l'élève »), jamais par un nombre de personnes.
+
+Ce qui reste une proposition, à soumettre au directeur : la salle exacte où la répartition entre dans le parcours de candidature, l'écran qui la porte pour chaque rôle, la base de calcul et la façon de dire qu'il s'agit d'une estimation, le « 2 % » (le document ne porte aucune ligne de 2 % : les frais de carte et de change valent environ 5 % de l'encaissé, et les frais de virement vers l'enseignant environ 2 % de sa paie plus 1 $ par versement), et le sort des montants que l'enseignant voit déjà de sa propre paie. Proposition : `docs/current/CANDIDATURES/PROPOSITION_REPARTITION_PAIEMENT.md`.
+
 ## Décision du directeur du 19/10/2026 : l'enseignant reçoit 47 % du prix
 
 Le directeur l'a dit : « je confirme le nouveau tarif, il faut juste ramener le prof adulte à 47 % comme l'enfant ; tu rends le nouveau le standard partout ». Elle remplace la part de 22,5 % (enfant) et de 30 % (adulte) du 18/10, qui venait d'une erreur : le « 22,5 » visé était un montant par élève et par mois, appliqué à tort comme un pourcentage du prix.
