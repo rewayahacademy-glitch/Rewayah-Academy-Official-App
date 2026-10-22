@@ -563,6 +563,8 @@ Une relecture de tout le texte visible des 18 pages a suivi. Ont été réécrit
 
 Ensuite : la porte du haut de l'accueil, un peu plus petite au bureau, ne touche plus l'en-tête ; au téléphone, la porte et la famille sont cadrées en grand. L'accueil se referme sous le haut d'une arche (« arche-haut », jusqu'ici sans usage), centré, comme il s'ouvre sur une porte : sa fin ne ressemble plus à celle des autres pages.
 
+**Légende des illustrations (décision du directeur, 22/10/2026, registre M-30).** La légende « Illustration » sous chaque image est retirée de tout le site. Une seule mention la remplace, dans les mentions légales, section « Les images du site » : « Les images de ce site sont des illustrations, sauf les photos des fondateurs. » Chaque image garde son texte alternatif. Les règles de mise en page qui ne servaient qu'aux légendes sont retirées. Le test qui exigeait la légende vérifie maintenant son absence et la présence de la mention.
+
 ## Hors de portée de l'agent
 
 - `.github/workflows/flutter-deploy.yml` vérifie la présence de 8 fichiers du site, mais pas de `motion.js`. Le garde du dépôt interdit à l'agent d'écrire dans `.github/`. Le test `test_only_approved_public_assets_are_copied` couvre ce fichier côté tests.

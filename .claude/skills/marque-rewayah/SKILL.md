@@ -35,8 +35,9 @@ des **candidates**. La vision, la mission, l'ambition, les valeurs et le texte d
 2. Une couleur, une police ou une valeur hors de `lib/core/theme/`. Polices : DM Sans (titres), Plus
    Jakarta Sans (reste et chiffres), Noto Sans Arabic, Uthman Taha Naskh, UthmanicHafs (Coran seulement).
 3. Une identité périmée (vert et or, rose et taupe, crème) ou étrangère (PISI : fluor, crème, Syne).
-4. Un témoignage, un chiffre, un résultat, une photo d'enfant réel ou un écran inventés. Une illustration
-   se légende comme telle.
+4. Un témoignage, un chiffre, un résultat, une photo d'enfant réel ou un écran inventés. Sur le site public,
+   les illustrations sont déclarées une seule fois, dans les mentions légales, sans légende sous chaque image
+   (M-30, 22/10/2026) ; une vraie photo n'est jamais présentée comme une illustration.
 5. « Certifié », « garanti », « 100 % sécurisé », « gratuit », « le meilleur », « cours enregistré ».
 
 Une contradiction ? Écris-la dans la section 3 du registre et continue sans la trancher.

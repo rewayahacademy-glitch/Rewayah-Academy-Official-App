@@ -284,7 +284,7 @@ def lien_fleche(label: str, href: str) -> str:
 # --- Images ------------------------------------------------------------------
 
 def scene(images: dict, ident: str, tailles: str, css: str = "", prioritaire: bool = False,
-          legende: bool = True, attributs: str = "") -> str:
+          attributs: str = "") -> str:
     """Une illustration detouree, en WebP a plusieurs largeurs, legendee comme telle (cahier C.4).
 
     Quand l'image a des calques (content/images.json), elle est posee en deux couches : le fond, puis la partie
@@ -320,11 +320,10 @@ def scene(images: dict, ident: str, tailles: str, css: str = "", prioritaire: bo
     else:
         anime = ""
         couches = img(ident, image["alt"])
-    figcaption = '<figcaption>Illustration</figcaption>' if legende else ""
     # La largeur du fichier le plus grand : un detail cadre ne s'affiche jamais plus grand (il deviendrait flou).
     style = (style[:-1] + ";" if style else ' style="') + f'--natif:{grande}px"'
     return (f'<figure class="scene {esc(css)}"{style}{anime}{attributs}><span class="scene__cadre">{couches}</span>'
-            f'{figcaption}</figure>')
+            '</figure>')
 
 
 def logo_entete(ambiance: str = "clair") -> str:
@@ -486,9 +485,8 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
   <div class="porte__collant">
     <div class="porte__vue">
       <div class="porte__arche" aria-hidden="true"></div>
-      {scene(images, "chemin", "(max-width: 839px) 150vw, 112vw", "porte__scene", prioritaire=True, legende=False)}
+      {scene(images, "chemin", "(max-width: 839px) 150vw, 112vw", "porte__scene", prioritaire=True)}
     </div>
-    <p class="porte__legende">Illustration</p>
     <div class="porte__texte" data-lignes>
       <h1>{titre_html(page['h1'])}</h1>
       <p class="hero-intro">{texte_html(page.get('intro', ''))}</p>
@@ -499,7 +497,7 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
     <div class="porte__cercle">
       <div class="porte__disque" aria-hidden="true"></div>
       <p class="porte__phrase" aria-hidden="true"><span>Une petite classe.</span><br><span>Un enseignant attitré.</span></p>
-      {scene(images, "halqa", "(max-width: 839px) 90vw, 50vw", "porte__halqa", legende=False)}
+      {scene(images, "halqa", "(max-width: 839px) 90vw, 50vw", "porte__halqa")}
     </div>
   </div>
 </section>'''
@@ -521,7 +519,7 @@ def accueil_chapitres(page: dict, images: dict) -> str:
     # grand fichier, et non celui qui suffit a la largeur de la fenetre.
     figures = "".join(
         scene(images, img, "(max-width: 839px) 92vw, 1220px" if (images["images"][img].get("calques") or {}).get("anime") == "mains"
-              else "(max-width: 839px) 92vw, 44vw", "chapitres__image", legende=(i == 0), attributs=f' data-chapitre-image="{i}"')
+              else "(max-width: 839px) 92vw, 44vw", "chapitres__image", attributs=f' data-chapitre-image="{i}"')
         for i, (_, img) in enumerate(chapitres))
     textes = []
     for i, (sid, _) in enumerate(chapitres):
@@ -529,7 +527,7 @@ def accueil_chapitres(page: dict, images: dict) -> str:
         textes.append(
             f'<article class="chapitre" id="{esc(sid)}" aria-labelledby="chapitre-{sid}" data-chapitre="{i}">'
             f'<h2 id="chapitre-{sid}">{titre_html(sec["title"])}</h2>{paragraphes(sec)}{points_liste(sec)}{liens_section(sec)}'
-            f'<div class="chapitre__image-mobile">{scene(images, chapitres[i][1], "860px" if (images["images"][chapitres[i][1]].get("calques") or {}).get("anime") == "mains" else "92vw", "chapitres__image-mobile", legende=True)}</div>'
+            f'<div class="chapitre__image-mobile">{scene(images, chapitres[i][1], "860px" if (images["images"][chapitres[i][1]].get("calques") or {}).get("anime") == "mains" else "92vw", "chapitres__image-mobile")}</div>'
             '</article>')
     return f'''<section class="chapitres" aria-label="Pour vos enfants et pour vous">
   <div class="chapitres__fenetre" aria-hidden="true"><div class="chapitres__pile">{figures}</div></div>
@@ -549,7 +547,7 @@ def accueil_etapes(page: dict, images: dict) -> str:
     )
     tuiles = "".join(
         f'<li class="pousse__etape pousse__etape--{i}" data-revele>'
-        f'<div class="pousse__tuile">{scene(images, img, "(max-width: 839px) 90vw, 40vw", "pousse__image", legende=(i == 2))}</div>'
+        f'<div class="pousse__tuile">{scene(images, img, "(max-width: 839px) 90vw, 40vw", "pousse__image")}</div>'
         f'<h3>{titre_html(titre)}</h3><p>{texte_html(texte)}</p></li>'
         for i, (img, titre, texte) in enumerate(etapes))
     return f'''<section class="pousse" id="fonctionnement" aria-labelledby="pousse-titre">
@@ -1324,7 +1322,7 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
         f'<figure class="scene introuvable__scene"><img src="{ASSETS}/scene-place-{largeurs_404[-1]}.webp" '
         f'srcset="{", ".join(f"{ASSETS}/scene-place-{w}.webp {w}w" for w in largeurs_404)}" sizes="(max-width: 839px) 90vw, 44vw" '
         f'width="{largeurs_404[-1]}" height="{round(images["images"]["place"]["hauteur"] * largeurs_404[-1] / images["images"]["place"]["largeur"])}" '
-        f'alt="{esc(images["images"]["place"]["alt"])}"><figcaption>Illustration</figcaption></figure>'
+        f'alt="{esc(images["images"]["place"]["alt"])}"></figure>'
         '</main></body></html>',
         encoding="utf-8",
     )

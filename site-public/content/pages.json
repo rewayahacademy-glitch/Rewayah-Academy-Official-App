@@ -933,6 +933,13 @@
           ]
         },
         {
+          "id": "images",
+          "title": "Les images du site",
+          "paragraphs": [
+            "Les images de ce site sont des illustrations, sauf les photos des fondateurs."
+          ]
+        },
+        {
           "id": "s4",
           "title": "Ces textes",
           "paragraphs": [

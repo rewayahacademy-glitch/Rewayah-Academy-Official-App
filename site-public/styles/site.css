@@ -243,7 +243,6 @@ p { text-wrap: wrap; max-width: 60ch; }
 .pause-anim .pause-anim__lecture, .pause-anim[aria-pressed="true"] .pause-anim__pause { display: none; }
 .pause-anim[aria-pressed="true"] .pause-anim__lecture { display: inline; }
 /* Une seule regle pour la legende « Illustration » : petite, alignee sur le bord droit de son image. */
-.scene figcaption { font-size: var(--t-petit); line-height: 1.3; text-align: end; color: var(--encre-douce); }
 
 /* --- Boutons et liens : une seule forme, la pilule ------------------------- */
 .action-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--e-2) var(--e-4); margin-top: var(--e-8); }
@@ -311,8 +310,6 @@ p { text-wrap: wrap; max-width: 60ch; }
    alignee sur le bord droit du contenu, sous la scene ; elle s'efface quand on passe la porte. */
 /* Le bas de la scene du haut s'efface au lieu de finir sur une coupe nette : le tapis et le sol se fondent dans la page. */
 .porte__scene .scene__cadre { -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent); mask-image: linear-gradient(to bottom, #000 82%, transparent); }
-.porte__legende { position: absolute; z-index: 2; inset-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); bottom: max(2px, calc(3svh - 22px)); margin: 0; font-size: var(--t-petit); line-height: 1.3; color: var(--encre-douce); }
-.js .porte__legende { opacity: calc(1 - var(--z2, 0) * 6); }
 .porte__cercle, .porte__phrase { display: none; }
 .porte__vue { display: contents; }
 @media (min-width: 840px) and (max-height: 760px) { .porte__scene { bottom: -11svh; } }
@@ -369,7 +366,6 @@ li, dd { text-wrap: wrap; }
 .chapitres__image.scene--cercle > .scene__cadre { flex: none; align-self: center; width: min(100%, calc((100svh - var(--entete) - 8svh) * .92)); }
 /* Les arches de la fenetre (rapport 4/5) : jamais plus larges que leur fichier, ni plus hautes que la fenetre. */
 .chapitres__image.scene--arche > .scene__cadre { flex: none; align-self: center; width: min(100%, var(--natif, 100%), calc((100svh - var(--entete) - 8svh) * .92 * .8)); }
-.chapitres__image figcaption { display: none; }
 .chapitres__textes { grid-column: 1 / -1; }
 .chapitre { padding-block: var(--e-16); }
 .chapitre h2 { max-width: 20ch; margin-bottom: var(--e-6); font-size: var(--t-titre); }
@@ -378,7 +374,6 @@ li, dd { text-wrap: wrap; }
 .chapitre__image-mobile { margin-top: var(--e-8); }
 /* Les mains : la manche sort par le bord gauche de l'ecran, au lieu de finir coupee dans le vide. */
 .chapitre__image-mobile:has(.scene[data-anime="mains"]) { margin-inline-start: calc(var(--marge) * -1); }
-.chapitre__image-mobile:has(.scene[data-anime="mains"]) figcaption { margin-inline-start: var(--marge); }
 /* Sous 840 px, chaque image se pose juste au-dessus de son titre, alignee sur le texte ; les chapitres se suivent sans vide. */
 @media (max-width: 839px) {
   .chapitre { display: flex; flex-direction: column; padding-block: var(--e-10); }
@@ -425,7 +420,6 @@ li, dd { text-wrap: wrap; }
 .pousse__tuile { position: relative; overflow: visible; }
 /* La legende sort de l'arche : 8 px sous la tuile, a droite, dans l'espace du titre de l'etape. */
 .pousse__image { position: static; }
-.pousse__image figcaption { position: absolute; inset-inline-end: 0; top: calc(100% + var(--e-2)); }
 .pousse__etape h3 { margin-top: var(--e-16); }
 .pousse__etape p { margin-top: var(--e-2); max-width: 32ch; }
 /* Au telephone, les etapes s'empilent : la montee des hauteurs ne se lit plus, les trois tuiles prennent la meme taille. */
@@ -593,7 +587,6 @@ li, dd { text-wrap: wrap; }
 @media (min-width: 600px) and (max-width: 839px) { .entete-page__arche, .entete-page--document .entete-page__arche { width: 100%; } }
 .entete-page__image { transform: translateY(calc(var(--par, 0) * -1px)); }
 /* La legende passe sous le cadre, a 8 px, alignee a droite : jamais posee sur l'image. */
-.entete-page__image figcaption { position: static; margin-top: var(--e-2); text-align: end; }
 .entete-page--sobre { min-height: 0; padding-bottom: var(--e-12); background: var(--fond); }
 .entete-page--sobre h1 { max-width: 22ch; }
 .entete-page__ornement { position: absolute; inset-inline-end: 6vw; top: 50%; translate: 0 -46%; width: clamp(120px, 16vw, 240px); opacity: .14; pointer-events: none; }
@@ -634,10 +627,8 @@ li, dd { text-wrap: wrap; }
 .section__texte h2 { margin-bottom: var(--e-6); }
 .section__texte > p + p { margin-top: var(--e-4); }
 .section__figure { position: relative; width: min(100%, 600px); border-radius: var(--arche); background: var(--champ); padding: 14% 5% 0; }
-.section__figure .scene figcaption { position: absolute; inset-inline-end: 0; bottom: calc(var(--e-6) * -1); }
 .section--figure .section__figure { margin-top: var(--e-6); }
 .section__figure--panorama { width: 100%; background: none; padding: 0; border-radius: 0; }
-.section__figure--panorama .scene figcaption { top: auto; bottom: calc(var(--e-6) * -1); }
 .section__corps { max-width: var(--lecture); }
 .section__corps > p + p { margin-top: var(--e-4); }
 @media (min-width: 840px) {
@@ -682,7 +673,6 @@ li, dd { text-wrap: wrap; }
 .pleine__tete h2 { max-width: 20ch; }
 .pleine__image .scene { width: min(100%, calc(72svh * var(--ratio, 1))); max-width: var(--natif, none); margin-inline: auto; }
 .pleine__image .scene { position: relative; }
-.pleine__image .scene figcaption { position: absolute; inset-inline-end: 0; bottom: calc(var(--e-6) * -1); }
 .pleine__corps { display: grid; gap: var(--e-8); }
 .pleine__texte > p + p { margin-top: var(--e-4); }
 .pleine__texte p { max-width: 58ch; }
@@ -773,7 +763,6 @@ li, dd { text-wrap: wrap; }
 @media (max-width: 839px) { .bande-image--large .scene { width: 100%; padding-block: var(--e-10) var(--e-12); } .bande-image--large .scene__cadre { translate: none; } }
 .bande-image--cercle .scene { width: min(86vw, 720px); margin-inline: auto; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: var(--champ); padding: 6%; }
 .bande-image--cercle .scene__cadre { width: 92%; }
-.bande-image .scene figcaption { position: absolute; inset-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); bottom: var(--e-3); }
 .bande-image--large .scene { position: static; }
 .bande-image__texte { margin-top: var(--e-8); }
 .bande-image__phrase { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: max(22px, var(--t-moyen)); line-height: 1.1; letter-spacing: -0.02em; max-width: 30ch; text-wrap: balance; }
@@ -796,7 +785,6 @@ li, dd { text-wrap: wrap; }
 .etape:nth-child(2) { background: var(--champ); }
 .etape:nth-child(3) { background: var(--champ-fort); }
 .etape:nth-child(4) { background: var(--marque); color: var(--sur-marque); }
-.etape .scene figcaption { color: inherit; }
 @media (min-width: 840px) {
   /* Deux cartes par rangee, de meme hauteur. */
   .etapes { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; gap: var(--e-4); }
@@ -978,7 +966,6 @@ li, dd { text-wrap: wrap; }
   .porte__phrase { display: block; text-align: center; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: min(clamp(44px, 7.4vw, 62px), calc((100vw - 2 * var(--marge)) / 10.5)); line-height: 1.04; letter-spacing: -0.02em; }
   .porte__arche { display: none; }
   .porte__scene { position: relative; width: 150vw; max-width: none; margin-inline-start: -50vw; margin-top: var(--e-6); bottom: 0; }
-  .porte__legende { order: 1; position: static; align-self: flex-end; margin-top: var(--e-1); }
 }
 @media (max-width: 599px) {
   .site-header__brand img { height: 36px; }
@@ -1104,7 +1091,6 @@ li, dd { text-wrap: wrap; }
 [data-ambiance="violet"] .pousse__etape--2 .pousse__tuile { background: #BA98FB; }
 [data-ambiance="violet"] .tuile[open] { background: #8652E6; }
 [data-ambiance="violet"] .panneau { background: #25113F; }
-[data-ambiance="violet"] .pousse__image figcaption { color: inherit; }
 
 /* --- Hauts de page qui ouvrent sur le sujet de la page -------------------------------
    Familles garde sa porte ; Cours s'ouvre sur les quatre arches du parcours, Tarifs sur ses deux prix,
@@ -1201,7 +1187,6 @@ li, dd { text-wrap: wrap; }
 @media (min-width: 840px) {
   .entete-page--libre:has(.scene:not([data-anime])) .entete-page__arche { margin-inline-end: calc(-1 * max(var(--marge), (100vw - var(--contenu)) / 2) - 24px); width: calc(100% + max(var(--marge), (100vw - var(--contenu)) / 2) + 24px); }
   /* La legende reste dans la marge de la page, pas dans le debord. */
-  .entete-page--libre:has(.scene:not([data-anime])) .entete-page__image figcaption { padding-inline-end: calc(max(var(--marge), (100vw - var(--contenu)) / 2) + 24px); }
 }
 
 /* --- Phrase seule : centree, elle ne laisse pas une moitie d'ecran vide -------------------- */
@@ -1230,7 +1215,7 @@ li, dd { text-wrap: wrap; }
 [data-ambiance="violet"] .fond--lavande .section__figure::after, [data-ambiance="violet"] .fond--lavande .pleine__image::after { opacity: .5; }
 [data-ambiance="violet"] .fond--prune .fiche { background: #4E2983; }
 [data-ambiance="violet"] .fond--prune .fiche:nth-child(2) { background: #FFFFFF; color: #25113F; }
-.fond--lavande .scene figcaption, .fond--lavande .lien-fleche { color: inherit; }
+.fond--lavande .lien-fleche { color: inherit; }
 /* Phrase seule sur un champ : un ecran d'un seul element, en grand. */
 .bande-phrase { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
 .bande-phrase__phrase { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-titre); line-height: 1.06; letter-spacing: -0.03em; max-width: 26ch; text-wrap: balance; }
@@ -1273,14 +1258,12 @@ li, dd { text-wrap: wrap; }
 .entete-page__panneau { margin-inline: calc(var(--marge) * -1); }
 .entete-page__panneau .scene__cadre { display: block; aspect-ratio: 1 / 1.08; overflow: hidden; border-radius: 50% 50% 0 0 / 28% 28% 0 0; background: #EEE6FA; }
 .entete-page__panneau img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; }
-.entete-page__panneau figcaption { padding-inline-end: var(--marge); }
 @media (min-width: 840px) {
   .entete-page--haut-gros-plan { min-height: min(100svh, 940px); align-items: stretch; }
   .entete-page--haut-gros-plan .entete-page__texte { grid-column: 1 / span 6; align-self: center; padding-bottom: var(--e-12); }
   .entete-page--haut-gros-plan .entete-page__panneau { grid-column: 7 / -1; grid-row: 1; display: flex; margin-inline: 0 calc(-1 * max(var(--marge), (100vw - var(--contenu)) / 2)); }
   .entete-page__panneau .entete-page__image { flex: 1; display: flex; flex-direction: column; transform: none; }
   .entete-page__panneau .scene__cadre { flex: 1; aspect-ratio: auto; min-height: 0; border-radius: min(26vw, 380px) 0 0 0 / min(22vw, 320px) 0 0 0; }
-  .entete-page__panneau figcaption { padding-inline-end: max(var(--marge), (100vw - var(--contenu)) / 2); padding-bottom: var(--e-2); }
 }
 
 /* --- Tablette : le titre de la page sur deux lignes, en grand, au lieu d'une ligne de telephone --- */
@@ -1354,7 +1337,6 @@ li, dd { text-wrap: wrap; }
 .bande-image--detail .scene { width: min(72vw, 420px); }
 .bande-image--detail .bande-phrase__phrase { margin-inline: auto; }
 .bande-image--detail .bande-image__sous { margin-inline: auto; }
-.bande-image--detail .scene figcaption { position: static; margin-top: var(--e-2); text-align: end; }
 @media (min-width: 840px) {
   .fond > .bande-image--detail { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: center; justify-items: stretch; text-align: start; }
   .bande-image--detail .bande-image__texte { grid-column: 1 / span 7; grid-row: 1; margin-top: 0; }
@@ -1523,7 +1505,6 @@ li, dd { text-wrap: wrap; }
   .enonce__texte { text-align: center; font-size: min(48px, calc((100vw - 2 * var(--marge)) / 16.4)); }
   /* Les mains dans leur arche, comme au bureau, au lieu de deborder par le bord de l'ecran. */
   .chapitre__image-mobile:has(.scene[data-anime="mains"]) { margin-inline-start: 0; }
-  .chapitre__image-mobile:has(.scene[data-anime="mains"]) figcaption { margin-inline-start: 0; }
   .chapitre__image-mobile .scene[data-anime="mains"] { background: none; }
   .chapitre__image-mobile .scene[data-anime="mains"] > .scene__cadre { width: min(100%, 380px); aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 40% 40% 0 0; overflow: hidden; background: #EEE6FA; }
   .chapitre__image-mobile .scene[data-anime="mains"] > .scene__cadre img { width: 100%; height: 100%; object-fit: cover; object-position: 40% 50%; scale: 1.35; transform-origin: 46% 57%; -webkit-mask: none; mask: none; }
@@ -1721,7 +1702,6 @@ li, dd { text-wrap: wrap; }
 .appel--porte { display: block; text-align: center; }
 .appel--porte .appel__arche { width: min(86%, 640px); margin: 0 auto calc(-1 * var(--e-12)); }
 /* La legende dans le coin vide, en haut a droite de l'arche : le titre passe sous l'arche, pas sur la legende. */
-.appel--porte .appel__arche figcaption { position: absolute; top: 0; inset-inline-end: 0; }
 .appel--porte .appel__titre { position: relative; max-width: 11em; margin-inline: auto; }
 .appel--porte .appel__phrase { margin: var(--e-6) auto 0; max-width: 46ch; padding: 0; }
 @media (min-width: 840px) { .page-accueil .appel--porte { display: block; } .page-accueil .appel--porte .appel__phrase { grid-column: auto; } }

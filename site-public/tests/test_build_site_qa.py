@@ -181,15 +181,18 @@ class GeneratedSiteQA(unittest.TestCase):
         self.assertIn('<p class="preuve">Rewayah Academy a été fondée en 2024', home.replace("\u00a0", " "))
         self.assertNotIn('4 août 2025', "\n".join(path.read_text(encoding="utf-8") for path in self.output.rglob("*.html")))
 
-    def test_every_illustration_is_captioned_and_described(self) -> None:
+    def test_every_illustration_is_described_and_declared_once(self) -> None:
+        # Decision du directeur du 22/10/2026 (registre de marque, M-30) : pas de legende sous chaque illustration ;
+        # une seule mention, dans les mentions legales ; chaque image garde un texte alternatif qui la decrit.
         images = json.loads((SITE / "content" / "images.json").read_text(encoding="utf-8"))
         for route in self.pages:
             source = self.page_file(route).read_text(encoding="utf-8")
             with self.subTest(route=route):
                 for figure in re.findall(r'<figure class="scene[^"]*"[^>]*>.*?</figure>', source, re.S):
                     self.assertRegex(figure, r'alt="[^"]{20,}"')
-                self.assertEqual(source.count("<figcaption>Illustration</figcaption>") > 0,
-                                 '<figure class="scene' in source)
+                self.assertNotIn(">Illustration<", source)
+        mentions = self.page_file("/fr/legal/mentions").read_text(encoding="utf-8").replace("\u00a0", " ")
+        self.assertIn("Les images de ce site sont des illustrations, sauf les photos des fondateurs.", mentions)
         for ident, image in images["images"].items():
             self.assertGreaterEqual(len(image["alt"]), 20, ident)
 
