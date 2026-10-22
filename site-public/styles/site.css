@@ -1712,3 +1712,8 @@ li, dd { text-wrap: wrap; }
   .entete-page--libre .entete-page__image img { max-height: calc(100svh - var(--entete) - var(--e-12)); }
 }
 
+/* Accueil, premier ecran : la porte un peu plus petite au bureau, pour que son arche ne touche pas l'en-tete ;
+   au telephone, la porte et la famille en grand, cadrees sur la moitie droite de la scene. */
+@media (min-width: 840px) { .porte__scene { width: 104vw; inset-inline-end: -9vw; } }
+@media (max-width: 599px) { .porte__scene { width: 200vw; margin-inline-start: -100vw; } }
+
