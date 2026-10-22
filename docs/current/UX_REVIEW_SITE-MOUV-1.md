@@ -225,6 +225,7 @@ Inspection après ces corrections :
 | Recette 22 (jurés Sonnet) | 7,67 | 6,73 | 6,33 | « presque » |
 | Recette 23 (jurés Sonnet) | 7,57 | 7,18 | 6,50 | « presque » |
 | Recette 24 (jurés Sonnet) | 7,63 | 6,87 | 6,50 | « presque » |
+| Recette 25 (jurés Sonnet) | 7,53 | 6,63 | 6,57 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -619,6 +620,19 @@ Ensuite : la porte du haut de l'accueil, un peu plus petite au bureau, ne touche
 | HH5 | Tarifs finit sur ses prix une troisième fois | Le bandeau centré, sans prix (le seul de ce type sur le site) |
 | HH6 | Académie redit le titre « Apprendre avec un enseignant » de Cours | « Ce que nous enseignons », comme le dit son texte |
 | HH7 | Fin du zoom de la porte décentrée | La scène grandit d'un quart au plus |
+
+**Après la recette 25.** Arches, tuiles de prix et accordéon tenus pour corrigés. Restent, en commun : les chapitres de l'accueil (petites puces à côté d'une grande arche), le rythme des pages (une image à côté d'un texte, six fois de suite), la fin de l'accueil sans bouton, l'arabe petit sur tablette et téléphone, « Trois spécialistes » au-dessus de deux portraits, et une tache au pied du socle du haut de l'accueil.
+
+| # | Relevé | Correction |
+|---|---|---|
+| II1 | Chapitres : petites puces | Les points en pastilles sur une ligne |
+| II2 | Une image à côté d'un texte, six fois de suite | Une bande pleine par page : Cours, « Trois séances par semaine » (la place qui attend, en grand) ; Académie, « Ce que nous enseignons » |
+| II3 | Fin de l'accueil sans bouton | Titre, phrase et bouton « Commencer mon inscription » sous une arche plus grande |
+| II4 | Arabe petit sur tablette et téléphone | À la mesure de l'arche (unités de conteneur) sur tablette ; 36 et 44 px au téléphone |
+| II5 | « Trois spécialistes » au-dessus de deux portraits | Une ligne au-dessus d'eux : « Aux côtés du directeur, Abdoulaye Mouhidine Sow : » |
+| II6 | Tache au pied du socle (haut de l'accueil) | Le bout droit du sol s'efface, comme le bout gauche du tapis |
+| II7 | « Les cours en bref » : bande calme | Les lignes de l'encart en tuiles, deux par rangée, de même hauteur (mots inchangés) |
+| II8 | « Un horaire fixe » : titre et texte décalés | Alignés par le haut |
 
 ## Hors de portée de l'agent
 

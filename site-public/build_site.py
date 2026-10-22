@@ -701,7 +701,7 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: st
     - Accueil et pages principales (seuil, direction.json fin.seuil) : la page se referme sur un titre de la taille de
       son titre d'ouverture, pose sur le fond, et ce titre est le lien ; chaque page finit sur sa propre phrase. Quand le
       libelle de l'action differe du titre, les lecteurs d'ecran l'entendent a la suite. L'accueil (arche) se referme
-      sous le haut d'une arche, comme il s'ouvre sur une porte. Pour que les pages ne finissent pas toutes pareil
+      sous une arche entiere, sur son titre, sa phrase et un bouton. Pour que les pages ne finissent pas toutes pareil
       (direction.json fin.forme) : « centre », un bandeau lavande, le titre et sa phrase au centre, un bouton ;
       « sombre », le titre lien sur une bande sombre ; « prix », le titre et son bouton a cote des deux prix (la page
       des tarifs finit sur ce qu'elle annonce) ; « image », le titre et son bouton a cote d'une arche entiere (extra),
@@ -726,11 +726,18 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: st
   </div>
   <div class="appel__extra" data-revele-enfants>{extra}</div>
 </section>'''
+    if seuil and arche:
+        # L'accueil se referme sous une arche entiere, sur son titre, sa phrase et un vrai bouton (et non un titre lien).
+        return f'''<section class="appel appel--seuil appel--porte" id="{esc(identifiant)}" aria-labelledby="appel-titre">{arche}
+  <h2 id="appel-titre" class="appel__titre" data-revele>{titre_html(titre)}</h2>
+  <p class="appel__phrase" data-revele>{texte_html(phrase)}</p>
+  <div class="action-row" data-revele>{bouton(label, href)}</div>
+</section>'''
     if seuil:
         debut, _, dernier = titre.rpartition(" ")
         texte = (titre_html(debut) + " " if debut else "") + f'<span class="insecable">{titre_html(dernier)}{FLECHE}</span>'
         action = "" if label.rstrip(".").casefold() == titre.rstrip(".").casefold() else f'<span class="sr-only"> ({esc(label)})</span>'
-        return f'''<section class="appel appel--seuil{" appel--porte" if arche else ""}{" appel--sombre" if forme == "sombre" else ""}" id="{esc(identifiant)}" aria-labelledby="appel-titre">{arche}
+        return f'''<section class="appel appel--seuil{" appel--sombre" if forme == "sombre" else ""}" id="{esc(identifiant)}" aria-labelledby="appel-titre">
   <h2 id="appel-titre" class="appel__titre" data-revele><a class="appel__titre-lien" href="{esc(href)}">{texte}{action}{messagerie}</a></h2>
   <p class="appel__phrase" data-revele>{texte_html(phrase)}</p>
 </section>'''
@@ -754,7 +761,7 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str, mot: dict | No
         # Comme les pages principales, l'accueil se referme sur une phrase qui est le lien : elle dit pour qui.
         bande_finale((fin.get("paragraphs") or [fin["title"]])[0], "L’inscription se fait dans l’application Rewayah.",
                      page["cta"]["label"], page["cta"]["href"], seuil=True,
-                     arche=scene(images, "eleve-enseignante-b", "(max-width: 839px) 72vw, 420px", "appel__arche")),
+                     arche=scene(images, "eleve-enseignante-b", "(max-width: 839px) 72vw, 480px", "appel__arche")),
     ))
 
 
@@ -1024,7 +1031,8 @@ def section_fondateurs(section: dict, number: int, images: dict | None = None, p
     return (f'<section class="fondateurs" id="{esc(section["id"])}" aria-labelledby="heading-{number}">'
             f'<div class="fondateurs__tete" data-revele><h2 id="heading-{number}">{titre_html(section["title"])}</h2>'
             f'<div class="fondateurs__texte">{paragraphes(section)}{liens_section(section)}</div></div>'
-            f'<ul class="profils" data-revele-enfants>{"".join(profils)}</ul></section>')
+            + (f'<p class="profils__intro">{texte_html(f"Aux côtés du directeur, {deja} :")}</p>' if deja else "")
+            + f'<ul class="profils" data-revele-enfants>{"".join(profils)}</ul></section>')
 
 
 def alternance(reglage: dict):

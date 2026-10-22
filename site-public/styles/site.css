@@ -1698,7 +1698,7 @@ li, dd { text-wrap: wrap; }
 
 /* Accueil : la page se referme sous le haut d'une arche, comme elle s'ouvre sur une porte ; tout est centre. */
 .appel--porte { display: block; text-align: center; }
-.appel--porte .appel__arche { width: min(72%, 420px); margin: 0 auto var(--e-8); }
+.appel--porte .appel__arche { width: min(72%, 480px); margin: 0 auto var(--e-8); }
 /* La legende dans le coin vide, en haut a droite de l'arche : le titre passe sous l'arche, pas sur la legende. */
 .appel--porte .appel__titre { position: relative; max-width: 11em; margin-inline: auto; }
 .appel--porte .appel__phrase { margin: var(--e-6) auto 0; max-width: 46ch; padding: 0; }
@@ -1725,8 +1725,8 @@ li, dd { text-wrap: wrap; }
   /* Tarifs : le resultat du simulateur part de la 7e colonne, comme le texte des autres sections. */
   .simulator--page > .simulator__result, .simulator--page > .simulator__note, .simulator--page > .cta { grid-column: 7 / -1; }
 }
-/* Accueil : le bout gauche du tapis s'efface au lieu de s'arreter net au bord de l'image. */
-.porte__scene { -webkit-mask-image: linear-gradient(to right, transparent 0, #000 9%); mask-image: linear-gradient(to right, transparent 0, #000 9%); }
+/* Accueil : les deux bouts du sol (le tapis a gauche, le socle a droite) s'effacent au lieu de s'arreter net. */
+.porte__scene { -webkit-mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 85%, transparent 95%); mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 85%, transparent 95%); }
 .portrait--profil { width: min(100%, 300px); }
 
 
@@ -1808,7 +1808,7 @@ li, dd { text-wrap: wrap; }
 
 /* Accueil, « Un horaire fixe, une classe stable » : le titre a gauche, son texte et ses liens dans la colonne de droite. */
 @media (min-width: 1100px) {
-  .pousse .pousse__entete { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: end; }
+  .pousse .pousse__entete { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: start; }
   .pousse .pousse__entete h2 { grid-column: 1 / span 6; }
   .pousse .pousse__corps { grid-column: 7 / -1; max-width: none; }
 }
@@ -1917,3 +1917,37 @@ li, dd { text-wrap: wrap; }
 @media (min-width: 840px) and (prefers-reduced-motion: no-preference) {
   .js .porte__scene { transform: scale(calc(1 + var(--z2, 0) * .25)); }
 }
+
+/* --- Recette 25 (22/10/2026) ------------------------------------------------------------------------------------- */
+/* Accueil : la fin a un vrai bouton, au centre sous la phrase. */
+.appel--porte .action-row { justify-content: center; margin-top: var(--e-8); }
+
+/* Accueil, les chapitres : les points en pastilles sur une ligne, a la taille du texte, et non en petites puces. */
+.chapitre ul { list-style: none; display: flex; flex-wrap: wrap; gap: var(--e-2); margin-top: var(--e-6); padding: 0; }
+.chapitre ul li { padding: var(--e-2) var(--e-4); border-radius: var(--r-full); background: #4E2983; font-size: var(--t-petit); font-weight: 600; }
+.chapitre .points .puce { display: none; }
+
+/* Les cours en bref : a droite, chaque ligne de l'encart dans une tuile, deux par rangee (mots inchanges). */
+@media (min-width: 840px) {
+  .fiches-bloc .fiche__lignes { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--e-4); row-gap: var(--e-4); align-items: stretch; }
+  .fiches-bloc .fiche__lignes li { grid-column: auto; max-width: none; }
+  .fiches-bloc .fiche__lignes li:nth-child(1) { grid-column: 1 / span 2; grid-row: 1; padding-inline-end: var(--e-10); }
+  .fiches-bloc .fiche__lignes li:nth-child(2) { grid-column: 1 / span 2; grid-row: 2 / span 9; }
+  .fiches-bloc .fiche__lignes li:nth-child(n+3) { padding: var(--e-5); border-radius: var(--r-lg); background: #4E2983; }
+}
+
+/* Cours, tablette et telephone : le mot arabe a la mesure de son arche (unites de conteneur). */
+@media (max-width: 1099px) {
+  .parcours--haut .parcours__etape { container-type: inline-size; }
+  .parcours--haut .parcours__arabe { font-size: 17cqi; }
+  .parcours--haut .parcours__etape:has(.parcours__mot) .parcours__arabe { font-size: 26cqi; }
+}
+@media (max-width: 599px) {
+  .parcours--haut .parcours__etape { container-type: normal; }
+  .parcours--haut .parcours__arabe { font-size: 36px; }
+  .parcours--haut .parcours__etape:has(.parcours__mot) .parcours__arabe { font-size: 44px; }
+}
+
+/* Academie : une ligne dit, au-dessus des deux portraits, que le directeur est presente plus haut. */
+.profils__intro { margin-top: var(--e-12); font-weight: 600; }
+.profils__intro + .profils { margin-top: var(--e-6); }

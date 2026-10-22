@@ -262,16 +262,16 @@ class GeneratedSiteQA(unittest.TestCase):
         # (fin.forme) portent un bouton.
         direction = json.loads((SITE / "content" / "direction.json").read_text(encoding="utf-8"))["pages"]
         accueil = {s["id"]: s for s in self.pages["/fr/"]["sections"]}["footer"]
-        fins = {"/fr/": {"titre": accueil["paragraphs"][0], "label": self.pages["/fr/"]["cta"]["label"]}}
+        fins = {"/fr/": {"titre": accueil["paragraphs"][0], "label": self.pages["/fr/"]["cta"]["label"], "forme": "porte"}}
         fins.update({route: reglage["fin"] for route, reglage in direction.items() if (reglage.get("fin") or {}).get("seuil")})
         self.assertGreaterEqual(len(fins), 6)
         for route, fin in fins.items():
             source = self.page_file(route).read_text(encoding="utf-8")
             with self.subTest(route=route):
-                if fin.get("forme") in ("centre", "prix", "image", "note"):
+                if fin.get("forme") in ("centre", "prix", "image", "note", "porte"):
                     # Bandeau centre, fin sur les prix, sur une arche ou sur une note : le titre, sa phrase, puis un bouton
                     # qui porte le libelle de l'action.
-                    fin_page = re.split(rf'class="appel appel--{fin["forme"]}[^"]*"', source, maxsplit=1)[1].split("</section>", 1)[0]
+                    fin_page = re.split(rf'class="appel [^"]*appel--{fin["forme"]}[^"]*"', source, maxsplit=1)[1].split("</section>", 1)[0]
                     titre = re.search(r'<h2 id="appel-titre" class="appel__titre"[^>]*>(.*?)</h2>', fin_page, re.S).group(1)
                     self.assertEqual(re.sub(r"<[^>]+>", "", titre).replace("\u00a0", " ").strip(), fin["titre"])
                     self.assertIn(f'href="{fin.get("href", self.pages[route]["cta"]["href"])}"', fin_page)

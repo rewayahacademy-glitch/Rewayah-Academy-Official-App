@@ -55,7 +55,9 @@
         "methode": "eleve-enseignante",
         "groupes": "place"
       },
-      "pleine": [],
+      "pleine": [
+        "groupes"
+      ],
       "parcours": [
         "objectifs"
       ],
@@ -171,7 +173,9 @@
         "projet": "detail-tabouret",
         "famille": "detail-mere-fille"
       },
-      "pleine": [],
+      "pleine": [
+        "projet"
+      ],
       "fonds": {
         "famille": "lavande"
       },
