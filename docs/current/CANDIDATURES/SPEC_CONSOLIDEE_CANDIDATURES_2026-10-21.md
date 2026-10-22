@@ -97,31 +97,37 @@ s'applique, et le lot qui écrit les ports met le contrat à jour.
 | « Le super admin doit voir les deux côtés » (`DEC:30`) | le super-admin lit les deux côtés ; il ne mène un entretien que du même côté que le candidat | `DEC:30` ne parle que de lecture ; un entretien face à face avec une personne de l'autre genre n'est pas décidé (0.3) |
 | Les anciennes réponses « ne créent pas de candidature à leur place » (`DEC:60`) | la direction peut garder une ligne `recue` de suivi (transition 2) | porter l'invitation (`DEC:27`) ou consigner l'envoi du lien par WhatsApp (`DEC:26`) ; choix de mise en oeuvre (3.2) |
 | Une seule page d'accords ; l'app « ne renvoie jamais en arrière pour cocher après coup » (`C/DECISION-ENTREE-2026-10-17.md:30-32`) | accords en trois moments : confidentialité à l'inscription, cadre religieux en salle d'examen, contrat et avis en salle 2 ; une version neuve se ré-accepte (4.3) | ne pas demander trop tôt (`SPEC §2.1`) ; contrat et pièce après la salle d'examen : proposition de `REVUE §6.2`, pas une décision |
+| Salles 2 et 3 « qu'aux personnes que l'académie peut payer » (`DEC:28`) | en salle 3, « garder une autre ligne `confirme` » veut dire garder un moyen déclaré **confirmé par la direction** qui croise une ligne `confirme` (contrôle de la section 5) ; qui n'a plus qu'un moyen déclaré non encore confirmé passe aussi en restriction « paiement à revérifier » ; la transition 24 s'ouvre alors en salle 3 sous restriction de cause `paiement`, puis la direction lève la restriction (21) | sûr par défaut : l'académie n'a pas vérifié qu'elle peut payer ce moyen ; sans la 24 en salle 3, la personne resterait bloquée (L6, relecture du 21/10) |
+| Séparation femmes et hommes, « compteurs » compris (`DEC:30`, 8.2) | l'impact d'un changement du référentiel et ses alertes : une direction lit les restrictions de son côté, le super-admin les deux côtés (journalisé), la comptabilité le total ; aucun autre compteur ne sort ; une direction au genre inconnu est refusée | 8.2 range les compteurs dans la portée ; 8.1 donne l'impact à la comptabilité, qui n'a pas de côté. À trancher : la direction doit-elle lire le total des deux côtés, et la comptabilité le garder ? |
 
 ### 0.3 Ce qui reste ouvert
 
 | Question | Ce qui manque | Qui tranche | Effet tant que c'est ouvert |
 | :--- | :--- | :--- | :--- |
 | `CAND-Q05` | pays et moyens qui fonctionnent en Afrique (par exemple le mobile money par pawaPay) ; sort d'un candidat qui vit en Afrique et a un compte bancaire (`DEC:80-83`) | directeur | toutes les lignes d'Afrique du référentiel restent `en_verification` : aucun candidat dont le pays de versement est en Afrique n'entre en salle 2 |
-| Liste des pays d'Afrique | la liste du référentiel ; c'est elle qui décide qui entre en salle 2 (`DEC:28`) | proposée en L6 avec sa source nommée, puis soumise au directeur avec `CAND-Q05` | même effet que `CAND-Q05` |
+| Liste des pays d'Afrique | la liste du référentiel ; c'est elle qui décide qui entre en salle 2 (`DEC:28`) | proposée en L6 le 21/10 (60 pays ou territoires, ONU M49 région 002, 5.1), soumise au directeur avec `CAND-Q05` | même effet que `CAND-Q05` |
 | `CAND-Q12` | accord sur les trois noms de salle (`DEC:87-88`) ; forme du côté des femmes pour « Salle des prêts à enseigner », en français et en arabe ; « Salle d'examen » croise « examen de fin des bases », mot du programme (`mots-rewayah` §3) | directeur | les noms proposés sont les valeurs des clés i18n ; un changement ne touche que les textes |
 | `CAND-Q21` | durée de conservation, avis du juriste (`DEC:90`) ; base des courriels envoyés avant l'inscription et conservation des réponses importées de qui ne s'inscrit pas (8.4) | directeur, après le juriste | aucune purge automatique des candidatures ; `CAND-BR-14` n'est pas commencé |
 | Super-admin intervieweur | le super-admin peut-il mener l'entretien d'une personne de l'autre côté ? | directeur | refus : l'intervieweur est du même côté que le candidat, super-admin compris |
 | Ligne `recue` de suivi | confirmation du choix de mise en oeuvre (3.2) | directeur | le geste « garder pour suivi » s'écrit en L3 sur la base de test ; il ne s'ouvre pas en production sans réponse |
 | Canal du code d'invitation | tant que l'envoi de la file manque (7.3), par où la direction transmet-elle un code ? WhatsApp est exclu hors lien d'inscription (`DEC:29`) | directeur | aucune invitation n'est émise en production |
-| Accords en trois moments | l'écart à la page unique (0.2 bis) | directeur | L2 suit ce document sur la base de test ; rien en production |
+| Accords en trois moments | l'écart à la page unique (0.2 bis) | directeur | L2 suit ce document sur la base de test ; rien en production. Le dépôt de pièce suit déjà 2.1 en base (CAND-L1B : salle 2 en cours ou salle 3, toute voie) ; si le directeur garde la page unique, un lot rouvre le dépôt en salle d'examen |
 | Pays de la carte publique | recopier le pays de résidence déclaré dans `teacher_profiles.country`, public sur la carte (`C/ENS-PAYS-1_BR.md:3`) ? | directeur | non recopié ; l'enseignant le pose dans son profil, comme aujourd'hui (2.2) |
 | Personne de B sans courriel | 1 personne (`REVUE §2.4`), sans réponse importée ni ligne : où consigner l'envoi du lien par WhatsApp ? | L3, puis directeur si un geste neuf est nécessaire | l'envoi n'est pas consigné dans l'app |
 | Durée de conservation des pièces | point de départ : dépôt (aujourd'hui) ou décision (4.1) | directeur | `purge_at` vaut dépôt plus 90 jours ; aucune purge programmée |
 | Forme de `teacher_id` pour la séance d'entretien | `teacher_id` est obligatoire aujourd'hui (6.1) | L4 | L4 n'écrit pas ses scénarios sans elle |
 | `ff` et `poular` | équivalence du peul et du poular (`MAP §3.2`, section 9) | directeur | `ff` s'importe hors référentiel |
-| Forme en base du compte candidat | rôle et `account_status`, les mêmes pour les deux portes (3.1) | L1, sans question au directeur | L2 ne s'écrit pas |
+| Forme en base du compte candidat | **tranchée** par le complément CAND-L1B (21/10, repris après relecture) : rôle `teacher`, `account_status` `pending_kyc`, fiche `teacher_profiles` vide, la même pour les deux portes ; règle et preuve en 3.1, condition 1 (`supabase/tests/scenarios_cand_l1b_forme_compte.sql`, `supabase/tests/scenarios_cand_l1b_concurrence.sql`) | L1, complément CAND-L1B, sans question au directeur | plus aucun pour la forme : L2 s'écrit sur elle ; `testé localement` seulement, rien sur staging ni en production |
+| Portée par genre des comptes candidats hors module | la forme `teacher` + `pending_kyc` met chaque candidat dans les surfaces de la direction qui listent des comptes ; `DEC:30` et 8.2 bornent la direction à son côté. CAND-L1B borne `comptes_admin()` (`ADM-08`), `dossiers_en_attente()` (`ADM-02`), le compteur d'`indicateurs_admin()` (`ADM-01`) et la table `profiles` (3.1). Restent non bornés : `journal_audit()` et `journal_audit_filtres()` (nom de l'auteur d'une ligne du journal), `demandes_suppression_lister()`, `jetons_agent_actifs()` ; et le refus d'une écriture directe d'affectation (`compte_candidat_non_affectable`), qui dit à la direction de l'autre côté qu'un identifiant déjà connu d'elle porte une candidature | L2, qui étend `ADM-02` et `decider_dossier()` | ces surfaces nomment un compte candidat à toute la direction, sur la base de test seulement ; aucune production (`DEC:25`) |
 
 L'écran du référentiel va dans Finance, sauf avis contraire (`DEC:85`).
 
 Les points à trancher par le directeur (sections 0.2, 0.2 bis et 0.3) lui sont
 posés dans la page d'arbitrage comme questions de suivi `CAND-S01` à `CAND-S11`.
-Ses réponses s'y enregistrent comme les 22 premières.
+Ses réponses s'y enregistrent comme les 22 premières. Les deux lignes de 0.2 bis
+ajoutées par L6 le 21/10 (paiement en salle 3, compteurs du référentiel) restent
+à y poser comme questions de suivi ; d'ici sa réponse, le serveur applique la
+lecture la plus sûre décrite dans ces lignes.
 
 ---
 
@@ -251,7 +257,7 @@ des règles.
 
 | # | Condition (`DEC`) | Règle | Lot |
 | :-- | :--- | :--- | :--- |
-| 1 | Compte candidat seulement (`:50-51`) | l'inscription crée un compte `pending_kyc` confiné à `/attente` et une candidature `prequalification/a_completer` de type `enseignant`. **Refusé** : jeton de cours, affectation, prérequis de travail, présence dans une liste d'enseignants. **Permis** : accords de l'étape, dépôt de pièce en salle 2, fil `candidature`. Aujourd'hui `inscrire_enseignant_invite` crée un profil `teacher` `pending_kyc` avec une fiche `teacher_profiles` vide (`M/20261017150200_af_l1_11_inscription_enseignant_sur_invitation.sql:110-178`) ; le dépôt de pièce (policy `kyc_staff_self_insert`, `M/0004_inscription_kyc_appairage.sql:169-174`), la garde `0089` (`NEW.role = 'teacher'`) et la policy du code de conduite (`CORR §7`) sont réservés au rôle `teacher`. L1 fixe donc la forme en base (rôle et `account_status`), la même pour le lien public et l'invitation, avant que L2 ne s'écrive | L1 (forme), L3 |
+| 1 | Compte candidat seulement (`:50-51`) | l'inscription crée un compte candidat confiné à `/attente` et une candidature `prequalification/a_completer` de type `enseignant`. **Forme en base, fixée par CAND-L1B le 21/10** : rôle `teacher`, `account_status` `pending_kyc`, fiche `teacher_profiles` vide, sans foyer, la même pour le lien public et l'invitation. Une seule fabrique : `private.creer_profil_inscription_interne('teacher', ...)` (`M/20261017150200_af_l1_11_inscription_enseignant_sur_invitation.sql:61-64`, `:80`), appelée par `inscrire_enseignant_invite` (`:169`) et, en L3, par le lien public. Pourquoi ce rôle et ce statut : le confinement repose déjà sur `app_account_valid()` (`M/0001_fondations.sql:412-422`), et les portes que le candidat doit franchir sont déjà ouvertes au rôle `teacher` en attente (pièce, `M/0004_inscription_kyc_appairage.sql:169-174` puis `M/20261017120100_af_l1_08_reprise_gardes_vues.sql:168` ; contrat et avis, `M/20261017100800_af_l1_08_policies_compte_valide.sql:234` ; code de conduite, `M/20261021210400_pe_code_conduite_avant_activation.sql:54-70` ; garde `0089` à l'activation) ; un rôle ou un statut neuf les rouvrirait toutes. **Lien en base** : le type porte le rôle du compte (`candidature_types.role_compte`, `M/20261021220000_cand_l1b_forme_compte_candidat.sql:147-149`) ; deux déclencheurs de contrainte, côté candidature et côté compte (`:199-309`, différables pour la transaction d'entrée en salle 3 de L2), refusent : un compte d'un autre rôle tant que la candidature est en cours avant `confirmee` ; un compte du rôle du type `active` ou `provisional_active` avant `confirmee`, quelle que soit l'issue ; un engagement d'enseignant en cours avant `confirmee` (classe non close, séance de cours à venir ou en cours, affectation ouverte, remplacement d'une telle séance, `:161-186`), un historique n'empêchant pas une ancienne enseignante de candidater. La règle ne tient plus après la salle 3 : une enseignante confirmée, ou une personne dont la candidature est refusée ou retirée, change de rôle comme tout compte (`C/DECISION-IMMATRICULATION-2026-10-12.md:23`) ; rouvrir la candidature rejoue la règle du rôle. Les deux côtés se sérialisent sur la ligne du compte (verrou `FOR NO KEY UPDATE` côté candidature, `FOR SHARE` côté affectation) : deux transactions qui se croisent ne valident pas un compte candidat actif ou enseignant. Une seule candidature par type et par compte (`M/20261021200000_cand_l1_socle_candidatures.sql:185`). **Refusé** : jeton de cours (`M/20261017110100_af_l2_01_jeton_enseignant_effectif_et_retrait.sql:44-52`) ; affectation par toute RPC (`M/20261021210200_creer_groupe_predicat_affectation.sql:105` et `:338`, `c11bis`, `attribuer_eleve`, `prendre_eleve`, remplacements) et par écriture directe, à la création comme à la modification (classe, séance de cours, affectation, remplacement, `M/20261021220000_cand_l1b_forme_compte_candidat.sql:319-373`) ; prérequis de travail (`prerequis_enseignant`, disponibilités, photo, et `maj_profil_enseignant`, ouverte au compte en attente jusqu'à CAND-L1B, `:533-572`) ; présence dans une liste d'enseignants (`enseignants_pour`, `enseignants_pour_classe`, `enseignants_pour_public`, tirage du contrôle, pilotage, personnes observables, remplacements, carte et recherche de la famille) ; activation avant la salle 3, `decider_dossier()` compris (refus brut `compte_candidat_actif_avant_salle_3`, que L2 précède de ses contrôles nommés). **Cloisonnement par genre** (`DEC:30`, 8.2) : la direction de l'autre côté, ou au genre inconnu, ne lit pas un compte qui porte une candidature avant la salle 3, ni dans `comptes_admin()` (`ADM-08`, registre des comptes), ni dans `dossiers_en_attente()` (`ADM-02`, file des dossiers), ni dans le compteur d'`indicateurs_admin()` (`ADM-01`), ni dans la table `profiles` (policy restrictive `profiles_compte_candidat_portee`, agent compris, `:385-429`) ; son écriture sur ce profil touche 0 ligne, sans message qui révèle la candidature ; le super-admin lit les deux côtés (exception de `0088`). La file d'`ADM-02` ne montre un compte candidat qu'en Salle de vérification et d'entretien en cours ou après (`:681-750`) : la salle d'examen se suit dans `ADM-20` et `ADM-21` (2.2). Les surfaces encore non bornées sont en 0.3. **Permis** : contrat, avis et code de conduite ; dépôt de pièce par la policy et par le coffre R2 (porte `peut_deposer_piece_identite` alignée sur la policy, `:582-612`), seulement en Salle de vérification et d'entretien (candidature en cours) ou après, par toute voie (déclencheur `kyc_documents_depot_etape`, `:439-474`, selon 2.1), jamais avec une décision (`:482-508`) ; `etat_dossier()`. Le fil `candidature` vient en L5 ; l'étape où chaque accord s'ouvre, en L2 (4.3). Preuve : `supabase/tests/scenarios_cand_l1b_forme_compte.sql`, 132 contrôles verts sur base neuve, 54 rouges sans la migration ; `supabase/tests/scenarios_cand_l1b_concurrence.sql` (deux sessions, quatre croisements dans les deux ordres), 9 contrôles verts, 9 rouges sans la migration ou sans les verrous (`testé localement`) | L1 (forme : CAND-L1B, `testé localement`), L3 |
 | 2 | Contre les robots (`:52-53`) | la candidature n'existe qu'après confirmation du courriel (aujourd'hui `enable_confirmations = false`, `supabase/config.toml:229`) ; plafond d'inscriptions par heure dans `app_config`, refus neutre au-delà : la réponse est la même qu'en cas de succès (`CAND-04`) ; la limite par adresse IP reste (`sign_in_sign_ups = 30` par 5 minutes, `config.toml:210`) ; captcha possible (`config.toml:216-219`) | L3 |
 | 3 | Courriel obligatoire (`:54-56`) | l'app se connecte par courriel (`lib/core/auth/service_auth.dart:52-56`) : pas de courriel, pas d'inscription ; le message WhatsApp aux personnes sans courriel leur dit d'en créer un | L3 |
 | 4 | Personnes des formulaires (`:57-62`) | reconnues et pré-remplies (3.4) ; aucune candidature créée à leur place ; tout le monde complète pays, paiement et cadre religieux | L3 |
@@ -421,7 +427,7 @@ numéros 1 à 22 ne changent pas ; les lignes 23 à 28 sont ajoutées à la rév
 | 21 | `confirmee` + restriction | `confirmee` | direction | contrôles revérifiés. Lever une restriction `piece` exige une nouvelle pièce `approved` et remet le compte de `disabled` à `active` sous la garde étendue, dans la même transaction | **oui** |
 | 22 | `confirmee` | indisponibilité notée ou levée | direction | étape inchangée ; le prédicat d'affectation la refuse (4.3) ; comptée à part | non |
 | 23 | `verifications`, tout état | même état, complément demandé | direction (`demanderComplement`) | éléments manquants nommés au candidat ; la candidature compte dans « informations manquantes » | **oui** |
-| 24 | `en_examen`, paiement `a_verifier` | paiement `compatible` | direction (`confirmerMoyenPaiement`) | méthode et opérateur déclarés croisent une ligne `confirme` du pays de versement ; une ligne `en_verification` ne se confirme jamais | non |
+| 24 | `en_examen`, paiement `a_verifier` ; ou `confirmee` en restriction de cause `paiement`, paiement `a_verifier` (proposé en L6, 0.2 bis) | paiement `compatible` | direction (`confirmerMoyenPaiement`) | méthode et opérateur déclarés croisent une ligne `confirme` du pays de versement ; une ligne `en_verification` ne se confirme jamais | non |
 | 25 | `en_examen`, paiement `a_verifier` ou `compatible` | paiement `incompatible` | direction (`infirmerMoyenPaiement`) | moyen nommé ; la transition 8 suit | **oui** |
 | 26 | `recue` sans courriel valide | même étape, lien envoyé consigné | direction (`consignerPrevenu`), ligne ou lot | canal `whatsapp`, modèle `lien_inscription`, date ; jamais un texte libre (7.4) | non |
 | 27 | `prequalification/a_completer` et réponses importées proposées | réponses rattachées | direction (`rattacher`) | proposition existante (même téléphone normalisé, 3.4) ; réponses rattachées à aucune autre candidature ; pré-remplissage ensuite | non |
@@ -458,7 +464,11 @@ WhatsApp. Tout autre geste rend `GesteNonGroupable`.
 - planifier sans fuseau connu ou avec un intervieweur hors portée (de l'autre
   côté, super-admin compris) ; donner un jeton d'entretien à un autre que le
   candidat convoqué et l'intervieweur ;
-- pendant une pause, tout geste autre que lever la pause, refuser ou retirer.
+- pendant une pause, tout geste autre que lever la pause, refuser ou retirer ;
+- déposer la pièce d'un compte candidat hors de la Salle de vérification et
+  d'entretien (en cours) ou de la salle 3, par toute voie : posé par CAND-L1B
+  (3.1) ; accepter le contrat ou l'avis hors de leur étape (2.1) : L2, une fois
+  tranchés les accords en trois moments (0.3).
 
 **Ne rétrograde jamais** : une indisponibilité, une pause, un critère ou une
 version de questionnaire changés après une décision, un contrôle qui tombe après la
@@ -512,6 +522,52 @@ où l'académie ne peut pas verser se signale au directeur. Chaque pays
 jusqu'à la réponse ouverte de `CAND-Q05` ; la liste de ces pays est proposée en L6
 avec sa source (0.3).
 
+**Liste des pays d'Afrique proposée par L6, à soumettre au directeur avec
+`CAND-Q05`.** Source nommée : Division de statistique des Nations unies, norme M49
+(« Standard country or area codes for statistical use »), région 002 Afrique,
+<https://unstats.un.org/unsd/methodology/m49/overview/>, lue le 21/10/2026 :
+60 pays ou territoires.
+
+| Région M49 | Codes ISO 3166-1 |
+| :--- | :--- |
+| 015 Afrique du Nord (7) | DZ EG LY MA SD TN EH |
+| 014 Afrique orientale (22) | IO BI KM DJ ER ET TF KE MG MW MU YT MZ RE RW SC SO SS UG TZ ZM ZW |
+| 017 Afrique centrale (9) | AO CM CF TD CG CD GQ GA ST |
+| 018 Afrique australe (5) | BW SZ LS NA ZA |
+| 011 Afrique de l'Ouest (17) | BJ BF CV CI GM GH GN GW LR ML MR NE NG SH SN SL TG |
+
+L'Arabie saoudite et le Yémen sont en Asie de l'Ouest pour la même norme. Les
+territoires d'outre-mer français de la région (La Réunion, Mayotte, Terres
+australes) y figurent : la norme les range en Afrique orientale. L'état initial
+porte une ligne de virement par code de `lib/core/i18n/pays_iso.dart` (249) :
+189 à `confirme`, 60 à `en_verification`. Les 189 comprennent des territoires sans
+population (AQ, BV, HM, GS, UM) et des pays où un virement peut être impossible
+(sanctions internationales : par exemple KP, IR, SY, CU) : ils sont à signaler au
+directeur, qui a décidé une règle et non vérifié chaque pays. Tant que la clé
+`app_config` `paiement.afrique_ouverte` ne vaut pas `true`, aucune ligne d'un pays
+de cette liste ne quitte `en_verification` (ni `confirme`, ni `indisponible`) : la
+RPC le refuse (`afrique_en_verification`) et une garde de table le refuse pour
+toute autre voie. La clé passe à `true` sur décision datée du directeur, et par
+elle seule : elle recopie la dernière ligne de
+`public.referentiel_paiement_afrique_decisions` (ajout seul : ouverte ou fermée,
+référence de la décision, date), qu'aucun compte n'écrit, direction, comptabilité
+et `service_role` compris ; seul le propriétaire de la base l'écrit, par migration
+ou par l'éditeur SQL. Une garde sur `app_config` refuse toute écriture directe de
+la clé (sur le modèle du quota C-29), son effacement et son renommage. Refermer
+l'Afrique est refusé tant qu'une de ses lignes n'est pas revenue à
+`en_verification`.
+
+**Clés des réponses déclarées, fixées par L6** (`candidature_reponses.reponses`,
+document de source `candidat` le plus récent ; jamais une réponse importée) :
+`paysVersement` (code ISO 3166-1 alpha-2 en majuscules), `compteBancaire`
+(booléen), `operateurs` (tableau de codes du catalogue des opérateurs de mobile
+money). Une déclaration existe quand `paysVersement` est un code valide et
+`compteBancaire` un booléen ; sinon le paiement vaut `inconnu`. `paysResidence` et
+`accordRemuneration` (booléen, lu par L2 à l'envoi) ne sont pas lus par le calcul.
+Un moyen déclaré croise une ligne `confirme` du pays de versement de même méthode
+(et du même opérateur pour le mobile money ; pour le virement, toute ligne de
+virement du pays).
+
 **Ce que le candidat déclare** (`CAND-01`) : pays de résidence ; pays de
 versement ; compte bancaire oui ou non ; opérateurs, parmi les seules lignes
 `confirme` de son pays de versement ; la case « J'accepte de recevoir ma
@@ -538,15 +594,76 @@ comme numéro de portefeuille.
 - **Ligne qui quitte `confirme`** (`ADM-24`) : restriction automatique « paiement
   à revérifier » pour les personnes en salle 3 qui n'avaient qu'elle ; en salle 2,
   le contrôle passe faux et la candidature compte dans « bloquées » ; en salle
-  d'examen, la transition 8 s'applique ; les personnes qui gardent une autre ligne
-  `confirme` ne bougent pas. `enregistrer` rend l'`impact` (nombre de
-  restrictions) ; alerte à la direction et à la comptabilité.
+  d'examen, la transition 8 s'applique ; les personnes qui gardent un autre moyen
+  déclaré, confirmé par la direction, sur une ligne `confirme` ne bougent pas. Qui
+  n'a plus qu'un moyen déclaré non encore confirmé (paiement `a_verifier`) passe
+  aussi en restriction en salle 3 (0.2 bis). `enregistrer` rend l'`impact`
+  (nombre de restrictions, dans la portée du lecteur, 0.2 bis) ; alerte à la
+  direction et à la comptabilité.
 - **Ligne qui passe `confirme`** : les candidatures `paiement_non_disponible` du
   pays passent `a_completer` (transition 9).
 
 Écrivent : la direction et la comptabilité (`paiement.referentiel.ecrire`). Le
 référentiel devient la source de compatibilité par corridor de `CPT-BR-10`, sans
 remplacer `PortCapacitePayout` (`PORTS §4`).
+
+**Statut L6 au 21/10** : `présent dans le code` et `testé localement` ; ni testé
+sur staging, ni déployé. Migration
+`supabase/migrations/20261021220100_cand_l6_referentiel_paiement.sql`, scénario
+`supabase/tests/scenarios_cand_l6_referentiel_paiement.sql` (cas L6-1 à L6-10,
+droits, journal, genre sans effet), rejoué sur base neuve. Ce que L6 pose :
+
+| Objet | Rôle |
+| :--- | :--- |
+| `public.referentiel_paiement` | une ligne par pays, méthode et opérateur ; prestataire, devise, type de décaissement (liste proposée : `virement_international`, `virement_local`, `payout_portefeuille`, vide tant qu'il n'est pas précisé), état, source (`decision_directeur` ou `verification`), vérifié le, par, notes, version |
+| `public.referentiel_paiement_afrique` | les 60 codes ci-dessus et leur région M49 |
+| `public.referentiel_paiement_afrique_decisions` | décisions datées du directeur sur l'Afrique, en ajout seul ; la dernière fait foi et la clé `paiement.afrique_ouverte` la recopie ; écrite par le seul propriétaire de la base ; la première, fermée, renvoie à `DEC:80-83` |
+| `public.referentiel_paiement_operateurs` | catalogue fermé des opérateurs (Wave, Orange Money, Moov Money, nommés par `SPEC §4.2`), étendu par migration ; aucune disponibilité supposée |
+| `public.referentiel_paiement_journal` | chaque changement en ajout seul, par quelque voie que ce soit (déclencheur de la table) : avant, après, auteur et clé d'idempotence (vides hors de la RPC), effets comptés au total et par genre ; plus une entrée `audit_logs` |
+| `public.candidature_paiement_decisions` | décisions de la direction sur un moyen déclaré (transitions 24 et 25), en ajout seul ; une confirmation exige un moyen déclaré qui croise une ligne `confirme` ; une infirmation exige un motif. **Aucun geste de L6 ne l'écrit** : L2 y écrit, puis appelle `private.paiement_recalculer` |
+| `candidatures.restriction_cause` | `piece`, `paiement` ou `manuelle`, présente si et seulement si la candidature est en restriction (4.1) ; l'état `paiement_non_disponible` entre dans les contraintes |
+| `capacites_referentiel_paiement()` | `peutLire`, `peutEcrire` : comptabilité active ; direction active de genre connu, ou sous l'exception super-admin |
+| `lire_referentiel_paiement(pays?)` | `PortReferentielPaiement.lister` : lignes (avec `capacitePayout` : `confirme` donne `prisEnCharge`, `en_verification` `verificationRequise`, `indisponible` `nonPrisEnCharge`), liste des pays d'Afrique, sa source et la dernière décision, listes de la fiche `ADM-24` (méthodes, états, types, opérateurs), alertes : les changements qui ont posé des restrictions dans la portée du lecteur, chacun avec ce nombre seul ; direction au genre inconnu refusée ; une lecture de l'autre côté par l'exception super-admin se journalise |
+| `enregistrer_ligne_referentiel_paiement(...)` | `PortReferentielPaiement.enregistrer` : version attendue et clé d'idempotence ; refus rendus `confirmation_sans_verification`, `afrique_en_verification`, `conflit_referentiel` (ligne relue jointe), `absente`, `cle_idempotence_reutilisee` ; direction au genre inconnu refusée avant tout effet ; rend la ligne relue et l'`impact` (restrictions posées, dans la portée du lecteur), rien d'autre |
+| `options_paiement_confirmees(pays)` | `PortReferentielPaiement.optionsConfirmees` : pour le titulaire d'une candidature en cours au compte valide (en attente, provisoire ou actif, non expiré, comme L1-08), les seules lignes `confirme` du pays (méthode, opérateur, nom, devise), sans note, prestataire, source ni nom |
+| `private.paiement_etat`, `private.paiement_compatible` | la dimension paiement et le contrôle `paiement_compatible`, lus par L2 (section 5, transition 10) |
+
+Effets d'une ligne qui passe ou quitte `confirme`, portés par un déclencheur de
+la table, donc par toute voie d'écriture (la RPC, l'éditeur SQL, une migration
+qui appliquerait la réponse à `CAND-Q05`), pour les candidatures en cours dont le
+pays de versement déclaré est celui de la ligne, journalisés dans
+`candidature_evenements` avec la cause (`referentiel`) et la ligne : transition 8
+(en examen), transition 9 (`paiement_non_disponible` vers `a_completer`,
+`moyen_paiement` nommé, marqueur `aNotifier` = `paiement_possible`, le modèle de
+la liste fermée de `CONTRAT_FILE_COURRIELS.md` section 3, pour L5), contrôle qui
+tombe en salle 2 (« bloquée », sans retour), restriction automatique en salle 3
+(transition 20, cause `paiement`, motif « paiement à revérifier » ; décidée par
+le calcul en direct, jamais par la colonne `paiement`, qu'une écriture oubliée
+laisserait périmée ; une candidature déjà en restriction garde sa cause), un
+événement `controle` à chaque changement de la dimension. Auteur : système.
+Aucune levée automatique (transition 21). Le pays, la méthode et l'opérateur
+d'une ligne ne changent pas, aucune ligne ne s'efface, et la version augmente à
+chaque modification, par toute voie (gardes de table). Les lignes du référentiel
+ne sont pas cloisonnées par genre et un changement agit sur les deux côtés ; ce
+qui sort vers un compte l'est (0.2 bis) : une direction lit les restrictions de
+son côté, le super-admin les deux côtés (journalisé, comme C13 de L1), la
+comptabilité le total ; les autres compteurs (bloquées, transitions 8 et 9,
+candidatures recalculées, partage par genre) restent dans le journal. L'alerte à
+la direction et à la comptabilité est le journal des changements qui ont posé
+des restrictions dans la portée du lecteur, rendu par `lire_referentiel_paiement`
+en nombres ; notifications et courriels : L5. Reste ouvert :
+`capacites_candidatures` (L1) rend encore `peutEcrireReferentiel` faux (l'écran
+de Finance lit `capacites_referentiel_paiement`) ; les lectures de L1 ne
+connaissent pas encore ce que L6 ajoute : le filtre `etat` de
+`lister_candidatures` refuse `paiement_non_disponible`, et le filtre `paiement`
+`incompatible` ne le remplace pas (il rend aussi des candidatures `a_completer` et
+des confirmées en restriction) ; ni `lire_candidature` ni `lister_candidatures`
+ne rendent `restriction_cause` (seulement `restreinte`) ; la transition 24 en
+salle 3 sous restriction de cause `paiement` (0.2 bis) est un geste de L2 ;
+`audit_logs` est lisible par toute direction active (hors module) : l'entrée de
+chaque effet y porte l'identifiant de la candidature, comme les entrées de L1, et
+leur compte laisse déduire le nombre d'effets de l'autre côté ; qui ajoute un
+opérateur au catalogue (aujourd'hui par migration).
 
 ### 5.2 Tri : des clés en clair (`CAND-Q20`)
 
@@ -852,12 +969,12 @@ lots `langue` et `c11bis`.
 
 | Lot | Contenu | `CAND-BR` | Questions | Statut au 21/10 | Prérequis |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **L1** socle | tables (type, candidature, questionnaire versionné, réponses, réponses importées) ; **forme en base du compte candidat** (rôle et `account_status`, la même pour le lien public et l'invitation, 3.1) ; lectures cloisonnées par genre (RLS, liste paginée et triée au serveur, détail, contact journalisé) ; historique sans nom | `01`, `02`, `03`, `07` | `Q02`, `Q04`, `Q07`, `Q20` | **en cours d'écriture** dans une autre session ; aucune migration du module sur cette branche à la rédaction ; si L1 est livré sans la forme du compte, un complément de L1 la fixe avant L2 | - |
-| **L2** transitions et contrôles | une RPC par geste ; les huit contrôles ; `decider_dossier()` : pour un profil porteur d'une candidature `enseignant`, validation acceptée seulement salle 2 terminée, les autres profils gardent l'approbation actuelle ; transaction d'entrée en salle 3 (2.2) ; garde `0089` étendue, vers `active` et `provisional_active` ; deux issues de pièce et levée de la restriction `piece` (transition 21) ; prédicat d'affectation qui refuse restriction et indisponibilité (4.3) ; lots ; `etat_dossier()` étendu, questionnaire, envoi, retrait ; sorte d'accord du cadre religieux, version requise publiée seulement après validation juridique et accord du directeur (section 9) ; conditions de rémunération lisibles en attente | `04`, `05`, `06`, `10`, `11`, `12` | `Q01`, `Q08`, `Q11`, `Q18` | à écrire | L1 (forme du compte) ; `CAND-BR-11` : L1 et lot `conduite` (`CORR §7`) ; prédicat d'affectation : lot `creer_groupe` |
+| **L1** socle | tables (type, candidature, questionnaire versionné, réponses, réponses importées) ; **forme en base du compte candidat** (rôle `teacher`, `pending_kyc`, la même pour le lien public et l'invitation, 3.1 ; complément CAND-L1B) ; lectures cloisonnées par genre (RLS, liste paginée et triée au serveur, détail, contact journalisé) ; historique sans nom | `01`, `02`, `03`, `07` | `Q02`, `Q04`, `Q07`, `Q20` | socle `présent dans le code` et `testé localement` (`M/20261021200000_cand_l1_socle_candidatures.sql`, `supabase/tests/scenarios_cand_l1_socle.sql`) ; forme du compte fixée par le complément CAND-L1B, repris après relecture (`M/20261021220000_cand_l1b_forme_compte_candidat.sql`, `supabase/tests/scenarios_cand_l1b_forme_compte.sql`, `supabase/tests/scenarios_cand_l1b_concurrence.sql`), `testé localement` ; ni staging ni production | - |
+| **L2** transitions et contrôles | une RPC par geste ; les huit contrôles ; `decider_dossier()` : pour un profil porteur d'une candidature `enseignant`, validation acceptée seulement salle 2 terminée, les autres profils gardent l'approbation actuelle ; transaction d'entrée en salle 3 (2.2) ; garde `0089` étendue, vers `active` et `provisional_active` ; deux issues de pièce et levée de la restriction `piece` (transition 21) ; prédicat d'affectation qui refuse restriction et indisponibilité (4.3) ; lots ; `etat_dossier()` étendu, questionnaire, envoi, retrait ; sorte d'accord du cadre religieux, version requise publiée seulement après validation juridique et accord du directeur (section 9) ; conditions de rémunération lisibles en attente ; étape des accords en base (contrat et avis en salle 2, 2.1, après la réponse sur les accords en trois moments, 0.3) ; portée par genre des surfaces de la direction encore non bornées (0.3) | `04`, `05`, `06`, `10`, `11`, `12` | `Q01`, `Q08`, `Q11`, `Q18` | à écrire | L1 (forme du compte) ; `CAND-BR-11` : L1 et lot `conduite` (`CORR §7`) ; prédicat d'affectation : lot `creer_groupe` |
 | **L3** inscription publique et import | compte candidat ; courriel confirmé ; genre et téléphone obligatoires ; plafond horaire et réponse neutre ; clé de mise en ligne ; accord de confidentialité ; rattachement (courriel, téléphone, B) ; alignement de `inscrire_enseignant_invite` ; geste `inviter` ; reprise des invitations ; import ponctuel, rejouable, réservé au super-admin | `17`, `09`, part de `04` | `Q03`, `Q04`, `Q16`, `Q17` | à écrire | L1, L2 ; mise en ligne : SMTP d'authentification, `enable_confirmations`, feu vert (3.1, condition 6) |
 | **L4** entretiens dans l'app | type `entretien`, forme de `teacher_id`, rôles, jeton du candidat convoqué, exclusions (paie, clôture, chevauchement, vues, contrôleur), mode sans mention, planification, constat, compte rendu | `08` | `Q06`, `Q07`, `Q08`, `Q09`, `Q19`, `Q22` | à écrire | L2 ; revue de sécurité (jeton, déclencheur de paie) |
 | **L5** conversation, notifications, file des courriels | objet `candidature` dans la messagerie ; compte en attente admis pour cet objet ; notifications ; file `a_envoyer` | `18`, `16` | `Q06`, `Q07`, `Q10` | à écrire | L1 ; contrat de la file remis à la session du site public |
-| **L6** référentiel de paiement | lignes (avec type de décaissement), droits, état initial déduit de `DEC:28`, liste des pays d'Afrique proposée avec sa source, déclencheur de restriction, transitions 8 et 9, alerte, part de `CPT-BR-10` | `13` | `Q05` | à écrire ; lignes d'Afrique `en_verification` tant que `Q05` est ouvert | L1 |
+| **L6** référentiel de paiement | lignes (avec type de décaissement), droits, état initial déduit de `DEC:28`, liste des pays d'Afrique proposée avec sa source, déclencheur de restriction, transitions 8 et 9, alerte, part de `CPT-BR-10` | `13` | `Q05` | présent dans le code et testé localement le 21/10 (5.1), ni staging ni production ; lignes d'Afrique `en_verification` tant que `Q05` est ouvert ; gestes 24 et 25 en L2, notifications en L5 | L1 |
 | Transverse | conservation et anonymisation | `14` | `Q21` | en attente du juriste | - |
 | Transverse | scénarios du module | `15` | - | un fichier par lot | ordre du directeur pour la CI |
 
@@ -911,6 +1028,8 @@ neuve et s'écrit. Fichiers proposés : `supabase/tests/scenarios_cand_l1.sql` �
 | L2-16 | après L2-6 : nouvelle pièce déposée par le compte `disabled`, approuvée, restriction levée | compte `active` et affectable, en 1 transaction ; 1 ligne de journal |
 | L2-17 | rouvrir une candidature refusée, un contrôle de l'étape faux | `ControlesNonSatisfaits` nommé ; 0 écriture |
 | L2-18 | complément demandé en salle 2 | même état ; comptée dans « informations manquantes » ; 1 notification |
+| L2-19 | contrat `teacher_nda` ou avis accepté par un candidat en salle d'examen | refus ; 0 ligne `contract_acceptances` |
+| L2-20 | une directrice et un directeur lisent le journal d'audit, les demandes de suppression et les jetons d'agent, avec un candidat de chaque côté | 0 nom de candidat de l'autre côté ; les deux côtés pour le super-admin |
 | L3-1 | inscription sans courriel confirmé | 0 candidature |
 | L3-2 | inscription au-delà du plafond horaire de `app_config` | refus |
 | L3-3 | inscription par le lien | 1 compte `pending_kyc` ; 0 capacité enseignant ; jeton de cours refusé ; 0 apparition dans une liste d'enseignants |
@@ -947,11 +1066,27 @@ neuve et s'écrit. Fichiers proposés : `supabase/tests/scenarios_cand_l1.sql` �
 | L6-3 | Afrique, compte bancaire oui, `Q05` ouvert | `incompatible` |
 | L6-4 | ligne `en_verification` | 0 cas `compatible` |
 | L6-5 | `confirme` sans date ni responsable | refus |
-| L6-6 | ligne passée `indisponible` | K restrictions pour les K personnes en salle 3 qui n'avaient qu'elle ; 0 changement pour qui garde une autre ligne `confirme` ; `impact` = K |
+| L6-6 | ligne passée `indisponible` | K restrictions pour les K personnes en salle 3 qui n'avaient qu'elle ; 0 changement pour qui garde un autre moyen confirmé par la direction sur une ligne `confirme` (0.2 bis) ; `impact` = K, dans la portée du lecteur |
 | L6-7 | un candidat lit le référentiel | 0 ligne non confirmée, 0 note interne |
 | L6-8 | pays de fixture, compte bancaire non, ligne `mobile_money` `confirme`, moyen confirmé | `compatible` ; admission en salle 2 acceptée |
 | L6-9 | ligne passée `confirme` | candidatures `paiement_non_disponible` du pays en `a_completer` ; 1 notification et 1 courriel chacune |
 | L6-10 | candidat `en_examen` dont la seule ligne quitte `confirme` ; puis moyen infirmé par la direction | `paiement_non_disponible` ; puis `paiement_non_disponible` avec motif tracé |
+
+Mesure L6 du 21/10, reprise après relecture
+(`scenarios_cand_l6_referentiel_paiement.sql`, base neuve) : 146 contrôles verts,
+L6-1 à L6-10 compris. L6-1 et L6-8 mesurent le contrôle `paiement_compatible` que
+lira l'admission (transition 10, geste de L2). L6-6 mesure K = 4 au journal, dont
+une personne à colonne `paiement` périmée et une qui n'a plus qu'un moyen non
+confirmé ; l'impact rendu vaut 2 pour chaque direction (son côté), 4 pour la
+comptabilité et pour l'exception super-admin (journalisée). L6-9 mesure un
+événement de transition 9 par candidature, marqué `aNotifier` = `paiement_possible` ;
+la notification et le courriel sont de L5. L6-10, second temps : la décision
+d'infirmation est écrite comme le fera le geste 25 de L2, puis recalculée. Le
+scénario mesure aussi : une écriture directe dans la table (mêmes effets, journal
+sans auteur), la clé de l'Afrique (refusée à une direction et au propriétaire par
+`app_config`, ouverte et refermée par la table des décisions, refermeture refusée
+tant qu'une ligne d'Afrique est `confirme`), la direction au genre inconnu
+refusée, le compte candidat désactivé ou expiré refusé (L1-08).
 
 ### 12.2 Flutter
 

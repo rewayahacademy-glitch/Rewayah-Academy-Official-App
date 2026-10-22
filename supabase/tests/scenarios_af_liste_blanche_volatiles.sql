@@ -121,6 +121,8 @@ declare
     'enregistrer_regles_tirage(jsonb,uuid)',
     'enregistrer_resultat_evaluation(uuid,text,text)',
     'enregistrer_resume_seance(uuid,uuid,text,uuid,boolean)',
+    -- CAND-L6 (21/10) : referentiel de paiement, direction ou comptabilite, compte valide.
+    'enregistrer_ligne_referentiel_paiement(uuid,text,text,text,text,text,text,text,date,text,integer,text)',
     'enseignants_pour_classe(uuid)',
     'enseignants_pour(uuid)',
     'entrer_observation(uuid,text)',
@@ -147,6 +149,8 @@ declare
     'historique_candidature(uuid,bigint,integer)',
     'lire_candidature(uuid)',
     'lire_contact_candidature(uuid)',
+    -- CAND-L6 (21/10) : referentiel de paiement, lecture qui journalise l'exception super-admin.
+    'lire_referentiel_paiement(text)',
     'lister_candidatures(jsonb,text,integer)',
     'indicateurs_admin()',
     'inscrire_comptable_invite(text,text,text,gender)',
