@@ -52,6 +52,7 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | rattraper ce cours (l'élève, seul) | cours de rattrapage offert |
 | demander une pause d'un mois | geler, suspendre l'abonnement |
 | lecture enregistrée (du programme) | audio du cours, enregistrement du professeur |
+| qiraat (lectures du Coran), pour traduire القراءات : « Institut des qiraat (lectures du Coran) » (directeur, 22/10/2026) | lectures du Coran seul |
 | emploi du temps de révision | planning, programme de révision personnalisé |
 | dans la langue choisie à l'inscription | les cours sont en français |
 | nos familles vivent loin des écoles coraniques | le nom d'un pays ou d'un continent |
