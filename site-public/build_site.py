@@ -213,9 +213,11 @@ def load_direction(pages: dict[str, dict]) -> tuple[dict, dict]:
         for ident in (reglage.get("figures") or {}).values():
             if ident not in connues:
                 raise ValueError(f"direction.json names an unknown picture: {ident}")
-        for ident in (reglage.get("portraits") or {}).values():
-            if ident not in connues or not (connues[ident].get("photo") or {}).get("legende"):
-                raise ValueError(f"direction.json: portrait {ident} must be a photo with its legende in images.json")
+        for valeur in (reglage.get("portraits") or {}).values():
+            # une section a un portrait (le mot) ou un portrait par personne, par son nom (les fondateurs)
+            for ident in (valeur.values() if isinstance(valeur, dict) else [valeur]):
+                if ident not in connues or not (connues[ident].get("photo") or {}).get("legende"):
+                    raise ValueError(f"direction.json: portrait {ident} must be a photo with its legende in images.json")
         for cle in ("image", "bande"):
             valeur = (reglage.get(cle) or {}).get("image") if isinstance(reglage.get(cle), dict) else reglage.get(cle)
             if valeur and valeur not in connues:
@@ -932,13 +934,23 @@ def section_mot(section: dict, number: int, images: dict, ident: str | None) -> 
             f'<span class="mot__role">{esc(sig["role"])}</span></p></div></section>')
 
 
-def section_fondateurs(section: dict, number: int) -> str:
-    """Les fondateurs : le texte de la section, puis un profil par personne (role et diplomes). L'arabe des noms et des
-    diplomes attend le site en arabe (registre de marque, M-29) : on ne melange pas les deux langues sur une page."""
+# Un portrait de fondateur : une colonne de profil, 300 px au plus.
+TAILLES_PROFIL = "(max-width: 359px) calc(100vw - 32px), 300px"
+
+
+def section_fondateurs(section: dict, number: int, images: dict | None = None, portraits: dict | None = None) -> str:
+    """Les fondateurs : le texte de la section, puis un profil par personne (portrait, role et diplomes). Les trois
+    portraits sont traites ensemble (meme fond, meme cadrage, meme etalonnage) : ils vont toujours a trois, ou pas du
+    tout. L'arabe des noms et des diplomes attend le site en arabe (registre de marque, M-29) : on ne melange pas les
+    deux langues sur une page."""
+    noms = [p["nom"] for p in section["profils"]]
+    if portraits and set(portraits) != set(noms):
+        raise ValueError(f"direction.json: les portraits des fondateurs doivent nommer {noms}, pas {sorted(portraits)}")
     profils = []
     for p in section["profils"]:
         parcours = "".join(f"<li>{texte_html(l)}</li>" for l in p["parcours"])
-        profils.append(f'<li class="profil"><h3>{titre_html(p["nom"])}</h3><p class="profil__role">{esc(p["role"])}</p>'
+        photo = portrait(images, portraits[p["nom"]], TAILLES_PROFIL, "portrait--profil") if portraits else ""
+        profils.append(f'<li class="profil">{photo}<h3>{titre_html(p["nom"])}</h3><p class="profil__role">{esc(p["role"])}</p>'
                        f'<ul class="profil__parcours">{parcours}</ul></li>')
     return (f'<section class="fondateurs" id="{esc(section["id"])}" aria-labelledby="heading-{number}">'
             f'<div class="fondateurs__tete" data-revele><h2 id="heading-{number}">{titre_html(section["title"])}</h2>'
@@ -1046,7 +1058,7 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
             morceaux.append(section_mot(s, i, images, (reglage.get("portraits") or {}).get(s["id"])))
         elif s.get("profils"):
             vider()
-            morceaux.append(section_fondateurs(s, i))
+            morceaux.append(section_fondateurs(s, i, images, (reglage.get("portraits") or {}).get(s["id"])))
         elif s["id"] in reglage.get("parcours", []) and reglage.get("haut") != "parcours":
             vider()
             morceaux.append(render_section(s, i, tarifs, today, avis, "parcours"))

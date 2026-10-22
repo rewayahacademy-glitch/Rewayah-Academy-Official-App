@@ -196,15 +196,23 @@ class GeneratedSiteQA(unittest.TestCase):
     def test_portraits_are_named_photos_never_captioned_illustration(self) -> None:
         # Une vraie photo (le directeur) n'est pas une illustration : ni « Illustration » ni texte alternatif vide.
         images = json.loads((SITE / "content" / "images.json").read_text(encoding="utf-8"))
-        for route in ("/fr/", "/fr/academie"):
+        # Accueil : le visage du directeur. Academie : son mot, puis les trois fondateurs, chacun avec son portrait.
+        for route, nombre in (("/fr/", 1), ("/fr/academie", 4)):
             source = self.page_file(route).read_text(encoding="utf-8")
             portraits = re.findall(r'<figure class="portrait[^"]*">.*?</figure>', source, re.S)
             with self.subTest(route=route):
-                self.assertEqual(len(portraits), 1)
-                self.assertNotIn("Illustration", portraits[0])
-                ident = re.search(r'src="/fr/assets/scene-([a-z-]+)-\d+\.webp"', portraits[0]).group(1)
-                self.assertIn("legende", images["images"][ident]["photo"])
-                self.assertIn(f'alt="{images["images"][ident]["alt"]}"', portraits[0])
+                self.assertEqual(len(portraits), nombre)
+                for figure in portraits:
+                    self.assertNotIn("Illustration", figure)
+                    ident = re.search(r'src="/fr/assets/scene-([a-z-]+)-\d+\.webp"', figure).group(1)
+                    self.assertIn("legende", images["images"][ident]["photo"])
+                    self.assertIn(f'alt="{images["images"][ident]["alt"]}"', figure)
+        # Chaque profil de fondateur porte le portrait de la personne qu'il nomme.
+        academie = self.page_file("/fr/academie").read_text(encoding="utf-8")
+        for profil in re.findall(r'<li class="profil">.*?</li>\s*(?=<li class="profil">|</ul></section>)', academie, re.S):
+            nom = re.sub(r"<[^>]+>", "", re.search(r"<h3>(.*?)</h3>", profil).group(1)).replace("\u00a0", " ")
+            with self.subTest(nom=nom):
+                self.assertIn(f'alt="{nom}', profil)
 
     def test_director_message_and_founders_render_in_french_only(self) -> None:
         academie = self.page_file("/fr/academie").read_text(encoding="utf-8")

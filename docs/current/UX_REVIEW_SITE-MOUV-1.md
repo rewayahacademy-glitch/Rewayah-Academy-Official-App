@@ -523,6 +523,14 @@ Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte co
 | DD10 | Erreurs HTML anciennes : un titre dans un `span`, un identifiant en double sur l'Aide, des libellés qui contenaient plusieurs boutons dans le simulateur (relecture) | Corrigées : 0 erreur sur les 18 pages (validateur Nu 26.10.12). Les boutons moins et plus sont hors du libellé, qui nomme son champ par son identifiant |
 | DD11 | Règles CSS sans effet (cartes de l'Académie, ancienne grille des étapes sur tablette) ; test de l'arabe incomplet (relecture) | Règles retirées, sans changement de position mesuré ; le test cherche aussi dans les textes alternatifs et sur toutes les plages de l'arabe |
 
+**Photos des deux autres fondateurs (22/10/2026).** Le directeur les a déposées sur le Drive (« Alim & Ahmad ») : Mamadou Alimou Diallo sur fond blanc, Ahmad Diallo de nuit sous des arches éclairées, en pied. Les trois profils de la page Académie ont maintenant chacun leur portrait, traités ensemble pour aller ensemble :
+- détourage (BiRefNet), puis pose sur le mur clair de la photo du directeur ;
+- cadrage tête et épaules en 4:5, la tête faisant 60 % de la hauteur ; le directeur, coupé à gauche par sa photo d'origine, regarde vers les deux autres ;
+- peau éclaircie à la luminosité de celle du directeur, les tons clairs (une tunique claire) protégés ;
+- même étalonnage A3, même demi-arche que la photo du directeur, 300 px au plus.
+
+Aucun visage n'est retouché. La photo d'Ahmad Diallo, en pied, ne donne que 338 px de large pour le portrait : il n'est jamais affiché plus grand que son fichier. Un test vérifie que chaque profil porte le portrait de la personne qu'il nomme.
+
 Non repris : la répétition des personnages d'une page à l'autre (O-20). Les jurés proposent des recadrages sans personne, mais la recette 15 les avait refusés (« jamais une porte ou un tapis sans personne »). La réponse reste les nouvelles scènes demandées au directeur.
 
 Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Comment ça marche garde un avertissement de marges (120 et 142 px) : l'inspecteur ne compte que l'étendue du texte, et l'ornement retiré du pied de page touchait la marge droite. Les cartes et la grille vont bien de 120 à 1320 px. Aucun texte coupé. Aucune image agrandie à 390, 1024 et 1440 px. À 1920 px, l'image du haut de Familles est agrandie de 10 %, comme avant ce lot. Aucun mot seul. Simulateur vérifié : 3 élèves de 8, 12 et 30 ans donnent 159,55 $, sans erreur dans la console. Tests : 68, OK.

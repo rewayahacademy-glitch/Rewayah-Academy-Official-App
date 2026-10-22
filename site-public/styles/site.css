@@ -1492,6 +1492,8 @@ li, dd { text-wrap: wrap; }
 .fondateurs__texte > p + p { margin-top: var(--e-4); }
 .profils { list-style: none; display: grid; gap: var(--e-12); margin-top: var(--e-12); }
 .profil h3 { font-size: var(--t-moyen); line-height: 1.2; }
+/* Le portrait d'un fondateur : la demi-arche des photos, 300 px au plus, au-dessus de son nom. */
+.portrait--profil { width: min(100%, 300px); margin-bottom: var(--e-6); }
 .profil__role { margin-top: var(--e-1); }
 .profil__parcours { list-style: none; display: grid; gap: var(--e-3); margin-top: var(--e-6); max-width: 34ch; }
 @media (min-width: 840px) {
