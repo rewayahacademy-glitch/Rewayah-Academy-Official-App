@@ -283,12 +283,20 @@ RESET ROLE;
 -- ------------------------------------------------------------
 -- (b) Capacites par appelant
 -- ------------------------------------------------------------
+-- CAND-L2A2 (22/10) : les gestes de la direction existent ; peutDecider et
+-- peutEcrireReferentiel (private.paiement_gestionnaire de L6) s'ouvrent, une
+-- capacite par geste et les listes fermees s'ajoutent (spec 8.1). Les
+-- capacites sans RPC (import, entretien, double verification) restent
+-- fausses ; le detail des gestes est mesure par le scenario de CAND-L2A2.
 SELECT pg_temp.qui('ca1d0000-0000-4000-8000-0000000000a1', 'admin', 'aal1');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai(public.capacites_candidatures() = '{"peutLire": true, "peutVoirContact": true,
-  "peutLireHorsGenre": false, "genreLecteurConnu": true, "peutDecider": false, "peutImporter": false,
-  "doubleVerificationRequise": false, "peutMenerEntretien": false, "peutEcrireReferentiel": false}'::jsonb,
-  'direction homme nommee aal1 : lit son cote et le contact, aucun geste ni double verification promis');
+SELECT pg_temp.vrai(public.capacites_candidatures() - 'gestes' - 'gestesGroupables' - 'listes'
+    = '{"peutLire": true, "peutVoirContact": true,
+  "peutLireHorsGenre": false, "genreLecteurConnu": true, "peutDecider": true, "peutImporter": false,
+  "doubleVerificationRequise": false, "peutMenerEntretien": false, "peutEcrireReferentiel": true}'::jsonb
+  AND (public.capacites_candidatures() #>> '{gestes,inviter}') = 'false'
+  AND (public.capacites_candidatures() #>> '{gestes,refuser}') = 'true',
+  'direction homme nommee aal1 : lit son cote et le contact, decide de son cote ; ni import, ni entretien, ni double verification promis');
 SELECT pg_temp.qui('ca1d0000-0000-4000-8000-0000000000a1', 'admin', 'aal2');
 SELECT pg_temp.vrai((public.capacites_candidatures() ->> 'doubleVerificationRequise') = 'false'
   AND (public.capacites_candidatures() ->> 'peutImporter') = 'false'
@@ -316,10 +324,13 @@ SELECT pg_temp.vrai((public.capacites_candidatures() ->> 'peutLire') = 'false'
   AND (public.capacites_candidatures() ->> 'doubleVerificationRequise') = 'false',
   'direction desactivee : aucune capacite');
 SELECT pg_temp.qui('ca1d0000-0000-4000-8000-0000000000e1', 'guardian', 'aal1');
-SELECT pg_temp.vrai(public.capacites_candidatures() = '{"peutLire": false, "peutVoirContact": false,
+SELECT pg_temp.vrai(public.capacites_candidatures() - 'gestes' - 'gestesGroupables' - 'listes'
+    = '{"peutLire": false, "peutVoirContact": false,
   "peutLireHorsGenre": false, "genreLecteurConnu": false, "peutDecider": false, "peutImporter": false,
-  "doubleVerificationRequise": false, "peutMenerEntretien": false, "peutEcrireReferentiel": false}'::jsonb,
-  'tuteur : aucune capacite');
+  "doubleVerificationRequise": false, "peutMenerEntretien": false, "peutEcrireReferentiel": false}'::jsonb
+  AND NOT EXISTS (SELECT 1 FROM jsonb_each(public.capacites_candidatures() -> 'gestes') g WHERE g.value <> 'false'::jsonb)
+  AND public.capacites_candidatures() -> 'gestesGroupables' = '[]'::jsonb,
+  'tuteur : aucune capacite, aucun geste');
 SELECT pg_temp.qui(NULL, NULL);
 SELECT pg_temp.refus($$SELECT public.capacites_candidatures()$$, '42501', 'sans session : capacites refusees');
 RESET ROLE;

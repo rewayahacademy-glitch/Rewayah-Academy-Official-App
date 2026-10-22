@@ -118,6 +118,18 @@ l'autre côté : les candidatures du module, mais aussi **les pièces d'identit�
 Le relecteur l'a reproduit sur une base neuve : changement de genre, lecture du
 contact de l'autre côté, retour au genre d'origine. Rien n'en garde trace.
 
+**Depuis le lot CAND-L2A2 (22/10), le même défaut ouvre aussi les écritures.**
+Tous les gestes de la direction (complément, admission, refus, retrait, pause,
+réouverture, responsable, confirmation et infirmation d'un moyen de paiement) et
+l'action groupée ne valent que du côté du lecteur, d'après `profiles.gender` : une
+direction qui change son propre genre refuse, met en pause, rouvre ou confirme
+pour l'autre côté, et rien ne garde la trace du changement. Le lot L2A2 ne le
+corrige pas : le correctif ci-dessous reste le même, et il devient un prérequis de
+tout passage de ces gestes sur staging (spec consolidée 0.3 ; scénario
+`scenarios_cand_l2a2_gestes_direction.sql`, section (o), qui reproduit le
+changement par le propriétaire de la base pour prouver ce que le serveur fait
+ensuite).
+
 **Correctif proposé (non écrit, hors du lot CAND-L1).**
 - Refuser à un membre de la direction de changer **son propre** genre.
 - Ne le permettre que par `service_role`, ou par le super-admin de l'exception
@@ -125,8 +137,10 @@ contact de l'autre côté, retour au genre d'origine. Rien n'en garde trace.
 - Journaliser chaque changement de genre (`log_sensitive_access`).
 - Ajouter un scénario qui reproduit la faille, puis la ferme.
 
-**À faire avant toute mise en production du module.** Ce défaut ne figurait pas
-parmi les cinq de `CAND-Q15` : son correctif attend l'accord du directeur.
+**À faire avant toute mise en production du module, et avant tout passage de ses
+gestes sur staging.** Ce défaut ne figurait pas parmi les cinq de `CAND-Q15` : son
+correctif attend l'accord du directeur (à lui soumettre, pas décidé par le lot
+L2A2).
 
 ## 0 quater. Écrits et testés localement (21/10, soir)
 

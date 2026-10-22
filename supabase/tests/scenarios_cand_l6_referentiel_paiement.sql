@@ -961,9 +961,9 @@ BEGIN
                           FROM public.candidatures WHERE id = ('ca6dcccc-0000-4000-8000-0000000000' || s)::uuid)
       AND pg_temp.ev(('ca6dcccc-0000-4000-8000-0000000000' || s)::uuid, 'transition',
             jsonb_build_object('transition', 9, 'cause', 'referentiel', 'ligne', v_ligne,
-                               'aCompleter', jsonb_build_array('moyen_paiement'),
+                               'aCompleter', jsonb_build_array('versement'),
                                'aNotifier', 'paiement_possible')) = 1,
-      'L6-9 : c' || s || ' en a_completer, moyen_paiement nomme, 1 evenement a notifier, modele paiement_possible de la liste fermee (notification et courriel : L5)');
+      'L6-9 : c' || s || ' en a_completer, carte versement nommee (CAND-L2A2, D19 : le code de la carte du questionnaire, non plus moyen_paiement), 1 evenement a notifier, modele paiement_possible de la liste fermee (notification et courriel : L5)');
   END LOOP;
   PERFORM pg_temp.vrai((SELECT array_agg(paiement ORDER BY id) FROM public.candidatures
                         WHERE id IN ('ca6dcccc-0000-4000-8000-000000000013', 'ca6dcccc-0000-4000-8000-000000000015'))

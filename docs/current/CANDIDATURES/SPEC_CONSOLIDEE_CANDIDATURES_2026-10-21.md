@@ -68,6 +68,13 @@ s'applique, et le lot qui écrit les ports met le contrat à jour.
   clé de mise en ligne (3.1).
 - L'import écrit des réponses importées, pas des candidatures (3.2) ; les
   Garanties de `PORTS §2` changent en conséquence.
+- Depuis L2A2 (22/10, 4.2) : `geste` rend l'état relu de la candidature
+  (dimensions et version), le dossier complet se relit par `lire` ;
+  `demanderComplement` nomme ses éléments dans une liste fermée par salle ;
+  `consignerRetrait` prend le canal (`conversation` ou `courriel`) et la date de
+  la demande ; `executerLot` reprend le geste et les identifiants de l'aperçu
+  avec le jeton, empreinte de l'aperçu ; `CapacitesCandidatures` gagne une
+  capacité par geste et les listes fermées.
 
 ### 0.2 Où ce document s'écarte de la spec v1
 
@@ -99,6 +106,16 @@ s'applique, et le lot qui écrit les ports met le contrat à jour.
 | Une seule page d'accords ; l'app « ne renvoie jamais en arrière pour cocher après coup » (`C/DECISION-ENTREE-2026-10-17.md:30-32`) | accords en trois moments : confidentialité à l'inscription, cadre religieux en salle d'examen, contrat et avis en salle 2 ; une version neuve se ré-accepte (4.3) | ne pas demander trop tôt (`SPEC §2.1`) ; contrat et pièce après la salle d'examen : proposition de `REVUE §6.2`, pas une décision |
 | Salles 2 et 3 « qu'aux personnes que l'académie peut payer » (`DEC:28`) | en salle 3, « garder une autre ligne `confirme` » veut dire garder un moyen déclaré **confirmé par la direction** qui croise une ligne `confirme` (contrôle de la section 5) ; qui n'a plus qu'un moyen déclaré non encore confirmé passe aussi en restriction « paiement à revérifier » ; la transition 24 s'ouvre alors en salle 3 sous restriction de cause `paiement`, puis la direction lève la restriction (21) | sûr par défaut : l'académie n'a pas vérifié qu'elle peut payer ce moyen ; sans la 24 en salle 3, la personne resterait bloquée (L6, relecture du 21/10) |
 | Séparation femmes et hommes, « compteurs » compris (`DEC:30`, 8.2) | l'impact d'un changement du référentiel et ses alertes : une direction lit les restrictions de son côté, le super-admin les deux côtés (journalisé), la comptabilité le total ; aucun autre compteur ne sort ; une direction au genre inconnu est refusée | 8.2 range les compteurs dans la portée ; 8.1 donne l'impact à la comptabilité, qui n'a pas de côté. À trancher : la direction doit-elle lire le total des deux côtés, et la comptabilité le garder ? |
+| Le questionnaire de la Salle d'examen (2.1, fiche `CAND-01`) | listes fermées proposées par L2A1 (`M/20261022000000_cand_l2a1_moteur_salle_examen.sql:453-491`) : `riwayat` (choix multiple parmi les vingt riwayat des dix lectures) ; `niveauLectureTajwid` (`lecture_sans_regles_tajwid`, `tajwid_applique`, `tajwid_enseigne`) ; `publics` (`enfant`, `adulte`, les codes d'`enseignants_pour_public`) ; `ijazaPresentable` et `experienceDebutants` (`oui`, `non` : la valeur importée `pret_a_un_test` n'est pas proposée et se re-répond) ; la date de début par la liste du mappage (`debutPossible`, `MAP §3.6`), pas une date ; des créneaux à la demi-heure, jour 1 = lundi, dans un fuseau IANA déclaré avec eux ; les langues hors référentiel limitées aux 23 codes ISO 639 du mappage (`MAP §3.2`). Les libellés ne sont pas en base : le serveur rend des codes, l'écran les affiche par des clés i18n `fr` et `ar`, alors que la fiche `CAND-01` les voulait rendus par le questionnaire | ni `SPEC` ni une décision ne fixent ces listes ; des codes fermés évitent toute saisie libre (2.1) ; une liste change en publiant une version du questionnaire. À trancher : ces listes, et des libellés en base plutôt qu'en clés i18n |
+| Refus et retrait pendant une pause (4.2, lignes 16 à 18 ; 4.3) | le refus (16) et le retrait (17) lèvent la pause : une issue terminale n'est pas en pause ; l'événement le dit (`pauseLevee`) | sans cela, une candidature rouverte (19) le serait en pause sans que personne l'ait décidé |
+| Candidat maintenu faute de moyen de paiement (`DEC:28`, transition 8) | en `paiement_non_disponible`, le candidat ne modifie ni ne renvoie ses réponses : aucune transition de 4.2 ne le lui ouvre ; il reste libre de partir (17) ; seule la transition 9 (une ligne passe `confirme`) le rend à `a_completer` | lecture stricte de 4.2. À trancher : un candidat qui ouvre un compte bancaire corrige-t-il sa déclaration (transition neuve) ? |
+| Conditions de rémunération avant le 1er novembre 2026 (`C/DECISION-TARIFS-2026-10-18.md:13-16`) ; répartition du paiement montrée en pourcentages seulement (décision du directeur du 22/10 : `C/DECISION-TARIFS-2026-10-18.md`, section du 22/10, et `C/CANDIDATURES/PROPOSITION_REPARTITION_PAIEMENT.md` section 2.2 point 1, tous deux sur la branche principale et pas encore dans cet arbre) | le candidat lit la politique en vigueur si elle paie par élève présent, sinon la prochaine publiée qui le fait, avec sa date d'effet et **la part de l'enseignant en pour mille, par public** : aujourd'hui la v2.0.0 (47 %, en vigueur le 1er novembre) ; **aucun montant n'est rendu, ni le taux par élève présent et par heure, ni la devise** : qui veut les montants les demande à l'administration ; le taux ne sert plus qu'à reconnaître la politique qui paie par élève présent ; la v1.0.0, encore en vigueur et caduque, n'est jamais montrée ; une politique sans sa ligne de part de l'enseignant n'est pas montrée du tout, et l'envoi est refusé (`conditions_indisponibles`, `M/20261022000000_cand_l2a1_moteur_salle_examen.sql:791-829`) | la décision du 19/10 rend caduques les valeurs de la v1.0.0 ; la décision du 22/10 retire les montants de ce que le candidat lit (1,99 $ et 1,57 $ n'y figurent plus) ; montrer une politique pas encore en vigueur reste un choix |
+| Brouillon du questionnaire et questions rouvertes après un complément (`CAND-F15`, `C/CATALOGUE_ECRANS_RECRUTEMENT.md:2006` ; fiche `CAND-01`, `:700`) | brouillon gardé **au serveur** (L2A1) : un document de réponses marqué brouillon, qui porte sa propre version, attendue par l'enregistrement suivant (`conflit_brouillon` sinon) et qui ne change jamais la version de la candidature (`M/20261022000000_cand_l2a1_moteur_salle_examen.sql:1136-1186`, `:1827-1888`) ; après un complément demandé (transitions 7, 9, 23), **toutes** les questions se rouvrent, alors que la fiche `CAND-01` ne rouvrirait que les questions nommées | `CAND-F15` laissait le choix entre un brouillon local et un brouillon au serveur ; un brouillon local se perd d'un appareil à l'autre. Les codes demandés (`aCompleter`) ne nomment pas encore des champs du questionnaire, mais des cartes : la transition 9 de L6 nommait `moyen_paiement`, qui n'est pas une carte du questionnaire ; depuis la relecture de L2A2 (22/10) elle nomme `versement`, la carte de la liste fermée des lignes 7 et 23 (`private.paiement_recalculer`, recopié de L6). À trancher : brouillon au serveur ou sur l'appareil ; questions nommées seules ou toutes rouvertes |
+| Modèle de message du refus et de la pause (4.2, lignes 16 et 18 ; `PORTS §1`) | liste fermée proposée par L2A2 (`M/20261022000100_cand_l2a2_gestes_direction.sql:233-248`) : refus `refus_general`, `refus_niveau`, `refus_besoins`, `refus_sans_reponse` ; pause `pause_attente_besoin`, `pause_attente_informations`, `pause_demande_candidat`, `pause_general` ; un modèle hors de la liste est refusé (`modele_inconnu`) ; le serveur garde la clé, les textes `fr` et `ar` s'écrivent avec les écrans, selon `mots-rewayah` | ni `SPEC` ni une décision ne fixent ces modèles ; le contrat de la file veut la clé d'un modèle d'une liste fermée (`C/CANDIDATURES/CONTRAT_FILE_COURRIELS.md:79-81`), jamais un texte libre. À trancher : la liste et ses textes |
+| Éléments manquants nommés au candidat (4.2, lignes 7 et 23) | liste fermée par salle (`M/20261022000100_cand_l2a2_gestes_direction.sql:331-355`) : en Salle d'examen, les cartes du questionnaire courant (`langues`, `recitation`, `disponibilites`, `publics`, `versement`) et `cadre_religieux` ; en Salle de vérification et d'entretien, `piece_identite`, `cadre_religieux`, `contrat`, `avis`, et non les réponses du questionnaire. **La fin d'un complément de salle 2** (relecture du 22/10) : aucun envoi ne remplace la demande en salle 2 (la transition 6 ne vaut qu'en salle 1), et la plupart des éléments (pièce, contrat, avis) n'ont pas de fin calculable avant L2B ; `complementDemande` et le compteur « informations manquantes » lisent le dernier événement qui porte une liste, si bien qu'une demande ne finissait jamais. Retenu : la direction clôture le complément par la transition 23 avec le seul code `complement_clos` (même état, événement à liste vide, aucun marqueur de notification ; `aucun_complement` quand rien ne court), et peut en demander un neuf ensuite | une demande ne nomme que ce que le candidat peut faire dans sa salle : aucune transition de 4.2 ne lui rouvre ses réponses en salle 2 ; un élément libre serait un texte libre. À trancher : la liste ; si un candidat de salle 2 corrige ses réponses (transition neuve) ; et la fin d'un complément de salle 2 : clôture par la direction (retenue), ou fin calculée par élément (cadre accepté à la version requise, pièce déposée, contrat et avis acceptés), qui demande la pièce de L2B |
+| Rouvrir (4.2, ligne 19 : « contrôles de l'étape revérifiés, questionnaire à la version courante ») | lecture stricte (`M/20261022000100_cand_l2a2_gestes_direction.sql:435-501`, `:1082-1125`) : compte conforme (règle de CAND-L1B, nommée au lieu d'être levée) ; pour un état qui suit un envoi (en examen, `paiement_non_disponible`, salle 2), dernier questionnaire envoyé complet à la version courante ; **en salle 2 seulement**, `paiement_compatible` et cadre religieux à la version requise (section 5 : le cadre est exigé pour la salle 2, et rouvrir une candidature de salle 2 est une rentrée en salle 2). Une candidature dont le questionnaire ou, en salle 2, le cadre a changé de version pendant qu'elle était refusée ou retirée ne se rouvre donc pas, et ce blocage ne se lève pas de lui-même : elle ne peut pas ré-accepter un texte avant d'être en cours (policy de `contract_acceptances`, `M/20261022000000_cand_l2a1_moteur_salle_examen.sql:725-759`, `:1827-1888`), et la direction ne peut pas la rouvrir. À l'inverse, une candidature en examen se rouvre sans le cadre ni les conditions de rémunération que la transition 6 exige : seul son questionnaire est contrôlé | la lecture stricte de « contrôles de l'étape revérifiés » (section 5) ; ce n'est pas la règle du candidat qui bloque la salle 2 (rouverte, il peut accepter la version neuve, 4.3), c'est le contrôle d'entrée. À trancher : garder la lecture stricte ; ou retirer le cadre des contrôles de la réouverture en salle 2, le candidat le ré-acceptant ensuite (4.3 : avant la salle 3 ; `etat_dossier()` le nomme déjà dans `aCompleter`), ce qui supprime le blocage ; ou rouvrir alors en `a_completer` |
+| Rouvrir une candidature refusée ou retirée en entretien planifié (4.2, lignes 12, 16, 17, 19) | le refus et le retrait notent `entretienPlanifie` dans l'événement (L4 annulera la séance, lignes 16 et 17) ; la réouverture rend l'étape et l'état d'origine, donc `entretien_planifie`, alors que la séance annulée n'existera plus ; la ligne 12 ramène l'état à `entretien_a_planifier` quand un entretien est annulé. Figé par le scénario de L2A2 pour que L4 le voie ; rien ne l'exerce avant L4, aucune séance n'étant planifiable | 4.2 ne dit pas si l'état d'origine après un entretien annulé est `entretien_planifie` ou `entretien_a_planifier`. À trancher avec L4 : rouvrir en `entretien_a_planifier` quand le refus ou le retrait a noté `entretienPlanifie` (une règle neuve de la table du moteur, `rouvrir` variante 2) |
+| Séparation femmes et hommes, journal compris (`DEC:30`, 8.2, 8.3) | une ligne d'`audit_logs` qui vise une candidature, ou dont l'auteur porte une candidature avant la salle 3, ne se lit que du côté de cette candidature (`journal_audit()`, `journal_audit_filtres()`, lecture directe) ; l'auteur porteur de candidature est rendu par la référence `CAND-` ; la trace d'une tentative hors portée vise l'autre côté : son auteur ne la relit pas ; la lecture directe d'`audit_logs` n'a pas l'exception du super-admin, qui lit les deux côtés par `journal_audit()`, journalisé ; une trace de l'exception qui ne vise aucune candidature n'est lue que sous l'exception (`M/20261022000000_cand_l2a1_moteur_salle_examen.sql:2163-2457`) | 8.2 range l'historique et les compteurs dans la portée ; 8.3 veut la référence, jamais le nom ; une lecture directe ne se journalise pas. À trancher : une direction relit-elle ses propres tentatives hors portée, et la direction de son côté relit-elle les traces de l'exception du super-admin ? |
 
 ### 0.3 Ce qui reste ouvert
 
@@ -107,7 +124,7 @@ s'applique, et le lot qui écrit les ports met le contrat à jour.
 | `CAND-Q05` | pays et moyens qui fonctionnent en Afrique (par exemple le mobile money par pawaPay) ; sort d'un candidat qui vit en Afrique et a un compte bancaire (`DEC:80-83`) | directeur | toutes les lignes d'Afrique du référentiel restent `en_verification` : aucun candidat dont le pays de versement est en Afrique n'entre en salle 2 |
 | Liste des pays d'Afrique | la liste du référentiel ; c'est elle qui décide qui entre en salle 2 (`DEC:28`) | proposée en L6 le 21/10 (60 pays ou territoires, ONU M49 région 002, 5.1), soumise au directeur avec `CAND-Q05` | même effet que `CAND-Q05` |
 | `CAND-Q12` | accord sur les trois noms de salle (`DEC:87-88`) ; forme du côté des femmes pour « Salle des prêts à enseigner », en français et en arabe ; « Salle d'examen » croise « examen de fin des bases », mot du programme (`mots-rewayah` §3) | directeur | les noms proposés sont les valeurs des clés i18n ; un changement ne touche que les textes |
-| `CAND-Q21` | durée de conservation, avis du juriste (`DEC:90`) ; base des courriels envoyés avant l'inscription et conservation des réponses importées de qui ne s'inscrit pas (8.4) | directeur, après le juriste | aucune purge automatique des candidatures ; `CAND-BR-14` n'est pas commencé |
+| `CAND-Q21` | durée de conservation, avis du juriste (`DEC:90`) ; base des courriels envoyés avant l'inscription et conservation des réponses importées de qui ne s'inscrit pas (8.4) | directeur, après le juriste | aucune purge automatique des candidatures ; `CAND-BR-14` n'est pas commencé ; il couvrira aussi les deux tables d'idempotence de L2A1 (8.4) |
 | Super-admin intervieweur | le super-admin peut-il mener l'entretien d'une personne de l'autre côté ? | directeur | refus : l'intervieweur est du même côté que le candidat, super-admin compris |
 | Ligne `recue` de suivi | confirmation du choix de mise en oeuvre (3.2) | directeur | le geste « garder pour suivi » s'écrit en L3 sur la base de test ; il ne s'ouvre pas en production sans réponse |
 | Canal du code d'invitation | tant que l'envoi de la file manque (7.3), par où la direction transmet-elle un code ? WhatsApp est exclu hors lien d'inscription (`DEC:29`) | directeur | aucune invitation n'est émise en production |
@@ -118,16 +135,24 @@ s'applique, et le lot qui écrit les ports met le contrat à jour.
 | Forme de `teacher_id` pour la séance d'entretien | `teacher_id` est obligatoire aujourd'hui (6.1) | L4 | L4 n'écrit pas ses scénarios sans elle |
 | `ff` et `poular` | équivalence du peul et du poular (`MAP §3.2`, section 9) | directeur | `ff` s'importe hors référentiel |
 | Forme en base du compte candidat | **tranchée** par le complément CAND-L1B (21/10, repris après relecture) : rôle `teacher`, `account_status` `pending_kyc`, fiche `teacher_profiles` vide, la même pour les deux portes ; règle et preuve en 3.1, condition 1 (`supabase/tests/scenarios_cand_l1b_forme_compte.sql`, `supabase/tests/scenarios_cand_l1b_concurrence.sql`) | L1, complément CAND-L1B, sans question au directeur | plus aucun pour la forme : L2 s'écrit sur elle ; `testé localement` seulement, rien sur staging ni en production |
-| Portée par genre des comptes candidats hors module | la forme `teacher` + `pending_kyc` met chaque candidat dans les surfaces de la direction qui listent des comptes ; `DEC:30` et 8.2 bornent la direction à son côté. CAND-L1B borne `comptes_admin()` (`ADM-08`), `dossiers_en_attente()` (`ADM-02`), le compteur d'`indicateurs_admin()` (`ADM-01`) et la table `profiles` (3.1). Restent non bornés : `journal_audit()` et `journal_audit_filtres()` (nom de l'auteur d'une ligne du journal), `demandes_suppression_lister()`, `jetons_agent_actifs()` ; et le refus d'une écriture directe d'affectation (`compte_candidat_non_affectable`), qui dit à la direction de l'autre côté qu'un identifiant déjà connu d'elle porte une candidature | L2, qui étend `ADM-02` et `decider_dossier()` | ces surfaces nomment un compte candidat à toute la direction, sur la base de test seulement ; aucune production (`DEC:25`) |
+| Un membre de la direction change son propre genre | `guard_profile_privileged_columns` laisse tout compte de la direction active changer le genre de n'importe quel profil, le sien compris (`C/CANDIDATURES/CORRECTIFS_HORS_MODULE_PROPOSES.md` section 0 ter) ; or le genre du lecteur décide de la portée de toutes les lectures (8.2) et, depuis L2A2, de tous les **gestes** (4.2 ; D13 du lot) ; aucun journal ne garde le changement | directeur (correctif proposé, non écrit : refuser le changement de son propre genre, ne l'autoriser qu'à `service_role` ou au super-admin de `0088`, le journaliser, scénario) | tant que c'est ouvert, une direction peut se mettre de l'autre côté, puis lire **et**, depuis L2A2, refuser, mettre en pause, rouvrir ou confirmer un moyen pour l'autre côté, sans trace ; à corriger avant tout passage sur staging |
+| Portée par genre des comptes candidats hors module | la forme `teacher` + `pending_kyc` met chaque candidat dans les surfaces de la direction qui listent des comptes ; `DEC:30` et 8.2 bornent la direction à son côté. CAND-L1B borne `comptes_admin()` (`ADM-08`), `dossiers_en_attente()` (`ADM-02`), le compteur d'`indicateurs_admin()` (`ADM-01`) et la table `profiles` (3.1). L2A1 (22/10, repris après relecture) borne aussi le journal d'audit et les accords, puisqu'il est le premier lot à écrire des lignes d'audit dont l'auteur est un candidat : `journal_audit()`, `journal_audit_filtres()`, la lecture directe d'`audit_logs` et celle de `contract_acceptances` (8.2, `M/20261022000000_cand_l2a1_moteur_salle_examen.sql:772-778`, `:2163-2457`). Restent non bornés : `demandes_suppression_lister()`, `jetons_agent_actifs()` ; et le refus d'une écriture directe d'affectation (`compte_candidat_non_affectable`), qui dit à la direction de l'autre côté qu'un identifiant déjà connu d'elle porte une candidature | L2B, qui étend `ADM-02` et `decider_dossier()` | ces surfaces nomment un compte candidat à toute la direction, sur la base de test seulement ; aucune production (`DEC:25`) |
 
 L'écran du référentiel va dans Finance, sauf avis contraire (`DEC:85`).
 
 Les points à trancher par le directeur (sections 0.2, 0.2 bis et 0.3) lui sont
 posés dans la page d'arbitrage comme questions de suivi `CAND-S01` à `CAND-S11`.
-Ses réponses s'y enregistrent comme les 22 premières. Les deux lignes de 0.2 bis
-ajoutées par L6 le 21/10 (paiement en salle 3, compteurs du référentiel) restent
-à y poser comme questions de suivi ; d'ici sa réponse, le serveur applique la
-lecture la plus sûre décrite dans ces lignes.
+Ses réponses s'y enregistrent comme les 22 premières. Restent à y poser comme
+questions de suivi : les deux lignes de 0.2 bis ajoutées par L6 le 21/10
+(paiement en salle 3, compteurs du référentiel) et les six ajoutées par L2A1 le
+22/10 (listes fermées du questionnaire, refus et retrait qui lèvent la pause,
+candidat maintenu faute de moyen de paiement, conditions de rémunération avant le
+1er novembre, brouillon et questions rouvertes après un complément, journal
+borné par genre), puis les quatre ajoutées par L2A2 le 22/10 (modèles de message
+du refus et de la pause, éléments d'un complément et sa fin, réouverture,
+réouverture en entretien planifié), la ligne des conditions de rémunération
+corrigée le 22/10 par la décision du directeur (pourcentages seulement). D'ici sa
+réponse, le serveur applique la lecture la plus sûre décrite dans ces lignes.
 
 ---
 
@@ -439,6 +464,163 @@ le texte du modèle (`PORTS §5` point 4). **Gestes groupables** (`ADM-22`) :
 inviter, mettre en pause, lever la pause, refuser, consigner le lien envoyé par
 WhatsApp. Tout autre geste rend `GesteNonGroupable`.
 
+**Le moteur, posé par L2A1 le 22/10, repris après relecture le même jour**
+(`présent dans le code`, `testé localement`). Chaque RPC de geste passe par trois
+aides privées, dans cet ordre (`M/20261022000000_cand_l2a1_moteur_salle_examen.sql:1305-1580`) :
+- `private.candidature_geste_ouvrir` vérifie tout avant d'écrire : arguments
+  (22023), auteur égal à la session et, pour la direction, active et de genre
+  connu (42501), candidature absente, portée par genre, rejeu de la clé, version
+  attendue, puis la règle du geste (étape, état, issue, pause, condition), le
+  motif et le modèle exigés. Un motif est normalisé d'abord : les blancs de tête
+  et de queue (espace, tabulation, fin de ligne, espaces Unicode) sont retirés,
+  et un motif fait de blancs vaut absent (L2-10, `M/20261022000000_cand_l2a1_moteur_salle_examen.sql:1191-1201`). Les refus sont
+  **rendus** sans écriture : `absente`, `hors_portee`,
+  `cle_idempotence_reutilisee`, `conflit_candidature` (`ConflitCandidature`,
+  version courante rendue), `transition_interdite` (étape, état, issue et pause
+  nommés, raison `pause` ou `etat`), `motif_requis`, `modele_requis`. Seule une
+  tentative hors portée écrit, sa trace, comme une lecture hors portée de L1
+  (`private.cand_hors_portee`) ;
+- `private.candidature_geste_appliquer` écrit le nouvel état, la version, la
+  dernière activité, une ligne `candidature_evenements` (étape, état et issue
+  avant et après, auteur et sa catégorie, instant, motif interne gardé au
+  serveur, changements de l'appelant avant et après) et une ligne `audit_logs`
+  sans motif, lue du seul côté de la candidature (8.2). Chaque règle nomme les
+  colonnes que l'appelant peut poser : la date de reprise pour la pause, le
+  « jusqu'au » pour l'indisponibilité, le responsable pour la transition 28, le
+  pays de résidence et le fuseau pour l'envoi ; tout autre changement est refusé
+  (22023). Un responsable posé est un membre actif de la direction du même côté
+  que la candidature, sinon 42501 (`M/20261022000000_cand_l2a1_moteur_salle_examen.sql:1421-1554`) ;
+- `private.candidature_geste_conclure` garde le premier résultat sous la clé :
+  la même clé rejouée le rend (`rejoue` vrai) sans aucune écriture, même à
+  l'ancienne version ; une clé reprise pour un autre geste, une autre
+  candidature ou un autre auteur est refusée ; seules les réussites sont gardées
+  (table `candidature_gestes`, en ajout seul, `M/20261022000000_cand_l2a1_moteur_salle_examen.sql:619-630`). Aucun résultat
+  gardé ne porte une réponse du candidat.
+
+Le brouillon du questionnaire n'est pas une transition : il ne change jamais la
+version de la candidature, si bien qu'un enregistrement entre la lecture de la
+direction et son geste ne refuse pas ce geste ; sa version attendue est celle du
+brouillon (0.2 bis, 10). Il ne garde que sa dernière clé, une ligne par
+candidature (`candidature_brouillon_cles`, `M/20261022000000_cand_l2a1_moteur_salle_examen.sql:638-648`) : une clé de brouillon
+plus ancienne rejouée est une clé neuve, refusée par la version du brouillon
+(`conflit_brouillon`), sans écriture.
+
+La source de chaque geste vit dans une table privée, écrite par migration
+(`private.candidature_gestes_regles`, `M/20261022000000_cand_l2a1_moteur_salle_examen.sql:515-611`) : toutes les lignes de 4.2 à
+geste (3, 6, 7, 10 à 28), plus le brouillon du questionnaire. Les gestes des
+entrées (L3), des entretiens (L4) et de la salle 3 (L2B) n'ont pas encore de RPC :
+leurs lignes servent déjà au moteur, et chaque lot y ajoute ses prédicats propres
+dans sa RPC. Un geste de la direction ne vaut que de son côté (8.1,
+`candidatures.decider`) : l'exception du super-admin reste une exception de
+lecture, et un geste de l'autre côté, super-admin compris, est rendu
+`hors_portee` et tracé. Le retrait (17) vaut de toute étape en cours avant la
+salle 3, pause comprise ; il n'existe pas en salle 3, dont les sorties sont la
+restriction et l'indisponibilité (2.2).
+
+**Les gestes de la direction, posés par L2A2 le 22/10, repris après relecture le
+même jour** (`présent dans le code`, `testé localement`). Une RPC par geste, chacune par les trois aides du moteur, du
+côté de la direction seulement (`M/20261022000100_cand_l2a2_gestes_direction.sql`) :
+`demander_complement_candidat` (7 et 23, `:834-907`),
+`admettre_salle_verification` (10, `:912-952`), `refuser_candidat` (16,
+`:956-976`), `mettre_en_pause_candidat` et `lever_pause_candidat` (18,
+`:980-1023`), `consigner_retrait_candidat` (17 par la direction, `:1028-1077`),
+`rouvrir_candidat` (19, `:1082-1125`), `definir_responsable_candidat` (28,
+`:1129-1171`), `confirmer_moyen_paiement_candidat` et
+`infirmer_moyen_paiement_candidat` (24 et 25, `:1177-1303`). Aucun nom ne contient
+« candidature » : `etat_dossier()` reste la seule lecture de l'état du candidat.
+- Après les refus du moteur viennent ceux du geste, rendus sans écriture :
+  `elements_requis`, `elements_invalides` (avec la liste permise),
+  `controles_non_satisfaits` (`ControlesNonSatisfaits` : chaque contrôle faux
+  nommé avec sa cause), `aucun_complement` (clôture sans complément en cours),
+  `modele_inconnu`, `date_reprise_invalide`,
+  `date_demande_invalide`, `responsable_invalide`, `moyen_non_confirmable` (cause
+  `non_declare` ou `ligne_non_confirmee`, avec l'état de la ligne),
+  `moyen_non_declare`. Un argument mal formé (canal hors liste, moyen incohérent,
+  élément nul) lève 22023 avant le moteur.
+- Chaque geste rend l'état relu après l'écriture (étape, état, issue, pause et
+  son modèle, refus et son modèle, restriction et sa cause, indisponibilité,
+  paiement, responsable, version, `:298-325`), gardé sous la clé ; jamais une
+  réponse, un motif ni un nom. Le dossier complet se relit par
+  `lire_candidature`, qui rend aussi, depuis la relecture, `pauseModele`,
+  `refusModele` et `restrictionCause` : l'écran relit le même état que celui que
+  le geste vient de rendre.
+- Le complément (7, 23) écrit ses éléments dans l'événement (`aCompleter`), que
+  lit `complementDemande` d'`etat_dossier()` ; en salle 2, la candidature compte
+  dans les informations manquantes de `lister_candidatures` tant que le
+  complément court, selon la même règle (`:362-391`, `:1847-1852`). **Rien ne ferme
+  un complément de salle 2 tout seul** : la direction le clôture par la
+  transition 23 avec le seul code `complement_clos` (même état, événement à
+  liste vide, aucun marqueur `aNotifier` ; `aucun_complement` s'il n'y en a pas),
+  et `complementDemande`, comme le compteur, retombent à `[]` (0.2 bis). L'admission
+  (10) vérifie `paiement_compatible`, le cadre religieux à la version requise et le
+  dernier questionnaire envoyé, complet à la version courante (`:396-501`). Le
+  retrait par la direction (17) trace le canal (`conversation` ou `courriel`) et
+  la date de la demande, ni future ni antérieure à la réception de la
+  candidature. La pause (18) prend une reprise facultative, postérieure au jour
+  UTC courant ; sa levée n'exige ni motif ni modèle. Le responsable (28) est un
+  membre actif de la direction du même côté, ou aucun.
+- Les gestes 24 et 25 s'appliquent avant la décision, que la règle du moteur lit
+  en direct, puis écrivent `candidature_paiement_decisions` et appellent
+  `private.paiement_recalculer` (`:1230-1237`, `:1291-1298`) : une infirmation qui
+  ne laisse aucun moyen mène à la transition 8, motif tracé ; une ligne
+  `en_verification` ne se confirme jamais ; en salle 3 sous restriction de cause
+  `paiement`, la confirmation rend le paiement compatible et la restriction reste,
+  levée par la transition 21 (L2B). Après une réouverture (19), le paiement est
+  recalculé (cause `reouverture`) : la transition 8 (en examen) ou la transition
+  9 (`paiement_non_disponible` dont le paiement n'est plus incompatible : une
+  ligne est passée `confirme` pendant le refus ou le retrait, que le
+  déclencheur de L6 ne voit pas, car il ne recalcule que les candidatures en
+  cours) peut suivre ; la transition 9 nomme la carte `versement`.
+- Chaque événement porte le marqueur `aNotifier`, le code du modèle de la file
+  (`complement_demande`, `admis_salle_verification`, `refus`,
+  `retrait_enregistre`, `pause_posee`, `pause_levee`,
+  `C/CANDIDATURES/CONTRAT_FILE_COURRIELS.md:63-82`), que L5 lira ; rien pour 19
+  et 25 (écart 6 de ce contrat), ni pour 24 et 28, absents de la liste de 7.2. Les listes fermées (modèles, éléments), la fin
+  d'un complément, la lecture stricte de la réouverture et son état d'origine
+  après un entretien annulé sont à soumettre (0.2 bis).
+
+**L'action groupée (`ADM-22`), posée par L2A2 le 22/10, reprise après relecture le
+même jour** (`testé localement`). `apercu_lot_candidats(geste, ids)` (`:1315-1371`)
+rend les éligibles (référence, nom, étape, état, version), les exclus avec leur
+raison (`absente` ; `hors_portee`, sans aucune donnée ; `transition_interdite`,
+avec `pause` ou `etat`), l'effet, le nombre et un jeton : une empreinte
+HMAC-SHA256 de l'auteur, du geste, des éligibles avec leur version et des exclus,
+sous une clé secrète du serveur (`private.candidature_lot_secret`, engendrée par
+la migration, jamais dans le dépôt, jamais rendue). Un client ne peut donc pas
+calculer un jeton : il ne l'obtient que de l'aperçu. Comme une lecture de liste,
+l'aperçu écrit une ligne `audit_logs` (`candidatures_apercu_lot` : côté du
+lecteur, geste, nombres, jamais un nom ni un identifiant, 8.2). Le geste s'écrit
+avec le code du moteur (`mettre_en_pause`, `lever_pause`, `refuser`) ou celui de
+`gestesGroupables` (`mettreEnPause`, `leverPause`, `refuser`) ; le rapport rend
+le code du moteur.
+- **Traces.** Chaque identifiant de l'autre côté laisse sa trace (événement
+  `lecture_hors_portee` et ligne d'audit, comme une lecture hors portée de L1) dès
+  l'entrée dans l'aperçu ou l'exécution, **avant** tout refus rendu : geste non
+  groupable, motif, modèle, date, clé reprise, jeton, nombre. Seuls les refus
+  levés (22023), qui ne portent que sur la forme des arguments, la précèdent.
+  Aucune réponse ne dit si un identifiant existe de l'autre côté sans l'avoir
+  tracé : un jeton qui n'est pas celui de l'aperçu rend `jeton_perime`, que
+  l'identifiant soit de l'autre côté, inconnu ou du côté du lecteur.
+- **Rejeu.** La même clé rejouée retrace ces identifiants (chaque appel est une
+  tentative, comme pour un geste seul) et rend `hors_portee` si un identifiant du
+  rapport gardé est désormais de l'autre côté (le moteur vérifie la portée avant le
+  rejeu) ; sinon le premier rapport, sans écriture.
+`executer_lot_candidats(geste, ids, jeton, nombre, clé, motif?, modèle?, reprise?)`
+(`:1378-1541`) n'écrit rien quand le jeton diffère (`jeton_perime` : le lot a
+changé depuis l'aperçu, ou l'aperçu est d'un autre auteur), quand le nombre saisi
+diffère (`nombre_discordant`), sans éligible (`aucun_eligible`), ou quand le motif
+ou le modèle manquent ou sortent de la liste ; puis chaque ligne passe seule par
+le moteur, sous une clé dérivée de celle du lot, dans un sous-bloc : un refus ou
+une erreur n'annule jamais une réussite voisine, et chaque ligne est `reussie`,
+`exclue` (inchangée) ou `refusee`, avec sa raison. Le rapport, sans nom, se garde
+sous la clé du lot (`public.candidature_lots`, en ajout seul, `:254-266`) : la
+même clé le rend sans écriture ; reprise pour d'autres identifiants ou par un
+autre auteur, elle est refusée. Groupables dans ce lot : mettre en pause, lever
+la pause, refuser ; `inviter` et `consigner_prevenu` (L3), comme tout autre
+geste, rendent `geste_non_groupable`. L'issue `inconnue` de `PORTS §1` reste un
+état de l'écran, quand la réponse du serveur ne lui parvient pas : le serveur
+connaît l'issue de chaque ligne. Au plus 200 candidatures par lot.
+
 ### 4.3 Règles de blocage
 
 **Refusés en base :**
@@ -564,6 +746,17 @@ document de source `candidat` le plus récent ; jamais une réponse importée) :
 money). Une déclaration existe quand `paysVersement` est un code valide et
 `compteBancaire` un booléen ; sinon le paiement vaut `inconnu`. `paysResidence` et
 `accordRemuneration` (booléen, lu par L2 à l'envoi) ne sont pas lus par le calcul.
+L2A1 écrit `accordRemuneration` dans le document envoyé, et l'accord lui-même
+comme une acceptation `teacher_pay_conditions` à la version de la politique que
+le candidat a lue et qu'il renvoie avec l'envoi (`conditions_perimees` si elle a
+changé depuis, `M/20261022000000_cand_l2a1_moteur_salle_examen.sql:1957-1972`), qu'aucun compte n'insère directement ; puis il
+recalcule le paiement (`private.paiement_recalculer(id, 'reponses')`, `:1981`),
+qui peut enchaîner la transition 8. Un brouillon n'est jamais une déclaration :
+« le document de source `candidat` le plus récent » se lit depuis L2A1 parmi les
+seuls documents qui ne sont pas des brouillons (`private.paiement_declaration`,
+corps de L6 recopié, `M/20261022000000_cand_l2a1_moteur_salle_examen.sql:2127-2152`) ; la colonne `paiement` et le calcul en
+direct ne divergent donc jamais après un brouillon. Un document écrit sans la
+marque (L6, import à venir) reste une déclaration.
 Un moyen déclaré croise une ligne `confirme` du pays de versement de même méthode
 (et du même opérateur pour le mobile money ; pour le virement, toute ligne de
 virement du pays).
@@ -634,7 +827,7 @@ qui appliquerait la réponse à `CAND-Q05`), pour les candidatures en cours dont
 pays de versement déclaré est celui de la ligne, journalisés dans
 `candidature_evenements` avec la cause (`referentiel`) et la ligne : transition 8
 (en examen), transition 9 (`paiement_non_disponible` vers `a_completer`,
-`moyen_paiement` nommé, marqueur `aNotifier` = `paiement_possible`, le modèle de
+carte `versement` nommée (jusqu'à la relecture de L2A2 du 22/10, `moyen_paiement`, qui n'est pas une carte du questionnaire), marqueur `aNotifier` = `paiement_possible`, le modèle de
 la liste fermée de `CONTRAT_FILE_COURRIELS.md` section 3, pour L5), contrôle qui
 tombe en salle 2 (« bloquée », sans retour), restriction automatique en salle 3
 (transition 20, cause `paiement`, motif « paiement à revérifier » ; décidée par
@@ -651,18 +844,18 @@ comptabilité le total ; les autres compteurs (bloquées, transitions 8 et 9,
 candidatures recalculées, partage par genre) restent dans le journal. L'alerte à
 la direction et à la comptabilité est le journal des changements qui ont posé
 des restrictions dans la portée du lecteur, rendu par `lire_referentiel_paiement`
-en nombres ; notifications et courriels : L5. Reste ouvert :
-`capacites_candidatures` (L1) rend encore `peutEcrireReferentiel` faux (l'écran
-de Finance lit `capacites_referentiel_paiement`) ; les lectures de L1 ne
-connaissent pas encore ce que L6 ajoute : le filtre `etat` de
-`lister_candidatures` refuse `paiement_non_disponible`, et le filtre `paiement`
-`incompatible` ne le remplace pas (il rend aussi des candidatures `a_completer` et
-des confirmées en restriction) ; ni `lire_candidature` ni `lister_candidatures`
-ne rendent `restriction_cause` (seulement `restreinte`) ; la transition 24 en
-salle 3 sous restriction de cause `paiement` (0.2 bis) est un geste de L2 ;
-`audit_logs` est lisible par toute direction active (hors module) : l'entrée de
-chaque effet y porte l'identifiant de la candidature, comme les entrées de L1, et
-leur compte laisse déduire le nombre d'effets de l'autre côté ; qui ajoute un
+en nombres ; notifications et courriels : L5. Depuis L2A2 (22/10) :
+`capacites_candidatures` rend `peutEcrireReferentiel` lu dans
+`private.paiement_gestionnaire()` (`M/20261022000100_cand_l2a2_gestes_direction.sql:1553-1634`) ; le filtre `etat` de
+`lister_candidatures` accepte `paiement_non_disponible` (`:1706-1879`) ; les
+gestes 24 (Salle d'examen, et salle 3 sous restriction de cause `paiement`) et 25
+écrivent `candidature_paiement_decisions` puis recalculent (4.2). Depuis la relecture de L2A2 (22/10), la transition 9 vaut aussi pour une
+candidature refusée ou retirée en `paiement_non_disponible`, au moment de sa
+réouverture (19). Reste ouvert :
+`lister_candidatures` ne rend pas `restriction_cause` (seulement `restreinte`) ;
+`lire_candidature` la rend, avec `pauseModele` et `refusModele` ; l'entrée `audit_logs` de chaque effet porte l'identifiant de la candidature,
+comme les entrées de L1 : depuis L2A1, elle ne se lit que du côté de la
+candidature (8.2), et son compte ne sort plus vers l'autre côté ; qui ajoute un
 opérateur au catalogue (aujourd'hui par migration).
 
 ### 5.2 Tri : des clés en clair (`CAND-Q20`)
@@ -723,6 +916,13 @@ la conversation.
   24 h, ou « à planifier » depuis plus de N jours (N dans `app_config`). Sans
   intervieweur de son côté, la candidature attend et compte dans l'alerte ; jamais
   d'intervieweur de l'autre côté, super-admin compris (0.3).
+- **À régler par L4** (relecture de L2A2, 22/10). Le refus (16) et le retrait (17)
+  d'une candidature en `entretien_planifie` ne notent aujourd'hui que
+  `entretienPlanifie` dans l'événement : L4 annule la séance dans la même
+  transaction (son issue reste). L'état d'origine d'une réouverture (19) après un
+  entretien annulé, `entretien_planifie` comme aujourd'hui ou `entretien_a_planifier`
+  comme la ligne 12, est une question de 0.2 bis ; le scénario de L2A2 fige le
+  comportement actuel pour que L4 le voie.
 
 ---
 
@@ -836,13 +1036,34 @@ entretiens, conversation, historique **et compteurs**. « Hors portée » et
 (`SPEC §7`). L'import, dont le fichier mêle les deux côtés, est réservé au
 super-admin (3.2).
 
+**Le journal d'audit, borné par L2A1 le 22/10** (`testé localement`). Une ligne
+d'`audit_logs` a le côté de la candidature qu'elle vise (tables `candidatures`
+et `candidature_contacts`, ligne = identifiant) ; sinon celui de la candidature
+avant la salle 3 que porte son auteur (règle de CAND-L1B) ; sinon, pour une
+lecture de liste de L1, celui du lecteur ; une trace de l'exception du
+super-admin qui ne vise aucune candidature compte des lignes de l'autre côté et
+n'a que le côté de l'exception. Une ligne sans côté reste lisible par toute la
+direction. `journal_audit()` et `journal_audit_filtres()` ne rendent et ne
+comptent que les lignes du côté du lecteur ; un lecteur au genre inconnu n'en lit
+aucune qui ait un côté ; le super-admin lit les deux côtés, et chaque appel qui
+lui en rend de l'autre côté laisse une trace (`candidature_exception_super_admin`,
+motif `exception_super_admin_kyc`, nombre de lignes). La lecture directe
+d'`audit_logs` est bornée par une policy restrictive, sans l'exception, qui ne
+s'y journaliserait pas. Les accords (`contract_acceptances`) d'un compte qui
+porte une candidature avant la salle 3 ne se lisent que de son côté, comme son
+profil (`M/20261022000000_cand_l2a1_moteur_salle_examen.sql:772-778`, `:2163-2457`). `verifier_chaine_audit()` reste sans
+portée : elle ne rend que des comptes de maillons. Choix à soumettre : 0.2 bis.
+
 ### 8.3 Ce que les listes ne montrent jamais
 
 Ni courriel, ni téléphone, ni genre, ni pièce, ni motif interne, ni compte rendu,
 ni constat, ni réponse libre, dans une liste, un aperçu de lot ou un export
 (`PORTS §1`, `LigneCandidature`). Le contact se lit par `lireContact`, journalisé.
 Le journal porte la référence `CAND-` et un numéro, jamais le nom ; chaque lecture
-hors portée et chaque lecture du contact y laissent une entrée.
+hors portée et chaque lecture du contact y laissent une entrée. Dans
+`journal_audit()` et `journal_audit_filtres()`, l'auteur porteur d'une
+candidature avant la salle 3 est rendu par sa référence `CAND-`, jamais par son
+nom (L2A1).
 
 ### 8.4 Conservation, anonymisation, effacement (`CAND-Q21`)
 
@@ -853,6 +1074,19 @@ hors portée et chaque lecture du contact y laissent une entrée.
   `mes_donnees_export()` (`:174`), motifs internes exclus. Effacement demandé
   depuis l'app (`demander_suppression_compte`, `:385`), ou reçu par courriel et
   noté par la direction pour une personne sans compte.
+- Deux tables de L2A1 entrent dans le lot de conservation (`CAND-BR-14`) :
+  `candidature_gestes`, en ajout seul, qu'aucun compte n'efface, pas même le
+  propriétaire, garde le premier résultat des envois, retraits et gestes de la
+  direction (l'état relu, des codes et des versions, jamais une réponse ni un
+  motif) ; `candidature_brouillon_cles` garde une ligne par candidature, la
+  dernière clé de brouillon et son résultat sans réponse, effacée avec elle. Le
+  document de réponses, brouillon compris, reste effaçable (CAND-L1).
+- Une table de L2A2 y entre aussi : `candidature_lots`, en ajout seul, garde le
+  rapport de chaque action groupée sous sa clé (identifiants, références, issues
+  et raisons, état relu ; jamais un nom, une réponse ni un motif,
+  `M/20261022000100_cand_l2a2_gestes_direction.sql:254-266`). Les décisions sur un moyen de paiement
+  (`candidature_paiement_decisions`, L6) portent un motif interne quand elles
+  infirment : le lot de conservation les nomme avec le journal des événements.
 - **À soumettre au juriste avec `CAND-Q21`** : la base des courriels envoyés aux
   personnes des formulaires avant leur inscription, et la conservation des
   réponses importées de qui ne s'inscrit pas. B n'a recueilli aucun consentement,
@@ -868,7 +1102,14 @@ inscription, questionnaire, page d'accords, états de `/attente`, « Mon
 entretien », retrait, conversation, notifications, modèles de courriel. Le texte
 du cadre religieux et pédagogique, dans les deux langues, est **validé
 juridiquement** (`SPEC §5`) **et soumis au directeur** (`DEC:34`) ; L2 ne publie sa
-version requise qu'après les deux. Aujourd'hui l'espace `recrutement` n'a que
+version requise qu'après les deux. La sorte d'accord existe depuis L2A1
+(`teacher_religious_framework`, `M/20261022000000_cand_l2a1_moteur_salle_examen.sql:654-663`) ; **aucune version requise n'est
+publiée** : `cadre_religieux_version_requise()` rend nul, et la transition 6 est
+impossible en base (`engagement_non_accepte`, `publie` faux). Une fois publiée, la
+version requise s'accepte par la page d'accords, par le titulaire d'une candidature
+enseignant en cours en Salle d'examen ou en Salle de vérification et d'entretien,
+au compte valide d'un candidat (policy restrictive
+`contract_acceptances_cadre_religieux_candidat`, `M/20261022000000_cand_l2a1_moteur_salle_examen.sql:752-759`). Aujourd'hui l'espace `recrutement` n'a que
 17 clés traduites sur 106 (`REVUE §3.6`). Les écrans de la direction suivent la
 règle générale : le français fait référence, les autres langues suivent le sens.
 
@@ -932,6 +1173,32 @@ jamais sous une forme courte ; la forme du côté des femmes et la collision ave
 | `CAND-05` | Écrire à l'académie (fil « Ma candidature ») | conversation | envoyer | fil vide ; message non parti (hors ligne) | L5 |
 | `/salle` (existante, mode entretien) | l'entretien | - | celui de la salle | aucune mention ; jeton refusé ; fin de séance | L4 |
 
+**Contrat serveur côté candidat, posé par L2A1 le 22/10, repris après relecture**
+(`testé localement`) : `etat_dossier()` gagne la clé `candidature` (étape, état,
+issue, pause par son modèle et sa reprise, modèle du refus, version,
+questionnaire : versions, périmé, champs manquants ; cadre religieux ;
+conditions ; `paiement`, la dimension de 5.1 en direct, ses quatre codes
+seulement, qui sert les états de paiement de `CAND-01` ; `aCompleter` : en Salle
+d'examen le questionnaire et le cadre religieux, en Salle de vérification et
+d'entretien le cadre religieux à une version requise neuve (4.3) ;
+`complementDemande` : les codes demandés par la dernière transition qui en porte
+(7, 9, 23), tant que l'étape n'a pas changé et qu'aucun envoi ne l'a suivi ;
+`peutEnvoyer`, `envoiBloque`), jamais un motif interne, toutes les clés d'avant
+gardées (`M/20261022000000_cand_l2a1_moteur_salle_examen.sql:1584-1726`, `:2031-2118`) ; `PortMaCandidature` :
+`conditions_remuneration_candidat()`, `questionnaire_salle_examen()` (champs,
+listes fermées, dernières réponses, version du brouillon ouvert),
+`enregistrer_reponses_salle_examen(...)` (brouillon : `versionAttendue` est la
+version du brouillon, 0 sans brouillon ; refus `conflit_brouillon` ; rend la
+version du brouillon, les champs manquants et `complet`, jamais les réponses,
+relues par le questionnaire), `envoyer_reponses_salle_examen(...)` (transition 6 ;
+porte la version des conditions affichées, refus `conditions_perimees` si elle a
+changé, `conditions_indisponibles` sans politique complète),
+`retrait_candidat(...)` (transition 17), chacune sous `versionAttendue` et
+`cleIdempotence` (`M/20261022000000_cand_l2a1_moteur_salle_examen.sql:1735-2025`). Aucun nom de RPC ne contient « candidature » :
+`etat_dossier()` reste la seule lecture de l'état du candidat (scénario de L1).
+Le brouillon au serveur et les questions rouvertes après un complément sont des
+choix à soumettre (0.2 bis, `CAND-F15`).
+
 **Côté direction (Personnes, sauf `ADM-24`) :**
 
 | Code | Écran | But | Bouton plein | États propres | Lot |
@@ -944,9 +1211,24 @@ jamais sous une forme courte ; la forme du côté des femmes et la collision ave
 | `ADM-24` | Compatibilité de paiement par pays (Finance, `DEC:85`) | référentiel | enregistrer | confirmation sans date ni responsable refusée ; impact (N restrictions) | L6 |
 | `ADM-02` (existant, étendu) | revue de pièce | valider (entrée en salle 3), « à corriger », refus définitif | valider | contrôles manquants nommés ; validation refusée par le serveur | L2 |
 
+**Contrat serveur côté direction, posé par L2A2 le 22/10** (`testé localement`) :
+les gestes d'`ADM-21` sans entretien ni contrôles nommés (7, 10, 16 à 19, 23 à
+25, 28) et l'action groupée d'`ADM-22` (aperçu, puis exécution sous jeton et
+nombre saisi), décrits en 4.2. `capacites_candidatures()` gagne `peutDecider`
+(direction active de genre connu), une capacité par geste, vraie pour les seuls
+gestes que le serveur sait faire (`inviter`, `consignerPrevenu`, `rattacher`,
+entretiens, pièce, restriction et indisponibilité restent faux), les gestes
+groupables, et les listes fermées que l'écran propose (modèles du refus et de la
+pause, éléments d'un complément par salle, canaux du retrait,
+`M/20261022000100_cand_l2a2_gestes_direction.sql:1553-1634`) ; `lister_candidatures()` filtre
+`paiement_non_disponible` et compte en informations manquantes le complément en
+cours de salle 2 (`:1706-1879`) ; `lire_candidature()` rend aussi `pauseModele`, `refusModele` et `restrictionCause` ; l'aperçu de l'action groupée écrit une ligne d'audit comme une liste, sans nom. Le motif interne ne sort vers aucun compte :
+ni dans le résultat d'un geste, ni dans un rapport de lot, ni dans
+`etat_dossier()`.
+
 **Quatre alertes d'`ADM-20`, jamais confondues** (`REVUE §10.2`) : bloquées
 (contrôle faux nommé ou restriction) ; entretiens en retard ; informations
-manquantes (`a_completer`, complément demandé en salle 2, « courriel à obtenir »,
+manquantes (`a_completer`, complément demandé en salle 2 jusqu'à sa clôture par la direction, « courriel à obtenir »,
 « indicatif à confirmer ») ; confirmées indisponibles. Une pause n'entre dans
 aucune. Le candidat qui ne répond pas (`SPEC §12.2`) se lit par le filtre « sans
 activité depuis N jours », pas par une cinquième alerte. **Composants** :
@@ -970,7 +1252,7 @@ lots `langue` et `c11bis`.
 | Lot | Contenu | `CAND-BR` | Questions | Statut au 21/10 | Prérequis |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **L1** socle | tables (type, candidature, questionnaire versionné, réponses, réponses importées) ; **forme en base du compte candidat** (rôle `teacher`, `pending_kyc`, la même pour le lien public et l'invitation, 3.1 ; complément CAND-L1B) ; lectures cloisonnées par genre (RLS, liste paginée et triée au serveur, détail, contact journalisé) ; historique sans nom | `01`, `02`, `03`, `07` | `Q02`, `Q04`, `Q07`, `Q20` | socle `présent dans le code` et `testé localement` (`M/20261021200000_cand_l1_socle_candidatures.sql`, `supabase/tests/scenarios_cand_l1_socle.sql`) ; forme du compte fixée par le complément CAND-L1B, repris après relecture (`M/20261021220000_cand_l1b_forme_compte_candidat.sql`, `supabase/tests/scenarios_cand_l1b_forme_compte.sql`, `supabase/tests/scenarios_cand_l1b_concurrence.sql`), `testé localement` ; ni staging ni production | - |
-| **L2** transitions et contrôles | une RPC par geste ; les huit contrôles ; `decider_dossier()` : pour un profil porteur d'une candidature `enseignant`, validation acceptée seulement salle 2 terminée, les autres profils gardent l'approbation actuelle ; transaction d'entrée en salle 3 (2.2) ; garde `0089` étendue, vers `active` et `provisional_active` ; deux issues de pièce et levée de la restriction `piece` (transition 21) ; prédicat d'affectation qui refuse restriction et indisponibilité (4.3) ; lots ; `etat_dossier()` étendu, questionnaire, envoi, retrait ; sorte d'accord du cadre religieux, version requise publiée seulement après validation juridique et accord du directeur (section 9) ; conditions de rémunération lisibles en attente ; étape des accords en base (contrat et avis en salle 2, 2.1, après la réponse sur les accords en trois moments, 0.3) ; portée par genre des surfaces de la direction encore non bornées (0.3) | `04`, `05`, `06`, `10`, `11`, `12` | `Q01`, `Q08`, `Q11`, `Q18` | à écrire | L1 (forme du compte) ; `CAND-BR-11` : L1 et lot `conduite` (`CORR §7`) ; prédicat d'affectation : lot `creer_groupe` |
+| **L2** transitions et contrôles | une RPC par geste ; les huit contrôles ; `decider_dossier()` : pour un profil porteur d'une candidature `enseignant`, validation acceptée seulement salle 2 terminée, les autres profils gardent l'approbation actuelle ; transaction d'entrée en salle 3 (2.2) ; garde `0089` étendue, vers `active` et `provisional_active` ; deux issues de pièce et levée de la restriction `piece` (transition 21) ; prédicat d'affectation qui refuse restriction et indisponibilité (4.3) ; lots ; `etat_dossier()` étendu, questionnaire, envoi, retrait ; sorte d'accord du cadre religieux, version requise publiée seulement après validation juridique et accord du directeur (section 9) ; conditions de rémunération lisibles en attente ; étape des accords en base (contrat et avis en salle 2, 2.1, après la réponse sur les accords en trois moments, 0.3) ; portée par genre des surfaces de la direction encore non bornées (0.3) | `04`, `05`, `06`, `10`, `11`, `12` | `Q01`, `Q08`, `Q11`, `Q18` | **L2A1** (moteur des gestes, questionnaire versionné et brouillon, transitions 6 et 17 par le candidat, sorte d'accord du cadre religieux sans version publiée, conditions de rémunération lisibles et leur accord, `etat_dossier()` étendu ; repris après relecture le 22/10 : journal d'audit et accords bornés par genre, brouillon sans effet sur la version de la candidature ni sur la déclaration de paiement, changements admis par geste, motif normalisé, accord lié aux conditions affichées, dimension paiement rendue au candidat, complément de salle 2 ; conditions de rémunération en pourcentages seulement, par la décision du directeur du 22/10, aucun montant ni devise rendu au candidat) : `présent dans le code` et `testé localement` le 22/10 (`M/20261022000000_cand_l2a1_moteur_salle_examen.sql`, `supabase/tests/scenarios_cand_l2a1_moteur_salle_examen.sql`), ni staging ni production. **L2A2** (gestes de la direction sans entretien ni contrôles nommés : transitions 7, 10, 16 à 19, 23 à 25, 28, chacune par le moteur, du côté de la direction ; action groupée d'`ADM-22` pour la pause, sa levée et le refus ; `capacites_candidatures()`, `lister_candidatures()` et `lire_candidature()` redéfinies, 4.2 et 10 ; repris après relecture le 22/10 : traces de l'action groupée avant tout refus rendu, jeton sous une clé du serveur, ligne d'audit de l'aperçu, rejeu après un changement de genre, réouverture d'une candidature en `paiement_non_disponible`, fin d'un complément de salle 2, un seul vocabulaire des gestes groupables, une seule carte `versement`, dossier relu avec les modèles et la cause de restriction) : `présent dans le code` et `testé localement` le 22/10 (`M/20261022000100_cand_l2a2_gestes_direction.sql`, `supabase/tests/scenarios_cand_l2a2_gestes_direction.sql`), ni staging ni production ; reste ouvert : l'état d'origine d'une réouverture après un entretien annulé (0.2 bis, avec L4) et le défaut hors module qui laisse une direction changer son propre genre (0.3) ; reste à écrire : contrôles nommés, salle 3, `decider_dossier()`, garde `0089` étendue, prédicat d'affectation, transitions 14, 15, 20 à 22, refus définitif de pièce, étape du contrat et de l'avis, portée des surfaces encore non bornées (`demandes_suppression_lister()`, `jetons_agent_actifs()`, message d'affectation refusée : L2B) ; `inviter`, `consignerPrevenu` et `rattacher`, groupables ou non (L3) | L1 (forme du compte) ; `CAND-BR-11` : L1 et lot `conduite` (`CORR §7`) ; prédicat d'affectation : lot `creer_groupe` |
 | **L3** inscription publique et import | compte candidat ; courriel confirmé ; genre et téléphone obligatoires ; plafond horaire et réponse neutre ; clé de mise en ligne ; accord de confidentialité ; rattachement (courriel, téléphone, B) ; alignement de `inscrire_enseignant_invite` ; geste `inviter` ; reprise des invitations ; import ponctuel, rejouable, réservé au super-admin | `17`, `09`, part de `04` | `Q03`, `Q04`, `Q16`, `Q17` | à écrire | L1, L2 ; mise en ligne : SMTP d'authentification, `enable_confirmations`, feu vert (3.1, condition 6) |
 | **L4** entretiens dans l'app | type `entretien`, forme de `teacher_id`, rôles, jeton du candidat convoqué, exclusions (paie, clôture, chevauchement, vues, contrôleur), mode sans mention, planification, constat, compte rendu | `08` | `Q06`, `Q07`, `Q08`, `Q09`, `Q19`, `Q22` | à écrire | L2 ; revue de sécurité (jeton, déclencheur de paie) |
 | **L5** conversation, notifications, file des courriels | objet `candidature` dans la messagerie ; compte en attente admis pour cet objet ; notifications ; file `a_envoyer` | `18`, `16` | `Q06`, `Q07`, `Q10` | à écrire | L1 ; contrat de la file remis à la session du site public |
@@ -1030,6 +1312,12 @@ neuve et s'écrit. Fichiers proposés : `supabase/tests/scenarios_cand_l1.sql` �
 | L2-18 | complément demandé en salle 2 | même état ; comptée dans « informations manquantes » ; 1 notification |
 | L2-19 | contrat `teacher_nda` ou avis accepté par un candidat en salle d'examen | refus ; 0 ligne `contract_acceptances` |
 | L2-20 | une directrice et un directeur lisent le journal d'audit, les demandes de suppression et les jetons d'agent, avec un candidat de chaque côté | 0 nom de candidat de l'autre côté ; les deux côtés pour le super-admin |
+| L2-21 | aperçu ou exécution d'un lot dont un identifiant est de l'autre côté, quel que soit le refus rendu (geste non groupable, motif, modèle, date de reprise, jeton, nombre, clé reprise), super-admin compris | 1 événement `lecture_hors_portee` et 1 ligne d'audit par identifiant et par appel ; 0 écriture sur la candidature ; un identifiant inconnu rend la même réponse |
+| L2-22 | jeton calculé par le client (ancienne empreinte md5), jeton d'un autre auteur ; aperçu relu | `jeton_perime`, 0 écriture ; jeton stable pour un même auteur et un même lot, jamais la clé du serveur ; 1 ligne d'audit par aperçu, sans nom |
+| L2-23 | lot et geste seul rejoués après un changement de genre de leur auteur ; puis le genre rendu | `hors_portee` et une trace par identifiant ; puis le premier rapport |
+| L2-24 | candidature refusée en `paiement_non_disponible`, une ligne passe `confirme`, puis réouverture (19) | transition 9 : `a_completer`, carte `versement`, marqueur `paiement_possible` ; sans ligne confirmée, elle reste en `paiement_non_disponible` |
+| L2-25 | complément de salle 2 clôturé (`complement_clos`), clôturé de nouveau, puis un complément neuf | `complementDemande` à `[]` et compteur diminué de 1 ; `aucun_complement` ; compteur augmenté de 1 |
+| L2-26 | chaque valeur de `gestesGroupables` donnée à l'aperçu et à l'exécution ; `lire_candidature` après une pause, un refus, une restriction | le code du moteur rendu ; `pauseModele`, `refusModele`, `restrictionCause` rendus comme le geste les a rendus |
 | L3-1 | inscription sans courriel confirmé | 0 candidature |
 | L3-2 | inscription au-delà du plafond horaire de `app_config` | refus |
 | L3-3 | inscription par le lien | 1 compte `pending_kyc` ; 0 capacité enseignant ; jeton de cours refusé ; 0 apparition dans une liste d'enseignants |
@@ -1087,6 +1375,160 @@ sans auteur), la clé de l'Afrique (refusée à une direction et au propriétair
 `app_config`, ouverte et refermée par la table des décisions, refermeture refusée
 tant qu'une ligne d'Afrique est `confirme`), la direction au genre inconnu
 refusée, le compte candidat désactivé ou expiré refusé (L1-08).
+
+Mesure L2A1 du 22/10, reprise après relecture (`supabase/tests/scenarios_cand_l2a1_moteur_salle_examen.sql`, base neuve) : 245 contrôles verts (243 avant la décision du directeur du 22/10 sur les conditions de rémunération : les contrôles des montants et de la devise sont devenus des contrôles qu'aucune clé de montant n'est rendue, et la partie « un taux ou une part changés » en compte deux) ; joué sur la migration d'avant cette décision, il rend 3 contrôles rouges (la forme des publics, l'absence de tout montant et de toute devise, un taux changé en base qui ne change plus la réponse) ; 0 sans la
+migration (le scénario s'arrête à sa préparation : `relation
+"public.candidature_gestes" does not exist`), et 0 non plus avec la version
+d'avant relecture (`relation "public.candidature_brouillon_cles" does not
+exist`). L2-8 : la même clé rejouée rend le premier résultat avec 0 écriture
+(brouillon, envoi, retrait, geste de la direction) ; une version périmée rend
+`conflit_candidature` (ou `conflit_brouillon` pour un brouillon) et 0 écriture.
+L2-9 : les vingt-six variantes de la table des règles, chacune depuis sa source et
+en pause ; vingt-trois refusées (`transition_interdite`, raison `pause`, 0
+écriture), lever la pause, refuser et retirer ouverts. L2-10 : les onze variantes
+à motif, depuis leur source, sans motif, avec un motif fait d'espaces, de
+tabulations et de fins de ligne, ou d'espaces Unicode (insécable, largeur nulle,
+idéographique) : refus, 0 écriture ; sans modèle pour refuser et mettre en pause :
+`modele_requis` ; un motif entouré de blancs est gardé sans eux. L2-11 : une ligne
+`audit_logs` par transition (6, 7, 8 de L6, 16, 17, 18, 23, 28), candidature par
+candidature, et `verifier_chaine_audit` ne trouve aucun maillon rompu. L2-5 en
+partie : refus par le moteur, motif interne dans l'événement seulement ;
+`etat_dossier()` du candidat rend le modèle du refus, 0 motif. Le scénario mesure
+aussi, depuis la relecture : une candidate qui envoie puis se retire n'a aucune
+ligne lue par la direction des hommes (`journal_audit`, `journal_audit_filtres`,
+lecture directe d'`audit_logs`, `contract_acceptances`), ni par une direction au
+genre inconnu ; la direction des femmes la lit sous sa référence `CAND-`, jamais
+son nom ; le super-admin la lit par le journal, journalisé, jamais par la lecture
+directe ; la forme ensembliste du côté d'une ligne et sa forme ligne à ligne
+concordent sur tout le journal ; vingt-cinq brouillons ne changent pas la version
+de la candidature, ne gardent qu'une clé, aucune réponse sous une clé, ne
+déclarent aucun paiement, et une pause posée à la version lue avant eux passe ; la
+transition 7 nomme le complément, que le renvoi lève ; la transition 23 le nomme en
+salle 2, où un cadre à une version requise non acceptée est à compléter ; un
+changement non admis par le geste (22023) et un responsable hors de la direction
+active du même côté (42501) sont refusés, un responsable du même côté est tracé
+avant et après ; un envoi aux conditions périmées et un envoi sans part de
+l'enseignant en base sont refusés ; la dimension paiement est rendue au candidat.
+Contre-épreuve par mutation : chaque correction de la relecture, défaite une à
+une dans une copie de la migration (dix-huit mutations), fait tomber le scénario
+sur le contrôle qui la vise. Il mesure toujours : les listes fermées
+(dix-huit valeurs hors liste refusées, champ nommé, 0 écriture), la transition 6
+impossible sans cadre publié puis sans cadre accepté, le recalcul du paiement
+(Arabie saoudite : `a_verifier` ; Nigeria : transition 8), le retrait depuis
+`paiement_non_disponible`, la portée par genre des gestes (direction de l'autre
+côté et super-admin : `hors_portee` tracé ; genre inconnu : 42501), et des
+conditions de rémunération lues en base (une part changée en base change la
+réponse ; un taux changé ne la change plus, aucun montant n'étant rendu). Coût mesuré sur 100 000 lignes d'audit : une page de
+`journal_audit()` en quelques millisecondes ; `journal_audit_filtres()` en
+environ 0,3 s, contre 0,1 s avant le lot. Rejeu complet du 22/10 à 02:51 UTC :
+118 scénarios verts sur 119 (`af_liste_blanche_volatiles` rouge connu, antérieur :
+les quatre fonctions `avis_*` seulement).
+
+Mesure L2A2 du 22/10, reprise après relecture (`supabase/tests/scenarios_cand_l2a2_gestes_direction.sql`,
+base neuve) : 232 contrôles verts (193 avant la relecture : la section (o) en ajoute 39 et en
+corrige deux). Joué sur la migration d'avant la reprise (copie des deux
+migrations de la validation précédente, base neuve), le scénario rend 32
+contrôles rouges, 3 erreurs et un décompte final faux (191 contrôles sur 232), le
+bloc des droits (F86) mis à part, rouge lui aussi (`lire_candidature`, neuf aides
+internes, clé des jetons). Sans la migration, le scénario s'arrête après
+son premier contrôle (les fixtures) : `function
+"public.demander_complement_candidat(uuid,text[],text,integer,text)" does not
+exist`. Contre-épreuve par mutation : dix-neuf défauts introduits un à un dans une
+copie de la migration (liste des modèles, compteur de salle 2, jeton, nombre,
+contrôles de l'admission et de la réouverture, cadre en salle 2, version du
+questionnaire, ligne `en_verification`, isolement des lignes d'un lot, trace hors
+portée d'un lot, éléments du complément, responsable, date du retrait, geste non
+groupable, rejeu d'un lot, capacité du référentiel, filtre `etat`, recalcul à la
+réouverture) : chacun fait tomber le scénario. Ce qu'il mesure :
+- L2-4 : sans paiement compatible ni cadre publié, deux contrôles nommés ; puis
+  paiement confirmé (24), cadre publié non accepté : `cadre_religieux`
+  `non_accepte` ; questionnaire envoyé à une version périmée : nommé ; après un
+  envoi réel (transition 6), refus tant que le moyen n'est pas confirmé, puis
+  admission, 0 écriture à chaque refus.
+- L2-7 : un lot de 10 pauses dont 3 sur des candidatures `refusee` : 7 réussies, 3
+  exclues avec leur raison (`transition_interdite`, `etat`), 3 inchangées ; un
+  aperçu suivi d'un geste sur une candidature du lot rend `jeton_perime` ; nombre
+  discordant, jeton inventé ou d'un autre auteur, motif ou modèle absents ou hors
+  liste : rien n'est écrit ; une levée en lot exclut sans donnée une candidate de
+  l'autre côté (trace à l'aperçu et à l'exécution) et un identifiant inconnu ; un
+  refus en lot dont une ligne bute sur une clé déjà prise et une autre sur une
+  erreur garde la réussite voisine ; `inviter`, `consigner_prevenu` et cinq
+  autres gestes rendent `geste_non_groupable`.
+- L2-8 : chaque geste rejoué avec sa clé rend le premier résultat, même à
+  l'ancienne version, sans écriture ; un lot aussi ; une clé de lot reprise pour
+  d'autres candidatures ou par un autre auteur est refusée ; une version périmée
+  rend `conflit_candidature`.
+- L2-9 : pendant une pause, le complément, l'admission, la confirmation et
+  l'infirmation d'un moyen, le responsable et une seconde pause sont refusés
+  (raison `pause`, 0 écriture) ; le refus et le retrait par la direction restent
+  ouverts et lèvent la pause.
+- L2-10 : sept gestes à motif (7, 23, 16, 17, 18, 19, 25), chacun sans motif puis
+  avec des espaces, des tabulations et fins de ligne, ou des espaces Unicode :
+  `motif_requis`, 0 écriture ; un motif entouré de blancs est gardé sans eux.
+- L2-11 : une ligne `audit_logs` par transition du moteur, candidature par
+  candidature (50 gestes de ce lot), chaîne vérifiée sans maillon rompu ; ces
+  lignes ne se lisent que du côté de la candidature (C15 de L2A1).
+- L2-17 : rouvrir en salle 2 sans paiement, sans cadre, sans questionnaire envoyé :
+  trois contrôles nommés ; un compte désactivé : `compte_conforme` `statut` ; un
+  questionnaire périmé : nommé ; 0 écriture ; rouverte, la candidature retrouve
+  son étape et son état, et une candidature d'Afrique repasse par la transition 8.
+- L2-18 : un complément en salle 2 laisse l'état, compte dans les informations
+  manquantes (le compteur et `etat_dossier()` lisent le même complément) ; une
+  pause l'en retire, la levée l'y remet. La notification est de L5.
+- L2-21 (relecture du 22/10) : un lot dont un identifiant est de l'autre côté
+  laisse une trace (un événement `lecture_hors_portee`, une ligne d'audit) par
+  identifiant et par appel, quel que soit le refus rendu : geste non groupable à
+  l'aperçu et à l'exécution, motif, modèle absent ou hors liste, date de reprise
+  passée, jeton inventé, jeton calculé par le client, identifiant inconnu à côté,
+  super-admin, geste mal formé, nombre discordant et aucun éligible (avec un
+  jeton valide), clé reprise pour d'autres identifiants ; la trace nomme la
+  lecture (`lot:inviter`, `lot:inconnu`), jamais le texte reçu ; la candidate
+  reste intacte, aucun rapport n'est gardé. L'exécution avec le jeton d'un autre
+  auteur, depuis l'autre côté, rend `jeton_perime` et trace chaque candidature.
+- L2-22 : l'ancienne empreinte md5 de l'auteur, du geste et des versions est
+  refusée (`jeton_perime`, 0 écriture, 0 rapport) ; le jeton est stable pour un
+  même auteur et un même lot, autre pour une autre direction, et la clé du
+  serveur n'apparaît pas dans la réponse de l'aperçu ; un aperçu écrit une ligne d'audit
+  (`reader_gender`, `geste`, `nombre`, `exclus`, `hors_portee`), sans nom, aucune
+  pour un geste non groupable.
+- L2-23 : le lot et le geste seul d'une direction, rejoués après le changement
+  de son genre, rendent `hors_portee` (le lot retrace chaque identifiant) ; le
+  genre rendu, le même lot rend son premier rapport.
+- L2-24 : une candidature refusée en `paiement_non_disponible` pendant qu'une
+  ligne passe `confirme` (le déclencheur de L6 ne la voit pas, la candidature
+  voisine en cours passe `a_completer`) est rouverte en `a_completer`, paiement
+  `a_verifier`, carte `versement` nommée, marqueur `paiement_possible`, et le
+  candidat peut de nouveau répondre ; sans ligne confirmée, elle reste en
+  `paiement_non_disponible`, ni transition 8 ni 9.
+- L2-25 : un complément de salle 2 clôturé par `complement_clos` (transition 23,
+  liste vide, sans marqueur de notification) : `complementDemande` à `[]`, la
+  candidature sort des informations manquantes ; clôturé de nouveau :
+  `aucun_complement` ; mêlé à un autre code, en Salle d'examen ou sans motif :
+  refusé, 0 écriture ; un complément neuf se demande ensuite.
+- L2-26 : chacune des trois valeurs de `gestesGroupables` est acceptée par
+  l'aperçu, et `mettreEnPause` et `leverPause` par l'exécution, qui rend le code
+  du moteur ; `lire_candidature` rend `pauseModele`, `refusModele` et
+  `restrictionCause` comme le geste les a rendus, et l'autre côté reste
+  `hors_portee` ; la transition 9 ne nomme que des cartes de la liste fermée ;
+  le refus puis la réouverture d'une candidature en entretien planifié notent
+  `entretienPlanifie` puis rendent `entretien_planifie` (comportement figé pour L4, 0.2 bis).
+- L6-10, second temps, par le geste réel : le seul moyen infirmé mène à
+  `paiement_non_disponible`, décision et motif tracés, jamais dans `audit_logs`
+  ni dans `etat_dossier()` ; le filtre `etat` le liste.
+- Aussi : une ligne `en_verification` ne se confirme jamais, un moyen non déclaré
+  non plus ; la confirmation en salle 3 sous restriction de cause `paiement` garde
+  la restriction ; les vingt gestes de l'autre côté, super-admin compris, rendent
+  `hors_portee`, chacun tracé, la candidature intacte ; la direction au genre
+  inconnu est refusée (42501) ; chaque RPC refuse le tuteur, la comptabilité, un
+  enseignant et un candidat (quarante-huit refus) ; aucun résultat gardé (gestes,
+  lots) ne porte une réponse, un nom ni un motif ; les capacités par compte. Le
+  scénario de L1 suit les capacités ouvertes par L2A2 (`peutDecider`,
+  `peutEcrireReferentiel`), le nombre de ses contrôles inchangé (174). Rejeu
+  complet du 22/10 avant la relecture, de 03:40 à 03:42 UTC : 119 scénarios verts
+  sur 120 ; **après la relecture, de 04:44 à 04:46 UTC : 119 verts sur 120**
+  (`af_liste_blanche_volatiles` rouge connu, antérieur : les quatre fonctions
+  `avis_*` seulement ; les douze RPC de L2A2 y sont inscrites, `lire_candidature`
+  l'était depuis L1).
 
 ### 12.2 Flutter
 

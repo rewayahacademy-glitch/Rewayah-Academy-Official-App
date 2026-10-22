@@ -45,6 +45,8 @@ declare
     'accorder_capacite_controle(uuid,timestamp with time zone,timestamp with time zone,boolean,uuid[],uuid[],uuid)',
     'admin_library_review_rights(uuid,uuid,jsonb,integer)',
     'affecter_enseignant_classe_c11bis(uuid,uuid)',
+    -- CAND-L2A2 (22/10) : admission en Salle de verification (transition 10), direction active de son cote (moteur, controles nommes).
+    'admettre_salle_verification(uuid,integer,text)',
     'agent_pre_request()',
     'ajouter_eleve_groupe(uuid,uuid,text)',
     'ajouter_niveau_programme(uuid,text,text,text,integer,text)',
@@ -53,6 +55,8 @@ declare
     -- CPT-SUPPR-EXPORT (18/10) : la personne annule sa demande de suppression (compte valide).
     'annuler_suppression_compte()',
     'annuler_upload_bibliotheque(uuid)',
+    -- CAND-L2A2 (22/10) : apercu d'une action groupee, direction active de son cote (trace des candidatures hors portee).
+    'apercu_lot_candidats(text,uuid[])',
     'autoriser_ecoute_archive(uuid)',
     'autoriser_lecture_piece_identite(uuid)',
     'autoriser_lecture_version(uuid)',
@@ -97,8 +101,15 @@ declare
     'declarer_conflit_mission(uuid,uuid)',
     -- PED-APRES-BACK (18/10) : la direction regle le partage pedagogique d'une classe et d'un eleve.
     'definir_partage_classe(uuid,boolean,text,text)',
+    -- CAND-L2A2 (22/10) : confirmation et retrait consignes par la direction (transitions 24 et 17), direction active de son cote (moteur).
+    'confirmer_moyen_paiement_candidat(uuid,text,text,integer,text)',
+    'consigner_retrait_candidat(uuid,text,date,text,integer,text)',
     'definir_politique_observation_groupe(uuid,text,smallint,integer,integer)',
+    -- CAND-L2A2 (22/10) : responsable d'une candidature (transition 28), direction active de son cote (moteur).
+    'definir_responsable_candidat(uuid,uuid,integer,text)',
     'definir_regle_partage_eleve(uuid,uuid,text,text,text)',
+    -- CAND-L2A2 (22/10) : complement demande (transitions 7 et 23), direction active de son cote (moteur, liste fermee).
+    'demander_complement_candidat(uuid,text[],text,integer,text)',
     'demander_creneau_personnalise(uuid,text,smallint[],smallint)',
     'demander_presentation_standard()',
     'demander(text,uuid,text,text,integer)',
@@ -123,11 +134,17 @@ declare
     'enregistrer_resume_seance(uuid,uuid,text,uuid,boolean)',
     -- CAND-L6 (21/10) : referentiel de paiement, direction ou comptabilite, compte valide.
     'enregistrer_ligne_referentiel_paiement(uuid,text,text,text,text,text,text,text,date,text,integer,text)',
+    -- CAND-L2A1 (22/10) : brouillon de la Salle d'examen, titulaire de la candidature (moteur, version du brouillon, cle).
+    'enregistrer_reponses_salle_examen(text,jsonb,integer,text)',
+    -- CAND-L2A1 (22/10) : envoi du questionnaire (transition 6), titulaire de la candidature (moteur, version des conditions).
+    'envoyer_reponses_salle_examen(text,jsonb,boolean,text,integer,text)',
     'enseignants_pour_classe(uuid)',
     'enseignants_pour(uuid)',
     'entrer_observation(uuid,text)',
     -- FAC-D-01 (18/10) : la direction decide les demandes de la comptabilite.
     -- FAC-F-01 (18/10) : la direction (AAL2) lance a la main les relances et la suspension pour paiement.
+    -- CAND-L2A2 (22/10) : execution d'une action groupee, direction active de son cote (jeton, nombre, moteur ligne par ligne).
+    'executer_lot_candidats(text,uuid[],text,integer,text,text,text,date)',
     'fac_traiter_relances_du_jour()',
     'finance_validation_decider(uuid,text,text,uuid)',
     'fusionner_classes(uuid,uuid,text)',
@@ -156,11 +173,16 @@ declare
     'inscrire_comptable_invite(text,text,text,gender)',
     'inscrire_titulaire(text,text,text,gender,text,boolean)',
     'inscrire_enseignant_invite(text,text,text,gender)',
+    -- CAND-L2A2 (22/10) : infirmation d'un moyen de paiement declare (transition 25), direction active de son cote (moteur, motif).
+    'infirmer_moyen_paiement_candidat(uuid,text,text,text,integer,text)',
     'inviter_conjoint(text,uuid)',
     'inviter_comptable(text)',
     'inviter_enseignant(text)',
+    -- CAND-L2A1 (22/10) : journal borne par genre (C15) ; ecrit la trace de l'exception super-admin.
     'journal_audit_filtres()',
     'journal_audit(uuid,text,timestamp with time zone,integer,timestamp with time zone,bigint)',
+    -- CAND-L2A2 (22/10) : levee de la pause (transition 18), direction active de son cote (moteur).
+    'lever_pause_candidat(uuid,integer,text,text)',
     'library_attribuer(uuid,uuid[],boolean,integer)',
     'library_creer_brouillon(jsonb)',
     'library_get_detail(uuid)',
@@ -175,6 +197,8 @@ declare
     'maj_profil_enseignant(text,text[],text)',
     -- CPT-SUPPR-EXPORT (18/10) : la copie des donnees de la personne (journalisee).
     'mes_donnees_export()',
+    -- CAND-L2A2 (22/10) : pose de la pause (transition 18), direction active de son cote (moteur, motif et modele).
+    'mettre_en_pause_candidat(uuid,text,text,date,integer,text)',
     'modifier_groupe(uuid,text,smallint,smallint,smallint,text,smallint)',
     'modifier_niveau_programme(uuid,text,text,integer,text)',
     'mon_invitation_en_cours()',
@@ -207,6 +231,8 @@ declare
     'recharge_verifier_montants(jsonb)',
     'rechercher_personne_par_matricule(text)',
     'reclamer_preinscription_apres_preuve()',
+    -- CAND-L2A2 (22/10) : refus d'une candidature (transition 16), direction active de son cote (moteur, motif et modele).
+    'refuser_candidat(uuid,text,text,integer,text)',
     'refuser_demande_horaire(uuid,text)',
     'refuser_demande_presentation(uuid)',
     'refuser_reprise_foyer(uuid)',
@@ -214,6 +240,10 @@ declare
     'renoncer_intention_horaire(uuid,text)',
     'repondre_invitation_conjoint(text,uuid)',
     'reprendre_alimentation_tresorerie()',
+    -- CAND-L2A1 (22/10) : retrait par le candidat (transition 17), titulaire de la candidature (moteur).
+    'retrait_candidat(integer,text)',
+    -- CAND-L2A2 (22/10) : reouverture d'une candidature refusee ou retiree (transition 19), direction active de son cote (moteur, controles nommes).
+    'rouvrir_candidat(uuid,text,integer,text)',
     'retirer_bourse(uuid,text)',
     'retirer_capacite_controle(uuid,text,uuid)',
     'retirer_creneau_personnalise(uuid)',
