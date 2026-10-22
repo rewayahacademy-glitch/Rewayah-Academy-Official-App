@@ -242,7 +242,7 @@ class GeneratedSiteQA(unittest.TestCase):
         # alternatifs comptent : un lecteur d'ecran les lit. Toutes les plages de l'arabe, formes de presentation comprises.
         arabe = re.compile(r"[\u0600-\u06FF\u0750-\u077F\u0870-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]")
         for route in self.pages:
-            source = re.sub(r'<span class="parcours__arabe"[^>]*>.*?</span>|<script type="application/ld\+json">.*?</script>', "",
+            source = re.sub(r'<span class="parcours__arabe"[^>]*>(?:<span[^>]*>[^<]*</span>|[^<])*</span>|<script type="application/ld\+json">.*?</script>', "",
                             self.page_file(route).read_text(encoding="utf-8"), flags=re.S)
             with self.subTest(route=route):
                 self.assertIsNone(arabe.search(source))
@@ -286,6 +286,20 @@ class GeneratedSiteQA(unittest.TestCase):
                 label = fin.get("label", self.pages[route]["cta"]["label"])
                 if label.rstrip(".").casefold() != fin["titre"].rstrip(".").casefold():
                     self.assertIn(f'<span class="sr-only"> ({label})</span>', titre.group(2))
+
+    def test_font_names_are_written_once_in_the_stylesheet(self) -> None:
+        # Changer une police du site, c'est changer une ligne : hors des @font-face, la feuille ne nomme jamais une
+        # police, elle lit --police-titre, --police-corps ou --police-arabe-ornement (:root).
+        css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")
+        sans_faces = re.sub(r"@font-face\s*\{[^}]*\}", "", css)
+        declarations = re.findall(r"font-family:\s*([^;}]+)", sans_faces)
+        self.assertTrue(declarations)
+        for valeur in declarations:
+            with self.subTest(valeur=valeur):
+                self.assertRegex(valeur.strip(), r"^(var\(--police-[a-z-]+\)|inherit)$")
+        racine = re.search(r":root\s*\{(.*?)\n\}", css, re.S).group(1)
+        for nom in ("--police-titre", "--police-corps", "--police-arabe-ornement"):
+            self.assertIn(nom + ":", racine)
 
     def test_bundle_gate_covers_every_local_font_requested_by_css(self) -> None:
         css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")

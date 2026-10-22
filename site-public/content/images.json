@@ -638,15 +638,15 @@
       "forme": "arche"
     },
     "detail-entree": {
-      "source": "02",
-      "largeur": 480,
-      "hauteur": 600,
+      "source": "02, l’arche entière avec sa marge (le haut de l’arche n’est plus coupé par le cadre)",
+      "largeur": 680,
+      "hauteur": 850,
       "alt": "Un jeune garçon en tunique blanche suit le chemin violet et passe la porte d’une arche en forme de livre.",
       "recadrage": [
-        1520,
-        120,
-        2000,
-        720
+        1478,
+        -56,
+        2158,
+        794
       ],
       "forme": "arche"
     },

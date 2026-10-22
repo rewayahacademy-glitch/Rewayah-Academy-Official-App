@@ -587,6 +587,11 @@ Ensuite : la porte du haut de l'accueil, un peu plus petite au bureau, ne touche
 
 **Lettres arabes des arches (directeur, 22/10/2026, registre M-31).** Le directeur trouve les inscriptions arabes de Cours peu jolies et demande une police d'ornement, koufi ou diwani, avec les voyelles. Comparaison faite sur les arches elles-mêmes : la seule diwani libre trouvée (Layla Diwani, OFL) est trop fine et place mal ses voyelles ; Reem Kufi (koufi, OFL) et Aref Ruqaa (roqaa, OFL) les placent bien. Reem Kufi est posée, réduite aux seize lettres du contenu et inscrite dans la feuille de style comme l'ancienne police (aucun fichier de plus à déployer) ; la roqaa reste au choix du directeur (O-20).
 
+**Demandes du directeur du 22/10 (suite).**
+- *Tuile « La classe commence » (accueil).* L'arche du livre de l'image était coupée par l'arche de la fenêtre. Le rendu 02 est recadré plus large (680 × 850, marge transparente au-dessus) : l'arche du livre tient entière dans la fenêtre, et les deux courbes s'emboîtent.
+- *Lettres arabes des arches (Cours).* Elles s'écrivent, arche après arche, en 3 s environ, une seule fois : les lettres séparées paraissent une à une de droite à gauche ; un mot lié s'écrit d'un trait de droite à gauche, sans être découpé (ses lettres restent liées). Au survol, l'arche s'écrit de nouveau. En mouvement réduit ou sans JavaScript, les lettres sont là, immobiles.
+- *Changer une police.* Le site ne nomme plus ses polices qu'une fois, dans `:root` (`--police-titre`, `--police-corps`, `--police-arabe-ornement`) ; un test refuse tout autre nom de police dans la feuille. Rendu vérifié identique, élément par élément, sur huit pages. L'application avait déjà ce principe : `lib/core/theme/app_typography.dart` porte les cinq familles.
+
 ## Hors de portée de l'agent
 
 - `.github/workflows/flutter-deploy.yml` vérifie la présence de 8 fichiers du site, mais pas de `motion.js`. Le garde du dépôt interdit à l'agent d'écrire dans `.github/`. Le test `test_only_approved_public_assets_are_copied` couvre ce fichier côté tests.

@@ -85,6 +85,11 @@
   --r-xs: 8px; --r-sm: 12px; --r-md: 16px; --r-lg: 24px; --r-full: 999px;
   /* L'arche, le seul motif : un demi-cercle en haut (les rayons trop grands sont ramenes a la moitie de la largeur) */
   --arche: 9999px 9999px 0 0;
+  /* Les polices du site, en un seul endroit : changer une police, c'est changer cette ligne (et son fichier, avec sa
+     licence, dans assets/). Le reste de la feuille n'ecrit jamais un nom de police. */
+  --police-titre: 'DM Sans', system-ui, sans-serif;
+  --police-corps: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --police-arabe-ornement: 'Reem Kufi', sans-serif;
   /* Mouvement (app_mouvement) */
   --mv-retour: 100ms;
   --mv-micro: 120ms;
@@ -116,7 +121,7 @@
   --t-moyen: clamp(20px, 1.95vw, 28px);
   --t-corps: clamp(18px, 0.25vw + 16px, 20px);
   --t-petit: 17px;
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-family: var(--police-corps);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-text-size-adjust: 100%;
@@ -171,7 +176,7 @@ a { color: inherit; text-underline-offset: .22em; text-decoration-thickness: 1px
 button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
 h1, h2, h3 {
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: var(--police-titre);
   font-weight: 600;
   text-wrap: balance;
   font-variation-settings: 'opsz' 40;
@@ -293,7 +298,7 @@ p { text-wrap: wrap; max-width: 60ch; }
 .mobile-menu[open] .mobile-menu__icone::after { transform: translateY(-5px) rotate(-45deg); }
 .mobile-menu:not([open]) nav { display: none; }
 .mobile-menu nav { position: absolute; left: var(--marge); right: var(--marge); top: calc(var(--entete) - 4px); display: grid; padding: var(--e-4); border-radius: var(--r-lg); background: var(--fond); box-shadow: var(--ombre-2); }
-.mobile-menu nav a { display: flex; align-items: center; min-height: 56px; padding-inline: var(--e-4); border-radius: var(--r-md); text-decoration: none; font-family: 'DM Sans', sans-serif; font-size: var(--t-moyen); font-weight: 600; }
+.mobile-menu nav a { display: flex; align-items: center; min-height: 56px; padding-inline: var(--e-4); border-radius: var(--r-md); text-decoration: none; font-family: var(--police-titre); font-size: var(--t-moyen); font-weight: 600; }
 .mobile-menu nav a:hover { background: var(--champ); }
 
 /* --- Accueil : la porte (premier ecran et scene signature) ------------------- */
@@ -331,13 +336,13 @@ p { text-wrap: wrap; max-width: 60ch; }
   .js .porte__vue { display: block; position: absolute; inset: 0; }
   .js .porte__disque { position: absolute; inset: 0; background: var(--fond); }
   .js .porte__halqa { position: relative; width: min(41vw, 74svh); margin-inline-start: 54vw; transform: scale(calc(1.18 - var(--c, 0) * .18)); }
-  .js .porte__phrase { display: block; position: absolute; inset-inline-start: max(var(--marge), calc((100vw - var(--contenu)) / 2)); top: 50%; translate: 0 -50%; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(38px, 4.3vw, 62px); line-height: 1.04; letter-spacing: -0.025em; color: var(--encre); opacity: var(--c, 0); transform: translateY(calc((1 - var(--c, 0)) * 16px)); }
+  .js .porte__phrase { display: block; position: absolute; inset-inline-start: max(var(--marge), calc((100vw - var(--contenu)) / 2)); top: 50%; translate: 0 -50%; font-family: var(--police-titre); font-weight: 600; font-size: clamp(38px, 4.3vw, 62px); line-height: 1.04; letter-spacing: -0.025em; color: var(--encre); opacity: var(--c, 0); transform: translateY(calc((1 - var(--c, 0)) * 16px)); }
   .js .porte__halqa::before { content: ''; position: absolute; inset: 4% 8% 2% 6%; border-radius: 50%; background: var(--champ); z-index: -1; }
 }
 
 /* --- Enonce : une phrase, des fenetres en arche dans la ligne ---------------- */
 .enonce { padding: var(--respire) var(--marge); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
-.enonce__texte { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-titre); line-height: 1.08; letter-spacing: -0.03em; }
+.enonce__texte { font-family: var(--police-titre); font-weight: 600; font-size: var(--t-titre); line-height: 1.08; letter-spacing: -0.03em; }
 .enonce__texte span { display: block; }
 /* Au-dessus de 840 px : les deux phrases au centre, a la taille qui remplit la mesure (la plus longue fait 15,3 em,
    on divise par 16,4 pour garder une marge), plafonnee a la taille du titre de l'accueil : une taille d'affiche de
@@ -459,7 +464,7 @@ li, dd { text-wrap: wrap; }
 .champ__inclus { margin-top: auto; padding-top: var(--e-10); display: grid; gap: var(--e-3); max-width: none; list-style: none; }
 .champ__inclus li { padding-inline-start: 1.4em; position: relative; }
 .champ__inclus li::before { content: ''; position: absolute; inset-inline-start: 0; top: .5em; width: .6em; height: .75em; border-radius: var(--arche); background: currentColor; opacity: .55; }
-.champ__montant { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.champ__montant { font-family: var(--police-titre); font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .champ__periode { font-weight: 600; }
 .champ--enfant { background: var(--champ-fort); color: var(--encre); }
 .champ--adulte { background: var(--marque); color: var(--sur-marque); }
@@ -486,7 +491,7 @@ li, dd { text-wrap: wrap; }
 /* --- Bande sombre de l'accueil : le visage du directeur, sa phrase signee, puis les trois engagements ------------ */
 .panneau { margin-top: var(--respire); padding: var(--respire) 0; background: var(--inverse); color: var(--sur-inverse); display: grid; row-gap: var(--e-10); }
 .panneau h2 { color: var(--sur-inverse); max-width: 13ch; }
-.panneau__depuis { margin-top: var(--e-6); font-family: 'DM Sans', sans-serif; font-size: var(--t-moyen); line-height: 1.25; font-weight: 500; max-width: 24ch; }
+.panneau__depuis { margin-top: var(--e-6); font-family: var(--police-titre); font-size: var(--t-moyen); line-height: 1.25; font-weight: 500; max-width: 24ch; }
 .panneau__in { display: grid; gap: var(--e-10); padding-inline: var(--marge); }
 .panneau__photo { width: min(88vw, 520px); }
 .panneau__promesses { list-style: none; display: grid; gap: var(--e-10); padding-inline: var(--marge); }
@@ -532,7 +537,7 @@ li, dd { text-wrap: wrap; }
 .tuile { border-radius: var(--r-md); background: var(--sous); transition: background-color var(--mv-apparition) var(--mv-entree); }
 .tuile summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: var(--e-4); min-height: 72px; padding: var(--e-4) var(--e-6); cursor: pointer; }
 .tuile summary::-webkit-details-marker { display: none; }
-.tuile summary h2, .tuile summary h3 { font-size: var(--t-corps); font-weight: 600; letter-spacing: 0; line-height: 1.35; font-family: 'Plus Jakarta Sans', sans-serif; }
+.tuile summary h2, .tuile summary h3 { font-size: var(--t-corps); font-weight: 600; letter-spacing: 0; line-height: 1.35; font-family: var(--police-corps); }
 .tuile__signe { position: relative; flex: 0 0 16px; height: 16px; }
 .tuile__signe::before, .tuile__signe::after { content: ''; position: absolute; left: 0; top: 6.5px; width: 16px; height: 3px; border-radius: 2px; background: currentColor; transition: transform var(--mv-apparition) var(--mv-entree); }
 .tuile__signe::after { transform: rotate(90deg); }
@@ -699,7 +704,7 @@ li, dd { text-wrap: wrap; }
 .parcours__tete p { max-width: 58ch; }
 .parcours__tete p + p { margin-top: var(--e-4); }
 .parcours { list-style: none; display: grid; gap: var(--e-3); }
-.parcours__etape { display: flex; align-items: flex-end; border-radius: var(--r-lg); padding: var(--e-8) var(--e-5); background: var(--sous); font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(19px, 1.55vw, 24px); line-height: 1.15; }
+.parcours__etape { display: flex; align-items: flex-end; border-radius: var(--r-lg); padding: var(--e-8) var(--e-5); background: var(--sous); font-family: var(--police-titre); font-weight: 600; font-size: clamp(19px, 1.55vw, 24px); line-height: 1.15; }
 .parcours__etape:nth-child(2) { background: var(--champ); }
 .parcours__etape:nth-child(3) { background: var(--champ-fort); }
 .parcours__etape:nth-child(4) { background: var(--marque); color: var(--sur-marque); }
@@ -746,7 +751,7 @@ li, dd { text-wrap: wrap; }
 /* Les encarts restent mot pour mot ; seule leur mise en page change : la ligne du prix se lit en grand, sans puce,
    comme le chiffre d'une affiche, et les autres lignes respirent davantage. */
 .fiche__lignes { gap: var(--e-4); }
-.fiche__lignes li:nth-child(2) { padding-inline-start: 0; margin-block: var(--e-2) var(--e-4); font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-titre); line-height: 1.05; letter-spacing: -0.03em; }
+.fiche__lignes li:nth-child(2) { padding-inline-start: 0; margin-block: var(--e-2) var(--e-4); font-family: var(--police-titre); font-weight: 600; font-size: var(--t-titre); line-height: 1.05; letter-spacing: -0.03em; }
 .fiche__lignes li:nth-child(2)::before { content: none; }
 /* Cote a cote, les deux lignes de prix s'alignent : la premiere ligne de chaque encart reserve deux lignes. */
 @media (min-width: 840px) { .fiches:has(.fiche + .fiche) .fiche__lignes li:first-child { min-height: calc(2lh); } }
@@ -764,7 +769,7 @@ li, dd { text-wrap: wrap; }
 .bande-image--cercle .scene__cadre { width: 92%; }
 .bande-image--large .scene { position: static; }
 .bande-image__texte { margin-top: var(--e-8); }
-.bande-image__phrase { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: max(22px, var(--t-moyen)); line-height: 1.1; letter-spacing: -0.02em; max-width: 30ch; text-wrap: balance; }
+.bande-image__phrase { font-family: var(--police-titre); font-weight: 600; font-size: max(22px, var(--t-moyen)); line-height: 1.1; letter-spacing: -0.02em; max-width: 30ch; text-wrap: balance; }
 .bande-image__sous { margin-top: var(--e-4); max-width: 44ch; }
 .bande-image--large .bande-image__texte { padding-inline: var(--marge); }
 @media (min-width: 840px) {
@@ -826,7 +831,7 @@ li, dd { text-wrap: wrap; }
 .contact-ligne { display: grid; gap: var(--e-3); }
 .contact-ligne h2 { font-size: var(--t-moyen); line-height: 1.2; }
 .contact-ligne .section-links { margin-top: var(--e-2); }
-.contact-ligne .lien-fleche > span { font-size: var(--t-moyen); font-family: 'DM Sans', sans-serif; font-weight: 600; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+.contact-ligne .lien-fleche > span { font-size: var(--t-moyen); font-family: var(--police-titre); font-weight: 600; letter-spacing: -0.02em; overflow-wrap: anywhere; }
 @media (min-width: 600px) {
   .contact-ligne { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: baseline; }
   .contact-ligne h2 { grid-column: 1 / span 4; }
@@ -884,8 +889,8 @@ li, dd { text-wrap: wrap; }
 .simulator__eleves li { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--e-4); row-gap: 2px; align-items: center; padding: var(--e-3) var(--e-4); border-radius: var(--r-sm); background: var(--fond); }
 .simulator__eleve { font-weight: 600; }
 .simulator__calcul { grid-column: 1; font-size: var(--t-petit); color: var(--encre-douce); }
-.simulator__eleves strong { grid-column: 2; grid-row: 1 / span 2; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-moyen); white-space: nowrap; }
-.simulator__prix { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.02em; }
+.simulator__eleves strong { grid-column: 2; grid-row: 1 / span 2; font-family: var(--police-titre); font-weight: 600; font-size: var(--t-moyen); white-space: nowrap; }
+.simulator__prix { font-family: var(--police-titre); font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.02em; }
 .simulator__prix small { display: block; margin-top: var(--e-3); font-size: var(--t-corps); font-weight: 600; letter-spacing: 0; }
 .simulator__result { margin-top: var(--e-6); }
 .simulator__note { margin-top: var(--e-4); font-size: var(--t-petit); color: var(--encre-douce); }
@@ -962,7 +967,7 @@ li, dd { text-wrap: wrap; }
   .porte__cercle { order: 3; display: grid; gap: var(--e-6); margin: var(--e-10) calc(var(--marge) * -1) 0; padding: var(--e-12) var(--marge) var(--e-16); border-radius: 0 0 50% 50% / 0 0 64px 64px; background: var(--champ); }
   /* Centree comme au bureau, a la taille du titre quand elle tient : chaque vers reste sur une ligne (le plus long
      mesure 9,9 em), donc 33 px a 390 px et la taille du titre (57 px) a 768 px. */
-  .porte__phrase { display: block; text-align: center; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: min(clamp(44px, 7.4vw, 62px), calc((100vw - 2 * var(--marge)) / 10.5)); line-height: 1.04; letter-spacing: -0.02em; }
+  .porte__phrase { display: block; text-align: center; font-family: var(--police-titre); font-weight: 600; font-size: min(clamp(44px, 7.4vw, 62px), calc((100vw - 2 * var(--marge)) / 10.5)); line-height: 1.04; letter-spacing: -0.02em; }
   .porte__arche { display: none; }
   .porte__scene { position: relative; width: 150vw; max-width: none; margin-inline-start: -50vw; margin-top: var(--e-6); bottom: 0; }
 }
@@ -1099,7 +1104,7 @@ li, dd { text-wrap: wrap; }
 .entete-prix { display: grid; row-gap: var(--e-8); column-gap: var(--e-3); }
 /* Les deux prix du haut de Tarifs, en grand et sans boite, comme sur l'accueil. */
 .entete-prix__bloc { display: grid; gap: var(--e-1); padding: 0; max-width: none; }
-.entete-prix__montant { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.entete-prix__montant { font-family: var(--police-titre); font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
 .entete-prix__note { grid-column: 1 / -1; margin-top: var(--e-4); max-width: 72ch; font-size: var(--t-petit); }
 .entete-prix__periode { font-weight: 600; }
 .entete-page--haut-prix .entete-page__arche { width: min(80%, 320px); justify-self: center; }
@@ -1217,20 +1222,20 @@ li, dd { text-wrap: wrap; }
 .fond--lavande .lien-fleche { color: inherit; }
 /* Phrase seule sur un champ : un ecran d'un seul element, en grand. */
 .bande-phrase { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
-.bande-phrase__phrase { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-titre); line-height: 1.06; letter-spacing: -0.03em; max-width: 26ch; text-wrap: balance; }
+.bande-phrase__phrase { font-family: var(--police-titre); font-weight: 600; font-size: var(--t-titre); line-height: 1.06; letter-spacing: -0.03em; max-width: 26ch; text-wrap: balance; }
 .bande-phrase__phrase + .bande-image__sous { margin-top: var(--e-6); font-size: var(--t-corps); line-height: 1.5; max-width: 52ch; }
 /* Schema « la classe se forme » (dessins en code, direction.json « dessins ») : sur la nuit, comme sur la planche du 21/10. */
 .bande-phrase--schema { text-align: start; }
 .bande-phrase--schema .bande-phrase__phrase, .bande-phrase--schema .bande-image__sous { margin-inline: 0; }
 .schema-classe { display: grid; gap: var(--e-6); margin-top: var(--e-10); border-radius: var(--r-lg); padding: var(--e-6); background: #25113F; color: #FFFFFF; }
 .schema-classe__figure { margin: 0; }
-.schema-classe__figure svg { display: block; width: 100%; height: auto; font-family: 'Plus Jakarta Sans', sans-serif; }
+.schema-classe__figure svg { display: block; width: 100%; height: auto; font-family: var(--police-corps); }
 .schema-classe__figure figcaption { margin-top: var(--e-2); font-size: var(--t-petit); color: #DCCAFD; }
 .schema-classe__anneau { transition: opacity .22s; }
 .schema-classe__etapes { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--e-2); }
 .schema-classe__etapes li { border-radius: var(--r-md, 16px); padding: var(--e-3) var(--e-4); background: rgb(255 255 255 / .06); color: #DCCAFD; transition: background-color .22s, color .22s; }
 .schema-classe__etapes li.est-active { background: #8652E6; color: #FFFFFF; }
-.schema-classe__etapes strong { display: block; font-family: 'DM Sans', sans-serif; font-weight: 600; color: #FFFFFF; }
+.schema-classe__etapes strong { display: block; font-family: var(--police-titre); font-weight: 600; color: #FFFFFF; }
 .schema-classe__etat { margin-top: var(--e-4); font-weight: 600; min-height: 1.5em; }
 .schema-classe__choix { display: none; flex-wrap: wrap; gap: var(--e-2); margin-top: var(--e-4); }
 .js .schema-classe__choix { display: flex; }
@@ -1308,7 +1313,7 @@ li, dd { text-wrap: wrap; }
 }
 
 /* --- Cours : dans chaque arche du parcours, ce que l'eleve lit a cette etape --------------------- */
-.parcours__arabe { font-family: 'Reem Kufi', sans-serif; font-weight: 500; line-height: 1.6; letter-spacing: 0; word-spacing: .15em; white-space: nowrap; }
+.parcours__arabe { font-family: var(--police-arabe-ornement); font-weight: 500; line-height: 1.6; letter-spacing: 0; word-spacing: .15em; white-space: nowrap; }
 @media (max-width: 839px) {
   .parcours--haut .parcours__etape { align-items: center; gap: var(--e-4); padding-block: var(--e-5); }
   /* Marge physique : le libelle arabe est en rtl, sa marge « de debut » serait a droite. */
@@ -1328,8 +1333,8 @@ li, dd { text-wrap: wrap; }
 /* --- Academie : les fondateurs, leurs noms en grand a la place d'une image ------------------------- */
 .section__figure--noms { width: 100%; background: none; padding: 0; border-radius: 0; }
 .noms { list-style: none; display: grid; gap: var(--e-8); padding: 0; margin: 0; max-width: none; }
-.noms__nom { display: block; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-moyen); line-height: 1.02; letter-spacing: -0.025em; text-wrap: balance; }
-.noms__role { display: block; margin-top: var(--e-2); font-family: 'Plus Jakarta Sans', sans-serif; font-size: var(--t-petit); font-weight: 600; letter-spacing: 0; opacity: .8; }
+.noms__nom { display: block; font-family: var(--police-titre); font-weight: 600; font-size: var(--t-moyen); line-height: 1.02; letter-spacing: -0.025em; text-wrap: balance; }
+.noms__role { display: block; margin-top: var(--e-2); font-family: var(--police-corps); font-size: var(--t-petit); font-weight: 600; letter-spacing: 0; opacity: .8; }
 
 /* --- Bande : une phrase en grand et un detail cadre, sur son fond ------------------------------- */
 .fond > .bande-image--detail { margin-top: 0; padding-top: var(--respire); display: grid; gap: var(--e-8); justify-items: center; text-align: center; max-width: calc(var(--contenu) + 2 * var(--marge)); }
@@ -1412,7 +1417,7 @@ li, dd { text-wrap: wrap; }
 .remises { list-style: none; display: grid; gap: var(--e-10) var(--e-6); margin-top: var(--e-10); }
 .remise { display: grid; gap: var(--e-2); align-content: start; }
 /* A la taille des titres de section (28 px au telephone) : le chiffre mene, sa ligne se lit dessous comme un texte. */
-.remise__valeur { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-titre); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.remise__valeur { font-family: var(--police-titre); font-weight: 600; font-size: var(--t-titre); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
 .remise__objet { max-width: 32ch; }
 @media (min-width: 600px) { .remises { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 840px) {
@@ -1425,7 +1430,7 @@ li, dd { text-wrap: wrap; }
 .price-table--famille { border-radius: 0; overflow: visible; }
 .price-table--famille th, .price-table--famille td { padding-inline: 0; vertical-align: baseline; }
 .price-table--famille tbody th { font-weight: 600; }
-.price-table--famille td { font-family: 'DM Sans', sans-serif; font-size: var(--t-moyen); font-weight: 600; text-align: end; }
+.price-table--famille td { font-family: var(--police-titre); font-size: var(--t-moyen); font-weight: 600; text-align: end; }
 .price-table--famille thead th:last-child { text-align: end; }
 @media (min-width: 840px) {
   /* La scene entiere de la place qui attend, a droite des deux prix, sur toute la hauteur du haut de page. */
@@ -1451,7 +1456,7 @@ li, dd { text-wrap: wrap; }
 /* La photo touche le bas de la section ; le texte garde sa marge dessous, comme dessus. */
 .mot__texte { padding: 0 var(--marge) var(--e-16); }
 .mot__texte h2 { max-width: 18ch; margin-bottom: var(--e-8); }
-.mot__citation { margin: 0; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: var(--t-moyen); line-height: 1.4; letter-spacing: -0.01em; max-width: 34ch; }
+.mot__citation { margin: 0; font-family: var(--police-titre); font-weight: 500; font-size: var(--t-moyen); line-height: 1.4; letter-spacing: -0.01em; max-width: 34ch; }
 .mot__citation p + p { margin-top: var(--e-4); }
 .mot__signature { margin-top: var(--e-8); display: grid; gap: var(--e-1); }
 .mot__nom { font-weight: 700; }
@@ -1496,9 +1501,9 @@ li, dd { text-wrap: wrap; }
 /* Tarifs : le focus du clavier se voit dans les champs du simulateur pose sur le violet. */
 .simulator--page .simulator__fields input:not([type="checkbox"]):focus-visible, .simulator--page .simulator__fields select:focus-visible { outline: 3px solid var(--encre-accent); outline-offset: 2px; }
 /* Accueil : la phrase du directeur, signee, a cote de sa photo. */
-.panneau__citation { margin: 0; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: var(--t-moyen); line-height: 1.35; max-width: 30ch; }
+.panneau__citation { margin: 0; font-family: var(--police-titre); font-weight: 500; font-size: var(--t-moyen); line-height: 1.35; max-width: 30ch; }
 .panneau__citation blockquote { margin: 0; }
-.panneau__signature { display: grid; gap: var(--e-1); margin-top: var(--e-4); font-family: 'Plus Jakarta Sans', sans-serif; font-size: var(--t-corps); }
+.panneau__signature { display: grid; gap: var(--e-1); margin-top: var(--e-4); font-family: var(--police-corps); font-size: var(--t-corps); }
 /* Accueil, sous 840 px : l'enonce centre, une phrase par ligne, a la plus grande taille qui la fait tenir (16,4 em). */
 @media (max-width: 839px) {
   .enonce__texte { text-align: center; font-size: min(48px, calc((100vw - 2 * var(--marge)) / 16.4)); }
@@ -1752,7 +1757,7 @@ li, dd { text-wrap: wrap; }
 /* Comment ca marche : la taille des classes en grands chiffres a cote du titre, la ou le haut de page restait vide. */
 .entete-chiffres { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e-6) var(--e-8); padding-bottom: var(--e-10); }
 .entete-chiffres__bloc { display: grid; gap: var(--e-1); max-width: none; padding: 0; }
-.entete-chiffres__nombre { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.entete-chiffres__nombre { font-family: var(--police-titre); font-weight: 600; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .entete-chiffres__libelle { font-weight: 600; font-size: var(--t-corps); }
 .entete-chiffres__sous { max-width: 40ch; font-size: var(--t-corps); }
 .entete-chiffres__sous { grid-column: 1 / -1; }
@@ -1782,14 +1787,14 @@ li, dd { text-wrap: wrap; }
 /* Familles, les horaires : un chiffre dans une arche (les trois séances), et non une deuxieme vue du dessus. */
 .section__figure--tuile { display: grid; place-items: center; background: none; padding: 0; }
 .tuile-chiffre { display: grid; place-items: center; align-content: center; width: min(100%, 400px); aspect-ratio: 4 / 5; padding: var(--e-10) var(--e-6); border-radius: 50% 50% 0 0 / 40% 40% 0 0; background: #EEE6FA; color: #25113F; text-align: center; max-width: none; }
-.tuile-chiffre__grand { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: clamp(140px, 17vw, 240px); line-height: .9; letter-spacing: -0.05em; }
-.tuile-chiffre__petit { margin-top: var(--e-4); font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--t-moyen); }
+.tuile-chiffre__grand { font-family: var(--police-titre); font-weight: 600; font-size: clamp(140px, 17vw, 240px); line-height: .9; letter-spacing: -0.05em; }
+.tuile-chiffre__petit { margin-top: var(--e-4); font-family: var(--police-titre); font-weight: 600; font-size: var(--t-moyen); }
 
 /* Les cours en bref (encarts du 18/10, mots inchanges) : une fiche a la fois ; le montant en grand chiffre, a gauche,
    les autres lignes a droite, sur la ligne de la septieme colonne. */
 .fiches-bloc .fiches:has(.fiche + .fiche) { grid-template-columns: minmax(0, 1fr); }
 .fiche__lignes li.fiche__prix { padding-inline-start: 0; font-family: inherit; font-size: var(--t-corps); font-weight: 600; line-height: 1.4; letter-spacing: 0; }
-.fiche__montant { display: block; margin-bottom: var(--e-2); font-family: 'DM Sans', sans-serif; font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.fiche__montant { display: block; margin-bottom: var(--e-2); font-family: var(--police-titre); font-size: var(--t-affiche); line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
 @media (min-width: 840px) {
   .fiches-bloc .fiche__lignes { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-6); grid-auto-flow: row dense; align-items: start; }
   .fiches-bloc .fiche__lignes li { grid-column: 2; max-width: 46ch; }
@@ -1817,4 +1822,26 @@ li, dd { text-wrap: wrap; }
 /* Accueil : la porte grandit moins ; la classe apparait plus tot, avant que les visages ne soient a taille reelle. */
 @media (min-width: 840px) and (prefers-reduced-motion: no-preference) {
   .js .porte__scene { transform: scale(calc(1 + var(--z2, 0) * 1)); }
+}
+
+/* Cours : les lettres arabes des arches s'ecrivent, arche apres arche (demande du directeur, 22/10/2026). Les lettres
+   separees paraissent une a une, de droite a gauche ; un mot lie s'ecrit d'un trait, de droite a gauche, sans que ses
+   lettres soient separees. Environ 3 s en tout, une seule fois ; au survol, l'arche s'ecrit de nouveau (motion.js).
+   Sans JavaScript ou en mouvement reduit, les lettres sont la, immobiles. */
+@keyframes lettre-ecrite { from { opacity: 0; transform: translateY(.35em); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes lettre-ecrite-bis { from { opacity: 0; transform: translateY(.35em); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes mot-ecrit { from { -webkit-mask-position: 0 0; mask-position: 0 0; } to { -webkit-mask-position: 100% 0; mask-position: 100% 0; } }
+@keyframes mot-ecrit-bis { from { -webkit-mask-position: 0 0; mask-position: 0 0; } to { -webkit-mask-position: 100% 0; mask-position: 100% 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  .parcours__etape:nth-child(1) { --base: 320ms; }
+  .parcours__etape:nth-child(2) { --base: 1080ms; }
+  .parcours__etape:nth-child(3) { --base: 1760ms; }
+  .parcours__etape:nth-child(4) { --base: 2480ms; }
+  .js .parcours__lettre { display: inline-block; }
+  .js .parcours.est-visible .parcours__lettre { animation: lettre-ecrite 400ms var(--mv-accentuee) calc(var(--base, 0ms) + var(--l, 0) * 160ms) both; }
+  .js .parcours__mot { display: inline-block; padding: .25em .2em; margin: -.25em -.2em; -webkit-mask-image: linear-gradient(to left, #000 45%, transparent 55%); mask-image: linear-gradient(to left, #000 45%, transparent 55%); -webkit-mask-size: 250% 100%; mask-size: 250% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+  .js .parcours.est-visible .parcours__mot { animation: mot-ecrit 760ms cubic-bezier(.45, 0, .25, 1) var(--base, 0ms) both; }
+  .js .parcours__etape.rejoue-a, .js .parcours__etape.rejoue-b { --base: 0ms; }
+  .js .parcours.est-visible .rejoue-a .parcours__lettre { animation-name: lettre-ecrite-bis; }
+  .js .parcours.est-visible .rejoue-a .parcours__mot { animation-name: mot-ecrit-bis; }
 }

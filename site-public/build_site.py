@@ -746,6 +746,16 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str, mot: dict | No
 
 # --- Pages interieures -------------------------------------------------------------
 
+def lettres_arabes(texte: str) -> str:
+    """Ce qu'une arche de Cours fait lire, pose pour s'ecrire lettre apres lettre (styles/site.css) : des lettres
+    separees (« ا ب ت ث ») chacune dans sa balise, dans l'ordre de l'ecriture ; un mot lie (« القُرْآن ») entier, pour ne
+    jamais casser la liaison de ses lettres (il s'ecrit d'un trait, de droite a gauche)."""
+    morceaux = texte.split(" ")
+    if len(morceaux) == 1:
+        return f'<span class="parcours__mot">{esc(texte)}</span>'
+    return " ".join(f'<span class="parcours__lettre" style="--l:{i}">{esc(m)}</span>' for i, m in enumerate(morceaux))
+
+
 def libelle_arche(point: str) -> str:
     """Libelle d'une arche du parcours : la precision apres la virgule passe dessous, plus petite et d'un seul tenant
     (« Les sourates courtes, » puis « d'Al-Fatiha à Az-Zalzalah », chaque nom d'un seul tenant)."""
@@ -784,7 +794,7 @@ def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str
             raise ValueError(f"direction.json {route}: parcours_arabe needs one entry per step")
         arches = "".join(
             '<li class="parcours__etape">'
-            + (f'<span class="parcours__arabe" lang="ar" dir="rtl" aria-hidden="true">{esc(a)}</span>' if a else "")
+            + (f'<span class="parcours__arabe" lang="ar" dir="rtl" aria-hidden="true">{lettres_arabes(a)}</span>' if a else "")
             + libelle_arche(p) + '</li>'
             for p, a in zip(sec.get("points", []), arabe))
         return (f'<section class="entete-page entete-page--haut-parcours">{texte}'

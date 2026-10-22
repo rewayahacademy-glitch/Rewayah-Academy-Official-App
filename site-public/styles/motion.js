@@ -445,7 +445,24 @@
     });
   }
 
+  /* Cours : au survol d'une arche, ses lettres arabes s'ecrivent de nouveau (styles/site.css). Changer le nom de
+     l'animation la relance : on alterne entre deux noms au dessin identique. */
+  function preparerArches() {
+    if (reduit.matches || !window.matchMedia('(hover: hover)').matches) return;
+    document.querySelectorAll('.parcours__etape').forEach(function (arche) {
+      if (!arche.querySelector('.parcours__lettre, .parcours__mot')) return;
+      var tour = 0;
+      arche.addEventListener('pointerenter', function () {
+        if (!arche.parentElement.classList.contains('est-visible')) return;
+        tour += 1;
+        arche.classList.toggle('rejoue-a', tour % 2 === 1);
+        arche.classList.toggle('rejoue-b', tour % 2 === 0);
+      });
+    });
+  }
+
   preparerEntrees();
+  preparerArches();
   preparerTapis();
   preparerHalo();
   preparerTitres();
