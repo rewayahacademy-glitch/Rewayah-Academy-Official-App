@@ -1653,3 +1653,34 @@ li, dd { text-wrap: wrap; }
 @keyframes page-sortie { to { opacity: 0; transform: translateY(-16px); } }
 @keyframes page-entree { from { opacity: 0; transform: translateY(32px); } }
 
+/* --- Recette 20 : un seul bord pour les colonnes de droite (la 7e colonne de la grille), des sections variees ---- */
+/* Des 1100 px, les titres d'affiche tiennent en deux lignes sur six colonnes : leur texte part alors de la 7e. */
+@media (min-width: 1100px) {
+  /* Fins de page : le titre sur six colonnes, sa phrase a partir de la 7e, comme le texte des sections. */
+  .appel__titre { grid-column: 1 / span 6; }
+  .appel--seuil .appel__phrase { grid-column: 7 / -1; }
+  /* Hauts de page en texte (Cours, Comment ca marche) : le titre sur six colonnes, la phrase et le bouton a la 7e. */
+  .entete-page--haut-texte .entete-page__texte > *, .entete-page--haut-parcours .entete-page__texte > * { grid-column: 7 / -1; }
+  .entete-page--haut-texte .entete-page__texte > h1, .entete-page--haut-parcours .entete-page__texte > h1 { grid-column: 1 / span 6; }
+}
+@media (min-width: 840px) {
+  /* Sections larges (Tarifs) : le texte et le tableau a la 7e colonne aussi. */
+  .section--large .section__titre { grid-column: 1 / span 6; }
+  .section--large .section__corps { grid-column: 7 / -1; }
+  /* Duo : deux cartes de six colonnes, la seconde a la 7e colonne, la ou commence le texte des autres sections. */
+  .duo { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); }
+  .duo > :first-child { grid-column: 1 / span 6; padding-inline-end: var(--e-6); }
+  .duo > :last-child { grid-column: 7 / -1; }
+  /* Academie : la societe et le contact cote a cote, au lieu de deux rangees titre et texte. */
+  .groupe--pile .carte { grid-column: span 6; display: block; }
+  .groupe--pile .carte > h2 { margin-bottom: var(--e-6); }
+}
+/* Familles : l'aide, juste avant la fin, en apartee : un intertitre et sa phrase, sans la coupe des grandes sections. */
+.page-familles #aide .section__grille { display: block; }
+.page-familles #aide .section__titre { position: static; }
+.page-familles #aide h2 { font-size: var(--t-moyen); line-height: 1.2; max-width: none; margin-bottom: var(--e-3); }
+.page-familles #aide .section__corps { max-width: 60ch; }
+/* Tarifs : les champs du simulateur prennent les formes du site (pilules et boutons ronds). */
+.simulator--page .simulator__fields input:not([type="checkbox"]), .simulator--page .simulator__fields select { border-radius: var(--r-full); }
+.simulator--page .pas button { border-radius: 50%; }
+
