@@ -75,6 +75,9 @@ la question. Une réponse ne devient une décision qu'une fois versée dans
    élève, en pourcentages (décision du directeur du 22/10, `DECISION-TARIFS`), dans le
    parcours de candidature et sur les écrans de l'enseignant, du tuteur et de l'élève
    adulte ; ce que cela change dans L2A ; questions `CAND-R01` à `CAND-R12`, proposées.
+10. `AUDIT_QUESTIONNAIRE_SALLE_EXAMEN_2026-10-22.md` : chaque question de la Salle
+   d'examen confrontée à ce qui la lit, les besoins de l'académie sans question, les
+   listes à compléter, ce qui passe en salle 2 ou 3 ; huit questions au directeur.
 
 ## Règles qui tiennent déjà, quoi que décide le directeur
 
