@@ -184,15 +184,24 @@ VALUES
   ('c1a5ffff-0000-4000-8000-000000000003', NULL, 'en_attente_enseignant', 'adulte', 6, 'Attente samedi', 6, 10, 'Europe/Paris');
 
 -- Disponibilites : la couverture est exigee a l'affectation d'une classe en
--- attente. TB couvre jeudi et vendredi ; TA, TB, TC, TD couvrent samedi.
+-- attente. TB couvre jeudi et vendredi ; TA, TB, TC, TD couvrent samedi. Les
+-- classes sont des Classes d'adultes, qui durent 90 minutes : chaque jour
+-- demande les heures 10 ET 11 (CLASSES-DUREE, 22/10 ; avant, l'heure 10 seule
+-- suffisait, la seance etant comptee 60 minutes).
 INSERT INTO public.weekly_availability (profile_id, weekday, hour_local, timezone_iana)
 VALUES
   ('c1a50000-0000-4000-8000-0000000000b1', 4, 10, 'Europe/Paris'),
+  ('c1a50000-0000-4000-8000-0000000000b1', 4, 11, 'Europe/Paris'),
   ('c1a50000-0000-4000-8000-0000000000b1', 5, 10, 'Europe/Paris'),
+  ('c1a50000-0000-4000-8000-0000000000b1', 5, 11, 'Europe/Paris'),
   ('c1a50000-0000-4000-8000-0000000000a1', 6, 10, 'Europe/Paris'),
+  ('c1a50000-0000-4000-8000-0000000000a1', 6, 11, 'Europe/Paris'),
   ('c1a50000-0000-4000-8000-0000000000b1', 6, 10, 'Europe/Paris'),
+  ('c1a50000-0000-4000-8000-0000000000b1', 6, 11, 'Europe/Paris'),
   ('c1a50000-0000-4000-8000-0000000000c1', 6, 10, 'Europe/Paris'),
-  ('c1a50000-0000-4000-8000-0000000000d1', 6, 10, 'Europe/Paris');
+  ('c1a50000-0000-4000-8000-0000000000c1', 6, 11, 'Europe/Paris'),
+  ('c1a50000-0000-4000-8000-0000000000d1', 6, 10, 'Europe/Paris'),
+  ('c1a50000-0000-4000-8000-0000000000d1', 6, 11, 'Europe/Paris');
 
 -- Les propositions d'enseignants relevees a chaque etape (lues sous la direction).
 CREATE TEMP TABLE pl_prop (etape text, teacher_id uuid) ON COMMIT DROP;

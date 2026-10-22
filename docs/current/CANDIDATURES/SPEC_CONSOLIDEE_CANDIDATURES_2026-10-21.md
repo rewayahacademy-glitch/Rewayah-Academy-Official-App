@@ -292,42 +292,105 @@ fuseauIana)`.
   viole la clé unique).
 - `weekly_availability` n'a aucun droit de modification (une case se pose ou se retire).
 - Le scénario de L2A1 prouve que les lignes ainsi produites sont lues par le vrai
-  prédicat d'affectation, heure par heure (lundi 18 h-21 h : les Classes de 18 h, 19 h et
-  20 h sont couvertes, celles de 17 h et de 21 h ne le sont pas), y compris entre deux
-  fuseaux (plage de Riyad, Classe de Conakry, comparées en instants).
+  prédicat d'affectation, heure par heure (lundi 18 h-21 h : les Classes **d'enfants**, de
+  60 minutes, de 18 h, 19 h et 20 h sont couvertes, celles de 17 h et de 21 h ne le sont
+  pas ; une Classe d'adultes, de 90 minutes, demande deux heures consécutives : voir
+  ci-dessous), y compris entre deux fuseaux (plage de Riyad, Classe de Conakry, comparées
+  en instants).
 
 **Ce que l'import ne fait pas.** Les formulaires d'origine (colonne J) donnent des
 tranches horaires **sans aucun jour** (« de 8 h à 10 h du soir ») : rien ne peut
 pré-remplir ce champ sans deviner des jours (`MAP §3.5`).
 
-**Ce qui manque pour qu'un cours adulte de 90 minutes soit comparé correctement**
-(deux heures couvertes). Hors de ce lot, non corrigé ; constaté et `testé localement`
-le 22/10 sur le prédicat `app_private.verifier_affectation_enseignant_base` (corps de
-`M/20261021210200_creer_groupe_predicat_affectation.sql`, renommé par
-`M/20261022000200_classes_plafond_par_enseignant.sql`) :
-1. **Une seule durée pour toutes les Classes.** Le prédicat lit le réglage
-   `session_duration_minutes` (60 par défaut), alors que l'offre porte la durée de sa
-   Classe (`seance.duree_minutes_enfant` 60, `seance.duree_minutes_adulte` 90) et que
-   `groupes` n'a aucune colonne de durée.
-2. **Une ligne d'une heure doit contenir toute la séance.** Le test de couverture exige
-   qu'une seule ligne contienne la séance entière ; deux heures déclarées (18 h et 19 h)
-   ne couvrent donc jamais une séance de 90 minutes à 18 h. Mesure : avec les lignes 18 et
-   19 du mercredi et une durée de 90 minutes, le prédicat refuse (« enseignant non
-   disponible : jour 3, heure 18 ») ; avec la durée de 60 minutes, une Classe d'adultes est
-   acceptée sur la seule heure 18, dont elle dépasse la fin de 30 minutes.
-3. **Collisions et plafond horaire** comptent la même durée pour les deux Classes en
-   présence, alors qu'une Classe d'adultes occupe 90 minutes.
+**Comment l'affectation compare un cours de 90 minutes** (corrigé le 22/10, lot
+`CLASSES-DUREE` : `présent dans le code`, `testé localement`, ni staging ni production ;
+`M/20261022000400_classes_affectation_couvre_toute_la_duree.sql`, scénario
+`supabase/tests/scenarios_classes_duree_affectation.sql`). Le défaut constaté le 22/10 sur
+`app_private.verifier_affectation_enseignant_base` (une durée unique de 60 minutes pour
+toutes les Classes ; une seule ligne d'une heure qui devait contenir toute la séance, si
+bien que les lignes 18 et 19 ne couvraient jamais un cours de 18 h à 19 h 30 et que la
+seule ligne 18 couvrait à tort un cours d'adultes ; collisions et plafond horaire comptés
+avec la même durée pour les deux Classes en présence) **n'est plus ouvert** :
+1. **La durée est celle de la Classe.** `app_private.duree_seance_minutes(offre_id,
+   type_public)` la lit : d'abord la durée de l'**offre** dont la Classe est née
+   (`groupes.offre_id`, `offres_horaires.duree_minutes`), parce que c'est ce que l'académie
+   a publié aux familles et que la Classe le tient jusqu'à sa clôture, même si un réglage
+   change ensuite ; sinon le réglage de son **public** (`groupes.type_public`, jamais nul :
+   `seance.duree_minutes_adulte` 90, `seance.duree_minutes_enfant` 60, que la direction
+   règle), qui est le cas d'une Classe créée par « Créer la classe » (elle n'a pas d'offre).
+   `session_duration_minutes` ne sert plus qu'aux affectations individuelles récurrentes,
+   qui n'ont ni offre ni public. Un public inconnu ou une durée hors de 15 à 240 minutes
+   (la borne de `offres_horaires`) **refuse** (garde positive) : jamais de repli silencieux
+   sur 60.
+2. **Chaque heure entière touchée est couverte.** Une séance de `d` minutes qui commence à
+   l'instant `D` occupe `[D, D + d)` ; elle est couverte quand l'**union** des heures
+   déclarées de l'enseignant (une ligne de `weekly_availability` = une heure, `[instant de
+   la ligne, + 1 h)`) contient tout l'intervalle, sans trou : lignes 18 et 19 pour 18 h-19 h 30,
+   lignes 23 puis (jour suivant) 0 pour 23 h-0 h 30, lignes du dimanche 23 puis du lundi 0
+   pour une séance qui franchit la semaine. Le compte se fait en instants, comme avant : la
+   conversion de fuseau (`instant_creneau`, fuseau de la ligne et fuseau de la Classe), les
+   52 semaines (les deux saisons) et les semaines voisines sont ceux de la définition
+   précédente, avec une semaine de plus avant : les lignes déclarées sont prises de la semaine
+   −1 à la semaine 52, parce que `instant_creneau` rend la **prochaine** occurrence après
+   maintenant et que la ligne qui couvre le début de la prochaine séance, sur une grille
+   décalée d'une demi-heure (Calcutta), a pu commencer il y a moins d'une heure (relecture du
+   22/10 : sans la semaine −1, un enseignant couvert était refusé pendant cette demi-heure de
+   la semaine ; les anciens tests n'y tombaient que par hasard de l'horloge). Conséquence voulue : un enseignant qui déclare dans un autre fuseau est
+   comparé en instants, même quand les deux grilles ne tombent pas sur les mêmes heures
+   (Calcutta, UTC+5:30 : un cours d'enfants de 18 h à Paris est couvert par l'union des
+   lignes 21 et 22 en été, 22 et 23 en hiver ; l'ancien test d'une seule ligne le refusait
+   toujours). Les lignes 19 et 20 de Riyad (UTC+3 toute l'année) ne couvrent que l'été un
+   cours d'adultes de 18 h à Paris : il faut 19, 20 et 21 pour couvrir l'année. Le refus
+   garde son message (`enseignant non disponible: jour, heure, fuseau, semaine, instant`) ;
+   son `DETAIL` donne maintenant la durée retenue et le premier instant non couvert.
+3. **Plafond horaire et collisions, avec la durée propre à chaque Classe** : le plafond
+   horaire additionne la durée de chaque créneau (trois séances d'adultes = 4 h 30, trois
+   séances d'enfants = 3 h) ; une collision compare l'intervalle de la Classe visée à celui
+   de chaque Classe déjà tenue (une Classe d'adultes de 18 h à 19 h 30 chevauche une Classe
+   d'enfants de 19 h ; une Classe d'enfants de 18 h à 19 h et une Classe de 19 h se touchent
+   sans se chevaucher). Pour des Classes de 60 minutes, rien ne change.
 
-Pour une comparaison correcte : (1) lire la durée à la Classe (colonne posée à la
-création depuis l'offre, ou lue par `groupes.offre_id`, à défaut par le public) ; (2)
-couvrir par l'**union des lignes consécutives** : une séance de `d` minutes commençant à
-l'heure `H` exige les lignes `H` à `H + ⌈d / 60⌉ − 1` (deux lignes pour 90 minutes), en
-passant au jour suivant après l'heure 23 (7 vers 1) ; (3) compter collisions et plafond
-avec la durée propre à chaque Classe ; (4) faire la même lecture côté élève (son motif est
-aussi heure par heure) et dans `enseignants_pour_classe` et `enseignants_pour_public`
-(créneaux libres : pour une Classe de 90 minutes, l'heure `H` n'est utilisable que si `H`
-et `H + 1` sont libres). Ces quatre points relèvent d'un lot d'affectation distinct, à
-décider avec le directeur : ils changent le prédicat qui décide qui reçoit une Classe.
+Le verrou par enseignant, tous les autres refus nommés (compte, pièce, accès, langue, genre,
+plafond horaire, collisions) dans le même ordre, le drapeau `p_exiger_disponibilites` (faux
+pour `creer_groupe`, D4), l'enveloppe et le plafond de Classes
+(`plafond_classes_atteint`, `M/20261022000200_classes_plafond_par_enseignant.sql`) ne
+changent pas. `enseignants_pour_classe` appelle le prédicat : sa proposition suit la
+nouvelle durée sans autre écriture.
+
+Les scénarios qui posaient une Classe d'**adultes** avec une seule heure déclarée ont reçu
+la seconde heure (`scenarios_classes_plafond_par_enseignant.sql`,
+`scenarios_creer_groupe_predicat.sql`, `scenarios_offres_personnalisees.sql`) : ils
+éprouvaient le plafond, la création et le suivi, pas la durée, et la durée d'un cours
+d'adultes est maintenant celle de l'offre.
+
+**Reste ouvert, hors de ce lot** (le point 4 du constat du 22/10, et un constat neuf) :
+- le **côté élève** (son motif est aussi heure par heure) ;
+- les **créneaux libres** de `enseignants_pour_classe` et `enseignants_pour_public`, qui
+  comptent encore `session_duration_minutes` (60) : pour une Classe de 90 minutes, l'heure
+  `H` n'est utilisable que si `H` et `H + 1` sont libres ; la proposition d'enseignants,
+  elle, passe par le prédicat et est exacte ;
+- **la durée des séances matérialisées** : `materialiser_seances_groupe`
+  (`M/0055_classes_en_attente_enseignant.sql:67`) fixe la fin de chaque séance par
+  `session_duration_minutes` (60) pour toutes les Classes, adultes comprises. Le calendrier
+  réel d'une Classe d'adultes est donc de 60 minutes alors que l'affectation la compare
+  désormais à 90 : à corriger dans un lot à part, qui change les séances créées (et
+  `session_participants`, jetons, présence), à décider avec le directeur ;
+- une Classe née d'une offre dont la durée diffère du réglage de son public : à la création
+  par `creer_groupe` (appelée par `publier_groupe_depuis_offre` avant de poser `offre_id`),
+  le prédicat compte encore la durée du public pour les collisions ; l'affectation
+  suivante lit l'offre. `publier_groupe_depuis_offre` n'est exécutable par aucun rôle
+  connecté (`proacl = {postgres=X/postgres}`) : aucun client n'y passe aujourd'hui ;
+- **changer l'horaire d'une Classe déjà affectée** (constat de la relecture du 22/10,
+  vérifié) : `modifier_groupe` (sept arguments, exécutable par `authenticated`, garde
+  direction) change `weekday`, `hour_local` et `timezone_iana` d'une Classe qui a son
+  enseignant **sans repasser par le prédicat** (ni couverture, ni collisions, ni plafond
+  horaire) ; la direction écrit aussi `groupe_creneaux` directement (policy
+  `groupe_creneaux_admin`). Seule la contrainte d'exclusion `sessions_no_teacher_overlap`
+  retient un déplacement sur le même instant ; comme les séances matérialisées durent 60
+  minutes (point précédent), elle ne voit pas le chevauchement d'une Classe d'adultes de 90
+  minutes. À décider avec le directeur : repasser le prédicat (avec ou sans exigence de
+  disponibilités) quand on déplace une Classe qui a un enseignant. Non corrigé, hors de ce
+  lot (fonction `SECURITY DEFINER` sous F86).
 
 ### 2.2 Les trois salles
 
@@ -1611,8 +1674,9 @@ validateur rétabli (il accepte l'ancienne forme à second fuseau) ; le contrôl
 chevauchement retiré ; les demi-heures de nouveau admises ; l'examen privé de la cause
 nommée (`motifs`, l'ancien examen) ; deux plages qui se touchent traitées comme un
 chevauchement ; le chevauchement calculé sans comparer les jours ; la vérification « fin
-après début » retirée. Le constat du cours de 90 minutes (2.1 bis) est une expérience
-jetable sur le prédicat, non gardée comme scénario pour ne pas figer un défaut.
+après début » retirée. Le constat du cours de 90 minutes (2.1 bis) était une expérience
+jetable sur le prédicat ; il est corrigé et gardé comme scénario par le lot `CLASSES-DUREE`
+(`supabase/tests/scenarios_classes_duree_affectation.sql`, 2.1 bis).
 
 Mesure L2A2 du 22/10, reprise après relecture (`supabase/tests/scenarios_cand_l2a2_gestes_direction.sql`,
 base neuve) : 232 contrôles verts (193 avant la relecture : la section (o) en ajoute 39 et en
@@ -1763,6 +1827,74 @@ réouverture) : chacun fait tomber le scénario. Ce qu'il mesure :
   main et hors suite : deux directions qui donnent chacune une Classe au même enseignant (deux
   sessions) sont refusées l'une après l'autre (trois Classes au final) ; avec le contrôle placé avant
   le verrou par enseignant, la seconde passe (quatre).
+- DUREE (22/10, lot CLASSES-DUREE, `testé localement`, `M/20261022000400_classes_affectation_couvre_toute_la_duree.sql`,
+  `supabase/tests/scenarios_classes_duree_affectation.sql`, 108 contrôles après la relecture ; 2.1 bis) : un cours
+  d'enfants de 60 minutes est couvert par une heure ; un cours d'adultes de 90 minutes est
+  **refusé** avec la seule heure 18, avec la seule heure 19, avec les heures 18 et 20 (un trou),
+  **accepté** avec 18 et 19 (le cas constaté : un enseignant disponible de 18 h à 20 h) et avec
+  18, 19 et 20 ; la séance qui passe minuit demande l'heure 0 du **jour suivant** (mercredi
+  23 h : jeudi 0 h ; refusé avec l'heure 0 du mercredi ou la seule heure 0 du jeudi) et, le
+  dimanche, l'heure 0 du **lundi** (refusé avec l'heure 0 du dimanche) ; un cours d'enfants de
+  23 h à minuit pile ne touche pas le jour suivant ; autre fuseau que la Classe, les deux
+  saisons : Riyad (UTC+3 sans changement d'heure) pour une Classe d'adultes de 18 h à Paris veut
+  les heures 19, 20 **et** 21 (19-20 ne couvre que l'été, 20-21 que l'hiver), pour une Classe
+  d'enfants 19 et 20 ; Calcutta (UTC+5:30, grille à la demi-heure des heures de Paris) veut
+  21, 22 et 23, et l'ancien test d'une seule ligne le refusait toujours ; la durée vient de
+  l'offre quand la Classe en a une (Classe d'enfants née d'une offre de 90 minutes : deux
+  heures ; Classe d'adultes née d'une offre de 60 minutes : une heure) et suit le réglage du
+  public sinon (la direction passe les adultes à 120 puis 150 minutes, le serveur suit à chaque
+  fois, la Classe née d'une offre de 60 minutes garde 60 ; un réglage à 0 refuse, sans repli sur
+  60, sans toucher une Classe d'enfants) ; les refus de compte, de langue et de genre gardent la
+  parole avant la durée ; collisions avec la durée de chaque Classe (une Classe d'adultes de 18 h
+  chevauche un cours d'enfants de 19 h, une Classe d'enfants de 18 h ne chevauche pas un cours
+  d'adultes de 19 h, un cours d'adultes de 17 h chevauche la Classe d'enfants de 18 h ; une
+  séance ponctuelle qui commence à 19 h 10 chevauche un cours d'adultes de 18 h, pas un cours
+  d'enfants) ; plafond horaire avec la durée de chaque Classe (trois séances d'adultes, 4 h 30,
+  dépassent 3 heures, trois séances d'enfants tiennent ; les deux séances d'adultes déjà tenues
+  comptent 3 heures, celles d'enfants 2 heures) ; le plafond de Classes `plafond_classes_atteint`
+  parle après la base (l'enseignant à trois Classes sans disponibilité reçoit d'abord
+  `enseignant non disponible`) et le verrou « teacher-schedule » est pris ; par les vraies RPC :
+  `enseignants_pour_classe` propose l'enseignant des heures 18 et 19 pour une Classe d'adultes de
+  18 h et pas celui de la seule heure 18 ni celui du trou, `affecter_enseignant_classe_c11bis`
+  refuse l'un et l'autre (la Classe attend toujours, sans séance) et accepte le premier,
+  `creer_groupe` crée sans disponibilité déclarée (D4) et refuse ensuite une collision de durée.
+  **Contre-épreuve** : sur la base du rejeu avec la seule fonction de durée (le prédicat d'avant),
+  le scénario est rouge sur 23 contrôles avant de s'arrêter sur l'affectation par
+  `affecter_enseignant_classe_c11bis` (acceptée à tort avec la seule heure 18) ; sans la
+  migration il s'arrête dès la fonction de durée, absente. **Mutation** : seize altérations de la migration, chacune fait tomber le
+  scénario sur une ligne nommée (durée fixe de 60 minutes ; offre ignorée ; collisions avec la
+  durée de la Classe visée seulement ; plafond horaire avec la durée de la Classe visée
+  seulement ; couverture du seul début ; heures qui se touchent non fusionnées ; trou d'une heure
+  comblé ; une seule semaine ; drapeau de disponibilités ignoré ; public inconnu sans garde ;
+  durée absurde sans garde ; verrou retiré ; `DETAIL` retiré ; message de refus changé ; réglage
+  des adultes et des enfants échangés ; séance ponctuelle comptée 60 minutes) ; le contrôle final
+  de la migration refuse six d'entre elles à lui seul. **Trois scénarios existants** voient la
+  seconde heure d'une Classe d'adultes (`classes_plafond_par_enseignant`, `creer_groupe_predicat`,
+  `offres_personnalisees` : leurs fixtures déclaraient une seule heure). **Rejeu complet du
+  22/10** : 121 scénarios verts sur 122 (`af_liste_blanche_volatiles` rouge connu et antérieur à
+  ce lot, les quatre fonctions `avis_*` seulement). **Mesure** : le prédicat de base, une Classe de
+  trois séances, 30 heures déclarées : 0,2 s (0,7 s avant) ; 168 heures : 1,0 s (2,8 s avant).
+  **Reprise après relecture (22/10)** : (1) la **semaine −1** : les lignes déclarées sont prises
+  de la semaine −1 à la semaine 52 (`generate_series(-1, 52)`), car `instant_creneau` rend la
+  prochaine occurrence après maintenant ; sur une grille décalée d'une demi-heure (Calcutta) la
+  ligne qui couvre le début de la prochaine séance a pu commencer il y a moins d'une heure, et
+  l'enseignant couvert était refusé pendant cette demi-heure de la semaine (reproduit : mercredi
+  15 h 45 UTC, cours d'enfants de 18 h à Paris, Calcutta 21, 22 et 23 : refusé à la semaine 0) ;
+  (2) section (l) du scénario, **horloge fixée** (`instant_creneau` lit `test.now` dans la
+  transaction du scénario, annulé avec elle) : Calcutta couvert à vingt instants du mercredi,
+  et refusé à ces mêmes instants avec les heures 21 et 22 ou 22 et 23 seulement ; la dernière
+  semaine examinée (la ligne de 19 h de la semaine 52 compte) ; le dimanche 23 h vers le lundi
+  0 h à seize instants autour de minuit ; les deux saisons examinées au 1er avril (refus à la
+  semaine 30) ; (3) des contrôles manquaient pour des altérations qui survivaient : la durée
+  des affectations individuelles (collision et plafond : `ti1`, `ti2`), le drapeau NULL qui vaut
+  vrai, les bornes 15 et 240 minutes (14, 15, 240, 241), et la proposition d'enseignants pour une
+  Classe d'enfants (les trois enseignants, pas l'un des deux). La voie `modifier_groupe` est un
+  constat neuf (2.1 bis). Aucune autre voie d'affectation : seules `creer_groupe`
+  (huit arguments) et `affecter_enseignant_classe_c11bis` donnent un enseignant à une Classe
+  et sont exécutables par un client, et toutes deux passent par le prédicat.
+  À noter, hors de ce lot et non corrigé : `scenarios_cpt_suppression_export.sql` est instable sur
+  la base du rejeu **sans** ce lot (4 rouges sur 80 rejeux) ; cause probable, non vérifiée : ses
+  filtres courts (`f02`, `-7.6`) rencontrent parfois des identifiants aléatoires de l'export.
 - L6-10, second temps, par le geste réel : le seul moyen infirmé mène à
   `paiement_non_disponible`, décision et motif tracés, jamais dans `audit_logs`
   ni dans `etat_dossier()` ; le filtre `etat` le liste.

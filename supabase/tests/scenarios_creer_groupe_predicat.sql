@@ -302,9 +302,12 @@ BEGIN
   PERFORM app_private.verifier_affectation_enseignant(v_attente, v_e1, false);
   RAISE NOTICE 'CAND-Q15 OK drapeau : false ne saute que la couverture des disponibilites';
 
-  -- Avec une disponibilite qui couvre le mercredi a 9 h, les deux arguments passent.
+  -- Avec les disponibilites qui couvrent le mercredi de 9 h a 10 h 30, les deux
+  -- arguments passent. La classe en attente est une Classe d'adultes, qui dure
+  -- 90 minutes : il faut les heures 9 ET 10 (CLASSES-DUREE, 22/10 ; avant, la
+  -- seule heure 9 suffisait, la seance etant comptee 60 minutes).
   INSERT INTO public.weekly_availability (profile_id, weekday, hour_local, timezone_iana)
-  VALUES (v_e1, 3, 9, 'Europe/Paris');
+  VALUES (v_e1, 3, 9, 'Europe/Paris'), (v_e1, 3, 10, 'Europe/Paris');
   PERFORM public.tc_verifier_affectation_enseignant(v_attente, v_e1);
   RAISE NOTICE 'CAND-Q15 OK C-04 : disponibilite declaree, deux arguments acceptes';
 END
