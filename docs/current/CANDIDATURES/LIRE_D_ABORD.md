@@ -33,7 +33,9 @@ avance en parallèle, puisqu'il est autorisé.
 
 ## Où le directeur répond
 
-Une page privée reprend les vingt-deux questions, chacune avec sa raison et la
+Une page privée reprend les vingt-deux questions, les onze questions de suivi
+(`CAND-S01` à `CAND-S11`) et, depuis le 22/10, les douze questions sur la répartition
+du paiement (`CAND-R01` à `CAND-R12`), chacune avec sa raison et la
 recommandation : <https://claude.ai/artifact/JVZ8QM5e1ZnEPaiQPHEoEE>. Chaque
 réponse enregistrée y est un document de la collection `reponses` (identifiant
 `CAND-Qnn`, champs `choix` : `valide`, `autre` ou `discuter`, `texte`, `maj`),
@@ -69,6 +71,10 @@ la question. Une réponse ne devient une décision qu'une fois versée dans
 8. `CONTRAT_FILE_COURRIELS.md` : ce que le module écrit dans la file des
    courriels et ce que l'envoi, construit par la session du site public, en lit
    (`CAND-Q10`). À lui remettre.
+9. `PROPOSITION_REPARTITION_PAIEMENT.md` : où montrer la répartition du paiement d'un
+   élève, en pourcentages (décision du directeur du 22/10, `DECISION-TARIFS`), dans le
+   parcours de candidature et sur les écrans de l'enseignant, du tuteur et de l'élève
+   adulte ; ce que cela change dans L2A ; questions `CAND-R01` à `CAND-R12`, proposées.
 
 ## Règles qui tiennent déjà, quoi que décide le directeur
 
