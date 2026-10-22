@@ -664,7 +664,7 @@
       "forme": "arche"
     },
     "portrait-directeur": {
-      "source": "photo fournie par le directeur le 21/10/2026, recadree en 4:5, desaturee vers le noir et blanc : ombres a l’encre de l’app (#110E20), clairs lavande (#F4EEFF), 15 % de gris neutre ; sans metadonnees",
+      "source": "photo fournie par le directeur le 21/10/2026, recadrée en 4:5 (buste), désaturée vers le noir et blanc : ombres à l’encre de l’app (#110E20), clairs au lavande des cadres (#EEE6FA), 8 % de gris neutre ; une marque du mur (un clou) retirée, le visage n’est pas retouché ; sans métadonnées",
       "largeur": 1792,
       "hauteur": 2240,
       "alt": "Abdoulaye Mouhidine Sow, directeur et fondateur de Rewayah Academy, en calotte brodée et chemise sombre, le regard tourné vers la droite.",
@@ -672,10 +672,10 @@
         "legende": "Abdoulaye Mouhidine Sow, directeur et fondateur"
       }
     },
-    "portrait-directeur-serre": {
-      "source": "meme photo et meme traitement que portrait-directeur, cadree plus serre (visage et epaules) pour l’accueil ; sans metadonnees",
-      "largeur": 1360,
-      "hauteur": 1700,
+    "portrait-directeur-visage": {
+      "source": "même photo que portrait-directeur, cadrée en largeur (5:4) sur le visage, de la calotte au col, pour l’accueil ; désaturée vers le noir et blanc : ombres à l’encre de l’app (#110E20), clairs au lavande des cadres (#EEE6FA), 8 % de gris neutre ; une marque du mur (un clou) retirée, le visage n’est pas retouché ; sans métadonnées",
+      "largeur": 1792,
+      "hauteur": 1434,
       "alt": "Abdoulaye Mouhidine Sow, directeur et fondateur de Rewayah Academy, en calotte brodée, le regard tourné vers la droite.",
       "photo": {
         "legende": "Abdoulaye Mouhidine Sow, directeur et fondateur"

@@ -218,6 +218,7 @@ Inspection après ces corrections :
 | Recette 15 | 7,42 | 6,07 | 6,17 | « presque » |
 | Recette 16 | 7,7 | 6,33 | 6,33 | « presque » |
 | Recette 17 | 7,4 | 6,5 | 6,5 | « presque » |
+| Recette 18 | 7,43 | 6,37 | 6,33 | « presque » |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -505,6 +506,26 @@ Inspection des six pages après ces corrections : 0 FAIL hors Tarifs (une image,
 La relecture note aussi : un doublon pour les lecteurs d'écran (la légende cachée de la photo redisait son texte alternatif ; retirée), une image sans usage (les mains de l'Académie ; retirée), aucun test des nouveaux chemins (trois tests ajoutés : la photo n'est jamais légendée « Illustration » et a son texte alternatif ; les profils sont les trois fondateurs et aucune ligne arabe n'est sur une page française ; un mot sans photo ou un extrait qui n'en vient pas est refusé).
 
 Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte coupé, aucune image agrandie, aucun mot seul. Tests : 67, OK.
+
+**Après la recette 18.** Les trois jurés placent Rewayah au-dessus des deux références (7,43 contre 6,37 et 6,33) et répondent encore « presque ». Ils relèvent tous trois la même fin de page partout, la bande du directeur sur l'accueil, l'adresse coupée dans le pied de page, l'énoncé trop petit au téléphone et le nombre de tailles de texte. La relecture du code ajoute un défaut d'accessibilité : le grand mot « S'inscrire » était caché aux lecteurs d'écran et absent du nom du lien (WCAG 2.5.3). Corrections :
+
+| # | Relevé | Correction |
+|---|---|---|
+| DD1 | Six pages finissent sur la même ellipse blanche et un grand verbe ; au téléphone, 150 à 230 px de blanc vide ; « Continuer » ne dit pas la suite | Seul l'accueil garde la bande blanche et son grand mot. Les pages principales (et Avis) se referment sur leur propre titre, à la taille de leur titre d'ouverture, posé sur le fond. Ce titre est le lien : « Inscrivez votre enfant. », « Commencez par les bases. », « Votre inscription commence ici. », « Commencez votre inscription. », « Découvrez les cours. ». Au bureau, le titre est à gauche et sa phrase à droite. Au téléphone, le vide de la bande de l'accueil est retiré |
+| DD2 | Le grand mot hors du nom du lien (relecture) | Le mot visible ouvre le libellé du lien (« Commencer » + « mon inscription » pour les lecteurs d'écran) ; le build refuse un mot qui n'ouvre pas le libellé ; test ajouté |
+| DD3 | Accueil, bande « Accompagné » : la photo commence bas, le coin haut gauche est vide, une douzaine d'éléments dans la colonne de droite ; même cadrage qu'à l'Académie ; au téléphone, la photo tout en bas sous la ligne de la société | Le visage, cadré en largeur (5:4, de la calotte au col), en haut, à la hauteur du titre, calé au bord gauche. À côté : la date, la phrase signée, « Lire le mot du directeur ». Dessous, les trois engagements côte à côte. La ligne de la société est retirée (elle est au pied de page). Au téléphone : le titre, le visage, puis la phrase signée juste dessous. La signature est hors de la citation (`figure` et `figcaption`) |
+| DD4 | La photo, un mur gris à côté des rendus lavande | Un pas de plus vers le violet, sur les deux cadrages : clairs au lavande des cadres (#EEE6FA), 8 % de gris au lieu de 15. Une marque du mur (un clou et son ombre) est retirée de la photo d'origine ; le visage n'est pas retouché |
+| DD5 | Pied de page : « recrutement@rewayahacademy.c / om » coupé au milieu du mot à 1280 px et plus ; l'ornement en contour lu comme un reste ; au téléphone, les libellés sans leur adresse | L'ornement est retiré, la colonne des contacts prend sa place ; une adresse ne se coupe qu'après « @ » ; au téléphone, chaque adresse sous son libellé, sur une colonne ; sous 380 px, la navigation du pied sur une colonne |
+| DD6 | Accueil, téléphone : l'énoncé à 21 px, plus petit que les titres qui l'entourent | La première phrase en grand sur deux lignes (35 px à 390, la taille de la phrase du zoom), la seconde dessous à la taille des intertitres ; moins de vide dessous |
+| DD7 | Neuf ou dix tailles de texte par page | Une échelle courte : affiche géante (prix de l'accueil et grand mot, 150 px), affiche (titres d'ouverture et de fin, prix de Tarifs, 66 px), titre de section, intertitre, texte, notes. Mesuré à 1440 px : accueil 6 tailles ; Familles, Cours, Comment ça marche, Tarifs et Académie 5 tailles. Les phrases d'ouverture passent à la taille du texte (500) ; les notes des arches de Cours à 17 px |
+| DD8 | Tarifs : la colonne de gauche encombrée, la scène flottante | Une seule action et un lien « Simuler mon tarif » ; la scène plus grande (600 px au plus) sur la droite ; les deux prix à 66 px sous le texte, au niveau du bas de la scène ; leurs mentions sur toute la largeur |
+| DD9 | Accueil, sous 840 px : l'arche des mains plus large et collée à la marge, à la différence des deux autres arches (relecture) | Même marge intérieure que les autres arches |
+| DD10 | Erreurs HTML anciennes : un titre dans un `span`, un identifiant en double sur l'Aide, des libellés qui contenaient plusieurs boutons dans le simulateur (relecture) | Corrigées : 0 erreur sur les 18 pages (validateur Nu 26.10.12). Les boutons moins et plus sont hors du libellé, qui nomme son champ par son identifiant |
+| DD11 | Règles CSS sans effet (cartes de l'Académie, ancienne grille des étapes sur tablette) ; test de l'arabe incomplet (relecture) | Règles retirées, sans changement de position mesuré ; le test cherche aussi dans les textes alternatifs et sur toutes les plages de l'arabe |
+
+Non repris : la répétition des personnages d'une page à l'autre (O-20). Les jurés proposent des recadrages sans personne, mais la recette 15 les avait refusés (« jamais une porte ou un tapis sans personne »). La réponse reste les nouvelles scènes demandées au directeur.
+
+Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Comment ça marche garde un avertissement de marges (120 et 142 px) : l'inspecteur ne compte que l'étendue du texte, et l'ornement retiré du pied de page touchait la marge droite. Les cartes et la grille vont bien de 120 à 1320 px. Aucun texte coupé. Aucune image agrandie à 390, 1024 et 1440 px. À 1920 px, l'image du haut de Familles est agrandie de 10 %, comme avant ce lot. Aucun mot seul. Simulateur vérifié : 3 élèves de 8, 12 et 30 ans donnent 159,55 $, sans erreur dans la console. Tests : 68, OK.
 
 ## Hors de portée de l'agent
 

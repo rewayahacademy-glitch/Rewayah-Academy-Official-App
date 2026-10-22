@@ -198,7 +198,7 @@ class GeneratedSiteQA(unittest.TestCase):
         images = json.loads((SITE / "content" / "images.json").read_text(encoding="utf-8"))
         for route in ("/fr/", "/fr/academie"):
             source = self.page_file(route).read_text(encoding="utf-8")
-            portraits = re.findall(r'<figure class="portrait">.*?</figure>', source, re.S)
+            portraits = re.findall(r'<figure class="portrait[^"]*">.*?</figure>', source, re.S)
             with self.subTest(route=route):
                 self.assertEqual(len(portraits), 1)
                 self.assertNotIn("Illustration", portraits[0])
@@ -217,12 +217,14 @@ class GeneratedSiteQA(unittest.TestCase):
         accueil = self.page_file("/fr/").read_text(encoding="utf-8").replace(" ", " ")
         self.assertIn(sections["mot"]["extrait"].replace(" ", " "), accueil)
         # L'arabe attend le site en arabe (registre M-29) : sur les pages francaises, seules les lettres des arches de Cours
-        # (et le nom arabe de l'academie dans les donnees structurees, M-27, qui ne s'affiche pas).
+        # (et le nom arabe de l'academie dans les donnees structurees, M-27, qui ne s'affiche pas). Les textes
+        # alternatifs comptent : un lecteur d'ecran les lit. Toutes les plages de l'arabe, formes de presentation comprises.
+        arabe = re.compile(r"[\u0600-\u06FF\u0750-\u077F\u0870-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]")
         for route in self.pages:
-            source = re.sub(r'<span class="parcours__arabe"[^>]*>.*?</span>|<script[^>]*>.*?</script>', "",
+            source = re.sub(r'<span class="parcours__arabe"[^>]*>.*?</span>|<script type="application/ld\+json">.*?</script>', "",
                             self.page_file(route).read_text(encoding="utf-8"), flags=re.S)
             with self.subTest(route=route):
-                self.assertIsNone(re.search(r"[؀-ۿ]", re.sub(r'(?:alt|content|title)="[^"]*"', "", source)))
+                self.assertIsNone(arabe.search(source))
 
     def test_a_citation_needs_its_portrait_and_a_true_excerpt(self) -> None:
         mot = dict(next(s for s in self.pages["/fr/academie"]["sections"] if s.get("citation")))
@@ -232,6 +234,27 @@ class GeneratedSiteQA(unittest.TestCase):
         mot["extrait"] = "Une phrase que le directeur n'a pas dite."
         with self.assertRaisesRegex(ValueError, "extrait"):
             BUILDER_MODULE.section_mot(mot, 1, images, "portrait-directeur")
+
+    def test_page_endings_name_their_link_by_what_they_show(self) -> None:
+        # Accueil : le grand mot visible ouvre le nom du lien (WCAG 2.5.3, une commande vocale le trouve) ; un mot qui
+        # n'ouvre pas le libelle est refuse. Pages principales : le titre de fin est lui-meme le lien.
+        accueil = self.page_file("/fr/").read_text(encoding="utf-8")
+        self.assertIn('<span class="appel__mot">Commencer<span class="sr-only"> mon inscription</span>', accueil)
+        with self.assertRaisesRegex(ValueError, "grand mot"):
+            BUILDER_MODULE.bande_finale("Titre", "Phrase.", "Commencer mon inscription", "/connexion", "S’inscrire")
+        direction = json.loads((SITE / "content" / "direction.json").read_text(encoding="utf-8"))["pages"]
+        seuils = [route for route, reglage in direction.items() if (reglage.get("fin") or {}).get("seuil")]
+        self.assertGreaterEqual(len(seuils), 5)
+        for route in seuils:
+            fin = direction[route]["fin"]
+            source = self.page_file(route).read_text(encoding="utf-8")
+            with self.subTest(route=route):
+                self.assertNotIn("appel__mot", source)
+                titre = re.search(r'<h2 id="appel-titre" class="appel__titre"[^>]*><a class="appel__titre-lien" '
+                                  r'href="([^"]+)">(.*?)</a></h2>', source, re.S)
+                self.assertIsNotNone(titre)
+                self.assertEqual(titre.group(1), fin.get("href", self.pages[route]["cta"]["href"]))
+                self.assertEqual(re.sub(r"<[^>]+>", "", titre.group(2)).replace(" ", " ").strip(), fin["titre"])
 
     def test_bundle_gate_covers_every_local_font_requested_by_css(self) -> None:
         css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")

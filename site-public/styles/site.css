@@ -490,29 +490,42 @@ li, dd { text-wrap: wrap; }
   .deux-champs__grille { column-gap: var(--e-16); }
 }
 
-/* --- Bande sombre de l'accueil : pleine largeur, sans carte ni image -------------------------- */
-.panneau { margin-top: var(--respire); padding: var(--respire) var(--marge); background: var(--inverse); color: var(--sur-inverse); }
-.panneau__in { max-width: var(--contenu); margin-inline: auto; display: grid; gap: var(--e-12); }
+/* --- Bande sombre de l'accueil : le visage du directeur, sa phrase signee, puis les trois engagements ------------ */
+.panneau { margin-top: var(--respire); padding: var(--respire) 0; background: var(--inverse); color: var(--sur-inverse); display: grid; row-gap: var(--e-10); }
 .panneau h2 { color: var(--sur-inverse); max-width: 13ch; }
 .panneau__depuis { margin-top: var(--e-6); font-family: 'DM Sans', sans-serif; font-size: var(--t-moyen); line-height: 1.25; font-weight: 500; max-width: 24ch; }
-.panneau__promesses { list-style: none; display: grid; gap: var(--e-10); }
+.panneau__in { display: grid; gap: var(--e-10); padding-inline: var(--marge); }
+.panneau__photo { width: min(88vw, 520px); }
+.panneau__promesses { list-style: none; display: grid; gap: var(--e-10); padding-inline: var(--marge); }
 .panneau__promesses h3 { color: var(--sur-inverse); font-size: var(--t-moyen); line-height: 1.2; margin-bottom: var(--e-3); max-width: 16ch; }
 .panneau__promesses p { max-width: 34ch; }
+.panneau__promesses .panneau__lien { margin-top: var(--e-4); }
 .panneau .cta--secondary { color: var(--sur-inverse); border-color: var(--sur-inverse-doux); }
 .panneau .cta--secondary:hover { background: var(--sur-inverse); color: var(--inverse); }
 .panneau .lien-fleche { color: var(--sur-inverse); }
-.panneau__societe { margin-top: var(--e-8); font-size: var(--t-petit); color: var(--sur-inverse-doux); }
-/* La photo du directeur, calee au bord gauche et posee sur le bas de la bande ; le texte a droite, a partir de la
-   7e colonne de la page, comme le mot du directeur sur la page Academie. */
-.panneau { display: grid; row-gap: var(--e-10); padding: var(--respire) 0 0; }
-.panneau__photo { width: min(88vw, 520px); order: 2; }
-.panneau__in { padding-inline: var(--marge); margin-inline: 0; }
-.panneau__pied { padding-bottom: var(--e-4); }
+.panneau .action-row { margin-top: 0; }
+/* La signature sur la bande sombre garde les couleurs de la bande, quelle que soit l'ambiance de la page. */
+.panneau .mot__nom { color: var(--sur-inverse); }
+.panneau .mot__role { color: var(--sur-inverse-doux); }
+@media (max-width: 839px) {
+  /* Au telephone et sur tablette : le titre, puis le visage, puis sa phrase signee juste dessous. */
+  .panneau__in { display: contents; }
+  .panneau__tete, .panneau__citation, .panneau__in > .action-row { padding-inline: var(--marge); }
+  .panneau__tete { order: 1; }
+  .panneau__photo { order: 2; }
+  .panneau__citation { order: 3; }
+  .panneau__in > .action-row { order: 4; }
+  .panneau__promesses { order: 5; margin-top: var(--e-6); }
+}
+/* Sur tablette, les trois engagements restent cote a cote, comme au bureau. */
+@media (min-width: 600px) and (max-width: 839px) { .panneau__promesses { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--e-6); } }
 @media (min-width: 840px) {
-  .panneau { grid-template-columns: minmax(0, calc(50vw + 12px - 120px)) minmax(0, 1fr); column-gap: 120px; align-items: end; padding-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); }
-  .panneau__photo { order: 0; width: 100%; align-self: end; }
-  .panneau__in { padding: 0 0 var(--e-16); max-width: none; margin: 0; gap: var(--e-10); }
-  .panneau__promesses { gap: var(--e-8); }
+  /* Le visage cale au bord gauche, son haut a la hauteur du titre ; le texte a partir de la 7e colonne de la page.
+     Dessous, les trois engagements cote a cote sur la grille de la page. */
+  .panneau { grid-template-columns: minmax(0, calc(50vw + 12px - 120px)) minmax(0, 1fr); column-gap: 120px; row-gap: var(--e-16); align-items: start; padding-inline-end: max(var(--marge), calc((100vw - var(--contenu)) / 2)); }
+  .panneau__photo { width: 100%; }
+  .panneau__in { padding: 0; }
+  .panneau__promesses { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--e-6); padding-inline: max(var(--marge), calc((100vw - var(--contenu)) / 2)) 0; }
 }
 
 /* --- Tuiles de questions (FAQ, aide) ------------------------------------------- */
@@ -721,15 +734,12 @@ li, dd { text-wrap: wrap; }
 
 /* Deux sections de texte cote a cote : deux champs, du plus profond au plus clair */
 .groupe { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; display: grid; gap: var(--e-4); }
-.carte { border-radius: var(--r-lg); padding: var(--e-10) var(--e-6); background: var(--sous); }
-.carte:nth-child(2) { background: var(--champ); }
-.carte:nth-child(3) { background: var(--champ-fort); }
 .carte h2 { font-size: var(--t-moyen); line-height: 1.12; max-width: 20ch; margin-bottom: var(--e-6); }
 .carte p + p { margin-top: var(--e-3); }
 .carte .points, .carte .liste-liens { margin-top: var(--e-6); }
 @media (min-width: 840px) {
   .groupe { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: start; }
-  .carte { grid-column: span 6; padding: var(--e-12) var(--e-10); }
+  .carte { grid-column: span 6; }
   .carte h2 { font-size: max(26px, var(--t-moyen)); margin-bottom: var(--e-8); }
   .groupe--3 .carte { grid-column: span 4; }
 }
@@ -738,8 +748,6 @@ li, dd { text-wrap: wrap; }
   .groupe--pile .carte > * { grid-column: 7 / -1; }
   .groupe--pile .carte > h2 { grid-column: 1 / span 5; grid-row: 1 / span 6; margin-bottom: 0; }
 }
-[data-ambiance="violet"] .carte { background: #4E2983; }
-[data-ambiance="violet"] .carte:nth-child(2) { background: #8652E6; }
 
 /* Fiches de la decision du 18/10 : les textes tels quels, en deux champs */
 .fiches { display: grid; gap: var(--e-4); margin-top: var(--e-6); align-items: stretch; }
@@ -794,14 +802,11 @@ li, dd { text-wrap: wrap; }
 .etape:nth-child(4) { background: var(--marque); color: var(--sur-marque); }
 .etape .scene figcaption { color: inherit; }
 @media (min-width: 840px) {
-  /* Deux cartes par rangee, de meme hauteur et alignees en haut ; l'image prend la moitie de la carte. */
+  /* Deux cartes par rangee, de meme hauteur. */
   .etapes { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; gap: var(--e-4); }
-  .etape { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: var(--e-8); align-content: start; border-radius: 200px var(--r-lg) var(--r-lg) var(--r-lg); padding: var(--e-8); }
-  .etape .section__figure { grid-column: 1; grid-row: 1 / span 2; margin: 0; aspect-ratio: auto; }
+  .etape { border-radius: 200px var(--r-lg) var(--r-lg) var(--r-lg); padding: var(--e-8); }
+  .etape .section__figure { aspect-ratio: auto; }
   .etape .section__figure .scene { width: 100%; }
-  .etape h2, .etape .etape__corps { grid-column: 2; }
-  .etape h2 { align-self: end; padding-top: var(--e-4); }
-  /* Le texte d'une carte d'etape se lit a 18 px sur environ 40 signes : les lignes se remplissent. */
   .etape .etape__corps { font-size: var(--t-corps); }
 }
 /* L'image au-dessus du texte, a toutes les largeurs : a cote de l'image, le texte n'avait que 250 px (quatre mots
@@ -872,7 +877,7 @@ li, dd { text-wrap: wrap; }
 .simulator > p { color: var(--encre-douce); font-size: var(--t-petit); }
 .simulator__close { display: grid; place-items: center; margin-inline-start: auto; width: 48px; height: 48px; border: 2px solid var(--contour); border-radius: 50%; background: transparent; }
 .simulator__fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--e-3); margin-top: var(--e-6); }
-.simulator__fields label { display: grid; gap: var(--e-2); font-size: var(--t-petit); font-weight: 600; }
+.simulator__fields label, .simulator__champ { display: grid; gap: var(--e-2); font-size: var(--t-petit); font-weight: 600; }
 .simulator__fields input, .simulator__fields select { width: 100%; min-height: 52px; padding: var(--e-3) var(--e-4); border: 2px solid transparent; border-radius: var(--r-sm); background-color: var(--sous); }
 .simulator__fields input:focus, .simulator__fields select:focus { outline: none; border-color: var(--encre-accent); }
 .pas { display: grid; grid-template-columns: 52px 1fr 52px; gap: var(--e-2); }
@@ -928,7 +933,6 @@ li, dd { text-wrap: wrap; }
   .site-footer { position: sticky; bottom: 0; z-index: 0; }
 }
 .site-footer__inner { position: relative; max-width: var(--contenu); margin-inline: auto; display: grid; gap: var(--e-10); font-size: var(--t-petit); }
-.site-footer__ornement { display: none; }
 .site-footer .brand img { width: 220px; margin-bottom: var(--e-6); }
 .footer-identity p, .footer-identity address { font-style: normal; color: var(--sur-pied-doux); }
 .footer-identity address { margin-top: var(--e-3); }
@@ -949,7 +953,6 @@ li, dd { text-wrap: wrap; }
   .footer-identity { grid-column: 1 / span 4; }
   .site-footer__inner > nav:not(.footer-legal) { grid-column: 5 / span 3; }
   .site-footer__inner > div:nth-of-type(2) { grid-column: 8 / span 3; }
-  .site-footer__ornement { display: block; grid-column: 11 / span 2; grid-row: 1; width: 100%; max-width: 180px; justify-self: end; opacity: .16; pointer-events: none; }
   .footer-legal { grid-column: 1 / -1; }
   .footer-bottom { grid-column: 1 / -1; grid-template-columns: auto 1fr; }
   .footer-bottom > div { justify-content: end; display: flex; gap: var(--e-6); }
@@ -1289,11 +1292,6 @@ li, dd { text-wrap: wrap; }
   .entete-page:not(.entete-page--document) h1, .entete-page:not(.entete-page--document) .entete-page__texte--long h1 { font-size: clamp(52px, 7.6vw, 64px); }
   .entete-page:not(.entete-page--document) .entete-page__texte--tres-long h1 { font-size: clamp(48px, 7vw, 56px); }
   .porte__texte h1 { font-size: clamp(52px, 7.4vw, 62px); }
-  /* Les etapes : l'image a gauche, plafonnee, le texte a droite ; une tablette n'est pas un telephone etire. */
-  .etape { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: auto 1fr; column-gap: var(--e-8); align-items: start; }
-  .etape .section__figure { grid-column: 1; grid-row: 1 / span 2; width: min(100%, 300px); margin: 0; }
-  .etape h2, .etape .etape__corps { grid-column: 2; }
-  .etape h2 { align-self: end; }
   :root { --t-corps: 18px; }
   /* Tarifs : le cercle a gauche, les deux prix a droite, au lieu d'un cercle seul au bord. */
   .entete-page--haut-prix { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--e-6); align-items: center; }
@@ -1502,12 +1500,10 @@ li, dd { text-wrap: wrap; }
   .fondateurs__texte { grid-column: 7 / -1; margin-top: 0; }
   .profils { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--e-6); }
 }
-/* Les deux dernieres sections de l'Academie (la societe, le contact) : du texte pose sur le fond, sans carte. */
-.carte, .carte:nth-child(n), [data-ambiance="violet"] .carte, [data-ambiance="violet"] .carte:nth-child(n) { border-radius: 0; padding: 0; background: none; }
 .groupe { row-gap: var(--e-12); }
 /* Tarifs : le simulateur pose sur le violet, sans carte ; ses libelles a la taille du texte, le total en grand. */
 .simulator--page { background: none; border-radius: 0; padding: 0 var(--marge); }
-.simulator--page > p, .simulator--page .simulator__fields label { font-size: var(--t-corps); }
+.simulator--page > p, .simulator--page .simulator__fields label, .simulator--page .simulator__champ { font-size: var(--t-corps); }
 .simulator--page .simulator__eleves li { background: none; border-radius: 0; padding-inline: 0; }
 @media (min-width: 840px) { .simulator--page { padding: 0; } }
 
@@ -1524,6 +1520,7 @@ li, dd { text-wrap: wrap; }
 .simulator--page .simulator__fields input:not([type="checkbox"]):focus-visible, .simulator--page .simulator__fields select:focus-visible { outline: 3px solid var(--encre-accent); outline-offset: 2px; }
 /* Accueil : la phrase du directeur, signee, a cote de sa photo. */
 .panneau__citation { margin: 0; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: var(--t-moyen); line-height: 1.35; max-width: 30ch; }
+.panneau__citation blockquote { margin: 0; }
 .panneau__signature { display: grid; gap: var(--e-1); margin-top: var(--e-4); font-family: 'Plus Jakarta Sans', sans-serif; font-size: var(--t-corps); }
 /* Accueil, sous 840 px : l'enonce centre, une phrase par ligne, a la plus grande taille qui la fait tenir (16,4 em). */
 @media (max-width: 839px) {
@@ -1531,7 +1528,7 @@ li, dd { text-wrap: wrap; }
   /* Les mains dans leur arche, comme au bureau, au lieu de deborder par le bord de l'ecran. */
   .chapitre__image-mobile:has(.scene[data-anime="mains"]) { margin-inline-start: 0; }
   .chapitre__image-mobile:has(.scene[data-anime="mains"]) figcaption { margin-inline-start: 0; }
-  .chapitre__image-mobile .scene[data-anime="mains"] { padding: 0; background: none; }
+  .chapitre__image-mobile .scene[data-anime="mains"] { background: none; }
   .chapitre__image-mobile .scene[data-anime="mains"] > .scene__cadre { width: min(100%, 380px); aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 40% 40% 0 0; overflow: hidden; background: #EEE6FA; }
   .chapitre__image-mobile .scene[data-anime="mains"] > .scene__cadre img { width: 100%; height: 100%; object-fit: cover; object-position: 40% 50%; scale: 1.35; transform-origin: 46% 57%; -webkit-mask: none; mask: none; }
 }
@@ -1540,9 +1537,76 @@ li, dd { text-wrap: wrap; }
   .entete-page--haut-prix .entete-page__arche { grid-column: 8 / -1; width: min(100%, 560px); }
   .entete-prix { grid-column: 1 / span 7; }
 }
-/* Tablette (600-839 px) : les cartes de Comment ca marche gardent l'image au-dessus du texte, comme au bureau. */
-@media (min-width: 600px) and (max-width: 839px) {
-  .etape { display: flex; flex-direction: column; }
-  .etape .section__figure { width: min(100%, 380px); margin: 0 auto var(--e-16); }
-  .etape h2 { align-self: stretch; }
+
+/* --- Recette 18 ------------------------------------------------------------------------------------------- */
+/* Une echelle courte : affiche geante (prix de l'accueil et grand mot), affiche (titres d'ouverture et de fin,
+   prix de Tarifs), titre de section, intertitre, texte, notes. */
+:root { --t-geant: clamp(52px, 10.4vw, 150px); --t-entete: clamp(40px, 4.6vw, 66px); }
+.champ__montant { font-size: var(--t-geant); }
+.appel__mot { font-size: var(--t-geant); }
+@media (min-width: 840px) {
+  .entete-page:not(.entete-page--document) h1, .entete-page--libre .entete-page__texte > h1 { font-size: var(--t-entete); }
+  .entete-page .hero-intro, .entete-page--libre .hero-intro, .entete-page--haut-texte .hero-intro, .entete-page--haut-parcours .hero-intro { font-size: var(--t-corps); font-weight: 500; }
+  /* La phrase d'ouverture remplit sa colonne de droite jusqu'a la marge, comme le reste de la page. */
+  .entete-page--haut-texte .hero-intro, .entete-page--haut-parcours .hero-intro { max-width: none; }
+  .entete-prix__montant, .simulator--page .simulator__prix { font-size: var(--t-entete); }
 }
+.parcours__precision { font-size: var(--t-petit); }
+@media (min-width: 840px) {
+  /* Cours : les lettres des arches a la taille des titres de section, leurs libelles a celle du texte. */
+  .parcours--haut .parcours__arabe { font-size: var(--t-titre); }
+  .parcours__etape { font-size: var(--t-corps); }
+}
+
+/* Le visage du directeur sur l'accueil : cadre en largeur, la meme courbe d'arche en haut a droite. */
+.portrait--visage .portrait__cadre { aspect-ratio: 5 / 4; border-radius: 0 56% 0 0 / 0 70% 0 0; }
+
+/* Fin des pages principales : la page se referme sur un titre de la taille de son ouverture, pose sur le fond, et ce
+   titre est le lien. Au telephone, sa taille le fait tenir en deux lignes (8,8 em pour la plus longue ligne). */
+.appel--seuil { padding: var(--respire) var(--marge) calc(var(--respire) + var(--e-8)); max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
+.appel__titre { font-size: min(44px, calc((100vw - 2 * var(--marge)) / 8.8)); line-height: 1.02; letter-spacing: -0.02em; max-width: none; }
+.appel__titre-lien { color: inherit; text-decoration: none; }
+.appel__titre-lien:hover, .appel__titre-lien:focus-visible { text-decoration: underline; text-decoration-thickness: .05em; text-underline-offset: .14em; }
+.appel__titre-lien svg { display: inline-block; width: .56em; height: .56em; margin-inline-start: .16em; vertical-align: -.02em; transition: transform var(--mv-micro) var(--mv-entree); }
+.appel__titre-lien svg path { stroke-width: 2.6; }
+.appel__titre-lien:hover svg, .appel__titre-lien:focus-visible svg { transform: translateX(.08em); }
+.appel--seuil .appel__phrase { margin-top: var(--e-6); max-width: 46ch; padding-inline: 0; }
+@media (min-width: 600px) and (max-width: 839px) { .appel__titre { font-size: clamp(52px, 7.6vw, 64px); } }
+@media (min-width: 840px) {
+  /* Le titre sur sept colonnes (deux lignes), sa phrase sur les cinq autres, alignee sur le bas du titre. */
+  .appel--seuil { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: end; }
+  .appel__titre { grid-column: 1 / span 7; font-size: var(--t-entete); }
+  .appel--seuil .appel__phrase { grid-column: 8 / -1; margin-top: 0; padding-bottom: .5em; max-width: none; }
+}
+
+/* La grande bande blanche de l'accueil ne garde pas de vide entre sa phrase et son grand mot sous 840 px. */
+@media (max-width: 839px) { .appel__lien { min-height: 0; } .appel__mot { margin-top: var(--e-10); } }
+
+/* Accueil, telephone : la premiere phrase de l'enonce en grand sur deux lignes, la seconde dessous, plus petite. */
+@media (max-width: 599px) {
+  .enonce { padding-bottom: var(--e-16); }
+  .enonce__texte span { white-space: normal; }
+  /* La premiere phrase a la taille de la phrase du zoom (10,2 em de mesure), la seconde a celle des intertitres. */
+  .enonce__texte span:first-child { font-size: min(44px, calc((100vw - 2 * var(--marge)) / 10.2)); text-wrap: balance; }
+  .enonce__texte span + span { margin-top: var(--e-4); font-size: var(--t-moyen); line-height: 1.25; font-weight: 500; letter-spacing: -0.01em; text-wrap: balance; }
+}
+
+/* Tarifs, premier ecran : le titre, sa phrase, une action et un lien a gauche ; la scene grande a droite ; les deux
+   prix sous le texte, a la hauteur du bas de la scene ; leurs mentions sur toute la largeur. */
+@media (min-width: 840px) {
+  .entete-page--haut-prix { align-items: start; row-gap: var(--e-10); }
+  .entete-page--haut-prix .entete-page__texte { grid-column: 1 / span 6; grid-row: 1; }
+  .entete-page--haut-prix .entete-page__arche { grid-column: 7 / -1; grid-row: 1 / span 2; width: min(100%, 600px); justify-self: end; align-self: start; }
+  .entete-prix { grid-column: 1 / span 6; grid-row: 2; align-self: end; }
+  .entete-prix__note { grid-column: 1 / -1; }
+}
+
+/* Pied de page : plus d'ornement ; la colonne des contacts prend sa place, et une adresse ne se coupe qu'apres @. */
+.footer-contacts a { overflow-wrap: normal; }
+@media (min-width: 840px) { .site-footer__inner > div:nth-of-type(2) { grid-column: 8 / -1; } }
+@media (max-width: 599px) {
+  .footer-contacts { grid-template-columns: minmax(0, 1fr); gap: var(--e-2); }
+  .footer-contacts__adresse { display: block; }
+}
+@media (max-width: 379px) { .site-footer__inner > nav:not(.footer-legal) ul { grid-template-columns: minmax(0, 1fr); } }
+

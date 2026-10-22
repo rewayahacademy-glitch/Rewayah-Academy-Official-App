@@ -607,37 +607,36 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
 
 
 def accueil_confiance(page: dict, images: dict, mot: dict | None = None) -> str:
-    """Une bande sombre sur toute la largeur : la photo du directeur calee au bord gauche (elle y est coupee), la date
-    en grand, puis les trois engagements, et le lien vers son mot sur la page Academie."""
+    """Une bande sombre sur toute la largeur. En haut, le visage du directeur, cadre en largeur et cale au bord gauche
+    de l'ecran (la photo y est coupee), a la hauteur du titre ; a cote, la date, une phrase de son mot signee et le lien
+    vers ce mot. Dessous, les trois engagements cote a cote. La page Academie montre la meme photo en buste."""
     sec = _sections_par_id(page)["confiance"]
     return f'''<section class="panneau" id="confiance" aria-labelledby="confiance-titre">
-  <div class="panneau__photo" data-revele>{portrait(images, "portrait-directeur-serre", TAILLES_PORTRAIT)}</div>
+  <div class="panneau__photo" data-revele>{portrait(images, "portrait-directeur-visage", TAILLES_PORTRAIT, "portrait--visage")}</div>
   <div class="panneau__in">
     <div class="panneau__tete" data-revele>
       <h2 id="confiance-titre">{titre_html(sec["title"])}</h2>
       <p class="panneau__depuis">{titre_html("Rewayah Academy enseigne le Coran depuis le 1er mai 2024.")}</p>
     </div>{citation_accueil(mot)}
-    <ul class="panneau__promesses" data-revele-enfants>
-      <li><h3>{titre_html("Un programme qui avance")}</h3><p>{texte_html("Chaque étape a son objectif et sa date limite.")}</p></li>
-      <li><h3>{titre_html("Un suivi pour les familles")}</h3><p>{texte_html("Retrouvez les séances et le travail à préparer dans votre espace familial.")}</p></li>
-      <li><h3>{titre_html("Un tuteur pour chaque enfant")}</h3>{paragraphes(sec)}</li>
-    </ul>
-    <div class="panneau__pied" data-revele>
-      <div class="action-row">{bouton("Lire le mot du directeur", "/fr/academie#mot", "contour")}{lien_fleche("Protection des enfants", "/fr/protection-des-enfants")}</div>
-      <p class="panneau__societe">REWAYAH ACADEMY LTD · Société n° 16624644</p>
-    </div>
+    <div class="action-row" data-revele>{bouton("Lire le mot du directeur", "/fr/academie#mot", "contour")}</div>
   </div>
+  <ul class="panneau__promesses" data-revele-enfants>
+    <li><h3>{titre_html("Un programme qui avance")}</h3><p>{texte_html("Chaque étape a son objectif et sa date limite.")}</p></li>
+    <li><h3>{titre_html("Un suivi pour les familles")}</h3><p>{texte_html("Retrouvez les séances et le travail à préparer dans votre espace familial.")}</p></li>
+    <li><h3>{titre_html("Un tuteur pour chaque enfant")}</h3>{paragraphes(sec)}<p class="panneau__lien">{lien_fleche("Protection des enfants", "/fr/protection-des-enfants")}</p></li>
+  </ul>
 </section>'''
 
 
 def citation_accueil(mot: dict | None) -> str:
-    """Une phrase du mot du directeur (page Academie), signee : sur l'accueil, la photo n'est pas anonyme."""
+    """Une phrase du mot du directeur (page Academie), signee hors de la citation : sur l'accueil, la photo n'est pas
+    anonyme."""
     if not mot or not mot.get("extrait"):
         return ""
     sig = mot["signature"]
-    return (f'\n    <blockquote class="panneau__citation" data-revele><p>« {texte_html(mot["extrait"])} »</p>'
-            f'<p class="panneau__signature"><span class="mot__nom">{esc(sig["nom"])}</span>'
-            f'<span class="mot__role">{esc(sig["role"])}</span></p></blockquote>')
+    return (f'\n    <figure class="panneau__citation" data-revele><blockquote><p>« {texte_html(mot["extrait"])} »</p></blockquote>'
+            f'<figcaption class="panneau__signature"><span class="mot__nom">{esc(sig["nom"])}</span>'
+            f'<span class="mot__role">{esc(sig["role"])}</span></figcaption></figure>')
 
 
 QUESTIONS_ACCUEIL = (
@@ -674,21 +673,42 @@ def accueil_faq(page: dict, tarifs: dict) -> str:
 </section>'''
 
 
-def bande_finale(titre: str, phrase: str, label: str, href: str, mot: str | None, identifiant: str = "inscription") -> str:
-    """La bande d'appel : toute la bande est le lien. Sur l'accueil et les pages principales, un seul mot honnete la
-    porte, en tres grand (direction.json, fin.mot) ; les autres pages gardent une bande sobre."""
+FLECHE = ('<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" '
+          'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>')
+
+
+def _comparable(texte: str) -> str:
+    return texte.replace("’", "'").casefold()
+
+
+def bande_finale(titre: str, phrase: str, label: str, href: str, mot: str | None = None, identifiant: str = "inscription",
+                 seuil: bool = False) -> str:
+    """La fin de page, sous trois formes.
+    - Accueil (mot) : toute la bande blanche est le lien, et un seul mot tres grand la porte. Ce mot ouvre le libelle
+      du lien (« Commencer » pour « Commencer mon inscription »), pour qu'une commande vocale qui le dit trouve le lien.
+    - Pages principales (seuil, direction.json fin.seuil) : la page se referme sur un titre de la taille de son titre
+      d'ouverture, pose sur le fond de la page, et ce titre est le lien ; chaque page finit donc sur sa propre phrase.
+    - Autres pages : une bande sobre et son bouton."""
     externe = href.startswith("mailto:")
-    sobre = "" if mot else " appel--sobre"
-    fleche = ('<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" '
-              'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>')
-    # Avec le grand mot, c'est lui le bouton : le libelle reste pour les lecteurs d'ecran, sans pilule a l'ecran,
-    # pour que le meme verbe ne s'affiche pas deux fois l'un sous l'autre.
-    bouton = "sr-only" if mot else "appel__bouton"
-    grand_mot = f'<span class="appel__mot" aria-hidden="true">{esc(mot)}{fleche}</span>' if mot else ""
-    return f'''<section class="appel{sobre}" id="{esc(identifiant)}" aria-labelledby="appel-titre">
+    messagerie = '<span class="sr-only"> (ouvre votre messagerie)</span>' if externe else ""
+    if seuil:
+        debut, _, dernier = titre.rpartition(" ")
+        texte = (titre_html(debut) + " " if debut else "") + f'<span class="insecable">{titre_html(dernier)}{FLECHE}</span>'
+        return f'''<section class="appel appel--seuil" id="{esc(identifiant)}" aria-labelledby="appel-titre">
+  <h2 id="appel-titre" class="appel__titre" data-revele><a class="appel__titre-lien" href="{esc(href)}">{texte}{messagerie}</a></h2>
+  <p class="appel__phrase" data-revele>{texte_html(phrase)}</p>
+</section>'''
+    if mot:
+        if not _comparable(label).startswith(_comparable(mot)):
+            raise ValueError(f"Le grand mot « {mot} » doit ouvrir le libelle du lien « {label} »")
+        reste = label[len(mot):]
+        porteur = (f'<span class="appel__mot">{esc(mot)}<span class="sr-only">{esc(reste)}</span>{messagerie}{FLECHE}</span>')
+    else:
+        porteur = f'<span class="appel__bouton">{esc(label)}{messagerie}{FLECHE}</span>'
+    return f'''<section class="appel{"" if mot else " appel--sobre"}" id="{esc(identifiant)}" aria-labelledby="appel-titre">
   <a class="appel__lien" href="{esc(href)}">
-    <span class="appel__haut"><h2 id="appel-titre">{titre_html(titre)}</h2><span class="appel__phrase">{texte_html(phrase)}</span><span class="{bouton}">{esc(label)}{'<span class="sr-only"> (ouvre votre messagerie)</span>' if externe else ""}{"" if mot else fleche}</span></span>
-    {grand_mot}
+    <div class="appel__haut"><h2 id="appel-titre">{titre_html(titre)}</h2><p class="appel__phrase">{texte_html(phrase)}</p>{"" if mot else porteur}</div>
+    {porteur if mot else ""}
   </a>
 </section>'''
 
@@ -879,7 +899,7 @@ def figure_pleine(reglage: dict, images: dict, sid: str) -> str:
             f'{scene(images, ident, "(max-width: 839px) 92vw, 1200px", "section__scene")}</div>')
 
 
-def portrait(images: dict, ident: str, tailles: str) -> str:
+def portrait(images: dict, ident: str, tailles: str, variante: str = "") -> str:
     """Une vraie photo d'une personne, et non une illustration : jamais legendee « Illustration » ; son texte
     alternatif la nomme, et le texte qui l'entoure le redit (signature, citation)."""
     image = images["images"][ident]
@@ -887,7 +907,7 @@ def portrait(images: dict, ident: str, tailles: str) -> str:
     grande = largeurs[-1]
     hauteur = round(image["hauteur"] * grande / image["largeur"])
     srcset = ", ".join(f"{ASSETS}/scene-{ident}-{w}.webp {w}w" for w in largeurs)
-    return (f'<figure class="portrait"><span class="portrait__cadre"><img src="{ASSETS}/scene-{ident}-{grande}.webp" '
+    return (f'<figure class="portrait{" " + variante if variante else ""}"><span class="portrait__cadre"><img src="{ASSETS}/scene-{ident}-{grande}.webp" '
             f'srcset="{srcset}" sizes="{esc(tailles)}" width="{grande}" height="{hauteur}" alt="{esc(image["alt"])}" '
             f'decoding="async" loading="lazy"></span></figure>')
 
@@ -1093,10 +1113,10 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     connexion = anchor(NAV[-1][0], NAV[-1][1], "site-header__connexion")
     footer_links = "".join(f"<li>{anchor(label, href, current=href == route)}</li>" for label, href in FOOTER if href.startswith('/fr/legal/') or href in ('/fr/protection-des-enfants', '/fr/accessibilite'))
     discovery_links = "".join(f"<li>{anchor(label, href, current=href == route)}</li>" for label, href in (*NAV[:4], ('Comment ça marche', '/fr/comment-ca-marche'), ('L’académie', '/fr/academie'), ('Avis', '/fr/avis'), ('Aide', '/fr/aide'), ('Recrutement', '/fr/recrutement')))
-    # Le libelle fait partie du lien : au telephone, l'adresse se masque et les quatre libelles tiennent sur deux colonnes.
+    # Le libelle fait partie du lien, l'adresse dessous ; une adresse ne se coupe qu'apres son arobase.
     contact_links = "".join(
         f'<li><a href="mailto:{esc(site["contacts"][key])}"><strong>{esc(label)}</strong>'
-        f'<span class="footer-contacts__adresse">{esc(site["contacts"][key])}</span></a></li>'
+        f'<span class="footer-contacts__adresse">{esc(site["contacts"][key]).replace("@", "@<wbr>")}</span></a></li>'
         for label, key in CONTACTS
     )
     social_by_href = {item["href"]: item for item in site["social_links"]}
@@ -1104,7 +1124,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     author_facebook = social_by_href["https://www.facebook.com/share/1D6H2EYhci/"]
     cta = bouton(page["cta"]["label"], page["cta"]["href"])
     if route == "/fr/tarifs":
-        cta += ('<a class="cta cta--secondary" href="#tarif-simulator">Simuler mon tarif</a>'
+        cta += (lien_fleche("Simuler mon tarif", "#tarif-simulator") +
                 '<noscript><p class="price-note">Le simulateur demande JavaScript. Sans lui, les prix et les remises '
                 'de cette page suffisent pour calculer le tarif de votre foyer.</p></noscript>')
     status = (
@@ -1119,8 +1139,10 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         main = hero_interieur(route, page, reglage, images, cta, status, tarifs, today) + render_inner(route, page, reglage, images, tarifs, today, avis)
         fin = reglage.get("fin")
         if fin:
+            # Une page qui a deja une section « inscription » (l'aide) donne un autre identifiant a sa fin.
             main += bande_finale(fin["titre"], fin["phrase"], fin.get("label", page["cta"]["label"]),
-                                 fin.get("href", page["cta"]["href"]), fin.get("mot"))
+                                 fin.get("href", page["cta"]["href"]), seuil=bool(fin.get("seuil")),
+                                 identifiant="fin-de-page" if 'id="inscription"' in main else "inscription")
         classe_page = "page-" + (route.strip("/").split("/", 1)[1].replace("/", "-") if "/" in route.strip("/") else "accueil")
     # Sur la page des tarifs, le simulateur est dans la page, sous la grille ; sur l'accueil, une feuille qui s'ouvre.
     en_page = route == "/fr/tarifs"
@@ -1131,7 +1153,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
       <h2 id="simulator-title">Estimez le tarif de votre foyer</h2>
       <p>Indiquez le nombre d’élèves, puis l’âge de chacun, dans l’ordre d’inscription.</p>
       <div class="simulator__fields">
-        <label for="sim-total">Nombre d’élèves <span class="pas"><button type="button" data-pas="-1" aria-label="Un élève de moins">−</button><input type="number" inputmode="numeric" min="1" step="1" value="1" id="sim-total"><button type="button" data-pas="1" aria-label="Un élève de plus">+</button></span></label>
+        <div class="simulator__champ"><label for="sim-total">Nombre d’élèves</label><span class="pas"><button type="button" data-pas="-1" aria-label="Un élève de moins">−</button><input type="number" inputmode="numeric" min="1" step="1" value="1" id="sim-total"><button type="button" data-pas="1" aria-label="Un élève de plus">+</button></span></div>
         <label>Paiement <select id="sim-paiement"></select></label>
         <label>Parrainage <input type="checkbox" id="sim-parrainage"></label>
       </div>
@@ -1202,7 +1224,6 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   </main>
   {simulator}
   <footer class="site-footer"><div class="site-footer__inner">
-     <img class="site-footer__ornement" src="{ASSETS}/ornement-contour-white.svg" width="494" height="777" alt="">
      <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a><p>REWAYAH ACADEMY LTD<br>Société n° 16624644</p>
       <address>71-75 Shelton Street<br>Covent Garden, London<br>WC2H 9JQ, Royaume-Uni</address>
     </div>
